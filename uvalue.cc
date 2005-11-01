@@ -1,0 +1,311 @@
+/*! \file uvalue.cc
+ *******************************************************************************
+
+ File: uvalue.cc\n
+ Implementation of the UValue class.
+
+ This file is part of 
+ %URBI Kernel, version __kernelversion__\n
+ (c) Jean-Christophe Baillie, 2004-2005.
+
+ Permission to use, copy, modify, and redistribute this software for
+ non-commercial use is hereby granted.
+
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
+
+ For more information, comments, bug reports: http://www.urbiforge.net
+
+ **************************************************************************** */
+
+#include <math.h>
+
+#include "utypes.h"
+#include "uvalue.h"
+#include "ucommand.h"
+#include "uconnection.h"
+#include "udevice.h"
+#include "userver.h"
+      
+		
+// **************************************************************************	
+//! UValue constructor.
+UValue::UValue()
+{
+  ADDOBJ(UValue);
+  dataType = DATA_VOID;
+  eventid = 0;
+  list = 0;
+
+  val        = 0; // set default values to 0, including
+                  // str & refBinary pointers
+}
+
+//! UValue constructor.
+UValue::UValue(double val) 
+{
+  ADDOBJ(UValue);
+  dataType = DATA_NUM;
+  eventid = 0;
+  list = 0;
+  this->val = val;
+}
+
+//! UValue constructor.
+UValue::UValue(const char* str) 
+{
+  ADDOBJ(UValue);
+  dataType = DATA_STRING;
+  eventid = 0;
+  list = 0;
+  this->str = new UString (str);
+}
+
+//! UValue destructor.
+UValue::~UValue()
+{  
+  FREEOBJ(UValue);
+  if ((dataType == DATA_STRING) && (str!=0)) delete (str);
+  if (dataType == DATA_BINARY) LIBERATE(refBinary);
+  if (list) delete list; 
+}
+
+//! UValue hard copy
+UValue*
+UValue::copy()
+{
+  UValue *ret = new UValue();
+  ret->dataType = dataType;
+  ret->eventid = eventid;  
+
+  if (dataType == DATA_NUM) 
+    ret->val = val;  
+
+  if (dataType == DATA_STRING) {
+    ret->str = new UString(str);
+    if (!ret->str) {
+      delete ret;
+      return 0;
+    }
+  }
+
+  if (dataType == DATA_BINARY) {
+    if (refBinary)
+      ret->refBinary = refBinary->copy();   
+    else
+      ret->refBinary = 0;
+  }
+
+  if (dataType == DATA_FILE) {
+    ret->str = new UString(str);
+    if (!ret->str) {
+      delete ret;
+      return 0;
+    }
+  }
+
+  if (dataType == DATA_LIST) {
+    
+    UValue *scanlist = list;
+    UValue *sret = ret;
+    while (scanlist) {
+      sret->list = scanlist->copy();
+      scanlist = scanlist->list;
+      sret = sret->list;
+    }
+  }
+        
+  return(ret);
+}
+
+
+//! UValue polymorphic addition
+UValue*
+UValue::add(UValue *v)
+{
+  const int maxFloatSize = 255;
+
+  if ((dataType == DATA_BINARY) &&
+      (v->dataType == DATA_BINARY)) {
+
+    // concat two binaries (useful for sound)
+
+    UValue *ret = new UValue();      
+    if (!ret) return 0;
+    
+    ret->dataType = DATA_BINARY;
+
+    UNamedParameters *param = 0;
+    if (refBinary->ref()->parameters)
+      param = refBinary->ref()->parameters->copy();
+    else
+      if (v->refBinary->ref()->parameters)
+        param = v->refBinary->ref()->parameters->copy();
+
+    ret->refBinary = 
+      new URefPt<UBinary> (
+                  new UBinary(
+                      refBinary->ref()->bufferSize+
+                        v->refBinary->ref()->bufferSize,
+                      param
+                      )
+                  );
+                               
+    if (!ret->refBinary) return 0;
+
+    ubyte* p = ret->refBinary->ref()->buffer;
+    if (!p) return 0;
+    memcpy(p,refBinary->ref()->buffer,refBinary->ref()->bufferSize);
+    memcpy(p+refBinary->ref()->bufferSize,
+           v->refBinary->ref()->buffer,
+           v->refBinary->ref()->bufferSize);
+    return(ret);
+  }
+
+  if ((dataType == DATA_FILE) ||
+      (dataType == DATA_BINARY) ||
+      (v->dataType == DATA_FILE)||
+      (v->dataType == DATA_BINARY) )
+    return 0;
+
+  if (dataType == DATA_NUM) {
+
+    if (v->dataType == DATA_NUM) {
+      UValue *ret = new UValue();
+      ret->dataType = DATA_NUM;
+      ret->val = val + v->val;
+      return(ret);
+    }
+
+    if (v->dataType == DATA_STRING) {
+      UValue *ret = new UValue(); 
+      if (ret==0) return (0);
+
+      ret->dataType = DATA_STRING;
+
+      char *tmp_String = new char[v->str->len()+maxFloatSize];
+      if (tmp_String==0) { 
+        delete ret;
+        return 0;
+      }
+      snprintf(tmp_String,v->str->len()+maxFloatSize,
+               "%f%s",val,v->str->str());
+      ret->str = new UString(tmp_String);
+      delete[] (tmp_String);
+      if (ret->str == 0) {
+        delete ret;
+        return 0;
+      }
+      return(ret);
+    }
+  }
+
+  if (dataType == DATA_LIST) {
+    if (v->dataType == DATA_LIST)
+      v = v->list;
+
+    UValue *scanlist = this;
+    while (scanlist->list)
+      scanlist = scanlist->list;
+    scanlist->list = v->copy();
+    return( copy() ); 
+  }
+
+  if (dataType == DATA_STRING) {
+
+    if (v->dataType == DATA_NUM) {
+      UValue *ret = new UValue(); 
+      if (ret==0) return (0);
+
+      ret->dataType = DATA_STRING;
+
+      char *tmp_String = new char[str->len()+maxFloatSize];
+      if (tmp_String==0) { 
+        delete ret;
+        return 0;
+      }
+      snprintf(tmp_String,str->len()+maxFloatSize,
+               "%s%f",str->str(),v->val);
+      ret->str = new UString(tmp_String);
+      delete[] (tmp_String);
+      if (ret->str == 0) {
+        delete ret;
+        return 0;
+      }
+      return(ret);
+    }
+
+    if (v->dataType == DATA_STRING) {
+      UValue *ret = new UValue(); 
+      if (ret==0) return (0);
+
+      ret->dataType = DATA_STRING;
+
+      char *tmp_String = new char[v->str->len()+str->len()+1];
+      if (tmp_String==0) { 
+        delete ret;
+        return 0;
+      }
+      sprintf(tmp_String,"%s%s",str->str(),v->str->str());
+      ret->str = new UString(tmp_String);
+      delete[] (tmp_String);
+      if (ret->str == 0) {
+        delete ret;
+        return 0;
+      }
+      return(ret);
+    }
+  }
+}
+
+//! UValue polymorphic equality test
+bool
+UValue::equal(UValue *v)
+{
+  switch (dataType) {
+
+  case DATA_NUM:
+    return ((v->dataType == DATA_NUM) && (v->val == val));
+
+  case DATA_STRING:
+    return ((v->dataType == DATA_STRING) &&
+            (strcmp(str->str(),v->str->str())==0));
+
+  case DATA_FILE:
+    return ((v->dataType == DATA_FILE) &&
+            (strcmp(str->str(),v->str->str())==0));
+
+  case DATA_BINARY:
+    
+    if (v->dataType != DATA_BINARY) return( false );
+    if (v->refBinary->ref()->bufferSize != refBinary->ref()->bufferSize)
+      return (false);
+    return( memcmp(v->refBinary->ref()->buffer,
+                   refBinary->ref()->buffer,
+                   refBinary->ref()->bufferSize) == 0 );   
+
+  default:
+    return (false);
+  }
+}
+
+//! UValue boolean convertion
+
+UTestResult
+booleval(UValue *v, bool freeme) 
+{
+  UTestResult res;
+
+  if (v==0) return UTESTFAIL;
+  
+  if (v->dataType != DATA_NUM) res = UTESTFAIL;
+  else
+    if (v->val == 0) 
+      res = UFALSE; 
+    else 
+      res = UTRUE;
+
+  if (freeme) delete v;
+  return (res);
+}

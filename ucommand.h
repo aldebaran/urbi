@@ -1,0 +1,770 @@
+/*! \file ucommand.h
+ *******************************************************************************
+
+ File: ucommand.h\n
+ Definition of the UCommand class.
+
+ This file is part of 
+ %URBI Kernel, version __kernelversion__\n
+ (c) Jean-Christophe Baillie, 2004-2005.
+
+ Permission to use, copy, modify, and redistribute this software for
+ non-commercial use is hereby granted.
+
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
+
+ For more information, comments, bug reports: http://www.urbiforge.net
+
+ **************************************************************************** */
+
+#ifndef UCOMMAND_H_DEFINED
+#define UCOMMAND_H_DEFINED
+
+#include "utypes.h"
+#include "ustring.h"
+#include "ucommandqueue.h"
+#include <list>
+
+#include "uexpression.h"
+#include "unamedparameters.h"
+#include "uvariablelist.h"
+#include "uvalue.h"
+#include "ugroup.h"
+#include "uproperty.h"
+#include "uvariablename.h"
+#include "ubinary.h"
+#include "ucallid.h"
+
+using namespace std;
+
+class UCommand;
+class UExpression;
+class UConnection;
+class UNamedParameters;
+class UBinary;
+class UVariableName;
+class UVariableList;
+class UVariable;
+class UValue;
+class UDevice;
+class UServer;
+class UCommand_TREE;
+		
+
+// *****************************************************************************
+//! UCommand class stores URBI commands.
+/*! UCommand class:   
+
+    Specific commands are all derived from UCommand, but they contain
+    command specific members.
+*/
+class UCommand
+{
+public:
+  
+  UCommand(UCommandType _type);          
+  virtual ~UCommand();
+
+  virtual void print(int l);
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand* copy();
+  UErrorValue       copybase(UCommand *command);
+  virtual void      mark(UString *stopTag);
+  virtual void      deleteMarked();
+  
+  UCommandType     type;        ///< Type of the command.
+  UCommandStatus   status;      ///< Status of the command
+
+  UString          *tag;        ///< Command tag
+  UNamedParameters *flags;      ///< list of flags of tagged commands
+
+  UCommand_TREE    *up;         ///< the UCommand_TREE that owns the UCommand
+  UCommand         **position;  ///< position in the owning UCommand_TREE
+  UCommand         *morph;      ///< stores the target UCommand in case of
+                                ///< morphing
+  bool             persistant;  ///< tells if the command should be deleted once
+                                ///< it is UCOMPLETED (useful for loops)
+  bool             toDelete;    ///< true if the command has been marked for 
+                                ///< deletion in a stop command.
+  bool             background;  ///< used to put the whole tree in bg mode (after
+                                ///< a morphing from a "at" or "whenever").
+  
+  double           startTime;   ///< start time
+  UExpression      *flagExpr1;   ///< expression used to store the flags parameters
+  UExpression      *flagExpr2;   ///< expression used to store the flags parameters
+  UExpression      *flagExpr4;   ///< expression used to store the flags parameters
+  int              flagType;    ///< in case of timeout or condout, stores the type
+                                ///< of the flag (timeout:0), (condout:1). 
+  int              flag_nbTrue2;      ///< nb of times the flag test is true
+  double           flag_startTrue2;   ///< time of the last 'true' for "stop"
+  int              flag_nbTrue4;      ///< nb of times the flag test is true
+  double           flag_startTrue4;   ///< time of the last 'true' for "freeze"
+  bool             morphed;     ///< true when the command is part of a morphed 
+                                ///< structure  
+
+public:
+
+  static const int MAXSIZE_TMPMESSAGE = 65536; ///< used by commands to build
+  HMvariabletab::iterator hmi;         ///< internal
+
+};
+
+extern char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE]; 
+
+
+class UCommand_TREE : public UCommand
+{
+public:
+
+  UCommand_TREE(UNodeType node,
+                UCommand* command1, 
+                UCommand* command2);
+  virtual ~UCommand_TREE();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+  virtual void           mark(UString *stopTag);
+  virtual void           deleteMarked();
+
+  UCommand         *command1;   ///< Left side of the compound command.
+  UCommand         *command2;   ///< Right side of the compound command.
+  UCallid          *callid; ///< context identificator for function calls
+  UNodeType        node;  ///< node type (AND, PIPE, ...)
+  URunlevel        runlevel1,
+                   runlevel2;  ///< stores the state of execution of
+                                ///< command1 and command2
+  UConnection      *connection; ///< belonging connection
+};
+
+class UCommand_ASSIGN_VALUE : public UCommand
+{
+public:
+  
+  UCommand_ASSIGN_VALUE(UVariableName *variablename, 
+                        UExpression* expression, 
+                        UNamedParameters *parameters,
+                        bool defkey = true);
+  virtual ~UCommand_ASSIGN_VALUE();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName    *variablename;   ///< variable name
+  UVariable        *variable;  ///< associated variable
+  UExpression      *expression; ///< Expression
+  UNamedParameters *parameters; ///< list of parameters
+  UString          *method;   ///< method in the varname 
+  UString          *devicename; ///< device in the varname
+
+  // Pointers to modificators to ease further processing
+  // in the URUNNING mode.
+
+  UExpression      *modif_time;
+  UExpression      *modif_sin;
+  UExpression      *modif_phase;
+  UExpression      *modif_smooth;
+  UExpression      *modif_speed;
+  UExpression      *modif_accel;
+  UExpression      *modif_ampli;
+  UExpression      *modif_adaptive;
+  UVariableName    *modif_getphase;
+  UValue           *tmpeval;
+
+  UExpression      *tmp_phase;  ///< stored temporary phase for cos modificator
+  UExpression      *tmp_time;  ///< stored temporary time=0 for direct assignment
+  double           endtime;     ///< time limit in case of timeout modificator
+  double           startval;    ///< start value for modificators
+  double           targetval;   ///< target value for modificators
+  double           starttime;   ///< start time for modificators
+  double           targettime;  ///< target time for modificators
+  double           idealval;    ///< ideal value to reach for the next
+                                ///< iteration. Used for +error
+  double           speed;       ///< speed for modificators
+  double           accel;       ///< accel for the accel modificator
+  double           speedmin;    ///< minimal speed in a movement
+  UDevice          *dev;        ///< device related to the assigned variable
+  
+  double           *valtmp;     ///< destination values 
+  int              nbval;       ///< nb destinaton values 
+  
+  bool             finished;    ///< true when the assign is finished  
+  bool             profileDone; ///< true when the motion profile is done
+  bool             isvaln;      ///< true for 'valn' type assignments
+  bool             errorFlag;   ///< true if +error is set for the command
+  bool             first;       ///< true on the first passage
+  bool             assigned;    ///< true when a nbAssign-- has to be done on delete
+  bool             defkey;      ///< is the def prefix used?
+
+private:
+
+  UErrorValue      processModifiers(UConnection* connection, double currentTime);
+
+};
+
+class UCommand_ASSIGN_BINARY : public UCommand
+{
+public:
+
+  UCommand_ASSIGN_BINARY(UVariableName *variablename, 
+                         URefPt<UBinary> *refBinary);
+  virtual ~UCommand_ASSIGN_BINARY();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName    *variablename;   ///< variable name
+  UVariable        *variable;  ///< associated variable
+  URefPt<UBinary>  *refBinary;  ///< Binary container
+
+  UString          *method;   ///< method in the varname 
+  UString          *devicename; ///< device in the varname
+};
+
+class UCommand_ASSIGN_PROPERTY : public UCommand
+{
+public:
+
+  UCommand_ASSIGN_PROPERTY(UVariableName *variablename, 
+                           UString *oper,
+                           UExpression *expression);
+  virtual ~UCommand_ASSIGN_PROPERTY();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName    *variablename;   ///< variable name
+  UVariable        *variable;       ///< associated variable
+  UString          *oper;           ///< Property operateur
+  UExpression      *expression;     ///< assigned expression
+
+  UString          *method;   ///< method in the varname 
+  UString          *devicename; ///< device in the varname
+};
+
+class UCommand_EXPR : public UCommand
+{
+public:
+
+  UCommand_EXPR(UExpression* expression); 
+  virtual ~UCommand_EXPR();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *expression; ///< Expression
+};
+
+class UCommand_RETURN : public UCommand
+{
+public:
+
+  UCommand_RETURN(UExpression* expression); 
+  virtual ~UCommand_RETURN();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *expression; ///< Expression
+};
+
+class UCommand_ECHO : public UCommand
+{
+public:
+
+  UCommand_ECHO(UExpression* expression, 
+                UNamedParameters *parameters,
+                UString *connectionTag); 
+  virtual ~UCommand_ECHO();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *expression; ///< Expression
+  UNamedParameters *parameters; ///< list of parameters
+  UString          *connectionTag; ///< tag of the connection to echo to.
+};
+
+class UCommand_GROUP : public UCommand
+{
+public:
+
+  UCommand_GROUP(UString* id,  
+                 UNamedParameters *parameters);  
+  virtual ~UCommand_GROUP();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *id;        ///< Identifier
+  UNamedParameters *parameters; ///< list of parameters
+};
+
+class UCommand_ALIAS : public UCommand
+{
+public:
+
+  UCommand_ALIAS (UVariableName* id,
+                  UVariableName* variablename);  
+  virtual ~UCommand_ALIAS();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName        *variablename; ///< variable
+  UVariableName        *id; ///< identifier
+};
+
+class UCommand_OPERATOR_ID : public UCommand
+{
+public:
+
+  UCommand_OPERATOR_ID (UString* oper,
+                        UString* id);  
+  virtual ~UCommand_OPERATOR_ID();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *oper; ///< operator name
+  UString          *id; ///< identifier
+};
+
+class UCommand_DEVICE_CMD : public UCommand
+{
+public:
+
+  UCommand_DEVICE_CMD  (UString* device,
+                        UString* cmd);  
+  virtual ~UCommand_DEVICE_CMD();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *device; ///< the device name
+  UString          *cmd;    ///< the command (on, off, ...)
+};
+
+class UCommand_OPERATOR_VAR : public UCommand
+{
+public:
+
+  UCommand_OPERATOR_VAR (UString* oper,
+                         UVariableName* variablename);  
+  virtual ~UCommand_OPERATOR_VAR();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *oper;     ///< operator name
+  UVariableName    *variablename;///< variable
+  UVariable        *variable; ///< cached variable, used by undef
+  UFunction        *fun; ///< cached function, used by undef
+};
+
+class UCommand_OPERATOR : public UCommand
+{
+public:
+
+  UCommand_OPERATOR (UString* oper);                       
+  virtual ~UCommand_OPERATOR ();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *oper; ///< operator name
+};
+
+class UCommand_WAIT : public UCommand
+{
+public:
+
+  UCommand_WAIT(UExpression* expression); 
+  virtual ~UCommand_WAIT();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *expression; ///< Expression
+  
+  double           endtime; ///< time to stop waiting.
+};
+
+class UCommand_EMIT : public UCommand
+{
+public:
+
+  UCommand_EMIT(UVariableName* eventname, UNamedParameters *parameters, UExpression *duration=0); 
+  virtual ~UCommand_EMIT();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName      *eventname;   ///< Name of the event
+  UNamedParameters   *parameters;  ///< list of parameters  
+  UExpression        *duration;
+
+  const char         *eventnamestr; ///< char* of the event name
+  bool               firsttime; ///< true for the first execution
+  double             targetTime; ///< time of the end of the signal
+  int                eventid; ///< id used to uniquely identify the event
+};
+
+class UCommand_WAIT_TEST : public UCommand
+{
+public:
+
+  UCommand_WAIT_TEST(UExpression* test); 
+  virtual ~UCommand_WAIT_TEST();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *test;       ///< test
+  int              nbTrue;      ///< nb of times the test is true
+  double           startTrue;   ///< time of the last 'true'
+};
+
+class UCommand_INCDECREMENT : public UCommand
+{
+public:
+
+  UCommand_INCDECREMENT(UCommandType type, UVariableName *variablename);                      
+  virtual ~UCommand_INCDECREMENT();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName     *variablename;   ///< variable
+};
+
+class UCommand_DEF : public UCommand
+{
+public:
+
+  UCommand_DEF (UVariableName *variablename,           
+                UNamedParameters *parameters,
+                UCommand* command); 
+  UCommand_DEF (UString *device,           
+                UNamedParameters *parameters);  
+  UCommand_DEF (UVariableList *variablelist);                    
+
+  virtual ~UCommand_DEF();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName    *variablename;   ///< variable
+  UNamedParameters *parameters; ///< list of parameters
+  UCommand         *command;    ///< Command definition
+  UString          *device;     ///< device name in a "def device {...}"
+  UVariableList    *variablelist; ///< list of variables in a multi def command
+};
+
+class UCommand_IF : public UCommand
+{
+public:
+
+  UCommand_IF ( UExpression *test,
+                UCommand* command1, 
+                UCommand* command2);                 
+  virtual ~UCommand_IF();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *test;       ///< test
+  UCommand         *command1;   ///< Command if
+  UCommand         *command2;   ///< Command else (0 if no else)
+};
+
+class UCommand_EVERY : public UCommand
+{
+public:
+
+  UCommand_EVERY ( UExpression *duration,
+                   UCommand* command);
+  virtual ~UCommand_EVERY();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *duration;   ///< duration
+  UCommand         *command;    ///< Command 
+  
+  bool             firsttime; ///< indicates the first time the command is run
+  double           starttime; ///< time of the previous pulse
+};
+
+class UCommand_TIMEOUT : public UCommand
+{
+public:
+
+  UCommand_TIMEOUT ( UExpression *duration,
+                   UCommand* command);
+  virtual ~UCommand_TIMEOUT();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *duration;   ///< duration
+  UCommand         *command;    ///< Command 
+  UString          *tagRef;     ///< ref of the tag to kill.
+};
+
+class UCommand_STOPIF : public UCommand
+{
+public:
+
+  UCommand_STOPIF ( UExpression *condition,
+                    UCommand* command);
+  virtual ~UCommand_STOPIF();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *condition;   ///< condition
+  UCommand         *command;     ///< Command 
+  UString          *tagRef;      ///< ref of the containing tag
+};
+
+class UCommand_FREEZEIF : public UCommand
+{
+public:
+
+  UCommand_FREEZEIF ( UExpression *condition,
+                    UCommand* command);
+  virtual ~UCommand_FREEZEIF();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *condition;   ///< condition
+  UCommand         *command;     ///< Command 
+  UString          *tagRef;      ///< ref of the containing tag
+};
+
+class UCommand_AT : public UCommand
+{
+public:
+
+  UCommand_AT ( UCommandType type,
+                UExpression *test,
+                UCommand* command1, 
+                UCommand* command2);                 
+  virtual ~UCommand_AT();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *test;       ///< test
+  UCommand         *command1;   ///< Command if
+  UCommand         *command2;   ///< Command else (0 if no else)
+
+  bool             mode;        ///< The command is activated 
+                                ///< when the test switch to "mode"
+  int              nbTrue;      ///< nb of times the test is true
+  double           startTrue;   ///< time of the last 'true'
+};
+
+class UCommand_WHILE : public UCommand
+{
+public:
+
+  UCommand_WHILE ( UCommandType type,
+                   UExpression *test,
+                   UCommand* command);                 
+  virtual ~UCommand_WHILE();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *test;       ///< test
+  UCommand         *command;    ///< Command 
+};
+
+class UCommand_WHENEVER : public UCommand
+{
+public:
+
+  UCommand_WHENEVER ( UExpression *test,
+                      UCommand* command1,
+                      UCommand* command2);                 
+  virtual ~UCommand_WHENEVER();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *test;       ///< test
+  UCommand         *command1;   ///< Command ok
+  UCommand         *command2;   ///< Command onleave
+
+  int              nbTrue;      ///< nb of times the test is true
+  double           startTrue;   ///< time of the last 'true'
+  int              nbFalse;     ///< nb of times the test is false
+  double           startFalse;  ///< time of the last 'false'
+};
+
+class UCommand_LOOP : public UCommand
+{
+public:
+
+  UCommand_LOOP ( UCommand* command);                 
+  virtual ~UCommand_LOOP();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UCommand         *command;    ///< Command 
+};
+
+class UCommand_LOOPN : public UCommand
+{
+public:
+
+  UCommand_LOOPN ( UCommandType type,
+                   UExpression* expression,
+                   UCommand* command);                 
+  virtual ~UCommand_LOOPN();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UExpression      *expression; ///< Expression
+  UCommand         *command;    ///< Command 
+};
+
+class UCommand_FOREACH : public UCommand
+{
+public:
+
+  UCommand_FOREACH ( UCommandType type,
+                     UVariableName* variablename,
+                     UExpression* expression,
+                     UCommand* command);                 
+  virtual ~UCommand_FOREACH();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName    *variablename; ///< Name of the iterating variable
+  UCommand         *command;      ///< Command 
+  UExpression      *expression;   ///< the list to iterate
+  UValue           *position;     ///< index in the list
+  bool             firsttime;     ///< first execution of the command
+};
+
+class UCommand_FOR : public UCommand
+{
+public:
+
+  UCommand_FOR ( UCommandType type,
+                 UCommand* instr1,
+                 UExpression* test,
+                 UCommand* instr2,
+                 UCommand* command);                 
+  virtual ~UCommand_FOR();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UCommand         *instr1;     ///< 1st part
+  UCommand         *instr2;     ///< 2nd part
+  UExpression      *test;       ///< test
+  UCommand         *command;    ///< Command 
+  bool             first;       ///< true on the first passage
+};
+
+class UCommand_NOOP : public UCommand
+{
+public:
+
+  UCommand_NOOP(bool zerotime = false);                 
+  virtual ~UCommand_NOOP();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+};
+
+class UCommand_LOAD : public UCommand
+{
+public:
+
+  UCommand_LOAD(UCommand_TREE *mainnode);                 
+  virtual ~UCommand_LOAD();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UCommandQueue       *loadQueue;    ///< used to load files
+  bool                ready; ///< used to alternate exec/non-exec state (a kind of noop)
+  UCommand_TREE       *mainnode; ///< node that contains the load command
+};
+
+#endif
