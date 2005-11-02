@@ -22,9 +22,7 @@ CXXFLAGS+= -Wno-deprecated\
         $(OPTIM) \
         -I.
 
-KERNEL_FILES=ugrammar.tab.o \
-             utoken.yy.o \
-	     udevice.o \
+KERNEL_FILES=udevice.o \
              uconnection.o \
              ughostconnection.o \
              userver.o \
@@ -45,27 +43,46 @@ KERNEL_FILES=ugrammar.tab.o \
              ubinary.o \
              ucallid.o
 
+NETWORK_SRC=$(wildcard network/$(NETWORK)/*.cpp)  $(wildcard network/$(NETWORK)/*.cc)
+
+NETWORK_OBJS=$(NETWORK_SRC:.*=.o);
+
+PARSER_SRC=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc)
+
+PARSER_OBJS=$(PARSER_SRC:.*=.o);
+
+
 ################################################################################
 
 .PHONY:: all install clean
 
-all:: libkernelurbi.a
+all:: buildnumber network parser build/libkernelurbi-$(NETWORK).a
 
-libkernelurbi.a: $(KERNEL_FILES)
-	./addnb
+buildnumber: $(KERNEL_FILES) $(PARSER_SRC) $(NETWORK_SRC)
+	expr 1 + $(cat build/buildnumber) > build/buildnumber
+	sed -e "s/build.*\"/build $(cat build/buildnumber) \"/" > tmp && mv tmp version.h
+
+network: $(NETWORK_OBJS)
+
+parser: $(PARSER_OBJS)
+
+libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES)  $(NETWORK_OBJS) $(PARSER_OBJS)
 	$(CXX) $(CXXFLAGS) -o userver.o -c userver.cc
-	$(LD) -r -whole-archive -o $@ $^
+	$(LD) -r -whole-archive -o build/libkernelurbi-$(NETWORK)-$(PARSER).a $^
 
-ugrammar.tab.cc: ugrammar.y
-	$(BISON) --defines ugrammar.y
-	mv ugrammar.tab.c ugrammar.tab.cc
+parser/bison/ugrammar.tab.cc: parser/bison/ugrammar.y
+	cd parser/bison/ && $(BISON) --defines ugrammar.y
+	mv parser/bison/ugrammar.tab.c parser/bison/ugrammar.tab.cc
 
-utoken.yy.cc: utoken.l ugrammar.tab.cc
+parser/bison/utoken.yy.cc: parser/bison/utoken.l parser/bison/ugrammar.tab.cc
 	$(FLEX) -+ utoken.l
-	sed -e 's/class istream;/#include <istream.h>/' lex.yy.cc > utoken.yy.cc
-	rm -f lex.yy.cc
+	sed -e 's/class istream;/#include <istream.h>/' parser/bison/lex.yy.cc > parser/bison/utoken.yy.cc
+	rm -f parser/bison/lex.yy.cc
 
 %.o: %.cc
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 %.o: %.c
