@@ -48,8 +48,10 @@ const int NB_HEADER_BEFORE_CUSTOM = 4;
 const char* HEADER_BEFORE_CUSTOM[] = {
   "**************************************************************\n",
   "*** URBI Language specif 1.3  - Copyright (C) 2005 JC Baillie\n",
-  "*** URBI Kernel version " \
-  KERNELVERSION \
+  "*** URBI Kernel version " 
+  #indlude "version.h"
+  " build "
+  #include "buildversion.h"
   "\n",
   "***\n"
 };

@@ -1,1 +1,1 @@
-#define KERNELVERSION "0.9.7 build"
+"0.9.7"

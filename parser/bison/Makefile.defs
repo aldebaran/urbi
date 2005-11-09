@@ -1,0 +1,11 @@
+PARSER_SRC=parser/bison/ugrammar.tab.cc parser/bison/utoken.yy.cc
+
+
+parser/bison/ugrammar.tab.cc: parser/bison/ugrammar.y
+	cd parser/bison/ && $(BISON) --defines ugrammar.y
+	mv parser/bison/ugrammar.tab.c parser/bison/ugrammar.tab.cc
+
+parser/bison/utoken.yy.cc: parser/bison/utoken.l parser/bison/ugrammar.tab.cc
+	$(FLEX) -+ -oparser/bison/lex.yy.cc parser/bison/utoken.l
+	sed -e 's/class istream;/#include <istream.h>/' parser/bison/lex.yy.cc > parser/bison/utoken.yy.cc
+	rm -f parser/bison/lex.yy.cc

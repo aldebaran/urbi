@@ -29,11 +29,12 @@
 
 #include <userver.h>
 
-#include "URBI.h"
+//#include "URBI.h"
 #include "entry.h"
-#include "aiboserver.h"
+//#include "aiboserver.h"
 #include "aiboconnection.h"
-
+extern antStackRef  ipstackRef;
+extern OID        URBI_OID;
 //! AiboConnection constructor.
 /*! The constructor calls UConnection::UConnection with the appropriate
     parameters. 
@@ -153,7 +154,7 @@ AiboConnection::oListen()
   // Send the "Listen" request message
   TCPEndpointListenMsg listenMsg(endpoint_,
 				 IP_ADDR_ANY, 
-                                 AiboServer::TCP_PORT);
+                                 UServer::TCP_PORT);
 
   listenMsg.continuation = (void*)this; // Used to recover in the callback.
 

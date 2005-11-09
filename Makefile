@@ -18,75 +18,86 @@ OPTIM?=-O2
 
 ################################################################################
 
+
+
+KERNEL_SOURCES=udevice.cc \
+             uconnection.cc \
+             ughostconnection.cc \
+             userver.cc \
+             ucommand.cc \
+             ucommandqueue.cc \
+             umixqueue.cc \
+             ustring.cc \
+             ufunction.cc \
+             uvariable.cc \
+             uqueue.cc \
+             uexpression.cc \
+             uvariablelist.cc \
+             unamedparameters.cc \
+             uvalue.cc \
+             ugroup.cc \
+             uproperty.cc \
+             uvariablename.cc \
+             ubinary.cc \
+             ucallid.cc
+
+KERNEL_FILES=$(KERNEL_SOURCES:.cc=.o)
+
+
+CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I.
 CXXFLAGS+= -Wno-deprecated\
-        $(OPTIM) \
-        -I.
+        $(OPTIM) 
 
-KERNEL_FILES=udevice.o \
-             uconnection.o \
-             ughostconnection.o \
-             userver.o \
-             ucommand.o \
-             ucommandqueue.o \
-             umixqueue.o \
-             ustring.o \
-             ufunction.o \
-             uvariable.o \
-             uqueue.o \
-             uexpression.o \
-             uvariablelist.o \
-             unamedparameters.o \
-             uvalue.o \
-             ugroup.o \
-             uproperty.o \
-             uvariablename.o \
-             ubinary.o \
-             ucallid.o
 
-NETWORK_SRC=$(wildcard network/$(NETWORK)/*.cpp)  $(wildcard network/$(NETWORK)/*.cc)
+.PHONY:: all install clean
 
-NETWORK_OBJS=$(NETWORK_SRC:.*=.o);
+all: build/buildnumber network parser build/libkernelurbi-$(NETWORK)-$(PARSER).a
 
-PARSER_SRC=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc)
 
-PARSER_OBJS=$(PARSER_SRC:.*=.o);
+
+include network/$(NETWORK)/Makefile.defs
+include parser/$(PARSER)/Makefile.defs
+
+
+
+NETWORK_SRC?=$(wildcard network/$(NETWORK)/*.cpp)  $(wildcard network/$(NETWORK)/*.cc)
+
+
+
+NETWORK_OBJS?=$(NETWORK_SRC:.cc=.o)
+
+
+
+PARSER_SRC?=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc)
+
+
+
+PARSER_OBJS?=$(PARSER_SRC:.cc=.o)
 
 
 ################################################################################
 
-.PHONY:: all install clean
-
-all:: buildnumber network parser build/libkernelurbi-$(NETWORK).a
-
-buildnumber: $(KERNEL_FILES) $(PARSER_SRC) $(NETWORK_SRC)
-	expr 1 + $(cat build/buildnumber) > build/buildnumber
-	sed -e "s/build.*\"/build $(cat build/buildnumber) \"/" > tmp && mv tmp version.h
+build/buildnumber: $(KERNEL_SOURCES)
+	expr 1 + `cat build/buildnumber` > build/tbuildnumber && mv -f build/tbuildnumber  build/buildnumber
+	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 network: $(NETWORK_OBJS)
 
 parser: $(PARSER_OBJS)
 
-libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES)  $(NETWORK_OBJS) $(PARSER_OBJS)
-	$(CXX) $(CXXFLAGS) -o userver.o -c userver.cc
+build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(NETWORK_OBJS) $(PARSER_OBJS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o userver.o -c userver.cc
 	$(LD) -r -whole-archive -o build/libkernelurbi-$(NETWORK)-$(PARSER).a $^
 
-parser/bison/ugrammar.tab.cc: parser/bison/ugrammar.y
-	cd parser/bison/ && $(BISON) --defines ugrammar.y
-	mv parser/bison/ugrammar.tab.c parser/bison/ugrammar.tab.cc
-
-parser/bison/utoken.yy.cc: parser/bison/utoken.l parser/bison/ugrammar.tab.cc
-	$(FLEX) -+ utoken.l
-	sed -e 's/class istream;/#include <istream.h>/' parser/bison/lex.yy.cc > parser/bison/utoken.yy.cc
-	rm -f parser/bison/lex.yy.cc
 
 %.o: %.cc
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 %.o: %.c
-	$(CC) $(CXXFLAGS) -o $@ -c $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
 
 depend::
 	makedepend -- $(CXXFLAGS) -- *.cc *.c

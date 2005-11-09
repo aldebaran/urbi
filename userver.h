@@ -184,6 +184,9 @@ public:
   bool                     motorstate; ///< state of motor on/off
   bool                     systemcommands; ///< false inside parsing, true otherwise for commands created by the kernel
 
+
+ static const int TCP_PORT            = 54000; ///< URBI TCP Port.
+ 
 protected:
   
   virtual void     effectiveDisplay         (const char*) = 0;
