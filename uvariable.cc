@@ -320,20 +320,3 @@ UVariable::get()
   return value; 
 };
 
-//! Set a value->val value. Must be called instead of value->val direct assignment
-inline void
-UVariable::setSensorVal(double f)
-{
-  valPrev2 = valPrev;
-  valPrev = value->val;
-  value->val = f;
-}
-
-//! Init a value->val value (valPrev and valPrev2 will be init too)
-inline void
-UVariable::initSensorVal(double f)
-{
-  valPrev2 = f;
-  valPrev = f;
-  value->val = f;
-}

@@ -31,7 +31,7 @@
 #include "ucommand.h"
 #include "utypes.h"
 #include "uconnection.h"
-#include "uparser.h"
+#include "../uparser.h"
 #include "udevice.h"
 #include "ugroup.h"
 

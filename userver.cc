@@ -30,7 +30,6 @@
 #include "utypes.h"
 #include "ughostconnection.h"
 
-#include "version.h"
 
 // Global server reference
 UServer    *urbiserver= 0;
@@ -49,7 +48,7 @@ const char* HEADER_BEFORE_CUSTOM[] = {
   "**************************************************************\n",
   "*** URBI Language specif 1.3  - Copyright (C) 2005 JC Baillie\n",
   "*** URBI Kernel version " 
-  #indlude "version.h"
+  #include "version.h"
   " build "
   #include "buildversion.h"
   "\n",

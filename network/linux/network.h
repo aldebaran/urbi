@@ -1,17 +1,22 @@
-#include <uconnection.hh>
-#include <userver.hh>
+#ifndef NETWORK_H
+#define NETWORK_H
+#include <uconnection.h>
+#include <userver.h>
 
 
 namespace Network {
-  
   class Pipe {
  public:
+
+    Pipe() {}
+    virtual ~Pipe() {}
   //returns read fd or -1 if none
   virtual int readFD()=0;
   virtual int writeFD()=0;
 
-  virtual void notifyRead();
-  virtual void notifyWrite();
+  virtual void notifyRead()=0;
+  virtual void notifyWrite()=0;
+  
  };
   //build the two fd_sets according to registered connections
   int buildFD(fd_set &rd, fd_set &wr);
@@ -22,4 +27,8 @@ namespace Network {
   void unregisterNetworkPipe(Pipe *p);
   
   bool createTCPServer(int port);
+  void selectAndProcess(int usDelay);
 };
+
+
+#endif

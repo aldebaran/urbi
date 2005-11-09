@@ -32,7 +32,7 @@ class UVariable;
 #include <list>
 #include <string>
 #include <hash_map.h>
-#include "uparser.h"
+#include "parser/uparser.h"
 #include "utypes.h"
 #include "ufunction.h"
 #include "uvariable.h"

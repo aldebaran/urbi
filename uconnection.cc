@@ -25,7 +25,7 @@
 #include "userver.h"
 #include "uqueue.h"
 #include "ucommandqueue.h"
-#include "uparser.h"
+#include "parser/uparser.h"
 #include "ucallid.h"
 #include "uvariable.h"
 

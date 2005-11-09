@@ -33,9 +33,9 @@
 #include <iostream.h>
 #include <string.h>
 
-#include "FlexLexer.h"
-#include "utypes.h"
-#include "ustring.h"
+#include "bison/FlexLexer.h"
+#include "../utypes.h"
+#include "../ustring.h"
 
 using namespace std;
 

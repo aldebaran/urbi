@@ -102,8 +102,10 @@ build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(NETWORK_OBJS) $(PA
 depend::
 	makedepend -- $(CXXFLAGS) -- *.cc *.c
 
-clean::
+clean:: $(PARSER)-clean $(NETWORK)-clean
 	makedepend
+	rm parser/$(PARSER)/*.o
+	rm network/$(NETWORK)/*.o
 	rm -f *.o *.elf *.snap.cc *.bak *~ utoken.yy.* ugrammar.tab.* *.a
 
 ################################################################################
