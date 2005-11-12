@@ -12,4 +12,4 @@ parser/bison/utoken.yy.cc: parser/bison/utoken.l parser/bison/ugrammar.tab.cc
 
 
 bison-clean: 
-	rm parser/bison/ugrammar.tab.cc parser/bison/utoken.yy.cc
+	rm parser/bison/ugrammar.tab.cc parser/bison/utoken.yy.cc parser/bison/ugrammar.tab.h

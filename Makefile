@@ -51,7 +51,7 @@ CXXFLAGS+= -Wno-deprecated\
 
 .PHONY:: all install clean
 
-all: build/buildnumber network parser build/libkernelurbi-$(NETWORK)-$(PARSER).a
+all: build/buildnumber parser network build/libkernelurbi-$(NETWORK)-$(PARSER).a
 
 
 
@@ -85,7 +85,7 @@ network: $(NETWORK_OBJS)
 
 parser: $(PARSER_OBJS)
 
-build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(NETWORK_OBJS) $(PARSER_OBJS)
+build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(PARSER_OBJS) $(NETWORK_OBJS) 
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o userver.o -c userver.cc
 	$(LD) -r -whole-archive -o build/libkernelurbi-$(NETWORK)-$(PARSER).a $^
 
