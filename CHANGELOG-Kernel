@@ -187,4 +187,4 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 ### Unstable - in development                              ###
 --------------------------------------------------------------
 
-
+* bugfix: sgn now works as expected

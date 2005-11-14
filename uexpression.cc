@@ -906,7 +906,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       if (strcmp(variablename->id->str(),"acos")==0) ret->val = acos(e1->val);
       if (strcmp(variablename->id->str(),"tan")==0)  ret->val = tan(e1->val);
       if (strcmp(variablename->id->str(),"atan")==0)  ret->val = atan(e1->val);
-      if (strcmp(variablename->id->str(),"sgn")==0)  if (ret->val>0) ret->val =1; else if (ret->val<0) ret->val = -1;
+      if (strcmp(variablename->id->str(),"sgn")==0)  if (e1->val>0) ret->val =1; else if (e1->val<0) ret->val = -1;
       if (strcmp(variablename->id->str(),"abs")==0)  ret->val = fabs(e1->val);
       if (strcmp(variablename->id->str(),"random")==0)  ret->val = (rand()%(int)e1->val);
       if (strcmp(variablename->id->str(),"round")==0)  
