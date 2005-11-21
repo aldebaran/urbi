@@ -1,18 +1,11 @@
 #include <list>
-#include "network.h"
 
-#ifdef WIN32
-#include <ws2_32.h>
-#else
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#endif
+
+
+#include "network.h"
 #include "Connection.h"
 
-#include <sys/select.h>
+
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -146,7 +139,7 @@ namespace Network {
   }
 
 
-  void selectAndProcess(int usDelay) {
+  bool selectAndProcess(int usDelay) {
     fd_set rd;
     fd_set wr;
     int mx = buildFD(rd, wr );
@@ -156,13 +149,14 @@ namespace Network {
     tv.tv_usec = usDelay;
     int r = select(mx, &rd, &wr, 0, &tv);
     if (r==0)
-      return;
+      return false;
     if (r>0)
       notify(rd, wr);
     if (r<0) {
       //this is baad, we should realy do something
       fprintf(stderr, "SELECT ERROR\n");
     }
+	return (r>0);
   }
 
 

@@ -1,11 +1,13 @@
-#include "Connection.h"
-
 #ifdef WIN32
+#define GROUP __GROUP
 #include <winsock2.h>
+#undef GROUP
+#define YYTOKENTYPE
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
 #endif
+#include "Connection.h"
 
 extern UServer * THESERVER;
 /**
@@ -61,7 +63,7 @@ Connection::closeConnection() {
 	closing=true;
 #ifdef WIN32
     closesocket(fd);
-    ret = WSACleanup();
+    ret = 0;//WSACleanup(); //wsastartup called only once!
 #else
     ret = close(fd);
 #endif
@@ -84,7 +86,7 @@ Connection::closeConnection() {
 
 void Connection::doRead(){
 
-	int n = ::recv(fd, read_buff, PACKETSIZE, MSG_NOSIGNAL);
+	int n = ::recv(fd, (char *)read_buff, PACKETSIZE, MSG_NOSIGNAL);
 	if(n<=0){
 	  //kill us
 	    closeConnection();
@@ -96,7 +98,7 @@ void Connection::doRead(){
 
 int Connection::effectiveSend (const ubyte *buffer, int length){
 
-	int ret = ::send(fd, buffer, length, MSG_NOSIGNAL);
+	int ret = ::send(fd, (char *)buffer, length, MSG_NOSIGNAL);
 	if(ret<=0){
 	  //kill us
 	  closeConnection();

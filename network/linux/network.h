@@ -1,5 +1,19 @@
 #ifndef NETWORK_H
 #define NETWORK_H
+#ifdef WIN32
+#define GROUP __GROUP
+#include <winsock2.h>
+#undef GROUP
+#define YYTOKENTYPE
+typedef int socklen_t;
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/select.h>
+#endif
 #include <uconnection.h>
 #include <userver.h>
 
@@ -27,7 +41,10 @@ namespace Network {
   void unregisterNetworkPipe(Pipe *p);
   
   bool createTCPServer(int port);
-  void selectAndProcess(int usDelay);
+
+  //performs the select with a delay of usedDelay microseconds, returns true if at least
+  // one action was performed
+  bool selectAndProcess(int usDelay);
 };
 
 
