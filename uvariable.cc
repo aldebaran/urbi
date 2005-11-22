@@ -242,9 +242,10 @@ UVariable::set(UValue *v)
 
         value->dataType = v->dataType;
         switch (v->dataType) {
-          case DATA_STRING: value->str = new UString(v->str); break;
-          case DATA_NUM:    initSensorVal(v->val); break;
-          case DATA_BINARY: value->refBinary = v->refBinary->copy(); break;      
+	case DATA_STRING: value->str = new UString(v->str); break;
+	case DATA_NUM:    initSensorVal(v->val); break;
+	case DATA_BINARY: value->refBinary = v->refBinary->copy(); break;    
+	case DATA_LIST: delete value;value = v->copy(); break;
         }
     }
   }

@@ -151,6 +151,7 @@ UVariable::setSensorVal(double f)
 inline void
 UVariable::initSensorVal(double f)
 {
+  value->dataType = DATA_NUM;
   valPrev2 = f;
   valPrev = f;
   value->val = f;

@@ -359,13 +359,25 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         return(ret);
       }
       
-      snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
-               variablename->getFullname()->str());     
+    
+      if (::urbiserver->grouptab.find(variablename->getDevice()->str()) !=
+          ::urbiserver->grouptab.end()) {
+	//this is a group, we create the variable for him
+	variable = new UVariable(variablename->getFullname()->str(),
+				 new UValue(), true, true, false);
+	variable->value->dataType = DATA_LIST;
+	variable->dev = ::urbiserver->devicetab[variablename->getDevice()->str()];
+      }
       
-      if (!silent)
-        connection->send(errorString,command->tag->str());
-      
-      return 0;
+      else {
+	snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
+		 variablename->getFullname()->str());     
+	
+	if (!silent)
+	  connection->send(errorString,command->tag->str());
+	
+	return 0;
+      }
     }
  
     if ((!variablename->isstatic) || (firsteval)) {

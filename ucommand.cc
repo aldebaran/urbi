@@ -25,6 +25,7 @@
 #include "ucommand.h"
 #include "uconnection.h"
 #include "udevice.h"
+#include "ugroupdevice.h"
 #include "userver.h"
 #include "ucallid.h"
 
@@ -2308,6 +2309,7 @@ UCommand_GROUP::execute(UConnection *connection)
       
       gp = new UGroup(id);
       connection->server->grouptab[gp->device->str()] = gp;
+      connection->server->devicetab[gp->device->str()] = new UGroupDevice(gp->device->str());
     }
 
     param = parameters;
@@ -2322,8 +2324,8 @@ UCommand_GROUP::execute(UConnection *connection)
         mbr = new UGroup(param->name);
         connection->server->grouptab[mbr->device->str()] = mbr;
       }
-
-      gp->members.push_front(mbr);
+      
+      gp->members.push_back(mbr);
       param = param->next;
     }
   }
