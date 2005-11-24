@@ -410,18 +410,20 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
            retr != gp->members.end();
            retr++) {
 
-        clone = (UCommand_ASSIGN_VALUE*)this->copy();
-        delete clone->variablename;
+
+	clone = (UCommand_ASSIGN_VALUE*)this->copy();
+	delete clone->variablename;
+	
         if (variablename->index) 
           varindex = variablename->index->copy();
         else
           varindex = 0;
-       
+	
         clone->variablename = new UVariableName((*retr)->device->copy(),
                                                 method->copy(),
                                                 false,
                                                 varindex);
-
+	
         clone->variablename->isnormalized = variablename->isnormalized;
         clone->variablename->deriv = variablename->deriv;
         clone->variablename->varerror = variablename->varerror;
@@ -432,8 +434,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
                             grouplist_prev);
         grouplist_prev = grouplist;        
       }
-      
-      morph = (UCommand*) 
+      morph = (UCommand*)
         new UCommand_TREE(UAND,
                           this,
                           grouplist);
@@ -441,8 +442,14 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       variablename->rooted = true;
       variablename->fromGroup = true;
       persistant = true;
-      return( status = UMORPH );      
+      return( status = UMORPH );
+      
     }
+  }
+  if (variablename->fromGroup && variablename->rooted) {
+    //we do not write on the GROUP variable
+    persistant = false;
+    return UCOMPLETED;
   }
 
   // Function call
@@ -4195,8 +4202,10 @@ UCommand_DEF::print(int l)
 
   ::urbiserver->debug("DEF:\n");
 
+
   if (variablename) { ::urbiserver->debug("%s  Variablename:",tabb); variablename->print(); ::urbiserver->debug("\n");}; 
   if (variablelist) { ::urbiserver->debug("%s  Variablelist: {",tabb); variablelist->print(); ::urbiserver->debug("}\n");}; 
+
   if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};  
   if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
   ::urbiserver->debug("%sEND DEF ------\n",tabb);
@@ -5805,3 +5814,4 @@ UCommand_LOAD::print(int l)
 
   ::urbiserver->debug("LOAD\n");
 }
+

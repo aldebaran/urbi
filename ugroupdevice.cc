@@ -69,6 +69,12 @@ void        UGroupDevice::notifyRead      ( const UVariable *variable) {
       }
       
       UValue * n = ::urbiserver->variabletab[vname]->get()->copy();
+      while (n && n->dataType == DATA_LIST) {
+	UValue * nn = n->list;
+	n->list=  0;
+	delete n;
+	n=nn;
+      }
       current->list = n;
       while (current->list)
 	current = current->list;
@@ -77,7 +83,7 @@ void        UGroupDevice::notifyRead      ( const UVariable *variable) {
     if (::urbiserver->variabletab[variable->varname->str()]==0)
       new UVariable(variable->varname->str(),0.0);
     ::urbiserver->variabletab[variable->varname->str()]->set(val);
-    
+    delete val; //set makes a deep copy
     
   }
   

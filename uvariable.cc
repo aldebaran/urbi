@@ -317,6 +317,7 @@ UVariable::selfSet(double *valcheck)
 UValue*
 UVariable::get()
 { 
+  //are we a group?
   if ((notifyRead) && (dev)) dev->notifyRead(this);
   return value; 
 };
