@@ -19,73 +19,69 @@
 
  ************************************************************************** */
 #include "ugroupdevice.h"
+#include "ugroup.h"
 #include "userver.h"
 
-
 UGroupDevice::UGroupDevice(const UString &name)
-  : UDevice(name.str(), "group device", 0.0, 0.0, "na", DATA_LIST, false, true, true) {}
+  : UDevice(name.str(), "group device", 0.0, 0.0, "na", DATA_LIST, false, true, true) {
+  fprintf(stderr, "creating group %s\n",  device->str());
+}
 
 void        UGroupDevice::notifyWrite     ( const UVariable *variable) {
   //later
 }
 
 void        UGroupDevice::notifyRead      ( const UVariable *variable) {
-  
+}
+
+UValue * UGroupDevice::list( UVariableName *variable) {
   //do read
   UGroup * gr =  ::urbiserver->grouptab[device->str()];
   if (!gr) {
     fprintf(stderr, "FATAL no group for %s\n", device->str());
-    return;
-  }
-  if (gr->members.empty()) {
-    fprintf(stderr, "FATAL empty group for %s\n", device->str());
-    UDevice * dev = ::urbiserver->devicetab[gr->device->str()];
-    if (dev) {
-      char vname[1024];
-      strcpy(vname, gr->device->str());
-      strcat(vname, ".");
-      strcat(vname, variable->method->str()); 
-      dev->notifyRead(::urbiserver->variabletab[vname]);
-    }
+    return 0;
   }
   
   
-  else {
-    UValue * val = new UValue();
-    val->dataType = DATA_LIST;
-    val->list = 0;
-    UValue * current = val;
-    for (list<UGroup*>::iterator it = gr->members.begin(); it != gr->members.end();it++) {
+  UValue * val = new UValue();
+  val->dataType = DATA_LIST;
+  val->list = 0;
+  UValue * current = val;
+  for (std::list<UGroup*>::iterator it = gr->members.begin(); it != gr->members.end();it++) {
+   
+    UValue *n;
+    if ((*it)->members.empty()) {
+      //child node
       char vname[1024];
       strcpy(vname, (*it)->device->str());
       strcat(vname, ".");
       strcat(vname, variable->method->str());
       if ( ::urbiserver->variabletab.find(vname) ==  ::urbiserver->variabletab.end()) {
 	//no variable? could be...
-	UVariable *var = new UVariable(vname,new UValue(), true, true, false);
-	if (::urbiserver->devicetab.find((*it)->device->str()) != ::urbiserver->devicetab.end())
-	  var->dev = ::urbiserver->devicetab[(*it)->device->str()];
-	var->value->dataType = DATA_LIST; 
+	n=new UValue("null");
       }
-      
-      UValue * n = ::urbiserver->variabletab[vname]->get()->copy();
-      while (n && n->dataType == DATA_LIST) {
-	UValue * nn = n->list;
-	n->list=  0;
-	delete n;
-	n=nn;
-      }
-      current->list = n;
-      while (current->list)
-	current = current->list;
+      else
+	n = ::urbiserver->variabletab[vname]->get()->copy();
     }
-
-    if (::urbiserver->variabletab[variable->varname->str()]==0)
-      new UVariable(variable->varname->str(),0.0);
-    ::urbiserver->variabletab[variable->varname->str()]->set(val);
-    delete val; //set makes a deep copy
     
+    else
+      n =  ((UGroupDevice *)(::urbiserver->devicetab[(*it)->device->str()]))->list(variable);
+    
+    while (n && n->dataType == DATA_LIST) {
+      UValue * nn = n->list;
+      n->list=  0;
+      delete n;
+      n=nn;
+    }
+    current->list = n;
+    while (current->list)
+      current = current->list;
   }
+  
+  
+  return val;
+  
+  
   
 }
 

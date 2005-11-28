@@ -232,7 +232,7 @@ true          { return TRUECONST;}
 false         { return FALSECONST;}
 copy          { return COPY;} 
 only          { return ONLY;}
-
+list          { return GROUPLIST;}
 
 "'n"          { return NORM;}
 "'e"          { return VARERROR;}

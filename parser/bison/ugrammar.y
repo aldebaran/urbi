@@ -112,7 +112,7 @@ using namespace std;
 %token GROUP RANGEMIN RANGEMAX INFO UNIT WAIT WAITUNTIL ECHO DOLLAR PERCENT AROBASE
 %token DEF RETURN BIN  WHENEVER COPY ALIAS DERIV DERIV2 TRUEDERIV TRUEDERIV2 SWITCH
 %token EVERY TIMEOUT STOPIF FREEZEIF AT ONLEAVE ANDOPERATOR OROPERATOR 
-%token CMDBLOCK EXPRBLOCK ONLY
+%token CMDBLOCK EXPRBLOCK ONLY GROUPLIST
 
 %token <val>                 NUM  
 %token <val>                 TIMEVALUE
@@ -1101,6 +1101,11 @@ expr:
       $$ = new UExpression(EXPR_TEST_OR,$1,$3); 
       MEMCHECK2($$,$1,$3);
     }
+  | 
+  GROUPLIST purevariable {
+    $$ = new UExpression(EXPR_GROUPLIST,$2); 
+      MEMCHECK1($$,$2);
+  }
 ;
 
 

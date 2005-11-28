@@ -15,6 +15,7 @@ BISON?=bison -v # It MUST be version 1.875d
 FLEX?=flex    # It MUST be version 2.5.4a 
 LIBS=-lm
 OPTIM?=-O2
+OBJEXT ?= .o
 
 ################################################################################
 
@@ -42,7 +43,7 @@ KERNEL_SOURCES=udevice.cc \
              ucallid.cc \
              ugroupdevice.cc
 
-KERNEL_FILES=$(KERNEL_SOURCES:.cc=.o)
+KERNEL_FILES=$(KERNEL_SOURCES:.cc=$(OBJEXT))
 
 
 CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I.
@@ -65,7 +66,7 @@ NETWORK_SRC?=$(wildcard network/$(NETWORK)/*.cpp)  $(wildcard network/$(NETWORK)
 
 
 
-NETWORK_OBJS?=$(NETWORK_SRC:.cc=.o)
+NETWORK_OBJS?=$(NETWORK_SRC:.cc=$(OBJEXT))
 
 
 
@@ -73,7 +74,7 @@ PARSER_SRC?=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc
 
 
 
-PARSER_OBJS?=$(PARSER_SRC:.cc=.o)
+PARSER_OBJS?=$(PARSER_SRC:.cc=$(OBJEXT))
 
 
 ################################################################################
@@ -91,13 +92,13 @@ build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(PARSER_OBJS) $(NET
 	$(LD) -r -whole-archive -o build/libkernelurbi-$(NETWORK)-$(PARSER).a $^
 
 
-%.o: %.cc
+%$(OBJEXT): %.cc
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-%.o: %.cpp
+%$(OBJEXT): %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-%.o: %.c
+%$(OBJEXT): %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ -c $<
 
 depend::
@@ -105,9 +106,9 @@ depend::
 
 clean:: $(PARSER)-clean $(NETWORK)-clean
 	makedepend
-	rm parser/$(PARSER)/*.o
-	rm network/$(NETWORK)/*.o
-	rm -f *.o *.elf *.snap.cc *.bak *~ utoken.yy.* ugrammar.tab.* *.a
+	rm parser/$(PARSER)/*$(OBJEXT)
+	rm network/$(NETWORK)/*$(OBJEXT)
+	rm -f *$(OBJEXT) *.elf *.snap.cc *.bak *~ utoken.yy.* ugrammar.tab.* *.a
 
 ################################################################################
 # DO NOT DELETE

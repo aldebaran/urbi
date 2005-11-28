@@ -103,7 +103,6 @@ protected:
 
 }
 #endif
-
 #if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
 // Either this is the first time through (yyFlexLexerOnce not defined),
 // or this is a repeated include to define a different flavor of

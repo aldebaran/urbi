@@ -446,11 +446,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       
     }
   }
-  if (variablename->fromGroup && variablename->rooted) {
-    //we do not write on the GROUP variable
-    persistant = false;
-    return UCOMPLETED;
-  }
+ 
 
   // Function call
   // morph into the function code

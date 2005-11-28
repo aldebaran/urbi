@@ -24,7 +24,7 @@
 
 #include "ustring.h"
 #include "udevice.h"
-
+#include "uvariablename.h"
 
 class UGroupDevice : public UDevice {
  public:
@@ -35,6 +35,7 @@ class UGroupDevice : public UDevice {
                                         UConnection *connection,                                       
                                         const char *method,
                                         UNamedParameters *parameters);
+  UValue * list( UVariableName *variable);
 
 };
 

@@ -169,6 +169,33 @@ UValue::add(UValue *v)
       (v->dataType == DATA_BINARY) )
     return 0;
 
+
+  if (dataType == DATA_LIST) {
+    UValue *ret = copy();
+    UValue *scanlist = ret;
+    while (scanlist->list)
+      scanlist = scanlist->list;
+    
+    scanlist->list = v->copy();
+    if (scanlist->list->dataType == DATA_LIST) {
+      UValue * tmp = scanlist->list;
+      scanlist->list = scanlist->list->list;
+      tmp->list = 0;
+      delete tmp;
+    }  
+   
+    return( ret ); 
+  }
+
+  if (v->dataType == DATA_LIST) { //we are not a list
+    UValue *ret = v->copy();
+    UValue * b = ret->list;
+    ret->list = copy();
+    ret->list->list = b;
+    return ret;
+  }
+
+
   if (dataType == DATA_NUM) {
 
     if (v->dataType == DATA_NUM) {
@@ -201,16 +228,6 @@ UValue::add(UValue *v)
     }
   }
 
-  if (dataType == DATA_LIST) {
-    if (v->dataType == DATA_LIST)
-      v = v->list;
-
-    UValue *scanlist = this;
-    while (scanlist->list)
-      scanlist = scanlist->list;
-    scanlist->list = v->copy();
-    return( copy() ); 
-  }
 
   if (dataType == DATA_STRING) {
 

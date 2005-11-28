@@ -182,7 +182,9 @@ enum UExpressionType {
   EXPR_TEST_LE,
   EXPR_TEST_BANG,
   EXPR_TEST_AND,
-  EXPR_TEST_OR  
+  EXPR_TEST_OR,
+  
+  EXPR_GROUPLIST 
 };
 
 //! The different Data types

@@ -26,7 +26,7 @@
 #include "uconnection.h"
 #include "udevice.h"
 #include "userver.h"
-                                      
+#include "ugroupdevice.h"                                      
 
 // **************************************************************************
 //! UExpression base constructor called by every specific constructor.
@@ -123,7 +123,7 @@ UExpression::UExpression(UExpressionType type,
 UExpression::UExpression(UExpressionType type, UVariableName* variablename) 
 {	
   initialize();
-  this->type     = type; // should be EXPR_VARIABLE or EXPR_ADDR_VARIABLE
+  this->type     = type; // should be EXPR_VARIABLE or EXPR_ADDR_VARIABLE or EXPR_GROUPLIST
   /*if (variablename)
     dataType = variablename->dataType;
   */
@@ -359,25 +359,16 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         return(ret);
       }
       
-    
-      if (::urbiserver->grouptab.find(variablename->getDevice()->str()) !=
-          ::urbiserver->grouptab.end()) {
-	//this is a group, we create the variable for him
-	variable = new UVariable(variablename->getFullname()->str(),
-				 new UValue(), true, true, false);
-	variable->value->dataType = DATA_LIST;
-	variable->dev = ::urbiserver->devicetab[variablename->getDevice()->str()];
-      }
       
-      else {
-	snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
-		 variablename->getFullname()->str());     
-	
-	if (!silent)
-	  connection->send(errorString,command->tag->str());
-	
-	return 0;
-      }
+      
+      snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
+	       variablename->getFullname()->str());     
+      
+      if (!silent)
+	connection->send(errorString,command->tag->str());
+      
+      return 0;
+      
     }
  
     if ((!variablename->isstatic) || (firsteval)) {
@@ -455,7 +446,33 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       
     return(ret);
   
+  case EXPR_GROUPLIST:
+    variable = variablename->getVariable(command,connection); 
+    if (!variablename->getFullname()) return (0); 
+    method = variablename->getMethod();
+    devicename = variablename->getDevice();
+
+    if (::urbiserver->grouptab.find(devicename->str()) ==
+	::urbiserver->grouptab.end()
+	|| ::urbiserver->grouptab[devicename->str()]->members.empty()
+	) {
+
+      snprintf(errorString,errSize,"!!! Not a group: %s\n",
+	       devicename->str());     
+      
+      if (!silent)
+	connection->send(errorString,command->tag->str());
+      
+      return 0;
+    }
     
+    ret = ((UGroupDevice *)::urbiserver->devicetab[devicename->str()])->list(variablename);
+    return ret;
+    
+
+
+
+
   case EXPR_PROPERTY:
 
     variable = variablename->getVariable(command,connection);  

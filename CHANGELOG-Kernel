@@ -188,3 +188,5 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 --------------------------------------------------------------
 
 * bugfix: sgn now works as expected
+* feature: 'list groupname.var' evaluates as the list [groupmember1.var, groupmember2.val]...
+* bugfix: addition of lists now works correctly
