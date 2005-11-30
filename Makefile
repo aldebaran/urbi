@@ -10,7 +10,7 @@
 # implied warranties of fitness for a particular purpose.
 #
 ################################################################################
-
+# usage: call with environnment variables OS, NETWORK and PARSER
 BISON?=bison -v # It MUST be version 1.875d 
 FLEX?=flex    # It MUST be version 2.5.4a 
 LIBS=-lm
@@ -76,7 +76,11 @@ PARSER_SRC?=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc
 
 PARSER_OBJS?=$(PARSER_SRC:.cc=$(OBJEXT))
 
-
+ifeq ($(OS),macosx)
+	LDFLAGS = -r -all_load
+else
+	LDFLAGS = -r -whole-archive
+endif 
 ################################################################################
 
 build/buildnumber: $(KERNEL_SOURCES)
@@ -89,7 +93,7 @@ parser: $(PARSER_OBJS)
 
 build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(PARSER_OBJS) $(NETWORK_OBJS) 
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o userver.o -c userver.cc
-	$(LD) -r -whole-archive -o build/libkernelurbi-$(NETWORK)-$(PARSER).a $^
+	$(LD) $(LDFLAGS)  -o build/libkernelurbi-$(NETWORK)-$(PARSER)-$(OS).a $^
 
 
 %$(OBJEXT): %.cc
