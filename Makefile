@@ -1,9 +1,6 @@
 ################################################################################
 #
-# URBI - (c) Jean-Christophe Baillie, 2004 
-#
-# Permission to use, copy, modify, and redistribute this software for
-# non-commercial use is hereby granted.
+# URBI - (c) Jean-Christophe Baillie, 2004-2005 
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the

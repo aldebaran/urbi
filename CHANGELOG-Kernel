@@ -184,9 +184,10 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 
 
 --------------------------------------------------------------
-### Unstable - in development                              ###
+ Version 0.9.8                        released on 29.10.2005
 --------------------------------------------------------------
 
 * bugfix: sgn now works as expected
 * feature: 'list groupname.var' evaluates as the list [groupmember1.var, groupmember2.val]...
 * bugfix: addition of lists now works correctly
+* syntax change: you can now user 'var', 'function' instead of 'def' in the appropriate situation. Backward compatibility is kept until 1.0

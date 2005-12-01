@@ -109,6 +109,7 @@ using namespace std;
 %token PLUS EXP MINUS ASSIGN EQ REQ PEQ NE GT GE LT LE TILDE RPAREN LPAREN DIR
 %token RSBRACKET LSBRACKET RBRACKET LBRACKET IF ELSE WHILE FOR NORM VARERROR
 %token LOOP LOOPN  FOREACH IN STOP BLOCK UNBLOCK NOOP TRUECONST FALSECONST EMIT
+%token CLASS VAR FUNCTION EVENT SUBCLASS NEW
 %token GROUP RANGEMIN RANGEMAX INFO UNIT WAIT WAITUNTIL ECHO DOLLAR PERCENT AROBASE
 %token DEF RETURN BIN  WHENEVER COPY ALIAS DERIV DERIV2 TRUEDERIV TRUEDERIV2 SWITCH
 %token EVERY TIMEOUT STOPIF FREEZEIF AT ONLEAVE ANDOPERATOR OROPERATOR 
@@ -378,7 +379,6 @@ command:
     }
 ;
 
-
 /* INSTRUCTION */
 
 instruction: 
@@ -395,11 +395,20 @@ instruction:
       MEMCHECK3($$,$1,$3,$4);
     } 
 
+  | VAR refvariable ASSIGN expr namedparameters { 
+
+    $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
+      MEMCHECK3($$,$2,$4,$5);
+    } 
+
+/* To be removed in 1.0, kept for backward compat*/
+/*************************************************/
   | DEF refvariable ASSIGN expr namedparameters { 
 
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
       MEMCHECK3($$,$2,$4,$5);
     } 
+/*************************************************/
 
   | property ASSIGN expr { 
 
@@ -437,6 +446,22 @@ instruction:
       MEMCHECK2($$,$2,$3);
     } 
 
+  | SUBCLASS IDENTIFIER LBRACKET identifiers RBRACKET {
+
+    MEMCHECK($2);
+      $$ = new UCommand_GROUP($2,$4);
+      MEMCHECK2($$,$4,$2);      
+    } 
+
+  | SUBCLASS IDENTIFIER {
+
+      MEMCHECK($2);
+      $$ = new UCommand_GROUP($2,0);
+      MEMCHECK1($$,$2);      
+    } 
+
+/* To be removed in 1.0, kept for backward compat*/
+/*************************************************/
   | GROUP IDENTIFIER LBRACKET identifiers RBRACKET {
 
     MEMCHECK($2);
@@ -450,6 +475,7 @@ instruction:
       $$ = new UCommand_GROUP($2,0);
       MEMCHECK1($$,$2);      
     } 
+/*************************************************/
 
   | ALIAS variable variable {
       
@@ -541,6 +567,53 @@ instruction:
       MEMCHECK($$)
     }
 
+  | VAR refvariable {
+  
+      $$ = new UCommand_DEF($2,
+                            (UNamedParameters*)0,
+                            (UCommand*)0);
+
+      MEMCHECK1($$,$2)
+    }
+
+  | VAR LBRACKET refvariables RBRACKET {
+  
+      $$ = new UCommand_DEF($3);
+      MEMCHECK1($$,$3)
+    }
+
+  | CLASS IDENTIFIER LBRACKET identifiers_semicolon RBRACKET {
+  
+      $$ = new UCommand_DEF($2,$4);
+      MEMCHECK2($$,$2,$4)
+    }
+
+  | FUNCTION variable LPAREN identifiers RPAREN {
+
+      if (bison_uparser.connection->functionTag) {
+        if ($2) delete($2);
+        if ($4) delete($4);
+        $2 = 0;
+        delete bison_uparser.connection->functionTag;
+        bison_uparser.connection->functionTag = 0;  
+        yyerror("Nested function def not allowed.");   
+        YYERROR;
+      }
+      else
+        bison_uparser.connection->functionTag = new UString("__Funct__");
+ 
+    } taggedcommand {
+    
+      $$ = new UCommand_DEF($2,$4,$7);
+      MEMCHECK3($$,$2,$4,$7);
+      if (bison_uparser.connection->functionTag) {
+        delete bison_uparser.connection->functionTag;
+        bison_uparser.connection->functionTag = 0;  
+      }      
+    }
+
+/* To be removed in 1.0, kept for backward compat*/
+/*************************************************/
   | DEF refvariable {
   
       $$ = new UCommand_DEF($2,
@@ -585,6 +658,7 @@ instruction:
         bison_uparser.connection->functionTag = 0;  
       }      
     }
+/*************************************************/
 
   | IF LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
 
@@ -1170,6 +1244,12 @@ softtest:
       $$ = $1;
       $$->issofttest = true;
       $$->softtest_time = $3; 
+    }                            
+  | LPAREN expr TILDE expr RPAREN { 
+
+      $$ = $2;
+      $$->issofttest = true;
+      $$->softtest_time = $4; 
     }                
 /* | expr TILDE NUM  { 
 
