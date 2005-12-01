@@ -77,9 +77,9 @@ PARSER_SRC?=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc
 PARSER_OBJS?=$(PARSER_SRC:.cc=$(OBJEXT))
 
 ifeq ($(OS),macosx)
-	LDFLAGS = -r -all_load
+	LDFLAGS := $(LDFLAGS) -r -all_load
 else
-	LDFLAGS = -r -whole-archive
+	LDFLAGS := $(LDFLAGS) -r -whole-archive
 endif 
 ################################################################################
 

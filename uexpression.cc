@@ -466,7 +466,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       return 0;
     }
     
-    ret = ((UGroupDevice *)::urbiserver->devicetab[devicename->str()])->list(variablename);
+    ret = ::urbiserver->grouptab[devicename->str()]->list(variablename);
     return ret;
     
 

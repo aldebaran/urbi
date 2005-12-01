@@ -2312,7 +2312,6 @@ UCommand_GROUP::execute(UConnection *connection)
       
       gp = new UGroup(id);
       connection->server->grouptab[gp->device->str()] = gp;
-      connection->server->devicetab[gp->device->str()] = new UGroupDevice(gp->device->str());
     }
 
     param = parameters;

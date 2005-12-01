@@ -23,7 +23,8 @@
 #define UGROUP_H_DEFINED
 
 #include "ustring.h"
-
+class UVariableName;
+class UValue;
 #include <list>
 using namespace std;
 
@@ -39,6 +40,9 @@ public:
   
   list<UGroup*> members;
   UString      *device;
+
+
+  UValue * list( UVariableName *variable);
 };
 
 #endif

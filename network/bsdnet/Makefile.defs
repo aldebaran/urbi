@@ -1,2 +1,2 @@
-linux-clean:
+bsdnet-clean:
 	rm *.o
