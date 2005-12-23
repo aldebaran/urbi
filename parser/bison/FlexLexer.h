@@ -125,6 +125,7 @@ public:
 	virtual int yylex(YYSTYPE *lvalp);
 	virtual void switch_streams( istream* new_in, ostream* new_out );
 
+	int num_lines;
 protected:
 	virtual int LexerInput( char* buf, int max_size );
 	virtual void LexerOutput( const char* buf, int size );

@@ -37,7 +37,7 @@ using namespace std;
 NUMBER   (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
 ID       [a-zA-Z_][_A-Za-z0-9]*
 STRING   \"([^"]|"\\\"")*\"
-
+int num_lines = 0;
 %%
 
 
@@ -309,6 +309,6 @@ list          { return GROUPLIST;}
                   
                 return STRUCT; } 
 
-[ \t\n\r]+      /* eat up whitespace */
-
+[ \t\r]+      /* eat up whitespace */
+\n      ++num_lines;
 %%

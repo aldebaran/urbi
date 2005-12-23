@@ -3565,7 +3565,7 @@ UCommand_EMIT::UCommand_EMIT(UVariableName *eventname, UNamedParameters *paramet
   this->eventname    = eventname;
   this->parameters   = parameters;
   this->duration     = duration;
-
+  eventnamestr       = 0;
   firsttime = true;
   eventid = 100+rand();
 }
@@ -3574,7 +3574,9 @@ UCommand_EMIT::UCommand_EMIT(UVariableName *eventname, UNamedParameters *paramet
 UCommand_EMIT::~UCommand_EMIT()
 {
   FREEOBJ(UCommand_EMIT);
-  ::urbiserver->eventtab.erase(::urbiserver->eventtab.find(eventnamestr));
+  if (eventnamestr) 
+    ::urbiserver->eventtab.erase(::urbiserver->eventtab.find(eventnamestr));
+  
   if (eventname) delete eventname;
   if (parameters) delete parameters;
   if (duration) delete duration;
