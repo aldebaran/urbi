@@ -191,3 +191,5 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 * feature: 'list groupname.var' evaluates as the list [groupmember1.var, groupmember2.val]...
 * bugfix: addition of lists now works correctly
 * syntax change: you can now user 'var', 'function' instead of 'def' in the appropriate situation. Backward compatibility is kept until 1.0
+* bugfix: || or && separated events now works fine
+

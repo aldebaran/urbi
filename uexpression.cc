@@ -348,7 +348,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     devicename = variablename->getDevice();
   
     if (!variable) {
-      
+    	
       if (::urbiserver->eventtab.find(variablename->getFullname()->str()) !=
           ::urbiserver->eventtab.end()) {
         // this is an event
@@ -360,14 +360,13 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       }
       
       
-      
       snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
 	       variablename->getFullname()->str());     
       
       if (!silent)
-	connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->tag->str());
       
-      return 0;
+      return new UValue();
       
     }
  
@@ -1451,7 +1450,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       if (e1) delete e1;
       return 0;
     }
-
+    /*
     if (e1->dataType != DATA_NUM) {
 
       snprintf(errorString,errSize,"!!! Non boolean value\n");              
@@ -1459,7 +1458,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       delete e1;
       return 0;
     }
-
+    */
     ret = new UValue();
     ret->dataType = e1->dataType;;
     ret->eventid = e1->eventid;
@@ -1473,7 +1472,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   case EXPR_TEST_AND:
     
     e1 = expression1->eval(command,connection,silent);   
-    if (!e1) return 0;    
+    if (!e1) return 0;  
+    /*  
     if (e1->dataType != DATA_NUM) {
 
       snprintf(errorString,errSize,"!!! Non boolean value\n");   
@@ -1481,7 +1481,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       delete e1;     
       return 0;
     }
-
+    */
     
     ret = new UValue();
     if (!ret) return 0;
@@ -1499,13 +1499,14 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       }
 
       if (e2->dataType != DATA_NUM) {
-        
+        /*
         snprintf(errorString,errSize,"!!! Non boolean value\n");   
         connection->send(errorString,command->tag->str());   
         delete e1;
         delete e2;
         delete ret;
         return 0;
+        */
       }
 
       ret->eventid = ret->eventid +  e2->eventid;
@@ -1521,14 +1522,15 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection,silent);   
     if (!e1) return 0;    
-    if (e1->dataType != DATA_NUM) {
+    /*    
+if (e1->dataType != DATA_NUM) {
 
       snprintf(errorString,errSize,"!!! Non boolean value\n");   
       connection->send(errorString,command->tag->str());
       delete e1;     
       return 0;
     }
-
+    */
     
     ret = new UValue();
     if (!ret) return 0;
@@ -1546,13 +1548,14 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       }
 
       if (e2->dataType != DATA_NUM) {
-        
+        /*
         snprintf(errorString,errSize,"!!! Non boolean value\n");   
         connection->send(errorString,command->tag->str());   
         delete e1;
         delete e2;
         delete ret;
         return 0;
+        */
       }
 
       ret->eventid = ret->eventid +  e2->eventid;
