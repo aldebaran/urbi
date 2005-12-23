@@ -153,6 +153,7 @@ UConnection::~UConnection()
     if (vari) delete vari;
     delete connectionTag;
   }
+  if (activeCommand) delete activeCommand;
 }
 
 //! UConnection IP associated

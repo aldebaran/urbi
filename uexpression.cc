@@ -1460,7 +1460,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     }
     */
     ret = new UValue();
-    ret->dataType = e1->dataType;;
+    ret->dataType = DATA_NUM;
     ret->eventid = e1->eventid;
    
     if (e1->val == 0) ret->val = 1;

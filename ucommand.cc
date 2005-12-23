@@ -3574,6 +3574,7 @@ UCommand_EMIT::UCommand_EMIT(UVariableName *eventname, UNamedParameters *paramet
 UCommand_EMIT::~UCommand_EMIT()
 {
   FREEOBJ(UCommand_EMIT);
+  ::urbiserver->eventtab.erase(::urbiserver->eventtab.find(eventnamestr));
   if (eventname) delete eventname;
   if (parameters) delete parameters;
   if (duration) delete duration;
@@ -3586,8 +3587,8 @@ UCommand_EMIT::execute(UConnection *connection)
   if (connection->receiving) 
     return( status = UONQUEUE);
   
-  double thetime = connection->server->lastTime();
-  
+  double thetime = connection->server->lastTime();  
+
   if (firsttime) {
     if (duration) {
       UValue *dur = duration->eval(this, connection);

@@ -394,13 +394,13 @@ instruction:
     $$ = new UCommand_ASSIGN_VALUE($1,$3,$4, false);
       MEMCHECK3($$,$1,$3,$4);
     } 
-
+/*
   | VAR refvariable ASSIGN expr namedparameters { 
 
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
       MEMCHECK3($$,$2,$4,$5);
     } 
-
+*/
 /* To be removed in 1.0, kept for backward compat*/
 /*************************************************/
   | DEF refvariable ASSIGN expr namedparameters { 
@@ -445,7 +445,7 @@ instruction:
       $$ = new UCommand_ECHO($2,$3,(UString*)0);
       MEMCHECK2($$,$2,$3);
     } 
-
+/*
   | SUBCLASS IDENTIFIER LBRACKET identifiers RBRACKET {
 
     MEMCHECK($2);
@@ -459,7 +459,7 @@ instruction:
       $$ = new UCommand_GROUP($2,0);
       MEMCHECK1($$,$2);      
     } 
-
+*/
 /* To be removed in 1.0, kept for backward compat*/
 /*************************************************/
   | GROUP IDENTIFIER LBRACKET identifiers RBRACKET {
@@ -566,7 +566,7 @@ instruction:
                             (UCommand*)0);
       MEMCHECK($$)
     }
-
+/*
   | VAR refvariable {
   
       $$ = new UCommand_DEF($2,
@@ -611,6 +611,7 @@ instruction:
         bison_uparser.connection->functionTag = 0;  
       }      
     }
+*/
 
 /* To be removed in 1.0, kept for backward compat*/
 /*************************************************/
