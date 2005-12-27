@@ -110,7 +110,7 @@ INCLUDES = -I$(top_srcdir)/src/liburbi
 AM_LDFLAGS = -L$(top_srcdir)/src/liburbi 
 AM_CXXFLAGS = -pthread
 
-bin_PROGRAMS = urbiping urbibandwidth urbiimage urbisound urbisend urbitalkie urbiplay urbirecord urbimirror urbisendsound urbiballtrackinghead
+bin_PROGRAMS = urbiping urbibandwidth urbiimage urbisound urbisend urbisendbin urbitalkie urbiplay urbirecord urbimirror urbisendsound urbiballtrackinghead
 
 urbiimage_SOURCES = urbiimage.cpp monitor.cpp monitor.h
 urbiimage_LDFLAGS = -L/usr/X11R6/lib  
@@ -136,14 +136,16 @@ urbibandwidth_LDADD = -lurbi
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp monitor.cpp monitor.h
 urbiballtrackinghead_LDADD = -lX11 -lXext -lurbi
 urbiballtrackinghead_LDFLAGS = -L/usr/X11R6/lib 
+urbisendbin_SOURCES = urbisendbin.cpp
+urbisendbin_LDADD = -lurbi
 subdir = src/examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = urbiping$(EXEEXT) urbibandwidth$(EXEEXT) \
 	urbiimage$(EXEEXT) urbisound$(EXEEXT) urbisend$(EXEEXT) \
-	urbitalkie$(EXEEXT) urbiplay$(EXEEXT) urbirecord$(EXEEXT) \
-	urbimirror$(EXEEXT) urbisendsound$(EXEEXT) \
+	urbisendbin$(EXEEXT) urbitalkie$(EXEEXT) urbiplay$(EXEEXT) \
+	urbirecord$(EXEEXT) urbimirror$(EXEEXT) urbisendsound$(EXEEXT) \
 	urbiballtrackinghead$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
@@ -178,6 +180,10 @@ am_urbisend_OBJECTS = urbisend.$(OBJEXT)
 urbisend_OBJECTS = $(am_urbisend_OBJECTS)
 urbisend_DEPENDENCIES =
 urbisend_LDFLAGS =
+am_urbisendbin_OBJECTS = urbisendbin.$(OBJEXT)
+urbisendbin_OBJECTS = $(am_urbisendbin_OBJECTS)
+urbisendbin_DEPENDENCIES =
+urbisendbin_LDFLAGS =
 am_urbisendsound_OBJECTS = urbisendsound.$(OBJEXT)
 urbisendsound_OBJECTS = $(am_urbisendsound_OBJECTS)
 urbisendsound_DEPENDENCIES =
@@ -200,6 +206,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/urbiimage.Po ./$(DEPDIR)/urbimirror.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/urbiping.Po ./$(DEPDIR)/urbiplay.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/urbirecord.Po ./$(DEPDIR)/urbisend.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/urbisendbin.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/urbisendsound.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/urbisound.Po ./$(DEPDIR)/urbitalkie.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
@@ -214,10 +221,10 @@ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DIST_SOURCES = $(urbiballtrackinghead_SOURCES) $(urbibandwidth_SOURCES) \
 	$(urbiimage_SOURCES) $(urbimirror_SOURCES) $(urbiping_SOURCES) \
 	$(urbiplay_SOURCES) $(urbirecord_SOURCES) $(urbisend_SOURCES) \
-	$(urbisendsound_SOURCES) $(urbisound_SOURCES) \
-	$(urbitalkie_SOURCES)
+	$(urbisendbin_SOURCES) $(urbisendsound_SOURCES) \
+	$(urbisound_SOURCES) $(urbitalkie_SOURCES)
 DIST_COMMON = $(srcdir)/Makefile.in Makefile.am
-SOURCES = $(urbiballtrackinghead_SOURCES) $(urbibandwidth_SOURCES) $(urbiimage_SOURCES) $(urbimirror_SOURCES) $(urbiping_SOURCES) $(urbiplay_SOURCES) $(urbirecord_SOURCES) $(urbisend_SOURCES) $(urbisendsound_SOURCES) $(urbisound_SOURCES) $(urbitalkie_SOURCES)
+SOURCES = $(urbiballtrackinghead_SOURCES) $(urbibandwidth_SOURCES) $(urbiimage_SOURCES) $(urbimirror_SOURCES) $(urbiping_SOURCES) $(urbiplay_SOURCES) $(urbirecord_SOURCES) $(urbisend_SOURCES) $(urbisendbin_SOURCES) $(urbisendsound_SOURCES) $(urbisound_SOURCES) $(urbitalkie_SOURCES)
 
 all: all-am
 
@@ -276,6 +283,9 @@ urbirecord$(EXEEXT): $(urbirecord_OBJECTS) $(urbirecord_DEPENDENCIES)
 urbisend$(EXEEXT): $(urbisend_OBJECTS) $(urbisend_DEPENDENCIES) 
 	@rm -f urbisend$(EXEEXT)
 	$(CXXLINK) $(urbisend_LDFLAGS) $(urbisend_OBJECTS) $(urbisend_LDADD) $(LIBS)
+urbisendbin$(EXEEXT): $(urbisendbin_OBJECTS) $(urbisendbin_DEPENDENCIES) 
+	@rm -f urbisendbin$(EXEEXT)
+	$(CXXLINK) $(urbisendbin_LDFLAGS) $(urbisendbin_OBJECTS) $(urbisendbin_LDADD) $(LIBS)
 urbisendsound$(EXEEXT): $(urbisendsound_OBJECTS) $(urbisendsound_DEPENDENCIES) 
 	@rm -f urbisendsound$(EXEEXT)
 	$(CXXLINK) $(urbisendsound_LDFLAGS) $(urbisendsound_OBJECTS) $(urbisendsound_LDADD) $(LIBS)
@@ -301,6 +311,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbiplay.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbirecord.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbisend.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbisendbin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbisendsound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbisound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urbitalkie.Po@am__quote@

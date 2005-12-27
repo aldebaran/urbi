@@ -278,8 +278,9 @@ UAbstractClient::vpack(const char *command, va_list arg)
 {
   //expand
   if (rc) return -1;
-#ifndef WIN32
+#if 0  //disabled, crashes
   int size = vsnprintf(NULL, 0, command, arg);
+  va_end(arg);
   if (strlen(sendBuffer) + size + 1 > buflen)
     return (-1);
   else {
@@ -287,8 +288,9 @@ UAbstractClient::vpack(const char *command, va_list arg)
     lockSend();
     vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
     unlockSend();
+    va_end(arg);
     return (0);
-#ifndef WIN32
+#if 0
   }
 #endif
 }
@@ -422,7 +424,7 @@ struct wavheader {
   int playlength = tosend *1000 / s->bytespersec;
   s->uc->send("%s.val = BIN %d %s %s;", 
               s->device,
-              tosend+ ((s->format == SOUND_WAV)?sizeof(wavheader):0), 
+              (int)(tosend+ ((s->format == SOUND_WAV)?sizeof(wavheader):0)), 
               (s->format == SOUND_WAV)?"wav":"raw",
               s->formatString
               );
@@ -457,12 +459,17 @@ struct wavheader {
   if (s->pos >= s->length ) {
     
     //printf("over: %d %d\n",URBI_REMOVE,URBI_CONTINUE);
+    //if (s->tag && s->tag[0]) 
+    //  s->uc->notifyCallbacks(UMessage(*s->uc, 0,s->tag, "*** stop"));
+    
+    s->uc->send("speaker->blend=speaker.sendsoundsaveblend;");
     if (s->tag && s->tag[0]) 
-      s->uc->notifyCallbacks(UMessage(*s->uc, 0,s->tag, "*** stop"));
+      s->uc->send("%s: 1;", s->tag);
     free(s->buffer);
-    free(s->tag);
+    if (s->tag)
+      free(s->tag);
     free(s->device);
-    delete s;
+    delete s;   
     return URBI_REMOVE;
   }
   return URBI_CONTINUE;
@@ -486,6 +493,7 @@ UAbstractClient::sendSound(const char * device, const USound &sound, const char 
  }
 
   if (sound.soundFormat == SOUND_WAV || sound.soundFormat == SOUND_RAW) {
+    send("speaker.sendsoundsaveblend = speaker->blend;speaker->blend=queue;");
     sendSoundData *s=new sendSoundData();
     char utag[16];
     makeUniqueTag(utag);
@@ -773,7 +781,7 @@ UAbstractClient::processRecvBuffer()
 			printf("one shot hit!\n");
 		  //now update structures and notify listeners 
 		  lockList();
-		  if ( (unsigned int)endline - (unsigned int)recvBuffer > 50)
+		  if ( (unsigned long)endline - (unsigned long)recvBuffer > 50)
 		    printf("WARNING, header unexpectedly long\n");
           UMessage msg(*this, currentTimestamp, currentTag, 
                        currentCommand, 
@@ -784,10 +792,10 @@ UAbstractClient::processRecvBuffer()
 		  //Move the extra we received.
 		  memmove(recvBuffer, 
                   &endline[1 + binaryBufferLength], 
-                  (int) &recvBuffer[recvBufferPosition] - 
-                  (int) &endline[1 + binaryBufferLength]);
-		  recvBufferPosition = (int) &recvBuffer[recvBufferPosition] - 
-            (int) &endline[1 + binaryBufferLength];
+                  (long) &recvBuffer[recvBufferPosition] - 
+                  (long) &endline[1 + binaryBufferLength]);
+		  recvBufferPosition = (long) &recvBuffer[recvBufferPosition] - 
+            (long) &endline[1 + binaryBufferLength];
 		  recvBuffer[recvBufferPosition] = 0;
 		  //Reenter loop.
 		  continue;
@@ -823,7 +831,7 @@ UAbstractClient::processRecvBuffer()
         notifyCallbacks(msg);
 		unlockList();
 		//prepare for next read, copy the extra
-		int len = (int) &recvBuffer[recvBufferPosition] - (int) &endline[1];
+		long len = (long) &recvBuffer[recvBufferPosition] - (long) &endline[1];
 		memmove(recvBuffer, &endline[1], len);	//copy beginning of next cmd
 		recvBufferPosition = len;
 		recvBuffer[recvBufferPosition] = 0;
