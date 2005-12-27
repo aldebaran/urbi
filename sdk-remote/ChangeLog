@@ -1,0 +1,111 @@
+2005-11-07
+	Bug corrections in image conversion function.
+2005-10-26
+	Added a c++<->URBI binding function.
+2005-10-24
+	Added support for URBI list type.
+2005-10-14
+	Added a convert function for images, that can perform scaling. Jpeg encoding still unsuported.
+2005-09-30
+	Included liburbi-openr support.
+	Corrected an unitialized-variable bug in uabstractclient.h.
+2005-09-19
+	Added Dev-cpp project files (.dev) for liburbi and libjpeg. Both librairies must be included in user projects.
+2005-09-16
+	ostream interface now uses the fixed floating point format as it should
+2005-09-12
+	Added a fast mode for Monitor object, activated by default, disabling the shared display mode.
+2005-09-07
+	UAbstractClient inherits from ostream, the operator << can be used to send commands
+	Defined a URBI macro allowing to do URBI((headPan.val = 12;)) ; see doc
+	Updated doc accordingly
+	Updated examples to match changes in syntax for 0.9.6b
+	
+2005-06-07
+	Corrected a few bugs in UMessage manipulation functions.
+	Corrected a potential buffer overrun in sendCommand
+	
+2005-04-11
+	Rewrote template callback mecanism. Old functions kept for compatibility
+	Added serErrorCallback and setWildcardCallback
+	
+2005-01-13
+	Modified Move.cpp: it does not send all the execs at the same time anymore.
+	Parser now ignores blank line without any warning.
+		
+2005-01-06
+	Windows version of liburbi, with vc++ projects and solutions.
+	All examples compile under windows.
+	
+2004-12-22
+	Corrected a memory leak in UMessage destructor.
+	More documentation.
+	Added noop after every camera format change.
+	
+2004-12-21
+	Updated the interrupt behavior of Move. It now work as it should.
+	
+2004-12-20
+	Rewrote urbiimage to have more friendly command line arguments
+	Rewrote sendSound to use URBI "speaker.remain" as the timing method.
+	
+2004-10-29
+	Corrected two bugs in Move.cpp: the user callback was called too early, and multiple times; the user callback was never called in case of null move.
+	
+2004-10-13
+	Some work on the documentation.
+	Renamed errorNotify in printf.
+	Removed all use of the pack functions from the examples.
+	
+2004-10-12
+	Important modifications to update to the 1.0 URBI protocol.
+	Added a UMessage structure containing all informations related to an URBI message: the library now goes one step further in parsing the server messages.
+	Added the associated USound and UImage structures.
+	Added a convert function for sound conversion.
+	Added template versions of setCallback to set a callback on member functions.
+	Ported all the examples to the new syntax.
+	Added a new example: ballTrackingHead.
+	Added an exit function to the URBI namespace, and a getCurrentTime virtual function to UAbstractClient.
+
+2004-09-24
+	sendSound now copies the buffer given in parameters.
+	
+2004-07-28
+	Added a read() in UClient constructor to check if connection is realy established.
+	
+2004-07-12
+	Added possibility to set window title in monitor's constructor.
+	
+2004-07-09
+	Major rewrite to ease other implementations: moved command code in UAbstractClient interface. API is mostly unchanged.
+
+	
+==LastOf-0-2==
+
+2004-06-29
+	Added a reconnection attempt after a small usleep in UClient constructor (ipstack design flaw)
+
+2004-06-23
+	Added support for stdin in urbisound and stdout in urbisendsound
+	To pipe them one need to do:
+	urbisound 100000 gyges - | sox -t raw -r 16000 -w -c 2 -s - -t raw -r 16000 -w -c 1 -s - | urbisendsound nemes -
+	added urbitalkie in examples, it realizes this pipe. Doesn't work very well.
+	
+2004-06-18
+	Added a syncGetDevice with an additional parameter: device field.
+	
+2004-06-14
+	Changed listLock mutex to recursive mode.
+	Added missing lock/unlock calls around UCallbackList::call
+	Corrected a bug in deleteCallback: UCallbackList::remove now removes the entry from the list.
+	Added a getConnection function for the Move object.
+
+	
+==0.2.1==
+	
+2004-06-09
+	New algorithm for the Move object: the sequence choosen is now the shortest that reach a value within the precision given as a parameter.
+	Added correct path handling in Move.
+	Updated urbiwalk accordingly.
+	Modified turn samples: left and right turn are now symetric.
+

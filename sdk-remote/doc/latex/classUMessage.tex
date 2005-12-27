@@ -1,0 +1,74 @@
+\section{UMessage Class Reference}
+\label{classUMessage}\index{UMessage@{UMessage}}
+Class containing all informations related to an URBI message.  
+
+
+{\tt \#include $<$uabstractclient.h$>$}
+
+\subsection*{Public Member Functions}
+\begin{CompactItemize}
+\item 
+{\bf UMessage} ({\bf UAbstract\-Client} \&{\bf client}, int {\bf timestamp}, char $\ast${\bf tag}, char $\ast${\bf message}, void $\ast$buffer=NULL, int length=0)\label{classUMessage_a0}
+
+\begin{CompactList}\small\item\em This constructor steals the pointers, no copy is made. \item\end{CompactList}\item 
+{\bf UMessage} (const {\bf UMessage} \&source, bool alocate=true)\label{classUMessage_a1}
+
+\begin{CompactList}\small\item\em If alocate is true, everything is copied, eles pointers are stolen. \item\end{CompactList}\item 
+{\bf $\sim$UMessage} ()\label{classUMessage_a2}
+
+\begin{CompactList}\small\item\em Free everything if data was copied, doesn't free anything otherwise. \item\end{CompactList}\end{CompactItemize}
+\subsection*{Public Attributes}
+\begin{CompactItemize}
+\item 
+{\bf UAbstract\-Client} \& {\bf client}\label{classUMessage_o0}
+
+\begin{CompactList}\small\item\em connection from which originated the message \item\end{CompactList}\item 
+int {\bf timestamp}\label{classUMessage_o1}
+
+\begin{CompactList}\small\item\em server-side timestamp \item\end{CompactList}\item 
+char $\ast$ {\bf tag}\label{classUMessage_o2}
+
+\begin{CompactList}\small\item\em associated tag \item\end{CompactList}\item 
+UMessage\-Type {\bf type}\label{classUMessage_o3}
+
+\item 
+UBinary\-Message\-Type {\bf binary\-Type}\label{classUMessage_o4}
+
+\item 
+double {\bf double\-Value}\label{classUMessage_o5}
+
+\begin{CompactList}\small\item\em float information \item\end{CompactList}\item 
+char $\ast$ {\bf string\-Value}\label{classUMessage_o6}
+
+\begin{CompactList}\small\item\em string information \item\end{CompactList}\item 
+char $\ast$ {\bf system\-Value}\label{classUMessage_o7}
+
+\begin{CompactList}\small\item\em system information \item\end{CompactList}\item 
+char $\ast$ {\bf error\-Value}\label{classUMessage_o8}
+
+\begin{CompactList}\small\item\em error message \item\end{CompactList}\item 
+char $\ast$ {\bf message}\label{classUMessage_o9}
+
+\begin{CompactList}\small\item\em unknwon message \item\end{CompactList}\item 
+{\bf USound} {\bf sound}\label{classUMessage_o10}
+
+\item 
+{\bf UImage} {\bf image}\label{classUMessage_o11}
+
+\item 
+{\bf UBinary} {\bf binary}\label{classUMessage_o12}
+
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+Class containing all informations related to an URBI message. 
+
+
+
+Definition at line 135 of file uabstractclient.h.
+
+The documentation for this class was generated from the following files:\begin{CompactItemize}
+\item 
+{\bf uabstractclient.h}\item 
+{\bf uabstractclient.cpp}\end{CompactItemize}

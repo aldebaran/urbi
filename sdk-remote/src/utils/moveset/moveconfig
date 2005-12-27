@@ -1,0 +1,31 @@
+#Move data obtained by recording the LRV move object using urbirecord. 
+#record procedure: urbirecord, then urbicycle, then 'urbiplay + cyclefile |grep leg > cycle.exe' 
+#WARNING: for turn and walk algorithm to work, there must be the same number of positive and negative values 
+#they must be sorted, bigger firsts and one by one  their absolute value must be roughly equal 
+#example: 20 10 5 2 -20.4 -11 -4.8 -2.6 
+ 
+walk ctrlwalkf_550.exe   0.088 0.12   0.05 
+walk ctrlwalkf_400.exe   0.064 0.12   0.05 
+walk ctrlwalkf_300.exe   0.053 0.12   0.05 
+walk ctrlwalkf_200.exe   0.034 0.12   0.05 
+ 
+walk ctrlwalkb_550.exe   -0.048 0.12   0.04 
+walk ctrlwalkb_400.exe   -0.04 0.12   0.04 
+walk ctrlwalkb_300.exe   -0.033 0.12   0.04 
+walk ctrlwalkb_200.exe   -0.025 0.12   0.04 
+ 
+ 
+ 
+turn ctrlturnrevr_70.exe   34  55    0.1 
+turn ctrlturnrevr_60.exe   30  55    0.1 
+turn ctrlturnrevr_50.exe   25  55    0.1 
+turn ctrlturnrevr_40.exe   21  55    0.1 
+turn ctrlturnrevr_30.exe   14  55    0.1 
+turn ctrlturnrevr_20.exe   8.2  55    0.1 
+ 
+turn ctrlturnr_70.exe   -34  55    0.1 
+turn ctrlturnr_60.exe   -30  55    0.1 
+turn ctrlturnr_50.exe   -25  55    0.06 
+turn ctrlturnr_40.exe   -21  55    0.05 
+turn ctrlturnr_30.exe   -14  55    0.04 
+turn ctrlturnr_20.exe   -8.2 55    0.03 

@@ -1,0 +1,33 @@
+# Project: urbiimage
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe -D__DEBUG__
+CC   = gcc.exe -D__DEBUG__
+WINDRES = windres.exe
+RES  = 
+OBJ  = urbiimage.o monitor-win.o $(RES)
+LINKOBJ  = urbiimage.o monitor-win.o $(RES)
+LIBS =  -L"D:/Dev-Cpp/lib" -L"../liburbi/windows" -L"../../lib/jpeg-6b" ../liburbi/windows/liburbi.a ../../../../../../Dev-Cpp/lib/libws2_32.a ../../lib/jpeg-6b/libjpeg.a ../../../../../../Dev-Cpp/lib/libgdi32.a  -g3 
+INCS =  -I"D:/Dev-Cpp/include"  -I"../liburbi" 
+CXXINCS =  -I"D:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"D:/Dev-Cpp/include/c++/3.4.2/backward"  -I"D:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"D:/Dev-Cpp/include/c++/3.4.2"  -I"D:/Dev-Cpp/include"  -I"../liburbi" 
+BIN  = urbiimage.exe
+CXXFLAGS = $(CXXINCS)   -g3
+CFLAGS = $(INCS)   -g3
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before urbiimage.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "urbiimage.exe" $(LIBS)
+
+urbiimage.o: urbiimage.cpp
+	$(CPP) -c urbiimage.cpp -o urbiimage.o $(CXXFLAGS)
+
+monitor-win.o: monitor-win.cpp
+	$(CPP) -c monitor-win.cpp -o monitor-win.o $(CXXFLAGS)

@@ -1,0 +1,346 @@
+<?xml version='1.0' encoding="iso-8859-1"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<article>
+<artheader>
+<title>Introduction to libURBI</title>
+<author><firstname>Matthieu</firstname><surname>Nottale</surname></author>
+</artheader>
+
+<section>
+<title>Introduction</title>
+<para>
+Liburbi-c++ is a library designed to encapsulate an URBI connection. It handles the TCP connection with the URBI server, and the dispatching of messages it sends. The library is thread-safe and reentrant.
+</para><para>
+The library consists of two C++ classes, <function>UClient</function> and <function>USyncClient</function>, and a few helpful functions.
+</para>
+<para>
+We expect the reader to be a bit familiar with the URBI syntax.
+</para>
+</section>
+
+<section>
+<title>Getting started</title>
+<section><title>Connecting</title>
+<para>To connect to an URBI server, simply create a new instance of <function>UClient</function> ( or <function>USyncClient</function> if you want to use the synchronous functions described bellow), passing the name or the address of the server as the first parameter, and optionnaly the port as the second parameter:</para>
+<programlisting>
+UClient * client = new UClient("myrobot.ensta.fr");
+
+//a wrapper is also available in the urbi namespace:
+UClient * client = urbi::connect("myrobot.ensta.fr");
+</programlisting>
+<para>
+The constructor  will start an independant thread that will listen for incoming messages from the URBI server.
+</para>
+<para>
+You can check if the connection was successfuly established by calling the <function>error</function> function, which returns a zero value on success, or a nonzero error code in case of failure.
+</para>
+</section>
+
+<section>
+<title>Sending URBI commands</title>
+<para>The method <function>send</function> is the simplest way to send commands to the URBI server. It accepts a syntax similmar to the <function>printf</function> function. To send a sequence of commands without risk of having an other thread sending commands at the same time, the <function>lockSend</function> and <function>unlockSend</function> methods can be used to lock and then unlock the send buffer.</para>
+<programlisting>
+int sleeptime = 50;
+
+client->send("motoron;");
+
+client->lockSend(); //send() call by other threads will be blocked from this point until unlockSend is called
+
+for (float val=0; val&lt;=1; val+=0.05) 
+    client->send("neck.val = %f;wait (%d);", val, sleeptime);
+
+client->unlockSend();
+
+</programlisting>
+<para> Alternatively, the <function>UClient</function> class inherits from ostreaam, so you can use the <function>&lt;&lt;</function> operator:</para>
+<programlisting>
+ client &lt;&lt; "headPan.val = " &lt;&lt;12 &lt;&lt; urbi::comma; 
+</programlisting>
+<para> The constants 'comma', 'semicolon', 'pipe' and 'parallel' are defined in the urbi namespace for ',', ';', '|' and '&amp;' respectively.
+</para>
+<para> A third possible way is to use the <function>URBI</function> macro, which uses the default connection (the first connection created with your program):</para>
+<programlisting>
+ URBI((
+   headPan.val = 12 , 
+   echo "coucou" | speaker.play("test.wav") &amp; leds.val = 1
+   )); 
+ //note the absence of double-quotes to delimit the URBI code
+ //the double-parenthesis are required
+ URBI() &lt;&lt; "headPan.val = " &lt;&lt; 12 &lt;&lt;  urbi::semicolon; 
+</programlisting>
+<para>The function <function>urbi::setDefaultClientUClient *cl)</function> can be used to change the default client.</para>
+</section>
+<section>
+<title>Sending binary data.</title>
+<para>
+To send binary data to the robot, the method <function>sendBin</function> must be used. It takes as parameters the buffer to send and its size, and optionnaly a header.
+</para>
+<programlisting>
+client->sendBin(soundData, soundDataSize,"speaker.val = BIN %d raw 2 16000 16 1;", soundDataSize);
+</programlisting>
+</section>
+
+
+<section><title>Sending a sound</title>
+<para>Although you could use <function>sendBin</function> to play a sound on the robot, a specific and efficient method has been written for this purpose: <function>sendSound</function>. </para>
+<programlisting>
+client->sendSound(sound, "endsound");
+</programlisting> 
+<para> The first parameter is a USound structure describing the sound to send. The second is an optionnal tag that will be used by the server to issue a "stop" system message when the sound has finished playing. The function <function>convert</function> can be used to convert between various sound formats.</para>
+
+<para>There is no limit to the size of the sound buffer, since it will be automatically cut into small chunks by the library. The data is copied by the library: the USound parameter and its associated data can be safely freed as soon as the function returns.
+</para>
+</section>
+</section>
+<section>
+<title>Receiving</title>
+<para>
+Most of the messages received from the URBI server are the results of a previously sent command. The mechanism of URBI tags enables to link a message to its reply: with each command is associated a tag, and this tag is repeated in the reply message. The <function>UClient</function> class handles the reception of those messages in the independant thread created by the constructor, parses them and fills a UMessage structure. Callback functions with an associated tag can be registered with the method <function>registerCallback</function>: each time a message with this tag is sent by the server, the callback function will be called with a UMessage structure as a parameter. The two basic forms of <function>registerCallback</function> are:</para>
+<programlisting>
+typedef UCallbackAction (*UCallback)             (const UMessage &amp;msg);
+typedef UCallbackAction (*UCustomCallback)       (void * callbackData, const UMessage &amp;msg);
+
+UCallbackID 	setCallback (UCallback cb, const char *tag)
+UCallbackID 	setCallback (UCustomCallback cb, void *callbackData, const char *tag)
+</programlisting>
+<para>
+The first parameter is always a pointer to the function to call. callbackData is a pointer that will be given back to the callback function each time it is called. The callback function must return URBI_CONTINUE, or URBI_REMOVE, in which case the function will be unregistered.
+</para>
+<para>A few examples:</para>
+<programlisting>
+
+UCallbackAction onImage(const UMessage &amp;msg) {
+  if (msg.binaryType != BINARYMESSAGE_IMAGE)
+    return URBI_CONTINUE;
+  msg.client.printf("Image of size (%d,%d) received from server at %d\n",msg.image.width, msg.image.height, msg.timestamp);
+
+  unsigned char *image = new unsigned char[msg.image.width*msg.image.height*3];
+  int sz = msg.image.width*msg.image.height*3;
+
+  if (msg.image.imageFormat == IMAGE_JPEG) 
+    convertJPEGtoRGB((const byte *) msg.image.data, msg.image.size, (byte *) image, sz); //provided by liburbi
+  if (msg.image.imageFormat == IMAGE_YCbCr)
+    convertYCrCbtoRGB((const byte *) msg.image.data, msg.image.size, (byte *) image);  //provided by liburbi
+
+  myDisplayRGBImage(image, msg.image.width, msg.image.height);
+  delete image;
+  return URBI_CONTINUE;
+}
+
+UCallbackAction onSound(const UMessage &amp;msg) {
+  if (msg.binaryType != BINARYMESSAGE_SOUND)
+    return URBI_CONTINUE;
+
+  //convert the sound to a wav 16KHz 16bit.
+  USound snd;
+  snd.soundFormat = SOUND_WAV;
+  snd.rate = 16000;
+  snd.sampleSize = 16;
+  snd.sampleFormat = SAMPLE_SIGNED;
+  snd.channels = 0; //take the value from source
+  snd.data = 0;
+  snd.size = 0;
+  convert(msg.sound, snd); //this function is provided by liburbi
+  myPlayWAV(snd.data, snd.size);
+  return URBI_CONTINUE;
+}
+
+UCallbackAction onJoint(const UMessage &amp;msg) {
+  if (msg.type != MESSAGE_DOUBLE)
+    return URBI_CONTINUE;
+  msg.client.printf("The joint value si %lf\n", msg.doubleValue);
+  return URBI_CONTINUE;
+}
+
+int main(int argc, const char * argv[]) {
+  UClient * cl = new UClient(argv[1]);
+  if (cl->error()) urbi::exit(1); //portability call explaned below
+  cl->setCallback(&amp;onImage, "img");
+  cl->setCallback(&amp;onSound, "snd");
+  cl->setCallback(&amp;onJoint, "joint");
+  cl->send("img: camera.val;");
+  cl->send("loop snd: micro.val,");
+  cl->send("joint: headPan.val;");
+  urbi::execute();  //portability call explaned below
+}
+</programlisting>
+
+<para>
+The UMessage structure is capable of storing the informations contained in any kind of URBI message by using a "type" field and a union of type-dependant structures. It is defined as follows:
+ </para>
+<programlisting>
+class UMessage {
+ public:  
+  UAbstractClient    &amp;client;   // connection from which originated the message
+  int                timestamp;     // server-side timestamp
+  char               *tag;          // associated tag
+  
+  UMessageType       type;          // type of the message
+  UBinaryMessageType binaryType;    // type of binary message
+  
+  union {
+    double        doubleValue;
+    char          *stringValue;
+    char          *systemValue;
+    char          *message;        // filled if type is unknown (MESSAGE_UNKNOWN)
+    USound        sound;           // filled if binary data is of the sound type
+    UImage        image;           // filled if binary data is of the image type
+    UBinary       binary;          // filled if binary data is of an unrecognised type
+  }; 
+
+
+class USound {
+ public:
+ char                  *data;            // pointer to sound data
+ int                   size;             // total size in byte
+ int                   channels;         // number of audio channels
+ int                   rate;             // rate in Hertz
+ int                   sampleSize;       // sample size in bit
+ USoundFormat          soundFormat;      // format of the sound data (SOUND_RAW, SOUND_WAV, SOUDN_MP3...)
+ USoundSampleFormat    sampleFormat;     // sample format
+};
+
+class UImage {
+ public:
+  char                  *data;            // pointer to image data
+  int                   size;             // image size in byte
+  int                   width, height;    // size of the image
+  UImageFormat          imageFormat;      // IMAGE_RGB, IMAGE_YCbCr, IMAGE_JPEG...
+};
+</programlisting> 
+<para>
+The type field can be MESSAGE_DOUBLE, MESSAGE_STRING, MESSAGE_SYSTEM, MESSAGE_BINARY or MESSAGE_UNKNOWN. Depending of this field, the corresponding value in the union will be set. If the message is of the binary type, binaryType will give additional informations on the type of data (BINARYMESSAGE_SOUND, BINARYMESSAGE_IMAGE or BINARYMESSAGE_UNKNOWN), and the appropriate sound or image structure will be filled.
+</para>
+
+<para>Template versions of <function>registerCallback</function> are also defined. They allow to set callbacks on member functions, with from 0 to 4 custom parameters of any type (including pointers and references). The only constraint on the function signature is that it must return a UCallbackAction, and take a const UMessage&amp; as its last parameter. A few examples:</para>
+
+<programlisting>
+
+class Test {
+   public:
+     UCallbackAction onJoint(int value, const UMessage &amp;msg);
+}:
+
+UCallbackAction  Test::onJoint(int value, const UMessage &amp;msg) {
+  msg.client.printf("got a message at %d with tag %s, our int is %d\n",msg.timestamp, msg.tag, value);
+  return URBI_REMOVE;  //unregister ourself
+}
+
+int main(int argc, const char * argv[]) {
+  Test *a = new Test();
+  UClient * cl= new UClient(argv[1]);
+  if (cl->error()) urbi::exit(1);
+  cl->setCallback(*a, &amp;Test::onJoint, 12, "tag");
+  cl->send("tag: headPan.val;");
+  urbi::execute();
+}
+</programlisting>
+</section>
+
+<section><title>Synchronous operations</title>
+<para>The derived class <function>USyncClient</function> implements methods to synchronously get the result of URBI commands. You must be aware that these functions are less efficient, and that they will not work in the OPEN-R version of the liburbi, for instance.</para>
+
+<section><title>Reading the value of a device</title>
+<para>
+To get the value of a device, you can use the method <function>syncGetDevice</function> or <function>syncGetNormalizedDevice</function>. The first parameter is the name of the device (for instance, "neck"), the second is a double that is filled with the received value. The difference between the two methods is that <function>syncGetDevice</function> retreives the value with a "val" command, whereas <function>syncGetNormalizedDevice</function> uses "valn" (see urbidoc.html for more details about "val" and "valn").
+</para>
+<programlisting>
+double neckVal;
+syncClient->syncGetDevice("neck",neckVal):
+</programlisting>
+</section>
+
+<section><title>Getting an image</title>
+<para>You can use the method <function>syncGetImage</function> to synchronously get an image. The method will send the appropriate command, and wait for the result, thus blocking your thread until the image is received.
+</para>
+<programlisting>
+client->send("camera.resolution = 0;camera.gain = 2;");
+int width, height;
+client->syncGetImage("camera", myBuffer, myBufferSize, URBI_RGB, URBI_TRANSMIT_JPEG, width, height);
+</programlisting>
+<para>
+The first parameter is the name of the camera device. 
+The second is the buffer which will be filled with the image data.
+The third must be an integer variable equal to the size of the buffer. The function will set this variable to the size of the data. If the buffer is too small, data will be truncated .
+</para>
+<para>
+The fourth parameter  is the format in which you want to receive the image data. Possible values are URBI_RGB for a raw RGB 24 bit per pixel image, URBI_PPM for a PPM file,  URBI_YCbCr for raw YCbCr data, and URBI_JPEG for a jpeg-compressed file.</para>
+<para> 
+The fifth parameter can be either URBI_TRANSMIT_JPEG or URBI_TRANSMIT_YCbCR and specifies how the image will be transmitted between the robot and the client. Transmitting JPEG images increases the frame rate and should be used for better performances.
+</para>
+<para>Finaly the width and height parameters are filled with the with and height of the image on return.
+</para>
+</section>
+<section><title>Getting sound</title>
+<para>
+The method <function>syncGetSound</function> can be used to get a sound sample of any length from the server.
+</para>
+<programlisting>
+client->syncGetSound("micro", duration, sound);
+</programlisting>
+<para>
+The first parameter is the name of the device from which to request sound, the second is the duration requested, in milliseconds. Sound is a USound structure that will be filled with the recorded sound on output.
+</para>
+</section>
+</section>
+
+<section><title>Conversion functions</title>
+<para>
+We also have included a few functions to convert between different image and sound formats. The usage of the image conversion functions is pretty straightforward:
+</para>
+<programlisting>
+int convertRGBtoYCrCb(const byte* source, int sourcelen, byte* dest);
+int convertYCrCbtoRGB(const byte* source, int sourcelen, byte* dest);
+int convertJPEGtoYCrCb(const byte* source, int sourcelen, byte* dest, int &amp;size);
+int convertJPEGtoRGB(const byte* source, int sourcelen, byte* dest, int &amp;size);
+</programlisting>
+<para>
+The <parameter>size</parameter> parameter must be set to the size of the destination buffer. On return it will be set to the size of the output data.
+</para>
+    <para>To convert between different sound formats, the function <function>convert</function> can be used. It takes two USound structures as its parameters. The two audio formats currently supported are SOUND_RAW and SOUND_WAV, but support for compressed sound formats such as Ogg Vorbis and MP3 is planned.. If any field is set to zero in the destination structure, the corresponding value from the source sound will be used.
+</para>
+</section>
+
+<section><title>Putting it all together: some examples</title>
+<para>
+Have a look at the examples, in the "example" or "utils" directory of the liburbi distribution. It currently contains:
+</para>
+<itemizedlist>
+<listitem><para><command>urbiimage</command>: Display the images taken by the camera in realtime, or save a snapshot to a file.</para></listitem>
+<listitem><para><command>urbisound</command>: Play the sound from the robot's microphone on the computer speaker, or record it to a file. </para></listitem>
+<listitem><para><command>urbisendsound</command>: Play a wav file from the computer, on the robot, converting it if neccesary.</para></listitem>
+<listitem><para><command>urbiping</command>: Send the URBI command 'ping' at regular intervals to measure latency.</para></listitem>
+<listitem><para><command>urbibandwidth</command>: Measure the effective bandwidth.</para></listitem>
+<listitem><para><command>urbisend</command>: Send a set of commands contained in a file to the robot.</para></listitem>
+<listitem><para><command>urbirecord</command>: Record all the movements of the robot to a file.</para></listitem>
+<listitem><para><command>urbiplay</command>: Play a file recorded with <command>urbirecord</command>, or dump it in a human-readable form.</para></listitem>
+<listitem><para><command>urbimirror</command>: Copy the movements of a robot on an other robot. Same as piping urbirecord to urbiplay, but with less latency.</para></listitem>
+<listitem><para><command>urbiscale</command>: Change the speed of a file recorded with <command>urbirecord</command>.</para></listitem>
+<listitem><para><command>urbireverse</command>: Reverse a file recorded with <command>urbirecord</command>.</para></listitem>
+<listitem><para><command>urbicycle</command>: Detects and extract cycles in a file recorded with <command>urbirecord</command>.</para></listitem>
+<listitem><para><command>urbiballtrackinghead</command>: Port of the OPEN-R ballTrackingHead example to URBI.</para></listitem>
+</itemizedlist>
+<para>Each program when invoked with no option will display its command line syntax and additional informations when apropriate.</para>
+</section>
+
+<section><title>Programming hints</title>
+<itemizedlist>
+<listitem><para>Except if what you are doing is trivial, try not to use the sync* functions. They are less efficient than the asynchronous ones.</para></listitem>
+<listitem><para>The callback functions should return as fast as possible, since all callbacks are called by the same thread. If you have time-consuming operations, you should spawn an other thread and use synchronisation mechanisms such as semaphores or mutexes.</para></listitem>
+</itemizedlist>
+</section>
+
+<section><title>Portability functions</title>
+<para> When other versions of the liburbi will be available, (in particular an OPEN-R version that will allow programs to run on the robot), it will be possible to compile the same code for both libraries, if a few rules are respected:</para>
+<itemizedlist>
+<listitem><para>Do not use <function>USyncClient</function>.</para></listitem>
+<listitem><para>Use the <function>printf</function> method of UClient instad of the standard version.</para></listitem>
+<listitem><para>Use the <function>getCurrentTime</function> method of UClient instad of functions from the stdlib.</para></listitem>
+<listitem><para>Use the <function>urbi::exit</function> function (in the "urbi" namespace) instead of <function>exit</function>.</para></listitem>
+<listitem><para>At the end of your <function>main</function>, call <function>urbi::execute</function>. </para></listitem>
+<listitem><para>Do not use threads, or any function call not implemented in the OPEN-R version of stdlib. </para></listitem>
+</itemizedlist>
+</section>
+</article>

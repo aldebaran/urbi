@@ -1,0 +1,118 @@
+\section{uabstractclient.cpp File Reference}
+\label{uabstractclient_8cpp}\index{uabstractclient.cpp@{uabstractclient.cpp}}
+{\tt \#include $<$stdio.h$>$}\par
+{\tt \#include $<$stdlib.h$>$}\par
+{\tt \#include $<$errno.h$>$}\par
+{\tt \#include $<$math.h$>$}\par
+{\tt \#include $<$setjmp.h$>$}\par
+{\tt \#include $<$algorithm$>$}\par
+{\tt \#include $<$sys/stat.h$>$}\par
+{\tt \#include \char`\"{}../../lib/jpeg-6b/jpeglib.h\char`\"{}}\par
+{\tt \#include \char`\"{}../../lib/jpeg-6b/jerror.h\char`\"{}}\par
+{\tt \#include \char`\"{}uabstractclient.h\char`\"{}}\par
+\subsection*{Defines}
+\begin{CompactItemize}
+\item 
+\#define {\bf DEBUG}\ 0\label{uabstractclient_8cpp_a0}
+
+\item 
+\#define {\bf URBI\_\-ERROR\_\-TAG}\ \char`\"{}[error]\char`\"{}\label{uabstractclient_8cpp_a1}
+
+\item 
+\#define {\bf URBI\_\-WILDCARD\_\-TAG}\ \char`\"{}[wildcard]\char`\"{}\label{uabstractclient_8cpp_a2}
+
+\end{CompactItemize}
+\subsection*{Enumerations}
+\begin{CompactItemize}
+\item 
+enum {\bf UCallback\-Type} \{ {\bf UCB\_\-}, 
+{\bf UCB\_\-C}
+ \}
+\end{CompactItemize}
+\subsection*{Functions}
+\begin{CompactItemize}
+\item 
+void $\ast$ {\bf read\_\-jpeg} (const char $\ast$jpgbuffer, int jpgbuffer\_\-size, bool RGB, int \&output\_\-size)
+\item 
+{\bf UCallback\-Action} {\bf send\-Sound\_\-} (void $\ast$cb, const {\bf UMessage} \&msg)\label{uabstractclient_8cpp_a7}
+
+\item 
+unsigned char {\bf clamp} (float v)\label{uabstractclient_8cpp_a8}
+
+\item 
+int {\bf convert\-YCr\-Cbto\-RGB} (const byte $\ast$source\-Image, int buffer\-Size, byte $\ast$destination\-Image)\label{uabstractclient_8cpp_a9}
+
+\item 
+int {\bf convert\-JPEGto\-YCr\-Cb} (const byte $\ast$source, int sourcelen, byte $\ast$dest, int \&size)\label{uabstractclient_8cpp_a10}
+
+\item 
+int {\bf convert\-JPEGto\-RGB} (const byte $\ast$source, int sourcelen, byte $\ast$dest, int \&size)\label{uabstractclient_8cpp_a11}
+
+\item 
+void {\bf init\_\-source} (j\_\-decompress\_\-ptr cinfo)\label{uabstractclient_8cpp_a12}
+
+\item 
+boolean {\bf fill\_\-input\_\-buffer} (j\_\-decompress\_\-ptr cinfo)\label{uabstractclient_8cpp_a13}
+
+\item 
+void {\bf term\_\-source} (j\_\-decompress\_\-ptr cinfo)\label{uabstractclient_8cpp_a14}
+
+\item 
+void {\bf skip\_\-input\_\-data} (j\_\-decompress\_\-ptr cinfo, long num\_\-bytes)\label{uabstractclient_8cpp_a15}
+
+\item 
+{\bf urbi\_\-jpeg\_\-error\_\-exit} (j\_\-common\_\-ptr cinfo)\label{uabstractclient_8cpp_a16}
+
+\item 
+template$<$class S, class D$>$ void {\bf copy} (S $\ast$src, D $\ast$dst, int sc, int dc, int sr, int dr, int count, bool sf, bool df)\label{uabstractclient_8cpp_a17}
+
+\item 
+int {\bf convert} (const {\bf USound} \&source, {\bf USound} \&dest)
+\begin{CompactList}\small\item\em Conversion between various sound formats. \item\end{CompactList}\end{CompactItemize}
+\subsection*{Variables}
+\begin{CompactItemize}
+\item 
+UCallback\-ID {\bf next\-Id}\label{uabstractclient_8cpp_a3}
+
+\end{CompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{Desc}
+\item[Id]{\bf uabstractclient.cpp}{\rm (p.\,\pageref{uabstractclient_8cpp})},v 1.10 2005/05/13 12:13:07 nottale Exp \end{Desc}
+
+
+Definition of the URBI interface class
+
+Copyright (C) 2004 Jean-Christophe Baillie. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+Definition in file {\bf uabstractclient.cpp}.
+
+\subsection{Function Documentation}
+\index{uabstractclient.cpp@{uabstractclient.cpp}!convert@{convert}}
+\index{convert@{convert}!uabstractclient.cpp@{uabstractclient.cpp}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}int convert (const {\bf USound} \& {\em source}, {\bf USound} \& {\em dest})}\label{uabstractclient_8cpp_a18}
+
+
+Conversion between various sound formats. 
+
+If any of destination,'s channel, sample\-Size, rate or sample\-Format parameter is 0, values from source will be used. If the desitnation's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory. 
+
+Definition at line 1068 of file uabstractclient.cpp.
+
+References USound::channels, USound::data, USound::rate, USound::sample\-Format, USound::sample\-Size, USound::size, and USound::sound\-Format.
+
+Referenced by USync\-Client::sync\-Get\-Sound().\index{uabstractclient.cpp@{uabstractclient.cpp}!read_jpeg@{read\_\-jpeg}}
+\index{read_jpeg@{read\_\-jpeg}!uabstractclient.cpp@{uabstractclient.cpp}}
+\subsubsection{\setlength{\rightskip}{0pt plus 5cm}void $\ast$ read\_\-jpeg (const char $\ast$ {\em jpgbuffer}, int {\em jpgbuffer\_\-size}, bool {\em RGB}, int \& {\em output\_\-size})\hspace{0.3cm}{\tt  [static]}}\label{uabstractclient_8cpp_a6}
+
+
+Convert a jpeg image to YCr\-Cb or RGB. Allocate the buffer with malloc. 
+
+Definition at line 954 of file uabstractclient.cpp.

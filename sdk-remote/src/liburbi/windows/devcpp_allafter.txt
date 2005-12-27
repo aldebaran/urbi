@@ -1,0 +1,3 @@
+all-after:
+	rm liburbi.a
+	ar r liburbi.a uclient.o usyncclient.o ../uabstractclient.o ..\..\..\lib\jpeg-6b\libjpeg.a

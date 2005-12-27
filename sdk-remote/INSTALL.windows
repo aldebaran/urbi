@@ -1,0 +1,15 @@
+Project files are included to compile liburbi-cpp under Microsoft Windows for Microsoft Visual C++ and Dev-cpp. But building it
+with other compilers should not be too difficult.
+
+For Dev-cpp:
+	Open libjpeg.dev in lib/jpeg-6b and build it, this will produce a file called libjpeg.a
+	Open liburbi.dev in src/liburbi/windows/ and build it, this will produce a file called liburbi.a
+	
+	Then to use liburbi in any project, simply include libjpeg.a and liburbi.a in the library list, in your project configuration.
+
+Fo Visual C++:	
+	Open liburbi.sln in src/liburbi/windows/ and build it, this will produce a file called liburbi.lib
+
+	Then to use liburbi in any project, simply include liburbi.lib in the library list, in your project configuration.
+	All the examples can be compiled by building the solution in src/examples.
+	

@@ -1,0 +1,32 @@
+This document explains how to install and use liburbi-openr.
+Please note that it is the first release, and may not be entirely
+bug-free.
+
+INSTALLATION:
+	run "./configure --enable-openr=<sdkpath>", where <sdkpath> 
+		is the path to the OPEN-R sdk (defaults to /usr/local/OPENR)
+	run "make", then "make install"
+
+USE:
+	To compile a project for liburbi-openr, cd to your project root directory, and type
+	"make.openr SRC=<sources> MS=<msdir> MODULENAME=<name>"
+	Where   -<sources> is the list of all source files in your project.
+		-<name> is the name of your project (must be unique, only uppercase characters is better)
+		-<msdir> is the path to the directory containing the urbi server (containing the MS/ dir)
+	This will create a makefile, called Makefile.aibo. You can edit this makefile to add more source 
+		file or change other parameters.
+	Type "make -f Makefile.aibo" to compile your project into a file called <name>.BIN
+	Type "make -f Makefile.aibo install" to install the file in the MS directory and edit the 
+		required configuration files.
+
+
+CODING RULES:
+	-The liburbi-openr call your main() functions with one argument: "127.0.0.1".
+	So to have your code work both embeded in the aibo and remotely, use argv[1] as the 
+	hostname when you create UClient objects.
+	-Your main function must terminate. Call urbi::execute() at the end of your main.
+	-Use the UClient::printf function to display informations to the OPENR debug port
+		(connect to your robot on port 59000 with telnet to see them).
+	-Right now, if you need to use images at high framerate, you will have to lower the resolution
+		(camera.resolution = 1) because of internal bandwidth/cpu limitations.
+	-When compiling with liburbi_openr, the LIBURBI_OPENR macro is defined
