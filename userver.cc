@@ -46,7 +46,7 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 const int NB_HEADER_BEFORE_CUSTOM = 4;
 const char* HEADER_BEFORE_CUSTOM[] = {
   "**************************************************************\n",
-  "*** URBI Language specif 1.3  - Copyright (C) 2005 JC Baillie\n",
+  "*** URBI Language specif 1.5 - Copyright (C) 2006  JC Baillie\n",
   "*** URBI Kernel version " 
   #include "version.h"
   " build"

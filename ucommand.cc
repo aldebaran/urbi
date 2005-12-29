@@ -1919,7 +1919,7 @@ UCommand_EXPR::execute(UConnection *connection)
       if (scanlist->dataType == DATA_STRING) snprintf(tmpexpr,254,"\"%s\"",scanlist->str->str()); 
       if (scanlist->dataType == DATA_BINARY) snprintf(tmpexpr,254,"BIN %d",scanlist->refBinary->ref()->bufferSize); 
       scanlist = scanlist->list;
-      strcat(tmpbuffer,tmpexpr);
+      strcat(tmpbuffer,tmpexpr); 
       if (scanlist) strcat(tmpbuffer,",");
     }
     strcat(tmpbuffer,"]\n");
