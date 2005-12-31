@@ -41,6 +41,7 @@ namespace URBI {
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
 }
+
 	
 // **************************************************************************	
 //! UObject constructor.
@@ -49,7 +50,7 @@ UObject::UObject(const string &s)
   name = s;
   
   objectData = new UObjectData(this);
-
+  
   lastUObject = this;
 }
 
@@ -73,25 +74,47 @@ URBI::dispatcher(const UMessage &msg)
 
       if (msg.listValue[0].type != MESSAGE_DOUBLE)
         msg.client.printf("Soft Device Error: unknown server message type %d\n",(int)msg.listValue[0].type);
-      else
-        switch ((USystemExternalMessage)(int)msg.listValue[0]) {
+
+      // UEM_ASSIGNVALUE
+      else {
+        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_ASSIGNVALUE) {
           
-        case UEM_ASSIGNVALUE:
           if (UVar* tmpvar = varmap[(string)msg.listValue[1]])
             tmpvar->__update(msg.listValue[2]);
           else
-            msg.client.printf("Soft Device Error: %s unknown.\n",((string)msg.listValue[1]).c_str());
-          break;
+            msg.client.printf("Soft Device Error: %s var unknown.\n",((string)msg.listValue[1]).c_str());
+        }
+        
+      // UEM_EVALFUNCTION
+      else 
+        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALFUNCTION) {
           
-        case UEM_EVALFUNCTION:
-          break;
+          if (baseUFunctionInitializer*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
+            UValue retval = tmpfun->__evalfunction(msg.listSize-3, &msg.listValue[3]); // que se passe-t-il lors du = ?
+            // pas clair. Revoir le destructeur de UValue et l'operator=
+             
+            if (retval.type == MESSAGE_DOUBLE)
+              URBI() << (string)msg.listValue[2] << " = " <<
+                (double)retval << ";" << endl;
+            else
+              if (retval.type == MESSAGE_STRING)
+                URBI() << (string)msg.listValue[2] << " = \"" <<
+                  (string)retval << "\";" << endl;            
+          }
+          else
+            msg.client.printf("Soft Device Error: %s function unknown.\n",((string)msg.listValue[1]).c_str());
           
-        case UEM_EVALVALUE:
-          break;
-          
-        default:
-          msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)msg.listValue[0]);
-        }    
+        }
+
+      // UEM_EVALVALUE
+      else
+        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALVALUE) {
+        }
+
+      // DEFAULT
+      else          
+        msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)msg.listValue[0]);      
+      } 
     
       return URBI_CONTINUE;
     }
@@ -119,15 +142,15 @@ URBI::debug(const UMessage &msg)
 }
 
 
-int 
-main(int argc, char *argv[])
+void
+URBI::URBIMain(int argc, char *argv[])
 { 
   // Retrieving command line arguments
   if (argc!=2) {
     cout << "usage: " << endl << argv[0] << " <URBI Server IP>" << endl;
     urbi::exit(0);
   }
-
+  
   serverIP = argv[1];
   cout << "Running Soft Device Module '" << argv[0] << "' on " << serverIP << endl;
   urbi::connect(argv[1]);
@@ -145,5 +168,5 @@ main(int argc, char *argv[])
     (*retr)->init();
 
   URBI() << externalModuleTag << ": [1,\"ball.x\",42]" << ";" ;
-  urbi::execute();
+  URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
 }

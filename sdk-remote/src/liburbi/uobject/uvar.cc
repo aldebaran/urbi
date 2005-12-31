@@ -54,7 +54,8 @@ UVar::UVar(string obj, string varname, bool writeonly)
 //! UVar constructor: object name + var name
 UVar::UVar(UValue s)
 {
-  name = "noname";
+  name = "";
+  value = s;
 }
 
 //! UVar initialization
