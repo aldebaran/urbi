@@ -1659,6 +1659,7 @@ UMessage::UMessage(const UMessage &b, bool alocate)
  }
 
 
+UValue::UValue() : type(MESSAGE_UNKNOWN) {}
 UValue::UValue(double v) : doubleValue(v), type(MESSAGE_DOUBLE) {}
 UValue::UValue(char * v) : stringValue(v), type(MESSAGE_STRING) {
     stringValue = strdup(stringValue);

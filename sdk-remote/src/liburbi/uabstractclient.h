@@ -141,7 +141,7 @@ class UValue {
     double doubleValue;
     char * stringValue;
   };
-  UValue() : type(MESSAGE_UNKNOWN) {}
+  UValue();
   UValue(double doubleValue);
   UValue(char * val);
   UValue(string str);
