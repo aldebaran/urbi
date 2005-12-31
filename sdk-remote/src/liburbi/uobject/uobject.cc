@@ -36,7 +36,7 @@ namespace URBI {
   const string externalModuleTag = "__ExternalMessage__";
 
   hash_map<string,UVar* > varmap;
-  hash_map<string,baseUFunctionInitializer*> functionmap;
+  hash_map<string,UFunctionInitializer*> functionmap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
@@ -48,9 +48,7 @@ namespace URBI {
 UObject::UObject(const string &s)
 {
   name = s;
-  
-  objectData = new UObjectData(this);
-  
+  objectData = new UObjectData(this);  
   lastUObject = this;
 }
 
@@ -89,8 +87,9 @@ URBI::dispatcher(const UMessage &msg)
       else 
         if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALFUNCTION) {
           
-          if (baseUFunctionInitializer*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
-            UValue retval = tmpfun->__evalfunction(msg.listSize-3, &msg.listValue[3]); // que se passe-t-il lors du = ?
+          if (UFunctionInitializer*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
+            /*
+            UValue retval = tmpfun->__evalfunction(msg.listSize-3, &msg.listValue[2]); // que se passe-t-il lors du = ?
             // pas clair. Revoir le destructeur de UValue et l'operator=
              
             if (retval.type == MESSAGE_DOUBLE)
@@ -100,6 +99,7 @@ URBI::dispatcher(const UMessage &msg)
               if (retval.type == MESSAGE_STRING)
                 URBI() << (string)msg.listValue[2] << " = \"" <<
                   (string)retval << "\";" << endl;            
+            */
           }
           else
             msg.client.printf("Soft Device Error: %s function unknown.\n",((string)msg.listValue[1]).c_str());
@@ -143,7 +143,7 @@ URBI::debug(const UMessage &msg)
 
 
 void
-URBI::URBIMain(int argc, char *argv[])
+URBI::main(int argc, char *argv[])
 { 
   // Retrieving command line arguments
   if (argc!=2) {

@@ -48,7 +48,7 @@ namespace __gnu_cxx {
 
 // Thess macro are here to make life easier
 #define UVarInit(__x,x) x.init(#x)
-#define UFunctionInit(obj,x)  new UFunctionInitializer<obj>(#obj, #x,this,&obj::x)
+#define UFunctionInit(obj,x)  new UFunctionInitializer(#obj, #x,createUCallback(this,&obj::x))
 #define UEventInit(obj,x) int zss = 7;
 
 // defines a variable and it's associated accessors
@@ -61,19 +61,20 @@ URBI {
   
   // For homogeneity of the code, UFunction and UEvent are nothing more than UValue's
   typedef UValue UFunction;
-  typedef UValue UEvent;
+  typedef void UEvent;
 
   // Forward declarations and global scope structures
   class UObjectData;
   class UVar;
   class baseURBIStarter;
-  class baseUFunctionInitializer;
+  class UFunctionInitializer;
+  class UGenericCallback;
   
   extern list<baseURBIStarter*> objectlist;
   extern hash_map<string,UVar*> varmap;
-  extern hash_map<string,baseUFunctionInitializer*> functionmap;
+  extern hash_map<string,UFunctionInitializer*> functionmap;
 
-  extern void URBIMain(int argc, char *argv[]);
+  extern void main(int argc, char *argv[]);
 
   // **************************************************************************	
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
@@ -156,168 +157,343 @@ URBI {
   /*! This heavily overloaded class is the only way in C++ to make life easy from the
       the interface user point's of view. Close yours eyes, it's ugly :)
   */
-
-  class baseUFunctionInitializer {
-  public:
-    baseUFunctionInitializer() {};
-    ~baseUFunctionInitializer() {};
-    
-    virtual UValue __evalfunction(int,UValue*)=0;
-  };
-
-  template <class T> 
-  class UFunctionInitializer : public baseUFunctionInitializer
+ 
+  class UFunctionInitializer
   {
   public:
-    UFunctionInitializer(string, string, T*, UValue (T::*) ());
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&));        
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    UFunctionInitializer(string, string, T*, UValue (T::*) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&));
-    
+    UFunctionInitializer(string objname, string funname, UGenericCallback* cb){
+       name = objname+"."+funname;
+       functionmap[name] = this;
+       this->cb = cb;
+    };
     ~UFunctionInitializer() {};
+    
 
-    virtual UValue __evalfunction(int nbparam,UValue *param) {    
-      UVar *vars[nbparam];
-      UValue ret;
-      for (int i=0;i<nbparam;i++) 
-        vars[i] = new UVar(param[i]);//I don't like that, but would need a fix in liburbi to improve
-
-      switch (nbparam) {
-      case 0:  ret = (uobj->*fun0)(); break;
-      case 1:  ret = (uobj->*fun1)(*vars[0]); break;
-      case 2:  ret = (uobj->*fun2)(*vars[0],*vars[1]); break;
-      case 3:  ret = (uobj->*fun3)(*vars[0],*vars[1],*vars[2]); break;
-      case 4:  ret = (uobj->*fun4)(*vars[0],*vars[1],*vars[2],*vars[3]); break;
-      case 5:  ret = (uobj->*fun5)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4]); break;
-      case 6:  ret = (uobj->*fun6)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5]); break;
-      case 7:  ret = (uobj->*fun7)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6]); break;
-      case 8:  ret = (uobj->*fun8)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7]); break;
-      case 9:  ret = (uobj->*fun9)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8]); break;
-      case 10: ret = (uobj->*fun10)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9]); break;
-      case 11: ret = (uobj->*fun11)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9],*vars[10]); break;
-      case 12: ret = (uobj->*fun12)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9],*vars[10],*vars[11]); break;
-      case 13: ret = (uobj->*fun13)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9],*vars[10],*vars[11],*vars[12]); break;
-      case 14: ret = (uobj->*fun14)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9],*vars[10],*vars[11],*vars[12],*vars[13]); break;
-      case 15: ret = (uobj->*fun15)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9],*vars[10],*vars[11],*vars[12],*vars[13],*vars[14]); break;
-      case 16: ret = (uobj->*fun16)(*vars[0],*vars[1],*vars[2],*vars[3],*vars[4],*vars[5],*vars[6],*vars[7],*vars[8],*vars[9],*vars[10],*vars[11],*vars[12],*vars[13],*vars[14],*vars[15]); break;
-      };
-      
-      for (int i=0;i<nbparam;i++)
-        delete vars[i];
-      return ret;
+    virtual UValue __evalfunction(int nbparam, UValue *param) {    
+     
+      //return ret;
     };
     
   private:
-    T*   uobj;
-    string name;    
-    UValue (T::*fun0)  ();
-    UValue (T::*fun1)  (UVar&);
-    UValue (T::*fun2)  (UVar&,UVar&);       
-    UValue (T::*fun3)  (UVar&,UVar&,UVar&);
-    UValue (T::*fun4)  (UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun5)  (UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun6)  (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun7)  (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun8)  (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun9)  (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun10) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun11) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun12) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun13) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun14) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun15) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
-    UValue (T::*fun16) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&);
+    string     name;
+    UGenericCallback *cb;
+  };
 
-    void __init(string objname, string funname, T* uobj) {
-      this->uobj = uobj;
-      name = objname+"."+funname;
-      functionmap[name] = (baseUFunctionInitializer*)this;
-    };
+
+  class UGenericCallback
+  {
+  public:
+    ~UGenericCallback() {};
+
+    virtual UValue __evalcall(UValue *param)  = 0;
+  };
+
+  template <class OBJ, class R>
+    class UCallback0 : public UGenericCallback
+  {
+  public:
+    UCallback0(OBJ* obj, R (OBJ::*fun) ()): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)());
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ();
   };
   
+  template <class OBJ, class R> 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ()) {
+    return ((UGenericCallback*) new UCallback0<OBJ,R> (obj,fun));
+  }
+  template <class OBJ, class R, class P1 >
+    class UCallback1 : public UGenericCallback
+  {
+  public:
+    UCallback1(OBJ* obj, R (OBJ::*fun) ( P1 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 );
+  };
   
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname,  T* uobj, UValue (T::*fun) ()) {      
-    fun0 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 )) {
+    return ((UGenericCallback*) new UCallback1<OBJ,R, P1 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname,  T* uobj, UValue (T::*fun) (UVar&)) {
-    fun1 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 >
+    class UCallback2 : public UGenericCallback
+  {
+  public:
+    UCallback2(OBJ* obj, R (OBJ::*fun) ( P1 , P2 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 )) {
+    return ((UGenericCallback*) new UCallback2<OBJ,R, P1 , P2 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&)) {   
-    fun2 = fun; __init(objname, funname, uobj);
-  }       
-  template <class T> 
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&)) {
-    fun3 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 >
+    class UCallback3 : public UGenericCallback
+  {
+  public:
+    UCallback3(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 )) {
+    return ((UGenericCallback*) new UCallback3<OBJ,R, P1 , P2 , P3 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&)) {
-    fun4 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 >
+    class UCallback4 : public UGenericCallback
+  {
+  public:
+    UCallback4(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 )) {
+    return ((UGenericCallback*) new UCallback4<OBJ,R, P1 , P2 , P3 , P4 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun5 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 >
+    class UCallback5 : public UGenericCallback
+  {
+  public:
+    UCallback5(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 )) {
+    return ((UGenericCallback*) new UCallback5<OBJ,R, P1 , P2 , P3 , P4 , P5 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun6 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 >
+    class UCallback6 : public UGenericCallback
+  {
+  public:
+    UCallback6(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 )) {
+    return ((UGenericCallback*) new UCallback6<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun7 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 >
+    class UCallback7 : public UGenericCallback
+  {
+  public:
+    UCallback7(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 )) {
+    return ((UGenericCallback*) new UCallback7<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun8 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 >
+    class UCallback8 : public UGenericCallback
+  {
+  public:
+    UCallback8(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 )) {
+    return ((UGenericCallback*) new UCallback8<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun9 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 >
+    class UCallback9 : public UGenericCallback
+  {
+  public:
+    UCallback9(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 )) {
+    return ((UGenericCallback*) new UCallback9<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun10 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 >
+    class UCallback10 : public UGenericCallback
+  {
+  public:
+    UCallback10(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] , param[10] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 )) {
+    return ((UGenericCallback*) new UCallback10<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun11 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 >
+    class UCallback11 : public UGenericCallback
+  {
+  public:
+    UCallback11(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] , param[10] , param[11] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 )) {
+    return ((UGenericCallback*) new UCallback11<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun12 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 >
+    class UCallback12 : public UGenericCallback
+  {
+  public:
+    UCallback12(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] , param[10] , param[11] , param[12] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 )) {
+    return ((UGenericCallback*) new UCallback12<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun13 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 >
+    class UCallback13 : public UGenericCallback
+  {
+  public:
+    UCallback13(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] , param[10] , param[11] , param[12] , param[13] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 )) {
+    return ((UGenericCallback*) new UCallback13<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun14 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 >
+    class UCallback14 : public UGenericCallback
+  {
+  public:
+    UCallback14(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] , param[10] , param[11] , param[12] , param[13] , param[14] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 )) {
+    return ((UGenericCallback*) new UCallback14<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun15 = fun; __init(objname, funname, uobj);
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 , class P15 >
+    class UCallback15 : public UGenericCallback
+  {
+  public:
+    UCallback15(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 )): 
+      obj(obj), 
+      fun(fun) {};
+      virtual UValue __evalcall(UValue *param) {
+        return UValue((obj->*fun)( param[1] , param[2] , param[3] , param[4] , param[5] , param[6] , param[7] , param[8] , param[9] , param[10] , param[11] , param[12] , param[13] , param[14] , param[15] ));
+      };
+  private:
+      OBJ* obj;
+      R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 );
+  };
+  
+  template <class OBJ, class R, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 , class P15 > 
+    UGenericCallback* createUCallback(OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 )) {
+    return ((UGenericCallback*) new UCallback15<OBJ,R, P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 > (obj,fun));
   }
-  template <class T>
-    UFunctionInitializer<T>::UFunctionInitializer(string objname, string funname, T* uobj, UValue (T::*fun) (UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&,UVar&)) {
-    fun16 = fun; __init(objname, funname, uobj);
-  }
-
+    
+ 
 } // end namespace URBI
 
 using namespace URBI;

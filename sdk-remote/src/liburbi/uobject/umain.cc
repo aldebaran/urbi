@@ -23,6 +23,6 @@
 int
 main(int argc, char *argv[])
 {
-  URBI::URBIMain(argc, argv);
+  URBI::main(argc, argv);
   urbi::execute();
 };
