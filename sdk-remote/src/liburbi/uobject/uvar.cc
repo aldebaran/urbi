@@ -51,21 +51,13 @@ UVar::UVar(string obj, string varname, bool writeonly)
   __init(writeonly);
 }
 
-//! UVar constructor: object name + var name
-UVar::UVar(UValue s)
-{
-  name = "";
-  value = s;
-}
 
 //! UVar initialization
 void
-UVar::init(string varname)
+UVar::init(string objname, string varname)
 {  
 
-  name = lastUObject->get_name() + "." + varname;
-  cout << "my name is(init) :" << name << endl;
-  
+  name = objname + "." + varname;  
   __init(false);
 }
 
@@ -115,4 +107,3 @@ UVar::__update(UValue& v)
 
   cout << endl;
 }
-

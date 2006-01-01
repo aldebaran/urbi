@@ -36,13 +36,42 @@ namespace URBI {
   const string externalModuleTag = "__ExternalMessage__";
 
   hash_map<string,UVar* > varmap;
-  hash_map<string,UFunctionInitializer*> functionmap;
+  UTable functionmap;
+  UTable monitormap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
 }
 
 	
+// **************************************************************************	
+//! UGenericCallback constructor.
+UGenericCallback::UGenericCallback(string name, UTable &t) : name(name) 
+{
+  t[this->name] = this;
+};
+
+UGenericCallback::~UGenericCallback()
+{
+};
+
+	
+// **************************************************************************	
+//  Monitoring functions
+
+//! Generic UVar monitoring without callback
+void
+URBI::UMonitor(UVar)
+{
+}
+
+//! UVar monitoring with callback
+void 
+URBI::UMonitor(UVar, int (*fun) ())
+{
+}
+
+
 // **************************************************************************	
 //! UObject constructor.
 UObject::UObject(const string &s)
@@ -87,9 +116,9 @@ URBI::dispatcher(const UMessage &msg)
       else 
         if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALFUNCTION) {
           
-          if (UFunctionInitializer*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
-            /*
-            UValue retval = tmpfun->__evalfunction(msg.listSize-3, &msg.listValue[2]); // que se passe-t-il lors du = ?
+          if (UGenericCallback*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
+            
+            UValue retval = tmpfun->__evalcall(&msg.listValue[3]); // que se passe-t-il lors du = ?
             // pas clair. Revoir le destructeur de UValue et l'operator=
              
             if (retval.type == MESSAGE_DOUBLE)
@@ -99,7 +128,7 @@ URBI::dispatcher(const UMessage &msg)
               if (retval.type == MESSAGE_STRING)
                 URBI() << (string)msg.listValue[2] << " = \"" <<
                   (string)retval << "\";" << endl;            
-            */
+            
           }
           else
             msg.client.printf("Soft Device Error: %s function unknown.\n",((string)msg.listValue[1]).c_str());
@@ -109,8 +138,13 @@ URBI::dispatcher(const UMessage &msg)
       // UEM_EVALVALUE
       else
         if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALVALUE) {
+          
+          if (UGenericCallback*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
+            
+            tmpfun->__evalcall(&msg.listValue[2]); // que se passe-t-il lors du = ?
+            // pas clair. Revoir le destructeur de UValue et l'operator=
+          }
         }
-
       // DEFAULT
       else          
         msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)msg.listValue[0]);      
@@ -150,7 +184,7 @@ URBI::main(int argc, char *argv[])
     cout << "usage: " << endl << argv[0] << " <URBI Server IP>" << endl;
     urbi::exit(0);
   }
-  
+
   serverIP = argv[1];
   cout << "Running Soft Device Module '" << argv[0] << "' on " << serverIP << endl;
   urbi::connect(argv[1]);
