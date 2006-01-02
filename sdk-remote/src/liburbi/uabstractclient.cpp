@@ -67,9 +67,7 @@ enum UCallbackType
 {
   UCB_,
   UCB_C,
-};
-
-
+}
 
 
 

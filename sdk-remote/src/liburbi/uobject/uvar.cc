@@ -28,9 +28,7 @@ using namespace URBI;
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
 UVar::UVar(string varname, bool writeonly)
 {
-  name = lastUObject->get_name() + "." + varname;
-  cout << "my name is :" << name << endl;
-  
+  name = varname;  
   __init(writeonly);
 }
 
@@ -38,16 +36,13 @@ UVar::UVar(string varname, bool writeonly)
 UVar::UVar(UObject& obj, string varname, bool writeonly)
 {
   name = obj.get_name() + "." + varname;
-  cout << "my name is :" << name << endl;
-
   __init(writeonly);
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string obj, string varname, bool writeonly)
+UVar::UVar(string objname, string varname, bool writeonly)
 {
-  name = obj + "." + varname;
-  
+  name = objname + "." + varname;
   __init(writeonly);
 }
 
@@ -56,7 +51,6 @@ UVar::UVar(string obj, string varname, bool writeonly)
 void
 UVar::init(string objname, string varname)
 {  
-
   name = objname + "." + varname;  
   __init(false);
 }
@@ -101,9 +95,21 @@ UVar::__update(UValue& v)
 {  
   cout << "  Variable " << name << " updated to : ";
   if (v.type == MESSAGE_DOUBLE)
-    cout << (double)v;
+    cout << (double)v << endl;
   if (v.type == MESSAGE_STRING)
-    cout << (string)v;
+    cout << (string)v << endl;
 
-  cout << endl;
+  value = v;
+  value.associatedVarName = name;
+
+  if (monitormap.find(name) != monitormap.end()) {
+  
+    list<UGenericCallback*> cb = monitormap[name];
+    cout << "there is somebody home..." << endl;
+    for (list<UGenericCallback*>::iterator cbit = cb.begin();
+    	 cbit != cb.end();
+	 cbit++)
+      // test of return value here
+      (*cbit)->__evalcall(&value);
+  }
 }

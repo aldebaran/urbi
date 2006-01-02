@@ -149,6 +149,8 @@ class UValue {
   operator string();
   operator int() {return (int)(double)(*this);}
   ~UValue();
+
+  string associatedVarName; // used to cast to UVar, necessary.
 };
 std::ostream & operator <<(std::ostream &s, const UValue &v);
 /// Class containing all informations related to an URBI message.

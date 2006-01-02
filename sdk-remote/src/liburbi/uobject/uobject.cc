@@ -38,37 +38,74 @@ namespace URBI {
   hash_map<string,UVar* > varmap;
   UTable functionmap;
   UTable monitormap;
+  UTable eventmap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
+
+  template <>
+  UVar cast(UValue v)
+  { 
+    UVar result;
+    result.set_value(v);
+    result.set_name(v.associatedVarName);
+    return result; 
+  }
 }
 
 	
 // **************************************************************************	
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string name, UTable &t) : name(name) 
+UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
+  name(name) 
 {
-  t[this->name] = this;
+  t[this->name].push_back(this);
+  URBI() << "external " << type << "(" << size << ") " << name <<";";
+};
+	
+//! UGenericCallback constructor.
+UGenericCallback::UGenericCallback(string type, string name, UTable &t) : 
+  name(name) 
+{
+  t[this->name].push_back(this);
+  URBI() << "external " << type << " " << name <<";";    
 };
 
 UGenericCallback::~UGenericCallback()
 {
 };
 
+
+UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UTable &t)
+{
+  return ((UGenericCallback*) new UCallbackGlobalvoid0 (type,fun,funname,t));
+}
+
 	
 // **************************************************************************	
 //  Monitoring functions
 
+int voidfun() {};
+
 //! Generic UVar monitoring without callback
 void
-URBI::UMonitor(UVar)
+URBI::UMonitor(UVar v)
 {
+  URBI::UMonitor(v,&voidfun);
 }
 
 //! UVar monitoring with callback
 void 
-URBI::UMonitor(UVar, int (*fun) ())
+URBI::UMonitor(UVar v, int (*fun) ())
+{  
+  createUCallback("var",fun,v.get_name(), monitormap);
+}
+
+//! UVar monitoring with callback
+void 
+URBI::UMonitor(UVar v, int (*fun) (UVar))
 {
+  createUCallback("var",fun,v.get_name(), monitormap);
 }
 
 
@@ -95,7 +132,7 @@ URBI::dispatcher(const UMessage &msg)
 {
   if (msg.type == MESSAGE_LIST) {
 
-    if (msg.listSize<3) 
+    if (msg.listSize<2) 
       msg.client.printf("Soft Device Error: Invalid number of arguments in the server message: %d\n",msg.listSize);
     else {
 
@@ -106,8 +143,10 @@ URBI::dispatcher(const UMessage &msg)
       else {
         if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_ASSIGNVALUE) {
           
-          if (UVar* tmpvar = varmap[(string)msg.listValue[1]])
+          if (varmap.find((string)msg.listValue[1]) != varmap.end()) {
+  	    UVar* tmpvar = varmap[(string)msg.listValue[1]];
             tmpvar->__update(msg.listValue[2]);
+	  }
           else
             msg.client.printf("Soft Device Error: %s var unknown.\n",((string)msg.listValue[1]).c_str());
         }
@@ -115,11 +154,14 @@ URBI::dispatcher(const UMessage &msg)
       // UEM_EVALFUNCTION
       else 
         if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALFUNCTION) {
-          
-          if (UGenericCallback*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
-            
-            UValue retval = tmpfun->__evalcall(&msg.listValue[3]); // que se passe-t-il lors du = ?
-            // pas clair. Revoir le destructeur de UValue et l'operator=
+          // For the moment, this iteration is useless since the list will contain
+	  // one and only one element. There is no function overloading yet and still
+	  // it would probably use a unique name identifier, hence a single element list again.	  
+	  if (functionmap.find((string)msg.listValue[1]) != functionmap.end()) {
+	  
+            list<UGenericCallback*> tmpfun = functionmap[(string)msg.listValue[1]];
+            list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+	    UValue retval = (*tmpfunit)->__evalcall(msg.listSize<=3?0:&msg.listValue[3]);
              
             if (retval.type == MESSAGE_DOUBLE)
               URBI() << (string)msg.listValue[2] << " = " <<
@@ -127,23 +169,24 @@ URBI::dispatcher(const UMessage &msg)
             else
               if (retval.type == MESSAGE_STRING)
                 URBI() << (string)msg.listValue[2] << " = \"" <<
-                  (string)retval << "\";" << endl;            
-            
-          }
+                  (string)retval << "\";" << endl;
+          }          
           else
             msg.client.printf("Soft Device Error: %s function unknown.\n",((string)msg.listValue[1]).c_str());
-          
         }
 
-      // UEM_EVALVALUE
+      // UEM_EMITEVENT
       else
-        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALVALUE) {
-          
-          if (UGenericCallback*  tmpfun = functionmap[(string)msg.listValue[1]]) {           
-            
-            tmpfun->__evalcall(&msg.listValue[2]); // que se passe-t-il lors du = ?
-            // pas clair. Revoir le destructeur de UValue et l'operator=
-          }
+        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EMITEVENT) {
+	  
+          if (eventmap.find((string)msg.listValue[1]) != eventmap.end()) {
+	    
+	    list<UGenericCallback*>  tmpfun = eventmap[(string)msg.listValue[1]];
+            for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+	         tmpfunit != tmpfun.end();
+		 tmpfunit++)
+	      (*tmpfunit)->__evalcall(msg.listSize<=2?0:&msg.listValue[2]);
+	  }
         }
       // DEFAULT
       else          
@@ -201,6 +244,8 @@ URBI::main(int argc, char *argv[])
        retr++)
     (*retr)->init();
 
-  URBI() << externalModuleTag << ": [1,\"ball.x\",42]" << ";" ;
+  URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
+  URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret124\",\"fff\",12]" << ";" ;
+  URBI() << externalModuleTag << ": [2,\"ball.myevent\"]" << ";" ;
 }
