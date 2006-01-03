@@ -147,7 +147,7 @@ UAbstractClient::notifyCallbacks(const UMessage &msg) {
   bool inc=false;
   for (list<UCallbackInfo>::iterator it = callbackList.begin(); it!=callbackList.end(); inc?it:it++, inc=false) {
     if ( 
-	(!strcmp(msg.tag, it->tag)) ||
+	(!strcmp(msg.tag.c_str(), it->tag)) ||
 	(!strcmp(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR) ||
 	(!strcmp(it->tag, URBI_WILDCARD_TAG)) 
 	) {
@@ -451,7 +451,7 @@ struct wavheader {
   */
 
   s->uc->sendBin(s->buffer+s->pos, tosend);
-   s->uc->send("wait(%s.remain < %d); %s: ping;", s->device, playlength/2, msg.tag);
+   s->uc->send("wait(%s.remain < %d); %s: ping;", s->device, playlength/2, msg.tag.c_str());
   // printf("%d end sending chunk\n", 0);
   s->pos+=tosend;
   if (s->pos >= s->length ) {
@@ -511,8 +511,8 @@ UAbstractClient::sendSound(const char * device, const USound &sound, const char 
     s->startNotify = false;
     UCallbackID cid=setCallback(sendSound_, s,utag);
     //invoke it 2 times to queue sound
-    if (sendSound_(s,UMessage(*this, 0, utag,"*** stop"))==URBI_CONTINUE) {
-      if ( sendSound_(s,UMessage(*this, 0, utag,"*** stop"))==URBI_REMOVE) {
+    if (sendSound_(s,UMessage(*this, 0, utag,"*** stop", list<BinaryData>()))==URBI_CONTINUE) {
+      if ( sendSound_(s,UMessage(*this, 0, utag,"*** stop", list<BinaryData>()))==URBI_REMOVE) {
         deleteCallback(cid);
         }
     }
@@ -683,35 +683,52 @@ UAbstractClient::processRecvBuffer()
 	  binaryBufferPosition += len;
 	  
 	  if (binaryBufferPosition == binaryBufferLength) {
-		//Finished receiving binary.
-		lockList();
-        UMessage msg(*this, currentTimestamp, currentTag, currentCommand,
-                     binaryBuffer, binaryBuffer?binaryBufferLength:0);
-		notifyCallbacks(msg); 
-		unlockList();
-		if (binaryBuffer)
-		  free(binaryBuffer);
-		binaryBuffer = 0;
-		binaryMode = false;
-		//Move the extra we received
-		memmove(recvBuffer, 
-                recvBuffer + endOfHeaderPosition + len,  
-                recvBufferPosition - len - endOfHeaderPosition);
-		recvBufferPosition = recvBufferPosition - len - endOfHeaderPosition;
+	    //Finished receiving binary.
+	    //append
+	    BinaryData bd;
+	    bd.size = binaryBufferLength;
+	    bd.data = binaryBuffer;
+	    bins.push_back(bd);
+	    binaryBuffer = 0;
+	    
+	    if (nBracket == 0) {
+	      //end of command, send
+	      lockList();
+	      UMessage msg(*this, currentTimestamp, currentTag, currentCommand,
+			   bins);
+	      notifyCallbacks(msg); 
+	      unlockList();
+	      
+	      while (!bins.empty()) {
+		free(bins.front().data);
+		bins.pop_front();
+	      }
+	    }
+	    
+	    binaryBuffer = 0;
+	    binaryMode = false;
+	    parsePosition = 0;
+	    //Move the extra we received
+	    memmove(recvBuffer, 
+		    recvBuffer + endOfHeaderPosition + len,  
+		    recvBufferPosition - len - endOfHeaderPosition);
+	    recvBufferPosition = recvBufferPosition - len - endOfHeaderPosition;
 		
-		//Reenter loop.
-		continue;
+	    //Reenter loop.
+	    continue;
 	  }
 	  else {
-		//Not finished receiving binary.
+	    //Not finished receiving binary.
 		recvBufferPosition = endOfHeaderPosition;
 		return;
 	  }
 	}
+	
 	else {
 	  //Not in binary mode.
-	  endline = (char *) memchr(recvBuffer, '\n', recvBufferPosition);
-	  if (!endline) return;
+	  endline = (char *) memchr(recvBuffer+parsePosition, '\n', recvBufferPosition);
+	  if (!endline) 
+	    return; //no new end of command/start of binary: wait
 	  
 	  //check
 	  /*
@@ -722,119 +739,125 @@ UAbstractClient::processRecvBuffer()
 	  if ( (unsigned int)endline > (unsigned int)endline2 && endline2)
 	    printf("WARNING, 0 before newline\n");
 	  */
-	  *endline = 0;
+	  
 
 	  //parse the line
 #if DEBUG
-		printf("%d parse line: --%s--\n", mtime(), recvBuffer);
+	  printf("%d parse line: --%s--\n", mtime(), recvBuffer);
 #endif
-	       
-	  int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_]]", 
-                         &currentTimestamp, currentTag);
-	  if (found != 2) {
-		found = sscanf(recvBuffer, "[%d]", &currentTimestamp);
-		if (found == 1)
+	  if (parsePosition == 0) {//parse header
+	    int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_]]", 
+			       &currentTimestamp, currentTag);
+	    if (found != 2) {
+	      found = sscanf(recvBuffer, "[%d]", &currentTimestamp);
+	      if (found == 1)
 		  currentTag[0] = 0;
-		else {	//failure
-		  printf("UAbstractClient::read, fatal error parsing header");
+	      else {	//failure
+		printf("UAbstractClient::read, fatal error parsing header");
 		  printf(" line was '%s'\n", recvBuffer);
 		  currentTimestamp = 0;
 		  strcpy(currentTag, "UNKNWN");
 		  lockList();
 		  UMessage msg(*this, 0, URBI_ERROR_TAG, 
 			       "!!! UAbstractClient::read, fatal error parsing header", 
-			       0, 0);
+			       list<BinaryData>());
 		  notifyCallbacks(msg);
 		  unlockList();
-		}
+	      }
+	    }
+	    
+	    currentCommand = strstr(recvBuffer, "]");
+	    
+	    currentCommand++;
+	    parsePosition = (long)currentCommand - (long)recvBuffer;
+
+	    //reinit just to be sure:
+	    nBracket = 0;
+	    inString = false;
 	  }
-	  
-	  currentCommand = strstr(recvBuffer, "]");
-	  if (!currentCommand) {
-		currentCommand = recvBuffer;
-		currentCommand--;
-	  }	//XXX DEBUG
-	  currentCommand++;
-	  
-	  //is this binary?
-	  char * mark=currentCommand;
-      while (*mark==' ') mark++;
-	  if (!strncmp(mark, "BIN ",4)) {
-		//get the length
+
+	  while (parsePosition < recvBufferPosition) {
+	    if (inString) {
+	      if (recvBuffer[parsePosition]=='\\') {
+		if (parsePosition == recvBufferPosition-1) {
+		  //we cant handle the \\
+		  return;
+		}
+		parsePosition+=2; //ignore next character
+		continue;
+	      }
+	      if (recvBuffer[parsePosition]=='"') {
+		inString = false;
+		parsePosition++;
+		continue;
+	      }
+	    }
+	    else {
+	      if (recvBuffer[parsePosition]=='"') {
+		inString = true;
+		parsePosition++;
+		continue;
+	      }
+	      if (recvBuffer[parsePosition]=='[') {
+		nBracket++;
+		parsePosition++;
+		continue;
+	      }
+	      if (recvBuffer[parsePosition]==']') {
+		nBracket--;
+		parsePosition++;
+		continue;
+	      }
+	      if (recvBuffer[parsePosition]=='\n') {
+		if (nBracket == 0) {
+		  //end of command
+		  recvBuffer[parsePosition]=0;
+		  lockList();
+		  UMessage msg(*this, currentTimestamp, currentTag, 
+			       currentCommand, 
+			       bins);
+		  notifyCallbacks(msg);
+		  unlockList();
+		  //prepare for next read, copy the extra
+		  memmove(recvBuffer, recvBuffer+parsePosition+1, recvBufferPosition-parsePosition-1);	//copy beginning of next cmd
+		  recvBufferPosition = recvBufferPosition-parsePosition-1;
+		  recvBuffer[recvBufferPosition] = 0;
+		  parsePosition = 0;
+		  while (!bins.empty()) {
+		    free(bins.front().data);
+		    bins.pop_front();
+		  }
+		  break; //restart
+		}
+		//this should not happen: \n should have been handled by binary code below
+		fprintf(stderr,"FATAL PARSE ERROR\n");
+	      }
+	      if (!strncmp(recvBuffer+parsePosition-3, "BIN ", 4)) { //very important: scan starts below current point
+		//compute length
 		char * endLength;
-		binaryBufferLength = strtol(&mark[4], &endLength, 0);
-		if (endLength == &mark[4]) {
+		binaryBufferLength = strtol(recvBuffer+parsePosition+1,&endLength, 0);
+		if (endLength == recvBuffer+parsePosition+1) {
 		  printf("UClient::read, error parsing bin data length.\n");
 		  recvBufferPosition = 0;
 		  return;
 		}
-#if DEBUG
-        printf("%d bin data: %d\n", mtime(), binaryBufferLength);
-#endif
-		
-		//Check if we have the whole binary.
-		if (binaryBufferLength < recvBufferPosition - strlen(recvBuffer) - 1) {
-		  //got eveything?
-		  if (DEBUG)
-			printf("one shot hit!\n");
-		  //now update structures and notify listeners 
-		  lockList();
-		  if ( (unsigned long)endline - (unsigned long)recvBuffer > 50)
-		    printf("WARNING, header unexpectedly long\n");
-          UMessage msg(*this, currentTimestamp, currentTag, 
-                       currentCommand, 
-                       &endline[1], binaryBufferLength);
-		  notifyCallbacks(msg);
-		  unlockList();
-		  
-		  //Move the extra we received.
-		  memmove(recvBuffer, 
-                  &endline[1 + binaryBufferLength], 
-                  (long) &recvBuffer[recvBufferPosition] - 
-                  (long) &endline[1 + binaryBufferLength]);
-		  recvBufferPosition = (long) &recvBuffer[recvBufferPosition] - 
-            (long) &endline[1 + binaryBufferLength];
-		  recvBuffer[recvBufferPosition] = 0;
-		  //Reenter loop.
-		  continue;
-		}
-		
-		else {	
-		  //We don t have the whole binary data. Copy what we have.
-		  binaryBuffer = (char *) malloc(binaryBufferLength);
-		  if (!binaryBuffer) {
-		    printf("##FATAL, failed to allocate binaryBuffer of size %d\n",binaryBufferLength);
-		  }
-		  else
-		    memcpy(binaryBuffer, 
-			   &endline[1], 
-			   recvBufferPosition - strlen(recvBuffer) - 1);
-		  binaryBufferPosition = recvBufferPosition - strlen(recvBuffer) - 1;
-		  endOfHeaderPosition =  strlen(recvBuffer) + 1;
-		  recvBufferPosition = endOfHeaderPosition;
-		  binaryMode = true;
-		  return;
-		}
-	  }
-	  else {	
-		//Not binary.
-		//now update structures and notify listeners 
-#if DEBUG
-		  printf("%d notify\n", mtime());
-#endif
-		lockList();
-        UMessage msg(*this, currentTimestamp, currentTag, 
-                       currentCommand, 
-                     NULL, 0);
-        notifyCallbacks(msg);
-		unlockList();
-		//prepare for next read, copy the extra
-		long len = (long) &recvBuffer[recvBufferPosition] - (long) &endline[1];
-		memmove(recvBuffer, &endline[1], len);	//copy beginning of next cmd
-		recvBufferPosition = len;
-		recvBuffer[recvBufferPosition] = 0;
-	  }
-	}
+		//go to end of header
+		while (recvBuffer[parsePosition] !='\n')
+		  parsePosition++; //we now we will find a \n
+		parsePosition++;
+		endOfHeaderPosition = parsePosition;
+		binaryMode = true;
+		binaryBuffer = malloc(binaryBufferLength);
+		binaryBufferPosition = 0;
+		break; //restart in binarymode to handle binary
+	      }
+	    } //not in string mode
+	  } //end while
+	  //either we ate all characters, or we were asked to restart
+	  if (parsePosition == recvBufferPosition)
+	    return;
+	  continue;	  
+	} //en else (!binaryMode)
   }// end while
 }
 
@@ -1338,6 +1361,34 @@ int convert(const UImage & src, UImage & dest) {
   return 1;
 }
 
+
+void unescape(string & data) {
+  int src=0, dst=0;
+  while (data[src]) {
+    if (data[src]!='\\')
+      data[dst]=data[src];
+    else {
+      switch(data[++src]) {
+      case 'n':
+	data[dst]='\n';
+	break;
+      case '\\':
+	data[dst]='\\';
+	break;
+      case '"':
+	data[dst]='"';
+	break;
+      default:
+	data[dst]=data[src];
+	break;
+      }
+    }
+    src++;
+    dst++;
+  }
+  data[dst] = 0;
+  
+}
 void unescape(char * data) {
   char* src = data;
   char * dst = data;
@@ -1363,359 +1414,332 @@ void unescape(char * data) {
     src++;
     dst++;
   }
+  *dst = 0;
 }
 
 UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *message, 
-                    void *buffer, int length)
-  : client(client), timestamp(timestamp),  tag(tag),  stringValue(0), alocated(false) {
+                    list<BinaryData> bins)
+  : client(client), timestamp(timestamp),  tag(tag){
   while (message[0] ==' ') message++;
-  if (strncmp(message,"BIN ",4)) {
-    //non binary message
-    binaryType = BINARYMESSAGE_NONE;
-
-    if (message[0] == '"') {
-      //string
-      type = MESSAGE_STRING;
-      stringValue = strdup(&message[1]);
-      ((char *)stringValue)[strlen(stringValue)-1] = 0;
-      unescape(stringValue);
-      return;
-    }
-
-    if (message[0] == '*') {
+  //parse non-value messages
+  if (message[0] == '*') {
       //system message
       type = MESSAGE_SYSTEM;
-      systemValue = message+1;
-      for (int i=0; i<2 && message[i+1]; i++)
-        systemValue++;
+      this->message = message+3;
       return;
     }
 
-    if (message[0] == '!') {
-      //error message
-      type = MESSAGE_ERROR;
-      errorValue = message+1;
-      for (int i=0; i<2 && message[i+1]; i++)
-        errorValue++;
-      return;
-    }
-    if (message[0] == '[') {
-      //list message
-      type = MESSAGE_LIST;
-      message++;
-      listSize = 0;
-      listValue = (UValue *)malloc(10*sizeof(UValue));
-      while(*message != ']' && *message) {
-	while (*message == ' ')
-	  message++;
-	if (*message == '"') {
-	  //locate end quote
-	  int l=1;
-	  while ( message[l]!=0 && (message[l] != '"' || message[l-1] == '\\'))
-	    l++;
-	  if (! (message+l)) {
-	    fprintf(stderr,"parse error parsing list in message '%s'\n", message);
-	    return;
-	  }
-	  listValue[listSize].type = MESSAGE_STRING;
-	  listValue[listSize].stringValue = (char *)malloc(l);
-	  strncpy( listValue[listSize].stringValue, message+1, l-1);
-	  listValue[listSize].stringValue[l-1]=0;
-	  unescape(listValue[listSize].stringValue);
-	  listSize++;
-	  message += (l+1);
-	  
-	}
-	else {
-	  //double value
-	  int pos;
-	  int count = sscanf(message, "%lf%n", &listValue[listSize].doubleValue, &pos);
-	  if (!count) {
-	     fprintf(stderr,"parse error parsing list in message '%s'\n", message);
-	     return;
-	  }
-	  listValue[listSize].type = MESSAGE_DOUBLE;
-	  listSize++;
-	  message += pos;
-	}
-	
-	//skip comma and spaces
-	while (*message == ' ' || *message == ',')
-	  message++;
-	
-	if (!(listSize%10)) {
-	  listValue = (UValue *)realloc(listValue, (listSize+10)*sizeof(UValue));
-	}
-      }
-
-      return;
-    }
-    //double?
-    int count = sscanf(message, "%lf", &doubleValue);
-    if (count)
-      type = MESSAGE_DOUBLE;
-    else {
-      type = MESSAGE_UNKNOWN;
-      this->message = message;
-    }
+  if (message[0] == '!') {
+    //error message
+    type = MESSAGE_ERROR;
+    this->message = message+3;
     return;
   }
 
-  //binary message
-  type = MESSAGE_BINARY;
+  //value
+  type = MESSAGE_DATA;
+  value = new UValue();
+  list<BinaryData>::iterator iter = bins.begin();
+  int p=value->parse(message,0, bins, iter);
+  while (message[p]==' ') p++;
+  if (p<0 || message[p] || iter != bins.end()) {
+    std::cerr << "PARSE ERROR in "<<message<<"at "<<abs(p)<<std::endl;
+  }
+}
+
+
+int UValue::parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos) {
+  while (message[pos]==' ')
+    pos++;
+  if (message[pos] == '"') {
+    //string
+    type = DATA_STRING;
+    //get terminating '"'
+    int p=pos+1;
+    while (message[p] && message[p]!='"') {
+      if (message[p]=='\\')
+	p++;
+      p++;
+    }
+    if (!message[p])
+      return -p; //parse error
+
+    stringValue = new string(message+pos+1, p-pos-1);
+    unescape(*stringValue);
+    return p+1;
+  }
+
+  if (message[pos] == '[') {
+    //list message
+    type = DATA_LIST;
+    array = new UArray();
+    pos++;
+    while (message[pos]==' ') pos++;
+    while (message[pos]) {
+      while (message[pos]==' ') pos++;
+      UValue *v = new UValue();
+      int p = v->parse(message, pos, bins, binpos);
+      if (p<0)
+	return p;
+      array->array.push_back(v);
+      pos = p;
+      while (message[pos]==' ') pos++;
+      //expect , or rbracket
+      if (message[pos]==']')
+	break;
+      if (message[pos]!=',')
+	return -pos;
+      pos++;
+    }
+    
+    if (message[pos]!=']')
+      return -pos;
+    return pos+1;
+  }
+
+  //OBJ a [x:12, y:4]
+  if (!strncmp(message+pos, "OBJ ", 4)) {
+    //obj message
+    pos+=4;
+    type = DATA_OBJECT;
+    object = new UNamedArray();
+
+    //parse object name
+    while (message[pos]==' ')
+      pos++;
+    
+    int p = pos;
+    while (message[p] && message[p]!=' ')
+      p++;
+    if (!message[p])
+      return -p; //parse error
+    object->refName = string(message+pos, p-pos);
+    pos=p;
+
+    
+    while (message[pos]==' ')
+      pos++;
+    if (message[pos]!='[')
+      return -pos;
+    pos++;
+    
+    while (message[pos]) {
+      while (message[pos]==' ') pos++;
+      //parse name
+      int p = pos;
+      while (message[p] && message[p]!=':')
+	p++;
+      if (!message[p])
+	return -p; //parse error
+      p++;
+      UNamedValue nv;
+      nv.name = string(message+pos, p-pos-1);
+      pos=p;
+      while (message[pos]==' ') pos++;
+      UValue *v = new UValue();
+      p = v->parse(message, pos, bins, binpos);
+      if (p<0)
+	return p;
+      nv.val = v;
+      object->array.push_back(nv);
+      pos = p;
+      while (message[pos]==' ') pos++;
+      //expect , or rbracket
+      if (message[pos]==']')
+	break;
+      if (message[pos]!=',')
+	return -pos;
+      pos++;
+    }
+    
+    if (message[pos]!=']')
+      return -pos;
+    return pos+1;
+  }
+
+
+      
+
+  if (!strncmp(message+pos,"BIN ",4)) {
+    //binary message: delegate
+    type = DATA_BINARY;
+    binary = new UBinary();
+    pos +=4;
+    //parsing type
+    int p = binary->parse(message, pos, bins, binpos);
+    return p;
+  }
+  
+  //last attempt: double
+  int p;
+  int count = sscanf(message+pos, "%lf%n", &val, &p);
+  if (!count) 
+    return -pos;
+  type = DATA_DOUBLE;
+  pos +=p;
+  return pos;
+
+}
+
+
+int UBinary::parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos) {
+  while (message[pos]==' ') pos++;
+  //find end of header
+ 
+  if( binpos == bins.end()) //no binary data available
+    return -1;
+  
+  //validate size
+  int ps,psize;
+  int count = sscanf(message+pos,"%d%n",&psize,&ps);
+  if (count!=1)
+    return -pos;
+  if (psize != binpos->size) {
+    std::cerr <<"bin size inconsistency\n";
+    return -pos;
+  }
+  pos +=ps;
+  size = psize;
+  data = malloc(psize);
+  memcpy(data, binpos->data, size);
+  binpos++;
+
+
+ int p = pos;
+  while (message[p] && message[p]!='\n')
+    p++;
+  if (!message[p])
+    return -p; //parse error
+  this->message = string(message+pos, p-pos);
+  p++;
 
   //trying to parse header to find type
   char type[64];
   memset(type, 0, 64);
   int p1, p2, p3, p4, p5;
-  int count = sscanf(message,"BIN %d %63s %d %d %d %d", &p1, type, &p2, &p3, &p4, &p5);
+  count = sscanf(message+pos,"%63s %d %d %d %d", type, &p2, &p3, &p4, &p5);
   //DEBUG fprintf(stderr,"%s:  %d %s %d %d\n", message, p1, type, p2, p3);
   if (!strcmp(type, "jpeg")) {
-    binaryType = BINARYMESSAGE_IMAGE;
-    image.size = p1;
+    this->type = BINARY_IMAGE;
+    image.size = size;
     image.width = p2;
     image.height = p3;
     image.imageFormat = IMAGE_JPEG;
-    image.data = (char * )buffer;
-    return;
+    return p;
   }
  
   if (!strcmp(type, "YCbCr")) {
-    binaryType = BINARYMESSAGE_IMAGE;
-    image.size = p1;
+    this->type = BINARY_IMAGE;
+    image.size = size;
     image.width = p2;
     image.height = p3;
     image.imageFormat = IMAGE_YCbCr;
-    image.data = (char * )buffer;
-    return;
+    return p;
   }
 
   if (!strcmp(type, "rgb")) {
-    binaryType = BINARYMESSAGE_IMAGE;
-    image.size = p1;
+    this->type = BINARY_IMAGE;
+    image.size = size;
     image.width = p2;
     image.height = p3;
     image.imageFormat = IMAGE_RGB;
-    image.data = (char * )buffer;
-    return;
+    return p;
   }
 
   if (!strcmp(type, "raw")) {
-    binaryType = BINARYMESSAGE_SOUND;
+    this->type = BINARY_SOUND;
     sound.soundFormat = SOUND_RAW;
-    sound.data = (char *)buffer;
-    sound.size = p1;
+    sound.size = size;
     sound.channels = p2;
     sound.rate = p3;
     sound.sampleSize = p4;
     sound.sampleFormat = (USoundSampleFormat) p5;
-    return;
+    return p;
   }
 
   if (!strcmp(type, "wav")) {
-    binaryType = BINARYMESSAGE_SOUND;
+    this->type = BINARY_SOUND;
     sound.soundFormat = SOUND_WAV;
-    sound.data = (char *)buffer;
-    sound.size = p1;
+    sound.size = size;
     sound.channels = p2;
     sound.rate = p3;
     sound.sampleSize = p4;
     sound.sampleFormat = (USoundSampleFormat) p5;
-    return;
+    return p;
   }
 
   //unknown binary
-  binary.message = message;
-  binaryType = BINARYMESSAGE_UNKNOWN;
-  binary.data = buffer;
-  binary.size = length;
-  return;
+  this->type = BINARY_UNKNOWN;
+  return p;
  }
 
 
-UMessage::UMessage(const UMessage &b, bool alocate)
+UMessage::UMessage(const UMessage &b)
   :client(b.client)
 {
-  alocated = alocate;
+
   timestamp = b.timestamp;
   tag = b.tag;
-  if (alocated)
-    tag = strdup(tag);
   type = b.type;
-  binaryType = b.binaryType;
+  
   switch(type) {
-  case MESSAGE_DOUBLE:
-    doubleValue = b.doubleValue;
-    break;
-  case MESSAGE_STRING:
-      stringValue = b.stringValue;
-      if (alocated)  
-        stringValue = strdup(stringValue);
-      break;
+    
   case MESSAGE_SYSTEM:
-    systemValue = b.systemValue;
-    if (alocated)
-      systemValue = strdup(b.systemValue);
-    break;
   case MESSAGE_ERROR:
-    errorValue = b.errorValue;
-    if (alocated)
-      errorValue = strdup(b.errorValue);
-    break;
-  case MESSAGE_UNKNOWN:
     message = b.message;
-    if (alocated)
-      message = strdup(message);
+  
     break;
-  case MESSAGE_LIST:
-    listSize = b.listSize;
-    listValue = (UValue *)malloc(listSize * sizeof(UValue));
-    memcpy(listValue, b.listValue, listSize * sizeof(UValue));
-    for (int i=0;i<listSize;i++)
-      if (listValue[i].type == MESSAGE_STRING) 
-	listValue[i].stringValue = strdup(listValue[i].stringValue);
-    
-    
-    break;
-
-  case MESSAGE_BINARY:
-    switch (binaryType) {
-    case BINARYMESSAGE_UNKNOWN:
-      binary = b.binary;
-      if (alocated) {
-        binary.data = malloc(binary.size);
-        memcpy(binary.data, b.binary.data, binary.size);
-      }
-      break;
-    case BINARYMESSAGE_SOUND:
-      sound = b.sound;
-      if (alocated) {
-        sound.data = (char *)malloc(sound.size);
-        memcpy(sound.data, b.sound.data, sound.size);
-      }
-      break;
-    case BINARYMESSAGE_IMAGE:
-      image = b.image;
-      if (alocated) {
-        image.data = (char *)malloc(image.size);
-        memcpy(image.data, b.image.data, image.size);
-      }
-      break;
-    }
+  default:
+    value = new UValue(*b.value);
     break;
   }
-  
 }
 
- UMessage::~UMessage() {
-   if ( (type == MESSAGE_STRING) && (stringValue!=0) )
-     free((void *)stringValue);
-   if (type == MESSAGE_LIST) {
-     for (int i=0;i<listSize;i++) 
-       if (listValue[i].type == MESSAGE_STRING)
-	 free (listValue[i].stringValue);
-     if (listValue)
-       free(listValue);
-   }
-   if (alocated) {
-     free(tag);
-      switch(type) {
-    
-      case MESSAGE_SYSTEM:
-	if (alocated)
-	  free(systemValue);	    
-	break;
 
-      case MESSAGE_UNKNOWN:
-	if (alocated)
-	  free(message);
-	break;
-
-      case MESSAGE_LIST:
-
-	
-	break;
-      case MESSAGE_BINARY:
-	switch (binaryType) {
-	case BINARYMESSAGE_UNKNOWN:
-	  if (alocated)
-	    free(binary.data);
-	  break;
-     
-	case BINARYMESSAGE_SOUND:
-	  if (alocated)
-	    free(sound.data);
-	  break;
-	case BINARYMESSAGE_IMAGE:
-	  if (alocated)
-	    free(image.data);
-	  break;
-	}
-	break;
-      }
-   }
- }
-
-
-UValue::UValue() : type(MESSAGE_UNKNOWN) {}
-UValue::UValue(const UValue &v) 
-{
-  type = v.type;
-  switch (type) {  
-  case MESSAGE_DOUBLE:
-    doubleValue = v.doubleValue;
-    break;
-  case MESSAGE_STRING:
-    stringValue = strdup(v.stringValue);
-    break;
-  };
+UMessage::~UMessage() {
+if (type != MESSAGE_SYSTEM && type != MESSAGE_ERROR)
+  delete value;
 }
 
-UValue::UValue(double v) : doubleValue(v), type(MESSAGE_DOUBLE)  {}
-UValue::UValue(char * v) : stringValue(v), type(MESSAGE_STRING)  {
-    stringValue = strdup(stringValue);
-}
-UValue::UValue(string v) : type(MESSAGE_STRING) {
+
+UValue::UValue() : type(DATA_VOID) {}
+
+
+UValue::UValue(double v) : val(v), type(DATA_DOUBLE)  {}
+UValue::UValue(char * v) : stringValue(new string(v)), type(DATA_STRING)  {}
+UValue::UValue(const string &v) : type(DATA_STRING), stringValue(new string(v)) {}
  
-  stringValue = strdup(v.c_str());
-}
- 
-UValue::UValue(UBinary &b) : type(MESSAGE_BINARY), binaryType(BINARYMESSAGE_UNKNOWN) {
-  binary = b; 
+UValue::UValue(const UBinary &b) : type(DATA_BINARY){
+  binary = new UBinary(b); 
 }
 
 
 UValue::~UValue() {
-  if (type == MESSAGE_STRING) free(stringValue);
-  if (type == MESSAGE_BINARY) {
-    switch (binaryType) {
-    case BINARYMESSAGE_UNKNOWN:
-      if (binary.data)
-	free(binary.data);
-      if (binary.message)
-	free(binary.message);
-      break;
-      
-    case BINARYMESSAGE_SOUND:
-      if (sound.data)
-	free(sound.data);
-      break;
-    case BINARYMESSAGE_IMAGE:
-      if (image.data)
-	free(image.data);
-      break;
-    } 
+  switch(type) {
+  case DATA_STRING:
+    delete stringValue;
+  case DATA_BINARY:
+    if (binary)
+      delete binary;
+    break;
+  case DATA_LIST:
+    if (array)
+      delete array;
+    break;
+  case DATA_OBJECT:
+    if (object)
+      delete object;
   }
 }
 
 UValue::operator double() {
   double v=0;
   switch( type) {
-  case MESSAGE_DOUBLE:
-    return doubleValue;
+  case DATA_DOUBLE:
+    return val;
     break;
-  case MESSAGE_STRING:
-    sscanf(stringValue,"%lf", &v);
+  case DATA_STRING:
+    sscanf(stringValue->c_str(),"%lf", &v);
     return v;
     break;
   };
@@ -1726,82 +1750,237 @@ UValue::operator double() {
 UValue::operator string() {
   char str[254];
    switch( type) {
-   case MESSAGE_DOUBLE:
-     sprintf(str,"%lf",doubleValue);
+   case DATA_DOUBLE:
+     sprintf(str,"%lf",val);
      return str;
      break;
-   case MESSAGE_STRING:
-     return stringValue;
+   case DATA_STRING:
+     return *stringValue;
      break;
    };
 };
 
 std::ostream & operator <<(std::ostream &s, const UValue &v) {
   switch( v.type) {
-  case MESSAGE_DOUBLE:
-    s<< v.doubleValue;
+  case DATA_DOUBLE:
+    s<< v.val;
     break;
-  case MESSAGE_STRING:
-    s<< '"'<<v.stringValue<<'"';
+  case DATA_STRING:
+    s<< '"'<<*v.stringValue<<'"';
     break;
-  case MESSAGE_BINARY:
-    switch( v.binaryType) {
-    case BINARYMESSAGE_UNKNOWN:
-      s<<"BIN "<<v.binary.size<<" "<<v.binary.message<<";";
-      s.write((char *)v.binary.data, v.binary.size);
+  case DATA_BINARY:
+    s<<"BIN "<<v.binary->size<<" "<<v.binary->message<<";";
+    s.write((char *)v.binary->data, v.binary->size);
+    break;
+  case DATA_LIST:
+    {
+      s<<"[";
+      int sz = v.array->array.size();
+      int p = 0;
+      for (list<UValue * >::const_iterator it = v.array->array.begin(); it != v.array->array.end(); it++) {
+	s << *(*it);
+	if (++p != sz)
+	  s<< " , ";
+      }
+      s<< "]";
     }
     break;
-  };
+  case DATA_OBJECT:
+    {
+      s<<"OBJ "<<v.object->refName<<" [";
+      int sz = v.object->array.size();
+      int p = 0;
+      for (list<UNamedValue>::const_iterator it = v.object->array.begin(); it != v.object->array.end(); it++) {
+	s << it->name<<":"<< *(it->val);
+	if (++p != sz)
+	  s<< " , ";
+      }
+      s<< "]"; 
+    }
+  
+    break;
+  }
   return s;
 }
 
 
 void UValue::send(UAbstractClient *cl) {
   switch( type) {
-  case MESSAGE_DOUBLE:
-    cl->send("%ld",doubleValue);
+  case DATA_DOUBLE:
+    cl->send("%ld",val);
     break;
-  case MESSAGE_STRING:
-    cl->send("%s",stringValue);
+  case DATA_STRING:
+    cl->send("%s",stringValue->c_str());
     break;
-  case MESSAGE_BINARY:
-    switch( binaryType) {
-    case BINARYMESSAGE_UNKNOWN:
-      cl->sendBin(binary.data, binary.size, "BIN %d %s;", binary.size, binary.message);
+  case DATA_BINARY:
+    cl->sendBin(binary->data, binary->size, "BIN %d %s;", binary->size, binary->message.c_str());      
+    break;
+  case DATA_LIST:
+    {
+      (*cl)<<"[";
+      int sz = array->array.size();
+      int p = 0;
+      for (list<UValue * >::const_iterator it = array->array.begin(); it != array->array.end(); it++) {
+	(*it)->send(cl);
+	if (++p != sz)
+	  (*cl)<< " , ";
+      }
+      (*cl)<< "]";
     }
+    break;
+  case DATA_OBJECT:
+    {
+      (*cl)<<"OBJ "<<object->refName<<" [";
+      int sz = object->array.size();
+      int p = 0;
+      for (list<UNamedValue>::const_iterator it = object->array.begin(); it != object->array.end(); it++) {
+	(*cl) << it->name<<":";
+	it->val->send(cl);;
+	if (++p != sz)
+	  (*cl)<< " , ";
+      }
+      (*cl)<< "]"; 
+    }  
     break;
   };
 }
 
 
 UValue& UValue::operator= (const UValue& v)
-{
+{ //TODO: optimize
   if (this == &v) return *this;
-  
-  if (type == MESSAGE_STRING) free(stringValue);
+  switch(type) {
+  case DATA_STRING:
+    if (stringValue)
+      delete stringValue;
+  case DATA_BINARY:
+    if (binary)
+      delete binary;
+    break;
+  case DATA_LIST:
+    if (array)
+      delete array;
+    break;
+  case DATA_OBJECT:
+    if (object)
+      delete object;
+  }
   
   type = v.type;
   switch (type) {  
-  case MESSAGE_DOUBLE:
-    doubleValue = v.doubleValue;
+  case DATA_DOUBLE:
+    val = v.val;
     break;
-  case MESSAGE_STRING:
-    stringValue = strdup(v.stringValue);
+  case DATA_STRING:
+    stringValue = new string(*v.stringValue);
     break;
-  case MESSAGE_BINARY:
-    switch( binaryType) {
-    case BINARYMESSAGE_UNKNOWN:
-      binary.data = (char *)malloc(v.binary.size);
-      memcpy(binary.data, v.binary.data, v.binary.size);
-      binary.size = v.binary.size;
-      binary.message = strdup(v.binary.message);
-      break;
-    }
+  case DATA_BINARY:
+    binary = new UBinary(*v.binary); 
+    break;
+  case DATA_LIST:
+    array = new UArray(*v.array);
+    break;
+  case DATA_OBJECT:
+    object = new UNamedArray(*v.object);
     break;
   };
   return *this;
 }
 
+
+UValue::UValue(const UValue &v) {
+  type = DATA_VOID;
+  (*this) = v;
+}
+
+
+UBinary::UBinary() {
+  data = 0;
+}
+
+UBinary::~UBinary() {
+  if (data)
+    free(data);
+}
+
+UBinary::UBinary(const UBinary &b) {
+  type = BINARY_NONE;
+  data = 0;
+  (*this) = b;
+}
+
+UBinary & UBinary::operator = (const UBinary &b) {
+  if (data)
+    free(data);
+
+  type = b.type;
+  message = b.message;
+  size = b.size;
+  switch(type) {
+  case BINARY_IMAGE:
+    image = b.image;
+    break;
+  case BINARY_SOUND:
+    sound = b.sound;
+    break;
+  }
+  data = malloc(size);
+  memcpy(data, b.data, b.size);
+}
+
+
+UArray::UArray() {}
+
+UArray::UArray(const UArray &b) {
+  (*this) = b;
+}
+
+UArray & UArray::operator = (const UArray &b) {
+  while (!array.empty()) {
+    delete array.front();
+    array.pop_front();
+  }
+
+  for (list<UValue*>::const_iterator it= b.array.begin(); it !=b.array.end();it++)
+    array.push_back(new UValue(**it));
+
+  return (*this);
+}
+
+UArray::~UArray() {
+  while (!array.empty()) {
+    delete array.front();
+    array.pop_front();
+  }
+}
+
+
+
+
+UNamedArray::UNamedArray() {}
+
+UNamedArray::UNamedArray(const UNamedArray &b) {
+  (*this) = b;
+}
+
+UNamedArray & UNamedArray::operator = (const UNamedArray &b) {
+  while (!array.empty()) {
+    delete array.front().val;
+    array.pop_front();
+  }
+
+  for (list<UNamedValue>::const_iterator it= b.array.begin(); it != b.array.end();it++)
+    array.push_back(UNamedValue(it->name, new UValue(*(it->val))));
+
+  return (*this);
+}
+
+UNamedArray::~UNamedArray() {
+  while (!array.empty()) {
+    delete array.front().val;
+    array.pop_front();
+  }
+}
 
 
 

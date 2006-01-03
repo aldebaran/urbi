@@ -62,21 +62,25 @@ typedef unsigned int UCallbackID;
 class UCallbackList;
 #define UINVALIDCALLBACKID 0
 
+enum UDataType {
+  DATA_DOUBLE,
+  DATA_STRING,
+  DATA_BINARY,
+  DATA_LIST,
+  DATA_OBJECT,
+  DATA_VOID
+};
 enum UMessageType {
-  MESSAGE_DOUBLE,
-  MESSAGE_STRING,
-  MESSAGE_BINARY,
   MESSAGE_SYSTEM,
   MESSAGE_ERROR,
-  MESSAGE_LIST,
-  MESSAGE_UNKNOWN
+  MESSAGE_DATA
 };
 
-enum UBinaryMessageType {
-  BINARYMESSAGE_NONE,
-  BINARYMESSAGE_UNKNOWN,
-  BINARYMESSAGE_IMAGE,
-  BINARYMESSAGE_SOUND
+enum UBinaryType {
+  BINARY_NONE,
+  BINARY_UNKNOWN,
+  BINARY_IMAGE,
+  BINARY_SOUND
 };
 
 enum UImageFormat {
@@ -97,6 +101,17 @@ enum USoundFormat {
 enum USoundSampleFormat {
   SAMPLE_SIGNED=1,
   SAMPLE_UNSIGNED=2
+};
+
+
+
+//internal use: unparsed binary data
+class BinaryData {
+ public:
+  void * data;
+  int size;
+  BinaryData() {}
+  BinaryData(void *d, int s):data(d), size(s) {}
 };
 
 
@@ -128,42 +143,90 @@ class USound {
 /// Class containing binary data sent by the server, that could not be furtehr interpreted.
 class UBinary {
  public:
-  void                  *data;             ///< binary data
-   char                  *message;         ///< message as sent by the server
+  UBinaryType             type;
+  union {
+    void                  *data;             ///< binary data
+    UImage                image;
+    USound                sound;
+  };
+   string                message;         ///< message as sent by the server
    int                   size;
+
+
+   UBinary();
+   UBinary(const UBinary &b);
+   UBinary & operator = (const UBinary &b);
+   ~UBinary();
+   int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
 };
 
 class UAbstractClient; 
+class UValue;
+
+class UArray {
+ public:
+  list<UValue *> array;
+  UArray();
+  UArray(const UArray &b);
+  UArray & operator = (const UArray &b);
+  ~UArray();
+};
+
+class UNamedValue {
+ public:
+  UValue *val;
+  string name;
+  UNamedValue(string n, UValue *v):name(n), val(v) {}
+  UNamedValue() {};
+};
+
+class UNamedArray {
+ public:
+  string refName;
+  list<UNamedValue> array;
+  UNamedArray();
+  UNamedArray(const UNamedArray &b);
+  UNamedArray & operator = (const UNamedArray &b);
+  ~UNamedArray();
+};
+
 class UValue {
  public:
-  UMessageType       type; //only simple types allowed
-  UBinaryMessageType binaryType;
+  UDataType       type; 
+
   union {
-    double doubleValue;
-    char * stringValue;
-    USound sound;
-    UImage image;
-    UBinary binary;
+    double         val;
+    string         *stringValue;
+    UBinary        *binary;
+    UArray         *array;
+    UNamedArray    *object;
   };
   
   UValue();
   UValue(const UValue&);
   explicit UValue(double doubleValue);
   explicit UValue(char * val);
-  explicit UValue(string str);
+  explicit UValue(const string &str);
+  explicit UValue(const UBinary &b);
   UValue(UBinary &bin);
   operator double();
   operator string();
   operator int() {return (int)(double)(*this);}
+  
   UValue& operator=(const UValue&);
   
   ~UValue();  
+  
+  ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
+  int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
 
   ///send the value over an urbi connection, without any prefix or terminator
   void send(UAbstractClient * cl);
   string associatedVarName; // (V  1.0) used to cast to UVar.
 };
   
+
+
 std::ostream & operator <<(std::ostream &s, const UValue &v);
 /// Class containing all informations related to an URBI message.
 class UMessage {
@@ -171,53 +234,23 @@ class UMessage {
   
   UAbstractClient    &client;       ///< connection from which originated the message
   int                timestamp;     ///< server-side timestamp
-  char               *tag;          ///< associated tag
- 
+  string             tag;          ///< associated tag
   
   UMessageType       type;
-  UBinaryMessageType binaryType;
+  
+  UValue             *value;
+  string             message;
   
   
-
-  union {
-    ///float information
-    double        doubleValue;
-
-    ///string information
-    char          *stringValue; 
-    
-    ///system information
-    char          *systemValue;
-
-    ///error message
-    char          *errorValue;
-
-    //list message
-    struct {
-      int listSize;
-      UValue * listValue; //vector of values
-    };
-    ///unknwon message
-    char          *message;
-
-    USound sound;
-    UImage image;
-    UBinary binary;
-    
-  };
-  
-  /// This constructor steals the pointers, no copy is made
+  /// Parser constructor
   UMessage(UAbstractClient & client, int timestamp,  char *tag, char *message, 
-           void *buffer=NULL, int length=0);
-
+           list<BinaryData> bins);
   /// If alocate is true, everything is copied, eles pointers are stolen 
-  UMessage(const UMessage &source, bool alocate=true);
+  UMessage(const UMessage &source);
 
   /// Free everything if data was copied, doesn't free anything otherwise
   ~UMessage();
 
- private: 
-  bool alocated;
 };
 
 
@@ -418,12 +451,19 @@ class UAbstractClient : public std::ostream
   
 
  private:
+  list<BinaryData> bins;                 ///< BIN object for this command
   void           *binaryBuffer;          ///< Temporary storage of binary data.
   int            binaryBufferPosition;   ///< Current position in binaryBuffer.
   int            binaryBufferLength;     ///< Size of binaryBuffer.
+
+  int            parsePosition;          ///< Position of parse in recvBuffer
+  bool           inString;               ///< True if preparsing is in a string
+  int            nBracket;               ///< Current depth of bracket
+  char           *currentCommand;        ///< Start of command, after [ts:tag] header
+
   int            endOfHeaderPosition;    ///< Position of end of header.
   char           currentTag[URBI_MAX_TAG_LENGTH];  
-  char           *currentCommand;                 
+           
   int            currentTimestamp;
 
 
