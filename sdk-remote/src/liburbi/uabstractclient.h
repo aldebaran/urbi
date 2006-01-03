@@ -141,16 +141,15 @@ class UValue {
     double doubleValue;
     char * stringValue;
   };
-  string associatedVarName; // used to cast to UVar, necessary.
-
+  
   UValue();
   UValue(const UValue&);
   explicit UValue(double doubleValue);
   explicit UValue(char * val);
   explicit UValue(string str);
-  operator double() const;
-  operator string() const;
-  operator int() const {return (int)(double)(*this);}
+  operator double();
+  operator string();
+  operator int() {return (int)(double)(*this);}
   UValue& operator=(const UValue&);
   
   ~UValue();  

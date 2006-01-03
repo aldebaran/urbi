@@ -42,16 +42,6 @@ namespace URBI {
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
-
-  template <>
-  UVar cast(UValue v)
-  { 
-   /* UVar result;
-    result.set_value(v);
-    result.set_name(v.associatedVarName);
-    return result; */
-    return (UVar)v;
-  }
 }
 
 	
@@ -142,6 +132,7 @@ URBI::dispatcher(const UMessage &msg)
 
       // UEM_ASSIGNVALUE
       else {
+	cout << msg.listValue[0] << endl;
         if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_ASSIGNVALUE) {
           
           if (varmap.find((string)msg.listValue[1]) != varmap.end()) {

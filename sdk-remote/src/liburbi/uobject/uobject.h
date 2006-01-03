@@ -133,7 +133,7 @@ URBI {
   
 
     // internal
-    void __update(const UValue&);
+    void __update(UValue&);
 
   private:    
 

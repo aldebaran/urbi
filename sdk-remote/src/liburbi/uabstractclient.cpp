@@ -1657,11 +1657,10 @@ UMessage::UMessage(const UMessage &b, bool alocate)
  }
 
 
-UValue::UValue() : type(MESSAGE_UNKNOWN) , associatedVarName("") {}
+UValue::UValue() : type(MESSAGE_UNKNOWN) {}
 UValue::UValue(const UValue &v) 
 {
   type = v.type;
-  associatedVarName = v.associatedVarName;
   switch (type) {  
   case MESSAGE_DOUBLE:
     doubleValue = v.doubleValue;
@@ -1672,11 +1671,11 @@ UValue::UValue(const UValue &v)
   };
 }
 
-UValue::UValue(double v) : doubleValue(v), type(MESSAGE_DOUBLE) , associatedVarName("")  {}
-UValue::UValue(char * v) : stringValue(v), type(MESSAGE_STRING) , associatedVarName("")  {
+UValue::UValue(double v) : doubleValue(v), type(MESSAGE_DOUBLE)  {}
+UValue::UValue(char * v) : stringValue(v), type(MESSAGE_STRING)  {
     stringValue = strdup(stringValue);
 }
-UValue::UValue(string v) : type(MESSAGE_STRING) , associatedVarName("")  {
+UValue::UValue(string v) : type(MESSAGE_STRING) {
  
   stringValue = strdup(v.c_str());
 }
@@ -1684,7 +1683,7 @@ UValue::~UValue() {
   if (type == MESSAGE_STRING) free(stringValue);
 }
 
-UValue::operator double() const {
+UValue::operator double() {
   double v=0;
   switch( type) {
   case MESSAGE_DOUBLE:
@@ -1699,7 +1698,7 @@ UValue::operator double() const {
 };
 
 
-UValue::operator string() const {
+UValue::operator string() {
   char str[254];
    switch( type) {
    case MESSAGE_DOUBLE:
@@ -1731,7 +1730,6 @@ UValue& UValue::operator= (const UValue& v)
   if (type == MESSAGE_STRING) free(stringValue);
   
   type = v.type;
-  associatedVarName = v.associatedVarName;
   switch (type) {  
   case MESSAGE_DOUBLE:
     doubleValue = v.doubleValue;
