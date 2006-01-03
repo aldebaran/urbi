@@ -1679,8 +1679,33 @@ UValue::UValue(string v) : type(MESSAGE_STRING) {
  
   stringValue = strdup(v.c_str());
 }
+ 
+UValue::UValue(UBinary &b) : type(MESSAGE_BINARY), binaryType(BINARYMESSAGE_UNKNOWN) {
+  binary = b; 
+}
+
+
 UValue::~UValue() {
   if (type == MESSAGE_STRING) free(stringValue);
+  if (type == MESSAGE_BINARY) {
+    switch (binaryType) {
+    case BINARYMESSAGE_UNKNOWN:
+      if (binary.data)
+	free(binary.data);
+      if (binary.message)
+	free(binary.message);
+      break;
+      
+    case BINARYMESSAGE_SOUND:
+      if (sound.data)
+	free(sound.data);
+      break;
+    case BINARYMESSAGE_IMAGE:
+      if (image.data)
+	free(image.data);
+      break;
+    } 
+  }
 }
 
 UValue::operator double() {
@@ -1719,9 +1744,35 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
   case MESSAGE_STRING:
     s<< '"'<<v.stringValue<<'"';
     break;
+  case MESSAGE_BINARY:
+    switch( v.binaryType) {
+    case BINARYMESSAGE_UNKNOWN:
+      s<<"BIN "<<v.binary.size<<" "<<v.binary.message<<";";
+      s.write((char *)v.binary.data, v.binary.size);
+    }
+    break;
   };
   return s;
 }
+
+
+void UValue::send(UAbstractClient *cl) {
+  switch( type) {
+  case MESSAGE_DOUBLE:
+    cl->send("%ld",doubleValue);
+    break;
+  case MESSAGE_STRING:
+    cl->send("%s",stringValue);
+    break;
+  case MESSAGE_BINARY:
+    switch( binaryType) {
+    case BINARYMESSAGE_UNKNOWN:
+      cl->sendBin(binary.data, binary.size, "BIN %d %s;", binary.size, binary.message);
+    }
+    break;
+  };
+}
+
 
 UValue& UValue::operator= (const UValue& v)
 {
@@ -1737,9 +1788,20 @@ UValue& UValue::operator= (const UValue& v)
   case MESSAGE_STRING:
     stringValue = strdup(v.stringValue);
     break;
+  case MESSAGE_BINARY:
+    switch( binaryType) {
+    case BINARYMESSAGE_UNKNOWN:
+      binary.data = (char *)malloc(v.binary.size);
+      memcpy(binary.data, v.binary.data, v.binary.size);
+      binary.size = v.binary.size;
+      binary.message = strdup(v.binary.message);
+      break;
+    }
+    break;
   };
   return *this;
 }
+
 
 
 

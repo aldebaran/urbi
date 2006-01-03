@@ -137,9 +137,13 @@ class UAbstractClient;
 class UValue {
  public:
   UMessageType       type; //only simple types allowed
+  UBinaryMessageType binaryType;
   union {
     double doubleValue;
     char * stringValue;
+    USound sound;
+    UImage image;
+    UBinary binary;
   };
   
   UValue();
@@ -147,14 +151,19 @@ class UValue {
   explicit UValue(double doubleValue);
   explicit UValue(char * val);
   explicit UValue(string str);
+  UValue(UBinary &bin);
   operator double();
   operator string();
   operator int() {return (int)(double)(*this);}
   UValue& operator=(const UValue&);
   
   ~UValue();  
-};
 
+  ///send the value over an urbi connection, without any prefix or terminator
+  void send(UAbstractClient * cl);
+  string associatedVarName; // (V  1.0) used to cast to UVar.
+};
+  
 std::ostream & operator <<(std::ostream &s, const UValue &v);
 /// Class containing all informations related to an URBI message.
 class UMessage {

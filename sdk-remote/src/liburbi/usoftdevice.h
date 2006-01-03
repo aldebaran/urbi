@@ -31,6 +31,26 @@ template<class C, class R> DeviceCallback & devicecallback(C &inst, R (C::*func)
   return *new DeviceCallback0<C,R>(inst, func);
 }
 
+template<class R> class DeviceCallbackR0: public DeviceCallback {
+ public:
+  DeviceCallbackR0(R (*func)()) :  func(func) {};
+  virtual UValue call(const UMessage & msg) {
+    if (msg.listSize != 1) {
+      msg.client.printf("Wrong argument count %d (expected %d) for function call\n",msg.listSize-1,0);
+      return UValue(0);
+    }
+    R r = (*func)();
+    return UValue(r);
+  }
+  virtual int nArgs() {return 0;}
+ private: 
+  R (*func)();
+};
+
+template<class R> DeviceCallback & devicecallback(R (*func)()) {
+  return *new DeviceCallbackR0<R>(func);
+}
+
 template<class C, class R, class P1> class DeviceCallback1: public DeviceCallback {
  public:
   DeviceCallback1(C &inst, R (C::*func)(P1)) : instance(inst), func(func) {};
@@ -53,6 +73,27 @@ template<class C, class R, class P1> DeviceCallback & devicecallback(C &inst, R 
   return *new DeviceCallback1<C,R,P1>(inst, func);
 }
 
+
+template<class R, class P1> class DeviceCallbackR1: public DeviceCallback {
+ public:
+  DeviceCallbackR1(R (*func)(P1)) :  func(func) {};
+  virtual UValue call(const UMessage & msg) {
+    if (msg.listSize != 2) {
+      msg.client.printf("Wrong argument count %d (expected %d) for function call\n",msg.listSize-1,1);
+      return UValue(0.0);
+    }
+    typename ElementTraits<P1>::Element  p1 = msg.listValue[1];
+    R r = (*func)(p1);
+    return UValue(r);
+  }
+  virtual int nArgs() {return 1;}
+ private: 
+  R (*func)(P1);
+};
+
+template<class R, class P1> DeviceCallback & devicecallback(R (*func)(P1)) {
+  return *new DeviceCallbackR1<R,P1>(func);
+}
 
 
 template<class C, class R, class P1, class P2> class DeviceCallback2: public DeviceCallback {
@@ -91,7 +132,7 @@ class DeviceCallbackWrapper {
       msg.client.printf("Function call expected list message type\n");
       return URBI_CONTINUE;
     }
-    //debug dump
+#if 0  //debug dump
     msg.client.printf("%d %s %d [", msg.timestamp, msg.tag, msg.listSize);
     for (int i=0;i<msg.listSize;i++)
       if (msg.listValue[i].type == MESSAGE_DOUBLE)
@@ -99,7 +140,7 @@ class DeviceCallbackWrapper {
       else
 	msg.client.printf("'%s', ", msg.listValue[i].stringValue);
     msg.client.printf("]\n");    
-    //end dump
+#endif    //end dump
 
     if (msg.listSize<1) {
       msg.client.printf("Function call expected at least one argument\n");
@@ -108,7 +149,9 @@ class DeviceCallbackWrapper {
     UValue v = cb->call(msg);
 
     
-    msg.client  <<msg.listValue[0].stringValue<<" = "<<v<<urbi::semicolon;
+    msg.client  <<msg.listValue[0].stringValue<<" = ";
+    v.send(&msg.client);
+     msg.client <<urbi::semicolon;
 
     return URBI_CONTINUE;
   }
@@ -143,7 +186,7 @@ inline UCallbackID registerDeviceFunction(UAbstractClient &cli, const char * dev
   cl<<" return result;};\n";
 
 
-  std::cerr << "code: "<<cl.str()<<std::endl;
+  //  std::cerr << "code: "<<cl.str()<<std::endl;
   cli << cl.str(); 
   return id;
 }
