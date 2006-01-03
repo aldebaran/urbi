@@ -67,7 +67,7 @@ enum UCallbackType
 {
   UCB_,
   UCB_C,
-}
+};
 
 
 
@@ -1657,20 +1657,34 @@ UMessage::UMessage(const UMessage &b, bool alocate)
  }
 
 
-UValue::UValue() : type(MESSAGE_UNKNOWN) {}
-UValue::UValue(double v) : doubleValue(v), type(MESSAGE_DOUBLE) {}
-UValue::UValue(char * v) : stringValue(v), type(MESSAGE_STRING) {
+UValue::UValue() : type(MESSAGE_UNKNOWN) , associatedVarName("") {}
+UValue::UValue(const UValue &v) 
+{
+  type = v.type;
+  associatedVarName = v.associatedVarName;
+  switch (type) {  
+  case MESSAGE_DOUBLE:
+    doubleValue = v.doubleValue;
+    break;
+  case MESSAGE_STRING:
+    stringValue = strdup(v.stringValue);
+    break;
+  };
+}
+
+UValue::UValue(double v) : doubleValue(v), type(MESSAGE_DOUBLE) , associatedVarName("")  {}
+UValue::UValue(char * v) : stringValue(v), type(MESSAGE_STRING) , associatedVarName("")  {
     stringValue = strdup(stringValue);
 }
-UValue::UValue(string v) : type(MESSAGE_STRING) {
+UValue::UValue(string v) : type(MESSAGE_STRING) , associatedVarName("")  {
  
   stringValue = strdup(v.c_str());
 }
 UValue::~UValue() {
-
+  if (type == MESSAGE_STRING) free(stringValue);
 }
 
-UValue::operator double() {
+UValue::operator double() const {
   double v=0;
   switch( type) {
   case MESSAGE_DOUBLE:
@@ -1685,7 +1699,7 @@ UValue::operator double() {
 };
 
 
-UValue::operator string() {
+UValue::operator string() const {
   char str[254];
    switch( type) {
    case MESSAGE_DOUBLE:
@@ -1709,6 +1723,27 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
   };
   return s;
 }
+
+UValue& UValue::operator= (const UValue& v)
+{
+  if (this == &v) return *this;
+  
+  if (type == MESSAGE_STRING) free(stringValue);
+  
+  type = v.type;
+  associatedVarName = v.associatedVarName;
+  switch (type) {  
+  case MESSAGE_DOUBLE:
+    doubleValue = v.doubleValue;
+    break;
+  case MESSAGE_STRING:
+    stringValue = strdup(v.stringValue);
+    break;
+  };
+  return *this;
+}
+
+
 
 namespace urbi {
 UClient * defaultClient=0;

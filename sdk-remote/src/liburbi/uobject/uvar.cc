@@ -91,14 +91,14 @@ UVar::operator = (string s)
 
 //! UVar update
 void
-UVar::__update(UValue& v)
+UVar::__update(const UValue& v)
 {  
   cout << "  Variable " << name << " updated to : ";
   if (v.type == MESSAGE_DOUBLE)
     cout << (double)v << endl;
   if (v.type == MESSAGE_STRING)
     cout << (string)v << endl;
-
+    
   value = v;
   value.associatedVarName = name;
 

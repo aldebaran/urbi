@@ -46,10 +46,11 @@ namespace URBI {
   template <>
   UVar cast(UValue v)
   { 
-    UVar result;
+   /* UVar result;
     result.set_value(v);
     result.set_name(v.associatedVarName);
-    return result; 
+    return result; */
+    return (UVar)v;
   }
 }
 
