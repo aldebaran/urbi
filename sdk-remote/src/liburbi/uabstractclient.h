@@ -207,7 +207,8 @@ class UValue {
     string         *stringValue;
     UBinary        *binary;
     UList          *list;
-    UObjectStruct    *object;
+    UObjectStruct  *object;
+    void           *storage; // internal 
   };
   
   UValue();

@@ -1,6 +1,6 @@
 INCLUDES = -I$(top_srcdir)/src/liburbi -I$(top_srcdir)/src/liburbi/uobject
 AM_LDFLAGS = -L$(top_srcdir)/src/liburbi -L$(top_srcdir)/src/liburbi/uobject
-AM_CXXFLAGS = -pthread
+AM_CXXFLAGS = -pthread -Wno-deprecated
 
 bin_PROGRAMS = ball
 

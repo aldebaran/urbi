@@ -1,5 +1,5 @@
 INCLUDES = -I$(top_srcdir)/src/liburbi
-AM_CXXFLAGS = -pthread
+AM_CXXFLAGS = -pthread -Wno-deprecated
 lib_LIBRARIES = libuobject.a
 libuobject_a_SOURCES = uobject.cc uobject.h uobjectdata.cc uobjectdata.h uvar.cc usharedexternal.h
 

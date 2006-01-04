@@ -1,6 +1,6 @@
 /*! \file ball.cc
  *******************************************************************************
-
+  
  File: ball.cc\n
  Implementation of the Ball class.
   
@@ -17,7 +17,7 @@
  For more information, comments, bug reports: http://www.urbiforge.com
 
  **************************************************************************** */
-
+ 
 #include "ball.h"
 
 /*************************************/
@@ -43,7 +43,7 @@ ball::ball() :
   UFunctionInit (ball,myfun);
   UFunctionInit (ball,myfun1);
   UEventInit    (ball,myevent);
-  
+   
   UMonitor(x);
   UMonitor(x, &ball::stuff);
   UMonitor(y, &ball::stuff2);
@@ -60,7 +60,7 @@ ball::~ball()
 }
 
 string
-ball::myfun   (int &n, string s)
+ball::myfun   (int n, string s)
 {  
   return("hello!");
 }

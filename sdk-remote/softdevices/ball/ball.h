@@ -31,7 +31,7 @@ class ball : public UObject
   UVar x;
   UVar y;
 
-  string myfun   (int&,string);
+  string myfun   (int,string);
   int    myfun1  (double);
   void   myevent ();
 

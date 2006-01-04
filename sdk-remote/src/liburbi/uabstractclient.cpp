@@ -1727,7 +1727,7 @@ std::ostream & operator <<(std::ostream &s, const UMessage &m) {
   }
   return s;
 }
-UValue::UValue() : type(DATA_VOID) {}
+UValue::UValue() : type(DATA_VOID), storage(0) {}
 
 
 UValue::UValue(double v) : val(v), type(DATA_DOUBLE)  {}
