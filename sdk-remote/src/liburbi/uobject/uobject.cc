@@ -35,16 +35,27 @@ namespace URBI {
   list<baseURBIStarter*> objectlist;
   const string externalModuleTag = "__ExternalMessage__";
 
-  hash_map<string,UVar* > varmap;
+  UVarTable varmap;
   UTable functionmap;
   UTable monitormap;
   UTable eventmap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
+
+  
+  template <>
+  UVar& cast(UValue &v) {
+    //cout << "I've been casted" << endl;
+    //UVar* tt=new UVar("tototo");
+    //return *tt;
+
+    
+  };
+
 }
 
-	
+
 // **************************************************************************	
 //! UGenericCallback constructor.
 UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
@@ -59,7 +70,7 @@ UGenericCallback::UGenericCallback(string type, string name, UTable &t) :
   name(name) 
 {
   t[this->name].push_back(this);
-  URBI() << "external " << type << " " << name <<";";    
+  URBI() << "external " << type << " " << name <<";";
 };
 
 UGenericCallback::~UGenericCallback()
@@ -80,21 +91,21 @@ int voidfun() {};
 
 //! Generic UVar monitoring without callback
 void
-URBI::UMonitor(UVar v)
+URBI::UMonitor(UVar &v)
 {
   URBI::UMonitor(v,&voidfun);
 }
 
 //! UVar monitoring with callback
 void 
-URBI::UMonitor(UVar v, int (*fun) ())
+URBI::UMonitor(UVar &v, int (*fun) ())
 {  
   createUCallback("var",fun,v.get_name(), monitormap);
 }
 
 //! UVar monitoring with callback
 void 
-URBI::UMonitor(UVar v, int (*fun) (UVar))
+URBI::UMonitor(UVar &v, int (*fun) (UVar&))
 {
   createUCallback("var",fun,v.get_name(), monitormap);
 }
@@ -132,15 +143,26 @@ URBI::dispatcher(const UMessage &msg)
 
       // UEM_ASSIGNVALUE
       else {
-	cout << msg.listValue[0] << endl;
-        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_ASSIGNVALUE) {
-          
-          if (varmap.find((string)msg.listValue[1]) != varmap.end()) {
-  	    UVar* tmpvar = varmap[(string)msg.listValue[1]];
-            tmpvar->__update(msg.listValue[2]);
+	if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_ASSIGNVALUE) {
+
+	  UVarTable::iterator varmapfind = varmap.find((string)msg.listValue[1]);
+          if (varmapfind != varmap.end()) {
+
+	    for (list<UVar*>::iterator it = varmapfind->second.begin();
+		 it != varmapfind->second.end();
+		 it++) 	    	      
+	      (*it)->__update(msg.listValue[2]);	    
 	  }
-          else
-            msg.client.printf("Soft Device Error: %s var unknown.\n",((string)msg.listValue[1]).c_str());
+	  
+	  UTable::iterator monitormapfind = monitormap.find((string)msg.listValue[1]);
+	  if (monitormapfind != monitormap.end()) {
+
+	    for (list<UGenericCallback*>::iterator cbit = monitormapfind->second.begin();
+	         cbit != monitormapfind->second.end();
+		 cbit++)
+	      // test of return value here
+	      (*cbit)->__evalcall(&msg.listValue[2]);
+	  }	 	  
         }
         
       // UEM_EVALFUNCTION

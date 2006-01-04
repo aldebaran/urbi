@@ -26,24 +26,24 @@ using namespace URBI;
 		
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(string varname, bool writeonly)
+UVar::UVar(string varname)
 {
   name = varname;  
-  __init(writeonly);
+  __init();
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, string varname, bool writeonly)
+UVar::UVar(UObject& obj, string varname)
 {
   name = obj.get_name() + "." + varname;
-  __init(writeonly);
+  __init();
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string objname, string varname, bool writeonly)
+UVar::UVar(string objname, string varname)
 {
   name = objname + "." + varname;
-  __init(writeonly);
+  __init();
 }
 
 
@@ -52,27 +52,33 @@ void
 UVar::init(string objname, string varname)
 {  
   name = objname + "." + varname;  
-  __init(false);
+  __init();
 }
 
-//! UVar initialization
-/*! The writeonly flag is an optimization: when a variable is 'writeonly', it
-    will not be updated by the server when the server changes it's value. This
-    will save bandwidth in the case when you only want to assign (write)
-    values on the variable and don't care about it's actually server-side value
-*/
+//! UVar initializationvoid
 void
-UVar::__init(bool writeonly)
+UVar::__init()
 {  
-  if (!writeonly)
-    URBI() << "external " << name << ";";
-
-  varmap[name] = this;
+  varmap[name].push_back(this);
 }
 
 //! UVar destructor.
 UVar::~UVar()
 {  
+  UVarTable::iterator varmapfind = varmap.find(name);
+  
+  if (varmapfind != varmap.end()) {
+    
+    for (list<UVar*>::iterator it = varmapfind->second.begin();
+	it != varmapfind->second.end();)
+      if ((*it) == this) 
+	varmapfind->second.erase(it);
+      else
+	it++;
+	
+    if (varmapfind->second.empty())
+      varmap.erase(varmapfind);
+  }
 }
 
 //! UVar float assignment
@@ -100,15 +106,5 @@ UVar::__update(UValue& v)
     cout << (string)v << endl;
       
   value = v;
-  
-  if (monitormap.find(name) != monitormap.end()) {
-  
-    list<UGenericCallback*> cb = monitormap[name];
-    cout << "there is somebody home..." << endl;
-    for (list<UGenericCallback*>::iterator cbit = cb.begin();
-    	 cbit != cb.end();
-	 cbit++)
-      // test of return value here
-      (*cbit)->__evalcall(&value);
-  }
 }
+  
