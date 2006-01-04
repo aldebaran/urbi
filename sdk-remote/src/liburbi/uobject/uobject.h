@@ -206,7 +206,7 @@ URBI {
     virtual UValue __evalcall(UValue *param)  = 0;
 
   private:
-    string name;    
+    string name;
   };
 
   /**********************************************************/
