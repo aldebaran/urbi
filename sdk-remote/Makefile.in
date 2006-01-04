@@ -106,12 +106,13 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = lib doc src
+SUBDIRS = lib doc src softdevices
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = src/liburbi/openr/Makefile \
-	src/liburbi/openr/Makefile.aibo lib/jpeg-6b/makefile.aibo
+	src/liburbi/openr/Makefile.aibo lib/jpeg-6b/makefile.aibo \
+	softdevices/ball/Makefile
 DIST_SOURCES =
 
 RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
@@ -148,6 +149,8 @@ src/liburbi/openr/Makefile: $(top_builddir)/config.status $(top_srcdir)/src/libu
 src/liburbi/openr/Makefile.aibo: $(top_builddir)/config.status $(top_srcdir)/src/liburbi/openr/Makefile.aibo.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 lib/jpeg-6b/makefile.aibo: $(top_builddir)/config.status $(top_srcdir)/lib/jpeg-6b/makefile.aibo.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+softdevices/ball/Makefile: $(top_builddir)/config.status $(top_srcdir)/softdevices/ball/Makefile.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 uninstall-info-am:
 
@@ -291,7 +294,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/lib/jpeg-6b $(distdir)/src/liburbi/openr
+	$(mkinstalldirs) $(distdir)/lib/jpeg-6b $(distdir)/softdevices/ball $(distdir)/src/liburbi/openr
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

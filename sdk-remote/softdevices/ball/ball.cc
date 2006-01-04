@@ -3,7 +3,7 @@
 
  File: ball.cc\n
  Implementation of the Ball class.
-
+  
  This file if part of the 'ball' soft device\n
  (c) Jean-Christophe Baillie, 2004-2006.
 

@@ -100,9 +100,9 @@ void
 UVar::__update(UValue& v)
 {  
   cout << "  Variable " << name << " updated to : ";
-  if (v.type == MESSAGE_DOUBLE)
+  if (v.type == DATA_DOUBLE)
     cout << (double)v << endl;
-  if (v.type == MESSAGE_STRING)  
+  if (v.type == DATA_STRING)  
     cout << (string)v << endl;
       
   value = v;

@@ -1,1 +1,1 @@
-SUBDIRS = lib doc src
+SUBDIRS =lib doc src softdevices
