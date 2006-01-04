@@ -253,7 +253,7 @@ class UMessage {
 
 };
 
-
+std::ostream & operator <<(std::ostream &s, const UMessage &m);
 
 /// Callback prototypes.
 typedef UCallbackAction (*UCallback)             (const UMessage &msg);
