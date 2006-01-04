@@ -2016,7 +2016,7 @@ UValue & UObjectStruct::operator [](string s) {
   for (int i=0;i<size();i++)
 	if (array[i].name==s)
 	  return *array[i].val;
-  UValue n;
+  static UValue n;
   return n;
 }
 

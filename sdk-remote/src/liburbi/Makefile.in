@@ -112,10 +112,11 @@ AM_CXXFLAGS = -pthread
 lib_LIBRARIES = liburbi.a
 include_HEADERS = uclient.h uabstractclient.h usyncclient.h
 
-liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp 
+liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h
 liburbi_a_LIBADD = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 
 @OPENR_TRUE@SUBDIRS = openr
+@OPENR_FALSE@SUBDIRS = uobject
 subdir = src/liburbi
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -124,14 +125,15 @@ LIBRARIES = $(lib_LIBRARIES)
 
 liburbi_a_AR = $(AR) cru
 liburbi_a_DEPENDENCIES = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
-am_liburbi_a_OBJECTS = uabstractclient.$(OBJEXT) uclient.$(OBJEXT)
+am_liburbi_a_OBJECTS = uabstractclient.$(OBJEXT) uclient.$(OBJEXT) \
+	usyncclient.$(OBJEXT)
 liburbi_a_OBJECTS = $(am_liburbi_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/uabstractclient.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/uclient.Po
+@AMDEP_TRUE@	./$(DEPDIR)/uclient.Po ./$(DEPDIR)/usyncclient.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -151,7 +153,7 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive pdf-recursive \
 	installdirs-recursive install-recursive uninstall-recursive \
 	check-recursive installcheck-recursive
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.in Makefile.am
-DIST_SUBDIRS = openr
+DIST_SUBDIRS = openr uobject
 SOURCES = $(liburbi_a_SOURCES)
 
 all: all-recursive
@@ -204,6 +206,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uabstractclient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uclient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usyncclient.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
@@ -515,10 +518,10 @@ uninstall-info: uninstall-info-recursive
 	uninstall-libLIBRARIES uninstall-recursive
 
 
-liburbi.a: uabstractclient.o uclient.o 
+liburbi.a: uabstractclient.o uclient.o usyncclient.o
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o 
+	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o
 	ranlib liburbi.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -2503,7 +2503,7 @@ else
 fi
 
 
-                                                                                                    ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile src/Makefile src/examples/Makefile src/liburbi/Makefile src/utils/Makefile src/liburbi/openr/Makefile src/liburbi/openr/Makefile.aibo lib/jpeg-6b/makefile.aibo"
+                                                                                                                                  ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile src/Makefile src/examples/Makefile src/liburbi/Makefile src/liburbi/uobject/Makefile src/utils/Makefile src/liburbi/openr/Makefile src/liburbi/openr/Makefile.aibo lib/jpeg-6b/makefile.aibo softdevices/Makefile softdevices/ball/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3093,10 +3093,13 @@ do
   "src/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
   "src/examples/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/examples/Makefile" ;;
   "src/liburbi/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/liburbi/Makefile" ;;
+  "src/liburbi/uobject/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/liburbi/uobject/Makefile" ;;
   "src/utils/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/utils/Makefile" ;;
   "src/liburbi/openr/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/liburbi/openr/Makefile" ;;
   "src/liburbi/openr/Makefile.aibo" ) CONFIG_FILES="$CONFIG_FILES src/liburbi/openr/Makefile.aibo" ;;
   "lib/jpeg-6b/makefile.aibo" ) CONFIG_FILES="$CONFIG_FILES lib/jpeg-6b/makefile.aibo" ;;
+  "softdevices/Makefile" ) CONFIG_FILES="$CONFIG_FILES softdevices/Makefile" ;;
+  "softdevices/ball/Makefile" ) CONFIG_FILES="$CONFIG_FILES softdevices/ball/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

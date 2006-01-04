@@ -35,6 +35,7 @@ AC_CONFIG_FILES([Makefile
           src/Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile	
+	  src/liburbi/uobject/Makefile
 	  src/utils/Makefile
 	  src/liburbi/openr/Makefile
 	  src/liburbi/openr/Makefile.aibo

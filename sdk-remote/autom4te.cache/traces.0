@@ -115,16 +115,19 @@ m4trace:configure.ac:30: -1- AM_CONDITIONAL([OPENR], [test $openr = true])
 m4trace:configure.ac:30: -1- AC_SUBST([OPENR_TRUE])
 m4trace:configure.ac:30: -1- AC_SUBST([OPENR_FALSE])
 m4trace:configure.ac:31: -1- AC_SUBST([OPENR_SDK_PATH])
-m4trace:configure.ac:42: -1- AC_CONFIG_FILES([Makefile
+m4trace:configure.ac:45: -1- AC_CONFIG_FILES([Makefile
           doc/Makefile
           lib/Makefile
           src/Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile	
+	  src/liburbi/uobject/Makefile
 	  src/utils/Makefile
 	  src/liburbi/openr/Makefile
 	  src/liburbi/openr/Makefile.aibo
 	  lib/jpeg-6b/makefile.aibo
+	  softdevices/Makefile
+	  softdevices/ball/Makefile
 ])
-m4trace:configure.ac:43: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
-m4trace:configure.ac:43: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])
+m4trace:configure.ac:46: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
+m4trace:configure.ac:46: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])

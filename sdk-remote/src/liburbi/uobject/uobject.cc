@@ -167,9 +167,10 @@ URBI::dispatcher(const UMessage &msg)
 	return URBI_CONTINUE;
   }
 
-  if (array[0].type != DATA_DOUBLE)
+  if (array[0].type != DATA_DOUBLE) {
 	msg.client.printf("Soft Device Error: unknown server message type %d\n",(int)array[0].type);
-  return URBI_CONTINUE;
+	return URBI_CONTINUE;
+  }
 
  
   // UEM_ASSIGNVALUE
@@ -192,42 +193,41 @@ URBI::dispatcher(const UMessage &msg)
  		  cbit++)
 		// test of return value here
 		(*cbit)->__evalcall(&array[2]);
-	}	 	  
+	}
+  }
 	
         
-      // UEM_EVALFUNCTION
-	else if ((USystemExternalMessage)(int)array[0] == UEM_EVALFUNCTION) {
-	  // For the moment, this iteration is useless since the list will contain
-	  // one and only one element. There is no function overloading yet and still
-	  // it would probably use a unique name identifier, hence a single element list again.	  
-	  if (functionmap.find((string)array[1]) != functionmap.end()) {		
-		list<UGenericCallback*> tmpfun = functionmap[(string)array[1]];
-		list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-		UValue retval = (*tmpfunit)->__evalcall(array.size()<=3?0:&array[3]);
-		URBI() << (string)array[2]<<"=";
-		retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
-	  }          
-	  else
-	  	msg.client.printf("Soft Device Error: %s function unknown.\n",((string)array[1]).c_str());
-	}
-
-   	// UEM_EMITEVENT
- 	else if ((USystemExternalMessage)(int)array[0] == UEM_EMITEVENT) {
-	  
-	  if (eventmap.find((string)array[1]) != eventmap.end()) {
-	  	
-		list<UGenericCallback*>  tmpfun = eventmap[(string)array[1]];
-  		for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-			tmpfunit != tmpfun.end();
-   			tmpfunit++)
-		  (*tmpfunit)->__evalcall(array.size()<=2?0:&array[2]);
-	  }
-	}
-	// DEFAULT
-	else          
-	  msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)array[0]);      
-  } 
+  // UEM_EVALFUNCTION
+  else if ((USystemExternalMessage)(int)array[0] == UEM_EVALFUNCTION) {
+	// For the moment, this iteration is useless since the list will contain
+	// one and only one element. There is no function overloading yet and still
+	// it would probably use a unique name identifier, hence a single element list again.	  
+	if (functionmap.find((string)array[1]) != functionmap.end()) {		
+  	  list<UGenericCallback*> tmpfun = functionmap[(string)array[1]];
+	  list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+	  UValue retval = (*tmpfunit)->__evalcall(array.size()<=3?0:&array[3]);
+	  URBI() << (string)array[2]<<"=";
+	  retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
+	}          
+	else
+	  msg.client.printf("Soft Device Error: %s function unknown.\n",((string)array[1]).c_str());
+  }
   
+  // UEM_EMITEVENT
+  else if ((USystemExternalMessage)(int)array[0] == UEM_EMITEVENT) {
+	
+	if (eventmap.find((string)array[1]) != eventmap.end()) {
+	  
+		list<UGenericCallback*>  tmpfun = eventmap[(string)array[1]];
+		for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+			tmpfunit != tmpfun.end();
+			tmpfunit++)
+		  (*tmpfunit)->__evalcall(array.size()<=2?0:&array[2]);
+	}
+  }
+  // DEFAULT
+  else          
+	msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)array[0]);       
   return URBI_CONTINUE;
 }
  

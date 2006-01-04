@@ -47,40 +47,40 @@ USyncClient::syncGetImage(const char *camera,
   sendCommand(URBIUnlock, &s, "%s.val;", camera);
   sem_wait(&s.semlock);
   sem_destroy(&s.semlock);
-  if (s.msg->binaryType != BINARYMESSAGE_IMAGE) {
+  if (s.msg->value->binary->type != BINARY_IMAGE) {
     delete s.msg;
     return 0;
   }
-  width = s.msg->image.width;
-  height = s.msg->image.height;
+  width = s.msg->value->binary->image.width;
+  height = s.msg->value->binary->image.height;
 
   int osize = buffersize;
   if (f == 1  &&  format != IMAGE_JPEG ) {	//uncompress jpeg
     if (format == IMAGE_YCbCr)
-      convertJPEGtoYCrCb((const byte *) s.msg->image.data, s.msg->image.size, 
+      convertJPEGtoYCrCb((const byte *) s.msg->value->binary->image.data, s.msg->value->binary->image.size, 
                          (byte *) buffer, buffersize);
     else
-      convertJPEGtoRGB((const byte *)  s.msg->image.data, s.msg->image.size,
+      convertJPEGtoRGB((const byte *)  s.msg->value->binary->image.data, s.msg->value->binary->image.size,
                        (byte *) buffer, buffersize);
   }
   else if (format == IMAGE_RGB || format == IMAGE_PPM) {
-    buffersize = min(s.msg->image.size, buffersize);
-    if (s.msg->image.imageFormat == IMAGE_YCbCr)
-      convertYCrCbtoRGB((const byte *) s.msg->image.data, buffersize, (byte *) buffer);
+    buffersize = min(s.msg->value->binary->image.size, buffersize);
+    if (s.msg->value->binary->image.imageFormat == IMAGE_YCbCr)
+      convertYCrCbtoRGB((const byte *) s.msg->value->binary->image.data, buffersize, (byte *) buffer);
     else 
-      memcpy(buffer, s.msg->image.data, buffersize);
+      memcpy(buffer, s.msg->value->binary->image.data, buffersize);
     
   }
   else { //jpeg jpeg, or ycrcb ycrcb
-    buffersize = min(s.msg->image.size, buffersize);
-    memcpy(buffer, s.msg->image.data, buffersize);
+    buffersize = min(s.msg->value->binary->image.size, buffersize);
+    memcpy(buffer, s.msg->value->binary->image.data, buffersize);
   }
   if (format == IMAGE_PPM) {
     char p6h[20];
     sprintf(p6h, "P6\n%d %d\n255\n", width, height);
     int p6len = strlen(p6h);
     int mlen = osize > buffersize + p6len ? buffersize : osize - p6len;
-    memmove((void *) (((int) buffer) + p6len), buffer, mlen);
+    memmove((void *) (((long) buffer) + p6len), buffer, mlen);
     memcpy(buffer, p6h, p6len);
     buffersize += p6len;
   }
@@ -97,11 +97,11 @@ USyncClient::syncGetNormalizedDevice(const char *device, double &val)
   sendCommand(URBIUnlock, &s, "%s.valn;", device);
   sem_wait(&s.semlock);
   sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DOUBLE) {
+  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
     delete s.msg;
     return 0;
   }
-  val = s.msg->doubleValue;
+  val = (double)(UValue&)s.msg;
   return 1;
 }
 
@@ -113,11 +113,11 @@ USyncClient::syncGetDevice(const char *device, double &val)
   sendCommand(URBIUnlock, &s, "%s.val;", device);
   sem_wait(&s.semlock);
   sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DOUBLE) {
+  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
     delete s.msg;
     return 0;
   }
-  val = s.msg->doubleValue;
+  val = (double)(UValue&)s.msg;
   return 1;
 }
 
@@ -128,11 +128,11 @@ USyncClient::syncGetResult(const char* command, double &val) {
   sendCommand(URBIUnlock, &s, command);
   sem_wait(&s.semlock);
   sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DOUBLE) {
+  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
     delete s.msg;
     return 0;
   }
-  val = s.msg->doubleValue;
+  val = (double)(UValue&)s.msg;
   return 1;
 }
 
@@ -146,25 +146,25 @@ USyncClient::syncGetDevice(const char *device, const char * access,
   sendCommand(URBIUnlock, &s, "%s.%s;", device,access);
   sem_wait(&s.semlock);
   sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DOUBLE) {
+  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
     delete s.msg;
     return 0;
   }
-  val = s.msg->doubleValue;
+  val = (double)(UValue&)s.msg;
   return 1;
 }
 
 static UCallbackAction URBISoundCopy(void *cbData, const UMessage &msg) {
    USyncStruct *s = (USyncStruct *) cbData;
-   if (msg.type != MESSAGE_BINARY || msg.binaryType != BINARYMESSAGE_SOUND) {
+   if (msg.type != MESSAGE_DATA || msg.value->type != DATA_BINARY || msg.value->binary->type != BINARY_SOUND) {
      sem_post(&s->semlock);
      return URBI_REMOVE;
    }
-   s->sound = msg.sound;
-   if (s->size < s->pos+msg.sound.size) s->buffer = realloc(s->buffer, msg.sound.size+s->pos);
-   s->size = msg.sound.size+s->pos;
-   memcpy((char*)(s->buffer)+s->pos, msg.sound.data, msg.sound.size);
-   s->pos +=msg.sound.size;
+   s->sound = msg.value->binary->sound;
+   if (s->size < s->pos+msg.value->binary->sound.size) s->buffer = realloc(s->buffer, msg.value->binary->sound.size+s->pos);
+   s->size = msg.value->binary->sound.size+s->pos;
+   memcpy((char*)(s->buffer)+s->pos, msg.value->binary->sound.data, msg.value->binary->sound.size);
+   s->pos +=msg.value->binary->sound.size;
    return URBI_CONTINUE;
 }
 
