@@ -515,10 +515,10 @@ uninstall-info: uninstall-info-recursive
 	uninstall-libLIBRARIES uninstall-recursive
 
 
-liburbi.a: uabstractclient.o uclient.o usyncclient.o
+liburbi.a: uabstractclient.o uclient.o 
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o
+	ar r liburbi.a uabstractclient.o uclient.o 
 	ranlib liburbi.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

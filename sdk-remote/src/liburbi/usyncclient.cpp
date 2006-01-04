@@ -24,7 +24,7 @@ struct USyncStruct
 static UCallbackAction URBIUnlock(void *cbData, const UMessage &msg)
 {
   USyncStruct *s = (USyncStruct *) cbData;
-  s->msg = new UMessage(msg, true);
+  s->msg = new UMessage(msg);
   sem_post(&s->semlock);
   return URBI_REMOVE;
 }

@@ -29,10 +29,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <list>
+#include <vector>
 #include <iostream>
 #include <string>
 using std::string;
 using std::list;
+using std::vector;
 using std::ostream;
 typedef unsigned char byte; 
 
@@ -163,13 +165,15 @@ class UBinary {
 class UAbstractClient; 
 class UValue;
 
-class UArray {
+class UList {
  public:
-  list<UValue *> array;
-  UArray();
-  UArray(const UArray &b);
-  UArray & operator = (const UArray &b);
-  ~UArray();
+  vector<UValue *> array;
+  UList();
+  UList(const UList &b);
+  UList & operator = (const UList &b);
+  ~UList();
+  UValue & operator [](int i) {return *array[i];} 
+  int size() {return array.size();}
 };
 
 class UNamedValue {
@@ -180,14 +184,18 @@ class UNamedValue {
   UNamedValue() {};
 };
 
-class UNamedArray {
+class UObjectStruct {
  public:
   string refName;
-  list<UNamedValue> array;
-  UNamedArray();
-  UNamedArray(const UNamedArray &b);
-  UNamedArray & operator = (const UNamedArray &b);
-  ~UNamedArray();
+  vector<UNamedValue> array;
+  UObjectStruct();
+  UObjectStruct(const UObjectStruct &b);
+  UObjectStruct & operator = (const UObjectStruct &b);
+  ~UObjectStruct();
+  UValue & operator [](string s);
+  UNamedValue & operator [](int i) {return array[i];} 
+  int size() {return array.size();}
+
 };
 
 class UValue {
@@ -198,8 +206,8 @@ class UValue {
     double         val;
     string         *stringValue;
     UBinary        *binary;
-    UArray         *array;
-    UNamedArray    *object;
+    UList          *list;
+    UObjectStruct    *object;
   };
   
   UValue();
@@ -208,7 +216,8 @@ class UValue {
   explicit UValue(char * val);
   explicit UValue(const string &str);
   explicit UValue(const UBinary &b);
-  UValue(UBinary &bin);
+  explicit UValue(const UList & l);
+  explicit UValue(const UObjectStruct &o);
   operator double();
   operator string();
   operator int() {return (int)(double)(*this);}
@@ -218,7 +227,7 @@ class UValue {
   ~UValue();  
   
   ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
-  int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
+  int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
 
   ///send the value over an urbi connection, without any prefix or terminator
   void send(UAbstractClient * cl);
@@ -250,6 +259,8 @@ class UMessage {
 
   /// Free everything if data was copied, doesn't free anything otherwise
   ~UMessage();
+
+  operator UValue& () {return *value;}
 
 };
 

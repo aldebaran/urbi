@@ -1461,7 +1461,7 @@ UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *m
 }
 
 
-int UValue::parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos) {
+int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos) {
   while (message[pos]==' ')
     pos++;
   if (message[pos] == '"') {
@@ -1485,7 +1485,7 @@ int UValue::parse(char * message, int pos, list<BinaryData> bins, list<BinaryDat
   if (message[pos] == '[') {
     //list message
     type = DATA_LIST;
-    array = new UArray();
+    list = new UList();
     pos++;
     while (message[pos]==' ') pos++;
     while (message[pos]) {
@@ -1494,7 +1494,7 @@ int UValue::parse(char * message, int pos, list<BinaryData> bins, list<BinaryDat
       int p = v->parse(message, pos, bins, binpos);
       if (p<0)
 	return p;
-      array->array.push_back(v);
+      list->array.push_back(v);
       pos = p;
       while (message[pos]==' ') pos++;
       //expect , or rbracket
@@ -1515,7 +1515,7 @@ int UValue::parse(char * message, int pos, list<BinaryData> bins, list<BinaryDat
     //obj message
     pos+=4;
     type = DATA_OBJECT;
-    object = new UNamedArray();
+    object = new UObjectStruct();
 
     //parse object name
     while (message[pos]==' ')
@@ -1737,6 +1737,12 @@ UValue::UValue(const string &v) : type(DATA_STRING), stringValue(new string(v)) 
 UValue::UValue(const UBinary &b) : type(DATA_BINARY){
   binary = new UBinary(b); 
 }
+UValue::UValue(const UList &l) : type(DATA_LIST){
+  list = new UList(l); 
+}
+UValue::UValue(const UObjectStruct &o) : type(DATA_OBJECT){
+  object = new UObjectStruct(o); 
+}
 
 
 UValue::~UValue() {
@@ -1749,8 +1755,8 @@ UValue::~UValue() {
       delete binary;
     break;
   case DATA_LIST:
-    if (array)
-      delete array;
+    if (list)
+      delete list;
     break;
   case DATA_OBJECT:
     if (object)
@@ -1800,31 +1806,32 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
     break;
   case DATA_LIST:
     {
-      s<<"[";
-      int sz = v.array->array.size();
+	  s<<"[";
+      int sz = v.list->size();
       int p = 0;
-      for (list<UValue * >::const_iterator it = v.array->array.begin(); it != v.array->array.end(); it++) {
-	s << *(*it);
-	if (++p != sz)
-	  s<< " , ";
-      }
-      s<< "]";
-    }
-    break;
+	  for (int i=0; i<sz;i++) {
+		s<< (*v.list)[i];
+		if (i != sz-1)
+		  s<< " , ";
+	  }
+	  s<< "]";
+	}
+   	break;
   case DATA_OBJECT:
     {
-      s<<"OBJ "<<v.object->refName<<" [";
-      int sz = v.object->array.size();
-      int p = 0;
-      for (list<UNamedValue>::const_iterator it = v.object->array.begin(); it != v.object->array.end(); it++) {
-	s << it->name<<":"<< *(it->val);
-	if (++p != sz)
-	  s<< " , ";
-      }
-      s<< "]"; 
-    }
-  
+	  s<<"OBJ "<<v.object->refName<<" [";
+	  int sz = v.object->size();
+	  int p = 0;
+	  for (int i=0; i<sz;i++) {
+		s << (*v.object)[i].name << ":";
+		s<< (*v.object)[i].val;
+		if (i != sz-1)
+		  s<< " , ";
+	  }
+	  s<< "]";
+	}  
     break;
+
   }
   return s;
 }
@@ -1844,29 +1851,29 @@ void UValue::send(UAbstractClient *cl) {
   case DATA_LIST:
     {
       (*cl)<<"[";
-      int sz = array->array.size();
+      int sz = list->size();
       int p = 0;
-      for (list<UValue * >::const_iterator it = array->array.begin(); it != array->array.end(); it++) {
-	(*it)->send(cl);
-	if (++p != sz)
-	  (*cl)<< " , ";
-      }
-      (*cl)<< "]";
-    }
-    break;
+	  for (int i=0; i<sz;i++) {
+		(*list)[i].send(cl);
+		if (i != sz-1)
+		  (*cl)<< " , ";
+	  }
+	  (*cl)<< "]";
+	}
+   	break;
   case DATA_OBJECT:
     {
       (*cl)<<"OBJ "<<object->refName<<" [";
-      int sz = object->array.size();
-      int p = 0;
-      for (list<UNamedValue>::const_iterator it = object->array.begin(); it != object->array.end(); it++) {
-	(*cl) << it->name<<":";
-	it->val->send(cl);;
-	if (++p != sz)
-	  (*cl)<< " , ";
-      }
-      (*cl)<< "]"; 
-    }  
+	  int sz = object->size();
+	  int p = 0;
+	  for (int i=0; i<sz;i++) {
+		(*cl) << (*object)[i].name << ":";
+		(*object)[i].val->send(cl);
+		if (i != sz-1)
+		  (*cl)<< " , ";
+	  }
+	  (*cl)<< "]";
+	}  
     break;
   };
 }
@@ -1884,8 +1891,8 @@ UValue& UValue::operator= (const UValue& v)
       delete binary;
     break;
   case DATA_LIST:
-    if (array)
-      delete array;
+    if (list)
+      delete list;
     break;
   case DATA_OBJECT:
     if (object)
@@ -1904,10 +1911,10 @@ UValue& UValue::operator= (const UValue& v)
     binary = new UBinary(*v.binary); 
     break;
   case DATA_LIST:
-    array = new UArray(*v.array);
+    list = new UList(*v.list);
     break;
   case DATA_OBJECT:
-    object = new UNamedArray(*v.object);
+    object = new UObjectStruct(*v.object);
     break;
   };
   return *this;
@@ -1955,57 +1962,62 @@ UBinary & UBinary::operator = (const UBinary &b) {
 }
 
 
-UArray::UArray() {}
+UList::UList() {}
 
-UArray::UArray(const UArray &b) {
+UList::UList(const UList &b) {
   (*this) = b;
 }
 
-UArray & UArray::operator = (const UArray &b) {
-  while (!array.empty()) {
-    delete array.front();
-    array.pop_front();
-  }
+UList & UList::operator = (const UList &b) {
+  for (int i=0;i<size();i++) //relax, its a vector
+	delete array[i];
+  array.clear();
 
-  for (list<UValue*>::const_iterator it= b.array.begin(); it !=b.array.end();it++)
+  for (vector<UValue*>::const_iterator it= b.array.begin(); it !=b.array.end();it++)
     array.push_back(new UValue(**it));
 
   return (*this);
 }
 
-UArray::~UArray() {
-  while (!array.empty()) {
-    delete array.front();
-    array.pop_front();
-  }
+UList::~UList() {
+ for (int i=0;i<size();i++) //relax, its a vector
+	delete array[i];
+  array.clear();
 }
 
 
 
 
-UNamedArray::UNamedArray() {}
+UObjectStruct::UObjectStruct() {}
 
-UNamedArray::UNamedArray(const UNamedArray &b) {
+UObjectStruct::UObjectStruct(const UObjectStruct &b) {
   (*this) = b;
 }
 
-UNamedArray & UNamedArray::operator = (const UNamedArray &b) {
-  while (!array.empty()) {
-    delete array.front().val;
-    array.pop_front();
-  }
+UObjectStruct & UObjectStruct::operator = (const UObjectStruct &b) {
+  for (int i=0;i<size();i++) //relax, its a vector
+	delete array[i].val;
+  array.clear();
 
-  for (list<UNamedValue>::const_iterator it= b.array.begin(); it != b.array.end();it++)
+  for (vector<UNamedValue>::const_iterator it= b.array.begin(); it != b.array.end();it++)
     array.push_back(UNamedValue(it->name, new UValue(*(it->val))));
 
   return (*this);
 }
 
-UNamedArray::~UNamedArray() {
-  while (!array.empty()) {
-    delete array.front().val;
-    array.pop_front();
-  }
+UObjectStruct::~UObjectStruct() {
+ for (int i=0;i<size();i++) //relax, its a vector
+	delete array[i].val;
+  array.clear();
+}
+
+
+UValue & UObjectStruct::operator [](string s) {
+  for (int i=0;i<size();i++)
+	if (array[i].name==s)
+	  return *array[i].val;
+  UValue n;
+  return n;
 }
 
 

@@ -4,10 +4,10 @@ AM_CXXFLAGS = -pthread
 lib_LIBRARIES = liburbi.a
 include_HEADERS = uclient.h uabstractclient.h usyncclient.h
 
-liburbi.a: uabstractclient.o uclient.o usyncclient.o
+liburbi.a: uabstractclient.o uclient.o 
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o
+	ar r liburbi.a uabstractclient.o uclient.o 
 	ranlib liburbi.a
 
 liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp 

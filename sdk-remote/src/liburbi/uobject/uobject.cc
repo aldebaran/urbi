@@ -19,6 +19,7 @@
  **************************************************************************** */
 
 #include <iostream>
+#include <sstream>
 #include <list>
 #include "uobject.h"
 #include "uclient.h"
@@ -53,6 +54,27 @@ namespace URBI {
     
   };
 
+  template<>
+  UBinary cast(UValue &v) {
+	if (v.type != DATA_BINARY) {
+	  return UBinary();
+	}
+	return UBinary(*v.binary);
+  }
+  
+  template<>
+  UList cast(UValue &v) {
+	if (v.type != DATA_LIST)
+	  return UList();
+	return UList(*v.list);
+  }
+  template<>
+  UObjectStruct cast(UValue &v) {
+	if (v.type != DATA_OBJECT)
+	  return UObjectStruct();
+	return UObjectStruct(*v.object);
+  }
+  
 }
 
 
@@ -132,102 +154,90 @@ UObject::~UObject()
 UCallbackAction
 URBI::dispatcher(const UMessage &msg)
 {
-  if (msg.type == MESSAGE_LIST) {
+  //check message type
+  if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST) {
+     msg.client.printf("Soft Device Error: unknown message content, type %d\n",(int)msg.type);
+	 return URBI_CONTINUE;
+  }
+ 
+  UList & array = *msg.value->list;
 
-    if (msg.listSize<2) 
-      msg.client.printf("Soft Device Error: Invalid number of arguments in the server message: %d\n",msg.listSize);
-    else {
+  if (array.size()<2) {
+	msg.client.printf("Soft Device Error: Invalid number of arguments in the server message: %d\n",array.size());
+	return URBI_CONTINUE;
+  }
 
-      if (msg.listValue[0].type != MESSAGE_DOUBLE)
-        msg.client.printf("Soft Device Error: unknown server message type %d\n",(int)msg.listValue[0].type);
+  if (array[0].type != DATA_DOUBLE)
+	msg.client.printf("Soft Device Error: unknown server message type %d\n",(int)array[0].type);
+  return URBI_CONTINUE;
 
-      // UEM_ASSIGNVALUE
-      else {
-	if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_ASSIGNVALUE) {
+ 
+  // UEM_ASSIGNVALUE
+  if ((USystemExternalMessage)(int)array[0] == UEM_ASSIGNVALUE) {
 
-	  UVarTable::iterator varmapfind = varmap.find((string)msg.listValue[1]);
-          if (varmapfind != varmap.end()) {
-
-	    for (list<UVar*>::iterator it = varmapfind->second.begin();
-		 it != varmapfind->second.end();
-		 it++) 	    	      
-	      (*it)->__update(msg.listValue[2]);	    
-	  }
+	UVarTable::iterator varmapfind = varmap.find((string)array[1]);
+	if (varmapfind != varmap.end()) {
 	  
-	  UTable::iterator monitormapfind = monitormap.find((string)msg.listValue[1]);
-	  if (monitormapfind != monitormap.end()) {
-
-	    for (list<UGenericCallback*>::iterator cbit = monitormapfind->second.begin();
-	         cbit != monitormapfind->second.end();
-		 cbit++)
-	      // test of return value here
-	      (*cbit)->__evalcall(&msg.listValue[2]);
-	  }	 	  
-        }
+	  for (list<UVar*>::iterator it = varmapfind->second.begin();
+  		  it != varmapfind->second.end();
+		  it++) 	    	      
+		(*it)->__update(array[2]);	    
+	}
+	
+	UTable::iterator monitormapfind = monitormap.find((string)array[1]);
+  	if (monitormapfind != monitormap.end()) {
+	  
+	  for (list<UGenericCallback*>::iterator cbit = monitormapfind->second.begin();
+ 		  cbit != monitormapfind->second.end();
+ 		  cbit++)
+		// test of return value here
+		(*cbit)->__evalcall(&array[2]);
+	}	 	  
+	
         
       // UEM_EVALFUNCTION
-      else 
-        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EVALFUNCTION) {
-          // For the moment, this iteration is useless since the list will contain
+	else if ((USystemExternalMessage)(int)array[0] == UEM_EVALFUNCTION) {
+	  // For the moment, this iteration is useless since the list will contain
 	  // one and only one element. There is no function overloading yet and still
 	  // it would probably use a unique name identifier, hence a single element list again.	  
-	  if (functionmap.find((string)msg.listValue[1]) != functionmap.end()) {
-	  
-            list<UGenericCallback*> tmpfun = functionmap[(string)msg.listValue[1]];
-            list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-	    UValue retval = (*tmpfunit)->__evalcall(msg.listSize<=3?0:&msg.listValue[3]);
-             
-            if (retval.type == MESSAGE_DOUBLE)
-              URBI() << (string)msg.listValue[2] << " = " <<
-                (double)retval << ";" << endl;
-            else
-              if (retval.type == MESSAGE_STRING)
-                URBI() << (string)msg.listValue[2] << " = \"" <<
-                  (string)retval << "\";" << endl;
-          }          
-          else
-            msg.client.printf("Soft Device Error: %s function unknown.\n",((string)msg.listValue[1]).c_str());
-        }
+	  if (functionmap.find((string)array[1]) != functionmap.end()) {		
+		list<UGenericCallback*> tmpfun = functionmap[(string)array[1]];
+		list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+		UValue retval = (*tmpfunit)->__evalcall(array.size()<=3?0:&array[3]);
+		URBI() << (string)array[2]<<"=";
+		retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
+	  }          
+	  else
+	  	msg.client.printf("Soft Device Error: %s function unknown.\n",((string)array[1]).c_str());
+	}
 
-      // UEM_EMITEVENT
-      else
-        if ((USystemExternalMessage)(int)msg.listValue[0] == UEM_EMITEVENT) {
+   	// UEM_EMITEVENT
+ 	else if ((USystemExternalMessage)(int)array[0] == UEM_EMITEVENT) {
 	  
-          if (eventmap.find((string)msg.listValue[1]) != eventmap.end()) {
-	    
-	    list<UGenericCallback*>  tmpfun = eventmap[(string)msg.listValue[1]];
-            for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-	         tmpfunit != tmpfun.end();
-		 tmpfunit++)
-	      (*tmpfunit)->__evalcall(msg.listSize<=2?0:&msg.listValue[2]);
+	  if (eventmap.find((string)array[1]) != eventmap.end()) {
+	  	
+		list<UGenericCallback*>  tmpfun = eventmap[(string)array[1]];
+  		for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+			tmpfunit != tmpfun.end();
+   			tmpfunit++)
+		  (*tmpfunit)->__evalcall(array.size()<=2?0:&array[2]);
 	  }
-        }
-      // DEFAULT
-      else          
-        msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)msg.listValue[0]);      
-      } 
-    
-      return URBI_CONTINUE;
-    }
-  }
+	}
+	// DEFAULT
+	else          
+	  msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)array[0]);      
+  } 
   
-  msg.client.printf("Soft Device Error: unknown message content, type %d\n",(int)msg.type);
-  return URBI_CONTINUE; 
+  return URBI_CONTINUE;
 }
-
+ 
 UCallbackAction 
 URBI::debug(const UMessage &msg)
 {
-  if (msg.type != MESSAGE_LIST)
-    msg.client.printf("DEBUG: got a message at %d with tag %s : %s\n",
-                      msg.timestamp, 
-                      msg.tag,
-                      msg.message);
-  else
-    msg.client.printf("DEBUG: got a message at %d with tag %s : list[%d]\n",
-                      msg.timestamp, 
-                      msg.tag,
-                      msg.listSize);
+  std::stringstream mesg;
+  mesg<<msg;
+  msg.client.printf("DEBUG: got a message  : %s\n",
+	  mesg.str().c_str());
     
   return URBI_CONTINUE; 
 }
