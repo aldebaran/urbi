@@ -30,6 +30,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <locale.h>
 #include "uclient.h"
 
 
@@ -47,6 +48,7 @@ the appropriate callbacks.
  */
 UClient::UClient(const char *_host, int _port, int _buflen) 
   :UAbstractClient(_host, _port, _buflen) {
+    setlocale(LC_NUMERIC,"C");
     control_fd[0] = control_fd[1] = -1;
     if (pipe(control_fd) == -1) {
       rc = -1;

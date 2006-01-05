@@ -44,7 +44,7 @@ the appropriate callbacks.
  */
 UClient::UClient(const char *_host, int _port, int _buflen) 
   :UAbstractClient(_host, _port, _buflen) {
-   
+   setlocale(LC_NUMERIC,"C"); 
    InitializeCriticalSection(&listLock); 
    InitializeCriticalSection(&writeLock);
    WSADATA localWSA;
