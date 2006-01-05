@@ -47,11 +47,7 @@ namespace URBI {
   
   template <>
   UVar& cast(UValue &v) {
-    cout << "I've been casted" << endl;
-    //UVar* tt=new UVar("tototo");
-    //return *tt;
-    return (*((UVar*)v.storage));
-    
+    return (*((UVar*)v.storage));    
   };
 
   template<>
@@ -287,6 +283,7 @@ URBI::main(int argc, char *argv[])
     (*retr)->init();
 
   URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
+  URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret124\",\"fff\",12]" << ";" ;
   URBI() << externalModuleTag << ": [2,\"ball.myevent\"]" << ";" ;

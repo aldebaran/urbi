@@ -36,6 +36,8 @@ class ball : public UObject
   void   myevent ();
 
   int stuff() {};
-  int stuff2(UVar &v) {};    
+  int stuff2(UVar &v) {
+    cout << "stuff2 call with " << v.get_name() << endl;
+  };    
 };
 
