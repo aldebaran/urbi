@@ -112,7 +112,8 @@ AM_CXXFLAGS = -pthread -Wno-deprecated
 
 bin_PROGRAMS = ball
 
-ball_SOURCES = ball.cc ball.h ../umain.cc
+ball_SOURCES = ball.cc ball.h ../umain.cc 
+ball_DEPENDENCIES = $(top_srcdir)/src/liburbi/liburbi.a $(top_srcdir)/src/liburbi/uobject/libuobject.a
 ball_LDADD = -lurbi -luobject
 subdir = softdevices/ball
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -123,7 +124,6 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_ball_OBJECTS = ball.$(OBJEXT) umain.$(OBJEXT)
 ball_OBJECTS = $(am_ball_OBJECTS)
-ball_DEPENDENCIES =
 ball_LDFLAGS =
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
