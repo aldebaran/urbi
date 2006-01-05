@@ -226,7 +226,7 @@ URBI {
     UCallback%N%(string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
     virtual UValue __evalcall(UList& param) {
-      return UValue((obj->*fun)(%%%,% cast<P%>(param[% - 1]) %%));
+      return UValue(( (*obj).*fun)(%%%,% cast<P%>(param[% - 1]) %%));
     };
   private:
     OBJ* obj;
@@ -242,8 +242,8 @@ URBI {
     UCallbackvoid%N%(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
     virtual UValue __evalcall(UList &param) {
-      (obj->*fun)(%%%,% cast<P%>(param[% - 1]) %%);
-      return (UValue());
+      ((*obj).*fun)(%%%,% cast<P%>(param[% - 1]) %%);
+      return UValue();
     };
   private:
       OBJ* obj;
@@ -294,7 +294,7 @@ URBI {
       UGenericCallback(type, funname,0, t), fun(fun) {};
     virtual UValue __evalcall(UList &) {
       (*fun)();
-      return (UValue());
+      return UValue();
     };
   private:
       void (*fun) ();
@@ -311,7 +311,7 @@ URBI {
       UGenericCallback(type, funname,%N%, t), fun(fun) {};
     virtual UValue __evalcall(UList &param) {
       (*fun)(%%%,% cast<P%>(param[% - 1]) %%);
-      return (UValue());
+      return UValue();
     };
   private:
       void (*fun) (%%%,% P% %%);

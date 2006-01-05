@@ -202,11 +202,11 @@ URBI::dispatcher(const UMessage &msg)
       for (list<UGenericCallback*>::iterator cbit = monitormapfind->second.begin();
 	  cbit != monitormapfind->second.end();
 	  cbit++) {
-	// test of return value here	
-	array[2].storage = (*cbit)->storage;
-	array.setOffset(2);
-	(*cbit)->__evalcall(array);
-	array.setOffset(0);
+	// test of return value here
+	UList u;
+	u.array.push_back(new UValue());
+	u[0].storage = (*cbit)->storage;
+	(*cbit)->__evalcall(u);
       }
     }	 	  
   }
@@ -278,20 +278,22 @@ URBI::main(int argc, char *argv[])
   cout << "Running Soft Device Module '" << argv[0] << "' on " << serverIP << endl;
   urbi::connect(argv[1]);
 
-#ifdef LIBURBIDEBUG
-  urbi::getDefaultClient()->setWildcardCallback( callback (&debug));
-#endif
+
   
   urbi::getDefaultClient()->setCallback(&dispatcher,
                                         externalModuleTag.c_str());
   
+#ifdef LIBURBIDEBUG
+  urbi::getDefaultClient()->setWildcardCallback( callback (&debug));
+#endif
+
   for (list<baseURBIStarter*>::iterator retr = objectlist.begin();
        retr != objectlist.end();
        retr++)
     (*retr)->init();
 
   URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
- // URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
+ URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret124\",\"fff\",12]" << ";" ;
   URBI() << externalModuleTag << ": [2,\"ball.myevent__0\"]" << ";" ;

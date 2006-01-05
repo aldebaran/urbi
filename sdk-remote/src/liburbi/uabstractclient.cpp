@@ -1431,20 +1431,20 @@ void unescape(char * data) {
 
 UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *message, 
                     list<BinaryData> bins)
-  : client(client), timestamp(timestamp),  tag(tag){
+  : client(client), timestamp(timestamp),  tag(tag), value(0){
   while (message[0] ==' ') message++;
   //parse non-value messages
   if (message[0] == '*') {
       //system message
       type = MESSAGE_SYSTEM;
-      this->message = message+3;
+      this->message = (string)(message+3);
       return;
     }
 
   if (message[0] == '!') {
     //error message
     type = MESSAGE_ERROR;
-    this->message = message+3;
+    this->message = (string)(message+3);
     return;
   }
 
@@ -1694,7 +1694,7 @@ UMessage::UMessage(const UMessage &b)
   timestamp = b.timestamp;
   tag = b.tag;
   type = b.type;
-  
+  value = 0;
   switch(type) {
     
   case MESSAGE_SYSTEM:
@@ -1710,7 +1710,7 @@ UMessage::UMessage(const UMessage &b)
 
 
 UMessage::~UMessage() {
-  if (type != MESSAGE_SYSTEM && type != MESSAGE_ERROR)
+  if (type != MESSAGE_SYSTEM && type != MESSAGE_ERROR && value)
 	delete value;
 }
 
@@ -1984,9 +1984,9 @@ UList & UList::operator = (const UList &b) {
 }
 
 UList::~UList() {
- offset=0;
- for (int i=0;i<size();i++) //relax, its a vector
-	delete array[i];
+  offset=0;
+  for (int i=0;i<size();i++) //relax, its a vector
+    delete array[i];
   array.clear();
 }
 
