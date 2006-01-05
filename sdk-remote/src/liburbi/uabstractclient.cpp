@@ -1962,24 +1962,29 @@ UBinary & UBinary::operator = (const UBinary &b) {
 }
 
 
-UList::UList() {}
+UList::UList() : offset(0) {}
 
-UList::UList(const UList &b) {
+UList::UList(const UList &b) : offset(0) {
   (*this) = b;
 }
 
 UList & UList::operator = (const UList &b) {
+
+  offset = 0;
   for (int i=0;i<size();i++) //relax, its a vector
-	delete array[i];
+    delete array[i];
   array.clear();
 
-  for (vector<UValue*>::const_iterator it= b.array.begin(); it !=b.array.end();it++)
+  for (vector<UValue*>::const_iterator it= b.array.begin(); 
+      it !=b.array.end();it++)
     array.push_back(new UValue(**it));
-
+  offset = b.offset;
+  
   return (*this);
 }
 
 UList::~UList() {
+ offset=0;
  for (int i=0;i<size();i++) //relax, its a vector
 	delete array[i];
   array.clear();

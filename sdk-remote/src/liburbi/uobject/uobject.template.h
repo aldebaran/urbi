@@ -14,7 +14,7 @@
  either expressed or implied, including but not limited to the
  implied warranties of fitness for a particular purpose.
 
- For more information, comments, bug reports: http://www.urbiforge.com
+ For more information, comments, bug reports: http:////<www.urbiforge.com
 
  **************************************************************************** */
 
@@ -95,7 +95,7 @@ URBI {
     baseURBIStarter() {};
     virtual ~baseURBIStarter() {};
 
-    virtual void init() =0; //< Used to provide a wrapper to initialize objects in starterlist
+    virtual void init() =0; ///< Used to provide a wrapper to initialize objects in starterlist
   };
 
   //! This is the class containing URBI starters
@@ -109,7 +109,7 @@ URBI {
     virtual ~URBIStarter() { };
 
   protected:
-    virtual void init()    { new T; }; //< Called when the object is ready to be initialized
+    virtual void init()    { new T; }; ///< Called when the object is ready to be initialized
   };	
 
   
@@ -140,8 +140,7 @@ URBI {
 
   private:    
 
-    PRIVATE(string,name); //< full name of the variable as seen in URBI  
-    
+    PRIVATE(string,name); ////< full name of the variable as seen in URBI      
     PRIVATE(UValue,value);
     void __init();
   };
@@ -160,9 +159,9 @@ URBI {
     UGenericCallback(string type, string name, UTable &t);
     ~UGenericCallback();
     
-    virtual UValue __evalcall(UValue *param)  = 0;
+    virtual UValue __evalcall(UList &param)  = 0;
     
-    void   *storage; //< used to store the UVar* pointeur for var monitoring
+    void   *storage; ////< used to store the UVar* pointeur for var monitoring
 
   private:
     string name; 
@@ -195,10 +194,10 @@ URBI {
     void UMonitor(UVar &v, int (*fun) (UVar&)) { URBI::UMonitor(v,fun); };
 
   private:
-    UObjectData*  objectData; //< pointer to a globalData structure specific to the 
-                              //< module/plugin architectures who defines it.
+    UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
+                              ///< module/plugin architectures who defines it.
      
-    PRIVATE(string,name); //< name of the object as seen in URBI
+    PRIVATE(string,name); ///< name of the object as seen in URBI
   };
 
   // generic caster  
@@ -225,7 +224,7 @@ URBI {
   public:
     UCallback%N%(string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)(%%%,% cast<P%>(param[% - 1]) %%));
     };
   private:
@@ -241,7 +240,7 @@ URBI {
   public:
     UCallbackvoid%N%(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)(%%%,% cast<P%>(param[% - 1]) %%);
       return (UValue());
     };
@@ -258,7 +257,7 @@ URBI {
   public:
     UCallbackGlobal%N%(string type, R (*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)(%%%,% cast<P%>(param[% - 1]) %%));
     };
   private:      
@@ -292,7 +291,7 @@ URBI {
   public:
     UCallbackGlobalvoid0(string type, void (*fun) (), string funname, UTable &t): 
       UGenericCallback(type, funname,0, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &) {
       (*fun)();
       return (UValue());
     };
@@ -309,7 +308,7 @@ URBI {
   public:
     UCallbackGlobalvoid%N%(string type, void (*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)(%%%,% cast<P%>(param[% - 1]) %%);
       return (UValue());
     };

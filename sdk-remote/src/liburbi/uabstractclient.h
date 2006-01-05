@@ -172,8 +172,12 @@ class UList {
   UList(const UList &b);
   UList & operator = (const UList &b);
   ~UList();
-  UValue & operator [](int i) {return *array[i];} 
+  UValue & operator [](int i) {return *array[i+offset];} 
   int size() {return array.size();}
+  void setOffset(int n) { offset = n;};
+
+private:
+  int offset;
 };
 
 class UNamedValue {

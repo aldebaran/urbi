@@ -200,7 +200,9 @@ URBI::dispatcher(const UMessage &msg)
 	  cbit++) {
 	// test of return value here	
 	array[2].storage = (*cbit)->storage;
-	(*cbit)->__evalcall(&array[2]);
+	array.setOffset(2);
+	(*cbit)->__evalcall(array);
+	array.setOffset(0);
       }
     }	 	  
   }
@@ -214,7 +216,9 @@ URBI::dispatcher(const UMessage &msg)
       
       list<UGenericCallback*> tmpfun = functionmap[(string)array[1]];
       list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-      UValue retval = (*tmpfunit)->__evalcall(array.size()<=3?0:&array[3]);
+      array.setOffset(3);
+      UValue retval = (*tmpfunit)->__evalcall(array);
+      array.setOffset(0);
       URBI() << (string)array[2] << "=";
       retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
     }          
@@ -230,8 +234,11 @@ URBI::dispatcher(const UMessage &msg)
       list<UGenericCallback*>  tmpfun = eventmap[(string)array[1]];
       for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 	  tmpfunit != tmpfun.end();
-	  tmpfunit++)
-	(*tmpfunit)->__evalcall(array.size()<=2?0:&array[2]);
+	  tmpfunit++) {
+	array.setOffset(2);
+	(*tmpfunit)->__evalcall(array);
+	array.setOffset(0);
+      }
     
     }
   }
@@ -281,7 +288,7 @@ URBI::main(int argc, char *argv[])
 
   URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
- // URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret124\",\"fff\",12]" << ";" ;
+  URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret124\",\"fff\",12]" << ";" ;
   URBI() << externalModuleTag << ": [2,\"ball.myevent\"]" << ";" ;
 }
 

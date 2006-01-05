@@ -14,7 +14,7 @@
  either expressed or implied, including but not limited to the
  implied warranties of fitness for a particular purpose.
 
- For more information, comments, bug reports: http://www.urbiforge.com
+ For more information, comments, bug reports: http:////<www.urbiforge.com
 
  **************************************************************************** */
 
@@ -95,7 +95,7 @@ URBI {
     baseURBIStarter() {};
     virtual ~baseURBIStarter() {};
 
-    virtual void init() =0; //< Used to provide a wrapper to initialize objects in starterlist
+    virtual void init() =0; ///< Used to provide a wrapper to initialize objects in starterlist
   };
 
   //! This is the class containing URBI starters
@@ -109,7 +109,7 @@ URBI {
     virtual ~URBIStarter() { };
 
   protected:
-    virtual void init()    { new T; }; //< Called when the object is ready to be initialized
+    virtual void init()    { new T; }; ///< Called when the object is ready to be initialized
   };	
 
   
@@ -140,8 +140,7 @@ URBI {
 
   private:    
 
-    PRIVATE(string,name); //< full name of the variable as seen in URBI  
-    
+    PRIVATE(string,name); ////< full name of the variable as seen in URBI      
     PRIVATE(UValue,value);
     void __init();
   };
@@ -160,9 +159,9 @@ URBI {
     UGenericCallback(string type, string name, UTable &t);
     ~UGenericCallback();
     
-    virtual UValue __evalcall(UValue *param)  = 0;
+    virtual UValue __evalcall(UList &param)  = 0;
     
-    void   *storage; //< used to store the UVar* pointeur for var monitoring
+    void   *storage; ////< used to store the UVar* pointeur for var monitoring
 
   private:
     string name; 
@@ -195,10 +194,10 @@ URBI {
     void UMonitor(UVar &v, int (*fun) (UVar&)) { URBI::UMonitor(v,fun); };
 
   private:
-    UObjectData*  objectData; //< pointer to a globalData structure specific to the 
-                              //< module/plugin architectures who defines it.
+    UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
+                              ///< module/plugin architectures who defines it.
      
-    PRIVATE(string,name); //< name of the object as seen in URBI
+    PRIVATE(string,name); ///< name of the object as seen in URBI
   };
 
   // generic caster  
@@ -224,7 +223,7 @@ URBI {
   public:
     UCallback0(string type, OBJ* obj, R (OBJ::*fun) (), string funname, UTable &t): 
       UGenericCallback(type, funname,0, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)());
     };
   private:
@@ -240,7 +239,7 @@ URBI {
   public:
     UCallbackvoid0(string type, OBJ* obj, void (OBJ::*fun) (), string funname, UTable &t): 
       UGenericCallback(type, funname,0, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)();
       return (UValue());
     };
@@ -257,7 +256,7 @@ URBI {
   public:
     UCallbackGlobal0(string type, R (*fun) (), string funname, UTable &t): 
       UGenericCallback(type, funname,0, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)());
     };
   private:      
@@ -290,7 +289,7 @@ URBI {
   public:
     UCallback1(string type, OBJ* obj, R (OBJ::*fun) ( P1 ), string funname, UTable &t): 
       UGenericCallback(type, funname,1, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) ));
     };
   private:
@@ -306,7 +305,7 @@ URBI {
   public:
     UCallbackvoid1(string type, OBJ* obj, void (OBJ::*fun) ( P1 ), string funname, UTable &t): 
       UGenericCallback(type, funname,1, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) );
       return (UValue());
     };
@@ -323,7 +322,7 @@ URBI {
   public:
     UCallbackGlobal1(string type, R (*fun) ( P1 ), string funname, UTable &t): 
       UGenericCallback(type, funname,1, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) ));
     };
   private:      
@@ -356,7 +355,7 @@ URBI {
   public:
     UCallback2(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 ), string funname, UTable &t): 
       UGenericCallback(type, funname,2, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) ));
     };
   private:
@@ -372,7 +371,7 @@ URBI {
   public:
     UCallbackvoid2(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 ), string funname, UTable &t): 
       UGenericCallback(type, funname,2, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) );
       return (UValue());
     };
@@ -389,7 +388,7 @@ URBI {
   public:
     UCallbackGlobal2(string type, R (*fun) ( P1 , P2 ), string funname, UTable &t): 
       UGenericCallback(type, funname,2, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) ));
     };
   private:      
@@ -422,7 +421,7 @@ URBI {
   public:
     UCallback3(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 ), string funname, UTable &t): 
       UGenericCallback(type, funname,3, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) ));
     };
   private:
@@ -438,7 +437,7 @@ URBI {
   public:
     UCallbackvoid3(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 ), string funname, UTable &t): 
       UGenericCallback(type, funname,3, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) );
       return (UValue());
     };
@@ -455,7 +454,7 @@ URBI {
   public:
     UCallbackGlobal3(string type, R (*fun) ( P1 , P2 , P3 ), string funname, UTable &t): 
       UGenericCallback(type, funname,3, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) ));
     };
   private:      
@@ -488,7 +487,7 @@ URBI {
   public:
     UCallback4(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 ), string funname, UTable &t): 
       UGenericCallback(type, funname,4, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) ));
     };
   private:
@@ -504,7 +503,7 @@ URBI {
   public:
     UCallbackvoid4(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 ), string funname, UTable &t): 
       UGenericCallback(type, funname,4, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) );
       return (UValue());
     };
@@ -521,7 +520,7 @@ URBI {
   public:
     UCallbackGlobal4(string type, R (*fun) ( P1 , P2 , P3 , P4 ), string funname, UTable &t): 
       UGenericCallback(type, funname,4, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) ));
     };
   private:      
@@ -554,7 +553,7 @@ URBI {
   public:
     UCallback5(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 ), string funname, UTable &t): 
       UGenericCallback(type, funname,5, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) ));
     };
   private:
@@ -570,7 +569,7 @@ URBI {
   public:
     UCallbackvoid5(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 ), string funname, UTable &t): 
       UGenericCallback(type, funname,5, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) );
       return (UValue());
     };
@@ -587,7 +586,7 @@ URBI {
   public:
     UCallbackGlobal5(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 ), string funname, UTable &t): 
       UGenericCallback(type, funname,5, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) ));
     };
   private:      
@@ -620,7 +619,7 @@ URBI {
   public:
     UCallback6(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 ), string funname, UTable &t): 
       UGenericCallback(type, funname,6, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) ));
     };
   private:
@@ -636,7 +635,7 @@ URBI {
   public:
     UCallbackvoid6(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 ), string funname, UTable &t): 
       UGenericCallback(type, funname,6, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) );
       return (UValue());
     };
@@ -653,7 +652,7 @@ URBI {
   public:
     UCallbackGlobal6(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 ), string funname, UTable &t): 
       UGenericCallback(type, funname,6, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) ));
     };
   private:      
@@ -686,7 +685,7 @@ URBI {
   public:
     UCallback7(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 ), string funname, UTable &t): 
       UGenericCallback(type, funname,7, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) ));
     };
   private:
@@ -702,7 +701,7 @@ URBI {
   public:
     UCallbackvoid7(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 ), string funname, UTable &t): 
       UGenericCallback(type, funname,7, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) );
       return (UValue());
     };
@@ -719,7 +718,7 @@ URBI {
   public:
     UCallbackGlobal7(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 ), string funname, UTable &t): 
       UGenericCallback(type, funname,7, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) ));
     };
   private:      
@@ -752,7 +751,7 @@ URBI {
   public:
     UCallback8(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 ), string funname, UTable &t): 
       UGenericCallback(type, funname,8, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) ));
     };
   private:
@@ -768,7 +767,7 @@ URBI {
   public:
     UCallbackvoid8(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 ), string funname, UTable &t): 
       UGenericCallback(type, funname,8, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) );
       return (UValue());
     };
@@ -785,7 +784,7 @@ URBI {
   public:
     UCallbackGlobal8(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 ), string funname, UTable &t): 
       UGenericCallback(type, funname,8, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) ));
     };
   private:      
@@ -818,7 +817,7 @@ URBI {
   public:
     UCallback9(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 ), string funname, UTable &t): 
       UGenericCallback(type, funname,9, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) ));
     };
   private:
@@ -834,7 +833,7 @@ URBI {
   public:
     UCallbackvoid9(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 ), string funname, UTable &t): 
       UGenericCallback(type, funname,9, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) );
       return (UValue());
     };
@@ -851,7 +850,7 @@ URBI {
   public:
     UCallbackGlobal9(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 ), string funname, UTable &t): 
       UGenericCallback(type, funname,9, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) ));
     };
   private:      
@@ -884,7 +883,7 @@ URBI {
   public:
     UCallback10(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 ), string funname, UTable &t): 
       UGenericCallback(type, funname,10, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) ));
     };
   private:
@@ -900,7 +899,7 @@ URBI {
   public:
     UCallbackvoid10(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 ), string funname, UTable &t): 
       UGenericCallback(type, funname,10, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) );
       return (UValue());
     };
@@ -917,7 +916,7 @@ URBI {
   public:
     UCallbackGlobal10(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 ), string funname, UTable &t): 
       UGenericCallback(type, funname,10, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) ));
     };
   private:      
@@ -950,7 +949,7 @@ URBI {
   public:
     UCallback11(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 ), string funname, UTable &t): 
       UGenericCallback(type, funname,11, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) ));
     };
   private:
@@ -966,7 +965,7 @@ URBI {
   public:
     UCallbackvoid11(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 ), string funname, UTable &t): 
       UGenericCallback(type, funname,11, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) );
       return (UValue());
     };
@@ -983,7 +982,7 @@ URBI {
   public:
     UCallbackGlobal11(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 ), string funname, UTable &t): 
       UGenericCallback(type, funname,11, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) ));
     };
   private:      
@@ -1016,7 +1015,7 @@ URBI {
   public:
     UCallback12(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 ), string funname, UTable &t): 
       UGenericCallback(type, funname,12, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) ));
     };
   private:
@@ -1032,7 +1031,7 @@ URBI {
   public:
     UCallbackvoid12(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 ), string funname, UTable &t): 
       UGenericCallback(type, funname,12, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) );
       return (UValue());
     };
@@ -1049,7 +1048,7 @@ URBI {
   public:
     UCallbackGlobal12(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 ), string funname, UTable &t): 
       UGenericCallback(type, funname,12, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) ));
     };
   private:      
@@ -1082,7 +1081,7 @@ URBI {
   public:
     UCallback13(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 ), string funname, UTable &t): 
       UGenericCallback(type, funname,13, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) ));
     };
   private:
@@ -1098,7 +1097,7 @@ URBI {
   public:
     UCallbackvoid13(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 ), string funname, UTable &t): 
       UGenericCallback(type, funname,13, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) );
       return (UValue());
     };
@@ -1115,7 +1114,7 @@ URBI {
   public:
     UCallbackGlobal13(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 ), string funname, UTable &t): 
       UGenericCallback(type, funname,13, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) ));
     };
   private:      
@@ -1148,7 +1147,7 @@ URBI {
   public:
     UCallback14(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 ), string funname, UTable &t): 
       UGenericCallback(type, funname,14, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) ));
     };
   private:
@@ -1164,7 +1163,7 @@ URBI {
   public:
     UCallbackvoid14(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 ), string funname, UTable &t): 
       UGenericCallback(type, funname,14, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) );
       return (UValue());
     };
@@ -1181,7 +1180,7 @@ URBI {
   public:
     UCallbackGlobal14(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 ), string funname, UTable &t): 
       UGenericCallback(type, funname,14, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) ));
     };
   private:      
@@ -1214,7 +1213,7 @@ URBI {
   public:
     UCallback15(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 ), string funname, UTable &t): 
       UGenericCallback(type, funname,15, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) ));
     };
   private:
@@ -1230,7 +1229,7 @@ URBI {
   public:
     UCallbackvoid15(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 ), string funname, UTable &t): 
       UGenericCallback(type, funname,15, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) );
       return (UValue());
     };
@@ -1247,7 +1246,7 @@ URBI {
   public:
     UCallbackGlobal15(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 ), string funname, UTable &t): 
       UGenericCallback(type, funname,15, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) ));
     };
   private:      
@@ -1280,7 +1279,7 @@ URBI {
   public:
     UCallback16(string type, OBJ* obj, R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 , P16 ), string funname, UTable &t): 
       UGenericCallback(type, funname,16, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList& param) {
       return UValue((obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) , cast<P16>(param[16 - 1]) ));
     };
   private:
@@ -1296,7 +1295,7 @@ URBI {
   public:
     UCallbackvoid16(string type, OBJ* obj, void (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 , P16 ), string funname, UTable &t): 
       UGenericCallback(type, funname,16, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (obj->*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) , cast<P16>(param[16 - 1]) );
       return (UValue());
     };
@@ -1313,7 +1312,7 @@ URBI {
   public:
     UCallbackGlobal16(string type, R (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 , P16 ), string funname, UTable &t): 
       UGenericCallback(type, funname,16, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       return UValue((*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) , cast<P16>(param[16 - 1]) ));
     };
   private:      
@@ -1346,7 +1345,7 @@ URBI {
   public:
     UCallbackGlobalvoid0(string type, void (*fun) (), string funname, UTable &t): 
       UGenericCallback(type, funname,0, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &) {
       (*fun)();
       return (UValue());
     };
@@ -1362,7 +1361,7 @@ URBI {
   public:
     UCallbackGlobalvoid1(string type, void (*fun) ( P1 ), string funname, UTable &t): 
       UGenericCallback(type, funname,1, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) );
       return (UValue());
     };
@@ -1381,7 +1380,7 @@ URBI {
   public:
     UCallbackGlobalvoid2(string type, void (*fun) ( P1 , P2 ), string funname, UTable &t): 
       UGenericCallback(type, funname,2, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) );
       return (UValue());
     };
@@ -1400,7 +1399,7 @@ URBI {
   public:
     UCallbackGlobalvoid3(string type, void (*fun) ( P1 , P2 , P3 ), string funname, UTable &t): 
       UGenericCallback(type, funname,3, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) );
       return (UValue());
     };
@@ -1419,7 +1418,7 @@ URBI {
   public:
     UCallbackGlobalvoid4(string type, void (*fun) ( P1 , P2 , P3 , P4 ), string funname, UTable &t): 
       UGenericCallback(type, funname,4, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) );
       return (UValue());
     };
@@ -1438,7 +1437,7 @@ URBI {
   public:
     UCallbackGlobalvoid5(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 ), string funname, UTable &t): 
       UGenericCallback(type, funname,5, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) );
       return (UValue());
     };
@@ -1457,7 +1456,7 @@ URBI {
   public:
     UCallbackGlobalvoid6(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 ), string funname, UTable &t): 
       UGenericCallback(type, funname,6, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) );
       return (UValue());
     };
@@ -1476,7 +1475,7 @@ URBI {
   public:
     UCallbackGlobalvoid7(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 ), string funname, UTable &t): 
       UGenericCallback(type, funname,7, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) );
       return (UValue());
     };
@@ -1495,7 +1494,7 @@ URBI {
   public:
     UCallbackGlobalvoid8(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 ), string funname, UTable &t): 
       UGenericCallback(type, funname,8, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) );
       return (UValue());
     };
@@ -1514,7 +1513,7 @@ URBI {
   public:
     UCallbackGlobalvoid9(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 ), string funname, UTable &t): 
       UGenericCallback(type, funname,9, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) );
       return (UValue());
     };
@@ -1533,7 +1532,7 @@ URBI {
   public:
     UCallbackGlobalvoid10(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 ), string funname, UTable &t): 
       UGenericCallback(type, funname,10, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) );
       return (UValue());
     };
@@ -1552,7 +1551,7 @@ URBI {
   public:
     UCallbackGlobalvoid11(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 ), string funname, UTable &t): 
       UGenericCallback(type, funname,11, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) );
       return (UValue());
     };
@@ -1571,7 +1570,7 @@ URBI {
   public:
     UCallbackGlobalvoid12(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 ), string funname, UTable &t): 
       UGenericCallback(type, funname,12, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) );
       return (UValue());
     };
@@ -1590,7 +1589,7 @@ URBI {
   public:
     UCallbackGlobalvoid13(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 ), string funname, UTable &t): 
       UGenericCallback(type, funname,13, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) );
       return (UValue());
     };
@@ -1609,7 +1608,7 @@ URBI {
   public:
     UCallbackGlobalvoid14(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 ), string funname, UTable &t): 
       UGenericCallback(type, funname,14, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) );
       return (UValue());
     };
@@ -1628,7 +1627,7 @@ URBI {
   public:
     UCallbackGlobalvoid15(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 ), string funname, UTable &t): 
       UGenericCallback(type, funname,15, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) );
       return (UValue());
     };
@@ -1647,7 +1646,7 @@ URBI {
   public:
     UCallbackGlobalvoid16(string type, void (*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 , P16 ), string funname, UTable &t): 
       UGenericCallback(type, funname,16, t), fun(fun) {};
-    virtual UValue __evalcall(UValue *param) {
+    virtual UValue __evalcall(UList &param) {
       (*fun)( cast<P1>(param[1 - 1]) , cast<P2>(param[2 - 1]) , cast<P3>(param[3 - 1]) , cast<P4>(param[4 - 1]) , cast<P5>(param[5 - 1]) , cast<P6>(param[6 - 1]) , cast<P7>(param[7 - 1]) , cast<P8>(param[8 - 1]) , cast<P9>(param[9 - 1]) , cast<P10>(param[10 - 1]) , cast<P11>(param[11 - 1]) , cast<P12>(param[12 - 1]) , cast<P13>(param[13 - 1]) , cast<P14>(param[14 - 1]) , cast<P15>(param[15 - 1]) , cast<P16>(param[16 - 1]) );
       return (UValue());
     };
