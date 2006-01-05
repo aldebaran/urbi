@@ -134,6 +134,7 @@ URBI {
     operator double () { return ((double)value); };
     operator string () { return ((string)value); };
   
+    UValue& val() { return value; };
 
     // internal
     void __update(UValue&);

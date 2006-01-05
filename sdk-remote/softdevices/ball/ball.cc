@@ -29,7 +29,7 @@
 
 void toto() {};
 int toto2(UVar &v) {
-    cout << "toto2 call with " << v.get_name() << endl;
+    cout << "toto2 call with " << v.get_name() << " value = " << v.val() << endl;
 };
 
 

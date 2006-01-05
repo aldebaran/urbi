@@ -80,8 +80,16 @@ namespace URBI {
 UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
   name(name) 
 {
+  if ((type == "function") || (type== "event")) {
+    std::ostringstream oss;
+    oss << size;
+    this->name = this->name + "__" + oss.str();
+  }
   t[this->name].push_back(this);
-  URBI() << "external " << type << "(" << size << ") " << name <<";";
+  if (type == "var")
+    URBI() << "external " << type << " " << name <<";";
+  else
+    URBI() << "external " << type << "(" << size << ") " << name <<";";
 };
 	
 //! UGenericCallback constructor.
@@ -283,9 +291,9 @@ URBI::main(int argc, char *argv[])
     (*retr)->init();
 
   URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
-  URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
-  URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
-  URBI() << externalModuleTag << ": [0,\"ball.myfun\",\"aa.__ret124\",\"fff\",12]" << ";" ;
-  URBI() << externalModuleTag << ": [2,\"ball.myevent\"]" << ";" ;
+ // URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
+  URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
+  URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret124\",\"fff\",12]" << ";" ;
+  URBI() << externalModuleTag << ": [2,\"ball.myevent__0\"]" << ";" ;
 }
 
