@@ -21,7 +21,7 @@
 #include "uobject.h"
 
 //! ball class definition
-class ball : public UObject
+class ball : public UObject 
 {
  public:
   

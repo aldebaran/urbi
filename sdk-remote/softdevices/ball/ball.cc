@@ -62,12 +62,14 @@ ball::~ball()
 string
 ball::myfun   (int n, string s)
 {  
+  cout << "I'm in myfun(" << n << "," << s << ")\n";
   return("hello!");
 }
 
 int
 ball::myfun1   (double n)
-{
+{ 
+  cout << "I'm in myfun1(" << n << ")\n";
   return ((int)(n + 1));
 }
   

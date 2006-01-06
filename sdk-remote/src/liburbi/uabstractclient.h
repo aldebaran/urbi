@@ -60,6 +60,8 @@ typedef unsigned int UCallbackID;
 
 
 
+#define DEBUG 0
+
 
 class UCallbackList;
 #define UINVALIDCALLBACKID 0
@@ -218,6 +220,7 @@ class UValue {
   UValue();
   UValue(const UValue&);
   explicit UValue(double doubleValue);
+  explicit UValue(int intValue);
   explicit UValue(char * val);
   explicit UValue(const string &str);
   explicit UValue(const UBinary &b);

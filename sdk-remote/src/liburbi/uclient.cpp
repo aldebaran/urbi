@@ -33,7 +33,7 @@
 #include <locale.h>
 #include "uclient.h"
 
-
+using namespace std;
 
 
 static void *listenThreadStarter(void *objectPtr)
@@ -157,6 +157,12 @@ UClient::canSend(int size) {
 
 int 
 UClient::effectiveSend(const void  * buffer, int size) {
+#if DEBUG
+char output[size+1];
+memcpy((void*)output, buffer, size);
+output[size]=0;
+cout << ">>>> SENT : [" << output << "]" << endl;
+#endif
   if (rc) return -1;
   int pos = 0;
   while (pos!=size) {

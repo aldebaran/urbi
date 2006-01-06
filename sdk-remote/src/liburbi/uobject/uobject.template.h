@@ -230,9 +230,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) (%%%,% P% %%);
+    R (OBJ::*fun) (%%%,% P% %%); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ%%, class P% %%>

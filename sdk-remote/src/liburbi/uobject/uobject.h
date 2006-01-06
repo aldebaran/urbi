@@ -229,9 +229,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ();
+    R (OBJ::*fun) (); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ>
@@ -295,9 +295,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 );
+    R (OBJ::*fun) ( P1 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 >
@@ -361,9 +361,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 );
+    R (OBJ::*fun) ( P1 , P2 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 >
@@ -427,9 +427,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 );
+    R (OBJ::*fun) ( P1 , P2 , P3 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 >
@@ -493,9 +493,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 >
@@ -559,9 +559,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 >
@@ -625,9 +625,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 >
@@ -691,9 +691,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 >
@@ -757,9 +757,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 >
@@ -823,9 +823,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 >
@@ -889,9 +889,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 >
@@ -955,9 +955,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 >
@@ -1021,9 +1021,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 >
@@ -1087,9 +1087,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 >
@@ -1153,9 +1153,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 >
@@ -1219,9 +1219,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 , class P15 >
@@ -1285,9 +1285,9 @@ URBI {
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 , P16 );
+    R (OBJ::*fun) ( P1 , P2 , P3 , P4 , P5 , P6 , P7 , P8 , P9 , P10 , P11 , P12 , P13 , P14 , P15 , P16 ); 
   };
-  
+   
   // void, object methods
 
   template <class OBJ, class P1 , class P2 , class P3 , class P4 , class P5 , class P6 , class P7 , class P8 , class P9 , class P10 , class P11 , class P12 , class P13 , class P14 , class P15 , class P16 >

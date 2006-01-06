@@ -225,6 +225,7 @@ URBI::dispatcher(const UMessage &msg)
       array.setOffset(0);
       URBI() << (string)array[2] << "=";
       retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
+      URBI() << ";";
     }          
     else
       msg.client.printf("Soft Device Error: %s function unknown.\n",((string)array[1]).c_str());
@@ -293,7 +294,7 @@ URBI::main(int argc, char *argv[])
     (*retr)->init();
 
   URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
- URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
+  URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret124\",\"fff\",12]" << ";" ;
   URBI() << externalModuleTag << ": [2,\"ball.myevent__0\"]" << ";" ;

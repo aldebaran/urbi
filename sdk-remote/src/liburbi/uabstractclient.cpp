@@ -41,8 +41,7 @@ extern "C"
 }
 
 #include "uabstractclient.h"
-#define DEBUG 0
-using std::min;
+using std::min; 
 #if DEBUG
 //
 //#include <sys/time.h>
@@ -1482,7 +1481,7 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
     return p+1;
   }
 
-  if (message[pos] == '[') {
+  if (message[pos] == '[') { 
     //list message
     type = DATA_LIST;
     list = new UList();
@@ -1731,6 +1730,8 @@ UValue::UValue() : type(DATA_VOID), storage(0) {}
 
 
 UValue::UValue(double v) : val(v), type(DATA_DOUBLE)  {}
+UValue::UValue(int v) : val((double)v), type(DATA_DOUBLE)  {}
+
 UValue::UValue(char * v) : stringValue(new string(v)), type(DATA_STRING)  {}
 UValue::UValue(const string &v) : type(DATA_STRING), stringValue(new string(v)) {}
  
@@ -1840,10 +1841,10 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
 void UValue::send(UAbstractClient *cl) {
   switch( type) {
   case DATA_DOUBLE:
-    cl->send("%ld",val);
+    cl->send("%lf",val);
     break;
   case DATA_STRING:
-    cl->send("%s",stringValue->c_str());
+    cl->send("\"%s\"",stringValue->c_str());
     break;
   case DATA_BINARY:
     cl->sendBin(binary->data, binary->size, "BIN %d %s;", binary->size, binary->message.c_str());      
