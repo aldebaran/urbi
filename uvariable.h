@@ -113,6 +113,7 @@ public:
   bool            speedmodified; ///< when a speedmax reajustment has been executed
   bool            reloop; ///< when speedmodified has been detected, asking for a reloop on pending
                           ///< finished assignements.
+  UBinder         *binder; ///< cached binder pointer
 
   UCommand_ASSIGN_VALUE *cancel; ///< used for the "cancel" blend type
   
@@ -127,6 +128,8 @@ public:
 
   void          setSensorVal(double f);
   void          initSensorVal(double f);
+
+  void          updated();
 
   UValue*       get();
 

@@ -36,7 +36,8 @@ UValue::UValue()
   ADDOBJ(UValue);
   dataType = DATA_VOID;
   eventid = 0;
-  list = 0;
+  liststart = 0;
+  next = 0;
 
   val        = 0; // set default values to 0, including
                   // str & refBinary pointers
@@ -48,7 +49,8 @@ UValue::UValue(double val)
   ADDOBJ(UValue);
   dataType = DATA_NUM;
   eventid = 0;
-  list = 0;
+  liststart = 0;
+  next = 0;
   this->val = val;
 }
 
@@ -58,7 +60,8 @@ UValue::UValue(const char* str)
   ADDOBJ(UValue);
   dataType = DATA_STRING;
   eventid = 0;
-  list = 0;
+  liststart = 0;
+  next = 0;
   this->str = new UString (str);
 }
 
@@ -68,7 +71,8 @@ UValue::~UValue()
   FREEOBJ(UValue);
   if ((dataType == DATA_STRING) && (str!=0)) delete (str);
   if (dataType == DATA_BINARY) LIBERATE(refBinary);
-  if (list) delete list; 
+  if (liststart) delete liststart;
+  if (next) delete next;
 }
 
 //! UValue hard copy
@@ -107,12 +111,20 @@ UValue::copy()
 
   if (dataType == DATA_LIST) {
     
-    UValue *scanlist = list;
+    UValue *scanlist = liststart;
     UValue *sret = ret;
-    while (scanlist) {
-      sret->list = scanlist->copy();
-      scanlist = scanlist->list;
-      sret = sret->list;
+    if (scanlist == 0) 
+      ret->liststart = 0;
+    else {      
+      sret->liststart = scanlist->copy();
+      scanlist = scanlist->next;
+      sret = sret->liststart;
+      
+      while (scanlist) {
+	sret->next = scanlist->copy();
+	scanlist = scanlist->next;
+	sret = sret->next;
+      }
     }
   }
         
@@ -172,26 +184,33 @@ UValue::add(UValue *v)
 
   if (dataType == DATA_LIST) {
     UValue *ret = copy();
-    UValue *scanlist = ret;
-    while (scanlist->list)
-      scanlist = scanlist->list;
     
-    scanlist->list = v->copy();
-    if (scanlist->list->dataType == DATA_LIST) {
-      UValue * tmp = scanlist->list;
-      scanlist->list = scanlist->list->list;
-      tmp->list = 0;
-      delete tmp;
-    }  
-   
+    if (ret->liststart) {
+
+      UValue *scanlist = ret->liststart;    
+      while (scanlist->next)
+	scanlist = scanlist->next;
+      
+      scanlist->next = v->copy();
+      /*
+      if (scanlist->list->dataType == DATA_LIST) 
+	UValue * tmp = scanlist->list;
+	scanlist->list = scanlist->list->list;
+	tmp->list = 0;
+	delete tmp;
+       */
+    }
+    else
+      ret->liststart = v->copy();  
+
     return( ret ); 
   }
 
   if (v->dataType == DATA_LIST) { //we are not a list
     UValue *ret = v->copy();
-    UValue * b = ret->list;
-    ret->list = copy();
-    ret->list->list = b;
+    UValue * b = ret->liststart;
+    ret->liststart = copy();
+    ret->liststart->next = b;
     return ret;
   }
 
@@ -326,3 +345,87 @@ booleval(UValue *v, bool freeme)
   if (freeme) delete v;
   return (res);
 }
+
+
+
+//! UValue echo in a connection
+void
+UValue::echo(UConnection *connection, bool human_readable)
+{
+  if (dataType == DATA_VOID) {
+    connection->send((const ubyte*)"void",4);
+    return;
+  }
+  
+  if (dataType == DATA_LIST) {
+    
+    connection->send((const ubyte*)"[",1);
+
+    UValue *scanlist = liststart;
+    while (scanlist) {
+
+      scanlist->echo(connection, human_readable);
+      scanlist = scanlist->next;
+      if (scanlist)  connection->send((const ubyte*)",",1);
+    }
+    connection->send((const ubyte*)"]",1);
+    return;
+  }
+
+  if (dataType == DATA_NUM)
+    sprintf(tmpbuffer,"%f",val); 
+
+  if (dataType == DATA_STRING)
+    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+             "\"%s\"",str->str());
+
+  if (dataType == DATA_FILE)
+    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+             "FILE %s",str->str());
+
+  if (dataType == DATA_BINARY) {
+    if (refBinary) {
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+               "BIN %d ",refBinary->ref()->bufferSize);
+      UNamedParameters *param = refBinary->ref()->parameters;
+      char tmpparam[1024];
+      while (param) {
+        if (param->expression) {
+          if (param->expression->dataType == DATA_NUM)
+            snprintf(tmpparam,1024,"%d ",(int)param->expression->val);
+          if (param->expression->dataType == DATA_STRING)
+            snprintf(tmpparam,1024,"%s ",param->expression->str->str());
+
+          strcat(tmpbuffer,tmpparam);
+        }
+        param = param->next;
+      }
+
+      if (!human_readable) {
+	strcat(tmpbuffer,"\n");
+      
+	if (connection->availableSendQueue() > 
+	    strlen(tmpbuffer) + 
+	    refBinary->ref()->bufferSize +1) {
+	  
+	  connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer));
+	  connection->send(refBinary->ref()->buffer,
+   	      refBinary->ref()->bufferSize);
+     	}
+       	else
+	  ::urbiserver->debug("Send queue full for binary... Drop command.\n");
+      }
+      else
+	connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer)-1);
+            
+      return; 
+    }
+    else
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+               "BIN 0 null\n");
+  }
+
+  connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer));
+}
+
+

@@ -388,6 +388,28 @@ public:
   UFunction        *fun; ///< cached function, used by undef
 };
 
+class UCommand_BINDER : public UCommand
+{
+public:
+
+  UCommand_BINDER (UString* binder,
+                   int type,
+                   UVariableName* variablename,
+		   int nbparam=0);  
+  virtual ~UCommand_BINDER();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *binder;     ///< binder name "external" or "internal"
+  UVariableName    *variablename;///< variable
+  int              type; ///< type of binding: 0:"function", 1:"var", 2:"event"
+  int              nbparam; ///< nb of param in a function binding
+};
+
+
 class UCommand_OPERATOR : public UCommand
 {
 public:

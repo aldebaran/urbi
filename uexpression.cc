@@ -25,8 +25,7 @@
 #include "ucommand.h"
 #include "uconnection.h"
 #include "udevice.h"
-#include "userver.h"
-#include "ugroupdevice.h"                                      
+#include "userver.h"                                   
 
 // **************************************************************************
 //! UExpression base constructor called by every specific constructor.
@@ -313,15 +312,21 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret->dataType = DATA_LIST;
     pevent = parameters;    
     e1 = ret;
+    if (pevent) {
+      e1->liststart = pevent->expression->eval(command, connection);
+      e1 = e1->liststart;
+      pevent = pevent->next;
+    }
+    
     while (pevent) {
       
-      e1->list = pevent->expression->eval(command, connection);
-      if (e1->list==0) {
+      e1->next = pevent->expression->eval(command, connection);
+      if (e1->next==0) {
         delete ret;
         return(0);
       }
       pevent = pevent->next;
-      e1 = e1->list;
+      e1 = e1->next;
     }
     return(ret);
 

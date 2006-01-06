@@ -101,7 +101,7 @@ UConnection::UConnection  (UServer *userver,
     UError = UFAIL;
     return;
   }
-   
+
   // Create receive queue
   recvQueue_       = new UCommandQueue(minRecvBufferSize,
                                        maxRecvBufferSize,
@@ -154,6 +154,31 @@ UConnection::~UConnection()
     delete connectionTag;
   }
   if (activeCommand) delete activeCommand;
+
+  // free bindings
+
+  for ( HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
+      it1 != ::urbiserver->variabletab.end(); it1++ ) {
+    
+    if (it1->second->binder)
+      if (it1->second->binder->removeMonitor(this)) {
+	delete it1->second->binder;
+	it1->second->binder = 0;
+      }	
+  }
+
+  for ( HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
+      it2 != ::urbiserver->functionbindertab.end(); ) {
+    
+    it2->second->removeMonitor(this);
+    it2++;  
+  }
+  for ( HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
+      it3 != ::urbiserver->eventbindertab.end(); ) {
+    
+    it3->second->removeMonitor(this);
+    it3++;  
+  }
 }
 
 //! UConnection IP associated
@@ -212,18 +237,9 @@ void UConnection::initialize()
   newDataAdded = true;
 }
 
-//! Send a string through the connection.
-/*! A tag is automatically added to output the message string and the 
-    resulting string is sent via send(const ubyte*,int).
-    \param s the string to send
-    \param tag the tag of the message. Default is "notag" 
-    \return 
-            - USUCCESS: successful
-            - UFAIL   : could not send the string
-    \sa send(const ubyte*,int)
-*/
+//! Send a message prefix [time:tag] through the connection
 UErrorValue      
-UConnection::send (const char *s, const char* tag)
+UConnection::sendPrefix (const char* tag)
 {
   static const int MAXSIZE_TMPBUFFER = 1024;
   static char tmpBuffer_[MAXSIZE_TMPBUFFER];
@@ -241,6 +257,31 @@ UConnection::send (const char *s, const char* tag)
   }
   
   send((const ubyte*)tmpBuffer_,strlen(tmpBuffer_));
+}
+
+//! Send a "\n" through the connection
+UErrorValue      
+UConnection::endline ()
+{  
+  send((const ubyte*)"\n",1);
+}
+
+
+
+//! Send a string through the connection.
+/*! A tag is automatically added to output the message string and the 
+    resulting string is sent via send(const ubyte*,int).
+    \param s the string to send
+    \param tag the tag of the message. Default is "notag" 
+    \return 
+            - USUCCESS: successful
+            - UFAIL   : could not send the string
+    \sa send(const ubyte*,int)
+*/
+UErrorValue      
+UConnection::send (const char *s, const char* tag)
+{
+  sendPrefix(tag);
   return send((const ubyte*)s,strlen(s));
 }
 

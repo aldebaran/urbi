@@ -25,6 +25,9 @@
 #include "userver.h"
 #include "ucommand.h"
 #include "udevice.h"
+#include "utypes.h"
+#include "uconnection.h"
+
 
 
 //! UVariable constructor.
@@ -141,6 +144,7 @@ UVariable::init() {
   uservar    = ::urbiserver->uservarState;
   toDelete   = false;
   activity   = 0;
+  binder     = 0;
 }
 
 //! UVariable destructor
@@ -303,7 +307,8 @@ UVariable::selfSet(double *valcheck)
 
   modified = true;
   if ((notifyWrite) && (dev)) dev->notifyWrite(this); 
-
+  updated();
+  
   if (speedmodified) return (USPEEDMAX);
 
   return ( UOK );
@@ -321,4 +326,41 @@ UVariable::get()
   if ((notifyRead) && (dev)) dev->notifyRead(this);
   return value; 
 };
+
+//! This function takes care of notifying the monitors that the var is updated
+/*! When the variable is updated, either by the kernel of robot-specific
+    part, this function must be called. It's called automatically by the above
+    set methods.
+*/
+inline void
+UVariable::updated()
+{
+  if (!binder) return;  
+
+  for (list<UConnection*>::iterator it = binder->monitors.begin();
+      it != binder->monitors.end();
+      it++) {
+
+    (*it)->sendPrefix(EXTERNAL_MESSAGE_TAG);
+    (*it)->send((const ubyte*)"[1,\"",4);
+    (*it)->send((const ubyte*)varname->str(),varname->len());
+    (*it)->send((const ubyte*)"\",",2);
+    value->echo((*it));
+    (*it)->send((const ubyte*)"]\n",2);    
+  }
+  
+  /*
+  //debug
+  switch (value->dataType) {
+    case DATA_STRING: 
+     ::urbiserver->debug("UPDATED: %s = \"%s\"\n",varname->str(),value->str->str());     
+     break;
+    case DATA_NUM:  
+     ::urbiserver->debug("UPDATED: %s = %f\n",varname->str(),value->val);
+     break;
+    default:
+     ::urbiserver->debug("UPDATED: %s (unknown type)\n",varname->str());
+  }
+  */
+}
 

@@ -45,10 +45,13 @@ UValue * UGroup::list( UVariableName *variable) {
   UGroup * gr =  this;
   
   UValue * val = new UValue();
-  val->dataType = DATA_LIST;
-  val->list = 0;
+  val->dataType = DATA_LIST;  
   UValue * current = val;
-  for (std::list<UGroup*>::iterator it = gr->members.begin(); it != gr->members.end();it++) {
+  bool first = true;
+  
+  for (std::list<UGroup*>::iterator it = gr->members.begin(); 
+      (it != gr->members.end()) && current ;
+      it++) {
    
     UValue *n;
     if ((*it)->members.empty()) { //terminal group, handle it for him
@@ -67,16 +70,22 @@ UValue * UGroup::list( UVariableName *variable) {
     
     else
       n =  ::urbiserver->grouptab[(*it)->device->str()]->list(variable);
-    
+   /* 
     while (n && n->dataType == DATA_LIST) {
       UValue * nn = n->list;
       n->list=  0;
       delete n;
       n=nn;
     }
-    current->list = n;
+    */
+    if (first) current->liststart =n; else current->next = n;
+    current = n;
+/*
+current->list = n;
     while (current->list)
       current = current->list;
+      */
+    first = false;
   }
   
   

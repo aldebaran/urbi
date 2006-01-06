@@ -177,6 +177,15 @@ switch     { lvalp->str = new UString(yytext);
               return SWITCH;
             }
 
+external |
+internal   { lvalp->str = new UString(yytext); 
+             if (lvalp->str->str() == 0) {
+                delete (lvalp->str);
+                lvalp->str = 0;
+             }
+             return BINDER;
+            }
+
 motoron    |
 motoroff   |
 defcheckon  |
@@ -201,6 +210,8 @@ shutdown      { lvalp->str = new UString(yytext);
                 }
                 return OPERATOR;
               }
+
+	      
 
 if            { return IF;}  
 else          { return ELSE;} 

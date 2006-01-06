@@ -37,8 +37,8 @@ KERNEL_SOURCES=udevice.cc \
              uproperty.cc \
              uvariablename.cc \
              ubinary.cc \
-             ucallid.cc \
-             ugroupdevice.cc
+	     ubinder.cc \
+             ucallid.cc
 
 KERNEL_FILES=$(KERNEL_SOURCES:.cc=$(OBJEXT))
 

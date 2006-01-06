@@ -26,6 +26,7 @@
 #include "ustring.h"
 
 class UBinary;
+class UConnection;
 
 // *****************************************************************************
 //! Contains a value: can be numeric, string, binary
@@ -47,11 +48,13 @@ public:
   };
 
   int eventid; ///< Used to identify the events from which the boolean value come from
-  UValue *list;
+  UValue *liststart;
+  UValue *next;
 
   UValue* copy();
   UValue* add(UValue* v);
   bool    equal(UValue* v);
+  void    echo(UConnection* connection, bool human_readable=false);
 };
 
 UTestResult booleval(UValue *,bool freeme = true);

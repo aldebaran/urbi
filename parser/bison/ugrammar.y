@@ -126,6 +126,7 @@ using namespace std;
 %token <structure>           REFSTRUCT
 %token <str>                 STRING
 %token <str>                 SWITCH
+%token <str>                 BINDER
 %token <str>                 OPERATOR
 %token <str>                 OPERATOR_ID
 %token <str>                 OPERATOR_ID_PARAM
@@ -511,6 +512,28 @@ instruction:
       MEMCHECK2($$,$1,$2);
     } 
 
+  | BINDER VAR purevariable {
+
+      MEMCHECK($1);
+      $$ = new UCommand_BINDER($1,1,$3);
+      MEMCHECK2($$,$1,$3);
+    }
+    
+  | BINDER FUNCTION LPAREN NUM RPAREN purevariable {
+
+      MEMCHECK($1);
+      $$ = new UCommand_BINDER($1,0,$6,(int)$4);
+      MEMCHECK2($$,$1,$6);
+    }
+
+  | BINDER EVENT LPAREN NUM RPAREN purevariable {
+
+      MEMCHECK($1);
+      $$ = new UCommand_BINDER($1,2,$6,(int)$4);
+      MEMCHECK2($$,$1,$6);
+    }
+
+
   | WAIT expr { 
 
       $$ = new UCommand_WAIT($2);
@@ -827,7 +850,7 @@ array:
 ;
 
 
-/* VARIABLE, REFVARIABLE */
+/* PUREVARIABLE, VARIABLE, REFVARIABLE */
 
 purevariable: 
 

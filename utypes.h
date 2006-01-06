@@ -37,6 +37,7 @@ class UServer;
 class UValue;
 class UVariable;
 class UFunction;
+class UBinder;
 class UGroup;
 class UString;
 class UCommand_EMIT;
@@ -80,6 +81,20 @@ enum UErrorCode {
   UERROR_MEMORY_WARNING,
   UERROR_CPU_OVERLOAD
 };
+
+//! Type of Bind modes
+enum UBindMode {
+  UEXTERNAL,
+  UINTERNAL
+};
+
+//! Type of binding
+enum UBindType {
+  UBIND_FUNCTION,
+  UBIND_VAR,
+  UBIND_EVENT
+};
+
 
 //! Type of Warnings
 enum UWarningCode {
@@ -315,5 +330,11 @@ typedef  hash_map<const char*,
                   UCommand_EMIT*,
                   hash<const char*>,
                   eqStr>                 HMeventtab; ///< hash of events
+		  
+typedef  hash_map<const char*,
+                  UBinder*,
+                  hash<const char*>,
+                  eqStr>                 HMbindertab; ///< hash of binders
+
 
 #endif

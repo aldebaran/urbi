@@ -36,6 +36,8 @@ class UVariable;
 #include "utypes.h"
 #include "ufunction.h"
 #include "uvariable.h"
+#include "ubinder.h"
+
 
 class UString;
 class UParser;
@@ -43,6 +45,7 @@ class UQueue;
 
 using namespace std;
 
+extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
 extern  const char* DISPLAY_FORMAT1;
 extern  const char* DISPLAY_FORMAT2;
@@ -146,6 +149,10 @@ public:
   HMgrouptab               grouptab; ///< hash of group definitions  
   HMaliastab               aliastab; ///< hash of alias definitions
   HMeventtab               eventtab; ///< hash of events
+  HMbindertab              functionbindertab; ///< hash of function binders
+  HMbindertab              eventbindertab; ///< hash of event binders
+
+
 
   list<UVariable*>         reinitList; ///< variables to reinit (nbAverage=0)
 
@@ -216,5 +223,12 @@ UServer::lastTime()
 {
   return lastTime_;
 }
+
+extern int URBI_unicID;
+
+inline int unic() {
+  URBI_unicID++;
+  return( URBI_unicID );
+}	
 
 #endif

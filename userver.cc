@@ -34,6 +34,9 @@
 // Global server reference
 UServer    *urbiserver= 0;
 
+const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
+int URBI_unicID = 10000; ///< unique identifier to create new references
+
 // Formatting for the echo and error outputs.
 
 const char* DISPLAY_FORMAT   = "[%d] %-35s %s";
