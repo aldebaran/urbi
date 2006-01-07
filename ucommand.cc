@@ -1929,7 +1929,7 @@ UCommand_EXPR::execute(UConnection *connection)
       /* // This version is not faster and is very complicated... kept for the
        * records only       
        
-      
+        
  	 new UCommand_TREE(UPIPE,
    	   new UCommand_TREE(UPIPE,
 	      new UCommand_WAIT_TEST(
@@ -3769,28 +3769,75 @@ UCommand_EMIT::execute(UConnection *connection)
     }
 
     eventnamestr = eventname->buildFullname(this,connection)->str();
-    /*
-    if (::urbiserver->eventtab.find(eventnamestr) != ::urbiserver->eventtab.end()) {
-      
-      if (eventnamestr) {
-        snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-                 "!!! event %s already running\n",
-                 eventnamestr);
-        connection->send(tmpbuffer,tag->str()); 
-      }
-      
-      return( status = UCOMPLETED );
-    } 
-    */        
-    // register event
-   
+         
+    // register event   
     ::urbiserver->eventtab[eventnamestr] = this;
+
+     ////// EXTERNAL /////
+   
+    HMbindertab::iterator it = ::urbiserver->eventbindertab.find(eventnamestr);
+    if ((it != ::urbiserver->eventbindertab.end()) && 
+	(parameters) && 
+	(it->second->nbparam == parameters->size()) &&
+	(!it->second->monitors.empty()))  {
+            
+      char tmpprefix[1024];
+      snprintf(tmpprefix,1024,"[2,\"%s__%d\"",
+    	  eventnamestr,it->second->nbparam);
+	  
+      for (list<UConnection*>::iterator it2 = it->second->monitors.begin();
+	   it2 != it->second->monitors.end();
+	   it2++) {
+	
+	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
+	for (UNamedParameters *pvalue = parameters;
+	    pvalue != 0;
+	    pvalue = pvalue->next) {
+	    
+	  (*it2)->send((const ubyte*)",",1);
+	  UValue* valparam = pvalue->expression->eval(this,connection);
+	  valparam->echo((*it2));
+	} 
+	(*it2)->send((const ubyte*)"]\n",2);
+      }
+    }
+    
+
+    ////// INTERNAL /////
+
+    //...
   }
  
   if ((thetime > targetTime) && (!firsttime)) {
-    // unregister event
-   
+  
+    // unregister event   
     ::urbiserver->eventtab.erase(::urbiserver->eventtab.find(eventnamestr));
+
+     ////// EXTERNAL /////
+   
+    HMbindertab::iterator it = ::urbiserver->eventbindertab.find(eventnamestr);
+    if ((it != ::urbiserver->eventbindertab.end()) && 
+	(parameters) && 
+	(it->second->nbparam == parameters->size()) &&
+	(!it->second->monitors.empty()))  {
+            
+      char tmpprefix[1024];
+      snprintf(tmpprefix,1024,"[3,\"%s__%d\"]\n",
+    	  eventnamestr,it->second->nbparam);
+	  
+      for (list<UConnection*>::iterator it2 = it->second->monitors.begin();
+	   it2 != it->second->monitors.end();
+	   it2++) {
+	
+	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));
+      }
+    }
+    
+    ////// INTERNAL /////
+    
+    
     return(status = UCOMPLETED);
   }
 
