@@ -51,7 +51,7 @@ ball::ball() :
 
   UNotifyEnd(ball, myevent, endevent);
   
-  //UMonitor("camera.val",&toto2);
+  UMonitor("camera.val",&toto2);
   x = 42;
 }
 

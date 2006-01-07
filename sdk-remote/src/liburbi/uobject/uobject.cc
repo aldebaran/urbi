@@ -134,13 +134,31 @@ URBI::UMonitor(UVar &v, int (*fun) ())
   createUCallback("var",fun,v.get_name(), monitormap);
 }
 
-//! UVar monitoring with callback
+//! UVar monitoring with callback including a pointeur to the UVar&
 void 
 URBI::UMonitor(UVar &v, int (*fun) (UVar&))
 {
   UGenericCallback* cb = createUCallback("var",fun,v.get_name(), monitormap);
   if (cb) cb->storage = (void*)(&v);
 }
+
+//! UVar monitoring with callback, based on var name: creates a hidden UVar
+void 
+URBI::UMonitor(string varname, int (*fun) ())
+{  
+  createUCallback("var",fun,varname, monitormap);
+}
+
+//! UVar monitoring with callback, based on var name: creates a hidden UVar 
+//! and pass it as a param in the callback
+void 
+URBI::UMonitor(string varname, int (*fun) (UVar&))
+{
+  UVar *hidden = new UVar(varname);
+  UGenericCallback* cb = createUCallback("var",fun,varname, monitormap);
+  if (cb) cb->storage = (void*)(hidden);
+}
+
 
 
 // **************************************************************************	

@@ -239,7 +239,6 @@ class UValue {
 
   ///send the value over an urbi connection, without any prefix or terminator
   void send(UAbstractClient * cl);
-  string associatedVarName; // (V  1.0) used to cast to UVar.
 };
   
 

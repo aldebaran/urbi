@@ -87,6 +87,9 @@ URBI {
   void UMonitor(UVar&);  
   void UMonitor(UVar&, int (*) ());
   void UMonitor(UVar&, int (*) (UVar&));
+  void UMonitor(string, int (*) ());
+  void UMonitor(string, int (*) (UVar&));
+
 
 
   // **************************************************************************	
@@ -196,6 +199,9 @@ URBI {
     void UMonitor(UVar &v) { URBI::UMonitor(v); };
     void UMonitor(UVar &v, int (*fun) ()) { URBI::UMonitor(v,fun); };
     void UMonitor(UVar &v, int (*fun) (UVar&)) { URBI::UMonitor(v,fun); };
+    void UMonitor(string varname, int (*fun) ()) { URBI::UMonitor(varname,fun); };
+    void UMonitor(string varname, int (*fun) (UVar&)) { URBI::UMonitor(varname,fun); };
+
 
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
