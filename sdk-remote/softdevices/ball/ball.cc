@@ -48,6 +48,8 @@ ball::ball() :
   UMonitor(x, &ball::stuff);
   UMonitor(y, &ball::stuff2);
   UMonitor(x, &toto2);
+
+  UNotifyEnd(ball, myevent, endevent);
   
   //UMonitor("camera.val",&toto2);
   x = 42;
@@ -74,6 +76,13 @@ ball::myfun1   (double n)
 }
   
 void
-ball::myevent ()
+ball::myevent (int n)
 {
+  cout << "Event 'myevent' received with param " << n<< endl;
+}
+
+void
+ball::endevent ()
+{
+  cout << "Event 'myevent' ended " << endl;
 }

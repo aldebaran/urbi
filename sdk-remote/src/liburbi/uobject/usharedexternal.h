@@ -26,7 +26,8 @@ namespace URBI {
   enum USystemExternalMessage {
     UEM_EVALFUNCTION,
     UEM_ASSIGNVALUE,
-    UEM_EMITEVENT
+    UEM_EMITEVENT,
+    UEM_ENDEVENT
   };
 } // namespace URBI
 

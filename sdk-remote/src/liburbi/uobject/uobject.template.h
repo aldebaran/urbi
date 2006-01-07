@@ -49,7 +49,9 @@ namespace __gnu_cxx {
 // Thess macro are here to make life easier
 #define UVarInit(obj,x) x.init(#obj,#x)
 #define UFunctionInit(obj,x)  createUCallback("function", this,(&obj::x),string(#obj)+"."+string(#x),functionmap)
-#define UEventInit(obj,x)     createUCallback("event", this,(&obj::x),string(#obj)+"."+string(#x),eventmap)
+#define UEventInit(obj,x)     createUCallback("event",    this,(&obj::x),string(#obj)+"."+string(#x),eventmap)
+#define UNotifyEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),string(#obj)+"."+string(#x),eventendmap)
+
 
 // defines a variable and it's associated accessors
 #define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
@@ -77,6 +79,7 @@ URBI {
   extern UVarTable varmap;
   extern UTable functionmap;
   extern UTable eventmap;
+  extern UTable eventendmap;
   extern UTable monitormap;
 
   extern void main(int argc, char *argv[]);
@@ -241,6 +244,7 @@ URBI {
   public:
     UCallbackvoid%N%(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
       UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
+    
     virtual UValue __evalcall(UList &param) {
       ((*obj).*fun)(%%%,% cast<P%>(param[% - 1]) %%);
       return UValue();
@@ -249,6 +253,25 @@ URBI {
       OBJ* obj;
       void (OBJ::*fun) (%%%,% P% %%);
   };
+  
+  // void, object methods : special case for notifyend event callbacks
+
+  template <class OBJ%%, class P% %%>
+    class UCallbacknotifyend%N% : public UGenericCallback
+  {
+  public:
+    UCallbacknotifyend%N%(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),string funname, UTable &t): 
+      UGenericCallback(type, funname,%N%, t), obj(obj), fun(end) {};
+    
+    virtual UValue __evalcall(UList &) {
+      ((*obj).*fun)();
+      return UValue();
+    };
+  private:
+      OBJ* obj;
+      void (OBJ::*fun) ();
+  };
+
 
   // non void, standard function
   
@@ -282,6 +305,14 @@ URBI {
   UGenericCallback* createUCallback(string type, R (*fun) (%%%,% P% %%), string funname,UTable &t) {
     return ((UGenericCallback*) new UCallbackGlobal%N%<R%%, P% %%> (type,fun,funname,t));
   }
+
+  // special case for eventend notification
+  template <class OBJ%%, class P% %%> 
+  UGenericCallback* createUCallback(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), string funname,UTable &t) {
+    return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (type,obj,fun,end,funname,t));
+  }
+   
+
 %%%%
 
 

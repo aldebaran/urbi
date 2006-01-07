@@ -40,6 +40,7 @@ namespace URBI {
   UTable functionmap;
   UTable monitormap;
   UTable eventmap;
+  UTable eventendmap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
@@ -80,15 +81,18 @@ namespace URBI {
 UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
   name(name) 
 {
-  if ((type == "function") || (type== "event")) {
+  if ((type == "function") || (type== "event") || (type=="eventend")) {
     std::ostringstream oss;
     oss << size;
     this->name = this->name + "__" + oss.str();
   }
   t[this->name].push_back(this);
+
+  cout << "Registering " << type << " " << name << " " << size << " into " << this->name << endl;
+
   if (type == "var")
     URBI() << "external " << type << " " << name <<";";
-  else
+  if ((type == "event") || (type == "function"))
     URBI() << "external " << type << "(" << size << ") " << name <<";";
 };
 	
@@ -233,7 +237,7 @@ URBI::dispatcher(const UMessage &msg)
   
   // UEM_EMITEVENT
   else if ((USystemExternalMessage)(int)array[0] == UEM_EMITEVENT) {
-    
+  
     if (eventmap.find((string)array[1]) != eventmap.end()) {
       
       list<UGenericCallback*>  tmpfun = eventmap[(string)array[1]];
@@ -247,6 +251,24 @@ URBI::dispatcher(const UMessage &msg)
     
     }
   }
+  
+  // UEM_ENDEVENT
+  else if ((USystemExternalMessage)(int)array[0] == UEM_ENDEVENT) {
+    
+    if (eventendmap.find((string)array[1]) != eventendmap.end()) {
+         
+      list<UGenericCallback*>  tmpfun = eventendmap[(string)array[1]];
+      for (list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
+	  tmpfunit != tmpfun.end();
+	  tmpfunit++) {
+	array.setOffset(2);
+	(*tmpfunit)->__evalcall(array);
+	array.setOffset(0);
+      }
+    
+    }
+  }
+
   // DEFAULT
   else          
     msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)array[0]);      
@@ -281,13 +303,13 @@ URBI::main(int argc, char *argv[])
 
 
   
-  urbi::getDefaultClient()->setCallback(&dispatcher,
-                                        externalModuleTag.c_str());
-  
 #ifdef LIBURBIDEBUG
   urbi::getDefaultClient()->setWildcardCallback( callback (&debug));
 #endif
 
+  urbi::getDefaultClient()->setCallback(&dispatcher,
+                                        externalModuleTag.c_str());
+  
   for (list<baseURBIStarter*>::iterator retr = objectlist.begin();
        retr != objectlist.end();
        retr++)
@@ -297,6 +319,6 @@ URBI::main(int argc, char *argv[])
   URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret124\",\"fff\",12]" << ";" ;
-  URBI() << externalModuleTag << ": [2,\"ball.myevent__0\"]" << ";" ;
+  URBI() << externalModuleTag << ": [2,\"ball.myevent__1\",123]" << ";" ;
 }
 
