@@ -33,7 +33,8 @@
 #include "uconnection.h"
 #include "../uparser.h"
 #include "udevice.h"
-#include "ugroup.h"
+#include "uobj.h"
+#include "ualias.h"
 
 #include <strstream>
 #include <iostream.h>
@@ -149,11 +150,13 @@ using namespace std;
 %type  <variablelist>        refvariables
 %type  <expr>                softtest
 %type  <namedparameters>     identifiers
-%type  <namedparameters>     identifiers_semicolon
+%type  <expr>                class_declaration
+%type  <namedparameters>     class_declaration_list
 %type  <binary>              binary
 %type  <property>            property
 %type  <variable>            variable
 %type  <variable>            purevariable
+%type  <namedparameters>     purevariables
 %type  <variable>            refvariable
 
 /* Operators priority */
@@ -395,21 +398,12 @@ instruction:
     $$ = new UCommand_ASSIGN_VALUE($1,$3,$4, false);
       MEMCHECK3($$,$1,$3,$4);
     } 
-/*
+
   | VAR refvariable ASSIGN expr namedparameters { 
 
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
       MEMCHECK3($$,$2,$4,$5);
     } 
-*/
-/* To be removed in 1.0, kept for backward compat*/
-/*************************************************/
-  | DEF refvariable ASSIGN expr namedparameters { 
-
-    $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
-      MEMCHECK3($$,$2,$4,$5);
-    } 
-/*************************************************/
 
   | property ASSIGN expr { 
 
@@ -446,39 +440,27 @@ instruction:
       $$ = new UCommand_ECHO($2,$3,(UString*)0);
       MEMCHECK2($$,$2,$3);
     } 
-/*
-  | SUBCLASS IDENTIFIER LBRACKET identifiers RBRACKET {
 
-    MEMCHECK($2);
-      $$ = new UCommand_GROUP($2,$4);
+  | refvariable ASSIGN NEW IDENTIFIER { 
+        
+      MEMCHECK($4);
+      $$ = new UCommand_NEW($1->id,$4,(UNamedParameters*)0);
+      MEMCHECK2($$,$1,$4);
+    } 
+
+  | ALIAS purevariable LBRACKET purevariables RBRACKET {
+
+      $$ = new UCommand_ALIAS($2,$4);
       MEMCHECK2($$,$4,$2);      
     } 
 
-  | SUBCLASS IDENTIFIER {
+  | ALIAS purevariable {
 
-      MEMCHECK($2);
-      $$ = new UCommand_GROUP($2,0);
+      $$ = new UCommand_ALIAS($2,(UVariableName*)0);
       MEMCHECK1($$,$2);      
     } 
-*/
-/* To be removed in 1.0, kept for backward compat*/
-/*************************************************/
-  | GROUP IDENTIFIER LBRACKET identifiers RBRACKET {
-
-    MEMCHECK($2);
-      $$ = new UCommand_GROUP($2,$4);
-      MEMCHECK2($$,$4,$2);      
-    } 
-
-  | GROUP IDENTIFIER {
-
-      MEMCHECK($2);
-      $$ = new UCommand_GROUP($2,0);
-      MEMCHECK1($$,$2);      
-    } 
-/*************************************************/
-
-  | ALIAS variable variable {
+    
+  | ALIAS purevariable purevariable {
       
       $$ = new UCommand_ALIAS($2,$3);
       MEMCHECK2($$,$2,$3);
@@ -533,7 +515,6 @@ instruction:
       MEMCHECK2($$,$1,$6);
     }
 
-
   | WAIT expr { 
 
       $$ = new UCommand_WAIT($2);
@@ -564,6 +545,20 @@ instruction:
       MEMCHECK3($$,$5,$7,$3);
     } 
 
+  | EMIT LPAREN RPAREN purevariable { 
+
+      $$ = new UCommand_EMIT($4,(UNamedParameters*)0, 
+      	new UExpression(EXPR_VALUE,UINFINITY));
+      MEMCHECK1($$,$4);
+    } 
+
+  | EMIT LPAREN RPAREN purevariable LPAREN parameterlist RPAREN { 
+
+      $$ = new UCommand_EMIT($4,$6,
+      	new UExpression(EXPR_VALUE,UINFINITY));
+      MEMCHECK2($$,$4,$6);
+    } 
+
   | WAITUNTIL softtest { 
 
       $$ = new UCommand_WAIT_TEST($2);
@@ -584,15 +579,25 @@ instruction:
 
   | DEF {
 
-      $$ = new UCommand_DEF((UVariableName*)0,
+      $$ = new UCommand_DEF(UDEF_QUERY,
+      	                    (UVariableName*)0,
                             (UNamedParameters*)0,
                             (UCommand*)0);
       MEMCHECK($$)
     }
-/*
+
   | VAR refvariable {
   
-      $$ = new UCommand_DEF($2,
+      $$ = new UCommand_DEF(UDEF_VAR,$2,
+                            (UNamedParameters*)0,
+                            (UCommand*)0);
+
+      MEMCHECK1($$,$2)
+    }
+
+  | DEF refvariable {
+  
+      $$ = new UCommand_DEF(UDEF_VAR,$2,
                             (UNamedParameters*)0,
                             (UCommand*)0);
 
@@ -601,14 +606,26 @@ instruction:
 
   | VAR LBRACKET refvariables RBRACKET {
   
-      $$ = new UCommand_DEF($3);
+      $$ = new UCommand_DEF(UDEF_VARS,$3);
       MEMCHECK1($$,$3)
     }
 
-  | CLASS IDENTIFIER LBRACKET identifiers_semicolon RBRACKET {
+  | CLASS IDENTIFIER LBRACKET class_declaration_list RBRACKET {
   
-      $$ = new UCommand_DEF($2,$4);
+      $$ = new UCommand_CLASS($2,$4);
       MEMCHECK2($$,$2,$4)
+    }
+      
+  | EVENT variable LPAREN identifiers RPAREN {
+    
+      $$ = new UCommand_DEF(UDEF_EVENT,$2,$4,(UCommand*)0);
+      MEMCHECK2($$,$2,$4);      
+    }
+    
+  | EVENT variable {
+    
+      $$ = new UCommand_DEF(UDEF_EVENT,$2,(UNamedParameters*)0,(UCommand*)0);
+      MEMCHECK1($$,$2);      
     }
 
   | FUNCTION variable LPAREN identifiers RPAREN {
@@ -622,67 +639,20 @@ instruction:
         yyerror("Nested function def not allowed.");   
         YYERROR;
       }
-      else
-        bison_uparser.connection->functionTag = new UString("__Funct__");
- 
-    } taggedcommand {
-    
-      $$ = new UCommand_DEF($2,$4,$7);
-      MEMCHECK3($$,$2,$4,$7);
-      if (bison_uparser.connection->functionTag) {
-        delete bison_uparser.connection->functionTag;
-        bison_uparser.connection->functionTag = 0;  
-      }      
-    }
-*/
-
-/* To be removed in 1.0, kept for backward compat*/
-/*************************************************/
-  | DEF refvariable {
-  
-      $$ = new UCommand_DEF($2,
-                            (UNamedParameters*)0,
-                            (UCommand*)0);
-
-      MEMCHECK1($$,$2)
-    }
-
-  | DEF LBRACKET refvariables RBRACKET {
-  
-      $$ = new UCommand_DEF($3);
-      MEMCHECK1($$,$3)
-    }
-
-  | DEF IDENTIFIER LBRACKET identifiers_semicolon RBRACKET {
-  
-      $$ = new UCommand_DEF($2,$4);
-      MEMCHECK2($$,$2,$4)
-    }
-
-  | DEF variable LPAREN identifiers RPAREN {
-
-      if (bison_uparser.connection->functionTag) {
-        if ($2) delete($2);
-        if ($4) delete($4);
-        $2 = 0;
-        delete bison_uparser.connection->functionTag;
-        bison_uparser.connection->functionTag = 0;  
-        yyerror("Nested function def not allowed.");   
-        YYERROR;
+      else {
+	bison_uparser.connection->functionTag = new UString("__Funct__");
+	bison_uparser.connection->functionClass = $2->device;
       }
-      else
-        bison_uparser.connection->functionTag = new UString("__Funct__");
  
     } taggedcommand {
-    
-      $$ = new UCommand_DEF($2,$4,$7);
-      MEMCHECK3($$,$2,$4,$7);
+     
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
+      MEMCHECK2($$,$2,$4);
       if (bison_uparser.connection->functionTag) {
         delete bison_uparser.connection->functionTag;
         bison_uparser.connection->functionTag = 0;  
       }      
     }
-/*************************************************/
 
   | IF LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
 
@@ -850,7 +820,7 @@ array:
 ;
 
 
-/* PUREVARIABLE, VARIABLE, REFVARIABLE */
+/* VARID, PUREVARIABLE, VARIABLE, REFVARIABLE */
 
 purevariable: 
 
@@ -862,19 +832,31 @@ purevariable:
 
   | IDENTIFIER array { 
   
-      MEMCHECK($1);  
-      if ((::urbiserver->devicetab.find($1->str()) != ::urbiserver->devicetab.end()) ||
-          (::urbiserver->grouptab.find($1->str()) != ::urbiserver->grouptab.end()))
-        $$ = new UVariableName($1,new UString("val"),false,$2);
-      else
-        if (bison_uparser.connection->functionTag)
-          $$ = new UVariableName(new UString(bison_uparser.connection->functionTag),
-                                 $1,false,$2);
+      MEMCHECK($1); 
+      // FIXME
+//      if ((::urbiserver->devicetab.find($1->str()) != ::urbiserver->devicetab.end()) ||
+//          (::urbiserver->grouptab.find($1->str()) != ::urbiserver->grouptab.end()))
+//        $$ = new UVariableName($1,new UString("val"),false,$2);
+//      else
+        if (bison_uparser.connection->functionTag) {
+	  // We are inside a function
+	  char tmpname[1024];
+	  snprintf(tmpname,1024,"%s.%s",
+	      bison_uparser.connection->functionClass->str(),
+	      $1->str());
+	      
+	  if ((::urbiserver->functiondeftab.find(tmpname) != ::urbiserver->functiondeftab.end()) ||
+	      (::urbiserver->eventdeftab.find(tmpname) != ::urbiserver->eventdeftab.end()) ||
+	      (::urbiserver->variabletab.find(tmpname) != ::urbiserver->variabletab.end()))
+	    $$ = new UVariableName(new UString("self"),$1,false,$2);
+	  else
+  	    $$ = new UVariableName(new UString(bison_uparser.connection->functionTag),$1,false,$2);
+	}
         else 
           $$ = new UVariableName(new UString(bison_uparser.connection->connectionTag),
-                                 $1,false,$2);
-  
+                                 $1,false,$2);      
       MEMCHECK2($$,$1,$2);
+      $$->nostruct = true;
     } 
 
   | STRUCT array {
@@ -885,6 +867,28 @@ purevariable:
       MEMCHECK3($$,$1.device,$1.id,$2);      
     }
 ;
+
+/* VARIDS */
+
+purevariables:  
+
+    purevariable { 
+            
+      $$ = new UNamedParameters(
+	  new UExpression(EXPR_VARIABLE,$1),
+	  0); 
+      MEMCHECK($$); 
+    }
+
+  | purevariable COMMA purevariables { 
+    
+      $$ = new UNamedParameters(
+	  new UExpression(EXPR_VARIABLE,$1),
+	  $3); 
+      MEMCHECK1($$,$3);     
+    }
+;
+
 
 variable:
 
@@ -1199,11 +1203,14 @@ expr:
       $$ = new UExpression(EXPR_TEST_OR,$1,$3); 
       MEMCHECK2($$,$1,$3);
     }
+    /*
+    // Not needed anymore => will be handled nicely by aliases
   | 
   GROUPLIST purevariable {
     $$ = new UExpression(EXPR_GROUPLIST,$2); 
       MEMCHECK1($$,$2);
   }
+  */
 ;
 
 
@@ -1275,13 +1282,6 @@ softtest:
       $$->issofttest = true;
       $$->softtest_time = $4; 
     }                
-/* | expr TILDE NUM  { 
-
-      $$ = $1;
-      $$->issofttest = true;
-      $$->softtest_rep = (int)($3);
-    }
-*/
 ;
 
 /* IDENTIFIERS */
@@ -1304,23 +1304,52 @@ identifiers:
     }
 ;
 
-/* IDENTIFIERS_SEMICOLON */
+/* CLASS_DELCARATION & CLASS_DECLARATION_LIST */
 
-identifiers_semicolon:  
+class_declaration:
+
+    VAR IDENTIFIER {
+    
+      MEMCHECK($2);
+      $$ = new UExpression(EXPR_VALUE,$2);
+      MEMCHECK1($$,$2);
+    }
+    
+  | FUNCTION variable LPAREN identifiers RPAREN {
+      $$ = new UExpression(EXPR_FUNCTION,$2,$4);
+      MEMCHECK2($$,$2,$4);
+    }
+    
+  | FUNCTION variable {
+      $$ = new UExpression(EXPR_FUNCTION,$2,(UNamedParameters*)0);
+      MEMCHECK1($$,$2);      
+    }
+    
+  | EVENT variable LPAREN identifiers RPAREN {
+      $$ = new UExpression(EXPR_EVENT,$2,$4);
+      MEMCHECK2($$,$2,$4);
+    }
+    
+  | EVENT variable {
+      $$ = new UExpression(EXPR_EVENT,$2,(UNamedParameters*)0);
+      MEMCHECK1($$,$2);
+    }
+;
+
+
+class_declaration_list:  
   /* empty */  { $$ = 0; }
 
-  | IDENTIFIER { 
-      
-      MEMCHECK($1);
+  | class_declaration { 
+            
       $$ = new UNamedParameters($1,0); 
       MEMCHECK1($$,$1); 
     }
 
-  | IDENTIFIER SEMICOLON identifiers_semicolon { 
-
-      MEMCHECK($1);
-      $$ = new UNamedParameters($1,0,$3); 
-      MEMCHECK2($$,$3,$1);     
+  | class_declaration SEMICOLON class_declaration_list { 
+      
+      $$ = new UNamedParameters($1,$3); 
+      MEMCHECK2($$,$3,$1);
     }
 ;
 

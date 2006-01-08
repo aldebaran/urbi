@@ -117,6 +117,82 @@ UCommand::print(int l)
 {
 }
 
+//! Command auto morhping according to alias hierarchy
+UCommand*
+UCommand::scanAlias()
+{
+  return 0; 
+}
+
+//! Command auto morhping according to object hierarchy
+UCommand*
+UCommand::scanObjects()
+{
+  UVariableName **varname = refVarName();  
+  if (!varname) return(0); // we are in a non broadcastable command
+  UString       *devicename = (*varname)->getDevice();
+  UString       *method     = (*varname)->getMethod();
+
+  HMobjtab::iterator hmg;
+
+  
+  if ((!(*varname)->rooted) && (devicename)) {
+
+    UObj *oo = 0;
+    if ((hmg = ::urbiserver->objtab.find(devicename->str())) !=
+        ::urbiserver->objtab.end()) 
+      oo = (*hmg).second;
+        
+    if ((oo) && (oo->down.size() > 0)) {
+        
+      UCommand *objlist = 0;
+      UCommand *objlist_prev = 0;
+      UCommand *clone;
+      UNamedParameters *varindex;
+
+      for (list<UObj*>::iterator retr = oo->down.begin();
+           retr != oo->down.end();
+           retr++) {
+
+	clone = copy();
+	delete (*(clone->refVarName()));
+	
+        if ((*varname)->index) 
+          varindex = (*varname)->index->copy();
+        else
+          varindex = 0;
+	
+        *(clone->refVarName()) = new UVariableName((*retr)->device->copy(),
+                                                    method->copy(),
+						    false,
+						    varindex);
+	
+	(*clone->refVarName())->isnormalized = (*varname)->isnormalized;
+	(*clone->refVarName())->deriv = (*varname)->deriv;
+	(*clone->refVarName())->varerror = (*varname)->varerror;
+
+        objlist = (UCommand*)
+          new UCommand_TREE(UAND,clone,objlist_prev);
+	  
+        objlist_prev = objlist;        
+      }
+      
+      morph = (UCommand*)
+        new UCommand_TREE(UAND,
+                          this,
+                          objlist);
+      
+      (*varname)->rooted = true;
+      (*varname)->fromGroup = true;
+      persistant = true;
+      return( morph );      
+    }
+  }
+  return (0);
+}
+
+
+
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -372,7 +448,6 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   double currentTime;
   UNamedParameters *modif;
   UVariable *vari;
-  HMgrouptab::iterator hmg;
 
   // General initializations
   if (!variable) {
@@ -389,64 +464,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     if ((variable->blendType == UQUEUE) && (variable->nbAverage > 0))
       return(status);  
 
-  // Handling of groups and implicit multi assignments
-  // (using morphing and & conjunction)
-  if ((!variablename->rooted) && (devicename)) {
-
-    UGroup *gp = 0;
-    if ((hmg = ::urbiserver->grouptab.find(devicename->str())) !=
-        ::urbiserver->grouptab.end()) 
-      gp = (*hmg).second;
-        
-    if ((gp) && (gp->members.size() > 0)) {
-        
-      UCommand *grouplist = 0;
-      UCommand *grouplist_prev = 0;
-      UCommand_ASSIGN_VALUE *clone;
-      UNamedParameters *varindex;
-
-      for (list<UGroup*>::iterator retr = gp->members.begin();
-           retr != gp->members.end();
-           retr++) {
-
-
-	clone = (UCommand_ASSIGN_VALUE*)this->copy();
-	delete clone->variablename;
-	
-        if (variablename->index) 
-          varindex = variablename->index->copy();
-        else
-          varindex = 0;
-	
-        clone->variablename = new UVariableName((*retr)->device->copy(),
-                                                method->copy(),
-                                                false,
-                                                varindex);
-	
-        clone->variablename->isnormalized = variablename->isnormalized;
-        clone->variablename->deriv = variablename->deriv;
-        clone->variablename->varerror = variablename->varerror;
-
-        grouplist = (UCommand*)
-          new UCommand_TREE(UAND,
-                            (UCommand*)clone,
-                            grouplist_prev);
-        grouplist_prev = grouplist;        
-      }
-      morph = (UCommand*)
-        new UCommand_TREE(UAND,
-                          this,
-                          grouplist);
-      
-      variablename->rooted = true;
-      variablename->fromGroup = true;
-      persistant = true;
-      return( status = UMORPH );
-      
-    }
-  }
+  // Broadcasting  
+  if (scanAlias())   return ( status = UMORPH );
+  if (scanObjects()) return ( status = UMORPH );
  
-
   // Function call
   // morph into the function code
   if (expression->type == EXPR_FUNCTION) {
@@ -550,7 +571,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (morph) {
         
         sprintf(tmpbuffer,"__UFnct%d",(int)morph);
-        ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,(UCommand_TREE*)morph);
+        ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
+						      expression->variablename->device->str(),
+						      (UCommand_TREE*)morph);
         resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
                                     "__result__");
         if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
@@ -1398,8 +1421,6 @@ UCommand_ASSIGN_BINARY::~UCommand_ASSIGN_BINARY()
 UCommandStatus 
 UCommand_ASSIGN_BINARY::execute(UConnection *connection)
 {
-  HMgrouptab::iterator hmg;
-
   // General initializations
   if (!variable) {
     variable = variablename->getVariable(this,connection); 
@@ -1408,55 +1429,9 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
     devicename = variablename->getDevice();      
   }
 
-  // Handling of groups and implicit multi assignments
-  // (using morhping and & conjunction)
-  if ((!variablename->rooted) && (devicename)) {
-
-    UGroup *gp = 0;
-    if ((hmg = ::urbiserver->grouptab.find(devicename->str())) !=
-        ::urbiserver->grouptab.end()) 
-      gp = (*hmg).second;    
-        
-    if ((gp) && (gp->members.size() > 0)) {
-        
-      UCommand *grouplist;
-      UCommand *grouplist_prev = 0;
-      UCommand_ASSIGN_BINARY *clone;
-      UNamedParameters *varindex;
-
-      for (list<UGroup*>::iterator retr = gp->members.begin();
-           retr != gp->members.end();
-           retr++) {
-
-        clone = (UCommand_ASSIGN_BINARY*)this->copy();
-        delete clone->variablename;
-        if (variablename->index) 
-          varindex = variablename->index->copy();
-        else
-          varindex = 0;
-
-        clone->variablename = new UVariableName((*retr)->device->copy(),
-                                        method->copy(),
-                                        false,
-                                        varindex);
-        grouplist = (UCommand*)
-          new UCommand_TREE(UAND,
-                            (UCommand*)clone,
-                            grouplist_prev);
-        grouplist_prev = grouplist;
-      }
-
-      morph = (UCommand*) 
-        new UCommand_TREE(UAND,
-                          this,
-                          grouplist);
-      
-      variablename->rooted = true;
-      variablename->fromGroup = true;
-      persistant = true;
-      return( status = UMORPH );
-    }
-  }
+  // Broadcasting  
+  if (scanAlias())   return ( status = UMORPH );
+  if (scanObjects()) return ( status = UMORPH );
 
   // Type checking
   UValue *value;
@@ -1561,62 +1536,14 @@ UCommand_ASSIGN_PROPERTY::~UCommand_ASSIGN_PROPERTY()
 UCommandStatus 
 UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 {
-  HMgrouptab::iterator hmg;
-
   UVariable* variable = variablename->getVariable(this,connection); 
   if (!variablename->getFullname()) return ( status = UCOMPLETED );  
   UString* method = variablename->getMethod();
   UString* devicename = variablename->getDevice();
 
-  // Handling of groups and implicit multi assignments
-  // (using morhping and & conjunction)
-  if ((!variablename->rooted) && (devicename))  {
-
-    UGroup *gp = 0;
-    if ((hmg = ::urbiserver->grouptab.find(devicename->str())) !=
-        ::urbiserver->grouptab.end()) 
-      gp = (*hmg).second; 
-        
-    if ((gp) && (gp->members.size() > 0)) {
-        
-      UCommand *grouplist;
-      UCommand *grouplist_prev = 0;
-      UCommand_ASSIGN_PROPERTY *clone;
-      UNamedParameters *varindex;
-
-      for (list<UGroup*>::iterator retr = gp->members.begin();
-           retr != gp->members.end();
-           retr++) {
-
-        clone = (UCommand_ASSIGN_PROPERTY*)this->copy();
-        delete clone->variablename;
-        if (variablename->index) 
-          varindex = variablename->index->copy();
-        else
-          varindex = 0;
-
-        clone->variablename = new UVariableName((*retr)->device->copy(),
-                                        method->copy(),
-                                        false,
-                                        varindex);
-        grouplist = (UCommand*)
-          new UCommand_TREE(UAND,
-                            (UCommand*)clone,
-                            grouplist_prev);
-        grouplist_prev = grouplist;
-      }
-
-      morph = (UCommand*) 
-        new UCommand_TREE(UAND,
-                          this,
-                          grouplist);
-      
-      variablename->rooted = true;
-      variablename->fromGroup = true;
-      persistant = true;
-      return( status = UMORPH );
-    }
-  }
+  // Broadcasting  
+  if (scanAlias())   return ( status = UMORPH );
+  if (scanObjects()) return ( status = UMORPH );
 
   // variable existence checking
   if (!variable) {
@@ -1923,7 +1850,7 @@ UCommand_EXPR::execute(UConnection *connection)
                   new UString(tmpbuffer)
                   )
                 )
-            )
+            )  
           ); 
 
       /* // This version is not faster and is very complicated... kept for the
@@ -2003,7 +1930,9 @@ UCommand_EXPR::execute(UConnection *connection)
         }
         
         sprintf(tmpbuffer,"__UFnct%d",(int)morph);
-        ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,(UCommand_TREE*)morph);
+        ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
+						      expression->variablename->device->str(),
+						      (UCommand_TREE*)morph);
         if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
         ((UCommand_TREE*)morph)->connection = connection;
         
@@ -2306,98 +2235,76 @@ UCommand_ECHO::print(int l)
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_GROUP::UCommand_GROUP(UString* id,  
-                               UNamedParameters *parameters) :
-  UCommand(CMD_GROUP)
+UCommand_NEW::UCommand_NEW(UString* id,  
+                           UString* obj,
+			   UNamedParameters *parameters) :
+  UCommand(CMD_NEW)
 {	
-  ADDOBJ(UCommand_GROUP);
+  ADDOBJ(UCommand_NEW);
   this->id          = id;
+  this->obj         = obj;
   this->parameters  = parameters;
 }
 
 //! UCommand subclass destructor.
-UCommand_GROUP::~UCommand_GROUP()
+UCommand_NEW::~UCommand_NEW()
 {
-  FREEOBJ(UCommand_GROUP);
+  FREEOBJ(UCommand_NEW);
   if (id)         delete id;
+  if (obj)        delete obj;
   if (parameters) delete parameters;
 }
 
 //! UCommand subclass execution function
 UCommandStatus 
-UCommand_GROUP::execute(UConnection *connection)
+UCommand_NEW::execute(UConnection *connection)
 {
-  if (!id) return ( status = UCOMPLETED );
-  UGroup *gp,*mbr;
-  UNamedParameters *param;
-
-  if (parameters) {
-   
-    if (connection->server->grouptab.find(id->str()) !=
-        connection->server->grouptab.end()) {
-      
-      gp = connection->server->grouptab[id->str()];
-      gp->members.clear();
-    }
-    else {
-      
-      gp = new UGroup(id);
-      connection->server->grouptab[gp->device->str()] = gp;
-    }
-
-    param = parameters;
-    while (param) {
-      
-      if (connection->server->grouptab.find(param->name->str()) !=
-          connection->server->grouptab.end()) 
-      
-        mbr = connection->server->grouptab[param->name->str()];      
-      else {
-      
-        mbr = new UGroup(param->name);
-        connection->server->grouptab[mbr->device->str()] = mbr;
-      }
-      
-      gp->members.push_back(mbr);
-      param = param->next;
-    }
-  }
-  else {
+  if (!id)  return ( status = UCOMPLETED ); 
+  if (!obj) return ( status = UCOMPLETED );
+  
+  
+  HMobjtab::iterator objit = ::urbiserver->objtab.find(id->str());
+  if (objit == ::urbiserver->objtab.end())  {
     
-    if (connection->server->grouptab.find(id->str()) !=
-        connection->server->grouptab.end()) 
-      gp = connection->server->grouptab[id->str()];
-    else {
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! Unkown device %s\n",id->str());
+               "!!! Unkown object %s\n",obj->str());
       connection->send(tmpbuffer,tag->str());
       return ( status = UCOMPLETED );
-    }
-
-    for (list<UGroup*>::iterator retr = gp->members.begin();
-         retr != gp->members.end();
-         retr++) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "*** %s\n",(*retr)->device->str());
-      connection->send(tmpbuffer,tag->str());
-    }      
   }
 
+  
+  UObj* newobj;
+  HMobjtab::iterator idit = ::urbiserver->objtab.find(id->str());
+  if (idit == ::urbiserver->objtab.end()) 
+    newobj = new UObj(id);
+  else
+    newobj = idit->second;
+
+  newobj->up.push_back(objit->second);
+  objit->second->down.push_back(newobj);
+  
+  if (parameters)  {
+    //handle init call
+  }
+  
   return ( status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_GROUP::copy() 
+UCommand_NEW::copy() 
 {  
   UNamedParameters* copy_parameters;
   UString* copy_id;
+  UString* copy_obj;
   
   if (id)   copy_id = new UString(id); else copy_id = 0;
+  if (obj)   copy_obj = new UString(obj); else copy_obj = 0;
   if (parameters) copy_parameters = parameters->copy(); else copy_parameters = 0;
 
-  UCommand_GROUP *ret = new UCommand_GROUP(copy_id,
-                                           copy_parameters);
+  UCommand_NEW *ret = new UCommand_NEW(copy_id,
+                                       copy_obj,
+				       copy_parameters);
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -2407,7 +2314,7 @@ UCommand_GROUP::copy()
     It is not safe, efficient or crash proof. A better version will come later.
 */
 void 
-UCommand_GROUP::print(int l)
+UCommand_NEW::print(int l)
 {
   char tabb[100];  
 
@@ -2418,12 +2325,13 @@ UCommand_GROUP::print(int l)
   if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
   else ::urbiserver->debug("%s",tabb);
 
-  ::urbiserver->debug("GROUP:\n"); 
+  ::urbiserver->debug("NEW:\n"); 
 
   if (id)  { ::urbiserver->debug("%s  Id:[%s]\n",tabb,id->str());}  
+  if (obj)  { ::urbiserver->debug("%s  Obj:[%s]\n",tabb,obj->str());}  
   if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};  
 
-  ::urbiserver->debug("%sEND GROUP ------\n",tabb);
+  ::urbiserver->debug("%sEND NEW ------\n",tabb);
 }
 
 // *********************************************************
@@ -2437,6 +2345,17 @@ UCommand_ALIAS::UCommand_ALIAS(UVariableName* id,
   ADDOBJ(UCommand_ALIAS);
   this->id           = id;
   this->variablename = variablename;
+  parameters=0;
+}
+
+UCommand_ALIAS::UCommand_ALIAS(UVariableName* id,
+                               UNamedParameters* parameters) :
+  UCommand(CMD_ALIAS)
+{	
+  ADDOBJ(UCommand_ALIAS);
+  this->id           = id;
+  this->variablename = 0;
+  this->parameters   = parameters;
 }
 
 //! UCommand subclass destructor.
@@ -2451,43 +2370,222 @@ UCommand_ALIAS::~UCommand_ALIAS()
 UCommandStatus 
 UCommand_ALIAS::execute(UConnection *connection)
 {
+  if (parameters) {
+    // morph ta vie
+  }
+  
+  HMaliastab::iterator hma;
+  HMaliastab::iterator hmb;
+  UAlias *a;
+  UAlias *b;
+  
+  char tmpvarname[1024];
+  UValue *e1;
+
   if ((id) && (variablename)) {
 
-    const char* idname = id->buildFullname(this,connection,false)->str(); // false = no alias following
-    const char* variablenamestr = variablename->buildFullname(this,connection)->str();
-
-    if (connection->server->aliastab.find(idname) !=
-        connection->server->aliastab.end()) {
-      
-      UString *alias = connection->server->aliastab[idname];
-      alias->update(variablenamestr);
-    }
-    else {
-      
-      UString *ids = new UString(idname); // persistant, no delete associated
-      connection->server->aliastab[ids->str()] = new UString(variablenamestr);
-    }
-  }
-  else {
+    // objalias
+    if ((id->nostruct) && (variablename->nostruct)) {
+  
+      hma = ::urbiserver->objaliastab.find(id->id->str());
+      if (hma == ::urbiserver->objaliastab.end()) {
+	a = new UAlias(id->id);
+	::urbiserver->objaliastab[a->name->str()] = a;
+      }
+      else
+	a = hma->second;  
+	  
+      hmb = ::urbiserver->objaliastab.find(variablename->id->str());
+      if (hmb == ::urbiserver->objaliastab.end()) {
+	b = new UAlias(variablename->id);
+	::urbiserver->objaliastab[b->name->str()] = b;
+      }
+      else
+      	b = hmb->second;        
     
-     for ( hash_map<const char*,
-            UString*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
+      a->members.push_back(b);      
+      return (status = UCOMPLETED);
+    } // objalias
+
+    // varalias
+    //
+    // 
+    // id
+    if (id->nostruct) snprintf(tmpvarname,1024,"%s",id->id->str());
+    else 
+      if (id->str) {
+	e1 = id->str->eval(this,connection);
+	
+	if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "!!! dynamic variable evaluation failed\n");
+	  connection->send(tmpbuffer,tag->str());
+	  if (e1) delete e1;      
+	  return( status = UCOMPLETED);
+	}
+	snprintf(tmpvarname,1024,"%s",e1->str->str());
+	delete e1;
+      }      
+      else 
+	snprintf(tmpvarname,1024,"%s.%s",id->device->str(),id->id->str());
+
+    hma = ::urbiserver->aliastab.find(tmpvarname);
+    
+    if (hma == ::urbiserver->aliastab.end()) {
+      a = new UAlias(tmpvarname);
+      ::urbiserver->aliastab[a->name->str()] = a;
+    }
+    else
+      a = hma->second;  
+
+    // variablename
+    if (variablename->nostruct) snprintf(tmpvarname,1024,"%s",variablename->id->str());
+    else 
+      if (variablename->str) {
+	e1 = variablename->str->eval(this,connection);
+	
+	if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "!!! dynamic variable evaluation failed\n");
+	  connection->send(tmpbuffer,tag->str());
+	  if (e1) delete e1;      
+	  return( status = UCOMPLETED);
+	}
+	snprintf(tmpvarname,1024,"%s",e1->str->str());
+	delete e1;
+      }      
+      else 
+	snprintf(tmpvarname,1024,"%s.%s",variablename->device->str(),variablename->id->str());
+
+    hmb = ::urbiserver->aliastab.find(tmpvarname);
+    
+    if (hmb == ::urbiserver->aliastab.end()) {
+      b = new UAlias(tmpvarname);
+      ::urbiserver->aliastab[b->name->str()] = b;
+    }
+    else
+      b = hma->second;  
+
+    // link stage
+
+    a->members.push_back(b);      
+    return (status = UCOMPLETED);    
+  }
+
+  // alias queries here...
+  list<UAlias*>::iterator it;
+
+  if ((!id) && (!variablename)) {
+    for ( HMaliastab::iterator retr = 
             connection->server->aliastab.begin();
           retr != connection->server->aliastab.end();
-          retr++) {
+          retr++) 
+      if (!retr->second->members.empty()) {
+      
+	it = retr->second->members.begin();
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	    "*** %25s -> %s\n",
+	    (*retr).first,(*it)->name->str());		              
+	connection->send(tmpbuffer,tag->str());
+	
+	for (it++;it != retr->second->members.end();it++) {
+	    
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+            "*** %25s -> %s\n","",
+	      (*it)->name->str());		              
+	  connection->send(tmpbuffer,tag->str());
+	}
+      }
+       
+    for ( HMaliastab::iterator retr2 = 
+            connection->server->objaliastab.begin();
+          retr2 != connection->server->objaliastab.end();
+          retr2++) 
+      if (!retr2->second->members.empty()) {
+      
+	it = retr2->second->members.begin();
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	    "*** %25s -> %s\n",
+	    (*retr2).first,(*it)->name->str());		              
+	connection->send(tmpbuffer,tag->str());
+	
+	for (it++;it != retr2->second->members.end();it++) {
+	    
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+            "*** %25s -> %s\n","",
+	      (*it)->name->str());		              
+	  connection->send(tmpbuffer,tag->str());
+	}
+      }    
+  } // full alias query
 
-       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-                "*** %s -> %s\n",
-                (*retr).first,(*retr).second->str());
-              
-       connection->send(tmpbuffer,tag->str());
-     }
-  }
 
-  return ( status = UCOMPLETED );
+  // named alias query
+  if ((id) && (!variablename)) {
+    if (id->nostruct) {
+      HMaliastab::iterator retr = connection->server->objaliastab.find(
+	  id->id->str());
+      if ((retr !=  connection->server->objaliastab.end()) &&	  
+	  (!retr->second->members.empty())) {
+      
+	it = retr->second->members.begin();
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	    "*** %25s -> %s\n",
+	    (*retr).first,(*it)->name->str());		              
+	connection->send(tmpbuffer,tag->str());
+	
+	for (it++;it != retr->second->members.end();it++) {
+	    
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "*** %25s -> %s\n","",
+	      (*it)->name->str());		              
+	  connection->send(tmpbuffer,tag->str());
+	}
+      }
+    }
+    
+    if (id->nostruct) snprintf(tmpvarname,1024,"%s",id->id->str());
+    else 
+      if (id->str) {
+	e1 = id->str->eval(this,connection);
+	
+	if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "!!! dynamic variable evaluation failed\n");
+	  connection->send(tmpbuffer,tag->str());
+	  if (e1) delete e1;      
+	  return( status = UCOMPLETED);
+	}
+	snprintf(tmpvarname,1024,"%s",e1->str->str());
+	delete e1;
+      }      
+      else 
+	snprintf(tmpvarname,1024,"%s.%s",id->device->str(),id->id->str());
+
+    HMaliastab::iterator retr = connection->server->aliastab.find(
+	tmpvarname);
+    if ((retr !=  connection->server->aliastab.end()) &&	  
+	(!retr->second->members.empty())) {
+      
+      it = retr->second->members.begin();
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  "*** %25s -> %s\n",
+	  (*retr).first,(*it)->name->str());		              
+      connection->send(tmpbuffer,tag->str());
+	
+      for (it++;it != retr->second->members.end();it++) {
+	
+      	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	    "*** %25s -> %s\n","",
+	    (*it)->name->str());		              
+	connection->send(tmpbuffer,tag->str());
+      }
+    } 
+  } // named alias query
+
+ return ( status = UCOMPLETED );
 }
+
 
 //! UCommand subclass hard copy function
 UCommand*
@@ -2720,7 +2818,10 @@ UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UString* device,
   UCommand(CMD_GENERIC)
 {	
   ADDOBJ(UCommand_DEVICE_CMD);
-  this->device        = device;
+  variablename        = new UVariableName(device,new
+      UString("__cmd__"),false,(UNamedParameters*)0);
+      
+//  this->device        = device;
   this->cmd           = cmd;
 }
 
@@ -2728,7 +2829,7 @@ UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UString* device,
 UCommand_DEVICE_CMD::~UCommand_DEVICE_CMD()
 {
   FREEOBJ(UCommand_DEVICE_CMD);
-  if (device)      delete device;
+  if (variablename)      delete variablename;
   if (cmd)         delete cmd;
 }
 
@@ -2774,7 +2875,7 @@ UCommand_DEVICE_CMD::copy()
   UString* copy_device;
   UString* copy_cmd;
   
-  if (device)   copy_device   = new UString(device); else copy_device = 0;
+  if (variablename)   copy_device   = new UString(variablename->device); else copy_device = 0;
   if (cmd) copy_cmd = new UString(cmd); else copy_cmd = 0;
 
   UCommand_DEVICE_CMD *ret = new UCommand_DEVICE_CMD(copy_device,
@@ -2799,7 +2900,7 @@ UCommand_DEVICE_CMD::print(int l)
   if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
   else ::urbiserver->debug("%s",tabb);
 
-  ::urbiserver->debug("DEVICE_CMD %s:\n",device->str()); 
+  ::urbiserver->debug("DEVICE_CMD %s:\n",variablename->device->str()); 
  
   if (cmd)  { ::urbiserver->debug("%s  Cmd:[%s]\n",tabb,cmd->str());}  
 
@@ -2876,6 +2977,8 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
         
       connection->server->functiontab.erase(
              connection->server->functiontab.find(fullname->str()));
+      connection->server->functiondeftab.erase(
+             connection->server->functiondeftab.find(fullname->str()));
       
       delete fun;
       return( status = UCOMPLETED );
@@ -3200,12 +3303,12 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     return( status = UCOMPLETED );
   }  
 
-  if (strcmp(oper->str(),"defcheckon")==0) {
+  if (strcmp(oper->str(),"strict")==0) {
     connection->server->defcheck = true;
     return( status = UCOMPLETED );
   }  
 
-  if (strcmp(oper->str(),"defcheckoff")==0) {
+  if (strcmp(oper->str(),"unstrict")==0) {
     connection->server->defcheck = false;
     return( status = UCOMPLETED );
   }  
@@ -3715,7 +3818,7 @@ UCommand_EMIT::UCommand_EMIT(UVariableName *eventname, UNamedParameters *paramet
   this->duration     = duration;
   eventnamestr       = 0;
   firsttime = true;
-  eventid = 100+rand();
+  eventid = 100+unic();
 }
 
 //! UCommand subclass destructor.
@@ -3992,68 +4095,14 @@ UCommand_INCDECREMENT::~UCommand_INCDECREMENT()
 UCommandStatus 
 UCommand_INCDECREMENT::execute(UConnection *connection)
 {      
-  HMgrouptab::iterator hmg;
-
   UVariable* variable = variablename->getVariable(this,connection); 
   if (!variablename->getFullname()) return ( status = UCOMPLETED );  
   UString* method = variablename->getMethod();
   UString* devicename = variablename->getDevice();
 
-  // Handling of groups and implicit multi assignments
-  // (using morhping and & conjunction)
-
-  if ((!variablename->rooted) && (devicename)) {
-  
-    UGroup *gp = 0;
-    if ((hmg = ::urbiserver->grouptab.find(devicename->str())) !=
-        ::urbiserver->grouptab.end()) 
-      gp = (*hmg).second; 
-        
-    if ((gp) && (gp->members.size() > 0)) {
-        
-      UCommand *grouplist;
-      UCommand *grouplist_prev = 0;
-      UCommand_INCDECREMENT *clone;
-      UNamedParameters *varindex;
-
-      for (list<UGroup*>::iterator retr = gp->members.begin();
-           retr != gp->members.end();
-           retr++) {
-
-        clone = (UCommand_INCDECREMENT*)this->copy();
-        delete clone->variablename;
-        if (variablename->index) 
-          varindex = variablename->index->copy();
-        else
-          varindex = 0;
-
-        clone->variablename = new UVariableName((*retr)->device->copy(),
-                                        method->copy(),
-                                        false,
-                                        varindex);
-
-        clone->variablename->isnormalized = variablename->isnormalized;
-        clone->variablename->deriv = variablename->deriv;
-        clone->variablename->varerror = variablename->varerror;
-
-        grouplist = (UCommand*)
-          new UCommand_TREE(UAND,
-                            (UCommand*)clone,
-                            grouplist_prev);
-        grouplist_prev = grouplist;
-      }
-
-      morph = (UCommand*) 
-        new UCommand_TREE(UAND,
-                          this,
-                          grouplist);
-      
-      variablename->rooted = true;
-      variablename->fromGroup = true;
-      persistant = true;
-      return( status = UMORPH );
-    }
-  }
+  // Broadcasting  
+  if (scanAlias())   return ( status = UMORPH );
+  if (scanObjects()) return ( status = UMORPH );
 
   // Main execution
   if (type == CMD_INCREMENT) {
@@ -4131,12 +4180,14 @@ UCommand_INCDECREMENT::print(int l)
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_DEF::UCommand_DEF(UVariableName *variablename,           
+UCommand_DEF::UCommand_DEF(UDefType deftype,
+                           UVariableName *variablename,           
                            UNamedParameters *parameters,
                            UCommand* command) :
   UCommand(CMD_DEF)
 {	
   ADDOBJ(UCommand_DEF);
+  this->deftype      = deftype;
   this->variablename = variablename;
   this->parameters   = parameters;
   this->command      = command;
@@ -4147,11 +4198,13 @@ UCommand_DEF::UCommand_DEF(UVariableName *variablename,
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_DEF::UCommand_DEF(UString *device,           
+UCommand_DEF::UCommand_DEF(UDefType deftype,
+                           UString *device,           
                            UNamedParameters *parameters) :
   UCommand(CMD_DEF)
 {	
   ADDOBJ(UCommand_DEF);
+  this->deftype      = deftype;
   this->variablename = 0;
   this->parameters   = parameters;
   this->command      = 0;
@@ -4162,10 +4215,12 @@ UCommand_DEF::UCommand_DEF(UString *device,
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_DEF::UCommand_DEF(UVariableList *variablelist) :
+UCommand_DEF::UCommand_DEF(UDefType deftype,
+                           UVariableList *variablelist) :
   UCommand(CMD_DEF)
 {	
   ADDOBJ(UCommand_DEF);
+  this->deftype      = deftype;
   this->variablename = 0;
   this->parameters   = 0;
   this->command      = 0;
@@ -4211,7 +4266,7 @@ UCommand_DEF::execute(UConnection *connection)
   }
 
   // Function definition
-  if ((variablename) && (command)) {
+  if ((deftype == UDEF_FUNCTION) && (variablename) && (command)) {    
 
     UString* funname = variablename->buildFullname(this,connection);
     if (!funname) return (status = UCOMPLETED);
@@ -4229,72 +4284,36 @@ UCommand_DEF::execute(UConnection *connection)
     UFunction *fun = new UFunction(new UString(funname),
                                    parameters,
                                    command);
-    
-    if (fun) 
+    if (fun)
+      connection->server->functiondeftab[fun->name()->str()] = fun;
+      
+    if ((fun) && (command))
       connection->server->functiontab[fun->name()->str()] = fun;
   }
+  
+  // Event definition
+  if ((deftype == UDEF_EVENT) && (variablename)) {    
+
+    UString* eventname = variablename->buildFullname(this,connection);
+    if (!eventname) return (status = UCOMPLETED);
+        
+    UFunction *fun = new UFunction(new UString(eventname),
+                                   parameters,
+                                   (UCommand*)0);
+    
+    if (fun) 
+      connection->server->eventdeftab[fun->name()->str()] = fun;
+  }
+
 
   // Single Variable definition
   if ((variablename) && (!command) && (!parameters)) {  
      
-    HMgrouptab::iterator hmg;
-    
     UVariable* variable = variablename->getVariable(this,connection); 
     if (!variablename->getFullname()) return ( status = UCOMPLETED );   
-    UString* method = variablename->getMethod();
-    UString* devicename = variablename->getDevice();
-        
-    // Handling of groups and implicit multi assignments
-    // (using morhping and & conjunction)
+    if (variable) // the variable is already defined
+       return ( status = UCOMPLETED );   
     
-    if ((!variablename->rooted) && (devicename)) {
-      
-      UGroup *gp = 0;
-      if ((hmg = ::urbiserver->grouptab.find(devicename->str())) !=
-          ::urbiserver->grouptab.end()) 
-        gp = (*hmg).second; 
-      
-      if ((gp) && (gp->members.size() > 0)) {
-        
-        UCommand *grouplist;
-        UCommand *grouplist_prev = 0;
-        UCommand_DEF *clone;
-        UNamedParameters *varindex;
-        
-        for (list<UGroup*>::iterator retr = gp->members.begin();
-             retr != gp->members.end();
-             retr++) {
-          
-          clone = (UCommand_DEF*)this->copy();
-          delete clone->variablename;
-          if (variablename->index) 
-            varindex = variablename->index->copy();
-          else
-            varindex = 0;
-          
-          clone->variablename = new UVariableName((*retr)->device->copy(),
-                                                  method->copy(),
-                                                  false,
-                                                  varindex);
-          grouplist = (UCommand*)
-            new UCommand_TREE(UAND,
-                              (UCommand*)clone,
-                              grouplist_prev);
-          grouplist_prev = grouplist;
-        }
-        
-        morph = (UCommand*) 
-          new UCommand_TREE(UAND,
-                            this,
-                            grouplist);
-        
-        variablename->rooted = true;
-        variablename->fromGroup = true;
-        persistant = true;
-        return( status = UMORPH );
-      }
-    }
-
     // Variable definition
     
     variable = new UVariable(variablename->getFullname()->str(), new UValue());
@@ -4305,7 +4324,7 @@ UCommand_DEF::execute(UConnection *connection)
   if ((device) && (!command) && (parameters)) {
 
     UNamedParameters * param = parameters;    
-    UCommand_DEF *cdef = new UCommand_DEF (new UVariableName(device->copy(),param->name, true,0),
+    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,new UVariableName(device->copy(),param->name, true,0),
                              (UNamedParameters*) 0,
                              (UCommand*) 0);
     cdef->tag->update(tag->str());
@@ -4314,7 +4333,7 @@ UCommand_DEF::execute(UConnection *connection)
 
     while (param) {
       if (param->name) {
-        cdef = new UCommand_DEF (new UVariableName(device->copy(),param->name, true,0),
+        cdef = new UCommand_DEF (UDEF_VAR,new UVariableName(device->copy(),param->name, true,0),
                                  (UNamedParameters*) 0,
                                  (UCommand*) 0);
         cdef->tag->update(tag->str());
@@ -4330,7 +4349,7 @@ UCommand_DEF::execute(UConnection *connection)
   if (variablelist) {
 
     UVariableList *list = variablelist;
-    UCommand_DEF *cdef = new UCommand_DEF (list->variablename->copy(),
+    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,list->variablename->copy(),
                                            (UNamedParameters*) 0,
                                            (UCommand*) 0);
     cdef->tag->update(tag->str());
@@ -4339,7 +4358,7 @@ UCommand_DEF::execute(UConnection *connection)
 
     while (list) {
       if (list->variablename) {
-        cdef = new UCommand_DEF (list->variablename->copy(),
+        cdef = new UCommand_DEF (UDEF_VAR,list->variablename->copy(),
                                  (UNamedParameters*) 0,
                                  (UCommand*) 0);
         cdef->tag->update(tag->str()); 
@@ -4369,7 +4388,7 @@ UCommand_DEF::copy()
   if (variablelist) copy_variablelist = variablelist->copy(); else copy_variablelist = 0;
   if (parameters) copy_parameters = parameters->copy(); else copy_parameters = 0;
 
-  UCommand_DEF *ret = new UCommand_DEF(copy_variable,
+  UCommand_DEF *ret = new UCommand_DEF(deftype, copy_variable,
                                        copy_parameters,
                                        copy_command);
   ret->variablelist = copy_variablelist;
@@ -4402,6 +4421,135 @@ UCommand_DEF::print(int l)
   if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};  
   if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
   ::urbiserver->debug("%sEND DEF ------\n",tabb);
+}
+
+// **************************************************
+//! UCommand subclass constructor.
+/*! Subclass of UCommand with standard member initialization.
+*/
+UCommand_CLASS::UCommand_CLASS(UString *object,           
+                               UNamedParameters *parameters) :
+  UCommand(CMD_CLASS)
+{	
+  ADDOBJ(UCommand_CLASS);
+  this->object       = object;
+  this->parameters   = parameters;
+}
+
+//! UCommand subclass destructor.
+UCommand_CLASS::~UCommand_CLASS()
+{
+  FREEOBJ(UCommand_CLASS);
+  if (object)     delete object;
+  if (parameters) delete parameters;
+}
+
+//! UCommand subclass execution function
+UCommandStatus 
+UCommand_CLASS::execute(UConnection *connection)
+{
+  if (!parameters) return ( status = UCOMPLETED );
+  
+  // add some object storage here based on 'object'
+  
+
+  // morph into a series of & for each element of the class
+  morph = 0;
+  
+  UNamedParameters * param = parameters;  
+  UCommand_DEF *cdef;
+  while (param) {
+        
+    if (param->expression) {
+      switch (param->expression->type) {
+	
+	case EXPR_VALUE: 
+	  cdef = new UCommand_DEF(UDEF_VAR,
+	     new UVariableName(
+	       new UString(object),
+	       new UString(param->expression->str), 
+	       true,
+	       (UNamedParameters*)0),
+	     (UNamedParameters*) 0,
+	     (UCommand*) 0);
+	  break;
+	case EXPR_FUNCTION:	
+	  cdef = new UCommand_DEF(UDEF_FUNCTION,
+	     new UVariableName(
+	       new UString(object),
+	       new UString(param->expression->variablename->id), 
+	       true,
+	       (UNamedParameters*)0),
+	     param->expression->parameters,
+	     (UCommand*) 0);
+	  break;
+	case EXPR_EVENT:	
+	  cdef = new UCommand_DEF(UDEF_EVENT,
+	     new UVariableName(
+	       new UString(object),
+	       new UString(param->expression->variablename->id), 
+	       true,
+	       (UNamedParameters*)0),
+	     param->expression->parameters,
+	     (UCommand*) 0);
+	  break;
+      }
+      
+      cdef->tag->update(tag->str());
+      if (param == parameters)
+      	morph = cdef;
+      else
+	morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
+    }
+    
+    param = param->next;
+  }
+  
+  if (morph) {
+    persistant = false;
+    return( status = UMORPH );
+  }
+  else
+    return ( status = UCOMPLETED );
+}
+
+//! UCommand subclass hard copy function
+UCommand*
+UCommand_CLASS::copy() 
+{  
+  UString*          copy_object;
+  UNamedParameters* copy_parameters;
+  
+  if (object) copy_object = object->copy(); else copy_object = 0;
+  if (parameters) copy_parameters = parameters->copy(); else copy_parameters = 0;
+
+  UCommand_CLASS *ret = new UCommand_CLASS(copy_object,
+                                           copy_parameters);
+  copybase(ret);
+  return ((UCommand*)ret);
+}
+
+//! Print the command 
+/*! This function is for debugging purpose only. 
+    It is not safe, efficient or crash proof. A better version will come later.
+*/
+void 
+UCommand_CLASS::print(int l)
+{
+  char tabb[100];  
+
+  strcpy(tabb,"");
+  for (int i=0;i<l;i++)
+    strcat(tabb," ");
+
+  if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
+  else ::urbiserver->debug("%s",tabb);
+
+  ::urbiserver->debug("CLASS:\n");
+
+  if (object) { ::urbiserver->debug("%s  Object name: %s\n",tabb,object->str());};  
+  if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};  
+  ::urbiserver->debug("%sEND CLASS ------\n",tabb);
 }
 
 // *********************************************************

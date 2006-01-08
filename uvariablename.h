@@ -87,7 +87,8 @@ public:
   bool              fromGroup; ///< the variable is part of a command spawned by a group morphing
                                ///< this is used to avoid error messages when the variable does not exist
   bool              firsttime; ///< before the first local function prefix resolution
-
+  bool              nostruct; ///< is nostruct if it comes from a simple IDENTIFIER in the parsing phase
+  
 protected:
 
   UString*        fullname_; ///< used as a hash key
@@ -96,6 +97,7 @@ protected:
   HMvariabletab::iterator hmi2;         ///< internal
   HMfunctiontab::iterator hmf;          ///< internal
   bool                    localFunction;///< true for variables local to a func.
+  bool                    selfFunction;///< true for variables with self prefix
   bool                    cached;       ///< internal
 };
 

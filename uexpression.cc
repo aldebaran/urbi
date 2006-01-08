@@ -449,7 +449,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         ret = staticcache->copy();
       
     return(ret);
-  
+  /*
   case EXPR_GROUPLIST:
     variable = variablename->getVariable(command,connection); 
     if (!variablename->getFullname()) return (0); 
@@ -472,7 +472,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     ret = ::urbiserver->grouptab[devicename->str()]->list(variablename);
     return ret;
-    
+    */
 
 
 

@@ -186,23 +186,23 @@ internal   { lvalp->str = new UString(yytext);
              return BINDER;
             }
 
-motoron    |
-motoroff   |
-defcheckon  |
-defcheckoff |
-ping       |
-devices    |
+motoron     |
+motoroff    |
+strict      |
+unstrict    |
+ping        |
+devices     |
 connections |
-vars       |
-uservars   |
-undefall   |
-reset      |
-commands   |
-debugon    |
-debugoff   |
-quit       |
-stopall    |
-reboot     |
+vars        |
+uservars    |
+undefall    |
+reset       |
+commands    |
+debugon     |
+debugoff    |
+quit        |
+stopall     |
+reboot      |
 shutdown      { lvalp->str = new UString(yytext); 
                 if (lvalp->str->str() == 0) {
                   delete (lvalp->str);

@@ -1,8 +1,8 @@
-/*! \file ugroup.h
+/*! \file uobj.h
  *******************************************************************************
 
- File: ugroup.h\n
- Definition of the UGroup class.
+ File: uobj.h\n
+ Definition of the UObj class.
 
  This file is part of 
  %URBI Kernel, version __kernelversion__\n
@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UGROUP_H_DEFINED
-#define UGROUP_H_DEFINED
+#ifndef UOBJ_H_DEFINED
+#define UOBJ_H_DEFINED
 
 #include "ustring.h"
 class UVariableName;
@@ -31,18 +31,17 @@ using namespace std;
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
-class UGroup
+class UObj
 {
 public:
 
-  UGroup(UString *device);
-  ~UGroup(); 
+  UObj(UString *device);
+  ~UObj(); 
   
-  list<UGroup*> members;
+  list<UObj*> down;
+  list<UObj*> up;
+
   UString      *device;
-
-
-  UValue * list( UVariableName *variable);
 };
 
 #endif

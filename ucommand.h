@@ -31,7 +31,8 @@
 #include "unamedparameters.h"
 #include "uvariablelist.h"
 #include "uvalue.h"
-#include "ugroup.h"
+#include "uobj.h"
+#include "ualias.h"
 #include "uproperty.h"
 #include "uvariablename.h"
 #include "ubinary.h"
@@ -74,6 +75,11 @@ public:
   UErrorValue       copybase(UCommand *command);
   virtual void      mark(UString *stopTag);
   virtual void      deleteMarked();
+  UCommand*         scanAlias();
+  UCommand*         scanObjects();
+  virtual UVariableName** refVarName() { return 0; };
+
+
   
   UCommandType     type;        ///< Type of the command.
   UCommandStatus   status;      ///< Status of the command
@@ -155,6 +161,8 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
+  virtual UVariableName** refVarName() { return &variablename; };
+
 
   UVariableName    *variablename;   ///< variable name
   UVariable        *variable;  ///< associated variable
@@ -220,6 +228,8 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
+  virtual UVariableName** refVarName() { return &variablename; };
+
 
   UVariableName    *variablename;   ///< variable name
   UVariable        *variable;  ///< associated variable
@@ -242,6 +252,8 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
+  virtual UVariableName** refVarName() { return &variablename; };
+
 
   UVariableName    *variablename;   ///< variable name
   UVariable        *variable;       ///< associated variable
@@ -301,20 +313,22 @@ public:
   UString          *connectionTag; ///< tag of the connection to echo to.
 };
 
-class UCommand_GROUP : public UCommand
+class UCommand_NEW : public UCommand
 {
 public:
 
-  UCommand_GROUP(UString* id,  
-                 UNamedParameters *parameters);  
-  virtual ~UCommand_GROUP();
+  UCommand_NEW(UString* id,  
+               UString* obj, 
+               UNamedParameters *parameters);  
+  virtual ~UCommand_NEW();
 
   virtual void print(int l); 
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
 
-  UString          *id;        ///< Identifier
+  UString          *id;         ///< Identifier
+  UString          *obj;        ///< Object
   UNamedParameters *parameters; ///< list of parameters
 };
 
@@ -324,6 +338,10 @@ public:
 
   UCommand_ALIAS (UVariableName* id,
                   UVariableName* variablename);  
+		  
+  UCommand_ALIAS(UVariableName* id,
+                 UNamedParameters *parameters);  
+
   virtual ~UCommand_ALIAS();
 
   virtual void print(int l); 
@@ -333,6 +351,7 @@ public:
 
   UVariableName        *variablename; ///< variable
   UVariableName        *id; ///< identifier
+  UNamedParameters     *parameters; ///< list of aliases
 };
 
 class UCommand_OPERATOR_ID : public UCommand
@@ -359,13 +378,14 @@ public:
   UCommand_DEVICE_CMD  (UString* device,
                         UString* cmd);  
   virtual ~UCommand_DEVICE_CMD();
+  virtual UVariableName** refVarName() { return &variablename; };
 
   virtual void print(int l); 
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
 
-  UString          *device; ///< the device name
+  UVariableName    *variablename; ///< the device name embedded in a var name
   UString          *cmd;    ///< the command (on, off, ...)
 };
 
@@ -487,6 +507,7 @@ public:
 
   UCommand_INCDECREMENT(UCommandType type, UVariableName *variablename);                      
   virtual ~UCommand_INCDECREMENT();
+  virtual UVariableName** refVarName() { return &variablename; };
 
   virtual void print(int l); 
 
@@ -500,12 +521,15 @@ class UCommand_DEF : public UCommand
 {
 public:
 
-  UCommand_DEF (UVariableName *variablename,           
+  UCommand_DEF (UDefType deftype,
+                UVariableName *variablename,           
                 UNamedParameters *parameters,
                 UCommand* command); 
-  UCommand_DEF (UString *device,           
+  UCommand_DEF (UDefType deftype,
+                UString *device,           
                 UNamedParameters *parameters);  
-  UCommand_DEF (UVariableList *variablelist);                    
+  UCommand_DEF (UDefType deftype,
+                UVariableList *variablelist);                    
 
   virtual ~UCommand_DEF();
 
@@ -519,7 +543,28 @@ public:
   UCommand         *command;    ///< Command definition
   UString          *device;     ///< device name in a "def device {...}"
   UVariableList    *variablelist; ///< list of variables in a multi def command
+  UDefType         deftype;      ///< type of definition (var, function, event)
 };
+
+
+class UCommand_CLASS : public UCommand
+{
+public:
+
+  UCommand_CLASS (UString *object,
+                  UNamedParameters *parameters);
+
+  virtual ~UCommand_CLASS();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UString          *object;   ///< class name
+  UNamedParameters *parameters; ///< list of parameters
+};
+
 
 class UCommand_IF : public UCommand
 {

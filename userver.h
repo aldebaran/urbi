@@ -145,9 +145,12 @@ public:
 
   HMdevicetab              devicetab; ///< hash of available devices.  
   HMvariabletab            variabletab; ///< hash of variable values  
-  HMfunctiontab            functiontab; ///< hash of function definition  
-  HMgrouptab               grouptab; ///< hash of group definitions  
+  HMfunctiontab            functiontab; ///< hash of function definition
+  HMfunctiontab            functiondeftab; ///< hash of functions definition markers
+  HMfunctiontab            eventdeftab; ///< hash of events definition markers
+  HMobjtab                 objtab; ///< hash of objects hierarchy  
   HMaliastab               aliastab; ///< hash of alias definitions
+  HMaliastab               objaliastab; ///< hash of alias definitions
   HMeventtab               eventtab; ///< hash of events
   HMbindertab              functionbindertab; ///< hash of function binders
   HMbindertab              eventbindertab; ///< hash of event binders

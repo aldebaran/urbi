@@ -189,7 +189,10 @@ UServer::initialization()
   new UVariable(MAINDEVICE,"name", mainName->str());
 
   // Devices initialization
+   
+
   initDevices();
+ 
   new UVariable(MAINDEVICE,"nbdevices", (double)(devicetab.size()));
 
   ghost  = new UGhostConnection(this); 
@@ -200,9 +203,10 @@ UServer::initialization()
 
   new UVariable(MAINDEVICE,"ghostID", tmpbuffer_ghostTag);
 
+ 
   uservarState = true;
-  loadFile("URBI.INI",ghost->recvQueue());
-  ghost->newDataAdded = true;
+  if (loadFile("URBI.INI",ghost->recvQueue()) == USUCCESS)
+    ghost->newDataAdded = true;	
 }
 
 //! Function called before work
@@ -310,7 +314,7 @@ UServer::work()
        
         (*retr)->newDataAdded = false;
         (*retr)->received("");        
-      }                     
+      }            
     }
 
   // Scan currently opened connections for deleting marked commands or killall order
@@ -565,6 +569,9 @@ UServer::debug(const char* s,...)
   va_end(arg);
 
   effectiveDisplay(tmpBuffer_);
+  
+//  used to slow down printing with Aibo...  
+//  double y=4;double x=145;  for (int i=0;i<300000;i++) y = y+ sin( i*x);
 }
 
 //! Isolate the server from incoming commands.
@@ -855,6 +862,8 @@ UServer::removeConnection(UConnection *connection)
 void
 UServer::addAlias(const char* id, const char* variablename)
 {
+// FIXME
+/*
   if (aliastab.find(id) != aliastab.end()) {
     
     UString *alias = aliastab[id];
@@ -865,6 +874,7 @@ UServer::addAlias(const char* id, const char* variablename)
     UString *ids = new UString(id); // persistant, no delete associated
     aliastab[ids->str()] = new UString(variablename);
   }
+  */
 }
 
 //! Add an offset to the cpucload calculus

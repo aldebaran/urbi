@@ -54,10 +54,15 @@ UVariableName::UVariableName(UString* device,
   this->variable  = 0; 
   this->function  = 0;
   this->firsttime = true;
+  this->nostruct  = false;
 
   localFunction   = false;
+  selfFunction    = false;
   if ((device) && (device->equal("__Funct__")))
     localFunction = true;
+  if ((device) && (device->equal("self")))
+    selfFunction = true;
+
 }
 
 //! UVariableName constructor for string based variables: $("...")
@@ -78,9 +83,12 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
   this->varerror  = false;
   this->cached    = false;  
   localFunction   = false; 
+  selfFunction    = false;
   this->variable  = 0;
   this->function  = 0;
   this->firsttime = true;
+  this->nostruct  = false;
+
 }
 
 //! UVariableName destructor.
@@ -274,15 +282,20 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   else {
 
     // Local function call
-    if ((localFunction) && (firsttime)) {
+    if ((localFunction || selfFunction) && (firsttime)) {
       firsttime = false;
       if (!connection->stack.empty()) {
         UCallid *funid = connection->stack.front();
-        if (funid) device->update(funid->str());
+        if (funid) {
+	  if (localFunction)
+	    device->update(funid->str());
+	  if (selfFunction)
+	    device->update(funid->self());	    
+	}
       }
       else {
         snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-                 "!!! invalid function prefix resolution\n");
+                 "!!! invalid prefix resolution\n");
         connection->send(tmpbuffer,command->tag->str());  
         if (fullname_) {
           delete fullname_;
@@ -355,6 +368,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 
   // Alias updating
   if (withalias) {
+/*
+  
     hmi = ::urbiserver->aliastab.find(name);      
     past_hmi = hmi;
     
@@ -369,6 +384,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       if (method) delete(method); method = 0; // forces recalc of device.method
       if (variable) variable = 0;
     }
+    */
   }
 
   if (fullname_) fullname_->update(name);

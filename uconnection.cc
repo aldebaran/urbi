@@ -405,6 +405,8 @@ UConnection::received (const char *s)
 UErrorValue          
 UConnection::received (const ubyte *buffer, int length)
 { 
+
+
   if (server->memoryOverflow) {
 
     errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
@@ -485,6 +487,7 @@ UConnection::received (const ubyte *buffer, int length)
       }
       server->memoryCheck();
       
+
       // Xtrem memory recovery in case of anomaly
       if (server->memoryOverflow) 
         if (server->parser.commandTree) {
@@ -539,11 +542,13 @@ UConnection::received (const ubyte *buffer, int length)
             // Pile the command
             if (!receiveBinary_) {
 
+//::urbiserver->debug("Received - 5i.\n"); //TRASHME
+
               // immediate execution of simple commands
             
-              if (!obstructed) {                
+              if (!obstructed) {       
                 server->parser.commandTree->up = 0;
-                server->parser.commandTree->position = 0;                                    
+                server->parser.commandTree->position = 0;    
                 execute(server->parser.commandTree);
                 if ((server->parser.commandTree) &&
                     (server->parser.commandTree->status == URUNNING))

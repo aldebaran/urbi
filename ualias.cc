@@ -1,8 +1,8 @@
-/*! \file ugroup.cc
+/*! \file ulias.cc
  *******************************************************************************
 
- File: ugroup.cc\n
- Implementation of the UGroup class.
+ File: ualias.cc\n
+ Implementation of the UAlias class.
 
  This file is part of 
  %URBI Kernel, version __kernelversion__\n
@@ -19,37 +19,45 @@
 
  **************************************************************************** */
 
-#include "ugroup.h"
+#include "ualias.h"
 #include "ustring.h"
 #include "uvalue.h"
 #include "uvariablename.h"
 #include "userver.h"
                                                        	
 // **************************************************************************	
-//! UGroup constructor.
-UGroup::UGroup (UString *device)
+//! UAlias constructor.
+UAlias::UAlias (UString *name)
 {
-  this->device = new UString(device);
+  this->name = new UString(name);
+  composed = ( (strstr(name->str(),".")) != 0);
 }
 
-//! UGroup destructor
-UGroup::~UGroup()
+UAlias::UAlias (char *name)
 {
-  if (device) delete(device);
+  this->name = new UString(name);
+  composed = ( (strstr(name,".")) != 0);
 }
 
 
+//! UAlias destructor
+UAlias::~UAlias()
+{
+  if (name) delete(name);
+}
 
-UValue * UGroup::list( UVariableName *variable) {
+
+/*
+UValue * UAlias::list( UVariableName *variable) {
   //do read
-  UGroup * gr =  this;
+  UAlias * gr =  this;
   
   UValue * val = new UValue();
   val->dataType = DATA_LIST;  
   UValue * current = val;
   bool first = true;
   
-  for (std::list<UGroup*>::iterator it = gr->members.begin(); 
+  for (std::list<UAlias*>::iterator it = gr->members.begin(); 
       (it != gr->members.end()) && current ;
       it++) {
    
@@ -70,27 +78,23 @@ UValue * UGroup::list( UVariableName *variable) {
     
     else
       n =  ::urbiserver->grouptab[(*it)->device->str()]->list(variable);
-   /* 
-    while (n && n->dataType == DATA_LIST) {
-      UValue * nn = n->list;
-      n->list=  0;
-      delete n;
-      n=nn;
-    }
-    */
+   
+//    while (n && n->dataType == DATA_LIST) {
+//      UValue * nn = n->list;
+//      n->list=  0;
+//      delete n;
+//      n=nn;
+//    }
+    
     if (first) current->liststart =n; else current->next = n;
     current = n;
-/*
-current->list = n;
-    while (current->list)
-      current = current->list;
-      */
+
+//current->list = n;
+//    while (current->list)
+//      current = current->list;
+      
     first = false;
   }
-  
-  
   return val;
-  
-  
-  
 }
+*/

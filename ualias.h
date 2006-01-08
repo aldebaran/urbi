@@ -1,8 +1,8 @@
-/*! \file ucallid.h
+/*! \file ualias.h
  *******************************************************************************
 
- File: ucallid.h\n
- Definition of the UCallid class.
+ File: ualias.h\n
+ Definition of the UAlias class.
 
  This file is part of 
  %URBI Kernel, version __kernelversion__\n
@@ -19,35 +19,32 @@
 
  **************************************************************************** */
 
-#ifndef UCALLID_H_DEFINED
-#define UCALLID_H_DEFINED
+#ifndef UALIAS_H_DEFINED
+#define UALIAS_H_DEFINED
 
 #include "ustring.h"
-#include "uvariable.h"
-
+class UVariableName;
+class UValue;
 #include <list>
 using namespace std;
-
-class UCommand_TREE;
 
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
-class UCallid
+class UAlias
 {
 public:
 
-  UCallid(const char* fun_id, const char* self_id, UCommand_TREE* root);
-  ~UCallid(); 
-  
-  list<UVariable*> stack;
-  UString* fun_id;
-  UString* self_id;
-  UCommand_TREE* root;
+  UAlias(UString *name);
+  UAlias(char *name);
 
-  void         store(UVariable *variable);
-  const char*  str();  
-  const char*  self();
+  ~UAlias();
+  
+  list<UAlias*> members;
+  UString      *name;
+  bool         composed;
+
+ // UValue * list( UVariableName *variable);
 };
 
 #endif

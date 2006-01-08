@@ -332,7 +332,7 @@ UVariable::get()
     part, this function must be called. It's called automatically by the above
     set methods.
 */
-inline void
+void
 UVariable::updated()
 {
   if (!binder) return;  

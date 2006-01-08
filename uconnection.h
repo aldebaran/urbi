@@ -119,6 +119,7 @@ public:
                                       ///< binary transfer occurs.
   UString             *connectionTag; ///< virtual device for the connection.
   UString             *functionTag;   ///< virtual device for function def
+  UString             *functionClass; ///< class name in a class method definition
   IPAdd               clientIP;      ///< IP of the calling client
   bool                killall;       ///< killall signal (empty Activecommand)
   bool                closing;       ///< connection closing

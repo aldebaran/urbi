@@ -25,9 +25,10 @@
                                                        	
 // **************************************************************************	
 //! UCallid constructor.
-UCallid::UCallid (const char *fun_id, UCommand_TREE* root)
+UCallid::UCallid (const char *fun_id, const char *self_id, UCommand_TREE* root)
 {
   this->fun_id = new UString(fun_id);
+  this->self_id = new UString(self_id);
   this->root = root;
 }
 
@@ -35,6 +36,7 @@ UCallid::UCallid (const char *fun_id, UCommand_TREE* root)
 UCallid::~UCallid()
 {
   if (fun_id) delete(fun_id);
+  if (self_id) delete(self_id);
   
   for (list<UVariable*>::iterator iter = stack.begin();
        iter != stack.end();iter++) 
@@ -55,4 +57,11 @@ const char*
 UCallid::str()
 {
   return (fun_id->str());
+}
+
+//! Access to the call self ref
+const char*
+UCallid::self()
+{
+  return (self_id->str());
 }

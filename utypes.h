@@ -38,7 +38,8 @@ class UValue;
 class UVariable;
 class UFunction;
 class UBinder;
-class UGroup;
+class UObj;
+class UAlias;
 class UString;
 class UCommand_EMIT;
 
@@ -95,6 +96,16 @@ enum UBindType {
   UBIND_EVENT
 };
 
+//! Type of defs in UCommand_DEF
+enum UDefType {
+  UDEF_FUNCTION,
+  UDEF_VAR,
+  UDEF_VARS,
+  UDEF_EVENT,
+  UDEF_QUERY
+};
+
+
 
 //! Type of Warnings
 enum UWarningCode {
@@ -128,13 +139,14 @@ enum UCommandType {
     CMD_EXPR,
     CMD_RETURN,
     CMD_ECHO,
-    CMD_GROUP,
+    CMD_NEW,
     CMD_ALIAS,    
     CMD_WAIT,
     CMD_WAIT_TEST,
     CMD_INCREMENT,
     CMD_DECREMENT,
     CMD_DEF,
+    CMD_CLASS,
     CMD_IF,
     CMD_EVERY,
     CMD_TIMEOUT,
@@ -185,6 +197,7 @@ enum UExpressionType {
   EXPR_NEG,
   EXPR_COPY,
   EXPR_PROPERTY, 
+  EXPR_EVENT, 
 
   EXPR_TEST_EQ,
   EXPR_TEST_REQ,
@@ -197,9 +210,7 @@ enum UExpressionType {
   EXPR_TEST_LE,
   EXPR_TEST_BANG,
   EXPR_TEST_AND,
-  EXPR_TEST_OR,
-  
-  EXPR_GROUPLIST 
+  EXPR_TEST_OR
 };
 
 //! The different Data types
@@ -317,12 +328,12 @@ typedef hash_map<const char*,
                  eqStr>                 HMfunctiontab; ///< hash of function definition
 
 typedef  hash_map<const char*,
-                  UGroup*,
+                  UObj*,
                   hash<const char*>,
-                  eqStr>                 HMgrouptab; ///< hash of group definitions
+                  eqStr>                 HMobjtab; ///< hash of group definitions
 
 typedef  hash_map<const char*,
-                  UString*,
+                  UAlias*,
                   hash<const char*>,
                   eqStr>                 HMaliastab; ///< hash of alias definitions
 

@@ -184,7 +184,7 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 
 
 --------------------------------------------------------------
- Version 0.9.8                        released on 24.12.2005
+ Version 0.9.8                        released on xx.01.2006
 --------------------------------------------------------------
 
 * bugfix: sgn now works as expected
@@ -192,3 +192,17 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 * bugfix: addition of lists now works correctly
 * bugfix: || or && separated events now work fine
 * bugfix: closed connection do no hold zombie events anymore
+
+--------------------------------------------------------------
+ Version 1.0.0                        released on xx.xx.2006
+--------------------------------------------------------------
+
+* bugfix: lists of lists works now
+* feature: lists can contain any type of data, including binary
+* external mode works: register with 	"external var <name>" or 
+					"external function(<nbparam>) <name>" or 
+					"external event(<nbparam>) <name>"
+* syntax: syntax change def=>var, function or event, defcheckon=>strict, group=>alias
+* class implementation (see detail in doc)
+* feature: emit() now works (<=> emit(inf))
+
