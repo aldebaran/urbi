@@ -113,7 +113,7 @@ extern UString** globalDelete;
 %token PLUS EXP MINUS ASSIGN EQ REQ PEQ NE GT GE LT LE TILDE RPAREN LPAREN DIR
 %token RSBRACKET LSBRACKET RBRACKET LBRACKET IF ELSE WHILE FOR NORM VARERROR
 %token LOOP LOOPN  FOREACH IN STOP BLOCK UNBLOCK NOOP TRUECONST FALSECONST EMIT
-%token CLASS VAR FUNCTION EVENT SUBCLASS NEW
+%token CLASS VAR FUNCTION EVENT SUBCLASS NEW OBJECT
 %token GROUP RANGEMIN RANGEMAX INFO UNIT WAIT WAITUNTIL ECHO DOLLAR PERCENT AROBASE
 %token DEF RETURN BIN  WHENEVER COPY ALIAS DERIV DERIV2 TRUEDERIV TRUEDERIV2 SWITCH
 %token EVERY TIMEOUT STOPIF FREEZEIF AT ONLEAVE ANDOPERATOR OROPERATOR 
@@ -447,9 +447,17 @@ instruction:
   | refvariable ASSIGN NEW IDENTIFIER { 
         
       MEMCHECK($4);
-      $$ = new UCommand_NEW($1->id,$4,(UNamedParameters*)0);
+      $$ = new UCommand_NEW($1->id,$4,(UNamedParameters*)0,true);
       MEMCHECK2($$,$1,$4);
     } 
+    
+  | refvariable ASSIGN NEW IDENTIFIER LPAREN parameterlist RPAREN { 
+        
+      MEMCHECK($4);
+      $$ = new UCommand_NEW($1->id,$4,$6);
+      MEMCHECK3($$,$1,$4,$6);
+    } 
+
 
   | ALIAS purevariable LBRACKET purevariables RBRACKET {
 
@@ -495,7 +503,15 @@ instruction:
       MEMCHECK($1);      
       $$ = new UCommand_OPERATOR_VAR($1,$2);
       MEMCHECK2($$,$1,$2);
-    } 
+    }  
+    
+  | BINDER OBJECT purevariable {
+
+      MEMCHECK($1);
+      $$ = new UCommand_BINDER($1,3,$3);
+      MEMCHECK2($$,$1,$3);
+    }
+
 
   | BINDER VAR purevariable {
 
@@ -618,6 +634,13 @@ instruction:
       $$ = new UCommand_CLASS($2,$4);
       MEMCHECK2($$,$2,$4)
     }
+    
+  | CLASS IDENTIFIER {
+  
+      $$ = new UCommand_CLASS($2,(UNamedParameters*)0);
+      MEMCHECK1($$,$2)
+    }
+
       
   | EVENT variable LPAREN identifiers RPAREN {
     

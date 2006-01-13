@@ -216,6 +216,7 @@ shutdown      { lvalp->str = new UString(yytext);
 if            { return IF;}  
 else          { return ELSE;} 
 var           { return VAR;} 
+object        { return OBJECT;}  
 function      { return FUNCTION;} 
 class         { return CLASS;} 
 subclass      { return SUBCLASS;} 

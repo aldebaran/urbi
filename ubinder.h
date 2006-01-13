@@ -52,7 +52,7 @@ public:
 
   void addMonitor(UConnection *c);
   bool removeMonitor(UConnection *c);
-  void applyParameters(UNamedParameters *param);
+//  void applyParameters(UNamedParameters *param);
 };
 
 #endif

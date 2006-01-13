@@ -23,6 +23,7 @@
 #define UOBJ_H_DEFINED
 
 #include "ustring.h"
+#include "ubinder.h"
 class UVariableName;
 class UValue;
 class UVariable;
@@ -43,7 +44,9 @@ public:
   list<UObj*> down;
   list<UObj*> up;
 
-  UString      *device;
+  UString      *device;  list<UConnection*> bound;
+  UBinder      *binder;
+  
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
 };

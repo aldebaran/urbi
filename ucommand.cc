@@ -2281,13 +2281,15 @@ UCommand_ECHO::print(int l)
 */
 UCommand_NEW::UCommand_NEW(UString* id,  
                            UString* obj,
-			   UNamedParameters *parameters) :
+			   UNamedParameters *parameters,
+			   bool noinit) :
   UCommand(CMD_NEW)
 {	
   ADDOBJ(UCommand_NEW);
   this->id          = id;
   this->obj         = obj;
   this->parameters  = parameters;
+  this->noinit      = noinit;
 }
 
 //! UCommand subclass destructor.
@@ -2296,7 +2298,7 @@ UCommand_NEW::~UCommand_NEW()
   FREEOBJ(UCommand_NEW);
   if (id)         delete id;
   if (obj)        delete obj;
-  if (parameters) delete parameters;
+  // parameters are handled by the morphed init
 }
 
 //! UCommand subclass execution function
@@ -2305,8 +2307,7 @@ UCommand_NEW::execute(UConnection *connection)
 {
   if (!id)  return ( status = UCOMPLETED ); 
   if (!obj) return ( status = UCOMPLETED );
-  
-  
+    
   HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end())  {
     
@@ -2318,19 +2319,118 @@ UCommand_NEW::execute(UConnection *connection)
 
   
   UObj* newobj;
+  bool creation = false;
   HMobjtab::iterator idit = ::urbiserver->objtab.find(id->str());
-  if (idit == ::urbiserver->objtab.end()) 
+  if (idit == ::urbiserver->objtab.end()) {
     newobj = new UObj(id);
+    creation = true;
+  }
   else
     newobj = idit->second;
 
-  newobj->up.push_back(objit->second);
-  objit->second->down.push_back(newobj);
-  
-  if (parameters)  {
-    //handle init call
+  if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
+      newobj->up.end()) {
+        
+    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	"!!! %s has already inherited from %s\n",id->str(),obj->str());
+    if (creation) delete newobj;
+    connection->send(tmpbuffer,tag->str());
+    return ( status = UCOMPLETED );
   }
+      
+  // init constructor call
+  // 
+  // For the moment, multiple inheritance with multiple constructors
+  // will not be accepted. However, in principle there is no ambiguity since
+  // we have a clear reference to the inherited object in this case. It will
+  // be fixed later.
   
+  if (objit->second->binder) {
+    
+    //new
+    char tmpprefixnew[1024];
+    snprintf(tmpprefixnew,1024,"[4,\"%s\",\"%s\"]\n",
+	newobj->device->str(),
+	objit->second->device->str()); 
+	
+    //init
+    char tmpprefix[1024];
+    if (!noinit) {
+     
+      snprintf(tmpprefix,1024,"%s.init",
+      objit->second->device->str(),parameters?parameters->size():0);      
+      HMbindertab::iterator itbind =
+	::urbiserver->functionbindertab.find(tmpprefix);
+      if (!((itbind != ::urbiserver->functionbindertab.end()) && (
+	    (
+	     (parameters) && 	  
+	     (itbind->second->nbparam == parameters->size())
+	    ) ||
+	    (
+	     (!parameters) &&
+	     (itbind->second->nbparam == 0)
+	    )
+	   )) ) {
+	    
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	    "!!! remote 'init' constructor call failed for %s\n",objit->second->device->str());
+	connection->send(tmpbuffer,tag->str());
+    	if (creation) delete newobj;
+	return ( status = UCOMPLETED );
+      }
+      
+      if (parameters)
+	snprintf(tmpprefix,1024,"[0,\"%s.init__%d\",\"__UFnctret.__tmp__UNewreturnvalue\"",
+	    newobj->device->str(),
+	    parameters->size());
+      else
+	snprintf(tmpprefix,1024,"[0,\"%s.init__0\",\"__UFnctret.__tmp__UNewreturnvalue\"",
+	    newobj->device->str());
+    }    
+
+      
+    for (list<UConnection*>::iterator it2 =
+	objit->second->binder->monitors.begin();
+	it2 != objit->second->binder->monitors.end();
+	it2++) {
+      
+      (*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it2)->send((const ubyte*)tmpprefixnew,strlen(tmpprefixnew));	
+
+      if (!noinit) {
+	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
+	for (UNamedParameters *pvalue = parameters;
+	    pvalue != 0;
+	    pvalue = pvalue->next) {
+	  
+	  (*it2)->send((const ubyte*)",",1);
+	  UValue* valparam = pvalue->expression->eval(this,connection);
+	  valparam->echo((*it2));
+	}
+	(*it2)->send((const ubyte*)"]\n",2);      
+      }
+    }    
+  }
+  else 
+  if (!noinit) {
+    
+    persistant = false;
+    morph = (UCommand*) new UCommand_EXPR(
+	new UExpression (EXPR_FUNCTION,
+	  new UVariableName(
+	    new UString(id),
+	    new UString("init"),
+	    true,
+	    (UNamedParameters*)0),
+	  parameters ));
+    newobj->up.push_back(objit->second);
+    objit->second->down.push_back(newobj);
+    return ( status = UMORPH );	  	
+  }
+
+  newobj->up.push_back(objit->second);
+  objit->second->down.push_back(newobj);  
   return ( status = UCOMPLETED );
 }
 
@@ -3222,11 +3322,16 @@ UCommand_BINDER::~UCommand_BINDER()
 UCommandStatus 
 UCommand_BINDER::execute(UConnection *connection)
 {
+  UObj* uobj;
   UString *fullname = variablename->buildFullname(this,connection);
   if (!fullname) return( status = UCOMPLETED );
 
-  ::urbiserver->debug("BINDING: %s type(%d) %s[%d]\n",
-      binder->str(), type, fullname->str(), nbparam);
+  if (type != 3) // not object binder
+    ::urbiserver->debug("BINDING: %s type(%d) %s[%d]\n",
+	binder->str(), type, fullname->str(), nbparam);
+  else
+    ::urbiserver->debug("BINDING: %s type(%d) %s\n",
+	binder->str(), type, variablename->id->str());  
   
   UBindMode mode;
   if (strcmp(binder->str(),"external")==0) mode = UEXTERNAL;
@@ -3266,6 +3371,18 @@ UCommand_BINDER::execute(UConnection *connection)
       else
 	::urbiserver->eventbindertab[key->str()]->addMonitor(connection);
       break;
+    case UBIND_OBJECT:
+      if (::urbiserver->objtab.find(variablename->id->str()) !=
+	  ::urbiserver->objtab.end()) 
+	uobj = ::urbiserver->objtab[variablename->id->str()];
+      else
+	uobj = new UObj(variablename->id);
+      if (uobj->binder) 
+	uobj->binder->addMonitor(connection);
+      else
+	uobj->binder=new UBinder(uobj->device,mode,(UBindType)type,0,connection);	
+      break;
+
   }      
 
   return ( status = UCOMPLETED );
@@ -4492,10 +4609,9 @@ UCommand_CLASS::~UCommand_CLASS()
 UCommandStatus 
 UCommand_CLASS::execute(UConnection *connection)
 {
-  if (!parameters) return ( status = UCOMPLETED );
-  
   // add some object storage here based on 'object'
   new UObj(object);
+  if (!parameters) return ( status = UCOMPLETED );
 
   // morph into a series of & for each element of the class
   morph = 0;

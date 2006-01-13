@@ -61,7 +61,7 @@ bool UBinder::removeMonitor(UConnection *c)
   monitors.remove(c);
   return( monitors.empty() );
 }
-
+/*
 void UBinder::applyParameters(UNamedParameters *param)
 {
   for (list<UConnection *>::iterator monitorit = monitors.begin();
@@ -70,6 +70,6 @@ void UBinder::applyParameters(UNamedParameters *param)
     
   }
 }
-
+*/
 
 

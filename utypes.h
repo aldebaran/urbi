@@ -93,7 +93,8 @@ enum UBindMode {
 enum UBindType {
   UBIND_FUNCTION,
   UBIND_VAR,
-  UBIND_EVENT
+  UBIND_EVENT,
+  UBIND_OBJECT
 };
 
 //! Type of defs in UCommand_DEF

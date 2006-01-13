@@ -32,6 +32,7 @@ char namebuffer[1024];
 UObj::UObj (UString *device)
 {
   this->device = new UString(device);
+  binder = 0;
 
   ::urbiserver->objtab[this->device->str()] = this;
 }
@@ -40,6 +41,7 @@ UObj::UObj (UString *device)
 UObj::~UObj()
 {
   if (device) delete(device);
+  if (binder) delete(binder);
 }
 
 UFunction*

@@ -319,7 +319,8 @@ public:
 
   UCommand_NEW(UString* id,  
                UString* obj, 
-               UNamedParameters *parameters);  
+               UNamedParameters *parameters, 
+	       bool noinit=false);  
   virtual ~UCommand_NEW();
 
   virtual void print(int l); 
@@ -330,6 +331,7 @@ public:
   UString          *id;         ///< Identifier
   UString          *obj;        ///< Object
   UNamedParameters *parameters; ///< list of parameters
+  bool             noinit; ///< tells if 'init' should be called
 };
 
 class UCommand_ALIAS : public UCommand
