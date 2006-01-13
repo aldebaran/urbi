@@ -42,7 +42,10 @@
 
 #include <list>
 using namespace std;
- 
+  
+class UString;
+extern UString** globalDelete;
+
 #define YYERROR_VERBOSE
 
 
@@ -642,6 +645,7 @@ instruction:
       else {
 	bison_uparser.connection->functionTag = new UString("__Funct__");
 	bison_uparser.connection->functionClass = $2->device;
+	globalDelete = &bison_uparser.connection->functionTag;
       }
  
     } taggedcommand {
@@ -651,6 +655,7 @@ instruction:
       if (bison_uparser.connection->functionTag) {
         delete bison_uparser.connection->functionTag;
         bison_uparser.connection->functionTag = 0;  
+	globalDelete = 0;
       }      
     }
 

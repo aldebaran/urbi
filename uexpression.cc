@@ -825,10 +825,16 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
         ::urbiserver->parser.commandTree = 0;
         errorMessage[0] = 0;
-        ::urbiserver->systemcommands = false;
+        ::urbiserver->systemcommands = false;	
+	if (!connection->stack.empty())
+	  connection->functionTag = new UString("__Funct__");
         int result = ::urbiserver->parser.process((ubyte*)e1->str->str(), 
                                                   e1->str->len(),                                                  
-                                                  connection);     
+                                                  connection); 
+	if (connection->functionTag) {
+	  delete connection->functionTag;
+	  connection->functionTag=0;
+	}     
         ::urbiserver->systemcommands = true;    
 
         if (errorMessage[0] != 0) { // a parsing error occured 
@@ -1001,7 +1007,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+        (e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1020,7 +1027,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1047,7 +1055,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1074,7 +1083,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1106,7 +1116,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1132,7 +1143,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     
-    if (e1==0) return 0;   
+    if ((e1==0) || (e1->dataType == DATA_VOID)) return 0;   
     if (e1->dataType != DATA_NUM) {
       delete e1;
       return 0;
@@ -1146,8 +1157,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
   case EXPR_COPY:
     
-    e1 = expression1->eval(command,connection);
-    
+    e1 = expression1->eval(command,connection);   
+
     if (e1==0) return 0;  
 
     ret = e1->copy();
@@ -1175,7 +1186,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1193,7 +1205,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1227,7 +1240,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e2==0)) {
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1273,8 +1287,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
-    
-    if ((e1==0) || (e2==0)) {
+     
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1313,8 +1328,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
-    
-    if ((e1==0) || (e2==0)) {
+     
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1331,8 +1347,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
-    
-    if ((e1==0) || (e2==0)) {
+     
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1361,8 +1378,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
-    
-    if ((e1==0) || (e2==0)) {
+     
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1391,8 +1409,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
-    
-    if ((e1==0) || (e2==0)) {
+     
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1421,8 +1440,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
-    
-    if ((e1==0) || (e2==0)) {
+     
+    if ((e1==0) || (e1->dataType == DATA_VOID) ||
+    	(e2==0) || (e2->dataType == DATA_VOID)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1477,7 +1497,10 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   case EXPR_TEST_AND:
     
     e1 = expression1->eval(command,connection,silent);   
-    if (!e1) return 0;  
+    if (e1==0)  { 
+      if (e1) delete e1;
+      return 0;
+    }
     /*  
     if (e1->dataType != DATA_NUM) {
 

@@ -192,6 +192,7 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 * bugfix: addition of lists now works correctly
 * bugfix: || or && separated events now work fine
 * bugfix: closed connection do no hold zombie events anymore
+* bugfix: context is now properly liberated when a parse error occur inside a function definition
 
 --------------------------------------------------------------
  Version 1.0.0                        released on xx.xx.2006
@@ -205,4 +206,21 @@ Major changes in the kernel interface to allow softdevices to be plugged in the 
 * syntax: syntax change def=>var, function or event, defcheckon=>strict, group=>alias
 * class implementation (see detail in doc)
 * feature: emit() now works (<=> emit(inf))
+
+TODO:
+
+ * add event def (out of class definition)
+ * class
+   - add function def
+   - add event def
+   - operator new
+   - call to init
+   - inheritance integrated class a:b {...};
+   - function polymorphism
+   - var polymorphism
+   - name resolution inside function => class members identification
+ * aliases update
+ * list type?
+ * a=b <=> alias a b? yes, with alias unicity
+
 

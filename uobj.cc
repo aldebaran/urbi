@@ -24,7 +24,9 @@
 #include "uvalue.h"
 #include "uvariablename.h"
 #include "userver.h"
-                                                       	
+  
+char namebuffer[1024];
+  
 // **************************************************************************	
 //! UObj constructor.
 UObj::UObj (UString *device)
@@ -39,5 +41,72 @@ UObj::~UObj()
 {
   if (device) delete(device);
 }
+
+UFunction*
+UObj::searchFunction(const char* id, bool &ambiguous)
+{
+  UFunction *ret;
+  bool found;
+  
+  snprintf(namebuffer,1024,"%s.%s",device->str(),id);  
+  HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
+  if (hmf != ::urbiserver->functiontab.end()) {
+    ambiguous = false;
+    return (hmf->second);
+  }
+  else {
+    ret   = 0;
+    found = false;
+    for (list<UObj*>::iterator itup = up.begin();
+	itup != up.end();
+	itup++){
+      ret = (*itup)->searchFunction(id,ambiguous);
+      if (ambiguous) return 0;
+      if (ret)
+	if (found) {
+	  ambiguous = true;
+	  return 0;
+	}
+	else 
+	  found = true;      
+    }
+    ambiguous = false;
+    return ret;
+  }
+}
+
+UVariable*
+UObj::searchVariable(const char* id, bool &ambiguous)
+{
+  UVariable *ret;
+  bool found;
+  
+  snprintf(namebuffer,1024,"%s.%s",device->str(),id);  
+  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
+  if (hmv != ::urbiserver->variabletab.end()) {
+    ambiguous = false;
+    return (hmv->second);
+  }
+  else {
+    ret   = 0;
+    found = false;
+    for (list<UObj*>::iterator itup = up.begin();
+	itup != up.end();
+	itup++){
+      ret = (*itup)->searchVariable(id,ambiguous);
+      if (ambiguous) return 0;
+      if (ret)
+	if (found) {
+	  ambiguous = true;
+	  return 0;
+	}
+	else 
+	  found = true;      
+    }
+    ambiguous = false;
+    return ret;
+  }
+}
+
 
 

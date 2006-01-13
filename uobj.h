@@ -25,6 +25,8 @@
 #include "ustring.h"
 class UVariableName;
 class UValue;
+class UVariable;
+class UFunction;
 #include <list>
 using namespace std;
 
@@ -42,6 +44,8 @@ public:
   list<UObj*> up;
 
   UString      *device;
+  UFunction*    searchFunction(const char* id, bool& ambiguous);
+  UVariable*    searchVariable(const char* id, bool& ambiguous);
 };
 
 #endif

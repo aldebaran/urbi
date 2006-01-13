@@ -27,6 +27,7 @@
 #include "udevice.h"
 #include "userver.h"
 #include "ucallid.h"
+#include "utypes.h"
 
 char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];  ///< temporary global string                                              
 
@@ -532,11 +533,33 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     ////// INTERNAL /////
 
     ////// user-defined /////
+       
+    hmf = ::urbiserver->functiontab.find(functionname->str());
+    bool found = (hmf != ::urbiserver->functiontab.end());
+    if (!found) {
+      //trying inheritance
+      const char* devname = expression->variablename->getDevice()->str();
+      bool ambiguous;
+      fun = 0;
+      HMobjtab::iterator itobj;
+      if ((itobj = ::urbiserver->objtab.find(devname)) !=
+	  ::urbiserver->objtab.end()) {
+	fun = itobj->second->searchFunction(expression->variablename->getMethod()->str(),
+    	    ambiguous);
+	if (ambiguous)  { 
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "!!! Ambiguous multiple inheritance on function %s\n",
+    	      functionname->str());
+	  connection->send(tmpbuffer,tag->str()); 	      
+	  return( status = UCOMPLETED );	      
+	}
+      }
+    } 
+    else
+      fun = hmf->second;
+	   
 
-    if ( (hmf = connection->server->functiontab.find(functionname->str())) !=
-         connection->server->functiontab.end()) {
-      
-      fun = (*hmf).second;
+    if (fun) {
       
       if ( ( (expression->parameters) && 
              (fun->nbparam()) && 
@@ -1896,12 +1919,33 @@ UCommand_EXPR::execute(UConnection *connection)
     ////// INTERNAL /////
 
     ////// user-defined /////
-
-    if ((hmf = ::urbiserver->functiontab.find(funname->str())) !=
-        ::urbiserver->functiontab.end()) {
-  
-      fun = (*hmf).second;
-
+            
+    hmf = ::urbiserver->functiontab.find(funname->str());
+    bool found = (hmf != ::urbiserver->functiontab.end());
+    if (!found) {
+      //trying inheritance
+      const char* devname = expression->variablename->getDevice()->str();
+      bool ambiguous;
+      fun = 0;
+      HMobjtab::iterator itobj;
+      if ((itobj = ::urbiserver->objtab.find(devname)) !=
+	  ::urbiserver->objtab.end()) {
+	fun = itobj->second->searchFunction(expression->variablename->getMethod()->str(),
+    	    ambiguous);
+	if (ambiguous)  { 
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "!!! Ambiguous multiple inheritance on function %s\n",
+    	      funname->str());
+	  connection->send(tmpbuffer,tag->str()); 	      
+	  return( status = UCOMPLETED );	      
+	}
+      }
+    }
+    else
+      fun = hmf->second;
+	   
+    if (fun) {
+                
       if ( ( (expression->parameters) && 
              (fun->nbparam()) && 
              (expression->parameters->size() != fun->nbparam())) ||
@@ -2263,7 +2307,7 @@ UCommand_NEW::execute(UConnection *connection)
   if (!obj) return ( status = UCOMPLETED );
   
   
-  HMobjtab::iterator objit = ::urbiserver->objtab.find(id->str());
+  HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end())  {
     
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
@@ -4451,7 +4495,7 @@ UCommand_CLASS::execute(UConnection *connection)
   if (!parameters) return ( status = UCOMPLETED );
   
   // add some object storage here based on 'object'
-  
+  new UObj(object);
 
   // morph into a series of & for each element of the class
   morph = 0;

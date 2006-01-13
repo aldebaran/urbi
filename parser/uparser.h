@@ -48,6 +48,9 @@ extern char errorMessage[1024];
 class UConnection;
 class UCommand;
 
+class UString;
+extern UString** globalDelete;
+
 struct UDefine {
   UString *name;
   UString *value;
@@ -60,6 +63,10 @@ inline void yyerror(char const *what_error) {
   strncat(errorMessage,what_error,1019);
   errorMessage[1022] = 0; // Just make sure it ends...
   strcat(errorMessage,"\n");
+  if (globalDelete) {
+     delete *globalDelete;
+     (*globalDelete) = 0;
+  }
 }
 
 

@@ -90,7 +90,7 @@ network: $(NETWORK_OBJS)
 parser: $(PARSER_OBJS)
 
 build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(PARSER_OBJS) $(NETWORK_OBJS) 
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o userver.o -c userver.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o userver$(OBJEXT) -c userver.cc
 	$(LD) $(LDFLAGS)  -o build/libkernelurbi-$(NETWORK)-$(PARSER)-$(OS).a $^
 
 
