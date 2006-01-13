@@ -28,6 +28,7 @@
 #include <uclient.h>
 using namespace std;
 
+extern const bool NOTIFYNEW;
 
 // USed by some classes and defined somewhere else in liburbi. This avoids including
 // multiple .h that are not actually used by the programmer
@@ -44,13 +45,13 @@ namespace __gnu_cxx {
 
 // This macro is here to make life easier
 // Simply use: UStarter(myUObjectType) and the rest will be taken care of.
-#define UStart(x) URBI::URBIStarter<x> x ## ____URBI_object
+#define UStart(x) URBI::URBIStarter<x> x ## ____URBI_object(string(#x))
 
 // Thess macro are here to make life easier
-#define UVarInit(obj,x) x.init(#obj,#x)
-#define UFunctionInit(obj,x)  createUCallback("function", this,(&obj::x),string(#obj)+"."+string(#x),functionmap)
-#define UEventInit(obj,x)     createUCallback("event",    this,(&obj::x),string(#obj)+"."+string(#x),eventmap)
-#define UNotifyEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),string(#obj)+"."+string(#x),eventendmap)
+#define UVarInit(obj,x) x.init(name,#x)
+#define UFunctionInit(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
+#define UEventInit(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
+#define UNotifyEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
 
 
 // defines a variable and it's associated accessors
@@ -98,10 +99,12 @@ URBI {
   {
   public:
 
-    baseURBIStarter() {};
+    baseURBIStarter(string name) : name(name) {};
     virtual ~baseURBIStarter() {};
 
-    virtual void init() =0; ///< Used to provide a wrapper to initialize objects in starterlist
+    virtual void init(string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
+    virtual void copy(string) = 0; ///< Used to provide a copy of a C++ object based on its name
+    string name;
   };
 
   //! This is the class containing URBI starters
@@ -111,11 +114,17 @@ URBI {
   template <class T> class URBIStarter : public baseURBIStarter
   {
   public:
-    URBIStarter()          { objectlist.push_back(dynamic_cast<baseURBIStarter*>(this)); };
+    URBIStarter(string name) : baseURBIStarter(name)
+    	{ objectlist.push_back(dynamic_cast<baseURBIStarter*>(this)); };
     virtual ~URBIStarter() { };
 
+    virtual void copy(string objname) {
+      	new URBIStarter<T>(objname);
+	init(objname);
+    };
+
   protected:
-    virtual void init()    { new T; }; ///< Called when the object is ready to be initialized
+    virtual void init(string objname)    { new T(objname); }; ///< Called when the object is ready to be initialized
   };	
 
   
@@ -182,7 +191,7 @@ URBI {
   {
   public:
     
-    UObject(const string&);
+    UObject(const string&, bool);
     ~UObject();
 
     template <class T> 
@@ -201,13 +210,14 @@ URBI {
     void UMonitor(UVar &v, int (*fun) (UVar&)) { URBI::UMonitor(v,fun); };
     void UMonitor(string varname, int (*fun) ()) { URBI::UMonitor(varname,fun); };
     void UMonitor(string varname, int (*fun) (UVar&)) { URBI::UMonitor(varname,fun); };
+  	
+    string name; ///< name of the object as seen in URBI
 
 
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
                               ///< module/plugin architectures who defines it.
-     
-    PRIVATE(string,name); ///< name of the object as seen in URBI
+    bool       notifynew; ///< is the object notified when a 'new' command is done on the URBI side?
   };
 
   // generic caster  

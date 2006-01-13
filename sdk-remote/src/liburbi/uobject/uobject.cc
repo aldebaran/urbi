@@ -29,6 +29,8 @@
 using namespace URBI;
 using namespace std;
 
+const bool NOTIFYNEW = true;
+
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
@@ -163,11 +165,14 @@ URBI::UMonitor(string varname, int (*fun) (UVar&))
 
 // **************************************************************************	
 //! UObject constructor.
-UObject::UObject(const string &s) :
-  name(s)
+UObject::UObject(const string &s, bool notifynew = false) :
+  name(s), notifynew(notifynew)
 {
   objectData = new UObjectData(this);  
   lastUObject = this;
+  URBI() << "class " << name << "{};";
+  if (notifynew)
+    URBI() << "external " << "object" << " " << name <<";";
 }
 
 
@@ -245,8 +250,12 @@ URBI::dispatcher(const UMessage &msg)
       array.setOffset(3);
       UValue retval = (*tmpfunit)->__evalcall(array);
       array.setOffset(0);
-      URBI() << (string)array[2] << "=";
-      retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
+      if (retval.type == DATA_VOID)
+	URBI() << "var " << (string)array[2];
+      else {
+	URBI() << (string)array[2] << "=";
+	retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
+      }
       URBI() << ";";
     }          
     else
@@ -265,8 +274,7 @@ URBI::dispatcher(const UMessage &msg)
 	array.setOffset(2);
 	(*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-      }
-    
+      }    
     }
   }
   
@@ -282,10 +290,28 @@ URBI::dispatcher(const UMessage &msg)
 	array.setOffset(2);
 	(*tmpfunit)->__evalcall(array);
 	array.setOffset(0);
-      }
-    
+      }    
     }
   }
+
+  // UEM_NEW
+  else if ((USystemExternalMessage)(int)array[0] == UEM_NEW) { 
+  
+    list<baseURBIStarter*>::iterator found = objectlist.end();
+    for (list<baseURBIStarter*>::iterator retr = objectlist.begin();
+	retr != objectlist.end();
+	retr++)
+      if ((*retr)->name == (string)array[2])
+	if (found != objectlist.end())
+	  msg.client.printf("Double object definition %s\n",(*retr)->name.c_str());
+	else
+	  found = retr;
+            
+    if (found == objectlist.end())
+      msg.client.printf("Unknown object definition %s\n",((string)array[2]).c_str());
+    else
+      (*found)->copy( (string) array[1] );
+    }
 
   // DEFAULT
   else          
@@ -331,12 +357,13 @@ URBI::main(int argc, char *argv[])
   for (list<baseURBIStarter*>::iterator retr = objectlist.begin();
        retr != objectlist.end();
        retr++)
-    (*retr)->init();
-
+    (*retr)->init((*retr)->name);
+/*
   URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
   URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
   URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret124\",\"fff\",12]" << ";" ;
   URBI() << externalModuleTag << ": [2,\"ball.myevent__1\",123]" << ";" ;
+  */
 }
 

@@ -27,7 +27,8 @@ namespace URBI {
     UEM_EVALFUNCTION,
     UEM_ASSIGNVALUE,
     UEM_EMITEVENT,
-    UEM_ENDEVENT
+    UEM_ENDEVENT,
+    UEM_NEW
   };
 } // namespace URBI
 
