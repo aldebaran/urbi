@@ -23,7 +23,6 @@
 #include <list>
 #include "uobject.h"
 #include "uclient.h"
-#include "uobjectdata.h"
 #include "usharedexternal.h"
 
 using namespace URBI;
@@ -35,6 +34,9 @@ const bool NOTIFYNEW = true;
 
 //! Global definition of the starterlist
 namespace URBI {
+
+  UObject* lastUObject;
+
   list<baseURBIStarter*> objectlist;
   const string externalModuleTag = "__ExternalMessage__";
 
@@ -168,7 +170,7 @@ URBI::UMonitor(string varname, int (*fun) (UVar&))
 UObject::UObject(const string &s, bool notifynew = false) :
   name(s), notifynew(notifynew)
 {
-  objectData = new UObjectData(this);  
+//  objectData = new UObjectData(this);  
   lastUObject = this;
   URBI() << "class " << name << "{};";
   if (notifynew)
@@ -341,8 +343,8 @@ URBI::main(int argc, char *argv[])
     urbi::exit(0);
   }
 
-  serverIP = argv[1];
-  cout << "Running Soft Device Module '" << argv[0] << "' on " << serverIP << endl;
+  //serverIP = argv[1];
+  cout << "Running Soft Device Module '" << argv[0] << "' on " << argv[1] << endl;
   urbi::connect(argv[1]);
 
 
