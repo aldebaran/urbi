@@ -183,6 +183,16 @@ UObject::~UObject()
 {  
 }
 
+//! UObject echo method
+void
+urbi::echo(const char* format, ... ) {
+  va_list arg;
+  va_start(arg, format);
+  vfprintf(stderr, format, arg);
+  va_end(arg);
+}
+
+
 // This part is specific for standalone linux objects
 // LIBURBI 'Module mode'
 

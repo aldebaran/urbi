@@ -33,6 +33,7 @@
 #include <iostream>
 #include <string>
 #include "uobject/uobject.h"
+using namespace urbi;
 
 using std::string;
 using std::list;

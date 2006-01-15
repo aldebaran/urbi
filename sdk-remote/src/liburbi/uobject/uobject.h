@@ -65,6 +65,7 @@ urbi {
   class baseURBIStarter;  
   class UGenericCallback;
   class UValue;
+  class UVardata;
 
   // For homogeneity of the code, UFunction and UEvent are nothing more than UValue's
   typedef UValue UFunction;
@@ -88,178 +89,178 @@ urbi {
   void UMonitor(string, int (*) ());
   void UMonitor(string, int (*) (UVar&));
 
+  void echo(const char * format, ... );
 
- 
   // *****************************************************************************
   // UValue and other related types
 
-enum UDataType {
-  DATA_DOUBLE,
-  DATA_STRING,
-  DATA_BINARY,
-  DATA_LIST,
-  DATA_OBJECT,
-  DATA_VOID
-};
-
-  
-enum UBinaryType {
-  BINARY_NONE,
-  BINARY_UNKNOWN,
-  BINARY_IMAGE,
-  BINARY_SOUND
-};
-
-enum UImageFormat {
-  IMAGE_RGB=1,     ///< RGB 24 bit/pixel
-  IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
-  IMAGE_JPEG=3,    ///< JPEG
-  IMAGE_PPM=4      ///< RGB with a PPM header
-};
-
-
-enum USoundFormat {
-  SOUND_RAW,
-  SOUND_WAV,
-  SOUND_MP3,
-  SOUND_OGG
-};
-
-enum USoundSampleFormat {
-  SAMPLE_SIGNED=1,
-  SAMPLE_UNSIGNED=2
-};
-
-
-
-//internal use: unparsed binary data
-class BinaryData {
- public:
-  void * data;
-  int size;
-  BinaryData() {}
-  BinaryData(void *d, int s):data(d), size(s) {}
-};
-
-
-///Class encapsulating an image.
-class UImage {
- public:
-  char                  *data;            ///< pointer to image data
-  int                   size;             ///< image size in byte
-  int                   width, height;    ///< size of the image
-  UImageFormat          imageFormat;
-};
-
-///Class encapsulating sound informations.
-class USound {
- public:
- char                  *data;            ///< pointer to sound data
- int                   size;             ///< total size in byte
- int                   channels;         ///< number of audio channels
- int                   rate;             ///< rate in Hertz
- int                   sampleSize;       ///< sample size in bit
- USoundFormat          soundFormat;      ///< format of the sound data
- USoundSampleFormat    sampleFormat;     ///< sample format
-
-
-   // USound() : data(0), size(0), channels(1), rate(16000), sampleSize(2), sampleFormat(SAMPLE_SIGNED) {}
- bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
-};
-
-
-
-/// Class containing binary data sent by the server, that could not be furtehr interpreted.
-class UBinary {
- public:
-  UBinaryType             type;
-  union {
-    void                  *data;             ///< binary data
-    UImage                image;
-    USound                sound;
+  enum UDataType {
+    DATA_DOUBLE,
+    DATA_STRING,
+    DATA_BINARY,
+    DATA_LIST,
+    DATA_OBJECT,
+    DATA_VOID
   };
-   string                message;         ///< message as sent by the server
-   int                   size;
 
 
-   UBinary();
-   UBinary(const UBinary &b);
-   UBinary & operator = (const UBinary &b);
-   ~UBinary();
-   int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
-};
-
-class UList {
- public:
-  vector<UValue *> array;
-  UList();
-  UList(const UList &b);
-  UList & operator = (const UList &b);
-  ~UList();
-  UValue & operator [](int i) {return *array[i+offset];} 
-  int size() {return array.size();}
-  void setOffset(int n) { offset = n;};
-
-private:
-  int offset;
-};
-
-class UNamedValue {
- public:
-  UValue *val;
-  string name;
-  UNamedValue(string n, UValue *v):name(n), val(v) {}
-  UNamedValue() {};
-};
-
-class UObjectStruct {
- public:
-  string refName;
-  vector<UNamedValue> array;
-  UObjectStruct();
-  UObjectStruct(const UObjectStruct &b);
-  UObjectStruct & operator = (const UObjectStruct &b);
-  ~UObjectStruct();
-  UValue & operator [](string s);
-  UNamedValue & operator [](int i) {return array[i];} 
-  int size() {return array.size();}
-
-};
-
-class UValue {
- public:
-  UDataType       type; 
-
-  union {
-    double         val;
-    string         *stringValue;
-    UBinary        *binary;
-    UList          *list;
-    UObjectStruct  *object;
-    void           *storage; // internal 
+  enum UBinaryType {
+    BINARY_NONE,
+    BINARY_UNKNOWN,
+    BINARY_IMAGE,
+    BINARY_SOUND
   };
-  
-  UValue();
-  UValue(const UValue&);
-  explicit UValue(double doubleValue);
-  explicit UValue(int intValue);
-  explicit UValue(char * val);
-  explicit UValue(const string &str);
-  explicit UValue(const UBinary &b);
-  explicit UValue(const UList & l);
-  explicit UValue(const UObjectStruct &o);
-  operator double();
-  operator string();
-  operator int() {return (int)(double)(*this);}
-  
-  UValue& operator=(const UValue&);
-  
-  ~UValue();  
-  
-  ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
-  int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
-};
-  
+
+  enum UImageFormat {
+    IMAGE_RGB=1,     ///< RGB 24 bit/pixel
+    IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
+    IMAGE_JPEG=3,    ///< JPEG
+    IMAGE_PPM=4      ///< RGB with a PPM header
+  };
+
+
+  enum USoundFormat {
+    SOUND_RAW,
+    SOUND_WAV,
+    SOUND_MP3,
+    SOUND_OGG
+  };
+
+  enum USoundSampleFormat {
+    SAMPLE_SIGNED=1,
+    SAMPLE_UNSIGNED=2
+  };
+
+
+
+  //internal use: unparsed binary data
+  class BinaryData {
+    public:
+      void * data;
+      int size;
+      BinaryData() {}
+      BinaryData(void *d, int s):data(d), size(s) {}
+  };
+
+
+  ///Class encapsulating an image.
+  class UImage {
+    public:
+      char                  *data;            ///< pointer to image data
+      int                   size;             ///< image size in byte
+      int                   width, height;    ///< size of the image
+      UImageFormat          imageFormat;
+  };
+
+  ///Class encapsulating sound informations.
+  class USound {
+    public:
+      char                  *data;            ///< pointer to sound data
+      int                   size;             ///< total size in byte
+      int                   channels;         ///< number of audio channels
+      int                   rate;             ///< rate in Hertz
+      int                   sampleSize;       ///< sample size in bit
+      USoundFormat          soundFormat;      ///< format of the sound data
+      USoundSampleFormat    sampleFormat;     ///< sample format
+
+
+      // USound() : data(0), size(0), channels(1), rate(16000), sampleSize(2), sampleFormat(SAMPLE_SIGNED) {}
+      bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
+  };
+
+
+
+  /// Class containing binary data sent by the server, that could not be furtehr interpreted.
+  class UBinary {
+    public:
+      UBinaryType             type;
+      union {
+	void                  *data;             ///< binary data
+	UImage                image;
+	USound                sound;
+      };
+      string                message;         ///< message as sent by the server
+      int                   size;
+
+
+      UBinary();
+      UBinary(const UBinary &b);
+      UBinary & operator = (const UBinary &b);
+      ~UBinary();
+      int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
+  };
+
+  class UList {
+    public:
+      vector<UValue *> array;
+      UList();
+      UList(const UList &b);
+      UList & operator = (const UList &b);
+      ~UList();
+      UValue & operator [](int i) {return *array[i+offset];} 
+      int size() {return array.size();}
+      void setOffset(int n) { offset = n;};
+
+    private:
+      int offset;
+  };
+
+  class UNamedValue {
+    public:
+      UValue *val;
+      string name;
+      UNamedValue(string n, UValue *v):name(n), val(v) {}
+      UNamedValue() {};
+  };
+
+  class UObjectStruct {
+    public:
+      string refName;
+      vector<UNamedValue> array;
+      UObjectStruct();
+      UObjectStruct(const UObjectStruct &b);
+      UObjectStruct & operator = (const UObjectStruct &b);
+      ~UObjectStruct();
+      UValue & operator [](string s);
+      UNamedValue & operator [](int i) {return array[i];} 
+      int size() {return array.size();}
+
+  };
+
+  class UValue {
+    public:
+      UDataType       type; 
+
+      union {
+	double         val;
+	string         *stringValue;
+	UBinary        *binary;
+	UList          *list;
+	UObjectStruct  *object;
+	void           *storage; // internal 
+      };
+
+      UValue();
+      UValue(const UValue&);
+      explicit UValue(double doubleValue);
+      explicit UValue(int intValue);
+      explicit UValue(char * val);
+      explicit UValue(const string &str);
+      explicit UValue(const UBinary &b);
+      explicit UValue(const UList & l);
+      explicit UValue(const UObjectStruct &o);
+      operator double();
+      operator string();
+      operator int() {return (int)(double)(*this);}
+
+      UValue& operator=(const UValue&);
+
+      ~UValue();  
+
+      ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
+      int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
+  };
+
 
 
 
@@ -325,10 +326,11 @@ class UValue {
     void __update(UValue&);
 
   private:    
+    UVardata  *vardata; ///< pointer to internal data specifics
+    void __init();	
 
-    PRIVATE(string,name); ////< full name of the variable as seen in URBI      
-    PRIVATE(UValue,value);
-    void __init();
+    PRIVATE(string,name); ///< full name of the variable as seen in URBI      
+    PRIVATE(UValue,value); ///< the variable value on the softdevice's side    
   };
 
 
@@ -375,15 +377,16 @@ class UValue {
       if (cb) cb->storage = (void*)(&v);
     };
 
+    // We have to duplicate because of the above UMonitor which catches the
+    // namespace on UObject instead of urbi.
     void UMonitor(UVar &v) { urbi::UMonitor(v); };
     void UMonitor(UVar &v, int (*fun) ()) { urbi::UMonitor(v,fun); };
     void UMonitor(UVar &v, int (*fun) (UVar&)) { urbi::UMonitor(v,fun); };
     void UMonitor(string varname, int (*fun) ()) { urbi::UMonitor(varname,fun); };
     void UMonitor(string varname, int (*fun) (UVar&)) { urbi::UMonitor(varname,fun); };
-  	
+  
     string name; ///< name of the object as seen in URBI
-
-
+    
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
                               ///< module/plugin architectures who defines it.
@@ -2328,9 +2331,8 @@ class UValue {
   
 
 } // end namespace urbi
-using namespace urbi;
 
-std::ostream & operator <<(std::ostream &s, const UValue &v);
+std::ostream & operator <<(std::ostream &s, const urbi::UValue &v);
 
 #endif
 

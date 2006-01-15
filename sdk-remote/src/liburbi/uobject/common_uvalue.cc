@@ -18,17 +18,9 @@
 
  **************************************************************************** */
 
-#include "uobject.h"
+#include "uobject.h" 
+using namespace urbi;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <math.h>
-#include <setjmp.h>
-#include <algorithm>
-#include <sys/stat.h>
-#include <iostream>
- 
 //////////////////////
 //// UValue Parsing
 //////////////////////

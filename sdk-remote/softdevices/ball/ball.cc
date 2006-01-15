@@ -29,7 +29,7 @@
 
 void toto() {};
 int toto2(UVar &v) {
-    cout << "toto2 call with " << v.get_name() << " value = " << v.val() << endl;
+    echo("toto2 call with %s\n",v.get_name().c_str());
 };
 
 
@@ -69,25 +69,26 @@ ball::~ball()
 string
 ball::myfun   (int n, string s)
 {  
-  cout << "I'm in " << name<<".myfun(" << n << "," << s << ")\n";
+  echo("I'm in %s.myfun(%d,%s)\n",name.c_str(),n,s.c_str());
+  
   return("hello!");
 }
 
 int
 ball::myfun1   (double n)
 { 
-  cout << "I'm in "<<name<<".myfun1(" << n << ")\n";
+  echo("I'm in %s.myfun1(%lf)\n",name.c_str(),n);
   return ((int)(n + 1));
 }
   
 void
 ball::myevent (int n)
 {
-  cout << "Event '"<<name<<".myevent' received with param " << n<< endl;
+  echo("Event '%s.myevent' received with param %d\n",name.c_str(),n);
 }
 
 void
 ball::endevent ()
 {
-  cout << "Event '"<<name<<".myevent' ended " << endl;
+  echo("Event '%s.myevent' ended \n",name.c_str());
 }

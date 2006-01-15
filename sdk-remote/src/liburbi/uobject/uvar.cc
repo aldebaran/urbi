@@ -19,7 +19,18 @@
  **************************************************************************** */
 
 #include "uobject.h"
+using namespace urbi;
+
 #include <uclient.h>
+
+namespace 
+urbi {
+  class UVardata {
+    public:	
+    UVardata() {};
+    ~UVardata() {};
+  };
+};
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
@@ -57,6 +68,7 @@ void
 UVar::__init()
 {  
   varmap[name].push_back(this);
+  vardata = 0; // unused. For internal softdevices only
 }
 
 //! UVar destructor.
