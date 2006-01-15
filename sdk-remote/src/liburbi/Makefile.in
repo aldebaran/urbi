@@ -108,11 +108,12 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/lib/jpeg-6b
 AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
-AM_CXXFLAGS = -pthread
-lib_LIBRARIES = liburbi.a
-include_HEADERS = uclient.h uabstractclient.h usyncclient.h
+AM_CXXFLAGS = -pthread -Wno-deprecated
 
-liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h
+lib_LIBRARIES = liburbi.a
+include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject/uobject.h
+
+liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h
 liburbi_a_LIBADD = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 
 @OPENR_TRUE@SUBDIRS = openr
@@ -378,6 +379,7 @@ top_distdir = ../..
 distdir = $(top_distdir)/$(PACKAGE)-$(VERSION)
 
 distdir: $(DISTFILES)
+	$(mkinstalldirs) $(distdir)/uobject
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -517,7 +519,8 @@ uninstall-info: uninstall-info-recursive
 	uninstall-info-am uninstall-info-recursive \
 	uninstall-libLIBRARIES uninstall-recursive
 
-
+uobject/uobject.h:
+	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
 liburbi.a: uabstractclient.o uclient.o usyncclient.o
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a

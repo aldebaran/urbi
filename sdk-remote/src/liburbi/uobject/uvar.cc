@@ -19,11 +19,8 @@
  **************************************************************************** */
 
 #include "uobject.h"
-#include "uobjectdata.h"
-using namespace URBI;
-
 #include <uclient.h>
-		
+	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
 UVar::UVar(string varname)
@@ -107,4 +104,4 @@ UVar::__update(UValue& v)
       
   value = v;
 }
-  
+ 

@@ -50,7 +50,7 @@ UClient::UClient(const char *_host, int _port, int _buflen)
   :UAbstractClient(_host, _port, _buflen) {
     setlocale(LC_NUMERIC,"C");
     control_fd[0] = control_fd[1] = -1;
-    if (pipe(control_fd) == -1) {
+    if (::pipe(control_fd) == -1) {
       rc = -1;
       perror("UClient::UClient failed to create pipe");
       return;

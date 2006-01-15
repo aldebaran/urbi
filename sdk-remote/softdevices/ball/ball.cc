@@ -35,23 +35,28 @@ int toto2(UVar &v) {
 
 // **************************************************************************	
 //! Ball constructor.
-ball::ball() :
-  UObject("ball")
+ball::ball(string s) :
+  UObject(s,NOTIFYNEW)
 { 
+cout << "MY NAME IS:  " << name << endl;
+
   UVarInit      (ball,x);
   UVarInit      (ball,y);
+  UVarInit      (ball,truc);
+  UFunctionInit (ball,init);
   UFunctionInit (ball,myfun);
   UFunctionInit (ball,myfun1);
   UEventInit    (ball,myevent);
    
   UMonitor(x);
+  UMonitor(truc);
   UMonitor(x, &ball::stuff);
   UMonitor(y, &ball::stuff2);
   UMonitor(x, &toto2);
 
   UNotifyEnd(ball, myevent, endevent);
   
-  UMonitor("camera.val",&toto2);
+  //UMonitor("camera.val",&toto2);
   x = 42;
 }
 
@@ -64,25 +69,25 @@ ball::~ball()
 string
 ball::myfun   (int n, string s)
 {  
-  cout << "I'm in myfun(" << n << "," << s << ")\n";
+  cout << "I'm in " << name<<".myfun(" << n << "," << s << ")\n";
   return("hello!");
 }
 
 int
 ball::myfun1   (double n)
 { 
-  cout << "I'm in myfun1(" << n << ")\n";
+  cout << "I'm in "<<name<<".myfun1(" << n << ")\n";
   return ((int)(n + 1));
 }
   
 void
 ball::myevent (int n)
 {
-  cout << "Event 'myevent' received with param " << n<< endl;
+  cout << "Event '"<<name<<".myevent' received with param " << n<< endl;
 }
 
 void
 ball::endevent ()
 {
-  cout << "Event 'myevent' ended " << endl;
+  cout << "Event '"<<name<<".myevent' ended " << endl;
 }

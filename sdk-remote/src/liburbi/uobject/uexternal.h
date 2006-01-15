@@ -21,7 +21,7 @@
 #ifndef USHAREDEXTERNAL_H_DEFINED
 #define USHAREDEXTERNAL_H_DEFINED
 
-namespace URBI {
+namespace urbi {
 
   enum USystemExternalMessage {
     UEM_EVALFUNCTION,

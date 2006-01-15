@@ -18,11 +18,12 @@
 
  **************************************************************************** */
 
-#include "uobject.h"
+#include <uobject.h>
+#include <uclient.h>
 
 int
 main(int argc, char *argv[])
 {
-  URBI::main(argc, argv);
+  urbi::main(argc, argv);
   urbi::execute();
 };

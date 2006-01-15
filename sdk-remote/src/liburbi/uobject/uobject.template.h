@@ -24,15 +24,11 @@
 #include <string>
 #include <list>
 #include <hash_map.h>
-#include <iostream> // should not be there, remove after debug
-#include <uclient.h>
+//#include <iostream> // should not be there, remove after debug
+//#include <uclient.h>
 using namespace std;
 
-extern const bool NOTIFYNEW;
-
-// USed by some classes and defined somewhere else in liburbi. This avoids including
-// multiple .h that are not actually used by the programmer
-class UValue;
+extern const bool NOTIFYNEW; 
 
 // A quick hack to be able to use hash_map with string easily
 namespace __gnu_cxx {
@@ -45,7 +41,7 @@ namespace __gnu_cxx {
 
 // This macro is here to make life easier
 // Simply use: UStarter(myUObjectType) and the rest will be taken care of.
-#define UStart(x) URBI::URBIStarter<x> x ## ____URBI_object(string(#x))
+#define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x))
 
 // Thess macro are here to make life easier
 #define UVarInit(obj,x) x.init(name,#x)
@@ -58,9 +54,9 @@ namespace __gnu_cxx {
 #define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
   () { return varname; }; void set_ ## varname (vartype& ____value) { varname = ____value; };private:
 
-/* URBI namespace starts */
+/* urbi namespace starts */
 namespace 
-URBI {
+urbi {
   
   // Forward declarations and global scope structures
   class UObjectData;
@@ -68,6 +64,7 @@ URBI {
   class UObject;
   class baseURBIStarter;  
   class UGenericCallback;
+  class UValue;
 
   // For homogeneity of the code, UFunction and UEvent are nothing more than UValue's
   typedef UValue UFunction;
@@ -90,6 +87,179 @@ URBI {
   void UMonitor(UVar&, int (*) (UVar&));
   void UMonitor(string, int (*) ());
   void UMonitor(string, int (*) (UVar&));
+
+
+ 
+  // *****************************************************************************
+  // UValue and other related types
+
+enum UDataType {
+  DATA_DOUBLE,
+  DATA_STRING,
+  DATA_BINARY,
+  DATA_LIST,
+  DATA_OBJECT,
+  DATA_VOID
+};
+
+  
+enum UBinaryType {
+  BINARY_NONE,
+  BINARY_UNKNOWN,
+  BINARY_IMAGE,
+  BINARY_SOUND
+};
+
+enum UImageFormat {
+  IMAGE_RGB=1,     ///< RGB 24 bit/pixel
+  IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
+  IMAGE_JPEG=3,    ///< JPEG
+  IMAGE_PPM=4      ///< RGB with a PPM header
+};
+
+
+enum USoundFormat {
+  SOUND_RAW,
+  SOUND_WAV,
+  SOUND_MP3,
+  SOUND_OGG
+};
+
+enum USoundSampleFormat {
+  SAMPLE_SIGNED=1,
+  SAMPLE_UNSIGNED=2
+};
+
+
+
+//internal use: unparsed binary data
+class BinaryData {
+ public:
+  void * data;
+  int size;
+  BinaryData() {}
+  BinaryData(void *d, int s):data(d), size(s) {}
+};
+
+
+///Class encapsulating an image.
+class UImage {
+ public:
+  char                  *data;            ///< pointer to image data
+  int                   size;             ///< image size in byte
+  int                   width, height;    ///< size of the image
+  UImageFormat          imageFormat;
+};
+
+///Class encapsulating sound informations.
+class USound {
+ public:
+ char                  *data;            ///< pointer to sound data
+ int                   size;             ///< total size in byte
+ int                   channels;         ///< number of audio channels
+ int                   rate;             ///< rate in Hertz
+ int                   sampleSize;       ///< sample size in bit
+ USoundFormat          soundFormat;      ///< format of the sound data
+ USoundSampleFormat    sampleFormat;     ///< sample format
+
+
+   // USound() : data(0), size(0), channels(1), rate(16000), sampleSize(2), sampleFormat(SAMPLE_SIGNED) {}
+ bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
+};
+
+
+
+/// Class containing binary data sent by the server, that could not be furtehr interpreted.
+class UBinary {
+ public:
+  UBinaryType             type;
+  union {
+    void                  *data;             ///< binary data
+    UImage                image;
+    USound                sound;
+  };
+   string                message;         ///< message as sent by the server
+   int                   size;
+
+
+   UBinary();
+   UBinary(const UBinary &b);
+   UBinary & operator = (const UBinary &b);
+   ~UBinary();
+   int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
+};
+
+class UList {
+ public:
+  vector<UValue *> array;
+  UList();
+  UList(const UList &b);
+  UList & operator = (const UList &b);
+  ~UList();
+  UValue & operator [](int i) {return *array[i+offset];} 
+  int size() {return array.size();}
+  void setOffset(int n) { offset = n;};
+
+private:
+  int offset;
+};
+
+class UNamedValue {
+ public:
+  UValue *val;
+  string name;
+  UNamedValue(string n, UValue *v):name(n), val(v) {}
+  UNamedValue() {};
+};
+
+class UObjectStruct {
+ public:
+  string refName;
+  vector<UNamedValue> array;
+  UObjectStruct();
+  UObjectStruct(const UObjectStruct &b);
+  UObjectStruct & operator = (const UObjectStruct &b);
+  ~UObjectStruct();
+  UValue & operator [](string s);
+  UNamedValue & operator [](int i) {return array[i];} 
+  int size() {return array.size();}
+
+};
+
+class UValue {
+ public:
+  UDataType       type; 
+
+  union {
+    double         val;
+    string         *stringValue;
+    UBinary        *binary;
+    UList          *list;
+    UObjectStruct  *object;
+    void           *storage; // internal 
+  };
+  
+  UValue();
+  UValue(const UValue&);
+  explicit UValue(double doubleValue);
+  explicit UValue(int intValue);
+  explicit UValue(char * val);
+  explicit UValue(const string &str);
+  explicit UValue(const UBinary &b);
+  explicit UValue(const UList & l);
+  explicit UValue(const UObjectStruct &o);
+  operator double();
+  operator string();
+  operator int() {return (int)(double)(*this);}
+  
+  UValue& operator=(const UValue&);
+  
+  ~UValue();  
+  
+  ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
+  int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
+};
+  
 
 
 
@@ -205,11 +375,11 @@ URBI {
       if (cb) cb->storage = (void*)(&v);
     };
 
-    void UMonitor(UVar &v) { URBI::UMonitor(v); };
-    void UMonitor(UVar &v, int (*fun) ()) { URBI::UMonitor(v,fun); };
-    void UMonitor(UVar &v, int (*fun) (UVar&)) { URBI::UMonitor(v,fun); };
-    void UMonitor(string varname, int (*fun) ()) { URBI::UMonitor(varname,fun); };
-    void UMonitor(string varname, int (*fun) (UVar&)) { URBI::UMonitor(varname,fun); };
+    void UMonitor(UVar &v) { urbi::UMonitor(v); };
+    void UMonitor(UVar &v, int (*fun) ()) { urbi::UMonitor(v,fun); };
+    void UMonitor(UVar &v, int (*fun) (UVar&)) { urbi::UMonitor(v,fun); };
+    void UMonitor(string varname, int (*fun) ()) { urbi::UMonitor(varname,fun); };
+    void UMonitor(string varname, int (*fun) (UVar&)) { urbi::UMonitor(varname,fun); };
   	
     string name; ///< name of the object as seen in URBI
 
@@ -228,7 +398,6 @@ URBI {
   template <> UBinary cast(UValue &v);
   template <> UList cast(UValue &v);
   template <> UObjectStruct cast(UValue &v);
-
 
   /**********************************************************/
   // This section is autogenerated. Not for humans eyes ;)
@@ -373,9 +542,10 @@ URBI {
     
   
 
-} // end namespace URBI
+} // end namespace urbi
+using namespace urbi;
 
-using namespace URBI;
+std::ostream & operator <<(std::ostream &s, const UValue &v);
 
 #endif
 

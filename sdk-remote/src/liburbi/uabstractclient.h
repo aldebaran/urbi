@@ -32,6 +32,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include "uobject/uobject.h"
+
 using std::string;
 using std::list;
 using std::vector;
@@ -64,186 +66,15 @@ typedef unsigned int UCallbackID;
 
 
 class UCallbackList;
+class UAbstractClient;
 #define UINVALIDCALLBACKID 0
 
-enum UDataType {
-  DATA_DOUBLE,
-  DATA_STRING,
-  DATA_BINARY,
-  DATA_LIST,
-  DATA_OBJECT,
-  DATA_VOID
-};
 enum UMessageType {
   MESSAGE_SYSTEM,
   MESSAGE_ERROR,
   MESSAGE_DATA
 };
 
-enum UBinaryType {
-  BINARY_NONE,
-  BINARY_UNKNOWN,
-  BINARY_IMAGE,
-  BINARY_SOUND
-};
-
-enum UImageFormat {
-  IMAGE_RGB=1,     ///< RGB 24 bit/pixel
-  IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
-  IMAGE_JPEG=3,    ///< JPEG
-  IMAGE_PPM=4      ///< RGB with a PPM header
-};
-
-
-enum USoundFormat {
-  SOUND_RAW,
-  SOUND_WAV,
-  SOUND_MP3,
-  SOUND_OGG
-};
-
-enum USoundSampleFormat {
-  SAMPLE_SIGNED=1,
-  SAMPLE_UNSIGNED=2
-};
-
-
-
-//internal use: unparsed binary data
-class BinaryData {
- public:
-  void * data;
-  int size;
-  BinaryData() {}
-  BinaryData(void *d, int s):data(d), size(s) {}
-};
-
-
-///Class encapsulating an image.
-class UImage {
- public:
-  char                  *data;            ///< pointer to image data
-  int                   size;             ///< image size in byte
-  int                   width, height;    ///< size of the image
-  UImageFormat          imageFormat;
-};
-
-///Class encapsulating sound informations.
-class USound {
- public:
- char                  *data;            ///< pointer to sound data
- int                   size;             ///< total size in byte
- int                   channels;         ///< number of audio channels
- int                   rate;             ///< rate in Hertz
- int                   sampleSize;       ///< sample size in bit
- USoundFormat          soundFormat;      ///< format of the sound data
- USoundSampleFormat    sampleFormat;     ///< sample format
-
-
-   // USound() : data(0), size(0), channels(1), rate(16000), sampleSize(2), sampleFormat(SAMPLE_SIGNED) {}
- bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
-};
-
-/// Class containing binary data sent by the server, that could not be furtehr interpreted.
-class UBinary {
- public:
-  UBinaryType             type;
-  union {
-    void                  *data;             ///< binary data
-    UImage                image;
-    USound                sound;
-  };
-   string                message;         ///< message as sent by the server
-   int                   size;
-
-
-   UBinary();
-   UBinary(const UBinary &b);
-   UBinary & operator = (const UBinary &b);
-   ~UBinary();
-   int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
-};
-
-class UAbstractClient; 
-class UValue;
-
-class UList {
- public:
-  vector<UValue *> array;
-  UList();
-  UList(const UList &b);
-  UList & operator = (const UList &b);
-  ~UList();
-  UValue & operator [](int i) {return *array[i+offset];} 
-  int size() {return array.size();}
-  void setOffset(int n) { offset = n;};
-
-private:
-  int offset;
-};
-
-class UNamedValue {
- public:
-  UValue *val;
-  string name;
-  UNamedValue(string n, UValue *v):name(n), val(v) {}
-  UNamedValue() {};
-};
-
-class UObjectStruct {
- public:
-  string refName;
-  vector<UNamedValue> array;
-  UObjectStruct();
-  UObjectStruct(const UObjectStruct &b);
-  UObjectStruct & operator = (const UObjectStruct &b);
-  ~UObjectStruct();
-  UValue & operator [](string s);
-  UNamedValue & operator [](int i) {return array[i];} 
-  int size() {return array.size();}
-
-};
-
-class UValue {
- public:
-  UDataType       type; 
-
-  union {
-    double         val;
-    string         *stringValue;
-    UBinary        *binary;
-    UList          *list;
-    UObjectStruct  *object;
-    void           *storage; // internal 
-  };
-  
-  UValue();
-  UValue(const UValue&);
-  explicit UValue(double doubleValue);
-  explicit UValue(int intValue);
-  explicit UValue(char * val);
-  explicit UValue(const string &str);
-  explicit UValue(const UBinary &b);
-  explicit UValue(const UList & l);
-  explicit UValue(const UObjectStruct &o);
-  operator double();
-  operator string();
-  operator int() {return (int)(double)(*this);}
-  
-  UValue& operator=(const UValue&);
-  
-  ~UValue();  
-  
-  ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
-  int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
-
-  ///send the value over an urbi connection, without any prefix or terminator
-  void send(UAbstractClient * cl);
-};
-  
-
-
-std::ostream & operator <<(std::ostream &s, const UValue &v);
 /// Class containing all informations related to an URBI message.
 class UMessage {
  public:
@@ -337,6 +168,9 @@ class UAbstractClient : public std::ostream
   /// Send an Urbi command. The syntax is similar to the printf() function.
   int send(const char* format,...);
   
+  ///send the value without any prefix or terminator
+  int send(UValue& v);
+
   /// Send binary data.
   int sendBin(const void*, int len);
 

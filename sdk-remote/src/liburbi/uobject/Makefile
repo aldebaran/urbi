@@ -109,7 +109,7 @@ target_alias =
 INCLUDES = -I$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = -pthread -Wno-deprecated
 lib_LIBRARIES = libuobject.a
-libuobject_a_SOURCES = uobject.cc uobject.h uobjectdata.cc uobjectdata.h uvar.cc usharedexternal.h
+libuobject_a_SOURCES = uobject.cc uobject.h uvar.cc common_uvalue.cc uexternal.h 
 subdir = src/liburbi/uobject
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -118,15 +118,15 @@ LIBRARIES = $(lib_LIBRARIES)
 
 libuobject_a_AR = $(AR) cru
 libuobject_a_LIBADD =
-am_libuobject_a_OBJECTS = uobject.$(OBJEXT) uobjectdata.$(OBJEXT) \
-	uvar.$(OBJEXT)
+am_libuobject_a_OBJECTS = uobject.$(OBJEXT) uvar.$(OBJEXT) \
+	common_uvalue.$(OBJEXT)
 libuobject_a_OBJECTS = $(am_libuobject_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-DEP_FILES = ./$(DEPDIR)/uobject.Po \
-	./$(DEPDIR)/uobjectdata.Po ./$(DEPDIR)/uvar.Po
+DEP_FILES = ./$(DEPDIR)/common_uvalue.Po \
+	./$(DEPDIR)/uobject.Po ./$(DEPDIR)/uvar.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -192,8 +192,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/common_uvalue.Po
 include ./$(DEPDIR)/uobject.Po
-include ./$(DEPDIR)/uobjectdata.Po
 include ./$(DEPDIR)/uvar.Po
 
 .cc.o:

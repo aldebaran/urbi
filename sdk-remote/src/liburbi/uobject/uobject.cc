@@ -1,6 +1,6 @@
 /*! \file uobject.cc
  *******************************************************************************
-
+ 
  File: uobject.cc\n
  Implementation of the UObject class.
 
@@ -22,10 +22,10 @@
 #include <sstream>
 #include <list>
 #include "uobject.h"
-#include "uclient.h"
-#include "usharedexternal.h"
+#include <uclient.h>
+#include "uexternal.h"
 
-using namespace URBI;
+using namespace urbi;
 using namespace std;
 
 const bool NOTIFYNEW = true;
@@ -33,7 +33,7 @@ const bool NOTIFYNEW = true;
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
-namespace URBI {
+namespace urbi {
 
   UObject* lastUObject;
 
@@ -126,21 +126,21 @@ int voidfun() {};
 
 //! Generic UVar monitoring without callback
 void
-URBI::UMonitor(UVar &v)
+urbi::UMonitor(UVar &v)
 {
-  URBI::UMonitor(v,&voidfun);
+  urbi::UMonitor(v,&voidfun);
 }
 
 //! UVar monitoring with callback
 void 
-URBI::UMonitor(UVar &v, int (*fun) ())
+urbi::UMonitor(UVar &v, int (*fun) ())
 {  
   createUCallback("var",fun,v.get_name(), monitormap);
 }
 
 //! UVar monitoring with callback including a pointeur to the UVar&
 void 
-URBI::UMonitor(UVar &v, int (*fun) (UVar&))
+urbi::UMonitor(UVar &v, int (*fun) (UVar&))
 {
   UGenericCallback* cb = createUCallback("var",fun,v.get_name(), monitormap);
   if (cb) cb->storage = (void*)(&v);
@@ -148,7 +148,7 @@ URBI::UMonitor(UVar &v, int (*fun) (UVar&))
 
 //! UVar monitoring with callback, based on var name: creates a hidden UVar
 void 
-URBI::UMonitor(string varname, int (*fun) ())
+urbi::UMonitor(string varname, int (*fun) ())
 {  
   createUCallback("var",fun,varname, monitormap);
 }
@@ -156,7 +156,7 @@ URBI::UMonitor(string varname, int (*fun) ())
 //! UVar monitoring with callback, based on var name: creates a hidden UVar 
 //! and pass it as a param in the callback
 void 
-URBI::UMonitor(string varname, int (*fun) (UVar&))
+urbi::UMonitor(string varname, int (*fun) (UVar&))
 {
   UVar *hidden = new UVar(varname);
   UGenericCallback* cb = createUCallback("var",fun,varname, monitormap);
@@ -187,7 +187,7 @@ UObject::~UObject()
 // LIBURBI 'Module mode'
 
 UCallbackAction
-URBI::dispatcher(const UMessage &msg)
+urbi::dispatcher(const UMessage &msg)
 {
   //check message type
   if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST) {
@@ -256,7 +256,7 @@ URBI::dispatcher(const UMessage &msg)
 	URBI() << "var " << (string)array[2];
       else {
 	URBI() << (string)array[2] << "=";
-	retval.send(urbi::getDefaultClient()); //I'd rather not use << for bins
+	urbi::getDefaultClient()->send(retval);//I'd rather not use << for bins
       }
       URBI() << ";";
     }          
@@ -323,7 +323,7 @@ URBI::dispatcher(const UMessage &msg)
 }
  
 UCallbackAction 
-URBI::debug(const UMessage &msg)
+urbi::debug(const UMessage &msg)
 {
   std::stringstream mesg;
   mesg<<msg;
@@ -335,7 +335,7 @@ URBI::debug(const UMessage &msg)
 
 
 void
-URBI::main(int argc, char *argv[])
+urbi::main(int argc, char *argv[])
 { 
   // Retrieving command line arguments
   if (argc!=2) {

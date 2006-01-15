@@ -25,12 +25,17 @@ class ball : public UObject
 {
  public:
   
-  ball();
+  ball(string);
   ~ball();  
 
   UVar x;
   UVar y;
+  UVar truc;
 
+  void init(double a,double b) { 
+  	cout << "constructor called!"<<endl;
+  x=a; y=b; };
+ 
   string myfun   (int,string);
   int    myfun1  (double);
   void   myevent (int);         void endevent();
