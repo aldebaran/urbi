@@ -1,11 +1,11 @@
-INCLUDES = -I$(top_srcdir)/src/liburbi -I$(top_srcdir)/src/liburbi/uobject
-AM_LDFLAGS = -L$(top_srcdir)/src/liburbi -L$(top_srcdir)/src/liburbi/uobject
+INCLUDES = -I$(top_srcdir)/src/liburbi
+AM_LDFLAGS = -L$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
 bin_PROGRAMS = ball
 
 ball_SOURCES = ball.cc ball.h ../umain.cc 
-ball_DEPENDENCIES = $(top_srcdir)/src/liburbi/liburbi.a $(top_srcdir)/src/liburbi/uobject/libuobject.a
-ball_LDADD = -lurbi -luobject
+ball_DEPENDENCIES = $(top_srcdir)/src/liburbi/liburbi.a
+ball_LDADD = -lurbi
 
 

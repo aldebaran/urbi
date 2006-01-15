@@ -111,9 +111,9 @@ AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
 lib_LIBRARIES = liburbi.a
-include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject/uobject.h
+include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject.h uobject/uexternal.h
 
-liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h
+liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h uobject/uobject.cc uobject/uvar.cc uobject/common_uvalue.cc uobject/uexternal.h
 liburbi_a_LIBADD = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 
 @OPENR_TRUE@SUBDIRS = openr
@@ -127,14 +127,17 @@ LIBRARIES = $(lib_LIBRARIES)
 liburbi_a_AR = $(AR) cru
 liburbi_a_DEPENDENCIES = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 am_liburbi_a_OBJECTS = uabstractclient.$(OBJEXT) uclient.$(OBJEXT) \
-	usyncclient.$(OBJEXT)
+	usyncclient.$(OBJEXT) uobject.$(OBJEXT) uvar.$(OBJEXT) \
+	common_uvalue.$(OBJEXT)
 liburbi_a_OBJECTS = $(am_liburbi_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/uabstractclient.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/uclient.Po ./$(DEPDIR)/usyncclient.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/common_uvalue.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/uabstractclient.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/uclient.Po ./$(DEPDIR)/uobject.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/usyncclient.Po ./$(DEPDIR)/uvar.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -160,7 +163,7 @@ SOURCES = $(liburbi_a_SOURCES)
 all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .cpp .o .obj
+.SUFFIXES: .cc .cpp .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.ac $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  src/liburbi/Makefile
@@ -205,9 +208,100 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common_uvalue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uabstractclient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uclient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uobject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usyncclient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uvar.Po@am__quote@
+
+.cc.o:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+
+.cc.obj:
+@am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/$*.Po' tmpdepfile='$(DEPDIR)/$*.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `if test -f '$<'; then $(CYGPATH_W) '$<'; else $(CYGPATH_W) '$(srcdir)/$<'; fi`
+
+uobject.o: uobject/uobject.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT uobject.o -MD -MP -MF "$(DEPDIR)/uobject.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o uobject.o `test -f 'uobject/uobject.cc' || echo '$(srcdir)/'`uobject/uobject.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/uobject.Tpo" "$(DEPDIR)/uobject.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/uobject.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='uobject/uobject.cc' object='uobject.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/uobject.Po' tmpdepfile='$(DEPDIR)/uobject.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o uobject.o `test -f 'uobject/uobject.cc' || echo '$(srcdir)/'`uobject/uobject.cc
+
+uobject.obj: uobject/uobject.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT uobject.obj -MD -MP -MF "$(DEPDIR)/uobject.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o uobject.obj `if test -f 'uobject/uobject.cc'; then $(CYGPATH_W) 'uobject/uobject.cc'; else $(CYGPATH_W) '$(srcdir)/uobject/uobject.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/uobject.Tpo" "$(DEPDIR)/uobject.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/uobject.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='uobject/uobject.cc' object='uobject.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/uobject.Po' tmpdepfile='$(DEPDIR)/uobject.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o uobject.obj `if test -f 'uobject/uobject.cc'; then $(CYGPATH_W) 'uobject/uobject.cc'; else $(CYGPATH_W) '$(srcdir)/uobject/uobject.cc'; fi`
+
+uvar.o: uobject/uvar.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT uvar.o -MD -MP -MF "$(DEPDIR)/uvar.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o uvar.o `test -f 'uobject/uvar.cc' || echo '$(srcdir)/'`uobject/uvar.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/uvar.Tpo" "$(DEPDIR)/uvar.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/uvar.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='uobject/uvar.cc' object='uvar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/uvar.Po' tmpdepfile='$(DEPDIR)/uvar.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o uvar.o `test -f 'uobject/uvar.cc' || echo '$(srcdir)/'`uobject/uvar.cc
+
+uvar.obj: uobject/uvar.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT uvar.obj -MD -MP -MF "$(DEPDIR)/uvar.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o uvar.obj `if test -f 'uobject/uvar.cc'; then $(CYGPATH_W) 'uobject/uvar.cc'; else $(CYGPATH_W) '$(srcdir)/uobject/uvar.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/uvar.Tpo" "$(DEPDIR)/uvar.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/uvar.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='uobject/uvar.cc' object='uvar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/uvar.Po' tmpdepfile='$(DEPDIR)/uvar.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o uvar.obj `if test -f 'uobject/uvar.cc'; then $(CYGPATH_W) 'uobject/uvar.cc'; else $(CYGPATH_W) '$(srcdir)/uobject/uvar.cc'; fi`
+
+common_uvalue.o: uobject/common_uvalue.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_uvalue.o -MD -MP -MF "$(DEPDIR)/common_uvalue.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o common_uvalue.o `test -f 'uobject/common_uvalue.cc' || echo '$(srcdir)/'`uobject/common_uvalue.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/common_uvalue.Tpo" "$(DEPDIR)/common_uvalue.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/common_uvalue.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='uobject/common_uvalue.cc' object='common_uvalue.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/common_uvalue.Po' tmpdepfile='$(DEPDIR)/common_uvalue.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_uvalue.o `test -f 'uobject/common_uvalue.cc' || echo '$(srcdir)/'`uobject/common_uvalue.cc
+
+common_uvalue.obj: uobject/common_uvalue.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_uvalue.obj -MD -MP -MF "$(DEPDIR)/common_uvalue.Tpo" \
+@am__fastdepCXX_TRUE@	  -c -o common_uvalue.obj `if test -f 'uobject/common_uvalue.cc'; then $(CYGPATH_W) 'uobject/common_uvalue.cc'; else $(CYGPATH_W) '$(srcdir)/uobject/common_uvalue.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/common_uvalue.Tpo" "$(DEPDIR)/common_uvalue.Po"; \
+@am__fastdepCXX_TRUE@	else rm -f "$(DEPDIR)/common_uvalue.Tpo"; exit 1; \
+@am__fastdepCXX_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='uobject/common_uvalue.cc' object='common_uvalue.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	depfile='$(DEPDIR)/common_uvalue.Po' tmpdepfile='$(DEPDIR)/common_uvalue.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_uvalue.obj `if test -f 'uobject/common_uvalue.cc'; then $(CYGPATH_W) 'uobject/common_uvalue.cc'; else $(CYGPATH_W) '$(srcdir)/uobject/common_uvalue.cc'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
@@ -521,10 +615,10 @@ uninstall-info: uninstall-info-recursive
 
 uobject/uobject.h:
 	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
-liburbi.a: uabstractclient.o uclient.o usyncclient.o
+liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o
+	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o
 	ranlib liburbi.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

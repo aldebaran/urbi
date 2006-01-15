@@ -3,16 +3,16 @@ AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
 lib_LIBRARIES = liburbi.a
-include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject/uobject.h
+include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject.h uobject/uexternal.h
 uobject/uobject.h:
 	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
-liburbi.a: uabstractclient.o uclient.o usyncclient.o
+liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o
+	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o
 	ranlib liburbi.a
 
-liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h
+liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h uobject/uobject.cc uobject/uvar.cc uobject/common_uvalue.cc uobject/uexternal.h
 liburbi_a_LIBADD = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 
 if OPENR

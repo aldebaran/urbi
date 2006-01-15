@@ -106,15 +106,15 @@ sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 sysconfdir = ${prefix}/etc
 target_alias = 
-INCLUDES = -I$(top_srcdir)/src/liburbi -I$(top_srcdir)/src/liburbi/uobject
-AM_LDFLAGS = -L$(top_srcdir)/src/liburbi -L$(top_srcdir)/src/liburbi/uobject
+INCLUDES = -I$(top_srcdir)/src/liburbi
+AM_LDFLAGS = -L$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
 bin_PROGRAMS = ball
 
 ball_SOURCES = ball.cc ball.h ../umain.cc 
-ball_DEPENDENCIES = $(top_srcdir)/src/liburbi/liburbi.a $(top_srcdir)/src/liburbi/uobject/libuobject.a
-ball_LDADD = -lurbi -luobject
+ball_DEPENDENCIES = $(top_srcdir)/src/liburbi/liburbi.a
+ball_LDADD = -lurbi
 subdir = softdevices/ball
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
