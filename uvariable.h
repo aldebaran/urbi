@@ -27,11 +27,17 @@
 #include <uvalue.h>
 #include "ustring.h"
 #include "utypes.h"
+#include <list>
+using namespace std;
 
 class UNamedParameters;
 class UCommand;
 class UCommand_ASSIGN_VALUE;
 class UValue;
+
+namespace urbi {
+  class UGenericCallback;
+};
 
 //! Uvariable is used to store variables
 /*! You can pass to the constructor three importants parameters:
@@ -114,6 +120,8 @@ public:
   bool            reloop; ///< when speedmodified has been detected, asking for a reloop on pending
                           ///< finished assignements.
   UBinder         *binder; ///< cached binder pointer
+  
+  list<urbi::UGenericCallback*> internalBinder; ///< binder for internal monitors
 
   UCommand_ASSIGN_VALUE *cancel; ///< used for the "cancel" blend type
   

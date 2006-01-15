@@ -27,6 +27,7 @@
 #include "udevice.h"
 #include "utypes.h"
 #include "uconnection.h"
+#include "uobject.h"
 
 
 
@@ -335,18 +336,27 @@ UVariable::get()
 void
 UVariable::updated()
 {
-  if (!binder) return;  
+  if ((!binder) && (internalBinder.empty())) return;  
+  
+  if (binder)    
+    for (list<UConnection*>::iterator it = binder->monitors.begin();
+	it != binder->monitors.end();
+	it++) {
+      
+      (*it)->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it)->send((const ubyte*)"[1,\"",4);
+      (*it)->send((const ubyte*)varname->str(),varname->len());
+      (*it)->send((const ubyte*)"\",",2);
+      value->echo((*it));
+      (*it)->send((const ubyte*)"]\n",2);    
+    }
 
-  for (list<UConnection*>::iterator it = binder->monitors.begin();
-      it != binder->monitors.end();
-      it++) {
-
-    (*it)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-    (*it)->send((const ubyte*)"[1,\"",4);
-    (*it)->send((const ubyte*)varname->str(),varname->len());
-    (*it)->send((const ubyte*)"\",",2);
-    value->echo((*it));
-    (*it)->send((const ubyte*)"]\n",2);    
+  if (!internalBinder.empty()) {
+    for (list<urbi::UGenericCallback*>::iterator itcb = internalBinder.begin();
+	itcb != internalBinder.end();
+	itcb++) {
+      // ...
+    }
   }
   
   /*

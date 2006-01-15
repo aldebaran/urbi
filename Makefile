@@ -39,12 +39,15 @@ KERNEL_SOURCES=udevice.cc \
              uvariablename.cc \
              ubinary.cc \
 	     ubinder.cc \
-             ucallid.cc
+             ucallid.cc \
+	     uobject/uobject.cc \
+	     uobject/uvar.cc \
+	     uobject/common_uvalue.cc
 
 KERNEL_FILES=$(KERNEL_SOURCES:.cc=$(OBJEXT))
 
 
-CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I.
+CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I. -I./uobject
 CXXFLAGS+= -Wno-deprecated\
         $(OPTIM) 
 

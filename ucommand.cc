@@ -3333,9 +3333,9 @@ UCommand_BINDER::execute(UConnection *connection)
     ::urbiserver->debug("BINDING: %s type(%d) %s\n",
 	binder->str(), type, variablename->id->str());  
   
-  UBindMode mode;
-  if (strcmp(binder->str(),"external")==0) mode = UEXTERNAL;
-  if (strcmp(binder->str(),"internal")==0) mode = UINTERNAL;
+  UBindMode mode = UEXTERNAL;
+// if (strcmp(binder->str(),"external")==0) mode = UEXTERNAL;
+// if (strcmp(binder->str(),"internal")==0) mode = UINTERNAL;
     
   UString *key = new UString(fullname);
   switch (type) {

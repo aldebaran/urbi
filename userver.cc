@@ -29,6 +29,7 @@
 #include "udevice.h"
 #include "utypes.h"
 #include "ughostconnection.h"
+#include "uobject.h"
 
 
 // Global server reference
@@ -191,11 +192,16 @@ UServer::initialization()
 
   // Devices initialization
    
-
   initDevices();
- 
   new UVariable(MAINDEVICE,"nbdevices", (double)(devicetab.size()));
 
+  // Plugins (internal softdevices)
+  for (list<urbi::baseURBIStarter*>::iterator retr = urbi::objectlist.begin();
+      retr != urbi::objectlist.end();
+      retr++)
+    (*retr)->init((*retr)->name);
+
+  // Ghost connection
   ghost  = new UGhostConnection(this); 
   connectionList.push_front((UConnection*)ghost);
 

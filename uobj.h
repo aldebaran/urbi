@@ -28,8 +28,14 @@ class UVariableName;
 class UValue;
 class UVariable;
 class UFunction;
+
+namespace urbi {
+  class UGenericCallback;
+  }
+  
 #include <list>
 using namespace std;
+
 
 
 // *****************************************************************************
@@ -44,8 +50,10 @@ public:
   list<UObj*> down;
   list<UObj*> up;
 
-  UString      *device;  list<UConnection*> bound;
+  UString      *device;  
+  //list<UConnection*> bound;
   UBinder      *binder;
+  list<urbi::UGenericCallback*> internalBinder;
   
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
