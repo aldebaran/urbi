@@ -64,7 +64,7 @@ class UCommand_TREE;
 class UCommand
 {
 public:
-  
+  MEMORY_MANAGED;
   UCommand(UCommandType _type);          
   virtual ~UCommand();
 
@@ -124,7 +124,8 @@ extern char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
 class UCommand_TREE : public UCommand
 {
 public:
-
+  MEMORY_MANAGED;
+  
   UCommand_TREE(UNodeType node,
                 UCommand* command1, 
                 UCommand* command2);
@@ -150,6 +151,7 @@ public:
 class UCommand_ASSIGN_VALUE : public UCommand
 {
 public:
+  MEMORY_MANAGED;
   
   UCommand_ASSIGN_VALUE(UVariableName *variablename, 
                         UExpression* expression, 
@@ -219,6 +221,7 @@ private:
 class UCommand_ASSIGN_BINARY : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_ASSIGN_BINARY(UVariableName *variablename, 
                          URefPt<UBinary> *refBinary);
@@ -242,6 +245,7 @@ public:
 class UCommand_ASSIGN_PROPERTY : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_ASSIGN_PROPERTY(UVariableName *variablename, 
                            UString *oper,
@@ -267,6 +271,7 @@ public:
 class UCommand_EXPR : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_EXPR(UExpression* expression); 
   virtual ~UCommand_EXPR();
@@ -282,6 +287,7 @@ public:
 class UCommand_RETURN : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_RETURN(UExpression* expression); 
   virtual ~UCommand_RETURN();
@@ -297,6 +303,7 @@ public:
 class UCommand_ECHO : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_ECHO(UExpression* expression, 
                 UNamedParameters *parameters,
@@ -316,6 +323,7 @@ public:
 class UCommand_NEW : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_NEW(UString* id,  
                UString* obj, 
@@ -337,6 +345,7 @@ public:
 class UCommand_ALIAS : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_ALIAS (UVariableName* id,
                   UVariableName* variablename);  
@@ -359,6 +368,7 @@ public:
 class UCommand_OPERATOR_ID : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_OPERATOR_ID (UString* oper,
                         UString* id);  
@@ -376,6 +386,7 @@ public:
 class UCommand_DEVICE_CMD : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_DEVICE_CMD  (UString* device,
                         UString* cmd);  
@@ -394,6 +405,7 @@ public:
 class UCommand_OPERATOR_VAR : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_OPERATOR_VAR (UString* oper,
                          UVariableName* variablename);  
@@ -413,6 +425,7 @@ public:
 class UCommand_BINDER : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_BINDER (UString* binder,
                    int type,
@@ -435,6 +448,7 @@ public:
 class UCommand_OPERATOR : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_OPERATOR (UString* oper);                       
   virtual ~UCommand_OPERATOR ();
@@ -450,6 +464,7 @@ public:
 class UCommand_WAIT : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_WAIT(UExpression* expression); 
   virtual ~UCommand_WAIT();
@@ -467,6 +482,7 @@ public:
 class UCommand_EMIT : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_EMIT(UVariableName* eventname, UNamedParameters *parameters, UExpression *duration=0); 
   virtual ~UCommand_EMIT();
@@ -489,6 +505,7 @@ public:
 class UCommand_WAIT_TEST : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_WAIT_TEST(UExpression* test); 
   virtual ~UCommand_WAIT_TEST();
@@ -506,6 +523,7 @@ public:
 class UCommand_INCDECREMENT : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_INCDECREMENT(UCommandType type, UVariableName *variablename);                      
   virtual ~UCommand_INCDECREMENT();
@@ -522,6 +540,7 @@ public:
 class UCommand_DEF : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_DEF (UDefType deftype,
                 UVariableName *variablename,           
@@ -552,6 +571,7 @@ public:
 class UCommand_CLASS : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_CLASS (UString *object,
                   UNamedParameters *parameters);
@@ -571,6 +591,7 @@ public:
 class UCommand_IF : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_IF ( UExpression *test,
                 UCommand* command1, 
@@ -590,6 +611,7 @@ public:
 class UCommand_EVERY : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_EVERY ( UExpression *duration,
                    UCommand* command);
@@ -610,6 +632,7 @@ public:
 class UCommand_TIMEOUT : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_TIMEOUT ( UExpression *duration,
                    UCommand* command);
@@ -628,6 +651,7 @@ public:
 class UCommand_STOPIF : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_STOPIF ( UExpression *condition,
                     UCommand* command);
@@ -646,6 +670,7 @@ public:
 class UCommand_FREEZEIF : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_FREEZEIF ( UExpression *condition,
                     UCommand* command);
@@ -664,6 +689,7 @@ public:
 class UCommand_AT : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_AT ( UCommandType type,
                 UExpression *test,
@@ -689,6 +715,7 @@ public:
 class UCommand_WHILE : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_WHILE ( UCommandType type,
                    UExpression *test,
@@ -707,6 +734,7 @@ public:
 class UCommand_WHENEVER : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_WHENEVER ( UExpression *test,
                       UCommand* command1,
@@ -731,6 +759,7 @@ public:
 class UCommand_LOOP : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_LOOP ( UCommand* command);                 
   virtual ~UCommand_LOOP();
@@ -746,6 +775,7 @@ public:
 class UCommand_LOOPN : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_LOOPN ( UCommandType type,
                    UExpression* expression,
@@ -764,6 +794,7 @@ public:
 class UCommand_FOREACH : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_FOREACH ( UCommandType type,
                      UVariableName* variablename,
@@ -786,6 +817,7 @@ public:
 class UCommand_FOR : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_FOR ( UCommandType type,
                  UCommand* instr1,
@@ -809,6 +841,7 @@ public:
 class UCommand_NOOP : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_NOOP(bool zerotime = false);                 
   virtual ~UCommand_NOOP();
@@ -822,6 +855,7 @@ public:
 class UCommand_LOAD : public UCommand
 {
 public:
+  MEMORY_MANAGED;
 
   UCommand_LOAD(UCommand_TREE *mainnode);                 
   virtual ~UCommand_LOAD();

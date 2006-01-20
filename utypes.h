@@ -194,6 +194,7 @@ enum UExpressionType {
   EXPR_MINUS,
   EXPR_MULT,
   EXPR_DIV,
+  EXPR_MOD,
   EXPR_EXP,
   EXPR_NEG,
   EXPR_COPY,

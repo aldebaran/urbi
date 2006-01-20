@@ -24,6 +24,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include "memorymanager/memorymanager.h"
 #include <uvalue.h>
 #include "ustring.h"
 #include "utypes.h"
@@ -56,7 +57,7 @@ namespace urbi {
  */
 class UVariable {
 public:
-
+  MEMORY_MANAGED;
   UVariable(const char* name, double val, 
             bool _notifyWrite = false,
             bool _notifyRead = false,
@@ -110,7 +111,7 @@ public:
   double          previous_sensed; ///< previous sensed value 
   UValue          *value; ///< variable value
   double          valPrev,
-                  valPrev2; // used for 'd and 'dd calculation
+                  valPrev2; // uased for 'd and 'dd calculation
   bool            notifyRead; ///< true when UDevice::notifyRead must be called
   bool            notifyWrite;  ///< true when UDevice::notifyWrite must be called
   bool            autoUpdate;  ///< true when the target value is automatically mapped to value

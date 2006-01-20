@@ -28,7 +28,7 @@
 #include "udevice.h"
 #include "userver.h"
       
-		
+MEMORY_MANAGER_INIT(UValue);		
 // **************************************************************************	
 //! UValue constructor.
 UValue::UValue()

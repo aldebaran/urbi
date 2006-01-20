@@ -167,7 +167,7 @@ extern UString** globalDelete;
 %left  OROPERATOR ANDOPERATOR BANG
 %left  EQ REQ PEQ DEQ NE GE GT LT LE
 %left  MINUS PLUS
-%left  MULT DIV 
+%left  MULT DIV PERCENT
 %left  NEG     /* Negation--unary minus */
 %right EXP     /* Exponentiation*/       
 %right NORM
@@ -1122,6 +1122,12 @@ expr:
   | expr DIV expr { 
 
       $$ = new UExpression(EXPR_DIV,$1,$3);
+      MEMCHECK2($$,$1,$3);
+    }
+
+ | expr PERCENT expr { 
+
+      $$ = new UExpression(EXPR_MOD,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 

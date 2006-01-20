@@ -24,6 +24,7 @@
 #include "ustring.h"
 #include "userver.h"
 
+MEMORY_MANAGER_INIT(UString);
 UString::UString(const char* s) {
     
   ADDOBJ(UString);

@@ -28,7 +28,7 @@
 #include "userver.h"
 #include "ucallid.h"
                                       
-		
+MEMORY_MANAGER_INIT(UVariableName);
 // **************************************************************************	
 //! UVariableName constructor for variable of the type device.id[...][...]...
 UVariableName::UVariableName(UString* device, 

@@ -30,6 +30,7 @@
 #include "uobject.h"
 
 
+MEMORY_MANAGER_INIT(UVariable);
 
 //! UVariable constructor.
 UVariable::UVariable(const char* name, UValue* _value, 

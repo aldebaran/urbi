@@ -24,6 +24,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include "memorymanager/memorymanager.h"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a tight control on how
@@ -32,7 +33,7 @@
 */   
 class UString {
 public:
-
+  MEMORY_MANAGED;
   UString(const char* s);
   UString(UString *s);
   ~UString();

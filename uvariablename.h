@@ -54,7 +54,8 @@ class UCommand_TREE;
 class UVariableName
 {
 public:
-
+  MEMORY_MANAGED;
+  
   UVariableName(UExpression *str, bool rooted = false);
   UVariableName(UString* device, UString *id, bool rooted, UNamedParameters *index);
   virtual ~UVariableName();

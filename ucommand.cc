@@ -30,7 +30,7 @@
 #include "utypes.h"
 
 char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];  ///< temporary global string                                              
-
+MEMORY_MANAGER_INIT(UCommand);
 // **************************************************************************
 //! UCommand constructor.
 /*! The parameter 'type' is required here to describe the type of the command.
@@ -193,7 +193,7 @@ UCommand::scanObjects()
 }
 
 
-
+MEMORY_MANAGER_INIT(UCommand_TREE);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -384,6 +384,7 @@ UCommand_TREE::print(int l)
   ::urbiserver->debug("%sEND TREE ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_ASSIGN_VALUE);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -1416,6 +1417,7 @@ UCommand_ASSIGN_VALUE::print(int l)
   ::urbiserver->debug("%sEND ASSIGN VALUE ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -1528,6 +1530,7 @@ UCommand_ASSIGN_BINARY::print(int l)
   ::urbiserver->debug("%sEND ASSIGN BINARY ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_ASSIGN_PROPERTY);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -1795,6 +1798,7 @@ UCommand_ASSIGN_PROPERTY::print(int l)
   ::urbiserver->debug("%sEND ASSIGN PROPERTY ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_EXPR);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -2070,6 +2074,7 @@ UCommand_EXPR::print(int l)
   ::urbiserver->debug("%sEND EXPR ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_RETURN);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -2146,6 +2151,7 @@ UCommand_RETURN::print(int l)
   ::urbiserver->debug("%sEND RETURN ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_ECHO);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -2275,6 +2281,7 @@ UCommand_ECHO::print(int l)
   ::urbiserver->debug("%sEND ECHO ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_NEW);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -2478,6 +2485,8 @@ UCommand_NEW::print(int l)
   ::urbiserver->debug("%sEND NEW ------\n",tabb);
 }
 
+
+MEMORY_MANAGER_INIT(UCommand_ALIAS);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -2770,6 +2779,7 @@ UCommand_ALIAS::print(int l)
   ::urbiserver->debug("%sEND ALIAS ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -2953,6 +2963,7 @@ UCommand_OPERATOR_ID::print(int l)
   ::urbiserver->debug("%sEND OPERATOR_ID ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -3051,6 +3062,7 @@ UCommand_DEVICE_CMD::print(int l)
   ::urbiserver->debug("%sEND DEVICE_CMD ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -3293,6 +3305,7 @@ UCommand_OPERATOR_VAR::print(int l)
   ::urbiserver->debug("%sEND OPERATOR_VAR ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_BINDER);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -3426,7 +3439,7 @@ UCommand_BINDER::print(int l)
   ::urbiserver->debug("%sEND BINDER ------\n",tabb);
 }
 
-
+MEMORY_MANAGER_INIT(UCommand_OPERATOR);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -3879,6 +3892,7 @@ UCommand_OPERATOR::print(int l)
   ::urbiserver->debug("%sEND OPERATOR ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_WAIT);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -3966,6 +3980,7 @@ UCommand_WAIT::print(int l)
   ::urbiserver->debug("%sEND WAIT ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_EMIT);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4147,6 +4162,7 @@ UCommand_EMIT::print(int l)
   ::urbiserver->debug("%sEND EMIT ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4234,6 +4250,8 @@ UCommand_WAIT_TEST::print(int l)
   ::urbiserver->debug("%sEND WAIT_TEST ------\n",tabb);
 }
 
+
+MEMORY_MANAGER_INIT(UCommand_INCDECREMENT);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4337,6 +4355,7 @@ UCommand_INCDECREMENT::print(int l)
   ::urbiserver->debug("%sEND INCDECREMENT ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_DEF);
 // **************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4584,6 +4603,7 @@ UCommand_DEF::print(int l)
   ::urbiserver->debug("%sEND DEF ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_CLASS);
 // **************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4712,6 +4732,7 @@ UCommand_CLASS::print(int l)
   ::urbiserver->debug("%sEND CLASS ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_IF);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4809,6 +4830,7 @@ UCommand_IF::print(int l)
   ::urbiserver->debug("%sEND IF ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_EVERY);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4902,6 +4924,7 @@ UCommand_EVERY::print(int l)
   ::urbiserver->debug("%sEND EVERY ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -4986,6 +5009,7 @@ UCommand_TIMEOUT::print(int l)
   ::urbiserver->debug("%sEND TIMEOUT ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_STOPIF);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5091,6 +5115,7 @@ UCommand_STOPIF::print(int l)
   ::urbiserver->debug("%sEND STOPIF ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5181,6 +5206,7 @@ UCommand_FREEZEIF::print(int l)
   ::urbiserver->debug("%sEND FREEZEIF ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_AT);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5358,6 +5384,7 @@ UCommand_AT::print(int l)
   ::urbiserver->debug("%sEND AT ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_WHILE);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5474,6 +5501,7 @@ UCommand_WHILE::print(int l)
   ::urbiserver->debug("%sEND WHILE ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_WHENEVER);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5625,6 +5653,7 @@ UCommand_WHENEVER::print(int l)
   ::urbiserver->debug("%sEND WHENEVER ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_LOOP);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5694,6 +5723,7 @@ UCommand_LOOP::print(int l)
   ::urbiserver->debug("%sEND LOOP ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_LOOPN);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -5823,6 +5853,7 @@ UCommand_LOOPN::print(int l)
   ::urbiserver->debug("%sEND LOOPN ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_FOR);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -6012,7 +6043,7 @@ UCommand_FOR::print(int l)
   ::urbiserver->debug("%sEND FOR ------\n",tabb);
 }
 
-
+MEMORY_MANAGER_INIT(UCommand_FOREACH);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -6154,7 +6185,7 @@ UCommand_FOREACH::print(int l)
   ::urbiserver->debug("%sEND FOREACH ------\n",tabb);
 }
 
-
+MEMORY_MANAGER_INIT(UCommand_NOOP);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
@@ -6217,6 +6248,7 @@ UCommand_NOOP::print(int l)
   ::urbiserver->debug("NOOP, level =%d\n",(int)status);
 }
 
+MEMORY_MANAGER_INIT(UCommand_LOAD);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.

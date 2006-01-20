@@ -25,7 +25,7 @@
 #include "utypes.h"
 #include "ustring.h"
 #include "ucommandqueue.h"
-
+#include "memorymanager/memorymanager.h"
 #include <list>
 using namespace std;
 
@@ -56,7 +56,7 @@ class UContext;
 class UExpression
 {
 public:
-
+  MEMORY_MANAGED;
   UExpression(UExpressionType type, double val);
   UExpression(UExpressionType type, UString *str);
   UExpression(UExpressionType type, UValue *v);

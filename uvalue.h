@@ -22,6 +22,7 @@
 #ifndef UVALUE_H_DEFINED
 #define UVALUE_H_DEFINED
 
+#include "memorymanager/memorymanager.h"
 #include "utypes.h"
 #include "ustring.h"
 
@@ -33,7 +34,7 @@ class UConnection;
 class UValue
 {
 public:
-
+  MEMORY_MANAGED;
   UValue();
   UValue(double val);
   UValue(const char* str);

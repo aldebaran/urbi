@@ -27,6 +27,7 @@
 #include "udevice.h"
 #include "userver.h"                                   
 
+MEMORY_MANAGER_INIT(UExpression);
 // **************************************************************************
 //! UExpression base constructor called by every specific constructor.
 void UExpression::initialize()
@@ -1111,6 +1112,32 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     delete(e2);
     return(ret);
 
+  case EXPR_MOD:
+    
+    e1 = expression1->eval(command,connection);
+    e2 = expression2->eval(command,connection);
+    
+    if ((e1==0) || (e2==0)) {
+      if (e1) delete e1;
+      if (e2) delete e2;
+      return 0;
+    }
+
+    if ((e1->dataType != DATA_NUM) ||
+        (e2->dataType != DATA_NUM)) {
+
+      delete e1;
+      delete e2;
+      return 0;
+    }
+
+    ret = new UValue();
+    ret->dataType = DATA_NUM;
+    ret->val = fmod(e1->val,e2->val);
+    delete(e1);
+    delete(e2);
+    return(ret);
+  
   case EXPR_EXP:
     
     e1 = expression1->eval(command,connection);

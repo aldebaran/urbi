@@ -42,12 +42,14 @@ KERNEL_SOURCES=udevice.cc \
              ucallid.cc \
 	     uobject/uobject.cc \
 	     uobject/uvar.cc \
-	     uobject/common_uvalue.cc
+	     uobject/common_uvalue.cc \
+	     memorymanager/memorymanager.cc
 
 KERNEL_FILES=$(KERNEL_SOURCES:.cc=$(OBJEXT))
 
 
-CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I. -I./uobject
+CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I. -I./uobject 
+#CPPFLAGS+=-DENABLE_BLOCKMEMMNGR
 CXXFLAGS+= -Wno-deprecated\
         $(OPTIM) 
 
