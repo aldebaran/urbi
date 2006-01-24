@@ -20,12 +20,14 @@
  **************************************************************************** */
 
 #include <math.h>
+#include <stdio.h>
 
 #include "uexpression.h"
 #include "ucommand.h"
 #include "uconnection.h"
 #include "udevice.h"
-#include "userver.h"                                   
+
+#include "userver.h"
 
 MEMORY_MANAGER_INIT(UExpression);
 // **************************************************************************

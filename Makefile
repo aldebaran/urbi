@@ -45,11 +45,12 @@ KERNEL_SOURCES=udevice.cc \
 	     uobject/common_uvalue.cc \
 	     memorymanager/memorymanager.cc
 
+
 KERNEL_FILES=$(KERNEL_SOURCES:.cc=$(OBJEXT))
 
 
 CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I. -I./uobject 
-#CPPFLAGS+=-DENABLE_BLOCKMEMMNGR
+CPPFLAGS+=-DENABLE_BLOCKMEMMNGR
 CXXFLAGS+= -Wno-deprecated\
         $(OPTIM) 
 
@@ -84,6 +85,8 @@ ifeq ($(OS),macosx)
 else
 	LDFLAGS := $(LDFLAGS) -r -whole-archive
 endif 
+
+CPPFLAGS += -DOS=$(OS)
 ################################################################################
 
 build/buildnumber: $(KERNEL_SOURCES)

@@ -20,6 +20,7 @@
  **************************************************************************** */
 
 #include <string.h>
+#include <stdio.h>
 
 #include "uconnection.h"
 #include "userver.h"

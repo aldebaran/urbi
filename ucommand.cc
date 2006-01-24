@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "ucommand.h"
 #include "uconnection.h"
@@ -3458,10 +3459,17 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
   if (oper)       delete oper;  
 }
 
+//#define ENABLE_BENCH
+#ifdef ENABLE_BENCH
+#include "testspeed.h"
+#endif
 //! UCommand subclass execution function
 UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 {
   if (strcmp(oper->str(),"ping")==0) {
+#ifdef ENABLE_BENCH
+   dotest(connection->server);
+#endif
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
              "*** pong time=%f\n",connection->server->getTime());
     connection->send(tmpbuffer,tag->str());

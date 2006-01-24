@@ -28,15 +28,16 @@ MEMORY_MANAGER_INIT(UString);
 UString::UString(const char* s) {
     
   ADDOBJ(UString);
-  if (s==0) str_ = strdup("");
+  int slen = s?strlen(s):0;
+  if (s==0) 
+    str_ = strdup("");
+    
   else {
-    str_ = (char*)malloc(strlen(s)+1);
+    str_ = (char*)malloc(slen+1);
     strcpy(str_,s);
   }
-  if (str_ != 0)
-    len_ = strlen(str_);
-  else
-    len_ = 0;
+ 
+  len_ = slen;
   ADDMEM(len_);
 }
 
@@ -48,11 +49,11 @@ UString::UString(UString *s) {
     strcpy(str_,"");
   }
   else {
-    str_ = (char*)malloc(strlen(s->str())+1);
+    str_ = (char*)malloc(s->len()+1);
     strcpy(str_,s->str());
   }
   if (str_ != 0)
-    len_ = strlen(str_);
+    len_ = s->len();
   else
     len_ = 0;
   ADDMEM(len_);
@@ -85,17 +86,26 @@ bool UString::equal(const char *s) {
 }
 
 void UString::update(const char *s) {    
-  if ((s==0) || (strcmp(s,str_)==0)) return;
+  if ((s==0) || (s == str_) /*|| (strcmp(s,str_)==0) */) return;
   
   if (str_) free(str_);    
   FREEMEM(len_);
-  str_ = (char*)malloc(strlen(s)+1);
+  int slen = strlen(s);
+  str_ = (char*)malloc(slen+1);
   strcpy(str_,s);
-  len_ = strlen(str_);
+  len_ = slen;
   ADDMEM(len_);
 }
 
 void UString::update(UString *s) {   
-  if (s)
-    update(s->str());
+  if (!s)
+    return;
+  if (str_) free(str_);
+  FREEMEM(len_);
+
+  str_ = (char*)malloc(s->len()+1);
+  strcpy(str_, s->str());
+  len_ = s->len();
+  ADDMEM(len_);
+
 }

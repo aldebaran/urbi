@@ -20,6 +20,7 @@
  **************************************************************************** */
 
 #include <math.h>
+#include <stdio.h>
 
 #include "utypes.h"
 #include "uvalue.h"

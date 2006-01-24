@@ -20,6 +20,7 @@
  **************************************************************************** */
 
 #include <math.h>
+#include <stdio.h>
 
 #include "uvariablename.h"
 #include "ucommand.h"

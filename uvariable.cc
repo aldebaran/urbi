@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "uvariable.h"
 #include "userver.h"
 #include "ucommand.h"
