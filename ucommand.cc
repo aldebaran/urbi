@@ -1992,7 +1992,7 @@ UCommand_EXPR::execute(UConnection *connection)
              pvalue = pvalue->next, pname = pname->next) {
 
           UValue* valparam = pvalue->expression->eval(this,connection);
-          if (!valparam) {
+          if ((!valparam) || (valparam->dataType == DATA_VOID)) {
               
             connection->send("!!! EXPR evaluation failed\n",tag->str());
             return (status = UCOMPLETED);
