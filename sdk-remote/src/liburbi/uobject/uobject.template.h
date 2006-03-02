@@ -325,7 +325,7 @@ urbi {
     void __update(UValue&);
 
   private:    
-    UVarData  *vardata; ///< pointer to internal data specifics
+    UVardata  *vardata; ///< pointer to internal data specifics
     void __init();	
 
     PRIVATE(string,name); ///< full name of the variable as seen in URBI      
