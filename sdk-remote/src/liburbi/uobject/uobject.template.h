@@ -230,9 +230,8 @@ urbi {
   class UValue {
     public:
       UDataType       type; 
-
+      UFloat          val;
       union {
-	double         val;
 	string         *stringValue;
 	UBinary        *binary;
 	UList          *list;
@@ -242,16 +241,16 @@ urbi {
 
       UValue();
       UValue(const UValue&);
-      explicit UValue(double doubleValue);
+      explicit UValue(UFloat doubleValue);
       explicit UValue(int intValue);
       explicit UValue(char * val);
       explicit UValue(const string &str);
       explicit UValue(const UBinary &b);
       explicit UValue(const UList & l);
       explicit UValue(const UObjectStruct &o);
-      operator double();
+      operator UFloat();
       operator string();
-      operator int() {return (int)(double)(*this);}
+      operator int() {return (int)(UFloat)(*this);}
 
       UValue& operator=(const UValue&);
 
@@ -317,7 +316,7 @@ urbi {
     void operator = ( float );
     void operator = ( string );
     operator int () { return ((int)value); };
-    operator double () { return ((double)value); };
+    operator UFloat () { return ((UFloat)value); };
     operator string () { return ((string)value); };
   
     UValue& val() { return value; };

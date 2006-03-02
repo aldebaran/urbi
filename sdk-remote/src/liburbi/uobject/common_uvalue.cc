@@ -19,6 +19,7 @@
  **************************************************************************** */
 
 #include "uobject.h" 
+#include <sstream>
 using namespace urbi;
 
 //////////////////////
@@ -356,8 +357,8 @@ int UBinary::parse(char * message, int pos, list<BinaryData> bins, list<BinaryDa
 UValue::UValue() : type(DATA_VOID), storage(0) {}
 
 
-UValue::UValue(double v) : val(v), type(DATA_DOUBLE)  {}
-UValue::UValue(int v) : val((double)v), type(DATA_DOUBLE)  {}
+UValue::UValue(UFloat v) : val(v), type(DATA_DOUBLE)  {}
+UValue::UValue(int v) : val(v), type(DATA_DOUBLE)  {}
 
 UValue::UValue(char * v) : stringValue(new string(v)), type(DATA_STRING)  {}
 UValue::UValue(const string &v) : type(DATA_STRING), stringValue(new string(v)) {}
@@ -392,27 +393,32 @@ UValue::~UValue() {
   }
 }
 
-UValue::operator double() {
-  double v=0;
+UValue::operator UFloat() {
+  UFloat v;
   switch( type) {
   case DATA_DOUBLE:
     return val;
     break;
-  case DATA_STRING:
-    sscanf(stringValue->c_str(),"%lf", &v);
-    return v;
+  case DATA_STRING: 
+    {
+      std::istringstream tstr(*stringValue);
+      tstr >> v;
+      return v;
+    }
     break;
   };
-  return 0;
+  return UFloat(0);
 };
 
 
 UValue::operator string() {
-  char str[254];
    switch( type) {
-   case DATA_DOUBLE:
-     sprintf(str,"%lf",val);
-     return str;
+   case DATA_DOUBLE: 
+     {
+       std::ostringstream tstr;
+       tstr << val;
+       return tstr.str();
+     }
      break;
    case DATA_STRING:
      return *stringValue;
