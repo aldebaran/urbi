@@ -262,8 +262,8 @@ enum UReport {
 typedef unsigned char ubyte;
 
 static const UFloat UINFINITY   = UFloat(999999999999999.0);
-static const UFloat TRUE = UFloat(1);
-static const UFloat FALSE = UFloat(0);
+//static const UFloat TRUE = UFloat(1);
+//static const UFloat FALSE = UFloat(0);
 #define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
 

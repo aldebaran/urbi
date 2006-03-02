@@ -41,6 +41,8 @@
 #include <string.h>
 
 #include <list>
+#define TRUE UFloat(1)
+#define FALSE UFloat(0)
 using namespace std;
   
 class UString;
