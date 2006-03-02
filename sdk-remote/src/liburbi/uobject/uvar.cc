@@ -92,7 +92,7 @@ UVar::~UVar()
 
 //! UVar float assignment
 void
-UVar::operator = (float n)
+UVar::operator = (UFloat n)
 {  
   URBI() << name << "=" << n << ";";  
 }
