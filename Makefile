@@ -16,7 +16,10 @@ OBJEXT ?= .o
 
 ################################################################################
 
-
+ifeq (ww$(OBJEXT),ww)
+  echo fatal error
+  false;
+endif
 
 KERNEL_SOURCES=udevice.cc \
              uconnection.cc \
@@ -43,14 +46,15 @@ KERNEL_SOURCES=udevice.cc \
 	     uobject/uobject.cc \
 	     uobject/uvar.cc \
 	     uobject/common_uvalue.cc \
-	     memorymanager/memorymanager.cc
+	     memorymanager/memorymanager.cc \
+	     ufloat.cc
 
 
 KERNEL_FILES=$(KERNEL_SOURCES:.cc=$(OBJEXT))
 
 
 CPPFLAGS+= -I./network/$(NETWORK) -I./parser/$(PARSER) -I. -I./uobject 
-CPPFLAGS+=-DENABLE_BLOCKMEMMNGR
+CPPFLAGS+=-DENABLE_BLOCKMEMMNGR -DFLOAT_DOUBLE
 CXXFLAGS+= -Wno-deprecated\
         $(OPTIM) 
 
@@ -118,7 +122,7 @@ clean:: $(PARSER)-clean $(NETWORK)-clean
 	makedepend
 	rm parser/$(PARSER)/*$(OBJEXT)
 	rm network/$(NETWORK)/*$(OBJEXT)
-	rm -f *$(OBJEXT) *.elf *.snap.cc *.bak *~ utoken.yy.* ugrammar.tab.* *.a
+	rm -f uobject/*$(OBJEXT) memorymanager/*$(OBJEXT) *$(OBJEXT) *.elf *.snap.cc *.bak *~ utoken.yy.* ugrammar.tab.* *.a
 
 ################################################################################
 # DO NOT DELETE

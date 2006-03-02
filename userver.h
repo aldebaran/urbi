@@ -94,7 +94,7 @@ class UServer
 {
 public:
 	
-  UServer(double frequency,          
+  UServer(UFloat frequency,          
           int freeMemory,
           const char* mainName);
 
@@ -111,8 +111,8 @@ public:
   void              deIsolate       ();
   bool              isIsolated      ();
 
-  virtual double    getTime         () = 0;  
-  virtual double    getPower        () = 0;  
+  virtual UFloat    getTime         () = 0;  
+  virtual UFloat    getPower        () = 0;  
   virtual void      getCustomHeader (int line, char* header, int maxlength) = 0;
   virtual UErrorValue loadFile      (const char *filename, UCommandQueue* loadQueue) = 0;
   virtual UErrorValue saveFile      (const char *filename, const char * content) = 0;
@@ -124,7 +124,7 @@ public:
                                       const char *property);
 
 
-  double            getFrequency    ();
+  UFloat            getFrequency    ();
   void              mark            (UString *stopTag);
   virtual void      reboot          () = 0;
   virtual void      shutdown        () = 0;
@@ -133,12 +133,12 @@ public:
   virtual void      afterWork       ();
   
   void              display         (const char*);
-  double            lastTime        ();
+  UFloat            lastTime        ();
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   void              addAlias        (const char* id, const char* variablename);
-  void              addCPULoadOffset(double ms);
+  void              addCPULoadOffset(UFloat ms);
 
   list<UConnection*>       connectionList; ///< list of active connections: includes
                                            ///< one UGhostConnection
@@ -177,18 +177,18 @@ public:
   bool                     somethingToDelete; ///< true after a stop command
   bool                     uservarState; ///< true after the initialization phase: all vars
                                          ///< are uservar then.
-  double                   cpuload; ///< cpu load expressed as a number between 0 and 1
+  UFloat                   cpuload; ///< cpu load expressed as a number between 0 and 1
   bool                     cpuoverload; ///< true when there is a cpu overload
   bool                     signalcpuoverload; ///< a signal must be sent to every connection
   int                      cpucount; ///< nb of recent cpu overloads
-  double                   cputhreshold; ///< threshold for cpu overload alert
+  UFloat                   cputhreshold; ///< threshold for cpu overload alert
   bool                     defcheck; ///< true when the server is paranoid on def checking
-  double                   previous2Time,
+  UFloat                   previous2Time,
                            previous3Time,
                            currentTime, 
                            previousTime, 
                            latestTime; ///< used to detect cpu overload
-  double                   cpuloadOffset;
+  UFloat                   cpuloadOffset;
   bool                     stopall; ///< stops all commands in all connections
   bool                     reloadURBIINI; ///< reload URBI.INI file
   bool                     motorstate; ///< state of motor on/off
@@ -206,22 +206,22 @@ private:
   static const int MAXSIZE_INTERNALMESSAGE = 1024;  ///< used by echo()& error()
   static const int SECURITY_MEMORY_SIZE    = 100000;///< amount of security mem.
 
-  double           frequency_; ///< frequency of the calls to work()
+  UFloat           frequency_; ///< frequency of the calls to work()
   void*            securityBuffer_; ///< stores memory for emergency use.
   bool             isolate_; ///< is the server isolated
-  double           lastTime_; ///< store the time on the last call to updateTime();
+  UFloat           lastTime_; ///< store the time on the last call to updateTime();
   UGhostConnection *ghost; ///< the ghost connection used for URBI.INI
 };
 
 //! Accessor for frequency_
-inline double
+inline UFloat
 UServer::getFrequency() 
 {
   return frequency_;
 }
 
 //! Accessor for lastTime_
-inline double
+inline UFloat
 UServer::lastTime() 
 {
   return lastTime_;

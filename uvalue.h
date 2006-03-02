@@ -25,6 +25,7 @@
 #include "memorymanager/memorymanager.h"
 #include "utypes.h"
 #include "ustring.h"
+#include "ufloat.h"
 
 class UBinary;
 class UConnection;
@@ -36,14 +37,14 @@ class UValue
 public:
   MEMORY_MANAGED;
   UValue();
-  UValue(double val);
+  UValue(UFloat val);
   UValue(const char* str);
   ~UValue();
 
   UDataType       dataType;     ///< Type of the value
 
+  UFloat val; // must be out of the union in case of reimplementation
   union {    ///< union of the possible types
-    double  val;
     UString *str;    
     URefPt<UBinary> *refBinary;    
   };

@@ -43,8 +43,8 @@ class UDevice
 	
   UDevice  ( const char    *device,
              const char    *detail,
-             double         val_rangemin,
-             double         val_rangemax,            
+             UFloat         val_rangemin,
+             UFloat         val_rangemax,            
              const char    *val_unit,
              UDataType      val_dataType,
              bool           val_autoUpdate,

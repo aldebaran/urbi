@@ -46,67 +46,67 @@ int num_lines = 0;
 \/\*(.|"\n")*\*\/    /* eat up several-lines comments, C++ like   */
 
 
-"inf"         { lvalp->val = UINFINITY;
+"inf"         { lvalp->val = new UFloat(UINFINITY);
                 return NUM;
               }
 
-"pi"          { lvalp->val = 3.14159265358979323846264338327950288;
+"pi"          { lvalp->val = new UFloat(3.14159265358979323846264338327950288);
                 return NUM;
               }
 
 
-"+report"     { lvalp->val = 1; 
+"+report"     { lvalp->val = new UFloat(1); 
                 return FLAG;}
 
-"+error"      { lvalp->val = 2;
+"+error"      { lvalp->val = new UFloat(2);
                 return FLAG;}
 
-"+end"        { lvalp->val = 3;
+"+end"        { lvalp->val = new UFloat(3);
                 return FLAG;}
 
-"+begin"      { lvalp->val = 4;
+"+begin"      { lvalp->val = new UFloat(4);
                 return FLAG;}
 
-"+timeout"    { lvalp->val = 5;
+"+timeout"    { lvalp->val = new UFloat(5);
                 return FLAGTIME;}
 
-"+bg"         { lvalp->val = 10;
+"+bg"         { lvalp->val = new UFloat(10);
                 return FLAG;}
 
-"+stop"       { lvalp->val = 6;
+"+stop"       { lvalp->val = new UFloat(6);
                 return FLAGTEST;}
 
-"+top"        { lvalp->val = 7; 
+"+top"        { lvalp->val = new UFloat(7); 
                 return FLAG;}
 
-"+freeze"     { lvalp->val = 8;
+"+freeze"     { lvalp->val = new UFloat(8);
                 return FLAGTEST;}
 
-"+connection" { lvalp->val = 9;
+"+connection" { lvalp->val = new UFloat(9);
                 return FLAGID;}
 
 {NUMBER}"d"   { yytext[yyleng-1]=0;
-                lvalp->val = atof(yytext) *60000*60*24;
+                lvalp->val = new UFloat(atof(yytext) *60000*60*24);
                 return TIMEVALUE; }
 
 {NUMBER}"h"   { yytext[yyleng-1]=0;
-                lvalp->val = atof(yytext) *60000*60;
+                lvalp->val = new UFloat(atof(yytext) *60000*60);
                 return TIMEVALUE; }
 
 {NUMBER}"m"   { yytext[yyleng-1]=0;
-                lvalp->val = atof(yytext) *60000;
+                lvalp->val = new UFloat(atof(yytext) *60000);
                 return TIMEVALUE; }
 
 {NUMBER}"s"   { yytext[yyleng-1]=0;
-                lvalp->val = atof(yytext) *1000;
+                lvalp->val = new UFloat(atof(yytext) *1000);
                 return TIMEVALUE; }
 
 {NUMBER}"ms"  { yytext[yyleng-2]=0;
-                lvalp->val = atof(yytext);
+                lvalp->val = new UFloat(atof(yytext));
                 return TIMEVALUE; }
 
 
-{NUMBER}      { lvalp->val = atof(yytext);
+{NUMBER}      { lvalp->val = new UFloat(atof(yytext));
                 return NUM; }
 
 {STRING}      { lvalp->str = new UString(yytext+1);

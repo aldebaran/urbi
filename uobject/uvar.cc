@@ -95,7 +95,7 @@ UVar::~UVar()
 
 //! UVar float assignment
 void
-UVar::operator = (float n)
+UVar::operator = (UFloat n)
 {  
   if (!vardata) {
     // first time initialization

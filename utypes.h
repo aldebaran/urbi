@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <hash_map.h>
-
+#include "ufloat.h"
 class UDevice; 
 class UConnection;
 class UGhostConnection;
@@ -261,9 +261,9 @@ enum UReport {
 
 typedef unsigned char ubyte;
 
-#define UINFINITY   999999999999999.0
-#define PI          3.14159265358979323846264338327950288
-
+static const UFloat UINFINITY   = UFloat(999999999999999.0);
+static const UFloat TRUE = UFloat(1);
+static const UFloat FALSE = UFloat(0);
 #define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
 

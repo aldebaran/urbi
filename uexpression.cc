@@ -21,7 +21,7 @@
 
 #include <math.h>
 #include <stdio.h>
-
+#include <sstream>
 #include "uexpression.h"
 #include "ucommand.h"
 #include "uconnection.h"
@@ -56,7 +56,24 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
     between all the different constructors.
 */
-UExpression::UExpression(UExpressionType type, double val) 
+UExpression::UExpression(UExpressionType type, UFloat *val) 
+{	
+   initialize();
+  
+   this->val  = *val;
+   delete val; //other steal pointer, we copy->destroy
+   this->type = type; // should be EXPR_VALUE
+   this->isconst = true;
+  
+   dataType   = DATA_NUM;
+}
+		
+			
+//! UExpression constructor for numeric value.
+/*! The parameter 'type' is required here only for the sake of uniformity
+    between all the different constructors.
+*/
+UExpression::UExpression(UExpressionType type, UFloat val) 
 {	
    initialize();
   
@@ -66,7 +83,8 @@ UExpression::UExpression(UExpressionType type, double val)
   
    dataType   = DATA_NUM;
 }
-		
+
+
 //! UExpression constructor for string value.
 /*! The parameter 'type' is required here only for the sake of uniformity
     between all the different constructors.
@@ -230,7 +248,7 @@ UExpression::~UExpression()
 UExpression*
 UExpression::copy() 
 {
-  UExpression* ret = new UExpression(type,0.0);  
+  UExpression* ret = new UExpression(type,UFloat(0));  
 
   if (expression1)  ret->expression1 = expression1->copy(); 
   if (expression2)  ret->expression2 = expression2->copy(); 
@@ -259,7 +277,11 @@ UExpression::print()
 {
   ::urbiserver->debug("[Type:E%d ",type);
   if (isconst) ::urbiserver->debug("(const) ");
-  if ((type == EXPR_VALUE) && (dataType == DATA_NUM)) ::urbiserver->debug("val=%4.4f ",val);
+  if ((type == EXPR_VALUE) && (dataType == DATA_NUM)) {
+    std::ostringstream tstr;
+    tstr << "val="<<val<<" ";
+    ::urbiserver->debug(tstr.str().c_str());
+  }
   if (str) ::urbiserver->debug("str='%s' ",str->str());
   if (id) ::urbiserver->debug("id='%s' ",id->str());
   if (expression1) {::urbiserver->debug("expr1="); expression1->print(); ::urbiserver->debug(" ");}
@@ -289,7 +311,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   UString* method;
   UString* devicename;
   UDevice* devcall;
-  double d1,d2;
+  UFloat d1,d2;
   UCommand_EMIT* cmd;
   const char* vnamestr;
   UNamedParameters *pevent;
@@ -361,7 +383,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
           ::urbiserver->eventtab.end()) {
         // this is an event
        
-        ret = new UValue(1);
+        ret = new UValue(UFloat(1));
         ret->val = 1;
         ret->eventid = ::urbiserver->eventtab[variablename->getFullname()->str()]->eventid;
         return(ret);
@@ -572,7 +594,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       cmd = ::urbiserver->eventtab[vnamestr];   
 
       if ((!cmd->parameters) && (!parameters)) { 
-        ret = new UValue(1);
+        ret = new UValue(UFloat(1));
         ret->eventid = cmd->eventid;
         ret->val = 1;
 
@@ -611,7 +633,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
           pcatch = pcatch->next;
         }
 
-        ret = new UValue(1);
+        ret = new UValue(UFloat(1));
         ret->eventid = (int)cmd;
         ret->val = 1;
 
@@ -953,10 +975,10 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       if (strcmp(variablename->id->str(),"random")==0)  ret->val = (rand()%(int)e1->val);
       if (strcmp(variablename->id->str(),"round")==0)  
         if (e1->val>=0)
-          ret->val = (double)(int)(e1->val+0.5);
+          ret->val = (UFloat)(int)(e1->val+0.5);
         else
-          ret->val = (double)(int)(e1->val-0.5);
-      if (strcmp(variablename->id->str(),"trunc")==0)  ret->val = (double)(int)(e1->val);
+          ret->val = (UFloat)(int)(e1->val-0.5);
+      if (strcmp(variablename->id->str(),"trunc")==0)  ret->val = (UFloat)(int)(e1->val);
       if (strcmp(variablename->id->str(),"exp")==0)  ret->val = exp(e1->val);
       if (strcmp(variablename->id->str(),"sqr")==0)  ret->val = e1->val*e1->val;
       if (strcmp(variablename->id->str(),"sqrt")==0) {
@@ -1567,7 +1589,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       }
 
       ret->eventid = ret->eventid +  e2->eventid;
-      ret->val = (double) ( ((int)e1->val) && ((int)e2->val) );
+      ret->val = (UFloat) ( ((int)e1->val) && ((int)e2->val) );
       delete(e2);
     }
 
@@ -1616,7 +1638,7 @@ if (e1->dataType != DATA_NUM) {
       }
 
       ret->eventid = ret->eventid +  e2->eventid;
-      ret->val = (double) ( ((int)e1->val) || ((int)e2->val) );
+      ret->val = (UFloat) ( ((int)e1->val) || ((int)e2->val) );
       delete(e2);
     }
 

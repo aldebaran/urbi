@@ -96,7 +96,7 @@ extern UString** globalDelete;
   UVariableList           *variablelist;   
   UProperty               *property;  
 
-  double                   val;
+  UFloat                   *val;
   UString                  *str;
   struct {
     UString *device;
@@ -352,7 +352,7 @@ flags :
 
   | FLAGTEST LPAREN softtest RPAREN flags {
                  
-      if ($1 == 6)
+      if (*$1 == 6)
         $$ = new UNamedParameters(new UString("flagstop"),$3,$5); 
       else
         $$ = new UNamedParameters(new UString("flagfreeze"),$3,$5);
@@ -361,7 +361,7 @@ flags :
 
   | FLAGTEST LPAREN softtest RPAREN {
 
-      if ($1 == 6)
+      if (*$1 == 6)
         $$ = new UNamedParameters(new UString("flagstop"),$3,0); 
       else
         $$ = new UNamedParameters(new UString("flagfreeze"),$3,0); 
@@ -1037,7 +1037,9 @@ timeexpr:
     }
 
   | timeexpr TIMEVALUE {
-       $$ = $1+$2;
+       $$ = new UFloat(*$1+*$2); //XXX shall we delete 1 and 2??
+       delete $1;
+       delete $2;
     }
 ;
 
@@ -1158,12 +1160,12 @@ expr:
 
   | TRUECONST {
 
-      $$ = new UExpression(EXPR_VALUE,1.0);  
+      $$ = new UExpression(EXPR_VALUE,TRUE);  
     }
 
   | FALSECONST {
 
-      $$ = new UExpression(EXPR_VALUE,0.0);  
+      $$ = new UExpression(EXPR_VALUE,FALSE);  
     }  
 
   | expr EQ expr { 

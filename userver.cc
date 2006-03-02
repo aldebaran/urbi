@@ -99,7 +99,7 @@ int usedMemory;
            limit of memory allocation, thus avoiding later to run out of memory
            during a new or malloc.         
 */
-UServer::UServer(double frequency, 
+UServer::UServer(UFloat frequency, 
                  int freeMemory,
                  const char* mainName) 
 { 
@@ -193,7 +193,7 @@ UServer::initialization()
   // Devices initialization
    
   initDevices();
-  new UVariable(MAINDEVICE,"nbdevices", (double)(devicetab.size()));
+  new UVariable(MAINDEVICE,"nbdevices", (UFloat)(devicetab.size()));
 
   // Plugins (internal softdevices)
   for (list<urbi::baseURBIStarter*>::iterator retr = urbi::objectlist.begin();
@@ -352,7 +352,7 @@ UServer::work()
 
   // Values final assignment and nbAverage reset to 0
  
-  double *valtmp;
+  UFloat *valtmp;
   UVarSet selfError;
 
   for (list<UVariable*>::iterator iter = reinitList.begin();
@@ -578,7 +578,7 @@ UServer::debug(const char* s,...)
   effectiveDisplay(tmpBuffer_);
   
 //  used to slow down printing with Aibo...  
-//  double y=4;double x=145;  for (int i=0;i<300000;i++) y = y+ sin( i*x);
+//  UFloat y=4;UFloat x=145;  for (int i=0;i<300000;i++) y = y+ sin( i*x);
 }
 
 //! Isolate the server from incoming commands.
@@ -649,20 +649,20 @@ UServer::initDevices()
 //! Overload this function to return the running time of the server.
 /*! The running time of the server must be in milliseconds.
  */
-double
+UFloat
 UServer::getTime() 
 {
-  return 0;
+  return (UFloat)0;
 }
 
 //! Overload this function to return the remaining power of the robot
 /*! The remaining power is expressed as percentage. 0 for empty batteries
     and 1 for full power.
  */
-double
+UFloat
 UServer::getPower() 
 {
-  return 1;
+  return (UFloat)1;
 }
 
 //! Update the server's time using the robot-specific implementation
@@ -892,7 +892,7 @@ UServer::addAlias(const char* id, const char* variablename)
     This function adds a amount in ms to the offset
 */
 void
-UServer::addCPULoadOffset(double ms)
+UServer::addCPULoadOffset(UFloat ms)
 {
   cpuloadOffset += ms;
 }

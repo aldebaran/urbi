@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <sstream>
 
 #include "utypes.h"
 #include "uvalue.h"
@@ -45,7 +46,7 @@ UValue::UValue()
 }
 
 //! UValue constructor.
-UValue::UValue(double val) 
+UValue::UValue(UFloat val) 
 {
   ADDOBJ(UValue);
   dataType = DATA_NUM;
@@ -231,15 +232,9 @@ UValue::add(UValue *v)
 
       ret->dataType = DATA_STRING;
 
-      char *tmp_String = new char[v->str->len()+maxFloatSize];
-      if (tmp_String==0) { 
-        delete ret;
-        return 0;
-      }
-      snprintf(tmp_String,v->str->len()+maxFloatSize,
-               "%f%s",val,v->str->str());
-      ret->str = new UString(tmp_String);
-      delete[] (tmp_String);
+      std::ostringstream ostr;
+      ostr << val<<v->str->str();
+      ret->str = new UString(ostr.str().c_str());
       if (ret->str == 0) {
         delete ret;
         return 0;
@@ -257,15 +252,10 @@ UValue::add(UValue *v)
 
       ret->dataType = DATA_STRING;
 
-      char *tmp_String = new char[str->len()+maxFloatSize];
-      if (tmp_String==0) { 
-        delete ret;
-        return 0;
-      }
-      snprintf(tmp_String,str->len()+maxFloatSize,
-               "%s%f",str->str(),v->val);
-      ret->str = new UString(tmp_String);
-      delete[] (tmp_String);
+      std::ostringstream ostr;
+      ostr << str->str()<<v->val;
+      ret->str = new UString(ostr.str().c_str());
+      
       if (ret->str == 0) {
         delete ret;
         return 0;
@@ -373,8 +363,12 @@ UValue::echo(UConnection *connection, bool human_readable)
     return;
   }
 
-  if (dataType == DATA_NUM)
-    sprintf(tmpbuffer,"%f",val); 
+  if (dataType == DATA_NUM) {
+    std::ostringstream ostr;
+    ostr << val;
+    strcpy(tmpbuffer, ostr.str().c_str());
+    //sprintf(tmpbuffer,"%f",val);
+  }
 
   if (dataType == DATA_STRING)
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,

@@ -45,8 +45,8 @@
  */
 UDevice::UDevice(const char    *device,
                  const char    *detail,
-                 double         val_rangemin,
-                 double         val_rangemax,            
+                 UFloat         val_rangemin,
+                 UFloat         val_rangemax,            
                  const char    *val_unit,
                  UDataType      val_dataType,
                  bool           val_autoUpdate,
@@ -160,10 +160,10 @@ UDevice::getValue(const char* var)
     in the file. For obvious reasons, this is not the job of the kernel,
     so you will have to intercept it and handle it on the robot-specific
     side.
-    The function returns a UValue*. If you just want to return a double,
+    The function returns a UValue*. If you just want to return a UFloat,
     do this:
 
-    return( new UValue(mydouble) );
+    return( new UValue(myUFloat) );
 
     Don't worry about memory allocation. The kernel handles it.
 
