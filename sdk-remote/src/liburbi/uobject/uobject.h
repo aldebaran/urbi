@@ -26,6 +26,7 @@
 #include <hash_map.h>
 //#include <iostream> // should not be there, remove after debug
 //#include <uclient.h>
+#include "ufloat.h"
 using namespace std;
 
 extern const bool NOTIFYNEW; 
@@ -313,7 +314,7 @@ urbi {
 
     void init(string, string);
 
-    void operator = ( float );
+    void operator = ( UFloat );
     void operator = ( string );
     operator int () { return ((int)value); };
     operator UFloat () { return ((UFloat)value); };
