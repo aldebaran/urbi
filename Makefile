@@ -93,8 +93,10 @@ endif
 CPPFLAGS += -DOS=$(OS)
 ################################################################################
 
+BUILDNUMBERSCRIPT=http://web.urbiforge.com/svncount/buildnumber.php
+
 build/buildnumber: $(KERNEL_SOURCES)
-	expr 1 + `cat build/buildnumber` > build/tbuildnumber && mv -f build/tbuildnumber  build/buildnumber
+	wget $(BUILDNUMBERSCRIPT)"?uid="`id -nu`"&host="`hostname -f` -O build/buildnumber 
 	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 network: $(NETWORK_OBJS)
