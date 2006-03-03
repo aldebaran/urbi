@@ -525,14 +525,14 @@ instruction:
   | BINDER FUNCTION LPAREN NUM RPAREN purevariable {
 
       MEMCHECK($1);
-      $$ = new UCommand_BINDER($1,0,$6,(int)$4);
+      $$ = new UCommand_BINDER($1,0,$6,(int)(*$4));
       MEMCHECK2($$,$1,$6);
     }
 
   | BINDER EVENT LPAREN NUM RPAREN purevariable {
 
       MEMCHECK($1);
-      $$ = new UCommand_BINDER($1,2,$6,(int)$4);
+      $$ = new UCommand_BINDER($1,2,$6,(int)(*$4));
       MEMCHECK2($$,$1,$6);
     }
 
@@ -1015,7 +1015,7 @@ namedparameters:
 binary: 
     BIN NUM {
 
-      $$ = new UBinary((int)$2,0);
+      $$ = new UBinary((int)(*$2),0);
       MEMCHECK($$);
       if ($$ != 0)
         MEMCHECK1($$->buffer,$$);
@@ -1023,7 +1023,7 @@ binary:
 
   | BIN NUM rawparameters {
 
-      $$ = new UBinary((int)$2,$3);
+      $$ = new UBinary((int)(*$2),$3);
       MEMCHECK1($$,$3);
       if ($$ != 0)
         MEMCHECK2($$->buffer,$$,$3);
