@@ -356,8 +356,19 @@ UVariable::updated()
   if (!internalBinder.empty()) {
     for (list<urbi::UGenericCallback*>::iterator itcb = internalBinder.begin();
 	itcb != internalBinder.end();
-	itcb++) {
-      // ...
+	itcb++) {      
+      // ::urbiserver->debug("Hello!!! I've been callbacked, my name is %s\n",varname->str()); 
+      
+      urbi::UList tmparray;
+      
+      if ((*itcb)->storage) {
+	// monitor with &UVar reference
+	urbi::UValue tmpvalue;
+	tmpvalue.storage = (*itcb)->storage;
+	tmparray.array.push_back(&tmpvalue);
+      };
+          
+      (*itcb)->__evalcall(tmparray); // tmparray is empty here      
     }
   }
   

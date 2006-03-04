@@ -156,10 +156,29 @@ UVar::operator = (string s)
   vardata->variable->value->str->update(s.c_str());
 }
 
+// UVar Casting
+
+UVar::operator int () {	 
+  return ((int)value); 
+};
+
+UVar::operator UFloat () { 
+//  return ((UFloat)value); 
+//return (UFloat(666));
+};
+
+
+UVar::operator string () { 
+  return ((string)value); 
+};
+
+
 //! UVar update
 void
 UVar::__update(UValue& v)
 { 
   value = v;
 }
+
+
  

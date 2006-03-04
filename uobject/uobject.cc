@@ -79,7 +79,7 @@ using namespace urbi;
 // **************************************************************************	
 //! UGenericCallback constructor.
 UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
-  name(name) 
+  name(name) , storage(0)
 {
   if ((type == "function") || (type== "event") || (type=="eventend")) {
 //    std::ostringstream oss;
@@ -171,7 +171,7 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
 	
 //! UGenericCallback constructor.
 UGenericCallback::UGenericCallback(string type, string name, UTable &t) : 
-  name(name) 
+  name(name) , storage(0)
 {
   t[this->name].push_back(this);
   /*
@@ -193,7 +193,7 @@ UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UT
 // **************************************************************************	
 //  Monitoring functions
 
-int voidfun() {};
+int voidfun() { echo("void fun call\n"); };
 
 //! Generic UVar monitoring without callback
 void
