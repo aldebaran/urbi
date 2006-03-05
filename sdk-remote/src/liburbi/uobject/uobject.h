@@ -39,16 +39,17 @@ namespace __gnu_cxx {
   };
 }
 
+#define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
 // This macro is here to make life easier
-// Simply use: UStarter(myUObjectType) and the rest will be taken care of.
+// Simply use: UStart(myUObjectType) and the rest will be taken care of.
 #define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x))
 
-// Thess macro are here to make life easier
-#define UVarInit(obj,x) x.init(name,#x)
-#define UFunctionInit(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
-#define UEventInit(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
-#define UNotifyEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
+// These macros are here to make life easier
+#define UAttachVar(obj,x) x.init(name,#x)
+#define UAttachFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
+#define UAttachEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
+#define UAttachEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
 
 
 // defines a variable and it's associated accessors
@@ -81,14 +82,19 @@ urbi {
   extern UTable eventmap;
   extern UTable eventendmap;
   extern UTable monitormap;
+  extern UTable accessmap;
+
 
   extern void main(int argc, char *argv[]);
 
-  void UMonitor(UVar&);  
-  void UMonitor(UVar&, int (*) ());
-  void UMonitor(UVar&, int (*) (UVar&));
-  void UMonitor(string, int (*) ());
-  void UMonitor(string, int (*) (UVar&));
+  void UNotifyChange(UVar&);  
+  void UNotifyChange(UVar&, int (*) ());
+  void UNotifyChange(UVar&, int (*) (UVar&));
+  void UNotifyChange(string, int (*) ());
+  void UNotifyChange(string, int (*) (UVar&));
+  
+  void UNotifyAccess(UVar&, int (*) (UVar&));
+
 
   void echo(const char * format, ... );
 
@@ -210,7 +216,7 @@ urbi {
     public:
       UValue *val;
       string name;
-      UNamedValue(string n, UValue *v):name(n), val(v) {}
+      UNamedValue(string n, UValue *v):val(v),name(n) {}
       UNamedValue() {};
   };
 
@@ -295,7 +301,7 @@ urbi {
     };
 
   protected:
-    virtual void init(string objname)    { new T(objname); }; ///< Called when the object is ready to be initialized
+    virtual void init(string objname) { new T(objname); }; ///< Called when the object is ready to be initialized
   };	
 
   
@@ -316,9 +322,9 @@ urbi {
 
     void operator = ( UFloat );
     void operator = ( string );
-    operator int () { return ((int)value); };
-    operator UFloat () { return ((UFloat)value); };
-    operator string () { return ((string)value); };
+    operator int ();
+    operator UFloat ();
+    operator string ();
   
     UValue& val() { return value; };
 
@@ -345,7 +351,7 @@ urbi {
   public:
     UGenericCallback(string type, string name, int size, UTable &t);
     UGenericCallback(string type, string name, UTable &t);
-    ~UGenericCallback();
+    virtual ~UGenericCallback();
     
     virtual UValue __evalcall(UList &param)  = 0;
     
@@ -367,24 +373,32 @@ urbi {
     ~UObject();
 
     template <class T> 
-    void UMonitor(UVar& v, int (T::*fun) ()) { 
+    void UNotifyChange (UVar& v, int (T::*fun) ()) { 
       createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
     }; 
 
     template <class T>
-    void UMonitor(UVar& v, int (T::*fun) (UVar&)) { 
+    void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) { 
       UGenericCallback* cb = createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     };
 
-    // We have to duplicate because of the above UMonitor which catches the
+    template <class T>
+    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
+      UGenericCallback* cb = createUCallback("varaccess", (T*)this, fun, v.get_name(), accessmap);
+      if (cb) cb->storage = (void*)(&v);
+    };
+
+    // We have to duplicate because of the above UNotifyChange which catches the
     // namespace on UObject instead of urbi.
-    void UMonitor(UVar &v) { urbi::UMonitor(v); };
-    void UMonitor(UVar &v, int (*fun) ()) { urbi::UMonitor(v,fun); };
-    void UMonitor(UVar &v, int (*fun) (UVar&)) { urbi::UMonitor(v,fun); };
-    void UMonitor(string varname, int (*fun) ()) { urbi::UMonitor(varname,fun); };
-    void UMonitor(string varname, int (*fun) (UVar&)) { urbi::UMonitor(varname,fun); };
+    void UNotifyChange(UVar &v) { urbi::UNotifyChange(v); };
+    void UNotifyChange(UVar &v, int (*fun) ()) { urbi::UNotifyChange(v,fun); };
+    void UNotifyChange(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyChange(v,fun); };
+    void UNotifyChange(string varname, int (*fun) ()) { urbi::UNotifyChange(varname,fun); };
+    void UNotifyChange(string varname, int (*fun) (UVar&)) { urbi::UNotifyChange(varname,fun); };
   
+    void UNotifyAccess(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyAccess(v,fun); };
+
     string name; ///< name of the object as seen in URBI
     
   private:

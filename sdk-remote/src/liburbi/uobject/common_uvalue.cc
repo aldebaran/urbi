@@ -394,11 +394,14 @@ UValue::~UValue() {
 }
 
 UValue::operator UFloat() {
+
   UFloat v;
   switch( type) {
   case DATA_DOUBLE:
+
     return val;
     break;
+    
   case DATA_STRING: 
     {
       std::istringstream tstr(*stringValue);
@@ -407,6 +410,7 @@ UValue::operator UFloat() {
     }
     break;
   };
+
   return UFloat(0);
 };
 

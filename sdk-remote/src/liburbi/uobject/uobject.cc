@@ -98,6 +98,9 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
     URBI() << "external " << type << " " << name <<";";
   if ((type == "event") || (type == "function"))
     URBI() << "external " << type << "(" << size << ") " << name <<";";
+
+  if (type == "varaccess")
+    echo("Warning: NotifyAccess facility is not available for modules in remote mode.\n");    
 };
 	
 //! UGenericCallback constructor.
@@ -126,29 +129,38 @@ int voidfun() {};
 
 //! Generic UVar monitoring without callback
 void
-urbi::UMonitor(UVar &v)
+urbi::UNotifyChange(UVar &v)
 {
-  urbi::UMonitor(v,&voidfun);
+  urbi::UNotifyChange(v,&voidfun);
 }
 
 //! UVar monitoring with callback
 void 
-urbi::UMonitor(UVar &v, int (*fun) ())
+urbi::UNotifyChange(UVar &v, int (*fun) ())
 {  
   createUCallback("var",fun,v.get_name(), monitormap);
 }
 
 //! UVar monitoring with callback including a pointeur to the UVar&
 void 
-urbi::UMonitor(UVar &v, int (*fun) (UVar&))
+urbi::UNotifyChange(UVar &v, int (*fun) (UVar&))
 {
   UGenericCallback* cb = createUCallback("var",fun,v.get_name(), monitormap);
   if (cb) cb->storage = (void*)(&v);
 }
 
+//! UVar monitoring with callback including a pointeur to the UVar&
+void 
+urbi::UNotifyAccess(UVar &v, int (*fun) (UVar&))
+{
+  UGenericCallback* cb = createUCallback("varaccess",fun,v.get_name(), accessmap);
+  if (cb) cb->storage = (void*)(&v);
+}
+
+
 //! UVar monitoring with callback, based on var name: creates a hidden UVar
 void 
-urbi::UMonitor(string varname, int (*fun) ())
+urbi::UNotifyChange(string varname, int (*fun) ())
 {  
   createUCallback("var",fun,varname, monitormap);
 }
@@ -156,7 +168,7 @@ urbi::UMonitor(string varname, int (*fun) ())
 //! UVar monitoring with callback, based on var name: creates a hidden UVar 
 //! and pass it as a param in the callback
 void 
-urbi::UMonitor(string varname, int (*fun) (UVar&))
+urbi::UNotifyChange(string varname, int (*fun) (UVar&))
 {
   UVar *hidden = new UVar(varname);
   UGenericCallback* cb = createUCallback("var",fun,varname, monitormap);

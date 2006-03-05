@@ -104,6 +104,19 @@ UVar::operator = (string s)
   URBI() << name << "=\"" << s << "\";";  
 }
 
+UVar::operator int () {	 
+  return ((int)value); 
+};
+
+UVar::operator UFloat () { 
+  return ((UFloat)value); 
+};
+
+
+UVar::operator string () { 
+  return ((string)value); 
+};
+ 
 //! UVar update
 void
 UVar::__update(UValue& v)
@@ -116,4 +129,4 @@ UVar::__update(UValue& v)
       
   value = v;
 }
- 
+
