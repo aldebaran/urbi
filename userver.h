@@ -38,6 +38,7 @@ class UVariable;
 #include "uvariable.h"
 #include "ubinder.h"
 
+#define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
 class UString;
 class UParser;

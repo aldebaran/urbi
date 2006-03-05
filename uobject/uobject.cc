@@ -41,6 +41,7 @@ namespace urbi {
   UVarTable varmap;
   UTable functionmap;
   UTable monitormap;
+  UTable accessmap;
   UTable eventmap;
   UTable eventendmap;
   
@@ -100,6 +101,19 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
     else 
       it->second->internalBinder.push_back(this);
   }
+   
+  if (type == "varaccess") {
+    
+    HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
+    if (it == ::urbiserver->variabletab.end()) {
+	  
+      UVariable *variable = new UVariable(name.c_str(), new ::UValue());
+      if (variable) variable->internalAccessBinder.push_back(this);
+    }
+    else 
+      it->second->internalAccessBinder.push_back(this);
+  }
+
   
   // Note pour la suite:
   // ucommand.cc:3342 => mise en place de bindings. C'est là que se trouve
@@ -197,29 +211,37 @@ int voidfun() { echo("void fun call\n"); };
 
 //! Generic UVar monitoring without callback
 void
-urbi::UMonitor(UVar &v)
+urbi::UNotifyChange(UVar &v)
 {
-  urbi::UMonitor(v,&voidfun);
+  urbi::UNotifyChange(v,&voidfun);
 }
 
 //! UVar monitoring with callback
 void 
-urbi::UMonitor(UVar &v, int (*fun) ())
+urbi::UNotifyChange(UVar &v, int (*fun) ())
 {  
   createUCallback("var",fun,v.get_name(), monitormap);
 }
 
 //! UVar monitoring with callback including a pointeur to the UVar&
 void 
-urbi::UMonitor(UVar &v, int (*fun) (UVar&))
+urbi::UNotifyChange(UVar &v, int (*fun) (UVar&))
 {
   UGenericCallback* cb = createUCallback("var",fun,v.get_name(), monitormap);
   if (cb) cb->storage = (void*)(&v);
 }
 
+//! UVar monitoring with callback including a pointeur to the UVar&
+void 
+urbi::UNotifyAccess(UVar &v, int (*fun) (UVar&))
+{
+  UGenericCallback* cb = createUCallback("varaccess",fun,v.get_name(), accessmap);
+  if (cb) cb->storage = (void*)(&v);
+}
+
 //! UVar monitoring with callback, based on var name: creates a hidden UVar
 void 
-urbi::UMonitor(string varname, int (*fun) ())
+urbi::UNotifyChange(string varname, int (*fun) ())
 {  
   createUCallback("var",fun,varname, monitormap);
 }
@@ -227,7 +249,7 @@ urbi::UMonitor(string varname, int (*fun) ())
 //! UVar monitoring with callback, based on var name: creates a hidden UVar 
 //! and pass it as a param in the callback
 void 
-urbi::UMonitor(string varname, int (*fun) (UVar&))
+urbi::UNotifyChange(string varname, int (*fun) (UVar&))
 {
   UVar *hidden = new UVar(varname);
   UGenericCallback* cb = createUCallback("var",fun,varname, monitormap);

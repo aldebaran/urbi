@@ -71,7 +71,12 @@ void
 UVar::__init()
 {  
   varmap[name].push_back(this);
-  vardata = 0;
+  
+  HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
+  if (it == ::urbiserver->variabletab.end()) 
+    vardata = new UVardata(new UVariable(name.c_str(),new ::UValue()));  
+  else
+    vardata = new UVardata(it->second);
 }
 
 //! UVar destructor.
@@ -96,8 +101,9 @@ UVar::~UVar()
 //! UVar float assignment
 void
 UVar::operator = (UFloat n)
-{  
-  if (!vardata) {
+{ 
+  if (!vardata) { 
+
     // first time initialization
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
     if (it == ::urbiserver->variabletab.end()) {
@@ -119,8 +125,11 @@ UVar::operator = (UFloat n)
 	  name.c_str());
       return;      
     }
-  }
-  vardata->variable->value->val = n;
+  } 
+
+  // type mismatch is not integrated at this stage
+  vardata->variable->value->dataType = ::DATA_NUM;
+  vardata->variable->setFloat(n);
 }
 
 //! UVar string assignment
@@ -153,23 +162,37 @@ UVar::operator = (string s)
     }
   }
   
-  vardata->variable->value->str->update(s.c_str());
+  // type mismatch is not integrated at this stage
+  vardata->variable->value->dataType = ::DATA_STRING;
+  ::UValue tmpv(s.c_str());
+  vardata->variable->set(&tmpv);
 }
 
 // UVar Casting
 
 UVar::operator int () {	 
-  return ((int)value); 
+
+  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_NUM))    
+    return ((int)(vardata->variable->value->val));  
+  else  
+    return 0;  
 };
 
 UVar::operator UFloat () { 
-//  return ((UFloat)value); 
-//return (UFloat(666));
+
+  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
+    return (UFloat(vardata->variable->value->val));  
+  else  
+    return UFloat(0);  
 };
 
 
 UVar::operator string () { 
-  return ((string)value); 
+
+  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_STRING))    
+    return (string(vardata->variable->value->str->str()));  
+  else  
+    return string("");    
 };
 
 

@@ -198,9 +198,9 @@ UServer::initialization()
   // Plugins (internal softdevices)
   for (list<urbi::baseURBIStarter*>::iterator retr = urbi::objectlist.begin();
       retr != urbi::objectlist.end();
-      retr++)
+      retr++) 
     (*retr)->init((*retr)->name);
-
+  
   // Ghost connection
   ghost  = new UGhostConnection(this); 
   connectionList.push_front((UConnection*)ghost);
@@ -210,10 +210,9 @@ UServer::initialization()
 
   new UVariable(MAINDEVICE,"ghostID", tmpbuffer_ghostTag);
 
- 
   uservarState = true;
   if (loadFile("URBI.INI",ghost->recvQueue()) == USUCCESS)
-    ghost->newDataAdded = true;	
+    ghost->newDataAdded = true; 
 }
 
 //! Function called before work

@@ -122,7 +122,8 @@ public:
                           ///< finished assignements.
   UBinder         *binder; ///< cached binder pointer
   
-  list<urbi::UGenericCallback*> internalBinder; ///< binder for internal monitors
+  list<urbi::UGenericCallback*> internalBinder; ///< binder for internal monitors  
+  list<urbi::UGenericCallback*> internalAccessBinder; ///< binder for internal access monitors
 
   UCommand_ASSIGN_VALUE *cancel; ///< used for the "cancel" blend type
   
@@ -141,8 +142,8 @@ public:
   void          updated();
 
   UValue*       get();
-
- private:
+  
+  private:
 
   void    init();
 

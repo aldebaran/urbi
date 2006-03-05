@@ -327,6 +327,26 @@ UVariable::get()
 { 
   //are we a group?
   if ((notifyRead) && (dev)) dev->notifyRead(this);
+
+  if (!internalAccessBinder.empty()) {
+    for (list<urbi::UGenericCallback*>::iterator itcb = internalAccessBinder.begin();
+	itcb != internalAccessBinder.end();
+	itcb++) {      
+      // ::urbiserver->debug("Hello!!! I've been callbacked, my name is %s\n",varname->str()); 
+      
+      urbi::UList tmparray;
+      
+      if ((*itcb)->storage) {
+	// monitor with &UVar reference
+	urbi::UValue *tmpvalue = new urbi::UValue();
+	tmpvalue->storage = (*itcb)->storage;
+	tmparray.array.push_back(tmpvalue);
+      };
+          
+      (*itcb)->__evalcall(tmparray); // tmparray is empty here     
+    }
+  }
+
   return value; 
 };
 
@@ -363,12 +383,12 @@ UVariable::updated()
       
       if ((*itcb)->storage) {
 	// monitor with &UVar reference
-	urbi::UValue tmpvalue;
-	tmpvalue.storage = (*itcb)->storage;
-	tmparray.array.push_back(&tmpvalue);
+	urbi::UValue *tmpvalue = new urbi::UValue();
+	tmpvalue->storage = (*itcb)->storage;
+	tmparray.array.push_back(tmpvalue);
       };
           
-      (*itcb)->__evalcall(tmparray); // tmparray is empty here      
+      (*itcb)->__evalcall(tmparray); // tmparray is empty here     
     }
   }
   
