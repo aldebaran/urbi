@@ -325,15 +325,13 @@ UVariable::selfSet(UFloat *valcheck)
 UValue*
 UVariable::get()
 { 
-  //are we a group?
   if ((notifyRead) && (dev)) dev->notifyRead(this);
 
   if (!internalAccessBinder.empty()) {
     for (list<urbi::UGenericCallback*>::iterator itcb = internalAccessBinder.begin();
 	itcb != internalAccessBinder.end();
 	itcb++) {      
-      // ::urbiserver->debug("Hello!!! I've been callbacked, my name is %s\n",varname->str()); 
-      
+    
       urbi::UList tmparray;
       
       if ((*itcb)->storage) {
@@ -376,8 +374,7 @@ UVariable::updated()
   if (!internalBinder.empty()) {
     for (list<urbi::UGenericCallback*>::iterator itcb = internalBinder.begin();
 	itcb != internalBinder.end();
-	itcb++) {      
-      // ::urbiserver->debug("Hello!!! I've been callbacked, my name is %s\n",varname->str()); 
+	itcb++) {       
       
       urbi::UList tmparray;
       
@@ -391,19 +388,5 @@ UVariable::updated()
       (*itcb)->__evalcall(tmparray); // tmparray is empty here     
     }
   }
-  
-  /*
-  //debug
-  switch (value->dataType) {
-    case DATA_STRING: 
-     ::urbiserver->debug("UPDATED: %s = \"%s\"\n",varname->str(),value->str->str());     
-     break;
-    case DATA_NUM:  
-     ::urbiserver->debug("UPDATED: %s = %f\n",varname->str(),value->val);
-     break;
-    default:
-     ::urbiserver->debug("UPDATED: %s (unknown type)\n",varname->str());
-  }
-  */
 }
 

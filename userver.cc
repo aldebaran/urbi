@@ -250,7 +250,19 @@ UServer::work()
   previous2Time = previousTime;
   previousTime  = currentTime;
   currentTime   = lastTime();
-  
+
+  // Execute Timers
+
+  for (urbi::UTimerTable::iterator ittt = urbi::timermap.begin();
+       ittt != urbi::timermap.end();
+       ittt++) 
+    if ((*ittt)->lastTimeCalled - currentTime + (*ittt)->period <
+	frequency_ / 2) {    
+	
+      (*ittt)->call();
+      (*ittt)->lastTimeCalled = currentTime;
+    }
+
   beforeWork();
 
   // memory test

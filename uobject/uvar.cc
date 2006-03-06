@@ -37,46 +37,48 @@ namespace urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(string varname)
+UVar::UVar(string varname, bool sync)
 {
   name = varname;  
-  __init();
+  __init(sync);
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, string varname)
+UVar::UVar(UObject& obj, string varname, bool sync)
 {
   name = obj.name + "." + varname;
-  __init();
+  __init(sync);
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string objname, string varname)
+UVar::UVar(string objname, string varname, bool sync)
 {
   name = objname + "." + varname;
-  __init();
+  __init(sync);
 }
 
 
 //! UVar initialization
 void
-UVar::init(string objname, string varname)
+UVar::init(string objname, string varname, bool sync)
 {  
   name = objname + "." + varname;  
-  __init();
+  __init(sync);
 }
 
 //! UVar initializationvoid
 void
-UVar::__init()
+UVar::__init(bool sync)
 {  
   varmap[name].push_back(this);
   
   HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
   if (it == ::urbiserver->variabletab.end()) 
-    vardata = new UVardata(new UVariable(name.c_str(),new ::UValue()));  
+    vardata = new UVardata(new UVariable(name.c_str(),new
+    ::UValue(),false,false,sync));  
   else
     vardata = new UVardata(it->second);
+  synchro = sync;
 }
 
 //! UVar destructor.
@@ -103,30 +105,11 @@ void
 UVar::operator = (UFloat n)
 { 
   if (!vardata) { 
-
-    // first time initialization
-    HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-    if (it == ::urbiserver->variabletab.end()) {
-
-      vardata = new UVardata(new UVariable(name.c_str(),new ::UValue(n)));
-    }
-    else
-      vardata = new UVardata(it->second);
-    if (!vardata) {
-      urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	  name.c_str());
-      return;      
-    }
-    if (vardata->variable->value->dataType == ::DATA_VOID) 
-      vardata->variable->value->dataType = ::DATA_NUM;
-      
-    if (vardata->variable->value->dataType != ::DATA_NUM) {
-      urbi::echo("Invalid type for variable %s in softdevice assignment\n",
-	  name.c_str());
-      return;      
-    }
-  } 
-
+    urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
+	name.c_str());
+    return;
+  }
+  
   // type mismatch is not integrated at this stage
   vardata->variable->value->dataType = ::DATA_NUM;
   vardata->variable->setFloat(n);
@@ -137,31 +120,14 @@ void
 UVar::operator = (string s)
 {  
   if (!vardata) {
-    // first time initialization
-    HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-    if (it == ::urbiserver->variabletab.end()) {
-
-      vardata = new UVardata(new UVariable(name.c_str(),new ::UValue(s.c_str())));
-    }
-    else
-      vardata = new UVardata(it->second);
-    if (!vardata) {
-      urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	  name.c_str());
-      return;      
-    }
-    if (vardata->variable->value->dataType == ::DATA_VOID) {
-      vardata->variable->value->dataType = ::DATA_STRING; 
-      vardata->variable->value->str = new UString("");
-    }
-
-    if (vardata->variable->value->dataType != ::DATA_STRING) {
-      urbi::echo("Invalid type for variable %s in softdevice assignment\n",
-	  name.c_str());
-      return;      
-    }
+    urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
+	name.c_str());
+    return;      
   }
-  
+
+  if (vardata->variable->value->dataType == ::DATA_VOID) 
+    vardata->variable->value->str = new UString("");
+   
   // type mismatch is not integrated at this stage
   vardata->variable->value->dataType = ::DATA_STRING;
   ::UValue tmpv(s.c_str());
@@ -194,6 +160,25 @@ UVar::operator string () {
   else  
     return string("");    
 };
+
+
+//! UVar out value (read mode)
+UFloat&
+UVar::out()
+{ 
+  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
+    return (vardata->variable->target);
+}
+
+//! UVar in value (write mode)
+UFloat&
+UVar::in()
+{  
+  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
+    return (vardata->variable->value->val);
+}
+
+
 
 
 //! UVar update
