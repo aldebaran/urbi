@@ -43,10 +43,11 @@ namespace __gnu_cxx {
 
 // This macro is here to make life easier
 // Simply use: UStart(myUObjectType) and the rest will be taken care of.
-#define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x))
+#define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objectlist)
 
 // These macros are here to make life easier
 #define UAttachVar(obj,x) x.init(name,#x)
+#define UAttachVarDesync(obj,x) x.init(name,#x,false)
 #define UAttachFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
 #define UAttachEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
 #define UAttachEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
@@ -66,6 +67,7 @@ urbi {
   class UObject;
   class baseURBIStarter;  
   class UGenericCallback;
+  class UTimerCallback;
   class UValue;
   class UVardata;
 
@@ -74,15 +76,20 @@ urbi {
   typedef void UEvent;
   typedef hash_map<string,list<UGenericCallback*> > UTable;
   typedef hash_map<string,list<UVar*> > UVarTable;
+  typedef list<baseURBIStarter*> UStartlist;
+  typedef list<UTimerCallback*> UTimerTable;
 
   
-  extern list<baseURBIStarter*> objectlist;
+  extern UStartlist objectlist;
+//  extern startlist hublist;
   extern UVarTable varmap;
   extern UTable functionmap;
   extern UTable eventmap;
   extern UTable eventendmap;
   extern UTable monitormap;
-  extern UTable accessmap;
+  extern UTable accessmap;  
+  extern UTimerTable timermap;
+
 
 
   extern void main(int argc, char *argv[]);
@@ -291,17 +298,21 @@ urbi {
   template <class T> class URBIStarter : public baseURBIStarter
   {
   public:
-    URBIStarter(string name) : baseURBIStarter(name)
-    	{ objectlist.push_back(dynamic_cast<baseURBIStarter*>(this)); };
+    URBIStarter(string name, UStartlist& _slist) : baseURBIStarter(name)
+    	{ slist = &_slist;
+	  slist->push_back(dynamic_cast<baseURBIStarter*>(this)); 
+	};
     virtual ~URBIStarter() { };
 
     virtual void copy(string objname) {
-      	new URBIStarter<T>(objname);
+      	new URBIStarter<T>(objname,*slist);
 	init(objname);
     };
 
   protected:
-    virtual void init(string objname) { new T(objname); }; ///< Called when the object is ready to be initialized
+    virtual void init(string objname) { new T(objname); }; ///< Called when the object is ready to be initialized    
+    
+    UStartlist  *slist;
   };	
 
   
@@ -313,12 +324,12 @@ urbi {
     
     UVar() { name = "noname";};
     UVar(UVar& v) {};
-    UVar(string);
-    UVar(string,string);
-    UVar(UObject&, string);
+    UVar(string,bool sync=true);
+    UVar(string,string,bool sync=true);
+    UVar(UObject&, string,bool sync=true);
     ~UVar();
 
-    void init(string, string);
+    void init(string, string, bool sync=true);
 
     void operator = ( UFloat );
     void operator = ( string );
@@ -327,16 +338,19 @@ urbi {
     operator string ();
   
     UValue& val() { return value; };
+    UFloat& in();
+    UFloat& out();
 
     // internal
     void __update(UValue&);
 
   private:    
     UVardata  *vardata; ///< pointer to internal data specifics
-    void __init();	
+    void __init(bool sync=true);	
 
     PRIVATE(string,name); ///< full name of the variable as seen in URBI      
-    PRIVATE(UValue,value); ///< the variable value on the softdevice's side    
+    PRIVATE(UValue,value); ///< the variable value on the softdevice's side     
+    PRIVATE(bool,synchro); ///< is the variable in/out synchronized?     
   };
 
 
@@ -356,12 +370,58 @@ urbi {
     virtual UValue __evalcall(UList &param)  = 0;
     
     void   *storage; ////< used to store the UVar* pointeur for var monitoring
+    UFloat period; ///< period of timers
 
   private:
     string name; 
   };
 
+  // *****************************************************************************
+  //! Timer mechanism
+  /*! This class stores a callback either as function or a class method
+  */
+
+  class UTimerCallback
+  {
+  public:
+    UTimerCallback(UFloat period);
+    virtual ~UTimerCallback();
+
+    virtual void call() = 0;
+
+    UFloat period;
+    UFloat lastTimeCalled;
+  };
+
+  // UTimerCallback subclasses
   
+  class UTimerCallbacknoobj : public UTimerCallback
+  {
+  public:
+    UTimerCallbacknoobj(UFloat period, int (*fun) ()): 
+      UTimerCallback(period), fun(fun) {};
+    
+    virtual void call() {
+      (*fun)();      
+    };
+  private:
+      int (*fun) ();
+  };
+  
+  template <class T>
+  class UTimerCallbackobj : public UTimerCallback
+  {
+  public:
+    UTimerCallbackobj(UFloat period, T* obj, int (T::*fun) ()): 
+      UTimerCallback(period), obj(obj), fun(fun) {};
+    
+    virtual void call() {
+      ((*obj).*fun)();        
+    };
+  private:
+      T* obj;
+      int (T::*fun) ();
+  };
 
   // *****************************************************************************
   //! Main UObject class definition
@@ -369,7 +429,7 @@ urbi {
   {
   public:
     
-    UObject(const string&, bool);
+    UObject(const string&);
     ~UObject();
 
     template <class T> 
@@ -389,6 +449,11 @@ urbi {
       if (cb) cb->storage = (void*)(&v);
     };
 
+    template <class T>
+    void USetTimer(UFloat t, int (T::*fun) ()) {
+      new UTimerCallbackobj<T> (t,(T*)this, fun);
+    };
+
     // We have to duplicate because of the above UNotifyChange which catches the
     // namespace on UObject instead of urbi.
     void UNotifyChange(UVar &v) { urbi::UNotifyChange(v); };
@@ -403,9 +468,43 @@ urbi {
     
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
-                              ///< module/plugin architectures who defines it.
-    bool       notifynew; ///< is the object notified when a 'new' command is done on the URBI side?
+                              ///< module/plugin architectures who defines it.   
   };
+
+
+  // *****************************************************************************
+  //! Main UObjectHub class definition
+  class UObjectHub
+  {
+  public:
+    
+    UObjectHub(UFloat t) : period(t) {};
+    virtual ~UObjectHub() {};
+
+    template <class T>
+    void USetTimer(UFloat t, int (T::*fun) ()) {
+      new UTimerCallbackobj<T> (t, (T*)this,fun);      
+    }
+
+    virtual void update();
+
+  protected:
+    
+    UFloat period;
+  };
+    
+  // *****************************************************************************
+  //! Timer definition
+
+  void USetTimer(UFloat t, int (*fun) ());
+      
+  template <class T>
+    void USetTimer(UFloat t, T* obj, int (T::*fun) ()) {
+      new UTimerCallbackobj<T> (t,obj,fun);
+    }
+  
+  // *****************************************************************************
+  // Casteurs
 
   // generic caster  
   template <class T>  T cast(UValue &v) { return (T)v; }
@@ -415,7 +514,7 @@ urbi {
   template <> UBinary cast(UValue &v);
   template <> UList cast(UValue &v);
   template <> UObjectStruct cast(UValue &v);
-
+  
   /**********************************************************/
   // This section is autogenerated. Not for humans eyes ;)
   /**********************************************************/

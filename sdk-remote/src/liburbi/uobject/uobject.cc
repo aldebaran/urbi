@@ -37,14 +37,17 @@ namespace urbi {
 
   UObject* lastUObject;
 
-  list<baseURBIStarter*> objectlist;
+  UStartlist objectlist;
   const string externalModuleTag = "__ExternalMessage__";
 
   UVarTable varmap;
   UTable functionmap;
   UTable monitormap;
+  UTable accessmap;
   UTable eventmap;
   UTable eventendmap;
+
+  UTimerTable timermap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
@@ -121,6 +124,19 @@ UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UT
   return ((UGenericCallback*) new UCallbackGlobalvoid0 (type,fun,funname,t));
 }
 
+
+// **************************************************************************	
+//! UTimerCallbacl constructor.
+
+UTimerCallback::UTimerCallback(UFloat period) : period(period)
+{
+  timermap.push_back(this);
+  lastTimeCalled = -9999999;
+}
+
+UTimerCallback::~UTimerCallback()
+{
+}
 	
 // **************************************************************************	
 //  Monitoring functions
@@ -165,6 +181,13 @@ urbi::UNotifyChange(string varname, int (*fun) ())
   createUCallback("var",fun,varname, monitormap);
 }
 
+//! Timer definition
+void 
+urbi::USetTimer(UFloat t, int (*fun) ())
+{
+  new UTimerCallbacknoobj(t,fun);  
+}
+
 //! UVar monitoring with callback, based on var name: creates a hidden UVar 
 //! and pass it as a param in the callback
 void 
@@ -179,14 +202,12 @@ urbi::UNotifyChange(string varname, int (*fun) (UVar&))
 
 // **************************************************************************	
 //! UObject constructor.
-UObject::UObject(const string &s, bool notifynew = false) :
-  name(s), notifynew(notifynew)
+UObject::UObject(const string &s) :
+  name(s)
 {
-//  objectData = new UObjectData(this);  
   lastUObject = this;
-  URBI() << "class " << name << "{};";
-  if (notifynew)
-    URBI() << "external " << "object" << " " << name <<";";
+  URBI() << "class " << name << "{};"; 
+  URBI() << "external " << "object" << " " << name <<";";
 }
 
 

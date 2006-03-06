@@ -34,42 +34,59 @@ urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(string varname)
+UVar::UVar(string varname, bool sync)
 {
   name = varname;  
-  __init();
+  __init(sync);
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, string varname)
+UVar::UVar(UObject& obj, string varname, bool sync)
 {
   name = obj.name + "." + varname;
-  __init();
+  __init(sync);
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string objname, string varname)
+UVar::UVar(string objname, string varname, bool sync)
 {
   name = objname + "." + varname;
-  __init();
+  __init(sync);
 }
 
 
 //! UVar initialization
 void
-UVar::init(string objname, string varname)
+UVar::init(string objname, string varname, bool sync)
 {  
   name = objname + "." + varname;  
-  __init();
+  __init(sync);
 }
 
-//! UVar initializationvoid
+//! UVar initialization
 void
-UVar::__init()
+UVar::__init(bool sync)
 {  
   varmap[name].push_back(this);
   vardata = 0; // unused. For internal softdevices only
+  synchro = true;// sync is unused here in remote mode.
 }
+
+//! UVar out value (read mode)
+UFloat&
+UVar::out()
+{  
+  return (value.val); 
+}
+
+//! UVar in value (write mode)
+UFloat&
+UVar::in()
+{  
+  return (value.val); 
+}
+
+
 
 //! UVar destructor.
 UVar::~UVar()

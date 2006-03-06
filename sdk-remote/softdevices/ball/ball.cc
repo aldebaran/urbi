@@ -36,27 +36,24 @@ int toto2(UVar &v) {
 // **************************************************************************	
 //! Ball constructor.
 ball::ball(string s) :
-  UObject(s,NOTIFYNEW)
+  UObject(s)
 { 
-cout << "MY NAME IS:  " << name << endl;
+  UAttachVar      (ball,x);
+  UAttachVar      (ball,y);
+  UAttachVar      (ball,truc);
+  UAttachFunction (ball,init);
+  UAttachFunction (ball,myfun);
+  UAttachFunction (ball,myfun1);
+  UAttachEvent    (ball,myevent);   
+  UAttachEventEnd (ball,myevent,endevent);
 
-  UVarInit      (ball,x);
-  UVarInit      (ball,y);
-  UVarInit      (ball,truc);
-  UFunctionInit (ball,init);
-  UFunctionInit (ball,myfun);
-  UFunctionInit (ball,myfun1);
-  UEventInit    (ball,myevent);
-   
-  UMonitor(x);
-  UMonitor(truc);
-  UMonitor(x, &ball::stuff);
-  UMonitor(y, &ball::stuff2);
-  UMonitor(x, &toto2);
-
-  UNotifyEnd(ball, myevent, endevent);
+  UNotifyChange(x);
+  UNotifyChange(truc);
+  UNotifyChange(x, &ball::stuff);
+  UNotifyChange(y, &ball::stuff2);
+  UNotifyChange(x, &toto2);
   
-  //UMonitor("camera.val",&toto2);
+  //UNotifyChange("camera.val",&toto2);
   x = 42;
 }
 
