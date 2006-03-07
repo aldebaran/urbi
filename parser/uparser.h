@@ -40,10 +40,10 @@
 using namespace std;
 
 #undef  YY_DECL
-#define YY_DECL int yyFlexLexer::yylex(YYSTYPE* lvalp)
+#define YY_DECL \
+  int yyFlexLexer::yylex(YYSTYPE* valp, yy::location* locp, UParser& p)
 
 // Parse function of 'bison' is defined externally
-extern "C" int yyparse(void *);
 extern char errorMessage[1024];
 class UConnection;
 class UCommand;
@@ -55,19 +55,6 @@ struct UDefine {
   UString *name;
   UString *value;
 };
-
-// The error function that 'bison' calls
-inline void yyerror(char const *what_error) { 
-
-  strcpy(errorMessage,"!!! "); 
-  strncat(errorMessage,what_error,1019);
-  errorMessage[1022] = 0; // Just make sure it ends...
-  strcat(errorMessage,"\n");
-  if (globalDelete) {
-     delete *globalDelete;
-     (*globalDelete) = 0;
-  }
-}
 
 
 //! Control class for a flex-scanner
@@ -94,7 +81,7 @@ private:
 class UParser 
 {
 public:
-  friend int yylex(YYSTYPE *lvalp, void *compiler);
+ // friend int yylex(YYSTYPE *lvalp, void *compiler);
 
   UParser() : uflexer(this) {}
 
@@ -117,8 +104,9 @@ public:
        
     uflexer.switch_streams(&(*mem_input), 0);// Tells flex the right stream
     binaryCommand = false;   
-       
-    result =  yyparse((void *) this);  
+    
+    yy::parser p(*this);   
+    result = p.parse();      
 
     delete mem_input;
     delete mem_buff;   
@@ -130,21 +118,15 @@ public:
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
+  int scan(YYSTYPE* val, yy::location* loc) { 
+     return uflexer.yylex(val,loc,*this); 
+  }
+
 private:
   // The scanner used in this parser (it is a flex-scanner)
   UFlexer uflexer;
   int result;
-
-  int scan(YYSTYPE *lvalp) { return uflexer.yylex(lvalp); }
 };
-
-
-//! Directs the call from 'bison' to the scanner in the right parser
-inline int yylex(YYSTYPE *lvalp, void *_uparser)
-{
-  UParser &the_parser = *static_cast<UParser *>(_uparser);
-  return the_parser.scan(lvalp);
-}
 
 
 // Definitions for 'flex' and 'bison'
@@ -157,6 +139,5 @@ inline int yylex(YYSTYPE *lvalp, void *_uparser)
 // Important! These are the "shortcuts" which you can use in your
 // ".l"- and ".y"-files to access the corresponding uparser-object!
 #define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
-#define bison_uparser (*static_cast<UParser *> (parm))
 
 #endif

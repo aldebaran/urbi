@@ -28,6 +28,8 @@
 #include "ucallid.h"
 #include "ucommandqueue.h"
 #include "uvariable.h"
+#include "parser/bison/location.hh"  //FIXME remove this to abstract parser
+				     // from connection
 
 class UParser;
 
@@ -129,6 +131,10 @@ public:
   bool                returnMode;    ///< true after a "return" command is met
   bool                obstructed;    ///< false when the whole command tree has been processed
   list<UCallid*>      stack;         ///< call ids stack for function calls  
+
+  
+  yy::location        lastloc;       ///< last location after parsing
+
 
 protected:
 

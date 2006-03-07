@@ -54,7 +54,7 @@
 #include <iostream.h>
 
 #include "ucommand.h"
-#include "ugrammar.tab.h"
+#include "ugrammar.hh"
 
 extern "C++" {
 
@@ -75,13 +75,14 @@ public:
 	virtual void yy_delete_buffer( struct yy_buffer_state* b ) = 0;
 	virtual void yyrestart( istream* s ) = 0;
 
-	virtual int yylex(YYSTYPE *lvalp) = 0;
+	virtual int yylex(YYSTYPE* val, yy::location* loc, UParser& p) = 0;
 
 	// Call yylex with new input/output sources.
-	int yylex( YYSTYPE *lvalp, istream* new_in, ostream* new_out = 0 )
+	int yylex( YYSTYPE* val, yy::location* loc, UParser& p,
+	           istream* new_in, ostream* new_out = 0 )
 		{
 		switch_streams( new_in, new_out );
-		return yylex(lvalp);
+		return yylex(val, loc, p);
 		}
 
 	// Switch to new input/output streams.  A nil stream pointer
@@ -122,10 +123,9 @@ public:
 	void yy_delete_buffer( struct yy_buffer_state* b );
 	void yyrestart( istream* s );
 
-	virtual int yylex(YYSTYPE *lvalp);
+	virtual int yylex(YYSTYPE* val, yy::location* loc, UParser& p);
 	virtual void switch_streams( istream* new_in, ostream* new_out );
 
-	int num_lines;
 protected:
 	virtual int LexerInput( char* buf, int max_size );
 	virtual void LexerOutput( const char* buf, int size );

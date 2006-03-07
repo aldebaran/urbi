@@ -1,15 +1,15 @@
-PARSER_SRC=parser/bison/ugrammar.tab.cc parser/bison/utoken.yy.cc
+PARSER_SRC=parser/bison/ugrammar.cc parser/bison/utoken.cc
 
 
-parser/bison/ugrammar.tab.cc: parser/bison/ugrammar.y
-	cd parser/bison/ && $(BISON) --defines ugrammar.y
-	sed -e 's/^.*__attribute.*//'  parser/bison/ugrammar.tab.c >  parser/bison/ugrammar.tab.cc
+parser/bison/ugrammar.cc: parser/bison/ugrammar.y
+	$(BISON) -o $@ $<
+#	sed -e 's/^.*__attribute.*//'  parser/bison/ugrammar.tab.c >  parser/bison/ugrammar.cc
 
-parser/bison/utoken.yy.cc: parser/bison/utoken.l parser/bison/ugrammar.tab.cc
-	$(FLEX) -+ -oparser/bison/lex.yy.cc parser/bison/utoken.l
-	sed -e 's/class istream;/#include <istream.h>/' parser/bison/lex.yy.cc > parser/bison/utoken.yy.cc
-	rm -f parser/bison/lex.yy.cc
+parser/bison/utoken.cc: parser/bison/utoken.l parser/bison/ugrammar.cc
+	$(FLEX) -+ -oparser/bison/lex.cc parser/bison/utoken.l
+	sed -e 's/class istream;/#include <istream.h>/' parser/bison/lex.cc > parser/bison/utoken.cc
+	rm -f parser/bison/lex.cc
 
 
 bison-clean: 
-	rm parser/bison/ugrammar.tab.cc parser/bison/utoken.yy.cc parser/bison/ugrammar.tab.h
+	rm parser/bison/ugrammar.cc parser/bison/utoken.cc parser/bison/ugrammar.hh

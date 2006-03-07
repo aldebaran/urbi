@@ -30,6 +30,8 @@
 #include <list>
 using namespace std;
 
+#define YY_USER_ACTION locp->columns(yyleng);
+
 %}
 
 %option noyywrap
@@ -37,93 +39,94 @@ using namespace std;
 NUMBER   (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
 ID       [a-zA-Z_][_A-Za-z0-9]*
 STRING   \"([^"]|"\\\"")*\"
-int num_lines = 0;
 %%
-
+%{
+  locp->step();
+%}
 
 "//"[^\n]*           /* eat up one-line comments, C++ like   (//) */
 "#"[^\n]*            /* eat up one-line comments, shell like (#)  */
 \/\*(.|"\n")*\*\/    /* eat up several-lines comments, C++ like   */
 
 
-"inf"         { lvalp->val = new UFloat(UINFINITY);
+"inf"         { valp->val = new UFloat(UINFINITY);
                 return NUM;
               }
 
-"pi"          { lvalp->val = new UFloat(3.14159265358979323846264338327950288);
+"pi"          { valp->val = new UFloat(3.14159265358979323846264338327950288);
                 return NUM;
               }
 
 
-"+report"     { lvalp->val = new UFloat(1); 
+"+report"     { valp->val = new UFloat(1); 
                 return FLAG;}
 
-"+error"      { lvalp->val = new UFloat(2);
+"+error"      { valp->val = new UFloat(2);
                 return FLAG;}
 
-"+end"        { lvalp->val = new UFloat(3);
+"+end"        { valp->val = new UFloat(3);
                 return FLAG;}
 
-"+begin"      { lvalp->val = new UFloat(4);
+"+begin"      { valp->val = new UFloat(4);
                 return FLAG;}
 
-"+timeout"    { lvalp->val = new UFloat(5);
+"+timeout"    { valp->val = new UFloat(5);
                 return FLAGTIME;}
 
-"+bg"         { lvalp->val = new UFloat(10);
+"+bg"         { valp->val = new UFloat(10);
                 return FLAG;}
 
-"+stop"       { lvalp->val = new UFloat(6);
+"+stop"       { valp->val = new UFloat(6);
                 return FLAGTEST;}
 
-"+top"        { lvalp->val = new UFloat(7); 
+"+top"        { valp->val = new UFloat(7); 
                 return FLAG;}
 
-"+freeze"     { lvalp->val = new UFloat(8);
+"+freeze"     { valp->val = new UFloat(8);
                 return FLAGTEST;}
 
-"+connection" { lvalp->val = new UFloat(9);
+"+connection" { valp->val = new UFloat(9);
                 return FLAGID;}
 
 {NUMBER}"d"   { yytext[yyleng-1]=0;
-                lvalp->val = new UFloat(atof(yytext) *60000*60*24);
+                valp->val = new UFloat(atof(yytext) *60000*60*24);
                 return TIMEVALUE; }
 
 {NUMBER}"h"   { yytext[yyleng-1]=0;
-                lvalp->val = new UFloat(atof(yytext) *60000*60);
+                valp->val = new UFloat(atof(yytext) *60000*60);
                 return TIMEVALUE; }
 
 {NUMBER}"m"   { yytext[yyleng-1]=0;
-                lvalp->val = new UFloat(atof(yytext) *60000);
+                valp->val = new UFloat(atof(yytext) *60000);
                 return TIMEVALUE; }
 
 {NUMBER}"s"   { yytext[yyleng-1]=0;
-                lvalp->val = new UFloat(atof(yytext) *1000);
+                valp->val = new UFloat(atof(yytext) *1000);
                 return TIMEVALUE; }
 
 {NUMBER}"ms"  { yytext[yyleng-2]=0;
-                lvalp->val = new UFloat(atof(yytext));
+                valp->val = new UFloat(atof(yytext));
                 return TIMEVALUE; }
 
 
-{NUMBER}      { lvalp->val = new UFloat(atof(yytext));
+{NUMBER}      { valp->val = new UFloat(atof(yytext));
                 return NUM; }
 
-{STRING}      { lvalp->str = new UString(yytext+1);
-                if (lvalp->str->str() == 0) {
-                  delete (lvalp->str);
-                  lvalp->str = 0;
+{STRING}      { valp->str = new UString(yytext+1);
+                if (valp->str->str() == 0) {
+                  delete (valp->str);
+                  valp->str = 0;
                 }
                 
-                if (lvalp->str != 0) {
+                if (valp->str != 0) {
                   
-                  char* position = const_cast<char*>(&(lvalp->str->str()[strlen(yytext)-2]));
+                  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
                   *position=0;
                   /* 
-                  while (position = strstr(lvalp->str->str(),"\\\""))
+                  while (position = strstr(valp->str->str(),"\\\""))
                     memmove((void*)position,
                             (void*)(position+1), 
-                            strlen(lvalp->str->str())-(int)(position-lvalp->str->str())); 
+                            strlen(valp->str->str())-(int)(position-valp->str->str())); 
                   */
                 }
                 
@@ -136,20 +139,20 @@ block      |
 unfreeze   |
 freeze     |
 killall    |
-disconnect   { lvalp->str = new UString(yytext); 
-               if (lvalp->str->str() == 0) {
-                  delete (lvalp->str);
-                  lvalp->str = 0;
+disconnect   { valp->str = new UString(yytext); 
+               if (valp->str->str() == 0) {
+                  delete (valp->str);
+                  valp->str = 0;
                }
                return OPERATOR_ID;
              }
 
 info  |
 undef        { 
-               lvalp->str = new UString(yytext); 
-               if (lvalp->str->str() == 0) {
-                  delete (lvalp->str);
-                  lvalp->str = 0;
+               valp->str = new UString(yytext); 
+               if (valp->str->str() == 0) {
+                  delete (valp->str);
+                  valp->str = 0;
                }
                return OPERATOR_VAR;
              }
@@ -159,29 +162,29 @@ add     |
 normal  |
 cancel  |
 discard |
-queue       { lvalp->str = new UString(yytext); 
-              if (lvalp->str->str() == 0) {
-                delete (lvalp->str);
-                lvalp->str = 0;
+queue       { valp->str = new UString(yytext); 
+              if (valp->str->str() == 0) {
+                delete (valp->str);
+                valp->str = 0;
               }
               return STRING;
             }
 
 on     |
 off    |
-switch     { lvalp->str = new UString(yytext); 
-              if (lvalp->str->str() == 0) {
-                delete (lvalp->str);
-                lvalp->str = 0;
+switch     { valp->str = new UString(yytext); 
+              if (valp->str->str() == 0) {
+                delete (valp->str);
+                valp->str = 0;
               }
               return SWITCH;
             }
 
 external |
-internal   { lvalp->str = new UString(yytext); 
-             if (lvalp->str->str() == 0) {
-                delete (lvalp->str);
-                lvalp->str = 0;
+internal   { valp->str = new UString(yytext); 
+             if (valp->str->str() == 0) {
+                delete (valp->str);
+                valp->str = 0;
              }
              return BINDER;
             }
@@ -203,10 +206,10 @@ debugoff    |
 quit        |
 stopall     |
 reboot      |
-shutdown      { lvalp->str = new UString(yytext); 
-                if (lvalp->str->str() == 0) {
-                  delete (lvalp->str);
-                  lvalp->str = 0;
+shutdown      { valp->str = new UString(yytext); 
+                if (valp->str->str() == 0) {
+                  delete (valp->str);
+                  valp->str = 0;
                 }
                 return OPERATOR;
               }
@@ -297,30 +300,30 @@ list          { return GROUPLIST;}
 
 
 
-{ID}          { lvalp->str = new UString(yytext);
-                if (lvalp->str->str() == 0) {
-                  delete (lvalp->str);
-                  lvalp->str = 0;
+{ID}          { valp->str = new UString(yytext);
+                if (valp->str->str() == 0) {
+                  delete (valp->str);
+                  valp->str = 0;
                 }
                 return IDENTIFIER; } 
 
 
 {ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
                 tmp_position[0] = 0;
-                lvalp->structure.device = new UString(yytext); 
-                if (lvalp->structure.device->str() == 0) {
-                  delete (lvalp->structure.device);
-                  lvalp->structure.device = 0;
+                valp->structure.device = new UString(yytext); 
+                if (valp->structure.device->str() == 0) {
+                  delete (valp->structure.device);
+                  valp->structure.device = 0;
                 }
-                lvalp->structure.id = new UString(tmp_position+1); 
-                if (lvalp->structure.id->str() == 0) {
-                  delete (lvalp->structure.id);
-                  lvalp->structure.id = 0;
+                valp->structure.id = new UString(tmp_position+1); 
+                if (valp->structure.id->str() == 0) {
+                  delete (valp->structure.id);
+                  valp->structure.id = 0;
                 }
-                lvalp->structure.rooted = false; 
+                valp->structure.rooted = false; 
                   
                 return STRUCT; } 
 
-[ \t\r]+      /* eat up whitespace */
-\n      ++num_lines;
+[ \t\r]+       locp->step();/* eat up whitespace */
+\n+            locp->lines(yyleng);locp->step();
 %%

@@ -1,4 +1,3 @@
-%{
 /* \file ugrammar.y
  *******************************************************************************
 
@@ -23,33 +22,70 @@
 
  **************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h> 
-#include <hash_map.h>
+%require "2.1b"
+%error-verbose
+%locations
+%defines 
+%skeleton "lalr1.cc"
+%parse-param {UParser& bison_uparser}
+%lex-param {UParser& bison_uparser}
+%define "global_tokens_and_yystype"
+%{
 
 #include "ucommand.h"
 #include "utypes.h"
-#include "uconnection.h"
-#include "../uparser.h"
-#include "udevice.h"
-#include "uobj.h"
-#include "ualias.h"
+      	
+class UString;
+class UParser;
 
-#include <strstream>
-#include <iostream.h>
-#include <string.h>
+%}
+
+/* Possible data type returned by the bison parsing mechanism */
+
+%union {
+  UCommand                *command;   
+  UExpression             *expr;
+  UBinary                 *binary;
+  UNamedParameters        *namedparameters;  
+  UVariableName           *variable;    
+  UVariableList           *variablelist;   
+  UProperty               *property;  
+
+  UFloat                   *val;
+  UString                  *str;
+  struct {
+    UString *device;
+    UString *id; 
+    bool rooted;
+  }                        structure;
+}
+
+%{
+// Is included in ugrammar.cc
+#include <cstdio>
+#include <cstdlib>
+#include <cmath> 
+#include <hash_map.h>
+
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <algorithm>
 
 #include <list>
 #define TRUE UFloat(1)
 #define FALSE UFloat(0)
+
+#include "../uparser.h"
+
+#include "uconnection.h"
+#include "udevice.h"
+#include "uobj.h"
+#include "ualias.h"
+
 using namespace std;
-  
-class UString;
+
 extern UString** globalDelete;
-
-#define YYERROR_VERBOSE
-
 
 /* Memory checking macros, used in the command tree building process */
 
@@ -83,29 +119,15 @@ extern UString** globalDelete;
    if (p3!=0) { delete(p3);p3=0; }; \
    if (p4!=0) { delete(p4);p4=0; }; }}
 
-%}
-
-%pure_parser
-
-/* Possible data type returned by the bison parsing mechanism */
-
-%union {
-  UCommand                *command;   
-  UExpression             *expr;
-  UBinary                 *binary;
-  UNamedParameters        *namedparameters;  
-  UVariableName           *variable;    
-  UVariableList           *variablelist;   
-  UProperty               *property;  
-
-  UFloat                   *val;
-  UString                  *str;
-  struct {
-    UString *device;
-    UString *id; 
-    bool rooted;
-  }                        structure;
+//! Directs the call from 'bison' to the scanner in the right parser
+inline int yylex(YYSTYPE* val, yy::location* loc, UParser& p)
+{
+  return p.scan(val, loc);
 }
+
+
+
+%}
 
 /* List of all tokens and terminal symbols, with their type */
 
@@ -117,11 +139,13 @@ extern UString** globalDelete;
 %token LOOP LOOPN  FOREACH IN STOP BLOCK UNBLOCK NOOP TRUECONST FALSECONST EMIT
 %token CLASS VAR FUNCTION EVENT SUBCLASS NEW OBJECT
 %token GROUP RANGEMIN RANGEMAX INFO UNIT WAIT WAITUNTIL ECHO DOLLAR PERCENT AROBASE
-%token DEF RETURN BIN  WHENEVER COPY ALIAS DERIV DERIV2 TRUEDERIV TRUEDERIV2 SWITCH
+%token DEF RETURN BIN  WHENEVER COPY ALIAS DERIV DERIV2 TRUEDERIV TRUEDERIV2
 %token EVERY TIMEOUT STOPIF FREEZEIF AT ONLEAVE ANDOPERATOR OROPERATOR 
 %token CMDBLOCK EXPRBLOCK ONLY GROUPLIST
 
-%token <val>                 NUM  
+%token UEOF 0 "end of command"
+
+%token <val>                 NUM        "number"
 %token <val>                 TIMEVALUE
 %token <val>                 FLAG      
 %token <val>                 FLAGTEST     
@@ -139,7 +163,6 @@ extern UString** globalDelete;
 %token <str>                 OPERATOR_VAR
 %token <str>                 FUNCTION_VAR
 
-%type  <command>             ROOT
 %type  <expr>                expr
 %type  <val>                 timeexpr
 %type  <command>             taggedcommands
@@ -184,9 +207,15 @@ extern UString** globalDelete;
 
 /* URBI Grammar */
 
+%initial-action { @$ = bison_uparser.connection->lastloc; }
+
 %%
 
-ROOT:   
+ROOT: root {
+	bison_uparser.connection->lastloc = @$;
+      }
+
+root:   
 
     refvariable ASSIGN binary SEMICOLON { 
 
@@ -197,26 +226,22 @@ ROOT:
       MEMCHECK2(tmpcmd,$1,ref);
       if (tmpcmd) bison_uparser.binaryCommand = true;
 
-      $$ = new UCommand_TREE(USEMICOLON,tmpcmd,0);
-      if ($$)
-        $$->tag->update("__node__");
-      MEMCHECK($$);
-      bison_uparser.commandTree = (UCommand_TREE*)$$; 
+      bison_uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
+      if ( bison_uparser.commandTree )
+        bison_uparser.commandTree->tag->update("__node__");
+      MEMCHECK(bison_uparser.commandTree);      
     } 
 
   | taggedcommands { 
 
-    if ($$) {
-      if ($$->type == CMD_TREE)
-        bison_uparser.commandTree = (UCommand_TREE*)$$;     
-      else {
-        delete $$;
-        bison_uparser.commandTree = 0;      
-      }
-    }
-    else
       bison_uparser.commandTree = 0;
-  }
+      if ($1) {
+        if ($1->type == CMD_TREE)
+          bison_uparser.commandTree = (UCommand_TREE*)$1;     
+        else
+          delete $1;
+      }      
+    }
 ;
 
 
@@ -664,7 +689,7 @@ instruction:
         $2 = 0;
         delete bison_uparser.connection->functionTag;
         bison_uparser.connection->functionTag = 0;  
-        yyerror("Nested function def not allowed.");   
+        error(@$,"Nested function def not allowed.");   
         YYERROR;
       }
       else {
@@ -1414,4 +1439,26 @@ refvariables:
 /* End of grammar */
 
 %%
+
+// The error function that 'bison' calls
+void yy::parser::error(const location_type& l, const std::string& what_error) { 
+
+  std::ostringstream sstr;
+
+  sstr << "!!! " << l << ": " << what_error;
+  
+  strncpy(errorMessage, sstr.str().c_str(), sstr.str().size()<1024? sstr.str().size():1024);		  
+		  
+  /*
+  strcpy(errorMessage,"!!! "); 
+  strncat(errorMessage,what_error.c_str(),1019);
+  errorMessage[1022] = 0; // Just make sure it ends...
+  strcat(errorMessage,"\n");
+  */
+		  
+  if (globalDelete) {
+     delete *globalDelete;
+     (*globalDelete) = 0;
+  }
+}
 
