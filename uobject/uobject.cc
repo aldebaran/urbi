@@ -26,8 +26,6 @@
 using namespace urbi;
 using namespace std;
 
-const bool NOTIFYNEW = true;
-
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
@@ -36,6 +34,7 @@ namespace urbi {
   UObject* lastUObject;
 
   UStartlist objectlist;
+  UStartlist objecthublist;
   const string externalModuleTag = "__ExternalMessage__";
 
   UVarTable varmap;
@@ -46,6 +45,8 @@ namespace urbi {
   UTable eventendmap;
 
   UTimerTable timermap;
+  UTimerTable updatemap;
+
   
   template <>
   UVar& cast(UValue &v) {
@@ -208,9 +209,9 @@ UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UT
 // **************************************************************************	
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(UFloat period) : period(period)
+UTimerCallback::UTimerCallback(UFloat period, UTimerTable &tt) : period(period)
 {
-  timermap.push_back(this);
+  tt.push_back(this);
   lastTimeCalled = -9999999;
 }
 
@@ -275,7 +276,7 @@ urbi::UNotifyChange(string varname, int (*fun) (UVar&))
 void 
 urbi::USetTimer(UFloat t, int (*fun) ())
 {
-  new UTimerCallbacknoobj(t,fun);  
+  new UTimerCallbacknoobj(t,fun,timermap);  
 }
 
 
@@ -308,8 +309,33 @@ UObject::UObject(const string &s) :
 UObject::~UObject()
 {  
 }
+
+
+// **************************************************************************	
+//! UObjectHub constructor.
+
+UObjectHub::UObjectHub(const string& s) : name(s)
+{
+}
+
+//! UObjectHub destructor.
+UObjectHub::~UObjectHub()
+{
+}
+
+void 
+UObjectHub::USetUpdate(UFloat t) 
+{
+  period = t;
+  //FIXME
+//  new UTimerCallbackobj<UObjectHub> (t, this, &UObjectHub::update, updatemap);
+}
+
  
-//! UObject echo method
+// **************************************************************************	
+// Other functions
+ 
+//! echo method
 void
 urbi::echo(const char* format, ... ) {
 

@@ -405,6 +405,19 @@ UServer::work()
     }
 
   
+  // Execute Hub Updaters
+
+  for (urbi::UTimerTable::iterator ittt = urbi::updatemap.begin();
+       ittt != urbi::updatemap.end();
+       ittt++) 
+    if ((*ittt)->lastTimeCalled - currentTime + (*ittt)->period <
+	frequency_ / 2) {    
+	
+      (*ittt)->call();
+      (*ittt)->lastTimeCalled = currentTime;
+    }
+
+
   //reinitList.clear(); 
   afterWork();
 
