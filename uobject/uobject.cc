@@ -33,8 +33,9 @@ namespace urbi {
   
   UObject* lastUObject;
 
-  UStartlist objectlist;
-  UStartlist objecthublist;
+  STATIC_INSTANCE(UStartlist, objectlist);
+  STATIC_INSTANCE(UStartlist, objecthublist);
+
   const string externalModuleTag = "__ExternalMessage__";
 
   UVarTable varmap;
