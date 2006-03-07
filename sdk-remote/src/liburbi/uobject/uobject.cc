@@ -35,8 +35,10 @@ namespace urbi {
 
   UObject* lastUObject;
 
-  UStartlist objectlist;
-  UStartlist objecthublist;
+  
+  STATIC_INSTANCE(UStartlist, objectlist);
+  STATIC_INSTANCE(UStartlist, objecthublist);
+
 
   const string externalModuleTag = "__ExternalMessage__";
 
@@ -343,17 +345,17 @@ urbi::dispatcher(const UMessage &msg)
   // UEM_NEW
   else if ((USystemExternalMessage)(int)array[0] == UEM_NEW) { 
   
-    list<baseURBIStarter*>::iterator found = objectlist.end();
-    for (list<baseURBIStarter*>::iterator retr = objectlist.begin();
-	retr != objectlist.end();
+    list<baseURBIStarter*>::iterator found = objectlist->end();
+    for (list<baseURBIStarter*>::iterator retr = objectlist->begin();
+	retr != objectlist->end();
 	retr++)
       if ((*retr)->name == (string)array[2])
-	if (found != objectlist.end())
+	if (found != objectlist->end())
 	  msg.client.printf("Double object definition %s\n",(*retr)->name.c_str());
 	else
 	  found = retr;
             
-    if (found == objectlist.end())
+    if (found == objectlist->end())
       msg.client.printf("Unknown object definition %s\n",((string)array[2]).c_str());
     else
       (*found)->copy( (string) array[1] );
@@ -426,8 +428,8 @@ urbi::main(int argc, char *argv[])
   urbi::getDefaultClient()->setCallback(&dispatcher,
                                         externalModuleTag.c_str());
   
-  for (list<baseURBIStarter*>::iterator retr = objectlist.begin();
-       retr != objectlist.end();
+  for (list<baseURBIStarter*>::iterator retr = objectlist->begin();
+       retr != objectlist->end();
        retr++)
     (*retr)->init((*retr)->name);
 /*

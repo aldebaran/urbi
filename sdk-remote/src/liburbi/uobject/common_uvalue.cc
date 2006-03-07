@@ -377,8 +377,9 @@ UValue::UValue(const UObjectStruct &o) : type(DATA_OBJECT){
 UValue::~UValue() {
   switch(type) {
   case DATA_STRING:
-    delete stringValue;
-	break;
+    if (stringValue)
+      delete stringValue;
+    break;
   case DATA_BINARY:
     if (binary)
       delete binary;

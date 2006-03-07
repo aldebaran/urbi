@@ -27,6 +27,7 @@
 //#include <iostream> // should not be there, remove after debug
 //#include <uclient.h>
 #include "ufloat.h"
+#include "uobject/singleton.h"
 using namespace std;
 
 extern const bool NOTIFYNEW; 
@@ -83,8 +84,8 @@ urbi {
   typedef list<UTimerCallback*> UTimerTable;
 
   
-  extern UStartlist objectlist;
-  extern UStartlist objecthublist;
+  EXTERN_STATIC_INSTANCE(UStartlist, objectlist);
+  EXTERN_STATIC_INSTANCE(UStartlist, objecthublist);
   extern UVarTable varmap;
   extern UTable functionmap;
   extern UTable eventmap;
