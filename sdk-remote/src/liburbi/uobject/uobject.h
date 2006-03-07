@@ -44,6 +44,9 @@ namespace __gnu_cxx {
 // This macro is here to make life easier
 // Simply use: UStart(myUObjectType) and the rest will be taken care of.
 #define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objectlist)
+// Simply use: UStartHub(myUObjectHubType) and the rest will be taken care of.
+#define UStartHub(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objecthublist)
+
 
 // These macros are here to make life easier
 #define UAttachVar(obj,x) x.init(name,#x)
@@ -81,14 +84,17 @@ urbi {
 
   
   extern UStartlist objectlist;
-//  extern startlist hublist;
+  extern UStartlist objecthublist;
   extern UVarTable varmap;
   extern UTable functionmap;
   extern UTable eventmap;
   extern UTable eventendmap;
   extern UTable monitormap;
   extern UTable accessmap;  
+  
   extern UTimerTable timermap;
+  extern UTimerTable updatemap;
+
 
 
 
@@ -384,7 +390,7 @@ urbi {
   class UTimerCallback
   {
   public:
-    UTimerCallback(UFloat period);
+    UTimerCallback(UFloat period, UTimerTable &tt);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
@@ -398,8 +404,8 @@ urbi {
   class UTimerCallbacknoobj : public UTimerCallback
   {
   public:
-    UTimerCallbacknoobj(UFloat period, int (*fun) ()): 
-      UTimerCallback(period), fun(fun) {};
+    UTimerCallbacknoobj(UFloat period, int (*fun) (), UTimerTable &tt): 
+      UTimerCallback(period,tt), fun(fun) {};
     
     virtual void call() {
       (*fun)();      
@@ -412,8 +418,8 @@ urbi {
   class UTimerCallbackobj : public UTimerCallback
   {
   public:
-    UTimerCallbackobj(UFloat period, T* obj, int (T::*fun) ()): 
-      UTimerCallback(period), obj(obj), fun(fun) {};
+    UTimerCallbackobj(UFloat period, T* obj, int (T::*fun) (), UTimerTable &tt): 
+      UTimerCallback(period,tt), obj(obj), fun(fun) {};
     
     virtual void call() {
       ((*obj).*fun)();        
@@ -451,7 +457,7 @@ urbi {
 
     template <class T>
     void USetTimer(UFloat t, int (T::*fun) ()) {
-      new UTimerCallbackobj<T> (t,(T*)this, fun);
+      new UTimerCallbackobj<T> (t,(T*)this, fun, timermap);
     };
 
     // We have to duplicate because of the above UNotifyChange which catches the
@@ -478,19 +484,22 @@ urbi {
   {
   public:
     
-    UObjectHub(UFloat t) : period(t) {};
-    virtual ~UObjectHub() {};
+    UObjectHub(const string&);
+    virtual ~UObjectHub();
+
+    void USetUpdate(UFloat);
 
     template <class T>
     void USetTimer(UFloat t, int (T::*fun) ()) {
-      new UTimerCallbackobj<T> (t, (T*)this,fun);      
+      new UTimerCallbackobj<T> (t, (T*)this,fun, timermap);      
     }
 
-    virtual void update();
+    virtual void update() = 0;
 
   protected:
     
     UFloat period;
+    string name;
   };
     
   // *****************************************************************************
@@ -500,7 +509,7 @@ urbi {
       
   template <class T>
     void USetTimer(UFloat t, T* obj, int (T::*fun) ()) {
-      new UTimerCallbackobj<T> (t,obj,fun);
+      new UTimerCallbackobj<T> (t,obj,fun, timermap);
     }
   
   // *****************************************************************************

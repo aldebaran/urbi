@@ -28,8 +28,6 @@
 using namespace urbi;
 using namespace std;
 
-const bool NOTIFYNEW = true;
-
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
@@ -38,6 +36,8 @@ namespace urbi {
   UObject* lastUObject;
 
   UStartlist objectlist;
+  UStartlist objecthublist;
+
   const string externalModuleTag = "__ExternalMessage__";
 
   UVarTable varmap;
@@ -48,6 +48,7 @@ namespace urbi {
   UTable eventendmap;
 
   UTimerTable timermap;
+  UTimerTable updatemap;
 
   UCallbackAction dispatcher(const UMessage &msg);
   UCallbackAction debug(const UMessage &msg);
@@ -128,9 +129,9 @@ UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UT
 // **************************************************************************	
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(UFloat period) : period(period)
+UTimerCallback::UTimerCallback(UFloat period, UTimerTable &tt) : period(period)
 {
-  timermap.push_back(this);
+  tt.push_back(this);
   lastTimeCalled = -9999999;
 }
 
@@ -185,7 +186,7 @@ urbi::UNotifyChange(string varname, int (*fun) ())
 void 
 urbi::USetTimer(UFloat t, int (*fun) ())
 {
-  new UTimerCallbacknoobj(t,fun);  
+  new UTimerCallbacknoobj(t,fun,timermap);  
 }
 
 //! UVar monitoring with callback, based on var name: creates a hidden UVar 
@@ -364,7 +365,33 @@ urbi::dispatcher(const UMessage &msg)
   
   return URBI_CONTINUE;
 }
+
+
+
+
+// **************************************************************************	
+//! UObjectHub constructor.
+UObjectHub::UObjectHub(const string& s) : name(s)
+{
+}
+
+//! UObjectHub destructor.
+UObjectHub::~UObjectHub()
+{
+}
+
+void 
+UObjectHub::USetUpdate(UFloat t) 
+{
+  period = t;
+  // nothing happend in remote mode...
+}
+
+
  
+// **************************************************************************	
+// Other functions
+
 UCallbackAction 
 urbi::debug(const UMessage &msg)
 {
