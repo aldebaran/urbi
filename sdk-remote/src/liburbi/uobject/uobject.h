@@ -507,7 +507,7 @@ urbi {
       new UTimerCallbackobj<T> (t, (T*)this,fun, timermap);      
     }
 
-    virtual void update() = 0;
+    virtual int update() = 0;
 
   protected:
     
