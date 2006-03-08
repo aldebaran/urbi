@@ -450,6 +450,18 @@ urbi {
       if (cb) cb->storage = (void*)(&v);
     };
 
+    template <class T> 
+    void UNotifyChange (string name, int (T::*fun) ()) { 
+      createUCallback("var", (T*)this, fun, name, monitormap);
+    }; 
+
+    template <class T>
+    void UNotifyChange (string name, int (T::*fun) (UVar&)) { 
+      UGenericCallback* cb = createUCallback("var", (T*)this, fun, name, monitormap);
+      if (cb) cb->storage = new UVar(name);
+    };
+
+
     template <class T>
     void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
       UGenericCallback* cb = createUCallback("varaccess", (T*)this, fun, v.get_name(), accessmap);

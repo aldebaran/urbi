@@ -111,9 +111,9 @@ AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
 lib_LIBRARIES = liburbi.a
-include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject.h uobject/uexternal.h
+include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject.h uobject/uexternal.h uconversion.h
 
-liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h uobject/uobject.cc uobject/uvar.cc uobject/common_uvalue.cc uobject/uexternal.h
+liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h uobject/uobject.cc uobject/uvar.cc uobject/common_uvalue.cc uobject/uexternal.h uconversion.h uconversion.cpp
 liburbi_a_LIBADD = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 
 @OPENR_TRUE@SUBDIRS = openr
@@ -128,7 +128,7 @@ liburbi_a_AR = $(AR) cru
 liburbi_a_DEPENDENCIES = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
 am_liburbi_a_OBJECTS = uabstractclient.$(OBJEXT) uclient.$(OBJEXT) \
 	usyncclient.$(OBJEXT) uobject.$(OBJEXT) uvar.$(OBJEXT) \
-	common_uvalue.$(OBJEXT)
+	common_uvalue.$(OBJEXT) uconversion.$(OBJEXT)
 liburbi_a_OBJECTS = $(am_liburbi_a_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
@@ -136,8 +136,9 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/common_uvalue.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/uabstractclient.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/uclient.Po ./$(DEPDIR)/uobject.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/usyncclient.Po ./$(DEPDIR)/uvar.Po
+@AMDEP_TRUE@	./$(DEPDIR)/uclient.Po ./$(DEPDIR)/uconversion.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/uobject.Po ./$(DEPDIR)/usyncclient.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/uvar.Po
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
@@ -211,6 +212,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common_uvalue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uabstractclient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uclient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uconversion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uobject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usyncclient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uvar.Po@am__quote@
@@ -615,10 +617,10 @@ uninstall-info: uninstall-info-recursive
 
 uobject/uobject.h:
 	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
-liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o
+liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o uconversion.o
 	rm -f liburbi.a
 	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o
+	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o uconversion.o
 	ranlib liburbi.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

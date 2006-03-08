@@ -39,7 +39,6 @@ using std::string;
 using std::list;
 using std::vector;
 using std::ostream;
-typedef unsigned char byte; 
 
 static const int URBI_BUFLEN    = 128000 ; ///< Connection Buffer size.  
 static const int URBI_PORT	    = 54000  ; ///< Standard port of URBI server.
@@ -330,24 +329,7 @@ class UAbstractClient : public std::ostream
   friend class UClientStreambuf;
 };
 
-
-/// Image format conversion functions.
-int convertRGBtoYCrCb  (const byte* source, int sourcelen, byte* dest);
-int convertYCrCbtoRGB  (const byte* source, int sourcelen, byte* dest);
-int convertJPEGtoYCrCb (const byte* source, int sourcelen, byte* dest, 
-                       int &size);
-int convertJPEGtoRGB   (const byte* source, int sourcelen, byte* dest, 
-                       int &size);
-
-//sound format conversion functions.
-int convert(const USound &source, USound &destination);
-
-
-//image format conversion. JPEG compression not impletmented.
-int convert(const UImage &source, UImage & destination);
-
-
-
+#include "uconversion.h"
 
 class UCallbackWrapper {
  public:
