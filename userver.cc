@@ -196,11 +196,13 @@ UServer::initialization()
   new UVariable(MAINDEVICE,"nbdevices", (UFloat)(devicetab.size()));
 
   // Plugins (internal softdevices)
+  
   for (list<urbi::baseURBIStarter*>::iterator retr = urbi::objectlist->begin();
       retr != urbi::objectlist->end();
       retr++) 
     (*retr)->init((*retr)->name);
   
+
   // Ghost connection
   ghost  = new UGhostConnection(this); 
   connectionList.push_front((UConnection*)ghost);

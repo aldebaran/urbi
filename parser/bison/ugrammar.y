@@ -133,59 +133,138 @@ inline int yylex(YYSTYPE* val, yy::location* loc, UParser& p)
 
 %start ROOT
 
-%token SEMICOLON COLON COMMA AND PIPE BANG MINUSMINUS PLUSPLUS MULT DIV DEQ
-%token PLUS EXP MINUS ASSIGN EQ REQ PEQ NE GT GE LT LE TILDE RPAREN LPAREN DIR
-%token RSBRACKET LSBRACKET RBRACKET LBRACKET IF ELSE WHILE FOR NORM VARERROR
-%token LOOP LOOPN  FOREACH IN STOP BLOCK UNBLOCK NOOP TRUECONST FALSECONST EMIT
-%token CLASS VAR FUNCTION EVENT SUBCLASS NEW OBJECT
-%token GROUP RANGEMIN RANGEMAX INFO UNIT WAIT WAITUNTIL ECHO DOLLAR PERCENT AROBASE
-%token DEF RETURN BIN  WHENEVER COPY ALIAS DERIV DERIV2 TRUEDERIV TRUEDERIV2
-%token EVERY TIMEOUT STOPIF FREEZEIF AT ONLEAVE ANDOPERATOR OROPERATOR 
-%token CMDBLOCK EXPRBLOCK ONLY GROUPLIST
+%token SEMICOLON ";"
+%token COLON  ":"
+%token COMMA ","
+%token AND  "&"
+%token PIPE  "|"
+%token BANG  "!"
+%token MINUSMINUS "--"
+%token PLUSPLUS  "++"
+%token MULT "*"
+%token DIV "/"
+%token DEQ "=~="
+%token PLUS "+"
+%token EXP "^"
+%token MINUS "-"
+%token ASSIGN "="
+%token EQ "=="
+%token REQ "~="
+%token PEQ "%="
+%token NE "!="
+%token GT ">"
+%token GE ">="
+%token LT "<"
+%token LE "<="
+%token TILDE "~"
+%token RPAREN ")"
+%token LPAREN "("
+%token DIR "->" 
+%token RSBRACKET  "]"
+%token LSBRACKET "["
+%token RBRACKET "}"
+%token LBRACKET "{"
+%token IF "if"
+%token ELSE "else"
+%token WHILE "while"
+%token FOR "for"
+%token NORM "normalized"
+%token VARERROR "varerror"
+%token LOOP "loop"
+%token LOOPN  "loopn"
+%token FOREACH "foreach"
+%token IN "in"
+%token STOP "stop"
+%token BLOCK "block"
+%token UNBLOCK "unblock"
+%token NOOP "noop"
+%token TRUECONST "true"
+%token FALSECONST "false"
+%token EMIT "emit"
+%token CLASS "class"
+%token VAR "var"
+%token FUNCTION "function"
+%token EVENT "event"
+%token SUBCLASS "subclass"
+%token NEW "new"
+%token OBJECT "object"
+%token GROUP "group"
+//%token RANGEMIN "rangemin"
+//%token RANGEMAX 
+%token INFO "info"
+%token UNIT "unit"
+%token WAIT "wait"
+%token WAITUNTIL "waituntil"
+%token ECHO "echo"
+%token DOLLAR "$"
+%token PERCENT "%"
+%token AROBASE "@"
+%token DEF "def"
+%token RETURN "return"
+%token BIN  "bin"
+%token WHENEVER "whenever"
+%token COPY "copy"
+%token ALIAS "alias"
+%token DERIV "derivation"
+%token DERIV2 "second-derivation"
+%token TRUEDERIV "command-derivation"
+%token TRUEDERIV2 "second-command-derivation"
+%token EVERY "every"
+%token TIMEOUT "timeout"
+%token STOPIF "stopif"
+%token FREEZEIF "freezeif"
+%token AT "at"
+%token ONLEAVE "onleave"
+%token ANDOPERATOR "&&"
+%token OROPERATOR "||"
+%token CMDBLOCK "command block"
+%token EXPRBLOCK "expression block"
+%token ONLY "only"
+%token GROUPLIST "group list"
 
 %token UEOF 0 "end of command"
 
 %token <val>                 NUM        "number"
-%token <val>                 TIMEVALUE
-%token <val>                 FLAG      
-%token <val>                 FLAGTEST     
-%token <val>                 FLAGID   
-%token <val>                 FLAGTIME         
-%token <str>                 IDENTIFIER    
-%token <structure>           STRUCT
-%token <structure>           REFSTRUCT
-%token <str>                 STRING
-%token <str>                 SWITCH
-%token <str>                 BINDER
-%token <str>                 OPERATOR
-%token <str>                 OPERATOR_ID
-%token <str>                 OPERATOR_ID_PARAM
-%token <str>                 OPERATOR_VAR
-%token <str>                 FUNCTION_VAR
+%token <val>                 TIMEVALUE  "time"
+%token <val>                 FLAG       "flag"
+%token <val>                 FLAGTEST   "flag test"  
+%token <val>                 FLAGID     "flag identifier"
+%token <val>                 FLAGTIME   "flag time"      
+%token <str>                 IDENTIFIER  "identifier"  
+%token <structure>           STRUCT      "structured identifier"
+%token <structure>           REFSTRUCT   "structured ref-identifier"
+%token <str>                 STRING      "string"
+%token <str>                 SWITCH      "switch"
+%token <str>                 BINDER      "binder"
+%token <str>                 OPERATOR    "operator command" 
+%token <str>                 OPERATOR_ID "operator"
+%token <str>                 OPERATOR_ID_PARAM "param-operator"
+%token <str>                 OPERATOR_VAR "var-operator"
+//%token <str>                 FUNCTION_VAR "var-function"
 
-%type  <expr>                expr
-%type  <val>                 timeexpr
-%type  <command>             taggedcommands
-%type  <command>             taggedcommand
-%type  <command>             command
-%type  <command>             instruction
-%type  <namedparameters>     parameters
-%type  <namedparameters>     array
-%type  <namedparameters>     parameterlist
-%type  <namedparameters>     rawparameters
-%type  <namedparameters>     namedparameters
-%type  <namedparameters>     flags
-%type  <variablelist>        refvariables
-%type  <expr>                softtest
-%type  <namedparameters>     identifiers
-%type  <expr>                class_declaration
-%type  <namedparameters>     class_declaration_list
-%type  <binary>              binary
-%type  <property>            property
-%type  <variable>            variable
-%type  <variable>            purevariable
-%type  <namedparameters>     purevariables
-%type  <variable>            refvariable
+%type  <expr>                expr            "expression"
+%type  <val>                 timeexpr        "time expression"
+%type  <command>             taggedcommands  "set of commands"
+%type  <command>             taggedcommand   "tagged command"
+%type  <command>             command         "command"
+%type  <command>             instruction     "instruction" 
+%type  <namedparameters>     parameters      "parameters"
+%type  <namedparameters>     array           "array"
+%type  <namedparameters>     parameterlist   "list of parameters"
+%type  <namedparameters>     rawparameters   "list of attributes"
+%type  <namedparameters>     namedparameters "list of named parameters"
+%type  <namedparameters>     flags           "list of flags"
+%type  <variablelist>        refvariables    "list of variables"
+%type  <expr>                softtest        "soft test"
+%type  <namedparameters>     identifiers     "list of identifiers"
+%type  <expr>                class_declaration "class declaration"
+%type  <namedparameters>     class_declaration_list "class declaration list"
+%type  <binary>              binary          "binary"
+%type  <property>            property        "property"
+%type  <variable>            variable        "variable"
+%type  <variable>            purevariable    "pure variable"
+%type  <namedparameters>     purevariables   "list of pure variables"
+%type  <variable>            refvariable     "ref-variable"
 
 /* Operators priority */
 
@@ -1445,8 +1524,8 @@ void yy::parser::error(const location_type& l, const std::string& what_error) {
 
   std::ostringstream sstr;
 
-  sstr << "!!! " << l << ": " << what_error;
-  
+  sstr << "!!! " << l << ": " << what_error << "\n";
+   
   strncpy(errorMessage, sstr.str().c_str(), sstr.str().size()<1024? sstr.str().size():1024);		  
 		  
   /*

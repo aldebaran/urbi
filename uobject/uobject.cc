@@ -328,8 +328,7 @@ void
 UObjectHub::USetUpdate(UFloat t) 
 {
   period = t;
-  //FIXME
-//  new UTimerCallbackobj<UObjectHub> (t, this, &UObjectHub::update, updatemap);
+  new UTimerCallbackobj<UObjectHub>(t, this, &UObjectHub::update, updatemap);
 }
 
  
