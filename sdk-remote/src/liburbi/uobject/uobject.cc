@@ -37,7 +37,7 @@ namespace urbi {
 
   
   STATIC_INSTANCE(UStartlist, objectlist);
-  STATIC_INSTANCE(UStartlist, objecthublist);
+  STATIC_INSTANCE(UStartlistHub, objecthublist);
 
 
   const string externalModuleTag = "__ExternalMessage__";
@@ -211,6 +211,10 @@ UObject::UObject(const string &s) :
   lastUObject = this;
   URBI() << "class " << name << "{};"; 
   URBI() << "external " << "object" << " " << name <<";";
+
+  // default
+  derived = false;
+  classname = name;
 }
 
 
@@ -357,9 +361,10 @@ urbi::dispatcher(const UMessage &msg)
             
     if (found == objectlist->end())
       msg.client.printf("Unknown object definition %s\n",((string)array[2]).c_str());
-    else
+    else 
       (*found)->copy( (string) array[1] );
-    }
+      
+  }
 
   // DEFAULT
   else          
@@ -389,7 +394,23 @@ UObjectHub::USetUpdate(UFloat t)
   // nothing happend in remote mode...
 }
 
+void 
+UObjectHub::addMember(UObject* obj)
+{
+  members.push_back(obj);
+}
 
+urbi::UObjectHub* 
+urbi::locateHub(string name) {
+
+  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
+       retr != urbi::objecthublist->end();
+       retr++)
+    if ((*retr)->name == name)
+      return (*retr)->getUObjectHub();       
+  
+  return 0;
+}
  
 // **************************************************************************	
 // Other functions
@@ -428,7 +449,7 @@ urbi::main(int argc, char *argv[])
   urbi::getDefaultClient()->setCallback(&dispatcher,
                                         externalModuleTag.c_str());
   
-  for (list<baseURBIStarter*>::iterator retr = objectlist->begin();
+  for (UStartlist::iterator retr = objectlist->begin();
        retr != objectlist->end();
        retr++)
     (*retr)->init((*retr)->name);

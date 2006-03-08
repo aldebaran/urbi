@@ -46,7 +46,7 @@ namespace __gnu_cxx {
 // Simply use: UStart(myUObjectType) and the rest will be taken care of.
 #define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objectlist)
 // Simply use: UStartHub(myUObjectHubType) and the rest will be taken care of.
-#define UStartHub(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objecthublist)
+#define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(string(#x),objecthublist)
 
 
 // These macros are here to make life easier
@@ -56,6 +56,10 @@ namespace __gnu_cxx {
 #define UAttachEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
 #define UAttachEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
 
+// Macro to register to a Hub
+#define URegister(hub) { UObjectHub* uobjhub = urbi::locateHub((string)#hub); \
+  if (uobjhub) uobjhub->addMember(dynamic_cast<UObject*>(this)); \
+  else echo("Error: hub name '%s' is unknown\n",#hub); }
 
 // defines a variable and it's associated accessors
 #define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
@@ -69,7 +73,9 @@ urbi {
   class UObjectData;
   class UVar;
   class UObject;
+  class UObjectHub;
   class baseURBIStarter;  
+  class baseURBIStarterHub;  
   class UGenericCallback;
   class UTimerCallback;
   class UValue;
@@ -81,11 +87,12 @@ urbi {
   typedef hash_map<string,list<UGenericCallback*> > UTable;
   typedef hash_map<string,list<UVar*> > UVarTable;
   typedef list<baseURBIStarter*> UStartlist;
+  typedef list<baseURBIStarterHub*> UStartlistHub;
   typedef list<UTimerCallback*> UTimerTable;
 
   
   EXTERN_STATIC_INSTANCE(UStartlist, objectlist);
-  EXTERN_STATIC_INSTANCE(UStartlist, objecthublist);
+  EXTERN_STATIC_INSTANCE(UStartlistHub, objecthublist);
   extern UVarTable varmap;
   extern UTable functionmap;
   extern UTable eventmap;
@@ -96,9 +103,6 @@ urbi {
   extern UTimerTable timermap;
   extern UTimerTable updatemap;
 
-
-
-
   extern void main(int argc, char *argv[]);
 
   void UNotifyChange(UVar&);  
@@ -108,8 +112,9 @@ urbi {
   void UNotifyChange(string, int (*) (UVar&));
   
   void UNotifyAccess(UVar&, int (*) (UVar&));
-
-
+  
+  UObjectHub* locateHub(string name);
+  
   void echo(const char * format, ... );
 
   // *****************************************************************************
@@ -281,47 +286,6 @@ urbi {
   };
 
 
-
-
-  // **************************************************************************	
-  //! URBIStarter base class used to store heterogeneous template class objects in starterlist
-  class baseURBIStarter
-  {
-  public:
-
-    baseURBIStarter(string name) : name(name) {};
-    virtual ~baseURBIStarter() {};
-
-    virtual void init(string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
-    virtual void copy(string) = 0; ///< Used to provide a copy of a C++ object based on its name
-    string name;
-  };
-
-  //! This is the class containing URBI starters
-  /** A starter is a class whose job is to start an instance of a particular UObject subclass,
-    * resulting in the initialization of this object (registration to the kernel)
-    */
-  template <class T> class URBIStarter : public baseURBIStarter
-  {
-  public:
-    URBIStarter(string name, UStartlist& _slist) : baseURBIStarter(name)
-    	{ slist = &_slist;
-	  slist->push_back(dynamic_cast<baseURBIStarter*>(this)); 
-	};
-    virtual ~URBIStarter() { };
-
-    virtual void copy(string objname) {
-      	new URBIStarter<T>(objname,*slist);
-	init(objname);
-    };
-
-  protected:
-    virtual void init(string objname) { new T(objname); }; ///< Called when the object is ready to be initialized    
-    
-    UStartlist  *slist;
-  };	
-
-  
   // *****************************************************************************
   //!UVar class definition
   class UVar
@@ -436,7 +400,7 @@ urbi {
   public:
     
     UObject(const string&);
-    ~UObject();
+    virtual ~UObject();
 
     template <class T> 
     void UNotifyChange (UVar& v, int (T::*fun) ()) { 
@@ -483,6 +447,10 @@ urbi {
     void UNotifyAccess(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyAccess(v,fun); };
 
     string name; ///< name of the object as seen in URBI
+    string classname; ///< name of the class the objects is derived from
+    bool   derived; ///< true when the object has been newed by an urbi command 
+
+    virtual void updateHub() {}; ///< this function can be called from the hub
     
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
@@ -506,7 +474,10 @@ urbi {
       new UTimerCallbackobj<T> (t, (T*)this,fun, timermap);      
     }
 
-    virtual int update() = 0;
+    void addMember(UObject* obj);
+    virtual int update() = 0 ;
+
+    list<UObject*> members;
 
   protected:
     
@@ -536,6 +507,91 @@ urbi {
   template <> UList cast(UValue &v);
   template <> UObjectStruct cast(UValue &v);
   
+
+  // **************************************************************************	
+  //! URBIStarter base class used to store heterogeneous template class objects in starterlist
+  class baseURBIStarter
+  {
+  public:
+
+    baseURBIStarter(string name) : name(name) {};
+    virtual ~baseURBIStarter() {};
+
+    virtual void init(string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
+    virtual void copy(string) = 0; ///< Used to provide a copy of a C++ object based on its name
+    string name;
+  };
+
+  //! This is the class containing URBI starters
+  /** A starter is a class whose job is to start an instance of a particular UObject subclass,
+    * resulting in the initialization of this object (registration to the kernel)
+    */
+  template <class T> class URBIStarter : public baseURBIStarter
+  {
+  public:
+    URBIStarter(string name, UStartlist& _slist) : baseURBIStarter(name)
+    	{ slist = &_slist;
+	  slist->push_back(dynamic_cast<baseURBIStarter*>(this)); 
+	};
+    virtual ~URBIStarter() {};
+
+    virtual void copy(string objname) {
+      	URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
+	ustarter->init(objname);
+ 	dynamic_cast<UObject*>(ustarter->object)->derived   = true;
+        dynamic_cast<UObject*>(ustarter->object)->classname = 
+	  dynamic_cast<UObject*>(object)->classname;
+    };
+
+  protected:
+    virtual void init(string objname) { 
+       object = new T(objname);
+    }; ///< Called when the object is ready to be initialized    
+    
+    UStartlist  *slist;
+    T*          object;
+  };	
+
+  // **************************************************************************	
+  //! URBIStarter base class used to store heterogeneous template class objects in starterlist
+  class baseURBIStarterHub
+  {
+  public:
+
+    baseURBIStarterHub(string name) : name(name) {};
+    virtual ~baseURBIStarterHub() {};
+
+    virtual void init(string) = 0; ///< Used to provide a wrapper to initialize objects in starterlist
+    virtual UObjectHub* getUObjectHub() = 0;
+    string name;    
+  };
+
+  //! This is the class containing URBI starters
+  /** A starter is a class whose job is to start an instance of a particular UObject subclass,
+    * resulting in the initialization of this object (registration to the kernel)
+    */
+  template <class T> class URBIStarterHub : public baseURBIStarterHub
+  {
+  public:
+    URBIStarterHub(string name, UStartlistHub& _slist) : baseURBIStarterHub(name)
+    	{ slist = &_slist;
+	  slist->push_back(dynamic_cast<baseURBIStarterHub*>(this)); 
+	};
+    virtual ~URBIStarterHub() { };
+
+  protected:
+    virtual void init(string objname) { 
+       object = new T(objname); 
+    }; ///< Called when the object is ready to be initialized    
+
+    virtual UObjectHub* getUObjectHub() { 
+      return dynamic_cast<UObjectHub*>(object);
+    }; ///< access to the object from the outside
+    
+    UStartlistHub  *slist;
+    T*                 object;
+  };
+
   /**********************************************************/
   // This section is autogenerated. Not for humans eyes ;)
   /**********************************************************/
