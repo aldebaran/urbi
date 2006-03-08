@@ -197,7 +197,13 @@ UServer::initialization()
 
   // Plugins (internal softdevices)
   
-  for (list<urbi::baseURBIStarter*>::iterator retr = urbi::objectlist->begin();
+  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
+      retr != urbi::objecthublist->end();
+      retr++) 
+    (*retr)->init((*retr)->name);
+  
+ 
+  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
       retr != urbi::objectlist->end();
       retr++) 
     (*retr)->init((*retr)->name);

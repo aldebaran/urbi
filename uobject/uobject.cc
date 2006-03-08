@@ -34,7 +34,7 @@ namespace urbi {
   UObject* lastUObject;
 
   STATIC_INSTANCE(UStartlist, objectlist);
-  STATIC_INSTANCE(UStartlist, objecthublist);
+  STATIC_INSTANCE(UStartlistHub, objecthublist);
 
   const string externalModuleTag = "__ExternalMessage__";
 
@@ -80,6 +80,7 @@ namespace urbi {
 
 using namespace urbi;
 
+void urbi::main(int argc, char *argv[]) {} // no effect here
 
 // **************************************************************************	
 //! UGenericCallback constructor.
@@ -331,6 +332,23 @@ UObjectHub::USetUpdate(UFloat t)
   new UTimerCallbackobj<UObjectHub>(t, this, &UObjectHub::update, updatemap);
 }
 
+void 
+UObjectHub::addMember(UObject* obj)
+{
+  members.push_back(obj);
+}
+
+urbi::UObjectHub* 
+urbi::locateHub(string name) {
+
+  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
+       retr != urbi::objecthublist->end();
+       retr++)
+    if ((*retr)->name == name)
+      return (*retr)->getUObjectHub();       
+  
+  return 0;
+}
  
 // **************************************************************************	
 // Other functions
