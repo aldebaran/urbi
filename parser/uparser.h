@@ -25,37 +25,26 @@
 #ifndef UPARSER_H_DEFINED
 #define UPARSER_H_DEFINED
 
-
-#include <iostream>
+#include <strstream> 
+#include <sstream>
+#include <algorithm>
 #include <string>
 
-#include <strstream> 
-#include <iostream.h>
-#include <string.h>
-
+#include "utypes.h"
 #include "bison/FlexLexer.h"
-#include "../utypes.h"
-#include "../ustring.h"
+#include "bison/location.hh"
 
-using namespace std;
-
+// FIXME: When Bison is fixed, replace yy::parser::token::yytokentype
+// by yy::parser::token_type.
 #undef  YY_DECL
-#define YY_DECL \
-  int yyFlexLexer::yylex(YYSTYPE* valp, yy::location* locp, UParser& p)
+#define YY_DECL                                                 \
+  yy::parser::token::yytokentype 			 	\
+  yyFlexLexer::yylex(yy::parser::semantic_type* valp,		\
+                     yy::location* locp, UParser& uparser)
 
 // Parse function of 'bison' is defined externally
 extern char errorMessage[1024];
-class UConnection;
-class UCommand;
-
-class UString;
 extern UString** globalDelete;
-
-struct UDefine {
-  UString *name;
-  UString *value;
-};
-
 
 //! Control class for a flex-scanner
 /*! It has a pointer to the uparser in which it is contained
@@ -81,7 +70,7 @@ private:
 class UParser 
 {
 public:
- // friend int yylex(YYSTYPE *lvalp, void *compiler);
+ // friend int yylex(yy::parser::semantic_type *lvalp, void *compiler);
 
   UParser() : uflexer(this) {}
 
@@ -93,10 +82,10 @@ public:
     commandTree = 0;
     result = 0;   
 
-    istrstream * mem_buff = new istrstream((char*)command, length);    
+    std::istrstream * mem_buff = new std::istrstream((char*)command, length);    
     if (!mem_buff) return -1;
        
-    istream* mem_input = new istream(mem_buff->rdbuf());
+    std::istream* mem_input = new std::istream(mem_buff->rdbuf());
     if (!mem_input) {
       delete mem_buff;
       return -1;
@@ -118,8 +107,19 @@ public:
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
-  int scan(YYSTYPE* val, yy::location* loc) { 
+  yy::parser::token::yytokentype scan(yy::parser::semantic_type* val,
+                                      yy::location* loc) { 
      return uflexer.yylex(val,loc,*this); 
+  }
+
+  void error (const yy::location& l, const std::string& msg)
+  {
+      std::ostringstream sstr;
+
+      sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
+      strncpy(errorMessage, sstr.str().c_str(),
+              std::min(sizeof (errorMessage), sstr.str().size()));  
+	
   }
 
 private:
@@ -129,15 +129,8 @@ private:
 };
 
 
-// Definitions for 'flex' and 'bison'
-
-#define yywrap() 1
-#define YY_SKIP_YYWRAP
-#define YYPARSE_PARAM parm
-#define YYLEX_PARAM parm
-
 // Important! These are the "shortcuts" which you can use in your
 // ".l"- and ".y"-files to access the corresponding uparser-object!
-#define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
+// #define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
 
 #endif

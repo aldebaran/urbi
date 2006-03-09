@@ -26,8 +26,7 @@
 #ifndef UTYPE_H_DEFINED
 #define UTYPE_H_DEFINED
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
 #include <hash_map.h>
 #include "ufloat.h"
 class UDevice; 
@@ -41,6 +40,7 @@ class UBinder;
 class UObj;
 class UAlias;
 class UString;
+class UCommand;
 class UCommand_EMIT;
 
 extern  int   usedMemory; //< Keeps track of how much memory has been used for                         

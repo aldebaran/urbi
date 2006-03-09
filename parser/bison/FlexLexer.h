@@ -42,7 +42,7 @@
 //	...
 
 // Note: july 2004-2005.=> modified by Jean-Christophe Baillie
-// Added YYSTYPE *lvalp to the definition of the yylex function.
+// Added yy::parser::semantic_type *lvalp to the definition of the yylex function.
 /*! \file FlexLexer.h
  *******************************************************************************
 
@@ -55,8 +55,6 @@
 
 #include "ucommand.h"
 #include "ugrammar.hh"
-
-extern "C++" {
 
 struct yy_buffer_state;
 typedef int yy_state_type;
@@ -75,11 +73,15 @@ public:
 	virtual void yy_delete_buffer( struct yy_buffer_state* b ) = 0;
 	virtual void yyrestart( istream* s ) = 0;
 
-	virtual int yylex(YYSTYPE* val, yy::location* loc, UParser& p) = 0;
+	virtual yy::parser::token::yytokentype 
+	           yylex(yy::parser::semantic_type* val,
+			 yy::location* loc, UParser& p) = 0;
 
 	// Call yylex with new input/output sources.
-	int yylex( YYSTYPE* val, yy::location* loc, UParser& p,
-	           istream* new_in, ostream* new_out = 0 )
+	yy::parser::token::yytokentype yylex( yy::parser::semantic_type* val,
+	                                      yy::location* loc, UParser& p,
+	                                      istream* new_in,
+					      ostream* new_out = 0 )
 		{
 		switch_streams( new_in, new_out );
 		return yylex(val, loc, p);
@@ -88,7 +90,7 @@ public:
 	// Switch to new input/output streams.  A nil stream pointer
 	// indicates "keep the current one".
 	virtual void switch_streams( istream* new_in = 0,
-					ostream* new_out = 0 ) = 0;
+				     ostream* new_out = 0 ) = 0;
 
 	int lineno() const		{ return yylineno; }
 
@@ -102,7 +104,6 @@ protected:
 	int yy_flex_debug;	// only has effect with -d or "%option debug"
 };
 
-}
 #endif
 #if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
 // Either this is the first time through (yyFlexLexerOnce not defined),
@@ -123,7 +124,9 @@ public:
 	void yy_delete_buffer( struct yy_buffer_state* b );
 	void yyrestart( istream* s );
 
-	virtual int yylex(YYSTYPE* val, yy::location* loc, UParser& p);
+	virtual yy::parser::token::yytokentype
+	             yylex(yy::parser::semantic_type* val,
+	                   yy::location* loc, UParser& p);
 	virtual void switch_streams( istream* new_in, ostream* new_out );
 
 protected:

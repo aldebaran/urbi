@@ -21,17 +21,18 @@
 
  **************************************************************************** */
 
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <math>
+#include <cstdlib>
+#include <cstring>
 
 #include "../uparser.h"
 
-#include <list>
-using namespace std;
+// Shorter access to the tokens.
+typedef yy::parser::token token;
 
 #define YY_USER_ACTION locp->columns(yyleng);
-
+// Otherwise Flex returns an int instead of an enum.
+#define yyterminate() return token::UEOF
 %}
 
 %option noyywrap
@@ -50,67 +51,67 @@ STRING   \"([^"]|"\\\"")*\"
 
 
 "inf"         { valp->val = new UFloat(UINFINITY);
-                return NUM;
+                return token::NUM;
               }
 
 "pi"          { valp->val = new UFloat(3.14159265358979323846264338327950288);
-                return NUM;
+                return token::NUM;
               }
 
 
 "+report"     { valp->val = new UFloat(1); 
-                return FLAG;}
+                return token::FLAG;}
 
 "+error"      { valp->val = new UFloat(2);
-                return FLAG;}
+                return token::FLAG;}
 
 "+end"        { valp->val = new UFloat(3);
-                return FLAG;}
+                return token::FLAG;}
 
 "+begin"      { valp->val = new UFloat(4);
-                return FLAG;}
+                return token::FLAG;}
 
 "+timeout"    { valp->val = new UFloat(5);
-                return FLAGTIME;}
+                return token::FLAGTIME;}
 
 "+bg"         { valp->val = new UFloat(10);
-                return FLAG;}
+                return token::FLAG;}
 
 "+stop"       { valp->val = new UFloat(6);
-                return FLAGTEST;}
+                return token::FLAGTEST;}
 
 "+top"        { valp->val = new UFloat(7); 
-                return FLAG;}
+                return token::FLAG;}
 
 "+freeze"     { valp->val = new UFloat(8);
-                return FLAGTEST;}
+                return token::FLAGTEST;}
 
 "+connection" { valp->val = new UFloat(9);
-                return FLAGID;}
+                return token::FLAGID;}
 
 {NUMBER}"d"   { yytext[yyleng-1]=0;
                 valp->val = new UFloat(atof(yytext) *60000*60*24);
-                return TIMEVALUE; }
+                return token::TIMEVALUE; }
 
 {NUMBER}"h"   { yytext[yyleng-1]=0;
                 valp->val = new UFloat(atof(yytext) *60000*60);
-                return TIMEVALUE; }
+                return token::TIMEVALUE; }
 
 {NUMBER}"m"   { yytext[yyleng-1]=0;
                 valp->val = new UFloat(atof(yytext) *60000);
-                return TIMEVALUE; }
+                return token::TIMEVALUE; }
 
 {NUMBER}"s"   { yytext[yyleng-1]=0;
                 valp->val = new UFloat(atof(yytext) *1000);
-                return TIMEVALUE; }
+                return token::TIMEVALUE; }
 
 {NUMBER}"ms"  { yytext[yyleng-2]=0;
                 valp->val = new UFloat(atof(yytext));
-                return TIMEVALUE; }
+                return token::TIMEVALUE; }
 
 
 {NUMBER}      { valp->val = new UFloat(atof(yytext));
-                return NUM; }
+                return token::NUM; }
 
 {STRING}      { valp->str = new UString(yytext+1);
                 if (valp->str->str() == 0) {
@@ -130,7 +131,7 @@ STRING   \"([^"]|"\\\"")*\"
                   */
                 }
                 
-                return STRING; }
+                return token::STRING; }
 
 
 stop       |
@@ -144,7 +145,7 @@ disconnect   { valp->str = new UString(yytext);
                   delete (valp->str);
                   valp->str = 0;
                }
-               return OPERATOR_ID;
+               return token::OPERATOR_ID;
              }
 
 info  |
@@ -154,7 +155,7 @@ undef        {
                   delete (valp->str);
                   valp->str = 0;
                }
-               return OPERATOR_VAR;
+               return token::OPERATOR_VAR;
              }
 
 mix     |
@@ -167,7 +168,7 @@ queue       { valp->str = new UString(yytext);
                 delete (valp->str);
                 valp->str = 0;
               }
-              return STRING;
+              return token::STRING;
             }
 
 on     |
@@ -177,7 +178,7 @@ switch     { valp->str = new UString(yytext);
                 delete (valp->str);
                 valp->str = 0;
               }
-              return SWITCH;
+              return token::SWITCH;
             }
 
 external |
@@ -186,7 +187,7 @@ internal   { valp->str = new UString(yytext);
                 delete (valp->str);
                 valp->str = 0;
              }
-             return BINDER;
+             return token::BINDER;
             }
 
 motoron     |
@@ -211,92 +212,92 @@ shutdown      { valp->str = new UString(yytext);
                   delete (valp->str);
                   valp->str = 0;
                 }
-                return OPERATOR;
+                return token::OPERATOR;
               }
 
 	      
 
-if            { return IF;}  
-else          { return ELSE;} 
-var           { return VAR;} 
-object        { return OBJECT;}  
-function      { return FUNCTION;} 
-class         { return CLASS;} 
-subclass      { return SUBCLASS;} 
-new           { return NEW;} 
-event         { return EVENT;} 
-while         { return WHILE;}
-timeout       { return TIMEOUT;}
-stopif        { return STOPIF;}
-freezeif      { return FREEZEIF;}
-every         { return EVERY;}
-at            { return AT;}
-whenever      { return WHENEVER;}
-onleave       { return ONLEAVE;}
-for           { return FOR;}
-foreach       { return FOREACH;}
-in            { return IN;}
-loop          { return LOOP;}
-loopn         { return LOOPN;}
-group         { return GROUP;}
-alias         { return ALIAS;}
-echo          { return ECHO;}
-wait          { return WAIT;}
-waituntil     { return WAITUNTIL;}
-emit          { return EMIT;}
-def           { return DEF;}
-return        { return RETURN;}
-"BIN"         { return BIN;}
-bin           { return BIN;}
-noop          { return NOOP;}
-true          { return TRUECONST;}
-false         { return FALSECONST;}
-copy          { return COPY;} 
-only          { return ONLY;}
-list          { return GROUPLIST;}
+if            { return token::IF;}  
+else          { return token::ELSE;} 
+var           { return token::VAR;} 
+object        { return token::OBJECT;}  
+function      { return token::FUNCTION;} 
+class         { return token::CLASS;} 
+subclass      { return token::SUBCLASS;} 
+new           { return token::NEW;} 
+event         { return token::EVENT;} 
+while         { return token::WHILE;}
+timeout       { return token::TIMEOUT;}
+stopif        { return token::STOPIF;}
+freezeif      { return token::FREEZEIF;}
+every         { return token::EVERY;}
+at            { return token::AT;}
+whenever      { return token::WHENEVER;}
+onleave       { return token::ONLEAVE;}
+for           { return token::FOR;}
+foreach       { return token::FOREACH;}
+in            { return token::IN;}
+loop          { return token::LOOP;}
+loopn         { return token::LOOPN;}
+group         { return token::GROUP;}
+alias         { return token::ALIAS;}
+echo          { return token::UECHO;}
+wait          { return token::WAIT;}
+waituntil     { return token::WAITUNTIL;}
+emit          { return token::EMIT;}
+def           { return token::DEF;}
+return        { return token::RETURN;}
+"BIN"         { return token::BIN;}
+bin           { return token::BIN;}
+noop          { return token::NOOP;}
+true          { return token::TRUECONST;}
+false         { return token::FALSECONST;}
+copy          { return token::COPY;} 
+only          { return token::ONLY;}
+list          { return token::GROUPLIST;}
 
-"'n"          { return NORM;}
-"'e"          { return VARERROR;}
-"'d"          { return TRUEDERIV;}
-"'dd"         { return TRUEDERIV2;}
-"''"          { return DERIV2;}
-"'"           { return DERIV;}
-"&&"          { return ANDOPERATOR;}
-"||"          { return OROPERATOR;}
-";"           { return SEMICOLON;}
-":"           { return COLON;}
-","           { return COMMA;}
-"&"           { return AND;}
-"|"           { return PIPE;}
-"!"           { return BANG;}
-"--"          { return MINUSMINUS;}
-"++"          { return PLUSPLUS;} 
-"*"           { return MULT;}
-"/"           { return DIV;}
-"+"           { return PLUS;}
-"^"           { return EXP;}
-"-"           { return MINUS;}
-"="           { return ASSIGN;}
-"=="          { return EQ;}
-"~="          { return REQ;}
-"=~="         { return DEQ;}
-"%="          { return PEQ;}
-"!="          { return NE;}
-">"           { return GT;}
-"<"           { return LT;}
-"<="          { return LE;}
-">="          { return GE;}
-"->"          { return DIR;}
-"~"           { return TILDE;}
-"%"           { return PERCENT;}
-"@"           { return AROBASE;}
-"("           { return LPAREN;}
-")"           { return RPAREN;}
-"["           { return LSBRACKET;}
-"]"           { return RSBRACKET;}
-"{"           { return LBRACKET;}
-"}"           { return RBRACKET;}
-"$"           { return DOLLAR;}
+"'n"          { return token::NORM;}
+"'e"          { return token::VARERROR;}
+"'d"          { return token::TRUEDERIV;}
+"'dd"         { return token::TRUEDERIV2;}
+"''"          { return token::DERIV2;}
+"'"           { return token::DERIV;}
+"&&"          { return token::ANDOPERATOR;}
+"||"          { return token::OROPERATOR;}
+";"           { return token::SEMICOLON;}
+":"           { return token::COLON;}
+","           { return token::COMMA;}
+"&"           { return token::AND;}
+"|"           { return token::PIPE;}
+"!"           { return token::BANG;}
+"--"          { return token::MINUSMINUS;}
+"++"          { return token::PLUSPLUS;} 
+"*"           { return token::MULT;}
+"/"           { return token::DIV;}
+"+"           { return token::PLUS;}
+"^"           { return token::EXP;}
+"-"           { return token::MINUS;}
+"="           { return token::ASSIGN;}
+"=="          { return token::EQ;}
+"~="          { return token::REQ;}
+"=~="         { return token::DEQ;}
+"%="          { return token::PEQ;}
+"!="          { return token::NE;}
+">"           { return token::GT;}
+"<"           { return token::LT;}
+"<="          { return token::LE;}
+">="          { return token::GE;}
+"->"          { return token::DIR;}
+"~"           { return token::TILDE;}
+"%"           { return token::PERCENT;}
+"@"           { return token::AROBASE;}
+"("           { return token::LPAREN;}
+")"           { return token::RPAREN;}
+"["           { return token::LSBRACKET;}
+"]"           { return token::RSBRACKET;}
+"{"           { return token::LBRACKET;}
+"}"           { return token::RBRACKET;}
+"$"           { return token::DOLLAR;}
 
 
 
@@ -305,7 +306,7 @@ list          { return GROUPLIST;}
                   delete (valp->str);
                   valp->str = 0;
                 }
-                return IDENTIFIER; } 
+                return token::IDENTIFIER; } 
 
 
 {ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
@@ -322,8 +323,13 @@ list          { return GROUPLIST;}
                 }
                 valp->structure.rooted = false; 
                   
-                return STRUCT; } 
+                return token::STRUCT; } 
 
 [ \t\r]+       locp->step();/* eat up whitespace */
 \n+            locp->lines(yyleng);locp->step();
+.              {
+                 uparser.error(*locp, std::string ("invalid character: ")
+		                      + yytext);
+		 locp->step ();
+	       }
 %%

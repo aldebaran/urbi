@@ -27,15 +27,13 @@
 %locations
 %defines 
 %skeleton "lalr1.cc"
-%parse-param {UParser& bison_uparser}
-%lex-param {UParser& bison_uparser}
-%define "global_tokens_and_yystype"
+%parse-param {UParser& uparser}
+%lex-param {UParser& uparser}
 %{
 
-#include "ucommand.h"
 #include "utypes.h"
-      	
-class UString;
+#include "ucommand.h"    
+
 class UParser;
 
 %}
@@ -62,17 +60,11 @@ class UParser;
 
 %{
 // Is included in ugrammar.cc
-#include <cstdio>
-#include <cstdlib>
-#include <cmath> 
+//#include <cmath> 
 #include <hash_map.h>
 
-#include <sstream>
-#include <iostream>
 #include <string>
-#include <algorithm>
 
-#include <list>
 #define TRUE UFloat(1)
 #define FALSE UFloat(0)
 
@@ -83,44 +75,43 @@ class UParser;
 #include "uobj.h"
 #include "ualias.h"
 
-using namespace std;
-
 extern UString** globalDelete;
 
 /* Memory checking macros, used in the command tree building process */
 
 #define MEMCHECK(p)       {if (p==0) { \
-   bison_uparser.connection->server->isolate(); \
-   bison_uparser.connection->server->memoryOverflow = true;}}
+   uparser.connection->server->isolate(); \
+   uparser.connection->server->memoryOverflow = true;}}
 
 #define MEMCHECK1(p,p1)       {if (p==0) { \
-   bison_uparser.connection->server->isolate(); \
-   bison_uparser.connection->server->memoryOverflow = true;\
+   uparser.connection->server->isolate(); \
+   uparser.connection->server->memoryOverflow = true;\
    if (p1!=0) { delete(p1);p1=0; };}}
 
 #define MEMCHECK2(p,p1,p2)    {if (p==0) { \
-   bison_uparser.connection->server->isolate(); \
-   bison_uparser.connection->server->memoryOverflow = true;\
+   uparser.connection->server->isolate(); \
+   uparser.connection->server->memoryOverflow = true;\
    if (p1!=0) { delete(p1);p1=0; }; \
    if (p2!=0) { delete(p2);p2=0; }; }}
 
 #define MEMCHECK3(p,p1,p2,p3) {if (p==0) { \
-   bison_uparser.connection->server->isolate(); \
-   bison_uparser.connection->server->memoryOverflow = true;\
+   uparser.connection->server->isolate(); \
+   uparser.connection->server->memoryOverflow = true;\
    if (p1!=0) { delete(p1);p1=0; }; \
    if (p2!=0) { delete(p2);p2=0; }; \
    if (p3!=0) { delete(p3);p3=0; }; }}
 
 #define MEMCHECK4(p,p1,p2,p3,p4) {if (p==0) { \
-   bison_uparser.connection->server->isolate(); \
-   bison_uparser.connection->server->memoryOverflow = true;\
+   uparser.connection->server->isolate(); \
+   uparser.connection->server->memoryOverflow = true;\
    if (p1!=0) { delete(p1);p1=0; }; \
    if (p2!=0) { delete(p2);p2=0; }; \
    if (p3!=0) { delete(p3);p3=0; }; \
    if (p4!=0) { delete(p4);p4=0; }; }}
 
 //! Directs the call from 'bison' to the scanner in the right parser
-inline int yylex(YYSTYPE* val, yy::location* loc, UParser& p)
+inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
+                                            yy::location* loc, UParser& p)
 {
   return p.scan(val, loc);
 }
@@ -189,13 +180,11 @@ inline int yylex(YYSTYPE* val, yy::location* loc, UParser& p)
 %token NEW "new"
 %token OBJECT "object"
 %token GROUP "group"
-//%token RANGEMIN "rangemin"
-//%token RANGEMAX 
 %token INFO "info"
 %token UNIT "unit"
 %token WAIT "wait"
 %token WAITUNTIL "waituntil"
-%token ECHO "echo"
+%token UECHO "echo"    // Flex defines the ECHO macro
 %token DOLLAR "$"
 %token PERCENT "%"
 %token AROBASE "@"
@@ -240,7 +229,6 @@ inline int yylex(YYSTYPE* val, yy::location* loc, UParser& p)
 %token <str>                 OPERATOR_ID "operator"
 %token <str>                 OPERATOR_ID_PARAM "param-operator"
 %token <str>                 OPERATOR_VAR "var-operator"
-//%token <str>                 FUNCTION_VAR "var-function"
 
 %type  <expr>                expr            "expression"
 %type  <val>                 timeexpr        "time expression"
@@ -286,12 +274,12 @@ inline int yylex(YYSTYPE* val, yy::location* loc, UParser& p)
 
 /* URBI Grammar */
 
-%initial-action { @$ = bison_uparser.connection->lastloc; }
+%initial-action { @$ = uparser.connection->lastloc; }
 
 %%
 
 ROOT: root {
-	bison_uparser.connection->lastloc = @$;
+	uparser.connection->lastloc = @$;
       }
 
 root:   
@@ -303,20 +291,20 @@ root:
       UCommand* tmpcmd = new UCommand_ASSIGN_BINARY($1,ref);
       if (tmpcmd) tmpcmd->tag->update("__node__");
       MEMCHECK2(tmpcmd,$1,ref);
-      if (tmpcmd) bison_uparser.binaryCommand = true;
+      if (tmpcmd) uparser.binaryCommand = true;
 
-      bison_uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
-      if ( bison_uparser.commandTree )
-        bison_uparser.commandTree->tag->update("__node__");
-      MEMCHECK(bison_uparser.commandTree);      
+      uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
+      if ( uparser.commandTree )
+        uparser.commandTree->tag->update("__node__");
+      MEMCHECK(uparser.commandTree);      
     } 
 
   | taggedcommands { 
 
-      bison_uparser.commandTree = 0;
+      uparser.commandTree = 0;
       if ($1) {
         if ($1->type == CMD_TREE)
-          bison_uparser.commandTree = (UCommand_TREE*)$1;     
+          uparser.commandTree = (UCommand_TREE*)$1;     
         else
           delete $1;
       }      
@@ -544,7 +532,7 @@ instruction:
       MEMCHECK1($$,$2);
     }      
 
-  | ECHO expr namedparameters {
+  | "echo" expr namedparameters {
 
       $$ = new UCommand_ECHO($2,$3,(UString*)0);
       MEMCHECK2($$,$2,$3);
@@ -762,28 +750,28 @@ instruction:
 
   | FUNCTION variable LPAREN identifiers RPAREN {
 
-      if (bison_uparser.connection->functionTag) {
-        if ($2) delete($2);
-        if ($4) delete($4);
+      if (uparser.connection->functionTag) {
+        delete($2);
+        delete($4);
         $2 = 0;
-        delete bison_uparser.connection->functionTag;
-        bison_uparser.connection->functionTag = 0;  
+        delete uparser.connection->functionTag;
+        uparser.connection->functionTag = 0;  
         error(@$,"Nested function def not allowed.");   
         YYERROR;
       }
       else {
-	bison_uparser.connection->functionTag = new UString("__Funct__");
-	bison_uparser.connection->functionClass = $2->device;
-	globalDelete = &bison_uparser.connection->functionTag;
+	uparser.connection->functionTag = new UString("__Funct__");
+	uparser.connection->functionClass = $2->device;
+	globalDelete = &uparser.connection->functionTag;
       }
  
     } taggedcommand {
      
       $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
       MEMCHECK2($$,$2,$4);
-      if (bison_uparser.connection->functionTag) {
-        delete bison_uparser.connection->functionTag;
-        bison_uparser.connection->functionTag = 0;  
+      if (uparser.connection->functionTag) {
+        delete uparser.connection->functionTag;
+        uparser.connection->functionTag = 0;  
 	globalDelete = 0;
       }      
     }
@@ -972,22 +960,21 @@ purevariable:
 //          (::urbiserver->grouptab.find($1->str()) != ::urbiserver->grouptab.end()))
 //        $$ = new UVariableName($1,new UString("val"),false,$2);
 //      else
-        if (bison_uparser.connection->functionTag) {
+        if (uparser.connection->functionTag) {
 	  // We are inside a function
-	  char tmpname[1024];
-	  snprintf(tmpname,1024,"%s.%s",
-	      bison_uparser.connection->functionClass->str(),
-	      $1->str());
-	      
-	  if ((::urbiserver->functiondeftab.find(tmpname) != ::urbiserver->functiondeftab.end()) ||
-	      (::urbiserver->eventdeftab.find(tmpname) != ::urbiserver->eventdeftab.end()) ||
-	      (::urbiserver->variabletab.find(tmpname) != ::urbiserver->variabletab.end()))
+
+	  std::string tmpname = std::string(uparser.connection->functionClass->str())
+	                        + "." + std::string($1->str());
+		  	      
+	  if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
+	      (::urbiserver->eventdeftab.find(tmpname.c_str()) != ::urbiserver->eventdeftab.end()) ||
+	      (::urbiserver->variabletab.find(tmpname.c_str()) != ::urbiserver->variabletab.end()))
 	    $$ = new UVariableName(new UString("self"),$1,false,$2);
 	  else
-  	    $$ = new UVariableName(new UString(bison_uparser.connection->functionTag),$1,false,$2);
+  	    $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
 	}
         else 
-          $$ = new UVariableName(new UString(bison_uparser.connection->connectionTag),
+          $$ = new UVariableName(new UString(uparser.connection->connectionTag),
                                  $1,false,$2);      
       MEMCHECK2($$,$1,$2);
       $$->nostruct = true;
@@ -1193,8 +1180,8 @@ expr:
   | refvariable LPAREN parameterlist RPAREN  { 
     
       if (($1) && ($1->device) && 
-          ($1->device->equal(bison_uparser.connection->functionTag)))
-        $1->nameUpdate(bison_uparser.connection->connectionTag->str(),
+          ($1->device->equal(uparser.connection->functionTag)))
+        $1->nameUpdate(uparser.connection->connectionTag->str(),
                        $1->id->str());
 
       $$ = new UExpression(EXPR_FUNCTION,$1,$3);
@@ -1522,19 +1509,7 @@ refvariables:
 // The error function that 'bison' calls
 void yy::parser::error(const location_type& l, const std::string& what_error) { 
 
-  std::ostringstream sstr;
-
-  sstr << "!!! " << l << ": " << what_error << "\n";
-   
-  strncpy(errorMessage, sstr.str().c_str(), sstr.str().size()<1024? sstr.str().size():1024);		  
-		  
-  /*
-  strcpy(errorMessage,"!!! "); 
-  strncat(errorMessage,what_error.c_str(),1019);
-  errorMessage[1022] = 0; // Just make sure it ends...
-  strcat(errorMessage,"\n");
-  */
-		  
+  uparser.error (l, what_error);
   if (globalDelete) {
      delete *globalDelete;
      (*globalDelete) = 0;
