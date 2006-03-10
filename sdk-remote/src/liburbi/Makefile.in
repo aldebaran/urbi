@@ -615,7 +615,7 @@ uninstall-info: uninstall-info-recursive
 	uninstall-info-am uninstall-info-recursive \
 	uninstall-libLIBRARIES uninstall-recursive
 
-uobject/uobject.h:
+uobject.h:
 	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
 liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o uconversion.o
 	rm -f liburbi.a

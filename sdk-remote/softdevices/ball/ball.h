@@ -18,7 +18,7 @@
 
  **************************************************************************** */
 
-#include <uobject.h>
+#include "uobject.h"
 using namespace urbi;
 
 //! ball class definition

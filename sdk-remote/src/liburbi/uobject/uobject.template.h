@@ -120,6 +120,12 @@ urbi {
   // *****************************************************************************
   // UValue and other related types
 
+  enum UVarType {
+    USYNC,
+    UREAD,
+    UWRITE
+  };
+  
   enum UDataType {
     DATA_DOUBLE,
     DATA_STRING,
@@ -294,12 +300,12 @@ urbi {
     
     UVar() { name = "noname";};
     UVar(UVar& v) {};
-    UVar(string,bool sync=true);
-    UVar(string,string,bool sync=true);
-    UVar(UObject&, string,bool sync=true);
+    UVar(string, UVarType vartype = USYNC);
+    UVar(string,string, UVarType vartype = USYNC);
+    UVar(UObject&, string, UVarType vartype = USYNC);
     ~UVar();
 
-    void init(string, string, bool sync=true);
+    void init(string, string, UVarType vartype = USYNC);
 
     void operator = ( UFloat );
     void operator = ( string );
@@ -311,16 +317,17 @@ urbi {
     UFloat& in();
     UFloat& out();
 
+    UVarType vartype; ///< type of variable synchronization or in/out behavior
+
     // internal
     void __update(UValue&);
 
   private:    
     UVardata  *vardata; ///< pointer to internal data specifics
-    void __init(bool sync=true);	
+    void __init(UVarType vartype = USYNC);	
 
     PRIVATE(string,name); ///< full name of the variable as seen in URBI      
     PRIVATE(UValue,value); ///< the variable value on the softdevice's side     
-    PRIVATE(bool,synchro); ///< is the variable in/out synchronized?     
   };
 
 

@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)/src/liburbi
+INCLUDES = -I$(top_srcdir)/src/liburbi -I$(top_srcdir)/src/liburbi/uobject
 AM_LDFLAGS = -L$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
