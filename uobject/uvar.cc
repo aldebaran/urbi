@@ -37,48 +37,52 @@ namespace urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(string varname, bool sync)
+UVar::UVar(string varname, UVarType vartype) :
+  vartype(vartype)
 {
   name = varname;  
-  __init(sync);
+  __init(vartype);
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, string varname, bool sync)
+UVar::UVar(UObject& obj, string varname, UVarType vartype) :
+  vartype(vartype)
 {
   name = obj.name + "." + varname;
-  __init(sync);
+  __init(vartype);
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string objname, string varname, bool sync)
+UVar::UVar(string objname, string varname, UVarType vartype) :
+  vartype(vartype)
 {
   name = objname + "." + varname;
-  __init(sync);
+  __init(vartype);
 }
 
 
 //! UVar initialization
 void
-UVar::init(string objname, string varname, bool sync)
+UVar::init(string objname, string varname, UVarType vartype)
 {  
+  this->vartype = vartype;
   name = objname + "." + varname;  
-  __init(sync);
+  __init(vartype);
 }
 
 //! UVar initializationvoid
 void
-UVar::__init(bool sync)
+UVar::__init(UVarType vartype)
 {  
+  this->vartype = vartype;
   varmap[name].push_back(this);
   
   HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
   if (it == ::urbiserver->variabletab.end()) 
     vardata = new UVardata(new UVariable(name.c_str(),new
-    ::UValue(),false,false,sync));  
+    ::UValue(),false,false,(vartype == USYNC)));  
   else
-    vardata = new UVardata(it->second);
-  synchro = sync;
+    vardata = new UVardata(it->second);  
 }
 
 //! UVar destructor.
