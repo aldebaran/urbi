@@ -29,6 +29,7 @@
 #include "userver.h"
 #include "ucallid.h"
 #include "utypes.h"
+#include "uobject.h"
 
 char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];  ///< temporary global string                                              
 MEMORY_MANAGER_INIT(UCommand);
@@ -628,7 +629,48 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       
       return ( status = UMORPH );
     } // fi: function exists
-  }
+
+
+    ////// module-defined /////
+
+    urbi::UTable::iterator hmfi = urbi::functionmap.find(functionname->str());
+    if (hmfi != urbi::functionmap.end()) {
+
+      UCommand *call_prev = 0;
+      bool found_function = false;
+
+      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+	  ((cbi != hmfi->second.end()) && (!found_function));
+	  cbi++) {
+	               
+  	if ( ( (expression->parameters) &&              
+   	      (expression->parameters->size() == (*cbi)->nbparam)) ||           
+    	    ( (!expression->parameters) && (!(*cbi)->nbparam)) ) {
+       	  
+  	  // here you could spawn a thread... if only Aprios knew how to!
+  	  urbi::UList tmparray;
+  	  for (UNamedParameters *pvalue = expression->parameters;               
+   	      pvalue != 0;
+    	      pvalue = pvalue->next) {
+	    
+	    UValue* valparam = pvalue->expression->eval(this,connection);
+	    if (!valparam) {
+	      
+	      connection->send("!!! EXPR evaluation failed\n",tag->str());
+	      return (status = UCOMPLETED);
+	    }
+	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, so it must be valparam who does the job.
+	    tmparray.array.push_back(tmpvalue);
+	  }
+	  
+	  delete expression;
+	  expression = new UExpression(EXPR_VALUE,
+	      new UValue( (*cbi)->__evalcall(tmparray)));
+	  found_function = true;
+	}
+      }
+    }    
+  } // fi: expr == function
 
 
   ////////////////////////////////////////
@@ -1818,9 +1860,10 @@ UCommandStatus
 UCommand_EXPR::execute(UConnection *connection)
 {
   HMfunctiontab::iterator hmf;
-
+  
   if (expression->type == EXPR_FUNCTION) {
-    // implement group-morphing
+    // implement group-morphing here
+    //...
 
     // Execution & morphing
     UString* funname = expression->variablename->buildFullname(this,connection);
@@ -1875,44 +1918,7 @@ UCommand_EXPR::execute(UConnection *connection)
                 )
             )  
           ); 
-
-      /* // This version is not faster and is very complicated... kept for the
-       * records only       
-       
-        
- 	 new UCommand_TREE(UPIPE,
-   	   new UCommand_TREE(UPIPE,
-	      new UCommand_WAIT_TEST(
-		new UExpression(EXPR_FUNCTION,
-		  new UVariableName(
-		    new UString("global"),
-		    new UString("isdef"),true, (UNamedParameters*)0),
-		  new UNamedParameters(
-		    new UExpression(EXPR_VARIABLE,	    
-		      new UVariableName(
-			new UString("__UFnctret"),
-			new UString(tmpbuffer),true,(UNamedParameters*)0)
-		      )
-		    )
-		  )
-		),
-	      new UCommand_EXPR(
-		new UExpression(EXPR_VARIABLE,	    
-		  new UVariableName(
-		    new UString("__UFnctret"),
-		    new UString(tmpbuffer),true,(UNamedParameters*)0)
-		  )
-		)
-	      ),
-	    new UCommand_OPERATOR_VAR(
-		new UString("undef"),
-		new UVariableName(
-		  new UString("__UFnctret"),
-		  new UString(tmpbuffer),true,(UNamedParameters*)0)
-		)
-	      );
-      */
-
+      
       return( status = UMORPH );
     }
 
@@ -1936,8 +1942,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	      "!!! Ambiguous multiple inheritance on function %s\n",
     	      funname->str());
-	  connection->send(tmpbuffer,tag->str()); 	      
-	  return( status = UCOMPLETED );	      
+	  connection->send(tmpbuffer,tag->str());
+	  return( status = UCOMPLETED );     
 	}
       }
     }
@@ -1987,7 +1993,7 @@ UCommand_EXPR::execute(UConnection *connection)
              pvalue = pvalue->next, pname = pname->next) {
 
           UValue* valparam = pvalue->expression->eval(this,connection);
-  if (!valparam) {
+	  if (!valparam) {
               
             connection->send("!!! EXPR evaluation failed\n",tag->str());
             return (status = UCOMPLETED);
@@ -2009,6 +2015,48 @@ UCommand_EXPR::execute(UConnection *connection)
       if ((connection->receiving) &&
           (expression->variablename->id->equal("exec")))
         return ( status = URUNNING);
+
+    ////// module-defined /////
+
+    urbi::UTable::iterator hmfi = urbi::functionmap.find(funname->str());
+    if (hmfi != urbi::functionmap.end()) {
+      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+ 	  cbi != hmfi->second.end();
+	  cbi++) {
+	               
+  	if ( ( (expression->parameters) &&              
+   	      (expression->parameters->size() == (*cbi)->nbparam)) ||           
+    	    ( (!expression->parameters) && (!(*cbi)->nbparam)) ) {
+       	  
+  	  // here you could spawn a thread... if only Aprios knew how to!
+  	  urbi::UList tmparray;
+  	  for (UNamedParameters *pvalue = expression->parameters;               
+   	      pvalue != 0;
+    	      pvalue = pvalue->next) {
+	    
+	    UValue* valparam = pvalue->expression->eval(this,connection);
+	    if (!valparam) {
+	      
+	      connection->send("!!! EXPR evaluation failed\n",tag->str());
+	      return (status = UCOMPLETED);
+	    }
+	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, so it must be valparam who does the job.
+	    tmparray.array.push_back(tmpvalue);
+	  }
+	  
+	  UValue* ret = new UValue((*cbi)->__evalcall(tmparray));
+	  
+	  connection->sendPrefix(tag->str());
+	  ret->echo(connection);
+	  if (ret->dataType!=DATA_BINARY) 
+	    connection->endline();
+	  delete(ret);
+	  return( status = UCOMPLETED );
+	}
+	
+	return( status = UCOMPLETED );
+      }
+    }
   }
 
   // Normal expression (no function)
@@ -2308,6 +2356,9 @@ UCommand_NEW::~UCommand_NEW()
 UCommandStatus 
 UCommand_NEW::execute(UConnection *connection)
 {
+  char tmpprefix[1024];
+  char tmpprefixnew[1024];
+
   if (!id)  return ( status = UCOMPLETED ); 
   if (!obj) return ( status = UCOMPLETED );
     
@@ -2323,6 +2374,10 @@ UCommand_NEW::execute(UConnection *connection)
   
   UObj* newobj;
   bool creation = false;
+
+  if (objit->second->internalBinder)
+    objit->second->internalBinder->copy(string(id->str()));
+   
   HMobjtab::iterator idit = ::urbiserver->objtab.find(id->str());
   if (idit == ::urbiserver->objtab.end()) {
     newobj = new UObj(id);
@@ -2330,6 +2385,7 @@ UCommand_NEW::execute(UConnection *connection)
   }
   else
     newobj = idit->second;
+    
 
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end()) {
@@ -2348,16 +2404,64 @@ UCommand_NEW::execute(UConnection *connection)
   // we have a clear reference to the inherited object in this case. It will
   // be fixed later.
   
+  // new  
+  // EXTERNAL
   if (objit->second->binder) {
-    
-    //new
-    char tmpprefixnew[1024];
+       
     snprintf(tmpprefixnew,1024,"[4,\"%s\",\"%s\"]\n",
 	newobj->device->str(),
-	objit->second->device->str()); 
+	objit->second->device->str());
+  }
+  
+  
+  // init
+  // INTERNAL (module)
+  string funtofind(id->str());
+  funtofind = funtofind + ".init";
+  bool initdefined = (::urbiserver->functiontab.find(funtofind.c_str()) != 
+                      ::urbiserver->functiontab.end());
+		      
+  if ((objit->second->internalBinder) &&
+      (!initdefined)) { // you redefine the internal object's constructor
+    
+    urbi::UTable::iterator hmfi = urbi::functionmap.find(funtofind.c_str());
+    if (hmfi != urbi::functionmap.end()) {
+      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+	  cbi != hmfi->second.end();
+	  cbi++) {
 	
-    //init
-    char tmpprefix[1024];
+	if ( ( (parameters) &&              
+	      (parameters->size() == (*cbi)->nbparam)) ||           
+	    ( (!parameters) && (!(*cbi)->nbparam)) ) {
+	  
+  	  // here you could spawn a thread... if only Aprios knew how to!
+  	  urbi::UList tmparray;
+  	  for (UNamedParameters *pvalue = parameters;               
+   	      pvalue != 0;
+    	      pvalue = pvalue->next) {
+	    
+	    UValue* valparam = pvalue->expression->eval(this,connection);
+	    if (!valparam) {
+	      
+	      connection->send("!!! EXPR evaluation failed\n",tag->str());
+	      return (status = UCOMPLETED);
+	    }
+	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, so it must be valparam who does the job.
+	    tmparray.array.push_back(tmpvalue);
+	  }
+	  
+	  (*cbi)->__evalcall(tmparray);	  	
+	}
+      }
+    }
+  
+
+  }
+  
+  // EXTERNAL
+  if ((objit->second->binder) &&
+      (!initdefined)) {
+    
     if (!noinit) {
      
       snprintf(tmpprefix,1024,"%s.init",
@@ -2416,7 +2520,7 @@ UCommand_NEW::execute(UConnection *connection)
     }    
   }
   else 
-  if (!noinit) {
+  if ((!noinit) && (initdefined)) {
     
     persistant = false;
     morph = (UCommand*) new UCommand_EXPR(
@@ -4070,7 +4174,37 @@ UCommand_EMIT::execute(UConnection *connection)
 
     ////// INTERNAL /////
 
-    //...
+    urbi::UTable::iterator hmfi = urbi::eventmap.find(eventnamestr);
+    if (hmfi != urbi::eventmap.end()) {
+      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+ 	  cbi != hmfi->second.end();
+	  cbi++) {
+	               
+  	if ( ( (parameters) &&              
+   	      (parameters->size() == (*cbi)->nbparam)) ||           
+    	    ( (!parameters) && (!(*cbi)->nbparam)) ) {
+       	  
+  	  // here you could spawn a thread... if only Aprios knew how to!
+  	  urbi::UList tmparray;
+  	  for (UNamedParameters *pvalue = parameters;               
+   	      pvalue != 0;
+    	      pvalue = pvalue->next) {
+	    
+	    UValue* valparam = pvalue->expression->eval(this,connection);
+	    if (!valparam) {
+	      
+	      connection->send("!!! EXPR evaluation failed\n",tag->str());
+	      return (status = UCOMPLETED);
+	    }
+	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, so it must be valparam who does the job.
+	    tmparray.array.push_back(tmpvalue);
+	  }
+	  
+	  (*cbi)->__evalcall(tmparray);	  	  
+	}	
+      }
+    }
+    
   }
  
   if ((thetime > targetTime) && (!firsttime)) {
@@ -4100,6 +4234,17 @@ UCommand_EMIT::execute(UConnection *connection)
     }
     
     ////// INTERNAL /////
+    
+    urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
+    if (hmfi != urbi::eventendmap.end()) {
+      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+ 	  cbi != hmfi->second.end();
+	  cbi++) {
+	        
+	urbi::UList tmparray;  	 	  
+	(*cbi)->__evalcall(tmparray);	  	        
+      }
+    }
     
     
     return(status = UCOMPLETED);

@@ -87,14 +87,12 @@ void urbi::main(int argc, char *argv[]) {} // no effect here
 UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
   name(name) , storage(0)
 {
-  if ((type == "function") || (type== "event") || (type=="eventend")) {
-//    std::ostringstream oss;
-//    oss << size;
-//    this->name = this->name + "__" + oss.str();
-  }
+  nbparam = size;
+  
+  if ((type == "function") || (type== "event") || (type=="eventend")) {};
+  
   t[this->name].push_back(this);
-  
-  
+    
   if (type == "var") {
     
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
@@ -290,7 +288,15 @@ UObject::UObject(const string &s) :
 {
   lastUObject = this;
   UString tmps(name.c_str()); // quelle merde ces UString!!!!
-  new UObj(&tmps);
+  UObj* tmpobj = new UObj(&tmps);
+    
+  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
+       retr != urbi::objectlist->end();
+       retr++)
+    if ((*retr)->name == name)
+      tmpobj->internalBinder = (*retr);
+  
+  
   // FIXME
  // add a binding of some sort here for the 'new' operation  
 

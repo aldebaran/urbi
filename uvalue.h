@@ -27,8 +27,13 @@
 #include "ustring.h"
 #include "ufloat.h"
 
+namespace urbi {
+  class UValue;
+};
+
 class UBinary;
 class UConnection;
+
 
 // *****************************************************************************
 //! Contains a value: can be numeric, string, binary
@@ -39,6 +44,7 @@ public:
   UValue();
   UValue(UFloat val);
   UValue(const char* str);
+  UValue(urbi::UValue);
   ~UValue();
 
   UDataType       dataType;     ///< Type of the value
@@ -57,6 +63,8 @@ public:
   UValue* add(UValue* v);
   bool    equal(UValue* v);
   void    echo(UConnection* connection, bool human_readable=false);
+
+  urbi::UValue* urbiValue();
 };
 
 UTestResult booleval(UValue *,bool freeme = true);

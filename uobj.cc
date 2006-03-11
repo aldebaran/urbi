@@ -33,6 +33,7 @@ UObj::UObj (UString *device)
 {
   this->device = new UString(device);
   binder = 0;
+  internalBinder = 0;
 
   ::urbiserver->objtab[this->device->str()] = this;
 }

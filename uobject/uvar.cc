@@ -80,7 +80,7 @@ UVar::__init(UVarType vartype)
   HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
   if (it == ::urbiserver->variabletab.end()) 
     vardata = new UVardata(new UVariable(name.c_str(),new
-    ::UValue(),false,false,(vartype == USYNC)));  
+    ::UValue(),false,false,(vartype == SYNC)));  
   else
     vardata = new UVardata(it->second);  
 }

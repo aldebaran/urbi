@@ -29,6 +29,7 @@
 #include "uconnection.h"
 #include "udevice.h"
 #include "userver.h"
+#include "uobject.h"
       
 MEMORY_MANAGER_INIT(UValue);		
 // **************************************************************************	
@@ -65,6 +66,32 @@ UValue::UValue(const char* str)
   liststart = 0;
   next = 0;
   this->str = new UString (str);
+}
+
+UValue::UValue(urbi::UValue v)
+{
+  ADDOBJ(UValue);
+  eventid = 0;
+  liststart = 0;
+  next = 0;
+  switch (v.type) {
+    case urbi::DATA_DOUBLE: dataType = DATA_NUM;
+		     	    this->val = v.val;
+			    break;
+    case urbi::DATA_STRING: dataType = DATA_STRING;
+			    this->str = new UString(v.stringValue->c_str());
+			    break;
+    case urbi::DATA_LIST: // j'ai pas le courage... //FIXME 
+			    dataType = DATA_VOID;
+			    break;  
+    case urbi::DATA_BINARY: // j'ai pas le courage... //FIXME 
+			    dataType = DATA_VOID;
+			    break;  
+    case urbi::DATA_OBJECT: // j'ai pas le courage... //FIXME 
+			    dataType = DATA_VOID;
+			    break;
+    default: dataType = DATA_VOID;
+  };
 }
 
 //! UValue destructor.
@@ -423,4 +450,15 @@ UValue::echo(UConnection *connection, bool human_readable)
   connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer));
 }
 
+
+urbi::UValue* 
+UValue::urbiValue()
+{
+  switch (dataType) {
+    case DATA_NUM:     return new urbi::UValue(val);
+    case DATA_STRING:  return new urbi::UValue(string(str->str())); 
+    case DATA_BINARY:  return new urbi::UValue(); //FIXME
+    default: return new urbi::UValue(); 
+  };
+}
 

@@ -30,7 +30,7 @@ class UVariable;
 class UFunction;
 
 namespace urbi {
-  class UGenericCallback;
+  class baseURBIStarter;
   }
   
 #include <list>
@@ -53,7 +53,7 @@ public:
   UString      *device;  
   //list<UConnection*> bound;
   UBinder      *binder;
-  list<urbi::UGenericCallback*> internalBinder;
+  urbi::baseURBIStarter* internalBinder;
   
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
