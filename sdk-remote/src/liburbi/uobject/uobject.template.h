@@ -51,7 +51,7 @@ namespace __gnu_cxx {
 
 // These macros are here to make life easier
 #define UAttachVar(obj,x) x.init(name,#x)
-#define UAttachVarDesync(obj,x) x.init(name,#x,false)
+#define UAttachVarSP(obj,x,vtype) x.init(name,#x,vtype)
 #define UAttachFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
 #define UAttachEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
 #define UAttachEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
@@ -121,9 +121,9 @@ urbi {
   // UValue and other related types
 
   enum UVarType {
-    USYNC,
-    UREAD,
-    UWRITE
+    SYNC,
+    USER,
+    OWNER
   };
   
   enum UDataType {
@@ -300,12 +300,12 @@ urbi {
     
     UVar() { name = "noname";};
     UVar(UVar& v) {};
-    UVar(string, UVarType vartype = USYNC);
-    UVar(string,string, UVarType vartype = USYNC);
-    UVar(UObject&, string, UVarType vartype = USYNC);
+    UVar(string, UVarType vartype = SYNC);
+    UVar(string,string, UVarType vartype = SYNC);
+    UVar(UObject&, string, UVarType vartype = SYNC);
     ~UVar();
 
-    void init(string, string, UVarType vartype = USYNC);
+    void init(string, string, UVarType vartype = SYNC);
 
     void operator = ( UFloat );
     void operator = ( string );
@@ -324,7 +324,7 @@ urbi {
 
   private:    
     UVardata  *vardata; ///< pointer to internal data specifics
-    void __init(UVarType vartype = USYNC);	
+    void __init(UVarType vartype = SYNC);	
 
     PRIVATE(string,name); ///< full name of the variable as seen in URBI      
     PRIVATE(UValue,value); ///< the variable value on the softdevice's side     
@@ -348,6 +348,7 @@ urbi {
     
     void   *storage; ////< used to store the UVar* pointeur for var monitoring
     UFloat period; ///< period of timers
+    int    nbparam;
 
   private:
     string name; 

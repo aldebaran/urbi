@@ -73,7 +73,7 @@ UVar::__init(UVarType vartype)
 {  
   varmap[name].push_back(this);
   vardata = 0; // unused. For internal softdevices only
-  this->vartype = USYNC; // sync is forced here in remote mode.
+  this->vartype = SYNC; // sync is forced here in remote mode.
 }
 
 //! UVar out value (read mode)

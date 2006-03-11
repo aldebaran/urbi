@@ -91,6 +91,8 @@ namespace urbi {
 UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
   name(name) 
 {
+  nbparam = size;
+  
   if ((type == "function") || (type== "event") || (type=="eventend")) {
     std::ostringstream oss;
     oss << size;
