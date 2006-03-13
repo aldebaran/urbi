@@ -29,7 +29,7 @@
 #include "udevice.h"
 #include "utypes.h"
 #include "ughostconnection.h"
-#include "uobject.h"
+#include "uobject/uobject.h"
 
 
 // Global server reference

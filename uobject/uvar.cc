@@ -37,7 +37,7 @@ namespace urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(string varname, UVarType vartype) :
+UVar::UVar(const string &varname, UVarType vartype) :
   vartype(vartype)
 {
   name = varname;  
@@ -45,7 +45,7 @@ UVar::UVar(string varname, UVarType vartype) :
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, string varname, UVarType vartype) :
+UVar::UVar(UObject& obj, const string &varname, UVarType vartype) :
   vartype(vartype)
 {
   name = obj.name + "." + varname;
@@ -53,7 +53,7 @@ UVar::UVar(UObject& obj, string varname, UVarType vartype) :
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string objname, string varname, UVarType vartype) :
+UVar::UVar(const string &objname, const string &varname, UVarType vartype) :
   vartype(vartype)
 {
   name = objname + "." + varname;
@@ -63,7 +63,7 @@ UVar::UVar(string objname, string varname, UVarType vartype) :
 
 //! UVar initialization
 void
-UVar::init(string objname, string varname, UVarType vartype)
+UVar::init(const string &objname, const string &varname, UVarType vartype)
 {  
   this->vartype = vartype;
   name = objname + "." + varname;  
@@ -81,8 +81,15 @@ UVar::__init(UVarType vartype)
   if (it == ::urbiserver->variabletab.end()) 
     vardata = new UVardata(new UVariable(name.c_str(),new
     ::UValue(),false,false,(vartype == SYNC)));  
-  else
+  else {
     vardata = new UVardata(it->second);  
+    //validate autoupdate consistency   
+    if ( (vartype==SYNC) != vardata->variable->autoUpdate) {
+      urbi::echo("Warning, inconsistency between bind mode and autoUpdate for variable %s.\n",
+	name.c_str());
+
+    }
+  }  
 }
 
 //! UVar destructor.
@@ -116,7 +123,11 @@ UVar::operator = (UFloat n)
   
   // type mismatch is not integrated at this stage
   vardata->variable->value->dataType = ::DATA_NUM;
-  vardata->variable->setFloat(n);
+
+  if (vartype==OWNER)
+    in() = n;
+  else
+    vardata->variable->setFloat(n);
 }
 
 //! UVar string assignment
@@ -141,19 +152,19 @@ UVar::operator = (string s)
 // UVar Casting
 
 UVar::operator int () {	 
-
-  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_NUM))    
-    return ((int)(vardata->variable->value->val));  
-  else  
-    return 0;  
+  //check of dataType is done inside in and out
+  if (vartype == OWNER)
+    return (int)out();
+  else
+    return (int)in();   
 };
 
 UVar::operator UFloat () { 
-
-  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
-    return (UFloat(vardata->variable->value->val));  
-  else  
-    return UFloat(0);  
+  //check of dataType is done inside in and out
+  if (vartype == OWNER)
+    return out();
+  else
+    return in();   
 };
 
 
@@ -170,16 +181,20 @@ UVar::operator string () {
 UFloat&
 UVar::out()
 { 
+  static UFloat er=0;
   if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
     return (vardata->variable->target);
+  else return er;
 }
 
 //! UVar in value (write mode)
 UFloat&
 UVar::in()
 {  
-  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
-    return (vardata->variable->value->val);
+ static UFloat er=0;
+ if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
+   return (vardata->variable->value->val);
+ else return er;
 }
 
 
