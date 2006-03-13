@@ -20,17 +20,11 @@
 #include <iostream>
 #include <math.h>
 #include <algorithm>
+#ifndef DEBUG
 #define DEBUG 0
+#endif
 using std::max;
 using std::min;
-static const int LONG_NBIT=sizeof(long)*8;
-static const int LONGLONG_NBIT=sizeof(long long)*8;
-
-static const int HALFLONG_NBIT=sizeof(long)*4;
-
-static const int LONG_NOSIGN_BIT_MASK=(1L<<(sizeof(long)*8-1))-1;
-static const int LONG_SIGN_BIT_MASK=(1L<<(sizeof(long)*8-1));
-static const long long LONG_VAL = (1LL<<LONG_NBIT);
 
 #if 0
 /** Fixed point implementation on a long. Point is the number of bits of the DECIMAL part, ie <sz(long)-point>.<point> represnetation.
@@ -387,6 +381,15 @@ std::istream& operator >>(std::istream &s, UFFloat &u);
 
 
 #ifdef FLOAT_FAST 
+
+static const int LONG_NBIT=sizeof(long)*8;
+static const int LONGLONG_NBIT=sizeof(long long)*8;
+
+static const int HALFLONG_NBIT=sizeof(long)*4;
+
+static const int LONG_NOSIGN_BIT_MASK=(1L<<(sizeof(long)*8-1))-1;
+static const int LONG_SIGN_BIT_MASK=(1L<<(sizeof(long)*8-1));
+static const long long LONG_VAL = (1LL<<LONG_NBIT);
 
 
 /** Fixed point implementation on a long long, expected to be twice the size of a long

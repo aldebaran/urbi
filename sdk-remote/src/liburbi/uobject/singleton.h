@@ -14,11 +14,11 @@ template<class T> class SingletonPtr {
 };
 
 #define STATIC_INSTANCE(cl, name) \
-  SingletonPtr<cl##name> name;
+  SingletonPtr<cl##name> name
 
 #define EXTERN_STATIC_INSTANCE(cl, name)\
   class cl##name: public cl{}; \
-extern SingletonPtr<cl##name> name;
+extern SingletonPtr<cl##name> name
 
 
 #endif

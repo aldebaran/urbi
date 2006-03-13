@@ -63,7 +63,7 @@ namespace __gnu_cxx {
 
 // defines a variable and it's associated accessors
 #define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
-  () { return varname; }; void set_ ## varname (vartype& ____value) { varname = ____value; };private:
+  () { return varname; } void set_ ## varname (vartype& ____value) { varname = ____value; }  private:
 
 /* urbi namespace starts */
 namespace 
@@ -282,7 +282,7 @@ urbi {
       operator UFloat();
       operator string();
       operator int() {return (int)(UFloat)(*this);}
-
+      operator bool() {return (bool)(int)(UFloat)(*this);}
       UValue& operator=(const UValue&);
 
       ~UValue();  
@@ -300,16 +300,18 @@ urbi {
     
     UVar() { name = "noname";};
     UVar(UVar& v) {};
-    UVar(string, UVarType vartype = SYNC);
-    UVar(string,string, UVarType vartype = SYNC);
-    UVar(UObject&, string, UVarType vartype = SYNC);
+    UVar(const string&, UVarType vartype = SYNC);
+    UVar(const string&, const string&, UVarType vartype = SYNC);
+    UVar(UObject&, const string&, UVarType vartype = SYNC);
     ~UVar();
 
-    void init(string, string, UVarType vartype = SYNC);
+    void init(const string&,const string&, UVarType vartype = SYNC);
 
     void operator = ( UFloat );
     void operator = ( string );
     operator int ();
+    operator bool () {return (int)(*this);}
+
     operator UFloat ();
     operator string ();
   
@@ -326,8 +328,8 @@ urbi {
     UVardata  *vardata; ///< pointer to internal data specifics
     void __init(UVarType vartype = SYNC);	
 
-    PRIVATE(string,name); ///< full name of the variable as seen in URBI      
-    PRIVATE(UValue,value); ///< the variable value on the softdevice's side     
+    PRIVATE(string,name) ///< full name of the variable as seen in URBI      
+    PRIVATE(UValue,value) ///< the variable value on the softdevice's side     
   };
 
 
@@ -413,36 +415,36 @@ urbi {
     template <class T> 
     void UNotifyChange (UVar& v, int (T::*fun) ()) { 
       createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
-    }; 
+    }
 
     template <class T>
     void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) { 
       UGenericCallback* cb = createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
-    };
+    }
 
     template <class T> 
     void UNotifyChange (string name, int (T::*fun) ()) { 
       createUCallback("var", (T*)this, fun, name, monitormap);
-    }; 
+    } 
 
     template <class T>
     void UNotifyChange (string name, int (T::*fun) (UVar&)) { 
       UGenericCallback* cb = createUCallback("var", (T*)this, fun, name, monitormap);
       if (cb) cb->storage = new UVar(name);
-    };
+    }
 
 
     template <class T>
     void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
       UGenericCallback* cb = createUCallback("varaccess", (T*)this, fun, v.get_name(), accessmap);
       if (cb) cb->storage = (void*)(&v);
-    };
+    }
 
     template <class T>
     void USetTimer(UFloat t, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (t,(T*)this, fun, timermap);
-    };
+    }
 
     // We have to duplicate because of the above UNotifyChange which catches the
     // namespace on UObject instead of urbi.

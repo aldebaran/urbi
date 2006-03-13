@@ -34,7 +34,7 @@ urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(string varname, UVarType vartype) :
+UVar::UVar(const string &varname, UVarType vartype) :
   vartype(vartype)
 {
   name = varname;  
@@ -42,7 +42,7 @@ UVar::UVar(string varname, UVarType vartype) :
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, string varname, UVarType vartype) :
+UVar::UVar(UObject& obj, const string &varname, UVarType vartype) :
   vartype(vartype)
 {
   name = obj.name + "." + varname;
@@ -50,7 +50,7 @@ UVar::UVar(UObject& obj, string varname, UVarType vartype) :
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(string objname, string varname, UVarType vartype) :
+UVar::UVar(const string &objname, const string &varname, UVarType vartype) :
   vartype(vartype)
 {
   name = objname + "." + varname;
@@ -60,7 +60,7 @@ UVar::UVar(string objname, string varname, UVarType vartype) :
 
 //! UVar initialization
 void
-UVar::init(string objname, string varname, UVarType vartype)
+UVar::init(const string &objname, const string &varname, UVarType vartype)
 {  
   this->vartype = vartype;
   name = objname + "." + varname;  
