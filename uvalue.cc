@@ -392,7 +392,7 @@ UValue::echo(UConnection *connection, bool human_readable)
 
   if (dataType == DATA_NUM) {
     std::ostringstream ostr;
-    ostr << val;
+    ostr << fixed << val;
     strcpy(tmpbuffer, ostr.str().c_str());
     //sprintf(tmpbuffer,"%f",val);
   }
