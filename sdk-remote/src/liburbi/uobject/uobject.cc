@@ -56,28 +56,26 @@ namespace urbi {
   UCallbackAction debug(const UMessage &msg);
 
   
-  template <>
-  UVar& cast(UValue &v) {
+  UVar& cast(UValue &v, UVar * ) {
     return (*((UVar*)v.storage));    
   };
 
-  template<>
-  UBinary cast(UValue &v) {
+
+  UBinary cast(UValue &v, UBinary *) {
 	if (v.type != DATA_BINARY) {
 	  return UBinary();
 	}
 	return UBinary(*v.binary);
   }
   
-  template<>
-  UList cast(UValue &v) {
+
+  UList cast(UValue &v, UList *) {
 	if (v.type != DATA_LIST)
 	  return UList();
 	return UList(*v.list);
   }
   
-  template<>
-  UObjectStruct cast(UValue &v) {
+  UObjectStruct cast(UValue &v, UObjectStruct *) {
 	if (v.type != DATA_OBJECT)
 	  return UObjectStruct();
 	return UObjectStruct(*v.object);

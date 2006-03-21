@@ -17,7 +17,7 @@
  For more information, comments, bug reports: http://www.urbiforge.com
 
  **************************************************************************** */
-
+#include <stdio.h>
 #include "uobject.h" 
 #include <sstream>
 using namespace urbi;
