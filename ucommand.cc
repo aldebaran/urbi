@@ -30,6 +30,9 @@
 #include "ucallid.h"
 #include "utypes.h"
 #include "uobject.h"
+#if (__GNUC__ == 2)
+static const string left = "";
+#endif
 
 char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];  ///< temporary global string                                              
 MEMORY_MANAGER_INIT(UCommand);
@@ -2044,13 +2047,12 @@ UCommand_EXPR::execute(UConnection *connection)
 	    tmparray.array.push_back(tmpvalue);
 	  }
 	  
-	  UValue* ret = new UValue((*cbi)->__evalcall(tmparray));
+	  UValue ret = (*cbi)->__evalcall(tmparray);
 	  
 	  connection->sendPrefix(tag->str());
-	  ret->echo(connection);
-	  if (ret->dataType!=DATA_BINARY) 
+	  ret.echo(connection);
+	  if (ret.dataType!=DATA_BINARY) 
 	    connection->endline();
-	  delete(ret);
 	  return( status = UCOMPLETED );
 	}
 	
@@ -3673,28 +3675,28 @@ connection->send(tstr.str().c_str(),tag->str());
           retr != connection->server->devicetab.end();
           retr++) {
       
-if (strstr( (*retr).second->device_val->unit->str(),"bin")==0) {
-tstr.width(13);
-tstr << "*** " <<left<<(*retr).second->device->str()
-  <<" unit=";
-tstr.width(8);
-tstr << (*retr).second->device_val->unit->str()
-  << " range=["<<(*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax
-  <<"] : "<<(*retr).second->detail->str()<<'\n';
-}
-else  {     
-tstr.width(13);
-tstr << "*** " <<left<<(*retr).second->device->str()
-  <<" unit=";
-tstr.width(8);
-tstr << (*retr).second->device_val->unit->str()
-  <<" : "<<(*retr).second->detail->str()<<'\n';
-}
-connection->send(tstr.str().c_str(),tag->str());
-tstr.str("");
+      if (strstr( (*retr).second->device_val->unit->str(),"bin")==0) {
+	tstr.width(13);
+	tstr << "*** " <<left<<(*retr).second->device->str()
+	  <<" unit=";
+	tstr.width(8);
+	tstr << (*retr).second->device_val->unit->str()
+	  << " range=["<<(*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax
+	  <<"] : "<<(*retr).second->detail->str()<<'\n';
+      }
+      else  {     
+	tstr.width(13);
+	tstr << "*** " <<left<<(*retr).second->device->str()
+	  <<" unit=";
+	tstr.width(8);
+	tstr << (*retr).second->device_val->unit->str()
+	  <<" : "<<(*retr).second->detail->str()<<'\n';
+      }
+      connection->send(tstr.str().c_str(),tag->str());
+      tstr.str("");
     }
-
+    
     // Output in debug mode by device types
 
     for ( hash_map<const char*,
@@ -3703,16 +3705,16 @@ tstr.str("");
             eqStr>::iterator retr = 
             connection->server->devicetab.begin();
           retr != connection->server->devicetab.end();
-          retr++) 
+    	  retr++) 
       if (strcmp( (*retr).second->device_val->unit->str(),"deg")==0) {
-tstr << "[" << (*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax<<"]";
-::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-                            (*retr).second->device_val->unit->str(),
-                            (*retr).second->detail->str());
-tstr.str("");
+	tstr << "[" << (*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax<<"]";
+	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
+	    (*retr).second->device_val->unit->str(),
+	    (*retr).second->detail->str());
+	tstr.str("");
       }
-               
+    
     ::urbiserver->debug("\n");
     for ( hash_map<const char*,
             UDevice*,
@@ -3722,12 +3724,12 @@ tstr.str("");
           retr != connection->server->devicetab.end();
           retr++) 
       if (strcmp( (*retr).second->device_val->unit->str(),"bool")==0)  {
-tstr << "[" << (*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax<<"]";
-::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-                            (*retr).second->device_val->unit->str(),
-                            (*retr).second->detail->str());
-tstr.str("");
+	tstr << "[" << (*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax<<"]";
+	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
+	    (*retr).second->device_val->unit->str(),
+     	    (*retr).second->detail->str());
+	tstr.str("");
 
       }
                                    
@@ -3739,12 +3741,12 @@ tstr.str("");
           retr != connection->server->devicetab.end();
           retr++) 
       if (strcmp( (*retr).second->device_val->unit->str(),"lum")==0)  {
-tstr << "[" << (*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax<<"]";
-::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-                            (*retr).second->device_val->unit->str(),
-                            (*retr).second->detail->str());
-tstr.str("");
+	tstr << "[" << (*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax<<"]";
+	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
+	    (*retr).second->device_val->unit->str(),
+	    (*retr).second->detail->str());
+	tstr.str("");
 
       }
 
@@ -3757,12 +3759,12 @@ tstr.str("");
           retr != connection->server->devicetab.end();
           retr++) 
       if (strcmp( (*retr).second->device_val->unit->str(),"uPa")==0)  {
-tstr << "[" << (*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax<<"]";
-::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-                            (*retr).second->device_val->unit->str(),
-                            (*retr).second->detail->str());                              
-tstr.str("");
+	tstr << "[" << (*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax<<"]";
+	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
+	    (*retr).second->device_val->unit->str(),
+	    (*retr).second->detail->str());                              
+	tstr.str("");
 
 
       }
@@ -3773,14 +3775,14 @@ tstr.str("");
             eqStr>::iterator retr = 
             connection->server->devicetab.begin();
           retr != connection->server->devicetab.end();
-          retr++) 
+	  retr++) 
       if (strcmp( (*retr).second->device_val->unit->str(),"cm")==0)  {
-tstr << "[" << (*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax<<"]";
-::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-                            (*retr).second->device_val->unit->str(),
-                            (*retr).second->detail->str());
-tstr.str("");
+	tstr << "[" << (*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax<<"]";
+	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
+	    (*retr).second->device_val->unit->str(),
+	    (*retr).second->detail->str());
+	tstr.str("");
 
       }
                                    
@@ -3794,12 +3796,12 @@ tstr.str("");
       if ( (strcmp( (*retr).second->device_val->unit->str(),"m/s2")==0) ||
            (strcmp( (*retr).second->device_val->unit->str(),"m")==0) || 
            (strcmp( (*retr).second->device_val->unit->str(),"C")==0) ) {
-tstr << "[" << (*retr).second->device_val->rangemin
-  <<","<<(*retr).second->device_val->rangemax<<"]";
-::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(),         tstr.str().c_str(),
-                            (*retr).second->device_val->unit->str(),
-                            (*retr).second->detail->str());
-tstr.str("");
+	tstr << "[" << (*retr).second->device_val->rangemin
+	  <<","<<(*retr).second->device_val->rangemax<<"]";
+	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(),         tstr.str().c_str(),
+	    (*retr).second->device_val->unit->str(),
+	    (*retr).second->detail->str());
+	tstr.str("");
 
       }
                                
@@ -3821,32 +3823,32 @@ tstr.str("");
 
       fullname = (*retr).second->varname;
       if (fullname) {
-ostringstream tstr;
+	ostringstream tstr;
         switch ((*retr).second->value->dataType) {
 
         case DATA_NUM:
-    tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
-      <<'\n';
+	  tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
+	    <<'\n';
           break;
-          
-        case DATA_STRING:
-    tstr << "*** " << fullname->str() << " = " << (*retr).second->value->str->str()
-      <<'\n';
+	  
+	case DATA_STRING:
+	  tstr << "*** " << fullname->str() << " = " << (*retr).second->value->str->str()
+	    <<'\n';
           break;
           
         case DATA_BINARY:
-          if ((*retr).second->value->refBinary)
-      tstr <<"*** "<<fullname->str()<<" = BIN "<<
-	(*retr).second->value->refBinary->ref()->bufferSize<<'\n';
-          else
-      tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
+	  if ((*retr).second->value->refBinary)
+	    tstr <<"*** "<<fullname->str()<<" = BIN "<<
+	      (*retr).second->value->refBinary->ref()->bufferSize<<'\n';
+	  else
+	    tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
           break;
           
         default:
-    tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
+	  tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
         } // end switch
         
-connection->send(tstr.str().c_str(),tag->str());
+	connection->send(tstr.str().c_str(),tag->str());
       }
     }
 

@@ -30,7 +30,10 @@
 #include "udevice.h"
 #include "userver.h"
 #include "uobject.h"
-      
+#if (__GNUC__ == 2)
+static const string fixed = "";
+#endif
+
 MEMORY_MANAGER_INIT(UValue);		
 // **************************************************************************	
 //! UValue constructor.
@@ -68,7 +71,7 @@ UValue::UValue(const char* str)
   this->str = new UString (str);
 }
 
-UValue::UValue(urbi::UValue v)
+UValue::UValue(const urbi::UValue &v)
 {
   ADDOBJ(UValue);
   eventid = 0;
@@ -81,12 +84,86 @@ UValue::UValue(urbi::UValue v)
     case urbi::DATA_STRING: dataType = DATA_STRING;
 			    this->str = new UString(v.stringValue->c_str());
 			    break;
-    case urbi::DATA_LIST: // j'ai pas le courage... //FIXME 
-			    dataType = DATA_VOID;
+    case urbi::DATA_LIST: // j'ai pas le courage... //FIXME you'll pay for this I swear!
+			    {
+			      dataType = DATA_LIST;
+			      UValue * current = this;
+			      for (vector<urbi::UValue *>::iterator it = v.list->array.begin();
+				  it != v.list->array.end(); it++) {
+				UValue *n = new UValue(*(*it));
+				current->next = n;
+				while (current->next)
+				  current = current->next;
+			      }
+			   
+		      	      liststart = next;
+			      next = 0;
+			    }
 			    break;  
-    case urbi::DATA_BINARY: // j'ai pas le courage... //FIXME 
-			    dataType = DATA_VOID;
-			    break;  
+    case urbi::DATA_BINARY: {
+			      int sz=0;
+			      dataType = DATA_BINARY;
+			      //building unamedparameters
+			      UNamedParameters * first=0;
+			      if (v.binary->type == urbi::BINARY_IMAGE) {
+				sz = v.binary->image.size;
+				switch (v.binary->image.imageFormat) {
+				  case urbi::IMAGE_RGB:
+				    first = new UNamedParameters(new UString("RGB"),0);
+				    break;
+				  case urbi::IMAGE_YCbCr:
+				    first = new UNamedParameters(new UString("YCbCr"),0);
+				    break;
+				  case urbi::IMAGE_JPEG:
+				    first = new UNamedParameters(new UString("JPEG"),0);
+				    break;
+				  default:	
+				    first = new UNamedParameters(new UString("UNKN"),0);	
+				    break;				  
+				};
+				std::ostringstream tmp;
+				tmp << v.binary->image.width;
+				first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+				tmp.str("");
+				tmp << v.binary->image.height;
+				first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);			      
+			      }
+			      if (v.binary->type == urbi::BINARY_SOUND) {
+				sz = v.binary->sound.size;
+				switch(v.binary->sound.soundFormat) {
+				  case urbi::SOUND_RAW:
+				    first = new UNamedParameters(new UString("raw"),0);
+				    break;
+				  case urbi::SOUND_WAV:
+				    first = new UNamedParameters(new UString("wav"),0);
+				    break;
+				  default:	
+				    first = new UNamedParameters(new UString("UNKN"),0);	
+				    break;	
+				}
+			      std::ostringstream tmp;
+			      tmp << v.binary->sound.channels;
+			      first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+			      tmp.str("");
+			      tmp << v.binary->sound.rate;
+			      first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+			      tmp.str("");
+			      tmp << v.binary->sound.sampleSize;
+			      first->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+			      tmp.str("");
+			      tmp << v.binary->sound.sampleFormat;
+			      first->next->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+			      tmp.str("");
+			      
+			      
+			    }
+			      UBinary *bin = new UBinary(sz, first);
+			      bin->bufferSize =  sz;
+			      bin->buffer = (ubyte *)malloc(sz);
+			      memcpy(bin->buffer, v.binary->data, sz); 
+			      refBinary = new URefPt<UBinary>(bin);
+			      break;  
+			    }
     case urbi::DATA_OBJECT: // j'ai pas le courage... //FIXME 
 			    dataType = DATA_VOID;
 			    break;

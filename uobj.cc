@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
+#include <stdio.h>
 #include "uobj.h"
 #include "ustring.h"
 #include "uvalue.h"

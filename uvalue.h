@@ -44,7 +44,7 @@ public:
   UValue();
   UValue(UFloat val);
   UValue(const char* str);
-  UValue(urbi::UValue);
+  UValue(const urbi::UValue&);
   ~UValue();
 
   UDataType       dataType;     ///< Type of the value
