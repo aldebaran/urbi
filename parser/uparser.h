@@ -31,6 +31,7 @@
 #include <string>
 
 #include "utypes.h"
+#undef IN
 #include "bison/FlexLexer.h"
 #include "bison/location.hh"
 

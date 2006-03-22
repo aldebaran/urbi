@@ -95,9 +95,16 @@ CPPFLAGS += -DOS=$(OS)
 
 BUILDNUMBERSCRIPT=http://web.urbiforge.com/svncount/buildnumber.php
 
+
+ifeq ($(OS),windows)
+build/buildnumber: $(KERNEL_SOURCES)	
+	echo 666 > build/buildnumber
+	echo '"' `cat build/buildnumber` '"'  > buildversion.h
+else
 build/buildnumber: $(KERNEL_SOURCES)
 	wget $(BUILDNUMBERSCRIPT)"?uid="`id -nu`"&host="`hostname -f` -O build/buildnumber 
 	echo '"' `cat build/buildnumber` '"'  > buildversion.h
+endif
 
 network: $(NETWORK_OBJS)
 
