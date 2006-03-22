@@ -222,12 +222,14 @@ urbi {
 	UImage                image;
 	USound                sound;
       };
-      string                message;         ///< message as sent by the server
+      string                message;         ///< extra bin headers
 
 
       UBinary();
       UBinary(const UBinary &b);
       UBinary & operator = (const UBinary &b);
+      void buildMessage(); ///< build message from structures
+      string getMessage() const; ///< get message extracted from structures
       ~UBinary();
       int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
   };
@@ -320,13 +322,13 @@ urbi {
 
     void operator = ( UFloat );
     void operator = ( string );
+    void operator = ( const UBinary &);
     operator int ();
     operator bool () {return (int)(*this);}
 
     operator UFloat ();
     operator string ();
   
-    UValue& val() { return value; };
     UFloat& in();
     UFloat& out();
 
@@ -335,7 +337,9 @@ urbi {
     // internal
     void __update(UValue&);
 
-  private:    
+  private:   
+    UValue& val() { return value; }; ///< XXX only works in softdevice mode
+
     UVardata  *vardata; ///< pointer to internal data specifics
     void __init(UVarType vartype = SYNC);	
 

@@ -125,6 +125,17 @@ UVar::operator = (string s)
   URBI() << name << "=\"" << s << "\";";  
 }
 
+//! UVar binary assignment
+void
+UVar::operator = (const UBinary &b)
+{  
+  URBI() << name << "=\"";  
+  URBI()<<"BIN "<<b.size<<" "<<b.getMessage()<<";";
+  URBI().write((char *)b.data, b.size);
+
+}
+
+
 UVar::operator int () {	 
   return ((int)value); 
 };

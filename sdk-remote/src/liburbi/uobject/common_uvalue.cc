@@ -352,6 +352,47 @@ int UBinary::parse(char * message, int pos, list<BinaryData> bins, list<BinaryDa
   return p;
  }
 
+void UBinary::buildMessage() {
+  message = getMessage();
+}
+
+string UBinary::getMessage() const {
+  std::ostringstream str;
+  if (type == BINARY_IMAGE) {
+    switch( image.imageFormat) {
+      case IMAGE_RGB:
+	str<<"rgb ";
+	break;
+      case IMAGE_JPEG:
+	str<<"jpeg ";
+	break;
+      case IMAGE_YCbCr:
+	str<<"YCbCr";
+	break;
+      default:
+	str<<"unknown ";
+	break;
+    };
+    str<<image.width<<" "<<image.height;
+  }
+  if (type == BINARY_SOUND) {
+    switch (sound.soundFormat) {
+      case SOUND_RAW:
+	str<<"raw ";
+	break;
+      case SOUND_WAV:
+	str << "wav ";
+	break;
+      default:
+	str << "unknown ";
+	break;	
+    };
+    str<<sound.channels<<" "<<sound.rate<<" "<<sound.sampleSize<<" "<<sound.sampleFormat;
+  
+  }
+
+  return str.str();
+ }
 
 //! Class UValue implementation
 UValue::UValue() : type(DATA_VOID), storage(0) {}
