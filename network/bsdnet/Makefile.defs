@@ -1,2 +1,0 @@
-bsdnet-clean:
-	rm *.o
