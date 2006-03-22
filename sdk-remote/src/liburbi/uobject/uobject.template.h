@@ -215,12 +215,14 @@ urbi {
     public:
       UBinaryType             type;
       union {
+	struct {
 	void                  *data;             ///< binary data
+	int                   size;
+	};
 	UImage                image;
 	USound                sound;
       };
       string                message;         ///< message as sent by the server
-      int                   size;
 
 
       UBinary();
