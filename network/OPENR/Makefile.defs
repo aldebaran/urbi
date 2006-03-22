@@ -1,0 +1,7 @@
+PREFIX=/usr/local/OPEN_R_SDK
+CPPFLAGS+=-I$(PREFIX)/OPEN_R/include/R4000 \
+	-I$(PREFIX)/OPEN_R/include/MCOOP \
+	-I$(PREFIX)/OPEN_R/include
+
+OPENR-clean:
+	rm *.o
