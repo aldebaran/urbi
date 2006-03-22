@@ -149,6 +149,20 @@ UVar::operator = (string s)
   vardata->variable->set(&tmpv);
 }
 
+//! UVar binary assignment
+void
+UVar::operator = (const UBinary &b)
+{  
+  if (!vardata) {
+    urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
+	name.c_str());
+    return;      
+  }
+  *vardata->variable->value=b;
+}
+
+
+
 // UVar Casting
 
 UVar::operator int () {	 

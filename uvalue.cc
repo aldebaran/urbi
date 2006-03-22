@@ -71,6 +71,73 @@ UValue::UValue(const char* str)
   this->str = new UString (str);
 }
 
+UValue & UValue::operator = (const urbi::UBinary &b) {
+  //TODO: cleanup
+  int sz=0;
+  dataType = DATA_BINARY;
+  //building unamedparameters
+  UNamedParameters * first=0;
+  if (b.type == urbi::BINARY_IMAGE) {
+    sz = b.image.size;
+    switch (b.image.imageFormat) {
+      case urbi::IMAGE_RGB:
+	first = new UNamedParameters(new UString("RGB"),0);
+	break;
+      case urbi::IMAGE_YCbCr:
+	first = new UNamedParameters(new UString("YCbCr"),0);
+	break;
+      case urbi::IMAGE_JPEG:
+	first = new UNamedParameters(new UString("JPEG"),0);
+	break;
+      default:	
+	first = new UNamedParameters(new UString("UNKN"),0);	
+	break;				  
+    };
+    std::ostringstream tmp;
+    tmp << b.image.width;
+    first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+    tmp.str("");
+    tmp << b.image.height;
+    first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);			      
+  }
+  if (b.type == urbi::BINARY_SOUND) {
+    sz = b.sound.size;
+    switch(b.sound.soundFormat) {
+      case urbi::SOUND_RAW:
+	first = new UNamedParameters(new UString("raw"),0);
+	break;
+      case urbi::SOUND_WAV:
+	first = new UNamedParameters(new UString("wav"),0);
+	break;
+      default:	
+	first = new UNamedParameters(new UString("UNKN"),0);	
+	break;	
+    }
+    std::ostringstream tmp;
+    tmp << b.sound.channels;
+    first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+    tmp.str("");
+    tmp << b.sound.rate;
+    first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+    tmp.str("");
+    tmp << b.sound.sampleSize;
+    first->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+    tmp.str("");
+    tmp << b.sound.sampleFormat;
+    first->next->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
+    tmp.str("");
+    
+    
+  }
+  UBinary *bin = new UBinary(sz, first);
+  bin->bufferSize =  sz;
+  bin->buffer = (ubyte *)malloc(sz);
+  memcpy(bin->buffer, b.data, sz); 
+  refBinary = new URefPt<UBinary>(bin);
+  return *this;
+}
+
+
 UValue::UValue(const urbi::UValue &v)
 {
   ADDOBJ(UValue);
@@ -101,67 +168,7 @@ UValue::UValue(const urbi::UValue &v)
 			    }
 			    break;  
     case urbi::DATA_BINARY: {
-			      int sz=0;
-			      dataType = DATA_BINARY;
-			      //building unamedparameters
-			      UNamedParameters * first=0;
-			      if (v.binary->type == urbi::BINARY_IMAGE) {
-				sz = v.binary->image.size;
-				switch (v.binary->image.imageFormat) {
-				  case urbi::IMAGE_RGB:
-				    first = new UNamedParameters(new UString("RGB"),0);
-				    break;
-				  case urbi::IMAGE_YCbCr:
-				    first = new UNamedParameters(new UString("YCbCr"),0);
-				    break;
-				  case urbi::IMAGE_JPEG:
-				    first = new UNamedParameters(new UString("JPEG"),0);
-				    break;
-				  default:	
-				    first = new UNamedParameters(new UString("UNKN"),0);	
-				    break;				  
-				};
-				std::ostringstream tmp;
-				tmp << v.binary->image.width;
-				first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-				tmp.str("");
-				tmp << v.binary->image.height;
-				first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);			      
-			      }
-			      if (v.binary->type == urbi::BINARY_SOUND) {
-				sz = v.binary->sound.size;
-				switch(v.binary->sound.soundFormat) {
-				  case urbi::SOUND_RAW:
-				    first = new UNamedParameters(new UString("raw"),0);
-				    break;
-				  case urbi::SOUND_WAV:
-				    first = new UNamedParameters(new UString("wav"),0);
-				    break;
-				  default:	
-				    first = new UNamedParameters(new UString("UNKN"),0);	
-				    break;	
-				}
-			      std::ostringstream tmp;
-			      tmp << v.binary->sound.channels;
-			      first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-			      tmp.str("");
-			      tmp << v.binary->sound.rate;
-			      first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-			      tmp.str("");
-			      tmp << v.binary->sound.sampleSize;
-			      first->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-			      tmp.str("");
-			      tmp << v.binary->sound.sampleFormat;
-			      first->next->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-			      tmp.str("");
-			      
-			      
-			    }
-			      UBinary *bin = new UBinary(sz, first);
-			      bin->bufferSize =  sz;
-			      bin->buffer = (ubyte *)malloc(sz);
-			      memcpy(bin->buffer, v.binary->data, sz); 
-			      refBinary = new URefPt<UBinary>(bin);
+			      (*this)= (*v.binary);
 			      break;  
 			    }
     case urbi::DATA_OBJECT: // j'ai pas le courage... //FIXME 

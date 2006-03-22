@@ -29,6 +29,7 @@
 
 namespace urbi {
   class UValue;
+  class UBinary;
 };
 
 class UBinary;
@@ -45,6 +46,8 @@ public:
   UValue(UFloat val);
   UValue(const char* str);
   UValue(const urbi::UValue&);
+
+  UValue & operator = (const urbi::UBinary&); 
   ~UValue();
 
   UDataType       dataType;     ///< Type of the value
