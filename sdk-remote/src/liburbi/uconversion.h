@@ -13,6 +13,10 @@ int convertJPEGtoYCrCb (const byte* source, int sourcelen, byte* dest,
 int convertJPEGtoRGB   (const byte* source, int sourcelen, byte* dest, 
                        int &size);
 
+int convertRGBtoJPEG(const byte* source, int w, int h, byte* dest, 
+                       int &size, int quality);
+int convertYCrCbtoJPEG(const byte* source, int w, int h, byte* dest, 
+                       int &size, int quality);
 
 
 //sound format conversion functions.

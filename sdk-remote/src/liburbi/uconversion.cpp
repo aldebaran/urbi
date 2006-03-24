@@ -12,7 +12,9 @@ extern "C"
 static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, 
                        bool RGB, int &output_size);
 
-
+static int
+write_jpeg(const unsigned char* src, int w, int h, bool ycrcb, 
+               unsigned char* dst, int &sz, int quality);
 struct wavheader {
 	char riff[4];
 	int length;
@@ -120,6 +122,15 @@ convertJPEGtoRGB(const byte * source, int sourcelen, byte * dest, int &size)
   return 1;
 }
 
+int convertRGBtoJPEG(const byte* source, int w, int h, byte* dest, int &size, int quality) {
+  return write_jpeg(source, w, h, false, dest,size,quality);
+}
+
+
+int convertYCrCbtoJPEG(const byte* source, int w, int h, byte* dest, int &size, int quality) {
+  return write_jpeg(source, w, h, true, dest,size,quality);
+}
+
 struct mem_source_mgr
 {
   struct jpeg_source_mgr pub;
@@ -176,6 +187,72 @@ urbi_jpeg_error_exit (j_common_ptr cinfo)
 
   /* Return control to the setjmp point */
   longjmp(myerr->setjmp_buffer, 1);
+}
+
+
+struct mem_destination_mgr{
+    struct jpeg_destination_mgr pub;
+};
+
+void init_destination(j_compress_ptr cinfo) {
+}
+
+boolean empty_output_buffer(j_compress_ptr cinfo) {
+return FALSE;
+}
+
+void term_destination(j_compress_ptr cinfo) {
+}
+
+
+int
+write_jpeg(const unsigned char* src, int w, int h, bool ycrcb, 
+               unsigned char* dst, int &sz, int quality)
+{
+   
+    struct jpeg_compress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+
+    JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
+    int row_stride;		/* physical row width in image buffer */
+    int jpegsize;
+
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_compress(&cinfo);
+    mem_destination_mgr *dest = (struct mem_destination_mgr *)
+    (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
+			       sizeof(mem_destination_mgr));
+
+    cinfo.dest = (jpeg_destination_mgr*)dest;
+    dest->pub.init_destination=&init_destination;
+    dest->pub.empty_output_buffer = &empty_output_buffer;
+    dest->pub.term_destination = term_destination;
+    dest->pub.free_in_buffer = sz;
+    dest->pub.next_output_byte = dst;
+    cinfo.image_width = w;
+    cinfo.image_height = h;
+    cinfo.input_components = 3;		/* # of color components per pixel */
+    cinfo.in_color_space = ycrcb?JCS_YCbCr:JCS_RGB; /* colorspace of input image */
+
+    jpeg_set_defaults(&cinfo);
+
+    jpeg_set_quality(&cinfo,
+                     quality, TRUE /* limit to baseline-JPEG values */);
+
+    jpeg_start_compress(&cinfo, TRUE);
+
+    row_stride = w * 3;	/* JSAMPLEs per row in image_buffer */
+
+    while (cinfo.next_scanline < cinfo.image_height) {
+        row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
+        (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    }
+
+    jpeg_finish_compress(&cinfo);
+    sz -= dest->pub.free_in_buffer ;
+    jpeg_destroy_compress(&cinfo);
+
+    return sz;
 }
 
 
