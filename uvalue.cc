@@ -73,6 +73,9 @@ UValue::UValue(const char* str)
 
 UValue & UValue::operator = (const urbi::UBinary &b) {
   //TODO: cleanup
+ if (dataType == DATA_BINARY) {
+   delete refBinary;
+ }
   int sz=0;
   dataType = DATA_BINARY;
   //building unamedparameters
@@ -81,51 +84,40 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
     sz = b.image.size;
     switch (b.image.imageFormat) {
       case urbi::IMAGE_RGB:
-	first = new UNamedParameters(new UString("RGB"),0);
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("rgb")));
 	break;
       case urbi::IMAGE_YCbCr:
-	first = new UNamedParameters(new UString("YCbCr"),0);
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("YCbCr")));
 	break;
       case urbi::IMAGE_JPEG:
-	first = new UNamedParameters(new UString("JPEG"),0);
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("jpeg")));
 	break;
       default:	
-	first = new UNamedParameters(new UString("UNKN"),0);	
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));	
 	break;				  
     };
-    std::ostringstream tmp;
-    tmp << b.image.width;
-    first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-    tmp.str("");
-    tmp << b.image.height;
-    first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);			      
+
+    first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.image.width));
+   first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.image.height));		      
   }
   if (b.type == urbi::BINARY_SOUND) {
     sz = b.sound.size;
     switch(b.sound.soundFormat) {
       case urbi::SOUND_RAW:
-	first = new UNamedParameters(new UString("raw"),0);
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("raw")));
 	break;
       case urbi::SOUND_WAV:
-	first = new UNamedParameters(new UString("wav"),0);
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("wav")));
 	break;
       default:	
-	first = new UNamedParameters(new UString("UNKN"),0);	
+	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));
 	break;	
     }
-    std::ostringstream tmp;
-    tmp << b.sound.channels;
-    first->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-    tmp.str("");
-    tmp << b.sound.rate;
-    first->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-    tmp.str("");
-    tmp << b.sound.sampleSize;
-    first->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-    tmp.str("");
-    tmp << b.sound.sampleFormat;
-    first->next->next->next->next = new UNamedParameters(new UString(tmp.str().c_str()),0);
-    tmp.str("");
+
+    first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.channels));
+    first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.rate));	
+    first->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleSize));
+    first->next->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleFormat));	
     
     
   }
