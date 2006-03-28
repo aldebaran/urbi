@@ -171,7 +171,7 @@ UVar::operator int () {
     return (int)out();
   else
     return (int)in();   
-};
+}
 
 UVar::operator UFloat () { 
   //check of dataType is done inside in and out
@@ -179,7 +179,7 @@ UVar::operator UFloat () {
     return out();
   else
     return in();   
-};
+}
 
 
 UVar::operator string () { 
@@ -188,7 +188,37 @@ UVar::operator string () {
     return (string(vardata->variable->value->str->str()));  
   else  
     return string("");    
-};
+}
+
+UVar::operator UBinary() {
+  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
+    //simplest way is to echo our bin headers and parse again
+    UBinary b;
+    string msg;
+    msg = vardata->variable->value->refBinary->ref()->bufferSize;
+    std::list<urbi::BinaryData> lBin;
+    lBin.push_back(urbi::BinaryData( vardata->variable->value->refBinary->ref()->buffer,  vardata->variable->value->refBinary->ref()->bufferSize));
+    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
+    b.parse(msg.c_str(), 0, lBin, lIter);
+  return b;
+  }
+  else return UBinary();
+}
+
+UVar::operator UBinary*() {
+  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
+    //simplest way is to echo our bin headers and parse again
+    UBinary* b = new UBinary();
+    string msg;
+    msg = vardata->variable->value->refBinary->ref()->bufferSize;
+    std::list<urbi::BinaryData> lBin;
+    lBin.push_back(urbi::BinaryData( vardata->variable->value->refBinary->ref()->buffer,  vardata->variable->value->refBinary->ref()->bufferSize));
+    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
+    b->parse(msg.c_str(), 0, lBin, lIter);
+    return b;
+  }
+  else return new UBinary();
+}
 
 
 //! UVar out value (read mode)

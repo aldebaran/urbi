@@ -123,7 +123,7 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
   }
   UBinary *bin = new UBinary(sz, first);
   bin->bufferSize =  sz;
-  bin->buffer = (ubyte *)malloc(sz);
+  //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
   memcpy(bin->buffer, b.data, sz); 
   refBinary = new URefPt<UBinary>(bin);
   return *this;
