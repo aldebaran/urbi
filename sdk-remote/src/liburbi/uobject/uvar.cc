@@ -149,6 +149,16 @@ UVar::operator string () {
   return ((string)value); 
 };
  
+
+UVar::operator UBinary() {
+  return (UBinary)value;
+};
+
+UVar::operator UBinary*() {
+  return new UBinary(value);
+};
+
+
 //! UVar update
 void
 UVar::__update(UValue& v)

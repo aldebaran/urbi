@@ -261,7 +261,7 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
 }
 
 
-int UBinary::parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos) {
+int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos) {
   while (message[pos]==' ') pos++;
   //find end of header
  
@@ -435,7 +435,7 @@ UValue::~UValue() {
   }
 }
 
-UValue::operator UFloat() {
+UValue::operator UFloat () const {
 
   UFloat v;
   switch( type) {
@@ -457,7 +457,7 @@ UValue::operator UFloat() {
 };
 
 
-UValue::operator string() {
+UValue::operator string() const {
    switch( type) {
    case DATA_DOUBLE: 
      {
@@ -471,6 +471,13 @@ UValue::operator string() {
      break;
    };
 };
+
+UValue::operator UBinary() const {
+  if (type != DATA_BINARY)
+    return UBinary();
+  else 
+    return *binary;
+}
 
 
 UValue& UValue::operator= (const UValue& v)

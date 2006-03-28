@@ -222,16 +222,16 @@ urbi {
 	UImage                image;
 	USound                sound;
       };
-      string                message;         ///< extra bin headers
+      string                message;         ///< extra bin headers(everything after BIN <size> and before ';'
 
 
       UBinary();
-      UBinary(const UBinary &b);
-      UBinary & operator = (const UBinary &b);
+      UBinary(const UBinary &b);  ///< deep copy constructor
+      UBinary & operator = (const UBinary &b); ///< deep copy
       void buildMessage(); ///< build message from structures
       string getMessage() const; ///< get message extracted from structures
-      ~UBinary();
-      int parse(char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
+      ~UBinary();  ///< Frees binary buffer
+      int parse(const char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
   };
 
   class UList {
@@ -292,10 +292,11 @@ urbi {
       explicit UValue(const UBinary &b);
       explicit UValue(const UList & l);
       explicit UValue(const UObjectStruct &o);
-      operator UFloat();
-      operator string();
-      operator int() {return (int)(UFloat)(*this);}
-      operator bool() {return (bool)(int)(UFloat)(*this);}
+      operator UFloat() const;
+      operator string() const;
+      operator int() const {return (int)(UFloat)(*this);}
+      operator bool() const {return (bool)(int)(UFloat)(*this);}
+      operator UBinary() const;
       UValue& operator=(const UValue&);
 
       ~UValue();  
@@ -325,7 +326,8 @@ urbi {
     void operator = ( const UBinary &);
     operator int ();
     operator bool () {return (int)(*this);}
-
+    operator UBinary ();
+    operator UBinary *();  //binary will have to be deleted by the user
     operator UFloat ();
     operator string ();
   
