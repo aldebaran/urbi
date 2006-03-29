@@ -479,6 +479,27 @@ UValue::operator UBinary() const {
     return *binary;
 }
 
+UValue::operator UImage() {
+ if (type != DATA_BINARY || binary->type != BINARY_IMAGE) {
+   UImage i;
+   i.data=0; i.size=0; i.width=0; i.height=0;
+   return i;
+ }
+ else
+   return binary->image;
+}
+
+UValue::operator USound() {
+ if (type != DATA_BINARY || binary->type != BINARY_SOUND) {
+   USound i;
+   i.data=0; i.size=0; i.channels=i.rate=0;
+   return i;
+ }
+ else
+   return binary->sound;
+}
+
+
 
 UValue& UValue::operator= (const UValue& v)
 { //TODO: optimize

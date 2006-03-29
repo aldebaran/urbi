@@ -155,7 +155,9 @@ urbi {
     IMAGE_RGB=1,     ///< RGB 24 bit/pixel
     IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
     IMAGE_JPEG=3,    ///< JPEG
-    IMAGE_PPM=4      ///< RGB with a PPM header
+    IMAGE_PPM=4,      ///< RGB with a PPM header
+
+    IMAGE_UNKNOWN, 
   };
 
 
@@ -163,7 +165,9 @@ urbi {
     SOUND_RAW,
     SOUND_WAV,
     SOUND_MP3,
-    SOUND_OGG
+    SOUND_OGG,
+
+    SOUND_UNKNOWN,
   };
 
   enum USoundSampleFormat {
@@ -296,7 +300,9 @@ urbi {
       operator string() const;
       operator int() const {return (int)(UFloat)(*this);}
       operator bool() const {return (bool)(int)(UFloat)(*this);}
-      operator UBinary() const;
+      operator UBinary() const; ///< deep copy
+      operator UImage(); ///< ptr copy
+      operator USound(); ///< ptr copy
       UValue& operator=(const UValue&);
 
       ~UValue();  
@@ -323,11 +329,17 @@ urbi {
 
     void operator = ( UFloat );
     void operator = ( string );
-    void operator = ( const UBinary &);
+    void operator = ( const UBinary &); 
+    void operator = ( const UImage &i) {UBinary b; b.type=BINARY_IMAGE;b.image=i; (*this)=b; b.data=0;} ///< Data is copied
+    void operator = ( const USound &s) {UBinary b; b.type=BINARY_SOUND;b.sound=s; (*this)=b; b.data=0;} ///< Data is copied
+
+
     operator int ();
     operator bool () {return (int)(*this);}
-    operator UBinary ();
-    operator UBinary *();  //binary will have to be deleted by the user
+    operator UBinary ();   ///< deep copy
+    operator UBinary *();  ///< deep copy, binary will have to be deleted by the user
+    operator UImage (); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
+    operator USound(); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
     operator UFloat ();
     operator string ();
   

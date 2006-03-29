@@ -158,6 +158,14 @@ UVar::operator UBinary*() {
   return new UBinary(value);
 };
 
+UVar::operator UImage() {
+  return (UImage)value;
+};
+
+UVar::operator USound() {
+  return (USound)value;
+};
+
 
 //! UVar update
 void
