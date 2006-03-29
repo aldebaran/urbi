@@ -194,12 +194,24 @@ UVar::operator UBinary() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
     //simplest way is to echo our bin headers and parse again
     UBinary b;
-    string msg;
-    msg = vardata->variable->value->refBinary->ref()->bufferSize;
+    std::ostringstream msg;
+    msg << vardata->variable->value->refBinary->ref()->bufferSize;
+    UNamedParameters *param = vardata->variable->value->refBinary->ref()->parameters;
+    while (param) {
+      if (param->expression) {
+	if (param->expression->dataType == ::DATA_NUM)
+	  msg<< " "<<(int)param->expression->val;
+	else if (param->expression->dataType == ::DATA_STRING)
+	  msg << " "<<param->expression->str->str();
+      }
+      param = param->next;
+    }
+    
+
     std::list<urbi::BinaryData> lBin;
     lBin.push_back(urbi::BinaryData( vardata->variable->value->refBinary->ref()->buffer,  vardata->variable->value->refBinary->ref()->bufferSize));
     std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-    b.parse(msg.c_str(), 0, lBin, lIter);
+    b.parse(msg.str().c_str(), 0, lBin, lIter);
   return b;
   }
   else return UBinary();
@@ -209,15 +221,34 @@ UVar::operator UBinary*() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
     //simplest way is to echo our bin headers and parse again
     UBinary* b = new UBinary();
-    string msg;
-    msg = vardata->variable->value->refBinary->ref()->bufferSize;
+    std::ostringstream msg;
+    msg << vardata->variable->value->refBinary->ref()->bufferSize;
+    UNamedParameters *param = vardata->variable->value->refBinary->ref()->parameters;
+    while (param) {
+      if (param->expression) {
+	if (param->expression->dataType == ::DATA_NUM)
+	  msg<< " "<<(int)param->expression->val;
+	else if (param->expression->dataType == ::DATA_STRING)
+	  msg << " "<<param->expression->str->str();
+      }
+      param = param->next;
+    }
+
     std::list<urbi::BinaryData> lBin;
     lBin.push_back(urbi::BinaryData( vardata->variable->value->refBinary->ref()->buffer,  vardata->variable->value->refBinary->ref()->bufferSize));
     std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-    b->parse(msg.c_str(), 0, lBin, lIter);
+    b->parse(msg.str().c_str(), 0, lBin, lIter);
     return b;
   }
   else return new UBinary();
+}
+
+UVar::operator UImage() {
+ return (UImage)*vardata->variable->value;
+}
+
+UVar::operator USound() {
+ return (USound)*vardata->variable->value;
 }
 
 

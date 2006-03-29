@@ -71,6 +71,71 @@ UValue::UValue(const char* str)
   this->str = new UString (str);
 }
 
+#define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
+UValue::operator urbi::UImage() {
+  urbi::UImage img; img.data=0; img.size=img.width = img.height=0; img.imageFormat=urbi::IMAGE_UNKNOWN;
+  if (dataType != DATA_BINARY)
+    return img;
+
+  //fill parameters from list
+  UNamedParameters *param = refBinary->ref()->parameters;
+  //validate
+  if (! (VALIDATE(param,DATA_STRING) && 
+      VALIDATE(param->next, DATA_NUM) &&
+      VALIDATE(param->next->next, DATA_NUM)))
+    return img;
+  
+  if (!strcmp(param->expression->str->str(), "rgb"))
+    img.imageFormat = urbi::IMAGE_RGB;
+  else if (!strcmp(param->expression->str->str(), "jpeg"))
+    img.imageFormat = urbi::IMAGE_JPEG;
+  else if (!strcmp(param->expression->str->str(), "YCbCr"))
+    img.imageFormat = urbi::IMAGE_YCbCr;
+  else
+    img.imageFormat = urbi::IMAGE_UNKNOWN;
+
+  img.width = param->next->expression->val;
+  img.height = param->next->next->expression->val;
+  img.size = refBinary->ref()->bufferSize;
+  img.data = (char *)refBinary->ref()->buffer;
+  return img;
+}
+
+UValue::operator urbi::USound() {
+  urbi::USound snd;
+  snd.data=0; snd.size = snd.channels = snd.rate = 0; snd.soundFormat = urbi::SOUND_UNKNOWN;
+  if (dataType != DATA_BINARY)
+    return snd;
+  UNamedParameters *param = refBinary->ref()->parameters;
+  //validate
+  if (! (VALIDATE(param,DATA_STRING) && 
+      VALIDATE(param->next, DATA_NUM) &&
+      VALIDATE(param->next->next, DATA_NUM) && 
+      VALIDATE(param->next->next->next, DATA_NUM) && 
+      VALIDATE(param->next->next->next->next, DATA_NUM) 
+      ))
+    return snd;
+   
+  if (!strcmp(param->expression->str->str(), "raw"))
+    snd.soundFormat = urbi::SOUND_RAW;
+  else if (!strcmp(param->expression->str->str(), "wav"))
+    snd.soundFormat = urbi::SOUND_WAV;
+  else
+    snd.soundFormat = urbi::SOUND_UNKNOWN;
+
+  snd.channels = param->next->expression->val;
+  snd.rate = param->next->next->expression->val;
+  snd.sampleSize = param->next->next->next->expression->val;
+  snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;
+
+  snd.size = refBinary->ref()->bufferSize;
+  snd.data = (char *)refBinary->ref()->buffer;
+
+  return snd;
+}
+
+#undef VALIDATE
+
 UValue & UValue::operator = (const urbi::UBinary &b) {
   //TODO: cleanup
  if (dataType == DATA_BINARY) {
