@@ -189,7 +189,7 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
   UBinary *bin = new UBinary(sz, first);
   bin->bufferSize =  sz;
   //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
-  memcpy(bin->buffer, b.data, sz); 
+  memcpy(bin->buffer, b.common.data, sz); 
   refBinary = new URefPt<UBinary>(bin);
   return *this;
 }
@@ -546,7 +546,7 @@ UValue::echo(UConnection *connection, bool human_readable)
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
              "FILE %s",str->str());
 
-  if (dataType == DATA_BINARY) {
+  if (dataType == DATA_BINARY) {http://www.steven-seagal.net/forum/showthread.php?t=7740
     if (refBinary) {
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
                "BIN %d ",refBinary->ref()->bufferSize);

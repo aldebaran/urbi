@@ -190,7 +190,7 @@ UVar::operator string () {
     return string("");    
 }
 
-UVar::operator UBinary() {
+UVar::operator urbi::UBinary() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
     //simplest way is to echo our bin headers and parse again
     UBinary b;
@@ -217,7 +217,7 @@ UVar::operator UBinary() {
   else return UBinary();
 }
 
-UVar::operator UBinary*() {
+UVar::operator urbi::UBinary*() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
     //simplest way is to echo our bin headers and parse again
     UBinary* b = new UBinary();
