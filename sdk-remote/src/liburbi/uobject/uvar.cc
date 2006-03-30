@@ -130,8 +130,8 @@ void
 UVar::operator = (const UBinary &b)
 {  
   URBI() << name << "=\"";  
-  URBI()<<"BIN "<<b.size<<" "<<b.getMessage()<<";";
-  URBI().write((char *)b.data, b.size);
+  URBI()<<"BIN "<<b.common.size<<" "<<b.getMessage()<<";";
+  URBI().write((char *)b.common.data, b.common.size);
 
 }
 

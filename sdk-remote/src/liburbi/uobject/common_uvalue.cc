@@ -226,8 +226,8 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
       s<< '"'<<*v.stringValue<<'"';
       break;
     case DATA_BINARY:
-      s<<"BIN "<<v.binary->size<<" "<<v.binary->message<<";";
-      s.write((char *)v.binary->data, v.binary->size);
+      s<<"BIN "<<v.binary->common.size<<" "<<v.binary->message<<";";
+      s.write((char *)v.binary->common.data, v.binary->common.size);
       break;
     case DATA_LIST:
       {
@@ -278,9 +278,9 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
     return -pos;
   }
   pos +=ps;
-  size = psize;
-  data = malloc(psize);
-  memcpy(data, binpos->data, size);
+  common.size = psize;
+  common.data = malloc(psize);
+  memcpy(common.data, binpos->data, common.size);
   binpos++;
 
 
@@ -300,7 +300,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
   //DEBUG fprintf(stderr,"%s:  %d %s %d %d\n", message, p1, type, p2, p3);
   if (!strcmp(type, "jpeg")) {
     this->type = BINARY_IMAGE;
-    image.size = size;
+    image.size = common.size;
     image.width = p2;
     image.height = p3;
     image.imageFormat = IMAGE_JPEG;
@@ -309,7 +309,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
  
   if (!strcmp(type, "YCbCr")) {
     this->type = BINARY_IMAGE;
-    image.size = size;
+    image.size = common.size;
     image.width = p2;
     image.height = p3;
     image.imageFormat = IMAGE_YCbCr;
@@ -318,7 +318,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
 
   if (!strcmp(type, "rgb")) {
     this->type = BINARY_IMAGE;
-    image.size = size;
+    image.size = common.size;
     image.width = p2;
     image.height = p3;
     image.imageFormat = IMAGE_RGB;
@@ -328,7 +328,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
   if (!strcmp(type, "raw")) {
     this->type = BINARY_SOUND;
     sound.soundFormat = SOUND_RAW;
-    sound.size = size;
+    sound.size = common.size;
     sound.channels = p2;
     sound.rate = p3;
     sound.sampleSize = p4;
@@ -339,7 +339,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
   if (!strcmp(type, "wav")) {
     this->type = BINARY_SOUND;
     sound.soundFormat = SOUND_WAV;
-    sound.size = size;
+    sound.size = common.size;
     sound.channels = p2;
     sound.rate = p3;
     sound.sampleSize = p4;
@@ -550,27 +550,29 @@ UValue::UValue(const UValue &v) {
 
 
 UBinary::UBinary() {
-  data = 0;
+  common.data = 0;
+  common.size = 0;
+  type = BINARY_NONE;
 }
 
 UBinary::~UBinary() {
-  if (data)
-    free(data);
+  if (common.data)
+    free(common.data);
 }
 
 UBinary::UBinary(const UBinary &b) {
   type = BINARY_NONE;
-  data = 0;
+  common.data = 0;
   (*this) = b;
 }
 
 UBinary & UBinary::operator = (const UBinary &b) {
-  if (data)
-    free(data);
+  if (common.data)
+    free(common.data);
 
   type = b.type;
   message = b.message;
-  size = b.size;
+  common.size = b.common.size;
   switch(type) {
   case BINARY_IMAGE:
     image = b.image;
@@ -579,8 +581,8 @@ UBinary & UBinary::operator = (const UBinary &b) {
     sound = b.sound;
     break;
   }
-  data = malloc(size);
-  memcpy(data, b.data, b.size);
+  common.data = malloc(common.size);
+  memcpy(common.data, b.common.data, b.common.size);
 }
 
 
