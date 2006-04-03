@@ -45,6 +45,11 @@ namespace Network {
   //performs the select with a delay of usedDelay microseconds, returns true if at least
   // one action was performed
   bool selectAndProcess(int usDelay);
+
+  //create a thread that will loop forever on selectAndProcess
+  void startNetworkProcessingThread();
+     
+
 };
 
 

@@ -154,7 +154,7 @@ namespace Network {
     if (r>0)
       notify(rd, wr);
     if (r<0) {
-      //this is baad, we should realy do something
+      //XXX this is baad, we should realy do something
       fprintf(stderr, "SELECT ERROR\n");
     }
 	return (r>0);
@@ -169,4 +169,21 @@ namespace Network {
     if (i != pList.end())
       pList.erase(i); 
   }
+
+  void * processNetwork(void * useless) {
+    while (true) {
+      selectAndProcess(1000000);
+    }
+  }
+
+  
+  void startNetworkProcessingThread() {
+    #ifdef WIN32
+    #error "write this"
+    #else
+    pthread_t * pt = new pthread_t;
+    pthread_create(pt, 0, &processNetwork, 0);
+    #endif
+  }
+  
 };

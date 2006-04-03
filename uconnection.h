@@ -29,7 +29,7 @@
 #include "ucommandqueue.h"
 #include "uvariable.h"
 #include "parser/bison/location.hh"  //FIXME remove this to abstract parser
-				     // from connection
+#include "lockable.h"				     // from connection
 
 class UParser;
 
@@ -60,7 +60,7 @@ class UParser;
     system is actually sending data through the real connection.
  */
 
-class UConnection 
+class UConnection: public Lockable //queue lock
 {
   friend class UServer;
   
@@ -135,7 +135,7 @@ public:
   
   yy::location        lastloc;       ///< last location after parsing
 
-
+  Lockable            treeLock;      ///< Lock access to command tree
 protected:
 
   static const int ADAPTIVE = 100; ///< Default adaptive behavior for Send/Recv.

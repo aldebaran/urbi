@@ -358,6 +358,7 @@ UConnection::block ()
 UErrorValue
 UConnection::continueSend ()
 {
+  BlockLock bl(this); //lock this function
   blocked_ = false;         // continueSend unblocks the connection.
   
   int toSend = sendQueue_->dataSize(); // nb of bytes to send
@@ -406,8 +407,10 @@ UConnection::received (const char *s)
 UErrorValue          
 UConnection::received (const ubyte *buffer, int length)
 { 
-
-
+  BlockLock bl(this); //lock this function
+  bool gotlock = false;
+  bool faillock = false; //if binary append failed to get lock, abort processing
+  
   if (server->memoryOverflow) {
 
     errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
@@ -435,9 +438,14 @@ UConnection::received (const ubyte *buffer, int length)
 
       length -= (binCommand->refBinary->ref()->bufferSize - 
                 transferedBinary_);
-      receiveBinary_ = false;  
-
-      append(binCommand->up);
+      if (treeLock.tryLock()) {
+	receiveBinary_ = false;  	
+	append(binCommand->up);
+	gotlock = true;
+      }
+      else {
+	faillock = true;
+      }
     }
   
   UErrorValue result = recvQueue_->push( buffer, length);
@@ -458,6 +466,16 @@ UConnection::received (const ubyte *buffer, int length)
     }
     return result;
   }
+
+  if (faillock) {
+    newDataAdded = true; //server will call us again right after work
+    return USUCCESS;
+    }
+  if (!gotlock) 
+    if (!treeLock.tryLock()) {
+     newDataAdded = true; //server will call us again right after work
+     return USUCCESS;
+    }
 
   // Starts processing
   receiving = true;
@@ -570,6 +588,7 @@ UConnection::received (const ubyte *buffer, int length)
   receiving = false;  
   server->parser.commandTree = 0;
 
+  treeLock.unlock();
   if (server->memoryOverflow) return UMEMORYFAIL; 
 
   return USUCCESS; 

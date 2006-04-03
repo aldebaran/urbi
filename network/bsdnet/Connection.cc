@@ -44,6 +44,7 @@ Connection::Connection(int connfd) :
 	else {
 
 		initialize();
+		block(); //mark as blocked
 	}
 }
 
@@ -109,6 +110,7 @@ int Connection::effectiveSend (const ubyte *buffer, int length){
 	  return ret; // Number of bytes actually written.
 }
 
-void Connection::doWrite(){
-	continueSend();
+void Connection::doWrite(){ 
+  continueSend();
+  block();
 }

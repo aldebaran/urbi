@@ -13,9 +13,8 @@
 #include <uconnection.h>
 #include <utypes.h>
 #include "network.h"
-
 //! LinuxConnection implements an TCP/IP client connection.
-class Connection : public UConnection, public Network::Pipe 
+class Connection : public UConnection, public Network::Pipe
 {
 public:
 	// Parameters used by the constructor.
@@ -48,7 +47,6 @@ public:
 protected:
 	//! Overloading this function is requiered by UConnection
 	virtual int effectiveSend (const ubyte *buffer, int length);
-	
 	//! The file descriptor of the connection
 	int	fd;
 	//! The reception buffer
