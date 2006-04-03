@@ -23,7 +23,7 @@ inline void deleteLock(Lock &l) {
 
 
 #else
-#ifdef OPENR
+#if (OS == aibo)
 typedef int Lock;
 inline void initLock(Lock &l) {
   
@@ -41,7 +41,7 @@ inline void deleteLock(Lock &l) {
 }
 
 inline bool lockTryLock(Lock &l) {
-  
+  return true;
 }
 
 #else
