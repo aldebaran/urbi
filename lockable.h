@@ -66,7 +66,7 @@ inline bool lockTryLock(Lock &l) {
   return !pthread_mutex_trylock(&l);
 }
 #endif
-
+#endif
 class Lockable {
  public:
   Lockable() { initLock(_lock);}
