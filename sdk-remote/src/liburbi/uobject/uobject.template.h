@@ -157,7 +157,7 @@ urbi {
     IMAGE_JPEG=3,    ///< JPEG
     IMAGE_PPM=4,      ///< RGB with a PPM header
 
-    IMAGE_UNKNOWN, 
+    IMAGE_UNKNOWN 
   };
 
 
@@ -166,8 +166,8 @@ urbi {
     SOUND_WAV,
     SOUND_MP3,
     SOUND_OGG,
-
-    SOUND_UNKNOWN,
+    
+    SOUND_UNKNOWN
   };
 
   enum USoundSampleFormat {
