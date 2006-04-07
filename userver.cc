@@ -56,7 +56,7 @@ const char* HEADER_BEFORE_CUSTOM[] = {
   #include "version.h"
   " build"
   #include "buildversion.h"
-  "        www.gostai.com\n",
+  "\n",
   "***\n"
 };
 

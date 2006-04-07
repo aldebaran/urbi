@@ -387,7 +387,8 @@ public:
   MEMORY_MANAGED;
 
   UCommand_GROUP(UString* id,
-                 UNamedParameters *parameters);  
+                 UNamedParameters *parameters,
+		 int grouptype = 0);  
 
   virtual ~UCommand_GROUP();
 
@@ -398,6 +399,7 @@ public:
  
   UString              *id; ///< identifier
   UNamedParameters     *parameters; ///< list of group members
+  int                  grouptype; ///< type of group command group/addgroup/delgroup
 };
 
 

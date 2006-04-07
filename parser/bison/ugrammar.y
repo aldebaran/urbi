@@ -182,6 +182,8 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token NEW "new"
 %token OBJECT "object"
 %token GROUP "group"
+%token ADDGROUP "addgroup"
+%token DELGROUP "delgroup"
 %token INFO "info"
 %token UNIT "unit"
 %token WAIT "wait"
@@ -608,6 +610,20 @@ instruction:
       $$ = new UCommand_GROUP($2,$4);
       MEMCHECK2($$,$4,$2);      
     } 
+
+  | ADDGROUP IDENTIFIER LBRACKET identifiers RBRACKET {
+
+      $$ = new UCommand_GROUP($2,$4,1);
+      MEMCHECK2($$,$4,$2);      
+    } 
+
+
+  | DELGROUP IDENTIFIER LBRACKET identifiers RBRACKET {
+
+      $$ = new UCommand_GROUP($2,$4,2);
+      MEMCHECK2($$,$4,$2);      
+    } 
+
     
   | GROUP IDENTIFIER {
 

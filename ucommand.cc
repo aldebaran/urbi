@@ -2837,12 +2837,14 @@ MEMORY_MANAGER_INIT(UCommand_GROUP);
 /*! Subclass of UCommand with standard member initialization.
 */
 UCommand_GROUP::UCommand_GROUP(UString* id,
-                               UNamedParameters* parameters) :
+                               UNamedParameters* parameters,
+			       int grouptype) :
   UCommand(CMD_GROUP)
 {	
   ADDOBJ(UCommand_GROUP);
   this->id           = id;
   this->parameters   = parameters;
+  this->grouptype    = grouptype;
 }
 
 //! UCommand subclass destructor.
@@ -2867,12 +2869,25 @@ UCommand_GROUP::execute(UConnection *connection)
       g = new UGroup(id);
       ::urbiserver->grouptab[g->name->str()] = g;
     }
-    g->members.clear();
+    if (grouptype==0)  g->members.clear();
+
     UNamedParameters* param = parameters;
     while (param) { 
-      g->members.push_back(param->name->copy());
+      if (grouptype == 2) {//del
+	for (list<UString*>::iterator it = g->members.begin();
+	    it != g->members.end(); 
+	    )
+	  if ((*it)->equal(param->name)) 
+	    it =g->members.erase(it);
+	  else  
+	    it++;
+      }
+      else
+        g->members.push_back(param->name->copy());
+	
       param = param->next;
     }
+      
     return (status = UCOMPLETED);
   }
 
@@ -2924,218 +2939,6 @@ UCommand_GROUP::execute(UConnection *connection)
   return (status = UCOMPLETED);
 }
   
- /* 
-  HMaliastab::iterator hma;
-  HMaliastab::iterator hmb;
-  UAlias *a;
-  UAlias *b;
-  
-  char tmpvarname[1024];
-  UValue *e1;
-
-  if ((id) && (variablename)) {
-
-    // objalias
-    if ((id->nostruct) && (variablename->nostruct)) {
-  
-      hma = ::urbiserver->objaliastab.find(id->id->str());
-      if (hma == ::urbiserver->objaliastab.end()) {
-	a = new UAlias(id->id);
-	::urbiserver->objaliastab[a->name->str()] = a;
-      }
-      else
-	a = hma->second;  
-	  
-      hmb = ::urbiserver->objaliastab.find(variablename->id->str());
-      if (hmb == ::urbiserver->objaliastab.end()) {
-	b = new UAlias(variablename->id);
-	::urbiserver->objaliastab[b->name->str()] = b;
-      }
-      else
-      	b = hmb->second;        
-    
-      a->members.push_back(b);      
-      return (status = UCOMPLETED);
-    } // objalias
-
-    // varalias
-    //
-    // 
-    // id
-    if (id->nostruct) snprintf(tmpvarname,1024,"%s",id->id->str());
-    else 
-      if (id->str) {
-	e1 = id->str->eval(this,connection);
-	
-	if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	      "!!! dynamic variable evaluation failed\n");
-	  connection->send(tmpbuffer,tag->str());
-	  if (e1) delete e1;      
-	  return( status = UCOMPLETED);
-	}
-	snprintf(tmpvarname,1024,"%s",e1->str->str());
-	delete e1;
-      }      
-      else 
-	snprintf(tmpvarname,1024,"%s.%s",id->device->str(),id->id->str());
-
-    hma = ::urbiserver->aliastab.find(tmpvarname);
-    
-    if (hma == ::urbiserver->aliastab.end()) {
-      a = new UAlias(tmpvarname);
-      ::urbiserver->aliastab[a->name->str()] = a;
-    }
-    else
-      a = hma->second;  
-
-    // variablename
-    if (variablename->nostruct) snprintf(tmpvarname,1024,"%s",variablename->id->str());
-    else 
-      if (variablename->str) {
-	e1 = variablename->str->eval(this,connection);
-	
-	if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	      "!!! dynamic variable evaluation failed\n");
-	  connection->send(tmpbuffer,tag->str());
-	  if (e1) delete e1;      
-	  return( status = UCOMPLETED);
-	}
-	snprintf(tmpvarname,1024,"%s",e1->str->str());
-	delete e1;
-      }      
-      else 
-	snprintf(tmpvarname,1024,"%s.%s",variablename->device->str(),variablename->id->str());
-
-    hmb = ::urbiserver->aliastab.find(tmpvarname);
-    
-    if (hmb == ::urbiserver->aliastab.end()) {
-      b = new UAlias(tmpvarname);
-      ::urbiserver->aliastab[b->name->str()] = b;
-    }
-    else
-      b = hma->second;  
-
-    // link stage
-
-    a->members.push_back(b);      
-    return (status = UCOMPLETED);    
-  }
-
-  // alias queries here...
-  list<UAlias*>::iterator it;
-
-  if ((!id) && (!variablename)) {
-    for ( HMaliastab::iterator retr = 
-            connection->server->aliastab.begin();
-          retr != connection->server->aliastab.end();
-          retr++) 
-      if (!retr->second->members.empty()) {
-      
-	it = retr->second->members.begin();
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	    "*** %25s -> %s\n",
-	    (*retr).first,(*it)->name->str());		              
-	connection->send(tmpbuffer,tag->str());
-	
-	for (it++;it != retr->second->members.end();it++) {
-	    
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-            "*** %25s -> %s\n","",
-	      (*it)->name->str());		              
-	  connection->send(tmpbuffer,tag->str());
-	}
-      }
-       
-    for ( HMaliastab::iterator retr2 = 
-            connection->server->objaliastab.begin();
-          retr2 != connection->server->objaliastab.end();
-          retr2++) 
-      if (!retr2->second->members.empty()) {
-      
-	it = retr2->second->members.begin();
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	    "*** %25s -> %s\n",
-	    (*retr2).first,(*it)->name->str());		              
-	connection->send(tmpbuffer,tag->str());
-	
-	for (it++;it != retr2->second->members.end();it++) {
-	    
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-            "*** %25s -> %s\n","",
-	      (*it)->name->str());		              
-	  connection->send(tmpbuffer,tag->str());
-	}
-      }    
-  } // full alias query
-
-
-  // named alias query
-  if ((id) && (!variablename)) {
-    if (id->nostruct) {
-      HMaliastab::iterator retr = connection->server->objaliastab.find(
-	  id->id->str());
-      if ((retr !=  connection->server->objaliastab.end()) &&	  
-	  (!retr->second->members.empty())) {
-      
-	it = retr->second->members.begin();
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	    "*** %25s -> %s\n",
-	    (*retr).first,(*it)->name->str());		              
-	connection->send(tmpbuffer,tag->str());
-	
-	for (it++;it != retr->second->members.end();it++) {
-	    
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	      "*** %25s -> %s\n","",
-	      (*it)->name->str());		              
-	  connection->send(tmpbuffer,tag->str());
-	}
-      }
-    }
-    
-    if (id->nostruct) snprintf(tmpvarname,1024,"%s",id->id->str());
-    else 
-      if (id->str) {
-	e1 = id->str->eval(this,connection);
-	
-	if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	      "!!! dynamic variable evaluation failed\n");
-	  connection->send(tmpbuffer,tag->str());
-	  if (e1) delete e1;      
-	  return( status = UCOMPLETED);
-	}
-	snprintf(tmpvarname,1024,"%s",e1->str->str());
-	delete e1;
-      }      
-      else 
-	snprintf(tmpvarname,1024,"%s.%s",id->device->str(),id->id->str());
-
-    HMaliastab::iterator retr = connection->server->aliastab.find(
-	tmpvarname);
-    if ((retr !=  connection->server->aliastab.end()) &&	  
-	(!retr->second->members.empty())) {
-      
-      it = retr->second->members.begin();
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	  "*** %25s -> %s\n",
-	  (*retr).first,(*it)->name->str());		              
-      connection->send(tmpbuffer,tag->str());
-	
-      for (it++;it != retr->second->members.end();it++) {
-	
-      	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	    "*** %25s -> %s\n","",
-	    (*it)->name->str());		              
-	connection->send(tmpbuffer,tag->str());
-      }
-    } 
-  } // named alias query
-*/
-
-	
 
 //! UCommand subclass hard copy function
 UCommand*
@@ -3148,7 +2951,8 @@ UCommand_GROUP::copy()
   if (parameters) copy_parameters = parameters->copy(); else copy_parameters = 0;
 
   UCommand_GROUP *ret = new UCommand_GROUP(copy_id,
-                                           copy_parameters);
+                                           copy_parameters,
+					   grouptype);
   copybase(ret);
   return ((UCommand*)ret);
 }

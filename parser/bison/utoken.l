@@ -240,6 +240,8 @@ in            { return token::IN;}
 loop          { return token::LOOP;}
 loopn         { return token::LOOPN;}
 group         { return token::GROUP;}
+addgroup      { return token::ADDGROUP;}
+delgroup      { return token::DELGROUP;}
 alias         { return token::ALIAS;}
 echo          { return token::UECHO;}
 wait          { return token::WAIT;}
