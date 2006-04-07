@@ -917,6 +917,31 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         return(ret);
       } // tail
 
+      if (strcmp(variablename->id->str(),"size")==0) {
+        
+        e1 = parameters->expression->eval(command,connection);
+
+        if (e1==0) return 0;   
+        if (e1->dataType != DATA_LIST) {
+          delete e1;
+          return 0;
+        }
+	ret = new UValue(0.0);
+	
+	if (e1->liststart) {
+	  
+	  e2 = e1->liststart;
+	  while (e2) {
+	    e2 = e2->next;
+	    ret->val = ret->val + 1;
+	  }	  
+	}
+
+        delete e1; 
+        return(ret);
+      } // size
+
+
       if (strcmp(variablename->id->str(),"isdef")==0) {        
         
         ret = new UValue();
