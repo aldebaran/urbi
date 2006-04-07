@@ -40,10 +40,10 @@ public:
 
   ~UString();
 
-  const char* str() const;
-// {
-//    return str_;
-//  }
+  const char* str() const
+ {
+    return str_;
+  }
 
   int len() {
     return len_;

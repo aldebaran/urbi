@@ -51,12 +51,12 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 const int NB_HEADER_BEFORE_CUSTOM = 4;
 const char* HEADER_BEFORE_CUSTOM[] = {
   "**************************************************************\n",
-  "*** URBI Language specif 1.5 - Copyright (C) 2006  JC Baillie\n",
+  "*** URBI Language specif 1.5 - Copyright (C) 2006  Gostai SAS\n",
   "*** URBI Kernel version " 
   #include "version.h"
   " build"
   #include "buildversion.h"
-  "\n",
+  "        www.gostai.com\n",
   "***\n"
 };
 

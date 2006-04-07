@@ -127,9 +127,10 @@ void UString::update(UString *s) {
   ADDMEM(len_);
 
 }
-
+/*
 const char* UString::str() const {
     return str_;
 }
+*/ // inlined for speed.
 
 
