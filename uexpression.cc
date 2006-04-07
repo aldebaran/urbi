@@ -305,6 +305,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   UValue *e1;
   UValue *e2;
   UValue *e3;
+  UValue *e4;
   UValue *ret;
   UValue *value;
   UVariable *variable;
@@ -379,7 +380,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   
     if (!variable) {
     	
-      if (::urbiserver->eventtab.find(variablename->getFullname()->str()) !=
+      const char* varname = variablename->getFullname()->str();
+      if (::urbiserver->eventtab.find(varname) !=
           ::urbiserver->eventtab.end()) {
         // this is an event
        
@@ -389,6 +391,57 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         return(ret);
       }
       
+      char* p = strstr(varname,"__");
+      char* p2;
+      if (p) { // could be a list index.... (dirty hack)
+	p[0]=0;
+	HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
+	if (hmv != ::urbiserver->variabletab.end()) {
+	  UVariable* tmpvar = (*hmv).second;
+	  if (tmpvar->value->dataType == DATA_LIST) {
+	    // welcome to C-string hacking grand master area
+	    // Don't let unaccompagnied children see this.
+	    UValue* xval = tmpvar->value->liststart;
+	    int index;
+	    int curr;	    
+	    p[0]='_';
+	    p=p+2; // beginning of the index
+	    p2 = strchr(p,'_');
+	    while (p) {
+	      if (p2) p2[0]=0;
+	      index = atoi(p);
+	      curr=0;
+	      while ((curr!=index) && (xval)) {
+		xval = xval->next;
+		curr++;
+	      }
+	      if (!xval) {		
+	        snprintf(errorString,errSize,"!!! Index out of range\n");
+		connection->send(errorString,command->tag->str());
+	        return new UValue();
+	      }
+	      else {
+		if (p2) {
+		  if (xval->dataType != DATA_LIST) {  
+		    snprintf(errorString,errSize,"!!! Invalid index usage\n");
+   		    connection->send(errorString,command->tag->str());
+	            return new UValue();
+		  }
+		  else
+		    xval = xval->liststart;
+		}
+	      }
+
+	      if (p2) p2[0]='_';
+	      if (p2) p = p2+2; else p=0;
+	      if (p) p2 = strchr(p,'_');
+	    }
+	    
+	    return xval->copy();
+	  }
+	}
+	p[0]='_';
+      }
       
       snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
 	       variablename->getFullname()->str());     
@@ -705,6 +758,86 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         delete e2; 
         return(ret);
       } // save
+
+      if (strcmp(variablename->id->str(),"getIndex")==0) {
+
+	e1 = parameters->expression->eval(command,connection);
+	e2 = parameters->next->expression->eval(command,connection);
+
+	if (e1==0) return 0;
+	if (e2==0) { delete e1; return 0;}
+	if ((e1->dataType != DATA_LIST) ||
+	    (e2->dataType != DATA_NUM)) {
+	  delete e1;
+	  delete e2;
+	  return 0;
+	}
+
+	e3 = e1->liststart;
+	int indx = 0;
+	while ((e3) && (indx!=(int)e2->val)) {
+	  e3 = e3->next;
+	  indx++;
+	}
+	if (!e3) {
+	 
+          snprintf(errorString,errSize,
+                   "!!! Index out of range\n");
+          connection->send(errorString,command->tag->str());
+          ret = 0; 
+	}
+	else
+	  ret = e3->copy();
+
+	delete e1;
+	delete e2;
+	return(ret);
+      } // getIndex
+
+      if (strcmp(variablename->id->str(),"cat")==0) {
+
+	e1 = parameters->expression->eval(command,connection);
+	e2 = parameters->next->expression->eval(command,connection);
+
+	if (e1==0) return 0;
+	if (e2==0) { delete e1; return 0;}
+	if ((e1->dataType != DATA_LIST) ||
+	    (e2->dataType != DATA_LIST)) {
+	  delete e1;
+	  delete e2;
+	  return 0;
+	}
+	
+	ret = e1->copy();
+	e3 = ret->liststart;	
+	while ((e3) && (e3->next)) 
+	  e3 = e3->next;
+	e4 = e2->liststart;
+	
+	if (e4)
+	  if (!e3) {
+	    ret->liststart = e4->copy();	
+  	    e3 = ret->liststart; 
+	    e4 = e4->next;
+	    
+  	    while (e4) {
+	      e3->next = e4->copy();
+  	      e3 = e3->next;
+	      e4 = e4->next;
+	    }
+	  }
+	else
+	  while (e4) {
+	    e3->next = e4->copy();
+	    e3 = e3->next;
+	    e4 = e4->next;
+	  } 
+	  
+	delete e1;
+	delete e2;
+	return(ret);
+      } // getIndex
+
     }
 
     if ( (parameters!=0) &&
@@ -732,6 +865,57 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         delete e1; 
         return(ret);
       } // strlen
+ 
+      if (strcmp(variablename->id->str(),"head")==0) {
+        
+        e1 = parameters->expression->eval(command,connection);
+
+        if (e1==0) return 0;   
+        if (e1->dataType != DATA_LIST) {
+          delete e1;
+          return 0;
+        }
+	if (e1->liststart)
+	  ret = e1->liststart->copy();
+	else	   
+          ret = new UValue();
+	        
+        delete e1; 
+        return(ret);
+      } // head
+
+      if (strcmp(variablename->id->str(),"tail")==0) {
+        
+        e1 = parameters->expression->eval(command,connection);
+
+        if (e1==0) return 0;   
+        if (e1->dataType != DATA_LIST) {
+          delete e1;
+          return 0;
+        }
+	if (e1->liststart) {
+
+          ret = new UValue();
+          ret->dataType = DATA_LIST;
+	  e2 = e1->liststart->next;
+	  e3 = ret;
+	  if (e2) {
+	    e3->liststart = e2->copy();
+	    e2 = e2->next;
+	    e3 = e3->liststart;
+	    while (e2) {
+	      e3->next = e2->copy();
+	      e2 = e2->next;
+	      e3 = e3->next;
+	    }
+	  }	  
+	}
+	else	   
+          ret = e1->copy();
+	        
+        delete e1; 
+        return(ret);
+      } // tail
 
       if (strcmp(variablename->id->str(),"isdef")==0) {        
         
