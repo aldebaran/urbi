@@ -151,7 +151,8 @@ public:
   HMfunctiontab            eventdeftab; ///< hash of events definition markers
   HMobjtab                 objtab; ///< hash of objects hierarchy  
   HMaliastab               aliastab; ///< hash of alias definitions
-  HMaliastab               objaliastab; ///< hash of alias definitions
+  HMaliastab               objaliastab; ///< hash of obj alias definitions
+  HMgrouptab               grouptab; ///< hash of group definitions
   HMeventtab               eventtab; ///< hash of events
   HMbindertab              functionbindertab; ///< hash of function binders
   HMbindertab              eventbindertab; ///< hash of event binders

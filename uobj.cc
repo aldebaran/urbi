@@ -76,7 +76,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
     ambiguous = false;
     return ret;
   }
-}
+} 
 
 UVariable*
 UObj::searchVariable(const char* id, bool &ambiguous)

@@ -1,8 +1,8 @@
-/*! \file ualias.h
+/*! \file ugroup.h
  *******************************************************************************
 
- File: ualias.h\n
- Definition of the UAlias class.
+ File: ugroup.h\n
+ Definition of the UGroup class.
 
  This file is part of 
  %URBI Kernel, version __kernelversion__\n
@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UALIAS_H_DEFINED
-#define UALIAS_H_DEFINED
+#ifndef UGROUP_H_DEFINED
+#define UGROUP_H_DEFINED
 
 #include "ustring.h"
 class UVariableName;
@@ -31,20 +31,17 @@ using namespace std;
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
-class UAlias
+class UGroup
 {
 public:
 
-  UAlias(UString *name);
-  UAlias(char *name);
+  UGroup(UString *name);
+  UGroup(char *name);
 
-  ~UAlias();
+  ~UGroup();
   
-  list<UAlias*> members;
+  list<UString*> members;
   UString      *name;
-  bool         composed;
-
- // UValue * list( UVariableName *variable);
 };
 
 #endif

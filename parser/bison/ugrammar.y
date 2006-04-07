@@ -73,7 +73,7 @@ class UParser;
 #include "uconnection.h"
 #include "udevice.h"
 #include "uobj.h"
-#include "ualias.h"
+#include "ugroup.h"
 
 extern UString** globalDelete;
 
@@ -132,6 +132,8 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token BANG  "!"
 %token MINUSMINUS "--"
 %token PLUSPLUS  "++"
+%token PLUSASSIGN  "+="
+%token MINUSASSIGN  "-="
 %token MULT "*"
 %token DIV "/"
 %token DEQ "=~="
@@ -251,7 +253,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %type  <property>            property        "property"
 %type  <variable>            variable        "variable"
 %type  <variable>            purevariable    "pure variable"
-%type  <namedparameters>     purevariables   "list of pure variables"
+//%type  <namedparameters>     purevariables   "list of pure variables"
 %type  <variable>            refvariable     "ref-variable"
 
 /* Operators priority */
@@ -387,6 +389,41 @@ taggedcommand:
       $$ = $3;
     }
 
+  | STRUCT COLON command {
+            
+      MEMCHECK($1.device);
+      MEMCHECK($1.id);
+      if ($3) {
+        
+        if ($3->tag) delete $3->tag;
+        $3->tag = new UString($1.device,$1.id);
+	delete $1.device;
+	delete $1.id;
+      }
+      $$ = $3;
+    }
+
+  | STRUCT flags COLON command {
+              
+      MEMCHECK($1.device);
+      MEMCHECK($1.id);
+
+      if ($4) {
+        
+        if ($4->tag) delete $4->tag;	
+       	$4->tag = new UString($1.device,$1.id);
+	delete $1.device;
+	delete $1.id;
+      
+        $4->flags = $2;
+      }
+      $$ = $4;
+    }
+
+
+
+//uparser.connection-
+
   | flags COLON command {
       
       MEMCHECK($1);
@@ -496,6 +533,19 @@ instruction:
       MEMCHECK3($$,$1,$3,$4);
     } 
 
+  | refvariable PLUSASSIGN expr { 
+
+      $$ = new UCommand_AUTOASSIGN($1,$3,0);
+      MEMCHECK2($$,$1,$3);
+    } 
+
+  | refvariable MINUSASSIGN expr { 
+
+      $$ = new UCommand_AUTOASSIGN($1,$3,1);
+      MEMCHECK2($$,$1,$3);
+    } 
+
+
   | VAR refvariable ASSIGN expr namedparameters { 
 
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
@@ -553,23 +603,36 @@ instruction:
     } 
 
 
-  | ALIAS purevariable LBRACKET purevariables RBRACKET {
+  | GROUP IDENTIFIER LBRACKET identifiers RBRACKET {
 
-      $$ = new UCommand_ALIAS($2,$4);
+      $$ = new UCommand_GROUP($2,$4);
       MEMCHECK2($$,$4,$2);      
     } 
+    
+  | GROUP IDENTIFIER {
 
-  | ALIAS purevariable {
-
-      $$ = new UCommand_ALIAS($2,(UVariableName*)0);
+      $$ = new UCommand_GROUP($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);      
     } 
-    
+
+  | GROUP {
+      
+      $$ = new UCommand_GROUP((UString*)0,(UNamedParameters*)0);
+      MEMCHECK($$);
+    }
+
+
   | ALIAS purevariable purevariable {
       
       $$ = new UCommand_ALIAS($2,$3);
       MEMCHECK2($$,$2,$3);
     }
+
+  | ALIAS purevariable {
+
+      $$ = new UCommand_ALIAS($2,(UVariableName*)0);
+      MEMCHECK1($$,$2);
+    } 
 
   | ALIAS {
       
@@ -955,27 +1018,22 @@ purevariable:
   | IDENTIFIER array { 
   
       MEMCHECK($1); 
-      // FIXME
-//      if ((::urbiserver->devicetab.find($1->str()) != ::urbiserver->devicetab.end()) ||
-//          (::urbiserver->grouptab.find($1->str()) != ::urbiserver->grouptab.end()))
-//        $$ = new UVariableName($1,new UString("val"),false,$2);
-//      else
-        if (uparser.connection->functionTag) {
-	  // We are inside a function
+      if (uparser.connection->functionTag) {
+	// We are inside a function
 
-	  std::string tmpname = std::string(uparser.connection->functionClass->str())
-	                        + "." + std::string($1->str());
-		  	      
-	  if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
-	      (::urbiserver->eventdeftab.find(tmpname.c_str()) != ::urbiserver->eventdeftab.end()) ||
-	      (::urbiserver->variabletab.find(tmpname.c_str()) != ::urbiserver->variabletab.end()))
-	    $$ = new UVariableName(new UString("self"),$1,false,$2);
-	  else
-  	    $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
-	}
-        else 
-          $$ = new UVariableName(new UString(uparser.connection->connectionTag),
-                                 $1,false,$2);      
+	std::string tmpname = std::string(uparser.connection->functionClass->str())
+	  + "." + std::string($1->str());
+	
+	if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
+	    (::urbiserver->eventdeftab.find(tmpname.c_str()) != ::urbiserver->eventdeftab.end()) ||
+	    (::urbiserver->variabletab.find(tmpname.c_str()) != ::urbiserver->variabletab.end()))
+	  $$ = new UVariableName(new UString("self"),$1,false,$2);
+	else
+	  $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
+      }
+      else 
+	$$ = new UVariableName(new UString(uparser.connection->connectionTag),
+	    $1,false,$2);      
       MEMCHECK2($$,$1,$2);
       $$->nostruct = true;
     } 
@@ -990,7 +1048,7 @@ purevariable:
 ;
 
 /* VARIDS */
-
+/*
 purevariables:  
 
     purevariable { 
@@ -1009,7 +1067,7 @@ purevariables:
       MEMCHECK1($$,$3);     
     }
 ;
-
+*/
 
 variable:
 

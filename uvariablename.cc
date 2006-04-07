@@ -266,6 +266,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     }
     
     if (strchr(e1->str->str(),'.') == 0) {
+      nostruct = true;
       if (connection->stack.empty())
         snprintf(name,fullnameMaxSize,
                  "%s.%s",connection->connectionTag->str(),
@@ -366,12 +367,18 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     }
   } // else str
 
-
   // Alias updating
   if (withalias) {
-/*
-  
-    hmi = ::urbiserver->aliastab.find(name);      
+
+    if (nostruct) { // Comes from a simple IDENTIFIER
+      char* p =  strchr(name,'.');
+      if (p) 
+	hmi = ::urbiserver->aliastab.find(p+1);
+      else
+	hmi = ::urbiserver->aliastab.find(name);      
+    }
+    else 
+      hmi = ::urbiserver->aliastab.find(name);
     past_hmi = hmi;
     
     while  (hmi != ::urbiserver->aliastab.end()) {      
@@ -384,9 +391,18 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       if (device) delete(device); device = 0;
       if (method) delete(method); method = 0; // forces recalc of device.method
       if (variable) variable = 0;
-    }
-    */
+    }    
   }
+  else 
+    if (nostruct) {
+      char* p =  strchr(name,'.');
+      if (p) {
+	if (fullname_) fullname_->update(p+1);
+	else fullname_ = new UString(p+1);
+	
+	return (fullname_);	
+      }
+    }
 
   if (fullname_) fullname_->update(name);
   else fullname_ = new UString(name);
@@ -434,6 +450,7 @@ UVariableName::copy()
   ret->deriv        = deriv;
   ret->varerror     = varerror;
   ret->fromGroup    = fromGroup;
+  ret->nostruct     = nostruct;
 
   return (ret);
 }

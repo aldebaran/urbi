@@ -32,7 +32,7 @@
 #include "uvariablelist.h"
 #include "uvalue.h"
 #include "uobj.h"
-#include "ualias.h"
+#include "ugroup.h"
 #include "uproperty.h"
 #include "uvariablename.h"
 #include "ubinary.h"
@@ -75,8 +75,7 @@ public:
   UErrorValue       copybase(UCommand *command);
   virtual void      mark(UString *stopTag);
   virtual void      deleteMarked();
-  UCommand*         scanAlias();
-  UCommand*         scanObjects();
+  UCommand*         scanGroups();
   virtual UVariableName** refVarName() { return 0; };
 
 
@@ -268,6 +267,27 @@ public:
   UString          *devicename; ///< device in the varname
 };
 
+class UCommand_AUTOASSIGN : public UCommand
+{
+public:
+  MEMORY_MANAGED;
+
+  UCommand_AUTOASSIGN ( UVariableName* variablename,
+                        UExpression* expression,
+                        int assigntype);                 
+  virtual ~UCommand_AUTOASSIGN();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName    *variablename; ///< Name of the iterating variable
+  UExpression      *expression;   ///< the list to iterate
+  int              assigntype;    ///< is it +=(0) or -=(1)?
+};
+
+
 class UCommand_EXPR : public UCommand
 {
 public:
@@ -347,11 +367,8 @@ class UCommand_ALIAS : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ALIAS (UVariableName* id,
-                  UVariableName* variablename);  
-		  
-  UCommand_ALIAS(UVariableName* id,
-                 UNamedParameters *parameters);  
+  UCommand_ALIAS (UVariableName* aliasname,
+                  UVariableName* id);  		
 
   virtual ~UCommand_ALIAS();
 
@@ -360,10 +377,29 @@ public:
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
 
-  UVariableName        *variablename; ///< variable
-  UVariableName        *id; ///< identifier
-  UNamedParameters     *parameters; ///< list of aliases
+  UVariableName           *aliasname; ///< alias name
+  UVariableName           *id; ///< identifier
 };
+
+class UCommand_GROUP : public UCommand
+{
+public:
+  MEMORY_MANAGED;
+
+  UCommand_GROUP(UString* id,
+                 UNamedParameters *parameters);  
+
+  virtual ~UCommand_GROUP();
+
+  virtual void print(int l); 
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+ 
+  UString              *id; ///< identifier
+  UNamedParameters     *parameters; ///< list of group members
+};
+
 
 class UCommand_OPERATOR_ID : public UCommand
 {

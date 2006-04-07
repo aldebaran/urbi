@@ -1,8 +1,8 @@
-/*! \file ulias.cc
+/*! \file ugroup.cc
  *******************************************************************************
 
- File: ualias.cc\n
- Implementation of the UAlias class.
+ File: ugroup.cc\n
+ Implementation of the UGroup class.
 
  This file is part of 
  %URBI Kernel, version __kernelversion__\n
@@ -19,36 +19,33 @@
 
  **************************************************************************** */
 
-#include "ualias.h"
+#include "ugroup.h"
 #include "ustring.h"
 #include "uvalue.h"
 #include "uvariablename.h"
 #include "userver.h"
                                                        	
 // **************************************************************************	
-//! UAlias constructor.
-UAlias::UAlias (UString *name)
+//! UGroup constructor.
+UGroup::UGroup (UString *name)
 {
   this->name = new UString(name);
-  composed = ( (strstr(name->str(),".")) != 0);
 }
 
-UAlias::UAlias (char *name)
+UGroup::UGroup (char *name)
 {
   this->name = new UString(name);
-  composed = ( (strstr(name,".")) != 0);
 }
 
-
-//! UAlias destructor
-UAlias::~UAlias()
+//! UGroup destructor
+UGroup::~UGroup()
 {
   if (name) delete(name);
 }
 
 
 /*
-UValue * UAlias::list( UVariableName *variable) {
+UValue * UGroup::list( UVariableName *variable) {
   //do read
   UAlias * gr =  this;
   

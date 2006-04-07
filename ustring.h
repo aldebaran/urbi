@@ -36,11 +36,14 @@ public:
   MEMORY_MANAGED;
   UString(const char* s);
   UString(UString *s);
+  UString(UString *s1,UString *s2); ///< concat s1 and s2 with a dot in the middle...
+
   ~UString();
 
-  const char* str() const {
-    return str_;
-  }
+  const char* str() const;
+// {
+//    return str_;
+//  }
 
   int len() {
     return len_;

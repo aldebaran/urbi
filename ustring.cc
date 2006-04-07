@@ -59,6 +59,24 @@ UString::UString(UString *s) {
   ADDMEM(len_);
 }
 
+UString::UString(UString *s1, UString* s2) {
+  
+  ADDOBJ(UString);
+
+  std::string tmpname = s1->str();
+  tmpname = tmpname + "." + s2->str();
+
+  str_ = (char*)malloc(tmpname.length()+1);
+  strcpy(str_,tmpname.c_str());
+  
+  if (str_ != 0)
+    len_ = tmpname.length();
+  else
+    len_ = 0;
+  ADDMEM(len_);
+}
+
+
 UString::~UString() {
   
   FREEOBJ(UString);
@@ -109,3 +127,9 @@ void UString::update(UString *s) {
   ADDMEM(len_);
 
 }
+
+const char* UString::str() const {
+    return str_;
+}
+
+

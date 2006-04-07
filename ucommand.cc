@@ -123,41 +123,37 @@ UCommand::print(int l)
 {
 }
 
-//! Command auto morhping according to alias hierarchy
+//! Command auto morphing according to group hierarchy
 UCommand*
-UCommand::scanAlias()
-{
-  return 0; 
-}
-
-//! Command auto morhping according to object hierarchy
-UCommand*
-UCommand::scanObjects()
+UCommand::scanGroups()
 {
   UVariableName **varname = refVarName();  
   if (!varname) return(0); // we are in a non broadcastable command
   UString       *devicename = (*varname)->getDevice();
   UString       *method     = (*varname)->getMethod();
 
-  HMobjtab::iterator hmg;
-
+  HMgrouptab::iterator hmg;
   
   if ((!(*varname)->rooted) && (devicename)) {
 
-    UObj *oo = 0;
-    if ((hmg = ::urbiserver->objtab.find(devicename->str())) !=
-        ::urbiserver->objtab.end()) 
+    UGroup *oo = 0;
+    if ((*varname)->nostruct)
+      hmg = ::urbiserver->grouptab.find(method->str());
+    else
+      hmg = ::urbiserver->grouptab.find(devicename->str());
+	  
+    if (hmg != ::urbiserver->grouptab.end()) 
       oo = (*hmg).second;
         
-    if ((oo) && (oo->down.size() > 0)) {
+    if ((oo) && (oo->members.size() > 0)) {
         
-      UCommand *objlist = 0;
-      UCommand *objlist_prev = 0;
+      UCommand *gplist = 0;
+      UCommand *gplist_prev = 0;
       UCommand *clone;
       UNamedParameters *varindex;
 
-      for (list<UObj*>::iterator retr = oo->down.begin();
-           retr != oo->down.end();
+      for (list<UString*>::iterator retr = oo->members.begin();
+           retr != oo->members.end();
            retr++) {
 
 	clone = copy();
@@ -168,25 +164,32 @@ UCommand::scanObjects()
         else
           varindex = 0;
 	
-        *(clone->refVarName()) = new UVariableName((*retr)->device->copy(),
-                                                    method->copy(),
-						    false,
-						    varindex);
+	if ((*varname)->nostruct)
+          *(clone->refVarName()) = new UVariableName(devicename->copy(),
+                                                     (*retr)->copy(),
+						     false,
+						     varindex);
+	else
+          *(clone->refVarName()) = new UVariableName((*retr)->copy(),
+                                                      method->copy(),
+  						      false,
+  						      varindex);
 	
 	(*clone->refVarName())->isnormalized = (*varname)->isnormalized;
 	(*clone->refVarName())->deriv = (*varname)->deriv;
 	(*clone->refVarName())->varerror = (*varname)->varerror;
+	(*clone->refVarName())->nostruct = (*varname)->nostruct;
 
-        objlist = (UCommand*)
-          new UCommand_TREE(UAND,clone,objlist_prev);
+        gplist = (UCommand*)
+          new UCommand_TREE(UAND,clone,gplist_prev);
 	  
-        objlist_prev = objlist;        
+        gplist_prev = gplist;        
       }
       
       morph = (UCommand*)
         new UCommand_TREE(UAND,
                           this,
-                          objlist);
+                          gplist);
       
       (*varname)->rooted = true;
       (*varname)->fromGroup = true;
@@ -472,8 +475,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       return(status);  
 
   // Broadcasting  
-  if (scanAlias())   return ( status = UMORPH );
-  if (scanObjects()) return ( status = UMORPH );
+  if (scanGroups()) return ( status = UMORPH );
  
   // Function call
   // morph into the function code
@@ -1496,8 +1498,7 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
   }
 
   // Broadcasting  
-  if (scanAlias())   return ( status = UMORPH );
-  if (scanObjects()) return ( status = UMORPH );
+  if (scanGroups()) return ( status = UMORPH );
 
   // Type checking
   UValue *value;
@@ -1609,8 +1610,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   UString* devicename = variablename->getDevice();
 
   // Broadcasting  
-  if (scanAlias())   return ( status = UMORPH );
-  if (scanObjects()) return ( status = UMORPH );
+  if (scanGroups()) return ( status = UMORPH );
 
   // variable existence checking
   if (!variable) {
@@ -1839,6 +1839,104 @@ UCommand_ASSIGN_PROPERTY::print(int l)
   ::urbiserver->debug("%sEND ASSIGN PROPERTY ------\n",tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
+// *********************************************************
+//! UCommand subclass constructor.
+/*! Subclass of UCommand with standard member initialization.
+*/
+UCommand_AUTOASSIGN::UCommand_AUTOASSIGN( UVariableName* variablename,
+                                          UExpression* expression,
+                                          int assigntype) :
+  UCommand(CMD_ASSIGN_VALUE)
+{	
+  ADDOBJ(UCommand_AUTOASSIGN); 
+  this->variablename = variablename;
+  this->expression   = expression;
+  this->assigntype   = assigntype;
+}
+
+//! UCommand subclass destructor.
+UCommand_AUTOASSIGN::~UCommand_AUTOASSIGN()
+{
+  FREEOBJ(UCommand_AUTOASSIGN);
+  if (variablename) delete variablename;
+  if (expression)   delete expression;
+}
+
+//! UCommand subclass execution function
+UCommandStatus 
+UCommand_AUTOASSIGN::execute(UConnection *connection)
+{  
+  if ((!variablename) || (!expression)) return (status = UCOMPLETED);
+  
+  UExpression* extended_expression;
+  
+  switch (assigntype) {
+    case 0: /* += */
+       extended_expression = new UExpression(EXPR_PLUS,
+	   new UExpression(EXPR_VARIABLE,variablename->copy()),
+	   expression->copy());
+       break;
+    case 1: /* -= */
+       extended_expression = new UExpression(EXPR_MINUS,
+	   new UExpression(EXPR_VARIABLE,variablename->copy()),
+	   expression->copy());
+       break;
+  }
+     
+  if (!extended_expression) return (status = UCOMPLETED);
+                                         
+  morph =  (UCommand*) 
+    new UCommand_ASSIGN_VALUE(variablename->copy(),
+	extended_expression,
+	(UNamedParameters*)0,
+	false);
+  
+  persistant = false;
+  return (status = UMORPH);   
+}
+
+//! UCommand subclass hard copy function
+UCommand*
+UCommand_AUTOASSIGN::copy() 
+{  
+  UExpression*    copy_expression;
+  UVariableName*  copy_variablename;
+  
+  if (variablename) copy_variablename = variablename->copy(); else copy_variablename = 0;
+  if (expression) copy_expression = expression->copy(); else copy_expression = 0;
+
+  UCommand_AUTOASSIGN *ret = new UCommand_AUTOASSIGN(copy_variablename,
+                                                     copy_expression,                                                              assigntype);  
+  copybase(ret);
+  return ((UCommand*)ret);
+}
+
+//! Print the command 
+/*! This function is for debugging purpose only. 
+    It is not safe, efficient or crash proof. A better version will come later.
+*/
+void 
+UCommand_AUTOASSIGN::print(int l)
+{
+  char tabb[100];  
+
+  strcpy(tabb,"");
+  for (int i=0;i<l;i++)
+    strcat(tabb," ");
+
+  if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
+  else ::urbiserver->debug("%s",tabb);
+
+  ::urbiserver->debug("AUTOASSIGN (%d):",assigntype);
+
+  if (variablename) { ::urbiserver->debug("%s  VariableName:",tabb); variablename->print(); ::urbiserver->debug("\n");};    
+  if (expression) { ::urbiserver->debug("%s  expression:",tabb); expression->print(); ::urbiserver->debug("\n");}; 
+
+  ::urbiserver->debug("%sEND AUTOASSIGN ------\n",tabb);
+}
+
+
 MEMORY_MANAGER_INIT(UCommand_EXPR);
 // *********************************************************
 //! UCommand subclass constructor.
@@ -1983,8 +2081,15 @@ UCommand_EXPR::execute(UConnection *connection)
         }
                 
         sprintf(tmpbuffer,"__UFnct%d",(int)morph);
+	UString* fundevice = expression->variablename->getDevice();
+	if (!fundevice) {
+		
+            connection->send("!!! Function name evaluation failed\n",tag->str());
+            return (status = UCOMPLETED);
+	}
+
         ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
-						      expression->variablename->device->str(),
+						      fundevice->str(),
 						      (UCommand_TREE*)morph);
         if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
         ((UCommand_TREE*)morph)->connection = connection;
@@ -2358,6 +2463,8 @@ UCommand_NEW::~UCommand_NEW()
 UCommandStatus 
 UCommand_NEW::execute(UConnection *connection)
 {
+  morph = 0;
+  
   char tmpprefix[1024];
   char tmpprefixnew[1024];
 
@@ -2532,15 +2639,34 @@ UCommand_NEW::execute(UConnection *connection)
 	    new UString("init"),
 	    true,
 	    (UNamedParameters*)0),
-	  parameters ));
-    newobj->up.push_back(objit->second);
-    objit->second->down.push_back(newobj);
-    return ( status = UMORPH );	  	
+	  parameters ));	  
   }
 
   newobj->up.push_back(objit->second);
-  objit->second->down.push_back(newobj);  
-  return ( status = UCOMPLETED );
+  objit->second->down.push_back(newobj);
+  
+  // implicit grouping
+  HMgrouptab::iterator hmg;
+  UGroup *g;
+  hmg = ::urbiserver->grouptab.find(obj->str());
+  if (hmg != ::urbiserver->grouptab.end())
+    g = (*hmg).second;
+  else {
+    g = new UGroup(obj);
+    ::urbiserver->grouptab[g->name->str()] = g;
+  }
+  
+  bool foundit = false;
+  for (list<UString*>::iterator it = g->members.begin();
+       (it != g->members.end() && (!foundit)); it++)
+    if (id->equal((*it))) foundit = true;
+  
+  if (!foundit) g->members.push_back(id->copy());
+  
+  if (morph)
+    return ( status = UMORPH );	  	
+  else
+    return ( status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -2593,24 +2719,13 @@ MEMORY_MANAGER_INIT(UCommand_ALIAS);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_ALIAS::UCommand_ALIAS(UVariableName* id,
-                               UVariableName* variablename) :
+UCommand_ALIAS::UCommand_ALIAS(UVariableName* aliasname,
+                               UVariableName* id) :
   UCommand(CMD_ALIAS)
 {	
   ADDOBJ(UCommand_ALIAS);
   this->id           = id;
-  this->variablename = variablename;
-  parameters=0;
-}
-
-UCommand_ALIAS::UCommand_ALIAS(UVariableName* id,
-                               UNamedParameters* parameters) :
-  UCommand(CMD_ALIAS)
-{	
-  ADDOBJ(UCommand_ALIAS);
-  this->id           = id;
-  this->variablename = 0;
-  this->parameters   = parameters;
+  this->aliasname    = aliasname;
 }
 
 //! UCommand subclass destructor.
@@ -2618,17 +2733,198 @@ UCommand_ALIAS::~UCommand_ALIAS()
 {
   FREEOBJ(UCommand_ALIAS);
   if (id)            delete id;
-  if (variablename)  delete variablename;
+  if (aliasname)     delete aliasname;
 }
 
 //! UCommand subclass execution function
 UCommandStatus 
 UCommand_ALIAS::execute(UConnection *connection)
-{
-  if (parameters) {
-    // morph ta vie
+{  
+  //alias setting
+  if (aliasname && id) {
+    UString *id0 = aliasname->buildFullname(this, connection,false);
+    UString *id1 = id->buildFullname(this, connection,false);
+    if (id0 && id1) 
+      connection->server->addAlias(id0->str(),
+  	      	    id1->str());
+
+    return ( status = UCOMPLETED );
+  }
+
+  // full alias query
+  if (!aliasname && !id) {
+  
+    for ( HMaliastab::iterator retr = 
+		    connection->server->aliastab.begin();
+	  	    retr != connection->server->aliastab.end();
+		    retr++) {
+		    
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  	      "*** %25s -> %s\n",
+		      (*retr).first,(*retr).second->str());		              
+      connection->send(tmpbuffer,tag->str());	
+    }
+       
+    return ( status = UCOMPLETED );
   }
   
+  // full alias query
+  if (aliasname && !id) {
+
+    UString *id0 = aliasname->buildFullname(this, connection,false);
+    HMaliastab::iterator retr = connection->server->aliastab.find(id0->str());
+    if (retr != connection->server->aliastab.end()) {
+    		    
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  	      "*** %25s -> %s\n",
+		      (*retr).first,(*retr).second->str());		              
+      connection->send(tmpbuffer,tag->str());	
+    }
+       
+    return ( status = UCOMPLETED );
+  }
+
+}
+
+
+//! UCommand subclass hard copy function
+UCommand*
+UCommand_ALIAS::copy() 
+{  
+  UVariableName* copy_alias;
+  UVariableName* copy_id;
+  
+  if (aliasname) copy_alias = aliasname->copy(); else copy_alias = 0;
+  if (id) copy_id = id->copy(); else copy_id = 0;
+
+  UCommand_ALIAS *ret = new UCommand_ALIAS(copy_alias,
+                                           copy_id);
+  copybase(ret);
+  return ((UCommand*)ret);
+}
+
+//! Print the command 
+/*! This function is for debugging purpose only. 
+    It is not safe, efficient or crash proof. A better version will come later.
+*/
+void 
+UCommand_ALIAS::print(int l)
+{
+  char tabb[100];  
+
+  strcpy(tabb,"");
+  for (int i=0;i<l;i++)
+    strcat(tabb," ");
+
+  if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
+  else ::urbiserver->debug("%s",tabb);
+
+  ::urbiserver->debug("ALIAS :\n");
+
+   if (aliasname) { ::urbiserver->debug("  %s  Aliasname:",tabb); aliasname->print(); ::urbiserver->debug("\n");};    
+   if (id) { ::urbiserver->debug("  %s  id:",tabb); id->print(); ::urbiserver->debug("\n");};    
+   
+  ::urbiserver->debug("%sEND ALIAS ------\n",tabb);
+}
+
+
+
+
+
+MEMORY_MANAGER_INIT(UCommand_GROUP);
+// *********************************************************
+//! UCommand subclass constructor.
+/*! Subclass of UCommand with standard member initialization.
+*/
+UCommand_GROUP::UCommand_GROUP(UString* id,
+                               UNamedParameters* parameters) :
+  UCommand(CMD_GROUP)
+{	
+  ADDOBJ(UCommand_GROUP);
+  this->id           = id;
+  this->parameters   = parameters;
+}
+
+//! UCommand subclass destructor.
+UCommand_GROUP::~UCommand_GROUP()
+{
+  FREEOBJ(UCommand_GROUP);
+  if (id)            delete id;
+}
+
+//! UCommand subclass execution function
+UCommandStatus 
+UCommand_GROUP::execute(UConnection *connection)
+{
+  HMgrouptab::iterator hma;
+  UGroup *g;
+
+  if (parameters) {
+    hma = ::urbiserver->grouptab.find(id->str());
+    if (hma != ::urbiserver->grouptab.end())
+      g = hma->second;
+    else {
+      g = new UGroup(id);
+      ::urbiserver->grouptab[g->name->str()] = g;
+    }
+    g->members.clear();
+    UNamedParameters* param = parameters;
+    while (param) { 
+      g->members.push_back(param->name->copy());
+      param = param->next;
+    }
+    return (status = UCOMPLETED);
+  }
+
+  // full query
+  if (!id) {
+    for ( HMgrouptab::iterator retr = 
+	connection->server->grouptab.begin();
+	retr != connection->server->grouptab.end();
+	retr++) {
+
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  "*** %s = {",
+	  (*retr).first);
+      for (list<UString*>::iterator it = (*retr).second->members.begin();
+	   it !=  (*retr).second->members.end();
+	   ) {
+	strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
+	it++;
+	if (it != (*retr).second->members.end())
+	  strncat(tmpbuffer,",",UCommand::MAXSIZE_TMPMESSAGE);
+      }
+      strncat(tmpbuffer,"}\n",UCommand::MAXSIZE_TMPMESSAGE);
+      connection->send(tmpbuffer,tag->str());	
+    }
+    return (status = UCOMPLETED);
+  }
+
+  // specific query
+  HMgrouptab::iterator retr = connection->server->grouptab.find(id->str());
+  if (retr !=  connection->server->grouptab.end()) {
+
+    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	"*** %s = {",
+	(*retr).first);
+    for (list<UString*>::iterator it = (*retr).second->members.begin();
+	it !=  (*retr).second->members.end();
+	) {
+      strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
+      it++;
+      if (it != (*retr).second->members.end())
+	strncat(tmpbuffer,",",UCommand::MAXSIZE_TMPMESSAGE);
+    }
+    strncat(tmpbuffer,"}\n",UCommand::MAXSIZE_TMPMESSAGE);
+    connection->send(tmpbuffer,tag->str());
+    
+    return (status = UCOMPLETED);
+  }
+  
+  return (status = UCOMPLETED);
+}
+  
+ /* 
   HMaliastab::iterator hma;
   HMaliastab::iterator hmb;
   UAlias *a;
@@ -2837,23 +3133,22 @@ UCommand_ALIAS::execute(UConnection *connection)
       }
     } 
   } // named alias query
+*/
 
- return ( status = UCOMPLETED );
-}
-
+	
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_ALIAS::copy() 
+UCommand_GROUP::copy() 
 {  
-  UVariableName* copy_variable;
-  UVariableName* copy_id;
+  UString* copy_id;
+  UNamedParameters* copy_parameters;
   
-  if (variablename) copy_variable = variablename->copy(); else copy_variable = 0;
   if (id) copy_id = id->copy(); else copy_id = 0;
+  if (parameters) copy_parameters = parameters->copy(); else copy_parameters = 0;
 
-  UCommand_ALIAS *ret = new UCommand_ALIAS(copy_id,
-                                           copy_variable);
+  UCommand_GROUP *ret = new UCommand_GROUP(copy_id,
+                                           copy_parameters);
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -2863,7 +3158,7 @@ UCommand_ALIAS::copy()
     It is not safe, efficient or crash proof. A better version will come later.
 */
 void 
-UCommand_ALIAS::print(int l)
+UCommand_GROUP::print(int l)
 {
   char tabb[100];  
 
@@ -2874,12 +3169,14 @@ UCommand_ALIAS::print(int l)
   if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
   else ::urbiserver->debug("%s",tabb);
 
-  ::urbiserver->debug("ALIAS :\n");
-  if (id) { ::urbiserver->debug("  %s  ID:",tabb); id->print(); ::urbiserver->debug("\n");};      
-  if (variablename) { ::urbiserver->debug("  %s  Variablename:",tabb); variablename->print(); ::urbiserver->debug("\n");};      
+  ::urbiserver->debug("GROUP :\n");
+  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n",tabb,id->str());}  
 
-  ::urbiserver->debug("%sEND ALIAS ------\n",tabb);
+  ::urbiserver->debug("%sEND GROUP ------\n",tabb);
 }
+
+
+
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 // *********************************************************
@@ -4412,8 +4709,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   UString* devicename = variablename->getDevice();
 
   // Broadcasting  
-  if (scanAlias())   return ( status = UMORPH );
-  if (scanObjects()) return ( status = UMORPH );
+  if (scanGroups()) return ( status = UMORPH );
 
   // Main execution
   if (type == CMD_INCREMENT) {

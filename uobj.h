@@ -51,7 +51,6 @@ public:
   list<UObj*> up;
 
   UString      *device;  
-  //list<UConnection*> bound;
   UBinder      *binder;
   urbi::baseURBIStarter* internalBinder;
   

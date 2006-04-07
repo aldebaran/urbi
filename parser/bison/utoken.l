@@ -272,6 +272,8 @@ list          { return token::GROUPLIST;}
 "!"           { return token::BANG;}
 "--"          { return token::MINUSMINUS;}
 "++"          { return token::PLUSPLUS;} 
+"+="          { return token::PLUSASSIGN;} 
+"-="          { return token::MINUSASSIGN;} 
 "*"           { return token::MULT;}
 "/"           { return token::DIV;}
 "+"           { return token::PLUS;}
@@ -324,6 +326,7 @@ list          { return token::GROUPLIST;}
                 valp->structure.rooted = false; 
                   
                 return token::STRUCT; } 
+
 
 [ \t\r]+       locp->step();/* eat up whitespace */
 \n+            locp->lines(yyleng);locp->step();

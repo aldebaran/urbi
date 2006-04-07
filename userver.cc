@@ -903,8 +903,6 @@ UServer::removeConnection(UConnection *connection)
 void
 UServer::addAlias(const char* id, const char* variablename)
 {
-// FIXME
-/*
   if (aliastab.find(id) != aliastab.end()) {
     
     UString *alias = aliastab[id];
@@ -915,7 +913,6 @@ UServer::addAlias(const char* id, const char* variablename)
     UString *ids = new UString(id); // persistant, no delete associated
     aliastab[ids->str()] = new UString(variablename);
   }
-  */
 }
 
 //! Add an offset to the cpucload calculus

@@ -38,7 +38,7 @@ class UVariable;
 class UFunction;
 class UBinder;
 class UObj;
-class UAlias;
+class UGroup;
 class UString;
 class UCommand;
 class UCommand_EMIT;
@@ -141,7 +141,8 @@ enum UCommandType {
     CMD_RETURN,
     CMD_ECHO,
     CMD_NEW,
-    CMD_ALIAS,    
+    CMD_ALIAS,  
+    CMD_GROUP,     
     CMD_WAIT,
     CMD_WAIT_TEST,
     CMD_INCREMENT,
@@ -335,7 +336,12 @@ typedef  hash_map<const char*,
                   eqStr>                 HMobjtab; ///< hash of group definitions
 
 typedef  hash_map<const char*,
-                  UAlias*,
+                  UGroup*,
+                  hash<const char*>,
+                  eqStr>                 HMgrouptab; ///< hash of group definitions
+
+typedef  hash_map<const char*,
+                  UString*,
                   hash<const char*>,
                   eqStr>                 HMaliastab; ///< hash of alias definitions
 

@@ -37,7 +37,7 @@ KERNEL_SOURCES=udevice.cc \
              unamedparameters.cc \
              uvalue.cc \
              uobj.cc \
-	     ualias.cc \
+	     ugroup.cc \
              uproperty.cc \
              uvariablename.cc \
              ubinary.cc \
