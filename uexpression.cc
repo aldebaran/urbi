@@ -368,7 +368,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     ret = new UValue();
     ret->dataType = DATA_STRING;    
-    ret->str = new UString (variablename->buildFullname(command,connection));
+    // hack here to be able to use objects pointeurs
+    
+    ret->str = new UString (variablename->buildFullname(command,connection)); 
     return(ret);
 
   case EXPR_VARIABLE: 
@@ -377,10 +379,11 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     if (!variablename->getFullname()) return (0); 
     method = variablename->getMethod();
     devicename = variablename->getDevice();
-  
+ 	
+    const char* varname; 
     if (!variable) {
     	
-      const char* varname = variablename->getFullname()->str();
+      varname = variablename->getFullname()->str();
       if (::urbiserver->eventtab.find(varname) !=
           ::urbiserver->eventtab.end()) {
         // this is an event
@@ -390,7 +393,33 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         ret->eventid = ::urbiserver->eventtab[variablename->getFullname()->str()]->eventid;
         return(ret);
       }
+
+      // virtual variables
+      const char* devname = variablename->getDevice()->str();
+      bool ambiguous;
+      UVariable *vari = 0;
+      HMobjtab::iterator itobj;
+      if ((itobj = ::urbiserver->objtab.find(devname)) !=
+	  ::urbiserver->objtab.end()) {
+	vari = itobj->second->searchVariable(variablename->getMethod()->str(),
+    	    ambiguous);
+	if (ambiguous)  {  
+	  snprintf(errorString,errSize,"!!! Ambiguous multiple inheritance on variable %s\n", variablename->getFullname()->str());
+	  connection->send(errorString,command->tag->str()); 
+          return new UValue();	            
+	}
+	
+	variable = vari;     
+	if (vari) {
+  	  devicename->update(vari->method);
+	  variablename->device->update(vari->method);
+	  variablename->buildFullname(command,connection); 
+	}
+      }
+    }
       
+    if (!variable) {
+
       char* p = strstr(varname,"__");
       char* p2;
       if (p) { // could be a list index.... (dirty hack)

@@ -125,9 +125,9 @@ UCommand::print(int l)
 
 //! Command auto morphing according to group hierarchy
 UCommand*
-UCommand::scanGroups()
+UCommand::scanGroups(UVariableName** (UCommand::*refName)())
 {
-  UVariableName **varname = refVarName();  
+  UVariableName **varname = ((*this).*refName)();  
   if (!varname) return(0); // we are in a non broadcastable command
   UString       *devicename = (*varname)->getDevice();
   UString       *method     = (*varname)->getMethod();
@@ -157,7 +157,7 @@ UCommand::scanGroups()
            retr++) {
 
 	clone = copy();
-	delete (*(clone->refVarName()));
+	delete (*((clone->*refName)()));
 	
         if ((*varname)->index) 
           varindex = (*varname)->index->copy();
@@ -165,20 +165,20 @@ UCommand::scanGroups()
           varindex = 0;
 	
 	if ((*varname)->nostruct)
-          *(clone->refVarName()) = new UVariableName(devicename->copy(),
+          *((clone->*refName)()) = new UVariableName(devicename->copy(),
                                                      (*retr)->copy(),
 						     false,
 						     varindex);
 	else
-          *(clone->refVarName()) = new UVariableName((*retr)->copy(),
+          *((clone->*refName)()) = new UVariableName((*retr)->copy(),
                                                       method->copy(),
   						      false,
   						      varindex);
 	
-	(*clone->refVarName())->isnormalized = (*varname)->isnormalized;
-	(*clone->refVarName())->deriv = (*varname)->deriv;
-	(*clone->refVarName())->varerror = (*varname)->varerror;
-	(*clone->refVarName())->nostruct = (*varname)->nostruct;
+	(*(clone->*refName)())->isnormalized = (*varname)->isnormalized;
+	(*(clone->*refName)())->deriv = (*varname)->deriv;
+	(*(clone->*refName)())->varerror = (*varname)->varerror;
+	(*(clone->*refName)())->nostruct = (*varname)->nostruct;
 
         gplist = (UCommand*)
           new UCommand_TREE(UAND,clone,gplist_prev);
@@ -475,7 +475,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       return(status);  
 
   // Broadcasting  
-  if (scanGroups()) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName)) return ( status = UMORPH );
  
   // Function call
   // morph into the function code
@@ -483,7 +483,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     
     UString* functionname = expression->variablename->buildFullname(this,connection);
     if (!functionname) return ( status = UCOMPLETED );
-    
+
+    if (scanGroups(&UCommand::refVarName2)) return ( status = UMORPH );
+
     UFunction *fun;
     HMfunctiontab::iterator hmf;
     
@@ -1520,7 +1522,7 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
   }
 
   // Broadcasting  
-  if (scanGroups()) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName)) return ( status = UMORPH );
 
   // Type checking
   UValue *value;
@@ -1632,7 +1634,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   UString* devicename = variablename->getDevice();
 
   // Broadcasting  
-  if (scanGroups()) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName)) return ( status = UMORPH );
 
   // variable existence checking
   if (!variable) {
@@ -1985,12 +1987,13 @@ UCommand_EXPR::execute(UConnection *connection)
   HMfunctiontab::iterator hmf;
   
   if (expression->type == EXPR_FUNCTION) {
-    // implement group-morphing here
-    //...
-
+  
     // Execution & morphing
     UString* funname = expression->variablename->buildFullname(this,connection);
     if (!funname) return( status = UCOMPLETED );
+ 
+    // Broadcasting  
+    if (scanGroups(&UCommand::refVarName)) return ( status = UMORPH );
 
     UFunction *fun;
 
@@ -4535,7 +4538,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   UString* devicename = variablename->getDevice();
 
   // Broadcasting  
-  if (scanGroups()) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName)) return ( status = UMORPH );
 
   // Main execution
   if (type == CMD_INCREMENT) {

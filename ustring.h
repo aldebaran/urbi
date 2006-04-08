@@ -49,10 +49,10 @@ public:
     return len_;
   }
   
-  UString* copy() {
-    
-    return (new UString(this));
-  }
+  UString* copy();
+// {  
+//    return (new UString(this));
+//  }
 
   char* ext(int deb, int length);
   bool equal(UString *s);

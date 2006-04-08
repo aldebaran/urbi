@@ -133,4 +133,9 @@ const char* UString::str() const {
 }
 */ // inlined for speed.
 
+ 
+  UString* UString::copy() {
+    
+    return (new UString(this));
+  }
 

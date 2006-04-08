@@ -75,8 +75,10 @@ public:
   UErrorValue       copybase(UCommand *command);
   virtual void      mark(UString *stopTag);
   virtual void      deleteMarked();
-  UCommand*         scanGroups();
-  virtual UVariableName** refVarName() { return 0; };
+  UCommand*         scanGroups(UVariableName** (UCommand::*refName)());
+  virtual UVariableName** refVarName()  { return 0; };
+  virtual UVariableName** refVarName2() { return 0; };
+
 
 
   
@@ -163,6 +165,8 @@ public:
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
   virtual UVariableName** refVarName() { return &variablename; };
+  virtual UVariableName** refVarName2() { return &expression->variablename; };
+
 
 
   UVariableName    *variablename;   ///< variable name
@@ -299,7 +303,8 @@ public:
   virtual void print(int l); 
 
   virtual UCommandStatus execute(UConnection *connection);
-  virtual UCommand*      copy();
+  virtual UCommand*      copy(); 
+  virtual UVariableName** refVarName() { return &expression->variablename; };
 
   UExpression      *expression; ///< Expression
 };
