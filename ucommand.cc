@@ -683,11 +683,33 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   ////////////////////////////////////////
 
   if (status == UONQUEUE) {
+    // object aliasing here
+ 
+    if ((variablename->nostruct) &&
+	(expression->type == EXPR_VARIABLE) &&
+	(expression->variablename) &&
+	(expression->variablename->nostruct)) {
 
+      UString* objname = expression->variablename->id;
+
+      HMobjtab::iterator objit = 
+	::urbiserver->objtab.find(objname->str());
+      if (objit != ::urbiserver->objtab.end())  {
+	HMaliastab::iterator hmi = ::urbiserver->objaliastab.find(objname->str());
+	if (hmi != ::urbiserver->objaliastab.end())
+	  (*hmi).second->update(objname);
+	else {
+	  UString* objalias = new UString(variablename->method);
+	  ::urbiserver->objaliastab[objalias->str()] = new UString(objname);
+	}
+	return (status = UCOMPLETED);
+      }
+    }
+   
     if ((!variable) && (connection->server->defcheck) && (!defkey)) {
-
+      
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! Unknown identifier: %s\n",variablename->getFullname()->str());
+ 	  "!!! Unknown identifier: %s\n",variablename->getFullname()->str());
       connection->send(tmpbuffer,tag->str());            
     }
      

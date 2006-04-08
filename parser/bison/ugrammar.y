@@ -855,6 +855,35 @@ instruction:
       }      
     }
 
+  | DEF variable LPAREN identifiers RPAREN {
+
+      uparser.connection->server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
+      if (uparser.connection->functionTag) {
+        delete($2);
+        delete($4);
+        $2 = 0;
+        delete uparser.connection->functionTag;
+        uparser.connection->functionTag = 0;  
+        error(@$,"Nested function def not allowed.");   
+        YYERROR;
+      }
+      else {
+	uparser.connection->functionTag = new UString("__Funct__");
+	uparser.connection->functionClass = $2->device;
+	globalDelete = &uparser.connection->functionTag;
+      }
+ 
+    } taggedcommand {
+     
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
+      MEMCHECK2($$,$2,$4);
+      if (uparser.connection->functionTag) {
+        delete uparser.connection->functionTag;
+        uparser.connection->functionTag = 0;  
+	globalDelete = 0;
+      }      
+    }
+
   | IF LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_IF($3,$5,(UCommand*)0);

@@ -372,10 +372,27 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 
     if (nostruct) { // Comes from a simple IDENTIFIER
       char* p =  strchr(name,'.');
+      HMaliastab::iterator getobj;
+      if (p)
+  	getobj = ::urbiserver->objaliastab.find(p+1);    
+      else
+	getobj = ::urbiserver->objaliastab.find(name);   
+      if (getobj != ::urbiserver->objaliastab.end()) {
+	UString* newobj = (*getobj).second;
+	getobj = ::urbiserver->objaliastab.find(newobj->str());
+	while (getobj !=  ::urbiserver->objaliastab.end()) {
+	  newobj = (*getobj).second;
+	  getobj = ::urbiserver->objaliastab.find(newobj->str());
+	}	
+	snprintf(name,fullnameMaxSize,"%s",newobj->str());	
+      }
+
+      p =  strchr(name,'.');
+
       if (p) 
 	hmi = ::urbiserver->aliastab.find(p+1);
       else
-	hmi = ::urbiserver->aliastab.find(name);      
+	hmi = ::urbiserver->aliastab.find(name);
     }
     else 
       hmi = ::urbiserver->aliastab.find(name);
@@ -403,6 +420,26 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	return (fullname_);	
       }
     }
+
+  char* p =  strchr(name,'.');
+  if (p) {
+    p[0]=0;
+    HMaliastab::iterator getobj = ::urbiserver->objaliastab.find(name);
+    p[0]='.';
+    if (getobj != ::urbiserver->objaliastab.end()) {
+      UString* newobj = (*getobj).second;
+      getobj = ::urbiserver->objaliastab.find(newobj->str());
+      while (getobj !=  ::urbiserver->objaliastab.end()) {
+	newobj = (*getobj).second;
+	getobj = ::urbiserver->objaliastab.find(newobj->str());
+      }
+      UString* newmethod = new UString(p+1);
+      snprintf(name,fullnameMaxSize,"%s.%s",newobj->str(),newmethod->str());
+      delete newmethod;
+    }
+  }
+
+
 
   if (fullname_) fullname_->update(name);
   else fullname_ = new UString(name);
