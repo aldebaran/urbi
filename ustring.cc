@@ -98,6 +98,15 @@ bool UString::equal(UString *s) {
   return (strcmp(s->str(),(const char*)str_)==0);
 }
 
+bool UString::tagequal(UString *s) {    
+  if (s==0) return (false);
+  char* p = strchr(s->str(),'.');
+  if (p) p[0]=0;
+  bool res = (strcmp(s->str(),(const char*)str_)==0);
+  if (p) p[0]='.';
+  return res;
+}
+
 bool UString::equal(const char *s) {    
   if (s==0) return (false);
   return (strcmp(s,(const char*)str_)==0);
@@ -133,9 +142,9 @@ const char* UString::str() const {
 }
 */ // inlined for speed.
 
- 
+ /*
   UString* UString::copy() {
     
     return (new UString(this));
   }
-
+*/

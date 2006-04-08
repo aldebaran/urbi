@@ -49,13 +49,14 @@ public:
     return len_;
   }
   
-  UString* copy();
-// {  
-//    return (new UString(this));
-//  }
+  UString* copy()
+ {  
+    return (new UString(this));
+  }
 
   char* ext(int deb, int length);
-  bool equal(UString *s);
+  bool equal(UString *s);;
+  bool tagequal(UString *s);
   bool equal(const char *s);
   void update(const char *s);
   void update(UString *s);

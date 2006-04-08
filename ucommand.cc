@@ -106,7 +106,7 @@ UCommand::copybase(UCommand *command)
 void
 UCommand::mark(UString *stopTag)
 {
-  if (stopTag->equal(tag))
+  if (stopTag->tagequal(tag))
     toDelete = true;
 }
 
@@ -277,7 +277,7 @@ UCommand_TREE::mark(UString *stopTag)
   int go_to = 1;
   UCommand_TREE *tree = this;
 
-  if ((stopTag->equal(tag)) &&
+  if ((stopTag->tagequal(tag)) &&
       ((status != UONQUEUE) || (morphed))) {
     toDelete = true;
     return;
@@ -286,7 +286,7 @@ UCommand_TREE::mark(UString *stopTag)
   while (tree != up) {
 
     if ((tree->command1) && (go_to == 1)) 
-      if ( (stopTag->equal(tree->command1->tag)) &&
+      if ( (stopTag->tagequal(tree->command1->tag)) &&
            ((tree->command1->status != UONQUEUE) || 
             (tree->command1->morphed))) 
         tree->command1->toDelete = true;           
@@ -297,7 +297,7 @@ UCommand_TREE::mark(UString *stopTag)
           continue;
         }
     if ((tree->command2) && (go_to >= 1)) 
-      if ((stopTag->equal(tree->command2->tag)) &&
+      if ((stopTag->tagequal(tree->command2->tag)) &&
           ((tree->command2->status != UONQUEUE) ||
            (tree->command2->morphed)))
         tree->command2->toDelete = true;            

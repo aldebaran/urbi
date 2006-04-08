@@ -671,6 +671,17 @@ instruction:
       MEMCHECK2($$,$1,$2);
     } 
 
+  | OPERATOR_ID STRUCT {
+
+      MEMCHECK($1);
+      MEMCHECK($2.device);
+      MEMCHECK($2.id);
+      $$ = new UCommand_OPERATOR_ID($1,new UString($2.device,$2.id));
+      delete $2.device;
+      delete $2.id;
+      MEMCHECK1($$,$1);
+    } 
+
   | OPERATOR_VAR variable {
 
       MEMCHECK($1);      

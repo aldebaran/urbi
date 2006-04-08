@@ -770,21 +770,46 @@ UConnection::processCommand(UCommand *&command,
   rl = UEXPLORED;
    
   // Handle blocked/freezed commands
-  if ( (command->tag) &&
-       (server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
-       (server->freezetab[command->tag->str()]) )    
-    return (command);
-  
+  if (command->tag) {
+    if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
+        (server->freezetab[command->tag->str()]) )    
+      return (command);
+    char* p= strchr(command->tag->str(),'.');
+    if (p) {
+      p[0]=0;
+      if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
+	  (server->freezetab[command->tag->str()]) ) {
+	p[0]='.';
+	return(command);	
+      }
+      p[0]='.';	
+    }
+  }
 
-  if ( (command->tag) &&
-       (server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
-       (server->blocktab[command->tag->str()]) ) {
+  if (command->tag) {
+    if ((server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
+	(server->blocktab[command->tag->str()]) ) {
     
-    if (command == lastCommand)
-      lastCommand = command->up;
-        
-    delete command;
-    return(0);    
+      if (command == lastCommand)
+	lastCommand = command->up;
+      
+      delete command;
+      return(0);    
+    }
+    char* p= strchr(command->tag->str(),'.');
+    if (p) {
+      p[0]=0;
+      if ((server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
+	  (server->blocktab[command->tag->str()]) ) {
+	p[0]='.';
+	if (command == lastCommand)
+	  lastCommand = command->up;
+	
+	delete command;
+	return(0);    
+      }
+      p[0]='.';
+    }
   }
 
   UCommand         *morphed;  
@@ -1045,22 +1070,48 @@ UConnection::execute(UCommand_TREE* &execCommand)
     // BLOCKED/FREEZED COMMANDS
 
     deletecommand = false;
-    if ( (tree->tag) &&
-         (server->freezetab.find(tree->tag->str())!=server->freezetab.end()) &&
-         (server->freezetab[tree->tag->str()]) ) {
+    if (tree->tag) {
+      if ((server->freezetab.find(tree->tag->str())!=server->freezetab.end()) &&
+	  (server->freezetab[tree->tag->str()]) ) {
 
-      tree = tree->up;
-      continue;
-    }      
+	tree = tree->up;
+	continue;
+      }
+      char* p= strchr(tree->tag->str(),'.');
+      if (p) {
+	p[0]=0;
+	if ((server->freezetab.find(tree->tag->str())!=server->freezetab.end()) &&
+	    (server->freezetab[tree->tag->str()]) ) {
+	  p[0]='.';
+	  tree = tree->up;	  
+	  continue;
+	}
+	p[0]='.';	
+      }
+    }
 
-    if ( (tree->tag) &&
-         (server->blocktab.find(tree->tag->str())!=server->blocktab.end()) &&
-         (server->blocktab[tree->tag->str()]) ) {
+
+    if (tree->tag) {
+      if ((server->blocktab.find(tree->tag->str())!=server->blocktab.end()) &&
+	  (server->blocktab[tree->tag->str()]) ) {
     
-      tree->runlevel1 = UEXPLORED;
-      tree->runlevel2 = UEXPLORED;
-      deletecommand = true;      
-    }      
+	tree->runlevel1 = UEXPLORED;
+	tree->runlevel2 = UEXPLORED;
+	deletecommand = true;      
+      }
+      char* p= strchr(tree->tag->str(),'.');
+      if (p) {
+	p[0]=0;
+	if ((server->blocktab.find(tree->tag->str())!=server->blocktab.end()) &&
+  	    (server->blocktab[tree->tag->str()]) ) {
+	  
+	  tree->runlevel1 = UEXPLORED;
+	  tree->runlevel2 = UEXPLORED;
+	  deletecommand = true;      
+	}
+	p[0]='.';
+      }
+    }
             
     // COMMAND1
     
