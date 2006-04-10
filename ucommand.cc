@@ -1268,7 +1268,7 @@ bool adaptive = false;
       *valtmp = variable->nbAverage * *valtmp +
         startval + 
         ( (targetval - startval) * 0.5 *
-  (1+sin(-(PI*UFloat(2))+ PI*(currentTime - starttime + deltaTime) /
+  (UFloat(1)+sin(-(PI/UFloat(2))+ PI*(currentTime - starttime + deltaTime) /
                  targettime 
                  ))
           );        
