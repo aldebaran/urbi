@@ -317,7 +317,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   const char* vnamestr;
   UNamedParameters *pevent;
   UNamedParameters *pcatch;
-
+  UString* funname;
+  HMfunctiontab::iterator hmf;
 
   if ((issofttest) &&
       (softtest_time)) {
@@ -1253,8 +1254,16 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     }
 
     // default = unknown.
-    variablename->buildFullname(command,connection);
+    funname = variablename->buildFullname(command,connection);
     if (!variablename->getFullname()) return (0); 
+    hmf = ::urbiserver->functiontab.find(funname->str());
+    if (hmf != ::urbiserver->functiontab.end()) { 
+	snprintf(errorString,errSize,"!!! Custom function call in expressions not allowed in kernel 1\n");
+        connection->send(errorString,command->tag->str());
+        return 0;   
+    }
+
+    
     if (parameters)
       snprintf(errorString,errSize,"!!! Error with function eval: %s [nb param=%d]\n",
                variablename->getFullname()->str(),parameters->size());

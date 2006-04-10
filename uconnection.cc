@@ -768,7 +768,7 @@ UConnection::processCommand(UCommand *&command,
       (command->toDelete)) return (command);
  
   rl = UEXPLORED;
-   
+
   // Handle blocked/freezed commands
   if (command->tag) {
     if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
@@ -785,7 +785,7 @@ UConnection::processCommand(UCommand *&command,
       p[0]='.';	
     }
   }
-
+  
   if (command->tag) {
     if ((server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
 	(server->blocktab[command->tag->str()]) ) {
@@ -819,7 +819,6 @@ UConnection::processCommand(UCommand *&command,
   bool             stopit;
 
   while (1) {
-
     // timeout, stop , freeze and connection flags initialization
 
     if (command->startTime == -1) {
@@ -977,12 +976,10 @@ UConnection::processCommand(UCommand *&command,
     // Regular command processing
 
     if (command->type == CMD_TREE) {
- 
         mustReturn = true;
         return( command );
     }
     else { // != CMD_TREE
-            
       morphed_up = command->up;
       morphed_position = command->position;
     
@@ -1010,7 +1007,6 @@ UConnection::processCommand(UCommand *&command,
         return(0);        
         
       case UMORPH:
-                       
         command->status = UONQUEUE;
         command->morphed = true;
         
@@ -1028,11 +1024,10 @@ UConnection::processCommand(UCommand *&command,
             morphed->tag = new UString("notag");
         //morphed->morphed = true;
         if (!command->persistant) delete command;  
-        command = morphed;        
+        command = morphed;                      
         break;
         
       default:
-
         // "+bg" flag
         if ((command->flagType&8) &&
             (command->status == URUNNING))
@@ -1064,7 +1059,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
   tree = execCommand;
 
   while (tree) { 
- 
     tree->status = URUNNING;
 
     // BLOCKED/FREEZED COMMANDS
@@ -1119,7 +1113,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
         (tree->command1) &&
         (tree->runlevel1 == UWAITING))
       stack.push_front(tree->callid);
-    
     tree->command1 = processCommand ( tree->command1,
                                       tree->runlevel1,
                                       mustReturn );   
@@ -1136,7 +1129,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
     }
 
     // COMMAND2
-    
     if ( (tree->node == UAND) ||
          (tree->node == UCOMMA) ||
          (tree->command1 == 0) || 
@@ -1144,7 +1136,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
       if (tree == lastCommand) 
         obstructed = false;
-      
+
       tree->command2 = processCommand ( tree->command2,
                                         tree->runlevel2,
                                         mustReturn );
@@ -1162,7 +1154,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
     if ( ((tree->command1 == 0) && 
           (tree->command2 == 0)) ||
          (deletecommand)) {
-    
       if (tree == lastCommand)
         lastCommand = tree->up;
       if (tree == execCommand)

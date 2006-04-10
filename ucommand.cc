@@ -92,8 +92,8 @@ UErrorValue
 UCommand::copybase(UCommand *command) 
 {   
   if (tag) {    
-    command->tag->update(tag->str());
     if (!command->tag) return (UMEMORYFAIL);
+    command->tag->update(tag->str());
   }
 
   if (flags) {
@@ -133,7 +133,6 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)())
   UString       *method     = (*varname)->getMethod();
 
   HMgrouptab::iterator hmg;
-  
   if ((!(*varname)->rooted) && (devicename)) {
 
     UGroup *oo = 0;
@@ -146,7 +145,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)())
       oo = (*hmg).second;
         
     if ((oo) && (oo->members.size() > 0)) {
-        
+
       UCommand *gplist = 0;
       UCommand *gplist_prev = 0;
       UCommand *clone;
@@ -185,7 +184,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)())
 	  
         gplist_prev = gplist;        
       }
-      
+
       morph = (UCommand*)
         new UCommand_TREE(UAND,
                           this,
@@ -197,6 +196,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)())
       return( morph );      
     }
   }
+
   return (0);
 }
 
@@ -2194,17 +2194,17 @@ UCommand_EXPR::execute(UConnection *connection)
   // Normal expression (no function)
 
   UValue* ret = expression->eval(this,connection); 
-  
+ 
+  if (ret==0) {   
+    connection->send("!!! EXPR evaluation failed\n",tag->str());
+    return (status = UCOMPLETED);
+  }  
+ 
   // Expression morphing (currently used for load only)
   if (morph) {
     if (ret) delete ret;
     return( status = UMORPH);
   }
-
-  if (ret==0) {   
-    connection->send("!!! EXPR evaluation failed\n",tag->str());
-    return (status = UCOMPLETED);
-  }  
 
   connection->sendPrefix(tag->str());
   ret->echo(connection);

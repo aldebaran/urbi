@@ -63,24 +63,13 @@ CXXFLAGS+= -Wno-deprecated\
 
 all: build/buildnumber parser network build/libkernelurbi-$(NETWORK)-$(PARSER).a
 
-
-
 include network/$(NETWORK)/Makefile.defs
 include parser/$(PARSER)/Makefile.defs
 
 
-
 NETWORK_SRC?=$(wildcard network/$(NETWORK)/*.cpp)  $(wildcard network/$(NETWORK)/*.cc)
-
-
-
 NETWORK_OBJS?=$(NETWORK_SRC:.cc=$(OBJEXT))
-
-
-
 PARSER_SRC?=$(wildcard parser/$(PARSER)/*.cpp)  $(wildcard parser/$(PARSER)/*.cc)
-
-
 
 PARSER_OBJS?=$(PARSER_SRC:.cc=$(OBJEXT))
 

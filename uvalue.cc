@@ -45,8 +45,8 @@ UValue::UValue()
   liststart = 0;
   next = 0;
 
-  val        = 0; // set default values to 0, including
-                  // str & refBinary pointers
+  val        = 0; // set default values to 0
+  str        = 0; // this is for str and refBinary
 }
 
 //! UValue constructor.
@@ -58,6 +58,7 @@ UValue::UValue(UFloat val)
   liststart = 0;
   next = 0;
   this->val = val;
+  str = 0;
 }
 
 //! UValue constructor.
@@ -68,6 +69,7 @@ UValue::UValue(const char* str)
   eventid = 0;
   liststart = 0;
   next = 0;
+  val = 0;
   this->str = new UString (str);
 }
 
@@ -94,8 +96,8 @@ UValue::operator urbi::UImage() {
   else
     img.imageFormat = urbi::IMAGE_UNKNOWN;
 
-  img.width = param->next->expression->val;
-  img.height = param->next->next->expression->val;
+  img.width = (int)param->next->expression->val;
+  img.height = (int)param->next->next->expression->val;
   img.size = refBinary->ref()->bufferSize;
   img.data = (char *)refBinary->ref()->buffer;
   return img;
@@ -123,9 +125,9 @@ UValue::operator urbi::USound() {
   else
     snd.soundFormat = urbi::SOUND_UNKNOWN;
 
-  snd.channels = param->next->expression->val;
-  snd.rate = param->next->next->expression->val;
-  snd.sampleSize = param->next->next->next->expression->val;
+  snd.channels = (int)param->next->expression->val;
+  snd.rate = (int)param->next->next->expression->val;
+  snd.sampleSize = (int)param->next->next->next->expression->val;
   snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;
 
   snd.size = refBinary->ref()->bufferSize;
@@ -138,7 +140,7 @@ UValue::operator urbi::USound() {
 
 UValue & UValue::operator = (const urbi::UBinary &b) {
   //TODO: cleanup
- if (dataType == DATA_BINARY) {
+ if ((dataType == DATA_BINARY) && (refBinary)) {
    delete refBinary;
  }
   int sz=0;
@@ -201,6 +203,7 @@ UValue::UValue(const urbi::UValue &v)
   eventid = 0;
   liststart = 0;
   next = 0;
+  str=0;
   switch (v.type) {
     case urbi::DATA_DOUBLE: dataType = DATA_NUM;
 		     	    this->val = v.val;
