@@ -138,7 +138,7 @@ public:
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
-  void              addAlias        (const char* id, const char* variablename);
+  int               addAlias        (const char* id, const char* variablename);
   void              addCPULoadOffset(UFloat ms);
 
   list<UConnection*>       connectionList; ///< list of active connections: includes

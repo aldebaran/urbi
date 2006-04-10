@@ -243,6 +243,7 @@ group         { return token::GROUP;}
 addgroup      { return token::ADDGROUP;}
 delgroup      { return token::DELGROUP;}
 alias         { return token::ALIAS;}
+unalias       { return token::UNALIAS;}
 echo          { return token::UECHO;}
 wait          { return token::WAIT;}
 waituntil     { return token::WAITUNTIL;}

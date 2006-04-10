@@ -53,8 +53,8 @@ extern  int   availableMemory; //< Total amount of free memory in the system
 #define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
 
 #define LIBERATE(x) if (x) if (x->liberate()==0) delete (x)
-#define DDD ::urbiserver->debug("Check point %s, %d\n",__FILE__,__LINE__);
-#define DDDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n",x,__FILE__,__LINE__);
+#define DD ::urbiserver->debug("Check point %s, %d\n",__FILE__,__LINE__);
+#define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n",x,__FILE__,__LINE__);
 
 typedef unsigned long IPAdd;
 

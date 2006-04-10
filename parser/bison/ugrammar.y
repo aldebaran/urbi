@@ -198,6 +198,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token WHENEVER "whenever"
 %token COPY "copy"
 %token ALIAS "alias"
+%token UNALIAS "unalias"
 %token DERIV "derivation"
 %token DERIV2 "second-derivation"
 %token TRUEDERIV "command-derivation"
@@ -650,11 +651,17 @@ instruction:
       MEMCHECK1($$,$2);
     } 
 
+  | UNALIAS purevariable {
+
+      $$ = new UCommand_ALIAS($2,(UVariableName*)0,true);
+      MEMCHECK1($$,$2);
+    } 
+
   | ALIAS {
       
       $$ = new UCommand_ALIAS((UVariableName*)0,(UVariableName*)0);
       MEMCHECK($$);
-    }
+  }
 
   | OPERATOR {
      

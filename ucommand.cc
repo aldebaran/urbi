@@ -2745,12 +2745,14 @@ MEMORY_MANAGER_INIT(UCommand_ALIAS);
 /*! Subclass of UCommand with standard member initialization.
 */
 UCommand_ALIAS::UCommand_ALIAS(UVariableName* aliasname,
-                               UVariableName* id) :
+                               UVariableName* id,
+			       bool eraseit) :
   UCommand(CMD_ALIAS)
 {	
   ADDOBJ(UCommand_ALIAS);
   this->id           = id;
   this->aliasname    = aliasname;
+  this->eraseit      = eraseit;
 }
 
 //! UCommand subclass destructor.
@@ -2770,8 +2772,10 @@ UCommand_ALIAS::execute(UConnection *connection)
     UString *id0 = aliasname->buildFullname(this, connection,false);
     UString *id1 = id->buildFullname(this, connection,false);
     if (id0 && id1) 
-      connection->server->addAlias(id0->str(),
-  	      	    id1->str());
+      if (!connection->server->addAlias(id0->str(),id1->str())) {
+	connection->send("!!! Circular alias detected, abort command.\n",tag->str());
+	return (status = UCOMPLETED);
+      }
 
     return ( status = UCOMPLETED );
   }
@@ -2793,8 +2797,8 @@ UCommand_ALIAS::execute(UConnection *connection)
     return ( status = UCOMPLETED );
   }
   
-  // full alias query
-  if (aliasname && !id) {
+  // specific alias query
+  if (aliasname && !id && (!eraseit)) {
 
     UString *id0 = aliasname->buildFullname(this, connection,false);
     HMaliastab::iterator retr = connection->server->aliastab.find(id0->str());
@@ -2805,6 +2809,17 @@ UCommand_ALIAS::execute(UConnection *connection)
 		      (*retr).first,(*retr).second->str());		              
       connection->send(tmpbuffer,tag->str());	
     }
+
+    return ( status = UCOMPLETED );
+  }
+
+  // unalias query
+  if (aliasname && !id && (eraseit)) {
+
+    UString *id0 = aliasname->buildFullname(this, connection,false);
+    HMaliastab::iterator retr = connection->server->aliastab.find(id0->str());
+    if (retr != connection->server->aliastab.end()) 
+      connection->server->aliastab.erase(retr);    
        
     return ( status = UCOMPLETED );
   }
@@ -2823,7 +2838,8 @@ UCommand_ALIAS::copy()
   if (id) copy_id = id->copy(); else copy_id = 0;
 
   UCommand_ALIAS *ret = new UCommand_ALIAS(copy_alias,
-                                           copy_id);
+                                           copy_id,
+					   eraseit);
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -2844,7 +2860,7 @@ UCommand_ALIAS::print(int l)
   if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
   else ::urbiserver->debug("%s",tabb);
 
-  ::urbiserver->debug("ALIAS :\n");
+  ::urbiserver->debug("ALIAS (%d) :\n",(int)eraseit);
 
    if (aliasname) { ::urbiserver->debug("  %s  Aliasname:",tabb); aliasname->print(); ::urbiserver->debug("\n");};    
    if (id) { ::urbiserver->debug("  %s  id:",tabb); id->print(); ::urbiserver->debug("\n");};    

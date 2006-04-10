@@ -373,7 +373,8 @@ public:
   MEMORY_MANAGED;
 
   UCommand_ALIAS (UVariableName* aliasname,
-                  UVariableName* id);  		
+                  UVariableName* id,
+		  bool eraseit=false);  		
 
   virtual ~UCommand_ALIAS();
 
@@ -384,6 +385,7 @@ public:
 
   UVariableName           *aliasname; ///< alias name
   UVariableName           *id; ///< identifier
+  bool                    eraseit; ///< unalias command
 };
 
 class UCommand_GROUP : public UCommand

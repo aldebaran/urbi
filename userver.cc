@@ -899,10 +899,24 @@ UServer::removeConnection(UConnection *connection)
 //! Adds an alias in the server base
 /*! This function is mostly useful for alias creation at start in the 
     initialization() function for example.
+    return 1 in case of success,  0 if circular alias is detected
 */
-void
+int
 UServer::addAlias(const char* id, const char* variablename)
-{
+{  
+  if (strcmp(id, variablename)==0) return(0);    
+  
+  const char* newobj = variablename;
+  HMaliastab::iterator getobj = ::urbiserver->aliastab.find(newobj);
+
+  while (getobj != ::urbiserver->aliastab.end()) {
+
+    newobj = (*getobj).second->str();
+    if (strcmp(newobj,id)==0) return(0);    
+    
+    getobj = ::urbiserver->aliastab.find(newobj);
+  };
+
   if (aliastab.find(id) != aliastab.end()) {
     
     UString *alias = aliastab[id];
@@ -913,6 +927,7 @@ UServer::addAlias(const char* id, const char* variablename)
     UString *ids = new UString(id); // persistant, no delete associated
     aliastab[ids->str()] = new UString(variablename);
   }
+  return (1);
 }
 
 //! Add an offset to the cpucload calculus
