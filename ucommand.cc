@@ -1069,7 +1069,11 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
         return( status = UCOMPLETED );  
       
       // init valarray for a "val" assignment
-      UFloat *targetvalue =  &(variable->get()->val);
+      UFloat *targetvalue;
+      if (!controlled)
+        targetvalue = &(variable->value->val); // prevents a read access
+      else 
+        targetvalue =  &(variable->get()->val);
     
       if (variable->autoUpdate)
         valtmp = targetvalue;         // &variable->value->val
