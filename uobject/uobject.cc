@@ -224,7 +224,7 @@ int voidfun() { echo("void fun call\n"); };
 
 //! Generic UVar monitoring without callback
 void
-urbi::UNotifyChange(UVar &v)
+urbi::USync(UVar &v)
 {
   urbi::UNotifyChange(v,&voidfun);
 }

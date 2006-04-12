@@ -37,59 +37,64 @@ namespace urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(const string &varname, UVarType vartype) :
-  vartype(vartype)
+UVar::UVar(const string &varname) 
 {
   name = varname;  
-  __init(vartype);
+  __init();
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, const string &varname, UVarType vartype) :
-  vartype(vartype)
+UVar::UVar(UObject& obj, const string &varname)
 {
   name = obj.name + "." + varname;
-  __init(vartype);
+  __init();
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(const string &objname, const string &varname, UVarType vartype) :
-  vartype(vartype)
+UVar::UVar(const string &objname, const string &varname)
 {
   name = objname + "." + varname;
-  __init(vartype);
+  __init();
 }
 
 
 //! UVar initialization
 void
-UVar::init(const string &objname, const string &varname, UVarType vartype)
+UVar::init(const string &objname, const string &varname)
 {  
-  this->vartype = vartype;
   name = objname + "." + varname;  
-  __init(vartype);
+  __init();
 }
 
 //! UVar initializationvoid
 void
-UVar::__init(UVarType vartype)
+UVar::__init()
 {  
-  this->vartype = vartype;
+  this->owned = false;
   varmap[name].push_back(this);
   
   HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
   if (it == ::urbiserver->variabletab.end()) 
     vardata = new UVardata(new UVariable(name.c_str(),new
-    ::UValue(),false,false,(vartype == SYNC)));  
+    ::UValue(),false,false,true));  // autoupdate unless otherwise specified
   else {
     vardata = new UVardata(it->second);  
     //validate autoupdate consistency   
-    if ( (vartype==SYNC) != vardata->variable->autoUpdate) {
-      urbi::echo("Warning, inconsistency between bind mode and autoUpdate for variable %s.\n",
-	name.c_str());
+    /*
+    if ( (!owned) != vardata->variable->autoUpdate) {
+      urbi::echo("Warning, inconsistency between bind mode and autoUpdate for variable %s.\n",name.c_str());
 
-    }
+    }*/
   }  
+}
+
+//! set own mode
+void
+UVar::setOwned()
+{
+  owned = true;
+  if (vardata) 
+    vardata->variable->autoUpdate = false;  
 }
 
 //! UVar destructor.
@@ -124,7 +129,7 @@ UVar::operator = (UFloat n)
   // type mismatch is not integrated at this stage
   vardata->variable->value->dataType = ::DATA_NUM;
 
-  if (vartype==OWNER)
+  if (owned)
     in() = n;
   else
     vardata->variable->setFloat(n);
@@ -167,7 +172,7 @@ UVar::operator = (const UBinary &b)
 
 UVar::operator int () {	 
   //check of dataType is done inside in and out
-  if (vartype == OWNER)
+  if (owned)
     return (int)out();
   else
     return (int)in();   
@@ -175,7 +180,7 @@ UVar::operator int () {
 
 UVar::operator UFloat () { 
   //check of dataType is done inside in and out
-  if (vartype == OWNER)
+  if (owned)
     return out();
   else
     return in();   
