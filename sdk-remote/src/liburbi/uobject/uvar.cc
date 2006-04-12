@@ -34,46 +34,42 @@ urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(const string &varname, UVarType vartype) :
-  vartype(vartype)
+UVar::UVar(const string &varname)
 {
   name = varname;  
-  __init(vartype);
+  __init();
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, const string &varname, UVarType vartype) :
-  vartype(vartype)
+UVar::UVar(UObject& obj, const string &varname) 
 {
   name = obj.name + "." + varname;
-  __init(vartype);
+  __init();
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(const string &objname, const string &varname, UVarType vartype) :
-  vartype(vartype)
+UVar::UVar(const string &objname, const string &varname)
 {
   name = objname + "." + varname;
-  __init(vartype);
+  __init();
 }
 
 
 //! UVar initialization
 void
-UVar::init(const string &objname, const string &varname, UVarType vartype)
+UVar::init(const string &objname, const string &varname)
 {  
-  this->vartype = vartype;
   name = objname + "." + varname;  
-  __init(vartype);
+  __init();
 }
 
 //! UVar initialization
 void
-UVar::__init(UVarType vartype)
+UVar::__init()
 {  
   varmap[name].push_back(this);
   vardata = 0; // unused. For internal softdevices only
-  this->vartype = SYNC; // sync is forced here in remote mode.
+  this->owned = false;
 }
 
 //! UVar out value (read mode)
@@ -132,7 +128,6 @@ UVar::operator = (const UBinary &b)
   URBI() << name << "=\"";  
   URBI()<<"BIN "<<b.common.size<<" "<<b.getMessage()<<";";
   URBI().write((char *)b.common.data, b.common.size);
-
 }
 
 
@@ -180,3 +175,9 @@ UVar::__update(UValue& v)
   value = v;
 }
 
+//! set own mode
+void
+UVar::setOwned()
+{
+  owned = true;
+}

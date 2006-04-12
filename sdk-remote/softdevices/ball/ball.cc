@@ -38,17 +38,17 @@ int toto2(UVar &v) {
 ball::ball(string s) :
   UObject(s)
 { 
-  UAttachVar      (ball,x);
-  UAttachVar      (ball,y);
-  UAttachVar      (ball,truc);
-  UAttachFunction (ball,init);
-  UAttachFunction (ball,myfun);
-  UAttachFunction (ball,myfun1);
-  UAttachEvent    (ball,myevent);   
-  UAttachEventEnd (ball,myevent,endevent);
+  UBindVar      (ball,x);
+  UBindVar      (ball,y);
+  UBindVar      (ball,truc);
+  UBindFunction (ball,init);
+  UBindFunction (ball,myfun);
+  UBindFunction (ball,myfun1);
+  UBindEvent    (ball,myevent);   
+  UBindEventEnd (ball,myevent,endevent);
 
-  UNotifyChange(x);
-  UNotifyChange(truc);
+  USync(x);
+  USync(truc);
   UNotifyChange(x, &ball::stuff);
   UNotifyChange(y, &ball::stuff2);
   UNotifyChange(x, &toto2);

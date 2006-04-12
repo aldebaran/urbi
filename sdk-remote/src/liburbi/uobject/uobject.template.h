@@ -59,11 +59,12 @@ __STL_END_NAMESPACE
 
 
 // These macros are here to make life easier
-#define UAttachVar(obj,x) x.init(name,#x)
-#define UAttachVarSP(obj,x,vtype) x.init(name,#x,vtype)
-#define UAttachFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
-#define UAttachEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
-#define UAttachEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
+#define UBindVar(obj,x) x.init(name,#x)
+#define UOwned(x) x.setOwned()
+#define UBindFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
+#define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
+#define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
+
 
 // Macro to register to a Hub
 #define URegister(hub) { UObjectHub* uobjhub = urbi::locateHub((string)#hub); \
@@ -114,26 +115,20 @@ urbi {
 
   extern void main(int argc, char *argv[]);
 
-  void UNotifyChange(UVar&);  
+  void USync(UVar&);  
   void UNotifyChange(UVar&, int (*) ());
   void UNotifyChange(UVar&, int (*) (UVar&));
   void UNotifyChange(string, int (*) ());
   void UNotifyChange(string, int (*) (UVar&));
-  
+
   void UNotifyAccess(UVar&, int (*) (UVar&));
-  
+
   UObjectHub* locateHub(string name);
   
   void echo(const char * format, ... );
 
   // *****************************************************************************
   // UValue and other related types
-
-  enum UVarType {
-    SYNC,
-    USER,
-    OWNER
-  };
   
   enum UDataType {
     DATA_DOUBLE,
@@ -318,14 +313,15 @@ urbi {
   {
   public:
     
-    UVar() { name = "noname";};
+    UVar() { name = "noname"; owned=false;};
     UVar(UVar& v) {};
-    UVar(const string&, UVarType vartype = SYNC);
-    UVar(const string&, const string&, UVarType vartype = SYNC);
-    UVar(UObject&, const string&, UVarType vartype = SYNC);
+    UVar(const string&);
+    UVar(const string&, const string&);
+    UVar(UObject&, const string&);
     ~UVar();
 
-    void init(const string&,const string&, UVarType vartype = SYNC);
+    void init(const string&,const string&);
+    void setOwned();
 
     void operator = ( UFloat );
     void operator = ( string );
@@ -346,7 +342,7 @@ urbi {
     UFloat& in();
     UFloat& out();
 
-    UVarType vartype; ///< type of variable synchronization or in/out behavior
+    bool owned; ///< is the variable owned by the module?
 
     // internal
     void __update(UValue&);
@@ -355,10 +351,10 @@ urbi {
     UValue& val() { return value; }; ///< XXX only works in softdevice mode
 
     UVardata  *vardata; ///< pointer to internal data specifics
-    void __init(UVarType vartype = SYNC);	
+    void __init();	
 
     PRIVATE(string,name) ///< full name of the variable as seen in URBI      
-    PRIVATE(UValue,value) ///< the variable value on the softdevice's side     
+    PRIVATE(UValue,value) ///< the variable value on the softdevice's side    
   };
 
 
@@ -477,7 +473,6 @@ urbi {
 
     // We have to duplicate because of the above UNotifyChange which catches the
     // namespace on UObject instead of urbi.
-    void UNotifyChange(UVar &v) { urbi::UNotifyChange(v); };
     void UNotifyChange(UVar &v, int (*fun) ()) { urbi::UNotifyChange(v,fun); };
     void UNotifyChange(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyChange(v,fun); };
     void UNotifyChange(string varname, int (*fun) ()) { urbi::UNotifyChange(varname,fun); };
