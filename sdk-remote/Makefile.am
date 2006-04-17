@@ -1,2 +1,2 @@
-SUBDIRS =lib doc src softdevices
+SUBDIRS =lib doc src 
 BUILT_SOURCES = ctags

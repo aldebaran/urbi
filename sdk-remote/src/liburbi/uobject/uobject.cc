@@ -205,16 +205,16 @@ urbi::UNotifyChange(string varname, int (*fun) (UVar&))
 // **************************************************************************	
 //! UObject constructor.
 UObject::UObject(const string &s) :
-  name(s)
+  __name(s)
 {
   objecthub = 0;
   lastUObject = this;
-  URBI() << "class " << name << "{};"; 
-  URBI() << "external " << "object" << " " << name <<";";
+  URBI() << "class " << __name << "{};"; 
+  URBI() << "external " << "object" << " " << __name <<";";
 
   // default
   derived = false;
-  classname = name;
+  classname = __name;
 
   UBindVar(UObject,load);
 }

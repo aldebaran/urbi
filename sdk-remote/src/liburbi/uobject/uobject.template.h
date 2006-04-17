@@ -56,11 +56,11 @@ __STL_END_NAMESPACE
 
 
 // These macros are here to make life easier
-#define UBindVar(obj,x) x.init(name,#x)
+#define UBindVar(obj,x) x.init(__name,#x)
 #define USensor(x) x.setOwned()
-#define UBindFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
-#define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
-#define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
+#define UBindFunction(obj,x)  createUCallback("function", this,(&obj::x),__name+"."+string(#x),functionmap)
+#define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),__name+"."+string(#x),eventmap)
+#define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
 
 
 // Macro to register to a Hub
@@ -494,7 +494,7 @@ urbi {
   
     void UNotifyAccess(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyAccess(v,fun); };
 
-    string name; ///< name of the object as seen in URBI
+    string __name; ///< name of the object as seen in URBI
     string classname; ///< name of the class the objects is derived from
     bool   derived; ///< true when the object has been newed by an urbi command 
 
