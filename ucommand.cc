@@ -60,8 +60,8 @@ UCommand::UCommand(UCommandType _type)
   flagExpr1         = 0;
   flagExpr2         = 0;
   flagExpr4         = 0;
-  flag_nbTrue2       = 0;
-  flag_nbTrue4       = 0;
+  flag_nbTrue2      = 0;
+  flag_nbTrue4      = 0;
   morphed           = false;
 }
 
@@ -2964,21 +2964,26 @@ UCommand_GROUP::execute(UConnection *connection)
   HMgrouptab::iterator retr = connection->server->grouptab.find(id->str());
   if (retr !=  connection->server->grouptab.end()) {
 
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	"*** %s = {",
-	(*retr).first);
-    for (list<UString*>::iterator it = (*retr).second->members.begin();
-	it !=  (*retr).second->members.end();
-	) {
-      strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
+    UNamedParameters *ret = 0;
+ 
+    list<UString*>::iterator it = (*retr).second->members.begin();
+    if (it !=  (*retr).second->members.end()) {
+      ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
+	   (UNamedParameters*)0);
       it++;
-      if (it != (*retr).second->members.end())
-	strncat(tmpbuffer,",",UCommand::MAXSIZE_TMPMESSAGE);
     }
-    strncat(tmpbuffer,"}\n",UCommand::MAXSIZE_TMPMESSAGE);
-    connection->send(tmpbuffer,tag->str());
-    
-    return (status = UCOMPLETED);
+
+    while (it !=  (*retr).second->members.end()) {
+      
+      ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
+	  ret);      
+      it++;
+    }
+
+    morph = new UCommand_EXPR(new UExpression(EXPR_LIST, ret));
+
+    persistant = false;
+    return (status = UMORPH);
   }
   
   return (status = UCOMPLETED);
@@ -3216,16 +3221,13 @@ MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UString* device,
-                                          UString* cmd) :
+UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UVariableName* device,
+                                          UFloat *cmd) :
   UCommand(CMD_GENERIC)
 {	
   ADDOBJ(UCommand_DEVICE_CMD);
-  variablename        = new UVariableName(device,new
-      UString("__cmd__"),false,(UNamedParameters*)0);
-      
-//  this->device        = device;
-  this->cmd           = cmd;
+  this->variablename  = device;        
+  this->cmd           = *cmd;
 }
 
 //! UCommand subclass destructor.
@@ -3233,56 +3235,59 @@ UCommand_DEVICE_CMD::~UCommand_DEVICE_CMD()
 {
   FREEOBJ(UCommand_DEVICE_CMD);
   if (variablename)      delete variablename;
-  if (cmd)         delete cmd;
 }
 
 //! UCommand subclass execution function
 UCommandStatus 
 UCommand_DEVICE_CMD::execute(UConnection *connection)
 {
-  if (strcmp(cmd->str(),"on")==0) {
-    if (connection->receiving) return (status = URUNNING);
-    
-    connection->server->motorstate = true;
-    connection->server->motor(connection->server->motorstate);
-    return( status = UCOMPLETED );
-  }
- 
-  if (strcmp(cmd->str(),"off")==0) {
+  if (!variablename) return ( status = UMORPH );
+  if (variablename->nostruct) {
 
-    connection->server->motorstate = false;
-    connection->server->motor(connection->server->motorstate);
-    return( status = UCOMPLETED );    
-  }
+    variablename->buildFullname(this, connection);
+    UVariableName* recreatevar = new UVariableName(variablename->getMethod()->copy(),
+	                            new UString("load"),
+				    variablename->rooted,
+				    (UNamedParameters*)0);
 
-  if (strcmp(cmd->str(),"switch")==0) {
-    
-    if (connection->receiving) return (status = URUNNING);
-
-    if (connection->server->motorstate)
-      connection->server->motorstate = false;
-    else
-      connection->server->motorstate = true;
-
-    connection->server->motor(connection->server->motorstate);    
-    return( status = UCOMPLETED );
+    delete variablename;
+    variablename = recreatevar;  
+    variablename->buildFullname(this, connection);
   }
 
-  return ( status = UCOMPLETED );
+  // Broadcasting  
+  if (scanGroups(&UCommand::refVarName)) return ( status = UMORPH );
+  
+// Main execution
+  if (cmd == -1)
+    morph = new UCommand_ASSIGN_VALUE(
+	variablename->copy(),
+	new UExpression(EXPR_MINUS,
+	  new UExpression(EXPR_VALUE, UFloat(1)),
+	  new UExpression(EXPR_VARIABLE, variablename->copy())),
+	(UNamedParameters*)0,
+	false);
+  else	
+    morph = new UCommand_ASSIGN_VALUE(
+	variablename->copy(),
+	new UExpression(EXPR_VALUE, UFloat(cmd)),
+	(UNamedParameters*)0,
+	false);
+
+  persistant = false;
+  return ( status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
 UCommand*
 UCommand_DEVICE_CMD::copy() 
 {  
-  UString* copy_device;
-  UString* copy_cmd;
+  UVariableName* copy_device;
   
-  if (variablename)   copy_device   = new UString(variablename->device); else copy_device = 0;
-  if (cmd) copy_cmd = new UString(cmd); else copy_cmd = 0;
+  if (variablename)   copy_device   = variablename->copy(); else copy_device = 0;
 
   UCommand_DEVICE_CMD *ret = new UCommand_DEVICE_CMD(copy_device,
-                                                       copy_cmd);
+                                                     new UFloat(cmd));
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -3305,7 +3310,7 @@ UCommand_DEVICE_CMD::print(int l)
 
   ::urbiserver->debug("DEVICE_CMD %s:\n",variablename->device->str()); 
  
-  if (cmd)  { ::urbiserver->debug("%s  Cmd:[%s]\n",tabb,cmd->str());}  
+  if (cmd)  { ::urbiserver->debug("%s  Cmd:[%f]\n",tabb,cmd);}  
 
   ::urbiserver->debug("%sEND DEVICE_CMD ------\n",tabb);
 }

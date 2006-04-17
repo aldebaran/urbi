@@ -105,8 +105,7 @@ UExpression::UExpression(UExpressionType type, UString *str)
 UExpression::UExpression(UExpressionType type, UValue *v) 
 {	
    initialize();
-  
-  
+    
    this->type = type; // should be EXPR_VALUE
    this->isconst = true;
    dataType   = v->dataType;
@@ -318,7 +317,10 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   UNamedParameters *pevent;
   UNamedParameters *pcatch;
   UString* funname;
-  HMfunctiontab::iterator hmf;
+  HMfunctiontab::iterator hmf; 
+  HMgrouptab::iterator retr;
+  list<UString*>::iterator it;
+  UExpression *e;
 
   if ((issofttest) &&
       (softtest_time)) {
@@ -357,6 +359,59 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     }
     return(ret);
 
+  case EXPR_GROUP: 
+        
+    ret = new UValue(); 
+    retr = connection->server->grouptab.find(str->str());
+    if (retr !=  connection->server->grouptab.end()) {
+      
+      ret->dataType = DATA_LIST;
+      
+      it = (*retr).second->members.begin();
+      if (it !=  (*retr).second->members.end()) {
+
+	e = new UExpression (EXPR_GROUP, (*it)->copy());
+	e2 = e->eval(command, connection);
+	delete e;
+	if (e2->dataType == DATA_VOID) {
+	  ret->liststart = new UValue((*it)->str());
+	  delete e2;
+	}
+	else {
+	  delete ret;
+	  ret = e2;
+	}
+	  
+	e1 = ret->liststart;
+	while (e1->next) e1 = e1->next;
+	it++;
+      }
+      
+      while (it !=  (*retr).second->members.end()) {
+	
+	e = new UExpression (EXPR_GROUP, (*it)->copy());
+	e2 = e->eval(command, connection);
+	delete e;
+	if (e2->dataType == DATA_VOID) {
+	  e1->next = new UValue((*it)->str());
+	  delete e2;
+	  e1 = e1->next;
+	}
+	else {
+	  e3 = e2;
+	  e2 = e2->liststart;
+	  while (e2) {
+	    e1->next = e2->copy();
+	    e1 = e1->next;
+	    e2 = e2->next;
+	  }
+	  delete e3;
+	}
+	it++;
+      }
+    }  
+    return(ret);
+    
   case EXPR_VALUE:
 
     ret = new UValue();

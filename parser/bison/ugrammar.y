@@ -567,10 +567,10 @@ instruction:
       MEMCHECK1($$,$1); 
     }         
 
-  | IDENTIFIER SWITCH {
+  | refvariable NUM {
 
-      $$ = new UCommand_DEVICE_CMD($1,$2);
-      MEMCHECK2($$,$1,$2);
+      $$ = new UCommand_DEVICE_CMD($1,$2); 
+      MEMCHECK1($$,$1);
     }
 
   | RETURN {
@@ -625,13 +625,13 @@ instruction:
       MEMCHECK2($$,$4,$2);      
     } 
 
-    
+   /* 
   | GROUP IDENTIFIER {
 
       $$ = new UCommand_GROUP($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);      
     } 
-
+*/
   | GROUP {
       
       $$ = new UCommand_GROUP((UString*)0,(UNamedParameters*)0);
@@ -1110,28 +1110,6 @@ purevariable:
     }
 ;
 
-/* VARIDS */
-/*
-purevariables:  
-
-    purevariable { 
-            
-      $$ = new UNamedParameters(
-	  new UExpression(EXPR_VARIABLE,$1),
-	  0); 
-      MEMCHECK($$); 
-    }
-
-  | purevariable COMMA purevariables { 
-    
-      $$ = new UNamedParameters(
-	  new UExpression(EXPR_VARIABLE,$1),
-	  $3); 
-      MEMCHECK1($$,$3);     
-    }
-;
-*/
-
 variable:
 
      purevariable {
@@ -1314,6 +1292,12 @@ expr:
       $$ = new UExpression(EXPR_VARIABLE,$1); 
       MEMCHECK1($$,$1);      
     }  
+ 
+  | GROUP IDENTIFIER {
+
+      $$ = new UExpression(EXPR_GROUP, $2);
+      MEMCHECK1($$,$2);
+    } 
 
   /* num expr */
 

@@ -103,35 +103,79 @@ UValue::operator urbi::UImage() {
   return img;
 }
 
+
+
 UValue::operator urbi::USound() {
+
+ struct wavheader {
+
+    char riff[4];
+    int length;
+    char wave[4];
+    char fmt[4];
+    int lnginfo;
+    short one;
+    short channels;
+    int freqechant;
+    int bytespersec;
+    short bytesperechant;
+    short bitperchannel;
+    char data[4];
+    int datalength;
+  };
+
+
   urbi::USound snd;
   snd.data=0; snd.size = snd.channels = snd.rate = 0; snd.soundFormat = urbi::SOUND_UNKNOWN;
-  if (dataType != DATA_BINARY)
+  if ( (dataType != DATA_BINARY) ||
+       (!refBinary) ||
+       (!refBinary->ref()))
     return snd;
-  UNamedParameters *param = refBinary->ref()->parameters;
-  //validate
-  if (! (VALIDATE(param,DATA_STRING) && 
-      VALIDATE(param->next, DATA_NUM) &&
-      VALIDATE(param->next->next, DATA_NUM) && 
-      VALIDATE(param->next->next->next, DATA_NUM) && 
-      VALIDATE(param->next->next->next->next, DATA_NUM) 
-      ))
-    return snd;
+  UNamedParameters *param = refBinary->ref()->parameters;  
+  if (!(VALIDATE(param,DATA_STRING))) return snd;
    
-  if (!strcmp(param->expression->str->str(), "raw"))
+  bool decoded = false;
+  if (!param->expression->str) return snd;
+      
+  if (!strcmp(param->expression->str->str(), "raw")) {    
     snd.soundFormat = urbi::SOUND_RAW;
-  else if (!strcmp(param->expression->str->str(), "wav"))
+    decoded =  (VALIDATE(param->next, DATA_NUM) &&
+       	VALIDATE(param->next->next, DATA_NUM) &&
+	VALIDATE(param->next->next->next, DATA_NUM) &&
+	VALIDATE(param->next->next->next->next, DATA_NUM));
+  }
+  else if (!strcmp(param->expression->str->str(), "wav")) {
     snd.soundFormat = urbi::SOUND_WAV;
+    if ( (refBinary->ref()->bufferSize > sizeof(wavheader)) &&
+	 (refBinary->ref()->buffer) ) {
+      decoded= true;
+      wavheader * wh = (wavheader *)refBinary->ref()->buffer;
+      snd.channels = wh->channels;
+      snd.rate = wh->freqechant;
+      snd.sampleSize = wh->bitperchannel;
+      snd.sampleFormat =  (snd.sampleSize>8)?urbi::SAMPLE_SIGNED : urbi::SAMPLE_UNSIGNED;  
+    }
+  }
   else
     snd.soundFormat = urbi::SOUND_UNKNOWN;
 
-  snd.channels = (int)param->next->expression->val;
-  snd.rate = (int)param->next->next->expression->val;
-  snd.sampleSize = (int)param->next->next->next->expression->val;
-  snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;
 
-  snd.size = refBinary->ref()->bufferSize;
-  snd.data = (char *)refBinary->ref()->buffer;
+  if (VALIDATE(param->next, DATA_NUM)) {
+    snd.channels = (int)param->next->expression->val;
+    if (VALIDATE(param->next->next, DATA_NUM) ) {
+      snd.rate = (int)param->next->next->expression->val;
+      if (VALIDATE(param->next->next->next, DATA_NUM) ) {
+	snd.sampleSize = (int)param->next->next->next->expression->val;
+	if ( VALIDATE(param->next->next->next->next, DATA_NUM))
+	  snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;
+      }
+    }
+  }
+
+  if (decoded) {
+    snd.size = refBinary->ref()->bufferSize;
+    snd.data = (char *)refBinary->ref()->buffer;
+  }
 
   return snd;
 }
@@ -191,7 +235,8 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
   UBinary *bin = new UBinary(sz, first);
   bin->bufferSize =  sz;
   //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
-  memcpy(bin->buffer, b.common.data, sz); 
+  if (sz>0)
+    memcpy(bin->buffer, b.common.data, sz); 
   refBinary = new URefPt<UBinary>(bin);
   return *this;
 }

@@ -139,7 +139,6 @@ public:
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
-  void              addCPULoadOffset(UFloat ms);
 
   list<UConnection*>       connectionList; ///< list of active connections: includes
                                            ///< one UGhostConnection
@@ -190,7 +189,6 @@ public:
                            currentTime, 
                            previousTime, 
                            latestTime; ///< used to detect cpu overload
-  UFloat                   cpuloadOffset;
   bool                     stopall; ///< stops all commands in all connections
   bool                     reloadURBIINI; ///< reload URBI.INI file
   bool                     motorstate; ///< state of motor on/off

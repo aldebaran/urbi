@@ -433,8 +433,8 @@ class UCommand_DEVICE_CMD : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_DEVICE_CMD  (UString* device,
-                        UString* cmd);  
+  UCommand_DEVICE_CMD  (UVariableName* device,
+                        UFloat *cmd);  
   virtual ~UCommand_DEVICE_CMD();
   virtual UVariableName** refVarName() { return &variablename; };
 
@@ -444,7 +444,7 @@ public:
   virtual UCommand*      copy();
 
   UVariableName    *variablename; ///< the device name embedded in a var name
-  UString          *cmd;    ///< the command (on, off, ...)
+  UFloat           cmd;    ///< the command (on, off, ...)
 };
 
 class UCommand_OPERATOR_VAR : public UCommand

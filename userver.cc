@@ -133,7 +133,6 @@ UServer::UServer(UFloat frequency,
  
   cpuoverload = false;
   cpucount = 0;
-  cpuloadOffset = 0;
   signalcpuoverload = false;
   cputhreshold = 1.2;
   defcheck = false;
@@ -260,7 +259,6 @@ UServer::work()
   currentTime   = lastTime();
 
   // Execute Timers
-
   for (urbi::UTimerTable::iterator ittt = urbi::timermap.begin();
        ittt != urbi::timermap.end();
        ittt++) 
@@ -270,6 +268,7 @@ UServer::work()
       (*ittt)->call();
       (*ittt)->lastTimeCalled = currentTime;
     }
+
 
   beforeWork();
 
@@ -301,6 +300,7 @@ UServer::work()
       securityBuffer_ = 0;
       signalMemoryOverflow = true;
     }  
+
 
   // Scan currently opened connections for ongoing work 
   for (list<UConnection*>::iterator retr = connectionList.begin();
@@ -434,11 +434,7 @@ UServer::work()
   updateTime();
   latestTime = lastTime();
  
-  if (getFrequency() > cpuloadOffset)
-    cpuload = (latestTime - currentTime)/( getFrequency() - cpuloadOffset);
-  else
-    cpuload = 1;
-  cpuloadOffset = 0;
+  cpuload = (latestTime - currentTime)/getFrequency();
 
   if (!cpuoverload)
     if  (cpuload > cputhreshold) {
@@ -930,15 +926,3 @@ UServer::addAlias(const char* id, const char* variablename)
   return (1);
 }
 
-//! Add an offset to the cpucload calculus
-/*! When cpuload is calculated it measures dt/frequency, where dt is the
-    time spent in the work() function. If the robot-specific side does 
-    consume some time, it should register it on the kernel side to
-    have a better estimate of the cpuload:  dt/(frequency.- offset)
-    This function adds a amount in ms to the offset
-*/
-void
-UServer::addCPULoadOffset(UFloat ms)
-{
-  cpuloadOffset += ms;
-}

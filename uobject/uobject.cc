@@ -283,6 +283,7 @@ urbi::USetTimer(UFloat t, int (*fun) ())
 UObject::UObject(const string &s) :
   name(s)
 {
+  objecthub = 0;
   lastUObject = this;
   UString tmps(name.c_str()); // quelle merde ces UString!!!!
   UObj* tmpobj = new UObj(&tmps);
@@ -292,21 +293,13 @@ UObject::UObject(const string &s) :
        retr++)
     if ((*retr)->name == name)
       tmpobj->internalBinder = (*retr);
-  
-  
-  // FIXME
- // add a binding of some sort here for the 'new' operation  
-
- //LIBURBI CODE, pour info
-  /*
-  URBI() << "class " << name << "{};";
-  */
-//  if (notifynew)
-    /*
-    URBI() << "external " << "object" << " " << name <<";";
-    */
-    
-    
+ 
+  // default
+  derived = false;
+  classname = name;
+ 
+  UBindVar(UObject,load);
+  load = 1;
 }
 
 
@@ -315,6 +308,24 @@ UObject::~UObject()
 {  
 }
 
+void 
+UObject::USetUpdate(UFloat t) 
+{
+  period = t;
+  new UTimerCallbackobj<UObject>(t, this, &UObject::update, updatemap);
+}
+
+/*
+int
+UObject::updateGlobal() 
+{
+  update();
+  for (UObjectList::iterator it = members.begin();
+       it != members.end();
+       it++) 
+    (*it)->updateGlobal();
+}
+*/
 
 // **************************************************************************	
 //! UObjectHub constructor.
@@ -332,7 +343,17 @@ void
 UObjectHub::USetUpdate(UFloat t) 
 {
   period = t;
-  new UTimerCallbackobj<UObjectHub>(t, this, &UObjectHub::update, updatemap);
+  new UTimerCallbackobj<UObjectHub>(t, this, &UObjectHub::updateGlobal, updatemap);
+}
+
+int
+UObjectHub::updateGlobal() 
+{
+  for (UObjectList::iterator it = members.begin();
+       it != members.end();
+       it++) 
+    (*it)->update();
+  update();
 }
 
 void 
@@ -341,8 +362,23 @@ UObjectHub::addMember(UObject* obj)
   members.push_back(obj);
 }
 
+UObjectList*
+UObjectHub::getSubClass(string subclass)
+{
+  UObjectList* res = new UObjectList();
+  for (UObjectList::iterator it = members.begin();
+       it != members.end();
+       it++)
+    if ((*it)->classname == subclass)
+      res->push_back(*it);
+
+  return(res);
+}
+
+
+//! retrieve a UObjectHub based on its name
 urbi::UObjectHub* 
-urbi::locateHub(string name) {
+urbi::getUObjectHub(string name) {
 
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
        retr != urbi::objecthublist->end();
@@ -353,9 +389,20 @@ urbi::locateHub(string name) {
   return 0;
 }
  
-// **************************************************************************	
-// Other functions
- 
+//! retrieve a UObject based on its name
+urbi::UObject* 
+urbi::getUObject(string name) {
+
+  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
+       retr != urbi::objectlist->end();
+       retr++)
+    if ((*retr)->name == name)
+      return (*retr)->getUObject();       
+  
+  return 0;
+}
+
+
 //! echo method
 void
 urbi::echo(const char* format, ... ) {

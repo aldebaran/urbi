@@ -78,13 +78,8 @@ UVar::__init()
     vardata = new UVardata(new UVariable(name.c_str(),new
     ::UValue(),false,false,true));  // autoupdate unless otherwise specified
   else {
-    vardata = new UVardata(it->second);  
-    //validate autoupdate consistency   
-    /*
-    if ( (!owned) != vardata->variable->autoUpdate) {
-      urbi::echo("Warning, inconsistency between bind mode and autoUpdate for variable %s.\n",name.c_str());
-
-    }*/
+    vardata = new UVardata(it->second); 
+    owned = !vardata->variable->autoUpdate;
   }  
 }
 
@@ -164,6 +159,7 @@ UVar::operator = (const UBinary &b)
     return;      
   }
   *vardata->variable->value=b;
+  vardata->variable->updated();
 }
 
 
@@ -275,6 +271,17 @@ UVar::in()
  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
    return (vardata->variable->value->val);
  else return er;
+}
+
+UBlendType
+UVar::blend()
+{
+  if (vardata)
+    return ((UBlendType)vardata->variable->blendType);
+  else {
+    urbi::echo("Internal error on variable 'vardata', should not be zero\n");
+    return (UNORMAL);
+  }
 }
 
 

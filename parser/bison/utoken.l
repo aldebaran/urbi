@@ -58,6 +58,20 @@ STRING   \"([^"]|"\\\"")*\"
                 return token::NUM;
               }
 
+"off"          { valp->val = new UFloat(0);
+                return token::NUM;
+              }
+
+"switch"      { valp->val = new UFloat(-1);
+                return token::NUM;
+              }
+
+
+"on"          { valp->val = new UFloat(1);
+                return token::NUM;
+              }
+
+
 
 "+report"     { valp->val = new UFloat(1); 
                 return token::FLAG;}
@@ -169,16 +183,6 @@ queue       { valp->str = new UString(yytext);
                 valp->str = 0;
               }
               return token::STRING;
-            }
-
-on     |
-off    |
-switch     { valp->str = new UString(yytext); 
-              if (valp->str->str() == 0) {
-                delete (valp->str);
-                valp->str = 0;
-              }
-              return token::SWITCH;
             }
 
 external |
