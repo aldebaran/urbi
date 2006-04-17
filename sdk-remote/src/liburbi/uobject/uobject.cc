@@ -34,7 +34,6 @@ using namespace std;
 namespace urbi {
 
   UObject* lastUObject;
-
   
   STATIC_INSTANCE(UStartlist, objectlist);
   STATIC_INSTANCE(UStartlistHub, objecthublist);
@@ -106,7 +105,7 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
     URBI() << "external " << type << "(" << size << ") " << name <<";";
 
   if (type == "varaccess")
-    echo("Warning: NotifyAccess facility is not available for modules in remote mode.\n");    
+    urbi::echo("Warning: NotifyAccess facility is not available for modules in remote mode.\n");    
 };
 	
 //! UGenericCallback constructor.
@@ -208,6 +207,7 @@ urbi::UNotifyChange(string varname, int (*fun) (UVar&))
 UObject::UObject(const string &s) :
   name(s)
 {
+  objecthub = 0;
   lastUObject = this;
   URBI() << "class " << name << "{};"; 
   URBI() << "external " << "object" << " " << name <<";";
@@ -215,6 +215,8 @@ UObject::UObject(const string &s) :
   // default
   derived = false;
   classname = name;
+
+  UBindVar(UObject,load);
 }
 
 
@@ -223,15 +225,24 @@ UObject::~UObject()
 {  
 }
 
-//! UObject echo method
 void
-urbi::echo(const char* format, ... ) {
-  va_list arg;
-  va_start(arg, format);
-  vfprintf(stderr, format, arg);
-  va_end(arg);
+UObject::USetUpdate(UFloat t)
+{
+  period = t;
+  // nothing happend in remote mode...
 }
 
+/*
+int
+UObject::updateGlobal() 
+{
+  update();
+  for (UObjectList::iterator it = members.begin();
+       it != members.end();
+       it++) 
+    (*it)->updateGlobal();
+}
+*/
 
 // This part is specific for standalone linux objects
 // LIBURBI 'Module mode'
@@ -394,14 +405,39 @@ UObjectHub::USetUpdate(UFloat t)
   // nothing happend in remote mode...
 }
 
+int
+UObjectHub::updateGlobal() 
+{
+  for (UObjectList::iterator it = members.begin();
+       it != members.end();
+       it++) 
+    (*it)->update();
+  update();
+}
+
 void 
 UObjectHub::addMember(UObject* obj)
 {
   members.push_back(obj);
 }
 
+UObjectList*
+UObjectHub::getSubClass(string subclass)
+{
+  UObjectList* res = new UObjectList();
+  for (UObjectList::iterator it = members.begin();
+       it != members.end();
+       it++)
+    if ((*it)->classname == subclass)
+      res->push_back(*it);
+
+  return(res);
+}
+
+
+//! retrieve a UObjectHub based on its name
 urbi::UObjectHub* 
-urbi::locateHub(string name) {
+urbi::getUObjectHub(string name) {
 
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
        retr != urbi::objecthublist->end();
@@ -411,6 +447,31 @@ urbi::locateHub(string name) {
   
   return 0;
 }
+ 
+//! retrieve a UObject based on its name
+urbi::UObject* 
+urbi::getUObject(string name) {
+
+  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
+       retr != urbi::objectlist->end();
+       retr++)
+    if ((*retr)->name == name)
+      return (*retr)->getUObject();       
+  
+  return 0;
+}
+
+//! echo method
+void
+urbi::echo(const char* format, ... ) {
+
+  va_list arg;
+  va_start(arg, format);
+  vfprintf(stderr, format, arg);
+  va_end(arg);
+}
+
+
  
 // **************************************************************************	
 // Other functions

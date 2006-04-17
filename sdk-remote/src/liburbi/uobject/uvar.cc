@@ -86,6 +86,12 @@ UVar::in()
   return (value.val); 
 }
 
+UBlendType
+UVar::blend()
+{
+  urbi::echo("Properties not implemented in remote mode yet.\n");
+  return (UNORMAL);
+}
 
 
 //! UVar destructor.

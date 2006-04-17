@@ -30,9 +30,6 @@
 #include "uobject/singleton.h"
 using namespace std;
 
-extern const bool NOTIFYNEW; 
-
-
 // A quick hack to be able to use hash_map with string easily
 #if (__GNUC__ == 2)
 __STL_BEGIN_NAMESPACE
@@ -60,15 +57,15 @@ __STL_END_NAMESPACE
 
 // These macros are here to make life easier
 #define UBindVar(obj,x) x.init(name,#x)
-#define UOwned(x) x.setOwned()
+#define USensor(x) x.setOwned()
 #define UBindFunction(obj,x)  createUCallback("function", this,(&obj::x),name+"."+string(#x),functionmap)
 #define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),name+"."+string(#x),eventmap)
 #define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),name+"."+string(#x),eventendmap)
 
 
 // Macro to register to a Hub
-#define URegister(hub) { UObjectHub* uobjhub = urbi::locateHub((string)#hub); \
-  if (uobjhub) uobjhub->addMember(dynamic_cast<UObject*>(this)); \
+#define URegister(hub) { objecthub = urbi::getUObjectHub((string)#hub); \
+  if (objecthub) objecthub->addMember(dynamic_cast<UObject*>(this)); \
   else echo("Error: hub name '%s' is unknown\n",#hub); }
 
 // defines a variable and it's associated accessors
@@ -99,7 +96,8 @@ urbi {
   typedef list<baseURBIStarter*> UStartlist;
   typedef list<baseURBIStarterHub*> UStartlistHub;
   typedef list<UTimerCallback*> UTimerTable;
-
+  typedef list<UObject*> UObjectList;
+  typedef int UReturn;
   
   EXTERN_STATIC_INSTANCE(UStartlist, objectlist);
   EXTERN_STATIC_INSTANCE(UStartlistHub, objecthublist);
@@ -123,10 +121,14 @@ urbi {
 
   void UNotifyAccess(UVar&, int (*) (UVar&));
 
-  UObjectHub* locateHub(string name);
-  
-  void echo(const char * format, ... );
+  // *****************************************************************************
+  // Global function of the urbi:: namespace to access kernel features
 
+  void echo(const char * format, ... );
+  UObjectHub* getUObjectHub(string); // retrieve a UObjectHub based on its name or return 0 if not found. 
+  UObject* getUObject(string); // retrieve a UObject based on its name or return 0 if not found.
+
+  
   // *****************************************************************************
   // UValue and other related types
   
@@ -170,6 +172,16 @@ urbi {
     SAMPLE_UNSIGNED=2
   };
 
+
+  //! Blending mode
+  enum UBlendType {
+    UMIX,
+    UADD,
+    UDISCARD,
+    UQUEUE,
+    UCANCEL,
+    UNORMAL
+  };
 
 
   //internal use: unparsed binary data
@@ -313,7 +325,7 @@ urbi {
   {
   public:
     
-    UVar() { name = "noname"; owned=false;};
+    UVar() { name = "noname"; owned=false; vardata=0;};
     UVar(UVar& v) {};
     UVar(const string&);
     UVar(const string&, const string&);
@@ -339,8 +351,10 @@ urbi {
     operator UFloat ();
     operator string ();
   
+    //kernel operators
     UFloat& in();
     UFloat& out();
+    UBlendType blend();
 
     bool owned; ///< is the variable owned by the module?
 
@@ -484,11 +498,18 @@ urbi {
     string classname; ///< name of the class the objects is derived from
     bool   derived; ///< true when the object has been newed by an urbi command 
 
-    virtual void updateHub() {}; ///< this function can be called from the hub
-    
+    UObjectList members;
+    UObjectHub  *objecthub; ///< the hub, if it exists
+
+    void USetUpdate(UFloat);
+    virtual int update() {}; 
+
+    UVar        load;
+  
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
-                              ///< module/plugin architectures who defines it.   
+                              ///< module/plugin architectures who defines it.    
+    UFloat period;
   };
 
 
@@ -503,18 +524,52 @@ urbi {
 
     void USetUpdate(UFloat);
 
+    template <class T> 
+    void UNotifyChange (UVar& v, int (T::*fun) ()) { 
+      createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
+    }
+
+    template <class T>
+    void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) { 
+      UGenericCallback* cb = createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
+      if (cb) cb->storage = (void*)(&v);
+    }
+
+    template <class T> 
+    void UNotifyChange (string name, int (T::*fun) ()) { 
+      createUCallback("var", (T*)this, fun, name, monitormap);
+    } 
+
+    template <class T>
+    void UNotifyChange (string name, int (T::*fun) (UVar&)) { 
+      UGenericCallback* cb = createUCallback("var", (T*)this, fun, name, monitormap);
+      if (cb) cb->storage = new UVar(name);
+    }
+
+
+    template <class T>
+    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
+      UGenericCallback* cb = createUCallback("varaccess", (T*)this, fun, v.get_name(), accessmap);
+      if (cb) cb->storage = (void*)(&v);
+    }
+
     template <class T>
     void USetTimer(UFloat t, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (t, (T*)this,fun, timermap);      
     }
 
     void addMember(UObject* obj);
-    virtual int update() = 0 ;
+    virtual int update() {};
+  
 
-    list<UObject*> members;
+    UObjectList members;
+  
+    UObjectList* getSubClass(string);
+ //   UObjectList* getAllSubClass(string); //TODO
 
   protected:
-    
+    int updateGlobal(); ///< this function calls update and the subclass update
+
     UFloat period;
     string name;
   };
@@ -551,6 +606,8 @@ urbi {
     baseURBIStarter(string name) : name(name) {};
     virtual ~baseURBIStarter() {};
 
+    virtual UObject* getUObject() = 0;
+
     virtual void init(string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
     virtual void copy(string) = 0; ///< Used to provide a copy of a C++ object based on its name
     string name;
@@ -572,10 +629,16 @@ urbi {
     virtual void copy(string objname) {
       	URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
 	ustarter->init(objname);
+	dynamic_cast<UObject*>(object)->members.push_back(dynamic_cast<UObject*>(ustarter->object));
  	dynamic_cast<UObject*>(ustarter->object)->derived   = true;
         dynamic_cast<UObject*>(ustarter->object)->classname = 
 	  dynamic_cast<UObject*>(object)->classname;
     };
+
+    virtual UObject* getUObject() { 
+      return dynamic_cast<UObject*>(object);
+    }; ///< access to the object from the outside
+    
 
   protected:
     virtual void init(string objname) { 
