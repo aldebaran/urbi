@@ -38,7 +38,6 @@ class UVariableName;
 class UVariableList;
 class UVariable;
 class UValue;
-class UDevice;
 class UServer;
 class UCommand_TREE;
 		
@@ -71,7 +70,6 @@ public:
   void           resetCache();
   UString*       getDevice();
   UString*       getMethod();
-  UDevice*       getDev(UCommand *command, UConnection *connection);
 
   UString*          device;   ///< First part of a compound variable
   UString*          id;       ///< Variable name (second part of a compound var.)

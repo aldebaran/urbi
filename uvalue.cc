@@ -27,7 +27,6 @@
 #include "uvalue.h"
 #include "ucommand.h"
 #include "uconnection.h"
-#include "udevice.h"
 #include "userver.h"
 #include "uobject.h"
 #if (__GNUC__ == 2)

@@ -98,12 +98,10 @@ public:
   UFloat          speedmax;  ///< rangemax
   UFloat          delta;     ///< delta
   
-  UDevice         *dev; ///< associated device if any
   int             nbAssigns;///< nb superposition of assignments
   int             nbAverage; ///< nb superposition of mixing or adding assignments
   int             activity;  ///< stage of usage in the reinit list: 0 (off), 1(in) or 2(going out)
   bool            uservar; ///< indicates user variables
-  bool            isval;    ///< true for device.val
   UFloat          target;   ///< temporary value container 
   UFloat          previous,
                   previous2,

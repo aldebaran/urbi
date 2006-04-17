@@ -37,7 +37,6 @@ class UVariableName;
 class UVariableList;
 class UVariable;
 class UValue;
-class UDevice;
 class UServer;
 class UCommand_TREE;
 class UContext;

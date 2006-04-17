@@ -22,7 +22,6 @@
 #ifndef USERVER_H_DEFINED
 #define USERVER_H_DEFINED
 
-class UDevice; 
 class UConnection;
 class UGhostConnection;
 class UServer;
@@ -70,26 +69,10 @@ extern  class UServer   *urbiserver; // Global variable for the server
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 
-    NOTE ON MULTI THREADING:
-
-    The kernel of the URBI server is not reentrant. There is also a lack for 
-    locking mechanisms for access to the command stack and several resources
-    shared by all connections. The kernel is designed so far to run in a 
-    single threaded application. As long as there is no bi-processor based
-    robots, this is safe to assume anyway... 
-
-    As for the flex/bison parser implemented by the UParser class, we have not
-    done for the moment any serious test about the pretendous reentrancy of this
-    part of the code. However, it is claimed to be reentrant.
-    Flex generates a C++ class via the "-+" option, which is 
-    supposed to be reentrant because all scanning data is class specific, and 
-    bison is invoked with the %pure_parser option which is supposed to make it 
-    reentrant. 
-
     The versions we used to generate the parser are:
 
     - flex 2.5.4a
-    - bison 1.875d
+    - bison 2.1b
 */
 class UServer
 {
@@ -117,7 +100,6 @@ public:
   virtual void      getCustomHeader (int line, char* header, int maxlength) = 0;
   virtual UErrorValue loadFile      (const char *filename, UCommandQueue* loadQueue) = 0;
   virtual UErrorValue saveFile      (const char *filename, const char * content) = 0;
-  virtual void      motor           (bool state) = 0;
   void              memoryCheck     ();                                 
   int               memory          (); 
  
@@ -129,7 +111,6 @@ public:
   void              mark            (UString *stopTag);
   virtual void      reboot          () = 0;
   virtual void      shutdown        () = 0;
-  virtual void      initDevices     () = 0;
   virtual void      beforeWork      ();
   virtual void      afterWork       ();
   
@@ -143,7 +124,6 @@ public:
   list<UConnection*>       connectionList; ///< list of active connections: includes
                                            ///< one UGhostConnection
 
-  HMdevicetab              devicetab; ///< hash of available devices.  
   HMvariabletab            variabletab; ///< hash of variable values  
   HMfunctiontab            functiontab; ///< hash of function definition
   HMfunctiontab            functiondeftab; ///< hash of functions definition markers
@@ -191,7 +171,6 @@ public:
                            latestTime; ///< used to detect cpu overload
   bool                     stopall; ///< stops all commands in all connections
   bool                     reloadURBIINI; ///< reload URBI.INI file
-  bool                     motorstate; ///< state of motor on/off
   bool                     systemcommands; ///< false inside parsing, true otherwise for commands created by the kernel
 
 

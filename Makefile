@@ -21,8 +21,7 @@ ifeq (ww$(OBJEXT),ww)
   false;
 endif
 
-KERNEL_SOURCES=udevice.cc \
-             uconnection.cc \
+KERNEL_SOURCES= uconnection.cc \
              ughostconnection.cc \
              userver.cc \
              ucommand.cc \

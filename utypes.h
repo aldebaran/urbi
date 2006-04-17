@@ -29,7 +29,6 @@
 #include <cstring>
 #include <hash_map.h>
 #include "ufloat.h"
-class UDevice; 
 class UConnection;
 class UGhostConnection;
 class UServer;
@@ -316,11 +315,6 @@ struct eqStr
     return strcmp(s1, s2) == 0;
   }
 };
-
-typedef hash_map<const char*,
-                 UDevice*,
-                 hash<const char*>,
-                 eqStr>                 HMdevicetab; ///< hash of available devices.
 
 typedef hash_map<const char*,
                  UVariable*,

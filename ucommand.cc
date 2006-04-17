@@ -25,7 +25,6 @@
 #include <sstream>
 #include "ucommand.h"
 #include "uconnection.h"
-#include "udevice.h"
 #include "userver.h"
 #include "ucallid.h"
 #include "utypes.h"
@@ -410,7 +409,6 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(UVariableName *variablename,
   finished          = false;
   this->method      = 0;
   this->devicename  = 0;
-  this->dev         = 0;
   this->tmp_phase   = 0;
   this->tmp_time    = 0;
   this->variable    = 0;
@@ -465,7 +463,6 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     if (!variablename->getFullname()) return ( status = UCOMPLETED );  
     method = variablename->getMethod();
     devicename = variablename->getDevice();
-    dev = variablename->getDev(this,connection);
   }
   currentTime = connection->server->lastTime();
 
@@ -1555,9 +1552,6 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
     LIBERATE(variable->value->refBinary);
 
   variable->value->refBinary = refBinary->copy();
-
-  if ((variable->dev) && (variable->notifyWrite))
-    variable->dev->notifyWrite(variable);
 
   variable->updated();
   return( status = UCOMPLETED );
@@ -3396,6 +3390,8 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
     return( status = UCOMPLETED );
   }    
 
+ //FIXME
+ /*
   if (strcmp(oper->str(),"info")==0) {
              
     variable = variablename->getVariable(this,connection); 
@@ -3505,7 +3501,7 @@ tstr.str("");
     }
     
     return(status = UCOMPLETED);
-  }
+  }*/
 
   return ( status = UCOMPLETED );
 }
@@ -3746,7 +3742,6 @@ connection->send(tstr.str().c_str(),tag->str());
              "!!! This command is no longer valid. Please use \"motor on\" instead\n");
     connection->send(tmpbuffer,tag->str());
 
-    connection->server->motor(true);
     return( status = UCOMPLETED );
   }  
 
@@ -3756,7 +3751,6 @@ connection->send(tstr.str().c_str(),tag->str());
              "!!! This command is no longer valid. Please use \"motor off\" instead\n");
     connection->send(tmpbuffer,tag->str());
         
-    connection->server->motor(false);
     return( status = UCOMPLETED );
   }  
 
@@ -3816,6 +3810,8 @@ connection->send(tstr.str().c_str(),tag->str());
     return( status = UMORPH );
   }  
 
+//FIXME
+/*
   if (strcmp(oper->str(),"devices")==0) {
 
     for ( hash_map<const char*,
@@ -3959,7 +3955,7 @@ connection->send(tstr.str().c_str(),tag->str());
 
 
     return( status = UCOMPLETED );
-  }
+  }*/
 
   UString* fullname;
 

@@ -25,7 +25,6 @@
 #include "uvariablename.h"
 #include "ucommand.h"
 #include "uconnection.h"
-#include "udevice.h"
 #include "userver.h"
 #include "ucallid.h"
                                       
@@ -176,22 +175,6 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   return (tmpfun);
 }
 
-//! UVariableName access to device (with cache)
-UString* 
-UVariableName::getDevice()
-{
-  if (device) return (device);
-
-  if (!fullname_) return (0);
-  char *pointPos = strstr(fullname_->str(),".");
-  if (pointPos == 0) return (fullname_);     
-  pointPos[0] = 0;
- 
-  device = new UString(fullname_->str());
-  pointPos[0] = '.';
-  return (device);
-}
-
 //! UVariableName access to method (with cache)
 UString* 
 UVariableName::getMethod()
@@ -208,25 +191,20 @@ UVariableName::getMethod()
   return(method);
 }
 
-//! UVariableName access to dev
-UDevice* 
-UVariableName::getDev(UCommand *command, UConnection *connection)
+//! UVariableName access to device (with cache)
+UString*
+UVariableName::getDevice()
 {
-  HMdevicetab::iterator hmi;
+  if (device) return (device);
 
-  if (!variable) {
-    
-    UString* dev = getDevice();
-    if (!dev) return(0);
+  if (!fullname_) return (0);
+  char *pointPos = strstr(fullname_->str(),".");
+  if (pointPos == 0) return (fullname_);
+  pointPos[0] = 0;
 
-    if ((hmi = ::urbiserver->devicetab.find(dev->str())) !=
-        ::urbiserver->devicetab.end()) 
-      return( (*hmi).second);    
-    else
-      return(0);
-  }
-  else
-    return (variable->dev);
+  device = new UString(fullname_->str());
+  pointPos[0] = '.';
+  return (device);
 }
 
 

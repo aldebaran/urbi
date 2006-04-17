@@ -25,7 +25,6 @@
 #include "uexpression.h"
 #include "ucommand.h"
 #include "uconnection.h"
-#include "udevice.h"
 
 #include "userver.h"
 
@@ -310,7 +309,6 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   UVariable *variable;
   UString* method;
   UString* devicename;
-  UDevice* devcall;
   UFloat d1,d2;
   UCommand_EMIT* cmd;
   const char* vnamestr;
@@ -1296,18 +1294,6 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       return(ret);
     }
       
-    // Custom definitions 
-
-    devcall = variablename->getDev(command,connection);
-    
-    if (devcall) { 
-      ret = devcall->evalFunction(command,
-                                  connection,
-                                  variablename->id->str(),
-                                  parameters);
-      if (ret) return (ret);
-    }
-
     // default = unknown.
     funname = variablename->buildFullname(command,connection);
     if (!variablename->getFullname()) return (0); 

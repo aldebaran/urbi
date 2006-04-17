@@ -26,7 +26,6 @@
 
 #include "userver.h"
 #include "uconnection.h"
-#include "udevice.h"
 #include "utypes.h"
 #include "ughostconnection.h"
 #include "uobject/uobject.h"
@@ -51,7 +50,7 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 const int NB_HEADER_BEFORE_CUSTOM = 4;
 const char* HEADER_BEFORE_CUSTOM[] = {
   "**************************************************************\n",
-  "*** URBI Language specif 1.5 - Copyright (C) 2006  Gostai SAS\n",
+  "*** URBI Language specif 1.0 - Copyright (C) 2006  Gostai SAS\n",
   "*** URBI Kernel version " 
   #include "version.h"
   " build"
@@ -129,7 +128,6 @@ UServer::UServer(UFloat frequency,
     memoryOverflow = true;
     
   somethingToDelete = false;
-
  
   cpuoverload = false;
   cpucount = 0;
@@ -142,7 +140,6 @@ UServer::UServer(UFloat frequency,
   // init the memory manager.
   usedMemory = 0 ;
   reloadURBIINI = false;
-  motorstate = false;
 
   ADDOBJ(UServer);
   ::urbiserver = this;
@@ -183,17 +180,6 @@ UServer::initialization()
   
   debugOutput     = false;
 
-  // Initialize global constants
-
-  new UVariable(MAINDEVICE,"epsilontilde", 15.0);
-  new UVariable(MAINDEVICE,"epsilonpercent", 0.05);
-  new UVariable(MAINDEVICE,"name", mainName->str());
-
-  // Devices initialization
-   
-  initDevices();
-  new UVariable(MAINDEVICE,"nbdevices", (UFloat)(devicetab.size()));
-
   // Plugins (internal softdevices)
   
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
@@ -201,7 +187,6 @@ UServer::initialization()
       retr++) 
     (*retr)->init((*retr)->name);
   
- 
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
       retr != urbi::objectlist->end();
       retr++) 
@@ -416,7 +401,6 @@ UServer::work()
 
   
   // Execute Hub Updaters
-
   for (urbi::UTimerTable::iterator ittt = urbi::updatemap.begin();
        ittt != urbi::updatemap.end();
        ittt++) 
@@ -661,18 +645,6 @@ UServer::reboot()
 //! Overload this function to specify how your system will shutdown
 void 
 UServer::shutdown() 
-{
-}
-
-//! Overload this function to specify how to handle motoron & motoroff commands
-void 
-UServer::motor(bool) 
-{
-}
-
-//! Overload this function to initializa your robot UDevice's
-void 
-UServer::initDevices() 
 {
 }
 

@@ -49,7 +49,6 @@ class UVariableName;
 class UVariableList;
 class UVariable;
 class UValue;
-class UDevice;
 class UServer;
 class UCommand_TREE;
 		
@@ -202,7 +201,6 @@ public:
   UFloat           speed;       ///< speed for modificators
   UFloat           accel;       ///< accel for the accel modificator
   UFloat           speedmin;    ///< minimal speed in a movement
-  UDevice          *dev;        ///< device related to the assigned variable
   
   UFloat           *valtmp;     ///< destination values 
   int              nbval;       ///< nb destinaton values 

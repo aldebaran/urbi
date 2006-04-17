@@ -71,7 +71,6 @@ class UParser;
 #include "../uparser.h"
 
 #include "uconnection.h"
-#include "udevice.h"
 #include "uobj.h"
 #include "ugroup.h"
 

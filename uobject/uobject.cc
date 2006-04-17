@@ -281,22 +281,22 @@ urbi::USetTimer(UFloat t, int (*fun) ())
 // **************************************************************************	
 //! UObject constructor.
 UObject::UObject(const string &s) :
-  name(s)
+  __name(s)
 {
   objecthub = 0;
   lastUObject = this;
-  UString tmps(name.c_str()); // quelle merde ces UString!!!!
+  UString tmps(__name.c_str()); // quelle merde ces UString!!!!
   UObj* tmpobj = new UObj(&tmps);
     
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();
        retr++)
-    if ((*retr)->name == name)
+    if ((*retr)->name == __name)
       tmpobj->internalBinder = (*retr);
  
   // default
   derived = false;
-  classname = name;
+  classname = __name;
  
   UBindVar(UObject,load);
   load = 1;

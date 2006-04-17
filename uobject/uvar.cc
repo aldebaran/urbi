@@ -46,7 +46,7 @@ UVar::UVar(const string &varname)
 //! UVar constructor: object reference + var name
 UVar::UVar(UObject& obj, const string &varname)
 {
-  name = obj.name + "." + varname;
+  name = obj.__name + "." + varname;
   __init();
 }
 

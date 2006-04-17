@@ -24,7 +24,6 @@
 #include "unamedparameters.h"
 #include "ucommand.h"
 #include "uconnection.h"
-#include "udevice.h"
 #include "userver.h"
                                       
 	

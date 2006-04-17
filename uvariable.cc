@@ -25,7 +25,6 @@
 #include "uvariable.h"
 #include "userver.h"
 #include "ucommand.h"
-#include "udevice.h"
 #include "utypes.h"
 #include "uconnection.h"
 #include "uobject.h"
@@ -132,7 +131,6 @@ UVariable::init() {
   speedmodified = false;
   reloop        = false;
 
-  dev        = 0;
   nbAssigns  = 0;
   nbAverage  = 0; 
   varname    = 0;
@@ -143,7 +141,6 @@ UVariable::init() {
   previous2  = 0;
   previous3  = 0;
   cancel     = 0;
-  isval      = false;
   uservar    = ::urbiserver->uservarState;
   toDelete   = false;
   activity   = 0;
@@ -176,7 +173,6 @@ const char*
 UVariable::setName(const char *s)
 {  
   char *pointPos;
-  HMdevicetab::iterator hmi;
   
   varname    = new UString (s);
 
@@ -191,13 +187,6 @@ UVariable::setName(const char *s)
   devicename = new UString(varname->str());
   if (pointPos) pointPos[0] = '.';
   
-  if ((hmi = ::urbiserver->devicetab.find(devicename->str())) !=
-      ::urbiserver->devicetab.end()) {
-    dev = (*hmi).second;
-    if (method->equal("val")) isval = true;
-  }
-  else dev = 0;
-
   return (varname->str());
 }
 
@@ -206,7 +195,6 @@ const char*
 UVariable::setName(const char *_id, const char* _method)
 {
   char tmpVarName[1024];
-  HMdevicetab::iterator hmi;
   
   snprintf(tmpVarName,1024,"%s.%s",_id,_method);
 
@@ -214,13 +202,6 @@ UVariable::setName(const char *_id, const char* _method)
   method     = new UString(_method); 
   devicename = new UString(_id);
  
-  if ((hmi = ::urbiserver->devicetab.find(devicename->str())) !=
-      ::urbiserver->devicetab.end()) {
-    dev = (*hmi).second;    
-    if (method->equal("val")) isval = true;  
-  }
-  else dev = 0;
-
   return (varname->str());
 }
 
@@ -309,7 +290,6 @@ UVariable::selfSet(UFloat *valcheck)
   }
 
   modified = true;
-  if ((notifyWrite) && (dev)) dev->notifyWrite(this); 
   updated();
   
   if (speedmodified) return (USPEEDMAX);
@@ -325,8 +305,6 @@ UVariable::selfSet(UFloat *valcheck)
 UValue*
 UVariable::get()
 { 
-  if ((notifyRead) && (dev)) dev->notifyRead(this);
-
   if (!internalAccessBinder.empty()) {
     for (list<urbi::UGenericCallback*>::iterator itcb = internalAccessBinder.begin();
 	itcb != internalAccessBinder.end();
