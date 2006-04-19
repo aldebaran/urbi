@@ -857,7 +857,10 @@ instruction:
       }
       else {
 	uparser.connection->functionTag = new UString("__Funct__");
-	uparser.connection->functionClass = $2->device;
+	if ($2->nostruct) // we are not in a class
+	  uparser.connection->functionClass = 0;
+	else
+	  uparser.connection->functionClass = $2->device;
 	globalDelete = &uparser.connection->functionTag;
       }
  
@@ -1083,14 +1086,18 @@ purevariable:
       if (uparser.connection->functionTag) {
 	// We are inside a function
 
-	std::string tmpname = std::string(uparser.connection->functionClass->str())
-	  + "." + std::string($1->str());
+	if (uparser.connection->functionClass) {
+	  std::string tmpname = std::string(uparser.connection->functionClass->str())
+	    + "." + std::string($1->str());
 	
-	if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
-	    (::urbiserver->eventdeftab.find(tmpname.c_str()) != ::urbiserver->eventdeftab.end()) ||
-	    (::urbiserver->variabletab.find(tmpname.c_str()) != ::urbiserver->variabletab.end()))
-	  $$ = new UVariableName(new UString("self"),$1,false,$2);
-	else
+	  if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
+	      (::urbiserver->eventdeftab.find(tmpname.c_str()) != ::urbiserver->eventdeftab.end()) ||
+	      (::urbiserver->variabletab.find(tmpname.c_str()) != ::urbiserver->variabletab.end()))
+	    $$ = new UVariableName(new UString("self"),$1,false,$2);
+	  else
+	    $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
+	} 
+       	else
 	  $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
       }
       else 
