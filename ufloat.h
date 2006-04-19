@@ -574,10 +574,40 @@ inline UFloat fmod(UFloat a, UFloat b) {UFloat q = trunc(a/b); return a-q*b;}
 #elif FLOAT_FLOAT
 typedef  float UFloat;
 static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+#elif FLOAT_TABFLOAT
+#define FLOAT_TABULATED
+typedef  float UFloat;
+static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+
+#elif FLOAT_TABDOUBLE
+#define FLOAT_TABULATED
+typedef double UFloat;
+static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+
+
 #else
 typedef double UFloat;
 static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
 
+
+#endif
+
+#if FLOAT_TABULATED
+/// return the tabulated sinus of given value in radian, using linear interpolation 
+UFloat tabulatedSin(UFloat angle);
+/// return the tabulated cosinus of given value in radian, using linear interpolation 
+UFloat tabulatedCos(UFloat angle);
+/// return the tabulated arcsinus of given value, in radian, using linear interpolation 
+UFloat tabulatedASin(UFloat val);
+/// return the tabulated arccosinus of given value, in radian, using linear interpolation 
+inline UFloat tabulatedACos(UFloat val) {return (PI>>1)-tabulatedASin(val);}
+
+inline UFloat sin(UFloat angle) {return tabulatedSin(angle);}
+inline UFloat cos(UFloat angle) {return tabulatedCos(angle);}
+inline UFloat tan(UFloat angle) {return sin(angle)/cos(angle);}
+
+inline UFloat asin(UFloat angle) {return tabulatedASin(angle);}
+inline UFloat acos(UFloat angle) {return tabulatedACos(angle);}
 
 #endif
 #endif

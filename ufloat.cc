@@ -1,7 +1,7 @@
 #include <math.h>
 #include "ufloat.h"
 
-#ifdef FLOAT_FAST
+#if defined(FLOAT_FAST) || defined(FLOAT_TABULATED)
 void buildSinusTable(int powersize);
 class DummyInit {
   public:
@@ -31,14 +31,71 @@ void buildSinusTable(int powersize) {
 
   tableSize = size;
   for (int i=0;i<size;i++) {
-    float idx = (float)i*(M_PI/2.0)/(float)size;
-    float val = sin(idx);
+    double idx = (double)i*(M_PI/2.0)/(double)size;
+    float val = ::sin(idx);
     sinTable[i]=val;
 
-    float idx2 = (float)i/(float)size;
-    asinTable[i] = asin(idx);
+    double idx2 = (double)i/(double)size;
+    asinTable[i] = ::asin(idx2);
   }
 }
+
+#endif
+#ifdef FLOAT_TABULATED
+
+
+UFloat tabulatedSin(UFloat val) {
+  UFloat fidx = (val*(UFloat)tableSize / (M_PI/2.0));
+  int idx = (int) fidx;
+  UFloat rem = fidx -(UFloat)idx;
+  
+  idx = idx & (tableSize-1);
+  
+  if (fmod(val, M_PI) >= M_PI/2)
+    idx = (tableSize-idx-1); //sin(pi/2+x) = sin(pi/2-x)
+  UFloat interp = sinTable(idx)*(1.0-rem)+sinTable[(idx+1)%tableSize]*rem;
+  
+  if (fmod(val, M_PI*2) > M_PI)
+    return -interp;
+  else
+    return interp;
+};
+
+UFloat tabulatedCos(UFloat val) {
+  UFloat fidx = (val*(UFloat)tableSize / (M_PI/2.0));
+  int idx = (int) fidx;
+  UFloat rem = fidx -(UFloat)idx;
+  
+  idx = idx & (tableSize-1);
+  
+  if (fmod(val, M_PI) < M_PI/2)
+    idx = (tableSize-idx-1); //sin(pi/2+x) = sin(pi/2-x)
+  
+  UFloat interp = sinTable(idx)*(1.0-rem)+sinTable[(idx+1)%tableSize]*rem;
+  
+   if (fmod(val, M_PI*2) > M_PI)
+    return -interp;
+  else
+    return interp;
+};
+
+
+UFloat tabulatedASin(UFloat val) { 
+  UFloat fidx = val *(UFloat)tableSize;
+  int idx =(int) fidx;
+  UFloat rem = fidx -(UFloat)idx;
+  idx = idx & (tableSize-1);
+  UFloat interp = asinTable(idx)*(1.0-rem)+asinTable[(idx+1)%tableSize]*rem;
+  
+  if (val < 0.0)
+    return -interp;
+  else
+    return interp;
+}
+
+
+#endif
+#ifdef FLOAT_FAST
 
 
 UFloat tabulatedSin(UFloat val) {

@@ -600,7 +600,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       
       if (morph) {
         
-        sprintf(tmpbuffer,"__UFnct%d",(int)morph);
+        sprintf(tmpbuffer,"__UFnct%d",unic());
         ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
 						      expression->variablename->device->str(),
 						      (UCommand_TREE*)morph);
@@ -2103,7 +2103,7 @@ UCommand_EXPR::execute(UConnection *connection)
             morph->flags = flags->copy();
         }
                 
-        sprintf(tmpbuffer,"__UFnct%d",(int)morph);
+        sprintf(tmpbuffer,"__UFnct%d",unic());
 	UString* fundevice = expression->variablename->getDevice();
 	if (!fundevice) {
 		
@@ -5215,7 +5215,7 @@ UCommand_TIMEOUT::UCommand_TIMEOUT( UExpression *duration,
   this->duration    = duration;
   this->command     = command; 
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_timeout_%d",(int)this);
+  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_timeout_%d",(int)unic());
   this->tagRef      = new UString(tmpbuffer);
 }
 
@@ -5300,7 +5300,7 @@ UCommand_STOPIF::UCommand_STOPIF( UExpression *condition,
   this->condition   = condition;
   this->command     = command; 
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_stopif_%d",(int)100+rand());
+  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_stopif_%d",unic());
   this->tagRef      = new UString(tmpbuffer);
 }
 
@@ -5406,7 +5406,7 @@ UCommand_FREEZEIF::UCommand_FREEZEIF( UExpression *condition,
   this->condition   = condition;
   this->command     = command; 
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_stopif_%d",(int)100+rand());
+  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_stopif_%d",(int)unic());
   this->tagRef      = new UString(tmpbuffer);
 }
 

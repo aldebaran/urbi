@@ -317,7 +317,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
           snprintf(indexstr,fullnameMaxSize-strlen(name),"__%d",(int)e1->val);      
         else         
           if (e1->dataType == DATA_STRING) 
-            snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",(int)e1->str->str());
+            snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",e1->str->str());
           else {
             
             delete e1;

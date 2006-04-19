@@ -142,7 +142,14 @@ UValue::operator urbi::USound() {
        	VALIDATE(param->next->next, DATA_NUM) &&
 	VALIDATE(param->next->next->next, DATA_NUM) &&
 	VALIDATE(param->next->next->next->next, DATA_NUM));
+    if (decoded) {
+      snd.channels = (int)param->next->expression->val;
+      snd.rate = (int)param->next->next->expression->val;
+      snd.sampleSize = (int)param->next->next->next->expression->val;
+      snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;    
+    }
   }
+  
   else if (!strcmp(param->expression->str->str(), "wav")) {
     snd.soundFormat = urbi::SOUND_WAV;
     if ( (refBinary->ref()->bufferSize > sizeof(wavheader)) &&
@@ -158,19 +165,7 @@ UValue::operator urbi::USound() {
   else
     snd.soundFormat = urbi::SOUND_UNKNOWN;
 
-
-  if (VALIDATE(param->next, DATA_NUM)) {
-    snd.channels = (int)param->next->expression->val;
-    if (VALIDATE(param->next->next, DATA_NUM) ) {
-      snd.rate = (int)param->next->next->expression->val;
-      if (VALIDATE(param->next->next->next, DATA_NUM) ) {
-	snd.sampleSize = (int)param->next->next->next->expression->val;
-	if ( VALIDATE(param->next->next->next->next, DATA_NUM))
-	  snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;
-      }
-    }
-  }
-
+ 
   if (decoded) {
     snd.size = refBinary->ref()->bufferSize;
     snd.data = (char *)refBinary->ref()->buffer;
@@ -184,7 +179,7 @@ UValue::operator urbi::USound() {
 UValue & UValue::operator = (const urbi::UBinary &b) {
   //TODO: cleanup
  if ((dataType == DATA_BINARY) && (refBinary)) {
-   delete refBinary;
+   LIBERATE(refBinary);
  }
   int sz=0;
   dataType = DATA_BINARY;
@@ -215,6 +210,11 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
     switch(b.sound.soundFormat) {
       case urbi::SOUND_RAW:
 	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("raw")));
+	first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.channels));
+	first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.rate));	
+	first->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleSize));
+	first->next->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleFormat));	
+	
 	break;
       case urbi::SOUND_WAV:
 	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("wav")));
@@ -223,12 +223,8 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
 	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));
 	break;	
     }
-
-    first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.channels));
-    first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.rate));	
-    first->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleSize));
-    first->next->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleFormat));	
     
+        
     
   }
   UBinary *bin = new UBinary(sz, first);
