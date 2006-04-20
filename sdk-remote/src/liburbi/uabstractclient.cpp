@@ -789,7 +789,7 @@ UAbstractClient::processRecvBuffer()
 	  printf("%d parse line: --%s--\n", mtime(), recvBuffer);
 #endif
 	  if (parsePosition == 0) {//parse header
-	    int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_]]", 
+	    int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]", 
 			       &currentTimestamp, currentTag);
 	    if (found != 2) {
 	      found = sscanf(recvBuffer, "[%d]", &currentTimestamp);
