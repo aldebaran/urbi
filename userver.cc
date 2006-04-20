@@ -53,7 +53,7 @@ const char* HEADER_BEFORE_CUSTOM[] = {
   "*** URBI Language specif 1.0 - Copyright (C) 2006  Gostai SAS\n",
   "*** URBI Kernel version " 
   #include "version.h"
-  " build"
+  " rev."
   #include "buildversion.h"
   "\n",
   "***\n"

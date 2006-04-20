@@ -26,7 +26,6 @@ KERNEL_SOURCES= uconnection.cc \
              userver.cc \
              ucommand.cc \
              ucommandqueue.cc \
-             umixqueue.cc \
              ustring.cc \
              ufunction.cc \
              uvariable.cc \
@@ -86,7 +85,7 @@ CPPFLAGS += -DOS=$(OS)
 BUILDNUMBERSCRIPT=http://web.urbiforge.com/svncount/buildnumber.php
 
 build/buildnumber: $(KERNEL_SOURCES)
-	wget $(BUILDNUMBERSCRIPT)"?uid="`id -nu`"&host="`hostname -f` -O build/buildnumber 
+	svn info | grep Revision | sed -e "s/Revision: //" > build/buildnumber 
 	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 network: $(NETWORK_OBJS)
