@@ -8,15 +8,25 @@ TARGET=remote
 
 MODULENAME=module
 
+
+#include build rules for the current target
 include $(PREFIX)/share/urbicore/$(TARGET)/Makefile.param
 
+
+
 CPPFLAGS += -I$(PREFIX)/share/urbicore/include
+
+
+#build OBJECTS by searching for .cc, .c and .cpp files in current directory
 SOURCEPCC :=$(wildcard *.cc) 
 SOURCECC := $(filter-out URBI.snap.cc umain.cc ,  $(SOURCEPCC))
 SOURCECPP := $(wildcard *.cpp) 
 SOURCEC := $(wildcard *.c)
 HEADERS :=$(wildcard *.h)  $(wildcard *.hh)
+#simply add extra objects to the following line
 OBJECTS := $(SOURCECC:%.cc=%.o)  $(SOURCECPP:%.cpp=%.o) $(SOURCEC:%.c=%.o)
+
+
 
 module: lib$(MODULENAME).a
 
