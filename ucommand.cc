@@ -453,7 +453,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   UValue *target;
   UValue *modificator;
   UValue *value;
-  UFloat currentTime;
+  ufloat currentTime;
   UNamedParameters *modif;
   UVariable *vari;
 
@@ -952,7 +952,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
           if (modif->name->equal("cos")) {
             modif_sin = modif->expression;
-	    tmp_phase = new UExpression(EXPR_VALUE,PI/UFloat(2));
+	    tmp_phase = new UExpression(EXPR_VALUE,PI/ufloat(2));
             modif_phase = tmp_phase;
             found = true;
             controlled = true;
@@ -1053,7 +1053,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       // virtual "time:0" if no modificator specified (controlled == false)
       if (!controlled) {// no controlling modificator => time:0
-	tmp_time = new UExpression(EXPR_VALUE,UFloat(0));
+	tmp_time = new UExpression(EXPR_VALUE,ufloat(0));
           modif_time = tmp_time;
         }
 
@@ -1066,7 +1066,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
         return( status = UCOMPLETED );  
       
       // init valarray for a "val" assignment
-      UFloat *targetvalue;
+      ufloat *targetvalue;
       if (!controlled)
         targetvalue = &(variable->value->val); // prevents a read access
       else 
@@ -1110,7 +1110,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     }
     */
 
-    UFloat deltaTime = connection->server->getFrequency();
+    ufloat deltaTime = connection->server->getFrequency();
     
     // Cancel if needed
     if ((variable->blendType == UCANCEL) && (variable->cancel != this))      
@@ -1136,7 +1136,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
     // absorb average and set reinit list to set nbAverage back to 0 after work()
     if (variable->blendType != UADD)
-      *valtmp = *valtmp / (UFloat)(variable->nbAverage+1);          
+      *valtmp = *valtmp / (ufloat)(variable->nbAverage+1);          
     variable->nbAverage++;
 
     if (variable->activity == 0)   
@@ -1167,11 +1167,11 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 // Processing the modifiers in a URUNNING assignment
 UErrorValue
-UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection, UFloat currentTime) 
+UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection, ufloat currentTime) 
 {
-UFloat deltaTime = connection->server->getFrequency();
-UFloat currentVal = variable->get()->val;
-UFloat phase,amplitude;
+ufloat deltaTime = connection->server->getFrequency();
+ufloat currentVal = variable->get()->val;
+ufloat phase,amplitude;
   
   // Adaptive mode? (only for "speed" and "time")
 bool adaptive = false;
@@ -1269,7 +1269,7 @@ bool adaptive = false;
       *valtmp = variable->nbAverage * *valtmp +
         startval + 
         ( (targetval - startval) * 0.5 *
-  (UFloat(1)+sin(-(PI/UFloat(2))+ PI*(currentTime - starttime + deltaTime) /
+  (ufloat(1)+sin(-(PI/ufloat(2))+ PI*(currentTime - starttime + deltaTime) /
                  targettime 
                  ))
           );        
@@ -1406,9 +1406,9 @@ bool adaptive = false;
       delete tmpeval;
     }
     
-UFloat intermediary;
+ufloat intermediary;
     intermediary = targetval + amplitude * sin(phase + 
-				       (PI*UFloat(2))*( (currentTime - starttime + deltaTime) / 
+				       (PI*ufloat(2))*( (currentTime - starttime + deltaTime) / 
                                                       targettime ));
     if (modif_getphase) {
       
@@ -1419,18 +1419,18 @@ UFloat intermediary;
           
           return( UFAIL );
         }
-phasevari = new UVariable(modif_getphase->getFullname()->str(),UFloat(0));
+phasevari = new UVariable(modif_getphase->getFullname()->str(),ufloat(0));
         connection->localVariableCheck(phasevari);
       }
       
       UValue *phaseval = phasevari->value;         
       
       phaseval->val = (phase + 
-	       (PI*UFloat(2))*( (currentTime - starttime + deltaTime) / 
+	       (PI*ufloat(2))*( (currentTime - starttime + deltaTime) / 
                               targettime ));          
-int n = (int)(phaseval->val / (PI*UFloat(2)));
+int n = (int)(phaseval->val / (PI*ufloat(2)));
       if (n<0) n--;
-phaseval->val = phaseval->val - n  * (PI*UFloat(2));
+phaseval->val = phaseval->val - n  * (PI*ufloat(2));
     }    
     
     *valtmp = variable->nbAverage * *valtmp + intermediary;
@@ -3216,7 +3216,7 @@ MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 /*! Subclass of UCommand with standard member initialization.
 */
 UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UVariableName* device,
-                                          UFloat *cmd) :
+                                          ufloat *cmd) :
   UCommand(CMD_GENERIC)
 {	
   ADDOBJ(UCommand_DEVICE_CMD);
@@ -3257,14 +3257,14 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
     morph = new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
 	new UExpression(EXPR_MINUS,
-	  new UExpression(EXPR_VALUE, UFloat(1)),
+	  new UExpression(EXPR_VALUE, ufloat(1)),
 	  new UExpression(EXPR_VARIABLE, variablename->copy())),
 	(UNamedParameters*)0,
 	false);
   else	
     morph = new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
-	new UExpression(EXPR_VALUE, UFloat(cmd)),
+	new UExpression(EXPR_VALUE, ufloat(cmd)),
 	(UNamedParameters*)0,
 	false);
 
@@ -3281,7 +3281,7 @@ UCommand_DEVICE_CMD::copy()
   if (variablename)   copy_device   = variablename->copy(); else copy_device = 0;
 
   UCommand_DEVICE_CMD *ret = new UCommand_DEVICE_CMD(copy_device,
-                                                     new UFloat(cmd));
+                                                     new ufloat(cmd));
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -4254,7 +4254,7 @@ UCommand_EMIT::execute(UConnection *connection)
   if (connection->receiving) 
     return( status = UONQUEUE);
   
-  UFloat thetime = connection->server->lastTime();  
+  ufloat thetime = connection->server->lastTime();  
 
   if (firsttime) {
     if (duration) {
@@ -4570,7 +4570,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
               new UExpression(
                          EXPR_PLUS,
                          new UExpression(EXPR_VARIABLE,variablename->copy()),
-                         new UExpression(EXPR_VALUE,UFloat(1))),0);          
+                         new UExpression(EXPR_VALUE,ufloat(1))),0);          
         
     persistant = false;
     return( status = UMORPH );                                                
@@ -4584,7 +4584,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
               new UExpression(
                          EXPR_MINUS,
                          new UExpression(EXPR_VARIABLE,variablename->copy()),
-                         new UExpression(EXPR_VALUE,UFloat(1))),0);
+                         new UExpression(EXPR_VALUE,ufloat(1))),0);
     
     persistant = false;
     return( status = UMORPH );                                                
@@ -5137,7 +5137,7 @@ UCommand_EVERY::~UCommand_EVERY()
 UCommandStatus 
 UCommand_EVERY::execute(UConnection *connection)
 {
-  UFloat thetime = connection->server->lastTime();  
+  ufloat thetime = connection->server->lastTime();  
 
   if (command == 0) return ( status = UCOMPLETED );  
 
@@ -6372,7 +6372,7 @@ UCommand_FOREACH::execute(UConnection *connection)
   if (type == CMD_FOREACH_PIPE) nodeType = UPIPE;
   if (type == CMD_FOREACH_AND)  nodeType = UAND;
 
-  UExpression* currentvalue = new UExpression(EXPR_VALUE,UFloat(0));
+  UExpression* currentvalue = new UExpression(EXPR_VALUE,ufloat(0));
   if (!currentvalue)  return( status = UCOMPLETED );  
   currentvalue->dataType = position->dataType;
   if (position->dataType == DATA_NUM)    currentvalue->val = position->val;

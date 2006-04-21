@@ -113,7 +113,7 @@ UVar::~UVar()
 
 //! UVar float assignment
 void
-UVar::operator = (UFloat n)
+UVar::operator = (ufloat n)
 { 
   if (!vardata) { 
     urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
@@ -174,7 +174,7 @@ UVar::operator int () {
     return (int)in();   
 }
 
-UVar::operator UFloat () { 
+UVar::operator ufloat () { 
   //check of dataType is done inside in and out
   if (owned)
     return out();
@@ -254,20 +254,20 @@ UVar::operator USound() {
 
 
 //! UVar out value (read mode)
-UFloat&
+ufloat&
 UVar::out()
 { 
-  static UFloat er=0;
+  static ufloat er=0;
   if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
     return (vardata->variable->target);
   else return er;
 }
 
 //! UVar in value (write mode)
-UFloat&
+ufloat&
 UVar::in()
 {  
- static UFloat er=0;
+ static ufloat er=0;
  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
    return (vardata->variable->value->val);
  else return er;

@@ -98,16 +98,16 @@ public:
   bool             background;  ///< used to put the whole tree in bg mode (after
                                 ///< a morphing from a "at" or "whenever").
   
-  UFloat           startTime;   ///< start time
+  ufloat           startTime;   ///< start time
   UExpression      *flagExpr1;   ///< expression used to store the flags parameters
   UExpression      *flagExpr2;   ///< expression used to store the flags parameters
   UExpression      *flagExpr4;   ///< expression used to store the flags parameters
   int              flagType;    ///< in case of timeout or condout, stores the type
                                 ///< of the flag (timeout:0), (condout:1). 
   int              flag_nbTrue2;      ///< nb of times the flag test is true
-  UFloat           flag_startTrue2;   ///< time of the last 'true' for "stop"
+  ufloat           flag_startTrue2;   ///< time of the last 'true' for "stop"
   int              flag_nbTrue4;      ///< nb of times the flag test is true
-  UFloat           flag_startTrue4;   ///< time of the last 'true' for "freeze"
+  ufloat           flag_startTrue4;   ///< time of the last 'true' for "freeze"
   bool             morphed;     ///< true when the command is part of a morphed 
                                 ///< structure  
 
@@ -191,18 +191,18 @@ public:
 
   UExpression      *tmp_phase;  ///< stored temporary phase for cos modificator
   UExpression      *tmp_time;  ///< stored temporary time=0 for direct assignment
-  UFloat           endtime;     ///< time limit in case of timeout modificator
-  UFloat           startval;    ///< start value for modificators
-  UFloat           targetval;   ///< target value for modificators
-  UFloat           starttime;   ///< start time for modificators
-  UFloat           targettime;  ///< target time for modificators
-  UFloat           idealval;    ///< ideal value to reach for the next
+  ufloat           endtime;     ///< time limit in case of timeout modificator
+  ufloat           startval;    ///< start value for modificators
+  ufloat           targetval;   ///< target value for modificators
+  ufloat           starttime;   ///< start time for modificators
+  ufloat           targettime;  ///< target time for modificators
+  ufloat           idealval;    ///< ideal value to reach for the next
                                 ///< iteration. Used for +error
-  UFloat           speed;       ///< speed for modificators
-  UFloat           accel;       ///< accel for the accel modificator
-  UFloat           speedmin;    ///< minimal speed in a movement
+  ufloat           speed;       ///< speed for modificators
+  ufloat           accel;       ///< accel for the accel modificator
+  ufloat           speedmin;    ///< minimal speed in a movement
   
-  UFloat           *valtmp;     ///< destination values 
+  ufloat           *valtmp;     ///< destination values 
   int              nbval;       ///< nb destinaton values 
   
   bool             finished;    ///< true when the assign is finished  
@@ -215,7 +215,7 @@ public:
 
 private:
 
-  UErrorValue      processModifiers(UConnection* connection, UFloat currentTime);
+  UErrorValue      processModifiers(UConnection* connection, ufloat currentTime);
 
 };
 
@@ -432,7 +432,7 @@ public:
   MEMORY_MANAGED;
 
   UCommand_DEVICE_CMD  (UVariableName* device,
-                        UFloat *cmd);  
+                        ufloat *cmd);  
   virtual ~UCommand_DEVICE_CMD();
   virtual UVariableName** refVarName() { return &variablename; };
 
@@ -442,7 +442,7 @@ public:
   virtual UCommand*      copy();
 
   UVariableName    *variablename; ///< the device name embedded in a var name
-  UFloat           cmd;    ///< the command (on, off, ...)
+  ufloat           cmd;    ///< the command (on, off, ...)
 };
 
 class UCommand_OPERATOR_VAR : public UCommand
@@ -519,7 +519,7 @@ public:
 
   UExpression      *expression; ///< Expression
   
-  UFloat           endtime; ///< time to stop waiting.
+  ufloat           endtime; ///< time to stop waiting.
 };
 
 class UCommand_EMIT : public UCommand
@@ -541,7 +541,7 @@ public:
 
   const char         *eventnamestr; ///< char* of the event name
   bool               firsttime; ///< true for the first execution
-  UFloat             targetTime; ///< time of the end of the signal
+  ufloat             targetTime; ///< time of the end of the signal
   int                eventid; ///< id used to uniquely identify the event
 };
 
@@ -560,7 +560,7 @@ public:
 
   UExpression      *test;       ///< test
   int              nbTrue;      ///< nb of times the test is true
-  UFloat           startTrue;   ///< time of the last 'true'
+  ufloat           startTrue;   ///< time of the last 'true'
 };
 
 class UCommand_INCDECREMENT : public UCommand
@@ -669,7 +669,7 @@ public:
   UCommand         *command;    ///< Command 
   
   bool             firsttime; ///< indicates the first time the command is run
-  UFloat           starttime; ///< time of the previous pulse
+  ufloat           starttime; ///< time of the previous pulse
 };
 
 class UCommand_TIMEOUT : public UCommand
@@ -752,7 +752,7 @@ public:
   bool             mode;        ///< The command is activated 
                                 ///< when the test switch to "mode"
   int              nbTrue;      ///< nb of times the test is true
-  UFloat           startTrue;   ///< time of the last 'true'
+  ufloat           startTrue;   ///< time of the last 'true'
 };
 
 class UCommand_WHILE : public UCommand
@@ -794,9 +794,9 @@ public:
   UCommand         *command2;   ///< Command onleave
 
   int              nbTrue;      ///< nb of times the test is true
-  UFloat           startTrue;   ///< time of the last 'true'
+  ufloat           startTrue;   ///< time of the last 'true'
   int              nbFalse;     ///< nb of times the test is false
-  UFloat           startFalse;  ///< time of the last 'false'
+  ufloat           startFalse;  ///< time of the last 'false'
 };
 
 class UCommand_LOOP : public UCommand

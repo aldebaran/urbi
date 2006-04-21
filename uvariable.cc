@@ -61,7 +61,7 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 }
 
 //! UVariable constructor.
-UVariable::UVariable(const char* name,UFloat val, 
+UVariable::UVariable(const char* name,ufloat val, 
                      bool _notifyWrite,
                      bool _notifyRead,
                      bool _autoUpdate) 
@@ -75,7 +75,7 @@ UVariable::UVariable(const char* name,UFloat val,
 }
 
 //! UVariable constructor.
-UVariable::UVariable(const char* _id, const char* _method, UFloat val, 
+UVariable::UVariable(const char* _id, const char* _method, ufloat val, 
                      bool _notifyWrite,
                      bool _notifyRead,
                      bool _autoUpdate) 
@@ -246,7 +246,7 @@ UVariable::set(UValue *v)
     necessity to have a UValue passed as parameter
 */
 UVarSet
-UVariable::setFloat(UFloat f)
+UVariable::setFloat(ufloat f)
 {  
   if (!value)
     value = new UValue(f);
@@ -264,9 +264,9 @@ UVariable::setFloat(UFloat f)
     valcheck can point either on value->val or on target.
 */
 UVarSet
-UVariable::selfSet(UFloat *valcheck)
+UVariable::selfSet(ufloat *valcheck)
 {    
-  UFloat s,localspeed;
+  ufloat s,localspeed;
   
   if (value->dataType == DATA_NUM) {    
     if (*valcheck < rangemin) *valcheck = rangemin;

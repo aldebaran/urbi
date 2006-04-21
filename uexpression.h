@@ -56,8 +56,8 @@ class UExpression
 {
 public:
   MEMORY_MANAGED;
-  UExpression(UExpressionType type, UFloat *val);
-  UExpression(UExpressionType type, UFloat val);
+  UExpression(UExpressionType type, ufloat *val);
+  UExpression(UExpressionType type, ufloat val);
 
   UExpression(UExpressionType type, UString *str);
   UExpression(UExpressionType type, UValue *v);
@@ -91,7 +91,7 @@ public:
   UExpressionType type;         ///< Type of the expression.
   UDataType       dataType;     ///< Type of the expression's data.
 
-  UFloat          val;          ///< numerical value used for the EXPR_NUM                               
+  ufloat          val;          ///< numerical value used for the EXPR_NUM                               
   UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR 
                                 ///< type.
   UString         *id;          ///< id of the EXPR_FUNCTOR
@@ -106,7 +106,7 @@ public:
                                 ///< EXPR_VARIABLE or  EXPR_FUNCTION 
   UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION or EXPR_LIST
 
-  //  UFloat          softtest_time;///< Time constant for a soft test (0 means "hard test")
+  //  ufloat          softtest_time;///< Time constant for a soft test (0 means "hard test")
   UExpression      *softtest_time; ///< Time constant for a soft test (0 means "hard test")  
   //  int             softtest_rep; ///< Nb of repetition for a soft test
 };

@@ -49,7 +49,7 @@ UValue::UValue()
 }
 
 //! UValue constructor.
-UValue::UValue(UFloat val) 
+UValue::UValue(ufloat val) 
 {
   ADDOBJ(UValue);
   dataType = DATA_NUM;
@@ -577,7 +577,6 @@ UValue::echo(UConnection *connection, bool human_readable)
     std::ostringstream ostr;
     ostr << fixed << val;
     strcpy(tmpbuffer, ostr.str().c_str());
-    //sprintf(tmpbuffer,"%f",val);
   }
 
   if (dataType == DATA_STRING)
@@ -588,7 +587,7 @@ UValue::echo(UConnection *connection, bool human_readable)
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
              "FILE %s",str->str());
 
-  if (dataType == DATA_BINARY) {http://www.steven-seagal.net/forum/showthread.php?t=7740
+  if (dataType == DATA_BINARY) {
     if (refBinary) {
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
                "BIN %d ",refBinary->ref()->bufferSize);

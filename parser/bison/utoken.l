@@ -50,81 +50,81 @@ STRING   \"([^"]|"\\\"")*\"
 \/\*(.|"\n")*\*\/    /* eat up several-lines comments, C++ like   */
 
 
-"inf"         { valp->val = new UFloat(UINFINITY);
+"inf"         { valp->val = new ufloat(UINFINITY);
                 return token::NUM;
               }
 
-"pi"          { valp->val = new UFloat(3.14159265358979323846264338327950288);
+"pi"          { valp->val = new ufloat(3.14159265358979323846264338327950288);
                 return token::NUM;
               }
 
-"off"          { valp->val = new UFloat(0);
+"off"          { valp->val = new ufloat(0);
                 return token::NUM;
               }
 
-"switch"      { valp->val = new UFloat(-1);
-                return token::NUM;
-              }
-
-
-"on"          { valp->val = new UFloat(1);
+"switch"      { valp->val = new ufloat(-1);
                 return token::NUM;
               }
 
 
+"on"          { valp->val = new ufloat(1);
+                return token::NUM;
+              }
 
-"+report"     { valp->val = new UFloat(1); 
+
+
+"+report"     { valp->val = new ufloat(1); 
                 return token::FLAG;}
 
-"+error"      { valp->val = new UFloat(2);
+"+error"      { valp->val = new ufloat(2);
                 return token::FLAG;}
 
-"+end"        { valp->val = new UFloat(3);
+"+end"        { valp->val = new ufloat(3);
                 return token::FLAG;}
 
-"+begin"      { valp->val = new UFloat(4);
+"+begin"      { valp->val = new ufloat(4);
                 return token::FLAG;}
 
-"+timeout"    { valp->val = new UFloat(5);
+"+timeout"    { valp->val = new ufloat(5);
                 return token::FLAGTIME;}
 
-"+bg"         { valp->val = new UFloat(10);
+"+bg"         { valp->val = new ufloat(10);
                 return token::FLAG;}
 
-"+stop"       { valp->val = new UFloat(6);
+"+stop"       { valp->val = new ufloat(6);
                 return token::FLAGTEST;}
 
-"+top"        { valp->val = new UFloat(7); 
+"+top"        { valp->val = new ufloat(7); 
                 return token::FLAG;}
 
-"+freeze"     { valp->val = new UFloat(8);
+"+freeze"     { valp->val = new ufloat(8);
                 return token::FLAGTEST;}
 
-"+connection" { valp->val = new UFloat(9);
+"+connection" { valp->val = new ufloat(9);
                 return token::FLAGID;}
 
 {NUMBER}"d"   { yytext[yyleng-1]=0;
-                valp->val = new UFloat(atof(yytext) *60000*60*24);
+                valp->val = new ufloat(atof(yytext) *60000*60*24);
                 return token::TIMEVALUE; }
 
 {NUMBER}"h"   { yytext[yyleng-1]=0;
-                valp->val = new UFloat(atof(yytext) *60000*60);
+                valp->val = new ufloat(atof(yytext) *60000*60);
                 return token::TIMEVALUE; }
 
 {NUMBER}"m"   { yytext[yyleng-1]=0;
-                valp->val = new UFloat(atof(yytext) *60000);
+                valp->val = new ufloat(atof(yytext) *60000);
                 return token::TIMEVALUE; }
 
 {NUMBER}"s"   { yytext[yyleng-1]=0;
-                valp->val = new UFloat(atof(yytext) *1000);
+                valp->val = new ufloat(atof(yytext) *1000);
                 return token::TIMEVALUE; }
 
 {NUMBER}"ms"  { yytext[yyleng-2]=0;
-                valp->val = new UFloat(atof(yytext));
+                valp->val = new ufloat(atof(yytext));
                 return token::TIMEVALUE; }
 
 
-{NUMBER}      { valp->val = new UFloat(atof(yytext));
+{NUMBER}      { valp->val = new ufloat(atof(yytext));
                 return token::NUM; }
 
 {STRING}      { valp->str = new UString(yytext+1);

@@ -55,7 +55,7 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
     between all the different constructors.
 */
-UExpression::UExpression(UExpressionType type, UFloat *val) 
+UExpression::UExpression(UExpressionType type, ufloat *val) 
 {	
    initialize();
   
@@ -72,7 +72,7 @@ UExpression::UExpression(UExpressionType type, UFloat *val)
 /*! The parameter 'type' is required here only for the sake of uniformity
     between all the different constructors.
 */
-UExpression::UExpression(UExpressionType type, UFloat val) 
+UExpression::UExpression(UExpressionType type, ufloat val) 
 {	
    initialize();
   
@@ -246,7 +246,7 @@ UExpression::~UExpression()
 UExpression*
 UExpression::copy() 
 {
-  UExpression* ret = new UExpression(type,UFloat(0));  
+  UExpression* ret = new UExpression(type,ufloat(0));  
 
   if (expression1)  ret->expression1 = expression1->copy(); 
   if (expression2)  ret->expression2 = expression2->copy(); 
@@ -309,7 +309,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
   UVariable *variable;
   UString* method;
   UString* devicename;
-  UFloat d1,d2;
+  ufloat d1,d2;
   UCommand_EMIT* cmd;
   const char* vnamestr;
   UNamedParameters *pevent;
@@ -442,7 +442,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
           ::urbiserver->eventtab.end()) {
         // this is an event
        
-        ret = new UValue(UFloat(1));
+        ret = new UValue(ufloat(1));
         ret->val = 1;
         ret->eventid = ::urbiserver->eventtab[variablename->getFullname()->str()]->eventid;
         return(ret);
@@ -730,7 +730,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       cmd = ::urbiserver->eventtab[vnamestr];   
 
       if ((!cmd->parameters) && (!parameters)) { 
-        ret = new UValue(UFloat(1));
+        ret = new UValue(ufloat(1));
         ret->eventid = cmd->eventid;
         ret->val = 1;
 
@@ -769,7 +769,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
           pcatch = pcatch->next;
         }
 
-        ret = new UValue(UFloat(1));
+        ret = new UValue(ufloat(1));
         ret->eventid = (int)cmd;
         ret->val = 1;
 
@@ -1267,10 +1267,10 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       if (strcmp(variablename->id->str(),"random")==0)  ret->val = (rand()%(int)e1->val);
       if (strcmp(variablename->id->str(),"round")==0)  
         if (e1->val>=0)
-          ret->val = (UFloat)(int)(e1->val+0.5);
+          ret->val = (ufloat)(int)(e1->val+0.5);
         else
-          ret->val = (UFloat)(int)(e1->val-0.5);
-      if (strcmp(variablename->id->str(),"trunc")==0)  ret->val = (UFloat)(int)(e1->val);
+          ret->val = (ufloat)(int)(e1->val-0.5);
+      if (strcmp(variablename->id->str(),"trunc")==0)  ret->val = (ufloat)(int)(e1->val);
       if (strcmp(variablename->id->str(),"exp")==0)  ret->val = exp(e1->val);
       if (strcmp(variablename->id->str(),"sqr")==0)  ret->val = e1->val*e1->val;
       if (strcmp(variablename->id->str(),"sqrt")==0) {
@@ -1877,7 +1877,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       }
 
       ret->eventid = ret->eventid +  e2->eventid;
-      ret->val = (UFloat) ( ((int)e1->val) && ((int)e2->val) );
+      ret->val = (ufloat) ( ((int)e1->val) && ((int)e2->val) );
       delete(e2);
     }
 
@@ -1926,7 +1926,7 @@ if (e1->dataType != DATA_NUM) {
       }
 
       ret->eventid = ret->eventid +  e2->eventid;
-      ret->val = (UFloat) ( ((int)e1->val) || ((int)e2->val) );
+      ret->val = (ufloat) ( ((int)e1->val) || ((int)e2->val) );
       delete(e2);
     }
 

@@ -2,7 +2,7 @@
  *******************************************************************************
 
  File: ufloat.h\n
- Definition of the UFloat classes.
+ Definition of the ufloat classes.
 
  This file is part of 
  %URBI Kernel, version __kernelversion__\n
@@ -376,7 +376,7 @@ class UFFloat {
 
 std::ostream& operator <<(std::ostream &s, UFFloat u);
 std::istream& operator >>(std::istream &s, UFFloat &u);
-//typedef ULongFixedPoint<10> UFloat;
+//typedef ULongFixedPoint<10> ufloat;
 #endif 
 
 
@@ -517,12 +517,12 @@ class ULLFixedPoint {
   inline ULLFixedPoint operator ++(int) {return (*this)+=ULLFixedPoint(1); }
 
 /*
-  inline ULLFixedPoint operator *(const int b) {return (*this)*UFloat(b);}
-  inline ULLFixedPoint operator *(const unsigned int b) {return (*this)*UFloat(b);}
-  inline ULLFixedPoint operator *(const long  b) {return (*this)*UFloat(b);}
-  inline ULLFixedPoint operator *(const unsigned long b) {return (*this)*UFloat(b);}
-  inline ULLFixedPoint operator *(const double  b) {return (*this)*UFloat(b);}
-  inline ULLFixedPoint operator *(const float  b) {return (*this)*UFloat(b);}
+  inline ULLFixedPoint operator *(const int b) {return (*this)*ufloat(b);}
+  inline ULLFixedPoint operator *(const unsigned int b) {return (*this)*ufloat(b);}
+  inline ULLFixedPoint operator *(const long  b) {return (*this)*ufloat(b);}
+  inline ULLFixedPoint operator *(const unsigned long b) {return (*this)*ufloat(b);}
+  inline ULLFixedPoint operator *(const double  b) {return (*this)*ufloat(b);}
+  inline ULLFixedPoint operator *(const float  b) {return (*this)*ufloat(b);}
 */
   double getDouble() const {return ((double)v)/double(1LL<<LONG_NBIT);}
   operator int() const {return getValue();};
@@ -545,69 +545,69 @@ inline ULLFixedPoint abs(ULLFixedPoint b) {
 #ifndef SINTABLE_POWER
 #define SINTABLE_POWER 10  //the tables will containe 2^sintable_power elements
 #endif
-typedef ULLFixedPoint UFloat;
-static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+typedef ULLFixedPoint ufloat;
+static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
 /// return the tabulated sinus of given value in radian, using linear interpolation 
-UFloat tabulatedSin(UFloat angle);
+ufloat tabulatedSin(ufloat angle);
 /// return the tabulated cosinus of given value in radian, using linear interpolation 
-UFloat tabulatedCos(UFloat angle);
+ufloat tabulatedCos(ufloat angle);
 /// return the tabulated arcsinus of given value, in radian, using linear interpolation 
-UFloat tabulatedASin(UFloat val);
+ufloat tabulatedASin(ufloat val);
 /// return the tabulated arccosinus of given value, in radian, using linear interpolation 
-inline UFloat tabulatedACos(UFloat val) {return (PI>>1)-tabulatedASin(val);}
+inline ufloat tabulatedACos(ufloat val) {return (PI>>1)-tabulatedASin(val);}
 
-inline UFloat sin(UFloat angle) {return tabulatedSin(angle);}
-inline UFloat cos(UFloat angle) {return tabulatedCos(angle);}
-inline UFloat tan(UFloat angle) {return sin(angle)/cos(angle);}
+inline ufloat sin(ufloat angle) {return tabulatedSin(angle);}
+inline ufloat cos(ufloat angle) {return tabulatedCos(angle);}
+inline ufloat tan(ufloat angle) {return sin(angle)/cos(angle);}
 
-inline UFloat asin(UFloat angle) {return tabulatedASin(angle);}
-inline UFloat acos(UFloat angle) {return tabulatedACos(angle);}
+inline ufloat asin(ufloat angle) {return tabulatedASin(angle);}
+inline ufloat acos(ufloat angle) {return tabulatedACos(angle);}
 
-inline UFloat atan(UFloat a) {return UFloat(atan(a.getDouble()));}
-inline UFloat pow(UFloat a, UFloat b) {return UFloat(pow(a.getDouble(), b.getDouble()));}
-inline UFloat exp(UFloat a) {return UFloat(exp(a.getDouble()));}
-inline UFloat log(UFloat a) {return UFloat(log(a.getDouble()));}
-inline UFloat sqrt(UFloat a) {return UFloat(sqrt(a.getDouble()));}
-inline UFloat fabs(UFloat a) {return (a>0)?a:-a;}
-inline UFloat trunc(UFloat a) {UFloat b; b.v = a.v & (-1LL ^ ((1LL<<LONG_NBIT)-1LL)); if (b.v<0) b++;return b;}
-inline UFloat fmod(UFloat a, UFloat b) {UFloat q = trunc(a/b); return a-q*b;}
+inline ufloat atan(ufloat a) {return ufloat(atan(a.getDouble()));}
+inline ufloat pow(ufloat a, ufloat b) {return ufloat(pow(a.getDouble(), b.getDouble()));}
+inline ufloat exp(ufloat a) {return ufloat(exp(a.getDouble()));}
+inline ufloat log(ufloat a) {return ufloat(log(a.getDouble()));}
+inline ufloat sqrt(ufloat a) {return ufloat(sqrt(a.getDouble()));}
+inline ufloat fabs(ufloat a) {return (a>0)?a:-a;}
+inline ufloat trunc(ufloat a) {ufloat b; b.v = a.v & (-1LL ^ ((1LL<<LONG_NBIT)-1LL)); if (b.v<0) b++;return b;}
+inline ufloat fmod(ufloat a, ufloat b) {ufloat q = trunc(a/b); return a-q*b;}
 #elif FLOAT_FLOAT
-typedef  float UFloat;
-static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+typedef  float ufloat;
+static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
 #elif FLOAT_TABFLOAT
 #define FLOAT_TABULATED
-typedef  float UFloat;
-static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+typedef  float ufloat;
+static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
 
 #elif FLOAT_TABDOUBLE
 #define FLOAT_TABULATED
-typedef double UFloat;
-static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+typedef double ufloat;
+static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
 
 
 #else
-typedef double UFloat;
-static const UFloat PI = UFloat(3.14159265358979323846264338327950288);
+typedef double ufloat;
+static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
 
 
 #endif
 
 #if FLOAT_TABULATED
 /// return the tabulated sinus of given value in radian, using linear interpolation 
-UFloat tabulatedSin(UFloat angle);
+ufloat tabulatedSin(ufloat angle);
 /// return the tabulated cosinus of given value in radian, using linear interpolation 
-UFloat tabulatedCos(UFloat angle);
+ufloat tabulatedCos(ufloat angle);
 /// return the tabulated arcsinus of given value, in radian, using linear interpolation 
-UFloat tabulatedASin(UFloat val);
+ufloat tabulatedASin(ufloat val);
 /// return the tabulated arccosinus of given value, in radian, using linear interpolation 
-inline UFloat tabulatedACos(UFloat val) {return (PI>>1)-tabulatedASin(val);}
+inline ufloat tabulatedACos(ufloat val) {return (PI>>1)-tabulatedASin(val);}
 
-inline UFloat sin(UFloat angle) {return tabulatedSin(angle);}
-inline UFloat cos(UFloat angle) {return tabulatedCos(angle);}
-inline UFloat tan(UFloat angle) {return sin(angle)/cos(angle);}
+inline ufloat sin(ufloat angle) {return tabulatedSin(angle);}
+inline ufloat cos(ufloat angle) {return tabulatedCos(angle);}
+inline ufloat tan(ufloat angle) {return sin(angle)/cos(angle);}
 
-inline UFloat asin(UFloat angle) {return tabulatedASin(angle);}
-inline UFloat acos(UFloat angle) {return tabulatedACos(angle);}
+inline ufloat asin(ufloat angle) {return tabulatedASin(angle);}
+inline ufloat acos(ufloat angle) {return tabulatedACos(angle);}
 
 #endif
 #endif

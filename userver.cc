@@ -98,7 +98,7 @@ int usedMemory;
            limit of memory allocation, thus avoiding later to run out of memory
            during a new or malloc.         
 */
-UServer::UServer(UFloat frequency, 
+UServer::UServer(ufloat frequency, 
                  int freeMemory,
                  const char* mainName) 
 { 
@@ -358,7 +358,7 @@ UServer::work()
 
   // Values final assignment and nbAverage reset to 0
  
-  UFloat *valtmp;
+  ufloat *valtmp;
   UVarSet selfError;
 
   for (list<UVariable*>::iterator iter = reinitList.begin();
@@ -592,7 +592,7 @@ UServer::debug(const char* s,...)
   effectiveDisplay(tmpBuffer_);
   
 //  used to slow down printing with Aibo...  
-//  UFloat y=4;UFloat x=145;  for (int i=0;i<300000;i++) y = y+ sin( i*x);
+//  ufloat y=4;ufloat x=145;  for (int i=0;i<300000;i++) y = y+ sin( i*x);
 }
 
 //! Isolate the server from incoming commands.
@@ -651,20 +651,20 @@ UServer::shutdown()
 //! Overload this function to return the running time of the server.
 /*! The running time of the server must be in milliseconds.
  */
-UFloat
+ufloat
 UServer::getTime() 
 {
-  return (UFloat)0;
+  return (ufloat)0;
 }
 
 //! Overload this function to return the remaining power of the robot
 /*! The remaining power is expressed as percentage. 0 for empty batteries
     and 1 for full power.
  */
-UFloat
+ufloat
 UServer::getPower() 
 {
-  return (UFloat)1;
+  return (ufloat)1;
 }
 
 //! Update the server's time using the robot-specific implementation

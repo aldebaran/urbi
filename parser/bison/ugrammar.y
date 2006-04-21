@@ -49,7 +49,7 @@ class UParser;
   UVariableList           *variablelist;   
   UProperty               *property;  
 
-  UFloat                   *val;
+  ufloat                   *val;
   UString                  *str;
   struct {
     UString *device;
@@ -65,8 +65,8 @@ class UParser;
 
 #include <string>
 
-#define TRUE UFloat(1)
-#define FALSE UFloat(0)
+#define TRUE ufloat(1)
+#define FALSE ufloat(0)
 
 #include "../uparser.h"
 
@@ -1235,7 +1235,7 @@ timeexpr:
     }
 
   | timeexpr TIMEVALUE {
-       $$ = new UFloat(*$1+*$2); //XXX shall we delete 1 and 2??
+       $$ = new ufloat(*$1+*$2); //XXX shall we delete 1 and 2??
        delete $1;
        delete $2;
     }

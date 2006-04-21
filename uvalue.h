@@ -45,7 +45,7 @@ class UValue
 public:
   MEMORY_MANAGED;
   UValue();
-  UValue(UFloat val);
+  UValue(ufloat val);
   UValue(const char* str);
   UValue(const urbi::UValue&);
 
@@ -56,7 +56,7 @@ public:
 
   UDataType       dataType;     ///< Type of the value
 
-  UFloat val; // must be out of the union in case of reimplementation
+  ufloat val; // must be out of the union in case of reimplementation
   union {    ///< union of the possible types
     UString *str;    
     URefPt<UBinary> *refBinary;    

@@ -78,7 +78,7 @@ class UServer
 {
 public:
 	
-  UServer(UFloat frequency,          
+  UServer(ufloat frequency,          
           int freeMemory,
           const char* mainName);
 
@@ -95,8 +95,8 @@ public:
   void              deIsolate       ();
   bool              isIsolated      ();
 
-  virtual UFloat    getTime         () = 0;  
-  virtual UFloat    getPower        () = 0;  
+  virtual ufloat    getTime         () = 0;  
+  virtual ufloat    getPower        () = 0;  
   virtual void      getCustomHeader (int line, char* header, int maxlength) = 0;
   virtual UErrorValue loadFile      (const char *filename, UCommandQueue* loadQueue) = 0;
   virtual UErrorValue saveFile      (const char *filename, const char * content) = 0;
@@ -107,7 +107,7 @@ public:
                                       const char *property);
 
 
-  UFloat            getFrequency    ();
+  ufloat            getFrequency    ();
   void              mark            (UString *stopTag);
   virtual void      reboot          () = 0;
   virtual void      shutdown        () = 0;
@@ -115,7 +115,7 @@ public:
   virtual void      afterWork       ();
   
   void              display         (const char*);
-  UFloat            lastTime        ();
+  ufloat            lastTime        ();
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
@@ -158,13 +158,13 @@ public:
   bool                     somethingToDelete; ///< true after a stop command
   bool                     uservarState; ///< true after the initialization phase: all vars
                                          ///< are uservar then.
-  UFloat                   cpuload; ///< cpu load expressed as a number between 0 and 1
+  ufloat                   cpuload; ///< cpu load expressed as a number between 0 and 1
   bool                     cpuoverload; ///< true when there is a cpu overload
   bool                     signalcpuoverload; ///< a signal must be sent to every connection
   int                      cpucount; ///< nb of recent cpu overloads
-  UFloat                   cputhreshold; ///< threshold for cpu overload alert
+  ufloat                   cputhreshold; ///< threshold for cpu overload alert
   bool                     defcheck; ///< true when the server is paranoid on def checking
-  UFloat                   previous2Time,
+  ufloat                   previous2Time,
                            previous3Time,
                            currentTime, 
                            previousTime, 
@@ -185,22 +185,22 @@ private:
   static const int MAXSIZE_INTERNALMESSAGE = 1024;  ///< used by echo()& error()
   static const int SECURITY_MEMORY_SIZE    = 100000;///< amount of security mem.
 
-  UFloat           frequency_; ///< frequency of the calls to work()
+  ufloat           frequency_; ///< frequency of the calls to work()
   void*            securityBuffer_; ///< stores memory for emergency use.
   bool             isolate_; ///< is the server isolated
-  UFloat           lastTime_; ///< store the time on the last call to updateTime();
+  ufloat           lastTime_; ///< store the time on the last call to updateTime();
   UGhostConnection *ghost; ///< the ghost connection used for URBI.INI
 };
 
 //! Accessor for frequency_
-inline UFloat
+inline ufloat
 UServer::getFrequency() 
 {
   return frequency_;
 }
 
 //! Accessor for lastTime_
-inline UFloat
+inline ufloat
 UServer::lastTime() 
 {
   return lastTime_;

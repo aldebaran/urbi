@@ -58,7 +58,7 @@ namespace urbi {
 class UVariable {
 public:
   MEMORY_MANAGED;
-  UVariable(const char* name, UFloat val, 
+  UVariable(const char* name, ufloat val, 
             bool _notifyWrite = false,
             bool _notifyRead = false,
             bool _autoUpdate = true);
@@ -74,7 +74,7 @@ public:
             bool _notifyWrite = false,
             bool _notifyRead = false,
             bool _autoUpdate = true);
-  UVariable(const char* _id, const char* _method, UFloat val, 
+  UVariable(const char* _id, const char* _method, ufloat val, 
             bool _notifyWrite = false,
             bool _notifyRead = false,
             bool _autoUpdate = true);
@@ -92,23 +92,23 @@ public:
 
   UBlend          blendType; ///< the variable blend type
   UString         *unit;     ///< device unit
-  UFloat          rangemin;  ///< rangemin
-  UFloat          rangemax;  ///< rangemax
-  UFloat          speedmin;  ///< rangemin
-  UFloat          speedmax;  ///< rangemax
-  UFloat          delta;     ///< delta
+  ufloat          rangemin;  ///< rangemin
+  ufloat          rangemax;  ///< rangemax
+  ufloat          speedmin;  ///< rangemin
+  ufloat          speedmax;  ///< rangemax
+  ufloat          delta;     ///< delta
   
   int             nbAssigns;///< nb superposition of assignments
   int             nbAverage; ///< nb superposition of mixing or adding assignments
   int             activity;  ///< stage of usage in the reinit list: 0 (off), 1(in) or 2(going out)
   bool            uservar; ///< indicates user variables
-  UFloat          target;   ///< temporary value container 
-  UFloat          previous,
+  ufloat          target;   ///< temporary value container 
+  ufloat          previous,
                   previous2,
                   previous3; ///< previous theoretical value container 
-  UFloat          previous_sensed; ///< previous sensed value 
+  ufloat          previous_sensed; ///< previous sensed value 
   UValue          *value; ///< variable value
-  UFloat          valPrev,
+  ufloat          valPrev,
                   valPrev2; // used for 'd and 'dd calculation
   bool            notifyRead; ///< true when UDevice::notifyRead must be called
   bool            notifyWrite;  ///< true when UDevice::notifyWrite must be called
@@ -131,11 +131,11 @@ public:
   const char*   setName(UString *s) { return( setName(s->str()) );};
 
   UVarSet       set(UValue *v);
-  UVarSet       setFloat(UFloat f);
-  UVarSet       selfSet(UFloat *valcheck);
+  UVarSet       setFloat(ufloat f);
+  UVarSet       selfSet(ufloat *valcheck);
 
-  void          setSensorVal(UFloat f);
-  void          initSensorVal(UFloat f);
+  void          setSensorVal(ufloat f);
+  void          initSensorVal(ufloat f);
 
   void          updated();
 
@@ -151,7 +151,7 @@ public:
 
 //! Set a value->val value. Must be called instead of value->val direct assignment
 inline void
-UVariable::setSensorVal(UFloat f)
+UVariable::setSensorVal(ufloat f)
 {
   valPrev2 = valPrev;
   valPrev = value->val;
@@ -160,7 +160,7 @@ UVariable::setSensorVal(UFloat f)
 
 //! Init a value->val value (valPrev and valPrev2 will be init too)
 inline void
-UVariable::initSensorVal(UFloat f)
+UVariable::initSensorVal(ufloat f)
 {
   value->dataType = DATA_NUM;
   valPrev2 = f;
