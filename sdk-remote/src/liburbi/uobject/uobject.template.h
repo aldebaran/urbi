@@ -26,8 +26,35 @@
 #include <hash_map.h>
 //#include <iostream> // should not be there, remove after debug
 //#include <uclient.h>
+#ifdef HAVE_UFLOAT_H
 #include "ufloat.h"
-#include "uobject/singleton.h"
+#else
+typedef double UFloat;
+#endif
+
+/** Singleton smart pointer that creates the object on demmand
+ * */
+template<class T> class SingletonPtr {
+  public:
+    operator T* () {return check();}
+    operator T& () {return *check();}
+
+    T* operator ->() {return check();}
+    T * check() {static T * ptr=0; if(ptr) return ptr; else return (ptr=new T());}
+  private:
+};
+
+#define STATIC_INSTANCE(cl, name) \
+  SingletonPtr<cl##name> name
+
+#define EXTERN_STATIC_INSTANCE(cl, name)\
+  class cl##name: public cl{}; \
+extern SingletonPtr<cl##name> name
+
+
+
+
+
 using namespace std;
 
 // A quick hack to be able to use hash_map with string easily
@@ -46,7 +73,7 @@ __STL_END_NAMESPACE
 }
 #endif
 
-#define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
+
 
 // This macro is here to make life easier
 // Simply use: UStart(myUObjectType) and the rest will be taken care of.
