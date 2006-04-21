@@ -1,10 +1,10 @@
-INCLUDES = -I$(top_srcdir)/lib/jpeg-6b
+INCLUDES = -I$(top_srcdir)/lib/jpeg-6b -I$(top_srcdir)/src/liburbi/uobject
 AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
 AM_CXXFLAGS = -pthread -Wno-deprecated
 
 lib_LIBRARIES = liburbi.a
-include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject.h uobject/uexternal.h uconversion.h
-uobject.h:
+include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject/uobject.h uobject/uexternal.h uconversion.h
+uobject/uobject.h:
 	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
 liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o uconversion.o
 	rm -f liburbi.a

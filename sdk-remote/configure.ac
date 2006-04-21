@@ -40,7 +40,7 @@ AC_CONFIG_FILES([Makefile
 	  src/liburbi/openr/Makefile
 	  src/liburbi/openr/Makefile.aibo
 	  lib/jpeg-6b/makefile.aibo
-	  softdevices/Makefile
-	  softdevices/ball/Makefile
+	  sdk/Makefile
+	  sdk/Makefile.param
 ])
 AC_OUTPUT

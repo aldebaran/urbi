@@ -1,5 +1,5 @@
 SUBDIRS = jpeg-6b
 
-install:
+install: all
 	echo nothing to install here
 

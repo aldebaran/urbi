@@ -1,6 +1,6 @@
 #ifndef UCONVERSION_H
 #define UCONVERSION_H
-#include "uobject/uobject.h"
+#include "uobject.h"
 using namespace urbi;
 typedef unsigned char byte; 
 

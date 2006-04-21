@@ -32,7 +32,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "uobject/uobject.h"
+#include "uobject.h"
 using namespace urbi;
 
 using std::string;
