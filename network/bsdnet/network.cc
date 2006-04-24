@@ -144,10 +144,10 @@ namespace Network {
     fd_set rd;
     fd_set wr;
     int mx = buildFD(rd, wr );
-
     struct timeval tv;
-    tv.tv_sec=0;
-    tv.tv_usec = usDelay;
+    tv.tv_sec=usDelay/1000000;
+    tv.tv_usec = usDelay-((usDelay/1000000)*1000000);
+
     int r = select(mx, &rd, &wr, 0, &tv);
     if (r==0)
       return false;
@@ -155,7 +155,7 @@ namespace Network {
       notify(rd, wr);
     if (r<0) {
       //XXX this is baad, we should realy do something
-      fprintf(stderr, "SELECT ERROR\n");
+      perror("SELECT ERROR:");
     }
 	return (r>0);
   }
