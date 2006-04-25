@@ -1,0 +1,31 @@
+prefix = @prefix@
+
+TARGETNAME=remote
+
+all: mkgccversion
+
+mkgccversion:
+	$(CXX) -v 2>&1 |grep version > gccversion
+
+gccversion: mkgccversion
+
+EXTRALDFLAGS	+= $(LIB_DIR:%=-L%)
+EXTRALDFLAGS	+= $(LIBS:%=-l%)
+
+
+link:  sanity umain.o
+	$(CXX) $(LDFLAGS) -o  urbimodule  -L$(prefix)/lib umain.o $(EXTRALDFLAGS) -lurbi -luobject -pthread
+
+umain.cc:
+	cp $(prefix)/share/urbicore/remote/umain.cc ./
+
+install: gccversion
+	mkdir -p  $(prefix)/share/urbicore/remote/
+	cp Makefile Makefile.param umain.cc gccversion $(prefix)/share/urbicore/remote/
+	sed -e "s@PREFIX=.*@PREFIX=$(PREFIX)@" Makefile.module > $(prefix)/share/urbicore/Makefile.module
+sanity:
+	$(CXX) -v 2>&1 |grep version | cmp $(prefix)/share/urbicore/remote/gccversion || echo "WARNING: gcc version mismatch"
+	
+clean:
+	rm -f gccversion umain.o
+ctags:

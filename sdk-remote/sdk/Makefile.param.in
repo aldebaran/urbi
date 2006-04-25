@@ -1,0 +1,7 @@
+export PREFIX=@prefix@
+
+export CXX=g++
+export CC=gcc
+export LD=ld
+
+export CPPFLAGS=-I$(PREFIX)/include
