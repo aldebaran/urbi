@@ -555,6 +555,7 @@ void
 UValue::echo(UConnection *connection, bool human_readable)
 {
   if (dataType == DATA_VOID) {
+	connection->send((const ubyte*)"void",4);
     return;
   }
   

@@ -226,6 +226,7 @@ enum UDataType {
   DATA_BINARY,
   DATA_VOID,
   DATA_LIST,
+  DATA_OBJ,
   DATA_FUNCTION
 };	
 

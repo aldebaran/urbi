@@ -682,6 +682,17 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   ////////////////////////////////////////
 
   if (status == UONQUEUE) {
+
+    // Objects cannot be assigned
+    if ((variable) && 
+	(variable->value->dataType == DATA_OBJ)) {
+
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! Warning: %s type mismatch: no object assignment\n",variablename->getFullname()->str());
+      connection->send(tmpbuffer,tag->str());
+      return (status = UCOMPLETED);
+    } 
+
     // object aliasing here
  
     if ((variablename->nostruct) &&
@@ -742,15 +753,17 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     if ((variable) &&
         (variable->value->dataType != DATA_VOID) &&
         (target->dataType != variable->value->dataType)) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! Warning: %s type mismatch\n",variablename->getFullname()->str());
-      if (::urbiserver->defcheck)
+    
+      if (::urbiserver->defcheck) {
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! Warning: %s type mismatch\n",variablename->getFullname()->str());
         connection->send(tmpbuffer,tag->str());
+	delete target;
+	return( status = UCOMPLETED );
+      }
+
       delete variable;
       variable = 0;
-      //delete target;
-      //return( status = UCOMPLETED );
     }   
 
 
@@ -2177,9 +2190,11 @@ UCommand_EXPR::execute(UConnection *connection)
 	  
 	  UValue ret = (*cbi)->__evalcall(tmparray);
 	  
-	  connection->sendPrefix(tag->str());
-	  ret.echo(connection);
-	  if (ret.dataType!=DATA_BINARY) 
+	  if (ret.dataType != DATA_VOID) {
+		  connection->sendPrefix(tag->str());
+		  ret.echo(connection);
+	  }
+	  if ((ret.dataType!=DATA_BINARY) && (ret.dataType!=DATA_VOID)) 
 	    connection->endline();
 	  return( status = UCOMPLETED );
 	}
@@ -2204,9 +2219,11 @@ UCommand_EXPR::execute(UConnection *connection)
     return( status = UMORPH);
   }
 
-  connection->sendPrefix(tag->str());
-  ret->echo(connection);
-  if (ret->dataType!=DATA_BINARY) 
+  if (ret->dataType != DATA_VOID) {
+    connection->sendPrefix(tag->str());
+    ret->echo(connection);
+  }
+  if ((ret->dataType!=DATA_BINARY) && (ret->dataType != DATA_VOID))
     connection->endline();
   delete(ret);
   return(status = UCOMPLETED);  
