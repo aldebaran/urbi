@@ -866,7 +866,8 @@ instruction:
  
     } taggedcommand {
      
-      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7, 
+																  new UCommand_RETURN((UExpression*)0)));
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
         delete uparser.connection->functionTag;

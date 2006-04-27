@@ -33,9 +33,12 @@ UObj::UObj (UString *device)
 {
   this->device = new UString(device);
   binder = 0;
-  internalBinder = 0;
+  internalBinder = 0; 
 
   ::urbiserver->objtab[this->device->str()] = this;
+  UValue* objvalue = new UValue();
+  objvalue->dataType = DATA_OBJ;
+  new UVariable(this->device->str(), objvalue);
 }
 
 //! UObj destructor

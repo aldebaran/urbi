@@ -390,7 +390,9 @@ UValue::add(UValue *v)
 
   if ((dataType == DATA_FILE) ||
       (dataType == DATA_BINARY) ||
+      (dataType == DATA_OBJ) ||
       (v->dataType == DATA_FILE)||
+      (v->dataType == DATA_OBJ)||
       (v->dataType == DATA_BINARY) )
     return 0;
 
@@ -559,6 +561,11 @@ UValue::echo(UConnection *connection, bool human_readable)
     return;
   }
   
+  if (dataType == DATA_OBJ) {
+	connection->send((const ubyte*)"OBJ",3);
+    return;
+  }  
+     
   if (dataType == DATA_LIST) {
     
     connection->send((const ubyte*)"[",1);
