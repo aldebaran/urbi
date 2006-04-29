@@ -11,8 +11,8 @@ class DummyInit {
 DummyInit _dummyInit__;
 
 
-static UFloat * sinTable=0; //we store [O, PI/2[
-static UFloat * asinTable=0; //we store [O, 1[
+static ufloat * sinTable=0; //we store [O, PI/2[
+static ufloat * asinTable=0; //we store [O, 1[
 
 static unsigned long tableSize; //must be a power of two
 static int tableShift;
@@ -26,8 +26,8 @@ void buildSinusTable(int powersize) {
     delete [] asinTable;
   }
   
-  sinTable = new UFloat[size];
-  asinTable = new UFloat[size];
+  sinTable = new ufloat[size];
+  asinTable = new ufloat[size];
 
   tableSize = size;
   for (int i=0;i<size;i++) {
@@ -41,9 +41,9 @@ void buildSinusTable(int powersize) {
 }
 
 
-UFloat tabulatedSin(UFloat val) {
-  static UFloat factor(2.0 / M_PI);
-  UFloat fidx = val * factor; //now we are 4-periodic: xy.zzz x:pi phase y:pi/2 phase
+ufloat tabulatedSin(ufloat val) {
+  static ufloat factor(2.0 / M_PI);
+  ufloat fidx = val * factor; //now we are 4-periodic: xy.zzz x:pi phase y:pi/2 phase
   
   //remove high part to avoid overflow, keeping 2 bits of intpart+decpart
   fidx = fidx - (fidx.getValue(-2)<<2);
@@ -54,21 +54,21 @@ UFloat tabulatedSin(UFloat val) {
  
  if (extraidx&1) //sin(pi/2+x) = sin(pi/2-x)
     idx = (tableSize-idx-1)&(tableSize-1);
-  UFloat v1 = sinTable[idx];
+  ufloat v1 = sinTable[idx];
  #if TABULATEDSIN_NO_INTERPOLATE
   return v1;
 #else
-  UFloat rem = fidx<<tableShift;
+  ufloat rem = fidx<<tableShift;
   rem = rem - rem.getValue();
-  UFloat v2 = sinTable[(idx+1) & (tableSize-1)];
+  ufloat v2 = sinTable[(idx+1) & (tableSize-1)];
     /*
   std::cerr <<idx<<" "<<((idx+1) & (tableSize-1))<<"  "<<extraidx<<"  "<< v1<<" "<<v2<<std::endl;
-  std::cerr << rem<<"  "<<(UFloat(1L)-rem)<<std::endl;
-  //std::cerr << (v2*rem)<<"   "<<(v1*(UFloat(1L)-rem))<<std::endl;
-  UFloat omr = (UFloat(1L)-rem);
+  std::cerr << rem<<"  "<<(ufloat(1L)-rem)<<std::endl;
+  //std::cerr << (v2*rem)<<"   "<<(v1*(ufloat(1L)-rem))<<std::endl;
+  ufloat omr = (ufloat(1L)-rem);
   //std::cerr << omr<<"  "<<v1<<"  "<<(v1*omr)<<std::endl;
   */
-  UFloat vi = (v1*(UFloat(1L)-rem))+(v2*rem);
+  ufloat vi = (v1*(ufloat(1L)-rem))+(v2*rem);
   if (extraidx&2) {
     //std::cerr <<"glop "<<vi<<"  "<<(-vi)<<std::endl;
     return -vi;
@@ -79,9 +79,9 @@ UFloat tabulatedSin(UFloat val) {
 }
 
 
-UFloat tabulatedCos(UFloat val) { //just reverse pi/2 bit meaning
-  static UFloat factor(2.0 / M_PI);
-  UFloat fidx = val * factor; //now we are 4-periodic: xy.zzz x:pi phase y:pi/2 phase
+ufloat tabulatedCos(ufloat val) { //just reverse pi/2 bit meaning
+  static ufloat factor(2.0 / M_PI);
+  ufloat fidx = val * factor; //now we are 4-periodic: xy.zzz x:pi phase y:pi/2 phase
   
   //remove high part to avoid overflow, keeping 2 bits of intpart+decpart
   fidx = fidx - (fidx.getValue(-2)<<2);
@@ -92,24 +92,24 @@ UFloat tabulatedCos(UFloat val) { //just reverse pi/2 bit meaning
  
  if (!(extraidx&1)) //sin(pi/2+x) = sin(pi/2-x)
     idx = (tableSize-idx-1)&(tableSize-1);
-  UFloat v1 = sinTable[idx];
+  ufloat v1 = sinTable[idx];
  #if TABULATEDSIN_NO_INTERPOLATE
   return v1;
 #else
-  UFloat rem = fidx<<tableShift;
+  ufloat rem = fidx<<tableShift;
   rem = rem - rem.getValue();
-  UFloat v2 = sinTable[(idx+1) & (tableSize-1)];
+  ufloat v2 = sinTable[(idx+1) & (tableSize-1)];
   
   /*
   std::cerr <<idx<<" "<<((idx+1) & (tableSize-1))<<"  "<<extraidx<<"  "<< v1<<" "<<v2<<std::endl;
-  std::cerr << rem<<"  "<<(UFloat(1L)-rem)<<std::endl;
-  //std::cerr << (v2*rem)<<"   "<<(v1*(UFloat(1L)-rem))<<std::endl;
-  UFloat omr = (UFloat(1L)-rem);
+  std::cerr << rem<<"  "<<(ufloat(1L)-rem)<<std::endl;
+  //std::cerr << (v2*rem)<<"   "<<(v1*(ufloat(1L)-rem))<<std::endl;
+  ufloat omr = (ufloat(1L)-rem);
   //std::cerr << omr<<"  "<<v1<<"  "<<(v1*omr)<<std::endl;
   */
 
 
-  UFloat vi = (v1*(UFloat(1L)-rem))+(v2*rem);
+  ufloat vi = (v1*(ufloat(1L)-rem))+(v2*rem);
   std::cerr<<vi<<std::endl;
   if (extraidx&2) {
     std::cerr <<"glop "<<vi<<"  "<<(-vi)<<std::endl;
@@ -124,30 +124,30 @@ UFloat tabulatedCos(UFloat val) { //just reverse pi/2 bit meaning
 
 
 
-UFloat tabulatedASin(UFloat val) { 
+ufloat tabulatedASin(ufloat val) { 
   //remove high part
-  UFloat fidx = val;
+  ufloat fidx = val;
   if (val<0) 
     fidx = -fidx;
   fidx - fidx.getValue();
   int idx = fidx.getValue(tableShift);
  
   //std::cerr <<"** "<<idx<<std::endl;
-  UFloat v1 = asinTable[idx];
+  ufloat v1 = asinTable[idx];
   #if TABULATEDSIN_NO_INTERPOLATE
   return v1;
 #else
-  UFloat rem = fidx << tableShift;
+  ufloat rem = fidx << tableShift;
   rem = rem - rem.getValue();
-  UFloat v2 = asinTable[(idx+1) & (tableSize-1)];
+  ufloat v2 = asinTable[(idx+1) & (tableSize-1)];
     /*
   std::cerr <<idx<<" "<<((idx+1) & (tableSize-1))<<"  "<<extraidx<<"  "<< v1<<" "<<v2<<std::endl;
-  std::cerr << rem<<"  "<<(UFloat(1L)-rem)<<std::endl;
-  //std::cerr << (v2*rem)<<"   "<<(v1*(UFloat(1L)-rem))<<std::endl;
-  UFloat omr = (UFloat(1L)-rem);
+  std::cerr << rem<<"  "<<(ufloat(1L)-rem)<<std::endl;
+  //std::cerr << (v2*rem)<<"   "<<(v1*(ufloat(1L)-rem))<<std::endl;
+  ufloat omr = (ufloat(1L)-rem);
   //std::cerr << omr<<"  "<<v1<<"  "<<(v1*omr)<<std::endl;
   */
-  UFloat vi = (v1*(UFloat(1L)-rem))+(v2*rem);
+  ufloat vi = (v1*(ufloat(1L)-rem))+(v2*rem);
   if (val<0) {
     //std::cerr <<"glop "<<vi<<"  "<<(-vi)<<std::endl;
     return -vi;

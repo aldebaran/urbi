@@ -73,14 +73,14 @@ UVar::__init()
 }
 
 //! UVar out value (read mode)
-UFloat&
+ufloat&
 UVar::out()
 {  
   return (value.val); 
 }
 
 //! UVar in value (write mode)
-UFloat&
+ufloat&
 UVar::in()
 {  
   return (value.val); 
@@ -115,7 +115,7 @@ UVar::~UVar()
 
 //! UVar float assignment
 void
-UVar::operator = (UFloat n)
+UVar::operator = (ufloat n)
 {  
   URBI() << name << "=" << n << ";";  
 }
@@ -141,8 +141,8 @@ UVar::operator int () {
   return ((int)value); 
 };
 
-UVar::operator UFloat () { 
-  return ((UFloat)value); 
+UVar::operator ufloat () { 
+  return ((ufloat)value); 
 };
 
 

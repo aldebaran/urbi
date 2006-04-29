@@ -398,7 +398,7 @@ string UBinary::getMessage() const {
 UValue::UValue() : type(DATA_VOID), storage(0) {}
 
 
-UValue::UValue(UFloat v) : val(v), type(DATA_DOUBLE)  {}
+UValue::UValue(ufloat v) : val(v), type(DATA_DOUBLE)  {}
 UValue::UValue(int v) : val(v), type(DATA_DOUBLE)  {}
 
 UValue::UValue(char * v) : stringValue(new string(v)), type(DATA_STRING)  {}
@@ -435,9 +435,9 @@ UValue::~UValue() {
   }
 }
 
-UValue::operator UFloat () const {
+UValue::operator ufloat () const {
 
-  UFloat v;
+  ufloat v;
   switch( type) {
   case DATA_DOUBLE:
 
@@ -453,7 +453,7 @@ UValue::operator UFloat () const {
     break;
   };
 
-  return UFloat(0);
+  return ufloat(0);
 };
 
 

@@ -29,7 +29,7 @@
 #ifdef HAVE_UFLOAT_H
 #include "ufloat.h"
 #else
-typedef double UFloat;
+typedef double ufloat;
 #endif
 
 /** Singleton smart pointer that creates the object on demmand
@@ -312,7 +312,7 @@ urbi {
   class UValue {
     public:
       UDataType       type; 
-      UFloat          val;
+      ufloat          val;
       union {
 	string         *stringValue;
 	UBinary        *binary;
@@ -323,17 +323,17 @@ urbi {
 
       UValue();
       UValue(const UValue&);
-      explicit UValue(UFloat doubleValue);
+      explicit UValue(ufloat doubleValue);
       explicit UValue(int intValue);
       explicit UValue(char * val);
       explicit UValue(const string &str);
       explicit UValue(const UBinary &b);
       explicit UValue(const UList & l);
       explicit UValue(const UObjectStruct &o);
-      operator UFloat() const;
+      operator ufloat() const;
       operator string() const;
-      operator int() const {return (int)(UFloat)(*this);}
-      operator bool() const {return (bool)(int)(UFloat)(*this);}
+      operator int() const {return (int)(ufloat)(*this);}
+      operator bool() const {return (bool)(int)(ufloat)(*this);}
       operator UBinary() const; ///< deep copy
       operator UImage(); ///< ptr copy
       operator USound(); ///< ptr copy
@@ -362,7 +362,7 @@ urbi {
     void init(const string&,const string&);
     void setOwned();
 
-    void operator = ( UFloat );
+    void operator = ( ufloat );
     void operator = ( string );
     void operator = ( const UBinary &); 
     void operator = ( const UImage &i) {UBinary b; b.type=BINARY_IMAGE;b.image=i; (*this)=b; b.common.data=0;} ///< Data is copied
@@ -375,12 +375,12 @@ urbi {
     operator UBinary *();  ///< deep copy, binary will have to be deleted by the user
     operator UImage (); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
     operator USound(); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
-    operator UFloat ();
+    operator ufloat ();
     operator string ();
   
     //kernel operators
-    UFloat& in();
-    UFloat& out();
+    ufloat& in();
+    ufloat& out();
     UBlendType blend();
 
     bool owned; ///< is the variable owned by the module?
@@ -415,7 +415,7 @@ urbi {
     virtual UValue __evalcall(UList &param)  = 0;
     
     void   *storage; ////< used to store the UVar* pointeur for var monitoring
-    UFloat period; ///< period of timers
+    ufloat period; ///< period of timers
     int    nbparam;
 
   private:
@@ -430,13 +430,13 @@ urbi {
   class UTimerCallback
   {
   public:
-    UTimerCallback(UFloat period, UTimerTable &tt);
+    UTimerCallback(ufloat period, UTimerTable &tt);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
 
-    UFloat period;
-    UFloat lastTimeCalled;
+    ufloat period;
+    ufloat lastTimeCalled;
   };
 
   // UTimerCallback subclasses
@@ -444,7 +444,7 @@ urbi {
   class UTimerCallbacknoobj : public UTimerCallback
   {
   public:
-    UTimerCallbacknoobj(UFloat period, int (*fun) (), UTimerTable &tt): 
+    UTimerCallbacknoobj(ufloat period, int (*fun) (), UTimerTable &tt): 
       UTimerCallback(period,tt), fun(fun) {};
     
     virtual void call() {
@@ -458,7 +458,7 @@ urbi {
   class UTimerCallbackobj : public UTimerCallback
   {
   public:
-    UTimerCallbackobj(UFloat period, T* obj, int (T::*fun) (), UTimerTable &tt): 
+    UTimerCallbackobj(ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt): 
       UTimerCallback(period,tt), obj(obj), fun(fun) {};
     
     virtual void call() {
@@ -508,7 +508,7 @@ urbi {
     }
 
     template <class T>
-    void USetTimer(UFloat t, int (T::*fun) ()) {
+    void USetTimer(ufloat t, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (t,(T*)this, fun, timermap);
     }
 
@@ -528,7 +528,7 @@ urbi {
     UObjectList members;
     UObjectHub  *objecthub; ///< the hub, if it exists
 
-    void USetUpdate(UFloat);
+    void USetUpdate(ufloat);
     virtual int update() {}; 
 
     UVar        load;
@@ -536,7 +536,7 @@ urbi {
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
                               ///< module/plugin architectures who defines it.    
-    UFloat period;
+    ufloat period;
   };
 
 
@@ -549,7 +549,7 @@ urbi {
     UObjectHub(const string&);
     virtual ~UObjectHub();
 
-    void USetUpdate(UFloat);
+    void USetUpdate(ufloat);
 
     template <class T> 
     void UNotifyChange (UVar& v, int (T::*fun) ()) { 
@@ -581,7 +581,7 @@ urbi {
     }
 
     template <class T>
-    void USetTimer(UFloat t, int (T::*fun) ()) {
+    void USetTimer(ufloat t, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (t, (T*)this,fun, timermap);      
     }
 
@@ -597,17 +597,17 @@ urbi {
   protected:
     int updateGlobal(); ///< this function calls update and the subclass update
 
-    UFloat period;
+    ufloat period;
     string name;
   };
     
   // *****************************************************************************
   //! Timer definition
 
-  void USetTimer(UFloat t, int (*fun) ());
+  void USetTimer(ufloat t, int (*fun) ());
       
   template <class T>
-    void USetTimer(UFloat t, T* obj, int (T::*fun) ()) {
+    void USetTimer(ufloat t, T* obj, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (t,obj,fun, timermap);
     }
   

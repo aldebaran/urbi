@@ -130,7 +130,7 @@ UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UT
 // **************************************************************************	
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(UFloat period, UTimerTable &tt) : period(period)
+UTimerCallback::UTimerCallback(ufloat period, UTimerTable &tt) : period(period)
 {
   tt.push_back(this);
   lastTimeCalled = -9999999;
@@ -185,7 +185,7 @@ urbi::UNotifyChange(string varname, int (*fun) ())
 
 //! Timer definition
 void 
-urbi::USetTimer(UFloat t, int (*fun) ())
+urbi::USetTimer(ufloat t, int (*fun) ())
 {
   new UTimerCallbacknoobj(t,fun,timermap);  
 }
@@ -226,7 +226,7 @@ UObject::~UObject()
 }
 
 void
-UObject::USetUpdate(UFloat t)
+UObject::USetUpdate(ufloat t)
 {
   period = t;
   // nothing happend in remote mode...
@@ -399,7 +399,7 @@ UObjectHub::~UObjectHub()
 }
 
 void 
-UObjectHub::USetUpdate(UFloat t) 
+UObjectHub::USetUpdate(ufloat t) 
 {
   period = t;
   // nothing happend in remote mode...
