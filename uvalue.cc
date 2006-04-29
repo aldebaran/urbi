@@ -611,8 +611,12 @@ UValue::echo(UConnection *connection, bool human_readable)
   }
 
   if (dataType == DATA_STRING)
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-             "\"%s\"",str->str());
+    if (human_readable)
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+       	  "%s",str->str());
+    else
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+      	  "\"%s\"",str->str());
 
   if (dataType == DATA_FILE)
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
