@@ -134,12 +134,24 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
     buildFullname(command,connection);
   
   if (!fullname_) return(0);
-  
-  if ( (hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
-       ::urbiserver->variabletab.end())
-    tmpvar = (*hmi2).second;
-  else 
-    tmpvar = 0;
+ 
+  if ((nostruct) && 
+      (::urbiserver->objtab.find(getMethod()->str()) !=
+       ::urbiserver->objtab.end())) {
+    if ( (hmi2 = ::urbiserver->variabletab.find(getMethod()->str())) !=
+	::urbiserver->variabletab.end())
+      tmpvar = (*hmi2).second;
+    else 
+      tmpvar = 0;
+  }
+  else {
+    if ( (hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
+	::urbiserver->variabletab.end())
+      tmpvar = (*hmi2).second;
+    else 
+      tmpvar = 0;
+  }
+
   
   if (cached) variable = tmpvar;
   
@@ -420,12 +432,16 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       delete newmethod;
     }
   }
-  
+  /*
   // treat single objects with a prefix-free name:
   p = strchr(name,'.');
   if ((p) && (nostruct) && 
-	  (::urbiserver->objtab.find(p+1) != ::urbiserver->objtab.end()))
-	strncpy(name, p+1, strlen(p+1)+1);
+	  (::urbiserver->objtab.find(p+1) != ::urbiserver->objtab.end())) {
+	strncpy(name, p+1, strlen(p+1)+1);		
+	if (device) delete(device); device = 0;
+	if (method) delete(method); method = 0;
+  }
+  */	
   
   if (fullname_) fullname_->update(name);
   else fullname_ = new UString(name);

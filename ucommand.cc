@@ -684,7 +684,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   if (status == UONQUEUE) {
 	
 	// Objects cannot be assigned
-	if ((variable) && 
+	if ((variable) &&  (!variablename->fromGroup) &&
 		(variable->value->dataType == DATA_OBJ)) {
 	  
 	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
@@ -4781,7 +4781,18 @@ UCommand_DEF::execute(UConnection *connection)
 
     UString* funname = variablename->buildFullname(this,connection);
     if (!funname) return (status = UCOMPLETED);
-    
+   
+   if ((variablename->nostruct) &&
+       (::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
+	::urbiserver->grouptab.end()))  {
+      
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! function name conflicts with group %s \n",variablename->getMethod()->str());
+      connection->send(tmpbuffer,tag->str()); 
+      
+      return( status = UCOMPLETED );
+    }
+
     if (connection->server->functiontab.find(funname->str()) !=
         connection->server->functiontab.end()) {
       

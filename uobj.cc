@@ -38,6 +38,7 @@ UObj::UObj (UString *device)
   ::urbiserver->objtab[this->device->str()] = this;
   UValue* objvalue = new UValue();
   objvalue->dataType = DATA_OBJ;
+  objvalue->str = new UString(device);
   new UVariable(this->device->str(), objvalue);
 }
 

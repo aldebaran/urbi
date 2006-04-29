@@ -282,7 +282,8 @@ UValue::UValue(const urbi::UValue &v)
 UValue::~UValue()
 {  
   FREEOBJ(UValue);
-  if ((dataType == DATA_STRING) && (str!=0)) delete (str);
+  if ( ((dataType == DATA_STRING) || (dataType == DATA_OBJ)) && 
+       (str!=0)) delete (str);
   if (dataType == DATA_BINARY) LIBERATE(refBinary);
   if (liststart) delete liststart;
   if (next) delete next;
@@ -299,7 +300,8 @@ UValue::copy()
   if (dataType == DATA_NUM) 
     ret->val = val;  
 
-  if (dataType == DATA_STRING) {
+  if ((dataType == DATA_STRING) ||
+      (dataType == DATA_OBJ)) {
     ret->str = new UString(str);
     if (!ret->str) {
       delete ret;
@@ -557,12 +559,33 @@ void
 UValue::echo(UConnection *connection, bool human_readable)
 {
   if (dataType == DATA_VOID) {
-	connection->send((const ubyte*)"void",4);
+    connection->send((const ubyte*)"void",4);
     return;
   }
   
   if (dataType == DATA_OBJ) {
-	connection->send((const ubyte*)"OBJ",3);
+ 
+    connection->send((const ubyte*)"OBJ [",5);
+    bool first = true;
+    for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+	 it != ::urbiserver->variabletab.end();
+	 it++) 
+      if ( ((*it).second->method) &&
+	   ((*it).second->devicename) && (str) &&
+	   ((*it).second->value->dataType != DATA_OBJ)) {
+	if ((*it).second->devicename->equal(str)) {
+
+	  if (!first) connection->send((const ubyte*)",",1);
+	  first = false;
+	  connection->send((const ubyte*)((*it).second->method->str()),
+	      strlen((*it).second->method->str()));      
+	  connection->send((const ubyte*)":",1);
+	  if ((*it).second->value)
+	   (*it).second->value->echo(connection, human_readable);
+	}
+      }
+    connection->send((const ubyte*)"]",1);
+
     return;
   }  
      
