@@ -1124,7 +1124,7 @@ variable:
        $$ = $1;
     }
 
-  | AROBASE purevariable {
+  | EXP purevariable {
 
       $$ = $2;
       $$->isstatic = true;
