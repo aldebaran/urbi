@@ -257,19 +257,24 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     
     if (strchr(e1->str->str(),'.') == 0) {
       nostruct = true;
-	  if (::urbiserver->objtab.find(e1->str->str()) ==
-		  ::urbiserver->objtab.end()) {
-		if (connection->stack.empty())
-		  snprintf(name,fullnameMaxSize,
-				   "%s.%s",connection->connectionTag->str(),
-				   e1->str->str());
-		else
-		  snprintf(name,fullnameMaxSize,
-				   "%s.%s",connection->stack.front()->str(),
-				   e1->str->str());
-	  }
-	  else
-		strncpy(name,e1->str->str(),fullnameMaxSize);
+      if (::urbiserver->objtab.find(e1->str->str()) ==
+	  ::urbiserver->objtab.end()) {
+	if (connection->stack.empty())
+	  snprintf(name,fullnameMaxSize,
+	      "%s.%s",connection->connectionTag->str(),
+	      e1->str->str());
+	else
+	  if (e1->str->equal("self"))
+	    snprintf(name,fullnameMaxSize,
+		"%s",connection->stack.front()->self());
+	  else 
+	    snprintf(name,fullnameMaxSize,
+		"%s.%s",connection->stack.front()->str(),
+		e1->str->str());
+	
+      }
+      else
+	strncpy(name,e1->str->str(),fullnameMaxSize);
     }
     else      
       strncpy(name,e1->str->str(),fullnameMaxSize);
@@ -286,8 +291,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
         if (funid) {
 	      if (localFunction)
 	        device->update(funid->str());
-	      if (selfFunction)
-	        device->update(funid->self());	    
+	      if (selfFunction) 
+	        device->update(funid->self());	      
   	    }
       }
       else {

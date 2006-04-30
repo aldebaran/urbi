@@ -2239,10 +2239,15 @@ UCommand_EXPR::execute(UConnection *connection)
 
   // Normal expression (no function)
 
-  UValue* ret = expression->eval(this,connection); 
- 
+  UValue *ret;
+  if (expression->variablename)
+    ret = expression->eval(this,connection, expression->variablename->fromGroup); 
+  else
+    ret = expression->eval(this,connection);
+
   if (ret==0) {   
-    connection->send("!!! EXPR evaluation failed\n",tag->str());
+    if ((expression) && (expression->variablename) && (!expression->variablename->fromGroup))
+      connection->send("!!! EXPR evaluation failed\n",tag->str());
     return (status = UCOMPLETED);
   }  
  
@@ -2598,7 +2603,7 @@ UCommand_NEW::execute(UConnection *connection)
 	objit->second->device->str());
   }
   
-  
+  bool alreadydone = false;
   // init
   // INTERNAL (module)
   string funtofind(id->str());
@@ -2609,6 +2614,7 @@ UCommand_NEW::execute(UConnection *connection)
   if ((objit->second->internalBinder) &&
       (!initdefined)) { // you redefine the internal object's constructor
     
+    alreadydone = true;
     urbi::UTable::iterator hmfi = urbi::functionmap.find(funtofind.c_str());
     if (hmfi != urbi::functionmap.end()) {
       for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
@@ -2649,6 +2655,7 @@ UCommand_NEW::execute(UConnection *connection)
     
     if (!noinit) {
      
+      alreadydone = true;
       snprintf(tmpprefix,1024,"%s.init",
       objit->second->device->str(),parameters?parameters->size():0);      
       HMbindertab::iterator itbind =
@@ -2704,8 +2711,13 @@ UCommand_NEW::execute(UConnection *connection)
       }
     }    
   }
-  else 
-  if ((!noinit) && (initdefined)) {
+
+  string funtofindobj(obj->str());
+  funtofindobj = funtofindobj + ".init";
+  bool initdefinedobj = (::urbiserver->functiontab.find(funtofindobj.c_str()) != 
+                         ::urbiserver->functiontab.end());
+
+  if ((!noinit) && (initdefinedobj) && (!alreadydone)) {
     
     persistant = false;
     morph = (UCommand*) new UCommand_EXPR(
@@ -4829,7 +4841,7 @@ UCommand_DEF::execute(UConnection *connection)
 
 
   // Single Variable definition
-  if ((variablename) && (!command) && (!parameters)) {  
+  if ((variablename) && (!command) && (!parameters) && (deftype != UDEF_FUNCTION)) {  
      
     UVariable* variable = variablename->getVariable(this,connection); 
     if (!variablename->getFullname()) return ( status = UCOMPLETED );   
@@ -4995,7 +5007,7 @@ UCommand_CLASS::execute(UConnection *connection)
 	     (UNamedParameters*) 0,
 	     (UCommand*) 0);
 	  break;
-	case EXPR_FUNCTION:	
+	case EXPR_FUNCTION:
 	  cdef = new UCommand_DEF(UDEF_FUNCTION,
 	     new UVariableName(
 	       new UString(object),
