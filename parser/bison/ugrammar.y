@@ -196,6 +196,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token BIN  "bin"
 %token WHENEVER "whenever"
 %token COPY "copy"
+%token STATIC "static"
 %token ALIAS "alias"
 %token UNALIAS "unalias"
 %token DERIV "derivation"
@@ -1124,7 +1125,7 @@ variable:
        $$ = $1;
     }
 
-  | EXP purevariable {
+  | STATIC purevariable {
 
       $$ = $2;
       $$->isstatic = true;

@@ -236,6 +236,7 @@ stopif        { return token::STOPIF;}
 freezeif      { return token::FREEZEIF;}
 every         { return token::EVERY;}
 at            { return token::AT;}
+static        { return token::STATIC;}
 whenever      { return token::WHENEVER;}
 onleave       { return token::ONLEAVE;}
 for           { return token::FOR;}
