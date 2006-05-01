@@ -74,7 +74,7 @@ public:
   UErrorValue       copybase(UCommand *command);
   virtual void      mark(UString *stopTag);
   virtual void      deleteMarked();
-  UCommand*         scanGroups(UVariableName** (UCommand::*refName)());
+  UCommand*         scanGroups(UVariableName** (UCommand::*refName)(),bool);
   virtual UVariableName** refVarName()  { return 0; };
   virtual UVariableName** refVarName2() { return 0; };
 
