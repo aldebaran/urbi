@@ -49,7 +49,7 @@ const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
 
 const int NB_HEADER_BEFORE_CUSTOM = 4;
 const char* HEADER_BEFORE_CUSTOM[] = {
-  "**************************************************************\n",
+  "*** **********************************************************\n",
   "*** URBI Language specif 1.0 - Copyright (C) 2006  Gostai SAS\n",
   "*** URBI Kernel version " 
   #include "version.h"
@@ -67,7 +67,7 @@ const char* HEADER_AFTER_CUSTOM[] = {
   "*** it under certain conditions; see LICENSE for details.\n",   
   "***\n",
   "*** See http://www.urbiforge.com for news and updates.\n",
-  "**************************************************************\n"
+  "*** **********************************************************\n"
 };
  
 const char* UNKNOWN_TAG = "notag";

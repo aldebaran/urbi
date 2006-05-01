@@ -470,7 +470,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  return(status);  
   
   // Broadcasting  
-  if (scanGroups(&UCommand::refVarName,false)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
   
   // Function call
   // morph into the function code
@@ -479,7 +479,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	UString* functionname = expression->variablename->buildFullname(this,connection);
 	if (!functionname) return ( status = UCOMPLETED );
 	
-	if (scanGroups(&UCommand::refVarName2,false)) return ( status = UMORPH );
+	if (scanGroups(&UCommand::refVarName2,true)) return ( status = UMORPH );
 	
 	UFunction *fun;
 	HMfunctiontab::iterator hmf;
@@ -1553,7 +1553,7 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
   }
 
   // Broadcasting  
-  if (scanGroups(&UCommand::refVarName,false)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
 
   // Type checking
   UValue *value;
@@ -1662,7 +1662,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   UString* devicename = variablename->getDevice();
 
   // Broadcasting  
-  if (scanGroups(&UCommand::refVarName,false)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
 
   // variable existence checking
   if (!variable) {
@@ -4622,7 +4622,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   UString* devicename = variablename->getDevice();
 
   // Broadcasting  
-  if (scanGroups(&UCommand::refVarName,false)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
 
   // Main execution
   if (type == CMD_INCREMENT) {

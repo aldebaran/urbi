@@ -1575,7 +1575,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     return(ret);
 
   case EXPR_TEST_DEQ:
-    
+
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
@@ -1611,11 +1611,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       variable = expression2->variablename->getVariable(command,connection); 
       if (variable) d2 = variable->delta;
     }
-    if (d1+d2 == 0) {
-      variable = ::urbiserver->getVariable(MAINDEVICE,"epsilontilde");
-      if (variable) d1 = variable->value->val;      
-    }
-
+  
     ret->val = (ABSF(e1->val - e2->val) <= d1+d2 );      
     
     delete(e1);
