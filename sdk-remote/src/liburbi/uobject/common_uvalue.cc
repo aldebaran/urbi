@@ -469,6 +469,7 @@ UValue::operator string() const {
    case DATA_STRING:
      return *stringValue;
      break;
+   default: return string("invalid");
    };
 };
 
