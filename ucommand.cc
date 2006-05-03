@@ -2203,7 +2203,7 @@ UCommand_EXPR::execute(UConnection *connection)
    	      (expression->parameters->size() == (*cbi)->nbparam)) ||           
     	    ( (!expression->parameters) && (!(*cbi)->nbparam)) ) {
        	  
-  	  // here you could spawn a thread... if only Aprios knew how to!
+  	  // here you could spawn a thread... if only Aperios knew how to!
   	  urbi::UList tmparray;
   	  for (UNamedParameters *pvalue = expression->parameters;               
    	      pvalue != 0;
@@ -2228,10 +2228,11 @@ UCommand_EXPR::execute(UConnection *connection)
 	  if ((ret.dataType!=DATA_BINARY) && (ret.dataType!=DATA_VOID)) 
 	    connection->endline();
 	  return( status = UCOMPLETED );
-	}
-	
-	return( status = UCOMPLETED );
+	}		
       }
+      
+      connection->send("!!! Invalid function call\n",tag->str());
+      return( status = UCOMPLETED );
     }
   }
 
@@ -3772,7 +3773,7 @@ std::ostringstream tstr;
 #ifdef ENABLE_BENCH
    dotest(connection->server);
 #endif
-tstr <<  "*** pong time="<<connection->server->getTime()<<'\n';
+tstr <<  "*** pong time="<<left <<connection->server->getTime()<<'\n';
 
 connection->send(tstr.str().c_str(),tag->str());
     return( status = UCOMPLETED );
