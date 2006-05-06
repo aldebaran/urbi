@@ -4077,31 +4077,36 @@ connection->send(tstr.str().c_str(),tag->str());
 
       fullname = (*retr).second->varname;
       if ((*retr).second->uservar) {
-ostringstream tstr;
-        switch ((*retr).second->value->dataType) {
-        case DATA_NUM:
-    tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
-      <<'\n';
-          break;
+	ostringstream tstr;
+	switch ((*retr).second->value->dataType) {
+	  case DATA_NUM:
+	    tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
+	      <<'\n';
+	    break;
           
-        case DATA_STRING:
-    tstr << "*** " << fullname->str() << " = " << (*retr).second->value->str->str()
-      <<'\n';
-          break;
-          
-        case DATA_BINARY:
-          if ((*retr).second->value->refBinary)
-      tstr <<"*** "<<fullname->str()<<" = BIN "<<
-	(*retr).second->value->refBinary->ref()->bufferSize<<'\n';
-          else
-      tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
-          break;
-          
-        default:
-    tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
-        } // end switch
-        
-        connection->send(tmpbuffer,tag->str());
+	  case DATA_STRING:
+	    tstr << "*** " << fullname->str() << " = " << (*retr).second->value->str->str()
+	      <<'\n';
+	    break;
+	    
+	  case DATA_BINARY:
+	    if ((*retr).second->value->refBinary)
+	      tstr <<"*** "<<fullname->str()<<" = BIN "<<
+		(*retr).second->value->refBinary->ref()->bufferSize<<'\n';
+	    else
+	      tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
+	    break;
+	   
+	   case DATA_OBJ:
+	      tstr << "*** " << fullname->str() << " = OBJ " << (*retr).second->value->str->str()
+	      <<'\n';
+	    break;
+
+	  default:
+	    tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
+	} // end switch
+	
+	connection->send(tstr.str().c_str(),tag->str());
       }
     }
     
