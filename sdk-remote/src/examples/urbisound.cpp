@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     if (!strcmp(argv[3],"-")) 
       file=stdout;
     else 
-      file = fopen(argv[3], "w+");
+      file = fopen(argv[3], "wb+");
     fname = argv[3];
     if (file==0) {
       printf("error creating file\n");
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 #else
     outtodsp = true;	 
     withheader = false;
-    file = fopen(device, "w" );
+    file = fopen(device, "wb" );
     if (file==0) {
       printf("error opening device\n"), exit(2);
     } 
