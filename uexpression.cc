@@ -1214,6 +1214,35 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       return(ret);
     }
 
+    if ( (parameters!=0  && 
+	  (parameters->size() == 2) &&
+	  (
+	   (strcmp(variablename->id->str(),"atan2")==0) 
+	  ))) {
+       e1 = parameters->expression->eval(command,connection);
+
+      if (e1==0) return 0;   
+      if (e1->dataType != DATA_NUM) {
+        delete e1;
+        return 0;
+      }
+       e2 = parameters->next->expression->eval(command,connection);
+
+      if (e2==0) return 0;   
+      if (e2->dataType != DATA_NUM) {
+        delete e1;
+	delete e2;
+        return 0;
+      }
+      ret = new UValue();
+      ret->dataType = DATA_NUM;
+
+      if (strcmp(variablename->id->str(),"atan2")==0)  ret->val = atan2(e1->val,e2->val);
+
+      delete e1;
+      delete e2;
+      return ret;
+    }
     if ( (parameters!=0) &&
          (parameters->size() == 1) &&
          (  (strcmp(variablename->id->str(),"sin")==0) ||
