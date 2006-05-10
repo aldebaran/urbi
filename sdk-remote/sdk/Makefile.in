@@ -1,8 +1,8 @@
-prefix = @prefix@
+prefix= @prefix@
 
 TARGETNAME=remote
 
-all: mkgccversion
+all: mkgccversion copyfiles
 
 mkgccversion:
 	$(CXX) -v 2>&1 |grep version > gccversion
@@ -12,17 +12,24 @@ gccversion: mkgccversion
 EXTRALDFLAGS	+= $(LIB_DIR:%=-L%)
 EXTRALDFLAGS	+= $(LIBS:%=-l%)
 
+copyfiles:
+	cp ../src/liburbi/liburbi.a .
+	cp ../src/liburbi/uobject/uobject.h .
+	cp ../src/liburbi/uobject/libuobject.a .
+
 
 link:  sanity umain.o
-	$(CXX) $(LDFLAGS) -o  urbimodule  -L$(prefix)/lib umain.o $(EXTRALDFLAGS) -lurbi -luobject -pthread
+	$(CXX) $(LDFLAGS) -o  urbimodule  -L$(prefix)/share/urbicore/remote/ umain.o $(EXTRALDFLAGS) -lurbi -luobject -pthread
 
 umain.cc:
 	cp $(prefix)/share/urbicore/remote/umain.cc ./
 
-install: gccversion
+install:
 	mkdir -p  $(prefix)/share/urbicore/remote/
-	cp Makefile Makefile.param umain.cc gccversion $(prefix)/share/urbicore/remote/
-	sed -e "s@PREFIX=.*@PREFIX=$(PREFIX)@" Makefile.module > $(prefix)/share/urbicore/Makefile.module
+	cp Makefile.param umain.cc gccversion libuobject.a liburbi.a  $(prefix)/share/urbicore/remote/
+	cp uobject.h  $(prefix)/share/urbicore/include
+	sed -e "s@PREFIX=.*@PREFIX=$(prefix)@" Makefile.module > $(prefix)/share/urbicore/Makefile.module
+	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile > $(prefix)/share/urbicore/remote/Makefile
 sanity:
 	$(CXX) -v 2>&1 |grep version | cmp $(prefix)/share/urbicore/remote/gccversion || echo "WARNING: gcc version mismatch"
 	

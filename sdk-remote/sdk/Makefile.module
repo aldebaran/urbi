@@ -37,7 +37,7 @@ link: module
 	make -f  $(PREFIX)/share/urbicore/$(TARGET)/Makefile link "LIB_DIR=./ $(LIB_DIR)" "LIBS=$(MODULENAME) $(LIBS)"
 	
 clean:
-	rm -f $(OBJECTS) lib$(MODULENAME).a: URBI.bin urbimodule
+	rm -f $(OBJECTS) lib$(MODULENAME).a URBI.bin urbimodule
 
 aibo:
 	make TARGET=aibo link
