@@ -377,7 +377,7 @@ urbi {
     operator USound(); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
     operator ufloat ();
     operator string ();
-  
+   operator UList();  
     //kernel operators
     ufloat& in();
     ufloat& out();
