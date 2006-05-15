@@ -26,7 +26,10 @@
 #include "utypes.h"
 #include "uvalue.h"
 #include "ucommand.h"
+#define private protected
 #include "uconnection.h"
+#undef private
+
 #include "userver.h"
 #include "uobject.h"
 #if (__GNUC__ == 2)
@@ -102,6 +105,29 @@ UValue::operator urbi::UImage() {
   return img;
 }
 
+class DumbConnection:public UConnection {
+  public:
+    DumbConnection():
+      UConnection(::urbiserver,1000,1000000,1000,1000,1000) {
+      }
+     virtual UErrorValue closeConnection    () {return USUCCESS;}
+     char * getData() {return (char *)sendQueue_->virtualPop(sendQueue_->dataSize());}
+  protected:
+     virtual int         effectiveSend     (const ubyte *buffer, int length) {return 0;};
+};
+
+
+UValue::operator urbi::UList() {
+  DumbConnection dc;
+  echo(&dc);
+  char * data=dc.getData();
+  urbi::UValue v;
+  std::list<urbi::BinaryData> b;
+  std::list<urbi::BinaryData>::iterator i=b.begin();
+  v.parse(data,0,b,i);
+  urbi::UList  l=*v.list;
+  return l;
+}
 
 
 UValue::operator urbi::USound() {

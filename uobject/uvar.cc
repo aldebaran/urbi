@@ -191,6 +191,11 @@ UVar::operator string () {
     return string("");    
 }
 
+UVar::operator UList() {
+return (UList)*vardata->variable->value;
+
+}
+
 UVar::operator urbi::UBinary() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
     //simplest way is to echo our bin headers and parse again

@@ -220,7 +220,7 @@ UTimerCallback::~UTimerCallback()
 // **************************************************************************	
 //  Monitoring functions
 
-int voidfun() { echo("void fun call\n"); };
+int voidfun() {/*echo("void fun call\n");*/};
 
 //! Generic UVar monitoring without callback
 void

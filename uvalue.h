@@ -32,6 +32,7 @@ namespace urbi {
   class UBinary;
   class UImage;
   class USound;
+  class UList;
 };
 
 class UBinary;
@@ -52,6 +53,8 @@ public:
   UValue & operator = (const urbi::UBinary&); 
   operator urbi::UImage ();
   operator urbi::USound();
+  operator urbi::UList();
+
   ~UValue();
 
   UDataType       dataType;     ///< Type of the value
