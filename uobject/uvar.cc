@@ -79,7 +79,7 @@ UVar::__init()
     ::UValue(),false,false,true));  // autoupdate unless otherwise specified
   else {
     vardata = new UVardata(it->second); 
-    owned = !vardata->variable->autoUpdate;
+    //XXX why?? owned = !vardata->variable->autoUpdate;
   }  
 }
 
