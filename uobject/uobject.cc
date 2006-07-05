@@ -26,7 +26,10 @@
 #include "uobject.h"
 using namespace urbi;
 using namespace std;
-
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#endif
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
@@ -49,7 +52,7 @@ namespace urbi {
   UTimerTable timermap;
   UTimerTable updatemap;
 
-  
+
   UVar& cast(UValue &v, UVar *) {
     return (*((UVar*)v.storage));    
   };
@@ -73,6 +76,7 @@ namespace urbi {
 	return UObjectStruct(*v.object);
   }
   
+
 }
 
 using namespace urbi;
@@ -220,7 +224,7 @@ UTimerCallback::~UTimerCallback()
 // **************************************************************************	
 //  Monitoring functions
 
-int voidfun() {/*echo("void fun call\n");*/};
+int voidfun() {/*echo("void fun call\n");*/ return 0;};
 
 //! Generic UVar monitoring without callback
 void
@@ -354,6 +358,7 @@ UObjectHub::updateGlobal()
        it++) 
     (*it)->update();
   update();
+  return 0;
 }
 
 void 
