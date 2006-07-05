@@ -25,5 +25,5 @@ int
 main(int argc, char *argv[])
 {
   urbi::main(argc, argv);
-  urbi::execute();
+  while(1) usleep(10000); //urbi::execute();
 };

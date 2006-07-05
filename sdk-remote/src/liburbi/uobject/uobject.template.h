@@ -25,10 +25,10 @@
 #include <list>
 #ifdef _MSC_VER
 #include <hash_map>
+using std::hash_map;
 #else
 #include <hash_map.h>
 #endif
-using std::hash_map;
 using std::string;
 using std::list;
 using std::vector;
@@ -391,7 +391,7 @@ urbi {
     void operator = ( ufloat );
     void operator = ( string );
     void operator = ( const UBinary &); 
-    void operator = ( const UImage &i) {UBinary b; b.type=BINARY_IMAGE;b.image=i; (*this)=b; b.common.data=0;} ///< Data is copied
+    void operator = ( const UImage &i); ///< No data is copied in plugin mode
     void operator = ( const USound &s) {UBinary b; b.type=BINARY_SOUND;b.sound=s; (*this)=b; b.common.data=0;} ///< Data is copied
 
 
