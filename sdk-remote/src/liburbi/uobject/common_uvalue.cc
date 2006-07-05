@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include "uobject.h" 
 #include <sstream>
+#include <iostream>
 using namespace urbi;
 
 //////////////////////
@@ -255,7 +256,9 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
 	}
 	s<< "]";
       }  
-      break;      
+      break;   
+	default:	
+	 s<< "<<void>>";
   }
   return s;
 }
@@ -584,6 +587,7 @@ UBinary & UBinary::operator = (const UBinary &b) {
   }
   common.data = malloc(common.size);
   memcpy(common.data, b.common.data, b.common.size);
+  return *this;
 }
 
 

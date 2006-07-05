@@ -23,7 +23,15 @@
 
 #include <string>
 #include <list>
+#ifdef _MSC_VER
+#include <hash_map>
+#else
 #include <hash_map.h>
+#endif
+using std::hash_map;
+using std::string;
+using std::list;
+using std::vector;
 //#include <iostream> // should not be there, remove after debug
 //#include <uclient.h>
 #ifdef HAVE_UFLOAT_H
@@ -55,7 +63,7 @@ extern SingletonPtr<cl##name> name
 
 
 
-using namespace std;
+#ifndef _MSC_VER
 
 // A quick hack to be able to use hash_map with string easily
 #if (__GNUC__ == 2)
@@ -72,7 +80,25 @@ __STL_END_NAMESPACE
 #else
 }
 #endif
+#else //_MSC_VER
+_STD_BEGIN
+template<> class hash_compare<std::string> {
+ public:
+	 enum
+		{	// parameters for hash table
+		bucket_size = 4,	// 0 < bucket_size
+		min_buckets = 8};	// min_buckets = 2 ^^ N, 0 < N
 
+	  size_t operator()( const std::string& x ) const
+    { return hash_compare< const char* >()( x.c_str() );}
+
+	bool operator()(const string& _Keyval1, const string& _Keyval2) const
+		{	// test if _Keyval1 ordered before _Keyval2
+		return (_Keyval1< _Keyval2);
+		}
+};
+_STD_END
+#endif
 
 
 // This macro is here to make life easier
@@ -85,7 +111,7 @@ __STL_END_NAMESPACE
 // These macros are here to make life easier
 #define UBindVar(obj,x) x.init(__name,#x)
 #define USensor(x) x.setOwned()
-#define UBindFunction(obj,x)  createUCallback("function", this,(&obj::x),__name+"."+string(#x),functionmap)
+#define UBindFunction(obj,x)  createUCallback((string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
 #define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),__name+"."+string(#x),eventmap)
 #define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
 
@@ -529,7 +555,7 @@ urbi {
     UObjectHub  *objecthub; ///< the hub, if it exists
 
     void USetUpdate(ufloat);
-    virtual int update() {}; 
+    virtual int update() {return 0;}; 
 
     UVar        load;
   
@@ -586,7 +612,7 @@ urbi {
     }
 
     void addMember(UObject* obj);
-    virtual int update() {};
+    virtual int update() {return 0;}
   
 
     UObjectList members;
@@ -614,15 +640,28 @@ urbi {
   // *****************************************************************************
   // Casteurs
 
-  // generic caster  , second parameter used only to guess correct type
+  
+#ifndef _MSC_VER
+
+	// generic caster  , second parameter used only to guess correct type
   template <class T>  T cast(UValue &v, T* type) { return (T)v; }
 
   // specializations 
-  UVar& cast(UValue &v, UVar *v);
+  UVar& cast(UValue &val, UVar *var);
   UBinary cast(UValue &v, UBinary * b);
   UList cast(UValue &v, UList *l);
   UObjectStruct cast(UValue &v, UObjectStruct *o);
-  
+#else
+	//something weird happenw when overloading with a different return type, so define everythiong by hand
+
+#define SETCAST(type) inline type cast(UValue &val, type *inu) { return (type)val;}
+
+  SETCAST(int); SETCAST(ufloat); SETCAST(std::string);
+  UVar& cast(UValue &val, UVar *var);
+  UBinary cast(UValue &v, UBinary * b);
+  UList cast(UValue &v, UList *l);
+  UObjectStruct cast(UValue &v, UObjectStruct *o);
+#endif
 
   // **************************************************************************	
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
@@ -723,11 +762,18 @@ template<typename T> class utrait {
   public:
     typedef T noref;
 };
+#ifndef _MSC_VER
 template<typename T> class utrait<T&> {
   public:
     typedef T noref;
 };
+#else
+template<> class utrait<UVar&> {
+  public:
+    typedef UVar noref;
+};
 
+#endif
 
 %%%% 0 16
 
