@@ -162,7 +162,19 @@ UVar::operator = (const UBinary &b)
   vardata->variable->updated();
 }
 
-
+//! UVar binary assignment
+void
+UVar::operator = (const UImage &b)
+{
+  if (!vardata) {
+    urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
+	name.c_str());
+    return;
+  }
+  *vardata->variable->value=b;
+  vardata->variable->updated();
+}
+                        
 
 // UVar Casting
 

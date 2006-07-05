@@ -353,8 +353,8 @@ typedef std::hash_map<const char*, UBinder*, str_compare> HMbindertab ;
 
 #else
 
-typedef std::hash_map<const char*,
-                 UVariable*> HMvariabletab
+typedef hash_map<const char*,
+                 UVariable*, 
                  hash<const char*>,
                  eqStr>                 HMvariabletab; ///< hash of variable values*/
 

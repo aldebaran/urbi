@@ -204,6 +204,48 @@ UValue::operator urbi::USound() {
 
 #undef VALIDATE
 
+UValue & UValue::operator = (const urbi::UImage &i) {
+  dataType = DATA_BINARY;
+  //building unamedparameters
+  UNamedParameters * first=0;
+  switch (i.imageFormat) {
+    case urbi::IMAGE_RGB:
+      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("rgb")));
+      break;
+    case urbi::IMAGE_YCbCr:
+      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("YCbCr")));
+      break;
+    case urbi::IMAGE_JPEG:
+      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("jpeg")));
+      break;
+    default:
+      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));
+      break;
+  };
+  first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, i.width));
+  first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, i.height));
+  if ((dataType == DATA_BINARY) && refBinary && (refBinary->ref()->buffer == (void*)i.data)) {
+    //just copy the parameters
+    delete refBinary->ref()->parameters;
+    refBinary->ref()->parameters=first;
+    refBinary->ref()->bufferSize = i.size;
+  }
+  else {
+    if ((dataType == DATA_BINARY) && (refBinary)) {
+      LIBERATE(refBinary);
+    }
+    dataType = DATA_BINARY;
+    UBinary *bin = new UBinary(i.size, first);
+    bin->bufferSize =  i.size;
+    //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
+    free(bin->buffer);
+    bin->buffer=const_cast<ubyte *>((const ubyte *)i.data);
+    refBinary = new URefPt<UBinary>(bin);      
+  }
+  return *this;
+}
+
+
 UValue & UValue::operator = (const urbi::UBinary &b) {
   //TODO: cleanup
  if ((dataType == DATA_BINARY) && (refBinary)) {
