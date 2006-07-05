@@ -21,7 +21,9 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 #include <math.h>
 #include <stdio.h>
-
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 #include "uvariablename.h"
 #include "ucommand.h"
 #include "uconnection.h"
@@ -229,7 +231,7 @@ true to avoid recalculus on next call.
 UString* 
 UVariableName::buildFullname(UCommand *command, UConnection *connection, bool withalias)
 {
-  int    fullnameMaxSize = 1024;
+  const int    fullnameMaxSize = 1024;
   char   name[fullnameMaxSize];
   char   indexstr[fullnameMaxSize];
   UValue *e1;

@@ -3,24 +3,28 @@
 
 
 #ifdef WIN32
+#define _WIN32_WINNT 0x0400
 #include <windows.h>
-#error "write this code"
+
 typedef CRITICAL_SECTION Lock;
 inline void initLock(Lock &l) {
-  InitializeCriticalSection(&l,0);
+  InitializeCriticalSection(&l);
 }
 inline void lockLock(Lock &l) {
-  pthread_mutex_lock(&l);
+  EnterCriticalSection(&l);
 }
 
 inline void lockUnlock(Lock &l) {
-  pthread_mutex_unlock(&l);
+  LeaveCriticalSection(&l);
 }
 
 inline void deleteLock(Lock &l) {
-  pthread_mutex_destroy(&l);
+  DeleteCriticalSection(&l);
 }
 
+inline bool lockTryLock(Lock &l) {
+  return TryEnterCriticalSection(&l);
+}
 
 #else
 #if (OS == aibo)

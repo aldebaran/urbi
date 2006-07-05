@@ -1,14 +1,18 @@
 #include <list>
-
-
-
+#include <algorithm>
+using std::find;
+#ifdef WIN32
+#define _WIN32_WINNT 0x0400
+#endif
 #include "network.h"
 #include "Connection.h"
 
-
+#ifndef _MSC_VER
 #include <sys/time.h>
-#include <sys/types.h>
 #include <unistd.h>
+#endif
+#include <sys/types.h>
+
 #include <stdio.h>
 
 extern UServer * THESERVER;
@@ -170,7 +174,12 @@ namespace Network {
       pList.erase(i); 
   }
 
-  void * processNetwork(void * useless) {
+#ifdef WIN32
+  DWORD WINAPI
+#else
+  void *
+#endif
+  processNetwork(void * useless) {
     while (true) {
       selectAndProcess(1000000);
     }
@@ -179,7 +188,8 @@ namespace Network {
   
   void startNetworkProcessingThread() {
     #ifdef WIN32
-    #error "write this"
+    DWORD tid;
+    CreateThread(NULL,0,processNetwork,0,0,&tid);
     #else
     pthread_t * pt = new pthread_t;
     pthread_create(pt, 0, &processNetwork, 0);

@@ -18,7 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
+#include <algorithm>
+using std::find;
 #include "ubinder.h"
 #include "ustring.h"
 #include "uvalue.h"

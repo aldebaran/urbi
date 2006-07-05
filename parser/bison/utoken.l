@@ -26,7 +26,8 @@
 #include <cstring>
 
 #include "../uparser.h"
-
+using std::cin;
+using std::cout;
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 

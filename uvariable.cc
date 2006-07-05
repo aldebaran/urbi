@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 #include <stdio.h>
 #include "uvariable.h"
@@ -27,8 +27,10 @@
 #include "ucommand.h"
 #include "utypes.h"
 #include "uconnection.h"
-#include "uobject.h"
-
+#include "uobject/uobject.h"
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 
 MEMORY_MANAGER_INIT(UVariable);
 

@@ -31,10 +31,12 @@
 #undef private
 
 #include "userver.h"
-#include "uobject.h"
+#include "uobject/uobject.h"
 #if (__GNUC__ == 2)
 static const string fixed = "";
 #endif
+
+
 
 MEMORY_MANAGER_INIT(UValue);		
 // **************************************************************************	
@@ -632,7 +634,7 @@ UValue::echo(UConnection *connection, bool human_readable)
 
   if (dataType == DATA_NUM) {
     std::ostringstream ostr;
-    ostr << fixed << val;
+	ostr << std::fixed << val;
     strcpy(tmpbuffer, ostr.str().c_str());
   }
 

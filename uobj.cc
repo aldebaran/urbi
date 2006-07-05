@@ -19,6 +19,9 @@
 
  **************************************************************************** */
 #include <stdio.h>
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 #include "uobj.h"
 #include "ustring.h"
 #include "uvalue.h"

@@ -28,11 +28,11 @@
 #include "userver.h"
 #include "ucallid.h"
 #include "utypes.h"
-#include "uobject.h"
+#include "uobject/uobject.h"
 #if (__GNUC__ == 2)
 static const string left = "";
 #endif
-
+using std::ostringstream;
 char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];  ///< temporary global string                                              
 MEMORY_MANAGER_INIT(UCommand);
 // **************************************************************************
@@ -3773,7 +3773,7 @@ std::ostringstream tstr;
 #ifdef ENABLE_BENCH
    dotest(connection->server);
 #endif
-tstr <<  "*** pong time="<<left <<connection->server->getTime()<<'\n';
+   tstr <<  "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
 connection->send(tstr.str().c_str(),tag->str());
     return( status = UCOMPLETED );
@@ -3833,10 +3833,7 @@ connection->send(tstr.str().c_str(),tag->str());
      "*** All variables and functions cleared\n");
     connection->send(tmpbuffer,tag->str());
 
-    for ( hash_map<const char*,
-            UVariable*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
+    for ( HMvariabletab::iterator retr = 
             connection->server->variabletab.begin();
           retr != connection->server->variabletab.end();) {
       if ((*retr).second->uservar)
@@ -4024,10 +4021,7 @@ connection->send(tstr.str().c_str(),tag->str());
   UString* fullname;
 
   if (strcmp(oper->str(),"vars")==0) {
-    for ( hash_map<const char*,
-            UVariable*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
+    for ( HMvariabletab::iterator retr = 
             connection->server->variabletab.begin();
           retr != connection->server->variabletab.end();
           retr++) {
@@ -4067,10 +4061,7 @@ connection->send(tstr.str().c_str(),tag->str());
   }  
 
   if (strcmp(oper->str(),"uservars")==0) {
-    for ( hash_map<const char*,
-            UVariable*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
+    for ( HMvariabletab::iterator retr = 
             connection->server->variabletab.begin();
           retr != connection->server->variabletab.end();
           retr++) {
@@ -4774,10 +4765,7 @@ UCommand_DEF::execute(UConnection *connection)
        (!parameters) && 
        (!variablelist)) {
     
-    for ( hash_map<const char*,
-            UFunction*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
+    for ( HMfunctiontab::iterator retr = 
             connection->server->functiontab.begin();
           retr != connection->server->functiontab.end();
           retr++) {

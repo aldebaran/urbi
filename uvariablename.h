@@ -26,7 +26,7 @@
 #include "ustring.h"
 
 #include <list>
-using namespace std;
+using std::list;
 
 class UCommand;
 class UExpression;

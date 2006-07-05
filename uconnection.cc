@@ -29,7 +29,9 @@
 #include "parser/uparser.h"
 #include "ucallid.h"
 #include "uvariable.h"
-
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 char errorMessage[1024]; // Global variable (thanks bison...) to store the
                          // the error message when a parsing error occurs.
 
@@ -258,6 +260,7 @@ UConnection::sendPrefix (const char* tag)
   }
   
   send((const ubyte*)tmpBuffer_,strlen(tmpBuffer_));
+  return USUCCESS;
 }
 
 //! Send a "\n" through the connection
@@ -265,6 +268,7 @@ UErrorValue
 UConnection::endline ()
 {  
   send((const ubyte*)"\n",1);
+  return USUCCESS;
 }
 
 

@@ -30,7 +30,10 @@
 #include "ughostconnection.h"
 #include "uobject/uobject.h"
 
-
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#endif
 // Global server reference
 UServer    *urbiserver= 0;
 UString    **globalDelete = 0;

@@ -1,5 +1,6 @@
 #ifdef WIN32
 #define GROUP __GROUP
+#define _WIN32_WINNT 0x0400
 #include <winsock2.h>
 #undef GROUP
 #define YYTOKENTYPE

@@ -35,7 +35,9 @@
 #include "ucommand.h"    
 
 class UParser;
-
+using std::cin;
+using std::cout;
+using std::cerr;
 %}
 
 /* Possible data type returned by the bison parsing mechanism */
@@ -61,10 +63,15 @@ class UParser;
 %{
 // Is included in ugrammar.cc
 //#include <cmath> 
+#ifdef VISUALCPP
+#include <hash_map>
+#else
 #include <hash_map.h>
-
+#endif
 #include <string>
-
+#include <iostream>
+using std::cin;
+using std::cout;
 #define TRUE ufloat(1)
 #define FALSE ufloat(0)
 

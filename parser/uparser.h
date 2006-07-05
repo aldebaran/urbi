@@ -29,7 +29,11 @@
 #include <sstream>
 #include <algorithm>
 #include <string>
-
+#ifdef _MSC_VER
+#ifdef min
+#undef min
+#endif
+#endif
 #include "utypes.h"
 #undef IN
 #include "bison/FlexLexer.h"

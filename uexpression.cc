@@ -22,6 +22,9 @@
 #include <math.h>
 #include <stdio.h>
 #include <sstream>
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 #include "uexpression.h"
 #include "ucommand.h"
 #include "uconnection.h"

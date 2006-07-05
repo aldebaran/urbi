@@ -22,7 +22,7 @@
 #ifndef USTRING_H_DEFINED
 #define USTRING_H_DEFINED
 
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 #include "memorymanager/memorymanager.h"
 

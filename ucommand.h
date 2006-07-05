@@ -38,7 +38,7 @@
 #include "ubinary.h"
 #include "ucallid.h"
 
-using namespace std;
+using std::list;
 
 class UCommand;
 class UExpression;

@@ -34,7 +34,7 @@ namespace urbi {
   }
   
 #include <list>
-using namespace std;
+using std::list;
 
 
 

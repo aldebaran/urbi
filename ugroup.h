@@ -26,7 +26,7 @@
 class UVariableName;
 class UValue;
 #include <list>
-using namespace std;
+using std::list;
 
 
 // *****************************************************************************

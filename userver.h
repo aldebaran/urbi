@@ -30,9 +30,9 @@ class UVariable;
 
 #include <list>
 #include <string>
-#include <hash_map.h>
-#include "parser/uparser.h"
+
 #include "utypes.h"
+#include "parser/uparser.h"
 #include "ufunction.h"
 #include "uvariable.h"
 #include "ubinder.h"
@@ -43,7 +43,7 @@ class UString;
 class UParser;
 class UQueue;
 
-using namespace std;
+using std::list;
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -140,6 +140,11 @@ public:
 
   list<UVariable*>         reinitList; ///< variables to reinit (nbAverage=0)
 
+#ifdef _MSC_VER
+  std::hash_map<const char *,bool, str_compare> blocktab;
+  std::hash_map<const char *,bool, str_compare> freezetab;
+
+#else
   hash_map<const char*,
     bool,
     hash<const char*>,
@@ -149,7 +154,7 @@ public:
     bool,
     hash<const char*>,
     eqStr>                 freezetab;  ///< hash of the freezed tags.
- 
+#endif	
   UParser                  parser; ///< The main parser object
   bool                     memoryOverflow; ///< Flag used to signal a memory 
                                            ///< Overflow.

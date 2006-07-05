@@ -22,7 +22,7 @@
 #ifndef UFUNCTION_H_DEFINED
 #define UFUNCTION_H_DEFINED
 
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 
 class UString;

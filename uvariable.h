@@ -22,14 +22,14 @@
 #ifndef UVARIABLE_H_DEFINED
 #define UVARIABLE_H_DEFINED
 
-#include <string.h>
+#include <string>
 #include <stdlib.h>
 #include "memorymanager/memorymanager.h"
 #include <uvalue.h>
 #include "ustring.h"
 #include "utypes.h"
 #include <list>
-using namespace std;
+using std::list;
 
 class UNamedParameters;
 class UCommand;
