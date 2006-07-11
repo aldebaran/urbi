@@ -120,7 +120,7 @@ public:
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
-
+  UGhostConnection *     getGhostConnection() {return ghost;}
   list<UConnection*>       connectionList; ///< list of active connections: includes
                                            ///< one UGhostConnection
 

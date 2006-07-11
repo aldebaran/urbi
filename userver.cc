@@ -183,18 +183,8 @@ UServer::initialization()
   
   debugOutput     = false;
 
-  // Plugins (internal softdevices)
-  
-  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
-      retr != urbi::objecthublist->end();
-      retr++) 
-    (*retr)->init((*retr)->name);
-  
-  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
-      retr != urbi::objectlist->end();
-      retr++) 
-    (*retr)->init((*retr)->name);
-  
+   
+  //The order is important: ghost connection, plugins, urbi.ini
 
   // Ghost connection
   ghost  = new UGhostConnection(this); 
@@ -206,6 +196,22 @@ UServer::initialization()
   new UVariable(MAINDEVICE,"ghostID", tmpbuffer_ghostTag);
 
   uservarState = true;
+
+
+   // Plugins (internal softdevices)
+  
+  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
+      retr != urbi::objecthublist->end();
+      retr++) 
+    (*retr)->init((*retr)->name);
+  
+  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
+      retr != urbi::objectlist->end();
+      retr++) 
+    (*retr)->init((*retr)->name);
+
+
+
   if (loadFile("URBI.INI",ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true; 
 }

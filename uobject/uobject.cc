@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <list>
 #include "userver.h"
+#include "uconnection.h"
+#include "ughostconnection.h"
 #include "uobject.h"
 using namespace urbi;
 using namespace std;
@@ -75,7 +77,19 @@ namespace urbi {
 	  return UObjectStruct();
 	return UObjectStruct(*v.object);
   }
-  
+
+
+   void uobject_unarmorAndSend(const char * str) {
+     //feed this to the ghostconnection
+     UConnection * ghost = urbiserver->getGhostConnection();
+     if (strlen(str)>=2 && str[0]=='(')
+       ghost->received((const unsigned char *)(str+1),strlen(str)-2);
+     else
+       ghost->received(str);
+
+     ghost->newDataAdded = true; 
+
+   }
 
 }
 
@@ -94,7 +108,7 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
   
   t[this->name].push_back(this);
     
-  if (type == "var") {
+  if (type == "var" || type=="var_onrequest") {
     
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
     if (it == ::urbiserver->variabletab.end()) {

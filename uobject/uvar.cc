@@ -302,6 +302,10 @@ UVar::blend()
 }
 
 
+void
+UVar::requestValue() {
+  //do nothing
+}
 
 
 //! UVar update
