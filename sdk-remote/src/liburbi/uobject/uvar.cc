@@ -19,6 +19,7 @@
  **************************************************************************** */
 
 #include "uobject.h"
+#include "uexternal.h"
 using namespace urbi;
 
 #include <uclient.h>
@@ -186,4 +187,10 @@ void
 UVar::setOwned()
 {
   owned = true;
+}
+
+void
+UVar::requestValue() {
+  //build a getvalue message  that will be parsed and returned by the server
+  URBI() << externalModuleTag<<':'<<'[' << UEM_ASSIGNVALUE << ","  <<'"'<<name<<'"'<<','<<name<<"];";
 }

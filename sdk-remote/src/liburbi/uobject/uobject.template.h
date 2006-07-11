@@ -125,6 +125,12 @@ _STD_END
 #define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
   () { return varname; } void set_ ## varname (vartype& ____value) { varname = ____value; }  private:
 
+
+//macro to send urbi commands
+#ifndef URBI
+#define URBI(a) urbi::uobject_unarmorAndSend(#a)
+#endif
+
 /* urbi namespace starts */
 namespace 
 urbi {
@@ -178,10 +184,11 @@ urbi {
   // Global function of the urbi:: namespace to access kernel features
 
   void echo(const char * format, ... );
-  UObjectHub* getUObjectHub(string); // retrieve a UObjectHub based on its name or return 0 if not found. 
-  UObject* getUObject(string); // retrieve a UObject based on its name or return 0 if not found.
+  UObjectHub* getUObjectHub(string); ///< retrieve a UObjectHub based on its name or return 0 if not found. 
+  UObject* getUObject(string); ///< retrieve a UObject based on its name or return 0 if not found.
 
-  
+  /// Send URBI code (ghost connection in plugin mode, default connection in remote mode)
+  void uobject_unarmorAndSend(const char * str);
   // *****************************************************************************
   // UValue and other related types
   
@@ -404,6 +411,10 @@ urbi {
     operator ufloat ();
     operator string ();
    operator UList();  
+
+
+   void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
+
     //kernel operators
     ufloat& in();
     ufloat& out();
@@ -514,6 +525,18 @@ urbi {
       UGenericCallback* cb = createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
+
+    template <class T> 
+    void UNotifyOnRequest (UVar& v, int (T::*fun) ()) { 
+      createUCallback("var_onrequest", (T*)this, fun, v.get_name(), monitormap);
+    }
+
+    template <class T>
+    void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&)) { 
+      UGenericCallback* cb = createUCallback("var_onrequest", (T*)this, fun, v.get_name(), monitormap);
+      if (cb) cb->storage = (void*)(&v);
+    }
+
 
     template <class T> 
     void UNotifyChange (string name, int (T::*fun) ()) { 

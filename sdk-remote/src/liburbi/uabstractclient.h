@@ -518,6 +518,10 @@ template<class C, class P1, class P2, class P3, class P4> UCallbackID UAbstractC
    The following construct is also valid:
    URBI() << "headPan.val="<<12<<";";
  */
+
+#ifdef URBI
+#undef URBI
+#endif
 #if defined(LIBURBI_NOARMOR)
 #if !defined(__GNUC__)
 #error "as far as we know, your compiler does not support the __VA_ARGS__ C preprocessor extension, feature unavailable"

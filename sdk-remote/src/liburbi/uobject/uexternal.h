@@ -30,6 +30,9 @@ namespace urbi {
     UEM_ENDEVENT,
     UEM_NEW
   };
+
+  static const string externalModuleTag = "__ExternalMessage__";
+
 } // namespace URBI
 
 #endif

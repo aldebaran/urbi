@@ -39,8 +39,7 @@ namespace urbi {
   STATIC_INSTANCE(UStartlistHub, objecthublist);
 
 
-  const string externalModuleTag = "__ExternalMessage__";
-
+ 
   UVarTable varmap;
   UTable functionmap;
   UTable monitormap;
@@ -80,6 +79,10 @@ namespace urbi {
 	return UObjectStruct(*v.object);
   }
   
+  std::ostream & unarmorAndSend(const char *a);
+  void uobject_unarmorAndSend(const char *a) {
+    unarmorAndSend(a);
+  }
 }
 
 
