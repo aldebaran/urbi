@@ -4,8 +4,8 @@
  File: uobject.h\n
  Definition of the UObject class and necessary related classes.
 
- This file is part of LIBURBI\n
- (c) Jean-Christophe Baillie, 2004-2006.
+ This file is part of UObject Component Architecture\n
+ (c) 2006 Gostai S.A.S.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -14,7 +14,7 @@
  either expressed or implied, including but not limited to the
  implied warranties of fitness for a particular purpose.
 
- For more information, comments, bug reports: http:////<www.urbiforge.com
+ For more information, comments, bug reports: http://www.urbiforge.com
 
  **************************************************************************** */
 
@@ -23,17 +23,21 @@
 
 #include <string>
 #include <list>
+
+// Hash maps, depending on the environment
 #ifdef _MSC_VER
 #include <hash_map>
 using std::hash_map;
 #else
 #include <hash_map.h>
 #endif
+
+// Short cuts
 using std::string;
 using std::list;
 using std::vector;
-//#include <iostream> // should not be there, remove after debug
-//#include <uclient.h>
+
+// Floating point definition (emulated or real)
 #ifdef HAVE_UFLOAT_H
 #include "ufloat.h"
 #else
@@ -61,60 +65,67 @@ extern SingletonPtr<cl##name> name
 
 
 
-
-
+// A quick hack to be able to use hash_map with string easily
 #ifndef _MSC_VER
 
-// A quick hack to be able to use hash_map with string easily
-#if (__GNUC__ == 2)
-__STL_BEGIN_NAMESPACE
-#else
-namespace __gnu_cxx {
-#endif
-  template<> struct hash< std::string > {  
-    size_t operator()( const std::string& x ) const
-    { return hash< const char* >()( x.c_str() );}
-  };
-#if (__GNUC__ == 2)
-__STL_END_NAMESPACE
-#else
-}
-#endif
-#else //_MSC_VER
-_STD_BEGIN
-template<> class hash_compare<std::string> {
- public:
-	 enum
-		{	// parameters for hash table
-		bucket_size = 4,	// 0 < bucket_size
-		min_buckets = 8};	// min_buckets = 2 ^^ N, 0 < N
+  #if (__GNUC__ == 2)
+  __STL_BEGIN_NAMESPACE
+  #else
+  namespace __gnu_cxx {
+  #endif
+	  
+template<> struct hash< std::string > {  
+   size_t operator()( const std::string& x ) const
+     { return hash< const char* >()( x.c_str() );}
+};
 
-	  size_t operator()( const std::string& x ) const
+  #if (__GNUC__ == 2)
+  __STL_END_NAMESPACE
+  #else
+  }
+  #endif
+
+#else //_MSC_VER
+
+  _STD_BEGIN
+  template<> class hash_compare<std::string> {
+  public:
+    enum
+    {	// parameters for hash table
+	bucket_size = 4,	// 0 < bucket_size
+	min_buckets = 8
+    };	// min_buckets = 2 ^^ N, 0 < N
+
+    size_t operator()( const std::string& x ) const
     { return hash_compare< const char* >()( x.c_str() );}
 
-	bool operator()(const string& _Keyval1, const string& _Keyval2) const
-		{	// test if _Keyval1 ordered before _Keyval2
-		return (_Keyval1< _Keyval2);
-		}
+    bool operator()(const string& _Keyval1, const string& _Keyval2) const
+    {	// test if _Keyval1 ordered before _Keyval2
+	return (_Keyval1< _Keyval2);
+    }
 };
 _STD_END
 #endif
 
 
-// This macro is here to make life easier
 // Simply use: UStart(myUObjectType) and the rest will be taken care of.
 #define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objectlist)
 // Simply use: UStartHub(myUObjectHubType) and the rest will be taken care of.
 #define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(string(#x),objecthublist)
 
 
-// These macros are here to make life easier
+// Variable binding
 #define UBindVar(obj,x) x.init(__name,#x)
+
+// Used for sensor+actuator variables
 #define USensor(x) x.setOwned()
+
+// Function Binding
 #define UBindFunction(obj,x)  createUCallback((string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
+
+// Event Binding
 #define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),__name+"."+string(#x),eventmap)
 #define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
-
 
 // Macro to register to a Hub
 #define URegister(hub) { objecthub = urbi::getUObjectHub((string)#hub); \
@@ -128,7 +139,7 @@ _STD_END
 
 //macro to send urbi commands
 #ifndef URBI
-#define URBI(a) urbi::uobject_unarmorAndSend(#a)
+  #define URBI(a) urbi::uobject_unarmorAndSend(#a)
 #endif
 
 /* urbi namespace starts */
@@ -147,19 +158,22 @@ urbi {
   class UValue;
   class UVardata;
 
-  // For homogeneity of the code, UFunction and UEvent are nothing more than UValue's
-  typedef UValue UFunction;
-  typedef void UEvent;
+  // A few list and hashtable types
   typedef hash_map<string,list<UGenericCallback*> > UTable;
   typedef hash_map<string,list<UVar*> > UVarTable;
   typedef list<baseURBIStarter*> UStartlist;
   typedef list<baseURBIStarterHub*> UStartlistHub;
   typedef list<UTimerCallback*> UTimerTable;
   typedef list<UObject*> UObjectList;
+
+  // The UReturn type
   typedef int UReturn;
   
+  // Two singleton lists to handle the object and hubobject registration
   EXTERN_STATIC_INSTANCE(UStartlist, objectlist);
   EXTERN_STATIC_INSTANCE(UStartlistHub, objecthublist);
+
+  // Lists and hashtables used
   extern UVarTable varmap;
   extern UTable functionmap;
   extern UTable eventmap;
@@ -167,17 +181,19 @@ urbi {
   extern UTable monitormap;
   extern UTable accessmap;  
   
+  // Timer and update maps
   extern UTimerTable timermap;
   extern UTimerTable updatemap;
 
+  // for remote mode
   extern void main(int argc, char *argv[]);
 
+  // Notification mechanism
   void USync(UVar&);  
   void UNotifyChange(UVar&, int (*) ());
   void UNotifyChange(UVar&, int (*) (UVar&));
   void UNotifyChange(string, int (*) ());
   void UNotifyChange(string, int (*) (UVar&));
-
   void UNotifyAccess(UVar&, int (*) (UVar&));
 
   // *****************************************************************************
@@ -189,6 +205,7 @@ urbi {
 
   /// Send URBI code (ghost connection in plugin mode, default connection in remote mode)
   void uobject_unarmorAndSend(const char * str);
+  
   // *****************************************************************************
   // UValue and other related types
   
@@ -212,18 +229,15 @@ urbi {
     IMAGE_RGB=1,     ///< RGB 24 bit/pixel
     IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
     IMAGE_JPEG=3,    ///< JPEG
-    IMAGE_PPM=4,      ///< RGB with a PPM header
-
+    IMAGE_PPM=4,      ///< RGB with a PPM header    
     IMAGE_UNKNOWN 
   };
-
 
   enum USoundFormat {
     SOUND_RAW,
     SOUND_WAV,
     SOUND_MP3,
-    SOUND_OGG,
-    
+    SOUND_OGG,    
     SOUND_UNKNOWN
   };
 
@@ -231,7 +245,6 @@ urbi {
     SAMPLE_SIGNED=1,
     SAMPLE_UNSIGNED=2
   };
-
 
   //! Blending mode
   enum UBlendType {
@@ -274,12 +287,8 @@ urbi {
       USoundFormat          soundFormat;      ///< format of the sound data
       USoundSampleFormat    sampleFormat;     ///< sample format
 
-
-      // USound() : data(0), size(0), channels(1), rate(16000), sampleSize(2), sampleFormat(SAMPLE_SIGNED) {}
       bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
   };
-
-
 
   /// Class containing binary data sent by the server, that could not be furtehr interpreted.
   class UBinary {
@@ -294,7 +303,6 @@ urbi {
 	USound                sound;
       };
       string                message;         ///< extra bin headers(everything after BIN <size> and before ';'
-
 
       UBinary();
       UBinary(const UBinary &b);  ///< deep copy constructor
@@ -571,7 +579,7 @@ urbi {
     void UNotifyAccess(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyAccess(v,fun); };
 
     string __name; ///< name of the object as seen in URBI
-    string classname; ///< name of the class the objects is derived from
+    string classname; ///< name of the class the object is derived from
     bool   derived; ///< true when the object has been newed by an urbi command 
 
     UObjectList members;
@@ -580,11 +588,12 @@ urbi {
     void USetUpdate(ufloat);
     virtual int update() {return 0;}; 
 
-    UVar        load;
+    UVar        load; ///< the load attribute is standard and can be used to control the activity 
+    		      ///< of the object
   
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
-                              ///< module/plugin architectures who defines it.    
+                              ///< remote/plugin architectures who defines it.    
     ufloat period;
   };
 
@@ -674,9 +683,10 @@ urbi {
   UBinary cast(UValue &v, UBinary * b);
   UList cast(UValue &v, UList *l);
   UObjectStruct cast(UValue &v, UObjectStruct *o);
+  
 #else
-	//something weird happenw when overloading with a different return type, so define everythiong by hand
-
+  //something weird happens when overloading with a different return type, so define everythiong by hand
+  
 #define SETCAST(type) inline type cast(UValue &val, type *inu) { return (type)val;}
 
   SETCAST(int); SETCAST(ufloat); SETCAST(std::string);
@@ -781,21 +791,26 @@ urbi {
   /**********************************************************/
   // This section is autogenerated. Not for humans eyes ;)
   /**********************************************************/
-template<typename T> class utrait {
+  
+  template<typename T> class utrait {
   public:
     typedef T noref;
-};
+  };
+  
 #ifndef _MSC_VER
-template<typename T> class utrait<T&> {
+  
+  template<typename T> class utrait<T&> {
   public:
     typedef T noref;
-};
-#else
-template<> class utrait<UVar&> {
+  };
+  
+#else  
+  
+  template<> class utrait<UVar&> {
   public:
     typedef UVar noref;
-};
-
+  };
+  
 #endif
 
 %%%% 0 16
