@@ -516,21 +516,21 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  
 	  persistant = false;
 	  sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s=__UFnctret.EXTERNAL_%d|undef __UFnctret.EXTERNAL_%d}",
-			  UU,variablename->getFullname()->str(),UU,UU);
+	      UU,variablename->getFullname()->str(),UU,UU);
 	  
 	  morph = (UCommand*) 
-		new UCommand_EXPR(
-						  new UExpression(
-										  EXPR_FUNCTION,
-										  new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
-										  new UNamedParameters(
-															   new UExpression(
-																			   EXPR_VALUE,
-																			   new UString(tmpbuffer)
-																			   )
-															   )
-										  )
-						  );
+	    new UCommand_EXPR(
+		new UExpression(
+		  EXPR_FUNCTION,
+		  new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
+		  new UNamedParameters(
+		    new UExpression(
+		      EXPR_VALUE,
+		      new UString(tmpbuffer)
+		      )
+		    )
+		  )
+		);
 	  return( status = UMORPH );
 	}
 	
@@ -585,50 +585,50 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 														 new UString("__result__"), 
 														 true, 
 														 (UNamedParameters*)0);
-	  
+
 	  morph = (UCommand*) 
-		new UCommand_TREE(UPIPE,
-						  fun->cmdcopy(),
-						  new UCommand_ASSIGN_VALUE(
-													variablename->copy(),
-													new UExpression(EXPR_VARIABLE,
-																	resultContainer),
-													(UNamedParameters*)0));
-	  
-	  
+	    new UCommand_TREE(UPIPE,
+		fun->cmdcopy(),
+		new UCommand_ASSIGN_VALUE(
+		  variablename->copy(),
+		  new UExpression(EXPR_VARIABLE,
+		    resultContainer),
+		  (UNamedParameters*)0));
+
+
 	  if (morph) {
-		
-		sprintf(tmpbuffer,"__UFnct%d",unic());
-		((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
-													  expression->variablename->device->str(),
-													  (UCommand_TREE*)morph);
-		resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
-									"__result__");
-		if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
-		((UCommand_TREE*)morph)->connection = connection;
-		
-		UNamedParameters *pvalue = expression->parameters;
-		UNamedParameters *pname  = fun->parameters;
-		for (;
-			 pvalue != 0;
-			 pvalue = pvalue->next, pname = pname->next) {
-		  
-		  UValue* valparam = pvalue->expression->eval(this,connection);
-		  if (!valparam) {
-			
-			connection->send("!!! EXPR evaluation failed\n",tag->str());
-			return (status = UCOMPLETED);
-		  }
-		  
-		  ((UCommand_TREE*)morph)->callid->store(
-												 new UVariable(((UCommand_TREE*)morph)->callid->str(),
-															   pname->name->str(),
-															   valparam)
-												 );
-		  
-		}
+
+	    sprintf(tmpbuffer,"__UFnct%d",unic());
+	    ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
+							  expression->variablename->device->str(),
+							  (UCommand_TREE*)morph);
+	    resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
+		"__result__");
+	    if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
+	    ((UCommand_TREE*)morph)->connection = connection;
+
+	    UNamedParameters *pvalue = expression->parameters;
+	    UNamedParameters *pname  = fun->parameters;
+	    for (;
+		pvalue != 0;
+		pvalue = pvalue->next, pname = pname->next) {
+
+	      UValue* valparam = pvalue->expression->eval(this,connection);
+	      if (!valparam) {
+
+		connection->send("!!! EXPR evaluation failed\n",tag->str());
+		return (status = UCOMPLETED);
+	      }
+
+	      ((UCommand_TREE*)morph)->callid->store(
+						     new UVariable(((UCommand_TREE*)morph)->callid->str(),
+						       pname->name->str(),
+						       valparam)
+						    );
+
+	    }
 	  }
-	  
+
 	  return ( status = UMORPH );
 	} // fi: function exists
 	
@@ -681,6 +681,35 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   
   if (status == UONQUEUE) {
 	
+	// object aliasing here
+	
+	if ((variablename->nostruct) &&
+		(expression->type == EXPR_VARIABLE) &&
+		(expression->variablename) &&
+		(expression->variablename->nostruct)) {
+	   ::urbiserver->debug("Shouldn't be here\n");
+	::urbiserver->debug("My name is:%s.%s / %s / %s.%s\n",variablename->id->str(),variablename->method->str(),variablename->getFullname()->str(),variablename->getDevice()->str(), variablename->getMethod()->str());
+ 
+	  UString* objname = expression->variablename->id;
+	  
+	  HMobjtab::iterator objit = ::urbiserver->objtab.find(objname->str());
+	  if (objit != ::urbiserver->objtab.end())  {
+	        // the use of 'id' is a hack that works.
+		HMaliastab::iterator hmi = ::urbiserver->objaliastab.find(variablename->id->str());
+		::urbiserver->debug("The left name is:%s.%s\n",variablename->id->str(),variablename->method->str());
+		if (hmi != ::urbiserver->objaliastab.end()) {
+		  ::urbiserver->debug("Redefined\n");
+		  (*hmi).second->update(objname);
+		}
+		else {
+		  ::urbiserver->debug("New\n");
+		  UString* objalias = new UString(variablename->method);
+		  ::urbiserver->objaliastab[objalias->str()] = new UString(objname);
+		}
+		return (status = UCOMPLETED);
+	  }
+	}
+	
 	// Objects cannot be assigned
 	if ((variable) &&  (!variablename->fromGroup) &&
 		(variable->value->dataType == DATA_OBJ)) {
@@ -691,29 +720,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  return (status = UCOMPLETED);
 	} 
 	
-	// object aliasing here
-	
-	if ((variablename->nostruct) &&
-		(expression->type == EXPR_VARIABLE) &&
-		(expression->variablename) &&
-		(expression->variablename->nostruct)) {
-	  
-	  UString* objname = expression->variablename->id;
-	  
-	  HMobjtab::iterator objit = 
-	  ::urbiserver->objtab.find(objname->str());
-	  if (objit != ::urbiserver->objtab.end())  {
-		HMaliastab::iterator hmi = ::urbiserver->objaliastab.find(objname->str());
-		if (hmi != ::urbiserver->objaliastab.end())
-		  (*hmi).second->update(objname);
-		else {
-		  UString* objalias = new UString(variablename->method);
-		  ::urbiserver->objaliastab[objalias->str()] = new UString(objname);
-		}
-		return (status = UCOMPLETED);
-	  }
-	}
-	
+	// Strict variable definition checking
 	if ((!variable) && (connection->server->defcheck) && (!defkey)) {
 	  
 	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,

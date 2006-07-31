@@ -237,7 +237,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   UValue *e1;
   bool   errordetected;
   UNamedParameters* itindex;
-  
+ 
   if (cached) return (fullname_);
   
   if (str) {
@@ -405,7 +405,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     };
     
     if (past_hmi != ::urbiserver->aliastab.end()) {
-      strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);                   		
+      strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);                    nostruct = false;	
       if (device) delete(device); device = 0;
       if (method) delete(method); method = 0; // forces recalc of device.method
       if (variable) variable = 0;
