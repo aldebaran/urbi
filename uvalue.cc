@@ -78,6 +78,13 @@ UValue::UValue(const char* str)
 }
 
 #define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
+
+inline int exprToInt(UExpression *e) {
+	if (e->dataType == DATA_NUM)
+		return (int)e->val;
+	else
+		return strtol(e->str->str(), 0,0);
+}
 UValue::operator urbi::UImage() {
   urbi::UImage img; img.data=0; img.size=img.width = img.height=0; img.imageFormat=urbi::IMAGE_UNKNOWN;
   if (dataType != DATA_BINARY)
@@ -86,22 +93,21 @@ UValue::operator urbi::UImage() {
   //fill parameters from list
   UNamedParameters *param = refBinary->ref()->parameters;
   //validate
-  if (! (VALIDATE(param,DATA_STRING) && 
-      VALIDATE(param->next, DATA_NUM) &&
-      VALIDATE(param->next->next, DATA_NUM)))
-    return img;
+  if (!(param && param->next && param->next->next && param->next->next))
+	  return img;
+  
   
   if (!strcmp(param->expression->str->str(), "rgb"))
-    img.imageFormat = urbi::IMAGE_RGB;
+	  img.imageFormat = urbi::IMAGE_RGB;
   else if (!strcmp(param->expression->str->str(), "jpeg"))
-    img.imageFormat = urbi::IMAGE_JPEG;
+	  img.imageFormat = urbi::IMAGE_JPEG;
   else if (!strcmp(param->expression->str->str(), "YCbCr"))
-    img.imageFormat = urbi::IMAGE_YCbCr;
+	  img.imageFormat = urbi::IMAGE_YCbCr;
   else
-    img.imageFormat = urbi::IMAGE_UNKNOWN;
-
-  img.width = (int)param->next->expression->val;
-  img.height = (int)param->next->next->expression->val;
+	  img.imageFormat = urbi::IMAGE_UNKNOWN;
+  
+  img.width = exprToInt(param->next->expression);
+  img.height = exprToInt(param->next->next->expression);
   img.size = refBinary->ref()->bufferSize;
   img.data = (char *)refBinary->ref()->buffer;
   return img;
@@ -119,15 +125,64 @@ class DumbConnection:public UConnection {
 };
 
 
+UValue::operator urbi::UBinary() {
+	//simplest way is to echo our bin headers and parse again
+	urbi::UBinary b;
+    std::ostringstream msg;
+    msg << refBinary->ref()->bufferSize;
+    UNamedParameters *param = refBinary->ref()->parameters;
+    while (param) {
+      if (param->expression) {
+	if (param->expression->dataType == ::DATA_NUM)
+	  msg<< " "<<(int)param->expression->val;
+	else if (param->expression->dataType == ::DATA_STRING)
+	  msg << " "<<param->expression->str->str();
+      }
+      param = param->next;
+    }
+    
+	msg << '\n'; //parse expects this
+    std::list<urbi::BinaryData> lBin;
+    lBin.push_back(urbi::BinaryData(refBinary->ref()->buffer,  refBinary->ref()->bufferSize));
+    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
+    b.parse(msg.str().c_str(), 0, lBin, lIter);
+	return b;
+}
+
+UValue::operator urbi::UBinary*() {
+	//simplest way is to echo our bin headers and parse again
+    urbi::UBinary* b = new urbi::UBinary();
+    std::ostringstream msg;
+    msg << refBinary->ref()->bufferSize;
+    UNamedParameters *param = refBinary->ref()->parameters;
+    while (param) {
+      if (param->expression) {
+		  if (param->expression->dataType == ::DATA_NUM)
+			  msg<< " "<<(int)param->expression->val;
+		  else if (param->expression->dataType == ::DATA_STRING)
+			  msg << " "<<param->expression->str->str();
+      }
+      param = param->next;
+    }
+	msg << '\n'; //parse expects this
+    std::list<urbi::BinaryData> lBin;
+    lBin.push_back(urbi::BinaryData( refBinary->ref()->buffer,  refBinary->ref()->bufferSize));
+    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
+    b->parse(msg.str().c_str(), 0, lBin, lIter);
+    return b;
+}
+
+
 UValue::operator urbi::UList() {
-  DumbConnection dc;
-  echo(&dc);
-  char * data=dc.getData();
-  urbi::UValue v;
-  std::list<urbi::BinaryData> b;
-  std::list<urbi::BinaryData>::iterator i=b.begin();
-  v.parse(data,0,b,i);
-  urbi::UList  l=*v.list;
+	if (dataType != DATA_LIST) {
+		return urbi::UList();
+	}
+	urbi::UList l;
+	UValue *n = liststart;
+	while(n) {
+		l.array.push_back(n->urbiValue());
+		n = n->next;
+	}
   return l;
 }
 
@@ -166,15 +221,13 @@ UValue::operator urbi::USound() {
       
   if (!strcmp(param->expression->str->str(), "raw")) {    
     snd.soundFormat = urbi::SOUND_RAW;
-    decoded =  (VALIDATE(param->next, DATA_NUM) &&
-       	VALIDATE(param->next->next, DATA_NUM) &&
-	VALIDATE(param->next->next->next, DATA_NUM) &&
-	VALIDATE(param->next->next->next->next, DATA_NUM));
+    decoded =  (param->next && param->next->next &&
+		param->next->next->next && param->next->next->next->next);
     if (decoded) {
-      snd.channels = (int)param->next->expression->val;
-      snd.rate = (int)param->next->next->expression->val;
-      snd.sampleSize = (int)param->next->next->next->expression->val;
-      snd.sampleFormat = (urbi::USoundSampleFormat)(int)param->next->next->next->next->expression->val;    
+      snd.channels = exprToInt(param->next->expression);
+      snd.rate = exprToInt(param->next->next->expression);
+      snd.sampleSize = exprToInt(param->next->next->next->expression);
+      snd.sampleFormat = (urbi::USoundSampleFormat)exprToInt(param->next->next->next->next->expression);    
     }
   }
   
@@ -204,99 +257,57 @@ UValue::operator urbi::USound() {
 
 #undef VALIDATE
 
+
+UValue & UValue::operator = (const urbi::USound &i) {
+	//avoid code duplication
+	urbi::UBinary b;
+	b.type = urbi::BINARY_SOUND;
+	b.sound = i;
+	(*this)=b;
+	b.common.data=0;
+	return *this;
+}
+
+
+
 UValue & UValue::operator = (const urbi::UImage &i) {
-  dataType = DATA_BINARY;
-  //building unamedparameters
-  UNamedParameters * first=0;
-  switch (i.imageFormat) {
-    case urbi::IMAGE_RGB:
-      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("rgb")));
-      break;
-    case urbi::IMAGE_YCbCr:
-      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("YCbCr")));
-      break;
-    case urbi::IMAGE_JPEG:
-      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("jpeg")));
-      break;
-    default:
-      first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));
-      break;
-  };
-  first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, i.width));
-  first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, i.height));
-  if ((dataType == DATA_BINARY) && refBinary && (refBinary->ref()->buffer == (void*)i.data)) {
-    //just copy the parameters
-    delete refBinary->ref()->parameters;
-    refBinary->ref()->parameters=first;
-    refBinary->ref()->bufferSize = i.size;
-  }
-  else {
-    if ((dataType == DATA_BINARY) && (refBinary)) {
-      LIBERATE(refBinary);
-    }
-    dataType = DATA_BINARY;
-    UBinary *bin = new UBinary(i.size, first);
-    bin->bufferSize =  i.size;
-    //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
-    free(bin->buffer);
-    bin->buffer=const_cast<ubyte *>((const ubyte *)i.data);
-    refBinary = new URefPt<UBinary>(bin);      
-  }
+  //avoid code duplication
+  urbi::UBinary b;
+  b.type = urbi::BINARY_IMAGE;
+  b.image = i;
+  (*this)=b;
+  b.common.data=0;
   return *this;
 }
 
 
 UValue & UValue::operator = (const urbi::UBinary &b) {
   //TODO: cleanup
- if ((dataType == DATA_BINARY) && (refBinary)) {
-   LIBERATE(refBinary);
- }
-  int sz=0;
+  if ((dataType == DATA_BINARY) && (refBinary)) {
+	  LIBERATE(refBinary);
+  }
+  
   dataType = DATA_BINARY;
-  //building unamedparameters
+  //Build named parameters list from getMessage() output
   UNamedParameters * first=0;
-  if (b.type == urbi::BINARY_IMAGE) {
-    sz = b.image.size;
-    switch (b.image.imageFormat) {
-      case urbi::IMAGE_RGB:
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("rgb")));
-	break;
-      case urbi::IMAGE_YCbCr:
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("YCbCr")));
-	break;
-      case urbi::IMAGE_JPEG:
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("jpeg")));
-	break;
-      default:	
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));	
-	break;				  
-    };
-
-    first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.image.width));
-   first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.image.height));		      
+  UNamedParameters * last=0;
+  std::stringstream str;
+  str.str(b.getMessage());
+  string item;
+  while (!!str) {
+	  str >> item;
+	  UNamedParameters * unp = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString(item.c_str())));
+	  if (!first) {
+		  first = unp;
+		  last = unp;
+	  }
+	  else {
+		  last->next=unp;
+		  last = unp;
+	  }
   }
-  if (b.type == urbi::BINARY_SOUND) {
-    sz = b.sound.size;
-    switch(b.sound.soundFormat) {
-      case urbi::SOUND_RAW:
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("raw")));
-	first->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.channels));
-	first->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.rate));	
-	first->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleSize));
-	first->next->next->next->next = new UNamedParameters(0,new UExpression(EXPR_VALUE, b.sound.sampleFormat));	
-	
-	break;
-      case urbi::SOUND_WAV:
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("wav")));
-	break;
-      default:	
-	first = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString("UNKNOWN")));
-	break;	
-    }
-    
-        
-    
-  }
+  
+  int sz = b.common.size;
   UBinary *bin = new UBinary(sz, first);
   bin->bufferSize =  sz;
   //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
@@ -744,7 +755,8 @@ UValue::urbiValue()
   switch (dataType) {
     case DATA_NUM:     return new urbi::UValue(val);
     case DATA_STRING:  return new urbi::UValue(string(str->str())); 
-    case DATA_BINARY:  return new urbi::UValue(); //FIXME
+    case DATA_BINARY:  return new urbi::UValue(operator urbi::UBinary()); //FIXME
+	case DATA_LIST:    return new urbi::UValue((urbi::UList)(*this));
     default: return new urbi::UValue(); 
   };
 }

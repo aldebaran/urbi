@@ -38,6 +38,7 @@ namespace urbi {
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
 UVar::UVar(const string &varname) 
+:VAR_PROP_INIT
 {
   name = varname;  
   __init();
@@ -45,6 +46,7 @@ UVar::UVar(const string &varname)
 
 //! UVar constructor: object reference + var name
 UVar::UVar(UObject& obj, const string &varname)
+:VAR_PROP_INIT
 {
   name = obj.__name + "." + varname;
   __init();
@@ -52,6 +54,7 @@ UVar::UVar(UObject& obj, const string &varname)
 
 //! UVar constructor: object name + var name
 UVar::UVar(const string &objname, const string &varname)
+:VAR_PROP_INIT
 {
   name = objname + "." + varname;
   __init();
@@ -102,7 +105,7 @@ UVar::~UVar()
     for (list<UVar*>::iterator it = varmapfind->second.begin();
 	it != varmapfind->second.end();)
       if ((*it) == this) 
-	varmapfind->second.erase(it);
+	it=varmapfind->second.erase(it);
       else
 	it++;
 	
@@ -174,7 +177,20 @@ UVar::operator = (const UImage &b)
   *vardata->variable->value=b;
   vardata->variable->updated();
 }
-                        
+  
+
+//! UVar binary assignment
+void
+UVar::operator = (const USound &b)
+{
+  if (!vardata) {
+    urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
+	name.c_str());
+    return;
+  }
+  *vardata->variable->value=b;
+  vardata->variable->updated();
+}
 
 // UVar Casting
 
@@ -210,53 +226,14 @@ return (UList)*vardata->variable->value;
 
 UVar::operator urbi::UBinary() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
-    //simplest way is to echo our bin headers and parse again
-    UBinary b;
-    std::ostringstream msg;
-    msg << vardata->variable->value->refBinary->ref()->bufferSize;
-    UNamedParameters *param = vardata->variable->value->refBinary->ref()->parameters;
-    while (param) {
-      if (param->expression) {
-	if (param->expression->dataType == ::DATA_NUM)
-	  msg<< " "<<(int)param->expression->val;
-	else if (param->expression->dataType == ::DATA_STRING)
-	  msg << " "<<param->expression->str->str();
-      }
-      param = param->next;
-    }
-    
-
-    std::list<urbi::BinaryData> lBin;
-    lBin.push_back(urbi::BinaryData( vardata->variable->value->refBinary->ref()->buffer,  vardata->variable->value->refBinary->ref()->bufferSize));
-    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-    b.parse(msg.str().c_str(), 0, lBin, lIter);
-  return b;
+	  return  (*vardata->variable->value).operator urbi::UBinary();
   }
   else return UBinary();
 }
 
 UVar::operator urbi::UBinary*() {
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
-    //simplest way is to echo our bin headers and parse again
-    UBinary* b = new UBinary();
-    std::ostringstream msg;
-    msg << vardata->variable->value->refBinary->ref()->bufferSize;
-    UNamedParameters *param = vardata->variable->value->refBinary->ref()->parameters;
-    while (param) {
-      if (param->expression) {
-	if (param->expression->dataType == ::DATA_NUM)
-	  msg<< " "<<(int)param->expression->val;
-	else if (param->expression->dataType == ::DATA_STRING)
-	  msg << " "<<param->expression->str->str();
-      }
-      param = param->next;
-    }
-
-    std::list<urbi::BinaryData> lBin;
-    lBin.push_back(urbi::BinaryData( vardata->variable->value->refBinary->ref()->buffer,  vardata->variable->value->refBinary->ref()->bufferSize));
-    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-    b->parse(msg.str().c_str(), 0, lBin, lIter);
-    return b;
+	  return (urbi::UBinary*) vardata->variable->value;
   }
   else return new UBinary();
 }
@@ -290,6 +267,94 @@ UVar::in()
  else return er;
 }
 
+static const char * blendNames[]={
+	"mix",
+	"add",
+	"discard",
+	"queue",
+	"cancel",
+	"normal",
+	""
+};
+
+
+void 
+UVar::setProp(UProperty prop, const UValue &v) {
+	if (!vardata)
+		return;
+	switch(prop) {
+	case PROP_RANGEMIN:
+		vardata->variable->rangemin =(double)v;
+		break;
+	case PROP_RANGEMAX:
+		vardata->variable->rangemax =(double)v;
+		break;
+	case PROP_SPEEDMIN:
+		vardata->variable->speedmin =(double)v;
+		break;
+	case PROP_SPEEDMAX:
+		vardata->variable->speedmax =(double)v;
+		break;
+	case PROP_DELTA:
+		vardata->variable->delta =(double)v;
+		break;
+	case PROP_BLEND:
+		{
+			if (v.type == DATA_DOUBLE) {
+				//numeric val
+				vardata->variable->blendType=(UBlend)(int)(double)v;
+			}
+			if (v.type == DATA_STRING) {
+				string s=(string)v;
+				for (int i=0;blendNames[i][0];i++) {
+					if (s==(string)blendNames[i]) {
+						vardata->variable->blendType = (UBlend)i;	
+						return;					
+					}	
+				}
+			}
+		}
+	}
+}
+
+void 
+UVar::setProp(UProperty prop, const char * v) {
+	return setProp(prop, UValue(v));
+}
+void 
+UVar::setProp(UProperty prop, double v) {
+	return setProp(prop, UValue(v));
+}
+
+urbi::UValue
+UVar::getProp(UProperty prop) {
+	if (!vardata)
+		return UValue();
+	switch(prop) {
+	case PROP_RANGEMIN:
+		return UValue(vardata->variable->rangemin);
+		break;
+	case PROP_RANGEMAX:
+		return UValue(vardata->variable->rangemax);
+		break;
+	case PROP_SPEEDMIN:
+		return UValue(vardata->variable->speedmin);
+		break;
+	case PROP_SPEEDMAX:
+		return UValue(vardata->variable->speedmax);
+		break;
+	case PROP_DELTA:
+		return UValue(vardata->variable->delta);
+		break;
+	case PROP_BLEND:
+		return UValue(vardata->variable->blendType);
+		break;
+	}
+	return UValue();
+}
+
+
+/*
 UBlendType
 UVar::blend()
 {
@@ -299,7 +364,7 @@ UVar::blend()
     urbi::echo("Internal error on variable 'vardata', should not be zero\n");
     return (UNORMAL);
   }
-}
+}*/
 
 
 void

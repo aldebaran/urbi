@@ -52,10 +52,12 @@ public:
 
   UValue & operator = (const urbi::UBinary&); 
   UValue & operator = (const urbi::UImage &);
+  UValue & operator = (const urbi::USound &);
   operator urbi::UImage ();
   operator urbi::USound();
   operator urbi::UList();
-
+  operator urbi::UBinary();
+  operator urbi::UBinary*();
   ~UValue();
 
   UDataType       dataType;     ///< Type of the value
