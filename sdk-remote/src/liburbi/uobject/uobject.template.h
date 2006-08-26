@@ -246,9 +246,10 @@ urbi {
     SAMPLE_UNSIGNED=2
   };
 
+  //WARNING: synchronize with blendNames in uvar.cc
   //! Blending mode
   enum UBlendType {
-    UMIX,
+    UMIX=0,
     UADD,
     UDISCARD,
     UQUEUE,
@@ -256,7 +257,16 @@ urbi {
     UNORMAL
   };
 
-
+  //WARNING: synchronize with propNames in uvar.cc
+  /// URBI properties associated to a variable
+  enum UProperty {
+	  PROP_RANGEMIN=0,
+	  PROP_RANGEMAX,
+	  PROP_SPEEDMIN,
+	  PROP_SPEEDMAX,
+	  PROP_BLEND,
+	  PROP_DELTA
+  };
   //internal use: unparsed binary data
   class BinaryData {
     public:
@@ -306,6 +316,8 @@ urbi {
 
       UBinary();
       UBinary(const UBinary &b);  ///< deep copy constructor
+	  explicit UBinary(const UImage &);
+	  explicit UBinary(const USound &);
       UBinary & operator = (const UBinary &b); ///< deep copy
       void buildMessage(); ///< build message from structures
       string getMessage() const; ///< get message extracted from structures
@@ -371,13 +383,16 @@ urbi {
       explicit UValue(const UBinary &b);
       explicit UValue(const UList & l);
       explicit UValue(const UObjectStruct &o);
+	  explicit UValue(const USound &);
+	  explicit UValue(const UImage &);
       operator ufloat() const;
       operator string() const;
       operator int() const {return (int)(ufloat)(*this);}
       operator bool() const {return (bool)(int)(ufloat)(*this);}
       operator UBinary() const; ///< deep copy
-      operator UImage(); ///< ptr copy
-      operator USound(); ///< ptr copy
+	  operator UList() const; ///< deep copy
+      operator UImage() const; ///< ptr copy
+      operator USound() const; ///< ptr copy
       UValue& operator=(const UValue&);
 
       ~UValue();  
@@ -386,6 +401,38 @@ urbi {
       int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
   };
 
+  
+  //! Provides easy access to variable properties
+  class UProp 
+  {
+	  public:
+	  void operator =(const UValue &v ) ;
+	  void operator =(const double v ) ;
+	  void operator =(const string & v ) ;
+	  operator double() ;
+	  operator string() ;
+	  operator UValue() ;
+	  
+	  
+	  UProp(UVar &owner, UProperty name):owner(owner),name(name){}
+	  
+	  private:
+	  UVar & owner;
+	  UProperty name;
+	  //disable copy ctor and equal operator
+	  UProp & operator =(const UProp &b);
+	  UProp(const UProp &b);
+  };
+  
+  
+   //Helper macro to initialize UProps in UVar constructors
+  #define VAR_PROP_INIT \
+  rangemin(*this, PROP_RANGEMIN), \
+  rangemax(*this, PROP_RANGEMAX), \
+  speedmin(*this, PROP_SPEEDMIN), \
+  speedmax(*this, PROP_SPEEDMAX), \
+  delta(*this, PROP_DELTA), \
+  blend(*this, PROP_BLEND)
 
   // *****************************************************************************
   //!UVar class definition
@@ -393,8 +440,8 @@ urbi {
   {
   public:
     
-    UVar() { name = "noname"; owned=false; vardata=0;};
-    UVar(UVar& v) {};
+  UVar() :VAR_PROP_INIT { name = "noname"; owned=false; vardata=0;};
+  UVar(UVar& v) :VAR_PROP_INIT  {};
     UVar(const string&);
     UVar(const string&, const string&);
     UVar(UObject&, const string&);
@@ -407,7 +454,7 @@ urbi {
     void operator = ( string );
     void operator = ( const UBinary &); 
     void operator = ( const UImage &i); ///< No data is copied in plugin mode
-    void operator = ( const USound &s) {UBinary b; b.type=BINARY_SOUND;b.sound=s; (*this)=b; b.common.data=0;} ///< Data is copied
+    void operator = ( const USound &s); ///< No data is copied in plugin mode
 
 
     operator int ();
@@ -426,10 +473,27 @@ urbi {
     //kernel operators
     ufloat& in();
     ufloat& out();
-    UBlendType blend();
+    //UBlendType blend();
 
     bool owned; ///< is the variable owned by the module?
 
+	
+	
+	//Property accessors 
+	
+	UProp rangemin;
+	UProp rangemax;
+	UProp speedmin;
+	UProp speedmax;
+	UProp delta;
+	UProp blend;
+	
+	
+	UValue getProp(UProperty prop);
+	void setProp(UProperty prop, const UValue &v);
+	void setProp(UProperty prop, double v);
+	void setProp(UProperty prop, const char * v);
+	void setProp(UProperty prop, const string &v) {setProp(prop,v.c_str());}
     // internal
     void __update(UValue&);
 
@@ -444,6 +508,17 @@ urbi {
   };
 
 
+ 
+  
+  
+  
+  inline void UProp::operator =(const UValue &v ) {owner.setProp(name,v);}
+  inline void UProp::operator =(const double v ) {owner.setProp(name,v);}
+  inline void UProp::operator =(const string & v ) {owner.setProp(name,v);}
+  inline UProp::operator double() {return (double)owner.getProp(name);}
+  inline UProp::operator string()  {return (string)owner.getProp(name);}
+  inline UProp::operator UValue() {return owner.getProp(name);}
+	  
   // *****************************************************************************
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the

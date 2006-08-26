@@ -22,7 +22,7 @@
 #include "uexternal.h"
 using namespace urbi;
 
-#include <uclient.h>
+#include <usyncclient.h>
 
 namespace 
 urbi {
@@ -33,9 +33,18 @@ urbi {
   };
 };
 	
+static const char * propNames[]={
+	"rangemin",
+	"rangemax",
+	"speedmin",
+	"speedmax",
+	"blend",
+	"delta"
+};
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
 UVar::UVar(const string &varname)
+:VAR_PROP_INIT
 {
   name = varname;  
   __init();
@@ -43,6 +52,7 @@ UVar::UVar(const string &varname)
 
 //! UVar constructor: object reference + var name
 UVar::UVar(UObject& obj, const string &varname) 
+:VAR_PROP_INIT
 {
   name = obj.__name + "." + varname;
   __init();
@@ -50,6 +60,7 @@ UVar::UVar(UObject& obj, const string &varname)
 
 //! UVar constructor: object name + var name
 UVar::UVar(const string &objname, const string &varname)
+:VAR_PROP_INIT
 {
   name = objname + "." + varname;
   __init();
@@ -87,13 +98,37 @@ UVar::in()
   return (value.val); 
 }
 
+
+void 
+UVar::setProp(UProperty prop, const UValue &v) {
+	URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+}
+
+void 
+UVar::setProp(UProperty prop, const char * v) {
+	URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+}
+void 
+UVar::setProp(UProperty prop, double v) {
+	URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+}
+
+UValue
+UVar::getProp(UProperty prop) {
+	UMessage *m=((USyncClient&)URBI()).syncGet("%s->%s",name.c_str(), propNames[(int)prop]);
+	UValue v = *(m->value);
+	delete m;
+	return v;
+}
+
+/*
 UBlendType
 UVar::blend()
 {
   urbi::echo("Properties not implemented in remote mode yet.\n");
   return (UNORMAL);
 }
-
+*/
 
 //! UVar destructor.
 UVar::~UVar()
@@ -137,6 +172,27 @@ UVar::operator = (const UBinary &b)
   URBI().write((char *)b.common.data, b.common.size);
 }
 
+void
+UVar::operator = (const UImage &i) 
+{
+	//we don't use UBinary Image ctor because it copies data
+	UBinary b;
+	b.type = BINARY_IMAGE;
+	b.image = i;
+	(*this)=b;
+	b.common.data=0; //required, dtor frees data
+}
+
+void
+UVar::operator = (const USound &i) 
+{
+	//we don't use UBinary Image ctor because it copies data
+	UBinary b;
+	b.type = BINARY_SOUND;
+	b.sound = i;
+	(*this)=b;
+	b.common.data=0; //required, dtor frees data
+}
 
 UVar::operator int () {	 
   return ((int)value); 
@@ -153,11 +209,11 @@ UVar::operator string () {
  
 
 UVar::operator UBinary() {
-  return (UBinary)value;
+  return value;
 };
 
 UVar::operator UBinary*() {
-  return new UBinary(value);
+  return new UBinary(value.operator UBinary());
 };
 
 UVar::operator UImage() {

@@ -393,7 +393,8 @@ string UBinary::getMessage() const {
     str<<sound.channels<<" "<<sound.rate<<" "<<sound.sampleSize<<" "<<sound.sampleFormat;
   
   }
-
+  if (type == BINARY_UNKNOWN)
+	  str<<message;
   return str.str();
  }
 
@@ -410,6 +411,15 @@ UValue::UValue(const string &v) : type(DATA_STRING), stringValue(new string(v)) 
 UValue::UValue(const UBinary &b) : type(DATA_BINARY){
   binary = new UBinary(b); 
 }
+
+UValue::UValue(const USound &s) : type(DATA_BINARY) {
+	binary = new UBinary(s);
+}
+
+UValue::UValue(const UImage &s) : type(DATA_BINARY) {
+	binary = new UBinary(s);
+}
+
 UValue::UValue(const UList &l) : type(DATA_LIST){
   list = new UList(l); 
 }
@@ -483,7 +493,7 @@ UValue::operator UBinary() const {
     return *binary;
 }
 
-UValue::operator UImage() {
+UValue::operator UImage() const {
  if (type != DATA_BINARY || binary->type != BINARY_IMAGE) {
    UImage i;
    i.data=0; i.size=0; i.width=0; i.height=0;
@@ -493,7 +503,7 @@ UValue::operator UImage() {
    return binary->image;
 }
 
-UValue::operator USound() {
+UValue::operator USound() const {
  if (type != DATA_BINARY || binary->type != BINARY_SOUND) {
    USound i;
    i.data=0; i.size=0; i.channels=i.rate=0;
@@ -503,7 +513,11 @@ UValue::operator USound() {
    return binary->sound;
 }
 
-
+UValue::operator UList() const {
+	if (type != DATA_LIST)
+		return UList();
+	return UList(*list);
+}
 
 UValue& UValue::operator= (const UValue& v)
 { //TODO: optimize
@@ -512,6 +526,7 @@ UValue& UValue::operator= (const UValue& v)
   case DATA_STRING:
     if (stringValue)
       delete stringValue;
+    break;
   case DATA_BINARY:
     if (binary)
       delete binary;
@@ -568,6 +583,21 @@ UBinary::UBinary(const UBinary &b) {
   type = BINARY_NONE;
   common.data = 0;
   (*this) = b;
+}
+
+
+UBinary::UBinary(const UImage &i) {
+	type = BINARY_IMAGE;
+	image = i;
+	image.data = (char *)malloc(image.size);
+	memcpy(image.data, i.data, image.size);
+}
+
+UBinary::UBinary(const USound &i) {
+	type = BINARY_SOUND;
+	sound = i;
+	sound.data = (char *)malloc(sound.size);
+	memcpy(sound.data, i.data, sound.size);
 }
 
 UBinary & UBinary::operator = (const UBinary &b) {
@@ -653,7 +683,3 @@ UValue & UObjectStruct::operator [](string s) {
   static UValue n;
   return n;
 }
-
-
-
-

@@ -24,6 +24,9 @@
 #include "uclient.h"
 
 
+class Semaphore;
+class Lockable;
+
 /*! Format in which image requested with syncGetSound are transmitted*/
 enum UTransmitFormat { 
   URBI_TRANSMIT_JPEG, ///< Transmit images compressed in JPEG
@@ -40,6 +43,9 @@ class USyncClient: public UClient {
   USyncClient(const char *_host,
               int _port = URBI_PORT,
               int _buflen = URBI_BUFLEN);
+  
+  /// Sends the expression and returns the result.
+  UMessage * syncGet(const char * expression,...);
   
   /// Send given buffer without copying it.
   int syncSend(const void * buffer, int length);
@@ -63,4 +69,18 @@ class USyncClient: public UClient {
   /// Get sound for duration milliseconds in buffer. 
   int syncGetSound(const char * device, int duration, USound &sound);
   
+  /// Wait until a message with specified tag is received. Returned message must be deleted.
+  UMessage * waitForTag(const char * tag);
+  /// Overriding UAbstractclient implementation
+   virtual void notifyCallbacks(const UMessage &msg);
+   
+   void callbackThread();
+   
+   private:
+   Semaphore * sem;
+   list<UMessage*> queue;
+   Lockable * listLock;
+   UMessage * msg;
+   Semaphore * syncLock;
+   string syncTag;
 };

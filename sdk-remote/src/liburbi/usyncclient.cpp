@@ -1,33 +1,101 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include "usyncclient.h"
+#include "lockable.h"
+
 using std::min;
+
+
+static void *callbackThreadStarter(void *objectPtr)
+{
+  USyncClient *connection = (USyncClient *) objectPtr;
+  connection->callbackThread();
+}
+
+
 USyncClient::USyncClient(const char *_host, int _port, int _buflen) : 
   UClient(_host, _port, _buflen) {
+	  sem = new Semaphore();
+	  listLock = new Lockable();
+	  syncLock = new Semaphore();
+	  msg=0;
+	  syncTag = "";
+	  pthread_t *pt = new pthread_t();
+	  pthread_create(pt, NULL, callbackThreadStarter, this);
+	  if (!urbi::defaultClient)
+		  urbi::defaultClient =  this;
+}
+
+void USyncClient::callbackThread() {
+	while (true) {
+		(*sem)--;
+		listLock->lock();
+		UMessage *m = queue.front();
+		queue.pop_front();
+		UAbstractClient::notifyCallbacks(*m);
+		delete m;
+		listLock->unlock();
+	}
+}
+
+void USyncClient::notifyCallbacks(const UMessage &msg) {
+	listLock->lock();
+	if (syncTag == msg.tag) {
+		this->msg = new UMessage(msg);
+		(*syncLock)++;
+	}
+	else {
+		queue.push_back(new UMessage(msg));
+		(*sem)++;
+	}
+	listLock->unlock();
+}
+
+UMessage * USyncClient::waitForTag(const char * tag) {
+	syncTag = tag;
+	(*syncLock)--;
+	syncTag = "";
+	return msg;
 }
 
 
-
-struct USyncStruct
-{
-  UMessage *msg;
-  sem_t semlock;
-
-  //UrbiSoundCopy
-  USound sound; //for format referece
-  void * buffer;
-  int pos;
-  int size;
-};
-
-
-static UCallbackAction URBIUnlock(void *cbData, const UMessage &msg)
-{
-  USyncStruct *s = (USyncStruct *) cbData;
-  s->msg = new UMessage(msg);
-  sem_post(&s->semlock);
-  return URBI_REMOVE;
+UMessage * USyncClient::syncGet(const char * format, ...) {
+	//check there is no tag
+	int p;
+	while(format[p]==' ') p++;
+	while (isalpha(format[p])) p++;
+	while(format[p]==' ') p++;
+	if (format[p]==':') {
+		std::cerr <<"FATAL: passing a taged command to syncGet:'"<<format<<"'\n";
+		::exit(1);
+	}
+	//check if there is a command separator
+	p = strlen(format)-1;
+	while (format[p]==' ') p--;
+	bool hasSep = (format[p]==';' || format[p]==',');
+	va_list arg;
+	va_start(arg, format);
+	lockSend();
+	rc = vpack(format, arg);
+	va_end(arg);
+	if (rc < 0) {
+		unlockSend();
+		return 0;
+	}
+	if (!hasSep)
+		strcat(sendBuffer,",");
+	char tag[70];
+	makeUniqueTag(tag);
+	strcat(tag,":");
+	effectiveSend(tag, strlen(tag));
+	tag[strlen(tag)-1]=0; //restore tag
+	rc = effectiveSend(sendBuffer, strlen(sendBuffer));
+	sendBuffer[0] = 0;
+	unlockSend();
+	UMessage *m = waitForTag(tag);
+	return m;
 }
+
 
 
 int 
@@ -36,44 +104,40 @@ USyncClient::syncGetImage(const char *camera,
                               int format, int transmitFormat, 
                               int &width, int &height)
 {
-  USyncStruct s;
-  sem_init(&s.semlock, 0, 0);
   int f;
   if ( (format == IMAGE_JPEG)  || (transmitFormat == URBI_TRANSMIT_JPEG))
     f = 1;
   else
     f = 0;
   send("%s.format = %d;noop;noop;", camera, f);	//XXX required to ensure format change is applied
-  sendCommand(URBIUnlock, &s, "%s.val;", camera);
-  sem_wait(&s.semlock);
-  sem_destroy(&s.semlock);
-  if (s.msg->value->binary->type != BINARY_IMAGE) {
-    delete s.msg;
+  UMessage *m = syncGet("%s.val;",camera);
+  if (m->value->binary->type != BINARY_IMAGE) {
+    delete m;
     return 0;
   }
-  width = s.msg->value->binary->image.width;
-  height = s.msg->value->binary->image.height;
+  width = m->value->binary->image.width;
+  height = m->value->binary->image.height;
 
   int osize = buffersize;
   if (f == 1  &&  format != IMAGE_JPEG ) {	//uncompress jpeg
     if (format == IMAGE_YCbCr)
-      convertJPEGtoYCrCb((const byte *) s.msg->value->binary->image.data, s.msg->value->binary->image.size, 
+      convertJPEGtoYCrCb((const byte *) m->value->binary->image.data, m->value->binary->image.size, 
                          (byte *) buffer, buffersize);
     else
-      convertJPEGtoRGB((const byte *)  s.msg->value->binary->image.data, s.msg->value->binary->image.size,
+      convertJPEGtoRGB((const byte *)  m->value->binary->image.data, m->value->binary->image.size,
                        (byte *) buffer, buffersize);
   }
   else if (format == IMAGE_RGB || format == IMAGE_PPM) {
-    buffersize = min(s.msg->value->binary->image.size, buffersize);
-    if (s.msg->value->binary->image.imageFormat == IMAGE_YCbCr)
-      convertYCrCbtoRGB((const byte *) s.msg->value->binary->image.data, buffersize, (byte *) buffer);
+    buffersize = min(m->value->binary->image.size, buffersize);
+    if (m->value->binary->image.imageFormat == IMAGE_YCbCr)
+      convertYCrCbtoRGB((const byte *) m->value->binary->image.data, buffersize, (byte *) buffer);
     else 
-      memcpy(buffer, s.msg->value->binary->image.data, buffersize);
+      memcpy(buffer, m->value->binary->image.data, buffersize);
     
   }
   else { //jpeg jpeg, or ycrcb ycrcb
-    buffersize = min(s.msg->value->binary->image.size, buffersize);
-    memcpy(buffer, s.msg->value->binary->image.data, buffersize);
+    buffersize = min(m->value->binary->image.size, buffersize);
+    memcpy(buffer, m->value->binary->image.data, buffersize);
   }
   if (format == IMAGE_PPM) {
     char p6h[20];
@@ -84,7 +148,7 @@ USyncClient::syncGetImage(const char *camera,
     memcpy(buffer, p6h, p6len);
     buffersize += p6len;
   }
-  delete s.msg;
+  delete m;
   return 1;
 }
 
@@ -92,48 +156,44 @@ USyncClient::syncGetImage(const char *camera,
 int 
 USyncClient::syncGetNormalizedDevice(const char *device, double &val)
 {
-  USyncStruct s;
-  sem_init(&s.semlock, 0, 0);
-  sendCommand(URBIUnlock, &s, "%s.valn;", device);
-  sem_wait(&s.semlock);
-  sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
-    delete s.msg;
+ 
+	UMessage *m = syncGet("%s.valn;", device);
+	
+  if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    delete m;
     return 0;
   }
-  val = (double)(UValue&)s.msg;
+  val = (double)(*(m->value));
+  delete m;
   return 1;
 }
 
 int 
 USyncClient::syncGetDevice(const char *device, double &val)
 {
-  USyncStruct s;
-  sem_init(&s.semlock, 0, 0);
-  sendCommand(URBIUnlock, &s, "%s.val;", device);
-  sem_wait(&s.semlock);
-  sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
-    delete s.msg;
+		UMessage *m = syncGet("%s.val;", device);
+	
+  if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    delete m;
     return 0;
   }
-  val = (double)(UValue&)s.msg;
+  val = (double)(*(m->value));
+  delete m;
   return 1;
 }
 
 int 
 USyncClient::syncGetResult(const char* command, double &val) {
-  USyncStruct s;
-  sem_init(&s.semlock, 0, 0);
-  sendCommand(URBIUnlock, &s, command);
-  sem_wait(&s.semlock);
-  sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
-    delete s.msg;
+  	UMessage *m = syncGet("%s", command);
+	
+  if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    delete m;
     return 0;
   }
-  val = (double)(UValue&)s.msg;
+  val = (double)(*(m->value));
+  delete m;
   return 1;
+	
 }
 
 
@@ -141,61 +201,34 @@ int
 USyncClient::syncGetDevice(const char *device, const char * access, 
                            double &val)
 {
-  USyncStruct s;
-  sem_init(&s.semlock, 0, 0);
-  sendCommand(URBIUnlock, &s, "%s.%s;", device,access);
-  sem_wait(&s.semlock);
-  sem_destroy(&s.semlock);
-  if (s.msg->type != MESSAGE_DATA || s.msg->value->type != DATA_DOUBLE) {
-    delete s.msg;
+	UMessage *m = syncGet("%s.%s;", device,access);
+	
+  if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    delete m;
     return 0;
   }
-  val = (double)(UValue&)s.msg;
+  val = (double)(*(m->value));
+  delete m;
   return 1;
-}
-
-static UCallbackAction URBISoundCopy(void *cbData, const UMessage &msg) {
-   USyncStruct *s = (USyncStruct *) cbData;
-   if (msg.type != MESSAGE_DATA || msg.value->type != DATA_BINARY || msg.value->binary->type != BINARY_SOUND) {
-     sem_post(&s->semlock);
-     return URBI_REMOVE;
-   }
-   s->sound = msg.value->binary->sound;
-   if (s->size < s->pos+msg.value->binary->sound.size) s->buffer = realloc(s->buffer, msg.value->binary->sound.size+s->pos);
-   s->size = msg.value->binary->sound.size+s->pos;
-   memcpy((char*)(s->buffer)+s->pos, msg.value->binary->sound.data, msg.value->binary->sound.size);
-   s->pos +=msg.value->binary->sound.size;
-   return URBI_CONTINUE;
+  
+  
 }
 
 
 int 
 USyncClient::syncGetSound(const char * device, int duration, USound &sound)
 {
-  USyncStruct s;
-  sem_init(&s.semlock, 0, 0);
-  s.buffer=sound.data;
-  s.pos=0;
-  s.size=sound.size;
-  setCallback(&URBISoundCopy, &s, "susound");
-  send("loopsound: loop susound: %s.val ,   { wait(%d); stop loopsound; noop;noop; susound:ping },", device, duration);
-  sem_wait(&s.semlock);
-  sem_destroy(&s.semlock);
-  s.sound.data = sound.data;
-  s.sound.size = sound.size;
-  if (! (s.sound == sound)) {
-    //conversion required
-    sound.data = 0;
-    sound.size = 0;
-    s.sound.data = (char *)s.buffer;
-    s.sound.size = s.pos;
-    convert(s.sound, sound);
+
+  send("syncgetsound = BIN 0;loopsound: loop syncgetsound = syncgetsound +  %s.val ,   { wait(%d); stop loopsound; noop;noop; };", device, duration);
+  UMessage * m = syncGet("syncgetsound;");
+  if (m->type != MESSAGE_DATA || m->value->type != DATA_BINARY || m->value->binary->type != BINARY_SOUND) {
+	  delete m;
+	  return 0;
   }
-  else {
-    sound.data = (char *)s.buffer;
-    sound.size = s.pos;
-  }
-  return 0;
+  convert(m->value->binary->sound, sound);
+  delete m;
+  return 1;
+  
 }
 
 int 

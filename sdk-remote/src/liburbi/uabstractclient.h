@@ -253,7 +253,7 @@ class UAbstractClient : public std::ostream
   void makeUniqueTag(char * tag);
 
   /// Simulate an Urbi message.
-  void notifyCallbacks(const UMessage &msg);
+  virtual void notifyCallbacks(const UMessage &msg);
 
   /// Notify of an error. 
   virtual void printf(const char * format, ...)=0;
@@ -300,7 +300,8 @@ class UAbstractClient : public std::ostream
   
   char           *recvBuffer;        ///< Reception buffer.
   int            recvBufferPosition; ///< Current position in reception buffer.
-  
+  char           *sendBuffer;            ///< Temporary buffer for send data.
+
 
  private:
   list<BinaryData> bins;                 ///< BIN object for this command
@@ -319,8 +320,7 @@ class UAbstractClient : public std::ostream
   int            currentTimestamp;
 
 
-  char           *sendBuffer;            ///< Temporary buffer for send data.
-
+  
   std::list<UCallbackInfo>callbackList;
   int            uid;                    ///< Unique tag base.
 

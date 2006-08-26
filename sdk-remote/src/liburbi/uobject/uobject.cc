@@ -22,7 +22,7 @@
 #include <sstream>
 #include <list>
 #include "uobject.h"
-#include <uclient.h>
+#include <usyncclient.h>
 #include "uexternal.h"
 
 using namespace urbi;
@@ -502,8 +502,8 @@ urbi::main(int argc, char *argv[])
 
   //serverIP = argv[1];
   cout << "Running Soft Device Module '" << argv[0] << "' on " << argv[1] << endl;
-  urbi::connect(argv[1]);
-
+  //we need a usyncclient urbi::connect(argv[1]);
+  new USyncClient(argv[1]);
 
   
 #ifdef LIBURBIDEBUG
