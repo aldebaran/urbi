@@ -1,7 +1,8 @@
 #ifndef UCONVERSION_H
 #define UCONVERSION_H
 #include "uobject.h"
-using namespace urbi;
+using urbi::USound;
+using urbi::UImage;
 typedef unsigned char byte; 
 
 

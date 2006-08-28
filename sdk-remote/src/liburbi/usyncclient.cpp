@@ -30,11 +30,17 @@ void USyncClient::callbackThread() {
 	while (true) {
 		(*sem)--;
 		listLock->lock();
+		if (queue.empty()) {
+			//we got mysteriously interrupted
+			listLock->unlock();
+			continue;
+		}
 		UMessage *m = queue.front();
 		queue.pop_front();
+		listLock->unlock();
 		UAbstractClient::notifyCallbacks(*m);
 		delete m;
-		listLock->unlock();
+		
 	}
 }
 
@@ -61,7 +67,7 @@ UMessage * USyncClient::waitForTag(const char * tag) {
 
 UMessage * USyncClient::syncGet(const char * format, ...) {
 	//check there is no tag
-	int p;
+	int p=0;
 	while(format[p]==' ') p++;
 	while (isalpha(format[p])) p++;
 	while(format[p]==' ') p++;

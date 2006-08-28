@@ -140,7 +140,7 @@ UVar::~UVar()
     for (list<UVar*>::iterator it = varmapfind->second.begin();
 	it != varmapfind->second.end();)
       if ((*it) == this) 
-	varmapfind->second.erase(it);
+	it=varmapfind->second.erase(it);
       else
 	it++;
 	

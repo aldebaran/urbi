@@ -1,7 +1,7 @@
 #include "uconversion.h"
 
 #include <setjmp.h>
-
+using namespace urbi;
 extern "C"
 {
 #include "../../lib/jpeg-6b/jpeglib.h"

@@ -34,6 +34,7 @@
 #include <iostream>
 
 #include "uabstractclient.h"
+using namespace urbi;
 using std::min; 
 #if DEBUG
 //
@@ -728,11 +729,11 @@ UAbstractClient::processRecvBuffer()
 	    
 	    if (nBracket == 0) {
 	      //end of command, send
-	      lockList();
+	      //dumb lockList();
 	      UMessage msg(*this, currentTimestamp, currentTag, currentCommand,
 			   bins);
 	      notifyCallbacks(msg); 
-	      unlockList();
+	      //unlockList();
 	      
 	      while (!bins.empty()) {
 			free(bins.front().data);
@@ -800,12 +801,12 @@ UAbstractClient::processRecvBuffer()
 		  printf(" line was '%s'\n", recvBuffer);
 		  currentTimestamp = 0;
 		  strcpy(currentTag, "UNKNWN");
-		  lockList();
+		  //lockList();
 		  UMessage msg(*this, 0, URBI_ERROR_TAG, 
 			       "!!! UAbstractClient::read, fatal error parsing header", 
 			       list<BinaryData>());
 		  notifyCallbacks(msg);
-		  unlockList();
+		  //unlockList();
 	      }
 	    }
 	    
@@ -855,12 +856,12 @@ UAbstractClient::processRecvBuffer()
 			if (nBracket == 0) {
 			  //end of command
 			  recvBuffer[parsePosition]=0;
-			  lockList();
+			  //lockList();
 			  UMessage msg(*this, currentTimestamp, currentTag, 
 				  currentCommand, 
 				  bins);
 			  notifyCallbacks(msg);
-			  unlockList();
+			  //unlockList();
 			  //prepare for next read, copy the extra
 			  memmove(recvBuffer, recvBuffer+parsePosition+1, recvBufferPosition-parsePosition-1);	//copy beginning of next cmd
 			  recvBufferPosition = recvBufferPosition-parsePosition-1;

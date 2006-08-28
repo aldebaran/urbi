@@ -33,6 +33,8 @@
 #include <iostream>
 #include <string>
 #include "uobject.h"
+
+//we don't want a using namespace, but we need those for backward compatibility
 using namespace urbi;
 
 using std::string;
