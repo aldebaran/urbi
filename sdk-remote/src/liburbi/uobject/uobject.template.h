@@ -778,8 +778,7 @@ urbi {
   public:
 
     baseURBIStarter(string name) : name(name) {};
-    virtual ~baseURBIStarter() { UObject* tokill = getUObject();
-    	                         if (tokill) delete tokill;};
+    virtual ~baseURBIStarter() {};
 
     virtual UObject* getUObject() = 0;
 
@@ -799,7 +798,8 @@ urbi {
     	{ slist = &_slist;
 	  slist->push_back(dynamic_cast<baseURBIStarter*>(this)); 
 	};
-    virtual ~URBIStarter() {};
+    virtual ~URBIStarter() { UObject* tokill = getUObject();
+    	                     if (tokill) delete tokill;};
 
     virtual void copy(string objname) {
       	URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
