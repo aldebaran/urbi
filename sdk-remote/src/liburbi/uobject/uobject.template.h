@@ -778,7 +778,8 @@ urbi {
   public:
 
     baseURBIStarter(string name) : name(name) {};
-    virtual ~baseURBIStarter() {};
+    virtual ~baseURBIStarter() { UObject* tokill = getUObject();
+    	                         if (tokill) delete tokill;};
 
     virtual UObject* getUObject() = 0;
 

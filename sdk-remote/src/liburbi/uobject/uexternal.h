@@ -28,7 +28,8 @@ namespace urbi {
     UEM_ASSIGNVALUE,
     UEM_EMITEVENT,
     UEM_ENDEVENT,
-    UEM_NEW
+    UEM_NEW,
+    UEM_DELETE
   };
 
   static const string externalModuleTag = "__ExternalMessage__";

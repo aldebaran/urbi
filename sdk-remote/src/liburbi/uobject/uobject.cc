@@ -380,6 +380,30 @@ urbi::dispatcher(const UMessage &msg)
       
   }
 
+  // UEM_DELETE
+  else if ((USystemExternalMessage)(int)array[0] == UEM_DELETE) { 
+  
+    list<baseURBIStarter*>::iterator found = objectlist->end();
+    for (list<baseURBIStarter*>::iterator retr = objectlist->begin();
+	retr != objectlist->end();
+	retr++)
+      if ((*retr)->name == (string)array[1])
+	if (found != objectlist->end())
+	  msg.client.printf("Double object definition %s\n",(*retr)->name.c_str());
+	else
+	  found = retr;
+            
+    if (found == objectlist->end())
+      msg.client.printf("Unknown object definition %s\n",((string)array[1]).c_str());
+    else {
+      // remove the object from objectlist
+      objectlist->erase(found);
+      // delete the object
+      delete (*found);
+    }
+  }
+
+
   // DEFAULT
   else          
     msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)array[0]);      
