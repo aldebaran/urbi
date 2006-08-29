@@ -24,13 +24,13 @@
 
 #include "ustring.h"
 #include "utypes.h"
-class UVariableName;
-class UValue;
 #include <list>
 using  std::list;
 
 class UNamedParameters;
 class UConnection;
+class UVariableName;
+class UValue;
 
 // *****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command
@@ -52,7 +52,6 @@ public:
 
   void addMonitor(UConnection *c);
   bool removeMonitor(UConnection *c);
-//  void applyParameters(UNamedParameters *param);
 };
 
 #endif

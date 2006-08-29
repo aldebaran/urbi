@@ -515,7 +515,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  }
 	  
 	  persistant = false;
-	  sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s=__UFnctret.EXTERNAL_%d|undef __UFnctret.EXTERNAL_%d}",
+	  sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 	      UU,variablename->getFullname()->str(),UU,UU);
 	  
 	  morph = (UCommand*) 
@@ -687,8 +687,6 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		(expression->type == EXPR_VARIABLE) &&
 		(expression->variablename) &&
 		(expression->variablename->nostruct)) {
-	   ::urbiserver->debug("Shouldn't be here\n");
-	::urbiserver->debug("My name is:%s.%s / %s / %s.%s\n",variablename->id->str(),variablename->method->str(),variablename->getFullname()->str(),variablename->getDevice()->str(), variablename->getMethod()->str());
  
 	  UString* objname = expression->variablename->id;
 	  
@@ -696,13 +694,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  if (objit != ::urbiserver->objtab.end())  {
 	        // the use of 'id' is a hack that works.
 		HMaliastab::iterator hmi = ::urbiserver->objaliastab.find(variablename->id->str());
-		::urbiserver->debug("The left name is:%s.%s\n",variablename->id->str(),variablename->method->str());
-		if (hmi != ::urbiserver->objaliastab.end()) {
-		  ::urbiserver->debug("Redefined\n");
-		  (*hmi).second->update(objname);
-		}
+		if (hmi != ::urbiserver->objaliastab.end()) 
+		  (*hmi).second->update(objname);		
 		else {
-		  ::urbiserver->debug("New\n");
 		  UString* objalias = new UString(variablename->method);
 		  ::urbiserver->objaliastab[objalias->str()] = new UString(objname);
 		}
@@ -2063,7 +2057,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
 
       persistant = false;
-      sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s:__UFnctret.EXTERNAL_%d|undef __UFnctret.EXTERNAL_%d}",
+      sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
       UU,tag->str(),UU,UU);
           	  	  
       morph = (UCommand*) 
@@ -3409,14 +3403,23 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
   UString *fullname = variablename->buildFullname(this,connection);
   if (!fullname) return( status = UCOMPLETED );
 
-  if (strcmp(oper->str(),"undef")==0) {
+  if ( (strcmp(oper->str(),"undef")==0) ||
+       (strcmp(oper->str(),"delete")==0) ) {
     
     if (status != URUNNING) {
 
       variable = 0;
       fun      = variablename->getFunction(this,connection);
-      if (!fun)
-        variable = variablename->getVariable(this,connection);
+      if (!fun) {
+	variable = variablename->getVariable(this,connection);
+
+	if ((!variable) && (variablename->nostruct)) {
+	  UString* objname = variablename->getMethod();
+	  if (::urbiserver->variabletab.find(objname->str()) !=
+	      ::urbiserver->variabletab.end())
+	    variable = ::urbiserver->variabletab[objname->str()];
+	}
+      }
             
       if ((!fun) && (!variable)) {
         snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
@@ -3433,6 +3436,23 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
         return( status = UCOMPLETED );
       }
 
+      // test if variable is an object with subclasses (and reject if yes)
+      if ((variable->value) && 
+	  (variable->value->dataType == DATA_OBJ) &&
+	  (variable->value->str)) {
+
+       	HMobjtab::iterator idit = ::urbiserver->objtab.find(variable->value->str->str());
+	if ( (idit != ::urbiserver->objtab.end()) &&
+ 	     (!idit->second->down.empty()) ) {
+
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      "!!! This object has subclasses. Delete subclasses first.\n");
+	  connection->send(tmpbuffer,tag->str());
+	  return( status = UCOMPLETED );	  
+	}
+      }
+
+      // variable is not an object or it does not have subclasses
       if ((variable->nbAssigns == 0) && (variable->uservar)) {
         
         variable->toDelete = true;

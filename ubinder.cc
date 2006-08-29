@@ -20,6 +20,7 @@
  **************************************************************************** */
 #include <algorithm>
 using std::find;
+
 #include "ubinder.h"
 #include "ustring.h"
 #include "uvalue.h"
@@ -62,15 +63,5 @@ bool UBinder::removeMonitor(UConnection *c)
   monitors.remove(c);
   return( monitors.empty() );
 }
-/*
-void UBinder::applyParameters(UNamedParameters *param)
-{
-  for (list<UConnection *>::iterator monitorit = monitors.begin();
-      monitorit != monitors.end();
-      monitorit++) {
-    
-  }
-}
-*/
 
 

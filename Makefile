@@ -82,10 +82,8 @@ endif
 CPPFLAGS += -DOS=$(OS)
 ################################################################################
 
-BUILDNUMBERSCRIPT=http://web.urbiforge.com/svncount/buildnumber.php
-
-build/buildnumber: $(KERNEL_SOURCES)
-	svn info | grep Revision | sed -e "s/Revision: //" > build/buildnumber 
+build/buildnumber: $(KERNEL_SOURCES) parser/$(PARSER)/*.y parser/$(PARSER)/*.l
+	LANG=en && svn info | sed -e "s/é/e/" | grep Revision | sed -e "s/Revision: //" > build/buildnumber 
 	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 network: $(NETWORK_OBJS)

@@ -162,7 +162,15 @@ UVariable::~UVariable() {
     ::urbiserver->variabletab.erase(hmi);  
 
   FREEOBJ(UVariable); 
-  if (value) delete value;
+  if (value) {
+    if ((value->dataType == DATA_OBJ) && (value->str!=0)) {
+
+      HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
+      if (idit != ::urbiserver->objtab.end())
+	delete idit->second;
+    }
+    delete value;
+  }
   if (unit)   delete unit;
   if (varname) delete varname;
   if (method) delete method;

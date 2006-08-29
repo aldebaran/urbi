@@ -164,7 +164,8 @@ disconnect   { valp->str = new UString(yytext);
              }
 
 info  |
-undef        { 
+undef |
+delete       { 
                valp->str = new UString(yytext); 
                if (valp->str->str() == 0) {
                   delete (valp->str);
