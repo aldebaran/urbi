@@ -171,7 +171,7 @@ UVar::operator = (string s)
 void
 UVar::operator = (const UBinary &b)
 {  
-  URBI() << name << "=\"";  
+  URBI() << name << "=";  
   URBI()<<"BIN "<<b.common.size<<" "<<b.getMessage()<<";";
   URBI().write((char *)b.common.data, b.common.size);
 }
