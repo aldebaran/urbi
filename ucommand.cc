@@ -2029,8 +2029,10 @@ UCommand_EXPR::execute(UConnection *connection)
     ////// EXTERNAL /////
     HMbindertab::iterator it = ::urbiserver->functionbindertab.find(funname->str());
     if ((it != ::urbiserver->functionbindertab.end()) && 
-	(expression->parameters) && 
-	(it->second->nbparam == expression->parameters->size()) &&
+		(
+			( (expression->parameters) && (it->second->nbparam == expression->parameters->size()))
+			||
+			((!expression->parameters) && (it->second->nbparam==0))) &&
 	(!it->second->monitors.empty()))  {
 	
       int UU = unic();

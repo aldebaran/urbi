@@ -267,15 +267,7 @@ UVar::in()
  else return er;
 }
 
-static const char * blendNames[]={
-	"mix",
-	"add",
-	"discard",
-	"queue",
-	"cancel",
-	"normal",
-	""
-};
+
 
 
 void 
@@ -306,8 +298,8 @@ UVar::setProp(UProperty prop, const UValue &v) {
 			}
 			if (v.type == DATA_STRING) {
 				string s=(string)v;
-				for (int i=0;blendNames[i][0];i++) {
-					if (s==(string)blendNames[i]) {
+				for (int i=0;urbi::blendNames[i][0];i++) {
+					if (s==(string)urbi::blendNames[i]) {
 						vardata->variable->blendType = (UBlend)i;	
 						return;					
 					}	
