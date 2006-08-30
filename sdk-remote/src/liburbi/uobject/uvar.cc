@@ -110,7 +110,11 @@ UVar::setProp(UProperty prop, const char * v) {
 }
 void 
 UVar::setProp(UProperty prop, double v) {
-	URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+	//TODO : generalize
+	if (prop == PROP_BLEND && v>=0 && v< blendNum)
+		URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<blendNames[(int)v]<<";";
+	else
+		URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
 }
 
 UValue

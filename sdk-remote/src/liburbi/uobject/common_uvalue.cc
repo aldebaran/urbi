@@ -227,9 +227,11 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
       s<< '"'<<*v.stringValue<<'"';
       break;
     case DATA_BINARY:
-      s<<"BIN "<<v.binary->common.size<<" "<<v.binary->message<<";";
-      s.write((char *)v.binary->common.data, v.binary->common.size);
-      break;
+	  if (v.binary->type != BINARY_NONE && v.binary->type != BINARY_UNKNOWN)
+		  v.binary->buildMessage();
+	  s<<"BIN "<<v.binary->common.size<<" "<<v.binary->message<<";";
+	  s.write((char *)v.binary->common.data, v.binary->common.size);
+	  break;
     case DATA_LIST:
       {
 	s<<"[";

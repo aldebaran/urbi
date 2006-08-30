@@ -257,6 +257,8 @@ int UAbstractClient::send(UValue &v) {
     send("\"%s\"",v.stringValue->c_str());
     break;
   case DATA_BINARY:
+	  if (v.binary->type != BINARY_NONE && v.binary->type != BINARY_UNKNOWN)
+		  v.binary->buildMessage();  
     sendBin(v.binary->common.data, v.binary->common.size, "BIN %d %s;", v.binary->common.size, v.binary->message.c_str());      
     break;
   case DATA_LIST:

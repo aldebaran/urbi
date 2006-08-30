@@ -246,7 +246,7 @@ urbi {
     SAMPLE_UNSIGNED=2
   };
 
-  //WARNING: synchronize with blendNames in uvar.cc
+  //WARNING: synchronize with blendNames below, must be 0-based
   //! Blending mode
   enum UBlendType {
     UMIX=0,
@@ -257,6 +257,19 @@ urbi {
     UNORMAL
   };
 
+   //values for enum-like properties
+  static const char * blendNames[]={
+	"mix",
+	"add",
+	"discard",
+	"queue",
+	"cancel",
+	"normal",
+	""
+  };
+  static const int blendNum = 6;
+  
+  
   //WARNING: synchronize with propNames in uvar.cc
   /// URBI properties associated to a variable
   enum UProperty {
@@ -267,6 +280,7 @@ urbi {
 	  PROP_BLEND,
 	  PROP_DELTA
   };
+  
   //internal use: unparsed binary data
   class BinaryData {
     public:
@@ -415,7 +429,6 @@ urbi {
 	  
 	  
 	  UProp(UVar &owner, UProperty name):owner(owner),name(name){}
-	  
 	  private:
 	  UVar & owner;
 	  UProperty name;
@@ -425,6 +438,7 @@ urbi {
   };
   
   
+ 
    //Helper macro to initialize UProps in UVar constructors
   #define VAR_PROP_INIT \
   rangemin(*this, PROP_RANGEMIN), \
