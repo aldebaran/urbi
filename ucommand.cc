@@ -485,13 +485,15 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	HMfunctiontab::iterator hmf;
 	
 	////// EXTERNAL /////
-	
+	 
 	HMbindertab::iterator it = ::urbiserver->functionbindertab.find(functionname->str());
 	if ((it != ::urbiserver->functionbindertab.end()) && 
-		(expression->parameters) && 
-		(it->second->nbparam == expression->parameters->size()) &&
+		(
+			( (expression->parameters) && (it->second->nbparam == expression->parameters->size()))
+			||
+			((!expression->parameters) && (it->second->nbparam==0))) &&
 		(!it->second->monitors.empty()))  {
-	  
+	
 	  int UU = unic();
 	  char tmpprefix[1024];
 	  snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",

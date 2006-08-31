@@ -411,18 +411,16 @@ UConnection::received (const char *s)
 UErrorValue          
 UConnection::received (const ubyte *buffer, int length)
 { 
-  BlockLock bl(this); //lock this function
   bool gotlock = false;
   bool faillock = false; //if binary append failed to get lock, abort processing
   
   if (server->memoryOverflow) {
-
     errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
     return UFAIL; // Block any new incoming command
                   // when the system is out of memory
   }
-
-  if (receiveBinary_) // handles and try to finish the binary transfer
+  lock();
+  if (receiveBinary_)  {// handles and try to finish the binary transfer
    
     if (length < binCommand->refBinary->ref()->bufferSize -
         transferedBinary_) {
@@ -430,6 +428,7 @@ UConnection::received (const ubyte *buffer, int length)
              buffer,
              length);
       transferedBinary_ += length;
+	  unlock();
       return USUCCESS;
     }
     else {
@@ -451,9 +450,9 @@ UConnection::received (const ubyte *buffer, int length)
 	faillock = true;
       }
     }
-  
+  }
   UErrorValue result = recvQueue_->push( buffer, length);
-  
+  unlock();
   if ( result != USUCCESS) { // Handles memory errors.
     
     if ( result == UFAIL ) {
@@ -571,7 +570,7 @@ UConnection::received (const ubyte *buffer, int length)
             
               if (!obstructed) {       
                 server->parser.commandTree->up = 0;
-                server->parser.commandTree->position = 0;    
+                server->parser.commandTree->position = 0;   
                 execute(server->parser.commandTree);
                 if ((server->parser.commandTree) &&
                     (server->parser.commandTree->status == URUNNING))
@@ -591,7 +590,6 @@ UConnection::received (const ubyte *buffer, int length)
 
   receiving = false;  
   server->parser.commandTree = 0;
-
   treeLock.unlock();
   if (server->memoryOverflow) return UMEMORYFAIL; 
 
