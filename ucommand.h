@@ -470,7 +470,8 @@ class UCommand_BINDER : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_BINDER (UString* binder,
+  UCommand_BINDER (UVariableName* objname,
+                   UString* binder,
                    int type,
                    UVariableName* variablename,
 		   int nbparam=0);  
@@ -483,6 +484,7 @@ public:
 
   UString          *binder;     ///< binder name "external" or "internal"
   UVariableName    *variablename;///< variable
+  UVariableName    *objname;///< name of the uobject controling the binding
   int              type; ///< type of binding: 0:"function", 1:"var", 2:"event"
   int              nbparam; ///< nb of param in a function binding
 };

@@ -225,6 +225,7 @@ shutdown      { valp->str = new UString(yytext);
 
 if            { return token::IF;}  
 else          { return token::ELSE;} 
+from          { return token::FROM;}
 var           { return token::VAR;} 
 object        { return token::OBJECT;}  
 function      { return token::FUNCTION;} 

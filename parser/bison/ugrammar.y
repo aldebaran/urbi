@@ -165,6 +165,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token LBRACKET "{"
 %token IF "if"
 %token ELSE "else"
+%token FROM "from"
 %token WHILE "while"
 %token FOR "for"
 %token NORM "normalized"
@@ -706,30 +707,30 @@ instruction:
   | BINDER OBJECT purevariable {
 
       MEMCHECK($1);
-      $$ = new UCommand_BINDER($1,3,$3);
+      $$ = new UCommand_BINDER((UVariableName*)0,$1,3,$3);
       MEMCHECK2($$,$1,$3);
     }
 
 
-  | BINDER VAR purevariable {
+  | BINDER VAR purevariable FROM purevariable {
 
       MEMCHECK($1);
-      $$ = new UCommand_BINDER($1,1,$3);
-      MEMCHECK2($$,$1,$3);
+      $$ = new UCommand_BINDER($5,$1,1,$3);
+      MEMCHECK3($$,$1,$3,$5);
     }
     
-  | BINDER FUNCTION LPAREN NUM RPAREN purevariable {
+  | BINDER FUNCTION LPAREN NUM RPAREN purevariable FROM purevariable {
 
       MEMCHECK($1);
-      $$ = new UCommand_BINDER($1,0,$6,(int)(*$4));
-      MEMCHECK2($$,$1,$6);
+      $$ = new UCommand_BINDER($8,$1,0,$6,(int)(*$4));
+      MEMCHECK3($$,$1,$6,$8);
     }
 
-  | BINDER EVENT LPAREN NUM RPAREN purevariable {
+  | BINDER EVENT LPAREN NUM RPAREN purevariable FROM purevariable {
 
       MEMCHECK($1);
-      $$ = new UCommand_BINDER($1,2,$6,(int)(*$4));
-      MEMCHECK2($$,$1,$6);
+      $$ = new UCommand_BINDER($8,$1,2,$6,(int)(*$4));
+      MEMCHECK3($$,$1,$6,$8);
     }
 
   | WAIT expr { 

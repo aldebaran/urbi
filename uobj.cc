@@ -80,10 +80,10 @@ UObj::~UObj()
     char messagetosend[1024];
     snprintf(messagetosend,1024,"[5,\"%s\"]\n", device->str());
 
-    for (list<UConnection*>::iterator it = binder->monitors.begin();
+    for (list<UMonitor*>::iterator it = binder->monitors.begin();
 	it != binder->monitors.end();
 	it++)
-      (*it)->send((const ubyte*)messagetosend, strlen(messagetosend));
+      (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
     delete(binder);
   }
 

@@ -347,16 +347,16 @@ UVariable::updated()
   if ((!binder) && (internalBinder.empty())) return;  
   
   if (binder)    
-    for (list<UConnection*>::iterator it = binder->monitors.begin();
+    for (list<UMonitor*>::iterator it = binder->monitors.begin();
 	it != binder->monitors.end();
 	it++) {
       
-      (*it)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*it)->send((const ubyte*)"[1,\"",4);
-      (*it)->send((const ubyte*)varname->str(),varname->len());
-      (*it)->send((const ubyte*)"\",",2);
-      value->echo((*it));
-      (*it)->send((const ubyte*)"]\n",2);    
+      (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it)->c->send((const ubyte*)"[1,\"",4);
+      (*it)->c->send((const ubyte*)varname->str(),varname->len());
+      (*it)->c->send((const ubyte*)"\",",2);
+      value->echo((*it)->c);
+      (*it)->c->send((const ubyte*)"]\n",2);    
     }
 
   if (!internalBinder.empty()) {

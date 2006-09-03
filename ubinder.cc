@@ -29,7 +29,7 @@ using std::find;
                                                        	
 // **************************************************************************	
 //! UBinder constructor.
-UBinder::UBinder (UString *id, UBindMode bindMode,
+UBinder::UBinder (UString *objname, UString *id, UBindMode bindMode,
 		  UBindType type, int nbparam,
 		  UConnection* c)
 {
@@ -37,31 +37,144 @@ UBinder::UBinder (UString *id, UBindMode bindMode,
   this->bindMode = bindMode;
   this->type     = type;
   this->nbparam  = nbparam;
-  addMonitor(c);
+  addMonitor(objname, c);
 }
 
 //! UBinder destructor
-UBinder::~UBinder()
+UBinder::~UBinder ()
 {
   if (id) delete(id);
+
+  for (list<UMonitor*>::iterator mit = monitors.begin();
+      mit != monitors.end();
+      mit++)      
+    delete (*mit);  
 }
 
 //! Add a monitoring connection to the list if it is not already there
-void UBinder::addMonitor(UConnection *c)
-{
-  list<UConnection *>::iterator monitorit = find (monitors.begin(),
-  monitors.end(), c);
-  if (monitorit == monitors.end())
-    monitors.push_back(c);  
+void 
+UBinder::addMonitor (UString *objname, UConnection *c)
+{ 
+  UMonitor *m = 0;
+
+  for (list<UMonitor*>::iterator mit = monitors.begin();
+       mit != monitors.end() && !m;
+       mit++) 
+  {
+    if ((*mit)->c == c)           
+      m = (*mit);          
+  }//for
+
+  if (!m) 
+  {
+    m = new UMonitor(objname,c);
+    monitors.push_back(m);
+  }
+  else
+    m->addObject(objname);  
+}
+
+//! Locate a monitor based on its connection or zero if not found
+UMonitor*
+UBinder::locateMonitor (UConnection *c)
+{ 
+  UMonitor *m = 0;
+
+  // locate the connection
+  for (list<UMonitor*>::iterator mit = monitors.begin();
+       mit != monitors.end();
+       mit++) 
+  {
+    if ((*mit)->c == c) 
+      m = (*mit);          
+  }//for
+
+  return (m);
 }
 
 //! Remove a monitoring connection.
 /** Returns true if the UBinder itself can be freed
   */
-bool UBinder::removeMonitor(UConnection *c)
+bool 
+UBinder::removeMonitor (UString *objname, UConnection *c)
 { 
-  monitors.remove(c);
+  UMonitor *m = locateMonitor(c);
+  if (!m) return false;
+
+  if (m->removeObject(objname)) 
+  {
+    monitors.remove(m);
+    delete m;
+  }//if
+  
   return( monitors.empty() );
 }
 
+//! Remove a monitoring connection.
+/** Returns true if the UBinder itself can be freed
+  */
+bool 
+UBinder::removeMonitor(UConnection *c)
+{ 
+  UMonitor *m = locateMonitor(c);
+  if (!m) return false;
+
+  monitors.remove(m);
+  delete m;
+  return( monitors.empty() );
+}
+
+/*****************************************************************/
+/* UMonitor */
+/*****************************************************************/
+
+//! UMonitor constructor
+UMonitor::UMonitor(UConnection *c): c(c)
+{
+}
+
+//! UMonitor constructor
+UMonitor::UMonitor(UString *objname, UConnection *c) :
+  c(c)
+{
+  addObject(objname);  
+}
+
+//! UMonitor destructor
+UMonitor::~UMonitor()
+{ 
+  for (list<UString*>::iterator sit = objects.begin();
+       sit != objects.end();
+       sit++)   
+    delete (*sit);
+}
+
+//! UMonitor addObject
+void
+UMonitor::addObject(UString *objname)
+{
+  objects.push_back(new UString(objname));
+}
+
+//! Monitor removeObject, returns true if objects is empty
+bool
+UMonitor::removeObject(UString *objname)
+{
+  // locate the object
+  UString *s = 0;  
+  for (list<UString*>::iterator sit = objects.begin();
+       sit != objects.end() && !s;
+       sit++) 
+  {
+    if (objname->equal(*sit))        
+      s = (*sit);          
+  }//for
+
+  if (!s) return (false);  
+
+  objects.remove(s);
+  delete s;
+
+  return( objects.empty() );
+}
 

@@ -26,8 +26,10 @@
 #include "uconnection.h"
 #include "ughostconnection.h"
 #include "uobject.h"
+
 using namespace urbi;
 using namespace std;
+
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
@@ -99,8 +101,8 @@ void urbi::main(int argc, char *argv[]) {} // no effect here
 
 // **************************************************************************	
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
-  name(name) , storage(0)
+UGenericCallback::UGenericCallback(string objname, string type, string name, int size,  UTable &t) : 
+  name(name) , storage(0), objname(objname)
 {
   nbparam = size;
   
@@ -131,84 +133,13 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
     else 
       it->second->internalAccessBinder.push_back(this);
   }
-
-  
-  // Note pour la suite:
-  // ucommand.cc:3342 => mise en place de bindings. C'est là que se trouve
-  // l'info pour traiter les callback function/event
-  //
-  // Voir aussi uvariable.cc:354 pour gérer la mise à jour d'une variable =>
-  // rien à faire du côté de UVar qui a un pointeur sur UVariable de toute
-  // façon, mais il faut appeller les callback des variables monitorées
-  //
-  // Ensuite, chercher les /// EXTERNAL et gérer la version internal au même
-  // endroit.
-  //
-  // A priori, l'affectation dans les UVar est reglée (UVar x;  x=42)
-  //
-  // Penser à sortir les méthodes de parsing des object UBinary et urbi::UValue,
-  // ça n'a rien à faire dans le kernel.
-  //
-  // Mettre en place des castings pour les UVar et les urbi::UValue
-
-  /* Principe de l'object UObjectHub:
-
-  L'diée est d'avoir un object UObjectHub perso du genre:
-
-  class myhub : UObjectHub {
-    virtual void callmeAfterAllCallbacks();
-  }  
-
-  callmeAfterAllCallbacks est appellé après l'appel concommitant de n callback
-  de UObject appartenant au hub. Ca veut dire que si deux objets sont callbackés
-  en même temps (pour ne pas dire au même tour de boucle), cette fonction est
-  appellé après que les deux cb ai été executé. On peut mettre là le code qui
-  envoit le message OPENR pour bouger les moteurs par exemple. Et on peut savoir
-  quels sont les objets qui ont callbacké et préparer le tableau en fonction.
-  Voir comment le hub et les objets partagent des données.
-
-  L'autre idée est de permettre de définir au niveau de la couche OS-specific la
-  notion de timer. Un hub peut demander à être reveillé à intervalles réguliers.
-  Comme par hasard, dans le cas Aibo, il va demander une fréquence correspondant
-  à la fréquence de rafraichissement des sensors et il sera appelé après que
-  l'OS ai rangé les valeurs neuves des senseurs dans une structure accessible au
-  hub. Le hub appelle ensuite les objets sous jacents et ceux ci transfèrent les
-  valeurs de senseurs à leur variable associée.
-  A priori, en créant des hubs différents, on peut avoir en principe des taux de
-  rafraichissement variables selons les devices, par catégories. Ce n'est pas
-  encore clair comment le kernel pourrait en tirer partie puisque pour l'instant
-  le modèle est encore celui d'une execution monolithique de toutes les
-  commandes de l'arbre à chaque tour. Donc, ça force à faire fonctionner le tout
-  à la plus petite période demandée. Intuitivement, le kernel2 sera plus à même
-  de gérer mais il faut voir si le kernel1 ne peut pas faire qqch d'intéressant
-  aussi, ce n'est pas sur que non.
-
-  Pour qu'un softdevice plugin se rattache à un UObjectHub, il suffit de passer
-  son nom en paramètre au constructeur de UObject.
-
-  NB: toutes ces structures ne sont bien entendues pas intialisées en static
-  dans le vide intersidéral, mais sont gérée par une structure d'intialisation
-  qui fait les choses au bon moment et dans le bon ordre (les hubs en premier,
-  les UObjects ensuite, par exemple...). => étendre les baseURBIStarter pour les
-  hubs? Pas forcément nécessaire.
-  
-   */
-
-    
-  /*
-  if ((type == "event") || (type == "function"))
-    URBI() << "external " << type << "(" << size << ") " << name <<";";
-  */
 };
 	
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string type, string name, UTable &t) : 
-  name(name) , storage(0)
+UGenericCallback::UGenericCallback(string objname, string type, string name, UTable &t) : 
+  name(name) , storage(0), objname(objname)
 {
   t[this->name].push_back(this);
-  /*
-  URBI() << "external " << type << " " << name <<";";
-  */
 };
 
 UGenericCallback::~UGenericCallback()
@@ -216,15 +147,12 @@ UGenericCallback::~UGenericCallback()
 };
 
 
-UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UTable &t)
-{
-  return ((UGenericCallback*) new UCallbackGlobalvoid0 (type,fun,funname,t));
-}
-
 // **************************************************************************	
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(ufloat period, UTimerTable &tt) : period(period)
+UTimerCallback::UTimerCallback(string objname, ufloat period, UTimerTable &tt) : 
+  period(period),
+  objname(objname)
 {
   tt.push_back(this);
   lastTimeCalled = -9999999;
@@ -244,57 +172,16 @@ int voidfun() {/*echo("void fun call\n");*/ return 0;};
 void
 urbi::USync(UVar &v)
 {
-  urbi::UNotifyChange(v,&voidfun);
+//  urbi::UNotifyChange(v,&voidfun);//FIXME
 }
-
+/*
 //! UVar monitoring with callback
 void 
 urbi::UNotifyChange(UVar &v, int (*fun) ())
 {  
   createUCallback("var",fun,v.get_name(), monitormap);
 }
-
-//! UVar monitoring with callback including a pointeur to the UVar&
-void 
-urbi::UNotifyChange(UVar &v, int (*fun) (UVar&))
-{
-  UGenericCallback* cb = createUCallback("var",fun,v.get_name(), monitormap);
-  if (cb) cb->storage = (void*)(&v);
-}
-
-//! UVar monitoring with callback including a pointeur to the UVar&
-void 
-urbi::UNotifyAccess(UVar &v, int (*fun) (UVar&))
-{
-  UGenericCallback* cb = createUCallback("varaccess",fun,v.get_name(), accessmap);
-  if (cb) cb->storage = (void*)(&v);
-}
-
-//! UVar monitoring with callback, based on var name: creates a hidden UVar
-void 
-urbi::UNotifyChange(string varname, int (*fun) ())
-{  
-  createUCallback("var",fun,varname, monitormap);
-}
-
-//! UVar monitoring with callback, based on var name: creates a hidden UVar 
-//! and pass it as a param in the callback
-void 
-urbi::UNotifyChange(string varname, int (*fun) (UVar&))
-{
-  UVar *hidden = new UVar(varname);
-  UGenericCallback* cb = createUCallback("var",fun,varname, monitormap);
-  if (cb) cb->storage = (void*)(hidden);
-}
-
-//! Timer definition
-void 
-urbi::USetTimer(ufloat t, int (*fun) ())
-{
-  new UTimerCallbacknoobj(t,fun,timermap);  
-}
-
-
+*/
 
 // **************************************************************************	
 //! UObject constructor.
@@ -330,20 +217,8 @@ void
 UObject::USetUpdate(ufloat t) 
 {
   period = t;
-  new UTimerCallbackobj<UObject>(t, this, &UObject::update, updatemap);
+  new UTimerCallbackobj<UObject>(__name, t, this, &UObject::update, updatemap);
 }
-
-/*
-int
-UObject::updateGlobal() 
-{
-  update();
-  for (UObjectList::iterator it = members.begin();
-       it != members.end();
-       it++) 
-    (*it)->updateGlobal();
-}
-*/
 
 // **************************************************************************	
 //! UObjectHub constructor.
@@ -361,7 +236,7 @@ void
 UObjectHub::USetUpdate(ufloat t) 
 {
   period = t;
-  new UTimerCallbackobj<UObjectHub>(t, this, &UObjectHub::updateGlobal, updatemap);
+  new UTimerCallbackobj<UObjectHub>(name, t, this, &UObjectHub::updateGlobal, updatemap);
 }
 
 int

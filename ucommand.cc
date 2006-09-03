@@ -499,21 +499,21 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
 			   functionname->str(),it->second->nbparam,UU);
 	  
-	  for (list<UConnection*>::iterator it2 = it->second->monitors.begin();
+	  for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 		   it2 != it->second->monitors.end();
 		   it2++) {
 		
-		(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-		(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
+		(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+		(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
 		for (UNamedParameters *pvalue = expression->parameters;
 			 pvalue != 0;
 			 pvalue = pvalue->next) {
 		  
-		  (*it2)->send((const ubyte*)",",1);
+		  (*it2)->c->send((const ubyte*)",",1);
 		  UValue* valparam = pvalue->expression->eval(this,connection);
-		  valparam->echo((*it2));
+		  valparam->echo((*it2)->c);
 		} 
-		(*it2)->send((const ubyte*)"]\n",2);
+		(*it2)->c->send((const ubyte*)"]\n",2);
 	  }
 	  
 	  persistant = false;
@@ -669,7 +669,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		  
 		  delete expression;
 		  expression = new UExpression(EXPR_VALUE,
-									   new UValue( (*cbi)->__evalcall(tmparray)));
+		      new UValue( (*cbi)->__evalcall(tmparray)));
 		  found_function = true;
 		}
 	  }
@@ -2042,21 +2042,21 @@ UCommand_EXPR::execute(UConnection *connection)
       snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
     	  funname->str(),it->second->nbparam,UU);
 
-      for (list<UConnection*>::iterator it2 = it->second->monitors.begin();
+      for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
 	   it2++) {
 	
-	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
+	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
 	for (UNamedParameters *pvalue = expression->parameters;
 	    pvalue != 0;
 	    pvalue = pvalue->next) {
 	    
-	  (*it2)->send((const ubyte*)",",1);
+	  (*it2)->c->send((const ubyte*)",",1);
 	  UValue* valparam = pvalue->expression->eval(this,connection);
-	  valparam->echo((*it2));
+	  valparam->echo((*it2)->c);
 	} 
-	(*it2)->send((const ubyte*)"]\n",2);
+	(*it2)->c->send((const ubyte*)"]\n",2);
       }
 
 
@@ -2692,26 +2692,26 @@ UCommand_NEW::execute(UConnection *connection)
     }    
 
       
-    for (list<UConnection*>::iterator it2 =
+    for (list<UMonitor*>::iterator it2 =
 	objit->second->binder->monitors.begin();
 	it2 != objit->second->binder->monitors.end();
 	it2++) {
       
-      (*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*it2)->send((const ubyte*)tmpprefixnew,strlen(tmpprefixnew));	
+      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it2)->c->send((const ubyte*)tmpprefixnew,strlen(tmpprefixnew));	
 
       if (!noinit) {
-	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
+	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
 	for (UNamedParameters *pvalue = parameters;
 	    pvalue != 0;
 	    pvalue = pvalue->next) {
 	  
-	  (*it2)->send((const ubyte*)",",1);
+	  (*it2)->c->send((const ubyte*)",",1);
 	  UValue* valparam = pvalue->expression->eval(this,connection);
-	  valparam->echo((*it2));
+	  valparam->echo((*it2)->c);
 	}
-	(*it2)->send((const ubyte*)"]\n",2);      
+	(*it2)->c->send((const ubyte*)"]\n",2);      
       }
     }    
   }
@@ -3644,13 +3644,15 @@ MEMORY_MANAGER_INIT(UCommand_BINDER);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_BINDER::UCommand_BINDER(UString* binder,
+UCommand_BINDER::UCommand_BINDER(UVariableName* objname,
+                                 UString* binder,
 				 int type,
                                  UVariableName* variablename,
 				 int nbparam) :
   UCommand(CMD_GENERIC)
 {	
   ADDOBJ(UCommand_BINDER);
+  this->objname      = objname;
   this->binder       = binder;
   this->variablename = variablename;
   this->type 	     = type;
@@ -3663,6 +3665,7 @@ UCommand_BINDER::~UCommand_BINDER()
   FREEOBJ(UCommand_BINDER);
   if (binder)       delete binder;
   if (variablename) delete variablename;
+  if (objname)      delete objname;
 }
 
 //! UCommand subclass execution function
@@ -3673,51 +3676,60 @@ UCommand_BINDER::execute(UConnection *connection)
   UString *fullname = variablename->buildFullname(this,connection);
   if (!fullname) return( status = UCOMPLETED );
 
+  UString *fullobjname = 0;
+  if (objname) {
+    fullobjname = objname->id;
+    if (!fullobjname) return( status = UCOMPLETED );
+  }
+
   if (type != 3) // not object binder
-    ::urbiserver->debug("BINDING: %s type(%d) %s[%d]\n",
-	binder->str(), type, fullname->str(), nbparam);
+    ::urbiserver->debug("BINDING: %s type(%d) %s[%d] from %s\n",
+	binder->str(), type, fullname->str(), nbparam, fullobjname->str());
   else
     ::urbiserver->debug("BINDING: %s type(%d) %s\n",
 	binder->str(), type, variablename->id->str());  
   
   UBindMode mode = UEXTERNAL;
-// if (strcmp(binder->str(),"external")==0) mode = UEXTERNAL;
-// if (strcmp(binder->str(),"internal")==0) mode = UINTERNAL;
     
   UString *key = new UString(fullname);
+
   switch (type) {
+
     case UBIND_VAR:
       {
   	HMvariabletab::iterator it = ::urbiserver->variabletab.find(key->str());
     	if (it == ::urbiserver->variabletab.end()) {
 	  
 	  UVariable *variable = new UVariable(key->str(), new UValue());
-	  variable->binder = new UBinder(fullname, 
+	  variable->binder = new UBinder(fullobjname, fullname, 
 	      mode,(UBindType)type, nbparam, connection);
 	}
 	else {
 	  if (it->second->binder)
-	    it->second->binder->addMonitor(connection);
+	    it->second->binder->addMonitor(fullobjname, connection);
 	  else
-	    it->second->binder = new UBinder(fullname, 
+	    it->second->binder = new UBinder(fullobjname, fullname, 
 		mode,(UBindType)type, nbparam, connection);
 	}
       }
       break;
+
     case UBIND_FUNCTION:
       if ( ::urbiserver->functionbindertab.find(key->str()) == ::urbiserver->functionbindertab.end())
-	::urbiserver->functionbindertab[key->str()] = new UBinder(fullname, 
+	::urbiserver->functionbindertab[key->str()] = new UBinder(fullobjname, fullname, 
 	    mode,(UBindType)type, nbparam, connection);
       else
-	::urbiserver->functionbindertab[key->str()]->addMonitor(connection);
+	::urbiserver->functionbindertab[key->str()]->addMonitor(fullobjname, connection);
       break;
+
     case UBIND_EVENT:
       if ( ::urbiserver->eventbindertab.find(key->str()) == ::urbiserver->eventbindertab.end())
-	::urbiserver->eventbindertab[key->str()] = new UBinder(fullname, 
+	::urbiserver->eventbindertab[key->str()] = new UBinder(fullobjname, fullname, 
 	    mode,(UBindType)type, nbparam, connection);
       else
-	::urbiserver->eventbindertab[key->str()]->addMonitor(connection);
+	::urbiserver->eventbindertab[key->str()]->addMonitor(fullobjname, connection);
       break;
+
     case UBIND_OBJECT:
       if (::urbiserver->objtab.find(variablename->id->str()) !=
 	  ::urbiserver->objtab.end()) 
@@ -3725,11 +3737,10 @@ UCommand_BINDER::execute(UConnection *connection)
       else
 	uobj = new UObj(variablename->id);
       if (uobj->binder) 
-	uobj->binder->addMonitor(connection);
+	uobj->binder->addMonitor(variablename->id, connection);
       else
-	uobj->binder=new UBinder(uobj->device,mode,(UBindType)type,0,connection);	
+	uobj->binder=new UBinder(uobj->device, uobj->device,mode,(UBindType)type,0,connection);	
       break;
-
   }      
 
   return ( status = UCOMPLETED );
@@ -3739,13 +3750,15 @@ UCommand_BINDER::execute(UConnection *connection)
 UCommand*
 UCommand_BINDER::copy() 
 {  
+  UVariableName* copy_objname;
   UVariableName* copy_variable;
   UString* copy_binder;
   
+  if (objname) copy_objname = objname->copy(); else copy_objname = 0;
   if (variablename) copy_variable = variablename->copy(); else copy_variable = 0;
   if (binder) copy_binder = new UString(binder); else copy_binder = 0;
 
-  UCommand_BINDER *ret = new UCommand_BINDER(copy_binder,type,copy_variable,nbparam);
+  UCommand_BINDER *ret = new UCommand_BINDER(copy_objname, copy_binder,type,copy_variable,nbparam);
       
   copybase(ret);
   return ((UCommand*)ret);
@@ -3767,7 +3780,8 @@ UCommand_BINDER::print(int l)
   if (tag) { ::urbiserver->debug("%s Tag:[%s] ",tabb,tag->str());}
   else ::urbiserver->debug("%s",tabb);
 
-  ::urbiserver->debug("BINDER %s type:%d nbparam:%d:\n",binder->str(),type,nbparam); 
+  ::urbiserver->debug("BINDER %s type:%d nbparam:%d:\n",binder->str(),type,nbparam);   
+  if (objname) { ::urbiserver->debug("  %s  objname:",tabb); objname->print(); ::urbiserver->debug("\n");};
   if (variablename) { ::urbiserver->debug("  %s  Variablename:",tabb); variablename->print(); ::urbiserver->debug("\n");};      
 
   ::urbiserver->debug("%sEND BINDER ------\n",tabb);
@@ -4393,21 +4407,21 @@ UCommand_EMIT::execute(UConnection *connection)
       snprintf(tmpprefix,1024,"[2,\"%s__%d\"",
     	  eventnamestr,it->second->nbparam);
 	  
-      for (list<UConnection*>::iterator it2 = it->second->monitors.begin();
+      for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
 	   it2++) {
 	
-	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
+	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
 	for (UNamedParameters *pvalue = parameters;
 	    pvalue != 0;
 	    pvalue = pvalue->next) {
 	    
-	  (*it2)->send((const ubyte*)",",1);
+	  (*it2)->c->send((const ubyte*)",",1);
 	  UValue* valparam = pvalue->expression->eval(this,connection);
-	  valparam->echo((*it2));
+	  valparam->echo((*it2)->c);
 	} 
-	(*it2)->send((const ubyte*)"]\n",2);
+	(*it2)->c->send((const ubyte*)"]\n",2);
       }
     }
     
@@ -4464,12 +4478,12 @@ UCommand_EMIT::execute(UConnection *connection)
       snprintf(tmpprefix,1024,"[3,\"%s__%d\"]\n",
     	  eventnamestr,it->second->nbparam);
 	  
-      for (list<UConnection*>::iterator it2 = it->second->monitors.begin();
+      for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
 	   it2++) {
 	
-	(*it2)->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->send((const ubyte*)tmpprefix,strlen(tmpprefix));
+	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));
       }
     }
     

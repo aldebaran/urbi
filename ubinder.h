@@ -31,27 +31,46 @@ class UNamedParameters;
 class UConnection;
 class UVariableName;
 class UValue;
+class UMonitor;
 
 // *****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command
 //! A binder associates a var name (function, event or var) to a callback
-//! mechanism that must be called, either internal of external
+//! mechanism that must be called. Only for external mode.
 class UBinder
 {
 public:
 
-  UBinder(UString *id, UBindMode bindMode, UBindType type, int nbparam,
+  UBinder(UString *objname, UString *id, UBindMode bindMode, UBindType type, int nbparam,
   	UConnection* c);
   ~UBinder(); 
-  
+ 
   UString      *id;
   UBindMode    bindMode;
   UBindType    type;
   int          nbparam;
-  list<UConnection*> monitors;
+  list<UMonitor*> monitors;
 
-  void addMonitor(UConnection *c);
+  void addMonitor(UString *objname, UConnection *c);
+  bool removeMonitor(UString *objname, UConnection *c);
   bool removeMonitor(UConnection *c);
+
+  UMonitor* locateMonitor(UConnection *c);
+};
+
+class UMonitor
+{
+public:
+
+  UMonitor(UConnection *c);
+  UMonitor(UString *objname, UConnection *c);
+  ~UMonitor();
+
+  void addObject(UString *objname);
+  bool removeObject(UString *objname);
+
+  UConnection* c;
+  list<UString*> objects;
 };
 
 #endif
