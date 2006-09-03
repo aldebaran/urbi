@@ -37,9 +37,7 @@ namespace urbi {
   
   STATIC_INSTANCE(UStartlist, objectlist);
   STATIC_INSTANCE(UStartlistHub, objecthublist);
-
-
- 
+  
   UVarTable varmap;
   UTable functionmap;
   UTable monitormap;
@@ -88,8 +86,8 @@ namespace urbi {
 
 // **************************************************************************	
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &t) : 
-  name(name) 
+UGenericCallback::UGenericCallback(string objname, string type, string name, int size,  UTable &t) : 
+  name(name), objname(objname)
 {
   nbparam = size;
   
@@ -100,20 +98,24 @@ UGenericCallback::UGenericCallback(string type, string name, int size,  UTable &
   }
   t[this->name].push_back(this);
 
-  cout << "Registering " << type << " " << name << " " << size << " into " << this->name << endl;
+  cout << "Registering " << type << " " << name << " " << size << " into " 
+  << this->name << " from " << objname << endl;
 
   if (type == "var")
-    URBI() << "external " << type << " " << name <<";";
+    URBI() << "external " << type << " " 
+    << name << " from " << objname << ";";
+    
   if ((type == "event") || (type == "function"))
-    URBI() << "external " << type << "(" << size << ") " << name <<";";
+    URBI() << "external " << type << "(" << size << ") " 
+    << name << " from " << objname << ";";
 
   if (type == "varaccess")
-    urbi::echo("Warning: NotifyAccess facility is not available for modules in remote mode.\n");    
+    urbi::echo("Warning: NotifyAccess facility is not available for modules in remote mode.\n");
 };
 	
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string type, string name, UTable &t) : 
-  name(name) 
+UGenericCallback::UGenericCallback(string objname, string type, string name, UTable &t) : 
+  name(name) , objname(objname)
 {
   t[this->name].push_back(this);
   URBI() << "external " << type << " " << name <<";";
@@ -124,16 +126,12 @@ UGenericCallback::~UGenericCallback()
 };
 
 
-UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UTable &t)
-{
-  return ((UGenericCallback*) new UCallbackGlobalvoid0 (type,fun,funname,t));
-}
-
-
 // **************************************************************************	
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(ufloat period, UTimerTable &tt) : period(period)
+UTimerCallback::UTimerCallback(string objname, ufloat period, UTimerTable &tt) : 
+  period(period),
+  objname(objname)
 {
   tt.push_back(this);
   lastTimeCalled = -9999999;
@@ -152,57 +150,16 @@ int voidfun() {};
 void
 urbi::USync(UVar &v)
 {
-  urbi::UNotifyChange(v,&voidfun);
+//  urbi::UNotifyChange(v,&voidfun);//FIXME
 }
-
+/*
 //! UVar monitoring with callback
 void 
 urbi::UNotifyChange(UVar &v, int (*fun) ())
 {  
   createUCallback("var",fun,v.get_name(), monitormap);
 }
-
-//! UVar monitoring with callback including a pointeur to the UVar&
-void 
-urbi::UNotifyChange(UVar &v, int (*fun) (UVar&))
-{
-  UGenericCallback* cb = createUCallback("var",fun,v.get_name(), monitormap);
-  if (cb) cb->storage = (void*)(&v);
-}
-
-//! UVar monitoring with callback including a pointeur to the UVar&
-void 
-urbi::UNotifyAccess(UVar &v, int (*fun) (UVar&))
-{
-  UGenericCallback* cb = createUCallback("varaccess",fun,v.get_name(), accessmap);
-  if (cb) cb->storage = (void*)(&v);
-}
-
-
-//! UVar monitoring with callback, based on var name: creates a hidden UVar
-void 
-urbi::UNotifyChange(string varname, int (*fun) ())
-{  
-  createUCallback("var",fun,varname, monitormap);
-}
-
-//! Timer definition
-void 
-urbi::USetTimer(ufloat t, int (*fun) ())
-{
-  new UTimerCallbacknoobj(t,fun,timermap);  
-}
-
-//! UVar monitoring with callback, based on var name: creates a hidden UVar 
-//! and pass it as a param in the callback
-void 
-urbi::UNotifyChange(string varname, int (*fun) (UVar&))
-{
-  UVar *hidden = new UVar(varname);
-  UGenericCallback* cb = createUCallback("var",fun,varname, monitormap);
-  if (cb) cb->storage = (void*)(hidden);
-}
-
+*/
 
 
 // **************************************************************************	
@@ -234,18 +191,6 @@ UObject::USetUpdate(ufloat t)
   period = t;
   // nothing happend in remote mode...
 }
-
-/*
-int
-UObject::updateGlobal() 
-{
-  update();
-  for (UObjectList::iterator it = members.begin();
-       it != members.end();
-       it++) 
-    (*it)->updateGlobal();
-}
-*/
 
 // This part is specific for standalone linux objects
 // LIBURBI 'Module mode'
@@ -525,7 +470,7 @@ urbi::main(int argc, char *argv[])
   }
 
   //serverIP = argv[1];
-  cout << "Running Soft Device Module '" << argv[0] << "' on " << argv[1] << endl;
+  cout << "Running Remote Component '" << argv[0] << "' on " << argv[1] << endl;
   //we need a usyncclient urbi::connect(argv[1]);
   new USyncClient(argv[1]);
 
@@ -541,12 +486,5 @@ urbi::main(int argc, char *argv[])
        retr != objectlist->end();
        retr++)
     (*retr)->init((*retr)->name);
-/*
-  URBI() << externalModuleTag << ": [1,\"ball.x\",666]" << ";" ;
-  URBI() << externalModuleTag << ": [1,\"ball.y\",\"hi!\"]" << ";" ;
-  URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret123\",42,\"hello\"]" << ";" ;
-  URBI() << externalModuleTag << ": [0,\"ball.myfun__2\",\"aa.__ret124\",\"fff\",12]" << ";" ;
-  URBI() << externalModuleTag << ": [2,\"ball.myevent__1\",123]" << ";" ;
-  */
 }
 

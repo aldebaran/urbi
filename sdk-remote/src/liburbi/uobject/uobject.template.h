@@ -121,11 +121,11 @@ _STD_END
 #define USensor(x) x.setOwned()
 
 // Function Binding
-#define UBindFunction(obj,x)  createUCallback((string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
+#define UBindFunction(obj,x)  createUCallback(__name,(string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
 
 // Event Binding
-#define UBindEvent(obj,x)     createUCallback("event",    this,(&obj::x),__name+"."+string(#x),eventmap)
-#define UBindEventEnd(obj,x,fun) createUCallback("eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
+#define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+string(#x),eventmap)
+#define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
 
 // Macro to register to a Hub
 #define URegister(hub) { objecthub = urbi::getUObjectHub((string)#hub); \
@@ -190,11 +190,6 @@ urbi {
 
   // Notification mechanism
   void USync(UVar&);  
-  void UNotifyChange(UVar&, int (*) ());
-  void UNotifyChange(UVar&, int (*) (UVar&));
-  void UNotifyChange(string, int (*) ());
-  void UNotifyChange(string, int (*) (UVar&));
-  void UNotifyAccess(UVar&, int (*) (UVar&));
 
   // *****************************************************************************
   // Global function of the urbi:: namespace to access kernel features
@@ -339,6 +334,7 @@ urbi {
       int parse(const char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
   };
 
+  /// Class storing URBI List type
   class UList {
     public:
       vector<UValue *> array;
@@ -419,22 +415,26 @@ urbi {
   //! Provides easy access to variable properties
   class UProp 
   {
-	  public:
-	  void operator =(const UValue &v ) ;
-	  void operator =(const double v ) ;
-	  void operator =(const string & v ) ;
-	  operator double() ;
-	  operator string() ;
-	  operator UValue() ;
+  public:
+    
+    void operator =(const UValue &v ) ;
+    void operator =(const double v ) ;
+    void operator =(const string & v ) ;
+    
+    operator double() ;
+    operator string() ;
+    operator UValue() ;
 	  
-	  
-	  UProp(UVar &owner, UProperty name):owner(owner),name(name){}
-	  private:
-	  UVar & owner;
-	  UProperty name;
-	  //disable copy ctor and equal operator
-	  UProp & operator =(const UProp &b);
-	  UProp(const UProp &b);
+    UProp(UVar &owner, UProperty name):owner(owner),name(name){}
+
+  private:
+    
+    UVar & owner;
+    UProperty name;
+  
+    //disable copy ctor and equal operator
+    UProp & operator =(const UProp &b);
+    UProp(const UProp &b);
   };
   
   
@@ -454,8 +454,8 @@ urbi {
   {
   public:
     
-  UVar() :VAR_PROP_INIT { name = "noname"; owned=false; vardata=0;};
-  UVar(UVar& v) :VAR_PROP_INIT  {};
+    UVar() :VAR_PROP_INIT { name = "noname"; owned=false; vardata=0;};
+    UVar(UVar& v) :VAR_PROP_INIT  {};
     UVar(const string&);
     UVar(const string&, const string&);
     UVar(UObject&, const string&);
@@ -470,7 +470,6 @@ urbi {
     void operator = ( const UImage &i); ///< No data is copied in plugin mode
     void operator = ( const USound &s); ///< No data is copied in plugin mode
 
-
     operator int ();
     operator bool () {return (int)(*this);}
     operator UBinary ();   ///< deep copy
@@ -479,35 +478,31 @@ urbi {
     operator USound(); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
     operator ufloat ();
     operator string ();
-   operator UList();  
+    operator UList();  
 
-
-   void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
+    void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
 
     //kernel operators
     ufloat& in();
     ufloat& out();
-    //UBlendType blend();
 
     bool owned; ///< is the variable owned by the module?
-
+		
+    //Property accessors 
 	
+    UProp rangemin;
+    UProp rangemax;
+    UProp speedmin;
+    UProp speedmax;
+    UProp delta;
+    UProp blend;
 	
-	//Property accessors 
-	
-	UProp rangemin;
-	UProp rangemax;
-	UProp speedmin;
-	UProp speedmax;
-	UProp delta;
-	UProp blend;
-	
-	
-	UValue getProp(UProperty prop);
-	void setProp(UProperty prop, const UValue &v);
-	void setProp(UProperty prop, double v);
-	void setProp(UProperty prop, const char * v);
-	void setProp(UProperty prop, const string &v) {setProp(prop,v.c_str());}
+    UValue getProp(UProperty prop);
+    void setProp(UProperty prop, const UValue &v);
+    void setProp(UProperty prop, double v);
+    void setProp(UProperty prop, const char * v);
+    void setProp(UProperty prop, const string &v) {setProp(prop,v.c_str());}
+    
     // internal
     void __update(UValue&);
 
@@ -521,11 +516,6 @@ urbi {
     PRIVATE(UValue,value) ///< the variable value on the softdevice's side    
   };
 
-
- 
-  
-  
-  
   inline void UProp::operator =(const UValue &v ) {owner.setProp(name,v);}
   inline void UProp::operator =(const double v ) {owner.setProp(name,v);}
   inline void UProp::operator =(const string & v ) {owner.setProp(name,v);}
@@ -542,15 +532,16 @@ urbi {
   class UGenericCallback
   {
   public:
-    UGenericCallback(string type, string name, int size, UTable &t);
-    UGenericCallback(string type, string name, UTable &t);
+    UGenericCallback(string objname, string type, string name, int size, UTable &t);
+    UGenericCallback(string objname, string type, string name, UTable &t);
     virtual ~UGenericCallback();
     
     virtual UValue __evalcall(UList &param)  = 0;
     
-    void   *storage; ////< used to store the UVar* pointeur for var monitoring
-    ufloat period; ///< period of timers
-    int    nbparam;
+    void   *storage; ///< used to store the UVar* pointeur for var monitoring
+    ufloat period;   ///< period of timers
+    int    nbparam;  ///< nb params of the callbacked function
+    string objname;  ///< name of the UObject that has created the callback
 
   private:
     string name; 
@@ -558,42 +549,30 @@ urbi {
 
   // *****************************************************************************
   //! Timer mechanism
-  /*! This class stores a callback either as function or a class method
+  /*! This class stores a callback as a class method
   */
 
   class UTimerCallback
   {
   public:
-    UTimerCallback(ufloat period, UTimerTable &tt);
+    UTimerCallback(string objname, ufloat period, UTimerTable &tt);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
 
     ufloat period;
     ufloat lastTimeCalled;
+    string objname;
   };
 
   // UTimerCallback subclasses
-  
-  class UTimerCallbacknoobj : public UTimerCallback
-  {
-  public:
-    UTimerCallbacknoobj(ufloat period, int (*fun) (), UTimerTable &tt): 
-      UTimerCallback(period,tt), fun(fun) {};
     
-    virtual void call() {
-      (*fun)();      
-    };
-  private:
-      int (*fun) ();
-  };
-  
   template <class T>
   class UTimerCallbackobj : public UTimerCallback
   {
   public:
-    UTimerCallbackobj(ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt): 
-      UTimerCallback(period,tt), obj(obj), fun(fun) {};
+    UTimerCallbackobj(string objname, ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt): 
+      UTimerCallback(objname, period,tt), obj(obj), fun(fun) {};
     
     virtual void call() {
       ((*obj).*fun)();        
@@ -614,59 +593,50 @@ urbi {
 
     template <class T> 
     void UNotifyChange (UVar& v, int (T::*fun) ()) { 
-      createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
+      createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
     }
 
     template <class T>
     void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
+      UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
     template <class T> 
     void UNotifyOnRequest (UVar& v, int (T::*fun) ()) { 
-      createUCallback("var_onrequest", (T*)this, fun, v.get_name(), monitormap);
+      createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
     }
 
     template <class T>
     void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("var_onrequest", (T*)this, fun, v.get_name(), monitormap);
+      UGenericCallback* cb = createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
 
     template <class T> 
     void UNotifyChange (string name, int (T::*fun) ()) { 
-      createUCallback("var", (T*)this, fun, name, monitormap);
+      createUCallback(__name, "var", (T*)this, fun, name, monitormap);
     } 
 
     template <class T>
     void UNotifyChange (string name, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("var", (T*)this, fun, name, monitormap);
+      UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, name, monitormap);
       if (cb) cb->storage = new UVar(name);
     }
 
 
     template <class T>
     void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("varaccess", (T*)this, fun, v.get_name(), accessmap);
+      UGenericCallback* cb = createUCallback(__name, "varaccess", (T*)this, fun, v.get_name(), accessmap);
       if (cb) cb->storage = (void*)(&v);
     }
 
     template <class T>
     void USetTimer(ufloat t, int (T::*fun) ()) {
-      new UTimerCallbackobj<T> (t,(T*)this, fun, timermap);
+      new UTimerCallbackobj<T> (__name, t,(T*)this, fun, timermap);
     }
-
-    // We have to duplicate because of the above UNotifyChange which catches the
-    // namespace on UObject instead of urbi.
-    void UNotifyChange(UVar &v, int (*fun) ()) { urbi::UNotifyChange(v,fun); };
-    void UNotifyChange(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyChange(v,fun); };
-    void UNotifyChange(string varname, int (*fun) ()) { urbi::UNotifyChange(varname,fun); };
-    void UNotifyChange(string varname, int (*fun) (UVar&)) { urbi::UNotifyChange(varname,fun); };
   
-    void UNotifyAccess(UVar &v, int (*fun) (UVar&)) { urbi::UNotifyAccess(v,fun); };
-
     string __name; ///< name of the object as seen in URBI
     string classname; ///< name of the class the object is derived from
     bool   derived; ///< true when the object has been newed by an urbi command 
@@ -696,48 +666,12 @@ urbi {
     UObjectHub(const string&);
     virtual ~UObjectHub();
 
-    void USetUpdate(ufloat);
-
-    template <class T> 
-    void UNotifyChange (UVar& v, int (T::*fun) ()) { 
-      createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
-    }
-
-    template <class T>
-    void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("var", (T*)this, fun, v.get_name(), monitormap);
-      if (cb) cb->storage = (void*)(&v);
-    }
-
-    template <class T> 
-    void UNotifyChange (string name, int (T::*fun) ()) { 
-      createUCallback("var", (T*)this, fun, name, monitormap);
-    } 
-
-    template <class T>
-    void UNotifyChange (string name, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("var", (T*)this, fun, name, monitormap);
-      if (cb) cb->storage = new UVar(name);
-    }
-
-
-    template <class T>
-    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
-      UGenericCallback* cb = createUCallback("varaccess", (T*)this, fun, v.get_name(), accessmap);
-      if (cb) cb->storage = (void*)(&v);
-    }
-
-    template <class T>
-    void USetTimer(ufloat t, int (T::*fun) ()) {
-      new UTimerCallbackobj<T> (t, (T*)this,fun, timermap);      
-    }
-
     void addMember(UObject* obj);
-    virtual int update() {return 0;}
-  
 
-    UObjectList members;
-  
+    void USetUpdate(ufloat);
+    virtual int update() {return 0;}
+ 
+    UObjectList  members;  
     UObjectList* getSubClass(string);
  //   UObjectList* getAllSubClass(string); //TODO
 
@@ -747,19 +681,9 @@ urbi {
     ufloat period;
     string name;
   };
-    
-  // *****************************************************************************
-  //! Timer definition
-
-  void USetTimer(ufloat t, int (*fun) ());
       
-  template <class T>
-    void USetTimer(ufloat t, T* obj, int (T::*fun) ()) {
-      new UTimerCallbackobj<T> (t,obj,fun, timermap);
-    }
-  
   // *****************************************************************************
-  // Casteurs
+  // Casters
 
   
 #ifndef _MSC_VER
@@ -905,14 +829,14 @@ urbi {
 
 %%%% 0 16
 
-  // non void, object methods
+  // non void return type
   
   template <class OBJ, class R%%, class P% %%>
     class UCallback%N% : public UGenericCallback
   {
   public:
-    UCallback%N%(string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
-      UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
+    UCallback%N%(string objname, string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
+      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
     virtual UValue __evalcall(UList& param) {
       return UValue(( (*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
     };
@@ -921,14 +845,14 @@ urbi {
     R (OBJ::*fun) (%%%,% P% %%); 
   };
    
-  // void, object methods
+  // void return type
 
   template <class OBJ%%, class P% %%>
     class UCallbackvoid%N% : public UGenericCallback
   {
   public:
-    UCallbackvoid%N%(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
-      UGenericCallback(type, funname,%N%, t), obj(obj), fun(fun) {};
+    UCallbackvoid%N%(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
+      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
     
     virtual UValue __evalcall(UList &param) {
       ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
@@ -939,14 +863,14 @@ urbi {
       void (OBJ::*fun) (%%%,% P% %%);
   };
   
-  // void, object methods : special case for notifyend event callbacks
+  // void return type : special case for notifyend event callbacks
 
   template <class OBJ%%, class P% %%>
     class UCallbacknotifyend%N% : public UGenericCallback
   {
   public:
-    UCallbacknotifyend%N%(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),string funname, UTable &t): 
-      UGenericCallback(type, funname,%N%, t), obj(obj), fun(end) {};
+    UCallbacknotifyend%N%(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),string funname, UTable &t): 
+      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(end) {};
     
     virtual UValue __evalcall(UList &) {
       ((*obj).*fun)();
@@ -957,89 +881,29 @@ urbi {
       void (OBJ::*fun) ();
   };
 
-
-  // non void, standard function
   
-  template <class R%%, class P% %%>
-    class UCallbackGlobal%N% : public UGenericCallback
-  {
-  public:
-    UCallbackGlobal%N%(string type, R (*fun) (%%%,% P% %%), string funname, UTable &t): 
-      UGenericCallback(type, funname,%N%, t), fun(fun) {};
-    virtual UValue __evalcall(UList &param) {
-      return UValue((*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
-    };
-  private:      
-      R (*fun) (%%%,% P% %%);
-  };
-  
-  
-  // callback creation for obj void & non void + standard function non void
+  // callback creation for non void return type
   
   template <class OBJ, class R%%, class P% %%> 
-  UGenericCallback* createUCallback(string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname,UTable &t) {
-    return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (type,obj,fun,funname,t));
+  UGenericCallback* createUCallback(string objname, string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname,UTable &t) {
+    return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t));
   }
-
+  
+  // callback creation for void return type 
+  
   template <class OBJ%%, class P% %%> 
-  UGenericCallback* createUCallback(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname,UTable &t) {
-    return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (type,obj,fun,funname,t));
+  UGenericCallback* createUCallback(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname,UTable &t) {
+    return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t));
   }
    
-  template <class R%%, class P% %%> 
-  UGenericCallback* createUCallback(string type, R (*fun) (%%%,% P% %%), string funname,UTable &t) {
-    return ((UGenericCallback*) new UCallbackGlobal%N%<R%%, P% %%> (type,fun,funname,t));
-  }
-
   // special case for eventend notification
   template <class OBJ%%, class P% %%> 
-  UGenericCallback* createUCallback(string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), string funname,UTable &t) {
-    return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (type,obj,fun,end,funname,t));
+  UGenericCallback* createUCallback(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), string funname,UTable &t) {
+    return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t));
   }
    
 
 %%%%
-
-
-  // Special case for void, standard functions
-  
-  class UCallbackGlobalvoid0 : public UGenericCallback
-  {
-  public:
-    UCallbackGlobalvoid0(string type, void (*fun) (), string funname, UTable &t): 
-      UGenericCallback(type, funname,0, t), fun(fun) {};
-    virtual UValue __evalcall(UList &) {
-      (*fun)();
-      return UValue();
-    };
-  private:
-      void (*fun) ();
-  };
-
-  UGenericCallback* createUCallback(string type, void (*fun) (), string funname,UTable &t);
-
-%%%% 1 16 
-  template <%%%,% class P% %%>
-    class UCallbackGlobalvoid%N% : public UGenericCallback
-  {
-  public:
-    UCallbackGlobalvoid%N%(string type, void (*fun) (%%%,% P% %%), string funname, UTable &t): 
-      UGenericCallback(type, funname,%N%, t), fun(fun) {};
-    virtual UValue __evalcall(UList &param) {
-      (*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
-      return UValue();
-    };
-  private:
-      void (*fun) (%%%,% P% %%);
-  };
-
-  template <%%%,% class P% %%> 
-  UGenericCallback* createUCallback(string type, void (*fun) (%%%,% P% %%), string funname,UTable &t) {
-    return ((UGenericCallback*) new UCallbackGlobalvoid%N%<%%%,% P% %%> (type,fun,funname,t));
-  }
-
-%%%%
-    
   
 
 } // end namespace urbi
