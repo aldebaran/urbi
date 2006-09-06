@@ -20,9 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
-#ifdef WIN32
-#include "windows/uclient.h"
-#else
+
 #ifndef UCLIENT_H
 #define UCLIENT_H
 
@@ -51,15 +49,13 @@ class UClient: public UAbstractClient {
   virtual void printf(const char * format, ...);
   virtual unsigned int getCurrentTime();
 
-  virtual void lockSend();
-  virtual void unlockSend();
+  
  protected:
 
   virtual int  effectiveSend(const void * buffer, int size);
   virtual bool canSend(int size);
   
-  virtual void lockList();
-  virtual void unlockList();
+  
  
   
   
@@ -67,11 +63,8 @@ class UClient: public UAbstractClient {
  private:
  
   int              control_fd[2];       ///< Pipe for termination notification.
-  pthread_mutex_t  writeLock;           ///< Send structure lock.
-  pthread_mutex_t  listLock;            ///< Receive structure lock.
-  pthread_t        *listenThreadStruct;
+ 
+  void           *thread;
 };
 
-
-#endif
 #endif

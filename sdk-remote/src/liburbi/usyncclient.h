@@ -79,7 +79,7 @@ class USyncClient: public UClient {
    private:
    Semaphore * sem;
    list<UMessage*> queue;
-   Lockable * listLock;
+   Lockable * queueLock;
    UMessage * msg;
    Semaphore * syncLock;
    string syncTag;

@@ -22,7 +22,7 @@
 **********************************************************************/
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 #include <stdio.h>
@@ -34,6 +34,7 @@
 #include <iostream>
 
 #include "uabstractclient.h"
+#include "lockable.h"
 using namespace urbi;
 using std::min; 
 #if DEBUG
@@ -106,10 +107,10 @@ int UClientStreambuf::overflow ( int c ) {
 }
 
 std::streamsize UClientStreambuf::xsputn (char * s, std::streamsize n) {
-  client->lockSend();
+  client->sendBufferLock.lock();
   if (strlen(client->sendBuffer)+1+n > client->buflen) {
     //error
-    client->unlockSend();
+    client->sendBufferLock.unlock();
     return 0;
   }
   int clen = strlen(client->sendBuffer);
@@ -122,7 +123,7 @@ std::streamsize UClientStreambuf::xsputn (char * s, std::streamsize n) {
     client->effectiveSend(client->sendBuffer, strlen(client->sendBuffer));
     client->sendBuffer[0] = 0;
   }
-  client->unlockSend();
+  client->sendBufferLock.unlock();
   return n;
 }
 
@@ -133,7 +134,7 @@ std::streamsize UClientStreambuf::xsputn (char * s, std::streamsize n) {
  */
 void 
 UAbstractClient::notifyCallbacks(const UMessage &msg) {
-  lockList();
+  listLock.lock();
   bool inc=false;
   for (list<UCallbackInfo>::iterator it = callbackList.begin(); it!=callbackList.end(); inc?it:it++, inc=false) {
     if ( 
@@ -149,7 +150,7 @@ UAbstractClient::notifyCallbacks(const UMessage &msg) {
       }
     }
   }
-  unlockList();
+  listLock.unlock();
 }
 
 /*! Initializes sendBuffer and recvBuffer, and copy _host and _port.
@@ -159,7 +160,9 @@ UAbstractClient::notifyCallbacks(const UMessage &msg) {
   Implementations should establish the connection in their constructor.
  */
 UAbstractClient::UAbstractClient(const char *_host, int _port, int _buflen) 
-  :std::ostream(new UClientStreambuf(this)) {
+  :std::ostream(new UClientStreambuf(this)), 
+  listLock(*new Lockable()), 
+  sendBufferLock(*new Lockable()) {
     stream=this; 
     getStream().setf(std::ios::fixed); 
     rc = 0;
@@ -207,13 +210,13 @@ UAbstractClient::~UAbstractClient()
   if (sendBuffer) delete [] sendBuffer;
 }
 
-/*! In threaded environnments, this function locks the send buffer so that only
+/*! In threaded environnments, this function lock()s the send buffer so that only
   the calling thread can call the send functions. Otherwise do nothing.
  */
 int
 UAbstractClient::startPack()
 {
-  lockSend();
+  sendBufferLock.lock();
   return 0;
 }
 
@@ -222,7 +225,7 @@ UAbstractClient::endPack()
 {
   int retval = effectiveSend(sendBuffer, strlen(sendBuffer));
   sendBuffer[0] = 0;
-  unlockSend();
+  sendBufferLock.unlock();
   return retval;
 }
 
@@ -235,16 +238,16 @@ UAbstractClient::send(const char *command, ...)
   if (rc) return -1;
   va_list arg;
   va_start(arg, command);
-  lockSend();
+  sendBufferLock.lock();
   rc = vpack(command, arg);
   va_end(arg);
   if (rc < 0) {
-    unlockSend();
+    sendBufferLock.unlock();
     return (rc);
   }
   rc = effectiveSend(sendBuffer, strlen(sendBuffer));
   sendBuffer[0] = 0;
-  unlockSend();
+  sendBufferLock.unlock();
   return rc;
 }
 
@@ -321,9 +324,9 @@ UAbstractClient::vpack(const char *command, va_list arg)
     return (-1);
   else {
 #endif
-    lockSend();
+    sendBufferLock.lock();
     vsprintf(&sendBuffer[strlen(sendBuffer)], command, arg);
-    unlockSend();
+    sendBufferLock.unlock();
     va_end(arg);
     return (0);
 #if 0
@@ -344,9 +347,9 @@ UAbstractClient::sendFile(const char *name)
   struct stat s;
   stat(name, &s);
   size = s.st_size;
-  lockSend();
+  sendBufferLock.lock();
   if (!canSend(size)) {
-	unlockSend();
+	sendBufferLock.unlock();
 	return -1;
   }
 
@@ -356,7 +359,7 @@ UAbstractClient::sendFile(const char *name)
   }
   fclose(fd);
   sendBuffer[0] = 0;
-  unlockSend();
+  sendBufferLock.unlock();
   return 0;
 }
 
@@ -373,14 +376,14 @@ UAbstractClient::sendBin(const void *buffer, int len,
                              const char *header, ...)
 {
   if (rc) return -1;
-  lockSend();
+  sendBufferLock.lock();
   if (header) {
     va_list arg;
     va_start(arg, header);
     vpack(header, arg);
     va_end(arg);
 	if (!canSend(strlen(sendBuffer) + len)) {
-	  unlockSend();
+	  sendBufferLock.unlock();
 	  return -1;
 	}
 
@@ -389,7 +392,7 @@ UAbstractClient::sendBin(const void *buffer, int len,
 
   int res = effectiveSend(buffer, len);
   sendBuffer[0] = 0;
-  unlockSend();
+  sendBufferLock.unlock();
   return res;
 }
 
@@ -538,7 +541,7 @@ UAbstractClient::sendSound(const char * device, const USound &sound, const char 
     s->buffer = (char *)malloc(sound.size);
     memcpy(s->buffer, sound.data, sound.size);
     s->length=sound.size;
-    s->tag=strdup(tag);
+    s->tag=tag?strdup(tag):0;
     s->device = strdup(device);
     s->pos=0;
     s->format = sound.soundFormat;
@@ -578,14 +581,14 @@ UAbstractClient::setCallback(UCustomCallback cb, void *cbData, const char *tag)
  */
 int
 UAbstractClient::getAssociatedTag(UCallbackID id, char * tag) {
- lockList();
+ listLock.lock();
   list<UCallbackInfo>:: iterator it = find(callbackList.begin(), callbackList.end(), id);
   if (it == callbackList.end()) {
-    unlockList();
+    listLock.unlock();
     return 0;
   }
   strcpy(tag, it->tag);
-  unlockList();
+  listLock.unlock();
   return 1;
 }
 
@@ -595,15 +598,15 @@ UAbstractClient::getAssociatedTag(UCallbackID id, char * tag) {
 int 
 UAbstractClient::deleteCallback(UCallbackID callbackID)
 {
-  lockList();
+  listLock.lock();
   list<UCallbackInfo>:: iterator it = find(callbackList.begin(), callbackList.end(), callbackID);
   if (it == callbackList.end()) {
-    unlockList();
+    listLock.unlock();
     return 0;
   }
   delete &(it->callback);
   callbackList.erase(it);
-  unlockList();
+  listLock.unlock();
   return 1;
 }
 
@@ -615,14 +618,14 @@ UAbstractClient::sendCommand(UCallback cb, const char *cmd, ...)
   char *mcmd = new char[strlen(cmd) + strlen(tag) + 5];
   sprintf(mcmd,"%s: %s",tag,cmd);
   UCallbackID cid = setCallback(cb, tag);
-  lockSend();
+  sendBufferLock.lock();
   va_list arg;
   va_start(arg, cmd);
   vpack(mcmd, arg);
   va_end(arg);
   int retval = effectiveSend(sendBuffer, strlen(sendBuffer));
   sendBuffer[0] = 0;
-  unlockSend();
+  sendBufferLock.unlock();
   delete []  mcmd;
   if (retval) {
 	deleteCallback(cid);
@@ -640,14 +643,14 @@ UAbstractClient::sendCommand(UCustomCallback cb, void *cbData,
   char *mcmd = new char[strlen(cmd) + strlen(tag) + 10];
   sprintf(mcmd,"%s: %s",tag,cmd);
   UCallbackID cid = setCallback(cb, cbData, tag);
-  lockSend();
+  sendBufferLock.lock();
   va_list arg;
   va_start(arg, cmd);
   vpack(mcmd, arg);
   va_end(arg);
   int retval = effectiveSend(sendBuffer, strlen(sendBuffer));
   sendBuffer[0] = 0;
-  unlockSend();
+  sendBufferLock.unlock();
   delete []mcmd;
   if (retval) {
 	deleteCallback(cid);
@@ -663,9 +666,9 @@ UAbstractClient::putFile(const char * localName, const char * remoteName) {
   struct stat st;
   if (stat(localName,&st) == -1) return 1;
   len = st.st_size;
-  lockSend();
+  sendBufferLock.lock();
   if (!canSend(len+strlen(remoteName)+ 20)) {
-	unlockSend();
+	sendBufferLock.unlock();
 	return -1;
   }
 
@@ -673,7 +676,7 @@ UAbstractClient::putFile(const char * localName, const char * remoteName) {
   send("save(\"%s\", \"",remoteName);
   int res = sendFile(localName);
   send("\");");
-  unlockSend();
+  sendBufferLock.unlock();
   return res;
 }
 
@@ -681,13 +684,13 @@ int
 UAbstractClient::putFile(const void * buffer, int length, 
                          const char * remoteName) {
   if (!canSend(length+strlen(remoteName)+ 20)) {
-	unlockSend();
+	sendBufferLock.unlock();
 	return -1;
   }
   send("save(\"%s\", \"",remoteName);
   sendBin(buffer,length);
   send("\");");
-  unlockSend();
+  sendBufferLock.unlock();
   return 0;
 }
 
@@ -731,11 +734,11 @@ UAbstractClient::processRecvBuffer()
 	    
 	    if (nBracket == 0) {
 	      //end of command, send
-	      //dumb lockList();
+	      //dumb listLock.lock();
 	      UMessage msg(*this, currentTimestamp, currentTag, currentCommand,
 			   bins);
 	      notifyCallbacks(msg); 
-	      //unlockList();
+	      //unlistLock.lock();
 	      
 	      while (!bins.empty()) {
 			free(bins.front().data);
@@ -803,12 +806,12 @@ UAbstractClient::processRecvBuffer()
 		  printf(" line was '%s'\n", recvBuffer);
 		  currentTimestamp = 0;
 		  strcpy(currentTag, "UNKNWN");
-		  //lockList();
+		  //listLock.lock();
 		  UMessage msg(*this, 0, URBI_ERROR_TAG, 
 			       "!!! UAbstractClient::read, fatal error parsing header", 
 			       list<BinaryData>());
 		  notifyCallbacks(msg);
-		  //unlockList();
+		  //unlistLock.lock();
 	      }
 	    }
 	    
@@ -858,12 +861,12 @@ UAbstractClient::processRecvBuffer()
 			if (nBracket == 0) {
 			  //end of command
 			  recvBuffer[parsePosition]=0;
-			  //lockList();
+			  //listLock.lock();
 			  UMessage msg(*this, currentTimestamp, currentTag, 
 				  currentCommand, 
 				  bins);
 			  notifyCallbacks(msg);
-			  //unlockList();
+			  //unlistLock.lock();
 			  //prepare for next read, copy the extra
 			  memmove(recvBuffer, recvBuffer+parsePosition+1, recvBufferPosition-parsePosition-1);	//copy beginning of next cmd
 			  recvBufferPosition = recvBufferPosition-parsePosition-1;
@@ -919,13 +922,13 @@ UCallbackID UAbstractClient::setCallback(UCallbackWrapper & callback, const char
   return addCallback(tag, callback);
 }
 UCallbackID UAbstractClient::addCallback(const char * tag, UCallbackWrapper &w) {
-  lockList();
+  listLock.lock();
   UCallbackInfo ci(w);
   strncpy(ci.tag, tag, URBI_MAX_TAG_LENGTH-1);
   ci.tag[URBI_MAX_TAG_LENGTH-1]=0;
   ci.id = ++nextId;
   callbackList.push_front(ci);
-  unlockList();
+  listLock.unlock();
   return ci.id;
 }
 

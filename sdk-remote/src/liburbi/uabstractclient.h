@@ -130,7 +130,7 @@ class UCallbackInfo {
 };
 //used internaly
 class UClientStreambuf;
-
+class Lockable;
 
 /// Interface for an URBI wrapper object.
 /*! Implementations of this interface are wrappers around the URBI protocol.
@@ -263,12 +263,6 @@ class UAbstractClient : public std::ostream
   /// Get time in milliseconds since an unspecified but constant reference time.
   virtual unsigned int getCurrentTime()=0;
 
-  /// Lock the send buffer for exclusive use by the current thread.
-  virtual void lockSend()=0;
-
-  /// Unlock the send buffer. 
-  virtual void unlockSend()=0;
-
   /// Return the server name or IP address.
   const char * getServerName() {return host;}
 
@@ -284,13 +278,8 @@ class UAbstractClient : public std::ostream
   /// Check if successive effectiveSend() of cumulated size 'size' will succeed.
   virtual bool canSend(int size)=0;
   
-  ///Lock receive and send portions of the code. 
-  virtual void lockList()=0;
-
-  ///Unlock receive and send portions of the code. 
-  virtual void unlockList()=0;
-  
-  
+  Lockable & sendBufferLock;
+  Lockable & listLock;
 
   
   UCallbackID addCallback(const char * tag, UCallbackWrapper &w); ///< Add a callback to the list.  

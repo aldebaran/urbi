@@ -20,27 +20,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
-#include <pthread.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+
+#ifdef WIN32
+#include <windows.h>
+#include <fcntl.h>
+#include <winsock.h>
+#else
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#endif
+
 #include <locale.h>
 #include "uclient.h"
-
+#include "lockable.h"
 using namespace std;
 
 
-static void *listenThreadStarter(void *objectPtr)
-{
-  UClient *connection = (UClient *) objectPtr;
-  connection->listenThread();
-}
+#ifdef WIN32
+#define pipe(a) _pipe(a,10, 0)
+#endif
 
 /*! Establish the connection with the server. 
 Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
@@ -55,16 +61,8 @@ UClient::UClient(const char *_host, int _port, int _buflen)
       perror("UClient::UClient failed to create pipe");
       return;
     }
-    pthread_mutexattr_t ma;
-    pthread_condattr_t ca;
-    pthread_mutexattr_init(&ma);
     
-    pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE_NP);
-    pthread_mutex_init(&writeLock, &ma);
-    //MUST BE RECURSIVE if a callback calls notifycallback 
-    //pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_FAST_NP);
-    pthread_mutex_init(&listLock, &ma);
-    listenThreadStruct = NULL;
+   
     
     // Address resolution stage.
     struct hostent *hen;		// host-to-IP translation
@@ -102,8 +100,12 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     
     // If we attempt to connect too fast to aperios ipstack it will fail.
     if (rc) {
-      usleep(20000);
-	rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+		#ifdef WIN32
+		Sleep(20);
+		#else
+		usleep(20000);
+		#endif
+		rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
     }
     
     // Check there was no error.
@@ -117,7 +119,7 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     //check that it really worked
     int pos=0;
     while (pos==0)
-      pos = read(sd, recvBuffer, buflen);
+		pos = ::read(sd, recvBuffer, buflen);
     if (pos<0) {
       rc = pos;
       printf("UClient::UClient couldn't connect: read error.\n");
@@ -125,8 +127,7 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     }
     else recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
-    listenThreadStruct = new pthread_t();
-    pthread_create(listenThreadStruct, NULL, listenThreadStarter, this);
+	thread = startThread(this, &UClient::listenThread);
     if (!urbi::defaultClient)
       urbi::defaultClient =  this;
   }
@@ -140,10 +141,7 @@ UClient::~UClient()
   close(sd);
   if (control_fd[1] != -1 ) ::write(control_fd[1],"a",1);
   //must wait for listen thread to terminate
-  if (listenThreadStruct)
-	pthread_join(*listenThreadStruct, NULL);
-  pthread_mutex_destroy(&writeLock);
-  pthread_mutex_destroy(&listLock);
+  joinThread(thread);
   if (control_fd[1] != -1 ) close(control_fd[1]);
   if (control_fd[0] != -1 ) close(control_fd[0]);
 }
@@ -214,29 +212,6 @@ UClient::listenThread() {
 }
 
 
-
-void 
-UClient::lockList() {
-  pthread_mutex_lock(&listLock);
-}
-
-void 
-UClient::lockSend() {
-  pthread_mutex_lock(&writeLock);
-}
-
-void 
-UClient::unlockList() {
-  pthread_mutex_unlock(&listLock);
-}
-
-void 
-UClient::unlockSend() {
-  pthread_mutex_unlock(&writeLock);
-}
-
-
-
 void 
 UClient::printf(const char * format, ...) {
   va_list arg;
@@ -246,13 +221,21 @@ UClient::printf(const char * format, ...) {
 }
 
 unsigned int UClient::getCurrentTime() {
+	#ifdef WIN32
+	return GetTickCount();
+	#else
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec*1000+tv.tv_usec/1000;
+  #endif
 } 
 
 void urbi::execute(void) {
+	#ifdef WIN32
+	while (true) Sleep(100000);
+	#else
   while (true) sleep(100);
+  #endif
 }
 
 void urbi::exit(int code) {

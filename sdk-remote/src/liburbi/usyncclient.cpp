@@ -1,8 +1,7 @@
-#include <pthread.h>
-#include <semaphore.h>
+
 #include "usyncclient.h"
 #include "lockable.h"
-
+#include <fcntl.h>
 using std::min;
 
 
@@ -16,12 +15,11 @@ static void *callbackThreadStarter(void *objectPtr)
 USyncClient::USyncClient(const char *_host, int _port, int _buflen) : 
   UClient(_host, _port, _buflen) {
 	  sem = new Semaphore();
-	  listLock = new Lockable();
+	  queueLock = new Lockable();
 	  syncLock = new Semaphore();
 	  msg=0;
 	  syncTag = "";
-	  pthread_t *pt = new pthread_t();
-	  pthread_create(pt, NULL, callbackThreadStarter, this);
+	  startThread(this, &USyncClient::callbackThread);
 	  if (!urbi::defaultClient)
 		  urbi::defaultClient =  this;
 }
@@ -29,15 +27,15 @@ USyncClient::USyncClient(const char *_host, int _port, int _buflen) :
 void USyncClient::callbackThread() {
 	while (true) {
 		(*sem)--;
-		listLock->lock();
+		queueLock->lock();
 		if (queue.empty()) {
 			//we got mysteriously interrupted
-			listLock->unlock();
+			queueLock->unlock();
 			continue;
 		}
 		UMessage *m = queue.front();
 		queue.pop_front();
-		listLock->unlock();
+		queueLock->unlock();
 		UAbstractClient::notifyCallbacks(*m);
 		delete m;
 		
@@ -45,7 +43,7 @@ void USyncClient::callbackThread() {
 }
 
 void USyncClient::notifyCallbacks(const UMessage &msg) {
-	listLock->lock();
+	queueLock->lock();
 	if (syncTag == msg.tag) {
 		this->msg = new UMessage(msg);
 		(*syncLock)++;
@@ -54,7 +52,7 @@ void USyncClient::notifyCallbacks(const UMessage &msg) {
 		queue.push_back(new UMessage(msg));
 		(*sem)++;
 	}
-	listLock->unlock();
+	queueLock->unlock();
 }
 
 UMessage * USyncClient::waitForTag(const char * tag) {
@@ -81,11 +79,11 @@ UMessage * USyncClient::syncGet(const char * format, ...) {
 	bool hasSep = (format[p]==';' || format[p]==',');
 	va_list arg;
 	va_start(arg, format);
-	lockSend();
+	sendBufferLock.lock();
 	rc = vpack(format, arg);
 	va_end(arg);
 	if (rc < 0) {
-		unlockSend();
+		sendBufferLock.unlock();
 		return 0;
 	}
 	if (!hasSep)
@@ -97,7 +95,7 @@ UMessage * USyncClient::syncGet(const char * format, ...) {
 	tag[strlen(tag)-1]=0; //restore tag
 	rc = effectiveSend(sendBuffer, strlen(sendBuffer));
 	sendBuffer[0] = 0;
-	unlockSend();
+	sendBufferLock.unlock();
 	UMessage *m = waitForTag(tag);
 	return m;
 }
@@ -240,17 +238,17 @@ USyncClient::syncGetSound(const char * device, int duration, USound &sound)
 int 
 USyncClient::syncSend(const void * buffer, int length) {
   if (rc !=0) return -1;
-  lockSend();
+  sendBufferLock.lock();
   int sent = 0;
   while (sent<length) {
     int res = ::write(sd, (char *) buffer + sent, length - sent);
     if (res < 0) {
       rc = res;
-      unlockSend();
+      sendBufferLock.unlock();
       return res;
     }
     sent +=res;
   }
-  unlockSend();
+  sendBufferLock.unlock();
   return 0;
 }
