@@ -181,7 +181,7 @@ template<class T> void *startThread(T * obj) {
 }
 
 
-void joinThread(void *t) {
+inline void joinThread(void *t) {
 	#ifdef WIN32
 	WaitForSingleObject(t, INFINITE);
 	#else
