@@ -52,17 +52,24 @@ UObj::~UObj()
 {
   // Removal of all variable bindings  
   
+  list<UVariable*> varToDelete;
   for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
       it != ::urbiserver->variabletab.end();
-      it++) 
+      ++it) 
+  {    
     if (((*it).second->method) &&
 	((*it).second->devicename) && (device) &&
 	((*it).second->value->dataType != DATA_OBJ) &&
         ((*it).second->devicename->equal(device)) ) {
-	  
-      delete (*it).second;//BUG: delete removes the var from variabletab, hence an invalid iterator.//FIXME
-    }
-  
+
+      varToDelete.push_back((*it).second);            
+    }    
+  }//for  
+
+  for (list<UVariable*>::iterator itd = varToDelete.begin();
+       itd != varToDelete.end();
+       ++itd)
+    delete (*itd);
 
   
   // clean variables binders (a bit brutal, we scan all wariables...
@@ -129,6 +136,11 @@ UObj::~UObj()
     delete(binder);
   }
 
+  // Remove the object from the hashtable
+  HMobjtab::iterator idit = ::urbiserver->objtab.find(device->str());
+  ASSERT (idit != ::urbiserver->objtab.end()) ::urbiserver->objtab.erase(idit);
+
+  // final cleanup
   if (internalBinder) delete internalBinder;    
   if (device) delete(device);
 }

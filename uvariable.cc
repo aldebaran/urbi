@@ -166,8 +166,8 @@ UVariable::~UVariable() {
     if ((value->dataType == DATA_OBJ) && (value->str!=0)) {
 
       HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
-      if (idit != ::urbiserver->objtab.end())
-	delete idit->second;
+      if (idit != ::urbiserver->objtab.end()) 
+	delete idit->second;	      
     }
     delete value;
   }
