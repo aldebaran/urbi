@@ -124,6 +124,28 @@ UBinder::removeMonitor(UConnection *c)
   return( monitors.empty() );
 }
 
+//! Remove a monitored object
+/** Returns true if the UBinder itself can be freed
+  */
+bool 
+UBinder::removeMonitor (UString *objname)
+{ 
+  for (list<UMonitor*>::iterator mit = monitors.begin();
+       mit != monitors.end();
+       )
+  {       
+    if ((*mit)->removeObject(objname))
+    {
+      delete (*mit);
+      mit = monitors.erase(mit);      
+    }//if
+    else
+      mit++;
+  }
+  return( monitors.empty() );
+}
+
+
 /*****************************************************************/
 /* UMonitor */
 /*****************************************************************/

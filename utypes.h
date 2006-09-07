@@ -62,6 +62,8 @@ extern  int   availableMemory; //< Total amount of free memory in the system
 #define DD ::urbiserver->debug("Check point %s, %d\n",__FILE__,__LINE__);
 #define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n",x,__FILE__,__LINE__);
 
+#define ASSERT(test) if (!(test)) ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n",#test,__FILE__,__LINE__); else
+
 typedef unsigned long IPAdd;
 
 //! Return code values

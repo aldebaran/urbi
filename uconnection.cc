@@ -170,18 +170,34 @@ UConnection::~UConnection()
       }	
   }
 
+  list<HMbindertab::iterator> deletelist;
   for ( HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
-      it2 != ::urbiserver->functionbindertab.end(); ) {
-    
-    it2->second->removeMonitor(this);
-    it2++;  
+      it2 != ::urbiserver->functionbindertab.end(); 
+      it2++) {
+
+    if (it2->second->removeMonitor(this)) 
+      deletelist.push_back(it2);                 
   }
+  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+       itt != deletelist.end();
+       itt++)
+    ::urbiserver->functionbindertab.erase((*itt));
+  deletelist.clear();
+
+
   for ( HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
-      it3 != ::urbiserver->eventbindertab.end(); ) {
+      it3 != ::urbiserver->eventbindertab.end(); 
+      it3++) {
     
-    it3->second->removeMonitor(this);
-    it3++;  
+    if (it3->second->removeMonitor(this))     
+      deletelist.push_back(it3);          
   }
+  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+       itt != deletelist.end();
+       itt++)
+    ::urbiserver->eventbindertab.erase((*itt));
+  deletelist.clear();
+
 }
 
 //! UConnection IP associated
@@ -1208,7 +1224,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
         (tree->command1 == 0) &&
         (tree->command2 != 0)) { // left reduction 
       
-      *(tree->position) = tree->command2;
+      ASSERT(tree->position!=0) *(tree->position) = tree->command2;
       tree->command2->up = tree->up;
       tree->command2->position = tree->position;
       tree->command2->background = tree->background;
@@ -1228,7 +1244,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
         (tree->command1->status != UBACKGROUND) ) { // right reduction 
                                           // the background hack is here to preserve {at()...} commands.
       
-      *(tree->position) = tree->command1;
+      ASSERT(tree->position!=0) *(tree->position) = tree->command1;
       tree->command1->up = tree->up;
       tree->command1->position = tree->position;
       tree->command1->background = tree->background;

@@ -52,7 +52,9 @@ public:
   list<UMonitor*> monitors;
 
   void addMonitor(UString *objname, UConnection *c);
+
   bool removeMonitor(UString *objname, UConnection *c);
+  bool removeMonitor(UString *objname);
   bool removeMonitor(UConnection *c);
 
   UMonitor* locateMonitor(UConnection *c);

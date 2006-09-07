@@ -51,7 +51,8 @@ UObj::UObj (UString *device)
 UObj::~UObj()
 {
   // Removal of all variable bindings  
-  for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+  
+  for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
       it != ::urbiserver->variabletab.end();
       it++) 
     if (((*it).second->method) &&
@@ -59,23 +60,61 @@ UObj::~UObj()
 	((*it).second->value->dataType != DATA_OBJ) &&
         ((*it).second->devicename->equal(device)) ) {
 	  
-      delete (*it).second;
-/*
-      if ((*it).second->binder) delete (*it).second->binder;
-
-      for (list<urbi::UGenericCallback*>::iterator itcb = internalBinder.begin();
-	  itcb != internalBinder.end();
-	  itcb++) 
-	delete (*itcb);
-      
-      for (list<urbi::UGenericCallback*>::iterator itcb = internalAccessBinder.begin();
-	  itcb != internalAccessBinder.end();
-	  itcb++) 
-	delete (*itcb);
-*/
+      delete (*it).second;//BUG: delete removes the var from variabletab, hence an invalid iterator.//FIXME
     }
+  
 
   
+  // clean variables binders (a bit brutal, we scan all wariables...
+  // I'll work on an optimized version later)
+  for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+       it != ::urbiserver->variabletab.end();
+       it++) 
+  {
+    if (it->second->binder) 
+    {
+      if (it->second->binder->removeMonitor(device))
+      {
+	delete it->second->binder;
+	it->second->binder = 0;
+      }//if
+    }//if
+  }//for
+  
+  list<HMbindertab::iterator> deletelist;
+
+  //clean functions binders
+  for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
+       it2 != ::urbiserver->functionbindertab.end();
+       it2++)
+  {
+    if (it2->second->removeMonitor(device))      
+      deletelist.push_back(it2);   
+  }//for
+  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+       itt != deletelist.end();
+       itt++)
+    ::urbiserver->functionbindertab.erase((*itt));
+  deletelist.clear();
+
+
+  //clean events binders
+  for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
+       it3 != ::urbiserver->eventbindertab.end();
+       it3++)
+  {
+    if (it3->second->removeMonitor(device))     
+      deletelist.push_back(it3); 
+  }//for
+  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+       itt != deletelist.end();
+       itt++)
+    ::urbiserver->eventbindertab.erase((*itt));
+  deletelist.clear();
+
+  
+
+  // clean the object binder
   if (binder) { 
     char messagetosend[1024];
     snprintf(messagetosend,1024,"[5,\"%s\"]\n", device->str());
@@ -84,6 +123,9 @@ UObj::~UObj()
 	it != binder->monitors.end();
 	it++)
       (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
+
+    // in fact here we can delete the binder since it contained only bindings
+    // to a single object (himself) associated to unique connections:
     delete(binder);
   }
 
