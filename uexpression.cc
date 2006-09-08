@@ -773,7 +773,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         }
 
         ret = new UValue(ufloat(1));
-        ret->eventid = (int)cmd;
+        ret->eventid = (long)cmd;
         ret->val = 1;
 
         return(ret);

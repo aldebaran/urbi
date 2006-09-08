@@ -43,8 +43,8 @@ int URBI_unicID = 10000; ///< unique identifier to create new references
 
 // Formatting for the echo and error outputs.
 
-const char* DISPLAY_FORMAT   = "[%d] %-35s %s";
-const char* DISPLAY_FORMAT1  = "[%d] %-35s %s : %d";
+const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
+const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d"; 
 
 // Standard header used by the server. Divided into "before" and "after" the
@@ -191,7 +191,7 @@ UServer::initialization()
   connectionList.push_front((UConnection*)ghost);
 
   char tmpbuffer_ghostTag[50];
-  sprintf(tmpbuffer_ghostTag,"U%d",(int)ghost);
+  sprintf(tmpbuffer_ghostTag,"U%ld",(long)ghost);
 
   new UVariable(MAINDEVICE,"ghostID", tmpbuffer_ghostTag);
 
@@ -852,7 +852,7 @@ void
 UServer::addConnection(UConnection *connection) 
 {
   if ((connection == 0) || (connection->UError != USUCCESS)) 
-      error(::DISPLAY_FORMAT1,(int)this,
+      error(::DISPLAY_FORMAT1,(long)this,
             "UServer::addConnection",
             "UConnection constructor failed");
   else
@@ -867,9 +867,9 @@ void
 UServer::removeConnection(UConnection *connection) 
 {
   connectionList.remove(connection);
-  echo(::DISPLAY_FORMAT1, (int)this,
+  echo(::DISPLAY_FORMAT1, (long)this,
        "UServer::removeConnection",
-       "Connection closed",(int)connection);
+       "Connection closed",(long)connection);
   delete connection;
 }
 

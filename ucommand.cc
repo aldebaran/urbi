@@ -382,9 +382,9 @@ UCommand_TREE::print(int l)
         else
           ::urbiserver->debug("UNKNOWN TREE!\n");
 
-  ::urbiserver->debug("(%d:%d) :\n",(int)this,(int)status);
-  if (command1) { ::urbiserver->debug("%s  Com1 (%d:%d) up=%d:\n",tabb,(int)command1,command1->status,(int)command1->up); command1->print(l+3);};
-  if (command2) { ::urbiserver->debug("%s  Com2 (%d:%d) up=%d:\n",tabb,(int)command2,command2->status,(int)command2->up); command2->print(l+3);};  
+  ::urbiserver->debug("(%ld:%ld) :\n",(long)this,(long)status);
+  if (command1) { ::urbiserver->debug("%s  Com1 (%ld:%d) up=%ld:\n",tabb,(long)command1,command1->status,(long)command1->up); command1->print(l+3);};
+  if (command2) { ::urbiserver->debug("%s  Com2 (%ld:%d) up=%ld:\n",tabb,(long)command2,command2->status,(long)command2->up); command2->print(l+3);};  
 
   ::urbiserver->debug("%sEND TREE ------\n",tabb);
 }
@@ -6237,8 +6237,8 @@ UCommand_LOOPN::print(int l)
         ::urbiserver->debug("UNKNOWN TYPE!\n");
 
   if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");}; 
-  if (command) { ::urbiserver->debug("%s  Command (%d:%d):\n",tabb,
-                            (int)command,
+  if (command) { ::urbiserver->debug("%s  Command (%ld:%d):\n",tabb,
+                            (long)command,
                             (int)command->status); command->print(l+3);};
 
   ::urbiserver->debug("%sEND LOOPN ------\n",tabb);

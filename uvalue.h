@@ -68,7 +68,7 @@ public:
     URefPt<UBinary> *refBinary;    
   };
 
-  int eventid; ///< Used to identify the events from which the boolean value come from
+  long eventid; ///< Used to identify the events from which the boolean value come from
   UValue *liststart;
   UValue *next;
 

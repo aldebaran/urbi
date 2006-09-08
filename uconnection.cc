@@ -129,7 +129,7 @@ UConnection::UConnection  (UServer *userver,
   activeCommand = 0;
 
   // initialize the connection tag used to reference local variables
-  sprintf(tmpbuffer_connectionTag,"U%d",(int)this);
+  sprintf(tmpbuffer_connectionTag,"U%ld",(long)this);
   connectionTag = new UString(tmpbuffer_connectionTag); 
   UVariable* cid = new UVariable(tmpbuffer_connectionTag,"connectionID",
                                  tmpbuffer_connectionTag);
@@ -248,7 +248,7 @@ void UConnection::initialize()
   send(customHeader,"ident");
 
   sprintf(customHeader,"%s created",connectionTag->str());
-  server->echo(::DISPLAY_FORMAT, (int)this,
+  server->echo(::DISPLAY_FORMAT, (long)this,
                "UConnection::initialize",
                customHeader); 
 
@@ -546,7 +546,7 @@ UConnection::received (const ubyte *buffer, int length)
         
         errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
         errorMessage[ 42 ] = 0; // cut at 41 characters
-        server->error(::DISPLAY_FORMAT,(int)this,
+        server->error(::DISPLAY_FORMAT,(long)this,
                       "UConnection::received",
                       errorMessage);      
       }
@@ -665,7 +665,7 @@ UConnection::error (UErrorCode n)
   UErrorValue result = send( errorString, "error");
   if (result == USUCCESS ) {
     errorString[strlen(errorString) - 1] = 0; // remove the '\n' at the end...
-    server->error(::DISPLAY_FORMAT,(int)this,"UConnection::error",errorString);
+    server->error(::DISPLAY_FORMAT,(long)this,"UConnection::error",errorString);
   } 
   return( result );
 }
@@ -693,7 +693,7 @@ UConnection::warning (UWarningCode n)
   UErrorValue result = send( warningString, "warning");
   if (result == USUCCESS ) {
     warningString[strlen(warningString) - 1] = 0; // remove the '\n' at the end...
-    server->echoKey("WARNG",::DISPLAY_FORMAT,(int)this,"UConnection::warning",warningString);
+    server->echoKey("WARNG",::DISPLAY_FORMAT,(long)this,"UConnection::warning",warningString);
   } 
   return( result );
 }
