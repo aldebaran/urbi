@@ -147,7 +147,6 @@ UVar::operator = (string s)
     vardata->variable->value->str = new UString("");
    
   // type mismatch is not integrated at this stage
-  vardata->variable->value->dataType = ::DATA_STRING;
   ::UValue tmpv(s.c_str());
   vardata->variable->set(&tmpv);
 }

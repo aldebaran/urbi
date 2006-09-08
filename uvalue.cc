@@ -325,6 +325,7 @@ UValue::UValue(const urbi::UValue &v)
   liststart = 0;
   next = 0;
   str=0;
+  dataType = DATA_VOID;
   switch (v.type) {
     case urbi::DATA_DOUBLE: dataType = DATA_NUM;
 		     	    this->val = v.val;

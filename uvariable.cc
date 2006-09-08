@@ -226,7 +226,14 @@ UVariable::setName(const char *_id, const char* _method)
 UVarSet
 UVariable::set(UValue *v)
 {  
-  if (!value)
+  if (!v)
+		return(selfSet(&(value->val)));
+	
+	if (value  && value->dataType != v->dataType) {
+		delete value;
+		value = 0;
+		}
+	if (!value)
     value = v->copy();
   else {  
     switch (value->dataType) {

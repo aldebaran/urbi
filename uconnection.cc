@@ -496,6 +496,11 @@ UConnection::received (const ubyte *buffer, int length)
      return USUCCESS;
     }
 
+  if (server->parser.commandTree) {
+	  //reentrency trouble
+	  treeLock.unlock();
+	  return USUCCESS;
+	}
   // Starts processing
   receiving = true;
   server->updateTime();

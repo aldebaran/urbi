@@ -2661,7 +2661,9 @@ UCommand_NEW::execute(UConnection *connection)
      
       alreadydone = true;
       snprintf(tmpprefix,1024,"%s.init",
-      objit->second->device->str(),parameters?parameters->size():0);      
+      objit->second->device->str());
+	  //TODO CHECKME :extra parameter to snprint: //parameters?parameters->size():0);      
+	  
       HMbindertab::iterator itbind =
 	::urbiserver->functionbindertab.find(tmpprefix);
       if (!((itbind != ::urbiserver->functionbindertab.end()) && (
@@ -3189,7 +3191,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     if (strcmp(id->str(),UNKNOWN_TAG)==0) {
       
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! cannot block 'notag'\n",id->str());
+               "!!! cannot block 'notag'\n");
       connection->send(tmpbuffer,tag->str());
     }
     else {
@@ -3217,7 +3219,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     if (strcmp(id->str(),UNKNOWN_TAG)==0) {
       
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! cannot freeze 'notag'\n",id->str());
+               "!!! cannot freeze 'notag'\n");
       connection->send(tmpbuffer,tag->str());
     }
     else {
@@ -6689,7 +6691,8 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
         ::urbiserver->parser.commandTree = 0;
       }
       
-      connection->send(errorMessage,"error");                   
+      connection->send(errorMessage,"error");  
+	  return(status = UCOMPLETED);
     }
     else {
 
