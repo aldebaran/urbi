@@ -93,6 +93,7 @@ public:
 
   ufloat          val;          ///< numerical value used for the EXPR_NUM                               
   UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR 
+  UValue          *tmp_value;   ///< stores a tmp UValue resulting from a function evaluation (which temporarily is processed as an UExpression). Usually, the value of this is 0.
                                 ///< type.
   UString         *id;          ///< id of the EXPR_FUNCTOR
   bool            firsteval;    ///< true on first evaluation (used by static)

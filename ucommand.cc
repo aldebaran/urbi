@@ -2580,6 +2580,7 @@ UCommand_NEW::execute(UConnection *connection)
   else
     newobj = idit->second;
     
+::urbiserver->debug("Je refais la cuisine... %d = new %d\n",newobj, objit->second);
 
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end()) {
@@ -2735,7 +2736,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    (UNamedParameters*)0),
 	  parameters ));	  
   }
-
+::urbiserver->debug("Je fais la cuisine... %d = new %d\n",newobj, objit->second);
   newobj->up.push_back(objit->second);
   objit->second->down.push_back(newobj);
   

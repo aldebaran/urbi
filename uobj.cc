@@ -50,8 +50,7 @@ UObj::UObj (UString *device)
 //! UObj destructor
 UObj::~UObj()
 {
-  // Removal of all variable bindings  
-  
+  // Removal of all variable bindings   
   list<UVariable*> varToDelete;
   for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
       it != ::urbiserver->variabletab.end();
@@ -65,7 +64,6 @@ UObj::~UObj()
       varToDelete.push_back((*it).second);            
     }    
   }//for  
-
   for (list<UVariable*>::iterator itd = varToDelete.begin();
        itd != varToDelete.end();
        ++itd)
@@ -139,6 +137,17 @@ UObj::~UObj()
   // Remove the object from the hashtable
   HMobjtab::iterator idit = ::urbiserver->objtab.find(device->str());
   ASSERT (idit != ::urbiserver->objtab.end()) ::urbiserver->objtab.erase(idit);
+
+    ::urbiserver->debug("EFFECTIFS: (%d) %d %d\n",this,up.size(), down.size());
+
+  // Remove the objects from the subclass list of its parents
+  for (list<UObj*>::iterator it = up.begin();
+       it != up.end();
+       ++it)
+  {
+    ::urbiserver->debug("Kill him %d\n",(*it));
+    (*it)->down.remove(this);
+  }
 
   // final cleanup
   if (internalBinder) delete internalBinder;    

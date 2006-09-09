@@ -48,6 +48,7 @@ void UExpression::initialize()
   isconst          = false;
   issofttest       = false;
   staticcache      = 0;
+  tmp_value        = 0;
 
   this->softtest_time = 0; 
   
@@ -115,8 +116,10 @@ UExpression::UExpression(UExpressionType type, UValue *v)
    if (v->dataType == DATA_NUM) this->val  = v->val;
    else
      if (v->dataType == DATA_STRING) this->str = v->str->copy();
-     else
+     else {
+       tmp_value = v;
        dataType = DATA_UNKNOWN;  
+     }
 }
 		
 //! UExpression constructor for functors 
@@ -265,6 +268,7 @@ UExpression::copy()
   ret->isconst  = isconst;
   ret->issofttest  = issofttest;
   ret->firsteval   = firsteval;
+  ret->tmp_value   = tmp_value;
 
   return (ret);
 }
@@ -415,10 +419,12 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
   case EXPR_VALUE:
 
+    if (tmp_value) return tmp_value; // hack to be able to handle complex return types from function calls
+
     ret = new UValue();
     ret->dataType = dataType;
     if (dataType == DATA_NUM) ret->val = val; 
-    if (dataType == DATA_STRING) ret->str = new UString(str);
+    if (dataType == DATA_STRING) ret->str = new UString(str);    
     return(ret);
 
   case EXPR_ADDR_VARIABLE:
