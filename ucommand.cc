@@ -1560,8 +1560,10 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
 
   // Type checking
   UValue *value;
-
-  if ((variable) && (variable->value->dataType != DATA_BINARY)) {
+	//XXX in some cases, the variable may exist and be of type DATA_VOID
+  if ((variable) 
+		&& (variable->value->dataType != DATA_BINARY)
+		&& (variable->value->dataType != DATA_VOID)) {
 
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
                "!!! %s type mismatch\n",variablename->getFullname()->str());
@@ -1581,9 +1583,12 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
 
     connection->localVariableCheck(variable);
   }
-  else 
-    LIBERATE(variable->value->refBinary);
-
+  else {
+		if (variable->value->dataType == DATA_BINARY) {
+				LIBERATE(variable->value->refBinary);	
+		}
+	}
+	variable->value->dataType = DATA_BINARY;
   variable->value->refBinary = refBinary->copy();
 
   variable->updated();
@@ -4401,10 +4406,13 @@ UCommand_EMIT::execute(UConnection *connection)
      ////// EXTERNAL /////
    
     HMbindertab::iterator it = ::urbiserver->eventbindertab.find(eventnamestr);
-    if ((it != ::urbiserver->eventbindertab.end()) && 
-	(parameters) && 
-	(it->second->nbparam == parameters->size()) &&
-	(!it->second->monitors.empty()))  {
+			if ((it != ::urbiserver->eventbindertab.end()) && 
+		(
+			( (parameters) && (it->second->nbparam == parameters->size()))
+			||
+			((!parameters) && (it->second->nbparam==0))) &&
+		(!it->second->monitors.empty()))  {
+	
             
       char tmpprefix[1024];
       snprintf(tmpprefix,1024,"[2,\"%s__%d\"",
