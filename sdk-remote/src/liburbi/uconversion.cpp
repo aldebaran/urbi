@@ -1,7 +1,10 @@
 #include "uconversion.h"
 
-#include <setjmp.h>
 using namespace urbi;
+
+#ifndef NO_IMAGE_CONVERSION
+#include <setjmp.h>
+
 extern "C"
 {
 #include "../../lib/jpeg-6b/jpeglib.h"
@@ -15,21 +18,7 @@ static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size,
 static int
 write_jpeg(const unsigned char* src, int w, int h, bool ycrcb, 
                unsigned char* dst, int &sz, int quality);
-struct wavheader {
-	char riff[4];
-	int length;
-	char wave[4];
-	char fmt[4];
-	int lnginfo;
-	short one;
-	short channels;
-	int freqechant;
-	int bytespersec;
-	short bytesperechant;
-	short bitperchannel;
-	char data[4];
-	int datalength;
-  };
+
 
 static inline unsigned char clamp(float v)
 {
@@ -313,140 +302,6 @@ static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
 }
 
 
-template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int dr, int count, bool sf, bool df) {
-  int shift = 8*(sizeof(S) - sizeof(D));
-  for (int i=0;i<count;i++) {
-    float soffset = (float)i* ((float)sr /(float)dr);
-    int so = (int)soffset;
-    float factor = soffset-(float)so;
-    S s1, s2;
-    s1 = src[so*sc];
-    if (i != count - 1)
-      s2 = src[(so+1)*sc]; 
-    else
-      s2 = s1; //nothing to interpolate with
-    if (!sf) {
-      s1 = s1 ^ (1<<(sizeof(S)*8-1));
-      s2 = s2 ^ (1<<(sizeof(S)*8-1));   
-    }
-    int v1 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
-    int v2;
-    if (sc==1)
-      v2 = v1;
-    else {
-      s1 = src[so*sc+1];
-      if (i != count - 1)
-	s2 = src[(so+1)*sc+1];
-      else
-	s2 = s1; //nothing to interpolate with
-      if (!sf) {
-        s1 = s1 ^ (1<<(sizeof(S)*8-1));
-        s2 = s2 ^ (1<<(sizeof(S)*8-1));   
-      }
-       v2 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
-    }
-    D d1, d2;
-    if (shift>=0) {
-      d1 = (D)(v1 >>shift);
-      d2 = (D)(v2 >>shift);
-    }
-    else {
-      d1 = (D)(v1) *  (1<< (-shift));
-      d2 = (D)(v2) * (1<< (-shift));
-    }
-    if (!df) {
-      d1 = d1 ^ (1<<(sizeof(D)*8-1));
-      d2 = d2 ^ (1<<(sizeof(D)*8-1));    
-    }
-    if (dc==2) {
-      dst[i*2] = d1;
-      dst[i*2+1] = d2;
-    }
-    else
-      dst[i] = (D) (((int)d1+(int)d2) /2);
-  }
-}
-
-/** Conversion between various sound formats.
-    If any of destination,'s channel, sampleSize, rate or sampleFormat parameter is 0, values from source will be used.
-    If the desitnation's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory.
- */
-int
-convert (const USound &source, USound &dest) {
-  if ( (source.soundFormat != SOUND_RAW && source.soundFormat != SOUND_WAV) ||
-       (dest.soundFormat != SOUND_RAW && dest.soundFormat != SOUND_WAV))
-    return 1; //conversion not handled yet
-  //phase one: calculate required buffer size, set destination unspecified fields
-  int schannels, srate, ssampleSize;
-  USoundSampleFormat ssampleFormat;
-  if (source.soundFormat == SOUND_WAV) {
-    wavheader * wh = (wavheader *)source.data;
-    schannels = wh->channels;
-    srate = wh->freqechant;
-    ssampleSize = wh->bitperchannel;
-    ssampleFormat = (ssampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED;
-  }
-  else {
-    schannels = source.channels;
-    srate = source.rate;
-    ssampleSize = source.sampleSize;
-    ssampleFormat = source.sampleFormat;
-  }
-  if (!dest.channels) dest.channels = schannels;
-  if (!dest.rate) dest.rate = srate;
-  if (!dest.sampleSize) dest.sampleSize = ssampleSize;
-  if (!(int)dest.sampleFormat) dest.sampleFormat = ssampleFormat;
-  if (dest.soundFormat == SOUND_WAV) dest.sampleFormat = (dest.sampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED; 
-  int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
-  if (dest.soundFormat == SOUND_WAV) destSize+= sizeof(wavheader);
-  if (dest.size<destSize) 
-    dest.data = (char *)realloc(dest.data, destSize);
-  dest.size = destSize;
-  //write destination header if appropriate
-  if (dest.soundFormat == SOUND_WAV) {
-    wavheader * wh = (wavheader *)dest.data;
-    memcpy(wh->riff,"RIFF",4);
-    wh->length = dest.size - 8;
-    memcpy(wh->wave, "WAVE", 4);
-    memcpy(wh->fmt, "fmt ", 4);
-    wh->lnginfo = 16;
-    wh->one = 1;
-    wh->channels = dest.channels;
-    wh->freqechant = dest.rate;
-    wh->bytespersec = dest.rate * dest.channels * (dest.sampleSize/8);
-    wh->bytesperechant = (dest.sampleSize/8)*dest.channels;
-    wh->bitperchannel = dest.sampleSize;
-    memcpy(wh->data, "data", 4);
-    wh->datalength = destSize - sizeof(wavheader);
-  }
-  
-  //do the conversion and write to dest.data
-  char * sbuffer = source.data;
-  if (source.soundFormat == SOUND_WAV)
-    sbuffer += sizeof(wavheader);
-  char * dbuffer = dest.data;
-  if (dest.soundFormat == SOUND_WAV)
-    dbuffer += sizeof(wavheader);
-  int elementCount = dest.size - ((dest.soundFormat == SOUND_WAV)?sizeof(wavheader):0);
-  elementCount /= (dest.channels * (dest.sampleSize/8));
-  switch( ssampleSize*1000 + dest.sampleSize) {
-  case 8008:
-    copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-    break;
-  case 16008:
-    copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-    break;
-  case 16016:
-    copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-    break;
-  case 8016:
-    copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-    break;
-  }
-  return 0;
-}
-
-
 
 //scale putting (scx,scy) at the center of destination image
 static void scaleColorImage(unsigned char * src, int sw, int sh,  int scx, int scy, unsigned char * dst, int dw, int dh, float sx, float sy) {
@@ -582,6 +437,159 @@ int convert(const UImage & src, UImage & dest) {
 
   free(uncompressedData);
   return 1;
+}
+
+
+#endif
+
+
+struct wavheader {
+	char riff[4];
+	int length;
+	char wave[4];
+	char fmt[4];
+	int lnginfo;
+	short one;
+	short channels;
+	int freqechant;
+	int bytespersec;
+	short bytesperechant;
+	short bitperchannel;
+	char data[4];
+	int datalength;
+  };
+  
+template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int dr, int count, bool sf, bool df) {
+  int shift = 8*(sizeof(S) - sizeof(D));
+  for (int i=0;i<count;i++) {
+    float soffset = (float)i* ((float)sr /(float)dr);
+    int so = (int)soffset;
+    float factor = soffset-(float)so;
+    S s1, s2;
+    s1 = src[so*sc];
+    if (i != count - 1)
+      s2 = src[(so+1)*sc]; 
+    else
+      s2 = s1; //nothing to interpolate with
+    if (!sf) {
+      s1 = s1 ^ (1<<(sizeof(S)*8-1));
+      s2 = s2 ^ (1<<(sizeof(S)*8-1));   
+    }
+    int v1 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
+    int v2;
+    if (sc==1)
+      v2 = v1;
+    else {
+      s1 = src[so*sc+1];
+      if (i != count - 1)
+	s2 = src[(so+1)*sc+1];
+      else
+	s2 = s1; //nothing to interpolate with
+      if (!sf) {
+        s1 = s1 ^ (1<<(sizeof(S)*8-1));
+        s2 = s2 ^ (1<<(sizeof(S)*8-1));   
+      }
+       v2 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
+    }
+    D d1, d2;
+    if (shift>=0) {
+      d1 = (D)(v1 >>shift);
+      d2 = (D)(v2 >>shift);
+    }
+    else {
+      d1 = (D)(v1) *  (1<< (-shift));
+      d2 = (D)(v2) * (1<< (-shift));
+    }
+    if (!df) {
+      d1 = d1 ^ (1<<(sizeof(D)*8-1));
+      d2 = d2 ^ (1<<(sizeof(D)*8-1));    
+    }
+    if (dc==2) {
+      dst[i*2] = d1;
+      dst[i*2+1] = d2;
+    }
+    else
+      dst[i] = (D) (((int)d1+(int)d2) /2);
+  }
+}
+
+/** Conversion between various sound formats.
+    If any of destination,'s channel, sampleSize, rate or sampleFormat parameter is 0, values from source will be used.
+    If the desitnation's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory.
+ */
+int
+convert (const USound &source, USound &dest) {
+  if ( (source.soundFormat != SOUND_RAW && source.soundFormat != SOUND_WAV) ||
+       (dest.soundFormat != SOUND_RAW && dest.soundFormat != SOUND_WAV))
+    return 1; //conversion not handled yet
+  //phase one: calculate required buffer size, set destination unspecified fields
+  int schannels, srate, ssampleSize;
+  USoundSampleFormat ssampleFormat;
+  if (source.soundFormat == SOUND_WAV) {
+    wavheader * wh = (wavheader *)source.data;
+    schannels = wh->channels;
+    srate = wh->freqechant;
+    ssampleSize = wh->bitperchannel;
+    ssampleFormat = (ssampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED;
+  }
+  else {
+    schannels = source.channels;
+    srate = source.rate;
+    ssampleSize = source.sampleSize;
+    ssampleFormat = source.sampleFormat;
+  }
+  if (!dest.channels) dest.channels = schannels;
+  if (!dest.rate) dest.rate = srate;
+  if (!dest.sampleSize) dest.sampleSize = ssampleSize;
+  if (!(int)dest.sampleFormat) dest.sampleFormat = ssampleFormat;
+  if (dest.soundFormat == SOUND_WAV) dest.sampleFormat = (dest.sampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED; 
+  int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
+  if (dest.soundFormat == SOUND_WAV) destSize+= sizeof(wavheader);
+  if (dest.size<destSize) 
+    dest.data = (char *)realloc(dest.data, destSize);
+  dest.size = destSize;
+  //write destination header if appropriate
+  if (dest.soundFormat == SOUND_WAV) {
+    wavheader * wh = (wavheader *)dest.data;
+    memcpy(wh->riff,"RIFF",4);
+    wh->length = dest.size - 8;
+    memcpy(wh->wave, "WAVE", 4);
+    memcpy(wh->fmt, "fmt ", 4);
+    wh->lnginfo = 16;
+    wh->one = 1;
+    wh->channels = dest.channels;
+    wh->freqechant = dest.rate;
+    wh->bytespersec = dest.rate * dest.channels * (dest.sampleSize/8);
+    wh->bytesperechant = (dest.sampleSize/8)*dest.channels;
+    wh->bitperchannel = dest.sampleSize;
+    memcpy(wh->data, "data", 4);
+    wh->datalength = destSize - sizeof(wavheader);
+  }
+  
+  //do the conversion and write to dest.data
+  char * sbuffer = source.data;
+  if (source.soundFormat == SOUND_WAV)
+    sbuffer += sizeof(wavheader);
+  char * dbuffer = dest.data;
+  if (dest.soundFormat == SOUND_WAV)
+    dbuffer += sizeof(wavheader);
+  int elementCount = dest.size - ((dest.soundFormat == SOUND_WAV)?sizeof(wavheader):0);
+  elementCount /= (dest.channels * (dest.sampleSize/8));
+  switch( ssampleSize*1000 + dest.sampleSize) {
+  case 8008:
+    copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    break;
+  case 16008:
+    copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    break;
+  case 16016:
+    copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    break;
+  case 8016:
+    copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    break;
+  }
+  return 0;
 }
 
 

@@ -171,9 +171,9 @@ UVar::operator = (string s)
 void
 UVar::operator = (const UBinary &b)
 {  
-  URBI() << name << "=";  
-  URBI()<<"BIN "<<b.common.size<<" "<<b.getMessage()<<";";
-  URBI().write((char *)b.common.data, b.common.size);
+	urbi::getDefaultClient()->sendBin(b.common.data, b.common.size, 
+		"%s=BIN %d %s;",
+		name.c_str(), b.common.size, b.getMessage().c_str());
 }
 
 void

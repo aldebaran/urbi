@@ -135,6 +135,16 @@ UTimerCallback::UTimerCallback(string objname, ufloat period, UTimerTable &tt) :
 {
   tt.push_back(this);
   lastTimeCalled = -9999999;
+	std::ostringstream os;
+	os << "timer"<<tt.size();
+	//register oursselves as an event
+	string cbname = os.str();
+	createUCallback(objname,"event",
+    this,&UTimerCallback::call,objname+"."+cbname,eventmap);
+	os.str("");
+	os.clear();
+	os << "timer_"<<objname<<": every("<<period<<") { emit "<<cbname<<";};";
+	URBI()<<os.str();
 }
 
 UTimerCallback::~UTimerCallback()
@@ -175,7 +185,8 @@ UObject::UObject(const string &s) :
   // default
   derived = false;
   classname = __name;
-
+	
+	period = -1;
   UBindVar(UObject,load);
 }
 
@@ -188,8 +199,22 @@ UObject::~UObject()
 void
 UObject::USetUpdate(ufloat t)
 {
+	std::ostringstream os;
+	if (period != -1) {
+		//kill previous timer
+		os<<"stop maintimer_"<<__name<<";";
+		URBI()<<os.str();
+	}
   period = t;
-  // nothing happend in remote mode...
+	if (period<=0)
+		period = 1;
+	string cbname = __name+".maintimer";
+  createUCallback(__name,"event",
+    this,&UObject::update,cbname,eventmap);
+	os.str("");
+	os.clear();
+	os << "maintimer_"<<__name<<": every("<<period<<") { emit "<<cbname<<";};";
+	URBI()<<os.str();
 }
 
 // This part is specific for standalone linux objects
