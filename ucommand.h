@@ -363,6 +363,7 @@ public:
   UString          *obj;        ///< Object
   UNamedParameters *parameters; ///< list of parameters
   bool             noinit; ///< tells if 'init' should be called
+  bool             remoteNew; ///< true when a remote new is waiting
 };
 
 class UCommand_ALIAS : public UCommand

@@ -326,6 +326,19 @@ struct eqStr
   }
 };
 
+/** Class containing the number of pending call to a remote new for
+ * a given class name (id).
+ *  */
+class UWaitCounter
+{
+  public:
+    UWaitCounter(UString *id, int nb);
+    ~UWaitCounter();
+
+   UString* id; ///< class name
+   int nb; ///< nb of waiting calls
+};    
+
 
 #ifdef _MSC_VER
 class str_compare {
@@ -352,6 +365,7 @@ typedef std::hash_map<const char*, UGroup*, str_compare> HMgrouptab ;
 typedef std::hash_map<const char*, UString*, str_compare> HMaliastab ;
 typedef std::hash_map<const char*, UCommand_EMIT*, str_compare> HMeventtab ;
 typedef std::hash_map<const char*, UBinder*, str_compare> HMbindertab ;
+typedef std::hash_map<const char*, UWaitCounter*, str_compare> HMobjWaiting;
 
 #else
 
@@ -389,6 +403,15 @@ typedef  hash_map<const char*,
                   UBinder*,
                   hash<const char*>,
                   eqStr>                 HMbindertab; ///< hash of binders
+
+typedef  hash_map<const char*, 
+         	 UWaitCounter*, 
+                 hash<const char*>,
+                 eqStr>                  HMobjWaiting; ///< hash for waiters
+
+
+
+
 #endif
 
 #endif

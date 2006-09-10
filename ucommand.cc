@@ -2538,6 +2538,7 @@ UCommand_NEW::UCommand_NEW(UString* id,
   this->obj         = obj;
   this->parameters  = parameters;
   this->noinit      = noinit;
+  remoteNew         = false;
 }
 
 //! UCommand subclass destructor.
@@ -2552,7 +2553,16 @@ UCommand_NEW::~UCommand_NEW()
 //! UCommand subclass execution function
 UCommandStatus 
 UCommand_NEW::execute(UConnection *connection)
-{
+{  
+  // Wait for remote new
+  HMobjWaiting::iterator ow;
+
+  if (remoteNew) 
+  {
+    ow = ::urbiserver->objWaittab.find(id->str());
+    if (ow!=::urbiserver->objWaittab.end()) return(status = URUNNING);
+  }
+
   morph = 0;
   
   char tmpprefix[1024];
@@ -2574,6 +2584,34 @@ UCommand_NEW::execute(UConnection *connection)
   UObj* newobj;
   bool creation = false;
 
+ // EXTERNAL
+  if ((objit->second->binder)&& (!remoteNew)) {
+       
+    snprintf(tmpprefixnew,1024,"[4,\"%s\",\"%s\"]\n",
+	id->str(),
+	objit->second->device->str());
+      
+    int nb=0;
+    for (list<UMonitor*>::iterator it2 = objit->second->binder->monitors.begin();
+	it2 != objit->second->binder->monitors.end();
+	it2++) 
+    {      
+      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it2)->c->send((const ubyte*)tmpprefixnew,strlen(tmpprefixnew));	
+      nb++;
+    }    
+    ow = ::urbiserver->objWaittab.find(id->str());
+    if (ow!=::urbiserver->objWaittab.end()) 
+      (*ow).second->nb += nb;
+    else {
+      UWaitCounter *wc = new UWaitCounter(id,nb);
+      ASSERT(wc!=0) ::urbiserver->objWaittab[wc->id->str()] = wc;
+    }
+    // initiate remote new waiting
+    remoteNew = true;
+    return (status = URUNNING);
+  }
+
   if (objit->second->internalBinder)
     objit->second->internalBinder->copy(string(id->str()));
    
@@ -2585,8 +2623,6 @@ UCommand_NEW::execute(UConnection *connection)
   else
     newobj = idit->second;
     
-::urbiserver->debug("Je refais la cuisine... %d = new %d\n",newobj, objit->second);
-
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end()) {
         
@@ -2603,16 +2639,7 @@ UCommand_NEW::execute(UConnection *connection)
   // will not be accepted. However, in principle there is no ambiguity since
   // we have a clear reference to the inherited object in this case. It will
   // be fixed later.
-  
-  // new  
-  // EXTERNAL
-  if (objit->second->binder) {
-       
-    snprintf(tmpprefixnew,1024,"[4,\"%s\",\"%s\"]\n",
-	newobj->device->str(),
-	objit->second->device->str());
-  }
-  
+   
   bool alreadydone = false;
   // init
   // INTERNAL (module)
@@ -2705,9 +2732,6 @@ UCommand_NEW::execute(UConnection *connection)
 	it2 != objit->second->binder->monitors.end();
 	it2++) {
       
-      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*it2)->c->send((const ubyte*)tmpprefixnew,strlen(tmpprefixnew));	
-
       if (!noinit) {
 	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));	
@@ -2741,7 +2765,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    (UNamedParameters*)0),
 	  parameters ));	  
   }
-::urbiserver->debug("Je fais la cuisine... %d = new %d\n",newobj, objit->second);
+
   newobj->up.push_back(objit->second);
   objit->second->down.push_back(newobj);
   
@@ -2762,7 +2786,7 @@ UCommand_NEW::execute(UConnection *connection)
     if (id->equal((*it))) foundit = true;
   
   if (!foundit) g->members.push_back(id->copy());
-  
+
   if (morph)
     return ( status = UMORPH );	  	
   else
@@ -2784,7 +2808,9 @@ UCommand_NEW::copy()
   UCommand_NEW *ret = new UCommand_NEW(copy_id,
                                        copy_obj,
 				       copy_parameters);
+  
   copybase(ret);
+  ret->remoteNew = remoteNew;
   return ((UCommand*)ret);
 }
 
@@ -5031,8 +5057,20 @@ UCommand_CLASS::~UCommand_CLASS()
 UCommandStatus 
 UCommand_CLASS::execute(UConnection *connection)
 {
-  // add some object storage here based on 'object'
-  new UObj(object);
+   // remote new processing
+  HMobjWaiting::iterator ow;    
+  ow = ::urbiserver->objWaittab.find(object->str());
+  if (ow != ::urbiserver->objWaittab.end()) {
+    (*ow).second->nb--;
+    if ((*ow).second->nb == 0) 
+      ::urbiserver->objWaittab.erase(ow);
+    else          
+      return(status = URUNNING);
+  }
+
+
+  // add some object storage here based on 'object'  
+  new UObj(object);  
   if (!parameters) return ( status = UCOMPLETED );
 
   // morph into a series of & for each element of the class

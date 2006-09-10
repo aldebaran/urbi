@@ -135,6 +135,7 @@ public:
   HMeventtab               eventtab; ///< hash of events
   HMbindertab              functionbindertab; ///< hash of function binders
   HMbindertab              eventbindertab; ///< hash of event binders
+  HMobjWaiting             objWaittab; ///< hash of obj name waiting for a remote new
 
 
 

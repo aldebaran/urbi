@@ -38,7 +38,9 @@ UObj::UObj (UString *device)
 {
   this->device = new UString(device);
   binder = 0;
-  internalBinder = 0; 
+  internalBinder = 0;
+
+ ::urbiserver->debug("I'm the new born: %s[%d]\n",this->device->str(), (int) this); 
 
   ::urbiserver->objtab[this->device->str()] = this;
   UValue* objvalue = new UValue();
@@ -138,7 +140,7 @@ UObj::~UObj()
   HMobjtab::iterator idit = ::urbiserver->objtab.find(device->str());
   ASSERT (idit != ::urbiserver->objtab.end()) ::urbiserver->objtab.erase(idit);
 
-    ::urbiserver->debug("EFFECTIFS: (%d) %d %d\n",this,up.size(), down.size());
+    ::urbiserver->debug("EFFECTIFS: (%s:%d) %d %d\n",device->str(),this,up.size(), down.size());
 
   // Remove the objects from the subclass list of its parents
   for (list<UObj*>::iterator it = up.begin();
@@ -220,5 +222,18 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   }
 }
 
+/*********************************************/
+/* UWaitCounter                              */
+/*********************************************/
 
+UWaitCounter::UWaitCounter(UString *id, int nb)
+{
+  this->id = new UString(id);
+  this->nb = nb;
+}
+
+UWaitCounter::~UWaitCounter() 
+{
+  if (id) delete id;
+}
 
