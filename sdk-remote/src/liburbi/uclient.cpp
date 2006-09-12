@@ -44,24 +44,23 @@
 using namespace std;
 
 
-#ifdef WIN32
-#define pipe(a) _pipe(a,10, 0)
-#endif
 
 /*! Establish the connection with the server. 
 Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
 the appropriate callbacks.
  */
 UClient::UClient(const char *_host, int _port, int _buflen) 
-  :UAbstractClient(_host, _port, _buflen) {
+  :UAbstractClient(_host, _port, _buflen) {                    
     setlocale(LC_NUMERIC,"C");
     control_fd[0] = control_fd[1] = -1;
+    
+    #ifndef WIN32
     if (::pipe(control_fd) == -1) {
       rc = -1;
       perror("UClient::UClient failed to create pipe");
       return;
     }
-    
+    #endif
    
     
     // Address resolution stage.
@@ -70,7 +69,12 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     
    
     memset(&sa, 0, sizeof(sa));
-    
+    #ifdef WIN32
+    WSADATA wsaData;
+    WORD wVersionRequested;
+    wVersionRequested = MAKEWORD( 1, 1 );
+    WSAStartup( wVersionRequested, &wsaData );
+    #endif
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
     
@@ -119,10 +123,10 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     //check that it really worked
     int pos=0;
     while (pos==0)
-		pos = ::read(sd, recvBuffer, buflen);
+		pos = ::recv(sd, recvBuffer, buflen, 0);
     if (pos<0) {
       rc = pos;
-      printf("UClient::UClient couldn't connect: read error.\n");
+      printf("UClient::UClient couldn't connect: read error %d.\n",rc);
       return;
     }
     else recvBufferPosition = pos;
@@ -139,6 +143,7 @@ UClient::~UClient()
 {
   
   close(sd);
+  sd = -1;
   if (control_fd[1] != -1 ) ::write(control_fd[1],"a",1);
   //must wait for listen thread to terminate
   joinThread(thread);
@@ -164,7 +169,7 @@ cout << ">>>> SENT : [" << output << "]" << endl;
   if (rc) return -1;
   int pos = 0;
   while (pos!=size) {
-    int retval = ::write(sd, (char *) buffer + pos, size-pos);
+    int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
 	if (retval<0) {
 	  rc = retval;
 	  return rc;
@@ -181,25 +186,39 @@ UClient::listenThread() {
   int res;
   while (true) {
 	do {
+      if (sd==-1)     
+         return;
 	  FD_ZERO(&rfds);
 	  FD_SET(sd, &rfds);
+	  #ifndef WIN32
 	  FD_SET(control_fd[0], &rfds);
-	  res = select(maxfd+1, &rfds, NULL, NULL, NULL);
-	  if ( (res == -1) && (errno != EINTR)) {
+	  #endif
+	  struct timeval tme;
+	  tme.tv_sec = 1;
+	  tme.tv_usec = 0;
+	  res = select(maxfd+1, &rfds, NULL, NULL, &tme);
+	  if ( (res < 0) && (errno != EINTR)) {
 		this->rc = -1;
+		#ifdef WIN32
+		res = WSAGetLastError();
+		#endif
+		std::cerr << "select error "<<res<<std::endl;
 		//TODO when error will be implemented, send an error msg
 		//TODO maybe try to reconnect?
 		return;
 	  }
 	  if (res == -1) { res=0;continue;}
+	  #ifndef WIN32
 	  if ( (res != 0) && (FD_ISSET(control_fd[0], &rfds)) ) return;
+	  #endif
 	}
 	while (res == 0);	
-	int count = read(sd, 
+	int count = ::recv(sd, 
                      &recvBuffer[recvBufferPosition], 
-                     buflen - recvBufferPosition - 1);
-	if (count == -1) {
+                     buflen - recvBufferPosition - 1, 0);
+	if (count < 0) {
 	  rc = -1;
+	  std::cerr <<"error "<<count<<std::endl;
 	  //TODO when error will be implemented, send an error msg
 	  //TODO maybe try to reconnect?
 	  return;

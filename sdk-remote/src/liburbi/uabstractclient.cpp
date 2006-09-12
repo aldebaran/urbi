@@ -163,7 +163,7 @@ UAbstractClient::UAbstractClient(const char *_host, int _port, int _buflen)
   :std::ostream(new UClientStreambuf(this)), 
   listLock(*new Lockable()), 
   sendBufferLock(*new Lockable()) {
-    stream=this; 
+    stream=this;
     getStream().setf(std::ios::fixed); 
     rc = 0;
     uid = 0;
