@@ -2,6 +2,8 @@
 #include "usyncclient.h"
 #include "lockable.h"
 #include <fcntl.h>
+#include <unistd.h>
+
 using std::min;
 
 
