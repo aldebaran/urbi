@@ -2,7 +2,12 @@
 #include "usyncclient.h"
 #include "lockable.h"
 #include <fcntl.h>
+
+#ifndef _MSC_VER
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
 
 using std::min;
 

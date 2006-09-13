@@ -102,11 +102,11 @@ UGenericCallback::UGenericCallback(string objname, string type, string name, int
   << this->name << " from " << objname << endl;
 
   if (type == "var")
-    URBI() << "external " << type << " " 
+    URBI(()) << "external " << type << " " 
     << name << " from " << objname << ";";
     
   if ((type == "event") || (type == "function"))
-    URBI() << "external " << type << "(" << size << ") " 
+    URBI(()) << "external " << type << "(" << size << ") " 
     << name << " from " << objname << ";";
 
   if (type == "varaccess")
@@ -118,7 +118,7 @@ UGenericCallback::UGenericCallback(string objname, string type, string name, UTa
   name(name) , objname(objname)
 {
   t[this->name].push_back(this);
-  URBI() << "external " << type << " " << name <<";";
+  URBI(()) << "external " << type << " " << name <<";";
 };
 
 UGenericCallback::~UGenericCallback()
@@ -139,12 +139,15 @@ UTimerCallback::UTimerCallback(string objname, ufloat period, UTimerTable &tt) :
 	os << "timer"<<tt.size();
 	//register oursselves as an event
 	string cbname = os.str();
-	createUCallback(objname,"event",
-    this,&UTimerCallback::call,objname+"."+cbname,eventmap);
+
+	// needed by MSVC
+	//createUCallback(objname, "event", this, &UTimerCallback::call, objname + "." + cbname, eventmap);
+	new UCallbackvoid0<UTimerCallback> (objname, "event", this, &UTimerCallback::call, objname + "." + cbname, eventmap);
+	
 	os.str("");
 	os.clear();
 	os << "timer_"<<objname<<": every("<<period<<") { emit "<<cbname<<";};";
-	URBI()<<os.str();
+	URBI(())<<os.str();
 }
 
 UTimerCallback::~UTimerCallback()
@@ -154,7 +157,7 @@ UTimerCallback::~UTimerCallback()
 // **************************************************************************	
 //  Monitoring functions
 
-int voidfun() {};
+int voidfun() { return 0; };
 
 //! Generic UVar monitoring without callback
 void
@@ -182,8 +185,8 @@ UObject::UObject(const string &s) :
 {
   objecthub = 0;
   lastUObject = this;
-  URBI() << "class " << __name << "{};"; 
-  URBI() << "external " << "object" << " " << __name <<";";
+  URBI(()) << "class " << __name << "{};"; 
+  URBI(()) << "external " << "object" << " " << __name <<";";
   period = -1;
 }
 
@@ -200,7 +203,7 @@ UObject::USetUpdate(ufloat t)
 	if (period != -1) {
 		//kill previous timer
 		os<<"stop maintimer_"<<__name<<";";
-		URBI()<<os.str();
+		URBI(())<<os.str();
 	}
   period = t;
 	if (period<=0)
@@ -211,7 +214,7 @@ UObject::USetUpdate(ufloat t)
 	os.str("");
 	os.clear();
 	os << "maintimer_"<<__name<<": every("<<period<<") { emit "<<cbname<<";};";
-	URBI()<<os.str();
+	URBI(())<<os.str();
 }
 
 // This part is specific for standalone linux objects
@@ -284,12 +287,12 @@ urbi::dispatcher(const UMessage &msg)
       UValue retval = (*tmpfunit)->__evalcall(array);
       array.setOffset(0);
       if (retval.type == DATA_VOID)
-	URBI() << "var " << (string)array[2];
+	URBI(()) << "var " << (string)array[2];
       else {
-	URBI() << (string)array[2] << "=";
+	URBI(()) << (string)array[2] << "=";
 	urbi::getDefaultClient()->send(retval);//I'd rather not use << for bins
       }
-      URBI() << ";";
+      URBI(()) << ";";
     }          
     else
       msg.client.printf("Soft Device Error: %s function unknown.\n",((string)array[1]).c_str());
@@ -407,6 +410,7 @@ UObjectHub::updateGlobal()
        it++) 
     (*it)->update();
   update();
+  return 0;
 }
 
 void 

@@ -4,9 +4,9 @@
 
 
 #ifdef WIN32
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0400
-#endif
+//#undef _WIN32_WINNT
+//#define _WIN32_WINNT 0x0400
+
 #include <windows.h>
 
 typedef CRITICAL_SECTION Lock;
@@ -24,10 +24,10 @@ inline void lockUnlock(Lock &l) {
 inline void deleteLock(Lock &l) {
   DeleteCriticalSection(&l);
 }
-
+/*
 inline bool lockTryLock(Lock &l) {
   return TryEnterCriticalSection(&l);
-}
+}*/
 #else
 
 #include <pthread.h>
@@ -129,13 +129,14 @@ typedef void * ThreadStartRet;
 #define THREADSTARTCALL
 #endif
 
-template<class T> THREADSTARTCALL ThreadStartRet _startThread2(void * data) {
+template<class T> ThreadStartRet THREADSTARTCALL _startThread2(void * data) {
   StartInfo<T> * st = (StartInfo<T>*)data;
   ((*st->inst).*st->func)();
   delete st;
+  return (ThreadStartRet) 0;
 }
 
-template<class T> THREADSTARTCALL ThreadStartRet _startThread(void * data) {
+template<class T> ThreadStartRet THREADSTARTCALL _startThread(void * data) {
   T * t = (T*)data;
   (*t)();
 }

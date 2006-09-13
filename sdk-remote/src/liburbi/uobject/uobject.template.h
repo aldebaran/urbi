@@ -25,11 +25,15 @@
 #include <list>
 
 // Hash maps, depending on the environment
-#ifdef _MSC_VER
-#include <hash_map>
-using std::hash_map;
+#ifndef _MSC_VER
+	#include <hash_map.h>
+#elif (_MSC_VER == 1400)
+	#pragma warning( disable : 4355 4996)
+	#include <hash_map>
+	using stdext::hash_map;
 #else
-#include <hash_map.h>
+	#include <hash_map>
+	using std::hash_map;
 #endif
 
 // Short cuts
@@ -84,6 +88,27 @@ template<> struct hash< std::string > {
   #else
   }
   #endif
+
+#elif (_MSC_VER == 1400)
+
+_STDEXT_BEGIN
+  template<> class hash_compare<std::string> {
+  public:
+    enum
+    {	// parameters for hash table
+	bucket_size = 4,	// 0 < bucket_size
+	min_buckets = 8
+    };	// min_buckets = 2 ^^ N, 0 < N
+
+    size_t operator()( const std::string& x ) const
+    { return hash_compare< const char* >()( x.c_str() );}
+
+    bool operator()(const string& _Keyval1, const string& _Keyval2) const
+    {	// test if _Keyval1 ordered before _Keyval2
+	return (_Keyval1< _Keyval2);
+    }
+};
+_STDEXT_END
 
 #else //_MSC_VER
 

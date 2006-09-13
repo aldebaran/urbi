@@ -101,25 +101,25 @@ UVar::in()
 
 void 
 UVar::setProp(UProperty prop, const UValue &v) {
-	URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+	URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
 }
 
 void 
 UVar::setProp(UProperty prop, const char * v) {
-	URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+	URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
 }
 void 
 UVar::setProp(UProperty prop, double v) {
 	//TODO : generalize
 	if (prop == PROP_BLEND && v>=0 && v< blendNum)
-		URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<blendNames[(int)v]<<";";
+		URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<blendNames[(int)v]<<";";
 	else
-		URBI()<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+		URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
 }
 
 UValue
 UVar::getProp(UProperty prop) {
-	UMessage *m=((USyncClient&)URBI()).syncGet("%s->%s",name.c_str(), propNames[(int)prop]);
+	UMessage *m=((USyncClient&)URBI(())).syncGet("%s->%s",name.c_str(), propNames[(int)prop]);
 	UValue v = *(m->value);
 	delete m;
 	return v;
@@ -157,14 +157,14 @@ UVar::~UVar()
 void
 UVar::operator = (ufloat n)
 {  
-  URBI() << name << "=" << n << ";";  
+  URBI(()) << name << "=" << n << ";";  
 }
 
 //! UVar string assignment
 void
 UVar::operator = (string s)
 {  
-  URBI() << name << "=\"" << s << "\";";  
+  URBI(()) << name << "=\"" << s << "\";";  
 }
 
 //! UVar binary assignment
@@ -233,11 +233,11 @@ UVar::operator USound() {
 void
 UVar::__update(UValue& v)
 {  
-  cout << "  Variable " << name << " updated to : ";
+  std::cout << "  Variable " << name << " updated to : ";
   if (v.type == DATA_DOUBLE)
-    cout << (double)v << endl;
+    std::cout << (double)v << std::endl;
   if (v.type == DATA_STRING)  
-    cout << (string)v << endl;
+    std::cout << (string)v << std::endl;
       
   value = v;
 }
@@ -252,5 +252,5 @@ UVar::setOwned()
 void
 UVar::requestValue() {
   //build a getvalue message  that will be parsed and returned by the server
-  URBI() << externalModuleTag<<':'<<'[' << UEM_ASSIGNVALUE << ","  <<'"'<<name<<'"'<<','<<name<<"];";
+  URBI(()) << externalModuleTag<<':'<<'[' << UEM_ASSIGNVALUE << ","  <<'"'<<name<<'"'<<','<<name<<"];";
 }

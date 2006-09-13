@@ -292,6 +292,7 @@ int UAbstractClient::send(UValue &v) {
 	}  
     break;
   };
+  return 0;
 }
 
 
@@ -829,7 +830,7 @@ UAbstractClient::processRecvBuffer()
 	    if (inString) {
 	      if (recvBuffer[parsePosition]=='\\') {
 			if (parsePosition == recvBufferPosition-1) {
-			  //we cant handle the \\
+			  //we cant handle the '\\'
 			  return;
 			}
 			parsePosition+=2; //ignore next character

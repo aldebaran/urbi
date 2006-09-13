@@ -25,9 +25,14 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include <locale.h>
+#include "uclient.h"
+#include "lockable.h"
+
 #ifdef WIN32
 #include <windows.h>
 #include <fcntl.h>
+#include <io.h>
 #include <winsock.h>
 #else
 #include <sys/time.h>
@@ -38,9 +43,6 @@
 #include <unistd.h>
 #endif
 
-#include <locale.h>
-#include "uclient.h"
-#include "lockable.h"
 using namespace std;
 
 
