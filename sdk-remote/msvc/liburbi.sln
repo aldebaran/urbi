@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "liburbi", "liburbi\liburbi.vcproj", "{FFB3F116-6CD2-4FE3-B60E-C8828DF4C42E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libuobject", "libuobject\libuobject.vcproj", "{ED12E69C-8134-4943-9B03-840EF8E730D8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jpeg-6b", "..\lib\jpeg-6b\jpeg-6b.vcproj", "{B2F1A96D-4E35-484E-8AD1-A36344696A04}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFB3F116-6CD2-4FE3-B60E-C8828DF4C42E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FFB3F116-6CD2-4FE3-B60E-C8828DF4C42E}.Debug|Win32.Build.0 = Debug|Win32
+		{FFB3F116-6CD2-4FE3-B60E-C8828DF4C42E}.Release|Win32.ActiveCfg = Release|Win32
+		{FFB3F116-6CD2-4FE3-B60E-C8828DF4C42E}.Release|Win32.Build.0 = Release|Win32
+		{ED12E69C-8134-4943-9B03-840EF8E730D8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ED12E69C-8134-4943-9B03-840EF8E730D8}.Debug|Win32.Build.0 = Debug|Win32
+		{ED12E69C-8134-4943-9B03-840EF8E730D8}.Release|Win32.ActiveCfg = Release|Win32
+		{ED12E69C-8134-4943-9B03-840EF8E730D8}.Release|Win32.Build.0 = Release|Win32
+		{B2F1A96D-4E35-484E-8AD1-A36344696A04}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B2F1A96D-4E35-484E-8AD1-A36344696A04}.Debug|Win32.Build.0 = Debug|Win32
+		{B2F1A96D-4E35-484E-8AD1-A36344696A04}.Release|Win32.ActiveCfg = Release|Win32
+		{B2F1A96D-4E35-484E-8AD1-A36344696A04}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
