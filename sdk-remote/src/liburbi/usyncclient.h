@@ -23,12 +23,12 @@
 
 #include "uclient.h"
 
-
 class Semaphore;
 class Lockable;
 
 /*! Format in which image requested with syncGetSound are transmitted*/
-enum UTransmitFormat {
+enum UTransmitFormat
+{
   URBI_TRANSMIT_JPEG, ///< Transmit images compressed in JPEG
   URBI_TRANSMIT_YCbCr ///< Transmit raw YCbCr images
 };
@@ -38,7 +38,8 @@ enum UTransmitFormat {
   synchronous. One must seriously ponder the fact that they are not easily
   portable before using them.
  */
-class USyncClient: public UClient {
+class USyncClient: public UClient
+{
  public:
   USyncClient(const char *_host,
 	      int _port = URBI_PORT,
@@ -52,7 +53,7 @@ class USyncClient: public UClient {
 
   /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
   int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
-		     int format, int transmitFormat, int &width, int &height);
+		   int format, int transmitFormat, int &width, int &height);
 
   /// Get the value of a device in a synchronous way. Returns 1 on success, 0 on failure.
   int syncGetDevice(const char* device, double &val);
@@ -67,20 +68,20 @@ class USyncClient: public UClient {
   int syncGetDevice(const char* device, const char * field, double &val);
 
   /// Get sound for duration milliseconds in buffer.
-  int syncGetSound(const char * device, int duration, USound &sound);
+  int syncGetSound(const char * device, int duration, urbi::USound &sound);
 
   /// Wait until a message with specified tag is received. Returned message must be deleted.
   UMessage * waitForTag(const char * tag);
   /// Overriding UAbstractclient implementation
-   virtual void notifyCallbacks(const UMessage &msg);
+  virtual void notifyCallbacks(const UMessage &msg);
 
-   void callbackThread();
+  void callbackThread();
 
-   private:
-   Semaphore * sem;
-   std::list<UMessage*> queue;
-   Lockable * queueLock;
-   UMessage * msg;
-   Semaphore * syncLock;
-   std::string syncTag;
+ private:
+  Semaphore * sem;
+  std::list<UMessage*> queue;
+  Lockable * queueLock;
+  UMessage * msg;
+  Semaphore * syncLock;
+  std::string syncTag;
 };

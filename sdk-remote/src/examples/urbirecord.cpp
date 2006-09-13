@@ -77,7 +77,7 @@ UCallbackAction command(const UMessage &msg) {
 
 
   //printf("-\n");
-  for (int i=0;i<devCount;i++) 
+  for (int i=0;i<devCount;i++)
     {
       if (msg.tag != devices[i])
 	{

@@ -1,10 +1,10 @@
 #ifndef MOVE_H
-#define MOVE_H
+# define MOVE_H
 
-#include <uclient.h>
-#include <list>
-#include <string>
-using namespace std;
+# include <uclient.h>
+# include <list>
+# include <string>
+
 /**
    Class Move, first rather trivial implementation.
    Call initialize with the UClient to use, and the name of the configuration file.
@@ -18,30 +18,24 @@ using namespace std;
    speed and precision are curently not used.
  */
 
-struct MovementProperties {
+struct MovementProperties
+{
   float maxSpeed; //  m/s, deg/s
   float minSpeed;
   float resolution; //min move value (m,deg)
   float precision;  //will move by resolution+/-resolution*precision
 };
 
-struct LoadedFile {
+struct LoadedFile
+{
   char name[256];
   float speed;
   float value;
   float precision;
 };
-class Move {
-  UClient * robot;
-  UClient * interruptConnection;
-  MovementProperties pwalk, pturn;
-  list<LoadedFile> walks;
-  list<LoadedFile> turns;
-  char tag[64]; //our unique tag to mark end.
-  int moving; //curently moving
-  char usertag[URBI_MAX_TAG_LENGTH]; //user tag
-  char execTag[URBI_MAX_TAG_LENGTH];
-  list<string> sequence; //move/walk commands not yet sent to server
+
+class Move
+{
  public:
   int initialize(UClient * client, bool uploadFiles=true, const char * configFile="moveconfig", bool enableInterrupt=false);
   const MovementProperties& getWalkProperties() {return pwalk;}
@@ -49,10 +43,22 @@ class Move {
   int walk(float &distance, float relativePrecision,const char * tag=NULL);
   int turn(float &angle,  float relativePrecision, const char * tag=NULL);
   /// Stop current movement as soon as possible
-  void interrupt(bool notifyEndMove); 
+  void interrupt(bool notifyEndMove);
   UCallbackAction moveEnd(const UMessage &msg);
   UClient * getConnection() {return robot;}
   //attempt to break movement, still call endmove
+
+ private:
+  UClient * robot;
+  UClient * interruptConnection;
+  MovementProperties pwalk, pturn;
+  std::list<LoadedFile> walks;
+  std::list<LoadedFile> turns;
+  char tag[64]; //our unique tag to mark end.
+  int moving; //curently moving
+  char usertag[URBI_MAX_TAG_LENGTH]; //user tag
+  char execTag[URBI_MAX_TAG_LENGTH];
+  std::list<std::string> sequence; //move/walk commands not yet sent to server
 };
 
 

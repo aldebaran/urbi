@@ -330,8 +330,8 @@ static void scaleColorImage(unsigned char * src, int sw, int sh,  int scx, int s
 
 /** Convert between various image formats, takes care of everything
  */
-int convert(const UImage & src, UImage & dest) {
-
+int convert(const urbi::UImage & src, urbi::UImage & dest)
+{
   if (dest.width == 0)
     dest.width = src.width;
   if (dest.height == 0)
@@ -387,14 +387,15 @@ int convert(const UImage & src, UImage & dest) {
 
 
   //now resize if target size is different
-  if (src.width != dest.width  ||  src.height != dest.height) {
-    void * scaled = malloc(dest.width*dest.height*3);
-    scaleColorImage((unsigned char *)uncompressedData, src.width, src.height, src.width/2, src.height/2,
-		    (unsigned char *)scaled, dest.width, dest.height,
-		    (float)dest.width/(float)src.width, (float)dest.height/(float) src.height);
-    free(uncompressedData);
-    uncompressedData = scaled;
-  }
+  if (src.width != dest.width  ||  src.height != dest.height)
+    {
+      void * scaled = malloc(dest.width*dest.height*3);
+      scaleColorImage((unsigned char *)uncompressedData, src.width, src.height, src.width/2, src.height/2,
+		      (unsigned char *)scaled, dest.width, dest.height,
+		      (float)dest.width/(float)src.width, (float)dest.height/(float) src.height);
+      free(uncompressedData);
+      uncompressedData = scaled;
+    }
 
   //then convert to destination format
   dest.data = (char *)realloc(dest.data, dest.width*dest.height*3+20);
@@ -442,7 +443,8 @@ int convert(const UImage & src, UImage & dest) {
 #endif
 
 
-struct wavheader {
+struct wavheader
+{
   char riff[4];
   int length;
   char wave[4];
@@ -517,29 +519,32 @@ template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int
     If the desitnation's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory.
  */
 int
-convert (const USound &source, USound &dest) {
+convert (const urbi::USound &source, urbi::USound &dest)
+{
   if ((source.soundFormat != urbi::SOUND_RAW
        && source.soundFormat != urbi::SOUND_WAV)
       ||
-       (dest.soundFormat != urbi::SOUND_RAW
-	&& dest.soundFormat != urbi::SOUND_WAV))
+      (dest.soundFormat != urbi::SOUND_RAW
+       && dest.soundFormat != urbi::SOUND_WAV))
     return 1; //conversion not handled yet
   //phase one: calculate required buffer size, set destination unspecified fields
   int schannels, srate, ssampleSize;
   urbi::USoundSampleFormat ssampleFormat;
-  if (source.soundFormat == urbi::SOUND_WAV) {
-    wavheader * wh = (wavheader *)source.data;
-    schannels = wh->channels;
-    srate = wh->freqechant;
-    ssampleSize = wh->bitperchannel;
-    ssampleFormat = (ssampleSize>8)?urbi::SAMPLE_SIGNED:urbi::SAMPLE_UNSIGNED;
-  }
-  else {
-    schannels = source.channels;
-    srate = source.rate;
-    ssampleSize = source.sampleSize;
-    ssampleFormat = source.sampleFormat;
-  }
+  if (source.soundFormat == urbi::SOUND_WAV)
+    {
+      wavheader * wh = (wavheader *)source.data;
+      schannels = wh->channels;
+      srate = wh->freqechant;
+      ssampleSize = wh->bitperchannel;
+      ssampleFormat = (ssampleSize>8)?urbi::SAMPLE_SIGNED:urbi::SAMPLE_UNSIGNED;
+    }
+  else
+    {
+      schannels = source.channels;
+      srate = source.rate;
+      ssampleSize = source.sampleSize;
+      ssampleFormat = source.sampleFormat;
+    }
   if (!dest.channels)
     dest.channels = schannels;
   if (!dest.rate)

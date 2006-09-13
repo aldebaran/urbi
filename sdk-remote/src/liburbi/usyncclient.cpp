@@ -224,7 +224,7 @@ USyncClient::syncGetDevice(const char *device, const char * access,
 
 
 int
-USyncClient::syncGetSound(const char * device, int duration, USound &sound)
+USyncClient::syncGetSound(const char * device, int duration, urbi::USound &sound)
 {
   send("syncgetsound = BIN 0;loopsound: loop syncgetsound = syncgetsound +  %s.val ,   { wait(%d); stop loopsound; noop;noop; };", device, duration);
   UMessage * m = syncGet("syncgetsound;");

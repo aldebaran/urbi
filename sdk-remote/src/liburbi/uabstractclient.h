@@ -38,8 +38,6 @@ static const int URBI_BUFLEN    = 128000 ; ///< Connection Buffer size.
 static const int URBI_PORT      = 54000  ; ///< Standard port of URBI server.
 static const int URBI_MAX_TAG_LENGTH = 64; ///< Maximum length of an URBI tag.
 
-
-
 /// Return values for the callack functions.
 /*! Each callback function, when called, must return with either URBI_CONTINUE
   or URBI_REMOVE:
@@ -53,7 +51,6 @@ enum UCallbackAction {
 };
 
 typedef unsigned int UCallbackID;
-
 
 #define DEBUG 0
 
@@ -233,11 +230,8 @@ class UAbstractClient : public std::ostream
   /// Get the tag associated with a registered callback.
   int getAssociatedTag(UCallbackID id, char * tag);
 
-
   /// Delete a callback.
   int deleteCallback(UCallbackID callBackID);
-
-
 
   /// Fill tag with a unique tag for this client.
   void makeUniqueTag(char * tag);
@@ -297,8 +291,6 @@ class UAbstractClient : public std::ostream
   char           currentTag[URBI_MAX_TAG_LENGTH];
 
   int            currentTimestamp;
-
-
 
   std::list<UCallbackInfo>callbackList;
   int            uid;                    ///< Unique tag base.
@@ -450,11 +442,7 @@ template<class C, class P1, class P2, class P3, class P4>  UCallbackWrapper& cal
 
 
 
-
-
-
-
-//old-style addCallback, depreciated
+//old-style addCallback, deprecated
 template<class C>                                          UCallbackID UAbstractClient::setCallback(C& ref,
 	     UCallbackAction (C::*func)(                 const UMessage &),                 const char * tag) {
   return addCallback(tag, *new UCallbackWrapper0<C>(ref, func));
@@ -519,7 +507,6 @@ namespace urbi
   static const char pipe = '|';
   static const char parallel = '&';
   static const char comma = ',';
-
 
   ///This function must be called at the last line of your main() function.
   void execute(void);

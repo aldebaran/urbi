@@ -35,8 +35,7 @@
 
 #include "uabstractclient.h"
 #include "lockable.h"
-using namespace urbi;
-using std::min;
+
 #if DEBUG
 //
 //#include <sys/time.h>
@@ -136,7 +135,8 @@ void
 UAbstractClient::notifyCallbacks(const UMessage &msg) {
   listLock.lock();
   bool inc=false;
-  for (std::list<UCallbackInfo>::iterator it = callbackList.begin(); it!=callbackList.end(); inc?it:it++, inc=false) {
+  for (std::list<UCallbackInfo>::iterator it = callbackList.begin();
+       it!=callbackList.end(); inc?it:it++, inc=false) {
     if (
 	(!strcmp(msg.tag.c_str(), it->tag)) ||
 	(!strcmp(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR) ||
@@ -161,53 +161,53 @@ UAbstractClient::notifyCallbacks(const UMessage &msg) {
  */
 UAbstractClient::UAbstractClient(const char *_host, int _port, int _buflen)
   :std::ostream(new UClientStreambuf(this)),
-  listLock(*new Lockable()),
-  sendBufferLock(*new Lockable()) {
-    stream=this;
-    getStream().setf(std::ios::fixed);
-    rc = 0;
-    uid = 0;
-    host = NULL;
-    recvBuffer = NULL;
-    recvBufferPosition = 0;
-    binaryBuffer = NULL;
-	parsePosition = 0;
-	inString = false;
-	nBracket = 0;
-    host = new char[strlen(_host) + 1];
-    if (!host) {
-      rc = -1;
-      return;
-    }
-    strcpy(host, _host);
-    port = _port;
-    buflen = _buflen;
-
-
-    recvBuffer = new char[buflen];
-    if (!recvBuffer) {
-      rc = -1;
-      //printf("UAbstractClient::UAbstractClient out of memory\n");
-      return;
-    }
-    recvBuffer[0] = 0;
-
-    sendBuffer = new char[buflen];
-    if (!sendBuffer) {
-      rc = -1;
-      //printf("UAbstractClient::UAbstractClient out of memory\n");
-      return;
-    }
-    sendBuffer[0] = 0;
-
-
+   listLock(*new Lockable()),
+   sendBufferLock(*new Lockable()) {
+  stream=this;
+  getStream().setf(std::ios::fixed);
+  rc = 0;
+  uid = 0;
+  host = NULL;
+  recvBuffer = NULL;
+  recvBufferPosition = 0;
+  binaryBuffer = NULL;
+  parsePosition = 0;
+  inString = false;
+  nBracket = 0;
+  host = new char[strlen(_host) + 1];
+  if (!host) {
+    rc = -1;
+    return;
   }
+  strcpy(host, _host);
+  port = _port;
+  buflen = _buflen;
+
+  recvBuffer = new char[buflen];
+  if (!recvBuffer) {
+    rc = -1;
+    //printf("UAbstractClient::UAbstractClient out of memory\n");
+    return;
+  }
+  recvBuffer[0] = 0;
+
+  sendBuffer = new char[buflen];
+  if (!sendBuffer) {
+    rc = -1;
+    //printf("UAbstractClient::UAbstractClient out of memory\n");
+    return;
+  }
+  sendBuffer[0] = 0;
+}
 
 UAbstractClient::~UAbstractClient()
 {
-  if (host) delete []  host;
-  if (recvBuffer) delete [] recvBuffer;
-  if (sendBuffer) delete [] sendBuffer;
+  if (host)
+    delete []  host;
+  if (recvBuffer)
+    delete [] recvBuffer;
+  if (sendBuffer)
+    delete [] sendBuffer;
 }
 
 /*! In threaded environnments, this function lock()s the send buffer so that only
@@ -251,47 +251,51 @@ UAbstractClient::send(const char *command, ...)
   return rc;
 }
 
-int UAbstractClient::send(UValue &v) {
-  switch( v.type) {
-  case DATA_DOUBLE:
-    send("%lf",v.val);
-    break;
-  case DATA_STRING:
-    send("\"%s\"",v.stringValue->c_str());
-    break;
-  case DATA_BINARY:
-    if (v.binary->type != BINARY_NONE && v.binary->type != BINARY_UNKNOWN)
-      v.binary->buildMessage();
-    sendBin(v.binary->common.data, v.binary->common.size, "BIN %d %s;", v.binary->common.size, v.binary->message.c_str());
-    break;
-  case DATA_LIST:
+int UAbstractClient::send(urbi::UValue &v)
+{
+  switch( v.type)
     {
-      send("[");
-      int sz = v.list->size();
-      int p = 0;
-      for (int i=0; i<sz;i++) {
-	send((*v.list)[i]);
-	if (i != sz-1)
-	  send(" , ");
+    case urbi::DATA_DOUBLE:
+      send("%lf",v.val);
+      break;
+    case urbi::DATA_STRING:
+      send("\"%s\"",v.stringValue->c_str());
+      break;
+    case urbi::DATA_BINARY:
+      if (v.binary->type != urbi::BINARY_NONE
+	  && v.binary->type != urbi::BINARY_UNKNOWN)
+	v.binary->buildMessage();
+      sendBin(v.binary->common.data, v.binary->common.size,
+	      "BIN %d %s;", v.binary->common.size, v.binary->message.c_str());
+      break;
+    case urbi::DATA_LIST:
+      {
+	send("[");
+	int sz = v.list->size();
+	int p = 0;
+	for (int i=0; i<sz;i++) {
+	  send((*v.list)[i]);
+	  if (i != sz-1)
+	    send(" , ");
+	}
+	send("]");
       }
-      send("]");
-    }
-    break;
-  case DATA_OBJECT:
-    {
-      send("OBJ %s [",v.object->refName.c_str());
-      int sz = v.object->size();
-      int p = 0;
-      for (int i=0; i<sz;i++) {
-	send("%s :",(*v.object)[i].name.c_str());
-	send( *((*v.object)[i].val) );
-	if (i != sz-1)
-	  send(" , ");
+      break;
+    case urbi::DATA_OBJECT:
+      {
+	send("OBJ %s [",v.object->refName.c_str());
+	int sz = v.object->size();
+	int p = 0;
+	for (int i=0; i<sz;i++) {
+	  send("%s :",(*v.object)[i].name.c_str());
+	  send( *((*v.object)[i].val) );
+	  if (i != sz-1)
+	    send(" , ");
+	}
+	send("]");
       }
-      send("]");
-    }
-    break;
-  };
+      break;
+    };
   return 0;
 }
 
@@ -350,13 +354,13 @@ UAbstractClient::sendFile(const char *name)
   size = s.st_size;
   sendBufferLock.lock();
   if (!canSend(size)) {
-	sendBufferLock.unlock();
-	return -1;
+    sendBufferLock.unlock();
+    return -1;
   }
 
   while (!feof(fd)) {
     int res = fread( sendBuffer, 1, buflen, fd);
-	effectiveSend(sendBuffer, res);
+    effectiveSend(sendBuffer, res);
   }
   fclose(fd);
   sendBuffer[0] = 0;
@@ -376,7 +380,8 @@ int
 UAbstractClient::sendBin(const void *buffer, int len,
 			 const char *header, ...)
 {
-  if (rc) return -1;
+  if (rc)
+    return -1;
   sendBufferLock.lock();
   if (header) {
     va_list arg;
@@ -405,7 +410,7 @@ struct sendSoundData {
   char * device;
   char * tag;
   char formatString[50];
-  USoundFormat format;
+  urbi::USoundFormat format;
   UAbstractClient * uc;
   bool startNotify;
 };
@@ -456,7 +461,7 @@ static UCallbackAction sendSound_(void * cb, const UMessage &msg) {
     0}; // no comment...
   */
   //handle next chunk
-  if (s->format == SOUND_WAV && s->pos==0)
+  if (s->format == urbi::SOUND_WAV && s->pos==0)
     s->pos = sizeof(wavheader);
   int tosend = (s->length-s->pos > CHUNK_SIZE) ? CHUNK_SIZE:s->length-s->pos;
 
@@ -464,17 +469,18 @@ static UCallbackAction sendSound_(void * cb, const UMessage &msg) {
   int playlength = tosend *1000 / s->bytespersec;
   s->uc->send("%s.val = BIN %d %s %s;",
 	      s->device,
-	      (int)(tosend+ ((s->format == SOUND_WAV)?sizeof(wavheader):0)),
-	      (s->format == SOUND_WAV)?"wav":"raw",
+	      (int)(tosend+ ((s->format == urbi::SOUND_WAV)?sizeof(wavheader):0)),
+	      (s->format == urbi::SOUND_WAV)?"wav":"raw",
 	      s->formatString
 	      );
-  if (s->format == SOUND_WAV) {
-    wavheader wh;
-    memcpy(&wh, s->buffer, sizeof(wh));
-    wh.datalength=tosend;
-    wh.length=tosend+44-8;
-    s->uc->sendBin(&wh, sizeof(wavheader));
-  }
+  if (s->format == urbi::SOUND_WAV)
+    {
+      wavheader wh;
+      memcpy(&wh, s->buffer, sizeof(wh));
+      wh.datalength=tosend;
+      wh.length=tosend+44-8;
+      s->uc->sendBin(&wh, sizeof(wavheader));
+    }
 
 
 
@@ -496,22 +502,22 @@ static UCallbackAction sendSound_(void * cb, const UMessage &msg) {
   s->uc->send("wait(%s.remain < %d); %s: ping;", s->device, playlength/2, msg.tag.c_str());
   // printf("%d end sending chunk\n", 0);
   s->pos+=tosend;
-  if (s->pos >= s->length ) {
+  if (s->pos >= s->length )
+    {
+      //printf("over: %d %d\n",URBI_REMOVE,URBI_CONTINUE);
+      //if (s->tag && s->tag[0])
+      //  s->uc->notifyCallbacks(UMessage(*s->uc, 0,s->tag, "*** stop"));
 
-    //printf("over: %d %d\n",URBI_REMOVE,URBI_CONTINUE);
-    //if (s->tag && s->tag[0])
-    //  s->uc->notifyCallbacks(UMessage(*s->uc, 0,s->tag, "*** stop"));
-
-    s->uc->send("speaker->blend=speaker.sendsoundsaveblend;");
-    if (s->tag && s->tag[0])
-      s->uc->send("%s: 1;", s->tag);
-    free(s->buffer);
-    if (s->tag)
-      free(s->tag);
-    free(s->device);
-    delete s;
-    return URBI_REMOVE;
-  }
+      s->uc->send("speaker->blend=speaker.sendsoundsaveblend;");
+      if (s->tag && s->tag[0])
+	s->uc->send("%s: 1;", s->tag);
+      free(s->buffer);
+      if (s->tag)
+	free(s->tag);
+      free(s->device);
+      delete s;
+      return URBI_REMOVE;
+    }
   return URBI_CONTINUE;
 }
 
@@ -521,18 +527,22 @@ static UCallbackAction sendSound_(void * cb, const UMessage &msg) {
   function returns.
  */
 int
-UAbstractClient::sendSound(const char * device, const USound &sound, const char *tag)
+UAbstractClient::sendSound(const char * device, const urbi::USound &sound,
+			   const char *tag)
 {
-  if (sound.soundFormat ==  SOUND_MP3) {
+  if (sound.soundFormat == urbi::SOUND_MP3) {
     //we don't handle chunkuing for this format
-    return sendBin(sound.data, sound.size, "%s +report:  %s.val = BIN %d mp3;", tag, device, sound.size);
+    return sendBin(sound.data, sound.size,
+		   "%s +report:  %s.val = BIN %d mp3;", tag, device, sound.size);
   }
-  if (sound.soundFormat ==  SOUND_OGG) {
+  if (sound.soundFormat == urbi::SOUND_OGG) {
     //we don't handle chunkuing for this format
-    return sendBin(sound.data, sound.size, "%s +report:  %s.val = BIN %d ogg;", tag, device, sound.size);
+    return sendBin(sound.data, sound.size,
+		   "%s +report:  %s.val = BIN %d ogg;", tag, device, sound.size);
   }
 
-  if (sound.soundFormat == SOUND_WAV || sound.soundFormat == SOUND_RAW) {
+  if (sound.soundFormat == urbi::SOUND_WAV
+      || sound.soundFormat == urbi::SOUND_RAW) {
     send("speaker.sendsoundsaveblend = speaker->blend;speaker->blend=queue;");
     sendSoundData *s=new sendSoundData();
     char utag[16];
@@ -546,15 +556,17 @@ UAbstractClient::sendSound(const char * device, const USound &sound, const char 
     s->device = strdup(device);
     s->pos=0;
     s->format = sound.soundFormat;
-    if ( sound.soundFormat == SOUND_RAW)
+    if (sound.soundFormat == urbi::SOUND_RAW)
       sprintf(s->formatString,"%d %d %d %d", sound.channels, sound.rate, sound.sampleSize, (int)sound.sampleFormat);
     else
       s->formatString[0] = 0;
     s->startNotify = false;
     UCallbackID cid=setCallback(sendSound_, s,utag);
     //invoke it 2 times to queue sound
-    if (sendSound_(s,UMessage(*this, 0, utag,"*** stop", std::list<BinaryData>()))==URBI_CONTINUE) {
-      if ( sendSound_(s,UMessage(*this, 0, utag,"*** stop", std::list<BinaryData>()))==URBI_REMOVE) {
+    if (sendSound_(s,UMessage(*this, 0, utag,"*** stop", 
+			      std::list<urbi::BinaryData>()))==URBI_CONTINUE) {
+      if ( sendSound_(s,UMessage(*this, 0, utag,"*** stop", 
+				 std::list<urbi::BinaryData>()))==URBI_REMOVE) {
 	deleteCallback(cid);
       }
     }
@@ -654,8 +666,8 @@ UAbstractClient::sendCommand(UCustomCallback cb, void *cbData,
   sendBufferLock.unlock();
   delete []mcmd;
   if (retval) {
-	deleteCallback(cid);
-	return UINVALIDCALLBACKID;
+    deleteCallback(cid);
+    return UINVALIDCALLBACKID;
   }
   return cid;
 
@@ -683,7 +695,8 @@ UAbstractClient::putFile(const char * localName, const char * remoteName) {
 
 int
 UAbstractClient::putFile(const void * buffer, int length,
-			 const char * remoteName) {
+			 const char * remoteName)
+{
   if (!canSend(length+strlen(remoteName)+ 20)) {
 	sendBufferLock.unlock();
 	return -1;
@@ -717,8 +730,8 @@ UAbstractClient::processRecvBuffer()
     if (binaryMode) {
 
       //Receiving binary. Append to binaryBuffer;
-      int len = min( recvBufferPosition - endOfHeaderPosition,
-		     binaryBufferLength - binaryBufferPosition);
+      int len = std::min( recvBufferPosition - endOfHeaderPosition,
+			  binaryBufferLength - binaryBufferPosition);
       if (binaryBuffer)
 	memcpy( (char *)binaryBuffer + binaryBufferPosition,
 		recvBuffer + endOfHeaderPosition, len);
@@ -727,7 +740,7 @@ UAbstractClient::processRecvBuffer()
       if (binaryBufferPosition == binaryBufferLength) {
 	//Finished receiving binary.
 	//append
-	BinaryData bd;
+	urbi::BinaryData bd;
 	bd.size = binaryBufferLength;
 	bd.data = binaryBuffer;
 	bins.push_back(bd);
@@ -810,7 +823,7 @@ UAbstractClient::processRecvBuffer()
 	    //listLock.lock();
 	    UMessage msg(*this, 0, URBI_ERROR_TAG,
 			 "!!! UAbstractClient::read, fatal error parsing header",
-			 std::list<BinaryData>());
+			 std::list<urbi::BinaryData>());
 	    notifyCallbacks(msg);
 	    //unlistLock.lock();
 	  }
@@ -935,7 +948,7 @@ UCallbackID UAbstractClient::addCallback(const char * tag, UCallbackWrapper &w) 
 
 
 UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *message,
-		   std::list<BinaryData> bins)
+		   std::list<urbi::BinaryData> bins)
   : client(client), timestamp(timestamp),  tag(tag), value(0){
   rawMessage = std::string(message);
   while (message[0] ==' ') message++;
@@ -956,8 +969,8 @@ UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *m
 
   //value
   type = MESSAGE_DATA;
-  value = new UValue();
-  std::list<BinaryData>::iterator iter = bins.begin();
+  value = new urbi::UValue();
+  std::list<urbi::BinaryData>::iterator iter = bins.begin();
   int p=value->parse(message,0, bins, iter);
   while (message[p]==' ') p++;
   //no assertion can be made on message[p] because there is no terminator for binaries
@@ -975,22 +988,21 @@ UMessage::UMessage(const UMessage &b)
   type = b.type;
   value = 0;
   switch(type) {
-
   case MESSAGE_SYSTEM:
   case MESSAGE_ERROR:
     message = b.message;
-
     break;
   default:
-    value = new UValue(*b.value);
+    value = new urbi::UValue(*b.value);
     break;
   }
 }
 
 
-UMessage::~UMessage() {
+UMessage::~UMessage()
+{
   if (type != MESSAGE_SYSTEM && type != MESSAGE_ERROR && value)
-	delete value;
+    delete value;
 }
 
 std::ostream & operator <<(std::ostream &s, const UMessage &m) {

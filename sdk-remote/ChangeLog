@@ -1,5 +1,18 @@
 2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
 
+	* src/utils/Makefile.am (AM_CXXFLAGS): Fix.
+	* src/liburbi/usyncclient.cpp, src/liburbi/usyncclient.h,
+	* src/liburbi/uconversion.cpp, src/liburbi/uconversion.h,
+	* src/liburbi/uabstractclient.cpp,
+	* src/liburbi/uabstractclient.h, src/examples/urbirecord.cpp:
+	Less "using".
+
+2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+
+	* src/liburbi/Makefile.am (include_HEADERS): Also ship lockable.h.
+
+2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+
 	"make dist" passes.  distcheck does not.
 	* src/liburbi/openr/Makefile.am: New, based on..
 	* src/liburbi/openr/Makefile.in: this.
