@@ -1,22 +1,38 @@
-INCLUDES = -I$(top_srcdir)/lib/jpeg-6b -I$(top_srcdir)/src/liburbi/uobject
+AM_CPPFLAGS = \
+-I$(top_srcdir)/lib/jpeg-6b \
+-I$(top_builddir)/src/liburbi/uobject \
+-I$(top_srcdir)/src/liburbi/uobject
+
 AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
-AM_CXXFLAGS = -pthread -Wno-deprecated
+AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
 
-lib_LIBRARIES = liburbi.a
-include_HEADERS = uclient.h uabstractclient.h usyncclient.h uobject/uobject.h uobject/uexternal.h uconversion.h
-uobject/uobject.h:
-	./uobject/template_autogen.pl uobject/uobject.template.h > uobject/uobject.h
-liburbi.a: uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o uconversion.o
-	rm -f liburbi.a
-	cp $(top_srcdir)/lib/jpeg-6b/libjpeg.a ./liburbi.a
-	ar r liburbi.a uabstractclient.o uclient.o usyncclient.o uobject/uobject.o uobject/common_uvalue.o uobject/uvar.o uconversion.o
-	ranlib liburbi.a
+lib_LTLIBRARIES = liburbi.la
 
-liburbi_a_SOURCES = uabstractclient.h uclient.h uabstractclient.cpp uclient.cpp usyncclient.cpp usyncclient.h uobject/uobject.h uobject/uobject.cc uobject/uvar.cc uobject/common_uvalue.cc uobject/uexternal.h uconversion.h uconversion.cpp
-liburbi_a_LIBADD = $(top_srcdir)/lib/jpeg-6b/libjpeg.a
+include_HEADERS =				\
+uabstractclient.h				\
+uclient.h					\
+uconversion.h					\
+uobject/uexternal.h				\
+uobject/uobject.h				\
+usyncclient.h
+
+uobject/uobject.h: uobject/uobject.template.h
+	cd uobject && $(MAKE) uobject.h
+
+liburbi_la_SOURCES =				\
+uabstractclient.h	uabstractclient.cpp	\
+uclient.h		uclient.cpp		\
+uconversion.h		uconversion.cpp		\
+uobject/common_uvalue.cc			\
+uobject/uexternal.h				\
+uobject/uobject.h	uobject/uobject.cc	\
+uobject/uvar.cc					\
+usyncclient.h		usyncclient.cpp
+
+liburbi_la_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la
 
 if OPENR
-SUBDIRS = openr
+SUBDIRS = openr .
 else
-SUBDIRS = uobject
+SUBDIRS = uobject .
 endif 

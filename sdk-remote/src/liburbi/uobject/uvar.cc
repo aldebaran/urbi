@@ -24,34 +24,34 @@ using namespace urbi;
 
 #include <usyncclient.h>
 
-namespace 
-urbi {
+namespace urbi
+{
   class UVardata {
-    public:	
+  public:
     UVardata() {};
     ~UVardata() {};
   };
-};
-	
+}
+
 static const char * propNames[]={
-	"rangemin",
-	"rangemax",
-	"speedmin",
-	"speedmax",
-	"blend",
-	"delta"
+  "rangemin",
+  "rangemax",
+  "speedmin",
+  "speedmax",
+  "blend",
+  "delta"
 };
-// **************************************************************************	
+// **************************************************************************
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(const string &varname)
+UVar::UVar(const std::string &varname)
 :VAR_PROP_INIT
 {
-  name = varname;  
+  name = varname;
   __init();
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, const string &varname) 
+UVar::UVar(UObject& obj, const std::string &varname)
 :VAR_PROP_INIT
 {
   name = obj.__name + "." + varname;
@@ -59,7 +59,7 @@ UVar::UVar(UObject& obj, const string &varname)
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(const string &objname, const string &varname)
+UVar::UVar(const std::string &objname, const std::string &varname)
 :VAR_PROP_INIT
 {
   name = objname + "." + varname;
@@ -69,16 +69,16 @@ UVar::UVar(const string &objname, const string &varname)
 
 //! UVar initialization
 void
-UVar::init(const string &objname, const string &varname)
-{  
-  name = objname + "." + varname;  
+UVar::init(const std::string &objname, const std::string &varname)
+{
+  name = objname + "." + varname;
   __init();
 }
 
 //! UVar initialization
 void
 UVar::__init()
-{  
+{
   varmap[name].push_back(this);
   vardata = 0; // unused. For internal softdevices only
   this->owned = false;
@@ -87,28 +87,28 @@ UVar::__init()
 //! UVar out value (read mode)
 ufloat&
 UVar::out()
-{  
-  return (value.val); 
+{
+  return (value.val);
 }
 
 //! UVar in value (write mode)
 ufloat&
 UVar::in()
-{  
-  return (value.val); 
+{
+  return (value.val);
 }
 
 
-void 
+void
 UVar::setProp(UProperty prop, const UValue &v) {
 	URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
 }
 
-void 
+void
 UVar::setProp(UProperty prop, const char * v) {
 	URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
 }
-void 
+void
 UVar::setProp(UProperty prop, double v) {
 	//TODO : generalize
 	if (prop == PROP_BLEND && v>=0 && v< blendNum)
@@ -136,18 +136,18 @@ UVar::blend()
 
 //! UVar destructor.
 UVar::~UVar()
-{  
+{
   UVarTable::iterator varmapfind = varmap.find(name);
-  
+
   if (varmapfind != varmap.end()) {
-    
-    for (list<UVar*>::iterator it = varmapfind->second.begin();
+
+    for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	it != varmapfind->second.end();)
-      if ((*it) == this) 
+      if ((*it) == this)
 	it=varmapfind->second.erase(it);
       else
 	it++;
-	
+
     if (varmapfind->second.empty())
       varmap.erase(varmapfind);
   }
@@ -156,28 +156,28 @@ UVar::~UVar()
 //! UVar float assignment
 void
 UVar::operator = (ufloat n)
-{  
-  URBI(()) << name << "=" << n << ";";  
+{
+  URBI(()) << name << "=" << n << ";";
 }
 
 //! UVar string assignment
 void
-UVar::operator = (string s)
-{  
-  URBI(()) << name << "=\"" << s << "\";";  
+UVar::operator = (std::string s)
+{
+  URBI(()) << name << "=\"" << s << "\";";
 }
 
 //! UVar binary assignment
 void
 UVar::operator = (const UBinary &b)
-{  
-	urbi::getDefaultClient()->sendBin(b.common.data, b.common.size, 
+{
+	urbi::getDefaultClient()->sendBin(b.common.data, b.common.size,
 		"%s=BIN %d %s;",
 		name.c_str(), b.common.size, b.getMessage().c_str());
 }
 
 void
-UVar::operator = (const UImage &i) 
+UVar::operator = (const UImage &i)
 {
 	//we don't use UBinary Image ctor because it copies data
 	UBinary b;
@@ -188,7 +188,7 @@ UVar::operator = (const UImage &i)
 }
 
 void
-UVar::operator = (const USound &i) 
+UVar::operator = (const USound &i)
 {
 	//we don't use UBinary Image ctor because it copies data
 	UBinary b;
@@ -198,19 +198,19 @@ UVar::operator = (const USound &i)
 	b.common.data=0; //required, dtor frees data
 }
 
-UVar::operator int () {	 
-  return ((int)value); 
+UVar::operator int () {
+  return ((int)value);
 };
 
-UVar::operator ufloat () { 
-  return ((ufloat)value); 
+UVar::operator ufloat () {
+  return ((ufloat)value);
 };
 
 
-UVar::operator string () { 
-  return ((string)value); 
+UVar::operator std::string () {
+  return ((std::string)value);
 };
- 
+
 
 UVar::operator UBinary() {
   return value;
@@ -232,13 +232,13 @@ UVar::operator USound() {
 //! UVar update
 void
 UVar::__update(UValue& v)
-{  
+{
   std::cout << "  Variable " << name << " updated to : ";
   if (v.type == DATA_DOUBLE)
     std::cout << (double)v << std::endl;
-  if (v.type == DATA_STRING)  
-    std::cout << (string)v << std::endl;
-      
+  if (v.type == DATA_STRING)
+    std::cout << (std::string)v << std::endl;
+
   value = v;
 }
 

@@ -5,47 +5,53 @@
 
 #ifdef WIN32
 #define usleep(a) Sleep(a/1000)
-#endif 
+#endif
 
 bool over=false;
 static int totalsize=0;
 static int starttime=0;
+
 UCallbackAction bw(const UMessage &msg) {
+  assert (msg.type == MESSAGE_DATA);
+  assert (msg.value->type == DATA_BINARY);
+  assert (msg.value->binary->type == BINARY_IMAGE);
 
+  //aproximately, but since bsz is more or less 400k...
+  totalsize += (msg.value->binary->image.size
+		+ msg.tag.size ()
+		+ 20); 
 
-
-
-  totalsize+=msg.image.size+strlen(msg.tag)+20; //aproximately, but since bsz is more or less 400k...
-
-  if (!strcmp(msg.tag,"be")) {
-	msg.client.printf("received %d bytes in %d miliseconds: bandwidth is %d bytes per second.\n",
-		   totalsize,
-		   msg.client.getCurrentTime()-starttime,
-		   totalsize*1000/(msg.client.getCurrentTime()-starttime));
-
-	over=true;
+  if (msg.tag != "be") 
+    {
+      msg.client.printf("received %d bytes in %d miliseconds: bandwidth is %d bytes per second.\n",
+			totalsize,
+			msg.client.getCurrentTime()-starttime,
+			totalsize*1000/(msg.client.getCurrentTime()-starttime));
+      
+      over=true;
   }
 
   return URBI_CONTINUE;
 }
 
 int main(int argc, char * argv[]) {
-
- if (argc<2) {
-   printf("usage: %s robot\n",argv[0]); exit(1);
+ if (argc != 2) {
+   printf("usage: %s robot\n", argv[0]); 
+   urbi::exit(1);
  }
 
  UClient &c= * new UClient(argv[1]);
 
- if (c.error()) exit(1);
+ if (c.error()) 
+   urbi::exit(1);
 
  c.printf("requesting raw images from server to test bandwidth...\n");
- 
+
  c.setCallback(bw,"bw");
  c.setCallback(bw,"be");
 
  c << "camera.format = 0;camera.resolution = 0;noop;noop;";
- 
+
  starttime=c.getCurrentTime();
  c << " for (i=0;i<9;i++) bw:camera.val|";
  c << "be:camera.val;";

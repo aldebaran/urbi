@@ -4,7 +4,7 @@
  *
  * Linux implementation of the URBI interface class
  *
- * Copyright (C) 2004 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <errno.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cerrno>
 
 #include <locale.h>
 #include "uclient.h"
@@ -43,19 +43,15 @@
 #include <unistd.h>
 #endif
 
-using namespace std;
-
-
-
-/*! Establish the connection with the server. 
+/*! Establish the connection with the server.
 Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
 the appropriate callbacks.
  */
-UClient::UClient(const char *_host, int _port, int _buflen) 
-  :UAbstractClient(_host, _port, _buflen) {                    
+UClient::UClient(const char *_host, int _port, int _buflen)
+  :UAbstractClient(_host, _port, _buflen) {
     setlocale(LC_NUMERIC,"C");
     control_fd[0] = control_fd[1] = -1;
-    
+
     #ifndef WIN32
     if (::pipe(control_fd) == -1) {
       rc = -1;
@@ -63,13 +59,13 @@ UClient::UClient(const char *_host, int _port, int _buflen)
       return;
     }
     #endif
-   
-    
+
+
     // Address resolution stage.
     struct hostent *hen;		// host-to-IP translation
     struct sockaddr_in sa;	// Internet address struct
-    
-   
+
+
     memset(&sa, 0, sizeof(sa));
     #ifdef WIN32
     WSADATA wsaData;
@@ -79,31 +75,31 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     #endif
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
-    
+
     hen = gethostbyname(host);
-    
+
     if (!hen) {	//maybe it is an IP address
       sa.sin_addr.s_addr = inet_addr(host);
       if (sa.sin_addr.s_addr == INADDR_NONE) {
-        printf("UClient::UClient couldn't resolve host name.\n");
-        rc = -1;
-        return;
+	printf("UClient::UClient couldn't resolve host name.\n");
+	rc = -1;
+	return;
       }
     }
-    
+
     else
       memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
-    
+
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0) {
       printf("UClient::UClient socket allocation failed.\n");
       rc = -1;
       return;
     }
-    
-    // now connect to the remote server. 
+
+    // now connect to the remote server.
     rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
-    
+
     // If we attempt to connect too fast to aperios ipstack it will fail.
     if (rc) {
 		#ifdef WIN32
@@ -113,15 +109,15 @@ UClient::UClient(const char *_host, int _port, int _buflen)
 		#endif
 		rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
     }
-    
+
     // Check there was no error.
     if (rc) {
       printf("UClient::UClient couldn't connect.\n");
       return;
     }
-    
+
     if (rc) return;
-    
+
     //check that it really worked
     int pos=0;
     while (pos==0)
@@ -143,7 +139,7 @@ UClient::UClient(const char *_host, int _port, int _buflen)
 
 UClient::~UClient()
 {
-  
+
   close(sd);
   sd = -1;
   if (control_fd[1] != -1 ) ::write(control_fd[1],"a",1);
@@ -154,13 +150,13 @@ UClient::~UClient()
 }
 
 
-bool 
+bool
 UClient::canSend(int size) {
   return true;
 }
 
 
-int 
+int
 UClient::effectiveSend(const void  * buffer, int size) {
 #if DEBUG
 char output[size+1];
@@ -181,15 +177,15 @@ cout << ">>>> SENT : [" << output << "]" << endl;
   return 0;
 }
 
-void 
+void
 UClient::listenThread() {
   fd_set rfds;
   int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
   int res;
   while (true) {
 	do {
-      if (sd==-1)     
-         return;
+      if (sd==-1)
+	 return;
 	  FD_ZERO(&rfds);
 	  FD_SET(sd, &rfds);
 	  #ifndef WIN32
@@ -214,10 +210,10 @@ UClient::listenThread() {
 	  if ( (res != 0) && (FD_ISSET(control_fd[0], &rfds)) ) return;
 	  #endif
 	}
-	while (res == 0);	
-	int count = ::recv(sd, 
-                     &recvBuffer[recvBufferPosition], 
-                     buflen - recvBufferPosition - 1, 0);
+	while (res == 0);
+	int count = ::recv(sd,
+		     &recvBuffer[recvBufferPosition],
+		     buflen - recvBufferPosition - 1, 0);
 	if (count < 0) {
 	  rc = -1;
 	  std::cerr <<"error "<<count<<std::endl;
@@ -233,7 +229,7 @@ UClient::listenThread() {
 }
 
 
-void 
+void
 UClient::printf(const char * format, ...) {
   va_list arg;
   va_start(arg, format);
@@ -249,7 +245,7 @@ unsigned int UClient::getCurrentTime() {
   gettimeofday(&tv, NULL);
   return tv.tv_sec*1000+tv.tv_usec/1000;
   #endif
-} 
+}
 
 void urbi::execute(void) {
 	#ifdef WIN32

@@ -1,23 +1,21 @@
 #include "uconversion.h"
 
-using namespace urbi;
-
 #ifndef NO_IMAGE_CONVERSION
-#include <setjmp.h>
+# include <setjmp.h>
 
 extern "C"
 {
-#include "../../lib/jpeg-6b/jpeglib.h"
-#include "../../lib/jpeg-6b/jerror.h"
+# include "../../lib/jpeg-6b/jpeglib.h"
+# include "../../lib/jpeg-6b/jerror.h"
 }
 
 
-static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, 
-                       bool RGB, int &output_size);
+static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size,
+		       bool RGB, int &output_size);
 
 static int
-write_jpeg(const unsigned char* src, int w, int h, bool ycrcb, 
-               unsigned char* dst, int &sz, int quality);
+write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
+	       unsigned char* dst, int &sz, int quality);
 
 
 static inline unsigned char clamp(float v)
@@ -30,10 +28,10 @@ static inline unsigned char clamp(float v)
 }
 
 
-int 
-convertRGBtoYCrCb(const byte * sourceImage, 
-                  int bufferSize, 
-                  byte * destinationImage)
+int
+convertRGBtoYCrCb(const byte * sourceImage,
+		  int bufferSize,
+		  byte * destinationImage)
 {
   unsigned char *in = (unsigned char *) sourceImage;
   unsigned char *out = (unsigned char *) destinationImage;
@@ -45,7 +43,7 @@ convertRGBtoYCrCb(const byte * sourceImage,
       Y  =      (0.257 * R) + (0.504 * G) + (0.098 * B) + 16
       Cr = V =  (0.439 * R) - (0.368 * G) - (0.071 * B) + 128
       Cb = U = -(0.148 * R) - (0.291 * G) + (0.439 * B) + 128
-    */ 
+    */
     out[i] = clamp((0.257 * r) + (0.504 * g) + (0.098 * b) + 16);
     out[i + 1] = clamp((0.439 * r) - (0.368 * g) - (0.071 * b) + 128);
     out[i + 2] = clamp(-(0.148 * r) - (0.291 * g) + (0.439 * b) + 128);
@@ -53,10 +51,10 @@ convertRGBtoYCrCb(const byte * sourceImage,
   return 1;
 }
 
-int 
-convertYCrCbtoRGB(const byte * sourceImage, 
-                  int bufferSize, 
-                  byte * destinationImage)
+int
+convertYCrCbtoRGB(const byte * sourceImage,
+		  int bufferSize,
+		  byte * destinationImage)
 {
   unsigned char *in = (unsigned char *) sourceImage;
   unsigned char *out = (unsigned char *) destinationImage;
@@ -70,17 +68,17 @@ convertYCrCbtoRGB(const byte * sourceImage,
        out[i]=clamp(y+1.77*cr);
      */
     out[i] = clamp(1.164 * (y - 16) + 1.596 * (cr - 128));
-    out[i + 1] = clamp(1.164 * (y - 16) - 0.813 * (cr - 128) - 
-                       0.392 * (cb - 128));
+    out[i + 1] = clamp(1.164 * (y - 16) - 0.813 * (cr - 128) -
+		       0.392 * (cb - 128));
     out[i + 2] = clamp(1.164 * (y - 16) + 2.017 * (cb - 128));
   }
   return 1;
 }
 
 
-int 
-convertJPEGtoYCrCb(const byte * source, int sourcelen, byte * dest, 
-                       int &size)
+int
+convertJPEGtoYCrCb(const byte * source, int sourcelen, byte * dest,
+		       int &size)
 {
   int sz;
   void *destination = read_jpeg((const char *) source, sourcelen, false, sz);
@@ -95,7 +93,7 @@ convertJPEGtoYCrCb(const byte * source, int sourcelen, byte * dest,
   return 1;
 }
 
-int 
+int
 convertJPEGtoRGB(const byte * source, int sourcelen, byte * dest, int &size)
 {
   int sz;
@@ -195,10 +193,10 @@ void term_destination(j_compress_ptr cinfo) {
 
 
 int
-write_jpeg(const unsigned char* src, int w, int h, bool ycrcb, 
-               unsigned char* dst, int &sz, int quality)
+write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
+	       unsigned char* dst, int &sz, int quality)
 {
-   
+
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
 
@@ -226,15 +224,15 @@ write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
     jpeg_set_defaults(&cinfo);
 
     jpeg_set_quality(&cinfo,
-                     quality, TRUE /* limit to baseline-JPEG values */);
+		     quality, TRUE /* limit to baseline-JPEG values */);
 
     jpeg_start_compress(&cinfo, TRUE);
 
     row_stride = w * 3;	/* JSAMPLEs per row in image_buffer */
 
     while (cinfo.next_scanline < cinfo.image_height) {
-        row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
-        (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+	row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
+	(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
     jpeg_finish_compress(&cinfo);
@@ -247,8 +245,8 @@ write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
 
 /*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
  */
-static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB, 
-                       int &output_size)
+static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
+		       int &output_size)
 {
   struct jpeg_decompress_struct cinfo;
   struct urbi_jpeg_error_mgr jerr;
@@ -259,7 +257,7 @@ static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
      * We need to clean up the JPEG object, close the input file, and return.
      */
     jpeg_destroy_decompress(&cinfo);
-    printf( "JPEG error!\n"); 
+    printf( "JPEG error!\n");
     return 0;
   }
   jpeg_create_decompress(&cinfo);
@@ -279,8 +277,8 @@ static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
   jpeg_read_header(&cinfo, TRUE);
   cinfo.out_color_space = (RGB ? JCS_RGB : JCS_YCbCr);
   jpeg_start_decompress(&cinfo);
-  output_size = cinfo.output_width * 
-    cinfo.output_components        * 
+  output_size = cinfo.output_width *
+    cinfo.output_components        *
     cinfo.output_height;
   void *buffer = malloc(output_size);
 
@@ -290,9 +288,9 @@ static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
      * more than one scanline at a time if that's more convenient.
      */
     JSAMPROW row_pointer[1];
-    row_pointer[0] = (JOCTET *) & ((char *) buffer)[cinfo.output_scanline   * 
-                                                    cinfo.output_components * 
-                                                    cinfo.output_width];
+    row_pointer[0] = (JOCTET *) & ((char *) buffer)[cinfo.output_scanline   *
+						    cinfo.output_components *
+						    cinfo.output_width];
     jpeg_read_scanlines(&cinfo, row_pointer, 1);
   }
   jpeg_finish_decompress(&cinfo);
@@ -305,17 +303,17 @@ static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
 
 //scale putting (scx,scy) at the center of destination image
 static void scaleColorImage(unsigned char * src, int sw, int sh,  int scx, int scy, unsigned char * dst, int dw, int dh, float sx, float sy) {
-  for (int x=0;x<dw;x++) 
-    for (int y=0;y<dh;y++) {      
-      //find the corresponding point in source image 
+  for (int x=0;x<dw;x++)
+    for (int y=0;y<dh;y++) {
+      //find the corresponding point in source image
       float fsrcx = (float) (x-dw/2) / sx  + (float)scx;
       float fsrcy = (float) (y-dh/2) / sy  + (float)scy;
       int srcx = (int) fsrcx;
       int srcy = (int) fsrcy;
-      if ( srcx<=0 || srcx>=sw-1 || srcy<=0 || srcy>=sh-1) 
+      if ( srcx<=0 || srcx>=sw-1 || srcy<=0 || srcy>=sh-1)
 	memset(dst+(x+y*dw)*3,0,3);
       else { //do the bilinear interpolation
-	
+
 	float xfactor = fsrcx-(float)srcx;
 	float yfactor = fsrcy-(float)srcy;
 	for (int color=0;color<3;color++) {
@@ -333,7 +331,7 @@ static void scaleColorImage(unsigned char * src, int sw, int sh,  int scx, int s
 /** Convert between various image formats, takes care of everything
  */
 int convert(const UImage & src, UImage & dest) {
-  
+
   if (dest.width == 0)
     dest.width = src.width;
   if (dest.height == 0)
@@ -343,39 +341,39 @@ int convert(const UImage & src, UImage & dest) {
   int usz = src.width*src.height*3;
   int format; //0 rgb 1 ycbcr
   int targetformat; //0 rgb 1 ycbcr 2 compressed
-  
+
   switch(dest.imageFormat) {
-  case IMAGE_RGB:
-  case IMAGE_PPM:
+  case urbi::IMAGE_RGB:
+  case urbi::IMAGE_PPM:
     targetformat = 1;
     break;
-  case IMAGE_YCbCr:
+  case urbi::IMAGE_YCbCr:
     targetformat = 0;
     break;
-  case IMAGE_JPEG:
+  case urbi::IMAGE_JPEG:
     targetformat = -1;
     break;
   }
   int p,c;
   switch(src.imageFormat) {
-  case IMAGE_YCbCr:
+  case urbi::IMAGE_YCbCr:
     format = 1;
     memcpy(uncompressedData, src.data, src.width*src.height*3);
     break;
-  case IMAGE_RGB:
+  case urbi::IMAGE_RGB:
     format = 0;
     memcpy(uncompressedData, src.data, src.width*src.height*3);
     break;
-  case IMAGE_PPM:
+  case urbi::IMAGE_PPM:
     format = 0;
     //locate header end
     p=0;c=0;
-    while(c<3) 
+    while(c<3)
       if (src.data[p++]=='\n')
 	c++;
     memcpy(src.data+p, uncompressedData, src.width*src.height*3);
     break;
-  case IMAGE_JPEG:
+  case urbi::IMAGE_JPEG:
     if (targetformat==0) {
       convertJPEGtoRGB((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
       format = 0;
@@ -392,8 +390,8 @@ int convert(const UImage & src, UImage & dest) {
   if (src.width != dest.width  ||  src.height != dest.height) {
     void * scaled = malloc(dest.width*dest.height*3);
     scaleColorImage((unsigned char *)uncompressedData, src.width, src.height, src.width/2, src.height/2,
-		 (unsigned char *)scaled, dest.width, dest.height, 
-		 (float)dest.width/(float)src.width, (float)dest.height/(float) src.height);
+		    (unsigned char *)scaled, dest.width, dest.height,
+		    (float)dest.width/(float)src.width, (float)dest.height/(float) src.height);
     free(uncompressedData);
     uncompressedData = scaled;
   }
@@ -402,38 +400,39 @@ int convert(const UImage & src, UImage & dest) {
   dest.data = (char *)realloc(dest.data, dest.width*dest.height*3+20);
   dest.size =  dest.width*dest.height*3+20;
   int dsz = dest.size;
-  switch(dest.imageFormat) {
-  case IMAGE_RGB:
-    if (format == 1)
-      convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data);
-    else
-      memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
-    break;
-  case IMAGE_YCbCr:
-    if (format == 0)
-      convertRGBtoYCrCb((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data);
-    else
-      memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
-    break;
-  case IMAGE_PPM:
-    sprintf(dest.data, "P6\n%d %d\n255\n", dest.width, dest.height);
-    if (format == 1)
-      convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data+strlen(dest.data));
-    else
-      memcpy(dest.data+strlen(dest.data), uncompressedData, dest.width*dest.height*3);
-    break;
-  case IMAGE_JPEG:
-    /*
+  switch(dest.imageFormat)
+    {
+    case urbi::IMAGE_RGB:
       if (format == 1)
-       convertYCrCbtoJPEG((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data, dsz);
-     else 
-     convertRGBtoJPEG((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data, dsz);
-    */
-    fprintf(stderr,"unsoported conversion requested: cant compress to jpeg\n");
-    free(uncompressedData);
-    return 0;
-    break;
-  }
+	convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data);
+      else
+	memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
+      break;
+    case urbi::IMAGE_YCbCr:
+      if (format == 0)
+	convertRGBtoYCrCb((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data);
+      else
+	memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
+      break;
+    case urbi::IMAGE_PPM:
+      sprintf(dest.data, "P6\n%d %d\n255\n", dest.width, dest.height);
+      if (format == 1)
+	convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data+strlen(dest.data));
+      else
+	memcpy(dest.data+strlen(dest.data), uncompressedData, dest.width*dest.height*3);
+      break;
+    case urbi::IMAGE_JPEG:
+      /*
+	if (format == 1)
+	convertYCrCbtoJPEG((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data, dsz);
+	else
+	convertRGBtoJPEG((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data, dsz);
+      */
+      fprintf(stderr,"unsoported conversion requested: cant compress to jpeg\n");
+      free(uncompressedData);
+      return 0;
+      break;
+    }
 
   free(uncompressedData);
   return 1;
@@ -444,21 +443,21 @@ int convert(const UImage & src, UImage & dest) {
 
 
 struct wavheader {
-	char riff[4];
-	int length;
-	char wave[4];
-	char fmt[4];
-	int lnginfo;
-	short one;
-	short channels;
-	int freqechant;
-	int bytespersec;
-	short bytesperechant;
-	short bitperchannel;
-	char data[4];
-	int datalength;
-  };
-  
+  char riff[4];
+  int length;
+  char wave[4];
+  char fmt[4];
+  int lnginfo;
+  short one;
+  short channels;
+  int freqechant;
+  int bytespersec;
+  short bytesperechant;
+  short bitperchannel;
+  char data[4];
+  int datalength;
+};
+
 template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int dr, int count, bool sf, bool df) {
   int shift = 8*(sizeof(S) - sizeof(D));
   for (int i=0;i<count;i++) {
@@ -468,12 +467,12 @@ template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int
     S s1, s2;
     s1 = src[so*sc];
     if (i != count - 1)
-      s2 = src[(so+1)*sc]; 
+      s2 = src[(so+1)*sc];
     else
       s2 = s1; //nothing to interpolate with
     if (!sf) {
       s1 = s1 ^ (1<<(sizeof(S)*8-1));
-      s2 = s2 ^ (1<<(sizeof(S)*8-1));   
+      s2 = s2 ^ (1<<(sizeof(S)*8-1));
     }
     int v1 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
     int v2;
@@ -486,8 +485,8 @@ template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int
       else
 	s2 = s1; //nothing to interpolate with
       if (!sf) {
-        s1 = s1 ^ (1<<(sizeof(S)*8-1));
-        s2 = s2 ^ (1<<(sizeof(S)*8-1));   
+	s1 = s1 ^ (1<<(sizeof(S)*8-1));
+	s2 = s2 ^ (1<<(sizeof(S)*8-1));
       }
        v2 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
     }
@@ -502,7 +501,7 @@ template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int
     }
     if (!df) {
       d1 = d1 ^ (1<<(sizeof(D)*8-1));
-      d2 = d2 ^ (1<<(sizeof(D)*8-1));    
+      d2 = d2 ^ (1<<(sizeof(D)*8-1));
     }
     if (dc==2) {
       dst[i*2] = d1;
@@ -519,18 +518,21 @@ template<class S, class D> void copy(S* src, D* dst, int sc, int dc, int sr, int
  */
 int
 convert (const USound &source, USound &dest) {
-  if ( (source.soundFormat != SOUND_RAW && source.soundFormat != SOUND_WAV) ||
-       (dest.soundFormat != SOUND_RAW && dest.soundFormat != SOUND_WAV))
+  if ((source.soundFormat != urbi::SOUND_RAW
+       && source.soundFormat != urbi::SOUND_WAV)
+      ||
+       (dest.soundFormat != urbi::SOUND_RAW
+	&& dest.soundFormat != urbi::SOUND_WAV))
     return 1; //conversion not handled yet
   //phase one: calculate required buffer size, set destination unspecified fields
   int schannels, srate, ssampleSize;
-  USoundSampleFormat ssampleFormat;
-  if (source.soundFormat == SOUND_WAV) {
+  urbi::USoundSampleFormat ssampleFormat;
+  if (source.soundFormat == urbi::SOUND_WAV) {
     wavheader * wh = (wavheader *)source.data;
     schannels = wh->channels;
     srate = wh->freqechant;
     ssampleSize = wh->bitperchannel;
-    ssampleFormat = (ssampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED;
+    ssampleFormat = (ssampleSize>8)?urbi::SAMPLE_SIGNED:urbi::SAMPLE_UNSIGNED;
   }
   else {
     schannels = source.channels;
@@ -538,18 +540,25 @@ convert (const USound &source, USound &dest) {
     ssampleSize = source.sampleSize;
     ssampleFormat = source.sampleFormat;
   }
-  if (!dest.channels) dest.channels = schannels;
-  if (!dest.rate) dest.rate = srate;
-  if (!dest.sampleSize) dest.sampleSize = ssampleSize;
-  if (!(int)dest.sampleFormat) dest.sampleFormat = ssampleFormat;
-  if (dest.soundFormat == SOUND_WAV) dest.sampleFormat = (dest.sampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED; 
-  int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
-  if (dest.soundFormat == SOUND_WAV) destSize+= sizeof(wavheader);
-  if (dest.size<destSize) 
+  if (!dest.channels)
+    dest.channels = schannels;
+  if (!dest.rate)
+    dest.rate = srate;
+  if (!dest.sampleSize)
+    dest.sampleSize = ssampleSize;
+  if (!(int)dest.sampleFormat)
+    dest.sampleFormat = ssampleFormat;
+  if (dest.soundFormat == urbi::SOUND_WAV)
+    dest.sampleFormat = ((dest.sampleSize>8)
+			 ? urbi::SAMPLE_SIGNED:urbi::SAMPLE_UNSIGNED);
+  int destSize = (int) (( (long long)(source.size- ((source.soundFormat == urbi::SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
+  if (dest.soundFormat == urbi::SOUND_WAV)
+    destSize+= sizeof(wavheader);
+  if (dest.size<destSize)
     dest.data = (char *)realloc(dest.data, destSize);
   dest.size = destSize;
   //write destination header if appropriate
-  if (dest.soundFormat == SOUND_WAV) {
+  if (dest.soundFormat == urbi::SOUND_WAV) {
     wavheader * wh = (wavheader *)dest.data;
     memcpy(wh->riff,"RIFF",4);
     wh->length = dest.size - 8;
@@ -565,33 +574,29 @@ convert (const USound &source, USound &dest) {
     memcpy(wh->data, "data", 4);
     wh->datalength = destSize - sizeof(wavheader);
   }
-  
+
   //do the conversion and write to dest.data
   char * sbuffer = source.data;
-  if (source.soundFormat == SOUND_WAV)
+  if (source.soundFormat == urbi::SOUND_WAV)
     sbuffer += sizeof(wavheader);
   char * dbuffer = dest.data;
-  if (dest.soundFormat == SOUND_WAV)
+  if (dest.soundFormat == urbi::SOUND_WAV)
     dbuffer += sizeof(wavheader);
-  int elementCount = dest.size - ((dest.soundFormat == SOUND_WAV)?sizeof(wavheader):0);
+  int elementCount = dest.size - ((dest.soundFormat == urbi::SOUND_WAV)?sizeof(wavheader):0);
   elementCount /= (dest.channels * (dest.sampleSize/8));
   switch( ssampleSize*1000 + dest.sampleSize) {
   case 8008:
-    copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==urbi::SAMPLE_SIGNED, dest.sampleFormat == urbi::SAMPLE_SIGNED);
     break;
   case 16008:
-    copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==urbi::SAMPLE_SIGNED, dest.sampleFormat == urbi::SAMPLE_SIGNED);
     break;
   case 16016:
-    copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==urbi::SAMPLE_SIGNED, dest.sampleFormat == urbi::SAMPLE_SIGNED);
     break;
   case 8016:
-    copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
+    copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==urbi::SAMPLE_SIGNED, dest.sampleFormat == urbi::SAMPLE_SIGNED);
     break;
   }
   return 0;
 }
-
-
-
-

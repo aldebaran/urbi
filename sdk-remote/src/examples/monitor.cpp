@@ -1,10 +1,10 @@
 /*******************************************************************************
 
-           filename             : monitor.cpp
-           description          : Class implementation
+	   filename             : monitor.cpp
+	   description          : Class implementation
 
-           copyright            : (C) 2004 by Jean-Christophe Baillie
-           email                : jean-christophe.baillie@m4x.org
+	   copyright            : (C) 2004, 2006 by Jean-Christophe Baillie
+	   email                : jean-christophe.baillie@m4x.org
 
 ********************************************************************************/
 
@@ -20,7 +20,7 @@
 static char *AtomWMDeleteWindowName = (char *) "WM_DELETE_WINDOW";
 
 
-Display    *Monitor::display; 
+Display    *Monitor::display;
 list<Monitor*> Monitor::monitorList;
 pthread_mutex_t      Monitor::lock=PTHREAD_MUTEX_INITIALIZER;
 static void * wrapper(void *) {
@@ -31,23 +31,23 @@ void Monitor::addList(Monitor *mon) {
   if (monitorList.empty()) {
     display = NULL;
     mon->gc = 0;
-   
-    
+
+
     // Open display
-    
+
     if ((display = XOpenDisplay(NULL)) == NULL) {	// NULL for DISPLAY
       printf("Error: XOpenDisplay() failed\n");
       exit(1);
     }
-    
 
-    
-    
+
+
+
     mon->gc = DefaultGC(display, DefaultScreen(display));
     XSetForeground(display, mon->gc, 255 + 256 * 255 + 256 * 256 * 255);
     pthread_t *pt=new pthread_t;
     monitorList.push_back(mon);
-    
+
     pthread_create(pt,0, &wrapper, 0);
   }
   else
@@ -83,8 +83,8 @@ void  Monitor::processMessages() {
     bool found = false;
     XNextEvent(display, &event);
     switch (event.type) {
-   
-      
+
+
     case Expose:
       if (event.xexpose.count == 0) {
 	for (list<Monitor *>::iterator it=monitorList.begin(); it != monitorList.end();it++)
@@ -118,7 +118,7 @@ Monitor::Monitor(int _w, int _h, const char * name, bool _fastMode):sharedPixmap
 {
  isShared = False;
  xImage = NULL;
-    
+
  w = _w;
  h = _h;
  if (! _fastMode) {
@@ -127,7 +127,7 @@ Monitor::Monitor(int _w, int _h, const char * name, bool _fastMode):sharedPixmap
  }
  else {
    // Open display
-   
+
    if ((localDisplay = XOpenDisplay(NULL)) == NULL) {	// NULL for DISPLAY
      printf("Error: XOpenDisplay() failed\n");
      exit(1);
@@ -142,7 +142,7 @@ Monitor::Monitor(int _w, int _h, const char * name, bool _fastMode):sharedPixmap
    printf("Error: %s atom does not exist\n", AtomWMDeleteWindowName);
    exit(1);
  }
- 
+
  createWindow(name?name:"XImage - XShm optimized");
  pthread_mutex_unlock(&lock);
  printf("Monitor created window %d\n", window);
@@ -162,7 +162,7 @@ Monitor::~Monitor()
 int Monitor::createImage()
 {
   XGCValues gcValues;
-  ulong gcValuesMask;
+  unsigned long gcValuesMask;
   XWindowAttributes windowAttributes;
 
 
@@ -273,7 +273,7 @@ int Monitor::destroyImage()
     sharedPixmap = None;
   }	// end if
 
-  
+
 
   return (0);
 
@@ -320,7 +320,7 @@ int Monitor::setImage(bits8 * buffer, int bufferlen)
   //XImage *xImage;
   bits8 *imageLine;
   int i;
-  if (localDisplay != display) 
+  if (localDisplay != display)
     {
       if (XPending(localDisplay) > 0) {
 	XNextEvent(localDisplay, &event);
@@ -329,23 +329,23 @@ int Monitor::setImage(bits8 * buffer, int bufferlen)
 	  if ((int) event.xclient.data.l[0] == (int) atomWMDeleteWindow)
 	  return (-1);
 	  break;
-	  
+
 	case Expose:
 	  if (event.xexpose.count == 0)
 	    put();
-	  
+
 	  break;
 	}
       }
       else {
-	
+
 	// DRAW
-	
+
 	//xImage = X();
 	imageLine = (bits8 *) xImage->data;
 	for (i = 0; i < bufferlen / 3; i++)
 	  setimageat(&imageLine, *(buffer + i * 3 + 2), *(buffer + i * 3 + 1), *(buffer + i * 3 + 0));
-	
+
 	put();
       }
     }

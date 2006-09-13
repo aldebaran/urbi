@@ -4,7 +4,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@ class Semaphore;
 class Lockable;
 
 /*! Format in which image requested with syncGetSound are transmitted*/
-enum UTransmitFormat { 
+enum UTransmitFormat {
   URBI_TRANSMIT_JPEG, ///< Transmit images compressed in JPEG
   URBI_TRANSMIT_YCbCr ///< Transmit raw YCbCr images
 };
@@ -41,18 +41,18 @@ enum UTransmitFormat {
 class USyncClient: public UClient {
  public:
   USyncClient(const char *_host,
-              int _port = URBI_PORT,
-              int _buflen = URBI_BUFLEN);
-  
+	      int _port = URBI_PORT,
+	      int _buflen = URBI_BUFLEN);
+
   /// Sends the expression and returns the result.
   UMessage * syncGet(const char * expression,...);
-  
+
   /// Send given buffer without copying it.
   int syncSend(const void * buffer, int length);
-  
+
   /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
-  int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize, 
-                     int format, int transmitFormat, int &width, int &height);
+  int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
+		     int format, int transmitFormat, int &width, int &height);
 
   /// Get the value of a device in a synchronous way. Returns 1 on success, 0 on failure.
   int syncGetDevice(const char* device, double &val);
@@ -62,25 +62,25 @@ class USyncClient: public UClient {
 
   /// Get the normalized value of a device in a synchronous way. Returns 1 on success, 0 on failure.
   int syncGetNormalizedDevice(const char* device, double &val);
-  
+
   /// Get a field of a device in a synchronous way. Returns 1 on success, 0 on failure.
   int syncGetDevice(const char* device, const char * field, double &val);
 
-  /// Get sound for duration milliseconds in buffer. 
+  /// Get sound for duration milliseconds in buffer.
   int syncGetSound(const char * device, int duration, USound &sound);
-  
+
   /// Wait until a message with specified tag is received. Returned message must be deleted.
   UMessage * waitForTag(const char * tag);
   /// Overriding UAbstractclient implementation
    virtual void notifyCallbacks(const UMessage &msg);
-   
+
    void callbackThread();
-   
+
    private:
    Semaphore * sem;
-   list<UMessage*> queue;
+   std::list<UMessage*> queue;
    Lockable * queueLock;
    UMessage * msg;
    Semaphore * syncLock;
-   string syncTag;
+   std::string syncTag;
 };

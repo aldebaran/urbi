@@ -18,16 +18,17 @@
 
  **************************************************************************** */
 #include <stdio.h>
-#include "uobject.h" 
+#include "uobject.h"
 #include <sstream>
 #include <iostream>
+
 using namespace urbi;
 
 //////////////////////
 //// UValue Parsing
 //////////////////////
 
-void unescape(string & data) {
+void unescape(std::string & data) {
   int src=0, dst=0;
   while (data[src]) {
     if (data[src]!='\\')
@@ -52,15 +53,15 @@ void unescape(string & data) {
     dst++;
   }
   data[dst] = 0;
-  
+
 }
 void unescape(char * data) {
   char* src = data;
   char * dst = data;
   while (*src) {
-    if (*src != '\\') 
+    if (*src != '\\')
       *dst = *src;
-    
+
     else {
       switch (*(++src)) {
       case 'n':
@@ -84,7 +85,10 @@ void unescape(char * data) {
 
 
 
-int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos) {
+int UValue::parse(char * message, int pos,
+		  std::list<BinaryData> bins,
+		  std::list<BinaryData>::iterator &binpos)
+{
   while (message[pos]==' ')
     pos++;
   if (message[pos] == '"') {
@@ -100,12 +104,12 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
     if (!message[p])
       return -p; //parse error
 
-    stringValue = new string(message+pos+1, p-pos-1);
+    stringValue = new std::string(message+pos+1, p-pos-1);
     unescape(*stringValue);
     return p+1;
   }
 
-  if (message[pos] == '[') { 
+  if (message[pos] == '[') {
     //list message
     type = DATA_LIST;
     list = new UList();
@@ -127,7 +131,7 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
 	return -pos;
       pos++;
     }
-    
+
     if (message[pos]!=']')
       return -pos;
     return pos+1;
@@ -143,22 +147,22 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
     //parse object name
     while (message[pos]==' ')
       pos++;
-    
+
     int p = pos;
     while (message[p] && message[p]!=' ')
       p++;
     if (!message[p])
       return -p; //parse error
-    object->refName = string(message+pos, p-pos);
+    object->refName = std::string(message+pos, p-pos);
     pos=p;
 
-    
+
     while (message[pos]==' ')
       pos++;
     if (message[pos]!='[')
       return -pos;
     pos++;
-    
+
     while (message[pos]) {
       while (message[pos]==' ') pos++;
       //parse name
@@ -169,7 +173,7 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
 	return -p; //parse error
       p++;
       UNamedValue nv;
-      nv.name = string(message+pos, p-pos-1);
+      nv.name = std::string(message+pos, p-pos-1);
       pos=p;
       while (message[pos]==' ') pos++;
       UValue *v = new UValue();
@@ -187,14 +191,14 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
 	return -pos;
       pos++;
     }
-    
+
     if (message[pos]!=']')
       return -pos;
     return pos+1;
   }
 
 
-      
+
 
   if (!strncmp(message+pos,"BIN ",4)) {
     //binary message: delegate
@@ -205,11 +209,11 @@ int UValue::parse(char * message, int pos, std::list<BinaryData> bins, std::list
     int p = binary->parse(message, pos, bins, binpos);
     return p;
   }
-  
+
   //last attempt: double
   int p;
   int count = sscanf(message+pos, "%lf%n", &val, &p);
-  if (!count) 
+  if (!count)
     return -pos;
   type = DATA_DOUBLE;
   pos +=p;
@@ -235,8 +239,8 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
     case DATA_LIST:
       {
 	s<<"[";
-  	int sz = v.list->size();
-    	int p = 0;
+	int sz = v.list->size();
+	int p = 0;
 	for (int i=0; i<sz;i++) {
 	  s << (*v.list)[i];
 	  if (i != sz-1)
@@ -257,22 +261,24 @@ std::ostream & operator <<(std::ostream &s, const UValue &v) {
 	    s<< " , ";
 	}
 	s<< "]";
-      }  
-      break;   
-	default:	
+      }
+      break;
+	default:
 	 s<< "<<void>>";
   }
   return s;
 }
 
 
-int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos) {
+int UBinary::parse(const char * message, int pos,
+		   std::list<BinaryData> bins,
+		   std::list<BinaryData>::iterator &binpos) {
   while (message[pos]==' ') pos++;
   //find end of header
- 
+
   if( binpos == bins.end()) //no binary data available
     return -1;
-  
+
   //validate size
   int ps,psize;
   int count = sscanf(message+pos,"%d%n",&psize,&ps);
@@ -294,7 +300,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
     p++;
   if (!message[p])
     return -p; //parse error
-  this->message = string(message+pos, p-pos);
+  this->message = std::string(message+pos, p-pos);
   p++;
 
   //trying to parse header to find type
@@ -311,7 +317,7 @@ int UBinary::parse(const char * message, int pos, list<BinaryData> bins, list<Bi
     image.imageFormat = IMAGE_JPEG;
     return p;
   }
- 
+
   if (!strcmp(type, "YCbCr")) {
     this->type = BINARY_IMAGE;
     image.size = common.size;
@@ -361,7 +367,7 @@ void UBinary::buildMessage() {
   message = getMessage();
 }
 
-string UBinary::getMessage() const {
+std::string UBinary::getMessage() const {
   std::ostringstream str;
   if (type == BINARY_IMAGE) {
     switch( image.imageFormat) {
@@ -390,10 +396,10 @@ string UBinary::getMessage() const {
 	break;
       default:
 	str << "unknown ";
-	break;	
+	break;
     };
     str<<sound.channels<<" "<<sound.rate<<" "<<sound.sampleSize<<" "<<sound.sampleFormat;
-  
+
   }
   if (type == BINARY_UNKNOWN)
 	  str<<message;
@@ -407,11 +413,11 @@ UValue::UValue() : type(DATA_VOID), storage(0) {}
 UValue::UValue(ufloat v) : val(v), type(DATA_DOUBLE)  {}
 UValue::UValue(int v) : val(v), type(DATA_DOUBLE)  {}
 
-UValue::UValue(char * v) : stringValue(new string(v)), type(DATA_STRING)  {}
-UValue::UValue(const string &v) : type(DATA_STRING), stringValue(new string(v)) {}
- 
+UValue::UValue(char * v) : stringValue(new std::string(v)), type(DATA_STRING)  {}
+UValue::UValue(const std::string &v) : type(DATA_STRING), stringValue(new std::string(v)) {}
+
 UValue::UValue(const UBinary &b) : type(DATA_BINARY){
-  binary = new UBinary(b); 
+  binary = new UBinary(b);
 }
 
 UValue::UValue(const USound &s) : type(DATA_BINARY) {
@@ -423,10 +429,10 @@ UValue::UValue(const UImage &s) : type(DATA_BINARY) {
 }
 
 UValue::UValue(const UList &l) : type(DATA_LIST){
-  list = new UList(l); 
+  list = new UList(l);
 }
 UValue::UValue(const UObjectStruct &o) : type(DATA_OBJECT){
-  object = new UObjectStruct(o); 
+  object = new UObjectStruct(o);
 }
 
 
@@ -458,8 +464,8 @@ UValue::operator ufloat () const {
 
     return val;
     break;
-    
-  case DATA_STRING: 
+
+  case DATA_STRING:
     {
       std::istringstream tstr(*stringValue);
       tstr >> v;
@@ -472,9 +478,9 @@ UValue::operator ufloat () const {
 };
 
 
-UValue::operator string() const {
+UValue::operator std::string() const {
    switch( type) {
-   case DATA_DOUBLE: 
+   case DATA_DOUBLE:
      {
        std::ostringstream tstr;
        tstr << val;
@@ -484,14 +490,14 @@ UValue::operator string() const {
    case DATA_STRING:
      return *stringValue;
      break;
-   default: return string("invalid");
+   default: return std::string("invalid");
    };
 };
 
 UValue::operator UBinary() const {
   if (type != DATA_BINARY)
     return UBinary();
-  else 
+  else
     return *binary;
 }
 
@@ -541,17 +547,17 @@ UValue& UValue::operator= (const UValue& v)
     if (object)
       delete object;
   }
-  
+
   type = v.type;
-  switch (type) {  
+  switch (type) {
   case DATA_DOUBLE:
     val = v.val;
     break;
   case DATA_STRING:
-    stringValue = new string(*v.stringValue);
+    stringValue = new std::string(*v.stringValue);
     break;
   case DATA_BINARY:
-    binary = new UBinary(*v.binary); 
+    binary = new UBinary(*v.binary);
     break;
   case DATA_LIST:
     list = new UList(*v.list);
@@ -589,17 +595,17 @@ UBinary::UBinary(const UBinary &b) {
 
 
 UBinary::UBinary(const UImage &i) {
-	type = BINARY_IMAGE;
-	image = i;
-	image.data = (char *)malloc(image.size);
-	memcpy(image.data, i.data, image.size);
+  type = BINARY_IMAGE;
+  image = i;
+  image.data = (char *)malloc(image.size);
+  memcpy(image.data, i.data, image.size);
 }
 
 UBinary::UBinary(const USound &i) {
-	type = BINARY_SOUND;
-	sound = i;
-	sound.data = (char *)malloc(sound.size);
-	memcpy(sound.data, i.data, sound.size);
+  type = BINARY_SOUND;
+  sound = i;
+  sound.data = (char *)malloc(sound.size);
+  memcpy(sound.data, i.data, sound.size);
 }
 
 UBinary & UBinary::operator = (const UBinary &b) {
@@ -629,18 +635,18 @@ UList::UList(const UList &b) : offset(0) {
   (*this) = b;
 }
 
-UList & UList::operator = (const UList &b) {
-
+UList & UList::operator = (const UList &b)
+{
   offset = 0;
   for (int i=0;i<size();i++) //relax, its a vector
     delete array[i];
   array.clear();
 
-  for (vector<UValue*>::const_iterator it= b.array.begin(); 
+  for (std::vector<UValue*>::const_iterator it= b.array.begin();
       it !=b.array.end();it++)
     array.push_back(new UValue(**it));
   offset = b.offset;
-  
+
   return (*this);
 }
 
@@ -665,7 +671,8 @@ UObjectStruct & UObjectStruct::operator = (const UObjectStruct &b) {
 	delete array[i].val;
   array.clear();
 
-  for (vector<UNamedValue>::const_iterator it= b.array.begin(); it != b.array.end();it++)
+  for (std::vector<UNamedValue>::const_iterator it= b.array.begin();
+       it != b.array.end();it++)
     array.push_back(UNamedValue(it->name, new UValue(*(it->val))));
 
   return (*this);
@@ -678,10 +685,10 @@ UObjectStruct::~UObjectStruct() {
 }
 
 
-UValue & UObjectStruct::operator [](string s) {
+UValue & UObjectStruct::operator [](std::string s) {
   for (int i=0;i<size();i++)
-	if (array[i].name==s)
-	  return *array[i].val;
+    if (array[i].name==s)
+      return *array[i].val;
   static UValue n;
   return n;
 }

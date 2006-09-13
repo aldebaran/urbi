@@ -4,7 +4,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,11 +22,9 @@
 **********************************************************************/
 
 #ifndef UCLIENT_H
-#define UCLIENT_H
+# define UCLIENT_H
 
-#include "uabstractclient.h"
-
-
+# include "uabstractclient.h"
 
 ///Linux implementation of UAbstractClient.
 /*! This implementation creates a thread for each instance of UClient, which
@@ -39,31 +37,26 @@ class UClient: public UAbstractClient {
   UClient(const char *_host,int _port = URBI_PORT,int _buflen = URBI_BUFLEN);
 
   virtual ~UClient();
-  
+
   //! For compatibility with older versions of the library
   void start() {}
- 
+
   //! For internal use.
   void listenThread();
 
   virtual void printf(const char * format, ...);
   virtual unsigned int getCurrentTime();
 
-  
+
  protected:
 
   virtual int  effectiveSend(const void * buffer, int size);
   virtual bool canSend(int size);
-  
-  
- 
-  
-  
-  int              sd;                  ///< Socket file descriptor.    
+
+
+  int             sd;                  ///< Socket file descriptor.
  private:
- 
-  int              control_fd[2];       ///< Pipe for termination notification.
- 
+  int             control_fd[2];       ///< Pipe for termination notification.
   void           *thread;
 };
 

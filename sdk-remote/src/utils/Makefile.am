@@ -1,17 +1,11 @@
-INCLUDES = -I$(top_srcdir)/src/liburbi
-AM_LDFLAGS = -L$(top_srcdir)/src/liburbi
-
-AM_CXXFLAGS = -pthread
-
+AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi
+AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
 
 bin_PROGRAMS = urbicycle urbireverse urbiwalk urbiscale
 
 urbicycle_SOURCES = urbicycle.cpp
-
 urbireverse_SOURCES = urbireverse.cpp
-
 urbiscale_SOURCES = urbiscale.cpp
-
 urbiwalk_SOURCES = urbiwalk.cpp Move.cpp Move.h
-urbiwalk_LDADD =  -lurbi
 
+urbiwalk_LDADD = $(top_srcdir)/src/liburbi/liburbi.a

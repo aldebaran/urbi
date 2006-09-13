@@ -32,9 +32,8 @@ namespace urbi {
     UEM_DELETE
   };
 
-  static const string externalModuleTag = "__ExternalMessage__";
+  static const std::string externalModuleTag = "__ExternalMessage__";
 
 } // namespace URBI
 
 #endif
-

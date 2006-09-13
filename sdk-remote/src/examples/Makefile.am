@@ -1,37 +1,49 @@
-INCLUDES = -I$(top_srcdir)/src/liburbi
-AM_LDFLAGS = -L$(top_srcdir)/src/liburbi 
-AM_CXXFLAGS = -pthread
+AM_CPPFLAGS =					\
+-I$(top_builddir)/src/liburbi/uobject		\
+-I$(top_srcdir)/src/liburbi
 
-bin_PROGRAMS = urbiping urbibandwidth urbiimage urbisound urbisend urbisendbin urbigetbin urbitalkie urbiplay urbirecord urbimirror urbisendsound urbiballtrackinghead urbispeak
+AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la $(PTHREAD_LIBS)
+# This is a hack for Automake 1.9: 1.10 honors AM_LDADD.
+LDADD = $(AM_LDADD)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
-urbiimage_SOURCES = urbiimage.cpp monitor.cpp monitor.h
-urbiimage_LDFLAGS = -L/usr/X11R6/lib  
-urbiimage_LDADD = -lX11 -lXext -lurbi
-urbisound_SOURCES = urbisound.cpp
-urbisound_LDADD = -lurbi
-urbisend_SOURCES = urbisend.cpp
-urbisend_LDADD = -lurbi
-urbiplay_SOURCES = urbiplay.cpp
-urbiplay_LDADD = -lurbi
-urbirecord_SOURCES = urbirecord.cpp
-urbirecord_LDADD = -lurbi
-urbimirror_SOURCES = urbimirror.cpp
-urbimirror_LDADD = -lurbi
-urbisendsound_SOURCES = urbisendsound.cpp
-urbisendsound_LDADD = -lurbi
-urbitalkie_SOURCES = urbitalkie.cpp
-urbitalkie_LDADD = -lurbi
-urbiping_SOURCES = urbiping.cpp
-urbiping_LDADD = -lurbi
-urbibandwidth_SOURCES = urbibandwidth.cpp
-urbibandwidth_LDADD = -lurbi
+bin_PROGRAMS =					\
+urbiballtrackinghead				\
+urbibandwidth					\
+urbiimage					\
+urbimirror					\
+urbiping					\
+urbiplay					\
+urbirecord					\
+urbisend					\
+urbisendbin					\
+urbisendsound					\
+urbisound					\
+urbispeak					\
+urbitalkie
+
+
+urbiballtrackinghead_LDADD = -lX11 -lXext $(AM_LDADD)
+urbiballtrackinghead_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp monitor.cpp monitor.h
-urbiballtrackinghead_LDADD = -lX11 -lXext -lurbi
-urbiballtrackinghead_LDFLAGS = -L/usr/X11R6/lib 
-urbisendbin_SOURCES = urbisendbin.cpp
-urbisendbin_LDADD = -lurbi
-urbigetbin_SOURCES = urbigetbin.cpp
-urbigetbin_LDADD = -lurbi
 
+urbibandwidth_SOURCES = urbibandwidth.cpp
+
+# Where are the sources of this guy: urbigetbin?
+# urbigetbin_SOURCES = urbigetbin.cpp
+
+urbiimage_LDADD = -lX11 -lXext $(AM_LDADD)
+urbiimage_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
+urbiimage_SOURCES = urbiimage.cpp monitor.cpp monitor.h
+
+urbimirror_SOURCES = urbimirror.cpp
+urbiping_SOURCES = urbiping.cpp
+urbiplay_SOURCES = urbiplay.cpp
+urbirecord_SOURCES = urbirecord.cpp
+urbisend_SOURCES = urbisend.cpp
+urbisendbin_SOURCES = urbisendbin.cpp
+urbisendsound_SOURCES = urbisendsound.cpp
+urbisound_SOURCES = urbisound.cpp
 urbispeak_SOURCES = urbispeak.cpp
-urbispeak_LDADD = -lurbi
+urbitalkie_SOURCES = urbitalkie.cpp
+

@@ -3,7 +3,7 @@
  *
  * Sample image acqusition urbi client.
  *
- * Copyright (C) 2004 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,10 +40,14 @@ unsigned char * buffer=NULL;
 /* Our callback function */
 UCallbackAction showImage(const UMessage &msg)
 {
-  if (msg.binaryType != BINARYMESSAGE_IMAGE) 
+  if (msg.type != MESSAGE_DATA
+      && msg.value->type != DATA_BINARY
+      && msg.value->binary->type != BINARY_IMAGE)
     return URBI_CONTINUE;
-  
-  static unsigned char* buffer = (unsigned char* )malloc(3*400*400);
+
+  UImage& img = msg.value->binary->image;
+
+  static unsigned char* buffer = (unsigned char*) malloc(3*400*400);
   int sz = 500000;
   static int tme = 0;
 
@@ -57,15 +61,15 @@ UCallbackAction showImage(const UMessage &msg)
     tme = msg.client.getCurrentTime();
   }
 
-  if (!mon)  
-    mon = new Monitor(msg.image.width, msg.image.height, "image");
-  
+  if (!mon)
+    mon = new Monitor(img.width, img.height, "image");
 
-  if (msg.image.imageFormat == IMAGE_JPEG)
-    convertJPEGtoRGB((const byte *) msg.image.data, msg.image.size, (byte *) buffer, sz);
-  else  if (msg.image.imageFormat == IMAGE_YCbCr) {
-    sz = msg.image.size;
-    convertYCrCbtoRGB((const byte *) msg.image.data, msg.image.size, (byte *) buffer);
+
+  if (img.imageFormat == IMAGE_JPEG)
+    convertJPEGtoRGB((const byte *) img.data, img.size, (byte *) buffer, sz);
+  else if (img.imageFormat == IMAGE_YCbCr) {
+    sz = img.size;
+    convertYCrCbtoRGB((const byte *) img.data, img.size, (byte *) buffer);
   }
 
   mon->setImage((bits8 *) buffer, sz);
@@ -76,7 +80,7 @@ UCallbackAction showImage(const UMessage &msg)
 void closeandquit(int sig)
 {
   delete urbi::getDefaultClient();
-  exit(0);
+  urbi::exit(0);
 }
 
 
@@ -85,19 +89,23 @@ int main(int argc, char *argv[])
   signal(SIGINT, closeandquit);
   mon = NULL;
 
-
-  if (argc < 3) {
-    fprintf(stderr, "Missing argument\nusage: urbiimage format robotname [reconstruct]: display images\n\tFormat : jpeg=transfer jpeg, raw=transfer raw\n" "usage: urbiimage -tofile format filename robotname [reconstruct]: save 1 image.\n\t Format: rgb: RGB ycrcb:YCrCb jpeg: JPEG ppm:PPM   \n");
-    exit(1);
+  if (argc != 3) {
+    fprintf(stderr,
+	    "Missing argument\n"
+	    "usage: urbiimage format robotname [reconstruct]: display images\n"
+	    "\tFormat : jpeg=transfer jpeg, raw=transfer raw\n"
+	    "usage: urbiimage -tofile format filename robotname [reconstruct]: save 1 image.\n"
+	    "\t Format: rgb: RGB ycrcb:YCrCb jpeg: JPEG ppm:PPM\n");
+    urbi::exit(1);
   }
- 
+
   int mode = 0;
   if (argc >=5)
     mode = 1;
   USyncClient & client = *new USyncClient(argv[2+mode*2]);
-  
+
   if (client.error() != 0)
-    exit(0);
+    urbi::exit(0);
 
   int t = client.getCurrentTime();
 
@@ -105,9 +113,8 @@ int main(int argc, char *argv[])
 
   client.send("camera.resolution  = 0;");
   client.send("camera.jpegfactor = 70;");
-  
+
   client << "camera.reconstruct = " << ((argc>3+mode*2)? 1:0) << urbi::semicolon;
-  
 
   if (mode == 0) {
     imcount = 0;
@@ -142,7 +149,7 @@ int main(int argc, char *argv[])
     FILE *f = fopen(argv[3], "w");
 
     if (!f)
-      exit(2);
+      urbi::exit(2);
 
     fwrite(buff, 1, sz, f);
     fclose(f);

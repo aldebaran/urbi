@@ -26,43 +26,48 @@ char * devices[]={
 int devCount=18;
 UCallbackAction command(const UMessage &msg) {
   //get command id
-  if (msg.type != MESSAGE_DOUBLE)
+  if (msg.type != MESSAGE_DATA
+      && msg.value->type != DATA_DOUBLE)
     return URBI_CONTINUE;
-  d->send("%s.val = %lf,", msg.tag, msg.doubleValue);
+  d->send("%s.val = %lf,", msg.tag.c_str (), (double) *msg.value);
   return URBI_CONTINUE;
 }
 
 void endRecord(int sig) {
-  exit(0);
+  urbi::exit(0);
 }
 
 int main(int argc, char * argv[]) {
-  if (argc<3) {
-	printf("usage: %s sourcerobot destinationrobot [motorstate]\n\t Mirror the movements of one robot to the other.\n",argv[0]);
-	exit(1);
+  if (argc != 3) {
+    printf("usage: %s sourcerobot destinationrobot [motorstate]\n"
+	   "\t Mirror the movements of one robot to the other.\n",
+	   argv[0]);
+    urbi::exit(1);
   }
 
   signal(SIGINT,endRecord);
 
   c = new UClient(argv[1]);
-  if (c->error()) exit(2);
+  if (c->error())
+    urbi::exit(2);
 
   d = new UClient(argv[2]);
-  if (d->error()) exit(2);
+  if (d->error())
+    urbi::exit(2);
 
   int motorstate=0;
 
   if (argc>=4)
-	motorstate=strtol(argv[3],NULL,0);
+    motorstate=strtol(argv[3],NULL,0);
   if (!motorstate)
-	c->send("motoroff;");
+    c->send("motoroff;");
 
   d->send("motoron;");
 
   c->send("looptag: loop {");
   for (int i=0;i<devCount-1;i++) {
     c->setCallback(command,devices[i]);
-	c->send("%s: %s.val&",devices[i], devices[i]);
+    c->send("%s: %s.val&",devices[i], devices[i]);
   }
 
   c->setCallback(command,devices[devCount-1]);

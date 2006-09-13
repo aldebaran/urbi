@@ -4,7 +4,7 @@
  File: ufloat.h\n
  Definition of the ufloat classes.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -16,39 +16,38 @@
 
  **************************************************************************** */
 #ifndef UFLOAT_H_DEFINED
-#define UFLOAT_H_DEFINED
-#include <iostream>
-#include <math.h>
-#include <algorithm>
-#ifndef DEBUG
-#define DEBUG 0
-#endif
-using std::max;
-using std::min;
+# define UFLOAT_H_DEFINED
+# include <iostream>
+# include <math.h>
+# include <algorithm>
+# ifndef DEBUG
+#  define DEBUG 0
+# endif
 
-#if 0
+
+# if 0
 /** Fixed point implementation on a long. Point is the number of bits of the DECIMAL part, ie <sz(long)-point>.<point> represnetation.
  * For this implementation to work, a long long type of size twice the long type must be available.
- *  
+ *
  */
 template<int point> class ULongFixedPoint {
 public:
-#ifndef NO_DOUBLE
+# ifndef NO_DOUBLE
   ULongFixedPoint(double d) {
     v = (long)(d* (double)(1<<point));
-    if (v<<1 - (long)((d* (double)(1<<(point+1))))) 
+    if (v<<1 - (long)((d* (double)(1<<(point+1)))))
       v++;
   }
   inline ULongFixedPoint<point> operator =(double d) { v = (long)(d* (double)(1<<point));return *this;}
   double getDoubleValue() { return (double)v / (double)(1<<point);}
-#endif
-  ULongFixedPoint(long d) {v=d<<point;} 
+# endif
+  ULongFixedPoint(long d) {v=d<<point;}
   ULongFixedPoint():v(0) {}
   ULongFixedPoint(const ULongFixedPoint<point> &b) {v=b.v;}
   ULongFixedPoint (long val, int shift) {v= val<<(point-shift);}
 
 
-  inline ULongFixedPoint<point> operator =(ULongFixedPoint<point> b) {v=b.v;} 
+  inline ULongFixedPoint<point> operator =(ULongFixedPoint<point> b) {v=b.v;}
   /// Initialize with the value val * 2^(-shift)
   inline ULongFixedPoint operator +(const ULongFixedPoint b) {ULongFixedPoint r;r.v=v+b.v;return r;}
   inline ULongFixedPoint operator -(const ULongFixedPoint b) {ULongFixedPoint r;r.v=v-b.v;return r;}
@@ -81,7 +80,7 @@ template<int point> std::istream& operator >>(std::istream & s,ULongFixedPoint<p
   c=s.get();
   if (c=='-')
     negative = true;
-  else if (c>='0' && c<='9') 
+  else if (c>='0' && c<='9')
     s.unget();
   else if (c != '+') {
     s.setstate(std::ios_base::failbit);
@@ -100,7 +99,7 @@ template<int point> std::istream& operator >>(std::istream & s,ULongFixedPoint<p
   u = ir;
 
   if (!s)
-    return s; 
+    return s;
   if (!s.eof()) {
     c=s.get();
     if (c!='.') { //XXX ignoring locales
@@ -127,7 +126,7 @@ template<int point> std::istream& operator >>(std::istream & s,ULongFixedPoint<p
       factor *=10;
     }
   }
-  
+
   ULongFixedPoint<point>  ip(ir);
   ULongFixedPoint<point>  t(dr);
   t = t / ULongFixedPoint<point>(factor);
@@ -143,18 +142,18 @@ template<int point> std::ostream& operator <<(std::ostream &s, ULongFixedPoint<p
   s << u.getValue(); //output integral part
   u = u - u.getValue(); //get decimal part
   s << '.';
-  const int limit = 1+(point*3)/10; 
+  const int limit = 1+(point*3)/10;
   for (int i=0;i<limit;i++) {
     u=u*10L;
     s << (char)('0'+ u.getValue());
-    u = u - u.getValue(); 
+    u = u - u.getValue();
   }
   return s;
 
 }
-#endif
+# endif
 
-#if 0
+# if 0
 /* Floating point implementation on a double long.
  * Representation: v* 2^exp, with v normalized: high bit is sign, next bit has value 1-sign
  */
@@ -192,7 +191,7 @@ class UFFloat {
       v = mant;
       e = exp - 31;
     }
-    
+
     inline void normalize() {
       bool neg = (v<0);
       int pos = LONG_NBIT - 2;
@@ -207,7 +206,7 @@ class UFFloat {
       else
 	return v>>(-e);
     }
-    
+
     int getValue(int shift) {
       if (shift+e>0)
 	return v<<(shift+e);
@@ -245,15 +244,15 @@ class UFFloat {
       while (pos && (neg == (bool)(r & (1LL<<pos))))
 	pos--;
       UFFloat result;
-      result.v = r >>max(0,pos-LONG_NBIT+2); //bring sign bit to pos
-      result.e = e+b.e+max(0,pos-LONG_NBIT+2);
+      result.v = r >>std::max(0,pos-LONG_NBIT+2); //bring sign bit to pos
+      result.e = e+b.e+std::max(0,pos-LONG_NBIT+2);
       if (pos < LONG_NBIT)
 	result.normalize();
       if (result.v==0)
 	result.e=-1000;
       return result;
     }
-    
+
     UFFloat operator /(const UFFloat &b) const {
       long long num =((long long)v) << LONG_NBIT;
       long long res = num /(long long)b.v;
@@ -277,7 +276,7 @@ class UFFloat {
       return result;
     }
 
-    
+
     UFFloat operator +(const UFFloat &b) const {
       UFFloat big,small;
       if (e<b.e) {
@@ -304,12 +303,12 @@ class UFFloat {
       unsigned long smalluv = small.v & LONG_NOSIGN_BIT_MASK;
       unsigned long long smalls = ((unsigned long long)smalluv) << (LONG_NBIT-1-drift);
       //handle signs
-      unsigned long long r; 
-      if ( (big.v & LONG_SIGN_BIT_MASK)== (small.v & LONG_SIGN_BIT_MASK)) 
+      unsigned long long r;
+      if ( (big.v & LONG_SIGN_BIT_MASK)== (small.v & LONG_SIGN_BIT_MASK))
 	r = bigs + smalls;
       else
 	r = bigs - smalls; //no sign problem
-      
+
       int pos = LONGLONG_NBIT - 1;
       while (pos && (!(r & (1LL<<pos))))
 	pos--;
@@ -321,7 +320,7 @@ class UFFloat {
       res.e = big.e - (LONG_NBIT-1)+(pos-LONG_NBIT-1);
       return res;
     }
-    
+
     UFFloat operator -(const UFFloat &b) const {
       UFFloat big,small;
       if (e<b.e) {
@@ -340,7 +339,7 @@ class UFFloat {
 	small = *this;
 	big = b;
       }
-      
+
       long drift = big.e-small.e;
       if (drift>= LONG_NBIT)
 	return big;
@@ -349,12 +348,12 @@ class UFFloat {
       unsigned long smalluv = small.v & LONG_NOSIGN_BIT_MASK;
       unsigned long long smalls = ((unsigned long long)smalluv) << (LONG_NBIT-1-drift);
       //handle signs
-      unsigned long long r; 
-      if ( (big.v & LONG_SIGN_BIT_MASK)== (small.v & LONG_SIGN_BIT_MASK)) 
+      unsigned long long r;
+      if ( (big.v & LONG_SIGN_BIT_MASK)== (small.v & LONG_SIGN_BIT_MASK))
 	r = bigs - smalls;
       else
 	r = bigs + smalls; //no sign problem
-      
+
       int pos = LONGLONG_NBIT - 1;
       while (pos && (!(r & (1LL<<pos))))
 	pos--;
@@ -369,7 +368,7 @@ class UFFloat {
 
 
     friend std::ostream& operator <<(std::ostream &s, UFFloat u);
-  private: 
+  private:
     long v;
     long e;
 };
@@ -377,10 +376,10 @@ class UFFloat {
 std::ostream& operator <<(std::ostream &s, UFFloat u);
 std::istream& operator >>(std::istream &s, UFFloat &u);
 //typedef ULongFixedPoint<10> ufloat;
-#endif 
+# endif
 
 
-#ifdef FLOAT_FAST 
+# ifdef FLOAT_FAST
 
 static const int LONG_NBIT=sizeof(long)*8;
 static const int LONGLONG_NBIT=sizeof(long long)*8;
@@ -398,7 +397,7 @@ static const long long LONG_VAL = (1LL<<LONG_NBIT);
 
 class ULLFixedPoint {
   public:
-    
+
     explicit ULLFixedPoint():v(0) {}
     ULLFixedPoint(const ULLFixedPoint &b):v(b.v) {}
     explicit ULLFixedPoint(double d) {v=(long long)(d*(double)LONG_VAL);}
@@ -406,20 +405,20 @@ class ULLFixedPoint {
     explicit ULLFixedPoint(int val) {v=(long long)val<<LONG_NBIT;}
     explicit ULLFixedPoint(unsigned int val) {v=(long long)val<<LONG_NBIT;}
     explicit ULLFixedPoint(unsigned long val) {v=(unsigned long long)val<<LONG_NBIT;}
-    
+
     ULLFixedPoint operator =(double d) {v=(long long)(d*(double)LONG_VAL);return (*this);}
     ULLFixedPoint operator =(int val) {v=(long long)val<<LONG_NBIT;return (*this);}
     ULLFixedPoint operator =(unsigned int val) {v=(long long)val<<LONG_NBIT;return (*this);}
     ULLFixedPoint operator =(long val) {v=(long long)val<<LONG_NBIT;return (*this);}
     ULLFixedPoint operator =(long long val) {v=(long long)val<<LONG_NBIT;return (*this);}
-     
+
     ULLFixedPoint operator =(unsigned long val) {v=(long long)val<<LONG_NBIT;return (*this);}
 
 
     void rawSet(long long val){v=val;}
     inline long getValue(int shift=0) const {return v>>(LONG_NBIT-shift);}
     inline ULLFixedPoint operator -() const {ULLFixedPoint r; r.v=-v; return r;}
-    
+
     inline ULLFixedPoint operator >>=(int shift) {
       v = v>> shift;
       return *this;
@@ -435,12 +434,12 @@ class ULLFixedPoint {
     inline bool operator ==(const ULLFixedPoint b) const {
       long long l=(v-b.v);
       if (l<0) l=-l;
-      return (l<4);  
+      return (l<4);
     }
     inline bool operator !=(const ULLFixedPoint b) const{
       long long l=(v-b.v);
       if (l<0) l=-l;
-      return (l>4);  
+      return (l>4);
     }
 
     inline ULLFixedPoint operator >>(int b) const {ULLFixedPoint r;r.v=v>>b; return r;}
@@ -453,7 +452,7 @@ class ULLFixedPoint {
 
     inline ULLFixedPoint operator +(const ULLFixedPoint b) const {ULLFixedPoint r;r.v=v+b.v;return r;}
     inline ULLFixedPoint operator -(const ULLFixedPoint b) const {ULLFixedPoint r;r.v=v-b.v;return r;}
-    inline ULLFixedPoint operator *(const ULLFixedPoint b) const {      
+    inline ULLFixedPoint operator *(const ULLFixedPoint b) const {
     ULLFixedPoint r;
     long long th = (v>>LONG_NBIT);
     unsigned long long  tl = v&((1LL<<LONG_NBIT)-1);
@@ -462,10 +461,10 @@ class ULLFixedPoint {
     long long d = tl + (((long long)th)<<LONG_NBIT);
     std::cerr <<th<<" + "<<tl<<" = "<<d<<"  = "<<v<<std::endl;
     */
-   
+
     long long bh  = (b.v >> LONG_NBIT);
     unsigned long long bl = b.v&((1LL<<LONG_NBIT)-1);
-    
+
     long long result =0;
     result = (long long)(th*bh)<<LONG_NBIT;
     result += (long long)(th*bl)+(long long)(tl*bh);
@@ -473,9 +472,9 @@ class ULLFixedPoint {
     r.v = result;
     return r;
     }
-    
+
   inline ULLFixedPoint operator /(const ULLFixedPoint b) const {
-    ULLFixedPoint result; 
+    ULLFixedPoint result;
     unsigned long long sb;
     unsigned long long ut;
     if (b.v<0)
@@ -542,18 +541,18 @@ inline ULLFixedPoint abs(ULLFixedPoint b) {
 }
 
 
-#ifndef SINTABLE_POWER
-#define SINTABLE_POWER 10  //the tables will containe 2^sintable_power elements
-#endif
+# ifndef SINTABLE_POWER
+# define SINTABLE_POWER 10  //the tables will containe 2^sintable_power elements
+# endif
 typedef ULLFixedPoint ufloat;
 static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
-/// return the tabulated sinus of given value in radian, using linear interpolation 
+/// return the tabulated sinus of given value in radian, using linear interpolation
 ufloat tabulatedSin(ufloat angle);
-/// return the tabulated cosinus of given value in radian, using linear interpolation 
+/// return the tabulated cosinus of given value in radian, using linear interpolation
 ufloat tabulatedCos(ufloat angle);
-/// return the tabulated arcsinus of given value, in radian, using linear interpolation 
+/// return the tabulated arcsinus of given value, in radian, using linear interpolation
 ufloat tabulatedASin(ufloat val);
-/// return the tabulated arccosinus of given value, in radian, using linear interpolation 
+/// return the tabulated arccosinus of given value, in radian, using linear interpolation
 inline ufloat tabulatedACos(ufloat val) {return (PI>>1)-tabulatedASin(val);}
 
 inline ufloat sin(ufloat angle) {return tabulatedSin(angle);}
@@ -571,14 +570,13 @@ inline ufloat sqrt(ufloat a) {return ufloat(sqrt(a.getDouble()));}
 inline ufloat fabs(ufloat a) {return (a>0)?a:-a;}
 inline ufloat trunc(ufloat a) {ufloat b; b.v = a.v & (-1LL ^ ((1LL<<LONG_NBIT)-1LL)); if (b.v<0) b++;return b;}
 inline ufloat fmod(ufloat a, ufloat b) {ufloat q = trunc(a/b); return a-q*b;}
-#elif FLOAT_FLOAT
+# elif FLOAT_FLOAT
 typedef  float ufloat;
 static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
-#else
+# else
 typedef double ufloat;
 static const ufloat PI = ufloat(3.14159265358979323846264338327950288);
 
 
+# endif
 #endif
-#endif
-

@@ -1,5 +1,4 @@
-#! /usr/bin/perl -w 
-
+#! /usr/bin/perl -w
 
 #
 # Template autogenerator.
@@ -13,23 +12,21 @@
 #    - expands "%%%,% whatever P% %%" to  "whetever P1, whatever P2, ..., whatever PN"
 #    - expands "%N%" to number of arguments
 #
-$file = $ARGV[0];
+my $file = $ARGV[0];
+my $DEBUG = 0;
 
-
-$DEBUG = 0;
-open(DAT, $file);
-
+open(DAT, $file) or die;
 
 while(<DAT>) {
     if (/%%%%/) {
 	$first = 1;
 	$last = 7;
-	if (/^%%%%\s*([0-9]+).*?([0-9]+)/) {
+	if (/^\s*%%%%\s*([0-9]+).*?([0-9]+)/) {
 	    $first = int($1);
 	    $last = int($2);
 	}
-	
-	
+
+
 	@block=();
 	while (<DAT>) {
 	    last if (/%%%%/);
@@ -54,7 +51,7 @@ sub parseMetaBlock {
     my $line = '';
     my $sep = '';
     my $ln = '';
-    
+
     while($_ = shift @block) {
 	s/\n//;
 	print "GOT '$_'\n" if ($DEBUG);
@@ -68,7 +65,7 @@ sub parseMetaBlock {
 	    $_ = $3;
 	    $line ='';
 	    $sep = $2;
-	    
+
 	}
 	else {
 	    if (/^(.*?)%%(.*)$/) {
@@ -80,7 +77,7 @@ sub parseMetaBlock {
 	    }
 	}
 	if ($in) {
-	    
+
 	    #read til end
 	    do  {
 		print ("GET '$_'\n") if($DEBUG);
@@ -113,6 +110,6 @@ sub parseMetaBlock {
 	    print "IGNORING '$_'\n" if ($DEBUG);
 	print $_."\n";;
 	}
-	
+
     }
 }

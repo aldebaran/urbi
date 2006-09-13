@@ -1,8 +1,19 @@
-INCLUDES = -I$(top_srcdir)/src/liburbi
-AM_CXXFLAGS = -pthread -Wno-deprecated
-lib_LIBRARIES = libuobject.a
-libuobject_a_SOURCES = uobject.cc uobject.h uvar.cc common_uvalue.cc uexternal.h 
+AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi
+AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
+lib_LTLIBRARIES = libuobject.la
 
-uobject.cc: uobject.h 
-uobject.h: uobject.template.h
-	./template_autogen.pl uobject.template.h > uobject.h
+libuobject_la_SOURCES =				\
+common_uvalue.cc				\
+uexternal.h 					\
+uobject.h		uobject.cc		\
+uvar.cc
+
+EXTRA_DIST = template_autogen.pl uobject.template.h
+CLEANFILES = uobject.h
+BUILT_SOURCES = uobject.h
+uobject.h: $(srcdir)/uobject.template.h $(srcdir)/template_autogen.pl
+	rm -f uobject.h.tmp uobject.h
+	$(srcdir)/template_autogen.pl $(srcdir)/uobject.template.h >uobject.h.tmp
+# Avoid accidental edition.
+	chmod a-w uobject.h.tmp
+	mv uobject.h.tmp uobject.h

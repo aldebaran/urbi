@@ -26,24 +26,19 @@
 
 // Hash maps, depending on the environment
 #ifndef _MSC_VER
-	#include <hash_map.h>
+# include <hash_map.h>
 #elif (_MSC_VER == 1400)
-	#pragma warning( disable : 4355 4996)
-	#include <hash_map>
-	using stdext::hash_map;
+# pragma warning( disable : 4355 4996)
+# include <hash_map>
+using stdext::hash_map;
 #else
-	#include <hash_map>
-	using std::hash_map;
+# include <hash_map>
+using std::hash_map;
 #endif
-
-// Short cuts
-using std::string;
-using std::list;
-using std::vector;
 
 // Floating point definition (emulated or real)
 #ifdef HAVE_UFLOAT_H
-#include "ufloat.h"
+# include "ufloat.h"
 #else
 typedef double ufloat;
 #endif
@@ -72,22 +67,22 @@ extern SingletonPtr<cl##name> name
 // A quick hack to be able to use hash_map with string easily
 #ifndef _MSC_VER
 
-  #if (__GNUC__ == 2)
+#  if (__GNUC__ == 2)
   __STL_BEGIN_NAMESPACE
-  #else
+#  else
   namespace __gnu_cxx {
-  #endif
-	  
-template<> struct hash< std::string > {  
+#  endif
+
+template<> struct hash< std::string > {
    size_t operator()( const std::string& x ) const
      { return hash< const char* >()( x.c_str() );}
 };
 
-  #if (__GNUC__ == 2)
+#  if (__GNUC__ == 2)
   __STL_END_NAMESPACE
-  #else
+#  else
   }
-  #endif
+#  endif
 
 #elif (_MSC_VER == 1400)
 
@@ -103,7 +98,7 @@ _STDEXT_BEGIN
     size_t operator()( const std::string& x ) const
     { return hash_compare< const char* >()( x.c_str() );}
 
-    bool operator()(const string& _Keyval1, const string& _Keyval2) const
+    bool operator()(const std::string& _Keyval1, const std::string& _Keyval2) const
     {	// test if _Keyval1 ordered before _Keyval2
 	return (_Keyval1< _Keyval2);
     }
@@ -124,7 +119,7 @@ _STDEXT_END
     size_t operator()( const std::string& x ) const
     { return hash_compare< const char* >()( x.c_str() );}
 
-    bool operator()(const string& _Keyval1, const string& _Keyval2) const
+    bool operator()(const std::string& _Keyval1, const std::string& _Keyval2) const
     {	// test if _Keyval1 ordered before _Keyval2
 	return (_Keyval1< _Keyval2);
     }
@@ -134,9 +129,9 @@ _STD_END
 
 
 // Simply use: UStart(myUObjectType) and the rest will be taken care of.
-#define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(string(#x),objectlist)
+#define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(std::string(#x),objectlist)
 // Simply use: UStartHub(myUObjectHubType) and the rest will be taken care of.
-#define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(string(#x),objecthublist)
+#define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(std::string(#x),objecthublist)
 
 
 // Variable binding
@@ -146,16 +141,16 @@ _STD_END
 #define USensor(x) x.setOwned()
 
 // Function Binding
-#define UBindFunction(obj,x)  createUCallback(__name,(string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
+#define UBindFunction(obj,x)  createUCallback(__name,(std::string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
 
 // Event Binding
 #define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+string(#x),eventmap)
 #define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
 
 // Macro to register to a Hub
-#define URegister(hub) { objecthub = urbi::getUObjectHub((string)#hub); \
-  if (objecthub) objecthub->addMember(dynamic_cast<UObject*>(this)); \
-  else echo("Error: hub name '%s' is unknown\n",#hub); }
+#define URegister(hub) { objecthub = urbi::getUObjectHub((std::string)#hub); \
+    if (objecthub) objecthub->addMember(dynamic_cast<UObject*>(this));	\
+    else echo("Error: hub name '%s' is unknown\n",#hub); }
 
 // defines a variable and it's associated accessors
 #define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
@@ -164,36 +159,36 @@ _STD_END
 
 //macro to send urbi commands
 #ifndef URBI
-  #define URBI(a) urbi::uobject_unarmorAndSend(#a)
+#  define URBI(a) urbi::uobject_unarmorAndSend(#a)
 #endif
 
 /* urbi namespace starts */
-namespace 
-urbi {
-  
+namespace urbi
+{
+
   // Forward declarations and global scope structures
   class UObjectData;
   class UVar;
   class UObject;
   class UObjectHub;
-  class baseURBIStarter;  
-  class baseURBIStarterHub;  
+  class baseURBIStarter;
+  class baseURBIStarterHub;
   class UGenericCallback;
   class UTimerCallback;
   class UValue;
   class UVardata;
 
   // A few list and hashtable types
-  typedef hash_map<string,list<UGenericCallback*> > UTable;
-  typedef hash_map<string,list<UVar*> > UVarTable;
-  typedef list<baseURBIStarter*> UStartlist;
-  typedef list<baseURBIStarterHub*> UStartlistHub;
-  typedef list<UTimerCallback*> UTimerTable;
-  typedef list<UObject*> UObjectList;
+  typedef hash_map<std::string, std::list<UGenericCallback*> > UTable;
+  typedef hash_map<std::string, std::list<UVar*> > UVarTable;
+  typedef std::list<baseURBIStarter*> UStartlist;
+  typedef std::list<baseURBIStarterHub*> UStartlistHub;
+  typedef std::list<UTimerCallback*> UTimerTable;
+  typedef std::list<UObject*> UObjectList;
 
   // The UReturn type
   typedef int UReturn;
-  
+
   // Two singleton lists to handle the object and hubobject registration
   EXTERN_STATIC_INSTANCE(UStartlist, objectlist);
   EXTERN_STATIC_INSTANCE(UStartlistHub, objecthublist);
@@ -204,8 +199,8 @@ urbi {
   extern UTable eventmap;
   extern UTable eventendmap;
   extern UTable monitormap;
-  extern UTable accessmap;  
-  
+  extern UTable accessmap;
+
   // Timer and update maps
   extern UTimerTable timermap;
   extern UTimerTable updatemap;
@@ -214,21 +209,23 @@ urbi {
   extern void main(int argc, char *argv[]);
 
   // Notification mechanism
-  void USync(UVar&);  
+  void USync(UVar&);
 
   // *****************************************************************************
   // Global function of the urbi:: namespace to access kernel features
 
   void echo(const char * format, ... );
-  UObjectHub* getUObjectHub(string); ///< retrieve a UObjectHub based on its name or return 0 if not found. 
-  UObject* getUObject(string); ///< retrieve a UObject based on its name or return 0 if not found.
+  /// Retrieve a UObjectHub based on its name or return 0 if not found.
+  UObjectHub* getUObjectHub(std::string);
+  /// Retrieve a UObject based on its name or return 0 if not found.
+  UObject* getUObject(std::string);
 
-  /// Send URBI code (ghost connection in plugin mode, default connection in remote mode)
+  /// Send URBI code (ghost connection in plugin mode, default connection in remote mode).
   void uobject_unarmorAndSend(const char * str);
-  
+
   // *****************************************************************************
   // UValue and other related types
-  
+
   enum UDataType {
     DATA_DOUBLE,
     DATA_STRING,
@@ -249,15 +246,15 @@ urbi {
     IMAGE_RGB=1,     ///< RGB 24 bit/pixel
     IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
     IMAGE_JPEG=3,    ///< JPEG
-    IMAGE_PPM=4,      ///< RGB with a PPM header    
-    IMAGE_UNKNOWN 
+    IMAGE_PPM=4,      ///< RGB with a PPM header
+    IMAGE_UNKNOWN
   };
 
   enum USoundFormat {
     SOUND_RAW,
     SOUND_WAV,
     SOUND_MP3,
-    SOUND_OGG,    
+    SOUND_OGG,
     SOUND_UNKNOWN
   };
 
@@ -277,221 +274,223 @@ urbi {
     UNORMAL
   };
 
-   //values for enum-like properties
+  //values for enum-like properties
   static const char * blendNames[]={
-	"mix",
-	"add",
-	"discard",
-	"queue",
-	"cancel",
-	"normal",
-	""
+    "mix",
+    "add",
+    "discard",
+    "queue",
+    "cancel",
+    "normal",
+    ""
   };
   static const int blendNum = 6;
-  
-  
+
+
   //WARNING: synchronize with propNames in uvar.cc
   /// URBI properties associated to a variable
   enum UProperty {
-	  PROP_RANGEMIN=0,
-	  PROP_RANGEMAX,
-	  PROP_SPEEDMIN,
-	  PROP_SPEEDMAX,
-	  PROP_BLEND,
-	  PROP_DELTA
+    PROP_RANGEMIN=0,
+    PROP_RANGEMAX,
+    PROP_SPEEDMIN,
+    PROP_SPEEDMAX,
+    PROP_BLEND,
+    PROP_DELTA
   };
-  
+
   //internal use: unparsed binary data
   class BinaryData {
-    public:
-      void * data;
-      int size;
-      BinaryData() {}
-      BinaryData(void *d, int s):data(d), size(s) {}
+  public:
+    void * data;
+    int size;
+    BinaryData() {}
+  BinaryData(void *d, int s):data(d), size(s) {}
   };
 
 
   ///Class encapsulating an image.
   class UImage {
-    public:
-      char                  *data;            ///< pointer to image data
-      int                   size;             ///< image size in byte
-      int                   width, height;    ///< size of the image
-      UImageFormat          imageFormat;
+  public:
+    char                  *data;            ///< pointer to image data
+    int                   size;             ///< image size in byte
+    int                   width, height;    ///< size of the image
+    UImageFormat          imageFormat;
   };
 
   ///Class encapsulating sound informations.
   class USound {
-    public:
-      char                  *data;            ///< pointer to sound data
-      int                   size;             ///< total size in byte
-      int                   channels;         ///< number of audio channels
-      int                   rate;             ///< rate in Hertz
-      int                   sampleSize;       ///< sample size in bit
-      USoundFormat          soundFormat;      ///< format of the sound data
-      USoundSampleFormat    sampleFormat;     ///< sample format
+  public:
+    char                  *data;            ///< pointer to sound data
+    int                   size;             ///< total size in byte
+    int                   channels;         ///< number of audio channels
+    int                   rate;             ///< rate in Hertz
+    int                   sampleSize;       ///< sample size in bit
+    USoundFormat          soundFormat;      ///< format of the sound data
+    USoundSampleFormat    sampleFormat;     ///< sample format
 
-      bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
+    bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
   };
 
   /// Class containing binary data sent by the server, that could not be furtehr interpreted.
   class UBinary {
-    public:
-      UBinaryType             type;
-      union {
-	struct {
+  public:
+    UBinaryType             type;
+    union {
+      struct {
 	void                  *data;             ///< binary data
 	int                   size;
-	} common;
-	UImage                image;
-	USound                sound;
-      };
-      string                message;         ///< extra bin headers(everything after BIN <size> and before ';'
+      } common;
+      UImage                image;
+      USound                sound;
+    };
+    std::string                message;         ///< extra bin headers(everything after BIN <size> and before ';'
 
-      UBinary();
-      UBinary(const UBinary &b);  ///< deep copy constructor
-	  explicit UBinary(const UImage &);
-	  explicit UBinary(const USound &);
-      UBinary & operator = (const UBinary &b); ///< deep copy
-      void buildMessage(); ///< build message from structures
-      string getMessage() const; ///< get message extracted from structures
-      ~UBinary();  ///< Frees binary buffer
-      int parse(const char * message, int pos, list<BinaryData> bins, list<BinaryData>::iterator &binpos);
+    UBinary();
+    UBinary(const UBinary &b);  ///< deep copy constructor
+    explicit UBinary(const UImage &);
+    explicit UBinary(const USound &);
+    UBinary & operator = (const UBinary &b); ///< deep copy
+    void buildMessage(); ///< build message from structures
+    std::string getMessage() const; ///< get message extracted from structures
+    ~UBinary();  ///< Frees binary buffer
+    int parse(const char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
   };
 
   /// Class storing URBI List type
   class UList {
-    public:
-      vector<UValue *> array;
-      UList();
-      UList(const UList &b);
-      UList & operator = (const UList &b);
-      ~UList();
-      UValue & operator [](int i) {return *array[i+offset];} 
-      int size() {return array.size();}
-      void setOffset(int n) { offset = n;};
+  public:
+    std::vector<UValue *> array;
+    UList();
+    UList(const UList &b);
+    UList & operator = (const UList &b);
+    ~UList();
+    UValue & operator [](int i) {return *array[i+offset];}
+    int size() {return array.size();}
+    void setOffset(int n) { offset = n;};
 
-    private:
-      int offset;
+  private:
+    int offset;
   };
 
   class UNamedValue {
-    public:
-      UValue *val;
-      string name;
-      UNamedValue(string n, UValue *v):val(v),name(n) {}
-      UNamedValue() {};
+  public:
+    UValue *val;
+    std::string name;
+  UNamedValue(std::string n, UValue *v)
+    :val(v),name(n)
+    {}
+    UNamedValue() {};
   };
 
   class UObjectStruct {
-    public:
-      string refName;
-      vector<UNamedValue> array;
-      UObjectStruct();
-      UObjectStruct(const UObjectStruct &b);
-      UObjectStruct & operator = (const UObjectStruct &b);
-      ~UObjectStruct();
-      UValue & operator [](string s);
-      UNamedValue & operator [](int i) {return array[i];} 
-      int size() {return array.size();}
+  public:
+    std::string refName;
+    std::vector<UNamedValue> array;
+    UObjectStruct();
+    UObjectStruct(const UObjectStruct &b);
+    UObjectStruct & operator = (const UObjectStruct &b);
+    ~UObjectStruct();
+    UValue & operator [](std::string s);
+    UNamedValue & operator [](int i) {return array[i];}
+    int size() {return array.size();}
 
   };
 
   class UValue {
-    public:
-      UDataType       type; 
-      ufloat          val;
-      union {
-	string         *stringValue;
-	UBinary        *binary;
-	UList          *list;
-	UObjectStruct  *object;
-	void           *storage; // internal 
-      };
+  public:
+    UDataType       type;
+    ufloat          val;
+    union {
+      std::string    *stringValue;
+      UBinary        *binary;
+      UList          *list;
+      UObjectStruct  *object;
+      void           *storage; // internal
+    };
 
-      UValue();
-      UValue(const UValue&);
-      explicit UValue(ufloat doubleValue);
-      explicit UValue(int intValue);
-      explicit UValue(char * val);
-      explicit UValue(const string &str);
-      explicit UValue(const UBinary &b);
-      explicit UValue(const UList & l);
-      explicit UValue(const UObjectStruct &o);
-	  explicit UValue(const USound &);
-	  explicit UValue(const UImage &);
-      operator ufloat() const;
-      operator string() const;
-      operator int() const {return (int)(ufloat)(*this);}
-      operator bool() const {return (bool)(int)(ufloat)(*this);}
-      operator UBinary() const; ///< deep copy
-	  operator UList() const; ///< deep copy
-      operator UImage() const; ///< ptr copy
-      operator USound() const; ///< ptr copy
-      UValue& operator=(const UValue&);
+    UValue();
+    UValue(const UValue&);
+    explicit UValue(ufloat doubleValue);
+    explicit UValue(int intValue);
+    explicit UValue(char * val);
+    explicit UValue(const std::string &str);
+    explicit UValue(const UBinary &b);
+    explicit UValue(const UList & l);
+    explicit UValue(const UObjectStruct &o);
+    explicit UValue(const USound &);
+    explicit UValue(const UImage &);
+    operator ufloat() const;
+    operator std::string() const;
+    operator int() const {return (int)(ufloat)(*this);}
+    operator bool() const {return (bool)(int)(ufloat)(*this);}
+    operator UBinary() const; ///< deep copy
+    operator UList() const; ///< deep copy
+    operator UImage() const; ///< ptr copy
+    operator USound() const; ///< ptr copy
+    UValue& operator=(const UValue&);
 
-      ~UValue();  
+    ~UValue();
 
-      ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
-      int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
+    ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
+    int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
   };
 
-  
+
   //! Provides easy access to variable properties
-  class UProp 
+  class UProp
   {
   public:
-    
+
     void operator =(const UValue &v ) ;
     void operator =(const double v ) ;
-    void operator =(const string & v ) ;
-    
+    void operator =(const std::string & v ) ;
+
     operator double() ;
-    operator string() ;
+    operator std::string() ;
     operator UValue() ;
-	  
-    UProp(UVar &owner, UProperty name):owner(owner),name(name){}
+
+  UProp(UVar &owner, UProperty name):owner(owner),name(name){}
 
   private:
-    
+
     UVar & owner;
     UProperty name;
-  
+
     //disable copy ctor and equal operator
     UProp & operator =(const UProp &b);
     UProp(const UProp &b);
   };
-  
-  
- 
-   //Helper macro to initialize UProps in UVar constructors
-  #define VAR_PROP_INIT \
-  rangemin(*this, PROP_RANGEMIN), \
-  rangemax(*this, PROP_RANGEMAX), \
-  speedmin(*this, PROP_SPEEDMIN), \
-  speedmax(*this, PROP_SPEEDMAX), \
-  delta(*this, PROP_DELTA), \
-  blend(*this, PROP_BLEND)
+
+
+
+  //Helper macro to initialize UProps in UVar constructors
+#  define VAR_PROP_INIT				\
+  rangemin(*this, PROP_RANGEMIN),		\
+    rangemax(*this, PROP_RANGEMAX),		\
+    speedmin(*this, PROP_SPEEDMIN),		\
+    speedmax(*this, PROP_SPEEDMAX),		\
+    delta(*this, PROP_DELTA),			\
+    blend(*this, PROP_BLEND)
 
   // *****************************************************************************
   //!UVar class definition
   class UVar
   {
   public:
-    
-    UVar() :VAR_PROP_INIT { name = "noname"; owned=false; vardata=0;};
-    UVar(UVar& v) :VAR_PROP_INIT  {};
-    UVar(const string&);
-    UVar(const string&, const string&);
-    UVar(UObject&, const string&);
+
+  UVar() :VAR_PROP_INIT { name = "noname"; owned=false; vardata=0;};
+  UVar(UVar& v) :VAR_PROP_INIT  {};
+    UVar(const std::string&);
+    UVar(const std::string&, const std::string&);
+    UVar(UObject&, const std::string&);
     ~UVar();
 
-    void init(const string&,const string&);
+    void init(const std::string&,const std::string&);
     void setOwned();
 
     void operator = ( ufloat );
-    void operator = ( string );
-    void operator = ( const UBinary &); 
+    void operator = ( std::string );
+    void operator = ( const UBinary &);
     void operator = ( const UImage &i); ///< No data is copied in plugin mode
     void operator = ( const USound &s); ///< No data is copied in plugin mode
 
@@ -502,8 +501,8 @@ urbi {
     operator UImage (); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
     operator USound(); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
     operator ufloat ();
-    operator string ();
-    operator UList();  
+    operator std::string ();
+    operator UList();
 
     void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
 
@@ -512,99 +511,99 @@ urbi {
     ufloat& out();
 
     bool owned; ///< is the variable owned by the module?
-		
-    //Property accessors 
-	
+
+    //Property accessors
+
     UProp rangemin;
     UProp rangemax;
     UProp speedmin;
     UProp speedmax;
     UProp delta;
     UProp blend;
-	
+
     UValue getProp(UProperty prop);
     void setProp(UProperty prop, const UValue &v);
     void setProp(UProperty prop, double v);
     void setProp(UProperty prop, const char * v);
-    void setProp(UProperty prop, const string &v) {setProp(prop,v.c_str());}
-    
+    void setProp(UProperty prop, const std::string &v) {setProp(prop,v.c_str());}
+
     // internal
     void __update(UValue&);
 
-  private:   
+  private:
     UValue& val() { return value; }; ///< XXX only works in softdevice mode
 
     UVardata  *vardata; ///< pointer to internal data specifics
-    void __init();	
+    void __init();
 
-    PRIVATE(string,name) ///< full name of the variable as seen in URBI      
-    PRIVATE(UValue,value) ///< the variable value on the softdevice's side    
-  };
+    PRIVATE(std::string,name) ///< full name of the variable as seen in URBI
+    PRIVATE(UValue,value) ///< the variable value on the softdevice's side
+      };
 
   inline void UProp::operator =(const UValue &v ) {owner.setProp(name,v);}
   inline void UProp::operator =(const double v ) {owner.setProp(name,v);}
-  inline void UProp::operator =(const string & v ) {owner.setProp(name,v);}
+  inline void UProp::operator =(const std::string & v ) {owner.setProp(name,v);}
   inline UProp::operator double() {return (double)owner.getProp(name);}
-  inline UProp::operator string()  {return (string)owner.getProp(name);}
+  inline UProp::operator std::string()  {return (std::string)owner.getProp(name);}
   inline UProp::operator UValue() {return owner.getProp(name);}
-	  
+
   // *****************************************************************************
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the
-      the interface user point's of view. 
+    the interface user point's of view.
   */
- 
+
   class UGenericCallback
   {
   public:
-    UGenericCallback(string objname, string type, string name, int size, UTable &t);
-    UGenericCallback(string objname, string type, string name, UTable &t);
+    UGenericCallback(std::string objname, std::string type, std::string name, int size, UTable &t);
+    UGenericCallback(std::string objname, std::string type, std::string name, UTable &t);
     virtual ~UGenericCallback();
-    
+
     virtual UValue __evalcall(UList &param)  = 0;
-    
+
     void   *storage; ///< used to store the UVar* pointeur for var monitoring
     ufloat period;   ///< period of timers
     int    nbparam;  ///< nb params of the callbacked function
-    string objname;  ///< name of the UObject that has created the callback
+    std::string objname;  ///< name of the UObject that has created the callback
 
   private:
-    string name; 
+    std::string name;
   };
 
   // *****************************************************************************
   //! Timer mechanism
   /*! This class stores a callback as a class method
-  */
+   */
 
   class UTimerCallback
   {
   public:
-    UTimerCallback(string objname, ufloat period, UTimerTable &tt);
+    UTimerCallback(std::string objname, ufloat period, UTimerTable &tt);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;
 
     ufloat period;
     ufloat lastTimeCalled;
-    string objname;
+    std::string objname;
   };
 
   // UTimerCallback subclasses
-    
+
   template <class T>
-  class UTimerCallbackobj : public UTimerCallback
+    class UTimerCallbackobj : public UTimerCallback
   {
   public:
-    UTimerCallbackobj(string objname, ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt): 
-      UTimerCallback(objname, period,tt), obj(obj), fun(fun) {};
-    
+  UTimerCallbackobj(std::string objname, ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt):
+    UTimerCallback(objname, period,tt), obj(obj), fun(fun) {};
+
     virtual void call() {
-      ((*obj).*fun)();        
+      ((*obj).*fun)();
     };
   private:
-      T* obj;
-      int (T::*fun) ();
+    T* obj;
+    int (T::*fun) ();
   };
 
   // *****************************************************************************
@@ -612,72 +611,72 @@ urbi {
   class UObject
   {
   public:
-    
-    UObject(const string&);
+
+    UObject(const std::string&);
     virtual ~UObject();
 
-    template <class T> 
-    void UNotifyChange (UVar& v, int (T::*fun) ()) { 
+    template <class T>
+      void UNotifyChange (UVar& v, int (T::*fun) ()) {
       createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
     }
 
     template <class T>
-    void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) { 
+      void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
-    template <class T> 
-    void UNotifyOnRequest (UVar& v, int (T::*fun) ()) { 
+    template <class T>
+      void UNotifyOnRequest (UVar& v, int (T::*fun) ()) {
       createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
     }
 
     template <class T>
-    void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&)) { 
+      void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
 
-    template <class T> 
-    void UNotifyChange (string name, int (T::*fun) ()) { 
+    template <class T>
+      void UNotifyChange (std::string name, int (T::*fun) ()) {
       createUCallback(__name, "var", (T*)this, fun, name, monitormap);
-    } 
+    }
 
     template <class T>
-    void UNotifyChange (string name, int (T::*fun) (UVar&)) { 
+      void UNotifyChange (std::string name, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, name, monitormap);
       if (cb) cb->storage = new UVar(name);
     }
 
 
     template <class T>
-    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) { 
+      void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "varaccess", (T*)this, fun, v.get_name(), accessmap);
       if (cb) cb->storage = (void*)(&v);
     }
 
     template <class T>
-    void USetTimer(ufloat t, int (T::*fun) ()) {
+      void USetTimer(ufloat t, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (__name, t,(T*)this, fun, timermap);
     }
-  
-    string __name; ///< name of the object as seen in URBI
-    string classname; ///< name of the class the object is derived from
-    bool   derived; ///< true when the object has been newed by an urbi command 
+
+    std::string __name; ///< name of the object as seen in URBI
+    std::string classname; ///< name of the class the object is derived from
+    bool   derived; ///< true when the object has been newed by an urbi command
 
     UObjectList members;
     UObjectHub  *objecthub; ///< the hub, if it exists
 
     void USetUpdate(ufloat);
-    virtual int update() {return 0;}; 
+    virtual int update() {return 0;};
 
-    UVar        load; ///< the load attribute is standard and can be used to control the activity 
-    		      ///< of the object
-  
+    UVar        load; ///< the load attribute is standard and can be used to control the activity
+		      ///< of the object
+
   private:
-    UObjectData*  objectData; ///< pointer to a globalData structure specific to the 
-                              ///< remote/plugin architectures who defines it.    
+    UObjectData*  objectData; ///< pointer to a globalData structure specific to the
+			      ///< remote/plugin architectures who defines it.
     ufloat period;
   };
 
@@ -687,44 +686,44 @@ urbi {
   class UObjectHub
   {
   public:
-    
-    UObjectHub(const string&);
+
+    UObjectHub(const std::string&);
     virtual ~UObjectHub();
 
     void addMember(UObject* obj);
 
     void USetUpdate(ufloat);
     virtual int update() {return 0;}
- 
-    UObjectList  members;  
-    UObjectList* getSubClass(string);
- //   UObjectList* getAllSubClass(string); //TODO
+
+    UObjectList  members;
+    UObjectList* getSubClass(std::string);
+    //   UObjectList* getAllSubClass(std::string); //TODO
 
   protected:
     int updateGlobal(); ///< this function calls update and the subclass update
 
     ufloat period;
-    string name;
+    std::string name;
   };
-      
+
   // *****************************************************************************
   // Casters
 
-  
+
 #ifndef _MSC_VER
 
-	// generic caster  , second parameter used only to guess correct type
+  // generic caster  , second parameter used only to guess correct type
   template <class T>  T cast(UValue &v, T* type) { return (T)v; }
 
-  // specializations 
+  // specializations
   UVar& cast(UValue &val, UVar *var);
   UBinary cast(UValue &v, UBinary * b);
   UList cast(UValue &v, UList *l);
   UObjectStruct cast(UValue &v, UObjectStruct *o);
-  
+
 #else
   //something weird happens when overloading with a different return type, so define everythiong by hand
-  
+
 #define SETCAST(type) inline type cast(UValue &val, type *inu) { return (type)val;}
 
   SETCAST(int); SETCAST(ufloat); SETCAST(std::string);
@@ -734,95 +733,95 @@ urbi {
   UObjectStruct cast(UValue &v, UObjectStruct *o);
 #endif
 
-  // **************************************************************************	
+  // **************************************************************************
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
   class baseURBIStarter
   {
   public:
 
-    baseURBIStarter(string name) : name(name) {};
+  baseURBIStarter(std::string name) : name(name) {};
     virtual ~baseURBIStarter() {};
 
     virtual UObject* getUObject() = 0;
 
-    virtual void init(string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
-    virtual void copy(string) = 0; ///< Used to provide a copy of a C++ object based on its name
-    string name;
+    virtual void init(std::string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
+    virtual void copy(std::string) = 0; ///< Used to provide a copy of a C++ object based on its name
+    std::string name;
   };
 
   //! This is the class containing URBI starters
   /** A starter is a class whose job is to start an instance of a particular UObject subclass,
-    * resulting in the initialization of this object (registration to the kernel)
-    */
+   * resulting in the initialization of this object (registration to the kernel)
+   */
   template <class T> class URBIStarter : public baseURBIStarter
   {
   public:
-    URBIStarter(string name, UStartlist& _slist) : baseURBIStarter(name)
-    	{ slist = &_slist;
-	  slist->push_back(dynamic_cast<baseURBIStarter*>(this)); 
-	};
+  URBIStarter(std::string name, UStartlist& _slist) : baseURBIStarter(name)
+    { slist = &_slist;
+      slist->push_back(dynamic_cast<baseURBIStarter*>(this));
+    };
     virtual ~URBIStarter() { UObject* tokill = getUObject();
-    	                     if (tokill) delete tokill;};
+      if (tokill) delete tokill;};
 
-    virtual void copy(string objname) {
-      	URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
-	ustarter->init(objname);
-	dynamic_cast<UObject*>(object)->members.push_back(dynamic_cast<UObject*>(ustarter->object));
- 	dynamic_cast<UObject*>(ustarter->object)->derived   = true;
-        dynamic_cast<UObject*>(ustarter->object)->classname = 
-	  dynamic_cast<UObject*>(object)->classname;
+    virtual void copy(std::string objname) {
+      URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
+      ustarter->init(objname);
+      dynamic_cast<UObject*>(object)->members.push_back(dynamic_cast<UObject*>(ustarter->object));
+      dynamic_cast<UObject*>(ustarter->object)->derived   = true;
+      dynamic_cast<UObject*>(ustarter->object)->classname =
+	dynamic_cast<UObject*>(object)->classname;
     };
 
-    virtual UObject* getUObject() { 
+    virtual UObject* getUObject() {
       return dynamic_cast<UObject*>(object);
     }; ///< access to the object from the outside
-    
+
 
   protected:
-    virtual void init(string objname) { 
-       object = new T(objname);
-    }; ///< Called when the object is ready to be initialized    
-    
+    virtual void init(std::string objname) {
+      object = new T(objname);
+    }; ///< Called when the object is ready to be initialized
+
     UStartlist  *slist;
     T*          object;
-  };	
+  };
 
-  // **************************************************************************	
+  // **************************************************************************
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
   class baseURBIStarterHub
   {
   public:
 
-    baseURBIStarterHub(string name) : name(name) {};
+  baseURBIStarterHub(std::string name) : name(name) {};
     virtual ~baseURBIStarterHub() {};
 
-    virtual void init(string) = 0; ///< Used to provide a wrapper to initialize objects in starterlist
+    virtual void init(std::string) = 0; ///< Used to provide a wrapper to initialize objects in starterlist
     virtual UObjectHub* getUObjectHub() = 0;
-    string name;    
+    std::string name;
   };
 
   //! This is the class containing URBI starters
   /** A starter is a class whose job is to start an instance of a particular UObject subclass,
-    * resulting in the initialization of this object (registration to the kernel)
-    */
+   * resulting in the initialization of this object (registration to the kernel)
+   */
   template <class T> class URBIStarterHub : public baseURBIStarterHub
   {
   public:
-    URBIStarterHub(string name, UStartlistHub& _slist) : baseURBIStarterHub(name)
-    	{ slist = &_slist;
-	  slist->push_back(dynamic_cast<baseURBIStarterHub*>(this)); 
-	};
+  URBIStarterHub(std::string name, UStartlistHub& _slist) : baseURBIStarterHub(name)
+    { slist = &_slist;
+      slist->push_back(dynamic_cast<baseURBIStarterHub*>(this));
+    };
     virtual ~URBIStarterHub() { };
 
   protected:
-    virtual void init(string objname) { 
-       object = new T(objname); 
-    }; ///< Called when the object is ready to be initialized    
+    virtual void init(std::string objname) {
+      object = new T(objname);
+    }; ///< Called when the object is ready to be initialized
 
-    virtual UObjectHub* getUObjectHub() { 
+    virtual UObjectHub* getUObjectHub() {
       return dynamic_cast<UObjectHub*>(object);
     }; ///< access to the object from the outside
-    
+
     UStartlistHub  *slist;
     T*                 object;
   };
@@ -830,110 +829,109 @@ urbi {
   /**********************************************************/
   // This section is autogenerated. Not for humans eyes ;)
   /**********************************************************/
-  
+
   template<typename T> class utrait {
   public:
     typedef T noref;
   };
-  
+
 #ifndef _MSC_VER
-  
+
   template<typename T> class utrait<T&> {
   public:
     typedef T noref;
   };
-  
-#else  
-  
+
+#else
+
   template<> class utrait<UVar&> {
   public:
     typedef UVar noref;
   };
-  
+
 #endif
 
 %%%% 0 16
 
   // non void return type
-  
+
   template <class OBJ, class R%%, class P% %%>
-    class UCallback%N% : public UGenericCallback
+  class UCallback%N% : public UGenericCallback
   {
   public:
-    UCallback%N%(string objname, string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
-      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
+    UCallback%N%(std::string objname, std::string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), std::string funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
     virtual UValue __evalcall(UList& param) {
       return UValue(( (*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
     };
   private:
     OBJ* obj;
-    R (OBJ::*fun) (%%%,% P% %%); 
+    R (OBJ::*fun) (%%%,% P% %%);
   };
-   
+
   // void return type
 
   template <class OBJ%%, class P% %%>
     class UCallbackvoid%N% : public UGenericCallback
   {
   public:
-    UCallbackvoid%N%(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname, UTable &t): 
-      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
-    
+    UCallbackvoid%N%(std::string objname, std::string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), std::string funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
+
     virtual UValue __evalcall(UList &param) {
       ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
       return UValue();
     };
   private:
-      OBJ* obj;
-      void (OBJ::*fun) (%%%,% P% %%);
+    OBJ* obj;
+    void (OBJ::*fun) (%%%,% P% %%);
   };
-  
+
   // void return type : special case for notifyend event callbacks
 
   template <class OBJ%%, class P% %%>
     class UCallbacknotifyend%N% : public UGenericCallback
   {
   public:
-    UCallbacknotifyend%N%(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),string funname, UTable &t): 
-      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(end) {};
-    
+    UCallbacknotifyend%N%(std::string objname, std::string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),std::string funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(end) {};
+
     virtual UValue __evalcall(UList &) {
       ((*obj).*fun)();
       return UValue();
     };
   private:
-      OBJ* obj;
-      void (OBJ::*fun) ();
+    OBJ* obj;
+    void (OBJ::*fun) ();
   };
 
-  
+
   // callback creation for non void return type
-  
-  template <class OBJ, class R%%, class P% %%> 
-  UGenericCallback* createUCallback(string objname, string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), string funname,UTable &t) {
+
+  template <class OBJ, class R%%, class P% %%>
+    UGenericCallback* createUCallback(std::string objname, std::string type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), std::string funname,UTable &t) {
     return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t));
   }
-  
-  // callback creation for void return type 
-  
-  template <class OBJ%%, class P% %%> 
-  UGenericCallback* createUCallback(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), string funname,UTable &t) {
+
+  // callback creation for void return type
+
+  template <class OBJ%%, class P% %%>
+    UGenericCallback* createUCallback(std::string objname, std::string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), std::string funname,UTable &t) {
     return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t));
   }
-   
+
   // special case for eventend notification
-  template <class OBJ%%, class P% %%> 
-  UGenericCallback* createUCallback(string objname, string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), string funname,UTable &t) {
+  template <class OBJ%%, class P% %%>
+    UGenericCallback* createUCallback(std::string objname, std::string type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), std::string funname,UTable &t) {
     return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t));
   }
-   
 
-%%%%
-  
 
-} // end namespace urbi
+  %%%%
+
+
+    } // end namespace urbi
 
 std::ostream & operator <<(std::ostream &s, const urbi::UValue &v);
 
 #endif
-
