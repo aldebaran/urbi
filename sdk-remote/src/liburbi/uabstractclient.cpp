@@ -937,6 +937,7 @@ UCallbackID UAbstractClient::addCallback(const char * tag, UCallbackWrapper &w) 
 UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *message, 
                     list<BinaryData> bins)
   : client(client), timestamp(timestamp),  tag(tag), value(0){
+	  rawMessage = string(message);
   while (message[0] ==' ') message++;
   //parse non-value messages
   if (message[0] == '*') {
@@ -968,7 +969,7 @@ UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *m
 UMessage::UMessage(const UMessage &b)
   :client(b.client)
 {
-
+  rawMessage = b.rawMessage;
   timestamp = b.timestamp;
   tag = b.tag;
   type = b.type;

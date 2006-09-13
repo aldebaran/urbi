@@ -90,7 +90,7 @@ class UMessage {
   UValue             *value;
   string             message;
   
-  
+  string             rawMessage; ///< Raw message without the binary data
   /// Parser constructor
   UMessage(UAbstractClient & client, int timestamp,  char *tag, char *message, 
            list<BinaryData> bins);
