@@ -128,7 +128,7 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y) {
 
 UCallbackAction
 BallTrackingHead::getHead(bool pan, const UMessage &msg) {
-  if (msg.type != MESSAGE_DATA && msg.value->type != DATA_DOUBLE)
+  if (msg.type != MESSAGE_DATA && msg.value->type != urbi::DATA_DOUBLE)
     return URBI_CONTINUE;
 
   PositionData pd;
@@ -154,8 +154,8 @@ UCallbackAction BallTrackingHead::getImage(const UMessage &msg) {
   static int frametime=0;
 
   if (msg.type != MESSAGE_DATA
-      && msg.value->type != DATA_BINARY
-      && msg.value->binary->type != BINARY_IMAGE)
+      && msg.value->type != urbi::DATA_BINARY
+      && msg.value->binary->type != urbi::BINARY_IMAGE)
     return URBI_CONTINUE;
 
   UImage& img = msg.value->binary->image;
@@ -184,7 +184,7 @@ UCallbackAction BallTrackingHead::getImage(const UMessage &msg) {
   }
   framenum++;
   int imgsize = 500000;
-  if (img.imageFormat == IMAGE_JPEG)
+  if (img.imageFormat == urbi::IMAGE_JPEG)
     convertJPEGtoYCrCb((const byte *) img.data,
 		       img.size, image, imgsize);
   else

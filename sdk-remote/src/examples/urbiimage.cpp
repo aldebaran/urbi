@@ -41,8 +41,8 @@ unsigned char * buffer=NULL;
 UCallbackAction showImage(const UMessage &msg)
 {
   if (msg.type != MESSAGE_DATA
-      && msg.value->type != DATA_BINARY
-      && msg.value->binary->type != BINARY_IMAGE)
+      && msg.value->type != urbi::DATA_BINARY
+      && msg.value->binary->type != urbi::BINARY_IMAGE)
     return URBI_CONTINUE;
 
   UImage& img = msg.value->binary->image;
@@ -65,9 +65,9 @@ UCallbackAction showImage(const UMessage &msg)
     mon = new Monitor(img.width, img.height, "image");
 
 
-  if (img.imageFormat == IMAGE_JPEG)
+  if (img.imageFormat == urbi::IMAGE_JPEG)
     convertJPEGtoRGB((const byte *) img.data, img.size, (byte *) buffer, sz);
-  else if (img.imageFormat == IMAGE_YCbCr) {
+  else if (img.imageFormat == urbi::IMAGE_YCbCr) {
     sz = img.size;
     convertYCrCbtoRGB((const byte *) img.data, img.size, (byte *) buffer);
   }
@@ -131,20 +131,22 @@ int main(int argc, char *argv[])
     int w, h;
     switch (argv[2][0]) {
     case 'r':
-      format = IMAGE_RGB;
+      format = urbi::IMAGE_RGB;
       break;
     case 'y':
-      format = IMAGE_YCbCr;
+      format = urbi::IMAGE_YCbCr;
       break;
     case 'p':
-      format = IMAGE_PPM;
+      format = urbi::IMAGE_PPM;
       break;
     case 'j':
-      format = IMAGE_JPEG;
+      format = urbi::IMAGE_JPEG;
       break;
     };
 
-    client.syncGetImage("camera", buff, sz, format,  format == IMAGE_JPEG?URBI_TRANSMIT_JPEG:URBI_TRANSMIT_YCbCr, w, h);
+    client.syncGetImage("camera", buff, sz,
+			format,
+			format == urbi::IMAGE_JPEG?URBI_TRANSMIT_JPEG:URBI_TRANSMIT_YCbCr, w, h);
 
     FILE *f = fopen(argv[3], "w");
 

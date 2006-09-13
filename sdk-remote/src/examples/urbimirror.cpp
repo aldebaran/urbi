@@ -27,7 +27,7 @@ int devCount=18;
 UCallbackAction command(const UMessage &msg) {
   //get command id
   if (msg.type != MESSAGE_DATA
-      && msg.value->type != DATA_DOUBLE)
+      && msg.value->type != urbi::DATA_DOUBLE)
     return URBI_CONTINUE;
   d->send("%s.val = %lf,", msg.tag.c_str (), (double) *msg.value);
   return URBI_CONTINUE;

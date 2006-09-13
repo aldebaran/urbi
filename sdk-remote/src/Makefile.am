@@ -1,1 +1,1 @@
-SUBDIRS = liburbi
+SUBDIRS = liburbi utils examples

@@ -12,6 +12,17 @@ libjpeg_la_SOURCES = \
         jfdctint.c jidctflt.c jidctfst.c jidctint.c jidctred.c jquant1.c \
         jquant2.c jutils.c jmemmgr.c
 
+libjpeg_la_SOURCES += 							   \
+cderror.h       jerror.h        jmorecfg.h      jversion.h		   \
+cdjpeg.h        jdct.h          jinclude.h      jpegint.h       transupp.h \
+jchuff.h        jdhuff.h        jmemsys.h       jpeglib.h
+
 # We use the stock memory allocator.
 libjpeg_la_SOURCES += jmemnobs.c
 
+# FIXME: We used a prebuild config.h.  This is certainly wrong...
+libjpeg_la_SOURCES += jconfig.h
+
+EXTRA_DIST =							\
+coderules.doc   install.doc     libjpeg.doc     usage.doc	\
+filelist.doc    jconfig.doc     structure.doc   wizard.doc

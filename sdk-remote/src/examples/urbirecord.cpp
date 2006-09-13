@@ -74,28 +74,35 @@ UCallbackAction command(const UMessage &msg) {
   //get command id
   static int tme=0;
   int id;
- 
- 
+
+
   //printf("-\n");
-  for (int i=0;i<devCount;i++) {
-	if (!strcmp(msg.tag,devices[i])) {
+  for (int i=0;i<devCount;i++) 
+    {
+      if (msg.tag != devices[i])
+	{
 	  UCommand uc;
 	  uc.timestamp=msg.timestamp;
 	  uc.id=i;
-	  uc.value.angle=msg.doubleValue;
-	 
+	  assert (msg.type == MESSAGE_DATA);
+	  assert (msg.value->type == urbi::DATA_DOUBLE);
+	  uc.value.angle=msg.value->val;
+
 	  fwrite(&uc,sizeof(UCommand),1,f);
 	  tilt++;
-	  if (! (tilt%100)) {
-		if (tme) fprintf(stderr, ". %f cps\n",100000.0/(float)(msg.client.getCurrentTime()-tme));
-		tme=msg.client.getCurrentTime();
-	  }
+	  if (! (tilt%100))
+	    {
+	      if (tme)
+		fprintf(stderr, ". %f cps\n",
+			100000.0/(float)(msg.client.getCurrentTime()-tme));
+	      tme=msg.client.getCurrentTime();
+	    }
 	  return URBI_CONTINUE;
 	}
-  }
-  fprintf(stderr,"error: no device %s (in %s)\n", msg.tag,command);
+    }
+  fprintf (stderr, "error: no device %s (in %s)\n", msg.tag.c_str (),command);
   return URBI_CONTINUE;
-	
+
 }
 
 void endRecord(int sig) {
@@ -104,9 +111,9 @@ void endRecord(int sig) {
 }
 
 int main(int argc, char * argv[]) {
-  if (argc<3) {
-	printf("usage: %s robotname file\n\t Records a sequence of movements to a file.\n",argv[0]);
-	exit(1);
+  if (argc != 3) {
+    printf("usage: %s robotname file\n\t Records a sequence of movements to a file.\n",argv[0]);
+    exit(1);
   }
   signal(SIGINT,endRecord);
   c = new UClient(argv[1]);
@@ -126,7 +133,7 @@ int main(int argc, char * argv[]) {
   c->setCallback(command,devices[devCount-1]);
   c->send("%s: %s.val},",devices[devCount-1], devices[devCount-1]);
 
- 
+
   fprintf(stderr,"starting, hit ctrl-c to stop...\n");
   urbi::execute();
 }

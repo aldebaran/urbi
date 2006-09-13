@@ -1,5 +1,14 @@
 2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
 
+	"make dist" passes.  distcheck does not.
+	* src/liburbi/openr/Makefile.am: New, based on..
+	* src/liburbi/openr/Makefile.in: this.
+	* src/Makefile.am (SUBDIRS): Go into the utils and examples.
+	* lib/jpeg-6b/Makefile.am: Add missing files.
+	Remove obsolete/useless ones.
+
+2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+
 	Big multipurpose patch.  Don't do this at home.
 	* bootstap: New.
 	* configure.ac: Upgrade style.
@@ -19,7 +28,7 @@
 	* src/liburbi/uobject/uexternal.h, src/liburbi/uobject/uobject.cc,
 	* src/liburbi/uobject/uobject.template.h,
 	* src/liburbi/uobject/uvar.cc, src/liburbi/usyncclient.cpp,
-	* src/liburbi/usyncclient.h: 
+	* src/liburbi/usyncclient.h:
 	Fix indentation style at various places.
 	Use standard C++ headers (e.g., cstdio, not stdio.h).
 	Don't use using.

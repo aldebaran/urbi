@@ -8,4 +8,4 @@ urbireverse_SOURCES = urbireverse.cpp
 urbiscale_SOURCES = urbiscale.cpp
 urbiwalk_SOURCES = urbiwalk.cpp Move.cpp Move.h
 
-urbiwalk_LDADD = $(top_srcdir)/src/liburbi/liburbi.a
+urbiwalk_LDADD = $(top_builddir)/src/liburbi/liburbi.la

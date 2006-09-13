@@ -13,21 +13,21 @@ static int starttime=0;
 
 UCallbackAction bw(const UMessage &msg) {
   assert (msg.type == MESSAGE_DATA);
-  assert (msg.value->type == DATA_BINARY);
-  assert (msg.value->binary->type == BINARY_IMAGE);
+  assert (msg.value->type == urbi::DATA_BINARY);
+  assert (msg.value->binary->type == urbi::BINARY_IMAGE);
 
   //aproximately, but since bsz is more or less 400k...
   totalsize += (msg.value->binary->image.size
 		+ msg.tag.size ()
-		+ 20); 
+		+ 20);
 
-  if (msg.tag != "be") 
+  if (msg.tag != "be")
     {
       msg.client.printf("received %d bytes in %d miliseconds: bandwidth is %d bytes per second.\n",
 			totalsize,
 			msg.client.getCurrentTime()-starttime,
 			totalsize*1000/(msg.client.getCurrentTime()-starttime));
-      
+
       over=true;
   }
 
@@ -36,13 +36,13 @@ UCallbackAction bw(const UMessage &msg) {
 
 int main(int argc, char * argv[]) {
  if (argc != 2) {
-   printf("usage: %s robot\n", argv[0]); 
+   printf("usage: %s robot\n", argv[0]);
    urbi::exit(1);
  }
 
  UClient &c= * new UClient(argv[1]);
 
- if (c.error()) 
+ if (c.error())
    urbi::exit(1);
 
  c.printf("requesting raw images from server to test bandwidth...\n");

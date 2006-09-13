@@ -3,7 +3,7 @@
  *
  * Sample urbi client that sends commands contained in a file.
  *
- * Copyright (C) 2004 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,29 +23,41 @@
 
 /* This is a trivial demonstration program that send commands contained in a file to an urbi server */
 
-#include <stdio.h>
+#include <cstdio>
 #include "uclient.h"
 
-UCallbackAction dump(const UMessage & msg) {
-  switch (msg.type) {
-  case MESSAGE_DOUBLE:
-    printf("%d %s %lf\n", msg.timestamp, msg.tag, msg.doubleValue);
-    break;
-  case MESSAGE_STRING:
-  case MESSAGE_ERROR:
-  case MESSAGE_SYSTEM:
-    printf("%d %s %s\n", msg.timestamp, msg.tag, msg.stringValue);
-    break;
-  case MESSAGE_LIST:
-    printf("%d %s %d [", msg.timestamp, msg.tag, msg.listSize);
-    for (int i=0;i<msg.listSize;i++)
-      if (msg.listValue[i].type == MESSAGE_DOUBLE)
-	printf("%lf, ", msg.listValue[i].doubleValue);
-      else
-	printf("'%s', ", msg.listValue[i].stringValue);
-    printf("]\n");
-    break;
-  }
+UCallbackAction dump(const UMessage & msg)
+{
+  // FIXME: This is absolutely not completely migrated.
+  // To be finished -- Akim.
+  switch (msg.type)
+    {
+    case urbi::MESSAGE_DATA:
+      switch (msg.value->type):
+	{
+	case urbi::DATA_DOUBLE:
+	  printf("%d %s %lf\n", msg.timestamp, msg.tag, msg.value->val);
+	  break;
+	case urbi::DATA_STRING:
+	  printf("%d %s %lf\n", msg.timestamp, msg.tag, msg.value->val);
+	  break;
+	case urbi::DATA_LIST:
+	  printf("%d %s %d [", msg.timestamp, msg.tag, msg.listSize);
+	  for (int i = 0; i < msg.listSize; i++)
+	    if (msg.listValue[i].type == MESSAGE_DOUBLE)
+	      printf("%lf, ", msg.listValue[i].doubleValue);
+	    else
+	      printf("'%s', ", msg.listValue[i].stringValue);
+	  printf("]\n");
+	  break;
+	}
+      break;
+
+    case urbi::MESSAGE_ERROR:
+    case urbi::MESSAGE_SYSTEM:
+      printf("%d %s %s\n", msg.timestamp, msg.tag, msg.stringValue);
+      break;
+    }
   return URBI_CONTINUE;
 }
 
@@ -54,13 +66,14 @@ int main(int argc, char *argv[])
 {
   UClient *client;
 
-  if (argc < 3) {
-    fprintf(stderr, "Missing file name\nUsage: urbisend robotname filename\n");
-    exit(1);
-  }
+  if (argc != 3)
+    {
+      fprintf (stderr,
+	       "Missing file name\nUsage: urbisend robotname filename\n");
+      exit(1);
+    }
 
- 
-    client = new UClient(argv[1]);
+  client = new UClient(argv[1]);
   if (client->error() != 0)
     exit(0);
   client->setWildcardCallback(callback(&dump));

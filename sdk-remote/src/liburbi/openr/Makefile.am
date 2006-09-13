@@ -1,21 +1,6 @@
-srcdir = @srcdir@
-top_srcdir = @top_srcdir@
-INSTALL = @INSTALL@
-install_sh = @install_sh@
-install_sh_DATA = $(install_sh) -c -m 644
-install_sh_PROGRAM = $(install_sh) -c
-install_sh_SCRIPT = $(install_sh) -c
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-bindir = @bindir@
-libdir = @libdir@
-includedir = @includedir@
-datadir = @datadir@
-
-OPENR		= @OPENR_SDK_PATH@
-CXX			= $(OPENR)/bin/mipsel-linux-g++
-CC			= $(OPENR)/bin/mipsel-linux-gcc
+OPENR		= $(OPENR_SDK_PATH)
+CXX		= $(OPENR)/bin/mipsel-linux-g++
+CC		= $(OPENR)/bin/mipsel-linux-gcc
 STRIP		= $(OPENR)/bin/mipsel-linux-strip
 MKBIN		= $(OPENR)/OPEN_R/bin/mkbin
 STUBGEN		= $(OPENR)/OPEN_R/bin/stubgen2
@@ -30,8 +15,6 @@ RANLIB_OPENR= $(OPENR)/bin/mipsel-linux-ranlib
 LIBJPEGDIR	= ../../../lib/jpeg-6b
 LIBJPEG		= $(LIBJPEGDIR)/libjpeg.mips.a
 
-
-
 CXXFLAGS+= \
 	-O2 \
 	-I. \
@@ -41,10 +24,11 @@ CXXFLAGS+= \
 	-I$(LIBJPEGDIR)	\
 	-I$(LIBURBIDIR)
 
-SOURCES =		 uclient.cc		\
-			 aiboconnection.cc	\
-			 uqueue.cc		\
-			 ../uabstractclient.cpp
+SOURCES =					\
+  uclient.cc					\
+  aiboconnection.cc				\
+  uqueue.cc					\
+  ../uabstractclient.cpp
 
 OBJA = $(SOURCES:.cc=.mips.o)
 OBJ = $(OBJA:.cpp=.mips.o)
@@ -74,20 +58,15 @@ liburbi.mips.a: $(OBJ) $(LIBJPEG)
 	$(CC) $(CXXFLAGS) -o $@ -c $^
 
 
-
-
 $(LIBJPEG):
 	$(RM) $(LIBJPEG)
 	make -C $(LIBJPEGDIR) -f makefile.aibo
 
-clean:
+clean-local:
 	make -C $(LIBJPEGDIR) -f makefile.aibo clean
 	rm -f *.mips.o *.BIN *.elf *.snap.cc *~ ../*.mips.o
 
-distclean: clean
-
-
-install:  liburbi.mips.a
+install-exec-local:  liburbi.mips.a
 	$(mkinstalldirs) $(bindir)
 	echo "cp $(datadir)/Makefile.aibo ./ && make -f  ./Makefile.aibo prepare" '$$*' >  $(bindir)/make.openr
 	chmod 755  $(bindir)/make.openr
@@ -99,9 +78,7 @@ install:  liburbi.mips.a
 	$(INSTALL) uclient.h aiboconnection.h uconnection.h uqueue.h utypes.h $(includedir)/openr
 	$(INSTALL) ../uabstractclient.h  $(includedir)
 
-uninstall:
-	$(rm)  $(libdir)/liburbi.mips.a
-	$(rm)  $(datadir)/Makefile.aibo
-	$(rm)  $(bindir)/make.openr
-
-.PHONY: all install clean
+uninstall-local:
+	$(rm) $(libdir)/liburbi.mips.a
+	$(rm) $(datadir)/Makefile.aibo
+	$(rm) $(bindir)/make.openr
