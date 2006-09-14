@@ -400,6 +400,6 @@ UCallbackAction Move::moveEnd(const UMessage &msg)
   if (moving <= 0
       && usertag[0])
     robot->notifyCallbacks(UMessage(*robot, msg.timestamp, usertag,
-				    "***end move", NULL, 0));
+		"***end move", std::list<urbi::BinaryData>()));
   return URBI_CONTINUE;
 }

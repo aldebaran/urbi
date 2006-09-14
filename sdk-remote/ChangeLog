@@ -1,3 +1,17 @@
+2006-09-14  Matthieu Nottale <nottale@gostai.com>
+
+        * src/utils/Makefile.am (AM_CXXFLAGS): Fix 
+	  (PTHREAD_CFLAGS and not PTHREAD_LIBS, cf src/examples/Makefile.am).
+	* src/examples/urbispeak.cpp, src/liburbi/usoftdevice.h: 
+          remove (deprecated API).
+	* src/liburbi/lockable.h : Fix deprecated pthread_mutexattr_setkind
+	  under linux.
+	* src/examples/*.cpp : Finish port to 1.0 API.
+	* src/examples/monitor-win.cpp : dos2unixize it
+	* src/liburbi/uobject/uobject.template.h,
+	src/liburbi/uabstractclient.h, src/liburbi/uobject/common_uvalue.cc:
+	  UMessage constructor uses const parameters, as does UValue::parse
+
 2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
 
 	* src/utils/Makefile.am (AM_CXXFLAGS): Fix.

@@ -85,7 +85,7 @@ void unescape(char * data) {
 
 
 
-int UValue::parse(char * message, int pos,
+int UValue::parse(const char * message, int pos,
 		  std::list<BinaryData> bins,
 		  std::list<BinaryData>::iterator &binpos)
 {

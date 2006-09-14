@@ -45,7 +45,7 @@ UCallbackAction showImage(const UMessage &msg)
       && msg.value->binary->type != urbi::BINARY_IMAGE)
     return URBI_CONTINUE;
 
-  UImage& img = msg.value->binary->image;
+  urbi::UImage& img = msg.value->binary->image;
 
   static unsigned char* buffer = (unsigned char*) malloc(3*400*400);
   int sz = 500000;

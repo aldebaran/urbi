@@ -89,7 +89,7 @@ UCallbackAction endProgram(const UMessage &msg) {
 
 UCallbackAction getSound(const UMessage &msg)
 {
-  static USound out;
+  static urbi::USound out;
   static bool initialized=false;
   if (!initialized) {
     totallength = 0;
@@ -100,21 +100,23 @@ UCallbackAction getSound(const UMessage &msg)
       out.channels = 2;
       out.sampleSize = 16;
       out.rate = 16000;
-      out.sampleFormat = SAMPLE_SIGNED;   
+      out.sampleFormat = urbi::SAMPLE_SIGNED;   
     }
     else {
       out.channels = 0;
       out.sampleSize = 0;
       out.rate = 0;
-      out.sampleFormat = (USoundSampleFormat)0;
+      out.sampleFormat = (urbi::USoundSampleFormat)0;
     }
   }
  
-  if (msg.binaryType != BINARYMESSAGE_SOUND)
+  if (msg.type != MESSAGE_DATA 
+	  || msg.value->type != urbi::DATA_BINARY 
+      || msg.value->binary->type != urbi::BINARY_SOUND)
     return URBI_CONTINUE;
-  out.soundFormat = withheader? SOUND_WAV:SOUND_RAW;
+  out.soundFormat = withheader? urbi::SOUND_WAV:urbi::SOUND_RAW;
   withheader = false;
-  convert(msg.sound, out);
+  convert(msg.value->binary->sound, out);
   totallength += out.size;
   fwrite(out.data, out.size, 1, file);
   return URBI_CONTINUE;

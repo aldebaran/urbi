@@ -947,7 +947,8 @@ UCallbackID UAbstractClient::addCallback(const char * tag, UCallbackWrapper &w) 
 }
 
 
-UMessage::UMessage(UAbstractClient & client, int timestamp,   char *tag, char *message,
+UMessage::UMessage(UAbstractClient & client, int timestamp, 
+				   const char *tag, const char *message,
 		   std::list<urbi::BinaryData> bins)
   : client(client), timestamp(timestamp),  tag(tag), value(0){
   rawMessage = std::string(message);

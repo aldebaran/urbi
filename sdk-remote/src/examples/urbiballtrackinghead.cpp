@@ -158,7 +158,7 @@ UCallbackAction BallTrackingHead::getImage(const UMessage &msg) {
       && msg.value->binary->type != urbi::BINARY_IMAGE)
     return URBI_CONTINUE;
 
-  UImage& img = msg.value->binary->image;
+  urbi::UImage& img = msg.value->binary->image;
   double cx=0, cy=0;
   /*
     std::vector<PositionData>::iterator it = find(current_x.begin(), current_x.end(), msg.timestamp/32);

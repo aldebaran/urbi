@@ -32,30 +32,14 @@ UCallbackAction dump(const UMessage & msg)
   // To be finished -- Akim.
   switch (msg.type)
     {
-    case urbi::MESSAGE_DATA:
-      switch (msg.value->type):
-	{
-	case urbi::DATA_DOUBLE:
-	  printf("%d %s %lf\n", msg.timestamp, msg.tag, msg.value->val);
-	  break;
-	case urbi::DATA_STRING:
-	  printf("%d %s %lf\n", msg.timestamp, msg.tag, msg.value->val);
-	  break;
-	case urbi::DATA_LIST:
-	  printf("%d %s %d [", msg.timestamp, msg.tag, msg.listSize);
-	  for (int i = 0; i < msg.listSize; i++)
-	    if (msg.listValue[i].type == MESSAGE_DOUBLE)
-	      printf("%lf, ", msg.listValue[i].doubleValue);
-	    else
-	      printf("'%s', ", msg.listValue[i].stringValue);
-	  printf("]\n");
-	  break;
-	}
+    case MESSAGE_DATA:
+		std::cerr << *msg.value << std::endl;
       break;
 
-    case urbi::MESSAGE_ERROR:
-    case urbi::MESSAGE_SYSTEM:
-      printf("%d %s %s\n", msg.timestamp, msg.tag, msg.stringValue);
+    case MESSAGE_ERROR:
+    case MESSAGE_SYSTEM:
+		std::cerr << msg.timestamp << " " << msg.tag.c_str() << " "
+		  << msg.message.c_str() << std::endl;
       break;
     }
   return URBI_CONTINUE;

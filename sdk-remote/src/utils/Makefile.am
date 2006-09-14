@@ -1,7 +1,7 @@
 AM_CPPFLAGS =					\
 -I$(top_builddir)/src/liburbi/uobject		\
 -I$(top_srcdir)/src/liburbi
-AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
 bin_PROGRAMS = urbicycle urbireverse urbiwalk urbiscale
 

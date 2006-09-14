@@ -19,7 +19,6 @@ urbisend					\
 urbisendbin					\
 urbisendsound					\
 urbisound					\
-urbispeak					\
 urbitalkie
 
 
@@ -44,6 +43,5 @@ urbisend_SOURCES = urbisend.cpp
 urbisendbin_SOURCES = urbisendbin.cpp
 urbisendsound_SOURCES = urbisendsound.cpp
 urbisound_SOURCES = urbisound.cpp
-urbispeak_SOURCES = urbispeak.cpp
 urbitalkie_SOURCES = urbitalkie.cpp
 

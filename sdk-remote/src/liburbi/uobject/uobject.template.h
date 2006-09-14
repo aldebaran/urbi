@@ -128,13 +128,13 @@ _STD_END
 #endif
 
 
-// Simply use: UStart(myUObjectType) and the rest will be taken care of.
+/// This macro must be called once for every UObject class.
 #define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(std::string(#x),objectlist)
-// Simply use: UStartHub(myUObjectHubType) and the rest will be taken care of.
+/// This macro must be called once for each UObjectHub class.
 #define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(std::string(#x),objecthublist)
 
 
-// Variable binding
+/// Bind 
 #define UBindVar(obj,x) x.init(__name,#x)
 
 // Used for sensor+actuator variables
@@ -432,7 +432,7 @@ namespace urbi
     ~UValue();
 
     ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
-    int parse(char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
+    int parse(const char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
   };
 
 

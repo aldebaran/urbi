@@ -79,7 +79,7 @@ class UMessage {
   std::string        rawMessage; ///< Raw message without the binary data
 
   /// Parser constructor
-  UMessage(UAbstractClient & client, int timestamp,  char *tag, char *message,
+  UMessage(UAbstractClient & client, int timestamp,  const char *tag, const char *message,
 	   std::list<urbi::BinaryData> bins);
   /// If alocate is true, everything is copied, eles pointers are stolen
   UMessage(const UMessage &source);

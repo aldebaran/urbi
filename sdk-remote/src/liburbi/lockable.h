@@ -44,7 +44,9 @@ inline void initLock(Lock &l) {
   // cygwin
   pthread_mutexattr_setkind_np(&ma, PTHREAD_MUTEX_RECURSIVE);
 #else
-  pthread_mutexattr_setkind_np(&ma, PTHREAD_MUTEX_RECURSIVE_NP);
+  // deprecated according to man page and fails to compile
+  // pthread_mutexattr_setkind_np(&ma, PTHREAD_MUTEX_RECURSIVE_NP);
+  pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE_NP);	
 #endif
   pthread_mutex_init(&l,&ma);
 }

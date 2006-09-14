@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <uclient.h>
 
+using urbi::USound;
 
 static int mtime()
 {
@@ -30,7 +31,7 @@ class SoundPipe {
   static const int minSendSize = 2048;
   class SoundStack {
   public:
-    list<USound> stack;
+  std::list<USound> stack;
     int serverStackPos;
   };
   UClient *robot[2];
@@ -74,19 +75,19 @@ UCallbackAction SoundPipe::microNotify(int source, const UMessage &msg) {
   snd.channels = 1;
   snd.rate = 16000;
   snd.sampleSize = 16;
-  snd.sampleFormat = SAMPLE_SIGNED;
+  snd.sampleFormat = urbi::SAMPLE_SIGNED;
  
 
   USound &lastStacked = stack[source].stack.back();
   if ( stack[source].stack.empty() || lastStacked.size > minSendSize) {
-    snd.soundFormat = SOUND_RAW;
-    convert(msg.sound, snd);
+	  snd.soundFormat = urbi::SOUND_RAW;
+    convert(msg.value->binary->sound, snd);
     stack[source].stack.push_back(snd);
   }
 
   else {
-    snd.soundFormat = SOUND_RAW;
-    convert(msg.sound, snd);
+	  snd.soundFormat = urbi::SOUND_RAW;
+    convert(msg.value->binary->sound, snd);
     lastStacked.data = (char *) realloc(lastStacked.data, lastStacked.size + snd.size);
     memcpy(lastStacked.data + lastStacked.size, snd.data, snd.size);
     lastStacked.size += snd.size;
@@ -102,7 +103,8 @@ UCallbackAction SoundPipe::microNotify(int source, const UMessage &msg) {
 }
 
 UCallbackAction SoundPipe::speakerNotify(int source, const UMessage &msg) {
-  if (msg.type != MESSAGE_SYSTEM || !strstr(msg.systemValue,"stop")) return URBI_CONTINUE;
+  if (msg.type != MESSAGE_SYSTEM || !strstr(msg.message.c_str(),"stop")) 
+    return URBI_CONTINUE;
 
   pthread_mutex_lock(&lock[source]);
   stack[source].serverStackPos--;

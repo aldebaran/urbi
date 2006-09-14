@@ -2,15 +2,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-USound snd;
+urbi::USound snd;
 UCallbackAction endProgram(const UMessage &msg) {
   printf("done\n");
   urbi::exit(0);
   return URBI_REMOVE;
 }
 UCallbackAction soundFormat(const UMessage &msg) {
-  UMessage smsg(msg.client, 0,"",msg.systemValue);
-  snd = smsg.sound;
+  UMessage smsg(msg.client, 0,"",msg.message.c_str(), std::list<urbi::BinaryData>());
+  snd = smsg.value->binary->sound;
   //sem_post(&sem);
   return URBI_REMOVE;
 }
@@ -32,16 +32,16 @@ int main(int argc, char * argv []) {
 
   //sem_init(&sem, false, 0);
   //uc->sendCommand(&soundFormat, "speaker.formatlist;");
-  soundFormat(UMessage(*uc,0,"a","*** BIN 0 raw 2 16000 16 1"));  //forcing sound format 
+  soundFormat(UMessage(*uc,0,"a","*** BIN 0 raw 2 16000 16 1", std::list<urbi::BinaryData>()));  //forcing sound format 
   //sem_wait(&sem);
 
-  USound s;
+  urbi::USound s;
 
   if (f!=stdin) {
     struct stat st;
     stat(argv[2],&st);
     s.data = (char * )malloc(st.st_size);
-    s.soundFormat = SOUND_WAV;	
+    s.soundFormat = urbi::SOUND_WAV;	
     s.size = st.st_size;
 	fread(s.data, 1,st.st_size, f);
     snd.data = 0;
@@ -54,7 +54,7 @@ int main(int argc, char * argv []) {
   }
   else {	
     s.data = (char *)malloc(130000);
-    s.soundFormat = SOUND_WAV;
+    s.soundFormat = urbi::SOUND_WAV;
     fread(s.data, 44, 1, f);
     int sz=1;
 
