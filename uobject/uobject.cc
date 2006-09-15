@@ -106,9 +106,10 @@ UGenericCallback::UGenericCallback(string objname, string type, string name, int
 {
   nbparam = size;
   
-  if ((type == "function") || (type== "event") || (type=="eventend")) {};
-  
-  t[this->name].push_back(this);
+  if ((type == "function") || (type== "event") || (type=="eventend")) 
+  {
+    t[this->name].push_back(this);
+  }
     
   if (type == "var" || type=="var_onrequest") {
     
@@ -208,10 +209,83 @@ UObject::UObject(const string &s) :
 }
 
 
+//! Clean a callback UTable from all callbacks linked to the object whose name is 'name'
+void 
+cleanTable(UTable &t, string name)
+{
+  list<UTable::iterator> todelete;
+  for (UTable::iterator it = t.begin();
+       it != t.end();
+       ++it)
+  {
+    list<UGenericCallback*>& tocheck = (*it).second;
+    for (list<UGenericCallback*>::iterator it2 = tocheck.begin();
+	 it2 != tocheck.end();
+	 )
+    {
+      if ((*it2)->objname == name) 
+      {
+	delete (*it2);
+	it2 = tocheck.erase(it2);
+      }
+      else 
+	++it2;
+    }//for
+
+    if (tocheck.empty()) 
+      todelete.push_back(it);
+  }//for
+
+  for (list<UTable::iterator>::iterator dit = todelete.begin();
+       dit != todelete.end();
+       ++dit)
+  {
+    t.erase(*dit);
+  }
+}//function
+
+
+//! Clean a callback UTimerTable from all callbacks linked to the object whose name is 'name'
+void 
+cleanTimerTable(UTimerTable &t, string name)
+{
+  for (UTimerTable::iterator it = t.begin();
+       it != t.end();
+       )
+  {
+    if ((*it)->objname == name) 
+    {
+      delete (*it);
+      it = t.erase(it);
+    }
+    else 
+      ++it;    
+  }//for
+}//function
+
+
+//! UObject cleaner
+void
+UObject::clean()
+{
+  cleanTable(functionmap, __name);
+  cleanTable(eventmap, __name);
+  cleanTable(eventendmap, __name);
+
+  cleanTimerTable(timermap, __name);
+  cleanTimerTable(updatemap, __name);
+
+  if (objecthub) objecthub->members.remove(this);
+}
+
+
+
 //! UObject destructor.
 UObject::~UObject()
-{  
+{
+  clean();
 }
+
 
 void 
 UObject::USetUpdate(ufloat t) 

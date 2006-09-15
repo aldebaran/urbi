@@ -583,11 +583,11 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  
 	  persistant = false;
 	  UVariableName* resultContainer = new UVariableName(
-														 new UString("__UFnct"),
-														 new UString("__result__"), 
-														 true, 
-														 (UNamedParameters*)0);
-
+	      new UString("__UFnct"),
+	      new UString("__result__"), 
+	      true, 
+	      (UNamedParameters*)0);
+	  
 	  morph = (UCommand*) 
 	    new UCommand_TREE(UPIPE,
 		fun->cmdcopy(),
@@ -2674,7 +2674,8 @@ UCommand_NEW::execute(UConnection *connection)
 	      connection->send("!!! EXPR evaluation failed\n",tag->str());
 	      return (status = UCOMPLETED);
 	    }
-	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, so it must be valparam who does the job.
+	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, 
+	                                                    // so it must be valparam who does the job.
 	    tmparray.array.push_back(tmpvalue);
 	  }
 	  
@@ -2682,8 +2683,6 @@ UCommand_NEW::execute(UConnection *connection)
 	}
       }
     }
-  
-
   }
   
   // EXTERNAL
@@ -2693,9 +2692,7 @@ UCommand_NEW::execute(UConnection *connection)
     if (!noinit) {
      
       alreadydone = true;
-      snprintf(tmpprefix,1024,"%s.init",
-      objit->second->device->str());
-	  //TODO CHECKME :extra parameter to snprint: //parameters?parameters->size():0);      
+      snprintf(tmpprefix,1024,"%s.init",objit->second->device->str());
 	  
       HMbindertab::iterator itbind =
 	::urbiserver->functionbindertab.find(tmpprefix);

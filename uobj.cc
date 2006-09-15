@@ -40,8 +40,6 @@ UObj::UObj (UString *device)
   binder = 0;
   internalBinder = 0;
 
- ::urbiserver->debug("I'm the new born: %s[%d]\n",this->device->str(), (int) this); 
-
   ::urbiserver->objtab[this->device->str()] = this;
   UValue* objvalue = new UValue();
   objvalue->dataType = DATA_OBJ;
@@ -80,7 +78,8 @@ UObj::~UObj()
   {
     if (it->second->binder) 
     {
-      if (it->second->binder->removeMonitor(device))
+      bool isempty = it->second->binder->removeMonitor(device);
+      if (isempty)
       {
 	delete it->second->binder;
 	it->second->binder = 0;
@@ -89,7 +88,6 @@ UObj::~UObj()
   }//for
   
   list<HMbindertab::iterator> deletelist;
-
   //clean functions binders
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
@@ -128,8 +126,11 @@ UObj::~UObj()
 
     for (list<UMonitor*>::iterator it = binder->monitors.begin();
 	it != binder->monitors.end();
-	it++)
+	it++) 
+    {
+      (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
+    }
 
     // in fact here we can delete the binder since it contained only bindings
     // to a single object (himself) associated to unique connections:
@@ -140,19 +141,66 @@ UObj::~UObj()
   HMobjtab::iterator idit = ::urbiserver->objtab.find(device->str());
   ASSERT (idit != ::urbiserver->objtab.end()) ::urbiserver->objtab.erase(idit);
 
-    ::urbiserver->debug("EFFECTIFS: (%s:%d) %d %d\n",device->str(),this,up.size(), down.size());
-
   // Remove the objects from the subclass list of its parents
   for (list<UObj*>::iterator it = up.begin();
        it != up.end();
        ++it)
   {
-    ::urbiserver->debug("Kill him %d\n",(*it));
     (*it)->down.remove(this);
   }
 
+  // INTERNAL cleanups
+  if ((internalBinder) &&
+      (internalBinder->getUObject()))
+  { 
+    if (internalBinder->getUObject()->derived)
+      delete internalBinder; // this deletes the associated UObject   
+    else
+      internalBinder->getUObject()->clean();          
+  }
+
+
+  
+  // clean variables internalBinder
+  for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+       it != ::urbiserver->variabletab.end();
+       it++) 
+  {        
+    for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalBinder.begin();
+	itcb != (*it).second->internalBinder.end();
+	)
+    {
+      if ((*itcb)->objname == device->str()) 
+      {
+	delete (*itcb);
+	itcb = (*it).second->internalBinder.erase(itcb);
+      }
+      else
+	++itcb;
+    }//for    
+  }//for
+
+  // clean variables internalAccessBinder
+  for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+       it != ::urbiserver->variabletab.end();
+       it++) 
+  {        
+    for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalAccessBinder.begin();
+	itcb != (*it).second->internalAccessBinder.end();
+	)
+    {
+      if ((*itcb)->objname == device->str()) 
+      {
+	delete (*itcb);
+	itcb = (*it).second->internalAccessBinder.erase(itcb);
+      }
+      else
+	++itcb;
+    }//for    
+  }//for
+
+
   // final cleanup
-  if (internalBinder) delete internalBinder;    
   if (device) delete(device);
 }
 
