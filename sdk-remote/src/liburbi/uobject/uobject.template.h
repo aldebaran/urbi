@@ -148,15 +148,15 @@ corresponding URBI object.
 /** Bind the function x in current URBI object to the C++ member function of same name.
 The return value and parameters must be of a basic integral or floating types, char *, std::string, UValue, UBinary, USound or UImage, or any type that can cast to/from UValue.
 */
-#define UBindFunction(obj,x)  createUCallback(__name,(std::string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
+#define UBindFunction(obj,x)  createUCallback(__name,(std::string)"function", this,(&obj::x),__name+"."+std::string(#x),functionmap)
 
 /** Registers a function x in current object that will be called each time the event of same name is triggered. The function will be called only if the number of arguments match between the function prototype and the URBI event.
 */
-#define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+string(#x),eventmap)
+#define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+std::string(#x),eventmap)
 
 /** Registers a function x in current object that will be called each time the event of same name is triggered, and a function fun called when the event ends. The function will be called only if the number of arguments match between the function prototype and the URBI event.
 */
-#define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
+#define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+std::string(#x),eventendmap)
 
 /** Register current object to the UObjectHub named 'hub'. 
 */
