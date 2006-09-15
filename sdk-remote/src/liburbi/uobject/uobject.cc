@@ -185,16 +185,75 @@ UObject::UObject(const std::string &s) :
   derived(false)
 {
   objecthub = 0;
+  autogroup = false;
+  
   lastUObject = this;
   URBI(()) << "class " << __name << "{};";
   URBI(()) << "external " << "object" << " " << __name <<";";
   period = -1;
 }
 
+//! Clean a callback UTable from all callbacks linked to the object whose name is 'name'
+void 
+cleanTable(UTable &t, string name)
+{
+  list<UTable::iterator> todelete;
+  for (UTable::iterator it = t.begin();
+       it != t.end();
+       ++it)
+  {
+    list<UGenericCallback*>& tocheck = (*it).second;
+    for (list<UGenericCallback*>::iterator it2 = tocheck.begin();
+	 it2 != tocheck.end();
+	 )
+    {
+      if ((*it2)->objname == name) 
+      {
+	delete (*it2);
+	it2 = tocheck.erase(it2);
+      }
+      else 
+	++it2;
+    }//for
+
+    if (tocheck.empty()) 
+      todelete.push_back(it);
+  }//for
+
+  for (list<UTable::iterator>::iterator dit = todelete.begin();
+       dit != todelete.end();
+       ++dit)
+  {
+    t.erase(*dit);
+  }
+}//function
+
+
+//! UObject cleaner
+void
+UObject::clean()
+{
+  cleanTable(monitormap, __name);
+  cleanTable(accessmap, __name);
+  cleanTable(functionmap, __name);
+  cleanTable(eventmap, __name);
+  cleanTable(eventendmap, __name);
+  
+  if (objecthub) objecthub->members.remove(this);
+}
+
 
 //! UObject destructor.
 UObject::~UObject()
 {
+  clean();
+}
+
+void
+UObject::UJoinGroup(string gpname)
+{
+  string groupregister = "addgroup " + gpname +" { "+__name+"};";
+  urbi::uobject_unarmorAndSend(groupregister.c_str());
 }
 
 void
@@ -226,24 +285,24 @@ dispatcher(const UMessage &msg)
 {
   //check message type
   if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST) {
-    msg.client.printf("Soft Device Error: unknown message content, type %d\n",(int)msg.type);
+    msg.client.printf("Component Error: unknown message content, type %d\n",(int)msg.type);
     return URBI_CONTINUE;
   }
 
   UList & array = *msg.value->list;
 
   if (array.size()<2) {
-    msg.client.printf("Soft Device Error: Invalid number of arguments in the server message: %d\n",array.size());
+    msg.client.printf("Component Error: Invalid number of arguments in the server message: %d\n",array.size());
     return URBI_CONTINUE;
   }
 
   if (array[0].type != DATA_DOUBLE) {
-	msg.client.printf("Soft Device Error: unknown server message type %d\n",(int)array[0].type);
+	msg.client.printf("Component Error: unknown server message type %d\n",(int)array[0].type);
 	return URBI_CONTINUE;
   }
 
   if (array[0].type != DATA_DOUBLE) {
-    msg.client.printf("Soft Device Error: unknown server message type %d\n",(int)array[0].type);
+    msg.client.printf("Component Error: unknown server message type %d\n",(int)array[0].type);
     return URBI_CONTINUE;
   }
 
@@ -296,7 +355,7 @@ dispatcher(const UMessage &msg)
       URBI(()) << ";";
     }
     else
-      msg.client.printf("Soft Device Error: %s function unknown.\n",((std::string)array[1]).c_str());
+      msg.client.printf("Component Error: %s function unknown.\n",((std::string)array[1]).c_str());
   }
 
   // UEM_EMITEVENT
@@ -366,18 +425,25 @@ dispatcher(const UMessage &msg)
 
     if (found == objectlist->end())
       msg.client.printf("Unknown object definition %s\n",((std::string)array[1]).c_str());
-    else {
-      // remove the object from objectlist
-      objectlist->erase(found);
-      // delete the object
-      delete (*found);
+    else 
+    {
+      // remove the object from objectlist or terminate 
+      // the component if there is nothing left
+      if (objectlist->size() == 1)
+	exit(0);
+      else 
+      {      
+	// delete the object
+	delete (*found);
+	objectlist->erase(found);    
+      }
     }
   }
 
 
   // DEFAULT
-  else
-    msg.client.printf("Soft Device Error: unknown server message type number %d\n",(int)array[0]);
+  else          
+    msg.client.printf("Component Error: unknown server message type number %d\n",(int)array[0]);
 
   return URBI_CONTINUE;
 }

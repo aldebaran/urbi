@@ -588,7 +588,8 @@ namespace urbi
     UGenericCallback(std::string objname, std::string type, std::string name, int size, UTable &t);
     UGenericCallback(std::string objname, std::string type, std::string name, UTable &t);
     virtual ~UGenericCallback();
-
+    string getName() { return name;};
+    
     virtual UValue __evalcall(UList &param)  = 0;
 
     void   *storage; ///< used to store the UVar* pointeur for var monitoring
@@ -709,10 +710,17 @@ namespace urbi
 	/// Set a timer that will call the update function every 'period' milliseconds
     void USetUpdate(ufloat period);
     virtual int update() {return 0;};
+    void UAutoGroup() { autogroup = true; }; ///< set autogrouping facility for each new subclass created.
+    virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; ///< called when a subclass is created if autogroup is true     
+    virtual void UJoinGroup(string gpname); ///< joins the uobject to the 'gpname' group
 
-    UVar        load; ///< the load attribute is standard and can be used to control the activity
-		      ///< of the object
+    bool autogroup; ///< adds a group with a 's' after the base class name
 
+    void clean(); ///< removes all bindings, this method is called by the destructor
+
+    UVar        load; ///< the load attribute is standard and can be used to control the activity 
+    		      ///< of the object
+  
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the
 			      ///< remote/plugin architectures who defines it.
@@ -801,7 +809,7 @@ namespace urbi
       slist->push_back(dynamic_cast<baseURBIStarter*>(this));
     };
     virtual ~URBIStarter() { UObject* tokill = getUObject();
-      if (tokill) delete tokill;};
+    	                     if ((tokill) && (tokill->derived)) delete tokill;};
 
     virtual void copy(std::string objname) {
       URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
@@ -810,6 +818,8 @@ namespace urbi
       dynamic_cast<UObject*>(ustarter->object)->derived   = true;
       dynamic_cast<UObject*>(ustarter->object)->classname =
 	dynamic_cast<UObject*>(object)->classname;
+	if (dynamic_cast<UObject*>(ustarter->object)->autogroup)	
+	  dynamic_cast<UObject*>(ustarter->object)->addAutoGroup();
     };
 
     virtual UObject* getUObject() {
