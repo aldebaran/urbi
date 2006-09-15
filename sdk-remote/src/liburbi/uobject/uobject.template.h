@@ -588,7 +588,7 @@ namespace urbi
     UGenericCallback(std::string objname, std::string type, std::string name, int size, UTable &t);
     UGenericCallback(std::string objname, std::string type, std::string name, UTable &t);
     virtual ~UGenericCallback();
-    string getName() { return name;};
+    std::string getName() { return name;};
     
     virtual UValue __evalcall(UList &param)  = 0;
 
@@ -712,7 +712,7 @@ namespace urbi
     virtual int update() {return 0;};
     void UAutoGroup() { autogroup = true; }; ///< set autogrouping facility for each new subclass created.
     virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; ///< called when a subclass is created if autogroup is true     
-    virtual void UJoinGroup(string gpname); ///< joins the uobject to the 'gpname' group
+    virtual void UJoinGroup(std::string gpname); ///< joins the uobject to the 'gpname' group
 
     bool autogroup; ///< adds a group with a 's' after the base class name
 

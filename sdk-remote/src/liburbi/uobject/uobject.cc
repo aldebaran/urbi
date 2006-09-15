@@ -195,15 +195,15 @@ UObject::UObject(const std::string &s) :
 
 //! Clean a callback UTable from all callbacks linked to the object whose name is 'name'
 void 
-cleanTable(UTable &t, string name)
+cleanTable(UTable &t, std::string name)
 {
-  list<UTable::iterator> todelete;
+  std::list<UTable::iterator> todelete;
   for (UTable::iterator it = t.begin();
        it != t.end();
        ++it)
   {
-    list<UGenericCallback*>& tocheck = (*it).second;
-    for (list<UGenericCallback*>::iterator it2 = tocheck.begin();
+    std::list<UGenericCallback*>& tocheck = (*it).second;
+    for (std::list<UGenericCallback*>::iterator it2 = tocheck.begin();
 	 it2 != tocheck.end();
 	 )
     {
@@ -220,7 +220,7 @@ cleanTable(UTable &t, string name)
       todelete.push_back(it);
   }//for
 
-  for (list<UTable::iterator>::iterator dit = todelete.begin();
+  for (std::list<UTable::iterator>::iterator dit = todelete.begin();
        dit != todelete.end();
        ++dit)
   {
@@ -250,9 +250,9 @@ UObject::~UObject()
 }
 
 void
-UObject::UJoinGroup(string gpname)
+UObject::UJoinGroup(std::string gpname)
 {
-  string groupregister = "addgroup " + gpname +" { "+__name+"};";
+  std::string groupregister = "addgroup " + gpname +" { "+__name+"};";
   urbi::uobject_unarmorAndSend(groupregister.c_str());
 }
 
