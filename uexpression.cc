@@ -1042,7 +1042,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
         if (parameters->expression->type == EXPR_VARIABLE)        
           if ((parameters->expression->variablename->getVariable(command,connection)) ||
-              (parameters->expression->variablename->getFunction(command,connection)))
+              (parameters->expression->variablename->isFunction(command,connection)))
             ret->val = 1;
                
         return(ret);

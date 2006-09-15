@@ -2766,24 +2766,6 @@ UCommand_NEW::execute(UConnection *connection)
   newobj->up.push_back(objit->second);
   objit->second->down.push_back(newobj);
   
-  // implicit grouping
-  HMgrouptab::iterator hmg;
-  UGroup *g;
-  hmg = ::urbiserver->grouptab.find(obj->str());
-  if (hmg != ::urbiserver->grouptab.end())
-    g = (*hmg).second;
-  else {
-    g = new UGroup(obj);
-    ::urbiserver->grouptab[g->name->str()] = g;
-  }
-  
-  bool foundit = false;
-  for (list<UString*>::iterator it = g->members.begin();
-       (it != g->members.end() && (!foundit)); it++)
-    if (id->equal((*it))) foundit = true;
-  
-  if (!foundit) g->members.push_back(id->copy());
-
   if (morph)
     return ( status = UMORPH );	  	
   else

@@ -26,6 +26,8 @@
 #include "uconnection.h"
 #include "ughostconnection.h"
 #include "uobject.h"
+#include "utypes.h"
+
 
 using namespace urbi;
 using namespace std;
@@ -286,6 +288,22 @@ UObject::~UObject()
   clean();
 }
 
+void
+UObject::UJoinGroup(string gpname)
+{
+  HMgrouptab::iterator hma;
+  UGroup *g;
+
+  hma = ::urbiserver->grouptab.find(gpname.c_str());
+  if (hma != ::urbiserver->grouptab.end())
+    g = hma->second;
+  else {
+    g = new UGroup(new UString(gpname.c_str()));
+    ::urbiserver->grouptab[g->name->str()] = g;
+  }
+
+  g->members.push_back(new UString(__name.c_str()));
+}
 
 void 
 UObject::USetUpdate(ufloat t) 

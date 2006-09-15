@@ -83,7 +83,7 @@ CPPFLAGS += -DOS=$(OS)
 ################################################################################
 
 build/buildnumber: $(KERNEL_SOURCES) parser/$(PARSER)/*.y parser/$(PARSER)/*.l
-	LANG=en_US.UTF-8 && svn info | sed -e "s/é/e/" | grep Revision | sed -e "s/Revision: //" > build/buildnumber 
+	LANG=en && svn info | sed -e "s/é/e/" | grep Revision | sed -e "s/Revision: //" > build/buildnumber 
 	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 network: $(NETWORK_OBJS)

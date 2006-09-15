@@ -29,6 +29,8 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "uconnection.h"
 #include "userver.h"
 #include "ucallid.h"
+#include "uobject/uobject.h"
+
 
 MEMORY_MANAGER_INIT(UVariableName);
 // **************************************************************************	
@@ -188,6 +190,20 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   
   return (tmpfun);
 }
+
+//! UVariableName test to know if there is a function with that name
+bool
+UVariableName::isFunction(UCommand *command, UConnection *connection)
+{  
+  UFunction* tmpfun = getFunction(command, connection);
+  if (tmpfun) return (true);    
+  if (!fullname_) return(false);  
+  if (urbi::functionmap.find(fullname_->str()) !=
+      urbi::functionmap.end()) return(true);
+  
+  return (false);
+}
+
 
 //! UVariableName access to method (with cache)
 UString* 

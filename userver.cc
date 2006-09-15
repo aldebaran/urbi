@@ -74,7 +74,7 @@ const char* HEADER_AFTER_CUSTOM[] = {
 };
  
 const char* UNKNOWN_TAG = "notag";
-const char* MAINDEVICE  = "global";
+const char* MAINDEVICE  = "system";
 
 // Memory counter system
 
@@ -195,11 +195,11 @@ UServer::initialization()
   sprintf(tmpbuffer_ghostTag,"U%ld",(long)ghost);
 
   new UVariable(MAINDEVICE,"ghostID", tmpbuffer_ghostTag);
-
+  new UVariable(MAINDEVICE,"name", mainName->str());
   uservarState = true;
 
 
-   // Plugins (internal softdevices)
+   // Plugins (internal components)
   
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
       retr != urbi::objecthublist->end();
