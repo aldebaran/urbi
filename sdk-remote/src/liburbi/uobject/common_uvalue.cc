@@ -378,7 +378,7 @@ std::string UBinary::getMessage() const {
 	str<<"jpeg ";
 	break;
       case IMAGE_YCbCr:
-	str<<"YCbCr";
+	str<<"YCbCr ";
 	break;
       default:
 	str<<"unknown ";

@@ -1,3 +1,9 @@
+2006-09-15  Matthieu Nottale <nottale@gostai.com>
+        
+	* src/liburbi/uobject/common_uvalue.cc : Fix missing space in
+	getMessage().
+	* src/liburbi/uobject/uobject.template.h: Improve doc.
+	
 2006-09-14  Matthieu Nottale <nottale@gostai.com>
 
         * src/utils/Makefile.am (AM_CXXFLAGS): Fix 

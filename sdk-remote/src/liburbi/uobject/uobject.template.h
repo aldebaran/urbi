@@ -134,20 +134,32 @@ _STD_END
 #define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(std::string(#x),objecthublist)
 
 
-/// Bind 
+/** Bind a variable to an object.
+ This macro can only be called from within a class inheriting from UObject.
+It binds the UVar x within the object to a variable with the same name in the
+corresponding URBI object.
+*/
 #define UBindVar(obj,x) x.init(__name,#x)
 
-// Used for sensor+actuator variables
+/** This macro defines a UVar as a sensor/effector couple. 
+ After this call is made, writes by this module affect the sensed value, and reads read the target value. Writes by other modules and URBI code affect the target value, and reads get the sensed value. Without this call, all operations affect the same underlying variable.*/
 #define USensor(x) x.setOwned()
 
-// Function Binding
+/** Bind the function x in current URBI object to the C++ member function of same name.
+The return value and parameters must be of a basic integral or floating types, char *, std::string, UValue, UBinary, USound or UImage, or any type that can cast to/from UValue.
+*/
 #define UBindFunction(obj,x)  createUCallback(__name,(std::string)"function", this,(&obj::x),__name+"."+string(#x),functionmap)
 
-// Event Binding
+/** Registers a function x in current object that will be called each time the event of same name is triggered. The function will be called only if the number of arguments match between the function prototype and the URBI event.
+*/
 #define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+string(#x),eventmap)
+
+/** Registers a function x in current object that will be called each time the event of same name is triggered, and a function fun called when the event ends. The function will be called only if the number of arguments match between the function prototype and the URBI event.
+*/
 #define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+string(#x),eventendmap)
 
-// Macro to register to a Hub
+/** Register current object to the UObjectHub named 'hub'. 
+*/
 #define URegister(hub) { objecthub = urbi::getUObjectHub((std::string)#hub); \
     if (objecthub) objecthub->addMember(dynamic_cast<UObject*>(this));	\
     else echo("Error: hub name '%s' is unknown\n",#hub); }
@@ -159,6 +171,9 @@ _STD_END
 
 //macro to send urbi commands
 #ifndef URBI
+/** Send unquoted URBI commands to the server. Add an extra layer of parenthesis
+for safety.
+*/
 #  define URBI(a) urbi::uobject_unarmorAndSend(#a)
 #endif
 
@@ -214,6 +229,7 @@ namespace urbi
   // *****************************************************************************
   // Global function of the urbi:: namespace to access kernel features
 
+  /// Write a message to the server debug output. Printf syntax.
   void echo(const char * format, ... );
   /// Retrieve a UObjectHub based on its name or return 0 if not found.
   UObjectHub* getUObjectHub(std::string);
@@ -226,6 +242,8 @@ namespace urbi
   // *****************************************************************************
   // UValue and other related types
 
+  /** UDataType enums the possible value types a UValue can contain
+  */
   enum UDataType {
     DATA_DOUBLE,
     DATA_STRING,
@@ -264,7 +282,7 @@ namespace urbi
   };
 
   //WARNING: synchronize with blendNames below, must be 0-based
-  //! Blending mode
+  /// Possible blending mode for an UVar
   enum UBlendType {
     UMIX=0,
     UADD,
@@ -308,7 +326,9 @@ namespace urbi
   };
 
 
-  ///Class encapsulating an image.
+  /**Class encapsulating an image.
+  This class does not handle its memory: the data field msut be freed manualy.
+  */
   class UImage {
   public:
     char                  *data;            ///< pointer to image data
@@ -317,7 +337,9 @@ namespace urbi
     UImageFormat          imageFormat;
   };
 
-  ///Class encapsulating sound informations.
+  /**Class encapsulating sound informations.
+  This class does not handle its memory: the data field msut be freed manualy.
+  */
   class USound {
   public:
     char                  *data;            ///< pointer to sound data
@@ -331,7 +353,9 @@ namespace urbi
     bool operator ==(const USound &b) const {return !memcmp(this, &b, sizeof(USound));}
   };
 
-  /// Class containing binary data sent by the server, that could not be furtehr interpreted.
+  /** Class containing binary data of known or unknown type.
+  Handles its memory: the data field will be freed when the destructor is called.
+  */
   class UBinary {
   public:
     UBinaryType             type;
@@ -396,15 +420,17 @@ namespace urbi
 
   };
 
+  /** Container for a value that handles all types known to URBI.
+  */
   class UValue {
   public:
     UDataType       type;
-    ufloat          val;
+    ufloat          val;  ///< value if of type DATA_DOUBLE
     union {
-      std::string    *stringValue;
-      UBinary        *binary;
-      UList          *list;
-      UObjectStruct  *object;
+      std::string    *stringValue; ///< value if of type DATA_STRING
+      UBinary        *binary;  ///< value if of type DATA_BINARY
+      UList          *list;  ///< value if of type DATA_LIST
+      UObjectStruct  *object;  ///< value if of type DATA_OBJ
       void           *storage; // internal
     };
 
@@ -431,7 +457,7 @@ namespace urbi
 
     ~UValue();
 
-    ///parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
+    //parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
     int parse(const char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
   };
 
@@ -473,7 +499,10 @@ namespace urbi
     blend(*this, PROP_BLEND)
 
   // *****************************************************************************
-  //!UVar class definition
+  /** UVar class definition
+  Each UVar instance corresponds to one URBI variable. The class provides access to
+  the variable properties, and reading/writting the value to/from all known types.
+  */
   class UVar
   {
   public:
@@ -490,9 +519,9 @@ namespace urbi
 
     void operator = ( ufloat );
     void operator = ( std::string );
-    void operator = ( const UBinary &);
-    void operator = ( const UImage &i); ///< No data is copied in plugin mode
-    void operator = ( const USound &s); ///< No data is copied in plugin mode
+    void operator = ( const UBinary &);  ///< deep copy
+    void operator = ( const UImage &i);  ///< deep copy
+    void operator = ( const USound &s);  ///< deep copy
 
     operator int ();
     operator bool () {return (int)(*this);}
@@ -510,7 +539,7 @@ namespace urbi
     ufloat& in();
     ufloat& out();
 
-    bool owned; ///< is the variable owned by the module?
+    bool owned; //< is the variable owned by the module?
 
     //Property accessors
 
@@ -607,7 +636,10 @@ namespace urbi
   };
 
   // *****************************************************************************
-  //! Main UObject class definition
+  /** Main UObject class definition
+  Each UObject instance corresponds to an URBI object. It provides mechanisms to
+  bind variables and functions between C++ and URBI.
+  */
   class UObject
   {
   public:
@@ -615,47 +647,53 @@ namespace urbi
     UObject(const std::string&);
     virtual ~UObject();
 
+	/// Calls the specified function each time the variable v is modified.
     template <class T>
       void UNotifyChange (UVar& v, int (T::*fun) ()) {
       createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
     }
 
+	/// Calls the specified function each time the variable v is modified.
     template <class T>
       void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
+	/// Calls the specified function when the variable value is updated on request by requestValue().
     template <class T>
       void UNotifyOnRequest (UVar& v, int (T::*fun) ()) {
       createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
     }
 
+	/// Calls the specified function when the variable value is updated on request by requestValue().
     template <class T>
       void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
-
+	/// Calls the specified function each time the variable v is modified.
     template <class T>
       void UNotifyChange (std::string name, int (T::*fun) ()) {
       createUCallback(__name, "var", (T*)this, fun, name, monitormap);
     }
 
+	/// Calls the specified function each time the variable v is modified.
     template <class T>
       void UNotifyChange (std::string name, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, name, monitormap);
       if (cb) cb->storage = new UVar(name);
     }
 
-
+	/// Calls the specified function each time the variable v is read.
     template <class T>
       void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) {
       UGenericCallback* cb = createUCallback(__name, "varaccess", (T*)this, fun, v.get_name(), accessmap);
       if (cb) cb->storage = (void*)(&v);
     }
 
+	/// Set a timer that will call tune 'fun' function every 't' milliseconds.
     template <class T>
       void USetTimer(ufloat t, int (T::*fun) ()) {
       new UTimerCallbackobj<T> (__name, t,(T*)this, fun, timermap);
@@ -668,7 +706,8 @@ namespace urbi
     UObjectList members;
     UObjectHub  *objecthub; ///< the hub, if it exists
 
-    void USetUpdate(ufloat);
+	/// Set a timer that will call the update function every 'period' milliseconds
+    void USetUpdate(ufloat period);
     virtual int update() {return 0;};
 
     UVar        load; ///< the load attribute is standard and can be used to control the activity
@@ -692,7 +731,8 @@ namespace urbi
 
     void addMember(UObject* obj);
 
-    void USetUpdate(ufloat);
+	/// Set a timer that will call update every 'period' milliseconds.
+    void USetUpdate(ufloat period);
     virtual int update() {return 0;}
 
     UObjectList  members;
