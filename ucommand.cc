@@ -2613,7 +2613,7 @@ UCommand_NEW::execute(UConnection *connection)
   }
 
   if (objit->second->internalBinder)
-    objit->second->internalBinder->copy(string(id->str()));
+    objit->second->internalBinder->copy(std::string(id->str()));
    
   HMobjtab::iterator idit = ::urbiserver->objtab.find(id->str());
   if (idit == ::urbiserver->objtab.end()) {
@@ -2643,7 +2643,7 @@ UCommand_NEW::execute(UConnection *connection)
   bool alreadydone = false;
   // init
   // INTERNAL (module)
-  string funtofind(id->str());
+  std::string funtofind(id->str());
   funtofind = funtofind + ".init";
   bool initdefined = (::urbiserver->functiontab.find(funtofind.c_str()) != 
                       ::urbiserver->functiontab.end());
@@ -2745,7 +2745,7 @@ UCommand_NEW::execute(UConnection *connection)
     }    
   }
 
-  string funtofindobj(obj->str());
+  std::string funtofindobj(obj->str());
   funtofindobj = funtofindobj + ".init";
   bool initdefinedobj = (::urbiserver->functiontab.find(funtofindobj.c_str()) != 
                          ::urbiserver->functiontab.end());

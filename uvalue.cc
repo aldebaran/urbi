@@ -293,7 +293,7 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
   UNamedParameters * last=0;
   std::stringstream str;
   str.str(b.getMessage());
-  string item;
+  std::string item;
   while (!!str) {
 	  str >> item;
 	  UNamedParameters * unp = new UNamedParameters(0, new UExpression(EXPR_VALUE, new UString(item.c_str())));
@@ -337,7 +337,7 @@ UValue::UValue(const urbi::UValue &v)
 			    {
 			      dataType = DATA_LIST;
 			      UValue * current = this;
-			      for (vector<urbi::UValue *>::iterator it = v.list->array.begin();
+			      for (std::vector<urbi::UValue *>::iterator it = v.list->array.begin();
 				  it != v.list->array.end(); it++) {
 				UValue *n = new UValue(*(*it));
 				current->next = n;
@@ -756,7 +756,7 @@ UValue::urbiValue()
 {
   switch (dataType) {
     case DATA_NUM:     return new urbi::UValue(val);
-    case DATA_STRING:  return new urbi::UValue(string(str->str())); 
+    case DATA_STRING:  return new urbi::UValue(std::string(str->str())); 
     case DATA_BINARY:  return new urbi::UValue(operator urbi::UBinary()); //FIXME
 	case DATA_LIST:    return new urbi::UValue((urbi::UList)(*this));
     default: return new urbi::UValue(); 

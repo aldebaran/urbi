@@ -37,7 +37,7 @@ namespace urbi {
 	
 // **************************************************************************	
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(const string &varname) 
+UVar::UVar(const std::string &varname) 
 :VAR_PROP_INIT
 {
   name = varname;  
@@ -45,7 +45,7 @@ UVar::UVar(const string &varname)
 }
 
 //! UVar constructor: object reference + var name
-UVar::UVar(UObject& obj, const string &varname)
+UVar::UVar(UObject& obj, const std::string &varname)
 :VAR_PROP_INIT
 {
   name = obj.__name + "." + varname;
@@ -53,7 +53,7 @@ UVar::UVar(UObject& obj, const string &varname)
 }
 
 //! UVar constructor: object name + var name
-UVar::UVar(const string &objname, const string &varname)
+UVar::UVar(const std::string &objname, const std::string &varname)
 :VAR_PROP_INIT
 {
   name = objname + "." + varname;
@@ -63,7 +63,7 @@ UVar::UVar(const string &objname, const string &varname)
 
 //! UVar initialization
 void
-UVar::init(const string &objname, const string &varname)
+UVar::init(const std::string &objname, const std::string &varname)
 {  
   name = objname + "." + varname;  
   __init();
@@ -135,7 +135,7 @@ UVar::operator = (ufloat n)
 
 //! UVar string assignment
 void
-UVar::operator = (string s)
+UVar::operator = (std::string s)
 {  
   if (!vardata) {
     urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
@@ -210,12 +210,12 @@ UVar::operator ufloat () {
 }
 
 
-UVar::operator string () { 
+UVar::operator std::string () { 
 
   if ((vardata)  && (vardata->variable->value->dataType == ::DATA_STRING))    
-    return (string(vardata->variable->value->str->str()));  
+    return (std::string(vardata->variable->value->str->str()));  
   else  
-    return string("");    
+    return std::string("");    
 }
 
 UVar::operator UList() {
@@ -296,9 +296,9 @@ UVar::setProp(UProperty prop, const UValue &v) {
 				vardata->variable->blendType=(UBlend)(int)(double)v;
 			}
 			if (v.type == DATA_STRING) {
-				string s=(string)v;
+				std::string s=(std::string)v;
 				for (int i=0;urbi::blendNames[i][0];i++) {
-					if (s==(string)urbi::blendNames[i]) {
+					if (s==(std::string)urbi::blendNames[i]) {
 						vardata->variable->blendType = (UBlend)i;	
 						return;					
 					}	
