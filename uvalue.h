@@ -26,6 +26,7 @@
 #include "utypes.h"
 #include "ustring.h"
 #include "ufloat.h"
+#include <string>
 
 namespace urbi {
   class UValue;
@@ -76,6 +77,7 @@ public:
   UValue* add(UValue* v);
   bool    equal(UValue* v);
   void    echo(UConnection* connection, bool human_readable=false);
+  std::string  echo(bool human_readable=false);
 
   urbi::UValue* urbiValue();
 };

@@ -637,18 +637,21 @@ booleval(UValue *v, bool freeme)
 
 
 
-//! UValue echo in a connection
-void
-UValue::echo(UConnection *connection, bool human_readable)
+//! UValue echo as a std::string
+std::string
+UValue::echo(bool hr)
 {
+  std::ostringstream oss;
+
   if (dataType == DATA_VOID) {
-    connection->send((const ubyte*)"void",4);
-    return;
+    oss << "void";
+
+    return oss.str();
   }
   
   if (dataType == DATA_OBJ) {
  
-    connection->send((const ubyte*)"OBJ [",5);
+    oss << "OBJ [";
     bool first = true;
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
@@ -658,96 +661,101 @@ UValue::echo(UConnection *connection, bool human_readable)
 	   ((*it).second->value->dataType != DATA_OBJ)) {
 	if ((*it).second->devicename->equal(str)) {
 
-	  if (!first) connection->send((const ubyte*)",",1);
+	  if (!first) oss << ",";
 	  first = false;
-	  connection->send((const ubyte*)((*it).second->method->str()),
-	      strlen((*it).second->method->str()));      
-	  connection->send((const ubyte*)":",1);
+	  oss << (*it).second->method->str()<< ":";
+	      	  
 	  if ((*it).second->value)
-	   (*it).second->value->echo(connection, human_readable);
+	   oss << (*it).second->value->echo(hr);
 	}
       }
-    connection->send((const ubyte*)"]",1);
+    oss << "]";    
 
-    return;
+    return oss.str();
   }  
      
   if (dataType == DATA_LIST) {
     
-    connection->send((const ubyte*)"[",1);
+    oss << "[";    
 
     UValue *scanlist = liststart;
     while (scanlist) {
 
-      scanlist->echo(connection, human_readable);
+      oss << scanlist->echo(hr);
       scanlist = scanlist->next;
-      if (scanlist)  connection->send((const ubyte*)",",1);
+      if (scanlist)  oss << ",";
     }
-    connection->send((const ubyte*)"]",1);
-    return;
+    oss << "]";
+    
+    return oss.str();
   }
 
   if (dataType == DATA_NUM) {
-    std::ostringstream ostr;
-	ostr << std::fixed << val;
-    strcpy(tmpbuffer, ostr.str().c_str());
+
+    oss << std::fixed << val;
+    return oss.str();
   }
 
-  if (dataType == DATA_STRING)
-    if (human_readable)
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-       	  "%s",str->str());
-    else
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-      	  "\"%s\"",str->str());
+  if (dataType == DATA_STRING) {
 
-  if (dataType == DATA_FILE)
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-             "FILE %s",str->str());
-
+    if (!hr) oss << "\"";
+    oss << str->str();
+    if (!hr) oss << "\"";
+    return oss.str();
+  }
+  
   if (dataType == DATA_BINARY) {
+
     if (refBinary) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "BIN %d ",refBinary->ref()->bufferSize);
+
+      oss << "BIN " << refBinary->ref()->bufferSize;
+
       UNamedParameters *param = refBinary->ref()->parameters;
       char tmpparam[1024];
       while (param) {
         if (param->expression) {
           if (param->expression->dataType == DATA_NUM)
-            snprintf(tmpparam,1024,"%d ",(int)param->expression->val);
+	    oss << (int)param->expression->val;
           if (param->expression->dataType == DATA_STRING)
-            snprintf(tmpparam,1024,"%s ",param->expression->str->str());
-
-          strcat(tmpbuffer,tmpparam);
+	    oss << param->expression->str->str();          
         }
+	if (param->next) oss << " ";
         param = param->next;
       }
 
-      if (!human_readable) {
-	strcat(tmpbuffer,"\n");
-      
-	if (connection->availableSendQueue() > 
-	    strlen(tmpbuffer) + 
-	    refBinary->ref()->bufferSize +1) {
+      if (!hr) {
+	oss << "\n";	
+  
+//FIXME    
+//	if (connection->availableSendQueue() > 
+//	    strlen(tmpbuffer) + 
+//	    refBinary->ref()->bufferSize +1) {
 	  
-	  connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer));
-	  connection->send(refBinary->ref()->buffer,
-   	      refBinary->ref()->bufferSize);
-     	}
-       	else
-	  ::urbiserver->debug("Send queue full for binary... Drop command.\n");
-      }
-      else
-	connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer)-1);
-            
-      return; 
+	oss.write((const char*)refBinary->ref()->buffer,
+	    refBinary->ref()->bufferSize);
+//     	}
+//       	else
+//	  ::urbiserver->debug("Send queue full for binary... Drop command.\n");
+      }                 
     }
     else
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "BIN 0 null\n");
-  }
+      oss << "BIN 0 null\n";
 
-  connection->send((const ubyte*)tmpbuffer,strlen(tmpbuffer));
+    return oss.str();
+  }
+    
+  oss << "unknown_type";
+  return oss.str();
+}
+
+
+
+//! UValue echo in a connection
+void
+UValue::echo(UConnection *connection, bool human_readable)
+{
+  std::string res = echo(human_readable);
+  connection->send((const ubyte*)res.c_str(),res.size());
 }
 
 

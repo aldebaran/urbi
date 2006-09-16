@@ -1048,6 +1048,23 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
         return(ret);
       } // isdef
 
+      if (strcmp(variablename->id->str(),"isvoid")==0) {        
+        
+        ret = new UValue();
+        ret->dataType = DATA_NUM;      
+        ret->val = 0;
+	
+        if (parameters->expression->type == EXPR_VARIABLE) {
+
+	  UVariable* v = parameters->expression->variablename->getVariable(command,connection);
+	  if ((v==0) || (v->value==0)) return ret;
+	  if (v->value->dataType == DATA_VOID) ret->val = 1; 
+	}
+  	
+  	return(ret);
+      } // isvoid
+
+
       if (strcmp(variablename->id->str(),"load")==0) {
         
         e1 = parameters->expression->eval(command,connection);
@@ -1563,8 +1580,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
     
-    if ((e1==0) || (e1->dataType == DATA_VOID) ||
-    	(e2==0) || (e2->dataType == DATA_VOID)) {
+    if ((e1==0) ||
+    	(e2==0)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;
@@ -1702,8 +1719,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection);
     e2 = expression2->eval(command,connection);
      
-    if ((e1==0) || (e1->dataType == DATA_VOID) ||
-    	(e2==0) || (e2->dataType == DATA_VOID)) {
+    if ((e1==0) ||
+    	(e2==0)) {
       if (e1) delete e1;
       if (e2) delete e2;
       return 0;

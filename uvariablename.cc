@@ -201,6 +201,9 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
   if (urbi::functionmap.find(fullname_->str()) !=
       urbi::functionmap.end()) return(true);
   
+  if (::urbiserver->functionbindertab.find(fullname_->str()) !=
+      ::urbiserver->functionbindertab.end()) return(true);
+
   return (false);
 }
 
@@ -241,7 +244,7 @@ UVariableName::getDevice()
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
 If the building blocks are static, non variable parameters (like static 
-															indexes in an array or constant string in a $(...)), cached is set to
+indexes in an array or constant string in a $(...)), cached is set to
 true to avoid recalculus on next call.
 */
 UString* 

@@ -575,7 +575,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		   ( (!expression->parameters) && (fun->nbparam())) ) {
 		snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 				 "!!! invalid number of arguments for %s (should be %d params)\n",
-				 variablename->getFullname()->str(),fun->nbparam());
+				 functionname->str(),fun->nbparam());
 		connection->send(tmpbuffer,tag->str()); 
 		
 		return( status = UCOMPLETED );
@@ -2633,6 +2633,11 @@ UCommand_NEW::execute(UConnection *connection)
     return ( status = UCOMPLETED );
   }
       
+  newobj->up.push_back(objit->second);
+  objit->second->down.push_back(newobj);
+
+  if (!parameters) return (status = UCOMPLETED);
+
   // init constructor call
   // 
   // For the moment, multiple inheritance with multiple constructors
@@ -2640,6 +2645,80 @@ UCommand_NEW::execute(UConnection *connection)
   // we have a clear reference to the inherited object in this case. It will
   // be fixed later.
    
+  int UU = unic();
+  persistant = false;
+  std::ostringstream oss;
+  std::string tmpval("__UInitret.tmpval_");  
+
+  oss << "{ ";
+
+  // wait for init created if external component
+  if ((objit->second->binder) || (objit->second->internalBinder))
+    oss << "waituntil(isdef(" << id->str() << ".init)) | ";
+
+  oss << tmpval << UU << "=" << id->str() << ".init(";
+
+  
+//  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+//      "{ waituntil(isdef(%s.init))|__UInitret.tmpval_%d=%s.init|delete __UFnctret.EXTERNAL_%d}",
+//      UU,variablename->getFullname()->str(),UU,UU);
+
+  for (UNamedParameters *pvalue = parameters;               
+      pvalue != 0;
+      pvalue = pvalue->next) {
+
+    UValue* valparam = pvalue->expression->eval(this,connection);
+    if (!valparam) {
+      
+      connection->send("!!! EXPR evaluation failed\n",tag->str());
+      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  "{delete %s}",id->str());
+
+      morph = (UCommand*) 
+	new UCommand_EXPR(
+	    new UExpression(
+	      EXPR_FUNCTION,
+	      new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
+	      new UNamedParameters(
+		new UExpression(
+		  EXPR_VALUE,
+		  new UString(tmpbuffer)
+		  )
+		)
+	      )
+	    );
+      return (status = UMORPH);
+    }
+    
+    oss << valparam->echo();
+    if (pvalue->next) oss << ",";    
+  }
+
+  oss << ") | if (!isdef(" << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
+<< tmpval << UU << ")))) { " 
+      << "echo \"Error: Constructor failed, objet deleted\";"
+      << " delete " << id->str() << "} | if (isdef(" << tmpval << UU << ")) delete " << tmpval << UU
+      << "}";  
+ 
+  morph = (UCommand*) 
+    new UCommand_EXPR(
+	new UExpression(
+	  EXPR_FUNCTION,
+	  new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
+	  new UNamedParameters(
+	    new UExpression(
+	      EXPR_VALUE,
+	      new UString(oss.str().c_str())
+	      )
+	    )
+	  )
+	);
+
+  return( status = UMORPH );
+}
+
+// I will never go Here
+/*
   bool alreadydone = false;
   // init
   // INTERNAL (module)
@@ -2762,15 +2841,13 @@ UCommand_NEW::execute(UConnection *connection)
 	    (UNamedParameters*)0),
 	  parameters ));	  
   }
-
-  newobj->up.push_back(objit->second);
-  objit->second->down.push_back(newobj);
   
   if (morph)
     return ( status = UMORPH );	  	
   else
     return ( status = UCOMPLETED );
 }
+*/
 
 //! UCommand subclass hard copy function
 UCommand*
