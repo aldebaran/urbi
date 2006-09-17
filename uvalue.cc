@@ -588,6 +588,9 @@ UValue::add(UValue *v)
 bool
 UValue::equal(UValue *v)
 {
+  UValue* scanlist;
+  UValue* vscanlist;
+
   switch (dataType) {
 
   case DATA_NUM:
@@ -610,7 +613,21 @@ UValue::equal(UValue *v)
                    refBinary->ref()->buffer,
                    refBinary->ref()->bufferSize) == 0 );   
   case DATA_LIST:
-    return(true);//FIXME
+    if (v->dataType != DATA_LIST) return (false);
+    
+    scanlist = liststart;
+    vscanlist = v->liststart;
+
+    while ((scanlist) && (vscanlist)) {
+
+      if (!scanlist->equal(vscanlist)) return( false );
+      
+      scanlist = scanlist->next;
+      vscanlist = vscanlist->next;      
+    }
+    if ((scanlist) || (vscanlist)) return (false);
+
+    return(true);
 
   default:
     return (false);
@@ -704,6 +721,7 @@ UValue::echo(bool hr)
       oss << "\"" << str->str() << "\"";
     else
     {
+      //  beurk, dirty C-like unescaping algorithm.
       char* c;
       bool escape = false;
       for (c = (char*)str->str(); *c != 0; c++) {
