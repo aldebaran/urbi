@@ -5767,6 +5767,9 @@ UCommand_AT::execute(UConnection *connection)
       (mode == false))
     mode = true;          
 
+  ufloat duration = test->softtest_time->val;
+  if (!mode) duration = 0;
+
   if (testres == mode) {
     if ((testeval) &&
         (testeval->eventid) && 
@@ -5785,16 +5788,16 @@ UCommand_AT::execute(UConnection *connection)
 
   if ( ( (nbTrue>0) && 
          (test->softtest_time) && 
-         (connection->server->lastTime() - startTrue >= test->softtest_time->val)) ||
+         (connection->server->lastTime() - startTrue >= duration)) ||
        ( (nbTrue >0) &&          
          (test->softtest_time==0)) ) {
 
-    nbTrue = 0;
-    
+    nbTrue = 0;    
     UNodeType     nodeType;
 
-    if (type == CMD_AT)      nodeType = USEMICOLON;
-    if (type == CMD_AT_AND)  nodeType = UAND;
+//    if (type == CMD_AT)      nodeType = USEMICOLON;
+//    if (type == CMD_AT_AND)  nodeType = UAND;
+    nodeType = UAND;
 
     if (mode == true) {
 
@@ -5836,12 +5839,10 @@ UCommand_AT::execute(UConnection *connection)
       }
 
       return ( status = UBACKGROUND ); 
-      //return (status = URUNNING);
     }
   }
   else 
     return ( status = UBACKGROUND ); 
-  //return (status = URUNNING);
 }
 
 //! UCommand subclass hard copy function
