@@ -128,7 +128,8 @@ UVar::operator = (ufloat n)
   vardata->variable->value->dataType = ::DATA_NUM;
 
   if (owned)
-    in() = n;
+//    in() = n;    
+    vardata->variable->setSensorVal(n);
   else
     vardata->variable->setFloat(n);
 }

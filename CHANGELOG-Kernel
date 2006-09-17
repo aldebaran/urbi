@@ -223,4 +223,11 @@ TODO:
  * list type?
  * a=b <=> alias a b? yes, with alias unicity
 
+------------------------------------------------------------------ 
+ Version 1.0 beta2                        released on xx.xx.2006
+------------------------------------------------------------------
 
+* add delete operator 
+* renamed global. into system.
+* group objects, hardware, software added
+* derivative extension fixed for autoupdate variables
