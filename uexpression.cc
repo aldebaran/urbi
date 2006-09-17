@@ -467,7 +467,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	vari = itobj->second->searchVariable(variablename->getMethod()->str(),
     	    ambiguous);
 	if (ambiguous)  {  
-	  snprintf(errorString,errSize,"!!! Ambiguous multiple inheritance on variable %s\n", variablename->getFullname()->str());
+	  snprintf(errorString,errSize,"!!! Ambiguous multiple inheritance on variable %s\n", 
+	      variablename->getFullname()->str());
 	  connection->send(errorString,command->tag->str()); 
           return new UValue();	            
 	}
@@ -484,11 +485,18 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     if (!variable) {
 
       char* p = strstr(varname,"__");
+      char* pnext = p;
+      while (pnext) {
+	p = pnext;
+	pnext = strstr(p+2,"__");
+      }
       char* p2;
       if (p) { // could be a list index.... (dirty hack)
 	p[0]=0;
+
 	HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
 	if (hmv != ::urbiserver->variabletab.end()) {
+	  
 	  UVariable* tmpvar = (*hmv).second;
 	  if (tmpvar->value->dataType == DATA_LIST) {
 	    // welcome to C-string hacking grand master area
