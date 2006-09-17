@@ -2574,11 +2574,20 @@ UCommand_NEW::execute(UConnection *connection)
     
   HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end())  {
+
+    char* objname = (char*)obj->str();  
+    while ( ::urbiserver->objaliastab.find(objname) !=
+	::urbiserver->objaliastab.end())
+      objname = (char*)::urbiserver->objaliastab[objname]->str();
     
+    objit = ::urbiserver->objtab.find(objname);
+    if (objit == ::urbiserver->objtab.end())  {
+      
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! Unkown object %s\n",obj->str());
+	  "!!! Unkown object %s\n",obj->str());
       connection->send(tmpbuffer,tag->str());
       return ( status = UCOMPLETED );
+    }
   }
 
   
@@ -3081,8 +3090,15 @@ UCommand_GROUP::execute(UConnection *connection)
 	  else  
 	    it++;
       }
-      else
-        g->members.push_back(param->name->copy());
+      else {
+	
+	char* objname = (char*)param->name->str();  
+	while ( ::urbiserver->objaliastab.find(objname) !=
+	    ::urbiserver->objaliastab.end())
+	  objname = (char*)::urbiserver->objaliastab[objname]->str();
+
+        g->members.push_back(new UString(objname));
+      }
 	
       param = param->next;
     }
