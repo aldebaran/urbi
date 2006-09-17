@@ -5767,8 +5767,9 @@ UCommand_AT::execute(UConnection *connection)
       (mode == false))
     mode = true;          
 
-  ufloat duration = test->softtest_time->val;
-  if (!mode) duration = 0;
+  ufloat duration = 0;
+  if ((test->softtest_time) && (mode)) 
+    duration = test->softtest_time->val;  
 
   if (testres == mode) {
     if ((testeval) &&
