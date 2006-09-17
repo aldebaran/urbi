@@ -61,7 +61,7 @@ CXXFLAGS+= -Wno-deprecated\
 
 .PHONY:: all install clean
 
-all: build/buildnumber parser network build/libkernelurbi-$(NETWORK)-$(PARSER).a
+all: buildnb parser network build/libkernelurbi-$(NETWORK)-$(PARSER).a
 
 include network/$(NETWORK)/Makefile.defs
 include parser/$(PARSER)/Makefile.defs
@@ -82,13 +82,13 @@ endif
 CPPFLAGS += -DOS=$(OS)
 ################################################################################
 
-build/buildnumber: $(KERNEL_SOURCES) parser/$(PARSER)/*.y parser/$(PARSER)/*.l
-	LANG=en && svn info | sed -e "s/é/e/" | grep Revision | sed -e "s/Revision: //" > build/buildnumber 
-	echo '"' `cat build/buildnumber` '"'  > buildversion.h
-
 network: $(NETWORK_OBJS)
 
 parser: $(PARSER_OBJS)
+
+buildnb:
+	LANG=en && svn info | sed -e "s/é/e/" | grep Revision | sed -e "s/Revision: //" > build/buildnumber
+	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(PARSER_OBJS) $(NETWORK_OBJS) 
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o userver$(OBJEXT) -c userver.cc
