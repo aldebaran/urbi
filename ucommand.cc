@@ -2093,6 +2093,7 @@ UCommand_EXPR::execute(UConnection *connection)
     hmf = ::urbiserver->functiontab.find(funname->str());
     bool found = (hmf != ::urbiserver->functiontab.end());
     if (!found) {
+
       //trying inheritance
       const char* devname = expression->variablename->getDevice()->str();
       bool ambiguous;
@@ -2131,20 +2132,20 @@ UCommand_EXPR::execute(UConnection *connection)
 
       persistant = false;
       UVariableName* resultContainer = new UVariableName(
-														 new UString("__UFnct"),
-														 new UString("__result__"), 
-														 true, 
-														 (UNamedParameters*)0);
-	  UCommand_EXPR* cexp = new UCommand_EXPR(new UExpression(EXPR_VARIABLE,
-															  resultContainer));
-	  cexp->tag->update(tag->str());
-	  morph = (UCommand*) 
-	/*new UCommand_TREE(UPIPE,
-	                  fun->cmdcopy(tag),
-                          new UCommand_NOOP(true));*/
-	 	  new UCommand_TREE(UPIPE,
-						fun->cmdcopy(tag),
-						cexp);
+	  new UString("__UFnct"),
+	  new UString("__result__"), 
+	  true, 
+	  (UNamedParameters*)0);
+
+      UCommand_EXPR* cexp = new UCommand_EXPR(new UExpression(EXPR_VARIABLE,
+	    resultContainer));
+
+      cexp->tag->update(tag->str());
+      morph = (UCommand*) 	
+	new UCommand_TREE(UPIPE,
+	    fun->cmdcopy(tag),
+	    cexp);
+
       if (morph) {
         
         morph->morphed = true;

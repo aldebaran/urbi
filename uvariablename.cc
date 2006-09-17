@@ -312,8 +312,20 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
         if (funid) {
 	      if (localFunction)
 	        device->update(funid->str());
-	      if (selfFunction) 
-	        device->update(funid->self());	      
+	      if (selfFunction) {
+		if (!nostruct)	
+		  device->update(funid->self());	
+		else
+		{
+		  std::string tmps(funid->str());
+		  tmps = tmps + "." + id->str();
+		  if (::urbiserver->variabletab.find(tmps.c_str()) !=
+		      ::urbiserver->variabletab.end())
+		    device->update(funid->str());
+		  else
+		    device->update(funid->self());	      
+		}
+	      }
   	    }
       }
       else {
