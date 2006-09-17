@@ -609,6 +609,8 @@ UValue::equal(UValue *v)
     return( memcmp(v->refBinary->ref()->buffer,
                    refBinary->ref()->buffer,
                    refBinary->ref()->bufferSize) == 0 );   
+  case DATA_LIST:
+    return(true);//FIXME
 
   default:
     return (false);
@@ -698,9 +700,25 @@ UValue::echo(bool hr)
 
   if (dataType == DATA_STRING) {
 
-    if (!hr) oss << "\"";
-    oss << str->str();
-    if (!hr) oss << "\"";
+    if (!hr) 
+      oss << "\"" << str->str() << "\"";
+    else
+    {
+      char* c;
+      bool escape = false;
+      for (c = (char*)str->str(); *c != 0; c++) {
+	if (((*c)=='\\') && (!escape) && ((*(c+1))!=0))
+	  escape = true;	  
+	else
+	{	
+	  if ((escape) && (*c=='n'))
+	    oss << "\n";
+	  else 
+	    oss << *c;	      	  	  	  
+	  escape = false;
+	}
+      }
+    }
     return oss.str();
   }
   
