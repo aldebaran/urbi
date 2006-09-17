@@ -223,9 +223,6 @@ namespace urbi
   // for remote mode
   extern void main(int argc, char *argv[]);
 
-  // Notification mechanism
-  void USync(UVar&);
-
   // *****************************************************************************
   // Global function of the urbi:: namespace to access kernel features
 
@@ -700,6 +697,8 @@ namespace urbi
       new UTimerCallbackobj<T> (__name, t,(T*)this, fun, timermap);
     }
 
+    void USync(UVar &v); ///< request permanent synchronization for v
+
     std::string __name; ///< name of the object as seen in URBI
     std::string classname; ///< name of the class the object is derived from
     bool   derived; ///< true when the object has been newed by an urbi command
@@ -713,6 +712,7 @@ namespace urbi
     void UAutoGroup() { autogroup = true; }; ///< set autogrouping facility for each new subclass created.
     virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; ///< called when a subclass is created if autogroup is true     
     virtual void UJoinGroup(std::string gpname); ///< joins the uobject to the 'gpname' group
+    int voidfun() {return  0;}; ///< void function used in USync callbacks
 
     bool autogroup; ///< adds a group with a 's' after the base class name
 

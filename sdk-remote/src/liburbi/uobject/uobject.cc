@@ -158,23 +158,12 @@ UTimerCallback::~UTimerCallback()
 // **************************************************************************
 //  Monitoring functions
 
-int voidfun() { return 0; };
-
 //! Generic UVar monitoring without callback
 void
-USync(UVar &v)
+UObject::USync(UVar &v)
 {
-//  urbi::UNotifyChange(v,&voidfun);//FIXME
+  UNotifyChange(v,&UObject::voidfun);
 }
-/*
-//! UVar monitoring with callback
-void
-urbi::UNotifyChange(UVar &v, int (*fun) ())
-{
-  createUCallback("var",fun,v.get_name(), monitormap);
-}
-*/
-
 
 // **************************************************************************
 //! UObject constructor.
