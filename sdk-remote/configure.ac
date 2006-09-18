@@ -29,7 +29,7 @@ URBI_ARG_PROGS([doxygen], [the Doxygen documentation generation program])
 # Name of the directory where the Doxygen documentation is created.
 AC_SUBST([DOCDIR], [srcdoc])
 
-AC_CONFIG_FILES([src/liburbi/Doxyfile])
+AC_CONFIG_FILES([doc/Doxyfile])
 
 ## ------------- ##
 ## Compilation.  ##

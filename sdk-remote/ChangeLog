@@ -1,4 +1,15 @@
-2006-09-18  Akim  <akim@sulaco.local>
+2006-09-18  Akim Demaille  <akim@lrde.epita.fr>
+
+	* src/liburbi/Makefile.am, src/liburbi/Doxyfile.in: Move do
+	generation to...
+	* doc/Makefile.am, doc/Doxyfile.in: here.
+	Put it in srcdir.
+	(install-data-local): New.
+	* doc/Doxyfile.in (INPUT, FILE_PATTERNS): Complete.
+
+	* src/examples/urbisound.cpp: Formatting changes.
+
+2006-09-18  Akim Demaille  <akim@lrde.epita.fr>
 
 	Improve Doxygenation.
 	* src/liburbi/Doxyfile: Rename as...
