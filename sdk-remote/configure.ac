@@ -1,6 +1,7 @@
 m4_pattern_forbid([^ACX_])dnl
+m4_pattern_forbid([^URBI_])dnl
 
-AC_PREREQ([2.59])
+AC_PREREQ([2.60])
 AC_INIT([liburbi-c++], [0.9.3a])
 
 # Auxiliary files.
@@ -9,12 +10,36 @@ AC_CONFIG_AUX_DIR([build-aux])
 # Automake.
 AM_INIT_AUTOMAKE([1.9.6 -Wall dist-zip])
 
+
+## --------------- ##
+## Documentation.  ##
+## --------------- ##
+
+# URBI_ARG_PROGS(PROG, DOC, [PROGRAMS])
+# -------------------------------------
+# Look for PROG, registered as an ARG_VAR with DOC, and store in
+# $PROG (upper cased).  If not available, set as "missing PROG".
+m4_define([URBI_ARG_PROGS],
+[AC_ARG_VAR(m4_toupper([$1]), [$2])
+AC_CHECK_PROGS(m4_toupper([$1]), [m4_default([$3], [$1])],
+	       [$am_aux_dir/missing $1])
+])
+
+URBI_ARG_PROGS([doxygen], [the Doxygen documentation generation program])
+# Name of the directory where the Doxygen documentation is created.
+AC_SUBST([DOCDIR], [srcdoc])
+
+AC_CONFIG_FILES([src/liburbi/Doxyfile])
+
+## ------------- ##
+## Compilation.  ##
+## ------------- ##
+
 # For the time being, we are not interested about deprecated
 # headers such as hash_map.h.  We should use ext/hash_map.
 AC_SUBST([WARNING_CXXFLAGS], [-Wno-deprecated])
-AC_PROG_CXX
-
 AC_PROG_CC
+AC_PROG_CXX
 
 # We don't need static libraries, speed the compilation up.
 : ${enable_shared=no}
@@ -22,6 +47,11 @@ AC_PROG_LIBTOOL
 
 # Pthreads.
 ACX_PTHREAD([], [AC_MSG_ERROR([pthreads are required])])
+
+
+## -------- ##
+## Open R.  ##
+## -------- ##
 
 OPENR_SDK_PATH=/usr/local/OPEN_R_SDK
 AC_ARG_ENABLE([openr],
@@ -49,6 +79,11 @@ fi
 
 AM_CONDITIONAL([OPENR], [test $openr = true])
 AC_SUBST([OPENR_SDK_PATH])
+
+
+## -------- ##
+## Output.  ##
+## -------- ##
 
 AC_CONFIG_FILES([Makefile
 	  doc/Makefile

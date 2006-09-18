@@ -33,12 +33,12 @@ typedef unsigned char byte;
 int convertRGBtoYCrCb  (const byte* source, int sourcelen, byte* dest);
 int convertYCrCbtoRGB  (const byte* source, int sourcelen, byte* dest);
 int convertJPEGtoYCrCb (const byte* source, int sourcelen, byte* dest,
-		       int &size);
+			int &size);
 int convertJPEGtoRGB   (const byte* source, int sourcelen, byte* dest,
-		       int &size);
+			int &size);
 
 int convertRGBtoJPEG(const byte* source, int w, int h, byte* dest,
-		       int &size, int quality);
+		     int &size, int quality);
 int convertYCrCbtoJPEG(const byte* source, int w, int h, byte* dest,
 		       int &size, int quality);
 

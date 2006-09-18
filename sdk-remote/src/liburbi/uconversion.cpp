@@ -5,28 +5,28 @@
 
 extern "C"
 {
-# include "../../lib/jpeg-6b/jpeglib.h"
-# include "../../lib/jpeg-6b/jerror.h"
+# include "jpeg-6b/jpeglib.h"
+# include "jpeg-6b/jerror.h"
 }
 
-
-static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size,
-		       bool RGB, int &output_size);
-
-static int
-write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
-	       unsigned char* dst, int &sz, int quality);
-
-
-static inline unsigned char clamp(float v)
+namespace
 {
-  if (v < 0)
-    return 0;
-  if (v > 255)
-    return 255;
-  return (unsigned char) v;
-}
+  void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size,
+		  bool RGB, int &output_size);
 
+  int write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
+		  unsigned char* dst, int &sz, int quality);
+
+
+  inline unsigned char clamp(float v)
+  {
+    if (v < 0)
+      return 0;
+    if (v > 255)
+      return 255;
+    return (unsigned char) v;
+  }
+}
 
 int
 convertRGBtoYCrCb(const byte * sourceImage,
@@ -124,37 +124,40 @@ struct mem_source_mgr
   JOCTET eoi[2];
 };
 
-static void init_source(j_decompress_ptr cinfo)
+namespace
 {
-}
+  void init_source(j_decompress_ptr cinfo)
+  {
+  }
 
-static boolean fill_input_buffer(j_decompress_ptr cinfo)
-{
-  mem_source_mgr *src = (mem_source_mgr *) cinfo->src;
-  if (src->pub.bytes_in_buffer != 0)
+  boolean fill_input_buffer(j_decompress_ptr cinfo)
+  {
+    mem_source_mgr *src = (mem_source_mgr *) cinfo->src;
+    if (src->pub.bytes_in_buffer != 0)
+      return TRUE;
+    src->eoi[0] = 0xFF;
+    src->eoi[1] = JPEG_EOI;
+    src->pub.bytes_in_buffer = 2;
+    src->pub.next_input_byte = src->eoi;
     return TRUE;
-  src->eoi[0] = 0xFF;
-  src->eoi[1] = JPEG_EOI;
-  src->pub.bytes_in_buffer = 2;
-  src->pub.next_input_byte = src->eoi;
-  return TRUE;
-}
+  }
 
-static void term_source(j_decompress_ptr cinfo)
-{
-}
+  void term_source(j_decompress_ptr cinfo)
+  {
+  }
 
-static void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
-{
-  mem_source_mgr *src = (mem_source_mgr *) cinfo->src;
-  if (num_bytes <= 0)
-    return;
-  if (num_bytes > src->pub.bytes_in_buffer)
-    num_bytes = src->pub.bytes_in_buffer;
-  src->pub.bytes_in_buffer -= num_bytes;
-  src->pub.next_input_byte += num_bytes;
-}
+  void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+  {
+    mem_source_mgr *src = (mem_source_mgr *) cinfo->src;
+    if (num_bytes <= 0)
+      return;
+    if (num_bytes > src->pub.bytes_in_buffer)
+      num_bytes = src->pub.bytes_in_buffer;
+    src->pub.bytes_in_buffer -= num_bytes;
+    src->pub.next_input_byte += num_bytes;
+  }
 
+}
 
 struct urbi_jpeg_error_mgr {
   struct jpeg_error_mgr pub;	/* "public" fields */
@@ -192,11 +195,12 @@ void term_destination(j_compress_ptr cinfo) {
 }
 
 
-int
-write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
-	       unsigned char* dst, int &sz, int quality)
+namespace 
 {
-
+  int
+  write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
+	     unsigned char* dst, int &sz, int quality)
+  {
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
 
@@ -207,8 +211,8 @@ write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
     mem_destination_mgr *dest = (struct mem_destination_mgr *)
-    (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
-			       sizeof(mem_destination_mgr));
+      (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
+				 sizeof(mem_destination_mgr));
 
     cinfo.dest = (jpeg_destination_mgr*)dest;
     dest->pub.init_destination=&init_destination;
@@ -231,8 +235,8 @@ write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
     row_stride = w * 3;	/* JSAMPLEs per row in image_buffer */
 
     while (cinfo.next_scanline < cinfo.image_height) {
-	row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
-	(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+      row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
+      (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
 
     jpeg_finish_compress(&cinfo);
@@ -240,93 +244,95 @@ write_jpeg(const unsigned char* src, int w, int h, bool ycrcb,
     jpeg_destroy_compress(&cinfo);
 
     return sz;
-}
+  }
 
+  /*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
+   */
+  void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
+		  int &output_size)
+  {
+    struct jpeg_decompress_struct cinfo;
+    struct urbi_jpeg_error_mgr jerr;
+    cinfo.err = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = urbi_jpeg_error_exit;
+    if (setjmp(jerr.setjmp_buffer)) {
+      /* If we get here, the JPEG code has signaled an error.
+       * We need to clean up the JPEG object, close the input file, and return.
+       */
+      jpeg_destroy_decompress(&cinfo);
+      printf( "JPEG error!\n");
+      return 0;
+    }
+    jpeg_create_decompress(&cinfo);
+    mem_source_mgr *source = (struct mem_source_mgr *)
+      (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
+				 sizeof(mem_source_mgr));
 
-/*! Convert a jpeg image to YCrCb or RGB. Allocate the buffer with malloc.
- */
-static void *read_jpeg(const char *jpgbuffer, int jpgbuffer_size, bool RGB,
-		       int &output_size)
-{
-  struct jpeg_decompress_struct cinfo;
-  struct urbi_jpeg_error_mgr jerr;
-  cinfo.err = jpeg_std_error(&jerr.pub);
-  jerr.pub.error_exit = urbi_jpeg_error_exit;
-  if (setjmp(jerr.setjmp_buffer)) {
-    /* If we get here, the JPEG code has signaled an error.
-     * We need to clean up the JPEG object, close the input file, and return.
-     */
+    cinfo.src = (jpeg_source_mgr *) source;
+    source->pub.skip_input_data = skip_input_data;
+    source->pub.term_source = term_source;
+    source->pub.init_source = init_source;
+    source->pub.fill_input_buffer = fill_input_buffer;
+    source->pub.resync_to_restart = jpeg_resync_to_restart;
+    source->pub.bytes_in_buffer = jpgbuffer_size;
+    source->pub.next_input_byte = (JOCTET *) jpgbuffer;
+    cinfo.out_color_space = (RGB ? JCS_RGB : JCS_YCbCr);
+    jpeg_read_header(&cinfo, TRUE);
+    cinfo.out_color_space = (RGB ? JCS_RGB : JCS_YCbCr);
+    jpeg_start_decompress(&cinfo);
+    output_size = cinfo.output_width *
+      cinfo.output_components        *
+      cinfo.output_height;
+    void *buffer = malloc(output_size);
+
+    while (cinfo.output_scanline < cinfo.output_height) {
+      /* jpeg_read_scanlines expects an array of pointers to scanlines.
+       * Here the array is only one element long, but you could ask for
+       * more than one scanline at a time if that's more convenient.
+       */
+      JSAMPROW row_pointer[1];
+      row_pointer[0] = (JOCTET *) & ((char *) buffer)[cinfo.output_scanline   *
+						      cinfo.output_components *
+						      cinfo.output_width];
+      jpeg_read_scanlines(&cinfo, row_pointer, 1);
+    }
+    jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
-    printf( "JPEG error!\n");
-    return 0;
+
+    return buffer;
   }
-  jpeg_create_decompress(&cinfo);
-  mem_source_mgr *source = (struct mem_source_mgr *)
-    (*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
-			       sizeof(mem_source_mgr));
-
-  cinfo.src = (jpeg_source_mgr *) source;
-  source->pub.skip_input_data = skip_input_data;
-  source->pub.term_source = term_source;
-  source->pub.init_source = init_source;
-  source->pub.fill_input_buffer = fill_input_buffer;
-  source->pub.resync_to_restart = jpeg_resync_to_restart;
-  source->pub.bytes_in_buffer = jpgbuffer_size;
-  source->pub.next_input_byte = (JOCTET *) jpgbuffer;
-  cinfo.out_color_space = (RGB ? JCS_RGB : JCS_YCbCr);
-  jpeg_read_header(&cinfo, TRUE);
-  cinfo.out_color_space = (RGB ? JCS_RGB : JCS_YCbCr);
-  jpeg_start_decompress(&cinfo);
-  output_size = cinfo.output_width *
-    cinfo.output_components        *
-    cinfo.output_height;
-  void *buffer = malloc(output_size);
-
-  while (cinfo.output_scanline < cinfo.output_height) {
-    /* jpeg_read_scanlines expects an array of pointers to scanlines.
-     * Here the array is only one element long, but you could ask for
-     * more than one scanline at a time if that's more convenient.
-     */
-    JSAMPROW row_pointer[1];
-    row_pointer[0] = (JOCTET *) & ((char *) buffer)[cinfo.output_scanline   *
-						    cinfo.output_components *
-						    cinfo.output_width];
-    jpeg_read_scanlines(&cinfo, row_pointer, 1);
-  }
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
-
-  return buffer;
-}
 
 
 
-//scale putting (scx,scy) at the center of destination image
-static void scaleColorImage(unsigned char * src, int sw, int sh,  int scx, int scy, unsigned char * dst, int dw, int dh, float sx, float sy) {
-  for (int x=0;x<dw;x++)
-    for (int y=0;y<dh;y++) {
-      //find the corresponding point in source image
-      float fsrcx = (float) (x-dw/2) / sx  + (float)scx;
-      float fsrcy = (float) (y-dh/2) / sy  + (float)scy;
-      int srcx = (int) fsrcx;
-      int srcy = (int) fsrcy;
-      if ( srcx<=0 || srcx>=sw-1 || srcy<=0 || srcy>=sh-1)
-	memset(dst+(x+y*dw)*3,0,3);
-      else { //do the bilinear interpolation
+  //scale putting (scx,scy) at the center of destination image
+  void scaleColorImage(unsigned char * src, int sw, int sh,  
+		       int scx, int scy, 
+		       unsigned char * dst, int dw, int dh, float sx, float sy) 
+  {
+    for (int x=0;x<dw;x++)
+      for (int y=0;y<dh;y++) {
+	//find the corresponding point in source image
+	float fsrcx = (float) (x-dw/2) / sx  + (float)scx;
+	float fsrcy = (float) (y-dh/2) / sy  + (float)scy;
+	int srcx = (int) fsrcx;
+	int srcy = (int) fsrcy;
+	if ( srcx<=0 || srcx>=sw-1 || srcy<=0 || srcy>=sh-1)
+	  memset(dst+(x+y*dw)*3,0,3);
+	else { //do the bilinear interpolation
 
-	float xfactor = fsrcx-(float)srcx;
-	float yfactor = fsrcy-(float)srcy;
-	for (int color=0;color<3;color++) {
-	  float up = (float)src[(srcx+srcy*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+srcy*sw)*3+color] * xfactor;
-	  float down = (float)src[(srcx+(srcy+1)*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+(srcy+1)*sw)*3+color] * xfactor;
-	  float result = up * (1.0-yfactor) + down * yfactor;
-	  dst[(x+y*dw)*3+color] = (unsigned char)result;
+	  float xfactor = fsrcx-(float)srcx;
+	  float yfactor = fsrcy-(float)srcy;
+	  for (int color=0;color<3;color++) {
+	    float up = (float)src[(srcx+srcy*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+srcy*sw)*3+color] * xfactor;
+	    float down = (float)src[(srcx+(srcy+1)*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+(srcy+1)*sw)*3+color] * xfactor;
+	    float result = up * (1.0-yfactor) + down * yfactor;
+	    dst[(x+y*dw)*3+color] = (unsigned char)result;
+	  }
 	}
       }
-    }
-}
+  }
 
-
+} // anonymous namespace
 
 /** Convert between various image formats, takes care of everything
  */

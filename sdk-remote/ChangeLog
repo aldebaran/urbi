@@ -1,15 +1,33 @@
+2006-09-18  Akim  <akim@sulaco.local>
+
+	Improve Doxygenation.
+	* src/liburbi/Doxyfile: Rename as...
+	* src/liburbi/Doxyfile.in: this.
+	(EXPAND_AS_DEFINED): Add the macros that should be expanded to
+	get proper documentation generation.
+	* configure.ac (DOXYGEN, DOCDIR): New.
+	* src/librubi/Makefile.am ($(DOCDIR)): New target.
+
+	* src/liburbi/uconversion.cpp: Do not use relative paths.
+	Use the anonymous namespace instead of "static".
+	* src/liburbi/uconversion.h, src/liburbi/lockable.h: Formatting
+	changes.
+	* src/liburbi/Makefile.am (AM_CPPFLAGS): Point to lib/, not
+	lib/jpeg-6.
+	* src/liburbi/uabstractclient.h: Formatting changes.
+
 2006-09-15  Matthieu Nottale <nottale@gostai.com>
-        
+
 	* src/liburbi/uobject/common_uvalue.cc : Fix missing space in
 	getMessage().
 	* src/liburbi/uobject/uobject.template.h: Improve doc.
-	
+
 2006-09-14  Matthieu Nottale <nottale@gostai.com>
 
-        * src/utils/Makefile.am (AM_CXXFLAGS): Fix 
+	* src/utils/Makefile.am (AM_CXXFLAGS): Fix
 	  (PTHREAD_CFLAGS and not PTHREAD_LIBS, cf src/examples/Makefile.am).
-	* src/examples/urbispeak.cpp, src/liburbi/usoftdevice.h: 
-          remove (deprecated API).
+	* src/examples/urbispeak.cpp, src/liburbi/usoftdevice.h:
+	  remove (deprecated API).
 	* src/liburbi/lockable.h : Fix deprecated pthread_mutexattr_setkind
 	  under linux.
 	* src/examples/*.cpp : Finish port to 1.0 API.

@@ -22,17 +22,18 @@
 **********************************************************************/
 
 #ifndef UABSTRACTCLIENT_H
-#define UABSTRACTCLIENT_H
-#include <cstdio>
-#include <sys/types.h>
-#include <cstring>
-#include <cstdlib>
-#include <stdarg.h>
-#include <list>
-#include <vector>
-#include <iostream>
-#include <string>
-#include "uobject.h"
+# define UABSTRACTCLIENT_H
+
+# include <cstdio>
+# include <sys/types.h>
+# include <cstring>
+# include <cstdlib>
+# include <stdarg.h>
+# include <list>
+# include <vector>
+# include <iostream>
+# include <string>
+# include "uobject.h"
 
 static const int URBI_BUFLEN    = 128000 ; ///< Connection Buffer size.
 static const int URBI_PORT      = 54000  ; ///< Standard port of URBI server.
@@ -52,11 +53,11 @@ enum UCallbackAction {
 
 typedef unsigned int UCallbackID;
 
-#define DEBUG 0
+# define DEBUG 0
 
 class UCallbackList;
 class UAbstractClient;
-#define UINVALIDCALLBACKID 0
+# define UINVALIDCALLBACKID 0
 
 enum UMessageType {
   MESSAGE_SYSTEM,
@@ -99,8 +100,6 @@ typedef UCallbackAction (*UCallback)             (const UMessage &msg);
 
 typedef UCallbackAction (*UCustomCallback)       (void * callbackData,
 						 const UMessage &msg);
-
-
 
 
 //used internaly
@@ -300,7 +299,7 @@ class UAbstractClient : public std::ostream
   friend class UClientStreambuf;
 };
 
-#include "uconversion.h"
+# include "uconversion.h"
 
 class UCallbackWrapper {
  public:
@@ -486,19 +485,19 @@ template<class C, class P1, class P2, class P3, class P4> UCallbackID UAbstractC
    URBI() << "headPan.val="<<12<<";";
  */
 
-#ifdef URBI
-# undef URBI
-#endif
-
-#if defined(LIBURBI_NOARMOR)
-# if !defined(__GNUC__)
-#  error "as far as we know, your compiler does not support the __VA_ARGS__ C preprocessor extension, feature unavailable"
-# else
-#  define URBI(...) ((urbi::getDefaultClient()==0)? std::cerr : (*urbi::getDefaultClient())) << #__VA_ARGS__
+# ifdef URBI
+#  undef URBI
 # endif
-#else
-# define URBI(a) urbi::unarmorAndSend(#a)
-#endif
+
+# if defined(LIBURBI_NOARMOR)
+#  if !defined(__GNUC__)
+#   error "as far as we know, your compiler does not support the __VA_ARGS__ C preprocessor extension, feature unavailable"
+#  else
+#   define URBI(...) ((urbi::getDefaultClient()==0)? std::cerr : (*urbi::getDefaultClient())) << # __VA_ARGS__
+#  endif
+# else
+#  define URBI(a) urbi::unarmorAndSend(# a)
+# endif
 
 class UClient;
 namespace urbi
@@ -518,10 +517,10 @@ namespace urbi
   UClient * getDefaultClient();
   /// Redefine the default client
   void setDefaultClient(UClient * cl);
-#ifndef DISABLE_IOSTREAM
+# ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
   std::ostream & unarmorAndSend(const char * str);
-#endif
+# endif
   extern UClient * defaultClient;
 }
 #endif // UABSTRACTCLIENT_H

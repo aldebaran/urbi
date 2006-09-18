@@ -46,7 +46,7 @@ inline void initLock(Lock &l) {
 #else
   // deprecated according to man page and fails to compile
   // pthread_mutexattr_setkind_np(&ma, PTHREAD_MUTEX_RECURSIVE_NP);
-  pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE_NP);	
+  pthread_mutexattr_settype(&ma, PTHREAD_MUTEX_RECURSIVE_NP);
 #endif
   pthread_mutex_init(&l,&ma);
 }
@@ -200,9 +200,9 @@ template<class T> void *startThread(T * obj) {
 
 inline void joinThread(void *t) {
 # ifdef WIN32
-	WaitForSingleObject(t, INFINITE);
+  WaitForSingleObject(t, INFINITE);
 # else
-	pthread_join(*(pthread_t*)t, 0);
+  pthread_join(*(pthread_t*)t, 0);
 # endif
 }
 
