@@ -559,6 +559,7 @@ instruction:
 
   | VAR refvariable ASSIGN expr namedparameters { 
 
+    $2->local_scope = true;
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
       MEMCHECK3($$,$2,$4,$5);
     } 
@@ -741,30 +742,35 @@ instruction:
 
   | EMIT purevariable { 
 
+      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
     } 
 
   | EMIT purevariable LPAREN parameterlist RPAREN { 
 
+      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($2,$4);
       MEMCHECK2($$,$2,$4);
     } 
 
   | EMIT LPAREN expr RPAREN purevariable { 
 
+      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($5,(UNamedParameters*)0,$3);
       MEMCHECK2($$,$5,$3);
     } 
 
   | EMIT LPAREN expr RPAREN purevariable LPAREN parameterlist RPAREN { 
 
+      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($5,$7,$3);
       MEMCHECK3($$,$5,$7,$3);
     } 
 
   | EMIT LPAREN RPAREN purevariable { 
 
+      $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,(UNamedParameters*)0, 
       	new UExpression(EXPR_VALUE,UINFINITY));
       MEMCHECK1($$,$4);
@@ -772,6 +778,7 @@ instruction:
 
   | EMIT LPAREN RPAREN purevariable LPAREN parameterlist RPAREN { 
 
+      $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,$6,
       	new UExpression(EXPR_VALUE,UINFINITY));
       MEMCHECK2($$,$4,$6);
@@ -806,6 +813,7 @@ instruction:
 
   | VAR refvariable {
   
+      $2->local_scope = true;
       $$ = new UCommand_DEF(UDEF_VAR,$2,
                             (UNamedParameters*)0,
                             (UCommand*)0);
@@ -815,6 +823,7 @@ instruction:
 
   | DEF refvariable {
   
+      $2->local_scope = true;
       $$ = new UCommand_DEF(UDEF_VAR,$2,
                             (UNamedParameters*)0,
                             (UCommand*)0);
@@ -842,13 +851,17 @@ instruction:
 
       
   | EVENT variable LPAREN identifiers RPAREN {
-    
+         
+      $2->local_scope = true;
+      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_DEF(UDEF_EVENT,$2,$4,(UCommand*)0);
-      MEMCHECK2($$,$2,$4);      
+      MEMCHECK2($$,$2,$4);
     }
     
   | EVENT variable {
     
+      $2->local_scope = true;
+      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_DEF(UDEF_EVENT,$2,(UNamedParameters*)0,(UCommand*)0);
       MEMCHECK1($$,$2);      
     }
@@ -866,17 +879,19 @@ instruction:
       }
       else {
 	uparser.connection->functionTag = new UString("__Funct__");
-	if ($2->nostruct) // we are not in a class
-	  uparser.connection->functionClass = 0;
-	else
-	  uparser.connection->functionClass = $2->device;
+	//if ($2->nostruct) // we are not in a class
+	//  uparser.connection->functionClass = 0;
+	//else
+	//  uparser.connection->functionClass = $2->device;
 	globalDelete = &uparser.connection->functionTag;
       }
  
     } taggedcommand {
      
+      $2->id_type = UDEF_FUNCTION;
       $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7, 
-																  new UCommand_RETURN((UExpression*)0)));
+	    new UCommand_RETURN((UExpression*)0)));
+
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
         delete uparser.connection->functionTag;
@@ -899,13 +914,16 @@ instruction:
       }
       else {
 	uparser.connection->functionTag = new UString("__Funct__");
-	uparser.connection->functionClass = $2->device;
+	//uparser.connection->functionClass = $2->device;
 	globalDelete = &uparser.connection->functionTag;
       }
  
     } taggedcommand {
      
-      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
+      $2->id_type = UDEF_FUNCTION;
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7, 
+	    new UCommand_RETURN((UExpression*)0)));
+      
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
         delete uparser.connection->functionTag;
@@ -1096,8 +1114,8 @@ purevariable:
       if (uparser.connection->functionTag) {
 	// We are inside a function
 
-	if (uparser.connection->functionClass) {
-	  std::string tmpname = std::string(uparser.connection->functionClass->str())
+/*	if (uparser.connection->functionClass) {
+//	  std::string tmpname = std::string(uparser.connection->functionClass->str())
 	    + "." + std::string($1->str());
 	
 	  if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
@@ -1107,7 +1125,7 @@ purevariable:
 	  else
 	    $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
 	} 
-       	else
+       	else*/
 	  $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
       }
       else 
@@ -1294,11 +1312,12 @@ expr:
 
   | refvariable LPAREN parameterlist RPAREN  { 
     
-      if (($1) && ($1->device) && 
-          ($1->device->equal(uparser.connection->functionTag)))
-        $1->nameUpdate(uparser.connection->connectionTag->str(),
-                       $1->id->str());
+      //if (($1) && ($1->device) && 
+      //    ($1->device->equal(uparser.connection->functionTag)))
+      //  $1->nameUpdate(uparser.connection->connectionTag->str(),
+      //                 $1->id->str());
 
+      $1->id_type = UDEF_FUNCTION;
       $$ = new UExpression(EXPR_FUNCTION,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
@@ -1566,21 +1585,25 @@ class_declaration:
     }
     
   | FUNCTION variable LPAREN identifiers RPAREN {
+      $2->id_type = UDEF_FUNCTION;
       $$ = new UExpression(EXPR_FUNCTION,$2,$4);
       MEMCHECK2($$,$2,$4);
     }
     
   | FUNCTION variable {
+      $2->id_type = UDEF_FUNCTION;
       $$ = new UExpression(EXPR_FUNCTION,$2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);      
     }
     
   | EVENT variable LPAREN identifiers RPAREN {
+      $2->id_type = UDEF_EVENT;
       $$ = new UExpression(EXPR_EVENT,$2,$4);
       MEMCHECK2($$,$2,$4);
     }
     
   | EVENT variable {
+      $2->id_type = UDEF_EVENT;
       $$ = new UExpression(EXPR_EVENT,$2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
     }

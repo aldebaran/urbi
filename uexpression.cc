@@ -1180,8 +1180,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	if (!connection->stack.empty())
 	  connection->functionTag = new UString("__Funct__");
         int result = ::urbiserver->parser.process((ubyte*)e1->str->str(), 
-                                                  e1->str->len(),                                                  
-                                                  connection); 
+                                                  e1->str->len(),                                                                                                connection); 
 	if (connection->functionTag) {
 	  delete connection->functionTag;
 	  connection->functionTag=0;

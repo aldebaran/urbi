@@ -59,7 +59,9 @@ UVariableName::UVariableName(UString* device,
   this->function  = 0;
   this->firsttime = true;
   this->nostruct  = false;
-  
+  this->id_type   = UDEF_VAR;  
+  this->local_scope  = false;
+
   localFunction   = false;
   selfFunction    = false;
   if ((device) && (device->equal("__Funct__")))
@@ -92,7 +94,8 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
   this->function  = 0;
   this->firsttime = true;
   this->nostruct  = false;
-  
+  this->id_type   = UDEF_VAR;  
+  this->local_scope  = false;
 }
 
 //! UVariableName destructor.
@@ -310,23 +313,75 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       if (!connection->stack.empty()) {
         UCallid *funid = connection->stack.front();
         if (funid) {
-	      if (localFunction)
-	        device->update(funid->str());
-	      if (selfFunction) {
-		if (!nostruct)	
-		  device->update(funid->self());	
+
+	  if (selfFunction)
+	    device->update(funid->self());
+
+	  if (localFunction) 
+	  {
+	    std::string tmpself(funid->self());
+	    tmpself = tmpself + "." + id->str();
+	    std::string tmpstr(funid->str());
+	    tmpstr = tmpstr + "." + id->str();	   
+
+	    if (local_scope)
+	      device->update(funid->str());
+	    else
+	    {
+	      if (((id_type==UDEF_VAR) // is it a class symbol? (class can be U0034578 for 
+	      	                       // functions without prefixes)
+  		    && (::urbiserver->variabletab.find(tmpself.c_str()) !=
+  		      ::urbiserver->variabletab.end()))
+  		  ||
+  		  ((id_type==UDEF_FUNCTION)
+ 		   && (::urbiserver->functiontab.find(tmpself.c_str()) !=
+ 		     ::urbiserver->functiontab.end()))
+  		  ||
+  		  ((id_type==UDEF_EVENT)
+ 		   && (::urbiserver->eventtab.find(tmpself.c_str()) !=
+ 		     ::urbiserver->eventtab.end()))
+  		 )
+  	      {
+  		if (((id_type==UDEF_VAR) // is it *not* local to the call?
+  		      && (::urbiserver->variabletab.find(tmpstr.c_str()) ==
+  			::urbiserver->variabletab.end()))
+  		    ||//impossible, there is no nested functions...
+  		    ((id_type==UDEF_FUNCTION)
+  		     && (::urbiserver->functiontab.find(tmpstr.c_str()) ==
+  		       ::urbiserver->functiontab.end()))
+  		    ||
+  		    ((id_type==UDEF_EVENT)
+  		     && (::urbiserver->eventtab.find(tmpstr.c_str()) ==
+  		       ::urbiserver->eventtab.end()))
+  		   )		 
+		  device->update(funid->self());
 		else
-		{
-		  std::string tmps(funid->str());
-		  tmps = tmps + "." + id->str();
-		  if (::urbiserver->variabletab.find(tmps.c_str()) !=
-		      ::urbiserver->variabletab.end())
-		    device->update(funid->str());
-		  else
-		    device->update(funid->self());	      
-		}
-	      }
-  	    }
+		  device->update(funid->str());
+  	      }// class symbol
+	      else
+	      {		
+		std::string tmploc(connection->connectionTag->str());
+		tmploc = tmploc + "." + id->str();
+
+		if (((id_type==UDEF_VAR) // is it a symbol local to the connection? 
+		      && (::urbiserver->variabletab.find(tmploc.c_str()) !=
+			::urbiserver->variabletab.end()))
+		    ||
+		    ((id_type==UDEF_FUNCTION)
+		     && (::urbiserver->functiontab.find(tmploc.c_str()) !=
+		       ::urbiserver->functiontab.end()))
+		    ||
+		    ((id_type==UDEF_EVENT)
+		     && (::urbiserver->eventtab.find(tmploc.c_str()) !=
+		       ::urbiserver->eventtab.end()))
+		   )
+		  device->update(connection->connectionTag->str());
+		else
+		  device->update(funid->str());
+	      }// !class symbol
+	    }
+	  }
+	}	
       }
       else {
         snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
@@ -528,6 +583,8 @@ UVariableName::copy()
   ret->varerror     = varerror;
   ret->fromGroup    = fromGroup;
   ret->nostruct     = nostruct;
+  ret->id_type      = id_type;
+  ret->local_scope  = local_scope;
   
   return (ret);
 }

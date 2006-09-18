@@ -88,6 +88,8 @@ public:
                                ///< this is used to avoid error messages when the variable does not exist
   bool              firsttime; ///< before the first local function prefix resolution
   bool              nostruct; ///< is nostruct if it comes from a simple IDENTIFIER in the parsing phase
+  UDefType          id_type; ///< type of the symbol: UDEF_FUNCTION, UDEF_VAR or UDEF_EVENT
+  bool              local_scope; ///< name resolution will be limited to local scope in functions
   
 protected:
 

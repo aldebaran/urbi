@@ -5030,6 +5030,7 @@ UCommand_DEF::execute(UConnection *connection)
   if (variablelist) {
 
     UVariableList *list = variablelist;
+    list->variablename->local_scope = true;
     UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,list->variablename->copy(),
                                            (UNamedParameters*) 0,
                                            (UCommand*) 0);
@@ -5039,6 +5040,7 @@ UCommand_DEF::execute(UConnection *connection)
 
     while (list) {
       if (list->variablename) {
+	list->variablename->local_scope = true;
         cdef = new UCommand_DEF (UDEF_VAR,list->variablename->copy(),
                                  (UNamedParameters*) 0,
                                  (UCommand*) 0);
