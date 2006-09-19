@@ -182,6 +182,7 @@ UObject::UObject(const string &s) :
   __name(s)
 {
   objecthub = 0;
+  autogroup = false;
   lastUObject = this;
   UString tmps(__name.c_str()); // quelle merde ces UString!!!!
   UObj* tmpobj = new UObj(&tmps);
