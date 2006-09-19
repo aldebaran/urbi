@@ -359,7 +359,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 		  device->update(funid->str());
   	      }// class symbol
 	      else
-	      {		
+	      {	
 		std::string tmploc(connection->connectionTag->str());
 		tmploc = tmploc + "." + id->str();
 

@@ -177,6 +177,8 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
 	(*(clone->*refName)())->deriv = (*varname)->deriv;
 	(*(clone->*refName)())->varerror = (*varname)->varerror;
 	(*(clone->*refName)())->nostruct = (*varname)->nostruct;
+	(*(clone->*refName)())->id_type = (*varname)->id_type;
+	(*(clone->*refName)())->local_scope = (*varname)->local_scope;
 
         gplist = (UCommand*) new UCommand_TREE(UAND,clone,gplist_prev);	  
         gplist_prev = gplist;        
@@ -3425,10 +3427,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
     variablename->buildFullname(this, connection);
   }
 
-  // Broadcasting  
-  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
-  
-// Main execution
+  // Main execution
   if (cmd == -1)
     morph = new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
