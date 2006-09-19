@@ -5,7 +5,10 @@ Sends a binary file to the URBI server, to be saved in a variable
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
+#ifdef WIN32
+#include <windows.h>
+#define sleep(a) Sleep(a*1000)
+#endif
 
 int main(int argc, char * argv[]) {
   if (argc < 4 || argc >5) {

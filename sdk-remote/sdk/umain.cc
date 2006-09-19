@@ -19,6 +19,13 @@
  **************************************************************************** */
 
 #include <uobject.h>
+#ifdef WIN32
+#include <windows.h>
+#define usleep(a) Sleep(a/1000)
+#else
+#include <unistd.h>
+#endif
+
 namespace urbi {
  int main(int argc, const char * argv[]);
 };
@@ -27,5 +34,5 @@ int
 main(int argc, char *argv[])
 {
   urbi::main(argc, argv);
-  while(1) usleep(10000); //urbi::execute();
+  while(1) usleep(100000); //urbi::execute();
 };

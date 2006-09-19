@@ -2,6 +2,7 @@
 #include <signal.h>
 
 #ifdef WIN32
+#include <windows.h>
 #define usleep(a) Sleep(a/1000)
 #endif 
 

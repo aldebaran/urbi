@@ -2,7 +2,7 @@
 ## Doxygen documentation.  ##
 ## ----------------------- ##
 
-all: $(srcdir)/$(DOCDIR)
+html_DATA = $(srcdir)/$(DOCDIR)
 $(srcdir)/$(DOCDIR): Doxyfile.in
 	rm -rf $(DOCDIR).tmp $(srcdir)/$(DOCDIR)
 	$(MAKE) $(AM_MAKEFLAGS) Doxyfile

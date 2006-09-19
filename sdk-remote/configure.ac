@@ -2,7 +2,7 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([liburbi-c++], [0.9.3a])
+AC_INIT([liburbi-c++], [0.9.3a], [bugs@gostai.com], [liburbi-cpp])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
@@ -46,7 +46,11 @@ AC_PROG_CXX
 AC_PROG_LIBTOOL
 
 # Pthreads.
-ACX_PTHREAD([], [AC_MSG_ERROR([pthreads are required])])
+ACX_PTHREAD([windows=false], [
+    AC_CHECK_HEADER(windows.h, [LIBS="$LIBS -lws2_32 -lgdi32";windows=true],
+      [AC_MSG_ERROR([pthreads or WIN32 API is required])])])
+AM_CONDITIONAL([WIN32], [test $windows = true])
+
 
 
 ## -------- ##

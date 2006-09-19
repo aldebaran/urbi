@@ -2,7 +2,6 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <libgen.h>
 #include <math.h>
 #include <iostream>
 #include <locale.h>
@@ -13,7 +12,19 @@
 #endif
 
 inline float ffloatpart(float a) {return a-(int)a;}
-
+static char * dirname(char * src) {
+  static char result[M_MAX_PATH];
+  if (!strchr(src, '/')) {
+    strcpy(result,".");
+    return result;
+  }
+  strcpy(result, src);
+  int p;
+  for (p=strlen(result)-1;result[p]!='/';p--)
+    ;
+  result[p]=0;
+  return result;
+}
 
 int Move::initialize(UClient * client,bool uploadFiles, const char * configFile, bool enableInterrupt) {
   setlocale( LC_ALL, "C" ); //this is required to parse our configuration file correctly

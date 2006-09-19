@@ -1,5 +1,5 @@
 typedef unsigned char bits8;
-#include <Windows.h>
+#include <windows.h>
 class Monitor {
  
  public:

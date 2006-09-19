@@ -8,13 +8,18 @@ mkgccversion:
 gccversion: mkgccversion
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
-EXTRALDFLAGS = $(LIB_DIR:%=-L%)
-EXTRALDFLAGS += $(LIBS:%=-l%)
+AM_CPPFLAGS =                                   \
+-I$(top_srcdir)/src/liburbi/uobject             \
+-I$(top_srcdir)/src/liburbi
+
+#removed, use standard method
+#EXTRALDFLAGS = $(LIB_DIR:%=-L%)
+#EXTRALDFLAGS += $(LIBS:%=-l%)
 
 ## What is this??? -- Akim
 copyfiles:
 	cp $(top_builddir)/src/liburbi/liburbi.la .
-	cp $(top_builddir)/src/liburbi/uobject/uobject.h .
+	cp $(top_srcdir)/src/liburbi/uobject/uobject.h .
 	cp $(top_builddir)/src/liburbi/uobject/libuobject.la .
 
 noinst_PROGRAMS = urbimodule

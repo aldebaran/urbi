@@ -21,7 +21,6 @@ AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
 lib_LTLIBRARIES = liburbi.la
 
 include_HEADERS =				\
-lockable.h					\
 uabstractclient.h				\
 uclient.h					\
 uconversion.h					\
@@ -34,6 +33,7 @@ uobject/uobject.h: uobject/uobject.template.h
 	cd uobject && $(MAKE) uobject.h
 
 liburbi_la_SOURCES =				\
+lockable.h                                      \
 uabstractclient.h	uabstractclient.cpp	\
 uclient.h		uclient.cpp		\
 uconversion.h		uconversion.cpp		\

@@ -9,11 +9,11 @@ uobject.h		uobject.cc		\
 uvar.cc
 
 EXTRA_DIST = template_autogen.pl uobject.template.h
-CLEANFILES = uobject.h
-BUILT_SOURCES = uobject.h
-uobject.h: $(srcdir)/uobject.template.h $(srcdir)/template_autogen.pl
-	rm -f uobject.h.tmp uobject.h
+CLEANFILES = $(srcdir)/uobject.h
+BUILT_SOURCES = $(srcdir)/uobject.h
+$(srcdir)/uobject.h: $(srcdir)/uobject.template.h $(srcdir)/template_autogen.pl
+	rm -f uobject.h.tmp $(srcdir)/uobject.h
 	$(srcdir)/template_autogen.pl $(srcdir)/uobject.template.h >uobject.h.tmp
 # Avoid accidental edition.
 	chmod a-w uobject.h.tmp
-	mv uobject.h.tmp uobject.h
+	mv uobject.h.tmp $(srcdir)/uobject.h

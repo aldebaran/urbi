@@ -872,7 +872,7 @@ UAbstractClient::processRecvBuffer()
 	    continue;
 	  }
 	  if (recvBuffer[parsePosition]=='\n') {
-	    if (nBracket == 0) {
+		if (true /*XXX: handle '[' in echoed messages or errors nBracket == 0*/) {
 	      //end of command
 	      recvBuffer[parsePosition]=0;
 	      //listLock.lock();

@@ -1,3 +1,22 @@
+2006-09-19  matthieu nottale  <nottale@gostai.com>
+
+	support cross-compile with mingw and distcheck progress
+
+	* sdk/Makefile.am: remove -EXTRALDFLAGS, fix builddir/srcdir mistake.
+	* sdk/umain.cc: fix usleep when compiling under WIN32 environment.
+	* src/utils/Move.cpp: idem.
+	* src/utils/Makefile.am: Fix builddir/srcdir mistake.
+	* src/liburbi/uabstractclient.cpp: Fix parse error when hadnling brackets in system messages.
+	* src/liburbi/Makefile.am: Fix builddir/srcdir mistake.
+	* src/liburbi/uobject/Makefile.am: idem.
+	* src/examples/urbiplay.cpp: Fix for WIN32 environnment.
+	* src/examples/urbisendbin.cpp: idem.
+	* src/examples/urbiping.cpp: idem.
+	* src/examples/monitor-win.h: idem.
+	* src/examples/Makefile.am: idem.
+	* configure.ac: Add detection of windows.h and adding of ws2_32 and gdi32 libs.
+	* doc/Makefile.am: Fix builddir/srcdir mistake.
+
 2006-09-18  Akim Demaille  <akim@lrde.epita.fr>
 
 	* src/liburbi/Makefile.am, src/liburbi/Doxyfile.in: Move do
