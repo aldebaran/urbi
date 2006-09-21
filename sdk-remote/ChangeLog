@@ -1,5 +1,10 @@
 2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
 
+	* build-aux/doxygen.mk: New.
+	* doc/Makefile.am: Use it.
+
+2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+
 	* src/examples/urbiping.cpp: Formatting changes.
 
 2006-09-19  matthieu nottale  <nottale@gostai.com>
