@@ -16,19 +16,21 @@ bool received;
 int count;
 
 #ifdef WIN32
-#include<windows.h>
-#define usleep(a) Sleep(a/1000)
+# include<windows.h>
+# define usleep(a) Sleep(a/1000)
 #endif
 
 
 UCallbackAction pong(const UMessage & msg)
 {
   unsigned int ptime = msg.client.getCurrentTime() - sendtime;
-  if ((!pingCount) || mintime>ptime) mintime=ptime;
-  if ((!pingCount) || maxtime<ptime) maxtime=ptime;
+  if ((!pingCount) || mintime>ptime)
+    mintime=ptime;
+  if ((!pingCount) || maxtime<ptime)
+    maxtime=ptime;
 
   avgtime+=ptime;
-  printf("ping reply from %s: seq=%d time=%d ms\n",rname, pingCount+1,ptime);
+  printf("ping reply from %s: seq=%d time=%d ms\n", rname, pingCount+1, ptime);
   pingCount++;
   received=true;
   if (pingCount==count)
@@ -76,14 +78,15 @@ int main(int argc, char * argv[])
 
   received=true;
 
-  for (int i=0;i<count || (!count);i++) {
-
-    while (!received) usleep(200);
-    received=false;
-    sendtime = c->getCurrentTime();
-    c->send("uping:ping;");
-    usleep(interval*1000);
-  }
+  for (int i=0;i<count || (!count);i++) 
+    {
+      while (!received)
+	usleep(200);
+      received=false;
+      sendtime = c->getCurrentTime();
+      c->send("uping:ping;");
+      usleep(interval*1000);
+    }
 
   while (!over) usleep(1000000);
   showstats(0);

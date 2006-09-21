@@ -7,7 +7,7 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la $(PTHREAD_LIBS)
 LDADD = $(AM_LDADD)
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
-common_programs =					\
+common_programs =				\
 urbiballtrackinghead				\
 urbibandwidth					\
 urbiimage					\
