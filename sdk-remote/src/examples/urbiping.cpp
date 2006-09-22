@@ -78,7 +78,7 @@ int main(int argc, char * argv[])
 
   received=true;
 
-  for (int i=0;i<count || (!count);i++) 
+  for (int i=0;i<count || (!count);i++)
     {
       while (!received)
 	usleep(200);

@@ -18,6 +18,7 @@ AM_CPPFLAGS =                                   \
 
 ## What is this??? -- Akim
 copyfiles:
+	rm -f liburbi.la uobject.h libuobject.la
 	cp $(top_builddir)/src/liburbi/liburbi.la .
 	cp $(top_srcdir)/src/liburbi/uobject/uobject.h .
 	cp $(top_builddir)/src/liburbi/uobject/libuobject.la .

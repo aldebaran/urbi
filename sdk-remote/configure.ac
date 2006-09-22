@@ -51,6 +51,9 @@ ACX_PTHREAD([windows=false], [
       [AC_MSG_ERROR([pthreads or WIN32 API is required])])])
 AM_CONDITIONAL([WIN32], [test $windows = true])
 
+# Soundcard.
+AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
+AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 
 
 ## -------- ##

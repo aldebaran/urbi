@@ -1,5 +1,19 @@
 2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
 
+	Please distcheck: don't compile the doc on user side, ship it.
+	* build-aux/doxygen.mk (html_DATA): Rename as...
+	(EXTRA_DATA): this.
+
+2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+
+	* configure.ac (sys/soundcard.h): Look for it.
+	* src/examples/Makefile.am: Depend on its presence.
+	Factor a bit.
+	* sdk/Makefile.am (copyfiles): Remove the files first, to avoid
+	problems with permissions.
+
+2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+
 	* build-aux/doxygen.mk: New.
 	* doc/Makefile.am: Use it.
 

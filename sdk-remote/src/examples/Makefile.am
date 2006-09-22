@@ -7,7 +7,7 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la $(PTHREAD_LIBS)
 LDADD = $(AM_LDADD)
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
-common_programs =				\
+bin_PROGRAMS =					\
 urbiballtrackinghead				\
 urbibandwidth					\
 urbiimage					\
@@ -17,22 +17,25 @@ urbiplay					\
 urbirecord					\
 urbisend					\
 urbisendbin					\
-urbisendsound					\
-urbisound					
+urbisendsound
+
+if SOUNDCARD
+bin_PROGRAMS += urbisound
+endif
 
 if WIN32
-bin_PROGRAMS = $(common_programs)
+bin_PROGRAMS += urbitalkie
+endif
+
+if WIN32
+monitor_sources = monitor-win.h monitor-win.cpp
 else
-bin_PROGRAMS = $(common_programs) urbitalkie
+monitor_sources = monitor.h monitor.cpp
 endif
 
 urbiballtrackinghead_LDADD = -lX11 -lXext $(AM_LDADD)
 urbiballtrackinghead_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
-if WIN32
-urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp monitor-win.cpp monitor-win.h
-else
-urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp monitor.cpp monitor.h
-endif
+urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp $(monitor_sources)
 
 urbibandwidth_SOURCES = urbibandwidth.cpp
 
@@ -41,11 +44,7 @@ urbibandwidth_SOURCES = urbibandwidth.cpp
 
 urbiimage_LDADD = -lX11 -lXext $(AM_LDADD)
 urbiimage_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
-if WIN32
-urbiimage_SOURCES = urbiimage.cpp monitor-win.cpp monitor-win.h
-else
-urbiimage_SOURCES = urbiimage.cpp monitor.cpp monitor.h
-endif
+urbiimage_SOURCES = urbiimage.cpp $(monitor_sources)
 urbimirror_SOURCES = urbimirror.cpp
 urbiping_SOURCES = urbiping.cpp
 urbiplay_SOURCES = urbiplay.cpp
