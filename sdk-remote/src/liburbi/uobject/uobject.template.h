@@ -130,6 +130,10 @@ _STD_END
 
 /// This macro must be called once for every UObject class.
 #define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(std::string(#x),objectlist)
+
+/// This macro must be called once for every UObject class.
+#define UStartRename(x,name) urbi::URBIStarter<x> x ## ____URBI_object(std::string(#name),objectlist)
+
 /// This macro must be called once for each UObjectHub class.
 #define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(std::string(#x),objecthublist)
 
@@ -792,6 +796,7 @@ namespace urbi
 
     virtual UObject* getUObject() = 0;
 
+    virtual void clean() = 0; ///< called before deletion
     virtual void init(std::string) =0; ///< Used to provide a wrapper to initialize objects in starterlist
     virtual void copy(std::string) = 0; ///< Used to provide a copy of a C++ object based on its name
     std::string name;
@@ -808,8 +813,15 @@ namespace urbi
     { slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarter*>(this));
     };
-    virtual ~URBIStarter() { UObject* tokill = getUObject();
-    	                     if ((tokill) && (tokill->derived)) delete tokill;};
+  
+    virtual ~URBIStarter() { clean(); }    	                        
+    virtual void clean() { UObject* tokill = getUObject();
+                           if ((tokill) /*&& (tokill->derived)*/) delete tokill;
+                           UStartlist::iterator toerase = std::find(slist->begin(), 
+	                                                            slist->end(),
+								    dynamic_cast<baseURBIStarter*>(this));
+                           if (toerase != slist->end()) slist->erase(toerase);
+                         };
 
     virtual void copy(std::string objname) {
       URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
@@ -818,8 +830,8 @@ namespace urbi
       dynamic_cast<UObject*>(ustarter->object)->derived   = true;
       dynamic_cast<UObject*>(ustarter->object)->classname =
 	dynamic_cast<UObject*>(object)->classname;
-	if (dynamic_cast<UObject*>(ustarter->object)->autogroup)	
-	  dynamic_cast<UObject*>(ustarter->object)->addAutoGroup();
+      if (dynamic_cast<UObject*>(ustarter->object)->autogroup)	
+        dynamic_cast<UObject*>(ustarter->object)->addAutoGroup();
     };
 
     virtual UObject* getUObject() {
@@ -861,7 +873,7 @@ namespace urbi
     { slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarterHub*>(this));
     };
-    virtual ~URBIStarterHub() { };
+    virtual ~URBIStarterHub() {/* noone can kill a hub*/ };
 
   protected:
     virtual void init(std::string objname) {
