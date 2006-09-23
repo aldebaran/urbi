@@ -192,6 +192,17 @@ UVar::operator = (const USound &b)
   vardata->variable->updated();
 }
 
+void
+UVar::operator = (const UList &l) {
+  if (!vardata) {
+    urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
+      name.c_str());
+    return;
+  }
+  *vardata->variable->value=l;
+  vardata->variable->updated();
+}
+
 // UVar Casting
 
 UVar::operator int () {	 

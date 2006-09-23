@@ -317,6 +317,21 @@ UValue & UValue::operator = (const urbi::UBinary &b) {
   return *this;
 }
 
+UValue & UValue::operator = (const urbi::UList &l) {
+   if ((dataType == DATA_BINARY) && (refBinary)) {
+	  LIBERATE(refBinary);
+  }
+  UValue * current = 0;
+  dataType = DATA_LIST;
+  for (int i=0;i<l.size();i++) {
+    UValue *v = new UValue(l[i]);
+    if( i==0)
+      liststart = v;
+    else 
+      current->next = v;
+    current = v;
+  }
+}
 
 UValue::UValue(const urbi::UValue &v)
 {
@@ -337,16 +352,17 @@ UValue::UValue(const urbi::UValue &v)
 			    {
 			      dataType = DATA_LIST;
 			      UValue * current = this;
-			      for (std::vector<urbi::UValue *>::iterator it = v.list->array.begin();
-				  it != v.list->array.end(); it++) {
-				UValue *n = new UValue(*(*it));
-				current->next = n;
-				while (current->next)
-				  current = current->next;
-			      }
-			   
-		      	      liststart = next;
-			      next = 0;
+			      for (std::vector<urbi::UValue *>::iterator it =                  
+              v.list->array.begin();
+              it != v.list->array.end(); it++) {
+              UValue *n = new UValue(*(*it));
+              current->next = n;
+              while (current->next)
+                current = current->next;
+            }
+              
+            liststart = next;
+            next = 0;
 			    }
 			    break;  
     case urbi::DATA_BINARY: {

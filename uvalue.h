@@ -54,6 +54,7 @@ public:
   UValue & operator = (const urbi::UBinary&); 
   UValue & operator = (const urbi::UImage &);
   UValue & operator = (const urbi::USound &);
+  UValue & operator = (const urbi::UList &);
   operator urbi::UImage ();
   operator urbi::USound();
   operator urbi::UList();
