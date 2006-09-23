@@ -246,6 +246,7 @@ UExpression::~UExpression()
   if (expression2)  delete expression2;
   if (variablename) delete variablename;
   if (parameters)   delete parameters;
+  if (tmp_value) delete tmp_value;
 } 
  
 //! UExpression hard copy function
@@ -419,7 +420,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     
   case EXPR_VALUE:
 
-    if (tmp_value) return tmp_value; // hack to be able to handle complex return types from function calls
+    if (tmp_value) return tmp_value->copy(); // hack to be able to handle complex return types from function calls
 
     ret = new UValue();
     ret->dataType = dataType;

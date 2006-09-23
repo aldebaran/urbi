@@ -152,14 +152,16 @@ UObj::~UObj()
   // INTERNAL cleanups
   if ((internalBinder) &&
       (internalBinder->getUObject()))
-  { 
+  {
+   // here we have two different cases because base classes are not dynamically
+   // created and cannot be deleted, they can only to be "cleaned":
     if (internalBinder->getUObject()->derived)
       delete internalBinder; // this deletes the associated UObject   
-    else
-      internalBinder->getUObject()->clean();          
+    else  {
+      if (internalBinder->getUObject())
+	delete internalBinder->getUObject();
+    }
   }
-
-
   
   // clean variables internalBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();

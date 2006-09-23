@@ -144,6 +144,8 @@ UServer::UServer(ufloat frequency,
   // init the memory manager.
   usedMemory = 0 ;
   reloadURBIINI = false;
+  reseting = false;
+  stage = 0;
 
   ADDOBJ(UServer);
   ::urbiserver = this;
@@ -341,6 +343,8 @@ UServer::work()
     }
 
   // Scan currently opened connections for deleting marked commands or killall order
+ 
+  if ((reseting) && (stage==0)) stopall = true;
   
   for (list<UConnection*>::iterator retr = connectionList.begin();
        retr != connectionList.end();
@@ -450,10 +454,14 @@ UServer::work()
     cpucount = 0;
   }  
 
-  static int stage = 0;
-  if (reloadURBIINI) {
-    stage++;
+  // Reseting procedure
+  if (reseting) {
+	  
+    stage++;    
     if (stage==1) {
+	    
+
+	    
       blocktab.clear();
       freezetab.clear();
       eventtab.clear();

@@ -190,8 +190,10 @@ UObject::UObject(const string &s) :
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();
        retr++)
+  {
     if ((*retr)->name == __name)
       tmpobj->internalBinder = (*retr);
+  }
  
   // default
   derived = false;

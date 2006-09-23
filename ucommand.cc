@@ -2258,7 +2258,12 @@ UCommand_EXPR::execute(UConnection *connection)
     ret = expression->eval(this,connection);
 
   if (ret==0) {   
-    if ((expression) && (expression->variablename) && (!expression->variablename->fromGroup))
+    if ((expression) && (expression->variablename))
+    {
+      if (!expression->variablename->fromGroup)
+	connection->send("!!! EXPR evaluation failed\n",tag->str());
+    }
+    else
       connection->send("!!! EXPR evaluation failed\n",tag->str());
     return (status = UCOMPLETED);
   }  
@@ -3986,14 +3991,12 @@ connection->send(tstr.str().c_str(),tag->str());
 
     for ( HMvariabletab::iterator retr = 
             connection->server->variabletab.begin();
-          retr != connection->server->variabletab.end();) {
-      if ((*retr).second->uservar)
-        connection->server->variabletab.erase(retr++);
-      else
-        retr++;
-    }
-    
+          retr != connection->server->variabletab.end();) 
+      delete (*retr).second;
+
+    connection->server->variabletab.clear();
     connection->server->functiontab.clear();
+    connection->server->eventtab.clear();
         
     return( status = UCOMPLETED );
   }  
@@ -4003,7 +4006,7 @@ connection->send(tstr.str().c_str(),tag->str());
      "*** Reset\n");
     connection->send(tmpbuffer,tag->str());
 
-    persistant = false;
+/*    persistant = false;
     morph = (UCommand*) 
       new UCommand_EXPR(
           new UExpression(
@@ -4017,157 +4020,21 @@ connection->send(tstr.str().c_str(),tag->str());
                 )
             )
           );
-    ::urbiserver->reloadURBIINI = true;
-
-    return( status = UMORPH );
-  }  
-
-//FIXME
-/*
-  if (strcmp(oper->str(),"devices")==0) {
-
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-          retr++) {
-      
-      if (strstr( (*retr).second->device_val->unit->str(),"bin")==0) {
-	tstr.width(13);
-	tstr << "*** " <<left<<(*retr).second->device->str()
-	  <<" unit=";
-	tstr.width(8);
-	tstr << (*retr).second->device_val->unit->str()
-	  << " range=["<<(*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax
-	  <<"] : "<<(*retr).second->detail->str()<<'\n';
-      }
-      else  {     
-	tstr.width(13);
-	tstr << "*** " <<left<<(*retr).second->device->str()
-	  <<" unit=";
-	tstr.width(8);
-	tstr << (*retr).second->device_val->unit->str()
-	  <<" : "<<(*retr).second->detail->str()<<'\n';
-      }
-      connection->send(tstr.str().c_str(),tag->str());
-      tstr.str("");
-    }
-    
-    // Output in debug mode by device types
-
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-    	  retr++) 
-      if (strcmp( (*retr).second->device_val->unit->str(),"deg")==0) {
-	tstr << "[" << (*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax<<"]";
-	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-	    (*retr).second->device_val->unit->str(),
-	    (*retr).second->detail->str());
-	tstr.str("");
-      }
-    
-    ::urbiserver->debug("\n");
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-          retr++) 
-      if (strcmp( (*retr).second->device_val->unit->str(),"bool")==0)  {
-	tstr << "[" << (*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax<<"]";
-	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-	    (*retr).second->device_val->unit->str(),
-     	    (*retr).second->detail->str());
-	tstr.str("");
-
-      }
-                                   
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-          retr++) 
-      if (strcmp( (*retr).second->device_val->unit->str(),"lum")==0)  {
-	tstr << "[" << (*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax<<"]";
-	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-	    (*retr).second->device_val->unit->str(),
-	    (*retr).second->detail->str());
-	tstr.str("");
-
-      }
-
-    ::urbiserver->debug("\n");
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-          retr++) 
-      if (strcmp( (*retr).second->device_val->unit->str(),"uPa")==0)  {
-	tstr << "[" << (*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax<<"]";
-	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-	    (*retr).second->device_val->unit->str(),
-	    (*retr).second->detail->str());                              
-	tstr.str("");
-
-
-      }
-
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-	  retr++) 
-      if (strcmp( (*retr).second->device_val->unit->str(),"cm")==0)  {
-	tstr << "[" << (*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax<<"]";
-	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(), tstr.str().c_str(),
-	    (*retr).second->device_val->unit->str(),
-	    (*retr).second->detail->str());
-	tstr.str("");
-
-      }
-                                   
-    for ( hash_map<const char*,
-            UDevice*,
-            hash<const char*>,
-            eqStr>::iterator retr = 
-            connection->server->devicetab.begin();
-          retr != connection->server->devicetab.end();
-          retr++) 
-      if ( (strcmp( (*retr).second->device_val->unit->str(),"m/s2")==0) ||
-           (strcmp( (*retr).second->device_val->unit->str(),"m")==0) || 
-           (strcmp( (*retr).second->device_val->unit->str(),"C")==0) ) {
-	tstr << "[" << (*retr).second->device_val->rangemin
-	  <<","<<(*retr).second->device_val->rangemax<<"]";
-	::urbiserver->debug("%-13s range=%-26s unit=%s : %s\n", (*retr).second->device->str(),         tstr.str().c_str(),
-	    (*retr).second->device_val->unit->str(),
-	    (*retr).second->detail->str());
-	tstr.str("");
-
-      }
-                               
-
+*/
+    ::urbiserver->reseting = true;
 
     return( status = UCOMPLETED );
-  }*/
+  }  
+
+  if (strcmp(oper->str(),"devices")==0) {
+
+        
+    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+     "*** devices is deprecated. Use 'group objects' instead.\n");
+    connection->send(tmpbuffer,tag->str());
+
+    return( status = UCOMPLETED );
+  }
 
   UString* fullname;
 
@@ -4488,7 +4355,7 @@ UCommand_EMIT::execute(UConnection *connection)
         UValue *e1 = pevent->expression->eval(this,connection);
         if (e1) {
           delete pevent->expression;
-          pevent->expression = new UExpression(EXPR_VALUE,e1);
+          pevent->expression = new UExpression(EXPR_VALUE,e1->copy());
           delete e1;
         }
 

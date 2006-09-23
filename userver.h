@@ -140,6 +140,9 @@ public:
 
 
   list<UVariable*>         reinitList; ///< variables to reinit (nbAverage=0)
+  list<UVariable*>         resetList; ///< list of variables to delete after a reset
+  bool                     reseting; ///< true when the server is in the process of resting
+  int                      stage;///< reseting stage
 
 #ifdef _MSC_VER
   std::hash_map<const char *,bool, str_compare> blocktab;
