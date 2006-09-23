@@ -41,6 +41,7 @@ static const char * propNames[]={
   "blend",
   "delta"
 };
+extern std::ostream & operator <<(std::ostream &s, const UValue &v);
 // **************************************************************************
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
 UVar::UVar(const std::string &varname)
@@ -198,6 +199,18 @@ UVar::operator = (const USound &i)
 	b.common.data=0; //required, dtor frees data
 }
 
+void
+UVar::operator = (const UList &l) {
+	URBI(()) << name << "=";
+	UValue v;
+	v.type = DATA_LIST;
+	v.list = &const_cast<UList &>(l);
+	URBI(()) << v<<";";
+	v.type = DATA_VOID;
+	v.list = 0;
+}
+
+
 UVar::operator int () {
   return ((int)value);
 };
@@ -228,6 +241,9 @@ UVar::operator USound() {
   return (USound)value;
 };
 
+UVar::operator UList() {
+  return (UList)value;
+};
 
 //! UVar update
 void

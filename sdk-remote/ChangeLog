@@ -1,3 +1,10 @@
+2006-09-23  Matthieu Nottale  <nottale@gostai.com>
+
+	adding missing operator
+
+	* src/liburbi/uobject/uvar.cc: Add uvar<=>ulist conversion.
+	* src/liburbi/uobject/uobject.template.h: Add missing const for UList methods.
+
 2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
 
 	Please distcheck: don't compile the doc on user side, ship it.

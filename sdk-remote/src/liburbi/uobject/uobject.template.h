@@ -390,7 +390,8 @@ namespace urbi
     UList & operator = (const UList &b);
     ~UList();
     UValue & operator [](int i) {return *array[i+offset];}
-    int size() {return array.size();}
+    const UValue & operator [](int i) const {return *array[i+offset];}
+    int size() const {return array.size();}
     void setOffset(int n) { offset = n;};
 
   private:
@@ -523,7 +524,7 @@ namespace urbi
     void operator = ( const UBinary &);  ///< deep copy
     void operator = ( const UImage &i);  ///< deep copy
     void operator = ( const USound &s);  ///< deep copy
-
+		void operator = ( const UList &l); 
     operator int ();
     operator bool () {return (int)(*this);}
     operator UBinary ();   ///< deep copy
