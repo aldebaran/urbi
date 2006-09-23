@@ -745,8 +745,10 @@ UValue::echo(bool hr)
     if (refBinary) {
 
       oss << "BIN " << refBinary->ref()->bufferSize;
-
+      
       UNamedParameters *param = refBinary->ref()->parameters;
+      if (param) oss << " ";
+
       char tmpparam[1024];
       while (param) {
         if (param->expression) {
