@@ -540,7 +540,8 @@ UServer::work()
 	for (list<UConnection*>::iterator retr = connectionList.begin();
 	    retr != connectionList.end();
 	    retr++) 
-	  if  ((*retr)->isActive()) { 
+	  if  ( ((*retr)->isActive()) && ((*retr) != ghost))
+	  {
 	    (*retr)->send("*** Reloading\n","reset");
 
 	    loadFile("CLIENT.INI",(*retr)->recvQueue());
