@@ -87,7 +87,7 @@ network: $(NETWORK_OBJS)
 parser: $(PARSER_OBJS)
 
 buildnb:
-	LANG=en && svn info | sed -e "s/é/e/" | grep Revision | sed -e "s/Revision: //" > build/buildnumber
+	grep "revision=" .svn/entries | sed -e "s/.*revision=\"//g" | sed -e "s/\"\/>//g" > build/buildnumber
 	echo '"' `cat build/buildnumber` '"'  > buildversion.h
 
 build/libkernelurbi-$(NETWORK)-$(PARSER).a: $(KERNEL_FILES) $(PARSER_OBJS) $(NETWORK_OBJS) 

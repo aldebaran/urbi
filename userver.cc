@@ -501,7 +501,8 @@ UServer::work()
       functiontab.clear();  //This leaks awfuly...
       eventtab.clear();
       aliastab.clear();
-      objaliastab.clear();	
+      objaliastab.clear();
+      grouptab.clear();      
       
       varToReset.clear();
       for (list<UConnection*>::iterator retr = connectionList.begin();
@@ -517,11 +518,25 @@ UServer::work()
 	(*retr)->init((*retr)->name);
 
       loadFile("URBI.INI",ghost->recvQueue());
-      ghost->newDataAdded = true;      
+      char resetsignal[255];
+      strcpy(resetsignal,"var __system__.resetsignal;");
+      ghost->recvQueue()->push((const ubyte*)resetsignal,strlen(resetsignal));
+      ghost->newDataAdded = true;
     }
     else
-      if (stage>100)
-      {      
+    {
+      //ASSERT(ghost) 
+	//ASSERT(ghost->recvQueue())
+	  //debug("Recv Queue: %d = %s\n",ghost->recvQueue()->dataSize());
+	 /* char* cc = (char*)ghost->recvQueue()->virtualPop(ghost->recvQueue()->dataSize()-1);
+	  for (int i=0;i<ghost->recvQueue()->dataSize()-1;i++)
+	    debug("Char%i = %c\n",i,cc[i]);*/
+	//}
+      HMvariabletab::iterator findResetSignal = variabletab.find("__system__.resetsignal");
+      if (findResetSignal != variabletab.end())
+      //if (ghost->recvQueue()->dataSize() == 0)
+      {     
+        	
 	for (list<UConnection*>::iterator retr = connectionList.begin();
 	    retr != connectionList.end();
 	    retr++) 
@@ -534,6 +549,7 @@ UServer::work()
 	reseting = false;
 	stage = 0;
       }
+    }
   }
 }
 
