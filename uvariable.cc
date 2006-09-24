@@ -386,3 +386,17 @@ UVariable::updated()
   }
 }
 
+bool
+UVariable::isDeletable()
+{
+  if ((value) && 
+      (value->dataType == DATA_OBJ) &&
+      (value->str)) 
+  {  
+    HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
+    if ( (idit != ::urbiserver->objtab.end()) &&
+	(!idit->second->down.empty()) ) 
+      return( false );
+  }
+  return (true);
+}

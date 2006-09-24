@@ -143,7 +143,6 @@ UServer::UServer(ufloat frequency,
   parser.commandTree = 0;
   // init the memory manager.
   usedMemory = 0 ;
-  reloadURBIINI = false;
   reseting = false;
   stage = 0;
 
@@ -458,28 +457,48 @@ UServer::work()
   if (reseting) {
 	  
     stage++;    
-    if (stage==1) {
-	    
+    switch (stage) {
+      case 1:
+	for ( HMvariabletab::iterator retr = variabletab.begin();
+	    retr != connection->server->variabletab.end();
+	    retr++) 
+	  varToReset.push_back( (*retr).second );	
+	      
+	while (!varToReset.empty()) 
+	{
+	  for (list<UVariable*>::iterator it = varToReset.begin()
+	       it != varToReset.end();) 
+	  {
+	    if (((*it)->value)
+	  }
+	}
+	      
+	blocktab.clear();
+	freezetab.clear();
+	eventtab.clear();
 
-	    
-      blocktab.clear();
-      freezetab.clear();
-      eventtab.clear();
-      loadFile("URBI.INI",ghost->recvQueue());
-      ghost->newDataAdded = true;      
+	variabletab.clear();
+	functiontab.clear();
+	eventtab.clear();	
+
+	varToReset.clear();
+
+	loadFile("URBI.INI",ghost->recvQueue());
+	ghost->newDataAdded = true;      
+	break;
+    
+      case 10:      
+	for (list<UConnection*>::iterator retr = connectionList.begin();
+	    retr != connectionList.end();
+	    retr++) 
+	  if  ((*retr)->isActive()) {
+	    loadFile("CLIENT.INI",(*retr)->recvQueue());
+	    (*retr)->newDataAdded = true;
+	  }
+	reseting = false;
+	stage = 0;
+	break;
     }
-    else 
-      if (stage>10) {
-        for (list<UConnection*>::iterator retr = connectionList.begin();
-             retr != connectionList.end();
-             retr++) 
-          if  ((*retr)->isActive()) {
-            loadFile("CLIENT.INI",(*retr)->recvQueue());
-            (*retr)->newDataAdded = true;
-          }
-        reloadURBIINI = false;
-        stage = 0;
-      }
   }
 }
 

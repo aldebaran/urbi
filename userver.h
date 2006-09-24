@@ -143,6 +143,7 @@ public:
   list<UVariable*>         resetList; ///< list of variables to delete after a reset
   bool                     reseting; ///< true when the server is in the process of resting
   int                      stage;///< reseting stage
+  list<UVariable*>         varToReset; ///< list of variables to delete in a reset command
 
 #ifdef _MSC_VER
   std::hash_map<const char *,bool, str_compare> blocktab;
@@ -179,7 +180,6 @@ public:
                            previousTime, 
                            latestTime; ///< used to detect cpu overload
   bool                     stopall; ///< stops all commands in all connections
-  bool                     reloadURBIINI; ///< reload URBI.INI file
   bool                     systemcommands; ///< false inside parsing, true otherwise for commands created by the kernel
 
 

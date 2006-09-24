@@ -4003,7 +4003,7 @@ connection->send(tstr.str().c_str(),tag->str());
   if (strcmp(oper->str(),"reset")==0) {
         
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-     "*** Reset\n");
+     "*** Reset in progress\n");
     connection->send(tmpbuffer,tag->str());
 
 /*    persistant = false;

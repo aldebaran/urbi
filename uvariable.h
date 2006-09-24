@@ -136,6 +136,7 @@ public:
 
   void          setSensorVal(ufloat f);
   void          initSensorVal(ufloat f);
+  bool          isDeletable(); ///< true when the variable does not contain an object with subclasses
 
   void          updated();
 
