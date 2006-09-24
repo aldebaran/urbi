@@ -457,48 +457,83 @@ UServer::work()
   if (reseting) {
 	  
     stage++;    
-    switch (stage) {
-      case 1:
-	for ( HMvariabletab::iterator retr = variabletab.begin();
-	    retr != connection->server->variabletab.end();
-	    retr++) 
+    if (stage == 1)
+    {
+      //delete objects first
+      for ( HMvariabletab::iterator retr = variabletab.begin();
+	  retr != variabletab.end();
+	  retr++) 
+	if (((*retr).second->value) &&
+	    ((*retr).second->value->dataType == DATA_OBJ))
 	  varToReset.push_back( (*retr).second );	
-	      
-	while (!varToReset.empty()) 
+      
+      while (!varToReset.empty()) 
+      {
+	for (list<UVariable*>::iterator it = varToReset.begin();
+	    it != varToReset.end();) 
 	{
-	  for (list<UVariable*>::iterator it = varToReset.begin()
-	       it != varToReset.end();) 
+	  if ((*it)->isDeletable()) 
 	  {
-	    if (((*it)->value)
+	    delete (*it);
+	    it = varToReset.erase(it);
 	  }
+	  else it++;
 	}
-	      
-	blocktab.clear();
-	freezetab.clear();
-	eventtab.clear();
+      }
+      
+      //delete the rest
+      for ( HMvariabletab::iterator retr = variabletab.begin();
+	  retr != variabletab.end();
+	  retr++) 
+	if ((*retr).second->uservar)
+	  varToReset.push_back( (*retr).second );	
+      
+      for (list<UVariable*>::iterator it = varToReset.begin();
+	  it != varToReset.end();++it) 	  
+	delete (*it);	  
+      
+      
+      blocktab.clear();
+      freezetab.clear();
+      eventtab.clear();
+      
+      //variabletab.clear();
+      functiontab.clear();  //This leaks awfuly...
+      eventtab.clear();
+      aliastab.clear();
+      objaliastab.clear();	
+      
+      varToReset.clear();
+      for (list<UConnection*>::iterator retr = connectionList.begin();
+       	  retr != connectionList.end();
+	  retr++) 
+	if  ((*retr)->isActive()) 
+	  (*retr)->send("*** Reset completed.\n","reset");
 
-	variabletab.clear();
-	functiontab.clear();
-	eventtab.clear();	
+      //restart everything
+      for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
+	  retr != urbi::objectlist->end();
+	  retr++) 
+	(*retr)->init((*retr)->name);
 
-	varToReset.clear();
-
-	loadFile("URBI.INI",ghost->recvQueue());
-	ghost->newDataAdded = true;      
-	break;
-    
-      case 10:      
+      loadFile("URBI.INI",ghost->recvQueue());
+      ghost->newDataAdded = true;      
+    }
+    else
+      if (stage>100)
+      {      
 	for (list<UConnection*>::iterator retr = connectionList.begin();
 	    retr != connectionList.end();
 	    retr++) 
-	  if  ((*retr)->isActive()) {
+	  if  ((*retr)->isActive()) { 
+	    (*retr)->send("*** Reloading\n","reset");
+
 	    loadFile("CLIENT.INI",(*retr)->recvQueue());
 	    (*retr)->newDataAdded = true;
 	  }
 	reseting = false;
 	stage = 0;
-	break;
-    }
+      }
   }
 }
 
