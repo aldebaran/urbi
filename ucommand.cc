@@ -162,7 +162,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
         else
           varindex = 0;
 	
-	if (((*varname)->nostruct) && (with_nostruct))
+	if (((*varname)->nostruct) && (with_nostruct)) 
           *((clone->*refName)()) = new UVariableName(devicename->copy(),
                                                      (*retr)->copy(),
 						     false,
@@ -183,19 +183,16 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
         gplist = (UCommand*) new UCommand_TREE(UAND,clone,gplist_prev);	  
         gplist_prev = gplist;        
       }
-
-      morph = (UCommand*)
-        new UCommand_TREE(UAND,
-                          this,
-                          gplist);
+	  
+      morph = (UCommand*) gplist;
       
       (*varname)->rooted = true;
       (*varname)->fromGroup = true;
-      persistant = true;
+      persistant = false;
       return( morph );      
     }
   }
-
+	  
   return (0);
 }
 
@@ -3418,19 +3415,21 @@ UCommand_DEVICE_CMD::~UCommand_DEVICE_CMD()
 UCommandStatus 
 UCommand_DEVICE_CMD::execute(UConnection *connection)
 {
-  if (!variablename) return ( status = UMORPH );
-  if (variablename->nostruct) {
+  if (!variablename) return ( status = UCOMPLETED );
+  variablename->buildFullname(this, connection);
 
-    variablename->buildFullname(this, connection);
+  if (variablename->nostruct) {
     UVariableName* recreatevar = new UVariableName(variablename->getMethod()->copy(),
 	                            new UString("load"),
 				    variablename->rooted,
 				    (UNamedParameters*)0);
-
     delete variablename;
     variablename = recreatevar;  
     variablename->buildFullname(this, connection);
   }
+  
+  // broadcasting
+  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH ); 
 
   // Main execution
   if (cmd == -1)
