@@ -44,6 +44,7 @@ public:
 	
 	virtual void notifyRead() {doRead();}
 	virtual void notifyWrite() {doWrite();}
+  virtual UErrorValue send  (const ubyte *buffer, int length);
 protected:
 	//! Overloading this function is requiered by UConnection
 	virtual int effectiveSend (const ubyte *buffer, int length);

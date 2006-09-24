@@ -30,7 +30,10 @@ namespace Network {
 
   virtual void notifyRead()=0;
   virtual void notifyWrite()=0;
+  void trigger(); ///< trigger demuxer fd set reload
   
+  
+  int controlFd;
  };
   //build the two fd_sets according to registered connections
   int buildFD(fd_set &rd, fd_set &wr);

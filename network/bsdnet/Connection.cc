@@ -115,3 +115,13 @@ void Connection::doWrite(){
   continueSend();
   block();
 }
+
+
+
+UErrorValue Connection::send(const ubyte *buffer, int length) {
+  if (sendQueueRemain()==0)
+    trigger();
+  UConnection::send(buffer, length);
+}
+
+

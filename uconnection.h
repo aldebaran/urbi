@@ -80,7 +80,7 @@ public:
 		
   UErrorValue         sendPrefix         (const char* tag = 0);
   UErrorValue         send               (const char *s, const char* tag = 0);
-  UErrorValue         send               (const ubyte *buffer, int length);
+  virtual UErrorValue send               (const ubyte *buffer, int length);
   UErrorValue         endline            ();
 
   

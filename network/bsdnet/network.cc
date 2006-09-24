@@ -95,8 +95,8 @@ namespace Network {
   }
 
   using std::list;
-  list<Pipe *> pList;
-  
+  static list<Pipe *> pList;
+  static int controlPipe[2]={-1,-1};
   bool createTCPServer(int port) {
     TCPServerPipe * tsp = new TCPServerPipe();
     if (!tsp->init(port)) {
@@ -109,21 +109,22 @@ namespace Network {
   int buildFD(fd_set &rd, fd_set &wr) {
     FD_ZERO(&rd);
     FD_ZERO(&wr);
-   
     int maxfd=0;
+    #ifndef WIN32
+    FD_SET(controlPipe[0], &rd);
+    maxfd = controlPipe[0];
+    #endif   
     for (list<Pipe *>::iterator i = pList.begin(); i != pList.end(); i++) {
       int f= (*i)->readFD();
       if (f>0)
-	FD_SET(f,&rd);
+        FD_SET(f,&rd);
       if (f>maxfd)
-	maxfd = f;
+        maxfd = f;
       int g= (*i)->writeFD();
       if (g>0)
-	FD_SET(g,&wr);
+        FD_SET(g,&wr);
       if (g>maxfd)
-	maxfd = g;
-     
-	  
+        maxfd = g; 
     }
     return maxfd+1;
   }
@@ -155,8 +156,15 @@ namespace Network {
     int r = select(mx, &rd, &wr, 0, &tv);
     if (r==0)
       return false;
-    if (r>0)
+    if (r>0) {
+      #ifndef WIN32
+      if (FD_ISSET(controlPipe[0],&rd)) {
+				char buf[128];
+				read(controlPipe[0], buf, 128);
+			}
+      #endif
       notify(rd, wr);
+      }
     if (r<0) {
       //XXX this is baad, we should realy do something
       perror("SELECT ERROR:");
@@ -167,6 +175,12 @@ namespace Network {
 
   void registerNetworkPipe(Pipe *p) {
     pList.push_back(p);
+    #ifndef WIN32
+    if (controlPipe[0]==-1) {
+      pipe(controlPipe);
+    }
+    p->controlFd = controlPipe[1];
+    #endif
   }
   void unregisterNetworkPipe(Pipe *p) {
     list<Pipe *>::iterator i = find(pList.begin(), pList.end(), p);
@@ -175,13 +189,15 @@ namespace Network {
   }
 
 #ifdef WIN32
+static const int delay = 10000;
   DWORD WINAPI
 #else
+static const int delay = 1000000;
   void *
 #endif
   processNetwork(void * useless) {
     while (true) {
-      selectAndProcess(1000000);
+      selectAndProcess(delay);
     }
   }
 
@@ -196,4 +212,11 @@ namespace Network {
     #endif
   }
   
+  
+  void Pipe::trigger() {
+    #ifndef WIN32
+    char  c = 0;
+    write(this->controlFd, &c, 1);
+    #endif
+  }
 };
