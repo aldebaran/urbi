@@ -1,3 +1,25 @@
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
+	Fixes.
+
+	* sdk/Makefile.am: Use DESTDIR.
+	Ship Makefile.module.in.
+	* src/utils/urbiwalk.cpp: Use a stack allocated object.
+	Formatting changes.
+	* src/liburbi/uobject/uobject.cc: Remove useless "urbi::".
+	* src/liburbi/uobject/uvar.cc: No using namespace urbi.
+	(operator<< (ostream, UValue): Don't prototype here, it is
+	declared elsewhere anyway.
+	Put everything inside the urbi namespace.
+	* src/liburbi/uobject/uobject.template.h: Formatting changes.
+	(UValue::print): New.
+	* src/liburbi/uobject/common_uvalue.cc: Work in urbi.
+	(UValue::print): Implement.
+	(operator<<(ostream, UValue): Use it.
+	Formatting changes.
+	* configure.ac (includedir, targetdir): Fix their value.
+	* build-aux/doxygen.mk (uninstall-local): New.
+
 2006-09-25  matthieu nottale  <nottale@gostai.com>
 
 	Add support for void data type

@@ -26,15 +26,16 @@ include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.h
 nodist_target_DATA = Makefile.param Makefile.module Makefile gccversion
 dist_target_DATA = umain.cc
 
+EXTRA_DIST = Makefile.module.in
 Makefile.module: Makefile.module.in
 	sed -e "s@PREFIX=.*@PREFIX=$(prefix)@" $(srcdir)/Makefile.module.in >$@.tmp
 	mv $@.tmp $@
 
 install-data-local:
-	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile >$(targetdir)/Makefile
+	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile >$(DESTDIR)$(targetdir)/Makefile
 
 sanity:
-	$(CXX) -v 2>&1 | grep version | cmp $(targetdir)/gccversion || \
+	$(CXX) -v 2>&1 | grep version | cmp $(DESTDIR)$(targetdir)/gccversion || \
 	  echo >&2 "WARNING: gcc version mismatch"
 
 CLEANFILES = gccversion

@@ -19,5 +19,8 @@ install-data-local:
 	$(mkdir_p) $(DESTDIR)$(htmldir)
 	cp -r $(srcdir)/$(DOCDIR) $(DESTDIR)$(htmldir)
 
+uninstall-local:
+	rm -rf $(DESTDIR)$(htmldir)/$(DOCDIR)
+
 maintainer-clean-local:
 	rm -rf $(DOCDIR).tmp $(srcdir)/$(DOCDIR)

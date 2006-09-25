@@ -19,72 +19,81 @@
  **************************************************************************** */
 
 #ifndef UOBJECT_H_DEFINED
-#define UOBJECT_H_DEFINED
+# define UOBJECT_H_DEFINED
 
-#include <string>
-#include <list>
+# include <string>
+# include <list>
 
 // Hash maps, depending on the environment
-#ifndef _MSC_VER
-# include <hash_map.h>
-#elif (_MSC_VER == 1400)
-# pragma warning( disable : 4355 4996)
-# include <hash_map>
+# ifndef _MSC_VER
+#  include <hash_map.h>
+# elif (_MSC_VER == 1400)
+#  pragma warning( disable : 4355 4996)
+#  include <hash_map>
 using stdext::hash_map;
-#else
-# include <hash_map>
+# else
+#  include <hash_map>
 using std::hash_map;
-#endif
+# endif
 
 // Floating point definition (emulated or real)
-#ifdef HAVE_UFLOAT_H
-# include "ufloat.h"
-#else
+# ifdef HAVE_UFLOAT_H
+#  include "ufloat.h"
+# else
 typedef double ufloat;
-#endif
+# endif
 
 /** Singleton smart pointer that creates the object on demmand
  * */
-template<class T> class SingletonPtr {
-  public:
-    operator T* () {return check();}
-    operator T& () {return *check();}
+template<class T>
+class SingletonPtr
+{
+public:
+  operator T* () {return check();}
+  operator T& () {return *check();}
 
-    T* operator ->() {return check();}
-    T * check() {static T * ptr=0; if(ptr) return ptr; else return (ptr=new T());}
-  private:
+  T* operator ->() {return check();}
+  T * check() 
+  {
+    static T * ptr=0; 
+    if(ptr) 
+      return ptr; 
+    else 
+      return (ptr=new T());
+  }
+private:
 };
 
-#define STATIC_INSTANCE(cl, name) \
-  SingletonPtr<cl##name> name
+# define STATIC_INSTANCE(cl, name) \
+  SingletonPtr<cl ## name> name
 
-#define EXTERN_STATIC_INSTANCE(cl, name)\
-  class cl##name: public cl{}; \
-extern SingletonPtr<cl##name> name
+# define EXTERN_STATIC_INSTANCE(cl, name)\
+  class cl ## name: public cl{}; \
+extern SingletonPtr<cl ## name> name
 
 
 
 // A quick hack to be able to use hash_map with string easily
-#ifndef _MSC_VER
+# ifndef _MSC_VER
 
-#  if (__GNUC__ == 2)
+#   if (__GNUC__ == 2)
   __STL_BEGIN_NAMESPACE
-#  else
+#   else
   namespace __gnu_cxx {
-#  endif
+#   endif
 
 template<> struct hash< std::string > {
    size_t operator()( const std::string& x ) const
      { return hash< const char* >()( x.c_str() );}
 };
 
-#  if (__GNUC__ == 2)
+#   if (__GNUC__ == 2)
   __STL_END_NAMESPACE
-#  else
+#   else
   }
-#  endif
+#   endif
 
-#elif (_MSC_VER == 1400)
+# elif (_MSC_VER == 1400)
 
 _STDEXT_BEGIN
   template<> class hash_compare<std::string> {
@@ -105,7 +114,7 @@ _STDEXT_BEGIN
 };
 _STDEXT_END
 
-#else //_MSC_VER
+# else //_MSC_VER
 
   _STD_BEGIN
   template<> class hash_compare<std::string> {
@@ -125,17 +134,17 @@ _STDEXT_END
     }
 };
 _STD_END
-#endif
+# endif
 
 
 /// This macro must be called once for every UObject class.
-#define UStart(x) urbi::URBIStarter<x> x ## ____URBI_object(std::string(#x),objectlist)
+# define UStart(x) urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# x),objectlist)
 
 /// This macro must be called once for every UObject class.
-#define UStartRename(x,name) urbi::URBIStarter<x> x ## ____URBI_object(std::string(#name),objectlist)
+# define UStartRename(x,name) urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# name),objectlist)
 
 /// This macro must be called once for each UObjectHub class.
-#define UStartHub(x) urbi::URBIStarterHub<x> x ## ____URBI_object(std::string(#x),objecthublist)
+# define UStartHub(x) urbi::URBIStarterHub<x> x ##  ____URBI_object(std::string(# x),objecthublist)
 
 
 /** Bind a variable to an object.
@@ -143,43 +152,43 @@ _STD_END
 It binds the UVar x within the object to a variable with the same name in the
 corresponding URBI object.
 */
-#define UBindVar(obj,x) x.init(__name,#x)
+# define UBindVar(obj,x) x.init(__name,# x)
 
 /** This macro defines a UVar as a sensor/effector couple.
  After this call is made, writes by this module affect the sensed value, and reads read the target value. Writes by other modules and URBI code affect the target value, and reads get the sensed value. Without this call, all operations affect the same underlying variable.*/
-#define USensor(x) x.setOwned()
+# define USensor(x) x.setOwned()
 
 /** Bind the function x in current URBI object to the C++ member function of same name.
 The return value and parameters must be of a basic integral or floating types, char *, std::string, UValue, UBinary, USound or UImage, or any type that can cast to/from UValue.
 */
-#define UBindFunction(obj,x)  createUCallback(__name,(std::string)"function", this,(&obj::x),__name+"."+std::string(#x),functionmap)
+# define UBindFunction(obj,x)  createUCallback(__name,(std::string)"function", this,(&obj::x),__name+"."+std::string(# x),functionmap)
 
 /** Registers a function x in current object that will be called each time the event of same name is triggered. The function will be called only if the number of arguments match between the function prototype and the URBI event.
 */
-#define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+std::string(#x),eventmap)
+# define UBindEvent(obj,x)     createUCallback(__name,"event",    this,(&obj::x),__name+"."+std::string(# x),eventmap)
 
 /** Registers a function x in current object that will be called each time the event of same name is triggered, and a function fun called when the event ends. The function will be called only if the number of arguments match between the function prototype and the URBI event.
 */
-#define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+std::string(#x),eventendmap)
+# define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+std::string(# x),eventendmap)
 
 /** Register current object to the UObjectHub named 'hub'.
 */
-#define URegister(hub) { objecthub = urbi::getUObjectHub((std::string)#hub); \
+# define URegister(hub) { objecthub = urbi::getUObjectHub((std::string)# hub); \
     if (objecthub) objecthub->addMember(dynamic_cast<UObject*>(this));	\
-    else echo("Error: hub name '%s' is unknown\n",#hub); }
+    else echo("Error: hub name '%s' is unknown\n",# hub); }
 
 // defines a variable and it's associated accessors
-#define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ## varname \
-  () { return varname; } void set_ ## varname (vartype& ____value) { varname = ____value; }  private:
+# define PRIVATE(vartype,varname) private: vartype varname;public: vartype get_ ##  varname \
+  () { return varname; } void set_ ##  varname (vartype& ____value) { varname = ____value; }  private:
 
 
 //macro to send urbi commands
-#ifndef URBI
+# ifndef URBI
 /** Send unquoted URBI commands to the server. Add an extra layer of parenthesis
 for safety.
 */
-#  define URBI(a) urbi::uobject_unarmorAndSend(#a)
-#endif
+#   define URBI(a) urbi::uobject_unarmorAndSend(# a)
+# endif
 
 /* urbi namespace starts */
 namespace urbi
@@ -462,7 +471,13 @@ namespace urbi
     ~UValue();
 
     //parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
-    int parse(const char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
+    int parse(const char* message, 
+	      int pos,
+	      std::list<BinaryData> bins,
+	      std::list<BinaryData>::iterator &binpos);
+
+    /// Print itself on \c s, and return it.
+    std::ostream& print (std::ostream& s) const;
   };
 
 
@@ -494,7 +509,7 @@ namespace urbi
 
 
   //Helper macro to initialize UProps in UVar constructors
-#  define VAR_PROP_INIT				\
+#   define VAR_PROP_INIT				\
   rangemin(*this, PROP_RANGEMIN),		\
     rangemax(*this, PROP_RANGEMAX),		\
     speedmin(*this, PROP_SPEEDMIN),		\
@@ -765,7 +780,7 @@ namespace urbi
   // Casters
 
 
-#ifndef _MSC_VER
+# ifndef _MSC_VER
 
   // generic caster  , second parameter used only to guess correct type
   template <class T>  T cast(UValue &v, T* type) { return (T)v; }
@@ -776,17 +791,17 @@ namespace urbi
   UList cast(UValue &v, UList *l);
   UObjectStruct cast(UValue &v, UObjectStruct *o);
 
-#else
+# else
   //something weird happens when overloading with a different return type, so define everythiong by hand
 
-#define SETCAST(type) inline type cast(UValue &val, type *inu) { return (type)val;}
+# define SETCAST(type) inline type cast(UValue &val, type *inu) { return (type)val;}
 
   SETCAST(int); SETCAST(ufloat); SETCAST(std::string);
   UVar& cast(UValue &val, UVar *var);
   UBinary cast(UValue &v, UBinary * b);
   UList cast(UValue &v, UList *l);
   UObjectStruct cast(UValue &v, UObjectStruct *o);
-#endif
+# endif
 
   // **************************************************************************
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
@@ -900,21 +915,21 @@ namespace urbi
     typedef T noref;
   };
 
-#ifndef _MSC_VER
+# ifndef _MSC_VER
 
   template<typename T> class utrait<T&> {
   public:
     typedef T noref;
   };
 
-#else
+# else
 
   template<> class utrait<UVar&> {
   public:
     typedef UVar noref;
   };
 
-#endif
+# endif
 
 %%%% 0 16
 
