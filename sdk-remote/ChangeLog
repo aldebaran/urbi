@@ -1,5 +1,12 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	urbi dirs.
+	* build-aux/urbi-dirs.m4: New.
+	* configure.ac: Use it.
+	* src/utils/urbiscale.cpp: Formatting changes.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	distcheck passes.
 
 	* sdk/Makefile.am (gccversion): Simplify the handling.
