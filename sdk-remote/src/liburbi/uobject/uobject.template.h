@@ -145,7 +145,7 @@ corresponding URBI object.
 */
 #define UBindVar(obj,x) x.init(__name,#x)
 
-/** This macro defines a UVar as a sensor/effector couple. 
+/** This macro defines a UVar as a sensor/effector couple.
  After this call is made, writes by this module affect the sensed value, and reads read the target value. Writes by other modules and URBI code affect the target value, and reads get the sensed value. Without this call, all operations affect the same underlying variable.*/
 #define USensor(x) x.setOwned()
 
@@ -162,7 +162,7 @@ The return value and parameters must be of a basic integral or floating types, c
 */
 #define UBindEventEnd(obj,x,fun) createUCallback(__name,"eventend", this,(&obj::x),(&obj::fun),__name+"."+std::string(#x),eventendmap)
 
-/** Register current object to the UObjectHub named 'hub'. 
+/** Register current object to the UObjectHub named 'hub'.
 */
 #define URegister(hub) { objecthub = urbi::getUObjectHub((std::string)#hub); \
     if (objecthub) objecthub->addMember(dynamic_cast<UObject*>(this));	\
@@ -240,7 +240,7 @@ namespace urbi
   /// Send URBI code (ghost connection in plugin mode, default connection in remote mode).
   void uobject_unarmorAndSend(const char * str);
   void send(const char* str); ///< sends the string to the connection hosting the UObject
-  void send(void* buf,int size); ///< sends buf to the connection hosting the UObject 
+  void send(void* buf,int size); ///< sends buf to the connection hosting the UObject
 
   // *****************************************************************************
   // UValue and other related types
@@ -526,7 +526,7 @@ namespace urbi
     void operator = ( const UBinary &);  ///< deep copy
     void operator = ( const UImage &i);  ///< deep copy
     void operator = ( const USound &s);  ///< deep copy
-		void operator = ( const UList &l); 
+		void operator = ( const UList &l);
     operator int ();
     operator bool () {return (int)(*this);}
     operator UBinary ();   ///< deep copy
@@ -593,7 +593,7 @@ namespace urbi
     UGenericCallback(std::string objname, std::string type, std::string name, UTable &t);
     virtual ~UGenericCallback();
     std::string getName() { return name;};
-    
+
     virtual UValue __evalcall(UList &param)  = 0;
 
     void   *storage; ///< used to store the UVar* pointeur for var monitoring
@@ -717,7 +717,7 @@ namespace urbi
     void USetUpdate(ufloat period);
     virtual int update() {return 0;};
     void UAutoGroup() { autogroup = true; }; ///< set autogrouping facility for each new subclass created.
-    virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; ///< called when a subclass is created if autogroup is true     
+    virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; ///< called when a subclass is created if autogroup is true
     virtual void UJoinGroup(std::string gpname); ///< joins the uobject to the 'gpname' group
     int voidfun() {return  0;}; ///< void function used in USync callbacks
 
@@ -725,9 +725,9 @@ namespace urbi
 
     void clean(); ///< removes all bindings, this method is called by the destructor
 
-    UVar        load; ///< the load attribute is standard and can be used to control the activity 
+    UVar        load; ///< the load attribute is standard and can be used to control the activity
     		      ///< of the object
-  
+
   private:
     UObjectData*  objectData; ///< pointer to a globalData structure specific to the
 			      ///< remote/plugin architectures who defines it.
@@ -816,15 +816,15 @@ namespace urbi
     { slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarter*>(this));
     };
-  
-    virtual ~URBIStarter() { clean(); }    	                        
+
+    virtual ~URBIStarter() { clean(); }
     virtual void clean() { UObject* tokill = getUObject();
-                           if ((tokill) /*&& (tokill->derived)*/) delete tokill;
-                           UStartlist::iterator toerase = std::find(slist->begin(), 
-	                                                            slist->end(),
+			   if ((tokill) /*&& (tokill->derived)*/) delete tokill;
+			   UStartlist::iterator toerase = std::find(slist->begin(),
+								    slist->end(),
 								    dynamic_cast<baseURBIStarter*>(this));
-                           if (toerase != slist->end()) slist->erase(toerase);
-                         };
+			   if (toerase != slist->end()) slist->erase(toerase);
+			 };
 
     virtual void copy(std::string objname) {
       URBIStarter<T>* ustarter = new URBIStarter<T>(objname,*slist);
@@ -833,8 +833,8 @@ namespace urbi
       dynamic_cast<UObject*>(ustarter->object)->derived   = true;
       dynamic_cast<UObject*>(ustarter->object)->classname =
 	dynamic_cast<UObject*>(object)->classname;
-      if (dynamic_cast<UObject*>(ustarter->object)->autogroup)	
-        dynamic_cast<UObject*>(ustarter->object)->addAutoGroup();
+      if (dynamic_cast<UObject*>(ustarter->object)->autogroup)
+	dynamic_cast<UObject*>(ustarter->object)->addAutoGroup();
     };
 
     virtual UObject* getUObject() {

@@ -1,5 +1,48 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	dos2unix.
+
+	* src/utils/urbiwalk.cpp: Use Unix end-of-lines.
+	* src/utils/urbicycle.cpp: Ditto.
+	* src/utils/Move.cpp: Ditto.
+	* src/utils/urbiscale.cpp: Ditto.
+	* src/utils/Move.h: Ditto.
+	* src/utils/urbireverse.cpp: Ditto.
+	* src/liburbi/openr/liburbi.mips.a: Ditto.
+	* src/liburbi/usyncclient.h: Ditto.
+	* src/liburbi/uobject/uvar.cc: Ditto.
+	* src/liburbi/uobject/uobject.template.h: Ditto.
+	* src/liburbi/uobject/common_uvalue.cc: Ditto.
+	* src/examples/urbiimage.layout: Ditto.
+	* src/examples/urbibandwidth.vcproj: Ditto.
+	* src/examples/urbiplay.vcproj: Ditto.
+	* src/examples/urbisound.cpp: Ditto.
+	* src/examples/urbisend.cpp: Ditto.
+	* src/examples/urbiballtrackinghead.vcproj: Ditto.
+	* src/examples/monitor-win.cpp: Ditto.
+	* src/examples/urbisendsound.cpp: Ditto.
+	* src/examples/urbiimage.vcproj: Ditto.
+	* src/examples/monitor.cpp: Ditto.
+	* src/examples/urbitalkie.cpp: Ditto.
+	* src/examples/urbisound.vcproj: Ditto.
+	* src/examples/urbimirror.cpp: Ditto.
+	* src/examples/urbiimage.dev: Ditto.
+	* src/examples/urbiping.vcproj: Ditto.
+	* src/examples/examples.suo: Ditto.
+	* src/examples/urbisendsound.vcproj: Ditto.
+	* src/examples/urbimirror.vcproj: Ditto.
+	* src/examples/urbiping.cpp: Ditto.
+	* src/examples/urbirecord.vcproj: Ditto.
+	* src/examples/urbibandwidth.cpp: Ditto.
+	* src/examples/monitor-win.h: Ditto.
+	* src/examples/Makefile.win: Ditto.
+	* src/examples/examples.sln: Ditto.
+	* src/examples/monitor.h: Ditto.
+	* INSTALL.windows: Ditto.
+	* setenv.sh: Ditto.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fix AM_LDADD use.
 	* src/liburbi/uobject/Makefile.am (AM_LDADD): Rename as...
 	(LDADD): This.
