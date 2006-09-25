@@ -23,7 +23,7 @@
 
 # include <string>
 # include <list>
-
+# include <algorithm>
 // Hash maps, depending on the environment
 # ifndef _MSC_VER
 #  include <hash_map.h>

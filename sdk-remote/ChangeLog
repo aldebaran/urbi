@@ -1,3 +1,10 @@
+2006-09-25  matthieu nottale  <nottale@gostai.com>
+
+	Fixing stuffs
+
+	* src/liburbi/uobject/uobject.template.h: Fix missing include <algorithm> for find.
+	* src/liburbi/uobject/common_uvalue.cc: Fix code that was mistakenly removed between 140 and 141.
+
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
 	Don't install libuobject.
