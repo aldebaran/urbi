@@ -1,6 +1,8 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
-AM_LDADD = $(PTHREAD_LIBS)
+# Automake 1.10 uses AM_LDADD, not previous versions.
+LDADD = $(PTHREAD_LIBS)
+
 target_LTLIBRARIES = libuobject.la
 
 libuobject_la_SOURCES =				\

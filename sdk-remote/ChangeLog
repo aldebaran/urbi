@@ -1,5 +1,11 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Fix AM_LDADD use.
+	* src/liburbi/uobject/Makefile.am (AM_LDADD): Rename as...
+	(LDADD): This.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	More Autoconfiscation.
 	* configure.ac (TARGET, urbicodedir, targetdir, includedir): New.
 	* src/liburbi/Makefile.am (lib_LTLIBRAIRES): Rename as...
