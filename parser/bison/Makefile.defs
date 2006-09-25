@@ -49,6 +49,7 @@ $(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
 	sed -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",'	\
 	    -e 's/class istream;/#include <istream>/'		\
 	    -e 's/^\([	 ]\)\(cerr <<\)/\1std::\2/'		\
+	    -e 's/\([	 ]\)\(istream\)/\1std::\2/'		\
 	    -e 's,lex.cc,utoken.cc,g'				\
 	    parser/bison/lex.cc > $@.tmp
 	mv $@.tmp $@
