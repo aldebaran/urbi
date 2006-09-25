@@ -1,6 +1,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi
-AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
-lib_LTLIBRARIES = libuobject.la
+AM_CXXFLAGS = $(WARNING_CXXFLAGS)
+AM_LDADD = $(PTHREAD_LIBS)
+target_LTLIBRARIES = libuobject.la
 
 libuobject_la_SOURCES =				\
 common_uvalue.cc				\

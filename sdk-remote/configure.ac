@@ -10,6 +10,11 @@ AC_CONFIG_AUX_DIR([build-aux])
 # Automake.
 AM_INIT_AUTOMAKE([1.9.6 -Wall dist-zip])
 
+# Urbi standard locations.
+AC_SUBST([TARGET], [remote])
+AC_SUBST([urbicoredir], ['$(datadir)/urbicore'])
+AC_SUBST([targetdir],   ['$(urbicore)/$(TARGET)'])
+AC_SUBST([includedir],  ['$(urbicore)/include'])
 
 ## --------------- ##
 ## Documentation.  ##

@@ -4,7 +4,6 @@ else
 SUBDIRS = uobject .
 endif 
 
-
 AM_CPPFLAGS = \
 -I$(top_srcdir)/lib \
 -I$(top_builddir)/src/liburbi/uobject \
@@ -18,7 +17,7 @@ AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
 ## liburbi.la.  ##
 ## ------------ ##
 
-lib_LTLIBRARIES = liburbi.la
+target_LTLIBRARIES = liburbi.la
 
 include_HEADERS =				\
 uabstractclient.h				\

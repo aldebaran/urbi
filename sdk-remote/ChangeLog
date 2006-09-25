@@ -1,3 +1,23 @@
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
+	More Autoconfiscation.
+	* configure.ac (TARGET, urbicodedir, targetdir, includedir): New.
+	* src/liburbi/Makefile.am (lib_LTLIBRAIRES): Rename as...
+	(target_LTLIBRARIES): this.
+	* src/liburbi/uobject/Makefile.am: Use PTHREAD_LIBS appropriately.
+
+	* sdk/Makefile.param.in: Formatting changes.
+	* sdk/Makefile.module: Rename as...
+	* sdk/Makefile.module.in: this.
+	* sdk/Makefile.am: Adjust.
+	Use TARGET instead of TARGETNAME.
+	(copyfile): Remove, rather use directly the various entities
+	at their current location.
+	(sanity): Update.
+	Currently not used, a header would be more appropriate.
+
+	* sdk/umain.cc: Various minor fixes.
+
 2006-09-23  Matthieu Nottale  <nottale@gostai.com>
 
 	adding missing operator
