@@ -78,6 +78,18 @@ namespace urbi {
   void uobject_unarmorAndSend(const char *a) {
     unarmorAndSend(a);
   }
+
+  void send(const char* a) {
+    std::ostream & s = (urbi::getDefaultClient()==0)? (std::cerr) : 
+                       (((UAbstractClient*)urbi::getDefaultClient())->getStream());
+    s << a;
+  } 
+
+  void send(void* buf, int size) {
+    std::ostream & s = (urbi::getDefaultClient()==0)? (std::cerr) : 
+                       (((UAbstractClient*)urbi::getDefaultClient())->getStream());
+    s.rdbuf()->sputn((char*)buf, size);
+  } 
 }
 
 namespace urbi

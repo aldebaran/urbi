@@ -239,6 +239,8 @@ namespace urbi
 
   /// Send URBI code (ghost connection in plugin mode, default connection in remote mode).
   void uobject_unarmorAndSend(const char * str);
+  void send(const char* str); ///< sends the string to the connection hosting the UObject
+  void send(void* buf,int size); ///< sends buf to the connection hosting the UObject 
 
   // *****************************************************************************
   // UValue and other related types
