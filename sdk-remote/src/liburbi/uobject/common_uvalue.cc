@@ -198,7 +198,12 @@ int UValue::parse(const char * message, int pos,
   }
 
 
-
+  if (!strncmp(message+pos,"void",4)) {
+    //void
+    type = DATA_VOID;
+    pos +=4;
+    return pos;
+  }
 
   if (!strncmp(message+pos,"BIN ",4)) {
     //binary message: delegate

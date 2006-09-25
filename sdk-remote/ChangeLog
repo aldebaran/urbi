@@ -1,3 +1,9 @@
+2006-09-25  matthieu nottale  <nottale@gostai.com>
+
+	Add support for void data type
+
+	* src/liburbi/uobject/common_uvalue.cc: Add support for 'void' in parse function (happens in OBJ type).
+
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
 	Revert some dos2unix.
