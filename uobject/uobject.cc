@@ -82,6 +82,7 @@ namespace urbi {
 	return UObjectStruct(*v.object);
   }
 
+// USeful sending functions
 
    void uobject_unarmorAndSend(const char * str) {
      //feed this to the ghostconnection
@@ -92,9 +93,23 @@ namespace urbi {
        ghost->received(str);
 
      ghost->newDataAdded = true; 
-
    }
 
+   void send(const char* str) {
+
+     //feed this to the ghostconnection
+     UConnection * ghost = urbiserver->getGhostConnection();
+     ghost->received(str);
+     ghost->newDataAdded = true; 
+   }
+
+   void send(void* buf, int size) {
+
+     //feed this to the ghostconnection
+     UConnection * ghost = urbiserver->getGhostConnection();
+     ghost->received((const unsigned char *)(buf),size);
+     ghost->newDataAdded = true;
+   }
 }
 
 using namespace urbi;
