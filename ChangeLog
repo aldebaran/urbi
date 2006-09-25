@@ -1,5 +1,12 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Portability fixes.
+	* parser/bison/Makefile.defs: use Perl, not sed, since alternation
+	is not portable (and OSX is a loser in this regard).
+	Also cover cin, cout, cerr, and widen the pattern.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Prepend std:: to istream.
 
 	* parser/bison/Makefile.defs: For Linux.

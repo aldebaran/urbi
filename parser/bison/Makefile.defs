@@ -42,15 +42,18 @@ $(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
 ## Flex Scanner.  ##
 ## -------------- ##
 
+# Flex 2.5.4 is quite old, and its C++ output does not use std::
+# properly.  This is the list of entities which must be prefixed by
+# std::.
+flex_nonstd = 'cin|cout|cerr|istream'
 EXTRA_DIST += parser/bison/utoken.l
 dist_libkernel_la_SOURCES += parser/bison/FlexLexer.h parser/bison/utoken.cc
 $(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
 	$(FLEX) -+ -oparser/bison/lex.cc $(srcdir)/parser/bison/utoken.l
-	sed -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",'	\
-	    -e 's/class istream;/#include <istream>/'		\
-	    -e 's/^\([	 ]\)\(cerr <<\)/\1std::\2/'		\
-	    -e 's/\([	 ]\)\(istream\)/\1std::\2/'		\
-	    -e 's,lex.cc,utoken.cc,g'				\
+	perl -p -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
+	        -e 's/class istream;/#include <istream>/;'		\
+	        -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
+	        -e 's,lex.cc,utoken.cc,g;'				\
 	    parser/bison/lex.cc > $@.tmp
 	mv $@.tmp $@
 	rm -f parser/bison/lex.cc
