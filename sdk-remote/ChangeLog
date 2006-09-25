@@ -1,5 +1,19 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Revert some dos2unix.
+	* src/liburbi/openr/liburbi.mips.a: Revert to previous version.
+	* src/examples/urbibandwidth.vcproj: Ditto.
+	* src/examples/urbiplay.vcproj: Ditto.
+	* src/examples/urbiballtrackinghead.vcproj: Ditto.
+	* src/examples/urbiimage.vcproj: Ditto.
+	* src/examples/urbisound.vcproj: Ditto.
+	* src/examples/urbiping.vcproj: Ditto.
+	* src/examples/urbisendsound.vcproj: Ditto.
+	* src/examples/urbimirror.vcproj: Ditto.
+	* src/examples/urbirecord.vcproj: Ditto.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	dos2unix.
 
 	* src/utils/urbiwalk.cpp: Use Unix end-of-lines.
