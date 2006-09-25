@@ -23,7 +23,7 @@ esac
 AC_DEFINE_UNQUOTED([OS], [$OS],
 	 	   [The OS the kernel is compiled for (aibo...).])
 
-
+URBI_DIRS([kernel1])
 
 ## --------------- ##
 ## Documentation.  ##

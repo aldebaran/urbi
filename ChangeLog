@@ -1,5 +1,11 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Use URBI_DIRS.
+	* build-aux/urbi-dirs.m4: New.
+	* configure.ac: Use it.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	distcheck fixes.
 	* build-aux/doxygen.mk: Update.
 	* build-aux/revision.mk: Clean version..hh.
