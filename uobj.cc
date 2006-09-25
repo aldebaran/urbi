@@ -4,7 +4,7 @@
  File: uobj.cc\n
  Implementation of the UObj class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -28,11 +28,11 @@
 #include "uvariablename.h"
 #include "userver.h"
 #include "uconnection.h"
-#include "uobject.h"
-  
+#include "uobject/uobject.h"
+
 char namebuffer[1024];
-  
-// **************************************************************************	
+
+// **************************************************************************
 //! UObj constructor.
 UObj::UObj (UString *device)
 {
@@ -50,52 +50,52 @@ UObj::UObj (UString *device)
 //! UObj destructor
 UObj::~UObj()
 {
-  // Removal of all variable bindings   
+  // Removal of all variable bindings
   list<UVariable*> varToDelete;
   for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
-      it != ::urbiserver->variabletab.end();
-      ++it) 
-  {    
-    if (((*it).second->method) &&
-	((*it).second->devicename) && (device) &&
-	((*it).second->value->dataType != DATA_OBJ) &&
-        ((*it).second->devicename->equal(device)) ) {
+       it != ::urbiserver->variabletab.end();
+       ++it)
+    {
+      if (((*it).second->method) &&
+	  ((*it).second->devicename) && (device) &&
+	  ((*it).second->value->dataType != DATA_OBJ) &&
+	  ((*it).second->devicename->equal(device)) ) {
 
-      varToDelete.push_back((*it).second);            
-    }    
-  }//for  
+	varToDelete.push_back((*it).second);
+      }
+    }//for
   for (list<UVariable*>::iterator itd = varToDelete.begin();
        itd != varToDelete.end();
        ++itd)
     delete (*itd);
 
-  
+
   // clean variables binders (a bit brutal, we scan all wariables...
   // I'll work on an optimized version later)
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
-       it++) 
-  {
-    if (it->second->binder) 
+       it++)
     {
-      bool isempty = it->second->binder->removeMonitor(device);
-      if (isempty)
-      {
-	delete it->second->binder;
-	it->second->binder = 0;
-      }//if
-    }//if
-  }//for
-  
+      if (it->second->binder)
+	{
+	  bool isempty = it->second->binder->removeMonitor(device);
+	  if (isempty)
+	    {
+	      delete it->second->binder;
+	      it->second->binder = 0;
+	    }//if
+	}//if
+    }//for
+
   list<HMbindertab::iterator> deletelist;
   //clean functions binders
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
        it2++)
-  {
-    if (it2->second->removeMonitor(device))      
-      deletelist.push_back(it2);   
-  }//for
+    {
+      if (it2->second->removeMonitor(device))
+	deletelist.push_back(it2);
+    }//for
   for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
@@ -107,30 +107,30 @@ UObj::~UObj()
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
        it3 != ::urbiserver->eventbindertab.end();
        it3++)
-  {
-    if (it3->second->removeMonitor(device))     
-      deletelist.push_back(it3); 
-  }//for
+    {
+      if (it3->second->removeMonitor(device))
+	deletelist.push_back(it3);
+    }//for
   for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
     ::urbiserver->eventbindertab.erase((*itt));
   deletelist.clear();
 
-  
+
 
   // clean the object binder
-  if (binder) { 
+  if (binder) {
     char messagetosend[1024];
     snprintf(messagetosend,1024,"[5,\"%s\"]\n", device->str());
 
     for (list<UMonitor*>::iterator it = binder->monitors.begin();
-	it != binder->monitors.end();
-	it++) 
-    {
-      (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
-    }
+	 it != binder->monitors.end();
+	 it++)
+      {
+	(*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
+      }
 
     // in fact here we can delete the binder since it contained only bindings
     // to a single object (himself) associated to unique connections:
@@ -145,61 +145,61 @@ UObj::~UObj()
   for (list<UObj*>::iterator it = up.begin();
        it != up.end();
        ++it)
-  {
-    (*it)->down.remove(this);
-  }
+    {
+      (*it)->down.remove(this);
+    }
 
   // INTERNAL cleanups
   if ((internalBinder) &&
       (internalBinder->getUObject()))
-  {
-   // here we have two different cases because base classes are not dynamically
-   // created and cannot be deleted, they can only to be "cleaned":
-    if (internalBinder->getUObject()->derived)
-      delete internalBinder; // this deletes the associated UObject   
-    else  {
-      if (internalBinder->getUObject())
-	delete internalBinder->getUObject();
+    {
+      // here we have two different cases because base classes are not dynamically
+      // created and cannot be deleted, they can only to be "cleaned":
+      if (internalBinder->getUObject()->derived)
+	delete internalBinder; // this deletes the associated UObject
+      else  {
+	if (internalBinder->getUObject())
+	  delete internalBinder->getUObject();
+      }
     }
-  }
-  
+
   // clean variables internalBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
-       it++) 
-  {        
-    for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalBinder.begin();
-	itcb != (*it).second->internalBinder.end();
-	)
+       it++)
     {
-      if ((*itcb)->objname == device->str()) 
-      {
-	delete (*itcb);
-	itcb = (*it).second->internalBinder.erase(itcb);
-      }
-      else
-	++itcb;
-    }//for    
-  }//for
+      for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalBinder.begin();
+	   itcb != (*it).second->internalBinder.end();
+	   )
+	{
+	  if ((*itcb)->objname == device->str())
+	    {
+	      delete (*itcb);
+	      itcb = (*it).second->internalBinder.erase(itcb);
+	    }
+	  else
+	    ++itcb;
+	}//for
+    }//for
 
   // clean variables internalAccessBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
-       it++) 
-  {        
-    for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalAccessBinder.begin();
-	itcb != (*it).second->internalAccessBinder.end();
-	)
+       it++)
     {
-      if ((*itcb)->objname == device->str()) 
-      {
-	delete (*itcb);
-	itcb = (*it).second->internalAccessBinder.erase(itcb);
-      }
-      else
-	++itcb;
-    }//for    
-  }//for
+      for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalAccessBinder.begin();
+	   itcb != (*it).second->internalAccessBinder.end();
+	   )
+	{
+	  if ((*itcb)->objname == device->str())
+	    {
+	      delete (*itcb);
+	      itcb = (*it).second->internalAccessBinder.erase(itcb);
+	    }
+	  else
+	    ++itcb;
+	}//for
+    }//for
 
 
   // final cleanup
@@ -211,8 +211,8 @@ UObj::searchFunction(const char* id, bool &ambiguous)
 {
   UFunction *ret;
   bool found;
-  
-  snprintf(namebuffer,1024,"%s.%s",device->str(),id);  
+
+  snprintf(namebuffer,1024,"%s.%s",device->str(),id);
   HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
   if (hmf != ::urbiserver->functiontab.end()) {
     ambiguous = false;
@@ -231,21 +231,21 @@ UObj::searchFunction(const char* id, bool &ambiguous)
 	  ambiguous = true;
 	  return 0;
 	}
-	else 
-	  found = true;      
+	else
+	  found = true;
     }
     ambiguous = false;
     return ret;
   }
-} 
+}
 
 UVariable*
 UObj::searchVariable(const char* id, bool &ambiguous)
 {
   UVariable *ret;
   bool found;
-  
-  snprintf(namebuffer,1024,"%s.%s",device->str(),id);  
+
+  snprintf(namebuffer,1024,"%s.%s",device->str(),id);
   HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
   if (hmv != ::urbiserver->variabletab.end()) {
     ambiguous = false;
@@ -264,8 +264,8 @@ UObj::searchVariable(const char* id, bool &ambiguous)
 	  ambiguous = true;
 	  return 0;
 	}
-	else 
-	  found = true;      
+	else
+	  found = true;
     }
     ambiguous = false;
     return ret;
@@ -282,8 +282,7 @@ UWaitCounter::UWaitCounter(UString *id, int nb)
   this->nb = nb;
 }
 
-UWaitCounter::~UWaitCounter() 
+UWaitCounter::~UWaitCounter()
 {
   if (id) delete id;
 }
-

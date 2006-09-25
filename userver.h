@@ -4,7 +4,7 @@
  File: userver.h\n
  Definition of the USystem class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -20,7 +20,7 @@
  **************************************************************************** */
 
 #ifndef USERVER_H_DEFINED
-#define USERVER_H_DEFINED
+# define USERVER_H_DEFINED
 
 class UConnection;
 class UGhostConnection;
@@ -28,16 +28,16 @@ class UServer;
 class UValue;
 class UVariable;
 
-#include <list>
-#include <string>
+# include <list>
+# include <string>
 
-#include "utypes.h"
-#include "parser/uparser.h"
-#include "ufunction.h"
-#include "uvariable.h"
-#include "ubinder.h"
+# include "utypes.h"
+# include "parser/uparser.h"
+# include "ufunction.h"
+# include "uvariable.h"
+# include "ubinder.h"
 
-#define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
+# define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
 class UString;
 class UParser;
@@ -51,14 +51,14 @@ extern  const char* DISPLAY_FORMAT1;
 extern  const char* DISPLAY_FORMAT2;
 
 extern  const int   NB_HEADER_BEFORE_CUSTOM;
-extern  const char* HEADER_BEFORE_CUSTOM[]; 
+extern  const char* HEADER_BEFORE_CUSTOM[];
 extern  const int   NB_HEADER_AFTER_CUSTOM;
-extern  const char* HEADER_AFTER_CUSTOM[]; 
+extern  const char* HEADER_AFTER_CUSTOM[];
 
 extern  const char* MAINDEVICE;
 
-extern  const char* UNKNOWN_TAG; 
-extern  class UServer   *urbiserver; // Global variable for the server  
+extern  const char* UNKNOWN_TAG;
+extern  class UServer   *urbiserver; // Global variable for the server
 
 
 //! UServer class: handles all URBI system processing.
@@ -77,10 +77,10 @@ extern  class UServer   *urbiserver; // Global variable for the server
 class UServer
 {
 public:
-	
-  UServer(ufloat frequency,          
-          int freeMemory,
-          const char* mainName);
+
+  UServer(ufloat frequency,
+	  int freeMemory,
+	  const char* mainName);
 
   virtual ~UServer();
 
@@ -95,16 +95,16 @@ public:
   void              deIsolate       ();
   bool              isIsolated      ();
 
-  virtual ufloat    getTime         () = 0;  
-  virtual ufloat    getPower        () = 0;  
+  virtual ufloat    getTime         () = 0;
+  virtual ufloat    getPower        () = 0;
   virtual void      getCustomHeader (int line, char* header, int maxlength) = 0;
   virtual UErrorValue loadFile      (const char *filename, UCommandQueue* loadQueue) = 0;
   virtual UErrorValue saveFile      (const char *filename, const char * content) = 0;
-  void              memoryCheck     ();                                 
-  int               memory          (); 
- 
+  void              memoryCheck     ();
+  int               memory          ();
+
   UVariable*        getVariable     ( const char *device,
-                                      const char *property);
+				      const char *property);
 
 
   ufloat            getFrequency    ();
@@ -113,7 +113,7 @@ public:
   virtual void      shutdown        () = 0;
   virtual void      beforeWork      ();
   virtual void      afterWork       ();
-  
+
   void              display         (const char*);
   ufloat            lastTime        ();
   void              updateTime      ();
@@ -122,13 +122,13 @@ public:
   int               addAlias        (const char* id, const char* variablename);
   UGhostConnection *     getGhostConnection() {return ghost;}
   list<UConnection*>       connectionList; ///< list of active connections: includes
-                                           ///< one UGhostConnection
+					   ///< one UGhostConnection
 
-  HMvariabletab            variabletab; ///< hash of variable values  
+  HMvariabletab            variabletab; ///< hash of variable values
   HMfunctiontab            functiontab; ///< hash of function definition
   HMfunctiontab            functiondeftab; ///< hash of functions definition markers
   HMfunctiontab            eventdeftab; ///< hash of events definition markers
-  HMobjtab                 objtab; ///< hash of objects hierarchy  
+  HMobjtab                 objtab; ///< hash of objects hierarchy
   HMaliastab               aliastab; ///< hash of alias definitions
   HMaliastab               objaliastab; ///< hash of obj alias definitions
   HMgrouptab               grouptab; ///< hash of group definitions
@@ -145,11 +145,11 @@ public:
   int                      stage;///< reseting stage
   list<UVariable*>         varToReset; ///< list of variables to delete in a reset command
 
-#ifdef _MSC_VER
+# ifdef _MSC_VER
   std::hash_map<const char *,bool, str_compare> blocktab;
   std::hash_map<const char *,bool, str_compare> freezetab;
 
-#else
+# else
   hash_map<const char*,
     bool,
     hash<const char*>,
@@ -159,15 +159,15 @@ public:
     bool,
     hash<const char*>,
     eqStr>                 freezetab;  ///< hash of the freezed tags.
-#endif	
+# endif
   UParser                  parser; ///< The main parser object
-  bool                     memoryOverflow; ///< Flag used to signal a memory 
-                                           ///< Overflow.
+  bool                     memoryOverflow; ///< Flag used to signal a memory
+					   ///< Overflow.
   bool                     debugOutput;    ///< shows debug or not.
   UString                  *mainName; ///< name of the main device
   bool                     somethingToDelete; ///< true after a stop command
   bool                     uservarState; ///< true after the initialization phase: all vars
-                                         ///< are uservar then.
+					 ///< are uservar then.
   ufloat                   cpuload; ///< cpu load expressed as a number between 0 and 1
   bool                     cpuoverload; ///< true when there is a cpu overload
   bool                     signalcpuoverload; ///< a signal must be sent to every connection
@@ -175,22 +175,21 @@ public:
   ufloat                   cputhreshold; ///< threshold for cpu overload alert
   bool                     defcheck; ///< true when the server is paranoid on def checking
   ufloat                   previous2Time,
-                           previous3Time,
-                           currentTime, 
-                           previousTime, 
-                           latestTime; ///< used to detect cpu overload
+			   previous3Time,
+			   currentTime,
+			   previousTime,
+			   latestTime; ///< used to detect cpu overload
   bool                     stopall; ///< stops all commands in all connections
   bool                     systemcommands; ///< false inside parsing, true otherwise for commands created by the kernel
 
-
  static const int TCP_PORT            = 54000; ///< URBI TCP Port.
- 
+
 protected:
-  
+
   virtual void     effectiveDisplay         (const char*) = 0;
-  
+
 private:
-  
+
   static const int MAXSIZE_INTERNALMESSAGE = 1024;  ///< used by echo()& error()
   static const int SECURITY_MEMORY_SIZE    = 100000;///< amount of security mem.
 
@@ -203,14 +202,14 @@ private:
 
 //! Accessor for frequency_
 inline ufloat
-UServer::getFrequency() 
+UServer::getFrequency()
 {
   return frequency_;
 }
 
 //! Accessor for lastTime_
 inline ufloat
-UServer::lastTime() 
+UServer::lastTime()
 {
   return lastTime_;
 }
@@ -220,6 +219,6 @@ extern int URBI_unicID;
 inline int unic() {
   URBI_unicID++;
   return( URBI_unicID );
-}	
+}
 
 #endif

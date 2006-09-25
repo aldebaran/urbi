@@ -1,19 +1,59 @@
-PARSER_SRC=parser/bison/ugrammar.cc parser/bison/utoken.cc
+# AM_CPPFLAGS += -I $(top_srcdir)/parser
+AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 
+## --------------- ##
+## Bison wrapper.  ##
+## --------------- ##
 
-parser/bison/ugrammar.cc: parser/bison/ugrammar.y
-	$(BISON) -o $@ $<
+# A Bison wrapper for C++.
+BISONXX = $(top_builddir)/build-aux/bison++
+BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 
-parser/bison/utoken.cc: parser/bison/utoken.l parser/bison/ugrammar.cc
-	$(FLEX) -+ -oparser/bison/lex.cc parser/bison/utoken.l
-	sed -e 's/class istream;/#include <istream.h>/' parser/bison/lex.cc > parser/bison/utoken.cc
+parsedir = $(srcdir)/parser/bison
+# We do not use Automake features here.
+FROM_UGRAMMAR_Y = \
+	$(parsedir)/stack.hh \
+	$(parsedir)/position.hh \
+	$(parsedir)/location.hh \
+	$(parsedir)/ugrammar.hh \
+	$(parsedir)/ugrammar.cc
+BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
+MAINTAINERCLEANFILES = $(FROM_UGRAMMAR_Y)
+dist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y) 
+
+# Compile the parser and save cycles.
+# This code comes from "Handling Tools that Produce Many Outputs",
+# from the Automake documentation.
+EXTRA_DIST += $(parsedir)/ugrammar.stamp $(parsedir)/ugrammar.y
+$(parsedir)/ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN)
+	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
+	@rm -f ugrammar.tmp
+	@touch ugrammar.tmp
+	$(BISONXX) $(parsedir) ugrammar.y ugrammar.cc -d -ra
+	@mv -f ugrammar.tmp $@
+
+$(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
+	@if test -f $@; then :; else \
+	  rm -f $(parsedir)/ugrammar.stamp; \
+	  $(MAKE) $(AM_MAKEFLAGS) $(parsedir)/ugrammar.stamp; \
+	fi
+
+dist_libkernel_la_SOURCES += parser/bison/utoken.cc
+$(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
+	$(FLEX) -+ -oparser/bison/lex.cc $(srcdir)/parser/bison/utoken.l
+	sed -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",'	\
+	    -e 's/class istream;/#include <istream>/'		\
+	    -e 's,lex.cc,utoken.cc,g'				\
+	    parser/bison/lex.cc > $@.tmp
+	mv $@.tmp $@
 	rm -f parser/bison/lex.cc
 
-ifeq ($(OS),aibo)
-parser/bison/ugrammar.mips.o: parser/bison/ugrammar.cc
-	echo "special compile for Aibo: no optim"
-	$(CC) $(CPPFLAGS) -Wno-deprecated $(OPTIM) -O0 -o $@ -c $<
-endif
+# ifeq ($(OS),aibo)
+# parser/bison/ugrammar.mips.o: parser/bison/ugrammar.cc
+# 	echo "special compile for Aibo: no optim"
+# 	$(CC) $(CPPFLAGS) -Wno-deprecated $(OPTIM) -O0 -o $@ -c $<
+# endif
 
-bison-clean: 
-	rm parser/bison/ugrammar.cc parser/bison/utoken.cc parser/bison/ugrammar.hh
+## Local Variables:
+## mode: Makefile
+## End:

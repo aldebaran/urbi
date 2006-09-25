@@ -1,0 +1,27 @@
+#! /bin/sh
+
+# Files to protect from --install.
+keep=INSTALL
+
+for i in $keep
+do
+  cp $i $i.bak
+done
+
+# On some environments (Darwin Ports), libtoolize is glibtoolize.
+# I suppose their autoreconf is adjusted accordingly, but I use
+# my custom Autoconf...
+for lt in "$LIBTOOLIZE" libtoolize glibtoolize
+do
+  if ($lt --version) >/dev/null 2>&1; then
+    export LIBTOOLIZE="$lt"
+    break
+  fi
+done
+
+autoreconf -f -v -i
+
+for i in $keep
+do
+  mv $i.bak $i
+done

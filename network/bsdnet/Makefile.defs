@@ -1,2 +1,16 @@
-bsdnet-clean:
-	rm *.o
+## ------------------ ##
+## libkernet-bsdnet.  ##
+## ------------------ ##
+
+lib_LTLIBRARIES += libkernel-bsdnet.la
+
+libkernel_bsdnet_la_SOURCES =			\
+network/bsdnet/Connection.h			\
+network/bsdnet/Connection.cc			\
+network/bsdnet/network.h			\
+network/bsdnet/network.cc
+libkernel_bsdnet_la_LIBADD = libkernel.la
+
+## Local Variables:
+## mode: Makefile
+## End:

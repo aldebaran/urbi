@@ -7,7 +7,7 @@
  This file is based on an example provided by Markus Mottl:
  See: "reent" at http://www.oefai.at/~markus
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -23,29 +23,31 @@
  **************************************************************************** */
 
 #ifndef UPARSER_H_DEFINED
-#define UPARSER_H_DEFINED
+# define UPARSER_H_DEFINED
 
-#include <strstream> 
-#include <sstream>
-#include <algorithm>
-#include <string>
-#ifdef _MSC_VER
-#ifdef min
-#undef min
-#endif
-#endif
-#include "utypes.h"
-#undef IN
-#include "bison/FlexLexer.h"
-#include "bison/location.hh"
+# include <strstream>
+# include <sstream>
+# include <algorithm>
+# include <string>
+# ifdef _MSC_VER
+#  ifdef min
+#   undef min
+#  endif
+# endif
+# include "utypes.h"
+# undef IN
 
-// FIXME: When Bison is fixed, replace yy::parser::token::yytokentype
-// by yy::parser::token_type.
-#undef  YY_DECL
-#define YY_DECL                                                 \
-  yy::parser::token::yytokentype 			 	\
-  yyFlexLexer::yylex(yy::parser::semantic_type* valp,		\
-                     yy::location* locp, UParser& uparser)
+# include "parser/bison/ugrammar.hh"
+# include "parser/bison/FlexLexer.h"
+# include "parser/bison/location.hh"
+
+class UCommand_TREE;
+
+# undef  YY_DECL
+# define YY_DECL                                                 \
+  yy::parser::token_type					 \
+  yyFlexLexer::yylex(yy::parser::semantic_type* valp,		 \
+		     yy::location* locp, UParser& uparser)
 
 // Parse function of 'bison' is defined externally
 extern char errorMessage[1024];
@@ -54,7 +56,7 @@ extern UString** globalDelete;
 //! Control class for a flex-scanner
 /*! It has a pointer to the uparser in which it is contained
  */
-class UFlexer 
+class UFlexer
   : public yyFlexLexer
 {
 public:
@@ -69,41 +71,41 @@ private:
 
 //! UParser uses 'flex' and 'bison' as scanner/parser
 /*! The choice of flex/bison is detailed in the comment on the UServer class.
-    The main concern is about reentrancy, which is not necessary in most 
+    The main concern is about reentrancy, which is not necessary in most
     cases but would become a problem with a multithreaded server.
 */
-class UParser 
+class UParser
 {
 public:
- // friend int yylex(yy::parser::semantic_type *lvalp, void *compiler);
+  // friend int yylex(yy::parser::semantic_type *lvalp, void *compiler);
 
   UParser() : uflexer(this) {}
 
-  // Parse the command from a stream (this is how flex C++ handles it, 
+  // Parse the command from a stream (this is how flex C++ handles it,
   // no choice).
-  int process(ubyte* command, int length, UConnection* connection_) 
-  {    
+  int process(ubyte* command, int length, UConnection* connection_)
+  {
     connection = connection_;
     commandTree = 0;
-    result = 0;   
+    result = 0;
 
-    std::istrstream * mem_buff = new std::istrstream((char*)command, length);    
+    std::istrstream * mem_buff = new std::istrstream((char*)command, length);
     if (!mem_buff) return -1;
-       
+
     std::istream* mem_input = new std::istream(mem_buff->rdbuf());
     if (!mem_input) {
       delete mem_buff;
       return -1;
     }
-       
+
     uflexer.switch_streams(&(*mem_input), 0);// Tells flex the right stream
-    binaryCommand = false;   
-    
-    yy::parser p(*this);   
-    result = p.parse();      
+    binaryCommand = false;
+
+    yy::parser p(*this);
+    result = p.parse();
 
     delete mem_input;
-    delete mem_buff;   
+    delete mem_buff;
 
     return result;
   }
@@ -112,19 +114,20 @@ public:
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
-  yy::parser::token::yytokentype scan(yy::parser::semantic_type* val,
-                                      yy::location* loc) { 
-     return uflexer.yylex(val,loc,*this); 
+  yy::parser::token_type scan(yy::parser::semantic_type* val,
+			      yy::location* loc) 
+  {
+    return uflexer.yylex(val,loc,*this);
   }
 
   void error (const yy::location& l, const std::string& msg)
   {
-      std::ostringstream sstr;
+    std::ostringstream sstr;
 
-      sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
-      strncpy(errorMessage, sstr.str().c_str(),
-              std::min(sizeof (errorMessage), sstr.str().size()));  
-	
+    sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
+    strncpy(errorMessage, sstr.str().c_str(),
+	    std::min(sizeof (errorMessage), sstr.str().size()));
+
   }
 
 private:
@@ -136,6 +139,11 @@ private:
 
 // Important! These are the "shortcuts" which you can use in your
 // ".l"- and ".y"-files to access the corresponding uparser-object!
-// #define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
+// # define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
 
 #endif
+
+// Local Variables:
+// mode: C++
+// End:
+

@@ -3,11 +3,11 @@
 
  File: ugrammar.y\n
  Definition of the parser used by the UParser object.
- This parser is defined with bison, using the option %pure_parser to make it 
- reentrant. For more details about reentrancy issues, check the definition of 
+ This parser is defined with bison, using the option %pure_parser to make it
+ reentrant. For more details about reentrancy issues, check the definition of
  the UServer class.
 
- This file is part of 
+ This file is part of
  %URBI, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004.
 
@@ -22,47 +22,44 @@
 
  **************************************************************************** */
 
-%require "2.1b"
+%require "2.2"
 %error-verbose
 %locations
-%defines 
+%defines
 %skeleton "lalr1.cc"
 %parse-param {UParser& uparser}
 %lex-param {UParser& uparser}
 %{
 
 #include "utypes.h"
-#include "ucommand.h"    
+#include "ucommand.h"
 
 class UParser;
-using std::cin;
-using std::cout;
-using std::cerr;
 %}
 
 /* Possible data type returned by the bison parsing mechanism */
 
 %union {
-  UCommand                *command;   
+  UCommand                *command;
   UExpression             *expr;
   UBinary                 *binary;
-  UNamedParameters        *namedparameters;  
-  UVariableName           *variable;    
-  UVariableList           *variablelist;   
-  UProperty               *property;  
+  UNamedParameters        *namedparameters;
+  UVariableName           *variable;
+  UVariableList           *variablelist;
+  UProperty               *property;
 
   ufloat                   *val;
   UString                  *str;
   struct {
     UString *device;
-    UString *id; 
+    UString *id;
     bool rooted;
   }                        structure;
 }
 
 %{
 // Is included in ugrammar.cc
-//#include <cmath> 
+//#include <cmath>
 #ifdef VISUALCPP
 #include <hash_map>
 #else
@@ -70,12 +67,10 @@ using std::cerr;
 #endif
 #include <string>
 #include <iostream>
-using std::cin;
-using std::cout;
 #define TRUE ufloat(1)
 #define FALSE ufloat(0)
 
-#include "../uparser.h"
+#include "parser/uparser.h"
 
 #include "uconnection.h"
 #include "uobj.h"
@@ -117,7 +112,7 @@ extern UString** globalDelete;
 
 //! Directs the call from 'bison' to the scanner in the right parser
 inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
-                                            yy::location* loc, UParser& p)
+					    yy::location* loc, UParser& p)
 {
   return p.scan(val, loc);
 }
@@ -158,7 +153,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token TILDE "~"
 %token RPAREN ")"
 %token LPAREN "("
-%token DIR "->" 
+%token DIR "->"
 %token RSBRACKET  "]"
 %token LSBRACKET "["
 %token RBRACKET "}"
@@ -229,16 +224,16 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %token <val>                 NUM        "number"
 %token <val>                 TIMEVALUE  "time"
 %token <val>                 FLAG       "flag"
-%token <val>                 FLAGTEST   "flag test"  
+%token <val>                 FLAGTEST   "flag test"
 %token <val>                 FLAGID     "flag identifier"
-%token <val>                 FLAGTIME   "flag time"      
-%token <str>                 IDENTIFIER  "identifier"  
+%token <val>                 FLAGTIME   "flag time"
+%token <str>                 IDENTIFIER  "identifier"
 %token <structure>           STRUCT      "structured identifier"
 %token <structure>           REFSTRUCT   "structured ref-identifier"
 %token <str>                 STRING      "string"
 %token <str>                 SWITCH      "switch"
 %token <str>                 BINDER      "binder"
-%token <str>                 OPERATOR    "operator command" 
+%token <str>                 OPERATOR    "operator command"
 %token <str>                 OPERATOR_ID "operator"
 %token <str>                 OPERATOR_ID_PARAM "param-operator"
 %token <str>                 OPERATOR_VAR "var-operator"
@@ -248,7 +243,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %type  <command>             taggedcommands  "set of commands"
 %type  <command>             taggedcommand   "tagged command"
 %type  <command>             command         "command"
-%type  <command>             instruction     "instruction" 
+%type  <command>             instruction     "instruction"
 %type  <namedparameters>     parameters      "parameters"
 %type  <namedparameters>     array           "array"
 %type  <namedparameters>     parameterlist   "list of parameters"
@@ -274,12 +269,12 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %left  MINUS PLUS
 %left  MULT DIV PERCENT
 %left  NEG     /* Negation--unary minus */
-%right EXP     /* Exponentiation*/       
+%right EXP     /* Exponentiation*/
 %right NORM
 
-%left  COMMA 
+%left  COMMA
 %left  SEMICOLON
-%left  AND PIPE 
+%left  AND PIPE
 %left  CMDBLOCK EXPRBLOCK
 %left  ELSE ONLEAVE
 %nonassoc ASSIGN
@@ -295,9 +290,9 @@ ROOT: root {
 	uparser.connection->lastloc = @$;
       }
 
-root:   
+root:
 
-    refvariable ASSIGN binary SEMICOLON { 
+    refvariable ASSIGN binary SEMICOLON {
 
       URefPt<UBinary> *ref = new URefPt<UBinary>($3);
       MEMCHECK(ref);
@@ -308,19 +303,19 @@ root:
 
       uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
       if ( uparser.commandTree )
-        uparser.commandTree->tag->update("__node__");
-      MEMCHECK(uparser.commandTree);      
-    } 
+	uparser.commandTree->tag->update("__node__");
+      MEMCHECK(uparser.commandTree);
+    }
 
-  | taggedcommands { 
+  | taggedcommands {
 
       uparser.commandTree = 0;
       if ($1) {
-        if ($1->type == CMD_TREE)
-          uparser.commandTree = (UCommand_TREE*)$1;     
-        else
-          delete $1;
-      }      
+	if ($1->type == CMD_TREE)
+	  uparser.commandTree = (UCommand_TREE*)$1;
+	else
+	  delete $1;
+      }
     }
 ;
 
@@ -332,34 +327,34 @@ taggedcommands:
     taggedcommand
 
   | taggedcommands COMMA taggedcommands {
-      
+
       $$ = new UCommand_TREE(UCOMMA,$1,$3);
-      if ($$)       
-        $$->tag->update("__node__");
+      if ($$)
+	$$->tag->update("__node__");
       MEMCHECK2($$,$1,$3);
     }
 
-  | taggedcommands SEMICOLON taggedcommands { 
-      
+  | taggedcommands SEMICOLON taggedcommands {
+
       $$ = new UCommand_TREE(USEMICOLON,$1,$3);
-      if ($$)         
-        $$->tag->update("__node__");
+      if ($$)
+	$$->tag->update("__node__");
       MEMCHECK2($$,$1,$3);
     }
 
   | taggedcommands PIPE taggedcommands {
-      
+
       $$ = new UCommand_TREE(UPIPE,$1,$3);
-      if ($$)        
-        $$->tag->update("__node__");
+      if ($$)
+	$$->tag->update("__node__");
       MEMCHECK2($$,$1,$3);
     }
 
   | taggedcommands AND taggedcommands {
-      
+
       $$ = new UCommand_TREE(UAND,$1,$3);
-      if ($$)        
-        $$->tag->update("__node__");
+      if ($$)
+	$$->tag->update("__node__");
       MEMCHECK2($$,$1,$3);
     }
 
@@ -367,47 +362,47 @@ taggedcommands:
 
 /* TAGGEDCOMMAND */
 
-taggedcommand:  
+taggedcommand:
 
     command {
-    
-      if (($1) && (!$1->tag))        
-        $1->tag = new UString(UNKNOWN_TAG);
-      
-      $$ = $1;     
+
+      if (($1) && (!$1->tag))
+	$1->tag = new UString(UNKNOWN_TAG);
+
+      $$ = $1;
     }
 
   | IDENTIFIER flags COLON command {
-      
+
       MEMCHECK($1);
       if ($4) {
-        
-        if ($4->tag) delete $4->tag;
-        $4->tag = $1;
-        $4->flags = $2;
+
+	if ($4->tag) delete $4->tag;
+	$4->tag = $1;
+	$4->flags = $2;
       }
       $$ = $4;
     }
 
   | IDENTIFIER COLON command {
-      
+
       MEMCHECK($1);
       if ($3) {
-        
-        if ($3->tag) delete $3->tag;
-        $3->tag = $1;        
+
+	if ($3->tag) delete $3->tag;
+	$3->tag = $1;
       }
       $$ = $3;
     }
 
   | STRUCT COLON command {
-            
+
       MEMCHECK($1.device);
       MEMCHECK($1.id);
       if ($3) {
-        
-        if ($3->tag) delete $3->tag;
-        $3->tag = new UString($1.device,$1.id);
+
+	if ($3->tag) delete $3->tag;
+	$3->tag = new UString($1.device,$1.id);
 	delete $1.device;
 	delete $1.id;
       }
@@ -415,18 +410,18 @@ taggedcommand:
     }
 
   | STRUCT flags COLON command {
-              
+
       MEMCHECK($1.device);
       MEMCHECK($1.id);
 
       if ($4) {
-        
-        if ($4->tag) delete $4->tag;	
+
+	if ($4->tag) delete $4->tag;
        	$4->tag = new UString($1.device,$1.id);
 	delete $1.device;
 	delete $1.id;
-      
-        $4->flags = $2;
+
+	$4->flags = $2;
       }
       $$ = $4;
     }
@@ -436,12 +431,12 @@ taggedcommand:
 //uparser.connection-
 
   | flags COLON command {
-      
+
       MEMCHECK($1);
       if ($3) {
-                
-        $3->tag->update(UNKNOWN_TAG);        
-        $3->flags = $1;
+
+	$3->tag->update(UNKNOWN_TAG);
+	$3->flags = $1;
       }
       $$ = $3;
     }
@@ -449,80 +444,80 @@ taggedcommand:
 
 /* FLAGS */
 
-flags : 
+flags :
      FLAG  {
-            
-      UExpression *flagval = new UExpression(EXPR_VALUE,$1); 
+
+      UExpression *flagval = new UExpression(EXPR_VALUE,$1);
       MEMCHECK(flagval);
 
-      $$ = new UNamedParameters(new UString("flag"),flagval,0); 
+      $$ = new UNamedParameters(new UString("flag"),flagval,0);
       MEMCHECK1($$,flagval);
     }
- 
+
   |  FLAG flags  {
-            
-      UExpression *flagval = new UExpression(EXPR_VALUE,$1); 
+
+      UExpression *flagval = new UExpression(EXPR_VALUE,$1);
       MEMCHECK(flagval);
 
-      $$ = new UNamedParameters(new UString("flag"),flagval,$2); 
+      $$ = new UNamedParameters(new UString("flag"),flagval,$2);
       MEMCHECK2($$,flagval,$2);
     }
 
   | FLAGTIME LPAREN expr RPAREN flags {
-                     
-      $$ = new UNamedParameters(new UString("flagtimeout"),$3,$5); 
+
+      $$ = new UNamedParameters(new UString("flagtimeout"),$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
   | FLAGTIME LPAREN expr RPAREN {
-                     
-      $$ = new UNamedParameters(new UString("flagtimeout"),$3,0); 
+
+      $$ = new UNamedParameters(new UString("flagtimeout"),$3,0);
       MEMCHECK1($$,$3);
     }
 
   | FLAGID LPAREN expr RPAREN {
-                
-      $$ = new UNamedParameters(new UString("flagid"),$3,0); 
+
+      $$ = new UNamedParameters(new UString("flagid"),$3,0);
       MEMCHECK1($$,$3);
     }
 
   | FLAGID LPAREN expr RPAREN flags {
-                
-      $$ = new UNamedParameters(new UString("flagid"),$3,$5); 
+
+      $$ = new UNamedParameters(new UString("flagid"),$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
   | FLAGTEST LPAREN softtest RPAREN flags {
-                 
+
       if (*$1 == 6)
-        $$ = new UNamedParameters(new UString("flagstop"),$3,$5); 
+	$$ = new UNamedParameters(new UString("flagstop"),$3,$5);
       else
-        $$ = new UNamedParameters(new UString("flagfreeze"),$3,$5);
+	$$ = new UNamedParameters(new UString("flagfreeze"),$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
   | FLAGTEST LPAREN softtest RPAREN {
 
       if (*$1 == 6)
-        $$ = new UNamedParameters(new UString("flagstop"),$3,0); 
+	$$ = new UNamedParameters(new UString("flagstop"),$3,0);
       else
-        $$ = new UNamedParameters(new UString("flagfreeze"),$3,0); 
+	$$ = new UNamedParameters(new UString("flagfreeze"),$3,0);
       MEMCHECK1($$,$3);
     }
 ;
 
 /* COMMAND */
 
-command:  
+command:
 
-    instruction 
+    instruction
 
-  | LBRACKET taggedcommands RBRACKET { 
-    
+  | LBRACKET taggedcommands RBRACKET {
+
       $$ = (UCommand*)
-        new UCommand_TREE(UPIPE,
-                          $2,
-                          new UCommand_NOOP(true));
+	new UCommand_TREE(UPIPE,
+			  $2,
+			  new UCommand_NOOP(true));
       $$->tag->update("__UGrouped_set_of_commands__");
       ((UCommand_TREE*)$$)->command2->tag->update("__system__");
     }
@@ -530,55 +525,55 @@ command:
 
 /* INSTRUCTION */
 
-instruction: 
+instruction:
   /* empty */ { $$ = 0; }
 
-  | NOOP { 
+  | NOOP {
       $$ = new UCommand_NOOP();
-      MEMCHECK($$);              
+      MEMCHECK($$);
     }
 
-  | refvariable ASSIGN expr namedparameters { 
+  | refvariable ASSIGN expr namedparameters {
 
     $$ = new UCommand_ASSIGN_VALUE($1,$3,$4, false);
       MEMCHECK3($$,$1,$3,$4);
-    } 
+    }
 
-  | refvariable PLUSASSIGN expr { 
+  | refvariable PLUSASSIGN expr {
 
       $$ = new UCommand_AUTOASSIGN($1,$3,0);
       MEMCHECK2($$,$1,$3);
-    } 
+    }
 
-  | refvariable MINUSASSIGN expr { 
+  | refvariable MINUSASSIGN expr {
 
       $$ = new UCommand_AUTOASSIGN($1,$3,1);
       MEMCHECK2($$,$1,$3);
-    } 
+    }
 
 
-  | VAR refvariable ASSIGN expr namedparameters { 
+  | VAR refvariable ASSIGN expr namedparameters {
 
     $2->local_scope = true;
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
       MEMCHECK3($$,$2,$4,$5);
-    } 
+    }
 
-  | property ASSIGN expr { 
+  | property ASSIGN expr {
 
       $$ = new UCommand_ASSIGN_PROPERTY($1->variablename,$1->property,$3);
       MEMCHECK3($$,$1,$1,$3);
-    } 
+    }
 
   | expr {
-   
-      $$ = new UCommand_EXPR($1); 
-      MEMCHECK1($$,$1); 
-    }         
+
+      $$ = new UCommand_EXPR($1);
+      MEMCHECK1($$,$1);
+    }
 
   | refvariable NUM {
 
-      $$ = new UCommand_DEVICE_CMD($1,$2); 
+      $$ = new UCommand_DEVICE_CMD($1,$2);
       MEMCHECK1($$,$1);
     }
 
@@ -586,70 +581,70 @@ instruction:
 
       $$ = new UCommand_RETURN((UExpression*)0);
       MEMCHECK($$);
-    }       
+    }
 
-  | RETURN expr { 
+  | RETURN expr {
 
       $$ = new UCommand_RETURN($2);
       MEMCHECK1($$,$2);
-    }      
+    }
 
   | "echo" expr namedparameters {
 
       $$ = new UCommand_ECHO($2,$3,(UString*)0);
       MEMCHECK2($$,$2,$3);
-    } 
+    }
 
-  | refvariable ASSIGN NEW IDENTIFIER { 
-        
+  | refvariable ASSIGN NEW IDENTIFIER {
+
       MEMCHECK($4);
       $$ = new UCommand_NEW($1->id,$4,(UNamedParameters*)0,true);
       MEMCHECK2($$,$1,$4);
-    } 
-    
-  | refvariable ASSIGN NEW IDENTIFIER LPAREN parameterlist RPAREN { 
-        
+    }
+
+  | refvariable ASSIGN NEW IDENTIFIER LPAREN parameterlist RPAREN {
+
       MEMCHECK($4);
       $$ = new UCommand_NEW($1->id,$4,$6);
       MEMCHECK3($$,$1,$4,$6);
-    } 
+    }
 
 
   | GROUP IDENTIFIER LBRACKET identifiers RBRACKET {
 
       $$ = new UCommand_GROUP($2,$4);
-      MEMCHECK2($$,$4,$2);      
-    } 
+      MEMCHECK2($$,$4,$2);
+    }
 
   | ADDGROUP IDENTIFIER LBRACKET identifiers RBRACKET {
 
       $$ = new UCommand_GROUP($2,$4,1);
-      MEMCHECK2($$,$4,$2);      
-    } 
+      MEMCHECK2($$,$4,$2);
+    }
 
 
   | DELGROUP IDENTIFIER LBRACKET identifiers RBRACKET {
 
       $$ = new UCommand_GROUP($2,$4,2);
-      MEMCHECK2($$,$4,$2);      
-    } 
+      MEMCHECK2($$,$4,$2);
+    }
 
-   /* 
+   /*
   | GROUP IDENTIFIER {
 
       $$ = new UCommand_GROUP($2,(UNamedParameters*)0);
-      MEMCHECK1($$,$2);      
-    } 
+      MEMCHECK1($$,$2);
+    }
 */
   | GROUP {
-      
+
       $$ = new UCommand_GROUP((UString*)0,(UNamedParameters*)0);
       MEMCHECK($$);
     }
 
 
   | ALIAS purevariable purevariable {
-      
+
       $$ = new UCommand_ALIAS($2,$3);
       MEMCHECK2($$,$2,$3);
     }
@@ -658,26 +653,26 @@ instruction:
 
       $$ = new UCommand_ALIAS($2,(UVariableName*)0);
       MEMCHECK1($$,$2);
-    } 
+    }
 
   | UNALIAS purevariable {
 
       $$ = new UCommand_ALIAS($2,(UVariableName*)0,true);
       MEMCHECK1($$,$2);
-    } 
+    }
 
   | ALIAS {
-      
+
       $$ = new UCommand_ALIAS((UVariableName*)0,(UVariableName*)0);
       MEMCHECK($$);
   }
 
   | OPERATOR {
-     
+
       MEMCHECK($1);
       $$ = new UCommand_OPERATOR($1);
-      MEMCHECK1($$,$1);      
-    } 
+      MEMCHECK1($$,$1);
+    }
 
   | OPERATOR_ID IDENTIFIER {
 
@@ -685,7 +680,7 @@ instruction:
       MEMCHECK($2);
       $$ = new UCommand_OPERATOR_ID($1,$2);
       MEMCHECK2($$,$1,$2);
-    } 
+    }
 
   | OPERATOR_ID STRUCT {
 
@@ -696,15 +691,15 @@ instruction:
       delete $2.device;
       delete $2.id;
       MEMCHECK1($$,$1);
-    } 
+    }
 
   | OPERATOR_VAR variable {
 
-      MEMCHECK($1);      
+      MEMCHECK($1);
       $$ = new UCommand_OPERATOR_VAR($1,$2);
       MEMCHECK2($$,$1,$2);
-    }  
-    
+    }
+
   | BINDER OBJECT purevariable {
 
       MEMCHECK($1);
@@ -719,7 +714,7 @@ instruction:
       $$ = new UCommand_BINDER($5,$1,1,$3);
       MEMCHECK3($$,$1,$3,$5);
     }
-    
+
   | BINDER FUNCTION LPAREN NUM RPAREN purevariable FROM purevariable {
 
       MEMCHECK($1);
@@ -734,148 +729,148 @@ instruction:
       MEMCHECK3($$,$1,$6,$8);
     }
 
-  | WAIT expr { 
+  | WAIT expr {
 
       $$ = new UCommand_WAIT($2);
       MEMCHECK1($$,$2);
-    } 
+    }
 
-  | EMIT purevariable { 
+  | EMIT purevariable {
 
       $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
-    } 
+    }
 
-  | EMIT purevariable LPAREN parameterlist RPAREN { 
+  | EMIT purevariable LPAREN parameterlist RPAREN {
 
       $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($2,$4);
       MEMCHECK2($$,$2,$4);
-    } 
+    }
 
-  | EMIT LPAREN expr RPAREN purevariable { 
+  | EMIT LPAREN expr RPAREN purevariable {
 
       $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($5,(UNamedParameters*)0,$3);
       MEMCHECK2($$,$5,$3);
-    } 
+    }
 
-  | EMIT LPAREN expr RPAREN purevariable LPAREN parameterlist RPAREN { 
+  | EMIT LPAREN expr RPAREN purevariable LPAREN parameterlist RPAREN {
 
       $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($5,$7,$3);
       MEMCHECK3($$,$5,$7,$3);
-    } 
+    }
 
-  | EMIT LPAREN RPAREN purevariable { 
+  | EMIT LPAREN RPAREN purevariable {
 
       $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT($4,(UNamedParameters*)0, 
+      $$ = new UCommand_EMIT($4,(UNamedParameters*)0,
       	new UExpression(EXPR_VALUE,UINFINITY));
       MEMCHECK1($$,$4);
-    } 
+    }
 
-  | EMIT LPAREN RPAREN purevariable LPAREN parameterlist RPAREN { 
+  | EMIT LPAREN RPAREN purevariable LPAREN parameterlist RPAREN {
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,$6,
       	new UExpression(EXPR_VALUE,UINFINITY));
       MEMCHECK2($$,$4,$6);
-    } 
+    }
 
-  | WAITUNTIL softtest { 
+  | WAITUNTIL softtest {
 
       $$ = new UCommand_WAIT_TEST($2);
       MEMCHECK1($$,$2);
-    } 
+    }
 
   | refvariable MINUSMINUS {
 
       $$ = new UCommand_INCDECREMENT(CMD_DECREMENT,$1);
       MEMCHECK1($$,$1);
-    } 
+    }
 
-  | refvariable PLUSPLUS { 
+  | refvariable PLUSPLUS {
 
       $$ = new UCommand_INCDECREMENT(CMD_INCREMENT,$1);
       MEMCHECK1($$,$1);
-    } 
+    }
 
   | DEF {
 
       $$ = new UCommand_DEF(UDEF_QUERY,
       	                    (UVariableName*)0,
-                            (UNamedParameters*)0,
-                            (UCommand*)0);
+			    (UNamedParameters*)0,
+			    (UCommand*)0);
       MEMCHECK($$)
     }
 
   | VAR refvariable {
-  
+
       $2->local_scope = true;
       $$ = new UCommand_DEF(UDEF_VAR,$2,
-                            (UNamedParameters*)0,
-                            (UCommand*)0);
+			    (UNamedParameters*)0,
+			    (UCommand*)0);
 
       MEMCHECK1($$,$2)
     }
 
   | DEF refvariable {
-  
+
       $2->local_scope = true;
       $$ = new UCommand_DEF(UDEF_VAR,$2,
-                            (UNamedParameters*)0,
-                            (UCommand*)0);
+			    (UNamedParameters*)0,
+			    (UCommand*)0);
 
       MEMCHECK1($$,$2)
     }
 
   | VAR LBRACKET refvariables RBRACKET {
-  
+
       $$ = new UCommand_DEF(UDEF_VARS,$3);
       MEMCHECK1($$,$3)
     }
 
   | CLASS IDENTIFIER LBRACKET class_declaration_list RBRACKET {
-  
+
       $$ = new UCommand_CLASS($2,$4);
       MEMCHECK2($$,$2,$4)
     }
-    
+
   | CLASS IDENTIFIER {
-  
+
       $$ = new UCommand_CLASS($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2)
     }
 
-      
+
   | EVENT variable LPAREN identifiers RPAREN {
-         
+
       $2->local_scope = true;
       $2->id_type = UDEF_EVENT;
       $$ = new UCommand_DEF(UDEF_EVENT,$2,$4,(UCommand*)0);
       MEMCHECK2($$,$2,$4);
     }
-    
+
   | EVENT variable {
-    
+
       $2->local_scope = true;
       $2->id_type = UDEF_EVENT;
       $$ = new UCommand_DEF(UDEF_EVENT,$2,(UNamedParameters*)0,(UCommand*)0);
-      MEMCHECK1($$,$2);      
+      MEMCHECK1($$,$2);
     }
 
   | FUNCTION variable LPAREN identifiers RPAREN {
 
       if (uparser.connection->functionTag) {
-        delete($2);
-        delete($4);
-        $2 = 0;
-        delete uparser.connection->functionTag;
-        uparser.connection->functionTag = 0;  
-        error(@$,"Nested function def not allowed.");   
-        YYERROR;
+	delete($2);
+	delete($4);
+	$2 = 0;
+	delete uparser.connection->functionTag;
+	uparser.connection->functionTag = 0;
+	error(@$,"Nested function def not allowed.");
+	YYERROR;
       }
       else {
 	uparser.connection->functionTag = new UString("__Funct__");
@@ -885,51 +880,51 @@ instruction:
 	//  uparser.connection->functionClass = $2->device;
 	globalDelete = &uparser.connection->functionTag;
       }
- 
+
     } taggedcommand {
-     
+
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7, 
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7,
 	    new UCommand_RETURN((UExpression*)0)));
 
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
-        delete uparser.connection->functionTag;
-        uparser.connection->functionTag = 0;  
+	delete uparser.connection->functionTag;
+	uparser.connection->functionTag = 0;
 	globalDelete = 0;
-      }      
+      }
     }
 
   | DEF variable LPAREN identifiers RPAREN {
 
       uparser.connection->server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
       if (uparser.connection->functionTag) {
-        delete($2);
-        delete($4);
-        $2 = 0;
-        delete uparser.connection->functionTag;
-        uparser.connection->functionTag = 0;  
-        error(@$,"Nested function def not allowed.");   
-        YYERROR;
+	delete($2);
+	delete($4);
+	$2 = 0;
+	delete uparser.connection->functionTag;
+	uparser.connection->functionTag = 0;
+	error(@$,"Nested function def not allowed.");
+	YYERROR;
       }
       else {
 	uparser.connection->functionTag = new UString("__Funct__");
 	//uparser.connection->functionClass = $2->device;
 	globalDelete = &uparser.connection->functionTag;
       }
- 
+
     } taggedcommand {
-     
+
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7, 
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7,
 	    new UCommand_RETURN((UExpression*)0)));
-      
+
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
-        delete uparser.connection->functionTag;
-        uparser.connection->functionTag = 0;  
+	delete uparser.connection->functionTag;
+	uparser.connection->functionTag = 0;
 	globalDelete = 0;
-      }      
+      }
     }
 
   | IF LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
@@ -1059,24 +1054,24 @@ instruction:
     }
 
   | FOR LPAREN instruction SEMICOLON
-               expr SEMICOLON
-               instruction RPAREN taggedcommand %prec CMDBLOCK { 
+	       expr SEMICOLON
+	       instruction RPAREN taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(CMD_FOR,$3,$5,$7,$9);
       MEMCHECK4($$,$3,$5,$7,$9);
     }
 
   | FOR PIPE LPAREN instruction SEMICOLON
-                    expr SEMICOLON
-                    instruction RPAREN taggedcommand %prec CMDBLOCK { 
+		    expr SEMICOLON
+		    instruction RPAREN taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(CMD_FOR_PIPE,$4,$6,$8,$10);
       MEMCHECK4($$,$4,$6,$8,$10);
     }
 
   | FOR AND LPAREN instruction SEMICOLON
-                   expr SEMICOLON
-                   instruction RPAREN taggedcommand %prec CMDBLOCK {
+		   expr SEMICOLON
+		   instruction RPAREN taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(CMD_FOR_AND,$4,$6,$8,$10);
       MEMCHECK4($$,$4,$6,$8,$10);
@@ -1087,20 +1082,20 @@ instruction:
 /* ARRAY */
 
 array:
-  
+
   /* empty */ { $$ = 0 }
-  
-  | LSBRACKET expr RSBRACKET array { 
-        
+
+  | LSBRACKET expr RSBRACKET array {
+
       $$ = new UNamedParameters($2,$4);
-      MEMCHECK2($$,$2,$4);     
+      MEMCHECK2($$,$2,$4);
     }
 ;
 
 
 /* VARID, PUREVARIABLE, VARIABLE, REFVARIABLE */
 
-purevariable: 
+purevariable:
 
     DOLLAR LPAREN expr RPAREN {
 
@@ -1108,46 +1103,46 @@ purevariable:
       MEMCHECK1($$,$3);
     }
 
-  | IDENTIFIER array { 
-  
-      MEMCHECK($1); 
+  | IDENTIFIER array {
+
+      MEMCHECK($1);
       if (uparser.connection->functionTag) {
 	// We are inside a function
 
 /*	if (uparser.connection->functionClass) {
 //	  std::string tmpname = std::string(uparser.connection->functionClass->str())
 	    + "." + std::string($1->str());
-	
+
 	  if ((::urbiserver->functiondeftab.find(tmpname.c_str()) != ::urbiserver->functiondeftab.end()) ||
 	      (::urbiserver->eventdeftab.find(tmpname.c_str()) != ::urbiserver->eventdeftab.end()) ||
 	      (::urbiserver->variabletab.find(tmpname.c_str()) != ::urbiserver->variabletab.end()))
 	    $$ = new UVariableName(new UString("self"),$1,false,$2);
 	  else
 	    $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
-	} 
+	}
        	else*/
 	  $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
       }
-      else 
+      else
 	$$ = new UVariableName(new UString(uparser.connection->connectionTag),
-	    $1,false,$2);      
+	    $1,false,$2);
       MEMCHECK2($$,$1,$2);
       $$->nostruct = true;
-    } 
+    }
 
   | STRUCT array {
 
       MEMCHECK($1.device);
       MEMCHECK($1.id);
       $$ = new UVariableName($1.device,$1.id,false,$2);
-      MEMCHECK3($$,$1.device,$1.id,$2);      
+      MEMCHECK3($$,$1.device,$1.id,$2);
     }
 ;
 
 variable:
 
      purevariable {
-     
+
        $$ = $1;
     }
 
@@ -1194,9 +1189,9 @@ variable:
     }
 ;
 
-refvariable:  
+refvariable:
     variable {
-     
+
       $$ = $1;
     }
 
@@ -1215,34 +1210,34 @@ property:
     purevariable DIR IDENTIFIER {
 
       $$ = new UProperty($1,$3);
-      MEMCHECK2($$,$1,$3); 
+      MEMCHECK2($$,$1,$3);
     }
 ;
 
 
 /* NAMEDPARAMETERS */
 
-namedparameters:  
+namedparameters:
   /* empty */ { $$ = 0 }
 
-  | IDENTIFIER COLON expr namedparameters { 
+  | IDENTIFIER COLON expr namedparameters {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,$3,$4);
-      MEMCHECK3($$,$1,$4,$3);      
+      MEMCHECK3($$,$1,$4,$3);
     }
 ;
 
 
 /* BINARY */
 
-binary: 
+binary:
     BIN NUM {
 
       $$ = new UBinary((int)(*$2),0);
       MEMCHECK($$);
       if ($$ != 0)
-        MEMCHECK1($$->buffer,$$);
+	MEMCHECK1($$->buffer,$$);
     }
 
   | BIN NUM rawparameters {
@@ -1250,9 +1245,9 @@ binary:
       $$ = new UBinary((int)(*$2),$3);
       MEMCHECK1($$,$3);
       if ($$ != 0)
-        MEMCHECK2($$->buffer,$$,$3);
+	MEMCHECK2($$->buffer,$$,$3);
     }
-; 
+;
 
 
 /* TIMEEXPR */
@@ -1272,21 +1267,21 @@ timeexpr:
 
 /* EXPR */
 
-expr:     
-    NUM { 
-     
-      $$ = new UExpression(EXPR_VALUE,$1);         
+expr:
+    NUM {
+
+      $$ = new UExpression(EXPR_VALUE,$1);
       MEMCHECK($$);
     }
 
   | timeexpr {
 
-      $$ = new UExpression(EXPR_VALUE,$1);         
+      $$ = new UExpression(EXPR_VALUE,$1);
       MEMCHECK($$);
     }
 
-  | STRING { 
-      
+  | STRING {
+
       MEMCHECK($1);
       $$ = new UExpression(EXPR_VALUE,$1);
       MEMCHECK1($$,$1);
@@ -1298,21 +1293,21 @@ expr:
       MEMCHECK1($$,$2);
     }
 
-  | PERCENT variable { 
-      
+  | PERCENT variable {
+
       $$ = new UExpression(EXPR_ADDR_VARIABLE,$2);
       MEMCHECK1($$,$2);
     }
 
   | property {
-             
+
        $$ = new UExpression(EXPR_PROPERTY,$1->property,$1->variablename);
        MEMCHECK1($$,$1);
     }
 
-  | refvariable LPAREN parameterlist RPAREN  { 
-    
-      //if (($1) && ($1->device) && 
+  | refvariable LPAREN parameterlist RPAREN  {
+
+      //if (($1) && ($1->device) &&
       //    ($1->device->equal(uparser.connection->functionTag)))
       //  $1->nameUpdate(uparser.connection->connectionTag->str(),
       //                 $1->id->str());
@@ -1322,161 +1317,161 @@ expr:
       MEMCHECK2($$,$1,$3);
     }
 
-  | variable { 
-    
-      $$ = new UExpression(EXPR_VARIABLE,$1); 
-      MEMCHECK1($$,$1);      
-    }  
- 
+  | variable {
+
+      $$ = new UExpression(EXPR_VARIABLE,$1);
+      MEMCHECK1($$,$1);
+    }
+
   | GROUP IDENTIFIER {
 
       $$ = new UExpression(EXPR_GROUP, $2);
       MEMCHECK1($$,$2);
-    } 
+    }
 
   /* num expr */
 
-  | expr PLUS expr { 
+  | expr PLUS expr {
 
       $$ = new UExpression(EXPR_PLUS,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | expr MINUS expr { 
+  | expr MINUS expr {
 
       $$ = new UExpression(EXPR_MINUS,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | expr MULT expr { 
+  | expr MULT expr {
 
       $$ = new UExpression(EXPR_MULT,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | expr DIV expr { 
+  | expr DIV expr {
 
       $$ = new UExpression(EXPR_DIV,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
- | expr PERCENT expr { 
+ | expr PERCENT expr {
 
       $$ = new UExpression(EXPR_MOD,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | COPY expr  %prec NEG { 
+  | COPY expr  %prec NEG {
 
       $$ = new UExpression(EXPR_COPY,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
-  | MINUS expr %prec NEG { 
+  | MINUS expr %prec NEG {
 
       $$ = new UExpression(EXPR_NEG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
-  | expr EXP expr { 
+  | expr EXP expr {
 
       $$ = new UExpression(EXPR_EXP,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | LPAREN expr RPAREN { 
+  | LPAREN expr RPAREN {
 
-      $$ = $2; 
-    } 
+      $$ = $2;
+    }
 
   /* Tests */
 
   | TRUECONST {
 
-      $$ = new UExpression(EXPR_VALUE,TRUE);  
+      $$ = new UExpression(EXPR_VALUE,TRUE);
     }
 
   | FALSECONST {
 
-      $$ = new UExpression(EXPR_VALUE,FALSE);  
-    }  
+      $$ = new UExpression(EXPR_VALUE,FALSE);
+    }
 
-  | expr EQ expr { 
+  | expr EQ expr {
 
-      $$ = new UExpression(EXPR_TEST_EQ,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_EQ,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | expr REQ expr { 
+  | expr REQ expr {
 
-      $$ = new UExpression(EXPR_TEST_REQ,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_REQ,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | expr DEQ expr { 
+  | expr DEQ expr {
 
-      $$ = new UExpression(EXPR_TEST_DEQ,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_DEQ,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | expr PEQ expr {
 
-      $$ = new UExpression(EXPR_TEST_PEQ,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_PEQ,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | expr NE expr { 
+  | expr NE expr {
 
-      $$ = new UExpression(EXPR_TEST_NE,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_NE,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | expr GT expr {
 
-      $$ = new UExpression(EXPR_TEST_GT,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_GT,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | expr GE expr {
 
-      $$ = new UExpression(EXPR_TEST_GE,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_GE,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | expr LT expr {
 
-      $$ = new UExpression(EXPR_TEST_LT,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_LT,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | expr LE expr {
 
-      $$ = new UExpression(EXPR_TEST_LE,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_LE,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | BANG expr {
 
-      $$ = new UExpression(EXPR_TEST_BANG,$2,(UExpression*)0); 
+      $$ = new UExpression(EXPR_TEST_BANG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
   | expr ANDOPERATOR expr {
 
-      $$ = new UExpression(EXPR_TEST_AND,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_AND,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
   | expr OROPERATOR expr {
 
-      $$ = new UExpression(EXPR_TEST_OR,$1,$3); 
+      $$ = new UExpression(EXPR_TEST_OR,$1,$3);
       MEMCHECK2($$,$1,$3);
     }
     /*
     // Not needed anymore => will be handled nicely by aliases
-  | 
+  |
   GROUPLIST purevariable {
-    $$ = new UExpression(EXPR_GROUPLIST,$2); 
+    $$ = new UExpression(EXPR_GROUPLIST,$2);
       MEMCHECK1($$,$2);
   }
   */
@@ -1485,91 +1480,91 @@ expr:
 
 /* PARAMETERLIST, PARAMETERS, PARAMETERSERIES */
 
-parameterlist: 
+parameterlist:
   /* empty */ { $$ = 0; }
 
   | parameters
 ;
 
-parameters:   
-    expr { 
+parameters:
+    expr {
 
-      $$ = new UNamedParameters($1); 
+      $$ = new UNamedParameters($1);
       MEMCHECK1($$,$1);
     }
 
   | expr COMMA parameters {
 
-      $$ = new UNamedParameters($1,$3); 
+      $$ = new UNamedParameters($1,$3);
       MEMCHECK2($$,$1,$3);
     }
 ;
 
-rawparameters:   
-    NUM { 
+rawparameters:
+    NUM {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1);       
-      $$ = new UNamedParameters(expr); 
+      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      $$ = new UNamedParameters(expr);
       MEMCHECK1($$,expr);
     }
- 
-  | IDENTIFIER { 
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1);   
-      $$ = new UNamedParameters(expr); 
+  | IDENTIFIER {
+
+      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      $$ = new UNamedParameters(expr);
       MEMCHECK1($$,expr);
     }
 
   |  NUM rawparameters {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1); 
-      $$ = new UNamedParameters(expr,$2); 
+      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      $$ = new UNamedParameters(expr,$2);
       MEMCHECK2($$,$2,expr);
     }
 
   |  IDENTIFIER rawparameters {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1); 
-      $$ = new UNamedParameters(expr,$2); 
+      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      $$ = new UNamedParameters(expr,$2);
       MEMCHECK2($$,$2,expr);
     }
 ;
 
 /* SOFTTEST */
 
-softtest: 
-    expr                 
-  | expr TILDE expr  { 
+softtest:
+    expr
+  | expr TILDE expr  {
 
       $$ = $1;
       $$->issofttest = true;
-      $$->softtest_time = $3; 
-    }                            
-  | LPAREN expr TILDE expr RPAREN { 
+      $$->softtest_time = $3;
+    }
+  | LPAREN expr TILDE expr RPAREN {
 
       $$ = $2;
       $$->issofttest = true;
-      $$->softtest_time = $4; 
-    }                
+      $$->softtest_time = $4;
+    }
 ;
 
 /* IDENTIFIERS */
 
-identifiers:  
+identifiers:
   /* empty */  { $$ = 0; }
 
-  | IDENTIFIER { 
-      
+  | IDENTIFIER {
+
       MEMCHECK($1);
-      $$ = new UNamedParameters($1,0); 
-      MEMCHECK1($$,$1); 
+      $$ = new UNamedParameters($1,0);
+      MEMCHECK1($$,$1);
     }
 
-  | IDENTIFIER COMMA identifiers { 
+  | IDENTIFIER COMMA identifiers {
 
       MEMCHECK($1);
-      $$ = new UNamedParameters($1,0,$3); 
-      MEMCHECK2($$,$3,$1);     
+      $$ = new UNamedParameters($1,0,$3);
+      MEMCHECK2($$,$3,$1);
     }
 ;
 
@@ -1578,30 +1573,30 @@ identifiers:
 class_declaration:
 
     VAR IDENTIFIER {
-    
+
       MEMCHECK($2);
       $$ = new UExpression(EXPR_VALUE,$2);
       MEMCHECK1($$,$2);
     }
-    
+
   | FUNCTION variable LPAREN identifiers RPAREN {
       $2->id_type = UDEF_FUNCTION;
       $$ = new UExpression(EXPR_FUNCTION,$2,$4);
       MEMCHECK2($$,$2,$4);
     }
-    
+
   | FUNCTION variable {
       $2->id_type = UDEF_FUNCTION;
       $$ = new UExpression(EXPR_FUNCTION,$2,(UNamedParameters*)0);
-      MEMCHECK1($$,$2);      
+      MEMCHECK1($$,$2);
     }
-    
+
   | EVENT variable LPAREN identifiers RPAREN {
       $2->id_type = UDEF_EVENT;
       $$ = new UExpression(EXPR_EVENT,$2,$4);
       MEMCHECK2($$,$2,$4);
     }
-    
+
   | EVENT variable {
       $2->id_type = UDEF_EVENT;
       $$ = new UExpression(EXPR_EVENT,$2,(UNamedParameters*)0);
@@ -1610,39 +1605,39 @@ class_declaration:
 ;
 
 
-class_declaration_list:  
+class_declaration_list:
   /* empty */  { $$ = 0; }
 
-  | class_declaration { 
-            
-      $$ = new UNamedParameters($1,0); 
-      MEMCHECK1($$,$1); 
+  | class_declaration {
+
+      $$ = new UNamedParameters($1,0);
+      MEMCHECK1($$,$1);
     }
 
-  | class_declaration SEMICOLON class_declaration_list { 
-      
-      $$ = new UNamedParameters($1,$3); 
+  | class_declaration SEMICOLON class_declaration_list {
+
+      $$ = new UNamedParameters($1,$3);
       MEMCHECK2($$,$3,$1);
     }
 ;
 
 /* REFVARIABLES */
 
-refvariables:  
+refvariables:
   /* empty */  { $$ = 0; }
 
-  | refvariable { 
-      
+  | refvariable {
+
       MEMCHECK($1);
-      $$ = new UVariableList($1); 
-      MEMCHECK1($$,$1); 
+      $$ = new UVariableList($1);
+      MEMCHECK1($$,$1);
     }
 
-  | refvariable SEMICOLON refvariables { 
+  | refvariable SEMICOLON refvariables {
 
       MEMCHECK($1);
-      $$ = new UVariableList($1,$3); 
-      MEMCHECK2($$,$3,$1);     
+      $$ = new UVariableList($1,$3);
+      MEMCHECK2($$,$3,$1);
     }
 ;
 
@@ -1651,7 +1646,7 @@ refvariables:
 %%
 
 // The error function that 'bison' calls
-void yy::parser::error(const location_type& l, const std::string& what_error) { 
+void yy::parser::error(const location_type& l, const std::string& what_error) {
 
   uparser.error (l, what_error);
   if (globalDelete) {
@@ -1659,4 +1654,3 @@ void yy::parser::error(const location_type& l, const std::string& what_error) {
      (*globalDelete) = 0;
   }
 }
-

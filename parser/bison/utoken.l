@@ -6,7 +6,7 @@
  Definition of scanner used by the UParser object.
  This scanned is defined with flex, using option c++.
 
- This file is part of 
+ This file is part of
  %URBI, version 1.0\n
  (c) Jean-Christophe Baillie, 2004.
 
@@ -25,9 +25,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "../uparser.h"
-using std::cin;
-using std::cout;
+#include "parser/uparser.h"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
@@ -52,101 +50,101 @@ STRING   \"([^"]|"\\\"")*\"
 
 
 "inf"         { valp->val = new ufloat(UINFINITY);
-                return token::NUM;
-              }
+		return token::NUM;
+	      }
 
 "pi"          { valp->val = new ufloat(3.14159265358979323846264338327950288);
-                return token::NUM;
-              }
+		return token::NUM;
+	      }
 
 "off"          { valp->val = new ufloat(0);
-                return token::NUM;
-              }
+		return token::NUM;
+	      }
 
 "switch"      { valp->val = new ufloat(-1);
-                return token::NUM;
-              }
+		return token::NUM;
+	      }
 
 
 "on"          { valp->val = new ufloat(1);
-                return token::NUM;
-              }
+		return token::NUM;
+	      }
 
 
 
-"+report"     { valp->val = new ufloat(1); 
-                return token::FLAG;}
+"+report"     { valp->val = new ufloat(1);
+		return token::FLAG;}
 
 "+error"      { valp->val = new ufloat(2);
-                return token::FLAG;}
+		return token::FLAG;}
 
 "+end"        { valp->val = new ufloat(3);
-                return token::FLAG;}
+		return token::FLAG;}
 
 "+begin"      { valp->val = new ufloat(4);
-                return token::FLAG;}
+		return token::FLAG;}
 
 "+timeout"    { valp->val = new ufloat(5);
-                return token::FLAGTIME;}
+		return token::FLAGTIME;}
 
 "+bg"         { valp->val = new ufloat(10);
-                return token::FLAG;}
+		return token::FLAG;}
 
 "+stop"       { valp->val = new ufloat(6);
-                return token::FLAGTEST;}
+		return token::FLAGTEST;}
 
-"+top"        { valp->val = new ufloat(7); 
-                return token::FLAG;}
+"+top"        { valp->val = new ufloat(7);
+		return token::FLAG;}
 
 "+freeze"     { valp->val = new ufloat(8);
-                return token::FLAGTEST;}
+		return token::FLAGTEST;}
 
 "+connection" { valp->val = new ufloat(9);
-                return token::FLAGID;}
+		return token::FLAGID;}
 
 {NUMBER}"d"   { yytext[yyleng-1]=0;
-                valp->val = new ufloat(atof(yytext) *60000*60*24);
-                return token::TIMEVALUE; }
+		valp->val = new ufloat(atof(yytext) *60000*60*24);
+		return token::TIMEVALUE; }
 
 {NUMBER}"h"   { yytext[yyleng-1]=0;
-                valp->val = new ufloat(atof(yytext) *60000*60);
-                return token::TIMEVALUE; }
+		valp->val = new ufloat(atof(yytext) *60000*60);
+		return token::TIMEVALUE; }
 
 {NUMBER}"m"   { yytext[yyleng-1]=0;
-                valp->val = new ufloat(atof(yytext) *60000);
-                return token::TIMEVALUE; }
+		valp->val = new ufloat(atof(yytext) *60000);
+		return token::TIMEVALUE; }
 
 {NUMBER}"s"   { yytext[yyleng-1]=0;
-                valp->val = new ufloat(atof(yytext) *1000);
-                return token::TIMEVALUE; }
+		valp->val = new ufloat(atof(yytext) *1000);
+		return token::TIMEVALUE; }
 
 {NUMBER}"ms"  { yytext[yyleng-2]=0;
-                valp->val = new ufloat(atof(yytext));
-                return token::TIMEVALUE; }
+		valp->val = new ufloat(atof(yytext));
+		return token::TIMEVALUE; }
 
 
 {NUMBER}      { valp->val = new ufloat(atof(yytext));
-                return token::NUM; }
+		return token::NUM; }
 
 {STRING}      { valp->str = new UString(yytext+1);
-                if (valp->str->str() == 0) {
-                  delete (valp->str);
-                  valp->str = 0;
-                }
-                
-                if (valp->str != 0) {
-                  
-                  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
-                  *position=0;
-                  /* 
-                  while (position = strstr(valp->str->str(),"\\\""))
-                    memmove((void*)position,
-                            (void*)(position+1), 
-                            strlen(valp->str->str())-(int)(position-valp->str->str())); 
-                  */
-                }
-                
-                return token::STRING; }
+		if (valp->str->str() == 0) {
+		  delete (valp->str);
+		  valp->str = 0;
+		}
+
+		if (valp->str != 0) {
+
+		  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
+		  *position=0;
+		  /*
+		  while (position = strstr(valp->str->str(),"\\\""))
+		    memmove((void*)position,
+			    (void*)(position+1),
+			    strlen(valp->str->str())-(int)(position-valp->str->str()));
+		  */
+		}
+
+		return token::STRING; }
 
 
 stop       |
@@ -155,46 +153,46 @@ block      |
 unfreeze   |
 freeze     |
 killall    |
-disconnect   { valp->str = new UString(yytext); 
-               if (valp->str->str() == 0) {
-                  delete (valp->str);
-                  valp->str = 0;
-               }
-               return token::OPERATOR_ID;
-             }
+disconnect   { valp->str = new UString(yytext);
+	       if (valp->str->str() == 0) {
+		  delete (valp->str);
+		  valp->str = 0;
+	       }
+	       return token::OPERATOR_ID;
+	     }
 
 info  |
 undef |
-delete       { 
-               valp->str = new UString(yytext); 
-               if (valp->str->str() == 0) {
-                  delete (valp->str);
-                  valp->str = 0;
-               }
-               return token::OPERATOR_VAR;
-             }
+delete       {
+	       valp->str = new UString(yytext);
+	       if (valp->str->str() == 0) {
+		  delete (valp->str);
+		  valp->str = 0;
+	       }
+	       return token::OPERATOR_VAR;
+	     }
 
 mix     |
 add     |
 normal  |
 cancel  |
 discard |
-queue       { valp->str = new UString(yytext); 
-              if (valp->str->str() == 0) {
-                delete (valp->str);
-                valp->str = 0;
-              }
-              return token::STRING;
-            }
+queue       { valp->str = new UString(yytext);
+	      if (valp->str->str() == 0) {
+		delete (valp->str);
+		valp->str = 0;
+	      }
+	      return token::STRING;
+	    }
 
 external |
-internal   { valp->str = new UString(yytext); 
-             if (valp->str->str() == 0) {
-                delete (valp->str);
-                valp->str = 0;
-             }
-             return token::BINDER;
-            }
+internal   { valp->str = new UString(yytext);
+	     if (valp->str->str() == 0) {
+		delete (valp->str);
+		valp->str = 0;
+	     }
+	     return token::BINDER;
+	    }
 
 motoron     |
 motoroff    |
@@ -213,26 +211,26 @@ debugoff    |
 quit        |
 stopall     |
 reboot      |
-shutdown      { valp->str = new UString(yytext); 
-                if (valp->str->str() == 0) {
-                  delete (valp->str);
-                  valp->str = 0;
-                }
-                return token::OPERATOR;
-              }
+shutdown      { valp->str = new UString(yytext);
+		if (valp->str->str() == 0) {
+		  delete (valp->str);
+		  valp->str = 0;
+		}
+		return token::OPERATOR;
+	      }
 
-	      
 
-if            { return token::IF;}  
-else          { return token::ELSE;} 
+
+if            { return token::IF;}
+else          { return token::ELSE;}
 from          { return token::FROM;}
-var           { return token::VAR;} 
-object        { return token::OBJECT;}  
-function      { return token::FUNCTION;} 
-class         { return token::CLASS;} 
-subclass      { return token::SUBCLASS;} 
-new           { return token::NEW;} 
-event         { return token::EVENT;} 
+var           { return token::VAR;}
+object        { return token::OBJECT;}
+function      { return token::FUNCTION;}
+class         { return token::CLASS;}
+subclass      { return token::SUBCLASS;}
+new           { return token::NEW;}
+event         { return token::EVENT;}
 while         { return token::WHILE;}
 timeout       { return token::TIMEOUT;}
 stopif        { return token::STOPIF;}
@@ -263,7 +261,7 @@ bin           { return token::BIN;}
 noop          { return token::NOOP;}
 true          { return token::TRUECONST;}
 false         { return token::FALSECONST;}
-copy          { return token::COPY;} 
+copy          { return token::COPY;}
 only          { return token::ONLY;}
 list          { return token::GROUPLIST;}
 
@@ -282,9 +280,9 @@ list          { return token::GROUPLIST;}
 "|"           { return token::PIPE;}
 "!"           { return token::BANG;}
 "--"          { return token::MINUSMINUS;}
-"++"          { return token::PLUSPLUS;} 
-"+="          { return token::PLUSASSIGN;} 
-"-="          { return token::MINUSASSIGN;} 
+"++"          { return token::PLUSPLUS;}
+"+="          { return token::PLUSASSIGN;}
+"-="          { return token::MINUSASSIGN;}
 "*"           { return token::MULT;}
 "/"           { return token::DIV;}
 "+"           { return token::PLUS;}
@@ -315,35 +313,39 @@ list          { return token::GROUPLIST;}
 
 
 {ID}          { valp->str = new UString(yytext);
-                if (valp->str->str() == 0) {
-                  delete (valp->str);
-                  valp->str = 0;
-                }
-                return token::IDENTIFIER; } 
+		if (valp->str->str() == 0) {
+		  delete (valp->str);
+		  valp->str = 0;
+		}
+		return token::IDENTIFIER; }
 
 
 {ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
-                tmp_position[0] = 0;
-                valp->structure.device = new UString(yytext); 
-                if (valp->structure.device->str() == 0) {
-                  delete (valp->structure.device);
-                  valp->structure.device = 0;
-                }
-                valp->structure.id = new UString(tmp_position+1); 
-                if (valp->structure.id->str() == 0) {
-                  delete (valp->structure.id);
-                  valp->structure.id = 0;
-                }
-                valp->structure.rooted = false; 
-                  
-                return token::STRUCT; } 
+		tmp_position[0] = 0;
+		valp->structure.device = new UString(yytext);
+		if (valp->structure.device->str() == 0) {
+		  delete (valp->structure.device);
+		  valp->structure.device = 0;
+		}
+		valp->structure.id = new UString(tmp_position+1);
+		if (valp->structure.id->str() == 0) {
+		  delete (valp->structure.id);
+		  valp->structure.id = 0;
+		}
+		valp->structure.rooted = false;
+
+		return token::STRUCT; }
 
 
 [ \t\r]+       locp->step();/* eat up whitespace */
 \n+            locp->lines(yyleng);locp->step();
 .              {
-                 uparser.error(*locp, std::string ("invalid character: ")
-		                      + yytext);
+		 uparser.error(*locp, std::string ("invalid character: ")
+				      + yytext);
 		 locp->step ();
 	       }
 %%
+
+// Local Variables:
+// mode: C++
+// End:

@@ -4,7 +4,7 @@
  File: uvar.cc\n
  Implementation of the UVar class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2006.
 
@@ -34,13 +34,13 @@ namespace urbi {
       UVariable *variable;
   };
 };
-	
-// **************************************************************************	
+
+// **************************************************************************
 //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-UVar::UVar(const std::string &varname) 
+UVar::UVar(const std::string &varname)
 :VAR_PROP_INIT
 {
-  name = varname;  
+  name = varname;
   __init();
 }
 
@@ -64,26 +64,26 @@ UVar::UVar(const std::string &objname, const std::string &varname)
 //! UVar initialization
 void
 UVar::init(const std::string &objname, const std::string &varname)
-{  
-  name = objname + "." + varname;  
+{
+  name = objname + "." + varname;
   __init();
 }
 
 //! UVar initializationvoid
 void
 UVar::__init()
-{  
+{
   this->owned = false;
   varmap[name].push_back(this);
-  
+
   HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-  if (it == ::urbiserver->variabletab.end()) 
+  if (it == ::urbiserver->variabletab.end())
     vardata = new UVardata(new UVariable(name.c_str(),new
-    ::UValue(),false,false,true));  // autoupdate unless otherwise specified
+					 ::UValue(),false,false,true));  // autoupdate unless otherwise specified
   else {
-    vardata = new UVardata(it->second); 
+    vardata = new UVardata(it->second);
     //XXX why?? owned = !vardata->variable->autoUpdate;
-  }  
+  }
 }
 
 //! set own mode
@@ -91,24 +91,24 @@ void
 UVar::setOwned()
 {
   owned = true;
-  if (vardata) 
-    vardata->variable->autoUpdate = false;  
+  if (vardata)
+    vardata->variable->autoUpdate = false;
 }
 
 //! UVar destructor.
 UVar::~UVar()
-{  
+{
   UVarTable::iterator varmapfind = varmap.find(name);
-  
+
   if (varmapfind != varmap.end()) {
-    
+
     for (list<UVar*>::iterator it = varmapfind->second.begin();
-	it != varmapfind->second.end();)
-      if ((*it) == this) 
+	 it != varmapfind->second.end();)
+      if ((*it) == this)
 	it=varmapfind->second.erase(it);
       else
 	it++;
-	
+
     if (varmapfind->second.empty())
       varmap.erase(varmapfind);
   }
@@ -117,18 +117,18 @@ UVar::~UVar()
 //! UVar float assignment
 void
 UVar::operator = (ufloat n)
-{ 
-  if (!vardata) { 
+{
+  if (!vardata) {
     urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	name.c_str());
+	       name.c_str());
     return;
   }
-  
+
   // type mismatch is not integrated at this stage
   vardata->variable->value->dataType = ::DATA_NUM;
 
   if (owned)
-//    in() = n;    
+    //    in() = n;
     vardata->variable->setSensorVal(n);
   else
     vardata->variable->setFloat(n);
@@ -137,16 +137,16 @@ UVar::operator = (ufloat n)
 //! UVar string assignment
 void
 UVar::operator = (std::string s)
-{  
+{
   if (!vardata) {
     urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	name.c_str());
-    return;      
+	       name.c_str());
+    return;
   }
 
-  if (vardata->variable->value->dataType == ::DATA_VOID) 
+  if (vardata->variable->value->dataType == ::DATA_VOID)
     vardata->variable->value->str = new UString("");
-   
+
   // type mismatch is not integrated at this stage
   ::UValue tmpv(s.c_str());
   vardata->variable->set(&tmpv);
@@ -155,11 +155,11 @@ UVar::operator = (std::string s)
 //! UVar binary assignment
 void
 UVar::operator = (const UBinary &b)
-{  
+{
   if (!vardata) {
     urbi::echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	name.c_str());
-    return;      
+	       name.c_str());
+    return;
   }
   *vardata->variable->value=b;
   vardata->variable->updated();
@@ -177,7 +177,7 @@ UVar::operator = (const UImage &b)
   *vardata->variable->value=b;
   vardata->variable->updated();
 }
-  
+
 
 //! UVar binary assignment
 void
@@ -205,48 +205,48 @@ UVar::operator = (const UList &l) {
 
 // UVar Casting
 
-UVar::operator int () {	 
+UVar::operator int () {
   //check of dataType is done inside in and out
   if (owned)
     return (int)out();
   else
-    return (int)in();   
+    return (int)in();
 }
 
-UVar::operator ufloat () { 
+UVar::operator ufloat () {
   //check of dataType is done inside in and out
   if (owned)
     return out();
   else
-    return in();   
+    return in();
 }
 
 
-UVar::operator std::string () { 
-
-  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_STRING))    
-    return (std::string(vardata->variable->value->str->str()));  
-  else  
-    return std::string("");    
+UVar::operator std::string ()
+{
+  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_STRING))
+    return (std::string(vardata->variable->value->str->str()));
+  else
+    return std::string("");
 }
 
 UVar::operator UList() {
-return (UList)*vardata->variable->value;
-
+  return (UList)*vardata->variable->value;
 }
 
 UVar::operator urbi::UBinary() {
-  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
-	  return  (*vardata->variable->value).operator urbi::UBinary();
-  }
+  if (vardata
+      && vardata->variable->value->dataType == ::DATA_BINARY)
+    return  (*vardata->variable->value).operator urbi::UBinary();
   else return UBinary();
 }
 
 UVar::operator urbi::UBinary*() {
-  if ((vardata)  && (vardata->variable->value->dataType == ::DATA_BINARY)) {
-	  return (urbi::UBinary*) vardata->variable->value;
-  }
-  else return new UBinary();
+  if (vardata
+      && vardata->variable->value->dataType == ::DATA_BINARY)
+    return (urbi::UBinary*) vardata->variable->value;
+  else
+    return new UBinary();
 }
 
 UVar::operator UImage() {
@@ -261,7 +261,7 @@ UVar::operator USound() {
 //! UVar out value (read mode)
 ufloat&
 UVar::out()
-{ 
+{
   static ufloat er=0;
   if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
     return (vardata->variable->target);
@@ -271,7 +271,7 @@ UVar::out()
 //! UVar in value (write mode)
 ufloat&
 UVar::in()
-{  
+{
  static ufloat er=0;
  if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
    return (vardata->variable->value->val);
@@ -281,79 +281,79 @@ UVar::in()
 
 
 
-void 
+void
 UVar::setProp(UProperty prop, const UValue &v) {
-	if (!vardata)
-		return;
-	switch(prop) {
-	case PROP_RANGEMIN:
-		vardata->variable->rangemin =(double)v;
-		break;
-	case PROP_RANGEMAX:
-		vardata->variable->rangemax =(double)v;
-		break;
-	case PROP_SPEEDMIN:
-		vardata->variable->speedmin =(double)v;
-		break;
-	case PROP_SPEEDMAX:
-		vardata->variable->speedmax =(double)v;
-		break;
-	case PROP_DELTA:
-		vardata->variable->delta =(double)v;
-		break;
-	case PROP_BLEND:
-		{
-			if (v.type == DATA_DOUBLE) {
-				//numeric val
-				vardata->variable->blendType=(UBlend)(int)(double)v;
-			}
-			if (v.type == DATA_STRING) {
-				std::string s=(std::string)v;
-				for (int i=0;urbi::blendNames[i][0];i++) {
-					if (s==(std::string)urbi::blendNames[i]) {
-						vardata->variable->blendType = (UBlend)i;	
-						return;					
-					}	
-				}
-			}
-		}
+  if (!vardata)
+    return;
+  switch(prop) {
+  case PROP_RANGEMIN:
+    vardata->variable->rangemin =(double)v;
+    break;
+  case PROP_RANGEMAX:
+    vardata->variable->rangemax =(double)v;
+    break;
+  case PROP_SPEEDMIN:
+    vardata->variable->speedmin =(double)v;
+    break;
+  case PROP_SPEEDMAX:
+    vardata->variable->speedmax =(double)v;
+    break;
+  case PROP_DELTA:
+    vardata->variable->delta =(double)v;
+    break;
+  case PROP_BLEND:
+    {
+      if (v.type == DATA_DOUBLE) {
+	//numeric val
+	vardata->variable->blendType=(UBlend)(int)(double)v;
+      }
+      if (v.type == DATA_STRING) {
+	std::string s=(std::string)v;
+	for (int i=0;urbi::blendNames[i][0];i++) {
+	  if (s==(std::string)urbi::blendNames[i]) {
+	    vardata->variable->blendType = (UBlend)i;
+	    return;
+	  }
 	}
+      }
+    }
+  }
 }
 
-void 
+void
 UVar::setProp(UProperty prop, const char * v) {
 	return setProp(prop, UValue(v));
 }
-void 
+void
 UVar::setProp(UProperty prop, double v) {
 	return setProp(prop, UValue(v));
 }
 
 urbi::UValue
 UVar::getProp(UProperty prop) {
-	if (!vardata)
-		return UValue();
-	switch(prop) {
-	case PROP_RANGEMIN:
-		return UValue(vardata->variable->rangemin);
-		break;
-	case PROP_RANGEMAX:
-		return UValue(vardata->variable->rangemax);
-		break;
-	case PROP_SPEEDMIN:
-		return UValue(vardata->variable->speedmin);
-		break;
-	case PROP_SPEEDMAX:
-		return UValue(vardata->variable->speedmax);
-		break;
-	case PROP_DELTA:
-		return UValue(vardata->variable->delta);
-		break;
-	case PROP_BLEND:
-		return UValue(vardata->variable->blendType);
-		break;
-	}
-	return UValue();
+  if (!vardata)
+    return UValue();
+  switch(prop) {
+  case PROP_RANGEMIN:
+    return UValue(vardata->variable->rangemin);
+    break;
+  case PROP_RANGEMAX:
+    return UValue(vardata->variable->rangemax);
+    break;
+  case PROP_SPEEDMIN:
+    return UValue(vardata->variable->speedmin);
+    break;
+  case PROP_SPEEDMAX:
+    return UValue(vardata->variable->speedmax);
+    break;
+  case PROP_DELTA:
+    return UValue(vardata->variable->delta);
+    break;
+  case PROP_BLEND:
+    return UValue(vardata->variable->blendType);
+    break;
+  }
+  return UValue();
 }
 
 
@@ -379,9 +379,6 @@ UVar::requestValue() {
 //! UVar update
 void
 UVar::__update(UValue& v)
-{ 
+{
   value = v;
 }
-
-
- 

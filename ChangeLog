@@ -1,0 +1,53 @@
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
+	Autoconfiscate.
+	* ChangeLog, bootstrap: New.
+	* build-aux/bison++.in, build-aux/revision.mk,
+	* build-aux/urbi-var-progs.m4: New.
+	* configure.ac: Use them.
+	* build-aux/doxygen.mk, doc/Makefile.am, doc/Doxyfile.in: New.
+
+	* Makefile: Rename as...
+	* Makefile.am: this.
+
+	* configure.ac (OS): New.
+	* version.hh.in: New.
+	* Makefile.am: Use it.
+
+	* lockable.h: Simplify.
+	* network/OPENR/Makefile.defs: Udate to match Automake use.
+	* network/bsdnet/Makefile.defs: Ditto.
+	* parser/bison/Makefile.defs: Ditto.
+	* parser/bison/FlexLexer.h: Formatting changes.
+	* parser/uparser.h: Formatting changes.
+	(ugrammar.hh, FlexLexer.h, location.hh): Include them.
+	Use parser::token_type instead of Bison pre-2.2 names.
+	Don't use using.
+	Let Emacs know this file is C++.
+	* parser/bison/utoken.l: Formatting changes.
+	No using.
+	* parser/bison/ugrammar.y: Require Bison 2.2.
+	No using.
+	Formatting changes.
+	Don't use "../" in includes.
+	* parser/bison/Makefile.defs: Use bison++ to save cycles.
+
+	* version.h: Replace by...
+	* version.hh.in: this.
+	* Makefile.am: Use it.
+
+	* userver.cc: Use C++ headers, use version.hh.
+	Formatting changes.
+	* userver.h: Formatting changes.
+	* uobj.cc: Specify the path to uobject.h.
+	* uobject/uvar.cc: Formatting changes.
+	* uvariable.h: Ditto.
+	* uconnection.cc: Ditto.
+
+Local Variables:
+ispell-local-dictionary: "american"
+End:
+
+$Rev$
+$Id$
+$Date$

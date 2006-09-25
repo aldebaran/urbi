@@ -1,7 +1,21 @@
-PREFIX=/usr/local/OPEN_R_SDK
-CPPFLAGS+=-I$(PREFIX)/OPEN_R/include/R4000 \
-	-I$(PREFIX)/OPEN_R/include/MCOOP \
-	-I$(PREFIX)/OPEN_R/include
+## ----------------- ##
+## libkernet-openr.  ##
+## ----------------- ##
 
-OPENR-clean:
-	rm *.o
+lib_LTLIBRARIES += libkernel-openr.la
+
+libkernel_openr_la_SOURCES =			\
+network/OPENR/aiboconnection.h			\
+network/OPENR/aiboconnection.cc
+libkernel_bsdnet_la_LIBADD = libkernel.la
+
+OPENR_PREFIX = /usr/local/OPEN_R_SDK
+libkernel_openr_la_CPPFLAGS =			\
+	$(AM_CPPFLAGS)				\
+	-I$(OPENR_PREFIX)/OPEN_R/include/R4000	\
+	-I$(OPENR_PREFIX)/OPEN_R/include/MCOOP	\
+	-I$(OPENR_PREFIX)/OPEN_R/include
+
+## Local Variables:
+## mode: Makefile
+## End:

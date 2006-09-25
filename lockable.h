@@ -1,10 +1,10 @@
 #ifndef LOCKABLE_H
-#define LOCKABLE_H
+# define LOCKABLE_H
 
 
-#ifdef WIN32
-#define _WIN32_WINNT 0x0400
-#include <windows.h>
+# ifdef WIN32
+#  define _WIN32_WINNT 0x0400
+#  include <windows.h>
 
 typedef CRITICAL_SECTION Lock;
 inline void initLock(Lock &l) {
@@ -26,30 +26,30 @@ inline bool lockTryLock(Lock &l) {
   return TryEnterCriticalSection(&l);
 }
 
-#else
-#if (OS == aibo)
+# elif (OS == aibo)
+
 typedef int Lock;
 inline void initLock(Lock &l) {
-  
+
 }
 inline void lockLock(Lock &l) {
-  
+
 }
 
 inline void lockUnlock(Lock &l) {
-  
+
 }
 
 inline void deleteLock(Lock &l) {
- 
+
 }
 
 inline bool lockTryLock(Lock &l) {
   return true;
 }
 
-#else
-#include <pthread.h>
+# else
+# include <pthread.h>
 typedef pthread_mutex_t Lock;
 inline void initLock(Lock &l) {
   pthread_mutex_init(&l,0);
@@ -69,8 +69,10 @@ inline void deleteLock(Lock &l) {
 inline bool lockTryLock(Lock &l) {
   return !pthread_mutex_trylock(&l);
 }
-#endif
-#endif
+# endif
+
+
+
 class Lockable {
  public:
   Lockable() { initLock(_lock);}
