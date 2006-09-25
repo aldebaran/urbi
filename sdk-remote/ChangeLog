@@ -1,5 +1,13 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	distcheck passes.
+
+	* sdk/Makefile.am (gccversion): Simplify the handling.
+	(CLEANFILES): Remove Makefile.module.
+	* build-aux/doxygen.mk: Chmod before rm to make sure it'll pass.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fixes.
 
 	* sdk/Makefile.am: Use DESTDIR.

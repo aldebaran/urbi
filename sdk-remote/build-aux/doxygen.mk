@@ -11,6 +11,9 @@ $(srcdir)/$(DOCDIR): Doxyfile.in
 	$(DOXYGEN) Doxyfile
 	mv $(DOCDIR).tmp $(srcdir)/$(DOCDIR)
 
+maintainer-clean-local:
+	rm -rf $(DOCDIR).tmp $(srcdir)/$(DOCDIR)
+
 # We install by hand, otherwise Automake produces "install .../srcdoc
 # .../srcdoc", which install our dir into the previous one, instead of
 # replacing it.
@@ -20,7 +23,5 @@ install-data-local:
 	cp -r $(srcdir)/$(DOCDIR) $(DESTDIR)$(htmldir)
 
 uninstall-local:
+	chmod -R 700 $(DESTDIR)$(htmldir)/$(DOCDIR)
 	rm -rf $(DESTDIR)$(htmldir)/$(DOCDIR)
-
-maintainer-clean-local:
-	rm -rf $(DOCDIR).tmp $(srcdir)/$(DOCDIR)

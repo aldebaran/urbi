@@ -1,6 +1,3 @@
-gccversion:
-	$(CXX) -v 2>&1 |grep version > gccversion
-
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 AM_CPPFLAGS =                                   \
 -I$(top_srcdir)/src/liburbi/uobject             \
@@ -26,16 +23,30 @@ include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.h
 nodist_target_DATA = Makefile.param Makefile.module Makefile gccversion
 dist_target_DATA = umain.cc
 
+## ----------------- ##
+## Makefile.module.  ##
+## ----------------- ##
+
 EXTRA_DIST = Makefile.module.in
 Makefile.module: Makefile.module.in
 	sed -e "s@PREFIX=.*@PREFIX=$(prefix)@" $(srcdir)/Makefile.module.in >$@.tmp
 	mv $@.tmp $@
+CLEANFILES = Makefile.module
+
 
 install-data-local:
-	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile >$(DESTDIR)$(targetdir)/Makefile
+	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile \
+	   >$(DESTDIR)$(targetdir)/Makefile
 
-sanity:
-	$(CXX) -v 2>&1 | grep version | cmp $(DESTDIR)$(targetdir)/gccversion || \
+## ------------ ##
+## gccversion.  ##
+## ------------ ##
+
+CLEANFILES += gccversion
+gccversion:
+	$(CXX) -v 2>&1 | grep version >$@.tmp
+	mv $@.tmp $@
+
+sanity: gccversion
+	cmp $(DESTDIR)$(targetdir)/gccversion gccversion || \
 	  echo >&2 "WARNING: gcc version mismatch"
-
-CLEANFILES = gccversion
