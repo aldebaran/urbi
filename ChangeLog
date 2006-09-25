@@ -1,5 +1,15 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Dos2unix.
+	* ucommand.cc, utypes.h, uvariablelist.cc, ucallid.cc
+	* unamedparameters.cc, uvalue.cc, ubinary.cc, uproperty.cc: .
+	* CHANGELOG-Kernel, uobject/common_uvalue.cc, ugroup.cc: .
+	* ubinder.cc: Use Unix-style end of lines.
+
+	* uobject/uvar.cc: Namespace fixes.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Autoconfiscate.
 	* ChangeLog, bootstrap: New.
 	* build-aux/bison++.in, build-aux/revision.mk,
