@@ -1,5 +1,17 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Fixes and details.
+
+	* ucommand.cc: Indent properly.
+	* utypes.h: Comment changes.
+	* parser/bison/ugrammar.y (NEW_BIN): New.
+	Use it.
+	Don't use parens for delete.
+	"Delete 0" is valid C++.
+	* parser/bison/Makefile.defs: Ship FlexLexer.h.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fixes.
 
 	* build-aux/move-if-change: New.

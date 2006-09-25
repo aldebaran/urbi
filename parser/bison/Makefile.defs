@@ -19,7 +19,7 @@ FROM_UGRAMMAR_Y = \
 	$(parsedir)/ugrammar.cc
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 MAINTAINERCLEANFILES = $(FROM_UGRAMMAR_Y)
-dist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y) 
+dist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
@@ -38,7 +38,7 @@ $(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) $(parsedir)/ugrammar.stamp; \
 	fi
 
-dist_libkernel_la_SOURCES += parser/bison/utoken.cc
+dist_libkernel_la_SOURCES += parser/bison/FlexLexer.h parser/bison/utoken.cc
 $(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
 	$(FLEX) -+ -oparser/bison/lex.cc $(srcdir)/parser/bison/utoken.l
 	sed -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",'	\

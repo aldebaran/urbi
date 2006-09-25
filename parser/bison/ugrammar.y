@@ -29,17 +29,17 @@
 %skeleton "lalr1.cc"
 %parse-param {UParser& uparser}
 %lex-param {UParser& uparser}
-%{
 
+
+%{
 #include "utypes.h"
 #include "ucommand.h"
-
 class UParser;
 %}
 
 /* Possible data type returned by the bison parsing mechanism */
-
-%union {
+%union
+{
   UCommand                *command;
   UExpression             *expr;
   UBinary                 *binary;
@@ -59,15 +59,14 @@ class UParser;
 
 %{
 // Is included in ugrammar.cc
-//#include <cmath>
 #ifdef VISUALCPP
-#include <hash_map>
+# include <hash_map>
 #else
-#include <hash_map.h>
+# include <hash_map.h>
 #endif
 #include <string>
 #include <iostream>
-#define TRUE ufloat(1)
+#define TRUE  ufloat(1)
 #define FALSE ufloat(0)
 
 #include "parser/uparser.h"
@@ -80,35 +79,60 @@ extern UString** globalDelete;
 
 /* Memory checking macros, used in the command tree building process */
 
-#define MEMCHECK(p)       {if (p==0) { \
-   uparser.connection->server->isolate(); \
-   uparser.connection->server->memoryOverflow = true;}}
+#define MEMCHECK(p)						\
+ do {								\
+   if (p==0)							\
+     {								\
+       uparser.connection->server->isolate();			\
+       uparser.connection->server->memoryOverflow = true;	\
+     }								\
+ } while (0)
 
-#define MEMCHECK1(p,p1)       {if (p==0) { \
-   uparser.connection->server->isolate(); \
-   uparser.connection->server->memoryOverflow = true;\
-   if (p1!=0) { delete(p1);p1=0; };}}
+#define MEMCHECK1(p,p1)						\
+  do {								\
+    if (p==0)							\
+      {								\
+	uparser.connection->server->isolate();			\
+	uparser.connection->server->memoryOverflow = true;	\
+	delete p1; p1 = 0;					\
+      }								\
+  } while (0)
 
-#define MEMCHECK2(p,p1,p2)    {if (p==0) { \
-   uparser.connection->server->isolate(); \
-   uparser.connection->server->memoryOverflow = true;\
-   if (p1!=0) { delete(p1);p1=0; }; \
-   if (p2!=0) { delete(p2);p2=0; }; }}
+#define MEMCHECK2(p,p1,p2)					\
+  do {								\
+    if (p==0)							\
+      {								\
+	uparser.connection->server->isolate();			\
+	uparser.connection->server->memoryOverflow = true;	\
+	delete p1; p1 = 0;					\
+	delete p2; p2 = 0;					\
+      }								\
+  } while (0)
 
-#define MEMCHECK3(p,p1,p2,p3) {if (p==0) { \
-   uparser.connection->server->isolate(); \
-   uparser.connection->server->memoryOverflow = true;\
-   if (p1!=0) { delete(p1);p1=0; }; \
-   if (p2!=0) { delete(p2);p2=0; }; \
-   if (p3!=0) { delete(p3);p3=0; }; }}
+#define MEMCHECK3(p,p1,p2,p3)					\
+  do {								\
+    if (p==0)							\
+      {								\
+	uparser.connection->server->isolate();			\
+	uparser.connection->server->memoryOverflow = true;	\
+	delete p1; p1 = 0;					\
+	delete p2; p2 = 0;					\
+	delete p3; p3 = 0;					\
+      }								\
+  } while (0)
 
-#define MEMCHECK4(p,p1,p2,p3,p4) {if (p==0) { \
-   uparser.connection->server->isolate(); \
-   uparser.connection->server->memoryOverflow = true;\
-   if (p1!=0) { delete(p1);p1=0; }; \
-   if (p2!=0) { delete(p2);p2=0; }; \
-   if (p3!=0) { delete(p3);p3=0; }; \
-   if (p4!=0) { delete(p4);p4=0; }; }}
+#define MEMCHECK4(p,p1,p2,p3,p4)				\
+  do {								\
+    if (p==0)							\
+      {								\
+	uparser.connection->server->isolate();			\
+	uparser.connection->server->memoryOverflow = true;	\
+	delete p1; p1 = 0;					\
+	delete p2; p2 = 0;					\
+	delete p3; p3 = 0;					\
+	delete p4; p4 = 0;					\
+      }								\
+  } while (0)
 
 //! Directs the call from 'bison' to the scanner in the right parser
 inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
@@ -117,6 +141,15 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
   return p.scan(val, loc);
 }
 
+
+/// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+# define NEW_BIN(Res, Op, Lhs, Rhs)		\
+    do {					\
+      Res = new UCommand_TREE(Op, Lhs, Rhs);	\
+      if (Res)					\
+	Res->tag->update("__node__");		\
+      MEMCHECK2(Res, Lhs, Rhs);			\
+    } while (0)
 
 
 %}
@@ -321,43 +354,12 @@ root:
 
 
 /* TAGGEDCOMMANDS */
-
 taggedcommands:
-
-    taggedcommand
-
-  | taggedcommands COMMA taggedcommands {
-
-      $$ = new UCommand_TREE(UCOMMA,$1,$3);
-      if ($$)
-	$$->tag->update("__node__");
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | taggedcommands SEMICOLON taggedcommands {
-
-      $$ = new UCommand_TREE(USEMICOLON,$1,$3);
-      if ($$)
-	$$->tag->update("__node__");
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | taggedcommands PIPE taggedcommands {
-
-      $$ = new UCommand_TREE(UPIPE,$1,$3);
-      if ($$)
-	$$->tag->update("__node__");
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | taggedcommands AND taggedcommands {
-
-      $$ = new UCommand_TREE(UAND,$1,$3);
-      if ($$)
-	$$->tag->update("__node__");
-      MEMCHECK2($$,$1,$3);
-    }
-
+  taggedcommand
+| taggedcommands COMMA taggedcommands     { NEW_BIN ($$, UCOMMA,$1,$3); }
+| taggedcommands SEMICOLON taggedcommands { NEW_BIN ($$, USEMICOLON,$1,$3); }
+| taggedcommands PIPE taggedcommands      { NEW_BIN ($$, UPIPE,$1,$3); }
+| taggedcommands AND taggedcommands       { NEW_BIN ($$, UAND,$1,$3);}
 ;
 
 /* TAGGEDCOMMAND */
@@ -556,7 +558,7 @@ instruction:
 
     $2->local_scope = true;
     $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
-      MEMCHECK3($$,$2,$4,$5);
+    MEMCHECK3($$,$2,$4,$5);
     }
 
   | property ASSIGN expr {
@@ -864,8 +866,8 @@ instruction:
   | FUNCTION variable LPAREN identifiers RPAREN {
 
       if (uparser.connection->functionTag) {
-	delete($2);
-	delete($4);
+	delete $2;
+	delete $4;
 	$2 = 0;
 	delete uparser.connection->functionTag;
 	uparser.connection->functionTag = 0;
@@ -899,8 +901,8 @@ instruction:
 
       uparser.connection->server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
       if (uparser.connection->functionTag) {
-	delete($2);
-	delete($4);
+	delete $2;
+	delete $4;
 	$2 = 0;
 	delete uparser.connection->functionTag;
 	uparser.connection->functionTag = 0;

@@ -4,11 +4,11 @@
  File: utypes.h\n
  Definition of useful types in the URBI server kernel.
 
- This file must be included if someone wants to reuse in an other context some 
+ This file must be included if someone wants to reuse in an other context some
  generic classes like the UStream circular buffer. Actually, from a design point
  of view, this is the only reason to be for utype.h :-)
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -24,18 +24,18 @@
  **************************************************************************** */
 
 #ifndef UTYPE_H_DEFINED
-#define UTYPE_H_DEFINED
+# define UTYPE_H_DEFINED
 
-#include <cstring>
+# include <cstring>
 
-#ifdef _MSC_VER
-#include <hash_map>
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#else
-#include <hash_map.h>
-#endif
-#include "ufloat.h"
+# ifdef _MSC_VER
+#  include <hash_map>
+#  define snprintf _snprintf
+#  define vsnprintf _vsnprintf
+# else
+#  include <hash_map.h>
+# endif
+# include "ufloat.h"
 class UConnection;
 class UGhostConnection;
 class UServer;
@@ -49,20 +49,20 @@ class UString;
 class UCommand;
 class UCommand_EMIT;
 
-extern  int   usedMemory; //< Keeps track of how much memory has been used for                         
-                          //< commands, buffers, etc...
-extern  int   availableMemory; //< Total amount of free memory in the system   
+extern  int   usedMemory; //< Keeps track of how much memory has been used for
+			  //< commands, buffers, etc...
+extern  int   availableMemory; //< Total amount of free memory in the system
 
-#define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
-#define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
-#define ADDOBJ(x)   {usedMemory += ((int)(sizeof(x)*1.15));}
-#define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
+# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
+# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
+# define ADDOBJ(x)   {usedMemory += ((int)(sizeof(x)*1.15));}
+# define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
 
-#define LIBERATE(x) if (x) if (x->liberate()==0) delete (x)
-#define DD ::urbiserver->debug("Check point %s, %d\n",__FILE__,__LINE__);
-#define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n",x,__FILE__,__LINE__);
+# define LIBERATE(x) if (x) if (x->liberate()==0) delete (x)
+# define DD ::urbiserver->debug("Check point %s, %d\n",__FILE__,__LINE__);
+# define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n",x,__FILE__,__LINE__);
 
-#define ASSERT(test) if (!(test)) ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n",#test,__FILE__,__LINE__); else
+# define ASSERT(test) if (!(test)) ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n",# test,__FILE__,__LINE__); else
 
 typedef unsigned long IPAdd;
 
@@ -75,7 +75,7 @@ enum UErrorValue {
 
 //! Return code for variable Update
 enum UVarSet {
-  UOK, 
+  UOK,
   USPEEDMAX
 };
 
@@ -139,7 +139,7 @@ enum UTestResult {
   UTESTFAIL
 };
 
-//! The different types for a UCommand  
+//! The different types for a UCommand
 enum UCommandType {
   CMD_GENERIC,
     CMD_TREE,
@@ -150,8 +150,8 @@ enum UCommandType {
     CMD_RETURN,
     CMD_ECHO,
     CMD_NEW,
-    CMD_ALIAS,  
-    CMD_GROUP,     
+    CMD_ALIAS,
+    CMD_GROUP,
     CMD_WAIT,
     CMD_WAIT_TEST,
     CMD_INCREMENT,
@@ -184,14 +184,14 @@ enum UCommandType {
     CMD_LOAD
   };
 
-//! Possible status for a UCommand  
+//! Possible status for a UCommand
 enum UCommandStatus {
-    UONQUEUE,
-    URUNNING,
-    UCOMPLETED,
-    UBACKGROUND,
-    UMORPH
-  };
+  UONQUEUE,
+  URUNNING,
+  UCOMPLETED,
+  UBACKGROUND,
+  UMORPH
+};
 
 //! The different types for a UExpression.
 enum UExpressionType {
@@ -209,8 +209,8 @@ enum UExpressionType {
   EXPR_EXP,
   EXPR_NEG,
   EXPR_COPY,
-  EXPR_PROPERTY, 
-  EXPR_EVENT, 
+  EXPR_PROPERTY,
+  EXPR_EVENT,
 
   EXPR_TEST_EQ,
   EXPR_TEST_REQ,
@@ -237,7 +237,7 @@ enum UDataType {
   DATA_LIST,
   DATA_OBJ,
   DATA_FUNCTION
-};	
+};
 
 //! Blending mode
 enum UBlend {
@@ -276,7 +276,7 @@ typedef unsigned char ubyte;
 static const ufloat UINFINITY   = ufloat(999999999999999.0);
 //static const ufloat TRUE = ufloat(1);
 //static const ufloat FALSE = ufloat(0);
-#define ABSF(x)     (((x)>0)? (x) : (-(x)) )
+# define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
 
 //! URefPt is used to make references to pointers.
@@ -337,10 +337,10 @@ class UWaitCounter
 
    UString* id; ///< class name
    int nb; ///< nb of waiting calls
-};    
+};
 
 
-#ifdef _MSC_VER
+# ifdef _MSC_VER
 class str_compare {
  public:
 	 enum
@@ -367,51 +367,56 @@ typedef std::hash_map<const char*, UCommand_EMIT*, str_compare> HMeventtab ;
 typedef std::hash_map<const char*, UBinder*, str_compare> HMbindertab ;
 typedef std::hash_map<const char*, UWaitCounter*, str_compare> HMobjWaiting;
 
-#else
+# else
 
+/// Hash of variable values.
 typedef hash_map<const char*,
-                 UVariable*, 
-                 hash<const char*>,
-                 eqStr>                 HMvariabletab; ///< hash of variable values*/
+		 UVariable*,
+		 hash<const char*>,
+		 eqStr>                 HMvariabletab;
 
+/// Hash of function definition.
 typedef hash_map<const char*,
-                 UFunction*,
-                 hash<const char*>,
-                 eqStr>                 HMfunctiontab; ///< hash of function definition
+		 UFunction*,
+		 hash<const char*>,
+		 eqStr>                 HMfunctiontab;
 
+/// Hash of group definitions.
 typedef  hash_map<const char*,
-                  UObj*,
-                  hash<const char*>,
-                  eqStr>                 HMobjtab; ///< hash of group definitions
+		  UObj*,
+		  hash<const char*>,
+		  eqStr>                 HMobjtab;
 
+/// Hash of group definitions.
 typedef  hash_map<const char*,
-                  UGroup*,
-                  hash<const char*>,
-                  eqStr>                 HMgrouptab; ///< hash of group definitions
+		  UGroup*,
+		  hash<const char*>,
+		  eqStr>                 HMgrouptab;
 
+/// Hash of alias definitions.
 typedef  hash_map<const char*,
-                  UString*,
-                  hash<const char*>,
-                  eqStr>                 HMaliastab; ///< hash of alias definitions
+		  UString*,
+		  hash<const char*>,
+		  eqStr>                 HMaliastab;
 
+/// Hash of events.
 typedef  hash_map<const char*,
-                  UCommand_EMIT*,
-                  hash<const char*>,
-                  eqStr>                 HMeventtab; ///< hash of events
-		  
+		  UCommand_EMIT*,
+		  hash<const char*>,
+		  eqStr>                 HMeventtab;
+
+/// Hash of binders.
 typedef  hash_map<const char*,
-                  UBinder*,
-                  hash<const char*>,
-                  eqStr>                 HMbindertab; ///< hash of binders
+		  UBinder*,
+		  hash<const char*>,
+		  eqStr>                 HMbindertab;
 
-typedef  hash_map<const char*, 
-         	 UWaitCounter*, 
-                 hash<const char*>,
-                 eqStr>                  HMobjWaiting; ///< hash for waiters
+/// Hash for waiters.
+typedef  hash_map<const char*,
+	 	 UWaitCounter*,
+		 hash<const char*>,
+		 eqStr>                  HMobjWaiting;
 
-
-
-
-#endif
+# endif
 
 #endif
