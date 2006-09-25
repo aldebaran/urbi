@@ -78,6 +78,7 @@ include build-aux/revision.mk
 
 # build-aux.
 EXTRA_DIST += \
+build-aux/bison++.in				\
 build-aux/move-if-change
 
 # memorymanager.

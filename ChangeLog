@@ -1,5 +1,12 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Fixes.
+
+	* build-aux/move-if-change: New.
+	* Makefile.am: Ship bison++.in.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Dos2unix.
 	* ucommand.cc, utypes.h, uvariablelist.cc, ucallid.cc
 	* unamedparameters.cc, uvalue.cc, ubinary.cc, uproperty.cc: .
