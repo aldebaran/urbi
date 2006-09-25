@@ -1,5 +1,10 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	Don't install libuobject.
+	* src/liburbi/uobject/Makefile.am: Make it noinst.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	urbi dirs.
 	* build-aux/urbi-dirs.m4: New.
 	* configure.ac: Use it.
