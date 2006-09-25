@@ -390,8 +390,8 @@ UCommand_TREE::print(int l)
 			  (long)command1,command1->status,(long)command1->up);
       command1->print(l+3);
     }
-  if (command2) 
-    { 
+  if (command2)
+    {
       ::urbiserver->debug("%s  Com2 (%ld:%d) up=%ld:\n",
 			  tabb,
 			  (long)command2,command2->status,(long)command2->up);

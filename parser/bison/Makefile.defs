@@ -1,9 +1,9 @@
 # AM_CPPFLAGS += -I $(top_srcdir)/parser
 AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 
-## --------------- ##
-## Bison wrapper.  ##
-## --------------- ##
+## -------------- ##
+## Bison parser.  ##
+## -------------- ##
 
 # A Bison wrapper for C++.
 BISONXX = $(top_builddir)/build-aux/bison++
@@ -38,11 +38,17 @@ $(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) $(parsedir)/ugrammar.stamp; \
 	fi
 
+## -------------- ##
+## Flex Scanner.  ##
+## -------------- ##
+
+EXTRA_DIST += parser/bison/utoken.l
 dist_libkernel_la_SOURCES += parser/bison/FlexLexer.h parser/bison/utoken.cc
 $(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
 	$(FLEX) -+ -oparser/bison/lex.cc $(srcdir)/parser/bison/utoken.l
 	sed -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",'	\
 	    -e 's/class istream;/#include <istream>/'		\
+	    -e 's/^\([	 ]\)\(cerr <<\)/\1std::\2/'		\
 	    -e 's,lex.cc,utoken.cc,g'				\
 	    parser/bison/lex.cc > $@.tmp
 	mv $@.tmp $@

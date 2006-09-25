@@ -1,5 +1,12 @@
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
+	VC++ issues"".
+
+	* ucommand.cc: .Formatting changes.
+	* parser/bison/Makefile.defs (utoken.cc): Fix lack of std::.
+
+2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fixes and details.
 
 	* ucommand.cc: Indent properly.
