@@ -1,5 +1,9 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* src/examples/urbisound.cpp: More urbi:: changes.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	Update pthreads detection.
 	* src/examples/urbisendsound.cpp: Formatting changes.
 

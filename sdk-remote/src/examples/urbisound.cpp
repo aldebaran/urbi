@@ -60,14 +60,15 @@ struct wavheader {
 
 char * fname;
 int imcount;
-UClient *client;
 FILE *  file;
 bool outtodsp;
 bool withheader;
 bool waswithheader;
 int totallength;
 
-UCallbackAction endProgram(const UMessage &msg) {
+urbi::UCallbackAction 
+endProgram(const urbi::UMessage &msg) 
+{
   if (waswithheader) {
     //fclose(file);
     //file = fopen(fname, "w");
@@ -89,7 +90,8 @@ UCallbackAction endProgram(const UMessage &msg) {
   return URBI_CONTINUE;
 }
 
-UCallbackAction getSound(const UMessage &msg)
+urbi::UCallbackAction
+getSound(const urbi::UMessage &msg)
 {
   static urbi::USound out;
   static bool initialized=false;
@@ -112,16 +114,16 @@ UCallbackAction getSound(const UMessage &msg)
     }
   }
 
-  if (msg.type != MESSAGE_DATA
+  if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
       || msg.value->binary->type != urbi::BINARY_SOUND)
-    return URBI_CONTINUE;
-  out.soundFormat = withheader? urbi::SOUND_WAV:urbi::SOUND_RAW;
+    return urbi::URBI_CONTINUE;
+  out.soundFormat = withheader? urbi::SOUND_WAV : urbi::SOUND_RAW;
   withheader = false;
   convert(msg.value->binary->sound, out);
   totallength += out.size;
   fwrite(out.data, out.size, 1, file);
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
 
@@ -192,14 +194,14 @@ int main(int argc, char *argv[])
   }
 
   waswithheader = withheader;
-  client = new UClient(argv[1]);
-  if (client->error() != 0)
+  urbi::UClient client (argv[1]);
+  if (client.error())
     exit(0);
 
-  client->setCallback(getSound, "usound");
-  client->setCallback(endProgram, "end");
+  client.setCallback(getSound, "usound");
+  client.setCallback(endProgram, "end");
 
-  client->send("loopsound:loop usound: micro.val ,"
-	       "{ wait(%d); stop loopsound; wait(1000); end:ping }, ", time);
+  client.send("loopsound:loop usound: micro.val ,"
+	      "{ wait(%d); stop loopsound; wait(1000); end:ping }, ", time);
   urbi::execute();
 }
