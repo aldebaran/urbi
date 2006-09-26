@@ -1,5 +1,9 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* uobject/uobject.cc: Add missing std::.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	* uobject/uobject.cc (cleanTable): Cleanup.
 	* Makefile.am: Formatting changes.
 

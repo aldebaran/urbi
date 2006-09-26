@@ -1,23 +1,23 @@
 /*! \file uobject.cc
- *******************************************************************************
+*******************************************************************************
 
- File: uobject.cc\n
- Implementation of the UObject class.
+File: uobject.cc\n
+Implementation of the UObject class.
 
- This file is part of
- %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2006.
+This file is part of
+%URBI Kernel, version __kernelversion__\n
+(c) Jean-Christophe Baillie, 2004-2006.
 
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
+Permission to use, copy, modify, and redistribute this software for
+non-commercial use is hereby granted.
 
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
+This software is provided "as is" without warranty of any kind,
+either expressed or implied, including but not limited to the
+implied warranties of fitness for a particular purpose.
 
- For more information, comments, bug reports: http://www.urbiforge.com
+For more information, comments, bug reports: http://www.urbiforge.com
 
- **************************************************************************** */
+**************************************************************************** */
 
 #include <cstdarg>
 #include <cstdio>
@@ -44,7 +44,7 @@ namespace urbi {
   STATIC_INSTANCE(UStartlist, objectlist);
   STATIC_INSTANCE(UStartlistHub, objecthublist);
 
-  const string externalModuleTag = "__ExternalMessage__";
+  const std::string externalModuleTag = "__ExternalMessage__";
 
   UVarTable varmap;
   UTable functionmap;
@@ -110,21 +110,19 @@ namespace urbi {
   }
 }
 
-using namespace urbi;
-
 void urbi::main(int argc, char *argv[]) {} // no effect here
 
 // **************************************************************************
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string objname, string type, string name, int size,  UTable &t) :
+UGenericCallback::UGenericCallback(std::string objname, std::string type, std::string name, int size,  UTable &t) :
   name(name) , storage(0), objname(objname)
 {
   nbparam = size;
 
   if ((type == "function") || (type== "event") || (type=="eventend"))
-  {
-    t[this->name].push_back(this);
-  }
+    {
+      t[this->name].push_back(this);
+    }
 
   if (type == "var" || type=="var_onrequest") {
 
@@ -152,7 +150,7 @@ UGenericCallback::UGenericCallback(string objname, string type, string name, int
 };
 
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(string objname, string type, string name, UTable &t) :
+UGenericCallback::UGenericCallback(std::string objname, std::string type, std::string name, UTable &t) :
   name(name) , storage(0), objname(objname)
 {
   t[this->name].push_back(this);
@@ -166,7 +164,7 @@ UGenericCallback::~UGenericCallback()
 // **************************************************************************
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(string objname, ufloat period, UTimerTable &tt) :
+UTimerCallback::UTimerCallback(std::string objname, ufloat period, UTimerTable &tt) :
   period(period),
   objname(objname)
 {
@@ -191,7 +189,7 @@ UObject::USync(UVar &v)
 
 // **************************************************************************
 //! UObject constructor.
-UObject::UObject(const string &s) :
+UObject::UObject(const std::string &s) :
   __name(s)
 {
   objecthub = 0;
@@ -203,10 +201,10 @@ UObject::UObject(const string &s) :
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();
        retr++)
-  {
-    if ((*retr)->name == __name)
-      tmpobj->internalBinder = (*retr);
-  }
+    {
+      if ((*retr)->name == __name)
+	tmpobj->internalBinder = (*retr);
+    }
 
   // default
   derived = false;
@@ -219,56 +217,56 @@ UObject::UObject(const string &s) :
 
 //! Clean a callback UTable from all callbacks linked to the object whose name is 'name'
 void
-cleanTable(UTable &t, string name)
+cleanTable(UTable &t, std::string name)
 {
   std::list<UTable::iterator> todelete;
   for (UTable::iterator it = t.begin();
        it != t.end();
        ++it)
-  {
-    std::list<UGenericCallback*>& tocheck = (*it).second;
-    for (std::list<UGenericCallback*>::iterator it2 = tocheck.begin();
-	 it2 != tocheck.end();
-	 )
     {
-      if ((*it2)->objname == name)
-      {
-	delete (*it2);
-	it2 = tocheck.erase(it2);
-      }
-      else
-	++it2;
-    }//for
+      std::list<UGenericCallback*>& tocheck = (*it).second;
+      for (std::list<UGenericCallback*>::iterator it2 = tocheck.begin();
+	   it2 != tocheck.end();
+	   )
+	{
+	  if ((*it2)->objname == name)
+	    {
+	      delete (*it2);
+	      it2 = tocheck.erase(it2);
+	    }
+	  else
+	    ++it2;
+	}//for
 
-    if (tocheck.empty())
-      todelete.push_back(it);
-  }//for
+      if (tocheck.empty())
+	todelete.push_back(it);
+    }//for
 
   for (std::list<UTable::iterator>::iterator dit = todelete.begin();
        dit != todelete.end();
        ++dit)
-  {
-    t.erase(*dit);
-  }
+    {
+      t.erase(*dit);
+    }
 }//function
 
 
 //! Clean a callback UTimerTable from all callbacks linked to the object whose name is 'name'
 void
-cleanTimerTable(UTimerTable &t, string name)
+cleanTimerTable(UTimerTable &t, std::string name)
 {
   for (UTimerTable::iterator it = t.begin();
        it != t.end();
        )
-  {
-    if ((*it)->objname == name)
     {
-      delete (*it);
-      it = t.erase(it);
-    }
-    else
-      ++it;
-  }//for
+      if ((*it)->objname == name)
+	{
+	  delete (*it);
+	  it = t.erase(it);
+	}
+      else
+	++it;
+    }//for
 }//function
 
 
@@ -295,7 +293,7 @@ UObject::~UObject()
 }
 
 void
-UObject::UJoinGroup(string gpname)
+UObject::UJoinGroup(std::string gpname)
 {
   HMgrouptab::iterator hma;
   UGroup *g;
@@ -321,7 +319,7 @@ UObject::USetUpdate(ufloat t)
 // **************************************************************************
 //! UObjectHub constructor.
 
-UObjectHub::UObjectHub(const string& s) : name(s)
+UObjectHub::UObjectHub(const std::string& s) : name(s)
 {
 }
 
@@ -355,7 +353,7 @@ UObjectHub::addMember(UObject* obj)
 }
 
 UObjectList*
-UObjectHub::getSubClass(string subclass)
+UObjectHub::getSubClass(std::string subclass)
 {
   UObjectList* res = new UObjectList();
   for (UObjectList::iterator it = members.begin();
@@ -370,7 +368,7 @@ UObjectHub::getSubClass(string subclass)
 
 //! retrieve a UObjectHub based on its name
 urbi::UObjectHub*
-urbi::getUObjectHub(string name) {
+urbi::getUObjectHub(std::string name) {
 
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
        retr != urbi::objecthublist->end();
@@ -383,8 +381,8 @@ urbi::getUObjectHub(string name) {
 
 //! retrieve a UObject based on its name
 urbi::UObject*
-urbi::getUObject(string name) {
-
+urbi::getUObject(std::string name)
+{
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();
        retr++)
