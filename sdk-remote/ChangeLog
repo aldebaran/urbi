@@ -1,5 +1,11 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* build-aux/urbi-dirs.m4 (_URBI_DIRS): New.
+	(URBI_DIRS): Use it.
+	(URBI_KERNEL_DIRS): New.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	* build-aux/urbi-dirs.m4: Pass the default urbi env.
 
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
