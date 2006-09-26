@@ -30,13 +30,30 @@ template<> struct hash< std::string > {
   __STL_END_NAMESPACE
 #   else
   }
-  namespace urbi {
-	template<class K, class V> class hash_map_type {
-	public:
-		  typedef std::hash_map<K, V> type;
-	};
-  }
 #   endif
+
+
+
+
+  namespace urbi {
+    
+    //! Used in the hash_map object to define equality of two variable names
+    struct eqStr
+    {
+      bool operator()(const char* s1, const char* s2) const
+      {
+	return strcmp(s1, s2) == 0;
+      }
+    };
+    template<class K, class V> class hash_map_type {
+	public:
+		  typedef __gnu_cxx::hash_map<K, V> type;
+    };
+    
+    template<class V> class hash_map_type<const char *, V> {
+      typedef __gnu_cxx::hash_map<const char *, V, hash<const char *>, eqStr> type;
+    };
+  }
 
 #else //_MSC_VER
 

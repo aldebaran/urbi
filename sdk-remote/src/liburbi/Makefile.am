@@ -24,6 +24,7 @@ uclient.h					\
 uconversion.h					\
 uobject/uexternal.h				\
 uobject/uobject.h				\
+uobject/uext.h                                  \
 usyncclient.h
 
 BUILT_SOURCES = uobject/uobject.h

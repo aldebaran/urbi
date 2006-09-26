@@ -1,3 +1,11 @@
+2006-09-26  matthieu nottale  <nottale@gostai.com>
+
+	Hash_map stuff
+
+	* src/liburbi/Makefile.am: Add uext.h.
+	* src/liburbi/uobject/uobject.template.h: Remove hash_map code moved to uext.h.
+	* src/liburbi/uobject/uext.h: Handle special case of hash_map with char * keys.
+
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
 	* src/liburbi/Makefile.am: Use the pthread vars correctly.
