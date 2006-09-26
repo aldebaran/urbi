@@ -55,45 +55,6 @@ uvariablename.h uvariablename.cc
 
 
 
-# This is a kludge: for the time being, install all the server include
-# files for the cores.
-include_HEADERS = 				\
-lockable.h					\
-ubinary.h					\
-ubinder.h					\
-ucallid.h					\
-ucommand.h					\
-ucommandqueue.h					\
-uconnection.h					\
-uexpression.h					\
-ufloat.h					\
-ufunction.h					\
-ughostconnection.h				\
-ugroup.h					\
-unamedparameters.h				\
-uobj.h 						\
-uproperty.h					\
-uqueue.h					\
-userver.h					\
-ustring.h					\
-utypes.h					\
-uvalue.h					\
-uvariable.h					\
-uvariablelist.h					\
-uvariablename.h 
-
-uobjectdir = $(includedir)/uobject
-uobject_HEADERS = uobject/uobject.h
-
-parserdir = $(includedir)/parser
-parser_HEADERS = parser/uparser.h
-
-memorymanagerdir = $(includedir)/memorymanager
-memorymanager_HEADERS =				\
-memorymanager/blockmemorymanager.h		\
-memorymanager/memorymanager.h
-
-
 if NETWORK_OPENR
 include network/OPENR/Makefile.defs
 endif
@@ -135,3 +96,47 @@ windows/urbikernel/Debug			\
 windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj       
+
+
+## ----------------- ##
+## Install headers.  ##
+## ----------------- ##
+
+# This is a kludge: for the time being, install all the server include
+# files for the cores.
+include_HEADERS = 				\
+lockable.h					\
+ubinary.h					\
+ubinder.h					\
+ucallid.h					\
+ucommand.h					\
+ucommandqueue.h					\
+uconnection.h					\
+uexpression.h					\
+ufloat.h					\
+ufunction.h					\
+ughostconnection.h				\
+ugroup.h					\
+unamedparameters.h				\
+uobj.h 						\
+uproperty.h					\
+uqueue.h					\
+userver.h					\
+ustring.h					\
+utypes.h					\
+uvalue.h					\
+uvariable.h					\
+uvariablelist.h					\
+uvariablename.h 
+
+uobjectdir = $(includedir)/uobject
+uobject_HEADERS = uobject/uobject.h
+
+parserdir = $(includedir)/parser
+parser_HEADERS = parser/uparser.h
+
+memorymanagerdir = $(includedir)/memorymanager
+memorymanager_HEADERS =				\
+memorymanager/blockmemorymanager.h		\
+memorymanager/memorymanager.h
+
