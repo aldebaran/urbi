@@ -23,7 +23,7 @@ if SOUNDCARD
 bin_PROGRAMS += urbisound
 endif
 
-if WIN32
+if !WIN32
 bin_PROGRAMS += urbitalkie
 endif
 

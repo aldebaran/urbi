@@ -66,8 +66,8 @@ bool withheader;
 bool waswithheader;
 int totallength;
 
-urbi::UCallbackAction 
-endProgram(const urbi::UMessage &msg) 
+urbi::UCallbackAction
+endProgram(const urbi::UMessage &msg)
 {
   if (waswithheader) {
     //fclose(file);

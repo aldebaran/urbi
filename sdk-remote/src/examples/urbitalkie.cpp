@@ -2,8 +2,6 @@
 #include <pthread.h>
 #include <uclient.h>
 
-using urbi::USound;
-
 static int mtime()
 {
   static int base = 0;
@@ -15,34 +13,32 @@ static int mtime()
   return tme - base;
 }
 
-UClient * r[2];
+class SoundPipe
+{
+public:
+  SoundPipe(urbi::UClient &r1, urbi::UClient &r2);
+  urbi::UCallbackAction microNotify(int side, const urbi::UMessage &msg);
+  urbi::UCallbackAction speakerNotify(int side, const urbi::UMessage &msg);
 
 
-
-class SoundPipe {
- public:
-  SoundPipe(UClient &r1, UClient &r2);
-  UCallbackAction microNotify(int side, const UMessage &msg); 
-  UCallbackAction speakerNotify(int side, const UMessage &msg); 
-
-
- private:
+private:
   static const int stackSize = 4;
   static const int minSendSize = 2048;
   class SoundStack {
   public:
-  std::list<USound> stack;
+    std::list<urbi::USound> stack;
     int serverStackPos;
   };
-  UClient *robot[2];
+  urbi::UClient *robot[2];
   SoundStack stack[2];
   pthread_mutex_t lock[2];;
 
-  void trySend(int source); 
+  void trySend(int source);
 };
 
 
-SoundPipe::SoundPipe(UClient &r1, UClient &r2) {
+SoundPipe::SoundPipe(urbi::UClient &r1, urbi::UClient &r2)
+{
   pthread_mutex_init(&lock[0], 0);
   pthread_mutex_init(&lock[1], 0);
   robot[0]=&r1;
@@ -56,79 +52,90 @@ SoundPipe::SoundPipe(UClient &r1, UClient &r2) {
   r2.send("loop mic: micro.val,");
   r1.setCallback(*this, &SoundPipe::speakerNotify, 0, "speak");
   r2.setCallback(*this, &SoundPipe::speakerNotify, 1, "speak");
-
 }
 
 
-UCallbackAction SoundPipe::microNotify(int source, const UMessage &msg) {
+urbi::UCallbackAction 
+SoundPipe::microNotify(int source, const urbi::UMessage &msg) 
+{
   pthread_mutex_lock(&lock[source]);
-  if (stack[source].stack.size() >= stackSize) {
-    //drop it
-    pthread_mutex_unlock(&lock[source]);
-    return URBI_CONTINUE;
-  }
+  if (stack[source].stack.size() >= stackSize) 
+    {
+      //drop it
+      pthread_mutex_unlock(&lock[source]);
+      return urbi::URBI_CONTINUE;
+    }
 
   //convert it
-  USound snd;
+  urbi::USound snd;
   snd.size = 0;
   snd.data = 0;
   snd.channels = 1;
   snd.rate = 16000;
   snd.sampleSize = 16;
   snd.sampleFormat = urbi::SAMPLE_SIGNED;
- 
 
-  USound &lastStacked = stack[source].stack.back();
-  if ( stack[source].stack.empty() || lastStacked.size > minSendSize) {
-	  snd.soundFormat = urbi::SOUND_RAW;
-    convert(msg.value->binary->sound, snd);
-    stack[source].stack.push_back(snd);
-  }
 
-  else {
-	  snd.soundFormat = urbi::SOUND_RAW;
-    convert(msg.value->binary->sound, snd);
-    lastStacked.data = (char *) realloc(lastStacked.data, lastStacked.size + snd.size);
-    memcpy(lastStacked.data + lastStacked.size, snd.data, snd.size);
-    lastStacked.size += snd.size;
-    printf("%d queed %d\n", source, lastStacked.size);
-    free(snd.data);
-    snd.data=0;
-  }
+  urbi::USound &lastStacked = stack[source].stack.back();
+  if ( stack[source].stack.empty() || lastStacked.size > minSendSize) 
+    {
+      snd.soundFormat = urbi::SOUND_RAW;
+      convert(msg.value->binary->sound, snd);
+      stack[source].stack.push_back(snd);
+    }
+  else
+    {
+      snd.soundFormat = urbi::SOUND_RAW;
+      convert(msg.value->binary->sound, snd);
+      lastStacked.data = (char *) realloc(lastStacked.data,
+					  lastStacked.size + snd.size);
+      memcpy(lastStacked.data + lastStacked.size, snd.data, snd.size);
+      lastStacked.size += snd.size;
+      printf("%d queed %d\n", source, lastStacked.size);
+      free(snd.data);
+      snd.data=0;
+    }
 
   pthread_mutex_unlock(&lock[source]);
   trySend(1-source);
-  
-  return URBI_CONTINUE;
+
+  return urbi::URBI_CONTINUE;
 }
 
-UCallbackAction SoundPipe::speakerNotify(int source, const UMessage &msg) {
-  if (msg.type != MESSAGE_SYSTEM || !strstr(msg.message.c_str(),"stop")) 
-    return URBI_CONTINUE;
+urbi::UCallbackAction
+SoundPipe::speakerNotify(int source, const urbi::UMessage &msg)
+{
+  if (msg.type != urbi::MESSAGE_SYSTEM || !strstr(msg.message.c_str(),"stop"))
+    return urbi::URBI_CONTINUE;
 
   pthread_mutex_lock(&lock[source]);
   stack[source].serverStackPos--;
   pthread_mutex_unlock(&lock[source]);
 
   trySend(1-source);
-  
-  return URBI_CONTINUE;
+
+  return urbi::URBI_CONTINUE;
 }
 
 
-void SoundPipe::trySend(int source) {
+void 
+SoundPipe::trySend(int source)
+{
   static int id=0;
 
   pthread_mutex_lock(&lock[0]);
   pthread_mutex_lock(&lock[1]);
 
-  if (stack[source].stack.empty() || stack[1-source].serverStackPos>=3 || stack[source].stack.front().size<minSendSize) {
-    pthread_mutex_unlock(&lock[1]);
-    pthread_mutex_unlock(&lock[0]);
-    return ;
-  }
+  if (stack[source].stack.empty()
+      || stack[1-source].serverStackPos>=3
+      || stack[source].stack.front().size<minSendSize)
+    {
+      pthread_mutex_unlock(&lock[1]);
+      pthread_mutex_unlock(&lock[0]);
+      return ;
+    }
 
-  USound snd = stack[source].stack.front();
+  urbi::USound snd = stack[source].stack.front();
   stack[source].stack.pop_front();
   stack[1-source].serverStackPos++;
   pthread_mutex_unlock(&lock[source]);
@@ -140,16 +147,21 @@ void SoundPipe::trySend(int source) {
 }
 
 
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[]) 
+{
   if (argc<3) {
-	fprintf(stderr,"usage: %s robot1 robot2\n\tplays what robot1 hears with robot2's speaker, and vice-versa\n",argv[0]);
+    fprintf(stderr,"usage: %s robot1 robot2\n\tplays what robot1 hears with robot2's speaker, and vice-versa\n",argv[0]);
+    exit(1);
+  }
+  urbi::UClient * r[2];
+  for (int i=0;i<2;i++)
+    {
+      r[i]=new urbi::UClient(argv[i+1]);
+      r[i]->start();
+      if (r[i]->error()) 
 	exit(1);
-  }
-  for (int i=0;i<2;i++) {
-	r[i]=new UClient(argv[i+1]);
-	r[i]->start();
-	if (r[i]->error()) exit(1);
-  }
+    }
   SoundPipe sp(*r[0], *r[1]);
-  while (1) sleep(1);
+  while (1)
+    sleep(1);
 }
