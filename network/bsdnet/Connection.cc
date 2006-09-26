@@ -121,7 +121,7 @@ void Connection::doWrite(){
 UErrorValue Connection::send(const ubyte *buffer, int length) {
   if (sendQueueRemain()==0)
     trigger();
-  UConnection::send(buffer, length);
+  return UConnection::send(buffer, length);
 }
 
 

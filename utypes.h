@@ -29,13 +29,12 @@
 # include <cstring>
 
 # ifdef _MSC_VER
-#  include <hash_map>
 #  define snprintf _snprintf
 #  define vsnprintf _vsnprintf
 # else
-#  include <hash_map.h>
 # endif
 # include "ufloat.h"
+# include "uobject/uext.h" 
 class UConnection;
 class UGhostConnection;
 class UServer;
@@ -340,83 +339,18 @@ class UWaitCounter
 };
 
 
-# ifdef _MSC_VER
-class str_compare {
- public:
-	 enum
-		{	// parameters for hash table
-		bucket_size = 4,	// 0 < bucket_size
-		min_buckets = 8};	// min_buckets = 2 ^^ N, 0 < N
-
-	  size_t operator()( const char *  x ) const
-	  { return std::hash_compare< const char* >()( x );}
-
-	bool operator()(const char* _Keyval1, const char* _Keyval2) const
-		{	// test if _Keyval1 ordered before _Keyval2
-		return strcmp(_Keyval1,_Keyval2)<0;
-		}
-};
 
 
-typedef std::hash_map<const char*, UVariable*, str_compare> HMvariabletab ;
-typedef std::hash_map<const char*, UFunction*, str_compare> HMfunctiontab ;
-typedef std::hash_map<const char*, UObj*, str_compare> HMobjtab ;
-typedef std::hash_map<const char*, UGroup*, str_compare> HMgrouptab ;
-typedef std::hash_map<const char*, UString*, str_compare> HMaliastab ;
-typedef std::hash_map<const char*, UCommand_EMIT*, str_compare> HMeventtab ;
-typedef std::hash_map<const char*, UBinder*, str_compare> HMbindertab ;
-typedef std::hash_map<const char*, UWaitCounter*, str_compare> HMobjWaiting;
 
-# else
+typedef  urbi::hash_map_type<const char*, UVariable*>::type HMvariabletab ;
+typedef  urbi::hash_map_type<const char*, UFunction*>::type HMfunctiontab ;
+typedef  urbi::hash_map_type<const char*, UObj*>::type HMobjtab ;
+typedef  urbi::hash_map_type<const char*, UGroup*>::type HMgrouptab ;
+typedef  urbi::hash_map_type<const char*, UString*>::type HMaliastab ;
+typedef  urbi::hash_map_type<const char*, UCommand_EMIT*>::type HMeventtab ;
+typedef  urbi::hash_map_type<const char*, UBinder*>::type HMbindertab ;
+typedef  urbi::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
 
-/// Hash of variable values.
-typedef hash_map<const char*,
-		 UVariable*,
-		 hash<const char*>,
-		 eqStr>                 HMvariabletab;
 
-/// Hash of function definition.
-typedef hash_map<const char*,
-		 UFunction*,
-		 hash<const char*>,
-		 eqStr>                 HMfunctiontab;
-
-/// Hash of group definitions.
-typedef  hash_map<const char*,
-		  UObj*,
-		  hash<const char*>,
-		  eqStr>                 HMobjtab;
-
-/// Hash of group definitions.
-typedef  hash_map<const char*,
-		  UGroup*,
-		  hash<const char*>,
-		  eqStr>                 HMgrouptab;
-
-/// Hash of alias definitions.
-typedef  hash_map<const char*,
-		  UString*,
-		  hash<const char*>,
-		  eqStr>                 HMaliastab;
-
-/// Hash of events.
-typedef  hash_map<const char*,
-		  UCommand_EMIT*,
-		  hash<const char*>,
-		  eqStr>                 HMeventtab;
-
-/// Hash of binders.
-typedef  hash_map<const char*,
-		  UBinder*,
-		  hash<const char*>,
-		  eqStr>                 HMbindertab;
-
-/// Hash for waiters.
-typedef  hash_map<const char*,
-	 	 UWaitCounter*,
-		 hash<const char*>,
-		 eqStr>                  HMobjWaiting;
-
-# endif
 
 #endif

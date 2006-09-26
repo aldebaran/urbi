@@ -155,23 +155,9 @@ public:
   /// List of variables to delete in a reset command.
   std::list<UVariable*>         varToReset;
 
-# ifdef _MSC_VER
-  std::hash_map<const char *,bool, str_compare> blocktab;
-  std::hash_map<const char *,bool, str_compare> freezetab;
+  urbi::hash_map_type<const char *,bool>::type blocktab;
+  urbi::hash_map_type<const char *,bool>::type freezetab;
 
-# else
-  /// Hash of the blocked tags..
-  hash_map<const char*,
-    bool,
-    hash<const char*>,
-    eqStr>                 blocktab;
-
-  /// Hash of the freezed tags..
-  hash_map<const char*,
-    bool,
-    hash<const char*>,
-    eqStr>                 freezetab;
-# endif
   /// The main parser object.
   UParser                  parser;
   /// Flag used to signal a memory overflow.

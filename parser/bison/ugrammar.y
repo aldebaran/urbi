@@ -59,7 +59,7 @@ class UParser;
 
 %{
 // Is included in ugrammar.cc
-#ifdef VISUALCPP
+#ifdef _MSC_VER
 # include <hash_map>
 #else
 # include <hash_map.h>

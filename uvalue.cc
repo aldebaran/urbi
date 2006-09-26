@@ -331,6 +331,7 @@ UValue & UValue::operator = (const urbi::UList &l) {
       current->next = v;
     current = v;
   }
+  return *this;
 }
 
 UValue::UValue(const urbi::UValue &v)
