@@ -87,7 +87,7 @@ endProgram(const urbi::UMessage &msg)
     exit(0);
   }
   exit(0);
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
 urbi::UCallbackAction
