@@ -17,7 +17,7 @@ ACLOCAL_AMFLAGS = -I build-aux
 
 SUBDIRS = . doc
 
-AM_CPPFLAGS = -Inetwork/$(NETWORK) -I. -I$(srcdir)
+AM_CPPFLAGS = -I$(srcdir)/uobject
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR -DFLOAT_DOUBLE
 AM_CPPFLAGS += -DFLOAT_DOUBLE
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
@@ -41,6 +41,7 @@ ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
 uobject/common_uvalue.cc					\
+uobject/uext.h							\
 uobject/uobject.h uobject/uobject.cc				\
 uobject/uvar.cc							\
 uproperty.h uproperty.cc					\
