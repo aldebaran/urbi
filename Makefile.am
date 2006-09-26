@@ -27,6 +27,7 @@ dist_libkernel_la_SOURCES =					\
 lockable.h							\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
+ubanner.hh ubanner.cc						\
 ubinary.h ubinary.cc						\
 ubinder.h ubinder.cc						\
 ucallid.h ucallid.cc						\

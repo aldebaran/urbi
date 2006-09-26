@@ -1,5 +1,14 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	Introduce ubanner.cc.
+	* ubanner.hh, ubanner.cc: New.
+	* userver.cc, userver.h: Use it.
+	(UServer::display (const char **)): New.
+	Use it.
+	* Makefile.am: Adjust.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	Update URBI_DIRS.
 	* build-aux/urbi-dirs.m4: Update from liburbi-cpp.
 	* configure.ac: Use it.

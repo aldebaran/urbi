@@ -24,7 +24,7 @@
 #include <cstdarg>
 #include <string>
 
-#include "version.hh"
+#include "ubanner.hh"
 #include "userver.h"
 #include "uconnection.h"
 #include "utypes.h"
@@ -47,32 +47,6 @@ int URBI_unicID = 10000; ///< unique identifier to create new references
 const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
 const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
-
-// Standard header used by the server. Divided into "before" and "after" the
-// custom header defined by the real server:
-
-const int NB_HEADER_BEFORE_CUSTOM = 4;
-const char* HEADER_BEFORE_CUSTOM[] = {
-  "*** **********************************************************\n",
-  "*** URBI Language specif 1.0 - Copyright (C) 2006  Gostai SAS\n",
-  "*** URBI Kernel version "
-  PACKAGE_VERSION
-  " rev."
-  PACKAGE_REVISION
-  "\n",
-  "***\n"
-};
-
-const int NB_HEADER_AFTER_CUSTOM = 7;
-const char* HEADER_AFTER_CUSTOM[] = {
-  "***\n",
-  "*** URBI comes with ABSOLUTELY NO WARRANTY;\n",
-  "*** This software is free, and you are welcome to use\n",
-  "*** it under certain conditions; see LICENSE for details.\n",
-  "***\n",
-  "*** See http://www.urbiforge.com for news and updates.\n",
-  "*** **********************************************************\n"
-};
 
 const char* UNKNOWN_TAG = "notag";
 const char* MAINDEVICE  = "system";
@@ -160,9 +134,6 @@ UServer::UServer(ufloat frequency,
 void
 UServer::initialization()
 {
-  char customHeader[1024];
-  int i;
-
   updateTime();
   currentTime = latestTime = lastTime();
   previousTime = currentTime - 0.000001; // avoid division by zero at start
@@ -170,18 +141,19 @@ UServer::initialization()
   previous3Time = previous2Time - 0.000001; // avoid division by zero at start
 
   debugOutput     = true;
-  for (i = 0; i < ::NB_HEADER_BEFORE_CUSTOM; i++)
-    display(::HEADER_BEFORE_CUSTOM[i]);
+  display(::HEADER_BEFORE_CUSTOM);
 
-  i = 0;
+  int i = 0;
+  char customHeader[1024];
+
   do {
     getCustomHeader(i,(char*)customHeader,1024);
-    if (customHeader[0]!=0) display((const char*) customHeader);
+    if (customHeader[0])
+      display((const char*) customHeader);
     i++;
   } while (customHeader[0]!=0);
 
-  for (i = 0; i < ::NB_HEADER_AFTER_CUSTOM; i++)
-    display(::HEADER_AFTER_CUSTOM[i]);
+  display(::HEADER_AFTER_CUSTOM);
   display("Ready.\n");
 
   debugOutput     = false;
@@ -718,12 +690,18 @@ UServer::effectiveDisplay(const char* s)
 {
 }
 
-//! Display a message on the robot console
 void
 UServer::display(const char* s)
 {
   if (debugOutput)
     effectiveDisplay(s);
+}
+
+void
+UServer::display(const char** b)
+{
+  for (int i = 0; b[i]; ++i)
+    display (b[i]);
 }
 
 //! Overload this function to specify how your system will reboot

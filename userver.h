@@ -107,7 +107,11 @@ public:
   virtual void      beforeWork      ();
   virtual void      afterWork       ();
 
+  /// Display a message on the robot console
   void              display         (const char*);
+  /// Display a set of messages on the robot console.
+  void              display         (const char**);
+
   ufloat            lastTime        ();
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
