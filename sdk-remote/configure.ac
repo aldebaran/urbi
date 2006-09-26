@@ -2,7 +2,7 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([liburbi-c++], [0.9.3a], [bugs@gostai.com], [liburbi-cpp])
+AC_INIT([liburbi-c++], [1.0-b2], [bugs@gostai.com], [liburbi-cpp])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
@@ -47,6 +47,8 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 # Open R.
 URBI_OPENR
 
+AC_CONFIG_FILES([umake/umake], [chmod +x umake/umake])
+
 ## -------- ##
 ## Output.  ##
 ## -------- ##
@@ -64,6 +66,6 @@ AC_CONFIG_FILES([Makefile
 	  lib/jpeg-6b/makefile.aibo
 	  lib/jpeg-6b/Makefile
 	  sdk/Makefile
-	  sdk/Makefile.param
+	  sdk/param.mk
 ])
 AC_OUTPUT

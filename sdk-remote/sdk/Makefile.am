@@ -9,26 +9,25 @@ urbimodule_LDADD = \
 	$(top_builddir)/src/liburbi/uobject/libuobject.la \
 	$(top_builddir)/src/liburbi/liburbi.la \
 	$(PTHREAD_LIBS)
-urbimodule_LDFLAGS = -L$(prefix)/share/urbicore/$(TARGET)
 
 include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.h
-nodist_target_DATA = Makefile.param Makefile.module Makefile gccversion
-dist_target_DATA = umain.cc
+nodist_env_DATA = param.mk module.mk Makefile gccversion
+dist_env_DATA = umain.cc
 
 ## ----------------- ##
 ## Makefile.module.  ##
 ## ----------------- ##
 
-EXTRA_DIST = Makefile.module.in
-Makefile.module: Makefile.module.in
-	sed -e "s@PREFIX=.*@PREFIX=$(prefix)@" $(srcdir)/Makefile.module.in >$@.tmp
+EXTRA_DIST = module.mk.in
+module.mk: module.mk.in
+	sed -e "s@PREFIX=.*@PREFIX=$(prefix)@" $(srcdir)/module.mk.in >$@.tmp
 	mv $@.tmp $@
-CLEANFILES = Makefile.module
+CLEANFILES = module.mk
 
 
 install-data-local:
 	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile \
-	   >$(DESTDIR)$(targetdir)/Makefile
+	   >$(DESTDIR)$(envdir)/Makefile
 
 ## ------------ ##
 ## gccversion.  ##
@@ -40,5 +39,5 @@ gccversion:
 	mv $@.tmp $@
 
 sanity: gccversion
-	cmp $(DESTDIR)$(targetdir)/gccversion gccversion || \
+	cmp $(DESTDIR)$(envdir)/gccversion gccversion || \
 	  echo >&2 "WARNING: gcc version mismatch"

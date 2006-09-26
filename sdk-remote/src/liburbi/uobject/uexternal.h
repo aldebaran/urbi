@@ -24,7 +24,7 @@
 namespace urbi
 {
 
-  enum USystemExternalMessage 
+  enum USystemExternalMessage
   {
     UEM_EVALFUNCTION,
     UEM_ASSIGNVALUE,
