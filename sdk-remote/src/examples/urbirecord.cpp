@@ -51,7 +51,6 @@ char * devices[]={
   "mouth"
 };
 int devCount=18;
-UClient *c;
 FILE *f;
 int tilt=0;
 void buildHeader() {
@@ -70,7 +69,9 @@ void buildHeader() {
 
 
 
-UCallbackAction command(const UMessage &msg) {
+urbi::UCallbackAction
+command(const urbi::UMessage &msg)
+{
   //get command id
   static int tme=0;
   int id;
@@ -84,7 +85,7 @@ UCallbackAction command(const UMessage &msg) {
 	  UCommand uc;
 	  uc.timestamp=msg.timestamp;
 	  uc.id=i;
-	  assert (msg.type == MESSAGE_DATA);
+	  assert (msg.type == urbi::MESSAGE_DATA);
 	  assert (msg.value->type == urbi::DATA_DOUBLE);
 	  uc.value.angle=msg.value->val;
 
@@ -97,11 +98,11 @@ UCallbackAction command(const UMessage &msg) {
 			100000.0/(float)(msg.client.getCurrentTime()-tme));
 	      tme=msg.client.getCurrentTime();
 	    }
-	  return URBI_CONTINUE;
+	  return urbi::URBI_CONTINUE;
 	}
     }
   fprintf (stderr, "error: no device %s (in %s)\n", msg.tag.c_str (),command);
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 
 }
 
@@ -110,28 +111,30 @@ void endRecord(int sig) {
   exit(0);
 }
 
-int main(int argc, char * argv[]) {
-  if (argc != 3) {
-    printf("usage: %s robotname file\n\t Records a sequence of movements to a file.\n",argv[0]);
-    exit(1);
-  }
+int main(int argc, char * argv[])
+{
+  if (argc != 3)
+    {
+      printf("usage: %s robotname file\n\t Records a sequence of movements to a file.\n",argv[0]);
+      exit(1);
+    }
   signal(SIGINT,endRecord);
-  c = new UClient(argv[1]);
-  c->start();
-  if (c->error()) exit(2);
+  urbi::UClient c(argv[1]);
+  c.start();
+  if (c.error()) exit(2);
   if (!strcmp(argv[2],"-")) f=stdout;
   else f=fopen(argv[2],"w");
   if (!f) exit(3);
   buildHeader();
-  //c->send("motoroff");
+  //c.send("motoroff");
   //build command
-  c->send("looptag: loop {");
+  c.send("looptag: loop {");
   for (int i=0;i<devCount-1;i++) {
-    c->setCallback(command,devices[i]);
-    c->send("%s: %s.val&",devices[i], devices[i]);
+    c.setCallback(command,devices[i]);
+    c.send("%s: %s.val&",devices[i], devices[i]);
   }
-  c->setCallback(command,devices[devCount-1]);
-  c->send("%s: %s.val},",devices[devCount-1], devices[devCount-1]);
+  c.setCallback(command,devices[devCount-1]);
+  c.send("%s: %s.val},",devices[devCount-1], devices[devCount-1]);
 
 
   fprintf(stderr,"starting, hit ctrl-c to stop...\n");

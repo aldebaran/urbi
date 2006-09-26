@@ -43,17 +43,17 @@ struct PositionData {
 };
 
 
-class BallTrackingHead {
-
+class BallTrackingHead
+{
  public:
   BallTrackingHead(const char * robotName);
 
   //callback functions
-  UCallbackAction getHead(bool pan, const UMessage &msg);
-  UCallbackAction getImage(const UMessage &msg);
+  urbi::UCallbackAction getHead(bool pan, const urbi::UMessage &msg);
+  urbi::UCallbackAction getImage(const urbi::UMessage &msg);
 
  private:
-  UClient * robotI, *robotC, *robotG; //client for image reception, command sending and command reception
+  urbi::UClient * robotI, *robotC, *robotG; //client for image reception, command sending and command reception
 
 
   std::vector<PositionData> current_x, current_y; //joint value for the last few frames
@@ -80,7 +80,8 @@ const double BallTrackingHead::maxcommand_y = 150.0;
 
 int format=1;
 
-void BallTrackingHead::doSendCommand(double current_x, double current_y) {
+void BallTrackingHead::doSendCommand(double current_x, double current_y)
+{
   static int sframe=0;
   static unsigned int stime=0;
   double command_x=-1, command_y=-1;
@@ -93,43 +94,47 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y) {
   }
   sframe++;
   return;
-  if (fabs(current_x-expect_x)< 100) {
-	if (fabs(target_x - current_x) > maxcommand_x)
-	  command_x = current_x + maxcommand_x*fsgn(target_x - current_x);
-	else command_x = target_x;
-	if (fabs(command_x-current_x) > 0.0) {
-	  robotC->send("headPan.val = %lf,",command_x);
-	  expect_x = command_x;
-	}
-	else command_x = -1;
-  }
-  if (fabs(current_y-expect_y)< 100) {
-	if (fabs(target_y - current_y) > maxcommand_y)
-	  command_y = current_y + maxcommand_y*fsgn(target_y - current_y);
-	else command_y = target_y;
-	if (fabs(command_y-current_y) > 0.0) {
-	  robotC->send("headTilt.val = %lf,",command_y);
-	  expect_y = command_y;
-	}
-	else command_y = -1;
-  }
+  if (fabs(current_x-expect_x)< 100)
+    {
+      if (fabs(target_x - current_x) > maxcommand_x)
+	command_x = current_x + maxcommand_x*fsgn(target_x - current_x);
+      else command_x = target_x;
+      if (fabs(command_x-current_x) > 0.0) {
+	robotC->send("headPan.val = %lf,",command_x);
+	expect_x = command_x;
+      }
+      else command_x = -1;
+    }
+  if (fabs(current_y-expect_y)< 100)
+    {
+      if (fabs(target_y - current_y) > maxcommand_y)
+	command_y = current_y + maxcommand_y*fsgn(target_y - current_y);
+      else command_y = target_y;
+      if (fabs(command_y-current_y) > 0.0) {
+	robotC->send("headTilt.val = %lf,",command_y);
+	expect_y = command_y;
+      }
+      else command_y = -1;
+    }
 
-  if (command_x!=-1 || command_y!=-1) {
-	if (! (sframe % 1000)) {
-	  if (stime)
-	    robotC->printf("!! csps %f\n",
-			   1000000.0/(float)(robotC->getCurrentTime()-stime));
-	  stime=robotC->getCurrentTime();
-	}
-	sframe++;
-  }
+  if (command_x!=-1 || command_y!=-1)
+    {
+      if (! (sframe % 1000)) {
+	if (stime)
+	  robotC->printf("!! csps %f\n",
+			 1000000.0/(float)(robotC->getCurrentTime()-stime));
+	stime=robotC->getCurrentTime();
+      }
+      sframe++;
+    }
 }
 
 
-UCallbackAction
-BallTrackingHead::getHead(bool pan, const UMessage &msg) {
-  if (msg.type != MESSAGE_DATA && msg.value->type != urbi::DATA_DOUBLE)
-    return URBI_CONTINUE;
+urbi::UCallbackAction
+BallTrackingHead::getHead(bool pan, const urbi::UMessage &msg)
+{
+  if (msg.type != urbi::MESSAGE_DATA && msg.value->type != urbi::DATA_DOUBLE)
+    return urbi::URBI_CONTINUE;
 
   PositionData pd;
   pd.frame = msg.timestamp/32;
@@ -145,18 +150,20 @@ BallTrackingHead::getHead(bool pan, const UMessage &msg) {
       current_y.resize(VSIZE);
     }
 
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
-UCallbackAction BallTrackingHead::getImage(const UMessage &msg) {
+urbi::UCallbackAction
+BallTrackingHead::getImage(const urbi::UMessage &msg)
+{
   static int framenum=0;
   static float interframe=0;
   static int frametime=0;
 
-  if (msg.type != MESSAGE_DATA
+  if (msg.type != urbi::MESSAGE_DATA
       && msg.value->type != urbi::DATA_BINARY
       && msg.value->binary->type != urbi::BINARY_IMAGE)
-    return URBI_CONTINUE;
+    return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
   double cx=0, cy=0;
@@ -185,8 +192,8 @@ UCallbackAction BallTrackingHead::getImage(const UMessage &msg) {
   framenum++;
   int imgsize = 500000;
   if (img.imageFormat == urbi::IMAGE_JPEG)
-    convertJPEGtoYCrCb((const byte *) img.data,
-		       img.size, image, imgsize);
+    urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data,
+			     img.size, image, imgsize);
   else
     memcpy(image, img.data, img.width * img.height * 3);
 
@@ -231,22 +238,23 @@ UCallbackAction BallTrackingHead::getImage(const UMessage &msg) {
   }
 
 #ifndef LIBURBI_OPENR
-  convertYCrCbtoRGB(image, w*h*3, image);
+  urbi::convertYCrCbtoRGB(image, w*h*3, image);
   if (!mon)
     mon = new Monitor(w, h, "Image");
   mon->setImage((bits8*)image, img.width*img.height*3);
 #endif
 
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
 
-BallTrackingHead::BallTrackingHead(const char * robotname) {
-  robotI=new UClient(robotname);
+BallTrackingHead::BallTrackingHead(const char * robotname)
+{
+  robotI=new urbi::UClient(robotname);
   robotI->start();
   if (robotI->error())
     urbi::exit(1);
-  robotC=new UClient(robotname);
+  robotC=new urbi::UClient(robotname);
   robotC->start();
   if (robotC->error())
     urbi::exit(1);

@@ -1,5 +1,5 @@
 /**
-Sends a binary file to the URBI server, to be saved in a variable
+   Send a binary file to the URBI server, to be saved in a variable.
 */
 #include <uclient.h>
 #include <sys/types.h>
@@ -10,26 +10,35 @@ Sends a binary file to the URBI server, to be saved in a variable
 #define sleep(a) Sleep(a*1000)
 #endif
 
-int main(int argc, char * argv[]) {
-  if (argc < 4 || argc >5) {
-    printf("usage: %s robotname variablename filename ['BIN headers']\n"
-	   "\t send the content of a file to the URBI server, to be saved in a variable\n"
-	   "\t example: %s myrobot sounds.hello ~/sounds/hello.wav WAV\n",argv[0], argv[0]);
-    return -1;
-  }
+int main(int argc, char * argv[])
+{
+  if (argc < 4 || argc >5)
+    {
+      printf("usage: %s robotname variablename filename ['BIN headers']\n"
+	     "\t send the content of a file to the URBI server, to be saved in a variable\n"
+	     "\t example: %s myrobot sounds.hello ~/sounds/hello.wav WAV\n",argv[0], argv[0]);
+      return -1;
+    }
+
   char * headers= "";
   if (argc==5)
     headers=argv[4];
-  UClient * uc=new UClient(argv[1]);
-  if (uc->error()) exit(2);
-  
+
+  urbi::UClient uc(argv[1]);
+  if (uc.error())
+    exit(2);
+
   FILE *f;
-  if (!strcmp(argv[3],"-")) 
+  if (!strcmp(argv[3],"-"))
     f = stdin;
-  else 
+  else
     f = fopen(argv[3],"r");
-  if (!f) { printf("error opening file\n"); exit(3); }
-  
+  if (!f)
+    {
+      printf("error opening file\n");
+      exit(3);
+    }
+
   char * buffer;
   int pos;
   //read the whole file in memory
@@ -41,7 +50,7 @@ int main(int argc, char * argv[]) {
       printf("not enough memory\n");
       return -2;
     }
-    
+
     pos=0;
     while (true) {
       int r = fread(buffer + pos, 1, st.st_size-pos, f);
@@ -70,8 +79,7 @@ int main(int argc, char * argv[]) {
       }
     }
   }
-  
-  uc->sendBin(buffer, pos, "%s = BIN %d %s;", argv[2], pos, headers);
+
+  uc.sendBin(buffer, pos, "%s = BIN %d %s;", argv[2], pos, headers);
   sleep(1);
-  return 0;
 }

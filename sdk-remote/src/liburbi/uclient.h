@@ -26,38 +26,40 @@
 
 # include "uabstractclient.h"
 
-///Linux implementation of UAbstractClient.
-/*! This implementation creates a thread for each instance of UClient, which
-  listens on the associated socket.
- */
-class UClient: public UAbstractClient {
+namespace urbi
+{
+  ///Linux implementation of UAbstractClient.
+  /*! This implementation creates a thread for each instance of UClient, which
+    listens on the associated socket.
+  */
+  class UClient: public UAbstractClient
+  {
+  public:
+    UClient(const char *_host,int _port = URBI_PORT,int _buflen = URBI_BUFLEN);
 
- public:
+    virtual ~UClient();
 
-  UClient(const char *_host,int _port = URBI_PORT,int _buflen = URBI_BUFLEN);
+    //! For compatibility with older versions of the library
+    void start() {}
 
-  virtual ~UClient();
+    //! For internal use.
+    void listenThread();
 
-  //! For compatibility with older versions of the library
-  void start() {}
-
-  //! For internal use.
-  void listenThread();
-
-  virtual void printf(const char * format, ...);
-  virtual unsigned int getCurrentTime();
-
-
- protected:
-
-  virtual int  effectiveSend(const void * buffer, int size);
-  virtual bool canSend(int size);
+    virtual void printf(const char * format, ...);
+    virtual unsigned int getCurrentTime();
 
 
-  int             sd;                  ///< Socket file descriptor.
- private:
-  int             control_fd[2];       ///< Pipe for termination notification.
-  void           *thread;
-};
+  protected:
 
+    virtual int  effectiveSend(const void * buffer, int size);
+    virtual bool canSend(int size);
+
+
+    int             sd;                  ///< Socket file descriptor.
+  private:
+    int             control_fd[2];       ///< Pipe for termination notification.
+    void           *thread;
+  };
+  
+} // namespace urbi
 #endif

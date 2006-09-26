@@ -1,7 +1,7 @@
 #include <uclient.h>
 #include <signal.h>
 
-UClient *c, *d;
+urbi::UClient *c, *d;
 
 char * devices[]={
   "legLF1",
@@ -23,21 +23,27 @@ char * devices[]={
   "tailPan",
   "mouth"
 };
+
 int devCount=18;
-UCallbackAction command(const UMessage &msg) {
+
+urbi::UCallbackAction
+command(const urbi::UMessage &msg)
+{
   //get command id
-  if (msg.type != MESSAGE_DATA
+  if (msg.type != urbi::MESSAGE_DATA
       && msg.value->type != urbi::DATA_DOUBLE)
-    return URBI_CONTINUE;
+    return urbi::URBI_CONTINUE;
   d->send("%s.val = %lf,", msg.tag.c_str (), (double) *msg.value);
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
-void endRecord(int sig) {
+void endRecord(int sig)
+{
   urbi::exit(0);
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[])
+{
   if (argc != 3) {
     printf("usage: %s sourcerobot destinationrobot [motorstate]\n"
 	   "\t Mirror the movements of one robot to the other.\n",
@@ -47,11 +53,11 @@ int main(int argc, char * argv[]) {
 
   signal(SIGINT,endRecord);
 
-  c = new UClient(argv[1]);
+  c = new urbi::UClient(argv[1]);
   if (c->error())
     urbi::exit(2);
 
-  d = new UClient(argv[2]);
+  d = new urbi::UClient(argv[2]);
   if (d->error())
     urbi::exit(2);
 

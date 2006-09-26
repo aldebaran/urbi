@@ -23,65 +23,71 @@
 
 #include "uclient.h"
 
-class Semaphore;
-class Lockable;
-
-/*! Format in which image requested with syncGetSound are transmitted*/
-enum UTransmitFormat
+namespace urbi
 {
-  URBI_TRANSMIT_JPEG, ///< Transmit images compressed in JPEG
-  URBI_TRANSMIT_YCbCr ///< Transmit raw YCbCr images
-};
+  class Semaphore;
+  class Lockable;
 
-/// UClient linux implementation with support for synchronous functions.
-/*! These functions differs from the UClient interface in that they are
-  synchronous. One must seriously ponder the fact that they are not easily
-  portable before using them.
- */
-class USyncClient: public UClient
-{
- public:
-  USyncClient(const char *_host,
-	      int _port = URBI_PORT,
-	      int _buflen = URBI_BUFLEN);
+  /*! Format in which image requested with syncGetSound are transmitted*/
+  enum UTransmitFormat
+    {
+      /// Transmit images compressed in JPEG.
+      URBI_TRANSMIT_JPEG,
+      /// Transmit raw YCbCr images.
+      URBI_TRANSMIT_YCbCr
+    };
 
-  /// Sends the expression and returns the result.
-  UMessage * syncGet(const char * expression,...);
+  /// UClient linux implementation with support for synchronous functions.
+  /*! These functions differs from the UClient interface in that they are
+    synchronous. One must seriously ponder the fact that they are not easily
+    portable before using them.
+  */
+  class USyncClient: public UClient
+  {
+  public:
+    USyncClient(const char *_host,
+		int _port = URBI_PORT,
+		int _buflen = URBI_BUFLEN);
 
-  /// Send given buffer without copying it.
-  int syncSend(const void * buffer, int length);
+    /// Sends the expression and returns the result.
+    UMessage * syncGet(const char * expression,...);
 
-  /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
-  int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
-		   int format, int transmitFormat, int &width, int &height);
+    /// Send given buffer without copying it.
+    int syncSend(const void * buffer, int length);
 
-  /// Get the value of a device in a synchronous way. Returns 1 on success, 0 on failure.
-  int syncGetDevice(const char* device, double &val);
+    /// Get an image in a synchronous way. Returns 1 on success, 0 on failure.
+    int syncGetImage(const char* cameraDevice, void* buffer, int &buffersize,
+		     int format, int transmitFormat, int &width, int &height);
 
-  /// Execute an URBI command, return the resulting double value. Returns 1 on success, 0 on failure.
-  int syncGetResult(const char* command, double &val);
+    /// Get the value of a device in a synchronous way. Returns 1 on success, 0 on failure.
+    int syncGetDevice(const char* device, double &val);
 
-  /// Get the normalized value of a device in a synchronous way. Returns 1 on success, 0 on failure.
-  int syncGetNormalizedDevice(const char* device, double &val);
+    /// Execute an URBI command, return the resulting double value. Returns 1 on success, 0 on failure.
+    int syncGetResult(const char* command, double &val);
 
-  /// Get a field of a device in a synchronous way. Returns 1 on success, 0 on failure.
-  int syncGetDevice(const char* device, const char * field, double &val);
+    /// Get the normalized value of a device in a synchronous way. Returns 1 on success, 0 on failure.
+    int syncGetNormalizedDevice(const char* device, double &val);
 
-  /// Get sound for duration milliseconds in buffer.
-  int syncGetSound(const char * device, int duration, urbi::USound &sound);
+    /// Get a field of a device in a synchronous way. Returns 1 on success, 0 on failure.
+    int syncGetDevice(const char* device, const char * field, double &val);
 
-  /// Wait until a message with specified tag is received. Returned message must be deleted.
-  UMessage * waitForTag(const char * tag);
-  /// Overriding UAbstractclient implementation
-  virtual void notifyCallbacks(const UMessage &msg);
+    /// Get sound for duration milliseconds in buffer.
+    int syncGetSound(const char * device, int duration, USound &sound);
 
-  void callbackThread();
+    /// Wait until a message with specified tag is received. Returned message must be deleted.
+    UMessage * waitForTag(const char * tag);
+    /// Overriding UAbstractclient implementation
+    virtual void notifyCallbacks(const UMessage &msg);
 
- private:
-  Semaphore * sem;
-  std::list<UMessage*> queue;
-  Lockable * queueLock;
-  UMessage * msg;
-  Semaphore * syncLock;
-  std::string syncTag;
-};
+    void callbackThread();
+
+  private:
+    Semaphore * sem;
+    std::list<UMessage*> queue;
+    Lockable * queueLock;
+    UMessage * msg;
+    Semaphore * syncLock;
+    std::string syncTag;
+  };
+
+} // namespace urbi

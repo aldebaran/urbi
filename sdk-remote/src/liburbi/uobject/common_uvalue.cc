@@ -22,12 +22,6 @@
 #include <sstream>
 #include <iostream>
 
-std::ostream&
-operator<<(std::ostream &s, const urbi::UValue &v)
-{
-  return v.print (s);
-}
-
 namespace urbi
 {
 
@@ -35,7 +29,8 @@ namespace urbi
   //// UValue Parsing
   //////////////////////
 
-  void unescape(std::string & data) {
+  void unescape(std::string & data)
+  {
     int src=0, dst=0;
     while (data[src]) {
       if (data[src]!='\\')
@@ -62,7 +57,8 @@ namespace urbi
     data[dst] = 0;
   }
 
-  void unescape(char * data) {
+  void unescape(char * data)
+  {
     char* src = data;
     char * dst = data;
     while (*src) {
@@ -105,128 +101,128 @@ namespace urbi
       //get terminating '"'
       int p=pos+1;
       while (message[p] && message[p]!='"') {
-        if (message[p]=='\\')
-          p++;
-        p++;
+	if (message[p]=='\\')
+	  p++;
+	p++;
       }
       if (!message[p])
-        return -p; //parse error
-      
+	return -p; //parse error
+
       stringValue = new std::string(message+pos+1, p-pos-1);
       unescape(*stringValue);
       return p+1;
       }
-      
+
       if (message[pos] == '[') {
-        //list message
-        type = DATA_LIST;
-        list = new UList();
-        pos++;
-        while (message[pos]==' ') pos++;
-        while (message[pos]) {
-          while (message[pos]==' ') pos++;
-          UValue *v = new UValue();
-          int p = v->parse(message, pos, bins, binpos);
-          if (p<0)
-            return p;
-          list->array.push_back(v);
-          pos = p;
-          while (message[pos]==' ') pos++;
-          //expect , or rbracket
-          if (message[pos]==']')
-            break;
-          if (message[pos]!=',')
-            return -pos;
-          pos++;
-        }
-        
-        if (message[pos]!=']')
-          return -pos;
-        return pos+1;
+	//list message
+	type = DATA_LIST;
+	list = new UList();
+	pos++;
+	while (message[pos]==' ') pos++;
+	while (message[pos]) {
+	  while (message[pos]==' ') pos++;
+	  UValue *v = new UValue();
+	  int p = v->parse(message, pos, bins, binpos);
+	  if (p<0)
+	    return p;
+	  list->array.push_back(v);
+	  pos = p;
+	  while (message[pos]==' ') pos++;
+	  //expect , or rbracket
+	  if (message[pos]==']')
+	    break;
+	  if (message[pos]!=',')
+	    return -pos;
+	  pos++;
+	}
+
+	if (message[pos]!=']')
+	  return -pos;
+	return pos+1;
       }
 
       //OBJ a [x:12, y:4]
       if (!strncmp(message+pos, "OBJ ", 4)) {
-        //obj message
-        pos+=4;
-        type = DATA_OBJECT;
-        object = new UObjectStruct();
-        
-        //parse object name
-        while (message[pos]==' ')
-          pos++;
-        
-        int p = pos;
-        while (message[p] && message[p]!=' ')
-          p++;
-        if (!message[p])
-          return -p; //parse error
-        object->refName = std::string(message+pos, p-pos);
-        pos=p;
-        
-        
-        while (message[pos]==' ')
-          pos++;
-        if (message[pos]!='[')
-          return -pos;
-        pos++;
-        
-        while (message[pos]) {
-          while (message[pos]==' ') pos++;
-          //parse name
-          int p = pos;
-          while (message[p] && message[p]!=':')
-            p++;
-          if (!message[p])
-            return -p; //parse error
-          p++;
-          UNamedValue nv;
-          nv.name = std::string(message+pos, p-pos-1);
-          pos=p;
-          while (message[pos]==' ') pos++;
-          UValue *v = new UValue();
-          p = v->parse(message, pos, bins, binpos);
-          if (p<0)
-            return p;
-          nv.val = v;
-          object->array.push_back(nv);
-          pos = p;
-          while (message[pos]==' ') pos++;
-          //expect , or rbracket
-          if (message[pos]==']')
-            break;
-          if (message[pos]!=',')
-            return -pos;
-          pos++;
-        }
-        
-        if (message[pos]!=']')
-          return -pos;
-        return pos+1;
+	//obj message
+	pos+=4;
+	type = DATA_OBJECT;
+	object = new UObjectStruct();
+
+	//parse object name
+	while (message[pos]==' ')
+	  pos++;
+
+	int p = pos;
+	while (message[p] && message[p]!=' ')
+	  p++;
+	if (!message[p])
+	  return -p; //parse error
+	object->refName = std::string(message+pos, p-pos);
+	pos=p;
+
+
+	while (message[pos]==' ')
+	  pos++;
+	if (message[pos]!='[')
+	  return -pos;
+	pos++;
+
+	while (message[pos]) {
+	  while (message[pos]==' ') pos++;
+	  //parse name
+	  int p = pos;
+	  while (message[p] && message[p]!=':')
+	    p++;
+	  if (!message[p])
+	    return -p; //parse error
+	  p++;
+	  UNamedValue nv;
+	  nv.name = std::string(message+pos, p-pos-1);
+	  pos=p;
+	  while (message[pos]==' ') pos++;
+	  UValue *v = new UValue();
+	  p = v->parse(message, pos, bins, binpos);
+	  if (p<0)
+	    return p;
+	  nv.val = v;
+	  object->array.push_back(nv);
+	  pos = p;
+	  while (message[pos]==' ') pos++;
+	  //expect , or rbracket
+	  if (message[pos]==']')
+	    break;
+	  if (message[pos]!=',')
+	    return -pos;
+	  pos++;
+	}
+
+	if (message[pos]!=']')
+	  return -pos;
+	return pos+1;
       }
 
       if (!strncmp(message+pos,"void",4)) {
-        //void
-        type = DATA_VOID;
-        pos +=4;
-        return pos;
+	//void
+	type = DATA_VOID;
+	pos +=4;
+	return pos;
       }
-    
+
       if (!strncmp(message+pos,"BIN ",4)) {
-        //binary message: delegate
-        type = DATA_BINARY;
-        binary = new UBinary();
-        pos +=4;
-        //parsing type
-        int p = binary->parse(message, pos, bins, binpos);
-        return p;
+	//binary message: delegate
+	type = DATA_BINARY;
+	binary = new UBinary();
+	pos +=4;
+	//parsing type
+	int p = binary->parse(message, pos, bins, binpos);
+	return p;
       }
 
       //last attempt: double
       int p;
       int count = sscanf(message+pos, "%lf%n", &val, &p);
       if (!count)
-        return -pos;
+	return -pos;
       type = DATA_DOUBLE;
       pos +=p;
       return pos;

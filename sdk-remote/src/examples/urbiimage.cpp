@@ -30,7 +30,6 @@
 #include "usyncclient.h"
 #include "monitor.h"
 
-
 int imcount;
 int format;
 Monitor *mon=0;
@@ -38,19 +37,21 @@ unsigned char * buffer=NULL;
 
 
 /* Our callback function */
-UCallbackAction showImage(const UMessage &msg)
+urbi::UCallbackAction
+showImage(const urbi::UMessage &msg)
 {
-  if (msg.type != MESSAGE_DATA
+  using urbi::byte;
+
+  if (msg.type != urbi::MESSAGE_DATA
       && msg.value->type != urbi::DATA_BINARY
       && msg.value->binary->type != urbi::BINARY_IMAGE)
-    return URBI_CONTINUE;
+    return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
 
   static unsigned char* buffer = (unsigned char*) malloc(3*400*400);
   int sz = 500000;
   static int tme = 0;
-
   /* Calculate framerate. */
   if (!(imcount % 20)) {
     if (tme) {
@@ -64,17 +65,17 @@ UCallbackAction showImage(const UMessage &msg)
   if (!mon)
     mon = new Monitor(img.width, img.height, "image");
 
-
   if (img.imageFormat == urbi::IMAGE_JPEG)
-    convertJPEGtoRGB((const byte *) img.data, img.size, (byte *) buffer, sz);
+    urbi::convertJPEGtoRGB((const byte *) img.data, 
+			   img.size, (byte *) buffer, sz);
   else if (img.imageFormat == urbi::IMAGE_YCbCr) {
     sz = img.size;
-    convertYCrCbtoRGB((const byte *) img.data, img.size, (byte *) buffer);
+    urbi::convertYCrCbtoRGB((const byte *) img.data, img.size, (byte *) buffer);
   }
 
   mon->setImage((bits8 *) buffer, sz);
   imcount++;
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
 void closeandquit(int sig)
@@ -102,7 +103,7 @@ int main(int argc, char *argv[])
   int mode = 0;
   if (argc >=5)
     mode = 1;
-  USyncClient & client = *new USyncClient(argv[2+mode*2]);
+  urbi::USyncClient client (argv[2+mode*2]);
 
   if (client.error() != 0)
     urbi::exit(0);
@@ -146,7 +147,10 @@ int main(int argc, char *argv[])
 
     client.syncGetImage("camera", buff, sz,
 			format,
-			format == urbi::IMAGE_JPEG?URBI_TRANSMIT_JPEG:URBI_TRANSMIT_YCbCr, w, h);
+			(format == urbi::IMAGE_JPEG
+			 ? urbi::URBI_TRANSMIT_JPEG
+			 : urbi::URBI_TRANSMIT_YCbCr),
+			w, h);
 
     FILE *f = fopen(argv[3], "w");
 

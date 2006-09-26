@@ -34,456 +34,482 @@
 # include <iostream>
 # include <string>
 # include "uobject.h"
+# include "uconversion.h"
 
-static const int URBI_BUFLEN    = 128000 ; ///< Connection Buffer size.
-static const int URBI_PORT      = 54000  ; ///< Standard port of URBI server.
-static const int URBI_MAX_TAG_LENGTH = 64; ///< Maximum length of an URBI tag.
+namespace urbi
+{
+  /// Connection Buffer size.
+  static const int URBI_BUFLEN    = 128000 ;
+  /// Standard port of URBI server.
+  static const int URBI_PORT      = 54000  ;
+  /// Maximum length of an URBI tag.
+  static const int URBI_MAX_TAG_LENGTH = 64;
 
-/// Return values for the callack functions.
-/*! Each callback function, when called, must return with either URBI_CONTINUE
-  or URBI_REMOVE:
-  - URBI_CONTINUE means that the client should continue to call this callbak
-  function.
-  - URBI_REMOVE means that the client should never call this callback again.
- */
-enum UCallbackAction {
-  URBI_CONTINUE=0,
-  URBI_REMOVE
-};
+  /// Return values for the callack functions.
+  /*! Each callback function, when called, must return with either URBI_CONTINUE
+    or URBI_REMOVE:
+    - URBI_CONTINUE means that the client should continue to call this callbak
+    function.
+    - URBI_REMOVE means that the client should never call this callback again.
+  */
+  enum UCallbackAction {
+    URBI_CONTINUE=0,
+    URBI_REMOVE
+  };
 
-typedef unsigned int UCallbackID;
+  typedef unsigned int UCallbackID;
 
 # define DEBUG 0
 
-class UCallbackList;
-class UAbstractClient;
+  class UCallbackList;
+  class UAbstractClient;
 # define UINVALIDCALLBACKID 0
 
-enum UMessageType {
-  MESSAGE_SYSTEM,
-  MESSAGE_ERROR,
-  MESSAGE_DATA
-};
-
-/// Class containing all informations related to an URBI message.
-class UMessage {
- public:
+  enum UMessageType {
+    MESSAGE_SYSTEM,
+    MESSAGE_ERROR,
+    MESSAGE_DATA
+  };
+
+  /// Class containing all informations related to an URBI message.
+  class UMessage {
+  public:
+
+    /// Connection from which originated the message.
+    UAbstractClient    &client;
+    /// Server-side timestamp.
+    int                timestamp;
+    /// Associated tag.
+    std::string        tag;
 
-  UAbstractClient    &client;       ///< connection from which originated the message
-  int                timestamp;     ///< server-side timestamp
-  std::string        tag;          ///< associated tag
+    UMessageType       type;
+
+    urbi::UValue       *value;
+    std::string        message;
+    /// Raw message without the binary data.
+    std::string        rawMessage;
 
-  UMessageType       type;
+    /// Parser constructor
+    UMessage(UAbstractClient & client, int timestamp,  const char *tag, const char *message,
+	     std::list<urbi::BinaryData> bins);
+    /// If alocate is true, everything is copied, eles pointers are stolen
+    UMessage(const UMessage &source);
 
-  urbi::UValue       *value;
-  std::string        message;
-  std::string        rawMessage; ///< Raw message without the binary data
+    /// Free everything if data was copied, doesn't free anything otherwise
+    ~UMessage();
 
-  /// Parser constructor
-  UMessage(UAbstractClient & client, int timestamp,  const char *tag, const char *message,
-	   std::list<urbi::BinaryData> bins);
-  /// If alocate is true, everything is copied, eles pointers are stolen
-  UMessage(const UMessage &source);
+    operator urbi::UValue& () {return *value;}
 
-  /// Free everything if data was copied, doesn't free anything otherwise
-  ~UMessage();
+  };
 
-  operator urbi::UValue& () {return *value;}
+  std::ostream & operator <<(std::ostream &s, const UMessage &m);
 
-};
+  /// Callback prototypes.
+  typedef UCallbackAction (*UCallback)             (const UMessage &msg);
 
-std::ostream & operator <<(std::ostream &s, const UMessage &m);
 
-/// Callback prototypes.
-typedef UCallbackAction (*UCallback)             (const UMessage &msg);
+  typedef UCallbackAction (*UCustomCallback)       (void * callbackData,
+						    const UMessage &msg);
 
 
-typedef UCallbackAction (*UCustomCallback)       (void * callbackData,
-						 const UMessage &msg);
+  //used internaly
+  class UCallbackWrapper;
 
+  //used internaly
+  class UCallbackInfo {
+  public:
+    char tag[URBI_MAX_TAG_LENGTH];
+    UCallbackWrapper & callback;
+    int id;
+    bool operator ==(int id) const {return id==this->id;}
+    UCallbackInfo(UCallbackWrapper &w): callback(w) {}
+  };
+  //used internaly
+  class UClientStreambuf;
+  class Lockable;
 
-//used internaly
-class UCallbackWrapper;
+  /// Interface for an URBI wrapper object.
+  /*! Implementations of this interface are wrappers around the URBI protocol.
+    It handles URBI messages parsing, callback registration and various
+    formatting functions.
+    Implementations of this interface should:
+    - Redefine errorNotify() as a function able to notify the user of eventual
+    errors.
+    - Redfine the four mutual exclusion functions.
+    - Redefine effectiveSend().
+    - Fill recvBuffer, update recvBufferPosition and call processRecvBuffer()
+    when new data is available.
+    - Provide an execute() function in the namespace urbi, that never returns,
+    and that will be called after initialization.
 
-//used internaly
-class UCallbackInfo {
- public:
-  char tag[URBI_MAX_TAG_LENGTH];
-  UCallbackWrapper & callback;
-  int id;
-  bool operator ==(int id) const {return id==this->id;}
-  UCallbackInfo(UCallbackWrapper &w): callback(w) {}
-};
-//used internaly
-class UClientStreambuf;
-class Lockable;
+    See the liburbi-cpp documentation for more informations on how to use this class.
+  */
+  class UAbstractClient : public std::ostream
+  {
+  public:
+    /// Create a new instance and connect to the Urbi server.
+    UAbstractClient(const char *_host,
+		    int _port = URBI_PORT,
+		    int _buflen = URBI_BUFLEN);
 
-/// Interface for an URBI wrapper object.
-/*! Implementations of this interface are wrappers around the URBI protocol.
-  It handles URBI messages parsing, callback registration and various
-  formatting functions.
-  Implementations of this interface should:
-  - Redefine errorNotify() as a function able to notify the user of eventual
-  errors.
-  - Redfine the four mutual exclusion functions.
-  - Redefine effectiveSend().
-  - Fill recvBuffer, update recvBufferPosition and call processRecvBuffer()
-  when new data is available.
-  - Provide an execute() function in the namespace urbi, that never returns,
-  and that will be called after initialization.
+    virtual ~UAbstractClient();
 
-  See the liburbi-cpp documentation for more informations on how to use this class.
- */
-class UAbstractClient : public std::ostream
-{
- public:
-  /// Create a new instance and connect to the Urbi server.
-  UAbstractClient(const char *_host,
-		  int _port = URBI_PORT,
-		  int _buflen = URBI_BUFLEN);
+    /// Return current error status, or zero if no error occurred.
+    int error() {return(rc);};
 
-  virtual ~UAbstractClient();
 
-  /// Return current error status, or zero if no error occurred.
-  int error() {return(rc);};
+    // Sending
 
+    /// Function for backward compatibility. Will be removed in future versions.
+    int send() { endPack(); return 0;}
 
-  // Sending
+    /// Send an Urbi command. The syntax is similar to the printf() function.
+    int send(const char* format,...);
 
-  /// Function for backward compatibility. Will be removed in future versions.
-  int send() { endPack(); return 0;}
+    ///send the value without any prefix or terminator
+    int send(urbi::UValue& v);
 
-  /// Send an Urbi command. The syntax is similar to the printf() function.
-  int send(const char* format,...);
+    /// Send binary data.
+    int sendBin(const void*, int len);
 
-  ///send the value without any prefix or terminator
-  int send(urbi::UValue& v);
+    /// Send an Urbi header followed by binary data.
+    int sendBin(const void*, int len,const char * header,...);
 
-  /// Send binary data.
-  int sendBin(const void*, int len);
+    /// Lock the send buffer (for backward compatibility, will be removed in future versions).
+    int startPack();
 
-  /// Send an Urbi header followed by binary data.
-  int sendBin(const void*, int len,const char * header,...);
+    /// Unlock the send buffer (for backward compatibility, will be removed in future versions).
+    int endPack();
 
-  /// Lock the send buffer (for backward compatibility, will be removed in future versions).
-  int startPack();
+    /// Append Urbi commands to the send buffer (for backward compatibility, will be removed in future versions).
+    int pack(const char*,...);
 
-  /// Unlock the send buffer (for backward compatibility, will be removed in future versions).
-  int endPack();
+    /// va_list version of pack.
+    int vpack(const char*,va_list args);
 
-  /// Append Urbi commands to the send buffer (for backward compatibility, will be removed in future versions).
-  int pack(const char*,...);
+    /// Send urbi commands contained in a file.
+    int sendFile(const char * filename);
 
-  /// va_list version of pack.
-  int vpack(const char*,va_list args);
+    /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
+    UCallbackID sendCommand(UCallback ,const char*,...);
 
-  /// Send urbi commands contained in a file.
-  int sendFile(const char * filename);
+    /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
+    UCallbackID sendCommand(UCustomCallback ,void *,const char*,...);
 
-  /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
-  UCallbackID sendCommand(UCallback ,const char*,...);
+    /// Send sound data to the robot for immediate playback.
+    int sendSound(const char * device,
+		  const urbi::USound &sound, const char * tag=0);
 
-  /// Send a command, prefixing it with a tag, and associate the given callback with this tag. */
-  UCallbackID sendCommand(UCustomCallback ,void *,const char*,...);
+    /// Put a file on the robot's mass storage device.
+    int putFile(const char * localName, const char * remoteName=0);
 
-  /// Send sound data to the robot for immediate playback.
-  int sendSound(const char * device,
-		const urbi::USound &sound, const char * tag=0);
+    /// Save a buffer to a file on the robot.
+    int putFile(const void * buffer, int length, const char * remoteName);
 
-  /// Put a file on the robot's mass storage device.
-  int putFile(const char * localName, const char * remoteName=0);
 
-  /// Save a buffer to a file on the robot.
-  int putFile(const void * buffer, int length, const char * remoteName);
+    // Receiving
 
+    /// Associate a callback function with a tag. new style
+    UCallbackID setCallback(UCallbackWrapper & callback, const char * tag);
 
-  // Receiving
+    /// Associate a callbaxk function with all error messages
+    UCallbackID setErrorCallback(UCallbackWrapper & callback);
 
-  /// Associate a callback function with a tag. new style
-  UCallbackID setCallback(UCallbackWrapper & callback, const char * tag);
+    /// Associate a callback with all messages
+    UCallbackID setWildcardCallback(UCallbackWrapper & callback);
 
-  /// Associate a callbaxk function with all error messages
-  UCallbackID setErrorCallback(UCallbackWrapper & callback);
+    /// OLD-style callbacks
+    UCallbackID setCallback(UCallback ,const char* tag);
 
-  /// Associate a callback with all messages
-  UCallbackID setWildcardCallback(UCallbackWrapper & callback);
+    /// Associate a callback function with a tag, specifiing a callback custom value that will be passed back to the callback function.
+    UCallbackID setCallback(UCustomCallback ,void * callbackData,const char* tag);
 
-  /// OLD-style callbacks
-  UCallbackID setCallback(UCallback ,const char* tag);
+    /// Callback to class member functions(old-style).
+    template<class C>                                         UCallbackID setCallback(C& ref,
+										      UCallbackAction (C::*)(                 const UMessage &),                 const char * tag);
+    template<class C, class P1>                               UCallbackID setCallback(C& ref,
+										      UCallbackAction (C::*)(P1 ,             const UMessage &), P1,             const char * tag);
+    template<class C, class P1, class P2>                     UCallbackID setCallback(C& ref,
+										      UCallbackAction (C::*)(P1 , P2,         const UMessage &), P1, P2,         const char * tag);
+    template<class C, class P1, class P2, class P3>           UCallbackID setCallback(C& ref,
+										      UCallbackAction (C::*)(P1 , P2, P3,     const UMessage &), P1, P2, P3,     const char * tag);
+    template<class C, class P1, class P2, class P3, class P4> UCallbackID setCallback(C& ref,
+										      UCallbackAction (C::*)(P1 , P2, P3, P4, const UMessage &), P1, P2, P3, P4, const char * tag);
 
-  /// Associate a callback function with a tag, specifiing a callback custom value that will be passed back to the callback function.
-  UCallbackID setCallback(UCustomCallback ,void * callbackData,const char* tag);
+    /// Get the tag associated with a registered callback.
+    int getAssociatedTag(UCallbackID id, char * tag);
 
-  /// Callback to class member functions(old-style).
-  template<class C>                                         UCallbackID setCallback(C& ref,
-										    UCallbackAction (C::*)(                 const UMessage &),                 const char * tag);
-  template<class C, class P1>                               UCallbackID setCallback(C& ref,
-										    UCallbackAction (C::*)(P1 ,             const UMessage &), P1,             const char * tag);
-  template<class C, class P1, class P2>                     UCallbackID setCallback(C& ref,
-										    UCallbackAction (C::*)(P1 , P2,         const UMessage &), P1, P2,         const char * tag);
-  template<class C, class P1, class P2, class P3>           UCallbackID setCallback(C& ref,
-										    UCallbackAction (C::*)(P1 , P2, P3,     const UMessage &), P1, P2, P3,     const char * tag);
-  template<class C, class P1, class P2, class P3, class P4> UCallbackID setCallback(C& ref,
-										    UCallbackAction (C::*)(P1 , P2, P3, P4, const UMessage &), P1, P2, P3, P4, const char * tag);
+    /// Delete a callback.
+    int deleteCallback(UCallbackID callBackID);
 
-  /// Get the tag associated with a registered callback.
-  int getAssociatedTag(UCallbackID id, char * tag);
+    /// Fill tag with a unique tag for this client.
+    void makeUniqueTag(char * tag);
 
-  /// Delete a callback.
-  int deleteCallback(UCallbackID callBackID);
+    /// Simulate an Urbi message.
+    virtual void notifyCallbacks(const UMessage &msg);
 
-  /// Fill tag with a unique tag for this client.
-  void makeUniqueTag(char * tag);
+    /// Notify of an error.
+    virtual void printf(const char * format, ...)=0;
 
-  /// Simulate an Urbi message.
-  virtual void notifyCallbacks(const UMessage &msg);
+    /// Get time in milliseconds since an unspecified but constant reference time.
+    virtual unsigned int getCurrentTime()=0;
 
-  /// Notify of an error.
-  virtual void printf(const char * format, ...)=0;
+    /// Return the server name or IP address.
+    const char * getServerName() {return host;}
 
-  /// Get time in milliseconds since an unspecified but constant reference time.
-  virtual unsigned int getCurrentTime()=0;
+    /// Called each time new data is available in recvBuffer.
+    void processRecvBuffer();
 
-  /// Return the server name or IP address.
-  const char * getServerName() {return host;}
+    std::ostream & getStream() { return *stream;}
+  protected:
 
-  /// Called each time new data is available in recvBuffer.
-  void processRecvBuffer();
+    /// Queue data for sending, returns zero on success, nonzero on failure.
+    virtual int effectiveSend(const void * buffer, int size)=0;
 
-  std::ostream & getStream() { return *stream;}
- protected:
+    /// Check if successive effectiveSend() of cumulated size 'size' will succeed.
+    virtual bool canSend(int size)=0;
 
-  /// Queue data for sending, returns zero on success, nonzero on failure.
-  virtual int effectiveSend(const void * buffer, int size)=0;
+    Lockable & sendBufferLock;
+    Lockable & listLock;
 
-  /// Check if successive effectiveSend() of cumulated size 'size' will succeed.
-  virtual bool canSend(int size)=0;
 
-  Lockable & sendBufferLock;
-  Lockable & listLock;
+    /// Add a callback to the list.
+    UCallbackID addCallback(const char * tag, UCallbackWrapper &w);
 
+    /// Host name.
+    char           *host;
+    /// Urbi Port.
+    int            port;
+    /// Urbi Buffer length.
+    int            buflen;
+    /// System calls return value storage.
+    int            rc;
 
-  UCallbackID addCallback(const char * tag, UCallbackWrapper &w); ///< Add a callback to the list.
-
-  char           *host;              ///< Host name.
-  int            port;               ///< URBI Port.
-  int            buflen;             ///< URBI Buffer length.
-  int            rc;                 ///< System calls return value storage.
-
-  char           *recvBuffer;        ///< Reception buffer.
-  int            recvBufferPosition; ///< Current position in reception buffer.
-  char           *sendBuffer;        ///< Temporary buffer for send data.
-
-
- private:
-  std::list<urbi::BinaryData> bins;      ///< BIN object for this command
-  void           *binaryBuffer;          ///< Temporary storage of binary data.
-  int            binaryBufferPosition;   ///< Current position in binaryBuffer.
-  int            binaryBufferLength;     ///< Size of binaryBuffer.
-
-  int            parsePosition;          ///< Position of parse in recvBuffer
-  bool           inString;               ///< True if preparsing is in a string
-  int            nBracket;               ///< Current depth of bracket
-  char           *currentCommand;        ///< Start of command, after [ts:tag] header
-
-  int            endOfHeaderPosition;    ///< Position of end of header.
-  char           currentTag[URBI_MAX_TAG_LENGTH];
-
-  int            currentTimestamp;
-
-  std::list<UCallbackInfo>callbackList;
-  int            uid;                    ///< Unique tag base.
-
-  std::ostream     *stream;
-
-  friend class UClientStreambuf;
-};
-
-# include "uconversion.h"
-
-class UCallbackWrapper {
- public:
-  virtual UCallbackAction operator ()(const UMessage &)=0;
-  virtual ~UCallbackWrapper() {}
-};
-
-
-template<class elementT> class ElementTraits {
- public:
-  typedef elementT  Element;
-  typedef elementT& ElementReference;
-  typedef const elementT& ConstElementReference;
-};
-
-template<class elementT> class ElementTraits<elementT&> {
- public:
-  typedef elementT  Element;
-  typedef elementT& ElementReference;
-  typedef const elementT& ConstElementReference;
-};
-
-
-
-class UCallbackWrapperF : public UCallbackWrapper {
-  UCallback cb;
- public:
-  UCallbackWrapperF(UCallback cb) : cb(cb) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return cb(msg);}
-  virtual ~UCallbackWrapperF() {}
-};
-
-class UCallbackWrapperCF : public UCallbackWrapper {
-  UCustomCallback cb;
-  void * cbData;
- public:
-  UCallbackWrapperCF(UCustomCallback cb, void * cbData) : cb(cb), cbData(cbData) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return cb(cbData, msg);}
-  virtual ~UCallbackWrapperCF() {}
-};
-
-template<class C> class UCallbackWrapper0 : public UCallbackWrapper {
-  C& instance;
-  UCallbackAction (C::*func)(const UMessage &);
- public:
-  UCallbackWrapper0(C& instance, UCallbackAction (C::*func)(const UMessage &))
-    : instance(instance), func(func) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(msg);}
-  virtual ~UCallbackWrapper0() {}
-};
-
-template<class C, class P1> class UCallbackWrapper1 : public UCallbackWrapper {
-  C& instance;
-  typename ElementTraits<P1>::Element  p1;
-  UCallbackAction (C::*funcPtr)(P1, const UMessage &);
- public:
-  UCallbackWrapper1(C& instance, UCallbackAction (C::*func)(P1, const UMessage &), P1 p1)
-    : instance(instance), funcPtr(func), p1(p1) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*funcPtr)(p1, msg);}
-   virtual ~UCallbackWrapper1() {}
-};
-
-template<class C, class P1, class P2> class UCallbackWrapper2 : public UCallbackWrapper {
-  C& instance;
-  typename ElementTraits<P1>::Element  p1;
-  typename ElementTraits<P2>::Element  p2;
-  UCallbackAction (C::*func)(P1, P2, const UMessage &);
- public:
-  UCallbackWrapper2(C& instance, UCallbackAction (C::*func)(P1, P2, const UMessage &), P1 p1, P2 p2)
-    : instance(instance), func(func), p1(p1), p2(p2) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(p1, p2, msg);}
-  virtual ~UCallbackWrapper2() {}
-};
-
-
-template<class C, class P1, class P2, class P3> class UCallbackWrapper3 : public UCallbackWrapper {
-  C& instance;
-  typename ElementTraits<P1>::Element  p1;
-  typename ElementTraits<P2>::Element  p2;
-  typename ElementTraits<P3>::Element  p3;
-  UCallbackAction (C::*func)(P1, P2, P3, const UMessage &);
- public:
-  UCallbackWrapper3(C& instance, UCallbackAction (C::*func)(P1, P2, P3, const UMessage &), P1 p1, P2 p2, P3 p3)
-    : instance(instance), func(func), p1(p1), p2(p2), p3(p3) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(p1, p2, p3, msg);}
-   virtual ~UCallbackWrapper3() {}
-};
-
-
-template<class C, class P1, class P2, class P3, class P4> class UCallbackWrapper4 : public UCallbackWrapper {
-  C& instance;
-  typename ElementTraits<P1>::Element  p1;
-  typename ElementTraits<P2>::Element  p2;
-  typename ElementTraits<P3>::Element  p3;
-  typename ElementTraits<P4>::Element  p4;
-  UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &);
- public:
-  UCallbackWrapper4(C& instance, UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4)
-    : instance(instance), func(func), p1(p1), p2(p2), p3(p3), p4(p4) {}
-  virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(p1, p2, p3, p4, msg);}
-  virtual ~UCallbackWrapper4() {}
-};
-
-//overloaded callback generators
-
-inline UCallbackWrapper& callback(UCallback cb) {
-  return *new UCallbackWrapperF(cb);
-}
-inline UCallbackWrapper& callback(UCustomCallback cb, void * data) {
-  return *new UCallbackWrapperCF(cb, data);
-}
-
-
-template<class C>                                          UCallbackWrapper& callback(C& ref,
-	UCallbackAction (C::*func)(                 const UMessage &)     ) {
-  return *new UCallbackWrapper0<C>(ref, func);
-}
-
-template<class C, class P1>                                UCallbackWrapper& callback(C& ref,
-	UCallbackAction (C::*func)(P1,              const UMessage &), P1 p1) {
-  return *new UCallbackWrapper1<C, P1>(ref, func, p1);
-}
-
-template<class C, class P1, class P2>                      UCallbackWrapper& callback(C& ref,
-	UCallbackAction (C::*func)(P1, P2,           const UMessage &), P1 p1, P2 p2) {
-  return *new UCallbackWrapper2<C, P1, P2>(ref, func, p1, p2);
-}
-
-template<class C, class P1, class P2, class P3>            UCallbackWrapper& callback(C& ref,
-	UCallbackAction (C::*func)(P1, P2, P3,           const UMessage &), P1 p1, P2 p2, P3 p3) {
-  return *new UCallbackWrapper3<C, P1, P2, P3>(ref, func, p1, p2, p3);
-}
-
-template<class C, class P1, class P2, class P3, class P4>  UCallbackWrapper& callback(C& ref,
-	UCallbackAction (C::*func)(P1, P2, P3, P4,           const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4) {
-  return *new UCallbackWrapper4<C, P1, P2, P3, P4>(ref, func, p1, p2, p3, p4);
-}
-
-
-
-
-//old-style addCallback, deprecated
-template<class C>                                          UCallbackID UAbstractClient::setCallback(C& ref,
-	     UCallbackAction (C::*func)(                 const UMessage &),                 const char * tag) {
-  return addCallback(tag, *new UCallbackWrapper0<C>(ref, func));
-}
-
-template<class C, class P1>                               UCallbackID UAbstractClient::setCallback(C& ref,
-	     UCallbackAction (C::*func)(P1 ,             const UMessage &), P1 p1,          const char * tag){
-  return addCallback(tag, *new UCallbackWrapper1<C, P1>(ref, func, p1));
-}
-
-template<class C, class P1, class P2>                     UCallbackID UAbstractClient::setCallback(C& ref,
-	     UCallbackAction (C::*func)(P1 , P2,         const UMessage &), P1 p1, P2 p2,         const char * tag){
-  return addCallback(tag, *new UCallbackWrapper2<C, P1, P2>(ref, func, p1, p2));
-}
-
-template<class C, class P1, class P2, class P3>           UCallbackID UAbstractClient::setCallback(C& ref,
-	     UCallbackAction (C::*func)(P1 , P2, P3,     const UMessage &), P1 p1 , P2 p2, P3 p3,     const char * tag){
-  return addCallback(tag, *new UCallbackWrapper3<C, P1, P2, P3>(ref, func, p1, p2, p3));
-}
-
-template<class C, class P1, class P2, class P3, class P4> UCallbackID UAbstractClient::setCallback(C& ref,
-	     UCallbackAction (C::*func)(P1 , P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4, const char * tag){
-  return addCallback(tag, *new UCallbackWrapper4<C, P1, P2, P3, P4>(ref, func, p1, p2, p3, p4));
-}
-
-
-/// Conveniant macro for easy insertion of URBI code in C
-/**
-   With this macro, the following code is enough to send a simple command to a robot using URBI:
-   int main() {
-   urbi::connect("robot");
-   URBI(
-      headPan.val'n = 0 time:1000 | headTilt.val'n = 0 time:1000, speaker.play("test.wav"),
-	  echo "test";
-   );
-
-
-   }
-
-   The following construct is also valid:
-   URBI() << "headPan.val="<<12<<";";
- */
+    /// Reception buffer.
+    char           *recvBuffer;
+    /// Current position in reception buffer.
+    int            recvBufferPosition;
+    /// Temporary buffer for send data.
+    char           *sendBuffer;
+
+
+  private:
+    /// Bin object for this command.
+    std::list<urbi::BinaryData> bins;
+    /// Temporary storage of binary data.
+    void           *binaryBuffer;
+    /// Current position in binaryBuffer.
+    int            binaryBufferPosition;
+    /// Size of binaryBuffer.
+    int            binaryBufferLength;
+
+    /// Position of parse in recvBuffer.
+    int            parsePosition;
+    /// True if preparsing is in a string.
+    bool           inString;
+    /// Current depth of bracket.
+    int            nBracket;
+    /// Start of command, after [ts:tag] header.
+    char           *currentCommand;
+
+    /// Position of end of header.
+    int            endOfHeaderPosition;
+    char           currentTag[URBI_MAX_TAG_LENGTH];
+
+    int            currentTimestamp;
+
+    std::list<UCallbackInfo>callbackList;
+    /// Unique tag base.
+    int            uid;
+
+    std::ostream     *stream;
+
+    friend class UClientStreambuf;
+  };
+
+  class UCallbackWrapper {
+  public:
+    virtual UCallbackAction operator ()(const UMessage &)=0;
+    virtual ~UCallbackWrapper() {}
+  };
+
+
+  template<class elementT> class ElementTraits {
+  public:
+    typedef elementT  Element;
+    typedef elementT& ElementReference;
+    typedef const elementT& ConstElementReference;
+  };
+
+  template<class elementT> class ElementTraits<elementT&> {
+  public:
+    typedef elementT  Element;
+    typedef elementT& ElementReference;
+    typedef const elementT& ConstElementReference;
+  };
+
+
+
+  class UCallbackWrapperF : public UCallbackWrapper {
+    UCallback cb;
+  public:
+    UCallbackWrapperF(UCallback cb) : cb(cb) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return cb(msg);}
+    virtual ~UCallbackWrapperF() {}
+  };
+
+  class UCallbackWrapperCF : public UCallbackWrapper {
+    UCustomCallback cb;
+    void * cbData;
+  public:
+    UCallbackWrapperCF(UCustomCallback cb, void * cbData) : cb(cb), cbData(cbData) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return cb(cbData, msg);}
+    virtual ~UCallbackWrapperCF() {}
+  };
+
+  template<class C> class UCallbackWrapper0 : public UCallbackWrapper {
+    C& instance;
+    UCallbackAction (C::*func)(const UMessage &);
+  public:
+    UCallbackWrapper0(C& instance, UCallbackAction (C::*func)(const UMessage &))
+      : instance(instance), func(func) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(msg);}
+    virtual ~UCallbackWrapper0() {}
+  };
+
+  template<class C, class P1> class UCallbackWrapper1 : public UCallbackWrapper {
+    C& instance;
+    typename ElementTraits<P1>::Element  p1;
+    UCallbackAction (C::*funcPtr)(P1, const UMessage &);
+  public:
+    UCallbackWrapper1(C& instance, UCallbackAction (C::*func)(P1, const UMessage &), P1 p1)
+      : instance(instance), funcPtr(func), p1(p1) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*funcPtr)(p1, msg);}
+    virtual ~UCallbackWrapper1() {}
+  };
+
+  template<class C, class P1, class P2> class UCallbackWrapper2 : public UCallbackWrapper {
+    C& instance;
+    typename ElementTraits<P1>::Element  p1;
+    typename ElementTraits<P2>::Element  p2;
+    UCallbackAction (C::*func)(P1, P2, const UMessage &);
+  public:
+    UCallbackWrapper2(C& instance, UCallbackAction (C::*func)(P1, P2, const UMessage &), P1 p1, P2 p2)
+      : instance(instance), func(func), p1(p1), p2(p2) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(p1, p2, msg);}
+    virtual ~UCallbackWrapper2() {}
+  };
+
+
+  template<class C, class P1, class P2, class P3> class UCallbackWrapper3 : public UCallbackWrapper {
+    C& instance;
+    typename ElementTraits<P1>::Element  p1;
+    typename ElementTraits<P2>::Element  p2;
+    typename ElementTraits<P3>::Element  p3;
+    UCallbackAction (C::*func)(P1, P2, P3, const UMessage &);
+  public:
+    UCallbackWrapper3(C& instance, UCallbackAction (C::*func)(P1, P2, P3, const UMessage &), P1 p1, P2 p2, P3 p3)
+      : instance(instance), func(func), p1(p1), p2(p2), p3(p3) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(p1, p2, p3, msg);}
+    virtual ~UCallbackWrapper3() {}
+  };
+
+
+  template<class C, class P1, class P2, class P3, class P4> class UCallbackWrapper4 : public UCallbackWrapper {
+    C& instance;
+    typename ElementTraits<P1>::Element  p1;
+    typename ElementTraits<P2>::Element  p2;
+    typename ElementTraits<P3>::Element  p3;
+    typename ElementTraits<P4>::Element  p4;
+    UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &);
+  public:
+    UCallbackWrapper4(C& instance, UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4)
+      : instance(instance), func(func), p1(p1), p2(p2), p3(p3), p4(p4) {}
+    virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(p1, p2, p3, p4, msg);}
+    virtual ~UCallbackWrapper4() {}
+  };
+
+  //overloaded callback generators
+
+  inline UCallbackWrapper& callback(UCallback cb) {
+    return *new UCallbackWrapperF(cb);
+  }
+  inline UCallbackWrapper& callback(UCustomCallback cb, void * data) {
+    return *new UCallbackWrapperCF(cb, data);
+  }
+
+
+  template<class C>                                          UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(                 const UMessage &)     ) {
+    return *new UCallbackWrapper0<C>(ref, func);
+  }
+
+  template<class C, class P1>                                UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1,              const UMessage &), P1 p1) {
+    return *new UCallbackWrapper1<C, P1>(ref, func, p1);
+  }
+
+  template<class C, class P1, class P2>                      UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1, P2,           const UMessage &), P1 p1, P2 p2) {
+    return *new UCallbackWrapper2<C, P1, P2>(ref, func, p1, p2);
+  }
+
+  template<class C, class P1, class P2, class P3>            UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1, P2, P3,           const UMessage &), P1 p1, P2 p2, P3 p3) {
+    return *new UCallbackWrapper3<C, P1, P2, P3>(ref, func, p1, p2, p3);
+  }
+
+  template<class C, class P1, class P2, class P3, class P4>  UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1, P2, P3, P4,           const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4) {
+    return *new UCallbackWrapper4<C, P1, P2, P3, P4>(ref, func, p1, p2, p3, p4);
+  }
+
+
+
+
+  //old-style addCallback, deprecated
+  template<class C>                                          UCallbackID UAbstractClient::setCallback(C& ref,
+												      UCallbackAction (C::*func)(                 const UMessage &),                 const char * tag) {
+    return addCallback(tag, *new UCallbackWrapper0<C>(ref, func));
+  }
+
+  template<class C, class P1>                               UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 ,             const UMessage &), P1 p1,          const char * tag){
+    return addCallback(tag, *new UCallbackWrapper1<C, P1>(ref, func, p1));
+  }
+
+  template<class C, class P1, class P2>                     UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 , P2,         const UMessage &), P1 p1, P2 p2,         const char * tag){
+    return addCallback(tag, *new UCallbackWrapper2<C, P1, P2>(ref, func, p1, p2));
+  }
+
+  template<class C, class P1, class P2, class P3>           UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 , P2, P3,     const UMessage &), P1 p1 , P2 p2, P3 p3,     const char * tag){
+    return addCallback(tag, *new UCallbackWrapper3<C, P1, P2, P3>(ref, func, p1, p2, p3));
+  }
+
+  template<class C, class P1, class P2, class P3, class P4> UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 , P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4, const char * tag){
+    return addCallback(tag, *new UCallbackWrapper4<C, P1, P2, P3, P4>(ref, func, p1, p2, p3, p4));
+  }
+
+
+  /// Conveniant macro for easy insertion of URBI code in C
+  /**
+     With this macro, the following code is enough to send a simple command to a robot using URBI:
+     int main() {
+     urbi::connect("robot");
+     URBI(
+     headPan.val'n = 0 time:1000 | headTilt.val'n = 0 time:1000, speaker.play("test.wav"),
+     echo "test";
+     );
+
+
+     }
+
+     The following construct is also valid:
+     URBI() << "headPan.val="<<12<<";";
+  */
 
 # ifdef URBI
 #  undef URBI
@@ -493,15 +519,14 @@ template<class C, class P1, class P2, class P3, class P4> UCallbackID UAbstractC
 #  if !defined(__GNUC__)
 #   error "as far as we know, your compiler does not support the __VA_ARGS__ C preprocessor extension, feature unavailable"
 #  else
-#   define URBI(...) ((urbi::getDefaultClient()==0)? std::cerr : (*urbi::getDefaultClient())) << # __VA_ARGS__
+#   define URBI(...) ((::urbi::getDefaultClient()==0)? std::cerr : (*urbi::getDefaultClient())) << # __VA_ARGS__
 #  endif
 # else
-#  define URBI(a) urbi::unarmorAndSend(# a)
+#  define URBI(a) ::urbi::unarmorAndSend(# a)
 # endif
 
-class UClient;
-namespace urbi
-{
+  class UClient;
+
   static const char semicolon = ';';
   static const char pipe = '|';
   static const char parallel = '&';
@@ -519,8 +544,10 @@ namespace urbi
   void setDefaultClient(UClient * cl);
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
-  std::ostream & unarmorAndSend(const char * str);
+  std::ostream& unarmorAndSend(const char * str);
 # endif
   extern UClient * defaultClient;
-}
+
+} // namespace urbi
+
 #endif // UABSTRACTCLIENT_H

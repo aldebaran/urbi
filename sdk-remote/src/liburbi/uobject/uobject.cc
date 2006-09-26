@@ -30,7 +30,6 @@
 //! Global definition of the starterlist
 namespace urbi
 {
-
   UObject* lastUObject;
 
   STATIC_INSTANCE(UStartlist, objectlist);
@@ -209,7 +208,7 @@ namespace urbi
 	  {
 	    if ((*it2)->objname == name)
 	      {
-		delete (*it2);
+		delete *it2;
 		it2 = tocheck.erase(it2);
 	      }
 	    else

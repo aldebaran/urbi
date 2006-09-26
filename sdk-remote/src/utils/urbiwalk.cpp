@@ -12,11 +12,11 @@ int main (int argc, char * argv[])
       exit(1);
     }
   
-  USyncClient cl(argv[1]);
+  urbi::USyncClient cl(argv[1]);
   cl.start();
   if (cl.error())
     exit(2);
-  Move * mv=new Move();
+  urbi::Move mv;
   char * config;
   bool init=true;
   if (argc>2 && argv[2][0]=='0')
@@ -28,13 +28,14 @@ int main (int argc, char * argv[])
   cl.send("motoron;");
   if (init)
     printf("Uploading elementary movement commands, this may take a few seconds...\n");
-  if (mv->initialize(&cl,init,config))
+  if (mv.initialize(&cl,init,config))
     exit(1);
   double useless;
   cl.syncGetDevice("neck",useless);
   if (init)
     printf("Done.\n");
   printf("Ready to accept commands\n");
+
   while (1) 
     {
       char line[1024];
@@ -42,11 +43,15 @@ int main (int argc, char * argv[])
       char cmd[64];
       float val,prec;
       int arg=sscanf(line,"%s%f%f",cmd,&val,&prec);
-      if (arg<2) continue;
-      if (arg<3) prec=0.2;
+      if (arg<2)
+	continue;
+      if (arg<3)
+	prec=0.2;
       if (cmd[0]=='w')
-	mv->walk(val,prec);
-      else mv->turn(val,prec);
-      printf(cmd[0]=='w'?"walked %f meters(%f)\n":"turned %f degrees (%f)\n",val,prec);
+	mv.walk(val,prec);
+      else
+	mv.turn(val,prec);
+      printf(cmd[0]=='w'?"walked %f meters(%f)\n":"turned %f degrees (%f)\n",
+	     val,prec);
     }
 }

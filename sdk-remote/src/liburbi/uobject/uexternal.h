@@ -21,7 +21,8 @@
 #ifndef USHAREDEXTERNAL_H_DEFINED
 #define USHAREDEXTERNAL_H_DEFINED
 
-namespace urbi {
+namespace urbi
+{
 
   enum USystemExternalMessage {
     UEM_EVALFUNCTION,
@@ -34,6 +35,6 @@ namespace urbi {
 
   static const std::string externalModuleTag = "__ExternalMessage__";
 
-} // namespace URBI
+} // namespace urbi
 
 #endif

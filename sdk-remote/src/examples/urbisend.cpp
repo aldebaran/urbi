@@ -26,30 +26,29 @@
 #include <cstdio>
 #include "uclient.h"
 
-UCallbackAction dump(const UMessage & msg)
+urbi::UCallbackAction
+dump(const urbi::UMessage & msg)
 {
   // FIXME: This is absolutely not completely migrated.
   // To be finished -- Akim.
   switch (msg.type)
     {
-    case MESSAGE_DATA:
+    case urbi::MESSAGE_DATA:
 		std::cerr << *msg.value << std::endl;
       break;
 
-    case MESSAGE_ERROR:
-    case MESSAGE_SYSTEM:
+    case urbi::MESSAGE_ERROR:
+    case urbi::MESSAGE_SYSTEM:
 		std::cerr << msg.timestamp << " " << msg.tag.c_str() << " "
 		  << msg.message.c_str() << std::endl;
       break;
     }
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
 
 int main(int argc, char *argv[])
 {
-  UClient *client;
-
   if (argc != 3)
     {
       fprintf (stderr,
@@ -57,11 +56,11 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-  client = new UClient(argv[1]);
-  if (client->error() != 0)
+  urbi::UClient client (argv[1]);
+  if (client.error())
     exit(0);
-  client->setWildcardCallback(callback(&dump));
-  client->sendFile(argv[2]);
+  client.setWildcardCallback(callback(&dump));
+  client.sendFile(argv[2]);
   fprintf(stdout, "File sent, hit Ctrl-C to terminate.\n");
   urbi::execute();
   return 0;

@@ -1,3 +1,27 @@
+2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+
+	Put it in urbi::.
+
+	* src/utils/urbiwalk.cpp: Put things in the urbi:: namespace.
+	Adjust dependencies.
+	Formatting changes.
+	* src/utils/Move.cpp: Ditto.
+	* src/utils/Move.h: Ditto.
+	* src/liburbi/uconversion.h: Ditto.
+	* src/liburbi/usyncclient.cpp: Ditto.
+	* src/liburbi/lockable.h: Ditto.
+	* src/liburbi/uclient.cpp: Ditto.
+	* src/liburbi/usyncclient.h: Ditto.
+	* src/liburbi/uabstractclient.cpp: Ditto.
+	* src/liburbi/uclient.h: Ditto.
+	* src/liburbi/uobject/uobject.cc: Ditto.
+	* src/liburbi/uobject/uvar.cc: Ditto.
+	* src/liburbi/uobject/uobject.template.h: Ditto.
+	* src/liburbi/uobject/common_uvalue.cc: Ditto.
+	* src/liburbi/uobject/uexternal.h: Ditto.
+	* src/liburbi/uconversion.cpp: Ditto.
+	* src/liburbi/uabstractclient.h: Ditto.
+
 2006-09-25  matthieu nottale  <nottale@gostai.com>
 
 	Fixing stuffs

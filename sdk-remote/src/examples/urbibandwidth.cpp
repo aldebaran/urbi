@@ -11,8 +11,10 @@ bool over=false;
 static int totalsize=0;
 static int starttime=0;
 
-UCallbackAction bw(const UMessage &msg) {
-  assert (msg.type == MESSAGE_DATA);
+urbi::UCallbackAction
+bw(const urbi::UMessage &msg)
+{
+  assert (msg.type == urbi::MESSAGE_DATA);
   assert (msg.value->type == urbi::DATA_BINARY);
   assert (msg.value->binary->type == urbi::BINARY_IMAGE);
 
@@ -31,16 +33,18 @@ UCallbackAction bw(const UMessage &msg) {
       over=true;
   }
 
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
-int main(int argc, char * argv[]) {
- if (argc != 2) {
-   printf("usage: %s robot\n", argv[0]);
-   urbi::exit(1);
- }
+int main(int argc, char * argv[])
+{
+ if (argc != 2)
+   {
+     printf("usage: %s robot\n", argv[0]);
+     urbi::exit(1);
+   }
 
- UClient &c= * new UClient(argv[1]);
+ urbi::UClient c (argv[1]);
 
  if (c.error())
    urbi::exit(1);

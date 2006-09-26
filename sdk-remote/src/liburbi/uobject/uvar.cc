@@ -24,25 +24,27 @@
 
 namespace urbi
 {
-  class UVardata {
+  class UVardata
+  {
   public:
     UVardata() {};
     ~UVardata() {};
   };
 
-  static const char * propNames[]={
-    "rangemin",
-    "rangemax",
-    "speedmin",
-    "speedmax",
-    "blend",
-    "delta"
-  };
+  static const char * propNames[]=
+    {
+      "rangemin",
+      "rangemax",
+      "speedmin",
+      "speedmax",
+      "blend",
+      "delta"
+    };
 
   // **************************************************************************
   //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
   UVar::UVar(const std::string &varname)
- :VAR_PROP_INIT
+    :VAR_PROP_INIT
   {
     name = varname;
     __init();
@@ -50,7 +52,7 @@ namespace urbi
 
   //! UVar constructor: object reference + var name
   UVar::UVar(UObject& obj, const std::string &varname)
- :VAR_PROP_INIT
+    :VAR_PROP_INIT
   {
     name = obj.__name + "." + varname;
     __init();
@@ -58,7 +60,7 @@ namespace urbi
 
   //! UVar constructor: object name + var name
   UVar::UVar(const std::string &objname, const std::string &varname)
- :VAR_PROP_INIT
+    :VAR_PROP_INIT
   {
     name = objname + "." + varname;
     __init();
@@ -98,8 +100,9 @@ namespace urbi
 
 
   void
-  UVar::setProp(UProperty prop, const UValue &v) {
-    URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+  UVar::setProp(UProperty prop, const UValue &v)
+  {
+    URBI(()) << name << "->"<< propNames[(int)prop] << "=" << v <<";";
   }
 
   void

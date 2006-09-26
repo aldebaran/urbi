@@ -1,17 +1,21 @@
+#include <cstdlib>
+#include <cstdio>
+
 #include <uclient.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 inline float fabs(float f ) {if (f>0) return f; else return f*(-1.0);}
 enum UType {
   TYPE_BOOL,
   TYPE_ANGLE,
   TYPE_NORM
 };
+
 union UJointValue {
   float angle;
   float normalized;
   bool boolean;
 };
+
 struct UCommand {
   int timestamp;
   short id;
@@ -66,10 +70,10 @@ int main(int argc, char * argv[]) {
   else ouf=fopen(argv[2],"w");
   if (!ouf) {printf("error opening file\n");exit(2);}
   if (int a=parseHeader(inf,ouf)) {printf("error parsing header: %d\n",a); exit(3);}
-   
-  float scale=2; 
+
+  float scale=2;
   int interpolate=0;
-  if (argc>4) interpolate=strtol(argv[4],NULL,0); 
+  if (argc>4) interpolate=strtol(argv[4],NULL,0);
   printf("interpolation set to %d\n", interpolate);
   //if no move greater than atresh cut the line
   sscanf(argv[3],"%f",&scale);
@@ -117,7 +121,7 @@ int main(int argc, char * argv[]) {
 	  if (nextuc[dev].timestamp==-1) continue;
 	  fwrite(&nextuc[dev],sizeof(UCommand),1,ouf);
 	  lastuc[dev]=nextuc[dev];
-	  nextuc[dev].timestamp=-1;		  
+	  nextuc[dev].timestamp=-1;
 	}
       }
       nextuc[uc.id]=uc;

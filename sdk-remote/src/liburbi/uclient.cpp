@@ -30,49 +30,50 @@
 #include "lockable.h"
 
 #ifdef WIN32
-#include <windows.h>
-#include <fcntl.h>
-#include <io.h>
-#include <winsock.h>
+# include <windows.h>
+# include <fcntl.h>
+# include <io.h>
+# include <winsock.h>
 #else
-#include <sys/time.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
+# include <sys/time.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
+# include <unistd.h>
 #endif
 
-/*! Establish the connection with the server.
-Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
-the appropriate callbacks.
- */
-UClient::UClient(const char *_host, int _port, int _buflen)
-  :UAbstractClient(_host, _port, _buflen) {
+namespace urbi
+{
+  /*! Establish the connection with the server.
+    Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
+    the appropriate callbacks.
+  */
+  UClient::UClient(const char *_host, int _port, int _buflen)
+    : UAbstractClient(_host, _port, _buflen)
+  {
     setlocale(LC_NUMERIC,"C");
     control_fd[0] = control_fd[1] = -1;
 
-    #ifndef WIN32
+#ifndef WIN32
     if (::pipe(control_fd) == -1) {
       rc = -1;
       perror("UClient::UClient failed to create pipe");
       return;
     }
-    #endif
-
+#endif
 
     // Address resolution stage.
     struct hostent *hen;		// host-to-IP translation
     struct sockaddr_in sa;	// Internet address struct
 
-
     memset(&sa, 0, sizeof(sa));
-    #ifdef WIN32
+#ifdef WIN32
     WSADATA wsaData;
     WORD wVersionRequested;
     wVersionRequested = MAKEWORD( 1, 1 );
     WSAStartup( wVersionRequested, &wsaData );
-    #endif
+#endif
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
 
@@ -86,7 +87,6 @@ UClient::UClient(const char *_host, int _port, int _buflen)
 	return;
       }
     }
-
     else
       memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
 
@@ -101,27 +101,30 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
 
     // If we attempt to connect too fast to aperios ipstack it will fail.
-    if (rc) {
-		#ifdef WIN32
-		Sleep(20);
-		#else
-		usleep(20000);
-		#endif
-		rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
-    }
+    if (rc)
+      {
+#ifdef WIN32
+	Sleep(20);
+#else
+	usleep(20000);
+#endif
+	rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+      }
 
     // Check there was no error.
-    if (rc) {
-      printf("UClient::UClient couldn't connect.\n");
-      return;
-    }
+    if (rc)
+      {
+	printf("UClient::UClient couldn't connect.\n");
+	return;
+      }
 
-    if (rc) return;
+    if (rc)
+      return;
 
     //check that it really worked
     int pos=0;
     while (pos==0)
-		pos = ::recv(sd, recvBuffer, buflen, 0);
+      pos = ::recv(sd, recvBuffer, buflen, 0);
     if (pos<0) {
       rc = pos;
       printf("UClient::UClient couldn't connect: read error %d.\n",rc);
@@ -129,137 +132,142 @@ UClient::UClient(const char *_host, int _port, int _buflen)
     }
     else recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
-	thread = startThread(this, &UClient::listenThread);
-    if (!urbi::defaultClient)
-      urbi::defaultClient =  this;
+    thread = startThread(this, &UClient::listenThread);
+    if (!defaultClient)
+      defaultClient = this;
+  }
+
+  UClient::~UClient()
+  {
+    close(sd);
+    sd = -1;
+    if (control_fd[1] != -1 )
+      ::write(control_fd[1],"a",1);
+    //must wait for listen thread to terminate
+    joinThread(thread);
+    if (control_fd[1] != -1)
+      close(control_fd[1]);
+    if (control_fd[0] != -1)
+      close(control_fd[0]);
   }
 
 
+  bool
+  UClient::canSend(int size) {
+    return true;
+  }
 
 
-UClient::~UClient()
-{
-
-  close(sd);
-  sd = -1;
-  if (control_fd[1] != -1 ) ::write(control_fd[1],"a",1);
-  //must wait for listen thread to terminate
-  joinThread(thread);
-  if (control_fd[1] != -1 ) close(control_fd[1]);
-  if (control_fd[0] != -1 ) close(control_fd[0]);
-}
-
-
-bool
-UClient::canSend(int size) {
-  return true;
-}
-
-
-int
-UClient::effectiveSend(const void  * buffer, int size) {
+  int
+  UClient::effectiveSend(const void  * buffer, int size) {
 #if DEBUG
-char output[size+1];
-memcpy((void*)output, buffer, size);
-output[size]=0;
-cout << ">>>> SENT : [" << output << "]" << endl;
+    char output[size+1];
+    memcpy((void*)output, buffer, size);
+    output[size]=0;
+    cout << ">>>> SENT : [" << output << "]" << endl;
 #endif
-  if (rc) return -1;
-  int pos = 0;
-  while (pos!=size) {
-    int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-	if (retval<0) {
-	  rc = retval;
-	  return rc;
-	}
-	pos += retval;
+    if (rc) return -1;
+    int pos = 0;
+    while (pos!=size) {
+      int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
+      if (retval<0) {
+	rc = retval;
+	return rc;
+      }
+      pos += retval;
+    }
+    return 0;
   }
-  return 0;
-}
 
-void
-UClient::listenThread() {
-  fd_set rfds;
-  int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
-  int res;
-  while (true) {
-	do {
-      if (sd==-1)
-	 return;
-	  FD_ZERO(&rfds);
-	  FD_SET(sd, &rfds);
-	  #ifndef WIN32
-	  FD_SET(control_fd[0], &rfds);
-	  #endif
-	  struct timeval tme;
-	  tme.tv_sec = 1;
-	  tme.tv_usec = 0;
-	  res = select(maxfd+1, &rfds, NULL, NULL, &tme);
-	  if ( (res < 0) && (errno != EINTR)) {
-		this->rc = -1;
-		#ifdef WIN32
-		res = WSAGetLastError();
-		#endif
-		std::cerr << "select error "<<res<<std::endl;
-		//TODO when error will be implemented, send an error msg
-		//TODO maybe try to reconnect?
-		return;
-	  }
-	  if (res == -1) { res=0;continue;}
-	  #ifndef WIN32
-	  if ( (res != 0) && (FD_ISSET(control_fd[0], &rfds)) ) return;
-	  #endif
-	}
-	while (res == 0);
-	int count = ::recv(sd,
-		     &recvBuffer[recvBufferPosition],
-		     buflen - recvBufferPosition - 1, 0);
-	if (count < 0) {
-	  rc = -1;
-	  std::cerr <<"error "<<count<<std::endl;
+  void
+  UClient::listenThread() {
+    fd_set rfds;
+    int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
+    int res;
+    while (true) {
+      do {
+	if (sd==-1)
+	  return;
+	FD_ZERO(&rfds);
+	FD_SET(sd, &rfds);
+#ifndef WIN32
+	FD_SET(control_fd[0], &rfds);
+#endif
+	struct timeval tme;
+	tme.tv_sec = 1;
+	tme.tv_usec = 0;
+	res = select(maxfd+1, &rfds, NULL, NULL, &tme);
+	if ( (res < 0) && (errno != EINTR)) {
+	  this->rc = -1;
+#ifdef WIN32
+	  res = WSAGetLastError();
+#endif
+	  std::cerr << "select error "<<res<<std::endl;
 	  //TODO when error will be implemented, send an error msg
 	  //TODO maybe try to reconnect?
 	  return;
 	}
+	if (res == -1) { res=0;continue;}
+#ifndef WIN32
+	if ( (res != 0) && (FD_ISSET(control_fd[0], &rfds)) ) return;
+#endif
+      }
+      while (res == 0);
+      int count = ::recv(sd,
+			 &recvBuffer[recvBufferPosition],
+			 buflen - recvBufferPosition - 1, 0);
+      if (count < 0) {
+	rc = -1;
+	std::cerr <<"error "<<count<<std::endl;
+	//TODO when error will be implemented, send an error msg
+	//TODO maybe try to reconnect?
+	return;
+      }
 
-	recvBufferPosition += count;
-	recvBuffer[recvBufferPosition] = 0;
-	processRecvBuffer();
+      recvBufferPosition += count;
+      recvBuffer[recvBufferPosition] = 0;
+      processRecvBuffer();
+    }
   }
-}
 
 
-void
-UClient::printf(const char * format, ...) {
-  va_list arg;
-  va_start(arg, format);
-  vfprintf(stderr, format, arg);
-  va_end(arg);
-}
+  void
+  UClient::printf(const char * format, ...) {
+    va_list arg;
+    va_start(arg, format);
+    vfprintf(stderr, format, arg);
+    va_end(arg);
+  }
 
-unsigned int UClient::getCurrentTime() {
-	#ifdef WIN32
-	return GetTickCount();
-	#else
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return tv.tv_sec*1000+tv.tv_usec/1000;
-  #endif
-}
+  unsigned int UClient::getCurrentTime()
+  {
+#ifdef WIN32
+    return GetTickCount();
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec*1000+tv.tv_usec/1000;
+#endif
+  }
 
-void urbi::execute(void) {
-	#ifdef WIN32
-	while (true) Sleep(100000);
-	#else
-  while (true) sleep(100);
-  #endif
-}
+  void execute(void)
+  {
+#ifdef WIN32
+    while (true) Sleep(100000);
+#else
+    while (true) sleep(100);
+#endif
+  }
 
-void urbi::exit(int code) {
-  ::exit(code);
-}
+  void exit(int code)
+  {
+    ::exit(code);
+  }
 
 
-UClient & urbi::connect(const char  * host) {
-  return *new UClient(host);
-}
+  UClient & connect(const char  * host)
+  {
+    return *new UClient(host);
+  }
+
+} // namespace urbi

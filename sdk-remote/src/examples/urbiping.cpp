@@ -4,7 +4,7 @@
 #include <signal.h>
 
 
-UClient *c;
+urbi::UClient *c;
 unsigned int sendtime;
 unsigned int mintime;
 unsigned int maxtime;
@@ -21,7 +21,8 @@ int count;
 #endif
 
 
-UCallbackAction pong(const UMessage & msg)
+urbi::UCallbackAction
+pong(const urbi::UMessage & msg)
 {
   unsigned int ptime = msg.client.getCurrentTime() - sendtime;
   if ((!pingCount) || mintime>ptime)
@@ -35,7 +36,7 @@ UCallbackAction pong(const UMessage & msg)
   received=true;
   if (pingCount==count)
     over = true;
-  return URBI_CONTINUE;
+  return urbi::URBI_CONTINUE;
 }
 
 void showstats(int s)
@@ -60,7 +61,7 @@ int main(int argc, char * argv[])
   rname = argv[1];
 
   // Client initialization
-  c = new UClient(argv[1]);
+  c = new urbi::UClient(argv[1]);
   c->start();
   if (c->error()) exit(1);
 

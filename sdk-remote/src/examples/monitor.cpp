@@ -21,7 +21,7 @@ static char *AtomWMDeleteWindowName = (char *) "WM_DELETE_WINDOW";
 
 
 Display    *Monitor::display;
-list<Monitor*> Monitor::monitorList;
+std::list<Monitor*> Monitor::monitorList;
 pthread_mutex_t      Monitor::lock=PTHREAD_MUTEX_INITIALIZER;
 static void * wrapper(void *) {
   Monitor::processMessages();
@@ -73,7 +73,8 @@ void  Monitor::processMessages() {
     pthread_mutex_lock(&lock);
     while (XPending(display) > 0)
       XNextEvent(display, &event);
-    for (list<Monitor *>::iterator it=monitorList.begin(); it != monitorList.end();it++)
+    for (std::list<Monitor *>::iterator it=monitorList.begin();
+	 it != monitorList.end();it++)
       (*it)->put();
     pthread_mutex_unlock(&lock);
     usleep(300000);
@@ -83,19 +84,20 @@ void  Monitor::processMessages() {
     bool found = false;
     XNextEvent(display, &event);
     switch (event.type) {
-
-
     case Expose:
       if (event.xexpose.count == 0) {
-	for (list<Monitor *>::iterator it=monitorList.begin(); it != monitorList.end();it++)
-	  if ((*it)->window == event.xexpose.window) {
-	    (*it)->put();
-	    printf("repainting %d\n", event.xexpose.window);
-	    found = true;
-	    break;
-	  }
+	for (std::list<Monitor *>::iterator it=monitorList.begin(); 
+	     it != monitorList.end();it++)
+	  if ((*it)->window == event.xexpose.window)
+	    {
+	      (*it)->put();
+	      printf("repainting %d\n", event.xexpose.window);
+	      found = true;
+	      break;
+	    }
 	if (!found)
-	  printf("error: expose event for unknown window %d\n", event.xexpose.window);
+	  printf("error: expose event for unknown window %d\n",
+		 event.xexpose.window);
       }
     }
   }
