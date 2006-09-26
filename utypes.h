@@ -34,7 +34,7 @@
 # else
 # endif
 # include "ufloat.h"
-# include "uobject/uext.h" 
+# include "uext.h" 
 class UConnection;
 class UGhostConnection;
 class UServer;

@@ -31,7 +31,7 @@
 #undef private
 
 #include "userver.h"
-#include "uobject/uobject.h"
+#include "uobject.h"
 #if (__GNUC__ == 2)
 static const string fixed = "";
 #endif

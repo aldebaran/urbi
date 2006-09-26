@@ -29,7 +29,7 @@
 #include "uconnection.h"
 #include "utypes.h"
 #include "ughostconnection.h"
-#include "uobject/uobject.h"
+#include "uobject.h"
 
 #ifdef _MSC_VER
 #define snprintf _snprintf
