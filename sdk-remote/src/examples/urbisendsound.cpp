@@ -5,14 +5,14 @@
 urbi::USound snd;
 
 urbi::UCallbackAction
-endProgram(const urbi::UMessage &msg) 
+endProgram(const urbi::UMessage &msg)
 {
   printf("done\n");
   urbi::exit(0);
   return urbi::URBI_REMOVE;
 }
 
-urbi::UCallbackAction 
+urbi::UCallbackAction
 soundFormat(const urbi::UMessage &msg)
 {
   urbi::UMessage smsg(msg.client, 0, "",
@@ -23,11 +23,11 @@ soundFormat(const urbi::UMessage &msg)
 }
 
 int
-main(int argc, char * argv []) 
+main(int argc, char * argv [])
 {
   if (argc<3)
     {
-      printf("usage: urbisendsound robot file\n\t file must be in the WAV format\n"); 
+      printf("usage: urbisendsound robot file\n\t file must be in the WAV format\n");
       exit(1);
     }
 
@@ -41,21 +41,21 @@ main(int argc, char * argv [])
   else
     f = fopen(argv[2],"r");
   if (!f)
-    { 
-      printf("error opening file\n"); 
-      exit(3); 
+    {
+      printf("error opening file\n");
+      exit(3);
     }
 
   //sem_init(&sem, false, 0);
   //uc->sendCommand(&soundFormat, "speaker.formatlist;");
   soundFormat(urbi::UMessage(uc,0,"a",
-			     "*** BIN 0 raw 2 16000 16 1", 
+			     "*** BIN 0 raw 2 16000 16 1",
 			     std::list<urbi::BinaryData>()));  //forcing sound format
   //sem_wait(&sem);
 
   urbi::USound s;
 
-  if (f!=stdin) 
+  if (f!=stdin)
     {
       struct stat st;
       stat(argv[2],&st);

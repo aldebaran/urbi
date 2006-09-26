@@ -17,16 +17,6 @@ URBI_DIRS([remote])
 ## Documentation.  ##
 ## --------------- ##
 
-# URBI_ARG_PROGS(PROG, DOC, [PROGRAMS])
-# -------------------------------------
-# Look for PROG, registered as an ARG_VAR with DOC, and store in
-# $PROG (upper cased).  If not available, set as "missing PROG".
-m4_define([URBI_ARG_PROGS],
-[AC_ARG_VAR(m4_toupper([$1]), [$2])
-AC_CHECK_PROGS(m4_toupper([$1]), [m4_default([$3], [$1])],
-	       [$am_aux_dir/missing $1])
-])
-
 URBI_ARG_PROGS([doxygen], [the Doxygen documentation generation program])
 # Name of the directory where the Doxygen documentation is created.
 AC_SUBST([DOCDIR], [srcdoc])
@@ -48,10 +38,7 @@ AC_PROG_CXX
 AC_PROG_LIBTOOL
 
 # Pthreads.
-ACX_PTHREAD([windows=false], [
-    AC_CHECK_HEADER(windows.h, [LIBS="$LIBS -lws2_32 -lgdi32";windows=true],
-      [AC_MSG_ERROR([pthreads or WIN32 API is required])])])
-AM_CONDITIONAL([WIN32], [test $windows = true])
+URBI_PTHREAD
 
 # Soundcard.
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])

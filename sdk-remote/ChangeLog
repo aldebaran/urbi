@@ -1,3 +1,12 @@
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
+	Update pthreads detection.
+	* src/examples/urbisendsound.cpp: Formatting changes.
+
+	* build-aux/urbi-pthread.m4: New.
+	* build-aux/urbi-var-progs.m4: New.
+	* configure.ac: Use them.
+
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
 	Put it in urbi::.
