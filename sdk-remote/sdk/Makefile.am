@@ -1,24 +1,16 @@
-AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 AM_CPPFLAGS =                                   \
 -I$(top_srcdir)/src/liburbi/uobject             \
 -I$(top_srcdir)/src/liburbi
-
-#removed, use standard method
-#EXTRALDFLAGS = $(LIB_DIR:%=-L%)
-#EXTRALDFLAGS += $(LIBS:%=-l%)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
 noinst_PROGRAMS = urbimodule
 urbimodule_SOURCES = umain.cc
 urbimodule_LDADD = \
 	$(top_builddir)/src/liburbi/uobject/libuobject.la \
 	$(top_builddir)/src/liburbi/liburbi.la \
-	$(PTHREAD_LIBS) \
-	$(EXTRALDFLAGS)
+	$(PTHREAD_LIBS)
 urbimodule_LDFLAGS = -L$(prefix)/share/urbicore/$(TARGET)
 
-## FIXME: These install instructions are really weird.  Why don't
-## we put things where they ought to be? -- Akim.  And copying .a
-## or .la does not make sense.
 include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.h
 nodist_target_DATA = Makefile.param Makefile.module Makefile gccversion
 dist_target_DATA = umain.cc

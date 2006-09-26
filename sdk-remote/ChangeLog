@@ -1,5 +1,14 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* build-aux/urbi-openr.m4: Fix.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
+	* sdk/Makefile.am: Remove dead code.
+	Formatting changes.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	* build-aux/urbi-openr.m4: New.
 	* configure.ac: Use it.
 
