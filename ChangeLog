@@ -1,5 +1,10 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* build-aux/urbi-openr.m4: New.
+	* configure.ac: Use it.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	* parser/bison/Makefile.defs: Install the header files.
 	* network/bsdnet/Makefile.defs,
 	* network/OPENR/Makefile.defs,

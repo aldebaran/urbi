@@ -58,7 +58,8 @@ AC_PROG_LIBTOOL
 ## --------- ##
 ## Network.  ##
 ## --------- ##
-AM_CONDITIONAL([NETWORK_OPENR],  [false])
+URBI_OPENR
+AM_CONDITIONAL([NETWORK_OPENR],  [$openr])
 AM_CONDITIONAL([NETWORK_BSDNET], [true])
 
 
