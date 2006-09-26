@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/liburbi
-AM_CXXFLAGS = $(WARNING_CXXFLAGS)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 # Automake 1.10 uses AM_LDADD, not previous versions.
 LDADD = $(PTHREAD_LIBS)
 

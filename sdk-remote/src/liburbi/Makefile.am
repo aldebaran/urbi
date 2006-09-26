@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/liburbi/uobject \
 -I$(top_srcdir)/src/liburbi/uobject
 
-AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
+AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
 
 ## ------------ ##
@@ -41,4 +41,4 @@ uobject/uobject.h	uobject/uobject.cc	\
 uobject/uvar.cc					\
 usyncclient.h		usyncclient.cpp
 
-liburbi_la_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la
+liburbi_la_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
