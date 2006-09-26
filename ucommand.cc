@@ -2662,7 +2662,9 @@ UCommand_NEW::execute(UConnection *connection)
   newobj->up.push_back(objit->second);
   objit->second->down.push_back(newobj);
 
-  if (!parameters) return (status = UCOMPLETED);
+  // Here the policy of "a = new b" which does not call init could be enforced with 'noinit'
+  // Currentl, after discussions, all call to new tries to start init.
+  // if ((!parameters) && (noinit)) return (status = UCOMPLETED);
 
   // init constructor call
   //
