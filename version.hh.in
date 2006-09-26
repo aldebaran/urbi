@@ -1,1 +1,8 @@
+// The Subversion Rev string of the ChangeLog.
 #define PACKAGE_REVISION "@REV@"
+
+// The Subversion Id string of the ChangeLog.
+#define PACKAGE_ID "@ID@"
+
+// The Subversion Date string of the ChangeLog.
+#define PACKAGE_DATE "@DATE@"

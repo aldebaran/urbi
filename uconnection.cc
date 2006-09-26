@@ -19,8 +19,12 @@
 
  **************************************************************************** */
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
+
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
 
 #include "uconnection.h"
 #include "userver.h"
@@ -29,9 +33,7 @@
 #include "parser/uparser.h"
 #include "ucallid.h"
 #include "uvariable.h"
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#endif
+
 char errorMessage[1024]; // Global variable (thanks bison...) to store the
 			 // the error message when a parsing error occurs.
 
@@ -170,7 +172,7 @@ UConnection::~UConnection()
       }
   }
 
-  list<HMbindertab::iterator> deletelist;
+  std::list<HMbindertab::iterator> deletelist;
   for ( HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
       it2 != ::urbiserver->functionbindertab.end();
       it2++) {
@@ -178,7 +180,7 @@ UConnection::~UConnection()
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
   }
-  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
     ::urbiserver->functionbindertab.erase((*itt));
@@ -192,7 +194,7 @@ UConnection::~UConnection()
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
   }
-  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
     ::urbiserver->eventbindertab.erase((*itt));
@@ -859,7 +861,7 @@ UConnection::processCommand(UCommand *&command,
 	    if (tmpID) {
 
 	      if (tmpID->dataType == DATA_STRING)
-		for (list<UConnection*>::iterator retr = ::urbiserver->connectionList.begin();
+		for (std::list<UConnection*>::iterator retr = ::urbiserver->connectionList.begin();
 		     retr != ::urbiserver->connectionList.end();
 		     retr++)
 		  if ((*retr)->isActive())

@@ -4,7 +4,7 @@
  File: uvariablename.h\n
  Definition of the UVariableName class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,11 +22,10 @@
 #ifndef UVARIABLENAME_H_DEFINED
 #define UVARIABLENAME_H_DEFINED
 
+#include <list>
+
 #include "utypes.h"
 #include "ustring.h"
-
-#include <list>
-using std::list;
 
 class UCommand;
 class UExpression;
@@ -40,12 +39,12 @@ class UVariable;
 class UValue;
 class UServer;
 class UCommand_TREE;
-		
+
 // *****************************************************************************
 //! Contains a variable name description
-/*! This class can contain complex names for variables, as returned by the 
+/*! This class can contain complex names for variables, as returned by the
     parser. Arrays, expression based variables like $(x) are all stored in this
-    object and the final name is expanded on request with the "buildFullname" 
+    object and the final name is expanded on request with the "buildFullname"
     method.
     A caching mecanism exist to avoid rebuilding the variable name if it is not
     needed.
@@ -54,7 +53,7 @@ class UVariableName
 {
 public:
   MEMORY_MANAGED;
-  
+
   UVariableName(UExpression *str, bool rooted = false);
   UVariableName(UString* device, UString *id, bool rooted, UNamedParameters *index);
   virtual ~UVariableName();
@@ -85,12 +84,12 @@ public:
   UVariable*        variable; ///< the variable associated to the variable name
   UFunction*        function; ///< the function associated to the variable name
   bool              fromGroup; ///< the variable is part of a command spawned by a group morphing
-                               ///< this is used to avoid error messages when the variable does not exist
+			       ///< this is used to avoid error messages when the variable does not exist
   bool              firsttime; ///< before the first local function prefix resolution
   bool              nostruct; ///< is nostruct if it comes from a simple IDENTIFIER in the parsing phase
   UDefType          id_type; ///< type of the symbol: UDEF_FUNCTION, UDEF_VAR or UDEF_EVENT
   bool              local_scope; ///< name resolution will be limited to local scope in functions
-  
+
 protected:
 
   UString*        fullname_; ///< used as a hash key

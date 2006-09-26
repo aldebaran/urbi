@@ -4,7 +4,7 @@
  File: uobj.h\n
  Definition of the UObj class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,6 +22,8 @@
 #ifndef UOBJ_H_DEFINED
 #define UOBJ_H_DEFINED
 
+#include <list>
+
 #include "ustring.h"
 #include "ubinder.h"
 class UVariableName;
@@ -29,12 +31,12 @@ class UValue;
 class UVariable;
 class UFunction;
 
-namespace urbi {
+namespace urbi
+{
   class baseURBIStarter;
-  }
-  
-#include <list>
-using std::list;
+}
+
+
 
 
 
@@ -45,15 +47,15 @@ class UObj
 public:
 
   UObj(UString *device);
-  ~UObj(); 
-  
-  list<UObj*> down;
-  list<UObj*> up;
+  ~UObj();
 
-  UString      *device;  
+  std::list<UObj*> down;
+  std::list<UObj*> up;
+
+  UString      *device;
   UBinder      *binder;
   urbi::baseURBIStarter* internalBinder;
-  
+
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
 };

@@ -28,9 +28,6 @@ class UServer;
 class UValue;
 class UVariable;
 
-# include <list>
-# include <string>
-
 # include "utypes.h"
 # include "parser/uparser.h"
 # include "ufunction.h"
@@ -42,8 +39,6 @@ class UVariable;
 class UString;
 class UParser;
 class UQueue;
-
-using std::list;
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -121,68 +116,104 @@ public:
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
   UGhostConnection *     getGhostConnection() {return ghost;}
-  list<UConnection*>       connectionList; ///< list of active connections: includes
-					   ///< one UGhostConnection
+  /// List of active connections: includes one UGhostConnection.
+  std::list<UConnection*>  connectionList;
 
-  HMvariabletab            variabletab; ///< hash of variable values
-  HMfunctiontab            functiontab; ///< hash of function definition
-  HMfunctiontab            functiondeftab; ///< hash of functions definition markers
-  HMfunctiontab            eventdeftab; ///< hash of events definition markers
-  HMobjtab                 objtab; ///< hash of objects hierarchy
-  HMaliastab               aliastab; ///< hash of alias definitions
-  HMaliastab               objaliastab; ///< hash of obj alias definitions
-  HMgrouptab               grouptab; ///< hash of group definitions
-  HMeventtab               eventtab; ///< hash of events
-  HMbindertab              functionbindertab; ///< hash of function binders
-  HMbindertab              eventbindertab; ///< hash of event binders
-  HMobjWaiting             objWaittab; ///< hash of obj name waiting for a remote new
+  /// Hash of variable values.
+  HMvariabletab            variabletab;
+  /// Hash of function definition.
+  HMfunctiontab            functiontab;
+  /// Hash of functions definition markers.
+  HMfunctiontab            functiondeftab;
+  /// Hash of events definition markers.
+  HMfunctiontab            eventdeftab;
+  /// Hash of objects hierarchy.
+  HMobjtab                 objtab;
+  /// Hash of alias definitions.
+  HMaliastab               aliastab;
+  /// Hash of obj alias definitions.
+  HMaliastab               objaliastab;
+  /// Hash of group definitions.
+  HMgrouptab               grouptab;
+  /// Hash of events.
+  HMeventtab               eventtab;
+  /// Hash of function binders.
+  HMbindertab              functionbindertab;
+  /// Hash of event binders.
+  HMbindertab              eventbindertab;
+  /// Hash of obj name waiting for a remote new.
+  HMobjWaiting             objWaittab;
 
 
 
-  list<UVariable*>         reinitList; ///< variables to reinit (nbAverage=0)
-  list<UVariable*>         resetList; ///< list of variables to delete after a reset
-  bool                     reseting; ///< true when the server is in the process of resting
-  int                      stage;///< reseting stage
-  list<UVariable*>         varToReset; ///< list of variables to delete in a reset command
+  /// Variables to reinit (nbAverage=0).
+  std::list<UVariable*>         reinitList;
+  /// List of variables to delete after a reset.
+  std::list<UVariable*>         resetList;
+  /// True when the server is in the process of resting.
+  bool                     reseting;
+  /// Reseting stage.
+  int                      stage;
+  /// List of variables to delete in a reset command.
+  std::list<UVariable*>         varToReset;
 
 # ifdef _MSC_VER
   std::hash_map<const char *,bool, str_compare> blocktab;
   std::hash_map<const char *,bool, str_compare> freezetab;
 
 # else
+  /// Hash of the blocked tags..
   hash_map<const char*,
     bool,
     hash<const char*>,
-    eqStr>                 blocktab;  ///< hash of the blocked tags.
+    eqStr>                 blocktab;
 
+  /// Hash of the freezed tags..
   hash_map<const char*,
     bool,
     hash<const char*>,
-    eqStr>                 freezetab;  ///< hash of the freezed tags.
+    eqStr>                 freezetab;
 # endif
-  UParser                  parser; ///< The main parser object
-  bool                     memoryOverflow; ///< Flag used to signal a memory
-					   ///< Overflow.
-  bool                     debugOutput;    ///< shows debug or not.
-  UString                  *mainName; ///< name of the main device
-  bool                     somethingToDelete; ///< true after a stop command
-  bool                     uservarState; ///< true after the initialization phase: all vars
-					 ///< are uservar then.
-  ufloat                   cpuload; ///< cpu load expressed as a number between 0 and 1
-  bool                     cpuoverload; ///< true when there is a cpu overload
-  bool                     signalcpuoverload; ///< a signal must be sent to every connection
-  int                      cpucount; ///< nb of recent cpu overloads
-  ufloat                   cputhreshold; ///< threshold for cpu overload alert
-  bool                     defcheck; ///< true when the server is paranoid on def checking
+  /// The main parser object.
+  UParser                  parser;
+  /// Flag used to signal a memory overflow.
+  bool                     memoryOverflow;
+
+
+  /// Shows debug or not..
+  bool                     debugOutput;
+  /// Name of the main device.
+  UString                  *mainName;
+  /// True after a stop command.
+  bool                     somethingToDelete;
+  /// True after the initialization phase: all vars are uservar then.
+  bool                     uservarState;
+
+  /// Cpu load expressed as a number between 0 and 1.
+  ufloat                   cpuload;
+  /// True when there is a cpu overload.
+  bool                     cpuoverload;
+  /// A signal must be sent to every connection.
+  bool                     signalcpuoverload;
+  /// Nb of recent cpu overloads.
+  int                      cpucount;
+  /// Threshold for cpu overload alert.
+  ufloat                   cputhreshold;
+  /// True when the server is paranoid on def checking.
+  bool                     defcheck;
   ufloat                   previous2Time,
 			   previous3Time,
 			   currentTime,
 			   previousTime,
 			   latestTime; ///< used to detect cpu overload
-  bool                     stopall; ///< stops all commands in all connections
-  bool                     systemcommands; ///< false inside parsing, true otherwise for commands created by the kernel
+  /// Stops all commands in all connections.
+  bool                     stopall;
+  /// False inside parsing, true otherwise for commands created by the
+  /// kernel.
+  bool                     systemcommands;
 
- static const int TCP_PORT            = 54000; ///< URBI TCP Port.
+  /// Urbi TCP Port..
+ static const int TCP_PORT            = 54000;
 
 protected:
 
@@ -190,14 +221,21 @@ protected:
 
 private:
 
-  static const int MAXSIZE_INTERNALMESSAGE = 1024;  ///< used by echo()& error()
-  static const int SECURITY_MEMORY_SIZE    = 100000;///< amount of security mem.
+  /// Used by echo()& error().
+  static const int MAXSIZE_INTERNALMESSAGE = 1024;
+  /// Amount of security mem..
+  static const int SECURITY_MEMORY_SIZE    = 100000;
 
-  ufloat           frequency_; ///< frequency of the calls to work()
-  void*            securityBuffer_; ///< stores memory for emergency use.
-  bool             isolate_; ///< is the server isolated
-  ufloat           lastTime_; ///< store the time on the last call to updateTime();
-  UGhostConnection *ghost; ///< the ghost connection used for URBI.INI
+  /// Frequency of the calls to work().
+  ufloat           frequency_;
+  /// Stores memory for emergency use..
+  void*            securityBuffer_;
+  /// Is the server isolated.
+  bool             isolate_;
+  /// Store the time on the last call to updateTime();.
+  ufloat           lastTime_;
+  /// The ghost connection used for URBI.INI.
+  UGhostConnection *ghost;
 };
 
 //! Accessor for frequency_

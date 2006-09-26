@@ -4,7 +4,7 @@
  File: ubinder.h\n
  Definition of the UBinder class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,10 +22,10 @@
 #ifndef UBINDER_H_DEFINED
 #define UBINDER_H_DEFINED
 
+#include <list>
+
 #include "ustring.h"
 #include "utypes.h"
-#include <list>
-using  std::list;
 
 class UNamedParameters;
 class UConnection;
@@ -43,13 +43,13 @@ public:
 
   UBinder(UString *objname, UString *id, UBindMode bindMode, UBindType type, int nbparam,
   	UConnection* c);
-  ~UBinder(); 
- 
+  ~UBinder();
+
   UString      *id;
   UBindMode    bindMode;
   UBindType    type;
   int          nbparam;
-  list<UMonitor*> monitors;
+  std::list<UMonitor*> monitors;
 
   void addMonitor(UString *objname, UConnection *c);
 
@@ -72,7 +72,7 @@ public:
   bool removeObject(UString *objname);
 
   UConnection* c;
-  list<UString*> objects;
+  std::list<UString*> objects;
 };
 
 #endif

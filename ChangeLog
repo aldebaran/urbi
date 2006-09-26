@@ -1,3 +1,29 @@
+2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+
+	namespace cleanups.
+	* ucommand.cc: Don't "using" things from std::.
+	Catch up with liburbi being in urbi::.
+	* ucommand.h: Ditto.
+	* uexpression.h: Ditto.
+	* ufloat.h: Ditto.
+	* ucallid.cc: Ditto.
+	* ugroup.h: Ditto.
+	* uexpression.cc: Ditto.
+	* uvariable.cc: Ditto.
+	* uconnection.h: Ditto.
+	* ubinder.h: Ditto.
+	* userver.cc: Ditto.
+	* userver.h: Ditto.
+	* uobj.cc: Ditto.
+	* uobj.h: Ditto.
+	* uobject/uvar.cc: Ditto.
+	* uvariablename.cc: Ditto.
+	* uvariable.h: Ditto.
+	* uvariablename.h: Ditto.
+	* ucallid.h: Ditto.
+	* uconnection.cc: Ditto.
+	* ubinder.cc: Ditto.
+
 2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
 
 	Use URBI_DIRS.

@@ -18,10 +18,11 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-#include <stdio.h>
+#include <cstdio>
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #endif
+
 #include "uobj.h"
 #include "ustring.h"
 #include "uvalue.h"
@@ -51,7 +52,7 @@ UObj::UObj (UString *device)
 UObj::~UObj()
 {
   // Removal of all variable bindings
-  list<UVariable*> varToDelete;
+  std::list<UVariable*> varToDelete;
   for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        ++it)
@@ -64,7 +65,7 @@ UObj::~UObj()
 	varToDelete.push_back((*it).second);
       }
     }//for
-  for (list<UVariable*>::iterator itd = varToDelete.begin();
+  for (std::list<UVariable*>::iterator itd = varToDelete.begin();
        itd != varToDelete.end();
        ++itd)
     delete (*itd);
@@ -87,7 +88,7 @@ UObj::~UObj()
 	}//if
     }//for
 
-  list<HMbindertab::iterator> deletelist;
+  std::list<HMbindertab::iterator> deletelist;
   //clean functions binders
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
@@ -96,7 +97,7 @@ UObj::~UObj()
       if (it2->second->removeMonitor(device))
 	deletelist.push_back(it2);
     }//for
-  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
     ::urbiserver->functionbindertab.erase((*itt));
@@ -111,7 +112,7 @@ UObj::~UObj()
       if (it3->second->removeMonitor(device))
 	deletelist.push_back(it3);
     }//for
-  for (list<HMbindertab::iterator>::iterator itt = deletelist.begin();
+  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
     ::urbiserver->eventbindertab.erase((*itt));
@@ -124,7 +125,7 @@ UObj::~UObj()
     char messagetosend[1024];
     snprintf(messagetosend,1024,"[5,\"%s\"]\n", device->str());
 
-    for (list<UMonitor*>::iterator it = binder->monitors.begin();
+    for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
 	 it != binder->monitors.end();
 	 it++)
       {
@@ -142,7 +143,7 @@ UObj::~UObj()
   ASSERT (idit != ::urbiserver->objtab.end()) ::urbiserver->objtab.erase(idit);
 
   // Remove the objects from the subclass list of its parents
-  for (list<UObj*>::iterator it = up.begin();
+  for (std::list<UObj*>::iterator it = up.begin();
        it != up.end();
        ++it)
     {
@@ -168,7 +169,7 @@ UObj::~UObj()
        it != ::urbiserver->variabletab.end();
        it++)
     {
-      for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalBinder.begin();
+      for (std::list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalBinder.begin();
 	   itcb != (*it).second->internalBinder.end();
 	   )
 	{
@@ -187,7 +188,7 @@ UObj::~UObj()
        it != ::urbiserver->variabletab.end();
        it++)
     {
-      for (list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalAccessBinder.begin();
+      for (std::list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalAccessBinder.begin();
 	   itcb != (*it).second->internalAccessBinder.end();
 	   )
 	{
@@ -221,7 +222,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   else {
     ret   = 0;
     found = false;
-    for (list<UObj*>::iterator itup = up.begin();
+    for (std::list<UObj*>::iterator itup = up.begin();
 	itup != up.end();
 	itup++){
       ret = (*itup)->searchFunction(id,ambiguous);
@@ -254,7 +255,7 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   else {
     ret   = 0;
     found = false;
-    for (list<UObj*>::iterator itup = up.begin();
+    for (std::list<UObj*>::iterator itup = up.begin();
 	itup != up.end();
 	itup++){
       ret = (*itup)->searchVariable(id,ambiguous);

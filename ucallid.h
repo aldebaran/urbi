@@ -4,7 +4,7 @@
  File: ucallid.h\n
  Definition of the UCallid class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,11 +22,10 @@
 #ifndef UCALLID_H_DEFINED
 #define UCALLID_H_DEFINED
 
+#include <list>
+
 #include "ustring.h"
 #include "uvariable.h"
-
-#include <list>
-using std::list;
 
 class UCommand_TREE;
 
@@ -38,15 +37,15 @@ class UCallid
 public:
 
   UCallid(const char* fun_id, const char* self_id, UCommand_TREE* root);
-  ~UCallid(); 
-  
-  list<UVariable*> stack;
+  ~UCallid();
+
+  std::list<UVariable*> stack;
   UString* fun_id;
   UString* self_id;
   UCommand_TREE* root;
 
   void         store(UVariable *variable);
-  const char*  str();  
+  const char*  str();
   const char*  self();
 };
 

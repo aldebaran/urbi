@@ -4,7 +4,7 @@
  File: ugroup.h\n
  Definition of the UGroup class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,12 +22,11 @@
 #ifndef UGROUP_H_DEFINED
 #define UGROUP_H_DEFINED
 
+#include <list>
+
 #include "ustring.h"
 class UVariableName;
 class UValue;
-#include <list>
-using std::list;
-
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
@@ -39,8 +38,8 @@ public:
   UGroup(char *name);
 
   ~UGroup();
-  
-  list<UString*> members;
+
+  std::list<UString*> members;
   UString      *name;
 };
 

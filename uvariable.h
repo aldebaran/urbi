@@ -23,13 +23,15 @@
 #define UVARIABLE_H_DEFINED
 
 #include <string>
-#include <stdlib.h>
+#include <list>
+
+#include <cstdlib>
+
 #include "memorymanager/memorymanager.h"
 #include <uvalue.h>
 #include "ustring.h"
 #include "utypes.h"
-#include <list>
-using std::list;
+
 
 class UNamedParameters;
 class UCommand;
@@ -84,46 +86,76 @@ public:
 	    bool _autoUpdate = true);
   ~UVariable();
 
-  UString         *varname;  ///< full associated var name if it exists
-  UString         *method;   ///< method in the varname
-  UString         *devicename; ///< device in the varname
+  /// Full associated var name if it exists.
+  UString         *varname;
+  /// Method in the varname.
+  UString         *method;
+  /// Device in the varname.
+  UString         *devicename;
 
   //properties
 
-  UBlend          blendType; ///< the variable blend type
-  UString         *unit;     ///< device unit
-  ufloat          rangemin;  ///< rangemin
-  ufloat          rangemax;  ///< rangemax
-  ufloat          speedmin;  ///< rangemin
-  ufloat          speedmax;  ///< rangemax
-  ufloat          delta;     ///< delta
+  /// The variable blend type.
+  UBlend          blendType;
+  /// Device unit.
+  UString         *unit;
+  /// Rangemin.
+  ufloat          rangemin;
+  /// Rangemax.
+  ufloat          rangemax;
+  /// Rangemin.
+  ufloat          speedmin;
+  /// Rangemax.
+  ufloat          speedmax;
+  /// Delta.
+  ufloat          delta;
 
-  int             nbAssigns;///< nb superposition of assignments
-  int             nbAverage; ///< nb superposition of mixing or adding assignments
-  int             activity;  ///< stage of usage in the reinit list: 0 (off), 1(in) or 2(going out)
-  bool            uservar; ///< indicates user variables
-  ufloat          target;   ///< temporary value container
+  /// Nb superposition of assignments.
+  int             nbAssigns;
+  /// Nb superposition of mixing or adding assignments.
+  int             nbAverage;
+  /// Stage of usage in the reinit list: 0 (off), 1(in) or 2(going
+  /// out).
+  int             activity;
+  /// Indicates user variables.
+  bool            uservar;
+  /// Temporary value container.
+  ufloat          target;
   ufloat          previous,
 		  previous2,
 		  previous3; ///< previous theoretical value container
-  ufloat          previous_sensed; ///< previous sensed value
-  UValue          *value; ///< variable value
+  /// Previous sensed value.
+  ufloat          previous_sensed;
+  /// Variable value.
+  UValue          *value;
   ufloat          valPrev,
 		  valPrev2; // used for 'd and 'dd calculation
-  bool            notifyRead; ///< true when UDevice::notifyRead must be called
-  bool            notifyWrite;  ///< true when UDevice::notifyWrite must be called
-  bool            autoUpdate;  ///< true when the target value is automatically mapped to value
-  bool            modified; ///< true when the value of the variable has been modified
-  bool            toDelete; ///< mark the variable for deletion
-  bool            speedmodified; ///< when a speedmax reajustment has been executed
-  bool            reloop; ///< when speedmodified has been detected, asking for a reloop on pending
-			  ///< finished assignements.
-  UBinder         *binder; ///< cached binder pointer
+  /// True when UDevice::notifyRead must be called.
+  bool            notifyRead;
+  /// True when UDevice::notifyWrite must be called.
+  bool            notifyWrite;
+  /// True when the target value is automatically mapped to value.
+  bool            autoUpdate;
+  /// True when the value of the variable has been modified.
+  bool            modified;
+  /// Mark the variable for deletion.
+  bool            toDelete;
+  /// When a speedmax reajustment has been executed.
+  bool            speedmodified;
+  /// When speedmodified has been detected, asking for a reloop on
+  /// pending finished assignements.
+  bool            reloop;
 
-  list<urbi::UGenericCallback*> internalBinder; ///< binder for internal monitors
-  list<urbi::UGenericCallback*> internalAccessBinder; ///< binder for internal access monitors
+  /// Cached binder pointer.
+  UBinder         *binder;
 
-  UCommand_ASSIGN_VALUE *cancel; ///< used for the "cancel" blend type
+  /// Binder for internal monitors.
+  std::list<urbi::UGenericCallback*> internalBinder;
+  /// Binder for internal access monitors.
+  std::list<urbi::UGenericCallback*> internalAccessBinder;
+
+  /// Used for the "cancel" blend type.
+  UCommand_ASSIGN_VALUE *cancel;
 
 
   const char*   setName(const char *s);
@@ -136,7 +168,9 @@ public:
 
   void          setSensorVal(ufloat f);
   void          initSensorVal(ufloat f);
-  bool          isDeletable(); ///< true when the variable does not contain an object with subclasses
+  /// True when the variable does not contain an object with
+  /// subclasses.
+  bool          isDeletable();
 
   void          updated();
 
@@ -150,7 +184,8 @@ public:
 
 
 
-//! Set a value->val value. Must be called instead of value->val direct assignment
+/// Set a value->val value. Must be called instead of value->val
+///  direct assignment
 inline void
 UVariable::setSensorVal(ufloat f)
 {

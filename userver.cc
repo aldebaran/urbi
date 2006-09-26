@@ -300,7 +300,7 @@ UServer::work()
 
 
   // Scan currently opened connections for ongoing work
-  for (list<UConnection*>::iterator retr = connectionList.begin();
+  for (std::list<UConnection*>::iterator retr = connectionList.begin();
        retr != connectionList.end();
        retr++)
     if ((*retr)->isActive())  {
@@ -346,7 +346,7 @@ UServer::work()
   if ((reseting) && (stage==0))
     stopall = true;
 
-  for (list<UConnection*>::iterator retr = connectionList.begin();
+  for (std::list<UConnection*>::iterator retr = connectionList.begin();
        retr != connectionList.end();
        retr++)
     if  ( ((*retr)->isActive()) &&
@@ -375,7 +375,7 @@ UServer::work()
   ufloat *valtmp;
   UVarSet selfError;
 
-  for (list<UVariable*>::iterator iter = reinitList.begin();
+  for (std::list<UVariable*>::iterator iter = reinitList.begin();
        iter != reinitList.end();)
 
     if ((*iter)->activity == 2) {
@@ -470,7 +470,7 @@ UServer::work()
 
       while (!varToReset.empty())
       {
-	for (list<UVariable*>::iterator it = varToReset.begin();
+	for (std::list<UVariable*>::iterator it = varToReset.begin();
 	    it != varToReset.end();)
 	{
 	  if ((*it)->isDeletable())
@@ -489,7 +489,7 @@ UServer::work()
 	if ((*retr).second->uservar)
 	  varToReset.push_back( (*retr).second );
 
-      for (list<UVariable*>::iterator it = varToReset.begin();
+      for (std::list<UVariable*>::iterator it = varToReset.begin();
 	  it != varToReset.end();++it)
 	delete (*it);
 
@@ -506,7 +506,7 @@ UServer::work()
       grouptab.clear();
 
       varToReset.clear();
-      for (list<UConnection*>::iterator retr = connectionList.begin();
+      for (std::list<UConnection*>::iterator retr = connectionList.begin();
        	  retr != connectionList.end();
 	  retr++)
 	if  ((*retr)->isActive())
@@ -538,7 +538,7 @@ UServer::work()
       //if (ghost->recvQueue()->dataSize() == 0)
       {
 
-	for (list<UConnection*>::iterator retr = connectionList.begin();
+	for (std::list<UConnection*>::iterator retr = connectionList.begin();
 	    retr != connectionList.end();
 	    retr++)
 	  if  ( ((*retr)->isActive()) && ((*retr) != ghost))
@@ -828,7 +828,7 @@ UServer::memoryCheck ()
     warningSent = true;
 
     // Scan currently opened connections
-    for (list<UConnection*>::iterator retr = connectionList.begin();
+    for (std::list<UConnection*>::iterator retr = connectionList.begin();
 	 retr != connectionList.end();
 	 retr++)
 
@@ -894,11 +894,11 @@ void
 UServer::mark(UString *stopTag)
 {
   // Scan currently opened connections for ongoing work
-  for (list<UConnection*>::iterator retr = connectionList.begin();
+  for (std::list<UConnection*>::iterator retr = connectionList.begin();
        retr != connectionList.end();
        retr++)
-    if  (((*retr)->isActive()) &&
-	 ((*retr)->activeCommand))
+    if  ((*retr)->isActive() &&
+	 (*retr)->activeCommand)
       (*retr)->activeCommand->mark(stopTag);
 
   if (parser.commandTree)

@@ -19,20 +19,23 @@
 
  **************************************************************************** */
 
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdlib>
+#include <cstdio>
+
 #include <sstream>
+
 #include "ucommand.h"
 #include "uconnection.h"
 #include "userver.h"
 #include "ucallid.h"
 #include "utypes.h"
 #include "uobject/uobject.h"
+
 #if (__GNUC__ == 2)
 static const string left = "";
 #endif
-using std::ostringstream;
+
 char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];  ///< temporary global string
 MEMORY_MANAGER_INIT(UCommand);
 // **************************************************************************
@@ -150,7 +153,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
       UCommand *clone;
       UNamedParameters *varindex;
 
-      for (list<UString*>::iterator retr = oo->members.begin();
+      for (std::list<UString*>::iterator retr = oo->members.begin();
 	   retr != oo->members.end();
 	   retr++) {
 
@@ -510,7 +513,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
 			   functionname->str(),it->second->nbparam,UU);
 
-	  for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+	  for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 		   it2 != it->second->monitors.end();
 		   it2++) {
 
@@ -654,7 +657,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  UCommand *call_prev = 0;
 	  bool found_function = false;
 
-	  for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+	  for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
 		   ((cbi != hmfi->second.end()) && (!found_function));
 		   cbi++) {
 
@@ -2058,7 +2061,7 @@ UCommand_EXPR::execute(UConnection *connection)
       snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
     	  funname->str(),it->second->nbparam,UU);
 
-      for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
 	   it2++) {
 
@@ -2217,7 +2220,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
     urbi::UTable::iterator hmfi = urbi::functionmap.find(funname->str());
     if (hmfi != urbi::functionmap.end()) {
-      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+      for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
  	  cbi != hmfi->second.end();
 	  cbi++) {
 
@@ -2468,7 +2471,7 @@ UCommand_ECHO::execute(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (list<UConnection*>::iterator retr = connection->server->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr = connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
       if  ( ((*retr)->isActive()) &&
@@ -2618,7 +2621,7 @@ UCommand_NEW::execute(UConnection *connection)
 	objit->second->device->str());
 
     int nb=0;
-    for (list<UMonitor*>::iterator it2 = objit->second->binder->monitors.begin();
+    for (std::list<UMonitor*>::iterator it2 = objit->second->binder->monitors.begin();
 	it2 != objit->second->binder->monitors.end();
 	it2++)
     {
@@ -2761,7 +2764,7 @@ UCommand_NEW::execute(UConnection *connection)
     alreadydone = true;
     urbi::UTable::iterator hmfi = urbi::functionmap.find(funtofind.c_str());
     if (hmfi != urbi::functionmap.end()) {
-      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+      for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
 	  cbi != hmfi->second.end();
 	  cbi++) {
 
@@ -2831,7 +2834,7 @@ UCommand_NEW::execute(UConnection *connection)
     }
 
 
-    for (list<UMonitor*>::iterator it2 =
+    for (std::list<UMonitor*>::iterator it2 =
 	objit->second->binder->monitors.begin();
 	it2 != objit->second->binder->monitors.end();
 	it2++) {
@@ -3100,7 +3103,7 @@ UCommand_GROUP::execute(UConnection *connection)
     UNamedParameters* param = parameters;
     while (param) {
       if (grouptype == 2) {//del
-	for (list<UString*>::iterator it = g->members.begin();
+	for (std::list<UString*>::iterator it = g->members.begin();
 	    it != g->members.end();
 	    )
 	  if ((*it)->equal(param->name))
@@ -3134,7 +3137,7 @@ UCommand_GROUP::execute(UConnection *connection)
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	  "*** %s = {",
 	  (*retr).first);
-      for (list<UString*>::iterator it = (*retr).second->members.begin();
+      for (std::list<UString*>::iterator it = (*retr).second->members.begin();
 	   it !=  (*retr).second->members.end();
 	   ) {
 	strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
@@ -3154,7 +3157,7 @@ UCommand_GROUP::execute(UConnection *connection)
 
     UNamedParameters *ret = 0;
 
-    list<UString*>::iterator it = (*retr).second->members.begin();
+    std::list<UString*>::iterator it = (*retr).second->members.begin();
     if (it !=  (*retr).second->members.end()) {
       ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
 	   (UNamedParameters*)0);
@@ -3261,7 +3264,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (list<UConnection*>::iterator retr = connection->server->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr = connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
       if  ( ((*retr)->isActive()) &&
@@ -3286,7 +3289,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (list<UConnection*>::iterator retr = connection->server->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr = connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
       if  ( ((*retr)->isActive()) &&
@@ -4059,7 +4062,7 @@ connection->send(tstr.str().c_str(),tag->str());
 
       fullname = (*retr).second->varname;
       if (fullname) {
-	ostringstream tstr;
+	std::ostringstream tstr;
 	switch ((*retr).second->value->dataType) {
 
 	case DATA_NUM:
@@ -4099,7 +4102,7 @@ connection->send(tstr.str().c_str(),tag->str());
 
       fullname = (*retr).second->varname;
       if ((*retr).second->uservar) {
-	ostringstream tstr;
+	std::ostringstream tstr;
 	switch ((*retr).second->value->dataType) {
 	  case DATA_NUM:
 	    tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
@@ -4142,7 +4145,7 @@ connection->send(tstr.str().c_str(),tag->str());
 
   if (strcmp(oper->str(),"connections")==0) {
 
-    for (list<UConnection*>::iterator retr = ::urbiserver->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr = ::urbiserver->connectionList.begin();
 	 retr != ::urbiserver->connectionList.end();
 	 retr++)
       if ((*retr)->isActive())  {
@@ -4396,7 +4399,7 @@ UCommand_EMIT::execute(UConnection *connection)
       snprintf(tmpprefix,1024,"[2,\"%s__%d\"",
     	  eventnamestr,it->second->nbparam);
 
-      for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
 	   it2++) {
 
@@ -4419,7 +4422,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
     urbi::UTable::iterator hmfi = urbi::eventmap.find(eventnamestr);
     if (hmfi != urbi::eventmap.end()) {
-      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+      for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
  	  cbi != hmfi->second.end();
 	  cbi++) {
 
@@ -4467,7 +4470,7 @@ UCommand_EMIT::execute(UConnection *connection)
       snprintf(tmpprefix,1024,"[3,\"%s__%d\"]\n",
     	  eventnamestr,it->second->nbparam);
 
-      for (list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
 	   it2++) {
 
@@ -4480,7 +4483,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
     urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
     if (hmfi != urbi::eventendmap.end()) {
-      for (list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+      for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
  	  cbi != hmfi->second.end();
 	  cbi++) {
 
@@ -4815,41 +4818,41 @@ UCommand_DEF::execute(UConnection *connection)
   }
 
   // Function definition
-  if ((deftype == UDEF_FUNCTION) && (variablename) && (command)) {
+  if (deftype == UDEF_FUNCTION && variablename && command)
+    {
+      UString* funname = variablename->buildFullname(this,connection);
+      if (!funname) return (status = UCOMPLETED);
 
-    UString* funname = variablename->buildFullname(this,connection);
-    if (!funname) return (status = UCOMPLETED);
+      if ((variablename->nostruct) &&
+	  (::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
+	   ::urbiserver->grouptab.end()))  {
 
-   if ((variablename->nostruct) &&
-       (::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
-	::urbiserver->grouptab.end()))  {
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! function name conflicts with group %s \n",variablename->getMethod()->str());
+	connection->send(tmpbuffer,tag->str());
 
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! function name conflicts with group %s \n",variablename->getMethod()->str());
-      connection->send(tmpbuffer,tag->str());
+	return( status = UCOMPLETED );
+      }
 
-      return( status = UCOMPLETED );
+      if (connection->server->functiontab.find(funname->str()) !=
+	  connection->server->functiontab.end()) {
+
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! function %s already exists\n",funname->str());
+	connection->send(tmpbuffer,tag->str());
+
+	return( status = UCOMPLETED );
+      }
+
+      UFunction *fun = new UFunction(new UString(funname),
+				     parameters,
+				     command);
+      if (fun)
+	connection->server->functiondeftab[fun->name()->str()] = fun;
+
+      if ((fun) && (command))
+	connection->server->functiontab[fun->name()->str()] = fun;
     }
-
-    if (connection->server->functiontab.find(funname->str()) !=
-	connection->server->functiontab.end()) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! function %s already exists\n",funname->str());
-      connection->send(tmpbuffer,tag->str());
-
-      return( status = UCOMPLETED );
-    }
-
-    UFunction *fun = new UFunction(new UString(funname),
-				   parameters,
-				   command);
-    if (fun)
-      connection->server->functiondeftab[fun->name()->str()] = fun;
-
-    if ((fun) && (command))
-      connection->server->functiontab[fun->name()->str()] = fun;
-  }
 
   // Event definition
   if ((deftype == UDEF_EVENT) && (variablename)) {
@@ -4872,7 +4875,7 @@ UCommand_DEF::execute(UConnection *connection)
     UVariable* variable = variablename->getVariable(this,connection);
     if (!variablename->getFullname()) return ( status = UCOMPLETED );
     if (variable) // the variable is already defined
-       return ( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
     // Variable definition
 
@@ -4885,8 +4888,8 @@ UCommand_DEF::execute(UConnection *connection)
 
     UNamedParameters * param = parameters;
     UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,new UVariableName(device->copy(),param->name, true,0),
-			     (UNamedParameters*) 0,
-			     (UCommand*) 0);
+					   (UNamedParameters*) 0,
+					   (UCommand*) 0);
     cdef->tag->update(tag->str());
     morph = cdef;
     param = param->next;

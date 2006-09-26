@@ -4,7 +4,7 @@
  File: uexpression.h\n
  Definition of the UExpression class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,12 +22,12 @@
 #ifndef UEXPRESSION_H_DEFINED
 #define UEXPRESSION_H_DEFINED
 
+#include <list>
+
 #include "utypes.h"
 #include "ustring.h"
 #include "ucommandqueue.h"
 #include "memorymanager/memorymanager.h"
-#include <list>
-using std::list;
 
 class UCommand;
 class UExpression;
@@ -40,12 +40,12 @@ class UValue;
 class UServer;
 class UCommand_TREE;
 class UContext;
-		
+
 // *****************************************************************************
 //! Contain an expression tree as returned by the parser
-/*! UExpression class:   
+/*! UExpression class:
 
-    There is no subclass to UExpression to make it easier to have 
+    There is no subclass to UExpression to make it easier to have
     expressions with transforming type, like in the numerical reduction
     that happends in the parser: 4+5 which is a EXPR_PLUS expression will
     be transformed into a EXPR_VALUE with value 9. Sub classes would make
@@ -63,38 +63,38 @@ public:
   UExpression(UExpressionType type, UValue *v);
   UExpression(UExpressionType type, UValue v);
 
-  UExpression(UExpressionType type, 
-              UExpression* expression1, 
-              UExpression* expression2);
+  UExpression(UExpressionType type,
+	      UExpression* expression1,
+	      UExpression* expression2);
   UExpression(UExpressionType type, UVariableName* variablename);
   UExpression(UExpressionType type,
-              UVariableName* variablename, 
-              UExpression *expression1);
+	      UVariableName* variablename,
+	      UExpression *expression1);
   UExpression(UExpressionType type,
-              UVariableName* variablename, 
-              UNamedParameters *parameters);
+	      UVariableName* variablename,
+	      UNamedParameters *parameters);
   UExpression(UExpressionType type,
-              UNamedParameters *parameters);
-  UExpression(UExpressionType type, 
-              UString *oper,
-              UString *id);
-  UExpression(UExpressionType type, 
-              UString *oper,
-              UVariableName *variablename);
+	      UNamedParameters *parameters);
+  UExpression(UExpressionType type,
+	      UString *oper,
+	      UString *id);
+  UExpression(UExpressionType type,
+	      UString *oper,
+	      UVariableName *variablename);
   ~UExpression();
 
-  void            print       (); 
+  void            print       ();
   void            initialize  ();
   UValue*         eval        (UCommand *command, UConnection *connection, bool silent = false);
-  UExpression*    copy        (); 
-  
+  UExpression*    copy        ();
+
   UExpressionType type;         ///< Type of the expression.
   UDataType       dataType;     ///< Type of the expression's data.
 
-  ufloat          val;          ///< numerical value used for the EXPR_NUM                               
-  UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR 
+  ufloat          val;          ///< numerical value used for the EXPR_NUM
+  UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR
   UValue          *tmp_value;   ///< stores a tmp UValue resulting from a function evaluation (which temporarily is processed as an UExpression). Usually, the value of this is 0.
-                                ///< type.
+				///< type.
   UString         *id;          ///< id of the EXPR_FUNCTOR
   bool            firsteval;    ///< true on first evaluation (used by static)
   bool            isconst;      ///< true when the expr is const
@@ -103,12 +103,12 @@ public:
 
   UExpression     *expression1; ///< Left side of a compound expression.
   UExpression     *expression2; ///< Right side of a compound expression.
-  UVariableName   *variablename;///< variable when the expression is a 
-                                ///< EXPR_VARIABLE or  EXPR_FUNCTION 
+  UVariableName   *variablename;///< variable when the expression is a
+				///< EXPR_VARIABLE or  EXPR_FUNCTION
   UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION or EXPR_LIST
 
   //  ufloat          softtest_time;///< Time constant for a soft test (0 means "hard test")
-  UExpression      *softtest_time; ///< Time constant for a soft test (0 means "hard test")  
+  UExpression      *softtest_time; ///< Time constant for a soft test (0 means "hard test")
   //  int             softtest_rep; ///< Nb of repetition for a soft test
 };
 

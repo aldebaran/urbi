@@ -4,7 +4,7 @@
  File: ucallid.cc\n
  Implementation of the UCallid class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,8 +22,8 @@
 #include "ucallid.h"
 #include "ustring.h"
 #include "ucommand.h"
-                                                       	
-// **************************************************************************	
+
+// **************************************************************************
 //! UCallid constructor.
 UCallid::UCallid (const char *fun_id, const char *self_id, UCommand_TREE* root)
 {
@@ -37,9 +37,9 @@ UCallid::~UCallid()
 {
   if (fun_id) delete(fun_id);
   if (self_id) delete(self_id);
-  
-  for (list<UVariable*>::iterator iter = stack.begin();
-       iter != stack.end();iter++) 
+
+  for (std::list<UVariable*>::iterator iter = stack.begin();
+       iter != stack.end();iter++)
     delete ((*iter));
 
   stack.clear();

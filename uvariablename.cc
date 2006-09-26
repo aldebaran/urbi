@@ -4,7 +4,7 @@
 File: uvariablename.cc\n
 Implementation of the UVariableName class.
 
-This file is part of 
+This file is part of
 %URBI Kernel, version __kernelversion__\n
 (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -33,18 +33,18 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 
 MEMORY_MANAGER_INIT(UVariableName);
-// **************************************************************************	
+// **************************************************************************
 //! UVariableName constructor for variable of the type device.id[...][...]...
-UVariableName::UVariableName(UString* device, 
-							 UString *id, 
+UVariableName::UVariableName(UString* device,
+							 UString *id,
 							 bool rooted,
 							 UNamedParameters *index)
-{	
-  ADDOBJ(UVariableName);	
-  
+{
+  ADDOBJ(UVariableName);
+
   this->device    = device;
   this->id        = id;
-  this->method    = 0; 
+  this->method    = 0;
   this->rooted    = rooted;
   this->index     = index;
   this->fullname_ = 0;
@@ -54,12 +54,12 @@ UVariableName::UVariableName(UString* device,
   this->deriv     = UNODERIV;
   this->varerror  = false;
   this->cached    = false;
-  this->fromGroup = false;  
-  this->variable  = 0; 
+  this->fromGroup = false;
+  this->variable  = 0;
   this->function  = 0;
   this->firsttime = true;
   this->nostruct  = false;
-  this->id_type   = UDEF_VAR;  
+  this->id_type   = UDEF_VAR;
   this->local_scope  = false;
 
   localFunction   = false;
@@ -68,40 +68,40 @@ UVariableName::UVariableName(UString* device,
     localFunction = true;
   if ((device) && (device->equal("self")))
     selfFunction = true;
-  
+
 }
 
 //! UVariableName constructor for string based variables: $("...")
 UVariableName::UVariableName(UExpression* str, bool rooted)
-{	
-  ADDOBJ(UVariableName);	
-  
+{
+  ADDOBJ(UVariableName);
+
   this->device    = 0;
   this->id        = 0;
-  this->method    = 0; 
+  this->method    = 0;
   this->rooted    = rooted;
   this->index     = 0;
   this->fullname_ = 0;
   this->str       = str;
-  this->isstatic  = false;  
+  this->isstatic  = false;
   this->isnormalized = false;
   this->deriv     = UNODERIV;
   this->varerror  = false;
-  this->cached    = false;  
-  localFunction   = false; 
+  this->cached    = false;
+  localFunction   = false;
   selfFunction    = false;
   this->variable  = 0;
   this->function  = 0;
   this->firsttime = true;
   this->nostruct  = false;
-  this->id_type   = UDEF_VAR;  
+  this->id_type   = UDEF_VAR;
   this->local_scope  = false;
 }
 
 //! UVariableName destructor.
 UVariableName::~UVariableName()
 {
-  FREEOBJ(UVariableName);	
+  FREEOBJ(UVariableName);
   if (device) delete(device);
   if (id) delete (id);
   if (method) delete (method);
@@ -113,7 +113,7 @@ UVariableName::~UVariableName()
 
 //! UVariableName reset cache access
 void
-UVariableName::resetCache() 
+UVariableName::resetCache()
 {
   cached = false;
   variable = 0;
@@ -127,41 +127,41 @@ constant and that the access to the variable hash table has been done
 already. This access is then cached to limitate the number of calls to
 the hash table.
 */
-UVariable* 
+UVariable*
 UVariableName::getVariable(UCommand *command, UConnection *connection)
 {
   UVariable *tmpvar;
-  
-  if (variable) 
+
+  if (variable)
     if (variable->toDelete) return(0);
 	else
 	  return (variable);
-  
+
   if ((!fullname_) || (!cached))
     buildFullname(command,connection);
-  
+
   if (!fullname_) return(0);
- 
-  if ((nostruct) && 
+
+  if ((nostruct) &&
       (::urbiserver->objtab.find(getMethod()->str()) !=
        ::urbiserver->objtab.end())) {
     if ( (hmi2 = ::urbiserver->variabletab.find(getMethod()->str())) !=
 	::urbiserver->variabletab.end())
       tmpvar = (*hmi2).second;
-    else 
+    else
       tmpvar = 0;
   }
   else {
     if ( (hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
 	::urbiserver->variabletab.end())
       tmpvar = (*hmi2).second;
-    else 
+    else
       tmpvar = 0;
   }
 
-  
+
   if (cached) variable = tmpvar;
-  
+
   return (tmpvar);
 }
 
@@ -171,39 +171,39 @@ constant and that the access to the function hash table has been done
 already. This access is then cached to limitate the number of calls to
 the hash table.
 */
-UFunction* 
+UFunction*
 UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
   UFunction *tmpfun;
-  
+
   if (function) return (function);
-  
+
   if ((!fullname_) || (!cached))
     buildFullname(command,connection);
-  
+
   if (!fullname_) return(0);
-  
+
   if ( (hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
        ::urbiserver->functiontab.end())
     tmpfun = (*hmf).second;
-  else 
+  else
     tmpfun = 0;
-  
+
   if (cached) function = tmpfun;
-  
+
   return (tmpfun);
 }
 
 //! UVariableName test to know if there is a function with that name
 bool
 UVariableName::isFunction(UCommand *command, UConnection *connection)
-{  
+{
   UFunction* tmpfun = getFunction(command, connection);
-  if (tmpfun) return (true);    
-  if (!fullname_) return(false);  
+  if (tmpfun) return (true);
+  if (!fullname_) return(false);
   if (urbi::functionmap.find(fullname_->str()) !=
       urbi::functionmap.end()) return(true);
-  
+
   if (::urbiserver->functionbindertab.find(fullname_->str()) !=
       ::urbiserver->functionbindertab.end()) return(true);
 
@@ -212,15 +212,15 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
 
 
 //! UVariableName access to method (with cache)
-UString* 
+UString*
 UVariableName::getMethod()
 {
   if (method) return (method);
-  
+
   if (!fullname_) return (0);
   char *pointPos = strstr(fullname_->str(),".");
-  
-  if (pointPos == 0) 
+
+  if (pointPos == 0)
     method = new UString("");
   else
     method = new UString(pointPos + 1);
@@ -232,12 +232,12 @@ UString*
 UVariableName::getDevice()
 {
   if (device) return (device);
-  
+
   if (!fullname_) return (0);
   char *pointPos = strstr(fullname_->str(),".");
   if (pointPos == 0) return (fullname_);
   pointPos[0] = 0;
-  
+
   device = new UString(fullname_->str());
   pointPos[0] = '.';
   return (device);
@@ -246,11 +246,11 @@ UVariableName::getDevice()
 
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
-If the building blocks are static, non variable parameters (like static 
+If the building blocks are static, non variable parameters (like static
 indexes in an array or constant string in a $(...)), cached is set to
 true to avoid recalculus on next call.
 */
-UString* 
+UString*
 UVariableName::buildFullname(UCommand *command, UConnection *connection, bool withalias)
 {
   const int    fullnameMaxSize = 1024;
@@ -259,26 +259,26 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   UValue *e1;
   bool   errordetected;
   UNamedParameters* itindex;
- 
+
   if (cached) return (fullname_);
-  
+
   if (str) {
-	
+
     e1 = str->eval(command,connection);
     cached = str->isconst;
-	
+
     if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING)) {
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! dynamic variable evaluation failed\n");
+	       "!!! dynamic variable evaluation failed\n");
       connection->send(tmpbuffer,command->tag->str());
-      if (e1) delete e1;      
+      if (e1) delete e1;
       if (fullname_) {
-        delete fullname_;
-        fullname_ = 0;
+	delete fullname_;
+	fullname_ = 0;
       }
       return(0);
     }
-    
+
     if (strchr(e1->str->str(),'.') == 0) {
       nostruct = true;
       if (::urbiserver->objtab.find(e1->str->str()) ==
@@ -291,44 +291,44 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	  if (e1->str->equal("self"))
 	    snprintf(name,fullnameMaxSize,
 		"%s",connection->stack.front()->self());
-	  else 
+	  else
 	    snprintf(name,fullnameMaxSize,
 		"%s.%s",connection->stack.front()->str(),
 		e1->str->str());
-	
+
       }
       else
 	strncpy(name,e1->str->str(),fullnameMaxSize);
     }
-    else      
+    else
       strncpy(name,e1->str->str(),fullnameMaxSize);
-	
-    delete e1;        
+
+    delete e1;
   }
   else {
-	
+
     // Local function call
     if ((localFunction || selfFunction) && (firsttime)) {
       firsttime = false;
       if (!connection->stack.empty()) {
-        UCallid *funid = connection->stack.front();
-        if (funid) {
+	UCallid *funid = connection->stack.front();
+	if (funid) {
 
 	  if (selfFunction)
 	    device->update(funid->self());
 
-	  if (localFunction) 
+	  if (localFunction)
 	  {
 	    std::string tmpself(funid->self());
 	    tmpself = tmpself + "." + id->str();
 	    std::string tmpstr(funid->str());
-	    tmpstr = tmpstr + "." + id->str();	   
+	    tmpstr = tmpstr + "." + id->str();
 
 	    if (local_scope)
 	      device->update(funid->str());
 	    else
 	    {
-	      if (((id_type==UDEF_VAR) // is it a class symbol? (class can be U0034578 for 
+	      if (((id_type==UDEF_VAR) // is it a class symbol? (class can be U0034578 for
 	      	                       // functions without prefixes)
   		    && (::urbiserver->variabletab.find(tmpself.c_str()) !=
   		      ::urbiserver->variabletab.end()))
@@ -353,17 +353,17 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   		    ((id_type==UDEF_EVENT)
   		     && (::urbiserver->eventtab.find(tmpstr.c_str()) ==
   		       ::urbiserver->eventtab.end()))
-  		   )		 
+  		   )
 		  device->update(funid->self());
 		else
 		  device->update(funid->str());
   	      }// class symbol
 	      else
-	      {	
+	      {
 		std::string tmploc(connection->connectionTag->str());
 		tmploc = tmploc + "." + id->str();
 
-		if (((id_type==UDEF_VAR) // is it a symbol local to the connection? 
+		if (((id_type==UDEF_VAR) // is it a symbol local to the connection?
 		      && (::urbiserver->variabletab.find(tmploc.c_str()) !=
 			::urbiserver->variabletab.end()))
 		    ||
@@ -381,55 +381,55 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	      }// !class symbol
 	    }
 	  }
-	}	
+	}
       }
       else {
-        snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-                 "!!! invalid prefix resolution\n");
-        connection->send(tmpbuffer,command->tag->str());  
-        if (fullname_) {
-          delete fullname_;
-          fullname_ = 0;
-        }
-        return(0);                    
-      }        
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! invalid prefix resolution\n");
+	connection->send(tmpbuffer,command->tag->str());
+	if (fullname_) {
+	  delete fullname_;
+	  fullname_ = 0;
+	}
+	return(0);
+      }
     }
-	
+
     if (device->equal("local"))
       device->update(connection->connectionTag->str());
-	
-    if (index == 0) {    
-	  
+
+    if (index == 0) {
+
       cached = true;
-	  
-      // Create the concatened variable name      
-      snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());       
+
+      // Create the concatened variable name
+      snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
     }
-    else { 
+    else {
       // rebuilding name based on index
-      
-      snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());      
+
+      snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
       itindex = index;
       errordetected = false;
       cached = true;
-	  
+
       while (itindex) {
-        
-        e1 = itindex->expression->eval(command,connection);  
-        if (e1==0) {
-          snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-                   "!!! expression error: array ignored\n");
-          connection->send(tmpbuffer,command->tag->str());
-          errordetected = true;
-          break;   
-        }
-        if (e1->dataType == DATA_NUM) 
-          snprintf(indexstr,fullnameMaxSize-strlen(name),"__%d",(int)e1->val);      
-        else         
-          if (e1->dataType == DATA_STRING) 
-            snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",e1->str->str());
+
+	e1 = itindex->expression->eval(command,connection);
+	if (e1==0) {
+	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		   "!!! expression error: array ignored\n");
+	  connection->send(tmpbuffer,command->tag->str());
+	  errordetected = true;
+	  break;
+	}
+	if (e1->dataType == DATA_NUM)
+	  snprintf(indexstr,fullnameMaxSize-strlen(name),"__%d",(int)e1->val);
+	else
+	  if (e1->dataType == DATA_STRING)
+	    snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",e1->str->str());
 		else {
-		  
+
 		  delete e1;
 		  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 				   "!!! invalid array type: array ignored\n");
@@ -437,77 +437,77 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 		  errordetected = true;
 		  break;
 		}
-        
-        // Suppress this to make index non static by default
-        // if (!itindex->expression->isconst) cached = false;
-		
-        strcat(name,indexstr);
-        itindex = itindex->next;
-        delete e1;
-      } 
-      if (errordetected) {        
-        if (fullname_) {
-          delete fullname_;
-          fullname_ = 0;
-        }
-        return(0);
+
+	// Suppress this to make index non static by default
+	// if (!itindex->expression->isconst) cached = false;
+
+	strcat(name,indexstr);
+	itindex = itindex->next;
+	delete e1;
+      }
+      if (errordetected) {
+	if (fullname_) {
+	  delete fullname_;
+	  fullname_ = 0;
+	}
+	return(0);
       }
     }
   } // else str
-  
+
   // Alias updating
   if (withalias) {
-	
+
     if (nostruct) { // Comes from a simple IDENTIFIER
       char* p =  strchr(name,'.');
       HMaliastab::iterator getobj;
       if (p)
-  	    getobj = ::urbiserver->objaliastab.find(p+1);    
+  	    getobj = ::urbiserver->objaliastab.find(p+1);
       else
-	    getobj = ::urbiserver->objaliastab.find(name);   
+	    getobj = ::urbiserver->objaliastab.find(name);
       if (getobj != ::urbiserver->objaliastab.end()) {
 	    UString* newobj = (*getobj).second;
 	    getobj = ::urbiserver->objaliastab.find(newobj->str());
 	    while (getobj !=  ::urbiserver->objaliastab.end()) {
 	      newobj = (*getobj).second;
 	      getobj = ::urbiserver->objaliastab.find(newobj->str());
-    	}	
-		snprintf(name,fullnameMaxSize,"%s",newobj->str());	
+    	}
+		snprintf(name,fullnameMaxSize,"%s",newobj->str());
       }
-	  
+
       p =  strchr(name,'.');
-      if (p) 
+      if (p)
 		hmi = ::urbiserver->aliastab.find(p+1);
       else
 		hmi = ::urbiserver->aliastab.find(name);
     }
-    else 
+    else
       hmi = ::urbiserver->aliastab.find(name);
     past_hmi = hmi;
-    
-    while  (hmi != ::urbiserver->aliastab.end()) {      
+
+    while  (hmi != ::urbiserver->aliastab.end()) {
       past_hmi = hmi;
-      hmi = ::urbiserver->aliastab.find((*hmi).second->str());          
+      hmi = ::urbiserver->aliastab.find((*hmi).second->str());
     };
-    
+
     if (past_hmi != ::urbiserver->aliastab.end()) {
-      strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);                    nostruct = false;	
+      strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);                    nostruct = false;
       if (device) delete(device); device = 0;
       if (method) delete(method); method = 0; // forces recalc of device.method
       if (variable) variable = 0;
-    }    
+    }
   }
-  else 
+  else
     if (nostruct) {
       char* p =  strchr(name,'.');
       if (p) {
 		if (fullname_) fullname_->update(p+1);
 		else fullname_ = new UString(p+1);
-		
-		return (fullname_);	
+
+		return (fullname_);
       }
     }
-  
+
   char* p =  strchr(name,'.');
   if (p) {
     p[0]=0;
@@ -528,35 +528,35 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   /*
   // treat single objects with a prefix-free name:
   p = strchr(name,'.');
-  if ((p) && (nostruct) && 
+  if ((p) && (nostruct) &&
 	  (::urbiserver->objtab.find(p+1) != ::urbiserver->objtab.end())) {
-	strncpy(name, p+1, strlen(p+1)+1);		
+	strncpy(name, p+1, strlen(p+1)+1);
 	if (device) delete(device); device = 0;
 	if (method) delete(method); method = 0;
   }
-  */	
-  
+  */
+
   if (fullname_) fullname_->update(name);
   else fullname_ = new UString(name);
-  
+
   return (fullname_);
 }
 
 
 //! UVariableName name update for functions scope hack
-void 
+void
 UVariableName::nameUpdate(const char* _device, const char* _id)
 {
   const int    fullnameMaxSize = 1024;
   char   name[fullnameMaxSize];
-  
+
   if (device)
     device->update(_device);
   else device = new UString(_device);
-  
+
   if (id)
     id->update(_id);
-  else id = new UString(_id);  
+  else id = new UString(_id);
 }
 
 //! UNamedParameters hard copy function
@@ -567,16 +567,16 @@ UVariableName::copy()
   UString*  copy_id;
   UNamedParameters*  copy_index;
   UVariableName *ret;
-  
+
   if (id)     copy_id = new UString(id); else copy_id = 0;
   if (device) copy_device = new UString(device); else copy_device = 0;
   if (index) copy_index = index->copy(); else copy_index = 0;
-  
+
   if (str==0)
-    ret = new UVariableName(copy_device,copy_id,rooted,copy_index);  
+    ret = new UVariableName(copy_device,copy_id,rooted,copy_index);
   else
-    ret = new UVariableName(str->copy(),rooted);  
-  
+    ret = new UVariableName(str->copy(),rooted);
+
   ret->isstatic     = isstatic;
   ret->isnormalized = isnormalized;
   ret->deriv        = deriv;
@@ -585,15 +585,15 @@ UVariableName::copy()
   ret->nostruct     = nostruct;
   ret->id_type      = id_type;
   ret->local_scope  = local_scope;
-  
+
   return (ret);
 }
 
 //! Print the variable
-/*! This function is for debugging purpose only. 
+/*! This function is for debugging purpose only.
 It is not safe, efficient or crash proof. A better version will come later.
 */
-void 
+void
 UVariableName::print()
 {
   ::urbiserver->debug("(VAR root=%d ",rooted);

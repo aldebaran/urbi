@@ -101,7 +101,7 @@ namespace urbi {
 
     if (varmapfind != varmap.end()) {
 
-      for (list<UVar*>::iterator it = varmapfind->second.begin();
+      for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	   it != varmapfind->second.end();)
 	if ((*it) == this)
 	  it=varmapfind->second.erase(it);
