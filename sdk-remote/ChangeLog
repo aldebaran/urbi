@@ -1,5 +1,10 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* build-aux/urbi-openr.m4: New.
+	* configure.ac: Use it.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	* src/examples/urbitalkie.cpp: Use urbi::.
 	* src/examples/Makefile.am: Build this file if !WIN32, not the
 	converse.

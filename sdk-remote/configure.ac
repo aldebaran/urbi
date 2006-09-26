@@ -44,38 +44,8 @@ URBI_PTHREAD
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 
-
-## -------- ##
-## Open R.  ##
-## -------- ##
-
-OPENR_SDK_PATH=/usr/local/OPEN_R_SDK
-AC_ARG_ENABLE([openr],
- [AC_HELP_STRING([--enable-openr=sdk_path], [Turn on OPENR client])],
- [case "${enableval}" in
-    no|false)  openr=false;;
-    *) openr=true
-       if test  ${enableval} != "yes" ; then
-	 OPENR_SDK_PATH=${enableval}
-       fi;;
-  esac],
-  [openr=false])
-
-# removed sh -c "cd lib/jpeg-6b && ./configure"
-# checking if openr sdk is realy there
-echo -n "checking for openr SDK... "
-if test $openr != false; then
-  if test ! -f $OPENR_SDK_PATH/bin/mipsel-linux-c++; then
-    echo -e "no\n ##mipsel c++ compiler not found in $OPENR_SDK_PATH/bin/, disabling openr"
-    openr=false
-  else
-    echo $OPENR_SDK_PATH
-  fi
-fi
-
-AM_CONDITIONAL([OPENR], [test $openr = true])
-AC_SUBST([OPENR_SDK_PATH])
-
+# Open R.
+URBI_OPENR
 
 ## -------- ##
 ## Output.  ##
