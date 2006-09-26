@@ -46,11 +46,11 @@ AC_SUBST([branddir], ['$(prefix)/$(PACKAGE_BRAND)'])
 # includedir and libdir under $prefix.
 
 # /usr/local/gostai/core/$host
-AC_SUBST([hostdir], [$(brandir)/core/$(URBI_HOST)])
+AC_SUBST([hostdir], ['$(brandir)/core/$(URBI_HOST)'])
 
 # /usr/local/gostai/core/$host/$env.
 # Could have been named sdklibdir too.
-AC_SUBST([envdir], [$(hostdir)/$(URBI_ENV)])
+AC_SUBST([envdir], ['$(hostdir)/$(URBI_ENV)'])
 
 # Where we install, and expect to find, headers.
 AC_SUBST([sdkincludedir],  ['$(branddir)/include'])

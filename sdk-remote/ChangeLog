@@ -1,5 +1,9 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* build-aux/urbi-dirs.m4: Quote properly.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	Various.
 
 	* sdk/Makefile.module.in: Rename as...
