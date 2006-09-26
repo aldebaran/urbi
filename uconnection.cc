@@ -525,7 +525,7 @@ UConnection::received (const ubyte *buffer, int length)
       int result = server->parser.process(command, length, this);
       server->systemcommands = true;
 
-      if (result == -1) 
+      if (result == -1)
 	{
 	  server->isolate();
 	  server->memoryOverflow = true;
@@ -544,9 +544,9 @@ UConnection::received (const ubyte *buffer, int length)
       // Error Message handling
       if (errorMessage[0] != 0 &&
 	  !server->memoryOverflow)
-	{ 
+	{
 	  // a parsing error occured
-	  if (server->parser.commandTree) 
+	  if (server->parser.commandTree)
 	    {
 	      delete server->parser.commandTree;
 	      server->parser.commandTree = 0;
@@ -561,7 +561,7 @@ UConnection::received (const ubyte *buffer, int length)
 			errorMessage);
 	}
       else if (server->parser.commandTree)
-	if (server->parser.commandTree->command1) 
+	if (server->parser.commandTree->command1)
 	  {
 	    // Process "commandTree"
 
@@ -596,7 +596,7 @@ UConnection::received (const ubyte *buffer, int length)
 		//::urbiserver->debug("Received - 5i.\n"); //TRASHME
 
 		// immediate execution of simple commands
-		
+
 		if (!obstructed) {
 		  server->parser.commandTree->up = 0;
 		  server->parser.commandTree->position = 0;
@@ -605,10 +605,10 @@ UConnection::received (const ubyte *buffer, int length)
 		      (server->parser.commandTree->status == URUNNING))
 		    obstructed = true;
 		}
-		
+
 		if (server->parser.commandTree)
 		  append(server->parser.commandTree);
-		
+
 		server->parser.commandTree = 0;
 	      }
 	  } // command1

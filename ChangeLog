@@ -1,3 +1,8 @@
+2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+
+	White space changes.
+	* uconnection.cc: White space chanegs.
+
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
 	* uconnection.cc: Include ubanner.hh.
