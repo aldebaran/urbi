@@ -1,9 +1,7 @@
-2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
-	<%= Title %>
-
-	* userver.h: .
-	* uconnection.cc: .
+	* uconnection.cc: Include ubanner.hh.
+	* userver.cc: Remove declarations that are now in ubanner.hh.
 
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
@@ -22,7 +20,6 @@
 	* build-aux/urbi-dirs.m4: Also define kernelincludedir.
 	* build-aux/urbi-openr.m4: Formatting changes.
 	* README: New.
-	* Makefile.am: .
 
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
