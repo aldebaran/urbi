@@ -24,17 +24,7 @@
 # include <string>
 # include <list>
 # include <algorithm>
-// Hash maps, depending on the environment
-# ifndef _MSC_VER
-#  include <hash_map.h>
-# elif (_MSC_VER == 1400)
-#  pragma warning( disable : 4355 4996)
-#  include <hash_map>
-using stdext::hash_map;
-# else
-#  include <hash_map>
-using std::hash_map;
-# endif
+
 
 // Floating point definition (emulated or real)
 # ifdef HAVE_UFLOAT_H
@@ -42,7 +32,7 @@ using std::hash_map;
 # else
 namespace urbi { typedef double ufloat; }
 # endif
-
+#include "uext.h"
 /** Singleton smart pointer that creates the object on demmand
  * */
 template<class T>
@@ -805,7 +795,7 @@ namespace urbi
 
 # define SETCAST(type) inline type cast(UValue &val, type *inu) { return (type)val;}
 
-  SETCAST(int); SETCAST(ufloat); SETCAST(std::string);
+  SETCAST(int); SETCAST(ufloat); SETCAST(std::string); SETCAST(UImage); SETCAST(USound);
   UVar& cast(UValue &val, UVar *var);
   UBinary cast(UValue &v, UBinary * b);
   UList cast(UValue &v, UList *l);
