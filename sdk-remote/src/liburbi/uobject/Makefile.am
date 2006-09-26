@@ -3,13 +3,18 @@ AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 # Automake 1.10 uses AM_LDADD, not previous versions.
 LDADD = $(PTHREAD_LIBS)
 
-noinst_LTLIBRARIES = libuobject.la
+lib_LTLIBRARIES = libuobject.la
 
 libuobject_la_SOURCES =				\
 common_uvalue.cc				\
 uexternal.h 					\
 uobject.h		uobject.cc		\
 uvar.cc
+
+
+## ----------- ##
+## uobject.h.  ##
+## ----------- ##
 
 EXTRA_DIST = template_autogen.pl uobject.template.h
 CLEANFILES = $(srcdir)/uobject.h

@@ -1,5 +1,12 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	* src/examples/urbitalkie.cpp: Formatting changes.
+	* src/liburbi/uobject/uexternal.h: Comment changes.
+	* src/liburbi/Makefile.am (AM_LDFLAGS): Remove, useless.
+	* src/liburbi/uobject/Makefile.am: Install back libuobject.
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	* build-aux/urbi-openr.m4: Fix.
 
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>

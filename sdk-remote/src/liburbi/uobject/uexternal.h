@@ -1,7 +1,7 @@
-/*! \file usharedexternal.h
+/*! \file uexternal.h
  *******************************************************************************
 
- File: usharedexternal.h\n
+ File: uexternal.h\n
  Definition of common structures between modules and the kernel
 
  This file is part of LIBURBI and URBI Kernel\n
@@ -18,13 +18,14 @@
 
  **************************************************************************** */
 
-#ifndef USHAREDEXTERNAL_H_DEFINED
-#define USHAREDEXTERNAL_H_DEFINED
+#ifndef UEXTERNAL_H_DEFINED
+# define UEXTERNAL_H_DEFINED
 
 namespace urbi
 {
 
-  enum USystemExternalMessage {
+  enum USystemExternalMessage 
+  {
     UEM_EVALFUNCTION,
     UEM_ASSIGNVALUE,
     UEM_EMITEVENT,

@@ -55,11 +55,11 @@ SoundPipe::SoundPipe(urbi::UClient &r1, urbi::UClient &r2)
 }
 
 
-urbi::UCallbackAction 
-SoundPipe::microNotify(int source, const urbi::UMessage &msg) 
+urbi::UCallbackAction
+SoundPipe::microNotify(int source, const urbi::UMessage &msg)
 {
   pthread_mutex_lock(&lock[source]);
-  if (stack[source].stack.size() >= stackSize) 
+  if (stack[source].stack.size() >= stackSize)
     {
       //drop it
       pthread_mutex_unlock(&lock[source]);
@@ -77,7 +77,7 @@ SoundPipe::microNotify(int source, const urbi::UMessage &msg)
 
 
   urbi::USound &lastStacked = stack[source].stack.back();
-  if ( stack[source].stack.empty() || lastStacked.size > minSendSize) 
+  if ( stack[source].stack.empty() || lastStacked.size > minSendSize)
     {
       snd.soundFormat = urbi::SOUND_RAW;
       convert(msg.value->binary->sound, snd);
@@ -118,7 +118,7 @@ SoundPipe::speakerNotify(int source, const urbi::UMessage &msg)
 }
 
 
-void 
+void
 SoundPipe::trySend(int source)
 {
   static int id=0;
@@ -147,7 +147,7 @@ SoundPipe::trySend(int source)
 }
 
 
-int main(int argc, char * argv[]) 
+int main(int argc, char * argv[])
 {
   if (argc<3) {
     fprintf(stderr,"usage: %s robot1 robot2\n\tplays what robot1 hears with robot2's speaker, and vice-versa\n",argv[0]);
@@ -158,7 +158,7 @@ int main(int argc, char * argv[])
     {
       r[i]=new urbi::UClient(argv[i+1]);
       r[i]->start();
-      if (r[i]->error()) 
+      if (r[i]->error())
 	exit(1);
     }
   SoundPipe sp(*r[0], *r[1]);

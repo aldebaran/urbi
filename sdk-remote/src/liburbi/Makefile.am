@@ -9,7 +9,6 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/liburbi/uobject \
 -I$(top_srcdir)/src/liburbi/uobject
 
-AM_LDFLAGS = -L$(top_srcdir)/lib/jpeg-6b
 AM_CXXFLAGS = $(PTHREAD_LIBS) $(WARNING_CXXFLAGS)
 
 
