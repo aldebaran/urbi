@@ -58,7 +58,10 @@ AC_SUBST([hostdir], ['$(branddir)/$1/$(URBI_HOST)'])
 AC_SUBST([envdir], ['$(hostdir)/$(URBI_ENV)'])
 
 # Where we install, and expect to find, headers.
-AC_SUBST([sdkincludedir],  ['$(branddir)/include'])
+AC_SUBST([sdkincludedir],  ['$(branddir)/$1/include'])
+# Possibly an alias.
+AC_SUBST([kernelincludedir],  ['$(branddir)/kernel/include'])
+
 CPPFLAGS="$CPPFLAGS -I$sdkincludedir"
 LDFLAGS="$LDFLAGS -L$envdir"
 ])

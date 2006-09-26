@@ -1,4 +1,3 @@
-# AM_CPPFLAGS += -I $(top_srcdir)/parser
 AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 
 ## -------------- ##
@@ -69,16 +68,10 @@ $(parsedir)/bison/utoken.cc: $(parsedir)/utoken.l
 
 
 # Kludge to install userver.h.
-bisondir = $(includedir)/parser/bison
+bisondir = $(kernelincludedir)/parser/bison
 bison_HEADERS = 				\
 $(parsedir)/stack.hh				\
 $(parsedir)/position.hh				\
 $(parsedir)/location.hh				\
 $(parsedir)/ugrammar.hh				\
 $(parsedir)/FlexLexer.h
-
-
-
-## Local Variables:
-## mode: Makefile
-## End:

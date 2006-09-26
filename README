@@ -1,0 +1,14 @@
+								-*- text -*-
+
+--enable-host=URBI-HOST
+--enable-env=URBI-ENV
+--with-openr[=sdk-path]
+
+This package builds a single kernel (libkernel).  If you pass
+--with-openr, this library will use the openr communication parts,
+otherwise the bsdnet bits are used.
+
+Note that pass --with-openr does not change the URBI-ENV name, so to
+compile (and install) for Aibo, you should probably run
+
+    ./configure --with-openr --host=mipsel-openr --enable-env=aibo

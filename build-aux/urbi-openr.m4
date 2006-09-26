@@ -28,9 +28,9 @@ if test $openr != false; then
 else
   AC_MSG_RESULT([no])
 fi
+AC_SUBST([OPENR_SDK_PATH])
 
 AM_CONDITIONAL([OPENR], [$openr])
-AC_SUBST([OPENR_SDK_PATH])
 ])
 
 

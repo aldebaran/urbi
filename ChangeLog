@@ -1,5 +1,24 @@
 2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	Update to URBI_DIRS.
+
+	* configure.ac (NETWORK_BSDNET): No longer define it.
+	* parser/bison/Makefile.defs: Rename as...
+	* parser/bison/bison.mk: this.
+	And adjust dir names.
+	* network/bsdnet/Makefile.defs: Rename as...
+	* network/bsdnet/bsdnet.mk: this.
+	And adjust dir names.
+	* network/OPENR/Makefile.defs: Rename as...
+	* network/OPENR/openr.mk: this.
+	And adjust dir names.
+	* build-aux/urbi-dirs.m4: Also define kernelincludedir.
+	* build-aux/urbi-openr.m4: Formatting changes.
+	* README: New.
+	* Makefile.am: .
+
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	Introduce ubanner.cc.
 	* ubanner.hh, ubanner.cc: New.
 	* userver.cc, userver.h: Use it.

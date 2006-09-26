@@ -22,7 +22,7 @@ AM_CPPFLAGS = -I$(srcdir)/uobject
 AM_CPPFLAGS += -DFLOAT_DOUBLE
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-lib_LTLIBRARIES = libkernel.la
+env_LTLIBRARIES = libkernel.la
 dist_libkernel_la_SOURCES =					\
 lockable.h							\
 memorymanager/blockmemorymanager.h				\
@@ -56,16 +56,14 @@ uvariablelist.h uvariablelist.cc				\
 uvariablename.h uvariablename.cc
 
 
-
+# We build for aibo, or posix.
 if NETWORK_OPENR
-include network/OPENR/Makefile.defs
+include network/OPENR/openr.mk
+else
+include network/bsdnet/bsdnet.mk
 endif
 
-if NETWORK_BSDNET
-include network/bsdnet/Makefile.defs
-endif NETWORK_BSDNET
-
-include parser/bison/Makefile.defs
+include parser/bison/bison.mk
 
 ## ------------ ##
 ## version.hh.  ##
@@ -106,7 +104,7 @@ windows/urbikernel/urbikernel.vcproj
 
 # This is a kludge: for the time being, install all the server include
 # files for the cores.
-include_HEADERS = 				\
+kernelinclude_HEADERS =				\
 lockable.h					\
 ubinary.h					\
 ubinder.h					\
@@ -131,13 +129,13 @@ uvariable.h					\
 uvariablelist.h					\
 uvariablename.h 
 
-uobjectdir = $(includedir)/uobject
+uobjectdir = $(kernelincludedir)/uobject
 uobject_HEADERS = uobject/uobject.h
 
-parserdir = $(includedir)/parser
+parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.h
 
-memorymanagerdir = $(includedir)/memorymanager
+memorymanagerdir = $(kernelincludedir)/memorymanager
 memorymanager_HEADERS =				\
 memorymanager/blockmemorymanager.h		\
 memorymanager/memorymanager.h

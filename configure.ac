@@ -15,14 +15,6 @@ AM_INIT_AUTOMAKE([1.9.6 foreign -Wall dist-zip])
 ## Parameters.  ##
 ## ------------ ##
 
-AC_ARG_VAR([OS], [the OS the kernel is compiled for (aibo...)])
-AC_CANONICAL_HOST
-case $OS in
-  "") OS="linux";;
-esac
-AC_DEFINE_UNQUOTED([OS], [$OS],
-	 	   [The OS the kernel is compiled for (aibo...).])
-
 URBI_KERNEL_DIRS([posix])
 
 ## --------------- ##
@@ -60,7 +52,6 @@ AC_PROG_LIBTOOL
 ## --------- ##
 URBI_OPENR
 AM_CONDITIONAL([NETWORK_OPENR],  [$openr])
-AM_CONDITIONAL([NETWORK_BSDNET], [true])
 
 
 ## -------- ##
