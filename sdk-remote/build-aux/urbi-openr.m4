@@ -6,7 +6,7 @@ AC_DEFUN([URBI_OPENR],
 [OPENR_SDK_PATH=/usr/local/OPEN_R_SDK
 AC_ARG_WITH([openr],
             [AC_HELP_STRING([--with-openr=sdk-path], [Turn on OPENR client])],
-            [], [openr=false])
+            [], [with_openr=no])
 
 case $with_openr in
    no) openr=false;;
