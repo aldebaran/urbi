@@ -26,6 +26,7 @@
 # define snprintf _snprintf
 #endif
 
+#include "ubanner.hh"
 #include "uconnection.h"
 #include "userver.h"
 #include "uqueue.h"
@@ -230,21 +231,20 @@ UConnection::closeConnection()
 */
 void UConnection::initialize()
 {
-  char customHeader[1024];
-  int i;
-
-
-  for (i = 0; i < ::NB_HEADER_BEFORE_CUSTOM; i++)
+  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; i++)
     send(::HEADER_BEFORE_CUSTOM[i],"start");
 
-  i = 0;
+  int i = 0;
+  char customHeader[1024];
+
   do {
     server->getCustomHeader(i,(char*)customHeader,1024);
-    if (customHeader[0]!=0) send((const char*) customHeader,"start");
+    if (customHeader[0]!=0)
+      send((const char*) customHeader,"start");
     i++;
   } while (customHeader[0]!=0);
 
-  for (i = 0; i < ::NB_HEADER_AFTER_CUSTOM; i++)
+  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; i++)
     send(::HEADER_AFTER_CUSTOM[i],"start");
   sprintf(customHeader,"*** ID: %s\n",connectionTag->str());
   send(customHeader,"ident");
@@ -446,7 +446,7 @@ UConnection::received (const ubyte *buffer, int length)
 	     buffer,
 	     length);
       transferedBinary_ += length;
-	  unlock();
+      unlock();
       return USUCCESS;
     }
     else {
@@ -455,10 +455,10 @@ UConnection::received (const ubyte *buffer, int length)
 	     binCommand->refBinary->ref()->bufferSize - transferedBinary_);
 
       buffer += (binCommand->refBinary->ref()->bufferSize -
-		transferedBinary_);
+		 transferedBinary_);
 
       length -= (binCommand->refBinary->ref()->bufferSize -
-		transferedBinary_);
+		 transferedBinary_);
       if (treeLock.tryLock()) {
 	receiveBinary_ = false;
 	append(binCommand->up);
@@ -491,18 +491,18 @@ UConnection::received (const ubyte *buffer, int length)
   if (faillock) {
     newDataAdded = true; //server will call us again right after work
     return USUCCESS;
-    }
+  }
   if (!gotlock)
     if (!treeLock.tryLock()) {
-     newDataAdded = true; //server will call us again right after work
-     return USUCCESS;
+      newDataAdded = true; //server will call us again right after work
+      return USUCCESS;
     }
 
   if (server->parser.commandTree) {
-	  //reentrency trouble
-	  treeLock.unlock();
-	  return USUCCESS;
-	}
+    //reentrency trouble
+    treeLock.unlock();
+    return USUCCESS;
+  }
   // Starts processing
   receiving = true;
   server->updateTime();
@@ -525,86 +525,92 @@ UConnection::received (const ubyte *buffer, int length)
       int result = server->parser.process(command, length, this);
       server->systemcommands = true;
 
-      if (result == -1) {
-
-	server->isolate();
-	server->memoryOverflow = true;
-      }
+      if (result == -1) 
+	{
+	  server->isolate();
+	  server->memoryOverflow = true;
+	}
       server->memoryCheck();
 
 
       // Xtrem memory recovery in case of anomaly
       if (server->memoryOverflow)
-	if (server->parser.commandTree) {
-	  delete server->parser.commandTree;
-	  server->parser.commandTree = 0;
-	}
+	if (server->parser.commandTree)
+	  {
+	    delete server->parser.commandTree;
+	    server->parser.commandTree = 0;
+	  }
 
       // Error Message handling
-      if ((errorMessage[0] != 0) &&
-	  (!server->memoryOverflow)) { // a parsing error occured
+      if (errorMessage[0] != 0 &&
+	  !server->memoryOverflow)
+	{ 
+	  // a parsing error occured
+	  if (server->parser.commandTree) 
+	    {
+	      delete server->parser.commandTree;
+	      server->parser.commandTree = 0;
+	    }
 
-	if (server->parser.commandTree) {
-	  delete server->parser.commandTree;
-	  server->parser.commandTree = 0;
+	  send(errorMessage,"error");
+
+	  errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
+	  errorMessage[ 42 ] = 0; // cut at 41 characters
+	  server->error(::DISPLAY_FORMAT,(long)this,
+			"UConnection::received",
+			errorMessage);
 	}
-
-	send(errorMessage,"error");
-
-	errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
-	errorMessage[ 42 ] = 0; // cut at 41 characters
-	server->error(::DISPLAY_FORMAT,(long)this,
-		      "UConnection::received",
-		      errorMessage);
-      }
-      else
-	if (server->parser.commandTree)
-	  if (server->parser.commandTree->command1) {
+      else if (server->parser.commandTree)
+	if (server->parser.commandTree->command1) 
+	  {
 	    // Process "commandTree"
 
 	    // CMD_ASSIGN_BINARY: intercept and execute immediately
-	    if (server->parser.binaryCommand) {
-	      binCommand = ((UCommand_ASSIGN_BINARY*)
-			    server->parser.commandTree->command1);
+	    if (server->parser.binaryCommand)
+	      {
+		binCommand = ((UCommand_ASSIGN_BINARY*)
+			      server->parser.commandTree->command1);
 
-	      ubyte* buffer = recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
+		ubyte* buffer = recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
 
-	      if (buffer) { // the binary was all in the queue
-		memcpy(binCommand->refBinary->ref()->buffer,
-		       buffer,
-		       binCommand->refBinary->ref()->bufferSize);
+		if (buffer)
+		  { // the binary was all in the queue
+		    memcpy(binCommand->refBinary->ref()->buffer,
+			   buffer,
+			   binCommand->refBinary->ref()->bufferSize);
+		  }
+		else
+		  {
+		    // not all was there, must set receiveBinary mode on
+		    transferedBinary_ = recvQueue_->dataSize();
+		    memcpy(binCommand->refBinary->ref()->buffer,
+			   recvQueue_->pop(transferedBinary_),
+			   transferedBinary_);
+		    receiveBinary_ = true;
+		  }
 	      }
-	      else { // not all was there, must set receiveBinary mode on
-
-		transferedBinary_ = recvQueue_->dataSize();
-		memcpy(binCommand->refBinary->ref()->buffer,
-		       recvQueue_->pop(transferedBinary_),
-		       transferedBinary_);
-		receiveBinary_ = true;
-	      }
-	    }
 
 	    // Pile the command
-	    if (!receiveBinary_) {
+	    if (!receiveBinary_)
+	      {
+		//::urbiserver->debug("Received - 5i.\n"); //TRASHME
 
-//::urbiserver->debug("Received - 5i.\n"); //TRASHME
-
-	      // immediate execution of simple commands
-
-	      if (!obstructed) {
-		server->parser.commandTree->up = 0;
-		server->parser.commandTree->position = 0;
-		execute(server->parser.commandTree);
-		if ((server->parser.commandTree) &&
-		    (server->parser.commandTree->status == URUNNING))
-		  obstructed = true;
+		// immediate execution of simple commands
+		
+		if (!obstructed) {
+		  server->parser.commandTree->up = 0;
+		  server->parser.commandTree->position = 0;
+		  execute(server->parser.commandTree);
+		  if ((server->parser.commandTree) &&
+		      (server->parser.commandTree->status == URUNNING))
+		    obstructed = true;
+		}
+		
+		if (server->parser.commandTree)
+		  append(server->parser.commandTree);
+		
+		server->parser.commandTree = 0;
 	      }
-
-	      if (server->parser.commandTree)
-		append(server->parser.commandTree);
-
-	      server->parser.commandTree = 0;
-	    }
 	  } // command1
     }
   } while ( (length != 0) &&

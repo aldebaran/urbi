@@ -43,11 +43,6 @@ extern  const char* DISPLAY_FORMAT;
 extern  const char* DISPLAY_FORMAT1;
 extern  const char* DISPLAY_FORMAT2;
 
-extern  const int   NB_HEADER_BEFORE_CUSTOM;
-extern  const char* HEADER_BEFORE_CUSTOM[];
-extern  const int   NB_HEADER_AFTER_CUSTOM;
-extern  const char* HEADER_AFTER_CUSTOM[];
-
 extern  const char* MAINDEVICE;
 
 extern  const char* UNKNOWN_TAG;
