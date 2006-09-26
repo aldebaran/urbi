@@ -3,8 +3,8 @@ m4_pattern_forbid([^URBI_])dnl
 AC_PREREQ([2.60])
 
 
-# URBI_DIRS(TARGET)
-# -----------------
+# URBI_DIRS(DEFAULT-URBI-ENV)
+# ---------------------------
 # Define the directory variables we are about to use.
 AC_DEFUN([URBI_DIRS],
 [# We need to know the host (the type of architecture it will run on),
@@ -31,7 +31,7 @@ AC_ARG_ENABLE([env],
 			       aibo, webots. posix [posix]])])
 AC_MSG_CHECKING([for URBI environment type])
 case $enable_env in
-			'') URBI_ENV=posix;;
+			'') URBI_ENV=$1;;
   remote|posix|webots|aibo) URBI_ENV=$enable_env;;
 		  *) AC_MSG_ERROR([invalid urbi env: $enable_env]);;
 esac
