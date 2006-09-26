@@ -23,34 +23,75 @@ AM_CPPFLAGS += -DFLOAT_DOUBLE
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 lib_LTLIBRARIES = libkernel.la
-dist_libkernel_la_SOURCES =			\
-lockable.h					\
-memorymanager/memorymanager.cc			\
-ubinary.h ubinary.cc				\
-ubinder.h ubinder.cc				\
-ucallid.h ucallid.cc				\
-ucommand.h ucommand.cc				\
-ucommandqueue.h ucommandqueue.cc		\
-uconnection.h uconnection.cc			\
-uexpression.h uexpression.cc			\
-ufloat.h ufloat.cc				\
-ufunction.h ufunction.cc			\
-ughostconnection.h ughostconnection.cc		\
-ugroup.h ugroup.cc				\
-unamedparameters.h unamedparameters.cc		\
-uobj.h uobj.cc					\
-uobject/common_uvalue.cc			\
-uobject/uobject.h uobject/uobject.cc		\
-uobject/uvar.cc					\
-uproperty.h uproperty.cc			\
-uqueue.h uqueue.cc				\
-userver.h userver.cc				\
-ustring.h ustring.cc				\
-utypes.h					\
-uvalue.h uvalue.cc				\
-uvariable.h uvariable.cc			\
-uvariablelist.h uvariablelist.cc		\
+dist_libkernel_la_SOURCES =					\
+lockable.h							\
+memorymanager/blockmemorymanager.h				\
+memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
+ubinary.h ubinary.cc						\
+ubinder.h ubinder.cc						\
+ucallid.h ucallid.cc						\
+ucommand.h ucommand.cc						\
+ucommandqueue.h ucommandqueue.cc				\
+uconnection.h uconnection.cc					\
+uexpression.h uexpression.cc					\
+ufloat.h ufloat.cc						\
+ufunction.h ufunction.cc					\
+ughostconnection.h ughostconnection.cc				\
+ugroup.h ugroup.cc						\
+unamedparameters.h unamedparameters.cc				\
+uobj.h uobj.cc							\
+uobject/common_uvalue.cc					\
+uobject/uobject.h uobject/uobject.cc				\
+uobject/uvar.cc							\
+uproperty.h uproperty.cc					\
+uqueue.h uqueue.cc						\
+userver.h userver.cc						\
+ustring.h ustring.cc						\
+utypes.h							\
+uvalue.h uvalue.cc						\
+uvariable.h uvariable.cc					\
+uvariablelist.h uvariablelist.cc				\
 uvariablename.h uvariablename.cc
+
+
+
+# This is a kludge: for the time being, install all the server include
+# files for the cores.
+include_HEADERS = 				\
+lockable.h					\
+ubinary.h					\
+ubinder.h					\
+ucallid.h					\
+ucommand.h					\
+ucommandqueue.h					\
+uconnection.h					\
+uexpression.h					\
+ufloat.h					\
+ufunction.h					\
+ughostconnection.h				\
+ugroup.h					\
+unamedparameters.h				\
+uobj.h 						\
+uproperty.h					\
+uqueue.h					\
+userver.h					\
+ustring.h					\
+utypes.h					\
+uvalue.h					\
+uvariable.h					\
+uvariablelist.h					\
+uvariablename.h 
+
+uobjectdir = $(includedir)/uobject
+uobject_HEADERS = uobject/uobject.h
+
+parserdir = $(includedir)/parser
+parser_HEADERS = parser/uparser.h
+
+memorymanagerdir = $(includedir)/memorymanager
+memorymanager_HEADERS =				\
+memorymanager/blockmemorymanager.h		\
+memorymanager/memorymanager.h
 
 
 if NETWORK_OPENR
@@ -81,24 +122,12 @@ EXTRA_DIST += \
 build-aux/bison++.in				\
 build-aux/move-if-change
 
-# memorymanager.
-EXTRA_DIST +=					\
-memorymanager/blockmemorymanager.h		\
-memorymanager/memorymanager.h	   		\
-memorymanager/memorymanager.cc
-
 # parser.
 EXTRA_DIST +=					\
 parser/uparser.h
 
 # parser/bison.
 # This case is handled by parser/bison/Makefile.defs itself.
-
-# uobject.
-EXTRA_DIST +=					\
-uobject/common_uvalue.cc			\
-uobject/uobject.h	   uobject/uobject.cc	\
-uobject/uvar.cc
 
 # windows.
 EXTRA_DIST +=					\

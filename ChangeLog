@@ -1,3 +1,14 @@
+2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+
+	* parser/bison/Makefile.defs: Install the header files.
+	* network/bsdnet/Makefile.defs,
+	* network/OPENR/Makefile.defs,
+	* network/OPENR/Makefile.defs,
+	* Makefile.am: Ditto.
+
+	* userver.h: Reorder includes.
+	* memorymanager/memorymanager.h: Formatting changes.
+
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
 	namespace cleanups.

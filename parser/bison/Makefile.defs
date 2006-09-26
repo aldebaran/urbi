@@ -11,12 +11,13 @@ BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 
 parsedir = $(srcdir)/parser/bison
 # We do not use Automake features here.
-FROM_UGRAMMAR_Y = \
-	$(parsedir)/stack.hh \
-	$(parsedir)/position.hh \
-	$(parsedir)/location.hh \
-	$(parsedir)/ugrammar.hh \
-	$(parsedir)/ugrammar.cc
+FROM_UGRAMMAR_Y =				\
+$(parsedir)/stack.hh				\
+$(parsedir)/position.hh				\
+$(parsedir)/location.hh				\
+$(parsedir)/ugrammar.hh				\
+$(parsedir)/ugrammar.cc
+
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 MAINTAINERCLEANFILES = $(FROM_UGRAMMAR_Y)
 dist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
@@ -46,14 +47,14 @@ $(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
 # properly.  This is the list of entities which must be prefixed by
 # std::.
 flex_nonstd = 'cin|cout|cerr|istream'
-EXTRA_DIST += parser/bison/utoken.l
-dist_libkernel_la_SOURCES += parser/bison/FlexLexer.h parser/bison/utoken.cc
-$(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
-	$(FLEX) -+ -oparser/bison/lex.cc $(srcdir)/parser/bison/utoken.l
+EXTRA_DIST += $(parsedir)/utoken.l
+dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h $(parsedir)/utoken.cc
+$(parsedir)/bison/utoken.cc: $(parsedir)/utoken.l
+	$(FLEX) -+ -oparser/bison/lex.cc $(parsedir)/utoken.l
 	perl -p -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
-	        -e 's/class istream;/#include <istream>/;'		\
-	        -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
-	        -e 's,lex.cc,utoken.cc,g;'				\
+		-e 's/class istream;/#include <istream>/;'		\
+		-e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
+		-e 's,lex.cc,utoken.cc,g;'				\
 	    parser/bison/lex.cc > $@.tmp
 	mv $@.tmp $@
 	rm -f parser/bison/lex.cc
@@ -63,6 +64,20 @@ $(srcdir)/parser/bison/utoken.cc: $(srcdir)/parser/bison/utoken.l
 # 	echo "special compile for Aibo: no optim"
 # 	$(CC) $(CPPFLAGS) -Wno-deprecated $(OPTIM) -O0 -o $@ -c $<
 # endif
+
+
+
+
+# Kludge to install userver.h.
+bisondir = $(includedir)/parser/bison
+bison_HEADERS = 				\
+$(parsedir)/stack.hh				\
+$(parsedir)/position.hh				\
+$(parsedir)/location.hh				\
+$(parsedir)/ugrammar.hh				\
+$(parsedir)/FlexLexer.h
+
+
 
 ## Local Variables:
 ## mode: Makefile
