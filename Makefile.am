@@ -22,6 +22,7 @@ AM_CPPFLAGS = -I$(srcdir)/uobject
 AM_CPPFLAGS += -DFLOAT_DOUBLE
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
+libkernel_la_CPPFLAGS = -I$(srcdir)/uobject -DFLOAT_DOUBLE
 env_LTLIBRARIES = libkernel.la
 dist_libkernel_la_SOURCES =					\
 lockable.h							\
@@ -130,7 +131,7 @@ uvariablelist.h					\
 uvariablename.h 
 
 uobjectdir = $(kernelincludedir)/uobject
-uobject_HEADERS = uobject/uobject.h
+uobject_HEADERS = uobject/uobject.h uobject/uext.h
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.h

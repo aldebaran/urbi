@@ -1,3 +1,9 @@
+2006-09-27  matthieu nottale  <nottale@gostai.com>
+
+	Makefile.am fixes
+
+	* Makefile.am: Add missing uext.h. Add libkernel_la_CPPFLAGS because AM_CPPFLAGS is ignored (libkernel_la_CPPFLAGS written in openr.mk)
+
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
 	White space changes.
