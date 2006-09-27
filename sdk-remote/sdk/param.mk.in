@@ -1,5 +1,23 @@
-export CXX=g++
-export CC=gcc
-export LD=ld
+CC = @CC@
+CFLAGS = @CFLAGS@
+CPP = @CPP@
+CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+LDFLAGS = @LDFLAGS@
+LD = @LD@
 
-export CPPFLAGS=-I$(PREFIX)/share/urbicore/include
+#override default targets to add headers dependency
+.c.o: $(HEADERS) 
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+
+.cc.o: $(HEADERS) 
+	$(CXX) $(CXX) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+
+.cpp.o: $(HEADERS) 
+	$(CXX) $(CXX) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+	
+#uobject target
+%.a: $(OBJECTS) $(LIBRARIES)
+	$(LD) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
+	
+%.$(EXEEXT): $(LIBRARIES) 

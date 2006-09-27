@@ -1,3 +1,11 @@
+2006-09-28  Matthieu Nottale  <nottale@gostai.com>
+
+	Continued work on umake
+
+	* sdk/param.mk.in: Rewrite in  progress. Generic makeile that will be called by umake.
+	* umake/umake.in: Almost done, now invokes make with the right makefile and almost the right arguments.
+	* configure.ac: Remove references to removed files in sdk.
+
 2006-09-27  matthieu nottale  <nottale@gostai.com>
 
 	Work on umake <TITLE> small fixes

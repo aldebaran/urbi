@@ -8,7 +8,7 @@ unset RUNNING_KSH
 # No failure shall remain unpunished.
 set -e
 
-usage="Usage: $program [OPTION]... FILE...
+usage="Usage: $program [OPTION]... [FILE]...
 
 General options:
   -D, --debug         turn on shell debugging (set -x)
@@ -20,8 +20,8 @@ General options:
 Compilation options:
   -C, --core=CORE
   -H, --host=HOST
-"
-
+FILE may be C/C++ source files, headers, libraries or directory that
+will be searched for such files"
 version="URBI Make 1.0"
 
 # We have to initialize IFS to space tab newline since we save and
@@ -41,16 +41,25 @@ CDPATH=${ZSH_VERSION+.}$path_sep
 : ${EGREP=egrep}
 
 
+# configure options
+prefix=@prefix@
+defaulthost=@URBI_HOST@
+defaultenv=@URBI_ENV@
+EXEEXT=@EXEEXT@
+
 # Initialize variables for option overriding and otherwise.
 # Don't use `unset' since old bourne shells don't have this command.
 # Instead, assign them an empty value.
-core=
+core=           #default core empty: dont use a core
 debug=false
-host=
+host=default
 quiet=false     # by default let the tools' message be displayed
 verb=false      # true for verbose mode
 
-
+libs=
+sources=
+headers=
+makeargs=
 
 ## --------------------- ##
 ## Auxiliary functions.  ##
@@ -179,7 +188,7 @@ get_options ()
   # Interpret remaining command line args as filenames.
   case $# in
    0)
-    error 2 "Missing file arguments." "Try \`--help' for more information."
+    set .
     ;;
    1) ;;
    *)
@@ -188,6 +197,26 @@ get_options ()
     fi
     ;;
   esac
+  
+  while test x"$1" != x; do
+  case "$1" in
+    *.h |*.hh)  headers="$headers $1";shift ;;
+    *.cc|*.cpp|*.c) sources="$sources $1";shift ;;
+    *.a)    libs="$libs $1";shift ;;
+    *=*) makeargs="$makeargs $1"; shift ;;
+    *)
+      #is it a directory
+      if test -d "$1"  ; then
+        #using find is the best way I found
+        files=$(find "$1" -maxdepth 1 -iname '*.h' -or -iname '*.hh' -or -iname '*.c' -or -iname '*.cc' -or -iname '*.cpp' -or -iname '*.a')
+        shift
+        set dummy $files  ${1+"$@"}; shift;
+      else
+        error 2 "unknown type of file '$1'"
+      fi
+   ;;
+   esac
+   done
 }
 
 
@@ -227,32 +256,30 @@ fi
 
 verbose "run."
 
-#parse file arguments 
-libs=
-sources=
-headers=
-while test x"$1" != x; do
-echo "1='$1'"
-case "$1" in
-  *.h |*.hh)  headers="$headers $1";shift ;;
-  *.cc|*.cpp|*.c) sources="$sources $1";shift ;;
-  *.a)    libs="$libs $1";shift ;;
-  *)
-    #is it a directory
-    if test -d "$1"  ; then
-       #using find is the best way I found
-       files=$(find "$1" -maxdepth 1 -iname '*.h' -or -iname '*.hh' -or -iname '*.c' -or -iname '*.cc' -or -iname '*.cpp' -or -iname '*.a')
-       shift
-       set dummy $files  ${1+"$@"}; shift;
-    else
-       error 2 "unknown type of file '$1'"
-    fi
-   ;;
-esac
-done
+if test x$core == xdefault ; then
+  core=$defaultenv
+fi
+
+if test x$host == xdefault ; then
+  host=$defaulthost
+
+
 
 objects=$(echo $sources | sed -e 's/\.c[^. ]*/.o/g')
-echo "libs='$libs' sources='$sources' headers='$headers' objects='$objects'"
+verbose "libs='$libs'" 
+verbose "sources='$sources'" 
+verbose "headers='$headers'"
+verbose "objects='$objects'"
+verbose "make options='$makeargs'"
+#select target
+if test x$core == x ; then
+  target=urbiengine.$EXEEXT
+else
+  target=uobject.a
+fi
 
+#invoke make
+verbose "invoking make -f $prefix/gostai/core/$host/Makefile $target" 
+make -f $prefix/gostai/core/$host/param.mk $target "HEADERS=$headers" "SOURCES=$sources" "LIBS=$libs" "OBJECTS=$objects" $makeargs   
 verbose "done."
 exit 0 # exit successfully, not however we ended the loop.

@@ -65,7 +65,5 @@ AC_CONFIG_FILES([Makefile
 	  src/liburbi/openr/Makefile.aibo
 	  lib/jpeg-6b/makefile.aibo
 	  lib/jpeg-6b/Makefile
-	  sdk/Makefile
-	  sdk/param.mk
 ])
 AC_OUTPUT
