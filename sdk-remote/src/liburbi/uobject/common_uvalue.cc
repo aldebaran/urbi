@@ -280,7 +280,7 @@ namespace urbi
   }
 
   int UBinary::parse(const char * message, int pos,
-		     std::list<BinaryData> bins,
+		     std::list<BinaryData> &bins,
 		     std::list<BinaryData>::iterator &binpos) {
     while (message[pos]==' ') pos++;
     //find end of header

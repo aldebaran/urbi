@@ -136,8 +136,8 @@ namespace urbi
   class UVardata;
 
   // A few list and hashtable types
-  typedef hash_map<std::string, std::list<UGenericCallback*> > UTable;
-  typedef hash_map<std::string, std::list<UVar*> > UVarTable;
+  typedef hash_map_type<std::string, std::list<UGenericCallback*> >::type UTable;
+  typedef hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
   typedef std::list<baseURBIStarter*> UStartlist;
   typedef std::list<baseURBIStarterHub*> UStartlistHub;
   typedef std::list<UTimerCallback*> UTimerTable;
@@ -318,7 +318,7 @@ namespace urbi
     void buildMessage(); ///< build message from structures
     std::string getMessage() const; ///< get message extracted from structures
     ~UBinary();  ///< Frees binary buffer
-    int parse(const char * message, int pos, std::list<BinaryData> bins, std::list<BinaryData>::iterator &binpos);
+    int parse(const char * message, int pos, std::list<BinaryData> &bins, std::list<BinaryData>::iterator &binpos);
   };
 
   /// Class storing URBI List type

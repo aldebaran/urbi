@@ -227,5 +227,32 @@ fi
 
 verbose "run."
 
+#parse file arguments 
+libs=
+sources=
+headers=
+while test x"$1" != x; do
+echo "1='$1'"
+case "$1" in
+  *.h |*.hh)  headers="$headers $1";shift ;;
+  *.cc|*.cpp|*.c) sources="$sources $1";shift ;;
+  *.a)    libs="$libs $1";shift ;;
+  *)
+    #is it a directory
+    if test -d "$1"  ; then
+       #using find is the best way I found
+       files=$(find "$1" -maxdepth 1 -iname '*.h' -or -iname '*.hh' -or -iname '*.c' -or -iname '*.cc' -or -iname '*.cpp' -or -iname '*.a')
+       shift
+       set dummy $files  ${1+"$@"}; shift;
+    else
+       error 2 "unknown type of file '$1'"
+    fi
+   ;;
+esac
+done
+
+objects=$(echo $sources | sed -e 's/\.c[^. ]*/.o/g')
+echo "libs='$libs' sources='$sources' headers='$headers' objects='$objects'"
+
 verbose "done."
 exit 0 # exit successfully, not however we ended the loop.

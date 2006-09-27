@@ -1,3 +1,11 @@
+2006-09-27  matthieu nottale  <nottale@gostai.com>
+
+	Work on umake <TITLE> small fixes
+
+	* src/liburbi/uobject/uobject.template.h: Fix hash_map declaration using urbi::hash_map_type. Change UBinary::parse prototype to fix a bug.
+	* src/liburbi/uobject/common_uvalue.cc: Fix UBinary::parse to pass the list by reference.
+	* umake/umake.in: Additional work on command line parsing: sort libs, headers and sources, handle directory arguments.
+
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
 	Fixes.
