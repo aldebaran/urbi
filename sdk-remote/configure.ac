@@ -33,7 +33,7 @@ AC_SUBST([WARNING_CXXFLAGS], [-Wno-deprecated])
 AC_PROG_CC
 AC_PROG_CXX
 
-# We don't need static libraries, speed the compilation up.
+# We don't need shared libraries, speed the compilation up.
 : ${enable_shared=no}
 AC_PROG_LIBTOOL
 
@@ -47,7 +47,7 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 # Open R.
 URBI_OPENR
 
-AC_CONFIG_FILES([umake/umake], [chmod +x umake/umake])
+AC_CONFIG_FILES([sdk/umake], [chmod +x sdk/umake])
 
 ## -------- ##
 ## Output.  ##
@@ -65,5 +65,7 @@ AC_CONFIG_FILES([Makefile
 	  src/liburbi/openr/Makefile.aibo
 	  lib/jpeg-6b/makefile.aibo
 	  lib/jpeg-6b/Makefile
+	  sdk/param.mk
+	  sdk/Makefile
 ])
 AC_OUTPUT

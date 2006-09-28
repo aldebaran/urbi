@@ -1,24 +1,50 @@
+prefix = @prefix@
+PACKAGE_BRAND = @PACKAGE_BRAND@
+URBI_ENV = @URBI_ENV@
+URBI_HOST = @URBI_HOST@
+branddir = @branddir@
+hostdir = @hostdir@
+envdir = @hostdir@/$(URBI_ENV)
+PTHREAD_CFLAGS = @PTHREAD_CFLAGS@
+PTHREAD_LIBS = @PTHREAD_LIBS@
 CC = @CC@
-CFLAGS = @CFLAGS@
+CFLAGS = @CFLAGS@ $(PTHREAD_CFLAGS)
+CXXFLAGS = @CXXFLAGS@ $(PTHREAD_CFLAGS)
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
-LDFLAGS = @LDFLAGS@
-LD = @LD@
+LDFLAGS = @LDFLAGS@ $(PTHREAD_LIBS)
+LD = @CC@
+
+LIBTOOL = $(hostdir)/libtool
+LTOBJECTS = $(OBJECTS:%.o=%.lo)
+OUTBIN = nothing
+.SUFFIXES: .cc .cpp .lo .o .obj
+
+.c.lo: $(HEADERS)
+	$(LIBTOOL) --tag=C --mode=compile $(CC) $(CFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+
+.cc.lo: $(HEADERS)
+	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+
+.cpp.lo: $(HEADERS)
+	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+
+#uobject target
+%.a: $(LTOBJECTS) $(LIBRARIES)
+	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(LTOBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
+
+$(OUTBIN):  $(OBJECTS) $(LIBRARIES) 
+	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS) $(envdir)/*.la
+
 
 #override default targets to add headers dependency
 .c.o: $(HEADERS) 
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
 .cc.o: $(HEADERS) 
-	$(CXX) $(CXX) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
 .cpp.o: $(HEADERS) 
-	$(CXX) $(CXX) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 	
-#uobject target
-%.a: $(OBJECTS) $(LIBRARIES)
-	$(LD) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
-
-%.$(EXEEXT):  $(OBJECTS) $(LIBRARIES) 
-	$(LD) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)

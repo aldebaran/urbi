@@ -273,24 +273,28 @@ objects=$(echo $sources | sed -e 's/\.c[^. ]*/.o/g')
 #select target name if unspecified
 if test x$target == x ; then
   if test x$core == x ; then
-    target=urbiengine.$EXEEXT
-  else
     target=uobject.a
+  else
+    target=urbiengine$EXEEXT
   fi
 else    #ensure correct extension
   target=$(echo $target | sed -e 's/\.[^.]*//')
   if test x$core == x ; then
-    target="$target.$EXEEXT"
-  else
     target="$target.a"
+  else
+    target="$target$EXEEXT"
   fi
 fi
 
-#remove ourselve from library list in lib generation mode
+#remove ourselve from library list in lib generation mode, add OUTBIN option otherwise
 if test x$core == x ; then
   libs=$(echo $libs | sed -e "s/$target//")
+else
+  makeargs="$makeargs OUTBIN=$target"
 fi
 
+#then pass env
+makeargs="$makeargs URBI_ENV=$core"
 verbose "libs='$libs'" 
 verbose "sources='$sources'" 
 verbose "headers='$headers'"
@@ -298,7 +302,7 @@ verbose "objects='$objects'"
 verbose "make options='$makeargs'"
 
 #invoke make
-verbose "invoking make -f $prefix/gostai/core/$host/Makefile $target" 
+verbose "invoking make -f $prefix/gostai/core/$host/param.mk $target" 
 make -f $prefix/gostai/core/$host/param.mk $target "HEADERS=$headers" "SOURCES=$sources" "LIBS=$libs" "OBJECTS=$objects" $makeargs   
 verbose "done."
 exit 0 # exit successfully, not however we ended the loop.

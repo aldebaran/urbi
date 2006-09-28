@@ -54,5 +54,5 @@ liburbi_la_LIBADD = $(AM_LIBADD)
 ## ------------ ##
 
 env_LTLIBRARIES = libkernel-remote.la
-libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES)
+libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES) $(top_srcdir)/sdk/umain.cc
 libkernel_remote_la_LIBADD = $(AM_LIBADD)

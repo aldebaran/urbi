@@ -3,6 +3,10 @@ AM_CPPFLAGS =                                   \
 -I$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
+bin_SCRIPTS = umake 
+
+host_SCRIPTS = $(top_srcdir)/libtool
+
 noinst_PROGRAMS = urbimodule
 urbimodule_SOURCES = umain.cc
 urbimodule_LDADD = \
@@ -11,8 +15,8 @@ urbimodule_LDADD = \
 	$(PTHREAD_LIBS)
 
 include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.h
-nodist_env_DATA = param.mk module.mk Makefile gccversion
-dist_env_DATA = umain.cc
+nodist_host_DATA = param.mk gccversion
+#dist_env_DATA = umain.cc
 
 ## ----------------- ##
 ## Makefile.module.  ##
@@ -25,9 +29,6 @@ module.mk: module.mk.in
 CLEANFILES = module.mk
 
 
-install-data-local:
-	sed -e "s@prefix=.*@prefix=$(prefix)@" Makefile \
-	   >$(DESTDIR)$(envdir)/Makefile
 
 ## ------------ ##
 ## gccversion.  ##

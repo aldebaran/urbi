@@ -1,5 +1,18 @@
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
+	Umake is working 
+
+	* sdk/umake.in: New. Moved, plus a few fixes.
+	* sdk/Makefile.am: Update list of installed things: remove umain.cc .
+	* sdk/param.mk.in: Working, shared with urbiengine-linux.
+	* src/liburbi/Makefile.am: Add umain.cc in source list.
+	* umake: Remove.
+	* umake/umake.in: Remove.
+	* configure.ac: Update list and location of config files.
+	* lib/jpeg-6b/Makefile.am: install also in $(envdir).
+
+2006-09-28  matthieu nottale  <nottale@gostai.com>
+
 	Work on umake
 
 	* sdk/param.mk.in: Will be the installed sdk makefile.
