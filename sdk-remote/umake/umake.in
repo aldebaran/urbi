@@ -18,11 +18,12 @@ General options:
   -V, --verbose       report on what is done
 
 Compilation options:
+  -o, --output=output output file name
   -C, --core=CORE
   -H, --host=HOST
 FILE may be C/C++ source files, headers, libraries or directory that
 will be searched for such files"
-version="URBI Make 1.0"
+version="URBI Make @PACKAGE_VERSION@"
 
 # We have to initialize IFS to space tab newline since we save and
 # restore IFS and apparently POSIX allows stupid/broken behavior with
@@ -42,10 +43,10 @@ CDPATH=${ZSH_VERSION+.}$path_sep
 
 
 # configure options
-prefix=@prefix@
-defaulthost=@URBI_HOST@
-defaultenv=@URBI_ENV@
-EXEEXT=@EXEEXT@
+prefix='@prefix@'
+defaulthost='@URBI_HOST@'
+defaultenv='@URBI_ENV@'
+EXEEXT='@EXEEXT@'
 
 # Initialize variables for option overriding and otherwise.
 # Don't use `unset' since old bourne shells don't have this command.
@@ -55,6 +56,7 @@ debug=false
 host=default
 quiet=false     # by default let the tools' message be displayed
 verb=false      # true for verbose mode
+target=         #target name
 
 libs=
 sources=
@@ -166,6 +168,7 @@ get_options ()
 
       -C | --core  ) shift; core=$1;;
       -H | --host  ) shift; host=$1;;
+      -o | --output) shift; target=$1;;
 
       --) # What remains are not options.
         shift
@@ -200,10 +203,10 @@ get_options ()
   
   while test x"$1" != x; do
   case "$1" in
+    *=*) makeargs="$makeargs $1"; shift ;;
     *.h |*.hh)  headers="$headers $1";shift ;;
     *.cc|*.cpp|*.c) sources="$sources $1";shift ;;
     *.a)    libs="$libs $1";shift ;;
-    *=*) makeargs="$makeargs $1"; shift ;;
     *)
       #is it a directory
       if test -d "$1"  ; then
@@ -262,21 +265,37 @@ fi
 
 if test x$host == xdefault ; then
   host=$defaulthost
-
+fi
 
 
 objects=$(echo $sources | sed -e 's/\.c[^. ]*/.o/g')
+
+#select target name if unspecified
+if test x$target == x ; then
+  if test x$core == x ; then
+    target=urbiengine.$EXEEXT
+  else
+    target=uobject.a
+  fi
+else    #ensure correct extension
+  target=$(echo $target | sed -e 's/\.[^.]*//')
+  if test x$core == x ; then
+    target="$target.$EXEEXT"
+  else
+    target="$target.a"
+  fi
+fi
+
+#remove ourselve from library list in lib generation mode
+if test x$core == x ; then
+  libs=$(echo $libs | sed -e "s/$target//")
+fi
+
 verbose "libs='$libs'" 
 verbose "sources='$sources'" 
 verbose "headers='$headers'"
 verbose "objects='$objects'"
 verbose "make options='$makeargs'"
-#select target
-if test x$core == x ; then
-  target=urbiengine.$EXEEXT
-else
-  target=uobject.a
-fi
 
 #invoke make
 verbose "invoking make -f $prefix/gostai/core/$host/Makefile $target" 

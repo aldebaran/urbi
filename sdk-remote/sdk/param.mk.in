@@ -19,5 +19,6 @@ LD = @LD@
 #uobject target
 %.a: $(OBJECTS) $(LIBRARIES)
 	$(LD) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
-	
-%.$(EXEEXT): $(LIBRARIES) 
+
+%.$(EXEEXT):  $(OBJECTS) $(LIBRARIES) 
+	$(LD) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
