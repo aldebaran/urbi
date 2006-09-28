@@ -1,3 +1,11 @@
+2006-09-28  matthieu nottale  <nottale@gostai.com>
+
+	Fixes for sdk generation
+
+	* network/OPENR/openr.mk: replaced CPPFLAGS= with CPPFLAGS +=.
+	* Makefile.am: Hack libkernel.lai and install locations to pretend the lib is not installed.
+	  We have to do it in order to include libkernel in an other library.
+
 2006-09-27  matthieu nottale  <nottale@gostai.com>
 
 	Makefile.am fixes

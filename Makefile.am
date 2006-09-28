@@ -23,7 +23,18 @@ AM_CPPFLAGS += -DFLOAT_DOUBLE
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 libkernel_la_CPPFLAGS = -I$(srcdir)/uobject -DFLOAT_DOUBLE
+libkernel_la_LDFLAGS = -static
 env_LTLIBRARIES = libkernel.la
+
+install-exec-local:
+	sed -e 's/libdir=.*/libdir=/' -e 's/installed=.*/installed=no/' .libs/libkernel.lai > libkernel.lai.new \
+	  && mv -f libkernel.lai.new .libs/libkernel.lai
+
+install-data-hook:
+	mkdir -p  $(envdir)/.libs
+	mv $(envdir)/lib* $(envdir)/.libs
+	ln -s .libs/libkernel.la $(envdir)/
+	ln -s .libs/libkernel.a $(envdir)/
 dist_libkernel_la_SOURCES =					\
 lockable.h							\
 memorymanager/blockmemorymanager.h				\
