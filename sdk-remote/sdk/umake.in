@@ -18,6 +18,7 @@ General options:
   -V, --verbose       report on what is done
 
 Compilation options:
+  -l, --library       Produces a library, don't link to a particular core
   -o, --output=output output file name
   -C, --core=CORE
   -H, --host=HOST
@@ -51,7 +52,7 @@ EXEEXT='@EXEEXT@'
 # Initialize variables for option overriding and otherwise.
 # Don't use `unset' since old bourne shells don't have this command.
 # Instead, assign them an empty value.
-core=           #default core empty: dont use a core
+core=$defaultenv           #default core: we link to core by default
 debug=false
 host=default
 quiet=false     # by default let the tools' message be displayed
@@ -166,6 +167,7 @@ get_options ()
       -q | --quiet  ) quiet=true;;
       -v | --version) echo "$version"; exit 0;;
 
+      -l | --library)  core= ;;
       -C | --core  ) shift; core=$1;;
       -H | --host  ) shift; host=$1;;
       -o | --output) shift; target=$1;;
@@ -273,9 +275,9 @@ objects=$(echo $sources | sed -e 's/\.c[^. ]*/.o/g')
 #select target name if unspecified
 if test x$target == x ; then
   if test x$core == x ; then
-    target=uobject.a
+    target=uobject-$host.a
   else
-    target=urbiengine$EXEEXT
+    target=urbiengine-$host-$core$EXEEXT
   fi
 else    #ensure correct extension
   target=$(echo $target | sed -e 's/\.[^.]*//')
@@ -289,6 +291,7 @@ fi
 #remove ourselve from library list in lib generation mode, add OUTBIN option otherwise
 if test x$core == x ; then
   libs=$(echo $libs | sed -e "s/$target//")
+  makeargs="$makeargs OUTLIB=$target"
 else
   makeargs="$makeargs OUTBIN=$target"
 fi

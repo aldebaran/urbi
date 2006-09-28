@@ -19,19 +19,20 @@ LD = @CC@
 LIBTOOL = $(hostdir)/libtool
 LTOBJECTS = $(OBJECTS:%.o=%.lo)
 OUTBIN = nothing
+OUTLIB = nothing
 .SUFFIXES: .cc .cpp .lo .o .obj
 
-.c.lo: $(HEADERS)
+.c.lo: $(HEADERS) 
 	$(LIBTOOL) --tag=C --mode=compile $(CC) $(CFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
-.cc.lo: $(HEADERS)
+.cc.lo: $(HEADERS) 
 	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
-.cpp.lo: $(HEADERS)
+.cpp.lo: $(HEADERS) 
 	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
 #uobject target
-%.a: $(LTOBJECTS) $(LIBRARIES)
+$(OUTLIB): $(LTOBJECTS) $(LIBRARIES)
 	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(LTOBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
 
 $(OUTBIN):  $(OBJECTS) $(LIBRARIES) 

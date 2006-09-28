@@ -1,5 +1,12 @@
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
+	Umake improvments
+
+	* sdk/umake.in: Defaults link with default core (according to jcb spec). Option -l produces only a library. Default target name depends on host and core.
+	* sdk/param.mk.in: Fix to better handle dependency: two generic targets (%.a and .cc:.lo) where resulting in the .lo files being deleted by make.
+
+2006-09-28  matthieu nottale  <nottale@gostai.com>
+
 	Umake is working 
 
 	* sdk/umake.in: New. Moved, plus a few fixes.
