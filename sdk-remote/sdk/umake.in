@@ -18,7 +18,7 @@ General options:
   -V, --verbose       report on what is done
 
 Compilation options:
-  -l, --library       Produces a library, don't link to a particular core
+  -l, --library       produce a library, don't link to a particular core
   -o, --output=output output file name
   -C, --core=CORE
   -H, --host=HOST

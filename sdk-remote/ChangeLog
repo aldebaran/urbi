@@ -1,3 +1,11 @@
+2006-09-29  Matthieu Nottale  <nottale@gostai.com>
+
+	umake fix
+
+	* sdk/umake.in: Fix typo in doc .
+	* sdk/Makefile.am: Fix srcdir/builddir path problems.
+	* sdk/param.mk.in: Fix LIBRARIES=>LIBS as sent by umake. Fix OBJECTS=>LTOBJECT
+
 2006-09-29  matthieu nottale  <nottale@gostai.com>
 
 	umake fixes

@@ -33,11 +33,11 @@ OUTLIB = nothing
 	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
 #uobject target
-$(OUTLIB): $(LTOBJECTS) $(LIBRARIES)
-	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(LTOBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
+$(OUTLIB): $(LTOBJECTS) $(LIBS)
+	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(LTOBJECTS) $(LIBS) $(EXTRALDFLAGS)
 
-$(OUTBIN): $(OBJECTS) $(LIBRARIES) 
-	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS) $(envdir)/*.la
+$(OUTBIN): $(LTOBJECTS) $(LIBS) 
+	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS) $(EXTRALDFLAGS) $(envdir)/*.la
 
 
 #override default targets to add headers dependency

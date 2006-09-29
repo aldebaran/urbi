@@ -5,7 +5,7 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
 bin_SCRIPTS = umake umake-lib umake-engine
 
-host_SCRIPTS = $(top_srcdir)/libtool
+host_SCRIPTS = $(top_builddir)/libtool
 
 noinst_PROGRAMS = urbimodule
 urbimodule_SOURCES = umain.cc
@@ -19,7 +19,7 @@ nodist_host_DATA = param.mk gccversion
 #dist_env_DATA = umain.cc
 
 install-data-local:
-	cp install $(prefix)/
+	cp $(top_srcdir)/sdk/install $(prefix)/
 ## ----------------- ##
 ## Makefile.module.  ##
 ## ----------------- ##
