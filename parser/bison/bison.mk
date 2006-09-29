@@ -48,7 +48,7 @@ $(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
 flex_nonstd = 'cin|cout|cerr|istream'
 EXTRA_DIST += $(parsedir)/utoken.l
 dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h $(parsedir)/utoken.cc
-$(parsedir)/bison/utoken.cc: $(parsedir)/utoken.l
+$(parsedir)/utoken.cc: $(parsedir)/utoken.l
 	$(FLEX) -+ -oparser/bison/lex.cc $(parsedir)/utoken.l
 	perl -p -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
 		-e 's/class istream;/#include <istream>/;'		\

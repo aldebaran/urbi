@@ -1,3 +1,9 @@
+2006-09-29  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix bison.mk incorrect path
+
+	* parser/bison/bison.mk: Fix utoken.cc path.
+
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
 	Fixes for sdk generation
