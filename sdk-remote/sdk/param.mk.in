@@ -1,4 +1,4 @@
-prefix = @prefix@
+#dont set prefix, umake will tell us this information
 PACKAGE_BRAND = @PACKAGE_BRAND@
 URBI_ENV = @URBI_ENV@
 URBI_HOST = @URBI_HOST@
@@ -20,22 +20,23 @@ LIBTOOL = $(hostdir)/libtool
 LTOBJECTS = $(OBJECTS:%.o=%.lo)
 OUTBIN = nothing
 OUTLIB = nothing
-.SUFFIXES: .cc .cpp .lo .o .obj
+.SUFFIXES: .c .cc .cpp .lo .o .obj
 
-.c.lo: $(HEADERS) 
+
+.c.lo: $(HEADERS) $(URBI_HOST).dep
 	$(LIBTOOL) --tag=C --mode=compile $(CC) $(CFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
-.cc.lo: $(HEADERS) 
+.cc.lo: $(HEADERS)
 	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
-.cpp.lo: $(HEADERS) 
+.cpp.lo: $(HEADERS)
 	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
 
 #uobject target
 $(OUTLIB): $(LTOBJECTS) $(LIBRARIES)
 	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(LTOBJECTS) $(LIBRARIES) $(EXTRALDFLAGS)
 
-$(OUTBIN):  $(OBJECTS) $(LIBRARIES) 
+$(OUTBIN): $(OBJECTS) $(LIBRARIES) 
 	$(LIBTOOL) --mode=link --tag=CXX $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBRARIES) $(EXTRALDFLAGS) $(envdir)/*.la
 
 

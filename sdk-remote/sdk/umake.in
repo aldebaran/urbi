@@ -52,7 +52,7 @@ EXEEXT='@EXEEXT@'
 # Initialize variables for option overriding and otherwise.
 # Don't use `unset' since old bourne shells don't have this command.
 # Instead, assign them an empty value.
-core=$defaultenv           #default core: we link to core by default
+core=remote           #default core: we link to core by default
 debug=false
 host=default
 quiet=false     # by default let the tools' message be displayed
@@ -297,7 +297,7 @@ else
 fi
 
 #then pass env
-makeargs="$makeargs URBI_ENV=$core"
+makeargs="$makeargs URBI_ENV=$core prefix=$prefix"
 verbose "libs='$libs'" 
 verbose "sources='$sources'" 
 verbose "headers='$headers'"

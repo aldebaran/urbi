@@ -1,7 +1,7 @@
 AM_CPPFLAGS = -I.
 
 lib_LTLIBRARIES = libjpeg.la
-env_LTLIBRARIES = libjpegx.la
+noinst_LTLIBRARIES = libjpegx.la
 libjpeg_la_SOURCES = \
 	jcapimin.c jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jchuff.c \
         jcinit.c jcmainct.c jcmarker.c jcmaster.c jcomapi.c jcparam.c \
@@ -24,7 +24,7 @@ libjpeg_la_SOURCES += jmemnobs.c
 # FIXME: We used a prebuild config.h.  This is certainly wrong...
 libjpeg_la_SOURCES += jconfig.h
 
-libjpegx_la_SOURCES = libjpeg_la_SOURCES
+libjpegx_la_SOURCES = $(libjpeg_la_SOURCES)
 
 EXTRA_DIST =							\
 coderules.doc   install.doc     libjpeg.doc     usage.doc	\

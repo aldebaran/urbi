@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/liburbi/uobject
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
-AM_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
+AM_LIBADD =  $(PTHREAD_LIBS)
 
 ## ------------ ##
 ## liburbi.la.  ##
@@ -46,7 +46,7 @@ uobject/uexternal.h				\
 uobject/uobject.h	uobject/uobject.cc	\
 uobject/uvar.cc					\
 usyncclient.h		usyncclient.cpp
-liburbi_la_LIBADD = $(AM_LIBADD)
+liburbi_la_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
 
 
 ## ------------ ##
@@ -55,4 +55,4 @@ liburbi_la_LIBADD = $(AM_LIBADD)
 
 env_LTLIBRARIES = libkernel-remote.la
 libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES) $(top_srcdir)/sdk/umain.cc
-libkernel_remote_la_LIBADD = $(AM_LIBADD)
+libkernel_remote_la_LIBADD = $(AM_LIBADD) $(top_builddir)/lib/jpeg-6b/libjpegx.la

@@ -1,3 +1,16 @@
+2006-09-29  matthieu nottale  <nottale@gostai.com>
+
+	umake fixes
+
+	* sdk/umake-engine: New.
+	* sdk/umake-lib: New.
+	* sdk/install: New. Install script, required if sdk must be relocated
+	* sdk/umake.in: Default core is now HARDCODED to 'remote'. Pass prefix to param.mk, so it can be location-independant.
+	* sdk/Makefile.am: Install install.
+	* sdk/param.mk.in: Remove ref to prefix.
+	* src/liburbi/Makefile.am: Add correct libjpegx to libkernel so that libjpeg is linked in the lib.
+	* lib/jpeg-6b/Makefile.am: libjpegx.la is built, as a noninstallable conveninance lib.
+
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
 	Umake improvments
