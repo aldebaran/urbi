@@ -1,5 +1,12 @@
 2006-10-02  matthieu nottale  <nottale@gostai.com>
 
+	Umake quoting fix.
+
+	* sdk/umake-engine: Add correct quoting.
+	* sdk/umake.in: Quote everything properly.
+
+2006-10-02  matthieu nottale  <nottale@gostai.com>
+
 	Umake feature 
 
 	* sdk/umake.in: When no option other than those of form "a=b" is passed, add '.' as directory to scan.

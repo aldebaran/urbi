@@ -204,12 +204,16 @@ get_options ()
     ;;
   esac
   
-  while test x"$1" != x; do
+  while test x"$1" != x || test $havearg == false; do
+  if test x"$1" == x && test $havearg == false; then
+    set dummy . ${1+"$@"}; shift;
+    havearg=true
+  fi
   case "$1" in
     *=*) makeargs="$makeargs '$1'"; shift ;;
-    *.h |*.hh)  headers="$headers $1"; havearg=true;shift ;;
-    *.cc|*.cpp|*.c) sources="$sources $1";havearg=true;shift ;;
-    *.a)    libs="$libs $1";havearg=true;shift ;;
+    *.h |*.hh)  headers="$headers '$1'"; havearg=true;shift ;;
+    *.cc|*.cpp|*.c) sources="$sources '$1'";havearg=true;shift ;;
+    *.a)    libs="$libs '$1'";havearg=true;shift ;;
     *)
       #is it a directory
       if test -d "$1"  ; then
@@ -261,12 +265,6 @@ else
   exec 6>/dev/null
 fi
 
-if test x$havearg == xfalse ; then
-  sources="$sources $(ls *.cc *.c *.cpp 2>/dev/null || true)"
-  libs="$libs  $(ls *.a 2>/dev/null || true)"
-  headers="$headers $(ls *.h *.hh 2>/dev/null || true)"
-fi
-
 verbose "run."
 
 if test x$core == xdefault ; then
@@ -278,7 +276,7 @@ if test x$host == xdefault ; then
 fi
 
 
-objects=$(echo $sources | sed -e 's/\.c[^. ]*/.o/g')
+objects=$(echo $sources | sed -e 's/\.c[^. '\'']*/.o/g')
 
 #select target name if unspecified
 if test x$target == x ; then
@@ -314,6 +312,6 @@ verbose "make options='$makeargs'"
 
 #invoke make
 verbose "invoking make -f $prefix/gostai/core/$host/param.mk $target" 
-eval make -f $prefix/gostai/core/$host/param.mk $target "HEADERS=$headers" "SOURCES=$sources" "LIBS=$libs" "OBJECTS=$objects" "$makeargs"  
+eval make -f $prefix/gostai/core/$host/param.mk $target "'HEADERS=$headers'" "'SOURCES=$sources'" "'LIBS=$libs'" "'OBJECTS=$objects'" "$makeargs"  
 verbose "done."
 exit 0 # exit successfully, not however we ended the loop.
