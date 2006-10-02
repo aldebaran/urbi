@@ -205,7 +205,7 @@ get_options ()
   
   while test x"$1" != x; do
   case "$1" in
-    *=*) makeargs="$makeargs $1"; shift ;;
+    *=*) makeargs="$makeargs '$1'"; shift ;;
     *.h |*.hh)  headers="$headers $1";shift ;;
     *.cc|*.cpp|*.c) sources="$sources $1";shift ;;
     *.a)    libs="$libs $1";shift ;;
@@ -306,6 +306,6 @@ verbose "make options='$makeargs'"
 
 #invoke make
 verbose "invoking make -f $prefix/gostai/core/$host/param.mk $target" 
-make -f $prefix/gostai/core/$host/param.mk $target "HEADERS=$headers" "SOURCES=$sources" "LIBS=$libs" "OBJECTS=$objects" $makeargs   
+eval make -f $prefix/gostai/core/$host/param.mk $target "HEADERS=$headers" "SOURCES=$sources" "LIBS=$libs" "OBJECTS=$objects" "$makeargs"  
 verbose "done."
 exit 0 # exit successfully, not however we ended the loop.

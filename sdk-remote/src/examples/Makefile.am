@@ -29,11 +29,14 @@ endif
 
 if WIN32
 monitor_sources = monitor-win.h monitor-win.cpp
+urbiballtrackinghead_LDADD = $(AM_LDADD)
+urbiimage_LDADD = $(AM_LDADD)
 else
 monitor_sources = monitor.h monitor.cpp
+urbiballtrackinghead_LDADD = -lX11 -lXext $(AM_LDADD)
+urbiimage_LDADD = -lX11 -lXext $(AM_LDADD)
 endif
 
-urbiballtrackinghead_LDADD = -lX11 -lXext $(AM_LDADD)
 urbiballtrackinghead_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp $(monitor_sources)
 
@@ -42,7 +45,6 @@ urbibandwidth_SOURCES = urbibandwidth.cpp
 # Where are the sources of this guy: urbigetbin?
 # urbigetbin_SOURCES = urbigetbin.cpp
 
-urbiimage_LDADD = -lX11 -lXext $(AM_LDADD)
 urbiimage_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
 urbiimage_SOURCES = urbiimage.cpp $(monitor_sources)
 urbimirror_SOURCES = urbimirror.cpp

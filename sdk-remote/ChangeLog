@@ -1,3 +1,10 @@
+2006-10-02  matthieu nottale  <nottale@gostai.com>
+
+	Fix umake parameters containing spaces.
+
+	* sdk/umake.in: Add eval to the make invocation line and quote parameters in arg parsing.
+	* src/examples/Makefile.am: Move -lX11 LDFLAGS in the 'if !WINDOWS' case .
+
 2006-09-29  Matthieu Nottale  <nottale@gostai.com>
 
 	umake fix
