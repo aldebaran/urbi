@@ -1,5 +1,11 @@
 2006-10-02  matthieu nottale  <nottale@gostai.com>
 
+	Umake feature 
+
+	* sdk/umake.in: When no option other than those of form "a=b" is passed, add '.' as directory to scan.
+
+2006-10-02  matthieu nottale  <nottale@gostai.com>
+
 	Fix umake parameters containing spaces.
 
 	* sdk/umake.in: Add eval to the make invocation line and quote parameters in arg parsing.

@@ -57,6 +57,7 @@ debug=false
 host=default
 quiet=false     # by default let the tools' message be displayed
 verb=false      # true for verbose mode
+havearg=false;   #we have at least one path or file arg
 target=         #target name
 
 libs=
@@ -206,14 +207,15 @@ get_options ()
   while test x"$1" != x; do
   case "$1" in
     *=*) makeargs="$makeargs '$1'"; shift ;;
-    *.h |*.hh)  headers="$headers $1";shift ;;
-    *.cc|*.cpp|*.c) sources="$sources $1";shift ;;
-    *.a)    libs="$libs $1";shift ;;
+    *.h |*.hh)  headers="$headers $1"; havearg=true;shift ;;
+    *.cc|*.cpp|*.c) sources="$sources $1";havearg=true;shift ;;
+    *.a)    libs="$libs $1";havearg=true;shift ;;
     *)
       #is it a directory
       if test -d "$1"  ; then
         #using find is the best way I found
         files=$(find "$1" -maxdepth 1 -iname '*.h' -or -iname '*.hh' -or -iname '*.c' -or -iname '*.cc' -or -iname '*.cpp' -or -iname '*.a')
+	havearg=true;
         shift
         set dummy $files  ${1+"$@"}; shift;
       else
@@ -257,6 +259,12 @@ if $debug; then
   set -x
 else
   exec 6>/dev/null
+fi
+
+if test x$havearg == xfalse ; then
+  sources="$sources $(ls *.cc *.c *.cpp 2>/dev/null || true)"
+  libs="$libs  $(ls *.a 2>/dev/null || true)"
+  headers="$headers $(ls *.h *.hh 2>/dev/null || true)"
 fi
 
 verbose "run."
