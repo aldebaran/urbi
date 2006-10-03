@@ -245,7 +245,7 @@ cleanTable(UTable &t, std::string name)
 	{
 	  if ((*it2)->objname == name)
 	    {
-	      delete (*it2);
+	      delete *it2;
 	      it2 = tocheck.erase(it2);
 	    }
 	  else
@@ -275,7 +275,7 @@ cleanTimerTable(UTimerTable &t, std::string name)
     {
       if ((*it)->objname == name)
 	{
-	  delete (*it);
+	  delete *it;
 	  it = t.erase(it);
 	}
       else
@@ -295,7 +295,8 @@ UObject::clean()
   cleanTimerTable(timermap, __name);
   cleanTimerTable(updatemap, __name);
 
-  if (objecthub) objecthub->members.remove(this);
+  if (objecthub)
+    objecthub->members.remove(this);
 }
 
 
@@ -315,10 +316,11 @@ UObject::UJoinGroup(const std::string& gpname)
   hma = ::urbiserver->grouptab.find(gpname.c_str());
   if (hma != ::urbiserver->grouptab.end())
     g = hma->second;
-  else {
-    g = new UGroup(new UString(gpname.c_str()));
-    ::urbiserver->grouptab[g->name->str()] = g;
-  }
+  else
+    {
+      g = new UGroup(new UString(gpname.c_str()));
+      ::urbiserver->grouptab[g->name->str()] = g;
+    }
 
   g->members.push_back(new UString(__name.c_str()));
 }
