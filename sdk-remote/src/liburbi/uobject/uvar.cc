@@ -31,7 +31,7 @@ namespace urbi
     ~UVardata() {};
   };
 
-  static const char * propNames[]=
+  static const char* propNames[]=
     {
       "rangemin",
       "rangemax",
@@ -43,7 +43,7 @@ namespace urbi
 
   // **************************************************************************
   //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
-  UVar::UVar(const std::string &varname)
+  UVar::UVar(const std::string& varname)
     :VAR_PROP_INIT
   {
     name = varname;
@@ -51,16 +51,16 @@ namespace urbi
   }
 
   //! UVar constructor: object reference + var name
-  UVar::UVar(UObject& obj, const std::string &varname)
-    :VAR_PROP_INIT
+  UVar::UVar(UObject& obj, const std::string& varname)
+    : VAR_PROP_INIT
   {
     name = obj.__name + "." + varname;
     __init();
   }
 
   //! UVar constructor: object name + var name
-  UVar::UVar(const std::string &objname, const std::string &varname)
-    :VAR_PROP_INIT
+  UVar::UVar(const std::string& objname, const std::string& varname)
+    : VAR_PROP_INIT
   {
     name = objname + "." + varname;
     __init();
@@ -69,7 +69,7 @@ namespace urbi
 
   //! UVar initialization
   void
-  UVar::init(const std::string &objname, const std::string &varname)
+  UVar::init(const std::string& objname, const std::string& varname)
   {
     name = objname + "." + varname;
     __init();
@@ -100,17 +100,20 @@ namespace urbi
 
 
   void
-  UVar::setProp(UProperty prop, const UValue &v)
+  UVar::setProp(UProperty prop, const UValue& v)
   {
     URBI(()) << name << "->"<< propNames[(int)prop] << "=" << v <<";";
   }
 
   void
-  UVar::setProp(UProperty prop, const char * v) {
-    URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+  UVar::setProp(UProperty prop, const char * v)
+  {
+    URBI(()) << name << "->" << propNames[(int)prop] << "=" << v << ";";
   }
+
   void
-  UVar::setProp(UProperty prop, double v) {
+  UVar::setProp(UProperty prop, double v)
+  {
     //TODO : generalize
     if (prop == PROP_BLEND && v>=0 && v< blendNum)
       URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<blendNames[(int)v]<<";";
@@ -119,9 +122,12 @@ namespace urbi
   }
 
   UValue
-  UVar::getProp(UProperty prop) {
-    UMessage *m=((USyncClient&)URBI(())).syncGet("%s->%s",name.c_str(), propNames[(int)prop]);
-    UValue v = *(m->value);
+  UVar::getProp(UProperty prop)
+  {
+    UMessage *m=
+      ((USyncClient&)URBI(())).syncGet("%s->%s",
+				       name.c_str(), propNames[(int)prop]);
+    UValue v = *m->value;
     delete m;
     return v;
   }
@@ -140,18 +146,18 @@ namespace urbi
   {
     UVarTable::iterator varmapfind = varmap.find(name);
 
-    if (varmapfind != varmap.end()) {
+    if (varmapfind != varmap.end())
+      {
+	for (std::list<UVar*>::iterator it = varmapfind->second.begin();
+	     it != varmapfind->second.end();)
+	  if (*it == this)
+	    it=varmapfind->second.erase(it);
+	  else
+	    it++;
 
-      for (std::list<UVar*>::iterator it = varmapfind->second.begin();
-	   it != varmapfind->second.end();)
-	if ((*it) == this)
-	  it=varmapfind->second.erase(it);
-	else
-	  it++;
-
-      if (varmapfind->second.empty())
-	varmap.erase(varmapfind);
-    }
+	if (varmapfind->second.empty())
+	  varmap.erase(varmapfind);
+      }
   }
 
   //! UVar float assignment
@@ -170,7 +176,7 @@ namespace urbi
 
   //! UVar binary assignment
   void
-  UVar::operator = (const UBinary &b)
+  UVar::operator = (const UBinary& b)
   {
     getDefaultClient()->sendBin(b.common.data, b.common.size,
 				"%s=BIN %d %s;",
@@ -179,7 +185,7 @@ namespace urbi
   }
 
   void
-  UVar::operator = (const UImage &i)
+  UVar::operator = (const UImage& i)
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
@@ -190,7 +196,7 @@ namespace urbi
   }
 
   void
-  UVar::operator = (const USound &i)
+  UVar::operator = (const USound& i)
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
@@ -201,32 +207,37 @@ namespace urbi
   }
 
   void
-  UVar::operator = (const UList &l) {
+  UVar::operator = (const UList& l)
+  {
     URBI(()) << name << "=";
     UValue v;
     v.type = DATA_LIST;
-    v.list = &const_cast<UList &>(l);
+    v.list = &const_cast<UList&>(l);
     URBI(()) << v<<";";
     v.type = DATA_VOID;
     v.list = 0;
   }
 
 
-  UVar::operator int () {
-    return ((int)value);
+  UVar::operator int ()
+  {
+    return (int)value;
   };
 
-  UVar::operator ufloat () {
-    return ((ufloat)value);
-  };
-
-
-  UVar::operator std::string () {
-    return ((std::string)value);
+  UVar::operator ufloat ()
+  {
+    return (ufloat)value;
   };
 
 
-  UVar::operator UBinary() {
+  UVar::operator std::string ()
+  {
+    return (std::string)value;
+  };
+
+
+  UVar::operator UBinary()
+  {
     return value;
   };
 
@@ -279,7 +290,7 @@ namespace urbi
   UVar::requestValue()
   {
     //build a getvalue message  that will be parsed and returned by the server
-    URBI(()) << externalModuleTag <<':'
+    URBI(()) << externalModuleTag << ':'
 	     <<'[' << UEM_ASSIGNVALUE << ","
 	     << '"' << name << '"' << ',' << name << "];";
   }

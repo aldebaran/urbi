@@ -57,8 +57,8 @@ debug=false
 host=default
 quiet=false     # by default let the tools' message be displayed
 verb=false      # true for verbose mode
-havearg=false;   #we have at least one path or file arg
-target=         #target name
+havearg=false   # we have at least one path or file arg
+target=         # target name
 
 libs=
 sources=
@@ -146,20 +146,20 @@ get_options ()
   # than nothing at all.
   arg_sep="$$--$$"
   set dummy ${1+"$@"} "$arg_sep"; shift
-  
+
   # Parse command line arguments.
-  while test x"$1" != x"$arg_sep"; do
-  
+  while test x"$1" != x"$arg_sep"
+  do
     # Handle --option=value by splitting apart and putting back on argv.
     case "$1" in
       --*=*)
-        opt=`echo "$1" | sed -e 's/=.*//'`
-        val=`echo "$1" | sed -e 's/[^=]*=//'`
-        shift
-        set dummy "$opt" "$val" ${1+"$@"}; shift
-        ;;
+	opt=`echo "$1" | sed -e 's/=.*//'`
+	val=`echo "$1" | sed -e 's/[^=]*=//'`
+	shift
+	set dummy "$opt" "$val" ${1+"$@"}; shift
+	;;
     esac
-  
+
     # This recognizes --quark as --quiet.  So what.
     case "$1" in
       -D | --debug  ) debug=true;;
@@ -174,16 +174,18 @@ get_options ()
       -o | --output) shift; target=$1;;
 
       --) # What remains are not options.
-        shift
-        while test x"$1" != x"$arg_sep"; do
-  	set dummy ${1+"$@"} "$1"; shift
-  	shift
-        done
-        break;;
+	shift
+	while test x"$1" != x"$arg_sep"
+	do
+  	    set dummy ${1+"$@"} "$1"; shift
+  	    shift
+	done
+	break
+	;;
       -*)
-        error 1 "Unknown or ambiguous option \`$1'." \
+	error 1 "Unknown or ambiguous option \`$1'." \
   	      "Try \`--help' for more information."
-        ;;
+	;;
       *) set dummy ${1+"$@"} "$1"; shift;;
      esac
      shift
@@ -203,33 +205,39 @@ get_options ()
     fi
     ;;
   esac
-  
-  while test x"$1" != x || test $havearg == false; do
-  if test x"$1" == x && test $havearg == false; then
-    set dummy . ${1+"$@"}; shift;
-    havearg=true
-  fi
-  case "$1" in
-    *=*) makeargs="$makeargs '$1'"; shift ;;
-    *.h |*.hh)  headers="$headers '$1'"; havearg=true;shift ;;
-    *.cc|*.cpp|*.c) sources="$sources '$1'";havearg=true;shift ;;
-    *.a)    libs="$libs '$1'";havearg=true;shift ;;
+
+  while test x"$1" != x || test $havearg == false
+  do
+      if test x"$1" == x && test $havearg == false; then
+	  set dummy . ${1+"$@"}; shift;
+	  havearg=true
+      fi
+
+  case $1 in
+    *=*)            makeargs="$makeargs '$1'"; shift ;;
+    *.h |*.hh)      headers="$headers '$1'";   havearg=true;shift ;;
+    *.cc|*.cpp|*.c) sources="$sources '$1'";   havearg=true;shift ;;
+    *.a)            libs="$libs '$1'";         havearg=true;shift ;;
     *)
       #is it a directory
-      if test -d "$1"  ; then
-        #using find is the best way I found
-        files=$(find "$1" -maxdepth 1 -iname '*.h' -or -iname '*.hh' -or -iname '*.c' -or -iname '*.cc' -or -iname '*.cpp' -or -iname '*.a')
-	havearg=true;
-        shift
-        set dummy $files  ${1+"$@"}; shift;
+      if test -d "$1"; then
+	  files=$(find "$1" -maxdepth 1		\
+			      -iname '*.h'	\
+			  -or -iname '*.hh'	\
+			  -or -iname '*.c'	\
+			  -or -iname '*.cc'	\
+			  -or -iname '*.cpp'    \
+			  -or -iname '*.a')
+	  havearg=true;
+	  shift
+	  set dummy $files  ${1+"$@"}; shift;
       else
-        error 2 "unknown type of file '$1'"
+	  error 2 "unknown type of file '$1'"
       fi
-   ;;
-   esac
-   done
+      ;;
+  esac
+  done
 }
-
 
 get_options "$@"
 
@@ -267,51 +275,48 @@ fi
 
 verbose "run."
 
-if test x$core == xdefault ; then
+if test x$core == xdefault; then
   core=$defaultenv
 fi
 
-if test x$host == xdefault ; then
+if test x$host == xdefault; then
   host=$defaulthost
 fi
 
 
 objects=$(echo $sources | sed -e 's/\.c[^. '\'']*/.o/g')
+#pacify Emacs: '
 
-#select target name if unspecified
-if test x$target == x ; then
-  if test x$core == x ; then
-    target=uobject-$host.a
-  else
-    target=urbiengine-$host-$core$EXEEXT
-  fi
-else    #ensure correct extension
-  target=$(echo $target | sed -e 's/\.[^.]*//')
-  if test x$core == x ; then
-    target="$target.a"
-  else
-    target="$target$EXEEXT"
-  fi
-fi
+# Select target name if unspecified.
+case $target:$core in
+    :)  target=uobject-$host.a;;
+    :*) target=urbiengine-$host-$core$EXEEXT;;
+    *:) target=$(echo $target | sed -e 's/\.[^.]*//')
+	target="$target.a";;
+    *:*)target=$(echo $target | sed -e 's/\.[^.]*//')
+	target="$target$EXEEXT";;
+esac
 
-#remove ourselve from library list in lib generation mode, add OUTBIN option otherwise
-if test x$core == x ; then
+# Remove ourselve from library list in lib generation mode, add OUTBIN
+# option otherwise.
+if test x$core == x; then
   libs=$(echo $libs | sed -e "s/$target//")
   makeargs="$makeargs OUTLIB=$target"
 else
   makeargs="$makeargs OUTBIN=$target"
 fi
 
-#then pass env
+# Then pass env.
 makeargs="$makeargs URBI_ENV=$core prefix=$prefix"
-verbose "libs='$libs'" 
-verbose "sources='$sources'" 
+verbose "libs='$libs'"
+verbose "sources='$sources'"
 verbose "headers='$headers'"
 verbose "objects='$objects'"
 verbose "make options='$makeargs'"
 
-#invoke make
-verbose "invoking make -f $prefix/gostai/core/$host/param.mk $target" 
-eval make -f $prefix/gostai/core/$host/param.mk $target "'HEADERS=$headers'" "'SOURCES=$sources'" "'LIBS=$libs'" "'OBJECTS=$objects'" "$makeargs"  
+# Invoke make.
+verbose "invoking make -f $prefix/gostai/core/$host/param.mk $target"
+eval make -f $prefix/gostai/core/$host/param.mk $target "'HEADERS=$headers'" "'SOURCES=$sources'" "'LIBS=$libs'" "'OBJECTS=$objects'" "$makeargs"
 verbose "done."
-exit 0 # exit successfully, not however we ended the loop.
+
+exit 0

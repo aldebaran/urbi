@@ -1,3 +1,16 @@
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
+	uinstall.
+
+	* sdk/install: Rename as...
+	* sdk/uinstall: this.
+	* sdk/Makefile.am: Adjust.
+	Be sure to ship umake-lib and others.
+	Remove hand crafted install rule.
+	* sdk/umake.in: Style changes.
+
+	* src/liburbi/uobject/uvar.cc: More formatting changes.
+
 2006-10-03  matthieu nottale  <nottale@gostai.com>
 
 	Install fix, make temporary fix.

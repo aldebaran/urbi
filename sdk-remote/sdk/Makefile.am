@@ -3,7 +3,8 @@ AM_CPPFLAGS =                                   \
 -I$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
-bin_SCRIPTS = umake umake-lib umake-engine
+nodist_bin_SCRIPTS = umake
+dist_bin_SCRIPTS = umake-lib umake-engine uinstall
 
 host_SCRIPTS = $(top_builddir)/libtool
 
@@ -18,8 +19,6 @@ include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.h
 nodist_host_DATA = param.mk gccversion
 #dist_env_DATA = umain.cc
 
-install-data-local:
-	cp $(top_srcdir)/sdk/install $(prefix)/
 ## ----------------- ##
 ## Makefile.module.  ##
 ## ----------------- ##
