@@ -1,6 +1,11 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes.
+	* src/utils/urbicycle.cpp, src/examples/urbiplay.cpp: Do that.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes.
 	* src/examples/urbiplay.cpp: Do that.
 
 2006-10-03  Akim Demaille  <demaille@gostai.com>

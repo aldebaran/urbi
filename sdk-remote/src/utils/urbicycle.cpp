@@ -26,32 +26,34 @@ struct UDev {
 UDev* devices;
 int devCount;
 
-int parseHeader(FILE *f,FILE * of) {
+int parseHeader(FILE *f,FILE * of)
+{
   char buff[4];
   if (fread(buff,4,1,f)!=1) return 1;
   if (fwrite(buff,4,1,of)!=1) return 2;
   if (strncmp(buff,"URBI",4)) return 3;
   if (fread(&devCount,4,1,f)!=1) return 4;
   if (fwrite(&devCount,4,1,of)!=1) return 5;
-  for (int i=0;i<devCount;i++) {
-	char device[256];
-	int pos=0;
-	int a;
-	do {
-	  if ((device[pos++]=fgetc(f))==EOF) return 6;
-	}
-	while (device[pos-1]);
-	if (fwrite(device,strlen(device)+1,1,of)!=1) return 7;
-	if (fread(&a,2,1,f)!=1) return 8;
-	if (fwrite(&a,2,1,of)!=1) return 9;
-	int type;
-	if ( (type=fgetc(f)) ==EOF) return 10;
-	fputc(type,of);
-  }
+  for (int i=0;i<devCount;i++)
+    {
+      char device[256];
+      int pos=0;
+      int a;
+      do {
+	if ((device[pos++]=fgetc(f))==EOF) return 6;
+      } while (device[pos-1]);
+      if (fwrite(device,strlen(device)+1,1,of)!=1) return 7;
+      if (fread(&a,2,1,f)!=1) return 8;
+      if (fwrite(&a,2,1,of)!=1) return 9;
+      int type;
+      if ((type=fgetc(f)) == EOF) return 10;
+      fputc(type,of);
+    }
   return 0;
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[])
+{
   if (argc<3) {
     printf("usage %s infile outfile [jointid] [startval] [direction] [numcycle]\n"
 	   "\tDetect and extract cycles in an urbi recorded file\n"
@@ -63,13 +65,29 @@ int main(int argc, char * argv[]) {
   }
   FILE * inf;
   FILE * ouf;
-  if (!strcmp(argv[1],"-")) inf=stdin;
-  else inf=fopen(argv[1],"r");
-  if (!inf) {printf("error opening file\n");exit(2);}
-  if (!strcmp(argv[2],"-")) ouf=stdout;
-  else ouf=fopen(argv[2],"w");
-  if (!ouf) {printf("error opening file\n");exit(2);}
-  if (int a=parseHeader(inf,ouf)) {printf("error parsing header: %d\n",a); exit(3);}
+  if (!strcmp(argv[1],"-"))
+    inf=stdin;
+  else
+    inf=fopen(argv[1],"r");
+  if (!inf)
+    {
+      printf("error opening file\n");
+      exit(2);
+    }
+  if (!strcmp(argv[2],"-"))
+    ouf=stdout;
+  else
+    ouf=fopen(argv[2],"w");
+  if (!ouf)
+    {
+      printf("error opening file\n");
+      exit(2);
+    }
+  if (int a=parseHeader(inf,ouf))
+    {
+      printf("error parsing header: %d\n",a);
+      exit(3);
+    }
 
   int joint=0;
   int wantedcycle=2;
@@ -112,58 +130,58 @@ int main(int argc, char * argv[]) {
   fread(&uc,sizeof(UCommand),1,inf);
   buffTime=uc.timestamp;
   buff[uc.id]=uc;
-  while (1) {
+  while (true)
+    {
+      int ok=fread(&uc,sizeof(UCommand),1,inf);
+      if (ok && !basetime) basetime=uc.timestamp;
+      if (ok && buffTime==0) buffTime=uc.timestamp;
+      if (ok && uc.timestamp==buffTime) {buff[uc.id]=uc;continue;}
 
-    int ok=fread(&uc,sizeof(UCommand),1,inf);
-    if (ok && !basetime) basetime=uc.timestamp;
-    if (ok && buffTime==0) buffTime=uc.timestamp;
-    if (ok && uc.timestamp==buffTime) {buff[uc.id]=uc;continue;}
+      if (init) {
+	//initialize asap<-now
 
-    if (init) {
-      //initialize asap<-now
+	if (buff[joint].timestamp==0) {
+	  //cant do anything
+	  for (int i=0;i<devCount;i++) buff[i].timestamp=0;
+	  buff[uc.id]=uc;
+	  buffTime=0;
+	  continue;
+	}
 
-      if (buff[joint].timestamp==0) {
-	//cant do anything
-	for (int i=0;i<devCount;i++) buff[i].timestamp=0;
-	buff[uc.id]=uc;
-	buffTime=0;
-	continue;
+	startval=buff[joint].value.angle;
+	gotSign=false;
+	init=false;
+	gotLastVal=true;
+	lastval=startval;
+	cycle++;
+	fprintf(stderr,"cycle %d starts at %d\n",cycle, buffTime-basetime);
       }
 
-      startval=buff[joint].value.angle;
-      gotSign=false;
-      init=false;
-      gotLastVal=true;
-      lastval=startval;
-      cycle++;
-      fprintf(stderr,"cycle %d starts at %d\n",cycle, buffTime-basetime);
+
+      if (gotLastVal &&
+	  ((!gotSign) ||   ( cyclesgn ^ (lastval<startval))) &&
+	  (   (lastval<startval && buff[joint].value.angle>=startval) ||
+	      (lastval>startval && buff[joint].value.angle<=startval) )) {
+	cyclesgn = (lastval>startval);
+	gotSign=true;
+	cycle++;
+	fprintf(stderr,"cycle %d starts at %d\n",cycle, buffTime-basetime);
+      }
+
+      if (buff[joint].timestamp!=0) {
+	lastval=buff[joint].value.angle;
+	gotLastVal=true;
+      }
+      if (cycle==wantedcycle)
+	for (int i=0;i<devCount;i++)
+	  if (buff[i].timestamp!=0) {buff[i].timestamp-=basetime;fwrite(&buff[i],sizeof(UCommand),1,ouf); }
+
+      //flush buffer
+      for (int i=0;i<devCount;i++) buff[i].timestamp=0;
+      buff[uc.id]=uc;
+      buffTime=0;
+      if (!ok) break;
     }
-
-
-    if (gotLastVal &&
-	((!gotSign) ||   ( cyclesgn ^ (lastval<startval))) &&
-	(   (lastval<startval && buff[joint].value.angle>=startval) ||
-	    (lastval>startval && buff[joint].value.angle<=startval) )) {
-      cyclesgn = (lastval>startval);
-      gotSign=true;
-      cycle++;
-      fprintf(stderr,"cycle %d starts at %d\n",cycle, buffTime-basetime);
-    }
-
-    if (buff[joint].timestamp!=0) {
-      lastval=buff[joint].value.angle;
-      gotLastVal=true;
-    }
-    if (cycle==wantedcycle)
-      for (int i=0;i<devCount;i++)
-	if (buff[i].timestamp!=0) {buff[i].timestamp-=basetime;fwrite(&buff[i],sizeof(UCommand),1,ouf); }
-
-    //flush buffer
-    for (int i=0;i<devCount;i++) buff[i].timestamp=0;
-    buff[uc.id]=uc;
-    buffTime=0;
-    if (!ok) break;
-  }
   fclose(inf);
   fclose(ouf);
 }

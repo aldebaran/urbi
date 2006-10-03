@@ -155,9 +155,9 @@ int main(int argc, char * argv[])
 
   if ( (!strcmp(argv[1],"-")) || (!strcmp(argv[1],"+")))
     {
-    robot=NULL;
-    dumpMode=argv[1][0];
-  }
+      robot=NULL;
+      dumpMode=argv[1][0];
+    }
   else 
     {
       robot=new urbi::UClient(argv[1]);
