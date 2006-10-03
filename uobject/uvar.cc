@@ -111,6 +111,7 @@ namespace urbi {
       if (varmapfind->second.empty())
 	varmap.erase(varmapfind);
     }
+    delete vardata;
   }
 
   //! UVar float assignment

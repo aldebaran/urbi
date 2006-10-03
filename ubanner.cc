@@ -21,8 +21,8 @@ const char* HEADER_AFTER_CUSTOM[] =
   {
     "***\n",
     "*** URBI comes with ABSOLUTELY NO WARRANTY;\n",
-    "*** This software is free, and you are welcome to use\n",
-    "*** it under certain conditions; see LICENSE for details.\n",
+    "*** This software can be used under certain conditions;\n",
+    "*** see LICENSE file for details.\n",
     "***\n",
     "*** See http://www.urbiforge.com for news and updates.\n",
     "*** **********************************************************\n",

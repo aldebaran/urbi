@@ -1,3 +1,10 @@
+2006-10-03  matthieu nottale  <nottale@gostai.com>
+
+	New nonfree banner. Fix leak.
+
+	* ubanner.cc: New message that doesn't say urbikernel is free.
+	* uobject/uvar.cc: Fix a leak: delete vardata in uvar dtor.
+
 2006-09-29  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix bison.mk incorrect path
