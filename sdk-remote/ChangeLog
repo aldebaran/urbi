@@ -1,5 +1,12 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Clean up.
+
+	* src/examples/urbimirror.cpp: Fix an and that should be an or.
+	* src/examples/urbiballtrackinghead.cpp: Formatting changes.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Clean ups.
 
 	Compiling with X11.

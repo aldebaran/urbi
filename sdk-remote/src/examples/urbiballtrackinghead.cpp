@@ -221,7 +221,8 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
       {
 	unsigned char cb = image[(i+j*w)*3+1];
 	unsigned char cr = image[(i+j*w)*3+2];;
-	if ( (cr<=230) && (cr>=150) && (cb<=190) && (cb>=120))
+	if (150 <= cr && cr<=230
+	    && 120 <= cb && cb<=190)
 	  {
 	    nummatch++;
 	    xsum+=i;
