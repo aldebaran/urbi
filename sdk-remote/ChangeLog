@@ -33,14 +33,17 @@
 
 	Umake feature
 
-	* sdk/umake.in: When no option other than those of form "a=b" is passed, add '.' as directory to scan.
+	* sdk/umake.in: When no option other than those of form
+	"a=b" is passed, add '.' as directory to scan.
 
 2006-10-02  matthieu nottale  <nottale@gostai.com>
 
 	Fix umake parameters containing spaces.
 
-	* sdk/umake.in: Add eval to the make invocation line and quote parameters in arg parsing.
-	* src/examples/Makefile.am: Move -lX11 LDFLAGS in the 'if !WINDOWS' case .
+	* sdk/umake.in: Add eval to the make invocation line and
+	quote parameters in arg parsing.
+	* src/examples/Makefile.am: Move -lX11 LDFLAGS in the
+	'if !WINDOWS' case .
 
 2006-09-29  Matthieu Nottale  <nottale@gostai.com>
 
@@ -48,7 +51,8 @@
 
 	* sdk/umake.in: Fix typo in doc .
 	* sdk/Makefile.am: Fix srcdir/builddir path problems.
-	* sdk/param.mk.in: Fix LIBRARIES=>LIBS as sent by umake. Fix OBJECTS=>LTOBJECT
+	* sdk/param.mk.in: Fix LIBRARIES=>LIBS as sent by umake.
+	Fix OBJECTS=>LTOBJECT
 
 2006-09-29  matthieu nottale  <nottale@gostai.com>
 
@@ -57,18 +61,25 @@
 	* sdk/umake-engine: New.
 	* sdk/umake-lib: New.
 	* sdk/install: New. Install script, required if sdk must be relocated
-	* sdk/umake.in: Default core is now HARDCODED to 'remote'. Pass prefix to param.mk, so it can be location-independant.
+	* sdk/umake.in: Default core is now HARDCODED to 'remote'. Pass
+	prefix to param.mk, so it can be location-independant.
 	* sdk/Makefile.am: Install install.
 	* sdk/param.mk.in: Remove ref to prefix.
-	* src/liburbi/Makefile.am: Add correct libjpegx to libkernel so that libjpeg is linked in the lib.
-	* lib/jpeg-6b/Makefile.am: libjpegx.la is built, as a noninstallable conveninance lib.
+	* src/liburbi/Makefile.am: Add correct libjpegx to libkernel so
+	that libjpeg is linked in the lib.
+	* lib/jpeg-6b/Makefile.am: libjpegx.la is built, as a
+	noninstallable conveninance lib.
 
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
 	Umake improvments
 
-	* sdk/umake.in: Defaults link with default core (according to jcb spec). Option -l produces only a library. Default target name depends on host and core.
-	* sdk/param.mk.in: Fix to better handle dependency: two generic targets (%.a and .cc:.lo) where resulting in the .lo files being deleted by make.
+	* sdk/umake.in: Defaults link with default core (according to jcb
+	spec). Option -l produces only a library. Default target name
+	depends on host and core.
+	* sdk/param.mk.in: Fix to better handle dependency: two generic
+	targets (%.a and .cc:.lo) where resulting in the .lo files being
+	deleted by make.
 
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
@@ -88,44 +99,51 @@
 	Work on umake
 
 	* sdk/param.mk.in: Will be the installed sdk makefile.
-	* umake/umake.in: Add --output option, remove output from $libraries variable in link mode.
+	* umake/umake.in: Add --output option, remove output from
+	$libraries variable in link mode.
 
 2006-09-28  Matthieu Nottale  <nottale@gostai.com>
 
 	Continued work on umake
 
-	* sdk/param.mk.in: Rewrite in  progress. Generic makeile that will be called by umake.
-	* umake/umake.in: Almost done, now invokes make with the right makefile and almost the right arguments.
+	* sdk/param.mk.in: Rewrite in  progress. Generic makeile that will
+	be called by umake.
+	* umake/umake.in: Almost done, now invokes make with the right
+	makefile and almost the right arguments.
 	* configure.ac: Remove references to removed files in sdk.
 
 2006-09-27  matthieu nottale  <nottale@gostai.com>
 
 	Work on umake <TITLE> small fixes
 
-	* src/liburbi/uobject/uobject.template.h: Fix hash_map declaration using urbi::hash_map_type. Change UBinary::parse prototype to fix a bug.
-	* src/liburbi/uobject/common_uvalue.cc: Fix UBinary::parse to pass the list by reference.
-	* umake/umake.in: Additional work on command line parsing: sort libs, headers and sources, handle directory arguments.
+	* src/liburbi/uobject/uobject.template.h: Fix hash_map declaration
+	using urbi::hash_map_type. Change UBinary::parse prototype to fix
+	a bug.
+	* src/liburbi/uobject/common_uvalue.cc: Fix UBinary::parse to pass
+	the list by reference.
+	* umake/umake.in: Additional work on command line parsing: sort
+	libs, headers and sources, handle directory arguments.
 
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
 	Fixes.
 	* src/liburbi/uobject/uext.h: Add a missing "public".
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/urbi-dirs.m4 (_URBI_DIRS): New.
 	(URBI_DIRS): Use it.
 	(URBI_KERNEL_DIRS): New.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/urbi-dirs.m4: Pass the default urbi env.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/urbi-dirs.m4: Quote properly.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Various.
 
@@ -149,50 +167,52 @@
 	Hash_map stuff
 
 	* src/liburbi/Makefile.am: Add uext.h.
-	* src/liburbi/uobject/uobject.template.h: Remove hash_map code moved to uext.h.
-	* src/liburbi/uobject/uext.h: Handle special case of hash_map with char * keys.
+	* src/liburbi/uobject/uobject.template.h: Remove hash_map code
+	moved to uext.h.
+	* src/liburbi/uobject/uext.h: Handle special case of hash_map with
+	char * keys.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* src/liburbi/Makefile.am: Use the pthread vars correctly.
 	* src/liburbi/uobject/Makefile.am: Likewise.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* src/examples/urbitalkie.cpp: Formatting changes.
 	* src/liburbi/uobject/uexternal.h: Comment changes.
 	* src/liburbi/Makefile.am (AM_LDFLAGS): Remove, useless.
 	* src/liburbi/uobject/Makefile.am: Install back libuobject.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/urbi-openr.m4: Fix.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* sdk/Makefile.am: Remove dead code.
 	Formatting changes.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/urbi-openr.m4: New.
 	* configure.ac: Use it.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* src/examples/urbitalkie.cpp: Use urbi::.
 	* src/examples/Makefile.am: Build this file if !WIN32, not the
 	converse.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* src/examples/urbisound.cpp: Even more urbi:: changes.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* src/examples/urbisound.cpp: More urbi:: changes.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Update pthreads detection.
 	* src/examples/urbisendsound.cpp: Formatting changes.
@@ -229,22 +249,24 @@
 
 	Fixing stuffs
 
-	* src/liburbi/uobject/uobject.template.h: Fix missing include <algorithm> for find.
-	* src/liburbi/uobject/common_uvalue.cc: Fix code that was mistakenly removed between 140 and 141.
+	* src/liburbi/uobject/uobject.template.h: Fix missing include
+	<algorithm> for find.
+	* src/liburbi/uobject/common_uvalue.cc: Fix code that was
+	mistakenly removed between 140 and 141.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Don't install libuobject.
 	* src/liburbi/uobject/Makefile.am: Make it noinst.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	urbi dirs.
 	* build-aux/urbi-dirs.m4: New.
 	* configure.ac: Use it.
 	* src/utils/urbiscale.cpp: Formatting changes.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	distcheck passes.
 
@@ -252,7 +274,7 @@
 	(CLEANFILES): Remove Makefile.module.
 	* build-aux/doxygen.mk: Chmod before rm to make sure it'll pass.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Fixes.
 
@@ -278,9 +300,10 @@
 
 	Add support for void data type
 
-	* src/liburbi/uobject/common_uvalue.cc: Add support for 'void' in parse function (happens in OBJ type).
+	* src/liburbi/uobject/common_uvalue.cc: Add support for 'void' in
+	parse function (happens in OBJ type).
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Revert some dos2unix.
 	* src/liburbi/openr/liburbi.mips.a: Revert to previous version.
@@ -294,7 +317,7 @@
 	* src/examples/urbimirror.vcproj: Ditto.
 	* src/examples/urbirecord.vcproj: Ditto.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	dos2unix.
 
@@ -337,13 +360,13 @@
 	* INSTALL.windows: Ditto.
 	* setenv.sh: Ditto.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Fix AM_LDADD use.
 	* src/liburbi/uobject/Makefile.am (AM_LDADD): Rename as...
 	(LDADD): This.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	More Autoconfiscation.
 	* configure.ac (TARGET, urbicodedir, targetdir, includedir): New.
@@ -370,13 +393,13 @@
 	* src/liburbi/uobject/uvar.cc: Add uvar<=>ulist conversion.
 	* src/liburbi/uobject/uobject.template.h: Add missing const for UList methods.
 
-2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-21  Akim Demaille  <demaille@gostai.com>
 
 	Please distcheck: don't compile the doc on user side, ship it.
 	* build-aux/doxygen.mk (html_DATA): Rename as...
 	(EXTRA_DATA): this.
 
-2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-21  Akim Demaille  <demaille@gostai.com>
 
 	* configure.ac (sys/soundcard.h): Look for it.
 	* src/examples/Makefile.am: Depend on its presence.
@@ -384,12 +407,12 @@
 	* sdk/Makefile.am (copyfiles): Remove the files first, to avoid
 	problems with permissions.
 
-2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-21  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/doxygen.mk: New.
 	* doc/Makefile.am: Use it.
 
-2006-09-21  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-21  Akim Demaille  <demaille@gostai.com>
 
 	* src/examples/urbiping.cpp: Formatting changes.
 
@@ -401,7 +424,8 @@
 	* sdk/umain.cc: fix usleep when compiling under WIN32 environment.
 	* src/utils/Move.cpp: idem.
 	* src/utils/Makefile.am: Fix builddir/srcdir mistake.
-	* src/liburbi/uabstractclient.cpp: Fix parse error when hadnling brackets in system messages.
+	* src/liburbi/uabstractclient.cpp: Fix parse error when hadnling
+	brackets in system messages.
 	* src/liburbi/Makefile.am: Fix builddir/srcdir mistake.
 	* src/liburbi/uobject/Makefile.am: idem.
 	* src/examples/urbiplay.cpp: Fix for WIN32 environnment.
@@ -409,10 +433,11 @@
 	* src/examples/urbiping.cpp: idem.
 	* src/examples/monitor-win.h: idem.
 	* src/examples/Makefile.am: idem.
-	* configure.ac: Add detection of windows.h and adding of ws2_32 and gdi32 libs.
+	* configure.ac: Add detection of windows.h and adding of ws2_32
+	and gdi32 libs.
 	* doc/Makefile.am: Fix builddir/srcdir mistake.
 
-2006-09-18  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-18  Akim Demaille  <demaille@gostai.com>
 
 	* src/liburbi/Makefile.am, src/liburbi/Doxyfile.in: Move do
 	generation to...
@@ -423,7 +448,7 @@
 
 	* src/examples/urbisound.cpp: Formatting changes.
 
-2006-09-18  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-18  Akim Demaille  <demaille@gostai.com>
 
 	Improve Doxygenation.
 	* src/liburbi/Doxyfile: Rename as...
@@ -461,7 +486,7 @@
 	src/liburbi/uabstractclient.h, src/liburbi/uobject/common_uvalue.cc:
 	  UMessage constructor uses const parameters, as does UValue::parse
 
-2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-13  Akim Demaille  <demaille@gostai.com>
 
 	* src/utils/Makefile.am (AM_CXXFLAGS): Fix.
 	* src/liburbi/usyncclient.cpp, src/liburbi/usyncclient.h,
@@ -470,11 +495,11 @@
 	* src/liburbi/uabstractclient.h, src/examples/urbirecord.cpp:
 	Less "using".
 
-2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-13  Akim Demaille  <demaille@gostai.com>
 
 	* src/liburbi/Makefile.am (include_HEADERS): Also ship lockable.h.
 
-2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-13  Akim Demaille  <demaille@gostai.com>
 
 	"make dist" passes.  distcheck does not.
 	* src/liburbi/openr/Makefile.am: New, based on..
@@ -483,7 +508,7 @@
 	* lib/jpeg-6b/Makefile.am: Add missing files.
 	Remove obsolete/useless ones.
 
-2006-09-13  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-13  Akim Demaille  <demaille@gostai.com>
 
 	Big multipurpose patch.  Don't do this at home.
 	* bootstap: New.
