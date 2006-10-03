@@ -1,4 +1,9 @@
-2006-10-03  Akim Demaille  <!!! EMAIL not set !!!>
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
+	* build-aux: Remove.
+	Now an svn:externals.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
 
 	URBI_DOC and URBI_SDK.
 	* src/examples/Makefile.am: Remove dead code.
@@ -6,7 +11,7 @@
 	* build-aux/urbi-doc.m4: New.
 	* configure.ac: Use them.
 
-2006-10-03  Akim Demaille  <!!! EMAIL not set !!!>
+2006-10-03  Akim Demaille  <demaille@gostai.com>
 
 	Fixes and style.
 	* src/examples/urbiimage.cpp: Fix an AND that was an OR.
@@ -26,7 +31,7 @@
 
 2006-10-02  matthieu nottale  <nottale@gostai.com>
 
-	Umake feature 
+	Umake feature
 
 	* sdk/umake.in: When no option other than those of form "a=b" is passed, add '.' as directory to scan.
 
@@ -67,7 +72,7 @@
 
 2006-09-28  matthieu nottale  <nottale@gostai.com>
 
-	Umake is working 
+	Umake is working
 
 	* sdk/umake.in: New. Moved, plus a few fixes.
 	* sdk/Makefile.am: Update list of installed things: remove umain.cc .
