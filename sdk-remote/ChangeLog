@@ -1,3 +1,10 @@
+2006-10-03  matthieu nottale  <nottale@gostai.com>
+
+	Install fix, make temporary fix.
+
+	* sdk/install: Copy everything.
+	* src/examples/Makefile.am: Temporary fix: add -L/usr/X11R6/lib.
+
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
 	liburbi-c++.

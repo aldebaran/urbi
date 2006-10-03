@@ -56,7 +56,7 @@ monitor_sources = monitor.h monitor.cpp
 endif
 
 # FIXME: -lXext should be checked via configure.ac.
-x11_libs = $(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS) $(AM_LDADD)
+x11_libs = -L/usr/X11R6/lib $(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS) $(AM_LDADD)
 
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp $(monitor_sources)
 urbiballtrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)

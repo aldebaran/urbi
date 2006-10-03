@@ -8,7 +8,7 @@ fi
 
 echo "installing in $dir"
 mkdir -p $dir
-cp -ar bin  gostai  include  lib  share $dir
+cp -ar * $dir
 sed -e "s@^prefix=.*@prefix=$dir@" "$dir/bin/umake" > "$dir/bin/umake.tmp" && mv "$dir/bin/umake.tmp" "$dir/bin/umake"
 chmod a+x $dir/bin/umake
 echo "all done"
