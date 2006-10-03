@@ -1,5 +1,13 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Catch up with uobject.h.
+	* ucommand.cc, uobject/uobject.cc, uobject/uvar.cc:
+	Various indentation fixes.
+	Various warning fixes.
+	Catch up with const-ref uses for std::string in uobject.h.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Use URBI_*.
 	* configure.ac: Use URBI_PROG_CXX, and URBI_DOC.
 	Use AC_ENABLE_SHARED.

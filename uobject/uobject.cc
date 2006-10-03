@@ -37,7 +37,8 @@ using namespace urbi;
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
-namespace urbi {
+namespace urbi
+{
 
   UObject* lastUObject;
 
@@ -57,24 +58,27 @@ namespace urbi {
   UTimerTable updatemap;
 
 
-  UVar& cast(UValue &v, UVar *) {
+  UVar& cast(UValue &v, UVar *)
+  {
     return (*((UVar*)v.storage));
   };
 
-  UBinary cast(UValue &v, UBinary *) {
-    if (v.type != DATA_BINARY) {
+  UBinary cast(UValue &v, UBinary *)
+  {
+    if (v.type != DATA_BINARY)
       return UBinary();
-    }
     return UBinary(*v.binary);
   }
 
-  UList cast(UValue &v, UList *) {
+  UList cast(UValue &v, UList *)
+  {
     if (v.type != DATA_LIST)
       return UList();
     return UList(*v.list);
   }
 
-  UObjectStruct cast(UValue &v, UObjectStruct*) {
+  UObjectStruct cast(UValue &v, UObjectStruct*)
+  {
     if (v.type != DATA_OBJECT)
       return UObjectStruct();
     return UObjectStruct(*v.object);
@@ -82,7 +86,8 @@ namespace urbi {
 
   // USeful sending functions
 
-  void uobject_unarmorAndSend(const char * str) {
+  void uobject_unarmorAndSend(const char * str)
+  {
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
@@ -93,16 +98,16 @@ namespace urbi {
     ghost->newDataAdded = true;
   }
 
-  void send(const char* str) {
-
+  void send(const char* str)
+  {
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();
     ghost->received(str);
     ghost->newDataAdded = true;
   }
 
-  void send(void* buf, int size) {
-
+  void send(void* buf, int size)
+  {
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();
     ghost->received((const unsigned char *)(buf),size);
@@ -110,63 +115,74 @@ namespace urbi {
   }
 }
 
-void urbi::main(int argc, char *argv[]) {} // no effect here
+void
+urbi::main(int argc, char *argv[])
+{
+  // no effect here
+}
 
 // **************************************************************************
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(std::string objname, std::string type, std::string name, int size,  UTable &t) :
-  name(name) , storage(0), objname(objname)
+UGenericCallback::UGenericCallback(const std::string& objname,
+				   const std::string& type,
+				   const std::string& name,
+				   int size,  UTable &t)
+  : storage(0), objname(objname), name(name)
 {
   nbparam = size;
 
-  if ((type == "function") || (type== "event") || (type=="eventend"))
+  if (type == "function"
+      || type== "event"
+      || type=="eventend")
+    t[this->name].push_back(this);
+
+  if (type == "var" || type=="var_onrequest")
     {
-      t[this->name].push_back(this);
+      HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
+      if (it == ::urbiserver->variabletab.end())
+	{
+	  UVariable *variable = new UVariable(name.c_str(), new ::UValue());
+	  if (variable) variable->internalBinder.push_back(this);
+	}
+      else
+	it->second->internalBinder.push_back(this);
     }
 
-  if (type == "var" || type=="var_onrequest") {
-
-    HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-    if (it == ::urbiserver->variabletab.end()) {
-
-      UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-      if (variable) variable->internalBinder.push_back(this);
+  if (type == "varaccess")
+    {
+      HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
+      if (it == ::urbiserver->variabletab.end())
+	{
+	  UVariable *variable = new UVariable(name.c_str(), new ::UValue());
+	  if (variable)
+	    variable->internalAccessBinder.push_back(this);
+	}
+      else
+	it->second->internalAccessBinder.push_back(this);
     }
-    else
-      it->second->internalBinder.push_back(this);
-  }
-
-  if (type == "varaccess") {
-
-    HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-    if (it == ::urbiserver->variabletab.end()) {
-
-      UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-      if (variable) variable->internalAccessBinder.push_back(this);
-    }
-    else
-      it->second->internalAccessBinder.push_back(this);
-  }
-};
+}
 
 //! UGenericCallback constructor.
-UGenericCallback::UGenericCallback(std::string objname, std::string type, std::string name, UTable &t) :
-  name(name) , storage(0), objname(objname)
+UGenericCallback::UGenericCallback(const std::string& objname,
+				   const std::string& type,
+				   const std::string& name, UTable &t)
+  : storage(0), objname(objname), name(name)
 {
   t[this->name].push_back(this);
-};
+}
 
 UGenericCallback::~UGenericCallback()
 {
-};
+}
 
 
 // **************************************************************************
 //! UTimerCallbacl constructor.
 
-UTimerCallback::UTimerCallback(std::string objname, ufloat period, UTimerTable &tt) :
-  period(period),
-  objname(objname)
+UTimerCallback::UTimerCallback(const std::string& objname,
+			       ufloat period, UTimerTable &tt)
+  : period(period),
+    objname(objname)
 {
   tt.push_back(this);
   lastTimeCalled = -9999999;
@@ -189,8 +205,8 @@ UObject::USync(UVar &v)
 
 // **************************************************************************
 //! UObject constructor.
-UObject::UObject(const std::string &s) :
-  __name(s)
+UObject::UObject(const std::string &s)
+  : __name(s)
 {
   objecthub = 0;
   autogroup = false;
@@ -201,10 +217,8 @@ UObject::UObject(const std::string &s) :
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();
        retr++)
-    {
-      if ((*retr)->name == __name)
-	tmpobj->internalBinder = (*retr);
-    }
+    if ((*retr)->name == __name)
+      tmpobj->internalBinder = (*retr);
 
   // default
   derived = false;
@@ -293,7 +307,7 @@ UObject::~UObject()
 }
 
 void
-UObject::UJoinGroup(std::string gpname)
+UObject::UJoinGroup(const std::string& gpname)
 {
   HMgrouptab::iterator hma;
   UGroup *g;
@@ -353,7 +367,7 @@ UObjectHub::addMember(UObject* obj)
 }
 
 UObjectList*
-UObjectHub::getSubClass(std::string subclass)
+UObjectHub::getSubClass(const std::string& subclass)
 {
   UObjectList* res = new UObjectList();
   for (UObjectList::iterator it = members.begin();
@@ -368,8 +382,8 @@ UObjectHub::getSubClass(std::string subclass)
 
 //! retrieve a UObjectHub based on its name
 urbi::UObjectHub*
-urbi::getUObjectHub(std::string name) {
-
+urbi::getUObjectHub(const std::string& name)
+{
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
        retr != urbi::objecthublist->end();
        retr++)
@@ -381,7 +395,7 @@ urbi::getUObjectHub(std::string name) {
 
 //! retrieve a UObject based on its name
 urbi::UObject*
-urbi::getUObject(std::string name)
+urbi::getUObject(const std::string& name)
 {
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();

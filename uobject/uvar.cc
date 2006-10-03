@@ -136,7 +136,7 @@ namespace urbi {
 
   //! UVar string assignment
   void
-  UVar::operator = (std::string s)
+  UVar::operator = (const std::string& s)
   {
     if (!vardata) {
       echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
@@ -303,19 +303,23 @@ namespace urbi {
       break;
     case PROP_BLEND:
       {
-	if (v.type == DATA_DOUBLE) {
-	  //numeric val
-	  vardata->variable->blendType=(UBlend)(int)(double)v;
-	}
-	if (v.type == DATA_STRING) {
-	  std::string s=(std::string)v;
-	  for (int i=0;blendNames[i][0];i++) {
-	    if (s==(std::string)blendNames[i]) {
-	      vardata->variable->blendType = (UBlend)i;
-	      return;
-	    }
+	if (v.type == DATA_DOUBLE)
+	  {
+	    //numeric val
+	    vardata->variable->blendType=(UBlend)(int)(double)v;
 	  }
-	}
+	else if (v.type == DATA_STRING)
+	  {
+	    std::string s=(std::string)v;
+	    for (int i=0;blendNames[i][0];i++)
+	      {
+	      if (s==(std::string)blendNames[i])
+		{
+		  vardata->variable->blendType = (UBlend)i;
+		  return;
+		}
+	      }
+	  }
       }
     }
   }
