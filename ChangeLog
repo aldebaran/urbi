@@ -1,3 +1,8 @@
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
+	* build-aux, bootstrap: Remove.
+	Now replaced with svn:externals.
+
 2006-10-03  matthieu nottale  <nottale@gostai.com>
 
 	New nonfree banner. Fix leak.
@@ -16,14 +21,17 @@
 	Fixes for sdk generation
 
 	* network/OPENR/openr.mk: replaced CPPFLAGS= with CPPFLAGS +=.
-	* Makefile.am: Hack libkernel.lai and install locations to pretend the lib is not installed.
-	  We have to do it in order to include libkernel in an other library.
+	* Makefile.am: Hack libkernel.lai and install locations to pretend
+	the lib is not installed.
+	We have to do it in order to include libkernel in an other library.
 
 2006-09-27  matthieu nottale  <nottale@gostai.com>
 
 	Makefile.am fixes
 
-	* Makefile.am: Add missing uext.h. Add libkernel_la_CPPFLAGS because AM_CPPFLAGS is ignored (libkernel_la_CPPFLAGS written in openr.mk)
+	* Makefile.am: Add missing uext.h.
+	Add libkernel_la_CPPFLAGS because AM_CPPFLAGS is ignored
+	(libkernel_la_CPPFLAGS written in openr.mk).
 
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
