@@ -1,5 +1,14 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	inline ucopy.
+	* ucommand.cc: Do it.
+	* uvariablename.cc: Use it.
+	This should fix some memory leak: before we were making copies
+	that are not always used.
+	delete 0 is valid C++.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes.
 	* uvariablename.cc, uvalue.cc: Do that.
 

@@ -373,7 +373,7 @@ UVariable::updated()
   if (!internalBinder.empty())
     for (std::list<urbi::UGenericCallback*>::iterator itcb = internalBinder.begin();
 	 itcb != internalBinder.end();
-	 itcb++) 
+	 itcb++)
       {
 	urbi::UList tmparray;
 

@@ -306,6 +306,7 @@ namespace
 {
   // FIXME: Should take a const arg, but does not work currently.
   template <typename T>
+  inline
   T*
   ucopy (T* t)
   {

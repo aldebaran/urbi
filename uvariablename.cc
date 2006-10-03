@@ -19,11 +19,13 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 **************************************************************************** */
 
-#include <math.h>
-#include <stdio.h>
+#include <cstdio>
+#include <cmath>
+
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #endif
+
 #include "uvariablename.h"
 #include "ucommand.h"
 #include "uconnection.h"
@@ -33,6 +35,21 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 
 MEMORY_MANAGER_INIT(UVariableName);
+
+namespace
+{
+  // FIXME: Should take a const arg, but does not work currently.
+  template <typename T>
+  inline
+  T*
+  ucopy (T* t)
+  {
+    return t ? t->copy () : 0;
+  }
+}
+
+
+
 // **************************************************************************
 //! UVariableName constructor for variable of the type device.id[...][...]...
 UVariableName::UVariableName(UString* device,
@@ -102,12 +119,12 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
 UVariableName::~UVariableName()
 {
   FREEOBJ(UVariableName);
-  if (device) delete(device);
-  if (id) delete (id);
-  if (method) delete (method);
-  if (fullname_) delete (fullname_);
-  if (str) delete (str);
-  if (index) delete (index);
+  delete device;
+  delete id;
+  delete method;
+  delete fullname_;
+  delete str;
+  delete index;
 }
 
 
@@ -117,7 +134,7 @@ UVariableName::resetCache()
 {
   cached = false;
   variable = 0;
-  if (fullname_) delete fullname_;
+  delete fullname_;
   fullname_ = 0;
 }
 
@@ -517,7 +534,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	  nostruct = false;
 	  delete device; device = 0;
 	  delete method; method = 0; // forces recalc of device.method
-	  if (variable) variable = 0;
+	  if (variable)
+	    variable = 0;
 	}
     }
   else if (nostruct)
@@ -560,8 +578,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   if ((p) && (nostruct) &&
   (::urbiserver->objtab.find(p+1) != ::urbiserver->objtab.end())) {
   strncpy(name, p+1, strlen(p+1)+1);
-  if (device) delete(device); device = 0;
-  if (method) delete(method); method = 0;
+  delete(device); device = 0;
+  delete(method); method = 0;
   }
   */
 
@@ -596,19 +614,12 @@ UVariableName::nameUpdate(const char* _device, const char* _id)
 UVariableName*
 UVariableName::copy()
 {
-  UString*  copy_device;
-  UString*  copy_id;
-  UNamedParameters*  copy_index;
   UVariableName *ret;
 
-  if (id)     copy_id = new UString(id); else copy_id = 0;
-  if (device) copy_device = new UString(device); else copy_device = 0;
-  if (index) copy_index = index->copy(); else copy_index = 0;
-
-  if (str==0)
-    ret = new UVariableName(copy_device,copy_id,rooted,copy_index);
+  if (str)
+    ret = new UVariableName(str->copy(), rooted);
   else
-    ret = new UVariableName(str->copy(),rooted);
+    ret = new UVariableName(ucopy (device), ucopy (id),rooted, ucopy (index));
 
   ret->isstatic     = isstatic;
   ret->isnormalized = isnormalized;
@@ -619,7 +630,7 @@ UVariableName::copy()
   ret->id_type      = id_type;
   ret->local_scope  = local_scope;
 
-  return (ret);
+  return ret;
 }
 
 //! Print the variable
