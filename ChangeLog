@@ -1,5 +1,14 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Clean up.
+	* ucommand.cc: Lots of formatting changes.
+	Don't abuse of parens, know your precedences.
+	delete 0 is valid C++.
+	(ucopy): New.
+	Use it.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes.
 	* uobject/uobject.cc: Do that.
 

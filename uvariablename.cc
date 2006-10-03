@@ -547,16 +547,18 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 void
 UVariableName::nameUpdate(const char* _device, const char* _id)
 {
-  const int    fullnameMaxSize = 1024;
-  char   name[fullnameMaxSize];
+  // const int    fullnameMaxSize = 1024;
+  // char   name[fullnameMaxSize];
 
   if (device)
     device->update(_device);
-  else device = new UString(_device);
+  else
+    device = new UString(_device);
 
   if (id)
     id->update(_id);
-  else id = new UString(_id);
+  else
+    id = new UString(_id);
 }
 
 //! UNamedParameters hard copy function

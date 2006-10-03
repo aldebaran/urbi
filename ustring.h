@@ -4,7 +4,7 @@
  File: ustring.h\n
  Definition of useful types in the URBI server kernel.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -30,7 +30,7 @@
 /*! The only reason why we had to introduce UString is to keep a tight control on how
     memory is managed, as far as strings are concerned.
     This class does all the ADDMEM/FREEMEM job for you. Use it.
-*/   
+*/
 class UString {
 public:
   MEMORY_MANAGED;
@@ -45,12 +45,13 @@ public:
     return str_;
   }
 
-  int len() {
+  int len()
+  {
     return len_;
   }
-  
+
   UString* copy()
- {  
+  {
     return (new UString(this));
   }
 
