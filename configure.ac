@@ -17,16 +17,7 @@ AM_INIT_AUTOMAKE([1.9.6 foreign -Wall dist-zip])
 
 URBI_KERNEL_DIRS([posix])
 
-## --------------- ##
-## Documentation.  ##
-## --------------- ##
-
-URBI_ARG_PROGS([doxygen], [the Doxygen documentation generation program])
-# Name of the directory where the Doxygen documentation is created.
-AC_SUBST([DOCDIR], [srcdoc])
-
-AC_CONFIG_FILES([doc/Makefile
-		 doc/Doxyfile])
+URBI_DOC
 
 ## ------------- ##
 ## Compilation.  ##
@@ -37,13 +28,10 @@ AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
 URBI_ARG_PROGS([bison], [the GNU LALR(1) parser generator])
 URBI_ARG_PROGS([flex],  [the fast lexical analyzer generator])
 
-# For the time being, we are not interested about deprecated
-# headers such as hash_map.h.  We should use ext/hash_map.
-AC_SUBST([WARNING_CXXFLAGS], [-Wno-deprecated])
-AC_PROG_CXX
+URBI_PROG_CXX
 
 # We don't need static libraries, speed the compilation up.
-: ${enable_shared=no}
+AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL
 
 

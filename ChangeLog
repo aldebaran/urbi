@@ -1,5 +1,11 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Use URBI_*.
+	* configure.ac: Use URBI_PROG_CXX, and URBI_DOC.
+	Use AC_ENABLE_SHARED.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	* build-aux, bootstrap: Remove.
 	Now replaced with svn:externals.
 
