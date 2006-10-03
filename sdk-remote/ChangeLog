@@ -1,3 +1,14 @@
+2006-10-03  Akim Demaille  <!!! EMAIL not set !!!>
+
+	Fixes and style.
+	* src/examples/urbiimage.cpp: Fix an AND that was an OR.
+	Use switch.
+	* src/examples/monitor.cpp: Use C++ headers.
+	Simplify writing.
+	Formatting changes.
+	* src/examples/monitor-win.h: Formatting changes.
+	* src/examples/monitor.h: Idem.
+
 2006-10-02  matthieu nottale  <nottale@gostai.com>
 
 	Umake quoting fix.

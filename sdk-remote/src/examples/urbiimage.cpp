@@ -24,9 +24,9 @@
  * This simple demonstration program display or save images from an Urbi server.
  */
 
+#include <cstdio>
+#include <csignal>
 
-#include <stdio.h>
-#include <signal.h>
 #include "usyncclient.h"
 #include "monitor.h"
 
@@ -40,11 +40,9 @@ unsigned char * buffer=NULL;
 urbi::UCallbackAction
 showImage(const urbi::UMessage &msg)
 {
-  using urbi::byte;
-
   if (msg.type != urbi::MESSAGE_DATA
-      && msg.value->type != urbi::DATA_BINARY
-      && msg.value->binary->type != urbi::BINARY_IMAGE)
+      || msg.value->type != urbi::DATA_BINARY
+      || msg.value->binary->type != urbi::BINARY_IMAGE)
     return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
@@ -53,52 +51,62 @@ showImage(const urbi::UMessage &msg)
   int sz = 500000;
   static int tme = 0;
   /* Calculate framerate. */
-  if (!(imcount % 20)) {
-    if (tme) {
-      float it = msg.client.getCurrentTime() - tme;
-      it = 20000.0 / it;
-      printf("***Framerate: %f fps***\n", it);
+  if (!(imcount % 20))
+    {
+      if (tme)
+	{
+	  float it = msg.client.getCurrentTime() - tme;
+	  it = 20000.0 / it;
+	  printf("***Framerate: %f fps***\n", it);
+	}
+      tme = msg.client.getCurrentTime();
     }
-    tme = msg.client.getCurrentTime();
-  }
 
   if (!mon)
     mon = new Monitor(img.width, img.height, "image");
 
-  if (img.imageFormat == urbi::IMAGE_JPEG)
-    urbi::convertJPEGtoRGB((const byte *) img.data, 
-			   img.size, (byte *) buffer, sz);
-  else if (img.imageFormat == urbi::IMAGE_YCbCr) {
-    sz = img.size;
-    urbi::convertYCrCbtoRGB((const byte *) img.data, img.size, (byte *) buffer);
-  }
-
+  switch (img.imageFormat)
+    {
+    case urbi::IMAGE_JPEG:
+      urbi::convertJPEGtoRGB((const urbi::byte *) img.data, img.size,
+			     (urbi::byte *) buffer, sz);
+      break;
+    case urbi::IMAGE_YCbCr:
+      sz = img.size;
+      urbi::convertYCrCbtoRGB((const urbi::byte *) img.data, img.size,
+			      (urbi::byte *) buffer);
+      break;
+    }
+  
   mon->setImage((bits8 *) buffer, sz);
   imcount++;
   return urbi::URBI_CONTINUE;
 }
 
-void closeandquit(int sig)
+void
+closeandquit (int sig)
 {
   delete urbi::getDefaultClient();
   urbi::exit(0);
 }
 
 
-int main(int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
   signal(SIGINT, closeandquit);
   mon = NULL;
 
-  if (argc != 3) {
-    fprintf(stderr,
-	    "Missing argument\n"
-	    "usage: urbiimage format robotname [reconstruct]: display images\n"
-	    "\tFormat : jpeg=transfer jpeg, raw=transfer raw\n"
-	    "usage: urbiimage -tofile format filename robotname [reconstruct]: save 1 image.\n"
-	    "\t Format: rgb: RGB ycrcb:YCrCb jpeg: JPEG ppm:PPM\n");
-    urbi::exit(1);
-  }
+  if (argc != 3)
+    {
+      fprintf(stderr,
+	      "Missing argument\n"
+	      "usage: urbiimage format robotname [reconstruct]: display images\n"
+	      "\tFormat : jpeg=transfer jpeg, raw=transfer raw\n"
+	      "usage: urbiimage -tofile format filename robotname [reconstruct]: save 1 image.\n"
+	      "\t Format: rgb: RGB ycrcb:YCrCb jpeg: JPEG ppm:PPM\n");
+      urbi::exit(1);
+    }
 
   int mode = 0;
   if (argc >=5)
@@ -115,51 +123,54 @@ int main(int argc, char *argv[])
   client.send("camera.resolution  = 0;");
   client.send("camera.jpegfactor = 70;");
 
-  client << "camera.reconstruct = " << ((argc>3+mode*2)? 1:0) << urbi::semicolon;
+  client << "camera.reconstruct = " << ((argc>3+mode*2)? 1:0)
+	 << urbi::semicolon;
 
-  if (mode == 0) {
-    imcount = 0;
-    format = (argv[1][0]=='r')?0:1;
-    client.send("camera.format = %d;", format);
-    client.send("loop {uimg: camera.val; noop},");
-	urbi::execute();
-  }
+  if (mode == 0)
+    {
+      imcount = 0;
+      format = (argv[1][0]=='r')?0:1;
+      client.send("camera.format = %d;", format);
+      client.send("loop {uimg: camera.val; noop},");
+      urbi::execute();
+    }
+  else
+    {
+      /* Use syncGetImage to save one image to a file. */
+      char buff[1000000];
+      int sz = 1000000;
+      int w, h;
+      switch (argv[2][0])
+	{
+	case 'r':
+	  format = urbi::IMAGE_RGB;
+	  break;
+	case 'y':
+	  format = urbi::IMAGE_YCbCr;
+	  break;
+	case 'p':
+	  format = urbi::IMAGE_PPM;
+	  break;
+	case 'j':
+	  format = urbi::IMAGE_JPEG;
+	  break;
+	};
 
-  else {
-    /* Use syncGetImage to save one image to a file. */
-    char buff[1000000];
-    int sz = 1000000;
-    int w, h;
-    switch (argv[2][0]) {
-    case 'r':
-      format = urbi::IMAGE_RGB;
-      break;
-    case 'y':
-      format = urbi::IMAGE_YCbCr;
-      break;
-    case 'p':
-      format = urbi::IMAGE_PPM;
-      break;
-    case 'j':
-      format = urbi::IMAGE_JPEG;
-      break;
-    };
+      client.syncGetImage("camera", buff, sz,
+			  format,
+			  (format == urbi::IMAGE_JPEG
+			   ? urbi::URBI_TRANSMIT_JPEG
+			   : urbi::URBI_TRANSMIT_YCbCr),
+			  w, h);
 
-    client.syncGetImage("camera", buff, sz,
-			format,
-			(format == urbi::IMAGE_JPEG
-			 ? urbi::URBI_TRANSMIT_JPEG
-			 : urbi::URBI_TRANSMIT_YCbCr),
-			w, h);
+      FILE *f = fopen(argv[3], "w");
 
-    FILE *f = fopen(argv[3], "w");
+      if (!f)
+	urbi::exit(2);
 
-    if (!f)
-      urbi::exit(2);
-
-    fwrite(buff, 1, sz, f);
-    fclose(f);
-  }
+      fwrite(buff, 1, sz, f);
+      fclose(f);
+    }
 
   return 0;
 }

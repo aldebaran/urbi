@@ -9,30 +9,30 @@
 ********************************************************************************/
 
 #ifndef _MONITOR_H
-#define _MONITOR_H
-#ifdef WIN32
-#include "monitor-win.h"
-#else
-/*-----------------------------------------------------------------------------*/
+# define _MONITOR_H
 
-#include <cstring>
-#include <cerrno>
-#include <cassert>
-#include <iostream>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <list>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <X11/extensions/XShm.h>
+# ifdef WIN32
+#  include "monitor-win.h"
+# else
+# include <cstring>
+# include <cerrno>
+# include <cassert>
+# include <iostream>
+# include <X11/X.h>
+# include <X11/Xlib.h>
+# include <X11/Xutil.h>
+# include <list>
+# include <sys/ipc.h>
+# include <sys/shm.h>
+# include <X11/extensions/XShm.h>
 
-/*-----------------------------------------------------------------------------*/
 typedef unsigned char bits8;
-class Monitor {
 
+class Monitor
+{
  public:
-  //if fastmode enabled, use its own display: better framerate, but irresponsive if not frequently updated
+  // if fastmode enabled, use its own display: better framerate, but
+  // irresponsive if not frequently updated
   Monitor(int,int, const char * name=NULL, bool fastMode = true);
   ~Monitor();
 
@@ -52,9 +52,9 @@ class Monitor {
   void  clear();
   int   put();
 
+  static void       processMessages();
 
  private:
-
   Window          window;
 
   Visual          *visual;
@@ -73,18 +73,15 @@ class Monitor {
   Atom                atomWMDeleteWindow;
   GC                  gc;
   Display             *localDisplay;
+
   static pthread_mutex_t      lock;
 
   static Display    *display;  //shared display
   static void addList(Monitor *);
   static void removeList(Monitor *);
   static std::list<Monitor*> monitorList;
- public:
-  static void       processMessages();
 };
 
-/*-----------------------------------------------------------------------------*/
+# endif
 
 #endif
-#endif
-/*-----------------------------------------------------------------------------*/
