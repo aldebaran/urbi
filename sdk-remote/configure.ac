@@ -13,15 +13,10 @@ AM_INIT_AUTOMAKE([1.9.6 -Wall dist-zip])
 # Urbi standard locations.
 URBI_DIRS([remote])
 
-## --------------- ##
-## Documentation.  ##
-## --------------- ##
+URBI_SDK
 
-URBI_ARG_PROGS([doxygen], [the Doxygen documentation generation program])
-# Name of the directory where the Doxygen documentation is created.
-AC_SUBST([DOCDIR], [srcdoc])
-
-AC_CONFIG_FILES([doc/Doxyfile])
+# Doc generation.
+URBI_DOC
 
 ## ------------- ##
 ## Compilation.  ##
@@ -47,14 +42,11 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 # Open R.
 URBI_OPENR
 
-AC_CONFIG_FILES([sdk/umake], [chmod +x sdk/umake])
-
 ## -------- ##
 ## Output.  ##
 ## -------- ##
 
 AC_CONFIG_FILES([Makefile
-	  doc/Makefile
 	  lib/Makefile
 	  src/Makefile
 	  src/examples/Makefile
@@ -65,7 +57,5 @@ AC_CONFIG_FILES([Makefile
 	  src/liburbi/openr/Makefile.aibo
 	  lib/jpeg-6b/makefile.aibo
 	  lib/jpeg-6b/Makefile
-	  sdk/param.mk
-	  sdk/Makefile
 ])
 AC_OUTPUT

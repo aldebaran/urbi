@@ -42,9 +42,6 @@ urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp $(monitor_sources)
 
 urbibandwidth_SOURCES = urbibandwidth.cpp
 
-# Where are the sources of this guy: urbigetbin?
-# urbigetbin_SOURCES = urbigetbin.cpp
-
 urbiimage_LDFLAGS = -L/usr/X11R6/lib $(AM_LDFLAGS)
 urbiimage_SOURCES = urbiimage.cpp $(monitor_sources)
 urbimirror_SOURCES = urbimirror.cpp

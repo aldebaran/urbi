@@ -1,5 +1,13 @@
 2006-10-03  Akim Demaille  <!!! EMAIL not set !!!>
 
+	URBI_DOC and URBI_SDK.
+	* src/examples/Makefile.am: Remove dead code.
+	* build-aux/urbi-sdk.m4: New.
+	* build-aux/urbi-doc.m4: New.
+	* configure.ac: Use them.
+
+2006-10-03  Akim Demaille  <!!! EMAIL not set !!!>
+
 	Fixes and style.
 	* src/examples/urbiimage.cpp: Fix an AND that was an OR.
 	Use switch.
