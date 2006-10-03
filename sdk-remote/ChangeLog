@@ -1,5 +1,10 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	* bootstap: Remove.
+	* bootstrap: New, symlink into build-aux.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	* build-aux: Remove.
 	Now an svn:externals.
 
