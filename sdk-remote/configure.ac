@@ -2,7 +2,8 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([liburbi-c++], [1.0-b2], [bugs@gostai.com], [liburbi-cpp])
+AC_INIT([liburbi-c++], [1.0-b2], [bugs@gostai.com],
+        [liburbi-c++])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])

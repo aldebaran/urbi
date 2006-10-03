@@ -259,6 +259,11 @@ namespace urbi
       case DATA_STRING:
 	std::cout << (std::string)v << std::endl;
 	break;
+      case DATA_BINARY:
+      case DATA_LIST:
+      case DATA_OBJECT:
+      case DATA_VOID:
+	break;
       }
     value = v;
   }
@@ -271,7 +276,7 @@ namespace urbi
   }
 
   void
-  UVar::requestValue() 
+  UVar::requestValue()
   {
     //build a getvalue message  that will be parsed and returned by the server
     URBI(()) << externalModuleTag <<':'

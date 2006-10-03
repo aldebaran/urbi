@@ -98,7 +98,7 @@ namespace urbi
 				     const std::string& type,
 				     const std::string& name,
 				     int size,  UTable &t)
-    : name (name), objname (objname)
+    : objname (objname), name (name)
   {
     nbparam = size;
 
@@ -131,7 +131,7 @@ namespace urbi
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name, UTable &t)
-    : name(name) , objname(objname)
+    : objname(objname), name(name)
   {
     t[this->name].push_back(this);
     URBI(()) << "external " << type << " " << name <<";";
@@ -188,8 +188,8 @@ namespace urbi
   UObject::UObject(const std::string &s) :
     __name(s),
     classname(s),
-    load(s,"load"),
-    derived(false)
+    derived(false),
+    load(s,"load")
   {
     objecthub = 0;
     autogroup = false;

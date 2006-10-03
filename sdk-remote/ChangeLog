@@ -1,5 +1,13 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	liburbi-c++.
+	* configure.ac: that's the name of the tarball.
+
+	* src/liburbi/uobject/uobject.cc,
+	* src/liburbi/uobject/uvar.cc: Fix warnings.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Clean up.
 
 	* src/examples/urbimirror.cpp: Fix an and that should be an or.
