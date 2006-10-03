@@ -77,7 +77,7 @@ showImage(const urbi::UMessage &msg)
 			      (urbi::byte *) buffer);
       break;
     }
-  
+
   mon->setImage((bits8 *) buffer, sz);
   imcount++;
   return urbi::URBI_CONTINUE;

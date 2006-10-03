@@ -25,12 +25,12 @@
   namespace __gnu_cxx {
 #   endif
 
-template<> 
-struct hash< std::string > 
+template<>
+struct hash<std::string>
 {
-  size_t operator()( const std::string& x ) const
-  { 
-    return hash< const char* >()( x.c_str() );
+  size_t operator() (const std::string& x) const
+  {
+    return hash<const char*>() (x.c_str());
   }
 };
 
@@ -43,7 +43,7 @@ struct hash< std::string >
 
 
 
-namespace urbi 
+namespace urbi
 {
 
   //! Used in the hash_map object to define equality of two variable names
@@ -55,7 +55,7 @@ namespace urbi
     }
   };
 
-  template<class K, class V> 
+  template<class K, class V>
   class hash_map_type
   {
   public:
@@ -102,8 +102,9 @@ class hash_compare<const char*>
     return r;
   }
   bool operator()(const char* _Keyval1, const char* _Keyval2) const
-  {	// test if _Keyval1 ordered before _Keyval2
-    return strcmp(_Keyval1, _Keyval2)<0;
+  {
+    // Whether _Keyval1 < _Keyval2.
+    return strcmp(_Keyval1, _Keyval2) < 0;
   }
 };
 
@@ -119,12 +120,12 @@ class hash_compare<std::string>
 
   size_t
   operator()( const std::string& x ) const
-  { return hash_compare< const char* >()( x.c_str() );}
+  { return hash_compare<const char*>()( x.c_str() );}
 
   bool
   operator()(const std::string& _Keyval1, const std::string& _Keyval2) const
-  {	// test if _Keyval1 ordered before _Keyval2
-    return (_Keyval1< _Keyval2);
+  {
+    return _Keyval1 < _Keyval2;
   }
 };
 
@@ -133,10 +134,10 @@ _STDEXT_END
 #else
 _STD_END
 #endif
-namespace urbi 
+namespace urbi
 {
-  template<class K, class V> 
-  class hash_map_type 
+  template<class K, class V>
+  class hash_map_type
   {
   public:
     typedef ::HASH_NS::hash_map<K, V> type;

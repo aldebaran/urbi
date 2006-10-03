@@ -18,9 +18,11 @@
 
  **************************************************************************** */
 #include <cstdio>
-#include "uobject.h"
+
 #include <sstream>
 #include <iostream>
+
+#include "uobject.h"
 
 namespace urbi
 {
@@ -376,7 +378,8 @@ namespace urbi
     message = getMessage();
   }
 
-  std::string UBinary::getMessage() const {
+  std::string UBinary::getMessage() const
+  {
     std::ostringstream str;
     if (type == BINARY_IMAGE) {
       switch( image.imageFormat) {
@@ -407,11 +410,14 @@ namespace urbi
 	str << "unknown ";
 	break;
       };
-      str<<sound.channels<<" "<<sound.rate<<" "<<sound.sampleSize<<" "<<sound.sampleFormat;
-
+      str << sound.channels
+	  << " " << sound.rate
+	  << " " << sound.sampleSize
+	  << " " << sound.sampleFormat;
     }
+
     if (type == BINARY_UNKNOWN)
-      str<<message;
+      str << message;
     return str.str();
   }
 
@@ -465,8 +471,8 @@ namespace urbi
     }
   }
 
-  UValue::operator ufloat () const {
-
+  UValue::operator ufloat () const 
+  {
     ufloat v;
     switch( type) {
     case DATA_DOUBLE:
@@ -538,7 +544,8 @@ namespace urbi
 
   UValue& UValue::operator= (const UValue& v)
   { //TODO: optimize
-    if (this == &v) return *this;
+    if (this == &v)
+      return *this;
     switch(type) {
     case DATA_STRING:
       if (stringValue)
@@ -617,7 +624,8 @@ namespace urbi
     memcpy(sound.data, i.data, sound.size);
   }
 
-  UBinary & UBinary::operator = (const UBinary &b) {
+  UBinary & UBinary::operator = (const UBinary &b)
+  {
     if (common.data)
       free(common.data);
 
@@ -638,9 +646,13 @@ namespace urbi
   }
 
 
-  UList::UList() : offset(0) {}
+  UList::UList()
+    : offset(0)
+  {}
 
-  UList::UList(const UList &b) : offset(0) {
+  UList::UList(const UList &b) 
+    : offset(0) 
+  {
     (*this) = b;
   }
 
@@ -659,7 +671,8 @@ namespace urbi
     return (*this);
   }
 
-  UList::~UList() {
+  UList::~UList() 
+  {
     offset=0;
     for (int i=0;i<size();i++) //relax, its a vector
       delete array[i];
@@ -675,7 +688,8 @@ namespace urbi
     (*this) = b;
   }
 
-  UObjectStruct & UObjectStruct::operator = (const UObjectStruct &b) {
+  UObjectStruct & UObjectStruct::operator = (const UObjectStruct &b)
+  {
     for (int i=0;i<size();i++) //relax, its a vector
       delete array[i].val;
     array.clear();
@@ -687,14 +701,16 @@ namespace urbi
     return (*this);
   }
 
-  UObjectStruct::~UObjectStruct() {
-    for (int i=0;i<size();i++) //relax, its a vector
+  UObjectStruct::~UObjectStruct() 
+  {
+    for (int i=0; i<size(); i++) //relax, it's a vector
       delete array[i].val;
     array.clear();
   }
 
 
-  UValue & UObjectStruct::operator [](std::string s) {
+  UValue & UObjectStruct::operator [](const std::string& s)
+  {
     for (int i=0;i<size();i++)
       if (array[i].name==s)
 	return *array[i].val;

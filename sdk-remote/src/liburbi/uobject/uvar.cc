@@ -163,7 +163,7 @@ namespace urbi
 
   //! UVar string assignment
   void
-  UVar::operator = (std::string s)
+  UVar::operator = (const std::string& s)
   {
     URBI(()) << name << "=\"" << s << "\";";
   }

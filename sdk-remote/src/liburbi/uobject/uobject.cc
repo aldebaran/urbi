@@ -94,16 +94,22 @@ namespace urbi
 
   // **************************************************************************
   //! UGenericCallback constructor.
-  UGenericCallback::UGenericCallback(std::string objname, std::string type, std::string name, int size,  UTable &t) :
-    name(name), objname(objname)
+  UGenericCallback::UGenericCallback(const std::string& objname,
+				     const std::string& type,
+				     const std::string& name,
+				     int size,  UTable &t)
+    : name (name), objname (objname)
   {
     nbparam = size;
 
-    if ((type == "function") || (type== "event") || (type=="eventend")) {
-      std::ostringstream oss;
-      oss << size;
-      this->name = this->name + "__" + oss.str();
-    }
+    if (type == "function"
+	|| type== "event"
+	|| type=="eventend")
+      {
+	std::ostringstream oss;
+	oss << size;
+	this->name = this->name + "__" + oss.str();
+      }
     t[this->name].push_back(this);
 
     cout << "Registering " << type << " " << name << " " << size << " into "
@@ -122,8 +128,10 @@ namespace urbi
   };
 
   //! UGenericCallback constructor.
-  UGenericCallback::UGenericCallback(std::string objname, std::string type, std::string name, UTable &t) :
-    name(name) , objname(objname)
+  UGenericCallback::UGenericCallback(const std::string& objname,
+				     const std::string& type,
+				     const std::string& name, UTable &t)
+    : name(name) , objname(objname)
   {
     t[this->name].push_back(this);
     URBI(()) << "external " << type << " " << name <<";";
@@ -137,7 +145,7 @@ namespace urbi
   // **************************************************************************
   //! UTimerCallbacl constructor.
 
-  UTimerCallback::UTimerCallback(std::string objname,
+  UTimerCallback::UTimerCallback(const std::string& objname,
 				 ufloat period, UTimerTable &tt) :
     period(period),
     objname(objname)
@@ -249,7 +257,7 @@ namespace urbi
   }
 
   void
-  UObject::UJoinGroup(std::string gpname)
+  UObject::UJoinGroup(const std::string& gpname)
   {
     std::string groupregister = "addgroup " + gpname +" { "+__name+"};";
     uobject_unarmorAndSend(groupregister.c_str());
@@ -486,7 +494,7 @@ namespace urbi
   }
 
   UObjectList*
-  UObjectHub::getSubClass(std::string subclass)
+  UObjectHub::getSubClass(const std::string& subclass)
   {
     UObjectList* res = new UObjectList();
     for (UObjectList::iterator it = members.begin();
@@ -501,7 +509,7 @@ namespace urbi
 
   //! retrieve a UObjectHub based on its name
   UObjectHub*
-  getUObjectHub(std::string name)
+  getUObjectHub(const std::string& name)
   {
     for (UStartlistHub::iterator retr = objecthublist->begin();
 	 retr != objecthublist->end();
@@ -514,7 +522,7 @@ namespace urbi
 
   //! retrieve a UObject based on its name
   UObject*
-  getUObject(std::string name)
+  getUObject(const std::string& name)
   {
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();

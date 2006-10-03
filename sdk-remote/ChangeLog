@@ -1,5 +1,17 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Clean up.
+	* src/liburbi/uobject/uobject.cc: Formatting changes.
+	Stick to 80 cols max.
+	And pass strings by const-ref.
+	* src/liburbi/uobject/uvar.cc: Ditto.
+	* src/liburbi/uobject/uobject.template.h: Ditto.
+	* src/liburbi/uobject/uext.h: Ditto.
+	* src/liburbi/uobject/common_uvalue.cc: Ditto.
+	* src/examples/urbiimage.cpp: Ditto.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	* bootstap: Remove.
 	* bootstrap: New, symlink into build-aux.
 
