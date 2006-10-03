@@ -1,5 +1,10 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes.
+	* uvariablename.cc, uvalue.cc: Do that.
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Clean up.
 	* ucommand.cc: Lots of formatting changes.
 	Don't abuse of parens, know your precedences.
