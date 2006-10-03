@@ -101,7 +101,7 @@ command(const urbi::UMessage &msg)
 	  return urbi::URBI_CONTINUE;
 	}
     }
-  fprintf (stderr, "error: no device %s (in %s)\n", msg.tag.c_str (),command);
+  fprintf (stderr, "error: no device %s\n", msg.tag.c_str ());
   return urbi::URBI_CONTINUE;
 
 }

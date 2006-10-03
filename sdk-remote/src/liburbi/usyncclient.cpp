@@ -16,6 +16,7 @@ namespace urbi
   {
     USyncClient *connection = (USyncClient *) objectPtr;
     connection->callbackThread();
+    return 0;
   }
 
 

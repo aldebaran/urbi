@@ -1,5 +1,35 @@
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
+	Clean ups.
+
+	Compiling with X11.
+	* configure.ac: Use URBI_PROG_CXX.
+	Use AC_ENABLE_SHARED.
+	Use AC_PATH_XTRA.
+	* src/examples/Makefile.am: Use the results.
+
+	* src/utils/urbicycle.cpp: Formatting changes.
+	Remove unused variables.
+	Add return values where missing.
+	Add cases to incomplete switches.
+	delete 0 is valid C++.
+	Prefer the anonymous namespace to static.
+	Initialize members in the same order as the one of the declaration.
+	Prefer stack resident variables to heap values.
+	* src/liburbi/usyncclient.cpp: .
+	* src/liburbi/lockable.h: .
+	* src/liburbi/uobject/uvar.cc: .
+	* src/liburbi/uobject/uobject.template.h: .
+	* src/liburbi/uobject/common_uvalue.cc: .
+	* src/examples/urbisendsound.cpp: .
+	* src/examples/urbiplay.cpp: .
+	* src/examples/urbitalkie.cpp: .
+	* src/examples/urbirecord.cpp: .
+	* src/examples/urbiballtrackinghead.cpp: .
+	* src/examples/monitor.h: .
+
+2006-10-03  Akim Demaille  <demaille@gostai.com>
+
 	Clean up.
 	* src/liburbi/uobject/uobject.cc: Formatting changes.
 	Stick to 80 cols max.

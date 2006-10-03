@@ -24,13 +24,16 @@ URBI_DOC
 
 # For the time being, we are not interested about deprecated
 # headers such as hash_map.h.  We should use ext/hash_map.
-AC_SUBST([WARNING_CXXFLAGS], [-Wno-deprecated])
 AC_PROG_CC
-AC_PROG_CXX
+URBI_PROG_CXX
 
 # We don't need shared libraries, speed the compilation up.
-: ${enable_shared=no}
+AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL
+
+# X11.
+AC_PATH_XTRA
+AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
 
 # Pthreads.
 URBI_PTHREAD

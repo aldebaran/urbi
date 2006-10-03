@@ -67,7 +67,7 @@ main(int argc, char * argv [])
       convert(s, snd);
 
       uc.setCallback(endProgram,"end");
-      printf("sending %d bytes\n",st.st_size);
+      printf("sending %d bytes\n", static_cast<int>(st.st_size));
       uc.sendSound("speaker", snd,"end");
       printf("done, waiting for end of play notification\n");
     }

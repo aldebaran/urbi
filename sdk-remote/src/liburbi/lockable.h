@@ -158,12 +158,13 @@ namespace urbi
     StartInfo<T> * st = (StartInfo<T>*)data;
     ((*st->inst).*st->func)();
     delete st;
-    return (ThreadStartRet) 0;
+    return static_cast<ThreadStartRet> (0);
   }
 
   template<class T> ThreadStartRet THREADSTARTCALL _startThread(void * data) {
     T * t = (T*)data;
     (*t)();
+    return static_cast<ThreadStartRet> (0);
   }
 
 

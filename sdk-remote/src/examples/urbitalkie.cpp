@@ -20,10 +20,9 @@ public:
   urbi::UCallbackAction microNotify(int side, const urbi::UMessage &msg);
   urbi::UCallbackAction speakerNotify(int side, const urbi::UMessage &msg);
 
-
 private:
-  static const int stackSize = 4;
-  static const int minSendSize = 2048;
+  static const size_t stackSize = 4;
+  static const size_t minSendSize = 2048;
   class SoundStack {
   public:
     std::list<urbi::USound> stack;

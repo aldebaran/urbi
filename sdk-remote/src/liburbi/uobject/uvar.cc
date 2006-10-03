@@ -251,11 +251,15 @@ namespace urbi
   UVar::__update(UValue& v)
   {
     std::cout << "  Variable " << name << " updated to : ";
-    if (v.type == DATA_DOUBLE)
-      std::cout << (double)v << std::endl;
-    if (v.type == DATA_STRING)
-      std::cout << (std::string)v << std::endl;
-
+    switch (v.type)
+      {
+      case DATA_DOUBLE:
+	std::cout << (double)v << std::endl;
+	break;
+      case DATA_STRING:
+	std::cout << (std::string)v << std::endl;
+	break;
+      }
     value = v;
   }
 
@@ -267,9 +271,12 @@ namespace urbi
   }
 
   void
-  UVar::requestValue() {
+  UVar::requestValue() 
+  {
     //build a getvalue message  that will be parsed and returned by the server
-    URBI(()) << externalModuleTag<<':'<<'[' << UEM_ASSIGNVALUE << ","  <<'"'<<name<<'"'<<','<<name<<"];";
+    URBI(()) << externalModuleTag <<':'
+	     <<'[' << UEM_ASSIGNVALUE << ","
+	     << '"' << name << '"' << ',' << name << "];";
   }
 
 } //namespace urbi

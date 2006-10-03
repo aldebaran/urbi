@@ -271,17 +271,20 @@ namespace urbi
     UNORMAL
   };
 
-  //values for enum-like properties
-  static const char * blendNames[]={
-    "mix",
-    "add",
-    "discard",
-    "queue",
-    "cancel",
-    "normal",
-    ""
-  };
-  static const int blendNum = 6;
+  // values for enum-like properties
+  namespace
+    {
+      const char * blendNames[]={
+	"mix",
+	"add",
+	"discard",
+	"queue",
+	"cancel",
+	"normal",
+	""
+      };
+      const int blendNum = 6;
+    }
 
 
   //WARNING: synchronize with propNames in uvar.cc
@@ -306,7 +309,7 @@ namespace urbi
 
 
   /** Class encapsulating an image.
-     
+
       This class does not handle its memory: the data field msut be
       freed manualy.  */
   class UImage {
@@ -318,7 +321,7 @@ namespace urbi
   };
 
   /** Class encapsulating sound informations.
-     
+
       This class does not handle its memory: the data field msut be
       freed manualy.  */
   class USound {
@@ -331,7 +334,7 @@ namespace urbi
     USoundFormat          soundFormat;      ///< format of the sound data
     USoundSampleFormat    sampleFormat;     ///< sample format
 
-    bool operator ==(const USound &b) const 
+    bool operator ==(const USound &b) const
     {
       return !memcmp(this, &b, sizeof(USound));
     }
@@ -381,7 +384,7 @@ namespace urbi
     int offset;
   };
 
-  class UNamedValue 
+  class UNamedValue
   {
   public:
     UValue *val;
@@ -629,7 +632,7 @@ namespace urbi
   public:
     UTimerCallbackobj(const std::string& objname,
 		      ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt)
-      : UTimerCallback(objname, period,tt), obj(obj), fun(fun) 
+      : UTimerCallback(objname, period,tt), obj(obj), fun(fun)
     {}
 
     virtual void call() {
@@ -727,16 +730,16 @@ namespace urbi
     bool autogroup;
 
     /// Remove all bindings, this method is called by the destructor.
-    void clean(); 
+    void clean();
 
     /// The load attribute is standard and can be used to control the
     /// activity of the object.
-    UVar load; 
+    UVar load;
 
   private:
     /// Pointer to a globalData structure specific to the
     /// remote/plugin architectures who defines it.
-    UObjectData*  objectData; 
+    UObjectData*  objectData;
     ufloat period;
   };
 
@@ -784,7 +787,7 @@ namespace urbi
 
 # else
   //something weird happens when overloading with a different return type, so define everythiong by hand
-  
+
 # define SETCAST(type)				\
   inline type					\
   cast(UValue &val, type *inu)			\
@@ -793,9 +796,9 @@ namespace urbi
   }
 
   SETCAST(int);
-  SETCAST(ufloat); 
+  SETCAST(ufloat);
   SETCAST(std::string);
-  SETCAST(UImage); 
+  SETCAST(UImage);
   SETCAST(USound);
   UVar& cast(UValue &val, UVar *var);
   UBinary cast(UValue &v, UBinary * b);
@@ -816,7 +819,7 @@ namespace urbi
 
     virtual void clean() = 0; ///< called before deletion
     /// Used to provide a wrapper to initialize objects in starterlist.
-    virtual void init(const std::string&) =0; 
+    virtual void init(const std::string&) =0;
     /// Used to provide a copy of a C++ object based on its name.
     virtual void copy(const std::string&) = 0;
     std::string name;
@@ -831,7 +834,7 @@ namespace urbi
   public:
     URBIStarter(const std::string& name, UStartlist& _slist)
       : baseURBIStarter(name)
-    { 
+    {
       slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarter*>(this));
     };
@@ -868,7 +871,7 @@ namespace urbi
     virtual void init(const std::string& objname)
     {
       object = new T(objname);
-    }; 
+    };
 
     UStartlist  *slist;
     T*          object;
@@ -898,7 +901,7 @@ namespace urbi
   public:
     URBIStarterHub(const std::string& name, UStartlistHub& _slist)
       : baseURBIStarterHub(name)
-    { 
+    {
       slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarterHub*>(this));
     };

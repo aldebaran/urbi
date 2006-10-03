@@ -45,7 +45,7 @@ class Monitor
   Bool IsShared() {return (isShared);}
   Bool HasSharedPixmap() {return ((Bool) (sharedPixmap != None));}
   Pixmap SharedPixmap() {return (sharedPixmap);}
-  int  setName(const char * name) {  XStoreName(display, window, name);}
+  void  setName(const char * name) {  XStoreName(display, window, name);}
   int   setImage(bits8*,int);
   int   createImage();
   int   destroyImage();
