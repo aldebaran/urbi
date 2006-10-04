@@ -35,6 +35,14 @@ AC_PROG_LIBTOOL
 # X11.
 AC_PATH_XTRA
 AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
+AC_ARG_ENABLE([examples], [AC_HELP_STRING([--enable-examples], [compile the examples (default:yes)])], 
+	[case "${enableval}" in
+  	yes) examples=true ;;
+  	no)  examples=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-examples) ;;
+esac],[examples=true])
+
+AM_CONDITIONAL(EXAMPLES, test x$examples = xtrue)
 
 # Pthreads.
 URBI_PTHREAD
@@ -42,6 +50,7 @@ URBI_PTHREAD
 # Soundcard.
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
+
 
 # Open R.
 URBI_OPENR

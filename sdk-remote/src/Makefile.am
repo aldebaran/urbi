@@ -1,1 +1,5 @@
-SUBDIRS = liburbi utils examples
+SUBDIRS = liburbi 
+
+if EXAMPLES
+SUBDIRS += utils examples
+endif

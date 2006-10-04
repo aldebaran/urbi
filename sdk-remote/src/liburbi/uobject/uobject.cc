@@ -112,8 +112,8 @@ namespace urbi
       }
     t[this->name].push_back(this);
 
-    cout << "Registering " << type << " " << name << " " << size << " into "
-	 << this->name << " from " << objname << endl;
+    std::cout << "Registering " << type << " " << name << " " << size << " into "
+	 << this->name << " from " << objname << std::endl;
 
     if (type == "var")
       URBI(()) << "external " << type << " "

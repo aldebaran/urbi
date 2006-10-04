@@ -1,3 +1,12 @@
+2006-10-04  matthieu nottale  <nottale@gostai.com>
+
+	Add --disable-examples and a few extras
+
+	* src/liburbi/uobject/uobject.cc: Add missing std:: before cout/endl.
+	* src/Makefile.am: conditionaly add examples and utils to SUBDIRS.
+	* src/examples/urbibandwidth.cpp: Add missing include assert.h.
+	* configure.ac: Add a AC_ARG_ENABLE(examples).
+
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes.
