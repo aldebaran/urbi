@@ -4,7 +4,7 @@
  File: ufunction.cc\n
  Implementation of the UFunction class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -26,9 +26,9 @@
 #include "ucommand.h"
 
 UFunction::UFunction(UString *funname,
-                     UNamedParameters *parameters,
-                     UCommand *command) {
-    
+		     UNamedParameters *parameters,
+		     UCommand *command) {
+
   ADDOBJ(UFunction);
   this->funname = funname;
   this->parameters = parameters;
@@ -37,39 +37,41 @@ UFunction::UFunction(UString *funname,
 
 
 UFunction::~UFunction() {
-  
+
   FREEOBJ(UFunction);
-  if (funname) delete(funname);
-  if (parameters) delete(parameters);
-  if (command) delete(command);
+  delete funname;
+  delete parameters;
+  delete command;
 }
 
 UString*
 UFunction::name() {
-  
+
   return(funname);
 }
 
-int 
+int
 UFunction::nbparam() {
-  
+
   if (!parameters) return(0);
   else
     return(parameters->size());
 }
 
-UCommand* 
+UCommand*
 UFunction::cmdcopy(UString *_tag, UNamedParameters *_flags) {
-  
+
   UCommand* tmpcmd = command->copy();
-  if (_tag) {
-    if (tmpcmd->tag) delete tmpcmd->tag;
-    tmpcmd->tag = _tag->copy();
-  }
-  if (_flags) {
-    if (tmpcmd->flags) delete tmpcmd->flags;
-    tmpcmd->flags = _flags->copy();
-  }
+  if (_tag)
+    {
+      delete tmpcmd->tag;
+      tmpcmd->tag = _tag->copy();
+    }
+  if (_flags)
+    {
+      delete tmpcmd->flags;
+      tmpcmd->flags = _flags->copy();
+    }
 
   return(tmpcmd);
 }

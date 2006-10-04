@@ -4,7 +4,7 @@
  File: ubinary.cc\n
  Implementation of the UBinary class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -21,25 +21,25 @@
 
 #include "ubinary.h"
 #include "userver.h"
- 
 
-// **************************************************************************	
+
+// **************************************************************************
 //! UBinary constructor.
 UBinary::UBinary(int bufferSize, UNamedParameters *parameters)
-{	
-  ADDOBJ(UBinary);	
+{
+  ADDOBJ(UBinary);
   this->bufferSize = bufferSize;
   this->parameters = parameters;
-  
+
   buffer = (ubyte*) malloc(bufferSize); // result tested outside
   if (buffer) ADDMEM(bufferSize);
 }
 
 //! UBinary destructor.
 UBinary::~UBinary()
-{	
+{
   FREEOBJ(UBinary);
-  if (parameters) delete parameters;
+  delete parameters;
   if (buffer) {
     free(buffer);
     FREEMEM(bufferSize);
@@ -47,11 +47,11 @@ UBinary::~UBinary()
 }
 
 //! Print the binary
-/*! This function is for debugging purpose only. 
+/*! This function is for debugging purpose only.
     It is not safe, efficient or crash proof. A better version will come later.
 */
-void 
+void
 UBinary::print()
 {
   ::urbiserver->debug("(BIN %d)",bufferSize);
-}	
+}

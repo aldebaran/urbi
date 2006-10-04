@@ -204,7 +204,7 @@ UObj::~UObj()
 
 
   // final cleanup
-  if (device) delete(device);
+  delete device;
 }
 
 UFunction*
@@ -285,5 +285,5 @@ UWaitCounter::UWaitCounter(UString *id, int nb)
 
 UWaitCounter::~UWaitCounter()
 {
-  if (id) delete id;
+  delete id;
 }

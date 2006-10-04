@@ -1,3 +1,23 @@
+2006-10-04  Akim Demaille  <akim@lrde.epita.fr>
+
+	Simplify delete invocations.
+
+	* ucommand.cc: "delete(\(.*?\))" -> "delete \1".
+	"if *(\(.*?\)) *\(delete \1\)" -> "\2".
+	* utypes.h: Ditto.
+	* uvariablelist.cc: Ditto.
+	* ufunction.cc: Ditto.
+	* ucallid.cc: Ditto.
+	* uexpression.cc: Ditto.
+	* unamedparameters.cc: Ditto.
+	* uvalue.cc: Ditto.
+	* ubinary.cc: Ditto.
+	* uproperty.cc: Ditto.
+	* uvariable.cc: Ditto.
+	* uobj.cc: Ditto.
+	* ugroup.cc: Ditto.
+	* uconnection.cc: Ditto.
+
 2006-10-03  Akim Demaille  <demaille@gostai.com>
 
 	inline ucopy.

@@ -4,7 +4,7 @@
  File: uproperty.cc\n
  Implementation of the UProperty class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,20 +22,20 @@
 #include "uproperty.h"
 #include "uvariablename.h"
 #include "ustring.h"
-                                      
+
 
 // **************************************************************************
 //! UProperty constructor
 UProperty::UProperty( UVariableName *variablename,
-                      UString *property) 
-{  
+		      UString *property)
+{
   this->variablename = variablename;
   this->property = property;
 }
 
 //! UProperty destructor
-UProperty:: ~UProperty() 
-{  
-  if (variablename) delete(variablename);
-  if (property) delete(property);
+UProperty:: ~UProperty()
+{
+  delete variablename;
+  delete property;
 }

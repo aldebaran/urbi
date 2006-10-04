@@ -4,7 +4,7 @@
  File: ugroup.cc\n
  Implementation of the UGroup class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -24,8 +24,8 @@
 #include "uvalue.h"
 #include "uvariablename.h"
 #include "userver.h"
-                                                       	
-// **************************************************************************	
+
+// **************************************************************************
 //! UGroup constructor.
 UGroup::UGroup (UString *name)
 {
@@ -40,7 +40,7 @@ UGroup::UGroup (char *name)
 //! UGroup destructor
 UGroup::~UGroup()
 {
-  if (name) delete(name);
+  delete name;
 }
 
 
@@ -48,16 +48,16 @@ UGroup::~UGroup()
 UValue * UGroup::list( UVariableName *variable) {
   //do read
   UAlias * gr =  this;
-  
+
   UValue * val = new UValue();
-  val->dataType = DATA_LIST;  
+  val->dataType = DATA_LIST;
   UValue * current = val;
   bool first = true;
-  
-  for (std::list<UAlias*>::iterator it = gr->members.begin(); 
+
+  for (std::list<UAlias*>::iterator it = gr->members.begin();
       (it != gr->members.end()) && current ;
       it++) {
-   
+
     UValue *n;
     if ((*it)->members.empty()) { //terminal group, handle it for him
       //child node
@@ -72,24 +72,24 @@ UValue * UGroup::list( UVariableName *variable) {
       else
 	n = ::urbiserver->variabletab[vname]->get()->copy();
     }
-    
+
     else
       n =  ::urbiserver->grouptab[(*it)->device->str()]->list(variable);
-   
+
 //    while (n && n->dataType == DATA_LIST) {
 //      UValue * nn = n->list;
 //      n->list=  0;
 //      delete n;
 //      n=nn;
 //    }
-    
+
     if (first) current->liststart =n; else current->next = n;
     current = n;
 
 //current->list = n;
 //    while (current->list)
 //      current = current->list;
-      
+
     first = false;
   }
   return val;

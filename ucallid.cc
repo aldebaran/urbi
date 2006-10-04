@@ -35,8 +35,8 @@ UCallid::UCallid (const char *fun_id, const char *self_id, UCommand_TREE* root)
 //! UCallid destructor
 UCallid::~UCallid()
 {
-  if (fun_id) delete(fun_id);
-  if (self_id) delete(self_id);
+  delete fun_id;
+  delete self_id;
 
   for (std::list<UVariable*>::iterator iter = stack.begin();
        iter != stack.end();iter++)

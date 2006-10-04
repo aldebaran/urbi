@@ -4,7 +4,7 @@
  File: unamedparameters.cc\n
  Implementation of the UNamedParameters class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -25,13 +25,13 @@
 #include "ucommand.h"
 #include "uconnection.h"
 #include "userver.h"
-                                      
-	
-// **************************************************************************	
+
+
+// **************************************************************************
 //! UNamedParameters constructor.
-UNamedParameters::UNamedParameters(UString* name, 
-                                   UExpression *expression, 
-                                   UNamedParameters* next) 
+UNamedParameters::UNamedParameters(UString* name,
+				   UExpression *expression,
+				   UNamedParameters* next)
 {
   ADDOBJ(UNamedParameters);
   this->name       = name;
@@ -40,25 +40,25 @@ UNamedParameters::UNamedParameters(UString* name,
 }
 
 //! UNamedParameters constructor (for expression list only)
-UNamedParameters::UNamedParameters(UExpression *expression, 
-                                   UNamedParameters* next) 
+UNamedParameters::UNamedParameters(UExpression *expression,
+				   UNamedParameters* next)
 {
   ADDOBJ(UNamedParameters);
   this->name       = 0;
   this->expression = expression;
-  this->next       = next;	
+  this->next       = next;
 }
 
 //! UNamedParameters destructor.
 UNamedParameters::~UNamedParameters()
 {
   FREEOBJ(UNamedParameters);
-  if (name) delete(name);
-  if (expression) delete expression;
-  if (next) delete next;
+  delete name;
+  delete expression;
+  delete next;
 }
 
-UNamedParameters* 
+UNamedParameters*
 UNamedParameters::rank(int n)
 {
   if (n==0) return (this);
@@ -68,11 +68,11 @@ UNamedParameters::rank(int n)
       return (next->rank(n-1));
 }
 
-int 
+int
 UNamedParameters::size()
 {
   if (next) return (next->size() + 1);
-  else 
+  else
     return(1);
 }
 
@@ -81,9 +81,9 @@ UNamedParameters*
 UNamedParameters::copy()
 {
   UNamedParameters* ret = new UNamedParameters((UExpression*)0,
-                                               (UNamedParameters*)0);  
+					       (UNamedParameters*)0);
 
-  if (expression)  ret->expression = expression->copy(); 
+  if (expression)  ret->expression = expression->copy();
   if (name)        ret->name = new UString(name);
   if (next)        ret->next = next->copy();
 
@@ -91,14 +91,13 @@ UNamedParameters::copy()
 }
 
 //! Print the list of parameters
-/*! This function is for debugging purpose only. 
+/*! This function is for debugging purpose only.
     It is not safe, efficient or crash proof. A better version will come later.
 */
-void 
+void
 UNamedParameters::print()
 {
   if (name) ::urbiserver->debug("%s:",name->str());
   if (expression) {::urbiserver->debug("expr="); expression->print(); ::urbiserver->debug(" ");}
-  if (next) {::urbiserver->debug(", "); next->print(); ::urbiserver->debug(" ");} 
+  if (next) {::urbiserver->debug(", "); next->print(); ::urbiserver->debug(" ");}
 }
-

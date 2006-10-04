@@ -112,8 +112,8 @@ UCommand::UCommand(UCommandType _type)
 //! UCommand destructor.
 UCommand::~UCommand()
 {
-  if (tag)        delete(tag);
-  if (flags)      delete(flags);
+  delete tag;
+  delete flags;
 }
 
 UCommandStatus
@@ -1673,7 +1673,7 @@ UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(UVariableName *variablename,
 UCommand_ASSIGN_BINARY::~UCommand_ASSIGN_BINARY()
 {
   FREEOBJ(UCommand_ASSIGN_BINARY);
-  if (variablename) delete variablename;
+  delete variablename;
   LIBERATE(refBinary);
 }
 
@@ -1787,9 +1787,9 @@ UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(UVariableName *variablename,
 UCommand_ASSIGN_PROPERTY::~UCommand_ASSIGN_PROPERTY()
 {
   FREEOBJ(UCommand_ASSIGN_PROPERTY);
-  if (variablename) delete variablename;
-  if (expression) delete expression;
-  if (oper)       delete oper;
+  delete variablename;
+  delete expression;
+  delete oper;
 }
 
 //! UCommand subclass execution function
@@ -2045,8 +2045,8 @@ UCommand_AUTOASSIGN::UCommand_AUTOASSIGN( UVariableName* variablename,
 UCommand_AUTOASSIGN::~UCommand_AUTOASSIGN()
 {
   FREEOBJ(UCommand_AUTOASSIGN);
-  if (variablename) delete variablename;
-  if (expression)   delete expression;
+  delete variablename;
+  delete expression;
 }
 
 //! UCommand subclass execution function
@@ -2139,7 +2139,7 @@ UCommand_EXPR::UCommand_EXPR(UExpression* expression) :
 UCommand_EXPR::~UCommand_EXPR()
 {
   FREEOBJ(UCommand_EXPR);
-  if (expression) delete expression;
+  delete expression;
 }
 
 //! UCommand subclass execution function
@@ -2394,7 +2394,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
   // Expression morphing (currently used for load only)
   if (morph) {
-    if (ret) delete ret;
+    delete ret;
     return( status = UMORPH);
   }
 
@@ -2404,7 +2404,7 @@ UCommand_EXPR::execute(UConnection *connection)
   }
   if ((ret->dataType!=DATA_BINARY) && (ret->dataType != DATA_VOID))
     connection->endline();
-  delete(ret);
+  delete ret;
   return(status = UCOMPLETED);
 }
 
@@ -2456,7 +2456,7 @@ UCommand_RETURN::UCommand_RETURN(UExpression* expression) :
 UCommand_RETURN::~UCommand_RETURN()
 {
   FREEOBJ(UCommand_RETURN);
-  if (expression) delete expression;
+  delete expression;
 }
 
 //! UCommand subclass execution function
@@ -2536,8 +2536,8 @@ UCommand_ECHO::UCommand_ECHO(UExpression* expression,
 UCommand_ECHO::~UCommand_ECHO()
 {
   FREEOBJ(UCommand_ECHO);
-  if (expression) delete expression;
-  if (parameters) delete parameters;
+  delete expression;
+  delete parameters;
 }
 
 //! UCommand subclass execution function
@@ -2559,7 +2559,7 @@ UCommand_ECHO::execute(UConnection *connection)
       if ((e1) && (e1->dataType == DATA_STRING))
 	connectionTag = new UString(e1->str);
 
-      if (e1) delete e1;
+      delete e1;
     }
     param = param->next;
   }
@@ -2591,14 +2591,15 @@ UCommand_ECHO::execute(UConnection *connection)
 	(*retr)->endline();
       }
 
-    if (!ok) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! %s: no such connection\n",connectionTag->str());
-      connection->send(tmpbuffer,tag->str());
-    }
+    if (!ok)
+      {
+	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! %s: no such connection\n",connectionTag->str());
+	connection->send(tmpbuffer,tag->str());
+      }
   }
 
-  delete(ret);
+  delete ret;
   return ( status = UCOMPLETED );
 }
 
@@ -2661,8 +2662,8 @@ UCommand_NEW::UCommand_NEW(UString* id,
 UCommand_NEW::~UCommand_NEW()
 {
   FREEOBJ(UCommand_NEW);
-  if (id)         delete id;
-  if (obj)        delete obj;
+  delete id;
+  delete obj;
   // parameters are handled by the morphed init
 }
 
@@ -3038,8 +3039,8 @@ UCommand_ALIAS::UCommand_ALIAS(UVariableName* aliasname,
 UCommand_ALIAS::~UCommand_ALIAS()
 {
   FREEOBJ(UCommand_ALIAS);
-  if (id)            delete id;
-  if (aliasname)     delete aliasname;
+  delete id;
+  delete aliasname;
 }
 
 //! UCommand subclass execution function
@@ -3166,7 +3167,7 @@ UCommand_GROUP::UCommand_GROUP(UString* id,
 UCommand_GROUP::~UCommand_GROUP()
 {
   FREEOBJ(UCommand_GROUP);
-  if (id)            delete id;
+  delete id;
 }
 
 //! UCommand subclass execution function
@@ -3321,8 +3322,8 @@ UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(UString* oper,
 UCommand_OPERATOR_ID::~UCommand_OPERATOR_ID()
 {
   FREEOBJ(UCommand_OPERATOR_ID);
-  if (oper)       delete oper;
-  if (id)         delete id;
+  delete oper;
+  delete id;
 }
 
 //! UCommand subclass execution function
@@ -3499,7 +3500,7 @@ UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UVariableName* device,
 UCommand_DEVICE_CMD::~UCommand_DEVICE_CMD()
 {
   FREEOBJ(UCommand_DEVICE_CMD);
-  if (variablename)      delete variablename;
+  delete variablename;
 }
 
 //! UCommand subclass execution function
@@ -3594,8 +3595,8 @@ UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(UString* oper,
 UCommand_OPERATOR_VAR::~UCommand_OPERATOR_VAR()
 {
   FREEOBJ(UCommand_OPERATOR_VAR);
-  if (oper)         delete oper;
-  if (variablename) delete variablename;
+  delete oper;
+  delete variablename;
 }
 
 //! UCommand subclass execution function
@@ -3856,9 +3857,9 @@ UCommand_BINDER::UCommand_BINDER(UVariableName* objname,
 UCommand_BINDER::~UCommand_BINDER()
 {
   FREEOBJ(UCommand_BINDER);
-  if (binder)       delete binder;
-  if (variablename) delete variablename;
-  if (objname)      delete objname;
+  delete binder;
+  delete variablename;
+  delete objname;
 }
 
 //! UCommand subclass execution function
@@ -3991,7 +3992,7 @@ UCommand_OPERATOR::UCommand_OPERATOR(UString* oper) :
 UCommand_OPERATOR::~UCommand_OPERATOR()
 {
   FREEOBJ(UCommand_OPERATOR);
-  if (oper)       delete oper;
+  delete oper;
 }
 
 //#define ENABLE_BENCH
@@ -4299,7 +4300,7 @@ UCommand_WAIT::UCommand_WAIT(UExpression* expression) :
 UCommand_WAIT::~UCommand_WAIT()
 {
   FREEOBJ(UCommand_WAIT);
-  if (expression) delete expression;
+  delete expression;
 }
 
 //! UCommand subclass execution function
@@ -4389,9 +4390,9 @@ UCommand_EMIT::~UCommand_EMIT()
   if (eventnamestr)
     ::urbiserver->eventtab.erase(::urbiserver->eventtab.find(eventnamestr));
 
-  if (eventname) delete eventname;
-  if (parameters) delete parameters;
-  if (duration) delete duration;
+  delete eventname;
+  delete parameters;
+  delete duration;
 }
 
 //! UCommand subclass execution function
@@ -4605,7 +4606,7 @@ UCommand_WAIT_TEST::UCommand_WAIT_TEST(UExpression* test) :
 UCommand_WAIT_TEST::~UCommand_WAIT_TEST()
 {
   FREEOBJ(UCommand_WAIT_TEST);
-  if (test)       delete test;
+  delete test;
 }
 
 //! UCommand subclass execution function
@@ -4689,7 +4690,7 @@ UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommandType type, UVariableName *v
 UCommand_INCDECREMENT::~UCommand_INCDECREMENT()
 {
   FREEOBJ(UCommand_INCDECREMENT);
-  if (variablename)   delete variablename;
+  delete variablename;
 }
 
 //! UCommand subclass execution function
@@ -4832,9 +4833,9 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
 UCommand_DEF::~UCommand_DEF()
 {
   FREEOBJ(UCommand_DEF);
-  if (variablename) delete variablename;
-  if (variablelist) delete variablelist;
-  if (device) delete device;
+  delete variablename;
+  delete variablelist;
+  delete device;
 }
 
 //! UCommand subclass execution function
@@ -5041,8 +5042,8 @@ UCommand_CLASS::UCommand_CLASS(UString *object,
 UCommand_CLASS::~UCommand_CLASS()
 {
   FREEOBJ(UCommand_CLASS);
-  if (object)     delete object;
-  if (parameters) delete parameters;
+  delete object;
+  delete parameters;
 }
 
 //! UCommand subclass execution function
@@ -5206,9 +5207,9 @@ UCommand_IF::UCommand_IF(UExpression *test,
 UCommand_IF::~UCommand_IF()
 {
   FREEOBJ(UCommand_IF);
-  if (command1)   delete command1;
-  if (command2)   delete command2;
-  if (test)       delete test;
+  delete command1;
+  delete command2;
+  delete test;
 }
 
 //! UCommand subclass execution function
@@ -5297,8 +5298,8 @@ UCommand_EVERY::UCommand_EVERY( UExpression *duration,
 UCommand_EVERY::~UCommand_EVERY()
 {
   FREEOBJ(UCommand_EVERY);
-  if (command)    delete command;
-  if (duration)   delete duration;
+  delete command;
+  delete duration;
 }
 
 //! UCommand subclass execution function
@@ -5385,9 +5386,9 @@ UCommand_TIMEOUT::UCommand_TIMEOUT( UExpression *duration,
 UCommand_TIMEOUT::~UCommand_TIMEOUT()
 {
   FREEOBJ(UCommand_TIMEOUT);
-  if (command)    delete command;
-  if (duration)   delete duration;
-  if (tagRef)     delete tagRef;
+  delete command;
+  delete duration;
+  delete tagRef;
 }
 
 //! UCommand subclass execution function
@@ -5464,9 +5465,9 @@ UCommand_STOPIF::UCommand_STOPIF( UExpression *condition,
 UCommand_STOPIF::~UCommand_STOPIF()
 {
   FREEOBJ(UCommand_STOPIF);
-  if (command)    delete command;
-  if (condition)  delete condition;
-  if (tagRef)     delete tagRef;
+  delete command;
+  delete condition;
+  delete tagRef;
 }
 
 //! UCommand subclass execution function
@@ -5564,9 +5565,9 @@ UCommand_FREEZEIF::UCommand_FREEZEIF( UExpression *condition,
 UCommand_FREEZEIF::~UCommand_FREEZEIF()
 {
   FREEOBJ(UCommand_FREEZEIF);
-  if (command)    delete command;
-  if (condition)  delete condition;
-  if (tagRef)     delete tagRef;
+  delete command;
+  delete condition;
+  delete tagRef;
 }
 
 //! UCommand subclass execution function
@@ -5652,9 +5653,9 @@ UCommand_AT::UCommand_AT( UCommandType type,
 UCommand_AT::~UCommand_AT()
 {
   FREEOBJ(UCommand_AT);
-  if (command1)   delete command1;
-  if (command2)   delete command2;
-  if (test)       delete test;
+  delete command1;
+  delete command2;
+  delete test;
 }
 
 //! UCommand subclass execution function
@@ -5694,7 +5695,7 @@ UCommand_AT::execute(UConnection *connection)
   else
     nbTrue = 0;
 
-  if (testeval) delete testeval;
+  delete testeval;
 
   if ( ( (nbTrue>0) &&
 	 (test->softtest_time) &&
@@ -5819,8 +5820,8 @@ UCommand_WHILE::UCommand_WHILE(UCommandType type,
 UCommand_WHILE::~UCommand_WHILE()
 {
   FREEOBJ(UCommand_WHILE);
-  if (command)    delete command;
-  if (test)       delete test;
+  delete command;
+  delete test;
 }
 
 //! UCommand subclass execution function
@@ -5934,9 +5935,9 @@ UCommand_WHENEVER::UCommand_WHENEVER(UExpression *test,
 UCommand_WHENEVER::~UCommand_WHENEVER()
 {
   FREEOBJ(UCommand_WHENEVER);
-  if (command1)   delete command1;
-  if (command2)   delete command2;
-  if (test)       delete test;
+  delete command1;
+  delete command2;
+  delete test;
 }
 
 //! UCommand subclass execution function
@@ -6071,7 +6072,7 @@ UCommand_LOOP::UCommand_LOOP(UCommand* command) :
 UCommand_LOOP::~UCommand_LOOP()
 {
   FREEOBJ(UCommand_LOOP);
-  if (command)    delete command;
+  delete command;
 }
 
 //! UCommand subclass execution function
@@ -6140,8 +6141,8 @@ UCommand_LOOPN::UCommand_LOOPN(UCommandType type,
 UCommand_LOOPN::~UCommand_LOOPN()
 {
   FREEOBJ(UCommand_LOOPN);
-  if (command)  delete command;
-  if (expression) delete expression;
+  delete command;
+  delete expression;
 }
 
 //! UCommand subclass execution function
@@ -6266,10 +6267,10 @@ UCommand_FOR::UCommand_FOR( UCommandType type,
 UCommand_FOR::~UCommand_FOR()
 {
   FREEOBJ(UCommand_FOR);
-  if (command)    delete command;
-  if (instr1)     delete instr1;
-  if (instr2)     delete instr2;
-  if (test)       delete test;
+  delete command;
+  delete instr1;
+  delete instr2;
+  delete test;
 }
 
 //! UCommand subclass execution function
@@ -6436,9 +6437,9 @@ UCommand_FOREACH::UCommand_FOREACH( UCommandType type,
 UCommand_FOREACH::~UCommand_FOREACH()
 {
   FREEOBJ(UCommand_FOREACH);
-  if (command)      delete command;
-  if (variablename) delete variablename;
-  if (expression)   delete expression;
+  delete command;
+  delete variablename;
+  delete expression;
 }
 
 //! UCommand subclass execution function
@@ -6628,7 +6629,7 @@ UCommand_LOAD::~UCommand_LOAD()
 {
   FREEOBJ(UCommand_LOAD);
 
-  if (loadQueue) delete loadQueue;
+  delete loadQueue;
 }
 
 //! UCommand subclass execution function

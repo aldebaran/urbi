@@ -381,12 +381,12 @@ UValue::UValue(const urbi::UValue &v)
 UValue::~UValue()
 {
   FREEOBJ(UValue);
-  if ((dataType == DATA_STRING) && (str!=0)) delete (str);
-  if ((dataType == DATA_OBJ) && (str!=0))    delete (str);
+  if (dataType == DATA_STRING
+      || dataType == DATA_OBJ)    delete str;
 
   if (dataType == DATA_BINARY) LIBERATE(refBinary);
-  if (liststart) delete liststart;
-  if (next) delete next;
+  delete liststart;
+  delete next;
 }
 
 //! UValue hard copy
@@ -667,7 +667,7 @@ booleval(UValue *v, bool freeme)
     else
       res = UTRUE;
 
-  if (freeme) delete v;
+  delete v;
   return (res);
 }
 

@@ -174,10 +174,10 @@ UVariable::~UVariable() {
     }
     delete value;
   }
-  if (unit)   delete unit;
-  if (varname) delete varname;
-  if (method) delete method;
-  if (devicename) delete devicename;
+  delete unit;
+  delete varname;
+  delete method;
+  delete devicename;
 }
 
 

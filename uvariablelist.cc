@@ -4,7 +4,7 @@
  File: uvariablelist.cc\n
  Implementation of the UVariableList class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -25,12 +25,12 @@
 #include "ucommand.h"
 #include "uconnection.h"
 #include "userver.h"
-                                      
 
-// **************************************************************************	
+
+// **************************************************************************
 //! UVariableList constructor.
-UVariableList::UVariableList(UVariableName *variablename,                                    
-                             UVariableList* next) 
+UVariableList::UVariableList(UVariableName *variablename,
+			     UVariableList* next)
 {
   ADDOBJ(UVariableList);
   this->variablename = variablename;
@@ -41,27 +41,29 @@ UVariableList::UVariableList(UVariableName *variablename,
 UVariableList::~UVariableList()
 {
   FREEOBJ(UVariableList);
-  if (variablename) delete(variablename);  
-  if (next) delete next;
+  delete variablename;
+  delete next;
 }
 
 //! UVariableList rank function
-UVariableList* 
+UVariableList*
 UVariableList::rank(int n)
 {
-  if (n==0) return (this);
+  if (n==0)
+    return this;
+  else if (next == 0)
+    return 0;
   else
-    if (next == 0) return 0;
-    else
-      return (next->rank(n-1));
+    return next->rank(n-1);
 }
 
 //! UVariableList size function
-int 
+int
 UVariableList::size()
 {
-  if (next) return (next->size() + 1);
-  else 
+  if (next)
+    return (next->size() + 1);
+  else
     return(1);
 }
 
@@ -70,7 +72,7 @@ UVariableList*
 UVariableList::copy()
 {
   UVariableList* ret = new UVariableList((UVariableName*)0,
-                                         (UVariableList*)0);  
+					 (UVariableList*)0);
 
   if (variablename) ret->variablename = variablename->copy();
   if (next)         ret->next = next->copy();
@@ -79,12 +81,22 @@ UVariableList::copy()
 }
 
 //! Print the list of parameters
-/*! This function is for debugging purpose only. 
+/*! This function is for debugging purpose only.
     It is not safe, efficient or crash proof. A better version will come later.
 */
-void 
+void
 UVariableList::print()
 {
-  if (variablename){::urbiserver->debug("variablename="); variablename->print(); ::urbiserver->debug(" ");}
-  if (next) {::urbiserver->debug(", "); next->print(); ::urbiserver->debug(" ");} 
+  if (variablename)
+    {
+      ::urbiserver->debug("variablename=");
+      variablename->print();
+      ::urbiserver->debug(" ");
+    }
+  if (next)
+    {
+      ::urbiserver->debug(", ");
+      next->print();
+      ::urbiserver->debug(" ");
+    }
 }

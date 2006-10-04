@@ -240,13 +240,13 @@ UExpression::~UExpression()
 {
   FREEOBJ(UExpression);
 
-  if (str) delete(str);
-  if (id) delete(id);
-  if (expression1)  delete expression1;
-  if (expression2)  delete expression2;
-  if (variablename) delete variablename;
-  if (parameters)   delete parameters;
-  if (tmp_value) delete tmp_value;
+  delete str;
+  delete id;
+  delete expression1;
+  delete expression2;
+  delete variablename;
+  delete parameters;
+  delete tmp_value;
 }
 
 //! UExpression hard copy function
@@ -1385,8 +1385,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
 	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
     ret = e1->add(e2);
@@ -1394,8 +1394,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	(expression2->isconst))
       this->isconst = true;
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_MINUS:
@@ -1405,8 +1405,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1421,8 +1421,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = e1->val - e2->val;
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
 
@@ -1433,8 +1433,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1449,8 +1449,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = e1->val * e2->val;
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
 
@@ -1461,8 +1461,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1483,8 +1483,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = e1->val / e2->val;
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_MOD:
@@ -1493,8 +1493,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e2 = expression2->eval(command,connection);
 
     if ((e1==0) || (e2==0)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1509,8 +1509,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = fmod(e1->val,e2->val);
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_EXP:
@@ -1520,8 +1520,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1536,8 +1536,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = pow(e1->val,e2->val);
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
 
@@ -1554,7 +1554,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = -e1->val;
-    delete(e1);
+    delete e1;
     return(ret);
 
   case EXPR_COPY:
@@ -1580,7 +1580,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       LIBERATE(ret->refBinary);
       ret->refBinary = ref;
     }
-    delete(e1);
+    delete e1;
     return(ret);
 
   case EXPR_TEST_EQ:
@@ -1590,16 +1590,16 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) ||
     	(e2==0)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = e1->equal(e2);
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_REQ:
@@ -1609,8 +1609,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1633,8 +1633,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     else
       ret->val = 0;
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_DEQ:
@@ -1644,8 +1644,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1677,8 +1677,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     ret->val = (ABSF(e1->val - e2->val) <= d1+d2 );
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_PEQ:
@@ -1688,8 +1688,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1718,8 +1718,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     else
       ret->val = 0;
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_NE:
@@ -1729,16 +1729,16 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) ||
     	(e2==0)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
     ret = new UValue();
     ret->dataType = DATA_NUM;
     ret->val = !e1->equal(e2);
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_GT:
@@ -1748,8 +1748,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1768,8 +1768,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     ret->val = (e1->val > e2->val);
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_GE:
@@ -1779,8 +1779,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1799,8 +1799,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     ret->val = (e1->val >= e2->val);
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_LT:
@@ -1810,8 +1810,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1830,8 +1830,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     ret->val = (e1->val < e2->val);
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_LE:
@@ -1841,8 +1841,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if ((e1==0) || (e1->dataType == DATA_VOID) ||
     	(e2==0) || (e2->dataType == DATA_VOID)) {
-      if (e1) delete e1;
-      if (e2) delete e2;
+      delete e1;
+      delete e2;
       return 0;
     }
 
@@ -1861,8 +1861,8 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     ret->val = (e1->val <= e2->val);
 
-    delete(e1);
-    delete(e2);
+    delete e1;
+    delete e2;
     return(ret);
 
   case EXPR_TEST_BANG:
@@ -1870,7 +1870,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     e1 = expression1->eval(command,connection,silent);
 
     if (e1==0)  {
-      if (e1) delete e1;
+      delete e1;
       return 0;
     }
     /*
@@ -1889,14 +1889,14 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
     if (e1->val == 0) ret->val = 1;
     else ret->val = 0;
 
-    delete(e1);
+    delete e1;
     return(ret);
 
   case EXPR_TEST_AND:
 
     e1 = expression1->eval(command,connection,silent);
     if (e1==0)  {
-      if (e1) delete e1;
+      delete e1;
       return 0;
     }
     /*
@@ -1937,10 +1937,10 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
       ret->eventid = ret->eventid +  e2->eventid;
       ret->val = (ufloat) ( ((int)e1->val) && ((int)e2->val) );
-      delete(e2);
+      delete e2;
     }
 
-    delete(e1);
+    delete e1;
     return(ret);
 
   case EXPR_TEST_OR:
@@ -1986,10 +1986,10 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
       ret->eventid = ret->eventid +  e2->eventid;
       ret->val = (ufloat) ( ((int)e1->val) || ((int)e2->val) );
-      delete(e2);
+      delete e2;
     }
 
-    delete(e1);
+    delete e1;
     return(ret);
 
   default:

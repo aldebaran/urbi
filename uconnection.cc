@@ -156,10 +156,10 @@ UConnection::~UConnection()
 
   if (connectionTag) {
     UVariable *vari = server->getVariable(connectionTag->str(),"connectionID");
-    if (vari) delete vari;
+    delete vari;
     delete connectionTag;
   }
-  if (activeCommand) delete activeCommand;
+  delete activeCommand;
 
   // free bindings
 
@@ -933,7 +933,7 @@ UConnection::processCommand(UCommand *&command,
 	  (value->dataType == DATA_NUM) &&
 	  (command->startTime + value->val <= server->lastTime()))
 	stopit = true;
-      if (value) delete value;
+      delete value;
     }
 
     // flag "+stop"
@@ -1176,7 +1176,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
       if (tree->callid) { // arriving here means the function is finished
 	vari  = ::urbiserver->getVariable(tree->callid->str(), "__result__");
-	if (vari) delete vari;
+	delete vari;
       }
     }
 
