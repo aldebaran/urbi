@@ -36,8 +36,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\liburbi\uobject"
-				PreprocessorDefinitions="WIN32"
+				AdditionalIncludeDirectories="..\..\lib;..\..\src\liburbi\uobject"
+				PreprocessorDefinitions="WIN32;min=min"
 				RuntimeLibrary="2"
 			/>
 			<Tool
@@ -92,8 +92,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\liburbi\uobject"
-				PreprocessorDefinitions="WIN32"
+				AdditionalIncludeDirectories="..\..\lib;..\..\src\liburbi\uobject"
+				PreprocessorDefinitions="WIN32;min=min"
 				RuntimeLibrary="2"
 			/>
 			<Tool
