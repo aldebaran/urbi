@@ -805,7 +805,7 @@ UConnection::processCommand(UCommand *&command,
     if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
 	(server->freezetab[command->tag->str()]) )
       return (command);
-    char* p= strchr(command->tag->str(),'.');
+    char* p= const_cast<char *>(strchr(command->tag->str(),'.'));
     if (p) {
       p[0]=0;
       if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
@@ -827,7 +827,7 @@ UConnection::processCommand(UCommand *&command,
       delete command;
       return(0);
     }
-    char* p= strchr(command->tag->str(),'.');
+    char* p= const_cast<char *>(strchr(command->tag->str(),'.'));
     if (p) {
       p[0]=0;
       if ((server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
@@ -1102,7 +1102,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	tree = tree->up;
 	continue;
       }
-      char* p= strchr(tree->tag->str(),'.');
+      char* p= const_cast<char*>(strchr(tree->tag->str(),'.'));
       if (p) {
 	p[0]=0;
 	if ((server->freezetab.find(tree->tag->str())!=server->freezetab.end()) &&
@@ -1124,7 +1124,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	tree->runlevel2 = UEXPLORED;
 	deletecommand = true;
       }
-      char* p= strchr(tree->tag->str(),'.');
+      char* p= const_cast<char*>(strchr(tree->tag->str(),'.'));
       if (p) {
 	p[0]=0;
 	if ((server->blocktab.find(tree->tag->str())!=server->blocktab.end()) &&

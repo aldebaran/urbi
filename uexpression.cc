@@ -485,7 +485,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
     if (!variable) {
 
-      char* p = strstr(varname,"__");
+      char* p = const_cast<char*>(strstr(varname,"__"));
       char* pnext = p;
       while (pnext) {
 	p = pnext;

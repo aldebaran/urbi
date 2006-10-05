@@ -240,7 +240,7 @@ UVariableName::getMethod()
   if (method) return (method);
 
   if (!fullname_) return (0);
-  char *pointPos = strstr(fullname_->str(),".");
+  const char *pointPos = strstr(fullname_->str(),".");
 
   if (pointPos == 0)
     method = new UString("");
@@ -256,7 +256,7 @@ UVariableName::getDevice()
   if (device) return (device);
 
   if (!fullname_) return (0);
-  char *pointPos = strstr(fullname_->str(),".");
+  char *pointPos = const_cast<char*>(strstr(fullname_->str(),"."));
   if (pointPos == 0) return (fullname_);
   pointPos[0] = 0;
 

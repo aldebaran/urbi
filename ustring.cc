@@ -100,7 +100,7 @@ bool UString::equal(UString *s) {
 
 bool UString::tagequal(UString *s) {    
   if (s==0) return (false);
-  char* p = strchr(s->str(),'.');
+  char* p = const_cast<char*>(strchr(s->str(),'.'));
   if (p) p[0]=0;
   bool res = (strcmp(s->str(),(const char*)str_)==0);
   if (p) p[0]='.';

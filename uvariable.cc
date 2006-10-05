@@ -189,7 +189,7 @@ UVariable::setName(const char *s)
 
   varname    = new UString (s);
 
-  pointPos = strstr(varname->str(),".");
+  pointPos = const_cast<char*>(strstr(varname->str(),"."));
   if (pointPos == 0)
 
     method = new UString("");
