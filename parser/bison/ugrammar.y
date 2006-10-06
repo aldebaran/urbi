@@ -1423,8 +1423,8 @@ expr:
       MEMCHECK1($$,$2);
     }
 
-  | expr ANDOPERATOR expr { NEW_EXP_2 ($$, EXPR_TEST_AND, $1, $3); }
-  | expr OROPERATOR  expr { NEW_EXP_2 ($$, EXPR_TEST_OR,  $1, $3); }
+  | expr "&&" expr { NEW_EXP_2 ($$, EXPR_TEST_AND, $1, $3); }
+  | expr "||"  expr { NEW_EXP_2 ($$, EXPR_TEST_OR,  $1, $3); }
 
     /*
     // Not needed anymore => will be handled nicely by aliases

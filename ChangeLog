@@ -1,5 +1,12 @@
 2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
 
+	Fix Perl invocation.
+	* parser/bison/bison.mk: Beware that perl needs the file to
+	process after the -e.
+	* parser/bison/ugrammar.y: Sugar.
+
+2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+
 	Sugar the parser.
 	* parser/bison/ugrammar.y (NEW_EXP_2): New.
 	Use it.
