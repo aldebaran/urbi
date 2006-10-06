@@ -31,10 +31,14 @@ install-exec-local:
 	  && mv -f libkernel.lai.new .libs/libkernel.lai
 
 install-data-hook:
-	mkdir -p  $(envdir)/.libs
-	mv $(envdir)/lib* $(envdir)/.libs
-	ln -s .libs/libkernel.la $(envdir)/
-	ln -s .libs/libkernel.a $(envdir)/
+	mkdir -p $(DESTDIR)$(envdir)/.libs
+	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
+	ln -s .libs/libkernel.la $(DESTDIR)$(envdir)
+	ln -s .libs/libkernel.a $(DESTDIR)$(envdir)
+
+uninstall-local:
+	rm -rf $(DESTDIR)$(envdir)/.libs
+
 dist_libkernel_la_SOURCES =					\
 lockable.h							\
 memorymanager/blockmemorymanager.h				\
