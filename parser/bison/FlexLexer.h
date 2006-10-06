@@ -59,7 +59,7 @@
 struct yy_buffer_state;
 typedef int yy_state_type;
 
-class FlexLexer 
+class FlexLexer
 {
 public:
   virtual ~FlexLexer()	{ }
@@ -114,7 +114,7 @@ protected:
 // yyFlexLexer, as discussed in the flex man page.
 // # define yyFlexLexerOnce
 
-class yyFlexLexer : public FlexLexer 
+class yyFlexLexer : public FlexLexer
 {
 public:
   // arg_yyin and arg_yyout default to the cin and cout, but we

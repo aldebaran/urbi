@@ -1,5 +1,14 @@
 2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
 
+	Bison and Flex output are no longer shipped.
+	Therefore they are now in the build tree.
+	* parser/bison/bison.mk: Implement these changes.
+	* Makefile.am (CLEANFILES): Initialize.
+	* configure.ac: Require exactly Flex 2.5.4.
+	Require at least Bison 2.2.
+
+2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fix Perl invocation.
 	* parser/bison/bison.mk: Beware that perl needs the file to
 	process after the -e.

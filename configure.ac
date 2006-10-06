@@ -23,10 +23,9 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-AM_PROG_LEX
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
-URBI_ARG_PROGS([bison], [the GNU LALR(1) parser generator])
-URBI_ARG_PROGS([flex],  [the fast lexical analyzer generator])
+TC_PROG([bison], [>= 2.2],   [BISON], [GNU parser generator])
+TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
 

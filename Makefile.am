@@ -9,8 +9,9 @@
 ################################################################################
 
 # Initialization.
-EXTRA_DIST =
 BUILT_SOURCES =
+CLEANFILES =
+EXTRA_DIST =
 
 ## Autoconf extensions.
 ACLOCAL_AMFLAGS = -I build-aux

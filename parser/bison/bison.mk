@@ -8,34 +8,35 @@ AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 BISONXX = $(top_builddir)/build-aux/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 
-parsedir = $(srcdir)/parser/bison
+parsedir = $(top_srcdir)/parser/bison
+
 # We do not use Automake features here.
-FROM_UGRAMMAR_Y =				\
-$(parsedir)/stack.hh				\
-$(parsedir)/position.hh				\
-$(parsedir)/location.hh				\
-$(parsedir)/ugrammar.hh				\
-$(parsedir)/ugrammar.cc
+FROM_UGRAMMAR_Y =			\
+stack.hh				\
+position.hh				\
+location.hh				\
+ugrammar.hh				\
+ugrammar.cc
 
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
-MAINTAINERCLEANFILES = $(FROM_UGRAMMAR_Y)
-dist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
+CLEANFILES += $(FROM_UGRAMMAR_Y) ugrammar.stamp ugrammar.output
+nodist_libkernel_la_SOURCES = $(FROM_UGRAMMAR_Y)
 
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
-EXTRA_DIST += $(parsedir)/ugrammar.stamp $(parsedir)/ugrammar.y
-$(parsedir)/ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN)
+EXTRA_DIST += $(parsedir)/ugrammar.y
+ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
-	@rm -f ugrammar.tmp
-	@touch ugrammar.tmp
-	$(BISONXX) $(parsedir) ugrammar.y ugrammar.cc -d -ra
-	@mv -f ugrammar.tmp $@
+	@rm -f $@.tmp
+	@touch $@.tmp
+	$(BISONXX) $(parsedir)/ugrammar.y ugrammar.cc -d -ra
+	@mv -f $@.tmp $@
 
-$(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
+$(FROM_UGRAMMAR_Y): ugrammar.stamp
 	@if test -f $@; then :; else \
-	  rm -f $(parsedir)/ugrammar.stamp; \
-	  $(MAKE) $(AM_MAKEFLAGS) $(parsedir)/ugrammar.stamp; \
+	  rm -f ugrammar.stamp; \
+	  $(MAKE) $(AM_MAKEFLAGS) ugrammar.stamp; \
 	fi
 
 ## -------------- ##
@@ -46,17 +47,32 @@ $(FROM_UGRAMMAR_Y): $(parsedir)/ugrammar.stamp
 # properly.  This is the list of entities which must be prefixed by
 # std::.
 flex_nonstd = 'cin|cout|cerr|istream'
+
+FROM_UTOKEN_L =			\
+utoken.cc
+
+BUILT_SOURCES += $(FROM_UTOKEN_L)
+CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
+dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h
+nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
+
 EXTRA_DIST += $(parsedir)/utoken.l
-dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h $(parsedir)/utoken.cc
-$(parsedir)/utoken.cc: $(parsedir)/utoken.l
-	$(FLEX) -+ -o$@.tmp $(parsedir)/utoken.l
+utoken.stamp: $(parsedir)/utoken.l
+	@rm -f $@.tmp
+	@touch $@.tmp
+	$(FLEX) -+ -outoken.cc $(parsedir)/utoken.l
 	perl -pi						\
 	     -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
 	     -e 's/class istream;/#include <istream>/;'		\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
-	     -e 's,lex.cc,utoken.cc,g;'				\
-	     $@.tmp
-	mv $@.tmp $@
+	     utoken.cc
+	@mv -f $@.tmp $@
+
+$(FROM_UTOKEN_L): utoken.stamp
+	@if test -f $@; then :; else \
+	  rm -f utoken.stamp; \
+	  $(MAKE) $(AM_MAKEFLAGS) utoken.stamp; \
+	fi
 
 # ifeq ($(OS),aibo)
 # parser/bison/ugrammar.mips.o: parser/bison/ugrammar.cc
@@ -69,9 +85,9 @@ $(parsedir)/utoken.cc: $(parsedir)/utoken.l
 
 # Kludge to install userver.h.
 bisondir = $(kernelincludedir)/parser/bison
-bison_HEADERS = 				\
-$(parsedir)/stack.hh				\
-$(parsedir)/position.hh				\
-$(parsedir)/location.hh				\
-$(parsedir)/ugrammar.hh				\
+bison_HEADERS = 			\
+stack.hh				\
+position.hh				\
+location.hh				\
+ugrammar.hh				\
 $(parsedir)/FlexLexer.h
