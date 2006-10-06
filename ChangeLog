@@ -1,3 +1,10 @@
+2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+
+	Enable debug traces in the parser.
+	* parser/uparser.h: Do that.
+	* parser/bison/ugrammar.y: use %debug.
+	delete 0 is valid c++.
+
 2006-10-04  Akim Demaille  <akim@lrde.epita.fr>
 
 	Simplify delete invocations.

@@ -29,7 +29,7 @@
 %skeleton "lalr1.cc"
 %parse-param {UParser& uparser}
 %lex-param {UParser& uparser}
-
+%debug
 
 %{
 #include "utypes.h"
@@ -355,10 +355,10 @@ root:
 /* TAGGEDCOMMANDS */
 taggedcommands:
   taggedcommand
-| taggedcommands COMMA taggedcommands     { NEW_BIN ($$, UCOMMA,$1,$3); }
-| taggedcommands SEMICOLON taggedcommands { NEW_BIN ($$, USEMICOLON,$1,$3); }
-| taggedcommands PIPE taggedcommands      { NEW_BIN ($$, UPIPE,$1,$3); }
-| taggedcommands AND taggedcommands       { NEW_BIN ($$, UAND,$1,$3);}
+| taggedcommands "," taggedcommands { NEW_BIN ($$, UCOMMA,$1,$3); }
+| taggedcommands ";" taggedcommands { NEW_BIN ($$, USEMICOLON,$1,$3); }
+| taggedcommands "|" taggedcommands { NEW_BIN ($$, UPIPE,$1,$3); }
+| taggedcommands "&" taggedcommands { NEW_BIN ($$, UAND,$1,$3);}
 ;
 
 /* TAGGEDCOMMAND */
@@ -367,7 +367,7 @@ taggedcommand:
 
     command {
 
-      if (($1) && (!$1->tag))
+      if ($1 && !$1->tag)
 	$1->tag = new UString(UNKNOWN_TAG);
 
       $$ = $1;
@@ -377,8 +377,7 @@ taggedcommand:
 
       MEMCHECK($1);
       if ($4) {
-
-	if ($4->tag) delete $4->tag;
+	delete $4->tag;
 	$4->tag = $1;
 	$4->flags = $2;
       }
@@ -390,7 +389,7 @@ taggedcommand:
       MEMCHECK($1);
       if ($3) {
 
-	if ($3->tag) delete $3->tag;
+	delete $3->tag;
 	$3->tag = $1;
       }
       $$ = $3;
@@ -402,7 +401,7 @@ taggedcommand:
       MEMCHECK($1.id);
       if ($3) {
 
-	if ($3->tag) delete $3->tag;
+	delete $3->tag;
 	$3->tag = new UString($1.device,$1.id);
 	delete $1.device;
 	delete $1.id;
@@ -417,7 +416,7 @@ taggedcommand:
 
       if ($4) {
 
-	if ($4->tag) delete $4->tag;
+	delete $4->tag;
        	$4->tag = new UString($1.device,$1.id);
 	delete $1.device;
 	delete $1.id;
@@ -1647,8 +1646,8 @@ refvariables:
 %%
 
 // The error function that 'bison' calls
-void yy::parser::error(const location_type& l, const std::string& what_error) {
-
+void yy::parser::error(const location_type& l, const std::string& what_error)
+{
   uparser.error (l, what_error);
   if (globalDelete) {
      delete *globalDelete;

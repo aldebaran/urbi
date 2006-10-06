@@ -25,6 +25,8 @@
 #ifndef UPARSER_H_DEFINED
 # define UPARSER_H_DEFINED
 
+# include <cstdlib>
+
 # include <strstream>
 # include <sstream>
 # include <algorithm>
@@ -102,6 +104,7 @@ public:
     binaryCommand = false;
 
     yy::parser p(*this);
+    p.set_debug_level (!!getenv ("YYDEBUG"));
     result = p.parse();
 
     delete mem_input;
@@ -115,7 +118,7 @@ public:
   bool          binaryCommand;
 
   yy::parser::token_type scan(yy::parser::semantic_type* val,
-			      yy::location* loc) 
+			      yy::location* loc)
   {
     return uflexer.yylex(val,loc,*this);
   }
@@ -146,4 +149,3 @@ private:
 // Local Variables:
 // mode: C++
 // End:
-
