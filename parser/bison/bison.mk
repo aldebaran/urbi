@@ -49,14 +49,13 @@ flex_nonstd = 'cin|cout|cerr|istream'
 EXTRA_DIST += $(parsedir)/utoken.l
 dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h $(parsedir)/utoken.cc
 $(parsedir)/utoken.cc: $(parsedir)/utoken.l
-	$(FLEX) -+ -oparser/bison/lex.cc $(parsedir)/utoken.l
-	perl -p -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
-		-e 's/class istream;/#include <istream>/;'		\
-		-e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
-		-e 's,lex.cc,utoken.cc,g;'				\
-	    parser/bison/lex.cc > $@.tmp
+	$(FLEX) -+ -o$@.tmp $(parsedir)/utoken.l
+	perl -pi $@.tmp						\
+	     -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
+	     -e 's/class istream;/#include <istream>/;'		\
+	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
+	     -e 's,lex.cc,utoken.cc,g;'
 	mv $@.tmp $@
-	rm -f parser/bison/lex.cc
 
 # ifeq ($(OS),aibo)
 # parser/bison/ugrammar.mips.o: parser/bison/ugrammar.cc

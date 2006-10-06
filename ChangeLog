@@ -1,3 +1,10 @@
+2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+
+	Fix build != src issue.
+	* parser/bison/bison.mk: Don't rely on an existing
+	builddir/parser/bison.
+	Reported by Matthieu.
+
 2006-10-06  matthieu nottale  <nottale@gostai.com>
 
 	COMMA and SEMICOLON priority changed
