@@ -151,6 +151,13 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
       MEMCHECK2(Res, Lhs, Rhs);			\
     } while (0)
 
+/// Create a new UExpression node composing \c Lhs and \c Rhs with \c Op.
+# define NEW_EXP_2(Res, Op, Lhs, Rhs)			\
+  do {							\
+      Res = new UExpression(Op, Lhs, Rhs);		\
+      MEMCHECK2(Res, Lhs, Rhs);				\
+    } while (0)
+
 
 %}
 
@@ -555,9 +562,9 @@ instruction:
 
   | VAR refvariable ASSIGN expr namedparameters {
 
-    $2->local_scope = true;
-    $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
-    MEMCHECK3($$,$2,$4,$5);
+      $2->local_scope = true;
+      $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
+      MEMCHECK3($$,$2,$4,$5);
     }
 
   | property ASSIGN expr {
@@ -1329,10 +1336,12 @@ expr:
       $$ = new UExpression(EXPR_GROUP, $2);
       MEMCHECK1($$,$2);
     }
+;
+
 
   /* num expr */
-
-  | expr PLUS expr {
+expr:
+    expr PLUS expr {
 
       $$ = new UExpression(EXPR_PLUS,$1,$3);
       MEMCHECK2($$,$1,$3);
@@ -1384,10 +1393,11 @@ expr:
 
       $$ = $2;
     }
+;
 
   /* Tests */
-
-  | TRUECONST {
+expr:
+    TRUECONST {
 
       $$ = new UExpression(EXPR_VALUE,TRUE);
     }
@@ -1397,59 +1407,15 @@ expr:
       $$ = new UExpression(EXPR_VALUE,FALSE);
     }
 
-  | expr EQ expr {
-
-      $$ = new UExpression(EXPR_TEST_EQ,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr REQ expr {
-
-      $$ = new UExpression(EXPR_TEST_REQ,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr DEQ expr {
-
-      $$ = new UExpression(EXPR_TEST_DEQ,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr PEQ expr {
-
-      $$ = new UExpression(EXPR_TEST_PEQ,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr NE expr {
-
-      $$ = new UExpression(EXPR_TEST_NE,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr GT expr {
-
-      $$ = new UExpression(EXPR_TEST_GT,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr GE expr {
-
-      $$ = new UExpression(EXPR_TEST_GE,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr LT expr {
-
-      $$ = new UExpression(EXPR_TEST_LT,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr LE expr {
-
-      $$ = new UExpression(EXPR_TEST_LE,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
+  | expr EQ expr  { NEW_EXP_2 ($$, EXPR_TEST_EQ,  $1, $3); }
+  | expr REQ expr { NEW_EXP_2 ($$, EXPR_TEST_REQ, $1, $3); }
+  | expr DEQ expr { NEW_EXP_2 ($$, EXPR_TEST_DEQ, $1, $3); }
+  | expr PEQ expr { NEW_EXP_2 ($$, EXPR_TEST_PEQ, $1, $3); }
+  | expr NE expr  { NEW_EXP_2 ($$, EXPR_TEST_NE,  $1, $3); }
+  | expr GT expr  { NEW_EXP_2 ($$, EXPR_TEST_GT,  $1, $3); }
+  | expr GE expr  { NEW_EXP_2 ($$, EXPR_TEST_GE,  $1, $3); }
+  | expr LT expr  { NEW_EXP_2 ($$, EXPR_TEST_LT,  $1, $3); }
+  | expr LE expr  { NEW_EXP_2 ($$, EXPR_TEST_LE,  $1, $3); }
 
   | BANG expr {
 
@@ -1457,17 +1423,9 @@ expr:
       MEMCHECK1($$,$2);
     }
 
-  | expr ANDOPERATOR expr {
+  | expr ANDOPERATOR expr { NEW_EXP_2 ($$, EXPR_TEST_AND, $1, $3); }
+  | expr OROPERATOR  expr { NEW_EXP_2 ($$, EXPR_TEST_OR,  $1, $3); }
 
-      $$ = new UExpression(EXPR_TEST_AND,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr OROPERATOR expr {
-
-      $$ = new UExpression(EXPR_TEST_OR,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
     /*
     // Not needed anymore => will be handled nicely by aliases
   |
@@ -1582,8 +1540,7 @@ class_declaration:
 
   | FUNCTION variable LPAREN identifiers RPAREN {
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UExpression(EXPR_FUNCTION,$2,$4);
-      MEMCHECK2($$,$2,$4);
+      NEW_EXP_2 ($$, EXPR_FUNCTION,$2,$4);
     }
 
   | FUNCTION variable {
@@ -1594,8 +1551,7 @@ class_declaration:
 
   | EVENT variable LPAREN identifiers RPAREN {
       $2->id_type = UDEF_EVENT;
-      $$ = new UExpression(EXPR_EVENT,$2,$4);
-      MEMCHECK2($$,$2,$4);
+      NEW_EXP_2 ($$, EXPR_EVENT,$2,$4);
     }
 
   | EVENT variable {
@@ -1652,6 +1608,10 @@ void yy::parser::error(const location_type& l, const std::string& what_error)
   uparser.error (l, what_error);
   if (globalDelete) {
      delete *globalDelete;
-     (*globalDelete) = 0;
+     *globalDelete = 0;
   }
 }
+
+// Local Variables:
+// mode: c++
+// End:
