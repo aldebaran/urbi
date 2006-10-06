@@ -1,3 +1,9 @@
+2006-10-06  matthieu nottale  <nottale@gostai.com>
+
+	COMMA and SEMICOLON priority changed
+
+	* parser/bison/ugrammar.y: Fix priority between COMMA and SEMICOLON in grammar.
+
 2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
 
 	Enable debug traces in the parser.
