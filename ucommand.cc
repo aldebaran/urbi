@@ -2792,53 +2792,64 @@ UCommand_NEW::execute(UConnection *connection)
 
   oss << "{ ";
 
+	bool component = false;
+	UFunction* initfun = 0;
   // wait for init created if external component
   if ((objit->second->binder) || (objit->second->internalBinder))
+	{
     oss << "waituntil(isdef(" << id->str() << ".init)) | ";
+		component = true;
+	}
+	else
+	{
+		// detects if init exists for the object or somewhere in the hierarchy
+		bool ambiguous;
+	  initfun = newobj->searchFunction("init",ambiguous);	
+	}
 
-  oss << tmpval << UU << "=" << id->str() << ".init(";
+	if (parameters || (initfun != 0) || component) {
+		
+		oss << tmpval << UU << "=" << id->str() << ".init(";
 
+		for (UNamedParameters *pvalue = parameters;
+				pvalue != 0;
+				pvalue = pvalue->next) {
 
-  //  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-  //      "{ waituntil(isdef(%s.init))|__UInitret.tmpval_%d=%s.init|delete __UFnctret.EXTERNAL_%d}",
-  //      UU,variablename->getFullname()->str(),UU,UU);
+			UValue* valparam = pvalue->expression->eval(this,connection);
+			if (!valparam) {
 
-  for (UNamedParameters *pvalue = parameters;
-       pvalue != 0;
-       pvalue = pvalue->next) {
-
-    UValue* valparam = pvalue->expression->eval(this,connection);
-    if (!valparam) {
-
-      connection->send("!!! EXPR evaluation failed\n",tag->str());
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "{delete %s}",id->str());
-
-      morph = (UCommand*)
-	new UCommand_EXPR(
-			  new UExpression(
-					  EXPR_FUNCTION,
-					  new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
-					  new UNamedParameters(
-							       new UExpression(
-									       EXPR_VALUE,
-									       new UString(tmpbuffer)
-									       )
-							       )
-					  )
-			  );
-      return (status = UMORPH);
-    }
-
-    oss << valparam->echo();
-    if (pvalue->next) oss << ",";
-  }
-
-  oss << ") | if (!isdef(" << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
-      << tmpval << UU << ")))) { "
-      << "echo \"Error: Constructor failed, objet deleted\";"
-      << " delete " << id->str() << "} | if (isdef(" << tmpval << UU << ")) delete " << tmpval << UU
-      << "}";
+				connection->send("!!! EXPR evaluation failed\n",tag->str());
+				snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+						"{delete %s}",id->str());
+				
+				morph = (UCommand*)
+					new UCommand_EXPR(
+							new UExpression(
+								EXPR_FUNCTION,
+								new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
+								new UNamedParameters(
+									new UExpression(
+										EXPR_VALUE,
+										new UString(tmpbuffer)
+										)
+							 		)
+								)
+							);
+				return (status = UMORPH);
+			}
+			
+			oss << valparam->echo();
+			if (pvalue->next) oss << ",";
+		}
+		
+		oss << ") | if (!isdef(" << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
+			<< tmpval << UU << ")))) { "
+			<< "echo \"Error: Constructor failed, objet deleted\";"
+			<< " delete " << id->str() << "} | if (isdef(" << tmpval << UU << ")) delete " << tmpval << UU
+			<< "}";
+	}
+	else
+		oss << "noop }";
 
   morph = (UCommand*)
     new UCommand_EXPR(

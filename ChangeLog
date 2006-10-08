@@ -1,5 +1,14 @@
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
+	fix 'new' behavior when no init is present and no parameters are given 
+
+When invoquing new with no parameters, the default "empty" constructor is now called,
+even if the init function has not been explicitly declared.
+
+	* ucommand.cc: fix UCommand_NEW behavior when new has no param and no init is defined.
+
+2006-10-08  JC Baillie  <baillie@gostai.com>
+
 	no recursive inheritance 
 
 	* ucommand.cc: fix a=new a; this is not permitted.
