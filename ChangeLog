@@ -1,5 +1,17 @@
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
+	Prepare for multievent handling 
+
+Multievent handling needs a new class UEventHandler.
+
+	* ucommand.cc: include uventhandler.h.
+	* utypes.h: nothing.
+	* ueventhandler.h: New.
+	* ueventhandler.cc: New.
+	* Makefile.am: add .cc and .h for ueventhandler.
+
+2006-10-08  JC Baillie  <baillie@gostai.com>
+
 	fix 'new' behavior when no init is present and no parameters are given 
 
 When invoquing new with no parameters, the default "empty" constructor is now called,

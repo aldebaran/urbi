@@ -70,7 +70,8 @@ utypes.h							\
 uvalue.h uvalue.cc						\
 uvariable.h uvariable.cc					\
 uvariablelist.h uvariablelist.cc				\
-uvariablename.h uvariablename.cc
+uvariablename.h uvariablename.cc \
+ueventhandler.h ueventhandler.cc
 
 
 # We build for aibo, or posix.
@@ -144,7 +145,8 @@ utypes.h					\
 uvalue.h					\
 uvariable.h					\
 uvariablelist.h					\
-uvariablename.h 
+uvariablename.h  \
+ueventhandler.h
 
 uobjectdir = $(kernelincludedir)/uobject
 uobject_HEADERS = uobject/uobject.h uobject/uext.h

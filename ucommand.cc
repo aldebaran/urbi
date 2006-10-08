@@ -31,6 +31,7 @@
 #include "ucallid.h"
 #include "utypes.h"
 #include "uobject/uobject.h"
+# include "ueventhandler.h"
 
 #if (__GNUC__ == 2)
 static const string left = "";

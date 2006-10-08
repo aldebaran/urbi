@@ -35,6 +35,7 @@
 # endif
 # include "ufloat.h"
 # include "uext.h"
+
 class UConnection;
 class UGhostConnection;
 class UServer;
@@ -47,6 +48,7 @@ class UGroup;
 class UString;
 class UCommand;
 class UCommand_EMIT;
+class UEventHandler;
 
 extern  int   usedMemory; //< Keeps track of how much memory has been used for
 			  //< commands, buffers, etc...
