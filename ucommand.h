@@ -347,7 +347,7 @@ class UCommand_NEW : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_NEW(UString* id,
+  UCommand_NEW(UVariableName* varname,
 	       UString* obj,
 	       UNamedParameters *parameters,
 	       bool noinit=false);
@@ -358,7 +358,8 @@ public:
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
 
-  UString          *id;         ///< Identifier
+  UString          *id;         ///< Object name
+	UVariableName    *varname;    ///< Identifier name
   UString          *obj;        ///< Object
   UNamedParameters *parameters; ///< list of parameters
   bool             noinit; ///< tells if 'init' should be called

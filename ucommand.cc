@@ -2645,17 +2645,18 @@ MEMORY_MANAGER_INIT(UCommand_NEW);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_NEW::UCommand_NEW(UString* id,
+UCommand_NEW::UCommand_NEW(UVariableName* varname,
 			   UString* obj,
 			   UNamedParameters *parameters,
 			   bool noinit) :
   UCommand(CMD_NEW)
 {
   ADDOBJ(UCommand_NEW);
-  this->id          = id;
+  this->varname     = varname;
   this->obj         = obj;
   this->parameters  = parameters;
   this->noinit      = noinit;
+	this->id          = 0;
   remoteNew         = false;
 }
 
@@ -2663,8 +2664,9 @@ UCommand_NEW::UCommand_NEW(UString* id,
 UCommand_NEW::~UCommand_NEW()
 {
   FREEOBJ(UCommand_NEW);
-  delete id;
+  delete varname;
   delete obj;
+	delete id;
   // parameters are handled by the morphed init
 }
 
@@ -2682,9 +2684,21 @@ UCommand_NEW::execute(UConnection *connection)
     }
 
   morph = 0;
-
-  //char tmpprefix[1024];
   char tmpprefixnew[1024];
+
+	if (!id) 
+	{ // init id
+		if (!varname->nostruct)
+		{
+			snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+				       "!!! Object names cannot be nested in Kernel 1\n");
+			connection->send(tmpbuffer,tag->str());
+
+      return ((status = UCOMPLETED));
+		}
+    UString* name = varname->buildFullname(this, connection, false);
+		id = new UString(name->str());		
+	}
 
   if (!id)
     return ((status = UCOMPLETED));
@@ -2869,148 +2883,16 @@ UCommand_NEW::execute(UConnection *connection)
   return( status = UMORPH );
 }
 
-// I will never go Here
-/*
-  bool alreadydone = false;
-  // init
-  // INTERNAL (module)
-  std::string funtofind(id->str());
-  funtofind = funtofind + ".init";
-  bool initdefined = (::urbiserver->functiontab.find(funtofind.c_str()) !=
-		      ::urbiserver->functiontab.end());
-
-  if ((objit->second->internalBinder) &&
-      (!initdefined)) { // you redefine the internal object's constructor
-
-    alreadydone = true;
-    urbi::UTable::iterator hmfi = urbi::functionmap.find(funtofind.c_str());
-    if (hmfi != urbi::functionmap.end()) {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
-	  cbi != hmfi->second.end();
-	  cbi++) {
-
-	if ( ( (parameters) &&
-	      (parameters->size() == (*cbi)->nbparam)) ||
-	    ( (!parameters) && (!(*cbi)->nbparam)) ) {
-
-  	  // here you could spawn a thread... if only Aprios knew how to!
-  	  urbi::UList tmparray;
-  	  for (UNamedParameters *pvalue = parameters;
-   	      pvalue != 0;
-    	      pvalue = pvalue->next) {
-
-	    UValue* valparam = pvalue->expression->eval(this,connection);
-	    if (!valparam) {
-
-	      connection->send("!!! EXPR evaluation failed\n",tag->str());
-	      return (status = UCOMPLETED);
-	    }
-	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue,
-							    // so it must be valparam who does the job.
-	    tmparray.array.push_back(tmpvalue);
-	  }
-
-	  (*cbi)->__evalcall(tmparray);
-	}
-      }
-    }
-  }
-
-  // EXTERNAL
-  if ((objit->second->binder) &&
-      (!initdefined)) {
-
-    if (!noinit) {
-
-      alreadydone = true;
-      snprintf(tmpprefix,1024,"%s.init",objit->second->device->str());
-
-      HMbindertab::iterator itbind =
-	::urbiserver->functionbindertab.find(tmpprefix);
-      if (!((itbind != ::urbiserver->functionbindertab.end()) && (
-	    (
-	     (parameters) &&
-	     (itbind->second->nbparam == parameters->size())
-	    ) ||
-	    (
-	     (!parameters) &&
-	     (itbind->second->nbparam == 0)
-	    )
-	   )) ) {
-
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	    "!!! remote 'init' constructor call failed for %s\n",objit->second->device->str());
-	connection->send(tmpbuffer,tag->str());
-    	if (creation) delete newobj;
-	return ( status = UCOMPLETED );
-      }
-
-      if (parameters)
-	snprintf(tmpprefix,1024,"[0,\"%s.init__%d\",\"__UFnctret.__tmp__UNewreturnvalue\"",
-	    newobj->device->str(),
-	    parameters->size());
-      else
-	snprintf(tmpprefix,1024,"[0,\"%s.init__0\",\"__UFnctret.__tmp__UNewreturnvalue\"",
-	    newobj->device->str());
-    }
-
-
-    for (std::list<UMonitor*>::iterator it2 =
-	objit->second->binder->monitors.begin();
-	it2 != objit->second->binder->monitors.end();
-	it2++) {
-
-      if (!noinit) {
-	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));
-	for (UNamedParameters *pvalue = parameters;
-	    pvalue != 0;
-	    pvalue = pvalue->next) {
-
-	  (*it2)->c->send((const ubyte*)",",1);
-	  UValue* valparam = pvalue->expression->eval(this,connection);
-	  valparam->echo((*it2)->c);
-	}
-	(*it2)->c->send((const ubyte*)"]\n",2);
-      }
-    }
-  }
-
-  std::string funtofindobj(obj->str());
-  funtofindobj = funtofindobj + ".init";
-  bool initdefinedobj = (::urbiserver->functiontab.find(funtofindobj.c_str()) !=
-			 ::urbiserver->functiontab.end());
-
-  if ((!noinit) && (initdefinedobj) && (!alreadydone)) {
-
-    persistant = false;
-    morph = (UCommand*) new UCommand_EXPR(
-	new UExpression (EXPR_FUNCTION,
-	  new UVariableName(
-	    new UString(id),
-	    new UString("init"),
-	    true,
-	    (UNamedParameters*)0),
-	  parameters ));
-  }
-
-  if (morph)
-    return ( status = UMORPH );
-  else
-    return ( status = UCOMPLETED );
-}
-*/
 
 //! UCommand subclass hard copy function
 UCommand*
 UCommand_NEW::copy()
 {
-  UCommand_NEW *ret = new UCommand_NEW(ucopy (id),
+  UCommand_NEW *ret = new UCommand_NEW(ucopy (varname),
 				       ucopy (obj),
 				       ucopy (parameters));
 
   copybase(ret);
-  ret->remoteNew = remoteNew;
   return ((UCommand*)ret);
 }
 

@@ -1,5 +1,26 @@
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
+	first stage of object arrays (can create) 
+
+The goal is be able to do things like:
+
+myobj[1] = new stuff;
+myobj[1].val = 4;
+
+For the moment, only the first stage is possible with this commit.
+To reach the second stage (which requires a modification of the grammar), you
+can do this:
+
+myobj__1.val = 4; //or
+$("myobj__"+string(index)+".val") = 4;
+
+
+	* ucommand.cc: tweak UCommand_NEW to support any object name.
+	* ucommand.h: change constructor.
+	* parser/bison/ugrammar.y: update with new UCommand_NEW constructor.
+
+2006-10-08  JC Baillie  <baillie@gostai.com>
+
 	Prepare for multievent handling 
 
 Multievent handling needs a new class UEventHandler.

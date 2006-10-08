@@ -605,14 +605,14 @@ instruction:
   | refvariable ASSIGN NEW IDENTIFIER {
 
       MEMCHECK($4);
-      $$ = new UCommand_NEW($1->id,$4,(UNamedParameters*)0,true);
+      $$ = new UCommand_NEW($1,$4,(UNamedParameters*)0,true);
       MEMCHECK2($$,$1,$4);
     }
 
   | refvariable ASSIGN NEW IDENTIFIER LPAREN parameterlist RPAREN {
 
       MEMCHECK($4);
-      $$ = new UCommand_NEW($1->id,$4,$6);
+      $$ = new UCommand_NEW($1,$4,$6);
       MEMCHECK3($$,$1,$4,$6);
     }
 
