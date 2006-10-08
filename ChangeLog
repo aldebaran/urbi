@@ -1,3 +1,9 @@
+2006-10-08  JC Baillie  <baillie@gostai.com>
+
+	no recursive inheritance 
+
+	* ucommand.cc: fix a=new a; this is not permitted.
+
 2006-10-08  Type Your Name Here  <your.mail.here@fixme.com>
 
 	Name resolution fix in object methods + akim bug in booleval reverted 

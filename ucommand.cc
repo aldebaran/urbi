@@ -2690,6 +2690,15 @@ UCommand_NEW::execute(UConnection *connection)
   if (!obj)
     return ((status = UCOMPLETED));
 
+  if (id->equal(obj)) 
+  {	
+    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	 "!!! Object %s cannot new itself\n",obj->str());
+    connection->send(tmpbuffer,tag->str());
+
+    return ((status = UCOMPLETED));
+  }
+
   HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end())
     {
