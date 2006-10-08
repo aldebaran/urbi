@@ -285,310 +285,320 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   if (cached)
     return fullname_;
 
-  if (str)
-    {
-      e1 = str->eval(command,connection);
-      cached = str->isconst;
-
-      if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING))
+	if (str)
 	{
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		   "!!! dynamic variable evaluation failed\n");
-	  connection->send(tmpbuffer,command->tag->str());
-	  delete e1;
-	  if (fullname_)
-	    {
-	      delete fullname_;
-	      fullname_ = 0;
-	    }
-	  return 0;
-	}
-
-      if (strchr(e1->str->str(),'.') == 0)
-	{
-	  nostruct = true;
-	  if (::urbiserver->objtab.find(e1->str->str()) ==
-	      ::urbiserver->objtab.end()) {
-	    if (connection->stack.empty())
-	      snprintf(name,fullnameMaxSize,
-		       "%s.%s",connection->connectionTag->str(),
-		       e1->str->str());
-	    else
-	      if (e1->str->equal("self"))
-		snprintf(name,fullnameMaxSize,
-			 "%s",connection->stack.front()->self());
-	      else
-		snprintf(name,fullnameMaxSize,
-			 "%s.%s",connection->stack.front()->str(),
-			 e1->str->str());
-
-	  }
-	  else
-	    strncpy(name,e1->str->str(),fullnameMaxSize);
-	}
-      else
-	strncpy(name,e1->str->str(),fullnameMaxSize);
-
-      delete e1;
-    }
-  else
-    {
-      // Local function call
-      if ((localFunction || selfFunction) && (firsttime))
-	{
-	  firsttime = false;
-	  if (!connection->stack.empty()) {
-	    UCallid *funid = connection->stack.front();
-	    if (funid) {
-
-	      if (selfFunction)
-		device->update(funid->self());
-
-	      if (localFunction)
+ 		e1 = str->eval(command,connection);
+		cached = str->isconst;
+		
+		if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING))
 		{
-		  std::string tmpself(funid->self());
-		  tmpself = tmpself + "." + id->str();
-		  std::string tmpstr(funid->str());
-		  tmpstr = tmpstr + "." + id->str();
-
-		  if (local_scope)
-		    device->update(funid->str());
-		  else
-		    {
-		      if (((id_type==UDEF_VAR) // is it a class symbol? (class can be U0034578 for
-			   // functions without prefixes)
-			   && (::urbiserver->variabletab.find(tmpself.c_str()) !=
-			       ::urbiserver->variabletab.end()))
-			  ||
-			  ((id_type==UDEF_FUNCTION)
-			   && (::urbiserver->functiontab.find(tmpself.c_str()) !=
-			       ::urbiserver->functiontab.end()))
-			  ||
-			  ((id_type==UDEF_EVENT)
-			   && (::urbiserver->eventtab.find(tmpself.c_str()) !=
-			       ::urbiserver->eventtab.end()))
-			  )
+			snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+				 	"!!! dynamic variable evaluation failed\n");
+			connection->send(tmpbuffer,command->tag->str());
+			delete e1;
+			if (fullname_)
 			{
-			  if (((id_type==UDEF_VAR) // is it *not* local to the call?
-			       && (::urbiserver->variabletab.find(tmpstr.c_str()) ==
-				   ::urbiserver->variabletab.end()))
-			      ||//impossible, there is no nested functions...
-			      ((id_type==UDEF_FUNCTION)
-			       && (::urbiserver->functiontab.find(tmpstr.c_str()) ==
-				   ::urbiserver->functiontab.end()))
-			      ||
-			      ((id_type==UDEF_EVENT)
-			       && (::urbiserver->eventtab.find(tmpstr.c_str()) ==
-				   ::urbiserver->eventtab.end()))
-			      )
-			    device->update(funid->self());
-			  else
-			    device->update(funid->str());
-			}// class symbol
-		      else
+				delete fullname_;
+				fullname_ = 0;
+			}
+			return 0;
+		}
+		
+		if (strchr(e1->str->str(),'.') == 0)
+		{
+			nostruct = true;
+			if (::urbiserver->objtab.find(e1->str->str()) ==
+					::urbiserver->objtab.end()) {
+				if (connection->stack.empty())
+					snprintf(name,fullnameMaxSize,
+							"%s.%s",connection->connectionTag->str(),
+							e1->str->str());
+				else
+					if (e1->str->equal("self"))
+						snprintf(name,fullnameMaxSize,
+								"%s",connection->stack.front()->self());
+					else
+						snprintf(name,fullnameMaxSize,
+								"%s.%s",connection->stack.front()->str(),
+								e1->str->str());
+				
+			}
+			else
+				strncpy(name,e1->str->str(),fullnameMaxSize);
+		}
+	 	else
+			strncpy(name,e1->str->str(),fullnameMaxSize);
+		
+		delete e1;
+	}
+	else
+	{
+		// Local function call
+		if ((localFunction || selfFunction) && (firsttime))
+		{
+			firsttime = false;
+			if (!connection->stack.empty()) {
+				UCallid *funid = connection->stack.front();
+				if (funid) {
+					
+					if (selfFunction)
+						device->update(funid->self());
+					
+					if (localFunction)
+					{
+						if (local_scope)
+							device->update(funid->str());
+						else
+						{
+							// does the symbol exist as a symbol local to the function call?
+							bool function_symbol = false;							
+							std::string tmpstr(funid->str());
+							tmpstr = tmpstr + "." + id->str();
+							if (((id_type==UDEF_VAR)
+										&& (::urbiserver->variabletab.find(tmpstr.c_str()) !=
+											::urbiserver->variabletab.end()))
+									||
+									((id_type==UDEF_EVENT)
+									 && (::urbiserver->eventtab.find(tmpstr.c_str()) !=
+										 ::urbiserver->eventtab.end()))
+								 )
+								function_symbol = true;
+
+							// does the symbol exist as an object symbol (direct on inherited)?
+							bool class_symbol = false;
+							bool ambiguous = true;
+							
+							HMobjtab::iterator objit = ::urbiserver->objtab.find(funid->self());
+							if (objit != ::urbiserver->objtab.end()) 
+							{
+								if (id_type == UDEF_VAR)
+									class_symbol = ((*objit).second->searchVariable(id->str(), ambiguous) != 0);
+								if (id_type == UDEF_FUNCTION)
+									class_symbol = ((*objit).second->searchFunction(id->str(), ambiguous) != 0);
+								if (id_type == UDEF_EVENT)
+									class_symbol = ((*objit).second->searchEvent(id->str(), ambiguous) != 0);
+
+								class_symbol = class_symbol && !ambiguous;
+							}							
+
+							// name resolution
+							if (class_symbol) 												
+							{
+								if (!function_symbol)							
+									device->update(funid->self());
+								else
+									device->update(funid->str());
+							}
+							else
+							{
+								// does the symbol exist as a symbol local to the connection?
+								bool local_symbol = false;
+								std::string tmploc(connection->connectionTag->str());
+								tmploc = tmploc + "." + id->str();
+
+								if (((id_type==UDEF_VAR)
+											&& (::urbiserver->variabletab.find(tmploc.c_str()) !=
+												::urbiserver->variabletab.end()))
+										||
+										((id_type==UDEF_FUNCTION)
+										 && (::urbiserver->functiontab.find(tmploc.c_str()) !=
+											 ::urbiserver->functiontab.end()))
+										||
+										((id_type==UDEF_EVENT)
+										 && (::urbiserver->eventtab.find(tmploc.c_str()) !=
+											 ::urbiserver->eventtab.end()))
+									 )
+									local_symbol = true;
+
+								if ((local_symbol) && (!function_symbol))
+									device->update(connection->connectionTag->str());
+								else
+									device->update(funid->str());
+							}
+
+						}
+					}
+				}
+			}
+			else
 			{
-			  std::string tmploc(connection->connectionTag->str());
-			  tmploc = tmploc + "." + id->str();
-
-			  if (((id_type==UDEF_VAR) // is it a symbol local to the connection?
-			       && (::urbiserver->variabletab.find(tmploc.c_str()) !=
-				   ::urbiserver->variabletab.end()))
-			      ||
-			      ((id_type==UDEF_FUNCTION)
-			       && (::urbiserver->functiontab.find(tmploc.c_str()) !=
-				   ::urbiserver->functiontab.end()))
-			      ||
-			      ((id_type==UDEF_EVENT)
-			       && (::urbiserver->eventtab.find(tmploc.c_str()) !=
-				   ::urbiserver->eventtab.end()))
-			      )
-			    device->update(connection->connectionTag->str());
-			  else
-			    device->update(funid->str());
-			}// !class symbol
-		    }
+				snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+						"!!! invalid prefix resolution\n");
+				connection->send(tmpbuffer,command->tag->str());
+				if (fullname_)
+				{
+					delete fullname_;
+					fullname_ = 0;
+				}
+				return(0);
+			}
 		}
-	    }
-	  }
-	  else
-	    {
-	      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		       "!!! invalid prefix resolution\n");
-	      connection->send(tmpbuffer,command->tag->str());
-	      if (fullname_)
+
+		if (device->equal("local"))
+			device->update(connection->connectionTag->str());
+
+		if (index == 0)
 		{
-		  delete fullname_;
-		  fullname_ = 0;
+			cached = true;
+
+			// Create the concatened variable name
+			snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
 		}
-	      return(0);
-	    }
-	}
-
-      if (device->equal("local"))
-	device->update(connection->connectionTag->str());
-
-      if (index == 0)
-	{
-	  cached = true;
-
-	  // Create the concatened variable name
-	  snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
-	}
-      else
-	{
-	  // rebuilding name based on index
-
-	  snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
-	  itindex = index;
-	  errordetected = false;
-	  cached = true;
-
-	  while (itindex)
-	    {
-	      e1 = itindex->expression->eval(command,connection);
-	      if (e1==0)
+		else
 		{
-		  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-			   "!!! expression error: array ignored\n");
-		  connection->send(tmpbuffer,command->tag->str());
-		  errordetected = true;
-		  break;
+			// rebuilding name based on index
+
+			snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
+			itindex = index;
+			errordetected = false;
+			cached = true;
+
+			while (itindex)
+			{
+				e1 = itindex->expression->eval(command,connection);
+				if (e1==0)
+				{
+					snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+							"!!! expression error: array ignored\n");
+					connection->send(tmpbuffer,command->tag->str());
+					errordetected = true;
+					break;
+				}
+				if (e1->dataType == DATA_NUM)
+					snprintf(indexstr,fullnameMaxSize-strlen(name),"__%d",(int)e1->val);
+				else if (e1->dataType == DATA_STRING)
+					snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",e1->str->str());
+				else
+				{
+					delete e1;
+					snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+							"!!! invalid array type: array ignored\n");
+					connection->send(tmpbuffer,command->tag->str());
+					errordetected = true;
+					break;
+				}
+
+				// Suppress this to make index non static by default
+				// if (!itindex->expression->isconst) cached = false;
+
+				strcat(name,indexstr);
+				itindex = itindex->next;
+				delete e1;
+			}
+			if (errordetected)
+			{
+				if (fullname_)
+				{
+					delete fullname_;
+					fullname_ = 0;
+				}
+				return(0);
+			}
 		}
-	      if (e1->dataType == DATA_NUM)
-		snprintf(indexstr,fullnameMaxSize-strlen(name),"__%d",(int)e1->val);
-	      else if (e1->dataType == DATA_STRING)
-		snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",e1->str->str());
-	      else
+	} // else str
+
+	// Alias updating
+	if (withalias)
+	{
+
+		if (nostruct)
 		{
-		  delete e1;
-		  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-			   "!!! invalid array type: array ignored\n");
-		  connection->send(tmpbuffer,command->tag->str());
-		  errordetected = true;
-		  break;
+			// Comes from a simple IDENTIFIER
+			char* p =  strchr(name,'.');
+			HMaliastab::iterator getobj;
+			if (p)
+				getobj = ::urbiserver->objaliastab.find(p+1);
+			else
+				getobj = ::urbiserver->objaliastab.find(name);
+			if (getobj != ::urbiserver->objaliastab.end())
+			{
+				UString* newobj = (*getobj).second;
+				getobj = ::urbiserver->objaliastab.find(newobj->str());
+				while (getobj !=  ::urbiserver->objaliastab.end())
+				{
+					newobj = (*getobj).second;
+					getobj = ::urbiserver->objaliastab.find(newobj->str());
+				}
+				snprintf(name,fullnameMaxSize,"%s",newobj->str());
+			}
+
+			p =  strchr(name,'.');
+			if (p)
+				hmi = ::urbiserver->aliastab.find(p+1);
+			else
+				hmi = ::urbiserver->aliastab.find(name);
 		}
+		else
+			hmi = ::urbiserver->aliastab.find(name);
+		past_hmi = hmi;
 
-	      // Suppress this to make index non static by default
-	      // if (!itindex->expression->isconst) cached = false;
-
-	      strcat(name,indexstr);
-	      itindex = itindex->next;
-	      delete e1;
-	    }
-	  if (errordetected)
-	    {
-	      if (fullname_)
+		while  (hmi != ::urbiserver->aliastab.end())
 		{
-		  delete fullname_;
-		  fullname_ = 0;
-		}
-	      return(0);
-	    }
-	}
-    } // else str
+			past_hmi = hmi;
+			hmi = ::urbiserver->aliastab.find((*hmi).second->str());
+		};
 
-  // Alias updating
-  if (withalias)
-    {
-
-      if (nostruct)
-	{
-	  // Comes from a simple IDENTIFIER
-	  char* p =  strchr(name,'.');
-	  HMaliastab::iterator getobj;
-	  if (p)
-	    getobj = ::urbiserver->objaliastab.find(p+1);
-	  else
-	    getobj = ::urbiserver->objaliastab.find(name);
-	  if (getobj != ::urbiserver->objaliastab.end())
-	    {
-	      UString* newobj = (*getobj).second;
-	      getobj = ::urbiserver->objaliastab.find(newobj->str());
-	      while (getobj !=  ::urbiserver->objaliastab.end())
+		if (past_hmi != ::urbiserver->aliastab.end())
 		{
-		  newobj = (*getobj).second;
-		  getobj = ::urbiserver->objaliastab.find(newobj->str());
+			strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);
+			nostruct = false;
+			delete device; device = 0;
+			delete method; method = 0; // forces recalc of device.method
+			if (variable)
+				variable = 0;
 		}
-	      snprintf(name,fullnameMaxSize,"%s",newobj->str());
-	    }
-
-	  p =  strchr(name,'.');
-	  if (p)
-	    hmi = ::urbiserver->aliastab.find(p+1);
-	  else
-	    hmi = ::urbiserver->aliastab.find(name);
 	}
-      else
-	hmi = ::urbiserver->aliastab.find(name);
-      past_hmi = hmi;
-
-      while  (hmi != ::urbiserver->aliastab.end())
+	else if (nostruct)
 	{
-	  past_hmi = hmi;
-	  hmi = ::urbiserver->aliastab.find((*hmi).second->str());
-	};
+		char* p =  strchr(name,'.');
+		if (p)
+		{
+			if (fullname_)
+				fullname_->update(p+1);
+			else
+				fullname_ = new UString(p+1);
 
-      if (past_hmi != ::urbiserver->aliastab.end())
-	{
-	  strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);
-	  nostruct = false;
-	  delete device; device = 0;
-	  delete method; method = 0; // forces recalc of device.method
-	  if (variable)
-	    variable = 0;
+			return fullname_;
+		}
 	}
-    }
-  else if (nostruct)
-    {
-      char* p =  strchr(name,'.');
-      if (p)
+
+	char* p =  strchr(name,'.');
+	if (p)
 	{
-	  if (fullname_)
-	    fullname_->update(p+1);
-	  else
-	    fullname_ = new UString(p+1);
-
-	  return fullname_;
+		p[0]=0;
+		HMaliastab::iterator getobj = ::urbiserver->objaliastab.find(name);
+		p[0]='.';
+		if (getobj != ::urbiserver->objaliastab.end())
+		{
+			UString* newobj = (*getobj).second;
+			getobj = ::urbiserver->objaliastab.find(newobj->str());
+			while (getobj !=  ::urbiserver->objaliastab.end())
+			{
+				newobj = (*getobj).second;
+				getobj = ::urbiserver->objaliastab.find(newobj->str());
+			}
+			UString* newmethod = new UString(p+1);
+			snprintf(name,fullnameMaxSize,"%s.%s",newobj->str(),newmethod->str());
+			delete newmethod;
+		}
 	}
-    }
-
-  char* p =  strchr(name,'.');
-  if (p)
-    {
-      p[0]=0;
-      HMaliastab::iterator getobj = ::urbiserver->objaliastab.find(name);
-      p[0]='.';
-      if (getobj != ::urbiserver->objaliastab.end())
-	{
-	  UString* newobj = (*getobj).second;
-	  getobj = ::urbiserver->objaliastab.find(newobj->str());
-	  while (getobj !=  ::urbiserver->objaliastab.end())
-	    {
-	      newobj = (*getobj).second;
-	      getobj = ::urbiserver->objaliastab.find(newobj->str());
-	    }
-	  UString* newmethod = new UString(p+1);
-	  snprintf(name,fullnameMaxSize,"%s.%s",newobj->str(),newmethod->str());
-	  delete newmethod;
+	/*
+	// treat single objects with a prefix-free name:
+	p = strchr(name,'.');
+	if ((p) && (nostruct) &&
+	(::urbiserver->objtab.find(p+1) != ::urbiserver->objtab.end())) {
+	strncpy(name, p+1, strlen(p+1)+1);
+	delete(device); device = 0;
+	delete(method); method = 0;
 	}
-    }
-  /*
-  // treat single objects with a prefix-free name:
-  p = strchr(name,'.');
-  if ((p) && (nostruct) &&
-  (::urbiserver->objtab.find(p+1) != ::urbiserver->objtab.end())) {
-  strncpy(name, p+1, strlen(p+1)+1);
-  delete(device); device = 0;
-  delete(method); method = 0;
-  }
-  */
+	*/
 
-  if (fullname_)
-    fullname_->update(name);
-  else
-    fullname_ = new UString(name);
+	if (fullname_)
+		fullname_->update(name);
+	else
+		fullname_ = new UString(name);
 
-  return fullname_;
+	return fullname_;
 }
 
 

@@ -233,7 +233,7 @@ UValue::operator urbi::USound() {
 
   else if (!strcmp(param->expression->str->str(), "wav")) {
     snd.soundFormat = urbi::SOUND_WAV;
-    if ( (refBinary->ref()->bufferSize > sizeof(wavheader)) &&
+    if ( ((unsigned int)refBinary->ref()->bufferSize > sizeof(wavheader)) &&
 	 (refBinary->ref()->buffer) ) {
       decoded= true;
       wavheader * wh = (wavheader *)refBinary->ref()->buffer;
@@ -599,6 +599,7 @@ UValue::add(UValue *v)
       return(ret);
     }
   }
+	return 0;
 }
 
 //! UValue polymorphic equality test
@@ -667,7 +668,7 @@ booleval(UValue *v, bool freeme)
     else
       res = UTRUE;
 
-  delete v;
+  if (freeme) delete v;
   return (res);
 }
 
@@ -766,17 +767,18 @@ UValue::echo(bool hr)
       UNamedParameters *param = refBinary->ref()->parameters;
       if (param) oss << " ";
 
-      char tmpparam[1024];
-      while (param) {
-	if (param->expression) {
-	  if (param->expression->dataType == DATA_NUM)
-	    oss << (int)param->expression->val;
-	  if (param->expression->dataType == DATA_STRING)
-	    oss << param->expression->str->str();
-	}
-	if (param->next) oss << " ";
-	param = param->next;
-      }
+      while (param) 
+			{
+				if (param->expression) 
+				{
+					if (param->expression->dataType == DATA_NUM)
+						oss << (int)param->expression->val;
+					if (param->expression->dataType == DATA_STRING)
+						oss << param->expression->str->str();
+				}
+				if (param->next) oss << " ";
+				param = param->next;
+			}
 
       if (!hr) {
 	oss << "\n";

@@ -1799,8 +1799,8 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   UVariable* variable = variablename->getVariable(this,connection);
   if (!variablename->getFullname())
     return ( status = UCOMPLETED );
-  UString* method = variablename->getMethod();
-  UString* devicename = variablename->getDevice();
+  variablename->getMethod();
+  variablename->getDevice();
 
   // Broadcasting
   if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
@@ -4697,11 +4697,11 @@ UCommand_INCDECREMENT::~UCommand_INCDECREMENT()
 UCommandStatus
 UCommand_INCDECREMENT::execute(UConnection *connection)
 {
-  UVariable* variable = variablename->getVariable(this,connection);
+  variablename->getVariable(this,connection);
   if (!variablename->getFullname())
     return ((status = UCOMPLETED));
-  UString* method = variablename->getMethod();
-  UString* devicename = variablename->getDevice();
+  variablename->getMethod();
+  variablename->getDevice();
 
   // Broadcasting
   if (scanGroups(&UCommand::refVarName,true))
@@ -5070,7 +5070,7 @@ UCommand_CLASS::execute(UConnection *connection)
   morph = 0;
 
   UNamedParameters * param = parameters;
-  UCommand_DEF *cdef;
+  UCommand_DEF *cdef=0;
   while (param)
     {
     if (param->expression)
@@ -5135,12 +5135,13 @@ UCommand_CLASS::execute(UConnection *connection)
 	  case EXPR_TEST_OR:
 	    break;
 	  }
-
-	cdef->tag->update(tag->str());
-	if (param == parameters)
-	  morph = cdef;
-	else
-	  morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
+	if (cdef) {
+	  cdef->tag->update(tag->str());
+	  if (param == parameters)
+	    morph = cdef;
+	  else
+	    morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
+	}
       }
 
     param = param->next;
@@ -5840,7 +5841,7 @@ UCommand_WHILE::execute(UConnection *connection)
 
   if (testres == UTRUE) {
 
-    UNodeType     nodeType;
+    UNodeType     nodeType = USEMICOLON;
 
     if (type == CMD_WHILE)      nodeType = USEMICOLON;
     if (type == CMD_WHILE_PIPE) nodeType = UPIPE;

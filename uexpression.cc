@@ -212,6 +212,7 @@ UExpression::UExpression(UExpressionType type,
       case EXPR_MULT:  val = expression1->val * expression2->val; break;
       case EXPR_DIV:   val = expression1->val / expression2->val; break;
       case EXPR_EXP:   val = pow (expression1->val , expression2->val); break;
+			default:    break;
       }
 
       this->type = EXPR_VALUE;
@@ -308,12 +309,11 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 {
   const int errSize = 256;
   static char errorString[errSize]; // Max error message = 256 chars
-  UValue *e1;
+  UValue *e1=0;
   UValue *e2;
   UValue *e3;
   UValue *e4;
-  UValue *ret;
-  UValue *value;
+  UValue *ret=0;  
   UVariable *variable;
   UString* method;
   UString* devicename;
@@ -339,326 +339,327 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       delete ret;
     }
 
-  switch (type) {
+	switch (type) {
 
-  case EXPR_LIST:
-
-    ret = new UValue();
-    ret->dataType = DATA_LIST;
-    pevent = parameters;
-    e1 = ret;
-    if (pevent) {
-      e1->liststart = pevent->expression->eval(command, connection);
-      e1 = e1->liststart;
-      pevent = pevent->next;
-    }
-
-    while (pevent) {
-
-      e1->next = pevent->expression->eval(command, connection);
-      if (e1->next==0) {
-	delete ret;
-	return(0);
-      }
-      pevent = pevent->next;
-      e1 = e1->next;
-    }
-    return(ret);
-
-  case EXPR_GROUP:
-
-    ret = new UValue();
-    retr = connection->server->grouptab.find(str->str());
-    if (retr !=  connection->server->grouptab.end()) {
-
-      ret->dataType = DATA_LIST;
-
-      it = (*retr).second->members.begin();
-      if (it !=  (*retr).second->members.end()) {
-
-	e = new UExpression (EXPR_GROUP, (*it)->copy());
-	e2 = e->eval(command, connection);
-	delete e;
-	if (e2->dataType == DATA_VOID) {
-	  ret->liststart = new UValue((*it)->str());
-	  delete e2;
-	}
-	else {
-	  delete ret;
-	  ret = e2;
-	}
-
-	e1 = ret->liststart;
-	while (e1->next) e1 = e1->next;
-	it++;
-      }
-
-      while (it !=  (*retr).second->members.end()) {
-
-	e = new UExpression (EXPR_GROUP, (*it)->copy());
-	e2 = e->eval(command, connection);
-	delete e;
-	if (e2->dataType == DATA_VOID) {
-	  e1->next = new UValue((*it)->str());
-	  delete e2;
-	  e1 = e1->next;
-	}
-	else {
-	  e3 = e2;
-	  e2 = e2->liststart;
-	  while (e2) {
-	    e1->next = e2->copy();
-	    e1 = e1->next;
-	    e2 = e2->next;
-	  }
-	  delete e3;
-	}
-	it++;
-      }
-    }
-    return(ret);
-
-  case EXPR_VALUE:
-
-    if (tmp_value) return tmp_value->copy(); // hack to be able to handle complex return types from function calls
-
-    ret = new UValue();
-    ret->dataType = dataType;
-    if (dataType == DATA_NUM) ret->val = val;
-    if (dataType == DATA_STRING) ret->str = new UString(str);
-    return(ret);
-
-  case EXPR_ADDR_VARIABLE:
-
-    ret = new UValue();
-    ret->dataType = DATA_STRING;
-    // hack here to be able to use objects pointeurs
-
-    ret->str = new UString (variablename->buildFullname(command,connection));
-    return(ret);
-
-  case EXPR_VARIABLE:
-
-    variable = variablename->getVariable(command,connection);
-    if (!variablename->getFullname()) return (0);
-    method = variablename->getMethod();
-    devicename = variablename->getDevice();
-
-    const char* varname;
-    if (!variable) {
-
-      varname = variablename->getFullname()->str();
-      if (::urbiserver->eventtab.find(varname) !=
-	  ::urbiserver->eventtab.end()) {
-	// this is an event
-
-	ret = new UValue(ufloat(1));
-	ret->val = 1;
-	ret->eventid = ::urbiserver->eventtab[variablename->getFullname()->str()]->eventid;
-	return(ret);
-      }
-
-      // virtual variables
-      const char* devname = variablename->getDevice()->str();
-      bool ambiguous;
-      UVariable *vari = 0;
-      HMobjtab::iterator itobj;
-      if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	  ::urbiserver->objtab.end()) {
-	vari = itobj->second->searchVariable(variablename->getMethod()->str(),
-					     ambiguous);
-	if (ambiguous)  {
-	  snprintf(errorString,errSize,"!!! Ambiguous multiple inheritance on variable %s\n",
-		   variablename->getFullname()->str());
-	  connection->send(errorString,command->tag->str());
-	  return new UValue();
-	}
-
-	variable = vari;
-	if (vari) {
-  	  devicename->update(vari->method);
-	  variablename->device->update(vari->method);
-	  variablename->buildFullname(command,connection);
-	}
-      }
-    }
-
-    if (!variable) {
-
-      char* p = const_cast<char*>(strstr(varname,"__"));
-      char* pnext = p;
-      while (pnext) {
-	p = pnext;
-	pnext = strstr(p+2,"__");
-      }
-      char* p2;
-      if (p) { // could be a list index.... (dirty hack)
-	p[0]=0;
-
-	HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
-	if (hmv != ::urbiserver->variabletab.end()) {
-
-	  UVariable* tmpvar = (*hmv).second;
-	  if (tmpvar->value->dataType == DATA_LIST) {
-	    // welcome to C-string hacking grand master area
-	    // Don't let unaccompagnied children see this.
-	    UValue* xval = tmpvar->value->liststart;
-	    int index;
-	    int curr;
-	    p[0]='_';
-	    p=p+2; // beginning of the index
-	    p2 = strchr(p,'_');
-	    while (p) {
-	      if (p2) p2[0]=0;
-	      index = atoi(p);
-	      curr=0;
-	      while ((curr!=index) && (xval)) {
-		xval = xval->next;
-		curr++;
-	      }
-	      if (!xval) {
-		snprintf(errorString,errSize,"!!! Index out of range\n");
-		connection->send(errorString,command->tag->str());
-		return new UValue();
-	      }
-	      else {
-		if (p2) {
-		  if (xval->dataType != DATA_LIST) {
-		    snprintf(errorString,errSize,"!!! Invalid index usage\n");
-   		    connection->send(errorString,command->tag->str());
-		    return new UValue();
-		  }
-		  else
-		    xval = xval->liststart;
-		}
-	      }
-
-	      if (p2) p2[0]='_';
-	      if (p2) p = p2+2; else p=0;
-	      if (p) p2 = strchr(p,'_');
-	    }
-
-	    return xval->copy();
-	  }
-	}
-	p[0]='_';
-      }
-
-      snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
-	       variablename->getFullname()->str());
-
-      if (!silent)
-	connection->send(errorString,command->tag->str());
-
-      return new UValue();
-
-    }
-
-    if ((!variablename->isstatic) || (firsteval)) {
-      ret = variable->get()->copy();
-
-      // error evaluation for variables (target-val)
-      if ((variablename->varerror) && (variable->value->dataType == DATA_NUM)) {
-	ret->val = variable->previous - ret->val;
-      }
-
-      // normalized variables
-      if ((variablename->isnormalized) && (variable->rangemax != variable->rangemin)) {
-
-	if ((variable->rangemin == -UINFINITY) ||
-	    (variable->rangemax ==  UINFINITY) ||
-	    (variable->value->dataType != DATA_NUM)) {
-
-	  snprintf(errorString,errSize,
-		   "!!! Impossible to normalize: no range defined for variable %s\n",
-		   variablename->getFullname()->str());
-
-	  connection->send(errorString,command->tag->str());
-	  return 0;
-	}
-
-	ret->val = (ret->val - variable->rangemin) /
-	  (variable->rangemax - variable->rangemin);
-      }
-
-      if (variablename->deriv != UNODERIV) {
-
-	if (variable->autoUpdate) {
-	  if (variablename->deriv == UTRUEDERIV)  variablename->deriv = UDERIV;
-	  if (variablename->deriv == UTRUEDERIV2) variablename->deriv = UDERIV2;
-	}
-
-	switch (variablename->deriv) {
-
-	case UDERIV: ret->val = 1000. * (variable->previous - variable->previous2)/
-	    (::urbiserver->previousTime - ::urbiserver->previous2Time);
-	  break;
-	case UDERIV2: ret->val = 1000000. * 2 *
-	    ( variable->previous  * (::urbiserver->previous2Time - ::urbiserver->previous3Time) -
-	      variable->previous2 * (::urbiserver->previousTime  - ::urbiserver->previous3Time) +
-	      variable->previous3 * (::urbiserver->previousTime  - ::urbiserver->previous2Time)
-	      ) / (  (::urbiserver->previous2Time - ::urbiserver->previous3Time) *
-		     (::urbiserver->previousTime  - ::urbiserver->previous3Time) *
-		     (::urbiserver->previousTime  - ::urbiserver->previous2Time) );
-
-	  break;
-	case UTRUEDERIV: ret->val = 1000. * (variable->get()->val - variable->valPrev)/
-	    (::urbiserver->currentTime - ::urbiserver->previousTime);
-	  break;
-	case UTRUEDERIV2: ret->val = 1000000. * 2 *
-	    ( variable->get()->val  * (::urbiserver->previousTime - ::urbiserver->previous2Time) -
-	      variable->valPrev     * (::urbiserver->currentTime  - ::urbiserver->previous2Time) +
-	      variable->valPrev2    * (::urbiserver->currentTime  - ::urbiserver->previousTime)
-	      ) / (  (::urbiserver->previousTime - ::urbiserver->previous2Time) *
-		     (::urbiserver->currentTime  - ::urbiserver->previous2Time) *
-		     (::urbiserver->currentTime  - ::urbiserver->previousTime) );
-	  break;
-	}
-      }
-    }
-
-    // static variables
-    if (variablename->isstatic)
-      if (firsteval) {
-	firsteval = false;
-	staticcache = ret->copy();
-	if (!staticcache)  return (0);
-      }
-      else
-	ret = staticcache->copy();
-
-    return(ret);
-    /*
-      case EXPR_GROUPLIST:
-      variable = variablename->getVariable(command,connection);
-      if (!variablename->getFullname()) return (0);
-      method = variablename->getMethod();
-      devicename = variablename->getDevice();
-
-      if (::urbiserver->grouptab.find(devicename->str()) ==
-      ::urbiserver->grouptab.end()
-      || ::urbiserver->grouptab[devicename->str()]->members.empty()
-      ) {
-
-      snprintf(errorString,errSize,"!!! Not a group: %s\n",
-      devicename->str());
-
-      if (!silent)
-      connection->send(errorString,command->tag->str());
-
-      return 0;
-      }
-
-      ret = ::urbiserver->grouptab[devicename->str()]->list(variablename);
-      return ret;
-    */
-
-
-
-
-  case EXPR_PROPERTY:
-
-    variable = variablename->getVariable(command,connection);
+		case EXPR_LIST:
+			
+			ret = new UValue();
+			ret->dataType = DATA_LIST;
+			pevent = parameters;
+			e1 = ret;
+			if (pevent) {
+				e1->liststart = pevent->expression->eval(command, connection);
+				e1 = e1->liststart;
+				pevent = pevent->next;
+			}
+			
+			while (pevent) {
+				
+				e1->next = pevent->expression->eval(command, connection);
+				if (e1->next==0) {
+					delete ret;
+					return(0);
+				}
+				pevent = pevent->next;
+				e1 = e1->next;
+			}
+			return(ret);
+			
+		case EXPR_GROUP:
+			
+			ret = new UValue();
+			retr = connection->server->grouptab.find(str->str());
+			if (retr !=  connection->server->grouptab.end()) {
+				
+				ret->dataType = DATA_LIST;
+				
+				it = (*retr).second->members.begin();
+				if (it !=  (*retr).second->members.end()) {
+					
+					e = new UExpression (EXPR_GROUP, (*it)->copy());
+					e2 = e->eval(command, connection);
+					delete e;
+					if (e2->dataType == DATA_VOID) {
+						ret->liststart = new UValue((*it)->str());
+						delete e2;
+					}
+					else {
+						delete ret;
+						ret = e2;
+					}
+					
+					e1 = ret->liststart;
+					while (e1->next) e1 = e1->next;
+					it++;
+				}
+				
+				while (it !=  (*retr).second->members.end()) {
+					
+					e = new UExpression (EXPR_GROUP, (*it)->copy());
+					e2 = e->eval(command, connection);
+					delete e;
+					if (e2->dataType == DATA_VOID) {
+						e1->next = new UValue((*it)->str());
+						delete e2;
+						e1 = e1->next;
+					}
+					else {
+						e3 = e2;
+						e2 = e2->liststart;
+						while (e2) {
+							e1->next = e2->copy();
+							e1 = e1->next;
+							e2 = e2->next;
+						}
+						delete e3;
+					}
+					it++;
+				}
+			}
+			return(ret);
+			
+		case EXPR_VALUE:
+			
+			if (tmp_value) return tmp_value->copy(); // hack to be able to handle complex return types from function calls
+			
+			ret = new UValue();
+			ret->dataType = dataType;
+			if (dataType == DATA_NUM) ret->val = val;
+			if (dataType == DATA_STRING) ret->str = new UString(str);
+			return(ret);
+			
+		case EXPR_ADDR_VARIABLE:
+			
+			ret = new UValue();
+			ret->dataType = DATA_STRING;
+			// hack here to be able to use objects pointeurs
+			
+			ret->str = new UString (variablename->buildFullname(command,connection));
+			return(ret);
+			
+		case EXPR_VARIABLE:
+			
+			variable = variablename->getVariable(command,connection);
+			if (!variablename->getFullname()) return (0);
+			method = variablename->getMethod();
+			devicename = variablename->getDevice();
+			
+			const char* varname;
+			if (!variable) {
+				
+				varname = variablename->getFullname()->str();
+				if (::urbiserver->eventtab.find(varname) !=
+						::urbiserver->eventtab.end()) {
+					// this is an event
+					
+					ret = new UValue(ufloat(1));
+					ret->val = 1;
+					ret->eventid = ::urbiserver->eventtab[variablename->getFullname()->str()]->eventid;
+					return(ret);
+				}
+				
+				// virtual variables
+				const char* devname = variablename->getDevice()->str();
+				bool ambiguous;
+				UVariable *vari = 0;
+				HMobjtab::iterator itobj;
+				if ((itobj = ::urbiserver->objtab.find(devname)) !=
+						::urbiserver->objtab.end()) {
+					vari = itobj->second->searchVariable(variablename->getMethod()->str(),
+							ambiguous);
+					if (ambiguous)  {
+						snprintf(errorString,errSize,"!!! Ambiguous multiple inheritance on variable %s\n",
+								variablename->getFullname()->str());
+						connection->send(errorString,command->tag->str());
+						return new UValue();
+					}
+					
+					variable = vari;
+					if (vari) {
+						devicename->update(vari->method);
+						variablename->device->update(vari->method);
+						variablename->buildFullname(command,connection);
+					}
+				}
+			}
+			
+			if (!variable) {
+				
+				char* p = const_cast<char*>(strstr(varname,"__"));
+				char* pnext = p;
+				while (pnext) {
+					p = pnext;
+					pnext = strstr(p+2,"__");
+				}
+				char* p2;
+				if (p) { // could be a list index.... (dirty hack)
+					p[0]=0;
+					
+					HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
+					if (hmv != ::urbiserver->variabletab.end()) {
+						
+						UVariable* tmpvar = (*hmv).second;
+						if (tmpvar->value->dataType == DATA_LIST) {
+							// welcome to C-string hacking grand master area
+							// Don't let unaccompagnied children see this.
+							UValue* xval = tmpvar->value->liststart;
+							int index;
+							int curr;
+							p[0]='_';
+							p=p+2; // beginning of the index
+							p2 = strchr(p,'_');
+							while (p) {
+								if (p2) p2[0]=0;
+								index = atoi(p);
+								curr=0;
+								while ((curr!=index) && (xval)) {
+									xval = xval->next;
+									curr++;
+								}
+								if (!xval) {
+									snprintf(errorString,errSize,"!!! Index out of range\n");
+									connection->send(errorString,command->tag->str());
+									return new UValue();
+								}
+								else {
+									if (p2) {
+										if (xval->dataType != DATA_LIST) {
+											snprintf(errorString,errSize,"!!! Invalid index usage\n");
+											connection->send(errorString,command->tag->str());
+											return new UValue();
+										}
+										else
+											xval = xval->liststart;
+									}
+								}
+								
+								if (p2) p2[0]='_';
+								if (p2) p = p2+2; else p=0;
+								if (p) p2 = strchr(p,'_');
+							}
+							
+							return xval->copy();
+						}
+					}
+					p[0]='_';
+				}
+				
+				snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
+						variablename->getFullname()->str());
+				
+				if (!silent)
+					connection->send(errorString,command->tag->str());
+				
+				return new UValue();
+				
+			}
+			
+			if ((!variablename->isstatic) || (firsteval)) {
+				ret = variable->get()->copy();
+				
+				// error evaluation for variables (target-val)
+				if ((variablename->varerror) && (variable->value->dataType == DATA_NUM)) {
+					ret->val = variable->previous - ret->val;
+				}
+				
+				// normalized variables
+				if ((variablename->isnormalized) && (variable->rangemax != variable->rangemin)) {
+					
+					if ((variable->rangemin == -UINFINITY) ||
+							(variable->rangemax ==  UINFINITY) ||
+							(variable->value->dataType != DATA_NUM)) {
+						
+						snprintf(errorString,errSize,
+								"!!! Impossible to normalize: no range defined for variable %s\n",
+								variablename->getFullname()->str());
+						
+						connection->send(errorString,command->tag->str());
+						return 0;
+					}
+					
+					ret->val = (ret->val - variable->rangemin) /
+						(variable->rangemax - variable->rangemin);
+				}
+				
+				if (variablename->deriv != UNODERIV) {
+					
+					if (variable->autoUpdate) {
+						if (variablename->deriv == UTRUEDERIV)  variablename->deriv = UDERIV;
+						if (variablename->deriv == UTRUEDERIV2) variablename->deriv = UDERIV2;
+					}
+					
+					switch (variablename->deriv) {
+						
+						case UDERIV: ret->val = 1000. * (variable->previous - variable->previous2)/
+												 (::urbiserver->previousTime - ::urbiserver->previous2Time);
+												 break;
+						case UDERIV2: ret->val = 1000000. * 2 *
+													( variable->previous  * (::urbiserver->previous2Time - ::urbiserver->previous3Time) -
+														variable->previous2 * (::urbiserver->previousTime  - ::urbiserver->previous3Time) +
+														variable->previous3 * (::urbiserver->previousTime  - ::urbiserver->previous2Time)
+													) / (  (::urbiserver->previous2Time - ::urbiserver->previous3Time) *
+														(::urbiserver->previousTime  - ::urbiserver->previous3Time) *
+														(::urbiserver->previousTime  - ::urbiserver->previous2Time) );
+													
+													break;
+						case UTRUEDERIV: ret->val = 1000. * (variable->get()->val - variable->valPrev)/
+														 (::urbiserver->currentTime - ::urbiserver->previousTime);
+														 break;
+						case UTRUEDERIV2: ret->val = 1000000. * 2 *
+															( variable->get()->val  * (::urbiserver->previousTime - ::urbiserver->previous2Time) -
+																variable->valPrev     * (::urbiserver->currentTime  - ::urbiserver->previous2Time) +
+																variable->valPrev2    * (::urbiserver->currentTime  - ::urbiserver->previousTime)
+															) / (  (::urbiserver->previousTime - ::urbiserver->previous2Time) *
+																(::urbiserver->currentTime  - ::urbiserver->previous2Time) *
+																(::urbiserver->currentTime  - ::urbiserver->previousTime) );
+															break;
+						default: break;
+					}
+				}
+			}
+			
+			// static variables
+			if (variablename->isstatic)
+				if (firsteval) {
+					firsteval = false;
+					staticcache = ret->copy();
+					if (!staticcache)  return (0);
+				}
+				else
+					ret = staticcache->copy();
+			
+			return(ret);
+			/*
+				 case EXPR_GROUPLIST:
+				 variable = variablename->getVariable(command,connection);
+				 if (!variablename->getFullname()) return (0);
+				 method = variablename->getMethod();
+				 devicename = variablename->getDevice();
+				 
+				 if (::urbiserver->grouptab.find(devicename->str()) ==
+				 ::urbiserver->grouptab.end()
+				 || ::urbiserver->grouptab[devicename->str()]->members.empty()
+				 ) {
+				 
+				 snprintf(errorString,errSize,"!!! Not a group: %s\n",
+				 devicename->str());
+				 
+				 if (!silent)
+				 connection->send(errorString,command->tag->str());
+				 
+				 return 0;
+				 }
+				 
+				 ret = ::urbiserver->grouptab[devicename->str()]->list(variablename);
+				 return ret;
+				 */
+			
+			
+			
+			
+	case EXPR_PROPERTY:
+			
+		variable = variablename->getVariable(command,connection);
     if (!variablename->getFullname()) return (0);
     if (!variable) {
 
@@ -1180,8 +1181,9 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	::urbiserver->systemcommands = false;
 	if (!connection->stack.empty())
 	  connection->functionTag = new UString("__Funct__");
-	int result = ::urbiserver->parser.process((ubyte*)e1->str->str(),
-						  e1->str->len(),                                                                                                connection);
+
+	::urbiserver->parser.process((ubyte*)e1->str->str(),e1->str->len(),connection);
+
 	if (connection->functionTag) {
 	  delete connection->functionTag;
 	  connection->functionTag=0;

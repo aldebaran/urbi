@@ -30,6 +30,7 @@ class UVariableName;
 class UValue;
 class UVariable;
 class UFunction;
+class UCommand_EMIT;
 
 namespace urbi
 {
@@ -58,6 +59,7 @@ public:
 
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
+  UCommand_EMIT*    searchEvent   (const char* id, bool& ambiguous);
 };
 
 #endif

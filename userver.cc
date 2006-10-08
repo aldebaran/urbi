@@ -344,7 +344,6 @@ UServer::work()
 
   // Values final assignment and nbAverage reset to 0
 
-  ufloat *valtmp;
   UVarSet selfError;
 
   for (std::list<UVariable*>::iterator iter = reinitList.begin();

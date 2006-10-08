@@ -273,6 +273,40 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   }
 }
 
+UCommand_EMIT*
+UObj::searchEvent(const char* id, bool &ambiguous)
+{
+  UCommand_EMIT* ret;
+  bool found;
+
+  snprintf(namebuffer,1024,"%s.%s",device->str(),id);
+  HMeventtab::iterator hmv = ::urbiserver->eventtab.find(namebuffer);
+  if (hmv != ::urbiserver->eventtab.end()) {
+    ambiguous = false;
+    return (hmv->second);
+  }
+  else {
+    ret   = 0;
+    found = false;
+		for (std::list<UObj*>::iterator itup = up.begin();
+				itup != up.end();
+				itup++){
+			ret = (*itup)->searchEvent(id,ambiguous);
+			if (ambiguous) return 0;
+			if (ret)
+				if (found) {
+					ambiguous = true;
+					return 0;
+				}
+				else
+					found = true;
+		}
+		ambiguous = false;
+		return ret;
+	}
+}
+
+
 /*********************************************/
 /* UWaitCounter                              */
 /*********************************************/

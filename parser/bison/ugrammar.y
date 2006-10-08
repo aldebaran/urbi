@@ -312,8 +312,6 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
 %right EXP     /* Exponentiation*/
 %right NORM
 
-/*%left  SEMICOLON*/
-/*%left  COMMA*/
 %right COMMA SEMICOLON
 %left  AND PIPE
 %left  CMDBLOCK EXPRBLOCK

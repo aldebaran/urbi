@@ -1,3 +1,24 @@
+2006-10-08  Type Your Name Here  <your.mail.here@fixme.com>
+
+	Name resolution fix in object methods + akim bug in booleval reverted 
+
+Some cleanup of warning messages during compile.
+Fix a name resolution bug in object methods when attributes are defined in the 
+origin class and not in the child class.
+Akim removed a "if (freeme)" before a delete in booleval. Reverted.
+
+	* ucommand.cc: cleanup warnings.
+	* parser/bison/ugrammar.y: cleanup of unecessary comments.
+	* uexpression.cc: cleanup warnings, fix indent.
+	* uvalue.cc: remove booleval bug, fix indent.
+	* uvariable.cc: cleanup warnings, fix indent.
+	* INSTALL: remove old install notes.
+	* userver.cc: cleanup warnings.
+	* uobj.cc: add searchEvent function.
+	* uobj.h: add searchEvent definition.
+	* uvariablename.cc: fix name resolution in object methods with inheritance.
+	* LICENSE-URBI-LANGUAGE: Remove.
+
 2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
 
 	Bison and Flex output are no longer shipped.

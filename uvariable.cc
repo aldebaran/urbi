@@ -239,23 +239,25 @@ UVariable::set(UValue *v)
 	if (!value)
     value = v->copy();
   else {
-    switch (value->dataType) {
-      case DATA_STRING: value->str->update(v->str->str()); break;
-      case DATA_NUM:    setSensorVal(v->val); break;
-      case DATA_LIST:   delete value;value = v->copy(); break;
-      case DATA_BINARY: LIBERATE(value->refBinary);
-			value->refBinary = v->refBinary->copy();
-			break;
-      case DATA_VOID:   // uninitialized def's
-
-	value->dataType = v->dataType;
-	switch (v->dataType) {
-	case DATA_STRING: value->str = new UString(v->str); break;
-	case DATA_NUM:    initSensorVal(v->val); break;
-	case DATA_BINARY: value->refBinary = v->refBinary->copy(); break;
-	case DATA_LIST: delete value;value = v->copy(); break;
-	}
-    }
+		switch (value->dataType) {
+			case DATA_STRING: value->str->update(v->str->str()); break;
+			case DATA_NUM:    setSensorVal(v->val); break;
+			case DATA_LIST:   delete value;value = v->copy(); break;
+			case DATA_BINARY: LIBERATE(value->refBinary);
+												value->refBinary = v->refBinary->copy();
+												break;
+			case DATA_VOID:   // uninitialized def's
+												
+												value->dataType = v->dataType;
+												switch (v->dataType) {
+													case DATA_STRING: value->str = new UString(v->str); break;
+													case DATA_NUM:    initSensorVal(v->val); break;
+													case DATA_BINARY: value->refBinary = v->refBinary->copy(); break;
+													case DATA_LIST: delete value;value = v->copy(); break;
+													default: break;
+												}
+			default: break;
+		}
   }
 
   return(selfSet(&(value->val)));
