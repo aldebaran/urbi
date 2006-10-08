@@ -551,16 +551,17 @@ namespace urbi
       return *binary;
   }
 
-  UValue::operator UImage() const {
-    if (type != DATA_BINARY
-	|| binary->type != BINARY_IMAGE)
-      {
-	UImage i;
-	i.data=0; i.size=0; i.width=0; i.height=0;
-	return i;
-      }
-    else
-      return binary->image;
+	UValue::operator UImage() const {
+		if (type != DATA_BINARY
+				|| binary->type != BINARY_IMAGE)
+		{
+			UImage i;
+			i.data=0; i.size=0; i.width=0; i.height=0;
+			i.imageFormat = IMAGE_UNKNOWN; 
+			return i;
+		}
+		else
+		 	return binary->image;
   }
 
   UValue::operator USound() const {

@@ -1,3 +1,9 @@
+2006-10-08  JC Baillie  <baillie@gostai.com>
+
+	compile warning fix 
+
+	* src/liburbi/uobject/common_uvalue.cc: remove a compile warning.
+
 2006-10-08  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix empty object parsing
