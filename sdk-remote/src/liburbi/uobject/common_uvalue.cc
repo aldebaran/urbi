@@ -171,6 +171,8 @@ namespace urbi
 
       while (message[pos]) {
 	while (message[pos]==' ') pos++;
+	if (message[pos]==']')
+	  break; //empty object
 	//parse name
 	int p = pos;
 	while (message[p] && message[p]!=':')

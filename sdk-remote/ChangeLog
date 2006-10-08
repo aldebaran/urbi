@@ -1,3 +1,9 @@
+2006-10-08  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix empty object parsing
+
+	* src/liburbi/uobject/common_uvalue.cc: Fix parser for empty objects.
+
 2006-10-04  matthieu nottale  <nottale@gostai.com>
 
 	Add --disable-examples and a few extras
