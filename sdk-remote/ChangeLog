@@ -1,3 +1,9 @@
+2006-10-09  Akim Demaille  <akim@lrde.epita.fr>
+
+	pin baux.
+
+	* Makefile.am: Include build-aux.mk.
+
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
 	compile warning fix 
