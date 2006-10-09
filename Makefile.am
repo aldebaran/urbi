@@ -8,7 +8,7 @@
 #
 ################################################################################
 
-include build-aux/build-aux.mk
+include $(top_srcdir)/build-aux/build-aux.mk
 
 # Initialization.
 BUILT_SOURCES =
