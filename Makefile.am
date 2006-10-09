@@ -8,6 +8,8 @@
 #
 ################################################################################
 
+include build-aux/build-aux.mk
+
 # Initialization.
 BUILT_SOURCES =
 CLEANFILES =

@@ -1,3 +1,8 @@
+2006-10-09  Akim Demaille  <akim@lrde.epita.fr>
+
+	pin baux.
+	* Makefile.am: And include build-aux.mk.
+
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
 	first stage of object arrays (can create) 
