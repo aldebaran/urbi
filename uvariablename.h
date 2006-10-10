@@ -24,21 +24,9 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "utypes.h"
 #include "ustring.h"
-
-class UCommand;
-class UExpression;
-class UConnection;
-class UNamedParameters;
-class UTest;
-class UBinary;
-class UVariableName;
-class UVariableList;
-class UVariable;
-class UValue;
-class UServer;
-class UCommand_TREE;
 
 // *****************************************************************************
 //! Contains a variable name description

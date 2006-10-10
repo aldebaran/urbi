@@ -4,7 +4,7 @@
  File: ughostconnection.h\n
  Definition of the UGhostConnection class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,9 +22,8 @@
 #ifndef UGHOSTCONNECTION_H_DEFINED
 #define UGHOSTCONNECTION_H_DEFINED
 
+#include "fwd.hh"
 #include "uconnection.h"
-
-class UServer;
 
 
 /// UGhostConnection is a invisible connection used to read URBI.INI
@@ -32,16 +31,16 @@ class UServer;
  */
 
 class UGhostConnection : public UConnection
-{ 
+{
 public:
-	
+
   UGhostConnection  ( UServer *mainserver );
   virtual ~UGhostConnection ();
 
   virtual UErrorValue   closeConnection    ();
 
   // Parameters used by the constructor.
-  
+
   static const int MINSENDBUFFERSIZE = 4096;
   static const int MAXSENDBUFFERSIZE = 1048576;
   static const int PACKETSIZE        = 32768;

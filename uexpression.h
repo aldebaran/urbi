@@ -24,22 +24,12 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "utypes.h"
 #include "ustring.h"
 #include "ucommandqueue.h"
 #include "memorymanager/memorymanager.h"
 
-class UCommand;
-class UExpression;
-class UConnection;
-class UNamedParameters;
-class UVariableName;
-class UVariableList;
-class UVariable;
-class UValue;
-class UServer;
-class UCommand_TREE;
-class UContext;
 
 // *****************************************************************************
 //! Contain an expression tree as returned by the parser

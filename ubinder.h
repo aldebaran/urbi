@@ -24,14 +24,9 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "ustring.h"
 #include "utypes.h"
-
-class UNamedParameters;
-class UConnection;
-class UVariableName;
-class UValue;
-class UMonitor;
 
 // *****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command

@@ -21,9 +21,9 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "ustring.h"
 
-class UCommand_EMIT;
 
 // *****************************************************************************
 //! Contains an event handler definition

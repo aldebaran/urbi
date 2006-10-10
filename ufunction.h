@@ -4,7 +4,7 @@
  File: ufunction.h\n
  Definition of useful types in the URBI server kernel.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -24,24 +24,21 @@
 
 #include <string>
 #include <stdlib.h>
+#include "fwd.hh"
 
-class UString;
-class UNamedParameters;
-class UCommand;
-
-//! UFunction is used to handle functions in the URBI server 
+//! UFunction is used to handle functions in the URBI server
 class UFunction {
 public:
 
   UFunction(UString *funname,
-            UNamedParameters *parameters,
-            UCommand *command);
+	    UNamedParameters *parameters,
+	    UCommand *command);
   ~UFunction();
 
   UString*   name();
   int        nbparam();
-  UCommand*  cmdcopy(UString *_tag = 0, 
-                     UNamedParameters *_flags = 0);
+  UCommand*  cmdcopy(UString *_tag = 0,
+		     UNamedParameters *_flags = 0);
   UString          *funname; ///< name of the function
   UNamedParameters *parameters; ///< parameters of the function
   UCommand         *command; ///< body of the function

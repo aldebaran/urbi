@@ -24,9 +24,8 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "ustring.h"
-class UVariableName;
-class UValue;
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command

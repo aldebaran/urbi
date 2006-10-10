@@ -24,10 +24,9 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "ustring.h"
 #include "uvariable.h"
-
-class UCommand_TREE;
 
 
 // *****************************************************************************

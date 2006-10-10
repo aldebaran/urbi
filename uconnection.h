@@ -20,18 +20,21 @@
  **************************************************************************** */
 
 #ifndef UCONNECTION_H_DEFINED
-#define UCONNECTION_H_DEFINED
+# define UCONNECTION_H_DEFINED
 
-#include "utypes.h"
-#include "userver.h"
-#include "uqueue.h"
-#include "ucallid.h"
-#include "ucommandqueue.h"
-#include "uvariable.h"
-#include "parser/bison/location.hh"  //FIXME remove this to abstract parser
-#include "lockable.h"				     // from connection
+# include "fwd.hh"
+# include "utypes.h"
+# include "userver.h"
+# include "uqueue.h"
+# include "ucallid.h"
+# include "ucommandqueue.h"
+# include "uvariable.h"
+# include "parser/bison/location.hh"  //FIXME remove this to abstract parser
+# include "lockable.h"				     // from connection
 
-class UParser;
+// Global variable (thanks bison...) to store the the error message
+// when a parsing error occurs.
+extern char errorMessage[1024];
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
@@ -112,53 +115,53 @@ public:
   void                setIP              (IPAdd ip);
 
   /// Error return code for the constructor..
-  UErrorValue         UError;    
+  UErrorValue         UError;
   /// Reference to the underlying server.
-  UServer             *server;   
+  UServer             *server;
   /// The command to be executed.
-  UCommand_TREE       *activeCommand; 
+  UCommand_TREE       *activeCommand;
   /// Store the position of the last command added.
-  UCommand_TREE       *lastCommand; 
-				   
+  UCommand_TREE       *lastCommand;
+
 
   /// Temporarily stores bin command while binary transfer occurs.
-  UCommand_ASSIGN_BINARY *binCommand; 
+  UCommand_ASSIGN_BINARY *binCommand;
 
   /// Virtual device for the connection..
-  UString             *connectionTag; 
+  UString             *connectionTag;
   /// Virtual device for function def.
-  UString             *functionTag;   
+  UString             *functionTag;
   /// Class name in a class method definition.
-  UString             *functionClass; 
+  UString             *functionClass;
   /// Ip of the calling client.
-  IPAdd               clientIP;      
+  IPAdd               clientIP;
   /// Killall signal (empty Activecommand).
-  bool                killall;       
+  bool                killall;
   /// Connection closing.
-  bool                closing;       
+  bool                closing;
   /// Connection receiving (and processing) commands.
-  bool                receiving;     
+  bool                receiving;
   /// Connection in the work command.
-  bool                inwork;        
+  bool                inwork;
   /// Used by addToQueue to notify new data.
-  bool                newDataAdded;  
+  bool                newDataAdded;
   /// True after a "return" command is met.
-  bool                returnMode;    
+  bool                returnMode;
   /// False when the whole command tree has been processed.
-  bool                obstructed;    
+  bool                obstructed;
   /// Call ids stack for function calls.
-  std::list<UCallid*>      stack;         
+  std::list<UCallid*>      stack;
 
 
   /// Last location after parsing.
-  yy::location        lastloc;       
+  yy::location        lastloc;
 
   /// Lock access to command tree.
-  Lockable            treeLock;      
+  Lockable            treeLock;
 protected:
 
   /// Default adaptive behavior for Send/Recv..
-  static const int ADAPTIVE = 100; 
+  static const int ADAPTIVE = 100;
 
   virtual int         effectiveSend     (const ubyte *buffer, int length) = 0;
   UErrorValue         error             (UErrorCode n);
@@ -169,30 +172,30 @@ protected:
 
 private:
   /// Max number of error signals used..
-  static const int MAX_ERRORSIGNALS = 20; 
+  static const int MAX_ERRORSIGNALS = 20;
 
   UQueue         *sendQueue_;
   UCommandQueue  *recvQueue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
-  int            packetSize_;    
+  int            packetSize_;
 
   /// Stores the state of the connection..
-  bool           blocked_;       
+  bool           blocked_;
   /// True when the connection is receiving binary data.
-  bool           receiveBinary_; 
-				 
+  bool           receiveBinary_;
+
   /// Nb of bytes already received in bin mode.
-  int            transferedBinary_; 
+  int            transferedBinary_;
   /// Adaptive behavior for the send UQueue..
-  int            sendAdaptive_;  
+  int            sendAdaptive_;
   /// Adaptive behavior for the send UQueue..
-  int            recvAdaptive_;  
+  int            recvAdaptive_;
   /// Stores error flags.
   bool           errorSignals_[MAX_ERRORSIGNALS];
   /// True when the connection is reading to send/receive data (usualy
   /// set at "true" on start).
-  bool           active_;        
+  bool           active_;
 };
 
 //! Accessor for sendAdaptive_

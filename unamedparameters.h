@@ -4,7 +4,7 @@
  File: unamedparameters.h\n
  Definition of the UNamedParameters class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,24 +22,23 @@
 #ifndef UNAMEDPARAMETERS_H_DEFINED
 #define UNAMEDPARAMETERS_H_DEFINED
 
+#include "fwd.hh"
 #include "utypes.h"
 #include "ustring.h"
 
-class UExpression;
-		
 // *****************************************************************************
 //! Contains any list of identifiers, expressions or combinaison of both.
-class UNamedParameters 
+class UNamedParameters
 {
 public:
-  UNamedParameters(UString* name, 
-                   UExpression *expression, 
-                   UNamedParameters* next=0);
+  UNamedParameters(UString* name,
+		   UExpression *expression,
+		   UNamedParameters* next=0);
 
   UNamedParameters(UExpression *expression, UNamedParameters* next = 0);
   virtual ~UNamedParameters();
 
-  void print(); 
+  void print();
 
   UNamedParameters* rank(int n);
   int               size();

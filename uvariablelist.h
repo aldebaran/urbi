@@ -4,7 +4,7 @@
  File: uvariablelist.h\n
  Definition of the UVariableList class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -22,27 +22,27 @@
 #ifndef UVARIABLELIST_H_DEFINED
 #define UVARIABLELIST_H_DEFINED
 
+#include "fwd.hh"
 #include "utypes.h"
 
-class UVariableName;
 
 // *****************************************************************************
 //! Contains a list of variable names
-class UVariableList 
+class UVariableList
 {
 public:
-  UVariableList(UVariableName* variablename,                   
-                UVariableList* next=0);
+  UVariableList(UVariableName* variablename,
+		UVariableList* next=0);
 
   virtual ~UVariableList();
 
-  void print(); 
+  void print();
 
   UVariableList* rank(int n);
   int            size();
   UVariableList* copy();
 
-  UVariableName      *variablename; ///< The name  
+  UVariableName      *variablename; ///< The name
   UVariableList      *next;         ///< Next element in the list
 };
 

@@ -28,19 +28,10 @@
 #include <cstdlib>
 
 #include "memorymanager/memorymanager.h"
+#include "fwd.hh"
 #include <uvalue.h>
 #include "ustring.h"
 #include "utypes.h"
-
-
-class UNamedParameters;
-class UCommand;
-class UCommand_ASSIGN_VALUE;
-class UValue;
-
-namespace urbi {
-  class UGenericCallback;
-};
 
 //! Uvariable is used to store variables
 /*! You can pass to the constructor three importants parameters:

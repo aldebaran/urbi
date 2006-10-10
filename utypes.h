@@ -31,24 +31,12 @@
 # ifdef _MSC_VER
 #  define snprintf _snprintf
 #  define vsnprintf _vsnprintf
-# else
 # endif
+
+# include "fwd.hh"
 # include "ufloat.h"
 # include "uext.h"
 
-class UConnection;
-class UGhostConnection;
-class UServer;
-class UValue;
-class UVariable;
-class UFunction;
-class UBinder;
-class UObj;
-class UGroup;
-class UString;
-class UCommand;
-class UCommand_EMIT;
-class UEventHandler;
 
 extern  int   usedMemory; //< Keeps track of how much memory has been used for
 			  //< commands, buffers, etc...

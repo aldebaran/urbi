@@ -247,19 +247,19 @@ UServer::work()
   // recover the security memory space, with a margin (size x 2)
   // if the margin can be malloced, then freed, then remalloced with
   // the correct size, then the memoryOverflow error is removed.
-  if ((securityBuffer_ == 0) &&
-      (usedMemory < availableMemory - 2 * SECURITY_MEMORY_SIZE)) {
-
-    securityBuffer_ = malloc( 2 * SECURITY_MEMORY_SIZE );
-    if (securityBuffer_ != 0) {
-      free(securityBuffer_);
-      securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
-      if (securityBuffer_) {
-	memoryOverflow = false;
-	deIsolate();
+  if (securityBuffer_ == 0 &&
+      usedMemory < availableMemory - 2 * SECURITY_MEMORY_SIZE)
+    {
+      securityBuffer_ = malloc( 2 * SECURITY_MEMORY_SIZE );
+      if (securityBuffer_ != 0) {
+	free(securityBuffer_);
+	securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
+	if (securityBuffer_) {
+	  memoryOverflow = false;
+	  deIsolate();
+	}
       }
     }
-  }
 
   bool signalMemoryOverflow = false;
   if (memoryOverflow)
@@ -352,7 +352,7 @@ UServer::work()
     if ((*iter)->activity == 2) {
       (*iter)->activity = 0;
 
-       // set previous for stationnary values
+      // set previous for stationnary values
       (*iter)->previous3 = (*iter)->previous;
       (*iter)->previous2 = (*iter)->previous;
 
@@ -430,99 +430,99 @@ UServer::work()
 
     stage++;
     if (stage == 1)
-    {
-      //delete objects first
-      for ( HMvariabletab::iterator retr = variabletab.begin();
-	  retr != variabletab.end();
-	  retr++)
-	if (((*retr).second->value) &&
-	    ((*retr).second->value->dataType == DATA_OBJ))
-	  varToReset.push_back( (*retr).second );
-
-      while (!varToReset.empty())
       {
+	//delete objects first
+	for ( HMvariabletab::iterator retr = variabletab.begin();
+	      retr != variabletab.end();
+	      retr++)
+	  if (((*retr).second->value) &&
+	      ((*retr).second->value->dataType == DATA_OBJ))
+	    varToReset.push_back( (*retr).second );
+
+	while (!varToReset.empty())
+	  {
+	    for (std::list<UVariable*>::iterator it = varToReset.begin();
+		 it != varToReset.end();)
+	      {
+		if ((*it)->isDeletable())
+		  {
+		    delete (*it);
+		    it = varToReset.erase(it);
+		  }
+		else it++;
+	      }
+	  }
+
+	//delete the rest
+	for ( HMvariabletab::iterator retr = variabletab.begin();
+	      retr != variabletab.end();
+	      retr++)
+	  if ((*retr).second->uservar)
+	    varToReset.push_back( (*retr).second );
+
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
-	    it != varToReset.end();)
-	{
-	  if ((*it)->isDeletable())
-	  {
-	    delete (*it);
-	    it = varToReset.erase(it);
-	  }
-	  else it++;
-	}
-      }
-
-      //delete the rest
-      for ( HMvariabletab::iterator retr = variabletab.begin();
-	  retr != variabletab.end();
-	  retr++)
-	if ((*retr).second->uservar)
-	  varToReset.push_back( (*retr).second );
-
-      for (std::list<UVariable*>::iterator it = varToReset.begin();
-	  it != varToReset.end();++it)
-	delete (*it);
+	     it != varToReset.end();++it)
+	  delete (*it);
 
 
-      blocktab.clear();
-      freezetab.clear();
-      eventtab.clear();
+	blocktab.clear();
+	freezetab.clear();
+	eventtab.clear();
 
-      //variabletab.clear();
-      functiontab.clear();  //This leaks awfuly...
-      eventtab.clear();
-      aliastab.clear();
-      objaliastab.clear();
-      grouptab.clear();
+	//variabletab.clear();
+	functiontab.clear();  //This leaks awfuly...
+	eventtab.clear();
+	aliastab.clear();
+	objaliastab.clear();
+	grouptab.clear();
 
-      varToReset.clear();
-      for (std::list<UConnection*>::iterator retr = connectionList.begin();
-       	  retr != connectionList.end();
-	  retr++)
-	if  ((*retr)->isActive())
-	  (*retr)->send("*** Reset completed.\n","reset");
-
-      //restart everything
-      for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
-	  retr != urbi::objectlist->end();
-	  retr++)
-	(*retr)->init((*retr)->name);
-
-      loadFile("URBI.INI",ghost->recvQueue());
-      char resetsignal[255];
-      strcpy(resetsignal,"var __system__.resetsignal;");
-      ghost->recvQueue()->push((const ubyte*)resetsignal,strlen(resetsignal));
-      ghost->newDataAdded = true;
-    }
-    else
-    {
-      //ASSERT(ghost)
-	//ASSERT(ghost->recvQueue())
-	  //debug("Recv Queue: %d = %s\n",ghost->recvQueue()->dataSize());
-	 /* char* cc = (char*)ghost->recvQueue()->virtualPop(ghost->recvQueue()->dataSize()-1);
-	  for (int i=0;i<ghost->recvQueue()->dataSize()-1;i++)
-	    debug("Char%i = %c\n",i,cc[i]);*/
-	//}
-      HMvariabletab::iterator findResetSignal = variabletab.find("__system__.resetsignal");
-      if (findResetSignal != variabletab.end())
-      //if (ghost->recvQueue()->dataSize() == 0)
-      {
-
+	varToReset.clear();
 	for (std::list<UConnection*>::iterator retr = connectionList.begin();
-	    retr != connectionList.end();
-	    retr++)
-	  if  ( ((*retr)->isActive()) && ((*retr) != ghost))
-	  {
-	    (*retr)->send("*** Reloading\n","reset");
+	     retr != connectionList.end();
+	     retr++)
+	  if  ((*retr)->isActive())
+	    (*retr)->send("*** Reset completed.\n","reset");
 
-	    loadFile("CLIENT.INI",(*retr)->recvQueue());
-	    (*retr)->newDataAdded = true;
-	  }
-	reseting = false;
-	stage = 0;
+	//restart everything
+	for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
+	     retr != urbi::objectlist->end();
+	     retr++)
+	  (*retr)->init((*retr)->name);
+
+	loadFile("URBI.INI",ghost->recvQueue());
+	char resetsignal[255];
+	strcpy(resetsignal,"var __system__.resetsignal;");
+	ghost->recvQueue()->push((const ubyte*)resetsignal,strlen(resetsignal));
+	ghost->newDataAdded = true;
       }
-    }
+    else
+      {
+	//ASSERT(ghost)
+	//ASSERT(ghost->recvQueue())
+	//debug("Recv Queue: %d = %s\n",ghost->recvQueue()->dataSize());
+	/* char* cc = (char*)ghost->recvQueue()->virtualPop(ghost->recvQueue()->dataSize()-1);
+	   for (int i=0;i<ghost->recvQueue()->dataSize()-1;i++)
+	   debug("Char%i = %c\n",i,cc[i]);*/
+	//}
+	HMvariabletab::iterator findResetSignal = variabletab.find("__system__.resetsignal");
+	if (findResetSignal != variabletab.end())
+	  //if (ghost->recvQueue()->dataSize() == 0)
+	  {
+
+	    for (std::list<UConnection*>::iterator retr = connectionList.begin();
+		 retr != connectionList.end();
+		 retr++)
+	      if  ( ((*retr)->isActive()) && ((*retr) != ghost))
+		{
+		  (*retr)->send("*** Reloading\n","reset");
+
+		  loadFile("CLIENT.INI",(*retr)->recvQueue());
+		  (*retr)->newDataAdded = true;
+		}
+	    reseting = false;
+	    stage = 0;
+	  }
+      }
   }
 }
 

@@ -43,6 +43,7 @@ uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
 dist_libkernel_la_SOURCES =					\
+fwd.hh								\
 lockable.h							\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\

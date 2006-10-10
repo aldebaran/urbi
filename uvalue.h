@@ -4,7 +4,7 @@
  File: uvalue.h\n
  Definition of the UValue class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -23,6 +23,7 @@
 #define UVALUE_H_DEFINED
 
 #include "memorymanager/memorymanager.h"
+#include "fwd.hh"
 #include "utypes.h"
 #include "ustring.h"
 #include "ufloat.h"
@@ -36,9 +37,6 @@ namespace urbi {
   class UList;
 };
 
-class UBinary;
-class UConnection;
-
 
 // *****************************************************************************
 //! Contains a value: can be numeric, string, binary
@@ -51,7 +49,7 @@ public:
   UValue(const char* str);
   UValue(const urbi::UValue&);
 
-  UValue & operator = (const urbi::UBinary&); 
+  UValue & operator = (const urbi::UBinary&);
   UValue & operator = (const urbi::UImage &);
   UValue & operator = (const urbi::USound &);
   UValue & operator = (const urbi::UList &);
@@ -66,8 +64,8 @@ public:
 
   ufloat val; // must be out of the union in case of reimplementation
   union {    ///< union of the possible types
-    UString *str;    
-    URefPt<UBinary> *refBinary;    
+    UString *str;
+    URefPt<UBinary> *refBinary;
   };
 
   long eventid; ///< Used to identify the events from which the boolean value come from

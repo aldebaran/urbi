@@ -24,20 +24,9 @@
 
 #include <list>
 
+#include "fwd.hh"
 #include "ustring.h"
 #include "ubinder.h"
-class UVariableName;
-class UValue;
-class UVariable;
-class UFunction;
-class UCommand_EMIT;
-
-namespace urbi
-{
-  class baseURBIStarter;
-}
-
-
 
 
 

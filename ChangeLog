@@ -1,5 +1,17 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	fwd.hh.
+	* fwd.hh: New.
+	* unamedparameters.h, uvalue.h, ucommand.h, uexpression.h,
+	* utypes.h, ucommandqueue.h, ugroup.h, ughostconnection.h,
+	* ueventhandler.h, uvariablelist.h, ufunction.h,
+	* uconnection.h, ubinder.h, userver.cc, userver.h, uobj.h,
+	* uvariable.h, uvariablename.h, ucallid.h:
+	Use it.
+	* Makefile.am: Adjust.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	uobject.cc in urbi::.
 	* uobject/uobject.cc:  Define in urbi:: the entities declared in it.
 

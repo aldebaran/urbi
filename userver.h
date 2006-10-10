@@ -22,6 +22,7 @@
 #ifndef USERVER_H_DEFINED
 # define USERVER_H_DEFINED
 
+# include "fwd.hh"
 # include "utypes.h"
 # include "parser/uparser.h"
 # include "ufunction.h"
@@ -29,14 +30,6 @@
 # include "ubinder.h"
 
 # define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
-
-class UConnection;
-class UGhostConnection;
-class UQueue;
-class UServer;
-class UString;
-class UValue;
-class UVariable;
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -65,10 +58,7 @@ extern  class UServer   *urbiserver; // Global variable for the server
 class UServer
 {
 public:
-
-  UServer(ufloat frequency,
-	  int freeMemory,
-	  const char* mainName);
+  UServer(ufloat frequency, int freeMemory, const char* mainName);
 
   virtual ~UServer();
 
