@@ -3,7 +3,7 @@ m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
 AC_INIT([liburbi-c++], [1.0-b2], [bugs@gostai.com],
-        [liburbi-c++])
+	[liburbi-c++])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
@@ -35,14 +35,15 @@ AC_PROG_LIBTOOL
 # X11.
 AC_PATH_XTRA
 AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
-AC_ARG_ENABLE([examples], [AC_HELP_STRING([--enable-examples], [compile the examples (default:yes)])], 
-	[case "${enableval}" in
-  	yes) examples=true ;;
-  	no)  examples=false ;;
-  *) AC_MSG_ERROR(bad value ${enableval} for --enable-examples) ;;
-esac],[examples=true])
 
-AM_CONDITIONAL(EXAMPLES, test x$examples = xtrue)
+# Examples.
+AC_ARG_ENABLE([examples],
+	      [AC_HELP_STRING([--disable-examples],
+			      [do no compile the examples])],
+	      [], [enable_examples=yes])
+AC_MSG_CHECKING([whether compiling the examples])
+AC_MSG_RESULT([$enable_examples])
+AM_CONDITIONAL(EXAMPLES, test x"$enable_examples" = xyes)
 
 # Pthreads.
 URBI_PTHREAD
