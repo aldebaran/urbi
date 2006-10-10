@@ -184,3 +184,12 @@ memorymanagerdir = $(kernelincludedir)/memorymanager
 memorymanager_HEADERS =				\
 memorymanager/blockmemorymanager.h		\
 memorymanager/memorymanager.h
+
+
+## ---------- ##
+## uconsole.  ##
+## ---------- ##
+
+noinst_PROGRAMS = uconsole
+uconsole_SOURCES = console.cc
+uconsole_LDADD = libkernel.la

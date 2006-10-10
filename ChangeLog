@@ -1,5 +1,11 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	console.
+	* console.cc: New.
+	* Makefile.am: Compile it.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	Hook liburbi to SUBDIRS.
 	* Makefile.am (liburbi-ci): New .
 
