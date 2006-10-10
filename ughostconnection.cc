@@ -61,7 +61,8 @@ UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 {
   char tmpbuf[1024];
   int real_length = length;
-  if (real_length>=1024) real_length = 1023;
+  if (real_length>=1024)
+    real_length = 1023;
 
   memcpy((void*)tmpbuf,(void*)buffer,real_length);
   tmpbuf[real_length]=0;

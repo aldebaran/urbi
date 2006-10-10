@@ -30,8 +30,8 @@ inline long long utime()
 }
 #endif
 
-class ConsoleServer: 
-  public UServer 
+class ConsoleServer
+  : public UServer 
 {
 public:
   ConsoleServer(int freq) 

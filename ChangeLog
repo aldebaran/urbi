@@ -1,5 +1,13 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes.
+	* userver.cc: Do it.
+	* console.cc: Idem.
+	* ughostconnection.cc: Idem.
+	* liburbi-c++/src/liburbi/uabstractclient.cpp: Idem.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	console.
 	* console.cc: New.
 	* Makefile.am: Compile it.

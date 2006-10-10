@@ -32,8 +32,8 @@
 #include "uobject.h"
 
 #ifdef _MSC_VER
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
+# define snprintf _snprintf
+# define vsnprintf _vsnprintf
 #endif
 // Global server reference
 UServer    *urbiserver= 0;
@@ -87,10 +87,7 @@ UServer::UServer(ufloat frequency,
   securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
   this->mainName = new UString(mainName);
 
-  if (securityBuffer_ == 0)
-    memoryOverflow = true;
-  else
-    memoryOverflow = false;
+  memoryOverflow = securityBuffer_ == 0;
 
   isolate_        = false;
   debugOutput     = false;
@@ -163,7 +160,7 @@ UServer::initialization()
 
   // Ghost connection
   ghost  = new UGhostConnection(this);
-  connectionList.push_front((UConnection*)ghost);
+  connectionList.push_front(ghost);
 
   char tmpbuffer_ghostTag[50];
   sprintf(tmpbuffer_ghostTag,"U%ld",(long)ghost);
@@ -184,8 +181,6 @@ UServer::initialization()
       retr != urbi::objectlist->end();
       retr++)
     (*retr)->init((*retr)->name);
-
-
 
   if (loadFile("URBI.INI",ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
@@ -321,23 +316,22 @@ UServer::work()
   for (std::list<UConnection*>::iterator retr = connectionList.begin();
        retr != connectionList.end();
        retr++)
-    if  ( ((*retr)->isActive()) &&
-	  ((*retr)->activeCommand) )
-
-      if ( ((*retr)->killall) ||
-	   (stopall) ) {
-	(*retr)->killall = false;
-	delete (*retr)->activeCommand;
-	(*retr)->activeCommand = 0;
+    if  ((*retr)->isActive() && (*retr)->activeCommand)
+      {
+	if ((*retr)->killall || stopall)
+	  {
+	    (*retr)->killall = false;
+	    delete (*retr)->activeCommand;
+	    (*retr)->activeCommand = 0;
+	  }
+	else if ((*retr)->activeCommand->toDelete)
+	  {
+	    delete (*retr)->activeCommand;
+	    (*retr)->activeCommand = 0;
+	  }
+	else if (somethingToDelete)
+	  (*retr)->activeCommand->deleteMarked();
       }
-      else
-	if ((*retr)->activeCommand->toDelete) {
-	  delete (*retr)->activeCommand;
-	  (*retr)->activeCommand = 0;
-	}
-	else
-	  if (somethingToDelete)
-	    (*retr)->activeCommand->deleteMarked();
 
   somethingToDelete = false;
   stopall = false;
@@ -365,20 +359,21 @@ UServer::work()
       (*iter)->reloop = false;
 
       if (((*iter)->blendType == UMIX) || ((*iter)->blendType == UADD))
-	if ((*iter)->value->dataType == DATA_NUM) {
-
-	  if ((*iter)->autoUpdate)
-	    selfError = (*iter)->selfSet ( &((*iter)->value->val) );
-	  else
-	    selfError = (*iter)->selfSet ( &((*iter)->target) );
-	}
+	if ((*iter)->value->dataType == DATA_NUM)
+	  {
+	    if ((*iter)->autoUpdate)
+	      selfError = (*iter)->selfSet ( &((*iter)->value->val) );
+	    else
+	      selfError = (*iter)->selfSet ( &((*iter)->target) );
+	  }
 
       // set previous for next iteration
       (*iter)->previous3 = (*iter)->previous2;
       (*iter)->previous2 = (*iter)->previous;
       (*iter)->previous  = (*iter)->target;
 
-      if ((*iter)->speedmodified) (*iter)->reloop = true;
+      if ((*iter)->speedmodified)
+	(*iter)->reloop = true;
       (*iter)->speedmodified = false;
 
       iter++;
@@ -390,11 +385,11 @@ UServer::work()
        ittt != urbi::updatemap.end();
        ittt++)
     if ((*ittt)->lastTimeCalled - currentTime + (*ittt)->period <
-	frequency_ / 2) {
-
-      (*ittt)->call();
-      (*ittt)->lastTimeCalled = currentTime;
-    }
+	frequency_ / 2)
+      {
+	(*ittt)->call();
+	(*ittt)->lastTimeCalled = currentTime;
+      }
 
 
   //reinitList.clear();
@@ -406,28 +401,26 @@ UServer::work()
   cpuload = (latestTime - currentTime)/getFrequency();
 
   if (!cpuoverload)
-    if  (cpuload > cputhreshold) {
-
-      cpucount++;
-      if (cpucount > 10) {
-	cpucount = 0;
-	cpuoverload = true;
-	signalcpuoverload = true;
+    if  (cpuload > cputhreshold)
+      {
+	cpucount++;
+	if (cpucount > 10) {
+	  cpucount = 0;
+	  cpuoverload = true;
+	  signalcpuoverload = true;
+	}
       }
+    else if (cpucount > 0)
+      cpucount--;
+
+  if (cpuoverload && cpuload < 1)
+    {
+      cpuoverload = false;
+      cpucount = 0;
     }
-    else
-      if (cpucount > 0) cpucount--;
-
-  if ((cpuoverload) &&
-      (cpuload < 1)) {
-
-    cpuoverload = false;
-    cpucount = 0;
-  }
 
   // Reseting procedure
   if (reseting) {
-
     stage++;
     if (stage == 1)
       {
@@ -462,8 +455,7 @@ UServer::work()
 
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
 	     it != varToReset.end();++it)
-	  delete (*it);
-
+	  delete *it;
 
 	blocktab.clear();
 	freezetab.clear();
@@ -504,15 +496,15 @@ UServer::work()
 	   for (int i=0;i<ghost->recvQueue()->dataSize()-1;i++)
 	   debug("Char%i = %c\n",i,cc[i]);*/
 	//}
-	HMvariabletab::iterator findResetSignal = variabletab.find("__system__.resetsignal");
+	HMvariabletab::iterator findResetSignal
+	  = variabletab.find("__system__.resetsignal");
 	if (findResetSignal != variabletab.end())
 	  //if (ghost->recvQueue()->dataSize() == 0)
 	  {
-
 	    for (std::list<UConnection*>::iterator retr = connectionList.begin();
 		 retr != connectionList.end();
 		 retr++)
-	      if  ( ((*retr)->isActive()) && ((*retr) != ghost))
+	      if  ((*retr)->isActive() && (*retr) != ghost)
 		{
 		  (*retr)->send("*** Reloading\n","reset");
 
@@ -789,11 +781,11 @@ UServer::memoryCheck ()
 {
   static bool warningSent = false;
 
-  if (usedMemory > availableMemory) {
-
-    memoryOverflow = true;
-    isolate_ = true;
-  }
+  if (usedMemory > availableMemory)
+    {
+      memoryOverflow = true;
+      isolate_ = true;
+    }
 
   // Issue a warning when memory reaches 80% of use (except if you know what
   // you are doing, you better take appropriate measures when this warning
@@ -833,19 +825,20 @@ UServer::memory()
   memo  = 50000000;
   memo1 = 0;
   memo2 = memo;
-  while (memo2 > memo1+1) {
-
-    memo = (memo1 + memo2)/2;
-    buf = malloc(memo);
-    if (buf) {
-      free(buf);
-      memo1 = memo;
+  while (memo2 > memo1+1)
+    {
+      memo = (memo1 + memo2)/2;
+      buf = malloc(memo);
+      if (buf)
+	{
+	  free(buf);
+	  memo1 = memo;
+	}
+      else
+	memo2 = memo;
     }
-    else
-      memo2 = memo;
-  }
 
-  return (memo);
+  return memo;
 }
 
 //! Get a variable in the hash table
@@ -909,7 +902,7 @@ UServer::saveFile (const char *filename, const char * content)
 void
 UServer::addConnection(UConnection *connection)
 {
-  if ((connection == 0) || (connection->UError != USUCCESS))
+  if (connection == 0 || connection->UError != USUCCESS)
       error(::DISPLAY_FORMAT1,(long)this,
 	    "UServer::addConnection",
 	    "UConnection constructor failed");
@@ -939,28 +932,30 @@ UServer::removeConnection(UConnection *connection)
 int
 UServer::addAlias(const char* id, const char* variablename)
 {
-  if (strcmp(id, variablename)==0) return(0);
+  if (strcmp(id, variablename)==0)
+    return 0;
 
   const char* newobj = variablename;
   HMaliastab::iterator getobj = ::urbiserver->aliastab.find(newobj);
 
-  while (getobj != ::urbiserver->aliastab.end()) {
+  while (getobj != ::urbiserver->aliastab.end())
+    {
+      newobj = (*getobj).second->str();
+      if (strcmp(newobj,id)==0)
+	return 0;
 
-    newobj = (*getobj).second->str();
-    if (strcmp(newobj,id)==0) return(0);
+      getobj = ::urbiserver->aliastab.find(newobj);
+    }
 
-    getobj = ::urbiserver->aliastab.find(newobj);
-  };
-
-  if (aliastab.find(id) != aliastab.end()) {
-
-    UString *alias = aliastab[id];
-    alias->update(variablename);
-  }
-  else {
-
-    UString *ids = new UString(id); // persistant, no delete associated
-    aliastab[ids->str()] = new UString(variablename);
-  }
-  return (1);
+  if (aliastab.find(id) != aliastab.end())
+    {
+      UString *alias = aliastab[id];
+      alias->update(variablename);
+    }
+  else
+    {
+      UString *ids = new UString(id); // persistant, no delete associated
+      aliastab[ids->str()] = new UString(variablename);
+    }
+  return 1;
 }
