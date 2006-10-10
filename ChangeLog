@@ -1,5 +1,10 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	Install fwd.hh.
+	* Makefile.am: Do it.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	Use liburbi as an svn:externals.
 	* configure.ac: Configure the subpackage liburbi-c++.
 	* uobject/uobject.h, uobject/uext.h, uobject/common_uvalue.cc:

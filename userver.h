@@ -211,14 +211,14 @@ private:
   UGhostConnection *ghost;
 };
 
-//! Accessor for frequency_
+//! Accessor for frequency_.
 inline ufloat
 UServer::getFrequency()
 {
   return frequency_;
 }
 
-//! Accessor for lastTime_
+//! Accessor for lastTime_.
 inline ufloat
 UServer::lastTime()
 {
@@ -227,7 +227,8 @@ UServer::lastTime()
 
 extern int URBI_unicID;
 
-inline int unic() {
+inline int unic() 
+{
   URBI_unicID++;
   return( URBI_unicID );
 }

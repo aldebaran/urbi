@@ -141,6 +141,7 @@ windows/urbikernel/urbikernel.vcproj
 # This is a kludge: for the time being, install all the server include
 # files for the cores.
 kernelinclude_HEADERS =				\
+fwd.hh						\
 lockable.h					\
 ubinary.h					\
 ubinder.h					\
@@ -148,13 +149,14 @@ ucallid.h					\
 ucommand.h					\
 ucommandqueue.h					\
 uconnection.h					\
+ueventhandler.h					\
 uexpression.h					\
 ufloat.h					\
 ufunction.h					\
 ughostconnection.h				\
 ugroup.h					\
 unamedparameters.h				\
-uobj.h 						\
+uobj.h						\
 uproperty.h					\
 uqueue.h					\
 userver.h					\
@@ -163,8 +165,7 @@ utypes.h					\
 uvalue.h					\
 uvariable.h					\
 uvariablelist.h					\
-uvariablename.h  \
-ueventhandler.h
+uvariablename.h
 
 uobjectdir = $(kernelincludedir)/uobject
 uobject_HEADERS = uobject/uobject.h uobject/uext.h

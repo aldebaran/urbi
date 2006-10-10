@@ -4,7 +4,7 @@
  File: ughostconnection.cc\n
  Implementation of the UGhostConnection class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -27,13 +27,13 @@
 class UServer;
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection  ( UServer * mainserver) : 
+UGhostConnection::UGhostConnection  ( UServer * mainserver) :
   UConnection   ( mainserver,
-                  UGhostConnection::MINSENDBUFFERSIZE,
-                  UGhostConnection::MAXSENDBUFFERSIZE,
-                  UGhostConnection::PACKETSIZE, 
-                  UGhostConnection::MINRECVBUFFERSIZE,
-                  UGhostConnection::MAXRECVBUFFERSIZE )
+		  UGhostConnection::MINSENDBUFFERSIZE,
+		  UGhostConnection::MAXSENDBUFFERSIZE,
+		  UGhostConnection::PACKETSIZE,
+		  UGhostConnection::MINRECVBUFFERSIZE,
+		  UGhostConnection::MAXRECVBUFFERSIZE )
 {
   ADDOBJ(UGhostConnection);
 
@@ -41,7 +41,7 @@ UGhostConnection::UGhostConnection  ( UServer * mainserver) :
 }
 
 //! UGhostConnection destructor.
-UGhostConnection::~UGhostConnection() 
+UGhostConnection::~UGhostConnection()
 {
   FREEOBJ(UGhostConnection);
 }
@@ -49,8 +49,8 @@ UGhostConnection::~UGhostConnection()
 //! Close the connection
 /*! This function does nothing. The ghost connection cannot be closed.
 */
-UErrorValue 
-UGhostConnection::closeConnection() 
+UErrorValue
+UGhostConnection::closeConnection()
 {
   return (USUCCESS);
 }
@@ -58,15 +58,15 @@ UGhostConnection::closeConnection()
 //! Does nothing. No output for the ghosts...
 int
 UGhostConnection::effectiveSend(const ubyte *buffer, int length)
-{  
+{
   char tmpbuf[1024];
   int real_length = length;
   if (real_length>=1024) real_length = 1023;
 
   memcpy((void*)tmpbuf,(void*)buffer,real_length);
   tmpbuf[real_length]=0;
-  
+
   ::urbiserver->debug(tmpbuf);
-  
+
   return length;
 }
