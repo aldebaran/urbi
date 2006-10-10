@@ -25,23 +25,12 @@
 #ifndef UPARSER_H_DEFINED
 # define UPARSER_H_DEFINED
 
-# include <cstdlib>
-
-# include <strstream>
-# include <sstream>
-# include <algorithm>
 # include <string>
-# ifdef _MSC_VER
-#  ifdef min
-#   undef min
-#  endif
-# endif
 # include "utypes.h"
 # undef IN
 
 # include "parser/bison/ugrammar.hh"
 # include "parser/bison/FlexLexer.h"
-# include "parser/bison/location.hh"
 
 class UCommand_TREE;
 
@@ -49,11 +38,7 @@ class UCommand_TREE;
 # define YY_DECL                                                 \
   yy::parser::token_type					 \
   yyFlexLexer::yylex(yy::parser::semantic_type* valp,		 \
-		     yy::location* locp, UParser& uparser)
-
-// Parse function of 'bison' is defined externally
-extern char errorMessage[1024];
-extern UString** globalDelete;
+		     yy::parser::location_type* locp, UParser& uparser)
 
 //! Control class for a flex-scanner
 /*! It has a pointer to the uparser in which it is contained
@@ -62,10 +47,8 @@ class UFlexer
   : public yyFlexLexer
 {
 public:
-  UFlexer(void *_uparser) : uparser(_uparser) {}
-
-  void * get_uparser() const { return uparser; }
-
+  UFlexer(void *_uparser);
+  void* UFlexer::get_uparser() const;
 private:
   void *uparser;
 };
@@ -80,58 +63,20 @@ class UParser
 {
 public:
   // friend int yylex(yy::parser::semantic_type *lvalp, void *compiler);
+  UParser();
 
-  UParser() : uflexer(this) {}
-
-  // Parse the command from a stream (this is how flex C++ handles it,
-  // no choice).
-  int process(ubyte* command, int length, UConnection* connection_)
-  {
-    connection = connection_;
-    commandTree = 0;
-    result = 0;
-
-    std::istrstream * mem_buff = new std::istrstream((char*)command, length);
-    if (!mem_buff) return -1;
-
-    std::istream* mem_input = new std::istream(mem_buff->rdbuf());
-    if (!mem_input) {
-      delete mem_buff;
-      return -1;
-    }
-
-    uflexer.switch_streams(&(*mem_input), 0);// Tells flex the right stream
-    binaryCommand = false;
-
-    yy::parser p(*this);
-    p.set_debug_level (!!getenv ("YYDEBUG"));
-    result = p.parse();
-
-    delete mem_input;
-    delete mem_buff;
-
-    return result;
-  }
+  /// Parse the command from a stream.
+  /// (this is how flex C++ handles it, no choice).
+  int process(ubyte* command, int length, UConnection* connection_);
 
   UConnection   *connection;
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
   yy::parser::token_type scan(yy::parser::semantic_type* val,
-			      yy::location* loc)
-  {
-    return uflexer.yylex(val,loc,*this);
-  }
+			      yy::parser::location_type* loc);
 
-  void error (const yy::location& l, const std::string& msg)
-  {
-    std::ostringstream sstr;
-
-    sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
-    strncpy(errorMessage, sstr.str().c_str(),
-	    std::min(sizeof (errorMessage), sstr.str().size()));
-
-  }
+  void error (const yy::parser::location_type& l, const std::string& msg);
 
 private:
   // The scanner used in this parser (it is a flex-scanner)

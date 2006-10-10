@@ -46,6 +46,7 @@ dist_libkernel_la_SOURCES =					\
 lockable.h							\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
+parser/uparser.h parser/uparser.cc				\
 ubanner.hh ubanner.cc						\
 ubinary.h ubinary.cc						\
 ubinder.h ubinder.cc						\
@@ -53,6 +54,7 @@ ucallid.h ucallid.cc						\
 ucommand.h ucommand.cc						\
 ucommandqueue.h ucommandqueue.cc				\
 uconnection.h uconnection.cc					\
+ueventhandler.h ueventhandler.cc				\
 uexpression.h uexpression.cc					\
 ufloat.h ufloat.cc						\
 ufunction.h ufunction.cc					\
@@ -72,9 +74,7 @@ utypes.h							\
 uvalue.h uvalue.cc						\
 uvariable.h uvariable.cc					\
 uvariablelist.h uvariablelist.cc				\
-uvariablename.h uvariablename.cc \
-ueventhandler.h ueventhandler.cc
-
+uvariablename.h uvariablename.cc
 
 # We build for aibo, or posix.
 if NETWORK_OPENR
@@ -108,7 +108,7 @@ EXTRA_DIST +=					\
 parser/uparser.h
 
 # parser/bison.
-# This case is handled by parser/bison/Makefile.defs itself.
+# This case is handled by parser/bison/bison.mk itself.
 
 # windows.
 EXTRA_DIST +=					\
