@@ -26,7 +26,7 @@ nodist_libkernel_la_SOURCES = $(FROM_UGRAMMAR_Y)
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 EXTRA_DIST += $(parsedir)/ugrammar.y
-ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN)
+ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN) $(parsedir)/bison.mk
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
@@ -57,7 +57,7 @@ dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h
 nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parsedir)/utoken.l
-utoken.stamp: $(parsedir)/utoken.l
+utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk
 	@rm -f $@.tmp
 	@touch $@.tmp
 	$(FLEX) -+ -outoken.cc $(parsedir)/utoken.l

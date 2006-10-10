@@ -1,3 +1,10 @@
+2006-10-10  matthieu nottale  <nottale@gostai.com>
+
+	Env defaults to engine. Add build dependency on bison.mk 
+
+	* configure.ac: Default env is engine.
+	* parser/bison/bison.mk: Add dependency on bison.mk.
+
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
 	More robustness against flex 2.5.4.

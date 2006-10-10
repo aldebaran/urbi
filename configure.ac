@@ -15,7 +15,7 @@ AM_INIT_AUTOMAKE([1.9.6 foreign -Wall dist-zip])
 ## Parameters.  ##
 ## ------------ ##
 
-URBI_KERNEL_DIRS([posix])
+URBI_KERNEL_DIRS([engine])
 
 URBI_DOC
 
