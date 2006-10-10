@@ -10,7 +10,22 @@
 
 include $(top_srcdir)/build-aux/build-aux.mk
 
-# Initialization.
+## --------- ##
+## liburbi.  ##
+## --------- ##
+
+# We use some of its files, so to ensure a correct synchronization, we
+# pin the revision we're using.  These targets simplify upgrading the
+# pin revision.
+.PHONY: liburbi-up
+liburbi-up:
+	cd $(top_srcdir) && build-aux/svn-externals --update=liburbi-c++
+
+
+## ---------------- ##
+## Initialization.  ##
+## ---------------- ##
+
 BUILT_SOURCES =
 CLEANFILES =
 EXTRA_DIST =

@@ -1,1 +1,1 @@
-../../liburbi/liburbi-cpp/src/liburbi/uobject/uobject.h
+../liburbi-c++/src/liburbi/uobject/uobject.h

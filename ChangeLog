@@ -1,5 +1,14 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	Use liburbi as an svn:externals.
+	* configure.ac: Configure the subpackage liburbi-c++.
+	* uobject/uobject.h, uobject/uext.h, uobject/common_uvalue.cc:
+	Point to the local version of liburbi-c++.
+	* Makefile.am (liburbi-up): New.
+	To be used to upgrade the version of liburbi used.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	fwd.hh.
 	* fwd.hh: New.
 	* unamedparameters.h, uvalue.h, ucommand.h, uexpression.h,

@@ -41,6 +41,11 @@ URBI_OPENR
 AM_CONDITIONAL([NETWORK_OPENR],  [$openr])
 
 
+## ------------- ##
+## liburbi C++.  ##
+## ------------- ##
+AC_CONFIG_SUBDIRS([liburbi-c++])
+
 ## -------- ##
 ## Output.  ##
 ## -------- ##
