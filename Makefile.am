@@ -17,9 +17,16 @@ include $(top_srcdir)/build-aux/build-aux.mk
 # We use some of its files, so to ensure a correct synchronization, we
 # pin the revision we're using.  These targets simplify upgrading the
 # pin revision.
-.PHONY: liburbi-up
+.PHONY: liburbi-up liburbi-ci
+
+# Update the dependency on liburbi.
 liburbi-up:
 	cd $(top_srcdir) && build-aux/svn-externals --update=liburbi-c++
+
+# Checkin the sub liburbi, and update the dependency.
+liburbi-ci:
+	cd $(top_srcdir)/liburbi-c++ && vcs-svn ci
+	$(MAKE) $(AM_MAKEFLAGS) liburbi-up
 
 
 ## ---------------- ##
@@ -33,7 +40,7 @@ EXTRA_DIST =
 ## Autoconf extensions.
 ACLOCAL_AMFLAGS = -I build-aux
 
-SUBDIRS = . doc
+SUBDIRS = liburbi-c++ . doc
 
 AM_CPPFLAGS = -I$(srcdir)/uobject
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR -DFLOAT_DOUBLE
@@ -177,4 +184,3 @@ memorymanagerdir = $(kernelincludedir)/memorymanager
 memorymanager_HEADERS =				\
 memorymanager/blockmemorymanager.h		\
 memorymanager/memorymanager.h
-

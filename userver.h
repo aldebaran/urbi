@@ -227,7 +227,7 @@ UServer::lastTime()
 
 extern int URBI_unicID;
 
-inline int unic() 
+inline int unic()
 {
   URBI_unicID++;
   return( URBI_unicID );
