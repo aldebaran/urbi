@@ -1,11 +1,4 @@
-#include <list>
-#include <algorithm>
-using std::find;
-#ifdef WIN32
-#define _WIN32_WINNT 0x0400
-#endif
-#include "network.h"
-#include "Connection.h"
+#include <cstdio>
 
 #ifndef _MSC_VER
 #include <sys/time.h>
@@ -13,17 +6,26 @@ using std::find;
 #endif
 #include <sys/types.h>
 
-#include <stdio.h>
+#include <list>
+#include <algorithm>
+
+#ifdef WIN32
+#define _WIN32_WINNT 0x0400
+#endif
+#include "network.h"
+#include "Connection.h"
+
 
 extern UServer * THESERVER;
-namespace Network {
+namespace Network
+{
 
-
-  class TCPServerPipe: public Pipe {
+  class TCPServerPipe: public Pipe
+  {
   public:
     TCPServerPipe(): fd(-1), port(-1) {}
     bool init(int port);
-    
+
     virtual int readFD() {return fd;}
     virtual int writeFD() {return -1;}
     virtual void notifyWrite() {}
@@ -38,7 +40,7 @@ namespace Network {
     this->port = port;
     int rc;
     struct ::sockaddr_in address;
-    
+
 #ifdef WIN32
     /* initialize the socket api */
     WSADATA info;
@@ -52,13 +54,13 @@ namespace Network {
     if (fd==-1) {
       return false;
     }
-    
+
     /* set the REUSEADDR option to 1 to allow imediate reuse of the port */
     int yes = 1;
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &yes, sizeof (yes)) < 0) {
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
+		   (char *) &yes, sizeof (yes)) < 0)
       return false;
-    }
-    
+
     /* fill in socket address */
     memset(&address,0,sizeof(struct sockaddr_in));
     address.sin_family = AF_INET;
@@ -66,43 +68,44 @@ namespace Network {
     address.sin_addr.s_addr = INADDR_ANY;
     /* bind to port */
     rc = bind(fd,(struct sockaddr *)&address,sizeof(struct sockaddr));
-    if (rc==-1) {
+    if (rc==-1)
       return false;
-    }
     /* listen for connections */
-    if (listen(fd,1)==-1) {
+    if (listen(fd,1)==-1)
       return false;
-    }
-    
+
     registerNetworkPipe(this);
     return true;
   }
 
 
-  void TCPServerPipe::notifyRead() {
+  void TCPServerPipe::notifyRead()
+  {
     int cfd;
     struct sockaddr_in client;
     struct hostent* client_info;
     socklen_t asize = sizeof(struct sockaddr_in);
     cfd = accept(fd, (struct sockaddr *)&client, &asize);
-    if (cfd==-1) {
-      return ;
-    }
+    if (cfd==-1)
+      return;
+
     client_info = gethostbyname((char *)inet_ntoa(client.sin_addr));
     Connection *c = new Connection(cfd);
     THESERVER->addConnection(c);
     registerNetworkPipe(c);
   }
 
-  using std::list;
-  static list<Pipe *> pList;
+  static std::list<Pipe *> pList;
   static int controlPipe[2]={-1,-1};
-  bool createTCPServer(int port) {
+
+  bool createTCPServer(int port)
+  {
     TCPServerPipe * tsp = new TCPServerPipe();
-    if (!tsp->init(port)) {
-      delete tsp;
-      return false;
-    }
+    if (!tsp->init(port))
+      {
+	delete tsp;
+	return false;
+      }
     return true;
   }
 
@@ -110,38 +113,41 @@ namespace Network {
     FD_ZERO(&rd);
     FD_ZERO(&wr);
     int maxfd=0;
-    #ifndef WIN32
+#ifndef WIN32
     FD_SET(controlPipe[0], &rd);
     maxfd = controlPipe[0];
-    #endif   
-    for (list<Pipe *>::iterator i = pList.begin(); i != pList.end(); i++) {
-      int f= (*i)->readFD();
-      if (f>0)
-        FD_SET(f,&rd);
-      if (f>maxfd)
-        maxfd = f;
-      int g= (*i)->writeFD();
-      if (g>0)
-        FD_SET(g,&wr);
-      if (g>maxfd)
-        maxfd = g; 
-    }
+#endif
+    for (std::list<Pipe *>::iterator i = pList.begin(); i != pList.end(); i++)
+      {
+	int f= (*i)->readFD();
+	if (f>0)
+	  FD_SET(f,&rd);
+	if (f>maxfd)
+	  maxfd = f;
+	int g= (*i)->writeFD();
+	if (g>0)
+	  FD_SET(g,&wr);
+	if (g>maxfd)
+	  maxfd = g;
+      }
     return maxfd+1;
   }
 
-  void notify(fd_set &rd, fd_set &wr) {
-    list<Pipe *>::iterator in;
-    for (list<Pipe *>::iterator i = pList.begin(); i != pList.end(); i=in) {
-      in=i;
-      in++;
-      int f= (*i)->readFD();
-      if (f>=0 && FD_ISSET(f,&rd))
-	(*i)->notifyRead();
-      
-      f= (*i)->writeFD();
-      if (f>=0 && FD_ISSET(f,&wr))
-	(*i)->notifyWrite();
-    }
+  void notify(fd_set &rd, fd_set &wr)
+  {
+    std::list<Pipe *>::iterator in;
+    for (std::list<Pipe *>::iterator i = pList.begin(); i != pList.end(); i=in)
+      {
+	in=i;
+	in++;
+	int f= (*i)->readFD();
+	if (f>=0 && FD_ISSET(f,&rd))
+	  (*i)->notifyRead();
+
+	f= (*i)->writeFD();
+	if (f>=0 && FD_ISSET(f,&wr))
+	  (*i)->notifyWrite();
+      }
   }
 
 
@@ -157,42 +163,44 @@ namespace Network {
     if (r==0)
       return false;
     if (r>0) {
-      #ifndef WIN32
+#ifndef WIN32
       if (FD_ISSET(controlPipe[0],&rd)) {
-				char buf[128];
-				read(controlPipe[0], buf, 128);
-			}
-      #endif
-      notify(rd, wr);
+	char buf[128];
+	read(controlPipe[0], buf, 128);
       }
-    if (r<0) {
+#endif
+      notify(rd, wr);
+    }
+    if (r<0)
       //XXX this is baad, we should realy do something
       perror("SELECT ERROR:");
-    }
-	return (r>0);
+
+    return r>0;
   }
 
 
-  void registerNetworkPipe(Pipe *p) {
+  void registerNetworkPipe(Pipe *p)
+  {
     pList.push_back(p);
-    #ifndef WIN32
-    if (controlPipe[0]==-1) {
+#ifndef WIN32
+    if (controlPipe[0]==-1)
       pipe(controlPipe);
-    }
+
     p->controlFd = controlPipe[1];
-    #endif
+#endif
   }
-  void unregisterNetworkPipe(Pipe *p) {
-    list<Pipe *>::iterator i = find(pList.begin(), pList.end(), p);
+  void unregisterNetworkPipe(Pipe *p)
+  {
+    std::list<Pipe *>::iterator i = std::find(pList.begin(), pList.end(), p);
     if (i != pList.end())
-      pList.erase(i); 
+      pList.erase(i);
   }
 
 #ifdef WIN32
-static const int delay = 10000;
+  static const int delay = 10000;
   DWORD WINAPI
 #else
-static const int delay = 1000000;
+  static const int delay = 1000000;
   void *
 #endif
   processNetwork(void * useless) {
@@ -201,22 +209,22 @@ static const int delay = 1000000;
     }
   }
 
-  
+
   void startNetworkProcessingThread() {
-    #ifdef WIN32
+#ifdef WIN32
     DWORD tid;
     CreateThread(NULL,0,processNetwork,0,0,&tid);
-    #else
+#else
     pthread_t * pt = new pthread_t;
     pthread_create(pt, 0, &processNetwork, 0);
-    #endif
+#endif
   }
-  
-  
+
+
   void Pipe::trigger() {
-    #ifndef WIN32
+#ifndef WIN32
     char  c = 0;
     write(this->controlFd, &c, 1);
-    #endif
+#endif
   }
 };

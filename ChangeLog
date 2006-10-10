@@ -1,3 +1,8 @@
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
+	* network/bsdnet/network.h, network/bsdnet/network.cc, 
+	* uconnection.cc, ucommand.cc: Formatting changes.
+
 2006-10-09  Akim Demaille  <akim@lrde.epita.fr>
 
 	pin baux.

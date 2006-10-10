@@ -2686,7 +2686,7 @@ UCommand_NEW::execute(UConnection *connection)
   morph = 0;
   char tmpprefixnew[1024];
 
-	if (!id) 
+	if (!id)
 	{ // init id
 		if (!varname->nostruct)
 		{
@@ -2697,7 +2697,7 @@ UCommand_NEW::execute(UConnection *connection)
       return ((status = UCOMPLETED));
 		}
     UString* name = varname->buildFullname(this, connection, false);
-		id = new UString(name->str());		
+		id = new UString(name->str());
 	}
 
   if (!id)
@@ -2705,8 +2705,8 @@ UCommand_NEW::execute(UConnection *connection)
   if (!obj)
     return ((status = UCOMPLETED));
 
-  if (id->equal(obj)) 
-  {	
+  if (id->equal(obj))
+  {
     snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	 "!!! Object %s cannot new itself\n",obj->str());
     connection->send(tmpbuffer,tag->str());
@@ -2819,11 +2819,11 @@ UCommand_NEW::execute(UConnection *connection)
 	{
 		// detects if init exists for the object or somewhere in the hierarchy
 		bool ambiguous;
-	  initfun = newobj->searchFunction("init",ambiguous);	
+	  initfun = newobj->searchFunction("init",ambiguous);
 	}
 
 	if (parameters || (initfun != 0) || component) {
-		
+
 		oss << tmpval << UU << "=" << id->str() << ".init(";
 
 		for (UNamedParameters *pvalue = parameters;
@@ -2836,7 +2836,7 @@ UCommand_NEW::execute(UConnection *connection)
 				connection->send("!!! EXPR evaluation failed\n",tag->str());
 				snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 						"{delete %s}",id->str());
-				
+
 				morph = (UCommand*)
 					new UCommand_EXPR(
 							new UExpression(
@@ -2852,11 +2852,11 @@ UCommand_NEW::execute(UConnection *connection)
 							);
 				return (status = UMORPH);
 			}
-			
+
 			oss << valparam->echo();
 			if (pvalue->next) oss << ",";
 		}
-		
+
 		oss << ") | if (!isdef(" << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
 			<< tmpval << UU << ")))) { "
 			<< "echo \"Error: Constructor failed, objet deleted\";"

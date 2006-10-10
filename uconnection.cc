@@ -46,7 +46,7 @@ char errorMessage[1024]; // Global variable (thanks bison...) to store the
     memory occupation evaluation. Symmetricaly, you must call
     FREEOBJ(nameofsubclass) in the UConnection destructor. "nameofsubclass" is
     the name of the sub class used (which will be evaluated with a sizeof
-    operator). ADDOBJ and FREEOBJ macros are in utypes.h
+    operator). ADDOBJ and FREEOBJ macros are in utypes.h.
 
     \param userver is the server to which the connection belongs
     \param minSendBufferSize UConnection uses an adaptive dynamic queue (UQueue)
@@ -103,7 +103,7 @@ UConnection::UConnection  (UServer *userver,
   sendQueue_       = new UQueue(minSendBufferSize,
 				maxSendBufferSize,
 				sendAdaptive_);
-  if ((sendQueue_ == 0) || (sendQueue_->UError == UFAIL)) {
+  if (sendQueue_ == 0 || sendQueue_->UError == UFAIL) {
     UError = UFAIL;
     return;
   }
@@ -112,7 +112,7 @@ UConnection::UConnection  (UServer *userver,
   recvQueue_       = new UCommandQueue(minRecvBufferSize,
 				       maxRecvBufferSize,
 				       sendAdaptive_);
-  if ((recvQueue_ == 0) || (recvQueue_->UError == UFAIL)) {
+  if (recvQueue_ == 0 || recvQueue_->UError == UFAIL) {
     UError = UFAIL;
     delete sendQueue_;
     sendQueue_ = 0;
@@ -516,111 +516,113 @@ UConnection::received (const ubyte *buffer, int length)
       length = 0;
     }
 
-    if (length !=0) {
+    if (length !=0)
+      {
+	errorMessage[0] = 0; // no error at start (errorMessage string is empty)
 
-      errorMessage[0] = 0; // no error at start (errorMessage string is empty)
+	server->parser.commandTree = 0;
+	server->systemcommands = false;
+	int result = server->parser.process(command, length, this);
+	server->systemcommands = true;
 
-      server->parser.commandTree = 0;
-      server->systemcommands = false;
-      int result = server->parser.process(command, length, this);
-      server->systemcommands = true;
-
-      if (result == -1)
-	{
-	  server->isolate();
-	  server->memoryOverflow = true;
-	}
-      server->memoryCheck();
+	if (result == -1)
+	  {
+	    server->isolate();
+	    server->memoryOverflow = true;
+	  }
+	server->memoryCheck();
 
 
-      // Xtrem memory recovery in case of anomaly
-      if (server->memoryOverflow)
-	if (server->parser.commandTree)
+	// Xtrem memory recovery in case of anomaly
+	if (server->memoryOverflow
+	    && server->parser.commandTree)
 	  {
 	    delete server->parser.commandTree;
 	    server->parser.commandTree = 0;
 	  }
 
-      // Error Message handling
-      if (errorMessage[0] != 0 &&
-	  !server->memoryOverflow)
-	{
-	  // a parsing error occured
-	  if (server->parser.commandTree)
-	    {
-	      delete server->parser.commandTree;
-	      server->parser.commandTree = 0;
-	    }
-
-	  send(errorMessage,"error");
-
-	  errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
-	  errorMessage[ 42 ] = 0; // cut at 41 characters
-	  server->error(::DISPLAY_FORMAT,(long)this,
-			"UConnection::received",
-			errorMessage);
-	}
-      else if (server->parser.commandTree)
-	if (server->parser.commandTree->command1)
+	// Error Message handling
+	if (errorMessage[0] != 0
+	    && !server->memoryOverflow)
 	  {
-	    // Process "commandTree"
-
-	    // CMD_ASSIGN_BINARY: intercept and execute immediately
-	    if (server->parser.binaryCommand)
+	    // a parsing error occured
+	    if (server->parser.commandTree)
 	      {
-		binCommand = ((UCommand_ASSIGN_BINARY*)
-			      server->parser.commandTree->command1);
-
-		ubyte* buffer = recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
-
-		if (buffer)
-		  { // the binary was all in the queue
-		    memcpy(binCommand->refBinary->ref()->buffer,
-			   buffer,
-			   binCommand->refBinary->ref()->bufferSize);
-		  }
-		else
-		  {
-		    // not all was there, must set receiveBinary mode on
-		    transferedBinary_ = recvQueue_->dataSize();
-		    memcpy(binCommand->refBinary->ref()->buffer,
-			   recvQueue_->pop(transferedBinary_),
-			   transferedBinary_);
-		    receiveBinary_ = true;
-		  }
-	      }
-
-	    // Pile the command
-	    if (!receiveBinary_)
-	      {
-		//::urbiserver->debug("Received - 5i.\n"); //TRASHME
-
-		// immediate execution of simple commands
-
-		if (!obstructed) {
-		  server->parser.commandTree->up = 0;
-		  server->parser.commandTree->position = 0;
-		  execute(server->parser.commandTree);
-		  if ((server->parser.commandTree) &&
-		      (server->parser.commandTree->status == URUNNING))
-		    obstructed = true;
-		}
-
-		if (server->parser.commandTree)
-		  append(server->parser.commandTree);
-
+		delete server->parser.commandTree;
 		server->parser.commandTree = 0;
 	      }
-	  } // command1
-    }
-  } while ( (length != 0) &&
-	    (!receiveBinary_) &&
-	    (!server->memoryOverflow));
+
+	    send(errorMessage,"error");
+
+	    errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
+	    errorMessage[ 42 ] = 0; // cut at 41 characters
+	    server->error(::DISPLAY_FORMAT,(long)this,
+			  "UConnection::received",
+			  errorMessage);
+	  }
+	else if (server->parser.commandTree)
+	  if (server->parser.commandTree->command1)
+	    {
+	      // Process "commandTree"
+
+	      // CMD_ASSIGN_BINARY: intercept and execute immediately
+	      if (server->parser.binaryCommand)
+		{
+		  binCommand = ((UCommand_ASSIGN_BINARY*)
+				server->parser.commandTree->command1);
+
+		  ubyte* buffer =
+		    recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
+
+		  if (buffer)
+		    { // the binary was all in the queue
+		      memcpy(binCommand->refBinary->ref()->buffer,
+			     buffer,
+			     binCommand->refBinary->ref()->bufferSize);
+		    }
+		  else
+		    {
+		      // not all was there, must set receiveBinary mode on
+		      transferedBinary_ = recvQueue_->dataSize();
+		      memcpy(binCommand->refBinary->ref()->buffer,
+			     recvQueue_->pop(transferedBinary_),
+			     transferedBinary_);
+		      receiveBinary_ = true;
+		    }
+		}
+
+	      // Pile the command
+	      if (!receiveBinary_)
+		{
+		  //::urbiserver->debug("Received - 5i.\n"); //TRASHME
+
+		  // immediate execution of simple commands
+
+		  if (!obstructed) {
+		    server->parser.commandTree->up = 0;
+		    server->parser.commandTree->position = 0;
+		    execute(server->parser.commandTree);
+		    if (server->parser.commandTree &&
+			server->parser.commandTree->status == URUNNING)
+		      obstructed = true;
+		  }
+
+		  if (server->parser.commandTree)
+		    append(server->parser.commandTree);
+
+		  server->parser.commandTree = 0;
+		}
+	    } // command1
+      }
+  } while (length != 0
+	   && !receiveBinary_
+	   && !server->memoryOverflow);
 
   receiving = false;
   server->parser.commandTree = 0;
   treeLock.unlock();
-  if (server->memoryOverflow) return UMEMORYFAIL;
+  if (server->memoryOverflow)
+    return UMEMORYFAIL;
 
   return USUCCESS;
 }
