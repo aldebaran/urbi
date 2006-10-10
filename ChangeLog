@@ -1,5 +1,10 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	uobject.cc in urbi::.
+	* uobject/uobject.cc:  Define in urbi:: the entities declared in it.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	uparse.cc.
 	* parser/uparser.cc: New.
 	* parser/uparser.h, Makefile.am: Adjust.
