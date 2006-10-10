@@ -1,5 +1,14 @@
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
+	More robustness against flex 2.5.4.
+
+	* parser/bison/bison.mk: std::ostream.
+	Include iostream, not istream, since ostreams are used.
+	* liburbi-c++/src/liburbi/uabstractclient.cpp: Instantiate
+	in the same order as the declaration.
+
+2006-10-10  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes.
 	* userver.cc: Do it.
 	* console.cc: Idem.

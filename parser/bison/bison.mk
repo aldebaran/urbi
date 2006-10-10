@@ -46,7 +46,7 @@ $(FROM_UGRAMMAR_Y): ugrammar.stamp
 # Flex 2.5.4 is quite old, and its C++ output does not use std::
 # properly.  This is the list of entities which must be prefixed by
 # std::.
-flex_nonstd = 'cin|cout|cerr|istream'
+flex_nonstd = 'cin|cout|cerr|[io]stream'
 
 FROM_UTOKEN_L =			\
 utoken.cc
@@ -63,7 +63,7 @@ utoken.stamp: $(parsedir)/utoken.l
 	$(FLEX) -+ -outoken.cc $(parsedir)/utoken.l
 	perl -pi						\
 	     -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
-	     -e 's/class istream;/#include <istream>/;'		\
+	     -e 's/class istream;/#include <iostream>/;'	\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
 	     utoken.cc
 	@mv -f $@.tmp $@
