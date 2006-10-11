@@ -140,13 +140,18 @@ namespace Network
       {
 	in=i;
 	in++;
-	int f= (*i)->readFD();
-	if (f>=0 && FD_ISSET(f,&rd))
-	  (*i)->notifyRead();
-
-	f= (*i)->writeFD();
-	if (f>=0 && FD_ISSET(f,&wr))
-	  (*i)->notifyWrite();
+	try {
+	  int f= (*i)->readFD();
+	  if (f>=0 && FD_ISSET(f,&rd))
+	    (*i)->notifyRead();
+	  
+	  f= (*i)->writeFD();
+	  if (f>=0 && FD_ISSET(f,&wr))
+	    (*i)->notifyWrite();
+	}
+	catch(...) {
+	  //this can happen if the object was destroyed by the notifyRead
+	}
       }
   }
 

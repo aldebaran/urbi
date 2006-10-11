@@ -1,3 +1,11 @@
+2006-10-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Add a much needed try/catch
+
+	* network/bsdnet/network.cc: Add a try/catch, so that when a connection is destroyed in its notifyread, the call to notifyWrite on the deleted object does not bring the ship down.
+	* lockable.h: Add a temporary #error in the aibo case to ensure locks are enabled.
+	* console.cc: Add missing includes time.h and sys/time.h in !windows case.
+
 2006-10-10  matthieu nottale  <nottale@gostai.com>
 
 	Env defaults to engine. Add build dependency on bison.mk 

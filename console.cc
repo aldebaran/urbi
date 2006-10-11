@@ -18,6 +18,8 @@ inline long long utime()
   return ((val-base) * 1000000LL)/ pfreq;
 }
 #else
+#include <sys/time.h>
+#include <time.h>
 inline long long utime()
 {
   static long long start = 0;

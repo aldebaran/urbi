@@ -26,7 +26,7 @@ inline bool lockTryLock(Lock &l) {
   return TryEnterCriticalSection(&l);
 }
 
-# elif (OS == aibo)
+# elif defined OS && (OS == aibo)
 
 typedef int Lock;
 inline void initLock(Lock &l) {
@@ -47,7 +47,7 @@ inline void deleteLock(Lock &l) {
 inline bool lockTryLock(Lock &l) {
   return true;
 }
-
+#error "in aibo mode"
 # else
 # include <pthread.h>
 typedef pthread_mutex_t Lock;
