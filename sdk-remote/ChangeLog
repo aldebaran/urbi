@@ -1,3 +1,10 @@
+2006-10-12  matthieu nottale  <nottale@gostai.com>
+
+	r193: Windows compatibility fix.
+
+	* sdk/Makefile.am: Remove libuobject.la from dependancies.
+	* sdk/uinstall: Replace test x == y by test x = y.
+
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
 	--disable-examples.

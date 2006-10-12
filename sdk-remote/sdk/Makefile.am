@@ -11,7 +11,6 @@ host_SCRIPTS = $(top_builddir)/libtool
 noinst_PROGRAMS = urbimodule
 urbimodule_SOURCES = umain.cc
 urbimodule_LDADD = \
-	$(top_builddir)/src/liburbi/uobject/libuobject.la \
 	$(top_builddir)/src/liburbi/liburbi.la \
 	$(PTHREAD_LIBS)
 
@@ -37,7 +36,7 @@ CLEANFILES = module.mk
 
 CLEANFILES += gccversion
 gccversion:
-	$(CXX) -v 2>&1 | grep version >$@.tmp
+	$(CXX) -v 2>&1 | grep version >$@.tmp || true
 	mv $@.tmp $@
 
 sanity: gccversion

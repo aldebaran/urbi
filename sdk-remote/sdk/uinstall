@@ -2,7 +2,7 @@
 
 set -e
 dir=$1
-if test x$dir == x; then
+if test x$dir = x; then
   dir=/usr/local
 fi
 
