@@ -1,5 +1,11 @@
 2006-10-12  matthieu nottale  <nottale@gostai.com>
 
+	r222: Fix invalid iterator use.
+
+	* network/bsdnet/network.cc: Fixed for good.
+
+2006-10-12  matthieu nottale  <nottale@gostai.com>
+
 	r221: Lock fix.
 
 	* parser/uparser.cc: Remove unneccessary &*.

@@ -141,13 +141,14 @@ namespace Network
 	in=i;
 	in++;
 	try {
-	  int f= (*i)->readFD();
+	  Pipe *p = (*i);
+	  int f= p->readFD();
 	  if (f>=0 && FD_ISSET(f,&rd))
-	    (*i)->notifyRead();
+	    p->notifyRead();
 	  
-	  f= (*i)->writeFD();
+	  f= p->writeFD();
 	  if (f>=0 && FD_ISSET(f,&wr))
-	    (*i)->notifyWrite();
+	    p->notifyWrite();
 	}
 	catch(...) {
 	  //this can happen if the object was destroyed by the notifyRead
