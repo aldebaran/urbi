@@ -28,6 +28,7 @@
 # include "ufunction.h"
 # include "uvariable.h"
 # include "ubinder.h"
+# include "lockable.h"
 
 # define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
@@ -55,7 +56,7 @@ extern  class UServer   *urbiserver; // Global variable for the server
     - flex 2.5.4a
     - bison 2.1b
 */
-class UServer
+class UServer: public Lockable
 {
 public:
   UServer(ufloat frequency, int freeMemory, const char* mainName);

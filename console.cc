@@ -1,3 +1,5 @@
+#include <sys/time.h>
+#include <time.h>	     
 #include "version.hh"
 #include "userver.h"
 #include "ughostconnection.h"

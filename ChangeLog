@@ -1,3 +1,14 @@
+2006-10-12  matthieu nottale  <nottale@gostai.com>
+
+	r221: Lock fix.
+
+	* parser/uparser.cc: Remove unneccessary &*.
+	* lockable.h: Lock is now a recursive mutex.
+	* userver.cc: Lock server in work.
+	* userver.h: UServer inherits Lockable .
+	* console.cc: Add missing headers.
+	* uconnection.cc: Lock server in parse.
+
 2006-10-12  Matthieu Nottale  <nottale@gostai.com>
 
 	Add a much needed try/catch

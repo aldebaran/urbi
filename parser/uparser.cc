@@ -35,7 +35,7 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
   connection = connection_;
   commandTree = 0;
   result = 0;
-
+  
   std::istrstream * mem_buff = new std::istrstream((char*)command, length);
   if (!mem_buff) return -1;
 
@@ -46,7 +46,7 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
       return -1;
     }
 
-  uflexer.switch_streams(&(*mem_input), 0);// Tells flex the right stream
+  uflexer.switch_streams(mem_input, 0);// Tells flex the right stream
   binaryCommand = false;
 
   yy::parser p(*this);

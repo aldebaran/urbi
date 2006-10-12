@@ -34,6 +34,7 @@
 #include "parser/uparser.h"
 #include "ucallid.h"
 #include "uvariable.h"
+#include "lockable.h"
 
 char errorMessage[1024]; // Global variable (thanks bison...) to store the
 			 // the error message when a parsing error occurs.
@@ -431,7 +432,7 @@ UConnection::received (const ubyte *buffer, int length)
 {
   bool gotlock = false;
   bool faillock = false; //if binary append failed to get lock, abort processing
-
+  BlockLock bl(server);
   if (server->memoryOverflow) {
     errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
     return UFAIL; // Block any new incoming command

@@ -215,6 +215,7 @@ UServer::afterWork()
 void
 UServer::work()
 {
+  BlockLock bl(this);
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;
