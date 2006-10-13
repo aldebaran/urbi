@@ -150,18 +150,6 @@ namespace urbi
       type = DATA_OBJECT;
       object = new UObjectStruct();
 
-      //parse object name
-      while (message[pos]==' ')
-	pos++;
-
-      int p = pos;
-      while (message[p] && message[p]!=' ')
-	p++;
-      if (!message[p])
-	return -p; //parse error
-      object->refName = std::string(message+pos, p-pos);
-      pos=p;
-
 
       while (message[pos]==' ')
 	pos++;
