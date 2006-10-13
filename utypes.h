@@ -306,14 +306,7 @@ public:
 
 
 
-//! Used in the hash_map object to define equality of two variable names
-struct eqStr
-{
-  bool operator()(const char* s1, const char* s2) const
-  {
-    return strcmp(s1, s2) == 0;
-  }
-};
+
 
 /** Class containing the number of pending call to a remote new for
  * a given class name (id).

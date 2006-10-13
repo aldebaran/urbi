@@ -1099,8 +1099,10 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
     deletecommand = false;
     if (tree->tag) {
-      if ((server->freezetab.find(tree->tag->str())!=server->freezetab.end()) &&
-	  (server->freezetab[tree->tag->str()]) ) {
+      urbi::hash_map_type<const char *,bool>::type::iterator it =
+        server->freezetab.find(tree->tag->str());
+      if ((it!=server->freezetab.end()) &&
+	  (it->second) ) {
 
 	tree = tree->up;
 	continue;
@@ -1108,8 +1110,10 @@ UConnection::execute(UCommand_TREE* &execCommand)
       char* p= const_cast<char*>(strchr(tree->tag->str(),'.'));
       if (p) {
 	p[0]=0;
-	if ((server->freezetab.find(tree->tag->str())!=server->freezetab.end()) &&
-	    (server->freezetab[tree->tag->str()]) ) {
+	urbi::hash_map_type<const char *,bool>::type::iterator it =
+          server->freezetab.find(tree->tag->str());
+	if ((it!=server->freezetab.end()) &&
+	    (it->second) ) {
 	  p[0]='.';
 	  tree = tree->up;
 	  continue;
@@ -1120,8 +1124,10 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
 
     if (tree->tag) {
-      if ((server->blocktab.find(tree->tag->str())!=server->blocktab.end()) &&
-	  (server->blocktab[tree->tag->str()]) ) {
+      urbi::hash_map_type<const char *,bool>::type::iterator it =
+        server->blocktab.find(tree->tag->str());
+      if ((it!=server->blocktab.end()) &&
+	  (it->second) ) {
 
 	tree->runlevel1 = UEXPLORED;
 	tree->runlevel2 = UEXPLORED;
@@ -1130,8 +1136,11 @@ UConnection::execute(UCommand_TREE* &execCommand)
       char* p= const_cast<char*>(strchr(tree->tag->str(),'.'));
       if (p) {
 	p[0]=0;
-	if ((server->blocktab.find(tree->tag->str())!=server->blocktab.end()) &&
-  	    (server->blocktab[tree->tag->str()]) ) {
+	
+	urbi::hash_map_type<const char *,bool>::type::iterator it =
+        server->blocktab.find(tree->tag->str());
+	if ((it!=server->blocktab.end()) &&
+	  (it->second) ) {
 
 	  tree->runlevel1 = UEXPLORED;
 	  tree->runlevel2 = UEXPLORED;

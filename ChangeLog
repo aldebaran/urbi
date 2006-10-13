@@ -1,3 +1,11 @@
+2006-10-13  Matthieu Nottale  <nottale@gostai.com>
+
+	Optimisation.
+
+	* utypes.h: Remove eqStr (leftover).
+	* uconnection.cc: Remove 4(half) useless hash map searches in execute.
+	* liburbi-c++/src/liburbi/uobject/uext.h: Tsuna:BUG: this is an external item.
+
 2006-10-12  matthieu nottale  <nottale@gostai.com>
 
 	r222: Fix invalid iterator use.
