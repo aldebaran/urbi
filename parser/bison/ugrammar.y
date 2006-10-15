@@ -424,7 +424,7 @@ taggedcommand:
       if ($4) {
 
 	delete $4->tag;
-       	$4->tag = new UString($1.device,$1.id);
+	$4->tag = new UString($1.device,$1.id);
 	delete $1.device;
 	delete $1.id;
 

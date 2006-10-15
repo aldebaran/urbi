@@ -1,3 +1,17 @@
+2006-10-15  BAILLIE Jean-Christophe  <baillie@gostai.com>
+
+	Fix indentation problems 
+
+Indentation problems fixed in some files (using Akim's convention: to be
+debated)
+NB: vi option to add =>  :set tabstop=8
+
+	* ucommand.cc: .
+	* parser/bison/ugrammar.y: .
+	* uexpression.cc: .
+	* userver.cc: .
+	* uvariablename.cc: .
+
 2006-10-13  Matthieu Nottale  <nottale@gostai.com>
 
 	Optimisation.

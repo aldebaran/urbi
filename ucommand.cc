@@ -5608,18 +5608,12 @@ UCommand_AT::execute(UConnection *connection)
 	 (test->softtest_time==0)) ) {
 
     nbTrue = 0;
-    UNodeType     nodeType;
-
-//    if (type == CMD_AT)      nodeType = USEMICOLON;
-//    if (type == CMD_AT_AND)  nodeType = UAND;
-    nodeType = UAND;
-
     if (mode == true) {
 
       mode = false;
       morph = (UCommand*)
 	new UCommand_TREE(
-	      nodeType,
+	      UAND,
 	      new UCommand_TREE(
 		    UAND,
 		    command1->copy(),
@@ -5639,7 +5633,7 @@ UCommand_AT::execute(UConnection *connection)
 
 	morph = (UCommand*)
 	  new UCommand_TREE(
-		nodeType,
+		UAND,
 		new UCommand_TREE(
 		      UAND,
 		      command2->copy(),

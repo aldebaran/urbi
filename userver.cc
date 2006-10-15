@@ -293,12 +293,12 @@ UServer::work()
 
       if ((*retr)->activeCommand!=0) {
 
-	(*retr)->obstructed = true; // will be changed to 'false' if the whole tree is visited
-	(*retr)->treeLock.lock();
-	(*retr)->inwork = true;     // to distinguish this call of execute from the one in receive
-	(*retr)->execute((*retr)->activeCommand);
-	(*retr)->inwork = false;
-	(*retr)->treeLock.unlock();
+        (*retr)->obstructed = true; // will be changed to 'false' if the whole tree is visited
+        (*retr)->treeLock.lock();
+        (*retr)->inwork = true;     // to distinguish this call of execute from the one in receive
+        (*retr)->execute((*retr)->activeCommand);
+        (*retr)->inwork = false;
+        (*retr)->treeLock.unlock();
       }
 
       if ((*retr)->newDataAdded) { // used by loadFile and exec to
