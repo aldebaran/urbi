@@ -1,5 +1,11 @@
 2006-10-15  Matthieu Nottale  <nottale@gostai.com>
 
+	r226: FIX: ugrammar was unsaved in my IDE. Sorry 
+
+	* parser/bison/ugrammar.y: Fix conflict.
+
+2006-10-15  Matthieu Nottale  <nottale@gostai.com>
+
 	r225: Optimization: tag subsystem rewrite, memory manager rewrite 
 
 	* ucommand.cc: .

@@ -420,12 +420,9 @@ taggedcommand:
 
       if ($4) {
 
-<<<<<<< .mine
+
        	$4->setTag(UString($1.device,$1.id).str());
-=======
-	delete $4->tag;
-	$4->tag = new UString($1.device,$1.id);
->>>>>>> .r224
+
 	delete $1.device;
 	delete $1.id;
 
