@@ -31,17 +31,19 @@
     memory is managed, as far as strings are concerned.
     This class does all the ADDMEM/FREEMEM job for you. Use it.
 */
-class UString {
-public:
+class UString
+{
+ public:
   MEMORY_MANAGED;
   UString(const char* s);
   UString(UString *s);
-  UString(UString *s1,UString *s2); ///< concat s1 and s2 with a dot in the middle...
+  /// Concat \c s1 and \c s2 with a dot in the middle.
+  UString(UString *s1,UString *s2);
 
   ~UString();
 
   const char* str() const
- {
+  {
     return str_;
   }
 
@@ -62,8 +64,7 @@ public:
   void update(const char *s);
   void update(UString *s);
 
-private:
-
+ private:
   int  len_;
   char *str_;
 };

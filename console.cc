@@ -1,5 +1,5 @@
 #include <sys/time.h>
-#include <time.h>	     
+#include <time.h>
 #include "version.hh"
 #include "userver.h"
 #include "ughostconnection.h"
@@ -35,13 +35,13 @@ inline long long utime()
 #endif
 
 class ConsoleServer
-  : public UServer 
+  : public UServer
 {
 public:
-  ConsoleServer(int freq) 
+  ConsoleServer(int freq)
     : UServer(freq, 64000000, "console")
   {}
-  virtual ~ConsoleServer() 
+  virtual ~ConsoleServer()
   {}
 
   virtual void shutdown()
@@ -60,7 +60,7 @@ public:
     return (ufloat)(utime()/1000LL);
   }
 
-  virtual ufloat getPower() 
+  virtual ufloat getPower()
   {
     return ufloat(1);
   }
@@ -100,13 +100,13 @@ public:
 	if (loadQueue->push((const ubyte*)buf,nbread) == UFAIL)
 	  return (UFAIL);
       }
-    
+
     fclose(f);
     return USUCCESS;
   }
 
-  virtual 
-  UErrorValue 
+  virtual
+  UErrorValue
   saveFile (const char *filename, const char * content)
   {
     //! \todo check this code
@@ -118,20 +118,20 @@ public:
     int sent = 0;
     int toSend = strlen(content);
     int nbSent;
-    
+
     while (sent < toSend)
       {
 	nbSent = fwrite((const void*)(content+sent),
 			sizeof(char),toSend-sent,f);
 	sent = sent + nbSent;
       }
-    
+
     fclose(f);
     return USUCCESS;
   }
 
   virtual
-  void effectiveDisplay(const char* t) 
+  void effectiveDisplay(const char* t)
   {
     printf ("%s",t);
   }

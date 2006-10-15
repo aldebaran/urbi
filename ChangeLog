@@ -1,3 +1,10 @@
+2006-10-15  Akim Demaille  <akim.demaille@free.fr>
+
+	Upgrade build-aux.
+	* ucommand.h: Formatting changes.
+	* console.cc: Idem.
+	* liburbi-c++/src/liburbi/uabstractclient.cpp: Idem.
+
 2006-10-15  Matthieu Nottale  <nottale@gostai.com>
 
 	r226: FIX: ugrammar was unsaved in my IDE. Sorry 

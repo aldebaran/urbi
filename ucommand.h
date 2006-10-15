@@ -73,12 +73,12 @@ public:
 
   bool isBlocked();
   bool isFrozen();
-  
+
   UCommandType     type;        ///< Type of the command.
   UCommandStatus   status;      ///< Status of the command
 
-  
-  
+
+
   UNamedParameters *flags;      ///< list of flags of tagged commands
 
   UCommand_TREE    *up;         ///< the UCommand_TREE that owns the UCommand
@@ -109,14 +109,14 @@ public:
 
   static const int MAXSIZE_TMPMESSAGE = 65536; ///< used by commands to build
   HMvariabletab::iterator hmi;         ///< internal
-  
+
   private:
-  
+
   std::string      tag;         ///< Command tag
   TagInfo* tagInfo; ///< Ptr to tag info concerning us
   std::list<UCommand *>::iterator tagInfoPtr; //for fast deletion
-  
-  
+
+
   UCommand (const UCommand &c); ///< Protection against copy
 
 };
@@ -140,7 +140,7 @@ public:
   virtual UCommand*      copy();
 
   void deleteMarked(); ///<D eletes sub commands marked for deletion
-  
+
   UCommand         *command1;   ///< Left side of the compound command.
   UCommand         *command2;   ///< Right side of the compound command.
   UCallid          *callid; ///< context identificator for function calls
