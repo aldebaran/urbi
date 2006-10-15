@@ -1,5 +1,15 @@
 2006-10-15  Akim Demaille  <akim.demaille@free.fr>
 
+	Fix some warnings.
+	* ucommand.cc: No longer name unused arguments.
+	* ucommand.h: Idem.
+	* ueventhandler.h: Idem.
+	* uconnection.h: Idem.
+	* ueventhandler.cc: Idem.
+	* uconnection.cc: Idem.
+
+2006-10-15  Akim Demaille  <akim.demaille@free.fr>
+
 	Upgrade build-aux.
 	* configure.ac: Don't use -Weffc++ yet.
 	* ustring.cc: Use C++ headers.

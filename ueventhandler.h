@@ -31,7 +31,8 @@ class UEventHandler
 {
 public:
 
-  UEventHandler(UString *device);
+  /// FIXME: Takes an argument, but does not use it.
+  UEventHandler(UString*);
   ~UEventHandler();
 
 	UCommand_EMIT* cmd;

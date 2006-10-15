@@ -20,26 +20,26 @@
  **************************************************************************** */
 
 #ifndef UCOMMAND_H_DEFINED
-#define UCOMMAND_H_DEFINED
+# define UCOMMAND_H_DEFINED
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
+# include "fwd.hh"
 
-#include "utypes.h"
-#include "ustring.h"
-#include "ucommandqueue.h"
+# include "utypes.h"
+# include "ustring.h"
+# include "ucommandqueue.h"
 
-#include "uexpression.h"
-#include "unamedparameters.h"
-#include "uvariablelist.h"
-#include "uvalue.h"
-#include "uobj.h"
-#include "ugroup.h"
-#include "uproperty.h"
-#include "uvariablename.h"
-#include "ubinary.h"
-#include "ucallid.h"
+# include "uexpression.h"
+# include "unamedparameters.h"
+# include "uvariablelist.h"
+# include "uvalue.h"
+# include "uobj.h"
+# include "ugroup.h"
+# include "uproperty.h"
+# include "uvariablename.h"
+# include "ubinary.h"
+# include "ucallid.h"
 
 
 // *****************************************************************************
@@ -56,9 +56,9 @@ public:
   UCommand(UCommandType _type);
   virtual ~UCommand();
 
-  virtual void print(int l);
+  virtual void print(int);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand* copy();
   UErrorValue       copybase(UCommand *command);
 
@@ -118,7 +118,6 @@ public:
 
 
   UCommand (const UCommand &c); ///< Protection against copy
-
 };
 
 extern char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
@@ -136,7 +135,7 @@ public:
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand*      copy();
 
   void deleteMarked(); ///<D eletes sub commands marked for deletion
@@ -277,14 +276,14 @@ class UCommand_AUTOASSIGN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AUTOASSIGN ( UVariableName* variablename,
+  UCommand_AUTOASSIGN (UVariableName* variablename,
 			UExpression* expression,
 			int assigntype);
   virtual ~UCommand_AUTOASSIGN();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand*      copy();
 
   UVariableName    *variablename; ///< Name of the iterating variable
@@ -630,7 +629,7 @@ public:
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand*      copy();
 
   UString          *object;   ///< class name
@@ -643,9 +642,9 @@ class UCommand_IF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_IF ( UExpression *test,
-		UCommand* command1,
-		UCommand* command2);
+  UCommand_IF (UExpression *test,
+	       UCommand* command1,
+	       UCommand* command2);
   virtual ~UCommand_IF();
 
   virtual void print(int l);
@@ -663,8 +662,8 @@ class UCommand_EVERY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EVERY ( UExpression *duration,
-		   UCommand* command);
+  UCommand_EVERY (UExpression *duration,
+		  UCommand* command);
   virtual ~UCommand_EVERY();
 
   virtual void print(int l);
@@ -684,13 +683,13 @@ class UCommand_TIMEOUT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_TIMEOUT ( UExpression *duration,
-		   UCommand* command);
+  UCommand_TIMEOUT (UExpression *duration,
+		    UCommand* command);
   virtual ~UCommand_TIMEOUT();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand*      copy();
 
   UExpression      *duration;   ///< duration
@@ -703,8 +702,8 @@ class UCommand_STOPIF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_STOPIF ( UExpression *condition,
-		    UCommand* command);
+  UCommand_STOPIF (UExpression *condition,
+		   UCommand* command);
   virtual ~UCommand_STOPIF();
 
   virtual void print(int l);
@@ -722,13 +721,13 @@ class UCommand_FREEZEIF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FREEZEIF ( UExpression *condition,
-		    UCommand* command);
+  UCommand_FREEZEIF (UExpression *condition,
+		     UCommand* command);
   virtual ~UCommand_FREEZEIF();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand*      copy();
 
   UExpression      *condition;   ///< condition
@@ -741,10 +740,10 @@ class UCommand_AT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AT ( UCommandType type,
-		UExpression *test,
-		UCommand* command1,
-		UCommand* command2);
+  UCommand_AT (UCommandType type,
+	       UExpression *test,
+	       UCommand* command1,
+	       UCommand* command2);
   virtual ~UCommand_AT();
 
   virtual void print(int l);
@@ -767,7 +766,7 @@ class UCommand_WHILE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WHILE ( UCommandType type,
+  UCommand_WHILE (UCommandType type,
 		   UExpression *test,
 		   UCommand* command);
   virtual ~UCommand_WHILE();
@@ -786,7 +785,7 @@ class UCommand_WHENEVER : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WHENEVER ( UExpression *test,
+  UCommand_WHENEVER (UExpression *test,
 		      UCommand* command1,
 		      UCommand* command2);
   virtual ~UCommand_WHENEVER();
@@ -811,12 +810,12 @@ class UCommand_LOOP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOP ( UCommand* command);
+  UCommand_LOOP (UCommand* command);
   virtual ~UCommand_LOOP();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection*);
   virtual UCommand*      copy();
 
   UCommand         *command;    ///< Command
@@ -827,7 +826,7 @@ class UCommand_LOOPN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOPN ( UCommandType type,
+  UCommand_LOOPN (UCommandType type,
 		   UExpression* expression,
 		   UCommand* command);
   virtual ~UCommand_LOOPN();
@@ -846,7 +845,7 @@ class UCommand_FOREACH : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOREACH ( UCommandType type,
+  UCommand_FOREACH (UCommandType type,
 		     UVariableName* variablename,
 		     UExpression* expression,
 		     UCommand* command);
@@ -869,11 +868,11 @@ class UCommand_FOR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOR ( UCommandType type,
-		 UCommand* instr1,
-		 UExpression* test,
-		 UCommand* instr2,
-		 UCommand* command);
+  UCommand_FOR (UCommandType type,
+		UCommand* instr1,
+		UExpression* test,
+		UCommand* instr2,
+		UCommand* command);
   virtual ~UCommand_FOR();
 
   virtual void print(int l);

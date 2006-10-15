@@ -89,7 +89,7 @@ MEMORY_MANAGER_INIT(UCommand);
 */
 UCommand::UCommand(UCommandType _type)
 {
- 
+
   flags             = 0;
   type              = _type;
   status            = UONQUEUE;
@@ -107,7 +107,7 @@ UCommand::UCommand(UCommandType _type)
   morphed           = false;
   tagInfo           = 0;
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
-  L2: pass a tag or a command ptr to ctor  
+  L2: pass a tag or a command ptr to ctor
   */
   tag="";
   if (::urbiserver->systemcommands)
@@ -124,7 +124,7 @@ UCommand::~UCommand()
 }
 
 UCommandStatus
-UCommand::execute(UConnection *connection)
+UCommand::execute(UConnection*)
 {
   return UCOMPLETED;
 }
@@ -143,8 +143,8 @@ UErrorValue
 UCommand::copybase(UCommand *command)
 {
 
-  command->setTag(this); 
-  
+  command->setTag(this);
+
   if (flags)
     {
       command->flags = flags->copy();
@@ -159,7 +159,7 @@ UCommand::copybase(UCommand *command)
 
 //! Print command
 void
-UCommand::print(int l)
+UCommand::print(int)
 {
 }
 
@@ -242,12 +242,12 @@ TagInfo * TagInfo::insert(HMtagtab &tab) {
   HMtagtab::iterator i
     = tab.insert(HMtagtab::value_type(name,*this)).first;
   TagInfo * result = &i->second;
-  
+
   //remove last part of tag
   size_t pos = name.find_last_of('.');
   if (pos == std::string::npos) //we reached base tag
     return result;
-  
+
   std::string subtag = name.substr(0, name.length()-pos-1);
   HMtagtab::iterator it = tab.find(subtag);
   TagInfo *parent;
@@ -259,11 +259,11 @@ TagInfo * TagInfo::insert(HMtagtab &tab) {
   }
   else
     parent = &it->second;
-  
+
   parent->subTags.push_back(result);
   result->parent = parent;
   result->parentPtr = --parent->subTags.end();
-  
+
   return result;
 }
 
@@ -274,26 +274,26 @@ void UCommand::setTag(const std::string & tag) {
   if (tag != "")
     unsetTag();
   this->tag = tag;
-  
+
   TagInfo* ti;
   HMtagtab::iterator it = urbiserver->tagtab.find(tag);
-    
+
   if (it == urbiserver->tagtab.end()) {
     TagInfo t;
     t.blocked = t.frozen = false;
     t.name = tag;
-    
-    ti = t.insert(urbiserver->tagtab); 
+
+    ti = t.insert(urbiserver->tagtab);
 
   }
   else
     ti = &it->second;
-  
+
   //add ourself to the taginfo, add it to ourself
   ti->commands.push_back(this);
   tagInfoPtr = --ti->commands.end();
   tagInfo = ti; //we know he won't die before us
-  
+
 }
 
 void UCommand::setTag(UCommand * cmd) {
@@ -311,7 +311,7 @@ void UCommand::unsetTag() {
     return; //nothing to do
   tagInfo->commands.erase(tagInfoPtr);
   TagInfo * ti = tagInfo;
-  while (ti && ti->commands.empty() && ti->subTags.empty() 
+  while (ti && ti->commands.empty() && ti->subTags.empty()
       && !ti->frozen && !ti->blocked) {
     //remove from parent list
     if (ti->parent)
@@ -326,7 +326,7 @@ void UCommand::unsetTag() {
 
 bool UCommand::isFrozen() {
   TagInfo * t = tagInfo;
-  
+
   while (t) {
     if( t->frozen)
       return true;
@@ -395,7 +395,7 @@ UCommand_TREE::~UCommand_TREE()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_TREE::execute(UConnection *connection)
+UCommand_TREE::execute(UConnection*)
 {
   return URUNNING;
 }
@@ -434,39 +434,39 @@ UCommand_TREE::deleteMarked()
 
     if (tree->command1 && go_to == 1)
       if (tree->command1->toDelete)
-        {
-          delete tree->command1;
-          tree->command1 = 0;
-        }
+	{
+	  delete tree->command1;
+	  tree->command1 = 0;
+	}
       else if (tree->command1->type == CMD_TREE)
-        {
-          tree = (UCommand_TREE*) tree->command1;
-          go_to = 1;
-          continue;
-        }
+	{
+	  tree = (UCommand_TREE*) tree->command1;
+	  go_to = 1;
+	  continue;
+	}
 
     if (tree->command2 && go_to >= 1)
       if (tree->command2->toDelete)
-        {
-          delete tree->command2;
-          tree->command2 = 0;
-        }
+	{
+	  delete tree->command2;
+	  tree->command2 = 0;
+	}
       else if (tree->command2->type == CMD_TREE)
-        {
-          tree = (UCommand_TREE*) tree->command2;
-          go_to = 1;
-          continue;
-        }
+	{
+	  tree = (UCommand_TREE*) tree->command2;
+	  go_to = 1;
+	  continue;
+	}
 
     go_to = 2;
     if (tree->up)
       if (*tree->position == tree->up->command2)
-        go_to = 0;
+	go_to = 0;
 
     tree = tree->up;
   }
 }
-  
+
 //! Print the command
 /*! This function is for debugging purpose only.
     It is not safe, efficient or crash proof. A better version will come later.
@@ -2097,9 +2097,10 @@ UCommand_AUTOASSIGN::~UCommand_AUTOASSIGN()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_AUTOASSIGN::execute(UConnection *connection)
+UCommand_AUTOASSIGN::execute(UConnection*)
 {
-  if ((!variablename) || (!expression)) return (status = UCOMPLETED);
+  if (!variablename || !expression)
+    return (status = UCOMPLETED);
 
   UExpression* extended_expression = 0;
 
@@ -2321,12 +2322,12 @@ UCommand_EXPR::execute(UConnection *connection)
       if (morph) {
 
 	morph->morphed = true;
-	
+
 	  morph->setTag(this);
 
 	  if (flags)
 	    morph->flags = flags->copy();
-	
+
 
 	sprintf(tmpbuffer,"__UFnct%d",unic());
 	UString* fundevice = expression->variablename->getDevice();
@@ -3377,7 +3378,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
   if (strcmp(oper->str(),"unfreeze")==0) {
 
-  
+
       connection->server->unfreeze(id->str());
 
     return( status = UCOMPLETED );
@@ -4208,7 +4209,7 @@ UCommand_OPERATOR::print(int l)
     strcat(tabb," ");
 
   ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
-    
+
   ::urbiserver->debug("OPERATOR %s:\n",oper->str());
   ::urbiserver->debug("%sEND OPERATOR ------\n",tabb);
 }
@@ -4974,7 +4975,7 @@ UCommand_CLASS::~UCommand_CLASS()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_CLASS::execute(UConnection *connection)
+UCommand_CLASS::execute(UConnection*)
 {
   // remote new processing
   HMobjWaiting::iterator ow;
@@ -5317,9 +5318,10 @@ UCommand_TIMEOUT::~UCommand_TIMEOUT()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_TIMEOUT::execute(UConnection *connection)
+UCommand_TIMEOUT::execute(UConnection*)
 {
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0)
+    return ( status = UCOMPLETED );
 
   persistant = false;
   morph = (UCommand*)
@@ -5494,7 +5496,7 @@ UCommand_FREEZEIF::~UCommand_FREEZEIF()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_FREEZEIF::execute(UConnection *connection)
+UCommand_FREEZEIF::execute(UConnection*)
 {
   if (command == 0) return ( status = UCOMPLETED );
 
@@ -5989,7 +5991,7 @@ UCommand_LOOP::~UCommand_LOOP()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_LOOP::execute(UConnection *connection)
+UCommand_LOOP::execute(UConnection*)
 {
   if (command == 0) return ( status = UCOMPLETED );
 

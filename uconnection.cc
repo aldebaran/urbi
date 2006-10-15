@@ -640,7 +640,7 @@ UConnection::received (const ubyte *buffer, int length)
     \return the number of bytes effectively sent. -1 means that there was an error.
 */
 int
-UConnection::effectiveSend (const ubyte *buffer, int length)
+UConnection::effectiveSend (const ubyte*, int length)
 {
   return length;
 }
@@ -804,16 +804,16 @@ UConnection::processCommand(UCommand *&command,
   rl = UEXPLORED;
 
   // Handle blocked/freezed commands
-  
+
   if (command->isFrozen())
     return (command);
-  
+
 
   if (command->isBlocked()) {
     delete command;
     return(0);
   }
-   
+
   UCommand         *morphed;
   UCommand_TREE    *morphed_up;
   UCommand         **morphed_position;
@@ -1064,20 +1064,20 @@ UConnection::execute(UCommand_TREE* &execCommand)
     // BLOCKED/FREEZED COMMANDS
 
     deletecommand = false;
-    
+
     //check if freezed
     if (tree->isFrozen()) {
       tree = tree->up;
       continue;
     }
-    
+
     if (tree->isBlocked()) {
-      
+
       tree->runlevel1 = UEXPLORED;
       tree->runlevel2 = UEXPLORED;
       deletecommand = true;
     }
-    
+
     // COMMAND1
 
     if ((tree->callid) &&

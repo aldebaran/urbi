@@ -163,7 +163,7 @@ protected:
   /// Default adaptive behavior for Send/Recv..
   static const int ADAPTIVE = 100;
 
-  virtual int         effectiveSend     (const ubyte *buffer, int length) = 0;
+  virtual int         effectiveSend     (const ubyte*, int length) = 0;
   UErrorValue         error             (UErrorCode n);
   UErrorValue         warning           (UWarningCode n);
   UCommand*           processCommand    (UCommand *&command,

@@ -15,16 +15,12 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-#include <cstdio>
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#endif
 
 #include "ueventhandler.h"
 
 // **************************************************************************
 //! UEventHandler constructor.
-UEventHandler::UEventHandler (UString *device)
+UEventHandler::UEventHandler (UString*)
 {
 }
 
@@ -32,4 +28,3 @@ UEventHandler::UEventHandler (UString *device)
 UEventHandler::~UEventHandler()
 {
 }
-
