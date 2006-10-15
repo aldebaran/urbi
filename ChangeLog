@@ -1,19 +1,27 @@
 2006-10-15  Akim Demaille  <akim.demaille@free.fr>
 
 	Upgrade build-aux.
+	* configure.ac: Don't use -Weffc++ yet.
+	* ustring.cc: Use C++ headers.
+	Formatting changes.
+	* ustring.h: Formatting changes.
+	* memorymanager/blockmemorymanager.h: Idem.
+	(BlockPool::BlockPool): New.
+	* memorymanager/memorymanager.cc: Implement it.
+	And use it.
 	* ucommand.h: Formatting changes.
 	* console.cc: Idem.
 	* liburbi-c++/src/liburbi/uabstractclient.cpp: Idem.
 
 2006-10-15  Matthieu Nottale  <nottale@gostai.com>
 
-	r226: FIX: ugrammar was unsaved in my IDE. Sorry 
+	r226: FIX: ugrammar was unsaved in my IDE. Sorry
 
 	* parser/bison/ugrammar.y: Fix conflict.
 
 2006-10-15  Matthieu Nottale  <nottale@gostai.com>
 
-	r225: Optimization: tag subsystem rewrite, memory manager rewrite 
+	r225: Optimization: tag subsystem rewrite, memory manager rewrite
 
 	* ucommand.cc: .
 	* ucommand.h: .
@@ -32,7 +40,7 @@
 
 2006-10-15  BAILLIE Jean-Christophe  <baillie@gostai.com>
 
-	Fix indentation problems 
+	Fix indentation problems
 
 Indentation problems fixed in some files (using Akim's convention: to be
 debated)
@@ -79,7 +87,7 @@ NB: vi option to add =>  :set tabstop=8
 
 2006-10-10  matthieu nottale  <nottale@gostai.com>
 
-	Env defaults to engine. Add build dependency on bison.mk 
+	Env defaults to engine. Add build dependency on bison.mk
 
 	* configure.ac: Default env is engine.
 	* parser/bison/bison.mk: Add dependency on bison.mk.
@@ -151,7 +159,7 @@ NB: vi option to add =>  :set tabstop=8
 
 2006-10-10  Akim Demaille  <demaille@gostai.com>
 
-	* network/bsdnet/network.h, network/bsdnet/network.cc, 
+	* network/bsdnet/network.h, network/bsdnet/network.cc,
 	* uconnection.cc, ucommand.cc: Formatting changes.
 
 2006-10-09  Akim Demaille  <akim@lrde.epita.fr>
@@ -161,7 +169,7 @@ NB: vi option to add =>  :set tabstop=8
 
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
-	first stage of object arrays (can create) 
+	first stage of object arrays (can create)
 
 The goal is be able to do things like:
 
@@ -182,7 +190,7 @@ $("myobj__"+string(index)+".val") = 4;
 
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
-	Prepare for multievent handling 
+	Prepare for multievent handling
 
 Multievent handling needs a new class UEventHandler.
 
@@ -194,7 +202,7 @@ Multievent handling needs a new class UEventHandler.
 
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
-	fix 'new' behavior when no init is present and no parameters are given 
+	fix 'new' behavior when no init is present and no parameters are given
 
 When invoquing new with no parameters, the default "empty" constructor is now called,
 even if the init function has not been explicitly declared.
@@ -203,16 +211,16 @@ even if the init function has not been explicitly declared.
 
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
-	no recursive inheritance 
+	no recursive inheritance
 
 	* ucommand.cc: fix a=new a; this is not permitted.
 
 2006-10-08  Type Your Name Here  <your.mail.here@fixme.com>
 
-	Name resolution fix in object methods + akim bug in booleval reverted 
+	Name resolution fix in object methods + akim bug in booleval reverted
 
 Some cleanup of warning messages during compile.
-Fix a name resolution bug in object methods when attributes are defined in the 
+Fix a name resolution bug in object methods when attributes are defined in the
 origin class and not in the child class.
 Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 
