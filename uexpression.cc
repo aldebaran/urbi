@@ -470,7 +470,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  if (ambiguous)  {
 	    snprintf(errorString,errSize,"!!! Ambiguous multiple inheritance on variable %s\n",
 		variablename->getFullname()->str());
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    return new UValue();
 	  }
 
@@ -518,14 +518,14 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 		}
 		if (!xval) {
 		  snprintf(errorString,errSize,"!!! Index out of range\n");
-		  connection->send(errorString,command->tag->str());
+		  connection->send(errorString,command->getTag().c_str());
 		  return new UValue();
 		}
 		else {
 		  if (p2) {
 		    if (xval->dataType != DATA_LIST) {
 		      snprintf(errorString,errSize,"!!! Invalid index usage\n");
-		      connection->send(errorString,command->tag->str());
+		      connection->send(errorString,command->getTag().c_str());
 		      return new UValue();
 		    }
 		    else
@@ -548,7 +548,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	    variablename->getFullname()->str());
 
 	if (!silent)
-	  connection->send(errorString,command->tag->str());
+	  connection->send(errorString,command->getTag().c_str());
 
 	return new UValue();
 
@@ -573,7 +573,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 		"!!! Impossible to normalize: no range defined for variable %s\n",
 		variablename->getFullname()->str());
 
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    return 0;
 	  }
 
@@ -629,7 +629,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  ret = staticcache->copy();
 
       return(ret);
-
+      
     case EXPR_PROPERTY:
 
       variable = variablename->getVariable(command,connection);
@@ -639,7 +639,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	snprintf(errorString,errSize,"!!! Unknown identifier: %s\n",
 	    variablename->getFullname()->str());
 
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	return 0;
       }
       method = variablename->getMethod();
@@ -706,7 +706,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       snprintf(errorString,errSize,"!!! Unknown property: %s\n",
 	  str->str());
 
-      connection->send(errorString,command->tag->str());
+      connection->send(errorString,command->getTag().c_str());
       return 0;
 
 
@@ -824,7 +824,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
 	    snprintf(errorString,errSize,
 		"!!! Cannot save to the file %s\n",e1->str->str());
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    delete ret;
 	    ret = 0;
 	  }
@@ -858,7 +858,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
 	    snprintf(errorString,errSize,
 		"!!! Index out of range\n");
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    ret = 0;
 	  }
 	  else
@@ -1075,7 +1075,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
 	    snprintf(errorString,errSize,
 		"!!! Cannot load the file %s\n",e1->str->str());
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    delete ret;
 	    delete loadcmd;
 	    ret = 0;
@@ -1087,7 +1087,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
 	    snprintf(errorString,errSize,
 		"*** \"%s\" loaded.\n",e1->str->str());
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	  }
 
 	  delete e1;
@@ -1113,7 +1113,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
 	    snprintf(errorString,errSize,
 		"!!! Cannot load the file %s\n",e1->str->str());
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    delete ret;
 	    delete loadQueue;
 	    ret = 0;
@@ -1182,7 +1182,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  else {
 	    snprintf(errorString,errSize,
 		"!!! Error parsing the exec string\n");
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    delete ret;
 	    ret = 0;
 	  }
@@ -1314,7 +1314,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	if (strcmp(variablename->id->str(),"sqrt")==0) {
 	  if (e1->val<0) {
 	    snprintf(errorString,errSize,"!!! Negative square root\n");
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    return 0;
 	  }
 	  ret->val = sqrt(e1->val);
@@ -1322,7 +1322,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	if (strcmp(variablename->id->str(),"log")==0) {
 	  if (e1->val<0) {
 	    snprintf(errorString,errSize,"!!! Negative logarithm\n");
-	    connection->send(errorString,command->tag->str());
+	    connection->send(errorString,command->getTag().c_str());
 	    return 0;
 	  }
 	  ret->val = log(e1->val);
@@ -1338,7 +1338,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
       hmf = ::urbiserver->functiontab.find(funname->str());
       if (hmf != ::urbiserver->functiontab.end()) {
 	snprintf(errorString,errSize,"!!! Custom function call in expressions not allowed in kernel 1\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	return 0;
       }
 
@@ -1350,7 +1350,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	snprintf(errorString,errSize,"!!! Error with function eval: %s [no param]\n",
 	    variablename->getFullname()->str());
       if (!silent)
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
       return 0;
 
     case EXPR_PLUS:
@@ -1451,7 +1451,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
       if (e2->val == 0) {
 	snprintf(errorString,errSize,"!!! Division by zero\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	return 0;
       }
 
@@ -1593,7 +1593,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Approximate comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1628,7 +1628,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Approximate comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1672,7 +1672,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Approximate comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1680,7 +1680,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 
       if ((e2->val == 0) || (e1->val == 0)) {
 	snprintf(errorString,errSize,"!!! Division by zero\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	return 0;
       }
 
@@ -1732,7 +1732,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Numerical comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1763,7 +1763,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Numerical comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1794,7 +1794,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Numerical comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1825,7 +1825,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	  (e2->dataType != DATA_NUM)) {
 
 	snprintf(errorString,errSize,"!!! Numerical comparisons must be between numerical values\n");
-	connection->send(errorString,command->tag->str());
+	connection->send(errorString,command->getTag().c_str());
 	delete e1;
 	delete e2;
 	return 0;
@@ -1852,7 +1852,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	 if (e1->dataType != DATA_NUM) {
 
 	 snprintf(errorString,errSize,"!!! Non boolean value\n");
-	 connection->send(errorString,command->tag->str());
+	 connection->send(errorString,command->getTag().c_str());
 	 delete e1;
 	 return 0;
 	 }
@@ -1878,7 +1878,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	 if (e1->dataType != DATA_NUM) {
 
 	 snprintf(errorString,errSize,"!!! Non boolean value\n");
-	 connection->send(errorString,command->tag->str());
+	 connection->send(errorString,command->getTag().c_str());
 	 delete e1;
 	 return 0;
 	 }
@@ -1902,7 +1902,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	if (e2->dataType != DATA_NUM) {
 	  /*
 	     snprintf(errorString,errSize,"!!! Non boolean value\n");
-	     connection->send(errorString,command->tag->str());
+	     connection->send(errorString,command->getTag().c_str());
 	     delete e1;
 	     delete e2;
 	     delete ret;
@@ -1927,7 +1927,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	 if (e1->dataType != DATA_NUM) {
 
 	 snprintf(errorString,errSize,"!!! Non boolean value\n");
-	 connection->send(errorString,command->tag->str());
+	 connection->send(errorString,command->getTag().c_str());
 	 delete e1;
 	 return 0;
 	 }
@@ -1951,7 +1951,7 @@ UExpression::eval(UCommand *command, UConnection *connection, bool silent)
 	if (e2->dataType != DATA_NUM) {
 	  /*
 	     snprintf(errorString,errSize,"!!! Non boolean value\n");
-	     connection->send(errorString,command->tag->str());
+	     connection->send(errorString,command->getTag().c_str());
 	     delete e1;
 	     delete e2;
 	     delete ret;

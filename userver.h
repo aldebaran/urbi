@@ -104,6 +104,11 @@ public:
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
   UGhostConnection *     getGhostConnection() {return ghost;}
+  
+  void              freeze          (const std::string &tag);
+  void              unfreeze        (const std::string &tag);
+  void              block           (const std::string &tag);
+  void              unblock         (const std::string &tag);
   /// List of active connections: includes one UGhostConnection.
   std::list<UConnection*>  connectionList;
 
@@ -131,8 +136,8 @@ public:
   HMbindertab              eventbindertab;
   /// Hash of obj name waiting for a remote new.
   HMobjWaiting             objWaittab;
-
-
+  /// Hash of all tags currently 'instanciated'
+  HMtagtab                 tagtab;
 
   /// Variables to reinit (nbAverage=0).
   std::list<UVariable*>         reinitList;
@@ -145,8 +150,7 @@ public:
   /// List of variables to delete in a reset command.
   std::list<UVariable*>         varToReset;
 
-  urbi::hash_map_type<const char *,bool>::type blocktab;
-  urbi::hash_map_type<const char *,bool>::type freezetab;
+
 
   /// The main parser object.
   UParser                  parser;
@@ -194,7 +198,7 @@ protected:
   virtual void     effectiveDisplay         (const char*) = 0;
 
 private:
-
+  void              mark            (TagInfo*);
   /// Used by echo()& error().
   static const int MAXSIZE_INTERNALMESSAGE = 1024;
   /// Amount of security mem..

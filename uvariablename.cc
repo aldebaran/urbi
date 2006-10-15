@@ -85,6 +85,7 @@ UVariableName::UVariableName(UString* device,
     localFunction = true;
   if ((device) && (device->equal("self")))
     selfFunction = true;
+
 }
 
 //! UVariableName constructor for string based variables: $("...")
@@ -293,7 +294,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     {
       snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	  "!!! dynamic variable evaluation failed\n");
-      connection->send(tmpbuffer,command->tag->str());
+      connection->send(tmpbuffer,command->getTag().c_str());
       delete e1;
       if (fullname_)
       {
@@ -423,7 +424,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       {
 	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	    "!!! invalid prefix resolution\n");
-	connection->send(tmpbuffer,command->tag->str());
+	connection->send(tmpbuffer,command->getTag().c_str());
 	if (fullname_)
 	{
 	  delete fullname_;
@@ -459,7 +460,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	{
 	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	      "!!! expression error: array ignored\n");
-	  connection->send(tmpbuffer,command->tag->str());
+	  connection->send(tmpbuffer,command->getTag().c_str());
 	  errordetected = true;
 	  break;
 	}
@@ -472,7 +473,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	  delete e1;
 	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
 	      "!!! invalid array type: array ignored\n");
-	  connection->send(tmpbuffer,command->tag->str());
+	  connection->send(tmpbuffer,command->getTag().c_str());
 	  errordetected = true;
 	  break;
 	}
@@ -581,6 +582,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       delete newmethod;
     }
   }
+
 
   if (fullname_)
     fullname_->update(name);

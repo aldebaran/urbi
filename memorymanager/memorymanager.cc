@@ -1,31 +1,55 @@
+#include <cstdlib>
+#include <iostream>
 #include "memorymanager.h"
 namespace MemoryManager {
   int allocatedMemory = 0;
 };
 
-#ifdef ENABLE_BLOCKMEMMNGR
-void block_operator_delete(std::list<void*>  &mempool, void * ptr, int sz) {
-  mempool.push_back(ptr);
-  MemoryManager::allocatedMemory-= sz;
-  
+#ifndef DISABLE_BLOCKMEMMNGR
+void block_operator_delete(BlockPool* mempool, void * ptr) {
+  mempool->cptr++;
+  *mempool->cptr = ptr;
+  MemoryManager::allocatedMemory -= mempool->itemSize;
 }
 
-
-void * block_operator_new(std::list<void*>  &mempool, int blocksize, size_t sz) {
-  /*if (!mempool) {
-    mempool = new std::list<void *>();
-  }*/
-  if (mempool.empty()) {
-    //realloc
+//note that this implementation can't release any memory to malloc.
+void * block_operator_new(BlockPool* &mempool, int sz) {
+  if (!mempool) {
+    mempool = new BlockPool;
+    mempool->cptr = 0;
+    mempool->size = 0;
+    mempool->ptr = 0;
+    mempool->cptr--;
+    const int align = sizeof(void*);
     int asz = sz;
-    if (asz%8)
-      asz = asz+8-(asz%8);
-    char * data = (char * )malloc(asz * blocksize);
-    for (int i=0;i<blocksize;i++)
-      mempool.push_back(data+asz*i);
+    if (asz%align)
+      asz = asz+align-(asz%align);
+    mempool->itemSize = asz;
   }
-  void * result = mempool.back();
-  mempool.pop_back();
+  
+  if (!mempool->ptr || mempool->cptr<mempool->ptr) {
+    
+    int newsize = (mempool->size*3)/2 + DEFAULT_BLOCK_SIZE;
+    
+    //realloc ptr pool
+    long cpos = (long)mempool->cptr-(long)mempool->ptr; //save cptr as relative int
+    mempool->ptr = (void**) realloc(mempool->ptr, newsize*sizeof(void*));
+    mempool->cptr = (void**)((long)mempool->ptr+cpos); //restore cptr
+    
+    //allocate new data bloc
+    char * data = (char * )malloc((newsize-mempool->size) * mempool->itemSize);
+    //std::cerr <<"alloc of size "<<newsize<<" "<<(void*)data<<std::endl;
+    //std::cerr << mempool->itemSize<<" for "<<sz<<std::endl;
+    //std::cerr <<"pool base: "<<mempool->ptr<<std::endl;
+    for (int i=0;i<newsize-mempool->size;i++) {
+      mempool->cptr++;
+      *mempool->cptr = (data+mempool->itemSize*i);
+    }
+    mempool->size = newsize;
+  }
+  
+  void * result = *mempool->cptr;
+  mempool->cptr--;
   MemoryManager::allocatedMemory += sz;
   return result;
 }

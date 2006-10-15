@@ -59,14 +59,11 @@ UFunction::nbparam() {
 }
 
 UCommand*
-UFunction::cmdcopy(UString *_tag, UNamedParameters *_flags) {
+UFunction::cmdcopy(std::string _tag, UNamedParameters *_flags) {
 
   UCommand* tmpcmd = command->copy();
-  if (_tag)
-    {
-      delete tmpcmd->tag;
-      tmpcmd->tag = _tag->copy();
-    }
+  if (_tag != "")
+    tmpcmd->setTag(_tag);
   if (_flags)
     {
       delete tmpcmd->flags;

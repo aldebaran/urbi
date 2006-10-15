@@ -804,48 +804,16 @@ UConnection::processCommand(UCommand *&command,
   rl = UEXPLORED;
 
   // Handle blocked/freezed commands
-  if (command->tag) {
-    if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
-	(server->freezetab[command->tag->str()]) )
-      return (command);
-    char* p= const_cast<char *>(strchr(command->tag->str(),'.'));
-    if (p) {
-      p[0]=0;
-      if ((server->freezetab.find(command->tag->str())!=server->freezetab.end()) &&
-	  (server->freezetab[command->tag->str()]) ) {
-	p[0]='.';
-	return(command);
-      }
-      p[0]='.';
-    }
+  
+  if (command->isFrozen())
+    return (command);
+  
+
+  if (command->isBlocked()) {
+    delete command;
+    return(0);
   }
-
-  if (command->tag) {
-    if ((server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
-	(server->blocktab[command->tag->str()]) ) {
-
-      if (command == lastCommand)
-	lastCommand = command->up;
-
-      delete command;
-      return(0);
-    }
-    char* p= const_cast<char *>(strchr(command->tag->str(),'.'));
-    if (p) {
-      p[0]=0;
-      if ((server->blocktab.find(command->tag->str())!=server->blocktab.end()) &&
-	  (server->blocktab[command->tag->str()]) ) {
-	p[0]='.';
-	if (command == lastCommand)
-	  lastCommand = command->up;
-
-	delete command;
-	return(0);
-      }
-      p[0]='.';
-    }
-  }
-
+   
   UCommand         *morphed;
   UCommand_TREE    *morphed_up;
   UCommand         **morphed_position;
@@ -896,17 +864,17 @@ UConnection::processCommand(UCommand *&command,
 	  if (param->name->equal("flagtimeout")) {
 	    command->flagType += 1;
 	    command->flagExpr1 = param->expression;
-	    send("!!! Warning: +timeout flag is obsolete. Use timeout(time) command instead.\n",command->tag->str());
+	    send("!!! Warning: +timeout flag is obsolete. Use timeout(time) command instead.\n",command->getTag().c_str());
 	  }
 	  if (param->name->equal("flagstop")) {
 	    command->flagType += 2;
 	    command->flagExpr2 = param->expression;
-	    send("!!! Warning: +stop flag is obsolete. Use stopif(test) command instead.\n",command->tag->str());
+	    send("!!! Warning: +stop flag is obsolete. Use stopif(test) command instead.\n",command->getTag().c_str());
 	  }
 	  if (param->name->equal("flagfreeze")) {
 	    command->flagType += 4;
 	    command->flagExpr4 = param->expression;
-	    send("!!! Warning: +freeze flag is obsolete. Use freezeif(test) command instead.\n",command->tag->str());
+	    send("!!! Warning: +freeze flag is obsolete. Use freezeif(test) command instead.\n",command->getTag().c_str());
 	  }
 
 	  if ((param->name->equal("flag")) &&
@@ -919,7 +887,7 @@ UConnection::processCommand(UCommand *&command,
 	      (!command->morphed) &&
 	      (( param->expression->val == 4 ) || // 4 = +begin
 	       ( param->expression->val == 1 ) )) // 1 = +report
-	    send("*** begin\n",command->tag->str());
+	    send("*** begin\n",command->getTag().c_str());
 
 	}
 
@@ -995,7 +963,7 @@ UConnection::processCommand(UCommand *&command,
 	    (!command->morphed) &&
 	    (( param->expression->val == 3 ) || // 3 = +end
 	     ( param->expression->val == 1 ) )) // 1 = +report
-	  send("*** end\n",command->tag->str());
+	  send("*** end\n",command->getTag().c_str());
 
 	param = param->next;
       }
@@ -1029,7 +997,7 @@ UConnection::processCommand(UCommand *&command,
 	      (param->expression) &&
 	      (( param->expression->val == 3 ) || // 3 = +end
 	       ( param->expression->val == 1 ) )) // 1 = +report
-	    send("*** end\n",command->tag->str());
+	    send("*** end\n",command->getTag().c_str());
 
 	  param = param->next;
 	}
@@ -1051,11 +1019,9 @@ UConnection::processCommand(UCommand *&command,
 	if (command->flags)
 	  morphed->flags = command->flags->copy();
 
-	if (!morphed->tag)
-	  if (command->tag)
-	    morphed->tag->update(command->tag->str());
-	  else
-	    morphed->tag = new UString("notag");
+
+	morphed->setTag(command);
+
 	//morphed->morphed = true;
 	if (!command->persistant) delete command;
 	command = morphed;
@@ -1098,58 +1064,20 @@ UConnection::execute(UCommand_TREE* &execCommand)
     // BLOCKED/FREEZED COMMANDS
 
     deletecommand = false;
-    if (tree->tag) {
-      urbi::hash_map_type<const char *,bool>::type::iterator it =
-        server->freezetab.find(tree->tag->str());
-      if ((it!=server->freezetab.end()) &&
-	  (it->second) ) {
-
-	tree = tree->up;
-	continue;
-      }
-      char* p= const_cast<char*>(strchr(tree->tag->str(),'.'));
-      if (p) {
-	p[0]=0;
-	urbi::hash_map_type<const char *,bool>::type::iterator it =
-          server->freezetab.find(tree->tag->str());
-	if ((it!=server->freezetab.end()) &&
-	    (it->second) ) {
-	  p[0]='.';
-	  tree = tree->up;
-	  continue;
-	}
-	p[0]='.';
-      }
+    
+    //check if freezed
+    if (tree->isFrozen()) {
+      tree = tree->up;
+      continue;
     }
-
-
-    if (tree->tag) {
-      urbi::hash_map_type<const char *,bool>::type::iterator it =
-        server->blocktab.find(tree->tag->str());
-      if ((it!=server->blocktab.end()) &&
-	  (it->second) ) {
-
-	tree->runlevel1 = UEXPLORED;
-	tree->runlevel2 = UEXPLORED;
-	deletecommand = true;
-      }
-      char* p= const_cast<char*>(strchr(tree->tag->str(),'.'));
-      if (p) {
-	p[0]=0;
-	
-	urbi::hash_map_type<const char *,bool>::type::iterator it =
-        server->blocktab.find(tree->tag->str());
-	if ((it!=server->blocktab.end()) &&
-	  (it->second) ) {
-
-	  tree->runlevel1 = UEXPLORED;
-	  tree->runlevel2 = UEXPLORED;
-	  deletecommand = true;
-	}
-	p[0]='.';
-      }
+    
+    if (tree->isBlocked()) {
+      
+      tree->runlevel1 = UEXPLORED;
+      tree->runlevel2 = UEXPLORED;
+      deletecommand = true;
     }
-
+    
     // COMMAND1
 
     if ((tree->callid) &&
@@ -1214,7 +1142,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	    (param->expression) &&
 	    (( param->expression->val == 3 ) || // 3 = +end
 	     ( param->expression->val == 1 ) )) // 1 = +report
-	  send("*** end\n",tree->tag->str());
+	  send("*** end\n",tree->getTag().c_str());
 
 	param = param->next;
       }

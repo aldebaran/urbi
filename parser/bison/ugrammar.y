@@ -147,7 +147,7 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
     do {					\
       Res = new UCommand_TREE(Op, Lhs, Rhs);	\
       if (Res)					\
-	Res->tag->update("__node__");		\
+	Res->setTag("__node__");		\
       MEMCHECK2(Res, Lhs, Rhs);			\
     } while (0)
 
@@ -336,13 +336,13 @@ root:
       URefPt<UBinary> *ref = new URefPt<UBinary>($3);
       MEMCHECK(ref);
       UCommand* tmpcmd = new UCommand_ASSIGN_BINARY($1,ref);
-      if (tmpcmd) tmpcmd->tag->update("__node__");
+      if (tmpcmd) tmpcmd->setTag("__node__");
       MEMCHECK2(tmpcmd,$1,ref);
       if (tmpcmd) uparser.binaryCommand = true;
 
       uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
       if ( uparser.commandTree )
-	uparser.commandTree->tag->update("__node__");
+	uparser.commandTree->setTag("__node__");
       MEMCHECK(uparser.commandTree);
     }
 
@@ -374,8 +374,8 @@ taggedcommand:
 
     command {
 
-      if ($1 && !$1->tag)
-	$1->tag = new UString(UNKNOWN_TAG);
+      if ($1)
+	$1->setTag(UNKNOWN_TAG);
 
       $$ = $1;
     }
@@ -384,8 +384,7 @@ taggedcommand:
 
       MEMCHECK($1);
       if ($4) {
-	delete $4->tag;
-	$4->tag = $1;
+	$4->setTag($1->str());
 	$4->flags = $2;
       }
       $$ = $4;
@@ -396,8 +395,7 @@ taggedcommand:
       MEMCHECK($1);
       if ($3) {
 
-	delete $3->tag;
-	$3->tag = $1;
+	$3->setTag($1->str());
       }
       $$ = $3;
     }
@@ -408,8 +406,7 @@ taggedcommand:
       MEMCHECK($1.id);
       if ($3) {
 
-	delete $3->tag;
-	$3->tag = new UString($1.device,$1.id);
+	$3->setTag(UString($1.device,$1.id).str());
 	delete $1.device;
 	delete $1.id;
       }
@@ -423,8 +420,12 @@ taggedcommand:
 
       if ($4) {
 
+<<<<<<< .mine
+       	$4->setTag(UString($1.device,$1.id).str());
+=======
 	delete $4->tag;
 	$4->tag = new UString($1.device,$1.id);
+>>>>>>> .r224
 	delete $1.device;
 	delete $1.id;
 
@@ -442,7 +443,7 @@ taggedcommand:
       MEMCHECK($1);
       if ($3) {
 
-	$3->tag->update(UNKNOWN_TAG);
+	$3->setTag(UNKNOWN_TAG);
 	$3->flags = $1;
       }
       $$ = $3;
@@ -525,8 +526,8 @@ command:
 	new UCommand_TREE(UPIPE,
 			  $2,
 			  new UCommand_NOOP(true));
-      $$->tag->update("__UGrouped_set_of_commands__");
-      ((UCommand_TREE*)$$)->command2->tag->update("__system__");
+      $$->setTag("__UGrouped_set_of_commands__");
+      ((UCommand_TREE*)$$)->command2->setTag("__system__");
     }
 ;
 

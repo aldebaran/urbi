@@ -14,7 +14,7 @@ namespace MemoryManager
 }
 
 
-#ifdef ENABLE_BLOCKMEMMNGR
+#ifndef DISABLE_BLOCKMEMMNGR
 # include "blockmemorymanager.h"
 #else
 # define  MEMORY_MANAGED

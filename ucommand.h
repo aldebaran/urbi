@@ -61,19 +61,24 @@ public:
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand* copy();
   UErrorValue       copybase(UCommand *command);
-  virtual void      mark(UString *stopTag);
-  virtual void      deleteMarked();
+
   UCommand*         scanGroups(UVariableName** (UCommand::*refName)(),bool);
   virtual UVariableName** refVarName()  { return 0; };
   virtual UVariableName** refVarName2() { return 0; };
 
+  const std::string& getTag() {return tag;}
+  void setTag(const std::string& tag);
+  void setTag(UCommand *b); //faster than the one above
+  void unsetTag();
 
-
-
+  bool isBlocked();
+  bool isFrozen();
+  
   UCommandType     type;        ///< Type of the command.
   UCommandStatus   status;      ///< Status of the command
 
-  UString          *tag;        ///< Command tag
+  
+  
   UNamedParameters *flags;      ///< list of flags of tagged commands
 
   UCommand_TREE    *up;         ///< the UCommand_TREE that owns the UCommand
@@ -104,6 +109,15 @@ public:
 
   static const int MAXSIZE_TMPMESSAGE = 65536; ///< used by commands to build
   HMvariabletab::iterator hmi;         ///< internal
+  
+  private:
+  
+  std::string      tag;         ///< Command tag
+  TagInfo* tagInfo; ///< Ptr to tag info concerning us
+  std::list<UCommand *>::iterator tagInfoPtr; //for fast deletion
+  
+  
+  UCommand (const UCommand &c); ///< Protection against copy
 
 };
 
@@ -124,9 +138,9 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
-  virtual void           mark(UString *stopTag);
-  virtual void           deleteMarked();
 
+  void deleteMarked(); ///<D eletes sub commands marked for deletion
+  
   UCommand         *command1;   ///< Left side of the compound command.
   UCommand         *command2;   ///< Right side of the compound command.
   UCallid          *callid; ///< context identificator for function calls

@@ -458,8 +458,8 @@ UServer::work()
 	     it != varToReset.end();++it)
 	  delete *it;
 
-	blocktab.clear();
-	freezetab.clear();
+	tagtab.clear();
+	
 	eventtab.clear();
 
 	//variabletab.clear();
@@ -864,16 +864,68 @@ UServer::getVariable ( const char *device,
 void
 UServer::mark(UString *stopTag)
 {
-  // Scan currently opened connections for ongoing work
-  for (std::list<UConnection*>::iterator retr = connectionList.begin();
-       retr != connectionList.end();
-       retr++)
-    if  ((*retr)->isActive() &&
-	 (*retr)->activeCommand)
-      (*retr)->activeCommand->mark(stopTag);
+  std::cerr <<"mark "<<stopTag->str()<<std::endl;
+  HMtagtab::iterator it = tagtab.find(stopTag->str());
+  if (it == tagtab.end())
+    return; //no command with this tag
+  TagInfo* ti = &it->second;
+  mark(ti);
+}
 
-  if (parser.commandTree)
-    parser.commandTree->mark(stopTag);
+void
+UServer::mark(TagInfo * ti) {
+  for(std::list<UCommand*>::iterator i = ti->commands.begin(); 
+    i != ti->commands.end(); i++) {
+     if ((*i)->status != UONQUEUE || (*i)->morphed)
+       (*i)->toDelete = true;
+  }
+  for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
+    i != ti->subTags.end(); i++) {
+    mark(*i);
+  }
+}
+
+
+void
+UServer::freeze(const std::string &tag) {
+  HMtagtab::iterator it = tagtab.find(tag);
+  if (it != tagtab.end())
+    it->second.frozen = true;
+  else {
+    TagInfo t;
+    t.name = tag;
+    t.frozen = true;
+    t.blocked = false;
+    t.insert(tagtab);
+  }
+}
+
+void
+UServer::unfreeze(const std::string &tag) {
+  HMtagtab::iterator it = tagtab.find(tag);
+  if (it != tagtab.end())
+    it->second.frozen = false;
+}
+
+void
+UServer::block(const std::string &tag) {
+  HMtagtab::iterator it = tagtab.find(tag);
+  if (it != tagtab.end())
+    it->second.blocked = true;
+  else {
+    TagInfo t;
+    t.name = tag;
+    t.frozen = false;
+    t.blocked = true;
+    t.insert(tagtab);
+  }
+}
+
+void
+UServer::unblock(const std::string &tag) {
+  HMtagtab::iterator it = tagtab.find(tag);
+  if (it != tagtab.end())
+    it->second.blocked = false;
 }
 
 //! Load a file into the connection.

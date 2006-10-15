@@ -1,3 +1,22 @@
+2006-10-15  Matthieu Nottale  <nottale@gostai.com>
+
+	r225: Optimization: tag subsystem rewrite, memory manager rewrite 
+
+	* ucommand.cc: .
+	* ucommand.h: .
+	* utypes.h: .
+	* parser/bison/ugrammar.y: .
+	* ufunction.cc: .
+	* uexpression.cc: .
+	* ufunction.h: .
+	* userver.cc: .
+	* userver.h: .
+	* uvariablename.cc: .
+	* memorymanager/blockmemorymanager.h: .
+	* memorymanager/memorymanager.cc: .
+	* memorymanager/memorymanager.h: .
+	* uconnection.cc: .
+
 2006-10-15  BAILLIE Jean-Christophe  <baillie@gostai.com>
 
 	Fix indentation problems 

@@ -37,7 +37,7 @@ public:
 
   UString*   name();
   int        nbparam();
-  UCommand*  cmdcopy(UString *_tag = 0,
+  UCommand*  cmdcopy(std::string tag = "",
 		     UNamedParameters *_flags = 0);
   UString          *funname; ///< name of the function
   UNamedParameters *parameters; ///< parameters of the function
