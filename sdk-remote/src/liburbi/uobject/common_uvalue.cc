@@ -412,7 +412,9 @@ namespace urbi
   }
 
   //! Class UValue implementation
-  UValue::UValue() : type(DATA_VOID), storage(0) {}
+  UValue::UValue()
+    : type(DATA_VOID), val (0), storage(0)
+  {}
 
 
   UValue::UValue(ufloat v)
@@ -545,7 +547,7 @@ namespace urbi
 		{
 			UImage i;
 			i.data=0; i.size=0; i.width=0; i.height=0;
-			i.imageFormat = IMAGE_UNKNOWN; 
+			i.imageFormat = IMAGE_UNKNOWN;
 			return i;
 		}
 		else

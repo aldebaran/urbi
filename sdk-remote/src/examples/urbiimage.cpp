@@ -76,6 +76,10 @@ showImage(const urbi::UMessage &msg)
       urbi::convertYCrCbtoRGB((const urbi::byte *) img.data, img.size,
 			      (urbi::byte *) buffer);
       break;
+    case urbi::IMAGE_RGB:
+    case urbi::IMAGE_PPM:
+    case urbi::IMAGE_UNKNOWN:
+      break;
     }
 
   mon->setImage((bits8 *) buffer, sz);
@@ -84,7 +88,7 @@ showImage(const urbi::UMessage &msg)
 }
 
 void
-closeandquit (int sig)
+closeandquit (int)
 {
   delete urbi::getDefaultClient();
   urbi::exit(0);

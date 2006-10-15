@@ -1,3 +1,20 @@
+2006-10-15  Akim Demaille  <akim.demaille@free.fr>
+
+	Kill warnings.
+	* src/liburbi/ufloat.h: Do that.
+	* src/liburbi/uclient.cpp: Idem.
+	* src/liburbi/uabstractclient.cpp: Idem.
+	* src/liburbi/uobject/uobject.template.h: Idem.
+	* src/liburbi/uobject/common_uvalue.cc: Idem.
+	* src/liburbi/uconversion.cpp: Idem.
+	* src/examples/urbiimage.cpp: Idem.
+	* src/examples/urbisendsound.cpp: Idem.
+	* src/examples/urbitalkie.cpp: Idem.
+	* src/examples/urbimirror.cpp: Idem.
+	* src/examples/urbirecord.cpp: Idem.
+	* src/examples/urbiping.cpp: Idem.
+	* configure.ac: Disable -Weffc++.
+
 2006-10-12  matthieu nottale  <nottale@gostai.com>
 
 	r193: Windows compatibility fix.

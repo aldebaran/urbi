@@ -134,7 +134,7 @@ namespace urbi
 
   namespace
   {
-    void init_source(j_decompress_ptr cinfo)
+    void init_source(j_decompress_ptr)
     {
     }
 
@@ -150,7 +150,7 @@ namespace urbi
       return TRUE;
     }
 
-    void term_source(j_decompress_ptr cinfo)
+    void term_source(j_decompress_ptr)
     {
     }
 
@@ -192,14 +192,14 @@ namespace urbi
     struct jpeg_destination_mgr pub;
   };
 
-  void init_destination(j_compress_ptr cinfo) {
+  void init_destination(j_compress_ptr) {
   }
 
-  boolean empty_output_buffer(j_compress_ptr cinfo) {
+  boolean empty_output_buffer(j_compress_ptr) {
     return FALSE;
   }
 
-  void term_destination(j_compress_ptr cinfo) {
+  void term_destination(j_compress_ptr) {
   }
 
   namespace
@@ -213,7 +213,6 @@ namespace urbi
 
       JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
       int row_stride;		/* physical row width in image buffer */
-      int jpegsize;
 
       cinfo.err = jpeg_std_error(&jerr);
       jpeg_create_compress(&cinfo);
@@ -355,48 +354,54 @@ namespace urbi
     int format; //0 rgb 1 ycbcr
     int targetformat; //0 rgb 1 ycbcr 2 compressed
 
-    switch(dest.imageFormat) {
-    case IMAGE_RGB:
-    case IMAGE_PPM:
-      targetformat = 1;
-      break;
-    case IMAGE_YCbCr:
-      targetformat = 0;
-      break;
-    case IMAGE_JPEG:
-      targetformat = -1;
-      break;
-    }
+    switch(dest.imageFormat)
+      {
+      case IMAGE_RGB:
+      case IMAGE_PPM:
+	targetformat = 1;
+	break;
+      case IMAGE_YCbCr:
+	targetformat = 0;
+	break;
+      case IMAGE_JPEG:
+	targetformat = -1;
+	break;
+      case IMAGE_UNKNOWN:
+	break;
+      }
     int p,c;
-    switch(src.imageFormat) {
-    case IMAGE_YCbCr:
-      format = 1;
-      memcpy(uncompressedData, src.data, src.width*src.height*3);
-      break;
-    case IMAGE_RGB:
-      format = 0;
-      memcpy(uncompressedData, src.data, src.width*src.height*3);
-      break;
-    case IMAGE_PPM:
-      format = 0;
-      //locate header end
-      p=0;c=0;
-      while(c<3)
-	if (src.data[p++]=='\n')
-	  c++;
-      memcpy(src.data+p, uncompressedData, src.width*src.height*3);
-      break;
-    case IMAGE_JPEG:
-      if (targetformat==0) {
-	convertJPEGtoRGB((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
-	format = 0;
-      }
-      else {
-	convertJPEGtoYCrCb((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
+    switch(src.imageFormat)
+      {
+      case IMAGE_YCbCr:
 	format = 1;
+	memcpy(uncompressedData, src.data, src.width*src.height*3);
+	break;
+      case IMAGE_RGB:
+	format = 0;
+	memcpy(uncompressedData, src.data, src.width*src.height*3);
+	break;
+      case IMAGE_PPM:
+	format = 0;
+	//locate header end
+	p=0;c=0;
+	while(c<3)
+	  if (src.data[p++]=='\n')
+	    c++;
+	memcpy(src.data+p, uncompressedData, src.width*src.height*3);
+	break;
+      case IMAGE_JPEG:
+	if (targetformat==0) {
+	  convertJPEGtoRGB((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
+	  format = 0;
+	}
+	else {
+	  convertJPEGtoYCrCb((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
+	  format = 1;
+	}
+	break;
+      case IMAGE_UNKNOWN:
+	break;
       }
-      break;
-    }
 
 
     //now resize if target size is different
@@ -413,7 +418,7 @@ namespace urbi
     //then convert to destination format
     dest.data = (char *)realloc(dest.data, dest.width*dest.height*3+20);
     dest.size =  dest.width*dest.height*3+20;
-    int dsz = dest.size;
+
     switch(dest.imageFormat)
       {
       case IMAGE_RGB:
@@ -445,6 +450,8 @@ namespace urbi
 	fprintf(stderr,"unsoported conversion requested: cant compress to jpeg\n");
 	free(uncompressedData);
 	return 0;
+	break;
+      case IMAGE_UNKNOWN:
 	break;
       }
 

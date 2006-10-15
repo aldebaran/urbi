@@ -74,10 +74,7 @@ command(const urbi::UMessage &msg)
 {
   //get command id
   static int tme=0;
-  int id;
 
-
-  //printf("-\n");
   for (int i=0;i<devCount;i++)
     {
       if (msg.tag != devices[i])
@@ -106,7 +103,8 @@ command(const urbi::UMessage &msg)
 
 }
 
-void endRecord(int sig) {
+void endRecord(int)
+{
   fclose(f);
   exit(0);
 }

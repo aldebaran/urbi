@@ -29,8 +29,9 @@
 #include <cstdlib>
 #include <cerrno>
 #include <cmath>
-#include <algorithm>
 #include <sys/stat.h>
+
+#include <algorithm>
 #include <iostream>
 
 #include "uabstractclient.h"
@@ -111,11 +112,12 @@ namespace urbi
 
   std::streamsize UClientStreambuf::xsputn (char * s, std::streamsize n) {
     client->sendBufferLock.lock();
-    if (strlen(client->sendBuffer)+1+n > client->buflen) {
-      //error
-      client->sendBufferLock.unlock();
-      return 0;
-    }
+    if (strlen(client->sendBuffer)+1+n > client->buflen)
+      {
+	//error
+	client->sendBufferLock.unlock();
+	return 0;
+      }
     int clen = strlen(client->sendBuffer);
     memcpy(client->sendBuffer+clen, s, n);
     client->sendBuffer[clen+n] = 0;
@@ -136,7 +138,8 @@ namespace urbi
     as if it were comming from the URBI server.
   */
   void
-  UAbstractClient::notifyCallbacks(const UMessage &msg) {
+  UAbstractClient::notifyCallbacks(const UMessage &msg)
+  {
     listLock.lock();
     bool inc=false;
     for (std::list<UCallbackInfo>::iterator it = callbackList.begin();
@@ -164,9 +167,10 @@ namespace urbi
     Implementations should establish the connection in their constructor.
   */
   UAbstractClient::UAbstractClient(const char *_host, int _port, int _buflen)
-    :std::ostream(new UClientStreambuf(this)),
-     listLock(*new Lockable()),
-     sendBufferLock(*new Lockable()) {
+    : std::ostream(new UClientStreambuf(this)),
+      sendBufferLock(*new Lockable()),
+      listLock(*new Lockable())
+  {
     stream=this;
     getStream().setf(std::ios::fixed);
     rc = 0;
@@ -257,7 +261,7 @@ namespace urbi
 
   int UAbstractClient::send(UValue &v)
   {
-    switch( v.type)
+    switch(v.type)
       {
       case DATA_DOUBLE:
 	send("%lf",v.val);
@@ -276,12 +280,12 @@ namespace urbi
 	{
 	  send("[");
 	  int sz = v.list->size();
-	  int p = 0;
-	  for (int i=0; i<sz;i++) {
-	    send((*v.list)[i]);
-	    if (i != sz-1)
-	      send(" , ");
-	  }
+	  for (int i=0; i<sz;i++)
+	    {
+	      send((*v.list)[i]);
+	      if (i != sz-1)
+		send(" , ");
+	    }
 	  send("]");
 	}
 	break;
@@ -289,15 +293,17 @@ namespace urbi
 	{
 	  send("OBJ %s [",v.object->refName.c_str());
 	  int sz = v.object->size();
-	  int p = 0;
-	  for (int i=0; i<sz;i++) {
-	    send("%s :",(*v.object)[i].name.c_str());
-	    send( *((*v.object)[i].val) );
-	    if (i != sz-1)
-	      send(" , ");
-	  }
+	  for (int i=0; i<sz;i++)
+	    {
+	      send("%s :",(*v.object)[i].name.c_str());
+	      send( *((*v.object)[i].val) );
+	      if (i != sz-1)
+		send(" , ");
+	    }
 	  send("]");
 	}
+	break;
+      case DATA_VOID:
 	break;
       };
     return 0;
@@ -441,7 +447,7 @@ namespace urbi
     //create the header.
     // printf("sound message: %s %d\n", msg.systemValue, msg.type);
     static const int CHUNK_SIZE = 32 * 8*60;
-    static const int SUBCHUNK_SIZE = CHUNK_SIZE; //1024;
+    // static const int SUBCHUNK_SIZE = CHUNK_SIZE; //1024;
 
 
     sendSoundData *s=(sendSoundData *)cb;
@@ -729,7 +735,6 @@ namespace urbi
   {
     static bool binaryMode = false;
     char *endline;
-    char *endline2;
     while (true) {
 
       if (binaryMode) {

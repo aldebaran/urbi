@@ -39,7 +39,7 @@ pong(const urbi::UMessage & msg)
   return urbi::URBI_CONTINUE;
 }
 
-void showstats(int s)
+void showstats(int)
 {
   if (!pingCount)
     urbi::exit(0);

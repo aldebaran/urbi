@@ -17,8 +17,9 @@
  **************************************************************************** */
 #ifndef UFLOAT_H_DEFINED
 # define UFLOAT_H_DEFINED
+# include <cmath>
+
 # include <iostream>
-# include <math.h>
 # include <algorithm>
 # ifndef DEBUG
 #  define DEBUG 0

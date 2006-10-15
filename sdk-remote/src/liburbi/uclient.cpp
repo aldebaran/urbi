@@ -153,7 +153,8 @@ namespace urbi
 
 
   bool
-  UClient::canSend(int size) {
+  UClient::canSend(int)
+  {
     return true;
   }
 

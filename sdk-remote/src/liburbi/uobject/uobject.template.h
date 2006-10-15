@@ -301,10 +301,14 @@ namespace urbi
   //internal use: unparsed binary data
   class BinaryData {
   public:
-    void * data;
+  BinaryData()
+    : data (0), size (0)
+      {}
+    BinaryData(void *d, int s)
+      : data(d), size(s)
+    {}
+    void* data;
     int size;
-    BinaryData() {}
-    BinaryData(void *d, int s):data(d), size(s) {}
   };
 
 
@@ -387,12 +391,14 @@ namespace urbi
   class UNamedValue
   {
   public:
+    UNamedValue(const std::string& n, UValue *v)
+      : val(v),name(n)
+    {}
+    UNamedValue() 
+      : val(0),name(0)
+    {}
     UValue *val;
     std::string name;
-    UNamedValue(const std::string& n, UValue *v)
-      :val(v),name(n)
-    {}
-    UNamedValue() {};
   };
 
   class UObjectStruct {
@@ -506,9 +512,19 @@ namespace urbi
   class UVar
   {
   public:
-
-    UVar() :VAR_PROP_INIT { name = "noname"; owned=false; vardata=0;};
-    UVar(UVar& v) :VAR_PROP_INIT  {};
+    UVar() 
+      : owned (false),
+	VAR_PROP_INIT,
+	vardata (0), name ("noname")
+    {}
+    UVar(UVar&) 
+      : owned (false),
+	VAR_PROP_INIT,
+	vardata (0), name ("")
+    {
+      /// FIXME: This is really weird: a copy-ctor that does not use
+      /// the lhs?
+    }
     UVar(const std::string&);
     UVar(const std::string&, const std::string&);
     UVar(UObject&, const std::string&);

@@ -37,7 +37,7 @@ command(const urbi::UMessage &msg)
   return urbi::URBI_CONTINUE;
 }
 
-void endRecord(int sig)
+void endRecord(int)
 {
   urbi::exit(0);
 }

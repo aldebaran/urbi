@@ -5,7 +5,7 @@
 urbi::USound snd;
 
 urbi::UCallbackAction
-endProgram(const urbi::UMessage &msg)
+endProgram(const urbi::UMessage&)
 {
   printf("done\n");
   urbi::exit(0);

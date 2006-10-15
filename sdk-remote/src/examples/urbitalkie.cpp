@@ -76,7 +76,7 @@ SoundPipe::microNotify(int source, const urbi::UMessage &msg)
 
 
   urbi::USound &lastStacked = stack[source].stack.back();
-  if ( stack[source].stack.empty() || lastStacked.size > minSendSize)
+  if (stack[source].stack.empty() || lastStacked.size > minSendSize)
     {
       snd.soundFormat = urbi::SOUND_RAW;
       convert(msg.value->binary->sound, snd);
@@ -120,8 +120,6 @@ SoundPipe::speakerNotify(int source, const urbi::UMessage &msg)
 void
 SoundPipe::trySend(int source)
 {
-  static int id=0;
-
   pthread_mutex_lock(&lock[0]);
   pthread_mutex_lock(&lock[1]);
 
