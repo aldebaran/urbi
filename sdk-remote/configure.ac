@@ -10,6 +10,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 
 # Automake.
 AM_INIT_AUTOMAKE([1.9.6 -Wall dist-zip])
+AC_SUBST([INSTALL_HEADER], ['$(SHELL) $(install_sh_DATA) -C'])
 
 # Urbi standard locations.
 URBI_DIRS([remote])
