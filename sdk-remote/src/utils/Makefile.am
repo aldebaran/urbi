@@ -10,4 +10,4 @@ urbireverse_SOURCES = urbireverse.cpp
 urbiscale_SOURCES = urbiscale.cpp
 urbiwalk_SOURCES = urbiwalk.cpp Move.cpp Move.h
 
-urbiwalk_LDADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la $(top_builddir)/src/liburbi/liburbi.la
+urbiwalk_LDADD = $(top_builddir)/jpeg-6b/libjpeg.la $(top_builddir)/src/liburbi/liburbi.la

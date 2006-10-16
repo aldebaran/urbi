@@ -1,5 +1,11 @@
 2006-10-16  Akim Demaille  <demaille@gostai.com>
 
+	Fix errors in the previous patch.
+	* src/utils/Makefile.am: Adjust pathes to jpeg-6b.
+	* src/liburbi/Makefile.am: Ditto.
+
+2006-10-16  Akim Demaille  <demaille@gostai.com>
+
 	Tidy liburbi-c++.
 	* lib/jpeg-6bL: Move to...
 	* jpeg-6b: here.

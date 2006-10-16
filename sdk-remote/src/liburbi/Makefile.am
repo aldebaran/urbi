@@ -5,7 +5,7 @@ SUBDIRS = uobject .
 endif 
 
 AM_CPPFLAGS = \
--I$(top_srcdir)/lib \
+-I$(top_srcdir) \
 -I$(top_builddir)/src/liburbi/uobject \
 -I$(top_srcdir)/src/liburbi/uobject
 
@@ -46,7 +46,7 @@ uobject/uexternal.h				\
 uobject/uobject.h	uobject/uobject.cc	\
 uobject/uvar.cc					\
 usyncclient.h		usyncclient.cpp
-liburbi_la_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
+liburbi_la_LIBADD = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
 
 
 ## ------------ ##
@@ -55,4 +55,4 @@ liburbi_la_LIBADD = $(top_builddir)/lib/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
 
 env_LTLIBRARIES = libkernel-remote.la
 libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES) $(top_srcdir)/sdk/umain.cc
-libkernel_remote_la_LIBADD = $(AM_LIBADD) $(top_builddir)/lib/jpeg-6b/libjpegx.la
+libkernel_remote_la_LIBADD = $(AM_LIBADD) $(top_builddir)/jpeg-6b/libjpegx.la
