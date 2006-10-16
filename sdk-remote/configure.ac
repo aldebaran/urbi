@@ -63,8 +63,9 @@ URBI_OPENR
 ## Output.  ##
 ## -------- ##
 
+AC_CONFIG_HEADERS([src/config.h])
+
 AC_CONFIG_FILES([Makefile
-	  lib/Makefile
 	  src/Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile
@@ -72,7 +73,7 @@ AC_CONFIG_FILES([Makefile
 	  src/utils/Makefile
 	  src/liburbi/openr/Makefile
 	  src/liburbi/openr/Makefile.aibo
-	  lib/jpeg-6b/makefile.aibo
-	  lib/jpeg-6b/Makefile
+	  jpeg-6b/makefile.aibo
+	  jpeg-6b/Makefile
 ])
 AC_OUTPUT

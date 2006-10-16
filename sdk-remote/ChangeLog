@@ -1,3 +1,16 @@
+2006-10-16  Akim Demaille  <demaille@gostai.com>
+
+	Tidy liburbi-c++.
+	* lib/jpeg-6bL: Move to...
+	* jpeg-6b: here.
+	Spares time at configure and make time.
+	* configure.ac: Create a config.h.
+	Currently, it is not used anywhere.  When it is, one will have
+	to add a -I $(top_builddir)/src to find it.
+	BTW, this fixes the warnings in jpeg-6b, since we no longer
+	mix our HAVE_* with its.
+	* Makefile.am: Adjust.
+
 2006-10-15  Akim Demaille  <akim.demaille@free.fr>
 
 	Kill warnings.
