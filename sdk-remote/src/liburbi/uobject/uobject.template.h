@@ -454,7 +454,7 @@ namespace urbi
     //parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
     int parse(const char* message,
 	      int pos,
-	      std::list<BinaryData> bins,
+	      std::list<BinaryData> &bins,
 	      std::list<BinaryData>::iterator &binpos);
 
     /// Print itself on \c s, and return it.

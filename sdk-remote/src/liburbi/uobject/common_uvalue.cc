@@ -92,7 +92,7 @@ namespace urbi
 
 
   int UValue::parse(const char * message, int pos,
-		    std::list<BinaryData> bins,
+		    std::list<BinaryData> &bins,
 		    std::list<BinaryData>::iterator &binpos)
   {
     while (message[pos]==' ')
