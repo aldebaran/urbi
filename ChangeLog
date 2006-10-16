@@ -1,3 +1,16 @@
+2006-10-16  Akim Demaille  <akim.demaille@free.fr>
+
+	Use install-sh -C for headers.
+	* configure.ac (INSTALL_HEADER): Define.
+	This fixes the symptoms of a weird issue: when running
+	"make install" in the kernel, when install goes into
+	liburbi the headers are installed with fresh timestamps, and
+	therefore, when install arrives back in the kernel's
+	directory, it recompiles again.
+	Now the timestamps are no longer updated.
+	But in the first place, when should not depend on
+	installed headers, but on our shipped headers.
+
 2006-10-16  Akim Demaille  <demaille@gostai.com>
 
 	Tidy.

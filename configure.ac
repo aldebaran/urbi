@@ -6,10 +6,10 @@ AC_INIT([kernel1], [1.0])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
+AC_SUBST([INSTALL_HEADER], ['$(SHELL) $(install_sh_DATA) -C'])
 
 # Automake.
 AM_INIT_AUTOMAKE([1.9.6 foreign -Wall dist-zip])
-
 
 ## ------------ ##
 ## Parameters.  ##
