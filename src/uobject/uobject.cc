@@ -114,7 +114,7 @@ namespace urbi
 
 
   void
-  main(int argc, char *argv[])
+  main(int, char *[])
   {
     // no effect here
   }
@@ -162,7 +162,7 @@ namespace urbi
 
   //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
-				     const std::string& type,
+				     const std::string&,
 				     const std::string& name, UTable &t)
     : storage(0), objname(objname), name(name)
   {

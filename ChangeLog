@@ -1,3 +1,19 @@
+2006-10-16  Akim Demaille  <demaille@gostai.com>
+
+	Tidy.
+	Move all the sources into src.
+	Use the latest liburbi-c++.
+	* configure.ac: Create config.h.
+	* Makefile.am: Put bits into...
+	* src/Makefile.am: this new file.
+	* src/parser/bison/bison.mk: Adjust.
+	* src/uvalue.cc, src/network/bsdnet/network.cc,
+	* src/userver.cc, src/uobject/uobject.cc,
+	* src/uobject/uobject.h, src/uobject/uext.h,
+	* src/uobject/common_uvalue.cc: Don't name unused arguments.
+
+	* src/ubanner.cc: Include config.h.
+
 2006-10-15  Akim Demaille  <akim.demaille@free.fr>
 
 	Fix some warnings.

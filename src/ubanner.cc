@@ -3,6 +3,7 @@
 // which is demanding.
 
 #include "ubanner.hh"
+#include "config.h"
 #include "version.hh"
 
 // Standard header used by the server. Divided into "before" and

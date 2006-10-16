@@ -52,5 +52,6 @@ AC_CONFIG_SUBDIRS([liburbi-c++])
 ## Output.  ##
 ## -------- ##
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_HEADERS([src/config.h])
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

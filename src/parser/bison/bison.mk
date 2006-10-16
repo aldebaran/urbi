@@ -8,7 +8,7 @@ AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 BISONXX = $(top_builddir)/build-aux/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 
-parsedir = $(top_srcdir)/parser/bison
+parsedir = $(top_srcdir)/src/parser/bison
 
 # We do not use Automake features here.
 FROM_UGRAMMAR_Y =			\

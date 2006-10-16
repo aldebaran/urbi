@@ -36,7 +36,9 @@ namespace Network
     int port;
   };
 
-  bool TCPServerPipe::init(int port) {
+  bool
+  TCPServerPipe::init(int port)
+  {
     this->port = port;
     int rc;
     struct ::sockaddr_in address;
@@ -45,15 +47,13 @@ namespace Network
     /* initialize the socket api */
     WSADATA info;
     rc = WSAStartup(MAKEWORD(1,1),&info); /* Winsock 1.1 */
-    if (rc!=0) {
+    if (rc!=0)
       return false;
-    }
 #endif
     /* create the socket */
     fd = socket(AF_INET,SOCK_STREAM,0);
-    if (fd==-1) {
+    if (fd==-1)
       return false;
-    }
 
     /* set the REUSEADDR option to 1 to allow imediate reuse of the port */
     int yes = 1;
@@ -79,7 +79,8 @@ namespace Network
   }
 
 
-  void TCPServerPipe::notifyRead()
+  void
+  TCPServerPipe::notifyRead()
   {
     int cfd;
     struct sockaddr_in client;
@@ -98,7 +99,8 @@ namespace Network
   static std::list<Pipe *> pList;
   static int controlPipe[2]={-1,-1};
 
-  bool createTCPServer(int port)
+  bool
+  createTCPServer(int port)
   {
     TCPServerPipe * tsp = new TCPServerPipe();
     if (!tsp->init(port))
@@ -109,7 +111,9 @@ namespace Network
     return true;
   }
 
-  int buildFD(fd_set &rd, fd_set &wr) {
+  int
+  buildFD(fd_set &rd, fd_set &wr)
+  {
     FD_ZERO(&rd);
     FD_ZERO(&wr);
     int maxfd=0;
@@ -145,7 +149,7 @@ namespace Network
 	  int f= p->readFD();
 	  if (f>=0 && FD_ISSET(f,&rd))
 	    p->notifyRead();
-	  
+
 	  f= p->writeFD();
 	  if (f>=0 && FD_ISSET(f,&wr))
 	    p->notifyWrite();
@@ -157,7 +161,9 @@ namespace Network
   }
 
 
-  bool selectAndProcess(int usDelay) {
+  bool
+  selectAndProcess(int usDelay)
+  {
     fd_set rd;
     fd_set wr;
     int mx = buildFD(rd, wr );
@@ -168,15 +174,17 @@ namespace Network
     int r = select(mx, &rd, &wr, 0, &tv);
     if (r==0)
       return false;
-    if (r>0) {
+    if (r>0)
+      {
 #ifndef WIN32
-      if (FD_ISSET(controlPipe[0],&rd)) {
-	char buf[128];
-	read(controlPipe[0], buf, 128);
-      }
+	if (FD_ISSET(controlPipe[0],&rd))
+	  {
+	    char buf[128];
+	    read(controlPipe[0], buf, 128);
+	  }
 #endif
-      notify(rd, wr);
-    }
+	notify(rd, wr);
+      }
     if (r<0)
       //XXX this is baad, we should realy do something
       perror("SELECT ERROR:");
@@ -209,14 +217,15 @@ namespace Network
   static const int delay = 1000000;
   void *
 #endif
-  processNetwork(void * useless) {
-    while (true) {
+  processNetwork(void*)
+  {
+    while (true)
       selectAndProcess(delay);
-    }
   }
 
 
-  void startNetworkProcessingThread() {
+  void startNetworkProcessingThread()
+  {
 #ifdef WIN32
     DWORD tid;
     CreateThread(NULL,0,processNetwork,0,0,&tid);
@@ -227,7 +236,8 @@ namespace Network
   }
 
 
-  void Pipe::trigger() {
+  void Pipe::trigger()
+  {
 #ifndef WIN32
     char  c = 0;
     write(this->controlFd, &c, 1);

@@ -121,7 +121,7 @@ public:
   virtual UErrorValue closeConnection    () {return USUCCESS;}
   char * getData() {return (char *)sendQueue_->virtualPop(sendQueue_->dataSize());}
 protected:
-  virtual int         effectiveSend     (const ubyte *buffer, int length) {return 0;};
+  virtual int         effectiveSend     (const ubyte*, int) {return 0;};
 };
 
 
@@ -767,9 +767,9 @@ UValue::echo(bool hr)
       UNamedParameters *param = refBinary->ref()->parameters;
       if (param) oss << " ";
 
-      while (param) 
+      while (param)
 			{
-				if (param->expression) 
+				if (param->expression)
 				{
 					if (param->expression->dataType == DATA_NUM)
 						oss << (int)param->expression->val;

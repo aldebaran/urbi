@@ -293,12 +293,12 @@ UServer::work()
 
       if ((*retr)->activeCommand!=0) {
 
-        (*retr)->obstructed = true; // will be changed to 'false' if the whole tree is visited
-        (*retr)->treeLock.lock();
-        (*retr)->inwork = true;     // to distinguish this call of execute from the one in receive
-        (*retr)->execute((*retr)->activeCommand);
-        (*retr)->inwork = false;
-        (*retr)->treeLock.unlock();
+	(*retr)->obstructed = true; // will be changed to 'false' if the whole tree is visited
+	(*retr)->treeLock.lock();
+	(*retr)->inwork = true;     // to distinguish this call of execute from the one in receive
+	(*retr)->execute((*retr)->activeCommand);
+	(*retr)->inwork = false;
+	(*retr)->treeLock.unlock();
       }
 
       if ((*retr)->newDataAdded) { // used by loadFile and exec to
@@ -459,7 +459,7 @@ UServer::work()
 	  delete *it;
 
 	tagtab.clear();
-	
+
 	eventtab.clear();
 
 	//variabletab.clear();
@@ -678,7 +678,7 @@ UServer::isIsolated()
 
 //! Overload this function to specify how your robot is displaying messages.
 void
-UServer::effectiveDisplay(const char* s)
+UServer::effectiveDisplay(const char*)
 {
 }
 
@@ -762,7 +762,7 @@ UServer::updateTime()
 	   should be enough for any reasonable header.
 */
 void
-UServer::getCustomHeader (int line, char* header, int maxlength)
+UServer::getCustomHeader (int, char* header, int)
 {
   header[0] = 0; // empty string
 }
@@ -874,7 +874,7 @@ UServer::mark(UString *stopTag)
 
 void
 UServer::mark(TagInfo * ti) {
-  for(std::list<UCommand*>::iterator i = ti->commands.begin(); 
+  for(std::list<UCommand*>::iterator i = ti->commands.begin();
     i != ti->commands.end(); i++) {
      if ((*i)->status != UONQUEUE || (*i)->morphed)
        (*i)->toDelete = true;
@@ -933,7 +933,7 @@ UServer::unblock(const std::string &tag) {
     Returns UFAIL if anything goes wrong, USUCCESS otherwise.
  */
 UErrorValue
-UServer::loadFile (const char *filename, UCommandQueue* loadQueue)
+UServer::loadFile (const char*, UCommandQueue*)
 {
   return USUCCESS;
 }
@@ -943,7 +943,7 @@ UServer::loadFile (const char *filename, UCommandQueue* loadQueue)
     Returns UFAIL if anything goes wrong, USUCCESS otherwise.
  */
 UErrorValue
-UServer::saveFile (const char *filename, const char * content)
+UServer::saveFile (const char*, const char *)
 {
   return USUCCESS;
 }
