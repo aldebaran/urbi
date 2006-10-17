@@ -18,7 +18,7 @@ BUILT_SOURCES =
 CLEANFILES =
 EXTRA_DIST =
 
-AM_CPPFLAGS = -I$(libport_dir) -I$(srcdir)/uobject -DFLOAT_DOUBLE
+AM_CPPFLAGS = -I$(top_srcdir) -I$(srcdir)/uobject -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
@@ -28,8 +28,10 @@ libkernel_la_LDFLAGS = -static
 env_LTLIBRARIES = libkernel.la
 
 install-exec-local:
-	sed -e 's/libdir=.*/libdir=/' -e 's/installed=.*/installed=no/' .libs/libkernel.lai > libkernel.lai.new \
-	  && mv -f libkernel.lai.new .libs/libkernel.lai
+	sed -e 's/libdir=.*/libdir=/' \
+	    -e 's/installed=.*/installed=no/' \
+	    .libs/libkernel.lai > libkernel.lai.new
+	mv -f libkernel.lai.new .libs/libkernel.lai
 
 install-data-hook:
 	mkdir -p $(DESTDIR)$(envdir)/.libs

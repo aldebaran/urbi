@@ -22,6 +22,7 @@
 #ifndef UCONNECTION_H_DEFINED
 # define UCONNECTION_H_DEFINED
 
+# include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.h"
 # include "userver.h"
@@ -29,8 +30,7 @@
 # include "ucallid.h"
 # include "ucommandqueue.h"
 # include "uvariable.h"
-# include "parser/bison/location.hh"  //FIXME remove this to abstract parser
-# include "lockable.hh"				     // from connection
+# include "location.hh"  //FIXME remove this to abstract parser from connection
 
 // Global variable (thanks bison...) to store the the error message
 // when a parsing error occurs.

@@ -1,5 +1,15 @@
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
+	Update libport use.
+	* src/uconnection.h: Use the new files.
+	* src/userver.h: Ditto.
+	* src/parser/uparser.h: Fix include path.
+	Reported by Matthieu.
+	* src/uconnection.cc: idem.
+	* src/Makefile.am: Adjust.
+
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
 	Use libport/lockable.hh.
 	* src/lockable.h: Remove.
 	* src/uconnection.h, src/userver.cc, src/userver.h,

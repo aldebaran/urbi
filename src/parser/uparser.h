@@ -29,7 +29,7 @@
 # include "utypes.h"
 # undef IN
 
-# include "parser/bison/ugrammar.hh"
+# include "ugrammar.hh"
 # include "parser/bison/FlexLexer.h"
 
 class UCommand_TREE;
