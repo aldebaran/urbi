@@ -1,5 +1,3 @@
-AM_CXXFLAGS += $(WARNING_CXXFLAGS)
-
 ## -------------- ##
 ## Bison parser.  ##
 ## -------------- ##
@@ -53,7 +51,7 @@ utoken.cc
 
 BUILT_SOURCES += $(FROM_UTOKEN_L)
 CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
-dist_libkernel_la_SOURCES += $(parsedir)/FlexLexer.h
+dist_libkernel_la_SOURCES += $(parsedir)/flex-lexer.hh
 nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parsedir)/utoken.l
@@ -62,7 +60,7 @@ utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk
 	@touch $@.tmp
 	$(FLEX) -+ -outoken.cc $(parsedir)/utoken.l
 	perl -pi						\
-	     -e 's,<FlexLexer.h>,"parser/bison/FlexLexer.h",;'	\
+	     -e 's,<FlexLexer.h>,"parser/bison/flex-lexer.hh",;'\
 	     -e 's/class istream;/#include <iostream>/;'	\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
 	     utoken.cc
@@ -74,20 +72,14 @@ $(FROM_UTOKEN_L): utoken.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) utoken.stamp; \
 	fi
 
-# ifeq ($(OS),aibo)
-# parser/bison/ugrammar.mips.o: parser/bison/ugrammar.cc
-# 	echo "special compile for Aibo: no optim"
-# 	$(CC) $(CPPFLAGS) -Wno-deprecated $(OPTIM) -O0 -o $@ -c $<
-# endif
-
-
-
 
 # Kludge to install userver.h.
-bisondir = $(kernelincludedir)/parser/bison
-bison_HEADERS = 			\
+kernelinclude_HEADERS += 		\
 stack.hh				\
 position.hh				\
 location.hh				\
-ugrammar.hh				\
-$(parsedir)/FlexLexer.h
+ugrammar.hh
+
+bisonincludedir = $(kernelincludedir)/parser/bison
+bisoninclude_HEADERS = \
+$(parsedir)/flex-lexer.hh

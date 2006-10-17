@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - (C) Jean-Christophe Baillie, 2004-2005 
+# URBI - (C) 2004, 2005, 2006 Jean-Christophe Baillie 
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -17,6 +17,7 @@ libport_dir = $(top_srcdir)/libport
 BUILT_SOURCES =
 CLEANFILES =
 EXTRA_DIST =
+kernelinclude_HEADERS =
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(srcdir)/uobject -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
@@ -44,7 +45,7 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
-$(libport_dir)/lockable.h					\
+$(libport_dir)/lockable.hh					\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
 parser/uparser.h parser/uparser.cc				\
@@ -125,9 +126,9 @@ windows/urbikernel/urbikernel.vcproj
 
 # This is a kludge: for the time being, install all the server include
 # files for the cores.
-kernelinclude_HEADERS =				\
+kernelinclude_HEADERS +=			\
 fwd.hh						\
-$(libport_dir)/lockable.h			\
+$(libport_dir)/lockable.hh			\
 ubinary.h					\
 ubinder.h					\
 ucallid.h					\

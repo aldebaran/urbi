@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - (C) Jean-Christophe Baillie, 2004-2005 
+# URBI - (C) 2004, 2005, 2006 Jean-Christophe Baillie.
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the

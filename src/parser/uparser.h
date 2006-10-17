@@ -30,7 +30,7 @@
 # undef IN
 
 # include "ugrammar.hh"
-# include "parser/bison/FlexLexer.h"
+# include "parser/bison/flex-lexer.hh"
 
 class UCommand_TREE;
 

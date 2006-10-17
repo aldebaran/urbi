@@ -1,3 +1,9 @@
+// This file is based on FlexLexer.h, installed on systems that have
+// Flex installed.  But then, it is way too dangerous to use the same
+// name, as the installed one is read instead of this one.  So make
+// sure *not* to name this file FlexLexer.h.
+
+
 // $Header: /cvsroot/urbi/./devel-code/urbiserver/kernel/FlexLexer.h,v 1.5 2005/06/28 14:12:07 jcbaillie Exp $
 
 // FlexLexer.h -- define interfaces for lexical analyzer classes generated
@@ -43,18 +49,17 @@
 
 // Note: july 2004-2005.=> modified by Jean-Christophe Baillie
 // Added yy::parser::semantic_type *lvalp to the definition of the yylex function.
-/*! \file FlexLexer.h
+/*! \file flex-lexer.hh
  *******************************************************************************
 
  **************************************************************************** */
 
-#ifndef __FLEX_LEXER_H
-// Never included before - need to define base class.
-# define __FLEX_LEXER_H
+#ifndef FLEX_LEXER_HH
+# define FLEX_LEXER_HH
 # include <iostream>
 
 # include "ucommand.h"
-# include "parser/bison/ugrammar.hh"
+# include "ugrammar.hh"
 
 struct yy_buffer_state;
 typedef int yy_state_type;

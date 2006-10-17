@@ -1,5 +1,16 @@
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
+	Fix path.
+	* src/parser/bison/FlexLexer.h: Rename as...
+	* src/parser/bison/flex-lexer.hh: this to avoid being caught
+	by the installed one.
+	* src/parser/uparser.h: Adjust.
+	* src/parser/bison/bison.mk: Adjust.
+	* src/Makefile.am: Adjust.
+	lockable.h -> lockable.hh.
+
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
 	Update libport use.
 	* src/uconnection.h: Use the new files.
 	* src/userver.h: Ditto.
