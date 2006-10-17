@@ -27,7 +27,8 @@
 
 #include <locale.h>
 #include "uclient.h"
-#include "lockable.h"
+#include "libport/lockable.hh"
+#include "libport/thread.hh"
 
 #ifdef WIN32
 # include <windows.h>

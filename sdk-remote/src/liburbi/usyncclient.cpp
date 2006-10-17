@@ -7,7 +7,9 @@
 
 #include "usyncclient.h"
 #include "uconversion.h"
-#include "lockable.h"
+#include "libport/lockable.hh"
+#include "libport/semaphore.hh"
+#include "libport/thread.hh"
 
 
 namespace urbi

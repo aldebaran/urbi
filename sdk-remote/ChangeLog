@@ -1,3 +1,13 @@
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
+	Use libport.
+	* src/liburbi/lockable.h: Remove.
+	Now in libport.
+	* src/liburbi/usyncclient.cpp: Adjust.
+	* src/liburbi/uclient.cpp: Idem.
+	* src/liburbi/uabstractclient.cpp: Idem.
+	* src/liburbi/Makefile.am: Idem.
+
 2006-10-16  Akim Demaille  <akim.demaille@free.fr>
 
 	Use install-sh -C for headers.

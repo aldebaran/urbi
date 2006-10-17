@@ -4,9 +4,11 @@ else
 SUBDIRS = uobject .
 endif 
 
-AM_CPPFLAGS = \
--I$(top_srcdir) \
--I$(top_builddir)/src/liburbi/uobject \
+libport_dir = $(top_srcdir)/libport
+
+AM_CPPFLAGS =					\
+-I$(top_srcdir)					\
+-I$(top_builddir)/src/liburbi/uobject		\
 -I$(top_srcdir)/src/liburbi/uobject
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
@@ -37,7 +39,9 @@ uobject/uobject.h: uobject/uobject.template.h
 	cd uobject && $(MAKE) uobject.h
 
 liburbi_la_SOURCES =				\
-lockable.h                                      \
+$(libport_dir)/lockable.hh	                \
+$(libport_dir)/semaphore.hh	                \
+$(libport_dir)/thread.hh	                \
 uabstractclient.h	uabstractclient.cpp	\
 uclient.h		uclient.cpp		\
 uconversion.h		uconversion.cpp		\

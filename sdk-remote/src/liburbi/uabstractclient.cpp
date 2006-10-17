@@ -35,7 +35,7 @@
 #include <iostream>
 
 #include "uabstractclient.h"
-#include "lockable.h"
+#include "libport/lockable.hh"
 
 #if DEBUG
 //
