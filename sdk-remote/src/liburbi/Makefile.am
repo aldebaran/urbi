@@ -1,8 +1,4 @@
-if OPENR
-SUBDIRS = openr .
-else
 SUBDIRS = uobject .
-endif 
 
 libport_dir = $(top_srcdir)/libport
 

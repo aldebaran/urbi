@@ -58,9 +58,6 @@ AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 
 
-# Open R.
-URBI_OPENR
-
 ## -------- ##
 ## Output.  ##
 ## -------- ##
@@ -73,9 +70,6 @@ AC_CONFIG_FILES([Makefile
 	  src/liburbi/Makefile
 	  src/liburbi/uobject/Makefile
 	  src/utils/Makefile
-	  src/liburbi/openr/Makefile
-	  src/liburbi/openr/Makefile.aibo
-	  jpeg-6b/makefile.aibo
 	  jpeg-6b/Makefile
 ])
 AC_OUTPUT

@@ -1,3 +1,31 @@
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
+	Remove openr support.
+	* src/liburbi/openr: Remove.
+	* src/liburbi/openr/utypes.h: Remove.
+	* src/liburbi/openr/aiboconnection.h: Remove.
+	* src/liburbi/openr/def.h: Remove.
+	* src/liburbi/openr/CLIENT.ocf: Remove.
+	* src/liburbi/openr/uclient.cc: Remove.
+	* src/liburbi/openr/entry.h: Remove.
+	* src/liburbi/openr/uclient.h: Remove.
+	* src/liburbi/openr/Makefile.aibo.in: Remove.
+	* src/liburbi/openr/uqueue.cc: Remove.
+	* src/liburbi/openr/uqueue.h: Remove.
+	* src/liburbi/openr/CLIENTStub.cc: Remove.
+	* src/liburbi/openr/CLIENT.cc: Remove.
+	* src/liburbi/openr/CLIENTStub.h: Remove.
+	* src/liburbi/openr/CLIENT.h: Remove.
+	* src/liburbi/openr/uconnection.cc: Remove.
+	* src/liburbi/openr/Makefile.am: Remove.
+	* src/liburbi/openr/uconnection.h: Remove.
+	* src/liburbi/openr/stub.cfg: Remove.
+	* src/liburbi/openr/liburbi.mips.a: Remove.
+	* src/liburbi/openr/aiboconnection.cc: Remove.
+	* jpeg-6b/makefile.aibo.in: Remove.
+	* src/liburbi/Makefile.am: Adjust.
+	* configure.ac: Ditto.
+
 2006-10-17  Matthieu Nottale  <nottale@gostai.com>
 
 	r205: Fix last commit, misplaced endif
