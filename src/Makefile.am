@@ -128,7 +128,6 @@ windows/urbikernel/urbikernel.vcproj
 # files for the cores.
 kernelinclude_HEADERS +=			\
 fwd.hh						\
-$(libport_dir)/lockable.hh			\
 ubinary.h					\
 ubinder.h					\
 ucallid.h					\
@@ -152,6 +151,10 @@ uvalue.h					\
 uvariable.h					\
 uvariablelist.h					\
 uvariablename.h
+
+libportincludedir = $(kernelincludedir)/libport
+libportinclude_HEADERS = 			\
+$(libport_dir)/lockable.hh
 
 uobjectdir = $(kernelincludedir)/uobject
 uobject_HEADERS = uobject/uobject.h uobject/uext.h

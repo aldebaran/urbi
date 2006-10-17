@@ -15,32 +15,32 @@
 extern char errorMessage[1024];
 extern UString** globalDelete;
 
-UFlexer::UFlexer(void *_uparser) 
-  : uparser(_uparser) 
+UFlexer::UFlexer(void *_uparser)
+  : uparser(_uparser)
 {}
 
-void * 
+void *
 UFlexer::get_uparser() const
-{ 
-  return uparser; 
+{
+  return uparser;
 }
 
-UParser::UParser() 
-  : uflexer(this) 
+UParser::UParser()
+  : uflexer(this)
 {}
 
-int 
+int
 UParser::process(ubyte* command, int length, UConnection* connection_)
 {
   connection = connection_;
   commandTree = 0;
   result = 0;
-  
+
   std::istrstream * mem_buff = new std::istrstream((char*)command, length);
   if (!mem_buff) return -1;
 
   std::istream* mem_input = new std::istream(mem_buff->rdbuf());
-  if (!mem_input) 
+  if (!mem_input)
     {
       delete mem_buff;
       return -1;
@@ -60,17 +60,17 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
 }
 
 
-yy::parser::token_type 
+yy::parser::token_type
 UParser::scan(yy::parser::semantic_type* val, yy::parser::location_type* loc)
 {
   return uflexer.yylex(val,loc,*this);
 }
 
-void 
+void
 UParser::error (const yy::parser::location_type& l, const std::string& msg)
 {
   std::ostringstream sstr;
-  
+
   sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
   strncpy(errorMessage, sstr.str().c_str(),
 	  std::min(sizeof (errorMessage), sstr.str().size()));

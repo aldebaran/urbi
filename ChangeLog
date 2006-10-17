@@ -1,5 +1,12 @@
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
+	Look for pthread.h, install parts of libport.
+	* src/Makefile.am: install bit of libport, since userver,h includes
+	it, and is installed.  That sucks.
+	* configure.ac: Use URBI_PTHREAD.
+
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
 	Fix path.
 	* src/parser/bison/FlexLexer.h: Rename as...
 	* src/parser/bison/flex-lexer.hh: this to avoid being caught

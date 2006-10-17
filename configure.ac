@@ -42,6 +42,7 @@ AC_PROG_LIBTOOL
 URBI_OPENR
 AM_CONDITIONAL([NETWORK_OPENR],  [$openr])
 
+URBI_PTHREAD
 
 ## ------------- ##
 ## liburbi C++.  ##
