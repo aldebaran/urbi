@@ -8,6 +8,8 @@
 #
 ################################################################################
 
+libport_dir = $(top_srcdir)/libport
+
 ## ---------------- ##
 ## Initialization.  ##
 ## ---------------- ##
@@ -16,7 +18,7 @@ BUILT_SOURCES =
 CLEANFILES =
 EXTRA_DIST =
 
-AM_CPPFLAGS = -I$(srcdir)/uobject -DFLOAT_DOUBLE
+AM_CPPFLAGS = -I$(libport_dir) -I$(srcdir)/uobject -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
@@ -40,7 +42,7 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
-lockable.h							\
+$(libport_dir)/lockable.h					\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
 parser/uparser.h parser/uparser.cc				\
@@ -123,7 +125,7 @@ windows/urbikernel/urbikernel.vcproj
 # files for the cores.
 kernelinclude_HEADERS =				\
 fwd.hh						\
-lockable.h					\
+$(libport_dir)/lockable.h			\
 ubinary.h					\
 ubinder.h					\
 ucallid.h					\

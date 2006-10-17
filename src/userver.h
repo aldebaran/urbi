@@ -28,7 +28,7 @@
 # include "ufunction.h"
 # include "uvariable.h"
 # include "ubinder.h"
-# include "lockable.h"
+# include "lockable.hh"
 
 # define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
@@ -54,9 +54,9 @@ extern  class UServer   *urbiserver; // Global variable for the server
     The versions we used to generate the parser are:
 
     - flex 2.5.4a
-    - bison 2.1b
+    - bison 2.2 or greater.
 */
-class UServer: public Lockable
+class UServer: public urbi::Lockable
 {
 public:
   UServer(ufloat frequency, int freeMemory, const char* mainName);
@@ -104,7 +104,7 @@ public:
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
   UGhostConnection *     getGhostConnection() {return ghost;}
-  
+
   void              freeze          (const std::string &tag);
   void              unfreeze        (const std::string &tag);
   void              block           (const std::string &tag);
@@ -235,7 +235,11 @@ extern int URBI_unicID;
 inline int unic()
 {
   URBI_unicID++;
-  return( URBI_unicID );
+  return URBI_unicID;
 }
 
 #endif
+
+// Local Variables:
+// mode: c++
+// End:

@@ -1,5 +1,13 @@
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
+	Use libport/lockable.hh.
+	* src/lockable.h: Remove.
+	* src/uconnection.h, src/userver.cc, src/userver.h,
+	* src/uconnection.cc: Adjust.
+	* src/Makefile.am: Ditto.
+
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes.
 	* src/lockable.h: Do that.
 	* src/userver.cc: Idem.

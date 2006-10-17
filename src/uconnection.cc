@@ -34,7 +34,7 @@
 #include "parser/uparser.h"
 #include "ucallid.h"
 #include "uvariable.h"
-#include "lockable.h"
+#include "lockable.hh"
 
 char errorMessage[1024]; // Global variable (thanks bison...) to store the
 			 // the error message when a parsing error occurs.
@@ -381,7 +381,7 @@ UConnection::block ()
 UErrorValue
 UConnection::continueSend ()
 {
-  BlockLock bl(this); //lock this function
+  urbi::BlockLock bl(this); //lock this function
   blocked_ = false;         // continueSend unblocks the connection.
 
   int toSend = sendQueue_->dataSize(); // nb of bytes to send
@@ -432,44 +432,49 @@ UConnection::received (const ubyte *buffer, int length)
 {
   bool gotlock = false;
   bool faillock = false; //if binary append failed to get lock, abort processing
-  BlockLock bl(server);
-  if (server->memoryOverflow) {
-    errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
-    return UFAIL; // Block any new incoming command
-		  // when the system is out of memory
-  }
+  urbi::BlockLock bl(server);
+  if (server->memoryOverflow)
+    {
+      errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      // Block any new incoming command when the system is out of
+      // memory
+      return UFAIL;
+    }
   lock();
-  if (receiveBinary_)  {// handles and try to finish the binary transfer
+  if (receiveBinary_)
+    {
+      // handles and try to finish the binary transfer
 
-    if (length < binCommand->refBinary->ref()->bufferSize -
-	transferedBinary_) {
-      memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
-	     buffer,
-	     length);
-      transferedBinary_ += length;
-      unlock();
-      return USUCCESS;
-    }
-    else {
-      memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
-	     buffer,
-	     binCommand->refBinary->ref()->bufferSize - transferedBinary_);
-
-      buffer += (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
-
-      length -= (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
-      if (treeLock.tryLock()) {
-	receiveBinary_ = false;
-	append(binCommand->up);
-	gotlock = true;
-      }
+      if (length < binCommand->refBinary->ref()->bufferSize -
+	  transferedBinary_)
+	{
+	  memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
+		 buffer,
+		 length);
+	  transferedBinary_ += length;
+	  unlock();
+	  return USUCCESS;
+	}
       else {
-	faillock = true;
+	memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
+	       buffer,
+	       binCommand->refBinary->ref()->bufferSize - transferedBinary_);
+
+	buffer += (binCommand->refBinary->ref()->bufferSize -
+		   transferedBinary_);
+
+	length -= (binCommand->refBinary->ref()->bufferSize -
+		   transferedBinary_);
+	if (treeLock.tryLock()) {
+	  receiveBinary_ = false;
+	  append(binCommand->up);
+	  gotlock = true;
+	}
+	else {
+	  faillock = true;
+	}
       }
     }
-  }
   UErrorValue result = recvQueue_->push( buffer, length);
   unlock();
   if ( result != USUCCESS) { // Handles memory errors.

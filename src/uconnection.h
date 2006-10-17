@@ -30,7 +30,7 @@
 # include "ucommandqueue.h"
 # include "uvariable.h"
 # include "parser/bison/location.hh"  //FIXME remove this to abstract parser
-# include "lockable.h"				     // from connection
+# include "lockable.hh"				     // from connection
 
 // Global variable (thanks bison...) to store the the error message
 // when a parsing error occurs.
@@ -63,7 +63,7 @@ extern char errorMessage[1024];
     system is actually sending data through the real connection.
  */
 
-class UConnection: public Lockable //queue lock
+class UConnection: public urbi::Lockable //queue lock
 {
   friend class UServer;
 
@@ -157,7 +157,7 @@ public:
   yy::location        lastloc;
 
   /// Lock access to command tree.
-  Lockable            treeLock;
+  urbi::Lockable treeLock;
 protected:
 
   /// Default adaptive behavior for Send/Recv..
