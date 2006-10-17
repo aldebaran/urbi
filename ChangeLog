@@ -1,3 +1,9 @@
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes.
+	* src/lockable.h: Do that.
+	* src/userver.cc: Idem.
+
 2006-10-16  Akim Demaille  <akim.demaille@free.fr>
 
 	Use install-sh -C for headers.

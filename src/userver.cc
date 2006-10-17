@@ -749,8 +749,8 @@ UServer::updateTime()
        *** URBI version xx.xx for \<robotname\> robot\\n\n
        *** (c) Copyright \<year\> \<name\>\\n
 
-    The function should return in header the line corresponding to 'line' or an empty
-    string (not NULL!) when there is no line any more.
+    The function should return in header the line corresponding to 'line'
+    or an empty string (not NULL!) when there is no line any more.
     Each line is supposed to end with a carriage return \\n and each line should
     start with three empty spaces. This complicated method is necessary to allow
     the connection to stamp every line with the standard URBI prefix [time:tag].
