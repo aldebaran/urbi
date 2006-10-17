@@ -1,3 +1,9 @@
+2006-10-17  Matthieu Nottale  <nottale@gostai.com>
+
+	r205: Fix last commit, misplaced endif
+
+	* src/liburbi/uobject/uvar.cc: Put the #endif where it should go.
+
 2006-10-17  Type Your Name Here  <your.mail.here@FIXME.com>
 
 	r204: Remove debug output by default (-DLIBURBIDEBUG to enable)
