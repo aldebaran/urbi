@@ -165,7 +165,8 @@ namespace urbi
 
     os.str("");
     os.clear();
-    os << "timer_"<<objname<<": every("<<period<<") { emit "<<cbname<<";};";
+    os << "timer_"<<objname<<": every("<<period<<") { emit "
+      <<(objname + "." +cbname)<<";};";
     URBI(())<<os.str();
   }
 

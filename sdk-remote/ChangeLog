@@ -1,3 +1,9 @@
+2006-10-17  Matthieu Nottale  <nottale@gostai.com>
+
+	r203: USetTimer fix. 
+
+	* src/liburbi/uobject/uobject.cc: Use correct event name in usettimer.
+
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
 	Upgrade baux.
