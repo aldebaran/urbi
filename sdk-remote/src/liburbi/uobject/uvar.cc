@@ -261,7 +261,9 @@ namespace urbi
   void
   UVar::__update(UValue& v)
   {
+    #ifdef LIBURBIDEBUG
     std::cout << "  Variable " << name << " updated to : ";
+    #endif
     switch (v.type)
       {
       case DATA_DOUBLE:

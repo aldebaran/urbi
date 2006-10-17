@@ -25,7 +25,7 @@
 #include <usyncclient.h>
 #include "uexternal.h"
 
-#define LIBURBIDEBUG
+//#define LIBURBIDEBUG
 
 //! Global definition of the starterlist
 namespace urbi
