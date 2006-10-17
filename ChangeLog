@@ -1,3 +1,10 @@
+2006-10-17  Matthieu Nottale  <nottale@gostai.com>
+
+	r240: Replace install-sh, fix header path
+
+	* src/parser/uparser.cc: Fix ugrammar.hh inclusion path.
+	* configure.ac: Fix install-sh.
+
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
 	Look for pthread.h, install parts of libport.

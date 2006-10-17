@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <string>
 
-#include "parser/bison/ugrammar.hh"
+#include "ugrammar.hh"
 
 // Parse function of 'bison' is defined externally
 extern char errorMessage[1024];
