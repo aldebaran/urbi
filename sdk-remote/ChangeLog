@@ -1,5 +1,13 @@
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
+	Upgrade baux.
+	* src/liburbi/openr/Makefile.am: OPENR_SDK_PATH is now OPEN_R_SDK.
+	* configure.ac: Define INSTALL_HEADER and install_sh_c_DATA.
+	* build-aux/build-aux.mk: Since it is included first, no
+	need to initialize EXTRA_DIST.
+
+2006-10-17  Akim Demaille  <demaille@gostai.com>
+
 	Use libport.
 	* src/liburbi/lockable.h: Remove.
 	Now in libport.

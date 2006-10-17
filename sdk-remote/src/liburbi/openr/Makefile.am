@@ -1,15 +1,14 @@
-OPENR		= $(OPENR_SDK_PATH)
-CXX		= $(OPENR)/bin/mipsel-linux-g++
-CC		= $(OPENR)/bin/mipsel-linux-gcc
-STRIP		= $(OPENR)/bin/mipsel-linux-strip
-MKBIN		= $(OPENR)/OPEN_R/bin/mkbin
-STUBGEN		= $(OPENR)/OPEN_R/bin/stubgen2
-MKBINFLAGS	= -p $(OPENR)
-LIBS		= -L$(OPENR)/OPEN_R/lib -lObjectComm -lOPENR -lInternet -lantMCOOP
+CXX		= $(OPEN_R_SDK)/bin/mipsel-linux-g++
+CC		= $(OPEN_R_SDK)/bin/mipsel-linux-gcc
+STRIP		= $(OPEN_R_SDK)/bin/mipsel-linux-strip
+MKBIN		= $(OPEN_R_SDK)/OPEN_R/bin/mkbin
+STUBGEN		= $(OPEN_R_SDK)/OPEN_R/bin/stubgen2
+MKBINFLAGS	= -p $(OPEN_R_SDK)
+LIBS		= -L$(OPEN_R_SDK)/OPEN_R/lib -lObjectComm -lOPENR -lInternet -lantMCOOP
 # library (.a) file creation command
-AR_OPENR= $(OPENR)/bin/mipsel-linux-ar rc
+AR_OPENR= $(OPEN_R_SDK)/bin/mipsel-linux-ar rc
 # second step in .a creation (use "touch" if not needed)
-RANLIB_OPENR= $(OPENR)/bin/mipsel-linux-ranlib
+RANLIB_OPENR= $(OPEN_R_SDK)/bin/mipsel-linux-ranlib
 
 
 LIBJPEGDIR	= ../../../lib/jpeg-6b
@@ -18,9 +17,9 @@ LIBJPEG		= $(LIBJPEGDIR)/libjpeg.mips.a
 CXXFLAGS+= \
 	-O2 \
 	-I. \
-	-I$(OPENR)/OPEN_R/include/R4000 \
-	-I$(OPENR)/OPEN_R/include/MCOOP \
-	-I$(OPENR)/OPEN_R/include \
+	-I$(OPEN_R_SDK)/OPEN_R/include/R4000 \
+	-I$(OPEN_R_SDK)/OPEN_R/include/MCOOP \
+	-I$(OPEN_R_SDK)/OPEN_R/include \
 	-I$(LIBJPEGDIR)	\
 	-I$(LIBURBIDIR)
 
