@@ -33,9 +33,9 @@
 #  define vsnprintf _vsnprintf
 # endif
 
+# include "libport/hash.hh"
 # include "fwd.hh"
 # include "ufloat.h"
-# include "uext.h"
 
 
 extern  int   usedMemory; //< Keeps track of how much memory has been used for
@@ -351,9 +351,9 @@ class TagInfo {
     TagInfo * parent;
     std::list<TagInfo*>::iterator parentPtr; ///< iterator in parent child list
     std::string name;
-    
+
     /// Insert a Taginfo in map,link to parent creating if needed, recursively
-    TagInfo * insert(HMtagtab & tab); 
+    TagInfo * insert(HMtagtab & tab);
 };
 
 

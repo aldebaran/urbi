@@ -1,3 +1,13 @@
+2006-10-18  Akim Demaille  <demaille@gostai.com>
+
+	Fix distdir issue
+	* src/network/OPENR/aiboconnection.h,
+	* src/network/OPENR/aiboconnection.cc: Formatting changes.
+	* src/utypes.h: Use libport.hh.
+	* src/Makefile.am: Move some EXTRA_DISTs to...
+	* Makefile.am: here.
+	* configure.ac: Use tar-ustar.
+
 2006-10-17  Matthieu Nottale  <nottale@gostai.com>
 
 	r240: Replace install-sh, fix header path

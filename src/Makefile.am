@@ -65,7 +65,7 @@ ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
 uobject/common_uvalue.cc					\
-uobject/uext.h							\
+$(libport_dir)/hash.hh						\
 uobject/uobject.h uobject/uobject.cc				\
 uobject/uvar.cc							\
 uproperty.h uproperty.cc					\
@@ -100,24 +100,12 @@ include $(top_srcdir)/build-aux/revision.mk
 ## Sub directories.  ##
 ## ----------------- ##
 
-# build-aux.
-EXTRA_DIST += \
-build-aux/bison++.in				\
-build-aux/move-if-change
-
 # parser.
 EXTRA_DIST +=					\
 parser/uparser.h
 
 # parser/bison.
 # This case is handled by parser/bison/bison.mk itself.
-
-# windows.
-EXTRA_DIST +=					\
-windows/urbikernel/Debug			\
-windows/urbikernel/urbikernel.sln		\
-windows/urbikernel/urbikernel.suo          	\
-windows/urbikernel/urbikernel.vcproj       
 
 
 ## ----------------- ##
@@ -154,10 +142,11 @@ uvariablename.h
 
 libportincludedir = $(kernelincludedir)/libport
 libportinclude_HEADERS = 			\
+$(libport_dir)/hash.hh				\
 $(libport_dir)/lockable.hh
 
 uobjectdir = $(kernelincludedir)/uobject
-uobject_HEADERS = uobject/uobject.h uobject/uext.h
+uobject_HEADERS = uobject/uobject.h
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.h

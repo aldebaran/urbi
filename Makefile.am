@@ -10,6 +10,18 @@
 
 include $(top_srcdir)/build-aux/build-aux.mk
 
+# build-aux.
+EXTRA_DIST +=					\
+build-aux/bison++.in				\
+build-aux/move-if-change
+
+# windows.
+EXTRA_DIST +=					\
+windows/urbikernel/Debug			\
+windows/urbikernel/urbikernel.sln		\
+windows/urbikernel/urbikernel.suo          	\
+windows/urbikernel/urbikernel.vcproj       
+
 ## --------- ##
 ## liburbi.  ##
 ## --------- ##

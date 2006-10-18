@@ -10,7 +10,7 @@ AC_SUBST([install_sh_c_DATA], ['$(install_sh)-c -c -m 644'])
 AC_SUBST([INSTALL_HEADER], ['$(SHELL) $(install_sh_c_DATA) -C'])
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 foreign -Wall dist-zip])
+AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip])
 
 ## ------------ ##
 ## Parameters.  ##

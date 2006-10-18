@@ -4,7 +4,7 @@
  File: aiboconnection.h\n
  Definition of the AiboConnection class.
 
- This file is part of 
+ This file is part of
  %URBI Server Aibo, version __rsaiboversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -26,7 +26,7 @@
 #include <IPAddress.h>
 #include <OPENR/ODataFormats.h>
 #include <antTypes.h>
- 
+
 #include "uconnection.h"
 
 /// AiboConnection implements an TCP/IP client connection using OPENR.
@@ -36,7 +36,7 @@
     string. This asynchronous mechanism is handled by UConnection using
     its blocking feature (see UConnection::block());
 */
-class AiboConnection : public UConnection 
+class AiboConnection : public UConnection
 {
 public:
 
@@ -52,30 +52,30 @@ public:
 
 
   bool             isListening;       ///< true when AiboConnection is waiting
-                                      ///< for the TCPListenCont callback.
+				      ///< for the TCPListenCont callback.
   bool             isClosing;         ///< true when AiboConnection is waiting
-                                      ///< for the TCPCloseCont callback.
- 
-  int              cameraFormat;      ///< Camera image format: 
-                                      ///< - 0 = YCrCb
-                                      ///< - 1 = JPEG
+				      ///< for the TCPCloseCont callback.
+
+  int              cameraFormat;      ///< Camera image format:
+				      ///< - 0 = YCrCb
+				      ///< - 1 = JPEG
 
   int              cameraJpegfactor;  ///< jpeg compression factor in 0..100
 
   OFbkImageLayer   cameraResolution;  ///< Camera resolution
-                                      ///<  - 0 = ofbkimageLAYER_H
-                                      ///<  - 1 = ofbkimageLAYER_M
-                                      ///<  - 2 = ofbkimageLAYER_L
-                                      ///<  - 3 = ofbkimageLAYER_C
+				      ///<  - 0 = ofbkimageLAYER_H
+				      ///<  - 1 = ofbkimageLAYER_M
+				      ///<  - 2 = ofbkimageLAYER_L
+				      ///<  - 3 = ofbkimageLAYER_C
 
   bool             cameraReconstruct; ///< reconstruction of the image.
 
-  bool             recoverFromIsolation; ///< true when the oReceive function 
-                                         ///< has not been recalled after a 
-                                         ///< URBI::TCPReceiveCont
-  
+  bool             recoverFromIsolation; ///< true when the oReceive function
+					 ///< has not been recalled after a
+					 ///< URBI::TCPReceiveCont
+
   // Parameters used by the constructor.
-  
+
   static const int MINSENDBUFFERSIZE = 4096;
   static const int MAXSENDBUFFERSIZE = 1048576;
   static const int PACKETSIZE        = 32768;
