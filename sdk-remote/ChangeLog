@@ -1,5 +1,10 @@
 2006-10-18  Akim Demaille  <demaille@gostai.com>
 
+	Remove uext.h.
+	* src/liburbi/uobject/uext.h: Remove.
+
+2006-10-18  Akim Demaille  <demaille@gostai.com>
+
 	Use libport/hash.hh
 	* src/liburbi/uobject/uext.h: Remove.
 	* src/liburbi/uobject/uobject.template.h: Use it, not uext.hh.
