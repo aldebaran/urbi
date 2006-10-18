@@ -1,4 +1,5 @@
 AM_CPPFLAGS =                                   \
+-I$(top_srcdir)					\
 -I$(top_srcdir)/src/liburbi/uobject             \
 -I$(top_srcdir)/src/liburbi
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)

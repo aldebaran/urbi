@@ -1,3 +1,14 @@
+2006-10-18  Akim Demaille  <demaille@gostai.com>
+
+	Use libport/hash.hh
+	* src/liburbi/uobject/uext.h: Remove.
+	* src/liburbi/uobject/uobject.template.h: Use it, not uext.hh.
+	* sdk/Makefile.am: Adjust include paths.
+	* src/utils/Makefile.am: Idem.
+	* src/liburbi/Makefile.am: Idem.
+	* src/liburbi/uobject/Makefile.am: Idem.
+	* src/examples/Makefile.am: Idem.
+
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
 	Remove openr support.

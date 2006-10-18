@@ -20,10 +20,9 @@ include_HEADERS =				\
 uabstractclient.h				\
 uclient.h					\
 uconversion.h					\
-uobject/uext.h					\
+$(libport_dir)/hash.hh		                \
 uobject/uexternal.h				\
 uobject/uobject.h				\
-uobject/uext.h                                  \
 usyncclient.h
 
 sdkinclude_HEADERS = 				\

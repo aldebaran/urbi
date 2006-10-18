@@ -33,7 +33,7 @@
 namespace urbi { typedef double ufloat; }
 # endif
 
-# include "uext.h"
+# include "libport/hash.hh"
 
 /// Singleton smart pointer that creates the object on demand.
 template<class T>
@@ -44,13 +44,14 @@ public:
   operator T& () {return *check();}
 
   T* operator ->() {return check();}
-  T * check()
+ private:
+  T* check()
   {
     static T * ptr=0;
-    if(ptr)
+    if (ptr)
       return ptr;
     else
-      return (ptr=new T());
+      return (ptr = new T());
   }
 private:
 };
@@ -394,7 +395,7 @@ namespace urbi
     UNamedValue(const std::string& n, UValue *v)
       : val(v),name(n)
     {}
-    UNamedValue() 
+    UNamedValue()
       : val(0),name(0)
     {}
     UValue *val;
@@ -512,12 +513,12 @@ namespace urbi
   class UVar
   {
   public:
-    UVar() 
+    UVar()
       : owned (false),
 	VAR_PROP_INIT,
 	vardata (0), name ("noname")
     {}
-    UVar(UVar&) 
+    UVar(UVar&)
       : owned (false),
 	VAR_PROP_INIT,
 	vardata (0), name ("")
