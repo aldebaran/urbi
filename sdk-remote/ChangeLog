@@ -1,5 +1,11 @@
 2006-10-18  Akim Demaille  <demaille@gostai.com>
 
+	Use tar-ustar
+	* configure.ac: to avoid problems with long file names (doxygen
+	output).
+
+2006-10-18  Akim Demaille  <demaille@gostai.com>
+
 	Adjust to hash.hh
 	* src/liburbi/Makefile.am: Do that.
 
