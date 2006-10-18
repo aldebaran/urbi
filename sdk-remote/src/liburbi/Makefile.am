@@ -26,7 +26,7 @@ uobject/uobject.h				\
 usyncclient.h
 
 sdkinclude_HEADERS = 				\
-uobject/uext.h					\
+$(libport_dir)/hash.hh		                \
 uobject/uobject.h
 
 BUILT_SOURCES = uobject/uobject.h
