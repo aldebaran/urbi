@@ -1,4 +1,8 @@
-SUBDIRS = uobject .
+SUBDIRS = uobject
+if BINDINGS
+ SUBDIRS += swig
+endif
+SUBDIRS += .
 
 libport_dir = $(top_srcdir)/libport
 

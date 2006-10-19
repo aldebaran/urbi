@@ -1,3 +1,37 @@
+2006-10-19  Thomas Moulard  <thomas.moulard@lrde.epita.fr>
+
+	Adds SWIG bindings to liburbi.
+
+	To enable the binding's compilation, you can pass the
+	--enable-bindings to your configure file.
+
+	For instance, for perl and ruby support:
+	$ ./configure --enable-bindings=perl,ruby
+
+	You can pass the following values to this flag:
+	csharp, java, lua, perl, php, python, ruby or
+	yes which enables every language.
+
+	Caution: the Autotools support is not totally finished yet,
+	but as the bindings are disabled by default, it won't be
+	a problem.
+
+	* src/liburbi/swig: Binding's directory. New.
+	* src/liburbi/swig/liburbi.i: SWIG's interface file. New.
+	* src/liburbi/swig/sample.java: Java sample. New.
+	* src/liburbi/swig/sample.lua: Lua sample. New.
+	* src/liburbi/swig/sample.rb: Ruby sample. New.
+	* src/liburbi/swig/sample.cs: C# sample. New.
+	* src/liburbi/swig/sample.php: PHP sample. New.
+	* src/liburbi/swig/sample.py: Python sample. New.
+	* src/liburbi/swig/swig_python.hh: Python specific code. New.
+	* src/liburbi/swig/swig_ruby.hh: Ruby specific code. New.
+	* src/liburbi/swig/Makefile.am: SWIG Automake file. New.
+	* src/liburbi/swig/sample.pl: Perl sample. New.
+	* src/liburbi/Makefile.am: Adds the SWIG directory if the
+	 bindings are enabled.
+	* configure.ac: Adds SWIG support.
+
 2006-10-18  Akim Demaille  <demaille@gostai.com>
 
 	Use tar-ustar
