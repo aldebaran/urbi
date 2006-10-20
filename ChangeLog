@@ -1,3 +1,9 @@
+2006-10-20  Type Your Name Here  <your.mail.here@FIXME.com>
+
+	Upped libport and liburbi, small fix as a consequence
+
+	* src/uvalue.cc: cast char*->unsigned char*.
+
 2006-10-18  Akim Demaille  <demaille@gostai.com>
 
 	Fix distdir issue

@@ -109,7 +109,7 @@ UValue::operator urbi::UImage() {
   img.width = exprToInt(param->next->expression);
   img.height = exprToInt(param->next->next->expression);
   img.size = refBinary->ref()->bufferSize;
-  img.data = (char *)refBinary->ref()->buffer;
+  img.data = (unsigned char *)refBinary->ref()->buffer;
   return img;
 }
 
