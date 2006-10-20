@@ -416,7 +416,7 @@ namespace urbi
       }
 
     //then convert to destination format
-    dest.data = (char *)realloc(dest.data, dest.width*dest.height*3+20);
+    dest.data = (unsigned char *)realloc(dest.data, dest.width*dest.height*3+20);
     dest.size =  dest.width*dest.height*3+20;
 
     switch(dest.imageFormat)
@@ -434,11 +434,11 @@ namespace urbi
 	  memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
 	break;
       case IMAGE_PPM:
-	sprintf(dest.data, "P6\n%d %d\n255\n", dest.width, dest.height);
+	sprintf((char*)dest.data, "P6\n%d %d\n255\n", dest.width, dest.height);
 	if (format == 1)
-	  convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data+strlen(dest.data));
+	  convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data+strlen((char*)dest.data));
 	else
-	  memcpy(dest.data+strlen(dest.data), uncompressedData, dest.width*dest.height*3);
+	  memcpy(dest.data+strlen((char*)dest.data), uncompressedData, dest.width*dest.height*3);
 	break;
       case IMAGE_JPEG:
 	/*

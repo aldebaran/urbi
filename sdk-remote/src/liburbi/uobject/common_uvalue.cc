@@ -645,7 +645,7 @@ namespace urbi
   UBinary::UBinary(const UImage &i) {
     type = BINARY_IMAGE;
     image = i;
-    image.data = (char *)malloc(image.size);
+    image.data = (unsigned char *)malloc(image.size);
     memcpy(image.data, i.data, image.size);
   }
 
@@ -754,4 +754,29 @@ namespace urbi
     return n;
   }
 
+ 
+ 
+  void
+  UVar::operator = (const UValue& v)
+  {
+    switch(v.type)
+    {
+    case DATA_STRING:
+      (*this) = *v.stringValue;
+      break;
+    case DATA_BINARY:
+      (*this) = *v.binary;
+      break;
+    case DATA_LIST:
+      (*this) = *v.list;
+      break;
+    case DATA_DOUBLE:
+      (*this) = v.val;
+      break;
+    case DATA_VOID:
+	//TODO: do something!
+	break;
+    }
+  }
+      
 } // namespace urbi

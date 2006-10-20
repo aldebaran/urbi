@@ -1,3 +1,11 @@
+2006-10-20  Matthieu Nottale  <nottale@gostai.com>
+
+	Add UVar::operator= (UValue). Change data to unsigned char* in UImage 
+
+	* src/liburbi/uconversion.cpp: Fix.
+	* src/liburbi/uobject/uobject.template.h: Do it.
+	* src/liburbi/uobject/common_uvalue.cc: Do it.
+
 2006-10-19  Thomas Moulard  <thomas.moulard@lrde.epita.fr>
 
 	Adds SWIG bindings to liburbi.

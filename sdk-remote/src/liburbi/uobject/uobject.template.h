@@ -319,7 +319,7 @@ namespace urbi
       freed manualy.  */
   class UImage {
   public:
-    char                  *data;            ///< pointer to image data
+    unsigned char         *data;            ///< pointer to image data
     int                   size;             ///< image size in byte
     int                   width, height;    ///< size of the image
     UImageFormat          imageFormat;
@@ -540,6 +540,7 @@ namespace urbi
     void operator = (const UImage &i);  ///< deep copy
     void operator = (const USound &s);  ///< deep copy
     void operator = (const UList &l);
+    void operator = (const UValue &v);
     operator int ();
     operator bool () {return (int)(*this);}
     operator UBinary ();   ///< deep copy
@@ -549,6 +550,8 @@ namespace urbi
     operator ufloat ();
     operator std::string ();
     operator UList();
+   
+  
 
     void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
 
@@ -823,6 +826,22 @@ namespace urbi
   UObjectStruct cast(UValue &v, UObjectStruct *o);
 # endif
 
+#ifndef UOBJECT_NO_LIST_CAST
+template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
+  std::list<I> result;
+  if (val.type != DATA_LIST) {
+    //cast just the element
+    result.push_back(cast(val, (I*)0));
+  }
+  else {
+    for (int i=0;i<val.list->size();i++)
+      result.push_back(cast(*val.list->array[i], (I*)0));
+  }
+  return result;
+}
+
+
+#endif
   // **************************************************************************
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
   class baseURBIStarter
