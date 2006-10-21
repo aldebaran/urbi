@@ -1,3 +1,7 @@
+2006-10-21  Akim Demaille  <your.mail.here@FIXME.com>
+
+	ChangeLog issues
+
 2006-10-20  Type Your Name Here  <your.mail.here@FIXME.com>
 
 	Upped libport and liburbi, small fix as a consequence
@@ -16,7 +20,7 @@
 
 2006-10-17  Matthieu Nottale  <nottale@gostai.com>
 
-	r240: Replace install-sh, fix header path
+	Replace install-sh, fix header path
 
 	* src/parser/uparser.cc: Fix ugrammar.hh inclusion path.
 	* configure.ac: Fix install-sh.
@@ -119,13 +123,13 @@
 
 2006-10-15  Matthieu Nottale  <nottale@gostai.com>
 
-	r226: FIX: ugrammar was unsaved in my IDE. Sorry
+	FIX: ugrammar was unsaved in my IDE. Sorry
 
 	* parser/bison/ugrammar.y: Fix conflict.
 
 2006-10-15  Matthieu Nottale  <nottale@gostai.com>
 
-	r225: Optimization: tag subsystem rewrite, memory manager rewrite
+	Optimization: tag subsystem rewrite, memory manager rewrite
 
 	* ucommand.cc: .
 	* ucommand.h: .
@@ -146,9 +150,9 @@
 
 	Fix indentation problems
 
-Indentation problems fixed in some files (using Akim's convention: to be
-debated)
-NB: vi option to add =>  :set tabstop=8
+	Indentation problems fixed in some files (using Akim's convention:
+	to be debated)
+	NB: vi option to add =>  :set tabstop=8
 
 	* ucommand.cc: .
 	* parser/bison/ugrammar.y: .
@@ -162,17 +166,18 @@ NB: vi option to add =>  :set tabstop=8
 
 	* utypes.h: Remove eqStr (leftover).
 	* uconnection.cc: Remove 4(half) useless hash map searches in execute.
-	* liburbi-c++/src/liburbi/uobject/uext.h: Tsuna:BUG: this is an external item.
+	* liburbi-c++/src/liburbi/uobject/uext.h: Tsuna:BUG: this is an
+	external item.
 
 2006-10-12  matthieu nottale  <nottale@gostai.com>
 
-	r222: Fix invalid iterator use.
+	Fix invalid iterator use.
 
 	* network/bsdnet/network.cc: Fixed for good.
 
 2006-10-12  matthieu nottale  <nottale@gostai.com>
 
-	r221: Lock fix.
+	Lock fix.
 
 	* parser/uparser.cc: Remove unneccessary &*.
 	* lockable.h: Lock is now a recursive mutex.
@@ -185,9 +190,13 @@ NB: vi option to add =>  :set tabstop=8
 
 	Add a much needed try/catch
 
-	* network/bsdnet/network.cc: Add a try/catch, so that when a connection is destroyed in its notifyread, the call to notifyWrite on the deleted object does not bring the ship down.
-	* lockable.h: Add a temporary #error in the aibo case to ensure locks are enabled.
-	* console.cc: Add missing includes time.h and sys/time.h in !windows case.
+	* network/bsdnet/network.cc: Add a try/catch, so that when a
+	connection is destroyed in its notifyread, the call to notifyWrite
+	on the deleted object does not bring the ship down.
+	* lockable.h: Add a temporary #error in the aibo case to ensure
+	locks are enabled.
+	* console.cc: Add missing includes time.h and sys/time.h in
+	!windows case.
 
 2006-10-10  matthieu nottale  <nottale@gostai.com>
 
@@ -266,7 +275,7 @@ NB: vi option to add =>  :set tabstop=8
 	* network/bsdnet/network.h, network/bsdnet/network.cc,
 	* uconnection.cc, ucommand.cc: Formatting changes.
 
-2006-10-09  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-09  Akim Demaille  <demaille@gostai.com>
 
 	pin baux.
 	* Makefile.am: And include build-aux.mk.
@@ -275,17 +284,17 @@ NB: vi option to add =>  :set tabstop=8
 
 	first stage of object arrays (can create)
 
-The goal is be able to do things like:
-
-myobj[1] = new stuff;
-myobj[1].val = 4;
-
-For the moment, only the first stage is possible with this commit.
-To reach the second stage (which requires a modification of the grammar), you
-can do this:
-
-myobj__1.val = 4; //or
-$("myobj__"+string(index)+".val") = 4;
+	The goal is be able to do things like:
+	
+	myobj[1] = new stuff;
+	myobj[1].val = 4;
+	
+	For the moment, only the first stage is possible with this commit.
+	To reach the second stage (which requires a modification of the
+	grammar), you can do this:
+	
+	myobj__1.val = 4; //or
+	$("myobj__"+string(index)+".val") = 4;
 
 
 	* ucommand.cc: tweak UCommand_NEW to support any object name.
@@ -296,7 +305,7 @@ $("myobj__"+string(index)+".val") = 4;
 
 	Prepare for multievent handling
 
-Multievent handling needs a new class UEventHandler.
+	Multievent handling needs a new class UEventHandler.
 
 	* ucommand.cc: include uventhandler.h.
 	* utypes.h: nothing.
@@ -308,10 +317,12 @@ Multievent handling needs a new class UEventHandler.
 
 	fix 'new' behavior when no init is present and no parameters are given
 
-When invoquing new with no parameters, the default "empty" constructor is now called,
-even if the init function has not been explicitly declared.
+	When invoquing new with no parameters, the default "empty"
+	constructor is now called, even if the init function has not been
+	explicitly declared.
 
-	* ucommand.cc: fix UCommand_NEW behavior when new has no param and no init is defined.
+	* ucommand.cc: fix UCommand_NEW behavior when new has no param and
+	no init is defined.
 
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
@@ -323,10 +334,10 @@ even if the init function has not been explicitly declared.
 
 	Name resolution fix in object methods + akim bug in booleval reverted
 
-Some cleanup of warning messages during compile.
-Fix a name resolution bug in object methods when attributes are defined in the
-origin class and not in the child class.
-Akim removed a "if (freeme)" before a delete in booleval. Reverted.
+	Some cleanup of warning messages during compile.
+	Fix a name resolution bug in object methods when attributes are
+	defined in the origin class and not in the child class.
+	Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 
 	* ucommand.cc: cleanup warnings.
 	* parser/bison/ugrammar.y: cleanup of unecessary comments.
@@ -337,10 +348,11 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	* userver.cc: cleanup warnings.
 	* uobj.cc: add searchEvent function.
 	* uobj.h: add searchEvent definition.
-	* uvariablename.cc: fix name resolution in object methods with inheritance.
+	* uvariablename.cc: fix name resolution in object methods with
+	inheritance.
 	* LICENSE-URBI-LANGUAGE: Remove.
 
-2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-06  Akim Demaille  <demaille@gostai.com>
 
 	Bison and Flex output are no longer shipped.
 	Therefore they are now in the build tree.
@@ -349,27 +361,27 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	* configure.ac: Require exactly Flex 2.5.4.
 	Require at least Bison 2.2.
 
-2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-06  Akim Demaille  <demaille@gostai.com>
 
 	Fix Perl invocation.
 	* parser/bison/bison.mk: Beware that perl needs the file to
 	process after the -e.
 	* parser/bison/ugrammar.y: Sugar.
 
-2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-06  Akim Demaille  <demaille@gostai.com>
 
 	Sugar the parser.
 	* parser/bison/ugrammar.y (NEW_EXP_2): New.
 	Use it.
 
-2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-06  Akim Demaille  <demaille@gostai.com>
 
 	Fix install/uninstall issues.
 	distcheck passes.
 	* Makefile.am: Use DESTDIR.
 	(uninstall-local): New.
 
-2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-06  Akim Demaille  <demaille@gostai.com>
 
 	Fix build != src issue.
 	* parser/bison/bison.mk: Don't rely on an existing
@@ -380,16 +392,17 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 
 	COMMA and SEMICOLON priority changed
 
-	* parser/bison/ugrammar.y: Fix priority between COMMA and SEMICOLON in grammar.
+	* parser/bison/ugrammar.y: Fix priority between COMMA and
+	SEMICOLON in grammar.
 
-2006-10-06  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-06  Akim Demaille  <demaille@gostai.com>
 
 	Enable debug traces in the parser.
 	* parser/uparser.h: Do that.
 	* parser/bison/ugrammar.y: use %debug.
 	delete 0 is valid c++.
 
-2006-10-04  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-04  Akim Demaille  <demaille@gostai.com>
 
 	Simplify delete invocations.
 
@@ -491,12 +504,12 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	White space changes.
 	* uconnection.cc: White space chanegs.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* uconnection.cc: Include ubanner.hh.
 	* userver.cc: Remove declarations that are now in ubanner.hh.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Update to URBI_DIRS.
 
@@ -514,7 +527,7 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	* build-aux/urbi-openr.m4: Formatting changes.
 	* README: New.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Introduce ubanner.cc.
 	* ubanner.hh, ubanner.cc: New.
@@ -523,7 +536,7 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	Use it.
 	* Makefile.am: Adjust.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Update URBI_DIRS.
 	* build-aux/urbi-dirs.m4: Update from liburbi-cpp.
@@ -540,21 +553,21 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	* userver.cc: idem.
 	* uobject/uext.h: New. Symlink from liburbi.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* uobject/uobject.cc: Add missing std::.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* uobject/uobject.cc (cleanTable): Cleanup.
 	* Makefile.am: Formatting changes.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* build-aux/urbi-openr.m4: New.
 	* configure.ac: Use it.
 
-2006-09-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	* parser/bison/Makefile.defs: Install the header files.
 	* network/bsdnet/Makefile.defs,
@@ -591,39 +604,39 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	* uconnection.cc: Ditto.
 	* ubinder.cc: Ditto.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Use URBI_DIRS.
 	* build-aux/urbi-dirs.m4: New.
 	* configure.ac: Use it.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	distcheck fixes.
 	* build-aux/doxygen.mk: Update.
 	* build-aux/revision.mk: Clean version..hh.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Portability fixes.
 	* parser/bison/Makefile.defs: use Perl, not sed, since alternation
 	is not portable (and OSX is a loser in this regard).
 	Also cover cin, cout, cerr, and widen the pattern.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Prepend std:: to istream.
 
 	* parser/bison/Makefile.defs: For Linux.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	VC++ issues"".
 
 	* ucommand.cc: .Formatting changes.
 	* parser/bison/Makefile.defs (utoken.cc): Fix lack of std::.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Fixes and details.
 
@@ -635,14 +648,14 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 	"Delete 0" is valid C++.
 	* parser/bison/Makefile.defs: Ship FlexLexer.h.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Fixes.
 
 	* build-aux/move-if-change: New.
 	* Makefile.am: Ship bison++.in.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Dos2unix.
 	* ucommand.cc, utypes.h, uvariablelist.cc, ucallid.cc
@@ -652,7 +665,7 @@ Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 
 	* uobject/uvar.cc: Namespace fixes.
 
-2006-09-25  Akim Demaille  <akim@lrde.epita.fr>
+2006-09-25  Akim Demaille  <demaille@gostai.com>
 
 	Autoconfiscate.
 	* ChangeLog, bootstrap: New.
