@@ -57,11 +57,12 @@ namespace urbi
     control_fd[0] = control_fd[1] = -1;
 
 #ifndef WIN32
-    if (::pipe(control_fd) == -1) {
-      rc = -1;
-      perror("UClient::UClient failed to create pipe");
-      return;
-    }
+    if (::pipe(control_fd) == -1)
+      {
+	rc = -1;
+	perror("UClient::UClient failed to create pipe");
+	return;
+      }
 #endif
 
     // Address resolution stage.
@@ -80,23 +81,26 @@ namespace urbi
 
     hen = gethostbyname(host);
 
-    if (!hen) {	//maybe it is an IP address
-      sa.sin_addr.s_addr = inet_addr(host);
-      if (sa.sin_addr.s_addr == INADDR_NONE) {
-	printf("UClient::UClient couldn't resolve host name.\n");
-	rc = -1;
-	return;
+    if (!hen)
+      {	//maybe it is an IP address
+	sa.sin_addr.s_addr = inet_addr(host);
+	if (sa.sin_addr.s_addr == INADDR_NONE)
+	  {
+	    printf("UClient::UClient couldn't resolve host name.\n");
+	    rc = -1;
+	    return;
+	  }
       }
-    }
     else
       memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
 
     sd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sd < 0) {
-      printf("UClient::UClient socket allocation failed.\n");
-      rc = -1;
-      return;
-    }
+    if (sd < 0)
+      {
+	printf("UClient::UClient socket allocation failed.\n");
+	rc = -1;
+	return;
+      }
 
     // now connect to the remote server.
     rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
@@ -126,12 +130,14 @@ namespace urbi
     int pos=0;
     while (pos==0)
       pos = ::recv(sd, recvBuffer, buflen, 0);
-    if (pos<0) {
-      rc = pos;
-      printf("UClient::UClient couldn't connect: read error %d.\n",rc);
-      return;
-    }
-    else recvBufferPosition = pos;
+    if (pos<0)
+      {
+	rc = pos;
+	printf("UClient::UClient couldn't connect: read error %d.\n",rc);
+	return;
+      }
+    else 
+      recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
     thread = startThread(this, &UClient::listenThread);
     if (!defaultClient)
@@ -161,7 +167,8 @@ namespace urbi
 
 
   int
-  UClient::effectiveSend(const void  * buffer, int size) {
+  UClient::effectiveSend(const void  * buffer, int size)
+  {
 #if DEBUG
     char output[size+1];
     memcpy((void*)output, buffer, size);
@@ -170,19 +177,22 @@ namespace urbi
 #endif
     if (rc) return -1;
     int pos = 0;
-    while (pos!=size) {
-      int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-      if (retval<0) {
-	rc = retval;
-	return rc;
+    while (pos!=size)
+      {
+	int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
+	if (retval<0) 
+	  {
+	    rc = retval;
+	    return rc;
+	  }
+	pos += retval;
       }
-      pos += retval;
-    }
     return 0;
   }
 
   void
-  UClient::listenThread() {
+  UClient::listenThread()
+  {
     fd_set rfds;
     int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
     int res;
@@ -234,7 +244,8 @@ namespace urbi
 
 
   void
-  UClient::printf(const char * format, ...) {
+  UClient::printf(const char * format, ...)
+  {
     va_list arg;
     va_start(arg, format);
     vfprintf(stderr, format, arg);
@@ -267,7 +278,7 @@ namespace urbi
   }
 
 
-  UClient & connect(const char  * host)
+  UClient & connect(const char* host)
   {
     return *new UClient(host);
   }

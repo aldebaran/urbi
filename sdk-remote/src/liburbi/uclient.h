@@ -60,6 +60,6 @@ namespace urbi
     int             control_fd[2];       ///< Pipe for termination notification.
     void           *thread;
   };
-  
+
 } // namespace urbi
 #endif
