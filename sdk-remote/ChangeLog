@@ -1,3 +1,8 @@
+2006-10-21  Akim Demaille  <akim.demaille@free.fr>
+
+	Updates
+	* src/liburbi/uobject/common_uvalue.cc: Formatting changes.
+
 2006-10-21  Akim Demaille  <your.mail.here@FIXME.com>
 
 	Formatting changes.

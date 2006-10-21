@@ -34,12 +34,12 @@ namespace urbi
   void unescape(std::string& data)
   {
     int src=0, dst=0;
-    while (data[src]) 
+    while (data[src])
       {
 	if (data[src]!='\\')
 	  data[dst]=data[src];
 	else {
-	  switch(data[++src]) 
+	  switch(data[++src])
 	    {
 	    case 'n':
 	      data[dst]='\n';
@@ -65,7 +65,7 @@ namespace urbi
   {
     char* src = data;
     char * dst = data;
-    while (*src) 
+    while (*src)
       {
 	if (*src != '\\')
 	  *dst = *src;
@@ -100,13 +100,13 @@ namespace urbi
   {
     while (message[pos]==' ')
       pos++;
-    if (message[pos] == '"') 
+    if (message[pos] == '"')
       {
 	//string
 	type = DATA_STRING;
 	//get terminating '"'
 	int p=pos+1;
-	while (message[p] && message[p]!='"') 
+	while (message[p] && message[p]!='"')
 	  {
 	    if (message[p]=='\\')
 	      p++;
@@ -120,14 +120,14 @@ namespace urbi
 	return p+1;
       }
 
-    if (message[pos] == '[') 
+    if (message[pos] == '[')
       {
 	//list message
 	type = DATA_LIST;
 	list = new UList();
 	pos++;
 	while (message[pos]==' ') pos++;
-	while (message[pos]) 
+	while (message[pos])
 	  {
 	    while (message[pos]==' ') pos++;
 	    UValue *v = new UValue();
@@ -151,7 +151,7 @@ namespace urbi
       }
 
     //OBJ a [x:12, y:4]
-    if (!strncmp(message+pos, "OBJ ", 4)) 
+    if (!strncmp(message+pos, "OBJ ", 4))
       {
 	//obj message
 	pos+=4;
@@ -165,9 +165,10 @@ namespace urbi
 	  return -pos;
 	pos++;
 
-	while (message[pos]) 
+	while (message[pos])
 	  {
-	    while (message[pos]==' ') pos++;
+	    while (message[pos]==' ')
+	      pos++;
 	    if (message[pos]==']')
 	      break; //empty object
 	    //parse name
@@ -180,7 +181,8 @@ namespace urbi
 	    UNamedValue nv;
 	    nv.name = std::string(message+pos, p-pos-1);
 	    pos=p;
-	    while (message[pos]==' ') pos++;
+	    while (message[pos]==' ')
+	      pos++;
 	    UValue *v = new UValue();
 	    p = v->parse(message, pos, bins, binpos);
 	    if (p<0)
@@ -188,7 +190,8 @@ namespace urbi
 	    nv.val = v;
 	    object->array.push_back(nv);
 	    pos = p;
-	    while (message[pos]==' ') pos++;
+	    while (message[pos]==' ')
+	      pos++;
 	    //expect , or rbracket
 	    if (message[pos]==']')
 	      break;
@@ -202,7 +205,7 @@ namespace urbi
 	return pos+1;
       }
 
-    if (!strncmp(message+pos,"void",4)) 
+    if (!strncmp(message+pos,"void",4))
       {
 	//void
 	type = DATA_VOID;
@@ -210,7 +213,7 @@ namespace urbi
 	return pos;
       }
 
-    if (!strncmp(message+pos,"BIN ",4)) 
+    if (!strncmp(message+pos,"BIN ",4))
       {
 	//binary message: delegate
 	type = DATA_BINARY;
@@ -284,7 +287,7 @@ namespace urbi
 
   int UBinary::parse(const char * message, int pos,
 		     std::list<BinaryData> &bins,
-		     std::list<BinaryData>::iterator &binpos) 
+		     std::list<BinaryData>::iterator &binpos)
   {
     while (message[pos]==' ') pos++;
     //find end of header
@@ -297,7 +300,7 @@ namespace urbi
     int count = sscanf(message+pos,"%d%n",&psize,&ps);
     if (count!=1)
       return -pos;
-    if (psize != binpos->size) 
+    if (psize != binpos->size)
       {
 	std::cerr <<"bin size inconsistency\n";
 	return -pos;
@@ -323,7 +326,7 @@ namespace urbi
     int p2, p3, p4, p5;
     count = sscanf(message+pos,"%63s %d %d %d %d", type, &p2, &p3, &p4, &p5);
     //DEBUG fprintf(stderr,"%s:  %d %s %d %d\n", message, p1, type, p2, p3);
-    if (!strcmp(type, "jpeg")) 
+    if (!strcmp(type, "jpeg"))
       {
 	this->type = BINARY_IMAGE;
 	image.size = common.size;
@@ -333,7 +336,7 @@ namespace urbi
 	return p;
       }
 
-    if (!strcmp(type, "YCbCr")) 
+    if (!strcmp(type, "YCbCr"))
       {
 	this->type = BINARY_IMAGE;
 	image.size = common.size;
@@ -343,7 +346,7 @@ namespace urbi
 	return p;
       }
 
-    if (!strcmp(type, "rgb")) 
+    if (!strcmp(type, "rgb"))
       {
 	this->type = BINARY_IMAGE;
 	image.size = common.size;
@@ -353,7 +356,7 @@ namespace urbi
 	return p;
       }
 
-    if (!strcmp(type, "raw")) 
+    if (!strcmp(type, "raw"))
       {
 	this->type = BINARY_SOUND;
 	sound.soundFormat = SOUND_RAW;
@@ -365,7 +368,7 @@ namespace urbi
 	return p;
       }
 
-    if (!strcmp(type, "wav")) 
+    if (!strcmp(type, "wav"))
       {
 	this->type = BINARY_SOUND;
 	sound.soundFormat = SOUND_WAV;
@@ -382,7 +385,7 @@ namespace urbi
     return p;
   }
 
-  void UBinary::buildMessage() 
+  void UBinary::buildMessage()
   {
     message = getMessage();
   }
@@ -390,9 +393,9 @@ namespace urbi
   std::string UBinary::getMessage() const
   {
     std::ostringstream str;
-    if (type == BINARY_IMAGE) 
+    if (type == BINARY_IMAGE)
       {
-	switch( image.imageFormat) 
+	switch( image.imageFormat)
 	  {
 	  case IMAGE_RGB:
 	    str<<"rgb ";
@@ -409,9 +412,9 @@ namespace urbi
 	  };
 	str<<image.width<<" "<<image.height;
       }
-    if (type == BINARY_SOUND) 
+    if (type == BINARY_SOUND)
       {
-	switch (sound.soundFormat) 
+	switch (sound.soundFormat)
 	  {
 	  case SOUND_RAW:
 	    str<<"raw ";
@@ -580,7 +583,7 @@ namespace urbi
 
   UValue::operator USound() const
   {
-    if (type != DATA_BINARY || binary->type != BINARY_SOUND) 
+    if (type != DATA_BINARY || binary->type != BINARY_SOUND)
       {
 	USound i;
 	i.data=0; i.size=0; i.channels=i.rate=0;
@@ -651,20 +654,20 @@ namespace urbi
   }
 
 
-  UBinary::UBinary() 
+  UBinary::UBinary()
   {
     common.data = 0;
     common.size = 0;
     type = BINARY_NONE;
   }
 
-  UBinary::~UBinary() 
+  UBinary::~UBinary()
   {
     if (common.data)
       free(common.data);
   }
 
-  UBinary::UBinary(const UBinary &b) 
+  UBinary::UBinary(const UBinary &b)
   {
     type = BINARY_NONE;
     common.data = 0;
@@ -672,7 +675,7 @@ namespace urbi
   }
 
 
-  UBinary::UBinary(const UImage &i) 
+  UBinary::UBinary(const UImage &i)
   {
     type = BINARY_IMAGE;
     image = i;
@@ -680,7 +683,7 @@ namespace urbi
     memcpy(image.data, i.data, image.size);
   }
 
-  UBinary::UBinary(const USound &i) 
+  UBinary::UBinary(const USound &i)
   {
     type = BINARY_SOUND;
     sound = i;
@@ -750,10 +753,10 @@ namespace urbi
 
 
 
-  UObjectStruct::UObjectStruct() 
+  UObjectStruct::UObjectStruct()
   {}
 
-  UObjectStruct::UObjectStruct(const UObjectStruct &b) 
+  UObjectStruct::UObjectStruct(const UObjectStruct &b)
   {
     *this = b;
   }
