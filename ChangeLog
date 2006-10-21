@@ -1,3 +1,12 @@
+2006-10-21  Akim Demaille  <akim.demaille@free.fr>
+
+	Prepare aibo
+	* src/console.cc: Use libport/utime.hh.
+	* src/parser/bison/bison.mk: Compile the parser in a separate
+	library, in a failed attempt to avoid -O2.
+	* src/Makefile.am: Do not compile the Aibo connection kit.
+	Will probably be removed later.
+
 2006-10-21  Akim Demaille  <your.mail.here@FIXME.com>
 
 	ChangeLog issues

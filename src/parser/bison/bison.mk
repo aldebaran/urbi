@@ -18,7 +18,24 @@ ugrammar.cc
 
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UGRAMMAR_Y) ugrammar.stamp ugrammar.output
-nodist_libkernel_la_SOURCES = $(FROM_UGRAMMAR_Y)
+# We use a small library just to emulate Per-Object Flags.
+# See the Automake documentation.  We need to pass -O0 when
+# compiling ugrammar.cc with mipsel-linux-c++, to avoid this:
+#
+#  {standard input}: Assembler messages:
+#  {standard input}:4842: Error: Branch out of range
+#  {standard input}:5216: Error: Branch out of range
+#  {standard input}:5395: Error: Branch out of range
+#  {standard input}:5435: Error: Branch out of range
+#  {standard input}:5485: Error: Branch out of range
+#  {standard input}:5541: Error: Branch out of range
+#  {standard input}:5569: Error: Branch out of range
+#  {standard input}:5595: Error: Branch out of range
+#  
+noinst_LTLIBRARIES = libparser.la
+nodist_libparser_la_SOURCES = $(FROM_UGRAMMAR_Y)
+libparser_la_CXXFLAGS = $(AM_CXXFLAGS) $(PARSER_CXXFLAGS)
+libkernel_la_LIBADD = libparser.la
 
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
@@ -41,9 +58,8 @@ $(FROM_UGRAMMAR_Y): ugrammar.stamp
 ## Flex Scanner.  ##
 ## -------------- ##
 
-# Flex 2.5.4 is quite old, and its C++ output does not use std::
-# properly.  This is the list of entities which must be prefixed by
-# std::.
+# Flex 2.5.4's C++ output does not use std:: properly.  This is a Perl
+# regexp of entities to prefix with std::.
 flex_nonstd = 'cin|cout|cerr|[io]stream'
 
 FROM_UTOKEN_L =			\
@@ -52,7 +68,7 @@ utoken.cc
 BUILT_SOURCES += $(FROM_UTOKEN_L)
 CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
 dist_libkernel_la_SOURCES += $(parsedir)/flex-lexer.hh
-nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
+nodist_libkernel_la_SOURCES = $(FROM_UTOKEN_L)
 
 EXTRA_DIST += $(parsedir)/utoken.l
 utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk

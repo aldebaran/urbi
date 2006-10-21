@@ -78,10 +78,8 @@ uvariable.h uvariable.cc					\
 uvariablelist.h uvariablelist.cc				\
 uvariablename.h uvariablename.cc
 
-# We build for aibo, or posix.
-if NETWORK_OPENR
-include network/OPENR/openr.mk
-else
+# We either build the BSD connection set, or none at all for Aibo.
+if !NETWORK_OPENR
 include network/bsdnet/bsdnet.mk
 endif
 

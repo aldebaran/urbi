@@ -1,38 +1,10 @@
-#include <sys/time.h>
-#include <time.h>
+#include <unistd.h>
+
+#include "libport/utime.hh"
+
 #include "version.hh"
 #include "userver.h"
 #include "ughostconnection.h"
-
-#ifdef WIN32
-inline long long utime()
-{
-  static long long pfreq= 0LL; //cps
-  static long long base = 0LL;
-  if (pfreq == 0)
-    {
-      QueryPerformanceFrequency((LARGE_INTEGER *)&pfreq);
-      QueryPerformanceCounter((LARGE_INTEGER *)&base);
-      std::cerr <<"perfcounter at frequency of "<<pfreq<<"\n";
-    }
-  long long val;
-  QueryPerformanceCounter((LARGE_INTEGER *)&val);
-  return ((val-base) * 1000000LL)/ pfreq;
-}
-#else
-#include <sys/time.h>
-#include <time.h>
-inline long long utime()
-{
-  static long long start = 0;
-  static const long long BIGDELTA = 30LL*365LL*24LL*3600LL;
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  if (start == 0)
-    start = (tv.tv_sec-BIGDELTA)*1000000+tv.tv_usec;
-  return (tv.tv_sec-BIGDELTA)*1000000+tv.tv_usec - start;
-}
-#endif
 
 class ConsoleServer
   : public UServer
@@ -57,7 +29,7 @@ public:
 
   virtual ufloat getTime()
   {
-    return (ufloat)(utime()/1000LL);
+    return (ufloat)(urbi::utime()/1000LL);
   }
 
   virtual ufloat getPower()
@@ -68,21 +40,21 @@ public:
   //! Called to display the header at each coonection start
   virtual void getCustomHeader(int line, char* header, int maxlength)
   {
-    switch (line)
+    const char* banner[] =
       {
-      case 0:
-	strncpy(header,
-		"***      URBI Console Rev. " PACKAGE_REVISION "\n",
-		maxlength);
-	break;
-      default:
-	header[0] = 0;
-      }
+	"***      URBI Console " PACKAGE_VERSION_REV "\n",
+	"***      (C) 2006 Gostai SAS\n"
+      };
+
+    if ((size_t) line < sizeof banner / sizeof banner[0])
+      strncpy(header, banner[line], maxlength);
+    else
+      header[0] = 0;
   }
 
   virtual
   UErrorValue
-  loadFile (const char *filename, UCommandQueue* loadQueue)
+  loadFile (const char* filename, UCommandQueue* loadQueue)
   {
     //! \todo check this code
     FILE *f;
@@ -107,7 +79,7 @@ public:
 
   virtual
   UErrorValue
-  saveFile (const char *filename, const char * content)
+  saveFile (const char* filename, const char* content)
   {
     //! \todo check this code
     FILE *f;
@@ -147,12 +119,12 @@ main ()
     return 1;
   c.newDataAdded = true;
 
-  long long startTime = utime();
+  long long startTime = urbi::utime();
 
   while (true)
     {
       ufloat freq = s.getFrequency() *1000;
-      while (utime() < (startTime + freq))
+      while (urbi::utime() < (startTime + freq))
 	usleep (1);
       s.work ();
     }
