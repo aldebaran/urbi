@@ -1,5 +1,15 @@
 2006-10-22  Akim Demaille  <akim.demaille@free.fr>
 
+	Stop using symlinks, Matthieu dislikes them
+	* src/uobject/uobject.cc, src/uobject/uvar.cc: Move to...
+	* src/uobject.cc, src/uvar.cc: here.
+	* src/uobject/uobject.h, src/uobject/uext.h,
+	* src/uobject/common_uvalue.cc: Remove.
+	* src/Makefile.am (liburbi_srcdir, uobject_srcdir): New.
+	Use them to use the copies shipped by the enbedded liburbi.
+
+2006-10-22  Akim Demaille  <akim.demaille@free.fr>
+
 	Fix parser compilation under Aibo
 	* src/parser/bison/bison.mk: Include an explicit compilation
 	rule for ugrammar.cc which uses PARSER_CXXFLAGS.

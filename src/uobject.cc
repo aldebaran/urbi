@@ -29,8 +29,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "utypes.h"
 
 #ifdef _MSC_VER
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
+# define snprintf _snprintf
+# define vsnprintf _vsnprintf
 #endif
 #define LIBURBIDEBUG
 

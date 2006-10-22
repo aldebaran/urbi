@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - (C) 2004, 2005, 2006 Jean-Christophe Baillie 
+# URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie 
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -19,12 +19,15 @@ CLEANFILES =
 EXTRA_DIST =
 kernelinclude_HEADERS =
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(srcdir)/uobject -DFLOAT_DOUBLE
+liburbi_srcdir = $(top_srcdir)/liburbi-c++/src/liburbi
+uobject_srcdir = $(liburbi_srcdir)/uobject
+
+AM_CPPFLAGS = -I$(top_srcdir) -I$(liburbi_srcdir) -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-libkernel_la_LDFLAGS = -static
 env_LTLIBRARIES = libkernel.la
+libkernel_la_LDFLAGS = -static
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
@@ -62,10 +65,10 @@ ughostconnection.h ughostconnection.cc				\
 ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
-uobject/common_uvalue.cc					\
+$(uobject_srcdir)/common_uvalue.cc				\
 $(libport_dir)/hash.hh						\
-uobject/uobject.h uobject/uobject.cc				\
-uobject/uvar.cc							\
+$(uobject_srcdir)/uobject.h uobject.cc				\
+uvar.cc								\
 uproperty.h uproperty.cc					\
 uqueue.h uqueue.cc						\
 userver.h userver.cc						\
@@ -142,7 +145,7 @@ $(libport_dir)/hash.hh				\
 $(libport_dir)/lockable.hh
 
 uobjectdir = $(kernelincludedir)/uobject
-uobject_HEADERS = uobject/uobject.h
+uobject_HEADERS = $(uobject_srcdir)/uobject.h
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.h
