@@ -37,12 +37,10 @@ AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL
 
 
-## --------- ##
-## Network.  ##
-## --------- ##
+## -------- ##
+## Target.  ##
+## -------- ##
 URBI_OPENR
-AM_CONDITIONAL([NETWORK_OPENR],  [$openr])
-
 URBI_PTHREAD
 
 ## ------------- ##

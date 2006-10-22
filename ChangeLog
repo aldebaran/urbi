@@ -1,3 +1,15 @@
+2006-10-22  Akim Demaille  <akim.demaille@free.fr>
+
+	Fix parser compilation under Aibo
+	* src/parser/bison/bison.mk: Include an explicit compilation
+	rule for ugrammar.cc which uses PARSER_CXXFLAGS.
+	This rule was copied from Automake 1.9.6's output.
+	* src/Makefile.am: Don't compile console for aibo.
+	(libkernel_la_CPPFLAGS): Don't define it, it makes the object
+	file names longer for no good reason.
+	Just let AM_CPPFLAGS do its job.
+	* configure.ac: Don't define NETWORK_OPENR, OPENR suffices.
+
 2006-10-21  Akim Demaille  <akim.demaille@free.fr>
 
 	Prepare aibo

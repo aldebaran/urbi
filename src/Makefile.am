@@ -23,8 +23,6 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(srcdir)/uobject -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-# Initialize it: it's going to be extended in sub Makefiles.
-libkernel_la_CPPFLAGS = $(AM_CPPFLAGS)
 libkernel_la_LDFLAGS = -static
 env_LTLIBRARIES = libkernel.la
 
@@ -79,7 +77,7 @@ uvariablelist.h uvariablelist.cc				\
 uvariablename.h uvariablename.cc
 
 # We either build the BSD connection set, or none at all for Aibo.
-if !NETWORK_OPENR
+if !OPENR
 include network/bsdnet/bsdnet.mk
 endif
 
@@ -159,6 +157,8 @@ memorymanager/memorymanager.h
 ## uconsole.  ##
 ## ---------- ##
 
+if !OPENR
 noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
 uconsole_LDADD = libkernel.la
+endif
