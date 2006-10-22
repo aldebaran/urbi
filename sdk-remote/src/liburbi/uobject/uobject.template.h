@@ -550,8 +550,8 @@ namespace urbi
     operator ufloat ();
     operator std::string ();
     operator UList();
-   
-  
+
+
 
     void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
 
