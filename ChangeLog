@@ -1,5 +1,14 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	Use libport's ufloat.hh.
+	* src/ufloat.h: Wrap libport/ufloat.hh.
+	To be removed eventually (or moved into libport under some
+	form).
+	* src/ufloat.cc: Remove.
+	* src/utypes.h: Adjust.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	Remove AIBO connection code
 	* src/network/OPENR: Remove.
 	* src/network/OPENR/aiboconnection.h: Remove.

@@ -35,8 +35,8 @@
 
 # include "libport/hash.hh"
 # include "fwd.hh"
-# include "ufloat.h"
 
+# include "ufloat.h"
 
 extern  int   usedMemory; //< Keeps track of how much memory has been used for
 			  //< commands, buffers, etc...
@@ -262,9 +262,8 @@ enum UReport {
 
 typedef unsigned char ubyte;
 
-static const ufloat UINFINITY   = ufloat(999999999999999.0);
-//static const ufloat TRUE = ufloat(1);
-//static const ufloat FALSE = ufloat(0);
+//static const urbi::ufloat TRUE = urbi::ufloat(1);
+//static const urbi::ufloat FALSE = urbi::ufloat(0);
 # define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
 
