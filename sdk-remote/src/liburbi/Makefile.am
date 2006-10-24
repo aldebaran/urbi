@@ -4,8 +4,6 @@ if BINDINGS
 endif
 SUBDIRS += .
 
-libport_dir = $(top_srcdir)/libport
-
 AM_CPPFLAGS =					\
 -I$(top_srcdir)					\
 -I$(top_builddir)/src/liburbi/uobject		\
@@ -13,6 +11,7 @@ AM_CPPFLAGS =					\
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 AM_LIBADD =  $(PTHREAD_LIBS)
+
 
 ## ------------ ##
 ## liburbi.la.  ##
@@ -24,13 +23,11 @@ include_HEADERS =				\
 uabstractclient.h				\
 uclient.h					\
 uconversion.h					\
-$(libport_dir)/hash.hh		                \
 uobject/uexternal.h				\
 uobject/uobject.h				\
 usyncclient.h
 
 sdkinclude_HEADERS = 				\
-$(libport_dir)/hash.hh		                \
 uobject/uobject.h
 
 BUILT_SOURCES = uobject/uobject.h
@@ -38,9 +35,6 @@ uobject/uobject.h: uobject/uobject.template.h
 	cd uobject && $(MAKE) uobject.h
 
 liburbi_la_SOURCES =				\
-$(libport_dir)/lockable.hh	                \
-$(libport_dir)/semaphore.hh	                \
-$(libport_dir)/thread.hh	                \
 uabstractclient.h	uabstractclient.cpp	\
 uclient.h		uclient.cpp		\
 uconversion.h		uconversion.cpp		\
