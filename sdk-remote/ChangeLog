@@ -1,5 +1,11 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	use libport/ufloat.h
+	* src/liburbi/uobject/uobject.template.h: Do that.
+	Reindent.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	use libport/ufloat.hh
 	* src/liburbi/ufloat.h, src/liburbi/ufloat.cc: Remove.
 	* src/liburbi/uobject/Makefile.am: Adjust.

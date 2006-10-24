@@ -28,14 +28,7 @@
 # include <list>
 # include <algorithm>
 
-
-// Floating point definition (emulated or real)
-# ifdef HAVE_LIBPORT_UFLOAT_HH
-#  include "libport/ufloat.hh"
-# else
-namespace urbi { typedef double ufloat; }
-# endif
-
+# include "libport/ufloat.h"
 # include "libport/hash.hh"
 
 /// Singleton smart pointer that creates the object on demand.
@@ -979,7 +972,9 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
 
 # else
 
-  template<> class utrait<UVar&> {
+  template<>
+  class utrait<UVar&>
+  {
   public:
     typedef UVar noref;
   };
@@ -990,77 +985,76 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
 
        // non void return type
 
-  template <class OBJ, class R%%, class P% %%>
-  class UCallback%N% : public UGenericCallback
-  {
-  public:
-    UCallback%N%(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
-      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
-    virtual UValue __evalcall(UList& param) {
-      return UValue(( (*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
-    };
-  private:
-    OBJ* obj;
-    R (OBJ::*fun) (%%%,% P% %%);
+template <class OBJ, class R%%, class P% %%>
+class UCallback%N% : public UGenericCallback
+{
+ public:
+  UCallback%N%(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
+  virtual UValue __evalcall(UList& param) {
+    return UValue(( (*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
   };
+ private:
+  OBJ* obj;
+  R (OBJ::*fun) (%%%,% P% %%);
+};
 
-  // void return type
+// void return type
 
-  template <class OBJ%%, class P% %%>
-  class UCallbackvoid%N% : public UGenericCallback
-  {
-  public:
-    UCallbackvoid%N%(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
-      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
+template <class OBJ%%, class P% %%>
+class UCallbackvoid%N% : public UGenericCallback
+{
+ public:
+  UCallbackvoid%N%(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
 
-    virtual UValue __evalcall(UList &param) {
-      ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
-      return UValue();
-    };
-  private:
-    OBJ* obj;
-    void (OBJ::*fun) (%%%,% P% %%);
+  virtual UValue __evalcall(UList &param) {
+    ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
+    return UValue();
   };
+ private:
+  OBJ* obj;
+  void (OBJ::*fun) (%%%,% P% %%);
+};
 
-  // void return type : special case for notifyend event callbacks
+// void return type : special case for notifyend event callbacks
 
-  template <class OBJ%%, class P% %%>
-  class UCallbacknotifyend%N% : public UGenericCallback
-  {
-  public:
-    UCallbacknotifyend%N%(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),const std::string& funname, UTable &t):
-      UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(end) {};
+template <class OBJ%%, class P% %%>
+class UCallbacknotifyend%N% : public UGenericCallback
+{
+ public:
+  UCallbacknotifyend%N%(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),const std::string& funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(end) {};
 
-    virtual UValue __evalcall(UList &) {
-      ((*obj).*fun)();
-      return UValue();
-    };
-  private:
-    OBJ* obj;
-    void (OBJ::*fun) ();
+  virtual UValue __evalcall(UList &) {
+    ((*obj).*fun)();
+    return UValue();
   };
+ private:
+  OBJ* obj;
+  void (OBJ::*fun) ();
+};
 
 
-  // callback creation for non void return type
+// callback creation for non void return type
 
-  template <class OBJ, class R%%, class P% %%>
-  UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t) {
-    return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t));
-  }
+template <class OBJ, class R%%, class P% %%>
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t) {
+  return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t));
+}
 
-  // callback creation for void return type
+// callback creation for void return type
 
-  template <class OBJ%%, class P% %%>
-  UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t) {
-    return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t));
-  }
+template <class OBJ%%, class P% %%>
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t) {
+  return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t));
+}
 
-  // special case for eventend notification
-  template <class OBJ%%, class P% %%>
-  UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), const std::string& funname,UTable &t) {
-    return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t));
-  }
-
+// special case for eventend notification
+template <class OBJ%%, class P% %%>
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), const std::string& funname,UTable &t) {
+  return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t));
+}
 
 %%%%
 
