@@ -1,5 +1,11 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	Use libport/libport.mk
+	* Makefile.am: Include it.
+	* src/liburbi/Makefile.am: Stop doing its job.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/liburbi/uobject/uvar.cc: Do that.
 	* src/liburbi/uobject/common_uvalue.cc: And do it again.
@@ -19,7 +25,7 @@
 
 2006-10-20  Matthieu Nottale  <nottale@gostai.com>
 
-	Add UVar::operator= (UValue). Change data to unsigned char* in UImage 
+	Add UVar::operator= (UValue). Change data to unsigned char* in UImage
 
 	* src/liburbi/uconversion.cpp: Fix.
 	* src/liburbi/uobject/uobject.template.h: Do it.
@@ -129,7 +135,7 @@
 
 2006-10-17  Matthieu Nottale  <nottale@gostai.com>
 
-	r203: USetTimer fix. 
+	r203: USetTimer fix.
 
 	* src/liburbi/uobject/uobject.cc: Use correct event name in usettimer.
 
@@ -219,7 +225,7 @@
 
 2006-10-08  JC Baillie  <baillie@gostai.com>
 
-	compile warning fix 
+	compile warning fix
 
 	* src/liburbi/uobject/common_uvalue.cc: remove a compile warning.
 
