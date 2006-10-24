@@ -27,9 +27,9 @@ For more information, comments, bug reports: http://www.urbiforge.com
 namespace urbi
 {
 
-  //////////////////////
-  //// UValue Parsing
-  //////////////////////
+  /*-----------------.
+  | UValue Parsing.  |
+  `-----------------*/
 
   void unescape(std::string& data)
   {
@@ -61,7 +61,7 @@ namespace urbi
     data[dst] = 0;
   }
 
-  void unescape(char * data)
+  void unescape(char* data)
   {
     char* src = data;
     char * dst = data;
@@ -92,11 +92,12 @@ namespace urbi
     *dst = 0;
   }
 
-
-
-  int UValue::parse(const char * message, int pos,
-		    std::list<BinaryData> &bins,
-		    std::list<BinaryData>::iterator &binpos)
+  /*---------.
+  | UValue.  |
+  `---------*/
+  int UValue::parse(const char* message, int pos,
+		    std::list<BinaryData>& bins,
+		    std::list<BinaryData>::iterator& binpos)
   {
     while (message[pos]==' ')
       pos++;
@@ -235,7 +236,7 @@ namespace urbi
   }
 
   std::ostream&
-  UValue::print (std::ostream &s) const
+  UValue::print (std::ostream& s) const
   {
     switch (type)
       {
@@ -285,9 +286,13 @@ namespace urbi
     return s;
   }
 
+
+  /*----------.
+  | UBinary.  |
+  `----------*/
   int UBinary::parse(const char * message, int pos,
-		     std::list<BinaryData> &bins,
-		     std::list<BinaryData>::iterator &binpos)
+		     std::list<BinaryData>& bins,
+		     std::list<BinaryData>::iterator& binpos)
   {
     while (message[pos]==' ') pos++;
     //find end of header
@@ -437,6 +442,10 @@ namespace urbi
     return str.str();
   }
 
+  /*---------.
+  | UValue.  |
+  `---------*/
+
   //! Class UValue implementation
   UValue::UValue()
     : type(DATA_VOID), val (0), storage(0)
@@ -451,39 +460,39 @@ namespace urbi
     : type(DATA_DOUBLE), val(v)
   {}
 
-  UValue::UValue(char * v)
+  UValue::UValue(char*  v)
     : type(DATA_STRING), stringValue(new std::string(v))
   {}
 
-  UValue::UValue(const std::string &v)
+  UValue::UValue(const std::string& v)
     : type(DATA_STRING), stringValue(new std::string(v))
   {}
 
-  UValue::UValue(const UBinary &b)
+  UValue::UValue(const UBinary& b)
     : type(DATA_BINARY)
   {
     binary = new UBinary(b);
   }
 
-  UValue::UValue(const USound &s)
+  UValue::UValue(const USound& s)
     : type(DATA_BINARY)
   {
     binary = new UBinary(s);
   }
 
-  UValue::UValue(const UImage &s)
+  UValue::UValue(const UImage& s)
     : type(DATA_BINARY)
   {
     binary = new UBinary(s);
   }
 
-  UValue::UValue(const UList &l)
+  UValue::UValue(const UList& l)
     : type(DATA_LIST)
   {
     list = new UList(l);
   }
 
-  UValue::UValue(const UObjectStruct &o)
+  UValue::UValue(const UObjectStruct& o)
     : type(DATA_OBJECT)
   {
     object = new UObjectStruct(o);
@@ -647,13 +656,16 @@ namespace urbi
   }
 
 
-  UValue::UValue(const UValue &v)
+  UValue::UValue(const UValue& v)
   {
     type = DATA_VOID;
     *this = v;
   }
 
 
+  /*----------.
+  | UBinary.  |
+  `----------*/
   UBinary::UBinary()
   {
     common.data = 0;
@@ -667,7 +679,7 @@ namespace urbi
       free(common.data);
   }
 
-  UBinary::UBinary(const UBinary &b)
+  UBinary::UBinary(const UBinary& b)
   {
     type = BINARY_NONE;
     common.data = 0;
@@ -675,7 +687,7 @@ namespace urbi
   }
 
 
-  UBinary::UBinary(const UImage &i)
+  UBinary::UBinary(const UImage& i)
   {
     type = BINARY_IMAGE;
     image = i;
@@ -683,7 +695,7 @@ namespace urbi
     memcpy(image.data, i.data, image.size);
   }
 
-  UBinary::UBinary(const USound &i)
+  UBinary::UBinary(const USound& i)
   {
     type = BINARY_SOUND;
     sound = i;
@@ -691,7 +703,7 @@ namespace urbi
     memcpy(sound.data, i.data, sound.size);
   }
 
-  UBinary & UBinary::operator = (const UBinary &b)
+  UBinary& UBinary::operator = (const UBinary& b)
   {
     if (common.data)
       free(common.data);
@@ -717,17 +729,21 @@ namespace urbi
   }
 
 
+  /*--------.
+  | UList.  |
+  `--------*/
+
   UList::UList()
     : offset(0)
   {}
 
-  UList::UList(const UList &b)
+  UList::UList(const UList& b)
     : offset(0)
   {
     *this = b;
   }
 
-  UList & UList::operator = (const UList &b)
+  UList& UList::operator = (const UList& b)
   {
     offset = 0;
     for (int i=0;i<size();i++) //relax, its a vector
@@ -751,19 +767,21 @@ namespace urbi
   }
 
 
-
+  /*----------------.
+  | UObjectStruct.  |
+  `----------------*/
 
   UObjectStruct::UObjectStruct()
   {}
 
-  UObjectStruct::UObjectStruct(const UObjectStruct &b)
+  UObjectStruct::UObjectStruct(const UObjectStruct& b)
   {
     *this = b;
   }
 
-  UObjectStruct & UObjectStruct::operator = (const UObjectStruct &b)
+  UObjectStruct& UObjectStruct::operator = (const UObjectStruct& b)
   {
-    for (int i=0;i<size();i++) //relax, its a vector
+    for (int i=0;i<size();i++) // Relax, it's a vector.
       delete array[i].val;
     array.clear();
 
@@ -782,7 +800,11 @@ namespace urbi
   }
 
 
-  UValue & UObjectStruct::operator [](const std::string& s)
+  /*---------.
+  | UValue.  |
+  `---------*/
+
+  UValue& UObjectStruct::operator [](const std::string& s)
   {
     for (int i=0;i<size();i++)
       if (array[i].name==s)
@@ -790,6 +812,10 @@ namespace urbi
     static UValue n;
     return n;
   }
+
+  /*-------.
+  | UVar.  |
+  `-------*/
 
   void
   UVar::operator = (const UValue& v)

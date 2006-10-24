@@ -44,7 +44,7 @@ namespace urbi
   // **************************************************************************
   //! UVar constructor: implicit object ref (using 'lastUOjbect') + varname
   UVar::UVar(const std::string& varname)
-    :VAR_PROP_INIT
+    : VAR_PROP_INIT
   {
     name = varname;
     __init();
@@ -106,7 +106,7 @@ namespace urbi
   }
 
   void
-  UVar::setProp(UProperty prop, const char * v)
+  UVar::setProp(UProperty prop, const char* v)
   {
     URBI(()) << name << "->" << propNames[(int)prop] << "=" << v << ";";
   }
@@ -115,7 +115,7 @@ namespace urbi
   UVar::setProp(UProperty prop, double v)
   {
     //TODO : generalize
-    if (prop == PROP_BLEND && v>=0 && v< blendNum)
+    if (prop == PROP_BLEND && 0 <= v && v < blendNum)
       URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<blendNames[(int)v]<<";";
     else
       URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
@@ -124,7 +124,7 @@ namespace urbi
   UValue
   UVar::getProp(UProperty prop)
   {
-    UMessage *m=
+    UMessage* m=
       ((USyncClient&)URBI(())).syncGet("%s->%s",
 				       name.c_str(), propNames[(int)prop]);
     UValue v = *m->value;
@@ -241,19 +241,23 @@ namespace urbi
     return value;
   };
 
-  UVar::operator UBinary*() {
+  UVar::operator UBinary*()
+  {
     return new UBinary(value.operator UBinary());
   };
 
-  UVar::operator UImage() {
+  UVar::operator UImage()
+  {
     return (UImage)value;
   };
 
-  UVar::operator USound() {
+  UVar::operator USound()
+  {
     return (USound)value;
   };
 
-  UVar::operator UList() {
+  UVar::operator UList()
+  {
     return (UList)value;
   };
 
@@ -263,7 +267,7 @@ namespace urbi
   {
 # ifdef LIBURBIDEBUG
     std::cout << "  Variable " << name << " updated to : ";
-    
+
     switch (v.type)
       {
       case DATA_DOUBLE:
