@@ -10,7 +10,7 @@ AM_CPPFLAGS =					\
 -I$(top_srcdir)/src/liburbi/uobject
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
-AM_LIBADD =  $(PTHREAD_LIBS)
+AM_LIBADD = $(PTHREAD_LIBS)
 
 
 ## ------------ ##

@@ -48,7 +48,7 @@ AC_ARG_ENABLE([examples],
 	      [], [enable_examples=yes])
 AC_MSG_CHECKING([whether compiling the examples])
 AC_MSG_RESULT([$enable_examples])
-AM_CONDITIONAL(EXAMPLES, test x"$enable_examples" = xyes)
+AM_CONDITIONAL([EXAMPLES], [test x"$enable_examples" = xyes])
 
 # Pthreads.
 URBI_PTHREAD
@@ -56,6 +56,9 @@ URBI_PTHREAD
 # Soundcard.
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
+
+URBI_UFLOAT
+
 
 ## --------- ##
 ## Bindings  ##
@@ -83,9 +86,9 @@ AM_CONDITIONAL([BINDING_PERL],
 AM_CONDITIONAL([BINDING_PHP],
  	        [test `echo "$enable_bindings" | grep -ci php` -ne 0])
 AM_CONDITIONAL([BINDING_PYTHON],
-	        [test `echo "$enable_bindings" | grep -ci python` -ne 0])
+		[test `echo "$enable_bindings" | grep -ci python` -ne 0])
 AM_CONDITIONAL([BINDING_RUBY],
-	        [test `echo "$enable_bindings" | grep -ci ruby` -ne 0])
+		[test `echo "$enable_bindings" | grep -ci ruby` -ne 0])
 
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.

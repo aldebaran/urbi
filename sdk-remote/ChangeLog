@@ -1,5 +1,14 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	use libport/ufloat.hh
+	* src/liburbi/ufloat.h, src/liburbi/ufloat.cc: Remove.
+	* src/liburbi/uobject/Makefile.am: Adjust.
+	* src/liburbi/uobject/uobject.template.h: Include ufloat if
+	HAVE_LIBPORT_UFLOAT_HH is defined.
+	* configure.ac: Invoke URBI_UFLOAT.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	Use libport/libport.mk
 	* Makefile.am: Include it.
 	* src/liburbi/Makefile.am: Stop doing its job.
@@ -15,7 +24,7 @@
 	Updates
 	* src/liburbi/uobject/common_uvalue.cc: Formatting changes.
 
-2006-10-21  Akim Demaille  <your.mail.here@FIXME.com>
+2006-10-21  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes.
 	* src/liburbi/uclient.cpp: Do that.
@@ -985,3 +994,11 @@
 	Added correct path handling in Move.
 	Updated urbiwalk accordingly.
 	Modified turn samples: left and right turn are now symetric.
+
+Local Variables:
+ispell-local-dictionary: "american"
+End:
+
+$Rev$
+$Id$
+$Date$

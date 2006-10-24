@@ -21,14 +21,17 @@
 #ifndef UOBJECT_H_DEFINED
 # define UOBJECT_H_DEFINED
 
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
 # include <string>
 # include <list>
 # include <algorithm>
 
 
 // Floating point definition (emulated or real)
-# ifdef HAVE_UFLOAT_H
-#  include "ufloat.h"
+# ifdef HAVE_LIBPORT_UFLOAT_HH
+#  include "libport/ufloat.hh"
 # else
 namespace urbi { typedef double ufloat; }
 # endif
