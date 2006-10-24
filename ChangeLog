@@ -1,5 +1,11 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	Adjust to libport installation
+	* src/Makefile.am: No longer install libport bits.
+	(AM_CXXFLAGS): Point to uobject/.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/uvar.cc: Make it more alike its peer.
 

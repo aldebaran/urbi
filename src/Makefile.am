@@ -8,8 +8,6 @@
 #
 ################################################################################
 
-libport_dir = $(top_srcdir)/libport
-
 ## ---------------- ##
 ## Initialization.  ##
 ## ---------------- ##
@@ -22,7 +20,9 @@ kernelinclude_HEADERS =
 liburbi_srcdir = $(top_srcdir)/liburbi-c++/src/liburbi
 uobject_srcdir = $(liburbi_srcdir)/uobject
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(liburbi_srcdir) -DFLOAT_DOUBLE
+AM_CPPFLAGS = -I$(top_srcdir) -I$(liburbi_srcdir) -I$(uobject_srcdir)
+# FIXME: What is this?  Where is it used?
+AM_CPPFLAGS += -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
@@ -32,7 +32,7 @@ libkernel_la_LDFLAGS = -static
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
 	    -e 's/installed=.*/installed=no/' \
-	    .libs/libkernel.lai > libkernel.lai.new
+	    .libs/libkernel.lai >libkernel.lai.new
 	mv -f libkernel.lai.new .libs/libkernel.lai
 
 install-data-hook:
@@ -46,7 +46,6 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
-$(libport_dir)/lockable.hh					\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
 parser/uparser.h parser/uparser.cc				\
@@ -66,7 +65,6 @@ ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
 $(uobject_srcdir)/common_uvalue.cc				\
-$(libport_dir)/hash.hh						\
 $(uobject_srcdir)/uobject.h uobject.cc				\
 uvar.cc								\
 uproperty.h uproperty.cc					\
@@ -138,11 +136,6 @@ uvalue.h					\
 uvariable.h					\
 uvariablelist.h					\
 uvariablename.h
-
-libportincludedir = $(kernelincludedir)/libport
-libportinclude_HEADERS = 			\
-$(libport_dir)/hash.hh				\
-$(libport_dir)/lockable.hh
 
 uobjectdir = $(kernelincludedir)/uobject
 uobject_HEADERS = $(uobject_srcdir)/uobject.h
