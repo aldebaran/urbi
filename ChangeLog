@@ -1,5 +1,13 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	Remove AIBO connection code
+	* src/network/OPENR: Remove.
+	* src/network/OPENR/aiboconnection.h: Remove.
+	* src/network/OPENR/openr.mk: Remove.
+	* src/network/OPENR/aiboconnection.cc: Remove.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	Adjust to libport installation
 	* src/Makefile.am: No longer install libport bits.
 	(AM_CXXFLAGS): Point to uobject/.
