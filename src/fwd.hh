@@ -1,6 +1,8 @@
 /// \file   fwd.hh
 /// \brief  Forward declarations.
 
+#ifndef KERNEL1_FWD_HH
+# define KERNEL1_FWD_HH
 namespace urbi
 {
   class baseURBIStarter;
@@ -36,3 +38,5 @@ class UValue;
 class UVariable;
 class UVariableList;
 class UVariableName;
+
+#endif //! KERNEL1_FWD_HH

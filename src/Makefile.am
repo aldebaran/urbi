@@ -58,7 +58,6 @@ ucommandqueue.h ucommandqueue.cc				\
 uconnection.h uconnection.cc					\
 ueventhandler.h ueventhandler.cc				\
 uexpression.h uexpression.cc					\
-ufloat.h ufloat.cc						\
 ufunction.h ufunction.cc					\
 ughostconnection.h ughostconnection.cc				\
 ugroup.h ugroup.cc						\
@@ -121,7 +120,6 @@ ucommandqueue.h					\
 uconnection.h					\
 ueventhandler.h					\
 uexpression.h					\
-ufloat.h					\
 ufunction.h					\
 ughostconnection.h				\
 ugroup.h					\

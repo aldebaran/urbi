@@ -43,6 +43,8 @@ AC_PROG_LIBTOOL
 URBI_OPENR
 URBI_PTHREAD
 
+URBI_UFLOAT
+
 ## ------------- ##
 ## liburbi C++.  ##
 ## ------------- ##
