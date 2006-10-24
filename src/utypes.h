@@ -34,9 +34,9 @@
 # endif
 
 # include "libport/hash.hh"
-# include "fwd.hh"
+# include "libport/ufloat.h"
 
-# include "ufloat.h"
+# include "fwd.hh"
 
 extern  int   usedMemory; //< Keeps track of how much memory has been used for
 			  //< commands, buffers, etc...

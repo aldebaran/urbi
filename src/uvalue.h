@@ -22,11 +22,13 @@
 #ifndef UVALUE_H_DEFINED
 #define UVALUE_H_DEFINED
 
+#include "libport/ufloat.h"
+
 #include "memorymanager/memorymanager.h"
 #include "fwd.hh"
 #include "utypes.h"
 #include "ustring.h"
-#include "ufloat.h"
+
 #include <string>
 
 namespace urbi {

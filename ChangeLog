@@ -1,5 +1,11 @@
 2006-10-24  Akim Demaille  <demaille@gostai.com>
 
+	Use libport/ufloat.h
+	* src/ufloat.h: Remove.
+	* src/uvalue.h, src/utypes.h: Adjust.
+
+2006-10-24  Akim Demaille  <demaille@gostai.com>
+
 	Use libport's ufloat.hh.
 	* src/ufloat.h: Wrap libport/ufloat.hh.
 	To be removed eventually (or moved into libport under some
