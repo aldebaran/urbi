@@ -24,7 +24,7 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(liburbi_srcdir) -I$(uobject_srcdir)
 # FIXME: What is this?  Where is it used?
 AM_CPPFLAGS += -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
-AM_CXXFLAGS = $(WARNING_CXXFLAGS)
+AM_CXXFLAGS = $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static
@@ -154,5 +154,5 @@ memorymanager/memorymanager.h
 if !OPENR
 noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
-uconsole_LDADD = libkernel.la
+uconsole_LDADD = libkernel.la $(PTHREAD_LIBS)
 endif

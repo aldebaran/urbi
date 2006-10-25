@@ -48,7 +48,7 @@ class UFlexer
 {
 public:
   UFlexer(void *_uparser);
-  void* UFlexer::get_uparser() const;
+  void* get_uparser() const;
 private:
   void *uparser;
 };
