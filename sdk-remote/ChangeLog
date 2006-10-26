@@ -1,5 +1,10 @@
 2006-10-26  Akim Demaille  <akim@lrde.epita.fr>
 
+	Formatting changes
+	* src/liburbi/uobject/uobject.cc: Do that.
+
+2006-10-26  Akim Demaille  <akim@lrde.epita.fr>
+
 	Use libport/singleton-ptr
 	* src/liburbi/uobject/uobject.template.h: Do that.
 	And formatting changes.
