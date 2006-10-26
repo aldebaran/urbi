@@ -28,37 +28,9 @@
 # include <list>
 # include <algorithm>
 
+# include "libport/singleton-ptr.hh"
 # include "libport/ufloat.h"
 # include "libport/hash.hh"
-
-/// Singleton smart pointer that creates the object on demand.
-template<class T>
-class SingletonPtr
-{
-public:
-  operator T* () {return check();}
-  operator T& () {return *check();}
-
-  T* operator ->() {return check();}
- private:
-  T* check()
-  {
-    static T * ptr=0;
-    if (ptr)
-      return ptr;
-    else
-      return (ptr = new T());
-  }
-private:
-};
-
-# define STATIC_INSTANCE(cl, name) \
-  SingletonPtr<cl ## name> name
-
-# define EXTERN_STATIC_INSTANCE(cl, name)\
-  class cl ## name: public cl{}; \
-extern SingletonPtr<cl ## name> name
-
 
 
 /// This macro must be called once for every UObject class.
@@ -355,17 +327,25 @@ namespace urbi
       UImage                image;
       USound                sound;
     };
-    std::string                message;         ///< extra bin headers(everything after BIN <size> and before ';'
+    /// Extra bin headers(everything after BIN <size> and before ';'.
+    std::string                message;         
 
     UBinary();
-    UBinary(const UBinary &b);  ///< deep copy constructor
+    /// Deep copy constructor.
+    UBinary(const UBinary &b);  
     explicit UBinary(const UImage &);
     explicit UBinary(const USound &);
-    UBinary & operator = (const UBinary &b); ///< deep copy
-    void buildMessage(); ///< build message from structures
-    std::string getMessage() const; ///< get message extracted from structures
-    ~UBinary();  ///< Frees binary buffer
-    int parse(const char * message, int pos, std::list<BinaryData> &bins, std::list<BinaryData>::iterator &binpos);
+    /// Deep copy.
+    UBinary & operator = (const UBinary &b); 
+    /// Build message from structures.
+    void buildMessage(); 
+    /// Get message extracted from structures.
+    std::string getMessage() const; 
+    /// Frees binary buffer.
+    ~UBinary();  
+    int parse(const char* message, int pos, 
+	      std::list<BinaryData> &bins,
+	      std::list<BinaryData>::iterator &binpos);
   };
 
   /// Class storing URBI List type
@@ -613,10 +593,14 @@ namespace urbi
 
     virtual UValue __evalcall(UList &param)  = 0;
 
-    void   *storage; ///< used to store the UVar* pointeur for var monitoring
-    ufloat period;   ///< period of timers
-    int    nbparam;  ///< nb params of the callbacked function
-    std::string objname;  ///< name of the UObject that has created the callback
+    /// Used to store the UVar* pointeur for var monitoring.
+    void   *storage; 
+    /// Period of timers.
+    ufloat period;   
+    /// Nb params of the callbacked function.
+    int    nbparam;  
+    /// Name of the UObject that has created the callback.
+    std::string objname;  
 
   private:
     std::string name;
@@ -651,7 +635,8 @@ namespace urbi
       : UTimerCallback(objname, period,tt), obj(obj), fun(fun)
     {}
 
-    virtual void call() {
+    virtual void call()
+    {
       ((*obj).*fun)();
     }
   private:
@@ -723,20 +708,27 @@ namespace urbi
       new UTimerCallbackobj<T> (__name, t,(T*)this, fun, timermap);
     }
 
-    void USync(UVar &v); ///< request permanent synchronization for v
+    /// Request permanent synchronization for v.
+    void USync(UVar &v); 
 
-    std::string __name; ///< name of the object as seen in URBI
-    std::string classname; ///< name of the class the object is derived from
-    bool   derived; ///< true when the object has been newed by an urbi command
+    /// Name of the object as seen in URBI.
+    std::string __name; 
+    /// Name of the class the object is derived from.
+    std::string classname; 
+    /// True when the object has been newed by an urbi command.
+    bool   derived; 
 
     UObjectList members;
-    UObjectHub  *objecthub; ///< the hub, if it exists
+    /// The hub, if it exists.
+    UObjectHub  *objecthub; 
 
     /// Set a timer that will call the update function every 'period' milliseconds
     void USetUpdate(ufloat period);
     virtual int update() {return 0;};
-    void UAutoGroup() { autogroup = true; }; ///< set autogrouping facility for each new subclass created.
-    virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; ///< called when a subclass is created if autogroup is true
+    /// Set autogrouping facility for each new subclass created..
+    void UAutoGroup() { autogroup = true; }; 
+    /// Called when a subclass is created if autogroup is true.
+    virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; 
 
     /// Join the uobject to the 'gpname' group.
     virtual void UJoinGroup(const std::string& gpname);
@@ -780,7 +772,8 @@ namespace urbi
     //   UObjectList* getAllSubClass(const std::string&); //TODO
 
   protected:
-    int updateGlobal(); ///< this function calls update and the subclass update
+    /// This function calls update and the subclass update.
+    int updateGlobal(); 
 
     ufloat period;
     std::string name;
@@ -849,7 +842,8 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
 
     virtual UObject* getUObject() = 0;
 
-    virtual void clean() = 0; ///< called before deletion
+    /// Called before deletion.
+    virtual void clean() = 0; 
     /// Used to provide a wrapper to initialize objects in starterlist.
     virtual void init(const std::string&) =0;
     /// Used to provide a copy of a C++ object based on its name.
@@ -861,7 +855,9 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
   /** A starter is a class whose job is to start an instance of a particular UObject subclass,
    * resulting in the initialization of this object (registration to the kernel)
    */
-  template <class T> class URBIStarter : public baseURBIStarter
+  template <class T> 
+  class URBIStarter 
+    : public baseURBIStarter
   {
   public:
     URBIStarter(const std::string& name, UStartlist& _slist)
@@ -872,12 +868,18 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
     };
 
     virtual ~URBIStarter() { clean(); }
-    virtual void clean() { UObject* tokill = getUObject();
-      if ((tokill) /*&& (tokill->derived)*/) delete tokill;
-      UStartlist::iterator toerase = std::find(slist->begin(),
-					       slist->end(),
-					       dynamic_cast<baseURBIStarter*>(this));
-      if (toerase != slist->end()) slist->erase(toerase);
+
+    virtual void clean()
+    { 
+      UObject* tokill = getUObject();
+      if (tokill /*&& tokill->derived*/) 
+	delete tokill;
+      UStartlist::iterator toerase = 
+	std::find(slist->begin(),
+		  slist->end(),
+		  dynamic_cast<baseURBIStarter*>(this));
+      if (toerase != slist->end())
+	slist->erase(toerase);
     };
 
     virtual void
@@ -893,10 +895,11 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
 	dynamic_cast<UObject*>(ustarter->object)->addAutoGroup();
     };
 
-    virtual UObject* getUObject() {
+    /// Access to the object from the outside.
+    virtual UObject* getUObject()
+    {
       return dynamic_cast<UObject*>(object);
-    }; ///< access to the object from the outside
-
+    }; 
 
   protected:
     /// Called when the object is ready to be initialized.
@@ -946,26 +949,32 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
       object = new T(objname);
     };
 
-    virtual UObjectHub* getUObjectHub() {
+    /// Access to the object from the outside.
+    virtual UObjectHub* getUObjectHub()
+    {
       return dynamic_cast<UObjectHub*>(object);
-    }; ///< access to the object from the outside
+    }; 
 
     UStartlistHub  *slist;
-    T*                 object;
+    T*              object;
   };
 
   /**********************************************************/
   // This section is autogenerated. Not for humans eyes ;)
   /**********************************************************/
 
-  template<typename T> class utrait {
+  template<typename T>
+  class utrait
+  {
   public:
     typedef T noref;
   };
 
 # ifndef _MSC_VER
 
-  template<typename T> class utrait<T&> {
+  template<typename T>
+  class utrait<T&>
+  {
   public:
     typedef T noref;
   };
