@@ -21,13 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#include "uclient.h"
+#ifndef USYNCCLIENT_H
+# define USYNCCLIENT_H
+
+# include "libport/fwd.hh"
+
+# include "uclient.h"
 
 namespace urbi
 {
-  class Semaphore;
-  class Lockable;
-
   /*! Format in which image requested with syncGetSound are transmitted*/
   enum UTransmitFormat
     {
@@ -91,3 +93,5 @@ namespace urbi
   };
 
 } // namespace urbi
+
+#endif // ! USYNCCLIENT_H

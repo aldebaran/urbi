@@ -28,11 +28,15 @@
 # include <sys/types.h>
 # include <cstring>
 # include <cstdlib>
-# include <stdarg.h>
+# include <cstdarg>
+
 # include <list>
 # include <vector>
 # include <iostream>
 # include <string>
+
+# include "libport/fwd.hh"
+
 # include "uobject.h"
 # include "uconversion.h"
 
@@ -52,10 +56,11 @@ namespace urbi
     function.
     - URBI_REMOVE means that the client should never call this callback again.
   */
-  enum UCallbackAction {
-    URBI_CONTINUE=0,
-    URBI_REMOVE
-  };
+  enum UCallbackAction 
+    {
+      URBI_CONTINUE=0,
+      URBI_REMOVE
+    };
 
   typedef unsigned int UCallbackID;
 
@@ -65,16 +70,18 @@ namespace urbi
   class UAbstractClient;
 # define UINVALIDCALLBACKID 0
 
-  enum UMessageType {
-    MESSAGE_SYSTEM,
-    MESSAGE_ERROR,
-    MESSAGE_DATA
-  };
-
+  enum UMessageType
+    {
+      MESSAGE_SYSTEM,
+      MESSAGE_ERROR,
+      MESSAGE_DATA
+    };
+  
   /// Class containing all informations related to an URBI message.
-  class UMessage {
+  class UMessage
+  {
   public:
-
+    
     /// Connection from which originated the message.
     UAbstractClient    &client;
     /// Server-side timestamp.
@@ -90,7 +97,8 @@ namespace urbi
     std::string        rawMessage;
 
     /// Parser constructor
-    UMessage(UAbstractClient & client, int timestamp,  const char *tag, const char *message,
+    UMessage(UAbstractClient & client, int timestamp,  
+	     const char *tag, const char *message,
 	     std::list<urbi::BinaryData> bins);
     /// If alocate is true, everything is copied, eles pointers are stolen
     UMessage(const UMessage &source);
@@ -116,17 +124,23 @@ namespace urbi
   class UCallbackWrapper;
 
   //used internaly
-  class UCallbackInfo {
+  class UCallbackInfo
+  {
   public:
     char tag[URBI_MAX_TAG_LENGTH];
     UCallbackWrapper & callback;
     int id;
-    bool operator ==(int id) const {return id==this->id;}
-    UCallbackInfo(UCallbackWrapper &w): callback(w) {}
+    bool operator ==(int id) const
+    {
+      return id==this->id;
+    }
+    UCallbackInfo(UCallbackWrapper &w)
+      : callback(w) 
+    {}
   };
   //used internaly
   class UClientStreambuf;
-  class Lockable;
+
 
   /// Interface for an URBI wrapper object.
   /*! Implementations of this interface are wrappers around the URBI protocol.
@@ -327,21 +341,26 @@ namespace urbi
     friend class UClientStreambuf;
   };
 
-  class UCallbackWrapper {
+  class UCallbackWrapper 
+  {
   public:
     virtual UCallbackAction operator ()(const UMessage &)=0;
     virtual ~UCallbackWrapper() {}
   };
 
 
-  template<class elementT> class ElementTraits {
+  template<class elementT> 
+  class ElementTraits
+  {
   public:
     typedef elementT  Element;
     typedef elementT& ElementReference;
     typedef const elementT& ConstElementReference;
   };
 
-  template<class elementT> class ElementTraits<elementT&> {
+  template<class elementT> 
+  class ElementTraits<elementT&> 
+  {
   public:
     typedef elementT  Element;
     typedef elementT& ElementReference;
@@ -350,7 +369,9 @@ namespace urbi
 
 
 
-  class UCallbackWrapperF : public UCallbackWrapper {
+  class UCallbackWrapperF
+    : public UCallbackWrapper
+  {
     UCallback cb;
   public:
     UCallbackWrapperF(UCallback cb) : cb(cb) {}
@@ -358,26 +379,43 @@ namespace urbi
     virtual ~UCallbackWrapperF() {}
   };
 
-  class UCallbackWrapperCF : public UCallbackWrapper {
+  class UCallbackWrapperCF
+    : public UCallbackWrapper
+  {
     UCustomCallback cb;
     void * cbData;
   public:
-    UCallbackWrapperCF(UCustomCallback cb, void * cbData) : cb(cb), cbData(cbData) {}
-    virtual UCallbackAction operator ()(const UMessage & msg) {return cb(cbData, msg);}
+    UCallbackWrapperCF(UCustomCallback cb, void * cbData) 
+      : cb(cb), cbData(cbData)
+    {}
+    virtual UCallbackAction operator ()(const UMessage & msg)
+    {
+      return cb(cbData, msg);
+    }
     virtual ~UCallbackWrapperCF() {}
   };
 
-  template<class C> class UCallbackWrapper0 : public UCallbackWrapper {
+  template<class C> 
+  class UCallbackWrapper0 : 
+    public UCallbackWrapper 
+  {
     C& instance;
     UCallbackAction (C::*func)(const UMessage &);
   public:
     UCallbackWrapper0(C& instance, UCallbackAction (C::*func)(const UMessage &))
-      : instance(instance), func(func) {}
-    virtual UCallbackAction operator ()(const UMessage & msg) {return (instance.*func)(msg);}
+      : instance(instance), func(func) 
+    {}
+    virtual UCallbackAction operator ()(const UMessage & msg)
+    {
+      return (instance.*func)(msg);
+    }
     virtual ~UCallbackWrapper0() {}
   };
 
-  template<class C, class P1> class UCallbackWrapper1 : public UCallbackWrapper {
+  template<class C, class P1> 
+  class UCallbackWrapper1
+    : public UCallbackWrapper
+  {
     C& instance;
     typename ElementTraits<P1>::Element  p1;
     UCallbackAction (C::*funcPtr)(P1, const UMessage &);
