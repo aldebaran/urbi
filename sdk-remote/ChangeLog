@@ -1,3 +1,9 @@
+2006-10-31  Matthieu Nottale  <nottale@gostai.com>
+
+	up libport, add $prefix/include to compile path in param.mk
+
+	* sdk/param.mk.in: add $prefix/include to compile path.
+
 2006-10-26  Akim Demaille  <akim@lrde.epita.fr>
 
 	Formatting changes

@@ -1,4 +1,5 @@
 #dont set prefix, umake will tell us this information
+PREFIX = @prefix@
 PACKAGE_BRAND = @PACKAGE_BRAND@
 URBI_ENV = @URBI_ENV@
 URBI_HOST = @URBI_HOST@
@@ -11,7 +12,7 @@ CC = @CC@
 CFLAGS = @CFLAGS@ $(PTHREAD_CFLAGS)
 CXXFLAGS = @CXXFLAGS@ $(PTHREAD_CFLAGS)
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = @CPPFLAGS@ -I$(PREFIX)/include
 CXX = @CXX@
 LDFLAGS = @LDFLAGS@ $(PTHREAD_LIBS)
 LD = @CC@
