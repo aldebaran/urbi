@@ -1,0 +1,9 @@
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
+	uobject.hh
+	* uobject.mk: Fix several mistakes.
+	While we're at it, rename to uobject.hh.
+	* uobject.template.h: Rename as...
+	* uobject.hh.template: this.
+	* uvalue-common.cc: Adjust.
+

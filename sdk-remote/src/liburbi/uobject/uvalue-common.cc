@@ -23,7 +23,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <sstream>
 #include <iostream>
 
-#include "uobject.h"
+#include "uobject.hh"
 
 namespace urbi
 {
