@@ -1,4 +1,0 @@
-
-
-all-before:
-	copy jconfig.bcc jconfig.h
