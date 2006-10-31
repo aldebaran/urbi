@@ -46,20 +46,23 @@ UString::UString(const char* s)
 UString::UString(UString *s)
 {
   ADDOBJ(UString);
-  if (s==0) {
+  if (s==0)
+  {
+    len_ = 0;
     str_ = (char*)malloc(1);
     strcpy(str_,"");
   }
-  else {
-    str_ = (char*)malloc(s->len()+1);
+  else
+  {
+    len_ = s->len();
+    str_ = (char*)malloc(len_+1);
     strcpy(str_,s->str());
   }
-  if (str_ != 0)
-    len_ = s->len();
-  else
+  if (str_ == 0)
     len_ = 0;
   ADDMEM(len_);
 }
+
 
 UString::UString(UString *s1, UString* s2)
 {

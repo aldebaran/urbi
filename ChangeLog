@@ -1,3 +1,8 @@
+2006-10-31  Type Your Name Here  <baillie@gostai.com>
+
+	Fix UString copy ctor
+	* src/ustring.cc: Do it.
+
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
 	Adjust to the changes in liburbi
