@@ -316,7 +316,8 @@ namespace urbi
   /** Class containing binary data of known or unknown type.
       Handles its memory: the data field will be freed when the destructor is called.
   */
-  class UBinary {
+  class UBinary
+  {
   public:
     UBinaryType             type;
     union {
@@ -328,22 +329,22 @@ namespace urbi
       USound                sound;
     };
     /// Extra bin headers(everything after BIN <size> and before ';'.
-    std::string                message;         
+    std::string                message;
 
     UBinary();
     /// Deep copy constructor.
-    UBinary(const UBinary &b);  
+    UBinary(const UBinary &b);
     explicit UBinary(const UImage &);
     explicit UBinary(const USound &);
     /// Deep copy.
-    UBinary & operator = (const UBinary &b); 
+    UBinary & operator = (const UBinary &b);
     /// Build message from structures.
-    void buildMessage(); 
+    void buildMessage();
     /// Get message extracted from structures.
-    std::string getMessage() const; 
+    std::string getMessage() const;
     /// Frees binary buffer.
-    ~UBinary();  
-    int parse(const char* message, int pos, 
+    ~UBinary();
+    int parse(const char* message, int pos,
 	      std::list<BinaryData> &bins,
 	      std::list<BinaryData>::iterator &binpos);
   };
@@ -594,13 +595,13 @@ namespace urbi
     virtual UValue __evalcall(UList &param)  = 0;
 
     /// Used to store the UVar* pointeur for var monitoring.
-    void   *storage; 
+    void   *storage;
     /// Period of timers.
-    ufloat period;   
+    ufloat period;
     /// Nb params of the callbacked function.
-    int    nbparam;  
+    int    nbparam;
     /// Name of the UObject that has created the callback.
-    std::string objname;  
+    std::string objname;
 
   private:
     std::string name;
@@ -709,26 +710,26 @@ namespace urbi
     }
 
     /// Request permanent synchronization for v.
-    void USync(UVar &v); 
+    void USync(UVar &v);
 
     /// Name of the object as seen in URBI.
-    std::string __name; 
+    std::string __name;
     /// Name of the class the object is derived from.
-    std::string classname; 
+    std::string classname;
     /// True when the object has been newed by an urbi command.
-    bool   derived; 
+    bool   derived;
 
     UObjectList members;
     /// The hub, if it exists.
-    UObjectHub  *objecthub; 
+    UObjectHub  *objecthub;
 
     /// Set a timer that will call the update function every 'period' milliseconds
     void USetUpdate(ufloat period);
     virtual int update() {return 0;};
     /// Set autogrouping facility for each new subclass created..
-    void UAutoGroup() { autogroup = true; }; 
+    void UAutoGroup() { autogroup = true; };
     /// Called when a subclass is created if autogroup is true.
-    virtual void addAutoGroup() { UJoinGroup(classname+"s"); }; 
+    virtual void addAutoGroup() { UJoinGroup(classname+"s"); };
 
     /// Join the uobject to the 'gpname' group.
     virtual void UJoinGroup(const std::string& gpname);
@@ -773,7 +774,7 @@ namespace urbi
 
   protected:
     /// This function calls update and the subclass update.
-    int updateGlobal(); 
+    int updateGlobal();
 
     ufloat period;
     std::string name;
@@ -843,7 +844,7 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
     virtual UObject* getUObject() = 0;
 
     /// Called before deletion.
-    virtual void clean() = 0; 
+    virtual void clean() = 0;
     /// Used to provide a wrapper to initialize objects in starterlist.
     virtual void init(const std::string&) =0;
     /// Used to provide a copy of a C++ object based on its name.
@@ -855,8 +856,8 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
   /** A starter is a class whose job is to start an instance of a particular UObject subclass,
    * resulting in the initialization of this object (registration to the kernel)
    */
-  template <class T> 
-  class URBIStarter 
+  template <class T>
+  class URBIStarter
     : public baseURBIStarter
   {
   public:
@@ -870,11 +871,11 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
     virtual ~URBIStarter() { clean(); }
 
     virtual void clean()
-    { 
+    {
       UObject* tokill = getUObject();
-      if (tokill /*&& tokill->derived*/) 
+      if (tokill /*&& tokill->derived*/)
 	delete tokill;
-      UStartlist::iterator toerase = 
+      UStartlist::iterator toerase =
 	std::find(slist->begin(),
 		  slist->end(),
 		  dynamic_cast<baseURBIStarter*>(this));
@@ -899,7 +900,7 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
     virtual UObject* getUObject()
     {
       return dynamic_cast<UObject*>(object);
-    }; 
+    };
 
   protected:
     /// Called when the object is ready to be initialized.
@@ -953,7 +954,7 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
     virtual UObjectHub* getUObjectHub()
     {
       return dynamic_cast<UObjectHub*>(object);
-    }; 
+    };
 
     UStartlistHub  *slist;
     T*              object;
@@ -1071,3 +1072,7 @@ UGenericCallback* createUCallback(const std::string& objname, const std::string&
 } // end namespace urbi
 
 #endif
+
+/// Local Variables:
+/// mode: c++
+/// End:
