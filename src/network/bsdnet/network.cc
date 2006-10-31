@@ -13,7 +13,7 @@
 #define _WIN32_WINNT 0x0400
 #endif
 #include "network.h"
-#include "Connection.h"
+#include "connection.hh"
 
 
 extern UServer * THESERVER;

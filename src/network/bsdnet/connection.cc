@@ -9,7 +9,7 @@
 # include <sys/socket.h>
 # include <unistd.h>
 #endif
-#include "Connection.h"
+#include "connection.hh"
 
 extern UServer * THESERVER;
 /**

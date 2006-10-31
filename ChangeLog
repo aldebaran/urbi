@@ -1,3 +1,14 @@
+2006-10-31  Matthieu Nottale  <nottale@gostai.com>
+
+	Rename Connection* to connection* 
+
+	* src/network/bsdnet/Connection.cc: Remove.
+	* src/network/bsdnet/connection.cc: New.
+	* src/network/bsdnet/Connection.h: Remove.
+	* src/network/bsdnet/bsdnet.mk: .
+	* src/network/bsdnet/network.cc: .
+	* src/network/bsdnet/connection.hh: New.
+
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
 	Depend on uobject/ not liburbi
