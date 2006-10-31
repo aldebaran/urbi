@@ -1,5 +1,12 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
+	Update dependencies
+	* Makefile.am: Tidy.
+	More aliases for JCB.
+	* scheduler: Remove.
+
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/ustring.cc: here.
 	* src/memorymanager/blockmemorymanager.h: here.
