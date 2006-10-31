@@ -63,7 +63,7 @@ ughostconnection.h ughostconnection.cc				\
 ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
-$(uobject_srcdir)/common_uvalue.cc				\
+$(uobject_srcdir)/uvalue-common.cc				\
 $(uobject_srcdir)/uobject.h uobject.cc				\
 uvar.cc								\
 uproperty.h uproperty.cc					\
