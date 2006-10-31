@@ -107,7 +107,7 @@ fi
 ## -------- ##
 
 AC_CONFIG_HEADERS([src/config.h])
-
+AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  src/Makefile
 	  src/examples/Makefile
@@ -115,6 +115,5 @@ AC_CONFIG_FILES([Makefile
 	  src/liburbi/swig/Makefile
 	  src/liburbi/uobject/Makefile
 	  src/utils/Makefile
-	  jpeg-6b/Makefile
 ])
 AC_OUTPUT

@@ -1,5 +1,10 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
+	jpeg-6b is now a subpackage
+	* configure.ac: Adjust to the previous checkin.
+
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
 	use libjpeg-6 via externals
 	* jpeg-6b: Remove.
 	* jpeg-6b/filelist.doc: Remove.
