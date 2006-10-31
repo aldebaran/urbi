@@ -11,11 +11,8 @@ uexternal.h 					\
 uobject.h		uobject.cc		\
 uvar.cc
 
-# If using ufloats, we need their code.
-if UFLOAT
 nodist_libuobject_la_SOURCES =			\
 $(top_srcdir)/libport/ufloat.cc
-endif
 
 ## ----------- ##
 ## uobject.h.  ##

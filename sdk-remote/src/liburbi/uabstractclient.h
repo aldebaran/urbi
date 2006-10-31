@@ -56,7 +56,7 @@ namespace urbi
     function.
     - URBI_REMOVE means that the client should never call this callback again.
   */
-  enum UCallbackAction 
+  enum UCallbackAction
     {
       URBI_CONTINUE=0,
       URBI_REMOVE
@@ -76,12 +76,12 @@ namespace urbi
       MESSAGE_ERROR,
       MESSAGE_DATA
     };
-  
+
   /// Class containing all informations related to an URBI message.
   class UMessage
   {
   public:
-    
+
     /// Connection from which originated the message.
     UAbstractClient    &client;
     /// Server-side timestamp.
@@ -97,7 +97,7 @@ namespace urbi
     std::string        rawMessage;
 
     /// Parser constructor
-    UMessage(UAbstractClient & client, int timestamp,  
+    UMessage(UAbstractClient & client, int timestamp,
 	     const char *tag, const char *message,
 	     std::list<urbi::BinaryData> bins);
     /// If alocate is true, everything is copied, eles pointers are stolen
@@ -135,7 +135,7 @@ namespace urbi
       return id==this->id;
     }
     UCallbackInfo(UCallbackWrapper &w)
-      : callback(w) 
+      : callback(w)
     {}
   };
   //used internaly
@@ -341,7 +341,7 @@ namespace urbi
     friend class UClientStreambuf;
   };
 
-  class UCallbackWrapper 
+  class UCallbackWrapper
   {
   public:
     virtual UCallbackAction operator ()(const UMessage &)=0;
@@ -349,7 +349,7 @@ namespace urbi
   };
 
 
-  template<class elementT> 
+  template<class elementT>
   class ElementTraits
   {
   public:
@@ -358,8 +358,8 @@ namespace urbi
     typedef const elementT& ConstElementReference;
   };
 
-  template<class elementT> 
-  class ElementTraits<elementT&> 
+  template<class elementT>
+  class ElementTraits<elementT&>
   {
   public:
     typedef elementT  Element;
@@ -385,7 +385,7 @@ namespace urbi
     UCustomCallback cb;
     void * cbData;
   public:
-    UCallbackWrapperCF(UCustomCallback cb, void * cbData) 
+    UCallbackWrapperCF(UCustomCallback cb, void * cbData)
       : cb(cb), cbData(cbData)
     {}
     virtual UCallbackAction operator ()(const UMessage & msg)
@@ -395,15 +395,15 @@ namespace urbi
     virtual ~UCallbackWrapperCF() {}
   };
 
-  template<class C> 
-  class UCallbackWrapper0 : 
-    public UCallbackWrapper 
+  template<class C>
+  class UCallbackWrapper0 :
+    public UCallbackWrapper
   {
     C& instance;
     UCallbackAction (C::*func)(const UMessage &);
   public:
     UCallbackWrapper0(C& instance, UCallbackAction (C::*func)(const UMessage &))
-      : instance(instance), func(func) 
+      : instance(instance), func(func)
     {}
     virtual UCallbackAction operator ()(const UMessage & msg)
     {
@@ -412,7 +412,7 @@ namespace urbi
     virtual ~UCallbackWrapper0() {}
   };
 
-  template<class C, class P1> 
+  template<class C, class P1>
   class UCallbackWrapper1
     : public UCallbackWrapper
   {

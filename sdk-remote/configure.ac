@@ -25,6 +25,9 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
+# No requirement, can be used early to catch error in --enable invocation.
+URBI_UFLOAT
+
 # For the time being, we are not interested about deprecated
 # headers such as hash_map.h.  We should use ext/hash_map.
 AC_PROG_CC
@@ -57,7 +60,6 @@ URBI_PTHREAD
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 
-URBI_UFLOAT
 
 
 ## --------- ##

@@ -1,3 +1,10 @@
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
+	use the new ufloats
+	* src/liburbi/uobject/Makefile.am: Always compile in ufloat.cc.
+	* src/liburbi/uabstractclient.h: White space changes.
+	* configure.ac: Check ufloat earlier.
+
 2006-10-31  Matthieu Nottale  <nottale@gostai.com>
 
 	up libport, add $prefix/include to compile path in param.mk
