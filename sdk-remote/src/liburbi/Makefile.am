@@ -1,19 +1,29 @@
-SUBDIRS = uobject
+SUBDIRS =
 if BINDINGS
  SUBDIRS += swig
 endif
 SUBDIRS += .
 
+# Initialize some common variables.
+BUILT_SOURCES =
+CLEANFILES =
+EXTRA_DIST =
+
 # Find libjpeg's src (jpeglib.h) and build (jconfig.h) files.
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
 
 # Find uobject files.
-AM_CPPFLAGS += -I$(top_builddir)/src/liburbi/uobject
 AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/uobject
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 AM_LIBADD = $(PTHREAD_LIBS)
 
+
+## --------- ##
+## uobject.  ##
+## --------- ##
+
+include uobject/uobject.mk
 
 ## ------------ ##
 ## liburbi.la.  ##
@@ -32,17 +42,13 @@ usyncclient.h
 sdkinclude_HEADERS = 				\
 uobject/uobject.h
 
-BUILT_SOURCES = uobject/uobject.h
-uobject/uobject.h: uobject/uobject.template.h
-	cd uobject && $(MAKE) uobject.h
-
 liburbi_la_SOURCES =				\
+$(uobject_sources)				\
 uabstractclient.h	uabstractclient.cpp	\
 uclient.h		uclient.cpp		\
 uconversion.h		uconversion.cpp		\
-uobject/uvalue-common.cc			\
 uexternal.h					\
-uobject/uobject.h	uobject.cc		\
+uobject.cc					\
 uvar.cc						\
 usyncclient.h		usyncclient.cpp
 liburbi_la_LIBADD = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)

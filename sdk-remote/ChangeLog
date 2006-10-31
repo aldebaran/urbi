@@ -1,5 +1,15 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
+	Don't provide a Makefile.am for uobject/
+	* src/liburbi/uobject/Makefile.am: Rename as...
+	* src/liburbi/uobject/uobject.mk: this.
+	Adjust to be includable.
+	We no longer need to produce a libuobject.
+	We no longer need pthread stuff either.
+	* src/liburbi/Makefile.am, configure.ac: Adjust.
+
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
 	Move some liburbi's uobject files into liburbi
 	* src/liburbi/uobject/uobject.cc, 
 	* src/liburbi/uobject/uvar.cc,

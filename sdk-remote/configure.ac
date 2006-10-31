@@ -113,7 +113,6 @@ AC_CONFIG_FILES([Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile
 	  src/liburbi/swig/Makefile
-	  src/liburbi/uobject/Makefile
 	  src/utils/Makefile
 ])
 AC_OUTPUT
