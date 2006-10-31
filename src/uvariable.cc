@@ -25,6 +25,7 @@
 #include <cstdio>
 
 #include "uvariable.h"
+#include "uasyncregister.h"
 #include "userver.h"
 #include "ucommand.h"
 #include "utypes.h"
@@ -40,7 +41,8 @@ MEMORY_MANAGER_INIT(UVariable);
 UVariable::UVariable(const char* name, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate)
+		     bool _autoUpdate):
+  UASyncRegister()
 {
   init();
   value = _value;
@@ -54,7 +56,8 @@ UVariable::UVariable(const char* name, UValue* _value,
 UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate)
+		     bool _autoUpdate):
+  UASyncRegister()
 {
   init();
   value = _value;
@@ -68,7 +71,8 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 UVariable::UVariable(const char* name,ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate)
+		     bool _autoUpdate):
+  UASyncRegister()
 {
   init();
   value = new UValue(val);
@@ -82,7 +86,8 @@ UVariable::UVariable(const char* name,ufloat val,
 UVariable::UVariable(const char* _id, const char* _method, ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate)
+		     bool _autoUpdate):
+  UASyncRegister()
 {
   init();
   value = new UValue(val);
@@ -96,7 +101,8 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
 UVariable::UVariable(const char* name,const char* str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate)
+		     bool _autoUpdate):
+  UASyncRegister()
 {
   init();
   value = new UValue(str);
@@ -110,7 +116,8 @@ UVariable::UVariable(const char* name,const char* str,
 UVariable::UVariable(const char* _id, const char* _method, const char *str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate)
+		     bool _autoUpdate):
+  UASyncRegister()
 {
   init();
   value = new UValue(str);
@@ -356,6 +363,9 @@ UVariable::get()
 void
 UVariable::updated()
 {
+  // triggers associated commands update
+  updateRegisteredCmd ();
+
   if (!binder && internalBinder.empty())
     return;
 

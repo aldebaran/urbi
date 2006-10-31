@@ -30,7 +30,7 @@
 
 
 
-// *****************************************************************************
+// ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UObj
 {
@@ -48,7 +48,7 @@ public:
 
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
-  UCommand_EMIT*    searchEvent   (const char* id, bool& ambiguous);
+  UEventHandler*  searchEvent   (const char* id, bool& ambiguous);
 };
 
 #endif

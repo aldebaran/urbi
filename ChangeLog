@@ -1,5 +1,39 @@
 2006-10-31  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Add multievent support (whenever still not working) 
+	* src/ucommand.cc: adjust UCommand_EMIT and UCommand_AT.
+	* src/ucommand.h: add inheritance from UASyncCommand.
+	* src/uatcandidate.cc: New.
+	* src/uexpression.h: change UExpression::eval prototype.
+	* src/utypes.h: add UEventCompoundType.
+	* src/ueventinstance.cc: New.
+	* src/ueventinstance.h: New.
+	* src/uasynccommand.h: New.
+	* src/uasyncregister.cc: New.
+	* src/uasyncregister.h: New.
+	* src/uexpression.cc: change UExpression::eval and add 
+	UExpression::asyncScan.
+	* src/uatcandidate.h: New.
+	* src/ueventhandler.h: New.
+	* src/uvariable.cc: add support for UAsyncRegister.
+	* src/ueventcompound.cc: New.
+	* src/ueventcompound.h: New.
+	* src/userver.cc: replace eventtab by emittab.
+	* src/userver.h: replace eventtab by emittab.
+	* src/uobj.cc: update searchEvent function.
+	* src/uasynccommand.cc: New.
+	* src/uobj.h: update searchEvent prototype.
+	* src/ueventhandler.cc: New.
+	* src/uvariablename.cc: fixed name resolution for events
+	with new UEventHandler approach.
+	* src/uvariable.h: add support for UASyncRegister.
+	* src/ueventmatch.cc: New.
+	* src/ueventmatch.h: New.
+	* src/Makefile.am: add new files.
+	* src/fwd.hh: add new classes.
+
+2006-10-31  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Formatting changes
 	* uvalue.h: here.
 

@@ -32,6 +32,7 @@
 #include <uvalue.h>
 #include "ustring.h"
 #include "utypes.h"
+#include "uasyncregister.h"
 
 //! Uvariable is used to store variables
 /*! You can pass to the constructor three importants parameters:
@@ -48,7 +49,8 @@
 
       The methods "get" and "set" should be used to get and set the variable value if needed.
  */
-class UVariable {
+class UVariable : public UASyncRegister
+{
 public:
   MEMORY_MANAGED;
   UVariable(const char* name, ufloat val,

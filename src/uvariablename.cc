@@ -359,8 +359,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 		      ::urbiserver->variabletab.end()))
 		  ||
 		  ((id_type==UDEF_EVENT)
-		   && (::urbiserver->eventtab.find(tmpstr.c_str()) !=
-		     ::urbiserver->eventtab.end()))
+		   && (kernel::eventSymbolDefined (tmpstr.c_str()))
+                  )
 		 )
 		function_symbol = true;
 
@@ -405,8 +405,9 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 		       ::urbiserver->functiontab.end()))
 		    ||
 		    ((id_type==UDEF_EVENT)
-		     && (::urbiserver->eventtab.find(tmploc.c_str()) !=
-		       ::urbiserver->eventtab.end()))
+		     && (kernel::eventSymbolDefined (tmploc.c_str())
+                        )
+                    )
 		   )
 		  local_symbol = true;
 

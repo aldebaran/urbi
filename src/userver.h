@@ -118,8 +118,6 @@ public:
   HMfunctiontab            functiontab;
   /// Hash of functions definition markers.
   HMfunctiontab            functiondeftab;
-  /// Hash of events definition markers.
-  HMfunctiontab            eventdeftab;
   /// Hash of objects hierarchy.
   HMobjtab                 objtab;
   /// Hash of alias definitions.
@@ -129,7 +127,7 @@ public:
   /// Hash of group definitions.
   HMgrouptab               grouptab;
   /// Hash of events.
-  HMeventtab               eventtab;
+  HMemittab                emittab;
   /// Hash of function binders.
   HMbindertab              functionbindertab;
   /// Hash of event binders.

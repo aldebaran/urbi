@@ -29,6 +29,7 @@
 # include "utypes.h"
 # include "ustring.h"
 # include "ucommandqueue.h"
+# include "uasynccommand.h"
 
 # include "uexpression.h"
 # include "unamedparameters.h"
@@ -548,7 +549,8 @@ public:
   const char         *eventnamestr; ///< char* of the event name
   bool               firsttime; ///< true for the first execution
   ufloat             targetTime; ///< time of the end of the signal
-  int                eventid; ///< id used to uniquely identify the event
+  UEvent*            event; ///< the attached UEvent
+  UEventHandler*     eh; ///< the associated UEventHandler
 };
 
 class UCommand_WAIT_TEST : public UCommand
@@ -567,6 +569,12 @@ public:
   UExpression      *test;       ///< test
   int              nbTrue;      ///< nb of times the test is true
   ufloat           startTrue;   ///< time of the last 'true'
+  bool             firsttime;   ///< true when the command has not been
+                                ///< executed yet
+  std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
+
+private:
+  bool reloop_; ///< used for optimization
 };
 
 class UCommand_INCDECREMENT : public UCommand
@@ -735,7 +743,7 @@ public:
   UString          *tagRef;      ///< ref of the containing tag
 };
 
-class UCommand_AT : public UCommand
+class UCommand_AT : public UCommand, public UASyncCommand
 {
 public:
   MEMORY_MANAGED;
@@ -759,6 +767,12 @@ public:
 				///< when the test switch to "mode"
   int              nbTrue;      ///< nb of times the test is true
   ufloat           startTrue;   ///< time of the last 'true'
+  bool             firsttime;   ///< true when the command has not been
+                                ///< executed yet
+  std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
+
+private:
+  bool reloop_; ///< used for optimization
 };
 
 class UCommand_WHILE : public UCommand
@@ -780,7 +794,7 @@ public:
   UCommand         *command;    ///< Command
 };
 
-class UCommand_WHENEVER : public UCommand
+class UCommand_WHENEVER : public UCommand, public UASyncCommand
 {
 public:
   MEMORY_MANAGED;

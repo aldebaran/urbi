@@ -30,6 +30,7 @@
 #include "userver.h"
 #include "uconnection.h"
 #include "uobject/uobject.h"
+#include "ueventhandler.h"
 
 char namebuffer[1024];
 
@@ -273,28 +274,39 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   }
 }
 
-UCommand_EMIT*
+UEventHandler*
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
-  UCommand_EMIT* ret;
+  UEventHandler* ret;
   bool found;
 
   snprintf(namebuffer,1024,"%s.%s",device->str(),id);
-  HMeventtab::iterator hmv = ::urbiserver->eventtab.find(namebuffer);
-  if (hmv != ::urbiserver->eventtab.end()) {
+  bool ok = false;
+  HMemittab::iterator iet;
+  for (iet = ::urbiserver->emittab.begin ();
+       iet != ::urbiserver->emittab.end () && !ok;
+       ++iet)
+    if ( (*iet).second->unforgedName->equal (namebuffer))
+      ok = true;
+
+  if (ok)
+  {
     ambiguous = false;
-    return (hmv->second);
+    return (iet->second);
   }
-  else {
+  else
+  {
     ret   = 0;
     found = false;
 		for (std::list<UObj*>::iterator itup = up.begin();
 				itup != up.end();
-				itup++){
+	itup++)
+    {
 			ret = (*itup)->searchEvent(id,ambiguous);
 			if (ambiguous) return 0;
 			if (ret)
-				if (found) {
+	if (found)
+        {
 					ambiguous = true;
 					return 0;
 				}

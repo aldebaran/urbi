@@ -30,6 +30,9 @@
 #include "utypes.h"
 #include "ughostconnection.h"
 #include "uobject.h"
+#include "ueventmatch.h"
+#include "ueventcompound.h"
+#include "ueventhandler.h"
 
 #ifdef _MSC_VER
 # define snprintf _snprintf
@@ -120,6 +123,19 @@ UServer::UServer(ufloat frequency,
 
   ADDOBJ(UServer);
   ::urbiserver = this;
+
+  // Create system events
+  kernel::eh_system_alwaystrue = new UEventHandler
+   (new UString ("system.alwaysTrue"), 0);
+  kernel::eh_system_alwaysfalse = new UEventHandler
+   (new UString ("system.alwaysFalse"), 0);
+
+  std::list<UValue*> args;
+  kernel::system_alwaystrue = new UEvent ( kernel::eh_system_alwaystrue, args);
+  kernel::eh_system_alwaystrue->addEvent ( kernel::system_alwaystrue);
+
+  kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
+  kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
 }
 
 //! Initialization of the server. Displays the header message & init stuff
@@ -458,16 +474,13 @@ UServer::work()
 	     it != varToReset.end();++it)
 	  delete *it;
 
-	tagtab.clear();
-
-	eventtab.clear();
-
 	//variabletab.clear();
-	functiontab.clear();  //This leaks awfuly...
-	eventtab.clear();
 	aliastab.clear();
-	objaliastab.clear();
+	emittab.clear();
+	functiontab.clear();  //This leaks awfuly...
 	grouptab.clear();
+	objaliastab.clear();
+	tagtab.clear();
 
 	varToReset.clear();
 	for (std::list<UConnection*>::iterator retr = connectionList.begin();

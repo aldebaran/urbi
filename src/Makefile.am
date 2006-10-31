@@ -46,9 +46,14 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
+$(uobject_srcdir)/uobject.h uobject.cc				\
+$(uobject_srcdir)/uvalue-common.cc				\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
 parser/uparser.h parser/uparser.cc				\
+uasynccommand.h uasynccommand.cc				\
+uasyncregister.h uasyncregister.cc				\
+uatcandidate.h uatcandidate.cc					\
 ubanner.hh ubanner.cc						\
 ubinary.h ubinary.cc						\
 ubinder.h ubinder.cc						\
@@ -56,22 +61,23 @@ ucallid.h ucallid.cc						\
 ucommand.h ucommand.cc						\
 ucommandqueue.h ucommandqueue.cc				\
 uconnection.h uconnection.cc					\
+ueventcompound.h ueventcompound.cc				\
 ueventhandler.h ueventhandler.cc				\
+ueventinstance.h ueventinstance.cc				\
+ueventmatch.h ueventmatch.cc					\
 uexpression.h uexpression.cc					\
 ufunction.h ufunction.cc					\
 ughostconnection.h ughostconnection.cc				\
 ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
-$(uobject_srcdir)/uvalue-common.cc				\
-$(uobject_srcdir)/uobject.h uobject.cc				\
-uvar.cc								\
 uproperty.h uproperty.cc					\
 uqueue.h uqueue.cc						\
 userver.h userver.cc						\
 ustring.h ustring.cc						\
 utypes.h							\
 uvalue.h uvalue.cc						\
+uvar.cc								\
 uvariable.h uvariable.cc					\
 uvariablelist.h uvariablelist.cc				\
 uvariablename.h uvariablename.cc
@@ -133,7 +139,13 @@ utypes.h					\
 uvalue.h					\
 uvariable.h					\
 uvariablelist.h					\
-uvariablename.h
+uvariablename.h                                 \
+uasynccommand.h                                 \
+uasyncregister.h                                \
+ueventmatch.h                                   \
+ueventcompound.h                                \
+ueventinstance.h                                \
+uatcandidate.h
 
 uobjectdir = $(kernelincludedir)/uobject
 uobject_HEADERS = $(uobject_srcdir)/uobject.h

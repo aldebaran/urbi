@@ -1,0 +1,146 @@
+/*! \file ueventmatch.cc
+ *******************************************************************************
+
+ File: ueventmatch.cc\n
+ Implementation of the UEventMatch class.
+
+ This file is part of
+ %URBI Kernel, version __kernelversion__\n
+ (c) Gostai S.A.S., 2004-2006
+
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
+
+ For more information, comments, bug reports: http://www.urbiforge.net
+
+ **************************************************************************** */
+#include <cstdio>
+#include <sstream>
+
+#include "ueventmatch.h"
+#include "uasynccommand.h"
+#include "utypes.h"
+#include "userver.h"
+
+UEventMatch* kernel::eventmatch_true;
+UEventMatch* kernel::eventmatch_false;
+
+// **************************************************************************
+// UEventMatch
+
+UEventMatch::UEventMatch (UString* eventname,
+                          UNamedParameters* filter,
+                          UCommand* command,
+                          UConnection* connection)
+{
+  if  (!filter)
+    eventhandler_ = kernel::findEventHandler (eventname, 0);
+  else
+    eventhandler_ = kernel::findEventHandler (eventname, filter->size ());
+
+  // Build the args list by evaluating the UNamedParameters
+  UNamedParameters* param = filter;
+  UValue* e1;
+  UString* varname = 0;
+
+  while  (param)
+  {
+    if  (param->expression->type == EXPR_VARIABLE)
+    {
+      ASSERT (param->expression->variablename)
+        varname = param->expression->variablename->
+                 buildFullname (command, connection);
+      ASSERT (varname);
+      e1 = new UValue (varname->str ());
+      e1->dataType = DATA_VARIABLE; // this is a dirty hack. It means that the
+                                    // UValue does not contain a value, but a
+                                    // variable name instead.
+    }
+    else
+      e1 = param->expression->eval (command, connection);
+    ASSERT (e1) filter_.push_back (e1);
+    param = param->next;
+  }
+
+  // applies the filter to known events
+  findMatches_ ();
+  state_ = true; // default is positive event
+  deleteable_ = true; // can be deleted
+}
+
+UEventMatch::UEventMatch (UEventHandler* eh)
+{
+  eventhandler_ = eh;
+
+  // applies an empty filter to all events in eh
+  findMatches_ ();
+
+  state_ = true; // default is positive event
+  deleteable_ = false; // cannot be deleted, this is a system eventmatch
+}
+
+
+UEventMatch::~UEventMatch ()
+{
+  // The UEventMatch owns his UValues in the filter and it must free them:
+  for (std::list<UValue*>::iterator it = filter_.begin ();
+       it != filter_.end ();
+       it++)
+    delete *it;
+}
+
+void
+UEventMatch::findMatches_ ()
+{
+  if (!eventhandler_) return;
+
+  std::list<UEvent*>::iterator itevent;
+  std::list<UValue*>::iterator ifilter_arg;
+  std::list<UValue*>::iterator itevent_arg;
+  bool ok;
+
+  for (itevent  = eventhandler_->eventlist().begin ();
+       itevent != eventhandler_->eventlist().end ();
+       itevent++)
+  {
+    ok = true;
+    ifilter_arg = filter_.begin ();
+    itevent_arg = (*itevent)->args().begin();
+
+    while (ifilter_arg != filter_.end ()
+           && itevent_arg !=  (*itevent)->args().end ()
+           && ok)
+    {
+      if   ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
+             && !( (*ifilter_arg)->equal (*itevent_arg)) )
+        ok = false;
+
+      ifilter_arg++;
+      itevent_arg++;
+    }
+
+    if (ok)
+      matches_.push_back (*itevent);
+  }
+}
+
+void
+UEventMatch::reduce (bool st)
+{
+  for (std::list<UEvent*>::iterator itevent = matches_.begin ();
+       itevent != matches_.end ();
+       )
+  {
+    if  ((*itevent)->toDelete() == st)
+      itevent = matches_.erase (itevent);
+    else
+      itevent++;
+  }
+}
+
+void
+UEventMatch::reduce ()
+{
+  reduce (state_);
+}

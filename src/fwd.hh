@@ -38,5 +38,14 @@ class UValue;
 class UVariable;
 class UVariableList;
 class UVariableName;
+class UASyncCommand;
+class UEvent;
+class UEventHandler;
+class UASyncRegister;
+class UEventMatch;
+class UEventCompound;
+class UEventInstance;
+class UMultiEventInstance;
+class UAtCandidate;
 
 #endif //! KERNEL1_FWD_HH

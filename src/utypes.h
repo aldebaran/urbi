@@ -215,6 +215,14 @@ enum UExpressionType {
   EXPR_TEST_OR
 };
 
+enum UEventCompoundType
+{
+  EC_MATCH,
+  EC_AND,
+  EC_OR,
+  EC_BANG
+};
+
 //! The different Data types
 enum UDataType {
   DATA_UNKNOWN,
@@ -225,7 +233,8 @@ enum UDataType {
   DATA_VOID,
   DATA_LIST,
   DATA_OBJ,
-  DATA_FUNCTION
+  DATA_FUNCTION,
+  DATA_VARIABLE
 };
 
 //! Blending mode
@@ -328,7 +337,7 @@ typedef  urbi::hash_map_type<const char*, UFunction*>::type HMfunctiontab ;
 typedef  urbi::hash_map_type<const char*, UObj*>::type HMobjtab ;
 typedef  urbi::hash_map_type<const char*, UGroup*>::type HMgrouptab ;
 typedef  urbi::hash_map_type<const char*, UString*>::type HMaliastab ;
-typedef  urbi::hash_map_type<const char*, UCommand_EMIT*>::type HMeventtab ;
+typedef  urbi::hash_map_type<const char*, UEventHandler*>::type HMemittab ;
 typedef  urbi::hash_map_type<const char*, UBinder*>::type HMbindertab ;
 typedef  urbi::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
 typedef  urbi::hash_map_type<std::string, TagInfo>::type HMtagtab;

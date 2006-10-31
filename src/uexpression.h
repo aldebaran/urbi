@@ -31,7 +31,7 @@
 #include "memorymanager/memorymanager.h"
 
 
-// *****************************************************************************
+// ****************************************************************************
 //! Contain an expression tree as returned by the parser
 /*! UExpression class:
 
@@ -75,7 +75,19 @@ public:
 
   void            print       ();
   void            initialize  ();
-  UValue*         eval        (UCommand *command, UConnection *connection, bool silent = false);
+
+  // Backward compatible version of eval (thanks Mr. C++Overloading!)
+  UValue*         eval        (UCommand *command,
+                               UConnection *connection);
+
+  // New version of eval, capable of returning a UEventCompound
+  UValue*         eval        (UCommand *command,
+                               UConnection *connection,
+                               UEventCompound*& ec);
+
+  UErrorValue     asyncScan   (UASyncCommand* cmd,
+                               UConnection* c);
+
   UExpression*    copy        ();
 
   UExpressionType type;         ///< Type of the expression.
@@ -83,7 +95,11 @@ public:
 
   ufloat          val;          ///< numerical value used for the EXPR_NUM
   UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR
-  UValue          *tmp_value;   ///< stores a tmp UValue resulting from a function evaluation (which temporarily is processed as an UExpression). Usually, the value of this is 0.
+
+  /** stores a tmp UValue resulting from a function evaluation (which 
+   * temporarily is processed as an UExpression), Usually, the value of this is 0.
+   */
+  UValue          *tmp_value;
 				///< type.
   UString         *id;          ///< id of the EXPR_FUNCTOR
   bool            firsteval;    ///< true on first evaluation (used by static)
@@ -95,11 +111,11 @@ public:
   UExpression     *expression2; ///< Right side of a compound expression.
   UVariableName   *variablename;///< variable when the expression is a
 				///< EXPR_VARIABLE or  EXPR_FUNCTION
-  UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION or EXPR_LIST
+  UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION
+                                ///< or EXPR_LIST
 
-  //  ufloat          softtest_time;///< Time constant for a soft test (0 means "hard test")
-  UExpression      *softtest_time; ///< Time constant for a soft test (0 means "hard test")
-  //  int             softtest_rep; ///< Nb of repetition for a soft test
+  UExpression      *softtest_time; ///< Time constant for a soft test (0 means
+                                   ///< "hard test")
 };
 
 #endif
