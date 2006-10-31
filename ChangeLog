@@ -1,5 +1,10 @@
 2006-10-31  Type Your Name Here  <baillie@gostai.com>
 
+	Remove commented code
+	* src/parser/bison/ugrammar.y: here.
+
+2006-10-31  Type Your Name Here  <baillie@gostai.com>
+
 	Fix UString copy ctor
 	* src/ustring.cc: Do it.
 
