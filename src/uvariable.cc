@@ -30,7 +30,7 @@
 #include "ucommand.h"
 #include "utypes.h"
 #include "uconnection.h"
-#include "uobject/uobject.h"
+#include "uobject/uobject.hh"
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #endif
@@ -254,7 +254,7 @@ UVariable::set(UValue *v)
 												value->refBinary = v->refBinary->copy();
 												break;
 			case DATA_VOID:   // uninitialized def's
-												
+
 												value->dataType = v->dataType;
 												switch (v->dataType) {
 													case DATA_STRING: value->str = new UString(v->str); break;

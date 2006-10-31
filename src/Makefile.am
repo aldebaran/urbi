@@ -1,3 +1,4 @@
+
 ################################################################################
 #
 # URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie 
@@ -15,16 +16,16 @@
 BUILT_SOURCES =
 CLEANFILES =
 EXTRA_DIST =
+MAINTAINERCLEANFILES =
 kernelinclude_HEADERS =
 
-liburbi_srcdir = $(top_srcdir)/liburbi-c++/src/liburbi
-uobject_srcdir = $(liburbi_srcdir)/uobject
-
 AM_CPPFLAGS = -I$(top_srcdir) -I$(uobject_srcdir)
-AM_CPPFLAGS += -I$(liburbi_srcdir)
-
-#AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
+
+
+## ----------- ##
+## libkernel.  ##
+## ----------- ##
 
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static
@@ -46,8 +47,6 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
-$(uobject_srcdir)/uobject.h uobject.cc				\
-$(uobject_srcdir)/uvalue-common.cc				\
 memorymanager/blockmemorymanager.h				\
 memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
 parser/uparser.h parser/uparser.cc				\
@@ -71,6 +70,7 @@ ughostconnection.h ughostconnection.cc				\
 ugroup.h ugroup.cc						\
 unamedparameters.h unamedparameters.cc				\
 uobj.h uobj.cc							\
+uobject.cc							\
 uproperty.h uproperty.cc					\
 uqueue.h uqueue.cc						\
 userver.h userver.cc						\
@@ -96,6 +96,33 @@ include parser/bison/bison.mk
 REVISION_FILE = version.hh
 include $(top_srcdir)/build-aux/revision.mk
 
+
+
+## ---------- ##
+## uobject/.  ##
+## ---------- ##
+
+include uobject/uobject.mk
+dist_libkernel_la_SOURCES += $(uobject_sources)
+
+# We use some of its files, so to ensure a correct synchronization, we
+# pin the revision we're using.  These targets simplify upgrading the
+# pin revision.
+.PHONY: uobj-up uobject-up uobj-ci uobject-ci uobj-help
+
+help: uobj-help
+uobj-help:
+	@echo "uobj-up:    same as baux-up, but for libport"
+	@echo "uobj-ci:    likewise"
+
+# Update the dependency on uobj.
+uobj-up uobject-up:
+	cd $(srcdir) && build-aux/svn-externals --update=uobject
+
+# Checkin the sub uobj, and update the dependency.
+uobj-ci uobject-ci:
+	cd $(srcdir)/uobject && vcs-svn ci
+	$(MAKE) $(AM_MAKEFLAGS) uobj-up
 
 
 ## ----------------- ##
@@ -148,7 +175,7 @@ ueventinstance.h                                \
 uatcandidate.h
 
 uobjectdir = $(kernelincludedir)/uobject
-uobject_HEADERS = $(uobject_srcdir)/uobject.h
+uobject_HEADERS = $(uobject_srcdir)/uobject.hh
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.h

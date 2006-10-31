@@ -31,7 +31,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #undef private
 
 #include "userver.h"
-#include "uobject.h"
+#include "uobject/uobject.hh"
 #if (__GNUC__ == 2)
 static const string fixed = "";
 #endif

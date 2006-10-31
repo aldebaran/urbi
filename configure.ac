@@ -45,11 +45,6 @@ URBI_PTHREAD
 
 URBI_UFLOAT
 
-## ------------- ##
-## liburbi C++.  ##
-## ------------- ##
-AC_CONFIG_SUBDIRS([liburbi-c++])
-
 ## -------- ##
 ## Output.  ##
 ## -------- ##

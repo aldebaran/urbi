@@ -31,7 +31,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "uconnection.h"
 #include "userver.h"
 #include "ucallid.h"
-#include "uobject/uobject.h"
+#include "uobject/uobject.hh"
 
 
 MEMORY_MANAGER_INIT(UVariableName);
@@ -360,7 +360,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 		  ||
 		  ((id_type==UDEF_EVENT)
 		   && (kernel::eventSymbolDefined (tmpstr.c_str()))
-                  )
+		  )
 		 )
 		function_symbol = true;
 
@@ -406,8 +406,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 		    ||
 		    ((id_type==UDEF_EVENT)
 		     && (kernel::eventSymbolDefined (tmploc.c_str())
-                        )
-                    )
+			)
+		    )
 		   )
 		  local_symbol = true;
 

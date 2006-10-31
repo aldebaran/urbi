@@ -31,7 +31,7 @@
 #include "userver.h"
 #include "ucallid.h"
 #include "utypes.h"
-#include "uobject/uobject.h"
+#include "uobject/uobject.hh"
 # include "ueventhandler.h"
 #include "ueventcompound.h"
 #include "ueventinstance.h"
@@ -226,8 +226,8 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
 	      (*(clone->*refName)())->local_scope = (*varname)->local_scope;
 
 	      gplist = (UCommand*) new UCommand_TREE(UAND,
-                                                     clone,
-                                                     gplist_prev);
+						     clone,
+						     gplist_prev);
 	      gplist_prev = gplist;
 	    }
 
@@ -4319,8 +4319,8 @@ MEMORY_MANAGER_INIT(UCommand_EMIT);
 /*! Subclass of UCommand with standard member initialization.
 */
 UCommand_EMIT::UCommand_EMIT(UVariableName *eventname,
-                             UNamedParameters *parameters,
-                             UExpression *duration) :
+			     UNamedParameters *parameters,
+			     UExpression *duration) :
   UCommand(CMD_EMIT)
 {
   ADDOBJ(UCommand_EMIT);
@@ -5695,8 +5695,8 @@ UCommand_AT::execute(UConnection *connection)
 
       //cleanup of candidates that do not appear anymore in the mixlist
       for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-           ic != candidates.end ();
-           )
+	   ic != candidates.end ();
+	   )
 	if (!(*ic)->isVisited ())
 	  {
 	    delete *ic;

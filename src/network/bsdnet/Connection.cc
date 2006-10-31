@@ -1,13 +1,13 @@
 #ifdef WIN32
-#define GROUP __GROUP
-#define _WIN32_WINNT 0x0400
-#include <winsock2.h>
-#undef GROUP
-#define YYTOKENTYPE
+# define GROUP __GROUP
+# define _WIN32_WINNT 0x0400
+# include <winsock2.h>
+# undef GROUP
+# define YYTOKENTYPE
 #else
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <unistd.h>
 #endif
 #include "Connection.h"
 
@@ -22,22 +22,22 @@ extern UServer * THESERVER;
 
 //! LinuxConnection constructor.
 /*! The constructor calls UConnection::UConnection with the appropriate
-    parameters. 
-    The global variable ::linuxserver saves the need to pass a UServer parameter 
-    to the LinuxConnection constructor. 
+    parameters.
+    The global variable ::linuxserver saves the need to pass a UServer parameter
+    to the LinuxConnection constructor.
 
     UError can have the following values:
     -  USUCCESS: success
     -  UFAIL   : UConnection or memory allocation failed
-*/ 
+*/
 Connection::Connection(int connfd) :
-                UConnection   ( (UServer*) THESERVER,
-                                 Connection::MINSENDBUFFERSIZE,
-                                 Connection::MAXSENDBUFFERSIZE,
-                                 Connection::PACKETSIZE, 
-                                 Connection::MINRECVBUFFERSIZE,
-                                 Connection::MAXRECVBUFFERSIZE), 
-                fd(connfd) {
+		UConnection   ( (UServer*) THESERVER,
+				 Connection::MINSENDBUFFERSIZE,
+				 Connection::MAXSENDBUFFERSIZE,
+				 Connection::PACKETSIZE,
+				 Connection::MINRECVBUFFERSIZE,
+				 Connection::MAXRECVBUFFERSIZE),
+		fd(connfd) {
 	if (UError != USUCCESS) {// Test the error from UConnection constructor.
 	  //baad
 	  closeConnection();
@@ -50,14 +50,14 @@ Connection::Connection(int connfd) :
 }
 
 //! Connection destructor.
-Connection::~Connection() 
+Connection::~Connection()
 {
 	if (fd!=0)
 		closeConnection();
 }
 
 //! Close the connection
-/*! 
+/*!
 */
 UErrorValue
 Connection::closeConnection() {
@@ -79,7 +79,7 @@ Connection::closeConnection() {
     	//THESERVER.removeConnection(this);
     	return USUCCESS;
     }
-    
+
 }
 
 // Try for a trick on Mac OS X
@@ -96,7 +96,7 @@ void Connection::doRead(){
 	}
 	else
 	  received(read_buff, n);
-	
+
 }
 
 int Connection::effectiveSend (const ubyte *buffer, int length){
@@ -111,7 +111,7 @@ int Connection::effectiveSend (const ubyte *buffer, int length){
 	  return ret; // Number of bytes actually written.
 }
 
-void Connection::doWrite(){ 
+void Connection::doWrite(){
   continueSend();
   block();
 }
@@ -123,5 +123,3 @@ UErrorValue Connection::send(const ubyte *buffer, int length) {
     trigger();
   return UConnection::send(buffer, length);
 }
-
-

@@ -78,15 +78,15 @@ public:
 
   // Backward compatible version of eval (thanks Mr. C++Overloading!)
   UValue*         eval        (UCommand *command,
-                               UConnection *connection);
+			       UConnection *connection);
 
   // New version of eval, capable of returning a UEventCompound
   UValue*         eval        (UCommand *command,
-                               UConnection *connection,
-                               UEventCompound*& ec);
+			       UConnection *connection,
+			       UEventCompound*& ec);
 
   UErrorValue     asyncScan   (UASyncCommand* cmd,
-                               UConnection* c);
+			       UConnection* c);
 
   UExpression*    copy        ();
 
@@ -96,7 +96,7 @@ public:
   ufloat          val;          ///< numerical value used for the EXPR_NUM
   UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR
 
-  /** stores a tmp UValue resulting from a function evaluation (which 
+  /** stores a tmp UValue resulting from a function evaluation (which
    * temporarily is processed as an UExpression), Usually, the value of this is 0.
    */
   UValue          *tmp_value;
@@ -112,10 +112,10 @@ public:
   UVariableName   *variablename;///< variable when the expression is a
 				///< EXPR_VARIABLE or  EXPR_FUNCTION
   UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION
-                                ///< or EXPR_LIST
+				///< or EXPR_LIST
 
   UExpression      *softtest_time; ///< Time constant for a soft test (0 means
-                                   ///< "hard test")
+				   ///< "hard test")
 };
 
 #endif

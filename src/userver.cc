@@ -29,7 +29,7 @@
 #include "uconnection.h"
 #include "utypes.h"
 #include "ughostconnection.h"
-#include "uobject.h"
+#include "uobject/uobject.hh"
 #include "ueventmatch.h"
 #include "ueventcompound.h"
 #include "ueventhandler.h"

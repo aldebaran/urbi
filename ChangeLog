@@ -1,3 +1,13 @@
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
+	Depend on uobject/ not liburbi
+	* src/ucommand.cc, src/uexpression.h, src/uexpression.cc,
+	* src/uobject.cc, src/uvalue.cc, src/network/bsdnet/Connection.cc,
+	* src/uvariable.cc, src/uvar.cc, src/userver.cc, src/uobj.cc,
+	* src/uvariablename.cc: Adjust: use uobject/uobject.hh.
+
+	* src/Makefile.am, configure.ac, Makefile.am: Adjust.
+
 2006-10-31  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Add multievent support (whenever still not working) 

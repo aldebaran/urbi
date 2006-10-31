@@ -21,7 +21,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 
 #include "uvariable.h"
 #include "userver.h"
-#include "uobject.h"
+#include "uobject/uobject.hh"
 
 namespace urbi
 {

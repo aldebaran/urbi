@@ -151,7 +151,7 @@ UExpression::UExpression(UExpressionType type, UVariableName* variablename)
 {
   initialize();
   this->type     = type; // should be EXPR_VARIABLE or
-                         //EXPR_ADDR_VARIABLE or EXPR_GROUPLIST
+			 //EXPR_ADDR_VARIABLE or EXPR_GROUPLIST
   if (type == EXPR_ADDR_VARIABLE) dataType = DATA_STRING;
   this->variablename = variablename;
 }
@@ -329,7 +329,7 @@ UExpression::print()
   */
 UValue*
 UExpression::eval (UCommand *command,
-                   UConnection *connection)
+		   UConnection *connection)
 {
   // This is a hack to be backward compatible with existing code
   UEventCompound* ec = 0;
@@ -346,8 +346,8 @@ UExpression::eval (UCommand *command,
   */
 UValue*
 UExpression::eval (UCommand *command,
-                   UConnection *connection,
-                   UEventCompound*& ec)
+		   UConnection *connection,
+		   UEventCompound*& ec)
 {
   const int errSize = 256;
   static char errorString[errSize]; // Max error message = 256 chars
@@ -381,11 +381,11 @@ UExpression::eval (UCommand *command,
 	softtest_time->val = 0;
       delete ret;
     }
-  
+
   switch (type)
     {
     case EXPR_LIST:
-      
+
       ret = new UValue();
       ret->dataType = DATA_LIST;
       pevent = parameters;
@@ -433,12 +433,12 @@ UExpression::eval (UCommand *command,
 		delete ret;
 		ret = e2;
 	      }
-	      
+
 	      e1 = ret->liststart;
 	      while (e1->next) e1 = e1->next;
 	      it++;
 	    }
-	  
+
 	  while (it !=  (*retr).second->members.end())
 	    {
 	      e = new UExpression (EXPR_GROUP, (*it)->copy());
@@ -469,8 +469,8 @@ UExpression::eval (UCommand *command,
     case EXPR_VALUE:
 
       if (tmp_value)
-        return tmp_value->copy(); // hack to be able to handle complex
-                                  // return types from function calls
+	return tmp_value->copy(); // hack to be able to handle complex
+				  // return types from function calls
 
       ret = new UValue();
       ret->dataType = dataType;
@@ -702,7 +702,7 @@ UExpression::eval (UCommand *command,
 	  ret = staticcache->copy();
 
       return(ret);
-      
+
     case EXPR_PROPERTY:
 
       variable = variablename->getVariable(command,connection);
@@ -790,9 +790,9 @@ UExpression::eval (UCommand *command,
 
       // Event detection
       if (parameters)
-        eh = kernel::findEventHandler(funname, parameters->size());
+	eh = kernel::findEventHandler(funname, parameters->size());
       else
-        eh = kernel::findEventHandler(funname, 0);
+	eh = kernel::findEventHandler(funname, 0);
       if (eh)
 	{
 	  ret = new UValue(ufloat(1));
@@ -1932,40 +1932,40 @@ UExpression::eval (UCommand *command,
       return(ret);
 
     case EXPR_TEST_BANG:
-  
+
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
- 
+
       if (e1==0)
 	{
 	  delete e1;
 	  delete ec1;
 	  return 0;
 	}
- 
+
       ret = new UValue();
       ret->dataType = DATA_NUM;
- 
+
       if (e1->val == 0) ret->val = 1;
       else ret->val = 0;
- 
+
       delete e1;
       if  (ec1) ec = new UEventCompound (EC_BANG, ec1);
       return ret;
- 
+
     case EXPR_TEST_AND:
- 
+
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
       if (!e1)  {
 	delete ec1;
  	return 0;
       }
- 
+
       ret = new UValue();
       if (!ret) return 0;
       ret->dataType = DATA_NUM;
- 
+
       ec2 = 0;
       e2 = expression2->eval(command, connection, ec2);
       if (!e2)
@@ -1976,9 +1976,9 @@ UExpression::eval (UCommand *command,
 	  delete ec2;
  	  return 0;
  	}
- 
+
       ret->val = (ufloat) ( ((int)e1->val) && ((int)e2->val) );
- 
+
       if (ec1)
 	if (ec2)
 	  ec = new UEventCompound (EC_AND, ec1, ec2);
@@ -1990,13 +1990,13 @@ UExpression::eval (UCommand *command,
 	else
 	  ec = new UEventCompound (EC_AND, new UEventCompound (e1),
 				   new UEventCompound (e2));
- 
+
       delete e1;
       delete e2;
       return ret;
- 
+
     case EXPR_TEST_OR:
- 
+
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
       if (!e1)
@@ -2004,11 +2004,11 @@ UExpression::eval (UCommand *command,
 	  delete ec1;
 	  return 0;
 	}
- 
+
       ret = new UValue();
       if (!ret) return 0;
       ret->dataType = DATA_NUM;
- 
+
       ec2 = 0;
       e2 = expression2->eval(command, connection, ec2);
       if (!e2)
@@ -2019,9 +2019,9 @@ UExpression::eval (UCommand *command,
 	  delete ec2;
  	  return 0;
  	}
- 
+
       ret->val = (ufloat) ( ((int)e1->val) || ((int)e2->val) );
- 
+
       if (ec1)
 	if (ec2)
 	  ec = new UEventCompound (EC_OR, ec1, ec2);
@@ -2033,21 +2033,21 @@ UExpression::eval (UCommand *command,
 	else
 	  ec = new UEventCompound (EC_OR, new UEventCompound (e1),
 				   new UEventCompound (e2));
- 
+
       delete e2;
       delete e1;
       return ret;
- 
+
     default:
       return 0;
     }
 }
- 
- 
+
+
  /** UExpression scan to notify variables and events of async dependencies */
  UErrorValue
  UExpression::asyncScan(UASyncCommand *cmd,
-                        UConnection *c)
+			UConnection *c)
  {
    UVariable *variable;
    UNamedParameters *pevent;
@@ -2058,11 +2058,11 @@ UExpression::eval (UCommand *command,
    UString* fullname;
    const char* varname;
    int nbargs;
- 
+
    switch (type)
      {
      case EXPR_LIST:
- 
+
        pevent = parameters;
        while (pevent)
 	 {
@@ -2071,20 +2071,20 @@ UExpression::eval (UCommand *command,
 	   pevent = pevent->next;
 	 }
        return USUCCESS;
- 
+
      case EXPR_VARIABLE:
- 
+
        variable = variablename->getVariable((UCommand*)cmd, c);
        fullname = variablename->getFullname();
        if (!fullname) return UFAIL;
        varname  = variablename->getFullname()->str();
- 
+
        if (!variable)
 	 {
 	   // Is this a virtual variable?
 	   const char* devname = variablename->getDevice()->str();
 	   bool ambiguous;
- 
+
 	   HMobjtab::iterator itobj;
 	   if ((itobj = ::urbiserver->objtab.find(devname)) !=
 	       ::urbiserver->objtab.end())
@@ -2092,9 +2092,9 @@ UExpression::eval (UCommand *command,
 	       variable = itobj->second->
 		 searchVariable(variablename->getMethod()->str(),
 				ambiguous);
- 
+
 	       if (ambiguous) return UFAIL;
- 
+
 	       if (variable)
 		 {
 		   variablename->device->update(variable->method);
@@ -2103,7 +2103,7 @@ UExpression::eval (UCommand *command,
 		 }
 	     }
 	 }
- 
+
        if (!variable)
 	 {
 	   // Is this a list?
@@ -2123,7 +2123,7 @@ UExpression::eval (UCommand *command,
 		 variable = (*hmv).second;
 	     }
 	 }
- 
+
        if (variable)
 	 {
 	   // It is a variable
@@ -2150,23 +2150,23 @@ UExpression::eval (UCommand *command,
 		 return USUCCESS;
 	       }
 	 }
- 
+
      case EXPR_PROPERTY:
- 
+
        variable = variablename->getVariable((UCommand*)cmd, c);
        fullname = variablename->getFullname();
        if (!fullname) return UFAIL;
        if (!variable) return UFAIL;
        variable->registerCmd(cmd);
        return USUCCESS;
- 
+
      case EXPR_FUNCTION:
- 
+
        fullname = variablename->buildFullname ( (UCommand*)cmd, c);
        nbargs = 0;
        if (parameters) nbargs = parameters->size ();
        eh = kernel::findEventHandler(fullname, nbargs);
- 
+
        if (eh)
 	 { // This is an event
 	   eh->registerCmd (cmd);
@@ -2179,11 +2179,11 @@ UExpression::eval (UCommand *command,
 	       if (expression1)
 		 if (expression1->asyncScan(cmd, c) == UFAIL)
 		   return UFAIL;
- 
+
 	       if (expression2)
 		 if  (expression1->asyncScan(cmd, c) == UFAIL)
 		   return UFAIL;
- 
+
 	       return USUCCESS;
 	     }
 	   else
@@ -2198,16 +2198,15 @@ UExpression::eval (UCommand *command,
 		 }
 	     }
 	 }
- 
+
      default:
        if (expression1)
-         if (expression1->asyncScan(cmd, c) == UFAIL)
-           return UFAIL;
- 
+	 if (expression1->asyncScan(cmd, c) == UFAIL)
+	   return UFAIL;
+
        if (expression2)
-         if  (expression2->asyncScan(cmd, c) == UFAIL)
-           return UFAIL;
+	 if  (expression2->asyncScan(cmd, c) == UFAIL)
+	   return UFAIL;
        return USUCCESS;
      }
  }
-

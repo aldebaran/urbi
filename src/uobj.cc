@@ -29,7 +29,7 @@
 #include "uvariablename.h"
 #include "userver.h"
 #include "uconnection.h"
-#include "uobject/uobject.h"
+#include "uobject/uobject.hh"
 #include "ueventhandler.h"
 
 char namebuffer[1024];
@@ -306,7 +306,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
 			if (ambiguous) return 0;
 			if (ret)
 	if (found)
-        {
+	{
 					ambiguous = true;
 					return 0;
 				}
