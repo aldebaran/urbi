@@ -134,9 +134,10 @@ extern UString** globalDelete;
       }								\
   } while (0)
 
-//! Directs the call from 'bison' to the scanner in the right parser
-inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
-					    yy::location* loc, UParser& p)
+//! Direct the call from 'bison' to the scanner in the right parser.
+inline
+yy::parser::token::yytokentype
+yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 {
   return p.scan(val, loc);
 }
@@ -149,6 +150,13 @@ inline yy::parser::token::yytokentype yylex(yy::parser::semantic_type* val,
       if (Res)					\
 	Res->setTag("__node__");		\
       MEMCHECK2(Res, Lhs, Rhs);			\
+    } while (0)
+
+/// Create a new UExpression node composing \c Child with \c Op.
+# define NEW_EXP_1(Res, Op, Child)			\
+  do {							\
+      Res = new UExpression(Op, Child);			\
+      MEMCHECK1(Res, Child);				\
     } while (0)
 
 /// Create a new UExpression node composing \c Lhs and \c Rhs with \c Op.
@@ -1298,11 +1306,7 @@ expr:
       MEMCHECK1($$,$2);
     }
 
-  | PERCENT variable {
-
-      $$ = new UExpression(EXPR_ADDR_VARIABLE,$2);
-      MEMCHECK1($$,$2);
-    }
+  | PERCENT variable { NEW_EXP_1 ($$, EXPR_ADDR_VARIABLE, $2); }
 
   | property {
 
@@ -1318,55 +1322,22 @@ expr:
       //                 $1->id->str());
 
       $1->id_type = UDEF_FUNCTION;
-      $$ = new UExpression(EXPR_FUNCTION,$1,$3);
-      MEMCHECK2($$,$1,$3);
+      NEW_EXP_2($$, EXPR_FUNCTION,$1,$3);
     }
 
-  | variable {
-
-      $$ = new UExpression(EXPR_VARIABLE,$1);
-      MEMCHECK1($$,$1);
-    }
-
-  | GROUP IDENTIFIER {
-
-      $$ = new UExpression(EXPR_GROUP, $2);
-      MEMCHECK1($$,$2);
-    }
+  | variable         { NEW_EXP_1 ($$, EXPR_VARIABLE,$1); }
+  | GROUP IDENTIFIER { NEW_EXP_1 ($$, EXPR_GROUP,$2); }
 ;
 
 
   /* num expr */
 expr:
-    expr PLUS expr {
-
-      $$ = new UExpression(EXPR_PLUS,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr MINUS expr {
-
-      $$ = new UExpression(EXPR_MINUS,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr MULT expr {
-
-      $$ = new UExpression(EXPR_MULT,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
-  | expr DIV expr {
-
-      $$ = new UExpression(EXPR_DIV,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
-
- | expr PERCENT expr {
-
-      $$ = new UExpression(EXPR_MOD,$1,$3);
-      MEMCHECK2($$,$1,$3);
-    }
+    expr PLUS expr	{ NEW_EXP_2 ($$, EXPR_PLUS, $1,$3); }
+  | expr MINUS expr	{ NEW_EXP_2 ($$, EXPR_MINUS,$1,$3); }
+  | expr MULT expr	{ NEW_EXP_2 ($$, EXPR_MULT, $1,$3); }
+  | expr DIV expr	{ NEW_EXP_2 ($$, EXPR_DIV,  $1,$3); }
+  | expr PERCENT expr 	{ NEW_EXP_2 ($$, EXPR_MOD,  $1,$3); }
+  | expr EXP expr	{ NEW_EXP_2 ($$, EXPR_EXP,  $1,$3); }
 
   | COPY expr  %prec NEG {
 
@@ -1378,12 +1349,6 @@ expr:
 
       $$ = new UExpression(EXPR_NEG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
-    }
-
-  | expr EXP expr {
-
-      $$ = new UExpression(EXPR_EXP,$1,$3);
-      MEMCHECK2($$,$1,$3);
     }
 
   | LPAREN expr RPAREN {
@@ -1421,7 +1386,7 @@ expr:
     }
 
   | expr "&&" expr { NEW_EXP_2 ($$, EXPR_TEST_AND, $1, $3); }
-  | expr "||"  expr { NEW_EXP_2 ($$, EXPR_TEST_OR,  $1, $3); }
+  | expr "||" expr { NEW_EXP_2 ($$, EXPR_TEST_OR,  $1, $3); }
 
     /*
     // Not needed anymore => will be handled nicely by aliases

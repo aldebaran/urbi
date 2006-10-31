@@ -1,3 +1,9 @@
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes
+	* src/parser/bison/ugrammar.y (NEW_BIN_1): New.
+	Use it.
+
 2006-10-25  Matthieu Nottale  <nottale@gostai.com>
 
 	r256: Fix a parse error (gcc 4.1.2) and missing pthread flags
