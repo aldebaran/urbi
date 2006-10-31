@@ -22,8 +22,7 @@ uobject_srcdir = $(liburbi_srcdir)/uobject
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(uobject_srcdir)
 AM_CPPFLAGS += -I$(liburbi_srcdir)
-# FIXME: What is this?  Where is it used?
-AM_CPPFLAGS += -DFLOAT_DOUBLE
+
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR
 AM_CXXFLAGS = $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 

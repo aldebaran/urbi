@@ -1,5 +1,11 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
+	Dead line
+	* src/Makefile.am: No longer pass -DFLOAT_DOUBLE, this is
+	driven by configure now.
+
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
 	Update dependencies
 	* Makefile.am: Tidy.
 	More aliases for JCB.
