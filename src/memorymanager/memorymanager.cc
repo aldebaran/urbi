@@ -21,7 +21,7 @@ block_operator_delete(BlockPool* mempool, void * ptr)
   MemoryManager::allocatedMemory -= mempool->itemSize;
 }
 
-//note that this implementation can't release any memory to malloc.
+// This implementation can't release any memory to malloc.
 void* block_operator_new(BlockPool* &mempool, int sz)
 {
   if (!mempool)

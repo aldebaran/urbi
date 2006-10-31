@@ -1,6 +1,15 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
+	* src/ustring.cc: here.
+	* src/memorymanager/blockmemorymanager.h: here.
+	* src/memorymanager/memorymanager.cc: here.
+	* src/ubinder.cc: and here.
+	* src/Makefile.am: Formatting change.
+
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes
 	* src/parser/bison/ugrammar.y (NEW_BIN_1): New.
 	Use it.
 

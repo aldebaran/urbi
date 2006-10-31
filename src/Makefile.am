@@ -20,7 +20,8 @@ kernelinclude_HEADERS =
 liburbi_srcdir = $(top_srcdir)/liburbi-c++/src/liburbi
 uobject_srcdir = $(liburbi_srcdir)/uobject
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(liburbi_srcdir) -I$(uobject_srcdir)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(uobject_srcdir)
+AM_CPPFLAGS += -I$(liburbi_srcdir)
 # FIXME: What is this?  Where is it used?
 AM_CPPFLAGS += -DFLOAT_DOUBLE
 #AM_CPPFLAGS += -DENABLE_BLOCKMEMMNGR

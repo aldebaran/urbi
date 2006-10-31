@@ -4,9 +4,12 @@
  * instances allocated/freed using the block allocator
  */
 
-#define DEFAULT_BLOCK_SIZE 100
+#ifndef BLOCKMEMORYMANAGER_H
+# define BLOCKMEMORYMANAGER_H
 
-#define MEMORY_MANAGED				\
+# define DEFAULT_BLOCK_SIZE 100
+
+# define MEMORY_MANAGED				\
   void* operator new(size_t sz)			\
   {						\
     return block_operator_new(mempool_, sz);	\
@@ -19,7 +22,7 @@
 						\
   static BlockPool*  mempool_
 
-#define MEMORY_MANAGER_INIT(classname)		\
+# define MEMORY_MANAGER_INIT(classname)		\
   BlockPool* classname::mempool_ = 0
 
 class BlockPool
@@ -27,11 +30,17 @@ class BlockPool
  public:
   BlockPool ();
 
-  void** ptr;  //pool of pointers to free items
-  void** cptr; //curreent position in pool
-  int size; //pool size in number of items
+  /// Pool of pointers to free items.
+  void** ptr;
+  /// Current position in pool.
+  void** cptr;
+  /// Pool size in number of items.
+  int size;
   int itemSize;
 };
-void block_operator_delete(BlockPool* mempool, void * ptr);
 
-void * block_operator_new(BlockPool* &mempool, int sz);
+void block_operator_delete(BlockPool* mempool, void* ptr);
+
+void* block_operator_new(BlockPool* &mempool, int sz);
+
+#endif // !BLOCKMEMORYMANAGER_H
