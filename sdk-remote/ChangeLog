@@ -1,5 +1,25 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
+	Move some liburbi's uobject files into liburbi
+	* src/liburbi/uobject/uobject.cc, 
+	* src/liburbi/uobject/uvar.cc,
+	* src/liburbi/uobject/uexternal.h:
+	Move to...
+	* src/liburbi/uobject.cc,
+	* src/liburbi/uvar.cc,
+	* src/liburbi/uexternal.h:
+	here.
+
+	* src/liburbi/uobject/common_uvalue.cc: Rename as...
+	* src/liburbi/uobject/uvalue-common.cc: New.
+
+	* src/liburbi/Makefile.am, src/liburbi/uobject/Makefile.am: Adjust.
+
+	* src/liburbi/uconversion.cpp: We don't need to include jerror.h.
+	And now jpeglib.h already provide external "C".
+
+2006-10-31  Akim Demaille  <demaille@gostai.com>
+
 	jpeg-6b is now a subpackage
 	* configure.ac: Adjust to the previous checkin.
 

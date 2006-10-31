@@ -4,10 +4,12 @@ if BINDINGS
 endif
 SUBDIRS += .
 
-AM_CPPFLAGS =					\
--I$(top_srcdir)					\
--I$(top_builddir)/src/liburbi/uobject		\
--I$(top_srcdir)/src/liburbi/uobject
+# Find libjpeg's src (jpeglib.h) and build (jconfig.h) files.
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
+
+# Find uobject files.
+AM_CPPFLAGS += -I$(top_builddir)/src/liburbi/uobject
+AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/uobject
 
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 AM_LIBADD = $(PTHREAD_LIBS)
@@ -23,7 +25,7 @@ include_HEADERS =				\
 uabstractclient.h				\
 uclient.h					\
 uconversion.h					\
-uobject/uexternal.h				\
+uexternal.h					\
 uobject/uobject.h				\
 usyncclient.h
 
@@ -38,10 +40,10 @@ liburbi_la_SOURCES =				\
 uabstractclient.h	uabstractclient.cpp	\
 uclient.h		uclient.cpp		\
 uconversion.h		uconversion.cpp		\
-uobject/common_uvalue.cc			\
-uobject/uexternal.h				\
-uobject/uobject.h	uobject/uobject.cc	\
-uobject/uvar.cc					\
+uobject/uvalue-common.cc			\
+uexternal.h					\
+uobject/uobject.h	uobject.cc		\
+uvar.cc						\
 usyncclient.h		usyncclient.cpp
 liburbi_la_LIBADD = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
 
@@ -52,4 +54,4 @@ liburbi_la_LIBADD = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
 
 env_LTLIBRARIES = libkernel-remote.la
 libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES) $(top_srcdir)/sdk/umain.cc
-libkernel_remote_la_LIBADD = $(AM_LIBADD) $(top_builddir)/jpeg-6b/libjpegx.la
+libkernel_remote_la_LIBADD = $(AM_LIBADD) $(top_builddir)/jpeg-6b/libjpeg.la

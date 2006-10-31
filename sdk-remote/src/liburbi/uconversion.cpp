@@ -3,11 +3,7 @@
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>
 
-extern "C"
-{
 # include "jpeg-6b/jpeglib.h"
-# include "jpeg-6b/jerror.h"
-}
 
 namespace urbi
 {

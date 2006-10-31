@@ -1,7 +1,7 @@
-/*! \file common_uvalue.cc
+/*! \file uvalue-common.cc
 *******************************************************************************
 
-File: common_uvalue.cc\n
+File: uvalue-common.cc\n
 Implementation of the UValue class and other linked classes
 
 This file is part of LIBURBI\n
@@ -17,6 +17,7 @@ implied warranties of fitness for a particular purpose.
 For more information, comments, bug reports: http://www.urbiforge.com
 
 **************************************************************************** */
+
 #include <cstdio>
 
 #include <sstream>
