@@ -21,7 +21,7 @@
 #include <iostream>
 #include <sstream>
 #include <list>
-#include "uobject.h"
+#include "uobject/uobject.hh"
 #include <usyncclient.h>
 #include "uexternal.h"
 

@@ -13,9 +13,6 @@ MAINTAINERCLEANFILES =
 # Find libjpeg's src (jpeglib.h) and build (jconfig.h) files.
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
 
-# Find uobject files.
-AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/uobject
-
 AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 AM_LIBADD = $(PTHREAD_LIBS)
 
