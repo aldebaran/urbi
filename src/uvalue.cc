@@ -45,7 +45,6 @@ UValue::UValue()
 {
   ADDOBJ(UValue);
   dataType = DATA_VOID;
-  eventid = 0;
   liststart = 0;
   next = 0;
 
@@ -58,7 +57,6 @@ UValue::UValue(ufloat val)
 {
   ADDOBJ(UValue);
   dataType = DATA_NUM;
-  eventid = 0;
   liststart = 0;
   next = 0;
   this->val = val;
@@ -70,7 +68,6 @@ UValue::UValue(const char* str)
 {
   ADDOBJ(UValue);
   dataType = DATA_STRING;
-  eventid = 0;
   liststart = 0;
   next = 0;
   val = 0;
@@ -373,7 +370,6 @@ UValue & UValue::operator = (const urbi::UList &l)
 UValue::UValue(const urbi::UValue &v)
 {
   ADDOBJ(UValue);
-  eventid = 0;
   liststart = 0;
   next = 0;
   str=0;
@@ -433,7 +429,6 @@ UValue::copy()
 {
   UValue *ret = new UValue();
   ret->dataType = dataType;
-  ret->eventid = eventid;
 
   if (dataType == DATA_NUM)
     ret->val = val;
