@@ -18,7 +18,7 @@
 
  **************************************************************************** */
 
-#include "uobject.h"
+#include "uobject/uobject.hh"
 #include "uexternal.h"
 #include <usyncclient.h>
 

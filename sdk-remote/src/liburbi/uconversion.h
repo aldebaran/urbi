@@ -23,7 +23,7 @@
 
 #ifndef UCONVERSION_H
 # define UCONVERSION_H
-# include "uobject.h"
+# include "uobject/uobject.hh"
 
 namespace urbi
 {

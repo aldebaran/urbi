@@ -338,7 +338,7 @@ namespace urbi
 
   /** Convert between various image formats, takes care of everything
    */
-  int convert(const UImage & src, UImage & dest)
+  int convert(const UImage& src, UImage& dest)
   {
     if (dest.width == 0)
       dest.width = src.width;

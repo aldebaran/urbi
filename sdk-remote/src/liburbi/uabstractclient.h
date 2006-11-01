@@ -37,7 +37,7 @@
 
 # include "libport/fwd.hh"
 
-# include "uobject.h"
+# include "uobject/uobject.hh"
 # include "uconversion.h"
 
 namespace urbi
