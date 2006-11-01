@@ -18,7 +18,7 @@
 
  **************************************************************************** */
 
-#include <uobject/uobject.h>
+#include <uobject/uobject.hh>
 #ifdef WIN32
 # include <windows.h>
 # define usleep(a) Sleep(a/1000)
