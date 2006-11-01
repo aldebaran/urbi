@@ -1,5 +1,10 @@
 2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
 
+	uobject.hh
+	* src/liburbi/Makefile.am: More fixes.
+
+2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+
 	uobject.h -> uobject.hh
 	* src/liburbi/uconversion.h: Adjust.
 	* src/liburbi/uvar.cc: Adjust.

@@ -37,11 +37,11 @@ uabstractclient.h				\
 uclient.h					\
 uconversion.h					\
 uexternal.h					\
-uobject/uobject.h				\
+uobject/uobject.hh				\
 usyncclient.h
 
 sdkinclude_HEADERS = 				\
-uobject/uobject.h
+uobject/uobject.hh
 
 liburbi_la_SOURCES =				\
 $(uobject_sources)				\
