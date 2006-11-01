@@ -41,9 +41,7 @@ AC_PROG_LIBTOOL
 ## Target.  ##
 ## -------- ##
 URBI_OPENR
-URBI_PTHREAD
-
-URBI_UFLOAT
+URBI_LIBPORT
 
 ## -------- ##
 ## Output.  ##
