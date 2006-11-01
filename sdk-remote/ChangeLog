@@ -1,5 +1,10 @@
 2006-11-01  Akim Demaille  <akim.demaille@free.fr>
 
+	One more uobject.h
+	* sdk/Makefile.am: Fix.
+
+2006-11-01  Akim Demaille  <akim.demaille@free.fr>
+
 	Last bits of transition to uobject/uobject.hh
 	* sdk/Makefile.am, src/liburbi/Makefile.am: Since all the files
 	now include uobject/uobject.hh, there is no need to pass
