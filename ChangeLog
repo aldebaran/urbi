@@ -1,5 +1,12 @@
 2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	formating changes 
+
+	* src/ucommand.cc: indent.
+	* src/parser/bison/ugrammar.y: remove comments.
+
+2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Remove obsolete 'eventid' attribute in UValue 
 
 	* src/uvalue.cc: do it.
