@@ -88,7 +88,7 @@ extern UString** globalDelete;
      }								\
  } while (0)
 
-#define MEMCHECK1(p,p1)						\
+#define MEMCHECK1(p, p1)					\
   do {								\
     if (p==0)							\
       {								\
@@ -98,7 +98,7 @@ extern UString** globalDelete;
       }								\
   } while (0)
 
-#define MEMCHECK2(p,p1,p2)					\
+#define MEMCHECK2(p, p1, p2)					\
   do {								\
     if (p==0)							\
       {								\
@@ -109,7 +109,7 @@ extern UString** globalDelete;
       }								\
   } while (0)
 
-#define MEMCHECK3(p,p1,p2,p3)					\
+#define MEMCHECK3(p, p1, p2, p3)				\
   do {								\
     if (p==0)							\
       {								\
@@ -121,7 +121,7 @@ extern UString** globalDelete;
       }								\
   } while (0)
 
-#define MEMCHECK4(p,p1,p2,p3,p4)				\
+#define MEMCHECK4(p, p1, p2, p3, p4)				\
   do {								\
     if (p==0)							\
       {								\

@@ -169,10 +169,11 @@ UCommand::print(int)
 
 //! Command auto morphing according to group hierarchy
 UCommand*
-UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
+UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
+                     bool with_nostruct)
 {
   UVariableName **varname = ((*this).*refName)();
-  if (!varname) return(0); // we are in a non broadcastable command
+  if (!varname) return 0; // we are in a non broadcastable command
   UString       *devicename = (*varname)->getDevice();
   UString       *method     = (*varname)->getMethod();
 
@@ -244,9 +245,11 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(), bool with_nostruct)
 }
 
 
-TagInfo * TagInfo::insert(HMtagtab &tab) {
+TagInfo*
+TagInfo::insert(HMtagtab &tab)
+{
   HMtagtab::iterator i
-    = tab.insert(HMtagtab::value_type(name,*this)).first;
+    = tab.insert(HMtagtab::value_type(name, *this)).first;
   TagInfo * result = &i->second;
 
   //remove last part of tag
@@ -257,7 +260,8 @@ TagInfo * TagInfo::insert(HMtagtab &tab) {
   std::string subtag = name.substr(0, name.length()-pos-1);
   HMtagtab::iterator it = tab.find(subtag);
   TagInfo *parent;
-  if (it == tab.end()) {
+  if (it == tab.end())
+  {
     TagInfo t;
     t.blocked = t.frozen = false;
     t.name = subtag;
@@ -274,7 +278,9 @@ TagInfo * TagInfo::insert(HMtagtab &tab) {
 }
 
 
-void UCommand::setTag(const std::string & tag) {
+void
+UCommand::setTag(const std::string & tag)
+{
   if (tag==this->tag)
     return;
   if (tag != "")
@@ -284,7 +290,8 @@ void UCommand::setTag(const std::string & tag) {
   TagInfo* ti;
   HMtagtab::iterator it = urbiserver->tagtab.find(tag);
 
-  if (it == urbiserver->tagtab.end()) {
+  if (it == urbiserver->tagtab.end())
+  {
     TagInfo t;
     t.blocked = t.frozen = false;
     t.name = tag;
@@ -302,23 +309,29 @@ void UCommand::setTag(const std::string & tag) {
 
 }
 
-void UCommand::setTag(UCommand * cmd) {
+void
+UCommand::setTag(UCommand * cmd)
+{
   tag = cmd->tag;
   tagInfo = cmd->tagInfo;
-  if (tagInfo) {
+  if (tagInfo)
+  {
     tagInfo->commands.push_back(this);
     tagInfoPtr = --tagInfo->commands.end();
   }
 }
 
 
-void UCommand::unsetTag() {
+void
+UCommand::unsetTag()
+{
   if (!tagInfo)
     return; //nothing to do
   tagInfo->commands.erase(tagInfoPtr);
   TagInfo * ti = tagInfo;
   while (ti && ti->commands.empty() && ti->subTags.empty()
-      && !ti->frozen && !ti->blocked) {
+      && !ti->frozen && !ti->blocked)
+  {
     //remove from parent list
     if (ti->parent)
       ti->parent->subTags.erase(ti->parentPtr);
@@ -330,10 +343,13 @@ void UCommand::unsetTag() {
   }
 }
 
-bool UCommand::isFrozen() {
+bool
+UCommand::isFrozen()
+{
   TagInfo * t = tagInfo;
 
-  while (t) {
+  while (t)
+  {
     if( t->frozen)
       return true;
     t = t->parent;
@@ -341,9 +357,12 @@ bool UCommand::isFrozen() {
   return false;
 }
 
-bool UCommand::isBlocked() {
+bool
+UCommand::isBlocked()
+{
   TagInfo * t = tagInfo;
-  while (t) {
+  while (t)
+  {
     if( t->blocked)
       return true;
     t = t->parent;
@@ -436,8 +455,8 @@ UCommand_TREE::deleteMarked()
   int go_to = 1;
   UCommand_TREE *tree = this;
 
-  while (tree != up) {
-
+  while (tree != up)
+  {
     if (tree->command1 && go_to == 1)
       if (tree->command1->toDelete)
 	{
@@ -482,13 +501,14 @@ UCommand_TREE::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-
-  ::urbiserver->debug("%sTag:[%s] toDelete=%d ",tabb,getTag().c_str(),toDelete);
-
+  ::urbiserver->debug("%sTag:[%s] toDelete=%d ",
+                      tabb,
+                      getTag().c_str(),
+                      toDelete);
 
   switch (node)
     {
@@ -499,22 +519,22 @@ UCommand_TREE::print(int l)
     default:         ::urbiserver->debug("UNKNOWN TREE!\n");
     }
 
-  ::urbiserver->debug("(%ld:%ld) :\n",(long)this,(long)status);
+  ::urbiserver->debug("(%ld:%ld) :\n", (long)this, (long)status);
   if (command1)
     {
       ::urbiserver->debug("%s  Com1 (%ld:%d) up=%ld:\n",
 			  tabb,
-			  (long)command1,command1->status,(long)command1->up);
+			  (long)command1, command1->status, (long)command1->up);
       command1->print(l+3);
     }
   if (command2)
     {
       ::urbiserver->debug("%s  Com2 (%ld:%d) up=%ld:\n",
 			  tabb,
-			  (long)command2,command2->status,(long)command2->up);
+			  (long)command2, command2->status, (long)command2->up);
       command2->print(l+3);
     }
-  ::urbiserver->debug("%sEND TREE ------\n",tabb);
+  ::urbiserver->debug("%sEND TREE ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_VALUE);
@@ -587,7 +607,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   // General initializations
   if (!variable)
     {
-      variable = variablename->getVariable(this,connection);
+      variable = variablename->getVariable(this, connection);
       if (!variablename->getFullname())
 	return ( status = UCOMPLETED );
       method = variablename->getMethod();
@@ -598,21 +618,22 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   // Wait in queue if needed
   if (variable)
     if (variable->blendType == UQUEUE && variable->nbAverage > 0)
-      return(status);
+      return status;
 
   // Broadcasting
-  if (scanGroups(&UCommand::refVarName,true))
+  if (scanGroups(&UCommand::refVarName, true))
     return ( status = UMORPH );
 
   // Function call
   // morph into the function code
   if (expression->type == EXPR_FUNCTION)
     {
-      UString* functionname = expression->variablename->buildFullname(this,connection);
+      UString* functionname =
+        expression->variablename->buildFullname(this, connection);
       if (!functionname)
 	return ( status = UCOMPLETED );
 
-      if (scanGroups(&UCommand::refVarName2,true))
+      if (scanGroups(&UCommand::refVarName2, true))
 	return ( status = UMORPH );
 
       UFunction *fun;
@@ -620,7 +641,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       ////// EXTERNAL /////
 
-      HMbindertab::iterator it = ::urbiserver->functionbindertab.find(functionname->str());
+      HMbindertab::iterator it =
+        ::urbiserver->functionbindertab.find(functionname->str());
       if ((it != ::urbiserver->functionbindertab.end()) &&
 	  (
 	   ( (expression->parameters)
@@ -632,35 +654,41 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	{
 	  int UU = unic();
 	  char tmpprefix[1024];
-	  snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-		   functionname->str(),it->second->nbparam,UU);
+	  snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
+		   functionname->str(), it->second->nbparam, UU);
 
 	  for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	       it2 != it->second->monitors.end();
 	       it2++)
 	    {
 	      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	      (*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));
+	      (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
 	      for (UNamedParameters *pvalue = expression->parameters;
 		   pvalue != 0;
 		   pvalue = pvalue->next)
 		{
-		  (*it2)->c->send((const ubyte*)",",1);
-		  UValue* valparam = pvalue->expression->eval(this,connection);
+		  (*it2)->c->send((const ubyte*)",", 1);
+		  UValue* valparam = pvalue->expression->eval(this, connection);
 		  valparam->echo((*it2)->c);
 		}
-	      (*it2)->c->send((const ubyte*)"]\n",2);
+	      (*it2)->c->send((const ubyte*)"]\n", 2);
 	    }
 
 	  persistant = false;
-	  sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-		  UU,variablename->getFullname()->str(),UU,UU);
+	  sprintf(tmpbuffer,
+                  "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+                  "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+		  UU, variablename->getFullname()->str(), UU, UU);
 
 	  morph = (UCommand*)
 	    new UCommand_EXPR(
 			      new UExpression(
 					      EXPR_FUNCTION,
-					      new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
+					      new UVariableName
+                                              (new UString("global"),
+                                               new UString("exec"),
+                                               false,
+                                               (UNamedParameters *)0),
 					      new UNamedParameters(
 								   new UExpression(
 										   EXPR_VALUE,
@@ -669,7 +697,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 								   )
 					      )
 			      );
-	  return( status = UMORPH );
+	  return ((status = UMORPH));
 	}
 
 
@@ -684,20 +712,21 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  //trying inheritance
 	  const char* devname = expression->variablename->getDevice()->str();
 	  bool ambiguous;
-	  fun = 0;
-	  HMobjtab::iterator itobj;
-	  if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	      ::urbiserver->objtab.end())
-	    {
-	      fun = itobj->second->searchFunction(expression->variablename->getMethod()->str(),
-						  ambiguous);
-	      if (ambiguous)
-		{
-		  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-			   "!!! Ambiguous multiple inheritance on function %s\n",
+          fun = 0;
+          HMobjtab::iterator itobj;
+          if ((itobj = ::urbiserver->objtab.find(devname)) !=
+              ::urbiserver->objtab.end())
+          {
+            fun = itobj->second->searchFunction
+              (expression->variablename->getMethod()->str(),
+               ambiguous);
+            if (ambiguous)
+            {
+              snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                       "!!! Ambiguous multiple inheritance on function %s\n",
 			   functionname->str());
-		  connection->send(tmpbuffer,getTag().c_str());
-		  return( status = UCOMPLETED );
+		  connection->send(tmpbuffer, getTag().c_str());
+		  return (status = UCOMPLETED);
 		}
 	    }
 	}
@@ -713,12 +742,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	       || ( expression->parameters && !fun->nbparam())
 	       || ( !expression->parameters && fun->nbparam()) )
 	    {
-	      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		       "!!! invalid number of arguments for %s (should be %d params)\n",
-		       functionname->str(),fun->nbparam());
-	      connection->send(tmpbuffer,getTag().c_str());
+		       functionname->str(), fun->nbparam());
+	      connection->send(tmpbuffer, getTag().c_str());
 
-	      return( status = UCOMPLETED );
+	      return ((status = UCOMPLETED));
 	    }
 
 	  persistant = false;
@@ -741,7 +770,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	  if (morph)
 	    {
-	      sprintf(tmpbuffer,"__UFnct%d",unic());
+	      sprintf(tmpbuffer, "__UFnct%d", unic());
 	      ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
 							    expression->variablename->device->str(),
 							    (UCommand_TREE*)morph);
@@ -757,18 +786,19 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		   pvalue != 0;
 		   pvalue = pvalue->next, pname = pname->next)
 		{
-		  UValue* valparam = pvalue->expression->eval(this,connection);
+		  UValue* valparam = pvalue->expression->eval(this, connection);
 		  if (!valparam)
 		    {
-		      connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
+		      connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 		      return (status = UCOMPLETED);
-		    }
+                    }
 
-		  ((UCommand_TREE*)morph)->callid->store(new UVariable(((UCommand_TREE*)morph)->callid->str(),
-								       pname->name->str(),
-								       valparam));
-		}
-	    }
+                  ((UCommand_TREE*)morph)->callid->store
+                    (new UVariable(((UCommand_TREE*)morph)->callid->str(),
+                                   pname->name->str(),
+                                   valparam));
+                }
+            }
 
 	  return status = UMORPH;
 	} // fi: function exists
@@ -776,12 +806,14 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       ////// module-defined /////
 
-      urbi::UTable::iterator hmfi = urbi::functionmap.find(functionname->str());
+      urbi::UTable::iterator hmfi =
+        urbi::functionmap.find(functionname->str());
       if (hmfi != urbi::functionmap.end())
 	{
 	  bool found_function = false;
 
-	  for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
+	  for (std::list<urbi::UGenericCallback*>::iterator cbi =
+               hmfi->second.begin();
 	       ((cbi != hmfi->second.end()) && (!found_function));
 	       cbi++)
 	    {
@@ -796,10 +828,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		       pvalue != 0;
 		       pvalue = pvalue->next)
 		    {
-		      UValue* valparam = pvalue->expression->eval(this,connection);
+		      UValue* valparam = pvalue->expression->eval(this, connection);
 		      if (!valparam)
 			{
-			  connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
+			  connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 			  return (status = UCOMPLETED);
 			}
 		      // urbi::UValue do not see ::UValue, so it must
@@ -836,7 +868,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  if (objit != ::urbiserver->objtab.end())
 	    {
 	      // the use of 'id' is a hack that works.
-	      HMaliastab::iterator hmi = ::urbiserver->objaliastab.find(variablename->id->str());
+	      HMaliastab::iterator hmi =
+                ::urbiserver->objaliastab.find(variablename->id->str());
 	      if (hmi != ::urbiserver->objaliastab.end())
 		(*hmi).second->update(objname);
 	      else
@@ -853,19 +886,19 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  && !variablename->fromGroup
 	  && variable->value->dataType == DATA_OBJ)
 	{
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		   "!!! Warning: %s type mismatch: no object assignment\n",
 		   variablename->getFullname()->str());
-	  connection->send(tmpbuffer,getTag().c_str());
+	  connection->send(tmpbuffer, getTag().c_str());
 	  return (status = UCOMPLETED);
 	}
 
       // Strict variable definition checking
       if (!variable && connection->server->defcheck && !defkey)
 	{
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		   "!!! Unknown identifier: %s\n",variablename->getFullname()->str());
-	  connection->send(tmpbuffer,getTag().c_str());
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		   "!!! Unknown identifier: %s\n", variablename->getFullname()->str());
+	  connection->send(tmpbuffer, getTag().c_str());
 	}
 
       // Check the +error flag
@@ -890,10 +923,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	}
 
       // eval the right side of the assignment and check for errors
-      target = expression->eval(this,connection);
+      target = expression->eval(this, connection);
       //if ((target == 0) || (target->dataType == DATA_VOID))
       if (target == 0)
-	return( status = UCOMPLETED);
+	return (status = UCOMPLETED);
 
       // Check type compatibility if the left side variable already exists
       if (variable &&
@@ -902,9 +935,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	{
 	  if (::urbiserver->defcheck)
 	    {
-	      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		       "!!! Warning: %s type mismatch\n",variablename->getFullname()->str());
-	      connection->send(tmpbuffer,getTag().c_str());
+	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		       "!!! Warning: %s type mismatch\n",
+                       variablename->getFullname()->str());
+	      connection->send(tmpbuffer, getTag().c_str());
 	      delete target;
 	      return status = UCOMPLETED;
 	    }
@@ -922,7 +956,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    variable->set(target);
 	  else
 	    {
-	      variable = new UVariable(variablename->getFullname()->str(),target->copy());
+	      variable = new UVariable(variablename->getFullname()->str(),
+                                       target->copy());
 	      if (!variable) return ( status = UCOMPLETED );
 	      connection->localVariableCheck(variable);
 	      variable->updated();
@@ -949,12 +984,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		  modif = parameters;
 		  while (modif)
 		    {
-		      modificator = modif->expression->eval(this,connection);
+		      modificator = modif->expression->eval(this, connection);
 		      if (!modificator)
 			{
-			  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+			  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 				   "!!! String composition failed\n");
-			  connection->send(tmpbuffer,getTag().c_str());
+			  connection->send(tmpbuffer, getTag().c_str());
 			  delete target;
 			  return ((status = UCOMPLETED));
 			}
@@ -967,8 +1002,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 			  modificator->str = new UString(ostr.str().c_str());
 			}
 
-		      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-			       "$%s",modif->name->str());
+		      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+			       "$%s", modif->name->str());
 
 		      if (strstr(modificator->str->str(), tmpbuffer) == 0)
 			while ((possub = strstr(result, tmpbuffer)))
@@ -1027,7 +1062,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    }
 
 	  delete (target);
-	  return( status = UCOMPLETED );
+	  return ((status = UCOMPLETED));
 	}
 
       // LIST init ///////////////////
@@ -1049,7 +1084,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    }
 
 	  delete target;
-	  return( status = UCOMPLETED );
+	  return (status = UCOMPLETED);
 	}
 
       // NUM init ///////////////////
@@ -1067,13 +1102,13 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		{
 		  if (!variablename->fromGroup)
 		    {
-		      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 			       "!!! Impossible to normalize: no range defined for variable %s\n",
 			       variablename->getFullname()->str());
-		      connection->send(tmpbuffer,getTag().c_str());
+		      connection->send(tmpbuffer, getTag().c_str());
 		    }
 		  delete target;
-		  return( status = UCOMPLETED );
+		  return ((status = UCOMPLETED));
 		}
 
 	      if (targetval < 0) targetval = 0;
@@ -1103,13 +1138,13 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	      // Checking integrity (variable exists), if not sinusoidal
 	      if ((variable == 0) && (!sinusoidal))
 		{
-		  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 			   "!!! Modificator error: %s unknown (no start value)\n",
 			   variablename->getFullname()->str());
 		  if (!variablename->fromGroup)
-		    connection->send(tmpbuffer,getTag().c_str());
+		    connection->send(tmpbuffer, getTag().c_str());
 		  delete target;
-		  return( status = UCOMPLETED );
+		  return ((status = UCOMPLETED));
 		}
 
 	      speed    = 0;
@@ -1124,12 +1159,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		  if ((!modif->expression) ||
 		      (!modif->name))
 		    {
-		      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 			       "!!! Invalid modificator\n");
-		      connection->send(tmpbuffer,getTag().c_str());
+		      connection->send(tmpbuffer, getTag().c_str());
 
 		      delete target;
-		      return( status = UCOMPLETED );
+		      return ((status = UCOMPLETED));
 		    }
 
 		found = false;
@@ -1144,7 +1179,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		if (modif->name->equal("cos"))
 		  {
 		    modif_sin = modif->expression;
-		    tmp_phase = new UExpression(EXPR_VALUE,PI/ufloat(2));
+		    tmp_phase = new UExpression(EXPR_VALUE, PI/ufloat(2));
 		    modif_phase = tmp_phase;
 		    found = true;
 		    controlled = true;
@@ -1200,10 +1235,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		  {
 		  if (modif->expression->type != EXPR_VARIABLE)
 		    {
-		      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 			       "!!! a variable is expected for the 'getphase' modificator\n");
-		      connection->send(tmpbuffer,getTag().c_str());
-		      return( status = UCOMPLETED );
+		      connection->send(tmpbuffer, getTag().c_str());
+		      return ((status = UCOMPLETED));
 		    }
 		  modif_getphase = modif->expression->variablename;
 		  found = true;
@@ -1212,16 +1247,17 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 		if (modif->name->equal("timelimit"))
 		  {
-		    modificator = modif->expression->eval(this,connection);
+		    modificator = modif->expression->eval(this, connection);
 		    if ( (!modificator) ||
-			 (modificator->dataType != DATA_NUM) ) {
-		      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+			 (modificator->dataType != DATA_NUM) )
+                    {
+		      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 			       "!!! Invalid modificator value\n");
-		      connection->send(tmpbuffer,getTag().c_str());
+		      connection->send(tmpbuffer, getTag().c_str());
 
 		      delete modificator;
 		      delete target;
-		      return( status = UCOMPLETED );
+		      return ((status = UCOMPLETED));
 		    }
 		    endtime = currentTime + modificator->val;
 		    delete modificator;
@@ -1230,12 +1266,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 		if (!found)
 		  {
-		    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+		    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 			     "!!! Unkown modificator name\n");
-		    connection->send(tmpbuffer,getTag().c_str());
+		    connection->send(tmpbuffer, getTag().c_str());
 
 		    delete target;
-		    return( status = UCOMPLETED );
+		    return (status = UCOMPLETED);
 		  }
 
 		modif = modif->next;
@@ -1260,7 +1296,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  if (!controlled)
 	    {
 	      // no controlling modificator => time:0
-	      tmp_time = new UExpression(EXPR_VALUE,ufloat(0));
+	      tmp_time = new UExpression(EXPR_VALUE, ufloat(0));
 	      modif_time = tmp_time;
 	    }
 
@@ -1270,7 +1306,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  // UDISCARD mode
 	  if (variable->blendType == UDISCARD &&
 	      variable->nbAssigns > 0)
-	    return( status = UCOMPLETED );
+	    return (status = UCOMPLETED);
 
 	  // init valarray for a "val" assignment
 	  ufloat *targetvalue;
@@ -1305,27 +1341,13 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	else
 	  return (status = UCOMPLETED);
 
-      /*
-      // This function is removed because it cannot give interesting results on Aibo
-      // the delay is always crossed if given a sufficient speed
-      if ((errorFlag) &&
-      (fabs(variable->previous - variable->value->val) > 2*variable->delta)) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-      "!!! delayed, is %f, should be %f\n",variable->value->val,variable->previous);
-      connection->send(tmpbuffer,getTag().c_str());
-      }
-      */
-
-      // ufloat deltaTime = connection->server->getFrequency();
-
       // Cancel if needed
       if (variable->blendType == UCANCEL && variable->cancel != this)
-	return(status = UCOMPLETED);
+	return (status = UCOMPLETED);
 
       // Discard if needed
       if (variable->blendType == UDISCARD && variable->nbAverage > 0)
-	return(status = UCOMPLETED);
+	return (status = UCOMPLETED);
 
       // In normal mode, there is always only one value to consider
       if (variable->blendType == UNORMAL)
@@ -1341,7 +1363,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	return (status = UCOMPLETED);
       ///////////////////////////////
 
-      // absorb average and set reinit list to set nbAverage back to 0 after work()
+      // absorb average and set reinit list to set
+      // nbAverage back to 0 after work()
       if (variable->blendType != UADD)
 	*valtmp = *valtmp / (ufloat)(variable->nbAverage+1);
       variable->nbAverage++;
@@ -1351,11 +1374,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       variable->activity = 1;
 
       // Variable updating or signal for update (modified)
-      // UMIX and UADD are treated separatly in the processing of the reinit list
+      // UMIX and UADD are treated separatly
+      // in the processing of the reinit list
       // because we don't want to have several calls to notifyWrite (when the
       // variable is with a notifyWrite==true flag) for each intermediary step
-      // of the UADD and UMIX aggregation, but only at the end. Hence the report to
-      // reinit list processing.
+      // of the UADD and UMIX aggregation, but only at the end.
+      // Hence the report to reinit list processing.
 
       if (variable->blendType != UMIX && variable->blendType != UADD)
 	variable->selfSet(valtmp);
@@ -1380,12 +1404,12 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 {
   ufloat deltaTime = connection->server->getFrequency();
   ufloat currentVal = variable->get()->val;
-  ufloat phase,amplitude;
+  ufloat phase, amplitude;
 
   // Adaptive mode? (only for "speed" and "time")
   bool adaptive = false;
   if (modif_adaptive)
-    if ((tmpeval = modif_adaptive->eval(this,connection)))
+    if ((tmpeval = modif_adaptive->eval(this, connection)))
       {
 	adaptive = (tmpeval->val != 0);
 	delete tmpeval;
@@ -1413,7 +1437,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	      targetval;
 	  }
 
-      if ((tmpeval = modif_time->eval(this,connection)))
+      if ((tmpeval = modif_time->eval(this, connection)))
 	{
 	  targettime = ABSF(tmpeval->val);
 	  delete tmpeval;
@@ -1452,13 +1476,13 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	  ( (targetval - startval) /
 	    targettime );
 
-      return(USUCCESS);
+      return USUCCESS;
     }
 
   // smooth
   if (modif_smooth)
     {
-      if ((tmpeval = modif_smooth->eval(this,connection)))
+      if ((tmpeval = modif_smooth->eval(this, connection)))
 	{
 	  targettime = ABSF(tmpeval->val);
 	  delete tmpeval;
@@ -1491,7 +1515,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 			   targettime
 			   ))
 	    );
-      return(USUCCESS);
+      return USUCCESS;
     }
 
   //speed
@@ -1505,7 +1529,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	      targetval;
 	  }
 
-      if ((tmpeval = modif_speed->eval(this,connection)))
+      if ((tmpeval = modif_speed->eval(this, connection)))
 	{
 	  speed = ABSF(tmpeval->val);
 	  delete tmpeval;
@@ -1533,7 +1557,8 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	    ABSF(targetval - currentVal)/ speedmin;
 
 	  if (errorFlag && first)
-	    connection->send("!!! low speed: increased to speedmin\n",getTag().c_str());
+	    connection->send("!!! low speed: increased to speedmin\n",
+                             getTag().c_str());
 	}
 
       if (currentTime - starttime + deltaTime >= targettime)
@@ -1557,13 +1582,13 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	    ( (targetval - startval) /
 	      targettime );
 
-      return(USUCCESS);
+      return USUCCESS;
     }
 
   //accel
   if (modif_accel)
     {
-      if ((tmpeval = modif_accel->eval(this,connection)))
+      if ((tmpeval = modif_accel->eval(this, connection)))
 	{
 	  accel = ABSF(tmpeval->val/1000.);
 	  delete tmpeval;
@@ -1576,7 +1601,8 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       if (variablename->isnormalized)
 	accel = accel * (variable->rangemax - variable->rangemin);
 
-      targettime = sqrt ( 2 * ABSF(targetval - startval) / (ABSF(accel)/1000.));
+      targettime = sqrt ( 2 * ABSF(targetval - startval)
+                          / (ABSF(accel)/1000.));
 
       if (currentTime - starttime + deltaTime >= targettime)
 	{
@@ -1595,7 +1621,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   if (modif_sin)
     {
       targettime = 0;
-      if ((tmpeval = modif_sin->eval(this,connection)))
+      if ((tmpeval = modif_sin->eval(this, connection)))
 	{
 	  targettime = ABSF(tmpeval->val);
 	  delete tmpeval;
@@ -1604,14 +1630,16 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 
       phase = 0;
       if (modif_phase &&
-	  (tmpeval = modif_phase->eval(this,connection))) {
+	  (tmpeval = modif_phase->eval(this, connection)))
+      {
 	phase = tmpeval->val;
 	delete tmpeval;
       }
 
       amplitude = 0;
       if (modif_ampli &&
-	  (tmpeval = modif_ampli->eval(this,connection))) {
+	  (tmpeval = modif_ampli->eval(this, connection)))
+      {
 	amplitude = tmpeval->val;
 	delete tmpeval;
       }
@@ -1619,7 +1647,8 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	amplitude = amplitude * (variable->rangemax - variable->rangemin);
 
       if (expression &&
-	  (tmpeval = expression->eval(this,connection))) {
+	  (tmpeval = expression->eval(this, connection)))
+      {
 	targetval = tmpeval->val;
 	if (variablename->isnormalized)
 	  {
@@ -1638,16 +1667,17 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 								  targettime ));
       if (modif_getphase)
 	{
-	  UVariable *phasevari = modif_getphase->getVariable(this,connection);
+	  UVariable *phasevari = modif_getphase->getVariable(this, connection);
 	  if (!phasevari)
 	    {
 	      if (!modif_getphase->getFullname())
 		{
-		  connection->send("!!! invalid phase variable name\n",getTag().c_str());
+		  connection->send("!!! invalid phase variable name\n", getTag().c_str());
 
-		  return( UFAIL );
+		  return UFAIL;
 		}
-	      phasevari = new UVariable(modif_getphase->getFullname()->str(),ufloat(0));
+	      phasevari = new UVariable(modif_getphase->getFullname()->str(),
+                                        ufloat(0));
 	      connection->localVariableCheck(phasevari);
 	    }
 
@@ -1692,18 +1722,32 @@ UCommand_ASSIGN_VALUE::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] toDelete=%d ",tabb,getTag().c_str(),toDelete);
+  ::urbiserver->debug("%s Tag:[%s] toDelete=%d ",
+                      tabb,
+                      getTag().c_str(), toDelete);
 
   ::urbiserver->debug("ASSIGN VALUE:\n");
 
-  if (variablename) { ::urbiserver->debug("%s  Variable:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
-  if (parameters)  { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};
-  ::urbiserver->debug("%sEND ASSIGN VALUE ------\n",tabb);
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  Variable:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
+  if (parameters)
+  {
+    ::urbiserver->debug("%s  Param:{", tabb);
+    parameters->print(); ::urbiserver->debug("}\n");
+  };
+  ::urbiserver->debug("%sEND ASSIGN VALUE ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
@@ -1736,8 +1780,9 @@ UCommandStatus
 UCommand_ASSIGN_BINARY::execute(UConnection *connection)
 {
   // General initializations
-  if (!variable) {
-    variable = variablename->getVariable(this,connection);
+  if (!variable)
+  {
+    variable = variablename->getVariable(this, connection);
     if (!variablename->getFullname())
       return ( status = UCOMPLETED );
     method = variablename->getMethod();
@@ -1745,43 +1790,41 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
   }
 
   // Broadcasting
-  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName, true)) return ( status = UMORPH );
 
   // Type checking
   UValue *value;
-	//XXX in some cases, the variable may exist and be of type DATA_VOID
   if ((variable)
 		&& (variable->value->dataType != DATA_BINARY)
-		&& (variable->value->dataType != DATA_VOID)) {
+		&& (variable->value->dataType != DATA_VOID))
+  {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	       "!!! %s type mismatch\n", variablename->getFullname()->str());
+      connection->send(tmpbuffer, getTag().c_str());
 
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! %s type mismatch\n",variablename->getFullname()->str());
-      connection->send(tmpbuffer,getTag().c_str());
-
-      return( status = UCOMPLETED );
+      return (status = UCOMPLETED);
     }
 
   // Create variable if it doesn't exist
-  if (!variable) {
-
+  if (!variable)
+  {
     value = new UValue();
     value->dataType = DATA_BINARY;
     variable = new UVariable(variablename->getFullname()->str(), value);
-    if (!variable) return( status = UCOMPLETED );
+    if (!variable) return (status = UCOMPLETED);
     variable->blendType = UQUEUE;
 
     connection->localVariableCheck(variable);
   }
   else {
-		if (variable->value->dataType == DATA_BINARY) {
-				LIBERATE(variable->value->refBinary);
-		}
-	}
-	variable->value->dataType = DATA_BINARY;
+    if (variable->value->dataType == DATA_BINARY)
+      LIBERATE(variable->value->refBinary);
+  }
+  variable->value->dataType = DATA_BINARY;
   variable->value->refBinary = refBinary->copy();
 
   variable->updated();
-  return( status = UCOMPLETED );
+  return (status = UCOMPLETED);
 }
 
 //! UCommand subclass hard copy function
@@ -1804,17 +1847,25 @@ UCommand_ASSIGN_BINARY::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("ASSIGN BINARY:\n");
 
-  if (variablename) { ::urbiserver->debug("%s  Variable:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  if (refBinary) { ::urbiserver->debug("%s  Binary:",tabb); refBinary->ref()->print(); ::urbiserver->debug("\n");};
-  ::urbiserver->debug("%sEND ASSIGN BINARY ------\n",tabb);
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  Variable:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  if (refBinary)
+  {
+    ::urbiserver->debug("%s  Binary:", tabb);
+    refBinary->ref()->print(); ::urbiserver->debug("\n");};
+  ::urbiserver->debug("%sEND ASSIGN BINARY ------\n",
+                      tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_PROPERTY);
@@ -1849,197 +1900,214 @@ UCommand_ASSIGN_PROPERTY::~UCommand_ASSIGN_PROPERTY()
 UCommandStatus
 UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 {
-  UVariable* variable = variablename->getVariable(this,connection);
+  UVariable* variable = variablename->getVariable(this, connection);
   if (!variablename->getFullname())
     return ( status = UCOMPLETED );
   variablename->getMethod();
   variablename->getDevice();
 
   // Broadcasting
-  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName, true)) return ( status = UMORPH );
 
   // variable existence checking
-  if (!variable) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! Variable %s does not exist\n",variablename->getFullname()->str());
+  if (!variable)
+  {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	       "!!! Variable %s does not exist\n",
+               variablename->getFullname()->str());
       if (!variablename->fromGroup)
-	connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+	connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
   }
 
   // Property handling
 
 
   // blend
-  if (strcmp(oper->str(),"blend")==0) {
-
-    UValue *blendmode = expression->eval(this,connection);
+  if (strcmp(oper->str(), "blend")==0)
+  {
+    UValue *blendmode = expression->eval(this, connection);
     if (blendmode == 0)
-      return( status = UCOMPLETED );
+      return (status = UCOMPLETED);
 
-    if (blendmode->dataType != DATA_STRING) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (blendmode->dataType != DATA_STRING)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid blend mode.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return (status = UCOMPLETED);
     }
 
     if ((variable->value->dataType != DATA_NUM) &&
-	(variable->value->dataType != DATA_BINARY)) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	(variable->value->dataType != DATA_BINARY))
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! %s type is invalid for mixing\n",
 		variablename->getFullname()->str());
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return (status = UCOMPLETED);
     }
 
-    if (strcmp(blendmode->str->str(),"normal")==0)     variable->blendType = UNORMAL;
+    if (strcmp(blendmode->str->str(), "normal")==0)
+      variable->blendType = UNORMAL;
     else
-    if (strcmp(blendmode->str->str(),"mix")==0)        variable->blendType = UMIX;
-    else
-    if (strcmp(blendmode->str->str(),"add")==0)        variable->blendType = UADD;
-    else
-    if (strcmp(blendmode->str->str(),"discard")==0)    variable->blendType = UDISCARD;
-    else
-    if (strcmp(blendmode->str->str(),"queue")==0)      variable->blendType = UQUEUE;
-    else
-    if (strcmp(blendmode->str->str(),"cancel")==0)     variable->blendType = UCANCEL;
-    else {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! Unknown blend mode: %s\n",
-		blendmode->str->str());
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
-    }
+      if (strcmp(blendmode->str->str(), "mix")==0)
+        variable->blendType = UMIX;
+      else
+        if (strcmp(blendmode->str->str(), "add")==0)
+          variable->blendType = UADD;
+        else
+          if (strcmp(blendmode->str->str(), "discard")==0)
+            variable->blendType = UDISCARD;
+          else
+            if (strcmp(blendmode->str->str(), "queue")==0)
+              variable->blendType = UQUEUE;
+            else
+              if (strcmp(blendmode->str->str(), "cancel")==0)
+                variable->blendType = UCANCEL;
+              else {
+                snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                         "!!! Unknown blend mode: %s\n",
+                         blendmode->str->str());
+                connection->send(tmpbuffer, getTag().c_str());
+                return (status = UCOMPLETED);
+              }
 
-    return( status = UCOMPLETED );
+    return (status = UCOMPLETED);
   }
 
   // rangemax
-  if (strcmp(oper->str(),"rangemax")==0) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (strcmp(oper->str(), "rangemax")==0)
+  {
+    UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return (status = UCOMPLETED);
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid range type. NUM expected.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return (status = UCOMPLETED);
     }
 
     variable->rangemax = nb->val;
-    return( status = UCOMPLETED );
+    return (status = UCOMPLETED);
   }
 
   // delta
-  if (strcmp(oper->str(),"delta")==0) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (strcmp(oper->str(), "delta")==0)
+  {
+    UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return (status = UCOMPLETED);
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid delta type. NUM expected.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return (status = UCOMPLETED);
     }
 
     variable->delta = nb->val;
-    return( status = UCOMPLETED );
+    return (status = UCOMPLETED);
   }
 
 
   // unit
-  if (strcmp(oper->str(),"unit")==0) {
-
-    UValue *unitval = expression->eval(this,connection);
+  if (strcmp(oper->str(), "unit")==0)
+  {
+    UValue *unitval = expression->eval(this, connection);
     if (unitval == 0)
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
-    if (unitval->dataType != DATA_STRING) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (unitval->dataType != DATA_STRING)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid unit type (must be a string).\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
     }
 
     if ((variable->value->dataType != DATA_NUM) &&
-	(variable->value->dataType != DATA_BINARY)) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	(variable->value->dataType != DATA_BINARY))
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! %s type is invalid for unit attribution\n",
 		variablename->getFullname()->str());
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
     }
 
     if (variable->unit) variable->unit->update(unitval->str->str());
     else
       variable->unit = new UString(unitval->str->str());
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
   // rangemin
-  if (strcmp(oper->str(),"rangemin")==0) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (strcmp(oper->str(), "rangemin")==0)
+  {
+    UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid range type. NUM expected.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
     }
 
     variable->rangemin = nb->val;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
   // speedmax
-  if (strcmp(oper->str(),"speedmax")==0) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (strcmp(oper->str(), "speedmax")==0)
+  {
+    UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid speed type. NUM expected.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
     }
 
     variable->speedmax = nb->val;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
   // speedmin
-  if (strcmp(oper->str(),"speedmin")==0) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (strcmp(oper->str(), "speedmin")==0)
+  {
+    UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid speed type. NUM expected.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
     }
 
     variable->speedmin = nb->val;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	   "!!! Unknown property: %s\n",oper->str());
-  connection->send(tmpbuffer,getTag().c_str());
-  return( status = UCOMPLETED );
+  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	   "!!! Unknown property: %s\n", oper->str());
+  connection->send(tmpbuffer, getTag().c_str());
+  return ( status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -2063,18 +2131,26 @@ UCommand_ASSIGN_PROPERTY::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
-  ::urbiserver->debug("ASSIGN PROPERTY [%s]:\n",oper->str());
+  ::urbiserver->debug("ASSIGN PROPERTY [%s]:\n", oper->str());
 
-  if (variablename) { ::urbiserver->debug("%s  Variable:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  Variable:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND ASSIGN PROPERTY ------\n",tabb);
+  ::urbiserver->debug("%sEND ASSIGN PROPERTY ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
@@ -2115,13 +2191,13 @@ UCommand_AUTOASSIGN::execute(UConnection*)
     case 0: /* += */
       extended_expression =
 	new UExpression(EXPR_PLUS,
-			new UExpression(EXPR_VARIABLE,variablename->copy()),
+			new UExpression(EXPR_VARIABLE, variablename->copy()),
 			expression->copy());
       break;
     case 1: /* -= */
       extended_expression =
 	new UExpression(EXPR_MINUS,
-			new UExpression(EXPR_VARIABLE,variablename->copy()),
+			new UExpression(EXPR_VARIABLE, variablename->copy()),
 			expression->copy());
       break;
     }
@@ -2160,19 +2236,27 @@ UCommand_AUTOASSIGN::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
 
-  ::urbiserver->debug("AUTOASSIGN (%d):",assigntype);
+  ::urbiserver->debug("AUTOASSIGN (%d):", assigntype);
 
-  if (variablename) { ::urbiserver->debug("%s  VariableName:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  if (expression) { ::urbiserver->debug("%s  expression:",tabb); expression->print(); ::urbiserver->debug("\n");};
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  VariableName:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  if (expression)
+  {
+    ::urbiserver->debug("%s  expression:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND AUTOASSIGN ------\n",tabb);
+  ::urbiserver->debug("%sEND AUTOASSIGN ------\n", tabb);
 }
 
 
@@ -2201,58 +2285,66 @@ UCommand_EXPR::execute(UConnection *connection)
 {
   HMfunctiontab::iterator hmf;
 
-  if (expression->type == EXPR_FUNCTION) {
-
+  if (expression->type == EXPR_FUNCTION)
+  {
     // Execution & morphing
-    UString* funname = expression->variablename->buildFullname(this,connection);
-    if (!funname) return( status = UCOMPLETED );
+    UString* funname =
+      expression->variablename->buildFullname(this, connection);
+    if (!funname) return ( status = UCOMPLETED );
 
     // Broadcasting
-    if (scanGroups(&UCommand::refVarName,false)) return ( status = UMORPH );
+    if (scanGroups(&UCommand::refVarName, false)) return ( status = UMORPH );
 
     UFunction *fun;
 
     ////// EXTERNAL /////
-    HMbindertab::iterator it = ::urbiserver->functionbindertab.find(funname->str());
+    HMbindertab::iterator it =
+      ::urbiserver->functionbindertab.find(funname->str());
     if ((it != ::urbiserver->functionbindertab.end()) &&
 		(
-			( (expression->parameters) && (it->second->nbparam == expression->parameters->size()))
+			( (expression->parameters)
+                          && (it->second->nbparam
+                              == expression->parameters->size()))
 			||
 			((!expression->parameters) && (it->second->nbparam==0))) &&
 	(!it->second->monitors.empty()))  {
 
       int UU = unic();
       char tmpprefix[1024];
-      snprintf(tmpprefix,1024,"[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-    	  funname->str(),it->second->nbparam,UU);
+      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
+	  funname->str(), it->second->nbparam, UU);
 
       for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	   it2 != it->second->monitors.end();
-	   it2++) {
-
+	   it2++)
+      {
 	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));
+	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
 	for (UNamedParameters *pvalue = expression->parameters;
 	    pvalue != 0;
-	    pvalue = pvalue->next) {
-
-	  (*it2)->c->send((const ubyte*)",",1);
-	  UValue* valparam = pvalue->expression->eval(this,connection);
+	    pvalue = pvalue->next)
+        {
+	  (*it2)->c->send((const ubyte*)",", 1);
+	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*it2)->c);
 	}
-	(*it2)->c->send((const ubyte*)"]\n",2);
+	(*it2)->c->send((const ubyte*)"]\n", 2);
       }
 
-
       persistant = false;
-      sprintf(tmpbuffer,"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-      UU,getTag().c_str(),UU,UU);
+      sprintf(tmpbuffer,
+              "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+              "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+      UU, getTag().c_str(), UU, UU);
 
       morph = (UCommand*)
       new UCommand_EXPR(
 	  new UExpression(
 	    EXPR_FUNCTION,
-	    new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
+	    new UVariableName(new UString("global"),
+                              new UString("exec"),
+                              false,
+                              (UNamedParameters *)0),
 	    new UNamedParameters(
 		new UExpression(
 		  EXPR_VALUE,
@@ -2262,7 +2354,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	    )
 	  );
 
-      return( status = UMORPH );
+      return ( status = UMORPH );
     }
 
     ////// INTERNAL /////
@@ -2271,42 +2363,46 @@ UCommand_EXPR::execute(UConnection *connection)
 
     hmf = ::urbiserver->functiontab.find(funname->str());
     bool found = (hmf != ::urbiserver->functiontab.end());
-    if (!found) {
-
+    if (!found)
+    {
       //trying inheritance
       const char* devname = expression->variablename->getDevice()->str();
       bool ambiguous;
       fun = 0;
       HMobjtab::iterator itobj;
       if ((itobj = ::urbiserver->objtab.find(devname)) !=
-		  ::urbiserver->objtab.end()) {
-		fun = itobj->second->searchFunction(expression->variablename->getMethod()->str(),
-											ambiguous);
-		if (ambiguous)  {
-		  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-				   "!!! Ambiguous multiple inheritance on function %s\n",
-				   funname->str());
-		  connection->send(tmpbuffer,getTag().c_str());
-		  return( status = UCOMPLETED );
-		}
+          ::urbiserver->objtab.end())
+      {
+        fun = itobj->second->
+          searchFunction(expression->variablename->getMethod()->str(),
+                         ambiguous);
+        if (ambiguous)
+        {
+          snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                   "!!! Ambiguous multiple inheritance on function %s\n",
+                   funname->str());
+          connection->send(tmpbuffer, getTag().c_str());
+          return ( status = UCOMPLETED );
+        }
       }
     }
     else
       fun = hmf->second;
 
-    if (fun) {
-
+    if (fun)
+    {
       if ( ( (expression->parameters) &&
 	     (fun->nbparam()) &&
 	     (expression->parameters->size() != fun->nbparam())) ||
 	   ( (expression->parameters) && (!fun->nbparam())) ||
-	   ( (!expression->parameters) && (fun->nbparam())) ) {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	   ( (!expression->parameters) && (fun->nbparam())) )
+      {
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! invalid number of arguments for %s (should be %d params)\n",
-		 funname->str(),fun->nbparam());
-	connection->send(tmpbuffer,getTag().c_str());
+		 funname->str(), fun->nbparam());
+	connection->send(tmpbuffer, getTag().c_str());
 
-	return( status = UCOMPLETED );
+	return ( status = UCOMPLETED );
       }
 
       persistant = false;
@@ -2321,30 +2417,29 @@ UCommand_EXPR::execute(UConnection *connection)
 
       cexp->setTag(this);
       morph = (UCommand*)
-	new UCommand_TREE(UPIPE,
-	    fun->cmdcopy(getTag()),
-	    cexp);
+        new UCommand_TREE(UPIPE,
+                          fun->cmdcopy(getTag()),
+                          cexp);
 
-      if (morph) {
+      if (morph)
+      {
+        morph->morphed = true;
+        morph->setTag(this);
 
-	morph->morphed = true;
+        if (flags)
+          morph->flags = flags->copy();
 
-	  morph->setTag(this);
+        sprintf(tmpbuffer, "__UFnct%d", unic());
+        UString* fundevice = expression->variablename->getDevice();
+        if (!fundevice)
+        {
+          connection->send("!!! Function name evaluation failed\n",
+                           getTag().c_str());
+          return (status = UCOMPLETED);
+        }
 
-	  if (flags)
-	    morph->flags = flags->copy();
-
-
-	sprintf(tmpbuffer,"__UFnct%d",unic());
-	UString* fundevice = expression->variablename->getDevice();
-	if (!fundevice) {
-
-	    connection->send("!!! Function name evaluation failed\n",getTag().c_str());
-	    return (status = UCOMPLETED);
-	}
-
-	((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
-						      fundevice->str(),
+        ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
+                                                      fundevice->str(),
 						      (UCommand_TREE*)morph);
 	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
 								"__result__");
@@ -2355,16 +2450,16 @@ UCommand_EXPR::execute(UConnection *connection)
 	UNamedParameters *pname  = fun->parameters;
 	for (;
 	     pvalue != 0;
-	     pvalue = pvalue->next, pname = pname->next) {
-
-	  UValue* valparam = pvalue->expression->eval(this,connection);
-	  if (!valparam) {
-
-	    connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
+	     pvalue = pvalue->next, pname = pname->next)
+        {
+	  UValue* valparam = pvalue->expression->eval(this, connection);
+	  if (!valparam)
+          {
+	    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 	    return (status = UCOMPLETED);
 	  }
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		   "%s.%s",((UCommand_TREE*)morph)->callid->str(),pname->name->str());
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		   "%s.%s", ((UCommand_TREE*)morph)->callid->str(), pname->name->str());
 
 	  ((UCommand_TREE*)morph)->callid->store(
 		   new UVariable(((UCommand_TREE*)morph)->callid->str(),
@@ -2374,7 +2469,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	}
       }
 
-      return( status = UMORPH );
+      return ( status = UMORPH );
     }
     else
       if ((connection->receiving) &&
@@ -2384,45 +2479,52 @@ UCommand_EXPR::execute(UConnection *connection)
     ////// module-defined /////
 
     urbi::UTable::iterator hmfi = urbi::functionmap.find(funname->str());
-    if (hmfi != urbi::functionmap.end()) {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi = hmfi->second.begin();
- 	  cbi != hmfi->second.end();
-	  cbi++) {
+    if (hmfi != urbi::functionmap.end())
+    {
+      for (std::list<urbi::UGenericCallback*>::iterator cbi =
+           hmfi->second.begin();
+           cbi != hmfi->second.end();
+           cbi++)
+      {
+        if ( ( (expression->parameters) &&
+               (expression->parameters->size() == (*cbi)->nbparam)) ||
+             ( (!expression->parameters) && (!(*cbi)->nbparam)) )
+        {
+          // here you could spawn a thread... if only Aperios knew how to!
+          urbi::UList tmparray;
+          for (UNamedParameters *pvalue = expression->parameters;
+               pvalue != 0;
+               pvalue = pvalue->next)
+          {
+            UValue* valparam = pvalue->expression->eval(this, connection);
+            if (!valparam)
+            {
+              connection->send("!!! EXPR evaluation failed\n",
+                               getTag().c_str());
+              return (status = UCOMPLETED);
+            }
+            // urbi::UValue do not see ::UValue,
+            // so it must be valparam who does the job.
+            urbi::UValue *tmpvalue = valparam->urbiValue();
 
-  	if ( ( (expression->parameters) &&
-   	      (expression->parameters->size() == (*cbi)->nbparam)) ||
-    	    ( (!expression->parameters) && (!(*cbi)->nbparam)) ) {
+            tmparray.array.push_back(tmpvalue);
+          }
 
-  	  // here you could spawn a thread... if only Aperios knew how to!
-  	  urbi::UList tmparray;
-  	  for (UNamedParameters *pvalue = expression->parameters;
-   	      pvalue != 0;
-    	      pvalue = pvalue->next) {
+          UValue ret = (*cbi)->__evalcall(tmparray);
 
-	    UValue* valparam = pvalue->expression->eval(this,connection);
-	    if (!valparam) {
-
-	      connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
-	      return (status = UCOMPLETED);
-	    }
-	    urbi::UValue *tmpvalue = valparam->urbiValue(); // urbi::UValue do not see ::UValue, so it must be valparam who does the job.
-	    tmparray.array.push_back(tmpvalue);
-	  }
-
-	  UValue ret = (*cbi)->__evalcall(tmparray);
-
-	  if (ret.dataType != DATA_VOID) {
-		  connection->sendPrefix(getTag().c_str());
-		  ret.echo(connection);
-	  }
-	  if ((ret.dataType!=DATA_BINARY) && (ret.dataType!=DATA_VOID))
-	    connection->endline();
-	  return( status = UCOMPLETED );
-	}
+          if (ret.dataType != DATA_VOID)
+          {
+            connection->sendPrefix(getTag().c_str());
+            ret.echo(connection);
+          }
+          if ((ret.dataType!=DATA_BINARY) && (ret.dataType!=DATA_VOID))
+            connection->endline();
+          return ( status = UCOMPLETED );
+        }
       }
 
-      connection->send("!!! Invalid function call\n",getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send("!!! Invalid function call\n", getTag().c_str());
+      return ( status = UCOMPLETED );
     }
   }
 
@@ -2434,41 +2536,22 @@ UCommand_EXPR::execute(UConnection *connection)
     return (status = UCOMPLETED);
   }
 
-  /*
-  // Legacy code: group morphing should not be protected anymore against unknown
-  // identifier messages:
-  UValue *ret;
-  if (expression->variablename)
-    ret = expression->eval(this,connection, expression->variablename->fromGroup);
-  else
-    ret = expression->eval(this,connection);
-
-  if (ret==0) {
-    if ((expression) && (expression->variablename))
-    {
-      if (!expression->variablename->fromGroup)
-	connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
-    }
-    else
-      connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
-    return (status = UCOMPLETED);
-  }
-  */
-
   // Expression morphing (currently used for load only)
-  if (morph) {
+  if (morph)
+  {
     delete ret;
-    return( status = UMORPH);
+    return ( status = UMORPH);
   }
 
-  if (ret->dataType != DATA_VOID) {
+  if (ret->dataType != DATA_VOID)
+  {
     connection->sendPrefix(getTag().c_str());
     ret->echo(connection);
   }
   if ((ret->dataType!=DATA_BINARY) && (ret->dataType != DATA_VOID))
     connection->endline();
   delete ret;
-  return(status = UCOMPLETED);
+  return (status = UCOMPLETED);
 }
 
 //! UCommand subclass hard copy function
@@ -2489,17 +2572,21 @@ UCommand_EXPR::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("EXPR:\n");
 
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND EXPR ------\n",tabb);
+  ::urbiserver->debug("%sEND EXPR ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_RETURN);
@@ -2525,23 +2612,25 @@ UCommand_RETURN::~UCommand_RETURN()
 UCommandStatus
 UCommand_RETURN::execute(UConnection *connection)
 {
-  if (!connection->stack.empty()) {
+  if (!connection->stack.empty())
+  {
     connection->returnMode = true;
-    if (expression) {
-      UValue *value = expression->eval(this,connection);
-      if (!value) {
-
-	connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
-	return (status = UCOMPLETED);
+    if (expression)
+    {
+      UValue *value = expression->eval(this, connection);
+      if (!value)
+      {
+        connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+        return (status = UCOMPLETED);
       }
 
       new UVariable(connection->stack.front()->str(),
-		    "__result__",
-		    value);
+                    "__result__",
+                    value);
     }
-	else
-	  new UVariable(connection->stack.front()->str(),
-					"__result__",new UValue());
+    else
+      new UVariable(connection->stack.front()->str(),
+                    "__result__", new UValue());
   }
   return ( status = UCOMPLETED );
 }
@@ -2564,17 +2653,21 @@ UCommand_RETURN::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("RETURN:\n");
 
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND RETURN ------\n",tabb);
+  ::urbiserver->debug("%sEND RETURN ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_ECHO);
@@ -2605,17 +2698,20 @@ UCommand_ECHO::~UCommand_ECHO()
 UCommandStatus
 UCommand_ECHO::execute(UConnection *connection)
 {
-  UValue* ret = expression->eval(this,connection);
+  UValue* ret = expression->eval(this, connection);
 
-  if (ret==0) {
-    connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
+  if (ret==0)
+  {
+    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 
     return (status = UCOMPLETED);
   }
 
   UNamedParameters *param = parameters;
-  while (param) {
-    if (param->name->equal("connection")) {
+  while (param)
+  {
+    if (param->name->equal("connection"))
+    {
       UValue *e1 = param->expression->eval(this, connection);
       if ((e1) && (e1->dataType == DATA_STRING))
 	connectionTag = new UString(e1->str);
@@ -2625,7 +2721,8 @@ UCommand_ECHO::execute(UConnection *connection)
     param = param->next;
   }
 
-  if (!connectionTag) {
+  if (!connectionTag)
+  {
     connection->send("*** ", getTag().c_str());
     ret->echo(connection, true);
     connection->endline();
@@ -2636,7 +2733,8 @@ UCommand_ECHO::execute(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator retr = connection->server->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr =
+         connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
       if  ( ((*retr)->isActive()) &&
@@ -2644,19 +2742,19 @@ UCommand_ECHO::execute(UConnection *connection)
 	      (connectionTag->equal("all")) ||
 	      ( (!(*retr)->connectionTag->equal(connection->connectionTag)) &&
 		(connectionTag->equal("other")) ) )
-	    ) {
+	    )
+      {
 	ok = true;
-
-    	(*retr)->send("*** ", getTag().c_str());
+	(*retr)->send("*** ", getTag().c_str());
 	ret->echo((*retr), true);
 	(*retr)->endline();
       }
 
     if (!ok)
       {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! %s: no such connection\n",connectionTag->str());
-	connection->send(tmpbuffer,getTag().c_str());
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! %s: no such connection\n", connectionTag->str());
+	connection->send(tmpbuffer, getTag().c_str());
       }
   }
 
@@ -2685,18 +2783,26 @@ UCommand_ECHO::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("ECHO:\n");
 
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
-  if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
+  if (parameters)
+  {
+    ::urbiserver->debug("%s  Param:{", tabb);
+    parameters->print(); ::urbiserver->debug("}\n");
+  };
 
-  ::urbiserver->debug("%sEND ECHO ------\n",tabb);
+  ::urbiserver->debug("%sEND ECHO ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_NEW);
@@ -2739,25 +2845,25 @@ UCommand_NEW::execute(UConnection *connection)
   if (remoteNew)
     {
       ow = ::urbiserver->objWaittab.find(id->str());
-      if (ow!=::urbiserver->objWaittab.end()) return(status = URUNNING);
+      if (ow!=::urbiserver->objWaittab.end()) return (status = URUNNING);
     }
 
   morph = 0;
   char tmpprefixnew[1024];
 
-	if (!id)
-	{ // init id
-		if (!varname->nostruct)
-		{
-			snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-				       "!!! Object names cannot be nested in Kernel 1\n");
-			connection->send(tmpbuffer,getTag().c_str());
+  if (!id)
+  { // init id
+    if (!varname->nostruct)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! Object names cannot be nested in Kernel 1\n");
+      connection->send(tmpbuffer, getTag().c_str());
 
       return ((status = UCOMPLETED));
-		}
+    }
     UString* name = varname->buildFullname(this, connection, false);
-		id = new UString(name->str());
-	}
+    id = new UString(name->str());
+  }
 
   if (!id)
     return ((status = UCOMPLETED));
@@ -2766,9 +2872,9 @@ UCommand_NEW::execute(UConnection *connection)
 
   if (id->equal(obj))
   {
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	 "!!! Object %s cannot new itself\n",obj->str());
-    connection->send(tmpbuffer,getTag().c_str());
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	 "!!! Object %s cannot new itself\n", obj->str());
+    connection->send(tmpbuffer, getTag().c_str());
 
     return ((status = UCOMPLETED));
   }
@@ -2784,9 +2890,9 @@ UCommand_NEW::execute(UConnection *connection)
       objit = ::urbiserver->objtab.find(objname);
       if (objit == ::urbiserver->objtab.end())  {
 
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! Unkown object %s\n",obj->str());
-	connection->send(tmpbuffer,getTag().c_str());
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! Unkown object %s\n", obj->str());
+	connection->send(tmpbuffer, getTag().c_str());
 	return ( status = UCOMPLETED );
       }
     }
@@ -2798,7 +2904,7 @@ UCommand_NEW::execute(UConnection *connection)
   // EXTERNAL
   if ((objit->second->binder)&& (!remoteNew))
     {
-      snprintf(tmpprefixnew,1024,"[4,\"%s\",\"%s\"]\n",
+      snprintf(tmpprefixnew, 1024, "[4,\"%s\",\"%s\"]\n",
 	       id->str(),
 	       objit->second->device->str());
 
@@ -2809,14 +2915,14 @@ UCommand_NEW::execute(UConnection *connection)
 	   it2++)
 	{
 	  (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*it2)->c->send((const ubyte*)tmpprefixnew,strlen(tmpprefixnew));
+	  (*it2)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
 	  nb++;
 	}
       ow = ::urbiserver->objWaittab.find(id->str());
       if (ow!=::urbiserver->objWaittab.end())
 	(*ow).second->nb += nb;
       else {
-	UWaitCounter *wc = new UWaitCounter(id,nb);
+	UWaitCounter *wc = new UWaitCounter(id, nb);
 	ASSERT(wc!=0) ::urbiserver->objWaittab[wc->id->str()] = wc;
       }
       // initiate remote new waiting
@@ -2828,7 +2934,8 @@ UCommand_NEW::execute(UConnection *connection)
     objit->second->internalBinder->copy(std::string(id->str()));
 
   HMobjtab::iterator idit = ::urbiserver->objtab.find(id->str());
-  if (idit == ::urbiserver->objtab.end()) {
+  if (idit == ::urbiserver->objtab.end())
+  {
     newobj = new UObj(id);
     creation = true;
   }
@@ -2836,20 +2943,21 @@ UCommand_NEW::execute(UConnection *connection)
     newobj = idit->second;
 
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
-      newobj->up.end()) {
-
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! %s has already inherited from %s\n",id->str(),obj->str());
+      newobj->up.end())
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	     "!!! %s has already inherited from %s\n", id->str(), obj->str());
     if (creation) delete newobj;
-    connection->send(tmpbuffer,getTag().c_str());
+    connection->send(tmpbuffer, getTag().c_str());
     return ( status = UCOMPLETED );
   }
 
   newobj->up.push_back(objit->second);
   objit->second->down.push_back(newobj);
 
-  // Here the policy of "a = new b" which does not call init could be enforced with 'noinit'
-  // Currentl, after discussions, all call to new tries to start init.
+  // Here the policy of "a = new b" which does not call init could be
+  // enforced with 'noinit'
+  // Currently, after discussions, all call to new tries to start init.
   // if ((!parameters) && (noinit)) return (status = UCOMPLETED);
 
   // init constructor call
@@ -2866,80 +2974,96 @@ UCommand_NEW::execute(UConnection *connection)
 
   oss << "{ ";
 
-	bool component = false;
-	UFunction* initfun = 0;
+  bool component = false;
+  UFunction* initfun = 0;
   // wait for init created if external component
   if ((objit->second->binder) || (objit->second->internalBinder))
-	{
+  {
     oss << "waituntil(isdef(" << id->str() << ".init)) | ";
-		component = true;
-	}
-	else
-	{
-		// detects if init exists for the object or somewhere in the hierarchy
-		bool ambiguous;
-	  initfun = newobj->searchFunction("init",ambiguous);
-	}
+    component = true;
+  }
+  else
+  {
+    // detects if init exists for the object or somewhere in the hierarchy
+    bool ambiguous;
+    initfun = newobj->searchFunction("init", ambiguous);
+  }
 
-	if (parameters || (initfun != 0) || component) {
+  if (parameters || (initfun != 0) || component)
+  {
+    oss << tmpval << UU << "=" << id->str() << ".init(";
 
-		oss << tmpval << UU << "=" << id->str() << ".init(";
+    for (UNamedParameters *pvalue = parameters;
+         pvalue != 0;
+         pvalue = pvalue->next)
+    {
+      UValue* valparam = pvalue->expression->eval(this, connection);
+      if (!valparam)
+      {
+        connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+        snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                 "{delete %s}", id->str());
 
-		for (UNamedParameters *pvalue = parameters;
-				pvalue != 0;
-				pvalue = pvalue->next) {
+        morph = (UCommand*)
+          new UCommand_EXPR
+          (new UExpression
+           (EXPR_FUNCTION,
+            new UVariableName
+            (new UString("global"),
+             new UString("exec"),
+             false,
+             (UNamedParameters *)0),
+            new UNamedParameters
+            (new UExpression
+             (EXPR_VALUE,
+              new UString(tmpbuffer)
+             )
+            )
+           )
+          );
+        return (status = UMORPH);
+      }
 
-			UValue* valparam = pvalue->expression->eval(this,connection);
-			if (!valparam) {
+      oss << valparam->echo();
+      if (pvalue->next) oss << ",";
+    }
 
-				connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
-				snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-						"{delete %s}",id->str());
-
-				morph = (UCommand*)
-					new UCommand_EXPR(
-							new UExpression(
-								EXPR_FUNCTION,
-								new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
-								new UNamedParameters(
-									new UExpression(
-										EXPR_VALUE,
-										new UString(tmpbuffer)
-										)
-							 		)
-								)
-							);
-				return (status = UMORPH);
-			}
-
-			oss << valparam->echo();
-			if (pvalue->next) oss << ",";
-		}
-
-		oss << ") | if (!isdef(" << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
-			<< tmpval << UU << ")))) { "
-			<< "echo \"Error: Constructor failed, objet deleted\";"
-			<< " delete " << id->str() << "} | if (isdef(" << tmpval << UU << ")) delete " << tmpval << UU
-			<< "}";
-	}
-	else
-		oss << "noop }";
+    oss << ") | if (!isdef("
+      << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
+      << tmpval << UU << ")))) { "
+      << "echo \"Error: Constructor failed, objet deleted\";"
+      << " delete "
+      << id->str() << "} | if (isdef("
+      << tmpval << UU << ")) delete " << tmpval << UU
+      << "}";
+  }
+  else
+    oss << "noop }";
 
   morph = (UCommand*)
-    new UCommand_EXPR(
-		      new UExpression(
-				      EXPR_FUNCTION,
-				      new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
-				      new UNamedParameters(
-							   new UExpression(
-									   EXPR_VALUE,
-									   new UString(oss.str().c_str())
-									   )
-							   )
-				      )
-		      );
+    new UCommand_EXPR
+    (
+     new UExpression
+     (
+      EXPR_FUNCTION,
+      new UVariableName
+      (
+       new UString("global"),
+       new UString("exec"),
+       false,
+       (UNamedParameters *)0),
+      new UNamedParameters
+      (
+       new UExpression
+       (
+        EXPR_VALUE,
+        new UString(oss.str().c_str())
+       )
+      )
+     )
+    );
 
-  return( status = UMORPH );
+  return ( status = UMORPH );
 }
 
 
@@ -2964,19 +3088,29 @@ UCommand_NEW::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("NEW:\n");
 
-  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n",tabb,id->str());}
-  if (obj)  { ::urbiserver->debug("%s  Obj:[%s]\n",tabb,obj->str());}
-  if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};
+  if (id)
+  {
+    ::urbiserver->debug("%s  Id:[%s]\n", tabb, id->str());
+  }
+  if (obj)
+  {
+    ::urbiserver->debug("%s  Obj:[%s]\n", tabb, obj->str());
+  }
+  if (parameters)
+  {
+    ::urbiserver->debug("%s  Param:{", tabb);
+    parameters->print(); ::urbiserver->debug("}\n");
+  };
 
-  ::urbiserver->debug("%sEND NEW ------\n",tabb);
+  ::urbiserver->debug("%sEND NEW ------\n", tabb);
 }
 
 
@@ -3011,12 +3145,13 @@ UCommand_ALIAS::execute(UConnection *connection)
   //alias setting
   if (aliasname && id)
     {
-      UString *id0 = aliasname->buildFullname(this, connection,false);
-      UString *id1 = id->buildFullname(this, connection,false);
+      UString *id0 = aliasname->buildFullname(this, connection, false);
+      UString *id1 = id->buildFullname(this, connection, false);
       if (id0 && id1)
-	if (!connection->server->addAlias(id0->str(),id1->str()))
+	if (!connection->server->addAlias(id0->str(), id1->str()))
 	  {
-	    connection->send("!!! Circular alias detected, abort command.\n",getTag().c_str());
+	    connection->send("!!! Circular alias detected, abort command.\n",
+                             getTag().c_str());
 	    return (status = UCOMPLETED);
 	  }
 
@@ -3031,10 +3166,10 @@ UCommand_ALIAS::execute(UConnection *connection)
 	    retr != connection->server->aliastab.end();
 	    retr++)
 	{
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		   "*** %25s -> %s\n",
-		   (*retr).first,(*retr).second->str());
-	  connection->send(tmpbuffer,getTag().c_str());
+		   (*retr).first, (*retr).second->str());
+	  connection->send(tmpbuffer, getTag().c_str());
 	}
 
       return ( status = UCOMPLETED );
@@ -3043,14 +3178,15 @@ UCommand_ALIAS::execute(UConnection *connection)
   // specific alias query
   if (aliasname && !id && (!eraseit))
     {
-      UString *id0 = aliasname->buildFullname(this, connection,false);
-      HMaliastab::iterator retr = connection->server->aliastab.find(id0->str());
+      UString *id0 = aliasname->buildFullname(this, connection, false);
+      HMaliastab::iterator retr =
+        connection->server->aliastab.find(id0->str());
       if (retr != connection->server->aliastab.end())
 	{
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		   "*** %25s -> %s\n",
-		   (*retr).first,(*retr).second->str());
-	  connection->send(tmpbuffer,getTag().c_str());
+		   (*retr).first, (*retr).second->str());
+	  connection->send(tmpbuffer, getTag().c_str());
 	}
       return ((status = UCOMPLETED));
     }
@@ -3058,8 +3194,9 @@ UCommand_ALIAS::execute(UConnection *connection)
   // unalias query
   if (aliasname && !id && (eraseit))
     {
-      UString *id0 = aliasname->buildFullname(this, connection,false);
-      HMaliastab::iterator retr = connection->server->aliastab.find(id0->str());
+      UString *id0 = aliasname->buildFullname(this, connection, false);
+      HMaliastab::iterator retr =
+        connection->server->aliastab.find(id0->str());
       if (retr != connection->server->aliastab.end())
 	connection->server->aliastab.erase(retr);
 
@@ -3082,29 +3219,34 @@ UCommand_ALIAS::copy()
 
 //! Print the command
 /*! This function is for debugging purpose only.
-    It is not safe, efficient or crash proof. A better version will come later.
-*/
+  It is not safe, efficient or crash proof. A better version will come later.
+ */
 void
 UCommand_ALIAS::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
-  ::urbiserver->debug("ALIAS (%d) :\n",(int)eraseit);
+  ::urbiserver->debug("ALIAS (%d) :\n", (int)eraseit);
 
-   if (aliasname) { ::urbiserver->debug("  %s  Aliasname:",tabb); aliasname->print(); ::urbiserver->debug("\n");};
-   if (id) { ::urbiserver->debug("  %s  id:",tabb); id->print(); ::urbiserver->debug("\n");};
+  if (aliasname)
+  {
+    ::urbiserver->debug("  %s  Aliasname:", tabb);
+    aliasname->print(); ::urbiserver->debug("\n");
+  };
+  if (id)
+  {
+    ::urbiserver->debug("  %s  id:", tabb);
+    id->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND ALIAS ------\n",tabb);
+  ::urbiserver->debug("%sEND ALIAS ------\n", tabb);
 }
-
-
-
 
 
 MEMORY_MANAGER_INIT(UCommand_GROUP);
@@ -3137,7 +3279,8 @@ UCommand_GROUP::execute(UConnection *connection)
   HMgrouptab::iterator hma;
   UGroup *g;
 
-  if (parameters) {
+  if (parameters)
+  {
     hma = ::urbiserver->grouptab.find(id->str());
     if (hma != ::urbiserver->grouptab.end())
       g = hma->second;
@@ -3148,8 +3291,10 @@ UCommand_GROUP::execute(UConnection *connection)
     if (grouptype==0)  g->members.clear();
 
     UNamedParameters* param = parameters;
-    while (param) {
-      if (grouptype == 2) {//del
+    while (param)
+    {
+      if (grouptype == 2)
+      {//del
 	for (std::list<UString*>::iterator it = g->members.begin();
 	    it != g->members.end();
 	    )
@@ -3175,44 +3320,47 @@ UCommand_GROUP::execute(UConnection *connection)
   }
 
   // full query
-  if (!id) {
+  if (!id)
+  {
     for ( HMgrouptab::iterator retr =
 	connection->server->grouptab.begin();
 	retr != connection->server->grouptab.end();
-	retr++) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	retr++)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	  "*** %s = {",
 	  (*retr).first);
       for (std::list<UString*>::iterator it = (*retr).second->members.begin();
 	   it !=  (*retr).second->members.end();
-	   ) {
+	   )
+      {
 	strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
 	it++;
 	if (it != (*retr).second->members.end())
-	  strncat(tmpbuffer,",",UCommand::MAXSIZE_TMPMESSAGE);
+	  strncat(tmpbuffer, ",", UCommand::MAXSIZE_TMPMESSAGE);
       }
-      strncat(tmpbuffer,"}\n",UCommand::MAXSIZE_TMPMESSAGE);
-      connection->send(tmpbuffer,getTag().c_str());
+      strncat(tmpbuffer, "}\n", UCommand::MAXSIZE_TMPMESSAGE);
+      connection->send(tmpbuffer, getTag().c_str());
     }
     return (status = UCOMPLETED);
   }
 
   // specific query
   HMgrouptab::iterator retr = connection->server->grouptab.find(id->str());
-  if (retr !=  connection->server->grouptab.end()) {
-
+  if (retr !=  connection->server->grouptab.end())
+  {
     UNamedParameters *ret = 0;
 
     std::list<UString*>::iterator it = (*retr).second->members.begin();
-    if (it !=  (*retr).second->members.end()) {
+    if (it !=  (*retr).second->members.end())
+    {
       ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
 	   (UNamedParameters*)0);
       it++;
     }
 
-    while (it !=  (*retr).second->members.end()) {
-
+    while (it !=  (*retr).second->members.end())
+    {
       ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
 	  ret);
       it++;
@@ -3248,16 +3396,16 @@ UCommand_GROUP::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("GROUP :\n");
-  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n",tabb,id->str());}
+  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n", tabb, id->str());}
 
-  ::urbiserver->debug("%sEND GROUP ------\n",tabb);
+  ::urbiserver->debug("%sEND GROUP ------\n", tabb);
 }
 
 
@@ -3289,115 +3437,117 @@ UCommand_OPERATOR_ID::~UCommand_OPERATOR_ID()
 UCommandStatus
 UCommand_OPERATOR_ID::execute(UConnection *connection)
 {
-  if (strcmp(oper->str(),"stop")==0) {
-
+  if (strcmp(oper->str(), "stop")==0)
+  {
     if (status == URUNNING)
       return ( status = UCOMPLETED);
     connection->server->mark(id);
     connection->server->somethingToDelete = true;
-    return( status = URUNNING );
+    return ( status = URUNNING );
   }
 
-  if (strcmp(oper->str(),"killall")==0) {
-
+  if (strcmp(oper->str(), "killall")==0)
+  {
     bool ok = false;
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator retr = connection->server->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr =
+         connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
       if  ( ((*retr)->isActive()) &&
-	    ((*retr)->connectionTag->equal(id))) {
+	    ((*retr)->connectionTag->equal(id)))
+      {
 	ok = true;
 	(*retr)->killall = true;
       }
 
-    if (!ok) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! %s: no such connection\n",id->str());
-      connection->send(tmpbuffer,getTag().c_str());
+    if (!ok)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	       "!!! %s: no such connection\n", id->str());
+      connection->send(tmpbuffer, getTag().c_str());
 
       return (status = UCOMPLETED);
     }
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"disconnect")==0) {
-
+  if (strcmp(oper->str(), "disconnect")==0)
+  {
     bool ok = false;
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator retr = connection->server->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr =
+         connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
       if  ( ((*retr)->isActive()) &&
-	    ((*retr)->connectionTag->equal(id))) {
+	    ((*retr)->connectionTag->equal(id)))
+      {
 	ok = true;
 	(*retr)->disactivate();
 	(*retr)->closeConnection();
       }
 
-    if (!ok) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! %s: no such connection\n",id->str());
-      connection->send(tmpbuffer,getTag().c_str());
+    if (!ok)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	       "!!! %s: no such connection\n", id->str());
+      connection->send(tmpbuffer, getTag().c_str());
 
       return (status = UCOMPLETED);
     }
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"block")==0) {
-
+  if (strcmp(oper->str(), "block")==0)
+  {
     if (status == URUNNING)
       return ( status = UCOMPLETED);
 
-    if (strcmp(id->str(),UNKNOWN_TAG)==0) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (strcmp(id->str(), UNKNOWN_TAG)==0)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! cannot block 'notag'\n");
-      connection->send(tmpbuffer,getTag().c_str());
+      connection->send(tmpbuffer, getTag().c_str());
     }
-    else {
+    else
       connection->server->block(id->str());
-    }
 
-    return( status = URUNNING );
+    return ( status = URUNNING );
   }
 
-  if (strcmp(oper->str(),"unblock")==0) {
-
+  if (strcmp(oper->str(), "unblock")==0)
+  {
    connection->server->unblock(id->str());
 
-    return( status = UCOMPLETED );
+   return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"freeze")==0) {
-
+  if (strcmp(oper->str(), "freeze")==0)
+  {
     if (status == URUNNING)
       return ( status = UCOMPLETED);
 
-    if (strcmp(id->str(),UNKNOWN_TAG)==0) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (strcmp(id->str(), UNKNOWN_TAG)==0)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! cannot freeze 'notag'\n");
-      connection->send(tmpbuffer,getTag().c_str());
+      connection->send(tmpbuffer, getTag().c_str());
     }
-    else {
+    else
       connection->server->freeze(id->str());
-    }
 
-    return( status = URUNNING );
+    return ( status = URUNNING );
   }
 
-  if (strcmp(oper->str(),"unfreeze")==0) {
-
-
-      connection->server->unfreeze(id->str());
-
-    return( status = UCOMPLETED );
+  if (strcmp(oper->str(), "unfreeze")==0)
+  {
+    connection->server->unfreeze(id->str());
+    return ( status = UCOMPLETED );
   }
 
   return ( status = UCOMPLETED );
@@ -3422,17 +3572,16 @@ UCommand_OPERATOR_ID::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  ::urbiserver->debug("OPERATOR_ID %s:\n", oper->str());
 
-  ::urbiserver->debug("OPERATOR_ID %s:\n",oper->str());
+  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n", tabb, id->str());}
 
-  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n",tabb,id->str());}
-
-  ::urbiserver->debug("%sEND OPERATOR_ID ------\n",tabb);
+  ::urbiserver->debug("%sEND OPERATOR_ID ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
@@ -3463,18 +3612,20 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
   if (!variablename) return ( status = UCOMPLETED );
   variablename->buildFullname(this, connection);
 
-  if (variablename->nostruct) {
-    UVariableName* recreatevar = new UVariableName(variablename->getMethod()->copy(),
-				    new UString("load"),
-				    variablename->rooted,
-				    (UNamedParameters*)0);
+  if (variablename->nostruct)
+  {
+    UVariableName* recreatevar =
+      new UVariableName(variablename->getMethod()->copy(),
+                        new UString("load"),
+                        variablename->rooted,
+                        (UNamedParameters*)0);
     delete variablename;
     variablename = recreatevar;
     variablename->buildFullname(this, connection);
   }
 
   // broadcasting
-  if (scanGroups(&UCommand::refVarName,true)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName, true)) return ( status = UMORPH );
 
   // Main execution
   if (cmd == -1)
@@ -3516,17 +3667,17 @@ UCommand_DEVICE_CMD::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
-  ::urbiserver->debug("DEVICE_CMD %s:\n",variablename->device->str());
+  ::urbiserver->debug("DEVICE_CMD %s:\n", variablename->device->str());
 
-  if (cmd)  { ::urbiserver->debug("%s  Cmd:[%f]\n",tabb,cmd);}
+  if (cmd)  { ::urbiserver->debug("%s  Cmd:[%f]\n", tabb, cmd);}
 
-  ::urbiserver->debug("%sEND DEVICE_CMD ------\n",tabb);
+  ::urbiserver->debug("%sEND DEVICE_CMD ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
@@ -3555,20 +3706,22 @@ UCommand_OPERATOR_VAR::~UCommand_OPERATOR_VAR()
 UCommandStatus
 UCommand_OPERATOR_VAR::execute(UConnection *connection)
 {
-  UString *fullname = variablename->buildFullname(this,connection);
-  if (!fullname) return( status = UCOMPLETED );
+  UString *fullname = variablename->buildFullname(this, connection);
+  if (!fullname) return ( status = UCOMPLETED );
 
-  if ( (strcmp(oper->str(),"undef")==0) ||
-       (strcmp(oper->str(),"delete")==0) ) {
-
-    if (status != URUNNING) {
-
+  if ( (strcmp(oper->str(), "undef")==0) ||
+       (strcmp(oper->str(), "delete")==0) )
+  {
+    if (status != URUNNING)
+    {
       variable = 0;
-      fun      = variablename->getFunction(this,connection);
-      if (!fun) {
-	variable = variablename->getVariable(this,connection);
+      fun = variablename->getFunction(this, connection);
+      if (!fun)
+      {
+	variable = variablename->getVariable(this, connection);
 
-	if ((!variable) && (variablename->nostruct)) {
+	if ((!variable) && (variablename->nostruct))
+        {
 	  UString* objname = variablename->getMethod();
 	  if (::urbiserver->variabletab.find(objname->str()) !=
 	      ::urbiserver->variabletab.end())
@@ -3576,64 +3729,68 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	}
       }
 
-      if ((!fun) && (!variable)) {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! identifier %s does not exist\n",fullname->str());
-	connection->send(tmpbuffer,getTag().c_str());
-	return( status = UCOMPLETED );
+      if ((!fun) && (!variable))
+      {
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! identifier %s does not exist\n", fullname->str());
+	connection->send(tmpbuffer, getTag().c_str());
+	return ( status = UCOMPLETED );
       }
     }
 
-    if (variable) {// undef variable
-
-      if (variable->toDelete) {
+    if (variable)
+    {// undef variable
+      if (variable->toDelete)
+      {
 	delete variable;
-	return( status = UCOMPLETED );
+	return ( status = UCOMPLETED );
       }
 
       // test if variable is an object with subclasses (and reject if yes)
       if ((variable->value) &&
 	  (variable->value->dataType == DATA_OBJ) &&
-	  (variable->value->str)) {
-
-       	HMobjtab::iterator idit = ::urbiserver->objtab.find(variable->value->str->str());
+	  (variable->value->str))
+      {
+	HMobjtab::iterator idit =
+          ::urbiserver->objtab.find(variable->value->str->str());
 	if ( (idit != ::urbiserver->objtab.end()) &&
- 	     (!idit->second->down.empty()) ) {
-
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	     (!idit->second->down.empty()) )
+        {
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	      "!!! This object has subclasses. Delete subclasses first.\n");
-	  connection->send(tmpbuffer,getTag().c_str());
-	  return( status = UCOMPLETED );
+	  connection->send(tmpbuffer, getTag().c_str());
+	  return ( status = UCOMPLETED );
 	}
       }
 
       // variable is not an object or it does not have subclasses
-      if ((variable->nbAssigns == 0) && (variable->uservar)) {
-
+      if ((variable->nbAssigns == 0) && (variable->uservar))
+      {
 	variable->toDelete = true;
-	return( status = URUNNING );
+	return ( status = URUNNING );
       }
-      else {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+      else
+      {
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! variable %s already in use or is a system var. Cannot delete.\n",
 		 fullname->str());
-	connection->send(tmpbuffer,getTag().c_str());
-	return( status = UCOMPLETED );
+	connection->send(tmpbuffer, getTag().c_str());
+	return ( status = UCOMPLETED );
       }
     }
 
-    if (fun) { //undef function
-
+    if (fun)
+    { //undef function
       connection->server->functiontab.erase(
 	     connection->server->functiontab.find(fullname->str()));
       connection->server->functiondeftab.erase(
 	     connection->server->functiondeftab.find(fullname->str()));
 
       delete fun;
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
     }
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
  //FIXME
@@ -3746,7 +3903,7 @@ tstr.str("");
 
     }
 
-    return(status = UCOMPLETED);
+    return (status = UCOMPLETED);
   }*/
 
   return ( status = UCOMPLETED );
@@ -3772,15 +3929,19 @@ UCommand_OPERATOR_VAR::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
-  ::urbiserver->debug("OPERATOR_VAR %s:\n",oper->str());
-  if (variablename) { ::urbiserver->debug("  %s  Variablename:",tabb); variablename->print(); ::urbiserver->debug("\n");};
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  ::urbiserver->debug("OPERATOR_VAR %s:\n", oper->str());
+  if (variablename)
+  {
+    ::urbiserver->debug("  %s  Variablename:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND OPERATOR_VAR ------\n",tabb);
+  ::urbiserver->debug("%sEND OPERATOR_VAR ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_BINDER);
@@ -3799,7 +3960,7 @@ UCommand_BINDER::UCommand_BINDER(UVariableName* objname,
   this->objname      = objname;
   this->binder       = binder;
   this->variablename = variablename;
-  this->type 	     = type;
+  this->type	     = type;
   this->nbparam	     = nbparam;
 }
 
@@ -3817,13 +3978,14 @@ UCommandStatus
 UCommand_BINDER::execute(UConnection *connection)
 {
   UObj* uobj;
-  UString *fullname = variablename->buildFullname(this,connection);
-  if (!fullname) return( status = UCOMPLETED );
+  UString *fullname = variablename->buildFullname(this, connection);
+  if (!fullname) return ( status = UCOMPLETED );
 
   UString *fullobjname = 0;
-  if (objname) {
+  if (objname)
+  {
     fullobjname = objname->id;
-    if (!fullobjname) return( status = UCOMPLETED );
+    if (!fullobjname) return ( status = UCOMPLETED );
   }
 
   if (type != 3) // not object binder
@@ -3837,39 +3999,49 @@ UCommand_BINDER::execute(UConnection *connection)
 
   UString *key = new UString(fullname);
 
-  switch (type) {
-
+  switch (type)
+  {
     case UBIND_VAR:
       {
-  	HMvariabletab::iterator it = ::urbiserver->variabletab.find(key->str());
-    	if (it == ::urbiserver->variabletab.end()) {
-
-	  UVariable *variable = new UVariable(key->str(), new UValue());
-	  variable->binder = new UBinder(fullobjname, fullname,
-	      mode,(UBindType)type, nbparam, connection);
-	}
-	else {
-	  if (it->second->binder)
-	    it->second->binder->addMonitor(fullobjname, connection);
-	  else
-	    it->second->binder = new UBinder(fullobjname, fullname,
-		mode,(UBindType)type, nbparam, connection);
-	}
+        HMvariabletab::iterator it =
+          ::urbiserver->variabletab.find(key->str());
+        if (it == ::urbiserver->variabletab.end())
+        {
+          UVariable *variable = new UVariable(key->str(), new UValue());
+          variable->binder = new UBinder(fullobjname, fullname,
+                                         mode,
+                                         (UBindType)type, nbparam, connection);
+        }
+        else
+        {
+          if (it->second->binder)
+            it->second->binder->addMonitor(fullobjname, connection);
+          else
+            it->second->binder = new UBinder(fullobjname, fullname,
+                                             mode,
+                                             (UBindType)type,
+                                             nbparam,
+                                             connection);
+        }
       }
       break;
 
     case UBIND_FUNCTION:
-      if ( ::urbiserver->functionbindertab.find(key->str()) == ::urbiserver->functionbindertab.end())
-	::urbiserver->functionbindertab[key->str()] = new UBinder(fullobjname, fullname,
-	    mode,(UBindType)type, nbparam, connection);
+      if ( ::urbiserver->functionbindertab.find(key->str())
+           == ::urbiserver->functionbindertab.end())
+	::urbiserver->functionbindertab[key->str()] =
+          new UBinder(fullobjname, fullname,
+	    mode, (UBindType)type, nbparam, connection);
       else
-	::urbiserver->functionbindertab[key->str()]->addMonitor(fullobjname, connection);
+	::urbiserver->functionbindertab[key->str()]->
+          addMonitor(fullobjname, connection);
       break;
 
     case UBIND_EVENT:
-      if ( ::urbiserver->eventbindertab.find(key->str()) == ::urbiserver->eventbindertab.end())
+      if ( ::urbiserver->eventbindertab.find(key->str())
+           == ::urbiserver->eventbindertab.end())
 	::urbiserver->eventbindertab[key->str()] = new UBinder(fullobjname, fullname,
-	    mode,(UBindType)type, nbparam, connection);
+	    mode, (UBindType)type, nbparam, connection);
       else
 	::urbiserver->eventbindertab[key->str()]->addMonitor(fullobjname, connection);
       break;
@@ -3883,7 +4055,12 @@ UCommand_BINDER::execute(UConnection *connection)
       if (uobj->binder)
 	uobj->binder->addMonitor(variablename->id, connection);
       else
-	uobj->binder=new UBinder(uobj->device, uobj->device,mode,(UBindType)type,0,connection);
+	uobj->binder = new UBinder(uobj->device,
+                                   uobj->device,
+                                   mode,
+                                   (UBindType)type,
+                                   0,
+                                   connection);
       break;
   }
 
@@ -3895,7 +4072,8 @@ UCommand*
 UCommand_BINDER::copy()
 {
   UCommand_BINDER *ret = new UCommand_BINDER(ucopy (objname),
-					     ucopy (binder),type,
+					     ucopy (binder),
+                                             type,
 					     ucopy (variablename),
 					     nbparam);
 
@@ -3912,17 +4090,26 @@ UCommand_BINDER::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
-  ::urbiserver->debug("BINDER %s type:%d nbparam:%d:\n",binder->str(),type,nbparam);
-  if (objname) { ::urbiserver->debug("  %s  objname:",tabb); objname->print(); ::urbiserver->debug("\n");};
-  if (variablename) { ::urbiserver->debug("  %s  Variablename:",tabb); variablename->print(); ::urbiserver->debug("\n");};
+  ::urbiserver->debug("BINDER %s type:%d nbparam:%d:\n",
+                      binder->str(), type, nbparam);
+  if (objname)
+  {
+    ::urbiserver->debug("  %s  objname:", tabb);
+    objname->print(); ::urbiserver->debug("\n");
+  };
+  if (variablename)
+  {
+    ::urbiserver->debug("  %s  Variablename:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND BINDER ------\n",tabb);
+  ::urbiserver->debug("%sEND BINDER ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR);
@@ -3952,69 +4139,73 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 {
 std::ostringstream tstr;
-  if (strcmp(oper->str(),"ping")==0) {
+  if (strcmp(oper->str(), "ping")==0)
+  {
 #ifdef ENABLE_BENCH
    dotest(connection->server);
 #endif
    tstr <<  "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
-connection->send(tstr.str().c_str(),getTag().c_str());
-    return( status = UCOMPLETED );
+    connection->send(tstr.str().c_str(), getTag().c_str());
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"commands")==0) {
+  if (strcmp(oper->str(), "commands")==0)
+  {
     if (connection->activeCommand)
       connection->activeCommand->print(0);
     ::urbiserver->debug("*** LOCAL TREE ***\n");
     if (connection->server->parser.commandTree)
       connection->server->parser.commandTree->print(0);
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"strict")==0) {
+  if (strcmp(oper->str(), "strict")==0)
+  {
     connection->server->defcheck = true;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"unstrict")==0) {
+  if (strcmp(oper->str(), "unstrict")==0)
+  {
     connection->server->defcheck = false;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"motoron")==0) {
-
+  if (strcmp(oper->str(), "motoron")==0)
+  {
     if (connection->receiving) return (status = URUNNING);
 
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! This command is no longer valid. Please use \"motor on\" instead\n");
-    connection->send(tmpbuffer,getTag().c_str());
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+     "!!! This command is no longer valid. Please use \"motor on\" instead\n");
+    connection->send(tmpbuffer, getTag().c_str());
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"motoroff")==0) {
+  if (strcmp(oper->str(), "motoroff")==0)
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+    "!!! This command is no longer valid. Please use \"motor off\" instead\n");
+    connection->send(tmpbuffer, getTag().c_str());
 
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! This command is no longer valid. Please use \"motor off\" instead\n");
-    connection->send(tmpbuffer,getTag().c_str());
-
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"stopall")==0) {
-
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+  if (strcmp(oper->str(), "stopall")==0)
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
      "*** All commands cleared\n");
-    connection->send(tmpbuffer,getTag().c_str());
+    connection->send(tmpbuffer, getTag().c_str());
     connection->server->stopall = true;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"undefall")==0) {
-
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+  if (strcmp(oper->str(), "undefall")==0)
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
      "*** All variables and functions cleared\n");
-    connection->send(tmpbuffer,getTag().c_str());
+    connection->send(tmpbuffer, getTag().c_str());
 
     for ( HMvariabletab::iterator retr =
 	    connection->server->variabletab.begin();
@@ -4025,103 +4216,95 @@ connection->send(tstr.str().c_str(),getTag().c_str());
     connection->server->functiontab.clear();
     connection->server->emittab.clear();
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
-  if (strcmp(oper->str(),"reset")==0) {
-
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-     "*** Reset in progress\n");
-    connection->send(tmpbuffer,getTag().c_str());
-
-/*    persistant = false;
-    morph = (UCommand*)
-      new UCommand_EXPR(
-	  new UExpression(
-	    EXPR_FUNCTION,
-	    new UVariableName(new UString("global"),new UString("exec"),false,(UNamedParameters *)0),
-	    new UNamedParameters(
-		new UExpression(
-		  EXPR_VALUE,
-		  new UString("undefall;stopall;")
-		  )
-		)
-	    )
-	  );
-*/
+  if (strcmp(oper->str(), "reset")==0)
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+             "*** Reset in progress\n");
+    connection->send(tmpbuffer, getTag().c_str());
     ::urbiserver->reseting = true;
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"devices")==0) {
+  if (strcmp(oper->str(), "devices")==0)
+  {
+    snprintf(tmpbuffer,
+             UCommand::MAXSIZE_TMPMESSAGE,
+             "*** devices is deprecated. Use 'group objects' instead.\n");
+    connection->send(tmpbuffer, getTag().c_str());
 
-
-    snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-     "*** devices is deprecated. Use 'group objects' instead.\n");
-    connection->send(tmpbuffer,getTag().c_str());
-
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
   UString* fullname;
 
-  if (strcmp(oper->str(),"vars")==0) {
+  if (strcmp(oper->str(), "vars")==0)
+  {
     for ( HMvariabletab::iterator retr =
-	    connection->server->variabletab.begin();
-	  retr != connection->server->variabletab.end();
-	  retr++) {
-
+          connection->server->variabletab.begin();
+          retr != connection->server->variabletab.end();
+          retr++)
+    {
       fullname = (*retr).second->varname;
-      if (fullname) {
-	std::ostringstream tstr;
-	switch ((*retr).second->value->dataType) {
+      if (fullname)
+      {
+        std::ostringstream tstr;
+        switch ((*retr).second->value->dataType)
+        {
+          case DATA_NUM:
+            tstr << "*** "
+              << fullname->str() << " = "<< (*retr).second->value->val
+              <<'\n';
+            break;
 
-	case DATA_NUM:
-	  tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
-	    <<'\n';
-	  break;
+          case DATA_STRING:
+            tstr << "*** "
+              << fullname->str() << " = " << (*retr).second->value->str->str()
+              <<'\n';
+            break;
 
-	case DATA_STRING:
-	  tstr << "*** " << fullname->str() << " = " << (*retr).second->value->str->str()
-	    <<'\n';
-	  break;
+          case DATA_BINARY:
+            if ((*retr).second->value->refBinary)
+              tstr <<"*** "<<fullname->str()<<" = BIN "<<
+                (*retr).second->value->refBinary->ref()->bufferSize<<'\n';
+            else
+              tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
+            break;
 
-	case DATA_BINARY:
-	  if ((*retr).second->value->refBinary)
-	    tstr <<"*** "<<fullname->str()<<" = BIN "<<
-	      (*retr).second->value->refBinary->ref()->bufferSize<<'\n';
-	  else
-	    tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
-	  break;
+          default:
+            tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
+        } // end switch
 
-	default:
-	  tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
-	} // end switch
-
-	connection->send(tstr.str().c_str(),getTag().c_str());
+        connection->send(tstr.str().c_str(), getTag().c_str());
       }
     }
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"uservars")==0) {
+  if (strcmp(oper->str(), "uservars")==0)
+  {
     for ( HMvariabletab::iterator retr =
 	    connection->server->variabletab.begin();
 	  retr != connection->server->variabletab.end();
-	  retr++) {
-
+	  retr++)
+    {
       fullname = (*retr).second->varname;
-      if ((*retr).second->uservar) {
+      if ((*retr).second->uservar)
+      {
 	std::ostringstream tstr;
-	switch ((*retr).second->value->dataType) {
+	switch ((*retr).second->value->dataType)
+        {
 	  case DATA_NUM:
 	    tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
 	      <<'\n';
 	    break;
 
 	  case DATA_STRING:
-	    tstr << "*** " << fullname->str() << " = " << (*retr).second->value->str->str()
+	    tstr << "*** "
+              << fullname->str() << " = " << (*retr).second->value->str->str()
 	      <<'\n';
 	    break;
 
@@ -4134,7 +4317,9 @@ connection->send(tstr.str().c_str(),getTag().c_str());
 	    break;
 
 	   case DATA_OBJ:
-	      tstr << "*** " << fullname->str() << " = OBJ " << (*retr).second->value->str->str()
+	      tstr << "*** "
+                << fullname->str()
+                << " = OBJ " << (*retr).second->value->str->str()
 	      <<'\n';
 	    break;
 
@@ -4142,25 +4327,28 @@ connection->send(tstr.str().c_str(),getTag().c_str());
 	    tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
 	} // end switch
 
-	connection->send(tstr.str().c_str(),getTag().c_str());
+	connection->send(tstr.str().c_str(), getTag().c_str());
       }
     }
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"debugon")==0) {
+  if (strcmp(oper->str(), "debugon")==0)
+  {
     connection->server->debugOutput = true;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"connections")==0) {
+  if (strcmp(oper->str(), "connections")==0)
+  {
 
-    for (std::list<UConnection*>::iterator retr = ::urbiserver->connectionList.begin();
+    for (std::list<UConnection*>::iterator retr =
+         ::urbiserver->connectionList.begin();
 	 retr != ::urbiserver->connectionList.end();
 	 retr++)
       if ((*retr)->isActive())  {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "*** %s (%d.%d.%d.%d)\n",
 		 (*retr)->connectionTag->str(),
 		 (int) (((*retr)->clientIP>>24) % 256),
@@ -4169,37 +4357,38 @@ connection->send(tstr.str().c_str(),getTag().c_str());
 		 (int) ( (*retr)->clientIP     % 256)
 		 );
 
-	connection->send(tmpbuffer,getTag().c_str());
+	connection->send(tmpbuffer, getTag().c_str());
       }
 
 
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"debugoff")==0) {
+  if (strcmp(oper->str(), "debugoff")==0)
+  {
     connection->server->debugOutput = false;
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"quit")==0) {
-
+  if (strcmp(oper->str(), "quit")==0)
+  {
     connection->closeConnection();
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"reboot")==0) {
-
+  if (strcmp(oper->str(), "reboot")==0)
+  {
     connection->server->reboot();
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  if (strcmp(oper->str(),"shutdown")==0) {
-
+  if (strcmp(oper->str(), "shutdown")==0)
+  {
     connection->server->shutdown();
-    return( status = UCOMPLETED );
+    return ( status = UCOMPLETED );
   }
 
-  return( status = UCOMPLETED );
+  return ( status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -4220,14 +4409,14 @@ UCommand_OPERATOR::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
-  ::urbiserver->debug("OPERATOR %s:\n",oper->str());
-  ::urbiserver->debug("%sEND OPERATOR ------\n",tabb);
+  ::urbiserver->debug("OPERATOR %s:\n", oper->str());
+  ::urbiserver->debug("%sEND OPERATOR ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_WAIT);
@@ -4256,17 +4445,18 @@ UCommandStatus
 UCommand_WAIT::execute(UConnection *connection)
 {
 
-  if (status == UONQUEUE) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (status == UONQUEUE)
+  {
+    UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid type. NUM expected.\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      return( status = UCOMPLETED );
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
     }
     if (nb->val == 0) return (status = UCOMPLETED);
 
@@ -4279,7 +4469,7 @@ UCommand_WAIT::execute(UConnection *connection)
     if (connection->server->lastTime() >= endtime)
       status = UCOMPLETED;
 
-  return(status);
+  return (status);
 }
 
 //! UCommand subclass hard copy function
@@ -4300,17 +4490,21 @@ UCommand_WAIT::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("WAIT:\n");
 
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND WAIT ------\n",tabb);
+  ::urbiserver->debug("%sEND WAIT ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_EMIT);
@@ -4348,7 +4542,7 @@ UCommandStatus
 UCommand_EMIT::execute(UConnection *connection)
 {
   if (connection->receiving)
-    return( status = UONQUEUE);
+    return ( status = UONQUEUE);
 
   ufloat thetime = connection->server->lastTime();
 
@@ -4359,10 +4553,10 @@ UCommand_EMIT::execute(UConnection *connection)
 	  UValue *dur = duration->eval(this, connection);
 	  if (!dur)
 	    {
-	      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		       "!!! invalid event duration for event %s\n",
 		       eventnamestr);
-	      connection->send(tmpbuffer,getTag().c_str());
+	      connection->send(tmpbuffer, getTag().c_str());
 	      return ((status = UCOMPLETED));
 	    }
 	  targetTime = thetime + dur->val;
@@ -4375,11 +4569,11 @@ UCommand_EMIT::execute(UConnection *connection)
 	  UNamedParameters *pevent = parameters;
 	  while (pevent)
 	    {
-	      UValue *e1 = pevent->expression->eval(this,connection);
+	      UValue *e1 = pevent->expression->eval(this, connection);
 	      if (e1)
 		{
 		  delete pevent->expression;
-		  pevent->expression = new UExpression(EXPR_VALUE,e1->copy());
+		  pevent->expression = new UExpression(EXPR_VALUE, e1->copy());
 		  delete e1;
 		}
 
@@ -4414,119 +4608,121 @@ UCommand_EMIT::execute(UConnection *connection)
       ////// EXTERNAL /////
 
       HMbindertab::iterator it =
-	::urbiserver->eventbindertab.find(eventnamestr);
+        ::urbiserver->eventbindertab.find(eventnamestr);
 
       if ((it != ::urbiserver->eventbindertab.end()) &&
-	  (
-	   ( (parameters) && (it->second->nbparam == parameters->size()))
-	   ||
-	   ((!parameters) && (it->second->nbparam==0))) &&
-	  (!it->second->monitors.empty()))
-	{
-	  char tmpprefix[1024];
-	  snprintf(tmpprefix,1024,"[2,\"%s__%d\"",
-		   eventnamestr,it->second->nbparam);
+          (
+           ( (parameters) && (it->second->nbparam == parameters->size()))
+           ||
+           ((!parameters) && (it->second->nbparam==0))) &&
+          (!it->second->monitors.empty()))
+      {
+        char tmpprefix[1024];
+        snprintf(tmpprefix, 1024, "[2,\"%s__%d\"",
+                 eventnamestr, it->second->nbparam);
 
-	  for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	       it2 != it->second->monitors.end();
-	       it2++)
-	    {
-	      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	      (*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));
-	      for (UNamedParameters *pvalue = parameters;
-		   pvalue != 0;
-		   pvalue = pvalue->next)
-		{
-		  (*it2)->c->send((const ubyte*)",",1);
-		  UValue* valparam = pvalue->expression->eval(this,connection);
-		  valparam->echo((*it2)->c);
-		}
-	      (*it2)->c->send((const ubyte*)"]\n",2);
-	    }
-	}
+        for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+             it2 != it->second->monitors.end();
+             it2++)
+        {
+          (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+          (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+          for (UNamedParameters *pvalue = parameters;
+               pvalue != 0;
+               pvalue = pvalue->next)
+          {
+            (*it2)->c->send((const ubyte*)",", 1);
+            UValue* valparam = pvalue->expression->eval(this, connection);
+            valparam->echo((*it2)->c);
+          }
+          (*it2)->c->send((const ubyte*)"]\n", 2);
+        }
+      }
 
 
       ////// INTERNAL /////
 
       urbi::UTable::iterator hmfi = urbi::eventmap.find(eventnamestr);
       if (hmfi != urbi::eventmap.end())
-	{
-	  for (std::list<urbi::UGenericCallback*>::iterator cbi =
-		 hmfi->second.begin();
-	       cbi != hmfi->second.end();
-	       cbi++)
-	    {
-	      if ( ( (parameters) &&
-		     (parameters->size() == (*cbi)->nbparam)) ||
-		   ( (!parameters) && (!(*cbi)->nbparam)) )
-		{
-		  urbi::UList tmparray;
-		  for (UNamedParameters *pvalue = parameters;
-		       pvalue != 0;
-		       pvalue = pvalue->next)
-		    {
-		      UValue* valparam = pvalue->expression->eval(this,connection);
-		      if (!valparam)
-			{
-			  connection->send("!!! EXPR evaluation failed\n",getTag().c_str());
-			  return (status = UCOMPLETED);
-			}
-		      // urbi::UValue do not see ::UValue, so it must be
-		      // valparam who does the job.
-		      urbi::UValue *tmpvalue = valparam->urbiValue();
-		      tmparray.array.push_back(tmpvalue);
-		    }
+      {
+        for (std::list<urbi::UGenericCallback*>::iterator cbi =
+             hmfi->second.begin();
+             cbi != hmfi->second.end();
+             cbi++)
+        {
+          if ( ( (parameters) &&
+                 (parameters->size() == (*cbi)->nbparam)) ||
+               ( (!parameters) && (!(*cbi)->nbparam)) )
+          {
+            urbi::UList tmparray;
+            for (UNamedParameters *pvalue = parameters;
+                 pvalue != 0;
+                 pvalue = pvalue->next)
+            {
+              UValue* valparam = pvalue->expression->eval(this, connection);
+              if (!valparam)
+              {
+                connection->send("!!! EXPR evaluation failed\n",
+                                 getTag().c_str());
+                return (status = UCOMPLETED);
+              }
+              // urbi::UValue do not see ::UValue, so it must be
+              // valparam who does the job.
+              urbi::UValue *tmpvalue = valparam->urbiValue();
+              tmparray.array.push_back(tmpvalue);
+            }
 
-		  (*cbi)->__evalcall(tmparray);
-		}
-	    }
-	}
+            (*cbi)->__evalcall(tmparray);
+          }
+        }
+      }
     }
 
   if ((thetime > targetTime) && (!firsttime))
+  {
+    // unregister event
+    ASSERT (event && eh) // free the event
+      eh->removeEvent (event);
+
+    ////// EXTERNAL /////
+
+    HMbindertab::iterator it =
+      ::urbiserver->eventbindertab.find(eventnamestr);
+    if ((it != ::urbiserver->eventbindertab.end()) &&
+        (parameters) &&
+        (it->second->nbparam == parameters->size()) &&
+        (!it->second->monitors.empty()))
     {
-      // unregister event
-      ASSERT (event && eh) // free the event
-	eh->removeEvent (event);
+      char tmpprefix[1024];
+      snprintf(tmpprefix, 1024, "[3,\"%s__%d\"]\n",
+               eventnamestr, it->second->nbparam);
 
-      ////// EXTERNAL /////
-
-      HMbindertab::iterator it = ::urbiserver->eventbindertab.find(eventnamestr);
-      if ((it != ::urbiserver->eventbindertab.end()) &&
-	  (parameters) &&
-	  (it->second->nbparam == parameters->size()) &&
-	  (!it->second->monitors.empty()))
-	{
-	  char tmpprefix[1024];
-	  snprintf(tmpprefix,1024,"[3,\"%s__%d\"]\n",
-		   eventnamestr,it->second->nbparam);
-
-	  for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	       it2 != it->second->monitors.end();
-	       it2++)
-	    {
-	      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	      (*it2)->c->send((const ubyte*)tmpprefix,strlen(tmpprefix));
-	    }
-	}
-
-      ////// INTERNAL /////
-
-      urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
-      if (hmfi != urbi::eventendmap.end())
-	{
-	  for (std::list<urbi::UGenericCallback*>::iterator cbi =
-		 hmfi->second.begin();
-	       cbi != hmfi->second.end();
-	       cbi++)
-	    {
-	      urbi::UList tmparray;
-	      (*cbi)->__evalcall(tmparray);
-	    }
-	}
-
-      return  ((status = UCOMPLETED));
+      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+           it2 != it->second->monitors.end();
+           it2++)
+      {
+        (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+        (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+      }
     }
+
+    ////// INTERNAL /////
+
+    urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
+    if (hmfi != urbi::eventendmap.end())
+    {
+      for (std::list<urbi::UGenericCallback*>::iterator cbi =
+           hmfi->second.begin();
+           cbi != hmfi->second.end();
+           cbi++)
+      {
+        urbi::UList tmparray;
+        (*cbi)->__evalcall(tmparray);
+      }
+    }
+
+    return ((status = UCOMPLETED));
+  }
 
   firsttime = false;
   return (status = UBACKGROUND);
@@ -4536,7 +4732,8 @@ UCommand_EMIT::execute(UConnection *connection)
 UCommand*
 UCommand_EMIT::copy()
 {
-  UCommand_EMIT *ret = new UCommand_EMIT(ucopy (eventname), ucopy (parameters));
+  UCommand_EMIT *ret =
+    new UCommand_EMIT(ucopy (eventname), ucopy (parameters));
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -4550,17 +4747,21 @@ UCommand_EMIT::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("EMIT:\n");
 
-  if (eventname) { ::urbiserver->debug("%s  Event:",tabb); eventname->print(); ::urbiserver->debug("\n");};
+  if (eventname)
+  {
+    ::urbiserver->debug("%s  Event:", tabb);
+    eventname->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND EMIT ------\n",tabb);
+  ::urbiserver->debug("%sEND EMIT ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
@@ -4588,13 +4789,13 @@ UCommandStatus
 UCommand_WAIT_TEST::execute(UConnection *connection)
 {
   if (!test) return (status = UCOMPLETED);
-//FIXME This is not compliant with the new event mechanism
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
     return ( status = URUNNING );
 
-  if (testres == UTRUE) {
+  if (testres == UTRUE)
+  {
     if (nbTrue == 0)
       startTrue = connection->server->lastTime();
     nbTrue++;
@@ -4633,17 +4834,21 @@ UCommand_WAIT_TEST::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("WAIT_TEST:\n");
 
-  if (test)   { ::urbiserver->debug("%s  Test:",tabb); test->print(); ::urbiserver->debug("\n");};
+  if (test)
+  {
+    ::urbiserver->debug("%s  Test:", tabb);
+    test->print(); ::urbiserver->debug("\n");
+  };
 
-  ::urbiserver->debug("%sEND WAIT_TEST ------\n",tabb);
+  ::urbiserver->debug("%sEND WAIT_TEST ------\n", tabb);
 }
 
 
@@ -4652,7 +4857,8 @@ MEMORY_MANAGER_INIT(UCommand_INCDECREMENT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
 */
-UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommandType type, UVariableName *variablename) :
+UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommandType type,
+                                             UVariableName *variablename) :
   UCommand(type)
 {
   ADDOBJ(UCommand_INCDECREMENT);
@@ -4670,43 +4876,43 @@ UCommand_INCDECREMENT::~UCommand_INCDECREMENT()
 UCommandStatus
 UCommand_INCDECREMENT::execute(UConnection *connection)
 {
-  variablename->getVariable(this,connection);
+  variablename->getVariable(this, connection);
   if (!variablename->getFullname())
     return ((status = UCOMPLETED));
   variablename->getMethod();
   variablename->getDevice();
 
   // Broadcasting
-  if (scanGroups(&UCommand::refVarName,true))
+  if (scanGroups(&UCommand::refVarName, true))
     return ( status = UMORPH );
 
   // Main execution
-  if (type == CMD_INCREMENT) {
-
+  if (type == CMD_INCREMENT)
+  {
     morph = (UCommand*)
       new UCommand_ASSIGN_VALUE(
 	      variablename->copy(),
 	      new UExpression(
 			 EXPR_PLUS,
-			 new UExpression(EXPR_VARIABLE,variablename->copy()),
-			 new UExpression(EXPR_VALUE,ufloat(1))),0);
+			 new UExpression(EXPR_VARIABLE, variablename->copy()),
+			 new UExpression(EXPR_VALUE, ufloat(1))), 0);
 
     persistant = false;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
 
-  if (type == CMD_DECREMENT) {
-
+  if (type == CMD_DECREMENT)
+  {
     morph = (UCommand*)
       new UCommand_ASSIGN_VALUE(
 	      variablename->copy(),
 	      new UExpression(
 			 EXPR_MINUS,
-			 new UExpression(EXPR_VARIABLE,variablename->copy()),
-			 new UExpression(EXPR_VALUE,ufloat(1))),0);
+			 new UExpression(EXPR_VARIABLE, variablename->copy()),
+			 new UExpression(EXPR_VALUE, ufloat(1))), 0);
 
     persistant = false;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
 
   return ( status = UCOMPLETED );
@@ -4717,7 +4923,7 @@ UCommand*
 UCommand_INCDECREMENT::copy()
 {
   UCommand_INCDECREMENT *ret =
-    new UCommand_INCDECREMENT(type,ucopy (variablename));
+    new UCommand_INCDECREMENT(type, ucopy (variablename));
   copybase(ret);
   return ((UCommand*)ret);
 }
@@ -4731,11 +4937,11 @@ UCommand_INCDECREMENT::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("INCDECREMENT:");
   if (type == CMD_INCREMENT) ::urbiserver->debug("INC\n");
@@ -4744,8 +4950,12 @@ UCommand_INCDECREMENT::print(int l)
     else
       ::urbiserver->debug("UNKNOWN TYPE\n");
 
-  if (variablename) { ::urbiserver->debug("%s  Variable:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  ::urbiserver->debug("%sEND INCDECREMENT ------\n",tabb);
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  Variable:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  ::urbiserver->debug("%sEND INCDECREMENT ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_DEF);
@@ -4818,19 +5028,19 @@ UCommand_DEF::execute(UConnection *connection)
   if ( (!variablename) &&
        (!command) &&
        (!parameters) &&
-       (!variablelist)) {
-
+       (!variablelist))
+  {
     for ( HMfunctiontab::iterator retr =
 	    connection->server->functiontab.begin();
 	  retr != connection->server->functiontab.end();
-	  retr++) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  retr++)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "*** %s : %d param(s)\n",
 	       (*retr).second->name()->str(),
 	       (*retr).second->nbparam());
 
-      connection->send(tmpbuffer,getTag().c_str());
+      connection->send(tmpbuffer, getTag().c_str());
     }
     return (status = UCOMPLETED);
   }
@@ -4838,28 +5048,29 @@ UCommand_DEF::execute(UConnection *connection)
   // Function definition
   if (deftype == UDEF_FUNCTION && variablename && command)
     {
-      UString* funname = variablename->buildFullname(this,connection);
+      UString* funname = variablename->buildFullname(this, connection);
       if (!funname) return (status = UCOMPLETED);
 
       if ((variablename->nostruct) &&
 	  (::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
-	   ::urbiserver->grouptab.end()))  {
+	   ::urbiserver->grouptab.end()))
+      {
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! function name conflicts with group %s \n",
+                 variablename->getMethod()->str());
+	connection->send(tmpbuffer, getTag().c_str());
 
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! function name conflicts with group %s \n",variablename->getMethod()->str());
-	connection->send(tmpbuffer,getTag().c_str());
-
-	return( status = UCOMPLETED );
+	return ( status = UCOMPLETED );
       }
 
       if (connection->server->functiontab.find(funname->str()) !=
-	  connection->server->functiontab.end()) {
+	  connection->server->functiontab.end())
+      {
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! function %s already exists\n", funname->str());
+	connection->send(tmpbuffer, getTag().c_str());
 
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! function %s already exists\n",funname->str());
-	connection->send(tmpbuffer,getTag().c_str());
-
-	return( status = UCOMPLETED );
+	return ( status = UCOMPLETED );
       }
 
       UFunction *fun = new UFunction(new UString(funname),
@@ -4875,7 +5086,7 @@ UCommand_DEF::execute(UConnection *connection)
   // Event definition
   if ((deftype == UDEF_EVENT) && (variablename))
   {
-    UString* eventname = variablename->buildFullname(this,connection);
+    UString* eventname = variablename->buildFullname(this, connection);
     if (!eventname) return (status = UCOMPLETED);
     int eventnbarg = 0;
     if (parameters) eventnbarg = parameters->size();
@@ -4888,9 +5099,12 @@ UCommand_DEF::execute(UConnection *connection)
 
 
   // Single Variable definition
-  if ((variablename) && (!command) && (!parameters) && (deftype != UDEF_FUNCTION)) {
-
-    UVariable* variable = variablename->getVariable(this,connection);
+  if ((variablename)
+      && (!command)
+      && (!parameters)
+      && (deftype != UDEF_FUNCTION))
+  {
+    UVariable* variable = variablename->getVariable(this, connection);
     if (!variablename->getFullname()) return ( status = UCOMPLETED );
     if (variable) // the variable is already defined
       return ( status = UCOMPLETED );
@@ -4902,19 +5116,29 @@ UCommand_DEF::execute(UConnection *connection)
   }
 
   // Device variable set definition
-  if ((device) && (!command) && (parameters)) {
-
+  if ((device) && (!command) && (parameters))
+  {
     UNamedParameters * param = parameters;
-    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,new UVariableName(device->copy(),param->name, true,0),
+    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,
+                                           new UVariableName(device->copy(),
+                                                             param->name,
+                                                             true,
+                                                             0),
 					   (UNamedParameters*) 0,
 					   (UCommand*) 0);
     cdef->setTag(this);
     morph = cdef;
     param = param->next;
 
-    while (param) {
-      if (param->name) {
-	cdef = new UCommand_DEF (UDEF_VAR,new UVariableName(device->copy(),param->name, true,0),
+    while (param)
+    {
+      if (param->name)
+      {
+	cdef = new UCommand_DEF (UDEF_VAR,
+                                 new UVariableName(device->copy(),
+                                                   param->name,
+                                                   true,
+                                                   0),
 				 (UNamedParameters*) 0,
 				 (UCommand*) 0);
 	cdef->setTag(this);
@@ -4923,25 +5147,29 @@ UCommand_DEF::execute(UConnection *connection)
       param = param->next;
     }
     persistant = false;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
 
   // Multi Variable definition
-  if (variablelist) {
-
+  if (variablelist)
+  {
     UVariableList *list = variablelist;
     list->variablename->local_scope = true;
-    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,list->variablename->copy(),
+    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,
+                                           list->variablename->copy(),
 					   (UNamedParameters*) 0,
 					   (UCommand*) 0);
     cdef->setTag(this);
     morph = cdef;
     list = list->next;
 
-    while (list) {
-      if (list->variablename) {
+    while (list)
+    {
+      if (list->variablename)
+      {
 	list->variablename->local_scope = true;
-	cdef = new UCommand_DEF (UDEF_VAR,list->variablename->copy(),
+	cdef = new UCommand_DEF (UDEF_VAR,
+                                 list->variablename->copy(),
 				 (UNamedParameters*) 0,
 				 (UCommand*) 0);
 	cdef->setTag(this);
@@ -4951,7 +5179,7 @@ UCommand_DEF::execute(UConnection *connection)
     }
 
     persistant = false;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
 
   return ( status = UCOMPLETED );
@@ -4978,21 +5206,37 @@ UCommand_DEF::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("DEF:\n");
 
 
-  if (variablename) { ::urbiserver->debug("%s  Variablename:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  if (variablelist) { ::urbiserver->debug("%s  Variablelist: {",tabb); variablelist->print(); ::urbiserver->debug("}\n");};
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  Variablename:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  if (variablelist)
+  {
+    ::urbiserver->debug("%s  Variablelist: {", tabb);
+    variablelist->print(); ::urbiserver->debug("}\n");
+  };
 
-  if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND DEF ------\n",tabb);
+  if (parameters)
+  {
+    ::urbiserver->debug("%s  Param:{", tabb);
+    parameters->print(); ::urbiserver->debug("}\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND DEF ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_CLASS);
@@ -5024,12 +5268,13 @@ UCommand_CLASS::execute(UConnection*)
   // remote new processing
   HMobjWaiting::iterator ow;
   ow = ::urbiserver->objWaittab.find(object->str());
-  if (ow != ::urbiserver->objWaittab.end()) {
+  if (ow != ::urbiserver->objWaittab.end())
+  {
     (*ow).second->nb--;
     if ((*ow).second->nb == 0)
       ::urbiserver->objWaittab.erase(ow);
     else
-      return(status = URUNNING);
+      return (status = URUNNING);
   }
 
 
@@ -5106,7 +5351,8 @@ UCommand_CLASS::execute(UConnection*)
 	  case EXPR_TEST_OR:
 	    break;
 	  }
-	if (cdef) {
+	if (cdef)
+        {
 	  cdef->setTag(this);
 	  if (param == parameters)
 	    morph = cdef;
@@ -5118,9 +5364,10 @@ UCommand_CLASS::execute(UConnection*)
     param = param->next;
   }
 
-  if (morph) {
+  if (morph)
+  {
     persistant = false;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
   else
     return ( status = UCOMPLETED );
@@ -5145,17 +5392,25 @@ UCommand_CLASS::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("CLASS:\n");
 
-  if (object) { ::urbiserver->debug("%s  Object name: %s\n",tabb,object->str());};
-  if (parameters) { ::urbiserver->debug("%s  Param:{",tabb); parameters->print(); ::urbiserver->debug("}\n");};
-  ::urbiserver->debug("%sEND CLASS ------\n",tabb);
+  if (object)
+  {
+    ::urbiserver->debug("%s  Object name: %s\n", tabb,
+                        object->str());
+  };
+  if (parameters)
+  {
+    ::urbiserver->debug("%s  Param:{", tabb);
+    parameters->print(); ::urbiserver->debug("}\n");
+  };
+  ::urbiserver->debug("%sEND CLASS ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_IF);
@@ -5194,20 +5449,20 @@ UCommand_IF::execute(UConnection *connection)
   if (testres == UTESTFAIL)
     return ( status = UCOMPLETED );
 
-  if (testres == UTRUE) {
-
+  if (testres == UTRUE)
+  {
     morph = command1;
     command1 = 0; // avoid delete of command when this is deleted
     persistant = false;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
   else
-    if (command2) {
-
+    if (command2)
+    {
       morph = command2;
       command2 = 0; // avoid delete of command when this is deleted
       persistant = false;
-      return( status = UMORPH );
+      return ( status = UMORPH );
     }
     else
       return ( status = UCOMPLETED );
@@ -5233,18 +5488,30 @@ UCommand_IF::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("IF:\n");
 
-  if (test)   { ::urbiserver->debug("%s  Test:",tabb); test->print(); ::urbiserver->debug("\n");};
-  if (command1) { ::urbiserver->debug("%s  Command1:\n",tabb); command1->print(l+3);};
-  if (command2) { ::urbiserver->debug("%s  Command2:\n",tabb); command2->print(l+3);};
-  ::urbiserver->debug("%sEND IF ------\n",tabb);
+  if (test)
+  {
+    ::urbiserver->debug("%s  Test:", tabb);
+    test->print(); ::urbiserver->debug("\n");
+  };
+  if (command1)
+  {
+    ::urbiserver->debug("%s  Command1:\n", tabb);
+    command1->print(l+3);
+  };
+  if (command2)
+  {
+    ::urbiserver->debug("%s  Command2:\n", tabb);
+    command2->print(l+3);
+  };
+  ::urbiserver->debug("%sEND IF ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_EVERY);
@@ -5284,8 +5551,8 @@ UCommand_EVERY::execute(UConnection *connection)
   if (!interval) return ( status = UCOMPLETED);
 
   if ((starttime + interval->val <= thetime) ||
-      (firsttime)) {
-
+      (firsttime))
+  {
     persistant = true;
     morph = (UCommand*)
       new UCommand_TREE( UAND,
@@ -5295,7 +5562,7 @@ UCommand_EVERY::execute(UConnection *connection)
     starttime = thetime;
     firsttime = false;
     delete interval;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
 
   delete interval;
@@ -5321,17 +5588,25 @@ UCommand_EVERY::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("EVERY:");
 
-  if (duration)     { ::urbiserver->debug("%s  Duration:",tabb); duration->print(); ::urbiserver->debug("\n");};
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND EVERY ------\n",tabb);
+  if (duration)
+  {
+    ::urbiserver->debug("%s  Duration:", tabb);
+    duration->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND EVERY ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
@@ -5347,7 +5622,8 @@ UCommand_TIMEOUT::UCommand_TIMEOUT( UExpression *duration,
   this->duration    = duration;
   this->command     = command;
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_timeout_%d",(int)unic());
+  snprintf(tmpbuffer,
+           UCommand::MAXSIZE_TMPMESSAGE, "__TAG_timeout_%d", (int)unic());
   this->tagRef      = new UString(tmpbuffer);
 }
 
@@ -5378,7 +5654,7 @@ UCommand_TIMEOUT::execute(UConnection*)
 		       );
 
   morph->setTag(tagRef->str());
-  return( status = UMORPH );
+  return ( status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -5400,17 +5676,25 @@ UCommand_TIMEOUT::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("TIMEOUT:");
 
-  if (duration)     { ::urbiserver->debug("%s  Duration:",tabb); duration->print(); ::urbiserver->debug("\n");};
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND TIMEOUT ------\n",tabb);
+  if (duration)
+  {
+    ::urbiserver->debug("%s  Duration:", tabb);
+    duration->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND TIMEOUT ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_STOPIF);
@@ -5426,7 +5710,7 @@ UCommand_STOPIF::UCommand_STOPIF( UExpression *condition,
   this->condition   = condition;
   this->command     = command;
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_stopif_%d",unic());
+  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE, "__TAG_stopif_%d", unic());
   this->tagRef      = new UString(tmpbuffer);
 }
 
@@ -5461,7 +5745,7 @@ UCommand_STOPIF::execute(UConnection *connection)
 		       command->copy()
 		       );
   morph->setTag(tagRef->str());
-  return( status = UMORPH );
+  return ( status = UMORPH );
 
 
   if (command == 0) return ( status = UCOMPLETED );
@@ -5477,7 +5761,7 @@ UCommand_STOPIF::execute(UConnection *connection)
 		       );
 
   morph->setTag(tagRef->str());
-  return( status = UMORPH );
+  return ( status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -5499,17 +5783,25 @@ UCommand_STOPIF::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("STOPIF:");
 
-  if (condition)     { ::urbiserver->debug("%s  Condition:",tabb); condition->print(); ::urbiserver->debug("\n");};
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND STOPIF ------\n",tabb);
+  if (condition)
+  {
+    ::urbiserver->debug("%s  Condition:", tabb);
+    condition->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND STOPIF ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
@@ -5525,7 +5817,8 @@ UCommand_FREEZEIF::UCommand_FREEZEIF( UExpression *condition,
   this->condition   = condition;
   this->command     = command;
 
-  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,"__TAG_stopif_%d",(int)unic());
+  snprintf(tmpbuffer,
+           UCommand::MAXSIZE_TMPMESSAGE, "__TAG_stopif_%d", (int)unic());
   this->tagRef      = new UString(tmpbuffer);
 }
 
@@ -5561,7 +5854,7 @@ UCommand_FREEZEIF::execute(UConnection*)
 		       cmd
 		       );
 
-  return( status = UMORPH );
+  return ( status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -5583,17 +5876,25 @@ UCommand_FREEZEIF::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("FREEZEIF:");
 
-  if (condition)     { ::urbiserver->debug("%s  Condition:",tabb); condition->print(); ::urbiserver->debug("\n");};
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND FREEZEIF ------\n",tabb);
+  if (condition)
+  {
+    ::urbiserver->debug("%s  Condition:", tabb);
+    condition->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND FREEZEIF ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_AT);
@@ -5662,7 +5963,7 @@ UCommand_AT::execute(UConnection *connection)
 
       testres = booleval(testeval, true);
       if (testres == UTESTFAIL)
-	return  ( (status = UCOMPLETED));
+	return ((status = UCOMPLETED));
 
       // softtest evaluation
       ufloat duration = 0;
@@ -5805,11 +6106,12 @@ UCommand_AT::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] toDelete=%d ", tabb, getTag().c_str(), toDelete);
+  ::urbiserver->debug("%s Tag:[%s] toDelete=%d ",
+                      tabb, getTag().c_str(), toDelete);
 
   ::urbiserver->debug("AT:");
   if (type == CMD_AT) ::urbiserver->debug("\n");
@@ -5818,10 +6120,22 @@ UCommand_AT::print(int l)
     else
       ::urbiserver->debug("UNKNOWN TYPE!\n");
 
-  if (test)   { ::urbiserver->debug("%s  Test:",tabb); test->print(); ::urbiserver->debug("\n");};
-  if (command1) { ::urbiserver->debug("%s  Command1:\n",tabb); command1->print(l+3);};
-  if (command2) { ::urbiserver->debug("%s  Command2:\n",tabb); command2->print(l+3);};
-  ::urbiserver->debug("%sEND AT ------\n",tabb);
+  if (test)
+  {
+    ::urbiserver->debug("%s  Test:", tabb);
+    test->print(); ::urbiserver->debug("\n");
+  };
+  if (command1)
+  {
+    ::urbiserver->debug("%s  Command1:\n", tabb);
+    command1->print(l+3);
+  };
+  if (command2)
+  {
+    ::urbiserver->debug("%s  Command2:\n", tabb);
+    command2->print(l+3);
+  };
+  ::urbiserver->debug("%sEND AT ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_WHILE);
@@ -5861,8 +6175,8 @@ UCommand_WHILE::execute(UConnection *connection)
   if (testres == UTESTFAIL)
     return ( status = UCOMPLETED );
 
-  if (testres == UTRUE) {
-
+  if (testres == UTRUE)
+  {
     UNodeType     nodeType = USEMICOLON;
 
     if (type == CMD_WHILE)      nodeType = USEMICOLON;
@@ -5888,7 +6202,7 @@ UCommand_WHILE::execute(UConnection *connection)
 	    );
 
     persistant = true;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
   else
     return ( status = UCOMPLETED );
@@ -5914,11 +6228,11 @@ UCommand_WHILE::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("WHILE:");
   if (type == CMD_WHILE) ::urbiserver->debug("\n");
@@ -5929,9 +6243,17 @@ UCommand_WHILE::print(int l)
       else
 	::urbiserver->debug("UNKNOWN TYPE!\n");
 
-  if (test)     { ::urbiserver->debug("%s  Test:",tabb); test->print(); ::urbiserver->debug("\n");};
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND WHILE ------\n",tabb);
+  if (test)
+  {
+    ::urbiserver->debug("%s  Test:", tabb);
+    test->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND WHILE ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_WHENEVER);
@@ -6009,7 +6331,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 
     morph->background = true;
     persistant = true;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
   else
     if (command2) {
@@ -6033,7 +6355,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 
 	morph->background = true;
 	persistant = true;
-	return( status = UMORPH );
+	return ( status = UMORPH );
       }
       else
 	return ( status = UBACKGROUND );
@@ -6067,18 +6389,31 @@ UCommand_WHENEVER::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("WHENEVER:\n");
 
-  if (test)   { ::urbiserver->debug("%s  Test:",tabb); test->print(); ::urbiserver->debug("\n");};
-  if (command1) { ::urbiserver->debug("%s  Command1:\n",tabb); command1->print(l+3);};
-  if (command2) { ::urbiserver->debug("%s  Command2:\n",tabb); command2->print(l+3);};
-  ::urbiserver->debug("%sEND WHENEVER ------\n",tabb);
+  if (test)
+  {
+    ::urbiserver->debug("%s  Test:", tabb);
+    test->print();
+    ::urbiserver->debug("\n");
+  };
+  if (command1)
+  {
+    ::urbiserver->debug("%s  Command1:\n", tabb);
+    command1->print(l+3);
+  };
+  if (command2)
+  {
+    ::urbiserver->debug("%s  Command2:\n", tabb);
+    command2->print(l+3);
+  };
+  ::urbiserver->debug("%sEND WHENEVER ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOOP);
@@ -6113,7 +6448,7 @@ UCommand_LOOP::execute(UConnection*)
 					new UCommand_NOOP()),
 		      this);
   persistant = true;
-  return( status = UMORPH );
+  return ( status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -6134,16 +6469,21 @@ UCommand_LOOP::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-  ::urbiserver->debug("%s Tag:[%s] toDelete=%d",tabb,getTag().c_str(),toDelete);
+  ::urbiserver->debug("%s Tag:[%s] toDelete=%d",
+                      tabb, getTag().c_str(), toDelete);
 
   ::urbiserver->debug("LOOP:\n");
 
-  if (command) { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
-  ::urbiserver->debug("%sEND LOOP ------\n",tabb);
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
+  ::urbiserver->debug("%sEND LOOP ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOOPN);
@@ -6178,19 +6518,20 @@ UCommand_LOOPN::execute(UConnection *connection)
   //if (status == UONQUEUE)
   //  command->status = UONQUEUE;
 
-  if (expression->type != EXPR_VALUE) {
-
-    UValue *nb = expression->eval(this,connection);
+  if (expression->type != EXPR_VALUE)
+  {
+    UValue *nb = expression->eval(this, connection);
 
     if (nb == 0)
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
 
-    if (nb->dataType != DATA_NUM) {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+    if (nb->dataType != DATA_NUM)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! number of loops is non numeric\n");
-      connection->send(tmpbuffer,getTag().c_str());
+      connection->send(tmpbuffer, getTag().c_str());
       delete nb;
-      return( status = UCOMPLETED );
+      return ( status = UCOMPLETED );
     }
 
     expression->type = EXPR_VALUE;
@@ -6200,7 +6541,7 @@ UCommand_LOOPN::execute(UConnection *connection)
   }
 
   if (expression->val < 1)
-    return( status = UCOMPLETED);
+    return ( status = UCOMPLETED);
 
   expression->val = expression->val - 1;
 
@@ -6220,7 +6561,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 					new UCommand_NOOP()),
 		      this);
   persistant = true;
-  return( status = UMORPH );
+  return ( status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -6243,11 +6584,11 @@ UCommand_LOOPN::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("LOOPN:");
   if (type == CMD_LOOPN) ::urbiserver->debug("\n");
@@ -6258,12 +6599,19 @@ UCommand_LOOPN::print(int l)
       else
 	::urbiserver->debug("UNKNOWN TYPE!\n");
 
-  if (expression) { ::urbiserver->debug("%s  Expr:",tabb); expression->print(); ::urbiserver->debug("\n");};
-  if (command) { ::urbiserver->debug("%s  Command (%ld:%d):\n",tabb,
-			    (long)command,
-			    (int)command->status); command->print(l+3);};
+  if (expression)
+  {
+    ::urbiserver->debug("%s  Expr:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command (%ld:%d):\n", tabb,
+                        (long)command,
+                        (int)command->status); command->print(l+3);
+  };
 
-  ::urbiserver->debug("%sEND LOOPN ------\n",tabb);
+  ::urbiserver->debug("%sEND LOOPN ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_FOR);
@@ -6302,7 +6650,8 @@ UCommand_FOR::execute(UConnection *connection)
 {
   UCommand *tmp_instr2;
 
-  if (first) {
+  if (first)
+  {
     first = false;
     if (instr1) instr1->setTag(this);
     if (instr2) instr2->setTag(this);
@@ -6310,8 +6659,8 @@ UCommand_FOR::execute(UConnection *connection)
 
   if (command == 0) return ( status = UCOMPLETED );
 
-  if (instr1) {
-
+  if (instr1)
+  {
     UCommand *first_instruction = instr1;
 
     instr1 = 0;
@@ -6320,7 +6669,7 @@ UCommand_FOR::execute(UConnection *connection)
 			first_instruction,
 			this);
     persistant = true;
-    return( status = UMORPH );
+    return ( status = UMORPH );
   }
 
   persistant = false;
@@ -6332,59 +6681,61 @@ UCommand_FOR::execute(UConnection *connection)
     return ( status = UCOMPLETED );
 
   if (testres == UTRUE)
+  {
+    UNodeType nodeType = nodeType_for (type);
+    tmp_instr2 = 0;
+
+    if (nodeType == UPIPE
+        || nodeType == UAND)
     {
-      UNodeType nodeType = nodeType_for (type);
-      tmp_instr2 = 0;
-
-      if (nodeType == UPIPE
-	  || nodeType == UAND)
-	{
-	  if (instr2)
-	    morph = (UCommand*)
-	      new UCommand_TREE(nodeType,
-				command->copy(),
-				new UCommand_TREE(UPIPE,
-						  tmp_instr2 = instr2->copy(),
-						  this
-						  )
-				);
-	  else
-	    morph = (UCommand*)
-	      new UCommand_TREE(nodeType,
-				command->copy(),
-				this
-				);
-	}
-      else {
-
-	if (instr2)
-	  morph = (UCommand*)
-	    new UCommand_TREE(nodeType,
-			      new UCommand_TREE(UAND,
-						new UCommand_TREE(UPIPE,
-								  command->copy(),
-								  tmp_instr2 = instr2->copy()
-								  ),
-						new UCommand_NOOP()
-						),
-			      this
-			      );
-	else
-	  morph = (UCommand*)
-	    new UCommand_TREE(nodeType,
-			      new UCommand_TREE(
-						UAND,
-						command->copy(),
-						new UCommand_NOOP()
-						),
-			      this
-			      );
-      }
-      if (tmp_instr2)
-	tmp_instr2->morphed = true;
-      persistant = true;
-      return( status = UMORPH );
+      if (instr2)
+        morph = (UCommand*)
+          new UCommand_TREE(nodeType,
+                            command->copy(),
+                            new UCommand_TREE(UPIPE,
+                                              tmp_instr2 = instr2->copy(),
+                                              this
+                                             )
+                           );
+      else
+        morph = (UCommand*)
+          new UCommand_TREE(nodeType,
+                            command->copy(),
+                            this
+                           );
     }
+    else {
+
+      if (instr2)
+        morph = (UCommand*)
+          new UCommand_TREE(nodeType,
+                            new UCommand_TREE(UAND,
+                                              new UCommand_TREE
+                                              (
+                                               UPIPE,
+                                               command->copy(),
+                                               tmp_instr2 = instr2->copy()
+                                              ),
+                                              new UCommand_NOOP()
+                                             ),
+                            this
+                           );
+      else
+        morph = (UCommand*)
+          new UCommand_TREE(nodeType,
+                            new UCommand_TREE(
+                                              UAND,
+                                              command->copy(),
+                                              new UCommand_NOOP()
+                                             ),
+                            this
+                           );
+    }
+    if (tmp_instr2)
+      tmp_instr2->morphed = true;
+    persistant = true;
+    return ( status = UMORPH );
+  }
   else
     return ( status = UCOMPLETED );
 }
@@ -6412,11 +6763,11 @@ UCommand_FOR::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("FOR:");
   if (type == CMD_FOR) ::urbiserver->debug("\n");
@@ -6427,12 +6778,29 @@ UCommand_FOR::print(int l)
       else
 	::urbiserver->debug("UNKNOWN TYPE!\n");
 
-  if (test)     { ::urbiserver->debug("%s  Test:",tabb); test->print(); ::urbiserver->debug("\n");};
-  if (instr1)   { ::urbiserver->debug("%s  Instr1:\n",tabb); instr1->print(l+3);};
-  if (instr2)   { ::urbiserver->debug("%s  Instr2:\n",tabb); instr2->print(l+3);};
-  if (command)  { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
+  if (test)
+  {
+    ::urbiserver->debug("%s  Test:", tabb);
+    test->print();
+    ::urbiserver->debug("\n");
+  };
+  if (instr1)
+  {
+    ::urbiserver->debug("%s  Instr1:\n", tabb);
+    instr1->print(l+3);
+  };
+  if (instr2)
+  {
+    ::urbiserver->debug("%s  Instr2:\n", tabb);
+    instr2->print(l+3);
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
 
-  ::urbiserver->debug("%sEND FOR ------\n",tabb);
+  ::urbiserver->debug("%sEND FOR ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_FOREACH);
@@ -6469,52 +6837,54 @@ UCommandStatus
 UCommand_FOREACH::execute(UConnection *connection)
 {
   if (firsttime)
-    {
-      firsttime = false;
-      position = expression->eval(this, connection);
-      if (position == 0)
-	return ((status = UCOMPLETED));
-      if (position->dataType == DATA_LIST)
-	position = position->liststart;
-    }
+  {
+    firsttime = false;
+    position = expression->eval(this, connection);
+    if (position == 0)
+      return ((status = UCOMPLETED));
+    if (position->dataType == DATA_LIST)
+      position = position->liststart;
+  }
 
   if (position == 0)
     return ((status = UCOMPLETED));
 
   UNodeType nodeType = nodeType_foreach (type);
 
-  UExpression* currentvalue = new UExpression(EXPR_VALUE,ufloat(0));
+  UExpression* currentvalue = new UExpression(EXPR_VALUE, ufloat(0));
   if (!currentvalue)
     return ((status = UCOMPLETED));
   currentvalue->dataType = position->dataType;
   if (position->dataType == DATA_NUM)    currentvalue->val = position->val;
-  if (position->dataType == DATA_STRING) currentvalue->str = new UString(position->str);
-  if (position->dataType == DATA_BINARY) {
+  if (position->dataType == DATA_STRING)
+    currentvalue->str = new UString(position->str);
+  if (position->dataType == DATA_BINARY)
+  {
     // add support here
-
   }
   if ((position->dataType != DATA_NUM) &&
-      (position->dataType != DATA_STRING)) {
-
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! This type is not supported yet\n");
-      connection->send(tmpbuffer,getTag().c_str());
-      delete currentvalue;
-      return( status = UCOMPLETED );
+      (position->dataType != DATA_STRING))
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+             "!!! This type is not supported yet\n");
+    connection->send(tmpbuffer, getTag().c_str());
+    delete currentvalue;
+    return ( status = UCOMPLETED );
   }
 
   morph =  (UCommand*)
     new UCommand_TREE(
-	 nodeType,
-	 new UCommand_TREE(
-	      UPIPE,
-	      new UCommand_ASSIGN_VALUE(
-		  variablename->copy(),
-		  currentvalue,
-		  (UNamedParameters*)0),
-	      command->copy()),
-	 this
-	 );
+                      nodeType,
+                      new UCommand_TREE(
+                                        UPIPE,
+                                        new UCommand_ASSIGN_VALUE
+                                        (
+                                         variablename->copy(),
+                                         currentvalue,
+                                         (UNamedParameters*)0),
+                                        command->copy()),
+                      this
+                     );
   ((UCommand_TREE*)((UCommand_TREE*)morph)->command1)->command1->setTag(this);
 
   position = position->next;
@@ -6544,11 +6914,11 @@ UCommand_FOREACH::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("FOREACH:");
   if (type == CMD_FOREACH)
@@ -6560,11 +6930,23 @@ UCommand_FOREACH::print(int l)
   else
     ::urbiserver->debug("UNKNOWN TYPE!\n");
 
-  if (variablename) { ::urbiserver->debug("%s  VariableName:",tabb); variablename->print(); ::urbiserver->debug("\n");};
-  if (expression) { ::urbiserver->debug("%s  List:",tabb); expression->print(); ::urbiserver->debug("\n");};
-  if (command)  { ::urbiserver->debug("%s  Command:\n",tabb); command->print(l+3);};
+  if (variablename)
+  {
+    ::urbiserver->debug("%s  VariableName:", tabb);
+    variablename->print(); ::urbiserver->debug("\n");
+  };
+  if (expression)
+  {
+    ::urbiserver->debug("%s  List:", tabb);
+    expression->print(); ::urbiserver->debug("\n");
+  };
+  if (command)
+  {
+    ::urbiserver->debug("%s  Command:\n", tabb);
+    command->print(l+3);
+  };
 
-  ::urbiserver->debug("%sEND FOREACH ------\n",tabb);
+  ::urbiserver->debug("%sEND FOREACH ------\n", tabb);
 }
 
 MEMORY_MANAGER_INIT(UCommand_NOOP);
@@ -6591,7 +6973,8 @@ UCommand_NOOP::~UCommand_NOOP()
 //! UCommand subclass execution function
 UCommandStatus UCommand_NOOP::execute(UConnection *connection)
 {
-  if (status == UONQUEUE) {
+  if (status == UONQUEUE)
+  {
     if (!connection->receiving)
       status = URUNNING;
     else
@@ -6599,7 +6982,7 @@ UCommandStatus UCommand_NOOP::execute(UConnection *connection)
   }
   else
     status = UCOMPLETED;
-  return(status);
+  return (status);
 }
 
 //! UCommand subclass hard copy function
@@ -6620,13 +7003,12 @@ UCommand_NOOP::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
-
-  ::urbiserver->debug("NOOP, level =%d\n",(int)status);
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  ::urbiserver->debug("NOOP, level =%d\n", (int)status);
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOAD);
@@ -6640,7 +7022,7 @@ UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode) :
 {
   ADDOBJ(UCommand_LOAD);
 
-  loadQueue = new UCommandQueue (4096,1048576,false);
+  loadQueue = new UCommandQueue (4096, 1048576, false);
   this->mainnode = mainnode;
 }
 
@@ -6672,15 +7054,16 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
       ::urbiserver->parser.process(str_command, length, connection);
       ::urbiserver->systemcommands = true;
 
-      if (errorMessage[0] != 0) { // a parsing error occured
-
-	if (::urbiserver->parser.commandTree) {
+      if (errorMessage[0] != 0)
+      { // a parsing error occured
+	if (::urbiserver->parser.commandTree)
+        {
 	  delete ::urbiserver->parser.commandTree;
 	  ::urbiserver->parser.commandTree = 0;
 	}
 
-	connection->send(errorMessage,"error");
-	return(status = UCOMPLETED);
+	connection->send(errorMessage, "error");
+	return (status = UCOMPLETED);
       }
       else {
 
@@ -6692,11 +7075,10 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
 	::urbiserver->parser.commandTree = 0;
 
 	persistant = true;
-	return( status = UMORPH );
+	return ( status = UMORPH );
       }
     }
   else
-    //mainnode->node = UAND;
     return ((status = UCOMPLETED));
 }
 
@@ -6718,11 +7100,11 @@ UCommand_LOAD::print(int l)
 {
   char tabb[100];
 
-  strcpy(tabb,"");
+  strcpy(tabb, "");
   for (int i=0;i<l;i++)
-    strcat(tabb," ");
+    strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ",tabb,getTag().c_str());
+::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
 
   ::urbiserver->debug("LOAD\n");
 }

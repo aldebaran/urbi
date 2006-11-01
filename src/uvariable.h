@@ -153,7 +153,7 @@ public:
 
   const char*   setName(const char *s);
   const char*   setName(const char *_id, const char* _method);
-  const char*   setName(UString *s) { return( setName(s->str()) );};
+  const char*   setName(UString *s)  { return setName(s->str());};
 
   UVarSet       set(UValue *v);
   UVarSet       setFloat(ufloat f);

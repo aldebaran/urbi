@@ -156,10 +156,10 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
       return variable;
 
   if (!fullname_ || !cached)
-    buildFullname(command,connection);
+    buildFullname(command, connection);
 
   if (!fullname_)
-    return(0);
+    return 0;
 
   if (nostruct &&
       (::urbiserver->objtab.find(getMethod()->str())
@@ -201,9 +201,9 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if (function) return (function);
 
   if ((!fullname_) || (!cached))
-    buildFullname(command,connection);
+    buildFullname(command, connection);
 
-  if (!fullname_) return(0);
+  if (!fullname_) return 0;
 
   if ( (hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
       ::urbiserver->functiontab.end())
@@ -222,12 +222,12 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
 {
   UFunction* tmpfun = getFunction(command, connection);
   if (tmpfun) return (true);
-  if (!fullname_) return(false);
+  if (!fullname_) return false;
   if (urbi::functionmap.find(fullname_->str()) !=
-      urbi::functionmap.end()) return(true);
+      urbi::functionmap.end()) return true;
 
   if (::urbiserver->functionbindertab.find(fullname_->str()) !=
-      ::urbiserver->functionbindertab.end()) return(true);
+      ::urbiserver->functionbindertab.end()) return true;
 
   return (false);
 }
@@ -240,13 +240,13 @@ UVariableName::getMethod()
   if (method) return (method);
 
   if (!fullname_) return (0);
-  const char *pointPos = strstr(fullname_->str(),".");
+  const char *pointPos = strstr(fullname_->str(), ".");
 
   if (pointPos == 0)
     method = new UString("");
   else
     method = new UString(pointPos + 1);
-  return(method);
+  return method;
 }
 
 //! UVariableName access to device (with cache)
@@ -256,7 +256,7 @@ UVariableName::getDevice()
   if (device) return (device);
 
   if (!fullname_) return (0);
-  char *pointPos = const_cast<char*>(strstr(fullname_->str(),"."));
+  char *pointPos = const_cast<char*>(strstr(fullname_->str(), "."));
   if (pointPos == 0) return (fullname_);
   pointPos[0] = 0;
 
@@ -273,7 +273,9 @@ UVariableName::getDevice()
   true to avoid recalculus on next call.
   */
   UString*
-UVariableName::buildFullname(UCommand *command, UConnection *connection, bool withalias)
+UVariableName::buildFullname(UCommand *command,
+                             UConnection *connection,
+                             bool withalias)
 {
   const int    fullnameMaxSize = 1024;
   char   name[fullnameMaxSize];
@@ -287,14 +289,14 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 
   if (str)
   {
-    e1 = str->eval(command,connection);
+    e1 = str->eval(command, connection);
     cached = str->isconst;
 
     if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING))
     {
-      snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	  "!!! dynamic variable evaluation failed\n");
-      connection->send(tmpbuffer,command->getTag().c_str());
+      connection->send(tmpbuffer, command->getTag().c_str());
       delete e1;
       if (fullname_)
       {
@@ -304,30 +306,31 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       return 0;
     }
 
-    if (strchr(e1->str->str(),'.') == 0)
+    if (strchr(e1->str->str(), '.') == 0)
     {
       nostruct = true;
       if (::urbiserver->objtab.find(e1->str->str()) ==
-	  ::urbiserver->objtab.end()) {
+	  ::urbiserver->objtab.end())
+      {
 	if (connection->stack.empty())
-	  snprintf(name,fullnameMaxSize,
-	      "%s.%s",connection->connectionTag->str(),
+	  snprintf(name, fullnameMaxSize,
+	      "%s.%s", connection->connectionTag->str(),
 	      e1->str->str());
 	else
 	  if (e1->str->equal("self"))
-	    snprintf(name,fullnameMaxSize,
-		"%s",connection->stack.front()->self());
+	    snprintf(name, fullnameMaxSize,
+		"%s", connection->stack.front()->self());
 	  else
-	    snprintf(name,fullnameMaxSize,
-		"%s.%s",connection->stack.front()->str(),
+	    snprintf(name, fullnameMaxSize,
+		"%s.%s", connection->stack.front()->str(),
 		e1->str->str());
 
       }
       else
-	strncpy(name,e1->str->str(),fullnameMaxSize);
+	strncpy(name, e1->str->str(), fullnameMaxSize);
     }
     else
-      strncpy(name,e1->str->str(),fullnameMaxSize);
+      strncpy(name, e1->str->str(), fullnameMaxSize);
 
     delete e1;
   }
@@ -337,10 +340,11 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     if ((localFunction || selfFunction) && (firsttime))
     {
       firsttime = false;
-      if (!connection->stack.empty()) {
+      if (!connection->stack.empty())
+      {
 	UCallid *funid = connection->stack.front();
-	if (funid) {
-
+	if (funid)
+        {
 	  if (selfFunction)
 	    device->update(funid->self());
 
@@ -372,9 +376,11 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	      if (objit != ::urbiserver->objtab.end())
 	      {
 		if (id_type == UDEF_VAR)
-		  class_symbol = ((*objit).second->searchVariable(id->str(), ambiguous) != 0);
+		  class_symbol = ((*objit).second->
+                                  searchVariable(id->str(), ambiguous) != 0);
 		if (id_type == UDEF_FUNCTION)
-		  class_symbol = ((*objit).second->searchFunction(id->str(), ambiguous) != 0);
+		  class_symbol = ((*objit).second->
+                                  searchFunction(id->str(), ambiguous) != 0);
 		if (id_type == UDEF_EVENT)
 		  class_symbol = ((*objit).second->searchEvent(id->str(), ambiguous) != 0);
 
@@ -423,15 +429,15 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       }
       else
       {
-	snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	    "!!! invalid prefix resolution\n");
-	connection->send(tmpbuffer,command->getTag().c_str());
+	connection->send(tmpbuffer, command->getTag().c_str());
 	if (fullname_)
 	{
 	  delete fullname_;
 	  fullname_ = 0;
 	}
-	return(0);
+	return 0;
       }
     }
 
@@ -443,38 +449,38 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
       cached = true;
 
       // Create the concatened variable name
-      snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
+      snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
     }
     else
     {
       // rebuilding name based on index
 
-      snprintf(name,fullnameMaxSize,"%s.%s",device->str(),id->str());
+      snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
       itindex = index;
       errordetected = false;
       cached = true;
 
       while (itindex)
       {
-	e1 = itindex->expression->eval(command,connection);
+	e1 = itindex->expression->eval(command, connection);
 	if (e1==0)
 	{
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	      "!!! expression error: array ignored\n");
-	  connection->send(tmpbuffer,command->getTag().c_str());
+	  connection->send(tmpbuffer, command->getTag().c_str());
 	  errordetected = true;
 	  break;
 	}
 	if (e1->dataType == DATA_NUM)
-	  snprintf(indexstr,fullnameMaxSize-strlen(name),"__%d",(int)e1->val);
+	  snprintf(indexstr, fullnameMaxSize-strlen(name), "__%d", (int)e1->val);
 	else if (e1->dataType == DATA_STRING)
-	  snprintf(indexstr,fullnameMaxSize-strlen(name),"__%s",e1->str->str());
+	  snprintf(indexstr, fullnameMaxSize-strlen(name), "__%s", e1->str->str());
 	else
 	{
 	  delete e1;
-	  snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	      "!!! invalid array type: array ignored\n");
-	  connection->send(tmpbuffer,command->getTag().c_str());
+	  connection->send(tmpbuffer, command->getTag().c_str());
 	  errordetected = true;
 	  break;
 	}
@@ -482,7 +488,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	// Suppress this to make index non static by default
 	// if (!itindex->expression->isconst) cached = false;
 
-	strcat(name,indexstr);
+	strcat(name, indexstr);
 	itindex = itindex->next;
 	delete e1;
       }
@@ -493,7 +499,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	  delete fullname_;
 	  fullname_ = 0;
 	}
-	return(0);
+	return 0;
       }
     }
   } // else str
@@ -505,7 +511,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     if (nostruct)
     {
       // Comes from a simple IDENTIFIER
-      char* p =  strchr(name,'.');
+      char* p =  strchr(name, '.');
       HMaliastab::iterator getobj;
       if (p)
 	getobj = ::urbiserver->objaliastab.find(p+1);
@@ -520,10 +526,10 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	  newobj = (*getobj).second;
 	  getobj = ::urbiserver->objaliastab.find(newobj->str());
 	}
-	snprintf(name,fullnameMaxSize,"%s",newobj->str());
+	snprintf(name, fullnameMaxSize, "%s", newobj->str());
       }
 
-      p =  strchr(name,'.');
+      p =  strchr(name, '.');
       if (p)
 	hmi = ::urbiserver->aliastab.find(p+1);
       else
@@ -551,7 +557,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
   }
   else if (nostruct)
   {
-    char* p =  strchr(name,'.');
+    char* p =  strchr(name, '.');
     if (p)
     {
       if (fullname_)
@@ -563,7 +569,7 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
     }
   }
 
-  char* p =  strchr(name,'.');
+  char* p =  strchr(name, '.');
   if (p)
   {
     p[0]=0;
@@ -579,7 +585,8 @@ UVariableName::buildFullname(UCommand *command, UConnection *connection, bool wi
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
       }
       UString* newmethod = new UString(p+1);
-      snprintf(name,fullnameMaxSize,"%s.%s",newobj->str(),newmethod->str());
+      snprintf(name, fullnameMaxSize, "%s.%s", newobj->str(),
+               newmethod->str());
       delete newmethod;
     }
   }
@@ -618,7 +625,7 @@ UVariableName::copy()
   if (str)
     ret = new UVariableName(str->copy(), rooted);
   else
-    ret = new UVariableName(ucopy (device), ucopy (id),rooted, ucopy (index));
+    ret = new UVariableName(ucopy (device), ucopy (id), rooted, ucopy (index));
 
   ret->isstatic     = isstatic;
   ret->isnormalized = isnormalized;
@@ -639,10 +646,10 @@ UVariableName::copy()
   void
 UVariableName::print()
 {
-  ::urbiserver->debug("(VAR root=%d ",rooted);
+  ::urbiserver->debug("(VAR root=%d ", rooted);
   if (device)
-    ::urbiserver->debug("device='%s' ",device->str());
+    ::urbiserver->debug("device='%s' ", device->str());
   if (id)
-    ::urbiserver->debug("id='%s' ",id->str());
+    ::urbiserver->debug("id='%s' ", id->str());
   ::urbiserver->debug(") ");
 }

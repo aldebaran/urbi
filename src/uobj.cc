@@ -57,15 +57,16 @@ UObj::~UObj()
   for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        ++it)
+  {
+    if (((*it).second->method) &&
+        ((*it).second->devicename) && (device) &&
+        ((*it).second->value->dataType != DATA_OBJ) &&
+        ((*it).second->devicename->equal(device)) )
     {
-      if (((*it).second->method) &&
-	  ((*it).second->devicename) && (device) &&
-	  ((*it).second->value->dataType != DATA_OBJ) &&
-	  ((*it).second->devicename->equal(device)) ) {
+      varToDelete.push_back((*it).second);
+    }
+  }//for
 
-	varToDelete.push_back((*it).second);
-      }
-    }//for
   for (std::list<UVariable*>::iterator itd = varToDelete.begin();
        itd != varToDelete.end();
        ++itd)
@@ -77,27 +78,27 @@ UObj::~UObj()
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        it++)
+  {
+    if (it->second->binder)
     {
-      if (it->second->binder)
-	{
-	  bool isempty = it->second->binder->removeMonitor(device);
-	  if (isempty)
-	    {
-	      delete it->second->binder;
-	      it->second->binder = 0;
-	    }//if
-	}//if
-    }//for
+      bool isempty = it->second->binder->removeMonitor(device);
+      if (isempty)
+      {
+        delete it->second->binder;
+        it->second->binder = 0;
+      }//if
+    }//if
+  }//for
 
   std::list<HMbindertab::iterator> deletelist;
   //clean functions binders
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
        it2++)
-    {
-      if (it2->second->removeMonitor(device))
-	deletelist.push_back(it2);
-    }//for
+  {
+    if (it2->second->removeMonitor(device))
+      deletelist.push_back(it2);
+  }//for
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
@@ -109,10 +110,10 @@ UObj::~UObj()
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
        it3 != ::urbiserver->eventbindertab.end();
        it3++)
-    {
-      if (it3->second->removeMonitor(device))
-	deletelist.push_back(it3);
-    }//for
+  {
+    if (it3->second->removeMonitor(device))
+      deletelist.push_back(it3);
+  }//for
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
@@ -122,17 +123,18 @@ UObj::~UObj()
 
 
   // clean the object binder
-  if (binder) {
+  if (binder)
+  {
     char messagetosend[1024];
-    snprintf(messagetosend,1024,"[5,\"%s\"]\n", device->str());
+    snprintf(messagetosend, 1024, "[5,\"%s\"]\n", device->str());
 
     for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
-	 it != binder->monitors.end();
-	 it++)
-      {
-	(*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
-      }
+         it != binder->monitors.end();
+         it++)
+    {
+      (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
+    }
 
     // in fact here we can delete the binder since it contained only bindings
     // to a single object (himself) associated to unique connections:
@@ -147,62 +149,64 @@ UObj::~UObj()
   for (std::list<UObj*>::iterator it = up.begin();
        it != up.end();
        ++it)
-    {
-      (*it)->down.remove(this);
-    }
+  {
+    (*it)->down.remove(this);
+  }
 
   // INTERNAL cleanups
   if ((internalBinder) &&
       (internalBinder->getUObject()))
-    {
-      // here we have two different cases because base classes are not dynamically
-      // created and cannot be deleted, they can only to be "cleaned":
-      if (internalBinder->getUObject()->derived)
-	delete internalBinder; // this deletes the associated UObject
-      else  {
-	if (internalBinder->getUObject())
-	  delete internalBinder->getUObject();
-      }
+  {
+    // here we have two different cases because base classes are not
+    // dynamically created and cannot be deleted, they can only
+    // to be "cleaned":
+    if (internalBinder->getUObject()->derived)
+      delete internalBinder; // this deletes the associated UObject
+    else  {
+      if (internalBinder->getUObject())
+        delete internalBinder->getUObject();
     }
+  }
 
   // clean variables internalBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        it++)
+  {
+    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+         (*it).second->internalBinder.begin();
+         itcb != (*it).second->internalBinder.end();
+        )
     {
-      for (std::list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalBinder.begin();
-	   itcb != (*it).second->internalBinder.end();
-	   )
-	{
-	  if ((*itcb)->objname == device->str())
-	    {
-	      delete (*itcb);
-	      itcb = (*it).second->internalBinder.erase(itcb);
-	    }
-	  else
-	    ++itcb;
-	}//for
+      if ((*itcb)->objname == device->str())
+      {
+        delete (*itcb);
+        itcb = (*it).second->internalBinder.erase(itcb);
+      }
+      else
+        ++itcb;
     }//for
+  }//for
 
   // clean variables internalAccessBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        it++)
+  {
+    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+         (*it).second->internalAccessBinder.begin();
+         itcb != (*it).second->internalAccessBinder.end();
+        )
     {
-      for (std::list<urbi::UGenericCallback*>::iterator itcb = (*it).second->internalAccessBinder.begin();
-	   itcb != (*it).second->internalAccessBinder.end();
-	   )
-	{
-	  if ((*itcb)->objname == device->str())
-	    {
-	      delete (*itcb);
-	      itcb = (*it).second->internalAccessBinder.erase(itcb);
-	    }
-	  else
-	    ++itcb;
-	}//for
+      if ((*itcb)->objname == device->str())
+      {
+        delete (*itcb);
+        itcb = (*it).second->internalAccessBinder.erase(itcb);
+      }
+      else
+        ++itcb;
     }//for
-
+  }//for
 
   // final cleanup
   delete device;
@@ -214,9 +218,10 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   UFunction *ret;
   bool found;
 
-  snprintf(namebuffer,1024,"%s.%s",device->str(),id);
+  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
-  if (hmf != ::urbiserver->functiontab.end()) {
+  if (hmf != ::urbiserver->functiontab.end())
+  {
     ambiguous = false;
     return (hmf->second);
   }
@@ -224,17 +229,18 @@ UObj::searchFunction(const char* id, bool &ambiguous)
     ret   = 0;
     found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
-	itup != up.end();
-	itup++){
-      ret = (*itup)->searchFunction(id,ambiguous);
+         itup != up.end();
+         itup++){
+      ret = (*itup)->searchFunction(id, ambiguous);
       if (ambiguous) return 0;
       if (ret)
-	if (found) {
-	  ambiguous = true;
-	  return 0;
-	}
-	else
-	  found = true;
+        if (found)
+        {
+          ambiguous = true;
+          return 0;
+        }
+        else
+          found = true;
     }
     ambiguous = false;
     return ret;
@@ -247,9 +253,10 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   UVariable *ret;
   bool found;
 
-  snprintf(namebuffer,1024,"%s.%s",device->str(),id);
+  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
-  if (hmv != ::urbiserver->variabletab.end()) {
+  if (hmv != ::urbiserver->variabletab.end())
+  {
     ambiguous = false;
     return (hmv->second);
   }
@@ -257,17 +264,18 @@ UObj::searchVariable(const char* id, bool &ambiguous)
     ret   = 0;
     found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
-	itup != up.end();
-	itup++){
-      ret = (*itup)->searchVariable(id,ambiguous);
+         itup != up.end();
+         itup++){
+      ret = (*itup)->searchVariable(id, ambiguous);
       if (ambiguous) return 0;
       if (ret)
-	if (found) {
-	  ambiguous = true;
-	  return 0;
-	}
-	else
-	  found = true;
+        if (found)
+        {
+          ambiguous = true;
+          return 0;
+        }
+        else
+          found = true;
     }
     ambiguous = false;
     return ret;
@@ -280,7 +288,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   UEventHandler* ret;
   bool found;
 
-  snprintf(namebuffer,1024,"%s.%s",device->str(),id);
+  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   bool ok = false;
   HMemittab::iterator iet;
   for (iet = ::urbiserver->emittab.begin ();
@@ -298,24 +306,24 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   {
     ret   = 0;
     found = false;
-		for (std::list<UObj*>::iterator itup = up.begin();
-				itup != up.end();
-	itup++)
+    for (std::list<UObj*>::iterator itup = up.begin();
+         itup != up.end();
+         itup++)
     {
-			ret = (*itup)->searchEvent(id,ambiguous);
-			if (ambiguous) return 0;
-			if (ret)
-	if (found)
-	{
-					ambiguous = true;
-					return 0;
-				}
-				else
-					found = true;
-		}
-		ambiguous = false;
-		return ret;
-	}
+      ret = (*itup)->searchEvent(id, ambiguous);
+      if (ambiguous) return 0;
+      if (ret)
+        if (found)
+        {
+          ambiguous = true;
+          return 0;
+        }
+        else
+          found = true;
+    }
+    ambiguous = false;
+    return ret;
+  }
 }
 
 

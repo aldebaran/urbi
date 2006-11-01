@@ -104,7 +104,8 @@ UConnection::UConnection  (UServer *userver,
   sendQueue_       = new UQueue(minSendBufferSize,
 				maxSendBufferSize,
 				sendAdaptive_);
-  if (sendQueue_ == 0 || sendQueue_->UError == UFAIL) {
+  if (sendQueue_ == 0 || sendQueue_->UError == UFAIL)
+  {
     UError = UFAIL;
     return;
   }
@@ -113,7 +114,8 @@ UConnection::UConnection  (UServer *userver,
   recvQueue_       = new UCommandQueue(minRecvBufferSize,
 				       maxRecvBufferSize,
 				       sendAdaptive_);
-  if (recvQueue_ == 0 || recvQueue_->UError == UFAIL) {
+  if (recvQueue_ == 0 || recvQueue_->UError == UFAIL)
+  {
     UError = UFAIL;
     delete sendQueue_;
     sendQueue_ = 0;
@@ -133,9 +135,9 @@ UConnection::UConnection  (UServer *userver,
   activeCommand = 0;
 
   // initialize the connection tag used to reference local variables
-  sprintf(tmpbuffer_connectionTag,"U%ld",(long)this);
+  sprintf(tmpbuffer_connectionTag, "U%ld", (long)this);
   connectionTag = new UString(tmpbuffer_connectionTag);
-  UVariable* cid = new UVariable(tmpbuffer_connectionTag,"connectionID",
+  UVariable* cid = new UVariable(tmpbuffer_connectionTag, "connectionID",
 				 tmpbuffer_connectionTag);
   if (cid) cid->uservar = false;
   functionTag = 0;
@@ -155,8 +157,10 @@ UConnection::~UConnection()
   delete recvQueue_;
   delete sendQueue_;
 
-  if (connectionTag) {
-    UVariable *vari = server->getVariable(connectionTag->str(),"connectionID");
+  if (connectionTag)
+  {
+    UVariable *vari = server->getVariable(connectionTag->str(),
+                                          "connectionID");
     delete vari;
     delete connectionTag;
   }
@@ -165,10 +169,11 @@ UConnection::~UConnection()
   // free bindings
 
   for ( HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-      it1 != ::urbiserver->variabletab.end(); it1++ ) {
-
+      it1 != ::urbiserver->variabletab.end(); it1++ )
+  {
     if (it1->second->binder)
-      if (it1->second->binder->removeMonitor(this)) {
+      if (it1->second->binder->removeMonitor(this))
+      {
 	delete it1->second->binder;
 	it1->second->binder = 0;
       }
@@ -177,22 +182,22 @@ UConnection::~UConnection()
   std::list<HMbindertab::iterator> deletelist;
   for ( HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
       it2 != ::urbiserver->functionbindertab.end();
-      it2++) {
-
+      it2++)
+  {
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
   }
+
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
     ::urbiserver->functionbindertab.erase((*itt));
   deletelist.clear();
 
-
   for ( HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
       it3 != ::urbiserver->eventbindertab.end();
-      it3++) {
-
+      it3++)
+  {
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
   }
@@ -233,29 +238,29 @@ UConnection::closeConnection()
 void UConnection::initialize()
 {
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; i++)
-    send(::HEADER_BEFORE_CUSTOM[i],"start");
+    send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   int i = 0;
   char customHeader[1024];
 
   do {
-    server->getCustomHeader(i,(char*)customHeader,1024);
+    server->getCustomHeader(i, (char*)customHeader, 1024);
     if (customHeader[0]!=0)
-      send((const char*) customHeader,"start");
+      send((const char*) customHeader, "start");
     i++;
   } while (customHeader[0]!=0);
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; i++)
-    send(::HEADER_AFTER_CUSTOM[i],"start");
-  sprintf(customHeader,"*** ID: %s\n",connectionTag->str());
-  send(customHeader,"ident");
+    send(::HEADER_AFTER_CUSTOM[i], "start");
+  sprintf(customHeader, "*** ID: %s\n", connectionTag->str());
+  send(customHeader, "ident");
 
-  sprintf(customHeader,"%s created",connectionTag->str());
+  sprintf(customHeader, "%s created", connectionTag->str());
   server->echo(::DISPLAY_FORMAT, (long)this,
 	       "UConnection::initialize",
 	       customHeader);
 
-  server->loadFile("CLIENT.INI",recvQueue_);
+  server->loadFile("CLIENT.INI", recvQueue_);
   newDataAdded = true;
 }
 
@@ -275,11 +280,12 @@ UConnection::sendPrefix (const char* tag)
       snprintf(tmpBuffer_,
 	       MAXSIZE_TMPBUFFER-3,
 	       "[%08d:%s", (int)server->lastTime(), tag);
-      strcat(tmpBuffer_,"] "); // This splitting method is used to truncate the
-      // tag if its size is too large.
+      strcat(tmpBuffer_, "] "); // This splitting method is
+                                //used to truncate the
+                                // tag if its size is too large.
     }
 
-  send((const ubyte*)tmpBuffer_,strlen(tmpBuffer_));
+  send((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
   return USUCCESS;
 }
 
@@ -287,7 +293,7 @@ UConnection::sendPrefix (const char* tag)
 UErrorValue
 UConnection::endline ()
 {
-  send((const ubyte*)"\n",1);
+  send((const ubyte*)"\n", 1);
   return USUCCESS;
 }
 
@@ -307,7 +313,7 @@ UErrorValue
 UConnection::send (const char *s, const char* tag)
 {
   sendPrefix(tag);
-  return send((const ubyte*)s,strlen(s));
+  return send((const ubyte*)s, strlen(s));
 }
 
 //! Send a buffer through the connection.
@@ -332,7 +338,7 @@ UConnection::send (const ubyte *buffer, int length)
 {
   if (closing) return USUCCESS;
 
-  UErrorValue result = sendQueue_->push(buffer,length);
+  UErrorValue result = sendQueue_->push(buffer, length);
   if ( result != USUCCESS)
     {
       if (result == UMEMORYFAIL)
@@ -356,7 +362,7 @@ UConnection::send (const ubyte *buffer, int length)
 bool
 UConnection::isBlocked ()
 {
-  return  blocked_ ;
+  return blocked_ ;
 }
 
 //! Blocks the connection so that send() functions will not call continueSend.
@@ -436,7 +442,8 @@ UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
   bool gotlock = false;
-  bool faillock = false; //if binary append failed to get lock, abort processing
+  bool faillock = false; // if binary append failed to get lock,
+                         // abort processing
   urbi::BlockLock bl(server);
   if (server->memoryOverflow)
     {
@@ -570,11 +577,11 @@ UConnection::received (const ubyte *buffer, int length)
 		server->parser.commandTree = 0;
 	      }
 
-	    send(errorMessage,"error");
+	    send(errorMessage, "error");
 
 	    errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
 	    errorMessage[ 42 ] = 0; // cut at 41 characters
-	    server->error(::DISPLAY_FORMAT,(long)this,
+	    server->error(::DISPLAY_FORMAT, (long)this,
 			  "UConnection::received",
 			  errorMessage);
 	  }
@@ -682,26 +689,39 @@ UConnection::error (UErrorCode n)
 {
   char errorString[80]; // Max error message = 80 chars
 
-  switch (n) {
-
-  case UERROR_CRITICAL            : strcpy(errorString,"!!! Critical error\n"); break;
-  case UERROR_SYNTAX              : strcpy(errorString,"!!! Syntax error\n"); break;
-  case UERROR_DIVISION_BY_ZERO    : strcpy(errorString,"!!! Division by zero\n"); break;
-  case UERROR_RECEIVE_BUFFER_FULL : strcpy(errorString,"!!! Receive buffer full\n"); break;
-  case UERROR_MEMORY_OVERFLOW     : strcpy(errorString,"!!! Out of memory\n"); break;
-  case UERROR_SEND_BUFFER_FULL    : strcpy(errorString,"!!! Send buffer full\n"); break;
-  case UERROR_CPU_OVERLOAD        : strcpy(errorString,"!!! CPU Overload\n"); break;
-  case UERROR_RECEIVE_BUFFER_CORRUPTED : strcpy(errorString,"!!! Receive buffer corrupted\n"); break;
-  default                         : strcpy(errorString,"!!! Unidentified Error\n");
+  switch (n)
+  {
+  case UERROR_CRITICAL            :
+    strcpy(errorString, "!!! Critical error\n"); break;
+  case UERROR_SYNTAX              :
+    strcpy(errorString, "!!! Syntax error\n"); break;
+  case UERROR_DIVISION_BY_ZERO    :
+    strcpy(errorString, "!!! Division by zero\n"); break;
+  case UERROR_RECEIVE_BUFFER_FULL :
+    strcpy(errorString, "!!! Receive buffer full\n"); break;
+  case UERROR_MEMORY_OVERFLOW     :
+    strcpy(errorString, "!!! Out of memory\n"); break;
+  case UERROR_SEND_BUFFER_FULL    :
+    strcpy(errorString, "!!! Send buffer full\n"); break;
+  case UERROR_CPU_OVERLOAD        :
+    strcpy(errorString, "!!! CPU Overload\n"); break;
+  case UERROR_RECEIVE_BUFFER_CORRUPTED :
+    strcpy(errorString, "!!! Receive buffer corrupted\n"); break;
+  default                         :
+    strcpy(errorString, "!!! Unidentified Error\n");
 
   }
 
   UErrorValue result = send( errorString, "error");
-  if (result == USUCCESS ) {
+  if (result == USUCCESS )
+  {
     errorString[strlen(errorString) - 1] = 0; // remove the '\n' at the end...
-    server->error(::DISPLAY_FORMAT,(long)this,"UConnection::error",errorString);
+    server->error(::DISPLAY_FORMAT,
+                  (long)this,
+                  "UConnection::error",
+                  errorString);
   }
-  return  result ;
+  return result ;
 }
 
 //! Send a warning message based on the warning number.
@@ -717,19 +737,26 @@ UConnection::warning (UWarningCode n)
 {
   char warningString[80]; // Max warning message = 80 chars
 
-  switch (n) {
-
-  case UWARNING_MEMORY            : strcpy(warningString,"!!! Memory overflow warning\n"); break;
-  default                         : strcpy(warningString,"!!! Unidentified Warning\n");
+  switch (n)
+  {
+  case UWARNING_MEMORY:
+    strcpy(warningString, "!!! Memory overflow warning\n"); break;
+  default:
+    strcpy(warningString, "!!! Unidentified Warning\n");
 
   }
 
   UErrorValue result = send( warningString, "warning");
-  if (result == USUCCESS ) {
-    warningString[strlen(warningString) - 1] = 0; // remove the '\n' at the end...
-    server->echoKey("WARNG",::DISPLAY_FORMAT,(long)this,"UConnection::warning",warningString);
+  if (result == USUCCESS )
+  {
+    warningString[strlen(warningString)-1] = 0;//remove the '\n' at the end...
+    server->echoKey("WARNG",
+                    ::DISPLAY_FORMAT,
+                    (long)this,
+                    "UConnection::warning",
+                    warningString);
   }
-  return  result ;
+  return result ;
 }
 
 //! Set a flag to insure the error will be send.
@@ -847,27 +874,28 @@ UConnection::processCommand(UCommand *&command,
 	  command->startTime = server->lastTime();
 
 	  param = command->flags;
-	  while (param) {
-
-	    if (param->name) {
-
-	      if (param->name->equal("flagid")) {
-
+	  while (param)
+          {
+	    if (param->name)
+            {
+	      if (param->name->equal("flagid"))
+              {
 		param->name->update("noflag");
-		UValue* tmpID = param->expression->eval(command,this);
-		if (tmpID) {
-
+		UValue* tmpID = param->expression->eval(command, this);
+		if (tmpID)
+                {
 		  if (tmpID->dataType == DATA_STRING)
-		    for (std::list<UConnection*>::iterator retr = ::urbiserver->connectionList.begin();
+		    for (std::list<UConnection*>::iterator retr =
+                         ::urbiserver->connectionList.begin();
 			 retr != ::urbiserver->connectionList.end();
 			 retr++)
 		      if ((*retr)->isActive())
 
 			if (((*retr)->connectionTag->equal(tmpID->str)) ||
-			    (strcmp(tmpID->str->str(),"all") == 0) ||
-			    ( ( strcmp(tmpID->str->str(),"other") == 0) &&
-			      ( !(*retr)->connectionTag->equal(connectionTag)))) {
-
+			    (strcmp(tmpID->str->str(), "all") == 0) ||
+			    ( ( strcmp(tmpID->str->str(), "other") == 0) &&
+			      ( !(*retr)->connectionTag->equal(connectionTag))))
+                        {
 			  UCommand_TREE* tohook = new UCommand_TREE( UAND,
 								     command->copy(),
 								     0);
@@ -881,20 +909,29 @@ UConnection::processCommand(UCommand *&command,
 	      }
 
 
-	      if (param->name->equal("flagtimeout")) {
+	      if (param->name->equal("flagtimeout"))
+              {
 		command->flagType += 1;
 		command->flagExpr1 = param->expression;
-		send("!!! Warning: +timeout flag is obsolete. Use timeout(time) command instead.\n",command->getTag().c_str());
+		send("!!! Warning: +timeout flag is obsolete."
+                     " Use timeout(time) command instead.\n",
+                     command->getTag().c_str());
 	      }
-	      if (param->name->equal("flagstop")) {
+	      if (param->name->equal("flagstop"))
+              {
 		command->flagType += 2;
 		command->flagExpr2 = param->expression;
-		send("!!! Warning: +stop flag is obsolete. Use stopif(test) command instead.\n",command->getTag().c_str());
+		send("!!! Warning: +stop flag is obsolete."
+                     " Use stopif(test) command instead.\n",
+                     command->getTag().c_str());
 	      }
-	      if (param->name->equal("flagfreeze")) {
+	      if (param->name->equal("flagfreeze"))
+              {
 		command->flagType += 4;
 		command->flagExpr4 = param->expression;
-		send("!!! Warning: +freeze flag is obsolete. Use freezeif(test) command instead.\n",command->getTag().c_str());
+		send("!!! Warning: +freeze flag is obsolete."
+                     " Use freezeif(test) command instead.\n",
+                     command->getTag().c_str());
 	      }
 
 	      if ((param->name->equal("flag")) &&
@@ -907,7 +944,7 @@ UConnection::processCommand(UCommand *&command,
 		  (!command->morphed) &&
 		  (( param->expression->val == 4 ) || // 4 = +begin
 		   ( param->expression->val == 1 ) )) // 1 = +report
-		send("*** begin\n",command->getTag().c_str());
+		send("*** begin\n", command->getTag().c_str());
 
 	    }
 
@@ -918,8 +955,9 @@ UConnection::processCommand(UCommand *&command,
       stopit = false;
 
       // flag "+timeout"
-      if (command->flagType&1) {
-	UValue *value = command->flagExpr1->eval(command,this);
+      if (command->flagType&1)
+      {
+	UValue *value = command->flagExpr1->eval(command, this);
 	if ((value) &&
 	    (value->dataType == DATA_NUM) &&
 	    (command->startTime + value->val <= server->lastTime()))
@@ -932,7 +970,8 @@ UConnection::processCommand(UCommand *&command,
       if (command->flagType&2)  {
 	UTestResult testres = booleval(command->flagExpr2->eval(command, this));
 
-	if (testres == UTRUE) {
+	if (testres == UTRUE)
+        {
 	  if (command->flag_nbTrue2 == 0)
 	    command->flag_startTrue2 = server->lastTime();
 	  command->flag_nbTrue2++;
@@ -952,10 +991,12 @@ UConnection::processCommand(UCommand *&command,
 
       // flag "+freeze"
 
-      if (command->flagType&4) {
+      if (command->flagType&4)
+      {
 	UTestResult testres = booleval(command->flagExpr4->eval(command, this));
 
-	if (testres == UTRUE) {
+	if (testres == UTRUE)
+        {
 	  if (command->flag_nbTrue4 == 0)
 	    command->flag_startTrue4 = server->lastTime();
 	  command->flag_nbTrue4++;
@@ -973,17 +1014,18 @@ UConnection::processCommand(UCommand *&command,
 	  return command;
       }
 
-      if (stopit) {
+      if (stopit)
+      {
 	param = command->flags;
-	while (param) {
-
+	while (param)
+        {
 	  if ((param->name) &&
 	      (param->name->equal("flag")) &&
 	      (param->expression) &&
 	      (!command->morphed) &&
 	      (( param->expression->val == 3 ) || // 3 = +end
 	       ( param->expression->val == 1 ) )) // 1 = +report
-	    send("*** end\n",command->getTag().c_str());
+	    send("*** end\n", command->getTag().c_str());
 
 	  param = param->next;
 	}
@@ -997,27 +1039,28 @@ UConnection::processCommand(UCommand *&command,
 
       // Regular command processing
 
-      if (command->type == CMD_TREE) {
+      if (command->type == CMD_TREE)
+      {
 	mustReturn = true;
-	return  command ;
+	return command ;
       }
       else { // != CMD_TREE
 	morphed_up = command->up;
 	morphed_position = command->position;
 
-	switch (command->execute(this)) {
-
+	switch (command->execute(this))
+        {
 	case UCOMPLETED:
 
 	  param = command->flags;
-	  while (param) {
-
+	  while (param)
+          {
 	    if ((param->name) &&
 		(param->name->equal("flag")) &&
 		(param->expression) &&
 		(( param->expression->val == 3 ) || // 3 = +end
 		 ( param->expression->val == 1 ) )) // 1 = +report
-	      send("*** end\n",command->getTag().c_str());
+	      send("*** end\n", command->getTag().c_str());
 
 	    param = param->next;
 	  }
@@ -1078,7 +1121,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
   tree = execCommand;
 
-  while (tree) {
+  while (tree)
+  {
     tree->status = URUNNING;
 
     // BLOCKED/FREEZED COMMANDS
@@ -1086,13 +1130,14 @@ UConnection::execute(UCommand_TREE* &execCommand)
     deletecommand = false;
 
     //check if freezed
-    if (tree->isFrozen()) {
+    if (tree->isFrozen())
+    {
       tree = tree->up;
       continue;
     }
 
-    if (tree->isBlocked()) {
-
+    if (tree->isBlocked())
+    {
       tree->runlevel1 = UEXPLORED;
       tree->runlevel2 = UEXPLORED;
       deletecommand = true;
@@ -1110,9 +1155,11 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
     if (mustReturn)  { tree = (UCommand_TREE*) tree->command1; continue;}
 
-    if (tree->callid) {
+    if (tree->callid)
+    {
       stack.pop_front();
-      if (returnMode) {
+      if (returnMode)
+      {
 	delete tree->command1;
 	tree->command1 = 0;
 	returnMode = false;
@@ -1123,8 +1170,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
     if ( (tree->node == UAND) ||
 	 (tree->node == UCOMMA) ||
 	 (tree->command1 == 0) ||
-	 (tree->command1->status == UBACKGROUND) ) {
-
+	 (tree->command1->status == UBACKGROUND) )
+    {
       if (tree == lastCommand)
 	obstructed = false;
 
@@ -1134,7 +1181,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
       if (mustReturn)  {tree = (UCommand_TREE*) tree->command2; continue;}
 
-      if (tree->callid) { // arriving here means the function is finished
+      if (tree->callid)
+      { // arriving here means the function is finished
 	vari  = ::urbiserver->getVariable(tree->callid->str(), "__result__");
 	delete vari;
       }
@@ -1144,7 +1192,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
     if ( ((tree->command1 == 0) &&
 	  (tree->command2 == 0)) ||
-	 (deletecommand)) {
+	 (deletecommand))
+    {
       if (tree == lastCommand)
 	lastCommand = tree->up;
       if (tree == execCommand)
@@ -1155,14 +1204,14 @@ UConnection::execute(UCommand_TREE* &execCommand)
       oldtree = tree;
 
       UNamedParameters *param = tree->flags;
-      while (param) {
-
+      while (param)
+      {
 	if ((param->name) &&
 	    (param->name->equal("flag")) &&
 	    (param->expression) &&
 	    (( param->expression->val == 3 ) || // 3 = +end
 	     ( param->expression->val == 1 ) )) // 1 = +report
-	  send("*** end\n",tree->getTag().c_str());
+	  send("*** end\n", tree->getTag().c_str());
 
 	param = param->next;
       }
@@ -1195,8 +1244,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	(tree != execCommand) &&
 	(!tree->toDelete) &&
 	(tree->command1 == 0) &&
-	(tree->command2 != 0)) { // left reduction
-
+	(tree->command2 != 0))
+    { // left reduction
       ASSERT(tree->position!=0) *(tree->position) = tree->command2;
       tree->command2->up = tree->up;
       tree->command2->position = tree->position;
@@ -1214,8 +1263,9 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	(!tree->toDelete) &&
 	(tree->command2 == 0) &&
 	(tree->command1 != 0) &&
-	(tree->command1->status != UBACKGROUND) ) { // right reduction
-					  // the background hack is here to preserve {at()...} commands.
+	(tree->command1->status != UBACKGROUND) )
+    { // right reduction
+      // the background hack is here to preserve {at()...} commands.
 
       ASSERT(tree->position!=0) *(tree->position) = tree->command1;
       tree->command1->up = tree->up;
@@ -1236,7 +1286,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
   if ( (execCommand) &&
        (execCommand->command1 == 0) &&
-       (execCommand->command2 == 0)) {
+       (execCommand->command2 == 0))
+  {
     delete execCommand;
     execCommand = 0;
   }
@@ -1259,12 +1310,14 @@ UConnection::execute(UCommand_TREE* &execCommand)
 void
 UConnection::append(UCommand_TREE *command)
 {
-  if (activeCommand == 0) {
+  if (activeCommand == 0)
+  {
     activeCommand = command;
     command->up = 0;
     command->position = 0;
   }
-  else {
+  else
+  {
     lastCommand->command2 = command;
     command->up = lastCommand;
     command->position = &(lastCommand->command2);
@@ -1298,8 +1351,8 @@ UConnection::sendQueueRemain ()
 void
 UConnection::localVariableCheck (UVariable *variable)
 {
-  if (!stack.empty()) {
-
+  if (!stack.empty())
+  {
     UCallid* cid = stack.front();
     if (variable->devicename->equal(cid->str()))
       cid->store(variable);

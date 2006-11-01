@@ -43,7 +43,7 @@
 # include "ucallid.h"
 
 
-// *****************************************************************************
+// ****************************************************************************
 //! UCommand class stores URBI commands.
 /*! UCommand class:
 
@@ -63,11 +63,11 @@ public:
   virtual UCommand* copy();
   UErrorValue       copybase(UCommand *command);
 
-  UCommand*         scanGroups(UVariableName** (UCommand::*refName)(),bool);
+  UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
   virtual UVariableName** refVarName()  { return 0; };
-  virtual UVariableName** refVarName2() { return 0; };
+  virtual UVariableName** refVarName2()  { return 0; };
 
-  const std::string& getTag() {return tag;}
+  const std::string& getTag()  {return tag;}
   void setTag(const std::string& tag);
   void setTag(UCommand *b); //faster than the one above
   void unsetTag();
@@ -86,18 +86,18 @@ public:
   UCommand         **position;  ///< position in the owning UCommand_TREE
   UCommand         *morph;      ///< stores the target UCommand in case of
 				///< morphing
-  bool             persistant;  ///< tells if the command should be deleted once
+  bool             persistant; ///< tells if the command should be deleted once
 				///< it is UCOMPLETED (useful for loops)
   bool             toDelete;    ///< true if the command has been marked for
 				///< deletion in a stop command.
-  bool             background;  ///< used to put the whole tree in bg mode (after
+  bool             background;///< used to put the whole tree in bg mode (after
 				///< a morphing from a "at" or "whenever").
 
   ufloat           startTime;   ///< start time
-  UExpression      *flagExpr1;   ///< expression used to store the flags parameters
-  UExpression      *flagExpr2;   ///< expression used to store the flags parameters
-  UExpression      *flagExpr4;   ///< expression used to store the flags parameters
-  int              flagType;    ///< in case of timeout or condout, stores the type
+  UExpression      *flagExpr1;  ///< expression used to store the flags params
+  UExpression      *flagExpr2;   ///< expression used to store the flags params
+  UExpression      *flagExpr4;   ///< expression used to store the flags params
+  int              flagType;///< in case of timeout or condout, stores the type
 				///< of the flag (timeout:0), (condout:1).
   int              flag_nbTrue2;      ///< nb of times the flag test is true
   ufloat           flag_startTrue2;   ///< time of the last 'true' for "stop"
@@ -166,8 +166,8 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName() { return &variablename; };
-  virtual UVariableName** refVarName2() { return &expression->variablename; };
+  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName2()  { return &expression->variablename; };
 
 
 
@@ -193,7 +193,7 @@ public:
   UValue           *tmpeval;
 
   UExpression      *tmp_phase;  ///< stored temporary phase for cos modificator
-  UExpression      *tmp_time;  ///< stored temporary time=0 for direct assignment
+  UExpression      *tmp_time;///< stored temporary time=0 for direct assignment
   ufloat           endtime;     ///< time limit in case of timeout modificator
   ufloat           startval;    ///< start value for modificators
   ufloat           targetval;   ///< target value for modificators
@@ -213,12 +213,13 @@ public:
   bool             isvaln;      ///< true for 'valn' type assignments
   bool             errorFlag;   ///< true if +error is set for the command
   bool             first;       ///< true on the first passage
-  bool             assigned;    ///< true when a nbAssign-- has to be done on delete
+  bool             assigned;///< true when a nbAssign-- has to be done ondelete
   bool             defkey;      ///< is the def prefix used?
 
 private:
 
-  UErrorValue      processModifiers(UConnection* connection, ufloat currentTime);
+  UErrorValue      processModifiers(UConnection* connection,
+                                    ufloat currentTime);
 
 };
 
@@ -235,7 +236,7 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName() { return &variablename; };
+  virtual UVariableName** refVarName()  { return &variablename; };
 
 
   UVariableName    *variablename;   ///< variable name
@@ -260,7 +261,7 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName() { return &variablename; };
+  virtual UVariableName** refVarName()  { return &variablename; };
 
 
   UVariableName    *variablename;   ///< variable name
@@ -305,7 +306,7 @@ public:
 
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName() { return &expression->variablename; };
+  virtual UVariableName** refVarName()  { return &expression->variablename; };
 
   UExpression      *expression; ///< Expression
 };
@@ -409,7 +410,7 @@ public:
 
   UString              *id; ///< identifier
   UNamedParameters     *parameters; ///< list of group members
-  int                  grouptype; ///< type of group command group/addgroup/delgroup
+  int            grouptype; ///< type of group command group/addgroup/delgroup
 };
 
 
@@ -439,7 +440,7 @@ public:
   UCommand_DEVICE_CMD  (UVariableName* device,
 			ufloat *cmd);
   virtual ~UCommand_DEVICE_CMD();
-  virtual UVariableName** refVarName() { return &variablename; };
+  virtual UVariableName** refVarName()  { return &variablename; };
 
   virtual void print(int l);
 
@@ -534,7 +535,8 @@ class UCommand_EMIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EMIT(UVariableName* eventname, UNamedParameters *parameters, UExpression *duration=0);
+  UCommand_EMIT(UVariableName* eventname,
+                UNamedParameters *parameters, UExpression *duration=0);
   virtual ~UCommand_EMIT();
 
   virtual void print(int l);
@@ -584,7 +586,7 @@ public:
 
   UCommand_INCDECREMENT(UCommandType type, UVariableName *variablename);
   virtual ~UCommand_INCDECREMENT();
-  virtual UVariableName** refVarName() { return &variablename; };
+  virtual UVariableName** refVarName()  { return &variablename; };
 
   virtual void print(int l);
 
@@ -929,7 +931,7 @@ public:
   virtual UCommand*      copy();
 
   UCommandQueue       *loadQueue;    ///< used to load files
-  bool                ready; ///< used to alternate exec/non-exec state (a kind of noop)
+  bool ready; ///< used to alternate exec/non-exec state (a kind of noop)
   UCommand_TREE       *mainnode; ///< node that contains the load command
 };
 

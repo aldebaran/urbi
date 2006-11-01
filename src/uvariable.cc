@@ -64,11 +64,12 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(_id,_method)] = this;
+  ::urbiserver->variabletab[setName(_id, _method)] = this;
 }
 
 //! UVariable constructor.
-UVariable::UVariable(const char* name,ufloat val,
+UVariable::UVariable(const char* name,
+                     ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
@@ -94,11 +95,11 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(_id,_method)] = this;
+  ::urbiserver->variabletab[setName(_id, _method)] = this;
 }
 
 //! UVariable constructor.
-UVariable::UVariable(const char* name,const char* str,
+UVariable::UVariable(const char* name, const char* str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
@@ -124,13 +125,13 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(_id,_method)] = this;
+  ::urbiserver->variabletab[setName(_id, _method)] = this;
 }
 
 //! general initialisation called by constructors
 void
-UVariable::init() {
-
+UVariable::init()
+{
   ADDOBJ(UVariable);
   blendType  = UNORMAL;
   rangemin   = -UINFINITY;
@@ -159,8 +160,8 @@ UVariable::init() {
 }
 
 //! UVariable destructor
-UVariable::~UVariable() {
-
+UVariable::~UVariable()
+{
   if (activity)
     ::urbiserver->reinitList.remove(this);
 
@@ -171,9 +172,10 @@ UVariable::~UVariable() {
     ::urbiserver->variabletab.erase(hmi);
 
   FREEOBJ(UVariable);
-  if (value) {
-    if ((value->dataType == DATA_OBJ) && (value->str!=0)) {
-
+  if (value)
+  {
+    if ((value->dataType == DATA_OBJ) && (value->str!=0))
+    {
       HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
       if (idit != ::urbiserver->objtab.end())
 	delete idit->second;
@@ -196,7 +198,7 @@ UVariable::setName(const char *s)
 
   varname    = new UString (s);
 
-  pointPos = const_cast<char*>(strstr(varname->str(),"."));
+  pointPos = const_cast<char*>(strstr(varname->str(), "."));
   if (pointPos == 0)
 
     method = new UString("");
@@ -216,7 +218,7 @@ UVariable::setName(const char *_id, const char* _method)
 {
   char tmpVarName[1024];
 
-  snprintf(tmpVarName,1024,"%s.%s",_id,_method);
+  snprintf(tmpVarName, 1024, "%s.%s", _id, _method);
 
   varname    = new UString (tmpVarName);
   method     = new UString(_method);
@@ -237,37 +239,44 @@ UVarSet
 UVariable::set(UValue *v)
 {
   if (!v)
-		return(selfSet(&(value->val)));
+    return selfSet(&(value->val));
 
-	if (value  && value->dataType != v->dataType) {
-		delete value;
-		value = 0;
-		}
-	if (!value)
+  if (value  && value->dataType != v->dataType)
+  {
+    delete value;
+    value = 0;
+  }
+  if (!value)
     value = v->copy();
   else {
-		switch (value->dataType) {
-			case DATA_STRING: value->str->update(v->str->str()); break;
-			case DATA_NUM:    setSensorVal(v->val); break;
-			case DATA_LIST:   delete value;value = v->copy(); break;
-			case DATA_BINARY: LIBERATE(value->refBinary);
-												value->refBinary = v->refBinary->copy();
-												break;
-			case DATA_VOID:   // uninitialized def's
+    switch (value->dataType)
+    {
+      case DATA_STRING: value->str->update(v->str->str()); break;
+      case DATA_NUM:    setSensorVal(v->val); break;
+      case DATA_LIST:   delete value;value = v->copy(); break;
+      case DATA_BINARY: LIBERATE(value->refBinary);
+                        value->refBinary = v->refBinary->copy();
+                        break;
+      case DATA_VOID:   // uninitialized def's
 
-												value->dataType = v->dataType;
-												switch (v->dataType) {
-													case DATA_STRING: value->str = new UString(v->str); break;
-													case DATA_NUM:    initSensorVal(v->val); break;
-													case DATA_BINARY: value->refBinary = v->refBinary->copy(); break;
-													case DATA_LIST: delete value;value = v->copy(); break;
-													default: break;
-												}
-			default: break;
-		}
+                        value->dataType = v->dataType;
+                        switch (v->dataType)
+                        {
+                          case DATA_STRING:
+                            value->str = new UString(v->str); break;
+                          case DATA_NUM:
+                            initSensorVal(v->val); break;
+                          case DATA_BINARY:
+                            value->refBinary = v->refBinary->copy(); break;
+                          case DATA_LIST:
+                            delete value;value = v->copy(); break;
+                          default: break;
+                        }
+      default: break;
+    }
   }
 
-  return(selfSet(&(value->val)));
+  return selfSet(&(value->val));
 }
 
 //! Set the UValue associated to the variable
@@ -282,7 +291,7 @@ UVariable::setFloat(ufloat f)
   else
     setSensorVal(f);
 
-  return(selfSet(&(value->val)));
+  return selfSet(&(value->val));
 }
 
 //! Check the float reference associated to the variable
@@ -295,17 +304,21 @@ UVariable::setFloat(ufloat f)
 UVarSet
 UVariable::selfSet(ufloat *valcheck)
 {
-  ufloat s,localspeed;
+  ufloat s;
+  ufloat localspeed;
 
-  if (value->dataType == DATA_NUM) {
+  if (value->dataType == DATA_NUM)
+  {
     if (*valcheck < rangemin) *valcheck = rangemin;
     if (*valcheck > rangemax) *valcheck = rangemax;
 
-    if (speedmax != UINFINITY) {
+    if (speedmax != UINFINITY)
+    {
       localspeed = (*valcheck - previous) / ::urbiserver->getFrequency();
       s = speedmax / 1000.;
 
-      if (ABSF(localspeed) > s) {
+      if (ABSF(localspeed) > s)
+      {
 	if (localspeed>0)
 	  *valcheck = *valcheck - ((localspeed - s) * ::urbiserver->getFrequency());
 	else
@@ -334,14 +347,17 @@ UVariable::selfSet(ufloat *valcheck)
 UValue*
 UVariable::get()
 {
-  if (!internalAccessBinder.empty()) {
-    for (std::list<urbi::UGenericCallback*>::iterator itcb = internalAccessBinder.begin();
+  if (!internalAccessBinder.empty())
+  {
+    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+         internalAccessBinder.begin();
 	itcb != internalAccessBinder.end();
-	itcb++) {
-
+	itcb++)
+    {
       urbi::UList tmparray;
 
-      if ((*itcb)->storage) {
+      if ((*itcb)->storage)
+      {
 	// monitor with &UVar reference
 	urbi::UValue *tmpvalue = new urbi::UValue();
 	tmpvalue->storage = (*itcb)->storage;
@@ -375,15 +391,16 @@ UVariable::updated()
 	 it++)
       {
 	(*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it)->c->send((const ubyte*)"[1,\"",4);
-	(*it)->c->send((const ubyte*)varname->str(),varname->len());
-	(*it)->c->send((const ubyte*)"\",",2);
+	(*it)->c->send((const ubyte*)"[1,\"", 4);
+	(*it)->c->send((const ubyte*)varname->str(), varname->len());
+	(*it)->c->send((const ubyte*)"\",", 2);
 	value->echo((*it)->c);
-	(*it)->c->send((const ubyte*)"]\n",2);
+	(*it)->c->send((const ubyte*)"]\n", 2);
       }
 
   if (!internalBinder.empty())
-    for (std::list<urbi::UGenericCallback*>::iterator itcb = internalBinder.begin();
+    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+         internalBinder.begin();
 	 itcb != internalBinder.end();
 	 itcb++)
       {
@@ -411,7 +428,7 @@ UVariable::isDeletable()
     HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
     if ( (idit != ::urbiserver->objtab.end()) &&
 	(!idit->second->down.empty()) )
-      return( false );
+      return false;
   }
-  return (true);
+  return true;
 }

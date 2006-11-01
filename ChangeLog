@@ -1,3 +1,21 @@
+2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	Code reindent and force coding style
+
+	* src/ucommand.cc: do it.
+	* src/uvalue.h: do it.
+	* src/ucommand.h: do it.
+	* src/parser/bison/ugrammar.y: do it.
+	* src/uexpression.cc: do it.
+	* src/uvalue.cc: do it.
+	* src/uvariable.cc: do it.
+	* src/userver.cc: do it.
+	* src/uobj.cc: do it.
+	* src/uvariablename.cc: do it.
+	* src/uvariable.h: do it.
+	* src/uvariablename.h: do it.
+	* src/uconnection.cc: do it.
+
 2006-10-31  Matthieu Nottale  <nottale@gostai.com>
 
 	Rename Connection* to connection* 

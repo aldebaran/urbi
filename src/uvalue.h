@@ -70,7 +70,6 @@ public:
     URefPt<UBinary> *refBinary;
   };
 
-  long eventid; ///< Used to identify the events from which the boolean value come from
   UValue *liststart;
   UValue *next;
 
@@ -83,6 +82,6 @@ public:
   urbi::UValue* urbiValue();
 };
 
-UTestResult booleval(UValue *,bool freeme = true);
+UTestResult booleval(UValue *, bool freeme = true);
 
 #endif

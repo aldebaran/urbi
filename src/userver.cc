@@ -160,7 +160,7 @@ UServer::initialization()
   char customHeader[1024];
 
   do {
-    getCustomHeader(i,(char*)customHeader,1024);
+    getCustomHeader(i, (char*)customHeader, 1024);
     if (customHeader[0])
       display((const char*) customHeader);
     i++;
@@ -179,10 +179,10 @@ UServer::initialization()
   connectionList.push_front(ghost);
 
   char tmpbuffer_ghostTag[50];
-  sprintf(tmpbuffer_ghostTag,"U%ld",(long)ghost);
+  sprintf(tmpbuffer_ghostTag, "U%ld", (long)ghost);
 
-  new UVariable(MAINDEVICE,"ghostID", tmpbuffer_ghostTag);
-  new UVariable(MAINDEVICE,"name", mainName->str());
+  new UVariable(MAINDEVICE, "ghostID", tmpbuffer_ghostTag);
+  new UVariable(MAINDEVICE, "name", mainName->str());
   uservarState = true;
 
 
@@ -198,7 +198,7 @@ UServer::initialization()
       retr++)
     (*retr)->init((*retr)->name);
 
-  if (loadFile("URBI.INI",ghost->recvQueue()) == USUCCESS)
+  if (loadFile("URBI.INI", ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
 }
 
@@ -244,8 +244,8 @@ UServer::work()
        ittt != urbi::timermap.end();
        ittt++)
     if ((*ittt)->lastTimeCalled - currentTime + (*ittt)->period <
-	frequency_ / 2) {
-
+	frequency_ / 2)
+    {
       (*ittt)->call();
       (*ittt)->lastTimeCalled = currentTime;
     }
@@ -263,10 +263,12 @@ UServer::work()
       usedMemory < availableMemory - 2 * SECURITY_MEMORY_SIZE)
     {
       securityBuffer_ = malloc( 2 * SECURITY_MEMORY_SIZE );
-      if (securityBuffer_ != 0) {
+      if (securityBuffer_ != 0)
+      {
 	free(securityBuffer_);
 	securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
-	if (securityBuffer_) {
+	if (securityBuffer_)
+        {
 	  memoryOverflow = false;
 	  deIsolate();
 	}
@@ -275,8 +277,9 @@ UServer::work()
 
   bool signalMemoryOverflow = false;
   if (memoryOverflow)
-    if (securityBuffer_) { // free space to ensure the warning messages will
-			   // be sent without problem.
+    if (securityBuffer_)
+    { // free space to ensure the warning messages will
+      // be sent without problem.
       free (securityBuffer_);
       securityBuffer_ = 0;
       signalMemoryOverflow = true;
@@ -293,7 +296,8 @@ UServer::work()
 	(*retr)->continueSend();
 
       if (signalMemoryOverflow) (*retr)->errorSignal(UERROR_MEMORY_OVERFLOW);
-      if (signalcpuoverload) {
+      if (signalcpuoverload)
+      {
 	(*retr)->errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
@@ -307,26 +311,30 @@ UServer::work()
 
       // Run the connection's command queue:
 
-      if ((*retr)->activeCommand!=0) {
-
-	(*retr)->obstructed = true; // will be changed to 'false' if the whole tree is visited
+      if ((*retr)->activeCommand!=0)
+      {
+	(*retr)->obstructed = true; // will be changed to 'false'
+                                    //if the whole tree is visited
 	(*retr)->treeLock.lock();
-	(*retr)->inwork = true;     // to distinguish this call of execute from the one in receive
+	(*retr)->inwork = true;   // to distinguish this call of
+                                  //execute from the one in receive
 	(*retr)->execute((*retr)->activeCommand);
 	(*retr)->inwork = false;
 	(*retr)->treeLock.unlock();
       }
 
-      if ((*retr)->newDataAdded) { // used by loadFile and exec to
-				   // delay the parsing after the completion
-				   // of execute().
+      if ((*retr)->newDataAdded)
+      { // used by loadFile and exec to
+        // delay the parsing after the completion
+        // of execute().
 
 	(*retr)->newDataAdded = false;
 	(*retr)->received("");
       }
     }
 
-  // Scan currently opened connections for deleting marked commands or killall order
+  // Scan currently opened connections for deleting marked
+  // commands or killall order
   if ((reseting) && (stage==0))
     stopall = true;
 
@@ -360,7 +368,8 @@ UServer::work()
   for (std::list<UVariable*>::iterator iter = reinitList.begin();
        iter != reinitList.end();)
 
-    if ((*iter)->activity == 2) {
+    if ((*iter)->activity == 2)
+    {
       (*iter)->activity = 0;
 
       // set previous for stationnary values
@@ -369,7 +378,8 @@ UServer::work()
 
       iter = reinitList.erase(iter);
     }
-    else {
+    else
+    {
       (*iter)->activity = 2;
 
       (*iter)->nbAverage = 0;
@@ -396,7 +406,6 @@ UServer::work()
       iter++;
     }
 
-
   // Execute Hub Updaters
   for (urbi::UTimerTable::iterator ittt = urbi::updatemap.begin();
        ittt != urbi::updatemap.end();
@@ -408,8 +417,7 @@ UServer::work()
 	(*ittt)->lastTimeCalled = currentTime;
       }
 
-
-  //reinitList.clear();
+  // after work
   afterWork();
 
   updateTime();
@@ -421,7 +429,8 @@ UServer::work()
     if  (cpuload > cputhreshold)
       {
 	cpucount++;
-	if (cpucount > 10) {
+	if (cpucount > 10)
+        {
 	  cpucount = 0;
 	  cpuoverload = true;
 	  signalcpuoverload = true;
@@ -437,7 +446,8 @@ UServer::work()
     }
 
   // Reseting procedure
-  if (reseting) {
+  if (reseting)
+  {
     stage++;
     if (stage == 1)
       {
@@ -487,7 +497,7 @@ UServer::work()
 	     retr != connectionList.end();
 	     retr++)
 	  if  ((*retr)->isActive())
-	    (*retr)->send("*** Reset completed.\n","reset");
+	    (*retr)->send("*** Reset completed.\n", "reset");
 
 	//restart everything
 	for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
@@ -495,34 +505,26 @@ UServer::work()
 	     retr++)
 	  (*retr)->init((*retr)->name);
 
-	loadFile("URBI.INI",ghost->recvQueue());
+	loadFile("URBI.INI", ghost->recvQueue());
 	char resetsignal[255];
-	strcpy(resetsignal,"var __system__.resetsignal;");
-	ghost->recvQueue()->push((const ubyte*)resetsignal,strlen(resetsignal));
+	strcpy(resetsignal, "var __system__.resetsignal;");
+	ghost->recvQueue()->push((const ubyte*)resetsignal, strlen(resetsignal));
 	ghost->newDataAdded = true;
       }
     else
       {
-	//ASSERT(ghost)
-	//ASSERT(ghost->recvQueue())
-	//debug("Recv Queue: %d = %s\n",ghost->recvQueue()->dataSize());
-	/* char* cc = (char*)ghost->recvQueue()->virtualPop(ghost->recvQueue()->dataSize()-1);
-	   for (int i=0;i<ghost->recvQueue()->dataSize()-1;i++)
-	   debug("Char%i = %c\n",i,cc[i]);*/
-	//}
 	HMvariabletab::iterator findResetSignal
 	  = variabletab.find("__system__.resetsignal");
 	if (findResetSignal != variabletab.end())
-	  //if (ghost->recvQueue()->dataSize() == 0)
 	  {
 	    for (std::list<UConnection*>::iterator retr = connectionList.begin();
 		 retr != connectionList.end();
 		 retr++)
 	      if  ((*retr)->isActive() && (*retr) != ghost)
 		{
-		  (*retr)->send("*** Reloading\n","reset");
+		  (*retr)->send("*** Reloading\n", "reset");
 
-		  loadFile("CLIENT.INI",(*retr)->recvQueue());
+		  loadFile("CLIENT.INI", (*retr)->recvQueue());
 		  (*retr)->newDataAdded = true;
 		}
 	    reseting = false;
@@ -546,7 +548,7 @@ UServer::~UServer()
     between brackets at the end.
 */
 void
-UServer::error(const char* s,...)
+UServer::error(const char* s, ...)
 {
   // This local declaration is rather unefficient but is necessary
   // to insure that the server could be made semi-reentrant.
@@ -556,10 +558,10 @@ UServer::error(const char* s,...)
 
   va_list arg;
 
-  va_start(arg,s);
-  vsnprintf(tmpBuffer_,MAXSIZE_INTERNALMESSAGE,s,arg);
+  va_start(arg, s);
+  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
   va_end(arg);
-  snprintf(internalMessage_,MAXSIZE_INTERNALMESSAGE,
+  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
 	   "%-90s [ERROR]\n",
 	   tmpBuffer_);
 
@@ -577,7 +579,7 @@ UServer::error(const char* s,...)
     \sa echoKey()
 */
 void
-UServer::echo(const char* s,...)
+UServer::echo(const char* s, ...)
 {
   // This local declaration is rather unefficient but is necessary
   // to insure that the server could be made semi-reentrant.
@@ -587,10 +589,10 @@ UServer::echo(const char* s,...)
 
   va_list arg;
 
-  va_start(arg,s);
-  vsnprintf(tmpBuffer_,MAXSIZE_INTERNALMESSAGE,s,arg);
+  va_start(arg, s);
+  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
   va_end(arg);
-  snprintf(internalMessage_,MAXSIZE_INTERNALMESSAGE,
+  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
 	   "%-90s [     ]\n",
 	   tmpBuffer_);
 
@@ -608,7 +610,7 @@ UServer::echo(const char* s,...)
     \param s is the formatted string containing the message.
 */
 void
-UServer::echoKey(const char* key, const char* s,...)
+UServer::echoKey(const char* key, const char* s, ...)
 {
   // This local declaration is rather unefficient but is necessary
   // to insure that the server could be made semi-reentrant.
@@ -620,18 +622,18 @@ UServer::echoKey(const char* key, const char* s,...)
   if (key == NULL)
     key_[0] = 0;
   else {
-    strncpy(key_,key,5);
+    strncpy(key_, key, 5);
     key_[5] = 0;
   }
 
   va_list arg;
 
-  va_start(arg,s);
-  vsnprintf(tmpBuffer_,MAXSIZE_INTERNALMESSAGE,s,arg);
+  va_start(arg, s);
+  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
   va_end(arg);
-  snprintf(internalMessage_,MAXSIZE_INTERNALMESSAGE,
+  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
 	   "%-90s [%5s]\n",
-	   tmpBuffer_,key_);
+	   tmpBuffer_, key_);
 
   display(internalMessage_);
 }
@@ -643,7 +645,7 @@ UServer::echoKey(const char* key, const char* s,...)
     \param s is the formatted string containing the message
 */
 void
-UServer::debug(const char* s,...)
+UServer::debug(const char* s, ...)
 {
   // This local declaration is rather unefficient but is necessary
   // to insure that the server could be made semi-reentrant.
@@ -652,8 +654,8 @@ UServer::debug(const char* s,...)
 
   va_list arg;
 
-  va_start(arg,s);
-  vsnprintf(tmpBuffer_,MAXSIZE_INTERNALMESSAGE,s,arg);
+  va_start(arg, s);
+  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
   va_end(arg);
 
   effectiveDisplay(tmpBuffer_);
@@ -686,7 +688,7 @@ UServer::deIsolate()
 bool
 UServer::isIsolated()
 {
-  return(isolate_);
+  return isolate_;
 }
 
 //! Overload this function to specify how your robot is displaying messages.
@@ -806,8 +808,8 @@ UServer::memoryCheck ()
   // reaches your connection...
 
   if ((usedMemory > (int)(0.8 * availableMemory)) &&
-      (warningSent == false)) {
-
+      (warningSent == false))
+  {
     warningSent = true;
 
     // Scan currently opened connections
@@ -833,7 +835,9 @@ UServer::memoryCheck ()
 int
 UServer::memory()
 {
-  int memo,memo1,memo2;
+  int memo;
+  int memo1;
+  int memo2;
   void *buf;
 
   memo  = 50000000;
@@ -863,12 +867,12 @@ UServer::getVariable ( const char *device,
   char tmpbuffer[1024];
   HMvariabletab::iterator hmi;
 
-  snprintf(tmpbuffer,1024,"%s.%s",device,property);
+  snprintf(tmpbuffer, 1024, "%s.%s", device, property);
 
   if ((hmi = variabletab.find(tmpbuffer)) != variabletab.end())
-    return((*hmi).second);
+    return (*hmi).second;
   else
-    return(0);
+    return 0;
 }
 
 
@@ -886,21 +890,24 @@ UServer::mark(UString *stopTag)
 }
 
 void
-UServer::mark(TagInfo * ti) {
+UServer::mark(TagInfo * ti)
+{
   for(std::list<UCommand*>::iterator i = ti->commands.begin();
-    i != ti->commands.end(); i++) {
+    i != ti->commands.end(); i++)
+  {
      if ((*i)->status != UONQUEUE || (*i)->morphed)
        (*i)->toDelete = true;
   }
   for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
-    i != ti->subTags.end(); i++) {
+    i != ti->subTags.end();
+    i++)
     mark(*i);
-  }
 }
 
 
 void
-UServer::freeze(const std::string &tag) {
+UServer::freeze(const std::string &tag)
+{
   HMtagtab::iterator it = tagtab.find(tag);
   if (it != tagtab.end())
     it->second.frozen = true;
@@ -914,14 +921,16 @@ UServer::freeze(const std::string &tag) {
 }
 
 void
-UServer::unfreeze(const std::string &tag) {
+UServer::unfreeze(const std::string &tag)
+{
   HMtagtab::iterator it = tagtab.find(tag);
   if (it != tagtab.end())
     it->second.frozen = false;
 }
 
 void
-UServer::block(const std::string &tag) {
+UServer::block(const std::string &tag)
+{
   HMtagtab::iterator it = tagtab.find(tag);
   if (it != tagtab.end())
     it->second.blocked = true;
@@ -935,7 +944,8 @@ UServer::block(const std::string &tag) {
 }
 
 void
-UServer::unblock(const std::string &tag) {
+UServer::unblock(const std::string &tag)
+{
   HMtagtab::iterator it = tagtab.find(tag);
   if (it != tagtab.end())
     it->second.blocked = false;
@@ -969,7 +979,7 @@ void
 UServer::addConnection(UConnection *connection)
 {
   if (connection == 0 || connection->UError != USUCCESS)
-      error(::DISPLAY_FORMAT1,(long)this,
+      error(::DISPLAY_FORMAT1, (long)this,
 	    "UServer::addConnection",
 	    "UConnection constructor failed");
   else
@@ -986,7 +996,7 @@ UServer::removeConnection(UConnection *connection)
   connectionList.remove(connection);
   echo(::DISPLAY_FORMAT1, (long)this,
        "UServer::removeConnection",
-       "Connection closed",(long)connection);
+       "Connection closed", (long)connection);
   delete connection;
 }
 
@@ -1007,7 +1017,7 @@ UServer::addAlias(const char* id, const char* variablename)
   while (getobj != ::urbiserver->aliastab.end())
     {
       newobj = (*getobj).second->str();
-      if (strcmp(newobj,id)==0)
+      if (strcmp(newobj, id)==0)
 	return 0;
 
       getobj = ::urbiserver->aliastab.find(newobj);
