@@ -8,6 +8,7 @@ SUBDIRS += .
 BUILT_SOURCES =
 CLEANFILES =
 EXTRA_DIST =
+MAINTAINERCLEANFILES =
 
 # Find libjpeg's src (jpeglib.h) and build (jconfig.h) files.
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg-6b

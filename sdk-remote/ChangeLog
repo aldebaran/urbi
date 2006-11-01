@@ -1,3 +1,8 @@
+2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+
+	Initialize MAINTAINERCLEANFILES.
+	* src/liburbi/Makefile.am: since that's now what uobject.mk uses.
+
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
 	Don't provide a Makefile.am for uobject/
