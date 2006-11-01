@@ -1,5 +1,16 @@
 2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix "exec" bug 
+
+	* src/parser/bison/utoken.l: fix UString lenght with STRING
+        token.
+	* src/uexpression.cc: nothing.
+	* src/ustring.cc: formating changes.
+	* src/ustring.h: add setLen, used by utoken.l to adjust the 
+        length of the UString.
+
+2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	formating changes 
 
 	* src/ucommand.cc: indent.

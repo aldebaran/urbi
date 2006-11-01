@@ -127,6 +127,8 @@ STRING   \"([^"]|"\\\"")*\"
 		return token::NUM; }
 
 {STRING}      { valp->str = new UString(yytext+1);
+                /* remove 1 to size because of the ending " */
+                valp->str->setLen( valp->str->len() -1 );     
 		if (valp->str->str() == 0) {
 		  delete (valp->str);
 		  valp->str = 0;

@@ -36,7 +36,7 @@ UString::UString(const char* s)
   else
     {
       str_ = (char*)malloc(slen+1);
-      strcpy(str_,s);
+      strcpy(str_, s);
     }
 
   len_ = slen;
@@ -50,13 +50,13 @@ UString::UString(UString *s)
   {
     len_ = 0;
     str_ = (char*)malloc(1);
-    strcpy(str_,"");
+    strcpy(str_, "");
   }
   else
   {
     len_ = s->len();
     str_ = (char*)malloc(len_+1);
-    strcpy(str_,s->str());
+    strcpy(str_, s->str());
   }
   if (str_ == 0)
     len_ = 0;
@@ -72,7 +72,7 @@ UString::UString(UString *s1, UString* s2)
   tmpname = tmpname + "." + s2->str();
 
   str_ = (char*)malloc(tmpname.length()+1);
-  strcpy(str_,tmpname.c_str());
+  strcpy(str_, tmpname.c_str());
 
   if (str_ != 0)
     len_ = tmpname.length();
@@ -104,16 +104,16 @@ bool UString::equal(UString *s)
 {
   if (s==0)
     return false;
-  return (strcmp(s->str(),(const char*)str_)==0);
+  return (strcmp(s->str(), (const char*)str_)==0);
 }
 
 bool UString::tagequal(UString *s)
 {
   if (s==0)
     return false;
-  char* p = const_cast<char*>(strchr(s->str(),'.'));
+  char* p = const_cast<char*>(strchr(s->str(), '.'));
   if (p) p[0]=0;
-  bool res = strcmp(s->str(),(const char*)str_) == 0;
+  bool res = strcmp(s->str(), (const char*)str_) == 0;
   if (p)
     p[0]='.';
   return res;
@@ -123,7 +123,7 @@ bool UString::equal(const char *s)
 {
   if (s==0)
     return false;
-  return strcmp(s,(const char*)str_)==0;
+  return strcmp(s, (const char*)str_)==0;
 }
 
 void UString::update(const char *s)
@@ -136,7 +136,7 @@ void UString::update(const char *s)
   FREEMEM(len_);
   int slen = strlen(s);
   str_ = (char*)malloc(slen+1);
-  strcpy(str_,s);
+  strcpy(str_, s);
   len_ = slen;
   ADDMEM(len_);
 }
@@ -155,15 +155,4 @@ void UString::update(UString *s)
   ADDMEM(len_);
 
 }
-/*
-const char* UString::str() const {
-    return str_;
-}
-*/ // inlined for speed.
 
- /*
-  UString* UString::copy() {
-
-    return (new UString(this));
-  }
-*/

@@ -38,7 +38,7 @@ class UString
   UString(const char* s);
   UString(UString *s);
   /// Concat \c s1 and \c s2 with a dot in the middle.
-  UString(UString *s1,UString *s2);
+  UString(UString *s1, UString *s2);
 
   ~UString();
 
@@ -58,15 +58,22 @@ class UString
   }
 
   char* ext(int deb, int length);
-  bool equal(UString *s);;
+  bool equal(UString *s);
   bool tagequal(UString *s);
   bool equal(const char *s);
   void update(const char *s);
   void update(UString *s);
+  void setLen(int l);
 
  private:
   int  len_;
   char *str_;
 };
+
+inline void
+UString::setLen(int l)
+{
+  len_ = l;
+}
 
 #endif
