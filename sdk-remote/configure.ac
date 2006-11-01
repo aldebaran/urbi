@@ -25,8 +25,7 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-# No requirement, can be used early to catch error in --enable invocation.
-URBI_UFLOAT
+URBI_LIBPORT
 
 # For the time being, we are not interested about deprecated
 # headers such as hash_map.h.  We should use ext/hash_map.
@@ -53,9 +52,6 @@ AC_MSG_CHECKING([whether compiling the examples])
 AC_MSG_RESULT([$enable_examples])
 AM_CONDITIONAL([EXAMPLES], [test x"$enable_examples" = xyes])
 
-# Pthreads.
-URBI_PTHREAD
-
 # Soundcard.
 AC_CHECK_HEADERS([sys/soundcard.h], [soundcard=true], [soundcard=false])
 AM_CONDITIONAL([SOUNDCARD], [$soundcard])
@@ -68,29 +64,36 @@ AM_CONDITIONAL([SOUNDCARD], [$soundcard])
 AC_ARG_ENABLE([bindings],
 	      [AC_HELP_STRING([--enable-bindings],
 			      [enable some bindings])],
-	      [enable_bindings="$enableval"], [enable_bindings="no"])
-AC_MSG_CHECKING([whether compiling the bindings])
+	      [], [enable_bindings=no])
+AC_MSG_CHECKING([the bindings to activate])
+save_IFS=$IFS
+IFS=,
+for i in $enable_bindings
+do
+  IFS=$save_IFS
+  case $i in
+    yes ) enable_bindings="csharp,java,lua,perl,php,python,ruby";;
+    no | csharp | java | perl | php | python | ruby ) ;;
+    *) AC_MSG_ERROR([invalid --enable-bindings argument: $i]);;
+  esac
+done
 AC_MSG_RESULT([$enable_bindings])
-
-if (test x"$enable_bindings" = xyes); then
-   enable_bindings="csharp,java,lua,perl,php,python,ruby"
-fi
 
 AM_CONDITIONAL([BINDINGS], [test x"$enable_bindings" != xno])
 AM_CONDITIONAL([BINDING_CSHARP],
-		[test `echo "$enable_bindings" | grep -ci csharp` -ne 0])
+		[echo "$enable_bindings" | grep -w csharp >/dev/null])
 AM_CONDITIONAL([BINDING_JAVA],
-		[test `echo "$enable_bindings" | grep -ci java` -ne 0])
+		[echo "$enable_bindings" | grep -w java >/dev/null])
 AM_CONDITIONAL([BINDING_LUA],
- 	        [test `echo "$enable_bindings" | grep -ci lua` -ne 0])
+ 	        [echo "$enable_bindings" | grep -w lua >/dev/null])
 AM_CONDITIONAL([BINDING_PERL],
- 	        [test `echo "$enable_bindings" | grep -ci perl` -ne 0])
+ 	        [echo "$enable_bindings" | grep -w perl >/dev/null])
 AM_CONDITIONAL([BINDING_PHP],
- 	        [test `echo "$enable_bindings" | grep -ci php` -ne 0])
+ 	        [echo "$enable_bindings" | grep -w php >/dev/null])
 AM_CONDITIONAL([BINDING_PYTHON],
-		[test `echo "$enable_bindings" | grep -ci python` -ne 0])
+		[echo "$enable_bindings" | grep -w python >/dev/null])
 AM_CONDITIONAL([BINDING_RUBY],
-		[test `echo "$enable_bindings" | grep -ci ruby` -ne 0])
+		[echo "$enable_bindings" | grep -w ruby >/dev/null])
 
 if test x"$enable_bindings" != xno; then
  # With the bindings, we need shared libraries.

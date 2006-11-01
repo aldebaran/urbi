@@ -1,5 +1,12 @@
 2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
 
+	use URBI_LIBPORT, simplify configure.ac
+	* configure.ac: Now by default OPENR is deactivated.
+	Simplify the handling of enable_bindings a bit, and add
+	verification for user input.
+
+2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+
 	encore un...
 	* sdk/umain.cc: uobject.hh.
 
