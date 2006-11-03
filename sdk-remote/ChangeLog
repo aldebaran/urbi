@@ -49,14 +49,14 @@
 	* configure.ac: Add libport test suite.
 	* Makefile.am: Idem.
 
-2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	use URBI_LIBPORT, simplify configure.ac
 	* configure.ac: Now by default OPENR is deactivated.
 	Simplify the handling of enable_bindings a bit, and add
 	verification for user input.
 
-2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	encore un...
 	* sdk/umain.cc: uobject.hh.
@@ -74,12 +74,12 @@
 	-I../uobject.
 	* sdk/umain.cc, src/liburbi/uobject.cc: Include uobject/uobject.hh.
 
-2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	uobject.hh
 	* src/liburbi/Makefile.am: More fixes.
 
-2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	uobject.h -> uobject.hh
 	* src/liburbi/uconversion.h: Adjust.
@@ -87,7 +87,7 @@
 	* src/liburbi/uconversion.cpp: Adjust.
 	* src/liburbi/uabstractclient.h: Adjust.
 
-2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	Initialize MAINTAINERCLEANFILES.
 	* src/liburbi/Makefile.am: since that's now what uobject.mk uses.
@@ -105,7 +105,7 @@
 2006-10-31  Akim Demaille  <demaille@gostai.com>
 
 	Move some liburbi's uobject files into liburbi
-	* src/liburbi/uobject/uobject.cc, 
+	* src/liburbi/uobject/uobject.cc,
 	* src/liburbi/uobject/uvar.cc,
 	* src/liburbi/uobject/uexternal.h:
 	Move to...
@@ -298,18 +298,18 @@
 
 	* sdk/param.mk.in: add $prefix/include to compile path.
 
-2006-10-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-26  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
 	* src/liburbi/uobject/uobject.cc: Do that.
 
-2006-10-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-26  Akim Demaille  <demaille@gostai.com>
 
 	Use libport/singleton-ptr
 	* src/liburbi/uobject/uobject.template.h: Do that.
 	And formatting changes.
 
-2006-10-26  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-26  Akim Demaille  <demaille@gostai.com>
 
 	use libport/fwd.hh
 	* src/liburbi/usyncclient.h: Do that.
@@ -550,7 +550,7 @@
 	--disable-examples.
 	* configure.ac: Simplify/clarify the use of --disable-examples.
 
-2006-10-09  Akim Demaille  <akim@lrde.epita.fr>
+2006-10-09  Akim Demaille  <demaille@gostai.com>
 
 	pin baux.
 
