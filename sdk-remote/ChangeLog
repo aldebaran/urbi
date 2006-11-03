@@ -1,5 +1,11 @@
 2006-11-03  Thomas Moulard  <thomas.moulard@lrde.epita.fr>
 
+	Upgrade libport.
+
+	Update libport to fix distcheck.
+
+2006-11-03  Thomas Moulard  <thomas.moulard@lrde.epita.fr>
+
 	Update libport test suite.
 
 	Update externals.
