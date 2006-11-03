@@ -1,3 +1,10 @@
+2006-11-03  Thomas Moulard  <thomas.moulard@lrde.epita.fr>
+
+	Add libport test suite.
+
+	* configure.ac: Add libport test suite.
+	* Makefile.am: Idem.
+
 2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
 
 	use URBI_LIBPORT, simplify configure.ac
