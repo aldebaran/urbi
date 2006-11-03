@@ -764,11 +764,6 @@ public:
   UExpression      *test;       ///< test
   UCommand         *command1;   ///< Command if
   UCommand         *command2;   ///< Command else (0 if no else)
-
-  bool             mode;        ///< The command is activated
-				///< when the test switch to "mode"
-  int              nbTrue;      ///< nb of times the test is true
-  ufloat           startTrue;   ///< time of the last 'true'
   bool             firsttime;   ///< true when the command has not been
                                 ///< executed yet
   std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
@@ -814,11 +809,16 @@ public:
   UExpression      *test;       ///< test
   UCommand         *command1;   ///< Command ok
   UCommand         *command2;   ///< Command onleave
+  bool             firsttime;   ///< true when the command has not been
+                                ///< executed yet
+  std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
 
-  int              nbTrue;      ///< nb of times the test is true
-  ufloat           startTrue;   ///< time of the last 'true'
-  int              nbFalse;     ///< nb of times the test is false
-  ufloat           startFalse;  ///< time of the last 'false'
+  void noloop()  {theloop_ = 0;};
+
+private:
+  bool reloop_; ///< used for optimization
+  bool active_; ///< true when 'whenever' has triggered and is still active
+  UCommand* theloop_; ///< the "loop command1" command
 };
 
 class UCommand_LOOP : public UCommand
@@ -835,6 +835,8 @@ public:
   virtual UCommand*      copy();
 
   UCommand         *command;    ///< Command
+  UCommand*        whenever_hook; ///< non zero if the loop belongs to a
+                                  ///< whenever command.
 };
 
 class UCommand_LOOPN : public UCommand

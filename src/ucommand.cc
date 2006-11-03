@@ -5934,8 +5934,6 @@ UCommand_AT::UCommand_AT( UCommandType type,
   this->command1    = command1;
   this->command2    = command2;
 
-  nbTrue  = 0;
-  mode    = true;
   firsttime = true;
   reloop_ = false;
 }
@@ -5962,141 +5960,145 @@ UCommand_AT::execute(UConnection *connection)
   if (!test) return (status = UCOMPLETED);
 
   if  (firsttime)
+  {
+    firsttime = false;
+    if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
     {
-      firsttime = false;
-      if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
-	{
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		   "!!! invalid name resolution in test. "
-		   "Did you define all events and variables?\n");
-	  connection->send(tmpbuffer, getTag().c_str());
-	  return ((status = UCOMPLETED));
-	}
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! invalid name resolution in test. "
+               "Did you define all events and variables?\n");
+      connection->send(tmpbuffer, getTag().c_str());
+      return ((status = UCOMPLETED));
     }
+  }
 
   if (reeval ())
+  {
+    ec = 0;
+    UValue *testeval = test->eval(this, connection, ec);
+    if (!ec) ec = new UEventCompound (testeval);
+    reset_reeval ();
+
+    testres = booleval(testeval, true);
+    if (testres == UTESTFAIL)
+      return ((status = UCOMPLETED));
+
+    // softtest evaluation
+    ufloat duration = 0;
+    if (test->softtest_time)
+      duration = test->softtest_time->val;
+
+    std::list<UMultiEventInstance*> mixlist;
+    ASSERT (ec)
     {
-      ec = 0;
-      UValue *testeval = test->eval(this, connection, ec);
-      if (!ec) ec = new UEventCompound (testeval);
-      reset_reeval ();
+      ec->normalForm ();
+      mixlist = ec->mixing ();
+    }
 
-      testres = booleval(testeval, true);
-      if (testres == UTESTFAIL)
-	return ((status = UCOMPLETED));
-
-      // softtest evaluation
-      ufloat duration = 0;
-      if (test->softtest_time)
-	duration = test->softtest_time->val;
-
-      std::list<UMultiEventInstance*> mixlist;
-      ASSERT (ec) mixlist = ec->mixing ();
-
-      for (std::list<UMultiEventInstance*>::iterator imei = mixlist.begin ();
-	   imei != mixlist.end ();
-	   ++imei)
-	{
-	  bool ok = false;
-	  for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	       ic != candidates.end () && !ok;
-	       ++ic)
-	    {
-	      if ((*ic)->equal (*imei))
-		{
-		  (*ic)->visited ();
-		  ok = true;
-		  delete *imei;
-		}
-	    }
-	  if (!ok)
-	    candidates.push_back (new UAtCandidate (currentTime + duration,
-						    *imei));
-	}
-
-      //cleanup of candidates that do not appear anymore in the mixlist
+    for (std::list<UMultiEventInstance*>::iterator imei = mixlist.begin ();
+         imei != mixlist.end ();
+         ++imei)
+    {
+      bool ok = false;
       for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	   ic != candidates.end ();
-	   )
-	if (!(*ic)->isVisited ())
-	  {
-	    delete *ic;
-	    ic = candidates.erase (ic);
-	    if (command2)
-	      {
-		if (!morph_onleave)
-		  morph_onleave = command2->copy ();
-		else
-		  morph_onleave = (UCommand*) new UCommand_TREE
-		    (UAND, morph_onleave, command2->copy ());
-		domorph = true;
-		morph = this;
-	      }
-	  }
-	else
-	  {
-	    (*ic)->unVisited ();
-	    ++ic;
-	  }
-      delete ec;
-      reloop_ = true;
-    } //end reeval
+           ic != candidates.end () && !ok;
+           ++ic)
+      {
+        if ((*ic)->equal (*imei))
+        {
+          (*ic)->visited ();
+          ok = true;
+          delete *imei;
+        }
+      }
+      if (!ok)
+        candidates.push_back (new UAtCandidate (currentTime + duration,
+                                                *imei));
+    }
+
+    //cleanup of candidates that do not appear anymore in the mixlist
+    for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+         ic != candidates.end ();
+        )
+      if (!(*ic)->isVisited ())
+      {
+        delete *ic;
+        ic = candidates.erase (ic);
+        if (command2)
+        {
+          if (!morph_onleave)
+            morph_onleave = command2->copy ();
+          else
+            morph_onleave = (UCommand*) new UCommand_TREE
+              (UAND, morph_onleave, command2->copy ());
+          domorph = true;
+          morph = this;
+        }
+      }
+      else
+      {
+        (*ic)->unVisited ();
+        ++ic;
+      }
+    delete ec;
+    reloop_ = true;
+  } //end reeval
 
 
 
   if (reloop_)
+  {
+    reloop_ = false;
+    morph = this;
+    // scan triggering candidates
+    for  (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+          ic != candidates.end ();
+          ++ic)
     {
-      reloop_ = false;
-      morph = this;
-      // scan triggering candidates
-      for  (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	    ic != candidates.end ();
-	    ++ic)
-	{
-	  UCommand* assigncmd;
-	  if  (!(*ic)->hasTriggered())
-	    {
-	      if ((*ic)->trigger (currentTime, assigncmd))
-		{
-		  if (assigncmd)
-		    {
-		      morph = (UCommand*)
-			new UCommand_TREE
-			( UAND,
-			  new UCommand_TREE
-			  ( UPIPE,
-			    assigncmd,
-			    command1->copy()
-			    ),
-			  morph
-			  );
-		    }
-		  else
-		    morph = (UCommand*)
-		      new UCommand_TREE (UAND, command1->copy (), morph);
-		}
-	      else
-		reloop_ = true; // we should try again later
-	    }
-	}
-
-      // morph if necessary
-      if (morph != this) domorph = true;
+      UCommand* assigncmd;
+      if  (!(*ic)->hasTriggered())
+      {
+        if ((*ic)->trigger (currentTime, assigncmd))
+        {
+          if (assigncmd)
+          {
+            morph = (UCommand*)
+              new UCommand_TREE
+              ( UAND,
+                new UCommand_TREE
+                ( UPIPE,
+                  assigncmd,
+                  command1->copy()
+                ),
+                morph
+              );
+          }
+          else
+            morph = (UCommand*)
+              new UCommand_TREE (UAND, command1->copy (), morph);
+        }
+        else
+          reloop_ = true; // we should try again later
+      }
     }
+
+    // morph if necessary
+    if (morph != this) domorph = true;
+  }
 
   // morphing, if required
   if (domorph)
+  {
+    if (morph_onleave)
     {
-      if (morph_onleave)
-	{
-	  // at this point, morph is at least equal to "this"
-	  morph = (UCommand*) new UCommand_TREE
-	    (UAND, morph, morph_onleave);
-	}
-      morph->background = true;
-      persistant = true;
-      return ((status = UMORPH));
+      // at this point, morph is at least equal to "this"
+      morph = (UCommand*) new UCommand_TREE
+        (UAND, morph, morph_onleave);
     }
+    morph->background = true;
+    persistant = true;
+    return ((status = UMORPH));
+  }
 
   return ((status = UBACKGROUND));
 }
@@ -6110,10 +6112,6 @@ UCommand_AT::copy()
 				     ucopy (command1),
 				     ucopy (command2));
   copybase(ret);
-
-  ret->nbTrue  = 0;
-  ret->mode    = true;
-
   return ((UCommand*)ret);
 }
 
@@ -6252,8 +6250,7 @@ UCommand_WHILE::print(int l)
   for (int i=0;i<l;i++)
     strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
   ::urbiserver->debug("WHILE:");
   if (type == CMD_WHILE) ::urbiserver->debug("\n");
   else
@@ -6292,8 +6289,10 @@ UCommand_WHENEVER::UCommand_WHENEVER(UExpression *test,
   this->command1    = command1;
   this->command2    = command2;
 
-  nbTrue = 0;
-  nbFalse = 0;
+  firsttime = true;
+  reloop_ = false;
+  active_ = false;
+  theloop_ = 0;
 }
 
 //! UCommand subclass destructor.
@@ -6303,88 +6302,199 @@ UCommand_WHENEVER::~UCommand_WHENEVER()
   delete command1;
   delete command2;
   delete test;
+  if (theloop_)
+    ((UCommand_LOOP*)theloop_)->whenever_hook = 0;
 }
 
 //! UCommand subclass execution function
 UCommandStatus
 UCommand_WHENEVER::execute(UConnection *connection)
 {
-   return ( status = UCOMPLETED );
-/*
-  if (command1 == 0) return ( status = UCOMPLETED );
+  UTestResult testres;
+  UEventCompound* ec;
+  bool domorph = false;
+  ufloat currentTime = connection->server->lastTime();
 
   if (!test) return (status = UCOMPLETED);
-  UTestResult testres = booleval(test->eval(this, connection,true));
 
-  if (testres == UTESTFAIL)
-    testres = UFALSE;
+  // handle the 'else' construct
+  if (command2)
+  {
+    morph =  (UCommand*)
+      new UCommand_TREE
+      (
+       UAND,
+       this,
+       new UCommand_WHENEVER
+        (
+         new UExpression (EXPR_TEST_BANG,
+                          test->copy (),
+                           (UExpression*)0),
+         command2,
+         (UCommand*)0
+        )
+      );
 
-  if (testres == true) {
-    nbFalse = 0;
-    if (nbTrue == 0)
-      startTrue = connection->server->lastTime();
-    nbTrue++;
-  }
-  else {
-    nbTrue = 0;
-    if (nbFalse == 0)
-      startFalse = connection->server->lastTime();
-    nbFalse++;
-  }
-
-  if ( ( (nbTrue>0) &&
-	 (test->softtest_time) &&
-	 (connection->server->lastTime() - startTrue >= test->softtest_time->val)) ||
-       ( (nbTrue >0) &&
-	 (test->softtest_time==0)) ) {
-
-    morph = (UCommand*)
-	new UCommand_TREE(
-	      USEMICOLON,
-	      new UCommand_TREE(
-		    UAND,
-		    command1->copy(),
-		    new UCommand_NOOP()
-		  ),
-	      this
-	    );
-
-    morph->background = true;
+    command2 = 0;
     persistant = true;
-    return ( status = UMORPH );
+    return ((status = UMORPH));
   }
-  else
-    if (command2) {
 
-      if ( ( (nbFalse>0) &&
-	     (test->softtest_time) &&
-	     (connection->server->lastTime() - startFalse >= test->softtest_time->val)) ||
-	   ( (nbFalse >0) &&
-	     (test->softtest_time==0)) ) {
+  // cache initilialization
+  if  (firsttime)
+  {
+    firsttime = false;
+    if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! invalid name resolution in test. "
+               "Did you define all events and variables?\n");
+      connection->send(tmpbuffer, getTag().c_str());
+      return ((status = UCOMPLETED));
+    }
+  }
 
-	morph = (UCommand*)
-	  new UCommand_TREE(
-	      USEMICOLON,
-	      new UCommand_TREE(
-		    UAND,
-		    command2->copy(),
-		    new UCommand_NOOP()
-		  ),
-	      this
-	    );
+  if (reeval ())
+  {
+    ec = 0;
+    UValue *testeval = test->eval(this, connection, ec);
+    if (!ec) ec = new UEventCompound (testeval);
+    reset_reeval ();
 
-	morph->background = true;
-	persistant = true;
-	return ( status = UMORPH );
+    testres = booleval(testeval, true);
+    if (testres == UTESTFAIL)
+      return ((status = UCOMPLETED));
+
+    // softtest evaluation
+    ufloat duration = 0;
+    if (test->softtest_time)
+      duration = test->softtest_time->val;
+
+    std::list<UMultiEventInstance*> mixlist;
+    ASSERT (ec)
+    {
+      ec->normalForm ();
+      mixlist = ec->mixing ();
+    }
+
+    for (std::list<UMultiEventInstance*>::iterator imei = mixlist.begin ();
+         imei != mixlist.end ();
+         ++imei)
+    {
+      bool ok = false;
+      for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+           ic != candidates.end () && !ok;
+           ++ic)
+      {
+        if ((*ic)->equal (*imei))
+        {
+          (*ic)->visited ();
+          ok = true;
+          delete *imei;
+        }
+      }
+      if (!ok)
+        candidates.push_back (new UAtCandidate (currentTime + duration,
+                                                *imei));
+    }
+
+    //cleanup of candidates that do not appear anymore in the mixlist
+    for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+         ic != candidates.end ();
+        )
+      if (!(*ic)->isVisited ())
+      {
+        delete *ic;
+        ic = candidates.erase (ic);
       }
       else
-	return ( status = UBACKGROUND );
-      //return ( status = URUNNING );
+      {
+        (*ic)->unVisited ();
+        ++ic;
+      }
+    delete ec;
+    reloop_ = true;
+
+    if (candidates.empty () && active_) // whenever stops
+    {
+      active_ = false;
+      connection->server->somethingToDelete = true;
+      // theloop_ is 0 if something has deleted it from the outside  (thanks
+      // to the 'whenever_hook' attribute), that's why we test here
+      if (theloop_) theloop_->toDelete = true;
+      theloop_ = 0;
     }
-    else
-      return ( status = UBACKGROUND );
-      //return ( status = URUNNING );
-  */
+  } //end reeval
+
+  if (reloop_)
+  {
+    reloop_ = false;
+    bool trigger = false;
+    UCommand* assign = 0;
+
+    // scan triggering candidates
+    for  (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+          ic != candidates.end ();
+          ++ic)
+    {
+      UCommand* assigncmd;
+      if  (!(*ic)->hasTriggered())
+      {
+        if ((*ic)->trigger (currentTime, assigncmd))
+        {
+          trigger = true;
+          if (assigncmd)
+          {
+            if (!assign) assign = assigncmd;
+            else
+              assign = (UCommand*)
+                new UCommand_TREE
+                ( UAND,
+                  assigncmd,
+                  assign
+                );
+          }
+        }
+        else
+          reloop_ = true; // we should try again later
+      }
+    }
+
+    if (trigger && !active_) // we need to start the loop
+    {
+      active_ = true;
+      ASSERT (theloop_ == 0);
+      theloop_ = (UCommand*) new UCommand_LOOP (command1->copy ());
+      theloop_->setTag ("__system__"); //untouchable
+      ((UCommand_LOOP*)theloop_)->whenever_hook = this;
+      if (assign)
+        assign = (UCommand*)
+          new UCommand_TREE (UPIPE,
+                             assign,
+                             theloop_);
+      else
+        assign = theloop_;
+    }
+
+    if (assign)
+    {
+      domorph = true;
+      morph = (UCommand*)
+        new UCommand_TREE (UPIPE,
+                           this,
+                           assign);
+    }
+  }
+
+  // morphing, if required
+  if (domorph)
+  {
+    morph->background = true;
+    persistant = true;
+    return ((status = UMORPH));
+  }
+
+  return ((status = UBACKGROUND));
 }
 
 //! UCommand subclass hard copy function
@@ -6395,8 +6505,6 @@ UCommand_WHENEVER::copy()
 						 ucopy (command1),
 						 ucopy (command2));
   copybase(ret);
-  ret->nbTrue = 0;
-  ret->nbFalse = 0;
   return ((UCommand*)ret);
 }
 
@@ -6413,8 +6521,7 @@ UCommand_WHENEVER::print(int l)
   for (int i=0;i<l;i++)
     strcat(tabb, " ");
 
-::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
   ::urbiserver->debug("WHENEVER:\n");
 
   if (test)
@@ -6446,6 +6553,7 @@ UCommand_LOOP::UCommand_LOOP(UCommand* command) :
 {
   ADDOBJ(UCommand_LOOP);
   this->command     = command;
+  whenever_hook = 0;
 }
 
 //! UCommand subclass destructor.
@@ -6453,6 +6561,8 @@ UCommand_LOOP::~UCommand_LOOP()
 {
   FREEOBJ(UCommand_LOOP);
   delete command;
+  if (whenever_hook)
+   ((UCommand_WHENEVER*)whenever_hook)->noloop ();
 }
 
 //! UCommand subclass execution function

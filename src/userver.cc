@@ -881,7 +881,6 @@ UServer::getVariable ( const char *device,
 void
 UServer::mark(UString *stopTag)
 {
-  std::cerr <<"mark "<<stopTag->str()<<std::endl;
   HMtagtab::iterator it = tagtab.find(stopTag->str());
   if (it == tagtab.end())
     return; //no command with this tag
