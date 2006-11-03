@@ -26,16 +26,16 @@ if !WIN32
 bin_PROGRAMS += urbitalkie
 endif
 
-urbibandwidth_SOURCES = urbibandwidth.cpp
-urbimirror_SOURCES = urbimirror.cpp
-urbiping_SOURCES = urbiping.cpp
-urbiplay_SOURCES = urbiplay.cpp
-urbirecord_SOURCES = urbirecord.cpp
-urbisend_SOURCES = urbisend.cpp
-urbisendbin_SOURCES = urbisendbin.cpp
-urbisendsound_SOURCES = urbisendsound.cpp
-urbisound_SOURCES = urbisound.cpp
-urbitalkie_SOURCES = urbitalkie.cpp
+urbibandwidth_SOURCES = urbibandwidth.cc
+urbimirror_SOURCES = urbimirror.cc
+urbiping_SOURCES = urbiping.cc
+urbiplay_SOURCES = urbiplay.cc
+urbirecord_SOURCES = urbirecord.cc
+urbisend_SOURCES = urbisend.cc
+urbisendbin_SOURCES = urbisendbin.cc
+urbisendsound_SOURCES = urbisendsound.cc
+urbisound_SOURCES = urbisound.cc
+urbitalkie_SOURCES = urbitalkie.cc
 
 
 ## -------------------------------------- ##
@@ -48,21 +48,21 @@ urbiimage
 
 if WIN32
 bin_PROGRAMS += $(monitor_programs)
-monitor_sources = monitor-win.h monitor-win.cpp
+monitor_sources = monitor-win.h monitor-win.cc
 endif
 
 if X11
 bin_PROGRAMS += $(monitor_programs)
-monitor_sources = monitor.h monitor.cpp
+monitor_sources = monitor.h monitor.cc
 endif
 
 # FIXME: -lXext should be checked via configure.ac.
 x11_libs = -L/usr/X11R6/lib $(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS) $(AM_LDADD)
 
-urbiballtrackinghead_SOURCES = urbiballtrackinghead.cpp $(monitor_sources)
+urbiballtrackinghead_SOURCES = urbiballtrackinghead.cc $(monitor_sources)
 urbiballtrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
 urbiballtrackinghead_LDADD = $(x11_libs)
 
-urbiimage_SOURCES = urbiimage.cpp $(monitor_sources)
+urbiimage_SOURCES = urbiimage.cc $(monitor_sources)
 urbiimage_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
 urbiimage_LDADD = $(x11_libs)

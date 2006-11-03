@@ -1,3 +1,47 @@
+2006-11-03  Akim Demaille  <akim.demaille@free.fr>
+
+	Normalize examples and utils extensions
+	* src/examples/monitor-win.cpp,
+	* src/examples/monitor.cpp,
+	* src/examples/urbiballtrackinghead.cpp,
+	* src/examples/urbibandwidth.cpp,
+	* src/examples/urbiimage.cpp,
+	* src/examples/urbimirror.cpp,
+	* src/examples/urbiping.cpp,
+	* src/examples/urbiplay.cpp,
+	* src/examples/urbirecord.cpp,
+	* src/examples/urbisend.cpp,
+	* src/examples/urbisendbin.cpp,
+	* src/examples/urbisendsound.cpp,
+	* src/examples/urbisound.cpp,
+	* src/examples/urbitalkie.cpp,
+	* src/utils/Move.h, src/utils/Move.cpp,
+	* src/utils/urbicycle.cpp,
+	* src/utils/urbireverse.cpp,
+	* src/utils/urbiscale.cpp,
+	* src/utils/urbiwalk.cpp:
+	Rename as...
+	* src/examples/monitor-win.cc,
+	* src/examples/monitor.cc,
+	* src/examples/urbiballtrackinghead.cc,
+	* src/examples/urbibandwidth.cc,
+	* src/examples/urbiimage.cc,
+	* src/examples/urbimirror.cc,
+	* src/examples/urbiping.cc,
+	* src/examples/urbiplay.cc,
+	* src/examples/urbirecord.cc,
+	* src/examples/urbisend.cc,
+	* src/examples/urbisendbin.cc,
+	* src/examples/urbisendsound.cc,
+	* src/examples/urbisound.cc,
+	* src/examples/urbitalkie.cc,
+	* src/utils/move.hh, src/utils/move.cc,
+	* src/utils/urbicycle.cc,
+	* src/utils/urbireverse.cc,
+	* src/utils/urbiscale.cc,
+	* src/utils/urbiwalk.cc:
+	these.
+
 2006-11-03  Thomas Moulard  <thomas.moulard@lrde.epita.fr>
 
 	Add libport test suite.

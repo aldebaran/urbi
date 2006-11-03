@@ -6,9 +6,9 @@ AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 
 bin_PROGRAMS = urbicycle urbireverse urbiwalk urbiscale
 
-urbicycle_SOURCES = urbicycle.cpp
-urbireverse_SOURCES = urbireverse.cpp
-urbiscale_SOURCES = urbiscale.cpp
-urbiwalk_SOURCES = urbiwalk.cpp Move.cpp Move.h
+urbicycle_SOURCES = urbicycle.cc
+urbireverse_SOURCES = urbireverse.cc
+urbiscale_SOURCES = urbiscale.cc
+urbiwalk_SOURCES = urbiwalk.cc move.cc move.hh
 
 urbiwalk_LDADD = $(top_builddir)/jpeg-6b/libjpeg.la $(top_builddir)/src/liburbi/liburbi.la

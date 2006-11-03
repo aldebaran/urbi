@@ -10,7 +10,7 @@
 #define M_MAX_PATH 1024
 #endif
 
-#include "Move.h"
+#include "move.hh"
 
 namespace urbi
 {
