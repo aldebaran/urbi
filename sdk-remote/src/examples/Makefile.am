@@ -1,7 +1,8 @@
 AM_CPPFLAGS =					\
 -I$(top_srcdir)					\
--I$(top_srcdir)/src/liburbi/uobject		\
+-I$(top_srcdir)/include				\
 -I$(top_srcdir)/src/liburbi
+
 
 AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la $(PTHREAD_LIBS)
 # This is a hack for Automake 1.9: 1.10 honors AM_LDADD.

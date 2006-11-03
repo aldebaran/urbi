@@ -1,5 +1,65 @@
 2006-11-03  Akim Demaille  <akim.demaille@free.fr>
 
+	urbi/uclient.hh
+	Rename and move headers.
+	* src/liburbi/uabstractclient.hh,
+	* src/liburbi/uclient.h,
+	* src/liburbi/uconversion.h,
+	* src/liburbi/uexternal.h,
+	* src/liburbi/usyncclient.h:
+	Rename and move to...
+	* include/urbi/uabstractclient.hh,
+	* include/urbi/uclient.hh,
+	* include/urbi/uconversion.hh,
+	* include/urbi/uexternal.hh,
+	* include/urbi/usyncclient.hh:
+	here.
+	* Makefile.am: Adjust.
+
+	Rename and adjust cc files.
+	* src/liburbi/usyncclient.cpp,
+	* src/liburbi/uclient.cpp,
+	* src/liburbi/uconversion.cpp,
+	* src/liburbi/uabstractclient.cpp:
+	Rename as...
+	* src/liburbi/usyncclient.cc,
+	* src/liburbi/uclient.cc,
+	* src/liburbi/uconversion.cc,
+	* src/liburbi/uabstractclient.cc:
+	these.
+	Adjust to the new header names.
+
+	Adjust files.
+	* src/utils/urbireverse.cc,
+	* src/utils/urbiwalk.cc,
+	* src/utils/move.hh,
+	* src/utils/urbicycle.cc,
+	* src/utils/urbiscale.cc,
+	* src/liburbi/uobject.cc,
+	* src/liburbi/uvar.cc,
+	* src/examples/urbitalkie.cc,
+	* src/examples/urbiballtrackinghead.cc,
+	* src/examples/urbiimage.cc,
+	* src/examples/urbisound.cc,
+	* src/examples/urbiping.cc,
+	* src/examples/urbisendsound.cc,
+	* src/examples/urbimirror.cc,
+	* src/examples/urbirecord.cc,
+	* src/examples/urbisendbin.cc,
+	* src/examples/urbisend.cc,
+	* src/examples/urbibandwidth.cc,
+	* src/examples/urbiplay.cc:
+	Adjust to the header names.
+
+	* src/examples/Makefile.am,
+	* src/utils/Makefile.am,
+	* src/liburbi/Makefile.am: Adjust.
+	Especially the paths.
+
+	* src/liburbi/uobject/uobject.mk: Fix typos.
+
+2006-11-03  Akim Demaille  <akim.demaille@free.fr>
+
 	Normalize examples and utils extensions
 	* src/examples/monitor-win.cpp,
 	* src/examples/monitor.cpp,

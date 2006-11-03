@@ -19,8 +19,9 @@
  **************************************************************************** */
 
 #include "uobject/uobject.hh"
-#include "uexternal.h"
-#include <usyncclient.h>
+
+#include "urbi/uexternal.hh"
+#include "urbi/usyncclient.hh"
 
 namespace urbi
 {

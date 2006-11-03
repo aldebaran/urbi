@@ -1,4 +1,4 @@
-/*! \file uclient.h
+/*! \file uclient.hh
 ****************************************************************************
  * $Id: uclient.h,v 1.7 2005/09/30 17:48:00 nottale Exp $
  *
@@ -21,10 +21,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#ifndef UCLIENT_H
-# define UCLIENT_H
+#ifndef URBI_UCLIENT_HH
+# define URBI_UCLIENT_HH
 
-# include "uabstractclient.h"
+# include "urbi/uabstractclient.hh"
 
 namespace urbi
 {

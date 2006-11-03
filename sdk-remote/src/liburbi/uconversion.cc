@@ -1,4 +1,4 @@
-#include "uconversion.h"
+#include "urbi/uconversion.hh"
 
 #ifndef NO_IMAGE_CONVERSION
 # include <setjmp.h>

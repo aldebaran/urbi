@@ -1,4 +1,4 @@
-/*! \file usyncclient.h
+/*! \file usyncclient.hh
 ****************************************************************************
  * $Id: usyncclient.h,v 1.5 2005/09/21 06:45:36 nottale Exp $
  *
@@ -21,12 +21,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#ifndef USYNCCLIENT_H
-# define USYNCCLIENT_H
+#ifndef URBI_USYNCCLIENT_HH
+# define URBI_USYNCCLIENT_HH
 
 # include "libport/fwd.hh"
 
-# include "uclient.h"
+# include "urbi/uclient.hh"
 
 namespace urbi
 {
@@ -94,4 +94,4 @@ namespace urbi
 
 } // namespace urbi
 
-#endif // ! USYNCCLIENT_H
+#endif // ! URBI_USYNCCLIENT_HH

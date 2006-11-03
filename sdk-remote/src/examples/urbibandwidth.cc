@@ -1,4 +1,4 @@
-#include <uclient.h>
+#include "urbi/uclient.hh"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>

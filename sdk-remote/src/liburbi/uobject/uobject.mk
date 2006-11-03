@@ -5,16 +5,16 @@ uobject_srcdir = $(srcdir)/uobject
 uobject_hh = $(uobject_srcdir)/uobject.hh
 
 uobject_sources =				\
-$(uobject_srcdir)/uobject.h			\
+$(uobject_hh)					\
 $(uobject_srcdir)/uvalue-common.cc
 
-## ----------- ##
-## uobject.h.  ##
-## ----------- ##
+## ------------ ##
+## uobject.hh.  ##
+## ------------ ##
 
 EXTRA_DIST +=					\
 $(uobject_srcdir)/template_autogen.pl		\
-$(uobject_srcdir)/uobject.template.h
+$(uobject_hh).template
 MAINTAINERCLEANFILES += $(uobject_hh)
 BUILT_SOURCES += $(uobject_hh)
 

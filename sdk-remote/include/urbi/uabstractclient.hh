@@ -1,6 +1,6 @@
-/*! \file uabstractclient.h
+/*! \file uabstractclient.hh
 ****************************************************************************
- * $Id: uabstractclient.h,v 1.9 2005/09/30 17:48:00 nottale Exp $
+ * $Id: uabstractclient.hh,v 1.9 2005/09/30 17:48:00 nottale Exp $
  *
  * Definition of the URBI interface class
  *
@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#ifndef UABSTRACTCLIENT_H
-# define UABSTRACTCLIENT_H
+#ifndef URBI_UABSTRACTCLIENT_HH
+# define URBI_UABSTRACTCLIENT_HH
 
 # include <cstdio>
 # include <sys/types.h>
@@ -38,7 +38,7 @@
 # include "libport/fwd.hh"
 
 # include "uobject/uobject.hh"
-# include "uconversion.h"
+# include "urbi/uconversion.hh"
 
 namespace urbi
 {
@@ -588,4 +588,4 @@ namespace urbi
 
 } // namespace urbi
 
-#endif // UABSTRACTCLIENT_H
+#endif // URBI_UABSTRACTCLIENT_HH

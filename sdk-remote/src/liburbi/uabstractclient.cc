@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include "uabstractclient.h"
+#include "urbi/uabstractclient.hh"
 #include "libport/lockable.hh"
 
 #if DEBUG

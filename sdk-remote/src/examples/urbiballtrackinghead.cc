@@ -28,7 +28,7 @@
 
 #include <vector>
 
-#include <uclient.h>
+#include "urbi/uclient.hh"
 
 #ifndef LIBURBI_OPENR
 # include "monitor.h"

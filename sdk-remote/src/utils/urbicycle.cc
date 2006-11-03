@@ -1,6 +1,7 @@
-#include <uclient.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
+
+#include "urbi/uclient.hh"
 inline float fabs(float f ) {if (f>0) return f; else return f*(-1.0);}
 enum UType {
   TYPE_BOOL,

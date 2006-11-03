@@ -1,7 +1,7 @@
-/*! \file uexternal.h
+/*! \file uexternal.hh
  *******************************************************************************
 
- File: uexternal.h\n
+ File: uexternal.hh\n
  Definition of common structures between modules and the kernel
 
  This file is part of LIBURBI and URBI Kernel\n
@@ -18,8 +18,8 @@
 
  **************************************************************************** */
 
-#ifndef UEXTERNAL_H_DEFINED
-# define UEXTERNAL_H_DEFINED
+#ifndef URBI_UEXTERNAL_HH
+# define URBI_UEXTERNAL_HH
 
 namespace urbi
 {

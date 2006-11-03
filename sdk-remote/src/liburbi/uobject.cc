@@ -21,9 +21,11 @@
 #include <iostream>
 #include <sstream>
 #include <list>
+
 #include "uobject/uobject.hh"
-#include <usyncclient.h>
-#include "uexternal.h"
+
+#include "urbi/usyncclient.hh"
+#include "urbi/uexternal.hh"
 
 //#define LIBURBIDEBUG
 

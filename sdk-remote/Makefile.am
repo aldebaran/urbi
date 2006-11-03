@@ -7,3 +7,15 @@ SUBDIRS = jpeg-6b libport src doc sdk
 
 # libport.
 include $(top_srcdir)/libport/libport.mk
+
+
+## ---------- ##
+## include/.  ##
+## ---------- ##
+
+urbiinclude_HEADERS =				\
+include/urbi/uabstractclient.hh			\
+include/urbi/uclient.hh				\
+include/urbi/uconversion.hh			\
+include/urbi/uexternal.hh			\
+include/urbi/usyncclient.hh

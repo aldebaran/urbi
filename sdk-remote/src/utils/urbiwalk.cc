@@ -1,17 +1,18 @@
-#include <usyncclient.h>
-#include "Move.h"
+#include "urbi/usyncclient.hh"
+#include "move.hh"
 
 
-int main (int argc, char * argv[]) 
+int
+main (int argc, char * argv[])
 {
-  if (argc<2) 
+  if (argc<2)
     {
       printf("usage: %s robotname [initialize] [configfile]\n"
 	     "\tSet initialize to 0 to skip upload of command files.(needed the first time, and each time changes are made to the configuration\n"
-	     "\tThen send commands to stdin with the syntax 'w[alk] value_in_meters relativePrecision' or 't[urn] value_in_degrees relativePrecision'\n",argv[0]); 
+	     "\tThen send commands to stdin with the syntax 'w[alk] value_in_meters relativePrecision' or 't[urn] value_in_degrees relativePrecision'\n",argv[0]);
       exit(1);
     }
-  
+
   urbi::USyncClient cl(argv[1]);
   cl.start();
   if (cl.error())
@@ -36,7 +37,7 @@ int main (int argc, char * argv[])
     printf("Done.\n");
   printf("Ready to accept commands\n");
 
-  while (1) 
+  while (1)
     {
       char line[1024];
       fgets(line,1024,stdin);

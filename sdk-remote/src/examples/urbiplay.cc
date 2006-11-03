@@ -5,7 +5,7 @@
 #define usleep(a) Sleep(a/1000)
 #endif
 
-#include <uclient.h>
+#include "urbi/uclient.hh"
 
 enum UType {
   TYPE_BOOL,

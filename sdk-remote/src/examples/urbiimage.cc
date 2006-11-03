@@ -27,7 +27,7 @@
 #include <cstdio>
 #include <csignal>
 
-#include "usyncclient.h"
+#include "urbi/usyncclient.hh"
 #include "monitor.h"
 
 int imcount;

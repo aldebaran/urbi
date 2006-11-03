@@ -5,11 +5,12 @@
 #endif
 #include <fcntl.h>
 
-#include "usyncclient.h"
-#include "uconversion.h"
 #include "libport/lockable.hh"
 #include "libport/semaphore.hh"
 #include "libport/thread.hh"
+
+#include "urbi/usyncclient.hh"
+#include "urbi/uconversion.hh"
 
 
 namespace urbi

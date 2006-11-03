@@ -1,4 +1,4 @@
-#include <uclient.h>
+#include "urbi/uclient.hh"
 
 #include <signal.h>
 

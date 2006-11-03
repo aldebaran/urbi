@@ -1,7 +1,7 @@
 /**
    Send a binary file to the URBI server, to be saved in a variable.
 */
-#include <uclient.h>
+#include "urbi/uclient.hh"
 #include <sys/types.h>
 #include <sys/stat.h>
 

@@ -4,7 +4,7 @@
 # include <list>
 # include <string>
 
-# include <uclient.h>
+# include "urbi/uclient.hh"
 
 namespace urbi
 {

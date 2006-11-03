@@ -27,12 +27,12 @@
  */
 
 #include <cstdio>
-#include <time.h>
+#include <ctime>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #include <fcntl.h>
-#include "uclient.h"
+#include "urbi/uclient.hh"
 
 #ifndef WIN32
 # include <sys/ioctl.h>

@@ -24,7 +24,7 @@
 /* This is a trivial demonstration program that send commands contained in a file to an urbi server */
 
 #include <cstdio>
-#include "uclient.h"
+#include "urbi/uclient.hh"
 
 urbi::UCallbackAction
 dump(const urbi::UMessage & msg)

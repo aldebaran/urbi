@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <uclient.h>
+#include "urbi/uclient.hh"
 
 namespace urbi
 {

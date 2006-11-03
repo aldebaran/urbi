@@ -26,7 +26,7 @@
 #include <cerrno>
 
 #include <locale.h>
-#include "uclient.h"
+#include "urbi/uclient.hh"
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
 
@@ -136,7 +136,7 @@ namespace urbi
 	printf("UClient::UClient couldn't connect: read error %d.\n",rc);
 	return;
       }
-    else 
+    else
       recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
     thread = startThread(this, &UClient::listenThread);
@@ -180,7 +180,7 @@ namespace urbi
     while (pos!=size)
       {
 	int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-	if (retval<0) 
+	if (retval<0)
 	  {
 	    rc = retval;
 	    return rc;

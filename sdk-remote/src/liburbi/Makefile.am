@@ -1,20 +1,18 @@
+include $(top_srcdir)/build-aux/init.mk
+
 SUBDIRS =
 if BINDINGS
  SUBDIRS += swig
 endif
 SUBDIRS += .
 
-# Initialize some common variables.
-BUILT_SOURCES =
-CLEANFILES =
-EXTRA_DIST =
-MAINTAINERCLEANFILES =
-
 # Find libjpeg's src (jpeglib.h) and build (jconfig.h) files.
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
+AM_CPPFLAGS += -I$(top_srcdir) -I$(top_builddir)/jpeg-6b
+# Find urbi/ headers.
+AM_CPPFLAGS += -I$(top_srcdir)/include
 
-AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
-AM_LIBADD = $(PTHREAD_LIBS)
+AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
+AM_LIBADD   += $(PTHREAD_LIBS)
 
 
 ## --------- ##
@@ -23,38 +21,30 @@ AM_LIBADD = $(PTHREAD_LIBS)
 
 include uobject/uobject.mk
 
+sdkincludeuobjectdir = $(sdkincludedir)/uobject
+sdkincludeuobject_HEADERS = 			\
+uobject/uobject.hh
+
 ## ------------ ##
 ## liburbi.la.  ##
 ## ------------ ##
 
 lib_LTLIBRARIES = liburbi.la
 
-include_HEADERS =				\
-uabstractclient.h				\
-uclient.h					\
-uconversion.h					\
-uexternal.h					\
-uobject/uobject.hh				\
-usyncclient.h
-
-sdkinclude_HEADERS = 				\
-uobject/uobject.hh
-
 liburbi_la_SOURCES =				\
 $(uobject_sources)				\
-uabstractclient.h	uabstractclient.cpp	\
-uclient.h		uclient.cpp		\
-uconversion.h		uconversion.cpp		\
-uexternal.h					\
+uabstractclient.cc				\
+uclient.cc					\
+uconversion.cc					\
 uobject.cc					\
 uvar.cc						\
-usyncclient.h		usyncclient.cpp
+usyncclient.cc
 liburbi_la_LIBADD = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
 
 
-## ------------ ##
-## liburbi.la.  ##
-## ------------ ##
+## --------------------- ##
+## libkernel-remove.la.  ##
+## --------------------- ##
 
 env_LTLIBRARIES = libkernel-remote.la
 libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES) $(top_srcdir)/sdk/umain.cc

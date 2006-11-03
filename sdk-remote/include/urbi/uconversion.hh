@@ -1,4 +1,4 @@
-/*! \file uconversion.h
+/*! \file uconversion.hh
 ****************************************************************************
  * $Id: $
  *
@@ -21,8 +21,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#ifndef UCONVERSION_H
-# define UCONVERSION_H
+#ifndef URBI_UCONVERSION_HH
+# define URBI_UCONVERSION_HH
 # include "uobject/uobject.hh"
 
 namespace urbi
