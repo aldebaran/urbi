@@ -1460,6 +1460,16 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       if ((tmpeval = modif_time->eval(this, connection)))
 	{
 	  targettime = ABSF(tmpeval->val);
+          //enforce speedmax here
+          if (variable->speedmax != UINFINITY)
+            if (targettime <  ABSF ((targetval-startval)/ variable->speedmax))
+            {
+              if (errorFlag)
+                connection->send("!!! Warning: request exceeds speedmax."
+                                 " Enforcing limitation\n",
+		                 getTag().c_str());
+              targettime = ABSF ((targetval - startval)/ variable->speedmax);
+            }
 	  delete tmpeval;
 	}
 

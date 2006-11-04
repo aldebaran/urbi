@@ -1,5 +1,11 @@
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix speedmax bug 
+	* src/ucommand.cc: enforce speedmax on instantaneus assignments like
+        x=<value> and display a warning message when the +error flag is set.
+
+2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	change 'modificator' to 'modifier' 
 	* src/ucommand.cc: change error messages to display 'modifier' instead
         of 'modificator'.
