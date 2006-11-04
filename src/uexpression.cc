@@ -551,12 +551,10 @@ UExpression::eval (UCommand *command,
       if (!variable)
 	{
 	  char* p = const_cast<char*>(strstr(varname, "__"));
-	  char* pnext = p;
-	  while (pnext)
-	    {
-	      p = pnext;
-	      pnext = strstr(p+2, "__");
-	    }
+
+          if (p==varname) // the name starts by __, we skip
+            p = const_cast<char*>(strstr(varname+2, "__"));
+
 	  char* p2;
 	  if (p)
 	    { // could be a list index.... (dirty hack)
