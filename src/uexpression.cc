@@ -564,6 +564,7 @@ UExpression::eval (UCommand *command,
 	      if (hmv != ::urbiserver->variabletab.end())
 		{
 		  UVariable* tmpvar = (*hmv).second;
+                  tmpvar->get (); // to trigger the UNotifyAccess
 		  if (tmpvar->value->dataType == DATA_LIST)
 		    {
 		      // welcome to C-string hacking grand master area

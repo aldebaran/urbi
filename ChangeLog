@@ -1,5 +1,10 @@
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #35: notifyaccess when list elements are viewed 
+	* src/uexpression.cc: add a call to UVariable::get().
+
+2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix bug accessing array of array in lists 
 	* src/uexpression.cc: a quick hack. This *must* be fixed in k1.5.
 
