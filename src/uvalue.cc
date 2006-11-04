@@ -780,24 +780,8 @@ UValue::echo(bool hr)
     if (!hr)
       oss << "\"" << str->str() << "\"";
     else
-      {
-	//  beurk, dirty C-like unescaping algorithm.
-	char* c;
-	bool escape = false;
-	for (c = (char*)str->str(); *c != 0; c++)
-        {
-	  if (((*c)=='\\') && (!escape) && ((*(c+1))!=0))
-	    escape = true;
-	  else
-	    {
-	      if ((escape) && (*c=='n'))
-		oss << "\n";
-	      else
-		oss << *c;
-	      escape = false;
-	    }
-	}
-      }
+      oss << str->str ();
+
     return oss.str();
   }
 

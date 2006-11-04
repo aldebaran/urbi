@@ -127,26 +127,26 @@ STRING   \"([^"]|"\\\"")*\"
 		return token::NUM; }
 
 {STRING}      { valp->str = new UString(yytext+1);
-                /* remove 1 to size because of the ending " */
+  
+                /* remove 1 to size because of the ending "*/
                 valp->str->setLen( valp->str->len() -1 );     
-		if (valp->str->str() == 0) {
+		if (valp->str->str() == 0)
+                {
 		  delete (valp->str);
 		  valp->str = 0;
 		}
 
 		if (valp->str != 0) {
-
+                  /* remove ending " */
 		  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
 		  *position=0;
-		  /*
-		  while (position = strstr(valp->str->str(),"\\\""))
-		    memmove((void*)position,
-			    (void*)(position+1),
-			    strlen(valp->str->str())-(int)(position-valp->str->str()));
-		  */
+                  
+                  /* unArmor */
+                  valp->str->unArmor();		  
 		}
 
-		return token::STRING; }
+		return token::STRING; 
+              }
 
 
 stop       |

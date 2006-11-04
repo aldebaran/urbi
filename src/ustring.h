@@ -64,6 +64,8 @@ class UString
   void update(const char *s);
   void update(UString *s);
   void setLen(int l);
+  char* armor();
+  char* unArmor();
 
  private:
   int  len_;

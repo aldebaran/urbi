@@ -156,3 +156,44 @@ void UString::update(UString *s)
 
 }
 
+char*
+UString::unArmor ()
+{
+  char* position = str_;
+  int pos = 0;
+  while (pos < len_)
+  {
+    if  (*position=='\\' && pos+1<len_)
+    {
+      if (   *(position+1) == 'n'
+          || *(position+1) == 't'
+          || *(position+1) == '\\'
+          || *(position+1) == '"')
+      {
+        if ( *(position+1) ==  'n') *(position+1) = '\n';
+        if ( *(position+1) ==  't') *(position+1) = '\t';
+
+        memmove((void*)position,
+                (void*)(position+1),
+                len_-pos);
+        len_ --;
+        if (*position=='\\') position++;
+      }
+      else
+        position++;
+    }
+    else
+      position++;
+    pos = position - str_;
+  }
+
+  return str_;
+}
+
+char*
+UString::armor ()
+{
+  // unimplemented
+  return str_;
+}
+
