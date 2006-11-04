@@ -598,7 +598,7 @@ UCommandStatus
 UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 {
   UValue *target;
-  UValue *modificator;
+  UValue *modifier;
   //UValue *value;
   ufloat currentTime;
   UNamedParameters *modif;
@@ -1002,8 +1002,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
           modif = parameters;
           while (modif)
           {
-            modificator = modif->expression->eval(this, connection);
-            if (!modificator)
+            modifier = modif->expression->eval(this, connection);
+            if (!modifier)
             {
               snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
                        "!!! String composition failed\n");
@@ -1012,32 +1012,32 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
               return ((status = UCOMPLETED));
             }
 
-            if (modificator->dataType == DATA_NUM)
+            if (modifier->dataType == DATA_NUM)
             {
-              modificator->dataType = DATA_STRING;
+              modifier->dataType = DATA_STRING;
               std::ostringstream ostr;
-              ostr << modificator->val;
-              modificator->str = new UString(ostr.str().c_str());
+              ostr << modifier->val;
+              modifier->str = new UString(ostr.str().c_str());
             }
 
             snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
                      "$%s", modif->name->str());
 
-            if (strstr(modificator->str->str(), tmpbuffer) == 0)
+            if (strstr(modifier->str->str(), tmpbuffer) == 0)
               while ((possub = strstr(result, tmpbuffer)))
               {
-                memmove(possub + modificator->str->len(),
+                memmove(possub + modifier->str->len(),
                         possub + strlen(tmpbuffer),
                         strlen(result) -
                         (int)(possub - result) -
                         strlen(tmpbuffer)+1);
 
                 strncpy (possub,
-                         modificator->str->str(),
-                         modificator->str->len());
+                         modifier->str->str(),
+                         modifier->str->len());
               }
 
-            delete modificator;
+            delete modifier;
             modif = modif->next;
           }
           target->str->update(result);
@@ -1168,7 +1168,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
         speed    = 0;
 
-        // Initialize modificators
+        // Initialize modifiers
 
         bool found;
         modif = parameters;
@@ -1179,7 +1179,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
               (!modif->name))
           {
             snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-                     "!!! Invalid modificator\n");
+                     "!!! Invalid modifier\n");
             connection->send(tmpbuffer, getTag().c_str());
 
             delete target;
@@ -1267,27 +1267,27 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
           if (modif->name->equal("timelimit"))
           {
-            modificator = modif->expression->eval(this, connection);
-            if ( (!modificator) ||
-                 (modificator->dataType != DATA_NUM) )
+            modifier = modif->expression->eval(this, connection);
+            if ( (!modifier) ||
+                 (modifier->dataType != DATA_NUM) )
             {
               snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-                       "!!! Invalid modificator value\n");
+                       "!!! Invalid modifier value\n");
               connection->send(tmpbuffer, getTag().c_str());
 
-              delete modificator;
+              delete modifier;
               delete target;
               return ((status = UCOMPLETED));
             }
-            endtime = currentTime + modificator->val;
-            delete modificator;
+            endtime = currentTime + modifier->val;
+            delete modifier;
             found = true;
           }
 
           if (!found)
           {
             snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-                     "!!! Unkown modificator name\n");
+                     "!!! Unkown modifier name\n");
             connection->send(tmpbuffer, getTag().c_str());
 
             delete target;
@@ -1312,10 +1312,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (variable->value->dataType == DATA_VOID)
         variable->value->dataType = DATA_NUM;
 
-      // virtual "time:0" if no modificator specified (controlled == false)
+      // virtual "time:0" if no modifier specified (controlled == false)
       if (!controlled)
       {
-        // no controlling modificator => time:0
+        // no controlling modifier => time:0
         tmp_time = new UExpression(EXPR_VALUE, ufloat(0));
         modif_time = tmp_time;
       }
