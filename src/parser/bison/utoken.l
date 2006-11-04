@@ -204,6 +204,7 @@ ping        |
 devices     |
 connections |
 vars        |
+events      |
 uservars    |
 undefall    |
 reset       |

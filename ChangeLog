@@ -1,5 +1,17 @@
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
+The simple code "event b" was creating both an event b[0] and a variable b.
+This is now fixed.
+
+	fix bug in declaration of events without parameters 
+	* src/ucommand.cc: add the "events" keyword that can be used to list
+        declared events (like vars for variables).
+	* src/parser/bison/utoken.l: add events keyword.
+	* src/ueventhandler.h: add a nbarg accessor.
+	* src/ueventhandler.cc: idem.
+
+2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix speedmax bug 
 	* src/ucommand.cc: enforce speedmax on instantaneus assignments like
         x=<value> and display a warning message when the +error flag is set.

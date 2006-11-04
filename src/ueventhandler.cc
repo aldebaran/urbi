@@ -140,7 +140,6 @@ UEventHandler::UEventHandler (UString* name, int nbarg):
 {
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
-  //tmp hack//FIXME
   unforgedName = new UString (name);
 }
 

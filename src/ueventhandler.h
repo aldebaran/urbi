@@ -174,8 +174,12 @@ public:
    */
   bool noPositive();
 
-  //tmp hack
+  /// Name of the event, without the nbarg suffix
   UString* unforgedName;
+
+  /// nbarg accessor
+  int nbarg();
+
 
 private:
   /// Name of the event
@@ -209,7 +213,6 @@ UEvent::id()
   return id_;
 }
 
-
 inline std::list<UValue*>&
 UEvent::args()
 {
@@ -226,6 +229,12 @@ inline std::list<UEvent*>&
 UEventHandler::eventlist()
 {
   return eventlist_;
+}
+
+inline int
+UEventHandler::nbarg()
+{
+  return nbarg_;
 }
 
 

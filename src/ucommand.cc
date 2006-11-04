@@ -4314,6 +4314,24 @@ std::ostringstream tstr;
     return ( status = UCOMPLETED );
   }
 
+  if (strcmp(oper->str(), "events")==0)
+  {
+    for ( HMemittab::iterator retr =
+          connection->server->emittab.begin();
+          retr != connection->server->emittab.end();
+          retr++)
+    {
+      std::ostringstream tstr;
+      tstr << "*** " << (*retr).second->unforgedName->str() << "["
+        <<  (*retr).second->nbarg () << "]\n";
+
+      connection->send(tstr.str().c_str(), getTag().c_str());
+    }
+
+    return ( status = UCOMPLETED );
+  }
+
+
   if (strcmp(oper->str(), "uservars")==0)
   {
     for ( HMvariabletab::iterator retr =
@@ -5111,6 +5129,8 @@ UCommand_DEF::execute(UConnection *connection)
 
       if ((fun) && (command))
 	connection->server->functiontab[fun->name()->str()] = fun;
+
+      return ( status = UCOMPLETED );
     }
 
   // Event definition
@@ -5125,6 +5145,8 @@ UCommand_DEF::execute(UConnection *connection)
 
     if (!eh)
       eh = new UEventHandler(eventname, eventnbarg);
+
+    return ( status = UCOMPLETED );
   }
 
 
@@ -5143,6 +5165,8 @@ UCommand_DEF::execute(UConnection *connection)
 
     variable = new UVariable(variablename->getFullname()->str(), new UValue());
     connection->localVariableCheck(variable);
+
+    return ( status = UCOMPLETED );
   }
 
   // Device variable set definition
