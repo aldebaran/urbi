@@ -1,0 +1,10 @@
+New in 1.0 RC1:
+
+* New support for multi events. Example:
+
+  at (e(x)) echo x;
+  emit e(4) & emit e(11);
+  [00018969:notag] *** 11.000000
+  [00018969:notag] *** 4.000000
+
+* 'events' keyword can be used to list existing declared events.

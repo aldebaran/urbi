@@ -1,5 +1,10 @@
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update NEWS 
+	* NEWS: update.
+
+2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
+
 The simple code "event b" was creating both an event b[0] and a variable b.
 This is now fixed.
 
