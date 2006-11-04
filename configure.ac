@@ -7,7 +7,7 @@ AC_INIT([kernel1], [1.0])
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
 AC_SUBST([install_sh_c_DATA], ['$(install_sh)-c -c -m 644'])
-AC_SUBST([INSTALL_HEADER], ['$(SHELL) $(install_sh_c_DATA) -C'])
+AC_SUBST([INSTALL_HEADER], ['$(install_sh_c_DATA) -C'])
 
 # Automake.
 AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip])

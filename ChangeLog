@@ -1,3 +1,11 @@
+2006-11-04  Akim Demaille  <akim@lrde.epita.fr>
+
+	Automake 1.10 compatibility
+	* src/Makefile.am: Use init.mk.
+	Use newer svn-externals.
+	* configure.ac: Automake 1.10 includes $(SHELL) in $(install_sh),
+	so do not add another.
+
 2006-11-03  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	whenever support add, fix bug in at (forgot to call normalForm) 

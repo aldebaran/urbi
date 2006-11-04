@@ -1,4 +1,3 @@
-
 ################################################################################
 #
 # URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie 
@@ -13,14 +12,12 @@
 ## Initialization.  ##
 ## ---------------- ##
 
-BUILT_SOURCES =
-CLEANFILES =
-EXTRA_DIST =
-MAINTAINERCLEANFILES =
+include $(top_srcdir)/build-aux/init.mk
+
 kernelinclude_HEADERS =
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(uobject_srcdir)
-AM_CXXFLAGS = $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
+AM_CPPFLAGS += -I$(top_srcdir) -I$(uobject_srcdir)
+AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 
 ## ----------- ##
@@ -104,7 +101,8 @@ include $(top_srcdir)/build-aux/revision.mk
 
 include uobject/uobject.mk
 dist_libkernel_la_SOURCES += $(uobject_sources)
-
+SVN = svn-wrapper.sh
+svn_externals = $(top_srcdir)/build-aux/svn-externals
 # We use some of its files, so to ensure a correct synchronization, we
 # pin the revision we're using.  These targets simplify upgrading the
 # pin revision.
@@ -117,11 +115,11 @@ uobj-help:
 
 # Update the dependency on uobj.
 uobj-up uobject-up:
-	cd $(srcdir) && build-aux/svn-externals --update=uobject
+	$(svn_externals) --update=uobject $(srcdir)
 
 # Checkin the sub uobj, and update the dependency.
 uobj-ci uobject-ci:
-	cd $(srcdir)/uobject && vcs-svn ci
+	cd $(srcdir)/uobject && $(SVN) ci
 	$(MAKE) $(AM_MAKEFLAGS) uobj-up
 
 
