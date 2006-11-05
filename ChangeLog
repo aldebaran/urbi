@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix bug in hash+list name resolution 
+	* src/uexpression.cc: fix.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 For many critical applications where URBI has to handle "lists" of objects
 created at runtime (like bots in a video game), it is necessary to be able to
 have objects refered to by names containing variable parts. This feature is

@@ -550,7 +550,10 @@ UExpression::eval (UCommand *command,
 
       if (!variable)
 	{
-	  char* p = const_cast<char*>(strstr(varname, "__"));
+          char* p;
+          char* pp = const_cast<char*>(strchr(varname, '.'));
+          if (!pp) pp = const_cast<char*> (varname);
+          p = const_cast<char*>(strstr(pp, "__"));
 
           if (p==varname) // the name starts by __, we skip
             p = const_cast<char*>(strstr(varname+2, "__"));
@@ -561,7 +564,18 @@ UExpression::eval (UCommand *command,
 	      p[0]=0;
 
 	      HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
-	      if (hmv != ::urbiserver->variabletab.end())
+              while (hmv == ::urbiserver->variabletab.end()
+                     && p)
+              {
+                p[0]='_';
+                p = const_cast<char*>(strstr(p+2, "__"));
+                if (p)
+                {
+                  p[0] = 0;
+                  hmv = ::urbiserver->variabletab.find(varname);
+                }
+              }
+	      if (hmv != ::urbiserver->variabletab.end() && p)
 		{
 		  UVariable* tmpvar = (*hmv).second;
                   tmpvar->get (); // to trigger the UNotifyAccess
@@ -613,7 +627,7 @@ UExpression::eval (UCommand *command,
 		      return xval->copy();
 		    }
 		}
-	      p[0]='_';
+	      if (p) p[0]='_';
 	    }
 
 	  snprintf(errorString, errSize, "!!! Unknown identifier: %s\n",
