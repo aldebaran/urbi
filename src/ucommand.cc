@@ -748,7 +748,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
            || ( !expression->parameters && fun->nbparam()) )
       {
         snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-                 "!!! invalid number of arguments for %s"
+                 "!!! Invalid number of arguments for %s"
                  " (should be %d params)\n",
                  functionname->str(), fun->nbparam());
         connection->send(tmpbuffer, getTag().c_str());
@@ -1702,7 +1702,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	    {
 	      if (!modif_getphase->getFullname())
 		{
-		  connection->send("!!! invalid phase variable name\n", getTag().c_str());
+		  connection->send("!!! Invalid phase variable name\n", getTag().c_str());
 
 		  return UFAIL;
 		}
@@ -2064,7 +2064,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 	(variable->value->dataType != DATA_BINARY))
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! %s type is invalid for unit attribution\n",
+	       "!!! %s type is Invalid for unit attribution\n",
 		variablename->getFullname()->str());
       connection->send(tmpbuffer, getTag().c_str());
       return ( status = UCOMPLETED );
@@ -2428,7 +2428,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	   ( (!expression->parameters) && (fun->nbparam())) )
       {
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! invalid number of arguments for %s (should be %d params)\n",
+		 "!!! Invalid number of arguments for %s (should be %d params)\n",
 		 funname->str(), fun->nbparam());
 	connection->send(tmpbuffer, getTag().c_str());
 
@@ -4644,7 +4644,7 @@ UCommand_EMIT::execute(UConnection *connection)
 	  if (!dur)
 	    {
 	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		       "!!! invalid event duration for event %s\n",
+		       "!!! Invalid event duration for event %s\n",
 		       eventnamestr);
 	      connection->send(tmpbuffer, getTag().c_str());
 	      return ((status = UCOMPLETED));
@@ -6041,7 +6041,7 @@ UCommand_AT::execute(UConnection *connection)
     if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! invalid name resolution in test. "
+               "!!! Invalid name resolution in test. "
                "Did you define all events and variables?\n");
       connection->send(tmpbuffer, getTag().c_str());
       return ((status = UCOMPLETED));
@@ -6423,7 +6423,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-               "!!! invalid name resolution in test. "
+               "!!! Invalid name resolution in test. "
                "Did you define all events and variables?\n");
       connection->send(tmpbuffer, getTag().c_str());
       return ((status = UCOMPLETED));

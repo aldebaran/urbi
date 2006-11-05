@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix error statement: must start with an upper case 
+	* src/ucommand.cc: change 'invalid' to 'Invalid'.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix 'vars' command 
 	* src/ucommand.cc: add support for VOID, LIST and OBJ types.
 
