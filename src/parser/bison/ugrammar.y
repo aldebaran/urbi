@@ -266,6 +266,7 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 %token EXPRBLOCK "expression block"
 %token ONLY "only"
 %token GROUPLIST "group list"
+%token POINT "."
 
 %token UEOF 0 "end of command"
 
@@ -1101,6 +1102,22 @@ purevariable:
       MEMCHECK1($$,$3);
     }
 
+  | IDENTIFIER array POINT IDENTIFIER {
+
+      MEMCHECK($1);
+      MEMCHECK($4);
+      $$ = new UVariableName($1,$2,$4);
+      MEMCHECK3($$,$1,$2,$4);
+    }
+
+  | IDENTIFIER array POINT IDENTIFIER array {
+
+      MEMCHECK($1);
+      MEMCHECK($4);
+      $$ = new UVariableName($1,$2,$4,$5);
+      MEMCHECK4($$,$1,$2,$4,$5);
+    }
+
   | IDENTIFIER array {
 
       MEMCHECK($1);
@@ -1122,6 +1139,7 @@ purevariable:
       $$ = new UVariableName($1.device,$1.id,false,$2);
       MEMCHECK3($$,$1.device,$1.id,$2);
     }
+
 ;
 
 variable:

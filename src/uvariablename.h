@@ -45,6 +45,11 @@ public:
   UVariableName(UExpression *str, bool rooted = false);
   UVariableName(UString* device, UString *id, bool rooted,
                 UNamedParameters *index);
+  UVariableName(UString* objname,
+                UNamedParameters *index_obj,
+                UString* attribute,
+                UNamedParameters *index_att = 0);
+
   virtual ~UVariableName();
 
   void           print();
@@ -67,6 +72,7 @@ public:
   UString*          method;   ///< extracted variable name second part.
   bool              rooted;///< true when the compound variable starts with '@'
   UNamedParameters* index;    ///< list of indexes for arrays
+  UNamedParameters* index_obj; ///< list of indexes for arrays in object names
   UExpression*      str;      ///< string expression for $ variables
   bool              isstatic; ///< true if the variable is static
   bool              isnormalized; ///< true if the var is in normalized mode

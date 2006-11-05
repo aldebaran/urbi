@@ -312,6 +312,8 @@ list          { return token::GROUPLIST;}
 "{"           { return token::LBRACKET;}
 "}"           { return token::RBRACKET;}
 "$"           { return token::DOLLAR;}
+"."           { return token::POINT;}
+
 
 
 

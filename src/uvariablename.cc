@@ -64,6 +64,7 @@ UVariableName::UVariableName(UString* device,
   this->method    = 0;
   this->rooted    = rooted;
   this->index     = index;
+  this->index_obj = 0;
   this->fullname_ = 0;
   this->str       = 0;
   this->isstatic  = false;
@@ -88,6 +89,44 @@ UVariableName::UVariableName(UString* device,
 
 }
 
+//! UVariableName constructor for variable of the type device[...][...].id[...][...]...
+UVariableName::UVariableName(UString* objname,
+    UNamedParameters *index_obj,
+    UString* attribute,
+    UNamedParameters *index_att)
+{
+  ADDOBJ(UVariableName);
+
+  this->device    = objname;
+  this->id        = attribute;
+  this->method    = 0;
+  this->rooted    = true;
+  this->index     = index_att;
+  this->index_obj = index_obj;
+  this->fullname_ = 0;
+  this->str       = 0;
+  this->isstatic  = false;
+  this->isnormalized = false;
+  this->deriv     = UNODERIV;
+  this->varerror  = false;
+  this->cached    = false;
+  this->fromGroup = false;
+  this->variable  = 0;
+  this->function  = 0;
+  this->firsttime = true;
+  this->nostruct  = false;
+  this->id_type   = UDEF_VAR;
+  this->local_scope  = false;
+
+  localFunction   = false;
+  selfFunction    = false;
+  if ((device) && (device->equal("__Funct__")))
+    localFunction = true;
+  if ((device) && (device->equal("self")))
+    selfFunction = true;
+}
+
+
 //! UVariableName constructor for string based variables: $("...")
 UVariableName::UVariableName(UExpression* str, bool rooted)
 {
@@ -98,6 +137,7 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
   this->method    = 0;
   this->rooted    = rooted;
   this->index     = 0;
+  this->index_obj = 0;
   this->fullname_ = 0;
   this->str       = str;
   this->isstatic  = false;
@@ -281,7 +321,6 @@ UVariableName::buildFullname(UCommand *command,
   char   name[fullnameMaxSize];
   char   indexstr[fullnameMaxSize];
   UValue *e1;
-  bool   errordetected;
   UNamedParameters* itindex;
 
   if (cached)
@@ -333,181 +372,229 @@ UVariableName::buildFullname(UCommand *command,
       strncpy(name, e1->str->str(), fullnameMaxSize);
 
     delete e1;
-  }
-  else
-  {
-    // Local function call
-    if ((localFunction || selfFunction) && (firsttime))
+    char* p = strchr (name, '.');
+
+    if (p != 0)
     {
-      firsttime = false;
-      if (!connection->stack.empty())
-      {
-	UCallid *funid = connection->stack.front();
-	if (funid)
-        {
-	  if (selfFunction)
-	    device->update(funid->self());
-
-	  if (localFunction)
-	  {
-	    if (local_scope)
-	      device->update(funid->str());
-	    else
-	    {
-	      // does the symbol exist as a symbol local to the function call?
-	      bool function_symbol = false;
-	      std::string tmpstr(funid->str());
-	      tmpstr = tmpstr + "." + id->str();
-	      if (((id_type==UDEF_VAR)
-		    && (::urbiserver->variabletab.find(tmpstr.c_str()) !=
-		      ::urbiserver->variabletab.end()))
-		  ||
-		  ((id_type==UDEF_EVENT)
-		   && (kernel::eventSymbolDefined (tmpstr.c_str()))
-		  )
-		 )
-		function_symbol = true;
-
-	      // does the symbol exist as an object symbol (direct on inherited)?
-	      bool class_symbol = false;
-	      bool ambiguous = true;
-
-	      HMobjtab::iterator objit = ::urbiserver->objtab.find(funid->self());
-	      if (objit != ::urbiserver->objtab.end())
-	      {
-		if (id_type == UDEF_VAR)
-		  class_symbol = ((*objit).second->
-                                  searchVariable(id->str(), ambiguous) != 0);
-		if (id_type == UDEF_FUNCTION)
-		  class_symbol = ((*objit).second->
-                                  searchFunction(id->str(), ambiguous) != 0);
-		if (id_type == UDEF_EVENT)
-		  class_symbol = ((*objit).second->searchEvent(id->str(), ambiguous) != 0);
-
-		class_symbol = class_symbol && !ambiguous;
-	      }
-
-	      // name resolution
-	      if (class_symbol)
-	      {
-		if (!function_symbol)
-		  device->update(funid->self());
-		else
-		  device->update(funid->str());
-	      }
-	      else
-	      {
-		// does the symbol exist as a symbol local to the connection?
-		bool local_symbol = false;
-		std::string tmploc(connection->connectionTag->str());
-		tmploc = tmploc + "." + id->str();
-
-		if (((id_type==UDEF_VAR)
-		      && (::urbiserver->variabletab.find(tmploc.c_str()) !=
-			::urbiserver->variabletab.end()))
-		    ||
-		    ((id_type==UDEF_FUNCTION)
-		     && (::urbiserver->functiontab.find(tmploc.c_str()) !=
-		       ::urbiserver->functiontab.end()))
-		    ||
-		    ((id_type==UDEF_EVENT)
-		     && (kernel::eventSymbolDefined (tmploc.c_str())
-			)
-		    )
-		   )
-		  local_symbol = true;
-
-		if ((local_symbol) && (!function_symbol))
-		  device->update(connection->connectionTag->str());
-		else
-		  device->update(funid->str());
-	      }
-
-	    }
-	  }
-	}
-      }
-      else
-      {
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	    "!!! invalid prefix resolution\n");
-	connection->send(tmpbuffer, command->getTag().c_str());
-	if (fullname_)
-	{
-	  delete fullname_;
-	  fullname_ = 0;
-	}
-	return 0;
-      }
+      p[0]=0;
+      delete device;
+      delete id;
+      device = new UString (name);
+      id = new UString (p+1);
+      p[0]= '.';
     }
+  };
 
-    if (device->equal("local"))
-      device->update(connection->connectionTag->str());
+  if (device->equal("local"))
+    device->update(connection->connectionTag->str());
 
-    if (index == 0)
+  cached = true;
+
+  // index on object name
+  if (index_obj != 0)
+  {
+    // rebuilding name based on index
+
+    //snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
+    itindex = index_obj;
+    std::string buildstr = device->str ();
+
+    while (itindex)
     {
-      cached = true;
+      e1 = itindex->expression->eval(command, connection);
+      if (e1==0)
+      {
+        snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                 "!!! array index evaluation failed\n");
+        connection->send(tmpbuffer, command->getTag().c_str());
+        delete fullname_;
+        fullname_ = 0;
+        return 0;
+      }
+      if (e1->dataType == DATA_NUM)
+        snprintf(indexstr, fullnameMaxSize, "__%d", (int)e1->val);
+      else
+        if (e1->dataType == DATA_STRING)
+          snprintf(indexstr, fullnameMaxSize, "__%s",
+                   e1->str->str());
+        else
+        {
+          delete e1;
+          snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                   "!!! invalid array index type\n");
+          connection->send(tmpbuffer, command->getTag().c_str());
+          delete fullname_;
+          fullname_ = 0;
+          return 0;
+        }
 
-      // Create the concatened variable name
-      snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
+      // Suppress this to make index non static by default
+      // if (!itindex->expression->isconst) cached = false;
+
+      buildstr = buildstr + indexstr;
+      itindex = itindex->next;
+      delete e1;
+    }
+    device->update (buildstr.c_str());
+  }
+
+  // index on attribute
+  if (index != 0)
+  {
+    // rebuilding name based on index
+
+    //snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
+    itindex = index;
+    std::string buildstr = id->str ();
+
+    while (itindex)
+    {
+      e1 = itindex->expression->eval(command, connection);
+      if (e1==0)
+      {
+        snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                 "!!! array index evaluation failed\n");
+        connection->send(tmpbuffer, command->getTag().c_str());
+        delete fullname_;
+        fullname_ = 0;
+        return 0;
+      }
+      if (e1->dataType == DATA_NUM)
+        snprintf(indexstr, fullnameMaxSize, "__%d", (int)e1->val);
+      else
+        if (e1->dataType == DATA_STRING)
+          snprintf(indexstr, fullnameMaxSize, "__%s",
+                   e1->str->str());
+        else
+        {
+          delete e1;
+          snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                   "!!! invalid array index type\n");
+          connection->send(tmpbuffer, command->getTag().c_str());
+          delete fullname_;
+          fullname_ = 0;
+          return 0;
+        }
+
+      // Suppress this to make index non static by default
+      // if (!itindex->expression->isconst) cached = false;
+
+      buildstr = buildstr + indexstr;
+      itindex = itindex->next;
+      delete e1;
+    }
+    id->update (buildstr.c_str());
+  }
+
+  // Local function call
+  if ((localFunction || selfFunction)
+      && firsttime)
+  {
+    firsttime = false;
+    if (!connection->stack.empty())
+    {
+      UCallid *funid = connection->stack.front();
+      if (funid)
+      {
+        if (selfFunction)
+          device->update(funid->self());
+
+        if (localFunction)
+        {
+          if (local_scope)
+            device->update(funid->str());
+          else
+          {
+            // does the symbol exist as a symbol local to the function call?
+            bool function_symbol = false;
+            std::string tmpstr(funid->str());
+            tmpstr = tmpstr + "." + id->str();
+            if (((id_type==UDEF_VAR)
+                 && (::urbiserver->variabletab.find(tmpstr.c_str()) !=
+                     ::urbiserver->variabletab.end()))
+                ||
+                ((id_type==UDEF_EVENT)
+                 && (kernel::eventSymbolDefined (tmpstr.c_str()))
+                )
+               )
+              function_symbol = true;
+
+            // does the symbol exist as an object symbol (direct on inherited)?
+            bool class_symbol = false;
+            bool ambiguous = true;
+
+            HMobjtab::iterator objit =::urbiserver->objtab.find(funid->self());
+            if (objit != ::urbiserver->objtab.end())
+            {
+              if (id_type == UDEF_VAR)
+                class_symbol = ((*objit).second->
+                                searchVariable(id->str(), ambiguous) != 0);
+              if (id_type == UDEF_FUNCTION)
+                class_symbol = ((*objit).second->
+                                searchFunction(id->str(), ambiguous) != 0);
+              if (id_type == UDEF_EVENT)
+                class_symbol = ((*objit).second->searchEvent(id->str(),
+                                                             ambiguous) != 0);
+
+              class_symbol = class_symbol && !ambiguous;
+            }
+
+            // name resolution
+            if (class_symbol)
+            {
+              if (!function_symbol)
+                device->update(funid->self());
+              else
+                device->update(funid->str());
+            }
+            else
+            {
+              // does the symbol exist as a symbol local to the connection?
+              bool local_symbol = false;
+              std::string tmploc(connection->connectionTag->str());
+              tmploc = tmploc + "." + id->str();
+
+              if (((id_type==UDEF_VAR)
+                   && (::urbiserver->variabletab.find(tmploc.c_str()) !=
+                       ::urbiserver->variabletab.end()))
+                  ||
+                  ((id_type==UDEF_FUNCTION)
+                   && (::urbiserver->functiontab.find(tmploc.c_str()) !=
+                       ::urbiserver->functiontab.end()))
+                  ||
+                  ((id_type==UDEF_EVENT)
+                   && (kernel::eventSymbolDefined (tmploc.c_str())
+                      )
+                  )
+                 )
+                local_symbol = true;
+
+              if ((local_symbol) && (!function_symbol))
+                device->update(connection->connectionTag->str());
+              else
+                device->update(funid->str());
+            }
+          }
+        }
+      }
     }
     else
     {
-      // rebuilding name based on index
-
-      snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
-      itindex = index;
-      errordetected = false;
-      cached = true;
-
-      while (itindex)
-      {
-	e1 = itindex->expression->eval(command, connection);
-	if (e1==0)
-	{
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	      "!!! expression error: array ignored\n");
-	  connection->send(tmpbuffer, command->getTag().c_str());
-	  errordetected = true;
-	  break;
-	}
-	if (e1->dataType == DATA_NUM)
-	  snprintf(indexstr, fullnameMaxSize-strlen(name), "__%d", (int)e1->val);
-	else if (e1->dataType == DATA_STRING)
-	  snprintf(indexstr, fullnameMaxSize-strlen(name), "__%s", e1->str->str());
-	else
-	{
-	  delete e1;
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	      "!!! invalid array type: array ignored\n");
-	  connection->send(tmpbuffer, command->getTag().c_str());
-	  errordetected = true;
-	  break;
-	}
-
-	// Suppress this to make index non static by default
-	// if (!itindex->expression->isconst) cached = false;
-
-	strcat(name, indexstr);
-	itindex = itindex->next;
-	delete e1;
-      }
-      if (errordetected)
-      {
-	if (fullname_)
-	{
-	  delete fullname_;
-	  fullname_ = 0;
-	}
-	return 0;
-      }
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! invalid prefix resolution\n");
+      connection->send(tmpbuffer, command->getTag().c_str());
+      delete fullname_;
+      fullname_ = 0;
+      return 0;
     }
-  } // else str
+  }
+
+  // Create the concatened variable name
+  snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
 
   // Alias updating
   if (withalias)
   {
-
     if (nostruct)
     {
       // Comes from a simple IDENTIFIER
@@ -625,7 +712,16 @@ UVariableName::copy()
   if (str)
     ret = new UVariableName(str->copy(), rooted);
   else
-    ret = new UVariableName(ucopy (device), ucopy (id), rooted, ucopy (index));
+    if (index_obj)
+      ret = new UVariableName (ucopy (device),
+                               ucopy (index_obj),
+                               ucopy (id),
+                               ucopy (index));
+    else
+      ret = new UVariableName(ucopy (device),
+                              ucopy (id),
+                              rooted,
+                              ucopy (index));
 
   ret->isstatic     = isstatic;
   ret->isnormalized = isnormalized;
