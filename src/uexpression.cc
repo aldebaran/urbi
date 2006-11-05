@@ -2181,6 +2181,8 @@ UErrorValue
 UExpression::asyncScan(UASyncCommand *cmd,
                        UConnection *c)
 {
+  const int errSize = 256;
+  static char errorString[errSize]; // Max error message = 256 chars
   UVariable *variable;
   UNamedParameters *pevent;
   HMfunctiontab::iterator hmf;
@@ -2229,9 +2231,13 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
           if (variable)
           {
-            variablename->device->update(variable->method);
-            variablename->buildFullname((UCommand*)cmd, c);
-            fullname = variablename->getFullname();
+            snprintf(errorString,
+                     errSize,
+                     "!!! Pure virtual variables not allowed"
+                     " in asynchronous tests.\n");
+            c->send(errorString,
+                    ((UCommand*)cmd)->getTag().c_str());
+            return UFAIL;
           }
         }
       }

@@ -1,5 +1,19 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+class toto { var x; };
+tata = new toto;
+at (tata.x) ping;
+[00007013:notag] !!! Pure virtual variables not allowed in asynchronous tests.
+[00007013:notag] !!! Invalid name resolution in test. Did you define all events and variables?
+
+=> tata.x must exist for 'at' to be able to put a hook on it for caching
+purposes.
+
+	forbid usage of virtual attributes in asynchronous test expressions 
+	* src/uexpression.cc: done.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix error statement: must start with an upper case 
 	* src/ucommand.cc: change 'invalid' to 'Invalid'.
 
