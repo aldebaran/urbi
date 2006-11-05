@@ -342,6 +342,14 @@ list          { return token::GROUPLIST;}
 		return token::STRUCT; }
 
 
+{ID}"."{ID}("."{ID})+   { valp->str = new UString(yytext);
+	             	     if (valp->str->str() == 0) {
+		               delete (valp->str);
+		               valp->str = 0;
+		             }
+		           return token::TAG; }
+
+
 [ \t\r]+       locp->step();/* eat up whitespace */
 \n+            locp->lines(yyleng);locp->step();
 .              {

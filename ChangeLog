@@ -1,5 +1,20 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+The grammar has been hacked again to support tags of the form <id>(.<id>)*
+In 1.5, when name resolution will be set properly, we will submit tags to the
+same resolution algorithm, giving immediate benefits like "programmable tags":
+
+a="hello";
+$(a): ping;
+[00012123:hello] pong
+
+	fix bug in parsing hierarchical tags with more than 2 levels of
+	* src/parser/bison/utoken.l: add the TAG token.
+	* src/parser/bison/ugrammar.y: extend parsing of tags to include the
+        TAG token.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix bug in hash+list name resolution 
 	* src/uexpression.cc: fix.
 

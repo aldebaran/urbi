@@ -277,6 +277,7 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 %token <val>                 FLAGID     "flag identifier"
 %token <val>                 FLAGTIME   "flag time"
 %token <str>                 IDENTIFIER  "identifier"
+%token <str>                 TAG         "tag"
 %token <structure>           STRUCT      "structured identifier"
 %token <structure>           REFSTRUCT   "structured ref-identifier"
 %token <str>                 STRING      "string"
@@ -398,6 +399,16 @@ taggedcommand:
       $$ = $4;
     }
 
+  | TAG flags COLON command {
+ 
+      MEMCHECK($1);
+      if ($4) {
+	$4->setTag($1->str());
+	$4->flags = $2;
+      }
+      $$ = $4;
+    }
+
   | IDENTIFIER COLON command {
  
       MEMCHECK($1);
@@ -406,6 +417,16 @@ taggedcommand:
       }
       $$ = $3;
     }
+
+  | TAG COLON command {
+ 
+      MEMCHECK($1);
+      if ($3) {
+	$3->setTag($1->str());
+      }
+      $$ = $3;
+    }
+
 
   | STRUCT COLON command {
  
@@ -679,6 +700,14 @@ instruction:
     }
 
   | OPERATOR_ID IDENTIFIER {
+
+      MEMCHECK($1);
+      MEMCHECK($2);
+      $$ = new UCommand_OPERATOR_ID($1,$2);
+      MEMCHECK2($$,$1,$2);
+    }
+
+  | OPERATOR_ID TAG {
 
       MEMCHECK($1);
       MEMCHECK($2);
@@ -1100,14 +1129,6 @@ purevariable:
 
       $$ = new UVariableName($3);
       MEMCHECK1($$,$3);
-    }
-
-  | IDENTIFIER array POINT IDENTIFIER {
-
-      MEMCHECK($1);
-      MEMCHECK($4);
-      $$ = new UVariableName($1,$2,$4);
-      MEMCHECK3($$,$1,$2,$4);
     }
 
   | IDENTIFIER array POINT IDENTIFIER array {
