@@ -2928,7 +2928,18 @@ UCommand_NEW::execute(UConnection *connection)
     return ((status = UCOMPLETED));
   }
 
-  HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->str());
+  HMobjtab::iterator objit = ::urbiserver->objtab.find(id->str());
+  if (objit != ::urbiserver->objtab.end())
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	 "!!! Object %s already exists. Delete it first.\n", id->str());
+    connection->send(tmpbuffer, getTag().c_str());
+
+    return ((status = UCOMPLETED));
+  }
+
+
+  objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end())
     {
       char* objname = (char*)obj->str();

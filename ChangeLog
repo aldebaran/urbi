@@ -1,5 +1,25 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+Calling 'new' several times for the same object will now fail:
+
+class x;
+class y;
+a = new x; // OK
+a = new y; // FAIL
+
+The proper way of doing it will be in the future:
+
+a = new x;
+a inherits y; // from this point on, any call to init would fail because it
+              // would be ambiguous between x.init and y.init
+              // Conflicts should be notified in warning and generate errors
+              // only if effective usage is attempted.
+
+	Temporarily prohibits multiple inheritance. 
+	* src/ucommand.cc: done.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 Trying to put objects in lists or have functions that return objects now
 triggers an error message.
 
