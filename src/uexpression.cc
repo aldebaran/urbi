@@ -393,6 +393,25 @@ UExpression::eval (UCommand *command,
       if (pevent)
       {
         e1->liststart = pevent->expression->eval(command, connection);
+
+        if (!e1->liststart)
+        {
+          delete ret;
+          return 0;
+        }
+
+        if (e1->liststart->dataType == DATA_OBJ)
+        {
+          snprintf(errorString,
+                   errSize,
+                   "!!! Objects not allowed in lists with Kernel 1. "
+                   "Use lists of keys and object maps instead\n");
+          connection->send(errorString,
+                             command->getTag().c_str());
+          delete ret;
+          return 0;
+        }
+
         e1 = e1->liststart;
         pevent = pevent->next;
       }
@@ -405,6 +424,18 @@ UExpression::eval (UCommand *command,
           delete ret;
           return 0;
         }
+        if (e1->next->dataType == DATA_OBJ)
+        {
+          snprintf(errorString,
+                   errSize,
+                   "!!! Objects not allowed in lists with Kernel 1. "
+                   "Use lists of keys and object maps instead\n");
+          connection->send(errorString,
+                             command->getTag().c_str());
+          delete ret;
+          return 0;
+        }
+
         pevent = pevent->next;
         e1 = e1->next;
       }

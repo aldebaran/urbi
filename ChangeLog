@@ -1,5 +1,14 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+Trying to put objects in lists or have functions that return objects now
+triggers an error message.
+
+	add proper error messages for common objects misusages in kernel 1 
+	* src/ucommand.cc: dito.
+	* src/uexpression.cc: dito.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix indentation 
 	* src/uexpression.cc: dito.
 

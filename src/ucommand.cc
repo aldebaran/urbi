@@ -2651,6 +2651,17 @@ UCommand_RETURN::execute(UConnection *connection)
       if (!value)
       {
         connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+        new UVariable(connection->stack.front()->str(),
+                    "__result__", new UValue());
+        return (status = UCOMPLETED);
+      }
+      if (value->dataType == DATA_OBJ)
+      {
+        connection->send("!!! Functions cannot return objects with Kernel 1\n",
+                         getTag().c_str());
+        delete value;
+        new UVariable(connection->stack.front()->str(),
+                    "__result__", new UValue());
         return (status = UCOMPLETED);
       }
 
