@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix 'vars' command 
+	* src/ucommand.cc: add support for VOID, LIST and OBJ types.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 Calling 'new' several times for the same object will now fail:
 
 class x;

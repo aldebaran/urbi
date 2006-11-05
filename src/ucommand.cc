@@ -4333,6 +4333,18 @@ std::ostringstream tstr;
               tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
             break;
 
+          case DATA_LIST:
+            tstr << "*** " << fullname->str() << " = LIST" <<'\n';
+            break;
+
+          case DATA_OBJ:
+            tstr << "*** " << fullname->str() << " = OBJ" <<'\n';
+            break;
+
+          case DATA_VOID:
+            tstr << "*** " << fullname->str() << " = VOID" <<'\n';
+            break;
+
           default:
             tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
         } // end switch
