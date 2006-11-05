@@ -3091,7 +3091,7 @@ UCommand_NEW::execute(UConnection *connection)
     oss << ") | if (!isdef("
       << tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
       << tmpval << UU << ")))) { "
-      << "echo \"Error: Constructor failed, objet deleted\";"
+      << "echo \"Error: Constructor failed, object deleted\";"
       << " delete "
       << id->str() << "} | if (isdef("
       << tmpval << UU << ")) delete " << tmpval << UU

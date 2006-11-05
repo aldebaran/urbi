@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix typo in one error message.
+	* src/ucommand.cc: done.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 class toto { var x; };
 tata = new toto;
 at (tata.x) ping;
