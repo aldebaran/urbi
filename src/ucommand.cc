@@ -941,7 +941,6 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
     // eval the right side of the assignment and check for errors
     target = expression->eval(this, connection);
-    //if ((target == 0) || (target->dataType == DATA_VOID))
     if (target == 0)
       return (status = UCOMPLETED);
 

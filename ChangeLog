@@ -1,5 +1,11 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix bug in assignment that fails and put void in the assigned variable. 
+	* src/ucommand.cc: remove useless comments.
+	* src/uexpression.cc: in case of error eval returns 0, not DATA_VOID.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix typo in one error message.
 	* src/ucommand.cc: done.
 

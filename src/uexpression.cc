@@ -665,10 +665,8 @@ UExpression::eval (UCommand *command,
 
         snprintf(errorString, errSize, "!!! Unknown identifier: %s\n",
                  variablename->getFullname()->str());
-
         connection->send(errorString, command->getTag().c_str());
-
-        return new UValue();
+        return 0;
       }
 
       if ((!variablename->isstatic) || (firsteval))
