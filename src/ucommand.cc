@@ -2892,6 +2892,14 @@ UCommand_NEW::execute(UConnection *connection)
       return ((status = UCOMPLETED));
     }
     UString* name = varname->buildFullname(this, connection, false);
+    if (!name)
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! Invalid object name\n");
+      connection->send(tmpbuffer, getTag().c_str());
+
+      return ((status = UCOMPLETED));
+    }
     id = new UString(name->str());
   }
 
