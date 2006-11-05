@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix bug on 'at' tests containing core functions 
+	* src/uexpression.cc: fix bug.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	indentation reformating 
 	* src/utypes.h: doit.
 

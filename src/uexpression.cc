@@ -2244,14 +2244,14 @@ UExpression::asyncScan(UASyncCommand *cmd,
       { // is it a known kernel function?
         if ( kernel::isCoreFunction (variablename->id))
         {
-          if (expression1)
-            if (expression1->asyncScan(cmd, c) == UFAIL)
-              return UFAIL;
-
-          if (expression2)
-            if  (expression1->asyncScan(cmd, c) == UFAIL)
-              return UFAIL;
-
+          UNamedParameters* param = parameters;
+          while (param)
+          {
+            if (param->expression)
+               if (param->expression->asyncScan(cmd, c) == UFAIL)
+                 return UFAIL;
+            param = param->next;
+          }
           return USUCCESS;
         }
         else
