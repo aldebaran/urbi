@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	indentation reformating 
+	* src/utypes.h: doit.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 The grammar has been hacked again to support tags of the form <id>(.<id>)*
 In 1.5, when name resolution will be set properly, we will submit tags to the
 same resolution algorithm, giving immediate benefits like "programmable tags":

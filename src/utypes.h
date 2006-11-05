@@ -48,10 +48,13 @@ extern  int   availableMemory; //< Total amount of free memory in the system
 # define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
 
 # define LIBERATE(x) if (x && x->liberate()==0) delete (x)
-# define DD ::urbiserver->debug("Check point %s, %d\n",__FILE__,__LINE__);
-# define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n",x,__FILE__,__LINE__);
+# define DD ::urbiserver->debug("Check point %s, %d\n", __FILE__, __LINE__);
+# define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n", \
+                                    x, __FILE__, __LINE__);
 
-# define ASSERT(test) if (!(test)) ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n",# test,__FILE__,__LINE__); else
+# define ASSERT(test) if (!(test)) \
+  ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n", \
+  # test, __FILE__, __LINE__); else
 
 typedef unsigned long IPAdd;
 
@@ -281,32 +284,38 @@ template <class T>
 class URefPt {
 public:
 
-  URefPt(T* p_) {
+  URefPt(T* p_)
+  {
     p = p_;
     cpt = 1;
   }
 
-  ~URefPt() {
+  ~URefPt()
+  {
     delete p;
   }
 
   int   cpt;
   T* p;
 
-  T* ref() {
+  T* ref()
+  {
     return p;
   }
 
-  int liberate() {
+  int liberate()
+  {
     cpt--;
-    if (cpt<=0) {
+    if (cpt<=0)
+    {
       delete p;
       p=0;
     }
     return cpt;
   }
 
-  URefPt *copy() {
+  URefPt *copy()
+  {
     cpt++;
     return (this);
   }
@@ -349,9 +358,10 @@ typedef  urbi::hash_map_type<std::string, TagInfo>::type HMtagtab;
  Each entry is linked to parent entry (a.b ->a) and to all commands having the
  tag.
 */
-class TagInfo {
+class TagInfo
+{
   public:
-  TagInfo():frozen(false),blocked(false),parent(0) {}
+  TagInfo():frozen(false), blocked(false), parent(0)  {}
     bool frozen;
     bool blocked;
     std::list<UCommand*> commands; ///< All commands with this tag
