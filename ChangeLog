@@ -1,5 +1,10 @@
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix indentation 
+	* src/uexpression.cc: dito.
+
+2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix ticket #52 
 	* src/ucommand.cc: fix bug in name eval checking inside NEW.
 
