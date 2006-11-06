@@ -257,7 +257,7 @@ TagInfo::insert(HMtagtab &tab)
   if (pos == std::string::npos) //we reached base tag
     return result;
 
-  std::string subtag = name.substr(0, name.length()-pos-1);
+  std::string subtag = name.substr(0, pos);
   HMtagtab::iterator it = tab.find(subtag);
   TagInfo *parent;
   if (it == tab.end())
