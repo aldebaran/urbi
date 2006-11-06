@@ -132,6 +132,8 @@ namespace urbi
 	while (message[pos])
 	  {
 	    while (message[pos]==' ') pos++;
+	    if (message[pos]==']')
+	      break;
 	    UValue *v = new UValue();
 	    int p = v->parse(message, pos, bins, binpos);
 	    if (p<0)
