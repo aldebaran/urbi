@@ -1,5 +1,10 @@
 2006-11-07  Akim Demaille  <demaille@gostai.com>
 
+	Upgrade dependencies
+	So that again, everybody installs libport.
+
+2006-11-07  Akim Demaille  <demaille@gostai.com>
+
 	liburbi installs libport
 	* flags.mk: Use LIBPORT_CPPFLAGS.
 	* configure.ac: nostdinc.
