@@ -21,9 +21,6 @@
 #ifndef UOBJECT_HH_DEFINED
 # define UOBJECT_HH_DEFINED
 
-# ifdef HAVE_CONFIG_H
-#  include "config.h"
-# endif
 # include <string>
 # include <list>
 # include <algorithm>

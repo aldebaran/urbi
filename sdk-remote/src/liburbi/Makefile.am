@@ -11,8 +11,7 @@ SUBDIRS += .
 ## --------- ##
 
 include uobject/uobject.mk
-urbiinclude_HEADERS = 			\
-uobject/urbi/uobject.hh
+urbiinclude_HEADERS = $(uobject_hh)
 
 ## ------------ ##
 ## liburbi.la.  ##
