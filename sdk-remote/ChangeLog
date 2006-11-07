@@ -1,5 +1,13 @@
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
+	Use reindent on the code
+	* src/liburbi/usyncclient.cc: Formatting changes.
+	* src/liburbi/uclient.cc: Ditto.
+	* src/liburbi/uabstractclient.cc: Ditto.
+	* src/liburbi/uconversion.cc: Ditto.
+
+2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+
 	uobject.hh should not depend on config.h
 	* src/liburbi/uobject/urbi/uobject.hh.template: Let libport stuff
 	do it anyway.

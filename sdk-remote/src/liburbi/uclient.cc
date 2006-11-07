@@ -196,8 +196,10 @@ namespace urbi
     fd_set rfds;
     int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
     int res;
-    while (true) {
-      do {
+    while (true)
+    {
+      do
+      {
 	if (sd==-1)
 	  return;
 	FD_ZERO(&rfds);
@@ -209,7 +211,8 @@ namespace urbi
 	tme.tv_sec = 1;
 	tme.tv_usec = 0;
 	res = select(maxfd+1, &rfds, NULL, NULL, &tme);
-	if ( (res < 0) && (errno != EINTR)) {
+	if ( (res < 0) && (errno != EINTR))
+	{
 	  this->rc = -1;
 #ifdef WIN32
 	  res = WSAGetLastError();
@@ -228,7 +231,8 @@ namespace urbi
       int count = ::recv(sd,
 			 &recvBuffer[recvBufferPosition],
 			 buflen - recvBufferPosition - 1, 0);
-      if (count < 0) {
+      if (count < 0)
+      {
 	rc = -1;
 	std::cerr <<"error "<<count<<std::endl;
 	//TODO when error will be implemented, send an error msg

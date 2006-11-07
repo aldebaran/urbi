@@ -36,11 +36,14 @@ namespace urbi
       defaultClient =  this;
   }
 
-  void USyncClient::callbackThread() {
-    while (true) {
+  void USyncClient::callbackThread()
+  {
+    while (true)
+    {
       (*sem)--;
       queueLock->lock();
-      if (queue.empty()) {
+      if (queue.empty())
+      {
 	//we got mysteriously interrupted
 	queueLock->unlock();
 	continue;
@@ -53,20 +56,24 @@ namespace urbi
     }
   }
 
-  void USyncClient::notifyCallbacks(const UMessage &msg) {
+  void USyncClient::notifyCallbacks(const UMessage &msg)
+  {
     queueLock->lock();
-    if (syncTag == msg.tag) {
+    if (syncTag == msg.tag)
+    {
       this->msg = new UMessage(msg);
       (*syncLock)++;
     }
-    else {
+    else
+    {
       queue.push_back(new UMessage(msg));
       (*sem)++;
     }
     queueLock->unlock();
   }
 
-  UMessage * USyncClient::waitForTag(const char * tag) {
+  UMessage * USyncClient::waitForTag(const char * tag)
+  {
     syncTag = tag;
     (*syncLock)--;
     syncTag = "";
@@ -74,13 +81,15 @@ namespace urbi
   }
 
 
-  UMessage * USyncClient::syncGet(const char * format, ...) {
+  UMessage * USyncClient::syncGet(const char * format, ...)
+  {
     //check there is no tag
     int p=0;
     while(format[p]==' ') p++;
     while (isalpha(format[p])) p++;
     while(format[p]==' ') p++;
-    if (format[p]==':') {
+    if (format[p]==':')
+    {
       std::cerr <<"FATAL: passing a taged command to syncGet:'"<<format<<"'\n";
       ::exit(1);
     }
@@ -93,7 +102,8 @@ namespace urbi
     sendBufferLock.lock();
     rc = vpack(format, arg);
     va_end(arg);
-    if (rc < 0) {
+    if (rc < 0)
+    {
       sendBufferLock.unlock();
       return 0;
     }
@@ -126,7 +136,8 @@ namespace urbi
       f = 0;
     send("%s.format = %d;noop;noop;", camera, f);	//XXX required to ensure format change is applied
     UMessage *m = syncGet("%s.val;",camera);
-    if (m->value->binary->type != BINARY_IMAGE) {
+    if (m->value->binary->type != BINARY_IMAGE)
+    {
       delete m;
       return 0;
     }
@@ -142,7 +153,8 @@ namespace urbi
 	convertJPEGtoRGB((const byte *)  m->value->binary->image.data, m->value->binary->image.size,
 			 (byte *) buffer, buffersize);
     }
-    else if (format == IMAGE_RGB || format == IMAGE_PPM) {
+    else if (format == IMAGE_RGB || format == IMAGE_PPM)
+    {
       buffersize = std::min(m->value->binary->image.size, buffersize);
       if (m->value->binary->image.imageFormat == IMAGE_YCbCr)
 	convertYCrCbtoRGB((const byte *) m->value->binary->image.data,
@@ -155,7 +167,8 @@ namespace urbi
       buffersize = std::min(m->value->binary->image.size, buffersize);
       memcpy(buffer, m->value->binary->image.data, buffersize);
     }
-    if (format == IMAGE_PPM) {
+    if (format == IMAGE_PPM)
+    {
       char p6h[20];
       sprintf(p6h, "P6\n%d %d\n255\n", width, height);
       int p6len = strlen(p6h);
@@ -174,7 +187,8 @@ namespace urbi
   {
     UMessage *m = syncGet("%s.valn;", device);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    {
       delete m;
       return 0;
     }
@@ -188,7 +202,8 @@ namespace urbi
   {
     UMessage *m = syncGet("%s.val;", device);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    {
       delete m;
       return 0;
     }
@@ -202,7 +217,8 @@ namespace urbi
   {
     UMessage *m = syncGet("%s", command);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    {
       delete m;
       return 0;
     }
@@ -219,7 +235,8 @@ namespace urbi
   {
     UMessage *m = syncGet("%s.%s;", device,access);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE) {
+    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    {
       delete m;
       return 0;
     }
@@ -238,7 +255,8 @@ namespace urbi
     UMessage * m = syncGet("syncgetsound;");
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY
-	|| m->value->binary->type != BINARY_SOUND) {
+	|| m->value->binary->type != BINARY_SOUND)
+	{
       delete m;
       return 0;
     }
@@ -253,9 +271,11 @@ namespace urbi
     if (rc !=0) return -1;
     sendBufferLock.lock();
     int sent = 0;
-    while (sent<length) {
+    while (sent<length)
+    {
       int res = ::write(sd, (char *) buffer + sent, length - sent);
-      if (res < 0) {
+      if (res < 0)
+      {
 	rc = res;
 	sendBufferLock.unlock();
 	return res;

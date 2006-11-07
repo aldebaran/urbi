@@ -34,7 +34,8 @@ namespace urbi
   {
     unsigned char *in = (unsigned char *) sourceImage;
     unsigned char *out = (unsigned char *) destinationImage;
-    for (int i = 0; i < bufferSize - 2; i += 3) {
+    for (int i = 0; i < bufferSize - 2; i += 3)
+    {
       float r = in[i];
       float g = in[i + 1];
       float b = in[i + 2];
@@ -57,7 +58,8 @@ namespace urbi
   {
     unsigned char *in = (unsigned char *) sourceImage;
     unsigned char *out = (unsigned char *) destinationImage;
-    for (int i = 0; i < bufferSize - 2; i += 3) {
+    for (int i = 0; i < bufferSize - 2; i += 3)
+    {
       float y = in[i];
       float cb = in[i + 1];
       float cr = in[i + 2];
@@ -81,7 +83,8 @@ namespace urbi
   {
     int sz;
     void *destination = read_jpeg((const char *) source, sourcelen, false, sz);
-    if (!destination) {
+    if (!destination)
+    {
       size = 0;
       return 0;
     }
@@ -97,7 +100,8 @@ namespace urbi
   {
     int sz;
     void *destination = read_jpeg((const char *) source, sourcelen, true, sz);
-    if (!destination) {
+    if (!destination)
+    {
       size = 0;
       return 0;
     }
@@ -184,18 +188,22 @@ namespace urbi
   }
 
 
-  struct mem_destination_mgr{
+  struct mem_destination_mgr
+  {
     struct jpeg_destination_mgr pub;
   };
 
-  void init_destination(j_compress_ptr) {
+  void init_destination(j_compress_ptr)
+  {
   }
 
-  boolean empty_output_buffer(j_compress_ptr) {
+  boolean empty_output_buffer(j_compress_ptr)
+  {
     return FALSE;
   }
 
-  void term_destination(j_compress_ptr) {
+  void term_destination(j_compress_ptr)
+  {
   }
 
   namespace
@@ -236,7 +244,8 @@ namespace urbi
 
       row_stride = w * 3;	/* JSAMPLEs per row in image_buffer */
 
-      while (cinfo.next_scanline < cinfo.image_height) {
+      while (cinfo.next_scanline < cinfo.image_height)
+      {
 	row_pointer[0] = (JSAMPLE *)& src[cinfo.next_scanline * row_stride];
 	(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
       }
@@ -257,7 +266,8 @@ namespace urbi
       struct urbi_jpeg_error_mgr jerr;
       cinfo.err = jpeg_std_error(&jerr.pub);
       jerr.pub.error_exit = urbi_jpeg_error_exit;
-      if (setjmp(jerr.setjmp_buffer)) {
+      if (setjmp(jerr.setjmp_buffer))
+      {
 	/* If we get here, the JPEG code has signaled an error.
 	 * We need to clean up the JPEG object, close the input file, and return.
 	 */
@@ -287,7 +297,8 @@ namespace urbi
 	cinfo.output_height;
       void *buffer = malloc(output_size);
 
-      while (cinfo.output_scanline < cinfo.output_height) {
+      while (cinfo.output_scanline < cinfo.output_height)
+      {
 	/* jpeg_read_scanlines expects an array of pointers to scanlines.
 	 * Here the array is only one element long, but you could ask for
 	 * more than one scanline at a time if that's more convenient.
@@ -312,7 +323,8 @@ namespace urbi
 			 unsigned char * dst, int dw, int dh, float sx, float sy)
     {
       for (int x=0;x<dw;x++)
-	for (int y=0;y<dh;y++) {
+	for (int y=0;y<dh;y++)
+	{
 	  //find the corresponding point in source image
 	  float fsrcx = (float) (x-dw/2) / sx  + (float)scx;
 	  float fsrcy = (float) (y-dh/2) / sy  + (float)scy;
@@ -324,7 +336,8 @@ namespace urbi
 
 	    float xfactor = fsrcx-(float)srcx;
 	    float yfactor = fsrcy-(float)srcy;
-	    for (int color=0;color<3;color++) {
+	    for (int color=0;color<3;color++)
+	    {
 	      float up = (float)src[(srcx+srcy*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+srcy*sw)*3+color] * xfactor;
 	      float down = (float)src[(srcx+(srcy+1)*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+(srcy+1)*sw)*3+color] * xfactor;
 	      float result = up * (1.0-yfactor) + down * yfactor;
@@ -386,11 +399,13 @@ namespace urbi
 	memcpy(src.data+p, uncompressedData, src.width*src.height*3);
 	break;
       case IMAGE_JPEG:
-	if (targetformat==0) {
+	if (targetformat==0)
+	{
 	  convertJPEGtoRGB((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
 	  format = 0;
 	}
-	else {
+	else
+	{
 	  convertJPEGtoYCrCb((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
 	  format = 1;
 	}
@@ -483,7 +498,8 @@ namespace urbi
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
   {
     int shift = 8*(sizeof(S) - sizeof(D));
-    for (int i=0;i<count;i++) {
+    for (int i=0;i<count;i++)
+    {
       float soffset = (float)i* ((float)sr /(float)dr);
       int so = (int)soffset;
       float factor = soffset-(float)so;
@@ -493,7 +509,8 @@ namespace urbi
 	s2 = src[(so+1)*sc];
       else
 	s2 = s1; //nothing to interpolate with
-      if (!sf) {
+      if (!sf)
+      {
 	s1 = s1 ^ (1<<(sizeof(S)*8-1));
 	s2 = s2 ^ (1<<(sizeof(S)*8-1));
       }
@@ -501,32 +518,38 @@ namespace urbi
       int v2;
       if (sc==1)
 	v2 = v1;
-      else {
+      else
+      {
 	s1 = src[so*sc+1];
 	if (i != count - 1)
 	  s2 = src[(so+1)*sc+1];
 	else
 	  s2 = s1; //nothing to interpolate with
-	if (!sf) {
+	if (!sf)
+	{
 	  s1 = s1 ^ (1<<(sizeof(S)*8-1));
 	  s2 = s2 ^ (1<<(sizeof(S)*8-1));
 	}
 	v2 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
       }
       D d1, d2;
-      if (shift>=0) {
+      if (shift>=0)
+      {
 	d1 = (D)(v1 >>shift);
 	d2 = (D)(v2 >>shift);
       }
-      else {
+      else
+      {
 	d1 = (D)(v1) *  (1<< (-shift));
 	d2 = (D)(v2) * (1<< (-shift));
       }
-      if (!df) {
+      if (!df)
+      {
 	d1 = d1 ^ (1<<(sizeof(D)*8-1));
 	d2 = d2 ^ (1<<(sizeof(D)*8-1));
       }
-      if (dc==2) {
+      if (dc==2)
+      {
 	dst[i*2] = d1;
 	dst[i*2+1] = d2;
       }
@@ -584,7 +607,8 @@ namespace urbi
       dest.data = (char *)realloc(dest.data, destSize);
     dest.size = destSize;
     //write destination header if appropriate
-    if (dest.soundFormat == SOUND_WAV) {
+    if (dest.soundFormat == SOUND_WAV)
+    {
       wavheader * wh = (wavheader *)dest.data;
       memcpy(wh->riff,"RIFF",4);
       wh->length = dest.size - 8;
@@ -610,7 +634,8 @@ namespace urbi
       dbuffer += sizeof(wavheader);
     int elementCount = dest.size - ((dest.soundFormat == SOUND_WAV)?sizeof(wavheader):0);
     elementCount /= (dest.channels * (dest.sampleSize/8));
-    switch( ssampleSize*1000 + dest.sampleSize) {
+    switch( ssampleSize*1000 + dest.sampleSize)
+    {
     case 8008:
       copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
       break;
