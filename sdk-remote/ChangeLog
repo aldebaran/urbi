@@ -1,3 +1,12 @@
+2006-11-07  Akim Demaille  <demaille@gostai.com>
+
+	Use libport/config.h
+	* flags.mk: New.
+	* sdk/Makefile.am, src/utils/Makefile.am, src/liburbi/Makefile.am,
+	* src/examples/Makefile.am: Use it.
+	* sdk/Makefile.am (gccversion, sanity): Remove, unused.
+	* configure.ac: Use URBI_CONFIG_HEADERS_PREFIXED and URBI_BUILD_AUX.
+
 2006-11-06  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix empty list parsing.

@@ -1,9 +1,4 @@
-AM_CPPFLAGS =					\
--I$(top_srcdir)					\
--I$(top_srcdir)/include				\
--I$(top_srcdir)/src/liburbi
-
-AM_CXXFLAGS = $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
+include $(top_srcdir)/flags.mk
 
 bin_PROGRAMS = urbicycle urbireverse urbiwalk urbiscale
 

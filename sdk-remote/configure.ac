@@ -7,8 +7,7 @@ AC_INIT([liburbi-c++], [1.0-b2], [bugs@gostai.com],
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
-AC_SUBST([install_sh_c_DATA], ['$(install_sh)-c -c -m 644'])
-AC_SUBST([INSTALL_HEADER], ['$(SHELL) $(install_sh_c_DATA) -C'])
+URBI_BUILD_AUX
 
 # Automake.
 AM_INIT_AUTOMAKE([1.9.6 -Wall tar-ustar dist-zip])
@@ -109,7 +108,8 @@ fi
 ## Output.  ##
 ## -------- ##
 
-AC_CONFIG_HEADERS([src/config.h])
+URBI_CONFIG_HEADERS_PREFIXED([src/config.h],
+	  		     [libport/config.h], [LIBPORT])
 AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  libport/Makefile
