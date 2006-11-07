@@ -29,7 +29,7 @@
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix bug in assignment that fails and put void in the assigned variable. 
+	fix bug in assignment that fails and put void in the assigned variable.
 	* src/ucommand.cc: remove useless comments.
 	* src/uexpression.cc: in case of error eval returns 0, not DATA_VOID.
 
@@ -49,17 +49,17 @@ at (tata.x) ping;
 => tata.x must exist for 'at' to be able to put a hook on it for caching
 purposes.
 
-	forbid usage of virtual attributes in asynchronous test expressions 
+	forbid usage of virtual attributes in asynchronous test expressions
 	* src/uexpression.cc: done.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix error statement: must start with an upper case 
+	fix error statement: must start with an upper case
 	* src/ucommand.cc: change 'invalid' to 'Invalid'.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix 'vars' command 
+	fix 'vars' command
 	* src/ucommand.cc: add support for VOID, LIST and OBJ types.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -75,11 +75,11 @@ The proper way of doing it will be in the future:
 
 a = new x;
 a inherits y; // from this point on, any call to init would fail because it
-              // would be ambiguous between x.init and y.init
-              // Conflicts should be notified in warning and generate errors
-              // only if effective usage is attempted.
+	      // would be ambiguous between x.init and y.init
+	      // Conflicts should be notified in warning and generate errors
+	      // only if effective usage is attempted.
 
-	Temporarily prohibits multiple inheritance. 
+	Temporarily prohibits multiple inheritance.
 	* src/ucommand.cc: done.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -87,28 +87,28 @@ a inherits y; // from this point on, any call to init would fail because it
 Trying to put objects in lists or have functions that return objects now
 triggers an error message.
 
-	add proper error messages for common objects misusages in kernel 1 
+	add proper error messages for common objects misusages in kernel 1
 	* src/ucommand.cc: dito.
 	* src/uexpression.cc: dito.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix indentation 
+	fix indentation
 	* src/uexpression.cc: dito.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix ticket #52 
+	fix ticket #52
 	* src/ucommand.cc: fix bug in name eval checking inside NEW.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix bug on 'at' tests containing core functions 
+	fix bug on 'at' tests containing core functions
 	* src/uexpression.cc: fix bug.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	indentation reformating 
+	indentation reformating
 	* src/utypes.h: doit.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -124,11 +124,11 @@ $(a): ping;
 	fix bug in parsing hierarchical tags with more than 2 levels of
 	* src/parser/bison/utoken.l: add the TAG token.
 	* src/parser/bison/ugrammar.y: extend parsing of tags to include the
-        TAG token.
+	TAG token.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix bug in hash+list name resolution 
+	fix bug in hash+list name resolution
 	* src/uexpression.cc: fix.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -146,30 +146,30 @@ obj[45]["hello"] = new x;
 The way it is done is again via a hack in the nameresolution function and the
 parser. In k1.5, this will be fixed with ageneric nameresolution algorithm.
 
-NB: obj[1] is not refering to an underlying ulist of objects, and evaluating 
+NB: obj[1] is not refering to an underlying ulist of objects, and evaluating
 obj alone without the array index will fail.
 
-	add support for objects hash table 
+	add support for objects hash table
 	* src/parser/bison/utoken.l: add POINT token ('.').
 	* src/parser/bison/ugrammar.y: add support for prefix[...].suffix[...]
-        constructs in grammar (should be generalized in 1.5).
+	constructs in grammar (should be generalized in 1.5).
 	* src/uvariablename.cc: extend buildFullname function and fix bugs in
-        name resolution algorithm.
+	name resolution algorithm.
 	* src/uvariablename.h: add index_obj array.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix ticket #35: notifyaccess when list elements are viewed 
+	fix ticket #35: notifyaccess when list elements are viewed
 	* src/uexpression.cc: add a call to UVariable::get().
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix bug accessing array of array in lists 
+	fix bug accessing array of array in lists
 	* src/uexpression.cc: a quick hack. This *must* be fixed in k1.5.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update NEWS 
+	update NEWS
 	* NEWS: update.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -177,33 +177,33 @@ obj alone without the array index will fail.
 The simple code "event b" was creating both an event b[0] and a variable b.
 This is now fixed.
 
-	fix bug in declaration of events without parameters 
+	fix bug in declaration of events without parameters
 	* src/ucommand.cc: add the "events" keyword that can be used to list
-        declared events (like vars for variables).
+	declared events (like vars for variables).
 	* src/parser/bison/utoken.l: add events keyword.
 	* src/ueventhandler.h: add a nbarg accessor.
 	* src/ueventhandler.cc: idem.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix speedmax bug 
+	fix speedmax bug
 	* src/ucommand.cc: enforce speedmax on instantaneus assignments like
-        x=<value> and display a warning message when the +error flag is set.
+	x=<value> and display a warning message when the +error flag is set.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	change 'modificator' to 'modifier' 
+	change 'modificator' to 'modifier'
 	* src/ucommand.cc: change error messages to display 'modifier' instead
-        of 'modificator'.
+	of 'modificator'.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix string unarmor bug 
+	fix string unarmor bug
 	* src/parser/bison/utoken.l: STRING token now calls UString::unArmor().
 	* src/ustring.cc: add unArmor/armor (armor not implemented yet).
 	* src/ustring.h: add defs.
 	* src/uvalue.cc: change UValue::echo for DATA_STRING; no processing
-        required anymore.
+	required anymore.
 
 2006-11-04  Akim Demaille  <akim@lrde.epita.fr>
 
@@ -215,7 +215,7 @@ This is now fixed.
 
 2006-11-03  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	whenever support add, fix bug in at (forgot to call normalForm) 
+	whenever support add, fix bug in at (forgot to call normalForm)
 
 	* src/ucommand.cc: add support for whenever.
 	* src/ucommand.h: add support for whenever.
@@ -228,25 +228,25 @@ This is now fixed.
 
 2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix "exec" bug 
+	fix "exec" bug
 
 	* src/parser/bison/utoken.l: fix UString lenght with STRING
-        token.
+	token.
 	* src/uexpression.cc: nothing.
 	* src/ustring.cc: formating changes.
-	* src/ustring.h: add setLen, used by utoken.l to adjust the 
-        length of the UString.
+	* src/ustring.h: add setLen, used by utoken.l to adjust the
+	length of the UString.
 
 2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	formating changes 
+	formating changes
 
 	* src/ucommand.cc: indent.
 	* src/parser/bison/ugrammar.y: remove comments.
 
 2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	Remove obsolete 'eventid' attribute in UValue 
+	Remove obsolete 'eventid' attribute in UValue
 
 	* src/uvalue.cc: do it.
 
@@ -270,7 +270,7 @@ This is now fixed.
 
 2006-10-31  Matthieu Nottale  <nottale@gostai.com>
 
-	Rename Connection* to connection* 
+	Rename Connection* to connection*
 
 	* src/network/bsdnet/Connection.cc: Remove.
 	* src/network/bsdnet/connection.cc: New.
@@ -291,7 +291,7 @@ This is now fixed.
 
 2006-10-31  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	Add multievent support (whenever still not working) 
+	Add multievent support (whenever still not working)
 	* src/ucommand.cc: adjust UCommand_EMIT and UCommand_AT.
 	* src/ucommand.h: add inheritance from UASyncCommand.
 	* src/uatcandidate.cc: New.
@@ -302,7 +302,7 @@ This is now fixed.
 	* src/uasynccommand.h: New.
 	* src/uasyncregister.cc: New.
 	* src/uasyncregister.h: New.
-	* src/uexpression.cc: change UExpression::eval and add 
+	* src/uexpression.cc: change UExpression::eval and add
 	UExpression::asyncScan.
 	* src/uatcandidate.h: New.
 	* src/ueventhandler.h: New.
@@ -730,14 +730,14 @@ This is now fixed.
 	first stage of object arrays (can create)
 
 	The goal is be able to do things like:
-	
+
 	myobj[1] = new stuff;
 	myobj[1].val = 4;
-	
+
 	For the moment, only the first stage is possible with this commit.
 	To reach the second stage (which requires a modification of the
 	grammar), you can do this:
-	
+
 	myobj__1.val = 4; //or
 	$("myobj__"+string(index)+".val") = 4;
 
