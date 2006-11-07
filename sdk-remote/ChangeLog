@@ -1,5 +1,12 @@
 2006-11-07  Akim Demaille  <demaille@gostai.com>
 
+	liburbi installs libport
+	* flags.mk: Use LIBPORT_CPPFLAGS.
+	* configure.ac: nostdinc.
+	* Makefile.am: Don't include libport.mk, we use its Makefile.am.
+
+2006-11-07  Akim Demaille  <demaille@gostai.com>
+
 	Use libport/config.h
 	* flags.mk: New.
 	* sdk/Makefile.am, src/utils/Makefile.am, src/liburbi/Makefile.am,

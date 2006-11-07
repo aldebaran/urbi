@@ -5,10 +5,6 @@ ACLOCAL_AMFLAGS = -I build-aux
 
 SUBDIRS = jpeg-6b libport src doc sdk
 
-# libport.
-include $(top_srcdir)/libport/libport.mk
-
-
 ## ---------- ##
 ## include/.  ##
 ## ---------- ##
