@@ -1,3 +1,12 @@
+2006-11-07  Akim Demaille  <demaille@gostai.com>
+
+	Upgrade dependencies
+	* src/console.cc: Include config.h.
+	* configure.ac (URBI_BUILD_AUX): Use it.
+	Use nostdinc.
+	* src/Makefile.am (AM_CPPFLAGS): Adjust.
+	(uobj-help, uobj-ci, uobj-up): Remove, now in uobject.mk.
+
 2006-11-07  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix ticket #60: Bug in hierarchical tags

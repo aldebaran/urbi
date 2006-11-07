@@ -16,7 +16,7 @@ include $(top_srcdir)/build-aux/init.mk
 
 kernelinclude_HEADERS =
 
-AM_CPPFLAGS += -I$(top_srcdir) -I$(uobject_srcdir)
+AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 
@@ -101,26 +101,6 @@ include $(top_srcdir)/build-aux/revision.mk
 
 include uobject/uobject.mk
 dist_libkernel_la_SOURCES += $(uobject_sources)
-SVN = svn-wrapper.sh
-svn_externals = $(top_srcdir)/build-aux/svn-externals
-# We use some of its files, so to ensure a correct synchronization, we
-# pin the revision we're using.  These targets simplify upgrading the
-# pin revision.
-.PHONY: uobj-up uobject-up uobj-ci uobject-ci uobj-help
-
-help: uobj-help
-uobj-help:
-	@echo "uobj-up:    same as baux-up, but for libport"
-	@echo "uobj-ci:    likewise"
-
-# Update the dependency on uobj.
-uobj-up uobject-up:
-	$(svn_externals) --update=uobject $(srcdir)
-
-# Checkin the sub uobj, and update the dependency.
-uobj-ci uobject-ci:
-	cd $(srcdir)/uobject && $(SVN) ci
-	$(MAKE) $(AM_MAKEFLAGS) uobj-up
 
 
 ## ----------------- ##

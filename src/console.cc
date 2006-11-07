@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <unistd.h>
 
 #include "libport/utime.hh"

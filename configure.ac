@@ -4,13 +4,12 @@ m4_pattern_forbid([^URBI_])dnl
 AC_PREREQ([2.60])
 AC_INIT([kernel1], [1.0])
 
-# Auxiliary files.
+# Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
-AC_SUBST([install_sh_c_DATA], ['$(install_sh)-c -c -m 644'])
-AC_SUBST([INSTALL_HEADER], ['$(install_sh_c_DATA) -C'])
+URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip])
+AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip nostdinc])
 
 ## ------------ ##
 ## Parameters.  ##
