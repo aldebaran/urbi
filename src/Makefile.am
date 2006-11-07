@@ -100,7 +100,7 @@ include $(top_srcdir)/build-aux/revision.mk
 ## ---------- ##
 
 include uobject/uobject.mk
-dist_libkernel_la_SOURCES += $(uobject_sources)
+nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
 ## ----------------- ##
@@ -152,8 +152,7 @@ ueventcompound.h                                \
 ueventinstance.h                                \
 uatcandidate.h
 
-uobjectdir = $(kernelincludedir)/uobject
-uobject_HEADERS = $(uobject_srcdir)/uobject.hh
+urbiinclude_HEADERS = $(uobject_hh)
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.h

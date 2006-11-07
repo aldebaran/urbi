@@ -25,7 +25,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "userver.h"
 #include "uconnection.h"
 #include "ughostconnection.h"
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 #include "utypes.h"
 
 #ifdef _MSC_VER

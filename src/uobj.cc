@@ -29,7 +29,7 @@
 #include "uvariablename.h"
 #include "userver.h"
 #include "uconnection.h"
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 #include "ueventhandler.h"
 
 char namebuffer[1024];

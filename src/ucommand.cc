@@ -31,7 +31,7 @@
 #include "userver.h"
 #include "ucallid.h"
 #include "utypes.h"
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 #include "ueventhandler.h"
 #include "ueventcompound.h"
 #include "ueventinstance.h"

@@ -1,5 +1,14 @@
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
+	urbi/uobject.hh
+	* src/ucommand.cc, src/uobject.cc, src/uvalue.cc, src/uvariable.cc,
+	* src/uvar.cc, src/userver.cc, src/uobj.cc, src/uvariablename.cc:
+	Adjust the path to uobject.hh.
+	* src/Makefile.am: Don't ship uobject files, uobject.mk does it.
+	Use $(uobject_hh).
+
+2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+
 	install libport
 	As discussed with Matthieu.
 	* Makefile.am: Include libport.mk.

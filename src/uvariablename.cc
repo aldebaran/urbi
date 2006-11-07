@@ -31,7 +31,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "uconnection.h"
 #include "userver.h"
 #include "ucallid.h"
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 
 
 MEMORY_MANAGER_INIT(UVariableName);

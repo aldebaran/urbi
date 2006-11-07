@@ -30,7 +30,7 @@
 #include "ucommand.h"
 #include "utypes.h"
 #include "uconnection.h"
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 #ifdef _MSC_VER
 #define snprintf _snprintf
 #endif
