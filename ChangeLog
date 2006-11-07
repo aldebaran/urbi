@@ -1,3 +1,9 @@
+2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+
+	install libport
+	As discussed with Matthieu.
+	* Makefile.am: Include libport.mk.
+
 2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	Upgrade dependencies
