@@ -1,5 +1,12 @@
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
+	Fix EXTRA_DIST
+	* uobject.mk: Use += for it.
+	* uvalue-common.cc: Formatting changes.
+	Spurious ; removal.
+
+2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+
 	Find uobject.hh
 	* uvalue-common.cc: Adjust.
 

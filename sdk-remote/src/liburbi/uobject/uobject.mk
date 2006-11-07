@@ -8,7 +8,7 @@ uobject_sources =				\
 $(uobject_hh)					\
 $(uobject_srcdir)/uvalue-common.cc
 
-EXTRA_DIST = $(uobject_srcdir)/uvalue-common.cc
+EXTRA_DIST += $(uobject_srcdir)/uvalue-common.cc
 
 ## ------------ ##
 ## uobject.hh.  ##

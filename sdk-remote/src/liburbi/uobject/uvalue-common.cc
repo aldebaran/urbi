@@ -29,8 +29,8 @@ namespace urbi
 {
 
   /*-----------------.
-  | UValue Parsing.  |
-  `-----------------*/
+    | UValue Parsing.  |
+    `-----------------*/
 
   void unescape(std::string& data)
   {
@@ -39,23 +39,24 @@ namespace urbi
       {
 	if (data[src]!='\\')
 	  data[dst]=data[src];
-	else {
-	  switch(data[++src])
-	    {
-	    case 'n':
-	      data[dst]='\n';
-	      break;
-	    case '\\':
-	      data[dst]='\\';
-	      break;
-	    case '"':
-	      data[dst]='"';
-	      break;
-	    default:
-	      data[dst]=data[src];
-	      break;
-	    }
-	}
+	else
+	  {
+	    switch(data[++src])
+	      {
+	      case 'n':
+		data[dst]='\n';
+		break;
+	      case '\\':
+		data[dst]='\\';
+		break;
+	      case '"':
+		data[dst]='"';
+		break;
+	      default:
+		data[dst]=data[src];
+		break;
+	      }
+	  }
 	src++;
 	dst++;
       }
@@ -85,7 +86,7 @@ namespace urbi
 		break;
 	      default:
 		*dst = *src;
-	      };
+	      }
 	  }
 	src++;
 	dst++;
@@ -94,8 +95,8 @@ namespace urbi
   }
 
   /*---------.
-  | UValue.  |
-  `---------*/
+    | UValue.  |
+    `---------*/
   int UValue::parse(const char* message, int pos,
 		    std::list<BinaryData>& bins,
 		    std::list<BinaryData>::iterator& binpos)
@@ -291,16 +292,17 @@ namespace urbi
 
 
   /*----------.
-  | UBinary.  |
-  `----------*/
+    | UBinary.  |
+    `----------*/
   int UBinary::parse(const char * message, int pos,
 		     std::list<BinaryData>& bins,
 		     std::list<BinaryData>::iterator& binpos)
   {
-    while (message[pos]==' ') pos++;
+    while (message[pos]==' ')
+      pos++;
     //find end of header
 
-    if( binpos == bins.end()) //no binary data available
+    if (binpos == bins.end()) //no binary data available
       return -1;
 
     //validate size
@@ -417,7 +419,7 @@ namespace urbi
 	  default:
 	    str<<"unknown ";
 	    break;
-	  };
+	  }
 	str<<image.width<<" "<<image.height;
       }
     if (type == BINARY_SOUND)
@@ -433,7 +435,7 @@ namespace urbi
 	  default:
 	    str << "unknown ";
 	    break;
-	  };
+	  }
 	str << sound.channels
 	    << " " << sound.rate
 	    << " " << sound.sampleSize
@@ -446,8 +448,8 @@ namespace urbi
   }
 
   /*---------.
-  | UValue.  |
-  `---------*/
+    | UValue.  |
+    `---------*/
 
   //! Class UValue implementation
   UValue::UValue()
@@ -545,10 +547,10 @@ namespace urbi
       case DATA_OBJECT:
       case DATA_VOID:
 	break;
-      };
+      }
 
     return ufloat(0);
-  };
+  }
 
 
   UValue::operator std::string() const
@@ -567,8 +569,8 @@ namespace urbi
 	break;
       default:
 	return std::string("invalid");
-      };
-  };
+      }
+  }
 
   UValue::operator
   UBinary() const
@@ -654,7 +656,7 @@ namespace urbi
 	break;
       case DATA_VOID:
 	break;
-      };
+      }
     return *this;
   }
 
@@ -667,8 +669,8 @@ namespace urbi
 
 
   /*----------.
-  | UBinary.  |
-  `----------*/
+    | UBinary.  |
+    `----------*/
   UBinary::UBinary()
   {
     common.data = 0;
@@ -733,8 +735,8 @@ namespace urbi
 
 
   /*--------.
-  | UList.  |
-  `--------*/
+    | UList.  |
+    `--------*/
 
   UList::UList()
     : offset(0)
@@ -771,8 +773,8 @@ namespace urbi
 
 
   /*----------------.
-  | UObjectStruct.  |
-  `----------------*/
+    | UObjectStruct.  |
+    `----------------*/
 
   UObjectStruct::UObjectStruct()
   {}
@@ -804,8 +806,8 @@ namespace urbi
 
 
   /*---------.
-  | UValue.  |
-  `---------*/
+    | UValue.  |
+    `---------*/
 
   UValue& UObjectStruct::operator [](const std::string& s)
   {
@@ -817,8 +819,8 @@ namespace urbi
   }
 
   /*-------.
-  | UVar.  |
-  `-------*/
+    | UVar.  |
+    `-------*/
 
   void
   UVar::operator = (const UValue& v)
