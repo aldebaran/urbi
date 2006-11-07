@@ -1,5 +1,10 @@
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
+	Find uobject.hh
+	* uvalue-common.cc: Adjust.
+
+2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+
 	Ship uvalue-common.cc
 	* uobject.mk: For sake of distcheck.
 
