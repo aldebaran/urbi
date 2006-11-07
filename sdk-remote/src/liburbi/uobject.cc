@@ -22,7 +22,7 @@
 #include <sstream>
 #include <list>
 
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 
 #include "urbi/usyncclient.hh"
 #include "urbi/uexternal.hh"

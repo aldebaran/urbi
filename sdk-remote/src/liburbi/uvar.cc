@@ -18,7 +18,7 @@
 
  **************************************************************************** */
 
-#include "uobject/uobject.hh"
+#include "urbi/uobject.hh"
 
 #include "urbi/uexternal.hh"
 #include "urbi/usyncclient.hh"

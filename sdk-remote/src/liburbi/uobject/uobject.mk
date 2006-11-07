@@ -2,7 +2,7 @@
 # included by the directory that has uobject/ (svn:externals or not).
 
 uobject_srcdir = $(srcdir)/uobject
-uobject_hh = $(uobject_srcdir)/uobject.hh
+uobject_hh = $(uobject_srcdir)/urbi/uobject.hh
 
 uobject_sources =				\
 $(uobject_hh)					\

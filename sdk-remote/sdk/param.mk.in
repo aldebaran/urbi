@@ -50,4 +50,3 @@ $(OUTBIN): $(LTOBJECTS) $(LIBS)
 
 .cpp.o: $(HEADERS) 
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(EXTRACPPFLAGS) -c $< -o $@
-	

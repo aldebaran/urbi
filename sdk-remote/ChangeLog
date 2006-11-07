@@ -1,3 +1,24 @@
+2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+
+	urbi/uobject.hh
+	uobject.hh should be in urbi/, not uobject/.
+	* sdk/Makefile.am: gcc no longer exists.
+	Adjust.
+	* sdk/param.mk.in: Ditto.
+	* sdk/umain.cc: Ditto.
+	* include/urbi/uabstractclient.hh: Ditto.
+	* include/urbi/uconversion.hh: Ditto.
+	* src/liburbi/uobject.cc: Ditto.
+	* src/liburbi/uvar.cc: Ditto.
+	* src/liburbi/Makefile.am: Ditto.
+	* src/liburbi/uobject/uobject.mk: Ditto.
+	* src/liburbi/uobject/uobject.hh.template: Rename as...
+	* src/liburbi/uobject/urbi/uobject.hh.template: this.
+	* flags.mk: Adjust.
+
+	* configure.ac: The creation of libport/config.h is now taken
+	care of by URBI_LIBPORT.
+
 2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	Upgrade dependencies

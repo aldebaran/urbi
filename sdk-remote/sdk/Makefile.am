@@ -11,8 +11,8 @@ urbimodule_LDADD = \
 	$(top_builddir)/src/liburbi/liburbi.la \
 	$(PTHREAD_LIBS)
 
-include_HEADERS = $(top_srcdir)/src/liburbi/uobject/uobject.hh
-nodist_host_DATA = param.mk gccversion
+# include_HEADERS = $(top_srcdir)/src/liburbi/urbi/uobject.hh
+nodist_host_DATA = param.mk
 #dist_env_DATA = umain.cc
 
 ## ----------------- ##

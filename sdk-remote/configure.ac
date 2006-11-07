@@ -108,8 +108,8 @@ fi
 ## Output.  ##
 ## -------- ##
 
-URBI_CONFIG_HEADERS_PREFIXED([src/config.h],
-	  		     [libport/config.h], [LIBPORT])
+AC_CONFIG_HEADERS([src/config.h])
+
 AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  libport/Makefile

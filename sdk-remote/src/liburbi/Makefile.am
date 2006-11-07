@@ -11,10 +11,8 @@ SUBDIRS += .
 ## --------- ##
 
 include uobject/uobject.mk
-
-sdkincludeuobjectdir = $(sdkincludedir)/uobject
-sdkincludeuobject_HEADERS = 			\
-uobject/uobject.hh
+urbiinclude_HEADERS = 			\
+uobject/urbi/uobject.hh
 
 ## ------------ ##
 ## liburbi.la.  ##

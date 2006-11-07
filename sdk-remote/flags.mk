@@ -6,8 +6,8 @@ AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 AM_CPPFLAGS += -I$(top_builddir)/jpeg-6b
 # Find urbi/ headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include
-# Find uobject.hh.
-AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi
+# Find urbi/uobject.hh.
+AM_CPPFLAGS += -I$(top_srcdir)/src/liburbi/uobject
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 LIBADD       = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)

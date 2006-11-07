@@ -23,7 +23,7 @@
 
 #ifndef URBI_UCONVERSION_HH
 # define URBI_UCONVERSION_HH
-# include "uobject/uobject.hh"
+# include "urbi/uobject.hh"
 
 namespace urbi
 {
