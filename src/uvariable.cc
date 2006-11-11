@@ -157,6 +157,7 @@ UVariable::init()
   toDelete   = false;
   activity   = 0;
   binder     = 0;
+  access_and_change = false;
 }
 
 //! UVariable destructor
@@ -164,6 +165,9 @@ UVariable::~UVariable()
 {
   if (activity)
     ::urbiserver->reinitList.remove(this);
+
+  if (access_and_change)
+    ::urbiserver->access_and_change_varlist.remove (this);
 
   HMvariabletab::iterator hmi;
 

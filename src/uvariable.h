@@ -147,6 +147,9 @@ public:
   /// Binder for internal access monitors.
   std::list<urbi::UGenericCallback*> internalAccessBinder;
 
+  /// Is the variable on the access_and_change_varlist ?
+  bool access_and_change;
+
   /// Used for the "cancel" blend type.
   UCommand_ASSIGN_VALUE *cancel;
 

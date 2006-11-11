@@ -253,6 +253,13 @@ UServer::work()
 
   beforeWork();
 
+  // Access & Change variable list
+  for (std::list<UVariable*>::iterator itac =
+       access_and_change_varlist.begin ();
+       itac != access_and_change_varlist.end ();
+       ++itac)
+    (*itac)->get ();
+
   // memory test
   memoryCheck(); // Check for memory availability
 

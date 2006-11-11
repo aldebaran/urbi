@@ -117,6 +117,10 @@ public:
 
   /// Hash of variable values.
   HMvariabletab            variabletab;
+
+  /// Hash of variable that have both an access and change notify
+  std::list<UVariable*>    access_and_change_varlist;
+
   /// Hash of function definition.
   HMfunctiontab            functiontab;
   /// Hash of functions definition markers.

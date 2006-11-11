@@ -1,5 +1,18 @@
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
+access_and_change_varlist in UServer keeps track of variable who have botha
+notifyChange and notifyAccess record. The destructor of UVariable cleans it,
+UServer::work calls UVariable::get for each of the listed variables.
+
+	add *untested* resolution for ticket #40. Cannot test as long as
+	* src/uobject.cc: done.
+	* src/userver.cc: done.
+	* src/userver.h: done.
+	* src/uvariable.cc: done.
+	* src/uvariable.h: done.
+
+2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	formating changes 
 	* src/uobject.cc: done.
 	* src/userver.h: done.
