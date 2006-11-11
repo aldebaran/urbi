@@ -66,19 +66,22 @@ public:
   void              initialization();
   void              work();
 
-  void              error           (const char* s,...);
-  void              echo            (const char* s,...);
-  void              echoKey         (const char* key, const char* s,...);
-  void              debug           (const char* s,...);
+  void              error           (const char* s, ...);
+  void              echo            (const char* s, ...);
+  void              echoKey         (const char* key, const char* s, ...);
+  void              debug           (const char* s, ...);
   void              isolate         ();
   void              deIsolate       ();
   bool              isIsolated      ();
 
   virtual ufloat    getTime         () = 0;
   virtual ufloat    getPower        () = 0;
-  virtual void      getCustomHeader (int line, char* header, int maxlength) = 0;
-  virtual UErrorValue loadFile      (const char *filename, UCommandQueue* loadQueue) = 0;
-  virtual UErrorValue saveFile      (const char *filename, const char * content) = 0;
+  virtual void      getCustomHeader (int line, char* header,
+                                     int maxlength) = 0;
+  virtual UErrorValue loadFile      (const char *filename,
+                                     UCommandQueue* loadQueue) = 0;
+  virtual UErrorValue saveFile      (const char *filename,
+                                     const char * content) = 0;
   void              memoryCheck     ();
   int               memory          ();
 
@@ -103,7 +106,7 @@ public:
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
-  UGhostConnection *     getGhostConnection() {return ghost;}
+  UGhostConnection* getGhostConnection()  {return ghost;}
 
   void              freeze          (const std::string &tag);
   void              unfreeze        (const std::string &tag);
@@ -148,13 +151,10 @@ public:
   /// List of variables to delete in a reset command.
   std::list<UVariable*>         varToReset;
 
-
-
   /// The main parser object.
   UParser                  parser;
   /// Flag used to signal a memory overflow.
   bool                     memoryOverflow;
-
 
   /// Shows debug or not..
   bool                     debugOutput;

@@ -89,7 +89,7 @@ namespace urbi
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
-      ghost->received((const unsigned char *)(str+1),strlen(str)-2);
+      ghost->received((const unsigned char *)(str+1), strlen(str)-2);
     else
       ghost->received(str);
 
@@ -108,7 +108,7 @@ namespace urbi
   {
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();
-    ghost->received((const unsigned char *)(buf),size);
+    ghost->received((const unsigned char *)(buf), size);
     ghost->newDataAdded = true;
   }
 
@@ -198,7 +198,7 @@ namespace urbi
   void
   UObject::USync(UVar &v)
   {
-    UNotifyChange(v,&UObject::voidfun);
+    UNotifyChange(v, &UObject::voidfun);
   }
 
   // **************************************************************************
@@ -222,12 +222,13 @@ namespace urbi
     derived = false;
     classname = __name;
 
-    UBindVar(UObject,load);
+    UBindVar(UObject, load);
     load = 1;
   }
 
 
-  //! Clean a callback UTable from all callbacks linked to the object whose name is 'name'
+  //! Clean a callback UTable from all callbacks linked to the
+  //! object whose name is 'name' 
   void
   cleanTable(UTable &t, std::string name)
   {
@@ -257,13 +258,12 @@ namespace urbi
     for (std::list<UTable::iterator>::iterator dit = todelete.begin();
 	 dit != todelete.end();
 	 ++dit)
-      {
-	t.erase(*dit);
-      }
+      t.erase(*dit);
   }//function
 
 
-  //! Clean a callback UTimerTable from all callbacks linked to the object whose name is 'name'
+  //! Clean a callback UTimerTable from all callbacks linked to
+  //! the object whose name is 'name'
   void
   cleanTimerTable(UTimerTable &t, std::string name)
   {
@@ -378,7 +378,7 @@ namespace urbi
       if ((*it)->classname == subclass)
 	res->push_back(*it);
 
-    return(res);
+    return res;
   }
 
 
@@ -421,5 +421,4 @@ namespace urbi
 
     ::urbiserver->debug(tmpoutput);
   }
-
 }
