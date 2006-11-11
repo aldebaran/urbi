@@ -2893,6 +2893,7 @@ UCommand_NEW::execute(UConnection *connection)
 
   if (!id)
   { // init id
+    UString* name = varname->buildFullname(this, connection, false);
     if (!varname->nostruct)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
@@ -2901,7 +2902,6 @@ UCommand_NEW::execute(UConnection *connection)
 
       return ((status = UCOMPLETED));
     }
-    UString* name = varname->buildFullname(this, connection, false);
     if (!name)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,

@@ -1,5 +1,11 @@
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #61: $() behavior 
+	* src/ucommand.cc: resolve name before testing it.
+	* src/uvariablename.cc: simplify $(s) construct and fix bug.
+
+2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix ticket #54 and bugs in name resolution 
 	* src/uobj.cc: fix a bug in iterator value.
 	* src/uvariablename.cc: check now for all possible name spaces all the

@@ -348,33 +348,24 @@ UVariableName::buildFullname(UCommand *command,
     if (strchr(e1->str->str(), '.') == 0)
     {
       nostruct = true;
-      if (::urbiserver->objtab.find(e1->str->str()) ==
-	  ::urbiserver->objtab.end())
-      {
-	if (connection->stack.empty())
-	  snprintf(name, fullnameMaxSize,
-	      "%s.%s", connection->connectionTag->str(),
-	      e1->str->str());
-	else
-	  if (e1->str->equal("self"))
-	    snprintf(name, fullnameMaxSize,
-		"%s", connection->stack.front()->self());
-	  else
-	    snprintf(name, fullnameMaxSize,
-		"%s.%s", connection->stack.front()->str(),
-		e1->str->str());
-
-      }
+      if (connection->stack.empty())
+        snprintf(name, fullnameMaxSize,
+                 "%s.%s", connection->connectionTag->str(),
+                 e1->str->str());
       else
-	strncpy(name, e1->str->str(), fullnameMaxSize);
+      {
+        snprintf(name, fullnameMaxSize,
+                 "%s.%s", "__Funct__",
+                 e1->str->str());
+        localFunction = true;
+      }
     }
     else
       strncpy(name, e1->str->str(), fullnameMaxSize);
 
     delete e1;
     char* p = strchr (name, '.');
-
-    if (p != 0)
+    ASSERT (p!=0)
     {
       p[0]=0;
       delete device;
