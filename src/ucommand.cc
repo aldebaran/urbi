@@ -2883,10 +2883,10 @@ UCommand_NEW::execute(UConnection *connection)
   HMobjWaiting::iterator ow;
 
   if (remoteNew)
-    {
-      ow = ::urbiserver->objWaittab.find(id->str());
-      if (ow!=::urbiserver->objWaittab.end()) return (status = URUNNING);
-    }
+  {
+    ow = ::urbiserver->objWaittab.find(id->str());
+    if (ow!=::urbiserver->objWaittab.end()) return (status = URUNNING);
+  }
 
   morph = 0;
   char tmpprefixnew[1024];
@@ -2918,76 +2918,79 @@ UCommand_NEW::execute(UConnection *connection)
   if (!obj)
     return ((status = UCOMPLETED));
 
-  if (id->equal(obj))
+  HMobjtab::iterator objit;
+  if (!remoteNew)
   {
-    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	 "!!! Object %s cannot new itself\n", obj->str());
-    connection->send(tmpbuffer, getTag().c_str());
-
-    return ((status = UCOMPLETED));
-  }
-
-  HMobjtab::iterator objit = ::urbiserver->objtab.find(id->str());
-  if (objit != ::urbiserver->objtab.end())
-  {
-    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	 "!!! Object %s already exists. Delete it first.\n", id->str());
-    connection->send(tmpbuffer, getTag().c_str());
-
-    return ((status = UCOMPLETED));
-  }
-
-
-  objit = ::urbiserver->objtab.find(obj->str());
-  if (objit == ::urbiserver->objtab.end())
+    if (id->equal(obj))
     {
-      char* objname = (char*)obj->str();
-      while ( ::urbiserver->objaliastab.find(objname) !=
-	      ::urbiserver->objaliastab.end())
-	objname = (char*)::urbiserver->objaliastab[objname]->str();
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! Object %s cannot new itself\n", obj->str());
+      connection->send(tmpbuffer, getTag().c_str());
 
-      objit = ::urbiserver->objtab.find(objname);
-      if (objit == ::urbiserver->objtab.end())  {
-
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! Unkown object %s\n", obj->str());
-	connection->send(tmpbuffer, getTag().c_str());
-	return ( status = UCOMPLETED );
-      }
+      return ((status = UCOMPLETED));
     }
 
+    objit = ::urbiserver->objtab.find(id->str());
+    if (objit != ::urbiserver->objtab.end())
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! Object %s already exists. Delete it first.\n", id->str());
+      connection->send(tmpbuffer, getTag().c_str());
+
+      return ((status = UCOMPLETED));
+    }
+  }
+
+  objit = ::urbiserver->objtab.find(obj->str());
+  if (objit == ::urbiserver->objtab.end()
+      &&  !remoteNew)
+  {
+    char* objname = (char*)obj->str();
+    while ( ::urbiserver->objaliastab.find(objname) !=
+            ::urbiserver->objaliastab.end())
+      objname = (char*)::urbiserver->objaliastab[objname]->str();
+
+    objit = ::urbiserver->objtab.find(objname);
+    if (objit == ::urbiserver->objtab.end())  {
+
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! Unkown object %s\n", obj->str());
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
+    }
+  }
 
   UObj* newobj;
   bool creation = false;
 
   // EXTERNAL
   if ((objit->second->binder)&& (!remoteNew))
-    {
-      snprintf(tmpprefixnew, 1024, "[4,\"%s\",\"%s\"]\n",
-	       id->str(),
-	       objit->second->device->str());
+  {
+    snprintf(tmpprefixnew, 1024, "[4,\"%s\",\"%s\"]\n",
+             id->str(),
+             objit->second->device->str());
 
-      int nb=0;
-      for (std::list<UMonitor*>::iterator it2 =
-	     objit->second->binder->monitors.begin();
-	   it2 != objit->second->binder->monitors.end();
-	   it2++)
-	{
-	  (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*it2)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
-	  nb++;
-	}
-      ow = ::urbiserver->objWaittab.find(id->str());
-      if (ow!=::urbiserver->objWaittab.end())
-	(*ow).second->nb += nb;
-      else {
-	UWaitCounter *wc = new UWaitCounter(id, nb);
-	ASSERT(wc!=0) ::urbiserver->objWaittab[wc->id->str()] = wc;
-      }
-      // initiate remote new waiting
-      remoteNew = true;
-      return (status = URUNNING);
+    int nb=0;
+    for (std::list<UMonitor*>::iterator it2 =
+         objit->second->binder->monitors.begin();
+         it2 != objit->second->binder->monitors.end();
+         it2++)
+    {
+      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it2)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
+      nb++;
     }
+    ow = ::urbiserver->objWaittab.find(id->str());
+    if (ow!=::urbiserver->objWaittab.end())
+      (*ow).second->nb += nb;
+    else {
+      UWaitCounter *wc = new UWaitCounter(id, nb);
+      ASSERT(wc!=0) ::urbiserver->objWaittab[wc->id->str()] = wc;
+    }
+    // initiate remote new waiting
+    remoteNew = true;
+    return (status = URUNNING);
+  }
 
   if (objit->second->internalBinder)
     objit->second->internalBinder->copy(std::string(id->str()));
@@ -3005,7 +3008,7 @@ UCommand_NEW::execute(UConnection *connection)
       newobj->up.end())
   {
     snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! %s has already inherited from %s\n", id->str(), obj->str());
+             "!!! %s has already inherited from %s\n", id->str(), obj->str());
     if (creation) delete newobj;
     connection->send(tmpbuffer, getTag().c_str());
     return ( status = UCOMPLETED );

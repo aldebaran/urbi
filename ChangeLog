@@ -1,3 +1,11 @@
+2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
+
+Remote uobjects couldn't be newed anymore because a test was double checking
+the object existence, triggering an error of "object already existing".
+
+	fix remote uobject new 
+	* src/ucommand.cc: fixed.
+
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
 	urbi/uobject.hh
