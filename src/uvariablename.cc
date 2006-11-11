@@ -509,14 +509,9 @@ UVariableName::buildFullname(UCommand *command,
             bool function_symbol = false;
             std::string tmpstr(funid->str());
             tmpstr = tmpstr + "." + id->str();
-            if (((id_type==UDEF_VAR)
-                 && (::urbiserver->variabletab.find(tmpstr.c_str()) !=
-                     ::urbiserver->variabletab.end()))
-                ||
-                ((id_type==UDEF_EVENT)
-                 && (kernel::eventSymbolDefined (tmpstr.c_str()))
-                )
-               )
+            if (::urbiserver->variabletab.find(tmpstr.c_str()) !=
+                               ::urbiserver->variabletab.end()
+                || kernel::eventSymbolDefined (tmpstr.c_str()))
               function_symbol = true;
 
             // does the symbol exist as an object symbol (direct on inherited)?
@@ -526,16 +521,10 @@ UVariableName::buildFullname(UCommand *command,
             HMobjtab::iterator objit =::urbiserver->objtab.find(funid->self());
             if (objit != ::urbiserver->objtab.end())
             {
-              if (id_type == UDEF_VAR)
-                class_symbol = ((*objit).second->
-                                searchVariable(id->str(), ambiguous) != 0);
-              if (id_type == UDEF_FUNCTION)
-                class_symbol = ((*objit).second->
-                                searchFunction(id->str(), ambiguous) != 0);
-              if (id_type == UDEF_EVENT)
-                class_symbol = ((*objit).second->searchEvent(id->str(),
-                                                             ambiguous) != 0);
-
+              class_symbol =
+                   ((*objit).second->searchVariable(id->str(), ambiguous) != 0)
+                || ((*objit).second->searchFunction(id->str(), ambiguous) != 0)
+                || ((*objit).second->searchEvent(id->str(), ambiguous) != 0);
               class_symbol = class_symbol && !ambiguous;
             }
 
@@ -554,19 +543,11 @@ UVariableName::buildFullname(UCommand *command,
               std::string tmploc(connection->connectionTag->str());
               tmploc = tmploc + "." + id->str();
 
-              if (((id_type==UDEF_VAR)
-                   && (::urbiserver->variabletab.find(tmploc.c_str()) !=
-                       ::urbiserver->variabletab.end()))
-                  ||
-                  ((id_type==UDEF_FUNCTION)
-                   && (::urbiserver->functiontab.find(tmploc.c_str()) !=
-                       ::urbiserver->functiontab.end()))
-                  ||
-                  ((id_type==UDEF_EVENT)
-                   && (kernel::eventSymbolDefined (tmploc.c_str())
-                      )
-                  )
-                 )
+              if (::urbiserver->variabletab.find(tmploc.c_str()) !=
+                  ::urbiserver->variabletab.end()
+                  || ::urbiserver->functiontab.find(tmploc.c_str()) !=
+                  ::urbiserver->functiontab.end()
+                  || kernel::eventSymbolDefined (tmploc.c_str()))
                 local_symbol = true;
 
               if ((local_symbol) && (!function_symbol))

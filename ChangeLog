@@ -1,5 +1,12 @@
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #54 and bugs in name resolution 
+	* src/uobj.cc: fix a bug in iterator value.
+	* src/uvariablename.cc: check now for all possible name spaces all the
+        time, not only according to id_type.
+
+2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
+
 Remote uobjects couldn't be newed anymore because a test was double checking
 the object existence, triggering an error of "object already existing".
 

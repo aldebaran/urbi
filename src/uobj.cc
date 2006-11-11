@@ -291,16 +291,21 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   bool ok = false;
   HMemittab::iterator iet;
+  HMemittab::iterator ietok = ::urbiserver->emittab.end ();
+
   for (iet = ::urbiserver->emittab.begin ();
        iet != ::urbiserver->emittab.end () && !ok;
        ++iet)
     if ( (*iet).second->unforgedName->equal (namebuffer))
+    {
       ok = true;
+      ietok = iet;
+    }
 
   if (ok)
   {
     ambiguous = false;
-    return (iet->second);
+    return (ietok->second);
   }
   else
   {
