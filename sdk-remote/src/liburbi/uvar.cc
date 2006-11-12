@@ -303,4 +303,19 @@ namespace urbi
 	     << '"' << name << '"' << ',' << name << "];";
   }
 
+  void
+  UVar::syncValue ()
+  {
+    USyncClient&	client = (USyncClient&) URBI(());
+    UMessage*		m;
+    char		tag[32];
+
+    client.makeUniqueTag(tag);
+    client.send ("if (isdef (%s) && !isvoid (%s)) { %s:%s } else { %s:1/0 };",
+		 name.c_str (), name.c_str (), tag, name.c_str (), tag);
+    m = client.waitForTag(tag);
+    if (m->type == MESSAGE_DATA)
+      __update (*m->value);
+  }
+
 } //namespace urbi

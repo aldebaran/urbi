@@ -1,5 +1,6 @@
 #include "urbi/uclient.hh"
 
+#include <cassert>
 #include <signal.h>
 
 

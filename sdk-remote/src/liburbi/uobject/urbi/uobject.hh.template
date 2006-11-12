@@ -507,6 +507,7 @@ namespace urbi
 
     void init(const std::string&,const std::string&);
     void setOwned();
+    void syncValue ();
 
     void operator = (ufloat);
     void operator = (const std::string&);

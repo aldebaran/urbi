@@ -1,3 +1,10 @@
+2006-11-12  Razik Yousfi  <yousfi@gostai.com>
+
+	* src/liburbi/uvar.hh,
+	* src/liburbi/uvar.cc: Add of syncValue method used to synchronise
+	the UVar's UValue.
+	* src/examples/urbirecord.cc: Missing include.
+
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
 	Use reindent on the code
