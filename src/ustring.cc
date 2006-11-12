@@ -40,6 +40,7 @@ UString::UString(const char* s)
     }
 
   len_ = slen;
+  fastArmor ();
   ADDMEM(len_);
 }
 
@@ -51,12 +52,14 @@ UString::UString(UString *s)
     len_ = 0;
     str_ = (char*)malloc(1);
     strcpy(str_, "");
+    fastArmor_ = true;
   }
   else
   {
     len_ = s->len();
     str_ = (char*)malloc(len_+1);
     strcpy(str_, s->str());
+    fastArmor_ = s->fastArmor_;
   }
   if (str_ == 0)
     len_ = 0;
@@ -78,6 +81,7 @@ UString::UString(UString *s1, UString* s2)
     len_ = tmpname.length();
   else
     len_ = 0;
+  fastArmor ();
   ADDMEM(len_);
 }
 
@@ -138,6 +142,7 @@ void UString::update(const char *s)
   str_ = (char*)malloc(slen+1);
   strcpy(str_, s);
   len_ = slen;
+  fastArmor ();
   ADDMEM(len_);
 }
 
@@ -152,6 +157,7 @@ void UString::update(UString *s)
   str_ = (char*)malloc(s->len()+1);
   strcpy(str_, s->str());
   len_ = s->len();
+  fastArmor ();
   ADDMEM(len_);
 
 }
@@ -190,10 +196,29 @@ UString::unArmor ()
   return str_;
 }
 
-char*
+std::string
 UString::armor ()
 {
-  // unimplemented
-  return str_;
+  // speedup
+  if (fastArmor_)
+    return std::string (str_);
+
+  std::string ret="";
+  char* p = str_;
+  while (*p)
+  {
+    if (*p=='"' || *p=='\\')
+      ret = ret + '\\';
+    ret = ret + *p;
+    ++p;
+  }
+  return ret;
+}
+
+void
+UString::fastArmor ()
+{
+  fastArmor_= strchr (str_, '"') == 0
+              && strchr (str_, '\\') == 0;
 }
 

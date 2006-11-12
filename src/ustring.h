@@ -64,12 +64,14 @@ class UString
   void update(const char *s);
   void update(UString *s);
   void setLen(int l);
-  char* armor();
+  std::string armor();
   char* unArmor();
+  void fastArmor();
 
  private:
   int  len_;
-  char *str_;
+  char* str_;
+  bool fastArmor_;
 };
 
 inline void

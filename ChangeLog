@@ -1,5 +1,12 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix string armor problem (related to ticket #63 
+	* src/ustring.cc: add armor() function, with optimization (fastArmor).
+	* src/ustring.h: add armor, fastArmor.
+	* src/uvalue.cc: use armor in UValue::echo.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 A big change in this commit. The use of 'return' in a function will return and
 destroy all commands still in progress in the function. The proper way to exit
 a function which should keep running commands (like 'at') is to avoid using

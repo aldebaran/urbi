@@ -778,7 +778,7 @@ UValue::echo(bool hr)
   if (dataType == DATA_STRING)
   {
     if (!hr)
-      oss << "\"" << str->str() << "\"";
+      oss << "\"" << str->armor() << "\"";
     else
       oss << str->str ();
 
