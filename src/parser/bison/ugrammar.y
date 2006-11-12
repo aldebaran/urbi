@@ -684,7 +684,7 @@ instruction:
 
   | purevariable DISINHERIT purevariable {
 
-      $$ = new UCommand_INHERIT($1,$3,false);
+      $$ = new UCommand_INHERIT($1,$3,true);
       MEMCHECK2($$,$1,$3);
     }
 

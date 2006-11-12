@@ -3378,6 +3378,24 @@ UCommand_INHERIT::execute(UConnection *connection)
     objsub->second->up.push_back(objparent->second);
     objparent->second->down.push_back(objsub->second);
   }
+  else
+  {
+    if (std::find(objsub->second->up.begin(),
+                  objsub->second->up.end(),
+                  objparent->second) ==
+        objsub->second->up.end())
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! %s does not inherit from %s\n",
+               sub->str(), parent->str());
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
+    }
+
+    //clean
+    objsub->second->up.remove(objparent->second);
+    objparent->second->down.remove(objsub->second);
+  }
 
   return ((status = UCOMPLETED));
 }
