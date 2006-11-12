@@ -1,3 +1,9 @@
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	fix ticket #36, requesting explicit ::urbi:: namespace in macros. 
+	* src/liburbi/uobject/urbi/uobject.hh.template: add urbi namespace in
+        macros.
+
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
 
 	Fix EXTRA_DIST

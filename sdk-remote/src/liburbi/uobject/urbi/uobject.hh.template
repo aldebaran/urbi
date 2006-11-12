@@ -32,15 +32,18 @@
 
 /// This macro must be called once for every UObject class.
 # define UStart(x) \
-  ::urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# x),objectlist)
+  ::urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# x),    \
+                                               ::urbi::objectlist)
 
 /// This macro must be called once for every UObject class.
 # define UStartRename(x,name) \
-  ::urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# name),objectlist)
+  ::urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# name), \
+                                               ::urbi::objectlist)
 
 /// This macro must be called once for each UObjectHub class.
 # define UStartHub(x) \
-  ::urbi::URBIStarterHub<x> x ##  ____URBI_object(std::string(# x),objecthublist)
+  ::urbi::URBIStarterHub<x> x ##  ____URBI_object(std::string(# x), \
+                                                  ::urbi::objecthublist)
 
 
 /** Bind a variable to an object.
@@ -65,8 +68,9 @@
     UBinary, USound or UImage, or any type that can cast to/from
     UValue.  */
 # define UBindFunction(obj,x)						\
-  createUCallback(__name, "function", this,				\
-		  (&obj::x),__name+"."+std::string(# x),functionmap)
+  ::urbi::createUCallback(__name, "function", this,			\
+		  (&obj::x),__name+"."+std::string(# x),                \
+                  ::urbi::functionmap)
 
 /** Registers a function x in current object that will be called each
     time the event of same name is triggered. The function will be
@@ -74,8 +78,9 @@
     prototype and the URBI event.
  */
 # define UBindEvent(obj,x)						\
-  createUCallback(__name, "event", this,				\
-		  (&obj::x),__name+"."+std::string(# x),eventmap)
+  ::urbi::createUCallback(__name, "event", this,			\
+		  (&obj::x),__name+"."+std::string(# x),                \
+                  ::urbi::eventmap)
 
 /** Registers a function x in current object that will be called each
  * time the event of same name is triggered, and a function fun called
@@ -84,8 +89,9 @@
  * event.
  */
 # define UBindEventEnd(obj,x,fun)					\
-  createUCallback(__name, "eventend", this,				\
-		  (&obj::x),(&obj::fun),__name+"."+std::string(# x),eventendmap)
+  ::urbi::createUCallback(__name, "eventend", this,			\
+		  (&obj::x),(&obj::fun),__name+"."+std::string(# x),    \
+                  ::urbi::eventendmap)
 
 /** Register current object to the UObjectHub named 'hub'.
  */
