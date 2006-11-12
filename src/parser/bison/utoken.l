@@ -279,6 +279,7 @@ list          { return token::GROUPLIST;}
 "&&"          { return token::ANDOPERATOR;}
 "||"          { return token::OROPERATOR;}
 ";"           { return token::SEMICOLON;}
+"::"          { return token::DOUBLECOLON;}
 ":"           { return token::COLON;}
 ","           { return token::COMMA;}
 "&"           { return token::AND;}

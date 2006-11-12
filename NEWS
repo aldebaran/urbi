@@ -8,3 +8,37 @@ New in 1.0 RC1:
   [00018969:notag] *** 4.000000
 
 * 'events' keyword can be used to list existing declared events.
+
+* Reminder: do not use 'return' inside functions defining background commands
+  like 'at', return will terminate function and everything it contains.
+  Simply end the function without calling return, and use a comma when you
+  call it:
+
+  function f()
+  {
+    at (test) ping;
+  };
+  f(),
+
+* The inherit/disinherit keywords are now available to manage inheritance and
+  multiple inheritance at runtime. Syntax:  
+
+  class1 inherit class2;
+  class1 disinherit class2;
+
+* The 'events' command lists all defined events
+
+* The :: construct allows you to call a parent method inside a redefined
+  subclass method:
+
+  function parent.f(x) { ... };
+  sub = new parent;
+  function sub.f(x)
+  {
+    parent::f(x);
+    ...
+  };
+
+  This is a powerful feature needed in more advanced object-oriented
+  programming.
+

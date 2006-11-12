@@ -175,6 +175,7 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 
 %token SEMICOLON ";"
 %token COLON  ":"
+%token DOUBLECOLON  "::"
 %token COMMA ","
 %token AND  "&"
 %token PIPE  "|"
@@ -1149,6 +1150,16 @@ purevariable:
       MEMCHECK($4);
       $$ = new UVariableName($1,$2,$4,$5);
       MEMCHECK4($$,$1,$2,$4,$5);
+    }
+
+  | IDENTIFIER DOUBLECOLON IDENTIFIER {
+
+      MEMCHECK($1);
+      MEMCHECK($3);
+      $$ = new UVariableName($1,$3,true,
+                             (UNamedParameters*)0);
+      if ($$) $$->doublecolon = true;
+      MEMCHECK2($$,$1,$3);
     }
 
   | IDENTIFIER array {

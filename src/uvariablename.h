@@ -90,6 +90,7 @@ public:
                              ///< UDEF_VAR or UDEF_EVENT
   bool              local_scope; ///< name resolution will be limited to
                                  ///< local scope in functions
+  bool              doublecolon; ///< true when the :: construct is used
 
 protected:
 

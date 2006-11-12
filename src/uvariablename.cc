@@ -87,6 +87,7 @@ UVariableName::UVariableName(UString* device,
   if ((device) && (device->equal("self")))
     selfFunction = true;
 
+  doublecolon = false;
 }
 
 //! UVariableName constructor for variable of the type device[...][...].id[...][...]...
@@ -124,6 +125,8 @@ UVariableName::UVariableName(UString* objname,
     localFunction = true;
   if ((device) && (device->equal("self")))
     selfFunction = true;
+
+  doublecolon = false;
 }
 
 
@@ -153,6 +156,8 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
   this->nostruct  = false;
   this->id_type   = UDEF_VAR;
   this->local_scope  = false;
+
+  doublecolon = false;
 }
 
 //! UVariableName destructor.
@@ -703,6 +708,7 @@ UVariableName::copy()
   ret->nostruct     = nostruct;
   ret->id_type      = id_type;
   ret->local_scope  = local_scope;
+  ret->doublecolon  = doublecolon;
 
   return ret;
 }

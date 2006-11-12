@@ -1,5 +1,19 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+The idea is to be able to call parent methods inside redefined children
+methods (see NEWS and ticket #65).
+
+	add support for :: construct (ticket #65) 
+	* NEWS: add description of recent changes.
+	* src/parser/bison/ugrammar.y: add parsing of :: construct.
+	* src/parser/bison/utoken.l: add :: token.
+	* src/ucommand.cc: add support for simple method call (no uobject, no
+        function. Will be done in next commit).
+	* src/uvariablename.cc: add doublecolon.
+	* src/uvariablename.h: add doublecolon.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix string armor problem (related to ticket #63 
 	* src/ustring.cc: add armor() function, with optimization (fastArmor).
 	* src/ustring.h: add armor, fastArmor.
