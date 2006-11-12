@@ -73,7 +73,7 @@ UNamedParameters::size()
 {
   if (next) return (next->size() + 1);
   else
-    return(1);
+    return 1;
 }
 
 //! UNamedParameters hard copy function
@@ -83,9 +83,12 @@ UNamedParameters::copy()
   UNamedParameters* ret = new UNamedParameters((UExpression*)0,
 					       (UNamedParameters*)0);
 
-  if (expression)  ret->expression = expression->copy();
-  if (name)        ret->name = new UString(name);
-  if (next)        ret->next = next->copy();
+  if (expression)
+    ret->expression = expression->copy();
+  if (name)
+    ret->name = new UString(name);
+  if (next)
+    ret->next = next->copy();
 
   return (ret);
 }
@@ -97,7 +100,17 @@ UNamedParameters::copy()
 void
 UNamedParameters::print()
 {
-  if (name) ::urbiserver->debug("%s:",name->str());
-  if (expression) {::urbiserver->debug("expr="); expression->print(); ::urbiserver->debug(" ");}
-  if (next) {::urbiserver->debug(", "); next->print(); ::urbiserver->debug(" ");}
+  if (name) ::urbiserver->debug("%s:", name->str());
+  if (expression)
+  {
+    ::urbiserver->debug("expr=");
+    expression->print();
+    ::urbiserver->debug(" ");
+  }
+  if (next)
+  {
+    ::urbiserver->debug(", ");
+    next->print();
+    ::urbiserver->debug(" ");
+  }
 }

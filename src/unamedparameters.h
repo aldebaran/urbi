@@ -26,7 +26,7 @@
 #include "utypes.h"
 #include "ustring.h"
 
-// *****************************************************************************
+// ****************************************************************************
 //! Contains any list of identifiers, expressions or combinaison of both.
 class UNamedParameters
 {

@@ -1,5 +1,11 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	formating changes 
+	* src/unamedparameters.cc: done.
+	* src/unamedparameters.h: done.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	indent 
 	* src/uconnection.cc: done.
 
