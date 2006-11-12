@@ -1,5 +1,10 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix bug in multiple inheritance 
+	* src/uobj.cc: done.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	add 'inherit'/'disinherit' keyword, implement inherit
 	* src/parser/bison/ugrammar.y: add syntax.
 	* src/parser/bison/utoken.l: add keywords.

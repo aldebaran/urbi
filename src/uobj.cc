@@ -216,6 +216,8 @@ UFunction*
 UObj::searchFunction(const char* id, bool &ambiguous)
 {
   UFunction *ret;
+  UFunction *tmpres;
+
   bool found;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
@@ -231,16 +233,19 @@ UObj::searchFunction(const char* id, bool &ambiguous)
     for (std::list<UObj*>::iterator itup = up.begin();
          itup != up.end();
          itup++){
-      ret = (*itup)->searchFunction(id, ambiguous);
+      tmpres = (*itup)->searchFunction(id, ambiguous);
       if (ambiguous) return 0;
-      if (ret)
+      if (tmpres)
         if (found)
         {
           ambiguous = true;
           return 0;
         }
         else
+        {
+          ret = tmpres;
           found = true;
+        }
     }
     ambiguous = false;
     return ret;
@@ -251,6 +256,7 @@ UVariable*
 UObj::searchVariable(const char* id, bool &ambiguous)
 {
   UVariable *ret;
+  UVariable *tmpres;
   bool found;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
@@ -260,22 +266,27 @@ UObj::searchVariable(const char* id, bool &ambiguous)
     ambiguous = false;
     return (hmv->second);
   }
-  else {
+  else
+  {
     ret   = 0;
     found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
          itup != up.end();
-         itup++){
-      ret = (*itup)->searchVariable(id, ambiguous);
+         itup++)
+    {
+      tmpres = (*itup)->searchVariable(id, ambiguous);
       if (ambiguous) return 0;
-      if (ret)
+      if (tmpres)
         if (found)
         {
           ambiguous = true;
           return 0;
         }
         else
+        {
+          ret = tmpres;
           found = true;
+        }
     }
     ambiguous = false;
     return ret;
@@ -286,6 +297,8 @@ UEventHandler*
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
   UEventHandler* ret;
+  UEventHandler* tmpres;
+
   bool found;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
@@ -315,22 +328,24 @@ UObj::searchEvent(const char* id, bool &ambiguous)
          itup != up.end();
          itup++)
     {
-      ret = (*itup)->searchEvent(id, ambiguous);
+      tmpres = (*itup)->searchEvent(id, ambiguous);
       if (ambiguous) return 0;
-      if (ret)
+      if (tmpres)
         if (found)
         {
           ambiguous = true;
           return 0;
         }
         else
+        {
+          ret = tmpres;
           found = true;
+        }
     }
     ambiguous = false;
     return ret;
   }
 }
-
 
 /*********************************************/
 /* UWaitCounter                              */
