@@ -351,6 +351,18 @@ UVariable::selfSet(ufloat *valcheck)
 UValue*
 UVariable::get()
 {
+  // recursive call for objects
+  if (value->dataType == DATA_OBJ)
+    for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+         it != ::urbiserver->variabletab.end();
+         it++)
+      if ( ((*it).second->method) &&
+           ((*it).second->devicename) && (value->str) &&
+           ((*it).second->value->dataType != DATA_OBJ) &&
+           ((*it).second->devicename->equal(value->str)))
+        (*it).second->get ();
+
+  // check for existing notifychange
   if (!internalAccessBinder.empty())
   {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =

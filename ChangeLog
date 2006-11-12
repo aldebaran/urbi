@@ -1,5 +1,11 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #41, not accesschange on object attributes 
+	* src/uvariable.cc: add a call to UVariable::get for each attribute of
+        the object.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 It is now possible to redefine a remote or plugged C++ method from within URBI
 itself, while still accessing the old definition. Example:
 
