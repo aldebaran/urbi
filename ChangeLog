@@ -1,5 +1,10 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	add support for :: in assignements 
+	* src/ucommand.cc: add same support of :: for UCommand_ASSIGN_VALUE.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 The idea is to be able to call parent methods inside redefined children
 methods (see NEWS and ticket #65).
 

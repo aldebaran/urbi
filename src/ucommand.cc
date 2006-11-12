@@ -782,10 +782,18 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (morph)
       {
         sprintf(tmpbuffer, "__UFnct%d", unic());
+        UString* fundevice = expression->variablename->getDevice();
+
+        // handle the :: case
+        if (expression->variablename->doublecolon
+            && !connection->stack.empty ()
+            && ::urbiserver->objtab.find(connection->stack.front()->self())!=
+               ::urbiserver->objtab.end ())
+          fundevice->update (connection->stack.front()->self());
 
         ((UCommand_TREE*)morph)->callid =
           new UCallid(tmpbuffer,
-                      expression->variablename->device->str(),
+                      fundevice->str(),
                       (UCommand_TREE*)morph);
 
         resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
