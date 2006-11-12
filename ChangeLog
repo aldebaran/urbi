@@ -1,5 +1,24 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+It is now possible to redefine a remote or plugged C++ method from within URBI
+itself, while still accessing the old definition. Example:
+
+myobj = new remoteobj;
+function myobj.foo(x)
+{
+  remoteobj::foo(x);
+  ...
+};
+
+Since local redefinitions of functions override remote/plugged definitions, the
+local 'myobj.foo' will always be called, bypassing the remote version (only
+accessible now via the :: construct).
+
+	extend support of :: to uobjects 
+	* src/ucommand.cc: add support for :: with remote/plugged uobjects.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 Native local functions must override plugins and remote functions definition
 when a name conflict occurs.
 This means that it is possible to redefine a remote function written in C++

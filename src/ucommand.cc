@@ -765,6 +765,21 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     } // fi: function exists
 
 
+    // handle the :: case
+    if (expression->variablename->doublecolon
+        && !connection->stack.empty ()
+        && ::urbiserver->objtab.find(connection->stack.front()->self())!=
+        ::urbiserver->objtab.end ())
+    {
+      // rebuild name with parent class
+      expression->variablename->device->
+        update(connection->stack.front()->self());
+      expression->variablename->resetCache (); // this deletes funname pointeur
+      functionname = expression->variablename->buildFullname(this, connection);
+      if (!functionname) return ( status = UCOMPLETED );
+    }
+
+
     ////// module-defined /////
 
     urbi::UTable::iterator hmfi =
@@ -2468,6 +2483,20 @@ UCommand_EXPR::execute(UConnection *connection)
       if ((connection->receiving) &&
 	  (expression->variablename->id->equal("exec")))
 	return ( status = URUNNING);
+
+    // handle the :: case
+    if (expression->variablename->doublecolon
+        && !connection->stack.empty ()
+        && ::urbiserver->objtab.find(connection->stack.front()->self())!=
+        ::urbiserver->objtab.end ())
+    {
+      // rebuild name with parent class
+      expression->variablename->device->
+        update(connection->stack.front()->self());
+      expression->variablename->resetCache (); // this deletes funname pointeur
+      funname = expression->variablename->buildFullname(this, connection);
+      if (!funname) return ( status = UCOMPLETED );
+    }
 
     ////// module-defined /////
 
