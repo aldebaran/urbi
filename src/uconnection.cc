@@ -831,16 +831,17 @@ UConnection::isActive()
 //! Execute a command
 /*! This function executes a regular command.
 
-    \param command is the UCommand to execute.
-*/
+  \param command is the UCommand to execute.
+ */
 UCommand*
 UConnection::processCommand(UCommand *&command,
-			    URunlevel &rl,
-			    bool &mustReturn)
+                            URunlevel &rl,
+                            bool &mustReturn)
 {
   mustReturn = false;
   if (command == 0)
     return 0;
+
   if (rl != UWAITING
       || returnMode
       || command->toDelete)
@@ -854,10 +855,10 @@ UConnection::processCommand(UCommand *&command,
     return command;
 
   if (command->isBlocked())
-    {
-      delete command;
-      return 0;
-    }
+  {
+    delete command;
+    return 0;
+  }
 
   UCommand         *morphed;
   UCommand_TREE    *morphed_up;
@@ -866,248 +867,250 @@ UConnection::processCommand(UCommand *&command,
   bool             stopit;
 
   while (true)
+  {
+    // timeout, stop , freeze and connection flags initialization
+
+    if (command->startTime == -1)
     {
-      // timeout, stop , freeze and connection flags initialization
+      command->startTime = server->lastTime();
 
-      if (command->startTime == -1)
-	{
-	  command->startTime = server->lastTime();
-
-	  param = command->flags;
-	  while (param)
+      param = command->flags;
+      while (param)
+      {
+        if (param->name)
+        {
+          if (param->name->equal("flagid"))
           {
-	    if (param->name)
+            param->name->update("noflag");
+            UValue* tmpID = param->expression->eval(command, this);
+            if (tmpID)
             {
-	      if (param->name->equal("flagid"))
-              {
-		param->name->update("noflag");
-		UValue* tmpID = param->expression->eval(command, this);
-		if (tmpID)
-                {
-		  if (tmpID->dataType == DATA_STRING)
-		    for (std::list<UConnection*>::iterator retr =
-                         ::urbiserver->connectionList.begin();
-			 retr != ::urbiserver->connectionList.end();
-			 retr++)
-		      if ((*retr)->isActive())
+              if (tmpID->dataType == DATA_STRING)
+                for (std::list<UConnection*>::iterator retr =
+                     ::urbiserver->connectionList.begin();
+                     retr != ::urbiserver->connectionList.end();
+                     retr++)
+                  if ((*retr)->isActive())
 
-			if (((*retr)->connectionTag->equal(tmpID->str)) ||
-			    (strcmp(tmpID->str->str(), "all") == 0) ||
-			    ( ( strcmp(tmpID->str->str(), "other") == 0) &&
-			      ( !(*retr)->connectionTag->equal(connectionTag))))
-                        {
-			  UCommand_TREE* tohook = new UCommand_TREE( UAND,
-								     command->copy(),
-								     0);
-			  (*retr)->append(tohook);
-			}
+                    if (((*retr)->connectionTag->equal(tmpID->str)) ||
+                        (strcmp(tmpID->str->str(), "all") == 0) ||
+                        ( ( strcmp(tmpID->str->str(), "other") == 0) &&
+                          ( !(*retr)->connectionTag->equal(connectionTag))))
+                    {
+                      UCommand_TREE* tohook =
+                        new UCommand_TREE( UAND,
+                                           command->copy(),
+                                           0);
+                      (*retr)->append(tohook);
+                    }
 
-		  delete tmpID;
-		}
-		delete command;
-		return 0;
-	      }
+              delete tmpID;
+            }
+            delete command;
+            return 0;
+          }
 
-
-	      if (param->name->equal("flagtimeout"))
-              {
-		command->flagType += 1;
-		command->flagExpr1 = param->expression;
-		send("!!! Warning: +timeout flag is obsolete."
-                     " Use timeout(time) command instead.\n",
-                     command->getTag().c_str());
-	      }
-	      if (param->name->equal("flagstop"))
-              {
-		command->flagType += 2;
-		command->flagExpr2 = param->expression;
-		send("!!! Warning: +stop flag is obsolete."
-                     " Use stopif(test) command instead.\n",
-                     command->getTag().c_str());
-	      }
-	      if (param->name->equal("flagfreeze"))
-              {
-		command->flagType += 4;
-		command->flagExpr4 = param->expression;
-		send("!!! Warning: +freeze flag is obsolete."
-                     " Use freezeif(test) command instead.\n",
-                     command->getTag().c_str());
-	      }
-
-	      if ((param->name->equal("flag")) &&
-		  (param->expression) &&
-		  (param->expression->val == 10))
-		command->flagType += 8;
-
-	      if ((param->name->equal("flag")) &&
-		  (param->expression) &&
-		  (!command->morphed) &&
-		  (( param->expression->val == 4 ) || // 4 = +begin
-		   ( param->expression->val == 1 ) )) // 1 = +report
-		send("*** begin\n", command->getTag().c_str());
-
-	    }
-
-	    param = param->next;
-	  }
-	}
-
-      stopit = false;
-
-      // flag "+timeout"
-      if (command->flagType&1)
-      {
-	UValue *value = command->flagExpr1->eval(command, this);
-	if ((value) &&
-	    (value->dataType == DATA_NUM) &&
-	    (command->startTime + value->val <= server->lastTime()))
-	  stopit = true;
-	delete value;
-      }
-
-      // flag "+stop"
-
-      if (command->flagType&2)  {
-	UTestResult testres = booleval(command->flagExpr2->eval(command, this));
-
-	if (testres == UTRUE)
-        {
-	  if (command->flag_nbTrue2 == 0)
-	    command->flag_startTrue2 = server->lastTime();
-	  command->flag_nbTrue2++;
-	}
-	else
-	  command->flag_nbTrue2 = 0;
-
-	if ( ( (command->flagExpr2->softtest_time) &&
-	       (command->flag_nbTrue2 > 0) &&
-	       (server->lastTime() - command->flag_startTrue2 >=
-		command->flagExpr2->softtest_time->val)) ||
-
-	     ( (command->flag_nbTrue2 >0) &&
-	       (command->flagExpr2->softtest_time==0)) )
-	  stopit = true;
-      }
-
-      // flag "+freeze"
-
-      if (command->flagType&4)
-      {
-	UTestResult testres = booleval(command->flagExpr4->eval(command, this));
-
-	if (testres == UTRUE)
-        {
-	  if (command->flag_nbTrue4 == 0)
-	    command->flag_startTrue4 = server->lastTime();
-	  command->flag_nbTrue4++;
-	}
-	else
-	  command->flag_nbTrue4 = 0;
-
-	if ( ( (command->flagExpr4->softtest_time) &&
-	       (command->flag_nbTrue4 > 0) &&
-	       (server->lastTime() - command->flag_startTrue4 >=
-		command->flagExpr4->softtest_time->val)) ||
-
-	     ( (command->flag_nbTrue4 >0) &&
-	       (command->flagExpr4->softtest_time==0)) )
-	  return command;
-      }
-
-      if (stopit)
-      {
-	param = command->flags;
-	while (param)
-        {
-	  if ((param->name) &&
-	      (param->name->equal("flag")) &&
-	      (param->expression) &&
-	      (!command->morphed) &&
-	      (( param->expression->val == 3 ) || // 3 = +end
-	       ( param->expression->val == 1 ) )) // 1 = +report
-	    send("*** end\n", command->getTag().c_str());
-
-	  param = param->next;
-	}
-
-	if (command == lastCommand)
-	  lastCommand = command->up;
-
-	delete command;
-	return 0;
-      }
-
-      // Regular command processing
-
-      if (command->type == CMD_TREE)
-      {
-	mustReturn = true;
-	return command ;
-      }
-      else { // != CMD_TREE
-	morphed_up = command->up;
-	morphed_position = command->position;
-
-	switch (command->execute(this))
-        {
-	case UCOMPLETED:
-
-	  param = command->flags;
-	  while (param)
+          if (param->name->equal("flagtimeout"))
           {
-	    if ((param->name) &&
-		(param->name->equal("flag")) &&
-		(param->expression) &&
-		(( param->expression->val == 3 ) || // 3 = +end
-		 ( param->expression->val == 1 ) )) // 1 = +report
-	      send("*** end\n", command->getTag().c_str());
+            command->flagType += 1;
+            command->flagExpr1 = param->expression;
+            send("!!! Warning: +timeout flag is obsolete."
+                 " Use timeout(time) command instead.\n",
+                 command->getTag().c_str());
+          }
+          if (param->name->equal("flagstop"))
+          {
+            command->flagType += 2;
+            command->flagExpr2 = param->expression;
+            send("!!! Warning: +stop flag is obsolete."
+                 " Use stopif(test) command instead.\n",
+                 command->getTag().c_str());
+          }
+          if (param->name->equal("flagfreeze"))
+          {
+            command->flagType += 4;
+            command->flagExpr4 = param->expression;
+            send("!!! Warning: +freeze flag is obsolete."
+                 " Use freezeif(test) command instead.\n",
+                 command->getTag().c_str());
+          }
 
-	    param = param->next;
-	  }
+          if ((param->name->equal("flag")) &&
+              (param->expression) &&
+              (param->expression->val == 10))
+            command->flagType += 8;
 
-	  if (command == lastCommand)
-	    lastCommand = command->up;
+          if ((param->name->equal("flag")) &&
+              (param->expression) &&
+              (!command->morphed) &&
+              (( param->expression->val == 4 ) || // 4 = +begin
+               ( param->expression->val == 1 ) )) // 1 = +report
+            send("*** begin\n", command->getTag().c_str());
 
-	  delete command;
-	  return 0;
+        }
 
-	case UMORPH:
-	  command->status = UONQUEUE;
-	  command->morphed = true;
-
-	  morphed = command->morph;
-	  morphed->toDelete = command->toDelete;
-	  morphed->up = morphed_up;
-	  morphed->position = morphed_position;
-	  if (command->flags)
-	    morphed->flags = command->flags->copy();
-
-
-	  morphed->setTag(command);
-
-	  //morphed->morphed = true;
-	  if (!command->persistant) delete command;
-	  command = morphed;
-	  break;
-
-	default:
-	  // "+bg" flag
-	  if ((command->flagType&8) &&
-	      (command->status == URUNNING))
-	    command->status = UBACKGROUND;
-
-	  return command;
-	}
+        param = param->next;
       }
-    }//while(1)
+    }
+
+    stopit = false;
+
+    // flag "+timeout"
+    if (command->flagType&1)
+    {
+      UValue *value = command->flagExpr1->eval(command, this);
+      if ((value) &&
+          (value->dataType == DATA_NUM) &&
+          (command->startTime + value->val <= server->lastTime()))
+        stopit = true;
+      delete value;
+    }
+
+    // flag "+stop"
+
+    if (command->flagType&2)
+    {
+      UTestResult testres = booleval(command->flagExpr2->eval(command, this));
+
+      if (testres == UTRUE)
+      {
+        if (command->flag_nbTrue2 == 0)
+          command->flag_startTrue2 = server->lastTime();
+        command->flag_nbTrue2++;
+      }
+      else
+        command->flag_nbTrue2 = 0;
+
+      if ( ( (command->flagExpr2->softtest_time) &&
+             (command->flag_nbTrue2 > 0) &&
+             (server->lastTime() - command->flag_startTrue2 >=
+              command->flagExpr2->softtest_time->val)) ||
+
+           ( (command->flag_nbTrue2 >0) &&
+             (command->flagExpr2->softtest_time==0)) )
+        stopit = true;
+    }
+
+    // flag "+freeze"
+
+    if (command->flagType&4)
+    {
+      UTestResult testres = booleval(command->flagExpr4->eval(command, this));
+
+      if (testres == UTRUE)
+      {
+        if (command->flag_nbTrue4 == 0)
+          command->flag_startTrue4 = server->lastTime();
+        command->flag_nbTrue4++;
+      }
+      else
+        command->flag_nbTrue4 = 0;
+
+      if ( ( (command->flagExpr4->softtest_time) &&
+             (command->flag_nbTrue4 > 0) &&
+             (server->lastTime() - command->flag_startTrue4 >=
+              command->flagExpr4->softtest_time->val)) ||
+
+           ( (command->flag_nbTrue4 >0) &&
+             (command->flagExpr4->softtest_time==0)) )
+        return command;
+    }
+
+    if (stopit)
+    {
+      param = command->flags;
+      while (param)
+      {
+        if ((param->name) &&
+            (param->name->equal("flag")) &&
+            (param->expression) &&
+            (!command->morphed) &&
+            (( param->expression->val == 3 ) || // 3 = +end
+             ( param->expression->val == 1 ) )) // 1 = +report
+          send("*** end\n", command->getTag().c_str());
+
+        param = param->next;
+      }
+
+      if (command == lastCommand)
+        lastCommand = command->up;
+
+      delete command;
+      return 0;
+    }
+
+    // Regular command processing
+
+    if (command->type == CMD_TREE)
+    {
+      mustReturn = true;
+      return command ;
+    }
+    else
+    { // != CMD_TREE
+      morphed_up = command->up;
+      morphed_position = command->position;
+
+      switch (command->execute(this))
+      {
+        case UCOMPLETED:
+
+          param = command->flags;
+          while (param)
+          {
+            if ((param->name) &&
+                (param->name->equal("flag")) &&
+                (param->expression) &&
+                (( param->expression->val == 3 ) || // 3 = +end
+                 ( param->expression->val == 1 ) )) // 1 = +report
+              send("*** end\n", command->getTag().c_str());
+
+            param = param->next;
+          }
+
+          if (command == lastCommand)
+            lastCommand = command->up;
+
+          delete command;
+          return 0;
+
+        case UMORPH:
+          command->status = UONQUEUE;
+          command->morphed = true;
+
+          morphed = command->morph;
+          morphed->toDelete = command->toDelete;
+          morphed->up = morphed_up;
+          morphed->position = morphed_position;
+          if (command->flags)
+            morphed->flags = command->flags->copy();
+
+
+          morphed->setTag(command);
+
+          //morphed->morphed = true;
+          if (!command->persistant) delete command;
+          command = morphed;
+          break;
+
+        default:
+          // "+bg" flag
+          if ((command->flagType&8) &&
+              (command->status == URUNNING))
+            command->status = UBACKGROUND;
+
+          return command;
+      }
+    }
+  }//while(1)
 }
 
 //! Execute a command tree
 /*! This function executes a command tree and
-    returns the next node of the tree to process..
+  returns the next node of the tree to process..
 
-    \param tree is the UCommand_TREE to execute.
-*/
+  \param tree is the UCommand_TREE to execute.
+ */
 void
 UConnection::execute(UCommand_TREE* &execCommand)
 {
@@ -1126,7 +1129,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
     tree->status = URUNNING;
 
     // BLOCKED/FREEZED COMMANDS
-
     deletecommand = false;
 
     //check if freezed
@@ -1146,12 +1148,12 @@ UConnection::execute(UCommand_TREE* &execCommand)
     // COMMAND1
 
     if ((tree->callid) &&
-	(tree->command1) &&
-	(tree->runlevel1 == UWAITING))
+        (tree->command1) &&
+        (tree->runlevel1 == UWAITING))
       stack.push_front(tree->callid);
     tree->command1 = processCommand ( tree->command1,
-				      tree->runlevel1,
-				      mustReturn );
+                                      tree->runlevel1,
+                                      mustReturn );
 
     if (mustReturn)  { tree = (UCommand_TREE*) tree->command1; continue;}
 
@@ -1160,60 +1162,60 @@ UConnection::execute(UCommand_TREE* &execCommand)
       stack.pop_front();
       if (returnMode)
       {
-	delete tree->command1;
-	tree->command1 = 0;
-	returnMode = false;
+        delete tree->command1;
+        tree->command1 = 0;
+        returnMode = false;
       }
     }
 
     // COMMAND2
     if ( (tree->node == UAND) ||
-	 (tree->node == UCOMMA) ||
-	 (tree->command1 == 0) ||
-	 (tree->command1->status == UBACKGROUND) )
+         (tree->node == UCOMMA) ||
+         (tree->command1 == 0) ||
+         (tree->command1->status == UBACKGROUND) )
     {
       if (tree == lastCommand)
-	obstructed = false;
+        obstructed = false;
 
       tree->command2 = processCommand ( tree->command2,
-					tree->runlevel2,
-					mustReturn );
+                                        tree->runlevel2,
+                                        mustReturn );
 
       if (mustReturn)  {tree = (UCommand_TREE*) tree->command2; continue;}
 
       if (tree->callid)
       { // arriving here means the function is finished
-	vari  = ::urbiserver->getVariable(tree->callid->str(), "__result__");
-	delete vari;
+        vari  = ::urbiserver->getVariable(tree->callid->str(), "__result__");
+        delete vari;
       }
     }
 
     // STATUS UPDATE
 
     if ( ((tree->command1 == 0) &&
-	  (tree->command2 == 0)) ||
-	 (deletecommand))
+          (tree->command2 == 0)) ||
+         (deletecommand))
     {
       if (tree == lastCommand)
-	lastCommand = tree->up;
+        lastCommand = tree->up;
       if (tree == execCommand)
-	execCommand = 0;
+        execCommand = 0;
 
       if (tree->position)
-	*(tree->position) = 0;
+        *(tree->position) = 0;
       oldtree = tree;
 
       UNamedParameters *param = tree->flags;
       while (param)
       {
-	if ((param->name) &&
-	    (param->name->equal("flag")) &&
-	    (param->expression) &&
-	    (( param->expression->val == 3 ) || // 3 = +end
-	     ( param->expression->val == 1 ) )) // 1 = +report
-	  send("*** end\n", tree->getTag().c_str());
+        if ((param->name) &&
+            (param->name->equal("flag")) &&
+            (param->expression) &&
+            (( param->expression->val == 3 ) || // 3 = +end
+             ( param->expression->val == 1 ) )) // 1 = +report
+          send("*** end\n", tree->getTag().c_str());
 
-	param = param->next;
+        param = param->next;
       }
 
       tree = tree->up;
@@ -1223,17 +1225,14 @@ UConnection::execute(UCommand_TREE* &execCommand)
     }
     else
       if ( ( ((tree->command1 == 0) ||
-	      (tree->command1->status == UBACKGROUND)) &&
+              (tree->command1->status == UBACKGROUND)) &&
 
-	     ((tree->command2 == 0) ||
-	      (tree->command2->status == UBACKGROUND))) ||
+             ((tree->command2 == 0) ||
+              (tree->command2->status == UBACKGROUND))) ||
 
-	   (tree->background == true) ||
-	   (tree->flagType&8))
-
-	tree->status = UBACKGROUND;
-    //   else
-    //    tree->status = URUNNING;
+           (tree->background == true) ||
+           (tree->flagType&8))
+        tree->status = UBACKGROUND;
 
     tree->runlevel1 = UWAITING;
     tree->runlevel2 = UWAITING;
@@ -1241,10 +1240,10 @@ UConnection::execute(UCommand_TREE* &execCommand)
     // REDUCTION
 
     if ((tree != lastCommand) &&
-	(tree != execCommand) &&
-	(!tree->toDelete) &&
-	(tree->command1 == 0) &&
-	(tree->command2 != 0))
+        (tree != execCommand) &&
+        (!tree->toDelete) &&
+        (tree->command1 == 0) &&
+        (tree->command2 != 0))
     { // left reduction
       ASSERT(tree->position!=0) *(tree->position) = tree->command2;
       tree->command2->up = tree->up;
@@ -1259,11 +1258,11 @@ UConnection::execute(UCommand_TREE* &execCommand)
     }
 
     if ((tree != lastCommand) &&
-	(tree != execCommand) &&
-	(!tree->toDelete) &&
-	(tree->command2 == 0) &&
-	(tree->command1 != 0) &&
-	(tree->command1->status != UBACKGROUND) )
+        (tree != execCommand) &&
+        (!tree->toDelete) &&
+        (tree->command2 == 0) &&
+        (tree->command1 != 0) &&
+        (tree->command1->status != UBACKGROUND) )
     { // right reduction
       // the background hack is here to preserve {at()...} commands.
 

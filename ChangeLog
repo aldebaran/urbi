@@ -1,5 +1,10 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	indent 
+	* src/uconnection.cc: done.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	add disinherit 
 	* src/parser/bison/ugrammar.y: fix bug in call to UCommand_INHERIT
         constructor with disinherit, should send the 'true' flag for
