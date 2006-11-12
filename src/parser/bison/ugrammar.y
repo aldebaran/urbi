@@ -248,6 +248,8 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 %token WHENEVER "whenever"
 %token COPY "copy"
 %token STATIC "static"
+%token INHERIT "inherit"
+%token DISINHERIT "disinherit"
 %token ALIAS "alias"
 %token UNALIAS "unalias"
 %token DERIV "derivation"
@@ -672,6 +674,18 @@ instruction:
 
       $$ = new UCommand_ALIAS($2,$3);
       MEMCHECK2($$,$2,$3);
+    }
+
+  | purevariable INHERIT purevariable {
+
+      $$ = new UCommand_INHERIT($1,$3);
+      MEMCHECK2($$,$1,$3);
+    }
+
+  | purevariable DISINHERIT purevariable {
+
+      $$ = new UCommand_INHERIT($1,$3,false);
+      MEMCHECK2($$,$1,$3);
     }
 
   | ALIAS purevariable {

@@ -392,6 +392,27 @@ public:
   bool                    eraseit; ///< unalias command
 };
 
+class UCommand_INHERIT : public UCommand
+{
+public:
+  MEMORY_MANAGED;
+
+  UCommand_INHERIT (UVariableName* subclass,
+		    UVariableName* theclass,
+		    bool eraseit=false);
+
+  virtual ~UCommand_INHERIT();
+
+  virtual void print(int l);
+
+  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommand*      copy();
+
+  UVariableName           *subclass; ///< subclass that inherits
+  UVariableName           *theclass; ///< parent class
+  bool                    eraseit; ///< uninherit command
+};
+
 class UCommand_GROUP : public UCommand
 {
 public:

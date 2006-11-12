@@ -252,6 +252,8 @@ group         { return token::GROUP;}
 addgroup      { return token::ADDGROUP;}
 delgroup      { return token::DELGROUP;}
 alias         { return token::ALIAS;}
+inherit       { return token::INHERIT;}
+disinherit    { return token::DISINHERIT;}
 unalias       { return token::UNALIAS;}
 echo          { return token::UECHO;}
 wait          { return token::WAIT;}

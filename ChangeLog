@@ -1,3 +1,12 @@
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add 'inherit'/'disinherit' keyword, implement inherit
+	* src/parser/bison/ugrammar.y: add syntax.
+	* src/parser/bison/utoken.l: add keywords.
+	* src/ucommand.cc: add class UCommand_INHERIT.
+	* src/ucommand.h: add class UCommand_INHERIT.
+	* src/utypes.h: add CMD_INHERIT.
+
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
 access_and_change_varlist in UServer keeps track of variable who have botha

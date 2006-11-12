@@ -3310,6 +3310,120 @@ UCommand_ALIAS::print(int l)
   ::urbiserver->debug("%sEND ALIAS ------\n", tabb);
 }
 
+MEMORY_MANAGER_INIT(UCommand_INHERIT);
+// *********************************************************
+//! UCommand subclass constructor.
+/*! Subclass of UCommand with standard member initialization.
+*/
+UCommand_INHERIT::UCommand_INHERIT(UVariableName* subclass,
+			           UVariableName* theclass,
+			           bool eraseit) :
+  UCommand(CMD_INHERIT)
+{
+  ADDOBJ(UCommand_INHERIT);
+  this->subclass     = subclass;
+  this->theclass     = theclass;
+  this->eraseit      = eraseit;
+}
+
+//! UCommand subclass destructor.
+UCommand_INHERIT::~UCommand_INHERIT()
+{
+  FREEOBJ(UCommand_INHERIT);
+  delete subclass;
+  delete theclass;
+}
+
+//! UCommand subclass execution function
+UCommandStatus
+UCommand_INHERIT::execute(UConnection *connection)
+{
+  UString *sub    = subclass->buildFullname(this, connection, false);
+  UString *parent = theclass->buildFullname(this, connection, false);
+
+  if (!sub || !parent)
+    return ((status = UCOMPLETED));
+
+  HMobjtab::iterator objsub    = ::urbiserver->objtab.find(sub->str());
+  if (objsub == ::urbiserver->objtab.end ())
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+             "!!! Object does not exist: %s\n", sub->str());
+    connection->send(tmpbuffer, getTag().c_str());
+    return ((status = UCOMPLETED));
+  }
+  HMobjtab::iterator objparent = ::urbiserver->objtab.find(parent->str());
+  if (objparent == ::urbiserver->objtab.end ())
+  {
+    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+             "!!! Object does not exist: %s\n", parent->str());
+    connection->send(tmpbuffer, getTag().c_str());
+    return ((status = UCOMPLETED));
+  }
+
+  if (!eraseit)
+  {
+    if (std::find(objsub->second->up.begin(),
+                  objsub->second->up.end(),
+                  objparent->second) !=
+        objsub->second->up.end())
+    {
+      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+               "!!! %s has already inherited from %s\n",
+               sub->str(), parent->str());
+      connection->send(tmpbuffer, getTag().c_str());
+      return ( status = UCOMPLETED );
+    }
+
+    objsub->second->up.push_back(objparent->second);
+    objparent->second->down.push_back(objsub->second);
+  }
+
+  return ((status = UCOMPLETED));
+}
+
+
+//! UCommand subclass hard copy function
+UCommand*
+UCommand_INHERIT::copy()
+{
+  UCommand_INHERIT *ret = new UCommand_INHERIT(ucopy (subclass),
+					       ucopy (theclass),
+					       eraseit);
+  copybase(ret);
+  return ((UCommand*)ret);
+}
+
+//! Print the command
+/*! This function is for debugging purpose only.
+  It is not safe, efficient or crash proof. A better version will come later.
+ */
+void
+UCommand_INHERIT::print(int l)
+{
+  char tabb[100];
+
+  strcpy(tabb, "");
+  for (int i=0;i<l;i++)
+    strcat(tabb, " ");
+
+  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+
+  ::urbiserver->debug("INHERIT (%d) :\n", (int)eraseit);
+
+  if (subclass)
+  {
+    ::urbiserver->debug("  %s  subclass:", tabb);
+    subclass->print(); ::urbiserver->debug("\n");
+  };
+  if (theclass)
+  {
+    ::urbiserver->debug("  %s  parentclass:", tabb);
+    theclass->print(); ::urbiserver->debug("\n");
+  };
+
+  ::urbiserver->debug("%sEND INHERIT ------\n", tabb);
+}
 
 MEMORY_MANAGER_INIT(UCommand_GROUP);
 // *********************************************************

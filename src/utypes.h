@@ -143,6 +143,7 @@ enum UCommandType {
     CMD_ECHO,
     CMD_NEW,
     CMD_ALIAS,
+    CMD_INHERIT,
     CMD_GROUP,
     CMD_WAIT,
     CMD_WAIT_TEST,
