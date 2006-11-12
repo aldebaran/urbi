@@ -30,6 +30,8 @@ UCallid::UCallid (const char *fun_id, const char *self_id, UCommand_TREE* root)
   this->fun_id = new UString(fun_id);
   this->self_id = new UString(self_id);
   this->root = root;
+
+  returnVar = 0;
 }
 
 //! UCallid destructor
@@ -65,3 +67,12 @@ UCallid::self()
 {
   return (self_id->str());
 }
+
+//! Set the returnVar in a function call
+void
+UCallid::setReturnVar (UVariable *v)
+{
+  returnVar = v;
+  store (returnVar);
+}
+

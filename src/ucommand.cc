@@ -790,6 +790,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
         resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
                                     "__result__");
+        // creates return variable
+        ((UCommand_TREE*)morph)->callid->setReturnVar (
+          new UVariable (((UCommand_TREE*)morph)->callid->str(),
+                         "__result__",
+                         new UValue ()));
+
         if (!((UCommand_TREE*)morph)->callid)
           return (status = UCOMPLETED);
         ((UCommand_TREE*)morph)->connection = connection;
@@ -2469,11 +2475,16 @@ UCommand_EXPR::execute(UConnection *connection)
 
         ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
                                                       fundevice->str(),
-						      (UCommand_TREE*)morph);
-	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
-								"__result__");
-	if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
-	((UCommand_TREE*)morph)->connection = connection;
+                                                      (UCommand_TREE*)morph);
+        resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
+                                    "__result__");
+        // creates return variable
+        ((UCommand_TREE*)morph)->callid->setReturnVar (
+          new UVariable (((UCommand_TREE*)morph)->callid->str(),
+                         "__result__",
+                         new UValue ()));
+        if (!((UCommand_TREE*)morph)->callid) return (status = UCOMPLETED);
+        ((UCommand_TREE*)morph)->connection = connection;
 
 	UNamedParameters *pvalue = expression->parameters;
 	UNamedParameters *pname  = fun->parameters;
@@ -2648,29 +2659,16 @@ UCommand_RETURN::execute(UConnection *connection)
     {
       UValue *value = expression->eval(this, connection);
       if (!value)
-      {
         connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
-        new UVariable(connection->stack.front()->str(),
-                    "__result__", new UValue());
-        return (status = UCOMPLETED);
-      }
-      if (value->dataType == DATA_OBJ)
-      {
-        connection->send("!!! Functions cannot return objects with Kernel 1\n",
-                         getTag().c_str());
-        delete value;
-        new UVariable(connection->stack.front()->str(),
-                    "__result__", new UValue());
-        return (status = UCOMPLETED);
-      }
-
-      new UVariable(connection->stack.front()->str(),
-                    "__result__",
-                    value);
+      else
+        if (value->dataType == DATA_OBJ)
+          connection->send("!!! Functions cannot return objects"
+                           " with Kernel 1\n",
+                           getTag().c_str());
+        else
+          ASSERT (connection->stack.front()->returnVar)
+            connection->stack.front()->returnVar->value = value;
     }
-    else
-      new UVariable(connection->stack.front()->str(),
-                    "__result__", new UValue());
   }
   return ( status = UCOMPLETED );
 }

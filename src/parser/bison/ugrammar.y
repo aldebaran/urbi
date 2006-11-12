@@ -927,8 +927,7 @@ instruction:
     } taggedcommand {
  
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7,
-	    new UCommand_RETURN((UExpression*)0)));
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
  
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
@@ -958,8 +957,7 @@ instruction:
     } taggedcommand {
  
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,new UCommand_TREE(UPIPE,$7,
-	    new UCommand_RETURN((UExpression*)0)));
+      $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
  
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {

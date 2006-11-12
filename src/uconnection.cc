@@ -1116,7 +1116,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
 {
   UCommand_TREE *oldtree;
   UCommand_TREE *tree;
-  UVariable* vari;
   bool mustReturn;
   bool deletecommand;
 
@@ -1182,12 +1181,6 @@ UConnection::execute(UCommand_TREE* &execCommand)
                                         mustReturn );
 
       if (mustReturn)  {tree = (UCommand_TREE*) tree->command2; continue;}
-
-      if (tree->callid)
-      { // arriving here means the function is finished
-        vari  = ::urbiserver->getVariable(tree->callid->str(), "__result__");
-        delete vari;
-      }
     }
 
     // STATUS UPDATE

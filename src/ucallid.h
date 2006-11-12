@@ -29,7 +29,7 @@
 #include "uvariable.h"
 
 
-// *****************************************************************************
+// ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UCallid
 {
@@ -42,10 +42,12 @@ public:
   UString* fun_id;
   UString* self_id;
   UCommand_TREE* root;
+  UVariable* returnVar;
 
   void         store(UVariable *variable);
   const char*  str();
   const char*  self();
+  void         setReturnVar( UVariable *v);
 };
 
 #endif

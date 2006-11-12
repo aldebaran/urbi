@@ -1,5 +1,44 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+A big change in this commit. The use of 'return' in a function will return and
+destroy all commands still in progress in the function. The proper way to exit
+a function which should keep running commands (like 'at') is to avoid using
+'return' (in fact, the function does not return, since it's still running.
+Logical). 
+
+This is new because in C++ this disctinction wouldn't make any sense: there is
+no such things as "still running background instructions" and when the end of
+the function is reached, it is guaranteed that all instructions within the
+function body are terminated, so putting 'return' or not doesn't change anything.
+Not in URBI.
+
+The difference is visible only in functions containing 'at' commands for
+example:
+
+function f()
+{
+  at (test) ping;
+};
+
+function f2()
+{
+  at (test) ping;
+  return;
+}
+
+f2() will kill the 'at', f() will not. This is indeed very useful if the
+'return' instruction is conditionned by some test. It has the same effect as a
+kind of 'stop function_tag'.
+
+	rewrite return mechanism for functions. 
+	* src/parser/bison/ugrammar.y: remove automatic return.
+	* src/ucallid.cc: add returnVar to store the return container.
+	* src/ucallid.h: add returnVar and accessor.
+	* src/ucommand.cc: fix return mechanism.
+	* src/uconnection.cc: fix return mechanism.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	formating changes 
 	* src/unamedparameters.cc: done.
 	* src/unamedparameters.h: done.
