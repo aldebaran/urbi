@@ -1,5 +1,10 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #62 (wrong tags in 'if' command)
+	* src/ucommand.cc: done.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix ticket #41, not accesschange on object attributes 
 	* src/uvariable.cc: add a call to UVariable::get for each attribute of
         the object.

@@ -5722,6 +5722,7 @@ UCommand_IF::execute(UConnection *connection)
   if (testres == UTRUE)
   {
     morph = command1;
+    setTag (command1);
     command1 = 0; // avoid delete of command when this is deleted
     persistant = false;
     return ( status = UMORPH );
@@ -5730,6 +5731,7 @@ UCommand_IF::execute(UConnection *connection)
     if (command2)
     {
       morph = command2;
+      setTag (command2);
       command2 = 0; // avoid delete of command when this is deleted
       persistant = false;
       return ( status = UMORPH );
