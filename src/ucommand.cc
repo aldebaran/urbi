@@ -639,76 +639,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     UFunction *fun;
     HMfunctiontab::iterator hmf;
 
-    ////// EXTERNAL /////
-
-    HMbindertab::iterator it =
-      ::urbiserver->functionbindertab.find(functionname->str());
-    if ((it != ::urbiserver->functionbindertab.end()) &&
-        (
-         ( (expression->parameters)
-           && (it->second->nbparam == expression->parameters->size()))
-         ||
-         ((!expression->parameters)
-          && (it->second->nbparam==0))) &&
-        (!it->second->monitors.empty()))
-    {
-      int UU = unic();
-      char tmpprefix[1024];
-      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-               functionname->str(), it->second->nbparam, UU);
-
-      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-           it2 != it->second->monitors.end();
-           it2++)
-      {
-        (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-        (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
-        for (UNamedParameters *pvalue = expression->parameters;
-             pvalue != 0;
-             pvalue = pvalue->next)
-        {
-          (*it2)->c->send((const ubyte*)",", 1);
-          UValue* valparam = pvalue->expression->eval(this, connection);
-          valparam->echo((*it2)->c);
-        }
-        (*it2)->c->send((const ubyte*)"]\n", 2);
-      }
-
-      persistant = false;
-      sprintf(tmpbuffer,
-              "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-              "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-              UU, variablename->getFullname()->str(), UU, UU);
-
-      morph = (UCommand*)
-        new UCommand_EXPR
-        (
-         new UExpression
-         (
-          EXPR_FUNCTION,
-          new UVariableName
-          (
-           new UString("global"),
-           new UString("exec"),
-           false,
-           (UNamedParameters *)0),
-          new UNamedParameters
-          (
-           new UExpression
-           (
-            EXPR_VALUE,
-            new UString(tmpbuffer)
-           )
-          )
-         )
-        );
-      return ((status = UMORPH));
-    }
-
-
     ////// INTERNAL /////
 
-    ////// user-defined /////
+    ////// Native URBI: user-defined /////
 
     hmf = ::urbiserver->functiontab.find(functionname->str());
     bool found = (hmf != ::urbiserver->functiontab.end());
@@ -876,6 +809,72 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
           found_function = true;
         }
       }
+    }
+
+    ////// EXTERNAL /////
+
+    HMbindertab::iterator it =
+      ::urbiserver->functionbindertab.find(functionname->str());
+    if ((it != ::urbiserver->functionbindertab.end()) &&
+        (
+         ( (expression->parameters)
+           && (it->second->nbparam == expression->parameters->size()))
+         ||
+         ((!expression->parameters)
+          && (it->second->nbparam==0))) &&
+        (!it->second->monitors.empty()))
+    {
+      int UU = unic();
+      char tmpprefix[1024];
+      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
+               functionname->str(), it->second->nbparam, UU);
+
+      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+           it2 != it->second->monitors.end();
+           it2++)
+      {
+        (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+        (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+        for (UNamedParameters *pvalue = expression->parameters;
+             pvalue != 0;
+             pvalue = pvalue->next)
+        {
+          (*it2)->c->send((const ubyte*)",", 1);
+          UValue* valparam = pvalue->expression->eval(this, connection);
+          valparam->echo((*it2)->c);
+        }
+        (*it2)->c->send((const ubyte*)"]\n", 2);
+      }
+
+      persistant = false;
+      sprintf(tmpbuffer,
+              "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+              "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+              UU, variablename->getFullname()->str(), UU, UU);
+
+      morph = (UCommand*)
+        new UCommand_EXPR
+        (
+         new UExpression
+         (
+          EXPR_FUNCTION,
+          new UVariableName
+          (
+           new UString("global"),
+           new UString("exec"),
+           false,
+           (UNamedParameters *)0),
+          new UNamedParameters
+          (
+           new UExpression
+           (
+            EXPR_VALUE,
+            new UString(tmpbuffer)
+           )
+          )
+         )
+        );
+      return ((status = UMORPH));
     }
   } // fi: expr == function
 
@@ -2340,69 +2339,9 @@ UCommand_EXPR::execute(UConnection *connection)
 
     UFunction *fun;
 
-    ////// EXTERNAL /////
-    HMbindertab::iterator it =
-      ::urbiserver->functionbindertab.find(funname->str());
-    if ((it != ::urbiserver->functionbindertab.end()) &&
-		(
-			( (expression->parameters)
-                          && (it->second->nbparam
-                              == expression->parameters->size()))
-			||
-			((!expression->parameters) && (it->second->nbparam==0))) &&
-	(!it->second->monitors.empty()))  {
-
-      int UU = unic();
-      char tmpprefix[1024];
-      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-	  funname->str(), it->second->nbparam, UU);
-
-      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	   it2 != it->second->monitors.end();
-	   it2++)
-      {
-	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
-	for (UNamedParameters *pvalue = expression->parameters;
-	    pvalue != 0;
-	    pvalue = pvalue->next)
-        {
-	  (*it2)->c->send((const ubyte*)",", 1);
-	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*it2)->c);
-	}
-	(*it2)->c->send((const ubyte*)"]\n", 2);
-      }
-
-      persistant = false;
-      sprintf(tmpbuffer,
-              "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-              "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-      UU, getTag().c_str(), UU, UU);
-
-      morph = (UCommand*)
-      new UCommand_EXPR(
-	  new UExpression(
-	    EXPR_FUNCTION,
-	    new UVariableName(new UString("global"),
-                              new UString("exec"),
-                              false,
-                              (UNamedParameters *)0),
-	    new UNamedParameters(
-		new UExpression(
-		  EXPR_VALUE,
-		  new UString(tmpbuffer)
-		  )
-		)
-	    )
-	  );
-
-      return ( status = UMORPH );
-    }
-
     ////// INTERNAL /////
 
-    ////// user-defined /////
+    ////// Native URBI: user-defined /////
 
     hmf = ::urbiserver->functiontab.find(funname->str());
     bool found = (hmf != ::urbiserver->functiontab.end());
@@ -2523,7 +2462,6 @@ UCommand_EXPR::execute(UConnection *connection)
 		   );
 	}
       }
-
       return ( status = UMORPH );
     }
     else
@@ -2580,6 +2518,66 @@ UCommand_EXPR::execute(UConnection *connection)
 
       connection->send("!!! Invalid function call\n", getTag().c_str());
       return ( status = UCOMPLETED );
+    }
+
+    ////// EXTERNAL /////
+    HMbindertab::iterator it =
+      ::urbiserver->functionbindertab.find(funname->str());
+    if ((it != ::urbiserver->functionbindertab.end()) &&
+		(
+			( (expression->parameters)
+                          && (it->second->nbparam
+                              == expression->parameters->size()))
+			||
+			((!expression->parameters) && (it->second->nbparam==0))) &&
+	(!it->second->monitors.empty()))  {
+
+      int UU = unic();
+      char tmpprefix[1024];
+      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
+	  funname->str(), it->second->nbparam, UU);
+
+      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+	   it2 != it->second->monitors.end();
+	   it2++)
+      {
+	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+	for (UNamedParameters *pvalue = expression->parameters;
+	    pvalue != 0;
+	    pvalue = pvalue->next)
+        {
+	  (*it2)->c->send((const ubyte*)",", 1);
+	  UValue* valparam = pvalue->expression->eval(this, connection);
+	  valparam->echo((*it2)->c);
+	}
+	(*it2)->c->send((const ubyte*)"]\n", 2);
+      }
+
+      persistant = false;
+      sprintf(tmpbuffer,
+              "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+              "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+      UU, getTag().c_str(), UU, UU);
+
+      morph = (UCommand*)
+      new UCommand_EXPR(
+	  new UExpression(
+	    EXPR_FUNCTION,
+	    new UVariableName(new UString("global"),
+                              new UString("exec"),
+                              false,
+                              (UNamedParameters *)0),
+	    new UNamedParameters(
+		new UExpression(
+		  EXPR_VALUE,
+		  new UString(tmpbuffer)
+		  )
+		)
+	    )
+	  );
+
+      return ( status = UMORPH );
     }
   }
 

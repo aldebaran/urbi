@@ -1,5 +1,17 @@
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
+Native local functions must override plugins and remote functions definition
+when a name conflict occurs.
+This means that it is possible to redefine a remote function written in C++
+by redefining the method in URBI (and possibly redirect it to another C++
+method).
+
+	change functions evaluation priority to: native, plugged, remote  
+	* src/ucommand.cc: swap order of evaluation for possible function name
+        match.
+
+2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	add support for :: in assignements 
 	* src/ucommand.cc: add same support of :: for UCommand_ASSIGN_VALUE.
 
