@@ -1,5 +1,9 @@
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Update externals
+
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Ctor should build in the same order as attribute declarations
 	* include/urbi/uabstractclient.hh: Fix that.
 	Formatting changes (run reindent).
