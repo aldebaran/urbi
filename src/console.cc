@@ -1,6 +1,5 @@
 #include "config.h"
 
-#include <unistd.h>
 #include <fstream>
 
 #include "libport/utime.hh"
@@ -61,14 +60,17 @@ public:
   UErrorValue
   loadFile (const char* filename, UCommandQueue* loadQueue)
   {
-    std::ifstream is (filename);
+    std::ifstream is (filename, std::ios::binary);
     if (!is)
       return UFAIL;
 
     char buf[URBI_BUFSIZ];
-    while (is.getline (buf, URBI_BUFSIZ))
-      if (loadQueue->push((const ubyte*)buf, strlen (buf)) == UFAIL)
+    while (is.good ())
+    {
+      is.read (buf, URBI_BUFSIZ);
+      if (loadQueue->push((const ubyte*)buf, is.gcount()) == UFAIL)
 	return UFAIL;
+    }
     is.close();
 
     return USUCCESS;
