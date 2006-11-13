@@ -1,7 +1,6 @@
 #include "config.h"
 
 #include <unistd.h>
-
 #include <fstream>
 
 #include "libport/utime.hh"
@@ -9,6 +8,8 @@
 #include "version.hh"
 #include "userver.h"
 #include "ughostconnection.h"
+
+#define URBI_BUFSIZ 1024
 
 class ConsoleServer
   : public UServer
@@ -46,8 +47,8 @@ public:
   {
     const char* banner[] =
       {
-	"***	    URBI Console " PACKAGE_VERSION_REV "\n",
-	"***	    (C) 2006 Gostai SAS\n"
+	"***      URBI Console " PACKAGE_VERSION_REV "\n",
+	"***      (C) 2006 Gostai SAS\n"
       };
 
     if ((size_t) line < sizeof banner / sizeof banner[0])
@@ -60,20 +61,17 @@ public:
   UErrorValue
   loadFile (const char* filename, UCommandQueue* loadQueue)
   {
-    //! \todo check this code
     std::ifstream is (filename);
-#define URBI_BUFSIZ 1024
+    if (!is)
+      return UFAIL;
+
     char buf[URBI_BUFSIZ];
-
-    while (!is.eof())
-    {
-      is.get (buf, URBI_BUFSIZ, '\n');
-      if (loadQueue->push((const ubyte*)buf, URBI_BUFSIZ) == UFAIL)
+    while (is.getline (buf, URBI_BUFSIZ))
+      if (loadQueue->push((const ubyte*)buf, strlen (buf)) == UFAIL)
 	return UFAIL;
-    }
-
     is.close();
-    return is.good () ? USUCCESS : UFAIL;
+
+    return USUCCESS;
   }
 
   virtual
@@ -107,10 +105,10 @@ main ()
   long long startTime = urbi::utime();
 
   while (true)
-  {
-    ufloat freq = s.getFrequency() *1000;
-    while (urbi::utime() < (startTime + freq))
-      usleep (1);
-    s.work ();
-  }
+    {
+      ufloat freq = s.getFrequency() *1000;
+      while (urbi::utime() < (startTime + freq))
+	usleep (1);
+      s.work ();
+    }
 }

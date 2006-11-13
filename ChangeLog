@@ -1,5 +1,11 @@
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Proprify console.cc
+	* src/console.cc: Finish the partial rewriting into C++.
+	Unfortunately that does not make it interactive.
+
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Update externals
 
 2006-11-13  Akim Demaille  <demaille@gostai.com>
