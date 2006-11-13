@@ -1,3 +1,8 @@
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes
+	* src/uobject/urbi/uobject.hh.template: here.
+
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix ticket #36, requesting explicit ::urbi:: namespace in macros. 
