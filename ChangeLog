@@ -1,5 +1,13 @@
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Factoring
+	* src/uexpression.cc (, ENSURE_TYPES_1, ENSURE_TYPES_2)
+	(ENSURE_TYPES_3, ENSURE_COMPARISON): New.
+	Use them.
+	Various formatting changes.
+
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Proprify console.cc
 	* src/console.cc: Finish the partial rewriting into C++.
 	Unfortunately that does not make it interactive.
