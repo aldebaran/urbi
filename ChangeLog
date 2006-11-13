@@ -1,5 +1,10 @@
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Start reworking console.cc
+	* src/console.cc: Unfinished work.
+
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/parser/uparser.cc, src/parser/bison/ugrammar.y,
 	* src/uconnection.cc: Here.

@@ -2,6 +2,8 @@
 
 #include <unistd.h>
 
+#include <fstream>
+
 #include "libport/utime.hh"
 
 #include "version.hh"
@@ -44,8 +46,8 @@ public:
   {
     const char* banner[] =
       {
-	"***      URBI Console " PACKAGE_VERSION_REV "\n",
-	"***      (C) 2006 Gostai SAS\n"
+	"***	    URBI Console " PACKAGE_VERSION_REV "\n",
+	"***	    (C) 2006 Gostai SAS\n"
       };
 
     if ((size_t) line < sizeof banner / sizeof banner[0])
@@ -59,24 +61,19 @@ public:
   loadFile (const char* filename, UCommandQueue* loadQueue)
   {
     //! \todo check this code
-    FILE *f;
-    int nbread;
-    char buf[1024];
-    f = fopen(filename,"r");
-    if (!f)
-    return UFAIL;
+    std::ifstream is (filename);
+#define URBI_BUFSIZ 1024
+    char buf[URBI_BUFSIZ];
 
-    while (!feof(f))
-      {
-	nbread = fread (buf,
-			sizeof buf[0], sizeof buf / sizeof buf[0],
-			f);
-	if (loadQueue->push((const ubyte*)buf,nbread) == UFAIL)
-	  return (UFAIL);
-      }
+    while (!is.eof())
+    {
+      is.get (buf, URBI_BUFSIZ, '\n');
+      if (loadQueue->push((const ubyte*)buf, URBI_BUFSIZ) == UFAIL)
+	return UFAIL;
+    }
 
-    fclose(f);
-    return USUCCESS;
+    is.close();
+    return is.good () ? USUCCESS : UFAIL;
   }
 
   virtual
@@ -84,24 +81,10 @@ public:
   saveFile (const char* filename, const char* content)
   {
     //! \todo check this code
-    FILE *f;
-    f = fopen(filename, "w");
-    if (!f)
-      return UFAIL;
-
-    int sent = 0;
-    int toSend = strlen(content);
-    int nbSent;
-
-    while (sent < toSend)
-      {
-	nbSent = fwrite((const void*)(content+sent),
-			sizeof(char),toSend-sent,f);
-	sent = sent + nbSent;
-      }
-
-    fclose(f);
-    return USUCCESS;
+    std::ofstream os (filename);
+    os << content;
+    os.close ();
+    return os.good () ? USUCCESS : UFAIL;
   }
 
   virtual
@@ -124,10 +107,10 @@ main ()
   long long startTime = urbi::utime();
 
   while (true)
-    {
-      ufloat freq = s.getFrequency() *1000;
-      while (urbi::utime() < (startTime + freq))
-	usleep (1);
-      s.work ();
-    }
+  {
+    ufloat freq = s.getFrequency() *1000;
+    while (urbi::utime() < (startTime + freq))
+      usleep (1);
+    s.work ();
+  }
 }
