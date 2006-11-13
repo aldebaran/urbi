@@ -13,7 +13,7 @@ include $(top_srcdir)/libport/libport.mk
 
 ACLOCAL_AMFLAGS = -I build-aux
 
-SUBDIRS = src doc .
+SUBDIRS = src tests doc .
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -26,3 +26,10 @@ windows/urbikernel/Debug			\
 windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj       
+
+# Simple forwards.
+uobject-ci uobj-ci uobject-up uob-up:
+	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
+
+urbivali-ci urbivalid-up:
+	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@

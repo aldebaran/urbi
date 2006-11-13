@@ -1,5 +1,5 @@
-								-*- text -*-
-
+							-*- outline -*-
+* configuration
 --enable-host=URBI-HOST
 --enable-env=URBI-ENV
 --with-openr[=sdk-path]
@@ -12,3 +12,8 @@ Note that pass --with-openr does not change the URBI-ENV name, so to
 compile (and install) for Aibo, you should probably run
 
     ./configure --with-openr --host=mipsel-openr --enable-env=aibo
+
+* test suite
+To run the test suite, run make check (-j2 works).  In the build
+directory of the test suite (e.g., _build/linux/tests) there is a
+test-suite.log file which contains all the details.

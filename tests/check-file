@@ -1,0 +1,50 @@
+#! /bin/sh
+
+set -e
+set -xv
+
+# filter_output FILE
+# ------------------
+# Select the lines corresponding to output, normalizing the tags.
+# Strip the banner.  Neutralize ping/pong performances.
+filter_output ()
+{
+  sed -n -e '/^\*\*\* /,/^Ready\.$/d' \
+         -e '/^\[[0-9]*\(:[^]]*\]\)/{s//[XXXXXXXXX\1/;p;}' \
+      "$1" |
+   sed -e 's/\(pong time=\).*/\1XXXXXX/g'
+}
+
+chk=$1
+test -f $chk
+me=$(basename "$chk" ".chk")
+
+# Compute input and expected output.
+sed  -e '/^\[[^]]*\] /d'         $chk >$me.in
+filter_output $chk >$me.expout
+
+# Be sure to end with a shutdown.
+cat <<EOF >>$me.in
+noop;
+wait 2s;
+shutdown;
+EOF
+
+# Feed the input to the console.
+../src/uconsole <$me.in >$me.out
+
+# Strip the banner.
+filter_output $me.out > $me.out.2
+mv $me.out.2 $me.out
+
+# Display input and output.
+echo >&2 "===== Input: "
+cat >&2 $me.in
+
+echo >&2 "===== Output: "
+cat >&2 $me.out
+
+# Compare expected output with actual output.
+diff -u $me.expout $me.out
+
+rm -f $me.in $me.out $me.expout

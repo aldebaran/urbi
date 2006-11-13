@@ -1,5 +1,13 @@
 2006-11-13  Akim Demaille  <akim.demaille@free.fr>
 
+	Use uconsole to check the kernel
+	To run the test, run "make check" (-j accepted).
+	To read the logs, see _build/linux/tests/test-suite.log.
+	* tests/Makefile.am, tests/check-file: New.
+	* Makefile.am, README, configure.ac: Adjust.
+
+2006-11-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Use istream::read
 	* src/console.cc: Use read.
 
