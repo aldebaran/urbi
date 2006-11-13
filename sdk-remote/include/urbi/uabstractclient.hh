@@ -1,5 +1,5 @@
 /*! \file uabstractclient.hh
-****************************************************************************
+ ****************************************************************************
  * $Id: uabstractclient.hh,v 1.9 2005/09/30 17:48:00 nottale Exp $
  *
  * Definition of the URBI interface class
@@ -13,13 +13,13 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-**********************************************************************/
+ **********************************************************************/
 
 #ifndef URBI_UABSTRACTCLIENT_HH
 # define URBI_UABSTRACTCLIENT_HH
@@ -43,9 +43,9 @@
 namespace urbi
 {
   /// Connection Buffer size.
-  static const int URBI_BUFLEN    = 128000 ;
+  static const int URBI_BUFLEN	  = 128000 ;
   /// Standard port of URBI server.
-  static const int URBI_PORT      = 54000  ;
+  static const int URBI_PORT	  = 54000  ;
   /// Maximum length of an URBI tag.
   static const int URBI_MAX_TAG_LENGTH = 64;
 
@@ -83,18 +83,18 @@ namespace urbi
   public:
 
     /// Connection from which originated the message.
-    UAbstractClient    &client;
+    UAbstractClient	 &client;
     /// Server-side timestamp.
-    int                timestamp;
+    int		 timestamp;
     /// Associated tag.
-    std::string        tag;
+    std::string	 tag;
 
-    UMessageType       type;
+    UMessageType	 type;
 
-    urbi::UValue       *value;
-    std::string        message;
+    urbi::UValue	 *value;
+    std::string	 message;
     /// Raw message without the binary data.
-    std::string        rawMessage;
+    std::string	 rawMessage;
 
     /// Parser constructor
     UMessage(UAbstractClient & client, int timestamp,
@@ -113,10 +113,10 @@ namespace urbi
   std::ostream & operator <<(std::ostream &s, const UMessage &m);
 
   /// Callback prototypes.
-  typedef UCallbackAction (*UCallback)             (const UMessage &msg);
+  typedef UCallbackAction (*UCallback)		   (const UMessage &msg);
 
 
-  typedef UCallbackAction (*UCustomCallback)       (void * callbackData,
+  typedef UCallbackAction (*UCustomCallback)	   (void * callbackData,
 						    const UMessage &msg);
 
 
@@ -239,14 +239,14 @@ namespace urbi
     UCallbackID setCallback(UCustomCallback ,void * callbackData,const char* tag);
 
     /// Callback to class member functions(old-style).
-    template<class C>                                         UCallbackID setCallback(C& ref,
-										      UCallbackAction (C::*)(                 const UMessage &),                 const char * tag);
-    template<class C, class P1>                               UCallbackID setCallback(C& ref,
-										      UCallbackAction (C::*)(P1 ,             const UMessage &), P1,             const char * tag);
-    template<class C, class P1, class P2>                     UCallbackID setCallback(C& ref,
-										      UCallbackAction (C::*)(P1 , P2,         const UMessage &), P1, P2,         const char * tag);
-    template<class C, class P1, class P2, class P3>           UCallbackID setCallback(C& ref,
-										      UCallbackAction (C::*)(P1 , P2, P3,     const UMessage &), P1, P2, P3,     const char * tag);
+    template<class C>						UCallbackID setCallback(C& ref,
+											UCallbackAction (C::*)(			const UMessage &),		   const char * tag);
+    template<class C, class P1>				UCallbackID setCallback(C& ref,
+										UCallbackAction (C::*)(P1 ,		const UMessage &), P1,		   const char * tag);
+    template<class C, class P1, class P2>			UCallbackID setCallback(C& ref,
+											UCallbackAction (C::*)(P1 , P2,		const UMessage &), P1, P2,	   const char * tag);
+    template<class C, class P1, class P2, class P3>		UCallbackID setCallback(C& ref,
+											UCallbackAction (C::*)(P1 , P2, P3,	const UMessage &), P1, P2, P3,	   const char * tag);
     template<class C, class P1, class P2, class P3, class P4> UCallbackID setCallback(C& ref,
 										      UCallbackAction (C::*)(P1 , P2, P3, P4, const UMessage &), P1, P2, P3, P4, const char * tag);
 
@@ -291,50 +291,50 @@ namespace urbi
     UCallbackID addCallback(const char * tag, UCallbackWrapper &w);
 
     /// Host name.
-    char           *host;
+    char	     *host;
     /// Urbi Port.
-    int            port;
+    int	     port;
     /// Urbi Buffer length.
-    int            buflen;
+    int	     buflen;
     /// System calls return value storage.
-    int            rc;
+    int	     rc;
 
     /// Reception buffer.
-    char           *recvBuffer;
+    char	     *recvBuffer;
     /// Current position in reception buffer.
-    int            recvBufferPosition;
+    int	     recvBufferPosition;
     /// Temporary buffer for send data.
-    char           *sendBuffer;
+    char	     *sendBuffer;
 
 
   private:
     /// Bin object for this command.
     std::list<urbi::BinaryData> bins;
     /// Temporary storage of binary data.
-    void           *binaryBuffer;
+    void	     *binaryBuffer;
     /// Current position in binaryBuffer.
-    int            binaryBufferPosition;
+    int	     binaryBufferPosition;
     /// Size of binaryBuffer.
-    int            binaryBufferLength;
+    int	     binaryBufferLength;
 
     /// Position of parse in recvBuffer.
-    int            parsePosition;
+    int	     parsePosition;
     /// True if preparsing is in a string.
-    bool           inString;
+    bool	     inString;
     /// Current depth of bracket.
-    int            nBracket;
+    int	     nBracket;
     /// Start of command, after [ts:tag] header.
-    char           *currentCommand;
+    char	     *currentCommand;
 
     /// Position of end of header.
-    int            endOfHeaderPosition;
-    char           currentTag[URBI_MAX_TAG_LENGTH];
+    int	     endOfHeaderPosition;
+    char	     currentTag[URBI_MAX_TAG_LENGTH];
 
-    int            currentTimestamp;
+    int	     currentTimestamp;
 
     std::list<UCallbackInfo>callbackList;
     /// Unique tag base.
-    int            uid;
+    int	     uid;
 
     std::ostream     *stream;
 
@@ -353,7 +353,7 @@ namespace urbi
   class ElementTraits
   {
   public:
-    typedef elementT  Element;
+    typedef elementT	Element;
     typedef elementT& ElementReference;
     typedef const elementT& ConstElementReference;
   };
@@ -362,7 +362,7 @@ namespace urbi
   class ElementTraits<elementT&>
   {
   public:
-    typedef elementT  Element;
+    typedef elementT	Element;
     typedef elementT& ElementReference;
     typedef const elementT& ConstElementReference;
   };
@@ -375,7 +375,10 @@ namespace urbi
     UCallback cb;
   public:
     UCallbackWrapperF(UCallback cb) : cb(cb) {}
-    virtual UCallbackAction operator ()(const UMessage & msg) {return cb(msg);}
+    virtual UCallbackAction operator ()(const UMessage & msg)
+    {
+      return cb(msg);
+    }
     virtual ~UCallbackWrapperF() {}
   };
 
@@ -417,8 +420,8 @@ namespace urbi
     : public UCallbackWrapper
   {
     C& instance;
-    typename ElementTraits<P1>::Element  p1;
     UCallbackAction (C::*funcPtr)(P1, const UMessage &);
+    typename ElementTraits<P1>::Element  p1;
   public:
     UCallbackWrapper1(C& instance, UCallbackAction (C::*func)(P1, const UMessage &), P1 p1)
       : instance(instance), funcPtr(func), p1(p1) {}
@@ -426,11 +429,12 @@ namespace urbi
     virtual ~UCallbackWrapper1() {}
   };
 
-  template<class C, class P1, class P2> class UCallbackWrapper2 : public UCallbackWrapper {
+  template<class C, class P1, class P2> class UCallbackWrapper2 : public UCallbackWrapper
+  {
     C& instance;
+    UCallbackAction (C::*func)(P1, P2, const UMessage &);
     typename ElementTraits<P1>::Element  p1;
     typename ElementTraits<P2>::Element  p2;
-    UCallbackAction (C::*func)(P1, P2, const UMessage &);
   public:
     UCallbackWrapper2(C& instance, UCallbackAction (C::*func)(P1, P2, const UMessage &), P1 p1, P2 p2)
       : instance(instance), func(func), p1(p1), p2(p2) {}
@@ -439,12 +443,13 @@ namespace urbi
   };
 
 
-  template<class C, class P1, class P2, class P3> class UCallbackWrapper3 : public UCallbackWrapper {
+  template<class C, class P1, class P2, class P3> class UCallbackWrapper3 : public UCallbackWrapper
+  {
     C& instance;
+    UCallbackAction (C::*func)(P1, P2, P3, const UMessage &);
     typename ElementTraits<P1>::Element  p1;
     typename ElementTraits<P2>::Element  p2;
     typename ElementTraits<P3>::Element  p3;
-    UCallbackAction (C::*func)(P1, P2, P3, const UMessage &);
   public:
     UCallbackWrapper3(C& instance, UCallbackAction (C::*func)(P1, P2, P3, const UMessage &), P1 p1, P2 p2, P3 p3)
       : instance(instance), func(func), p1(p1), p2(p2), p3(p3) {}
@@ -453,13 +458,14 @@ namespace urbi
   };
 
 
-  template<class C, class P1, class P2, class P3, class P4> class UCallbackWrapper4 : public UCallbackWrapper {
+  template<class C, class P1, class P2, class P3, class P4> class UCallbackWrapper4 : public UCallbackWrapper
+  {
     C& instance;
+    UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &);
     typename ElementTraits<P1>::Element  p1;
     typename ElementTraits<P2>::Element  p2;
     typename ElementTraits<P3>::Element  p3;
     typename ElementTraits<P4>::Element  p4;
-    UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &);
   public:
     UCallbackWrapper4(C& instance, UCallbackAction (C::*func)(P1, P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4)
       : instance(instance), func(func), p1(p1), p2(p2), p3(p3), p4(p4) {}
@@ -469,36 +475,43 @@ namespace urbi
 
   //overloaded callback generators
 
-  inline UCallbackWrapper& callback(UCallback cb) {
+  inline UCallbackWrapper& callback(UCallback cb)
+  {
     return *new UCallbackWrapperF(cb);
   }
-  inline UCallbackWrapper& callback(UCustomCallback cb, void * data) {
+  inline UCallbackWrapper& callback(UCustomCallback cb, void * data)
+  {
     return *new UCallbackWrapperCF(cb, data);
   }
 
 
-  template<class C>                                          UCallbackWrapper& callback(C& ref,
-											UCallbackAction (C::*func)(                 const UMessage &)     ) {
+  template<class C>					     UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(		    const UMessage &)	  )
+  {
     return *new UCallbackWrapper0<C>(ref, func);
   }
 
-  template<class C, class P1>                                UCallbackWrapper& callback(C& ref,
-											UCallbackAction (C::*func)(P1,              const UMessage &), P1 p1) {
+  template<class C, class P1>				     UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1,		    const UMessage &), P1 p1)
+  {
     return *new UCallbackWrapper1<C, P1>(ref, func, p1);
   }
 
-  template<class C, class P1, class P2>                      UCallbackWrapper& callback(C& ref,
-											UCallbackAction (C::*func)(P1, P2,           const UMessage &), P1 p1, P2 p2) {
+  template<class C, class P1, class P2>			     UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1, P2,	     const UMessage &), P1 p1, P2 p2)
+  {
     return *new UCallbackWrapper2<C, P1, P2>(ref, func, p1, p2);
   }
 
-  template<class C, class P1, class P2, class P3>            UCallbackWrapper& callback(C& ref,
-											UCallbackAction (C::*func)(P1, P2, P3,           const UMessage &), P1 p1, P2 p2, P3 p3) {
+  template<class C, class P1, class P2, class P3>	     UCallbackWrapper& callback(C& ref,
+											UCallbackAction (C::*func)(P1, P2, P3,		 const UMessage &), P1 p1, P2 p2, P3 p3)
+  {
     return *new UCallbackWrapper3<C, P1, P2, P3>(ref, func, p1, p2, p3);
   }
 
   template<class C, class P1, class P2, class P3, class P4>  UCallbackWrapper& callback(C& ref,
-											UCallbackAction (C::*func)(P1, P2, P3, P4,           const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4) {
+											UCallbackAction (C::*func)(P1, P2, P3, P4,	     const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4)
+  {
     return *new UCallbackWrapper4<C, P1, P2, P3, P4>(ref, func, p1, p2, p3, p4);
   }
 
@@ -506,28 +519,33 @@ namespace urbi
 
 
   //old-style addCallback, deprecated
-  template<class C>                                          UCallbackID UAbstractClient::setCallback(C& ref,
-												      UCallbackAction (C::*func)(                 const UMessage &),                 const char * tag) {
+  template<class C>					     UCallbackID UAbstractClient::setCallback(C& ref,
+												      UCallbackAction (C::*func)(		  const UMessage &),		     const char * tag)
+  {
     return addCallback(tag, *new UCallbackWrapper0<C>(ref, func));
   }
 
-  template<class C, class P1>                               UCallbackID UAbstractClient::setCallback(C& ref,
-												     UCallbackAction (C::*func)(P1 ,             const UMessage &), P1 p1,          const char * tag){
+  template<class C, class P1>				    UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 ,		 const UMessage &), P1 p1,	    const char * tag)
+  {
     return addCallback(tag, *new UCallbackWrapper1<C, P1>(ref, func, p1));
   }
 
-  template<class C, class P1, class P2>                     UCallbackID UAbstractClient::setCallback(C& ref,
-												     UCallbackAction (C::*func)(P1 , P2,         const UMessage &), P1 p1, P2 p2,         const char * tag){
+  template<class C, class P1, class P2>			    UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 , P2,	 const UMessage &), P1 p1, P2 p2,	  const char * tag)
+  {
     return addCallback(tag, *new UCallbackWrapper2<C, P1, P2>(ref, func, p1, p2));
   }
 
-  template<class C, class P1, class P2, class P3>           UCallbackID UAbstractClient::setCallback(C& ref,
-												     UCallbackAction (C::*func)(P1 , P2, P3,     const UMessage &), P1 p1 , P2 p2, P3 p3,     const char * tag){
+  template<class C, class P1, class P2, class P3>	    UCallbackID UAbstractClient::setCallback(C& ref,
+												     UCallbackAction (C::*func)(P1 , P2, P3,	 const UMessage &), P1 p1 , P2 p2, P3 p3,     const char * tag)
+  {
     return addCallback(tag, *new UCallbackWrapper3<C, P1, P2, P3>(ref, func, p1, p2, p3));
   }
 
   template<class C, class P1, class P2, class P3, class P4> UCallbackID UAbstractClient::setCallback(C& ref,
-												     UCallbackAction (C::*func)(P1 , P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4, const char * tag){
+												     UCallbackAction (C::*func)(P1 , P2, P3, P4, const UMessage &), P1 p1, P2 p2, P3 p3, P4 p4, const char * tag)
+  {
     return addCallback(tag, *new UCallbackWrapper4<C, P1, P2, P3, P4>(ref, func, p1, p2, p3, p4));
   }
 
@@ -535,7 +553,8 @@ namespace urbi
   /// Conveniant macro for easy insertion of URBI code in C
   /**
      With this macro, the following code is enough to send a simple command to a robot using URBI:
-     int main() {
+     int main()
+     {
      urbi::connect("robot");
      URBI(
      headPan.val'n = 0 time:1000 | headTilt.val'n = 0 time:1000, speaker.play("test.wav"),
@@ -570,13 +589,13 @@ namespace urbi
   static const char parallel = '&';
   static const char comma = ',';
 
-  ///This function must be called at the last line of your main() function.
+  /// Must be called at the last line of your main() function.
   void execute(void);
-  ///This function will terminate your URBI program.
+  /// Terminate your URBI program.
   void exit(int code);
-  /// Creates a new UClient object
+  /// Create a new UClient object
   UClient & connect(const char * host);
-  /// Returns the first UClient created by the program. Used by the URBI macro
+  /// Return the first UClient created by the program. Used by the URBI macro
   UClient * getDefaultClient();
   /// Redefine the default client
   void setDefaultClient(UClient * cl);

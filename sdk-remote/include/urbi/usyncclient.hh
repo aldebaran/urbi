@@ -84,11 +84,11 @@ namespace urbi
     void callbackThread();
 
   private:
-    Semaphore * sem;
+    Semaphore* sem;
     std::list<UMessage*> queue;
-    Lockable * queueLock;
-    UMessage * msg;
-    Semaphore * syncLock;
+    Lockable* queueLock;
+    UMessage* msg;
+    Semaphore* syncLock;
     std::string syncTag;
   };
 

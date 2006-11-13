@@ -1,3 +1,10 @@
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
+	Ctor should build in the same order as attribute declarations
+	* include/urbi/uabstractclient.hh: Fix that.
+	Formatting changes (run reindent).
+	* include/urbi/usyncclient.hh: Comment changes.
+
 2006-11-12  Razik Yousfi  <yousfi@gostai.com>
 
 	* src/liburbi/uvar.hh,
