@@ -1,3 +1,9 @@
+2006-11-13  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes
+	* src/parser/uparser.cc, src/parser/bison/ugrammar.y,
+	* src/uconnection.cc: Here.
+
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix ticket #62 (wrong tags in 'if' command)

@@ -37,14 +37,15 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
   result = 0;
 
   std::istrstream * mem_buff = new std::istrstream((char*)command, length);
-  if (!mem_buff) return -1;
+  if (!mem_buff)
+    return -1;
 
   std::istream* mem_input = new std::istream(mem_buff->rdbuf());
   if (!mem_input)
-    {
-      delete mem_buff;
-      return -1;
-    }
+  {
+    delete mem_buff;
+    return -1;
+  }
 
   uflexer.switch_streams(mem_input, 0);// Tells flex the right stream
   binaryCommand = false;

@@ -345,14 +345,14 @@ ROOT: root {
 root:
 
     refvariable ASSIGN binary SEMICOLON {
- 
+
       URefPt<UBinary> *ref = new URefPt<UBinary>($3);
       MEMCHECK(ref);
       UCommand* tmpcmd = new UCommand_ASSIGN_BINARY($1,ref);
       if (tmpcmd) tmpcmd->setTag("__node__");
       MEMCHECK2(tmpcmd,$1,ref);
       if (tmpcmd) uparser.binaryCommand = true;
- 
+
       uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
       if ( uparser.commandTree )
 	uparser.commandTree->setTag("__node__");
@@ -360,7 +360,7 @@ root:
     }
 
   | taggedcommands {
- 
+
       uparser.commandTree = 0;
       if ($1) {
 	if ($1->type == CMD_TREE)
@@ -388,12 +388,12 @@ taggedcommand:
     command {
       if ($1)
 	$1->setTag(UNKNOWN_TAG);
- 
+
       $$ = $1;
     }
 
   | IDENTIFIER flags COLON command {
- 
+
       MEMCHECK($1);
       if ($4) {
 	$4->setTag($1->str());
@@ -403,7 +403,7 @@ taggedcommand:
     }
 
   | TAG flags COLON command {
- 
+
       MEMCHECK($1);
       if ($4) {
 	$4->setTag($1->str());
@@ -413,7 +413,7 @@ taggedcommand:
     }
 
   | IDENTIFIER COLON command {
- 
+
       MEMCHECK($1);
       if ($3) {
 	$3->setTag($1->str());
@@ -422,7 +422,7 @@ taggedcommand:
     }
 
   | TAG COLON command {
- 
+
       MEMCHECK($1);
       if ($3) {
 	$3->setTag($1->str());
@@ -432,7 +432,7 @@ taggedcommand:
 
 
   | STRUCT COLON command {
- 
+
       MEMCHECK($1.device);
       MEMCHECK($1.id);
       if ($3) {
@@ -444,23 +444,23 @@ taggedcommand:
     }
 
   | STRUCT flags COLON command {
- 
+
       MEMCHECK($1.device);
       MEMCHECK($1.id);
- 
+
       if ($4) {
        	$4->setTag(UString($1.device,$1.id).str());
- 
+
 	delete $1.device;
 	delete $1.id;
- 
+
 	$4->flags = $2;
       }
       $$ = $4;
     }
 
   | flags COLON command {
- 
+
       MEMCHECK($1);
       if ($3) {
 	$3->setTag(UNKNOWN_TAG);
@@ -474,37 +474,37 @@ taggedcommand:
 
 flags :
      FLAG  {
- 
+
       UExpression *flagval = new UExpression(EXPR_VALUE,$1);
       MEMCHECK(flagval);
- 
+
       $$ = new UNamedParameters(new UString("flag"),flagval,0);
       MEMCHECK1($$,flagval);
     }
 
   |  FLAG flags  {
- 
+
       UExpression *flagval = new UExpression(EXPR_VALUE,$1);
       MEMCHECK(flagval);
- 
+
       $$ = new UNamedParameters(new UString("flag"),flagval,$2);
       MEMCHECK2($$,flagval,$2);
     }
 
   | FLAGTIME LPAREN expr RPAREN flags {
- 
+
       $$ = new UNamedParameters(new UString("flagtimeout"),$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
   | FLAGTIME LPAREN expr RPAREN {
- 
+
       $$ = new UNamedParameters(new UString("flagtimeout"),$3,0);
       MEMCHECK1($$,$3);
     }
 
   | FLAGID LPAREN expr RPAREN {
- 
+
       $$ = new UNamedParameters(new UString("flagid"),$3,0);
       MEMCHECK1($$,$3);
     }
@@ -910,7 +910,7 @@ instruction:
     }
 /**/
   | FUNCTION variable LPAREN identifiers RPAREN {
- 
+
       if (uparser.connection->functionTag) {
 	delete $2;
 	delete $4;
@@ -924,12 +924,12 @@ instruction:
 	uparser.connection->functionTag = new UString("__Funct__");
 	globalDelete = &uparser.connection->functionTag;
       }
- 
+
     } taggedcommand {
- 
+
       $2->id_type = UDEF_FUNCTION;
       $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
- 
+
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
 	delete uparser.connection->functionTag;
@@ -937,9 +937,9 @@ instruction:
 	globalDelete = 0;
       }
     }
- 
+
   | DEF variable LPAREN identifiers RPAREN {
- 
+
       uparser.connection->server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
       if (uparser.connection->functionTag) {
 	delete $2;
@@ -954,12 +954,12 @@ instruction:
 	uparser.connection->functionTag = new UString("__Funct__");
 	globalDelete = &uparser.connection->functionTag;
       }
- 
+
     } taggedcommand {
- 
+
       $2->id_type = UDEF_FUNCTION;
       $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
- 
+
       MEMCHECK2($$,$2,$4);
       if (uparser.connection->functionTag) {
 	delete uparser.connection->functionTag;
