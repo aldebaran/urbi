@@ -14,7 +14,7 @@
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
 	Factoring
-	* src/uexpression.cc (, ENSURE_TYPES_1, ENSURE_TYPES_2)
+	* src/uexpression.cc (ENSURE_TYPES_1, ENSURE_TYPES_2)
 	(ENSURE_TYPES_3, ENSURE_COMPARISON): New.
 	Use them.
 	Various formatting changes.
@@ -47,9 +47,9 @@
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix ticket #41, not accesschange on object attributes 
+	fix ticket #41, not accesschange on object attributes
 	* src/uvariable.cc: add a call to UVariable::get for each attribute of
-        the object.
+	the object.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
@@ -67,7 +67,7 @@ Since local redefinitions of functions override remote/plugged definitions, the
 local 'myobj.foo' will always be called, bypassing the remote version (only
 accessible now via the :: construct).
 
-	extend support of :: to uobjects 
+	extend support of :: to uobjects
 	* src/ucommand.cc: add support for :: with remote/plugged uobjects.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -78,13 +78,13 @@ This means that it is possible to redefine a remote function written in C++
 by redefining the method in URBI (and possibly redirect it to another C++
 method).
 
-	change functions evaluation priority to: native, plugged, remote  
+	change functions evaluation priority to: native, plugged, remote
 	* src/ucommand.cc: swap order of evaluation for possible function name
-        match.
+	match.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	add support for :: in assignements 
+	add support for :: in assignements
 	* src/ucommand.cc: add same support of :: for UCommand_ASSIGN_VALUE.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -92,18 +92,18 @@ method).
 The idea is to be able to call parent methods inside redefined children
 methods (see NEWS and ticket #65).
 
-	add support for :: construct (ticket #65) 
+	add support for :: construct (ticket #65)
 	* NEWS: add description of recent changes.
 	* src/parser/bison/ugrammar.y: add parsing of :: construct.
 	* src/parser/bison/utoken.l: add :: token.
 	* src/ucommand.cc: add support for simple method call (no uobject, no
-        function. Will be done in next commit).
+	function. Will be done in next commit).
 	* src/uvariablename.cc: add doublecolon.
 	* src/uvariablename.h: add doublecolon.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix string armor problem (related to ticket #63 
+	fix string armor problem (related to ticket #63
 	* src/ustring.cc: add armor() function, with optimization (fastArmor).
 	* src/ustring.h: add armor, fastArmor.
 	* src/uvalue.cc: use armor in UValue::echo.
@@ -114,7 +114,7 @@ A big change in this commit. The use of 'return' in a function will return and
 destroy all commands still in progress in the function. The proper way to exit
 a function which should keep running commands (like 'at') is to avoid using
 'return' (in fact, the function does not return, since it's still running.
-Logical). 
+Logical).
 
 This is new because in C++ this disctinction wouldn't make any sense: there is
 no such things as "still running background instructions" and when the end of
@@ -140,7 +140,7 @@ f2() will kill the 'at', f() will not. This is indeed very useful if the
 'return' instruction is conditionned by some test. It has the same effect as a
 kind of 'stop function_tag'.
 
-	rewrite return mechanism for functions. 
+	rewrite return mechanism for functions.
 	* src/parser/bison/ugrammar.y: remove automatic return.
 	* src/ucallid.cc: add returnVar to store the return container.
 	* src/ucallid.h: add returnVar and accessor.
@@ -149,26 +149,26 @@ kind of 'stop function_tag'.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	formating changes 
+	formating changes
 	* src/unamedparameters.cc: done.
 	* src/unamedparameters.h: done.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	indent 
+	indent
 	* src/uconnection.cc: done.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	add disinherit 
+	add disinherit
 	* src/parser/bison/ugrammar.y: fix bug in call to UCommand_INHERIT
-        constructor with disinherit, should send the 'true' flag for
-        'eraseit'.
+	constructor with disinherit, should send the 'true' flag for
+	'eraseit'.
 	* src/ucommand.cc: add eraseit==true case.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix bug in multiple inheritance 
+	fix bug in multiple inheritance
 	* src/uobj.cc: done.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -195,29 +195,29 @@ UServer::work calls UVariable::get for each of the listed variables.
 
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	formating changes 
+	formating changes
 	* src/uobject.cc: done.
 	* src/userver.h: done.
 
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix ticket #61: $() behavior 
+	fix ticket #61: $() behavior
 	* src/ucommand.cc: resolve name before testing it.
 	* src/uvariablename.cc: simplify $(s) construct and fix bug.
 
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix ticket #54 and bugs in name resolution 
+	fix ticket #54 and bugs in name resolution
 	* src/uobj.cc: fix a bug in iterator value.
 	* src/uvariablename.cc: check now for all possible name spaces all the
-        time, not only according to id_type.
+	time, not only according to id_type.
 
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
 Remote uobjects couldn't be newed anymore because a test was double checking
 the object existence, triggering an error of "object already existing".
 
-	fix remote uobject new 
+	fix remote uobject new
 	* src/ucommand.cc: fixed.
 
 2006-11-07  Akim Demaille  <akim.demaille@free.fr>
