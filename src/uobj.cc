@@ -216,10 +216,7 @@ UObj::~UObj()
 UFunction*
 UObj::searchFunction(const char* id, bool &ambiguous)
 {
-  UFunction *ret;
-  UFunction *tmpres;
-
-  bool found;
+  UFunction* ret;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
@@ -231,24 +228,24 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   else
   {
     ret   = 0;
-    found = false;
+    bool found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
-	 itup != up.end();
-	 itup++)
-	 {
-      tmpres = (*itup)->searchFunction(id, ambiguous);
+         itup != up.end();
+         itup++)
+    {
+      UFunction* tmpres = (*itup)->searchFunction(id, ambiguous);
       if (ambiguous) return 0;
       if (tmpres)
-	if (found)
-	{
-	  ambiguous = true;
-	  return 0;
-	}
-	else
-	{
-	  ret = tmpres;
-	  found = true;
-	}
+        if (found)
+        {
+          ambiguous = true;
+          return 0;
+        }
+        else
+        {
+          ret = tmpres;
+          found = true;
+        }
     }
     ambiguous = false;
     return ret;
@@ -258,9 +255,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
 UVariable*
 UObj::searchVariable(const char* id, bool &ambiguous)
 {
-  UVariable *ret;
-  UVariable *tmpres;
-  bool found;
+  UVariable* ret;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
@@ -272,12 +267,12 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   else
   {
     ret   = 0;
-    found = false;
+    bool found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
 	 itup != up.end();
 	 itup++)
     {
-      tmpres = (*itup)->searchVariable(id, ambiguous);
+      UVariable* tmpres = (*itup)->searchVariable(id, ambiguous);
       if (ambiguous) return 0;
       if (tmpres)
 	if (found)
@@ -300,9 +295,6 @@ UEventHandler*
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
   UEventHandler* ret;
-  UEventHandler* tmpres;
-
-  bool found;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   bool ok = false;
@@ -326,12 +318,12 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   else
   {
     ret   = 0;
-    found = false;
+    bool found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
 	 itup != up.end();
 	 itup++)
     {
-      tmpres = (*itup)->searchEvent(id, ambiguous);
+       UEventHandler* tmpres = (*itup)->searchEvent(id, ambiguous);
       if (ambiguous) return 0;
       if (tmpres)
 	if (found)
