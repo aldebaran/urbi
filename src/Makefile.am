@@ -44,40 +44,40 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
-memorymanager/blockmemorymanager.h				\
-memorymanager/memorymanager.h memorymanager/memorymanager.cc	\
-parser/uparser.h parser/uparser.cc				\
-uasynccommand.h uasynccommand.cc				\
-uasyncregister.h uasyncregister.cc				\
-uatcandidate.h uatcandidate.cc					\
+memorymanager/blockmemorymanager.hh				\
+memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
+parser/uparser.hh parser/uparser.cc				\
+uasynccommand.hh uasynccommand.cc				\
+uasyncregister.hh uasyncregister.cc				\
+uatcandidate.hh uatcandidate.cc					\
 ubanner.hh ubanner.cc						\
-ubinary.h ubinary.cc						\
-ubinder.h ubinder.cc						\
-ucallid.h ucallid.cc						\
-ucommand.h ucommand.cc						\
-ucommandqueue.h ucommandqueue.cc				\
-uconnection.h uconnection.cc					\
-ueventcompound.h ueventcompound.cc				\
-ueventhandler.h ueventhandler.cc				\
-ueventinstance.h ueventinstance.cc				\
-ueventmatch.h ueventmatch.cc					\
-uexpression.h uexpression.cc					\
-ufunction.h ufunction.cc					\
-ughostconnection.h ughostconnection.cc				\
-ugroup.h ugroup.cc						\
-unamedparameters.h unamedparameters.cc				\
-uobj.h uobj.cc							\
+ubinary.hh ubinary.cc						\
+ubinder.hh ubinder.cc						\
+ucallid.hh ucallid.cc						\
+ucommand.hh ucommand.cc						\
+ucommandqueue.hh ucommandqueue.cc				\
+uconnection.hh uconnection.cc					\
+ueventcompound.hh ueventcompound.cc				\
+ueventhandler.hh ueventhandler.cc				\
+ueventinstance.hh ueventinstance.cc				\
+ueventmatch.hh ueventmatch.cc					\
+uexpression.hh uexpression.cc					\
+ufunction.hh ufunction.cc					\
+ughostconnection.hh ughostconnection.cc				\
+ugroup.hh ugroup.cc						\
+unamedparameters.hh unamedparameters.cc				\
+uobj.hh uobj.cc							\
 uobject.cc							\
-uproperty.h uproperty.cc					\
-uqueue.h uqueue.cc						\
-userver.h userver.cc						\
-ustring.h ustring.cc						\
-utypes.h							\
-uvalue.h uvalue.cc						\
+uproperty.hh uproperty.cc					\
+uqueue.hh uqueue.cc						\
+userver.hh userver.cc						\
+ustring.hh ustring.cc						\
+utypes.hh							\
+uvalue.hh uvalue.cc						\
 uvar.cc								\
-uvariable.h uvariable.cc					\
-uvariablelist.h uvariablelist.cc				\
-uvariablename.h uvariablename.cc
+uvariable.hh uvariable.cc					\
+uvariablelist.hh uvariablelist.cc				\
+uvariablename.hh uvariablename.cc
 
 # We either build the BSD connection set, or none at all for Aibo.
 if !OPENR
@@ -109,7 +109,7 @@ nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 # parser.
 EXTRA_DIST +=					\
-parser/uparser.h
+parser/uparser.hh
 
 # parser/bison.
 # This case is handled by parser/bison/bison.mk itself.
@@ -123,44 +123,44 @@ parser/uparser.h
 # files for the cores.
 kernelinclude_HEADERS +=			\
 fwd.hh						\
-ubinary.h					\
-ubinder.h					\
-ucallid.h					\
-ucommand.h					\
-ucommandqueue.h					\
-uconnection.h					\
-ueventhandler.h					\
-uexpression.h					\
-ufunction.h					\
-ughostconnection.h				\
-ugroup.h					\
-unamedparameters.h				\
-uobj.h						\
-uproperty.h					\
-uqueue.h					\
-userver.h					\
-ustring.h					\
-utypes.h					\
-uvalue.h					\
-uvariable.h					\
-uvariablelist.h					\
-uvariablename.h                                 \
-uasynccommand.h                                 \
-uasyncregister.h                                \
-ueventmatch.h                                   \
-ueventcompound.h                                \
-ueventinstance.h                                \
-uatcandidate.h
+ubinary.hh					\
+ubinder.hh					\
+ucallid.hh					\
+ucommand.hh					\
+ucommandqueue.hh				\
+uconnection.hh					\
+ueventhandler.hh				\
+uexpression.hh					\
+ufunction.hh					\
+ughostconnection.hh				\
+ugroup.hh					\
+unamedparameters.hh				\
+uobj.hh						\
+uproperty.hh					\
+uqueue.hh					\
+userver.hh					\
+ustring.hh					\
+utypes.hh					\
+uvalue.hh					\
+uvariable.hh					\
+uvariablelist.hh				\
+uvariablename.hh				\
+uasynccommand.hh				\
+uasyncregister.hh				\
+ueventmatch.hh					\
+ueventcompound.hh				\
+ueventinstance.hh				\
+uatcandidate.hh
 
 urbiinclude_HEADERS = $(uobject_hh)
 
 parserdir = $(kernelincludedir)/parser
-parser_HEADERS = parser/uparser.h
+parser_HEADERS = parser/uparser.hh
 
 memorymanagerdir = $(kernelincludedir)/memorymanager
 memorymanager_HEADERS =				\
-memorymanager/blockmemorymanager.h		\
-memorymanager/memorymanager.h
+memorymanager/blockmemorymanager.hh		\
+memorymanager/memorymanager.hh
 
 
 ## ---------- ##

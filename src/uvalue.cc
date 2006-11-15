@@ -23,14 +23,14 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include <cstdio>
 #include <sstream>
 
-#include "utypes.h"
-#include "uvalue.h"
-#include "ucommand.h"
+#include "utypes.hh"
+#include "uvalue.hh"
+#include "ucommand.hh"
 #define private protected
-#include "uconnection.h"
+#include "uconnection.hh"
 #undef private
 
-#include "userver.h"
+#include "userver.hh"
 #include "urbi/uobject.hh"
 #if (__GNUC__ == 2)
 static const string fixed = "";

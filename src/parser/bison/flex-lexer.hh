@@ -58,7 +58,7 @@
 # define FLEX_LEXER_HH
 # include <iostream>
 
-# include "ucommand.h"
+# include "ucommand.hh"
 # include "ugrammar.hh"
 
 struct yy_buffer_state;

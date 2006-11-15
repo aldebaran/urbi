@@ -19,8 +19,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 
 **************************************************************************** */
 
-#include "uvariable.h"
-#include "userver.h"
+#include "uvariable.hh"
+#include "userver.hh"
 #include "urbi/uobject.hh"
 
 namespace urbi

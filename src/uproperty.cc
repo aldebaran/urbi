@@ -19,9 +19,9 @@
 
  **************************************************************************** */
 
-#include "uproperty.h"
-#include "uvariablename.h"
-#include "ustring.h"
+#include "uproperty.hh"
+#include "uvariablename.hh"
+#include "ustring.hh"
 
 
 // **************************************************************************

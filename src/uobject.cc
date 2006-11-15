@@ -22,11 +22,11 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <cstdarg>
 #include <cstdio>
 #include <list>
-#include "userver.h"
-#include "uconnection.h"
-#include "ughostconnection.h"
+#include "userver.hh"
+#include "uconnection.hh"
+#include "ughostconnection.hh"
 #include "urbi/uobject.hh"
-#include "utypes.h"
+#include "utypes.hh"
 
 #ifdef _MSC_VER
 # define snprintf _snprintf

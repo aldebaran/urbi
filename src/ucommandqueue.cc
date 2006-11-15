@@ -22,9 +22,9 @@
 #include <cstdlib>
 #include "libport/cstring"
 
-#include "uqueue.h"
-#include "ucommandqueue.h"
-#include "userver.h"
+#include "uqueue.hh"
+#include "ucommandqueue.hh"
+#include "userver.hh"
 
 //! UCommandQueue constructor.
 /*! UCommandQueue constructor simply calls the UQueue constructor with the same

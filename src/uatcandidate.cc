@@ -16,9 +16,9 @@
 
  **************************************************************************** */
 
-#include "uatcandidate.h"
-#include "ucommand.h"
-#include "ueventinstance.h"
+#include "uatcandidate.hh"
+#include "ucommand.hh"
+#include "ueventinstance.hh"
 
 // **************************************************************************
 // UAtCandidate

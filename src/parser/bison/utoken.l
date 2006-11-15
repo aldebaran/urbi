@@ -25,7 +25,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "parser/uparser.h"
+#include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
@@ -127,26 +127,26 @@ STRING   \"([^"]|"\\\"")*\"
 		return token::NUM; }
 
 {STRING}      { valp->str = new UString(yytext+1);
-  
-                /* remove 1 to size because of the ending "*/
-                valp->str->setLen( valp->str->len() -1 );     
+
+		/* remove 1 to size because of the ending "*/
+		valp->str->setLen( valp->str->len() -1 );
 		if (valp->str->str() == 0)
-                {
+		{
 		  delete (valp->str);
 		  valp->str = 0;
 		}
 
 		if (valp->str != 0) {
-                  /* remove ending " */
+		  /* remove ending " */
 		  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
 		  *position=0;
-                  
-                  /* unArmor */
-                  valp->str->unArmor();		  
+
+		  /* unArmor */
+		  valp->str->unArmor();
 		}
 
-		return token::STRING; 
-              }
+		return token::STRING;
+	      }
 
 
 stop       |
@@ -346,11 +346,11 @@ list          { return token::GROUPLIST;}
 
 
 {ID}"."{ID}("."{ID})+   { valp->str = new UString(yytext);
-	             	     if (valp->str->str() == 0) {
-		               delete (valp->str);
-		               valp->str = 0;
-		             }
-		           return token::TAG; }
+		     	     if (valp->str->str() == 0) {
+			       delete (valp->str);
+			       valp->str = 0;
+			     }
+			   return token::TAG; }
 
 
 [ \t\r]+       locp->step();/* eat up whitespace */

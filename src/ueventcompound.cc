@@ -18,12 +18,12 @@
 #include <cstdio>
 #include <sstream>
 
-#include "ueventcompound.h"
-#include "uasynccommand.h"
-#include "ueventmatch.h"
-#include "uvalue.h"
-#include "userver.h"
-#include "ueventinstance.h"
+#include "ueventcompound.hh"
+#include "uasynccommand.hh"
+#include "ueventmatch.hh"
+#include "uvalue.hh"
+#include "userver.hh"
+#include "ueventinstance.hh"
 
 // **************************************************************************
 // UEventCompound
@@ -239,4 +239,3 @@ UEventCompound::normalForm ()
       return;
   }
 }
-

@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <iostream>
-#include "memorymanager.h"
+#include "memorymanager/memorymanager.hh"
 
 namespace MemoryManager
 {

@@ -19,11 +19,11 @@
 
  **************************************************************************** */
 
-#include "ugroup.h"
-#include "ustring.h"
-#include "uvalue.h"
-#include "uvariablename.h"
-#include "userver.h"
+#include "ugroup.hh"
+#include "ustring.hh"
+#include "uvalue.hh"
+#include "uvariablename.hh"
+#include "userver.hh"
 
 // **************************************************************************
 //! UGroup constructor.

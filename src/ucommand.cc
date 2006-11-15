@@ -27,17 +27,17 @@
 
 #include <sstream>
 
-#include "ucommand.h"
-#include "uasynccommand.h"
-#include "uconnection.h"
-#include "userver.h"
-#include "ucallid.h"
-#include "utypes.h"
+#include "ucommand.hh"
+#include "uasynccommand.hh"
+#include "uconnection.hh"
+#include "userver.hh"
+#include "ucallid.hh"
+#include "utypes.hh"
 #include "urbi/uobject.hh"
-#include "ueventhandler.h"
-#include "ueventcompound.h"
-#include "ueventinstance.h"
-#include "uatcandidate.h"
+#include "ueventhandler.hh"
+#include "ueventcompound.hh"
+#include "ueventinstance.hh"
+#include "uatcandidate.hh"
 
 #if (__GNUC__ == 2)
 static const string left = "";
@@ -4381,7 +4381,7 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 
 //#define ENABLE_BENCH
 #ifdef ENABLE_BENCH
-#include "testspeed.h"
+#include "testspeed.hh"
 #endif
 //! UCommand subclass execution function
 UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)

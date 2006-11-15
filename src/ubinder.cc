@@ -20,11 +20,11 @@
  **************************************************************************** */
 #include <algorithm>
 
-#include "ubinder.h"
-#include "ustring.h"
-#include "uvalue.h"
-#include "uvariablename.h"
-#include "userver.h"
+#include "ubinder.hh"
+#include "ustring.hh"
+#include "uvalue.hh"
+#include "uvariablename.hh"
+#include "userver.hh"
 
 // **************************************************************************
 //! UBinder constructor.

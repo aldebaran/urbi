@@ -19,9 +19,9 @@
 
  **************************************************************************** */
 
-#include "ucallid.h"
-#include "ustring.h"
-#include "ucommand.h"
+#include "ucallid.hh"
+#include "ustring.hh"
+#include "ucommand.hh"
 
 // **************************************************************************
 //! UCallid constructor.

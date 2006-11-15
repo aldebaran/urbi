@@ -16,14 +16,14 @@
 
  **************************************************************************** */
 
-#include "ueventhandler.h"
+#include "ueventhandler.hh"
 
 #include <sstream>
 
-#include "ueventhandler.h"
-#include "unamedparameters.h"
-#include "utypes.h"
-#include "userver.h"
+#include "ueventhandler.hh"
+#include "unamedparameters.hh"
+#include "utypes.hh"
+#include "userver.hh"
 
 std::string
 kernel::forgeName (UString* name, int nbarg)

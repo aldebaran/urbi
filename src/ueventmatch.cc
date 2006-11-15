@@ -18,10 +18,10 @@
 #include <cstdio>
 #include <sstream>
 
-#include "ueventmatch.h"
-#include "uasynccommand.h"
-#include "utypes.h"
-#include "userver.h"
+#include "ueventmatch.hh"
+#include "uasynccommand.hh"
+#include "utypes.hh"
+#include "userver.hh"
 
 UEventMatch* kernel::eventmatch_true;
 UEventMatch* kernel::eventmatch_false;

@@ -100,7 +100,7 @@ $(FROM_UTOKEN_L): utoken.stamp
 	fi
 
 
-# Kludge to install userver.h.
+# Kludge to install userver.hh.
 kernelinclude_HEADERS += 		\
 stack.hh				\
 position.hh				\

@@ -21,10 +21,10 @@
 
 #include <cmath>
 
-#include "unamedparameters.h"
-#include "ucommand.h"
-#include "uconnection.h"
-#include "userver.h"
+#include "unamedparameters.hh"
+#include "ucommand.hh"
+#include "uconnection.hh"
+#include "userver.hh"
 
 
 // **************************************************************************

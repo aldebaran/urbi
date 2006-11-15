@@ -23,14 +23,14 @@
 #define snprintf _snprintf
 #endif
 
-#include "uobj.h"
-#include "ustring.h"
-#include "uvalue.h"
-#include "uvariablename.h"
-#include "userver.h"
-#include "uconnection.h"
+#include "uobj.hh"
+#include "ustring.hh"
+#include "uvalue.hh"
+#include "uvariablename.hh"
+#include "userver.hh"
+#include "uconnection.hh"
 #include "urbi/uobject.hh"
-#include "ueventhandler.h"
+#include "ueventhandler.hh"
 
 char namebuffer[1024];
 

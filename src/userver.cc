@@ -25,14 +25,14 @@
 #include <string>
 
 #include "ubanner.hh"
-#include "userver.h"
-#include "uconnection.h"
-#include "utypes.h"
-#include "ughostconnection.h"
+#include "userver.hh"
+#include "uconnection.hh"
+#include "utypes.hh"
+#include "ughostconnection.hh"
 #include "urbi/uobject.hh"
-#include "ueventmatch.h"
-#include "ueventcompound.h"
-#include "ueventhandler.h"
+#include "ueventmatch.hh"
+#include "ueventcompound.hh"
+#include "ueventhandler.hh"
 
 #ifdef _MSC_VER
 # define snprintf _snprintf

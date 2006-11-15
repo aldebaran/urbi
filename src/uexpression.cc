@@ -29,14 +29,14 @@
 
 #include "libport/cstring"
 
-#include "uexpression.h"
-#include "ucommand.h"
-#include "uconnection.h"
-#include "ueventcompound.h"
-#include "ueventmatch.h"
-#include "ueventinstance.h"
+#include "uexpression.hh"
+#include "ucommand.hh"
+#include "uconnection.hh"
+#include "ueventcompound.hh"
+#include "ueventmatch.hh"
+#include "ueventinstance.hh"
 
-#include "userver.h"
+#include "userver.hh"
 
 MEMORY_MANAGER_INIT(UExpression);
 // **************************************************************************

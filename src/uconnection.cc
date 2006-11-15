@@ -28,13 +28,13 @@
 
 #include "libport/lockable.hh"
 #include "ubanner.hh"
-#include "uconnection.h"
-#include "userver.h"
-#include "uqueue.h"
-#include "ucommandqueue.h"
-#include "parser/uparser.h"
-#include "ucallid.h"
-#include "uvariable.h"
+#include "uconnection.hh"
+#include "userver.hh"
+#include "uqueue.hh"
+#include "ucommandqueue.hh"
+#include "parser/uparser.hh"
+#include "ucallid.hh"
+#include "uvariable.hh"
 
 char errorMessage[1024]; // Global variable (thanks bison...) to store the
 // the error message when a parsing error occurs.

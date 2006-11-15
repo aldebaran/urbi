@@ -21,10 +21,10 @@
 
 #include <cmath>
 
-#include "uvariablelist.h"
-#include "ucommand.h"
-#include "uconnection.h"
-#include "userver.h"
+#include "uvariablelist.hh"
+#include "ucommand.hh"
+#include "uconnection.hh"
+#include "userver.hh"
 
 
 // **************************************************************************

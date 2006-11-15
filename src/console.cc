@@ -1,12 +1,12 @@
 #include "config.h"
+#include "version.hh"
 
 #include <fstream>
 
 #include "libport/utime.hh"
 
-#include "version.hh"
-#include "userver.h"
-#include "ughostconnection.h"
+#include "userver.hh"
+#include "ughostconnection.hh"
 
 #define URBI_BUFSIZ 1024
 

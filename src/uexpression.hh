@@ -1,0 +1,121 @@
+/*! \file uexpression.hh
+ *******************************************************************************
+
+ File: uexpression.h\n
+ Definition of the UExpression class.
+
+ This file is part of
+ %URBI Kernel, version __kernelversion__\n
+ (c) Jean-Christophe Baillie, 2004-2005.
+
+ Permission to use, copy, modify, and redistribute this software for
+ non-commercial use is hereby granted.
+
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
+
+ For more information, comments, bug reports: http://www.urbiforge.net
+
+ **************************************************************************** */
+
+#ifndef UEXPRESSION_HH
+#define UEXPRESSION_HH
+
+#include <list>
+
+#include "fwd.hh"
+#include "utypes.hh"
+#include "ustring.hh"
+#include "ucommandqueue.hh"
+#include "memorymanager/memorymanager.hh"
+
+
+// ****************************************************************************
+//! Contain an expression tree as returned by the parser
+/*! UExpression class:
+
+    There is no subclass to UExpression to make it easier to have
+    expressions with transforming type, like in the numerical reduction
+    that happends in the parser: 4+5 which is a EXPR_PLUS expression will
+    be transformed into a EXPR_VALUE with value 9. Sub classes would make
+    this operation more difficult to do. Furthermore, the memory loss due
+    to non subclassing is very low in the case of UExpression.
+*/
+class UExpression
+{
+public:
+  MEMORY_MANAGED;
+  UExpression(UExpressionType type, ufloat *val);
+  UExpression(UExpressionType type, ufloat val);
+
+  UExpression(UExpressionType type, UString *str);
+  UExpression(UExpressionType type, UValue *v);
+  UExpression(UExpressionType type, UValue v);
+
+  UExpression(UExpressionType type,
+	      UExpression* expression1,
+	      UExpression* expression2);
+  UExpression(UExpressionType type, UVariableName* variablename);
+  UExpression(UExpressionType type,
+	      UVariableName* variablename,
+	      UExpression *expression1);
+  UExpression(UExpressionType type,
+	      UVariableName* variablename,
+	      UNamedParameters *parameters);
+  UExpression(UExpressionType type,
+	      UNamedParameters *parameters);
+  UExpression(UExpressionType type,
+	      UString *oper,
+	      UString *id);
+  UExpression(UExpressionType type,
+	      UString *oper,
+	      UVariableName *variablename);
+  ~UExpression();
+
+  void            print       ();
+  void            initialize  ();
+
+  // Backward compatible version of eval (thanks Mr. C++Overloading!)
+  UValue*         eval        (UCommand *command,
+			       UConnection *connection);
+
+  // New version of eval, capable of returning a UEventCompound
+  UValue*         eval        (UCommand *command,
+			       UConnection *connection,
+			       UEventCompound*& ec);
+
+  UErrorValue     asyncScan   (UASyncCommand* cmd,
+			       UConnection* c);
+
+  UExpression*    copy        ();
+
+  UExpressionType type;         ///< Type of the expression.
+  UDataType       dataType;     ///< Type of the expression's data.
+
+  ufloat          val;          ///< numerical value used for the EXPR_NUM
+  UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR
+
+  /** stores a tmp UValue resulting from a function evaluation (which
+   * temporarily is processed as an UExpression), Usually, the value of this is 0.
+   */
+  UValue          *tmp_value;
+				///< type.
+  UString         *id;          ///< id of the EXPR_FUNCTOR
+  bool            firsteval;    ///< true on first evaluation (used by static)
+  bool            isconst;      ///< true when the expr is const
+  bool            issofttest;   ///< true when the expr is a soft test
+  UValue          *staticcache; ///< used for static variables
+
+  UExpression     *expression1; ///< Left side of a compound expression.
+  UExpression     *expression2; ///< Right side of a compound expression.
+  UVariableName   *variablename;///< variable when the expression is a
+				///< EXPR_VARIABLE or  EXPR_FUNCTION
+  UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION
+				///< or EXPR_LIST
+
+  UExpression      *softtest_time; ///< Time constant for a soft test (0 means
+				   ///< "hard test")
+};
+
+#endif

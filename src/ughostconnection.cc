@@ -21,8 +21,8 @@
 
 #include "libport/cstring"
 
-#include "utypes.h"
-#include "ughostconnection.h"
+#include "utypes.hh"
+#include "ughostconnection.hh"
 
 class UServer;
 

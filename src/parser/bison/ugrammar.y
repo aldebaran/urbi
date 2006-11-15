@@ -32,8 +32,8 @@
 %debug
 
 %{
-#include "utypes.h"
-#include "ucommand.h"
+#include "utypes.hh"
+#include "ucommand.hh"
 class UParser;
 %}
 
@@ -69,11 +69,11 @@ class UParser;
 #define TRUE  ufloat(1)
 #define FALSE ufloat(0)
 
-#include "parser/uparser.h"
+#include "parser/uparser.hh"
 
-#include "uconnection.h"
-#include "uobj.h"
-#include "ugroup.h"
+#include "uconnection.hh"
+#include "uobj.hh"
+#include "ugroup.hh"
 
 extern UString** globalDelete;
 
@@ -1157,7 +1157,7 @@ purevariable:
       MEMCHECK($1);
       MEMCHECK($3);
       $$ = new UVariableName($1,$3,true,
-                             (UNamedParameters*)0);
+			     (UNamedParameters*)0);
       if ($$) $$->doublecolon = true;
       MEMCHECK2($$,$1,$3);
     }

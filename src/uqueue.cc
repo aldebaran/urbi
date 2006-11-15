@@ -22,8 +22,8 @@
 #include <cstdlib>
 #include "libport/cstring"
 
-#include "uqueue.h"
-#include "userver.h"
+#include "uqueue.hh"
+#include "userver.hh"
 
 //! UQueue constructor.
 /*! UQueue implements a dynamic circular FIFO buffer.

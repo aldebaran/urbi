@@ -18,12 +18,12 @@
 #include <cstdio>
 #include <sstream>
 
-#include "uasyncregister.h"
-#include "uasynccommand.h"
+#include "uasyncregister.hh"
+#include "uasynccommand.hh"
 
 //FIXME: used only for debugging purposes
-#include "userver.h"
-#include "utypes.h"
+#include "userver.hh"
+#include "utypes.hh"
 
 // **************************************************************************
 // UASyncRegister

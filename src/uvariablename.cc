@@ -26,11 +26,11 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #define snprintf _snprintf
 #endif
 
-#include "uvariablename.h"
-#include "ucommand.h"
-#include "uconnection.h"
-#include "userver.h"
-#include "ucallid.h"
+#include "uvariablename.hh"
+#include "ucommand.hh"
+#include "uconnection.hh"
+#include "userver.hh"
+#include "ucallid.hh"
 #include "urbi/uobject.hh"
 
 

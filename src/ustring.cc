@@ -23,8 +23,8 @@
 
 #include "libport/cstring"
 
-#include "ustring.h"
-#include "userver.h"
+#include "ustring.hh"
+#include "userver.hh"
 
 MEMORY_MANAGER_INIT(UString);
 

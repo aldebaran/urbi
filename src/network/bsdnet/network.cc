@@ -12,8 +12,8 @@
 #ifdef WIN32
 #define _WIN32_WINNT 0x0400
 #endif
-#include "network.h"
-#include "connection.hh"
+#include "network/bsdnet/network.hh"
+#include "network/bsdnet/connection.hh"
 
 
 extern UServer * THESERVER;

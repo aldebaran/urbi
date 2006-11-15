@@ -21,9 +21,9 @@
 
 #include "libport/cstring"
 #include <cstdlib>
-#include "ufunction.h"
-#include "userver.h"
-#include "ucommand.h"
+#include "ufunction.hh"
+#include "userver.hh"
+#include "ucommand.hh"
 
 UFunction::UFunction(UString *funname,
 		     UNamedParameters *parameters,

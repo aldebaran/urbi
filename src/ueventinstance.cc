@@ -18,14 +18,14 @@
 #include <cstdio>
 #include <sstream>
 
-#include "ueventinstance.h"
-#include "uasynccommand.h"
-#include "ueventmatch.h"
-#include "ueventhandler.h"
+#include "ueventinstance.hh"
+#include "uasynccommand.hh"
+#include "ueventmatch.hh"
+#include "ueventhandler.hh"
 
 //FIXME for debugging purposes only
-#include "userver.h"
-#include "utypes.h"
+#include "userver.hh"
+#include "utypes.hh"
 
 // **************************************************************************
 // UEventInstance

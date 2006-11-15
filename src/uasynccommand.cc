@@ -23,13 +23,13 @@
 
 #include <sstream>
 
-#include "uasynccommand.h"
-#include "ucommand.h"
-#include "uconnection.h"
-#include "userver.h"
-#include "utypes.h"
-#include "ueventinstance.h"
-#include "ueventmatch.h"
+#include "uasynccommand.hh"
+#include "ucommand.hh"
+#include "uconnection.hh"
+#include "userver.hh"
+#include "utypes.hh"
+#include "ueventinstance.hh"
+#include "ueventmatch.hh"
 
 // **************************************************************************
 // UASyncCommand

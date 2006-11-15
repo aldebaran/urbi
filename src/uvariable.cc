@@ -24,12 +24,12 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "uvariable.h"
-#include "uasyncregister.h"
-#include "userver.h"
-#include "ucommand.h"
-#include "utypes.h"
-#include "uconnection.h"
+#include "uvariable.hh"
+#include "uasyncregister.hh"
+#include "userver.hh"
+#include "ucommand.hh"
+#include "utypes.hh"
+#include "uconnection.hh"
 #include "urbi/uobject.hh"
 #ifdef _MSC_VER
 #define snprintf _snprintf
