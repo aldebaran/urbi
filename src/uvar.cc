@@ -176,7 +176,8 @@ namespace urbi
   void
   UVar::operator = (const UImage &b)
   {
-    if (!vardata) {
+    if (!vardata)
+    {
       echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
 	   name.c_str());
       return;
@@ -389,7 +390,8 @@ namespace urbi
     {
     if (vardata)
     return ((UBlendType)vardata->variable->blendType);
-    else {
+    else
+    {
     echo("Internal error on variable 'vardata', should not be zero\n");
     return (UNORMAL);
     }

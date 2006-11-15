@@ -69,40 +69,40 @@ bool
 kernel::isCoreFunction (UString *fullname)
 {
   return ( (fullname->equal ("freemem")) ||
-           (fullname->equal ("power")) ||
-           (fullname->equal ("cpuload")) ||
-           (fullname->equal ("time")) ||
-           (fullname->equal ("save")) ||
-           (fullname->equal ("getIndex")) ||
-           (fullname->equal ("cat")) ||
-           (fullname->equal ("strlen")) ||
-           (fullname->equal ("head")) ||
-           (fullname->equal ("tail")) ||
-           (fullname->equal ("size")) ||
-           (fullname->equal ("isdef")) ||
-           (fullname->equal ("isvoid")) ||
-           (fullname->equal ("load")) ||
-           (fullname->equal ("loadwav")) ||
-           (fullname->equal ("exec")) ||
-           (fullname->equal ("strsub")) ||
-           (fullname->equal ("atan2")) ||
-           (fullname->equal ("sin")) ||
-           (fullname->equal ("asin")) ||
-           (fullname->equal ("cos")) ||
-           (fullname->equal ("acos")) ||
-           (fullname->equal ("string")) ||
-           (fullname->equal ("tan")) ||
-           (fullname->equal ("atan")) ||
-           (fullname->equal ("sgn")) ||
-           (fullname->equal ("abs")) ||
-           (fullname->equal ("exp")) ||
-           (fullname->equal ("log")) ||
-           (fullname->equal ("round")) ||
-           (fullname->equal ("random")) ||
-           (fullname->equal ("trunc")) ||
-           (fullname->equal ("sqr")) ||
-           (fullname->equal ("sqrt"))
-           );
+	   (fullname->equal ("power")) ||
+	   (fullname->equal ("cpuload")) ||
+	   (fullname->equal ("time")) ||
+	   (fullname->equal ("save")) ||
+	   (fullname->equal ("getIndex")) ||
+	   (fullname->equal ("cat")) ||
+	   (fullname->equal ("strlen")) ||
+	   (fullname->equal ("head")) ||
+	   (fullname->equal ("tail")) ||
+	   (fullname->equal ("size")) ||
+	   (fullname->equal ("isdef")) ||
+	   (fullname->equal ("isvoid")) ||
+	   (fullname->equal ("load")) ||
+	   (fullname->equal ("loadwav")) ||
+	   (fullname->equal ("exec")) ||
+	   (fullname->equal ("strsub")) ||
+	   (fullname->equal ("atan2")) ||
+	   (fullname->equal ("sin")) ||
+	   (fullname->equal ("asin")) ||
+	   (fullname->equal ("cos")) ||
+	   (fullname->equal ("acos")) ||
+	   (fullname->equal ("string")) ||
+	   (fullname->equal ("tan")) ||
+	   (fullname->equal ("atan")) ||
+	   (fullname->equal ("sgn")) ||
+	   (fullname->equal ("abs")) ||
+	   (fullname->equal ("exp")) ||
+	   (fullname->equal ("log")) ||
+	   (fullname->equal ("round")) ||
+	   (fullname->equal ("random")) ||
+	   (fullname->equal ("trunc")) ||
+	   (fullname->equal ("sqr")) ||
+	   (fullname->equal ("sqrt"))
+	   );
 }
 
 UEventHandler* kernel::eh_system_alwaystrue;
@@ -113,7 +113,7 @@ UEvent* kernel::system_alwaystrue;
 // UEvent
 
 UEvent::UEvent (UEventHandler* eventhandler,
-                std::list<UValue*>& args):
+		std::list<UValue*>& args):
   eventhandler_ (eventhandler),
   args_ (args)
 {
@@ -149,8 +149,8 @@ UEventHandler::~UEventHandler()
 
 UEvent*
 UEventHandler::addEvent(UNamedParameters* parameters,
-                        UCommand* command,
-                        UConnection* connection)
+			UCommand* command,
+			UConnection* connection)
 {
   UNamedParameters* param = parameters;
   UValue* e1;

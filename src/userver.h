@@ -77,11 +77,11 @@ public:
   virtual ufloat    getTime         () = 0;
   virtual ufloat    getPower        () = 0;
   virtual void      getCustomHeader (int line, char* header,
-                                     int maxlength) = 0;
+				     int maxlength) = 0;
   virtual UErrorValue loadFile      (const char *filename,
-                                     UCommandQueue* loadQueue) = 0;
+				     UCommandQueue* loadQueue) = 0;
   virtual UErrorValue saveFile      (const char *filename,
-                                     const char * content) = 0;
+				     const char * content) = 0;
   void              memoryCheck     ();
   int               memory          ();
 

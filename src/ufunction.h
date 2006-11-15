@@ -23,11 +23,12 @@
 #define UFUNCTION_H_DEFINED
 
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 #include "fwd.hh"
 
 //! UFunction is used to handle functions in the URBI server
-class UFunction {
+class UFunction
+{
 public:
 
   UFunction(UString *funname,

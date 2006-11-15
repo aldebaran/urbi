@@ -26,7 +26,7 @@
 #ifndef UTYPE_H_DEFINED
 # define UTYPE_H_DEFINED
 
-# include <cstring>
+# include "libport/cstring"
 # include <list>
 # ifdef _MSC_VER
 #  define snprintf _snprintf
@@ -50,7 +50,7 @@ extern  int   availableMemory; //< Total amount of free memory in the system
 # define LIBERATE(x) if (x && x->liberate()==0) delete (x)
 # define DD ::urbiserver->debug("Check point %s, %d\n", __FILE__, __LINE__);
 # define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n", \
-                                    x, __FILE__, __LINE__);
+				    x, __FILE__, __LINE__);
 
 # define ASSERT(test) if (!(test)) \
   ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n", \
@@ -59,20 +59,23 @@ extern  int   availableMemory; //< Total amount of free memory in the system
 typedef unsigned long IPAdd;
 
 //! Return code values
-enum UErrorValue {
+enum UErrorValue
+{
   USUCCESS,
   UFAIL,
   UMEMORYFAIL
 };
 
 //! Return code for variable Update
-enum UVarSet {
+enum UVarSet
+{
   UOK,
   USPEEDMAX
 };
 
 //! Type of Errors
-enum UErrorCode {
+enum UErrorCode
+{
   UERROR_CRITICAL,
   UERROR_SYNTAX,
   UERROR_DIVISION_BY_ZERO,
@@ -85,13 +88,15 @@ enum UErrorCode {
 };
 
 //! Type of Bind modes
-enum UBindMode {
+enum UBindMode
+{
   UEXTERNAL,
   UINTERNAL
 };
 
 //! Type of binding
-enum UBindType {
+enum UBindType
+{
   UBIND_FUNCTION,
   UBIND_VAR,
   UBIND_EVENT,
@@ -99,7 +104,8 @@ enum UBindType {
 };
 
 //! Type of defs in UCommand_DEF
-enum UDefType {
+enum UDefType
+{
   UDEF_FUNCTION,
   UDEF_VAR,
   UDEF_VARS,
@@ -110,12 +116,14 @@ enum UDefType {
 
 
 //! Type of Warnings
-enum UWarningCode {
+enum UWarningCode
+{
   UWARNING_MEMORY
 };
 
 //! Type of Derivative
-enum UDeriveType {
+enum UDeriveType
+{
   UNODERIV,
   UDERIV,
   UDERIV2,
@@ -125,14 +133,16 @@ enum UDeriveType {
 
 
 //! Results of a test
-enum UTestResult {
+enum UTestResult
+{
   UFALSE,
   UTRUE,
   UTESTFAIL
 };
 
 //! The different types for a UCommand
-enum UCommandType {
+enum UCommandType
+{
   CMD_GENERIC,
     CMD_TREE,
     CMD_ASSIGN_VALUE,
@@ -178,7 +188,8 @@ enum UCommandType {
   };
 
 //! Possible status for a UCommand
-enum UCommandStatus {
+enum UCommandStatus
+{
   UONQUEUE,
   URUNNING,
   UCOMPLETED,
@@ -187,7 +198,8 @@ enum UCommandStatus {
 };
 
 //! The different types for a UExpression.
-enum UExpressionType {
+enum UExpressionType
+{
   EXPR_VALUE,
   EXPR_VARIABLE,
   EXPR_LIST,
@@ -228,7 +240,8 @@ enum UEventCompoundType
 };
 
 //! The different Data types
-enum UDataType {
+enum UDataType
+{
   DATA_UNKNOWN,
   DATA_NUM,
   DATA_STRING,
@@ -242,7 +255,8 @@ enum UDataType {
 };
 
 //! Blending mode
-enum UBlend {
+enum UBlend
+{
   UMIX,
   UADD,
   UDISCARD,
@@ -252,7 +266,8 @@ enum UBlend {
 };
 
 //! Node type for a UCommand_TREE
-enum UNodeType {
+enum UNodeType
+{
   UAND,
   UPIPE,
   USEMICOLON,
@@ -260,14 +275,16 @@ enum UNodeType {
 };
 
 //! Runlevel type for a binary tree exploration
-enum URunlevel {
+enum URunlevel
+{
   UWAITING,
   UEXPLORED,
   UTERMINATED
 };
 
 //! Return code values for the setDeviceVar method
-enum UReport {
+enum UReport
+{
   UDONE,
   UCONTINUE
 };
@@ -282,7 +299,8 @@ typedef unsigned char ubyte;
 
 //! URefPt is used to make references to pointers.
 template <class T>
-class URefPt {
+class URefPt
+{
 public:
 
   URefPt(T* p_)

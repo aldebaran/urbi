@@ -62,7 +62,7 @@ public:
 
 private:
 
-  /** The matching filter. 
+  /** The matching filter.
    * Variables name are stored in full name and wildcards are stored as "*".
    * This filter can be paired with the content of the UEvent::args to execute
    * the matching.
@@ -103,7 +103,7 @@ public:
    * cartesien product.
    */
   UMultiEventInstance (UMultiEventInstance *mei1,
-                       UMultiEventInstance *mei2);
+		       UMultiEventInstance *mei2);
 
   /** UMultiEventInstance destructor */
   virtual ~UMultiEventInstance();

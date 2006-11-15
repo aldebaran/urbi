@@ -59,9 +59,9 @@ UObj::~UObj()
        ++it)
   {
     if (((*it).second->method) &&
-        ((*it).second->devicename) && (device) &&
-        ((*it).second->value->dataType != DATA_OBJ) &&
-        ((*it).second->devicename->equal(device)) )
+	((*it).second->devicename) && (device) &&
+	((*it).second->value->dataType != DATA_OBJ) &&
+	((*it).second->devicename->equal(device)) )
     {
       varToDelete.push_back((*it).second);
     }
@@ -84,8 +84,8 @@ UObj::~UObj()
       bool isempty = it->second->binder->removeMonitor(device);
       if (isempty)
       {
-        delete it->second->binder;
-        it->second->binder = 0;
+	delete it->second->binder;
+	it->second->binder = 0;
       }//if
     }//if
   }//for
@@ -129,8 +129,8 @@ UObj::~UObj()
     snprintf(messagetosend, 1024, "[5,\"%s\"]\n", device->str());
 
     for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
-         it != binder->monitors.end();
-         it++)
+	 it != binder->monitors.end();
+	 it++)
     {
       (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
@@ -162,9 +162,10 @@ UObj::~UObj()
     // to be "cleaned":
     if (internalBinder->getUObject()->derived)
       delete internalBinder; // this deletes the associated UObject
-    else  {
+    else
+    {
       if (internalBinder->getUObject())
-        delete internalBinder->getUObject();
+	delete internalBinder->getUObject();
     }
   }
 
@@ -174,17 +175,17 @@ UObj::~UObj()
        it++)
   {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
-         (*it).second->internalBinder.begin();
-         itcb != (*it).second->internalBinder.end();
-        )
+	 (*it).second->internalBinder.begin();
+	 itcb != (*it).second->internalBinder.end();
+	)
     {
       if ((*itcb)->objname == device->str())
       {
-        delete (*itcb);
-        itcb = (*it).second->internalBinder.erase(itcb);
+	delete (*itcb);
+	itcb = (*it).second->internalBinder.erase(itcb);
       }
       else
-        ++itcb;
+	++itcb;
     }//for
   }//for
 
@@ -194,17 +195,17 @@ UObj::~UObj()
        it++)
   {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
-         (*it).second->internalAccessBinder.begin();
-         itcb != (*it).second->internalAccessBinder.end();
-        )
+	 (*it).second->internalAccessBinder.begin();
+	 itcb != (*it).second->internalAccessBinder.end();
+	)
     {
       if ((*itcb)->objname == device->str())
       {
-        delete (*itcb);
-        itcb = (*it).second->internalAccessBinder.erase(itcb);
+	delete (*itcb);
+	itcb = (*it).second->internalAccessBinder.erase(itcb);
       }
       else
-        ++itcb;
+	++itcb;
     }//for
   }//for
 
@@ -227,25 +228,27 @@ UObj::searchFunction(const char* id, bool &ambiguous)
     ambiguous = false;
     return (hmf->second);
   }
-  else {
+  else
+  {
     ret   = 0;
     found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
-         itup != up.end();
-         itup++){
+	 itup != up.end();
+	 itup++)
+	 {
       tmpres = (*itup)->searchFunction(id, ambiguous);
       if (ambiguous) return 0;
       if (tmpres)
-        if (found)
-        {
-          ambiguous = true;
-          return 0;
-        }
-        else
-        {
-          ret = tmpres;
-          found = true;
-        }
+	if (found)
+	{
+	  ambiguous = true;
+	  return 0;
+	}
+	else
+	{
+	  ret = tmpres;
+	  found = true;
+	}
     }
     ambiguous = false;
     return ret;
@@ -271,22 +274,22 @@ UObj::searchVariable(const char* id, bool &ambiguous)
     ret   = 0;
     found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
-         itup != up.end();
-         itup++)
+	 itup != up.end();
+	 itup++)
     {
       tmpres = (*itup)->searchVariable(id, ambiguous);
       if (ambiguous) return 0;
       if (tmpres)
-        if (found)
-        {
-          ambiguous = true;
-          return 0;
-        }
-        else
-        {
-          ret = tmpres;
-          found = true;
-        }
+	if (found)
+	{
+	  ambiguous = true;
+	  return 0;
+	}
+	else
+	{
+	  ret = tmpres;
+	  found = true;
+	}
     }
     ambiguous = false;
     return ret;
@@ -325,22 +328,22 @@ UObj::searchEvent(const char* id, bool &ambiguous)
     ret   = 0;
     found = false;
     for (std::list<UObj*>::iterator itup = up.begin();
-         itup != up.end();
-         itup++)
+	 itup != up.end();
+	 itup++)
     {
       tmpres = (*itup)->searchEvent(id, ambiguous);
       if (ambiguous) return 0;
       if (tmpres)
-        if (found)
-        {
-          ambiguous = true;
-          return 0;
-        }
-        else
-        {
-          ret = tmpres;
-          found = true;
-        }
+	if (found)
+	{
+	  ambiguous = true;
+	  return 0;
+	}
+	else
+	{
+	  ret = tmpres;
+	  found = true;
+	}
     }
     ambiguous = false;
     return ret;

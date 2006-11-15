@@ -35,8 +35,8 @@ UASyncRegister::UASyncRegister ()
 UASyncRegister::~UASyncRegister()
 {
   for  (std::list<UASyncCommand*>::iterator it = register_.begin ();
-        it != register_.end ();
-        it++)
+	it != register_.end ();
+	it++)
     (*it)->registered_out (this);
 }
 
@@ -57,7 +57,7 @@ void
 UASyncRegister::updateRegisteredCmd ()
 {
   for  (std::list<UASyncCommand*>::iterator it = register_.begin ();
-        it != register_.end ();
-        it++)
+	it != register_.end ();
+	it++)
     (*it)->force_reeval ();
 }

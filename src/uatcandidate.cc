@@ -24,7 +24,7 @@
 // UAtCandidate
 
 UAtCandidate::UAtCandidate(ufloat endTime,
-                           UMultiEventInstance* mei):
+			   UMultiEventInstance* mei):
   endTime_ (endTime),
   mei_ (mei),
   checked_ (true),
@@ -65,33 +65,33 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
     std::string id;
 
     for (std::list<UEventInstance*>::iterator ii = mei_->instances_.begin ();
-         ii != mei_->instances_.end ();
-         ++ii)
+	 ii != mei_->instances_.end ();
+	 ++ii)
     {
       for (is = (*ii)->filter_.begin (), iuv = (*ii)->e_->args ().begin ();
-           is != (*ii)->filter_.end ();
-           ++is, ++iuv)
-        if ( !(*is).empty())
-        {
-          device = (*is).substr ( 0, (*is).find ('.'));
-          id = (*is).substr ( (*is).find ('.')+1 );
-          newcmd = new UCommand_ASSIGN_VALUE
-            (new UVariableName (new UString (device.c_str ()),
-                                new UString (id.c_str ()),
-                                true,  (UNamedParameters*)0),
-             new UExpression (EXPR_VALUE, (*iuv)),
-             (UNamedParameters*)0
-            );
-          if (!cmd)
-            cmd = newcmd;
-          else
-            cmd = (UCommand*)
-              new UCommand_TREE
-              (UAND,
-               newcmd,
-               cmd
-              );
-        }
+	   is != (*ii)->filter_.end ();
+	   ++is, ++iuv)
+	if ( !(*is).empty())
+	{
+	  device = (*is).substr ( 0, (*is).find ('.'));
+	  id = (*is).substr ( (*is).find ('.')+1 );
+	  newcmd = new UCommand_ASSIGN_VALUE
+	    (new UVariableName (new UString (device.c_str ()),
+				new UString (id.c_str ()),
+				true,  (UNamedParameters*)0),
+	     new UExpression (EXPR_VALUE, (*iuv)),
+	     (UNamedParameters*)0
+	    );
+	  if (!cmd)
+	    cmd = newcmd;
+	  else
+	    cmd = (UCommand*)
+	      new UCommand_TREE
+	      (UAND,
+	       newcmd,
+	       cmd
+	      );
+	}
     }
   }
 

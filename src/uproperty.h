@@ -4,7 +4,7 @@
  File: uproperty.h\n
  Definition of the UProperty class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -33,10 +33,10 @@ class UProperty
 public:
 
   UProperty(UVariableName *variablename,
-            UString *property);
+	    UString *property);
 
   ~UProperty();
-    
+
   UVariableName *variablename;
   UString       *property;
 };

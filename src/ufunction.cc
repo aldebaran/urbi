@@ -19,16 +19,16 @@
 
  **************************************************************************** */
 
-#include <string.h>
-#include <stdlib.h>
+#include "libport/cstring"
+#include <cstdlib>
 #include "ufunction.h"
 #include "userver.h"
 #include "ucommand.h"
 
 UFunction::UFunction(UString *funname,
 		     UNamedParameters *parameters,
-		     UCommand *command) {
-
+		     UCommand *command)
+		     {
   ADDOBJ(UFunction);
   this->funname = funname;
   this->parameters = parameters;
@@ -36,8 +36,8 @@ UFunction::UFunction(UString *funname,
 }
 
 
-UFunction::~UFunction() {
-
+UFunction::~UFunction()
+{
   FREEOBJ(UFunction);
   delete funname;
   delete parameters;
@@ -45,22 +45,22 @@ UFunction::~UFunction() {
 }
 
 UString*
-UFunction::name() {
-
+UFunction::name()
+{
   return(funname);
 }
 
 int
-UFunction::nbparam() {
-
+UFunction::nbparam()
+{
   if (!parameters) return(0);
   else
     return(parameters->size());
 }
 
 UCommand*
-UFunction::cmdcopy(std::string _tag, UNamedParameters *_flags) {
-
+UFunction::cmdcopy(std::string _tag, UNamedParameters *_flags)
+{
   UCommand* tmpcmd = command->copy();
   if (_tag != "")
     tmpcmd->setTag(_tag);

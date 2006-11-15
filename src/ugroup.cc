@@ -45,7 +45,8 @@ UGroup::~UGroup()
 
 
 /*
-UValue * UGroup::list( UVariableName *variable) {
+UValue * UGroup::list( UVariableName *variable)
+{
   //do read
   UAlias * gr =  this;
 
@@ -56,8 +57,8 @@ UValue * UGroup::list( UVariableName *variable) {
 
   for (std::list<UAlias*>::iterator it = gr->members.begin();
       (it != gr->members.end()) && current ;
-      it++) {
-
+      it++)
+      {
     UValue *n;
     if ((*it)->members.empty()) { //terminal group, handle it for him
       //child node
@@ -65,7 +66,8 @@ UValue * UGroup::list( UVariableName *variable) {
       strcpy(vname, (*it)->device->str());
       strcat(vname, ".");
       strcat(vname, variable->method->str());
-      if ( ::urbiserver->variabletab.find(vname) ==  ::urbiserver->variabletab.end()) {
+      if ( ::urbiserver->variabletab.find(vname) ==  ::urbiserver->variabletab.end())
+      {
 	//no variable? could be...
 	n=new UValue("null");
       }
@@ -76,7 +78,8 @@ UValue * UGroup::list( UVariableName *variable) {
     else
       n =  ::urbiserver->grouptab[(*it)->device->str()]->list(variable);
 
-//    while (n && n->dataType == DATA_LIST) {
+//    while (n && n->dataType == DATA_LIST)
+{
 //      UValue * nn = n->list;
 //      n->list=  0;
 //      delete n;

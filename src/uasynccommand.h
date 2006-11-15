@@ -34,7 +34,7 @@
 #include "ueventhandler.h"
 
 // ****************************************************************************
-/** UASyncCommand class is used by At end WHENEVER to store 
+/** UASyncCommand class is used by At end WHENEVER to store
  * asynchronous eval info.
  * UASyncCommand class:
  *
@@ -49,8 +49,8 @@ public:
   /** UASyncCommand destructor */
   virtual ~UASyncCommand();
 
-  /** Stores a pointer to a UASyncRegister (variable or event) 
-   * When the command is registered to the UASyncRegister reg, it will also 
+  /** Stores a pointer to a UASyncRegister (variable or event)
+   * When the command is registered to the UASyncRegister reg, it will also
    * register back to the command by calling registered_in, so that is can
    * be released once the destructor of the UASyncCommand is called
    *
@@ -58,13 +58,13 @@ public:
    */
   void registered_in (UASyncRegister* reg);
 
-  /** Removes a pointer to a UASyncRegister (variable or event) 
-   * When the command is registered to the UASyncRegister reg, it will also 
+  /** Removes a pointer to a UASyncRegister (variable or event)
+   * When the command is registered to the UASyncRegister reg, it will also
    * register back to the command by calling registered_in, so that is can
    * be released once the destructor of the UASyncCommand is called.
    * The registered_out is in turn called by the UASyncRegister to remove the
    * register from the list.
-   * 
+   *
    * @param reg The synchronous register that must be removed
    */
   void registered_out (UASyncRegister* reg);
@@ -134,7 +134,7 @@ UASyncCommand::reset_reeval()
 #include "ueventhandler.h"
 
 // ****************************************************************************
-/** UASyncCommand class is used by At end WHENEVER to store 
+/** UASyncCommand class is used by At end WHENEVER to store
  * asynchronous eval info.
  * UASyncCommand class:
  *
@@ -149,8 +149,8 @@ public:
   /** UASyncCommand destructor */
   virtual ~UASyncCommand();
 
-  /** Stores a pointer to a UASyncRegister (variable or event) 
-   * When the command is registered to the UASyncRegister reg, it will also 
+  /** Stores a pointer to a UASyncRegister (variable or event)
+   * When the command is registered to the UASyncRegister reg, it will also
    * register back to the command by calling registered_in, so that is can
    * be released once the destructor of the UASyncCommand is called
    *
@@ -158,13 +158,13 @@ public:
    */
   void registered_in (UASyncRegister* reg);
 
-  /** Removes a pointer to a UASyncRegister (variable or event) 
-   * When the command is registered to the UASyncRegister reg, it will also 
+  /** Removes a pointer to a UASyncRegister (variable or event)
+   * When the command is registered to the UASyncRegister reg, it will also
    * register back to the command by calling registered_in, so that is can
    * be released once the destructor of the UASyncCommand is called.
    * The registered_out is in turn called by the UASyncRegister to remove the
    * register from the list.
-   * 
+   *
    * @param reg The synchronous register that must be removed
    */
   void registered_out (UASyncRegister* reg);

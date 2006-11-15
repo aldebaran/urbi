@@ -44,11 +44,11 @@ public:
 
   UVariableName(UExpression *str, bool rooted = false);
   UVariableName(UString* device, UString *id, bool rooted,
-                UNamedParameters *index);
+		UNamedParameters *index);
   UVariableName(UString* objname,
-                UNamedParameters *index_obj,
-                UString* attribute,
-                UNamedParameters *index_att = 0);
+		UNamedParameters *index_obj,
+		UString* attribute,
+		UNamedParameters *index_att = 0);
 
   virtual ~UVariableName();
 
@@ -59,8 +59,8 @@ public:
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
   UString*       buildFullname(UCommand *command,
-                               UConnection *connection,
-                               bool withalias = true);
+			       UConnection *connection,
+			       bool withalias = true);
   UString*       getFullname()  { return (fullname_);};
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();
@@ -81,15 +81,15 @@ public:
   UVariable*        variable; ///< the variable associated to the variable name
   UFunction*        function; ///< the function associated to the variable name
   bool              fromGroup; ///< the var is part of a command spawned by a
-                               ///< group morphing. this is used to avoid error
-                               ///< messages when the variable does not exist
+			       ///< group morphing. this is used to avoid error
+			       ///< messages when the variable does not exist
   bool         firsttime;///< before the first local function prefix resolution
   bool         nostruct; ///< is nostruct if it comes from a simple
-                         ///< IDENTIFIER in the parsing phase
+			 ///< IDENTIFIER in the parsing phase
   UDefType          id_type; ///< type of the symbol: UDEF_FUNCTION,
-                             ///< UDEF_VAR or UDEF_EVENT
+			     ///< UDEF_VAR or UDEF_EVENT
   bool              local_scope; ///< name resolution will be limited to
-                                 ///< local scope in functions
+				 ///< local scope in functions
   bool              doublecolon; ///< true when the :: construct is used
 
 protected:
@@ -100,7 +100,7 @@ protected:
   HMvariabletab::iterator hmi2;         ///< internal
   HMfunctiontab::iterator hmf;          ///< internal
   bool                    localFunction; ///< true for variables
-                                         ///< local to a func.
+					 ///< local to a func.
   bool                    selfFunction;///< true for variables with self prefix
   bool                    cached;       ///< internal
 };

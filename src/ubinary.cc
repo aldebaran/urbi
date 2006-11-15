@@ -40,7 +40,8 @@ UBinary::~UBinary()
 {
   FREEOBJ(UBinary);
   delete parameters;
-  if (buffer) {
+  if (buffer)
+  {
     free(buffer);
     FREEMEM(bufferSize);
   }

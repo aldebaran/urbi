@@ -144,8 +144,8 @@ public:
    *  @return The event created
    */
   UEvent* addEvent(UNamedParameters* parameters,
-                        UCommand* command,
-                        UConnection* connection);
+			UCommand* command,
+			UConnection* connection);
 
   /** add an already existing event to the handler.
    *  @param e The event to add

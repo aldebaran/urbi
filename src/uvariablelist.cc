@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-#include <math.h>
+#include <cmath>
 
 #include "uvariablelist.h"
 #include "ucommand.h"

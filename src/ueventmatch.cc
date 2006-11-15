@@ -30,9 +30,9 @@ UEventMatch* kernel::eventmatch_false;
 // UEventMatch
 
 UEventMatch::UEventMatch (UString* eventname,
-                          UNamedParameters* filter,
-                          UCommand* command,
-                          UConnection* connection)
+			  UNamedParameters* filter,
+			  UCommand* command,
+			  UConnection* connection)
 {
   if  (!filter)
     eventhandler_ = kernel::findEventHandler (eventname, 0);
@@ -49,13 +49,13 @@ UEventMatch::UEventMatch (UString* eventname,
     if  (param->expression->type == EXPR_VARIABLE)
     {
       ASSERT (param->expression->variablename)
-        varname = param->expression->variablename->
-                 buildFullname (command, connection);
+	varname = param->expression->variablename->
+		 buildFullname (command, connection);
       ASSERT (varname);
       e1 = new UValue (varname->str ());
       e1->dataType = DATA_VARIABLE; // this is a dirty hack. It means that the
-                                    // UValue does not contain a value, but a
-                                    // variable name instead.
+				    // UValue does not contain a value, but a
+				    // variable name instead.
     }
     else
       e1 = param->expression->eval (command, connection);
@@ -109,12 +109,12 @@ UEventMatch::findMatches_ ()
     itevent_arg = (*itevent)->args().begin();
 
     while (ifilter_arg != filter_.end ()
-           && itevent_arg !=  (*itevent)->args().end ()
-           && ok)
+	   && itevent_arg !=  (*itevent)->args().end ()
+	   && ok)
     {
       if   ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
-             && !( (*ifilter_arg)->equal (*itevent_arg)) )
-        ok = false;
+	     && !( (*ifilter_arg)->equal (*itevent_arg)) )
+	ok = false;
 
       ifilter_arg++;
       itevent_arg++;

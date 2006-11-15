@@ -46,8 +46,8 @@ public:
    * of EC_BANG
    */
   UEventCompound(UEventCompoundType ectype,
-                 UEventCompound* ec1,
-                 UEventCompound* ec2 = 0);
+		 UEventCompound* ec1,
+		 UEventCompound* ec2 = 0);
 
   /** UEventCompound constructor for single UEventMatch.
    * The type of the compound will be EC_MATCH
@@ -72,12 +72,12 @@ public:
   std::list<UMultiEventInstance*> mixing();
 
   /** Reduces the compound to its bang-terminal normal form.
-   * Bangs are on pushed back on leafs and leafs of the form !event 
+   * Bangs are on pushed back on leafs and leafs of the form !event
    * are replaced by their boolean equivalent EC_TRUE or
    * EC_FALSE, depending on the content of the UEventMatch 'event'.
    * Finally, compounds like "X && EC_TRUE" are replaced by "X" and "X &&
    * EC_FALSE" by "EC_FALSE", and equivalent reductions with 'or'.
-   * 
+   *
    * At the end, it remains only a series of non negative events (UEventMatch)
    * linked by logicial connectors, or simply EC_TRUE/EC_FALSE in case of total
    * reduction.
@@ -92,7 +92,7 @@ protected:
   /// keep from recursive deletion
   bool keepalive_;
 
-  /// Type of the UEventCompound 
+  /// Type of the UEventCompound
   UEventCompoundType ectype_;
 
   /// Left part of the compound, if any (0 otherwise)

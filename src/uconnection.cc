@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-#include <cstring>
+#include "libport/cstring"
 #include <cstdio>
 
 #ifdef _MSC_VER
@@ -492,7 +492,8 @@ UConnection::received (const ubyte *buffer, int length)
   UErrorValue result = recvQueue_->push( buffer, length);
   unlock();
   if ( result != USUCCESS)
-  { // Handles memory errors.
+  {
+    // Handles memory errors.
     if ( result == UFAIL )
     {
       errorSignal(UERROR_RECEIVE_BUFFER_FULL);
@@ -531,7 +532,6 @@ UConnection::received (const ubyte *buffer, int length)
   server->updateTime();
 
   do {
-
     ubyte* command = recvQueue_->popCommand(length);
 
     if (command == 0 && length==-1)
@@ -599,7 +599,8 @@ UConnection::received (const ubyte *buffer, int length)
 	      recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
 
 	    if (buffer)
-	    { // the binary was all in the queue
+	    {
+	      // the binary was all in the queue
 	      memcpy(binCommand->refBinary->ref()->buffer,
 		     buffer,
 		     binCommand->refBinary->ref()->bufferSize);
@@ -892,8 +893,8 @@ UConnection::processCommand(UCommand *&command,
 		  if ((*retr)->isActive())
 
 		    if (((*retr)->connectionTag->equal(tmpID->str)) ||
-			(strcmp(tmpID->str->str(), "all") == 0) ||
-			( ( strcmp(tmpID->str->str(), "other") == 0) &&
+			(STREQ(tmpID->str->str(), "all")) ||
+			( ( STREQ(tmpID->str->str(), "other")) &&
 			  ( !(*retr)->connectionTag->equal(connectionTag))))
 		    {
 		      UCommand_TREE* tohook =
@@ -1046,7 +1047,8 @@ UConnection::processCommand(UCommand *&command,
       return command ;
     }
     else
-    { // != CMD_TREE
+    {
+      // != CMD_TREE
       morphed_up = command->up;
       morphed_position = command->position;
 
@@ -1236,7 +1238,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	(!tree->toDelete) &&
 	(tree->command1 == 0) &&
 	(tree->command2 != 0))
-    { // left reduction
+    {
+      // left reduction
       ASSERT(tree->position!=0) *(tree->position) = tree->command2;
       tree->command2->up = tree->up;
       tree->command2->position = tree->position;
@@ -1255,7 +1258,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	(tree->command2 == 0) &&
 	(tree->command1 != 0) &&
 	(tree->command1->status != UBACKGROUND) )
-    { // right reduction
+    {
+      // right reduction
       // the background hack is here to preserve {at()...} commands.
 
       ASSERT(tree->position!=0) *(tree->position) = tree->command1;

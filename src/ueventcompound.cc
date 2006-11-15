@@ -29,8 +29,8 @@
 // UEventCompound
 
 UEventCompound::UEventCompound(UEventCompoundType ectype,
-                               UEventCompound* ec1,
-                               UEventCompound* ec2):
+			       UEventCompound* ec1,
+			       UEventCompound* ec2):
   keepalive_ (false),
   ectype_ (ectype),
   ec1_ (ec1),
@@ -72,7 +72,7 @@ UEventCompound::~UEventCompound ()
     delete ec1_;
     delete ec2_;
     if (em_ && em_->deleteable()) delete em_; // some em are not deleteable
-                                              // (system events)
+					      // (system events)
   }
 }
 
@@ -100,12 +100,12 @@ UEventCompound::mixing()
   {
     case EC_MATCH:
       for (ievent = em_->matches ().begin ();
-           ievent != em_->matches ().end ();
-           ievent++)
+	   ievent != em_->matches ().end ();
+	   ievent++)
       {
-        ASSERT (mei = new UMultiEventInstance ());
-        mei->addInstance (new UEventInstance (em_, (*ievent)));
-        result.push_back (mei);
+	ASSERT (mei = new UMultiEventInstance ());
+	mei->addInstance (new UEventInstance (em_, (*ievent)));
+	result.push_back (mei);
       }
       return result;
 
@@ -114,9 +114,9 @@ UEventCompound::mixing()
       ASSERT (ec2_) res2 = ec2_->mixing ();
       result = res1;
       for (imei2 = res2.begin ();
-           imei2 != res2.end ();
-           imei2++)
-        result.push_back (*imei2);
+	   imei2 != res2.end ();
+	   imei2++)
+	result.push_back (*imei2);
       return result;
 
     case EC_AND:
@@ -124,25 +124,25 @@ UEventCompound::mixing()
       ASSERT (ec2_) res2 = ec2_->mixing ();
 
       for (imei1 = res1.begin ();
-           imei1 != res1.end ();
-           imei1++)
-        for (imei2 = res2.begin ();
-             imei2 != res2.end ();
-             imei2++)
-        {
-          ASSERT (mei = new UMultiEventInstance (*imei1, *imei2));
-          result.push_back (mei);
-        }
+	   imei1 != res1.end ();
+	   imei1++)
+	for (imei2 = res2.begin ();
+	     imei2 != res2.end ();
+	     imei2++)
+	{
+	  ASSERT (mei = new UMultiEventInstance (*imei1, *imei2));
+	  result.push_back (mei);
+	}
 
       // cleaning
       for (imei1 = res1.begin ();
-           imei1 != res1.end ();
-           imei1++)
-        delete *imei1;
+	   imei1 != res1.end ();
+	   imei1++)
+	delete *imei1;
       for (imei2 = res2.begin ();
-           imei2 != res2.end ();
-           imei2++)
-        delete *imei2;
+	   imei2 != res2.end ();
+	   imei2++)
+	delete *imei2;
 
       return result;
 
@@ -195,9 +195,9 @@ UEventCompound::normalForm ()
     case EC_MATCH:
       ec1_->em_->reduce ();
       if  (ec1_->em_->matches().empty())
-        em_ = kernel::eventmatch_true;
+	em_ = kernel::eventmatch_true;
       else
-        em_ = kernel::eventmatch_false;
+	em_ = kernel::eventmatch_false;
 
       ectype_ = EC_MATCH;
       delete ec1_;

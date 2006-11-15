@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-#include <string.h>
+#include "libport/cstring"
 
 #include "utypes.h"
 #include "ughostconnection.h"

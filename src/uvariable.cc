@@ -69,7 +69,7 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 
 //! UVariable constructor.
 UVariable::UVariable(const char* name,
-                     ufloat val,
+		     ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
@@ -252,30 +252,31 @@ UVariable::set(UValue *v)
   }
   if (!value)
     value = v->copy();
-  else {
+  else
+  {
     switch (value->dataType)
     {
       case DATA_STRING: value->str->update(v->str->str()); break;
       case DATA_NUM:    setSensorVal(v->val); break;
       case DATA_LIST:   delete value;value = v->copy(); break;
       case DATA_BINARY: LIBERATE(value->refBinary);
-                        value->refBinary = v->refBinary->copy();
-                        break;
+			value->refBinary = v->refBinary->copy();
+			break;
       case DATA_VOID:   // uninitialized def's
 
-                        value->dataType = v->dataType;
-                        switch (v->dataType)
-                        {
-                          case DATA_STRING:
-                            value->str = new UString(v->str); break;
-                          case DATA_NUM:
-                            initSensorVal(v->val); break;
-                          case DATA_BINARY:
-                            value->refBinary = v->refBinary->copy(); break;
-                          case DATA_LIST:
-                            delete value;value = v->copy(); break;
-                          default: break;
-                        }
+			value->dataType = v->dataType;
+			switch (v->dataType)
+			{
+			  case DATA_STRING:
+			    value->str = new UString(v->str); break;
+			  case DATA_NUM:
+			    initSensorVal(v->val); break;
+			  case DATA_BINARY:
+			    value->refBinary = v->refBinary->copy(); break;
+			  case DATA_LIST:
+			    delete value;value = v->copy(); break;
+			  default: break;
+			}
       default: break;
     }
   }
@@ -354,19 +355,19 @@ UVariable::get()
   // recursive call for objects
   if (value->dataType == DATA_OBJ)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
-         it != ::urbiserver->variabletab.end();
-         it++)
+	 it != ::urbiserver->variabletab.end();
+	 it++)
       if ( ((*it).second->method) &&
-           ((*it).second->devicename) && (value->str) &&
-           ((*it).second->value->dataType != DATA_OBJ) &&
-           ((*it).second->devicename->equal(value->str)))
-        (*it).second->get ();
+	   ((*it).second->devicename) && (value->str) &&
+	   ((*it).second->value->dataType != DATA_OBJ) &&
+	   ((*it).second->devicename->equal(value->str)))
+	(*it).second->get ();
 
   // check for existing notifychange
   if (!internalAccessBinder.empty())
   {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
-         internalAccessBinder.begin();
+	 internalAccessBinder.begin();
 	itcb != internalAccessBinder.end();
 	itcb++)
     {
@@ -416,7 +417,7 @@ UVariable::updated()
 
   if (!internalBinder.empty())
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
-         internalBinder.begin();
+	 internalBinder.begin();
 	 itcb != internalBinder.end();
 	 itcb++)
       {

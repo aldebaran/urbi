@@ -57,9 +57,9 @@ public:
    * @param connection The @c UConnection where errors shall be sent
    */
   UEventMatch(UString* eventname,
-              UNamedParameters* filter,
-              UCommand* command,
-              UConnection* connection);
+	      UNamedParameters* filter,
+	      UCommand* command,
+	      UConnection* connection);
 
   /** UEventMatch constructor for system events
    * @param eh The @c UEventHandler that must be matched. All events in the
@@ -113,7 +113,7 @@ private:
   /** Find @a matches_ between the @a filter_ and the @a eventhandler_ */
   void findMatches_();
 
-  /** The matching filter. 
+  /** The matching filter.
    * Variables are wildcards expressed as @c UValue with type @c DATA_VARIABLE
    * (created especially for this purpose) other expressions are
    * evaluated to normal @c UValue and enforced in the filter

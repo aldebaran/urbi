@@ -219,7 +219,7 @@ public:
 private:
 
   UErrorValue      processModifiers(UConnection* connection,
-                                    ufloat currentTime);
+				    ufloat currentTime);
 
 };
 
@@ -557,7 +557,7 @@ public:
   MEMORY_MANAGED;
 
   UCommand_EMIT(UVariableName* eventname,
-                UNamedParameters *parameters, UExpression *duration=0);
+		UNamedParameters *parameters, UExpression *duration=0);
   virtual ~UCommand_EMIT();
 
   virtual void print(int l);
@@ -593,7 +593,7 @@ public:
   int              nbTrue;      ///< nb of times the test is true
   ufloat           startTrue;   ///< time of the last 'true'
   bool             firsttime;   ///< true when the command has not been
-                                ///< executed yet
+				///< executed yet
   std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
 
 private:
@@ -786,7 +786,7 @@ public:
   UCommand         *command1;   ///< Command if
   UCommand         *command2;   ///< Command else (0 if no else)
   bool             firsttime;   ///< true when the command has not been
-                                ///< executed yet
+				///< executed yet
   std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
 
 private:
@@ -831,7 +831,7 @@ public:
   UCommand         *command1;   ///< Command ok
   UCommand         *command2;   ///< Command onleave
   bool             firsttime;   ///< true when the command has not been
-                                ///< executed yet
+				///< executed yet
   std::list<UAtCandidate*> candidates; ///< list of UMultiEvent candidates
 
   void noloop()  {theloop_ = 0;};
@@ -857,7 +857,7 @@ public:
 
   UCommand         *command;    ///< Command
   UCommand*        whenever_hook; ///< non zero if the loop belongs to a
-                                  ///< whenever command.
+				  ///< whenever command.
 };
 
 class UCommand_LOOPN : public UCommand

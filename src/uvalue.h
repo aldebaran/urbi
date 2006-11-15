@@ -31,7 +31,8 @@
 
 #include <string>
 
-namespace urbi {
+namespace urbi
+{
   class UValue;
   class UBinary;
   class UImage;

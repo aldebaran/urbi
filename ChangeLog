@@ -1,5 +1,26 @@
 2006-11-15  Akim Demaille  <akim.demaille@gmail.com>
 
+	Use reindent
+	* src/uasynccommand.cc, src/uasynccommand.h,
+	* src/uasyncregister.cc, src/uatcandidate.cc,
+	* src/uatcandidate.h, src/ubinary.cc, src/ubinary.h,
+	* src/ucommand.cc, src/ucommand.h, src/ucommandqueue.cc,
+	* src/uconnection.cc, src/ueventcompound.cc,
+	* src/ueventcompound.h, src/ueventhandler.cc,
+	* src/ueventhandler.h, src/ueventinstance.cc,
+	* src/ueventinstance.h, src/ueventmatch.cc, src/ueventmatch.h,
+	* src/uexpression.cc, src/ufunction.cc, src/ufunction.h,
+	* src/ughostconnection.cc, src/ugroup.cc,
+	* src/unamedparameters.cc, src/uobj.cc, src/uobject.cc,
+	* src/uproperty.h, src/uqueue.cc, src/uqueue.h,
+	* src/userver.cc, src/userver.h, src/ustring.cc, src/utypes.h,
+	* src/uvalue.cc, src/uvalue.h, src/uvar.cc, src/uvariable.cc,
+	* src/uvariablelist.cc, src/uvariablename.cc,
+	* src/uvariablename.h:
+	Use reindent: space changes, use STREQ, use libport/cstring.
+
+2006-11-15  Akim Demaille  <akim.demaille@gmail.com>
+
 	Small uexpression.cc cleansing
 	* src/uexpression.cc: Use reindent.
 	Remove some useless parens.

@@ -143,18 +143,18 @@ namespace urbi
 	    if (variable) variable->internalBinder.push_back(this);
 	  }
 	else
-        {
-          it->second->internalBinder.push_back(this);
-          if ( !it->second->internalAccessBinder.empty ()
-               && std::find (::urbiserver->access_and_change_varlist.begin (),
-                             ::urbiserver->access_and_change_varlist.end (),
-                             it->second) ==
-               ::urbiserver->access_and_change_varlist.end ())
-          {
-            it->second->access_and_change = true;
-            ::urbiserver->access_and_change_varlist.push_back (it->second);
-          }
-        }
+	{
+	  it->second->internalBinder.push_back(this);
+	  if ( !it->second->internalAccessBinder.empty ()
+	       && std::find (::urbiserver->access_and_change_varlist.begin (),
+			     ::urbiserver->access_and_change_varlist.end (),
+			     it->second) ==
+	       ::urbiserver->access_and_change_varlist.end ())
+	  {
+	    it->second->access_and_change = true;
+	    ::urbiserver->access_and_change_varlist.push_back (it->second);
+	  }
+	}
       }
 
     if (type == "varaccess")
@@ -166,20 +166,20 @@ namespace urbi
 	    if (variable)
 	      variable->internalAccessBinder.push_back(this);
 	  }
-        else
-        {
-          it->second->internalAccessBinder.push_back(this);
-          if ( (!it->second->internalBinder.empty ()
-                || it->second->binder)
-               && std::find (::urbiserver->access_and_change_varlist.begin (),
-                             ::urbiserver->access_and_change_varlist.end (),
-                             it->second) ==
-               ::urbiserver->access_and_change_varlist.end ())
-          {
-            it->second->access_and_change = true;
-            ::urbiserver->access_and_change_varlist.push_back (it->second);
-          }
-        }
+	else
+	{
+	  it->second->internalAccessBinder.push_back(this);
+	  if ( (!it->second->internalBinder.empty ()
+		|| it->second->binder)
+	       && std::find (::urbiserver->access_and_change_varlist.begin (),
+			     ::urbiserver->access_and_change_varlist.end (),
+			     it->second) ==
+	       ::urbiserver->access_and_change_varlist.end ())
+	  {
+	    it->second->access_and_change = true;
+	    ::urbiserver->access_and_change_varlist.push_back (it->second);
+	  }
+	}
       }
   }
 
@@ -251,7 +251,7 @@ namespace urbi
 
 
   //! Clean a callback UTable from all callbacks linked to the
-  //! object whose name is 'name' 
+  //! object whose name is 'name'
   void
   cleanTable(UTable &t, std::string name)
   {

@@ -275,7 +275,7 @@ UServer::work()
 	free(securityBuffer_);
 	securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
 	if (securityBuffer_)
-        {
+	{
 	  memoryOverflow = false;
 	  deIsolate();
 	}
@@ -285,7 +285,8 @@ UServer::work()
   bool signalMemoryOverflow = false;
   if (memoryOverflow)
     if (securityBuffer_)
-    { // free space to ensure the warning messages will
+    {
+      // free space to ensure the warning messages will
       // be sent without problem.
       free (securityBuffer_);
       securityBuffer_ = 0;
@@ -297,8 +298,8 @@ UServer::work()
   for (std::list<UConnection*>::iterator retr = connectionList.begin();
        retr != connectionList.end();
        retr++)
-    if ((*retr)->isActive())  {
-
+    if ((*retr)->isActive())
+    {
       if (!(*retr)->isBlocked())
 	(*retr)->continueSend();
 
@@ -321,19 +322,20 @@ UServer::work()
       if ((*retr)->activeCommand!=0)
       {
 	(*retr)->obstructed = true; // will be changed to 'false'
-                                    //if the whole tree is visited
+				    //if the whole tree is visited
 	(*retr)->treeLock.lock();
 	(*retr)->inwork = true;   // to distinguish this call of
-                                  //execute from the one in receive
+				  //execute from the one in receive
 	(*retr)->execute((*retr)->activeCommand);
 	(*retr)->inwork = false;
 	(*retr)->treeLock.unlock();
       }
 
       if ((*retr)->newDataAdded)
-      { // used by loadFile and exec to
-        // delay the parsing after the completion
-        // of execute().
+      {
+	// used by loadFile and exec to
+	// delay the parsing after the completion
+	// of execute().
 
 	(*retr)->newDataAdded = false;
 	(*retr)->received("");
@@ -437,7 +439,7 @@ UServer::work()
       {
 	cpucount++;
 	if (cpucount > 10)
-        {
+	{
 	  cpucount = 0;
 	  cpuoverload = true;
 	  signalcpuoverload = true;
@@ -628,7 +630,8 @@ UServer::echoKey(const char* key, const char* s, ...)
 
   if (key == NULL)
     key_[0] = 0;
-  else {
+  else
+  {
     strncpy(key_, key, 5);
     key_[5] = 0;
   }
@@ -917,7 +920,8 @@ UServer::freeze(const std::string &tag)
   HMtagtab::iterator it = tagtab.find(tag);
   if (it != tagtab.end())
     it->second.frozen = true;
-  else {
+  else
+  {
     TagInfo t;
     t.name = tag;
     t.frozen = true;
@@ -940,7 +944,8 @@ UServer::block(const std::string &tag)
   HMtagtab::iterator it = tagtab.find(tag);
   if (it != tagtab.end())
     it->second.blocked = true;
-  else {
+  else
+  {
     TagInfo t;
     t.name = tag;
     t.frozen = false;
@@ -1014,7 +1019,7 @@ UServer::removeConnection(UConnection *connection)
 int
 UServer::addAlias(const char* id, const char* variablename)
 {
-  if (strcmp(id, variablename)==0)
+  if (STREQ(id, variablename))
     return 0;
 
   const char* newobj = variablename;
@@ -1023,7 +1028,7 @@ UServer::addAlias(const char* id, const char* variablename)
   while (getobj != ::urbiserver->aliastab.end())
     {
       newobj = (*getobj).second->str();
-      if (strcmp(newobj, id)==0)
+      if (STREQ(newobj, id))
 	return 0;
 
       getobj = ::urbiserver->aliastab.find(newobj);

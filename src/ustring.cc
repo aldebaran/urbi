@@ -19,8 +19,9 @@
 
  **************************************************************************** */
 
-#include <cstring>
 #include <cstdlib>
+
+#include "libport/cstring"
 
 #include "ustring.h"
 #include "userver.h"
@@ -108,7 +109,7 @@ bool UString::equal(UString *s)
 {
   if (s==0)
     return false;
-  return (strcmp(s->str(), (const char*)str_)==0);
+  return (STREQ(s->str(), (const char*)str_));
 }
 
 bool UString::tagequal(UString *s)
@@ -117,7 +118,7 @@ bool UString::tagequal(UString *s)
     return false;
   char* p = const_cast<char*>(strchr(s->str(), '.'));
   if (p) p[0]=0;
-  bool res = strcmp(s->str(), (const char*)str_) == 0;
+  bool res = STREQ(s->str(), (const char*)str_);
   if (p)
     p[0]='.';
   return res;
@@ -127,12 +128,12 @@ bool UString::equal(const char *s)
 {
   if (s==0)
     return false;
-  return strcmp(s, (const char*)str_)==0;
+  return STREQ(s, (const char*)str_);
 }
 
 void UString::update(const char *s)
 {
-  if (s==0 || s == str_ /*|| (strcmp(s,str_)==0) */)
+  if (s==0 || s == str_ /*|| (STREQ(s,str_)) */)
     return;
 
   if (str_)
@@ -172,21 +173,21 @@ UString::unArmor ()
     if  (*position=='\\' && pos+1<len_)
     {
       if (   *(position+1) == 'n'
-          || *(position+1) == 't'
-          || *(position+1) == '\\'
-          || *(position+1) == '"')
+	  || *(position+1) == 't'
+	  || *(position+1) == '\\'
+	  || *(position+1) == '"')
       {
-        if ( *(position+1) ==  'n') *(position+1) = '\n';
-        if ( *(position+1) ==  't') *(position+1) = '\t';
+	if ( *(position+1) ==  'n') *(position+1) = '\n';
+	if ( *(position+1) ==  't') *(position+1) = '\t';
 
-        memmove((void*)position,
-                (void*)(position+1),
-                len_-pos);
-        len_ --;
-        if (*position=='\\') position++;
+	memmove((void*)position,
+		(void*)(position+1),
+		len_-pos);
+	len_ --;
+	if (*position=='\\') position++;
       }
       else
-        position++;
+	position++;
     }
     else
       position++;
@@ -219,6 +220,5 @@ void
 UString::fastArmor ()
 {
   fastArmor_= strchr (str_, '"') == 0
-              && strchr (str_, '\\') == 0;
+	      && strchr (str_, '\\') == 0;
 }
-

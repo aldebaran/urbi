@@ -78,7 +78,7 @@ private:
   ufloat endTime_; ///< Time when the candidate should trigger
   UMultiEventInstance* mei_; ///< The MultiEvent instance that is candidate
   bool checked_; ///< true when the candidate has been relocated in the last
-                ///< evaluation.
+		///< evaluation.
   bool hasTriggered_; ///< true when the event has already triggered.
 };
 

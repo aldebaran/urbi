@@ -4,7 +4,7 @@
  File: ubinary.h\n
  Definition of the UBinary class.
 
- This file is part of 
+ This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
 
@@ -33,7 +33,7 @@ public:
   UBinary(int bufferSize, UNamedParameters *parameters);
   ~UBinary();
 
-  void     print(); 
+  void     print();
 
   ubyte             *buffer;       ///< The buffer used to store the binary data
   int               bufferSize;    ///< The size of the buffer

@@ -27,7 +27,7 @@
 # define snprintf _snprintf
 #endif
 
-#include "libport/string.hh"
+#include "libport/cstring"
 
 #include "uexpression.h"
 #include "ucommand.h"

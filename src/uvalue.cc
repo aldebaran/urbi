@@ -114,7 +114,8 @@ UValue::operator urbi::UImage()
   return img;
 }
 
-class DumbConnection:public UConnection {
+class DumbConnection:public UConnection
+{
 public:
   DumbConnection():
     UConnection(::urbiserver, 1000, 1000000, 1000, 1000, 1000)
@@ -151,7 +152,7 @@ UValue::operator urbi::UBinary()
   msg << '\n'; //parse expects this
   std::list<urbi::BinaryData> lBin;
   lBin.push_back(urbi::BinaryData(refBinary->ref()->buffer,
-                                  refBinary->ref()->bufferSize));
+				  refBinary->ref()->bufferSize));
   std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
   b.parse(msg.str().c_str(), 0, lBin, lIter);
   return b;
@@ -178,7 +179,7 @@ UValue::operator urbi::UBinary*()
   msg << '\n'; //parse expects this
   std::list<urbi::BinaryData> lBin;
   lBin.push_back(urbi::BinaryData( refBinary->ref()->buffer,
-                                   refBinary->ref()->bufferSize));
+				   refBinary->ref()->bufferSize));
   std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
   b->parse(msg.str().c_str(), 0, lBin, lIter);
   return b;
@@ -204,8 +205,8 @@ UValue::operator urbi::UList()
 
 UValue::operator urbi::USound()
 {
-  struct wavheader {
-
+  struct wavheader
+  {
     char riff[4];
     int length;
     char wave[4];
@@ -245,7 +246,7 @@ UValue::operator urbi::USound()
       snd.rate = exprToInt(param->next->next->expression);
       snd.sampleSize = exprToInt(param->next->next->next->expression);
       snd.sampleFormat = (urbi::USoundSampleFormat)
-        exprToInt(param->next->next->next->next->expression);
+	exprToInt(param->next->next->next->next->expression);
     }
   }
 
@@ -261,7 +262,7 @@ UValue::operator urbi::USound()
       snd.rate = wh->freqechant;
       snd.sampleSize = wh->bitperchannel;
       snd.sampleFormat =  (snd.sampleSize>8)?urbi::SAMPLE_SIGNED :
-        urbi::SAMPLE_UNSIGNED;
+	urbi::SAMPLE_UNSIGNED;
     }
   }
   else
@@ -325,13 +326,14 @@ UValue & UValue::operator = (const urbi::UBinary &b)
     str >> item;
     UNamedParameters * unp =
       new UNamedParameters(0, new UExpression(EXPR_VALUE,
-                                              new UString(item.c_str())));
+					      new UString(item.c_str())));
     if (!first)
     {
       first = unp;
       last = unp;
     }
-    else {
+    else
+    {
       last->next=unp;
       last = unp;
     }
@@ -400,7 +402,8 @@ UValue::UValue(const urbi::UValue &v)
       next = 0;
     }
     break;
-  case urbi::DATA_BINARY: {
+  case urbi::DATA_BINARY:
+  {
     (*this)= (*v.binary);
     break;
   }
@@ -468,7 +471,8 @@ UValue::copy()
     UValue *sret = ret;
     if (scanlist == 0)
       ret->liststart = 0;
-    else {
+    else
+    {
       sret->liststart = scanlist->copy();
       scanlist = scanlist->next;
       sret = sret->liststart;
@@ -557,7 +561,8 @@ UValue::add(UValue *v)
   }
 
   if (v->dataType == DATA_LIST)
-  { //we are not a list
+  {
+    // we are not a list
     UValue *ret = v->copy();
     UValue * b = ret->liststart;
     ret->liststart = copy();
@@ -657,11 +662,11 @@ UValue::equal(UValue *v)
 
   case DATA_STRING:
     return ((v->dataType == DATA_STRING) &&
-	    (strcmp(str->str(), v->str->str())==0));
+	    (STREQ(str->str(), v->str->str())));
 
   case DATA_FILE:
     return ((v->dataType == DATA_FILE) &&
-	    (strcmp(str->str(), v->str->str())==0));
+	    (STREQ(str->str(), v->str->str())));
 
   case DATA_BINARY:
 
@@ -739,7 +744,7 @@ UValue::echo(bool hr)
 	   ((*it).second->value->dataType != DATA_OBJ))
       {
 	if ((*it).second->devicename->equal(str))
-        {
+	{
 	  if (!first) oss << ",";
 	  first = false;
 	  oss << (*it).second->method->str()<< ":";
@@ -796,15 +801,15 @@ UValue::echo(bool hr)
 
       while (param)
       {
-        if (param->expression)
-        {
-          if (param->expression->dataType == DATA_NUM)
-            oss << (int)param->expression->val;
-          if (param->expression->dataType == DATA_STRING)
-            oss << param->expression->str->str();
-        }
-        if (param->next) oss << " ";
-        param = param->next;
+	if (param->expression)
+	{
+	  if (param->expression->dataType == DATA_NUM)
+	    oss << (int)param->expression->val;
+	  if (param->expression->dataType == DATA_STRING)
+	    oss << param->expression->str->str();
+	}
+	if (param->next) oss << " ";
+	param = param->next;
       }
 
       if (!hr)
@@ -814,8 +819,8 @@ UValue::echo(bool hr)
 	//FIXME
 	//	if (connection->availableSendQueue() >
 	//	    strlen(tmpbuffer) +
-	//	    refBinary->ref()->bufferSize +1) {
-
+	//	    refBinary->ref()->bufferSize +1)
+	//      {
 	oss.write((const char*)refBinary->ref()->buffer,
 		  refBinary->ref()->bufferSize);
 	//	}

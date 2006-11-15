@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-#include <math.h>
+#include <cmath>
 
 #include "unamedparameters.h"
 #include "ucommand.h"
