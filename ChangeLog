@@ -1,5 +1,10 @@
 2006-11-15  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	remove unnecessary parenthesis in tests. 
+	* src/uvariable.cc: done.
+
+2006-11-15  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix unnecessary high level scoping in variables 
 	* src/uobj.cc: fix scoping.
 
