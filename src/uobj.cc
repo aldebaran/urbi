@@ -219,37 +219,54 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   UFunction* ret;
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
+
+  // test for pure urbi symbols
   HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
   if (hmf != ::urbiserver->functiontab.end())
   {
     ambiguous = false;
     return (hmf->second);
-  }
-  else
+  };
+
+  // test for remote uobjects symbols
+  if (::urbiserver->functionbindertab.find(namebuffer)
+      != ::urbiserver->functionbindertab.end())
   {
-    ret   = 0;
-    bool found = false;
-    for (std::list<UObj*>::iterator itup = up.begin();
-         itup != up.end();
-         itup++)
-    {
-      UFunction* tmpres = (*itup)->searchFunction(id, ambiguous);
-      if (ambiguous) return 0;
-      if (tmpres)
-        if (found)
-        {
-          ambiguous = true;
-          return 0;
-        }
-        else
-        {
-          ret = tmpres;
-          found = true;
-        }
-    }
     ambiguous = false;
-    return ret;
+    return (kernel::remoteFunction);
+  };
+
+  // test for plugged uobjects symbols
+  if (::urbi::functionmap.find(namebuffer)
+      != ::urbi::functionmap.end())
+  {
+    ambiguous = false;
+    return (kernel::remoteFunction);
+  };
+
+  // try recursively with parents
+  ret   = 0;
+  bool found = false;
+  for (std::list<UObj*>::iterator itup = up.begin();
+       itup != up.end();
+       itup++)
+  {
+    UFunction* tmpres = (*itup)->searchFunction(id, ambiguous);
+    if (ambiguous) return 0;
+    if (tmpres)
+      if (found)
+      {
+        ambiguous = true;
+        return 0;
+      }
+      else
+      {
+        ret = tmpres;
+        found = true;
+      }
   }
+  ambiguous = false;
+  return ret;
 }
 
 UVariable*

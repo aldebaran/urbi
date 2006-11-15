@@ -25,6 +25,8 @@
 #include "userver.hh"
 #include "ucommand.hh"
 
+UFunction* kernel::remoteFunction;
+
 UFunction::UFunction(UString *funname,
 		     UNamedParameters *parameters,
 		     UCommand *command)

@@ -26,6 +26,13 @@
 #include <cstdlib>
 #include "fwd.hh"
 
+namespace kernel
+{
+  /// This generic UFunction definition is used by methods
+  /// likeUObj::searchFunction to say "this is a remote function"
+  extern UFunction* remoteFunction;
+}
+
 //! UFunction is used to handle functions in the URBI server
 class UFunction
 {

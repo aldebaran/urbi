@@ -136,6 +136,9 @@ UServer::UServer(ufloat frequency,
 
   kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
   kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
+  kernel::remoteFunction   = new UFunction( (UString*)0,
+                                            (UNamedParameters*)0,
+                                            (UCommand*)0);
 }
 
 //! Initialization of the server. Displays the header message & init stuff

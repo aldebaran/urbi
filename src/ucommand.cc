@@ -660,6 +660,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	fun = itobj->second->searchFunction
 	  (expression->variablename->getMethod()->str(),
 	   ambiguous);
+
+        //hack until we get proper nameresolution
+        if (fun == kernel::remoteFunction) fun = 0;
+
 	if (ambiguous)
 	{
 	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
@@ -2377,6 +2381,10 @@ UCommand_EXPR::execute(UConnection *connection)
 	fun = itobj->second->
 	  searchFunction(expression->variablename->getMethod()->str(),
 			 ambiguous);
+
+        // hack until we get proper nameresolution
+        if (fun == kernel::remoteFunction) fun = 0;
+
 	if (ambiguous)
 	{
 	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
@@ -3095,6 +3103,9 @@ UCommand_NEW::execute(UConnection *connection)
     // detects if init exists for the object or somewhere in the hierarchy
     bool ambiguous;
     initfun = newobj->searchFunction("init", ambiguous);
+
+    //hack until we get proper nameresolution
+    if (initfun == kernel::remoteFunction) initfun = 0;
   }
 
   if (parameters || (initfun != 0) || component)

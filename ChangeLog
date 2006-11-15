@@ -1,5 +1,14 @@
 2006-11-15  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #70 on nameresolution with remote uobjects methods. 
+	* src/ucommand.cc: fix code backward compat.
+	* src/ufunction.cc: define kernel::remoteFunction.
+	* src/ufunction.hh: declare kernel::remoteFunction.
+	* src/uobj.cc: fix searchFunction.
+	* src/userver.cc: init remoteFunction.
+
+2006-11-15  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	remove unnecessary parenthesis in tests. 
 	* src/uvariable.cc: done.
 
