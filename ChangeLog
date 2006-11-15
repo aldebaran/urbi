@@ -1,3 +1,10 @@
+2006-11-15  Akim Demaille  <akim.demaille@gmail.com>
+
+	Small uexpression.cc cleansing
+	* src/uexpression.cc: Use reindent.
+	Remove some useless parens.
+	* src/ustring.h: Use appropriate C++ headers.
+
 2006-11-13  Akim Demaille  <akim.demaille@free.fr>
 
 	Use uconsole to check the kernel

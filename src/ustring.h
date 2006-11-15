@@ -23,12 +23,12 @@
 #define USTRING_H_DEFINED
 
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 #include "memorymanager/memorymanager.h"
 
 //! UString is used to handle strings in the URBI server
-/*! The only reason why we had to introduce UString is to keep a tight control on how
-    memory is managed, as far as strings are concerned.
+/*! The only reason why we had to introduce UString is to keep a
+    tight control on how memory is managed, as far as strings are concerned.
     This class does all the ADDMEM/FREEMEM job for you. Use it.
 */
 class UString

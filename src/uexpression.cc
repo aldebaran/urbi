@@ -19,12 +19,16 @@
 
  **************************************************************************** */
 
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
+
 #include <sstream>
 #ifdef _MSC_VER
-#define snprintf _snprintf
+# define snprintf _snprintf
 #endif
+
+#include "libport/string.hh"
+
 #include "uexpression.h"
 #include "ucommand.h"
 #include "uconnection.h"
@@ -41,17 +45,17 @@ void UExpression::initialize()
 {
   ADDOBJ(UExpression);
 
-  expression1      = 0;
-  expression2      = 0;
-  str              = 0;
-  id               = 0;
-  variablename     = 0;
-  parameters       = 0;
-  firsteval        = true;
-  isconst          = false;
-  issofttest       = false;
-  staticcache      = 0;
-  tmp_value        = 0;
+  expression1	   = 0;
+  expression2	   = 0;
+  str		   = 0;
+  id		   = 0;
+  variablename	   = 0;
+  parameters	   = 0;
+  firsteval	   = true;
+  isconst	   = false;
+  issofttest	   = false;
+  staticcache	   = 0;
+  tmp_value	   = 0;
 
   this->softtest_time = 0;
 
@@ -60,41 +64,41 @@ void UExpression::initialize()
 
 //! UExpression constructor for numeric value.
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type, ufloat *val)
 {
-   initialize();
+  initialize();
 
-   this->val  = *val;
-   delete val; //other steal pointer, we copy->destroy
-   this->type = type; // should be EXPR_VALUE
-   this->isconst = true;
+  this->val  = *val;
+  delete val; //other steal pointer, we copy->destroy
+  this->type = type; // should be EXPR_VALUE
+  this->isconst = true;
 
-   dataType   = DATA_NUM;
+  dataType   = DATA_NUM;
 }
 
 
 //! UExpression constructor for numeric value.
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type, ufloat val)
 {
-   initialize();
+  initialize();
 
-   this->val  = val;
-   this->type = type; // should be EXPR_VALUE
-   this->isconst = true;
+  this->val  = val;
+  this->type = type; // should be EXPR_VALUE
+  this->isconst = true;
 
-   dataType   = DATA_NUM;
+  dataType   = DATA_NUM;
 }
 
 
 //! UExpression constructor for string value.
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type, UString *str)
 {
   initialize();
@@ -106,81 +110,83 @@ UExpression::UExpression(UExpressionType type, UString *str)
 
 //! UExpression constructor for numeric value.
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type, UValue *v)
 {
-   initialize();
+  initialize();
 
-   this->type = type; // should be EXPR_VALUE
-   this->isconst = true;
-   dataType   = v->dataType;
+  this->type = type; // should be EXPR_VALUE
+  this->isconst = true;
+  dataType   = v->dataType;
 
-   if (v->dataType == DATA_NUM) this->val  = v->val;
-   else
-     if (v->dataType == DATA_STRING) this->str = v->str->copy();
-     else {
-       tmp_value = v;
-       dataType = DATA_UNKNOWN;
-     }
+  if (v->dataType == DATA_NUM)
+    this->val  = v->val;
+  else if (v->dataType == DATA_STRING)
+    this->str = v->str->copy();
+  else
+  {
+    tmp_value = v;
+    dataType = DATA_UNKNOWN;
+  }
 }
 
 //! UExpression constructor for functors
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type,
 			 UString *oper,
 			 UVariableName *variablename)
 {
   initialize();
-  this->str          = oper;
+  this->str	     = oper;
   this->variablename = variablename;
   if (variablename)
     this->isconst    = variablename->isstatic;
 
-  this->type       = type; // should be EXPR_PROPERTY
-  dataType         = DATA_UNKNOWN;
+  this->type	   = type; // should be EXPR_PROPERTY
+  dataType	   = DATA_UNKNOWN;
 }
 
 //! UExpression constructor for variable
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type, UVariableName* variablename)
 {
   initialize();
-  this->type     = type; // should be EXPR_VARIABLE or
-			 //EXPR_ADDR_VARIABLE or EXPR_GROUPLIST
+  this->type	 = type; // should be EXPR_VARIABLE or
+  //EXPR_ADDR_VARIABLE or EXPR_GROUPLIST
   if (type == EXPR_ADDR_VARIABLE) dataType = DATA_STRING;
   this->variablename = variablename;
 }
 
 //! UExpression constructor for function
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type,
 			 UVariableName* variablename,
 			 UNamedParameters *parameters)
 {
   initialize();
-  this->type         = type; // should be EXPR_FUNCTION
-  dataType           = DATA_UNKNOWN;
+  this->type	     = type; // should be EXPR_FUNCTION
+  dataType	     = DATA_UNKNOWN;
   this->variablename = variablename;
   this->parameters   = parameters;
 }
 
 //! UExpression constructor for function
 /*! The parameter 'type' is required here only for the sake of uniformity
-    between all the different constructors.
-*/
+ between all the different constructors.
+ */
 UExpression::UExpression(UExpressionType type,
 			 UNamedParameters *parameters)
 {
   initialize();
-  this->type         = type; // should be EXPR_LIST
-  dataType           = DATA_LIST;
+  this->type	     = type; // should be EXPR_LIST
+  dataType	     = DATA_LIST;
   this->parameters   = parameters;
 }
 
@@ -190,7 +196,7 @@ UExpression::UExpression(UExpressionType type,
 			 UExpression* expression2)
 {
   initialize();
-  this->type        = type;
+  this->type	    = type;
 
   this->expression1 = expression1;
   this->expression2 = expression2;
@@ -209,17 +215,17 @@ UExpression::UExpression(UExpressionType type,
     {
       switch (type)
       {
-      case EXPR_PLUS:  val = expression1->val + expression2->val; break;
-      case EXPR_MINUS: val = expression1->val - expression2->val; break;
-      case EXPR_MULT:  val = expression1->val * expression2->val; break;
-      case EXPR_DIV:   val = expression1->val / expression2->val; break;
-      case EXPR_EXP:   val = pow (expression1->val , expression2->val); break;
-			default:    break;
+	case EXPR_PLUS:	 val = expression1->val + expression2->val; break;
+	case EXPR_MINUS: val = expression1->val - expression2->val; break;
+	case EXPR_MULT:	 val = expression1->val * expression2->val; break;
+	case EXPR_DIV:	 val = expression1->val / expression2->val; break;
+	case EXPR_EXP:	 val = pow (expression1->val , expression2->val); break;
+	default:    break;
       }
 
       this->type = EXPR_VALUE;
       this->isconst = true;
-      dataType   = DATA_NUM;
+      dataType	 = DATA_NUM;
       delete expression1; this->expression1 = 0;
       delete expression2; this->expression2 = 0;
     }
@@ -233,7 +239,7 @@ UExpression::UExpression(UExpressionType type,
 
       this->type = EXPR_VALUE;
       this->isconst = true;
-      dataType   = DATA_NUM;
+      dataType	 = DATA_NUM;
       delete expression1; this->expression1 = 0;
     }
 }
@@ -262,14 +268,14 @@ UExpression::copy()
   if (expression2)  ret->expression2 = expression2->copy();
   if (variablename) ret->variablename = variablename->copy();
   if (parameters)   ret->parameters = parameters->copy();
-  if (str)          ret->str = new UString(str);
-  if (id)           ret->id  = new UString(id);
+  if (str)	    ret->str = new UString(str);
+  if (id)	    ret->id  = new UString(id);
   if (softtest_time) ret->softtest_time = softtest_time->copy();
   if (staticcache)  ret->staticcache = staticcache->copy();
 
   ret->dataType = dataType;
-  ret->val      = val;
-  ret->isconst  = isconst;
+  ret->val	= val;
+  ret->isconst	= isconst;
   ret->issofttest  = issofttest;
   ret->firsteval   = firsteval;
   ret->tmp_value   = tmp_value;
@@ -279,8 +285,8 @@ UExpression::copy()
 
 //! Print the expression
 /*! This function is for debugging purpose only.
-    It is not safe, efficient or crash proof. A better version will come later.
-*/
+ It is not safe, efficient or crash proof. A better version will come later.
+ */
 void
 UExpression::print()
 {
@@ -323,10 +329,10 @@ UExpression::print()
 
 //! UExpression evaluation.
 /*! The connection parameter is necessary to access the variable hash table for
-  expressions who contain variables. It is also used to display error
-  messages.
-  The UCommand is used to retrieve a message tag if necessary.
-  */
+ expressions who contain variables. It is also used to display error
+ messages.
+ The UCommand is used to retrieve a message tag if necessary.
+ */
 UValue*
 UExpression::eval (UCommand *command,
 		   UConnection *connection)
@@ -342,61 +348,61 @@ UExpression::eval (UCommand *command,
 // function.  Of course the actual fix is to factor the function for
 // real, say using a visitor.
 
-# define ENSURE_TYPES_1(Type1)						\
- do {									\
-   if (!e1 || e1->dataType != Type1)					\
-   {									\
-     delete e1;								\
-     return 0;								\
-   }									\
- } while (0)
+#define ENSURE_TYPES_1(Type1)			\
+  do {						\
+    if (!e1 || e1->dataType != Type1)		\
+    {						\
+      delete e1;				\
+      return 0;					\
+    }						\
+  } while (0)
 
-# define ENSURE_TYPES_2(Type1, Type2)					\
- do {									\
-   if (!e1 || e1->dataType != Type1					\
-       || !e2 || e2->dataType != Type2)					\
-   {									\
-     delete e1;								\
-     delete e2;								\
-     return 0;								\
-   }									\
- } while (0)
+#define ENSURE_TYPES_2(Type1, Type2)		\
+  do {						\
+    if (!e1 || e1->dataType != Type1		\
+	|| !e2 || e2->dataType != Type2)	\
+    {						\
+      delete e1;				\
+      delete e2;				\
+      return 0;					\
+    }						\
+  } while (0)
 
-# define ENSURE_TYPES_3(Type1, Type2, Type3)				\
- do {									\
-   if (!e1 || e1->dataType != Type1					\
-       || !e2 || e2->dataType != Type2					\
-       || !e3 || e3->dataType != Type3)					\
-   {									\
-     delete e1;								\
-     delete e2;								\
-     delete e3;								\
-     return 0;								\
-   }									\
- } while (0)
+#define ENSURE_TYPES_3(Type1, Type2, Type3)	\
+  do {						\
+    if (!e1 || e1->dataType != Type1		\
+	|| !e2 || e2->dataType != Type2		\
+	|| !e3 || e3->dataType != Type3)	\
+    {						\
+      delete e1;				\
+      delete e2;				\
+      delete e3;				\
+      return 0;					\
+    }						\
+  } while (0)
 
-# define ENSURE_COMPARISON(Kind)					\
- do {									\
-   if (!e1 || e1->dataType != DATA_NUM					\
-       || !e2 || e2->dataType != DATA_NUM)				\
-   {									\
-     snprintf(errorString,						\
-	      errSize,							\
-	      "!!! " Kind " comparisons must be"			\
-	      " between numerical values\n");				\
-     connection->send(errorString, command->getTag().c_str());		\
-     delete e1;								\
-     delete e2;								\
-     return 0;								\
-   }									\
- } while (0)
+#define ENSURE_COMPARISON(Kind)					\
+  do {								\
+    if (!e1 || e1->dataType != DATA_NUM				\
+	|| !e2 || e2->dataType != DATA_NUM)			\
+    {								\
+      snprintf(errorString,					\
+	       errSize,						\
+	       "!!! " Kind " comparisons must be"		\
+	       " between numerical values\n");			\
+      connection->send(errorString, command->getTag().c_str());	\
+      delete e1;						\
+      delete e2;						\
+      return 0;							\
+    }								\
+  } while (0)
 
 
 //! UExpression evaluation.
 /*! The connection parameter is necessary to access the variable hash table for
-  expressions who contain variables. It is also used to display error
-  messages.
-  The UCommand is used to retrieve a message tag if necessary.
+ expressions who contain variables. It is also used to display error
+ messages.
+ The UCommand is used to retrieve a message tag if necessary.
  */
 UValue*
 UExpression::eval (UCommand *command,
@@ -461,7 +467,7 @@ UExpression::eval (UCommand *command,
 		   "!!! Objects not allowed in lists with Kernel 1. "
 		   "Use lists of keys and object maps instead\n");
 	  connection->send(errorString,
-			     command->getTag().c_str());
+			   command->getTag().c_str());
 	  delete ret;
 	  return 0;
 	}
@@ -485,7 +491,7 @@ UExpression::eval (UCommand *command,
 		   "!!! Objects not allowed in lists with Kernel 1. "
 		   "Use lists of keys and object maps instead\n");
 	  connection->send(errorString,
-			     command->getTag().c_str());
+			   command->getTag().c_str());
 	  delete ret;
 	  return 0;
 	}
@@ -514,7 +520,8 @@ UExpression::eval (UCommand *command,
 	    ret->liststart = new UValue((*it)->str());
 	    delete e2;
 	  }
-	  else {
+	  else
+	  {
 	    delete ret;
 	    ret = e2;
 	  }
@@ -646,7 +653,8 @@ UExpression::eval (UCommand *command,
 
 	char* p2;
 	if (p)
-	{ // could be a list index.... (dirty hack)
+	{
+	  // could be a list index.... (dirty hack)
 	  p[0]=0;
 
 	  HMvariabletab::iterator hmv =::urbiserver->variabletab.find(varname);
@@ -779,44 +787,44 @@ UExpression::eval (UCommand *command,
 		(::urbiserver->previousTime - ::urbiserver->previous2Time);
 	      break;
 	    case UDERIV2: ret->val = 1000000. * 2 *
-			  ( variable->previous  * (::urbiserver->previous2Time-
-						   ::urbiserver->previous3Time)
-			    - variable->previous2 *(::urbiserver->previousTime-
-						   ::urbiserver->previous3Time)
-			    +
-			    variable->previous3 *
-			    (::urbiserver->previousTime  -
-			     ::urbiserver->previous2Time)
-			  ) / (  (::urbiserver->previous2Time
-				  - ::urbiserver->previous3Time) *
-				 (::urbiserver->previousTime
-				  - ::urbiserver->previous3Time) *
-				 (::urbiserver->previousTime
-				  - ::urbiserver->previous2Time) );
+		( variable->previous  * (::urbiserver->previous2Time-
+					 ::urbiserver->previous3Time)
+		  - variable->previous2 *(::urbiserver->previousTime-
+					  ::urbiserver->previous3Time)
+		  +
+		  variable->previous3 *
+		  (::urbiserver->previousTime  -
+		   ::urbiserver->previous2Time)
+		  ) / (	 (::urbiserver->previous2Time
+			  - ::urbiserver->previous3Time) *
+			 (::urbiserver->previousTime
+			  - ::urbiserver->previous3Time) *
+			 (::urbiserver->previousTime
+			  - ::urbiserver->previous2Time) );
 
-			  break;
+	      break;
 	    case UTRUEDERIV: ret->val = 1000. *
-			     (variable->get()->val - variable->valPrev)/
-			       (::urbiserver->currentTime
-				- ::urbiserver->previousTime);
-			     break;
+		(variable->get()->val - variable->valPrev)/
+		(::urbiserver->currentTime
+		 - ::urbiserver->previousTime);
+	      break;
 	    case UTRUEDERIV2: ret->val = 1000000. * 2 *
-			      ( variable->get()->val  *
-				(::urbiserver->previousTime -
-				 ::urbiserver->previous2Time) -
-				variable->valPrev     *
-				(::urbiserver->currentTime  -
-				 ::urbiserver->previous2Time) +
-				variable->valPrev2    *
-				(::urbiserver->currentTime-
-				 ::urbiserver->previousTime)
-			      ) / (  (::urbiserver->previousTime
-				      - ::urbiserver->previous2Time) *
-				     (::urbiserver->currentTime
-				      - ::urbiserver->previous2Time) *
-				     (::urbiserver->currentTime
-				      - ::urbiserver->previousTime) );
-			      break;
+		( variable->get()->val	*
+		  (::urbiserver->previousTime -
+		   ::urbiserver->previous2Time) -
+		  variable->valPrev	*
+		  (::urbiserver->currentTime  -
+		   ::urbiserver->previous2Time) +
+		  variable->valPrev2	*
+		  (::urbiserver->currentTime-
+		   ::urbiserver->previousTime)
+		  ) / (	 (::urbiserver->previousTime
+			  - ::urbiserver->previous2Time) *
+			 (::urbiserver->currentTime
+			  - ::urbiserver->previous2Time) *
+			 (::urbiserver->currentTime
+			  - ::urbiserver->previousTime) );
+	      break;
 	    default: break;
 	  }
 	}
@@ -852,59 +860,59 @@ UExpression::eval (UCommand *command,
 
       ret = new UValue();
 
-      if (strcmp(str->str(), "rangemin")==0)
+      if (STREQ(str->str(), "rangemin"))
       {
 	ret->dataType = DATA_NUM;
 	ret->val = variable->rangemin;
 	return ret;
       }
 
-      if (strcmp(str->str(), "rangemax")==0)
+      if (STREQ(str->str(), "rangemax"))
       {
 	ret->dataType = DATA_NUM;
 	ret->val = variable->rangemax;
 	return ret;
       }
 
-      if (strcmp(str->str(), "speedmin")==0)
+      if (STREQ(str->str(), "speedmin"))
       {
 	ret->dataType = DATA_NUM;
 	ret->val = variable->speedmin;
 	return ret;
       }
 
-      if (strcmp(str->str(), "speedmax")==0)
+      if (STREQ(str->str(), "speedmax"))
       {
 	ret->dataType = DATA_NUM;
 	ret->val = variable->speedmax;
 	return ret;
       }
 
-      if (strcmp(str->str(), "delta")==0)
+      if (STREQ(str->str(), "delta"))
       {
 	ret->dataType = DATA_NUM;
 	ret->val = variable->delta;
 	return ret;
       }
 
-      if (strcmp(str->str(), "unit")==0)
+      if (STREQ(str->str(), "unit"))
       {
 	ret->dataType = DATA_STRING;
 	ret->str = new UString( variable->unit );
 	return ret;
       }
 
-      if (strcmp(str->str(), "blend")==0)
+      if (STREQ(str->str(), "blend"))
       {
 	ret->dataType = DATA_STRING;
 	switch (variable->blendType)
 	{
-	  case UNORMAL:  ret->str = new UString("normal"); break;
-	  case UMIX:     ret->str = new UString("mix"); break;
-	  case UADD:     ret->str = new UString("add"); break;
+	  case UNORMAL:	 ret->str = new UString("normal"); break;
+	  case UMIX:	 ret->str = new UString("mix"); break;
+	  case UADD:	 ret->str = new UString("add"); break;
 	  case UDISCARD: ret->str = new UString("discard"); break;
-	  case UQUEUE:   ret->str = new UString("queue"); break;
-	  case UCANCEL:  ret->str = new UString("cancel"); break;
+	  case UQUEUE:	 ret->str = new UString("queue"); break;
+	  case UCANCEL:	 ret->str = new UString("cancel"); break;
 	  default: ret->str = new UString("unknown");
 	}
 	return (ret);
@@ -939,37 +947,37 @@ UExpression::eval (UCommand *command,
       }
 
       if ( /*(strcmp(variablename->device->str(),
-	     connection->connectionTag->str()) == 0) &&*/
-	   (parameters == 0) &&
-	   ( (variablename->id->equal("freemem")) ||
-	     (variablename->id->equal("power")) ||
-	     (variablename->id->equal("cpuload")) ||
-	     (variablename->id->equal("time")) ) )
+	    connection->connectionTag->str()) == 0) &&*/
+	(parameters == 0) &&
+	( (variablename->id->equal("freemem")) ||
+	  (variablename->id->equal("power")) ||
+	  (variablename->id->equal("cpuload")) ||
+	  (variablename->id->equal("time")) ) )
       {
 	ret = new UValue();
 	ret->dataType = DATA_NUM;
 
-	if (strcmp(variablename->id->str(), "freemem")==0)
+	if (STREQ(variablename->id->str(), "freemem"))
 	  ret->val = availableMemory - usedMemory;
 
-	if (strcmp(variablename->id->str(), "time")==0)
+	if (STREQ(variablename->id->str(), "time"))
 	  ret->val = connection->server->getTime();
 
-	if (strcmp(variablename->id->str(), "cpuload")==0)
+	if (STREQ(variablename->id->str(), "cpuload"))
 	  ret->val = connection->server->cpuload;
 
-	if (strcmp(variablename->id->str(), "power")==0)
+	if (STREQ(variablename->id->str(), "power"))
 	  ret->val = connection->server->getPower();
 
 	return ret;
       }
 
       if ( /*(strcmp(variablename->device->str(),
-	     connection->connectionTag->str()) == 0) &&*/
-	   (parameters!=0) &&
-	   (parameters->size() == 2))
+	    connection->connectionTag->str()) == 0) &&*/
+	(parameters!=0) &&
+	(parameters->size() == 2))
       {
-	if (strcmp(variablename->id->str(), "save")==0)
+	if (STREQ(variablename->id->str(), "save"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  e2 = parameters->next->expression->eval(command, connection);
@@ -995,7 +1003,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	} // save
 
-	if (strcmp(variablename->id->str(), "getIndex")==0)
+	if (STREQ(variablename->id->str(), "getIndex"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  e2 = parameters->next->expression->eval(command, connection);
@@ -1023,7 +1031,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	} // getIndex
 
-	if (strcmp(variablename->id->str(), "cat")==0)
+	if (STREQ(variablename->id->str(), "cat"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  e2 = parameters->next->expression->eval(command, connection);
@@ -1068,7 +1076,7 @@ UExpression::eval (UCommand *command,
       if ( (parameters!=0) &&
 	   (parameters->size() == 1))
       {
-	if (strcmp(variablename->id->str(), "strlen")==0)
+	if (STREQ(variablename->id->str(), "strlen"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
@@ -1086,7 +1094,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	} // strlen
 
-	if (strcmp(variablename->id->str(), "head")==0)
+	if (STREQ(variablename->id->str(), "head"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
@@ -1099,7 +1107,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	} // head
 
-	if (strcmp(variablename->id->str(), "tail")==0)
+	if (STREQ(variablename->id->str(), "tail"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
@@ -1129,7 +1137,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	} // tail
 
-	if (strcmp(variablename->id->str(), "size")==0)
+	if (STREQ(variablename->id->str(), "size"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
@@ -1150,7 +1158,7 @@ UExpression::eval (UCommand *command,
 	} // size
 
 
-	if (strcmp(variablename->id->str(), "isdef")==0)
+	if (STREQ(variablename->id->str(), "isdef"))
 	{
 	  ret = new UValue();
 	  ret->dataType = DATA_NUM;
@@ -1166,7 +1174,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	} // isdef
 
-	if (strcmp(variablename->id->str(), "isvoid")==0)
+	if (STREQ(variablename->id->str(), "isvoid"))
 	{
 	  ret = new UValue();
 	  ret->dataType = DATA_NUM;
@@ -1184,7 +1192,7 @@ UExpression::eval (UCommand *command,
 	} // isvoid
 
 
-	if (strcmp(variablename->id->str(), "load")==0)
+	if (STREQ(variablename->id->str(), "load"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
@@ -1227,7 +1235,7 @@ UExpression::eval (UCommand *command,
 	} // load
 
 
-	if (strcmp(variablename->id->str(), "loadwav")==0)
+	if (STREQ(variablename->id->str(), "loadwav"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
@@ -1245,7 +1253,8 @@ UExpression::eval (UCommand *command,
 	    delete loadQueue;
 	    ret = 0;
 	  }
-	  else {
+	  else
+	  {
 	    UBinary *binaire =
 	      new UBinary(loadQueue->dataSize(),
 			  new UNamedParameters
@@ -1264,7 +1273,7 @@ UExpression::eval (UCommand *command,
 	} // loadwav
 
 
-	if (strcmp(variablename->id->str(), "exec")==0)
+	if (STREQ(variablename->id->str(), "exec"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
@@ -1290,7 +1299,8 @@ UExpression::eval (UCommand *command,
 	  ::urbiserver->systemcommands = true;
 
 	  if (errorMessage[0] != 0)
-	  { // a parsing error occured
+	  {
+	    // a parsing error occured
 
 	    if (::urbiserver->parser.commandTree)
 	    {
@@ -1308,7 +1318,8 @@ UExpression::eval (UCommand *command,
 	    command->persistant = false;
 	    ::urbiserver->parser.commandTree = 0;
 	  }
-	  else {
+	  else
+	  {
 	    snprintf(errorString, errSize,
 		     "!!! Error parsing the exec string\n");
 	    connection->send(errorString, command->getTag().c_str());
@@ -1323,7 +1334,7 @@ UExpression::eval (UCommand *command,
 
       if ( (parameters!=0) &&
 	   (parameters->size() == 3) &&
-	   (strcmp(variablename->id->str(), "strsub")==0) )
+	   (STREQ(variablename->id->str(), "strsub")) )
       {
 	e1 = parameters->expression->eval(command, connection);
 	e2 = parameters->next->expression->eval(command, connection);
@@ -1333,18 +1344,16 @@ UExpression::eval (UCommand *command,
 	ret = new UValue();
 	ret->dataType = DATA_STRING;
 
-	if (strcmp(variablename->id->str(), "strsub")==0)
+	if (STREQ(variablename->id->str(), "strsub"))
 	  ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
 
 	delete e1; delete e2; delete e3;
 	return ret;
       }
 
-      if ( (parameters!=0  &&
-	    (parameters->size() == 2) &&
-	    (
-	     (strcmp(variablename->id->str(), "atan2")==0)
-	    )))
+      if (parameters
+	  && parameters->size() == 2
+	  && STREQ(variablename->id->str(), "atan2"))
       {
 	e1 = parameters->expression->eval(command, connection);
 	e2 = parameters->next->expression->eval(command, connection);
@@ -1352,37 +1361,37 @@ UExpression::eval (UCommand *command,
 	ret = new UValue();
 	ret->dataType = DATA_NUM;
 
-	if (strcmp(variablename->id->str(), "atan2")==0)
+	if (STREQ(variablename->id->str(), "atan2"))
 	  ret->val = atan2(e1->val, e2->val);
 
 	delete e1;
 	delete e2;
 	return ret;
       }
-      if ( (parameters!=0) &&
-	   (parameters->size() == 1) &&
-	   (  (strcmp(variablename->id->str(), "sin")==0) ||
-	      (strcmp(variablename->id->str(), "asin")==0) ||
-	      (strcmp(variablename->id->str(), "cos")==0) ||
-	      (strcmp(variablename->id->str(), "acos")==0) ||
-	      (strcmp(variablename->id->str(), "tan")==0) ||
-	      (strcmp(variablename->id->str(), "atan")==0) ||
-	      (strcmp(variablename->id->str(), "sgn")==0) ||
-	      (strcmp(variablename->id->str(), "abs")==0) ||
-	      (strcmp(variablename->id->str(), "exp")==0) ||
-	      (strcmp(variablename->id->str(), "log")==0) ||
-	      (strcmp(variablename->id->str(), "round")==0) ||
-	      (strcmp(variablename->id->str(), "random")==0) ||
-	      (strcmp(variablename->id->str(), "trunc")==0) ||
-	      (strcmp(variablename->id->str(), "sqr")==0) ||
-	      (strcmp(variablename->id->str(), "sqrt")==0) ||
-	      (strcmp(variablename->id->str(), "string")==0)
-	   ) )
+      if (parameters
+	  && parameters->size() == 1
+	  && (false
+	      || STREQ(variablename->id->str(), "sin")
+	      || STREQ(variablename->id->str(), "asin")
+	      || STREQ(variablename->id->str(), "cos")
+	      || STREQ(variablename->id->str(), "acos")
+	      || STREQ(variablename->id->str(), "tan")
+	      || STREQ(variablename->id->str(), "atan")
+	      || STREQ(variablename->id->str(), "sgn")
+	      || STREQ(variablename->id->str(), "abs")
+	      || STREQ(variablename->id->str(), "exp")
+	      || STREQ(variablename->id->str(), "log")
+	      || STREQ(variablename->id->str(), "round")
+	      || STREQ(variablename->id->str(), "random")
+	      || STREQ(variablename->id->str(), "trunc")
+	      || STREQ(variablename->id->str(), "sqr")
+	      || STREQ(variablename->id->str(), "sqrt")
+	      || STREQ(variablename->id->str(), "string")))
       {
 	e1 = parameters->expression->eval(command, connection);
 	ENSURE_TYPES_1 (DATA_NUM);
 
-	if (strcmp(variablename->id->str(), "string")==0)
+	if (STREQ(variablename->id->str(), "string"))
 	{
 	  ret = new UValue();
 	  ret->dataType = DATA_STRING;
@@ -1396,40 +1405,40 @@ UExpression::eval (UCommand *command,
 	ret = new UValue();
 	ret->dataType = DATA_NUM;
 
-	if (strcmp(variablename->id->str(), "sin")==0)
+	if (STREQ(variablename->id->str(), "sin"))
 	  ret->val = sin(e1->val);
-	if (strcmp(variablename->id->str(), "asin")==0)
+	if (STREQ(variablename->id->str(), "asin"))
 	  ret->val = asin(e1->val);
-	if (strcmp(variablename->id->str(), "cos")==0)
+	if (STREQ(variablename->id->str(), "cos"))
 	  ret->val = cos(e1->val);
-	if (strcmp(variablename->id->str(), "acos")==0)
+	if (STREQ(variablename->id->str(), "acos"))
 	  ret->val = acos(e1->val);
-	if (strcmp(variablename->id->str(), "tan")==0)
+	if (STREQ(variablename->id->str(), "tan"))
 	  ret->val = tan(e1->val);
-	if (strcmp(variablename->id->str(), "atan")==0)
+	if (STREQ(variablename->id->str(), "atan"))
 	  ret->val = atan(e1->val);
-	if (strcmp(variablename->id->str(), "sgn")==0)
+	if (STREQ(variablename->id->str(), "sgn"))
 	  if (e1->val>0)
 	    ret->val =1;
 	  else
 	    if (e1->val<0)
 	      ret->val = -1;
-	if (strcmp(variablename->id->str(), "abs")==0)
+	if (STREQ(variablename->id->str(), "abs"))
 	  ret->val = fabs(e1->val);
-	if (strcmp(variablename->id->str(), "random")==0)
+	if (STREQ(variablename->id->str(), "random"))
 	  ret->val = (rand()%(int)e1->val);
-	if (strcmp(variablename->id->str(), "round")==0)
+	if (STREQ(variablename->id->str(), "round"))
 	  if (e1->val>=0)
 	    ret->val = (ufloat)(int)(e1->val+0.5);
 	  else
 	    ret->val = (ufloat)(int)(e1->val-0.5);
-	if (strcmp(variablename->id->str(), "trunc")==0)
+	if (STREQ(variablename->id->str(), "trunc"))
 	  ret->val = (ufloat)(int)(e1->val);
-	if (strcmp(variablename->id->str(), "exp")==0)
+	if (STREQ(variablename->id->str(), "exp"))
 	  ret->val = exp(e1->val);
-	if (strcmp(variablename->id->str(), "sqr")==0)
+	if (STREQ(variablename->id->str(), "sqr"))
 	  ret->val = e1->val*e1->val;
-	if (strcmp(variablename->id->str(), "sqrt")==0)
+	if (STREQ(variablename->id->str(), "sqrt"))
 	{
 	  if (e1->val<0)
 	  {
@@ -1439,7 +1448,7 @@ UExpression::eval (UCommand *command,
 	  }
 	  ret->val = sqrt(e1->val);
 	}
-	if (strcmp(variablename->id->str(), "log")==0)
+	if (STREQ(variablename->id->str(), "log"))
 	{
 	  if (e1->val<0)
 	  {
@@ -1966,7 +1975,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  pnext = strstr(p+2, "__");
 	}
 	if (p)
-	{ // could be a list index
+	{
+	  // could be a list index
 	  p[0]=0;
 	  HMvariabletab::iterator hmv =
 	    ::urbiserver->variabletab.find(varname);
@@ -2020,26 +2030,29 @@ UExpression::asyncScan(UASyncCommand *cmd,
       eh = kernel::findEventHandler(fullname, nbargs);
 
       if (eh)
-      { // This is an event
+      {
+	// This is an event
 	eh->registerCmd (cmd);
 	return USUCCESS;
       }
       else
-      { // is it a known kernel function?
+      {
+	// is it a known kernel function?
 	if ( kernel::isCoreFunction (variablename->id))
 	{
 	  UNamedParameters* param = parameters;
 	  while (param)
 	  {
 	    if (param->expression)
-	       if (param->expression->asyncScan(cmd, c) == UFAIL)
-		 return UFAIL;
+	      if (param->expression->asyncScan(cmd, c) == UFAIL)
+		return UFAIL;
 	    param = param->next;
 	  }
 	  return USUCCESS;
 	}
 	else
-	{ // it is not a known function
+	{
+	  // it is not a known function
 	  if (c->server->defcheck) //strict
 	    return UFAIL;
 	  else
