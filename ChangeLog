@@ -1,3 +1,9 @@
+2006-11-16  Akim Demaille  <akim.demaille@gmail.com>
+
+	Formatting changes
+	* src/ucommand.cc: Also, prefer for to while when advisable.
+	Remove spurious parens.
+
 2006-11-15  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix ticket #70 on nameresolution with remote uobjects methods. 
@@ -83,22 +89,22 @@
 	* src/uvariablename.h: Rename as...
 	* src/uvariablename.hh: this.
 
-	* src/Makefile.am, src/parser/bison/bison.mk, 
+	* src/Makefile.am, src/parser/bison/bison.mk,
 	* src/parser/bison/flex-lexer.hh, src/parser/bison/ugrammar.y: Adjust.
 
 	* src/console.cc, src/memorymanager/memorymanager.cc,
-        * src/parser/uparser.cc, src/uasynccommand.cc,
-        * src/uasyncregister.cc, src/uatcandidate.cc, src/ubanner.cc,
-        * src/ubinary.cc, src/ubinder.cc, src/ucallid.cc,
-        * src/ucommand.cc, src/ucommandqueue.cc, src/uconnection.cc,
-        * src/ueventcompound.cc, src/ueventhandler.cc,
-        * src/ueventinstance.cc, src/ueventmatch.cc,
-        * src/uexpression.cc, src/ufunction.cc,
-        * src/ughostconnection.cc, src/ugroup.cc,
-        * src/unamedparameters.cc, src/uobj.cc, src/uobject.cc,
-        * src/uproperty.cc, src/uqueue.cc, src/userver.cc,
-        * src/ustring.cc, src/uvalue.cc, src/uvar.cc,
-        * src/uvariable.cc, src/uvariablelist.cc, src/uvariablename.cc:
+	* src/parser/uparser.cc, src/uasynccommand.cc,
+	* src/uasyncregister.cc, src/uatcandidate.cc, src/ubanner.cc,
+	* src/ubinary.cc, src/ubinder.cc, src/ucallid.cc,
+	* src/ucommand.cc, src/ucommandqueue.cc, src/uconnection.cc,
+	* src/ueventcompound.cc, src/ueventhandler.cc,
+	* src/ueventinstance.cc, src/ueventmatch.cc,
+	* src/uexpression.cc, src/ufunction.cc,
+	* src/ughostconnection.cc, src/ugroup.cc,
+	* src/unamedparameters.cc, src/uobj.cc, src/uobject.cc,
+	* src/uproperty.cc, src/uqueue.cc, src/userver.cc,
+	* src/ustring.cc, src/uvalue.cc, src/uvar.cc,
+	* src/uvariable.cc, src/uvariablelist.cc, src/uvariablename.cc:
 	Adjust.
 
 2006-11-15  Akim Demaille  <akim.demaille@gmail.com>
