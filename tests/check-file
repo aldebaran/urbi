@@ -1,7 +1,17 @@
 #! /bin/sh
 
 set -e
-set -xv
+
+banner ()
+{
+  if (figlet foo) >/dev/null 2>&1; then
+    figlet "$@"
+  else
+    echo
+    echo ===== "$@" =====
+    echo
+  fi
+}
 
 # filter_output FILE
 # ------------------
@@ -10,7 +20,7 @@ set -xv
 filter_output ()
 {
   sed -n -e '/^\*\*\* /,/^Ready\.$/d' \
-         -e '/^\[[0-9]*\(:[^]]*\]\)/{s//[XXXXXXXXX\1/;p;}' \
+	 -e '/^\[[0-9]*\(:[^]]*\]\)/{s//[XXXXXXXXX\1/;p;}' \
       "$1" |
    sed -e 's/\(pong time=\).*/\1XXXXXX/g'
 }
@@ -18,6 +28,8 @@ filter_output ()
 chk=$1
 test -f $chk
 me=$(basename "$chk" ".chk")
+
+banner >&2 "Test: $me"
 
 # Compute input and expected output.
 sed  -e '/^\[[^]]*\] /d'         $chk >$me.in
@@ -38,13 +50,14 @@ filter_output $me.out > $me.out.2
 mv $me.out.2 $me.out
 
 # Display input and output.
-echo >&2 "===== Input: "
+banner >&2 "Input:"
 cat >&2 $me.in
 
-echo >&2 "===== Output: "
+banner >&2 "Output:"
 cat >&2 $me.out
 
 # Compare expected output with actual output.
-diff -u $me.expout $me.out
+banner >&2 "Diffs:"
+diff -u $me.expout $me.out >&2
 
 rm -f $me.in $me.out $me.expout

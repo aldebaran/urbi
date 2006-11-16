@@ -1,3 +1,8 @@
+2006-11-16  Akim Demaille  <akim.demaille@free.fr>
+
+	Use banners in the tests.
+	* tests/check-file: here.
+
 2006-11-16  Akim Demaille  <akim.demaille@gmail.com>
 
 	Formatting changes
