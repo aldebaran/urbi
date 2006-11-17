@@ -31,7 +31,7 @@ URBI_PROG_CXX
 # The kernel is far from being ready for this warning.
 TC_CXX_WARNINGS([-Wno-effc++])
 
-# We don't need static libraries, speed the compilation up.
+# We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])
 AC_PROG_LIBTOOL
 

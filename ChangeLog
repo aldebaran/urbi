@@ -1,3 +1,9 @@
+2006-11-17  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Fix typos.
+	* ChangeLog: Here.
+	* configure.ac: And here.
+
 2006-11-16  Akim Demaille  <akim.demaille@free.fr>
 
 	Use banners in the tests.
@@ -226,7 +232,7 @@ method).
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	add support for :: in assignements
+	add support for :: in assignments
 	* src/ucommand.cc: add same support of :: for UCommand_ASSIGN_VALUE.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -258,7 +264,7 @@ a function which should keep running commands (like 'at') is to avoid using
 'return' (in fact, the function does not return, since it's still running.
 Logical).
 
-This is new because in C++ this disctinction wouldn't make any sense: there is
+This is new because in C++ this distinction wouldn't make any sense: there is
 no such things as "still running background instructions" and when the end of
 the function is reached, it is guaranteed that all instructions within the
 function body are terminated, so putting 'return' or not doesn't change anything.
@@ -279,7 +285,7 @@ function f2()
 }
 
 f2() will kill the 'at', f() will not. This is indeed very useful if the
-'return' instruction is conditionned by some test. It has the same effect as a
+'return' instruction is conditioned by some test. It has the same effect as a
 kind of 'stop function_tag'.
 
 	rewrite return mechanism for functions.
@@ -291,7 +297,7 @@ kind of 'stop function_tag'.
 
 2006-11-12  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	formating changes
+	Formatting changes.
 	* src/unamedparameters.cc: done.
 	* src/unamedparameters.h: done.
 
@@ -324,7 +330,7 @@ kind of 'stop function_tag'.
 
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
-access_and_change_varlist in UServer keeps track of variable who have botha
+access_and_change_varlist in UServer keeps track of variable that have both a
 notifyChange and notifyAccess record. The destructor of UVariable cleans it,
 UServer::work calls UVariable::get for each of the listed variables.
 
@@ -337,7 +343,7 @@ UServer::work calls UVariable::get for each of the listed variables.
 
 2006-11-11  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	formating changes
+	Formatting changes.
 	* src/uobject.cc: done.
 	* src/userver.h: done.
 
@@ -472,7 +478,7 @@ triggers an error message.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	indentation reformating
+	Indentation reformatting.
 	* src/utypes.h: doit.
 
 2006-11-05  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -499,8 +505,8 @@ $(a): ping;
 
 For many critical applications where URBI has to handle "lists" of objects
 created at runtime (like bots in a video game), it is necessary to be able to
-have objects refered to by names containing variable parts. This feature is
-added via the hash map mecanism already existing:
+have objects referred to by names containing variable parts. This feature is
+added via the hash map mechanism already existing:
 
 class x;
 obj[1] = new x;
@@ -508,9 +514,9 @@ obj["myname"] = new x;
 obj[45]["hello"] = new x;
 
 The way it is done is again via a hack in the nameresolution function and the
-parser. In k1.5, this will be fixed with ageneric nameresolution algorithm.
+parser. In k1.5, this will be fixed with a generic nameresolution algorithm.
 
-NB: obj[1] is not refering to an underlying ulist of objects, and evaluating
+NB: obj[1] is not referring to an underlying ulist of objects, and evaluating
 obj alone without the array index will fail.
 
 	add support for objects hash table
@@ -551,7 +557,7 @@ This is now fixed.
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix speedmax bug
-	* src/ucommand.cc: enforce speedmax on instantaneus assignments like
+	* src/ucommand.cc: enforce speedmax on instantaneous assignments like
 	x=<value> and display a warning message when the +error flag is set.
 
 2006-11-04  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -603,7 +609,7 @@ This is now fixed.
 
 2006-11-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	formating changes
+	Formatting changes.
 
 	* src/ucommand.cc: indent.
 	* src/parser/bison/ugrammar.y: remove comments.
@@ -692,12 +698,12 @@ This is now fixed.
 	Formatting changes
 	* uvalue.h: here.
 
-2006-10-31  Type Your Name Here  <baillie@gostai.com>
+2006-10-31  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Remove commented code
 	* src/parser/bison/ugrammar.y: here.
 
-2006-10-31  Type Your Name Here  <baillie@gostai.com>
+2006-10-31  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Fix UString copy ctor
 	* src/ustring.cc: Do it.
@@ -807,11 +813,11 @@ This is now fixed.
 	* src/Makefile.am: Do not compile the Aibo connection kit.
 	Will probably be removed later.
 
-2006-10-21  Akim Demaille  <your.mail.here@FIXME.com>
+2006-10-21  Akim Demaille  <akim.demaille@free.fr>
 
 	ChangeLog issues
 
-2006-10-20  Type Your Name Here  <your.mail.here@FIXME.com>
+2006-10-20  Matthieu Nottale  <nottale@gostai.com>
 
 	Upped libport and liburbi, small fix as a consequence
 
@@ -837,7 +843,7 @@ This is now fixed.
 2006-10-17  Akim Demaille  <demaille@gostai.com>
 
 	Look for pthread.h, install parts of libport.
-	* src/Makefile.am: install bit of libport, since userver,h includes
+	* src/Makefile.am: install bit of libport, since userver.h includes
 	it, and is installed.  That sucks.
 	* configure.ac: Use URBI_PTHREAD.
 
@@ -988,7 +994,7 @@ This is now fixed.
 
 	Lock fix.
 
-	* parser/uparser.cc: Remove unneccessary &*.
+	* parser/uparser.cc: Remove unnecessary &*.
 	* lockable.h: Lock is now a recursive mutex.
 	* userver.cc: Lock server in work.
 	* userver.h: UServer inherits Lockable .
@@ -1126,7 +1132,7 @@ This is now fixed.
 
 	fix 'new' behavior when no init is present and no parameters are given
 
-	When invoquing new with no parameters, the default "empty"
+	When invoking new with no parameters, the default "empty"
 	constructor is now called, even if the init function has not been
 	explicitly declared.
 
@@ -1139,7 +1145,7 @@ This is now fixed.
 
 	* ucommand.cc: fix a=new a; this is not permitted.
 
-2006-10-08  Type Your Name Here  <your.mail.here@fixme.com>
+2006-10-08  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Name resolution fix in object methods + akim bug in booleval reverted
 
@@ -1149,7 +1155,7 @@ This is now fixed.
 	Akim removed a "if (freeme)" before a delete in booleval. Reverted.
 
 	* ucommand.cc: cleanup warnings.
-	* parser/bison/ugrammar.y: cleanup of unecessary comments.
+	* parser/bison/ugrammar.y: cleanup of unnecessary comments.
 	* uexpression.cc: cleanup warnings, fix indent.
 	* uvalue.cc: remove booleval bug, fix indent.
 	* uvariable.cc: cleanup warnings, fix indent.
@@ -1311,7 +1317,7 @@ This is now fixed.
 2006-09-26  Akim Demaille  <akim.demaille@free.fr>
 
 	White space changes.
-	* uconnection.cc: White space chanegs.
+	* uconnection.cc: White space changes.
 
 2006-09-26  Akim Demaille  <demaille@gostai.com>
 
@@ -1353,7 +1359,7 @@ This is now fixed.
 	* Makefile.am (AM_CPPFLAGS): Remove useless ones, add missing ones.
 	Ship uext.h.
 
-2006-09-26  Type Your Name Here  <your.mail.here@fixme.com>
+2006-09-26  matthieu nottale  <nottale@gostai.com>
 
 	Include path fix
 
@@ -1440,7 +1446,7 @@ This is now fixed.
 
 2006-09-25  Akim Demaille  <demaille@gostai.com>
 
-	VC++ issues"".
+	VC++ issues.
 
 	* ucommand.cc: .Formatting changes.
 	* parser/bison/Makefile.defs (utoken.cc): Fix lack of std::.
@@ -1491,7 +1497,7 @@ This is now fixed.
 	* Makefile.am: Use it.
 
 	* lockable.h: Simplify.
-	* network/OPENR/Makefile.defs: Udate to match Automake use.
+	* network/OPENR/Makefile.defs: Update to match Automake use.
 	* network/bsdnet/Makefile.defs: Ditto.
 	* parser/bison/Makefile.defs: Ditto.
 	* parser/bison/FlexLexer.h: Formatting changes.
