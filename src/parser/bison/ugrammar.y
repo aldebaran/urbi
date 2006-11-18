@@ -1515,12 +1515,28 @@ identifiers:
       MEMCHECK1($$,$1);
     }
 
+  | VAR IDENTIFIER {
+
+      MEMCHECK($2);
+      $$ = new UNamedParameters($2,0);
+      MEMCHECK1($$,$2);
+    }
+
+
   | IDENTIFIER COMMA identifiers {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,0,$3);
       MEMCHECK2($$,$3,$1);
     }
+
+  | VAR IDENTIFIER COMMA identifiers {
+
+      MEMCHECK($2);
+      $$ = new UNamedParameters($2,0,$4);
+      MEMCHECK2($$,$4,$2);
+    }
+
 ;
 
 /* CLASS_DELCARATION & CLASS_DECLARATION_LIST */

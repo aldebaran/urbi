@@ -1,5 +1,10 @@
 2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	add support for var-prefixed args in function prototypes (#74).
+	* src/parser/bison/ugrammar.y: done.
+
+2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	cleanup of unnecessary parenthesis. 
 	* src/ucommand.cc: done.
 	* src/uexpression.cc: done.
