@@ -65,6 +65,10 @@ public:
   int                 bufferMaxFreeSpace();
   int                 dataSize          ();
 
+  void                mark              ();
+  void                revert            ();
+  bool                locked            ();
+
   UErrorValue         UError;///< err code for the constructor
 
 protected:
@@ -92,6 +96,9 @@ protected:
 				 ///< windows. Used to shrink the buffer.
   int            topOutputSize_; ///< maximal data size outputed in the time
 				 ///< windows. Used to shrink outputBuffer.
+  int            mark_;          ///< mark offset.
+  bool           locked_;        ///< lock the connection after a failure 
+                                 ///< (only 'mark' can unlock it)
 };
 
 
@@ -130,6 +137,13 @@ inline int
 UQueue::dataSize()
 {
   return( dataSize_ );
+}
+
+//! returns the locked status of the queue
+inline bool
+UQueue::locked()
+{
+  return locked_;
 }
 
 

@@ -45,7 +45,7 @@ Connection::Connection(int connfd) :
   else {
 
     initialize();
-    block(); //mark as blocked
+    //block(); //mark as blocked
   }
   }
 
@@ -113,7 +113,7 @@ int Connection::effectiveSend (const ubyte *buffer, int length){
 
 void Connection::doWrite(){
   continueSend();
-  block();
+  //block();
 }
 
 

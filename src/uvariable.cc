@@ -410,9 +410,9 @@ UVariable::updated()
 	 it++)
       {
 	(*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it)->c->send((const ubyte*)"[1,\"", 4);
-	(*it)->c->send((const ubyte*)varname->str(), varname->len());
-	(*it)->c->send((const ubyte*)"\",", 2);
+	(*it)->c->sendc((const ubyte*)"[1,\"", 4);
+	(*it)->c->sendc((const ubyte*)varname->str(), varname->len());
+	(*it)->c->sendc((const ubyte*)"\",", 2);
 	value->echo((*it)->c);
 	(*it)->c->send((const ubyte*)"]\n", 2);
       }

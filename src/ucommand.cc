@@ -842,12 +842,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	   it2++)
       {
 	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+	(*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	for (UNamedParameters *pvalue = expression->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*it2)->c->send((const ubyte*)",", 1);
+	  (*it2)->c->sendc((const ubyte*)",", 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*it2)->c);
 	}
@@ -2534,6 +2534,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	  }
 	  if (ret.dataType != DATA_BINARY && ret.dataType != DATA_VOID)
 	    connection->endline();
+          else
+            connection->flush ();
 	  return ( status = UCOMPLETED );
 	}
       }
@@ -2564,12 +2566,12 @@ UCommand_EXPR::execute(UConnection *connection)
 	   it2++)
       {
 	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+	(*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	for (UNamedParameters *pvalue = expression->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*it2)->c->send((const ubyte*)",", 1);
+	  (*it2)->c->sendc((const ubyte*)",", 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*it2)->c);
 	}
@@ -2625,6 +2627,8 @@ UCommand_EXPR::execute(UConnection *connection)
   }
   if ((ret->dataType!=DATA_BINARY) && (ret->dataType != DATA_VOID))
     connection->endline();
+  else
+    connection->flush ();
   delete ret;
   return (status = UCOMPLETED);
 }
@@ -2796,7 +2800,7 @@ UCommand_ECHO::execute(UConnection *connection)
 
   if (!connectionTag)
   {
-    connection->send("*** ", getTag().c_str());
+    connection->sendc("*** ", getTag().c_str());
     ret->echo(connection, true);
     connection->endline();
   }
@@ -2818,7 +2822,7 @@ UCommand_ECHO::execute(UConnection *connection)
 	)
       {
 	ok = true;
-	(*retr)->send("*** ", getTag().c_str());
+	(*retr)->sendc("*** ", getTag().c_str());
 	ret->echo((*retr), true);
 	(*retr)->endline();
       }
@@ -4899,12 +4903,12 @@ UCommand_EMIT::execute(UConnection *connection)
 	   it2++)
       {
 	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+	(*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*it2)->c->send((const ubyte*)",", 1);
+	  (*it2)->c->sendc((const ubyte*)",", 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*it2)->c);
 	}

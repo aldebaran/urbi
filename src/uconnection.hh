@@ -84,12 +84,15 @@ public:
   UErrorValue         sendPrefix         (const char* tag = 0);
   UErrorValue         send               (const char *s, const char* tag = 0);
   virtual UErrorValue send               (const ubyte *buffer, int length);
+  UErrorValue         sendc              (const char *s, const char* tag = 0);
+  virtual UErrorValue sendc              (const ubyte *buffer, int length);
   UErrorValue         endline            ();
 
 
   bool                isBlocked          ();
   void                block              ();
   UErrorValue         continueSend       ();
+  void                flush              ();
 
   UErrorValue         received           (const char *s);
   UErrorValue         received           (const ubyte *buffer, int length);

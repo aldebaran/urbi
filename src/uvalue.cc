@@ -845,7 +845,7 @@ void
 UValue::echo(UConnection *connection, bool human_readable)
 {
   std::string res = echo(human_readable);
-  connection->send((const ubyte*)res.c_str(), res.size());
+  connection->sendc((const ubyte*)res.c_str(), res.size());
 }
 
 

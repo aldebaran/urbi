@@ -1,4 +1,38 @@
 2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
+        rewrite UConnection sending mechanism.
+
+        UConnection::flush is introduced to be able to delay the effective
+        sending of the buffer into the connection. Functions like 'sendc' do not
+        flush the buffer, whereas 'send' does.
+        
+        'sendPrefix" now puts a marker in the circular buffer before the
+        prefix and if anything goes wrong in the subsequent sending, the
+        circular buffer queue can "revert" to this marker. This will allow now
+        to have atomic message sending, preventing partial sending of a
+        header and then failure of the body (large binary for example). The
+        body failure will trigger a call to 'revert' and cancel the whole
+        message out of the circular buffer (and also lock the queue with
+        locked_ so that next attempts will also fail, until we cross another
+        'sendPrefix'). Since the above flush-based mecanism ensures than nothing 
+        has been sent through the network yet, this cancelation is valid. Both
+        flushing and marker+reverting features fix the bugs reported in
+        ticket #25 and #47.
+
+        Proper testing on Aibo should be done to make sure the tickets are
+        closed (not possible for the moment due to compile pbs)
+        
+	* src/network/bsdnet/connection.cc: remove the call to block(). It is
+        not clear why this call was made and why it did not impact the
+        performances of the previous versions.
+	* src/ucommand.cc: support for the flushing mecanism.
+	* src/uconnection.cc: add sendc and flush.
+	* src/uconnection.hh: define sendc and flush.
+	* src/uqueue.cc: add revert/mark.
+	* src/uqueue.hh: define revert and mark + mark_ and locked_.
+	* src/uvalue.cc: fix proper usage of sendc vs send.
+	* src/uvariable.cc: idem.
+
+2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	rename system.arg into system.args. 
 	* src/userver.cc: done.

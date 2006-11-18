@@ -285,7 +285,8 @@ UConnection::sendPrefix (const char* tag)
     // tag if its size is too large.
   }
 
-  send((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
+  sendQueue_->mark (); // put a marker to indicate the beginning of a message
+  sendc((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
   return USUCCESS;
 }
 
@@ -296,8 +297,6 @@ UConnection::endline ()
   send((const ubyte*)"\n", 1);
   return USUCCESS;
 }
-
-
 
 //! Send a string through the connection.
 /*! A tag is automatically added to output the message string and the
@@ -316,7 +315,24 @@ UConnection::send (const char *s, const char* tag)
   return send((const ubyte*)s, strlen(s));
 }
 
-//! Send a buffer through the connection.
+//! Send a string through the connection but without flushing it
+UErrorValue
+UConnection::sendc (const char *s, const char* tag)
+{
+  sendPrefix(tag);
+  return sendc((const ubyte*)s, strlen(s));
+}
+
+//! Send a buffer through the connection and flush it
+UErrorValue
+UConnection::send (const ubyte *buffer, int length)
+{
+  UErrorValue ret = sendc (buffer, length);
+  if (ret != UFAIL) flush ();
+  return ret;
+}
+
+//! Send a buffer through the connection without flushing it.
 /*! The function piles the buffer in the sending queue and calls continueSend()
  if the connection is not blocked (blocked means that the connection is not
  ready to send data). The server will try to send the data in the
@@ -334,9 +350,10 @@ UConnection::send (const char *s, const char* tag)
  \sa send(const char*)
  */
 UErrorValue
-UConnection::send (const ubyte *buffer, int length)
+UConnection::sendc (const ubyte *buffer, int length)
 {
   if (closing) return USUCCESS;
+  if (sendQueue_->locked ()) return UFAIL;
 
   UErrorValue result = sendQueue_->push(buffer, length);
   if ( result != USUCCESS)
@@ -349,13 +366,20 @@ UConnection::send (const ubyte *buffer, int length)
     }
     if (result == UFAIL)
       errorSignal(UERROR_SEND_BUFFER_FULL);
+
+    sendQueue_->revert ();
     return UFAIL;
   }
 
+  return USUCCESS;
+}
+
+/// Flushes the connection buffer into the network
+void
+UConnection::flush ()
+{
   if (!blocked_)
     continueSend();
-
-  return USUCCESS;
 }
 
 //! Returns the state of the connection: blocked or unblocked.

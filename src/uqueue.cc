@@ -114,6 +114,10 @@ UQueue::UQueue  ( int minBufferSize,
   outputBufferSize_ = UQueue::INITIAL_BUFFER_SIZE;
   topOutputSize_ = 0;
 
+  // mark the beginning of the buffer
+  mark_ = 0;
+  locked_ = false;
+
   UError = USUCCESS;
 }
 
@@ -142,6 +146,22 @@ UQueue::clear()
   start_    = 0;
   end_      = 0;
   dataSize_ = 0;
+}
+
+//! Set a mark to be able to revert to this position
+void
+UQueue::mark()
+{
+  mark_ = end_;
+  locked_ = false;
+}
+
+//! Revert the buffer to the marked position.
+void
+UQueue::revert()
+{
+  end_ = mark_;
+  locked_ = true;
 }
 
 //! Pushes a buffer into the queue..
