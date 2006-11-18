@@ -1,4 +1,9 @@
 2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	rename system.arg into system.args. 
+	* src/userver.cc: done.
+
+2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
         The system variable 'system.arg' now gives access to a list
         corresponding to the argv[] list of the server execution command line.
         This feature is necessary for webots.

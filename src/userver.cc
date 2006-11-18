@@ -159,7 +159,7 @@ UServer::main (int argc, const char* argv[])
     current = v;
   }
 
-  new UVariable(MAINDEVICE, "arg", arglistv);
+  new UVariable(MAINDEVICE, "args", arglistv);
 }
 
 //! Initialization of the server. Displays the header message & init stuff
