@@ -141,6 +141,27 @@ UServer::UServer(ufloat frequency,
                                             (UCommand*)0);
 }
 
+/// Sets the system.arg list in URBI
+void
+UServer::main (int argc, const char* argv[])
+{
+  UValue* arglistv = new UValue ();
+
+  UValue* current = 0;
+  arglistv->dataType = DATA_LIST;
+  for (int i=0; i<argc; i++)
+  {
+    UValue* v = new UValue (argv[i]);
+    if (i==0)
+      arglistv->liststart = v;
+    else
+      current->next = v;
+    current = v;
+  }
+
+  new UVariable(MAINDEVICE, "arg", arglistv);
+}
+
 //! Initialization of the server. Displays the header message & init stuff
 /*! This function must be called once the server is operational and
     able to print messages. It is a requirement for URBI compliance to print

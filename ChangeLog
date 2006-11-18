@@ -1,4 +1,13 @@
 2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
+        The system variable 'system.arg' now gives access to a list
+        corresponding to the argv[] list of the server execution command line.
+        This feature is necessary for webots.
+
+	add support for system.arg (ticket #69). 
+	* src/userver.cc: add UServer::main.
+	* src/userver.hh: declare UServer::main.
+
+2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	add support for var-prefixed args in function prototypes (#74).
 	* src/parser/bison/ugrammar.y: done.

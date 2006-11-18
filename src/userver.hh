@@ -65,6 +65,7 @@ public:
 
   void              initialization();
   void              work();
+  void              main (int argc, const char* argv[]);
 
   void              error           (const char* s, ...);
   void              echo            (const char* s, ...);
