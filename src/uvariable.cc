@@ -357,13 +357,13 @@ UVariable::get()
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
 	 it++)
-      if ( (*it).second->method
-           && (*it).second->devicename
+      if ( it->second->method
+           && it->second->devicename
            && value->str
-           && (*it).second->value->dataType != DATA_OBJ
-           && (*it).second->devicename->equal(value->str)
+           && it->second->value->dataType != DATA_OBJ
+           && it->second->devicename->equal(value->str)
          )
-	(*it).second->get ();
+	it->second->get ();
 
   // check for existing notifychange
   if (!internalAccessBinder.empty())

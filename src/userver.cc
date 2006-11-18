@@ -467,9 +467,9 @@ UServer::work()
 	for ( HMvariabletab::iterator retr = variabletab.begin();
 	      retr != variabletab.end();
 	      retr++)
-	  if (((*retr).second->value) &&
-	      ((*retr).second->value->dataType == DATA_OBJ))
-	    varToReset.push_back( (*retr).second );
+	  if ((retr->second->value) &&
+	      (retr->second->value->dataType == DATA_OBJ))
+	    varToReset.push_back( retr->second );
 
 	while (!varToReset.empty())
 	  {
@@ -489,8 +489,8 @@ UServer::work()
 	for ( HMvariabletab::iterator retr = variabletab.begin();
 	      retr != variabletab.end();
 	      retr++)
-	  if ((*retr).second->uservar)
-	    varToReset.push_back( (*retr).second );
+	  if (retr->second->uservar)
+	    varToReset.push_back( retr->second );
 
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
 	     it != varToReset.end();++it)
@@ -883,7 +883,7 @@ UServer::getVariable ( const char *device,
   snprintf(tmpbuffer, 1024, "%s.%s", device, property);
 
   if ((hmi = variabletab.find(tmpbuffer)) != variabletab.end())
-    return (*hmi).second;
+    return hmi->second;
   else
     return 0;
 }
@@ -1030,7 +1030,7 @@ UServer::addAlias(const char* id, const char* variablename)
 
   while (getobj != ::urbiserver->aliastab.end())
     {
-      newobj = (*getobj).second->str();
+      newobj = getobj->second->str();
       if (STREQ(newobj, id))
 	return 0;
 

@@ -212,7 +212,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
   {
     if ( (hmi2 = ::urbiserver->variabletab.find(getMethod()->str())) !=
 	::urbiserver->variabletab.end())
-      tmpvar = (*hmi2).second;
+      tmpvar = hmi2->second;
     else
       tmpvar = 0;
   }
@@ -220,7 +220,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
   {
     if ( (hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
 	::urbiserver->variabletab.end())
-      tmpvar = (*hmi2).second;
+      tmpvar = hmi2->second;
     else
       tmpvar = 0;
   }
@@ -252,7 +252,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
 
   if ( (hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
       ::urbiserver->functiontab.end())
-    tmpfun = (*hmf).second;
+    tmpfun = hmf->second;
   else
     tmpfun = 0;
 
@@ -518,9 +518,9 @@ UVariableName::buildFullname(UCommand *command,
 	    if (objit != ::urbiserver->objtab.end())
 	    {
 	      class_symbol =
-		   ((*objit).second->searchVariable(id->str(), ambiguous) != 0)
-		|| ((*objit).second->searchFunction(id->str(), ambiguous) != 0)
-		|| ((*objit).second->searchEvent(id->str(), ambiguous) != 0);
+		   (objit->second->searchVariable(id->str(), ambiguous) != 0)
+		|| (objit->second->searchFunction(id->str(), ambiguous) != 0)
+		|| (objit->second->searchEvent(id->str(), ambiguous) != 0);
 	      class_symbol = class_symbol && !ambiguous;
 	    }
 
@@ -583,11 +583,11 @@ UVariableName::buildFullname(UCommand *command,
 	getobj = ::urbiserver->objaliastab.find(name);
       if (getobj != ::urbiserver->objaliastab.end())
       {
-	UString* newobj = (*getobj).second;
+	UString* newobj = getobj->second;
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
 	while (getobj !=  ::urbiserver->objaliastab.end())
 	{
-	  newobj = (*getobj).second;
+	  newobj = getobj->second;
 	  getobj = ::urbiserver->objaliastab.find(newobj->str());
 	}
 	snprintf(name, fullnameMaxSize, "%s", newobj->str());
@@ -606,12 +606,12 @@ UVariableName::buildFullname(UCommand *command,
     while  (hmi != ::urbiserver->aliastab.end())
     {
       past_hmi = hmi;
-      hmi = ::urbiserver->aliastab.find((*hmi).second->str());
+      hmi = ::urbiserver->aliastab.find(hmi->second->str());
     };
 
     if (past_hmi != ::urbiserver->aliastab.end())
     {
-      strncpy(name, (*past_hmi).second->str(), fullnameMaxSize);
+      strncpy(name, past_hmi->second->str(), fullnameMaxSize);
       nostruct = false;
       delete device; device = 0;
       delete method; method = 0; // forces recalc of device.method
@@ -641,11 +641,11 @@ UVariableName::buildFullname(UCommand *command,
     p[0]='.';
     if (getobj != ::urbiserver->objaliastab.end())
     {
-      UString* newobj = (*getobj).second;
+      UString* newobj = getobj->second;
       getobj = ::urbiserver->objaliastab.find(newobj->str());
       while (getobj !=  ::urbiserver->objaliastab.end())
       {
-	newobj = (*getobj).second;
+	newobj = getobj->second;
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
       }
       UString* newmethod = new UString(p+1);

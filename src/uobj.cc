@@ -58,13 +58,13 @@ UObj::~UObj()
        it != ::urbiserver->variabletab.end();
        ++it)
   {
-    if (((*it).second->method) &&
-	((*it).second->devicename) && (device) &&
-	((*it).second->value->dataType != DATA_OBJ) &&
-	((*it).second->devicename->equal(device)) )
-    {
-      varToDelete.push_back((*it).second);
-    }
+    if (it->second->method
+        && it->second->devicename
+        && device
+        && it->second->value->dataType != DATA_OBJ
+        && it->second->devicename->equal(device)
+       )
+      varToDelete.push_back(it->second);
   }//for
 
   for (std::list<UVariable*>::iterator itd = varToDelete.begin();
@@ -175,14 +175,14 @@ UObj::~UObj()
        it++)
   {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
-	 (*it).second->internalBinder.begin();
-	 itcb != (*it).second->internalBinder.end();
+	 it->second->internalBinder.begin();
+	 itcb != it->second->internalBinder.end();
 	)
     {
       if ((*itcb)->objname == device->str())
       {
-	delete (*itcb);
-	itcb = (*it).second->internalBinder.erase(itcb);
+	delete *itcb;
+	itcb = it->second->internalBinder.erase(itcb);
       }
       else
 	++itcb;
@@ -195,14 +195,14 @@ UObj::~UObj()
        it++)
   {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
-	 (*it).second->internalAccessBinder.begin();
-	 itcb != (*it).second->internalAccessBinder.end();
+	 it->second->internalAccessBinder.begin();
+	 itcb != it->second->internalAccessBinder.end();
 	)
     {
       if ((*itcb)->objname == device->str())
       {
 	delete (*itcb);
-	itcb = (*it).second->internalAccessBinder.erase(itcb);
+	itcb = it->second->internalAccessBinder.erase(itcb);
       }
       else
 	++itcb;
@@ -225,7 +225,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   if (hmf != ::urbiserver->functiontab.end())
   {
     ambiguous = false;
-    return (hmf->second);
+    return hmf->second;
   };
 
   // test for remote uobjects symbols
@@ -233,7 +233,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
       != ::urbiserver->functionbindertab.end())
   {
     ambiguous = false;
-    return (kernel::remoteFunction);
+    return kernel::remoteFunction;
   };
 
   // test for plugged uobjects symbols
@@ -241,7 +241,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
       != ::urbi::functionmap.end())
   {
     ambiguous = false;
-    return (kernel::remoteFunction);
+    return kernel::remoteFunction;
   };
 
   // try recursively with parents
@@ -279,7 +279,7 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   if (hmv != ::urbiserver->variabletab.end())
   {
     ambiguous = false;
-    return (hmv->second);
+    return hmv->second;
   }
   else
   {
@@ -321,7 +321,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   for (iet = ::urbiserver->emittab.begin ();
        iet != ::urbiserver->emittab.end () && !ok;
        ++iet)
-    if ( (*iet).second->unforgedName->equal (namebuffer))
+    if (iet->second->unforgedName->equal (namebuffer))
     {
       ok = true;
       ietok = iet;
@@ -330,7 +330,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   if (ok)
   {
     ambiguous = false;
-    return (ietok->second);
+    return ietok->second;
   }
   else
   {

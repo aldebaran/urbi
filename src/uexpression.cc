@@ -509,8 +509,8 @@ UExpression::eval (UCommand *command,
       {
 	ret->dataType = DATA_LIST;
 
-	it = (*retr).second->members.begin();
-	if (it !=  (*retr).second->members.end())
+	it = retr->second->members.begin();
+	if (it !=  retr->second->members.end())
 	{
 	  e = new UExpression (EXPR_GROUP, (*it)->copy());
 	  e2 = e->eval(command, connection);
@@ -531,7 +531,7 @@ UExpression::eval (UCommand *command,
 	  it++;
 	}
 
-	while (it !=  (*retr).second->members.end())
+	while (it !=  retr->second->members.end())
 	{
 	  e = new UExpression (EXPR_GROUP, (*it)->copy());
 	  e2 = e->eval(command, connection);

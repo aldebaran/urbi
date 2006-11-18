@@ -189,7 +189,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
       hmg = ::urbiserver->grouptab.find(devicename->str());
 
     if (hmg != ::urbiserver->grouptab.end())
-      oo = (*hmg).second;
+      oo = hmg->second;
 
     if ((oo) && (oo->members.size() > 0))
     {
@@ -908,7 +908,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	HMaliastab::iterator hmi =
 	  ::urbiserver->objaliastab.find(variablename->id->str());
 	if (hmi != ::urbiserver->objaliastab.end())
-	  (*hmi).second->update(objname);
+	  hmi->second->update(objname);
 	else
 	{
 	  UString* objalias = new UString(variablename->method);
@@ -3016,7 +3016,7 @@ UCommand_NEW::execute(UConnection *connection)
     }
     ow = ::urbiserver->objWaittab.find(id->str());
     if (ow!=::urbiserver->objWaittab.end())
-      (*ow).second->nb += nb;
+      ow->second->nb += nb;
     else
     {
       UWaitCounter *wc = new UWaitCounter(id, nb);
@@ -3268,7 +3268,7 @@ UCommand_ALIAS::execute(UConnection *connection)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "*** %25s -> %s\n",
-	       (*retr).first, (*retr).second->str());
+	       retr->first, retr->second->str());
       connection->send(tmpbuffer, getTag().c_str());
     }
 
@@ -3285,7 +3285,7 @@ UCommand_ALIAS::execute(UConnection *connection)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "*** %25s -> %s\n",
-	       (*retr).first, (*retr).second->str());
+	       retr->first, retr->second->str());
       connection->send(tmpbuffer, getTag().c_str());
     }
     return ((status = UCOMPLETED));
@@ -3563,14 +3563,14 @@ UCommand_GROUP::execute(UConnection *connection)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "*** %s = {",
-	       (*retr).first);
-      for (std::list<UString*>::iterator it = (*retr).second->members.begin();
-	   it !=  (*retr).second->members.end();
+	       retr->first);
+      for (std::list<UString*>::iterator it = retr->second->members.begin();
+	   it !=  retr->second->members.end();
 	)
       {
 	strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
 	it++;
-	if (it != (*retr).second->members.end())
+	if (it != retr->second->members.end())
 	  strncat(tmpbuffer, ",", UCommand::MAXSIZE_TMPMESSAGE);
       }
       strncat(tmpbuffer, "}\n", UCommand::MAXSIZE_TMPMESSAGE);
@@ -3585,15 +3585,15 @@ UCommand_GROUP::execute(UConnection *connection)
   {
     UNamedParameters *ret = 0;
 
-    std::list<UString*>::iterator it = (*retr).second->members.begin();
-    if (it !=  (*retr).second->members.end())
+    std::list<UString*>::iterator it = retr->second->members.begin();
+    if (it != retr->second->members.end())
     {
       ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
 				 (UNamedParameters*)0);
       it++;
     }
 
-    while (it !=  (*retr).second->members.end())
+    while (it != retr->second->members.end())
     {
       ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
 				 ret);
@@ -4417,7 +4417,8 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     if (connection->receiving) return (status = URUNNING);
 
     snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! This command is no longer valid. Please use \"motor on\" instead\n");
+	     "!!! This command is no longer valid."
+             " Please use \"motor on\" instead\n");
     connection->send(tmpbuffer, getTag().c_str());
 
     return ( status = UCOMPLETED );
@@ -4426,7 +4427,8 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
   if (STREQ(oper->str(), "motoroff"))
   {
     snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! This command is no longer valid. Please use \"motor off\" instead\n");
+	     "!!! This command is no longer valid."
+             " Please use \"motor off\" instead\n");
     connection->send(tmpbuffer, getTag().c_str());
 
     return ( status = UCOMPLETED );
@@ -4450,7 +4452,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for ( HMvariabletab::iterator retr =
 	    connection->server->variabletab.begin();
 	  retr != connection->server->variabletab.end();)
-      delete (*retr).second;
+      delete retr->second;
 
     connection->server->variabletab.clear();
     connection->server->functiontab.clear();
@@ -4487,28 +4489,28 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	  retr != connection->server->variabletab.end();
 	  retr++)
     {
-      fullname = (*retr).second->varname;
+      fullname = retr->second->varname;
       if (fullname)
       {
 	std::ostringstream tstr;
-	switch ((*retr).second->value->dataType)
+	switch (retr->second->value->dataType)
 	{
 	  case DATA_NUM:
 	    tstr << "*** "
-		 << fullname->str() << " = "<< (*retr).second->value->val
+		 << fullname->str() << " = "<< retr->second->value->val
 		 <<'\n';
 	    break;
 
 	  case DATA_STRING:
 	    tstr << "*** "
-		 << fullname->str() << " = " << (*retr).second->value->str->str()
+		 << fullname->str() << " = " << retr->second->value->str->str()
 		 <<'\n';
 	    break;
 
 	  case DATA_BINARY:
-	    if ((*retr).second->value->refBinary)
+	    if (retr->second->value->refBinary)
 	      tstr <<"*** "<<fullname->str()<<" = BIN "<<
-		(*retr).second->value->refBinary->ref()->bufferSize<<'\n';
+		retr->second->value->refBinary->ref()->bufferSize<<'\n';
 	    else
 	      tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
 	    break;
@@ -4544,8 +4546,8 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	  retr++)
     {
       std::ostringstream tstr;
-      tstr << "*** " << (*retr).second->unforgedName->str() << "["
-	   <<  (*retr).second->nbarg () << "]\n";
+      tstr << "*** " << retr->second->unforgedName->str() << "["
+	   <<  retr->second->nbarg () << "]\n";
 
       connection->send(tstr.str().c_str(), getTag().c_str());
     }
@@ -4561,27 +4563,27 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	  retr != connection->server->variabletab.end();
 	  retr++)
     {
-      fullname = (*retr).second->varname;
-      if ((*retr).second->uservar)
+      fullname = retr->second->varname;
+      if (retr->second->uservar)
       {
 	std::ostringstream tstr;
-	switch ((*retr).second->value->dataType)
+	switch (retr->second->value->dataType)
 	{
 	  case DATA_NUM:
-	    tstr << "*** " << fullname->str() << " = "<< (*retr).second->value->val
+	    tstr << "*** " << fullname->str() << " = "<< retr->second->value->val
 		 <<'\n';
 	    break;
 
 	  case DATA_STRING:
 	    tstr << "*** "
-		 << fullname->str() << " = " << (*retr).second->value->str->str()
+		 << fullname->str() << " = " << retr->second->value->str->str()
 		 <<'\n';
 	    break;
 
 	  case DATA_BINARY:
-	    if ((*retr).second->value->refBinary)
+	    if (retr->second->value->refBinary)
 	      tstr <<"*** "<<fullname->str()<<" = BIN "<<
-		(*retr).second->value->refBinary->ref()->bufferSize<<'\n';
+		retr->second->value->refBinary->ref()->bufferSize<<'\n';
 	    else
 	      tstr << "*** "<<fullname->str()<<" = BIN 0 null\n";
 	    break;
@@ -4589,7 +4591,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	  case DATA_OBJ:
 	    tstr << "*** "
 		 << fullname->str()
-		 << " = OBJ " << (*retr).second->value->str->str()
+		 << " = OBJ " << retr->second->value->str->str()
 		 <<'\n';
 	    break;
 
@@ -5308,8 +5310,8 @@ UCommand_DEF::execute(UConnection *connection)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "*** %s : %d param(s)\n",
-	       (*retr).second->name()->str(),
-	       (*retr).second->nbparam());
+	       retr->second->name()->str(),
+	       retr->second->nbparam());
 
       connection->send(tmpbuffer, getTag().c_str());
     }
@@ -5548,8 +5550,8 @@ UCommand_CLASS::execute(UConnection*)
   ow = ::urbiserver->objWaittab.find(object->str());
   if (ow != ::urbiserver->objWaittab.end())
   {
-    (*ow).second->nb--;
-    if ((*ow).second->nb == 0)
+    ow->second->nb--;
+    if (ow->second->nb == 0)
       ::urbiserver->objWaittab.erase(ow);
     else
       return (status = URUNNING);

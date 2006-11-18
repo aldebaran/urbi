@@ -1,3 +1,13 @@
+2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	cleanup of unnecessary parenthesis. 
+	* src/ucommand.cc: done.
+	* src/uexpression.cc: done.
+	* src/uobj.cc: done.
+	* src/userver.cc: done.
+	* src/uvariable.cc: done.
+	* src/uvariablename.cc: done.
+
 2006-11-17  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Fix typos.
