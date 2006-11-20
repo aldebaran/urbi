@@ -1,3 +1,10 @@
+2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
+
+	Coding style
+	* include/urbi/uabstractclient.hh,
+	* src/liburbi/uabstractclient.cc: White space changes.
+	Ctor changes.
+
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
 	Update externals

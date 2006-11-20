@@ -81,7 +81,6 @@ namespace urbi
   class UMessage
   {
   public:
-
     /// Connection from which originated the message.
     UAbstractClient	 &client;
     /// Server-side timestamp.
@@ -275,12 +274,13 @@ namespace urbi
     void processRecvBuffer();
 
     std::ostream & getStream() { return *stream;}
-  protected:
 
+
+  protected:
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual int effectiveSend(const void * buffer, int size)=0;
 
-    /// Check if successive effectiveSend() of cumulated size 'size' will succeed.
+    /// Whether successive effectiveSend() of cumulated size 'size' will succeed.
     virtual bool canSend(int size)=0;
 
     Lockable & sendBufferLock;
@@ -311,30 +311,30 @@ namespace urbi
     /// Bin object for this command.
     std::list<urbi::BinaryData> bins;
     /// Temporary storage of binary data.
-    void	     *binaryBuffer;
+    void *binaryBuffer;
     /// Current position in binaryBuffer.
-    int	     binaryBufferPosition;
+    int binaryBufferPosition;
     /// Size of binaryBuffer.
-    int	     binaryBufferLength;
+    int binaryBufferLength;
 
     /// Position of parse in recvBuffer.
-    int	     parsePosition;
+    int	parsePosition;
     /// True if preparsing is in a string.
-    bool	     inString;
+    bool inString;
     /// Current depth of bracket.
-    int	     nBracket;
+    int	nBracket;
     /// Start of command, after [ts:tag] header.
-    char	     *currentCommand;
+    char *currentCommand;
 
     /// Position of end of header.
-    int	     endOfHeaderPosition;
-    char	     currentTag[URBI_MAX_TAG_LENGTH];
+    int	endOfHeaderPosition;
+    char currentTag[URBI_MAX_TAG_LENGTH];
 
-    int	     currentTimestamp;
+    int	currentTimestamp;
 
     std::list<UCallbackInfo>callbackList;
     /// Unique tag base.
-    int	     uid;
+    int uid;
 
     std::ostream     *stream;
 
