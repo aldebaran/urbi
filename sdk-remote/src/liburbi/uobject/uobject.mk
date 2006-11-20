@@ -32,22 +32,6 @@ $(uobject_hh): $(uobject_hh).template $(uobject_srcdir)/template_autogen.pl
 ## Svn sugars.  ##
 ## ------------ ##
 
-svn_externals = $(top_srcdir)/build-aux/svn-externals
-# We use some of its files, so to ensure a correct synchronization, we
-# pin the revision we're using.  These targets simplify upgrading the
-# pin revision.
-.PHONY: uobj-up uobject-up uobj-ci uobject-ci uobj-help
+# svn-externals.mk must be included for this to work.
+SVN_EXTERNALS += uobject
 
-help: uobj-help
-uobj-help:
-	@echo "uobj-up:    same as baux-up, but for uobj"
-	@echo "uobj-ci:    likewise"
-
-# Update the dependency on uobj.
-uobj-up uobject-up:
-	$(svn_externals) --update=uobject $(srcdir)
-
-# Checkin the sub uobj, and update the dependency.
-uobj-ci uobject-ci:
-	cd $(srcdir)/uobject && $(SVN) ci
-	$(MAKE) $(AM_MAKEFLAGS) uobj-up

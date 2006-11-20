@@ -1,3 +1,8 @@
+2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
+
+	Use svn-externals.mk
+	* uobject.mk: .
+
 2006-11-13  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
