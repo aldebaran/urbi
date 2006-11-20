@@ -31,24 +31,5 @@ include $(top_srcdir)/build-aux/check.mk
 ## ---------------------- ##
 ## Update svn:externals.  ##
 ## ---------------------- ##
-
-svn_externals = $(top_srcdir)/build-aux/svn-externals
-SVN = svn
-# We use some of its files, so to ensure a correct synchronization, we
-# pin the revision we're using.  These targets simplify upgrading the
-# pin revision.
-.PHONY: urbivalid-help urbivalid-up urbivalid-ci
-
-help: urbivalid-help
-urbivalid-help:
-	@echo "urbivalid-up:    same as baux-up, but for urbivalid"
-	@echo "urbivalid-ci:    likewise"
-
-# Update the pinned external.
-urbivalid-up:
-	$(svn_externals) --update=$(@:-up=) $(srcdir)
-
-# Checkin the pinned external and update it.
-urbivalid-ci:
-	cd $(srcdir)/$(@:-up=) && $(SVN) ci
-	$(MAKE) $(AM_MAKEFLAGS) $(@:-up=-ci)
+include $(top_srcdir)/build-aux/svn-externals.mk
+SVN_EXTERNALS += urbivalid

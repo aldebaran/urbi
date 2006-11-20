@@ -1,5 +1,10 @@
 2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
 
+	Use svn-externals.mk
+	* Makefile.am, src/Makefile.am, tests/Makefile.am: here.
+
+2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
+
 	Formatting changes
 	* src/ubinary.hh, src/ucommand.hh: here.
 

@@ -27,9 +27,16 @@ windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj       
 
-# Simple forwards.
-uobject-ci uobj-ci uobject-up uob-up:
+
+## --------------- ##
+## Svn externals.  ##
+## --------------- ##
+uobject-help uobject-ci uobj-ci uobject-up uob-up:
 	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
 
-urbivali-ci urbivalid-up:
+urbivalid-help help urbivali-ci urbivalid-up:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
+
+externals-up: uobject-up urbivalid-up
+externals-ci: uobject-ci urbivalid-ci
+externals-help: uobject-help urbivalid-help

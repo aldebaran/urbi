@@ -99,6 +99,7 @@ include $(top_srcdir)/build-aux/revision.mk
 ## uobject/.  ##
 ## ---------- ##
 
+include $(top_srcdir)/build-aux/svn-externals.mk
 include uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
