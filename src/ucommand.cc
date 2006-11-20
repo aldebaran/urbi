@@ -94,24 +94,23 @@ MEMORY_MANAGER_INIT(UCommand);
  \param type is the command type
  */
 UCommand::UCommand(UCommandType _type)
+  : type (_type),
+    status (UONQUEUE),
+    flags (0),
+    morph (0),
+    persistant (false),
+    toDelete (false),
+    background (false),
+    startTime (-1),
+    flagType (0),
+    flagExpr1 (0),
+    flagExpr2 (0),
+    flagExpr4 (0),
+    flag_nbTrue2 (0),
+    flag_nbTrue4 (0),
+    morphed (false),
+    tagInfo (0)
 {
-
-  flags		    = 0;
-  type		    = _type;
-  status	    = UONQUEUE;
-  morph		    = 0;
-  persistant	    = false;
-  toDelete	    = false;
-  background	    = false;
-  startTime	    = -1;
-  flagType	    = 0;
-  flagExpr1	    = 0;
-  flagExpr2	    = 0;
-  flagExpr4	    = 0;
-  flag_nbTrue2	    = 0;
-  flag_nbTrue4	    = 0;
-  morphed	    = false;
-  tagInfo	    = 0;
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
    L2: pass a tag or a command ptr to ctor
    */
@@ -370,16 +369,20 @@ MEMORY_MANAGER_INIT(UCommand_TREE);
  This is useful for the LOAD command which should be run in bg and
  still cannot be persistant (like a AT or WHENEVER).
  */
-UCommand_TREE::UCommand_TREE( UNodeType node,
+UCommand_TREE::UCommand_TREE(UNodeType node,
 			      UCommand* command1,
 			      UCommand* command2)
-  : UCommand( CMD_TREE )
+  : UCommand(CMD_TREE),
+    command1 (command1),
+    command2 (command2),
+    callid (0),
+    node (node),
+    runlevel2 (UWAITING),
+    connection (0) // unknown unless there is a context).
 {
   ADDOBJ(UCommand_TREE);
-  this->command1    = command1;
-  this->command2    = command2;
-  this->node	    = node;
 
+  background = false;
   if (command1)
   {
     command1->up = this;
@@ -390,12 +393,6 @@ UCommand_TREE::UCommand_TREE( UNodeType node,
     command2->up = this;
     command2->position = &this->command2;
   }
-
-  runlevel1  = UWAITING;
-  runlevel2  = UWAITING;
-  background = false;
-  callid     = 0;
-  connection = 0; // unknown unless there is a context
 }
 
 //! UCommand subclass destructor.
@@ -538,33 +535,31 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(UVariableName *variablename,
 					     UExpression* expression,
 					     UNamedParameters *parameters,
 					     bool defkey)
-  : UCommand(CMD_ASSIGN_VALUE)
+  : UCommand(CMD_ASSIGN_VALUE),
+    variablename(variablename),
+    expression (expression),
+    parameters (parameters),
+    finished (false),
+    method (0),
+    devicename (0),
+    tmp_phase (0),
+    tmp_time (0),
+    variable (0),
+    assigned (false),
+    defkey (defkey),
+    endtime (-1),
+    modif_time (0),
+    modif_sin (0),
+    modif_phase (0),
+    modif_smooth (0),
+    modif_speed (0),
+    modif_accel (0),
+    modif_adaptive (0),
+    modif_ampli (0),
+    modif_getphase (0),
+    profileDone (false)
 {
   ADDOBJ(UCommand_ASSIGN_VALUE);
-  this->variablename= variablename;
-  this->expression  = expression;
-  this->parameters  = parameters;
-  finished	    = false;
-  this->method	    = 0;
-  this->devicename  = 0;
-  this->tmp_phase   = 0;
-  this->tmp_time    = 0;
-  this->variable    = 0;
-  this->assigned    = false;
-  this->defkey	    = defkey;
-
-
-  endtime	    = -1;
-  modif_time	    = 0;
-  modif_sin	    = 0;
-  modif_phase	    = 0;
-  modif_smooth	    = 0;
-  modif_speed	    = 0;
-  modif_accel	    = 0;
-  modif_adaptive    = 0;
-  modif_ampli	    = 0;
-  modif_getphase    = 0;
-  profileDone	    = false;
 }
 
 //! UCommand subclass destructor.
@@ -601,7 +596,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   {
     variable = variablename->getVariable(this, connection);
     if (!variablename->getFullname())
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     method = variablename->getMethod();
     devicename = variablename->getDevice();
   }
@@ -614,7 +609,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
   // Broadcasting
   if (scanGroups(&UCommand::refVarName, true))
-    return ( status = UMORPH );
+    return (status = UMORPH );
 
   // Function call
   // morph into the function code
@@ -623,10 +618,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     UString* functionname =
       expression->variablename->buildFullname(this, connection);
     if (!functionname)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (scanGroups(&UCommand::refVarName2, true))
-      return ( status = UMORPH );
+      return (status = UMORPH );
 
     UFunction *fun;
     HMfunctiontab::iterator hmf;
@@ -651,8 +646,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  (expression->variablename->getMethod()->str(),
 	   ambiguous);
 
-        //hack until we get proper nameresolution
-        if (fun == kernel::remoteFunction) fun = 0;
+	//hack until we get proper nameresolution
+	if (fun == kernel::remoteFunction) fun = 0;
 
 	if (ambiguous)
 	{
@@ -670,11 +665,11 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
     if (fun)
     {
-      if ( ( expression->parameters
+      if ((expression->parameters
 	     && fun->nbparam()
 	     && expression->parameters->size() != fun->nbparam())
-	   || ( expression->parameters && !fun->nbparam())
-	   || ( !expression->parameters && fun->nbparam()) )
+	   || (expression->parameters && !fun->nbparam())
+	   || (!expression->parameters && fun->nbparam()) )
       {
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! Invalid number of arguments for %s"
@@ -772,7 +767,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	update(connection->stack.front()->self());
       expression->variablename->resetCache (); // this deletes funname pointeur
       functionname = expression->variablename->buildFullname(this, connection);
-      if (!functionname) return ( status = UCOMPLETED );
+      if (!functionname) return (status = UCOMPLETED );
     }
 
 
@@ -789,9 +784,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	   ((cbi != hmfi->second.end()) && (!found_function));
 	   cbi++)
       {
-	if ( ( expression->parameters
+	if ((expression->parameters
 	       && expression->parameters->size() == (*cbi)->nbparam)
-	     || ( !expression->parameters && !(*cbi)->nbparam) )
+	     || (!expression->parameters && !(*cbi)->nbparam) )
 	{
 	  // here you could spawn a thread... if only Aprios
 	  // knew how to!
@@ -816,7 +811,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  delete expression;
 	  expression = new UExpression
 	    (EXPR_VALUE,
-	     new UValue( (*cbi)->__evalcall(tmparray)));
+	     new UValue((*cbi)->__evalcall(tmparray)));
 	  found_function = true;
 	}
       }
@@ -995,7 +990,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       {
 	variable = new UVariable(variablename->getFullname()->str(),
 				 target->copy());
-	if (!variable) return ( status = UCOMPLETED );
+	if (!variable) return (status = UCOMPLETED );
 	connection->localVariableCheck(variable);
 	variable->updated();
       }
@@ -1073,7 +1068,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	variable = new UVariable(variablename->getFullname()->str(),
 				 target->copy());
 	if (!variable)
-	  return ( status = UCOMPLETED );
+	  return (status = UCOMPLETED );
 	connection->localVariableCheck(variable);
 	variable->updated();
       }
@@ -1116,7 +1111,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	variable = new UVariable(variablename->getFullname()->str(),
 				 target->copy());
 	if (!variable)
-	  return ( status = UCOMPLETED );
+	  return (status = UCOMPLETED );
 	connection->localVariableCheck(variable);
 	variable->updated();
       }
@@ -1287,7 +1282,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  if (modif->name->equal("timelimit"))
 	  {
 	    modifier = modif->expression->eval(this, connection);
-	    if ( (!modifier) ||
+	    if ((!modifier) ||
 		 (modifier->dataType != DATA_NUM) )
 	    {
 	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
@@ -1323,7 +1318,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	variable = new UVariable(variablename->getFullname()->str(),
 				 target->copy());
 	if (!variable)
-	  return ( status = UCOMPLETED );
+	  return (status = UCOMPLETED );
 	connection->localVariableCheck(variable);
       }
 
@@ -1493,7 +1488,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     }
 
     // check for speedmin
-    if ( (targettime > (currentTime - starttime)) &&
+    if ((targettime > (currentTime - starttime)) &&
 	 (ABSF((targetval - currentVal) /
 	       (targettime - (currentTime - starttime))) < speedmin))
     {
@@ -1516,13 +1511,13 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       *valtmp = variable->nbAverage * *valtmp +
 	currentVal +
 	deltaTime*
-	( (targetval - currentVal) /
+	((targetval - currentVal) /
 	  (targettime - (currentTime - starttime)) );
     else
       *valtmp = variable->nbAverage * *valtmp +
 	startval +
 	(currentTime - starttime + deltaTime)*
-	( (targetval - startval) /
+	((targetval - startval) /
 	  targettime );
 
     return USUCCESS;
@@ -1538,7 +1533,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     }
 
     // test for speedmin (with linear mvt approximation)
-    if ( (targettime > (currentTime - starttime)) &&
+    if ((targettime > (currentTime - starttime)) &&
 	 (ABSF((targetval - currentVal) /
 	       (targettime - (currentTime - starttime))) < speedmin))
     {
@@ -1559,7 +1554,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     else
       *valtmp = variable->nbAverage * *valtmp +
 	startval +
-	( (targetval - startval) * 0.5 *
+	((targetval - startval) * 0.5 *
 	  (ufloat(1)+sin(-(PI/ufloat(2))+ PI*(currentTime - starttime + deltaTime) /
 			 targettime
 	    ))
@@ -1598,7 +1593,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 
 
     // test for speedmin
-    if ( (targettime > (currentTime - starttime)) &&
+    if ((targettime > (currentTime - starttime)) &&
 	 (ABSF((targetval - currentVal) /
 	       (targettime - (currentTime - starttime))) < speedmin))
     {
@@ -1622,13 +1617,13 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	*valtmp = variable->nbAverage * *valtmp +
 	  currentVal +
 	  deltaTime*
-	  ( (targetval - currentVal) /
+	  ((targetval - currentVal) /
 	    (targettime - (currentTime - starttime)) );
       else
 	*valtmp = variable->nbAverage * *valtmp +
 	  startval +
 	  (currentTime - starttime + deltaTime)*
-	  ( (targetval - startval) /
+	  ((targetval - startval) /
 	    targettime );
 
     return USUCCESS;
@@ -1650,7 +1645,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     if (variablename->isnormalized)
       accel = accel * (variable->rangemax - variable->rangemin);
 
-    targettime = sqrt ( 2 * ABSF(targetval - startval)
+    targettime = sqrt (2 * ABSF(targetval - startval)
 			/ (ABSF(accel)/1000.));
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1712,7 +1707,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 
     ufloat intermediary;
     intermediary = targetval + amplitude * sin(phase +
-					       (PI*ufloat(2))*( (currentTime - starttime + deltaTime) /
+					       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
 								targettime ));
     if (modif_getphase)
     {
@@ -1733,7 +1728,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       UValue *phaseval = phasevari->value;
 
       phaseval->val = (phase +
-		       (PI*ufloat(2))*( (currentTime - starttime + deltaTime) /
+		       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
 					targettime ));
       int n = (int)(phaseval->val / (PI*ufloat(2)));
       if (n<0) n--;
@@ -1805,15 +1800,15 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(UVariableName *variablename,
-					       URefPt<UBinary> *refBinary) :
-  UCommand(CMD_ASSIGN_BINARY)
+					       URefPt<UBinary> *refBinary)
+  : UCommand(CMD_ASSIGN_BINARY),
+    variablename (variablename),
+    refBinary (refBinary),
+    variable (0),
+    method (0),
+    devicename (0)
 {
   ADDOBJ(UCommand_ASSIGN_BINARY);
-  this->variablename = variablename;
-  this->refBinary    = refBinary;
-  variable	     = 0;
-  method	     = 0;
-  devicename	     = 0;
 }
 
 //! UCommand subclass destructor.
@@ -1833,13 +1828,13 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
   {
     variable = variablename->getVariable(this, connection);
     if (!variablename->getFullname())
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     method = variablename->getMethod();
     devicename = variablename->getDevice();
   }
 
   // Broadcasting
-  if (scanGroups(&UCommand::refVarName, true)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName, true)) return (status = UMORPH );
 
   // Type checking
   UValue *value;
@@ -1926,15 +1921,15 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_PROPERTY);
 UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(UVariableName *variablename,
 						   UString *oper,
 						   UExpression *expression) :
-  UCommand(CMD_ASSIGN_PROPERTY)
+  UCommand(CMD_ASSIGN_PROPERTY),
+  variablename (variablename),
+  oper (oper),
+  expression (expression),
+  variable (0),
+  method (0),
+  devicename (0)
 {
   ADDOBJ(UCommand_ASSIGN_PROPERTY);
-  this->variablename = variablename;
-  this->oper	     = oper;
-  this->expression   = expression;
-  variable	     = 0;
-  method	     = 0;
-  devicename	     = 0;
 }
 
 //! UCommand subclass destructor.
@@ -1952,12 +1947,12 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 {
   UVariable* variable = variablename->getVariable(this, connection);
   if (!variablename->getFullname())
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   variablename->getMethod();
   variablename->getDevice();
 
   // Broadcasting
-  if (scanGroups(&UCommand::refVarName, true)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName, true)) return (status = UMORPH );
 
   // variable existence checking
   if (!variable)
@@ -1967,7 +1962,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 	     variablename->getFullname()->str());
     if (!variablename->fromGroup)
       connection->send(tmpbuffer, getTag().c_str());
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // Property handling
@@ -2066,14 +2061,14 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   {
     UValue *unitval = expression->eval(this, connection);
     if (unitval == 0)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (unitval->dataType != DATA_STRING)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid unit type (must be a string).\n");
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     if (variable->value->dataType != DATA_NUM &&
@@ -2083,7 +2078,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 	       "!!! %s type is Invalid for unit attribution\n",
 	       variablename->getFullname()->str());
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     if (variable->unit)
@@ -2091,7 +2086,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
     else
       variable->unit = new UString(unitval->str->str());
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // rangemin
@@ -2099,18 +2094,18 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (nb->dataType != DATA_NUM)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid range type. NUM expected.\n");
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     variable->rangemin = nb->val;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // speedmax
@@ -2118,18 +2113,18 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (nb->dataType != DATA_NUM)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid speed type. NUM expected.\n");
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     variable->speedmax = nb->val;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // speedmin
@@ -2137,24 +2132,24 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (nb->dataType != DATA_NUM)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid speed type. NUM expected.\n");
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     variable->speedmin = nb->val;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	   "!!! Unknown property: %s\n", oper->str());
   connection->send(tmpbuffer, getTag().c_str());
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -2205,15 +2200,15 @@ MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_AUTOASSIGN::UCommand_AUTOASSIGN( UVariableName* variablename,
+UCommand_AUTOASSIGN::UCommand_AUTOASSIGN(UVariableName* variablename,
 					  UExpression* expression,
 					  int assigntype) :
-  UCommand(CMD_ASSIGN_VALUE)
+  UCommand(CMD_ASSIGN_VALUE),
+  variablename (variablename),
+  expression (expression),
+  assigntype (assigntype)
 {
   ADDOBJ(UCommand_AUTOASSIGN);
-  this->variablename = variablename;
-  this->expression   = expression;
-  this->assigntype   = assigntype;
 }
 
 //! UCommand subclass destructor.
@@ -2312,11 +2307,11 @@ MEMORY_MANAGER_INIT(UCommand_EXPR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_EXPR::UCommand_EXPR(UExpression* expression) :
-  UCommand(CMD_EXPR)
+UCommand_EXPR::UCommand_EXPR(UExpression* expression)
+  : UCommand(CMD_EXPR),
+    expression (expression)
 {
   ADDOBJ(UCommand_EXPR);
-  this->expression  = expression;
 }
 
 //! UCommand subclass destructor.
@@ -2337,10 +2332,10 @@ UCommand_EXPR::execute(UConnection *connection)
     // Execution & morphing
     UString* funname =
       expression->variablename->buildFullname(this, connection);
-    if (!funname) return ( status = UCOMPLETED );
+    if (!funname) return (status = UCOMPLETED );
 
     // Broadcasting
-    if (scanGroups(&UCommand::refVarName, false)) return ( status = UMORPH );
+    if (scanGroups(&UCommand::refVarName, false)) return (status = UMORPH );
 
     UFunction *fun;
 
@@ -2364,8 +2359,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	  searchFunction(expression->variablename->getMethod()->str(),
 			 ambiguous);
 
-        // hack until we get proper nameresolution
-        if (fun == kernel::remoteFunction) fun = 0;
+	// hack until we get proper nameresolution
+	if (fun == kernel::remoteFunction) fun = 0;
 
 	if (ambiguous)
 	{
@@ -2373,7 +2368,7 @@ UCommand_EXPR::execute(UConnection *connection)
 		   "!!! Ambiguous multiple inheritance on function %s\n",
 		   funname->str());
 	  connection->send(tmpbuffer, getTag().c_str());
-	  return ( status = UCOMPLETED );
+	  return (status = UCOMPLETED );
 	}
       }
     }
@@ -2382,18 +2377,18 @@ UCommand_EXPR::execute(UConnection *connection)
 
     if (fun)
     {
-      if ( ( (expression->parameters) &&
+      if (((expression->parameters) &&
 	     (fun->nbparam()) &&
 	     (expression->parameters->size() != fun->nbparam())) ||
-	   ( (expression->parameters) && (!fun->nbparam())) ||
-	   ( (!expression->parameters) && (fun->nbparam())) )
+	   ((expression->parameters) && (!fun->nbparam())) ||
+	   ((!expression->parameters) && (fun->nbparam())) )
       {
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! Invalid number of arguments for %s (should be %d params)\n",
 		 funname->str(), fun->nbparam());
 	connection->send(tmpbuffer, getTag().c_str());
 
-	return ( status = UCOMPLETED );
+	return (status = UCOMPLETED );
       }
 
       persistant = false;
@@ -2471,11 +2466,11 @@ UCommand_EXPR::execute(UConnection *connection)
 	    );
 	}
       }
-      return ( status = UMORPH );
+      return (status = UMORPH );
     }
     else if (connection->receiving &&
 	     expression->variablename->id->equal("exec"))
-      return ( status = URUNNING);
+      return (status = URUNNING);
 
     // handle the :: case
     if (expression->variablename->doublecolon
@@ -2488,7 +2483,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	update(connection->stack.front()->self());
       expression->variablename->resetCache (); // this deletes funname pointeur
       funname = expression->variablename->buildFullname(this, connection);
-      if (!funname) return ( status = UCOMPLETED );
+      if (!funname) return (status = UCOMPLETED );
     }
 
     ////// module-defined /////
@@ -2501,9 +2496,9 @@ UCommand_EXPR::execute(UConnection *connection)
 	   cbi != hmfi->second.end();
 	   cbi++)
       {
-	if ( ( (expression->parameters) &&
+	if (((expression->parameters) &&
 	       (expression->parameters->size() == (*cbi)->nbparam)) ||
-	     ( (!expression->parameters) && (!(*cbi)->nbparam)) )
+	     ((!expression->parameters) && (!(*cbi)->nbparam)) )
 	{
 	  // here you could spawn a thread... if only Aperios knew how to!
 	  urbi::UList tmparray;
@@ -2534,14 +2529,14 @@ UCommand_EXPR::execute(UConnection *connection)
 	  }
 	  if (ret.dataType != DATA_BINARY && ret.dataType != DATA_VOID)
 	    connection->endline();
-          else
-            connection->flush ();
+	  else
+	    connection->flush ();
 	  return ( status = UCOMPLETED );
 	}
       }
 
       connection->send("!!! Invalid function call\n", getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     ////// EXTERNAL /////
@@ -2549,7 +2544,7 @@ UCommand_EXPR::execute(UConnection *connection)
       ::urbiserver->functionbindertab.find(funname->str());
     if ((it != ::urbiserver->functionbindertab.end()) &&
 	(
-	  ( (expression->parameters)
+	  ((expression->parameters)
 	    && (it->second->nbparam
 		== expression->parameters->size()))
 	  ||
@@ -2601,7 +2596,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	    )
 	  );
 
-      return ( status = UMORPH );
+      return (status = UMORPH );
     }
   }
 
@@ -2617,7 +2612,7 @@ UCommand_EXPR::execute(UConnection *connection)
   if (morph)
   {
     delete ret;
-    return ( status = UMORPH);
+    return (status = UMORPH);
   }
 
   if (ret->dataType != DATA_VOID)
@@ -2674,10 +2669,10 @@ MEMORY_MANAGER_INIT(UCommand_RETURN);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_RETURN::UCommand_RETURN(UExpression* expression) :
-  UCommand(CMD_RETURN)
+  UCommand(CMD_RETURN),
+  expression (expression)
 {
   ADDOBJ(UCommand_RETURN);
-  this->expression  = expression;
 }
 
 //! UCommand subclass destructor.
@@ -2709,7 +2704,7 @@ UCommand_RETURN::execute(UConnection *connection)
 	    connection->stack.front()->returnVar->value = value;
     }
   }
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -2755,12 +2750,12 @@ MEMORY_MANAGER_INIT(UCommand_ECHO);
 UCommand_ECHO::UCommand_ECHO(UExpression* expression,
 			     UNamedParameters *parameters,
 			     UString *connectionTag) :
-  UCommand(CMD_ECHO)
+  UCommand(CMD_ECHO),
+  expression (expression),
+  parameters (parameters),
+  connectionTag (connectionTag)
 {
   ADDOBJ(UCommand_ECHO);
-  this->expression  = expression;
-  this->parameters  = parameters;
-  this->connectionTag = connectionTag;
 }
 
 //! UCommand subclass destructor.
@@ -2814,10 +2809,10 @@ UCommand_ECHO::execute(UConnection *connection)
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
-      if  ( ((*retr)->isActive()) &&
-	    ( ((*retr)->connectionTag->equal(connectionTag)) ||
+      if (((*retr)->isActive()) &&
+	    (((*retr)->connectionTag->equal(connectionTag)) ||
 	      (connectionTag->equal("all")) ||
-	      ( (!(*retr)->connectionTag->equal(connection->connectionTag)) &&
+	      ((!(*retr)->connectionTag->equal(connection->connectionTag)) &&
 		(connectionTag->equal("other")) ) )
 	)
       {
@@ -2836,7 +2831,7 @@ UCommand_ECHO::execute(UConnection *connection)
   }
 
   delete ret;
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -2891,15 +2886,15 @@ UCommand_NEW::UCommand_NEW(UVariableName* varname,
 			   UString* obj,
 			   UNamedParameters *parameters,
 			   bool noinit) :
-  UCommand(CMD_NEW)
+  UCommand(CMD_NEW),
+  varname (varname),
+  obj (obj),
+  parameters (parameters),
+  noinit (noinit),
+  id (0),
+  remoteNew (false)
 {
   ADDOBJ(UCommand_NEW);
-  this->varname	    = varname;
-  this->obj	    = obj;
-  this->parameters  = parameters;
-  this->noinit	    = noinit;
-  this->id	    = 0;
-  remoteNew	    = false;
 }
 
 //! UCommand subclass destructor.
@@ -2984,7 +2979,7 @@ UCommand_NEW::execute(UConnection *connection)
       &&  !remoteNew)
   {
     char* objname = (char*)obj->str();
-    while ( ::urbiserver->objaliastab.find(objname) !=
+    while (::urbiserver->objaliastab.find(objname) !=
 	    ::urbiserver->objaliastab.end())
       objname = (char*)::urbiserver->objaliastab[objname]->str();
 
@@ -2994,7 +2989,7 @@ UCommand_NEW::execute(UConnection *connection)
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Unkown object %s\n", obj->str());
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
   }
 
@@ -3050,7 +3045,7 @@ UCommand_NEW::execute(UConnection *connection)
 	     "!!! %s has already inherited from %s\n", id->str(), obj->str());
     if (creation) delete newobj;
     connection->send(tmpbuffer, getTag().c_str());
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   newobj->up.push_back(objit->second);
@@ -3167,7 +3162,7 @@ UCommand_NEW::execute(UConnection *connection)
 	)
       );
 
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 
@@ -3226,12 +3221,12 @@ MEMORY_MANAGER_INIT(UCommand_ALIAS);
 UCommand_ALIAS::UCommand_ALIAS(UVariableName* aliasname,
 			       UVariableName* id,
 			       bool eraseit) :
-  UCommand(CMD_ALIAS)
+  UCommand(CMD_ALIAS),
+  id (id),
+  aliasname (aliasname),
+  eraseit (eraseit)
 {
   ADDOBJ(UCommand_ALIAS);
-  this->id	     = id;
-  this->aliasname    = aliasname;
-  this->eraseit	     = eraseit;
 }
 
 //! UCommand subclass destructor.
@@ -3259,13 +3254,13 @@ UCommand_ALIAS::execute(UConnection *connection)
 	return (status = UCOMPLETED);
       }
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // full alias query
   if (!aliasname && !id)
   {
-    for ( HMaliastab::iterator retr =
+    for (HMaliastab::iterator retr =
 	    connection->server->aliastab.begin();
 	  retr != connection->server->aliastab.end();
 	  retr++)
@@ -3276,7 +3271,7 @@ UCommand_ALIAS::execute(UConnection *connection)
       connection->send(tmpbuffer, getTag().c_str());
     }
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // specific alias query
@@ -3360,12 +3355,12 @@ MEMORY_MANAGER_INIT(UCommand_INHERIT);
 UCommand_INHERIT::UCommand_INHERIT(UVariableName* subclass,
 				   UVariableName* theclass,
 				   bool eraseit) :
-  UCommand(CMD_INHERIT)
+  UCommand(CMD_INHERIT),
+  subclass (subclass),
+  theclass (theclass),
+  eraseit (eraseit)
 {
   ADDOBJ(UCommand_INHERIT);
-  this->subclass     = subclass;
-  this->theclass     = theclass;
-  this->eraseit	     = eraseit;
 }
 
 //! UCommand subclass destructor.
@@ -3414,7 +3409,7 @@ UCommand_INHERIT::execute(UConnection *connection)
 	       "!!! %s has already inherited from %s\n",
 	       sub->str(), parent->str());
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     objsub->second->up.push_back(objparent->second);
@@ -3431,7 +3426,7 @@ UCommand_INHERIT::execute(UConnection *connection)
 	       "!!! %s does not inherit from %s\n",
 	       sub->str(), parent->str());
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     //clean
@@ -3493,12 +3488,12 @@ MEMORY_MANAGER_INIT(UCommand_GROUP);
 UCommand_GROUP::UCommand_GROUP(UString* id,
 			       UNamedParameters* parameters,
 			       int grouptype) :
-  UCommand(CMD_GROUP)
+  UCommand(CMD_GROUP),
+  id (id),
+  parameters (parameters),
+  grouptype (grouptype)
 {
   ADDOBJ(UCommand_GROUP);
-  this->id	     = id;
-  this->parameters   = parameters;
-  this->grouptype    = grouptype;
 }
 
 //! UCommand subclass destructor.
@@ -3544,7 +3539,7 @@ UCommand_GROUP::execute(UConnection *connection)
       else
       {
 	char* objname = (char*)param->name->str();
-	while ( ::urbiserver->objaliastab.find(objname) !=
+	while (::urbiserver->objaliastab.find(objname) !=
 		::urbiserver->objaliastab.end())
 	  objname = (char*)::urbiserver->objaliastab[objname]->str();
 
@@ -3560,7 +3555,7 @@ UCommand_GROUP::execute(UConnection *connection)
   // full query
   if (!id)
   {
-    for ( HMgrouptab::iterator retr =
+    for (HMgrouptab::iterator retr =
 	    connection->server->grouptab.begin();
 	  retr != connection->server->grouptab.end();
 	  retr++)
@@ -3656,11 +3651,11 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
  */
 UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(UString* oper,
 					   UString* id) :
-  UCommand(CMD_GENERIC)
+  UCommand(CMD_GENERIC),
+  oper (oper),
+  id (id)
 {
   ADDOBJ(UCommand_OPERATOR_ID);
-  this->oper	    = oper;
-  this->id	    = id;
 }
 
 //! UCommand subclass destructor.
@@ -3678,10 +3673,10 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
   if (STREQ(oper->str(), "stop"))
   {
     if (status == URUNNING)
-      return ( status = UCOMPLETED);
+      return (status = UCOMPLETED);
     connection->server->mark(id);
     connection->server->somethingToDelete = true;
-    return ( status = URUNNING );
+    return (status = URUNNING );
   }
 
   if (STREQ(oper->str(), "killall"))
@@ -3694,7 +3689,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
-      if  ( ((*retr)->isActive()) &&
+      if (((*retr)->isActive()) &&
 	    ((*retr)->connectionTag->equal(id)))
       {
 	ok = true;
@@ -3709,7 +3704,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
       return (status = UCOMPLETED);
     }
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "disconnect"))
@@ -3722,7 +3717,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
 	 retr++)
-      if  ( ((*retr)->isActive()) &&
+      if (((*retr)->isActive()) &&
 	    ((*retr)->connectionTag->equal(id)))
       {
 	ok = true;
@@ -3738,13 +3733,13 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
       return (status = UCOMPLETED);
     }
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "block"))
   {
     if (status == URUNNING)
-      return ( status = UCOMPLETED);
+      return (status = UCOMPLETED);
 
     if (STREQ(id->str(), UNKNOWN_TAG))
     {
@@ -3755,20 +3750,20 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     else
       connection->server->block(id->str());
 
-    return ( status = URUNNING );
+    return (status = URUNNING );
   }
 
   if (STREQ(oper->str(), "unblock"))
   {
     connection->server->unblock(id->str());
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "freeze"))
   {
     if (status == URUNNING)
-      return ( status = UCOMPLETED);
+      return (status = UCOMPLETED);
 
     if (STREQ(id->str(), UNKNOWN_TAG))
     {
@@ -3779,16 +3774,16 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     else
       connection->server->freeze(id->str());
 
-    return ( status = URUNNING );
+    return (status = URUNNING );
   }
 
   if (STREQ(oper->str(), "unfreeze"))
   {
     connection->server->unfreeze(id->str());
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -3827,13 +3822,13 @@ MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_DEVICE_CMD::UCommand_DEVICE_CMD( UVariableName* device,
-					  ufloat *cmd) :
-  UCommand(CMD_GENERIC)
+UCommand_DEVICE_CMD::UCommand_DEVICE_CMD(UVariableName* device,
+					 ufloat *cmd)
+  : UCommand(CMD_GENERIC),
+    variablename (device),
+    cmd (*cmd)
 {
   ADDOBJ(UCommand_DEVICE_CMD);
-  this->variablename  = device;
-  this->cmd	      = *cmd;
 }
 
 //! UCommand subclass destructor.
@@ -3847,7 +3842,8 @@ UCommand_DEVICE_CMD::~UCommand_DEVICE_CMD()
 UCommandStatus
 UCommand_DEVICE_CMD::execute(UConnection *connection)
 {
-  if (!variablename) return ( status = UCOMPLETED );
+  if (!variablename)
+    return (status = UCOMPLETED );
   variablename->buildFullname(this, connection);
 
   if (variablename->nostruct)
@@ -3863,7 +3859,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
   }
 
   // broadcasting
-  if (scanGroups(&UCommand::refVarName, true)) return ( status = UMORPH );
+  if (scanGroups(&UCommand::refVarName, true)) return (status = UMORPH );
 
   // Main execution
   if (cmd == -1)
@@ -3882,7 +3878,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
       false);
 
   persistant = false;
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -3925,11 +3921,11 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
  */
 UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(UString* oper,
 					     UVariableName* variablename)
-  : UCommand(CMD_GENERIC)
+  : UCommand(CMD_GENERIC),
+    oper (oper),
+    variablename (variablename)
 {
   ADDOBJ(UCommand_OPERATOR_VAR);
-  this->oper	     = oper;
-  this->variablename = variablename;
 }
 
 //! UCommand subclass destructor.
@@ -3945,9 +3941,9 @@ UCommandStatus
 UCommand_OPERATOR_VAR::execute(UConnection *connection)
 {
   UString *fullname = variablename->buildFullname(this, connection);
-  if (!fullname) return ( status = UCOMPLETED );
+  if (!fullname) return (status = UCOMPLETED );
 
-  if ( (STREQ(oper->str(), "undef")) ||
+  if ((STREQ(oper->str(), "undef")) ||
        (STREQ(oper->str(), "delete")) )
   {
     if (status != URUNNING)
@@ -3972,7 +3968,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! identifier %s does not exist\n", fullname->str());
 	connection->send(tmpbuffer, getTag().c_str());
-	return ( status = UCOMPLETED );
+	return (status = UCOMPLETED );
       }
     }
 
@@ -3982,7 +3978,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
       if (variable->toDelete)
       {
 	delete variable;
-	return ( status = UCOMPLETED );
+	return (status = UCOMPLETED );
       }
 
       // test if variable is an object with subclasses (and reject if yes)
@@ -3992,13 +3988,13 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
       {
 	HMobjtab::iterator idit =
 	  ::urbiserver->objtab.find(variable->value->str->str());
-	if ( (idit != ::urbiserver->objtab.end()) &&
+	if ((idit != ::urbiserver->objtab.end()) &&
 	     (!idit->second->down.empty()) )
 	{
 	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		   "!!! This object has subclasses. Delete subclasses first.\n");
 	  connection->send(tmpbuffer, getTag().c_str());
-	  return ( status = UCOMPLETED );
+	  return (status = UCOMPLETED );
 	}
       }
 
@@ -4006,7 +4002,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
       if ((variable->nbAssigns == 0) && (variable->uservar))
       {
 	variable->toDelete = true;
-	return ( status = URUNNING );
+	return (status = URUNNING );
       }
       else
       {
@@ -4014,7 +4010,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 		 "!!! variable %s already in use or is a system var. Cannot delete.\n",
 		 fullname->str());
 	connection->send(tmpbuffer, getTag().c_str());
-	return ( status = UCOMPLETED );
+	return (status = UCOMPLETED );
       }
     }
 
@@ -4027,10 +4023,10 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	connection->server->functiondeftab.find(fullname->str()));
 
       delete fun;
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   //FIXME
@@ -4038,7 +4034,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
    if (STREQ(oper->str(),"info"))
    {
    variable = variablename->getVariable(this,connection);
-   if (!variablename->getFullname()) return ( status = UCOMPLETED );
+   if (!variablename->getFullname()) return (status = UCOMPLETED );
    UString* method = variablename->getMethod();
    UString* devicename = variablename->getDevice();
    UDevice* dev = 0;
@@ -4059,7 +4055,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
    variablename->getFullname()->str());
 
    connection->send(tmpbuffer,getTag().c_str());
-   return ( status = UCOMPLETED );
+   return (status = UCOMPLETED );
    }
 
    if ((dev) && (!variable))
@@ -4150,7 +4146,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
    return (status = UCOMPLETED);
    }*/
 
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -4198,14 +4194,14 @@ UCommand_BINDER::UCommand_BINDER(UVariableName* objname,
 				 int type,
 				 UVariableName* variablename,
 				 int nbparam) :
-  UCommand(CMD_GENERIC)
+  UCommand(CMD_GENERIC),
+  objname (objname),
+  binder (binder),
+  variablename (variablename),
+  type (type),
+  nbparam (nbparam)
 {
   ADDOBJ(UCommand_BINDER);
-  this->objname	     = objname;
-  this->binder	     = binder;
-  this->variablename = variablename;
-  this->type	     = type;
-  this->nbparam	     = nbparam;
 }
 
 //! UCommand subclass destructor.
@@ -4223,13 +4219,13 @@ UCommand_BINDER::execute(UConnection *connection)
 {
   UObj* uobj;
   UString *fullname = variablename->buildFullname(this, connection);
-  if (!fullname) return ( status = UCOMPLETED );
+  if (!fullname) return (status = UCOMPLETED );
 
   UString *fullobjname = 0;
   if (objname)
   {
     fullobjname = objname->id;
-    if (!fullobjname) return ( status = UCOMPLETED );
+    if (!fullobjname) return (status = UCOMPLETED );
   }
 
   if (type != 3) // not object binder
@@ -4271,7 +4267,7 @@ UCommand_BINDER::execute(UConnection *connection)
     break;
 
     case UBIND_FUNCTION:
-      if ( ::urbiserver->functionbindertab.find(key->str())
+      if (::urbiserver->functionbindertab.find(key->str())
 	   == ::urbiserver->functionbindertab.end())
 	::urbiserver->functionbindertab[key->str()] =
 	    new UBinder(fullobjname, fullname,
@@ -4282,7 +4278,7 @@ UCommand_BINDER::execute(UConnection *connection)
       break;
 
     case UBIND_EVENT:
-      if ( ::urbiserver->eventbindertab.find(key->str())
+      if (::urbiserver->eventbindertab.find(key->str())
 	   == ::urbiserver->eventbindertab.end())
 	::urbiserver->eventbindertab[key->str()] = new UBinder(fullobjname, fullname,
 							       mode, (UBindType)type, nbparam, connection);
@@ -4308,7 +4304,7 @@ UCommand_BINDER::execute(UConnection *connection)
       break;
   }
 
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -4362,10 +4358,10 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_OPERATOR::UCommand_OPERATOR(UString* oper) :
-  UCommand(CMD_GENERIC)
+  UCommand(CMD_GENERIC),
+  oper (oper)
 {
   ADDOBJ(UCommand_OPERATOR);
-  this->oper	   = oper;
 }
 
 //! UCommand subclass destructor.
@@ -4391,7 +4387,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     tstr <<  "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
     connection->send(tstr.str().c_str(), getTag().c_str());
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "commands"))
@@ -4401,19 +4397,19 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     ::urbiserver->debug("*** LOCAL TREE ***\n");
     if (connection->server->parser.commandTree)
       connection->server->parser.commandTree->print(0);
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "strict"))
   {
     connection->server->defcheck = true;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "unstrict"))
   {
     connection->server->defcheck = false;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "motoron"))
@@ -4422,20 +4418,20 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
     snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	     "!!! This command is no longer valid."
-             " Please use \"motor on\" instead\n");
+	     " Please use \"motor on\" instead\n");
     connection->send(tmpbuffer, getTag().c_str());
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "motoroff"))
   {
     snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	     "!!! This command is no longer valid."
-             " Please use \"motor off\" instead\n");
+	     " Please use \"motor off\" instead\n");
     connection->send(tmpbuffer, getTag().c_str());
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "stopall"))
@@ -4444,7 +4440,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	     "*** All commands cleared\n");
     connection->send(tmpbuffer, getTag().c_str());
     connection->server->stopall = true;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "undefall"))
@@ -4453,7 +4449,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	     "*** All variables and functions cleared\n");
     connection->send(tmpbuffer, getTag().c_str());
 
-    for ( HMvariabletab::iterator retr =
+    for (HMvariabletab::iterator retr =
 	    connection->server->variabletab.begin();
 	  retr != connection->server->variabletab.end();)
       delete retr->second;
@@ -4462,7 +4458,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     connection->server->functiontab.clear();
     connection->server->emittab.clear();
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
   if (STREQ(oper->str(), "reset"))
   {
@@ -4471,7 +4467,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     connection->send(tmpbuffer, getTag().c_str());
     ::urbiserver->reseting = true;
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "devices"))
@@ -4481,14 +4477,14 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	     "*** devices is deprecated. Use 'group objects' instead.\n");
     connection->send(tmpbuffer, getTag().c_str());
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   UString* fullname;
 
   if (STREQ(oper->str(), "vars"))
   {
-    for ( HMvariabletab::iterator retr =
+    for (HMvariabletab::iterator retr =
 	    connection->server->variabletab.begin();
 	  retr != connection->server->variabletab.end();
 	  retr++)
@@ -4539,12 +4535,12 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
       }
     }
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "events"))
   {
-    for ( HMemittab::iterator retr =
+    for (HMemittab::iterator retr =
 	    connection->server->emittab.begin();
 	  retr != connection->server->emittab.end();
 	  retr++)
@@ -4556,13 +4552,13 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
       connection->send(tstr.str().c_str(), getTag().c_str());
     }
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
 
   if (STREQ(oper->str(), "uservars"))
   {
-    for ( HMvariabletab::iterator retr =
+    for (HMvariabletab::iterator retr =
 	    connection->server->variabletab.begin();
 	  retr != connection->server->variabletab.end();
 	  retr++)
@@ -4607,13 +4603,13 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
       }
     }
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "debugon"))
   {
     connection->server->debugOutput = true;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "connections"))
@@ -4631,41 +4627,41 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 		 (int) (((*retr)->clientIP>>24) % 256),
 		 (int) (((*retr)->clientIP>>16) % 256),
 		 (int) (((*retr)->clientIP>>8) % 256),
-		 (int) ( (*retr)->clientIP     % 256)
+		 (int) ((*retr)->clientIP     % 256)
 	  );
 
 	connection->send(tmpbuffer, getTag().c_str());
       }
 
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "debugoff"))
   {
     connection->server->debugOutput = false;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "quit"))
   {
     connection->closeConnection();
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "reboot"))
   {
     connection->server->reboot();
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   if (STREQ(oper->str(), "shutdown"))
   {
     connection->server->shutdown();
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -4702,12 +4698,11 @@ MEMORY_MANAGER_INIT(UCommand_WAIT);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_WAIT::UCommand_WAIT(UExpression* expression) :
-  UCommand(CMD_WAIT)
+  UCommand(CMD_WAIT),
+  expression (expression),
+  endtime (0)
 {
   ADDOBJ(UCommand_WAIT);
-  this->expression  = expression;
-
-  endtime = 0;
 }
 
 //! UCommand subclass destructor.
@@ -4726,14 +4721,14 @@ UCommand_WAIT::execute(UConnection *connection)
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (nb->dataType != DATA_NUM)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid type. NUM expected.\n");
       connection->send(tmpbuffer, getTag().c_str());
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
     if (nb->val == 0) return (status = UCOMPLETED);
 
@@ -4792,16 +4787,16 @@ MEMORY_MANAGER_INIT(UCommand_EMIT);
 UCommand_EMIT::UCommand_EMIT(UVariableName *eventname,
 			     UNamedParameters *parameters,
 			     UExpression *duration) :
-  UCommand(CMD_EMIT)
+  UCommand(CMD_EMIT),
+  eventname (eventname),
+  parameters (parameters),
+  duration (duration),
+  eventnamestr (0),
+  firsttime (true),
+  event (0),
+  eh (0)
 {
   ADDOBJ(UCommand_EMIT);
-  this->eventname    = eventname;
-  this->parameters   = parameters;
-  this->duration     = duration;
-  eventnamestr	     = 0;
-  firsttime = true;
-  event = 0;
-  eh = 0;
 }
 
 //! UCommand subclass destructor.
@@ -4819,7 +4814,7 @@ UCommandStatus
 UCommand_EMIT::execute(UConnection *connection)
 {
   if (connection->receiving)
-    return ( status = UONQUEUE);
+    return (status = UONQUEUE);
 
   ufloat thetime = connection->server->lastTime();
 
@@ -4889,7 +4884,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
     if ((it != ::urbiserver->eventbindertab.end()) &&
 	(
-	  ( (parameters) && (it->second->nbparam == parameters->size()))
+	  ((parameters) && (it->second->nbparam == parameters->size()))
 	  ||
 	  ((!parameters) && (it->second->nbparam==0))) &&
 	(!it->second->monitors.empty()))
@@ -4927,9 +4922,9 @@ UCommand_EMIT::execute(UConnection *connection)
 	   cbi != hmfi->second.end();
 	   cbi++)
       {
-	if ( ( (parameters) &&
+	if (((parameters) &&
 	       (parameters->size() == (*cbi)->nbparam)) ||
-	     ( (!parameters) && (!(*cbi)->nbparam)) )
+	     ((!parameters) && (!(*cbi)->nbparam)) )
 	{
 	  urbi::UList tmparray;
 	  for (UNamedParameters *pvalue = parameters;
@@ -5047,11 +5042,11 @@ MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_WAIT_TEST::UCommand_WAIT_TEST(UExpression* test) :
-  UCommand(CMD_WAIT_TEST)
+  UCommand(CMD_WAIT_TEST),
+  test (test),
+  nbTrue (0)
 {
   ADDOBJ(UCommand_WAIT_TEST);
-  this->test  = test;
-  nbTrue  = 0;
 }
 
 //! UCommand subclass destructor.
@@ -5069,7 +5064,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
-    return ( status = URUNNING );
+    return (status = URUNNING );
 
   if (testres == UTRUE)
   {
@@ -5080,16 +5075,16 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
   else
     nbTrue = 0;
 
-  if ( ( (test->softtest_time) &&
+  if (((test->softtest_time) &&
 	 (nbTrue > 0) &&
 	 (connection->server->lastTime() - startTrue >= test->softtest_time->val)) ||
 
-       ( (nbTrue >0) &&
+       ((nbTrue >0) &&
 	 (test->softtest_time==0)) )
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   else
-    return ( status = URUNNING );
+    return (status = URUNNING );
 }
 
 //! UCommand subclass hard copy function
@@ -5136,10 +5131,10 @@ MEMORY_MANAGER_INIT(UCommand_INCDECREMENT);
  */
 UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommandType type,
 					     UVariableName *variablename) :
-  UCommand(type)
+  UCommand(type),
+  variablename (variablename)
 {
   ADDOBJ(UCommand_INCDECREMENT);
-  this->variablename  = variablename;
 }
 
 //! UCommand subclass destructor.
@@ -5161,7 +5156,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
 
   // Broadcasting
   if (scanGroups(&UCommand::refVarName, true))
-    return ( status = UMORPH );
+    return (status = UMORPH );
 
   // Main execution
   if (type == CMD_INCREMENT)
@@ -5175,7 +5170,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
 	  new UExpression(EXPR_VALUE, ufloat(1))), 0);
 
     persistant = false;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
 
   if (type == CMD_DECREMENT)
@@ -5189,10 +5184,10 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
 	  new UExpression(EXPR_VALUE, ufloat(1))), 0);
 
     persistant = false;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
 
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -5277,15 +5272,15 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
  */
 UCommand_DEF::UCommand_DEF(UDefType deftype,
 			   UVariableList *variablelist) :
-  UCommand(CMD_DEF)
+  UCommand(CMD_DEF),
+  deftype (deftype),
+  variablename (0),
+  parameters (0),
+  command (0),
+  device (0),
+  variablelist (variablelist)
 {
   ADDOBJ(UCommand_DEF);
-  this->deftype	     = deftype;
-  this->variablename = 0;
-  this->parameters   = 0;
-  this->command	     = 0;
-  this->device	     = 0;
-  this->variablelist = variablelist;
 }
 
 //! UCommand subclass destructor.
@@ -5302,12 +5297,12 @@ UCommandStatus
 UCommand_DEF::execute(UConnection *connection)
 {
   // Def list query
-  if ( (!variablename) &&
+  if ((!variablename) &&
        (!command) &&
        (!parameters) &&
        (!variablelist))
   {
-    for ( HMfunctiontab::iterator retr =
+    for (HMfunctiontab::iterator retr =
 	    connection->server->functiontab.begin();
 	  retr != connection->server->functiontab.end();
 	  retr++)
@@ -5337,7 +5332,7 @@ UCommand_DEF::execute(UConnection *connection)
 	       variablename->getMethod()->str());
       connection->send(tmpbuffer, getTag().c_str());
 
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     if (connection->server->functiontab.find(funname->str()) !=
@@ -5347,7 +5342,7 @@ UCommand_DEF::execute(UConnection *connection)
 	       "!!! function %s already exists\n", funname->str());
       connection->send(tmpbuffer, getTag().c_str());
 
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     UFunction *fun = new UFunction(new UString(funname),
@@ -5359,7 +5354,7 @@ UCommand_DEF::execute(UConnection *connection)
     if (fun && command)
       connection->server->functiontab[fun->name()->str()] = fun;
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // Event definition
@@ -5375,7 +5370,7 @@ UCommand_DEF::execute(UConnection *connection)
     if (!eh)
       eh = new UEventHandler(eventname, eventnbarg);
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
 
@@ -5387,16 +5382,16 @@ UCommand_DEF::execute(UConnection *connection)
   {
     UVariable* variable = variablename->getVariable(this, connection);
     if (!variablename->getFullname())
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     if (variable) // the variable is already defined
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     // Variable definition
 
     variable = new UVariable(variablename->getFullname()->str(), new UValue());
     connection->localVariableCheck(variable);
 
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   // Device variable set definition
@@ -5431,7 +5426,7 @@ UCommand_DEF::execute(UConnection *connection)
       param = param->next;
     }
     persistant = false;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
 
   // Multi Variable definition
@@ -5463,10 +5458,10 @@ UCommand_DEF::execute(UConnection *connection)
     }
 
     persistant = false;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
 
-  return ( status = UCOMPLETED );
+  return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -5530,11 +5525,11 @@ MEMORY_MANAGER_INIT(UCommand_CLASS);
  */
 UCommand_CLASS::UCommand_CLASS(UString *object,
 			       UNamedParameters *parameters) :
-  UCommand(CMD_CLASS)
+  UCommand(CMD_CLASS),
+  object (object),
+  parameters (parameters)
 {
   ADDOBJ(UCommand_CLASS);
-  this->object	     = object;
-  this->parameters   = parameters;
 }
 
 //! UCommand subclass destructor.
@@ -5564,7 +5559,7 @@ UCommand_CLASS::execute(UConnection*)
 
   // add some object storage here based on 'object'
   new UObj(object);
-  if (!parameters) return ( status = UCOMPLETED );
+  if (!parameters) return (status = UCOMPLETED );
 
   // morph into a series of & for each element of the class
   morph = 0;
@@ -5651,10 +5646,10 @@ UCommand_CLASS::execute(UConnection*)
   if (morph)
   {
     persistant = false;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
   else
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -5705,12 +5700,12 @@ MEMORY_MANAGER_INIT(UCommand_IF);
 UCommand_IF::UCommand_IF(UExpression *test,
 			 UCommand* command1,
 			 UCommand* command2) :
-  UCommand(CMD_IF)
+  UCommand(CMD_IF),
+  test (test),
+  command1 (command1),
+  command2 (command2)
 {
   ADDOBJ(UCommand_IF);
-  this->test	    = test;
-  this->command1    = command1;
-  this->command2    = command2;
 }
 
 //! UCommand subclass destructor.
@@ -5731,7 +5726,7 @@ UCommand_IF::execute(UConnection *connection)
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   if (testres == UTRUE)
   {
@@ -5739,7 +5734,7 @@ UCommand_IF::execute(UConnection *connection)
     setTag (command1);
     command1 = 0; // avoid delete of command when this is deleted
     persistant = false;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
   else
     if (command2)
@@ -5748,10 +5743,10 @@ UCommand_IF::execute(UConnection *connection)
       setTag (command2);
       command2 = 0; // avoid delete of command when this is deleted
       persistant = false;
-      return ( status = UMORPH );
+      return (status = UMORPH );
     }
     else
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -5805,16 +5800,15 @@ MEMORY_MANAGER_INIT(UCommand_EVERY);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_EVERY::UCommand_EVERY( UExpression *duration,
+UCommand_EVERY::UCommand_EVERY(UExpression *duration,
 				UCommand* command) :
-  UCommand(CMD_EVERY)
+  UCommand(CMD_EVERY),
+  duration (duration),
+  command (command),
+  firsttime (true),
+  starttime (0)
 {
   ADDOBJ(UCommand_EVERY);
-  this->duration    = duration;
-  this->command	    = command;
-
-  firsttime = true;
-  starttime = 0;
 }
 
 //! UCommand subclass destructor.
@@ -5831,28 +5825,28 @@ UCommand_EVERY::execute(UConnection *connection)
 {
   ufloat thetime = connection->server->lastTime();
 
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0) return (status = UCOMPLETED );
 
   UValue *interval = duration->eval(this, connection);
-  if (!interval) return ( status = UCOMPLETED);
+  if (!interval) return (status = UCOMPLETED);
 
   if ((starttime + interval->val <= thetime) ||
       (firsttime))
   {
     persistant = true;
     morph = (UCommand*)
-      new UCommand_TREE( UAND,
+      new UCommand_TREE(UAND,
 			 command->copy(),
 			 this
 	);
     starttime = thetime;
     firsttime = false;
     delete interval;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
 
   delete interval;
-  return ( status = UBACKGROUND );
+  return (status = UBACKGROUND );
 }
 
 //! UCommand subclass hard copy function
@@ -5900,13 +5894,13 @@ MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_TIMEOUT::UCommand_TIMEOUT( UExpression *duration,
+UCommand_TIMEOUT::UCommand_TIMEOUT(UExpression *duration,
 				    UCommand* command) :
-  UCommand(CMD_TIMEOUT)
+  UCommand(CMD_TIMEOUT),
+  duration (duration),
+  command (command)
 {
   ADDOBJ(UCommand_TIMEOUT);
-  this->duration    = duration;
-  this->command	    = command;
 
   snprintf(tmpbuffer,
 	   UCommand::MAXSIZE_TMPMESSAGE, "__TAG_timeout_%d", (int)unic());
@@ -5927,12 +5921,12 @@ UCommandStatus
 UCommand_TIMEOUT::execute(UConnection*)
 {
   if (command == 0)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   persistant = false;
   morph = (UCommand*)
-    new UCommand_TREE( UAND,
-		       new UCommand_TREE( UPIPE,
+    new UCommand_TREE(UAND,
+		       new UCommand_TREE(UPIPE,
 					  new UCommand_WAIT(duration->copy()),
 					  new UCommand_OPERATOR_ID(new UString("stop"),
 								   tagRef->copy())),
@@ -5940,7 +5934,7 @@ UCommand_TIMEOUT::execute(UConnection*)
       );
 
   morph->setTag(tagRef->str());
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -5988,13 +5982,13 @@ MEMORY_MANAGER_INIT(UCommand_STOPIF);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_STOPIF::UCommand_STOPIF( UExpression *condition,
+UCommand_STOPIF::UCommand_STOPIF(UExpression *condition,
 				  UCommand* command) :
-  UCommand(CMD_STOPIF)
+  UCommand(CMD_STOPIF),
+  condition (condition),
+  command (command)
 {
   ADDOBJ(UCommand_STOPIF);
-  this->condition   = condition;
-  this->command	    = command;
 
   snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE, "__TAG_stopif_%d", unic());
   this->tagRef	    = new UString(tmpbuffer);
@@ -6014,16 +6008,16 @@ UCommandStatus
 UCommand_STOPIF::execute(UConnection *connection)
 {
   if (!command || !condition)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   UTestResult testres = booleval(condition->eval(this, connection));
 
   if (testres == UTRUE)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   persistant = false;
   morph = (UCommand*)
-    new UCommand_TREE( UAND,
+    new UCommand_TREE(UAND,
 		       new UCommand_AT(CMD_AT,
 				       condition->copy(),
 				       new UCommand_OPERATOR_ID(new UString("stop"),
@@ -6032,15 +6026,15 @@ UCommand_STOPIF::execute(UConnection *connection)
 		       command->copy()
       );
   morph->setTag(tagRef->str());
-  return ( status = UMORPH );
+  return (status = UMORPH );
 
 
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0) return (status = UCOMPLETED );
 
   persistant = false;
   morph = (UCommand*)
-    new UCommand_TREE( UAND,
-		       new UCommand_TREE( UPIPE,
+    new UCommand_TREE(UAND,
+		       new UCommand_TREE(UPIPE,
 					  new UCommand_WAIT_TEST(condition->copy()),
 					  new UCommand_OPERATOR_ID(new UString("stop"),
 								   tagRef->copy())),
@@ -6048,7 +6042,7 @@ UCommand_STOPIF::execute(UConnection *connection)
       );
 
   morph->setTag(tagRef->str());
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -6096,13 +6090,13 @@ MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FREEZEIF::UCommand_FREEZEIF( UExpression *condition,
+UCommand_FREEZEIF::UCommand_FREEZEIF(UExpression *condition,
 				      UCommand* command) :
-  UCommand(CMD_FREEZEIF)
+  UCommand(CMD_FREEZEIF),
+  condition (condition),
+  command (command)
 {
   ADDOBJ(UCommand_FREEZEIF);
-  this->condition   = condition;
-  this->command	    = command;
 
   snprintf(tmpbuffer,
 	   UCommand::MAXSIZE_TMPMESSAGE, "__TAG_stopif_%d", (int)unic());
@@ -6122,16 +6116,16 @@ UCommand_FREEZEIF::~UCommand_FREEZEIF()
 UCommandStatus
 UCommand_FREEZEIF::execute(UConnection*)
 {
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0) return (status = UCOMPLETED );
 
   persistant = false;
-  UCommand* cmd = new UCommand_TREE( UPIPE,
+  UCommand* cmd = new UCommand_TREE(UPIPE,
 				     command->copy(),
 				     new UCommand_NOOP()
     );
   cmd->setTag(tagRef->str());
   morph = (UCommand*)
-    new UCommand_TREE( UAND,
+    new UCommand_TREE(UAND,
 		       new UCommand_AT(CMD_AT,
 				       condition->copy(),
 				       new UCommand_OPERATOR_ID(new UString("freeze"),
@@ -6141,7 +6135,7 @@ UCommand_FREEZEIF::execute(UConnection*)
 		       cmd
       );
 
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -6189,20 +6183,19 @@ MEMORY_MANAGER_INIT(UCommand_AT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_AT::UCommand_AT( UCommandType type,
+UCommand_AT::UCommand_AT(UCommandType type,
 			  UExpression *test,
 			  UCommand* command1,
 			  UCommand* command2) :
   UCommand(type),
-  UASyncCommand()
+  UASyncCommand(),
+  test (test),
+  command1 (command1),
+  command2 (command2),
+  firsttime (true),
+  reloop_ (false)
 {
   ADDOBJ(UCommand_AT);
-  this->test	    = test;
-  this->command1    = command1;
-  this->command2    = command2;
-
-  firsttime = true;
-  reloop_ = false;
 }
 
 //! UCommand subclass destructor.
@@ -6229,7 +6222,7 @@ UCommand_AT::execute(UConnection *connection)
   if (firsttime)
   {
     firsttime = false;
-    if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
+    if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid name resolution in test. "
@@ -6318,12 +6311,12 @@ UCommand_AT::execute(UConnection *connection)
     reloop_ = false;
     morph = this;
     // scan triggering candidates
-    for	 (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+    for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
 	  ic != candidates.end ();
 	  ++ic)
     {
       UCommand* assigncmd;
-      if  (!(*ic)->hasTriggered())
+      if (!(*ic)->hasTriggered())
       {
 	if ((*ic)->trigger (currentTime, assigncmd))
 	{
@@ -6331,9 +6324,9 @@ UCommand_AT::execute(UConnection *connection)
 	  {
 	    morph = (UCommand*)
 	      new UCommand_TREE
-	      ( UAND,
+	      (UAND,
 		new UCommand_TREE
-		( UPIPE,
+		(UPIPE,
 		  assigncmd,
 		  command1->copy()
 		  ),
@@ -6429,11 +6422,11 @@ MEMORY_MANAGER_INIT(UCommand_WHILE);
 UCommand_WHILE::UCommand_WHILE(UCommandType type,
 			       UExpression *test,
 			       UCommand* command) :
-  UCommand(type)
+  UCommand(type),
+  test (test),
+  command (command)
 {
   ADDOBJ(UCommand_WHILE);
-  this->test	    = test;
-  this->command	    = command;
 }
 
 //! UCommand subclass destructor.
@@ -6448,7 +6441,7 @@ UCommand_WHILE::~UCommand_WHILE()
 UCommandStatus
 UCommand_WHILE::execute(UConnection *connection)
 {
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0) return (status = UCOMPLETED );
 
   persistant = false;
 
@@ -6456,7 +6449,7 @@ UCommand_WHILE::execute(UConnection *connection)
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   if (testres == UTRUE)
   {
@@ -6485,10 +6478,10 @@ UCommand_WHILE::execute(UConnection *connection)
 	  );
 
     persistant = true;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
   else
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -6544,17 +6537,16 @@ UCommand_WHENEVER::UCommand_WHENEVER(UExpression *test,
 				     UCommand* command1,
 				     UCommand* command2) :
   UCommand(CMD_WHENEVER),
-  UASyncCommand()
+  UASyncCommand(),
+  test (test),
+  command1 (command1),
+  command2 (command2),
+  firsttime (true),
+  reloop_ (false),
+  active_ (false),
+  theloop_ (0)
 {
   ADDOBJ(UCommand_WHENEVER);
-  this->test	    = test;
-  this->command1    = command1;
-  this->command2    = command2;
-
-  firsttime = true;
-  reloop_ = false;
-  active_ = false;
-  theloop_ = 0;
 }
 
 //! UCommand subclass destructor.
@@ -6603,10 +6595,10 @@ UCommand_WHENEVER::execute(UConnection *connection)
   }
 
   // cache initilialization
-  if  (firsttime)
+  if (firsttime)
   {
     firsttime = false;
-    if (test->asyncScan ( (UASyncCommand*)this, connection) == UFAIL)
+    if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! Invalid name resolution in test. "
@@ -6681,7 +6673,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     {
       active_ = false;
       connection->server->somethingToDelete = true;
-      // theloop_ is 0 if something has deleted it from the outside  (thanks
+      // theloop_ is 0 if something has deleted it from the outside (thanks
       // to the 'whenever_hook' attribute), that's why we test here
       if (theloop_) theloop_->toDelete = true;
       theloop_ = 0;
@@ -6695,12 +6687,12 @@ UCommand_WHENEVER::execute(UConnection *connection)
     UCommand* assign = 0;
 
     // scan triggering candidates
-    for	 (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
+    for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
 	  ic != candidates.end ();
 	  ++ic)
     {
       UCommand* assigncmd;
-      if  (!(*ic)->hasTriggered())
+      if (!(*ic)->hasTriggered())
       {
 	if ((*ic)->trigger (currentTime, assigncmd))
 	{
@@ -6712,7 +6704,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	    else
 	      assign = (UCommand*)
 		new UCommand_TREE
-		( UAND,
+		(UAND,
 		  assigncmd,
 		  assign
 		  );
@@ -6812,11 +6804,11 @@ MEMORY_MANAGER_INIT(UCommand_LOOP);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_LOOP::UCommand_LOOP(UCommand* command) :
-  UCommand(CMD_LOOP)
+  UCommand(CMD_LOOP),
+  command (command),
+  whenever_hook (0)
 {
   ADDOBJ(UCommand_LOOP);
-  this->command	    = command;
-  whenever_hook = 0;
 }
 
 //! UCommand subclass destructor.
@@ -6832,7 +6824,7 @@ UCommand_LOOP::~UCommand_LOOP()
 UCommandStatus
 UCommand_LOOP::execute(UConnection*)
 {
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0) return (status = UCOMPLETED );
 
   morph = (UCommand*)
     new UCommand_TREE(USEMICOLON,
@@ -6841,7 +6833,7 @@ UCommand_LOOP::execute(UConnection*)
 					new UCommand_NOOP()),
 		      this);
   persistant = true;
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -6887,11 +6879,11 @@ MEMORY_MANAGER_INIT(UCommand_LOOPN);
 UCommand_LOOPN::UCommand_LOOPN(UCommandType type,
 			       UExpression* expression,
 			       UCommand* command) :
-  UCommand(type)
+  UCommand(type),
+  expression (expression),
+  command (command)
 {
   ADDOBJ(UCommand_LOOPN);
-  this->expression  = expression;
-  this->command	    = command;
 }
 
 //! UCommand subclass destructor.
@@ -6906,7 +6898,7 @@ UCommand_LOOPN::~UCommand_LOOPN()
 UCommandStatus
 UCommand_LOOPN::execute(UConnection *connection)
 {
-  if (command == 0) return ( status = UCOMPLETED );
+  if (command == 0) return (status = UCOMPLETED );
 
   //if (status == UONQUEUE)
   //  command->status = UONQUEUE;
@@ -6916,7 +6908,7 @@ UCommand_LOOPN::execute(UConnection *connection)
     UValue *nb = expression->eval(this, connection);
 
     if (nb == 0)
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
 
     if (nb->dataType != DATA_NUM)
     {
@@ -6924,7 +6916,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 	       "!!! number of loops is non numeric\n");
       connection->send(tmpbuffer, getTag().c_str());
       delete nb;
-      return ( status = UCOMPLETED );
+      return (status = UCOMPLETED );
     }
 
     expression->type = EXPR_VALUE;
@@ -6934,7 +6926,7 @@ UCommand_LOOPN::execute(UConnection *connection)
   }
 
   if (expression->val < 1)
-    return ( status = UCOMPLETED);
+    return (status = UCOMPLETED);
 
   expression->val = expression->val - 1;
 
@@ -6953,7 +6945,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 					  new UCommand_NOOP()),
 			this);
   persistant = true;
-  return ( status = UMORPH );
+  return (status = UMORPH );
 }
 
 //! UCommand subclass hard copy function
@@ -7008,19 +7000,19 @@ MEMORY_MANAGER_INIT(UCommand_FOR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FOR::UCommand_FOR( UCommandType type,
+UCommand_FOR::UCommand_FOR(UCommandType type,
 			    UCommand* instr1,
 			    UExpression* test,
 			    UCommand* instr2,
-			    UCommand* command) :
-  UCommand(type)
+			    UCommand* command)
+  : UCommand(type),
+    instr1 (instr1),
+    test (test),
+    instr2 (instr2),
+    command (command),
+    first (true)
 {
   ADDOBJ(UCommand_FOR);
-  this->instr1	    = instr1;
-  this->test	    = test;
-  this->instr2	    = instr2;
-  this->command	    = command;
-  this->first	    = true;
 }
 
 //! UCommand subclass destructor.
@@ -7042,12 +7034,14 @@ UCommand_FOR::execute(UConnection *connection)
   if (first)
   {
     first = false;
-    if (instr1) instr1->setTag(this);
-    if (instr2) instr2->setTag(this);
+    if (instr1)
+      instr1->setTag(this);
+    if (instr2)
+      instr2->setTag(this);
   }
 
   if (command == 0)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   if (instr1)
   {
@@ -7059,7 +7053,7 @@ UCommand_FOR::execute(UConnection *connection)
 			first_instruction,
 			this);
     persistant = true;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
 
   persistant = false;
@@ -7068,7 +7062,7 @@ UCommand_FOR::execute(UConnection *connection)
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 
   if (testres == UTRUE)
   {
@@ -7124,10 +7118,10 @@ UCommand_FOR::execute(UConnection *connection)
     if (tmp_instr2)
       tmp_instr2->morphed = true;
     persistant = true;
-    return ( status = UMORPH );
+    return (status = UMORPH );
   }
   else
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
 }
 
 //! UCommand subclass hard copy function
@@ -7198,7 +7192,7 @@ MEMORY_MANAGER_INIT(UCommand_FOREACH);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FOREACH::UCommand_FOREACH( UCommandType type,
+UCommand_FOREACH::UCommand_FOREACH(UCommandType type,
 				    UVariableName* variablename,
 				    UExpression* expression,
 				    UCommand* command) :
@@ -7260,7 +7254,7 @@ UCommand_FOREACH::execute(UConnection *connection)
 	     "!!! This type is not supported yet\n");
     connection->send(tmpbuffer, getTag().c_str());
     delete currentvalue;
-    return ( status = UCOMPLETED );
+    return (status = UCOMPLETED );
   }
 
   morph =  (UCommand*)
@@ -7352,6 +7346,7 @@ UCommand_NOOP::UCommand_NOOP(bool zerotime) :
   UCommand(CMD_NOOP)
 {
   ADDOBJ(UCommand_NOOP);
+  // FIXME: Otherwise, what is the value?
   if (zerotime) status = URUNNING;
 }
 
@@ -7409,12 +7404,11 @@ MEMORY_MANAGER_INIT(UCommand_LOAD);
  This class is used to delay the processing of a loaded file.
  */
 UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode) :
-  UCommand(CMD_LOAD)
+  UCommand(CMD_LOAD),
+  loadQueue (new UCommandQueue (4096, 1048576, false)),
+  mainnode (mainnode)
 {
   ADDOBJ(UCommand_LOAD);
-
-  loadQueue = new UCommandQueue (4096, 1048576, false);
-  this->mainnode = mainnode;
 }
 
 //! UCommand subclass destructor.
@@ -7467,7 +7461,7 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
       ::urbiserver->parser.commandTree = 0;
 
       persistant = true;
-      return ( status = UMORPH );
+      return (status = UMORPH );
     }
   }
   else

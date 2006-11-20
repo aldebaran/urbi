@@ -27,17 +27,20 @@
 class UServer;
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection  ( UServer * mainserver) :
-  UConnection   ( mainserver,
-		  UGhostConnection::MINSENDBUFFERSIZE,
-		  UGhostConnection::MAXSENDBUFFERSIZE,
-		  UGhostConnection::PACKETSIZE,
-		  UGhostConnection::MINRECVBUFFERSIZE,
-		  UGhostConnection::MAXRECVBUFFERSIZE )
+UGhostConnection::UGhostConnection  (UServer * mainserver) :
+  UConnection   (mainserver,
+		 UGhostConnection::MINSENDBUFFERSIZE,
+		 UGhostConnection::MAXSENDBUFFERSIZE,
+		 UGhostConnection::PACKETSIZE,
+		 UGhostConnection::MINRECVBUFFERSIZE,
+		 UGhostConnection::MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
 
-  if (UError != USUCCESS) return;// Test the error from UConnection constructor.
+  // FIXME: What the heck is this suppose to do???
+  // Test the error from UConnection constructor.
+  if (UError != USUCCESS)
+    return;
 }
 
 //! UGhostConnection destructor.

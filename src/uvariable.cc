@@ -341,7 +341,7 @@ UVariable::selfSet(ufloat *valcheck)
 
   if (speedmodified) return (USPEEDMAX);
 
-  return ( UOK );
+  return (UOK );
 }
 
 //! Get the UValue associated to the variable
@@ -357,12 +357,11 @@ UVariable::get()
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
 	 it++)
-      if ( it->second->method
-           && it->second->devicename
-           && value->str
-           && it->second->value->dataType != DATA_OBJ
-           && it->second->devicename->equal(value->str)
-         )
+      if (it->second->method
+	  && it->second->devicename
+	  && value->str
+	  && it->second->value->dataType != DATA_OBJ
+	  && it->second->devicename->equal(value->str))
 	it->second->get ();
 
   // check for existing notifychange
@@ -445,7 +444,7 @@ UVariable::isDeletable()
       (value->str))
   {
     HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
-    if ( (idit != ::urbiserver->objtab.end()) &&
+    if ((idit != ::urbiserver->objtab.end()) &&
 	(!idit->second->down.empty()) )
       return false;
   }

@@ -87,7 +87,7 @@ UServer::UServer(ufloat frequency,
 
   ::urbiserver = 0;
   frequency_      = frequency;
-  securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
+  securityBuffer_ = malloc(SECURITY_MEMORY_SIZE );
   this->mainName = new UString(mainName);
 
   memoryOverflow = securityBuffer_ == 0;
@@ -131,14 +131,14 @@ UServer::UServer(ufloat frequency,
    (new UString ("system.alwaysFalse"), 0);
 
   std::list<UValue*> args;
-  kernel::system_alwaystrue = new UEvent ( kernel::eh_system_alwaystrue, args);
-  kernel::eh_system_alwaystrue->addEvent ( kernel::system_alwaystrue);
+  kernel::system_alwaystrue = new UEvent (kernel::eh_system_alwaystrue, args);
+  kernel::eh_system_alwaystrue->addEvent (kernel::system_alwaystrue);
 
   kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
   kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
-  kernel::remoteFunction   = new UFunction( (UString*)0,
-                                            (UNamedParameters*)0,
-                                            (UCommand*)0);
+  kernel::remoteFunction   = new UFunction((UString*)0,
+					    (UNamedParameters*)0,
+					    (UCommand*)0);
 }
 
 /// Sets the system.arg list in URBI
@@ -293,11 +293,11 @@ UServer::work()
   if (securityBuffer_ == 0 &&
       usedMemory < availableMemory - 2 * SECURITY_MEMORY_SIZE)
     {
-      securityBuffer_ = malloc( 2 * SECURITY_MEMORY_SIZE );
+      securityBuffer_ = malloc(2 * SECURITY_MEMORY_SIZE );
       if (securityBuffer_ != 0)
       {
 	free(securityBuffer_);
-	securityBuffer_ = malloc( SECURITY_MEMORY_SIZE );
+	securityBuffer_ = malloc(SECURITY_MEMORY_SIZE );
 	if (securityBuffer_)
 	{
 	  memoryOverflow = false;
@@ -334,12 +334,12 @@ UServer::work()
 	signalcpuoverload = false;
       }
 
-      (*retr)->errorCheck( UERROR_MEMORY_OVERFLOW );
-      (*retr)->errorCheck( UERROR_MEMORY_WARNING );
-      (*retr)->errorCheck( UERROR_SEND_BUFFER_FULL );
-      (*retr)->errorCheck( UERROR_RECEIVE_BUFFER_FULL );
-      (*retr)->errorCheck( UERROR_RECEIVE_BUFFER_CORRUPTED );
-      (*retr)->errorCheck( UERROR_CPU_OVERLOAD );
+      (*retr)->errorCheck(UERROR_MEMORY_OVERFLOW );
+      (*retr)->errorCheck(UERROR_MEMORY_WARNING );
+      (*retr)->errorCheck(UERROR_SEND_BUFFER_FULL );
+      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_FULL );
+      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED );
+      (*retr)->errorCheck(UERROR_CPU_OVERLOAD );
 
       // Run the connection's command queue:
 
@@ -422,9 +422,9 @@ UServer::work()
 	if ((*iter)->value->dataType == DATA_NUM)
 	  {
 	    if ((*iter)->autoUpdate)
-	      selfError = (*iter)->selfSet ( &((*iter)->value->val) );
+	      selfError = (*iter)->selfSet (&((*iter)->value->val) );
 	    else
-	      selfError = (*iter)->selfSet ( &((*iter)->target) );
+	      selfError = (*iter)->selfSet (&((*iter)->target) );
 	  }
 
       // set previous for next iteration
@@ -485,11 +485,11 @@ UServer::work()
     if (stage == 1)
       {
 	//delete objects first
-	for ( HMvariabletab::iterator retr = variabletab.begin();
+	for (HMvariabletab::iterator retr = variabletab.begin();
 	      retr != variabletab.end();
 	      retr++)
-	  if ((retr->second->value) &&
-	      (retr->second->value->dataType == DATA_OBJ))
+	  if (retr->second->value
+	      && retr->second->value->dataType == DATA_OBJ)
 	    varToReset.push_back( retr->second );
 
 	while (!varToReset.empty())
@@ -507,7 +507,7 @@ UServer::work()
 	  }
 
 	//delete the rest
-	for ( HMvariabletab::iterator retr = variabletab.begin();
+	for (HMvariabletab::iterator retr = variabletab.begin();
 	      retr != variabletab.end();
 	      retr++)
 	  if (retr->second->uservar)
@@ -695,7 +695,7 @@ UServer::debug(const char* s, ...)
   effectiveDisplay(tmpBuffer_);
 
 //  used to slow down printing with Aibo...
-//  ufloat y=4;ufloat x=145;  for (int i=0;i<300000;i++) y = y+ sin( i*x);
+//  ufloat y=4;ufloat x=145;  for (int i=0;i<300000;i++) y = y+ sin(i*x);
 }
 
 //! Isolate the server from incoming commands.
@@ -895,8 +895,8 @@ UServer::memory()
 
 //! Get a variable in the hash table
 UVariable*
-UServer::getVariable ( const char *device,
-		       const char *property )
+UServer::getVariable (const char *device,
+		      const char *property)
 {
   char tmpbuffer[1024];
   HMvariabletab::iterator hmi;

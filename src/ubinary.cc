@@ -26,13 +26,13 @@
 // **************************************************************************
 //! UBinary constructor.
 UBinary::UBinary(int bufferSize, UNamedParameters *parameters)
+  : bufferSize (bufferSize),
+    buffer ((ubyte*) malloc(bufferSize)), // result tested outside.
+    parameters (parameters)
 {
   ADDOBJ(UBinary);
-  this->bufferSize = bufferSize;
-  this->parameters = parameters;
-
-  buffer = (ubyte*) malloc(bufferSize); // result tested outside
-  if (buffer) ADDMEM(bufferSize);
+  if (buffer)
+    ADDMEM(bufferSize);
 }
 
 //! UBinary destructor.

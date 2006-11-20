@@ -30,11 +30,11 @@ UFunction* kernel::remoteFunction;
 UFunction::UFunction(UString *funname,
 		     UNamedParameters *parameters,
 		     UCommand *command)
-		     {
+  : funname (funname),
+    parameters (parameters),
+    command (command)
+{
   ADDOBJ(UFunction);
-  this->funname = funname;
-  this->parameters = parameters;
-  this->command = command;
 }
 
 

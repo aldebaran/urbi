@@ -32,21 +32,21 @@
 UNamedParameters::UNamedParameters(UString* name,
 				   UExpression *expression,
 				   UNamedParameters* next)
+  : name       (name),
+    expression (expression),
+    next       (next)
 {
   ADDOBJ(UNamedParameters);
-  this->name       = name;
-  this->expression = expression;
-  this->next       = next;
 }
 
 //! UNamedParameters constructor (for expression list only)
 UNamedParameters::UNamedParameters(UExpression *expression,
 				   UNamedParameters* next)
+  : name       (0),
+    expression (expression),
+    next       (next)
 {
   ADDOBJ(UNamedParameters);
-  this->name       = 0;
-  this->expression = expression;
-  this->next       = next;
 }
 
 //! UNamedParameters destructor.
@@ -61,17 +61,19 @@ UNamedParameters::~UNamedParameters()
 UNamedParameters*
 UNamedParameters::rank(int n)
 {
-  if (n==0) return (this);
+  if (n==0)
+    return this;
+  else if (next == 0)
+    return 0;
   else
-    if (next == 0) return 0;
-    else
-      return (next->rank(n-1));
+    return next->rank(n-1);
 }
 
 int
 UNamedParameters::size()
 {
-  if (next) return (next->size() + 1);
+  if (next) 
+    return next->size() + 1;
   else
     return 1;
 }

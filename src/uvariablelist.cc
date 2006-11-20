@@ -31,10 +31,10 @@
 //! UVariableList constructor.
 UVariableList::UVariableList(UVariableName *variablename,
 			     UVariableList* next)
+  : variablename (variablename),
+    next         (next)
 {
   ADDOBJ(UVariableList);
-  this->variablename = variablename;
-  this->next         = next;
 }
 
 //! UVariableList destructor.
@@ -62,9 +62,9 @@ int
 UVariableList::size()
 {
   if (next)
-    return (next->size() + 1);
+    return next->size() + 1;
   else
-    return(1);
+    return 1;
 }
 
 //! UVariableList hard copy function

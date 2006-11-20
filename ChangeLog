@@ -1,3 +1,15 @@
+2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
+
+	Coding style changes
+	* src/ubinary.cc, src/ucommand.cc, src/ucommandqueue.cc,
+	* src/uconnection.cc, src/ufunction.cc,
+	* src/ughostconnection.cc, src/unamedparameters.cc,
+	* src/uobj.cc, src/uqueue.cc, src/userver.cc, src/uvalue.cc,
+	* src/uvariable.cc, src/uvariablelist.cc,
+	* src/uvariablename.cc:
+	White space changes.
+	Initialize members a la C++.
+
 2006-11-18  Jean-Christophe Baillie  <baillie@gostai.com>
         rewrite UConnection sending mechanism.
 

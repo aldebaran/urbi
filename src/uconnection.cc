@@ -168,7 +168,7 @@ UConnection::~UConnection()
 
   // free bindings
 
-  for ( HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
+  for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
 	it1 != ::urbiserver->variabletab.end(); it1++ )
   {
     if (it1->second->binder)
@@ -180,7 +180,7 @@ UConnection::~UConnection()
   }
 
   std::list<HMbindertab::iterator> deletelist;
-  for ( HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
+  for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
 	it2 != ::urbiserver->functionbindertab.end();
 	it2++)
   {
@@ -194,7 +194,7 @@ UConnection::~UConnection()
     ::urbiserver->functionbindertab.erase((*itt));
   deletelist.clear();
 
-  for ( HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
+  for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
 	it3 != ::urbiserver->eventbindertab.end();
 	it3++)
   {
@@ -356,7 +356,7 @@ UConnection::sendc (const ubyte *buffer, int length)
   if (sendQueue_->locked ()) return UFAIL;
 
   UErrorValue result = sendQueue_->push(buffer, length);
-  if ( result != USUCCESS)
+  if (result != USUCCESS)
   {
     if (result == UMEMORYFAIL)
     {
@@ -513,18 +513,18 @@ UConnection::received (const ubyte *buffer, int length)
       }
     }
   }
-  UErrorValue result = recvQueue_->push( buffer, length);
+  UErrorValue result = recvQueue_->push(buffer, length);
   unlock();
-  if ( result != USUCCESS)
+  if (result != USUCCESS)
   {
     // Handles memory errors.
-    if ( result == UFAIL )
+    if (result == UFAIL )
     {
       errorSignal(UERROR_RECEIVE_BUFFER_FULL);
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
 
-    if ( result == UMEMORYFAIL )
+    if (result == UMEMORYFAIL )
     {
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
       server->memoryOverflow = true;
@@ -770,7 +770,7 @@ UConnection::warning (UWarningCode n)
 
   }
 
-  UErrorValue result = send( warningString, "warning");
+  UErrorValue result = send(warningString, "warning");
   if (result == USUCCESS )
   {
     warningString[strlen(warningString)-1] = 0;//remove the '\n' at the end...
@@ -918,11 +918,11 @@ UConnection::processCommand(UCommand *&command,
 
 		    if (((*retr)->connectionTag->equal(tmpID->str)) ||
 			(STREQ(tmpID->str->str(), "all")) ||
-			( ( STREQ(tmpID->str->str(), "other")) &&
-			  ( !(*retr)->connectionTag->equal(connectionTag))))
+			((STREQ(tmpID->str->str(), "other")) &&
+			  (!(*retr)->connectionTag->equal(connectionTag))))
 		    {
 		      UCommand_TREE* tohook =
-			new UCommand_TREE( UAND,
+			new UCommand_TREE(UAND,
 					   command->copy(),
 					   0);
 		      (*retr)->append(tohook);
@@ -967,8 +967,8 @@ UConnection::processCommand(UCommand *&command,
 	  if ((param->name->equal("flag")) &&
 	      (param->expression) &&
 	      (!command->morphed) &&
-	      (( param->expression->val == 4 ) || // 4 = +begin
-	       ( param->expression->val == 1 ) )) // 1 = +report
+	      ((param->expression->val == 4 ) || // 4 = +begin
+	       (param->expression->val == 1 ) )) // 1 = +report
 	    send("*** begin\n", command->getTag().c_str());
 
 	}
@@ -1005,12 +1005,12 @@ UConnection::processCommand(UCommand *&command,
       else
 	command->flag_nbTrue2 = 0;
 
-      if ( ( (command->flagExpr2->softtest_time) &&
+      if (((command->flagExpr2->softtest_time) &&
 	     (command->flag_nbTrue2 > 0) &&
 	     (server->lastTime() - command->flag_startTrue2 >=
 	      command->flagExpr2->softtest_time->val)) ||
 
-	   ( (command->flag_nbTrue2 >0) &&
+	   ((command->flag_nbTrue2 >0) &&
 	     (command->flagExpr2->softtest_time==0)) )
 	stopit = true;
     }
@@ -1030,12 +1030,12 @@ UConnection::processCommand(UCommand *&command,
       else
 	command->flag_nbTrue4 = 0;
 
-      if ( ( (command->flagExpr4->softtest_time) &&
+      if (((command->flagExpr4->softtest_time) &&
 	     (command->flag_nbTrue4 > 0) &&
 	     (server->lastTime() - command->flag_startTrue4 >=
 	      command->flagExpr4->softtest_time->val)) ||
 
-	   ( (command->flag_nbTrue4 >0) &&
+	   ((command->flag_nbTrue4 >0) &&
 	     (command->flagExpr4->softtest_time==0)) )
 	return command;
     }
@@ -1049,8 +1049,8 @@ UConnection::processCommand(UCommand *&command,
 	    (param->name->equal("flag")) &&
 	    (param->expression) &&
 	    (!command->morphed) &&
-	    (( param->expression->val == 3 ) || // 3 = +end
-	     ( param->expression->val == 1 ) )) // 1 = +report
+	    ((param->expression->val == 3 ) || // 3 = +end
+	     (param->expression->val == 1 ) )) // 1 = +report
 	  send("*** end\n", command->getTag().c_str());
 
 	param = param->next;
@@ -1086,8 +1086,8 @@ UConnection::processCommand(UCommand *&command,
 	    if ((param->name) &&
 		(param->name->equal("flag")) &&
 		(param->expression) &&
-		(( param->expression->val == 3 ) || // 3 = +end
-		 ( param->expression->val == 1 ) )) // 1 = +report
+		((param->expression->val == 3 ) || // 3 = +end
+		 (param->expression->val == 1 ) )) // 1 = +report
 	      send("*** end\n", command->getTag().c_str());
 
 	    param = param->next;
@@ -1175,7 +1175,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	(tree->command1) &&
 	(tree->runlevel1 == UWAITING))
       stack.push_front(tree->callid);
-    tree->command1 = processCommand ( tree->command1,
+    tree->command1 = processCommand (tree->command1,
 				      tree->runlevel1,
 				      mustReturn );
 
@@ -1193,7 +1193,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
     }
 
     // COMMAND2
-    if ( (tree->node == UAND) ||
+    if ((tree->node == UAND) ||
 	 (tree->node == UCOMMA) ||
 	 (tree->command1 == 0) ||
 	 (tree->command1->status == UBACKGROUND) )
@@ -1201,7 +1201,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
       if (tree == lastCommand)
 	obstructed = false;
 
-      tree->command2 = processCommand ( tree->command2,
+      tree->command2 = processCommand (tree->command2,
 					tree->runlevel2,
 					mustReturn );
 
@@ -1210,7 +1210,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
     // STATUS UPDATE
 
-    if ( ((tree->command1 == 0) &&
+    if (((tree->command1 == 0) &&
 	  (tree->command2 == 0)) ||
 	 (deletecommand))
     {
@@ -1229,8 +1229,8 @@ UConnection::execute(UCommand_TREE* &execCommand)
 	if ((param->name) &&
 	    (param->name->equal("flag")) &&
 	    (param->expression) &&
-	    (( param->expression->val == 3 ) || // 3 = +end
-	     ( param->expression->val == 1 ) )) // 1 = +report
+	    ((param->expression->val == 3 ) || // 3 = +end
+	     (param->expression->val == 1 ) )) // 1 = +report
 	  send("*** end\n", tree->getTag().c_str());
 
 	param = param->next;
@@ -1242,7 +1242,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
       continue;
     }
     else
-      if ( ( ((tree->command1 == 0) ||
+      if ((((tree->command1 == 0) ||
 	      (tree->command1->status == UBACKGROUND)) &&
 
 	     ((tree->command2 == 0) ||
@@ -1303,14 +1303,13 @@ UConnection::execute(UCommand_TREE* &execCommand)
     tree = tree->up;
   }
 
-  if ( (execCommand) &&
-       (execCommand->command1 == 0) &&
-       (execCommand->command2 == 0))
+  if (execCommand &&
+      execCommand->command1 == 0 &&
+      execCommand->command2 == 0)
   {
     delete execCommand;
     execCommand = 0;
   }
-
 }
 
 //! Append a command to the command queue

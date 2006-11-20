@@ -20,7 +20,7 @@
  **************************************************************************** */
 #include <cstdio>
 #ifdef _MSC_VER
-#define snprintf _snprintf
+# define snprintf _snprintf
 #endif
 
 #include "uobj.hh"
@@ -32,16 +32,13 @@
 #include "urbi/uobject.hh"
 #include "ueventhandler.hh"
 
-char namebuffer[1024];
-
 // **************************************************************************
 //! UObj constructor.
 UObj::UObj (UString *device)
+  : device (new UString(device)),
+    binder (0),
+    internalBinder (0)
 {
-  this->device = new UString(device);
-  binder = 0;
-  internalBinder = 0;
-
   ::urbiserver->objtab[this->device->str()] = this;
   UValue* objvalue = new UValue();
   objvalue->dataType = DATA_OBJ;
@@ -59,10 +56,10 @@ UObj::~UObj()
        ++it)
   {
     if (it->second->method
-        && it->second->devicename
-        && device
-        && it->second->value->dataType != DATA_OBJ
-        && it->second->devicename->equal(device)
+	&& it->second->devicename
+	&& device
+	&& it->second->value->dataType != DATA_OBJ
+	&& it->second->devicename->equal(device)
        )
       varToDelete.push_back(it->second);
   }//for
@@ -138,7 +135,7 @@ UObj::~UObj()
 
     // in fact here we can delete the binder since it contained only bindings
     // to a single object (himself) associated to unique connections:
-    delete(binder);
+    delete binder;
   }
 
   // Remove the object from the hashtable
@@ -162,11 +159,8 @@ UObj::~UObj()
     // to be "cleaned":
     if (internalBinder->getUObject()->derived)
       delete internalBinder; // this deletes the associated UObject
-    else
-    {
-      if (internalBinder->getUObject())
-	delete internalBinder->getUObject();
-    }
+    else if (internalBinder->getUObject())
+      delete internalBinder->getUObject();
   }
 
   // clean variables internalBinder
@@ -206,8 +200,8 @@ UObj::~UObj()
       }
       else
 	++itcb;
-    }//for
-  }//for
+    }
+  }
 
   // final cleanup
   delete device;
@@ -217,7 +211,7 @@ UFunction*
 UObj::searchFunction(const char* id, bool &ambiguous)
 {
   UFunction* ret;
-
+  char namebuffer[1024];
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
 
   // test for pure urbi symbols
@@ -226,7 +220,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   {
     ambiguous = false;
     return hmf->second;
-  };
+  }
 
   // test for remote uobjects symbols
   if (::urbiserver->functionbindertab.find(namebuffer)
@@ -234,7 +228,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   {
     ambiguous = false;
     return kernel::remoteFunction;
-  };
+  }
 
   // test for plugged uobjects symbols
   if (::urbi::functionmap.find(namebuffer)
@@ -242,7 +236,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   {
     ambiguous = false;
     return kernel::remoteFunction;
-  };
+  }
 
   // try recursively with parents
   ret   = 0;
@@ -256,13 +250,13 @@ UObj::searchFunction(const char* id, bool &ambiguous)
     if (tmpres)
       if (found)
       {
-        ambiguous = true;
-        return 0;
+	ambiguous = true;
+	return 0;
       }
       else
       {
-        ret = tmpres;
-        found = true;
+	ret = tmpres;
+	found = true;
       }
   }
   ambiguous = false;
@@ -273,6 +267,7 @@ UVariable*
 UObj::searchVariable(const char* id, bool &ambiguous)
 {
   UVariable* ret;
+  char namebuffer[1024];
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
@@ -312,6 +307,7 @@ UEventHandler*
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
   UEventHandler* ret;
+  char namebuffer[1024];
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   bool ok = false;

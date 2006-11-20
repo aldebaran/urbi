@@ -42,36 +42,35 @@ MEMORY_MANAGER_INIT(UValue);
 // **************************************************************************
 //! UValue constructor.
 UValue::UValue()
+  : dataType (DATA_VOID),
+    val (0), // set default values to 0.
+    str (0), // this is for str and refBinary
+    liststart (0),
+    next (0)
 {
   ADDOBJ(UValue);
-  dataType = DATA_VOID;
-  liststart = 0;
-  next = 0;
-
-  val        = 0; // set default values to 0
-  str        = 0; // this is for str and refBinary
 }
 
 //! UValue constructor.
 UValue::UValue(ufloat val)
+  : dataType (DATA_NUM),
+    liststart (0),
+    next (0),
+    val (val),
+    str (0)
 {
   ADDOBJ(UValue);
-  dataType = DATA_NUM;
-  liststart = 0;
-  next = 0;
-  this->val = val;
-  str = 0;
 }
 
 //! UValue constructor.
 UValue::UValue(const char* str)
+  : dataType (DATA_STRING),
+    liststart (0),
+    next (0),
+    val (0),
+    str (new UString (str))
 {
   ADDOBJ(UValue);
-  dataType = DATA_STRING;
-  liststart = 0;
-  next = 0;
-  val = 0;
-  this->str = new UString (str);
 }
 
 #define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
@@ -178,7 +177,7 @@ UValue::operator urbi::UBinary*()
   }
   msg << '\n'; //parse expects this
   std::list<urbi::BinaryData> lBin;
-  lBin.push_back(urbi::BinaryData( refBinary->ref()->buffer,
+  lBin.push_back(urbi::BinaryData(refBinary->ref()->buffer,
 				   refBinary->ref()->bufferSize));
   std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
   b->parse(msg.str().c_str(), 0, lBin, lIter);
@@ -225,7 +224,7 @@ UValue::operator urbi::USound()
   urbi::USound snd;
   snd.data=0; snd.size = snd.channels = snd.rate = 0;
   snd.soundFormat = urbi::SOUND_UNKNOWN;
-  if ( (dataType != DATA_BINARY) ||
+  if ((dataType != DATA_BINARY) ||
        (!refBinary) ||
        (!refBinary->ref()))
     return snd;
@@ -253,7 +252,7 @@ UValue::operator urbi::USound()
   else if (!strcmp(param->expression->str->str(), "wav"))
   {
     snd.soundFormat = urbi::SOUND_WAV;
-    if ( ((unsigned int)refBinary->ref()->bufferSize > sizeof(wavheader)) &&
+    if (((unsigned int)refBinary->ref()->bufferSize > sizeof(wavheader)) &&
 	 (refBinary->ref()->buffer) )
     {
       decoded= true;
@@ -360,7 +359,7 @@ UValue & UValue::operator = (const urbi::UList &l)
   for (int i=0;i<l.size();i++)
   {
     UValue *v = new UValue(l[i]);
-    if( i==0)
+    if(i==0)
       liststart = v;
     else
       current->next = v;
@@ -370,12 +369,12 @@ UValue & UValue::operator = (const urbi::UList &l)
 }
 
 UValue::UValue(const urbi::UValue &v)
+  : liststart (0),
+    next (0),
+    str(0),
+    dataType (DATA_VOID)
 {
   ADDOBJ(UValue);
-  liststart = 0;
-  next = 0;
-  str=0;
-  dataType = DATA_VOID;
   switch (v.type)
   {
   case urbi::DATA_DOUBLE: dataType = DATA_NUM;
@@ -403,15 +402,14 @@ UValue::UValue(const urbi::UValue &v)
     }
     break;
   case urbi::DATA_BINARY:
-  {
-    (*this)= (*v.binary);
+    *this = *v.binary;
     break;
-  }
   case urbi::DATA_OBJECT: // j'ai pas le courage... //FIXME
     dataType = DATA_VOID;
     break;
-  default: dataType = DATA_VOID;
-  };
+  default:
+    dataType = DATA_VOID;
+  }
 }
 
 //! UValue destructor.
@@ -419,9 +417,11 @@ UValue::~UValue()
 {
   FREEOBJ(UValue);
   if (dataType == DATA_STRING
-      || dataType == DATA_OBJ)    delete str;
+      || dataType == DATA_OBJ)
+    delete str;
 
-  if (dataType == DATA_BINARY) LIBERATE(refBinary);
+  if (dataType == DATA_BINARY)
+    LIBERATE(refBinary);
   delete liststart;
   delete next;
 }
@@ -436,8 +436,7 @@ UValue::copy()
   if (dataType == DATA_NUM)
     ret->val = val;
 
-  if ((dataType == DATA_STRING) ||
-      (dataType == DATA_OBJ))
+  if (dataType == DATA_STRING ||  dataType == DATA_OBJ)
   {
     ret->str = new UString(str);
     if (!ret->str)
@@ -673,7 +672,7 @@ UValue::equal(UValue *v)
     if (v->dataType != DATA_BINARY) return false;
     if (v->refBinary->ref()->bufferSize != refBinary->ref()->bufferSize)
       return (false);
-    return ( memcmp(v->refBinary->ref()->buffer,
+    return (memcmp(v->refBinary->ref()->buffer,
 		    refBinary->ref()->buffer,
 		    refBinary->ref()->bufferSize) == 0 );
   case DATA_LIST:
@@ -739,7 +738,7 @@ UValue::echo(bool hr)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
 	 it++)
-      if ( ((*it).second->method) &&
+      if (((*it).second->method) &&
 	   ((*it).second->devicename) && (str) &&
 	   ((*it).second->value->dataType != DATA_OBJ))
       {

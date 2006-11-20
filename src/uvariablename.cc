@@ -53,111 +53,96 @@ namespace
 // **************************************************************************
 //! UVariableName constructor for variable of the type device.id[...][...]...
 UVariableName::UVariableName(UString* device,
-    UString *id,
-    bool rooted,
-    UNamedParameters *index)
+			     UString *id,
+			     bool rooted,
+			     UNamedParameters *index)
+  : device    (device),
+    id        (id),
+    method    (0),
+    rooted    (rooted),
+    index     (index),
+    index_obj (0),
+    str       (0),
+    isstatic  (false),
+    isnormalized (false),
+    deriv     (UNODERIV),
+    varerror  (false),
+    variable  (0),
+    function  (0),
+    fromGroup (false),
+    firsttime (true),
+    nostruct  (false),
+    id_type   (UDEF_VAR),
+    local_scope  (false),
+    doublecolon (false),
+    // Protected.
+    fullname_ (0),
+    localFunction (device && device->equal("__Funct__")),
+    selfFunction (device && device->equal("self")),
+    cached    (false)
 {
   ADDOBJ(UVariableName);
-
-  this->device    = device;
-  this->id        = id;
-  this->method    = 0;
-  this->rooted    = rooted;
-  this->index     = index;
-  this->index_obj = 0;
-  this->fullname_ = 0;
-  this->str       = 0;
-  this->isstatic  = false;
-  this->isnormalized = false;
-  this->deriv     = UNODERIV;
-  this->varerror  = false;
-  this->cached    = false;
-  this->fromGroup = false;
-  this->variable  = 0;
-  this->function  = 0;
-  this->firsttime = true;
-  this->nostruct  = false;
-  this->id_type   = UDEF_VAR;
-  this->local_scope  = false;
-
-  localFunction   = false;
-  selfFunction    = false;
-  if ((device) && (device->equal("__Funct__")))
-    localFunction = true;
-  if ((device) && (device->equal("self")))
-    selfFunction = true;
-
-  doublecolon = false;
 }
 
 //! UVariableName constructor for variable of the type device[...][...].id[...][...]...
 UVariableName::UVariableName(UString* objname,
-    UNamedParameters *index_obj,
-    UString* attribute,
-    UNamedParameters *index_att)
+			     UNamedParameters *index_obj,
+			     UString* attribute,
+			     UNamedParameters *index_att)
+  : device    (objname),
+    id        (attribute),
+    method    (0),
+    rooted    (true),
+    index     (index_att),
+    index_obj (index_obj),
+    fullname_ (0),
+    str       (0),
+    isstatic  (false),
+    isnormalized (false),
+    deriv     (UNODERIV),
+    varerror  (false),
+    cached    (false),
+    fromGroup (false),
+    variable  (0),
+    function  (0),
+    firsttime (true),
+    nostruct  (false),
+    id_type   (UDEF_VAR),
+    local_scope  (false),
+    localFunction (device && device->equal("__Funct__")),
+    selfFunction (device && device->equal("self")),
+    doublecolon (false)
 {
   ADDOBJ(UVariableName);
-
-  this->device    = objname;
-  this->id        = attribute;
-  this->method    = 0;
-  this->rooted    = true;
-  this->index     = index_att;
-  this->index_obj = index_obj;
-  this->fullname_ = 0;
-  this->str       = 0;
-  this->isstatic  = false;
-  this->isnormalized = false;
-  this->deriv     = UNODERIV;
-  this->varerror  = false;
-  this->cached    = false;
-  this->fromGroup = false;
-  this->variable  = 0;
-  this->function  = 0;
-  this->firsttime = true;
-  this->nostruct  = false;
-  this->id_type   = UDEF_VAR;
-  this->local_scope  = false;
-
-  localFunction   = false;
-  selfFunction    = false;
-  if ((device) && (device->equal("__Funct__")))
-    localFunction = true;
-  if ((device) && (device->equal("self")))
-    selfFunction = true;
-
-  doublecolon = false;
 }
 
 
 //! UVariableName constructor for string based variables: $("...")
 UVariableName::UVariableName(UExpression* str, bool rooted)
+  : device    (0),
+    id        (0),
+    method    (0),
+    rooted    (rooted),
+    index     (0),
+    index_obj (0),
+    fullname_ (0),
+    str       (str),
+    isstatic  (false),
+    isnormalized (false),
+    deriv     (UNODERIV),
+    varerror  (false),
+    cached    (false),
+    localFunction   (false),
+    selfFunction    (false),
+    variable  (0),
+    function  (0),
+    firsttime (true),
+    nostruct  (false),
+    id_type   (UDEF_VAR),
+    local_scope  (false),
+  doublecolon (false)
 {
   ADDOBJ(UVariableName);
-
-  this->device    = 0;
-  this->id        = 0;
-  this->method    = 0;
-  this->rooted    = rooted;
-  this->index     = 0;
-  this->index_obj = 0;
-  this->fullname_ = 0;
-  this->str       = str;
-  this->isstatic  = false;
-  this->isnormalized = false;
-  this->deriv     = UNODERIV;
-  this->varerror  = false;
-  this->cached    = false;
-  localFunction   = false;
-  selfFunction    = false;
-  this->variable  = 0;
-  this->function  = 0;
-  this->firsttime = true;
-  this->nostruct  = false;
-  this->id_type   = UDEF_VAR;
-  this->local_scope  = false;
-
-  doublecolon = false;
 }
 
 //! UVariableName destructor.
@@ -210,7 +195,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
       (::urbiserver->objtab.find(getMethod()->str())
        != ::urbiserver->objtab.end()))
   {
-    if ( (hmi2 = ::urbiserver->variabletab.find(getMethod()->str())) !=
+    if ((hmi2 = ::urbiserver->variabletab.find(getMethod()->str())) !=
 	::urbiserver->variabletab.end())
       tmpvar = hmi2->second;
     else
@@ -218,7 +203,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
   }
   else
   {
-    if ( (hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
+    if ((hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
 	::urbiserver->variabletab.end())
       tmpvar = hmi2->second;
     else
@@ -245,12 +230,12 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
 
   if (function) return (function);
 
-  if ((!fullname_) || (!cached))
+  if (!fullname_ || !cached)
     buildFullname(command, connection);
 
   if (!fullname_) return 0;
 
-  if ( (hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
+  if ((hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
       ::urbiserver->functiontab.end())
     tmpfun = hmf->second;
   else
@@ -681,7 +666,7 @@ UVariableName::nameUpdate(const char* _device, const char* _id)
 }
 
 //! UNamedParameters hard copy function
-  UVariableName*
+UVariableName*
 UVariableName::copy()
 {
   UVariableName *ret;

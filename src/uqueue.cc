@@ -62,7 +62,7 @@
     - USUCCESS: success
     - UFAIL   : memory allocation failed.
 */
-UQueue::UQueue  ( int minBufferSize,
+UQueue::UQueue  (int minBufferSize,
 		  int maxBufferSize,
 		  int adaptive)
 {
@@ -182,12 +182,12 @@ UQueue::push (const ubyte *buffer, int length)
 
   bfs = bufferFreeSpace();
 
-  if ( bfs < length) { // Is the internal buffer big enough?
+  if (bfs < length) { // Is the internal buffer big enough?
 
     // No. Check if the internal buffer can be extended.
     newSize = bufferSize_ + (length - bfs);
 
-    if ( (newSize > maxBufferSize_) && (maxBufferSize_ != 0))
+    if ((newSize > maxBufferSize_) && (maxBufferSize_ != 0))
     {
       return UFAIL; }// buffer rejected.
     else
@@ -203,12 +203,12 @@ UQueue::push (const ubyte *buffer, int length)
 	newSize = maxBufferSize_;
 
       // Realloc the internal buffer
-      newBuffer = (ubyte*)realloc( (void*)buffer_, newSize);
+      newBuffer = (ubyte*)realloc((void*)buffer_, newSize);
       if (newBuffer == 0) return UMEMORYFAIL; // not enough memory.
       ADDMEM(newSize - bufferSize_);
 
       buffer_ = newBuffer;
-      if ((end_ < start_) || ( bfs == 0 ))
+      if ((end_ < start_) || (bfs == 0 ))
       {
 	// Translate the rightside of the old internal buffer.
 
@@ -290,7 +290,7 @@ UQueue::pop (int length)
 	}
       }
 
-      if ( topDataSize_ < (int) (bufferSize_ * 0.8))
+      if (topDataSize_ < (int) (bufferSize_ * 0.8))
       {
 	// We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
 	topDataSize_ = (int) (topDataSize_ * 1.1);
@@ -320,7 +320,7 @@ UQueue::pop (int length)
 	  FREEMEM(bufferSize_ - topDataSize_);
 	  buffer_ = newBuffer;
 	  bufferSize_ = topDataSize_;
-	  if ( end_ == bufferSize_ ) end_ =0; // loop the circular geometry.
+	  if (end_ == bufferSize_ ) end_ =0; // loop the circular geometry.
 	} // else... well it should never come to this else anyway.
       }
 
@@ -351,7 +351,7 @@ UQueue::pop (int length)
       // Realloc the internal outputBuffer
       int theNewSize = (int)(toPop*1.10);
       if (theNewSize%2!=0) theNewSize++;
-      ubyte* newOutputBuffer = (ubyte*)realloc( (void*)outputBuffer_,
+      ubyte* newOutputBuffer = (ubyte*)realloc((void*)outputBuffer_,
 						theNewSize );
       if (newOutputBuffer == 0) return 0; // not enough memory.
       ADDMEM(theNewSize - outputBufferSize_);
@@ -363,7 +363,7 @@ UQueue::pop (int length)
 	   buffer_ + start_,
 	   bufferSize_ - start_);
 
-    memcpy(outputBuffer_ + ( bufferSize_ - start_ ),
+    memcpy(outputBuffer_ + (bufferSize_ - start_ ),
 	   buffer_,
 	   toPop - (bufferSize_ - start_));
 
@@ -398,7 +398,7 @@ UQueue::pop (int length)
 ubyte*
 UQueue::fastPop (int &length)
 {
-  return pop( (length > bufferSize_ - start_) ?
+  return pop((length > bufferSize_ - start_) ?
 	      (length = bufferSize_ - start_) :
 	      length );
 }
@@ -448,9 +448,11 @@ UQueue::virtualPop (int length)
       // Realloc the internal outputBuffer
       int theNewSize = (int)(toPop*1.10);
       if (theNewSize%2!=0) theNewSize++;
-      ubyte* newOutputBuffer = (ubyte*)realloc( (void*)outputBuffer_,
+      ubyte* newOutputBuffer = (ubyte*)realloc((void*)outputBuffer_,
 						theNewSize );
-      if (newOutputBuffer == 0) return 0; // not enough memory.
+      if (newOutputBuffer == 0) 
+	// not enough memory.
+	return 0;
       ADDMEM(theNewSize - outputBufferSize_);
       outputBuffer_ = newOutputBuffer;
       outputBufferSize_ = theNewSize;
@@ -460,7 +462,7 @@ UQueue::virtualPop (int length)
 	   buffer_ + start_,
 	   bufferSize_ - start_);
 
-    memcpy(outputBuffer_ + ( bufferSize_ - start_ ),
+    memcpy(outputBuffer_ + (bufferSize_ - start_),
 	   buffer_,
 	   toPop - (bufferSize_ - start_));
 
