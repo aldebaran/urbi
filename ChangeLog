@@ -1,5 +1,10 @@
 2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
 
+	Formatting changes
+	* src/ubinary.hh, src/ucommand.hh: here.
+
+2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
+
 	Coding style changes
 	* src/ubinary.cc, src/ucommand.cc, src/ucommandqueue.cc,
 	* src/uconnection.cc, src/ufunction.cc,

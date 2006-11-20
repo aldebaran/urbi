@@ -35,9 +35,12 @@ public:
 
   void     print();
 
-  ubyte             *buffer;       ///< The buffer used to store the binary data
-  int               bufferSize;    ///< The size of the buffer
-  UNamedParameters  *parameters;   ///< The optional parameters of the binary
+  /// The size of the buffer.
+  int               bufferSize;
+  /// The buffer used to store the binary data.
+  ubyte             *buffer;
+  /// The optional parameters of the binary.
+  UNamedParameters  *parameters;
 };
 
 #endif
