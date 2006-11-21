@@ -106,7 +106,7 @@ main (int argc, const char* argv[])
 
   if (s.loadFile(in, c.recvQueue ()) != USUCCESS)
   {
-    std::cerr << $argv[0] << ": failed to process " << in << std::endl;
+    std::cerr << argv[0] << ": failed to process " << in << std::endl;
     return 1;
   }
 

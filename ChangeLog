@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	:) :) :)
+	* src/console.cc: This is C++, not Perl or sh.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Let uconsole accept args
 	* src/console.cc: Use argv[1] if given.
 	* tests/check-file: Feed uconsole directly, not via stdin,
