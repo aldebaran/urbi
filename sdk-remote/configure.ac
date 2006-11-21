@@ -44,6 +44,12 @@ AC_PROG_LIBTOOL
 # X11.
 AC_PATH_XTRA
 AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
+# FIXME: -lXext should be checked too.
+if test x"$no_x" != xyes; then
+  AC_SUBST([X11_LDADD],
+           ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
+fi
+
 
 # Examples.
 AC_ARG_ENABLE([examples],

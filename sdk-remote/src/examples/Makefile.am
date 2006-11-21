@@ -52,13 +52,10 @@ bin_PROGRAMS += $(monitor_programs)
 monitor_sources = monitor.h monitor.cc
 endif
 
-# FIXME: -lXext should be checked via configure.ac.
-x11_libs = -L/usr/X11R6/lib $(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS) $(AM_LDADD)
-
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cc $(monitor_sources)
 urbiballtrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
-urbiballtrackinghead_LDADD = $(x11_libs)
+urbiballtrackinghead_LDADD = $(X11_LDADD) $(AM_LDADD)
 
 urbiimage_SOURCES = urbiimage.cc $(monitor_sources)
 urbiimage_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
-urbiimage_LDADD = $(x11_libs)
+urbiimage_LDADD = $(X11_LDADD) $(AM_LDADD)

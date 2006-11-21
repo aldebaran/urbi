@@ -1,5 +1,11 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	X11 vs. Win
+	* configure.ac (X11_LDADD): Define.
+	* src/examples/Makefile.am: Use it.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Fix libport's tests
 	* Makefile.am, configure.ac: Now libport.mk is only
 	included in the top level Makefile.am, there is no
