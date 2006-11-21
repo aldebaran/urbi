@@ -309,7 +309,7 @@ UValue & UValue::operator = (const urbi::UImage &i)
 UValue & UValue::operator = (const urbi::UBinary &b)
 {
   //TODO: cleanup
-  if ((dataType == DATA_BINARY) && (refBinary))
+  if (dataType == DATA_BINARY && refBinary)
   {
     LIBERATE(refBinary);
   }
@@ -351,7 +351,7 @@ UValue & UValue::operator = (const urbi::UBinary &b)
 
 UValue & UValue::operator = (const urbi::UList &l)
 {
-  if ((dataType == DATA_BINARY) && (refBinary))
+  if (dataType == DATA_BINARY && refBinary)
   {
     LIBERATE(refBinary);
   }

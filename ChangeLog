@@ -1,5 +1,11 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	More code formatting changes
+	* src/ucommand.cc, src/uconnection.cc, src/uexpression.cc,
+	* src/userver.cc, src/uvalue.cc, src/uvariable.cc: Here.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Run reindent
 	* src/ucommand.cc, src/uexpression.cc, src/unamedparameters.cc, 
 	* src/uqueue.cc, src/uqueue.hh, src/uvalue.cc: Formatting changes.

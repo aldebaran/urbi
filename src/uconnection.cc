@@ -1144,7 +1144,7 @@ UConnection::execute(UCommand_TREE* &execCommand)
   bool mustReturn;
   bool deletecommand;
 
-  if ((execCommand == 0) || (closing)) return;
+  if (execCommand == 0 || closing) return;
 
   tree = execCommand;
 
@@ -1171,9 +1171,9 @@ UConnection::execute(UCommand_TREE* &execCommand)
 
     // COMMAND1
 
-    if ((tree->callid) &&
-	(tree->command1) &&
-	(tree->runlevel1 == UWAITING))
+    if (tree->callid &&
+	tree->command1 &&
+	tree->runlevel1 == UWAITING)
       stack.push_front(tree->callid);
     tree->command1 = processCommand (tree->command1,
 				      tree->runlevel1,

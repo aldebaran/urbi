@@ -292,7 +292,7 @@ UExpression::print()
 {
   ::urbiserver->debug("[Type:E%d ", type);
   if (isconst) ::urbiserver->debug("(const) ");
-  if ((type == EXPR_VALUE) && (dataType == DATA_NUM))
+  if (type == EXPR_VALUE && dataType == DATA_NUM)
   {
     std::ostringstream tstr;
     tstr << "val="<<val<<" ";
@@ -1184,7 +1184,7 @@ UExpression::eval (UCommand *command,
 	  {
 	    UVariable* v = parameters->expression->
 	      variablename->getVariable(command, connection);
-	    if ((v==0) || (v->value==0)) return ret;
+	    if (v==0 || v->value==0) return ret;
 	    if (v->value->dataType == DATA_VOID) ret->val = 1;
 	  }
 
@@ -1495,8 +1495,8 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
 
-      if ((e1==0) || (e1->dataType == DATA_VOID) ||
-	  (e2==0) || (e2->dataType == DATA_VOID))
+      if (e1==0 || e1->dataType == DATA_VOID ||
+	  e2==0 || e2->dataType == DATA_VOID)
       {
 	delete e1;
 	delete e2;
@@ -1625,8 +1625,8 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
 
-      if ((e1==0) ||
-	  (e2==0))
+      if (e1==0 ||
+	  e2==0)
       {
 	delete e1;
 	delete e2;
@@ -1688,7 +1688,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
-      if ((e2->val == 0) || (e1->val == 0))
+      if (e2->val == 0 || e1->val == 0)
       {
 	snprintf(errorString, errSize, "!!! Division by zero\n");
 	connection->send(errorString, command->getTag().c_str());
@@ -1713,8 +1713,8 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
 
-      if ((e1==0) ||
-	  (e2==0))
+      if (e1==0 ||
+	  e2==0)
       {
 	delete e1;
 	delete e2;

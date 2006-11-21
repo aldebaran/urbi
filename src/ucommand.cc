@@ -2785,7 +2785,7 @@ UCommand_ECHO::execute(UConnection *connection)
     if (param->name->equal("connection"))
     {
       UValue *e1 = param->expression->eval(this, connection);
-      if ((e1) && (e1->dataType == DATA_STRING))
+      if (e1 && e1->dataType == DATA_STRING)
 	connectionTag = new UString(e1->str);
 
       delete e1;
@@ -3982,9 +3982,9 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
       }
 
       // test if variable is an object with subclasses (and reject if yes)
-      if ((variable->value) &&
-	  (variable->value->dataType == DATA_OBJ) &&
-	  (variable->value->str))
+      if (variable->value &&
+	  variable->value->dataType == DATA_OBJ &&
+	  variable->value->str)
       {
 	HMobjtab::iterator idit =
 	  ::urbiserver->objtab.find(variable->value->str->str());
@@ -3999,7 +3999,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
       }
 
       // variable is not an object or it does not have subclasses
-      if ((variable->nbAssigns == 0) && (variable->uservar))
+      if (variable->nbAssigns == 0 && variable->uservar)
       {
 	variable->toDelete = true;
 	return (status = URUNNING );
@@ -5358,7 +5358,7 @@ UCommand_DEF::execute(UConnection *connection)
   }
 
   // Event definition
-  if ((deftype == UDEF_EVENT) && (variablename))
+  if (deftype == UDEF_EVENT && variablename)
   {
     UString* eventname = variablename->buildFullname(this, connection);
     if (!eventname) return (status = UCOMPLETED);
@@ -7427,7 +7427,7 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
   int length;
   ubyte* str_command = loadQueue->popCommand(length);
 
-  if ((str_command == 0) && (length==-1))
+  if (str_command == 0 && length==-1)
     return (status = UCOMPLETED);
 
   if (length !=0)

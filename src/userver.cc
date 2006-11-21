@@ -368,7 +368,7 @@ UServer::work()
 
   // Scan currently opened connections for deleting marked
   // commands or killall order
-  if ((reseting) && (stage==0))
+  if (reseting && stage==0)
     stopall = true;
 
   for (std::list<UConnection*>::iterator retr = connectionList.begin();

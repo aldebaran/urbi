@@ -439,9 +439,9 @@ UVariable::updated()
 bool
 UVariable::isDeletable()
 {
-  if ((value) &&
-      (value->dataType == DATA_OBJ) &&
-      (value->str))
+  if (value &&
+      value->dataType == DATA_OBJ &&
+      value->str)
   {
     HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
     if ((idit != ::urbiserver->objtab.end()) &&
