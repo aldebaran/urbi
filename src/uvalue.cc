@@ -724,120 +724,125 @@ booleval(UValue *v, bool freeme)
 std::string
 UValue::echo(bool hr)
 {
-  std::ostringstream oss;
-
-  if (dataType == DATA_VOID)
+  switch (dataType)
   {
-    oss << "void";
-    return oss.str();
-  }
-
-  if (dataType == DATA_OBJ)
-  {
-    oss << "OBJ [";
-    bool first = true;
-    for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
-	 it != ::urbiserver->variabletab.end();
-	 it++)
-      if (((*it).second->method) &&
-	   ((*it).second->devicename) && (str) &&
-	   ((*it).second->value->dataType != DATA_OBJ))
-      {
-	if ((*it).second->devicename->equal(str))
-	{
-	  if (!first) oss << ",";
-	  first = false;
-	  oss << (*it).second->method->str()<< ":";
-
-	  if ((*it).second->value)
-	    oss << (*it).second->value->echo(hr);
-	}
-      }
-    oss << "]";
-
-    return oss.str();
-  }
-
-  if (dataType == DATA_LIST)
-  {
-    oss << "[";
-
-    UValue *scanlist = liststart;
-    while (scanlist)
+    case DATA_VOID:
     {
-      oss << scanlist->echo(hr);
-      scanlist = scanlist->next;
-      if (scanlist)  oss << ",";
+      std::ostringstream o;
+      o << "void";
+      return o.str();
     }
-    oss << "]";
 
-    return oss.str();
-  }
-
-  if (dataType == DATA_NUM)
-  {
-    oss << std::fixed << val;
-    return oss.str();
-  }
-
-  if (dataType == DATA_STRING)
-  {
-    if (!hr)
-      oss << "\"" << str->armor() << "\"";
-    else
-      oss << str->str ();
-
-    return oss.str();
-  }
-
-  if (dataType == DATA_BINARY)
-  {
-    if (refBinary)
+    case DATA_OBJ:
     {
-      oss << "BIN " << refBinary->ref()->bufferSize;
+      std::ostringstream o;
+      o << "OBJ [";
+      bool first = true;
+      for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
+	   it != ::urbiserver->variabletab.end();
+	   it++)
+	if (it->second->method
+	    && it->second->devicename
+	    && str
+	    && it->second->value->dataType != DATA_OBJ
+	    && it->second->devicename->equal(str))
+	{
+	  if (!first) o << ",";
+	  first = false;
+	  o << it->second->method->str()<< ":";
+
+	  // FIXME: It's better be non null!!!  Look at the if above,
+	  // it assumes it is not.
+	  if (it->second->value)
+	    o << it->second->value->echo(hr);
+	}
+      o << "]";
+      return o.str();
+    }
+
+    case DATA_LIST:
+    {
+      std::ostringstream o;
+      o << "[";
+
+      UValue *scanlist = liststart;
+      while (scanlist)
+      {
+	o << scanlist->echo(hr);
+	scanlist = scanlist->next;
+	if (scanlist)  o << ",";
+      }
+      o << "]";
+
+      return o.str();
+    }
+
+    case DATA_NUM:
+    {
+      std::ostringstream o;
+      o << std::fixed << val;
+      return o.str();
+    }
+
+    case DATA_STRING:
+    {
+      std::ostringstream o;
+      if (!hr)
+	o << "\"" << str->armor() << "\"";
+      else
+	o << str->str ();
+      return o.str();
+    }
+
+    case DATA_BINARY:
+    {
+      if (!refBinary)
+	return "BIN 0 null\n";
+
+      std::ostringstream o;
+      o << "BIN " << refBinary->ref()->bufferSize;
 
       UNamedParameters *param = refBinary->ref()->parameters;
-      if (param) oss << " ";
+      if (param) o << " ";
 
       while (param)
       {
 	if (param->expression)
 	{
 	  if (param->expression->dataType == DATA_NUM)
-	    oss << (int)param->expression->val;
+	    o << (int)param->expression->val;
 	  if (param->expression->dataType == DATA_STRING)
-	    oss << param->expression->str->str();
+	    o << param->expression->str->str();
 	}
-	if (param->next) oss << " ";
+	if (param->next) o << " ";
 	param = param->next;
       }
-
+      
       if (!hr)
       {
-	oss << "\n";
-
+	o << "\n";
+	
 	/* FIXME
-		if (connection->availableSendQueue() >
-		    strlen(tmpbuffer) +
-		    refBinary->ref()->bufferSize +1)
-	      {
+	 if (connection->availableSendQueue() >
+	 strlen(tmpbuffer) +
+	 refBinary->ref()->bufferSize +1)
+	 {
 	 */
-	oss.write((const char*)refBinary->ref()->buffer,
-		  refBinary->ref()->bufferSize);
+	o.write((const char*)refBinary->ref()->buffer,
+		refBinary->ref()->bufferSize);
 	/*	}
-		else
-		  ::urbiserver->debug("Send queue full for binary... Drop command.\n");
+	 else
+	 ::urbiserver->debug("Send queue full for binary... Drop command.\n");
 	 */
       }
+      return o.str();
     }
-    else
-      oss << "BIN 0 null\n";
 
-    return oss.str();
+    default:
+    {
+      return "unknown_type";
+    }
   }
-
-  oss << "unknown_type";
-  return oss.str();
 }
 
 

@@ -260,7 +260,7 @@ namespace urbi
 	 it != t.end();
 	 ++it)
       {
-	std::list<UGenericCallback*>& tocheck = (*it).second;
+	std::list<UGenericCallback*>& tocheck = it->second;
 	for (std::list<UGenericCallback*>::iterator it2 = tocheck.begin();
 	     it2 != tocheck.end();
 	     )

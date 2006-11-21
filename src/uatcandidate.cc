@@ -71,10 +71,10 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
       for (is = (*ii)->filter_.begin (), iuv = (*ii)->e_->args ().begin ();
 	   is != (*ii)->filter_.end ();
 	   ++is, ++iuv)
-	if ( !(*is).empty())
+	if ( !is->empty())
 	{
-	  device = (*is).substr ( 0, (*is).find ('.'));
-	  id = (*is).substr ( (*is).find ('.')+1 );
+	  device = is->substr ( 0, is->find ('.'));
+	  id = is->substr ( is->find ('.')+1 );
 	  newcmd = new UCommand_ASSIGN_VALUE
 	    (new UVariableName (new UString (device.c_str ()),
 				new UString (id.c_str ()),

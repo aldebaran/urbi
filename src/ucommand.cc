@@ -170,7 +170,7 @@ UCommand*
 UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 		     bool with_nostruct)
 {
-  UVariableName **varname = ((*this).*refName)();
+  UVariableName **varname = (this->*refName)();
   if (!varname) return 0; // we are in a non broadcastable command
   UString	*devicename = (*varname)->getDevice();
   UString	*method	    = (*varname)->getMethod();

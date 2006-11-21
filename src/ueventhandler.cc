@@ -59,7 +59,7 @@ kernel::eventSymbolDefined (const char* symbol)
   for (iet = ::urbiserver->emittab.begin ();
        iet != ::urbiserver->emittab.end () && !ok;
        ++iet)
-    if ( (*iet).second->unforgedName->equal (symbol))
+    if ( iet->second->unforgedName->equal (symbol))
       ok = true;
 
   return ok;

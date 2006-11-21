@@ -668,7 +668,7 @@ UExpression::eval (UCommand *command,
 	  }
 	  if (hmv != ::urbiserver->variabletab.end() && p)
 	  {
-	    UVariable* tmpvar = (*hmv).second;
+	    UVariable* tmpvar = hmv->second;
 	    tmpvar->get (); // to trigger the UNotifyAccess
 	    if (tmpvar->value->dataType == DATA_LIST)
 	    {
@@ -1978,7 +1978,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	    ::urbiserver->variabletab.find(varname);
 	  p[0]='_';
 	  if (hmv != ::urbiserver->variabletab.end())
-	    variable = (*hmv).second;
+	    variable = hmv->second;
 	}
       }
 

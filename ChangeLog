@@ -1,5 +1,18 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Restyle pointers
+	* src/uatcandidate.cc,
+	* src/ucommand.cc,
+	* src/ueventhandler.cc,
+	* src/uexpression.cc,
+	* src/uobject.cc,
+	* src/uvalue.cc:
+	Use build-aux/reindent.
+	* src/uvalue.cc (echo): Deeper overhaul: use switch, for God
+	sake!
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Return style.
 	* src/uqueue.hh, src/utypes.hh, src/uvariablename.hh: here.
 
