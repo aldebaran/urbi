@@ -1115,11 +1115,11 @@ public:
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
 
-  /// used to load files
+  /// To load files.
   UCommandQueue       *loadQueue;
-  /// used to alternate exec/non-exec state (a kind of noop)
+  /// To alternate exec/non-exec state (a kind of noop).
   bool ready;
-  /// node that contains the load command
+  /// The load command.
   UCommand_TREE       *mainnode;
 };
 
