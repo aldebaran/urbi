@@ -727,11 +727,7 @@ UValue::echo(bool hr)
   switch (dataType)
   {
     case DATA_VOID:
-    {
-      std::ostringstream o;
-      o << "void";
-      return o.str();
-    }
+      return "void";
 
     case DATA_OBJ:
     {

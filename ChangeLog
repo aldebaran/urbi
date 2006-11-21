@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Simplify
+	* src/uvalue.cc (echo): The code for void.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Restyle pointers
 	* src/uatcandidate.cc,
 	* src/ucommand.cc,
