@@ -9,7 +9,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc])
+AM_INIT_AUTOMAKE([1.9.6 -Wall tar-ustar dist-zip nostdinc])
 
 # Urbi standard locations.
 URBI_DIRS([remote])
