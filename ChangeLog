@@ -1,3 +1,9 @@
+2006-11-21  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Add a sanity check.
+	* src/uconnection.cc: Make sure that stack isn't empty before popping
+          it. Some code cleanup.
+
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
 	Update libport
