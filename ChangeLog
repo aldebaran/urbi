@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Coding style
+	* src/ucommand.cc, src/uconnection.cc, src/uexpression.cc: here.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	:) :) :)
 	* src/console.cc: This is C++, not Perl or sh.
 

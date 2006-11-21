@@ -202,16 +202,13 @@ UExpression::UExpression(UExpressionType type,
   this->expression2 = expression2;
 
   // Compile time calculus reduction
-
   if (expression1 && expression2)
-    if (( expression1->type == EXPR_VALUE ) &&
-	( expression1->dataType == DATA_NUM ) &&
-	( expression2->type == EXPR_VALUE ) &&
-	( expression2->dataType == DATA_NUM ) &&
-	( (type == EXPR_PLUS) || (type == EXPR_MINUS) ||
-	  (type == EXPR_MULT) || (type == EXPR_DIV) ||
-	  (type == EXPR_EXP) ) &&
-	( ! ( (type == EXPR_DIV) && (expression2->val == 0)) ) )
+    if (expression1->type == EXPR_VALUE && expression1->dataType == DATA_NUM
+	&& expression2->type == EXPR_VALUE && expression2->dataType == DATA_NUM
+	&& (type == EXPR_PLUS || type == EXPR_MINUS ||
+	    type == EXPR_MULT || type == EXPR_DIV ||
+	    type == EXPR_EXP)
+	&& ! (type == EXPR_DIV && expression2->val == 0))
     {
       switch (type)
       {

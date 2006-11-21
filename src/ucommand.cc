@@ -147,7 +147,6 @@ UCommand::copy()
 UErrorValue
 UCommand::copybase(UCommand *command)
 {
-
   command->setTag(this);
 
   if (flags)
@@ -158,8 +157,6 @@ UCommand::copybase(UCommand *command)
   }
   return USUCCESS;
 }
-
-
 
 
 //! Print command
@@ -295,9 +292,7 @@ UCommand::setTag(const std::string & tag)
     TagInfo t;
     t.blocked = t.frozen = false;
     t.name = tag;
-
     ti = t.insert(urbiserver->tagtab);
-
   }
   else
     ti = &it->second;
@@ -434,7 +429,7 @@ UCommand_TREE::copy()
 					 ucopy (command1),
 					 ucopy (command2));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Deletes sub commands marked for deletion after a stop command
@@ -767,7 +762,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	update(connection->stack.front()->self());
       expression->variablename->resetCache (); // this deletes funname pointeur
       functionname = expression->variablename->buildFullname(this, connection);
-      if (!functionname) return (status = UCOMPLETED );
+      if (!functionname)
+	return (status = UCOMPLETED );
     }
 
 

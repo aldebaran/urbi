@@ -1172,13 +1172,13 @@ UConnection::execute(UCommand_TREE*& execCommand)
     // COMMAND1
 
     if (tree->callid &&
-        tree->command1 &&
-        tree->runlevel1 == UWAITING)
+	tree->command1 &&
+	tree->runlevel1 == UWAITING)
       stack.push_front(tree->callid);
 
     tree->command1 = processCommand (tree->command1,
-                                     tree->runlevel1,
-                                     mustReturn );
+				     tree->runlevel1,
+				     mustReturn );
 
     if (mustReturn)
     {
@@ -1200,12 +1200,12 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // COMMAND2
     if (tree->node == UAND ||
-        tree->node == UCOMMA ||
-        tree->command1 == 0 ||
-        tree->command1->status == UBACKGROUND)
+	tree->node == UCOMMA ||
+	tree->command1 == 0 ||
+	tree->command1->status == UBACKGROUND)
     {
       if (tree == lastCommand)
-        obstructed = false;
+	obstructed = false;
 
       tree->command2 = processCommand (tree->command2,
 					tree->runlevel2,
@@ -1213,20 +1213,20 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
       if (mustReturn)
       {
-        tree = (UCommand_TREE*) tree->command2;
-        continue;
+	tree = (UCommand_TREE*) tree->command2;
+	continue;
       }
     }
 
     // STATUS UPDATE
 
     if ((tree->command1 == 0 && tree->command2 == 0)
-        || deletecommand)
+	|| deletecommand)
     {
       if (tree == lastCommand)
-        lastCommand = tree->up;
+	lastCommand = tree->up;
       if (tree == execCommand)
-        execCommand = 0;
+	execCommand = 0;
 
       if (tree->position)
 	*(tree->position) = 0;
@@ -1235,12 +1235,12 @@ UConnection::execute(UCommand_TREE*& execCommand)
       UNamedParameters *param = tree->flags;
       while (param)
       {
-        if ((param->name) &&
-            (param->name->equal("flag")) &&
-            (param->expression) &&
-            ((param->expression->val == 3 ) || // 3 = +end
-             (param->expression->val == 1 ) )) // 1 = +report
-          send("*** end\n", tree->getTag().c_str());
+	if ((param->name) &&
+	    (param->name->equal("flag")) &&
+	    (param->expression) &&
+	    ((param->expression->val == 3 ) || // 3 = +end
+	     (param->expression->val == 1 ) )) // 1 = +report
+	  send("*** end\n", tree->getTag().c_str());
 
 	param = param->next;
       }
