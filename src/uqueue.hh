@@ -97,8 +97,8 @@ protected:
   int            topOutputSize_; ///< maximal data size outputed in the time
 				 ///< windows. Used to shrink outputBuffer.
   int            mark_;          ///< mark offset.
-  bool           locked_;        ///< lock the connection after a failure 
-                                 ///< (only 'mark' can unlock it)
+  bool           locked_;        ///< lock the connection after a failure
+				 ///< (only 'mark' can unlock it)
 };
 
 

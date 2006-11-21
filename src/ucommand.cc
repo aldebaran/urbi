@@ -3073,7 +3073,7 @@ UCommand_NEW::execute(UConnection *connection)
   bool component = false;
   UFunction* initfun = 0;
   // wait for init created if external component
-  if ((objit->second->binder) || (objit->second->internalBinder))
+  if (objit->second->binder || objit->second->internalBinder)
   {
     oss << "waituntil(isdef(" << id->str() << ".init)) | ";
     component = true;

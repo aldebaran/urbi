@@ -450,7 +450,7 @@ UQueue::virtualPop (int length)
       if (theNewSize%2!=0) theNewSize++;
       ubyte* newOutputBuffer = (ubyte*)realloc((void*)outputBuffer_,
 						theNewSize );
-      if (newOutputBuffer == 0) 
+      if (newOutputBuffer == 0)
 	// not enough memory.
 	return 0;
       ADDMEM(theNewSize - outputBufferSize_);

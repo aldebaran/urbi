@@ -203,7 +203,7 @@ UExpression::UExpression(UExpressionType type,
 
   // Compile time calculus reduction
 
-  if ((expression1) && (expression2))
+  if (expression1 && expression2)
     if (( expression1->type == EXPR_VALUE ) &&
 	( expression1->dataType == DATA_NUM ) &&
 	( expression2->type == EXPR_VALUE ) &&
@@ -1040,7 +1040,7 @@ UExpression::eval (UCommand *command,
 
 	  ret = e1->copy();
 	  e3 = ret->liststart;
-	  while ((e3) && (e3->next))
+	  while (e3 && e3->next)
 	    e3 = e3->next;
 	  e4 = e2->liststart;
 
@@ -1503,8 +1503,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
       ret = e1->add(e2);
-      if ((expression1->isconst) &&
-	  (expression2->isconst))
+      if (expression1->isconst && expression2->isconst)
 	this->isconst = true;
 
       delete e1;

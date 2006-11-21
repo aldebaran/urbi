@@ -72,7 +72,7 @@ UNamedParameters::rank(int n)
 int
 UNamedParameters::size()
 {
-  if (next) 
+  if (next)
     return next->size() + 1;
   else
     return 1;

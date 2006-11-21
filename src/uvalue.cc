@@ -229,16 +229,18 @@ UValue::operator urbi::USound()
        (!refBinary->ref()))
     return snd;
   UNamedParameters *param = refBinary->ref()->parameters;
-  if (!(VALIDATE(param, DATA_STRING))) return snd;
+  if (!VALIDATE(param, DATA_STRING))
+    return snd;
 
   bool decoded = false;
-  if (!param->expression->str) return snd;
+  if (!param->expression->str)
+    return snd;
 
   if (!strcmp(param->expression->str->str(), "raw"))
   {
     snd.soundFormat = urbi::SOUND_RAW;
-    decoded =  (param->next && param->next->next &&
-		param->next->next->next && param->next->next->next->next);
+    decoded = (param->next && param->next->next &&
+	       param->next->next->next && param->next->next->next->next);
     if (decoded)
     {
       snd.channels = exprToInt(param->next->expression);
@@ -248,7 +250,6 @@ UValue::operator urbi::USound()
 	exprToInt(param->next->next->next->next->expression);
     }
   }
-
   else if (!strcmp(param->expression->str->str(), "wav"))
   {
     snd.soundFormat = urbi::SOUND_WAV;
@@ -681,14 +682,14 @@ UValue::equal(UValue *v)
     scanlist = liststart;
     vscanlist = v->liststart;
 
-    while ((scanlist) && (vscanlist))
+    while (scanlist && vscanlist)
     {
       if (!scanlist->equal(vscanlist)) return false;
 
       scanlist = scanlist->next;
       vscanlist = vscanlist->next;
     }
-    if ((scanlist) || (vscanlist)) return false;
+    if (scanlist || vscanlist) return false;
 
     return true;
 
@@ -815,16 +816,18 @@ UValue::echo(bool hr)
       {
 	oss << "\n";
 
-	//FIXME
-	//	if (connection->availableSendQueue() >
-	//	    strlen(tmpbuffer) +
-	//	    refBinary->ref()->bufferSize +1)
-	//      {
+	/* FIXME
+		if (connection->availableSendQueue() >
+		    strlen(tmpbuffer) +
+		    refBinary->ref()->bufferSize +1)
+	      {
+	 */
 	oss.write((const char*)refBinary->ref()->buffer,
 		  refBinary->ref()->bufferSize);
-	//	}
-	//	else
-	//	  ::urbiserver->debug("Send queue full for binary... Drop command.\n");
+	/*	}
+		else
+		  ::urbiserver->debug("Send queue full for binary... Drop command.\n");
+	 */
       }
     }
     else
