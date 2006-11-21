@@ -1,5 +1,9 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Update libport
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/memorymanager/memorymanager.cc: here.
 
