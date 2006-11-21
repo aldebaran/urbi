@@ -25,6 +25,9 @@ URBI_DOC
 ## ------------- ##
 
 URBI_LIBPORT
+# liburbi-c++ is also in charge of Libport's test suite.
+AC_CONFIG_FILES([libport/tests/Makefile])
+AC_CONFIG_FILES([build-aux/test.sh], [chmod a=rx build-aux/test.sh])
 
 # For the time being, we are not interested about deprecated
 # headers such as hash_map.h.  We should use ext/hash_map.
@@ -112,8 +115,6 @@ AC_CONFIG_HEADERS([src/config.h])
 
 AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
-	  libport/Makefile
-	  libport/tests/Makefile
 	  src/Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile

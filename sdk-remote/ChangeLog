@@ -1,5 +1,12 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Fix libport's tests
+	* Makefile.am, configure.ac: Now libport.mk is only
+	included in the top level Makefile.am, there is no
+	libport/Makefile.am.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Update externals
 	* Makefile.am (SVN_EXTERNALS): Add jpeg-6b.
 
