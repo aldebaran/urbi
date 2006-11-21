@@ -37,17 +37,16 @@ Connection::Connection(int connfd) :
 		  Connection::PACKETSIZE,
 		  Connection::MINRECVBUFFERSIZE,
 		  Connection::MAXRECVBUFFERSIZE),
-  fd(connfd) {
-  if (UError != USUCCESS) {// Test the error from UConnection constructor.
+  fd(connfd)
+{
+  if (UError != USUCCESS)
+    // Test the error from UConnection constructor.
     //baad
     closeConnection();
-  }
-  else {
-
+  else
     initialize();
-    //block(); //mark as blocked
-  }
-  }
+  //block(); //mark as blocked
+}
 
 //! Connection destructor.
 Connection::~Connection()
@@ -60,7 +59,8 @@ Connection::~Connection()
 /*!
  */
 UErrorValue
-Connection::closeConnection() {
+Connection::closeConnection()
+{
   int ret;
   // Setting 'closing' to true tell the kernel not to use the connection any longer
   closing=true;
@@ -71,15 +71,15 @@ Connection::closeConnection() {
   ret = close(fd);
 #endif
   Network::unregisterNetworkPipe(this);
-  if (ret!=0) {
+
+  if (ret!=0)
     return UFAIL;
-  }
-  else {
+  else
+  {
     fd=-1;
     //THESERVER.removeConnection(this);
     return USUCCESS;
   }
-
 }
 
 // Try for a trick on Mac OS X
@@ -87,22 +87,22 @@ Connection::closeConnection() {
 # define MSG_NOSIGNAL 0
 #endif
 
-void Connection::doRead(){
-
+void Connection::doRead()
+{
   int n = ::recv(fd, (char *)read_buff, PACKETSIZE, MSG_NOSIGNAL);
-  if(n<=0){
+  if(n<=0)
     //kill us
     closeConnection();
-  }
   else
     received(read_buff, n);
 
 }
 
-int Connection::effectiveSend (const ubyte *buffer, int length){
-
+int Connection::effectiveSend (const ubyte *buffer, int length)
+{
   int ret = ::send(fd, (char *)buffer, length, MSG_NOSIGNAL);
-  if(ret<=0){
+  if(ret<=0)
+  {
     //kill us
     closeConnection();
     return -1;
@@ -111,14 +111,16 @@ int Connection::effectiveSend (const ubyte *buffer, int length){
     return ret; // Number of bytes actually written.
 }
 
-void Connection::doWrite(){
+void Connection::doWrite()
+{
   continueSend();
   //block();
 }
 
 
 
-UErrorValue Connection::send(const ubyte *buffer, int length) {
+UErrorValue Connection::send(const ubyte *buffer, int length)
+{
   if (sendQueueRemain()==0)
     trigger();
   return UConnection::send(buffer, length);

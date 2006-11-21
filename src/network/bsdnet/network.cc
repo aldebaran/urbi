@@ -154,7 +154,8 @@ namespace Network
 	  if (f>=0 && FD_ISSET(f,&wr))
 	    p->notifyWrite();
 	}
-	catch(...) {
+	catch(...)
+	{
 	  //this can happen if the object was destroyed by the notifyRead
 	}
       }

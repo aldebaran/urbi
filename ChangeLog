@@ -1,5 +1,11 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Coding style changes
+	* src/network/bsdnet/connection.cc,
+	* src/network/bsdnet/network.cc: Run reindent.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Update externals
 	* Makefile.am: Include init.mk.
 	* tests/Makefile.am: Use SVN_EXTERNALS_PROXY.
