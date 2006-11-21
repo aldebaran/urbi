@@ -277,7 +277,7 @@ UExpression::copy()
   ret->firsteval   = firsteval;
   ret->tmp_value   = tmp_value;
 
-  return (ret);
+  return ret;
 }
 
 //! Print the expression
@@ -581,7 +581,7 @@ UExpression::eval (UCommand *command,
     case EXPR_VARIABLE:
 
       variable = variablename->getVariable(command, connection);
-      if (!variablename->getFullname()) return (0);
+      if (!variablename->getFullname()) return 0;
       method = variablename->getMethod();
       devicename = variablename->getDevice();
 
@@ -833,7 +833,7 @@ UExpression::eval (UCommand *command,
 	{
 	  firsteval = false;
 	  staticcache = ret->copy();
-	  if (!staticcache)  return (0);
+	  if (!staticcache)  return 0;
 	}
 	else
 	  ret = staticcache->copy();
@@ -843,7 +843,7 @@ UExpression::eval (UCommand *command,
     case EXPR_PROPERTY:
 
       variable = variablename->getVariable(command, connection);
-      if (!variablename->getFullname()) return (0);
+      if (!variablename->getFullname()) return 0;
       if (!variable)
       {
 	snprintf(errorString, errSize, "!!! Unknown identifier: %s\n",
@@ -912,7 +912,7 @@ UExpression::eval (UCommand *command,
 	  case UCANCEL:	 ret->str = new UString("cancel"); break;
 	  default: ret->str = new UString("unknown");
 	}
-	return (ret);
+	return ret;
       }
       snprintf(errorString, errSize, "!!! Unknown property: %s\n",
 	       str->str());
@@ -1204,7 +1204,7 @@ UExpression::eval (UCommand *command,
 	  {
 	    delete ret;
 	    delete e1;
-	    return (0);
+	    return 0;
 	  }
 
 	  if (connection->server->loadFile(e1->str->str(),
@@ -1462,7 +1462,7 @@ UExpression::eval (UCommand *command,
 
       // default = unknown.
       funname = variablename->buildFullname(command, connection);
-      if (!variablename->getFullname()) return (0);
+      if (!variablename->getFullname()) return 0;
       hmf = ::urbiserver->functiontab.find(funname->str());
       if (hmf != ::urbiserver->functiontab.end())
       {

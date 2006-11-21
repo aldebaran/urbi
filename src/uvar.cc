@@ -282,7 +282,7 @@ namespace urbi
   {
     static ufloat er=0;
     if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
-      return (vardata->variable->target);
+      return vardata->variable->target;
     else return er;
   }
 
@@ -292,7 +292,7 @@ namespace urbi
   {
     static ufloat er=0;
     if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
-      return (vardata->variable->value->val);
+      return vardata->variable->value->val;
     else return er;
   }
 
@@ -393,7 +393,7 @@ namespace urbi
     else
     {
     echo("Internal error on variable 'vardata', should not be zero\n");
-    return (UNORMAL);
+    return UNORMAL;
     }
     }*/
 

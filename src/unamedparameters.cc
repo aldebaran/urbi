@@ -92,7 +92,7 @@ UNamedParameters::copy()
   if (next)
     ret->next = next->copy();
 
-  return (ret);
+  return ret;
 }
 
 //! Print the list of parameters

@@ -339,9 +339,9 @@ UVariable::selfSet(ufloat *valcheck)
   modified = true;
   updated();
 
-  if (speedmodified) return (USPEEDMAX);
+  if (speedmodified) return USPEEDMAX;
 
-  return (UOK );
+  return UOK ;
 }
 
 //! Get the UValue associated to the variable

@@ -4737,7 +4737,7 @@ UCommand_WAIT::execute(UConnection *connection)
     if (connection->server->lastTime() >= endtime)
       status = UCOMPLETED;
 
-  return (status);
+  return status;
 }
 
 //! UCommand subclass hard copy function
@@ -7364,7 +7364,7 @@ UCommandStatus UCommand_NOOP::execute(UConnection *connection)
   }
   else
     status = UCOMPLETED;
-  return (status);
+  return status;
 }
 
 //! UCommand subclass hard copy function

@@ -583,7 +583,7 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_STRING)
     {
       UValue *ret = new UValue();
-      if (ret==0) return (0);
+      if (ret==0) return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -604,7 +604,7 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_NUM)
     {
       UValue *ret = new UValue();
-      if (ret==0) return (0);
+      if (ret==0) return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -623,7 +623,7 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_STRING)
     {
       UValue *ret = new UValue();
-      if (ret==0) return (0);
+      if (ret==0) return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -672,7 +672,7 @@ UValue::equal(UValue *v)
 
     if (v->dataType != DATA_BINARY) return false;
     if (v->refBinary->ref()->bufferSize != refBinary->ref()->bufferSize)
-      return (false);
+      return false;
     return (memcmp(v->refBinary->ref()->buffer,
 		    refBinary->ref()->buffer,
 		    refBinary->ref()->bufferSize) == 0 );
@@ -715,7 +715,7 @@ booleval(UValue *v, bool freeme)
       res = UTRUE;
 
   if (freeme) delete v;
-  return (res);
+  return res;
 }
 
 

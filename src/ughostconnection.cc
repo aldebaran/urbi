@@ -55,7 +55,7 @@ UGhostConnection::~UGhostConnection()
 UErrorValue
 UGhostConnection::closeConnection()
 {
-  return (USUCCESS);
+  return USUCCESS;
 }
 
 //! Does nothing. No output for the ghosts...

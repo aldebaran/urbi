@@ -49,13 +49,13 @@ UFunction::~UFunction()
 UString*
 UFunction::name()
 {
-  return(funname);
+  return funname;
 }
 
 int
 UFunction::nbparam()
 {
-  if (!parameters) return(0);
+  if (!parameters) return 0;
   else
     return(parameters->size());
 }
@@ -72,5 +72,5 @@ UFunction::cmdcopy(std::string _tag, UNamedParameters *_flags)
       tmpcmd->flags = _flags->copy();
     }
 
-  return(tmpcmd);
+  return tmpcmd;
 }

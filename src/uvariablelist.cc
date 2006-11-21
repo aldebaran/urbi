@@ -77,7 +77,7 @@ UVariableList::copy()
   if (variablename) ret->variablename = variablename->copy();
   if (next)         ret->next = next->copy();
 
-  return (ret);
+  return ret;
 }
 
 //! Print the list of parameters

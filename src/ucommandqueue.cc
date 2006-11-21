@@ -202,7 +202,7 @@ UCommandQueue::popCommand (int &length)
       parenlevel_ = 0;
       cursor_ = 0;
       discard_  = false;
-      return (0);
+      return 0;
     }
 
     cursor_ ++;

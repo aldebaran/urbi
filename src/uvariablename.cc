@@ -214,7 +214,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
   if (cached)
     variable = tmpvar;
 
-  return (tmpvar);
+  return tmpvar;
 }
 
 //! UVariableName access to function (with cache)
@@ -228,7 +228,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
   UFunction *tmpfun;
 
-  if (function) return (function);
+  if (function) return function;
 
   if (!fullname_ || !cached)
     buildFullname(command, connection);
@@ -243,7 +243,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
 
   if (cached) function = tmpfun;
 
-  return (tmpfun);
+  return tmpfun;
 }
 
 //! UVariableName test to know if there is a function with that name
@@ -251,7 +251,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
 UVariableName::isFunction(UCommand *command, UConnection *connection)
 {
   UFunction* tmpfun = getFunction(command, connection);
-  if (tmpfun) return (true);
+  if (tmpfun) return true;
   if (!fullname_) return false;
   if (urbi::functionmap.find(fullname_->str()) !=
       urbi::functionmap.end()) return true;
@@ -259,7 +259,7 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
   if (::urbiserver->functionbindertab.find(fullname_->str()) !=
       ::urbiserver->functionbindertab.end()) return true;
 
-  return (false);
+  return false;
 }
 
 
@@ -267,9 +267,9 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
   UString*
 UVariableName::getMethod()
 {
-  if (method) return (method);
+  if (method) return method;
 
-  if (!fullname_) return (0);
+  if (!fullname_) return 0;
   const char *pointPos = strstr(fullname_->str(), ".");
 
   if (pointPos == 0)
@@ -283,16 +283,16 @@ UVariableName::getMethod()
   UString*
 UVariableName::getDevice()
 {
-  if (device) return (device);
+  if (device) return device;
 
-  if (!fullname_) return (0);
+  if (!fullname_) return 0;
   char *pointPos = const_cast<char*>(strstr(fullname_->str(), "."));
-  if (pointPos == 0) return (fullname_);
+  if (pointPos == 0) return fullname_;
   pointPos[0] = 0;
 
   device = new UString(fullname_->str());
   pointPos[0] = '.';
-  return (device);
+  return device;
 }
 
 

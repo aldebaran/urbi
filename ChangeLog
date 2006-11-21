@@ -1,5 +1,21 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Normalize returns
+	* src/ubinder.cc,
+	* src/ucommand.cc,
+	* src/ucommandqueue.cc,
+	* src/uexpression.cc,
+	* src/ufunction.cc,
+	* src/ughostconnection.cc,
+	* src/unamedparameters.cc,
+	* src/uvalue.cc,
+	* src/uvar.cc,
+	* src/uvariable.cc,
+	* src/uvariablelist.cc,
+	* src/uvariablename.cc: Run build-aux/reindent.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Coding style
 	* src/ucommand.cc, src/uconnection.cc, src/uexpression.cc: here.
 

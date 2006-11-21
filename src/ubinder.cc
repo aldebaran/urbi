@@ -89,7 +89,7 @@ UBinder::locateMonitor (UConnection *c)
       m = (*mit);
   }//for
 
-  return (m);
+  return m;
 }
 
 //! Remove a monitoring connection.
