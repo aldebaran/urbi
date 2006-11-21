@@ -40,7 +40,8 @@
 static const char *device="/dev/dsp";
 #endif
 
-struct wavheader {
+struct wavheader
+{
   char riff[4];
   int length;
   char wave[4];
@@ -69,7 +70,8 @@ int totallength;
 urbi::UCallbackAction
 endProgram(const urbi::UMessage &msg)
 {
-  if (waswithheader) {
+  if (waswithheader)
+  {
     //fclose(file);
     //file = fopen(fname, "w");
     // seek to set correct size in wav header
@@ -95,18 +97,21 @@ getSound(const urbi::UMessage &msg)
 {
   static urbi::USound out;
   static bool initialized=false;
-  if (!initialized) {
+  if (!initialized)
+  {
     totallength = 0;
     initialized = true;
     out.data = 0;
     out.size = 0;
-    if (outtodsp) {
+    if (outtodsp)
+    {
       out.channels = 2;
       out.sampleSize = 16;
       out.rate = 16000;
       out.sampleFormat = urbi::SAMPLE_SIGNED;
     }
-    else {
+    else
+    {
       out.channels = 0;
       out.sampleSize = 0;
       out.rate = 0;
@@ -132,21 +137,24 @@ int main(int argc, char *argv[])
   const char *usage = "usage:  urbisound robot milisecondtime  :plays sound recorded by the aibo to /dev/dsp\n"
     "\turbisound robot milisecondtime file [withoutheader] : write recorded sound to a file, with a wav header except if argument withoutheader is set to anything\n";
   //16000 1 16
-  if (argc != 3) {
+  if (argc != 3)
+  {
     printf(usage);
     exit(1);
   }
 
   int time = strtol(argv[2], NULL, 0);
 
-  if (argc >= 4) {
+  if (argc >= 4)
+  {
     outtodsp = false;
     if (!strcmp(argv[3],"-"))
       file=stdout;
     else
       file = fopen(argv[3], "wb+");
     fname = argv[3];
-    if (file==0) {
+    if (file==0)
+    {
       printf("error creating file\n");
       exit(2);
     }
@@ -156,7 +164,8 @@ int main(int argc, char *argv[])
     else
       withheader = true;
   }
-  else {
+  else
+  {
 #ifdef WIN32
     printf("output to soundcard not supported under windows\n");
     exit(2);
@@ -164,7 +173,8 @@ int main(int argc, char *argv[])
     outtodsp = true;
     withheader = false;
     file = fopen(device, "wb" );
-    if (file==0) {
+    if (file==0)
+    {
       printf("error opening device\n"), exit(2);
     }
     int f = fileno(file);

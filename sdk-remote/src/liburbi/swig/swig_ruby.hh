@@ -19,21 +19,21 @@ namespace urbi
        UCallbackWrapper(),
        proc_ (proc)
        {
-         Check_Type(proc_, T_DATA);
+	 Check_Type(proc_, T_DATA);
        }
 
      virtual UCallbackAction operator () (const UMessage& msg)
        {
-         // v est le paramètre que je vais passer au callback
-         // je veux qu'ils contiennent les mêmes informations que msg.
-         VALUE v = Qnil;
-         v = SWIG_Ruby_NewPointerObj((void *)&msg,
-                                     SWIGTYPE_p_urbi__UMessage,
-                                     0);
+	 // v est le paramètre que je vais passer au callback
+	 // je veux qu'ils contiennent les mêmes informations que msg.
+	 VALUE v = Qnil;
+	 v = SWIG_Ruby_NewPointerObj((void *)&msg,
+				     SWIGTYPE_p_urbi__UMessage,
+				     0);
 
-         rb_funcall(proc_, rb_intern("call"), 1, v);
+	 rb_funcall(proc_, rb_intern("call"), 1, v);
 
-         return URBI_CONTINUE;
+	 return URBI_CONTINUE;
        }
 
      virtual ~Callback() {}

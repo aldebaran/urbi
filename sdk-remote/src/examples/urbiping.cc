@@ -54,7 +54,8 @@ void showstats(int)
 int main(int argc, char * argv[])
 {
   signal(SIGINT, showstats);
-  if (argc<2) {
+  if (argc<2)
+  {
     printf("usage: %s robot [msinterval] [count]\n",argv[0]); exit(1);
   }
 

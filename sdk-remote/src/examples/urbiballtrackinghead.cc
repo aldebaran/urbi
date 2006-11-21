@@ -61,7 +61,7 @@ class BallTrackingHead
   /// Client for command sending.
   urbi::UClient robotC;
   /// Client for command reception.
-  /// urbi::UClient robotG; 
+  /// urbi::UClient robotG;
 
   std::vector<PositionData> current_x, current_y; //joint value for the last few frames
   int baseframeX, baseframeY; //base of current_x, current_y (currentx[i] = frame_base - i)
@@ -107,7 +107,8 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y)
       if (fabs(target_x - current_x) > maxcommand_x)
 	command_x = current_x + maxcommand_x*fsgn(target_x - current_x);
       else command_x = target_x;
-      if (fabs(command_x-current_x) > 0.0) {
+      if (fabs(command_x-current_x) > 0.0)
+      {
 	robotC.send("headPan.val = %lf,",command_x);
 	expect_x = command_x;
       }
@@ -118,7 +119,8 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y)
       if (fabs(target_y - current_y) > maxcommand_y)
 	command_y = current_y + maxcommand_y*fsgn(target_y - current_y);
       else command_y = target_y;
-      if (fabs(command_y-current_y) > 0.0) {
+      if (fabs(command_y-current_y) > 0.0)
+      {
 	robotC.send("headTilt.val = %lf,",command_y);
 	expect_y = command_y;
       }
@@ -179,19 +181,21 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
   double cx=0, cy=0;
   /*
     std::vector<PositionData>::iterator it = find(current_x.begin(), current_x.end(), msg.timestamp/32);
-    if (it==current_x.end()) {
+    if (it==current_x.end())
+    {
     return URBI_CONTINUE;
     }
     double cx = it->value;
     it = find(current_y.begin(), current_y.end(), msg.timestamp/32);
-    if (it==current_y.end()) {
+    if (it==current_y.end())
+    {
     return URBI_CONTINUE;
     }
     double cy = it->value;
   */
   if ((framenum % 50)==0)
     {
-      if (!frametime) 
+      if (!frametime)
 	frametime=robotC.getCurrentTime();
       else
 	{
@@ -293,7 +297,7 @@ BallTrackingHead::BallTrackingHead(const char * robotname)
 }
 
 
-int 
+int
 main(int argc, char * argv[])
 {
   if (argc != 2)

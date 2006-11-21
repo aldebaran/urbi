@@ -23,7 +23,8 @@ public:
 private:
   static const size_t stackSize = 4;
   static const size_t minSendSize = 2048;
-  class SoundStack {
+  class SoundStack
+  {
   public:
     std::list<urbi::USound> stack;
     int serverStackPos;
@@ -146,7 +147,8 @@ SoundPipe::trySend(int source)
 
 int main(int argc, char * argv[])
 {
-  if (argc<3) {
+  if (argc<3)
+  {
     fprintf(stderr,"usage: %s robot1 robot2\n\tplays what robot1 hears with robot2's speaker, and vice-versa\n",argv[0]);
     exit(1);
   }

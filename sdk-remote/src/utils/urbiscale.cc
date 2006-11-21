@@ -4,25 +4,29 @@
 #include "urbi/uclient.hh"
 
 inline float fabs(float f ) {if (f>0) return f; else return f*(-1.0);}
-enum UType {
+enum UType
+{
   TYPE_BOOL,
   TYPE_ANGLE,
   TYPE_NORM
 };
 
-union UJointValue {
+union UJointValue
+{
   float angle;
   float normalized;
   bool boolean;
 };
 
-struct UCommand {
+struct UCommand
+{
   int timestamp;
   short id;
   UJointValue value;
 };
 
-struct UDev {
+struct UDev
+{
   char * name;
   short id;
   UType type;
@@ -30,14 +34,16 @@ struct UDev {
 UDev* devices;
 int devCount;
 
-int parseHeader(FILE *f,FILE * of) {
+int parseHeader(FILE *f,FILE * of)
+{
   char buff[4];
   if (fread(buff,4,1,f)!=1) return 1;
   if (fwrite(buff,4,1,of)!=1) return 2;
   if (strncmp(buff,"URBI",4)) return 3;
   if (fread(&devCount,4,1,f)!=1) return 4;
   if (fwrite(&devCount,4,1,of)!=1) return 5;
-  for (int i=0;i<devCount;i++) {
+  for (int i=0;i<devCount;i++)
+  {
     char device[256];
     int pos=0;
     int a;
@@ -55,9 +61,11 @@ int parseHeader(FILE *f,FILE * of) {
   return 0;
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[])
+{
   //cut static part of an urbi file
-  if (argc<4) {
+  if (argc<4)
+  {
     printf("usage %s infile outfile factor [interpolate]\n\ttime-scale the urbi file by given factor (>1 means slow-down) \n\tInterpolation will only work with integer factors\n",argv[0]);
     exit(1);
   }
@@ -84,9 +92,11 @@ int main(int argc, char * argv[]) {
   for (int i=0;i<devCount;i++) {lastuc[i].timestamp=-1;}
   for (int i=0;i<devCount;i++) {nextuc[i].timestamp=-1;}
   int inittime=666;
-  while (fread(&uc,sizeof(UCommand),1,inf)==1) {
+  while (fread(&uc,sizeof(UCommand),1,inf)==1)
+  {
     if (starttime==-1) starttime=uc.timestamp;
-    if ( interpolate && (lastuc[uc.id].timestamp==-1) ) {
+    if ( interpolate && (lastuc[uc.id].timestamp==-1) )
+    {
       if (inittime==666) inittime=uc.timestamp;
       fprintf(stderr,"first command for %d at %d   (inittime %d)\n",uc.id, uc.timestamp,inittime);
       if (inittime!=uc.timestamp) { //trouble, missed some commands at start
@@ -95,7 +105,8 @@ int main(int argc, char * argv[]) {
 	fprintf(stderr,"miss: adding command for id %d at time %d\n",uc.id,lastuc[uc.id].timestamp);
 	//go on processing uc
       }
-      else {
+      else
+      {
 	uc.timestamp = (int) ( ((float)(uc.timestamp)-((float)starttime))*scale);
 	fwrite(&uc,sizeof(UCommand),1,ouf);
 	lastuc[uc.id]=uc;
@@ -103,12 +114,15 @@ int main(int argc, char * argv[]) {
       }
     }
     uc.timestamp = (int) ( ((float)(uc.timestamp)-((float)starttime))*scale);
-    if (interpolate) {
-      if (nextuc[uc.id].timestamp != -1) {
+    if (interpolate)
+    {
+      if (nextuc[uc.id].timestamp != -1)
+      {
 	//flush all!
 	fprintf(stderr, "flush, %d -1 steps\n",(int)scale);
 	for (int step=1;step<(int)scale;step++) { //step 0 already sent, last step will be sent after
-	  for (int dev=0;dev<devCount;dev++) {
+	  for (int dev=0;dev<devCount;dev++)
+	  {
 	    if (nextuc[dev].timestamp==-1) continue;
 	    UCommand suc=lastuc[dev];
 	    suc.timestamp = (lastuc[dev].timestamp*((int)scale-step)+ nextuc[dev].timestamp*step) /(int)scale;
@@ -117,7 +131,8 @@ int main(int argc, char * argv[]) {
 	  }
 	}
 	//send the last
-	for (int dev=0;dev<devCount;dev++) {
+	for (int dev=0;dev<devCount;dev++)
+	{
 	  if (nextuc[dev].timestamp==-1) continue;
 	  fwrite(&nextuc[dev],sizeof(UCommand),1,ouf);
 	  lastuc[dev]=nextuc[dev];
@@ -126,13 +141,15 @@ int main(int argc, char * argv[]) {
       }
       nextuc[uc.id]=uc;
     }
-    else {
+    else
+    {
       fwrite(&uc,sizeof(UCommand),1,ouf);
     }
   }
   //send the last chunk
   if (interpolate)
-    for (int dev=0;dev<devCount;dev++) {
+    for (int dev=0;dev<devCount;dev++)
+    {
       if (nextuc[dev].timestamp==-1) continue;
       fwrite(&nextuc[dev],sizeof(UCommand),1,ouf);
     }

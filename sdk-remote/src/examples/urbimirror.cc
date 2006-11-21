@@ -3,7 +3,8 @@
 
 urbi::UClient *d;
 
-const char * devices[]={
+const char * devices[]=
+{
   "legLF1",
   "legLF2",
   "legLF3",

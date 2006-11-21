@@ -819,7 +819,8 @@ UAbstractClient::processRecvBuffer()
 	  recvBufferPosition = recvBufferPosition - len - endOfHeaderPosition;
 	}
 	else
-	{ //not over yet
+	{
+	  // not over yet
 	  //leave parseposition where it is
 	  //move the extra (parsePosition = endOfHeaderPosition)
 	  memmove(recvBuffer+parsePosition,

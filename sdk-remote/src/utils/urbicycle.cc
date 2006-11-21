@@ -3,23 +3,27 @@
 
 #include "urbi/uclient.hh"
 inline float fabs(float f ) {if (f>0) return f; else return f*(-1.0);}
-enum UType {
+enum UType
+{
   TYPE_BOOL,
   TYPE_ANGLE,
   TYPE_NORM
 };
-union UJointValue {
+union UJointValue
+{
   float angle;
   float normalized;
   bool boolean;
 };
-struct UCommand {
+struct UCommand
+{
   int timestamp;
   short id;
   UJointValue value;
 };
 
-struct UDev {
+struct UDev
+{
   char * name;
   short id;
   UType type;
@@ -55,7 +59,8 @@ int parseHeader(FILE *f,FILE * of)
 
 int main(int argc, char * argv[])
 {
-  if (argc<3) {
+  if (argc<3)
+  {
     printf("usage %s infile outfile [jointid] [startval] [direction] [numcycle]\n"
 	   "\tDetect and extract cycles in an urbi recorded file\n"
 	   "\tJointid is the joint used to detect cycles (0-based value, see urbirecord.cpp for id/name correspondance)\n"
@@ -109,7 +114,8 @@ int main(int argc, char * argv[])
     {
       int v;
       sscanf(argv[5],"%d",&v);
-      if (v!=0) {
+      if (v!=0)
+      {
 	gotSign=true;
 	cyclesgn=(v<0);
       }
@@ -138,10 +144,12 @@ int main(int argc, char * argv[])
       if (ok && buffTime==0) buffTime=uc.timestamp;
       if (ok && uc.timestamp==buffTime) {buff[uc.id]=uc;continue;}
 
-      if (init) {
+      if (init)
+      {
 	//initialize asap<-now
 
-	if (buff[joint].timestamp==0) {
+	if (buff[joint].timestamp==0)
+	{
 	  //cant do anything
 	  for (int i=0;i<devCount;i++) buff[i].timestamp=0;
 	  buff[uc.id]=uc;
@@ -162,14 +170,16 @@ int main(int argc, char * argv[])
       if (gotLastVal &&
 	  ((!gotSign) ||   ( cyclesgn ^ (lastval<startval))) &&
 	  (   (lastval<startval && buff[joint].value.angle>=startval) ||
-	      (lastval>startval && buff[joint].value.angle<=startval) )) {
+	      (lastval>startval && buff[joint].value.angle<=startval) ))
+	      {
 	cyclesgn = (lastval>startval);
 	gotSign=true;
 	cycle++;
 	fprintf(stderr,"cycle %d starts at %d\n",cycle, buffTime-basetime);
       }
 
-      if (buff[joint].timestamp!=0) {
+      if (buff[joint].timestamp!=0)
+      {
 	lastval=buff[joint].value.angle;
 	gotLastVal=true;
       }

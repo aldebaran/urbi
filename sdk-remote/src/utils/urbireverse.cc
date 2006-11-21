@@ -6,23 +6,27 @@
 namespace urbi
 {
   inline float fabs(float f ) {if (f>0) return f; else return f*(-1.0);}
-  enum UType {
+  enum UType
+  {
     TYPE_BOOL,
     TYPE_ANGLE,
     TYPE_NORM
   };
-  union UJointValue {
+  union UJointValue
+  {
     float angle;
     float normalized;
     bool boolean;
   };
-  struct UCommand {
+  struct UCommand
+  {
     int timestamp;
     short id;
     UJointValue value;
   };
 
-  struct UDev {
+  struct UDev
+  {
     char * name;
     short id;
     UType type;
@@ -30,14 +34,16 @@ namespace urbi
   UDev* devices;
   int devCount;
 
-  int parseHeader(FILE *f,FILE * of) {
+  int parseHeader(FILE *f,FILE * of)
+  {
     char buff[4];
     if (fread(buff,4,1,f)!=1) return 1;
     if (fwrite(buff,4,1,of)!=1) return 2;
     if (strncmp(buff,"URBI",4)) return 3;
     if (fread(&devCount,4,1,f)!=1) return 4;
     if (fwrite(&devCount,4,1,of)!=1) return 5;
-    for (int i=0;i<devCount;i++) {
+    for (int i=0;i<devCount;i++)
+    {
       char device[256];
       int pos=0;
       int a;
@@ -93,7 +99,8 @@ int main(int argc, char * argv[])
   urbi::UCommand uc;
   int starttime=-1;
   fseek(inf,sizeof(urbi::UCommand)*(-1),SEEK_END);
-  while (ftell(inf)!=endheader) {
+  while (ftell(inf)!=endheader)
+  {
     if (fread(&uc,sizeof(urbi::UCommand),1,inf)!=1)
       {
 	printf("error reading from file\n");

@@ -42,17 +42,20 @@ int main(int argc, char * argv[])
   char * buffer;
   int pos;
   //read the whole file in memory
-  if (f!=stdin) {
+  if (f!=stdin)
+  {
     struct stat st;
     stat(argv[3],&st);
     buffer = (char *)malloc(st.st_size);
-    if (!buffer) {
+    if (!buffer)
+    {
       printf("not enough memory\n");
       return -2;
     }
 
     pos=0;
-    while (true) {
+    while (true)
+    {
       int r = fread(buffer + pos, 1, st.st_size-pos, f);
       if (r<=0)
 	break;
@@ -60,15 +63,19 @@ int main(int argc, char * argv[])
     }
   }
 
-  else {
+  else
+  {
     int sz=10000;
     pos = 0;
     buffer = (char *)malloc(sz);
-    while (true) {
-      if (sz-pos < 500) {
+    while (true)
+    {
+      if (sz-pos < 500)
+      {
 	sz += 10000;
 	buffer = (char *)realloc(buffer,sz);
-	if (!buffer) {
+	if (!buffer)
+	{
 	  printf("not enough memory\n");
 	  return -2;
 	}

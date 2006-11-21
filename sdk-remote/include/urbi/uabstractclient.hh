@@ -26,7 +26,7 @@
 
 # include <cstdio>
 # include <sys/types.h>
-# include <cstring>
+# include "libport/cstring"
 # include <cstdlib>
 # include <cstdarg>
 

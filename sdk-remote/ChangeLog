@@ -1,3 +1,22 @@
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
+	Run reindent
+	* include/urbi/uabstractclient.hh,
+	* src/examples/monitor-win.cc, src/examples/monitor.cc,
+	* src/examples/urbiballtrackinghead.cc,
+	* src/examples/urbimirror.cc, src/examples/urbiping.cc,
+	* src/examples/urbiplay.cc, src/examples/urbirecord.cc,
+	* src/examples/urbisendbin.cc, src/examples/urbisendsound.cc,
+	* src/examples/urbisound.cc, src/examples/urbitalkie.cc,
+	* src/liburbi/swig/swig_ruby.hh,
+	* src/liburbi/uabstractclient.cc, src/liburbi/uclient.cc,
+	* src/liburbi/uobject/uvalue-common.cc,
+	* src/liburbi/usyncclient.cc, src/utils/move.cc,
+	* src/utils/urbicycle.cc, src/utils/urbireverse.cc,
+	* src/utils/urbiscale.cc:
+	Formatting changes.
+	Parens simplifications.
+
 2006-11-20  Akim Demaille  <akim.demaille@gmail.com>
 
 	Coding style

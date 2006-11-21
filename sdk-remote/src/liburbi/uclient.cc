@@ -82,7 +82,8 @@ namespace urbi
     hen = gethostbyname(host);
 
     if (!hen)
-      {	//maybe it is an IP address
+      {
+	// maybe it is an IP address
 	sa.sin_addr.s_addr = inet_addr(host);
 	if (sa.sin_addr.s_addr == INADDR_NONE)
 	  {
@@ -198,8 +199,7 @@ namespace urbi
     int res;
     while (true)
     {
-      do
-      {
+      do {
 	if (sd==-1)
 	  return;
 	FD_ZERO(&rfds);

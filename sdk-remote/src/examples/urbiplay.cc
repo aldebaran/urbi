@@ -7,23 +7,27 @@
 
 #include "urbi/uclient.hh"
 
-enum UType {
+enum UType
+{
   TYPE_BOOL,
   TYPE_ANGLE,
   TYPE_NORM
 };
-union UJointValue {
+union UJointValue
+{
   float angle;
   float normalized;
   bool boolean;
 };
-struct UCommand {
+struct UCommand
+{
   int timestamp;
   short id;
   UJointValue value;
 };
 
-struct UDev {
+struct UDev
+{
   char * name;
   short id;
   UType type;
@@ -44,14 +48,14 @@ bool parseHeader(FILE *f)
       char device[256];
       int pos=0;
       do {
-	if ((device[pos++]=fgetc(f)) == EOF) 
+	if ((device[pos++]=fgetc(f)) == EOF)
 	  return false;
       } while (device[pos-1]);
       devices[i].name = strdup(device);
-      if (fread(&devices[i].id,2,1,f)!=1) 
+      if (fread(&devices[i].id,2,1,f)!=1)
 	return false;
       int type;
-      if ((type=fgetc(f)) == EOF) 
+      if ((type=fgetc(f)) == EOF)
 	return false;
       devices[i].type=(UType)type;
     }
@@ -79,7 +83,7 @@ void play(urbi::UClient * robot, FILE *f)
       //find the device
       UDev * dev=NULL;
       for (int i=0;i<devCount;i++)
-	if (devices[i].id==uc.id) 
+	if (devices[i].id==uc.id)
 	  {
 	    dev=&devices[i];
 	    break;
@@ -158,14 +162,14 @@ int main(int argc, char * argv[])
       robot=NULL;
       dumpMode=argv[1][0];
     }
-  else 
+  else
     {
       robot=new urbi::UClient(argv[1]);
       robot->start();
       if (robot->error()) exit(4);
     }
-  
-  if (robot) 
+
+  if (robot)
     robot->send("motoron;");
 
   FILE * f;

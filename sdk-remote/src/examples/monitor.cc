@@ -43,7 +43,8 @@ Monitor::addList(Monitor *mon)
 
       // Open display
       if ((display = XOpenDisplay(NULL)) == NULL)
-	{	// NULL for DISPLAY
+	{
+	  // NULL for DISPLAY
 	  printf("Error: XOpenDisplay() failed\n");
 	  exit(1);
 	}
@@ -149,7 +150,8 @@ Monitor::Monitor(int _w, int _h, const char * name, bool _fastMode)
       // Open display
 
       if ((localDisplay = XOpenDisplay(NULL)) == NULL)
-	{	// NULL for DISPLAY
+	{
+	  // NULL for DISPLAY
 	  printf("Error: XOpenDisplay() failed\n");
 	  exit(1);
 	}
@@ -213,10 +215,12 @@ int Monitor::createImage()
     errno = 0;
     xImage = NULL;
     sharedPixmap = None;
-    if (isShared) {
+    if (isShared)
+    {
       shmInfo.shmid = -1;
       shmInfo.shmaddr = NULL;
-      if ((xImage = XShmCreateImage(localDisplay, visual, depth, ZPixmap, NULL, &shmInfo, w, h)) == NULL) {
+      if ((xImage = XShmCreateImage(localDisplay, visual, depth, ZPixmap, NULL, &shmInfo, w, h)) == NULL)
+      {
 	throw("XShmCreateImage");
       }	// end if
       if ((shmInfo.shmid = shmget(IPC_PRIVATE, xImage->bytes_per_line * xImage->height, IPC_CREAT | 0777)) < 0) {	// Create segment
@@ -236,24 +240,29 @@ int Monitor::createImage()
       XSync(localDisplay, False);
 
 
-      if (XShmPixmapFormat(localDisplay) == ZPixmap) {
-	if ((sharedPixmap = XShmCreatePixmap(localDisplay, window, shmInfo.shmaddr, &shmInfo, w, h, depth)) == None) {
+      if (XShmPixmapFormat(localDisplay) == ZPixmap)
+      {
+	if ((sharedPixmap = XShmCreatePixmap(localDisplay, window, shmInfo.shmaddr, &shmInfo, w, h, depth)) == None)
+	{
 	  ;	// HasSharedPixmap() will return false.
 	}	// end if
       }	// end if
     }
-    else {
-      if ((xImage = XCreateImage(localDisplay, visual, depth, ZPixmap, 0, NULL, w, h, 16, 0)) == NULL) {
+    else
+    {
+      if ((xImage = XCreateImage(localDisplay, visual, depth, ZPixmap, 0, NULL, w, h, 16, 0)) == NULL)
+      {
 	throw("XCreateImage");
       }	// end if
-      if ((xImage->data = (char *) malloc(xImage->bytes_per_line * xImage->height)) == NULL) {
+      if ((xImage->data = (char *) malloc(xImage->bytes_per_line * xImage->height)) == NULL)
+      {
 	throw("malloc");
       }	// end if
     }	// end if
     return (0);
   }
-  catch(char *function) {
-
+  catch(char *function)
+  {
     printf("%s%s:%s\n","Error: Image::Create failed in ",function,((errno == 0) ? "No further info" : strerror(errno)));
 
     destroyImage();

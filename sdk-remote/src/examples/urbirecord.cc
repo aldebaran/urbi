@@ -13,17 +13,20 @@
     timestamp [int, milisec] id (short) value (UValue)
  */
 
-enum UType {
+enum UType
+{
   TYPE_BOOL,
   TYPE_ANGLE,
   TYPE_NORM
 };
-union UJointValue {
+union UJointValue
+{
   float angle;
   float normalized;
   bool boolean;
 };
-struct UCommand {
+struct UCommand
+{
   int timestamp;
   short id;
   UJointValue value;
@@ -31,7 +34,8 @@ struct UCommand {
 
 
 
-char * devices[]={
+char * devices[]=
+{
   "legLF1",
   "legLF2",
   "legLF3",
@@ -54,7 +58,8 @@ char * devices[]={
 int devCount=18;
 FILE *f;
 int tilt=0;
-void buildHeader() {
+void buildHeader()
+{
   fwrite("URBI",4,1,f);
   fwrite(&devCount,4,1,f);
   for (int i=0;i<devCount;i++)
@@ -128,7 +133,8 @@ int main(int argc, char * argv[])
   //c.send("motoroff");
   //build command
   c.send("looptag: loop {");
-  for (int i=0;i<devCount-1;i++) {
+  for (int i=0;i<devCount-1;i++)
+  {
     c.setCallback(command,devices[i]);
     c.send("%s: %s.val&",devices[i], devices[i]);
   }

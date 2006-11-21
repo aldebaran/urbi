@@ -1,7 +1,7 @@
 #include <sys/stat.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
 #include <iostream>
 #include <locale.h>
 #ifdef MAX_PATH
@@ -16,9 +16,11 @@ namespace urbi
 {
   inline float ffloatpart(float a) {return a-(int)a;}
 
-  static char * dirname(char * src) {
+  static char * dirname(char * src)
+  {
     static char result[M_MAX_PATH];
-    if (!strchr(src, '/')) {
+    if (!strchr(src, '/'))
+    {
       strcpy(result,".");
       return result;
     }
@@ -40,14 +42,16 @@ namespace urbi
     robot = client;
     robot->makeUniqueTag(tag);
     robot->makeUniqueTag(execTag);
-    if (enableInterrupt) {
+    if (enableInterrupt)
+    {
       interruptConnection = new UClient(robot->getServerName());
     }
     else
       interruptConnection = 0;
     strcat(tag,"mov");
     FILE * cf=fopen(configFile,"r");
-    if (!cf) {
+    if (!cf)
+    {
       fprintf(stderr,"Failed to open main configuration file %s\n",configFile);
       return 1;
     }
@@ -58,7 +62,8 @@ namespace urbi
     char line[1024];
     int idx=0;
 
-    while (fgets(line,1024,cf)) {
+    while (fgets(line,1024,cf))
+    {
       char type[64];
       char name[M_MAX_PATH];
       LoadedFile lf;
@@ -77,15 +82,18 @@ namespace urbi
 	continue;
       if ( (s>=1) && (type[0]==0))
 	continue;
-      if (s!=5) {
+      if (s!=5)
+      {
 	fprintf(stderr,"parse error at line %s, skipping\n",line);
 	continue;
       }
 
       sprintf(lf.name,"mov%d",idx++);
 
-      if (uploadFiles) {
-	if (name[0]!='/') {
+      if (uploadFiles)
+      {
+	if (name[0]!='/')
+	{
 	  //not an absolute path, happen dirname as a prefix
 	  strcpy(filePath,path);
 	  strcat(filePath,"/");
@@ -106,7 +114,8 @@ namespace urbi
 	char * buffer=(char *)malloc(filelength+200);
 	//read the file
 	int left=filelength;
-	while (left) {
+	while (left)
+	{
 	  int rc=fread(buffer,1,left,cmdf);
 	  if (!rc) {fprintf(stderr,"error reading file %s\n",name); return 3;}
 	  left-=rc;
@@ -119,7 +128,8 @@ namespace urbi
 	int offset = 0;
 
 	robot->send("%s = \"%s: {\";", lf.name, execTag);
-	while (filelength > offset) {
+	while (filelength > offset)
+	{
 	  //std::cerr << offset<<" / "<<filelength<<std::endl;
 	  //usleep(200000);
 	  //std::cerr << block<<std::endl;
@@ -144,7 +154,8 @@ namespace urbi
     //fill the properties structs by parsing our loadedfiles.
     pwalk.minSpeed=pwalk.resolution=pwalk.precision=300000000;
     pwalk.maxSpeed=0;
-    for (std::list<LoadedFile>::iterator it=walks.begin();it!=walks.end();it++) {
+    for (std::list<LoadedFile>::iterator it=walks.begin();it!=walks.end();it++)
+    {
       if (it->speed>pwalk.maxSpeed) pwalk.maxSpeed=it->speed;
       if (it->speed<pwalk.minSpeed) pwalk.minSpeed=it->speed;
       if (it->value<pwalk.resolution) {pwalk.resolution=it->value; pwalk.precision=it->precision;}
@@ -161,7 +172,8 @@ namespace urbi
     return 0;
   };
 
-  void Move::interrupt(bool notifyEndMove) {
+  void Move::interrupt(bool notifyEndMove)
+  {
     if (!interruptConnection)
       return;
     if (moving <=0)
@@ -173,7 +185,8 @@ namespace urbi
       robot->send("%s: ping;", tag);
   }
 
-  int Move::walk(float &distance, float precision, const char * tag) {
+  int Move::walk(float &distance, float precision, const char * tag)
+  {
     float absoluteprecision=fabs(distance * precision);
     int length=walks.size();
     float values[length/2][2];
@@ -198,8 +211,10 @@ namespace urbi
     direction[0]=(distance>0)?0:1;
     move[0]= (distance>0)?-1:1;
     int index=0;
-    while (1) {
-      if (index==length/2-1) {
+    while (1)
+    {
+      if (index==length/2-1)
+      {
 	//calculate best value for move[index]
 	float dist=distance-currentval;
 	int cnt= (int) (dist/values[index][direction[index]]); // -12/5 = -2 en division entiere.
@@ -217,7 +232,8 @@ namespace urbi
 	//calculate nummoves
 	int nummoves=0;
 	for (int i=0;i<=index;i++) nummoves+=abs(move[i]);
-	if (fabs(currentval-distance)<absoluteprecision && (nummoves<bestnummoves || bestnummoves==-1) ) {
+	if (fabs(currentval-distance)<absoluteprecision && (nummoves<bestnummoves || bestnummoves==-1) )
+	{
 	  bestnummoves=nummoves;
 	  for (int k=0;k<length/2;k++)
 	    bestmove[k]=move[k];
@@ -260,7 +276,8 @@ namespace urbi
     if (tag) strcpy(usertag,tag);
     else
       strcpy(usertag, "notag");
-    if (bestnummoves==-1 || bestnummoves==0) {
+    if (bestnummoves==-1 || bestnummoves==0)
+    {
       distance=0;
       moving = 0;
       robot->send("%s: ping;", this->tag);
@@ -274,10 +291,12 @@ namespace urbi
     it2=it;
     sequence.clear();
     for (int i=0;i<length/2;i++,it2++);
-    for (int i=0;i<length/2;i++,it++,it2++) {
+    for (int i=0;i<length/2;i++,it++,it2++)
+    {
       char * name= (bestmove[i]>0)?it->name:it2->name;
       realmove += bestmove[i]*values[i][(bestmove[i]>0)?0:1];
-      for (int j=0;j<abs(bestmove[i]);j++) {
+      for (int j=0;j<abs(bestmove[i]);j++)
+      {
 	moving++;
 	if (moving<4)
 	  sprintf(&command[strlen(command)],"exec(%s);", name);
@@ -289,7 +308,8 @@ namespace urbi
     distance=realmove;
     return 0;
   }
-  int Move::turn(float &distance, float precision, const char * tag) {
+  int Move::turn(float &distance, float precision, const char * tag)
+  {
     float absoluteprecision=fabs(distance * precision);
     int length=turns.size();
     float values[length/2][2];
@@ -302,7 +322,8 @@ namespace urbi
     std::list<LoadedFile>::iterator it2=it;
     for (int i=0;i<length/2;i++,it2++);
     // std::cerr << "values: ";
-    for (int i=0;i<length/2;i++,it++,it2++) {
+    for (int i=0;i<length/2;i++,it++,it2++)
+    {
       values[i][0]=it->value;
       values[i][1]=it2->value*(-1); //the minus is in the negative value in move
       //std::cerr << values[i][0] << " " << values[i][1] <<" , ";
@@ -312,8 +333,10 @@ namespace urbi
     direction[0]=(distance>0)?0:1;
     move[0]= (distance>0)?-1:1;
     int index=0;
-    while (1) {
-      if (index==length/2-1) {
+    while (1)
+    {
+      if (index==length/2-1)
+      {
 	//calculate best value for move[index]
 	float dist=distance-currentval;
 	int cnt= (int)(dist/values[index][direction[index]]); // -12/5 = -2 en division entiere.
@@ -331,7 +354,8 @@ namespace urbi
 	//calculate nummoves
 	int nummoves=0;
 	for (int i=0;i<=index;i++) nummoves+=abs(move[i]);
-	if ((fabs(currentval-distance)<absoluteprecision) && ((nummoves<bestnummoves) || (bestnummoves==-1)) ) {
+	if ((fabs(currentval-distance)<absoluteprecision) && ((nummoves<bestnummoves) || (bestnummoves==-1)) )
+	{
 	  bestnummoves=nummoves;
 	  for (int k=0;k<length/2;k++)
 	    bestmove[k]=move[k];
@@ -371,7 +395,8 @@ namespace urbi
     if (tag) strcpy(usertag,tag);
     else
       strcpy(usertag, "notag");
-    if (bestnummoves==-1 || bestnummoves==0) {
+    if (bestnummoves==-1 || bestnummoves==0)
+    {
       distance=0;
       moving = 0;
       robot->send("%s: ping;", this->tag);
@@ -386,11 +411,13 @@ namespace urbi
     sequence.clear();
     for (int i=0;i<length/2;i++,it2++);
     // std::cerr << "choice:" ;
-    for (int i=0;i<length/2;i++,it++,it2++) {
+    for (int i=0;i<length/2;i++,it++,it2++)
+    {
       char * name= (bestmove[i]>0)?it->name:it2->name;
       realmove += bestmove[i]*values[i][(bestmove[i]>0)?0:1];
       //	std::cerr << bestmove[i] << " ";
-      for (int j=0;j<abs(bestmove[i]);j++) {
+      for (int j=0;j<abs(bestmove[i]);j++)
+      {
 	moving++;
 	if (moving<4)
 	  sprintf(&command[strlen(command)],"exec(%s);", name);
@@ -408,7 +435,8 @@ namespace urbi
   {
     moving--;
     std::cerr << "movend "<< moving << std::endl;
-    if (moving >0 && !sequence.empty()) {
+    if (moving >0 && !sequence.empty())
+    {
       std::string s=sequence.front();
       sequence.pop_front();
       msg.client.send("exec(%s);",s.c_str());

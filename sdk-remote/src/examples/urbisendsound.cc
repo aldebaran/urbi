@@ -78,7 +78,8 @@ main(int argc, char * argv [])
       fread(s.data, 44, 1, f);
       int sz=1;
 
-      while (sz) {
+      while (sz)
+      {
 	sz=fread(s.data+44,1,128000,f);
 	s.size = sz+44;
 	convert(s, snd);

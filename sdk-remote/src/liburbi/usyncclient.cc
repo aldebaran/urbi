@@ -130,7 +130,7 @@ namespace urbi
 			    int &width, int &height)
   {
     int f;
-    if ( (format == IMAGE_JPEG)  || (transmitFormat == URBI_TRANSMIT_JPEG))
+    if (format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG)
       f = 1;
     else
       f = 0;

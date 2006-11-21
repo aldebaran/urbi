@@ -615,7 +615,8 @@ namespace urbi
   }
 
   UValue& UValue::operator= (const UValue& v)
-  { //TODO: optimize
+  {
+    // TODO: optimize
     if (this == &v)
       return *this;
     switch (type)
