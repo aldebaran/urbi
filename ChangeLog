@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/memorymanager/memorymanager.cc: here.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Coding style changes
 	* src/network/bsdnet/connection.cc,
 	* src/network/bsdnet/network.cc: Run reindent.
