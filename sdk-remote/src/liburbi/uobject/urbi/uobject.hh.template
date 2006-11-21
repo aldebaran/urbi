@@ -18,8 +18,8 @@
 
  **************************************************************************** */
 
-#ifndef UOBJECT_HH_DEFINED
-# define UOBJECT_HH_DEFINED
+#ifndef URBI_UOBJECT_HH
+# define URBI_UOBJECT_HH
 
 # include <string>
 # include <list>
@@ -195,7 +195,8 @@ namespace urbi
   // UValue and other related types
 
   /// Possible value types a UValue can contain.
-  enum UDataType {
+  enum UDataType
+  {
     DATA_DOUBLE,
     DATA_STRING,
     DATA_BINARY,
@@ -204,14 +205,16 @@ namespace urbi
     DATA_VOID
   };
 
-  enum UBinaryType {
+  enum UBinaryType
+  {
     BINARY_NONE,
     BINARY_UNKNOWN,
     BINARY_IMAGE,
     BINARY_SOUND
   };
 
-  enum UImageFormat {
+  enum UImageFormat
+  {
     IMAGE_RGB=1,     ///< RGB 24 bit/pixel
     IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
     IMAGE_JPEG=3,    ///< JPEG
@@ -219,7 +222,8 @@ namespace urbi
     IMAGE_UNKNOWN
   };
 
-  enum USoundFormat {
+  enum USoundFormat
+  {
     SOUND_RAW,
     SOUND_WAV,
     SOUND_MP3,
@@ -227,14 +231,16 @@ namespace urbi
     SOUND_UNKNOWN
   };
 
-  enum USoundSampleFormat {
+  enum USoundSampleFormat
+  {
     SAMPLE_SIGNED=1,
     SAMPLE_UNSIGNED=2
   };
 
   //WARNING: synchronize with blendNames below, must be 0-based
   /// Possible blending mode for an UVar
-  enum UBlendType {
+  enum UBlendType
+  {
     UMIX=0,
     UADD,
     UDISCARD,
@@ -246,7 +252,8 @@ namespace urbi
   // values for enum-like properties
   namespace
     {
-      const char * blendNames[]={
+      const char * blendNames[]=
+      {
 	"mix",
 	"add",
 	"discard",
@@ -261,7 +268,8 @@ namespace urbi
 
   //WARNING: synchronize with propNames in uvar.cc
   /// URBI properties associated to a variable
-  enum UProperty {
+  enum UProperty
+  {
     PROP_RANGEMIN=0,
     PROP_RANGEMAX,
     PROP_SPEEDMIN,
@@ -271,7 +279,8 @@ namespace urbi
   };
 
   //internal use: unparsed binary data
-  class BinaryData {
+  class BinaryData
+  {
   public:
   BinaryData()
     : data (0), size (0)
@@ -288,7 +297,8 @@ namespace urbi
 
       This class does not handle its memory: the data field msut be
       freed manualy.  */
-  class UImage {
+  class UImage
+  {
   public:
     unsigned char         *data;            ///< pointer to image data
     int                   size;             ///< image size in byte
@@ -300,7 +310,8 @@ namespace urbi
 
       This class does not handle its memory: the data field msut be
       freed manualy.  */
-  class USound {
+  class USound
+  {
   public:
     char                  *data;            ///< pointer to sound data
     int                   size;             ///< total size in byte
@@ -323,8 +334,10 @@ namespace urbi
   {
   public:
     UBinaryType             type;
-    union {
-      struct {
+    union
+    {
+      struct
+      {
 	void                  *data;             ///< binary data
 	int                   size;
       } common;
@@ -353,7 +366,8 @@ namespace urbi
   };
 
   /// Class storing URBI List type
-  class UList {
+  class UList
+  {
   public:
     std::vector<UValue *> array;
     UList();
@@ -382,7 +396,8 @@ namespace urbi
     std::string name;
   };
 
-  class UObjectStruct {
+  class UObjectStruct
+  {
   public:
     std::string refName;
     std::vector<UNamedValue> array;
@@ -397,11 +412,13 @@ namespace urbi
 
   /** Container for a value that handles all types known to URBI.
    */
-  class UValue {
+  class UValue
+  {
   public:
     UDataType       type;
     ufloat          val;  ///< value if of type DATA_DOUBLE
-    union {
+    union
+    {
       std::string    *stringValue; ///< value if of type DATA_STRING
       UBinary        *binary;  ///< value if of type DATA_BINARY
       UList          *list;  ///< value if of type DATA_LIST
@@ -663,53 +680,61 @@ namespace urbi
 
     /// Calls the specified function each time the variable v is modified.
     template <class T>
-    void UNotifyChange (UVar& v, int (T::*fun) ()) {
+    void UNotifyChange (UVar& v, int (T::*fun) ())
+    {
       createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
     }
 
     /// Calls the specified function each time the variable v is modified.
     template <class T>
-    void UNotifyChange (UVar& v, int (T::*fun) (UVar&)) {
+    void UNotifyChange (UVar& v, int (T::*fun) (UVar&))
+    {
       UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
     /// Calls the specified function when the variable value is updated on request by requestValue().
     template <class T>
-    void UNotifyOnRequest (UVar& v, int (T::*fun) ()) {
+    void UNotifyOnRequest (UVar& v, int (T::*fun) ())
+    {
       createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
     }
 
     /// Calls the specified function when the variable value is updated on request by requestValue().
     template <class T>
-    void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&)) {
+    void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&))
+    {
       UGenericCallback* cb = createUCallback(__name, "var_onrequest", (T*)this, fun, v.get_name(), monitormap);
       if (cb) cb->storage = (void*)(&v);
     }
 
     /// Calls the specified function each time the variable v is modified.
     template <class T>
-    void UNotifyChange (const std::string& name, int (T::*fun) ()) {
+    void UNotifyChange (const std::string& name, int (T::*fun) ())
+    {
       createUCallback(__name, "var", (T*)this, fun, name, monitormap);
     }
 
     /// Calls the specified function each time the variable v is modified.
     template <class T>
-    void UNotifyChange (const std::string& name, int (T::*fun) (UVar&)) {
+    void UNotifyChange (const std::string& name, int (T::*fun) (UVar&))
+    {
       UGenericCallback* cb = createUCallback(__name, "var", (T*)this, fun, name, monitormap);
       if (cb) cb->storage = new UVar(name);
     }
 
     /// Calls the specified function each time the variable v is read.
     template <class T>
-    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&)) {
+    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&))
+    {
       UGenericCallback* cb = createUCallback(__name, "varaccess", (T*)this, fun, v.get_name(), accessmap);
       if (cb) cb->storage = (void*)(&v);
     }
 
     /// Set a timer that will call tune 'fun' function every 't' milliseconds.
     template <class T>
-    void USetTimer(ufloat t, int (T::*fun) ()) {
+    void USetTimer(ufloat t, int (T::*fun) ())
+    {
       new UTimerCallbackobj<T> (__name, t,(T*)this, fun, timermap);
     }
 
@@ -821,13 +846,16 @@ namespace urbi
 # endif
 
 #ifndef UOBJECT_NO_LIST_CAST
-template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)  {
+template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
+{
   std::list<I> result;
-  if (val.type != DATA_LIST) {
+  if (val.type != DATA_LIST)
+  {
     //cast just the element
     result.push_back(cast(val, (I*)0));
   }
-  else {
+  else
+  {
     for (int i=0;i<val.list->size();i++)
       result.push_back(cast(*val.list->array[i], (I*)0));
   }
@@ -1005,7 +1033,8 @@ class UCallback%N% : public UGenericCallback
  public:
   UCallback%N%(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
     UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
-  virtual UValue __evalcall(UList& param) {
+  virtual UValue __evalcall(UList& param)
+  {
     return UValue(( (*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
   };
  private:
@@ -1022,7 +1051,8 @@ class UCallbackvoid%N% : public UGenericCallback
   UCallbackvoid%N%(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
     UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(fun) {};
 
-  virtual UValue __evalcall(UList &param) {
+  virtual UValue __evalcall(UList &param)
+  {
     ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
     return UValue();
   };
@@ -1040,7 +1070,8 @@ class UCallbacknotifyend%N% : public UGenericCallback
   UCallbacknotifyend%N%(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(),const std::string& funname, UTable &t):
     UGenericCallback(objname, type, funname,%N%, t), obj(obj), fun(end) {};
 
-  virtual UValue __evalcall(UList &) {
+  virtual UValue __evalcall(UList &)
+  {
     ((*obj).*fun)();
     return UValue();
   };
@@ -1053,20 +1084,23 @@ class UCallbacknotifyend%N% : public UGenericCallback
 // callback creation for non void return type
 
 template <class OBJ, class R%%, class P% %%>
-UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t) {
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, R (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t)
+{
   return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t));
 }
 
 // callback creation for void return type
 
 template <class OBJ%%, class P% %%>
-UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t) {
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), const std::string& funname,UTable &t)
+{
   return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t));
 }
 
 // special case for eventend notification
 template <class OBJ%%, class P% %%>
-UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), const std::string& funname,UTable &t) {
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, OBJ* obj, void (OBJ::*fun) (%%%,% P% %%), void (OBJ::*end)(), const std::string& funname,UTable &t)
+{
   return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t));
 }
 
@@ -1075,7 +1109,7 @@ UGenericCallback* createUCallback(const std::string& objname, const std::string&
 
 } // end namespace urbi
 
-#endif // ! UOBJECT_HH_DEFINED
+#endif // ! URBI_UOBJECT_HH
 
 /// Local Variables:
 /// mode: c++

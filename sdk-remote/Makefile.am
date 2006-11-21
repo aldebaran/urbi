@@ -12,6 +12,7 @@ SVN_EXTERNALS += jpeg-6b
 ## ---------- ##
 
 urbiinclude_HEADERS =				\
+include/uobject.h				\
 include/urbi/uabstractclient.hh			\
 include/urbi/uclient.hh				\
 include/urbi/uconversion.hh			\

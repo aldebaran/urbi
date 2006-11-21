@@ -1,5 +1,12 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	uobject.h
+	* include/uobject.h: New.
+	* Makefile.am: Adjust.
+	* src/liburbi/uobject/urbi/uobject.hh.template: Style changes.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	X11 vs. Win
 	* configure.ac (X11_LDADD): Define.
 	* src/examples/Makefile.am: Use it.
