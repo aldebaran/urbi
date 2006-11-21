@@ -99,8 +99,8 @@ if test x"$enable_bindings" != xno; then
  AC_ENABLE_SHARED([yes])
  AC_PROG_SWIG([1.3.24])
  if (eval "$SWIG -version") >/dev/null 2>&1; then :; else
- AC_MSG_ERROR([SWIG 1.3.24 is required to build bindings.])
- SWIG_ENABLE_CXX()
+   AC_MSG_ERROR([SWIG 1.3.24 is required to build bindings.])
+   SWIG_ENABLE_CXX
  fi
 fi
 
