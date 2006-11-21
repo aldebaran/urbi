@@ -2,15 +2,14 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([liburbi-c++], [1.0-b2], [bugs@gostai.com],
-	[liburbi-c++])
+AC_INIT([URBI SDK], [1.0-rc1], [bugs@gostai.com], [urbi-sdk])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 -Wall tar-ustar dist-zip nostdinc])
+AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc])
 
 # Urbi standard locations.
 URBI_DIRS([remote])
@@ -47,7 +46,7 @@ AM_CONDITIONAL([X11], [test x"$no_x" != xyes])
 # FIXME: -lXext should be checked too.
 if test x"$no_x" != xyes; then
   AC_SUBST([X11_LDADD],
-           ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
+	   ['$(X_PRE_LIBS) $(X_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)'])
 fi
 
 

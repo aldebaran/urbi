@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	liburbi-cpp is now urbi-sdk
+	* configure.ac: Adjust.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	uobject.h
 	* include/uobject.h: New.
 	* Makefile.am: Adjust.

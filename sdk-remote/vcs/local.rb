@@ -6,7 +6,7 @@ class Vcs
   protocol_version '0.1'
 
   def local_commit! ( *args )
-    common_commit!("liburbi-c++ <%= rev %>: <%= title %>", *args) do |subject|
+    common_commit!("urbi-sdk <%= rev %>: <%= title %>", *args) do |subject|
       mail!(:to => %w[akim@lrde.epita.fr
                       matthieu.nottale@ensta.fr
                       baillie@gostai.com],
