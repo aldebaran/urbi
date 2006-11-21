@@ -61,7 +61,7 @@ public:
   UString*       buildFullname(UCommand *command,
 			       UConnection *connection,
 			       bool withalias = true);
-  UString*       getFullname()  { return (fullname_);};
+  UString*       getFullname()  { return fullname_;};
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();
   UString*       getDevice();

@@ -336,7 +336,7 @@ public:
   URefPt *copy()
   {
     cpt++;
-    return (this);
+    return this;
   }
 };
 

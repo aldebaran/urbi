@@ -122,21 +122,21 @@ UQueue::push (const char *s)
 inline int
 UQueue::bufferFreeSpace()
 {
-  return( bufferSize_ - dataSize_ );
+  return bufferSize_ - dataSize_ ;
 }
 
 //! returns the max available free space in the buffer.
 inline int
 UQueue::bufferMaxFreeSpace()
 {
-  return( maxBufferSize_ - dataSize_ );
+  return maxBufferSize_ - dataSize_ ;
 }
 
 //! returns the size of the data in the buffer
 inline int
 UQueue::dataSize()
 {
-  return( dataSize_ );
+  return dataSize_ ;
 }
 
 //! returns the locked status of the queue

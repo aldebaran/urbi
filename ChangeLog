@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Return style.
+	* src/uqueue.hh, src/utypes.hh, src/uvariablename.hh: here.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Normalize returns
 	* src/ubinder.cc,
 	* src/ucommand.cc,
