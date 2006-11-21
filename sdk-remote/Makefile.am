@@ -15,3 +15,8 @@ include/urbi/uclient.hh				\
 include/urbi/uconversion.hh			\
 include/urbi/uexternal.hh			\
 include/urbi/usyncclient.hh
+
+## --------------- ##
+## Svn externals.  ##
+## --------------- ##
+SVN_EXTERNALS += libport

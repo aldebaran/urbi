@@ -1,5 +1,12 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Update externals.
+	This should solve the recent problems.
+	* sdk/param.mk.in: Remove, now part of build-aux.
+	* src/liburbi/Makefile.am: Use SVN_EXTERNALS.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Run reindent
 	* include/urbi/uabstractclient.hh,
 	* src/examples/monitor-win.cc, src/examples/monitor.cc,

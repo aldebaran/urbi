@@ -10,6 +10,7 @@ SUBDIRS += .
 ## uobject.  ##
 ## --------- ##
 
+include $(top_srcdir)/build-aux/svn-externals.mk
 include uobject/uobject.mk
 urbiinclude_HEADERS = $(uobject_hh)
 
