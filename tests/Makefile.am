@@ -1,5 +1,7 @@
+include $(top_srcdir)/build-aux/init.mk
+
 # The test suite is composed of *.chk files.  Each one must create a
-#*.log file that we want to keep.
+# *.log file that we want to keep.
 TESTS = $(notdir $(wildcard $(srcdir)/urbivalid/checkfiles/*.chk))
 TEST_LOGS = $(TESTS:.chk=.log)
 # .PRECIOUS: $(TEST_LOGS)

@@ -31,12 +31,9 @@ windows/urbikernel/urbikernel.vcproj
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-uobject-help uobject-ci uobj-ci uobject-up uob-up:
+SVN_EXTERNALS_PROXY += uobject urbivalid
+uobject-help uobject-ci uobject-up uobj-ci uob-up:
 	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
 
-urbivalid-help help urbivali-ci urbivalid-up:
+urbivalid-help urbivali-ci urbivalid-up:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
-
-externals-up: uobject-up urbivalid-up
-externals-ci: uobject-ci urbivalid-ci
-externals-help: uobject-help urbivalid-help
