@@ -43,7 +43,7 @@ shutdown;
 EOF
 
 # Feed the input to the console.
-../src/uconsole <$me.in >$me.out
+../src/uconsole $me.in >$me.out
 
 # Strip the banner.
 filter_output $me.out > $me.out.2

@@ -1,3 +1,10 @@
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
+	Let uconsole accept args
+	* src/console.cc: Use argv[1] if given.
+	* tests/check-file: Feed uconsole directly, not via stdin,
+	since it behaves weirdly on Tsuna's machine.
+
 2006-11-21  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Add a sanity check.

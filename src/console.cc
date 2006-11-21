@@ -95,13 +95,21 @@ public:
 };
 
 int
-main ()
+main (int argc, const char* argv[])
 {
+  // Input file.
+  const char *in = argc == 2 ? argv[1] : "/dev/stdin";
+
   ConsoleServer s (10);
   s.initialization ();
   UGhostConnection& c = *s.getGhostConnection ();
-  if (s.loadFile("/dev/stdin", c.recvQueue ()) != USUCCESS)
+
+  if (s.loadFile(in, c.recvQueue ()) != USUCCESS)
+  {
+    std::cerr << $argv[0] << ": failed to process " << in << std::endl;
     return 1;
+  }
+
   c.newDataAdded = true;
 
   long long startTime = urbi::utime();
