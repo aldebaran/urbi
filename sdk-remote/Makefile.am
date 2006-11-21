@@ -19,4 +19,4 @@ include/urbi/usyncclient.hh
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += libport
+SVN_EXTERNALS += libport jpeg-6b

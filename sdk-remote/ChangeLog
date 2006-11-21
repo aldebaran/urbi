@@ -1,5 +1,10 @@
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
+	Update externals
+	* Makefile.am (SVN_EXTERNALS): Add jpeg-6b.
+
+2006-11-21  Akim Demaille  <demaille@gostai.com>
+
 	Update externals.
 	This should solve the recent problems.
 	* sdk/param.mk.in: Remove, now part of build-aux.
