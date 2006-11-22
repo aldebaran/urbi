@@ -1,5 +1,10 @@
 2006-11-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Fix includes.
+	* src/console.cc: include unistd.h for usleep.
+
+2006-11-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Fix initialization orders in ctors.
 	* src/ucommand.cc,
 	* src/uvalue.cc,
