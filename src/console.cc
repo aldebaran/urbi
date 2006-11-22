@@ -4,6 +4,12 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#ifdef WIN32
+/* Windows doesn't have usleep. Use Sleep instead:
+ * http://msdn.microsoft.com/library/default.asp
+ * `-> ?url=/library/en-us/dllproc/base/sleep.asp */
+# define usleep(t) Sleep((t) * 1000)
+#endif
 #include <fstream>
 
 #include "libport/utime.hh"
@@ -36,7 +42,7 @@ public:
 
   virtual ufloat getTime()
   {
-    return (ufloat)(urbi::utime()/1000LL);
+    return (ufloat)(urbi::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
@@ -71,7 +77,7 @@ public:
     while (is.good ())
     {
       is.read (buf, URBI_BUFSIZ);
-      if (loadQueue->push((const ubyte*)buf, is.gcount()) == UFAIL)
+      if (loadQueue->push((const ubyte*) buf, is.gcount()) == UFAIL)
 	return UFAIL;
     }
     is.close();
@@ -93,7 +99,7 @@ public:
   virtual
   void effectiveDisplay(const char* t)
   {
-    printf ("%s",t);
+    printf ("%s", t);
   }
 };
 
@@ -118,10 +124,10 @@ main (int argc, const char* argv[])
   long long startTime = urbi::utime();
 
   while (true)
-    {
-      ufloat freq = s.getFrequency() *1000;
-      while (urbi::utime() < (startTime + freq))
-	usleep (1);
-      s.work ();
-    }
+  {
+    ufloat freq = s.getFrequency() * 1000;
+    while (urbi::utime() < (startTime + freq))
+      usleep (1);
+    s.work ();
+  }
 }

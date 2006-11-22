@@ -1,5 +1,10 @@
 2006-11-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Use Sleep on Windows.
+	* src/console.cc: Here.
+
+2006-11-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Fix includes.
 	* src/console.cc: include unistd.h for usleep.
 
