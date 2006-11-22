@@ -102,10 +102,10 @@ UCommand::UCommand(UCommandType _type)
     toDelete (false),
     background (false),
     startTime (-1),
-    flagType (0),
     flagExpr1 (0),
     flagExpr2 (0),
     flagExpr4 (0),
+    flagType (0),
     flag_nbTrue2 (0),
     flag_nbTrue4 (0),
     morphed (false),
@@ -532,27 +532,27 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(UVariableName *variablename,
 					     bool defkey)
   : UCommand(CMD_ASSIGN_VALUE),
     variablename(variablename),
+    variable (0),
     expression (expression),
     parameters (parameters),
-    finished (false),
     method (0),
     devicename (0),
-    tmp_phase (0),
-    tmp_time (0),
-    variable (0),
-    assigned (false),
-    defkey (defkey),
-    endtime (-1),
     modif_time (0),
     modif_sin (0),
     modif_phase (0),
     modif_smooth (0),
     modif_speed (0),
     modif_accel (0),
-    modif_adaptive (0),
     modif_ampli (0),
+    modif_adaptive (0),
     modif_getphase (0),
-    profileDone (false)
+    tmp_phase (0),
+    tmp_time (0),
+    endtime (-1),
+    finished (false),
+    profileDone (false),
+    assigned (false),
+    defkey (defkey)
 {
   ADDOBJ(UCommand_ASSIGN_VALUE);
 }
@@ -1799,8 +1799,8 @@ UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(UVariableName *variablename,
 					       URefPt<UBinary> *refBinary)
   : UCommand(CMD_ASSIGN_BINARY),
     variablename (variablename),
-    refBinary (refBinary),
     variable (0),
+    refBinary (refBinary),
     method (0),
     devicename (0)
 {
@@ -1919,9 +1919,9 @@ UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(UVariableName *variablename,
 						   UExpression *expression) :
   UCommand(CMD_ASSIGN_PROPERTY),
   variablename (variablename),
+  variable (0),
   oper (oper),
   expression (expression),
-  variable (0),
   method (0),
   devicename (0)
 {
@@ -2883,11 +2883,11 @@ UCommand_NEW::UCommand_NEW(UVariableName* varname,
 			   UNamedParameters *parameters,
 			   bool noinit) :
   UCommand(CMD_NEW),
+  id (0),
   varname (varname),
   obj (obj),
   parameters (parameters),
   noinit (noinit),
-  id (0),
   remoteNew (false)
 {
   ADDOBJ(UCommand_NEW);
@@ -3218,8 +3218,8 @@ UCommand_ALIAS::UCommand_ALIAS(UVariableName* aliasname,
 			       UVariableName* id,
 			       bool eraseit) :
   UCommand(CMD_ALIAS),
-  id (id),
   aliasname (aliasname),
+  id (id),
   eraseit (eraseit)
 {
   ADDOBJ(UCommand_ALIAS);
@@ -4191,9 +4191,9 @@ UCommand_BINDER::UCommand_BINDER(UVariableName* objname,
 				 UVariableName* variablename,
 				 int nbparam) :
   UCommand(CMD_GENERIC),
-  objname (objname),
   binder (binder),
   variablename (variablename),
+  objname (objname),
   type (type),
   nbparam (nbparam)
 {
@@ -5269,12 +5269,12 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
 UCommand_DEF::UCommand_DEF(UDefType deftype,
 			   UVariableList *variablelist) :
   UCommand(CMD_DEF),
-  deftype (deftype),
   variablename (0),
   parameters (0),
   command (0),
   device (0),
-  variablelist (variablelist)
+  variablelist (variablelist),
+  deftype (deftype)
 {
   ADDOBJ(UCommand_DEF);
 }
@@ -7003,8 +7003,8 @@ UCommand_FOR::UCommand_FOR(UCommandType type,
 			    UCommand* command)
   : UCommand(type),
     instr1 (instr1),
-    test (test),
     instr2 (instr2),
+    test (test),
     command (command),
     first (true)
 {

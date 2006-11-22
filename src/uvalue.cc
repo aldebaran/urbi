@@ -54,10 +54,10 @@ UValue::UValue()
 //! UValue constructor.
 UValue::UValue(ufloat val)
   : dataType (DATA_NUM),
-    liststart (0),
-    next (0),
     val (val),
-    str (0)
+    str (0),
+    liststart (0),
+    next (0)
 {
   ADDOBJ(UValue);
 }
@@ -65,10 +65,10 @@ UValue::UValue(ufloat val)
 //! UValue constructor.
 UValue::UValue(const char* str)
   : dataType (DATA_STRING),
-    liststart (0),
-    next (0),
     val (0),
-    str (new UString (str))
+    str (new UString (str)),
+    liststart (0),
+    next (0)
 {
   ADDOBJ(UValue);
 }
@@ -370,10 +370,10 @@ UValue & UValue::operator = (const urbi::UList &l)
 }
 
 UValue::UValue(const urbi::UValue &v)
-  : liststart (0),
-    next (0),
+  : dataType (DATA_VOID),
     str(0),
-    dataType (DATA_VOID)
+    liststart (0),
+    next (0)
 {
   ADDOBJ(UValue);
   switch (v.type)
@@ -813,11 +813,11 @@ UValue::echo(bool hr)
 	if (param->next) o << " ";
 	param = param->next;
       }
-      
+
       if (!hr)
       {
 	o << "\n";
-	
+
 	/* FIXME
 	 if (connection->availableSendQueue() >
 	 strlen(tmpbuffer) +

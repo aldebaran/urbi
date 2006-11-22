@@ -95,23 +95,23 @@ UVariableName::UVariableName(UString* objname,
     rooted    (true),
     index     (index_att),
     index_obj (index_obj),
-    fullname_ (0),
     str       (0),
     isstatic  (false),
     isnormalized (false),
     deriv     (UNODERIV),
     varerror  (false),
-    cached    (false),
-    fromGroup (false),
     variable  (0),
     function  (0),
+    fromGroup (false),
     firsttime (true),
     nostruct  (false),
     id_type   (UDEF_VAR),
     local_scope  (false),
+    doublecolon (false),
+    fullname_ (0),
     localFunction (device && device->equal("__Funct__")),
     selfFunction (device && device->equal("self")),
-    doublecolon (false)
+    cached    (false)
 {
   ADDOBJ(UVariableName);
 }
@@ -125,22 +125,22 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
     rooted    (rooted),
     index     (0),
     index_obj (0),
-    fullname_ (0),
     str       (str),
     isstatic  (false),
     isnormalized (false),
     deriv     (UNODERIV),
     varerror  (false),
-    cached    (false),
-    localFunction   (false),
-    selfFunction    (false),
     variable  (0),
     function  (0),
     firsttime (true),
     nostruct  (false),
     id_type   (UDEF_VAR),
     local_scope  (false),
-  doublecolon (false)
+    doublecolon (false),
+    fullname_ (0),
+    localFunction   (false),
+    selfFunction    (false),
+    cached    (false)
 {
   ADDOBJ(UVariableName);
 }

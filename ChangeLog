@@ -1,3 +1,10 @@
+2006-11-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Fix initialization orders in ctors.
+	* src/ucommand.cc,
+	* src/uvalue.cc,
+	* src/uvariablename.cc: Here.
+
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
 	Simplify
