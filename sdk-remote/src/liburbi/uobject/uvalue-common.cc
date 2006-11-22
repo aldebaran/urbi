@@ -584,13 +584,14 @@ namespace urbi
   UValue::operator UImage() const
   {
     if (type != DATA_BINARY
-	|| binary->type != BINARY_IMAGE)
-      {
-	UImage i;
-	i.data=0; i.size=0; i.width=0; i.height=0;
-	i.imageFormat = IMAGE_UNKNOWN;
-	return i;
-      }
+        || binary->type != BINARY_IMAGE)
+    {
+      UImage i;
+      i.data = 0;
+      i.size = i.width = i.height = 0;
+      i.imageFormat = IMAGE_UNKNOWN;
+      return i;
+    }
     else
       return binary->image;
   }
@@ -598,11 +599,14 @@ namespace urbi
   UValue::operator USound() const
   {
     if (type != DATA_BINARY || binary->type != BINARY_SOUND)
-      {
-	USound i;
-	i.data=0; i.size=0; i.channels=i.rate=0;
-	return i;
-      }
+    {
+      USound i;
+      i.data = 0;
+      i.size = i.sampleSize = i.channels = i.rate = 0;
+      i.soundFormat = SOUND_UNKNOWN;
+      i.sampleFormat = SAMPLE_UNSIGNED;
+      return i;
+    }
     else
       return binary->sound;
   }
