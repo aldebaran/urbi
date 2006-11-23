@@ -372,6 +372,7 @@ UCommand_TREE::UCommand_TREE(UNodeType node,
     command2 (command2),
     callid (0),
     node (node),
+    runlevel1 (UWAITING),
     runlevel2 (UWAITING),
     connection (0) // unknown unless there is a context).
 {
