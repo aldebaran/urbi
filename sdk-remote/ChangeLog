@@ -1,5 +1,12 @@
 2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Use the new sdk folder.
+	* Makefile.am: sdk is now an external.
+	* src/liburbi/Makefile.am: umain.cc is now in this folder.
+	* src/liburbi/umain.cc: New.
+
+2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Code cleanup and prepare for the new SDK.
 	* sdk/Makefile.am: Remove.
 	* sdk/module.mk.in: Remove.

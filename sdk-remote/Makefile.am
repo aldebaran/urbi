@@ -5,7 +5,7 @@ include $(top_srcdir)/libport/libport.mk
 ACLOCAL_AMFLAGS = -I build-aux
 
 SUBDIRS = jpeg-6b libport/tests src doc sdk
-SVN_EXTERNALS += jpeg-6b
+SVN_EXTERNALS += jpeg-6b sdk
 
 ## ---------- ##
 ## include/.  ##
