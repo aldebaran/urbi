@@ -52,6 +52,23 @@ namespace urbi
   }
 
   int
+  convertYCrCbtoYCbCr(const byte * sourceImage,
+		      int bufferSize,
+		      byte * destinationImage)
+  {
+    unsigned char *in = (unsigned char *) sourceImage;
+    unsigned char *out = (unsigned char *) destinationImage;
+    for (int i = 0; i < bufferSize - 2; i += 3)
+    {
+      out[i]     = in[i];
+      out[i + 1] = in[i + 2];
+      out[i + 2] = in[i + 1];
+    }
+    return 1;
+  }
+
+
+  int
   convertYCrCbtoRGB(const byte * sourceImage,
 		    int bufferSize,
 		    byte * destinationImage)

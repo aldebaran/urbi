@@ -1,3 +1,9 @@
+2006-11-23  Benjamin Renoust  <renoust@gostai.com>
+
+	Add YCbCr function.
+	* include/urbi/uconversion.hh: Add YCbCr function.
+	* src/liburbi/uconversion.cc: Idem.
+
 2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Use the new sdk folder.

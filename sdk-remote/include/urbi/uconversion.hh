@@ -30,6 +30,7 @@ namespace urbi
   typedef unsigned char byte;
 
   /// Image format conversion functions.
+  int convertYCrCbtoYCbCr(const byte* source, int sourcelen, byte* dest);
   int convertRGBtoYCrCb  (const byte* source, int sourcelen, byte* dest);
   int convertYCrCbtoRGB  (const byte* source, int sourcelen, byte* dest);
   int convertJPEGtoYCrCb (const byte* source, int sourcelen, byte* dest,
