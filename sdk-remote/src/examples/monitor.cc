@@ -339,53 +339,55 @@ Monitor::put()
 }
 
 int
-Monitor::setImage(bits8 * buffer, int bufferlen)
+Monitor::setImage(bits8* buffer, int bufferlen)
 {
   if (xImage == NULL)
     return -1;
   //XImage *xImage;
-  bits8 *imageLine;
-  int i;
+  bits8* imageLine;
+  int i = 0;
+
   if (localDisplay != display)
+  {
+    if (XPending(localDisplay) > 0)
     {
-      if (XPending(localDisplay) > 0)
-	{
-	  XNextEvent(localDisplay, &event);
-	  switch (event.type)
-	    {
-	    case ClientMessage:
-	      if ((int) event.xclient.data.l[0] == (int) atomWMDeleteWindow)
-		return (-1);
-	      break;
+      XNextEvent(localDisplay, &event);
+      switch (event.type)
+      {
+        case ClientMessage:
+          if ((int) event.xclient.data.l[0] == (int) atomWMDeleteWindow)
+            return (-1);
+          break;
 
-	    case Expose:
-	      if (event.xexpose.count == 0)
-		put();
+        case Expose:
+          if (event.xexpose.count == 0)
+            put();
 
-	      break;
-	    }
-	}
-      else
-	{
-	  //xImage = X();
-	  imageLine = (bits8 *) xImage->data;
-	  for (i = 0; i < bufferlen / 3; i++)
-	    setimageat(&imageLine,
-		       *(buffer + i * 3 + 2),
-		       *(buffer + i * 3 + 1),
-		       *(buffer + i * 3 + 0));
-	  put();
-	}
+          break;
+      }
     }
-  else
+    else
     {
+      //xImage = X();
       imageLine = (bits8 *) xImage->data;
       for (i = 0; i < bufferlen / 3; i++)
-	setimageat(&imageLine,
-		   *(buffer + i * 3 + 2),
-		   *(buffer + i * 3 + 1),
-		   *(buffer + i * 3 + 0));
+        setimageat(&imageLine,
+                   *(buffer + i * 3 + 2),
+                   *(buffer + i * 3 + 1),
+                   *(buffer + i * 3 + 0));
+      put();
     }
+  }
+  else
+  {
+    imageLine = (bits8 *) xImage->data;
+    for (i = 0; i < bufferlen / 3; i++)
+      setimageat(&imageLine,
+                 *(buffer + i * 3 + 2),
+                 *(buffer + i * 3 + 1),
+                 *(buffer + i * 3 + 0));
+  }
+  return 1; // ?
 }
 
 /*******************************************************************************/

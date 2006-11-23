@@ -115,14 +115,14 @@ namespace urbi
   int convertRGBtoJPEG(const byte* source,
 		       int w, int h, byte* dest, int &size, int quality)
   {
-    return write_jpeg(source, w, h, false, dest,size,quality);
+    return write_jpeg(source, w, h, false, dest, size, quality);
   }
 
 
   int convertYCrCbtoJPEG(const byte* source,
 			 int w, int h, byte* dest, int &size, int quality)
   {
-    return write_jpeg(source, w, h, true, dest,size,quality);
+    return write_jpeg(source, w, h, true, dest, size, quality);
   }
 
   struct mem_source_mgr
@@ -156,10 +156,10 @@ namespace urbi
 
     void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
     {
-      mem_source_mgr *src = (mem_source_mgr *) cinfo->src;
+      mem_source_mgr* src = (mem_source_mgr*) cinfo->src;
       if (num_bytes <= 0)
 	return;
-      if (num_bytes > src->pub.bytes_in_buffer)
+      if (static_cast<unsigned long> (num_bytes) > src->pub.bytes_in_buffer)
 	num_bytes = src->pub.bytes_in_buffer;
       src->pub.bytes_in_buffer -= num_bytes;
       src->pub.next_input_byte += num_bytes;
@@ -317,34 +317,39 @@ namespace urbi
 
 
 
-    //scale putting (scx,scy) at the center of destination image
+    //scale putting (scx, scy) at the center of destination image
     void scaleColorImage(unsigned char * src, int sw, int sh,
-			 int scx, int scy,
-			 unsigned char * dst, int dw, int dh, float sx, float sy)
+                         int scx, int scy, unsigned char * dst,
+                         int dw, int dh, float sx, float sy)
     {
-      for (int x=0;x<dw;x++)
-	for (int y=0;y<dh;y++)
-	{
-	  //find the corresponding point in source image
-	  float fsrcx = (float) (x-dw/2) / sx  + (float)scx;
-	  float fsrcy = (float) (y-dh/2) / sy  + (float)scy;
-	  int srcx = (int) fsrcx;
-	  int srcy = (int) fsrcy;
-	  if ( srcx<=0 || srcx>=sw-1 || srcy<=0 || srcy>=sh-1)
-	    memset(dst+(x+y*dw)*3,0,3);
-	  else { //do the bilinear interpolation
-
-	    float xfactor = fsrcx-(float)srcx;
-	    float yfactor = fsrcy-(float)srcy;
-	    for (int color=0;color<3;color++)
-	    {
-	      float up = (float)src[(srcx+srcy*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+srcy*sw)*3+color] * xfactor;
-	      float down = (float)src[(srcx+(srcy+1)*sw)*3+color] * (1.0-xfactor) + (float)src[(srcx+1+(srcy+1)*sw)*3+color] * xfactor;
-	      float result = up * (1.0-yfactor) + down * yfactor;
-	      dst[(x+y*dw)*3+color] = (unsigned char)result;
-	    }
-	  }
-	}
+      for (int x = 0; x < dw; x++)
+        for (int y = 0; y < dh; y++)
+        {
+          //find the corresponding point in source image
+          float fsrcx = (float) (x-dw/2) / sx  + (float) scx;
+          float fsrcy = (float) (y-dh/2) / sy  + (float) scy;
+          int srcx = (int) fsrcx;
+          int srcy = (int) fsrcy;
+          if (srcx <= 0 || srcx >= sw - 1 || srcy <= 0 || srcy >= sh - 1)
+            memset(dst + (x + y * dw) * 3, 0, 3);
+          else //do the bilinear interpolation
+          {
+            float xfactor = fsrcx - (float) srcx;
+            float yfactor = fsrcy - (float) srcy;
+            for (int color = 0; color < 3; color++)
+            {
+              float up = (float) src[(srcx + srcy * sw) * 3 + color]
+                * (1.0 - xfactor)
+                + (float) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
+              float down = (float) src[(srcx + (srcy + 1) * sw) * 3 + color]
+                * (1.0 - xfactor)
+                + (float) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
+                * xfactor;
+              float result = up * (1.0 - yfactor) + down * yfactor;
+              dst[(x + y * dw) * 3 + color] = (unsigned char) result;
+            }
+          }
+        }
     }
 
   } // anonymous namespace
@@ -358,113 +363,128 @@ namespace urbi
     if (dest.height == 0)
       dest.height = src.height;
     //step 1: uncompress source, to have raw uncompressed rgb or ycbcr
-    void * uncompressedData=malloc(src.width*src.height*3);
-    int usz = src.width*src.height*3;
-    int format; //0 rgb 1 ycbcr
-    int targetformat; //0 rgb 1 ycbcr 2 compressed
+    void* uncompressedData = malloc(src.width * src.height * 3);
+    int usz = src.width * src.height * 3;
+    int format = 42; //0 rgb 1 ycbcr
+    int targetformat = 42; //0 rgb 1 ycbcr 2 compressed
 
     switch(dest.imageFormat)
-      {
+    {
       case IMAGE_RGB:
       case IMAGE_PPM:
-	targetformat = 1;
-	break;
+        targetformat = 1;
+        break;
       case IMAGE_YCbCr:
-	targetformat = 0;
-	break;
+        targetformat = 0;
+        break;
       case IMAGE_JPEG:
-	targetformat = -1;
-	break;
+        targetformat = -1;
+        break;
       case IMAGE_UNKNOWN:
-	break;
-      }
-    int p,c;
+        break;
+    }
+    int p = 0;
+    int c = 0;
     switch(src.imageFormat)
-      {
+    {
       case IMAGE_YCbCr:
-	format = 1;
-	memcpy(uncompressedData, src.data, src.width*src.height*3);
-	break;
+        format = 1;
+        memcpy(uncompressedData, src.data, src.width * src.height * 3);
+        break;
       case IMAGE_RGB:
-	format = 0;
-	memcpy(uncompressedData, src.data, src.width*src.height*3);
-	break;
+        format = 0;
+        memcpy(uncompressedData, src.data, src.width * src.height * 3);
+        break;
       case IMAGE_PPM:
-	format = 0;
-	//locate header end
-	p=0;c=0;
-	while(c<3)
-	  if (src.data[p++]=='\n')
-	    c++;
-	memcpy(src.data+p, uncompressedData, src.width*src.height*3);
-	break;
+        format = 0;
+        //locate header end
+        p=0;
+        c=0;
+        while(c < 3)
+          if (src.data[p++] == '\n')
+            c++;
+        memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
+        break;
       case IMAGE_JPEG:
-	if (targetformat==0)
-	{
-	  convertJPEGtoRGB((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
-	  format = 0;
-	}
-	else
-	{
-	  convertJPEGtoYCrCb((byte *)src.data,  src.size, (byte *)uncompressedData, usz);
-	  format = 1;
-	}
-	break;
+        if (targetformat == 0)
+        {
+          convertJPEGtoRGB((byte*) src.data, src.size,
+                           (byte*) uncompressedData, usz);
+          format = 0;
+        }
+        else
+        {
+          convertJPEGtoYCrCb((byte*) src.data, src.size,
+                             (byte*) uncompressedData, usz);
+          format = 1;
+        }
+        break;
       case IMAGE_UNKNOWN:
-	break;
-      }
-
+        break;
+    }
 
     //now resize if target size is different
-    if (src.width != dest.width  ||  src.height != dest.height)
-      {
-	void * scaled = malloc(dest.width*dest.height*3);
-	scaleColorImage((unsigned char *)uncompressedData, src.width, src.height, src.width/2, src.height/2,
-			(unsigned char *)scaled, dest.width, dest.height,
-			(float)dest.width/(float)src.width, (float)dest.height/(float) src.height);
-	free(uncompressedData);
-	uncompressedData = scaled;
-      }
+    if (src.width != dest.width || src.height != dest.height)
+    {
+      void* scaled = malloc(dest.width * dest.height * 3);
+      scaleColorImage((unsigned char*) uncompressedData, src.width,
+                      src.height, src.width/2, src.height/2,
+                      (unsigned char*) scaled, dest.width, dest.height,
+                      (float) dest.width / (float) src.width,
+                      (float) dest.height / (float) src.height);
+      free(uncompressedData);
+      uncompressedData = scaled;
+    }
 
     //then convert to destination format
-    dest.data = (unsigned char *)realloc(dest.data, dest.width*dest.height*3+20);
-    dest.size =  dest.width*dest.height*3+20;
+    dest.size = dest.width * dest.height * 3 + 20;
+    dest.data = static_cast<unsigned char*> (realloc(dest.data, dest.size));
 
     switch(dest.imageFormat)
-      {
+    {
       case IMAGE_RGB:
-	if (format == 1)
-	  convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data);
-	else
-	  memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
-	break;
+        if (format == 1)
+          convertYCrCbtoRGB((byte*) uncompressedData,
+                            dest.width * dest.height * 3, (byte*) dest.data);
+        else
+          memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+        break;
       case IMAGE_YCbCr:
-	if (format == 0)
-	  convertRGBtoYCrCb((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data);
-	else
-	  memcpy(dest.data, uncompressedData, dest.width*dest.height*3);
-	break;
+        if (format == 0)
+          convertRGBtoYCrCb((byte*) uncompressedData,
+                            dest.width * dest.height * 3, (byte*) dest.data);
+        else
+          memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+        break;
       case IMAGE_PPM:
-	sprintf((char*)dest.data, "P6\n%d %d\n255\n", dest.width, dest.height);
-	if (format == 1)
-	  convertYCrCbtoRGB((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data+strlen((char*)dest.data));
-	else
-	  memcpy(dest.data+strlen((char*)dest.data), uncompressedData, dest.width*dest.height*3);
-	break;
+        sprintf((char*) dest.data, "P6\n%d %d\n255\n",
+                dest.width, dest.height);
+        if (format == 1)
+          convertYCrCbtoRGB((byte*) uncompressedData,
+                            dest.width * dest.height * 3,
+                            (byte*) dest.data + strlen((char*) dest.data));
+        else
+          memcpy(dest.data + strlen((char*) dest.data),
+                 uncompressedData, dest.width * dest.height * 3);
+        break;
       case IMAGE_JPEG:
-	/*
-	  if (format == 1)
-	  convertYCrCbtoJPEG((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data, dsz);
-	  else
-	  convertRGBtoJPEG((byte *)uncompressedData, dest.width*dest.height*3, (byte *)dest.data, dsz);
-	*/
-	fprintf(stderr,"unsoported conversion requested: cant compress to jpeg\n");
-	free(uncompressedData);
-	return 0;
-	break;
+        /*if (format == 1)
+          convertYCrCbtoJPEG((byte*) uncompressedData,
+                             dest.width * dest.height * 3,
+                             (byte*) dest.data, dsz);
+        else
+          convertRGBtoJPEG((byte*) uncompressedData,
+                           dest.width * dest.height * 3,
+                           (byte*) dest.data, dsz);
+        */
+        fprintf(stderr,
+                "unsupported conversion requested: can't compress to jpeg\n");
+        free(uncompressedData);
+        return 0;
+        break;
       case IMAGE_UNKNOWN:
-	break;
-      }
+        break;
+    }
 
     free(uncompressedData);
     return 1;
@@ -559,8 +579,8 @@ namespace urbi
   }
 
   /** Conversion between various sound formats.
-      If any of destination,'s channel, sampleSize, rate or sampleFormat parameter is 0, values from source will be used.
-      If the desitnation's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory.
+      If any of destination's channel, sampleSize, rate or sampleFormat parameter is 0, values from source will be used.
+      If the destination's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory.
   */
   int
   convert (const USound &source, USound &dest)
@@ -610,7 +630,7 @@ namespace urbi
     if (dest.soundFormat == SOUND_WAV)
     {
       wavheader * wh = (wavheader *)dest.data;
-      memcpy(wh->riff,"RIFF",4);
+      memcpy(wh->riff, "RIFF", 4);
       wh->length = dest.size - 8;
       memcpy(wh->wave, "WAVE", 4);
       memcpy(wh->fmt, "fmt ", 4);

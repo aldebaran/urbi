@@ -1,3 +1,20 @@
+2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Code cleanup and prepare for the new SDK.
+	* sdk/Makefile.am: Remove.
+	* sdk/module.mk.in: Remove.
+	* sdk/uinstall: Remove.
+	* sdk/umain.cc: Remove.
+	* sdk/umake-engine: Remove.
+	* sdk/umake-lib: Remove.
+	* sdk: Remove.
+        These file will be provided by an external later.
+
+	* src/examples/monitor.cc,
+	* src/liburbi/uabstractclient.cc,
+	* src/liburbi/uconversion.cc,
+	* src/utils/urbicycle.cc: Code cleanup.
+
 2006-11-21  Akim Demaille  <demaille@gostai.com>
 
 	liburbi-cpp is now urbi-sdk
