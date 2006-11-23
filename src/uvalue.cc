@@ -323,7 +323,10 @@ UValue & UValue::operator = (const urbi::UBinary &b)
   std::string item;
   while (!!str)
   {
+    item = "";
     str >> item;
+    if (item == "")
+      break;
     UNamedParameters * unp =
       new UNamedParameters(0, new UExpression(EXPR_VALUE,
 					      new UString(item.c_str())));

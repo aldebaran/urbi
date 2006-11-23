@@ -1,5 +1,10 @@
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
+	Fix incorrect bin header conversion 
+	* src/uvalue.cc: Fix empty stream check.
+
+2006-11-23  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix a segfault(assert fail) in uconnection.cc
 	* src/ucommand.cc: Add missing initialisation of runlevel1 in UCOMMAND_TREE ctor.
 
