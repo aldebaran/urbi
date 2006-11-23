@@ -5927,7 +5927,9 @@ UCommand_TIMEOUT::execute(UConnection*)
 					  new UCommand_WAIT(duration->copy()),
 					  new UCommand_OPERATOR_ID(new UString("stop"),
 								   tagRef->copy())),
-		       command->copy()
+		      new UCommand_TREE(UPIPE, command->copy(),
+			                new UCommand_OPERATOR_ID(new UString("stop"),
+				                                 tagRef->copy()))
       );
 
   morph->setTag(tagRef->str());

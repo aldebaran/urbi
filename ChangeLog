@@ -1,5 +1,10 @@
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
+	Fix timeout command behavior. 
+	* src/ucommand.cc: Fix timeout command morphing: command can last less than timeout.
+
+2006-11-23  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix incorrect bin header conversion 
 	* src/uvalue.cc: Fix empty stream check.
 
