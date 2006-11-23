@@ -1,5 +1,10 @@
 2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Fix calls to usleep for Windows.
+	* src/console.cc: Because 1/1000 = 0 and Sleep(0) might not work.
+
+2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Install version.hh.
         This will be extremely helpful in order to know which version is
         installed (especially for the buildfarm so that it knows which version
