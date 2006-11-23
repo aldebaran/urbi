@@ -976,6 +976,14 @@ instruction:
 
   | IF LPAREN expr RPAREN taggedcommand ELSE taggedcommand {
 
+      if (!$5)
+      {
+        delete $3;
+        delete $5;
+        delete $7;
+        error(@$, "Empty then-part within a if.");
+	YYERROR;
+      }
       $$ = new UCommand_IF($3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
@@ -1011,7 +1019,14 @@ instruction:
     }
 
   | AT LPAREN softtest RPAREN taggedcommand ONLEAVE taggedcommand {
-
+      if(!$5)
+      {
+	delete $3;
+	delete $5;
+	delete $7;
+	error(@$,"Empty body within a at command.");
+	YYERROR;
+      }
       $$ = new UCommand_AT(CMD_AT,$3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }

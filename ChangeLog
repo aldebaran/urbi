@@ -1,3 +1,12 @@
+2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Fix bug #84.
+	* src/parser/bison/ugrammar.y: Raise parse errors in cases where the
+          then-part of an if-else or the at-part of an at-onleave is empty.
+          eg: if (true) else whatever;
+              at (true) onleave whatever;
+	* vcs/local.rb: Add myself.
+
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix timeout command behavior. 
