@@ -124,6 +124,7 @@ parser/uparser.hh
 # files for the cores.
 kernelinclude_HEADERS +=			\
 fwd.hh						\
+version.hh					\
 ubinary.hh					\
 ubinder.hh					\
 ucallid.hh					\

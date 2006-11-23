@@ -1,3 +1,12 @@
+2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Install version.hh.
+        This will be extremely helpful in order to know which version is
+        installed (especially for the buildfarm so that it knows which version
+        of the kernel it's using when compiling an engine/core/sdk/you name
+        it).
+	* src/Makefile.am: Here.
+
 2006-11-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Use Sleep on Windows.
