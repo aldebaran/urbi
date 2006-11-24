@@ -33,7 +33,7 @@ include $(top_srcdir)/build-aux/check.mk
 	@rm $@-t
 
 EXTRA_DIST += check-file urbivalid
-CLEANFILES =  $(TESTS:.chk=.out) $(TESTS:.chk=.in) $(TESTS:.chk=.expout)
+CLEANFILES +=  $(TESTS:.chk=.out) $(TESTS:.chk=.in) $(TESTS:.chk=.expout)
 
 ## ---------------------- ##
 ## Update svn:externals.  ##

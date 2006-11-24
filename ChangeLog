@@ -1,5 +1,10 @@
 2006-11-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Fix CLEANFILES.
+	* tests/Makefile.am: Use '+=' because it's already initialized.
+
+2006-11-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Fix distcheck.
 	* Makefile.am (dist-hook): New: remove remaining .svn files.
 	* tests/Makefile.am (check-TESTS): Fix the case where srcdir ==
