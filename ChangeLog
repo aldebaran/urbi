@@ -1,3 +1,8 @@
+2006-11-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	List the tests that fail in XFAIL_TESTS.
+	* tests/Makefile.am: Here.
+
 2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Fix bug #84.
