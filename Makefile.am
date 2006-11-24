@@ -27,6 +27,8 @@ windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj       
 
+dist-hook:
+	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
 
 ## --------------- ##
 ## Svn externals.  ##

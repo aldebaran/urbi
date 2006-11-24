@@ -4,8 +4,8 @@ include $(top_srcdir)/build-aux/init.mk
 # *.log file that we want to keep.
 TESTS = $(notdir $(wildcard $(srcdir)/urbivalid/checkfiles/*.chk))
 XFAIL_TESTS = \
-	$(srcdir)/urbivalid/checkfiles/events.chk	\
-        $(srcdir)/urbivalid/checkfiles/tag.chk
+	events.chk	\
+        tag.chk
 TEST_LOGS = $(TESTS:.chk=.log)
 # .PRECIOUS: $(TEST_LOGS)
 
@@ -21,10 +21,10 @@ include $(top_srcdir)/build-aux/check.mk
 	$(TESTS_ENVIRONMENT) $(srcdir)/check-file $${dir}$< >$@-t 2>&1;	\
 	status=$$?;					\
 	case $$status:" $(XFAIL_TESTS) " in		\
-	    0:*' $< '*) res='XPASS';;			\
+	    0:*" $$(basename $<) "*) res='XPASS';;	\
 	    0:*)        res='PASS' ;;			\
 	    77:*)       res='SKIP' ;;			\
-	    *:*' $< '*) res='XFAIL';;			\
+	    *:*" $$(basename $<) "*) res='XFAIL';;	\
 	    *:*)        res='FAIL' ;;			\
 	   esac;					\
 	echo "$$res: $$(basename $<)";			\
@@ -32,6 +32,8 @@ include $(top_srcdir)/build-aux/check.mk
 	@cat $@-t >>$@
 	@rm $@-t
 
+EXTRA_DIST += check-file urbivalid
+CLEANFILES =  $(TESTS:.chk=.out) $(TESTS:.chk=.in) $(TESTS:.chk=.expout)
 
 ## ---------------------- ##
 ## Update svn:externals.  ##
