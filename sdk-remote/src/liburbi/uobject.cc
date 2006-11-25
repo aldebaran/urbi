@@ -78,7 +78,16 @@ namespace urbi
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
-
+  
+  const char * cast(UValue &v, const char ** b) 
+  {
+    static const char * er = "invalid";
+    if (v.type != DATA_STRING)
+      return er;
+    return v.stringValue->c_str();
+  }
+  
+  
   std::ostream&  unarmorAndSend(const char* a);
   void uobject_unarmorAndSend(const char* a)
   {
@@ -337,7 +346,7 @@ namespace urbi
     // UEM_ASSIGNVALUE
     if ((USystemExternalMessage)(int)array[0] == UEM_ASSIGNVALUE)
       {
-	UVarTable::iterator varmapfind = varmap.find((std::string)array[1]);
+	UVarTable::iterator varmapfind = varmap.find(array[1]);
 	if (varmapfind != varmap.end())
 	  for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	       it != varmapfind->second.end();
@@ -345,7 +354,7 @@ namespace urbi
 	    (*it)->__update(array[2]);
 
 	UTable::iterator monitormapfind =
-	  monitormap.find((std::string)array[1]);
+	  monitormap.find(array[1]);
 	if (monitormapfind != monitormap.end())
 	  for (std::list<UGenericCallback*>::iterator cbit = monitormapfind->second.begin();
 	       cbit != monitormapfind->second.end();
@@ -365,9 +374,9 @@ namespace urbi
 	// For the moment, this iteration is useless since the list will contain
 	// one and only one element. There is no function overloading yet and still
 	// it would probably use a unique name identifier, hence a single element list again.
-	if (functionmap.find((std::string)array[1]) != functionmap.end())
+	if (functionmap.find(array[1]) != functionmap.end())
 	  {
-	    std::list<UGenericCallback*> tmpfun = functionmap[(std::string)array[1]];
+	    std::list<UGenericCallback*> tmpfun = functionmap[array[1]];
 	    std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 	    array.setOffset(3);
 	    UValue retval = (*tmpfunit)->__evalcall(array);
@@ -388,9 +397,9 @@ namespace urbi
     // UEM_EMITEVENT
     else if ((USystemExternalMessage)(int)array[0] == UEM_EMITEVENT)
       {
-	if (eventmap.find((std::string)array[1]) != eventmap.end())
+	if (eventmap.find(array[1]) != eventmap.end())
 	  {
-	    std::list<UGenericCallback*>  tmpfun = eventmap[(std::string)array[1]];
+	    std::list<UGenericCallback*>  tmpfun = eventmap[array[1]];
 	    for (std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 		 tmpfunit != tmpfun.end();
 		 tmpfunit++)
@@ -405,9 +414,9 @@ namespace urbi
     // UEM_ENDEVENT
     else if ((USystemExternalMessage)(int)array[0] == UEM_ENDEVENT)
       {
-	if (eventendmap.find((std::string)array[1]) != eventendmap.end())
+	if (eventendmap.find(array[1]) != eventendmap.end())
 	  {
-	    std::list<UGenericCallback*>  tmpfun = eventendmap[(std::string)array[1]];
+	    std::list<UGenericCallback*>  tmpfun = eventendmap[array[1]];
 	    for (std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 		 tmpfunit != tmpfun.end();
 		 tmpfunit++)

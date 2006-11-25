@@ -1,3 +1,16 @@
+2006-11-25  Matthieu Nottale  <nottale@gostai.com>
+
+	Add more uvalue from/to cast stuff
+	* src/liburbi/uobject.cc: 
+	   - Add a const char * "cast".
+	   - Remove unneccesary explicit casts in code.
+	* src/liburbi/uobject/urbi/uobject.hh.template: 
+	   - Add const char * cast
+	   - Add ctors taking void*, unsigned long, long and unsigned int, and cast operator to long unisgned long and unsigned int.
+	   - Remove the template cast implementation that calls cast operator, use SETCAST with explicit type list.
+	   - Add non-member function support to createUCallback mechanism. 
+	* src/liburbi/uobject/uvalue-common.cc: Add ctors mentionned above. void* ctor set uvalue to "%ptr_<adderess>.
+
 2006-11-23  Benjamin Renoust  <renoust@gostai.com>
 
 	Add YCbCr function.

@@ -430,7 +430,11 @@ namespace urbi
     UValue(const UValue&);
     explicit UValue(ufloat doubleValue);
     explicit UValue(int intValue);
+    explicit UValue(long intValue);
+    explicit UValue(unsigned int intValue);
+    explicit UValue(unsigned long intValue);
     explicit UValue(char * val);
+    explicit UValue(void * val);
     explicit UValue(const std::string& str);
     explicit UValue(const UBinary& b);
     explicit UValue(const UList & l);
@@ -440,6 +444,9 @@ namespace urbi
     operator ufloat() const;
     operator std::string() const;
     operator int() const {return (int)(ufloat)(*this);}
+    operator unsigned int() const {return (unsigned int)(ufloat)(*this);}
+    operator long() const {return (int)(ufloat)(*this);}
+    operator unsigned long() const {return (unsigned int)(ufloat)(*this);}
     operator bool() const {return (bool)(int)(ufloat)(*this);}
     operator UBinary() const; ///< deep copy
     operator UList() const; ///< deep copy
@@ -591,7 +598,7 @@ namespace urbi
   inline void UProp::operator =(const double v) {owner.setProp(name,v);}
   inline void UProp::operator =(const std::string& v) {owner.setProp(name,v);}
   inline UProp::operator double() {return (double)owner.getProp(name);}
-  inline UProp::operator std::string()  {return (std::string)owner.getProp(name);}
+  inline UProp::operator std::string()  {return owner.getProp(name);}
   inline UProp::operator UValue() {return owner.getProp(name);}
 
   // *****************************************************************************
@@ -813,28 +820,17 @@ namespace urbi
   // Casters
 
 
-# ifndef _MSC_VER
-
-  // generic caster  , second parameter used only to guess correct type
-  template <class T>  T cast(UValue &v, T* type) { return (T)v; }
-
-  // specializations
-  UVar& cast(UValue &val, UVar *var);
-  UBinary cast(UValue &v, UBinary * b);
-  UList cast(UValue &v, UList *l);
-  UObjectStruct cast(UValue &v, UObjectStruct *o);
-
-# else
-  //something weird happens when overloading with a different return type, so define everythiong by hand
-
 # define SETCAST(type)				\
   inline type					\
-  cast(UValue &val, type *inu)			\
+  cast(UValue &val, type *)			\
   {						\
     return (type)val;				\
   }
 
   SETCAST(int);
+  SETCAST(unsigned int);
+  SETCAST(long);
+  SETCAST(unsigned long);
   SETCAST(ufloat);
   SETCAST(std::string);
   SETCAST(UImage);
@@ -843,7 +839,7 @@ namespace urbi
   UBinary cast(UValue &v, UBinary * b);
   UList cast(UValue &v, UList *l);
   UObjectStruct cast(UValue &v, UObjectStruct *o);
-# endif
+  const char * cast(UValue &v, const char ** b);
 
 #ifndef UOBJECT_NO_LIST_CAST
 template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
@@ -1080,6 +1076,53 @@ class UCallbacknotifyend%N% : public UGenericCallback
   void (OBJ::*fun) ();
 };
 
+// void non-member function
+template <class INU %%, class P% %%>
+class UFCallbackvoid%N% : public UGenericCallback
+{
+ public:
+  UFCallbackvoid%N%(const std::string& objname, const std::string& type,  void (*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t),  fun(fun) {};
+
+  virtual UValue __evalcall(UList &param)
+  {
+    (*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%);
+    return UValue();
+  };
+ private:
+  void (*fun) (%%%,% P% %%);
+};
+
+// non void non-member function
+template <class R%%, class P% %%>
+class UFCallback%N% : public UGenericCallback
+{
+ public:
+  UFCallback%N%(const std::string& objname, const std::string& type, R (*fun) (%%%,% P% %%), const std::string& funname, UTable &t):
+    UGenericCallback(objname, type, funname,%N%, t),  fun(fun) {};
+  virtual UValue __evalcall(UList& param)
+  {
+    return UValue((*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref *)0) %%));
+  };
+ private:
+  R (*fun) (%%%,% P% %%);
+};
+
+// callback creation for non-member non void return type
+
+template <class R%%, class P% %%>
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type, R (*fun) (%%%,% P% %%), const std::string& funname,UTable &t)
+{
+  return ((UGenericCallback*) new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t));
+}
+
+// callback creation for non-member void return type
+// inline required since one of them is not a template
+template <%%%,% class P% %%> inline 
+UGenericCallback* createUCallback(const std::string& objname, const std::string& type,  void (*fun) (%%%,% P% %%), const std::string& funname,UTable &t)
+{
+  return ((UGenericCallback*) new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t));
+}
 
 // callback creation for non void return type
 

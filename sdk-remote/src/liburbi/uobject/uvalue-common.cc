@@ -464,7 +464,23 @@ namespace urbi
   UValue::UValue(int v)
     : type(DATA_DOUBLE), val(v)
   {}
-
+  UValue::UValue(unsigned int v)
+    : type(DATA_DOUBLE), val(v)
+  {}
+   UValue::UValue(long v)
+    : type(DATA_DOUBLE), val(v)
+  {}
+   UValue::UValue(unsigned long v)
+    : type(DATA_DOUBLE), val(v)
+  {}
+  
+  UValue::UValue(void * v)
+  : type(DATA_STRING)
+  {
+    std::ostringstream i;
+    i<<"%ptr_"<<(unsigned long)v;
+    stringValue = new std::string(i.str());
+  }
   UValue::UValue(char*  v)
     : type(DATA_STRING), stringValue(new std::string(v))
   {}
