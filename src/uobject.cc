@@ -81,7 +81,15 @@ namespace urbi
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
-
+  
+  const char * cast(UValue &v, const char ** b) 
+  {
+    static const char * er = "invalid";
+    if (v.type != DATA_STRING)
+      return er;
+    return v.stringValue->c_str();
+  }
+  
   // USeful sending functions
 
   void uobject_unarmorAndSend(const char * str)

@@ -1,3 +1,9 @@
+2006-11-25  Matthieu Nottale  <nottale@gostai.com>
+
+	Bugfix <TITLE> uobject up
+	* src/ucommand.cc: Fix a bug in ucommand_assign::execute.
+	* src/uobject.cc: Implement new "cast" overload to const char *.
+
 2006-11-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Fix CLEANFILES.

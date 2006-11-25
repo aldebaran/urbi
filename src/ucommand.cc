@@ -769,13 +769,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 
     ////// module-defined /////
-
+    bool found_function = false;
     urbi::UTable::iterator hmfi =
       urbi::functionmap.find(functionname->str());
     if (hmfi != urbi::functionmap.end())
     {
-      bool found_function = false;
-
+      
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   ((cbi != hmfi->second.end()) && (!found_function));
@@ -815,44 +814,44 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     }
 
     ////// EXTERNAL /////
-
-    HMbindertab::iterator it =
-      ::urbiserver->functionbindertab.find(functionname->str());
-    if (it != ::urbiserver->functionbindertab.end()
+    if (!found_function) {
+      HMbindertab::iterator it =
+        ::urbiserver->functionbindertab.find(functionname->str());
+      if (it != ::urbiserver->functionbindertab.end()
 	&& (expression->parameters
 	    ? it->second->nbparam == expression->parameters->size()
 	    : it->second->nbparam==0)
 	&& !it->second->monitors.empty())
-    {
-      int UU = unic();
-      char tmpprefix[1024];
-      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-	       functionname->str(), it->second->nbparam, UU);
-
-      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	   it2 != it->second->monitors.end();
-	   it2++)
       {
-	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
-	for (UNamedParameters *pvalue = expression->parameters;
-	     pvalue != 0;
-	     pvalue = pvalue->next)
+	int UU = unic();
+	char tmpprefix[1024];
+	snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
+	  functionname->str(), it->second->nbparam, UU);
+	
+	for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+	  it2 != it->second->monitors.end();
+	  it2++)
 	{
-	  (*it2)->c->sendc((const ubyte*)",", 1);
-	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*it2)->c);
+	  (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	  (*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
+	  for (UNamedParameters *pvalue = expression->parameters;
+	    pvalue != 0;
+	    pvalue = pvalue->next)
+	  {
+	    (*it2)->c->sendc((const ubyte*)",", 1);
+	    UValue* valparam = pvalue->expression->eval(this, connection);
+	    valparam->echo((*it2)->c);
+	  }
+	  (*it2)->c->send((const ubyte*)"]\n", 2);
 	}
-	(*it2)->c->send((const ubyte*)"]\n", 2);
-      }
 
-      persistant = false;
-      sprintf(tmpbuffer,
-	      "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-	      "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-	      UU, variablename->getFullname()->str(), UU, UU);
-
-      morph = (UCommand*)
+	persistant = false;
+	sprintf(tmpbuffer,
+	  "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+	  "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+	  UU, variablename->getFullname()->str(), UU, UU);
+	
+	morph = (UCommand*)
 	new UCommand_EXPR
 	(
 	  new UExpression
@@ -874,7 +873,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	      )
 	    )
 	  );
-      return ((status = UMORPH));
+	return ((status = UMORPH));
+      }
     }
   } // fi: expr == function
 
