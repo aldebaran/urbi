@@ -1,7 +1,12 @@
 #ifndef NETWORK_HH
 # define NETWORK_HH
 
+# include "config.h"
+
 # ifdef WIN32
+#  ifndef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0400
+#  endif
 #  define GROUP __GROUP
 #  include <winsock2.h>
 #  undef GROUP

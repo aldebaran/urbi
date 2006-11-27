@@ -1,3 +1,9 @@
+#ifdef WIN32
+# ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0400
+# endif
+#endif
+
 #include <cstdio>
 
 #ifndef _MSC_VER
@@ -9,9 +15,6 @@
 #include <list>
 #include <algorithm>
 
-#ifdef WIN32
-#define _WIN32_WINNT 0x0400
-#endif
 #include "network/bsdnet/network.hh"
 #include "network/bsdnet/connection.hh"
 

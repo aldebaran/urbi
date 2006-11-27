@@ -90,6 +90,7 @@ utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk
 	     -e 's,<FlexLexer.h>,"parser/bison/flex-lexer.hh",;'\
 	     -e 's/class istream;/#include <iostream>/;'	\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
+	     -e 's/# *include *<unistd.h>/#include "config.h"\n#ifndef WIN32\n$$&\n#endif/;'	\
 	     utoken.cc
 	@mv -f $@.tmp $@
 
