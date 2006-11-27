@@ -22,6 +22,9 @@
 **********************************************************************/
 
 #ifdef WIN32
+# ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0400
+# endif
 # include <windows.h>
 #endif
 
@@ -37,24 +40,19 @@
 #include "urbi/uabstractclient.hh"
 #include "libport/lockable.hh"
 
-#if DEBUG
-//
-//#include <sys/time.h>
-static int mtime()
-{
-  return 12;
-  /*
-  static int base = 0;
-  timeval tv;
-  gettimeofday(&tv, NULL);
-  int tme = tv.tv_sec * 1000 + (tv.tv_usec / 1000);
-  if (!base)
-    base = tme;
-    return tme - base;*/
-}
-#endif
+/* "min" shouldn't be defined as a preprocessor macro. On windows, it is. So
+ * using std::min leads to a parse error because CPP expands it as
+ *   std::((a) < (b) ? (a) : (b))
+ * However, this should only occur on windows with the STL of MS VC++.
+ */
+#ifdef min
+# ifdef WIN32
+#  undef min
+# else
+#  error "min is defined as a CPP macro and we're not on WIN32. Report this!"
+# endif /* !WIN32 */
+#endif /* !min */
 
-//inline int min(int a, int b) {if (a<b) return a; else return b;}
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"
 

@@ -6,8 +6,11 @@
 #include <sys/stat.h>
 
 #ifdef WIN32
-#include <windows.h>
-#define sleep(a) Sleep(a*1000)
+# ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0400
+# endif
+# include <windows.h>
+# define sleep(a) Sleep((a) * 1000)
 #endif
 
 int main(int argc, char * argv[])

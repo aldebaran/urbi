@@ -1,3 +1,25 @@
+2006-11-27  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Patch for Win32/VC++ and code cleanup
+	* configure.ac: Invoke URBI_PTHREAD. This also defines the
+          AM_CONDITIONAL WIN32 (required for src/examples/Makefile.am).
+	* src/examples/Makefile.am: Link with libjpeg.
+
+	* src/liburbi/uclient.cc,
+	* src/liburbi/uabstractclient.cc,
+	* src/liburbi/umain.cc,
+	* src/examples/urbiping.cc,
+	* src/examples/urbisendbin.cc,
+	* src/examples/monitor-win.h,
+	* src/examples/urbiplay.cc: Define _WIN32_WINNT before include windows.h.
+
+	* src/liburbi/usyncclient.cc: VC++ #defines min. #Undef it.
+
+	* src/utils/urbicycle.cc: VC++ doesn't handle variable-size arrays on
+          stack.
+	* src/utils/move.cc,
+	* src/utils/urbiscale.cc: Ditto + massive code cleanup.
+
 2006-11-25  Matthieu Nottale  <nottale@gostai.com>
 
 	Add more uvalue from/to cast stuff

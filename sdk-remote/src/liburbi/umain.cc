@@ -20,8 +20,11 @@
 
 #include <urbi/uobject.hh>
 #ifdef WIN32
+# ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0400
+# endif
 # include <windows.h>
-# define usleep(a) Sleep(a/1000)
+# define usleep(a) Sleep((a) < 1000 ? 1 : (a) / 1000)
 #else
 # include <unistd.h>
 #endif

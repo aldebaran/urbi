@@ -4,7 +4,7 @@
 #include <signal.h>
 
 
-urbi::UClient *c;
+urbi::UClient* c;
 unsigned int sendtime;
 unsigned int mintime;
 unsigned int maxtime;
@@ -16,13 +16,16 @@ bool received;
 int count;
 
 #ifdef WIN32
-# include<windows.h>
-# define usleep(a) Sleep(a/1000)
+# ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0400
+# endif
+# include <windows.h>
+# define usleep(a) Sleep((a) < 1000 ? 1 : (a) / 1000)
 #endif
 
 
 urbi::UCallbackAction
-pong(const urbi::UMessage & msg)
+pong(const urbi::UMessage& msg)
 {
   unsigned int ptime = msg.client.getCurrentTime() - sendtime;
   if ((!pingCount) || mintime>ptime)

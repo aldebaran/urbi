@@ -1,6 +1,9 @@
 include $(top_srcdir)/flags.mk
 
-AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la $(PTHREAD_LIBS)
+AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
+           $(top_builddir)/jpeg-6b/libjpeg.la		\
+           $(PTHREAD_LIBS)
+
 # This is a hack for Automake 1.9: 1.10 honors AM_LDADD.
 LDADD = $(AM_LDADD)
 
@@ -43,7 +46,7 @@ urbiballtrackinghead				\
 urbiimage
 
 if WIN32
-bin_PROGRAMS += $(monitor_programs)
+#bin_PROGRAMS += $(monitor_programs)
 monitor_sources = monitor-win.h monitor-win.cc
 endif
 
@@ -54,6 +57,7 @@ endif
 
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cc $(monitor_sources)
 urbiballtrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
+urbiballtrackinghead_CPPFLAGS = $(AM_CPPFLAGS) $(CPPFLAGS)
 urbiballtrackinghead_LDADD = $(X11_LDADD) $(AM_LDADD)
 
 urbiimage_SOURCES = urbiimage.cc $(monitor_sources)

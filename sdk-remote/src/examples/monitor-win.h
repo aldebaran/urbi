@@ -1,6 +1,12 @@
+#ifndef MONITOR_WIN_H_
+# define MONITOR_WIN_H_
+
 typedef unsigned char bits8;
 
-#include <windows.h>
+# ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0400
+# endif
+# include <windows.h>
 
 class Monitor
 {
@@ -15,3 +21,4 @@ class Monitor
   int w,h;
   HWND window;
 };
+#endif /* !MONITOR_WIN_H_ */
