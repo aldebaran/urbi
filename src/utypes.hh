@@ -46,7 +46,6 @@ extern  int   availableMemory; //< Total amount of free memory in the system
 # define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
 # define ADDOBJ(x)   {usedMemory += ((int)(sizeof(x)*1.15));}
 # define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
-
 # define LIBERATE(x) if (x && x->liberate()==0) delete (x)
 # define DD ::urbiserver->debug("Check point %s, %d\n", __FILE__, __LINE__);
 # define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n", \

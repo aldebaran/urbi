@@ -1,3 +1,11 @@
+2006-11-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	fix ticket #77 
+	* src/ucommand.cc: add missing event deletion in UCommand_EMIT
+        destructor + code refactoring.
+	* src/ucommand.hh: add removeEvent method.
+	* src/utypes.hh: nothing.
+
 2006-11-25  Matthieu Nottale  <nottale@gostai.com>
 
 	Bugfix <TITLE> uobject up

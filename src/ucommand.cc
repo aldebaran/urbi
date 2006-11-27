@@ -4800,6 +4800,8 @@ UCommand_EMIT::UCommand_EMIT(UVariableName *eventname,
 UCommand_EMIT::~UCommand_EMIT()
 {
   FREEOBJ(UCommand_EMIT);
+  if (event && eh)
+    removeEvent ();
 
   delete eventname;
   delete parameters;
@@ -4949,52 +4951,57 @@ UCommand_EMIT::execute(UConnection *connection)
 
   if ((thetime > targetTime) && (!firsttime))
   {
-    // unregister event
-    ASSERT (event && eh) // free the event
-      eh->removeEvent (event);
-
-    ////// EXTERNAL /////
-
-    HMbindertab::iterator it =
-      ::urbiserver->eventbindertab.find(eventnamestr);
-    if ((it != ::urbiserver->eventbindertab.end()) &&
-	(parameters) &&
-	(it->second->nbparam == parameters->size()) &&
-	(!it->second->monitors.empty()))
-    {
-      char tmpprefix[1024];
-      snprintf(tmpprefix, 1024, "[3,\"%s__%d\"]\n",
-	       eventnamestr, it->second->nbparam);
-
-      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	   it2 != it->second->monitors.end();
-	   it2++)
-      {
-	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
-      }
-    }
-
-    ////// INTERNAL /////
-
-    urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
-    if (hmfi != urbi::eventendmap.end())
-    {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	     hmfi->second.begin();
-	   cbi != hmfi->second.end();
-	   cbi++)
-      {
-	urbi::UList tmparray;
-	(*cbi)->__evalcall(tmparray);
-      }
-    }
-
+    removeEvent ();
     return ((status = UCOMPLETED));
   }
 
   firsttime = false;
   return (status = UBACKGROUND);
+}
+
+void
+UCommand_EMIT::removeEvent ()
+{
+  // unregister event
+  ASSERT (event && eh) // free the event
+    eh->removeEvent (event);
+
+  ////// EXTERNAL /////
+
+  HMbindertab::iterator it =
+    ::urbiserver->eventbindertab.find(eventnamestr);
+  if ((it != ::urbiserver->eventbindertab.end()) &&
+      (parameters) &&
+      (it->second->nbparam == parameters->size()) &&
+      (!it->second->monitors.empty()))
+  {
+    char tmpprefix[1024];
+    snprintf(tmpprefix, 1024, "[3,\"%s__%d\"]\n",
+             eventnamestr, it->second->nbparam);
+
+    for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
+         it2 != it->second->monitors.end();
+         it2++)
+    {
+      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+    }
+  }
+
+  ////// INTERNAL /////
+
+  urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
+  if (hmfi != urbi::eventendmap.end())
+  {
+    for (std::list<urbi::UGenericCallback*>::iterator cbi =
+         hmfi->second.begin();
+         cbi != hmfi->second.end();
+         cbi++)
+    {
+      urbi::UList tmparray;
+      (*cbi)->__evalcall(tmparray);
+    }
+  }
 }
 
 //! UCommand subclass hard copy function

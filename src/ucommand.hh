@@ -663,6 +663,9 @@ public:
   virtual UCommandStatus execute(UConnection *connection);
   virtual UCommand*      copy();
 
+  /// terminate and clean the event when the emit ends.
+  void removeEvent ();
+
   /// Name of the event
   UVariableName      *eventname;
   /// list of parameters
