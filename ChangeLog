@@ -1,3 +1,7 @@
+2006-11-28  Matthieu Nottale  <nottale@gostai.com>
+
+	uobject up
+
 2006-11-27  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Fixes for win32/MSVC++.
