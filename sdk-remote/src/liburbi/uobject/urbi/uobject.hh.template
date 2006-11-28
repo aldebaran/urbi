@@ -833,6 +833,8 @@ namespace urbi
   SETCAST(unsigned long);
   SETCAST(ufloat);
   SETCAST(std::string);
+  SETCAST(const std::string);
+  SETCAST(bool);
   SETCAST(UImage);
   SETCAST(USound);
   UVar& cast(UValue &val, UVar *var);

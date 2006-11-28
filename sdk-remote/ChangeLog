@@ -1,3 +1,8 @@
+2006-11-28  Matthieu Nottale  <nottale@gostai.com>
+
+	uped sdk, add missing SETCAST for bool and const std::string
+	* src/liburbi/uobject/urbi/uobject.hh.template: add missing SETCAST for bool and const std::string.
+
 2006-11-27  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Patch for Win32/VC++ and code cleanup
