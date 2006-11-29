@@ -611,6 +611,8 @@ namespace urbi
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback( callback (&debug));
+#else
+    getDefaultClient()->setErrorCallback( callback (&debug));
 #endif
 
     getDefaultClient()->setCallback(&dispatcher,
