@@ -75,6 +75,7 @@ namespace urbi
     {
       this->msg = new UMessage(msg);
       (*syncLock)++;
+      syncTag = "";
     }
     else
     {
