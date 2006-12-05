@@ -1,5 +1,11 @@
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
+	Formatting
+	* src/uvalue.cc: here.
+	And use case instead of if.
+
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
 	Kill more useless parens
 	* src/console.cc,
 	* src/ubinder.cc,
