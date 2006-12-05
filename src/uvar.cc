@@ -144,7 +144,6 @@ namespace urbi
     vardata->variable->value->dataType = ::DATA_NUM;
 
     if (owned)
-      //    in() = n;
       vardata->variable->setSensorVal(n);
     else
       vardata->variable->setFloat(n);
@@ -283,8 +282,6 @@ namespace urbi
     else
       return er;
   }
-
-
 
 
   void
