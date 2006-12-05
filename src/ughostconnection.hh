@@ -33,7 +33,6 @@
 class UGhostConnection : public UConnection
 {
 public:
-
   UGhostConnection  ( UServer *mainserver );
   virtual ~UGhostConnection ();
 
@@ -48,7 +47,6 @@ public:
   static const int MAXRECVBUFFERSIZE = 32768;
 
 protected:
-
   virtual int   effectiveSend     (const ubyte *buffer, int length);
 };
 

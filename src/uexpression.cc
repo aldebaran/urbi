@@ -742,17 +742,15 @@ UExpression::eval (UCommand *command,
 	// error evaluation for variables (target-val)
 	if (variablename->varerror
 	    && variable->value->dataType == DATA_NUM)
-	{
 	  ret->val = variable->previous - ret->val;
-	}
 
 	// normalized variables
 	if (variablename->isnormalized
 	    && variable->rangemax != variable->rangemin)
 	{
-	  if ((variable->rangemin == -UINFINITY) ||
-	      (variable->rangemax ==  UINFINITY) ||
-	      (variable->value->dataType != DATA_NUM))
+	  if (variable->rangemin == -UINFINITY ||
+	      variable->rangemax ==  UINFINITY ||
+	      variable->value->dataType != DATA_NUM)
 	  {
 	    snprintf(errorString, errSize,
 		     "!!! Impossible to normalize:"
@@ -843,7 +841,8 @@ UExpression::eval (UCommand *command,
     case EXPR_PROPERTY:
 
       variable = variablename->getVariable(command, connection);
-      if (!variablename->getFullname()) return 0;
+      if (!variablename->getFullname())
+	return 0;
       if (!variable)
       {
 	snprintf(errorString, errSize, "!!! Unknown identifier: %s\n",
@@ -1207,7 +1206,7 @@ UExpression::eval (UCommand *command,
 	  }
 
 	  if (connection->server->loadFile(e1->str->str(),
-					   loadcmd->loadQueue) == UFAIL)
+					   &loadcmd->loadQueue) == UFAIL)
 	  {
 	    snprintf(errorString, errSize,
 		     "!!! Cannot load the file %s\n", e1->str->str());

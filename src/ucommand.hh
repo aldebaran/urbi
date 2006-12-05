@@ -1120,7 +1120,8 @@ public:
   virtual UCommand*      copy();
 
   /// To load files.
-  UCommandQueue       *loadQueue;
+  UCommandQueue       loadQueue;
+private:
   /// To alternate exec/non-exec state (a kind of noop).
   bool ready;
   /// The load command.

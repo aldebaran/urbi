@@ -7400,7 +7400,7 @@ MEMORY_MANAGER_INIT(UCommand_LOAD);
  */
 UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode) :
   UCommand(CMD_LOAD),
-  loadQueue (new UCommandQueue (4096, 1048576, false)),
+  loadQueue (4096, 1048576, false),
   mainnode (mainnode)
 {
   ADDOBJ(UCommand_LOAD);
@@ -7410,53 +7410,51 @@ UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode) :
 UCommand_LOAD::~UCommand_LOAD()
 {
   FREEOBJ(UCommand_LOAD);
-
-  delete loadQueue;
 }
 
 //! UCommand subclass execution function
 UCommandStatus UCommand_LOAD::execute(UConnection *connection)
 {
-  if (connection->receiving) return status = URUNNING;
+  if (connection->receiving)
+    return status = URUNNING;
 
   int length;
-  ubyte* str_command = loadQueue->popCommand(length);
+  ubyte* str_command = loadQueue.popCommand(length);
 
   if (str_command == 0 && length==-1)
     return status = UCOMPLETED;
 
-  if (length !=0)
+  if (length)
   {
-    ::urbiserver->parser.commandTree = 0;
-    errorMessage[0] = 0;
-
+    UParser &p = ::urbiserver->parser;
+    p.commandTree = 0;
     ::urbiserver->systemcommands = false;
-    ::urbiserver->parser.process(str_command, length, connection);
+    *errorMessage = 0;
+    p.process(str_command, length, connection);
     ::urbiserver->systemcommands = true;
 
-    if (errorMessage[0] != 0)
+    if (*errorMessage)
     {
-      // a parsing error occured
-      if (::urbiserver->parser.commandTree)
-      {
-	delete ::urbiserver->parser.commandTree;
-	::urbiserver->parser.commandTree = 0;
-      }
-
-      connection->send(errorMessage, "error");
-      return status = UCOMPLETED;
-    }
-    else
-    {
-      ::urbiserver->parser.commandTree->setTag("__system__");
-      ::urbiserver->parser.commandTree->command2 = this;
-      up = ::urbiserver->parser.commandTree;
-      position = &(::urbiserver->parser.commandTree->command2);
-      morph = ::urbiserver->parser.commandTree;
-      ::urbiserver->parser.commandTree = 0;
+      p.commandTree->setTag("__system__");
+      p.commandTree->command2 = this;
+      up = p.commandTree;
+      position = &p.commandTree->command2;
+      morph = p.commandTree;
+      p.commandTree = 0;
 
       persistant = true;
       return status = UMORPH;
+    }
+    else
+    {
+      // a parsing error occured
+      if (p.commandTree)
+      {
+	delete p.commandTree;
+	p.commandTree = 0;
+      }
+      connection->send(errorMessage, "error");
+      return status = UCOMPLETED;
     }
   }
   else

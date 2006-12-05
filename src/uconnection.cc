@@ -92,15 +92,31 @@ UConnection::UConnection  (UServer *userver,
 			   int packetSize,
 			   int minRecvBufferSize,
 			   int maxRecvBufferSize)
+  : UError(USUCCESS),
+    server(userver),
+    packetSize_(packetSize),
+    sendAdaptive_(UConnection::ADAPTIVE),
+    recvAdaptive_(UConnection::ADAPTIVE),
+    // Initial state of the connection: unblocked, not receiving binary.
+    blocked_(false),
+    receiveBinary_(false),
+    active_(true),
+    
+    // no active command and no last command at start:
+    lastCommand(0),
+    activeCommand(0),
+    
+    functionTag(0),
+    killall(false),
+    closing(false),
+    newDataAdded(false),
+    returnMode(false),
+    obstructed(false),
+    receiving(false),
+    inwork(false),
+    clientIP(0)
 {
-  UError = USUCCESS;
   char tmpbuffer_connectionTag[50];
-
-  server	   = userver;
-  packetSize_	   = packetSize;
-  sendAdaptive_	   = UConnection::ADAPTIVE;
-  recvAdaptive_	   = UConnection::ADAPTIVE;
-
   // Create send queue
   sendQueue_	   = new UQueue(minSendBufferSize,
 				maxSendBufferSize,
@@ -123,17 +139,8 @@ UConnection::UConnection  (UServer *userver,
     return;
   }
 
-  // Initial state of the connection: unblocked, not receiving binary.
-  blocked_	       = false;
-  receiveBinary_       = false;
-  active_	       = true;
-
   for (int i = 0; i < MAX_ERRORSIGNALS ; i++)
     errorSignals_[i] = false;
-
-  // no active command and no last command at start:
-  lastCommand = 0;
-  activeCommand = 0;
 
   // initialize the connection tag used to reference local variables
   sprintf(tmpbuffer_connectionTag, "U%ld", (long)this);
@@ -141,15 +148,6 @@ UConnection::UConnection  (UServer *userver,
   UVariable* cid = new UVariable(tmpbuffer_connectionTag, "connectionID",
 				 tmpbuffer_connectionTag);
   if (cid) cid->uservar = false;
-  functionTag = 0;
-  killall = false;
-  closing = false;
-  newDataAdded = false;
-  returnMode = false;
-  obstructed = false;
-  receiving  = false;
-  inwork     = false;
-  clientIP   = 0;
 }
 
 //! UConnection destructor.
@@ -1208,9 +1206,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	obstructed = false;
 
       tree->command2 = processCommand (tree->command2,
-					tree->runlevel2,
-					mustReturn );
-
+				       tree->runlevel2,
+				       mustReturn);
       if (mustReturn)
       {
 	tree = (UCommand_TREE*) tree->command2;
@@ -1232,45 +1229,34 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	*(tree->position) = 0;
       oldtree = tree;
 
-      UNamedParameters *param = tree->flags;
-      while (param)
-      {
-	if ((param->name) &&
-	    (param->name->equal("flag")) &&
-	    (param->expression) &&
-	    ((param->expression->val == 3 ) || // 3 = +end
-	     (param->expression->val == 1 ) )) // 1 = +report
+      for (UNamedParameters *param = tree->flags; param; param = param->next)
+	if (param->name &&
+	    param->name->equal("flag") &&
+	    param->expression &&
+	    (param->expression->val == 3 || // 3 = +end
+	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", tree->getTag().c_str());
-
-	param = param->next;
-      }
-
       tree = tree->up;
 
       delete oldtree;
       continue;
     }
-    else
-      if ((((tree->command1 == 0) ||
-	      (tree->command1->status == UBACKGROUND)) &&
-
-	     ((tree->command2 == 0) ||
-	      (tree->command2->status == UBACKGROUND))) ||
-
-	   (tree->background == true) ||
-	   (tree->flagType&8))
-	tree->status = UBACKGROUND;
+    else if (((tree->command1 == 0 || tree->command1->status == UBACKGROUND)
+	      && (tree->command2 == 0 || tree->command2->status == UBACKGROUND))
+	     || tree->background == true
+	     || (tree->flagType&8))
+      tree->status = UBACKGROUND;
 
     tree->runlevel1 = UWAITING;
     tree->runlevel2 = UWAITING;
 
     // REDUCTION
 
-    if ((tree != lastCommand) &&
-	(tree != execCommand) &&
-	(!tree->toDelete) &&
-	(tree->command1 == 0) &&
-	(tree->command2 != 0))
+    if (tree != lastCommand &&
+	tree != execCommand &&
+	!tree->toDelete &&
+	tree->command1 == 0 &&
+	tree->command2 != 0)
     {
       // left reduction
       ASSERT(tree->position!=0) *(tree->position) = tree->command2;
@@ -1285,12 +1271,12 @@ UConnection::execute(UCommand_TREE*& execCommand)
       continue;
     }
 
-    if ((tree != lastCommand) &&
-	(tree != execCommand) &&
-	(!tree->toDelete) &&
-	(tree->command2 == 0) &&
-	(tree->command1 != 0) &&
-	(tree->command1->status != UBACKGROUND) )
+    if (tree != lastCommand &&
+	tree != execCommand &&
+	!tree->toDelete &&
+	tree->command2 == 0 &&
+	tree->command1 != 0 &&
+	tree->command1->status != UBACKGROUND)
     {
       // right reduction
       // the background hack is here to preserve {at()...} commands.

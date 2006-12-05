@@ -1,5 +1,17 @@
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
+	Some cleanup
+	This code is truly depressing, as soon as one wants to improve
+	something, the impedance is so high that everything either falls
+	apart, or require immediate care.  Believe it or not, I was
+	working on error messages from the parser!
+	* src/ucommand.cc, src/ucommand.hh, src/uconnection.cc,
+	* src/uexpression.cc, src/ughostconnection.hh: Several
+	changes I no longer feel like documenting, which is bad.
+	Just as the code.
+
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
 	uvar-common.cc
 	* src/uvar.cc: Remove the code now in uvar-common.cc.
 
