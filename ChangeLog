@@ -1,5 +1,14 @@
 2006-12-05  Akim Demaille  <demaille@gostai.com>
 
+	Simplify UBinder
+	* src/ubinder.hh, src/ubinder.cc: Use C++ style ctors.
+	(id): A UString, not a pointer.
+	(monitors_type): New, use it.
+	Change almost all signatures to pass const UString& instead of
+	UString*.
+
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/parser/bison/ugrammar.y: here.
 

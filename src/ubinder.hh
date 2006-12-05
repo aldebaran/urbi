@@ -36,21 +36,23 @@ class UBinder
 {
 public:
 
-  UBinder(UString *objname, UString *id,
+  UBinder(const UString& objname, const UString& id,
 	  UBindMode bindMode, UBindType type, int nbparam,
 	  UConnection* c);
   ~UBinder();
 
-  UString      *id;
+  UString      id;
   UBindMode    bindMode;
   UBindType    type;
   int          nbparam;
-  std::list<UMonitor*> monitors;
 
-  void addMonitor(UString *objname, UConnection *c);
+  typedef std::list<UMonitor*> monitors_type;
+  monitors_type monitors;
 
-  bool removeMonitor(UString *objname, UConnection *c);
-  bool removeMonitor(UString *objname);
+  void addMonitor(const UString& objname, UConnection *c);
+
+  bool removeMonitor(const UString& objname, UConnection *c);
+  bool removeMonitor(const UString& objname);
   bool removeMonitor(UConnection *c);
 
   UMonitor* locateMonitor(UConnection *c);
@@ -59,13 +61,12 @@ public:
 class UMonitor
 {
 public:
-
   UMonitor(UConnection *c);
-  UMonitor(UString *objname, UConnection *c);
+  UMonitor(const UString& objname, UConnection *c);
   ~UMonitor();
 
-  void addObject(UString *objname);
-  bool removeObject(UString *objname);
+  void addObject(const UString& objname);
+  bool removeObject(const UString& objname);
 
   UConnection* c;
   std::list<UString*> objects;
