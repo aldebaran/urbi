@@ -27,10 +27,10 @@
 // **************************************************************************
 //! UCallid constructor.
 UCallid::UCallid (const char *f, const char *s, UCommand_TREE* r)
-  : fun_id (f),
+  : returnVar (0),
+    fun_id (f),
     self_id (s),
-    root (r),
-    returnVar (0)
+    root (r)
 {
 }
 

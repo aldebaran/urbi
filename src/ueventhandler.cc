@@ -123,7 +123,7 @@ UEvent::UEvent (UEventHandler* eventhandler,
 
 UEvent::~UEvent()
 {
-  libport::deep_clear(args);
+  libport::deep_clear(args_);
 }
 
 

@@ -32,33 +32,33 @@
 
 UEventCompound::UEventCompound(UEventCompoundType ectype,
 			       UEventCompound* ec1,
-			       UEventCompound* ec2):
-  keepalive_ (false),
-  ectype_ (ectype),
-  ec1_ (ec1),
-  ec2_ (ec2),
-  em_ (0)
+			       UEventCompound* ec2)
+  : keepalive_ (false),
+    ectype_ (ectype),
+    ec1_ (ec1),
+    ec2_ (ec2),
+    em_ (0)
 {
 }
 
-UEventCompound::UEventCompound(UEventMatch* em) :
-  keepalive_ (false),
-  ectype_ (EC_MATCH),
-  ec1_  (0),
-  ec2_  (0),
-  em_ (em)
+UEventCompound::UEventCompound(UEventMatch* em)
+  : keepalive_ (false),
+    ectype_ (EC_MATCH),
+    ec1_  (0),
+    ec2_  (0),
+    em_ (em)
 {
 }
 
-UEventCompound::UEventCompound (UValue* v) :
-  keepalive_ (false),
-  ectype_ (EC_MATCH),
-  ec1_  (0),
-  ec2_  (0)
+UEventCompound::UEventCompound (UValue* v)
+  : keepalive_ (false),
+    ectype_ (EC_MATCH),
+    ec1_  (0),
+    ec2_  (0)
 {
-  if ( v
-       && v->dataType == DATA_NUM
-       && v->val != 0 )
+  if (v
+      && v->dataType == DATA_NUM
+      && v->val != 0)
     em_ = kernel::eventmatch_true;
   else
     em_ = kernel::eventmatch_false;
@@ -73,8 +73,9 @@ UEventCompound::~UEventCompound ()
   {
     delete ec1_;
     delete ec2_;
-    if (em_ && em_->deleteable()) delete em_; // some em are not deleteable
-					      // (system events)
+    // some em are not deleteable (system events)
+    if (em_ && em_->deleteable())
+      delete em_;
   }
 }
 
@@ -87,24 +88,19 @@ UEventCompound::keepalive()
 std::list<UMultiEventInstance*>
 UEventCompound::mixing()
 {
-  UMultiEventInstance* mei;
-  std::list<UMultiEventInstance*> result;
-  std::list<UMultiEventInstance*> res1;
-  std::list<UMultiEventInstance*> res2;
-
-  std::list<UEvent*>::iterator ievent;
-  std::list<UMultiEventInstance*>::iterator imei1;
-  std::list<UMultiEventInstance*>::iterator imei2;
-
   ASSERT (ectype_ != EC_BANG);
+
+  typedef std::list<UMultiEventInstance*> multievents_type;
+  multievents_type result, res1, res2;
 
   switch (ectype_)
   {
     case EC_MATCH:
-      for (ievent = em_->matches ().begin ();
+      for (std::list<UEvent*>::iterator ievent = em_->matches ().begin ();
 	   ievent != em_->matches ().end ();
 	   ievent++)
       {
+	UMultiEventInstance* mei;
 	ASSERT (mei = new UMultiEventInstance ());
 	mei->addInstance (new UEventInstance (em_, (*ievent)));
 	result.push_back (mei);
@@ -115,9 +111,8 @@ UEventCompound::mixing()
       ASSERT (ec1_) res1 = ec1_->mixing ();
       ASSERT (ec2_) res2 = ec2_->mixing ();
       result = res1;
-      for (imei2 = res2.begin ();
-	   imei2 != res2.end ();
-	   imei2++)
+      for (multievents_type::iterator imei2 = res2.begin ();
+	   imei2 != res2.end (); imei2++)
 	result.push_back (*imei2);
       return result;
 
@@ -125,20 +120,19 @@ UEventCompound::mixing()
       ASSERT (ec1_) res1 = ec1_->mixing ();
       ASSERT (ec2_) res2 = ec2_->mixing ();
 
-      for (imei1 = res1.begin ();
-	   imei1 != res1.end ();
-	   imei1++)
-	for (imei2 = res2.begin ();
-	     imei2 != res2.end ();
-	     imei2++)
+      for (multievents_type::iterator imei1 = res1.begin ();
+	   imei1 != res1.end (); imei1++)
+	for (multievents_type::iterator imei2 = res2.begin ();
+	     imei2 != res2.end (); imei2++)
 	{
+	  UMultiEventInstance* mei;
 	  ASSERT (mei = new UMultiEventInstance (*imei1, *imei2));
 	  result.push_back (mei);
 	}
 
       // cleaning
-      libport::deep_clear (imei1);
-      libport::deep_clear (imei2);
+      libport::deep_clear (res1);
+      libport::deep_clear (res2);
       return result;
 
     default:
