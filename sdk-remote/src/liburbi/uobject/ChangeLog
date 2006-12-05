@@ -1,5 +1,10 @@
 2006-12-05  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/liburbi/uobject/uvalue-common.cc: here.
+
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
 	* urbi/uobject.hh.template (UVar::invariant): New.
 
 2006-12-05  Akim Demaille  <demaille@gostai.com>
