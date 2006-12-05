@@ -71,8 +71,8 @@ UVariableList::size()
 UVariableList*
 UVariableList::copy()
 {
-  UVariableList* ret = new UVariableList((UVariableName*)0,
-					 (UVariableList*)0);
+  UVariableList* ret = new UVariableList(0,
+					 0);
 
   if (variablename) ret->variablename = variablename->copy();
   if (next)         ret->next = next->copy();

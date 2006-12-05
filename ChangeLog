@@ -1,5 +1,19 @@
 2006-12-05  Akim Demaille  <demaille@gostai.com>
 
+	Simplifications
+	* src/uatcandidate.cc,
+	* src/ucommand.cc,
+	* src/uexpression.cc,
+	* src/ufunction.hh,
+	* src/userver.cc,
+	* src/utypes.hh,
+	* src/uvariablelist.cc,
+	* src/uvariablename.cc:
+	Formatting changes.
+	No need to cast 0, it has all the pointer types.
+
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
 	ucopy.hh, formatting changes.
 	* src/ucopy.hh: New.
 	* src/Makefile.am: Adjust.

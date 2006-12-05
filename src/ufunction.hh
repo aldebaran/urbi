@@ -48,11 +48,11 @@ public:
   UCommand*  cmdcopy(std::string tag = "",
 		     UNamedParameters *_flags = 0);
   /// Name.
-  UString          *funname; 
+  UString          *funname;
   /// Formal arguments.
   UNamedParameters *parameters;
   /// Body.
-  UCommand         *command; 
+  UCommand         *command;
 };
 
 #endif

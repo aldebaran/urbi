@@ -136,9 +136,9 @@ UServer::UServer(ufloat frequency,
 
   kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
   kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
-  kernel::remoteFunction   = new UFunction((UString*)0,
-					    (UNamedParameters*)0,
-					    (UCommand*)0);
+  kernel::remoteFunction   = new UFunction(0,
+					    0,
+					    0);
 }
 
 /// Sets the system.arg list in URBI

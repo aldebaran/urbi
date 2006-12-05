@@ -78,8 +78,8 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 	  newcmd = new UCommand_ASSIGN_VALUE
 	    (new UVariableName (new UString (device.c_str ()),
 				new UString (id.c_str ()),
-				true,  (UNamedParameters*)0),
-	     new UExpression (EXPR_VALUE, (*iuv)), (UNamedParameters*)0);
+				true,  0),
+	     new UExpression (EXPR_VALUE, (*iuv)), 0);
 	  if (!cmd)
 	    cmd = newcmd;
 	  else

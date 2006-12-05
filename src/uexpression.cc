@@ -601,7 +601,7 @@ UExpression::eval (UCommand *command,
 	  ec = new UEventCompound
 	    (new UEventMatch
 	     (variablename->getFullname(),
-	      (UNamedParameters*)0,
+	      0,
 	      command,
 	      connection));
 	  return ret;
@@ -1256,7 +1256,7 @@ UExpression::eval (UCommand *command,
 			  new UNamedParameters
 			  (new UExpression(EXPR_VALUE,
 					   new UString("wav")),
-			   (UNamedParameters*)0));
+			   0));
 	    memcpy(binaire->buffer,
 		   loadQueue->pop(loadQueue->dataSize()),
 		   loadQueue->dataSize());

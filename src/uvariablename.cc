@@ -197,7 +197,6 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
       tmpvar = 0;
   }
 
-
   if (cached)
     variable = tmpvar;
 
@@ -209,18 +208,20 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
   constant and that the access to the function hash table has been done
   already. This access is then cached to limitate the number of calls to
   the hash table.
-  */
-  UFunction*
+*/
+UFunction*
 UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
   UFunction *tmpfun;
 
-  if (function) return function;
+  if (function)
+    return function;
 
   if (!fullname_ || !cached)
     buildFullname(command, connection);
 
-  if (!fullname_) return 0;
+  if (!fullname_)
+    return 0;
 
   if ((hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
       ::urbiserver->functiontab.end())
@@ -228,35 +229,40 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   else
     tmpfun = 0;
 
-  if (cached) function = tmpfun;
+  if (cached)
+    function = tmpfun;
 
   return tmpfun;
 }
 
 //! UVariableName test to know if there is a function with that name
-  bool
+bool
 UVariableName::isFunction(UCommand *command, UConnection *connection)
 {
   UFunction* tmpfun = getFunction(command, connection);
-  if (tmpfun) return true;
-  if (!fullname_) return false;
+  if (tmpfun)
+    return true;
+  if (!fullname_)
+    return false;
   if (urbi::functionmap.find(fullname_->str()) !=
-      urbi::functionmap.end()) return true;
-
+      urbi::functionmap.end())
+    return true;
   if (::urbiserver->functionbindertab.find(fullname_->str()) !=
-      ::urbiserver->functionbindertab.end()) return true;
-
+      ::urbiserver->functionbindertab.end())
+    return true;
   return false;
 }
 
 
 //! UVariableName access to method (with cache)
-  UString*
+UString*
 UVariableName::getMethod()
 {
-  if (method) return method;
+  if (method)
+    return method;
 
-  if (!fullname_) return 0;
+  if (!fullname_)
+    return 0;
   const char *pointPos = strstr(fullname_->str(), ".");
 
   if (pointPos == 0)
@@ -267,7 +273,7 @@ UVariableName::getMethod()
 }
 
 //! UVariableName access to device (with cache)
-  UString*
+UString*
 UVariableName::getDevice()
 {
   if (device) return device;
@@ -289,7 +295,7 @@ UVariableName::getDevice()
   indexes in an array or constant string in a $(...)), cached is set to
   true to avoid recalculus on next call.
   */
-  UString*
+UString*
 UVariableName::buildFullname(UCommand *command,
 			     UConnection *connection,
 			     bool withalias)
@@ -490,9 +496,9 @@ UVariableName::buildFullname(UCommand *command,
 	    if (objit != ::urbiserver->objtab.end())
 	    {
 	      class_symbol =
-		   (objit->second->searchVariable(id->str(), ambiguous) != 0)
-		|| (objit->second->searchFunction(id->str(), ambiguous) != 0)
-		|| (objit->second->searchEvent(id->str(), ambiguous) != 0);
+		   objit->second->searchVariable(id->str(), ambiguous)
+		|| objit->second->searchFunction(id->str(), ambiguous)
+		|| objit->second->searchEvent(id->str(), ambiguous);
 	      class_symbol = class_symbol && !ambiguous;
 	    }
 

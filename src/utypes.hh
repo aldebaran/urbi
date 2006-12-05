@@ -28,19 +28,17 @@
 
 # include "libport/cstring"
 # include <list>
-# ifdef _MSC_VER
-#  define snprintf _snprintf
-#  define vsnprintf _vsnprintf
-# endif
 
 # include "libport/hash.hh"
 # include "libport/ufloat.h"
 
 # include "fwd.hh"
 
-extern  int   usedMemory; //< Keeps track of how much memory has been used for
-			  //< commands, buffers, etc...
-extern  int   availableMemory; //< Total amount of free memory in the system
+/// Keep track of how much memory has been used for commands, buffers,
+/// etc.
+extern  int   usedMemory;
+/// Total amount of free memory in the system.
+extern  int   availableMemory;
 
 # define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
 # define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}

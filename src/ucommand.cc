@@ -670,7 +670,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  new UString("__UFnct"),
 	  new UString("__result__"),
 	  true,
-	  (UNamedParameters*)0);
+	  0);
 
       morph = (UCommand*)
 	new UCommand_TREE
@@ -682,7 +682,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    variablename->copy(),
 	    new UExpression(EXPR_VARIABLE,
 			    resultContainer),
-	    (UNamedParameters*)0
+	    0
 	    )
 	  );
 
@@ -851,7 +851,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	      new UString("global"),
 	      new UString("exec"),
 	      false,
-	      (UNamedParameters *)0),
+	      0),
 	    new UNamedParameters
 	    (
 	      new UExpression
@@ -2236,7 +2236,7 @@ UCommand_AUTOASSIGN::execute(UConnection*)
   morph =  (UCommand*)
     new UCommand_ASSIGN_VALUE(variablename->copy(),
 			      extended_expression,
-			      (UNamedParameters*)0,
+			      0,
 			      false);
 
   persistant = false;
@@ -2382,7 +2382,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	new UString("__UFnct"),
 	new UString("__result__"),
 	true,
-	(UNamedParameters*)0);
+	0);
 
       UCommand_EXPR* cexp = new UCommand_EXPR(new UExpression(EXPR_VARIABLE,
 							      resultContainer));
@@ -2572,7 +2572,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	    new UVariableName(new UString("global"),
 			      new UString("exec"),
 			      false,
-			      (UNamedParameters *)0),
+			      0),
 	    new UNamedParameters(
 	      new UExpression(
 		EXPR_VALUE,
@@ -3097,7 +3097,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    (new UString("global"),
 	     new UString("exec"),
 	     false,
-	     (UNamedParameters *)0),
+	     0),
 	    new UNamedParameters
 	    (new UExpression
 	     (EXPR_VALUE,
@@ -3136,7 +3136,7 @@ UCommand_NEW::execute(UConnection *connection)
 	  new UString("global"),
 	  new UString("exec"),
 	  false,
-	  (UNamedParameters *)0),
+	  0),
 	new UNamedParameters
 	(
 	  new UExpression
@@ -3574,7 +3574,7 @@ UCommand_GROUP::execute(UConnection *connection)
     if (it != retr->second->members.end())
     {
       ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
-				 (UNamedParameters*)0);
+				 0);
       it++;
     }
 
@@ -3838,7 +3838,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
       new UVariableName(variablename->getMethod()->copy(),
 			new UString("load"),
 			variablename->rooted,
-			(UNamedParameters*)0);
+			0);
     delete variablename;
     variablename = recreatevar;
     variablename->buildFullname(this, connection);
@@ -3854,13 +3854,13 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
       new UExpression(EXPR_MINUS,
 		      new UExpression(EXPR_VALUE, ufloat(1)),
 		      new UExpression(EXPR_VARIABLE, variablename->copy())),
-      (UNamedParameters*)0,
+      0,
       false);
   else
     morph = new UCommand_ASSIGN_VALUE(
       variablename->copy(),
       new UExpression(EXPR_VALUE, ufloat(cmd)),
-      (UNamedParameters*)0,
+      0,
       false);
 
   persistant = false;
@@ -5396,8 +5396,8 @@ UCommand_DEF::execute(UConnection *connection)
 							     param->name,
 							     true,
 							     0),
-					   (UNamedParameters*) 0,
-					   (UCommand*) 0);
+					   0,
+					   0);
     cdef->setTag(this);
     morph = cdef;
     param = param->next;
@@ -5411,8 +5411,8 @@ UCommand_DEF::execute(UConnection *connection)
 						   param->name,
 						   true,
 						   0),
-				 (UNamedParameters*) 0,
-				 (UCommand*) 0);
+				 0,
+				 0);
 	cdef->setTag(this);
 	morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
       }
@@ -5429,8 +5429,8 @@ UCommand_DEF::execute(UConnection *connection)
     list->variablename->local_scope = true;
     UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,
 					   list->variablename->copy(),
-					   (UNamedParameters*) 0,
-					   (UCommand*) 0);
+					   0,
+					   0);
     cdef->setTag(this);
     morph = cdef;
     list = list->next;
@@ -5442,8 +5442,8 @@ UCommand_DEF::execute(UConnection *connection)
 	list->variablename->local_scope = true;
 	cdef = new UCommand_DEF (UDEF_VAR,
 				 list->variablename->copy(),
-				 (UNamedParameters*) 0,
-				 (UCommand*) 0);
+				 0,
+				 0);
 	cdef->setTag(this);
 	morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
       }
@@ -5571,9 +5571,9 @@ UCommand_CLASS::execute(UConnection*)
 				    new UString(object),
 				    new UString(param->expression->str),
 				    true,
-				    (UNamedParameters*)0),
-				  (UNamedParameters*) 0,
-				  (UCommand*) 0);
+				    0),
+				  0,
+				  0);
 	  break;
 	case EXPR_FUNCTION:
 	  cdef = new UCommand_DEF(UDEF_FUNCTION,
@@ -5581,9 +5581,9 @@ UCommand_CLASS::execute(UConnection*)
 				    new UString(object),
 				    new UString(param->expression->variablename->id),
 				    true,
-				    (UNamedParameters*)0),
+				    0),
 				  param->expression->parameters,
-				  (UCommand*) 0);
+				  0);
 	  break;
 	case EXPR_EVENT:
 	  cdef = new UCommand_DEF(UDEF_EVENT,
@@ -5591,9 +5591,9 @@ UCommand_CLASS::execute(UConnection*)
 				    new UString(object),
 				    new UString(param->expression->variablename->id),
 				    true,
-				    (UNamedParameters*)0),
+				    0),
 				  param->expression->parameters,
-				  (UCommand*) 0);
+				  0);
 	  break;
 
 	case EXPR_VARIABLE:
@@ -6017,7 +6017,7 @@ UCommand_STOPIF::execute(UConnection *connection)
 				       condition->copy(),
 				       new UCommand_OPERATOR_ID(new UString("stop"),
 								tagRef->copy()),
-				       (UCommand*)0),
+				       0),
 		       command->copy()
       );
   morph->setTag(tagRef->str());
@@ -6578,9 +6578,9 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	(
 	  new UExpression (EXPR_TEST_BANG,
 			   test->copy (),
-			   (UExpression*)0),
+			   0),
 	  command2,
-	  (UCommand*)0
+	  0
 	  )
 	);
 
@@ -7261,7 +7261,7 @@ UCommand_FOREACH::execute(UConnection *connection)
 	(
 	  variablename->copy(),
 	  currentvalue,
-	  (UNamedParameters*)0),
+	  0),
 	command->copy()),
       this
       );
