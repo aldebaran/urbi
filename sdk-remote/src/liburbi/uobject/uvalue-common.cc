@@ -473,7 +473,7 @@ namespace urbi
    UValue::UValue(unsigned long v)
     : type(DATA_DOUBLE), val(v)
   {}
-  
+
   UValue::UValue(void * v)
   : type(DATA_STRING)
   {
@@ -600,7 +600,7 @@ namespace urbi
   UValue::operator UImage() const
   {
     if (type != DATA_BINARY
-        || binary->type != BINARY_IMAGE)
+	|| binary->type != BINARY_IMAGE)
     {
       UImage i;
       i.data = 0;
