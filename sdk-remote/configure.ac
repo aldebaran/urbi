@@ -12,7 +12,7 @@ URBI_BUILD_AUX
 AM_INIT_AUTOMAKE([1.9.6 -Wall tar-ustar dist-zip nostdinc])
 
 # Urbi standard locations.
-URBI_DIRS([remote])
+URBI_SDK_DIRS([remote])
 
 URBI_SDK
 
@@ -29,8 +29,6 @@ URBI_PTHREAD
 AC_CONFIG_FILES([libport/tests/Makefile])
 AC_CONFIG_FILES([build-aux/test.sh], [chmod a=rx build-aux/test.sh])
 
-# For the time being, we are not interested about deprecated
-# headers such as hash_map.h.  We should use ext/hash_map.
 AC_PROG_CC
 URBI_PROG_CXX
 # Unfortunately -Weffc++ triggers warnings that cannot be avoided

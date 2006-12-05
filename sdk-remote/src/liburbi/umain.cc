@@ -19,20 +19,15 @@
  **************************************************************************** */
 
 #include <urbi/uobject.hh>
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# include <windows.h>
-# define usleep(a) Sleep((a) < 1000 ? 1 : (a) / 1000)
-#else
+#include "libport/windows.hh"
+#ifndef WIN32
 # include <unistd.h>
 #endif
 
 namespace urbi
 {
   int main(int argc, const char * argv[]);
-};
+}
 
 int
 main(int argc, char *argv[])
