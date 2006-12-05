@@ -34,24 +34,49 @@
 
 # include "fwd.hh"
 
+
+/*--------------------.
+| Memory allocation.  |
+`--------------------*/
+
 /// Keep track of how much memory has been used for commands, buffers,
 /// etc.
 extern  int   usedMemory;
 /// Total amount of free memory in the system.
 extern  int   availableMemory;
 
-# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
-# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
-# define ADDOBJ(x)   {usedMemory += ((int)(sizeof(x)*1.15));}
-# define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
-# define LIBERATE(x) if (x && x->liberate()==0) delete (x)
-# define DD ::urbiserver->debug("Check point %s, %d\n", __FILE__, __LINE__);
-# define DDD(x) ::urbiserver->debug("Check point [%s] on %s, %d\n", \
-				    x, __FILE__, __LINE__);
+// FIXME: Why applying the 1.15 threshold here instead of where we
+// consult usedMemory?
+# define ADDMEM(X)   usedMemory += (int) ((X) * 1.15)
+# define FREEMEM(X)  ADDMEM (-(X))
 
-# define ASSERT(test) if (!(test)) \
-  ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n", \
-  # test, __FILE__, __LINE__); else
+# define ADDOBJ(X)   ADDMEM (sizeof(X))
+# define FREEOBJ(X)  FREEMEM (sizeof(X))
+
+# define LIBERATE(X)				\
+  do {						\
+    if ((X)->liberate() == 0)			\
+      delete X;					\
+  } while (0)
+
+
+/*------------.
+| Debugging.  |
+`------------*/
+
+# define DD								\
+  ::urbiserver->debug("Check point %s, %d\n", __FILE__, __LINE__)
+
+# define DDD(x)								\
+  ::urbiserver->debug("Check point [%s] on %s, %d\n", x, __FILE__, __LINE__)
+
+# define ASSERT(Test)					\
+  if (!(Test))						\
+    ::urbiserver->debug("ASSERT FAILED: %s in %s %d\n", \
+			#Test, __FILE__, __LINE__);	\
+  else
+
+
 
 typedef unsigned long IPAdd;
 
@@ -141,48 +166,48 @@ enum UTestResult
 enum UCommandType
 {
   CMD_GENERIC,
-    CMD_TREE,
-    CMD_ASSIGN_VALUE,
-    CMD_ASSIGN_PROPERTY,
-    CMD_ASSIGN_BINARY,
-    CMD_EXPR,
-    CMD_RETURN,
-    CMD_ECHO,
-    CMD_NEW,
-    CMD_ALIAS,
-    CMD_INHERIT,
-    CMD_GROUP,
-    CMD_WAIT,
-    CMD_WAIT_TEST,
-    CMD_INCREMENT,
-    CMD_DECREMENT,
-    CMD_DEF,
-    CMD_CLASS,
-    CMD_IF,
-    CMD_EVERY,
-    CMD_TIMEOUT,
-    CMD_STOPIF,
-    CMD_FREEZEIF,
-    CMD_AT,
-    CMD_AT_AND,
-    CMD_WHILE,
-    CMD_WHILE_AND,
-    CMD_WHILE_PIPE,
-    CMD_WHENEVER,
-    CMD_LOOP,
-    CMD_LOOPN,
-    CMD_LOOPN_PIPE,
-    CMD_LOOPN_AND,
-    CMD_FOREACH,
-    CMD_FOREACH_PIPE,
-    CMD_FOREACH_AND,
-    CMD_FOR,
-    CMD_FOR_PIPE,
-    CMD_FOR_AND,
-    CMD_NOOP,
-    CMD_EMIT,
-    CMD_LOAD
-  };
+  CMD_TREE,
+  CMD_ASSIGN_VALUE,
+  CMD_ASSIGN_PROPERTY,
+  CMD_ASSIGN_BINARY,
+  CMD_EXPR,
+  CMD_RETURN,
+  CMD_ECHO,
+  CMD_NEW,
+  CMD_ALIAS,
+  CMD_INHERIT,
+  CMD_GROUP,
+  CMD_WAIT,
+  CMD_WAIT_TEST,
+  CMD_INCREMENT,
+  CMD_DECREMENT,
+  CMD_DEF,
+  CMD_CLASS,
+  CMD_IF,
+  CMD_EVERY,
+  CMD_TIMEOUT,
+  CMD_STOPIF,
+  CMD_FREEZEIF,
+  CMD_AT,
+  CMD_AT_AND,
+  CMD_WHILE,
+  CMD_WHILE_AND,
+  CMD_WHILE_PIPE,
+  CMD_WHENEVER,
+  CMD_LOOP,
+  CMD_LOOPN,
+  CMD_LOOPN_PIPE,
+  CMD_LOOPN_AND,
+  CMD_FOREACH,
+  CMD_FOREACH_PIPE,
+  CMD_FOREACH_AND,
+  CMD_FOR,
+  CMD_FOR_PIPE,
+  CMD_FOR_AND,
+  CMD_NOOP,
+  CMD_EMIT,
+  CMD_LOAD
+};
 
 //! Possible status for a UCommand
 enum UCommandStatus
@@ -289,8 +314,6 @@ enum UReport
 
 typedef unsigned char ubyte;
 
-//static const urbi::ufloat TRUE = urbi::ufloat(1);
-//static const urbi::ufloat FALSE = urbi::ufloat(0);
 # define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
 

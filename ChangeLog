@@ -1,5 +1,10 @@
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
+	Formatting changes
+	* src/utypes.hh: Make it cuter and more factored.
+
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
 	Cleanup UStrings
 	A *lot* more is needed.  For instance it is still unclear
 	whether str_ can be equal to 0 or not.
