@@ -1,5 +1,10 @@
 2006-12-05  Akim Demaille  <demaille@gostai.com>
 
+	Fix distcheck for Windows
+	* src/parser/bison/bison.mk: Remove the unexpected back up copy.
+
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
 	Simplifications
 	* src/uatcandidate.cc,
 	* src/ucommand.cc,
