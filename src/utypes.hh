@@ -55,7 +55,7 @@ extern  int   availableMemory;
 
 # define LIBERATE(X)				\
   do {						\
-    if ((X)->liberate() == 0)			\
+    if ((X) && (X)->liberate() == 0)		\
       delete X;					\
   } while (0)
 
