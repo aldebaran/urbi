@@ -1,5 +1,15 @@
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
+	Clean UCallid
+	* src/ucallid.hh, src/ucallid.cc (fun_id, self_id): Be real
+	UString instead of pointers.
+	(stack, fun_id, self_id, root): Private.
+	Formatting changes.
+	Use libport::deep_clear.
+	Modernize ctor.
+
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
 	Formatting changes
 	* src/ucommand.cc: Here.
 
