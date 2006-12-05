@@ -11,7 +11,7 @@
 include $(top_srcdir)/build-aux/build-aux.mk
 include $(top_srcdir)/libport/libport.mk
 
-ACLOCAL_AMFLAGS = -I build-aux
+ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
 SUBDIRS = src tests doc .
 
@@ -33,6 +33,7 @@ dist-hook:
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
+SVN_EXTERNALS += sdk
 SVN_EXTERNALS_PROXY += uobject urbivalid
 uobject-help uobject-ci uobject-up uobj-ci uob-up:
 	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
