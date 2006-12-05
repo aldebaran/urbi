@@ -1,3 +1,18 @@
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
+	Clean the scanner
+	Now the scanner is tracking location accurately when
+	there are C comments.
+	* src/parser/bison/utoken.l (SET_VALP_STR, RETURN_STR_TOKEN)
+	(RETURN_VAL_TOKEN, RETURN_NUM, RETURN_FLAG, RETURN_FLAGTIME)
+	(RETURN_TIMEVALUE): New.
+	Use them to factor and improve the code.
+	(SC_C_COMMENT): New, use it to handle C comments.
+	(EOL, BLANKS): New abbrev, use them.
+	Put quotes around patterns, to improve readability and
+	pretty-printing.
+	As usual, remove useless braces and parens.
+
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
 	UVar::invariant
