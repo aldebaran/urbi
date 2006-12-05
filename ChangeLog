@@ -1,5 +1,10 @@
 2006-12-05  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/parser/bison/ugrammar.y: here.
+
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
 	Fix LIBERATE
 	* src/utypes.hh: Restore the original test.
 

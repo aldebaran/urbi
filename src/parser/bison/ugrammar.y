@@ -978,10 +978,10 @@ instruction:
 
       if (!$5)
       {
-        delete $3;
-        delete $5;
-        delete $7;
-        error(@$, "Empty then-part within a if.");
+	delete $3;
+	delete $5;
+	delete $7;
+	error(@$, "Empty then-part within a if.");
 	YYERROR;
       }
       $$ = new UCommand_IF($3,$5,$7);
@@ -1593,13 +1593,11 @@ class_declaration_list:
   /* empty */  { $$ = 0; }
 
   | class_declaration {
-
       $$ = new UNamedParameters($1,0);
       MEMCHECK1($$,$1);
     }
 
   | class_declaration SEMICOLON class_declaration_list {
-
       $$ = new UNamedParameters($1,$3);
       MEMCHECK2($$,$3,$1);
     }
@@ -1611,14 +1609,12 @@ refvariables:
   /* empty */  { $$ = 0; }
 
   | refvariable {
-
       MEMCHECK($1);
       $$ = new UVariableList($1);
       MEMCHECK1($$,$1);
     }
 
   | refvariable SEMICOLON refvariables {
-
       MEMCHECK($1);
       $$ = new UVariableList($1,$3);
       MEMCHECK2($$,$3,$1);
@@ -1633,9 +1629,10 @@ refvariables:
 void yy::parser::error(const location_type& l, const std::string& what_error)
 {
   uparser.error (l, what_error);
-  if (globalDelete) {
-     delete *globalDelete;
-     *globalDelete = 0;
+  if (globalDelete)
+  {
+    delete *globalDelete;
+    *globalDelete = 0;
   }
 }
 
