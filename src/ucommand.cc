@@ -2680,17 +2680,17 @@ UCommand_RETURN::execute(UConnection *connection)
       UValue *value = expression->eval(this, connection);
       if (!value)
 	connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+      else if (value->dataType == DATA_OBJ)
+	connection->send("!!! Functions cannot return objects"
+			 " with Kernel 1\n",
+			 getTag().c_str());
       else
-	if (value->dataType == DATA_OBJ)
-	  connection->send("!!! Functions cannot return objects"
-			   " with Kernel 1\n",
-			   getTag().c_str());
-	else
-	  ASSERT (connection->stack.front()->returnVar)
-	    connection->stack.front()->returnVar->value = value;
+	// FIXME: Why don't we use setReturnVar that calls "store"?
+	ASSERT (connection->stack.front()->returnVar)
+	  connection->stack.front()->returnVar->value = value;
     }
   }
-  return (status = UCOMPLETED );
+  return (status = UCOMPLETED);
 }
 
 //! UCommand subclass hard copy function
