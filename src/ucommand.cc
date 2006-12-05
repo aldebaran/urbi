@@ -410,18 +410,6 @@ UCommand_TREE::execute(UConnection*)
   return URUNNING;
 }
 
-namespace
-{
-  // FIXME: Should take a const arg, but does not work currently.
-  template <typename T>
-  inline
-  T*
-  ucopy (T* t)
-  {
-    return t ? t->copy () : 0;
-  }
-}
-
 //! UCommand subclass hard copy function
 UCommand*
 UCommand_TREE::copy()
@@ -662,10 +650,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     if (fun)
     {
       if ((expression->parameters
-	     && fun->nbparam()
-	     && expression->parameters->size() != fun->nbparam())
-	   || (expression->parameters && !fun->nbparam())
-	   || (!expression->parameters && fun->nbparam()) )
+	   && fun->nbparam()
+	   && expression->parameters->size() != fun->nbparam())
+	  || (expression->parameters && !fun->nbparam())
+	  || (!expression->parameters && fun->nbparam()) )
       {
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! Invalid number of arguments for %s"
@@ -749,7 +737,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       }
 
       return status = UMORPH;
-    } // fi: function exists
+    }
 
 
     // handle the :: case
@@ -774,7 +762,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       urbi::functionmap.find(functionname->str());
     if (hmfi != urbi::functionmap.end())
     {
-      
+
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   ((cbi != hmfi->second.end()) && (!found_function));
@@ -814,9 +802,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     }
 
     ////// EXTERNAL /////
-    if (!found_function) {
+    if (!found_function)
+    {
       HMbindertab::iterator it =
-        ::urbiserver->functionbindertab.find(functionname->str());
+	::urbiserver->functionbindertab.find(functionname->str());
       if (it != ::urbiserver->functionbindertab.end()
 	&& (expression->parameters
 	    ? it->second->nbparam == expression->parameters->size()
@@ -827,7 +816,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	char tmpprefix[1024];
 	snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
 	  functionname->str(), it->second->nbparam, UU);
-	
+
 	for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
 	  it2 != it->second->monitors.end();
 	  it2++)
@@ -850,7 +839,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
 	  "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 	  UU, variablename->getFullname()->str(), UU, UU);
-	
+
 	morph = (UCommand*)
 	new UCommand_EXPR
 	(
@@ -876,7 +865,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	return ((status = UMORPH));
       }
     }
-  } // fi: expr == function
+  }
 
 
   ////////////////////////////////////////
@@ -1055,7 +1044,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  target->str->update(result);
 	  free(result);
 	}
-      } // end of string composition: target is up to date
+      }
 
       // Assignment
       if (variable) // the variable already exists
@@ -1307,7 +1296,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	  modif = modif->next;
 	}
-      } // end FLAGS handling
+      }
 
       // create var if it does not already exist
       if (!variable)
@@ -4526,7 +4515,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
 	  default:
 	    tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
-	} // end switch
+	}
 
 	connection->send(tstr.str().c_str(), getTag().c_str());
       }
@@ -4594,7 +4583,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
 	  default:
 	    tstr << "*** "<<fullname->str()<<" = UNKNOWN TYPE\n";
-	} // end switch
+	}
 
 	connection->send(tstr.str().c_str(), getTag().c_str());
       }
@@ -4977,11 +4966,11 @@ UCommand_EMIT::removeEvent ()
   {
     char tmpprefix[1024];
     snprintf(tmpprefix, 1024, "[3,\"%s__%d\"]\n",
-             eventnamestr, it->second->nbparam);
+	     eventnamestr, it->second->nbparam);
 
     for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-         it2 != it->second->monitors.end();
-         it2++)
+	 it2 != it->second->monitors.end();
+	 it2++)
     {
       (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -4994,9 +4983,9 @@ UCommand_EMIT::removeEvent ()
   if (hmfi != urbi::eventendmap.end())
   {
     for (std::list<urbi::UGenericCallback*>::iterator cbi =
-         hmfi->second.begin();
-         cbi != hmfi->second.end();
-         cbi++)
+	 hmfi->second.begin();
+	 cbi != hmfi->second.end();
+	 cbi++)
     {
       urbi::UList tmparray;
       (*cbi)->__evalcall(tmparray);
@@ -5935,8 +5924,8 @@ UCommand_TIMEOUT::execute(UConnection*)
 					  new UCommand_OPERATOR_ID(new UString("stop"),
 								   tagRef->copy())),
 		      new UCommand_TREE(UPIPE, command->copy(),
-			                new UCommand_OPERATOR_ID(new UString("stop"),
-				                                 tagRef->copy()))
+					new UCommand_OPERATOR_ID(new UString("stop"),
+								 tagRef->copy()))
       );
 
   morph->setTag(tagRef->str());

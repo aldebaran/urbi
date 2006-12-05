@@ -36,19 +36,6 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 MEMORY_MANAGER_INIT(UVariableName);
 
-namespace
-{
-  // FIXME: Should take a const arg, but does not work currently.
-  template <typename T>
-    inline
-    T*
-    ucopy (T* t)
-    {
-      return t ? t->copy () : 0;
-    }
-}
-
-
 
 // **************************************************************************
 //! UVariableName constructor for variable of the type device.id[...][...]...

@@ -47,9 +47,12 @@ public:
   int        nbparam();
   UCommand*  cmdcopy(std::string tag = "",
 		     UNamedParameters *_flags = 0);
-  UString          *funname; ///< name of the function
-  UNamedParameters *parameters; ///< parameters of the function
-  UCommand         *command; ///< body of the function
+  /// Name.
+  UString          *funname; 
+  /// Formal arguments.
+  UNamedParameters *parameters;
+  /// Body.
+  UCommand         *command; 
 };
 
 #endif

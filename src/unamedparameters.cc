@@ -82,17 +82,10 @@ UNamedParameters::size()
 UNamedParameters*
 UNamedParameters::copy()
 {
-  UNamedParameters* ret = new UNamedParameters((UExpression*)0,
-					       (UNamedParameters*)0);
-
-  if (expression)
-    ret->expression = expression->copy();
-  if (name)
-    ret->name = new UString(name);
-  if (next)
-    ret->next = next->copy();
-
-  return ret;
+  return
+    new UNamedParameters(ucopy (name),
+			 ucopy (expression),
+			 ucopy (next));
 }
 
 //! Print the list of parameters
@@ -102,7 +95,8 @@ UNamedParameters::copy()
 void
 UNamedParameters::print()
 {
-  if (name) ::urbiserver->debug("%s:", name->str());
+  if (name)
+    ::urbiserver->debug("%s:", name->str());
   if (expression)
   {
     ::urbiserver->debug("expr=");

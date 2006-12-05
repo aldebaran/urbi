@@ -57,6 +57,7 @@ ucallid.hh ucallid.cc						\
 ucommand.hh ucommand.cc						\
 ucommandqueue.hh ucommandqueue.cc				\
 uconnection.hh uconnection.cc					\
+ucopy.hh							\
 ueventcompound.hh ueventcompound.cc				\
 ueventhandler.hh ueventhandler.cc				\
 ueventinstance.hh ueventinstance.cc				\
@@ -131,6 +132,7 @@ ucallid.hh					\
 ucommand.hh					\
 ucommandqueue.hh				\
 uconnection.hh					\
+ucopy.hh					\
 ueventhandler.hh				\
 uexpression.hh					\
 ufunction.hh					\

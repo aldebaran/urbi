@@ -663,7 +663,7 @@ UConnection::received (const ubyte *buffer, int length)
 
 	    server->parser.commandTree = 0;
 	  }
-	} // command1
+	}
     }
   } while (length != 0
 	   && !receiveBinary_

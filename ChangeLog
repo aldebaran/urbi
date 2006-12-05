@@ -1,3 +1,17 @@
+2006-12-05  Akim Demaille  <demaille@gostai.com>
+
+	ucopy.hh, formatting changes.
+	* src/ucopy.hh: New.
+	* src/Makefile.am: Adjust.
+	* src/ucommand.cc, src/uvariablename.cc: Ditto.
+
+	* src/uatcandidate.cc, src/ucommand.hh, src/uconnection.cc,
+	* src/uexpression.cc, src/ufunction.hh, src/unamedparameters.cc,
+	* src/unamedparameters.hh, src/uobject.cc, src/uqueue.cc:
+	Formatting changes.
+
+	* src/uobject.cc: Fix a warning by not naming useless arguments.
+
 2006-11-28  Matthieu Nottale  <nottale@gostai.com>
 
 	uobject up

@@ -187,9 +187,10 @@ UQueue::push (const ubyte *buffer, int length)
     // No. Check if the internal buffer can be extended.
     newSize = bufferSize_ + (length - bfs);
 
-    if ((newSize > maxBufferSize_) && (maxBufferSize_ != 0))
+    if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
     {
-      return UFAIL; }// buffer rejected.
+      return UFAIL;
+    }
     else
     {
       // Yes, the internal buffer can be extended.
@@ -222,14 +223,17 @@ UQueue::push (const ubyte *buffer, int length)
     }
   }
 
-  if (bufferSize_ - end_ >= length) { // Do we have to split 'buffer'?
+  if (bufferSize_ - end_ >= length)
+  {
+    // Do we have to split 'buffer'?
     // No need to split.
 
     memcpy(buffer_ + end_, buffer, length);
     end_ += length;
     if (end_ == bufferSize_) end_ = 0; // loop the circular geometry.
 
-  } else
+  }
+  else
   {
     // Split 'buffer' to fit in the internal circular buffer.
 
@@ -297,21 +301,23 @@ UQueue::pop (int length)
 	if ((topDataSize_ > maxBufferSize_) && (maxBufferSize_ !=0))
 	  topDataSize_ = maxBufferSize_;
 
-	if (end_ < start_)  {// The data is splitted
-
+	if (end_ < start_)
+	{
+	  // The data is splitted
 	  memmove(buffer_ + start_ - (bufferSize_ - topDataSize_),
 		  buffer_ + start_,
 		  bufferSize_ - start_);
 	  start_ = start_ - (bufferSize_ - topDataSize_);
 	}
-
-	else { // The data is contiguous
-
+	else
+	{
+	  // The data is contiguous
 	  memmove(buffer_,
 		  buffer_ + start_,
 		  dataSize_);
 	  start_ = 0;
-	  end_   = dataSize_;// the case end_ == bufferSize_ is handled below.
+	  end_   = dataSize_;
+	  // the case end_ == bufferSize_ is handled below.
 	}
 
 	ubyte* newBuffer = (ubyte*) realloc (buffer_, topDataSize_);
@@ -321,7 +327,8 @@ UQueue::pop (int length)
 	  buffer_ = newBuffer;
 	  bufferSize_ = topDataSize_;
 	  if (end_ == bufferSize_ ) end_ =0; // loop the circular geometry.
-	} // else... well it should never come to this else anyway.
+	}
+	// else... well it should never come to this else anyway.
       }
 
       topDataSize_   = 0;
@@ -340,7 +347,8 @@ UQueue::pop (int length)
 
     return (buffer_ + tmp_index);
 
-  } else
+  }
+  else
   {
     // no, the packet spans then end and the beginning of the buffer
     // and it must be reconstructed.
@@ -437,7 +445,8 @@ UQueue::virtualPop (int length)
 
     return (buffer_ + tmp_index);
 
-  } else
+  }
+  else
   {
     // no, the packet spans then end and the beginning of the buffer
     // and it must be reconstructed.

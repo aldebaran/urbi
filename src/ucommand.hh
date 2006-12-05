@@ -26,6 +26,7 @@
 
 # include "fwd.hh"
 
+# include "ucopy.hh"
 # include "utypes.hh"
 # include "ustring.hh"
 # include "ucommandqueue.hh"

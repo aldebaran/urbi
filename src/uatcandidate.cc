@@ -40,7 +40,7 @@ UAtCandidate::~UAtCandidate ()
 bool
 UAtCandidate::equal(UMultiEventInstance* mei)
 {
-  return ((*mei) == (*mei_));
+  return *mei == *mei_;
 }
 
 bool
@@ -49,7 +49,7 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
   bool res = false;
   cmd = 0;
 
-  if ((currentTime >= endTime_) &&
+  if (currentTime >= endTime_ &&
       !hasTriggered_)
   {
     res = true;
@@ -71,31 +71,22 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
       for (is = (*ii)->filter_.begin (), iuv = (*ii)->e_->args ().begin ();
 	   is != (*ii)->filter_.end ();
 	   ++is, ++iuv)
-	if ( !is->empty())
+	if (!is->empty())
 	{
-	  device = is->substr ( 0, is->find ('.'));
-	  id = is->substr ( is->find ('.')+1 );
+	  device = is->substr (0, is->find ('.'));
+	  id = is->substr (is->find ('.')+1);
 	  newcmd = new UCommand_ASSIGN_VALUE
 	    (new UVariableName (new UString (device.c_str ()),
 				new UString (id.c_str ()),
 				true,  (UNamedParameters*)0),
-	     new UExpression (EXPR_VALUE, (*iuv)),
-	     (UNamedParameters*)0
-	    );
+	     new UExpression (EXPR_VALUE, (*iuv)), (UNamedParameters*)0);
 	  if (!cmd)
 	    cmd = newcmd;
 	  else
-	    cmd = (UCommand*)
-	      new UCommand_TREE
-	      (UAND,
-	       newcmd,
-	       cmd
-	      );
+	    cmd = (UCommand*) new UCommand_TREE (UAND, newcmd, cmd);
 	}
     }
   }
 
   return res;
 }
-
-

@@ -44,9 +44,12 @@ public:
   int               size();
   UNamedParameters* copy();
 
-  UString            *name;         ///< The name
-  UExpression        *expression;   ///< The expression
-  UNamedParameters   *next;         ///< Next element in the list
+  /// Name.
+  UString            *name;
+  /// Value.
+  UExpression        *expression;
+  /// Next in the list.
+  UNamedParameters   *next;
 };
 
 #endif

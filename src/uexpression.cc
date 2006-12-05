@@ -227,10 +227,10 @@ UExpression::UExpression(UExpressionType type,
       delete expression2; this->expression2 = 0;
     }
 
-  if ( ( type == EXPR_NEG ) &&
-       ( expression1 ) )
-    if ( ( expression1->type == EXPR_VALUE ) &&
-	 ( expression1->dataType == DATA_NUM ) )
+  if (type == EXPR_NEG
+      && expression1
+      && expression1->type == EXPR_VALUE
+      && expression1->dataType == DATA_NUM)
     {
       val = - expression1->val;
 
@@ -998,7 +998,7 @@ UExpression::eval (UCommand *command,
 	  delete e1;
 	  delete e2;
 	  return ret;
-	} // save
+	}
 
 	if (STREQ(variablename->id->str(), "getIndex"))
 	{
@@ -1026,7 +1026,7 @@ UExpression::eval (UCommand *command,
 	  delete e1;
 	  delete e2;
 	  return ret;
-	} // getIndex
+	}
 
 	if (STREQ(variablename->id->str(), "cat"))
 	{
@@ -1066,12 +1066,12 @@ UExpression::eval (UCommand *command,
 	  delete e1;
 	  delete e2;
 	  return ret;
-	} // getIndex
+	}
 
       }
 
-      if ( (parameters!=0) &&
-	   (parameters->size() == 1))
+      if (parameters != 0 &&
+	  parameters->size() == 1)
       {
 	if (STREQ(variablename->id->str(), "strlen"))
 	{
@@ -1081,15 +1081,14 @@ UExpression::eval (UCommand *command,
 	  ret->dataType = DATA_NUM;
 	  ret->val = e1->str->len();
 
-	  // lourd...
 	  for (int i=0;i<e1->str->len()-1;i++)
-	    if ((e1->str->str()[i] == '\\') &&
-		(e1->str->str()[i+1] == '"'))
+	    if (e1->str->str()[i] == '\\' &&
+		e1->str->str()[i+1] == '"')
 	      ret->val--;
 
 	  delete e1;
 	  return ret;
-	} // strlen
+	}
 
 	if (STREQ(variablename->id->str(), "head"))
 	{
@@ -1102,7 +1101,7 @@ UExpression::eval (UCommand *command,
 
 	  delete e1;
 	  return ret;
-	} // head
+	}
 
 	if (STREQ(variablename->id->str(), "tail"))
 	{
@@ -1132,7 +1131,7 @@ UExpression::eval (UCommand *command,
 
 	  delete e1;
 	  return ret;
-	} // tail
+	}
 
 	if (STREQ(variablename->id->str(), "size"))
 	{
@@ -1152,7 +1151,7 @@ UExpression::eval (UCommand *command,
 
 	  delete e1;
 	  return ret;
-	} // size
+	}
 
 
 	if (STREQ(variablename->id->str(), "isdef"))
@@ -1169,7 +1168,7 @@ UExpression::eval (UCommand *command,
 	      ret->val = 1;
 
 	  return ret;
-	} // isdef
+	}
 
 	if (STREQ(variablename->id->str(), "isvoid"))
 	{
@@ -1186,7 +1185,7 @@ UExpression::eval (UCommand *command,
 	  }
 
 	  return ret;
-	} // isvoid
+	}
 
 
 	if (STREQ(variablename->id->str(), "load"))
@@ -1229,7 +1228,7 @@ UExpression::eval (UCommand *command,
 
 	  delete e1;
 	  return ret;
-	} // load
+	}
 
 
 	if (STREQ(variablename->id->str(), "loadwav"))
@@ -1267,7 +1266,7 @@ UExpression::eval (UCommand *command,
 	  }
 
 	  return ret;
-	} // loadwav
+	}
 
 
 	if (STREQ(variablename->id->str(), "exec"))
@@ -1326,12 +1325,12 @@ UExpression::eval (UCommand *command,
 
 	  delete e1;
 	  return ret;
-	} // exec
+	}
       }
 
-      if ( (parameters!=0) &&
-	   (parameters->size() == 3) &&
-	   (STREQ(variablename->id->str(), "strsub")) )
+      if (parameters != 0 &&
+	  parameters->size() == 3 &&
+	  STREQ(variablename->id->str(), "strsub"))
       {
 	e1 = parameters->expression->eval(command, connection);
 	e2 = parameters->next->expression->eval(command, connection);

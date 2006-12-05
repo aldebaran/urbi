@@ -61,35 +61,35 @@ namespace urbi
     return (*((UVar*)v.storage));
   };
 
-  UBinary cast(UValue &v, UBinary *)
+  UBinary cast(UValue& v, UBinary*)
   {
     if (v.type != DATA_BINARY)
       return UBinary();
     return UBinary(*v.binary);
   }
 
-  UList cast(UValue &v, UList *)
+  UList cast(UValue& v, UList*)
   {
     if (v.type != DATA_LIST)
       return UList();
     return UList(*v.list);
   }
 
-  UObjectStruct cast(UValue &v, UObjectStruct*)
+  UObjectStruct cast(UValue& v, UObjectStruct*)
   {
     if (v.type != DATA_OBJECT)
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
-  
-  const char * cast(UValue &v, const char ** b) 
+
+  const char * cast(UValue& v, const char**)
   {
     static const char * er = "invalid";
     if (v.type != DATA_STRING)
       return er;
     return v.stringValue->c_str();
   }
-  
+
   // USeful sending functions
 
   void uobject_unarmorAndSend(const char * str)
@@ -280,17 +280,17 @@ namespace urbi
 	      }
 	    else
 	      ++it2;
-	  }//for
+	  }
 
 	if (tocheck.empty())
 	  todelete.push_back(it);
-      }//for
+      }
 
     for (std::list<UTable::iterator>::iterator dit = todelete.begin();
 	 dit != todelete.end();
 	 ++dit)
       t.erase(*dit);
-  }//function
+  }
 
 
   //! Clean a callback UTimerTable from all callbacks linked to
