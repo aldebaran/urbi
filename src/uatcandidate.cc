@@ -49,35 +49,30 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
   bool res = false;
   cmd = 0;
 
-  if (currentTime >= endTime_ &&
-      !hasTriggered_)
+  if (currentTime >= endTime_ && !hasTriggered_)
   {
     res = true;
     hasTriggered_ = true;
   }
 
   if (res)
-  {
-    UCommand* newcmd;
-    std::list<std::string>::iterator is;
-    std::list<UValue*>::iterator iuv;
-    std::string device;
-    std::string id;
-
     for (std::list<UEventInstance*>::iterator ii = mei_->instances_.begin ();
 	 ii != mei_->instances_.end ();
 	 ++ii)
     {
-      for (is = (*ii)->filter_.begin (), iuv = (*ii)->e_->args ().begin ();
+      std::list<std::string>::iterator is;
+      std::list<UValue*>::iterator iuv;
+      for (is = (*ii)->filter_.begin (),
+	     iuv = (*ii)->e_->args ().begin ();
 	   is != (*ii)->filter_.end ();
 	   ++is, ++iuv)
 	if (!is->empty())
 	{
-	  device = is->substr (0, is->find ('.'));
-	  id = is->substr (is->find ('.')+1);
-	  newcmd = new UCommand_ASSIGN_VALUE
-	    (new UVariableName (new UString (device.c_str ()),
-				new UString (id.c_str ()),
+	  std::string device = is->substr (0, is->find ('.'));
+	  std::string id = is->substr (is->find ('.')+1);
+	  UCommand *newcmd = new UCommand_ASSIGN_VALUE
+	    (new UVariableName (new UString (device),
+				new UString (id),
 				true,  0),
 	     new UExpression (EXPR_VALUE, (*iuv)), 0);
 	  if (!cmd)
@@ -86,7 +81,6 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 	    cmd = (UCommand*) new UCommand_TREE (UAND, newcmd, cmd);
 	}
     }
-  }
 
   return res;
 }
