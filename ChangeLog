@@ -1,5 +1,10 @@
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
+	UVar::invariant
+	* src/uvar.cc: Implement it, and use it.
+
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
 	Formatting
 	* src/uvalue.cc: here.
 	And use case instead of if.

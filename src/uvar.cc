@@ -74,7 +74,7 @@ namespace urbi
   void
   UVar::__init()
   {
-    this->owned = false;
+    owned = false;
     varmap[name].push_back(this);
 
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
@@ -83,10 +83,10 @@ namespace urbi
       vardata = new UVardata(new UVariable(name.c_str(), new ::UValue(),
 					   false,false,true));
     else
-      {
-	vardata = new UVardata(it->second);
-	//XXX why?? owned = !vardata->variable->autoUpdate;
-      }
+    {
+      vardata = new UVardata(it->second);
+      //XXX why?? owned = !vardata->variable->autoUpdate;
+    }
   }
 
   //! set own mode
@@ -104,30 +104,41 @@ namespace urbi
     UVarTable::iterator varmapfind = varmap.find(name);
 
     if (varmapfind != varmap.end())
-      {
-	for (std::list<UVar*>::iterator it = varmapfind->second.begin();
-	     it != varmapfind->second.end();)
-	  if ((*it) == this)
-	    it=varmapfind->second.erase(it);
-	  else
-	    it++;
+    {
+      for (std::list<UVar*>::iterator it = varmapfind->second.begin();
+	   it != varmapfind->second.end();)
+	if ((*it) == this)
+	  it=varmapfind->second.erase(it);
+	else
+	  it++;
 
-	if (varmapfind->second.empty())
-	  varmap.erase(varmapfind);
-      }
+      if (varmapfind->second.empty())
+	varmap.erase(varmapfind);
+    }
     delete vardata;
   }
+
+  bool
+  UVar::invariant () const
+  {
+    if (!vardata)
+    {
+      echo("Unable to locate variable %s in hashtable. "
+	   "Memory problem, report bug.\n",
+	   name.c_str());
+      return false;
+    }
+    else
+      return true;
+  }
+
 
   //! UVar float assignment
   void
   UVar::operator = (ufloat n)
   {
-    if (!vardata)
-      {
-	echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	     name.c_str());
-	return;
-      }
+    if (!invariant())
+      return;
 
     // type mismatch is not integrated at this stage
     vardata->variable->value->dataType = ::DATA_NUM;
@@ -143,12 +154,8 @@ namespace urbi
   void
   UVar::operator = (const std::string& s)
   {
-    if (!vardata)
-      {
-	echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	     name.c_str());
-	return;
-      }
+    if (!invariant())
+      return;
 
     if (vardata->variable->value->dataType == ::DATA_VOID)
       vardata->variable->value->str = new UString("");
@@ -162,12 +169,8 @@ namespace urbi
   void
   UVar::operator = (const UBinary &b)
   {
-    if (!vardata)
-      {
-	echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	     name.c_str());
-	return;
-      }
+    if (!invariant())
+      return;
     *vardata->variable->value=b;
     vardata->variable->updated();
   }
@@ -176,12 +179,8 @@ namespace urbi
   void
   UVar::operator = (const UImage &b)
   {
-    if (!vardata)
-    {
-      echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	   name.c_str());
+    if (!invariant())
       return;
-    }
     *vardata->variable->value=b;
     vardata->variable->updated();
   }
@@ -191,12 +190,8 @@ namespace urbi
   void
   UVar::operator = (const USound &b)
   {
-    if (!vardata)
-      {
-	echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	     name.c_str());
-	return;
-      }
+    if (!invariant())
+      return;
     *vardata->variable->value=b;
     vardata->variable->updated();
   }
@@ -204,12 +199,8 @@ namespace urbi
   void
   UVar::operator = (const UList &l)
   {
-    if (!vardata)
-      {
-	echo("Unable to locate variable %s in hashtable. Memory problem, report bug.\n",
-	     name.c_str());
-	return;
-      }
+    if (!invariant())
+      return;
     *vardata->variable->value=l;
     vardata->variable->updated();
   }
@@ -219,25 +210,19 @@ namespace urbi
   UVar::operator int ()
   {
     //check of dataType is done inside in and out
-    if (owned)
-      return (int)out();
-    else
-      return (int)in();
+    return owned ? (int) out() : (int) in();
   }
 
   UVar::operator ufloat ()
   {
     //check of dataType is done inside in and out
-    if (owned)
-      return out();
-    else
-      return in();
+    return owned ? out() : in();
   }
 
 
   UVar::operator std::string ()
   {
-    if (vardata  && (vardata->variable->value->dataType == ::DATA_STRING))
+    if (vardata && vardata->variable->value->dataType == ::DATA_STRING)
       return std::string(vardata->variable->value->str->str());
     else
       return std::string("");
@@ -253,7 +238,8 @@ namespace urbi
     if (vardata
 	&& vardata->variable->value->dataType == ::DATA_BINARY)
       return  (*vardata->variable->value).operator UBinary();
-    else return UBinary();
+    else
+      return UBinary();
   }
 
   UVar::operator UBinary*()
@@ -281,9 +267,10 @@ namespace urbi
   UVar::out()
   {
     static ufloat er=0;
-    if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
+    if (vardata && vardata->variable->value->dataType == ::DATA_NUM)
       return vardata->variable->target;
-    else return er;
+    else
+      return er;
   }
 
   //! UVar in value (write mode)
@@ -291,9 +278,10 @@ namespace urbi
   UVar::in()
   {
     static ufloat er=0;
-    if ((vardata) && (vardata->variable->value->dataType == ::DATA_NUM))
+    if (vardata && vardata->variable->value->dataType == ::DATA_NUM)
       return vardata->variable->value->val;
-    else return er;
+    else
+      return er;
   }
 
 
@@ -305,7 +293,7 @@ namespace urbi
     if (!vardata)
       return;
     switch(prop)
-      {
+    {
       case PROP_RANGEMIN:
 	vardata->variable->rangemin =(double)v;
 	break;
@@ -322,24 +310,24 @@ namespace urbi
 	vardata->variable->delta =(double)v;
 	break;
       case PROP_BLEND:
+      {
+	if (v.type == DATA_DOUBLE)
 	{
-	  if (v.type == DATA_DOUBLE)
+	  //numeric val
+	  vardata->variable->blendType=(UBlend)(int)(double)v;
+	}
+	else if (v.type == DATA_STRING)
+	{
+	  std::string s=(std::string)v;
+	  for (int i=0;blendNames[i][0];i++)
+	    if (s==(std::string)blendNames[i])
 	    {
-	      //numeric val
-	      vardata->variable->blendType=(UBlend)(int)(double)v;
-	    }
-	  else if (v.type == DATA_STRING)
-	    {
-	      std::string s=(std::string)v;
-	      for (int i=0;blendNames[i][0];i++)
-		if (s==(std::string)blendNames[i])
-		  {
-		    vardata->variable->blendType = (UBlend)i;
-		    return;
-		  }
+	      vardata->variable->blendType = (UBlend)i;
+	      return;
 	    }
 	}
       }
+    }
   }
 
   void
@@ -360,7 +348,7 @@ namespace urbi
     if (!vardata)
       return UValue();
     switch(prop)
-      {
+    {
       case PROP_RANGEMIN:
 	return UValue(vardata->variable->rangemin);
 	break;
@@ -379,23 +367,23 @@ namespace urbi
       case PROP_BLEND:
 	return UValue(vardata->variable->blendType);
 	break;
-      }
+    }
     return UValue();
   }
 
 
   /*
-    UBlendType
-    UVar::blend()
-    {
-    if (vardata)
-    return ((UBlendType)vardata->variable->blendType);
-    else
-    {
-    echo("Internal error on variable 'vardata', should not be zero\n");
-    return UNORMAL;
-    }
-    }*/
+   UBlendType
+   UVar::blend()
+   {
+   if (vardata)
+   return ((UBlendType)vardata->variable->blendType);
+   else
+   {
+   echo("Internal error on variable 'vardata', should not be zero\n");
+   return UNORMAL;
+   }
+   }*/
 
 
   void

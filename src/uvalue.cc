@@ -681,7 +681,7 @@ UValue::equal(UValue *v)
 	return false;
       return (memcmp(v->refBinary->ref()->buffer,
 		     refBinary->ref()->buffer,
-		     refBinary->ref()->bufferSize) == 0 );
+		     refBinary->ref()->bufferSize) == 0);
     case DATA_LIST:
       if (v->dataType != DATA_LIST)
 	return false;
