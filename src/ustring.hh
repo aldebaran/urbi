@@ -36,9 +36,12 @@ class UString
  public:
   MEMORY_MANAGED;
   UString(const char* s);
-  UString(UString *s);
+  UString(const UString *s);
+  UString(const UString& s);
+  UString(const std::string& s);
+
   /// Concat \c s1 and \c s2 with a dot in the middle.
-  UString(UString *s1, UString *s2);
+  UString(const UString *s1, const UString *s2);
 
   ~UString();
 
@@ -47,31 +50,38 @@ class UString
     return str_;
   }
 
-  int len()
+  int len() const
   {
     return len_;
   }
 
-  UString* copy()
+  UString* copy() const
   {
     return (new UString(this));
   }
 
-  char* ext(int deb, int length);
-  bool equal(UString *s);
-  bool tagequal(UString *s);
-  bool equal(const char *s);
+  const char* ext(int deb, int length);
+  bool equal(const UString *s) const;
+  bool tagequal(const UString *s) const;
+  bool equal(const char *s) const;
+
   void update(const char *s);
-  void update(UString *s);
+  void update(const UString *s);
+
   void setLen(int l);
+
+  /// Decode \n, \\, \", and \t, in place.
+  char* un_armor();
+
+  // Return the string with " and \ escaped.
   std::string armor();
-  char* unArmor();
-  void fastArmor();
 
  private:
+  void fast_armor();
+
   int  len_;
   char* str_;
-  bool fastArmor_;
+  bool fast_armor_;
 };
 
 inline void

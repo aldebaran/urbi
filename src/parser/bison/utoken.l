@@ -131,17 +131,17 @@ STRING   \"([^"]|"\\\"")*\"
 		valp->str->setLen( valp->str->len() -1 );
 		if (valp->str->str() == 0)
 		{
-		  delete (valp->str);
+		  delete valp->str;
 		  valp->str = 0;
 		}
 
 		if (valp->str != 0) {
 		  /* remove ending " */
-		  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
-		  *position=0;
+		  char* cp = const_cast<char*>(&(valp->str->str()[yyleng-2]));
+		  *cp=0;
 
 		  /* unArmor */
-		  valp->str->unArmor();
+		  valp->str->un_armor();
 		}
 
 		return token::STRING;
