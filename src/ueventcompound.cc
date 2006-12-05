@@ -18,6 +18,8 @@
 #include <cstdio>
 #include <sstream>
 
+#include "libport/containers.hh"
+
 #include "ueventcompound.hh"
 #include "uasynccommand.hh"
 #include "ueventmatch.hh"
@@ -135,15 +137,8 @@ UEventCompound::mixing()
 	}
 
       // cleaning
-      for (imei1 = res1.begin ();
-	   imei1 != res1.end ();
-	   imei1++)
-	delete *imei1;
-      for (imei2 = res2.begin ();
-	   imei2 != res2.end ();
-	   imei2++)
-	delete *imei2;
-
+      libport::deep_clear (imei1);
+      libport::deep_clear (imei2);
       return result;
 
     default:

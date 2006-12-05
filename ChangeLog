@@ -1,5 +1,15 @@
 2006-12-05  Akim Demaille  <akim.demaille@free.fr>
 
+	use libport::deep_clear
+	* src/ubinder.cc, src/ubinder.hh, src/ucommand.cc,
+	* src/uconnection.cc, src/ueventcompound.cc, src/ueventhandler.cc,
+	* src/ueventinstance.cc, src/ueventmatch.cc, src/uobj.cc,
+	* src/uobject.cc, src/userver.cc:
+	here.
+	And run restyle.
+
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
 	Formatting changes
 	* src/uatcandidate.cc: here.
 	Shorten scopes.

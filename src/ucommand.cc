@@ -6297,7 +6297,7 @@ UCommand_AT::execute(UConnection *connection)
       }
     delete ec;
     reloop_ = true;
-  } //end reeval
+  }
 
 
 
@@ -6673,7 +6673,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
       if (theloop_) theloop_->toDelete = true;
       theloop_ = 0;
     }
-  } //end reeval
+  }
 
   if (reloop_)
   {

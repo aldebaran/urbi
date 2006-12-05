@@ -18,6 +18,8 @@
 #include <cstdio>
 #include <sstream>
 
+#include "libport/containers.hh"
+
 #include "ueventmatch.hh"
 #include "uasynccommand.hh"
 #include "utypes.hh"
@@ -83,11 +85,7 @@ UEventMatch::UEventMatch (UEventHandler* eh)
 
 UEventMatch::~UEventMatch ()
 {
-  // The UEventMatch owns his UValues in the filter and it must free them:
-  for (std::list<UValue*>::iterator it = filter_.begin ();
-       it != filter_.end ();
-       it++)
-    delete *it;
+  libport::deep_clear(filter_);
 }
 
 void

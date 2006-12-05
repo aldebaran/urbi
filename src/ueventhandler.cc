@@ -16,9 +16,9 @@
 
  **************************************************************************** */
 
-#include "ueventhandler.hh"
-
 #include <sstream>
+
+#include "libport/containers.hh"
 
 #include "ueventhandler.hh"
 #include "unamedparameters.hh"
@@ -123,11 +123,7 @@ UEvent::UEvent (UEventHandler* eventhandler,
 
 UEvent::~UEvent()
 {
-  // The UEvent owns his UValues and must free them:
-  for (std::list<UValue*>::iterator it = args_.begin ();
-       it != args_.end ();
-       it++)
-    delete *it;
+  libport::deep_clear(args);
 }
 
 
@@ -199,4 +195,3 @@ UEventHandler::removeEvent(UEvent* event)
   // triggers associated commands update
   updateRegisteredCmd ();
 }
-

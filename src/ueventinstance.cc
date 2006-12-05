@@ -18,6 +18,8 @@
 #include <cstdio>
 #include <sstream>
 
+#include "libport/containers.hh"
+
 #include "ueventinstance.hh"
 #include "uasynccommand.hh"
 #include "ueventmatch.hh"
@@ -85,11 +87,7 @@ UMultiEventInstance::UMultiEventInstance (UMultiEventInstance *mei1,
 
 UMultiEventInstance::~UMultiEventInstance ()
 {
-  // The UMultiEventInstance owns his UEventInstances and must free them:
-  for (std::list<UEventInstance*>::iterator it = instances_.begin ();
-       it != instances_.end ();
-       it++)
-    delete *it;
+  libport::deep_clear(instances_);
 }
 
 void
@@ -113,4 +111,3 @@ UMultiEventInstance::operator== (UMultiEventInstance& mei)
 
   return true;
 }
-

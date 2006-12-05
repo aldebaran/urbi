@@ -24,6 +24,8 @@
 #include <cstdarg>
 #include <string>
 
+#include "libport/containers.hh"
+
 #include "ubanner.hh"
 #include "userver.hh"
 #include "uconnection.hh"
@@ -499,7 +501,7 @@ UServer::work()
 	      {
 		if ((*it)->isDeletable())
 		  {
-		    delete (*it);
+		    delete *it;
 		    it = varToReset.erase(it);
 		  }
 		else it++;
@@ -511,11 +513,9 @@ UServer::work()
 	      retr != variabletab.end();
 	      retr++)
 	  if (retr->second->uservar)
-	    varToReset.push_back( retr->second );
+	    varToReset.push_back(retr->second);
 
-	for (std::list<UVariable*>::iterator it = varToReset.begin();
-	     it != varToReset.end();++it)
-	  delete *it;
+	libport::deep_clear (varToReset);
 
 	//variabletab.clear();
 	aliastab.clear();
@@ -525,7 +525,6 @@ UServer::work()
 	objaliastab.clear();
 	tagtab.clear();
 
-	varToReset.clear();
 	for (std::list<UConnection*>::iterator retr = connectionList.begin();
 	     retr != connectionList.end();
 	     retr++)

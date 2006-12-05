@@ -23,6 +23,8 @@
 # define snprintf _snprintf
 #endif
 
+#include "libport/containers.hh"
+
 #include "uobj.hh"
 #include "ustring.hh"
 #include "uvalue.hh"
@@ -62,13 +64,9 @@ UObj::~UObj()
 	&& it->second->devicename->equal(device)
        )
       varToDelete.push_back(it->second);
-  }//for
+  }
 
-  for (std::list<UVariable*>::iterator itd = varToDelete.begin();
-       itd != varToDelete.end();
-       ++itd)
-    delete (*itd);
-
+  libport::deep_clear (varToDelete);
 
   // clean variables binders (a bit brutal, we scan all wariables...
   // I'll work on an optimized version later)
@@ -83,9 +81,9 @@ UObj::~UObj()
       {
 	delete it->second->binder;
 	it->second->binder = 0;
-      }//if
-    }//if
-  }//for
+      }
+    }
+  }
 
   std::list<HMbindertab::iterator> deletelist;
   //clean functions binders
@@ -95,7 +93,7 @@ UObj::~UObj()
   {
     if (it2->second->removeMonitor(device))
       deletelist.push_back(it2);
-  }//for
+  }
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
@@ -110,7 +108,7 @@ UObj::~UObj()
   {
     if (it3->second->removeMonitor(device))
       deletelist.push_back(it3);
-  }//for
+  }
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        itt++)
@@ -180,8 +178,8 @@ UObj::~UObj()
       }
       else
 	++itcb;
-    }//for
-  }//for
+    }
+  }
 
   // clean variables internalAccessBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
@@ -195,7 +193,7 @@ UObj::~UObj()
     {
       if ((*itcb)->objname == device->str())
       {
-	delete (*itcb);
+	delete *itcb;
 	itcb = it->second->internalAccessBinder.erase(itcb);
       }
       else

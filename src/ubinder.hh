@@ -36,8 +36,9 @@ class UBinder
 {
 public:
 
-  UBinder(UString *objname, UString *id, UBindMode bindMode, UBindType type, int nbparam,
-  	UConnection* c);
+  UBinder(UString *objname, UString *id,
+	  UBindMode bindMode, UBindType type, int nbparam,
+	  UConnection* c);
   ~UBinder();
 
   UString      *id;

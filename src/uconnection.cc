@@ -1128,7 +1128,7 @@ UConnection::processCommand(UCommand *&command,
 	  return command;
       }
     }
-  }//while(1)
+  }
 }
 
 //! Execute a command tree

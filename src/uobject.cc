@@ -309,8 +309,8 @@ namespace urbi
 	  }
 	else
 	  ++it;
-      }//for
-  }//function
+      }
+  }
 
 
   //! UObject cleaner
