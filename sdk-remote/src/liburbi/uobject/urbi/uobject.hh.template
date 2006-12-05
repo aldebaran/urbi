@@ -173,7 +173,7 @@ namespace urbi
   // For remote mode.
   extern void main(int argc, char *argv[]);
 
-  // *****************************************************************************
+
   // Global function of the urbi:: namespace to access kernel features
 
   /// Write a message to the server debug output. Printf syntax.
@@ -191,7 +191,7 @@ namespace urbi
   /// Send buf to the connection hosting the UObject.
   void send(void* buf,int size);
 
-  // *****************************************************************************
+
   // UValue and other related types
 
   /// Possible value types a UValue can contain.
@@ -419,11 +419,11 @@ namespace urbi
     ufloat          val;  ///< value if of type DATA_DOUBLE
     union
     {
-      std::string    *stringValue; ///< value if of type DATA_STRING
-      UBinary        *binary;  ///< value if of type DATA_BINARY
-      UList          *list;  ///< value if of type DATA_LIST
-      UObjectStruct  *object;  ///< value if of type DATA_OBJ
-      void           *storage; // internal
+      std::string	*stringValue;	///< value if of type DATA_STRING
+      UBinary		*binary;	///< value if of type DATA_BINARY
+      UList		*list;		///< value if of type DATA_LIST
+      UObjectStruct	*object;	///< value if of type DATA_OBJ
+      void           *storage;		///< internal
     };
 
     UValue();
@@ -456,7 +456,8 @@ namespace urbi
 
     ~UValue();
 
-    //parse an uvalue in current message+pos, returns pos of end of match -pos of error if error
+    /// Parse an uvalue in current message+pos, returns pos of end of
+    /// match -pos of error if error.
     int parse(const char* message,
 	      int pos,
 	      std::list<BinaryData> &bins,
@@ -478,18 +479,19 @@ namespace urbi
   {
   public:
 
-    void operator =(const UValue &v ) ;
-    void operator =(const double v ) ;
-    void operator =(const std::string & v ) ;
+    void operator =(const UValue &v);
+    void operator =(const double v);
+    void operator =(const std::string & v);
 
-    operator double() ;
-    operator std::string() ;
-    operator UValue() ;
+    operator double();
+    operator std::string();
+    operator UValue();
 
-    UProp(UVar &owner, UProperty name):owner(owner),name(name){}
+    UProp(UVar &owner, UProperty name)
+      :owner(owner),name(name)
+    {}
 
   private:
-
     UVar & owner;
     UProperty name;
 
@@ -509,7 +511,7 @@ namespace urbi
   delta(*this, PROP_DELTA),			\
   blend(*this, PROP_BLEND)
 
-  // *****************************************************************************
+
   /** UVar class definition
       Each UVar instance corresponds to one URBI variable. The class provides access to
       the variable properties, and reading/writting the value to/from all known types.
@@ -549,16 +551,25 @@ namespace urbi
     operator int ();
     operator bool () {return (int)(*this);}
     operator UBinary ();   ///< deep copy
-    operator UBinary *();  ///< deep copy, binary will have to be deleted by the user
-    operator UImage (); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
-    operator USound(); ///< In plugin mode, gives direct access to the buffer, which may not be valid after the calling function returns. Changes to the other fields of the structure have no effect.
+    /// Deep copy, binary will have to be deleted by the user.
+    operator UBinary *();
+    /// In plugin mode, gives direct access to the buffer, which may
+    /// not be valid after the calling function returns. Changes to
+    /// the other fields of the structure have no effect..
+    operator UImage ();
+    /// In plugin mode, gives direct access to the buffer, which may
+    /// not be valid after the calling function returns. Changes to
+    /// the other fields of the structure have no effect..
+    operator USound();
     operator ufloat ();
     operator std::string ();
     operator UList();
 
 
 
-    void requestValue(); ///< No effect in plugin mode. In remote mode, updates the value once asynchronously.
+    /// No effect in plugin mode. In remote mode, updates the value
+    /// once asynchronously..
+    void requestValue();
 
     //kernel operators
     ufloat& in();
@@ -585,13 +596,17 @@ namespace urbi
     void __update(UValue&);
 
   private:
-    UValue& val() { return value; }; ///< XXX only works in softdevice mode
+    /// Xxx only works in softdevice mode.
+    UValue& val() { return value; };
 
-    UVardata  *vardata; ///< pointer to internal data specifics
+    /// Pointer to internal data specifics.
+    UVardata  *vardata;
     void __init();
 
-    PRIVATE(std::string,name) ///< full name of the variable as seen in URBI
-    PRIVATE(UValue,value) ///< the variable value on the softdevice's side
+    /// Full name of the variable as seen in URBI.
+    PRIVATE(std::string,name)
+    /// The variable value on the softdevice's side.
+    PRIVATE(UValue,value)
   };
 
   inline void UProp::operator =(const UValue& v) {owner.setProp(name,v);}
@@ -601,7 +616,7 @@ namespace urbi
   inline UProp::operator std::string()  {return owner.getProp(name);}
   inline UProp::operator UValue() {return owner.getProp(name);}
 
-  // *****************************************************************************
+
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the
     the interface user point's of view.
@@ -635,7 +650,7 @@ namespace urbi
     std::string name;
   };
 
-  // *****************************************************************************
+
   //! Timer mechanism
   /*! This class stores a callback as a class method
    */
@@ -673,7 +688,7 @@ namespace urbi
     int (T::*fun) ();
   };
 
-  // *****************************************************************************
+
   /** Main UObject class definition
       Each UObject instance corresponds to an URBI object. It provides mechanisms to
       bind variables and functions between C++ and URBI.
@@ -789,7 +804,7 @@ namespace urbi
   };
 
 
-  // *****************************************************************************
+
   //! Main UObjectHub class definition
   class UObjectHub
   {
@@ -816,8 +831,10 @@ namespace urbi
     std::string name;
   };
 
-  // *****************************************************************************
-  // Casters
+
+  /*----------.
+  | Casters.  |
+  `----------*/
 
 
 # define SETCAST(type)				\
@@ -848,21 +865,17 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
 {
   std::list<I> result;
   if (val.type != DATA_LIST)
-  {
     //cast just the element
     result.push_back(cast(val, (I*)0));
-  }
   else
-  {
     for (int i=0;i<val.list->size();i++)
       result.push_back(cast(*val.list->array[i], (I*)0));
-  }
   return result;
 }
 
 
 #endif
-  // **************************************************************************
+
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
   class baseURBIStarter
   {
@@ -896,7 +909,7 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
     {
       slist = &_slist;
       slist->push_back(dynamic_cast<baseURBIStarter*>(this));
-    };
+    }
 
     virtual ~URBIStarter() { clean(); }
 
@@ -943,7 +956,7 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
     T*          object;
   };
 
-  // **************************************************************************
+
   //! URBIStarter base class used to store heterogeneous template class objects in starterlist
   class baseURBIStarterHub
   {
@@ -990,9 +1003,11 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
     T*              object;
   };
 
-  /**********************************************************/
-  // This section is autogenerated. Not for humans eyes ;)
-  /**********************************************************/
+
+  /*------------------------------------------------------.
+  | This section is autogenerated. Not for humans eyes ;) |
+  `------------------------------------------------------*/
+
 
   template<typename T>
   class utrait
@@ -1120,7 +1135,7 @@ UGenericCallback* createUCallback(const std::string& objname, const std::string&
 
 // callback creation for non-member void return type
 // inline required since one of them is not a template
-template <%%%,% class P% %%> inline 
+template <%%%,% class P% %%> inline
 UGenericCallback* createUCallback(const std::string& objname, const std::string& type,  void (*fun) (%%%,% P% %%), const std::string& funname,UTable &t)
 {
   return ((UGenericCallback*) new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t));
