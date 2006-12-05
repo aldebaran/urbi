@@ -4,11 +4,16 @@
 uobject_srcdir = $(srcdir)/uobject
 uobject_hh = $(uobject_srcdir)/urbi/uobject.hh
 
-uobject_sources =				\
-$(uobject_hh)					\
-$(uobject_srcdir)/uvalue-common.cc
+nodist_uobject_sources =			\
+$(uobject_hh)
 
-EXTRA_DIST += $(uobject_srcdir)/uvalue-common.cc
+dist_uobject_sources =				\
+$(uobject_srcdir)/uvalue-common.cc		\
+$(uobject_srcdir)/uvar-common.cc
+
+uobject_sources = $(nodist_uobject_sources) $(dist_uobject_sources)
+
+EXTRA_DIST += $(dist_uobject_sources)
 
 ## ------------ ##
 ## uobject.hh.  ##
