@@ -137,7 +137,7 @@ UBinder::removeMonitor (const UString& objname)
     else
       mit++;
   }
-  return( monitors.empty() );
+  return monitors.empty();
 }
 
 

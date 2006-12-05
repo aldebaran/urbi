@@ -122,7 +122,7 @@ bool UString::equal(const UString *s) const
 {
   if (s==0)
     return false;
-  return (STREQ(s->str(), (const char*)str_));
+  return STREQ(s->str(), (const char*)str_);
 }
 
 bool UString::tagequal(const UString *s) const

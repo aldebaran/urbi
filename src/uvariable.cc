@@ -213,7 +213,7 @@ UVariable::setName(const char *s)
   devicename = new UString(varname->str());
   if (pointPos) pointPos[0] = '.';
 
-  return (varname->str());
+  return varname->str();
 }
 
 //! Associated variable name initialization
@@ -228,7 +228,7 @@ UVariable::setName(const char *_id, const char* _method)
   method     = new UString(_method);
   devicename = new UString(_id);
 
-  return (varname->str());
+  return varname->str();
 }
 
 //! Set the UValue associated to the variable

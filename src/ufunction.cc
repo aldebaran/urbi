@@ -57,7 +57,7 @@ UFunction::nbparam()
 {
   if (!parameters) return 0;
   else
-    return(parameters->size());
+    return parameters->size();
 }
 
 UCommand*

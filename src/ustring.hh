@@ -57,7 +57,7 @@ class UString
 
   UString* copy() const
   {
-    return (new UString(this));
+    return new UString(this);
   }
 
   const char* ext(int deb, int length);

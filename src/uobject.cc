@@ -58,7 +58,7 @@ namespace urbi
 
   UVar& cast(UValue &v, UVar *)
   {
-    return (*((UVar*)v.storage));
+    return *((UVar*)v.storage);
   };
 
   UBinary cast(UValue& v, UBinary*)

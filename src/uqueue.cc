@@ -345,7 +345,7 @@ UQueue::pop (int length)
     if (start_ == bufferSize_) start_ = 0; // loop the circular geometry.
     dataSize_ -= toPop;
 
-    return (buffer_ + tmp_index);
+    return buffer_ + tmp_index;
 
   }
   else
@@ -443,7 +443,7 @@ UQueue::virtualPop (int length)
     //if (start_ == bufferSize_) start_ = 0; // loop the circular geometry.
     //dataSize_ -= toPop;
 
-    return (buffer_ + tmp_index);
+    return buffer_ + tmp_index;
 
   }
   else

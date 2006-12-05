@@ -42,7 +42,7 @@ public:
 
   virtual ufloat getTime()
   {
-    return (ufloat)(urbi::utime() / 1000LL);
+    return static_cast<ufloat>(urbi::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
