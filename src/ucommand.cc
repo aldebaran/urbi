@@ -22,7 +22,8 @@
 #include "config.h"
 
 #include <cstdio>
-#ifdef WIN32
+#ifdef _MSC_VER
+/* MS Visual C++ doesn't have snprintf. */
 # define snprintf _snprintf
 #endif
 
