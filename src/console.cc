@@ -5,10 +5,7 @@
 # include <unistd.h>
 #endif
 #ifdef WIN32
-/* Windows doesn't have usleep. Use Sleep instead:
- * http://msdn.microsoft.com/library/default.asp
- * `-> ?url=/library/en-us/dllproc/base/sleep.asp */
-# define usleep(t) Sleep((t) <= 1000 ? 1 : (t) / 1000)
+# include "libport/windows.h"
 #endif
 #include <fstream>
 

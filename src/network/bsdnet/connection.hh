@@ -13,6 +13,7 @@
 # include "uconnection.hh"
 # include "utypes.hh"
 # include "network/bsdnet/network.hh"
+
 //! LinuxConnection implements an TCP/IP client connection.
 class Connection : public UConnection, public Network::Pipe
 {
@@ -33,7 +34,7 @@ public:
    * is thus responsible for its deletion, and the declaration of its allocation*/
   Connection(int connfd);
   virtual ~Connection();
-  virtual UErrorValue	closeConnection	   ();
+  virtual UErrorValue closeConnection ();
 
   /*ENABLE_URBI_MEM*/
 

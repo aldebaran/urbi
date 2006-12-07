@@ -94,31 +94,30 @@ UConnection::UConnection  (UServer *userver,
 			   int maxRecvBufferSize)
   : UError(USUCCESS),
     server(userver),
-    packetSize_(packetSize),
-    sendAdaptive_(UConnection::ADAPTIVE),
-    recvAdaptive_(UConnection::ADAPTIVE),
-    // Initial state of the connection: unblocked, not receiving binary.
-    blocked_(false),
-    receiveBinary_(false),
-    active_(true),
-    
+    activeCommand(0),
     // no active command and no last command at start:
     lastCommand(0),
-    activeCommand(0),
-    
+    connectionTag(0),
     functionTag(0),
+    clientIP(0),
     killall(false),
     closing(false),
+    receiving(false),
+    inwork(false),
     newDataAdded(false),
     returnMode(false),
     obstructed(false),
-    receiving(false),
-    inwork(false),
-    clientIP(0)
+    packetSize_(packetSize),
+    blocked_(false),
+    receiveBinary_(false),
+    sendAdaptive_(UConnection::ADAPTIVE),
+    recvAdaptive_(UConnection::ADAPTIVE),
+    // Initial state of the connection: unblocked, not receiving binary.
+    active_(true)
 {
   char tmpbuffer_connectionTag[50];
   // Create send queue
-  sendQueue_	   = new UQueue(minSendBufferSize,
+  sendQueue_ = new UQueue(minSendBufferSize,
 				maxSendBufferSize,
 				sendAdaptive_);
   if (sendQueue_ == 0 || sendQueue_->UError == UFAIL)
@@ -128,7 +127,7 @@ UConnection::UConnection  (UServer *userver,
   }
 
   // Create receive queue
-  recvQueue_	   = new UCommandQueue(minRecvBufferSize,
+  recvQueue_ = new UCommandQueue(minRecvBufferSize,
 				       maxRecvBufferSize,
 				       sendAdaptive_);
   if (recvQueue_ == 0 || recvQueue_->UError == UFAIL)
@@ -139,15 +138,16 @@ UConnection::UConnection  (UServer *userver,
     return;
   }
 
-  for (int i = 0; i < MAX_ERRORSIGNALS ; i++)
+  for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
 
   // initialize the connection tag used to reference local variables
-  sprintf(tmpbuffer_connectionTag, "U%ld", (long)this);
+  sprintf(tmpbuffer_connectionTag, "U%ld", (long) this);
   connectionTag = new UString(tmpbuffer_connectionTag);
   UVariable* cid = new UVariable(tmpbuffer_connectionTag, "connectionID",
 				 tmpbuffer_connectionTag);
-  if (cid) cid->uservar = false;
+  if (cid)
+    cid->uservar = false;
 }
 
 //! UConnection destructor.

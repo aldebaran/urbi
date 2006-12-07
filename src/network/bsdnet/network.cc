@@ -1,23 +1,17 @@
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-#endif
+#include "network/bsdnet/network.hh"
+#include "network/bsdnet/connection.hh"
 
 #include <cstdio>
 
-#ifndef _MSC_VER
-#include <sys/time.h>
-#include <unistd.h>
+#ifndef WIN32
+# include <sys/time.h>
+# include <unistd.h>
 #endif
+
 #include <sys/types.h>
 
 #include <list>
 #include <algorithm>
-
-#include "network/bsdnet/network.hh"
-#include "network/bsdnet/connection.hh"
-
 
 extern UServer * THESERVER;
 namespace Network
@@ -49,12 +43,12 @@ namespace Network
 #ifdef WIN32
     /* initialize the socket api */
     WSADATA info;
-    rc = WSAStartup(MAKEWORD(1,1),&info); /* Winsock 1.1 */
+    rc = WSAStartup(MAKEWORD(1, 1), &info); /* Winsock 1.1 */
     if (rc!=0)
       return false;
 #endif
     /* create the socket */
-    fd = socket(AF_INET,SOCK_STREAM,0);
+    fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd==-1)
       return false;
 
@@ -65,16 +59,16 @@ namespace Network
       return false;
 
     /* fill in socket address */
-    memset(&address,0,sizeof(struct sockaddr_in));
+    memset(&address, 0, sizeof(struct sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short)port);
     address.sin_addr.s_addr = INADDR_ANY;
     /* bind to port */
-    rc = bind(fd,(struct sockaddr *)&address,sizeof(struct sockaddr));
+    rc = bind(fd, (struct sockaddr *)&address, sizeof(struct sockaddr));
     if (rc==-1)
       return false;
     /* listen for connections */
-    if (listen(fd,1)==-1)
+    if (listen(fd, 1)==-1)
       return false;
 
     registerNetworkPipe(this);
@@ -100,7 +94,7 @@ namespace Network
   }
 
   static std::list<Pipe *> pList;
-  static int controlPipe[2]={-1,-1};
+  static int controlPipe[2]={-1, -1};
 
   bool
   createTCPServer(int port)
@@ -128,12 +122,12 @@ namespace Network
       {
 	int f= (*i)->readFD();
 	if (f>0)
-	  FD_SET(f,&rd);
+	  FD_SET(f, &rd);
 	if (f>maxfd)
 	  maxfd = f;
 	int g= (*i)->writeFD();
 	if (g>0)
-	  FD_SET(g,&wr);
+	  FD_SET(g, &wr);
 	if (g>maxfd)
 	  maxfd = g;
       }
@@ -150,11 +144,11 @@ namespace Network
 	try {
 	  Pipe *p = (*i);
 	  int f= p->readFD();
-	  if (f>=0 && FD_ISSET(f,&rd))
+	  if (f>=0 && FD_ISSET(f, &rd))
 	    p->notifyRead();
 
 	  f= p->writeFD();
-	  if (f>=0 && FD_ISSET(f,&wr))
+	  if (f>=0 && FD_ISSET(f, &wr))
 	    p->notifyWrite();
 	}
 	catch(...)
@@ -181,7 +175,7 @@ namespace Network
     if (r>0)
       {
 #ifndef WIN32
-	if (FD_ISSET(controlPipe[0],&rd))
+	if (FD_ISSET(controlPipe[0], &rd))
 	  {
 	    char buf[128];
 	    read(controlPipe[0], buf, 128);
@@ -232,7 +226,7 @@ namespace Network
   {
 #ifdef WIN32
     DWORD tid;
-    CreateThread(NULL,0,processNetwork,0,0,&tid);
+    CreateThread(NULL, 0, processNetwork, 0, 0, &tid);
 #else
     pthread_t * pt = new pthread_t;
     pthread_create(pt, 0, &processNetwork, 0);
