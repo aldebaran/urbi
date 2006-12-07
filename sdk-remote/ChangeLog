@@ -7,6 +7,13 @@
 	* flags.mk: Fix sdk/config.h.
 	* src/examples/Makefile.am: Simplify.
 
+2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+
+	Update sdk
+	* Makefile.am (ACLOCAL_AMFLAGS): Pass -I sdk.
+	* configure.ac: Use URBI_SDK_DIRS.
+	* src/liburbi/umain.cc: Use libport/windows.hh.
+
 2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	uvar-common.cc
