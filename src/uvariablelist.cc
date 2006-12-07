@@ -71,13 +71,8 @@ UVariableList::size()
 UVariableList*
 UVariableList::copy()
 {
-  UVariableList* ret = new UVariableList(0,
-					 0);
-
-  if (variablename) ret->variablename = variablename->copy();
-  if (next)         ret->next = next->copy();
-
-  return ret;
+  return new UVariableList (ucopy (variablename),
+			    ucopy (next));
 }
 
 //! Print the list of parameters

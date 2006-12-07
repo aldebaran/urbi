@@ -71,6 +71,21 @@ public:
   UExpression(UExpressionType type,
 	      UString *oper,
 	      UVariableName *variablename);
+  UExpression (UExpressionType type,
+	       UExpression* expression1,
+	       UExpression* expression2,
+	       UVariableName* variablename,
+	       UNamedParameters* parameters,
+	       UString* str,
+	       UString* id,
+	       UExpression* softtest_time,
+	       UValue* staticcache,
+	       UDataType dataType,
+	       ufloat val,
+	       bool issconst,
+	       bool issofttest,
+	       bool firsteval,
+	       UValue* tmp_value);
   ~UExpression();
 
   void            print       ();

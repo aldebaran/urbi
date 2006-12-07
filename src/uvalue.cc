@@ -445,6 +445,7 @@ UValue::copy()
       ret->val = val;
       break;
 
+    case DATA_FILE:
     case DATA_STRING:
     case DATA_OBJ:
       ret->str = new UString(str);
@@ -456,19 +457,7 @@ UValue::copy()
       break;
 
     case DATA_BINARY:
-      if (refBinary)
-	ret->refBinary = refBinary->copy();
-      else
-	ret->refBinary = 0;
-      break;
-
-    case DATA_FILE:
-      ret->str = new UString(str);
-      if (!ret->str)
-      {
-	delete ret;
-	return 0;
-      }
+      ret->refBinary = ucopy (refBinary);
       break;
 
     case DATA_LIST:

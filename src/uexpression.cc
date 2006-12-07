@@ -241,6 +241,26 @@ UExpression::UExpression(UExpressionType type,
     }
 }
 
+//! UExpression constructor.
+UExpression::UExpression (UExpressionType _type, UExpression* _expression1,
+			  UExpression* _expression2,
+			  UVariableName* _variablename,
+			  UNamedParameters* _parameters, UString* _str,
+			  UString* _id, UExpression* _softtest_time,
+			  UValue* _staticcache, UDataType _dataType,
+			  ufloat _val, bool _isconst,
+			  bool _issofttest, bool _firsteval,
+			  UValue* _tmp_value)
+  : type (_type), dataType (_dataType), val (_val), str (_str),
+    tmp_value (_tmp_value), id (_id), firsteval (_firsteval),
+    isconst (_isconst), issofttest (_issofttest),staticcache (_staticcache),
+    expression1 (_expression1), expression2 (_expression2),
+    variablename (_variablename), parameters (_parameters),
+    softtest_time (_softtest_time)
+{
+  ADDOBJ (UExpression);
+}
+
 //! UExpression destructor.
 UExpression::~UExpression()
 {
@@ -259,25 +279,11 @@ UExpression::~UExpression()
 UExpression*
 UExpression::copy()
 {
-  UExpression* ret = new UExpression(type, ufloat(0));
-
-  if (expression1)  ret->expression1 = expression1->copy();
-  if (expression2)  ret->expression2 = expression2->copy();
-  if (variablename) ret->variablename = variablename->copy();
-  if (parameters)   ret->parameters = parameters->copy();
-  if (str)	    ret->str = new UString(str);
-  if (id)	    ret->id  = new UString(id);
-  if (softtest_time) ret->softtest_time = softtest_time->copy();
-  if (staticcache)  ret->staticcache = staticcache->copy();
-
-  ret->dataType = dataType;
-  ret->val	= val;
-  ret->isconst	= isconst;
-  ret->issofttest  = issofttest;
-  ret->firsteval   = firsteval;
-  ret->tmp_value   = tmp_value;
-
-  return ret;
+  return new UExpression (type, ucopy (expression1), ucopy (expression2),
+			  ucopy (variablename), ucopy (parameters),
+			  ucopy (str), ucopy (id), ucopy (softtest_time),
+			  ucopy (staticcache), dataType, val, isconst,
+			  issofttest, firsteval, tmp_value);
 }
 
 //! Print the expression
