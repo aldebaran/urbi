@@ -19,7 +19,13 @@
 
  **************************************************************************** */
 
+#include "config.h"
+
 #include <cstdio>
+#ifdef WIN32
+# define snprintf _snprintf
+#endif
+
 #include <cstdlib>
 #include <cmath>
 
