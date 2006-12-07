@@ -1,5 +1,7 @@
 include $(top_srcdir)/build-aux/init.mk
 
+# Find config.h which is in sdk.
+AM_CPPFLAGS += $(top_builddir)/sdk
 # Find libport's sources and config.h.
 AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 # Find libjpeg's build (jconfig.h) files.

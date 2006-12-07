@@ -115,8 +115,6 @@ fi
 ## Output.  ##
 ## -------- ##
 
-AC_CONFIG_HEADERS([src/config.h])
-
 AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  src/Makefile

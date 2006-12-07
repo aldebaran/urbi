@@ -57,7 +57,6 @@ endif
 
 urbiballtrackinghead_SOURCES = urbiballtrackinghead.cc $(monitor_sources)
 urbiballtrackinghead_CXXFLAGS = $(X_CFLAGS) $(AM_CXXFLAGS)
-urbiballtrackinghead_CPPFLAGS = $(AM_CPPFLAGS) $(CPPFLAGS)
 urbiballtrackinghead_LDADD = $(X11_LDADD) $(AM_LDADD)
 
 urbiimage_SOURCES = urbiimage.cc $(monitor_sources)
