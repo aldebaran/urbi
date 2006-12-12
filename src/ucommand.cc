@@ -763,8 +763,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	   cbi++)
       {
 	if ((expression->parameters
-	       && expression->parameters->size() == (*cbi)->nbparam)
-	     || (!expression->parameters && !(*cbi)->nbparam) )
+	     && expression->parameters->size() == (*cbi)->nbparam)
+	    || (!expression->parameters && !(*cbi)->nbparam) )
 	{
 	  // here you could spawn a thread... if only Aprios
 	  // knew how to!
@@ -801,25 +801,25 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       HMbindertab::iterator it =
 	::urbiserver->functionbindertab.find(functionname->str());
       if (it != ::urbiserver->functionbindertab.end()
-	&& (expression->parameters
-	    ? it->second->nbparam == expression->parameters->size()
-	    : it->second->nbparam==0)
-	&& !it->second->monitors.empty())
+	  && (expression->parameters
+	      ? it->second->nbparam == expression->parameters->size()
+	      : it->second->nbparam==0)
+	  && !it->second->monitors.empty())
       {
 	int UU = unic();
 	char tmpprefix[1024];
 	snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-	  functionname->str(), it->second->nbparam, UU);
+		 functionname->str(), it->second->nbparam, UU);
 
 	for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	  it2 != it->second->monitors.end();
-	  it2++)
+	     it2 != it->second->monitors.end();
+	     it2++)
 	{
 	  (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	  (*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	  for (UNamedParameters *pvalue = expression->parameters;
-	    pvalue != 0;
-	    pvalue = pvalue->next)
+	       pvalue != 0;
+	       pvalue = pvalue->next)
 	  {
 	    (*it2)->c->sendc((const ubyte*)",", 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
@@ -830,32 +830,32 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	persistant = false;
 	sprintf(tmpbuffer,
-	  "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-	  "%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-	  UU, variablename->getFullname()->str(), UU, UU);
+		"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+		"%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+		UU, variablename->getFullname()->str(), UU, UU);
 
 	morph = (UCommand*)
-	new UCommand_EXPR
-	(
-	  new UExpression
+	  new UCommand_EXPR
 	  (
-	    EXPR_FUNCTION,
-	    new UVariableName
+	    new UExpression
 	    (
-	      new UString("global"),
-	      new UString("exec"),
-	      false,
-	      0),
-	    new UNamedParameters
-	    (
-	      new UExpression
+	      EXPR_FUNCTION,
+	      new UVariableName
 	      (
-		EXPR_VALUE,
-		new UString(tmpbuffer)
+		new UString("global"),
+		new UString("exec"),
+		false,
+		0),
+	      new UNamedParameters
+	      (
+		new UExpression
+		(
+		  EXPR_VALUE,
+		  new UString(tmpbuffer)
+		  )
 		)
 	      )
-	    )
-	  );
+	    );
 	return status = UMORPH;
       }
     }
@@ -1263,7 +1263,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  {
 	    modifier = modif->expression->eval(this, connection);
 	    if ((!modifier) ||
-		 (modifier->dataType != DATA_NUM) )
+		(modifier->dataType != DATA_NUM) )
 	    {
 	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		       "!!! Invalid modifier value\n");
