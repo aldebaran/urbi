@@ -14,8 +14,6 @@
 #include "userver.hh"
 #include "ughostconnection.hh"
 
-#define URBI_BUFSIZ 1024
-
 class ConsoleServer
   : public UServer
 {
@@ -60,26 +58,6 @@ public:
       strncpy(header, banner[line], maxlength);
     else
       header[0] = 0;
-  }
-
-  virtual
-  UErrorValue
-  loadFile (const char* filename, UCommandQueue* loadQueue)
-  {
-    std::ifstream is (filename, std::ios::binary);
-    if (!is)
-      return UFAIL;
-
-    char buf[URBI_BUFSIZ];
-    while (is.good ())
-    {
-      is.read (buf, URBI_BUFSIZ);
-      if (loadQueue->push((const ubyte*) buf, is.gcount()) == UFAIL)
-	return UFAIL;
-    }
-    is.close();
-
-    return USUCCESS;
   }
 
   virtual

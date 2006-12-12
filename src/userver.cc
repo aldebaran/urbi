@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <string>
+#include <fstream>
 
 #include "libport/containers.hh"
 
@@ -984,25 +985,44 @@ UServer::unblock(const std::string &tag)
     it->second.blocked = false;
 }
 
-//! Load a file into the connection.
-/*! This function must be redefined by the robot-specific server.
- Returns UFAIL if anything goes wrong, USUCCESS otherwise.
- */
-UErrorValue
-UServer::loadFile (const char*, UCommandQueue*)
+std::string
+UServer::find_file (const char* base)
 {
+  for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+    {
+      std::string f = *p + "/" + base;
+      std::ifstream is (f.c_str(), std::ios::binary);
+      if (is)
+	{
+	  is.close ();
+	  return f;
+	}
+    }
+  return base;
+}
+
+#define URBI_BUFSIZ 1024
+
+UErrorValue
+UServer::loadFile (const char* base, UCommandQueue* q)
+{
+  std::string f = find_file (base);
+  std::ifstream is (f.c_str(), std::ios::binary);
+  if (!is)
+    return UFAIL;
+
+  char buf[URBI_BUFSIZ];
+  while (is.good ())
+  {
+    is.read (buf, URBI_BUFSIZ);
+    if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
+      return UFAIL;
+  }
+  is.close();
+
   return USUCCESS;
 }
 
-//! Save content to a file
-/*! This function must be redefined by the robot-specific server.
- Returns UFAIL if anything goes wrong, USUCCESS otherwise.
- */
-UErrorValue
-UServer::saveFile (const char*, const char *)
-{
-  return USUCCESS;
-}
 
 //! Add a new connection to the connection list
 /*! This function perform also some error testing on the connection

@@ -79,10 +79,31 @@ public:
   virtual ufloat    getPower        () = 0;
   virtual void      getCustomHeader (int line, char* header,
 				     int maxlength) = 0;
+
+  /// A list of directory names.
+  typedef std::list<std::string> path_type;
+  /// Where to look for files to load.
+  // Should eventually become an Urbi variable.
+  // Should probably be changeable with an envvar.
+  // By default, empty (not even ".").  We rely on find_file to
+  // return at least the file name.
+  path_type path;
+
+  /// Return the full file name, handle paths.
+  /// Return \a f on failure.
+  virtual std::string find_file (const char* f);
+
+  /// Load a file into the connection.
+  /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue loadFile      (const char *filename,
-				     UCommandQueue* loadQueue) = 0;
+				     UCommandQueue* loadQueue);
+
+  /// Save content to a file
+  /// This function must be redefined by the robot-specific server.
+  /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue saveFile      (const char *filename,
 				     const char * content) = 0;
+
   void              memoryCheck     ();
   int               memory          ();
 
