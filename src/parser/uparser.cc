@@ -30,7 +30,6 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
 {
   connection = connection_;
   commandTree = 0;
-  result = 0;
   errorMessage[0] = 0;
   binaryCommand = false;
 
@@ -41,8 +40,7 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
 
   yy::parser p(*this);
   p.set_debug_level (!!getenv ("YYDEBUG"));
-  result = p.parse();
-  return result;
+  return p.parse();
 }
 
 

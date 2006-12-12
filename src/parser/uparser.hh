@@ -27,8 +27,6 @@
 
 # include <string>
 # include "utypes.hh"
-# undef IN
-
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"
 
@@ -84,7 +82,6 @@ public:
 private:
   // The scanner used in this parser (it is a flex-scanner)
   UFlexer uflexer;
-  int result;
 };
 
 
