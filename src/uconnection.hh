@@ -109,7 +109,7 @@ public:
   void                append             (UCommand_TREE *command);
   int                 availableSendQueue ();
   int                 sendQueueRemain    ();
-  UCommandQueue*      recvQueue          ();
+  UCommandQueue&      recvQueue          ();
   void                localVariableCheck (UVariable *variable);
   void                setIP              (IPAdd ip);
 
@@ -205,10 +205,10 @@ UConnection::sendAdaptive()
 }
 
 //! Accessor for recvQueue_
-inline UCommandQueue*
+inline UCommandQueue&
 UConnection::recvQueue()
 {
-  return &recvQueue_;
+  return recvQueue_;
 }
 
 //! Accessor for receiveAdaptive_

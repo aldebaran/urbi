@@ -1,5 +1,12 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	Return access to members by reference, not pointers
+	* src/uconnection.hh (recvQueue): Return a reference, to make
+	it clear the ownership is not given away.
+	* src/console.cc, src/userver.cc: Adjust.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	Fix the previous checkin
 	* src/uconnection.cc: Propagate the fact that queues are no
 	longer pointers.

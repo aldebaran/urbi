@@ -224,7 +224,7 @@ UServer::initialization()
       retr++)
     (*retr)->init((*retr)->name);
 
-  if (loadFile("URBI.INI", ghost->recvQueue()) == USUCCESS)
+  if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
 }
 
@@ -537,10 +537,10 @@ UServer::work()
 	     retr++)
 	  (*retr)->init((*retr)->name);
 
-	loadFile("URBI.INI", ghost->recvQueue());
+	loadFile("URBI.INI", &ghost->recvQueue());
 	char resetsignal[255];
 	strcpy(resetsignal, "var __system__.resetsignal;");
-	ghost->recvQueue()->push((const ubyte*)resetsignal, strlen(resetsignal));
+	ghost->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
 	ghost->newDataAdded = true;
       }
     else
@@ -556,7 +556,7 @@ UServer::work()
 		{
 		  (*retr)->send("*** Reloading\n", "reset");
 
-		  loadFile("CLIENT.INI", (*retr)->recvQueue());
+		  loadFile("CLIENT.INI", &(*retr)->recvQueue());
 		  (*retr)->newDataAdded = true;
 		}
 	    reseting = false;
