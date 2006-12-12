@@ -78,6 +78,7 @@ public:
   bool              isnormalized; ///< true if the var is in normalized mode
   UDeriveType       deriv;    ///< deriv type for the underlying variable
   bool              varerror; ///< true to request the target-val evaluation
+  bool              varin; ///< true to request the target evaluation
   UVariable*        variable; ///< the variable associated to the variable name
   UFunction*        function; ///< the function associated to the variable name
   bool              fromGroup; ///< the var is part of a command spawned by a

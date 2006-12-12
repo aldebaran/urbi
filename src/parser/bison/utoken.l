@@ -217,6 +217,8 @@ STRING   \"([^\"]|"\\\"")*\"
 "true"          return token::TOK_TRUECONST;
 "unalias"       return token::TOK_UNALIAS;
 "var"           return token::TOK_VAR;
+"'in"           return token::TOK_VARIN;
+"'out"          return token::TOK_VAROUT;
 "wait"          return token::TOK_WAIT;
 "waituntil"     return token::TOK_WAITUNTIL;
 "whenever"      return token::TOK_WHENEVER;

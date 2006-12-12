@@ -733,6 +733,12 @@ UExpression::eval (UCommand *command,
 	    && variable->value->dataType == DATA_NUM)
 	  ret->val = variable->previous - ret->val;
 
+        if (variablename->varin
+            && variable->value->dataType == DATA_NUM)
+        {
+          ret->val = variable->target;
+        }
+
 	// normalized variables
 	if (variablename->isnormalized
 	    && variable->rangemax != variable->rangemin)

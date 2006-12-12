@@ -264,7 +264,9 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
   TOK_UNBLOCK      "unblock"
   TOK_UNIT         "unit"
   TOK_VAR          "var"
-  TOK_VARERROR     "varerror"
+  TOK_VARERROR     "'e"
+  TOK_VARIN        "'in"
+  TOK_VAROUT       "'out"
   TOK_WAIT         "wait"
   TOK_WAITUNTIL    "waituntil"
   TOK_WHENEVER     "whenever"
@@ -1229,6 +1231,18 @@ variable:
       $$ = $1;
       $$->varerror = true;
     }
+
+  | purevariable TOK_VARIN {
+
+      $$ = $1;
+      $$->varin = true;
+    }
+
+  | purevariable TOK_VAROUT {
+
+      $$ = $1;
+    }
+
 
   | purevariable TOK_DERIV {
 
