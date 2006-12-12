@@ -683,7 +683,7 @@ UConnection::effectiveSend (const ubyte*, int length)
 namespace
 {
   const char*
-  error_message (UErrorCode n)
+  message (UErrorCode n)
   {
     switch (n)
     {
@@ -709,82 +709,82 @@ namespace
     // This should not be possible.
     return "!!! Unidentified Error\n";
   }
+
+  const char*
+  message (UWarningCode n)
+  {
+    switch (n)
+    {
+    case UWARNING_MEMORY:
+      return "!!! Memory overflow warning\n";
+    }
+    // This should not be possible.
+    return "!!! Unidentified warning\n";
+  }
 }
 
 //! Send an error message based on the error number.
-/*! This command sends an error message through the connection, and to the server
- output system, according to the error number n.
+/*! This command sends an error message through the connection, and to the
+ server output system, according to the error number n.
 
  \param n the error number. */
 UErrorValue
 UConnection::error (UErrorCode n)
 {
-  const char* err = error_message (n);
-  UErrorValue result = send(err, "error");
+  const char* msg = message (n);
+  UErrorValue result = send(msg, "error");
   if (result == USUCCESS)
   {
-    // Max error message = 80 chars
-    char buf[80]; 
-    strcpy (buf, err);
-    buf[strlen(err) - 1] = 0; // remove the '\n' at the end...
+    char buf[80];
+    strncpy (buf, msg, sizeof buf);
+    if (strlen (msg) - 1 < sizeof buf)
+      //remove the '\n' at the end...
+      buf[strlen(msg)-1] = 0;
     server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
   return result;
 }
 
 //! Send a warning message based on the warning number.
-/*! This command sends an warning message through the connection, and to the server
- output system, according to the warning number n.
+
+/*! This command sends an warning message through the connection, and to
+ the server output system, according to the warning number n.
 
  \param n the warning number. Use the UWarningCode enum. Can be:
  - 0 : Memory overflow warning
- \param complement is a complement string added at the end of the warning message.
+
+ \param complement is a complement string added at the end
+		   of the warning message.
  */
 UErrorValue
 UConnection::warning (UWarningCode n)
 {
-  char warningString[80]; // Max warning message = 80 chars
-
-  switch (n)
+  const char*msg = message (n);
+  UErrorValue result = send(msg, "warning");
+  if (result == USUCCESS)
   {
-    case UWARNING_MEMORY:
-      strcpy(warningString, "!!! Memory overflow warning\n"); break;
-    default:
-      strcpy(warningString, "!!! Unidentified Warning\n");
-
-  }
-
-  UErrorValue result = send(warningString, "warning");
-  if (result == USUCCESS )
-  {
-    warningString[strlen(warningString)-1] = 0;//remove the '\n' at the end...
-    server->echoKey("WARNG",
-		    ::DISPLAY_FORMAT,
-		    (long)this,
-		    "UConnection::warning",
-		    warningString);
+    char buf[80];
+    strncpy (buf, msg, sizeof buf);
+    if (strlen (msg) - 1 < sizeof buf)
+      //remove the '\n' at the end...
+      buf[strlen(msg)-1] = 0;
+    server->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
+		    "UConnection::warning", buf);
   }
   return result ;
 }
 
 //! Set a flag to insure the error will be send.
-/*! This command sends an error message through the connection, and to the server
- output system, according to the error number n. The difference with the "error"
- function is that is does not actually send the message but set a flag so that the
- message will be sent. The flag is active as long as the message is not actually
- sent. So, using errorSignal is more robust since it guarantees that the message
- will be sent, at all costs.
 
- \param n the error number. Use the UErrorCode enum. Can be:
- - 0 : Critical Error
- - 1 : Syntax Error (never used, bison handles it)
- - 2 : Division by zero
- - 3 : Receive buffer full
- - 4 : Out of memory
- - 5 : Send buffer full
- - 6 : Receive buffer corrupted
- - 7 : Memory Warning
- */
+/*! This command sends an error message through the connection, and
+ to the server output system, according to the error number n. The
+ difference with the "error" function is that is does not actually
+ send the message but set a flag so that the message will be
+ sent. The flag is active as long as the message is not actually
+ sent. So, using errorSignal is more robust since it guarantees
+ that the message will be sent, at all costs.
+ 
+ \param n the error number. Use the UErrorCode enum.  */
 void
 UConnection::errorSignal (UErrorCode n)
 {

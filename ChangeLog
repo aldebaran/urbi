@@ -1,5 +1,13 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	message for warnings
+	* src/uconnection.cc (error_message): Rename as...
+	(message): this.
+	(message): New overloaded version for warnings.
+	(UConnection::warning): Use it.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	error_message
 	* src/uconnection.cc (error_message): New.
 	Handle UERROR_MEMORY_WARNING.
