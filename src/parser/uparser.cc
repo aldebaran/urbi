@@ -35,20 +35,33 @@ UParser::UParser(UConnection& cn)
 {}
 
 int
-UParser::process(ubyte* command, int length)
+UParser::parse_ ()
 {
   commandTree = 0;
   errorMessage[0] = 0;
   binaryCommand = false;
 
-  // Pass the stream to scan.
-  std::istrstream mem_buff ((char*)command, length);
-  std::istream mem_input (mem_buff.rdbuf());
-  uflexer_.switch_streams(&mem_input, 0);
-
   yy::parser p(*this);
   p.set_debug_level (!!getenv ("YYDEBUG"));
   return p.parse();
+}
+
+int
+UParser::process(ubyte* command, int length)
+{
+  // It has been said Flex scanner cannot work with istrstream.
+  std::istrstream mem_buff ((char*)command, length);
+  std::istream mem_input (mem_buff.rdbuf());
+  uflexer_.switch_streams(&mem_input, 0);
+  return parse_();
+}
+
+int
+UParser::process(const char* fn)
+{
+  std::ifstream f (fn);
+  uflexer_.switch_streams(&f, 0);
+  return parse_();
 }
 
 

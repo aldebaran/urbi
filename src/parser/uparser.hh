@@ -70,6 +70,9 @@ public:
   /// Parse the command from a buffer
   int process(ubyte* command, int length);
 
+  /// Parse a file.
+  int process (const char* fn);
+
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
@@ -85,6 +88,9 @@ public:
   UConnection& connection;
 
 private:
+  /// Run the parse.  Expects the scanner to be initialized.
+  int parse_ ();
+
   /// The Flex scanner.
   UFlexer uflexer_;
 };
