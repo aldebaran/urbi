@@ -174,103 +174,103 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 %start ROOT
 
 %token
-  ADDGROUP     "addgroup"
-  ALIAS        "alias"
-  AND          "&"
-  ANDOPERATOR  "&&"
-  AROBASE      "@"
-  ASSIGN       "="
-  AT           "at"
-  BANG         "!"
-  BIN          "bin"
-  BLOCK        "block"
-  CLASS        "class"
-  CMDBLOCK     "command block"
-  COLON        ":"
-  COMMA        ","
-  COPY         "copy"
-  DEF          "def"
-  DELGROUP     "delgroup"
-  DEQ          "=~="
-  DERIV        "derivation"
-  DERIV2       "second-derivation"
-  DIR          "->"
-  DISINHERIT   "disinherit"
-  DIV          "/"
-  DOLLAR       "$"
-  DOUBLECOLON  "::"
-  ELSE         "else"
-  EMIT         "emit"
-  EQ           "=="
-  EVENT        "event"
-  EVERY        "every"
-  EXP          "^"
-  EXPRBLOCK    "expression block"
-  FALSECONST   "false"
-  FOR          "for"
-  FOREACH      "foreach"
-  FREEZEIF     "freezeif"
-  FROM         "from"
-  FUNCTION     "function"
-  GE           ">="
-  GROUP        "group"
-  GROUPLIST    "group list"
-  GT           ">"
-  IF           "if"
-  IN           "in"
-  INFO         "info"
-  INHERIT      "inherit"
-  LBRACKET     "{"
-  LE           "<="
-  LOOP         "loop"
-  LOOPN        "loopn"
-  LPAREN       "("
-  LSBRACKET    "["
-  LT           "<"
-  MINUS        "-"
-  MINUSASSIGN  "-="
-  MINUSMINUS   "--"
-  MULT         "*"
-  NE           "!="
-  NEW          "new"
-  NOOP         "noop"
-  NORM         "normalized"
-  OBJECT       "object"
-  ONLEAVE      "onleave"
-  ONLY         "only"
-  OROPERATOR   "||"
-  PEQ          "%="
-  PERCENT      "%"
-  PIPE         "|"
-  PLUS         "+"
-  PLUSASSIGN   "+="
-  PLUSPLUS     "++"
-  POINT        "."
-  RBRACKET     "}"
-  REQ          "~="
-  RETURN       "return"
-  RPAREN       ")"
-  RSBRACKET    "]"
-  SEMICOLON    ";"
-  STATIC       "static"
-  STOP         "stop"
-  STOPIF       "stopif"
-  SUBCLASS     "subclass"
-  TILDE        "~"
-  TIMEOUT      "timeout"
-  TRUECONST    "true"
-  TRUEDERIV    "command-derivation"
-  TRUEDERIV2   "second-command-derivation"
-  UECHO        "echo"    // Flex defines the ECHO macro
-  UNALIAS      "unalias"
-  UNBLOCK      "unblock"
-  UNIT         "unit"
-  VAR          "var"
-  VARERROR     "varerror"
-  WAIT         "wait"
-  WAITUNTIL    "waituntil"
-  WHENEVER     "whenever"
-  WHILE        "while"
+  TOK_ADDGROUP     "addgroup"
+  TOK_ALIAS        "alias"
+  TOK_AND          "&"
+  TOK_ANDOPERATOR  "&&"
+  TOK_AROBASE      "@"
+  TOK_ASSIGN       "="
+  TOK_AT           "at"
+  TOK_BANG         "!"
+  TOK_BIN          "bin"
+  TOK_BLOCK        "block"
+  TOK_CLASS        "class"
+  TOK_CMDBLOCK     "command block"
+  TOK_COLON        ":"
+  TOK_COMMA        ","
+  TOK_COPY         "copy"
+  TOK_DEF          "def"
+  TOK_DELGROUP     "delgroup"
+  TOK_DEQ          "=~="
+  TOK_DERIV        "derivation"
+  TOK_DERIV2       "second-derivation"
+  TOK_DIR          "->"
+  TOK_DISINHERIT   "disinherit"
+  TOK_DIV          "/"
+  TOK_DOLLAR       "$"
+  TOK_DOUBLECOLON  "::"
+  TOK_ELSE         "else"
+  TOK_EMIT         "emit"
+  TOK_EQ           "=="
+  TOK_EVENT        "event"
+  TOK_EVERY        "every"
+  TOK_EXP          "^"
+  TOK_EXPRBLOCK    "expression block"
+  TOK_FALSECONST   "false"
+  TOK_FOR          "for"
+  TOK_FOREACH      "foreach"
+  TOK_FREEZEIF     "freezeif"
+  TOK_FROM         "from"
+  TOK_FUNCTION     "function"
+  TOK_GE           ">="
+  TOK_GROUP        "group"
+  TOK_GROUPLIST    "group list"
+  TOK_GT           ">"
+  TOK_IF           "if"
+  TOK_IN           "in"
+  TOK_INFO         "info"
+  TOK_INHERIT      "inherit"
+  TOK_LBRACKET     "{"
+  TOK_LE           "<="
+  TOK_LOOP         "loop"
+  TOK_LOOPN        "loopn"
+  TOK_LPAREN       "("
+  TOK_LSBRACKET    "["
+  TOK_LT           "<"
+  TOK_MINUS        "-"
+  TOK_MINUSASSIGN  "-="
+  TOK_MINUSMINUS   "--"
+  TOK_MULT         "*"
+  TOK_NE           "!="
+  TOK_NEW          "new"
+  TOK_NOOP         "noop"
+  TOK_NORM         "normalized"
+  TOK_OBJECT       "object"
+  TOK_ONLEAVE      "onleave"
+  TOK_ONLY         "only"
+  TOK_OROPERATOR   "||"
+  TOK_PEQ          "%="
+  TOK_PERCENT      "%"
+  TOK_PIPE         "|"
+  TOK_PLUS         "+"
+  TOK_PLUSASSIGN   "+="
+  TOK_PLUSPLUS     "++"
+  TOK_POINT        "."
+  TOK_RBRACKET     "}"
+  TOK_REQ          "~="
+  TOK_RETURN       "return"
+  TOK_RPAREN       ")"
+  TOK_RSBRACKET    "]"
+  TOK_SEMICOLON    ";"
+  TOK_STATIC       "static"
+  TOK_STOP         "stop"
+  TOK_STOPIF       "stopif"
+  TOK_SUBCLASS     "subclass"
+  TOK_TILDE        "~"
+  TOK_TIMEOUT      "timeout"
+  TOK_TRUECONST    "true"
+  TOK_TRUEDERIV    "command-derivation"
+  TOK_TRUEDERIV2   "second-command-derivation"
+  TOK_UECHO        "echo"    // Flex defines the ECHO macro
+  TOK_UNALIAS      "unalias"
+  TOK_UNBLOCK      "unblock"
+  TOK_UNIT         "unit"
+  TOK_VAR          "var"
+  TOK_VARERROR     "varerror"
+  TOK_WAIT         "wait"
+  TOK_WAITUNTIL    "waituntil"
+  TOK_WHENEVER     "whenever"
+  TOK_WHILE        "while"
 
 %token UEOF 0 "end of command"
 
@@ -319,19 +319,19 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 
 /* Operator precedence. */
 
-%left  OROPERATOR ANDOPERATOR BANG
-%left  EQ REQ PEQ DEQ NE GE GT LT LE
-%left  MINUS PLUS
-%left  MULT DIV PERCENT
+%left  "||" "&&" "!"
+%left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
+%left  "-" "+"
+%left  "*" "/" "%"
 %left  NEG     /* Negation--unary minus */
-%right EXP     /* Exponentiation*/
-%right NORM
+%right "^"
+%right TOK_NORM
 
-%right COMMA SEMICOLON
-%left  AND PIPE
+%right "," ";"
+%left  "&" "|"
 %left  CMDBLOCK EXPRBLOCK
-%left  ELSE ONLEAVE
-%nonassoc ASSIGN
+%left  "else" "onleave"
+%nonassoc "="
 
 
 /* URBI Grammar */
@@ -346,7 +346,7 @@ ROOT: root {
 
 root:
 
-    refvariable ASSIGN binary SEMICOLON {
+    refvariable "=" binary ";" {
 
       URefPt<UBinary> *ref = new URefPt<UBinary>($3);
       MEMCHECK(ref);
@@ -394,7 +394,7 @@ taggedcommand:
       $$ = $1;
     }
 
-  | IDENTIFIER flags COLON command {
+  | IDENTIFIER flags ":" command {
 
       MEMCHECK($1);
       if ($4) {
@@ -404,7 +404,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | TAG flags COLON command {
+  | TAG flags ":" command {
 
       MEMCHECK($1);
       if ($4) {
@@ -414,7 +414,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | IDENTIFIER COLON command {
+  | IDENTIFIER ":" command {
 
       MEMCHECK($1);
       if ($3) {
@@ -423,7 +423,7 @@ taggedcommand:
       $$ = $3;
     }
 
-  | TAG COLON command {
+  | TAG ":" command {
 
       MEMCHECK($1);
       if ($3) {
@@ -433,7 +433,7 @@ taggedcommand:
     }
 
 
-  | STRUCT COLON command {
+  | STRUCT ":" command {
 
       MEMCHECK($1.device);
       MEMCHECK($1.id);
@@ -445,7 +445,7 @@ taggedcommand:
       $$ = $3;
     }
 
-  | STRUCT flags COLON command {
+  | STRUCT flags ":" command {
 
       MEMCHECK($1.device);
       MEMCHECK($1.id);
@@ -461,7 +461,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | flags COLON command {
+  | flags ":" command {
 
       MEMCHECK($1);
       if ($3) {
@@ -493,31 +493,31 @@ flags :
       MEMCHECK2($$,flagval,$2);
     }
 
-  | FLAGTIME LPAREN expr RPAREN flags {
+  | FLAGTIME "(" expr ")" flags {
 
       $$ = new UNamedParameters(new UString("flagtimeout"),$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | FLAGTIME LPAREN expr RPAREN {
+  | FLAGTIME "(" expr ")" {
 
       $$ = new UNamedParameters(new UString("flagtimeout"),$3,0);
       MEMCHECK1($$,$3);
     }
 
-  | FLAGID LPAREN expr RPAREN {
+  | FLAGID "(" expr ")" {
 
       $$ = new UNamedParameters(new UString("flagid"),$3,0);
       MEMCHECK1($$,$3);
     }
 
-  | FLAGID LPAREN expr RPAREN flags {
+  | FLAGID "(" expr ")" flags {
 
       $$ = new UNamedParameters(new UString("flagid"),$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | FLAGTEST LPAREN softtest RPAREN flags {
+  | FLAGTEST "(" softtest ")" flags {
 
       if (*$1 == 6)
 	$$ = new UNamedParameters(new UString("flagstop"),$3,$5);
@@ -526,7 +526,7 @@ flags :
       MEMCHECK2($$,$3,$5);
     }
 
-  | FLAGTEST LPAREN softtest RPAREN {
+  | FLAGTEST "(" softtest ")" {
 
       if (*$1 == 6)
 	$$ = new UNamedParameters(new UString("flagstop"),$3,0);
@@ -542,7 +542,7 @@ command:
 
     instruction
 
-  | LBRACKET taggedcommands RBRACKET {
+  | "{" taggedcommands "}" {
 
       $$ = (UCommand*)
 	new UCommand_TREE(UPIPE,
@@ -558,38 +558,38 @@ command:
 instruction:
   /* empty */ { $$ = 0; }
 
-  | NOOP {
+  | TOK_NOOP {
       $$ = new UCommand_NOOP();
       MEMCHECK($$);
     }
 
-  | refvariable ASSIGN expr namedparameters {
+  | refvariable "=" expr namedparameters {
 
     $$ = new UCommand_ASSIGN_VALUE($1,$3,$4, false);
       MEMCHECK3($$,$1,$3,$4);
     }
 
-  | refvariable PLUSASSIGN expr {
+  | refvariable "+=" expr {
 
       $$ = new UCommand_AUTOASSIGN($1,$3,0);
       MEMCHECK2($$,$1,$3);
     }
 
-  | refvariable MINUSASSIGN expr {
+  | refvariable "-=" expr {
 
       $$ = new UCommand_AUTOASSIGN($1,$3,1);
       MEMCHECK2($$,$1,$3);
     }
 
 
-  | VAR refvariable ASSIGN expr namedparameters {
+  | "var" refvariable "=" expr namedparameters {
 
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE($2,$4,$5);
       MEMCHECK3($$,$2,$4,$5);
     }
 
-  | property ASSIGN expr {
+  | property "=" expr {
 
       $$ = new UCommand_ASSIGN_PROPERTY($1->variablename,$1->property,$3);
       MEMCHECK3($$,$1,$1,$3);
@@ -607,13 +607,13 @@ instruction:
       MEMCHECK1($$,$1);
     }
 
-  | RETURN {
+  | TOK_RETURN {
 
       $$ = new UCommand_RETURN((UExpression*)0);
       MEMCHECK($$);
     }
 
-  | RETURN expr {
+  | TOK_RETURN expr {
 
       $$ = new UCommand_RETURN($2);
       MEMCHECK1($$,$2);
@@ -625,14 +625,14 @@ instruction:
       MEMCHECK2($$,$2,$3);
     }
 
-  | refvariable ASSIGN NEW IDENTIFIER {
+  | refvariable "=" "new" IDENTIFIER {
 
       MEMCHECK($4);
       $$ = new UCommand_NEW($1,$4,(UNamedParameters*)0,true);
       MEMCHECK2($$,$1,$4);
     }
 
-  | refvariable ASSIGN NEW IDENTIFIER LPAREN parameterlist RPAREN {
+  | refvariable "=" TOK_NEW IDENTIFIER "(" parameterlist ")" {
 
       MEMCHECK($4);
       $$ = new UCommand_NEW($1,$4,$6);
@@ -640,20 +640,20 @@ instruction:
     }
 
 
-  | GROUP IDENTIFIER LBRACKET identifiers RBRACKET {
+  | TOK_GROUP IDENTIFIER "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4);
       MEMCHECK2($$,$4,$2);
     }
 
-  | ADDGROUP IDENTIFIER LBRACKET identifiers RBRACKET {
+  | "addgroup" IDENTIFIER "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4,1);
       MEMCHECK2($$,$4,$2);
     }
 
 
-  | DELGROUP IDENTIFIER LBRACKET identifiers RBRACKET {
+  | TOK_DELGROUP IDENTIFIER "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4,2);
       MEMCHECK2($$,$4,$2);
@@ -666,44 +666,44 @@ instruction:
       MEMCHECK1($$,$2);
     }
 */
-  | GROUP {
+  | TOK_GROUP {
 
       $$ = new UCommand_GROUP((UString*)0,(UNamedParameters*)0);
       MEMCHECK($$);
     }
 
 
-  | ALIAS purevariable purevariable {
+  | TOK_ALIAS purevariable purevariable {
 
       $$ = new UCommand_ALIAS($2,$3);
       MEMCHECK2($$,$2,$3);
     }
 
-  | purevariable INHERIT purevariable {
+  | purevariable TOK_INHERIT purevariable {
 
       $$ = new UCommand_INHERIT($1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | purevariable DISINHERIT purevariable {
+  | purevariable TOK_DISINHERIT purevariable {
 
       $$ = new UCommand_INHERIT($1,$3,true);
       MEMCHECK2($$,$1,$3);
     }
 
-  | ALIAS purevariable {
+  | TOK_ALIAS purevariable {
 
       $$ = new UCommand_ALIAS($2,(UVariableName*)0);
       MEMCHECK1($$,$2);
     }
 
-  | UNALIAS purevariable {
+  | "unalias" purevariable {
 
       $$ = new UCommand_ALIAS($2,(UVariableName*)0,true);
       MEMCHECK1($$,$2);
     }
 
-  | ALIAS {
+  | "alias" {
 
       $$ = new UCommand_ALIAS((UVariableName*)0,(UVariableName*)0);
       MEMCHECK($$);
@@ -750,7 +750,7 @@ instruction:
       MEMCHECK2($$,$1,$2);
     }
 
-  | BINDER OBJECT purevariable {
+  | BINDER TOK_OBJECT purevariable {
 
       MEMCHECK($1);
       $$ = new UCommand_BINDER((UVariableName*)0,$1,3,$3);
@@ -758,62 +758,62 @@ instruction:
     }
 
 
-  | BINDER VAR purevariable FROM purevariable {
+  | BINDER "var" purevariable "from" purevariable {
 
       MEMCHECK($1);
       $$ = new UCommand_BINDER($5,$1,1,$3);
       MEMCHECK3($$,$1,$3,$5);
     }
 
-  | BINDER FUNCTION LPAREN NUM RPAREN purevariable FROM purevariable {
+  | BINDER TOK_FUNCTION "(" NUM ")" purevariable "from" purevariable {
 
       MEMCHECK($1);
       $$ = new UCommand_BINDER($8,$1,0,$6,(int)(*$4));
       MEMCHECK3($$,$1,$6,$8);
     }
 
-  | BINDER EVENT LPAREN NUM RPAREN purevariable FROM purevariable {
+  | BINDER "event" "(" NUM ")" purevariable "from" purevariable {
 
       MEMCHECK($1);
       $$ = new UCommand_BINDER($8,$1,2,$6,(int)(*$4));
       MEMCHECK3($$,$1,$6,$8);
     }
 
-  | WAIT expr {
+  | TOK_WAIT expr {
 
       $$ = new UCommand_WAIT($2);
       MEMCHECK1($$,$2);
     }
 
-  | EMIT purevariable {
+  | "emit" purevariable {
 
       $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
     }
 
-  | EMIT purevariable LPAREN parameterlist RPAREN {
+  | "emit" purevariable "(" parameterlist ")" {
 
       $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($2,$4);
       MEMCHECK2($$,$2,$4);
     }
 
-  | EMIT LPAREN expr RPAREN purevariable {
+  | "emit" "(" expr ")" purevariable {
 
       $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($5,(UNamedParameters*)0,$3);
       MEMCHECK2($$,$5,$3);
     }
 
-  | EMIT LPAREN expr RPAREN purevariable LPAREN parameterlist RPAREN {
+  | "emit" "(" expr ")" purevariable "(" parameterlist ")" {
 
       $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($5,$7,$3);
       MEMCHECK3($$,$5,$7,$3);
     }
 
-  | EMIT LPAREN RPAREN purevariable {
+  | "emit" "(" ")" purevariable {
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,(UNamedParameters*)0,
@@ -821,7 +821,7 @@ instruction:
       MEMCHECK1($$,$4);
     }
 
-  | EMIT LPAREN RPAREN purevariable LPAREN parameterlist RPAREN {
+  | "emit" "(" ")" purevariable "(" parameterlist ")" {
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,$6,
@@ -829,25 +829,25 @@ instruction:
       MEMCHECK2($$,$4,$6);
     }
 
-  | WAITUNTIL softtest {
+  | "waituntil" softtest {
 
       $$ = new UCommand_WAIT_TEST($2);
       MEMCHECK1($$,$2);
     }
 
-  | refvariable MINUSMINUS {
+  | refvariable TOK_MINUSMINUS {
 
       $$ = new UCommand_INCDECREMENT(CMD_DECREMENT,$1);
       MEMCHECK1($$,$1);
     }
 
-  | refvariable PLUSPLUS {
+  | refvariable TOK_PLUSPLUS {
 
       $$ = new UCommand_INCDECREMENT(CMD_INCREMENT,$1);
       MEMCHECK1($$,$1);
     }
 
-  | DEF {
+  | TOK_DEF {
 
       $$ = new UCommand_DEF(UDEF_QUERY,
       	                    (UVariableName*)0,
@@ -856,7 +856,7 @@ instruction:
       MEMCHECK($$)
     }
 
-  | VAR refvariable {
+  | "var" refvariable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(UDEF_VAR,$2,
@@ -866,7 +866,7 @@ instruction:
       MEMCHECK1($$,$2)
     }
 
-  | DEF refvariable {
+  | TOK_DEF refvariable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(UDEF_VAR,$2,
@@ -876,26 +876,26 @@ instruction:
       MEMCHECK1($$,$2)
     }
 
-  | VAR LBRACKET refvariables RBRACKET {
+  | "var" "{" refvariables "}" {
 
       $$ = new UCommand_DEF(UDEF_VARS,$3);
       MEMCHECK1($$,$3)
     }
 
-  | CLASS IDENTIFIER LBRACKET class_declaration_list RBRACKET {
+  | TOK_CLASS IDENTIFIER "{" class_declaration_list "}" {
 
       $$ = new UCommand_CLASS($2,$4);
       MEMCHECK2($$,$2,$4)
     }
 
-  | CLASS IDENTIFIER {
+  | TOK_CLASS IDENTIFIER {
 
       $$ = new UCommand_CLASS($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2)
     }
 
 
-  | EVENT variable LPAREN identifiers RPAREN {
+  | "event" variable "(" identifiers ")" {
 
       $2->local_scope = true;
       $2->id_type = UDEF_EVENT;
@@ -903,7 +903,7 @@ instruction:
       MEMCHECK2($$,$2,$4);
     }
 
-  | EVENT variable {
+  | "event" variable {
 
       $2->local_scope = true;
       $2->id_type = UDEF_EVENT;
@@ -911,7 +911,7 @@ instruction:
       MEMCHECK1($$,$2);
     }
 /**/
-  | FUNCTION variable LPAREN identifiers RPAREN {
+  | TOK_FUNCTION variable "(" identifiers ")" {
 
       if (uparser.connection->functionTag) {
 	delete $2;
@@ -940,7 +940,7 @@ instruction:
       }
     }
 
-  | DEF variable LPAREN identifiers RPAREN {
+  | TOK_DEF variable "(" identifiers ")" {
 
       uparser.connection->server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
       if (uparser.connection->functionTag) {
@@ -970,13 +970,13 @@ instruction:
       }
     }
 
-  | IF LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_IF "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_IF($3,$5,(UCommand*)0);
       MEMCHECK2($$,$3,$5);
     }
 
-  | IF LPAREN expr RPAREN taggedcommand ELSE taggedcommand {
+  | "if" "(" expr ")" taggedcommand "else" taggedcommand {
 
       if (!$5)
       {
@@ -990,37 +990,37 @@ instruction:
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | EVERY LPAREN expr RPAREN taggedcommand {
+  | TOK_EVERY "(" expr ")" taggedcommand {
 
       $$ = new UCommand_EVERY($3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | TIMEOUT LPAREN expr RPAREN taggedcommand {
+  | "timeout" "(" expr ")" taggedcommand {
 
       $$ = new UCommand_TIMEOUT($3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | STOPIF LPAREN softtest RPAREN taggedcommand {
+  | TOK_STOPIF "(" softtest ")" taggedcommand {
 
       $$ = new UCommand_STOPIF($3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | FREEZEIF LPAREN softtest RPAREN taggedcommand {
+  | TOK_FREEZEIF "(" softtest ")" taggedcommand {
 
       $$ = new UCommand_FREEZEIF($3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | AT LPAREN softtest RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_AT "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_AT(CMD_AT,$3,$5,(UCommand*)0);
       MEMCHECK2($$,$3,$5);
     }
 
-  | AT LPAREN softtest RPAREN taggedcommand ONLEAVE taggedcommand {
+  | TOK_AT "(" softtest ")" taggedcommand TOK_ONLEAVE taggedcommand {
       if(!$5)
       {
 	delete $3;
@@ -1033,103 +1033,103 @@ instruction:
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | AT AND LPAREN softtest RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_AT TOK_AND "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_AT(CMD_AT_AND,$4,$6,(UCommand*)0);
       MEMCHECK2($$,$4,$6);
     }
 
-  | AT AND LPAREN softtest RPAREN taggedcommand ONLEAVE taggedcommand {
+  | TOK_AT TOK_AND "(" softtest ")" taggedcommand TOK_ONLEAVE taggedcommand {
 
       $$ = new UCommand_AT(CMD_AT_AND,$4,$6,$8);
       MEMCHECK3($$,$4,$6,$8);
     }
 
-  | WHILE LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_WHILE "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_WHILE(CMD_WHILE,$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | WHILE PIPE LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_WHILE TOK_PIPE "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_WHILE(CMD_WHILE_PIPE,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
-  | WHENEVER LPAREN softtest RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_WHENEVER "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_WHENEVER($3,$5,(UCommand*)0);
       MEMCHECK2($$,$3,$5);
     }
 
-  | WHENEVER LPAREN softtest RPAREN taggedcommand ELSE taggedcommand {
+  | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {
 
       $$ = new UCommand_WHENEVER($3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | LOOP taggedcommand %prec CMDBLOCK {
+  | TOK_LOOP taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOP($2);
       MEMCHECK1($$,$2);
     }
 
-  | FOREACH purevariable IN expr LBRACKET taggedcommands RBRACKET %prec CMDBLOCK {
+  | TOK_FOREACH purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(CMD_FOREACH,$2,$4,$6);
       MEMCHECK3($$,$2,$4,$6);
     }
 
-  | FOREACH AND purevariable IN expr LBRACKET taggedcommands RBRACKET %prec CMDBLOCK {
+  | "foreach" "&" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(CMD_FOREACH_AND,$3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | FOREACH PIPE purevariable IN expr LBRACKET taggedcommands RBRACKET %prec CMDBLOCK {
+  | "foreach" "|" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(CMD_FOREACH_PIPE,$3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | LOOPN LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_LOOPN "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOPN(CMD_LOOPN,$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | LOOPN PIPE LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
+  | "loopn" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOPN(CMD_LOOPN_PIPE,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
-  | LOOPN AND LPAREN expr RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_LOOPN TOK_AND "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOPN(CMD_LOOPN_AND,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
-  | FOR LPAREN instruction SEMICOLON
-	       expr SEMICOLON
-	       instruction RPAREN taggedcommand %prec CMDBLOCK {
+  | TOK_FOR "(" instruction ";"
+	       expr ";"
+	       instruction ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(CMD_FOR,$3,$5,$7,$9);
       MEMCHECK4($$,$3,$5,$7,$9);
     }
 
-  | FOR PIPE LPAREN instruction SEMICOLON
-		    expr SEMICOLON
-		    instruction RPAREN taggedcommand %prec CMDBLOCK {
+  | "for" "|" "(" instruction ";"
+		    expr ";"
+		    instruction ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(CMD_FOR_PIPE,$4,$6,$8,$10);
       MEMCHECK4($$,$4,$6,$8,$10);
     }
 
-  | FOR AND LPAREN instruction SEMICOLON
-		   expr SEMICOLON
-		   instruction RPAREN taggedcommand %prec CMDBLOCK {
+  | "for" "&" "(" instruction ";"
+		   expr ";"
+		   instruction ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(CMD_FOR_AND,$4,$6,$8,$10);
       MEMCHECK4($$,$4,$6,$8,$10);
@@ -1143,7 +1143,7 @@ array:
 
   /* empty */ { $$ = 0 }
 
-  | LSBRACKET expr RSBRACKET array {
+  | "[" expr "]" array {
 
       $$ = new UNamedParameters($2,$4);
       MEMCHECK2($$,$2,$4);
@@ -1155,13 +1155,13 @@ array:
 
 purevariable:
 
-    DOLLAR LPAREN expr RPAREN {
+    "$" "(" expr ")" {
 
       $$ = new UVariableName($3);
       MEMCHECK1($$,$3);
     }
 
-  | IDENTIFIER array POINT IDENTIFIER array {
+  | IDENTIFIER array TOK_POINT IDENTIFIER array {
 
       MEMCHECK($1);
       MEMCHECK($4);
@@ -1169,7 +1169,7 @@ purevariable:
       MEMCHECK4($$,$1,$2,$4,$5);
     }
 
-  | IDENTIFIER DOUBLECOLON IDENTIFIER {
+  | IDENTIFIER "::" IDENTIFIER {
 
       MEMCHECK($1);
       MEMCHECK($3);
@@ -1210,43 +1210,43 @@ variable:
        $$ = $1;
     }
 
-  | STATIC purevariable {
+  | TOK_STATIC purevariable {
 
       $$ = $2;
       $$->isstatic = true;
     }
 
-  | purevariable NORM {
+  | purevariable TOK_NORM {
 
       $$ = $1;
       $$->isnormalized = true;
     }
 
-  | purevariable VARERROR {
+  | purevariable TOK_VARERROR {
 
       $$ = $1;
       $$->varerror = true;
     }
 
-  | purevariable DERIV {
+  | purevariable TOK_DERIV {
 
       $$ = $1;
       $$->deriv = UDERIV;
     }
 
-  | purevariable DERIV2 {
+  | purevariable TOK_DERIV2 {
 
       $$ = $1;
       $$->deriv = UDERIV2;
     }
 
-  | purevariable TRUEDERIV {
+  | purevariable TOK_TRUEDERIV {
 
       $$ = $1;
       $$->deriv = UTRUEDERIV;
     }
 
-  | purevariable TRUEDERIV2 {
+  | purevariable TOK_TRUEDERIV2 {
 
       $$ = $1;
       $$->deriv = UTRUEDERIV2;
@@ -1259,7 +1259,7 @@ refvariable:
       $$ = $1;
     }
 
-  | ONLY variable {
+  | TOK_ONLY variable {
 
       $$ = $2;
       $$->rooted = true;
@@ -1271,7 +1271,7 @@ refvariable:
 
 property:
 
-    purevariable DIR IDENTIFIER {
+    purevariable "->" IDENTIFIER {
 
       $$ = new UProperty($1,$3);
       MEMCHECK2($$,$1,$3);
@@ -1284,7 +1284,7 @@ property:
 namedparameters:
   /* empty */ { $$ = 0 }
 
-  | IDENTIFIER COLON expr namedparameters {
+  | IDENTIFIER ":" expr namedparameters {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,$3,$4);
@@ -1296,7 +1296,7 @@ namedparameters:
 /* BINARY */
 
 binary:
-    BIN NUM {
+    TOK_BIN NUM {
 
       $$ = new UBinary((int)(*$2),0);
       MEMCHECK($$);
@@ -1304,7 +1304,7 @@ binary:
 	MEMCHECK1($$->buffer,$$);
     }
 
-  | BIN NUM rawparameters {
+  | TOK_BIN NUM rawparameters {
 
       $$ = new UBinary((int)(*$2),$3);
       MEMCHECK1($$,$3);
@@ -1351,13 +1351,13 @@ expr:
       MEMCHECK1($$,$1);
     }
 
-  | LSBRACKET parameterlist RSBRACKET {
+  | "[" parameterlist "]" {
 
       $$ = new UExpression(EXPR_LIST,$2);
       MEMCHECK1($$,$2);
     }
 
-  | PERCENT variable { NEW_EXP_1 ($$, EXPR_ADDR_VARIABLE, $2); }
+  | "%" variable { NEW_EXP_1 ($$, EXPR_ADDR_VARIABLE, $2); }
 
   | property {
 
@@ -1365,7 +1365,7 @@ expr:
        MEMCHECK1($$,$1);
     }
 
-  | refvariable LPAREN parameterlist RPAREN  {
+  | refvariable "(" parameterlist ")"  {
 
       //if (($1) && ($1->device) &&
       //    ($1->device->equal(uparser.connection->functionTag)))
@@ -1377,32 +1377,32 @@ expr:
     }
 
   | variable         { NEW_EXP_1 ($$, EXPR_VARIABLE,$1); }
-  | GROUP IDENTIFIER { NEW_EXP_1 ($$, EXPR_GROUP,$2); }
+  | "group" IDENTIFIER { NEW_EXP_1 ($$, EXPR_GROUP,$2); }
 ;
 
 
   /* num expr */
 expr:
-    expr PLUS expr	{ NEW_EXP_2 ($$, EXPR_PLUS, $1,$3); }
-  | expr MINUS expr	{ NEW_EXP_2 ($$, EXPR_MINUS,$1,$3); }
-  | expr MULT expr	{ NEW_EXP_2 ($$, EXPR_MULT, $1,$3); }
-  | expr DIV expr	{ NEW_EXP_2 ($$, EXPR_DIV,  $1,$3); }
-  | expr PERCENT expr 	{ NEW_EXP_2 ($$, EXPR_MOD,  $1,$3); }
-  | expr EXP expr	{ NEW_EXP_2 ($$, EXPR_EXP,  $1,$3); }
+    expr "+" expr	{ NEW_EXP_2 ($$, EXPR_PLUS, $1,$3); }
+  | expr "-" expr	{ NEW_EXP_2 ($$, EXPR_MINUS,$1,$3); }
+  | expr "*" expr	{ NEW_EXP_2 ($$, EXPR_MULT, $1,$3); }
+  | expr "/" expr	{ NEW_EXP_2 ($$, EXPR_DIV,  $1,$3); }
+  | expr "%" expr 	{ NEW_EXP_2 ($$, EXPR_MOD,  $1,$3); }
+  | expr "^" expr	{ NEW_EXP_2 ($$, EXPR_EXP,  $1,$3); }
 
-  | COPY expr  %prec NEG {
+  | TOK_COPY expr  %prec NEG {
 
       $$ = new UExpression(EXPR_COPY,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
-  | MINUS expr %prec NEG {
+  | "-" expr %prec NEG {
 
       $$ = new UExpression(EXPR_NEG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
-  | LPAREN expr RPAREN {
+  | "(" expr ")" {
 
       $$ = $2;
     }
@@ -1410,27 +1410,27 @@ expr:
 
   /* Tests */
 expr:
-    TRUECONST {
+    TOK_TRUECONST {
 
       $$ = new UExpression(EXPR_VALUE,TRUE);
     }
 
-  | FALSECONST {
+  | TOK_FALSECONST {
 
       $$ = new UExpression(EXPR_VALUE,FALSE);
     }
 
-  | expr EQ expr  { NEW_EXP_2 ($$, EXPR_TEST_EQ,  $1, $3); }
-  | expr REQ expr { NEW_EXP_2 ($$, EXPR_TEST_REQ, $1, $3); }
-  | expr DEQ expr { NEW_EXP_2 ($$, EXPR_TEST_DEQ, $1, $3); }
-  | expr PEQ expr { NEW_EXP_2 ($$, EXPR_TEST_PEQ, $1, $3); }
-  | expr NE expr  { NEW_EXP_2 ($$, EXPR_TEST_NE,  $1, $3); }
-  | expr GT expr  { NEW_EXP_2 ($$, EXPR_TEST_GT,  $1, $3); }
-  | expr GE expr  { NEW_EXP_2 ($$, EXPR_TEST_GE,  $1, $3); }
-  | expr LT expr  { NEW_EXP_2 ($$, EXPR_TEST_LT,  $1, $3); }
-  | expr LE expr  { NEW_EXP_2 ($$, EXPR_TEST_LE,  $1, $3); }
+  | expr TOK_EQ expr  { NEW_EXP_2 ($$, EXPR_TEST_EQ,  $1, $3); }
+  | expr TOK_REQ expr { NEW_EXP_2 ($$, EXPR_TEST_REQ, $1, $3); }
+  | expr TOK_DEQ expr { NEW_EXP_2 ($$, EXPR_TEST_DEQ, $1, $3); }
+  | expr TOK_PEQ expr { NEW_EXP_2 ($$, EXPR_TEST_PEQ, $1, $3); }
+  | expr TOK_NE expr  { NEW_EXP_2 ($$, EXPR_TEST_NE,  $1, $3); }
+  | expr TOK_GT expr  { NEW_EXP_2 ($$, EXPR_TEST_GT,  $1, $3); }
+  | expr TOK_GE expr  { NEW_EXP_2 ($$, EXPR_TEST_GE,  $1, $3); }
+  | expr TOK_LT expr  { NEW_EXP_2 ($$, EXPR_TEST_LT,  $1, $3); }
+  | expr TOK_LE expr  { NEW_EXP_2 ($$, EXPR_TEST_LE,  $1, $3); }
 
-  | BANG expr {
+  | TOK_BANG expr {
 
       $$ = new UExpression(EXPR_TEST_BANG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
@@ -1465,7 +1465,7 @@ parameters:
       MEMCHECK1($$,$1);
     }
 
-  | expr COMMA parameters {
+  | expr "," parameters {
 
       $$ = new UNamedParameters($1,$3);
       MEMCHECK2($$,$1,$3);
@@ -1506,13 +1506,13 @@ rawparameters:
 
 softtest:
     expr
-  | expr TILDE expr  {
+  | expr "~" expr  {
 
       $$ = $1;
       $$->issofttest = true;
       $$->softtest_time = $3;
     }
-  | LPAREN expr TILDE expr RPAREN {
+  | "(" expr "~" expr ")" {
 
       $$ = $2;
       $$->issofttest = true;
@@ -1532,7 +1532,7 @@ identifiers:
       MEMCHECK1($$,$1);
     }
 
-  | VAR IDENTIFIER {
+  | "var" IDENTIFIER {
 
       MEMCHECK($2);
       $$ = new UNamedParameters($2,0);
@@ -1540,14 +1540,14 @@ identifiers:
     }
 
 
-  | IDENTIFIER COMMA identifiers {
+  | IDENTIFIER TOK_COMMA identifiers {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,0,$3);
       MEMCHECK2($$,$3,$1);
     }
 
-  | VAR IDENTIFIER COMMA identifiers {
+  | "var" IDENTIFIER "," identifiers {
 
       MEMCHECK($2);
       $$ = new UNamedParameters($2,0,$4);
@@ -1560,30 +1560,30 @@ identifiers:
 
 class_declaration:
 
-    VAR IDENTIFIER {
+    "var" IDENTIFIER {
 
       MEMCHECK($2);
       $$ = new UExpression(EXPR_VALUE,$2);
       MEMCHECK1($$,$2);
     }
 
-  | FUNCTION variable LPAREN identifiers RPAREN {
+  | TOK_FUNCTION variable "(" identifiers ")" {
       $2->id_type = UDEF_FUNCTION;
       NEW_EXP_2 ($$, EXPR_FUNCTION,$2,$4);
     }
 
-  | FUNCTION variable {
+  | "function" variable {
       $2->id_type = UDEF_FUNCTION;
       $$ = new UExpression(EXPR_FUNCTION,$2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
     }
 
-  | EVENT variable LPAREN identifiers RPAREN {
+  | "event" variable "(" identifiers ")" {
       $2->id_type = UDEF_EVENT;
       NEW_EXP_2 ($$, EXPR_EVENT,$2,$4);
     }
 
-  | EVENT variable {
+  | "event" variable {
       $2->id_type = UDEF_EVENT;
       $$ = new UExpression(EXPR_EVENT,$2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
@@ -1599,7 +1599,7 @@ class_declaration_list:
       MEMCHECK1($$,$1);
     }
 
-  | class_declaration SEMICOLON class_declaration_list {
+  | class_declaration ";" class_declaration_list {
       $$ = new UNamedParameters($1,$3);
       MEMCHECK2($$,$3,$1);
     }
@@ -1616,7 +1616,7 @@ refvariables:
       MEMCHECK1($$,$1);
     }
 
-  | refvariable SEMICOLON refvariables {
+  | refvariable ";" refvariables {
       MEMCHECK($1);
       $$ = new UVariableList($1,$3);
       MEMCHECK2($$,$3,$1);

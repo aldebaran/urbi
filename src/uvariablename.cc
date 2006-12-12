@@ -172,7 +172,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
 
   if (!fullname_)
     return 0;
-  
+
   HMvariabletab::iterator i;
   if (nostruct &&
       (::urbiserver->objtab.find(getMethod()->str())
