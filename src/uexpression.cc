@@ -1282,15 +1282,12 @@ UExpression::eval (UCommand *command,
 	  ret->dataType = DATA_VOID;
 
 	  // send string in the queue
-
-	  ::urbiserver->parser.commandTree = 0;
-	  errorMessage[0] = 0;
 	  ::urbiserver->systemcommands = false;
 	  if (!connection->stack.empty())
 	    connection->functionTag = new UString("__Funct__");
-	  ::urbiserver->parser.process((ubyte*)e1->str->str(),
-				       e1->str->len(),
-				       connection);
+	  UParser& p = ::urbiserver->parser;
+	  p.process((ubyte*)e1->str->str(), e1->str->len(),
+		    connection);
 
 	  if (connection->functionTag)
 	  {
@@ -1299,25 +1296,22 @@ UExpression::eval (UCommand *command,
 	  }
 	  ::urbiserver->systemcommands = true;
 
-	  if (errorMessage[0] != 0)
+	  if (p.errorMessage[0])
 	  {
 	    // a parsing error occured
-
-	    if (::urbiserver->parser.commandTree)
+	    if (p.commandTree)
 	    {
-	      delete ::urbiserver->parser.commandTree;
-	      ::urbiserver->parser.commandTree = 0;
+	      delete p.commandTree;
+	      p.commandTree = 0;
 	    }
-
-	    connection->send(errorMessage, "error");
+	    connection->send(p.errorMessage, "error");
 	  }
 
-	  if (::urbiserver->parser.commandTree )
+	  if (p.commandTree)
 	  {
-
-	    command->morph = ::urbiserver->parser.commandTree;
+	    command->morph = p.commandTree;
 	    command->persistant = false;
-	    ::urbiserver->parser.commandTree = 0;
+	    p.commandTree = 0;
 	  }
 	  else
 	  {

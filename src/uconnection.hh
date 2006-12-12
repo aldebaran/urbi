@@ -32,10 +32,6 @@
 # include "uvariable.hh"
 # include "location.hh"  //FIXME remove this to abstract parser from connection
 
-// Global variable (thanks bison...) to store the the error message
-// when a parsing error occurs.
-extern char errorMessage[1024];
-
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
     here on the kind of underlying connection (TCP, IPC, OPENR, ...).

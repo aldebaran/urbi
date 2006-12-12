@@ -37,9 +37,6 @@
 #include "ucallid.hh"
 #include "uvariable.hh"
 
-char errorMessage[1024]; // Global variable (thanks bison...) to store the
-// the error message when a parsing error occurs.
-
 //! UConnection constructor.
 /*! This constructor must be called by any sub class.
 
@@ -464,10 +461,6 @@ UConnection::received (const char *s)
 UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
-  bool gotlock = false;
-  bool faillock = false; // if binary append failed to get lock,
-  // abort processing
-  urbi::BlockLock bl(server);
   if (server->memoryOverflow)
   {
     errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
@@ -475,6 +468,11 @@ UConnection::received (const ubyte *buffer, int length)
     // memory
     return UFAIL;
   }
+
+  bool gotlock = false;
+  bool faillock = false; // if binary append failed to get lock,
+  // abort processing
+  urbi::BlockLock bl(server);
   lock();
   if (receiveBinary_)
   {
@@ -517,13 +515,13 @@ UConnection::received (const ubyte *buffer, int length)
   if (result != USUCCESS)
   {
     // Handles memory errors.
-    if (result == UFAIL )
+    if (result == UFAIL)
     {
       errorSignal(UERROR_RECEIVE_BUFFER_FULL);
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
 
-    if (result == UMEMORYFAIL )
+    if (result == UMEMORYFAIL)
     {
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
       server->memoryOverflow = true;
@@ -537,14 +535,15 @@ UConnection::received (const ubyte *buffer, int length)
     newDataAdded = true; //server will call us again right after work
     return USUCCESS;
   }
-  if (!gotlock)
-    if (!treeLock.tryLock())
-    {
-      newDataAdded = true; //server will call us again right after work
-      return USUCCESS;
-    }
 
-  if (server->parser.commandTree)
+  if (!gotlock && !treeLock.tryLock())
+  {
+    newDataAdded = true; //server will call us again right after work
+    return USUCCESS;
+  }
+
+  UParser& p = server->parser;
+  if (p.commandTree)
   {
     //reentrency trouble
     treeLock.unlock();
@@ -565,11 +564,8 @@ UConnection::received (const ubyte *buffer, int length)
 
     if (length !=0)
     {
-      errorMessage[0] = 0; // no error at start (errorMessage string is empty)
-
-      server->parser.commandTree = 0;
       server->systemcommands = false;
-      int result = server->parser.process(command, length, this);
+      int result = p.process(command, length, this);
       server->systemcommands = true;
 
       if (result == -1)
@@ -582,41 +578,41 @@ UConnection::received (const ubyte *buffer, int length)
 
       // Xtrem memory recovery in case of anomaly
       if (server->memoryOverflow
-	  && server->parser.commandTree)
+	  && p.commandTree)
       {
-	delete server->parser.commandTree;
-	server->parser.commandTree = 0;
+	delete p.commandTree;
+	p.commandTree = 0;
       }
 
       // Error Message handling
-      if (errorMessage[0] != 0
+      if (*p.errorMessage
 	  && !server->memoryOverflow)
       {
 	// a parsing error occured
-	if (server->parser.commandTree)
+	if (p.commandTree)
 	{
-	  delete server->parser.commandTree;
-	  server->parser.commandTree = 0;
+	  delete p.commandTree;
+	  p.commandTree = 0;
 	}
 
-	send(errorMessage, "error");
+	send(p.errorMessage, "error");
 
-	errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
-	errorMessage[ 42 ] = 0; // cut at 41 characters
+	p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
+	p.errorMessage[ 42 ] = 0; // cut at 41 characters
 	server->error(::DISPLAY_FORMAT, (long)this,
 		      "UConnection::received",
-		      errorMessage);
+		      p.errorMessage);
       }
-      else if (server->parser.commandTree)
-	if (server->parser.commandTree->command1)
+      else if (p.commandTree)
+	if (p.commandTree->command1)
 	{
 	  // Process "commandTree"
 
 	  // CMD_ASSIGN_BINARY: intercept and execute immediately
-	  if (server->parser.binaryCommand)
+	  if (p.binaryCommand)
 	  {
 	    binCommand = ((UCommand_ASSIGN_BINARY*)
-			  server->parser.commandTree->command1);
+			  p.commandTree->command1);
 
 	    ubyte* buffer =
 	      recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
@@ -648,18 +644,18 @@ UConnection::received (const ubyte *buffer, int length)
 
 	    if (!obstructed)
 	    {
-	      server->parser.commandTree->up = 0;
-	      server->parser.commandTree->position = 0;
-	      execute(server->parser.commandTree);
-	      if (server->parser.commandTree &&
-		  server->parser.commandTree->status == URUNNING)
+	      p.commandTree->up = 0;
+	      p.commandTree->position = 0;
+	      execute(p.commandTree);
+	      if (p.commandTree &&
+		  p.commandTree->status == URUNNING)
 		obstructed = true;
 	    }
 
-	    if (server->parser.commandTree)
-	      append(server->parser.commandTree);
+	    if (p.commandTree)
+	      append(p.commandTree);
 
-	    server->parser.commandTree = 0;
+	    p.commandTree = 0;
 	  }
 	}
     }
@@ -668,7 +664,7 @@ UConnection::received (const ubyte *buffer, int length)
 	   && !server->memoryOverflow);
 
   receiving = false;
-  server->parser.commandTree = 0;
+  p.commandTree = 0;
   treeLock.unlock();
   if (server->memoryOverflow)
     return UMEMORYFAIL;

@@ -7436,11 +7436,10 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
     UParser &p = ::urbiserver->parser;
     p.commandTree = 0;
     ::urbiserver->systemcommands = false;
-    *errorMessage = 0;
     p.process(str_command, length, connection);
     ::urbiserver->systemcommands = true;
 
-    if (*errorMessage)
+    if (!*p.errorMessage)
     {
       p.commandTree->setTag("__system__");
       p.commandTree->command2 = this;
@@ -7460,7 +7459,7 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
 	delete p.commandTree;
 	p.commandTree = 0;
       }
-      connection->send(errorMessage, "error");
+      connection->send(p.errorMessage, "error");
       return status = UCOMPLETED;
     }
   }

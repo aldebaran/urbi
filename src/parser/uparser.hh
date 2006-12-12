@@ -78,6 +78,9 @@ public:
 
   void error (const yy::parser::location_type& l, const std::string& msg);
 
+  /// The last error message from the parser.
+  char errorMessage[1024];
+
 private:
   // The scanner used in this parser (it is a flex-scanner)
   UFlexer uflexer;

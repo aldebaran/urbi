@@ -1,3 +1,17 @@
+2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+
+	UParser::errorMessage
+	* src/parser/uparser.cc, src/parser/uparser.hh,
+	* src/ucommand.cc, src/uconnection.cc,
+	* src/uconnection.hh, src/uexpression.cc:
+	(errorMessage): Move to...
+	(UParser::errorMessage): here.
+	(UParser::process): Simplify.
+	Don't use new when there is no reason to.
+	Remove initialization perfomed both by process and its callers.
+	Using "private" might help in the future...
+	Introduce variable shortcuts to improve the readability.
+
 2006-12-08  Razik Yousfi  <yousfi@gostai.com>
 
 	Remove dead code.
