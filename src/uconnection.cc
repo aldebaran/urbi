@@ -255,12 +255,11 @@ UConnection::sendPrefix (const char* tag)
 	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
   else
   {
-    snprintf(tmpBuffer_,
-	     MAXSIZE_TMPBUFFER-3,
+    snprintf(tmpBuffer_, MAXSIZE_TMPBUFFER-3,
 	     "[%08d:%s", (int)server->lastTime(), tag);
-    strcat(tmpBuffer_, "] "); // This splitting method is
-    //used to truncate the
-    // tag if its size is too large.
+    // This splitting method is used to truncate the tag if its size
+    // is too large.
+    strcat(tmpBuffer_, "] ");
   }
 
   sendQueue_.mark (); // put a marker to indicate the beginning of a message
@@ -293,21 +292,22 @@ UConnection::send (const char *s, const char* tag)
   return send((const ubyte*)s, strlen(s));
 }
 
+//! Send a buffer through the connection and flush it
+UErrorValue
+UConnection::send (const ubyte *buffer, int length)
+{
+  UErrorValue ret = sendc (buffer, length);
+  if (ret != UFAIL)
+    flush ();
+  return ret;
+}
+
 //! Send a string through the connection but without flushing it
 UErrorValue
 UConnection::sendc (const char *s, const char* tag)
 {
   sendPrefix(tag);
   return sendc((const ubyte*)s, strlen(s));
-}
-
-//! Send a buffer through the connection and flush it
-UErrorValue
-UConnection::send (const ubyte *buffer, int length)
-{
-  UErrorValue ret = sendc (buffer, length);
-  if (ret != UFAIL) flush ();
-  return ret;
 }
 
 //! Send a buffer through the connection without flushing it.
