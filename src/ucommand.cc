@@ -7386,16 +7386,21 @@ UCommand_NOOP::print(int l)
   ::urbiserver->debug("NOOP, level =%d\n", (int)status);
 }
 
+
+/*----------------.
+| UCommand_LOAD.  |
+`----------------*/
+
 MEMORY_MANAGER_INIT(UCommand_LOAD);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  This class is used to delay the processing of a loaded file.
  */
-UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode) :
-  UCommand(CMD_LOAD),
-  loadQueue (4096, 1048576, false),
-  mainnode (mainnode)
+UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode)
+  : UCommand(CMD_LOAD),
+    loadQueue (4096, 1048576, false),
+    mainnode (mainnode)
 {
   ADDOBJ(UCommand_LOAD);
 }
@@ -7418,40 +7423,33 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
   if (str_command == 0 && length==-1)
     return status = UCOMPLETED;
 
-  if (length)
-  {
-    UParser &p = ::urbiserver->parser;
-    p.commandTree = 0;
-    ::urbiserver->systemcommands = false;
-    p.process(str_command, length, connection);
-    ::urbiserver->systemcommands = true;
-
-    if (!*p.errorMessage)
-    {
-      p.commandTree->setTag("__system__");
-      p.commandTree->command2 = this;
-      up = p.commandTree;
-      position = &p.commandTree->command2;
-      morph = p.commandTree;
-      p.commandTree = 0;
-
-      persistant = true;
-      return status = UMORPH;
-    }
-    else
-    {
-      // a parsing error occured
-      if (p.commandTree)
-      {
-	delete p.commandTree;
-	p.commandTree = 0;
-      }
-      connection->send(p.errorMessage, "error");
-      return status = UCOMPLETED;
-    }
-  }
-  else
+  if (!length)
     return status = UCOMPLETED;
+
+  UParser &p = ::urbiserver->parser;
+  // FIXME: This does not preserve the value that systemcommands had
+  // before, is this ok?
+  ::urbiserver->systemcommands = false;
+  p.process(str_command, length, connection);
+  ::urbiserver->systemcommands = true;
+
+  if (*p.errorMessage)
+  {
+    // a parsing error occured
+    delete p.commandTree;
+    p.commandTree = 0;
+    connection->send(p.errorMessage, "error");
+    return status = UCOMPLETED;
+  }
+
+  p.commandTree->setTag("__system__");
+  p.commandTree->command2 = this;
+  position = &p.commandTree->command2;
+  up = morph = p.commandTree;
+  p.commandTree = 0;
+
+  persistant = true;
+  return status = UMORPH;
 }
 
 //! UCommand subclass hard copy function
