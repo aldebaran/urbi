@@ -1168,48 +1168,6 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	}
 
-
-	if (STREQ(variablename->id->str(), "load"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_STRING);
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_VOID;
-
-	  // load file
-	  UCommand_LOAD *loadcmd = new UCommand_LOAD(command->up);
-	  if (loadcmd == 0)
-	  {
-	    delete ret;
-	    delete e1;
-	    return 0;
-	  }
-
-	  if (connection->server->loadFile(e1->str->str(),
-					   &loadcmd->loadQueue) == UFAIL)
-	  {
-	    snprintf(errorString, errSize,
-		     "!!! Cannot load the file %s\n", e1->str->str());
-	    connection->send(errorString, command->getTag().c_str());
-	    delete ret;
-	    delete loadcmd;
-	    ret = 0;
-	  }
-	  else
-	  {
-	    command->morph = loadcmd;
-	    command->persistant = false;
-
-	    snprintf(errorString, errSize,
-		     "*** \"%s\" loaded.\n", e1->str->str());
-	    connection->send(errorString, command->getTag().c_str());
-	  }
-
-	  delete e1;
-	  return ret;
-	}
-
-
 	if (STREQ(variablename->id->str(), "loadwav"))
 	{
 	  e1 = parameters->expression->eval(command, connection);
@@ -1248,8 +1206,12 @@ UExpression::eval (UCommand *command,
 	}
 
 
-	if (STREQ(variablename->id->str(), "exec"))
+	// Exec and load are exactly the same thing with one difference:
+	// exec parse the string, and load, the file whose name is given.
+	if (STREQ(variablename->id->str(), "exec")
+	    || STREQ(variablename->id->str(), "load"))
 	{
+	  bool in_load = STREQ(variablename->id->str(), "load");
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
 	  ret = new UValue();
@@ -1260,7 +1222,15 @@ UExpression::eval (UCommand *command,
 	  if (!connection->stack.empty())
 	    connection->functionTag = new UString("__Funct__");
 	  UParser& p = connection->parser();
-	  p.process((ubyte*)e1->str->str(), e1->str->len());
+	  if (in_load)
+	  {
+	    std::string f = ::urbiserver->find_file (e1->str->str());
+	    p.process (f.c_str ());
+	  }
+	  else
+	  {
+	    p.process((ubyte*)e1->str->str(), e1->str->len());
+	  }
 
 	  if (connection->functionTag)
 	  {
@@ -1288,8 +1258,12 @@ UExpression::eval (UCommand *command,
 	  }
 	  else
 	  {
-	    connection->send("!!! Error parsing the exec string\n",
-			     command->getTag().c_str());
+	    if (in_load)
+	      connection->send("!!! Error loading the file\n",
+			       command->getTag().c_str());
+	    else
+	      connection->send("!!! Error parsing the exec string\n",
+			       command->getTag().c_str());
 	    delete ret;
 	    ret = 0;
 	  }
