@@ -124,11 +124,8 @@ public:
 
   /// used by commands to build
   static const int MAXSIZE_TMPMESSAGE = 65536;
-  /// internal
-  HMvariabletab::iterator hmi;
 
-  private:
-
+private:
   /// Command tag
   std::string      tag;
   /// Ptr to tag info concerning us

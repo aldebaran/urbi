@@ -1,5 +1,10 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	Remove unused attribute
+	* src/ucommand.hh (hmi): Remove.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	Simplify the logic of UCommand_LOAD::execute
 	* src/ucommand.cc: here.
 
