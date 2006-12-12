@@ -81,8 +81,6 @@ public:
   /// Status of the command
   UCommandStatus   status;
 
-
-
   /// list of flags of tagged commands
   UNamedParameters *flags;
 
@@ -92,11 +90,14 @@ public:
   UCommand         **position;
   /// stores the target UCommand in case of morphing
   UCommand         *morph;
-  /// tells if the command should be deleted once it is UCOMPLETED (useful for loops)
+  /// Whether the command should be deleted once it is UCOMPLETED
+  /// (useful for loops).
   bool             persistant;
-  /// true if the command has been marked for deletion in a stop command.
+  /// true if the command has been marked for deletion in a stop
+  /// command.
   bool             toDelete;
-  /// used to put the whole tree in bg mode (after a morphing from a "at" or "whenever").
+  /// used to put the whole tree in bg mode (after a morphing from a
+  /// "at" or "whenever").
   bool             background;
 
   /// start time
@@ -107,7 +108,8 @@ public:
   UExpression      *flagExpr2;
   /// expression used to store the flags params
   UExpression      *flagExpr4;
-  /// in case of timeout or condout, stores the type of the flag (timeout:0), (condout:1).
+  /// in case of timeout or condout, stores the type of the flag
+  /// (timeout:0), (condout:1).
   int              flagType;
   /// nb of times the flag test is true
   int              flag_nbTrue2;
@@ -1118,6 +1120,7 @@ public:
 
   /// To load files.
   UCommandQueue       loadQueue;
+
 private:
   /// To alternate exec/non-exec state (a kind of noop).
   bool ready;
