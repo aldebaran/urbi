@@ -97,7 +97,6 @@ protected:
   UString*        fullname_; ///< used as a hash key
 
   HMaliastab::iterator    hmi, past_hmi; ///< internal
-  HMvariabletab::iterator hmi2;         ///< internal
   HMfunctiontab::iterator hmf;          ///< internal
   bool                    localFunction; ///< true for variables
 					 ///< local to a func.

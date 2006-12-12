@@ -165,37 +165,24 @@ UVariableName::resetCache()
 UVariableName::getVariable(UCommand *command, UConnection *connection)
 {
   if (variable)
-    if (variable->toDelete)
-      return 0;
-    else
-      return variable;
+    return variable->toDelete ? 0 : variable;
 
   if (!fullname_ || !cached)
     buildFullname(command, connection);
 
   if (!fullname_)
     return 0;
-
-  UVariable *tmpvar;
-
+  
+  HMvariabletab::iterator i;
   if (nostruct &&
       (::urbiserver->objtab.find(getMethod()->str())
        != ::urbiserver->objtab.end()))
-  {
-    if ((hmi2 = ::urbiserver->variabletab.find(getMethod()->str())) !=
-	::urbiserver->variabletab.end())
-      tmpvar = hmi2->second;
-    else
-      tmpvar = 0;
-  }
+    i = ::urbiserver->variabletab.find(getMethod()->str());
   else
-  {
-    if ((hmi2 = ::urbiserver->variabletab.find(fullname_->str())) !=
-	::urbiserver->variabletab.end())
-      tmpvar = hmi2->second;
-    else
-      tmpvar = 0;
-  }
+    i = ::urbiserver->variabletab.find(fullname_->str());
+
+  UVariable *tmpvar =
+    (i != ::urbiserver->variabletab.end()) ? i->second : 0;
 
   if (cached)
     variable = tmpvar;
@@ -433,22 +420,22 @@ UVariableName::buildFullname(UCommand *command,
 	fullname_ = 0;
 	return 0;
       }
+
       if (e1->dataType == DATA_NUM)
 	snprintf(indexstr, fullnameMaxSize, "__%d", (int)e1->val);
+      else if (e1->dataType == DATA_STRING)
+	snprintf(indexstr, fullnameMaxSize, "__%s",
+		 e1->str->str());
       else
-	if (e1->dataType == DATA_STRING)
-	  snprintf(indexstr, fullnameMaxSize, "__%s",
-		   e1->str->str());
-	else
-	{
-	  delete e1;
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		   "!!! invalid array index type\n");
-	  connection->send(tmpbuffer, command->getTag().c_str());
-	  delete fullname_;
-	  fullname_ = 0;
-	  return 0;
-	}
+      {
+	delete e1;
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! invalid array index type\n");
+	connection->send(tmpbuffer, command->getTag().c_str());
+	delete fullname_;
+	fullname_ = 0;
+	return 0;
+      }
 
       // Suppress this to make index non static by default
       // if (!itindex->expression->isconst) cached = false;
@@ -581,7 +568,7 @@ UVariableName::buildFullname(UCommand *command,
       hmi = ::urbiserver->aliastab.find(name);
     past_hmi = hmi;
 
-    while  (hmi != ::urbiserver->aliastab.end())
+    while (hmi != ::urbiserver->aliastab.end())
     {
       past_hmi = hmi;
       hmi = ::urbiserver->aliastab.find(hmi->second->str());
@@ -599,7 +586,7 @@ UVariableName::buildFullname(UCommand *command,
   }
   else if (nostruct)
   {
-    char* p =  strchr(name, '.');
+    char* p = strchr(name, '.');
     if (p)
     {
       if (fullname_)

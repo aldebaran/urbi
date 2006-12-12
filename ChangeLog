@@ -1,5 +1,13 @@
 2006-12-12  Akim Demaille  <akim.demaille@free.fr>
 
+	Simplify some piece of crap
+	I thought I had seen it all checking student code at EPITA...
+	* src/uvariablename.cc, src/uvariablename.hh (hmi2): Don't
+	make it a class member, since it's only used as a local variable.
+	(getVariable): Simplify.
+
+2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+
 	Simplify scanGroups
 	* src/ucommand.cc: here, using variable aliases.
 	It should be noted that the test suite does not seem to
