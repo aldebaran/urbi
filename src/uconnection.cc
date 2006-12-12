@@ -238,7 +238,7 @@ void UConnection::initialize()
 	       "UConnection::initialize",
 	       customHeader);
 
-  server->loadFile("CLIENT.INI", recvQueue_);
+  server->loadFile("CLIENT.INI", &recvQueue_);
   newDataAdded = true;
 }
 
@@ -263,7 +263,7 @@ UConnection::sendPrefix (const char* tag)
     // tag if its size is too large.
   }
 
-  sendQueue_->mark (); // put a marker to indicate the beginning of a message
+  sendQueue_.mark (); // put a marker to indicate the beginning of a message
   sendc((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
   return USUCCESS;
 }
@@ -330,10 +330,12 @@ UConnection::send (const ubyte *buffer, int length)
 UErrorValue
 UConnection::sendc (const ubyte *buffer, int length)
 {
-  if (closing) return USUCCESS;
-  if (sendQueue_->locked ()) return UFAIL;
+  if (closing)
+    return USUCCESS;
+  if (sendQueue_.locked ())
+    return UFAIL;
 
-  UErrorValue result = sendQueue_->push(buffer, length);
+  UErrorValue result = sendQueue_.push(buffer, length);
   if (result != USUCCESS)
   {
     if (result == UMEMORYFAIL)
@@ -345,7 +347,7 @@ UConnection::sendc (const ubyte *buffer, int length)
     if (result == UFAIL)
       errorSignal(UERROR_SEND_BUFFER_FULL);
 
-    sendQueue_->revert ();
+    sendQueue_.revert ();
     return UFAIL;
   }
 
@@ -394,13 +396,13 @@ UConnection::continueSend ()
   urbi::BlockLock bl(this); //lock this function
   blocked_ = false;	    // continueSend unblocks the connection.
 
-  int toSend = sendQueue_->dataSize(); // nb of bytes to send
+  int toSend = sendQueue_.dataSize(); // nb of bytes to send
   if (toSend > packetSize_)
     toSend = packetSize_;
   if (toSend == 0)
     return USUCCESS;
 
-  ubyte* popData = sendQueue_->virtualPop(toSend);
+  ubyte* popData = sendQueue_.virtualPop(toSend);
 
   if (popData != 0)
   {
@@ -409,7 +411,7 @@ UConnection::continueSend ()
     if (wasSent < 0)
       return UFAIL;
     else
-      if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
+      if (wasSent == 0 || sendQueue_.pop(wasSent) != 0)
 	return USUCCESS;
   }
 
@@ -492,7 +494,7 @@ UConnection::received (const ubyte *buffer, int length)
       }
     }
   }
-  UErrorValue result = recvQueue_->push(buffer, length);
+  UErrorValue result = recvQueue_.push(buffer, length);
   unlock();
   if (result != USUCCESS)
   {
@@ -536,11 +538,11 @@ UConnection::received (const ubyte *buffer, int length)
   server->updateTime();
 
   do {
-    ubyte* command = recvQueue_->popCommand(length);
+    ubyte* command = recvQueue_.popCommand(length);
 
     if (command == 0 && length==-1)
     {
-      recvQueue_->clear();
+      recvQueue_.clear();
       length = 0;
     }
 
@@ -591,7 +593,7 @@ UConnection::received (const ubyte *buffer, int length)
 			p.commandTree->command1);
 
 	  ubyte* buffer =
-	    recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
+	    recvQueue_.pop(binCommand->refBinary->ref()->bufferSize);
 
 	  if (buffer)
 	  {
@@ -603,9 +605,9 @@ UConnection::received (const ubyte *buffer, int length)
 	  else
 	  {
 	    // not all was there, must set receiveBinary mode on
-	    transferedBinary_ = recvQueue_->dataSize();
+	    transferedBinary_ = recvQueue_.dataSize();
 	    memcpy(binCommand->refBinary->ref()->buffer,
-		   recvQueue_->pop(transferedBinary_),
+		   recvQueue_.pop(transferedBinary_),
 		   transferedBinary_);
 	    receiveBinary_ = true;
 	  }
@@ -996,13 +998,12 @@ UConnection::processCommand(UCommand *&command,
       else
 	command->flag_nbTrue4 = 0;
 
-      if (((command->flagExpr4->softtest_time) &&
-	     (command->flag_nbTrue4 > 0) &&
-	     (server->lastTime() - command->flag_startTrue4 >=
-	      command->flagExpr4->softtest_time->val)) ||
-
-	   ((command->flag_nbTrue4 >0) &&
-	     (command->flagExpr4->softtest_time==0)) )
+      if ((command->flagExpr4->softtest_time &&
+	   command->flag_nbTrue4 > 0 &&
+	   (server->lastTime() - command->flag_startTrue4 >=
+	    command->flagExpr4->softtest_time->val)) ||
+	  (command->flag_nbTrue4 >0 &&
+	   command->flagExpr4->softtest_time==0))
 	return command;
     }
 
@@ -1011,12 +1012,12 @@ UConnection::processCommand(UCommand *&command,
       param = command->flags;
       while (param)
       {
-	if ((param->name) &&
-	    (param->name->equal("flag")) &&
-	    (param->expression) &&
-	    (!command->morphed) &&
-	    ((param->expression->val == 3 ) || // 3 = +end
-	     (param->expression->val == 1 ) )) // 1 = +report
+	if (param->name &&
+	    param->name->equal("flag") &&
+	    param->expression &&
+	    !command->morphed &&
+	    (param->expression->val == 3 || // 3 = +end
+	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", command->getTag().c_str());
 
 	param = param->next;
@@ -1049,13 +1050,12 @@ UConnection::processCommand(UCommand *&command,
 	  param = command->flags;
 	  while (param)
 	  {
-	    if ((param->name) &&
-		(param->name->equal("flag")) &&
-		(param->expression) &&
-		((param->expression->val == 3 ) || // 3 = +end
-		 (param->expression->val == 1 ) )) // 1 = +report
+	    if (param->name &&
+		param->name->equal("flag") &&
+		param->expression &&
+		(param->expression->val == 3 || // 3 = +end
+		 param->expression->val == 1  )) // 1 = +report
 	      send("*** end\n", command->getTag().c_str());
-
 	    param = param->next;
 	  }
 
@@ -1310,7 +1310,7 @@ UConnection::append(UCommand_TREE *command)
 int
 UConnection::availableSendQueue ()
 {
-  return sendQueue_->bufferMaxFreeSpace();
+  return sendQueue_.bufferMaxFreeSpace();
 }
 
 
@@ -1318,7 +1318,7 @@ UConnection::availableSendQueue ()
 int
 UConnection::sendQueueRemain ()
 {
-  return sendQueue_->dataSize();
+  return sendQueue_.dataSize();
 }
 
 //! Performs a variable prefix check for local storage in function calls

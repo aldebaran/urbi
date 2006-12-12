@@ -120,12 +120,18 @@ public:
     UConnection(::urbiserver, 1000, 1000000, 1000, 1000, 1000)
   {}
   virtual UErrorValue closeConnection	 ()
-  {return USUCCESS;}
+  {
+    return USUCCESS;
+  }
   char * getData()
-  {return (char *)sendQueue_->virtualPop(sendQueue_->dataSize());}
+  {
+    return (char *)sendQueue_.virtualPop(sendQueue_.dataSize());
+  }
 protected:
   virtual int	      effectiveSend	(const ubyte*, int)
-  {return 0;};
+  {
+    return 0;
+  }
 };
 
 
