@@ -1,5 +1,12 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	UParser::*_type
+	* src/parser/uparser.hh (token_type, semantic_type)
+	(location_type): New.
+	Use them.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	Prefix (some of) the tokens
 	The token "in" was mapped to IN which is used somewhere on
 	Windows.  Rather than fighting against this, use names that

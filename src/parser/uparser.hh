@@ -34,9 +34,10 @@ class UCommand_TREE;
 
 # undef  YY_DECL
 # define YY_DECL                                                 \
-  yy::parser::token_type					 \
-  yyFlexLexer::yylex(yy::parser::semantic_type* valp,		 \
-		     yy::parser::location_type* locp, UParser& uparser)
+  UParser::token_type						 \
+  yyFlexLexer::yylex(UParser::semantic_type* valp,		 \
+		     UParser::location_type* locp,		 \
+		     UParser& uparser)
 
 //! Control class for a flex-scanner
 /*! It has a pointer to the uparser in which it is contained
@@ -60,7 +61,10 @@ private:
 class UParser
 {
 public:
-  // friend int yylex(yy::parser::semantic_type *lvalp, void *compiler);
+  typedef yy::parser::token_type token_type;
+  typedef yy::parser::semantic_type semantic_type;
+  typedef yy::parser::location_type location_type;
+
   UParser();
 
   /// Parse the command from a stream.
@@ -71,10 +75,10 @@ public:
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
-  yy::parser::token_type scan(yy::parser::semantic_type* val,
-			      yy::parser::location_type* loc);
+  token_type scan(semantic_type* val, location_type* loc);
 
-  void error (const yy::parser::location_type& l, const std::string& msg);
+  /// Declare an error at \a l about \a msg.
+  void error (const location_type& l, const std::string& msg);
 
   /// The last error message from the parser.
   char errorMessage[1024];
@@ -83,10 +87,5 @@ private:
   // The scanner used in this parser (it is a flex-scanner)
   UFlexer uflexer;
 };
-
-
-// Important! These are the "shortcuts" which you can use in your
-// ".l"- and ".y"-files to access the corresponding uparser-object!
-// # define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
 
 #endif
