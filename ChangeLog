@@ -1,5 +1,11 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	Remove UCommand_LOAD
+	* src/ucommand.cc, src/ucommand.hh: It has been obsoleted by the
+	previous patch.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	Merge load into exec
 	* src/uexpression.cc: Merge the handling of load into that of exec.
 

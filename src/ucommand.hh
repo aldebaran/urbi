@@ -1105,27 +1105,4 @@ public:
   virtual UCommand*      copy();
 };
 
-class UCommand_LOAD : public UCommand
-{
-public:
-  MEMORY_MANAGED;
-
-  UCommand_LOAD(UCommand_TREE *mainnode);
-  virtual ~UCommand_LOAD();
-
-  virtual void print(int l);
-
-  virtual UCommandStatus execute(UConnection *connection);
-  virtual UCommand*      copy();
-
-  /// To load files.
-  UCommandQueue       loadQueue;
-
-private:
-  /// To alternate exec/non-exec state (a kind of noop).
-  bool ready;
-  /// The load command.
-  UCommand_TREE       *mainnode;
-};
-
 #endif

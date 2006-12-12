@@ -5970,10 +5970,10 @@ MEMORY_MANAGER_INIT(UCommand_STOPIF);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_STOPIF::UCommand_STOPIF(UExpression *condition,
-				  UCommand* command) :
-  UCommand(CMD_STOPIF),
-  condition (condition),
-  command (command)
+				  UCommand* command)
+  : UCommand(CMD_STOPIF),
+    condition (condition),
+    command (command)
 {
   ADDOBJ(UCommand_STOPIF);
 
@@ -6016,7 +6016,8 @@ UCommand_STOPIF::execute(UConnection *connection)
   return status = UMORPH;
 
 
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
   persistant = false;
   morph = (UCommand*)
@@ -6103,23 +6104,24 @@ UCommand_FREEZEIF::~UCommand_FREEZEIF()
 UCommandStatus
 UCommand_FREEZEIF::execute(UConnection*)
 {
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
   persistant = false;
   UCommand* cmd = new UCommand_TREE(UPIPE,
-				     command->copy(),
-				     new UCommand_NOOP()
+				    command->copy(),
+				    new UCommand_NOOP()
     );
   cmd->setTag(tagRef->str());
   morph = (UCommand*)
     new UCommand_TREE(UAND,
-		       new UCommand_AT(CMD_AT,
-				       condition->copy(),
-				       new UCommand_OPERATOR_ID(new UString("freeze"),
-								tagRef->copy()),
-				       new UCommand_OPERATOR_ID(new UString("unfreeze"),
-								tagRef->copy())),
-		       cmd
+		      new UCommand_AT(CMD_AT,
+				      condition->copy(),
+				      new UCommand_OPERATOR_ID(new UString("freeze"),
+							       tagRef->copy()),
+				      new UCommand_OPERATOR_ID(new UString("unfreeze"),
+							       tagRef->copy())),
+		      cmd
       );
 
   return status = UMORPH;
@@ -6173,14 +6175,14 @@ MEMORY_MANAGER_INIT(UCommand_AT);
 UCommand_AT::UCommand_AT(UCommandType type,
 			  UExpression *test,
 			  UCommand* command1,
-			  UCommand* command2) :
-  UCommand(type),
-  UASyncCommand(),
-  test (test),
-  command1 (command1),
-  command2 (command2),
-  firsttime (true),
-  reloop_ (false)
+			  UCommand* command2)
+  : UCommand(type),
+    UASyncCommand(),
+    test (test),
+    command1 (command1),
+    command2 (command2),
+    firsttime (true),
+    reloop_ (false)
 {
   ADDOBJ(UCommand_AT);
 }
@@ -6522,16 +6524,16 @@ MEMORY_MANAGER_INIT(UCommand_WHENEVER);
  */
 UCommand_WHENEVER::UCommand_WHENEVER(UExpression *test,
 				     UCommand* command1,
-				     UCommand* command2) :
-  UCommand(CMD_WHENEVER),
-  UASyncCommand(),
-  test (test),
-  command1 (command1),
-  command2 (command2),
-  firsttime (true),
-  reloop_ (false),
-  active_ (false),
-  theloop_ (0)
+				     UCommand* command2)
+  : UCommand(CMD_WHENEVER),
+    UASyncCommand(),
+    test (test),
+    command1 (command1),
+    command2 (command2),
+    firsttime (true),
+    reloop_ (false),
+    active_ (false),
+    theloop_ (0)
 {
   ADDOBJ(UCommand_WHENEVER);
 }
@@ -6865,10 +6867,10 @@ MEMORY_MANAGER_INIT(UCommand_LOOPN);
  */
 UCommand_LOOPN::UCommand_LOOPN(UCommandType type,
 			       UExpression* expression,
-			       UCommand* command) :
-  UCommand(type),
-  expression (expression),
-  command (command)
+			       UCommand* command)
+  : UCommand(type),
+    expression (expression),
+    command (command)
 {
   ADDOBJ(UCommand_LOOPN);
 }
@@ -7382,96 +7384,4 @@ UCommand_NOOP::print(int l)
 
   ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
   ::urbiserver->debug("NOOP, level =%d\n", (int)status);
-}
-
-
-/*----------------.
-| UCommand_LOAD.  |
-`----------------*/
-
-MEMORY_MANAGER_INIT(UCommand_LOAD);
-// *********************************************************
-//! UCommand subclass constructor.
-/*! Subclass of UCommand with standard member initialization.
- This class is used to delay the processing of a loaded file.
- */
-UCommand_LOAD::UCommand_LOAD(UCommand_TREE* mainnode)
-  : UCommand(CMD_LOAD),
-    loadQueue (4096, 1048576, false),
-    mainnode (mainnode)
-{
-  ADDOBJ(UCommand_LOAD);
-}
-
-//! UCommand subclass destructor.
-UCommand_LOAD::~UCommand_LOAD()
-{
-  FREEOBJ(UCommand_LOAD);
-}
-
-//! UCommand subclass execution function
-UCommandStatus UCommand_LOAD::execute(UConnection *connection)
-{
-  if (connection->receiving)
-    return status = URUNNING;
-
-  int length;
-  ubyte* str_command = loadQueue.popCommand(length);
-
-  if (str_command == 0 && length==-1)
-    return status = UCOMPLETED;
-
-  if (!length)
-    return status = UCOMPLETED;
-
-  UParser &p = connection->parser();
-  // FIXME: This does not preserve the value that systemcommands had
-  // before, is this ok?
-  ::urbiserver->systemcommands = false;
-  p.process(str_command, length);
-  ::urbiserver->systemcommands = true;
-
-  if (*p.errorMessage)
-  {
-    // a parsing error occured
-    delete p.commandTree;
-    p.commandTree = 0;
-    connection->send(p.errorMessage, "error");
-    return status = UCOMPLETED;
-  }
-
-  p.commandTree->setTag("__system__");
-  p.commandTree->command2 = this;
-  position = &p.commandTree->command2;
-  up = p.commandTree;
-  morph = p.commandTree;
-  p.commandTree = 0;
-
-  persistant = true;
-  return status = UMORPH;
-}
-
-//! UCommand subclass hard copy function
-UCommand*
-UCommand_LOAD::copy()
-{
-  UCommand_LOAD *ret = new UCommand_LOAD(mainnode);
-  copybase(ret);
-  return ret;
-}
-
-//! Print the command
-/*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
-void
-UCommand_LOAD::print(int l)
-{
-  char tabb[100];
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-  ::urbiserver->debug("LOAD\n");
 }
