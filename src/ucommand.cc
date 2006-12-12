@@ -7445,7 +7445,8 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
   p.commandTree->setTag("__system__");
   p.commandTree->command2 = this;
   position = &p.commandTree->command2;
-  up = morph = p.commandTree;
+  up = p.commandTree;
+  morph = p.commandTree;
   p.commandTree = 0;
 
   persistant = true;
