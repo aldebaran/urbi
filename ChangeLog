@@ -1,5 +1,12 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	UDEBUG_EXPR
+	* src/uexpression.cc: New.
+	(UExpression::print): Use it.
+	Should be used more widely.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	One parser per connection
 	* src/userver.cc, src/userver.hh: No longer aggregate a parser.
 	* src/uconnection.cc, src/uconnection.hh (parser_, parser): New.

@@ -286,6 +286,16 @@ UExpression::copy()
 			  issofttest, firsteval, tmp_value);
 }
 
+#define UDEBUG_EXPR(What)			\
+  do {						\
+    if (What)					\
+    {						\
+      ::urbiserver->debug(#What "= {");		\
+      What->print();				\
+      ::urbiserver->debug("} ");		\
+    }						\
+  } while (0)
+
 //! Print the expression
 /*! This function is for debugging purpose only.
  It is not safe, efficient or crash proof. A better version will come later.
@@ -294,39 +304,22 @@ void
 UExpression::print()
 {
   ::urbiserver->debug("[Type:E%d ", type);
-  if (isconst) ::urbiserver->debug("(const) ");
+  if (isconst)
+    ::urbiserver->debug("(const) ");
   if (type == EXPR_VALUE && dataType == DATA_NUM)
   {
     std::ostringstream tstr;
     tstr << "val="<<val<<" ";
     ::urbiserver->debug(tstr.str().c_str());
   }
-  if (str) ::urbiserver->debug("str='%s' ", str->str());
-  if (id) ::urbiserver->debug("id='%s' ", id->str());
-  if (expression1)
-  {
-    ::urbiserver->debug("expr1=");
-    expression1->print();
-    ::urbiserver->debug(" ");
-  }
-  if (expression2)
-  {
-    ::urbiserver->debug("expr2=");
-    expression2->print();
-    ::urbiserver->debug(" ");
-  }
-  if (variablename)
-  {
-    ::urbiserver->debug("variablename=");
-    variablename->print();
-    ::urbiserver->debug(" ");
-  }
-  if (parameters)
-  {
-    ::urbiserver->debug("parameters={");
-    parameters->print();
-    ::urbiserver->debug("} ");
-  }
+  if (str)
+    ::urbiserver->debug("str='%s' ", str->str());
+  if (id)
+    ::urbiserver->debug("id='%s' ", id->str());
+  UDEBUG_EXPR (expression1);
+  UDEBUG_EXPR (expression2);
+  UDEBUG_EXPR (variablename);
+  UDEBUG_EXPR (parameters);
   ::urbiserver->debug("] ");
 }
 
