@@ -1,5 +1,11 @@
 2006-12-12  Akim Demaille  <akim.demaille@free.fr>
 
+	Sort tokens
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y:
+	Sort tokens.
+
+2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+
 	UParser::result
 	* src/parser/uparser.cc, src/parser/uparser.hh: Remove, unused.
 	(IN): Remove this #undef coming out of the blue.

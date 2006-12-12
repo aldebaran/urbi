@@ -134,142 +134,140 @@ STRING   \"([^\"]|"\\\"")*\"
 	      }
 
 
-"stop"       |
-"unblock"    |
 "block"      |
-"unfreeze"   |
+"disconnect" |
 "freeze"     |
 "killall"    |
-"disconnect"   RETURN_STR_TOKEN (OPERATOR_ID);
+"stop"       |
+"unblock"    |
+"unfreeze"   RETURN_STR_TOKEN (OPERATOR_ID);
 
-"info"  |
-"undef" |
-"delete"       RETURN_STR_TOKEN (OPERATOR_VAR);
+"delete"  |
+"info"    |
+"undef"   RETURN_STR_TOKEN (OPERATOR_VAR);
 
-"mix"     |
 "add"     |
-"normal"  |
 "cancel"  |
 "discard" |
-"queue"       RETURN_STR_TOKEN (STRING);
+"mix"     |
+"normal"  |
+"queue"   RETURN_STR_TOKEN (STRING);
 
-"external" |
-"internal"     RETURN_STR_TOKEN (BINDER);
+"external"  |
+"internal"  RETURN_STR_TOKEN (BINDER);
 
-"motoron"     |
-"motoroff"    |
-"strict"      |
-"unstrict"    |
-"ping"        |
-"devices"     |
-"connections" |
-"vars"        |
-"events"      |
-"uservars"    |
-"undefall"    |
-"reset"       |
 "commands"    |
-"debugon"     |
+"connections" |
 "debugoff"    |
+"debugon"     |
+"devices"     |
+"events"      |
+"motoroff"    |
+"motoron"     |
+"ping"        |
 "quit"        |
-"stopall"     |
 "reboot"      |
-"shutdown"      RETURN_STR_TOKEN (OPERATOR);
+"reset"       |
+"shutdown"    |
+"stopall"     |
+"strict"      |
+"undefall"    |
+"unstrict"    |
+"uservars"    |
+"vars"        RETURN_STR_TOKEN (OPERATOR);
 
-"if"            return token::IF;
-"else"          return token::ELSE;
-"from"          return token::FROM;
-"var"           return token::VAR;
-"object"        return token::OBJECT;
-"function"      return token::FUNCTION;
-"class"         return token::CLASS;
-"subclass"      return token::SUBCLASS;
-"new"           return token::NEW;
-"event"         return token::EVENT;
-"while"         return token::WHILE;
-"timeout"       return token::TIMEOUT;
-"stopif"        return token::STOPIF;
-"freezeif"      return token::FREEZEIF;
-"every"         return token::EVERY;
+"BIN"           return token::BIN;
+"addgroup"      return token::ADDGROUP;
+"alias"         return token::ALIAS;
 "at"            return token::AT;
-"static"        return token::STATIC;
-"whenever"      return token::WHENEVER;
-"onleave"       return token::ONLEAVE;
+"bin"           return token::BIN;
+"class"         return token::CLASS;
+"copy"          return token::COPY;
+"def"           return token::DEF;
+"delgroup"      return token::DELGROUP;
+"disinherit"    return token::DISINHERIT;
+"echo"          return token::UECHO;
+"else"          return token::ELSE;
+"emit"          return token::EMIT;
+"event"         return token::EVENT;
+"every"         return token::EVERY;
+"false"         return token::FALSECONST;
 "for"           return token::FOR;
 "foreach"       return token::FOREACH;
+"freezeif"      return token::FREEZEIF;
+"from"          return token::FROM;
+"function"      return token::FUNCTION;
+"group"         return token::GROUP;
+"if"            return token::IF;
 "in"            return token::IN;
+"inherit"       return token::INHERIT;
+"list"          return token::GROUPLIST;
 "loop"          return token::LOOP;
 "loopn"         return token::LOOPN;
-"group"         return token::GROUP;
-"addgroup"      return token::ADDGROUP;
-"delgroup"      return token::DELGROUP;
-"alias"         return token::ALIAS;
-"inherit"       return token::INHERIT;
-"disinherit"    return token::DISINHERIT;
+"new"           return token::NEW;
+"noop"          return token::NOOP;
+"object"        return token::OBJECT;
+"onleave"       return token::ONLEAVE;
+"only"          return token::ONLY;
+"return"        return token::RETURN;
+"static"        return token::STATIC;
+"stopif"        return token::STOPIF;
+"subclass"      return token::SUBCLASS;
+"timeout"       return token::TIMEOUT;
+"true"          return token::TRUECONST;
 "unalias"       return token::UNALIAS;
-"echo"          return token::UECHO;
+"var"           return token::VAR;
 "wait"          return token::WAIT;
 "waituntil"     return token::WAITUNTIL;
-"emit"          return token::EMIT;
-"def"           return token::DEF;
-"return"        return token::RETURN;
-"BIN"           return token::BIN;
-"bin"           return token::BIN;
-"noop"          return token::NOOP;
-"true"          return token::TRUECONST;
-"false"         return token::FALSECONST;
-"copy"          return token::COPY;
-"only"          return token::ONLY;
-"list"          return token::GROUPLIST;
+"whenever"      return token::WHENEVER;
+"while"         return token::WHILE;
 
-"'n"          return token::NORM;
-"'e"          return token::VARERROR;
+"!"           return token::BANG;
+"!="          return token::NE;
+"$"           return token::DOLLAR;
+"%"           return token::PERCENT;
+"%="          return token::PEQ;
+"&"           return token::AND;
+"&&"          return token::ANDOPERATOR;
+"'"           return token::DERIV;
+"''"          return token::DERIV2;
 "'d"          return token::TRUEDERIV;
 "'dd"         return token::TRUEDERIV2;
-"''"          return token::DERIV2;
-"'"           return token::DERIV;
-"&&"          return token::ANDOPERATOR;
-"||"          return token::OROPERATOR;
-";"           return token::SEMICOLON;
-"::"          return token::DOUBLECOLON;
-":"           return token::COLON;
-","           return token::COMMA;
-"&"           return token::AND;
-"|"           return token::PIPE;
-"!"           return token::BANG;
-"--"          return token::MINUSMINUS;
-"++"          return token::PLUSPLUS;
-"+="          return token::PLUSASSIGN;
-"-="          return token::MINUSASSIGN;
-"*"           return token::MULT;
-"/"           return token::DIV;
-"+"           return token::PLUS;
-"^"           return token::EXP;
-"-"           return token::MINUS;
-"="           return token::ASSIGN;
-"=="          return token::EQ;
-"~="          return token::REQ;
-"=~="         return token::DEQ;
-"%="          return token::PEQ;
-"!="          return token::NE;
-">"           return token::GT;
-"<"           return token::LT;
-"<="          return token::LE;
-">="          return token::GE;
-"->"          return token::DIR;
-"~"           return token::TILDE;
-"%"           return token::PERCENT;
-"@"           return token::AROBASE;
+"'e"          return token::VARERROR;
+"'n"          return token::NORM;
 "("           return token::LPAREN;
 ")"           return token::RPAREN;
+"*"           return token::MULT;
+"+"           return token::PLUS;
+"++"          return token::PLUSPLUS;
+"+="          return token::PLUSASSIGN;
+","           return token::COMMA;
+"-"           return token::MINUS;
+"--"          return token::MINUSMINUS;
+"-="          return token::MINUSASSIGN;
+"->"          return token::DIR;
+"."           return token::POINT;
+"/"           return token::DIV;
+":"           return token::COLON;
+"::"          return token::DOUBLECOLON;
+";"           return token::SEMICOLON;
+"<"           return token::LT;
+"<="          return token::LE;
+"="           return token::ASSIGN;
+"=="          return token::EQ;
+"=~="         return token::DEQ;
+">"           return token::GT;
+">="          return token::GE;
+"@"           return token::AROBASE;
 "["           return token::LSBRACKET;
 "]"           return token::RSBRACKET;
+"^"           return token::EXP;
 "{"           return token::LBRACKET;
+"|"           return token::PIPE;
+"||"          return token::OROPERATOR;
 "}"           return token::RBRACKET;
-"$"           return token::DOLLAR;
-"."           return token::POINT;
-
-
+"~"           return token::TILDE;
+"~="          return token::REQ;
 
 
 {ID}          RETURN_STR_TOKEN (IDENTIFIER);
