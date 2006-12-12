@@ -177,70 +177,57 @@ UCommand*
 UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 		     bool with_nostruct)
 {
-  UVariableName **varname = (this->*refName)();
-  if (!varname) return 0; // we are in a non broadcastable command
-  UString	*devicename = (*varname)->getDevice();
-  UString	*method	    = (*varname)->getMethod();
+  if (!(this->*refName)())
+    // We are in a non broadcastable command.
+    return 0;
+  UVariableName *varname = *(this->*refName)();
+  UString	*devicename = varname->getDevice();
+  UString	*method	    = varname->getMethod();
 
-  HMgrouptab::iterator hmg;
-  if (!(*varname)->rooted && devicename)
+  if (!varname->rooted && devicename)
   {
-    UGroup *oo = 0;
-    if ((*varname)->nostruct && with_nostruct)
+    HMgrouptab::iterator hmg;
+    if (varname->nostruct && with_nostruct)
       hmg = ::urbiserver->grouptab.find(method->str());
     else
       hmg = ::urbiserver->grouptab.find(devicename->str());
 
+    UGroup *oo = 0;
     if (hmg != ::urbiserver->grouptab.end())
       oo = hmg->second;
 
-    if ((oo) && (oo->members.size() > 0))
+    if (oo && oo->members.size() > 0)
     {
       UCommand *gplist = 0;
-      UCommand *gplist_prev = 0;
-      UCommand *clone;
-      UNamedParameters *varindex;
-
       for (std::list<UString*>::iterator retr = oo->members.begin();
 	   retr != oo->members.end();
 	   retr++)
       {
-	clone = copy();
-	delete *((clone->*refName)());
+	UCommand *clone = copy();
+	UVariableName*& clonename = *((clone->*refName)());
+	delete clonename;
 
-	if ((*varname)->index)
-	  varindex = (*varname)->index->copy();
+	// FIXME: Why don't we use clone here on the UVariableName.
+	if (varname->nostruct && with_nostruct)
+	  clonename = new UVariableName(devicename->copy(), (*retr)->copy(),
+					false, ucopy (varname->index));
 	else
-	  varindex = 0;
+	  clonename = new UVariableName((*retr)->copy(), method->copy(),
+					false, ucopy (varname->index));
 
-	if ((*varname)->nostruct && with_nostruct)
-	  *((clone->*refName)()) = new UVariableName(devicename->copy(),
-						     (*retr)->copy(),
-						     false,
-						     varindex);
-	else
-	  *((clone->*refName)()) = new UVariableName((*retr)->copy(),
-						     method->copy(),
-						     false,
-						     varindex);
-
-	(*(clone->*refName)())->isnormalized = (*varname)->isnormalized;
-	(*(clone->*refName)())->deriv = (*varname)->deriv;
-	(*(clone->*refName)())->varerror = (*varname)->varerror;
-	(*(clone->*refName)())->nostruct = (*varname)->nostruct;
-	(*(clone->*refName)())->id_type = (*varname)->id_type;
-	(*(clone->*refName)())->local_scope = (*varname)->local_scope;
-
-	gplist = (UCommand*) new UCommand_TREE(UAND,
-					       clone,
-					       gplist_prev);
-	gplist_prev = gplist;
+	clonename->isnormalized = varname->isnormalized;
+	clonename->deriv = varname->deriv;
+	clonename->varerror = varname->varerror;
+	clonename->nostruct = varname->nostruct;
+	clonename->id_type = varname->id_type;
+	clonename->local_scope = varname->local_scope;
+	gplist = new UCommand_TREE(UAND, clone, gplist);
       }
 
       morph = (UCommand*) gplist;
 
-      (*varname)->rooted = true;
-      (*varname)->fromGroup = true;
+      varname->rooted = true;
+      varname->fromGroup = true;
       persistant = false;
       return morph;
     }
@@ -7473,7 +7460,7 @@ UCommand_LOAD::copy()
 {
   UCommand_LOAD *ret = new UCommand_LOAD(mainnode);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command

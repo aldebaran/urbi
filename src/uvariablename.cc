@@ -164,8 +164,6 @@ UVariableName::resetCache()
   UVariable*
 UVariableName::getVariable(UCommand *command, UConnection *connection)
 {
-  UVariable *tmpvar;
-
   if (variable)
     if (variable->toDelete)
       return 0;
@@ -177,6 +175,8 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
 
   if (!fullname_)
     return 0;
+
+  UVariable *tmpvar;
 
   if (nostruct &&
       (::urbiserver->objtab.find(getMethod()->str())
