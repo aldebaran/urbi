@@ -83,8 +83,8 @@ extern UString** globalDelete;
  do {								\
    if (p==0)							\
      {								\
-       uparser.connection->server->isolate();			\
-       uparser.connection->server->memoryOverflow = true;	\
+       uparser.connection.server->isolate();			\
+       uparser.connection.server->memoryOverflow = true;	\
      }								\
  } while (0)
 
@@ -92,8 +92,8 @@ extern UString** globalDelete;
   do {								\
     if (p==0)							\
       {								\
-	uparser.connection->server->isolate();			\
-	uparser.connection->server->memoryOverflow = true;	\
+	uparser.connection.server->isolate();			\
+	uparser.connection.server->memoryOverflow = true;	\
 	delete p1; p1 = 0;					\
       }								\
   } while (0)
@@ -102,8 +102,8 @@ extern UString** globalDelete;
   do {								\
     if (p==0)							\
       {								\
-	uparser.connection->server->isolate();			\
-	uparser.connection->server->memoryOverflow = true;	\
+	uparser.connection.server->isolate();			\
+	uparser.connection.server->memoryOverflow = true;	\
 	delete p1; p1 = 0;					\
 	delete p2; p2 = 0;					\
       }								\
@@ -113,8 +113,8 @@ extern UString** globalDelete;
   do {								\
     if (p==0)							\
       {								\
-	uparser.connection->server->isolate();			\
-	uparser.connection->server->memoryOverflow = true;	\
+	uparser.connection.server->isolate();			\
+	uparser.connection.server->memoryOverflow = true;	\
 	delete p1; p1 = 0;					\
 	delete p2; p2 = 0;					\
 	delete p3; p3 = 0;					\
@@ -125,8 +125,8 @@ extern UString** globalDelete;
   do {								\
     if (p==0)							\
       {								\
-	uparser.connection->server->isolate();			\
-	uparser.connection->server->memoryOverflow = true;	\
+	uparser.connection.server->isolate();			\
+	uparser.connection.server->memoryOverflow = true;	\
 	delete p1; p1 = 0;					\
 	delete p2; p2 = 0;					\
 	delete p3; p3 = 0;					\
@@ -609,13 +609,13 @@ instruction:
       MEMCHECK1($$,$1);
     }
 
-  | TOK_RETURN {
+  | "return" {
 
       $$ = new UCommand_RETURN((UExpression*)0);
       MEMCHECK($$);
     }
 
-  | TOK_RETURN expr {
+  | "return" expr {
 
       $$ = new UCommand_RETURN($2);
       MEMCHECK1($$,$2);
@@ -634,7 +634,7 @@ instruction:
       MEMCHECK2($$,$1,$4);
     }
 
-  | refvariable "=" TOK_NEW "identifier" "(" parameterlist ")" {
+  | refvariable "=" "new" "identifier" "(" parameterlist ")" {
 
       MEMCHECK($4);
       $$ = new UCommand_NEW($1,$4,$6);
@@ -642,7 +642,7 @@ instruction:
     }
 
 
-  | TOK_GROUP "identifier" "{" identifiers "}" {
+  | "group" "identifier" "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4);
       MEMCHECK2($$,$4,$2);
@@ -655,7 +655,7 @@ instruction:
     }
 
 
-  | TOK_DELGROUP "identifier" "{" identifiers "}" {
+  | "delgroup" "identifier" "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4,2);
       MEMCHECK2($$,$4,$2);
@@ -668,32 +668,32 @@ instruction:
       MEMCHECK1($$,$2);
     }
 */
-  | TOK_GROUP {
+  | "group" {
 
       $$ = new UCommand_GROUP((UString*)0,(UNamedParameters*)0);
       MEMCHECK($$);
     }
 
 
-  | TOK_ALIAS purevariable purevariable {
+  | "alias" purevariable purevariable {
 
       $$ = new UCommand_ALIAS($2,$3);
       MEMCHECK2($$,$2,$3);
     }
 
-  | purevariable TOK_INHERIT purevariable {
+  | purevariable "inherit" purevariable {
 
       $$ = new UCommand_INHERIT($1,$3);
       MEMCHECK2($$,$1,$3);
     }
 
-  | purevariable TOK_DISINHERIT purevariable {
+  | purevariable "disinherit" purevariable {
 
       $$ = new UCommand_INHERIT($1,$3,true);
       MEMCHECK2($$,$1,$3);
     }
 
-  | TOK_ALIAS purevariable {
+  | "alias" purevariable {
 
       $$ = new UCommand_ALIAS($2,(UVariableName*)0);
       MEMCHECK1($$,$2);
@@ -767,7 +767,7 @@ instruction:
       MEMCHECK3($$,$1,$3,$5);
     }
 
-  | BINDER TOK_FUNCTION "(" NUM ")" purevariable "from" purevariable {
+  | BINDER "function" "(" NUM ")" purevariable "from" purevariable {
 
       MEMCHECK($1);
       $$ = new UCommand_BINDER($8,$1,0,$6,(int)(*$4));
@@ -913,20 +913,20 @@ instruction:
       MEMCHECK1($$,$2);
     }
 /**/
-  | TOK_FUNCTION variable "(" identifiers ")" {
+  | "function" variable "(" identifiers ")" {
 
-      if (uparser.connection->functionTag) {
+      if (uparser.connection.functionTag) {
 	delete $2;
 	delete $4;
 	$2 = 0;
-	delete uparser.connection->functionTag;
-	uparser.connection->functionTag = 0;
+	delete uparser.connection.functionTag;
+	uparser.connection.functionTag = 0;
 	error(@$,"Nested function def not allowed.");
 	YYERROR;
       }
       else {
-	uparser.connection->functionTag = new UString("__Funct__");
-	globalDelete = &uparser.connection->functionTag;
+	uparser.connection.functionTag = new UString("__Funct__");
+	globalDelete = &uparser.connection.functionTag;
       }
 
     } taggedcommand {
@@ -935,28 +935,28 @@ instruction:
       $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
 
       MEMCHECK2($$,$2,$4);
-      if (uparser.connection->functionTag) {
-	delete uparser.connection->functionTag;
-	uparser.connection->functionTag = 0;
+      if (uparser.connection.functionTag) {
+	delete uparser.connection.functionTag;
+	uparser.connection.functionTag = 0;
 	globalDelete = 0;
       }
     }
 
   | TOK_DEF variable "(" identifiers ")" {
 
-      uparser.connection->server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
-      if (uparser.connection->functionTag) {
+      uparser.connection.server->debug("Warning: 'def' is deprecated, use 'function' instead\n");
+      if (uparser.connection.functionTag) {
 	delete $2;
 	delete $4;
 	$2 = 0;
-	delete uparser.connection->functionTag;
-	uparser.connection->functionTag = 0;
+	delete uparser.connection.functionTag;
+	uparser.connection.functionTag = 0;
 	error(@$,"Nested function def not allowed.");
 	YYERROR;
       }
       else {
-	uparser.connection->functionTag = new UString("__Funct__");
-	globalDelete = &uparser.connection->functionTag;
+	uparser.connection.functionTag = new UString("__Funct__");
+	globalDelete = &uparser.connection.functionTag;
       }
 
     } taggedcommand {
@@ -965,9 +965,9 @@ instruction:
       $$ = new UCommand_DEF(UDEF_FUNCTION,$2,$4,$7);
 
       MEMCHECK2($$,$2,$4);
-      if (uparser.connection->functionTag) {
-	delete uparser.connection->functionTag;
-	uparser.connection->functionTag = 0;
+      if (uparser.connection.functionTag) {
+	delete uparser.connection.functionTag;
+	uparser.connection.functionTag = 0;
 	globalDelete = 0;
       }
     }
@@ -1184,12 +1184,12 @@ purevariable:
   | "identifier" array {
 
       MEMCHECK($1);
-      if (uparser.connection->functionTag) {
+      if (uparser.connection.functionTag) {
 	// We are inside a function
-	  $$ = new UVariableName(new UString(uparser.connection->functionTag),$1,false,$2);
+	  $$ = new UVariableName(new UString(uparser.connection.functionTag),$1,false,$2);
       }
       else
-	$$ = new UVariableName(new UString(uparser.connection->connectionTag),
+	$$ = new UVariableName(new UString(uparser.connection.connectionTag),
 	    $1,false,$2);
       MEMCHECK2($$,$1,$2);
       $$->nostruct = true;
@@ -1370,8 +1370,8 @@ expr:
   | refvariable "(" parameterlist ")"  {
 
       //if (($1) && ($1->device) &&
-      //    ($1->device->equal(uparser.connection->functionTag)))
-      //  $1->nameUpdate(uparser.connection->connectionTag->str(),
+      //    ($1->device->equal(uparser.connection.functionTag)))
+      //  $1->nameUpdate(uparser.connection.connectionTag->str(),
       //                 $1->id->str());
 
       $1->id_type = UDEF_FUNCTION;
@@ -1569,7 +1569,7 @@ class_declaration:
       MEMCHECK1($$,$2);
     }
 
-  | TOK_FUNCTION variable "(" identifiers ")" {
+  | "function" variable "(" identifiers ")" {
       $2->id_type = UDEF_FUNCTION;
       NEW_EXP_2 ($$, EXPR_FUNCTION,$2,$4);
     }

@@ -1260,8 +1260,7 @@ UExpression::eval (UCommand *command,
 	  if (!connection->stack.empty())
 	    connection->functionTag = new UString("__Funct__");
 	  UParser& p = connection->parser();
-	  p.process((ubyte*)e1->str->str(), e1->str->len(),
-		    connection);
+	  p.process((ubyte*)e1->str->str(), e1->str->len());
 
 	  if (connection->functionTag)
 	  {

@@ -109,6 +109,7 @@ UConnection::UConnection  (UServer *userver,
     newDataAdded(false),
     returnMode(false),
     obstructed(false),
+    parser_(*this),
     sendQueue_(minSendBufferSize, maxSendBufferSize, UConnection::ADAPTIVE),
     recvQueue_(minRecvBufferSize, maxRecvBufferSize, UConnection::ADAPTIVE),
     packetSize_(packetSize),
@@ -549,7 +550,7 @@ UConnection::received (const ubyte *buffer, int length)
     if (length !=0)
     {
       server->systemcommands = false;
-      int result = p.process(command, length, this);
+      int result = p.process(command, length);
       server->systemcommands = true;
 
       if (result == -1)

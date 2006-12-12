@@ -554,7 +554,7 @@ UServer::work()
 	  if  ((*retr)->isActive() && (*retr) != ghost)
 	  {
 	    (*retr)->send("*** Reloading\n", "reset");
-		
+
 	    loadFile("CLIENT.INI", &(*retr)->recvQueue());
 	    (*retr)->newDataAdded = true;
 	  }

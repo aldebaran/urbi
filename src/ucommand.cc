@@ -7428,7 +7428,7 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
   // FIXME: This does not preserve the value that systemcommands had
   // before, is this ok?
   ::urbiserver->systemcommands = false;
-  p.process(str_command, length, connection);
+  p.process(str_command, length);
   ::urbiserver->systemcommands = true;
 
   if (*p.errorMessage)

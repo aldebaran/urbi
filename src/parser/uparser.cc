@@ -11,6 +11,10 @@
 
 #include "ugrammar.hh"
 
+/*----------.
+| UFlexer.  |
+`----------*/
+
 UFlexer::UFlexer(void *_uparser)
   : uparser(_uparser)
 {}
@@ -21,14 +25,18 @@ UFlexer::get_uparser() const
   return uparser;
 }
 
-UParser::UParser()
-  : uflexer(this)
+/*----------.
+| UParser.  |
+`----------*/
+
+UParser::UParser(UConnection& cn)
+  : connection (cn),
+    uflexer_ (this)
 {}
 
 int
-UParser::process(ubyte* command, int length, UConnection* connection_)
+UParser::process(ubyte* command, int length)
 {
-  connection = connection_;
   commandTree = 0;
   errorMessage[0] = 0;
   binaryCommand = false;
@@ -36,7 +44,7 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
   // Pass the stream to scan.
   std::istrstream mem_buff ((char*)command, length);
   std::istream mem_input (mem_buff.rdbuf());
-  uflexer.switch_streams(&mem_input, 0);
+  uflexer_.switch_streams(&mem_input, 0);
 
   yy::parser p(*this);
   p.set_debug_level (!!getenv ("YYDEBUG"));
@@ -47,7 +55,7 @@ UParser::process(ubyte* command, int length, UConnection* connection_)
 yy::parser::token_type
 UParser::scan(yy::parser::semantic_type* val, yy::parser::location_type* loc)
 {
-  return uflexer.yylex(val,loc,*this);
+  return uflexer_.yylex(val, loc, *this);
 }
 
 void

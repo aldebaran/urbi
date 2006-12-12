@@ -65,13 +65,11 @@ public:
   typedef yy::parser::semantic_type semantic_type;
   typedef yy::parser::location_type location_type;
 
-  UParser();
+  UParser(UConnection& cn);
 
-  /// Parse the command from a stream.
-  /// (this is how flex C++ handles it, no choice).
-  int process(ubyte* command, int length, UConnection* connection_);
+  /// Parse the command from a buffer
+  int process(ubyte* command, int length);
 
-  UConnection   *connection;
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
@@ -83,9 +81,12 @@ public:
   /// The latest parse error message.
   char errorMessage[1024];
 
+  /// The connection we belong to.
+  UConnection& connection;
+
 private:
   /// The Flex scanner.
-  UFlexer uflexer;
+  UFlexer uflexer_;
 };
 
 #endif

@@ -163,7 +163,6 @@ public:
 private:
   /// The parser object.
   UParser parser_;
-
   /// \}
 
 protected:
