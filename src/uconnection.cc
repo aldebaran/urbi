@@ -680,58 +680,56 @@ UConnection::effectiveSend (const ubyte*, int length)
   return length;
 }
 
+namespace
+{
+  const char*
+  error_message (UErrorCode n)
+  {
+    switch (n)
+    {
+      case UERROR_CRITICAL:
+	return "!!! Critical error\n";
+      case UERROR_SYNTAX:
+	return "!!! Syntax error\n";
+      case UERROR_DIVISION_BY_ZERO:
+	return "!!! Division by zero\n";
+      case UERROR_RECEIVE_BUFFER_FULL:
+	return "!!! Receive buffer full\n";
+      case UERROR_MEMORY_OVERFLOW:
+	return "!!! Out of memory\n";
+      case UERROR_SEND_BUFFER_FULL:
+	return "!!! Send buffer full\n";
+      case UERROR_CPU_OVERLOAD:
+	return "!!! CPU Overload\n";
+      case UERROR_RECEIVE_BUFFER_CORRUPTED:
+	return "!!! Receive buffer corrupted\n";
+      case UERROR_MEMORY_WARNING:
+	return "!!! Memory warning\n";
+    }
+    // This should not be possible.
+    return "!!! Unidentified Error\n";
+  }
+}
+
 //! Send an error message based on the error number.
 /*! This command sends an error message through the connection, and to the server
  output system, according to the error number n.
 
- \param n the error number. Use the UErrorCode enum. Can be:
- - 0 : Critical Error
- - 1 : Syntax Error (never used, bison handles it)
- - 2 : Division by zero
- - 3 : Receive buffer full
- - 4 : Out of memory
- - 5 : Send buffer full
- - 6 : Receive buffer corrupted
- - 7 : Memory Warning
- */
+ \param n the error number. */
 UErrorValue
 UConnection::error (UErrorCode n)
 {
-  char errorString[80]; // Max error message = 80 chars
-
-  switch (n)
-  {
-    case UERROR_CRITICAL	    :
-      strcpy(errorString, "!!! Critical error\n"); break;
-    case UERROR_SYNTAX		    :
-      strcpy(errorString, "!!! Syntax error\n"); break;
-    case UERROR_DIVISION_BY_ZERO    :
-      strcpy(errorString, "!!! Division by zero\n"); break;
-    case UERROR_RECEIVE_BUFFER_FULL :
-      strcpy(errorString, "!!! Receive buffer full\n"); break;
-    case UERROR_MEMORY_OVERFLOW	    :
-      strcpy(errorString, "!!! Out of memory\n"); break;
-    case UERROR_SEND_BUFFER_FULL    :
-      strcpy(errorString, "!!! Send buffer full\n"); break;
-    case UERROR_CPU_OVERLOAD	    :
-      strcpy(errorString, "!!! CPU Overload\n"); break;
-    case UERROR_RECEIVE_BUFFER_CORRUPTED :
-      strcpy(errorString, "!!! Receive buffer corrupted\n"); break;
-    default			    :
-      strcpy(errorString, "!!! Unidentified Error\n");
-
-  }
-
-  UErrorValue result = send(errorString, "error");
+  const char* err = error_message (n);
+  UErrorValue result = send(err, "error");
   if (result == USUCCESS)
   {
-    errorString[strlen(errorString) - 1] = 0; // remove the '\n' at the end...
-    server->error(::DISPLAY_FORMAT,
-		  (long)this,
-		  "UConnection::error",
-		  errorString);
+    // Max error message = 80 chars
+    char buf[80]; 
+    strcpy (buf, err);
+    buf[strlen(err) - 1] = 0; // remove the '\n' at the end...
+    server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
-  return result ;
+  return result;
 }
 
 //! Send a warning message based on the warning number.

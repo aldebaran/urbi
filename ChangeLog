@@ -1,5 +1,13 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	error_message
+	* src/uconnection.cc (error_message): New.
+	Handle UERROR_MEMORY_WARNING.
+	(UConnection::error): Use it, it was extracted from here.
+	Simplify.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/uconnection.cc, src/uobject.cc: Here.
 
