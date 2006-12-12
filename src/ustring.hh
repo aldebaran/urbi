@@ -23,7 +23,7 @@
 #define USTRING_HH
 
 #include <string>
-#include <cstdlib>
+#include <iosfwd>
 #include "memorymanager/memorymanager.hh"
 
 //! UString is used to handle strings in the URBI server
@@ -88,6 +88,16 @@ inline void
 UString::setLen(int l)
 {
   len_ = l;
+}
+
+inline
+std::ostream& 
+operator<< (std::ostream& o, const UString& s)
+{
+  if (s.str())
+    return o << s.str();
+  else
+    return o << "<null UString>";
 }
 
 #endif

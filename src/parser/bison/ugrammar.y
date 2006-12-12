@@ -280,17 +280,27 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 %token <val>                 FLAGTEST   "flag test"
 %token <val>                 FLAGID     "flag identifier"
 %token <val>                 FLAGTIME   "flag time"
-%token <str>                 IDENTIFIER  "identifier"
-%token <str>                 TAG         "tag"
+
+ /*------.
+ | Str.  |
+ `------*/
+%token
+   <str>  IDENTIFIER         "identifier"
+   <str>  TAG                "tag"
+   <str>  STRING             "string"
+   <str>  SWITCH             "switch"
+   <str>  BINDER             "binder"
+   <str>  OPERATOR           "operator command"
+   <str>  OPERATOR_ID        "operator"
+   <str>  OPERATOR_ID_PARAM  "param-operator"
+   <str>  OPERATOR_VAR       "var-operator"
+// FIXME: Simplify once Bison 2.4 is out.
+%printer { debug_stream() << *$$; }
+   "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
+   OPERATOR_ID_PARAM OPERATOR_VAR;
+
 %token <structure>           STRUCT      "structured identifier"
 %token <structure>           REFSTRUCT   "structured ref-identifier"
-%token <str>                 STRING      "string"
-%token <str>                 SWITCH      "switch"
-%token <str>                 BINDER      "binder"
-%token <str>                 OPERATOR    "operator command"
-%token <str>                 OPERATOR_ID "operator"
-%token <str>                 OPERATOR_ID_PARAM "param-operator"
-%token <str>                 OPERATOR_VAR "var-operator"
 
 %type  <expr>                expr            "expression"
 %type  <val>                 timeexpr        "time expression"
@@ -394,7 +404,7 @@ taggedcommand:
       $$ = $1;
     }
 
-  | IDENTIFIER flags ":" command {
+  | "identifier" flags ":" command {
 
       MEMCHECK($1);
       if ($4) {
@@ -414,7 +424,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | IDENTIFIER ":" command {
+  | "identifier" ":" command {
 
       MEMCHECK($1);
       if ($3) {
@@ -625,14 +635,14 @@ instruction:
       MEMCHECK2($$,$2,$3);
     }
 
-  | refvariable "=" "new" IDENTIFIER {
+  | refvariable "=" "new" "identifier" {
 
       MEMCHECK($4);
       $$ = new UCommand_NEW($1,$4,(UNamedParameters*)0,true);
       MEMCHECK2($$,$1,$4);
     }
 
-  | refvariable "=" TOK_NEW IDENTIFIER "(" parameterlist ")" {
+  | refvariable "=" TOK_NEW "identifier" "(" parameterlist ")" {
 
       MEMCHECK($4);
       $$ = new UCommand_NEW($1,$4,$6);
@@ -640,27 +650,27 @@ instruction:
     }
 
 
-  | TOK_GROUP IDENTIFIER "{" identifiers "}" {
+  | TOK_GROUP "identifier" "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4);
       MEMCHECK2($$,$4,$2);
     }
 
-  | "addgroup" IDENTIFIER "{" identifiers "}" {
+  | "addgroup" "identifier" "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4,1);
       MEMCHECK2($$,$4,$2);
     }
 
 
-  | TOK_DELGROUP IDENTIFIER "{" identifiers "}" {
+  | TOK_DELGROUP "identifier" "{" identifiers "}" {
 
       $$ = new UCommand_GROUP($2,$4,2);
       MEMCHECK2($$,$4,$2);
     }
 
    /*
-  | GROUP IDENTIFIER {
+  | GROUP "identifier" {
 
       $$ = new UCommand_GROUP($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
@@ -716,7 +726,7 @@ instruction:
       MEMCHECK1($$,$1);
     }
 
-  | OPERATOR_ID IDENTIFIER {
+  | OPERATOR_ID "identifier" {
 
       MEMCHECK($1);
       MEMCHECK($2);
@@ -882,13 +892,13 @@ instruction:
       MEMCHECK1($$,$3)
     }
 
-  | TOK_CLASS IDENTIFIER "{" class_declaration_list "}" {
+  | TOK_CLASS "identifier" "{" class_declaration_list "}" {
 
       $$ = new UCommand_CLASS($2,$4);
       MEMCHECK2($$,$2,$4)
     }
 
-  | TOK_CLASS IDENTIFIER {
+  | TOK_CLASS "identifier" {
 
       $$ = new UCommand_CLASS($2,(UNamedParameters*)0);
       MEMCHECK1($$,$2)
@@ -1161,7 +1171,7 @@ purevariable:
       MEMCHECK1($$,$3);
     }
 
-  | IDENTIFIER array TOK_POINT IDENTIFIER array {
+  | "identifier" array TOK_POINT "identifier" array {
 
       MEMCHECK($1);
       MEMCHECK($4);
@@ -1169,7 +1179,7 @@ purevariable:
       MEMCHECK4($$,$1,$2,$4,$5);
     }
 
-  | IDENTIFIER "::" IDENTIFIER {
+  | "identifier" "::" "identifier" {
 
       MEMCHECK($1);
       MEMCHECK($3);
@@ -1179,7 +1189,7 @@ purevariable:
       MEMCHECK2($$,$1,$3);
     }
 
-  | IDENTIFIER array {
+  | "identifier" array {
 
       MEMCHECK($1);
       if (uparser.connection->functionTag) {
@@ -1271,7 +1281,7 @@ refvariable:
 
 property:
 
-    purevariable "->" IDENTIFIER {
+    purevariable "->" "identifier" {
 
       $$ = new UProperty($1,$3);
       MEMCHECK2($$,$1,$3);
@@ -1284,7 +1294,7 @@ property:
 namedparameters:
   /* empty */ { $$ = 0 }
 
-  | IDENTIFIER ":" expr namedparameters {
+  | "identifier" ":" expr namedparameters {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,$3,$4);
@@ -1377,7 +1387,7 @@ expr:
     }
 
   | variable         { NEW_EXP_1 ($$, EXPR_VARIABLE,$1); }
-  | "group" IDENTIFIER { NEW_EXP_1 ($$, EXPR_GROUP,$2); }
+  | "group" "identifier" { NEW_EXP_1 ($$, EXPR_GROUP,$2); }
 ;
 
 
@@ -1480,7 +1490,7 @@ rawparameters:
       MEMCHECK1($$,expr);
     }
 
-  | IDENTIFIER {
+  | "identifier" {
 
       UExpression *expr = new UExpression(EXPR_VALUE,$1);
       $$ = new UNamedParameters(expr);
@@ -1494,7 +1504,7 @@ rawparameters:
       MEMCHECK2($$,$2,expr);
     }
 
-  |  IDENTIFIER rawparameters {
+  |  "identifier" rawparameters {
 
       UExpression *expr = new UExpression(EXPR_VALUE,$1);
       $$ = new UNamedParameters(expr,$2);
@@ -1520,19 +1530,19 @@ softtest:
     }
 ;
 
-/* IDENTIFIERS */
+/* "identifier"S */
 
 identifiers:
   /* empty */  { $$ = 0; }
 
-  | IDENTIFIER {
+  | "identifier" {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,0);
       MEMCHECK1($$,$1);
     }
 
-  | "var" IDENTIFIER {
+  | "var" "identifier" {
 
       MEMCHECK($2);
       $$ = new UNamedParameters($2,0);
@@ -1540,14 +1550,14 @@ identifiers:
     }
 
 
-  | IDENTIFIER TOK_COMMA identifiers {
+  | "identifier" "," identifiers {
 
       MEMCHECK($1);
       $$ = new UNamedParameters($1,0,$3);
       MEMCHECK2($$,$3,$1);
     }
 
-  | "var" IDENTIFIER "," identifiers {
+  | "var" "identifier" "," identifiers {
 
       MEMCHECK($2);
       $$ = new UNamedParameters($2,0,$4);
@@ -1560,7 +1570,7 @@ identifiers:
 
 class_declaration:
 
-    "var" IDENTIFIER {
+    "var" "identifier" {
 
       MEMCHECK($2);
       $$ = new UExpression(EXPR_VALUE,$2);
