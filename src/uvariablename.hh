@@ -94,14 +94,11 @@ public:
 
 protected:
 
-  UString*        fullname_; ///< used as a hash key
-
-  HMaliastab::iterator    hmi, past_hmi; ///< internal
-  HMfunctiontab::iterator hmf;          ///< internal
-  bool                    localFunction; ///< true for variables
-					 ///< local to a func.
-  bool                    selfFunction;///< true for variables with self prefix
-  bool                    cached;       ///< internal
+  UString*		fullname_;	///< used as a hash key
+  bool			localFunction;	///< true for variables
+					///< local to a func.
+  bool			selfFunction;	///< true for variables with self prefix
+  bool			cached;		///< internal
 };
 
 #endif

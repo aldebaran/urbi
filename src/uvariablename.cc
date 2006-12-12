@@ -199,7 +199,8 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
 UFunction*
 UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
-  UFunction *tmpfun;
+  HMfunctiontab::iterator	hmf;
+  UFunction*			tmpfun = 0;
 
   if (function)
     return function;
@@ -213,8 +214,6 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if ((hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
       ::urbiserver->functiontab.end())
     tmpfun = hmf->second;
-  else
-    tmpfun = 0;
 
   if (cached)
     function = tmpfun;
@@ -287,11 +286,13 @@ UVariableName::buildFullname(UCommand *command,
 			     UConnection *connection,
 			     bool withalias)
 {
-  const int    fullnameMaxSize = 1024;
-  char   name[fullnameMaxSize];
-  char   indexstr[fullnameMaxSize];
-  UValue *e1;
-  UNamedParameters* itindex;
+  const int		fullnameMaxSize = 1024;
+  char			name[fullnameMaxSize];
+  char			indexstr[fullnameMaxSize];
+  UValue*		e1;
+  UNamedParameters*	itindex;
+  HMaliastab::iterator	hmi;
+  HMaliastab::iterator	past_hmi;
 
   if (cached)
     return fullname_;
