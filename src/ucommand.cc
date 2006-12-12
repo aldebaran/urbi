@@ -4375,8 +4375,8 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     if (connection->activeCommand)
       connection->activeCommand->print(0);
     ::urbiserver->debug("*** LOCAL TREE ***\n");
-    if (connection->server->parser.commandTree)
-      connection->server->parser.commandTree->print(0);
+    if (connection->parser().commandTree)
+      connection->parser().commandTree->print(0);
     return status = UCOMPLETED;
   }
 
@@ -4460,8 +4460,6 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     return status = UCOMPLETED;
   }
 
-  UString* fullname;
-
   if (STREQ(oper->str(), "vars"))
   {
     for (HMvariabletab::iterator retr =
@@ -4469,7 +4467,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	  retr != connection->server->variabletab.end();
 	  retr++)
     {
-      fullname = retr->second->varname;
+      UString* fullname = retr->second->varname;
       if (fullname)
       {
 	std::ostringstream tstr;
@@ -4543,7 +4541,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	  retr != connection->server->variabletab.end();
 	  retr++)
     {
-      fullname = retr->second->varname;
+      UString* fullname = retr->second->varname;
       if (retr->second->uservar)
       {
 	std::ostringstream tstr;
@@ -7426,7 +7424,7 @@ UCommandStatus UCommand_LOAD::execute(UConnection *connection)
   if (!length)
     return status = UCOMPLETED;
 
-  UParser &p = ::urbiserver->parser;
+  UParser &p = connection->parser();
   // FIXME: This does not preserve the value that systemcommands had
   // before, is this ok?
   ::urbiserver->systemcommands = false;

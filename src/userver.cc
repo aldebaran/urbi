@@ -117,7 +117,6 @@ UServer::UServer(ufloat frequency,
   stopall = false;
   systemcommands = true;
 
-  parser.commandTree = 0;
   // init the memory manager.
   usedMemory = 0 ;
   reseting = false;

@@ -1266,7 +1266,7 @@ UExpression::eval (UCommand *command,
 	  ::urbiserver->systemcommands = false;
 	  if (!connection->stack.empty())
 	    connection->functionTag = new UString("__Funct__");
-	  UParser& p = ::urbiserver->parser;
+	  UParser& p = connection->parser();
 	  p.process((ubyte*)e1->str->str(), e1->str->len(),
 		    connection);
 

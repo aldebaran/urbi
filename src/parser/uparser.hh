@@ -26,11 +26,11 @@
 # define UPARSER_HH
 
 # include <string>
+# include "fwd.hh"
 # include "utypes.hh"
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"
 
-class UCommand_TREE;
 
 # undef  YY_DECL
 # define YY_DECL                                                 \
@@ -80,11 +80,11 @@ public:
   /// Declare an error at \a l about \a msg.
   void error (const location_type& l, const std::string& msg);
 
-  /// The last error message from the parser.
+  /// The latest parse error message.
   char errorMessage[1024];
 
 private:
-  // The scanner used in this parser (it is a flex-scanner)
+  /// The Flex scanner.
   UFlexer uflexer;
 };
 

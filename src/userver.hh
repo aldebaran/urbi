@@ -156,8 +156,6 @@ public:
   /// List of variables to delete in a reset command.
   std::list<UVariable*>         varToReset;
 
-  /// The main parser object.
-  UParser                  parser;
   /// Flag used to signal a memory overflow.
   bool                     memoryOverflow;
 
@@ -197,7 +195,6 @@ public:
  static const int TCP_PORT            = 54000;
 
 protected:
-
   virtual void     effectiveDisplay         (const char*) = 0;
 
 private:

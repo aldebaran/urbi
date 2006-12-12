@@ -30,7 +30,6 @@
 # include "ucallid.hh"
 # include "ucommandqueue.hh"
 # include "uvariable.hh"
-# include "location.hh"  //FIXME remove this to abstract parser from connection
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
@@ -152,11 +151,21 @@ public:
   std::list<UCallid*>      stack;
 
 
-  /// Last location after parsing.
-  yy::location        lastloc;
+  /// \name Parsing.
+  /// \{
+public:
+  /// Return the UParser we use.
+  UParser& parser ();
 
   /// Lock access to command tree.
   urbi::Lockable treeLock;
+
+private:
+  /// The parser object.
+  UParser parser_;
+
+  /// \}
+
 protected:
 
   /// Default adaptive behavior for Send/Recv..
@@ -230,6 +239,13 @@ inline void
 UConnection::setReceiveAdaptive (int receiveAdaptive)
 {
   recvAdaptive_ = receiveAdaptive;
+}
+
+inline
+UParser&
+UConnection::parser ()
+{
+  return parser_;
 }
 
 #endif

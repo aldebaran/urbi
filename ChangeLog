@@ -1,5 +1,16 @@
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
+	One parser per connection
+	* src/userver.cc, src/userver.hh: No longer aggregate a parser.
+	* src/uconnection.cc, src/uconnection.hh (parser_, parser): New.
+	(lastloc): Move to...
+	* src/parser/uparser.hh: here.
+	* src/parser/bison/ugrammar.y: Adjust.
+	* src/ucommand.cc, src/uexpression.cc: Adjust to find the connection's
+	parser, not the server's.
+
+2006-12-12  Akim Demaille  <demaille@gostai.com>
+
 	Add printers for strings in the parser
 	* src/ustring.hh (operator<< (ostream, UString)): New.
 	* src/parser/bison/ugrammar.y: Add %printer for UString value.

@@ -171,8 +171,6 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 
 /* List of all tokens and terminal symbols, with their type */
 
-%start ROOT
-
 %token
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
@@ -345,15 +343,9 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 
 
 /* URBI Grammar */
-
-%initial-action { @$ = uparser.connection->lastloc; }
-
 %%
 
-ROOT: root {
-	uparser.connection->lastloc = @$;
-      }
-
+%start root;
 root:
 
     refvariable "=" binary ";" {

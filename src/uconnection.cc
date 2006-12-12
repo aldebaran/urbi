@@ -526,7 +526,7 @@ UConnection::received (const ubyte *buffer, int length)
     return USUCCESS;
   }
 
-  UParser& p = server->parser;
+  UParser& p = parser();
   if (p.commandTree)
   {
     //reentrency trouble
