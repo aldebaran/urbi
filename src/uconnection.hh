@@ -173,8 +173,8 @@ private:
   /// Max number of error signals used..
   static const int MAX_ERRORSIGNALS = 20;
 
-  UQueue         *sendQueue_;
-  UCommandQueue  *recvQueue_;
+  UQueue         sendQueue_;
+  UCommandQueue  recvQueue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
   int            packetSize_;
@@ -186,10 +186,10 @@ private:
 
   /// Nb of bytes already received in bin mode.
   int            transferedBinary_;
-  /// Adaptive behavior for the send UQueue..
-  int            sendAdaptive_;
-  /// Adaptive behavior for the send UQueue..
-  int            recvAdaptive_;
+  /// Adaptive behavior for the send UQueue.
+  int sendAdaptive_;
+  /// Adaptive behavior for the receiving UQueue.
+  int recvAdaptive_;
   /// Stores error flags.
   bool           errorSignals_[MAX_ERRORSIGNALS];
   /// True when the connection is reading to send/receive data (usualy
@@ -208,7 +208,7 @@ UConnection::sendAdaptive()
 inline UCommandQueue*
 UConnection::recvQueue()
 {
-  return recvQueue_;
+  return &recvQueue_;
 }
 
 //! Accessor for receiveAdaptive_

@@ -48,22 +48,27 @@
  operator). ADDOBJ and FREEOBJ macros are in utypes.h.
 
  \param userver is the server to which the connection belongs
+
  \param minSendBufferSize UConnection uses an adaptive dynamic queue (UQueue)
  to buffer sent data. This parameter sets the minimal and initial size
  of the queue. Suggested value is 4096.
+
  \param maxSendBufferSize The internal sending UQueue size can grow up to
- maxSendBufferSize.A good strategy is to have here twice the size of
+ maxSendBufferSize.  A good strategy is to have here twice the size of
  the biggest data that could enter the queue, plus a small 10%
  overhead. Typically, the size of the biggest image times two + 10%.
  Zero means "illimited" and is not advised if one wants to control
  the connection's size.
+
  \param packetSize is the maximal size of a packet sent in one shot via a
  call to effectiveSend(). This should be the biggest as possible to
  help emptying the sending queue as fast as possible. Check the
  capacity of your connection to know this limit.
+
  \param minRecvBufferSize UConnection uses an adaptive dynamic queue (UQueue)
  to buffer received data. This parameter sets the minimal and initial
  size of the queue. Suggested value is 4096.
+
  \param maxRecvBufferSize The internal receiving UQueue size can grow up to
  maxRecvBufferSize.A good strategy is to have here twice the size of
  the biggest data that could enter the queue, plus a small 10%
@@ -104,6 +109,8 @@ UConnection::UConnection  (UServer *userver,
     newDataAdded(false),
     returnMode(false),
     obstructed(false),
+    sendQueue_(minSendBufferSize, maxSendBufferSize, UConnection::ADAPTIVE),
+    recvQueue_(minRecvBufferSize, maxRecvBufferSize, UConnection::ADAPTIVE),
     packetSize_(packetSize),
     blocked_(false),
     receiveBinary_(false),
@@ -113,28 +120,6 @@ UConnection::UConnection  (UServer *userver,
     active_(true)
 {
   char tmpbuffer_connectionTag[50];
-  // Create send queue
-  sendQueue_ = new UQueue(minSendBufferSize,
-				maxSendBufferSize,
-				sendAdaptive_);
-  if (sendQueue_ == 0 || sendQueue_->UError == UFAIL)
-  {
-    UError = UFAIL;
-    return;
-  }
-
-  // Create receive queue
-  recvQueue_ = new UCommandQueue(minRecvBufferSize,
-				       maxRecvBufferSize,
-				       sendAdaptive_);
-  if (recvQueue_ == 0 || recvQueue_->UError == UFAIL)
-  {
-    UError = UFAIL;
-    delete sendQueue_;
-    sendQueue_ = 0;
-    return;
-  }
-
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
 
@@ -150,9 +135,6 @@ UConnection::UConnection  (UServer *userver,
 //! UConnection destructor.
 UConnection::~UConnection()
 {
-  delete recvQueue_;
-  delete sendQueue_;
-
   if (connectionTag)
   {
     UVariable *vari = server->getVariable(connectionTag->str(),
@@ -783,7 +765,7 @@ UConnection::warning (UWarningCode n)
  sent. The flag is active as long as the message is not actually
  sent. So, using errorSignal is more robust since it guarantees
  that the message will be sent, at all costs.
- 
+
  \param n the error number. Use the UErrorCode enum.  */
 void
 UConnection::errorSignal (UErrorCode n)
