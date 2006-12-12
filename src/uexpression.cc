@@ -389,11 +389,9 @@ UExpression::eval (UCommand *command,
     if (!e1 || e1->dataType != DATA_NUM				\
 	|| !e2 || e2->dataType != DATA_NUM)			\
     {								\
-      snprintf(errorString,					\
-	       errSize,						\
-	       "!!! " Kind " comparisons must be"		\
-	       " between numerical values\n");			\
-      connection->send(errorString, command->getTag().c_str());	\
+      connection->send("!!! " Kind " comparisons must be"	\
+		       " between numerical values\n",		\
+		       command->getTag().c_str());		\
       delete e1;						\
       delete e2;						\
       return 0;							\
@@ -464,11 +462,8 @@ UExpression::eval (UCommand *command,
 
 	if (e1->liststart->dataType == DATA_OBJ)
 	{
-	  snprintf(errorString,
-		   errSize,
-		   "!!! Objects not allowed in lists with Kernel 1. "
-		   "Use lists of keys and object maps instead\n");
-	  connection->send(errorString,
+	  connection->send("!!! Objects not allowed in lists with Kernel 1. "
+			   "Use lists of keys and object maps instead\n",
 			   command->getTag().c_str());
 	  delete ret;
 	  return 0;
@@ -488,11 +483,8 @@ UExpression::eval (UCommand *command,
 	}
 	if (e1->next->dataType == DATA_OBJ)
 	{
-	  snprintf(errorString,
-		   errSize,
-		   "!!! Objects not allowed in lists with Kernel 1. "
-		   "Use lists of keys and object maps instead\n");
-	  connection->send(errorString,
+	  connection->send("!!! Objects not allowed in lists with Kernel 1. "
+			   "Use lists of keys and object maps instead\n",
 			   command->getTag().c_str());
 	  delete ret;
 	  return 0;
@@ -698,8 +690,8 @@ UExpression::eval (UCommand *command,
 		}
 		if (!xval)
 		{
-		  snprintf(errorString, errSize, "!!! Index out of range\n");
-		  connection->send(errorString, command->getTag().c_str());
+		  connection->send("!!! Index out of range\n",
+				   command->getTag().c_str());
 		  return new UValue();
 		}
 		else
@@ -708,10 +700,8 @@ UExpression::eval (UCommand *command,
 		  {
 		    if (xval->dataType != DATA_LIST)
 		    {
-		      snprintf(errorString,
-			       errSize,
-			       "!!! Invalid index usage\n");
-		      connection->send(errorString, command->getTag().c_str());
+		      connection->send("!!! Invalid index usage\n",
+				       command->getTag().c_str());
 		      return new UValue();
 		    }
 		    else
@@ -1012,9 +1002,8 @@ UExpression::eval (UCommand *command,
 	  }
 	  if (!e3)
 	  {
-	    snprintf(errorString, errSize,
-		     "!!! Index out of range\n");
-	    connection->send(errorString, command->getTag().c_str());
+	    connection->send("!!! Index out of range\n",
+			     command->getTag().c_str());
 	    ret = 0;
 	  }
 	  else
@@ -1307,9 +1296,8 @@ UExpression::eval (UCommand *command,
 	  }
 	  else
 	  {
-	    snprintf(errorString, errSize,
-		     "!!! Error parsing the exec string\n");
-	    connection->send(errorString, command->getTag().c_str());
+	    connection->send("!!! Error parsing the exec string\n",
+			     command->getTag().c_str());
 	    delete ret;
 	    ret = 0;
 	  }
@@ -1433,8 +1421,8 @@ UExpression::eval (UCommand *command,
 	{
 	  if (e1->val<0)
 	  {
-	    snprintf(errorString, errSize, "!!! Negative square root\n");
-	    connection->send(errorString, command->getTag().c_str());
+	    connection->send("!!! Negative square root\n",
+			     command->getTag().c_str());
 	    return 0;
 	  }
 	  ret->val = sqrt(e1->val);
@@ -1443,8 +1431,8 @@ UExpression::eval (UCommand *command,
 	{
 	  if (e1->val<0)
 	  {
-	    snprintf(errorString, errSize, "!!! Negative logarithm\n");
-	    connection->send(errorString, command->getTag().c_str());
+	    connection->send("!!! Negative logarithm\n",
+			     command->getTag().c_str());
 	    return 0;
 	  }
 	  ret->val = log(e1->val);
@@ -1460,11 +1448,9 @@ UExpression::eval (UCommand *command,
       hmf = ::urbiserver->functiontab.find(funname->str());
       if (hmf != ::urbiserver->functiontab.end())
       {
-	snprintf(errorString,
-		 errSize,
-		 "!!! Custom function call in expressions"
-		 " not allowed in kernel 1\n");
-	connection->send(errorString, command->getTag().c_str());
+	connection->send("!!! Custom function call in expressions"
+			 " not allowed in kernel 1\n",
+			 command->getTag().c_str());
 	return 0;
       }
 
@@ -1536,8 +1522,7 @@ UExpression::eval (UCommand *command,
 
       if (e2->val == 0)
       {
-	snprintf(errorString, errSize, "!!! Division by zero\n");
-	connection->send(errorString, command->getTag().c_str());
+	connection->send("!!! Division by zero\n", command->getTag().c_str());
 	return 0;
       }
 
@@ -1681,8 +1666,7 @@ UExpression::eval (UCommand *command,
       ENSURE_COMPARISON ("Approximate");
       if (e2->val == 0 || e1->val == 0)
       {
-	snprintf(errorString, errSize, "!!! Division by zero\n");
-	connection->send(errorString, command->getTag().c_str());
+	connection->send("!!! Division by zero\n", command->getTag().c_str());
 	return 0;
       }
 
@@ -1893,8 +1877,6 @@ UErrorValue
 UExpression::asyncScan(UASyncCommand *cmd,
 		       UConnection *c)
 {
-  const int errSize = 256;
-  static char errorString[errSize]; // Max error message = 256 chars
   UVariable *variable;
   UNamedParameters *pevent;
   HMfunctiontab::iterator hmf;
@@ -1943,11 +1925,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
 	  if (variable)
 	  {
-	    snprintf(errorString,
-		     errSize,
-		     "!!! Pure virtual variables not allowed"
-		     " in asynchronous tests.\n");
-	    c->send(errorString,
+	    c->send("!!! Pure virtual variables not allowed"
+		     " in asynchronous tests.\n",
 		    ((UCommand*)cmd)->getTag().c_str());
 	    return UFAIL;
 	  }
