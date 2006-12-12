@@ -90,9 +90,9 @@ namespace urbi
     return v.stringValue->c_str();
   }
 
-  // USeful sending functions
+  // Useful sending functions.
 
-  void uobject_unarmorAndSend(const char * str)
+  void uobject_unarmorAndSend(const char* str)
   {
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();

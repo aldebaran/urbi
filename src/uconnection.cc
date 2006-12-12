@@ -577,23 +577,18 @@ UConnection::received (const ubyte *buffer, int length)
 
 
       // Xtrem memory recovery in case of anomaly
-      if (server->memoryOverflow
-	  && p.commandTree)
+      if (server->memoryOverflow && p.commandTree)
       {
 	delete p.commandTree;
 	p.commandTree = 0;
       }
 
       // Error Message handling
-      if (*p.errorMessage
-	  && !server->memoryOverflow)
+      if (*p.errorMessage && !server->memoryOverflow)
       {
 	// a parsing error occured
-	if (p.commandTree)
-	{
-	  delete p.commandTree;
-	  p.commandTree = 0;
-	}
+	delete p.commandTree;
+	p.commandTree = 0;
 
 	send(p.errorMessage, "error");
 
@@ -603,61 +598,57 @@ UConnection::received (const ubyte *buffer, int length)
 		      "UConnection::received",
 		      p.errorMessage);
       }
-      else if (p.commandTree)
-	if (p.commandTree->command1)
+      else if (p.commandTree && p.commandTree->command1)
+      {
+	// Process "commandTree"
+
+	// CMD_ASSIGN_BINARY: intercept and execute immediately
+	if (p.binaryCommand)
 	{
-	  // Process "commandTree"
+	  binCommand = ((UCommand_ASSIGN_BINARY*)
+			p.commandTree->command1);
 
-	  // CMD_ASSIGN_BINARY: intercept and execute immediately
-	  if (p.binaryCommand)
+	  ubyte* buffer =
+	    recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
+
+	  if (buffer)
 	  {
-	    binCommand = ((UCommand_ASSIGN_BINARY*)
-			  p.commandTree->command1);
-
-	    ubyte* buffer =
-	      recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
-
-	    if (buffer)
-	    {
-	      // the binary was all in the queue
-	      memcpy(binCommand->refBinary->ref()->buffer,
-		     buffer,
-		     binCommand->refBinary->ref()->bufferSize);
-	    }
-	    else
-	    {
-	      // not all was there, must set receiveBinary mode on
-	      transferedBinary_ = recvQueue_->dataSize();
-	      memcpy(binCommand->refBinary->ref()->buffer,
-		     recvQueue_->pop(transferedBinary_),
-		     transferedBinary_);
-	      receiveBinary_ = true;
-	    }
+	    // the binary was all in the queue
+	    memcpy(binCommand->refBinary->ref()->buffer,
+		   buffer,
+		   binCommand->refBinary->ref()->bufferSize);
 	  }
-
-	  // Pile the command
-	  if (!receiveBinary_)
+	  else
 	  {
-	    //::urbiserver->debug("Received - 5i.\n"); //TRASHME
-
-	    // immediate execution of simple commands
-
-	    if (!obstructed)
-	    {
-	      p.commandTree->up = 0;
-	      p.commandTree->position = 0;
-	      execute(p.commandTree);
-	      if (p.commandTree &&
-		  p.commandTree->status == URUNNING)
-		obstructed = true;
-	    }
-
-	    if (p.commandTree)
-	      append(p.commandTree);
-
-	    p.commandTree = 0;
+	    // not all was there, must set receiveBinary mode on
+	    transferedBinary_ = recvQueue_->dataSize();
+	    memcpy(binCommand->refBinary->ref()->buffer,
+		   recvQueue_->pop(transferedBinary_),
+		   transferedBinary_);
+	    receiveBinary_ = true;
 	  }
 	}
+
+	// Pile the command
+	if (!receiveBinary_)
+	{
+	  // immediate execution of simple commands
+	  if (!obstructed)
+	  {
+	    p.commandTree->up = 0;
+	    p.commandTree->position = 0;
+	    execute(p.commandTree);
+	    if (p.commandTree &&
+		p.commandTree->status == URUNNING)
+	      obstructed = true;
+	  }
+
+	  if (p.commandTree)
+	    append(p.commandTree);
+
+	  p.commandTree = 0;
+	}
+      }
     }
   } while (length != 0
 	   && !receiveBinary_
