@@ -155,7 +155,7 @@ UObj::~UObj()
     // to be "cleaned":
     if (internalBinder->getUObject()->derived)
       // this deletes the associated UObject
-      delete internalBinder; 
+      delete internalBinder;
     else if (internalBinder->getUObject())
       delete internalBinder->getUObject();
   }
