@@ -2,7 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
-
+#include "libport/windows.h"
 
 urbi::UClient* c;
 unsigned int sendtime;
@@ -14,15 +14,6 @@ bool over=false;
 char * rname;
 bool received;
 int count;
-
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# include <windows.h>
-# define usleep(a) Sleep((a) < 1000 ? 1 : (a) / 1000)
-#endif
-
 
 urbi::UCallbackAction
 pong(const urbi::UMessage& msg)

@@ -1,5 +1,6 @@
 #include <sys/time.h>
 #include <pthread.h>
+#include "libport/windows.h"
 #include "urbi/uclient.hh"
 
 static int mtime()

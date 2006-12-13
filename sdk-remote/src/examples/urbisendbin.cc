@@ -4,14 +4,7 @@
 #include "urbi/uclient.hh"
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# include <windows.h>
-# define sleep(a) Sleep((a) * 1000)
-#endif
+#include "libport/windows.h"
 
 int main(int argc, char * argv[])
 {

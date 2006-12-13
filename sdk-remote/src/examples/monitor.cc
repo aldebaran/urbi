@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <pthread.h>
+#include "libport/windows.h"
 
 #include "monitor.h"
 

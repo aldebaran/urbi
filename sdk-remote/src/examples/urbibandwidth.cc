@@ -3,10 +3,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <assert.h>
-
-#ifdef WIN32
-#define usleep(a) Sleep(a/1000)
-#endif
+#include "libport/windows.h"
 
 bool over=false;
 static int totalsize=0;

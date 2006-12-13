@@ -1,12 +1,5 @@
 #include <csignal>
-
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# include <windows.h>
-# define usleep(a) Sleep((a) < 1000 ? 1 : (a) / 1000)
-#endif
+#include "libport/windows.h"
 
 #include "urbi/uclient.hh"
 
