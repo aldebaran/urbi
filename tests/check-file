@@ -20,7 +20,8 @@ banner ()
 filter_output ()
 {
   sed -n -e '/^\*\*\* /,/^Ready\.$/d' \
-	 -e '/^\[[0-9]*\(:[^]]*\]\)/{s//[XXXXXXXXX\1/;p;}' \
+	 -e '/^\[[0-9]*\(:[^]]*\]\)/s//[XXXXXXXXX\1/' \
+	 -e '/^\[X*\(:[^]]*\]\)/p' \
       "$1" |
    sed -e 's/\(pong time=\).*/\1XXXXXX/g'
 }
@@ -43,7 +44,7 @@ shutdown;
 EOF
 
 # Feed the input to the console.
-../src/uconsole $me.in >$me.out
+URBI_PATH=$srcdir/urbivalid/checkfiles ../src/uconsole $me.in >$me.out
 
 # Strip the banner.
 filter_output $me.out > $me.out.2
@@ -60,4 +61,5 @@ cat >&2 $me.out
 banner >&2 "Diffs:"
 diff -u $me.expout $me.out >&2
 
+# Do not run rm -rf $me.* because of $me.chk...
 rm -f $me.in $me.out $me.expout

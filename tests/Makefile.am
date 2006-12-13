@@ -2,6 +2,7 @@ include $(top_srcdir)/build-aux/init.mk
 
 # The test suite is composed of *.chk files.  Each one must create a
 # *.log file that we want to keep.
+TESTS_ENVIRONMENT = srcdir=$(srcdir)
 TESTS = $(notdir $(wildcard $(srcdir)/urbivalid/checkfiles/*.chk))
 XFAIL_TESTS = \
 	events.chk	\

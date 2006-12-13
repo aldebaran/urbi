@@ -1,3 +1,12 @@
+2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Add tests for load
+	* src/console.cc: Support URBI_PATH.
+	* src/userver.cc (loadFile): Reduce scopes.
+	* tests/Makefile.am (TEST_ENVIRONMENT): New.
+	* tests/check-file: Also accept XXXXXXX "prompts".
+	Pass URBI_PATH to find files to load.
+
 2006-12-12  Akim Demaille  <demaille@gostai.com>
 
 	Remove UCommand_LOAD

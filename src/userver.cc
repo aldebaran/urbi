@@ -1011,9 +1011,9 @@ UServer::loadFile (const char* base, UCommandQueue* q)
   if (!is)
     return UFAIL;
 
-  char buf[URBI_BUFSIZ];
   while (is.good ())
   {
+    char buf[URBI_BUFSIZ];
     is.read (buf, URBI_BUFSIZ);
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;

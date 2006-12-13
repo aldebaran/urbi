@@ -85,6 +85,11 @@ main (int argc, const char* argv[])
   const char *in = argc == 2 ? argv[1] : "/dev/stdin";
 
   ConsoleServer s (10);
+
+  // FIXME: Add support for : in the path.
+  if (const char* cp = getenv ("URBI_PATH"))
+    s.path.push_back (cp);
+
   s.initialization ();
   UGhostConnection& c = *s.getGhostConnection ();
 
