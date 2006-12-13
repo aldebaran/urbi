@@ -31,7 +31,7 @@ UFlexer::get_uparser() const
 
 UParser::UParser(UConnection& cn)
   : connection (cn),
-    uflexer_ (this)
+    scanner_ (this)
 {}
 
 int
@@ -52,7 +52,7 @@ UParser::process(ubyte* command, int length)
   // It has been said Flex scanner cannot work with istrstream.
   std::istrstream mem_buff ((char*)command, length);
   std::istream mem_input (mem_buff.rdbuf());
-  uflexer_.switch_streams(&mem_input, 0);
+  scanner_.switch_streams(&mem_input, 0);
   return parse_();
 }
 
@@ -60,16 +60,10 @@ int
 UParser::process(const char* fn)
 {
   std::ifstream f (fn);
-  uflexer_.switch_streams(&f, 0);
+  scanner_.switch_streams(&f, 0);
   return parse_();
 }
 
-
-yy::parser::token_type
-UParser::scan(yy::parser::semantic_type* val, yy::parser::location_type* loc)
-{
-  return uflexer_.yylex(val, loc, *this);
-}
 
 void
 UParser::error (const yy::parser::location_type& l, const std::string& msg)

@@ -61,9 +61,10 @@ private:
 class UParser
 {
 public:
-  typedef yy::parser::token_type token_type;
-  typedef yy::parser::semantic_type semantic_type;
-  typedef yy::parser::location_type location_type;
+  typedef yy::parser parser_type;
+  typedef parser_type::token_type token_type;
+  typedef parser_type::semantic_type semantic_type;
+  typedef parser_type::location_type location_type;
 
   UParser(UConnection& cn);
 
@@ -88,11 +89,15 @@ public:
   UConnection& connection;
 
 private:
+  // Give access to filename_ and scanner_.
+  friend int parser_type::parse ();
+  friend token_type yylex (semantic_type*, location_type*, UParser&);
+
   /// Run the parse.  Expects the scanner to be initialized.
   int parse_ ();
 
   /// The Flex scanner.
-  UFlexer uflexer_;
+  UFlexer scanner_;
 };
 
 #endif

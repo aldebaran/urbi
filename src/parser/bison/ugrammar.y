@@ -134,12 +134,12 @@ extern UString** globalDelete;
       }								\
   } while (0)
 
-//! Direct the call from 'bison' to the scanner in the right parser.
+/// Direct the call from 'bison' to the scanner in the right UParser.
 inline
 yy::parser::token::yytokentype
 yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 {
-  return p.scan(val, loc);
+  return p.scanner_.yylex(val, loc, p);
 }
 
 
