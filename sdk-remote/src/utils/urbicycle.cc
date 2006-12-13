@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 
 #include "urbi/uclient.hh"
 
@@ -149,15 +150,7 @@ int main(int argc, char * argv[])
   UCommand uc;
 
   float lastval = 0.0;
-/* If we're on windows with MS VC++, we can't declare arrays with variable
- * size since their compiler doesn't handle it. BTW, since I don't know how to
- * properly detect MS VC++, I detect that we're not using G++ (GNUG) instead.
- */
-#if defined(WIN32) && !defined(__GNUG__)
-  UCommand* buff = new UCommand[devCount];
-#else
-  UCommand buff[devCount];
-#endif
+  std::vector<UCommand> buff (devCount);
   int cycle = 0;
 
   int buffTime = 0;
@@ -239,11 +232,6 @@ int main(int argc, char * argv[])
     if (!ok)
       break;
   }
-// See the remark at the declaration of buff (above).
-#if defined(WIN32) && !defined(__GNUG__)
-  delete buff;
-#endif
-
   fclose(inf);
   fclose(ouf);
 }

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstdio>
+#include <vector>
 
 #include "urbi/uclient.hh"
 
@@ -128,17 +129,8 @@ int main(int argc, char* argv[])
   sscanf(argv[3], "%f", &scale);
   UCommand uc;
   int starttime = -1;
-/* If we're on windows with MS VC++, we can't declare arrays with variable
- * size since their compiler doesn't handle it. BTW, since I don't know how to
- * properly detect MS VC++, I detect that we're not using G++ (GNUG) instead.
- */
-#if defined(WIN32) && !defined(__GNUG__)
-  UCommand* lastuc = new UCommand[devCount];
-  UCommand* nextuc = new UCommand[devCount];
-#else
-  UCommand lastuc[devCount];
-  UCommand nextuc[devCount];
-#endif
+  std::vector<UCommand> lastuc (devCount);
+  std::vector<UCommand> nextuc (devCount);
   for (int i = 0; i < devCount; ++i)
   {
     lastuc[i].timestamp = -1;
@@ -224,11 +216,6 @@ int main(int argc, char* argv[])
         continue;
       fwrite(&nextuc[dev], sizeof(UCommand), 1, ouf);
     }
-// See the remark at the declaration of lastuc and nextuc (above).
-#if defined(WIN32) && !defined(__GNUG__)
-  delete lastuc;
-  delete nextuc;
-#endif
 
   fclose(inf);
   fclose(ouf);

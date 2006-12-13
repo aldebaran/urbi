@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cmath>
 #include <iostream>
+#include <vector>
 #include <locale.h>
 #include <cassert>
 
@@ -218,34 +219,13 @@ namespace urbi
   {
     float absoluteprecision = fabs(distance * precision);
     const unsigned int length = walks.size();
-/* If we're on windows with MS VC++, we can't declare arrays with variable
- * size since their compiler doesn't handle it. BTW, since I don't know how to
- * properly detect MS VC++, I detect that we're not using G++ (GNUG) instead.
- */
-#if defined(WIN32) && !defined(__GNUG__)
-    /* NOTE: We just cross our fingers and hope that this unreadable function
-     * won't throw. Because if it does, we'll leak. */
-    float** values = new float*[length / 2U];
-    for (unsigned int i = 0; i < length / 2U; ++i)
-      values[i] = new float[2];
-    int* move = new int[length];
-    int* bestmove = new int[length];
-    int* direction = new int[length];
-/// "Invoke" this macro before returning from this method.
-# define MOVE__WALK_DELETE_LOCAL_VARS				\
-    for (unsigned int i__ = 0; i__ < length / 2U; ++i__)	\
-      delete values[i__];					\
-    delete values;						\
-    delete move;						\
-    delete bestmove;						\
-    delete direction
-#else
-    float values[length / 2U][2];
-    int move[length];
-    int bestmove[length];
-    int direction[length];
-# define MOVE__WALK_DELETE_LOCAL_VARS
-#endif
+    /* Looks hairy but that's the right way of declaring a matrix
+     * values[N][M] where N = length / 2U and M = 2 */
+    std::vector<std::vector<float> > values (length / 2U,
+                                             std::vector<float> (2));
+    std::vector<int> move (length);
+    std::vector<int> bestmove (length);
+    std::vector<int> direction (length);
     int bestnummoves = -1;
     float currentval = 0;
     std::list<LoadedFile>::iterator it = walks.begin();
@@ -341,7 +321,6 @@ namespace urbi
       distance = 0;
       moving = 0;
       robot->send("%s: ping;", this->tag);
-      MOVE__WALK_DELETE_LOCAL_VARS;
       return 0;
     }
     char command[1024];
@@ -368,39 +347,20 @@ namespace urbi
     }
     robot->send(command);
     distance = realmove;
-    MOVE__WALK_DELETE_LOCAL_VARS;
     return 0;
   }
-#undef MOVE__WALK_DELETE_LOCAL_VARS
 
   int Move::turn(float& distance, float precision, const char* tag)
   {
     float absoluteprecision = fabs(distance * precision);
     unsigned int length = turns.size();
-#if defined(WIN32) && !defined(__GNUG__)
-    /* NOTE: We just cross our fingers and hope that this unreadable function
-     * won't throw. Because if it does, we'll leak. */
-    float** values = new float*[length / 2U];
-    for (unsigned int i = 0; i < length / 2U; ++i)
-      values[i] = new float[2];
-    int* move = new int[length];
-    int* bestmove = new int[length];
-    int* direction = new int[length];
-/// "Invoke" this macro before returning from this method.
-# define MOVE__TURN_DELETE_LOCAL_VARS				\
-    for (unsigned int i__ = 0; i__ < length / 2U; ++i__)	\
-      delete values[i__];					\
-    delete values;						\
-    delete move;						\
-    delete bestmove;						\
-    delete direction
-#else
-    float values[length / 2U][2];
-    int move[length];
-    int bestmove[length];
-    int direction[length];
-# define MOVE__TURN_DELETE_LOCAL_VARS
-#endif
+    /* Looks hairy but that's the right way of declaring a matrix
+     * values[N][M] where N = length / 2U and M = 2 */
+    std::vector<std::vector<float> > values (length / 2U,
+                                             std::vector<float> (2));
+    std::vector<int> move (length);
+    std::vector<int> bestmove (length);
+    std::vector<int> direction (length);
     int bestnummoves = -1;
     float currentval = 0;
     std::list<LoadedFile>::iterator it = turns.begin();
@@ -496,7 +456,6 @@ namespace urbi
       distance = 0;
       moving = 0;
       robot->send("%s: ping;", this->tag);
-      MOVE__TURN_DELETE_LOCAL_VARS;
       return 0;
     }
     char command[1024];
@@ -526,10 +485,8 @@ namespace urbi
     //  std::cerr <<endl;
     robot->send(command);
     distance = realmove;
-    MOVE__TURN_DELETE_LOCAL_VARS;
     return 0;
   }
-#undef MOVE__TURN_DELETE_LOCAL_VARS
 
   UCallbackAction Move::moveEnd(const UMessage& msg)
   {
