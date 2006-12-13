@@ -1,5 +1,10 @@
 2006-12-13  Akim Demaille  <akim.demaille@free.fr>
 
+	More concrete tokens
+	* src/parser/bison/ugrammar.y: here.
+
+2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Add tests for load
 	* src/console.cc: Support URBI_PATH.
 	* src/userver.cc (loadFile): Reduce scopes.

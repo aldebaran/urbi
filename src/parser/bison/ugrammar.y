@@ -1006,7 +1006,7 @@ instruction:
       MEMCHECK2($$,$3,$5);
     }
 
-  | TOK_STOPIF "(" softtest ")" taggedcommand {
+  | "stopif" "(" softtest ")" taggedcommand {
 
       $$ = new UCommand_STOPIF($3,$5);
       MEMCHECK2($$,$3,$5);
@@ -1018,13 +1018,13 @@ instruction:
       MEMCHECK2($$,$3,$5);
     }
 
-  | TOK_AT "(" softtest ")" taggedcommand %prec CMDBLOCK {
+  | "at" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_AT(CMD_AT,$3,$5,(UCommand*)0);
       MEMCHECK2($$,$3,$5);
     }
 
-  | TOK_AT "(" softtest ")" taggedcommand TOK_ONLEAVE taggedcommand {
+  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand {
       if(!$5)
       {
 	delete $3;
@@ -1037,31 +1037,31 @@ instruction:
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | TOK_AT TOK_AND "(" softtest ")" taggedcommand %prec CMDBLOCK {
+  | "at" "&" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_AT(CMD_AT_AND,$4,$6,(UCommand*)0);
       MEMCHECK2($$,$4,$6);
     }
 
-  | TOK_AT TOK_AND "(" softtest ")" taggedcommand TOK_ONLEAVE taggedcommand {
+  | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
 
       $$ = new UCommand_AT(CMD_AT_AND,$4,$6,$8);
       MEMCHECK3($$,$4,$6,$8);
     }
 
-  | TOK_WHILE "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_WHILE(CMD_WHILE,$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
-  | TOK_WHILE TOK_PIPE "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "while" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_WHILE(CMD_WHILE_PIPE,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
-  | TOK_WHENEVER "(" softtest ")" taggedcommand %prec CMDBLOCK {
+  | "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_WHENEVER($3,$5,(UCommand*)0);
       MEMCHECK2($$,$3,$5);
@@ -1073,13 +1073,13 @@ instruction:
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | TOK_LOOP taggedcommand %prec CMDBLOCK {
+  | "loop" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOP($2);
       MEMCHECK1($$,$2);
     }
 
-  | TOK_FOREACH purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
+  | "foreach" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(CMD_FOREACH,$2,$4,$6);
       MEMCHECK3($$,$2,$4,$6);
@@ -1097,7 +1097,7 @@ instruction:
       MEMCHECK3($$,$3,$5,$7);
     }
 
-  | TOK_LOOPN "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "loopn" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOPN(CMD_LOOPN,$3,$5);
       MEMCHECK2($$,$3,$5);
@@ -1109,13 +1109,13 @@ instruction:
       MEMCHECK2($$,$4,$6);
     }
 
-  | TOK_LOOPN TOK_AND "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "loopn" "&" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOPN(CMD_LOOPN_AND,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
-  | TOK_FOR "(" instruction ";"
+  | "for" "(" instruction ";"
 	       expr ";"
 	       instruction ")" taggedcommand %prec CMDBLOCK {
 
@@ -1214,7 +1214,7 @@ variable:
        $$ = $1;
     }
 
-  | TOK_STATIC purevariable {
+  | "static" purevariable {
 
       $$ = $2;
       $$->isstatic = true;
@@ -1338,7 +1338,7 @@ timeexpr:
     }
 
   | timeexpr TIMEVALUE {
-       $$ = new ufloat(*$1+*$2); //XXX shall we delete 1 and 2??
+       $$ = new ufloat(*$1+*$2);
        delete $1;
        delete $2;
     }

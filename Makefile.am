@@ -38,5 +38,5 @@ SVN_EXTERNALS_PROXY += uobject urbivalid
 uobject-help uobject-ci uobject-up uobj-ci uob-up:
 	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
 
-urbivalid-help urbivali-ci urbivalid-up:
+urbivalid-help urbivalid-ci urbivalid-up:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
