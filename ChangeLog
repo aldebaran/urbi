@@ -1,5 +1,10 @@
 2006-12-13  Akim Demaille  <akim.demaille@free.fr>
 
+	More %printer
+	* src/parser/bison/ugrammar.y: For <val>.
+
+2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+
 	More concrete tokens
 	* src/parser/bison/ugrammar.y: here.
 

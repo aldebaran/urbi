@@ -274,12 +274,20 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 
 %token UEOF 0 "end of command"
 
-%token <val>                 NUM        "number"
-%token <val>                 TIMEVALUE  "time"
-%token <val>                 FLAG       "flag"
-%token <val>                 FLAGTEST   "flag test"
-%token <val>                 FLAGID     "flag identifier"
-%token <val>                 FLAGTIME   "flag time"
+/*------.
+| Val.  |
+`------*/
+
+%token
+  <val> NUM        "number"
+  <val> TIMEVALUE  "time"
+  <val> FLAG       "flag"
+  <val> FLAGTEST   "flag test"
+  <val> FLAGID     "flag identifier"
+  <val> FLAGTIME   "flag time"
+// FIXME: Simplify once Bison 2.4 is out.
+%printer { debug_stream() << *$$; }
+  NUM TIMEVALUE FLAG FLAGTEST FLAGID FLAGTIME;
 
  /*------.
  | Str.  |
