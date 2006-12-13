@@ -23,17 +23,16 @@
 
 #include "utypes.hh"
 #include "ughostconnection.hh"
-
-class UServer;
+#include "userver.hh"
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection  (UServer * mainserver) :
-  UConnection   (mainserver,
-		 UGhostConnection::MINSENDBUFFERSIZE,
-		 UGhostConnection::MAXSENDBUFFERSIZE,
-		 UGhostConnection::PACKETSIZE,
-		 UGhostConnection::MINRECVBUFFERSIZE,
-		 UGhostConnection::MAXRECVBUFFERSIZE)
+UGhostConnection::UGhostConnection  (UServer * mainserver)
+  : UConnection   (mainserver,
+		   UGhostConnection::MINSENDBUFFERSIZE,
+		   UGhostConnection::MAXSENDBUFFERSIZE,
+		   UGhostConnection::PACKETSIZE,
+		   UGhostConnection::MINRECVBUFFERSIZE,
+		   UGhostConnection::MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
 

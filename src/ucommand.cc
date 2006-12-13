@@ -34,17 +34,18 @@
 
 #include <sstream>
 
-#include "ucommand.hh"
 #include "uasynccommand.hh"
-#include "uconnection.hh"
-#include "userver.hh"
-#include "ucallid.hh"
-#include "utypes.hh"
-#include "urbi/uobject.hh"
-#include "ueventhandler.hh"
-#include "ueventcompound.hh"
-#include "ueventinstance.hh"
 #include "uatcandidate.hh"
+#include "ucallid.hh"
+#include "ucommand.hh"
+#include "uconnection.hh"
+#include "ueventcompound.hh"
+#include "ueventhandler.hh"
+#include "ueventinstance.hh"
+#include "ufunction.hh"
+#include "urbi/uobject.hh"
+#include "userver.hh"
+#include "utypes.hh"
 
 #if (__GNUC__ == 2)
 static const string left = "";
@@ -625,7 +626,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	   ambiguous);
 
 	//hack until we get proper nameresolution
-	if (fun == kernel::remoteFunction) fun = 0;
+	if (fun == kernel::remoteFunction)
+	  fun = 0;
 
 	if (ambiguous)
 	{

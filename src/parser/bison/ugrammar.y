@@ -74,6 +74,7 @@ class UParser;
 #include "uconnection.hh"
 #include "uobj.hh"
 #include "ugroup.hh"
+#include "userver.hh"
 
 extern UString** globalDelete;
 

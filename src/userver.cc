@@ -36,6 +36,7 @@
 #include "ueventmatch.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
+#include "ufunction.hh"
 
 #ifdef _MSC_VER
 # define snprintf _snprintf
@@ -138,9 +139,7 @@ UServer::UServer(ufloat frequency,
 
   kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
   kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
-  kernel::remoteFunction   = new UFunction(0,
-					   0,
-					   0);
+  kernel::remoteFunction   = new UFunction(0, 0, 0);
 }
 
 /// Sets the system.arg list in URBI

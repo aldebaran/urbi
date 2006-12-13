@@ -21,8 +21,10 @@
 #include "libport/containers.hh"
 
 #include "ueventhandler.hh"
+#include "uexpression.hh"
 #include "unamedparameters.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "userver.hh"
 
 std::string

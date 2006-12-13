@@ -25,11 +25,9 @@
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
-# include "userver.hh"
+# include "parser/uparser.hh"
 # include "uqueue.hh"
-# include "ucallid.hh"
 # include "ucommandqueue.hh"
-# include "uvariable.hh"
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made

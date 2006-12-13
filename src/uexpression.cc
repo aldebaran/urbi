@@ -35,7 +35,7 @@
 #include "ueventcompound.hh"
 #include "ueventmatch.hh"
 #include "ueventinstance.hh"
-
+#include "parser/uparser.hh"
 #include "userver.hh"
 
 MEMORY_MANAGER_INIT(UExpression);
@@ -733,11 +733,11 @@ UExpression::eval (UCommand *command,
 	    && variable->value->dataType == DATA_NUM)
 	  ret->val = variable->previous - ret->val;
 
-        if (variablename->varin
-            && variable->value->dataType == DATA_NUM)
-        {
-          ret->val = variable->target;
-        }
+	if (variablename->varin
+	    && variable->value->dataType == DATA_NUM)
+	{
+	  ret->val = variable->target;
+	}
 
 	// normalized variables
 	if (variablename->isnormalized

@@ -33,6 +33,7 @@
 #include "uconnection.hh"
 #include "urbi/uobject.hh"
 #include "ueventhandler.hh"
+#include "ufunction.hh"
 
 // **************************************************************************
 //! UObj constructor.
@@ -144,19 +145,17 @@ UObj::~UObj()
   for (std::list<UObj*>::iterator it = up.begin();
        it != up.end();
        ++it)
-  {
     (*it)->down.remove(this);
-  }
 
   // INTERNAL cleanups
-  if ((internalBinder) &&
-      (internalBinder->getUObject()))
+  if (internalBinder && internalBinder->getUObject())
   {
     // here we have two different cases because base classes are not
     // dynamically created and cannot be deleted, they can only
     // to be "cleaned":
     if (internalBinder->getUObject()->derived)
-      delete internalBinder; // this deletes the associated UObject
+      // this deletes the associated UObject
+      delete internalBinder; 
     else if (internalBinder->getUObject())
       delete internalBinder->getUObject();
   }
@@ -165,12 +164,10 @@ UObj::~UObj()
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        it++)
-  {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
 	 it->second->internalBinder.begin();
 	 itcb != it->second->internalBinder.end();
 	)
-    {
       if ((*itcb)->objname == device->str())
       {
 	delete *itcb;
@@ -178,19 +175,15 @@ UObj::~UObj()
       }
       else
 	++itcb;
-    }
-  }
 
   // clean variables internalAccessBinder
   for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        it++)
-  {
     for (std::list<urbi::UGenericCallback*>::iterator itcb =
 	 it->second->internalAccessBinder.begin();
 	 itcb != it->second->internalAccessBinder.end();
 	)
-    {
       if ((*itcb)->objname == device->str())
       {
 	delete *itcb;
@@ -198,8 +191,6 @@ UObj::~UObj()
       }
       else
 	++itcb;
-    }
-  }
 
   // final cleanup
   delete device;

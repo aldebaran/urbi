@@ -25,12 +25,7 @@
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
-# include "parser/uparser.hh"
-# include "ufunction.hh"
-# include "uvariable.hh"
 # include "ubinder.hh"
-
-# define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;

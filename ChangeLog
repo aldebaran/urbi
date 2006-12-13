@@ -1,5 +1,17 @@
 2006-12-13  Akim Demaille  <akim.demaille@free.fr>
 
+	Nuke a few useless includes
+	I have a small computer, and I'm tired of wasted cycles.
+	* src/fwd.hh: Complete and sort.
+	* src/parser/bison/ugrammar.y, src/ucommand.cc, src/uconnection.hh,
+	* src/ueventhandler.cc, src/uexpression.cc, src/ughostconnection.cc,
+	* src/uobj.cc, src/userver.cc, src/userver.hh:
+	Remove a few includes from userver.hh, since it's included by
+	virtually all the files.
+	Adjust the missing dependencies in *.cc files.
+
+2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Minor parser cleanups
 	* src/parser/uparser.cc, src/parser/uparser.hh (parser_type): New.
 	Use it.
