@@ -41,7 +41,7 @@ UParser::parse_ ()
   errorMessage[0] = 0;
   binaryCommand = false;
 
-  yy::parser p(*this);
+  parser_type p(*this);
   p.set_debug_level (!!getenv ("YYDEBUG"));
   return p.parse();
 }
@@ -49,6 +49,7 @@ UParser::parse_ ()
 int
 UParser::process(ubyte* command, int length)
 {
+  assert (filename_.empty());
   // It has been said Flex scanner cannot work with istrstream.
   std::istrstream mem_buff ((char*)command, length);
   std::istream mem_input (mem_buff.rdbuf());
@@ -59,9 +60,13 @@ UParser::process(ubyte* command, int length)
 int
 UParser::process(const char* fn)
 {
+  assert (filename_.empty ());
+  filename_ = fn;
   std::ifstream f (fn);
   scanner_.switch_streams(&f, 0);
-  return parse_();
+  int res = parse_();
+  filename_.clear ();
+  return res;
 }
 
 

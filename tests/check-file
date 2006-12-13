@@ -2,6 +2,9 @@
 
 set -e
 
+# Let uconsole find the files to load.
+export URBI_PATH=$srcdir/urbivalid/checkfiles
+
 banner ()
 {
   if (figlet foo) >/dev/null 2>&1; then
@@ -21,6 +24,7 @@ filter_output ()
 {
   sed -n -e '/^\*\*\* /,/^Ready\.$/d' \
 	 -e '/^\[[0-9]*\(:[^]]*\]\)/s//[XXXXXXXXX\1/' \
+	 -e "s,$URBI_PATH/,," \
 	 -e '/^\[X*\(:[^]]*\]\)/p' \
       "$1" |
    sed -e 's/\(pong time=\).*/\1XXXXXX/g'
@@ -44,7 +48,7 @@ shutdown;
 EOF
 
 # Feed the input to the console.
-URBI_PATH=$srcdir/urbivalid/checkfiles ../src/uconsole $me.in >$me.out
+../src/uconsole $me.in >$me.out
 
 # Strip the banner.
 filter_output $me.out > $me.out.2

@@ -98,6 +98,9 @@ private:
 
   /// The Flex scanner.
   UFlexer scanner_;
+
+  /// The file currently parsed.
+  std::string filename_;
 };
 
 #endif

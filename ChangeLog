@@ -1,5 +1,13 @@
 2006-12-13  Akim Demaille  <akim.demaille@free.fr>
 
+	Report file names in parse errors
+	* src/parser/uparser.cc, src/parser/uparser.hh (filename_): New.
+	* src/parser/bison/ugrammar.y: Use it to initialize @$.
+	* tests/check-file: Normalize the path of included files
+	to avoid difference due to builddir, srcdir etc.
+
+2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Nuke a few useless includes
 	I have a small computer, and I'm tired of wasted cycles.
 	* src/fwd.hh: Complete and sort.

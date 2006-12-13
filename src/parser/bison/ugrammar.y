@@ -24,7 +24,6 @@
 
 %require "2.2"
 %error-verbose
-%locations
 %defines
 %skeleton "lalr1.cc"
 %parse-param {UParser& uparser}
@@ -36,6 +35,15 @@
 #include "ucommand.hh"
 class UParser;
 %}
+
+// Locations.
+%locations
+%define "filename_type" "std::string"
+%initial-action
+{
+  @$.initialize (uparser.filename_.empty() ? 0 : &uparser.filename_);
+}
+
 
 /* Possible data type returned by the bison parsing mechanism */
 %union
