@@ -26,14 +26,15 @@
 #ifndef UTYPE_HH
 # define UTYPE_HH
 
-# include "libport/cstring"
 # include <list>
+# include "libport/cstring"
 
 # include "libport/hash.hh"
 # include "libport/ufloat.h"
 
 # include "fwd.hh"
 
+# include "urbi/utypes-common.hh"
 
 /*--------------------.
 | Memory allocation.  |
@@ -276,16 +277,14 @@ enum UDataType
   DATA_VARIABLE
 };
 
-//! Blending mode
-enum UBlend
-{
-  UMIX,
-  UADD,
-  UDISCARD,
-  UQUEUE,
-  UCANCEL,
-  UNORMAL
-};
+// UBlendType.
+using urbi::UBlendType;
+using urbi::UMIX;
+using urbi::UADD;
+using urbi::UDISCARD;
+using urbi::UQUEUE;
+using urbi::UCANCEL;
+using urbi::UNORMAL;
 
 //! Node type for a UCommand_TREE
 enum UNodeType

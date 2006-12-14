@@ -89,7 +89,7 @@ public:
   //properties
 
   /// The variable blend type.
-  UBlend          blendType;
+  UBlendType blendType;
   /// Device unit.
   UString         *unit;
   /// Rangemin.

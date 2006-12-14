@@ -258,23 +258,11 @@ namespace urbi
 	vardata->variable->delta =(double)v;
 	break;
       case PROP_BLEND:
-      {
 	if (v.type == DATA_DOUBLE)
-	{
 	  //numeric val
-	  vardata->variable->blendType=(UBlend)(int)(double)v;
-	}
+	  vardata->variable->blendType = (UBlendType)(int)(double)v;
 	else if (v.type == DATA_STRING)
-	{
-	  std::string s=(std::string)v;
-	  for (int i=0;blendNames[i][0];i++)
-	    if (s==(std::string)blendNames[i])
-	    {
-	      vardata->variable->blendType = (UBlend)i;
-	      return;
-	    }
-	}
-      }
+	  vardata->variable->blendType = ublendtype (std::string(v).c_str ());
     }
   }
 

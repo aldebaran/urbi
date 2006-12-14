@@ -1,5 +1,14 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Update uobject
+	* src/Makefile.am: Adjust.
+	* src/utypes.hh: Include utypes-common.hh.
+	Import UBlendType definitions.
+	* src/uvariable.hh: UBlend -> UBlendType.
+	* src/uvar.cc: Remove what is done elsewhere.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Don't declare static const int in declarations
 	* src/network/bsdnet/connection.hh: Use enums.
 

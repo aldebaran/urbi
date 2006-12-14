@@ -156,7 +156,7 @@ ueventcompound.hh				\
 ueventinstance.hh				\
 uatcandidate.hh
 
-urbiinclude_HEADERS = $(uobject_hh)
+urbiinclude_HEADERS = $(uobject_headers)
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.hh
