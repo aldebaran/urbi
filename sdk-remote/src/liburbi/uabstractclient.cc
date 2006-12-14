@@ -35,19 +35,6 @@
 #include "urbi/uabstractclient.hh"
 #include "libport/lockable.hh"
 
-/* "min" shouldn't be defined as a preprocessor macro. On windows, it is. So
- * using std::min leads to a parse error because CPP expands it as
- *   std::((a) < (b) ? (a) : (b))
- * However, this should only occur on windows with the STL of MS VC++.
- */
-#ifdef min
-# ifdef WIN32
-#  undef min
-# else
-#  error "min is defined as a CPP macro and we're not on WIN32. Report this!"
-# endif /* !WIN32 */
-#endif /* !min */
-
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"
 

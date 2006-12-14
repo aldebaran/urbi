@@ -1,5 +1,11 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Remove min workaround
+	* src/liburbi/uabstractclient.cc: here.
+	It is done in libport.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	windows.h -> windows.hh
 	* src/examples/monitor.cc, src/examples/urbibandwidth.cc,
 	* src/examples/urbiping.cc, src/examples/urbiplay.cc, 
