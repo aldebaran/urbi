@@ -410,8 +410,6 @@ UExpression::eval (UCommand *command,
   UValue *e3;
   UValue *e4;
   UVariable *variable;
-  ufloat d1;
-  ufloat d2;
   UNamedParameters *pevent;
   UString* funname;
   HMgrouptab::iterator retr;
@@ -706,8 +704,8 @@ UExpression::eval (UCommand *command,
       {
 	if (STREQ(variablename->id->str(), "save"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
-	  e2 = parameters->next->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
+	  UValue* e2 = parameters->next->expression->eval(command, connection);
 
 	  ENSURE_TYPES_2 (DATA_STRING, DATA_STRING);
 	  UValue* ret = new UValue();
@@ -733,8 +731,8 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "getIndex"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
-	  e2 = parameters->next->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
+	  UValue* e2 = parameters->next->expression->eval(command, connection);
 
 	  ENSURE_TYPES_2 (DATA_LIST, DATA_NUM);
 	  e3 = e1->liststart;
@@ -761,8 +759,8 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "cat"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
-	  e2 = parameters->next->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
+	  UValue* e2 = parameters->next->expression->eval(command, connection);
 
 	  ENSURE_TYPES_2 (DATA_LIST, DATA_LIST);
 
@@ -1323,13 +1321,13 @@ UExpression::eval (UCommand *command,
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
-      d1 = 0;
+      ufloat d1 = 0;
       if (expression1->type == EXPR_VARIABLE)
       {
 	variable = expression1->variablename->getVariable(command, connection);
 	if (variable) d1 = variable->delta;
       }
-      d2 = 0;
+      ufloat d2 = 0;
       if (expression2->type == EXPR_VARIABLE)
       {
 	variable = expression2->variablename->getVariable(command, connection);
