@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	windows.hh
+	* src/console.cc: Adjust.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Clean UExpressions
 	* src/utypes.hh (UExpressionType): Move to...
 	* src/uexpression.hh, src/uexpression.cc (UExpression::Type): Here.
