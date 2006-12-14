@@ -1,6 +1,7 @@
 /// \file uparser.cc
 
 #include <cstdlib>
+#include <cassert>
 
 #include <sstream>
 #include <strstream>

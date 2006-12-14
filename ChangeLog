@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Include cassert
+	* src/parser/uparser.cc: here.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Fix location tracking
 	* src/parser/uparser.cc, src/parser/uparser.hh (UParser::loc_):
 	New.
