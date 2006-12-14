@@ -1232,65 +1232,16 @@ purevariable:
 ;
 
 variable:
-
-     purevariable {
-
-       $$ = $1;
-    }
-
-  | "static" purevariable {
-
-      $$ = $2;
-      $$->isstatic = true;
-    }
-
-  | purevariable TOK_NORM {
-
-      $$ = $1;
-      $$->isnormalized = true;
-    }
-
-  | purevariable TOK_VARERROR {
-
-      $$ = $1;
-      $$->varerror = true;
-    }
-
-  | purevariable TOK_VARIN {
-
-      $$ = $1;
-      $$->varin = true;
-    }
-
-  | purevariable TOK_VAROUT {
-
-      $$ = $1;
-    }
-
-
-  | purevariable TOK_DERIV {
-
-      $$ = $1;
-      $$->deriv = UDERIV;
-    }
-
-  | purevariable TOK_DERIV2 {
-
-      $$ = $1;
-      $$->deriv = UDERIV2;
-    }
-
-  | purevariable TOK_TRUEDERIV {
-
-      $$ = $1;
-      $$->deriv = UTRUEDERIV;
-    }
-
-  | purevariable TOK_TRUEDERIV2 {
-
-      $$ = $1;
-      $$->deriv = UTRUEDERIV2;
-    }
+  purevariable			{ $$ = $1;				}
+| "static" purevariable		{ $$ = $2; $$->isstatic = true;		}
+| purevariable TOK_NORM		{ $$ = $1; $$->isnormalized = true;	}
+| purevariable TOK_VARERROR	{ $$ = $1; $$->varerror = true;		}
+| purevariable TOK_VARIN	{ $$ = $1; $$->varin = true;		}
+| purevariable TOK_VAROUT	{ $$ = $1;				}
+| purevariable TOK_DERIV	{ $$ = $1; $$->deriv = UDERIV;		}
+| purevariable TOK_DERIV2	{ $$ = $1; $$->deriv = UDERIV2;		}
+| purevariable TOK_TRUEDERIV	{ $$ = $1; $$->deriv = UTRUEDERIV;	}
+| purevariable TOK_TRUEDERIV2	{ $$ = $1; $$->deriv = UTRUEDERIV2;	}
 ;
 
 refvariable:
@@ -1299,7 +1250,7 @@ refvariable:
       $$ = $1;
     }
 
-  | TOK_ONLY variable {
+  | "only" variable {
 
       $$ = $2;
       $$->rooted = true;

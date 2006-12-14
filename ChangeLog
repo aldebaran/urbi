@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Formatting changes
+	* src/parser/bison/ugrammar.y: here.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	windows.hh
 	* src/console.cc: Adjust.
 
