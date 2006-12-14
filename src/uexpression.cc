@@ -1212,34 +1212,30 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_MINUS:
-    {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = e1->val - e2->val;
-      delete e1;
-      delete e2;
-      return ret;
+#define EVAL_EXPR_ARITHMETICS(Value)				\
+    {								\
+      UValue* e1 = expression1->eval(command, connection);	\
+      UValue* e2 = expression2->eval(command, connection);	\
+      ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);			\
+      UValue* res = new UValue();				\
+      res->dataType = DATA_NUM;					\
+      res->val = Value;						\
+      delete e1;						\
+      delete e2;						\
+      return res;						\
     }
+
+    case EXPR_MINUS:
+      EVAL_EXPR_ARITHMETICS(e1->val - e2->val);
 
     case EXPR_MULT:
-    {
+      EVAL_EXPR_ARITHMETICS(e1->val * e2->val);
 
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = e1->val * e2->val;
-      delete e1;
-      delete e2;
-      return ret;
+    case EXPR_MOD:
+      EVAL_EXPR_ARITHMETICS(fmod(e1->val, e2->val));
 
-    }
+    case EXPR_EXP:
+      EVAL_EXPR_ARITHMETICS(pow(e1->val, e2->val));
 
     case EXPR_DIV:
     {
@@ -1262,40 +1258,11 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_MOD:
-    {
-      UValue* e1 = expression1->eval(command, connection);
-      UValue* e2 = expression2->eval(command, connection);
-      ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = fmod(e1->val, e2->val);
-      delete e1;
-      delete e2;
-      return ret;
-    }
-
-    case EXPR_EXP:
-    {
-      UValue* e1 = expression1->eval(command, connection);
-      UValue* e2 = expression2->eval(command, connection);
-      ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = pow(e1->val, e2->val);
-      delete e1;
-      delete e2;
-      return ret;
-
-    }
 
     case EXPR_NEG:
     {
-
       e1 = expression1->eval(command, connection);
       ENSURE_TYPES_1 (DATA_NUM);
-
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = -e1->val;
