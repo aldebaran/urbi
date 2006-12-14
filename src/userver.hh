@@ -45,11 +45,6 @@ extern  class UServer   *urbiserver; // Global variable for the server
     UServer is used to store the UConnection list and the UDevice list.
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
-
-    The versions we used to generate the parser are:
-
-    - flex 2.5.4a
-    - bison 2.2 or greater.
 */
 class UServer: public urbi::Lockable
 {

@@ -1033,7 +1033,7 @@ UConnection::processCommand(UCommand *&command,
 
     // Regular command processing
 
-    if (command->type == CMD_TREE)
+    if (command->type == UCommand::CMD_TREE)
     {
       mustReturn = true;
       return command ;

@@ -55,7 +55,55 @@ class UCommand
 {
 public:
   MEMORY_MANAGED;
-  UCommand(UCommandType _type);
+
+  /// The different types for a UCommand
+  enum Type
+  {
+    CMD_GENERIC,
+    CMD_TREE,
+    CMD_ASSIGN_VALUE,
+    CMD_ASSIGN_PROPERTY,
+    CMD_ASSIGN_BINARY,
+    CMD_EXPR,
+    CMD_RETURN,
+    CMD_ECHO,
+    CMD_NEW,
+    CMD_ALIAS,
+    CMD_INHERIT,
+    CMD_GROUP,
+    CMD_WAIT,
+    CMD_WAIT_TEST,
+    CMD_INCREMENT,
+    CMD_DECREMENT,
+    CMD_DEF,
+    CMD_CLASS,
+    CMD_IF,
+    CMD_EVERY,
+    CMD_TIMEOUT,
+    CMD_STOPIF,
+    CMD_FREEZEIF,
+    CMD_AT,
+    CMD_AT_AND,
+    CMD_WHILE,
+    CMD_WHILE_AND,
+    CMD_WHILE_PIPE,
+    CMD_WHENEVER,
+    CMD_LOOP,
+    CMD_LOOPN,
+    CMD_LOOPN_PIPE,
+    CMD_LOOPN_AND,
+    CMD_FOREACH,
+    CMD_FOREACH_PIPE,
+    CMD_FOREACH_AND,
+    CMD_FOR,
+    CMD_FOR_PIPE,
+    CMD_FOR_AND,
+    CMD_NOOP,
+    CMD_EMIT,
+    CMD_LOAD,
+  };
+
+  UCommand(Type _type);
   virtual ~UCommand();
 
   virtual void print(int);
@@ -77,7 +125,8 @@ public:
   bool isFrozen();
 
   /// Type of the command.
-  UCommandType     type;
+  Type     type;
+
   /// Status of the command
   UCommandStatus   status;
 
@@ -125,7 +174,8 @@ public:
 public:
 
   /// used by commands to build
-  static const int MAXSIZE_TMPMESSAGE = 65536;
+  enum { MAXSIZE_TMPMESSAGE = 65536 };
+
 
 private:
   /// Command tag
@@ -718,7 +768,7 @@ class UCommand_INCDECREMENT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_INCDECREMENT(UCommandType type, UVariableName *variablename);
+  UCommand_INCDECREMENT(Type type, UVariableName *variablename);
   virtual ~UCommand_INCDECREMENT();
   virtual UVariableName** refVarName()  { return &variablename; };
 
@@ -909,7 +959,7 @@ class UCommand_AT : public UCommand, public UASyncCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AT (UCommandType type,
+  UCommand_AT (Type type,
 	       UExpression *test,
 	       UCommand* command1,
 	       UCommand* command2);
@@ -941,7 +991,7 @@ class UCommand_WHILE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WHILE (UCommandType type,
+  UCommand_WHILE (Type type,
 		   UExpression *test,
 		   UCommand* command);
   virtual ~UCommand_WHILE();
@@ -1018,7 +1068,7 @@ class UCommand_LOOPN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOPN (UCommandType type,
+  UCommand_LOOPN (Type type,
 		   UExpression* expression,
 		   UCommand* command);
   virtual ~UCommand_LOOPN();
@@ -1039,7 +1089,7 @@ class UCommand_FOREACH : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOREACH (UCommandType type,
+  UCommand_FOREACH (Type type,
 		     UVariableName* variablename,
 		     UExpression* expression,
 		     UCommand* command);
@@ -1067,7 +1117,7 @@ class UCommand_FOR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOR (UCommandType type,
+  UCommand_FOR (Type type,
 		UCommand* instr1,
 		UExpression* test,
 		UCommand* instr2,

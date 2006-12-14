@@ -53,37 +53,37 @@ static const string left = "";
 
 namespace
 {
-  UNodeType nodeType_foreach (UCommandType type)
+  UNodeType nodeType_foreach (UCommand::Type type)
   {
     switch (type)
     {
-      case CMD_FOREACH:	     return USEMICOLON;
-      case CMD_FOREACH_PIPE: return UPIPE;
-      case CMD_FOREACH_AND:  return UAND;
+      case UCommand::CMD_FOREACH:      return USEMICOLON;
+      case UCommand::CMD_FOREACH_PIPE: return UPIPE;
+      case UCommand::CMD_FOREACH_AND:  return UAND;
       default:
 	abort ();
     }
   }
 
-  UNodeType nodeType_loopn (UCommandType type)
+  UNodeType nodeType_loopn (UCommand::Type type)
   {
     switch (type)
     {
-      case CMD_LOOPN:	   return USEMICOLON;
-      case CMD_LOOPN_PIPE: return UPIPE;
-      case CMD_LOOPN_AND:  return UAND;
+      case UCommand::CMD_LOOPN:	     return USEMICOLON;
+      case UCommand::CMD_LOOPN_PIPE: return UPIPE;
+      case UCommand::CMD_LOOPN_AND:  return UAND;
       default:
 	abort ();
     }
   }
 
-  UNodeType nodeType_for (UCommandType type)
+  UNodeType nodeType_for (UCommand::Type type)
   {
     switch (type)
     {
-      case CMD_FOR:	 return USEMICOLON;
-      case CMD_FOR_PIPE: return UPIPE;
-      case CMD_FOR_AND:	 return UAND;
+      case UCommand::CMD_FOR:	    return USEMICOLON;
+      case UCommand::CMD_FOR_PIPE:  return UPIPE;
+      case UCommand::CMD_FOR_AND:   return UAND;
       default:
 	abort ();
     }
@@ -101,7 +101,7 @@ MEMORY_MANAGER_INIT(UCommand);
 
  \param type is the command type
  */
-UCommand::UCommand(UCommandType _type)
+UCommand::UCommand(UCommand::Type _type)
   : type (_type),
     status (UONQUEUE),
     flags (0),
@@ -5116,7 +5116,7 @@ MEMORY_MANAGER_INIT(UCommand_INCDECREMENT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommandType type,
+UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommand::Type type,
 					     UVariableName *variablename) :
   UCommand(type),
   variablename (variablename)
@@ -6174,7 +6174,7 @@ MEMORY_MANAGER_INIT(UCommand_AT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_AT::UCommand_AT(UCommandType type,
+UCommand_AT::UCommand_AT(UCommand::Type type,
 			  UExpression *test,
 			  UCommand* command1,
 			  UCommand* command2)
@@ -6410,7 +6410,7 @@ MEMORY_MANAGER_INIT(UCommand_WHILE);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_WHILE::UCommand_WHILE(UCommandType type,
+UCommand_WHILE::UCommand_WHILE(UCommand::Type type,
 			       UExpression *test,
 			       UCommand* command) :
   UCommand(type),
@@ -6867,7 +6867,7 @@ MEMORY_MANAGER_INIT(UCommand_LOOPN);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_LOOPN::UCommand_LOOPN(UCommandType type,
+UCommand_LOOPN::UCommand_LOOPN(UCommand::Type type,
 			       UExpression* expression,
 			       UCommand* command)
   : UCommand(type),
@@ -6989,7 +6989,7 @@ MEMORY_MANAGER_INIT(UCommand_FOR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FOR::UCommand_FOR(UCommandType type,
+UCommand_FOR::UCommand_FOR(UCommand::Type type,
 			    UCommand* instr1,
 			    UExpression* test,
 			    UCommand* instr2,
@@ -7181,7 +7181,7 @@ MEMORY_MANAGER_INIT(UCommand_FOREACH);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FOREACH::UCommand_FOREACH(UCommandType type,
+UCommand_FOREACH::UCommand_FOREACH(UCommand::Type type,
 				    UVariableName* variablename,
 				    UExpression* expression,
 				    UCommand* command) :
@@ -7224,7 +7224,7 @@ UCommand_FOREACH::execute(UConnection *connection)
 
   UNodeType nodeType = nodeType_foreach (type);
 
-  UExpression* currentvalue = 
+  UExpression* currentvalue =
     new UExpression(UExpression::EXPR_VALUE, ufloat(0));
   if (!currentvalue)
     return status = UCOMPLETED;

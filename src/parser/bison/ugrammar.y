@@ -79,6 +79,7 @@ class UParser;
 #include "uobj.hh"
 #include "ugroup.hh"
 #include "userver.hh"
+#include "ucommand.hh"
 
   extern UString** globalDelete;
 
@@ -392,7 +393,7 @@ root:
   | taggedcommands {
 
       uparser.commandTree = 0;
-      if ($1 && $1->type == CMD_TREE)
+      if ($1 && $1->type == UCommand::CMD_TREE)
 	uparser.commandTree = (UCommand_TREE*)$1;
       else
 	delete $1;
@@ -863,13 +864,13 @@ instruction:
 
   | refvariable TOK_MINUSMINUS {
 
-      $$ = new UCommand_INCDECREMENT(CMD_DECREMENT,$1);
+      $$ = new UCommand_INCDECREMENT(UCommand::CMD_DECREMENT,$1);
       MEMCHECK1($$,$1);
     }
 
   | refvariable TOK_PLUSPLUS {
 
-      $$ = new UCommand_INCDECREMENT(CMD_INCREMENT,$1);
+      $$ = new UCommand_INCDECREMENT(UCommand::CMD_INCREMENT,$1);
       MEMCHECK1($$,$1);
     }
 
@@ -1044,7 +1045,7 @@ instruction:
 
   | "at" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_AT(CMD_AT,$3,$5,(UCommand*)0);
+      $$ = new UCommand_AT(UCommand::CMD_AT,$3,$5,(UCommand*)0);
       MEMCHECK2($$,$3,$5);
     }
 
@@ -1057,31 +1058,31 @@ instruction:
 	error(@$,"Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(CMD_AT,$3,$5,$7);
+      $$ = new UCommand_AT(UCommand::CMD_AT,$3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
 
   | "at" "&" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_AT(CMD_AT_AND,$4,$6,(UCommand*)0);
+      $$ = new UCommand_AT(UCommand::CMD_AT_AND,$4,$6,(UCommand*)0);
       MEMCHECK2($$,$4,$6);
     }
 
   | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
 
-      $$ = new UCommand_AT(CMD_AT_AND,$4,$6,$8);
+      $$ = new UCommand_AT(UCommand::CMD_AT_AND,$4,$6,$8);
       MEMCHECK3($$,$4,$6,$8);
     }
 
   | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_WHILE(CMD_WHILE,$3,$5);
+      $$ = new UCommand_WHILE(UCommand::CMD_WHILE,$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
   | "while" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_WHILE(CMD_WHILE_PIPE,$4,$6);
+      $$ = new UCommand_WHILE(UCommand::CMD_WHILE_PIPE,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
@@ -1105,37 +1106,37 @@ instruction:
 
   | "foreach" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
-      $$ = new UCommand_FOREACH(CMD_FOREACH,$2,$4,$6);
+      $$ = new UCommand_FOREACH(UCommand::CMD_FOREACH,$2,$4,$6);
       MEMCHECK3($$,$2,$4,$6);
     }
 
   | "foreach" "&" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
-      $$ = new UCommand_FOREACH(CMD_FOREACH_AND,$3,$5,$7);
+      $$ = new UCommand_FOREACH(UCommand::CMD_FOREACH_AND,$3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
 
   | "foreach" "|" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
-      $$ = new UCommand_FOREACH(CMD_FOREACH_PIPE,$3,$5,$7);
+      $$ = new UCommand_FOREACH(UCommand::CMD_FOREACH_PIPE,$3,$5,$7);
       MEMCHECK3($$,$3,$5,$7);
     }
 
   | "loopn" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_LOOPN(CMD_LOOPN,$3,$5);
+      $$ = new UCommand_LOOPN(UCommand::CMD_LOOPN,$3,$5);
       MEMCHECK2($$,$3,$5);
     }
 
   | "loopn" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_LOOPN(CMD_LOOPN_PIPE,$4,$6);
+      $$ = new UCommand_LOOPN(UCommand::CMD_LOOPN_PIPE,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
   | "loopn" "&" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_LOOPN(CMD_LOOPN_AND,$4,$6);
+      $$ = new UCommand_LOOPN(UCommand::CMD_LOOPN_AND,$4,$6);
       MEMCHECK2($$,$4,$6);
     }
 
@@ -1143,7 +1144,7 @@ instruction:
 	       expr ";"
 	       instruction ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_FOR(CMD_FOR,$3,$5,$7,$9);
+      $$ = new UCommand_FOR(UCommand::CMD_FOR,$3,$5,$7,$9);
       MEMCHECK4($$,$3,$5,$7,$9);
     }
 
@@ -1151,7 +1152,7 @@ instruction:
 		    expr ";"
 		    instruction ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_FOR(CMD_FOR_PIPE,$4,$6,$8,$10);
+      $$ = new UCommand_FOR(UCommand::CMD_FOR_PIPE,$4,$6,$8,$10);
       MEMCHECK4($$,$4,$6,$8,$10);
     }
 
@@ -1159,7 +1160,7 @@ instruction:
 		   expr ";"
 		   instruction ")" taggedcommand %prec CMDBLOCK {
 
-      $$ = new UCommand_FOR(CMD_FOR_AND,$4,$6,$8,$10);
+      $$ = new UCommand_FOR(UCommand::CMD_FOR_AND,$4,$6,$8,$10);
       MEMCHECK4($$,$4,$6,$8,$10);
     }
 ;
