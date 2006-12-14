@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Do not allow string order-comparison
+	* src/uexpression.cc: Here.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Upgrade ENSURE_COMPARISON
 	* src/uexpression.cc (ENSURE_COMPARISON): Be given e1 and e2.
 	Adjust callers.

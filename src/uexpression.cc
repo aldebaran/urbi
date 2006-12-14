@@ -377,10 +377,12 @@ UExpression::eval (UCommand *command,
     }						\
   } while (0)
 
+/// If Kind is non null, require that \a Lhs and \a Rhs be defined.
 #define ENSURE_COMPARISON(Kind, Lhs, Rhs)			\
   do {								\
-    if (!Lhs || Lhs->dataType != DATA_NUM			\
-	|| !Rhs || Rhs->dataType != DATA_NUM)			\
+    if (*Kind							\
+	&& !(Lhs && Lhs->dataType == DATA_NUM			\
+	     && Rhs && Rhs->dataType == DATA_NUM))		\
     {								\
       connection->send("!!! " Kind " comparisons must be"	\
 		       " between numerical values\n",		\
@@ -1399,10 +1401,11 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-#define EVAL_EXPR_COMPARISON(Comparison)			\
+#define EVAL_EXPR_COMPARISON(Kind, Comparison)			\
     {								\
       UValue* lhs = expression1->eval(command, connection);	\
       UValue* rhs = expression2->eval(command, connection);	\
+      ENSURE_COMPARISON(Kind, lhs, rhs);			\
       UValue* res = 0;						\
       if (lhs && rhs)						\
       {								\
@@ -1416,28 +1419,27 @@ UExpression::eval (UCommand *command,
     }
 
     case EXPR_TEST_EQ:
-      EVAL_EXPR_COMPARISON (lhs->equal(rhs));
+      EVAL_EXPR_COMPARISON ("", lhs->equal(rhs));
 
     case EXPR_TEST_NE:
-      EVAL_EXPR_COMPARISON (!lhs->equal(rhs));
+      EVAL_EXPR_COMPARISON ("", !lhs->equal(rhs));
 
     case EXPR_TEST_GT:
-      EVAL_EXPR_COMPARISON (lhs->val > rhs->val);
+      EVAL_EXPR_COMPARISON ("Numerical", lhs->val > rhs->val);
 
     case EXPR_TEST_GE:
-      EVAL_EXPR_COMPARISON (lhs->val >= rhs->val);
+      EVAL_EXPR_COMPARISON ("Numerical", lhs->val >= rhs->val);
 
     case EXPR_TEST_LT:
-      EVAL_EXPR_COMPARISON (lhs->val < rhs->val);
+      EVAL_EXPR_COMPARISON ("Numerical", lhs->val < rhs->val);
 
     case EXPR_TEST_LE:
-      EVAL_EXPR_COMPARISON (lhs->val <= rhs->val);
+      EVAL_EXPR_COMPARISON ("Numerical", lhs->val <= rhs->val);
 
 #undef EVAL_EXPR_COMPARISON
 
     case EXPR_TEST_BANG:
     {
-
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
 
