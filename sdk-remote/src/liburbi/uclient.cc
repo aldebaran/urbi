@@ -47,9 +47,9 @@
 namespace urbi
 {
   /*! Establish the connection with the server.
-    Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
-    the appropriate callbacks.
-  */
+   Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
+   the appropriate callbacks.
+   */
   UClient::UClient(const char *_host, int _port, int _buflen)
     : UAbstractClient(_host, _port, _buflen)
   {
@@ -58,11 +58,11 @@ namespace urbi
 
 #ifndef WIN32
     if (::pipe(control_fd) == -1)
-      {
-	rc = -1;
-	perror("UClient::UClient failed to create pipe");
-	return;
-      }
+    {
+      rc = -1;
+      perror("UClient::UClient failed to create pipe");
+      return;
+    }
 #endif
 
     // Address resolution stage.
@@ -82,43 +82,43 @@ namespace urbi
     hen = gethostbyname(host);
 
     if (!hen)
+    {
+      // maybe it is an IP address
+      sa.sin_addr.s_addr = inet_addr(host);
+      if (sa.sin_addr.s_addr == INADDR_NONE)
       {
-	// maybe it is an IP address
-	sa.sin_addr.s_addr = inet_addr(host);
-	if (sa.sin_addr.s_addr == INADDR_NONE)
-	  {
-	    printf("UClient::UClient couldn't resolve host name.\n");
-	    rc = -1;
-	    return;
-	  }
+	printf("UClient::UClient couldn't resolve host name.\n");
+	rc = -1;
+	return;
       }
+    }
     else
       memcpy(&sa.sin_addr.s_addr, hen->h_addr_list[0], hen->h_length);
 
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0)
-      {
-	printf("UClient::UClient socket allocation failed.\n");
-	rc = -1;
-	return;
-      }
+    {
+      printf("UClient::UClient socket allocation failed.\n");
+      rc = -1;
+      return;
+    }
 
     // now connect to the remote server.
     rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
 
     // If we attempt to connect too fast to aperios ipstack it will fail.
     if (rc)
-      {
-	usleep(20000);
-	rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
-      }
+    {
+      usleep(20000);
+      rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+    }
 
     // Check there was no error.
     if (rc)
-      {
-	printf("UClient::UClient couldn't connect.\n");
-	return;
-      }
+    {
+      printf("UClient::UClient couldn't connect.\n");
+      return;
+    }
 
     if (rc)
       return;
@@ -128,11 +128,11 @@ namespace urbi
     while (pos==0)
       pos = ::recv(sd, recvBuffer, buflen, 0);
     if (pos<0)
-      {
-	rc = pos;
-	printf("UClient::UClient couldn't connect: read error %d.\n",rc);
-	return;
-      }
+    {
+      rc = pos;
+      printf("UClient::UClient couldn't connect: read error %d.\n",rc);
+      return;
+    }
     else
       recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
@@ -175,15 +175,15 @@ namespace urbi
     if (rc) return -1;
     int pos = 0;
     while (pos!=size)
+    {
+      int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
+      if (retval<0)
       {
-	int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-	if (retval<0)
-	  {
-	    rc = retval;
-	    return rc;
-	  }
-	pos += retval;
+	rc = retval;
+	return rc;
       }
+      pos += retval;
+    }
     return 0;
   }
 
