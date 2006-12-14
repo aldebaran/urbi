@@ -32,15 +32,21 @@ namespace urbi
     ~UVardata() {};
   };
 
-  static const char* propNames[]=
-    {
-      "rangemin",
-      "rangemax",
-      "speedmin",
-      "speedmax",
-      "blend",
-      "delta"
-    };
+  const char* name(UProperty p)
+  {
+    int i = static_cast<int> (p);
+    const char* names[]=
+      {
+	"rangemin",
+	"rangemax",
+	"speedmin",
+	"speedmax",
+	"blend",
+	"delta",
+      };
+    return names[i];
+  }
+
 
   //! UVar initialization
   void
@@ -67,33 +73,36 @@ namespace urbi
 
 
   void
-  UVar::setProp(UProperty prop, const UValue& v)
+  UVar::setProp(UProperty p, const UValue& v)
   {
-    URBI(()) << name << "->"<< propNames[(int)prop] << "=" << v <<";";
+    URBI(()) << name << "->" << urbi::name(p) << "=" << v << ";";
   }
 
   void
-  UVar::setProp(UProperty prop, const char* v)
+  UVar::setProp(UProperty p, const char* v)
   {
-    URBI(()) << name << "->" << propNames[(int)prop] << "=" << v << ";";
+    URBI(()) << name << "->" << urbi::name(p) << "=" << v << ";";
   }
 
   void
-  UVar::setProp(UProperty prop, double v)
+  UVar::setProp(UProperty p, double v)
   {
     //TODO : generalize
-    if (prop == PROP_BLEND && 0 <= v && v < blendNum)
-      URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<blendNames[(int)v]<<";";
+    // FIXME: This is not the right way to do it.
+    if (p == PROP_BLEND && is_blendtype(v))
+      URBI(()) << name << "->"<< urbi::name(p) << "="
+	       << urbi::name(static_cast<UBlendType>(v)) << ";";
     else
-      URBI(())<<name<<"->"<<propNames[(int)prop]<<"="<<v<<";";
+      URBI(()) << name << "->"<< urbi::name(p) << "="
+	       << v << ";";
   }
 
   UValue
-  UVar::getProp(UProperty prop)
+  UVar::getProp(UProperty p)
   {
     UMessage* m=
       ((USyncClient&)URBI(())).syncGet("%s->%s",
-				       name.c_str(), propNames[(int)prop]);
+				       name.c_str(), urbi::name (p));
     UValue v = *m->value;
     delete m;
     return v;

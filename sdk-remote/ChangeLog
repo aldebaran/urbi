@@ -1,3 +1,13 @@
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
+	Clean (a bit)
+	* src/liburbi/uobject/urbi/uobject.hh.template: Do not access to
+	arrays directly.
+	(name): New.
+	(clean): Simplify call to delete.
+	* src/liburbi/uvar.cc (name): New overloaded funtion.
+	Adjust the code.
+
 2006-12-13  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Fix includes: use libport's windows.h.
