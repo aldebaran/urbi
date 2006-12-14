@@ -1,3 +1,9 @@
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
+	Include cassert
+	* src/liburbi/uobject/urbi/utypes-common.hh: here.
+	Enums start at 0, don't say it again.
+
 2006-12-14  Matthieu Nottale  <nottale@gostai.com>
 
 	Add missing Uvalue 'cast' to self

@@ -13,6 +13,8 @@
 #ifndef URBI_UTYPES_COMMON_HH
 # define URBI_UTYPES_COMMON_HH
 
+# include <cassert>
+
 /// \file  urbi/utypes-common.hh
 /// \brief Types used by the kernel and uobject.
 
@@ -27,7 +29,7 @@ namespace urbi
   /// Possible blending mode for an UVar
   enum UBlendType
   {
-    UMIX=0,
+    UMIX,
     UADD,
     UDISCARD,
     UQUEUE,
@@ -81,7 +83,7 @@ namespace urbi
   /// URBI properties associated to a variable
   enum UProperty
   {
-    PROP_RANGEMIN=0,
+    PROP_RANGEMIN,
     PROP_RANGEMAX,
     PROP_SPEEDMIN,
     PROP_SPEEDMAX,
@@ -104,10 +106,10 @@ namespace urbi
 
   // FIXME: This is needed by urbi-sdk/uvar.cc.
   inline
-  bool 
+  bool
   is_propertytype (int i)
   {
-    return (static_cast<int> (PROP_RANGEMAX) <= i 
+    return (static_cast<int> (PROP_RANGEMAX) <= i
 	    && i <= static_cast<int> (PROP_DELTA));
   }
 
