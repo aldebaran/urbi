@@ -1,10 +1,8 @@
-#ifndef CONNECTION_H
-# define CONNECTION_H
+#ifndef CONNECTION_HH
+# define CONNECTION_HH
 
 # include <time.h>
 # include <sys/types.h>
-
-
 
 /** \file Connection.h.cpp
  *  \brief the linux specialization of the UConnection class of the URBI kernel.
@@ -19,12 +17,15 @@ class Connection : public UConnection, public Network::Pipe
 {
 public:
   // Parameters used by the constructor.
-  static const int MINSENDBUFFERSIZE = 4096;
-  static const int MAXSENDBUFFERSIZE = 1048576;
-  // This is also the size of the buffer
-  static const int PACKETSIZE	     = 16384;
-  static const int MINRECVBUFFERSIZE = 4096;
-  static const int MAXRECVBUFFERSIZE = 32768;
+  enum
+  {
+    MINSENDBUFFERSIZE = 4096,
+    MAXSENDBUFFERSIZE = 1048576,
+    // This is also the size of the buffer
+    PACKETSIZE	     = 16384,
+    MINRECVBUFFERSIZE = 4096,
+    MAXRECVBUFFERSIZE = 32768,
+  };
 
   //! Creates a new connection from the connection file descriptor
   /**
@@ -43,8 +44,14 @@ public:
   //! Called when the underlying fd is ready to be written
   void doWrite();
 
-  virtual void notifyRead() {doRead();}
-  virtual void notifyWrite() {doWrite();}
+  virtual void notifyRead()
+  {
+    doRead();
+  }
+  virtual void notifyWrite()
+  {
+    doWrite();
+  }
   virtual UErrorValue send  (const ubyte *buffer, int length);
 protected:
   //! Overloading this function is requiered by UConnection
@@ -56,10 +63,23 @@ protected:
 
 public:
   //! Accessor for the underlying file descriptor
-  inline operator int() const {return fd;}
+  inline operator int() const
+  {
+    return fd;
+  }
 
-  virtual int readFD() {return fd;}
-  virtual int writeFD() {if (sendQueueRemain()>0) return fd; else return -1;}
+  virtual int readFD()
+  {
+    return fd;
+  }
+
+  virtual int writeFD()
+  {
+    if (sendQueueRemain()>0)
+      return fd;
+    else
+      return -1;
+  }
 };
 
-#endif
+#endif // !CONNECTION_HH

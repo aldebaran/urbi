@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Don't declare static const int in declarations
+	* src/network/bsdnet/connection.hh: Use enums.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Remove version.hh.in
 	* src/version.hh.in: Remove.
 	We use the one in build-aux.
