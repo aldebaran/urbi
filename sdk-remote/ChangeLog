@@ -1,5 +1,17 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Factor UBlendType and UProperty handling
+	* src/liburbi/uobject/urbi/utypes-common.hh: New.
+	Extend.
+	* src/liburbi/uobject/urbi/uobject.hh.template: Extracted from
+	here.
+	* src/liburbi/uobject/uvar-common.cc, src/liburbi/uvar.cc: 
+	Remove code now in utypes-common.hh.
+	* src/liburbi/uobject/uobject.mk: Adjust.
+	* src/liburbi/Makefile.am: Adjust.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Clean (a bit)
 	* src/liburbi/uobject/urbi/uobject.hh.template: Do not access to
 	arrays directly.

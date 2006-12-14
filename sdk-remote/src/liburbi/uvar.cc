@@ -32,22 +32,6 @@ namespace urbi
     ~UVardata() {};
   };
 
-  const char* name(UProperty p)
-  {
-    int i = static_cast<int> (p);
-    const char* names[]=
-      {
-	"rangemin",
-	"rangemax",
-	"speedmin",
-	"speedmax",
-	"blend",
-	"delta",
-      };
-    return names[i];
-  }
-
-
   //! UVar initialization
   void
   UVar::__init()
@@ -89,9 +73,10 @@ namespace urbi
   {
     //TODO : generalize
     // FIXME: This is not the right way to do it.
-    if (p == PROP_BLEND && is_blendtype(v))
+    int i = v;
+    if (p == PROP_BLEND && is_blendtype(i))
       URBI(()) << name << "->"<< urbi::name(p) << "="
-	       << urbi::name(static_cast<UBlendType>(v)) << ";";
+	       << urbi::name(static_cast<UBlendType>(i)) << ";";
     else
       URBI(()) << name << "->"<< urbi::name(p) << "="
 	       << v << ";";

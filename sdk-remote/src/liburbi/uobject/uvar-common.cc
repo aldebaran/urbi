@@ -70,6 +70,4 @@ namespace urbi
       return true;
   }
 
-
-
 } // namespace urbi

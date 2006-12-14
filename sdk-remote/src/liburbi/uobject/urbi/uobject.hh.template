@@ -29,6 +29,7 @@
 # include "libport/ufloat.h"
 # include "libport/hash.hh"
 
+# include "urbi/utypes-common.hh"
 
 /// This macro must be called once for every UObject class.
 # define UStart(x)							\
@@ -132,16 +133,16 @@ namespace urbi
 {
 
   // Forward declarations and global scope structures
-  class UObjectData;
-  class UVar;
-  class UObject;
-  class UObjectHub;
-  class baseURBIStarter;
-  class baseURBIStarterHub;
   class UGenericCallback;
+  class UObject;
+  class UObjectData;
+  class UObjectHub;
   class UTimerCallback;
   class UValue;
+  class UVar;
   class UVardata;
+  class baseURBIStarter;
+  class baseURBIStarterHub;
 
   // A few list and hashtable types
   typedef hash_map_type<std::string, std::list<UGenericCallback*> >::type UTable;
@@ -236,56 +237,6 @@ namespace urbi
     SAMPLE_UNSIGNED=2
   };
 
-  //WARNING: synchronize with blendNames below, must be 0-based
-  /// Possible blending mode for an UVar
-  enum UBlendType
-  {
-    UMIX=0,
-    UADD,
-    UDISCARD,
-    UQUEUE,
-    UCANCEL,
-    UNORMAL
-  };
-
-  inline
-  // FIXME: This is needed by urbi-sdk/uvar.cc.
-  bool is_blendtype (double d)
-  {
-    return (static_cast<double> (UMIX) <= d
-	    && d <= static_cast<double> (UNORMAL));
-  }
-
-  // values for enum-like properties
-  inline
-  const char*
-  name (UBlendType u)
-  {
-    int i = static_cast <int> (u);
-    const char* names[]=
-      {
-	"mix",
-	"add",
-	"discard",
-	"queue",
-	"cancel",
-	"normal",
-      };
-    return names[i];
-  }
-
-
-  //WARNING: synchronize with propNames in uvar.cc
-  /// URBI properties associated to a variable
-  enum UProperty
-  {
-    PROP_RANGEMIN=0,
-    PROP_RANGEMAX,
-    PROP_SPEEDMIN,
-    PROP_SPEEDMAX,
-    PROP_BLEND,
-    PROP_DELTA
-  };
 
   //internal use: unparsed binary data
   class BinaryData
