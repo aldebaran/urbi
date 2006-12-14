@@ -416,8 +416,6 @@ UExpression::eval (UCommand *command,
   std::list<UString*>::iterator it;
   UExpression *e;
   UEventHandler* eh;
-  UEventCompound* ec1;
-  UEventCompound* ec2;
 
   if (issofttest && softtest_time)
   {
@@ -1392,7 +1390,7 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_BANG:
     {
-      ec1 = 0;
+      UEventCompound* ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
 
       if (e1==0)
@@ -1415,7 +1413,7 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_AND:
     {
-      ec1 = 0;
+      UEventCompound* ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
       if (!e1)
       {
@@ -1428,7 +1426,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       ret->dataType = DATA_NUM;
 
-      ec2 = 0;
+      UEventCompound* ec2 = 0;
       e2 = expression2->eval(command, connection, ec2);
       if (!e2)
       {
@@ -1460,7 +1458,7 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_OR:
     {
-      ec1 = 0;
+      UEventCompound* ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
       if (!e1)
       {
@@ -1471,7 +1469,7 @@ UExpression::eval (UCommand *command,
       if (!ret) return 0;
       ret->dataType = DATA_NUM;
 
-      ec2 = 0;
+      UEventCompound* ec2 = 0;
       e2 = expression2->eval(command, connection, ec2);
       if (!e2)
       {
