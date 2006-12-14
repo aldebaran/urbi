@@ -411,11 +411,8 @@ UExpression::eval (UCommand *command,
   UValue *e4;
   UVariable *variable;
   UNamedParameters *pevent;
-  UString* funname;
-  HMgrouptab::iterator retr;
   std::list<UString*>::iterator it;
   UExpression *e;
-  UEventHandler* eh;
 
   if (issofttest && softtest_time)
   {
@@ -484,7 +481,7 @@ UExpression::eval (UCommand *command,
     case EXPR_GROUP:
     {
       UValue* ret = new UValue();
-      retr = connection->server->grouptab.find(str->str());
+      HMgrouptab::iterator retr = connection->server->grouptab.find(str->str());
       if (retr !=  connection->server->grouptab.end())
       {
 	ret->dataType = DATA_LIST;
@@ -646,9 +643,10 @@ UExpression::eval (UCommand *command,
 
     case EXPR_FUNCTION:
     {
-      funname = variablename->buildFullname(command, connection);
+      UString* funname = variablename->buildFullname(command, connection);
 
       // Event detection
+      UEventHandler* eh;
       if (parameters)
 	eh = kernel::findEventHandler(funname, parameters->size());
       else
@@ -1786,7 +1784,6 @@ UExpression::asyncScan(UASyncCommand *cmd,
   UVariable *variable;
   UNamedParameters *pevent;
   HMfunctiontab::iterator hmf;
-  HMgrouptab::iterator retr;
   std::list<UString*>::iterator it;
   UEventHandler* eh;
   UString* fullname;
