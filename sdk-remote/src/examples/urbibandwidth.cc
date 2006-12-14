@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <assert.h>
-#include "libport/windows.h"
+#include "libport/windows.hh"
 
 bool over=false;
 static int totalsize=0;

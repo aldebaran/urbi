@@ -21,12 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 **********************************************************************/
 
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# include <windows.h>
-#endif
+#include "libport/windows.hh"
 
 #include <cstdio>
 #include <cstdlib>

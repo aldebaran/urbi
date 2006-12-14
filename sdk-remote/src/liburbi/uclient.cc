@@ -31,10 +31,7 @@
 #include "libport/thread.hh"
 
 #ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# include <windows.h>
+# include "libport/windows.hh"
 # include <fcntl.h>
 # include <io.h>
 # include <winsock.h>
@@ -112,11 +109,7 @@ namespace urbi
     // If we attempt to connect too fast to aperios ipstack it will fail.
     if (rc)
       {
-#ifdef WIN32
-	Sleep(20);
-#else
 	usleep(20000);
-#endif
 	rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
       }
 

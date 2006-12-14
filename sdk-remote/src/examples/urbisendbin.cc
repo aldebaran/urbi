@@ -4,7 +4,7 @@
 #include "urbi/uclient.hh"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "libport/windows.h"
+#include "libport/windows.hh"
 
 int main(int argc, char * argv[])
 {

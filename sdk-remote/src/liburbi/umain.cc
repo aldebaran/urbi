@@ -19,7 +19,7 @@
  **************************************************************************** */
 
 #include <urbi/uobject.hh>
-#include "libport/windows.h"
+#include "libport/windows.hh"
 #ifndef WIN32
 # include <unistd.h>
 #endif

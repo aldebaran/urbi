@@ -2,7 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
-#include "libport/windows.h"
+#include "libport/windows.hh"
 
 urbi::UClient* c;
 unsigned int sendtime;
