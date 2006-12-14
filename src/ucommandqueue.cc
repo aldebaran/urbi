@@ -32,17 +32,15 @@
 */
 UCommandQueue::UCommandQueue  (int minBufferSize,
 				int maxBufferSize,
-				int adaptive) :
-  UQueue (minBufferSize,
-	  maxBufferSize,
-	  adaptive),
-  cursor_         (0),
-  bracketlevel_   (0),
-  sbracketlevel_  (0),
-  parenlevel_     (0),
-  discard_        (false),
-  closechar_      (' '),
-  closechar2_     (' ')
+				int adaptive)
+  : UQueue (minBufferSize, maxBufferSize, adaptive),
+    cursor_         (0),
+    bracketlevel_   (0),
+    sbracketlevel_  (0),
+    parenlevel_     (0),
+    discard_        (false),
+    closechar_      (' '),
+    closechar2_     (' ')
 {
   ADDOBJ(UCommandQueue);
   FREEOBJ(UQueue); // A tester...
@@ -107,11 +105,12 @@ UCommandQueue::popCommand (int &length)
   if (previousposition < 0)
     previousposition = previousposition + bufferSize_;
   p0 = (char) (*(buffer_ + previousposition)); // extract the previous char.
-  if (cursor_ == 0) p0 = ' '; // no previous char at start
+  if (cursor_ == 0)
+    // no previous char at start
+    p0 = ' ';
 
   found = false;
-  while ((cursor_ < dataSize_ ) &&
-	 (!found ) )
+  while (cursor_ < dataSize_ && !found)
   {
     p_1 = p0;
     p0 = (char) (*(buffer_ + position));
@@ -140,11 +139,11 @@ UCommandQueue::popCommand (int &length)
     else
     {
       if (p0 == '{') bracketlevel_ ++;
-      if (p0 == '}') bracketlevel_ --;
-      if (p0 == '[') sbracketlevel_ ++;
-      if (p0 == ']') sbracketlevel_ --;
-      if (p0 == '(') parenlevel_ ++;
-      if (p0 == ')') parenlevel_ --;
+      else if (p0 == '}') bracketlevel_ --;
+      else if (p0 == '[') sbracketlevel_ ++;
+      else if (p0 == ']') sbracketlevel_ --;
+      else if (p0 == '(') parenlevel_ ++;
+      else if (p0 == ')') parenlevel_ --;
 
       if (bracketlevel_ < 0) bracketlevel_ = 0;
       if (sbracketlevel_ < 0) sbracketlevel_ = 0;
@@ -162,19 +161,15 @@ UCommandQueue::popCommand (int &length)
 	closechar_  = '"';
 	closechar2_ = ' ';
       }
-      if (((p0 == '/') &&
-	   (p1 == '*') ) ||
-	  ((p_1 == '/') &&
-	   (p0 == '*') ))
+      if (p0 == '/' && p1 == '*'
+	  || p_1 == '/' && p0 == '*')
       {
 	discard_    = true;
 	closechar_  = '*';
 	closechar2_ = '/';
       }
-      if (((p0 == '/') &&
-	   (p1 == '/') ) ||
-	  ((p_1 == '/') &&
-	   (p0 == '/') ) )
+      if (p0 == '/' && p1 == '/'
+	  || p_1 == '/' && p0 == '/')
       {
 	discard_    = true;
 	closechar_  = '\n';
@@ -213,7 +208,7 @@ UCommandQueue::popCommand (int &length)
     if (nextposition == bufferSize_)
       nextposition = 0;
 
-  };
+  }
 
   if (found)
   {
