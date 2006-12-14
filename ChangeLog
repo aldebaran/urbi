@@ -1,5 +1,12 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	EVAL_EXPR_COMPARISON
+	* src/uexpression.cc: New.
+	Use it.
+	Shorten scopes.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	eval_EXPR_VARIABLE
 	* src/uexpression.hh, src/uexpression.cc (eval_EXPR_VARIABLE): New.
 	(eval): Extracted from here.

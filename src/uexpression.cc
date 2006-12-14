@@ -1262,9 +1262,8 @@ UExpression::eval (UCommand *command,
 
     case EXPR_MOD:
     {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
@@ -1276,9 +1275,8 @@ UExpression::eval (UCommand *command,
 
     case EXPR_EXP:
     {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
 
       UValue* ret = new UValue();
@@ -1331,32 +1329,10 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_TEST_EQ:
-    {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-
-      if (e1==0 ||
-	  e2==0)
-      {
-	delete e1;
-	delete e2;
-	return 0;
-      }
-
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = e1->equal(e2);
-      delete e1;
-      delete e2;
-      return ret;
-    }
-
     case EXPR_TEST_REQ:
     {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
@@ -1374,8 +1350,8 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_DEQ:
     {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
@@ -1402,7 +1378,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_PEQ:
     {
-
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
@@ -1426,89 +1401,41 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_TEST_NE:
-    {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-
-      if (e1==0 ||
-	  e2==0)
-      {
-	delete e1;
-	delete e2;
-	return 0;
-      }
-
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = !e1->equal(e2);
-      delete e1;
-      delete e2;
-      return ret;
+#define EVAL_EXPR_COMPARISON(Comparison)			\
+    {								\
+      UValue* lhs = expression1->eval(command, connection);	\
+      UValue* rhs = expression2->eval(command, connection);	\
+      UValue* res = 0;						\
+      if (lhs && rhs)						\
+      {								\
+	res = new UValue();					\
+	res->dataType = DATA_NUM;				\
+	res->val = Comparison;					\
+      }								\
+      delete lhs;						\
+      delete rhs;						\
+      return res;						\
     }
+
+    case EXPR_TEST_EQ:
+      EVAL_EXPR_COMPARISON (lhs->equal(rhs));
+
+    case EXPR_TEST_NE:
+      EVAL_EXPR_COMPARISON (!lhs->equal(rhs));
 
     case EXPR_TEST_GT:
-    {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Numerical");
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-
-      ret->val = (e1->val > e2->val);
-
-      delete e1;
-      delete e2;
-      return ret;
-    }
+      EVAL_EXPR_COMPARISON (lhs->val > rhs->val);
 
     case EXPR_TEST_GE:
-    {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Numerical");
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-
-      ret->val = (e1->val >= e2->val);
-
-      delete e1;
-      delete e2;
-      return ret;
-    }
+      EVAL_EXPR_COMPARISON (lhs->val >= rhs->val);
 
     case EXPR_TEST_LT:
-    {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Numerical");
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
-
-      ret->val = (e1->val < e2->val);
-
-      delete e1;
-      delete e2;
-      return ret;
-    }
+      EVAL_EXPR_COMPARISON (lhs->val < rhs->val);
 
     case EXPR_TEST_LE:
-    {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Numerical");
-      UValue* ret = new UValue();
-      ret->dataType = DATA_NUM;
+      EVAL_EXPR_COMPARISON (lhs->val <= rhs->val);
 
-      ret->val = (e1->val <= e2->val);
-
-      delete e1;
-      delete e2;
-      return ret;
-    }
+#undef EVAL_EXPR_COMPARISON
 
     case EXPR_TEST_BANG:
     {
@@ -1536,7 +1463,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_AND:
     {
-
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
       if (!e1)
@@ -1892,7 +1818,8 @@ UExpression::eval_EXPR_VARIABLE (UCommand *command,
     {
       firsteval = false;
       staticcache = ret->copy();
-      if (!staticcache)  return 0;
+      if (!staticcache)
+	return 0;
     }
     else
       ret = staticcache->copy();
@@ -1919,7 +1846,6 @@ UExpression::asyncScan(UASyncCommand *cmd,
   switch (type)
   {
     case EXPR_LIST:
-
       pevent = parameters;
       while (pevent)
       {
