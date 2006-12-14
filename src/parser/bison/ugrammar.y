@@ -41,7 +41,8 @@ class UParser;
 %define "filename_type" "std::string"
 %initial-action
 {
-  @$.initialize (uparser.filename_.empty() ? 0 : &uparser.filename_);
+  // Saved when exiting the start symbol.
+  @$ = uparser.loc_;
 }
 
 
@@ -66,12 +67,7 @@ class UParser;
 }
 
 %{
-// Is included in ugrammar.cc
-#ifdef _MSC_VER
-# include <hash_map>
-#else
-# include <hash_map.h>
-#endif
+// Output in ugrammar.cc.
 #include <string>
 #include <iostream>
 #define TRUE  ufloat(1)
@@ -364,17 +360,29 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
 /* URBI Grammar */
 %%
 
-%start root;
-root:
+%start start;
+start:
+  root  { uparser.loc_ = @$; }
+;
 
-    refvariable "=" binary ";" {
+root:
+    /* Minimal error recovery, so that all the tokens are read,
+       especially the end-of-lines, to keep error messages in sync. */
+  error
+  {
+    uparser.commandTree = 0;
+  }
+
+  | refvariable "=" binary ";" {
 
       URefPt<UBinary> *ref = new URefPt<UBinary>($3);
       MEMCHECK(ref);
       UCommand* tmpcmd = new UCommand_ASSIGN_BINARY($1,ref);
-      if (tmpcmd) tmpcmd->setTag("__node__");
+      if (tmpcmd)
+	tmpcmd->setTag("__node__");
       MEMCHECK2(tmpcmd,$1,ref);
-      if (tmpcmd) uparser.binaryCommand = true;
+      if (tmpcmd)
+	uparser.binaryCommand = true;
 
       uparser.commandTree  = new UCommand_TREE(USEMICOLON,tmpcmd,0);
       if ( uparser.commandTree )
@@ -385,12 +393,10 @@ root:
   | taggedcommands {
 
       uparser.commandTree = 0;
-      if ($1) {
-	if ($1->type == CMD_TREE)
-	  uparser.commandTree = (UCommand_TREE*)$1;
-	else
-	  delete $1;
-      }
+      if ($1 && $1->type == CMD_TREE)
+	uparser.commandTree = (UCommand_TREE*)$1;
+      else
+	delete $1;
     }
 ;
 
@@ -800,7 +806,7 @@ instruction:
       MEMCHECK3($$,$1,$6,$8);
     }
 
-  | TOK_WAIT expr {
+  | "wait" expr {
 
       $$ = new UCommand_WAIT($2);
       MEMCHECK1($$,$2);
@@ -931,10 +937,11 @@ instruction:
       $$ = new UCommand_DEF(UDEF_EVENT,$2,(UNamedParameters*)0,(UCommand*)0);
       MEMCHECK1($$,$2);
     }
-/**/
+
   | "function" variable "(" identifiers ")" {
 
-      if (uparser.connection.functionTag) {
+      if (uparser.connection.functionTag)
+      {
 	delete $2;
 	delete $4;
 	$2 = 0;
@@ -943,7 +950,8 @@ instruction:
 	error(@$,"Nested function def not allowed.");
 	YYERROR;
       }
-      else {
+      else
+      {
 	uparser.connection.functionTag = new UString("__Funct__");
 	globalDelete = &uparser.connection.functionTag;
       }
@@ -1004,7 +1012,7 @@ instruction:
 	delete $3;
 	delete $5;
 	delete $7;
-	error(@$, "Empty then-part within a if.");
+	error(@$, "Empty then-part within an if.");
 	YYERROR;
       }
       $$ = new UCommand_IF($3,$5,$7);
@@ -1047,7 +1055,7 @@ instruction:
 	delete $3;
 	delete $5;
 	delete $7;
-	error(@$,"Empty body within a at command.");
+	error(@$,"Empty body within an at command.");
 	YYERROR;
       }
       $$ = new UCommand_AT(CMD_AT,$3,$5,$7);

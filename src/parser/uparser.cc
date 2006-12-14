@@ -60,12 +60,16 @@ UParser::process(ubyte* command, int length)
 int
 UParser::process(const char* fn)
 {
+  // Store in this object the name of the file, and let location point
+  // to it.  Once the parsing finish, clean it.
   assert (filename_.empty ());
   filename_ = fn;
+  loc_.initialize (&filename_);
   std::ifstream f (fn);
   scanner_.switch_streams(&f, 0);
   int res = parse_();
   filename_.clear ();
+  loc_.initialize (0);
   return res;
 }
 

@@ -6,7 +6,7 @@ TESTS_ENVIRONMENT = srcdir=$(srcdir)
 TESTS = $(notdir $(wildcard $(srcdir)/urbivalid/checkfiles/*.chk))
 XFAIL_TESTS = \
 	events.chk	\
-        tag.chk parse-errors.chk
+        tag.chk
 TEST_LOGS = $(TESTS:.chk=.log)
 # .PRECIOUS: $(TEST_LOGS)
 

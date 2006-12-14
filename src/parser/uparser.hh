@@ -89,7 +89,7 @@ public:
   UConnection& connection;
 
 private:
-  // Give access to filename_ and scanner_.
+  // Give access to loc_ and scanner_.
   friend int parser_type::parse ();
   friend token_type yylex (semantic_type*, location_type*, UParser&);
 
@@ -98,9 +98,12 @@ private:
 
   /// The Flex scanner.
   UFlexer scanner_;
-
+  
   /// The file currently parsed.
   std::string filename_;
+
+  /// The current location.
+  location_type loc_;
 };
 
 #endif
