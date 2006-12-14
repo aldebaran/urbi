@@ -377,16 +377,16 @@ UExpression::eval (UCommand *command,
     }						\
   } while (0)
 
-#define ENSURE_COMPARISON(Kind)					\
+#define ENSURE_COMPARISON(Kind, Lhs, Rhs)			\
   do {								\
-    if (!e1 || e1->dataType != DATA_NUM				\
-	|| !e2 || e2->dataType != DATA_NUM)			\
+    if (!Lhs || Lhs->dataType != DATA_NUM			\
+	|| !Rhs || Rhs->dataType != DATA_NUM)			\
     {								\
       connection->send("!!! " Kind " comparisons must be"	\
 		       " between numerical values\n",		\
 		       command->getTag().c_str());		\
-      delete e1;						\
-      delete e2;						\
+      delete Lhs;						\
+      delete Rhs;						\
       return 0;							\
     }								\
   } while (0)
@@ -1303,11 +1303,9 @@ UExpression::eval (UCommand *command,
 
     case EXPR_COPY:
     {
-
-      e1 = expression1->eval(command, connection);
-
-      if (e1==0) return 0;
-
+      UValue* e1 = expression1->eval(command, connection);
+      if (e1==0)
+	return 0;
       UValue* ret = e1->copy();
       if (ret->dataType == DATA_BINARY)
       {
@@ -1333,7 +1331,7 @@ UExpression::eval (UCommand *command,
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Approximate");
+      ENSURE_COMPARISON ("Approximate", e1, e2);
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
@@ -1352,7 +1350,7 @@ UExpression::eval (UCommand *command,
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Approximate");
+      ENSURE_COMPARISON ("Approximate", e1, e2);
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
@@ -1378,9 +1376,9 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_PEQ:
     {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
-      ENSURE_COMPARISON ("Approximate");
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
+      ENSURE_COMPARISON ("Approximate", e1, e2);
       if (e2->val == 0 || e1->val == 0)
       {
 	connection->send("!!! Division by zero\n", command->getTag().c_str());
@@ -1562,7 +1560,7 @@ UExpression::eval_EXPR_VARIABLE (UCommand *command,
 {
   assert (type == EXPR_VARIABLE);
   UVariable *variable = variablename->getVariable(command, connection);
-  if (!variablename->getFullname()) 
+  if (!variablename->getFullname())
     return 0;
   UString* devicename = variablename->getDevice();
   UValue* ret = 0;
