@@ -439,6 +439,7 @@ UExpression::eval (UCommand *command,
   switch (type)
   {
     case EXPR_LIST:
+    {
       ret = new UValue();
       ret->dataType = DATA_LIST;
       pevent = parameters;
@@ -487,8 +488,10 @@ UExpression::eval (UCommand *command,
 	e1 = e1->next;
       }
       return ret;
+    }
 
     case EXPR_GROUP:
+    {
 
       ret = new UValue();
       retr = connection->server->grouptab.find(str->str());
@@ -546,8 +549,10 @@ UExpression::eval (UCommand *command,
 	}
       }
       return ret;
+    }
 
     case EXPR_VALUE:
+    {
 
       if (tmp_value)
 	return tmp_value->copy(); // hack to be able to handle complex
@@ -558,8 +563,10 @@ UExpression::eval (UCommand *command,
       if (dataType == DATA_NUM) ret->val = val;
       if (dataType == DATA_STRING) ret->str = new UString(str);
       return ret;
+    }
 
     case EXPR_ADDR_VARIABLE:
+    {
 
       ret = new UValue();
       ret->dataType = DATA_STRING;
@@ -568,8 +575,10 @@ UExpression::eval (UCommand *command,
       ret->str = new UString (variablename->buildFullname(command,
 							  connection));
       return ret;
+    }
 
     case EXPR_VARIABLE:
+    {
 
       variable = variablename->getVariable(command, connection);
       if (!variablename->getFullname()) return 0;
@@ -832,8 +841,10 @@ UExpression::eval (UCommand *command,
 	  ret = staticcache->copy();
 
       return ret;
+    }
 
     case EXPR_PROPERTY:
+    {
 
       variable = variablename->getVariable(command, connection);
       if (!variablename->getFullname())
@@ -914,8 +925,10 @@ UExpression::eval (UCommand *command,
       connection->send(errorString, command->getTag().c_str());
       return 0;
 
+    }
 
     case EXPR_FUNCTION:
+    {
 
       funname = variablename->buildFullname(command, connection);
 
@@ -1438,9 +1451,10 @@ UExpression::eval (UCommand *command,
 		 variablename->getFullname()->str());
       connection->send(errorString, command->getTag().c_str());
       return 0;
+    }
 
     case EXPR_PLUS:
-
+    {
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
 
@@ -1458,9 +1472,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_MINUS:
-
+    {
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
@@ -1471,9 +1486,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
-
+    }
 
     case EXPR_MULT:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1485,8 +1501,10 @@ UExpression::eval (UCommand *command,
       delete e2;
       return ret;
 
+    }
 
     case EXPR_DIV:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1504,8 +1522,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_MOD:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1516,8 +1536,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_EXP:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1530,8 +1552,10 @@ UExpression::eval (UCommand *command,
       delete e2;
       return ret;
 
+    }
 
     case EXPR_NEG:
+    {
 
       e1 = expression1->eval(command, connection);
       ENSURE_TYPES_1 (DATA_NUM);
@@ -1541,8 +1565,10 @@ UExpression::eval (UCommand *command,
       ret->val = -e1->val;
       delete e1;
       return ret;
+    }
 
     case EXPR_COPY:
+    {
 
       e1 = expression1->eval(command, connection);
 
@@ -1567,8 +1593,10 @@ UExpression::eval (UCommand *command,
       }
       delete e1;
       return ret;
+    }
 
     case EXPR_TEST_EQ:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1587,8 +1615,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_REQ:
+    {
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
@@ -1604,8 +1634,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_DEQ:
+    {
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
@@ -1630,8 +1662,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_PEQ:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1654,8 +1688,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_NE:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1674,8 +1710,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_GT:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1688,8 +1726,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_GE:
+    {
 
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
@@ -1702,8 +1742,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_LT:
+    {
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Numerical");
@@ -1715,8 +1757,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_LE:
+    {
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Numerical");
@@ -1728,8 +1772,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_BANG:
+    {
 
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
@@ -1750,8 +1796,10 @@ UExpression::eval (UCommand *command,
       if (ec1)
 	ec = new UEventCompound (EC_BANG, ec1);
       return ret;
+    }
 
     case EXPR_TEST_AND:
+    {
 
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
@@ -1794,8 +1842,10 @@ UExpression::eval (UCommand *command,
       delete e1;
       delete e2;
       return ret;
+    }
 
     case EXPR_TEST_OR:
+    {
 
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
@@ -1837,6 +1887,7 @@ UExpression::eval (UCommand *command,
       delete e2;
       delete e1;
       return ret;
+    }
 
     default:
       return 0;

@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Add braces
+	* src/uexpression.cc: in this monster.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Formatting changes
 	* src/parser/bison/ugrammar.y: here.
 
