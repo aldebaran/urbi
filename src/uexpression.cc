@@ -219,21 +219,21 @@ UExpression::UExpression(UExpression::Type type,
       case EXPR_EXP:   val = pow (expression1->val , expression2->val); break;
       default:    break;
     }
-    
+
     this->type = EXPR_VALUE;
     this->isconst = true;
     dataType	 = DATA_NUM;
     delete expression1; this->expression1 = 0;
     delete expression2; this->expression2 = 0;
   }
-  
+
   if (type == EXPR_NEG
       && expression1
       && expression1->type == EXPR_VALUE
       && expression1->dataType == DATA_NUM)
   {
     val = - expression1->val;
-    
+
     this->type = EXPR_VALUE;
     this->isconst = true;
     dataType = DATA_NUM;
@@ -633,18 +633,10 @@ UExpression::eval (UCommand *command,
       if (STREQ(str->str(), "blend"))
       {
 	ret->dataType = DATA_STRING;
-	switch (variable->blendType)
-	{
-	  case UNORMAL:	 ret->str = new UString("normal"); break;
-	  case UMIX:	 ret->str = new UString("mix"); break;
-	  case UADD:	 ret->str = new UString("add"); break;
-	  case UDISCARD: ret->str = new UString("discard"); break;
-	  case UQUEUE:	 ret->str = new UString("queue"); break;
-	  case UCANCEL:	 ret->str = new UString("cancel"); break;
-	  default: ret->str = new UString("unknown");
-	}
+	ret->str = new UString(name (variable->blendType));
 	return ret;
       }
+
       char errorString[256];
       snprintf(errorString, sizeof errorString, "!!! Unknown property: %s\n",
 	       str->str());

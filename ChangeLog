@@ -1,5 +1,11 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	reuse name from UBlendType
+	* src/uexpression.cc: here.
+	* src/ucommand.cc: Formatting changes.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Put UCommandType in UCommand
 	* src/utypes.hh (UCommandType): Rename as...
 	* src/ucommand.hh (UCommand::Type): this.

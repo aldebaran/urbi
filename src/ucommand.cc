@@ -360,8 +360,8 @@ MEMORY_MANAGER_INIT(UCommand_TREE);
  still cannot be persistant (like a AT or WHENEVER).
  */
 UCommand_TREE::UCommand_TREE(UNodeType node,
-			      UCommand* command1,
-			      UCommand* command2)
+			     UCommand* command1,
+			     UCommand* command2)
   : UCommand(CMD_TREE),
     command1 (command1),
     command2 (command2),
@@ -5532,8 +5532,8 @@ UCommandStatus
 UCommand_CLASS::execute(UConnection*)
 {
   // remote new processing
-  HMobjWaiting::iterator ow;
-  ow = ::urbiserver->objWaittab.find(object->str());
+  HMobjWaiting::iterator ow
+    = ::urbiserver->objWaittab.find(object->str());
   if (ow != ::urbiserver->objWaittab.end())
   {
     ow->second->nb--;
@@ -5546,7 +5546,8 @@ UCommand_CLASS::execute(UConnection*)
 
   // add some object storage here based on 'object'
   new UObj(object);
-  if (!parameters) return status = UCOMPLETED;
+  if (!parameters)
+    return status = UCOMPLETED;
 
   // morph into a series of & for each element of the class
   morph = 0;
