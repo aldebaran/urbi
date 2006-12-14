@@ -5,6 +5,11 @@
 
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Shorten scopes
+	* src/uexpression.cc: here.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor binaries
 	* src/uexpression.cc: here.
 

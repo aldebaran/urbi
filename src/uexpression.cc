@@ -202,43 +202,43 @@ UExpression::UExpression(UExpression::Type type,
   this->expression2 = expression2;
 
   // Compile time calculus reduction
-  if (expression1 && expression2)
-    if (expression1->type == EXPR_VALUE && expression1->dataType == DATA_NUM
-	&& expression2->type == EXPR_VALUE && expression2->dataType == DATA_NUM
-	&& (type == EXPR_PLUS || type == EXPR_MINUS ||
-	    type == EXPR_MULT || type == EXPR_DIV ||
-	    type == EXPR_EXP)
-	&& ! (type == EXPR_DIV && expression2->val == 0))
+  if (expression1 && expression2
+      && expression1->type == EXPR_VALUE && expression1->dataType == DATA_NUM
+      && expression2->type == EXPR_VALUE && expression2->dataType == DATA_NUM
+      && (type == EXPR_PLUS || type == EXPR_MINUS ||
+	  type == EXPR_MULT || type == EXPR_DIV ||
+	  type == EXPR_EXP)
+      && ! (type == EXPR_DIV && expression2->val == 0))
+  {
+    switch (type)
     {
-      switch (type)
-      {
-	case EXPR_PLUS:	 val = expression1->val + expression2->val; break;
-	case EXPR_MINUS: val = expression1->val - expression2->val; break;
-	case EXPR_MULT:	 val = expression1->val * expression2->val; break;
-	case EXPR_DIV:	 val = expression1->val / expression2->val; break;
-	case EXPR_EXP:	 val = pow (expression1->val , expression2->val); break;
-	default:    break;
-      }
-
-      this->type = EXPR_VALUE;
-      this->isconst = true;
-      dataType	 = DATA_NUM;
-      delete expression1; this->expression1 = 0;
-      delete expression2; this->expression2 = 0;
+      case EXPR_PLUS:  val = expression1->val + expression2->val; break;
+      case EXPR_MINUS: val = expression1->val - expression2->val; break;
+      case EXPR_MULT:  val = expression1->val * expression2->val; break;
+      case EXPR_DIV:   val = expression1->val / expression2->val; break;
+      case EXPR_EXP:   val = pow (expression1->val , expression2->val); break;
+      default:    break;
     }
-
+    
+    this->type = EXPR_VALUE;
+    this->isconst = true;
+    dataType	 = DATA_NUM;
+    delete expression1; this->expression1 = 0;
+    delete expression2; this->expression2 = 0;
+  }
+  
   if (type == EXPR_NEG
       && expression1
       && expression1->type == EXPR_VALUE
       && expression1->dataType == DATA_NUM)
-    {
-      val = - expression1->val;
-
-      this->type = EXPR_VALUE;
-      this->isconst = true;
-      dataType	 = DATA_NUM;
-      delete expression1; this->expression1 = 0;
-    }
+  {
+    val = - expression1->val;
+    
+    this->type = EXPR_VALUE;
+    this->isconst = true;
+    dataType = DATA_NUM;
+    delete expression1; this->expression1 = 0;
+  }
 }
 
 //! UExpression constructor.
@@ -436,7 +436,7 @@ UExpression::eval (UCommand *command,
       UValue* ret = new UValue();
       ret->dataType = DATA_LIST;
       pevent = parameters;
-      e1 = ret;
+      UValue* e1 = ret;
       if (pevent)
       {
 	e1->liststart = pevent->expression->eval(command, connection);
@@ -485,7 +485,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_GROUP:
     {
-
       UValue* ret = new UValue();
       retr = connection->server->grouptab.find(str->str());
       if (retr !=  connection->server->grouptab.end())
@@ -496,7 +495,7 @@ UExpression::eval (UCommand *command,
 	if (it !=  retr->second->members.end())
 	{
 	  e = new UExpression (EXPR_GROUP, (*it)->copy());
-	  e2 = e->eval(command, connection);
+	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
 	  {
@@ -518,7 +517,7 @@ UExpression::eval (UCommand *command,
 	while (it !=  retr->second->members.end())
 	{
 	  e = new UExpression (EXPR_GROUP, (*it)->copy());
-	  e2 = e->eval(command, connection);
+	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
 	  {
@@ -528,7 +527,7 @@ UExpression::eval (UCommand *command,
 	  }
 	  else
 	  {
-	    e3 = e2;
+	    UValue* e3 = e2;
 	    e2 = e2->liststart;
 	    while (e2)
 	    {
@@ -546,7 +545,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_VALUE:
     {
-
       if (tmp_value)
 	return tmp_value->copy(); // hack to be able to handle complex
       // return types from function calls
@@ -560,7 +558,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_ADDR_VARIABLE:
     {
-
       UValue* ret = new UValue();
       ret->dataType = DATA_STRING;
       // hack here to be able to use objects pointeurs
@@ -799,12 +796,11 @@ UExpression::eval (UCommand *command,
 
       }
 
-      if (parameters != 0 &&
-	  parameters->size() == 1)
+      if (parameters && parameters->size() == 1)
       {
 	if (STREQ(variablename->id->str(), "strlen"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
 	  UValue* ret = new UValue();
 	  ret->dataType = DATA_NUM;
@@ -821,7 +817,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "head"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
 	  UValue* ret;
 	  if (e1->liststart)
@@ -835,7 +831,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "tail"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
 	  UValue* ret = 0;
 	  if (e1->liststart)
@@ -866,7 +862,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "size"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
 	  UValue* ret = new UValue(0.0);
 
@@ -922,7 +918,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "loadwav"))
 	{
-	  e1 = parameters->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
 	  UValue* ret = new UValue();
 	  ret->dataType = DATA_BINARY;
@@ -1026,13 +1022,13 @@ UExpression::eval (UCommand *command,
 	}
       }
 
-      if (parameters != 0 &&
+      if (parameters &&
 	  parameters->size() == 3 &&
 	  STREQ(variablename->id->str(), "strsub"))
       {
-	e1 = parameters->expression->eval(command, connection);
-	e2 = parameters->next->expression->eval(command, connection);
-	e3 = parameters->next->next->expression->eval(command, connection);
+	UValue* e1 = parameters->expression->eval(command, connection);
+	UValue* e2 = parameters->next->expression->eval(command, connection);
+	UValue* e3 = parameters->next->next->expression->eval(command, connection);
 
 	ENSURE_TYPES_3 (DATA_STRING, DATA_NUM, DATA_NUM);
 	UValue* ret = new UValue();
@@ -1049,8 +1045,8 @@ UExpression::eval (UCommand *command,
 	  && parameters->size() == 2
 	  && STREQ(variablename->id->str(), "atan2"))
       {
-	e1 = parameters->expression->eval(command, connection);
-	e2 = parameters->next->expression->eval(command, connection);
+	UValue* e1 = parameters->expression->eval(command, connection);
+	UValue* e2 = parameters->next->expression->eval(command, connection);
 	ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
 	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
@@ -1191,8 +1187,8 @@ UExpression::eval (UCommand *command,
 
     case EXPR_PLUS:
     {
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
 
       if (e1==0 || e1->dataType == DATA_VOID ||
 	  e2==0 || e2->dataType == DATA_VOID)
@@ -1237,9 +1233,8 @@ UExpression::eval (UCommand *command,
 
     case EXPR_DIV:
     {
-
-      e1 = expression1->eval(command, connection);
-      e2 = expression2->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
+      UValue* e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
 
       if (e2->val == 0)
@@ -1259,7 +1254,7 @@ UExpression::eval (UCommand *command,
 
     case EXPR_NEG:
     {
-      e1 = expression1->eval(command, connection);
+      UValue* e1 = expression1->eval(command, connection);
       ENSURE_TYPES_1 (DATA_NUM);
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
