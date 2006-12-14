@@ -126,7 +126,7 @@ public:
   void            print       ();
   void            initialize  ();
 
-  // Backward compatible version of eval (thanks Mr. C++Overloading!)
+  // Backward compatible version of eval.
   UValue*         eval        (UCommand *command,
 			       UConnection *connection);
 
@@ -179,6 +179,11 @@ public:
   /// Time constant for a soft test (0 means "hard test").
   UExpression      *softtest_time;
 
+private:
+  /// eval() specialized for type == EXPR_VARIABLE.
+  UValue* eval_EXPR_VARIABLE (UCommand *command,
+			      UConnection *connection,
+			      UEventCompound*& ec);
 };
 
 #endif

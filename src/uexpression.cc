@@ -403,20 +403,15 @@ UExpression::eval (UCommand *command,
 		   UConnection *connection,
 		   UEventCompound*& ec)
 {
-  const int errSize = 256;
-  static char errorString[errSize]; // Max error message = 256 chars
   UValue *e1=0;
   UValue *e2;
   UValue *e3;
   UValue *e4;
   UVariable *variable;
-  UString* method;
-  UString* devicename;
   ufloat d1;
   ufloat d2;
   UNamedParameters *pevent;
   UString* funname;
-  HMfunctiontab::iterator hmf;
   HMgrouptab::iterator retr;
   std::list<UString*>::iterator it;
   UExpression *e;
@@ -424,15 +419,14 @@ UExpression::eval (UCommand *command,
   UEventCompound* ec1;
   UEventCompound* ec2;
 
-  if (issofttest
-      && softtest_time)
+  if (issofttest && softtest_time)
   {
-    UValue *ret = softtest_time->eval(command, connection);
-    if (ret)
-      softtest_time->val = ret->val;
+    UValue *v = softtest_time->eval(command, connection);
+    if (v)
+      softtest_time->val = v->val;
     else
       softtest_time->val = 0;
-    delete ret;
+    delete v;
   }
 
   switch (type)
@@ -577,285 +571,23 @@ UExpression::eval (UCommand *command,
     }
 
     case EXPR_VARIABLE:
-    {
-      variable = variablename->getVariable(command, connection);
-      if (!variablename->getFullname()) 
-	return 0;
-      method = variablename->getMethod();
-      devicename = variablename->getDevice();
-      UValue* ret = 0;
-      const char* varname;
-      if (!variable)
-      {
-	varname = variablename->getFullname()->str();
-
-	// Event detection
-	eh = kernel::findEventHandler(variablename->getFullname(), 0);
-	if (eh)
-	{
-	  ret = new UValue(ufloat(1));
-	  if  (eh->noPositive())
-	    ret->val = 0; // no active (positive) event in the handler
-
-	  ec = new UEventCompound
-	    (new UEventMatch
-	     (variablename->getFullname(),
-	      0,
-	      command,
-	      connection));
-	  return ret;
-	}
-
-	// virtual variables
-	const char* devname = variablename->getDevice()->str();
-	bool ambiguous;
-	UVariable *vari = 0;
-	HMobjtab::iterator itobj;
-	if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	    ::urbiserver->objtab.end())
-	{
-	  vari = itobj->second->
-	    searchVariable(variablename->getMethod()->str(), ambiguous);
-	  if (ambiguous)
-	  {
-	    snprintf(errorString,
-		     errSize,
-		     "!!! Ambiguous multiple inheritance on variable %s\n",
-		     variablename->getFullname()->str());
-	    connection->send(errorString,
-			     command->getTag().c_str());
-	    return new UValue();
-	  }
-
-	  variable = vari;
-	  if (vari)
-	  {
-	    devicename->update(vari->method);
-	    variablename->device->update(vari->method);
-	    variablename->buildFullname(command, connection);
-	  }
-	}
-      }
-
-      if (!variable)
-      {
-	char* p;
-	char* pp = const_cast<char*>(strchr(varname, '.'));
-	if (!pp) pp = const_cast<char*> (varname);
-	p = const_cast<char*>(strstr(pp, "__"));
-
-	if (p==varname) // the name starts by __, we skip
-	  p = const_cast<char*>(strstr(varname+2, "__"));
-
-	char* p2;
-	if (p)
-	{
-	  // could be a list index.... (dirty hack)
-	  p[0]=0;
-
-	  HMvariabletab::iterator hmv =::urbiserver->variabletab.find(varname);
-	  while (hmv == ::urbiserver->variabletab.end()
-		 && p)
-	  {
-	    p[0]='_';
-	    p = const_cast<char*>(strstr(p+2, "__"));
-	    if (p)
-	    {
-	      p[0] = 0;
-	      hmv = ::urbiserver->variabletab.find(varname);
-	    }
-	  }
-	  if (hmv != ::urbiserver->variabletab.end() && p)
-	  {
-	    UVariable* tmpvar = hmv->second;
-	    tmpvar->get (); // to trigger the UNotifyAccess
-	    if (tmpvar->value->dataType == DATA_LIST)
-	    {
-	      // welcome to C-string hacking grand master area
-	      // Don't let unaccompagnied children see this.
-	      UValue* xval = tmpvar->value->liststart;
-	      int index;
-	      int curr;
-	      p[0]='_';
-	      p=p+2; // beginning of the index
-	      p2 = strchr(p, '_');
-	      while (p)
-	      {
-		if (p2) p2[0]=0;
-		index = atoi(p);
-		curr=0;
-		while ((curr!=index) && (xval))
-		{
-		  xval = xval->next;
-		  curr++;
-		}
-		if (!xval)
-		{
-		  connection->send("!!! Index out of range\n",
-				   command->getTag().c_str());
-		  return new UValue();
-		}
-		else
-		{
-		  if (p2)
-		  {
-		    if (xval->dataType != DATA_LIST)
-		    {
-		      connection->send("!!! Invalid index usage\n",
-				       command->getTag().c_str());
-		      return new UValue();
-		    }
-		    else
-		      xval = xval->liststart;
-		  }
-		}
-
-		if (p2)
-		  p2[0]='_';
-		if (p2)
-		  p = p2+2; else
-		  p=0;
-		if (p)
-		  p2 = strchr(p, '_');
-	      }
-
-	      return xval->copy();
-	    }
-	  }
-	  if (p)
-	    p[0]='_';
-	}
-
-	snprintf(errorString, errSize, "!!! Unknown identifier: %s\n",
-		 variablename->getFullname()->str());
-	connection->send(errorString, command->getTag().c_str());
-	return 0;
-      }
-
-      if (!variablename->isstatic || firsteval)
-      {
-	ret = variable->get()->copy();
-	// error evaluation for variables (target-val)
-	if (variablename->varerror
-	    && variable->value->dataType == DATA_NUM)
-	  ret->val = variable->previous - ret->val;
-
-	if (variablename->varin
-	    && variable->value->dataType == DATA_NUM)
-	{
-	  ret->val = variable->target;
-	}
-
-	// normalized variables
-	if (variablename->isnormalized
-	    && variable->rangemax != variable->rangemin)
-	{
-	  if (variable->rangemin == -UINFINITY ||
-	      variable->rangemax ==  UINFINITY ||
-	      variable->value->dataType != DATA_NUM)
-	  {
-	    snprintf(errorString, errSize,
-		     "!!! Impossible to normalize:"
-		     " no range defined for variable %s\n",
-		     variablename->getFullname()->str());
-
-	    connection->send(errorString, command->getTag().c_str());
-	    return 0;
-	  }
-
-	  ret->val = (ret->val - variable->rangemin) /
-	    (variable->rangemax - variable->rangemin);
-	}
-
-	if (variablename->deriv != UNODERIV)
-	{
-	  if (variable->autoUpdate)
-	  {
-	    if (variablename->deriv == UTRUEDERIV)
-	      variablename->deriv = UDERIV;
-	    if (variablename->deriv == UTRUEDERIV2)
-	      variablename->deriv = UDERIV2;
-	  }
-
-	  switch (variablename->deriv)
-	  {
-	    case UDERIV:
-	      ret->val = 1000. * (variable->previous - variable->previous2)/
-		(::urbiserver->previousTime - ::urbiserver->previous2Time);
-	      break;
-	    case UDERIV2: ret->val = 1000000. * 2 *
-		( variable->previous  * (::urbiserver->previous2Time-
-					 ::urbiserver->previous3Time)
-		  - variable->previous2 *(::urbiserver->previousTime-
-					  ::urbiserver->previous3Time)
-		  +
-		  variable->previous3 *
-		  (::urbiserver->previousTime  -
-		   ::urbiserver->previous2Time)
-		  ) / (	 (::urbiserver->previous2Time
-			  - ::urbiserver->previous3Time) *
-			 (::urbiserver->previousTime
-			  - ::urbiserver->previous3Time) *
-			 (::urbiserver->previousTime
-			  - ::urbiserver->previous2Time) );
-
-	      break;
-	    case UTRUEDERIV: ret->val = 1000. *
-		(variable->get()->val - variable->valPrev)/
-		(::urbiserver->currentTime
-		 - ::urbiserver->previousTime);
-	      break;
-	    case UTRUEDERIV2: ret->val = 1000000. * 2 *
-		( variable->get()->val	*
-		  (::urbiserver->previousTime -
-		   ::urbiserver->previous2Time) -
-		  variable->valPrev	*
-		  (::urbiserver->currentTime  -
-		   ::urbiserver->previous2Time) +
-		  variable->valPrev2	*
-		  (::urbiserver->currentTime-
-		   ::urbiserver->previousTime)
-		  ) / (	 (::urbiserver->previousTime
-			  - ::urbiserver->previous2Time) *
-			 (::urbiserver->currentTime
-			  - ::urbiserver->previous2Time) *
-			 (::urbiserver->currentTime
-			  - ::urbiserver->previousTime) );
-	      break;
-	    default: break;
-	  }
-	}
-      }
-
-      // static variables
-      if (variablename->isstatic)
-	if (firsteval)
-	{
-	  firsteval = false;
-	  staticcache = ret->copy();
-	  if (!staticcache)  return 0;
-	}
-	else
-	  ret = staticcache->copy();
-
-      return ret;
-    }
+      return eval_EXPR_VARIABLE (command, connection, ec);
 
     case EXPR_PROPERTY:
     {
-      variable = variablename->getVariable(command, connection);
+      UVariable *variable = variablename->getVariable(command, connection);
       if (!variablename->getFullname())
 	return 0;
       if (!variable)
       {
-	snprintf(errorString, errSize, "!!! Unknown identifier: %s\n",
+	char errorString[256];
+	snprintf(errorString, sizeof errorString,
+		 "!!! Unknown identifier: %s\n",
 		 variablename->getFullname()->str());
 
 	connection->send(errorString, command->getTag().c_str());
 	return 0;
       }
-      method = variablename->getMethod();
-      devicename = variablename->getDevice();
 
       UValue* ret = new UValue();
 
@@ -916,7 +648,8 @@ UExpression::eval (UCommand *command,
 	}
 	return ret;
       }
-      snprintf(errorString, errSize, "!!! Unknown property: %s\n",
+      char errorString[256];
+      snprintf(errorString, sizeof errorString, "!!! Unknown property: %s\n",
 	       str->str());
 
       connection->send(errorString, command->getTag().c_str());
@@ -983,7 +716,8 @@ UExpression::eval (UCommand *command,
 	  if (connection->server->saveFile(e1->str->str(),
 					   e2->str->str()) == UFAIL)
 	  {
-	    snprintf(errorString, errSize,
+	    char errorString[256];
+	    snprintf(errorString, sizeof errorString,
 		     "!!! Cannot save to the file %s\n", e1->str->str());
 	    connection->send(errorString, command->getTag().c_str());
 	    delete ret;
@@ -1197,7 +931,8 @@ UExpression::eval (UCommand *command,
 	  if (connection->server->loadFile(e1->str->str(),
 					   loadQueue) == UFAIL)
 	  {
-	    snprintf(errorString, errSize,
+	    char errorString[256];
+	    snprintf(errorString, sizeof errorString,
 		     "!!! Cannot load the file %s\n", e1->str->str());
 	    connection->send(errorString, command->getTag().c_str());
 	    delete ret;
@@ -1354,6 +1089,7 @@ UExpression::eval (UCommand *command,
 	{
 	  UValue* ret = new UValue();
 	  ret->dataType = DATA_STRING;
+	  char errorString[256];
 	  sprintf(errorString, "%d", (int)e1->val);
 	  ret->str = new UString(errorString);
 
@@ -1429,7 +1165,8 @@ UExpression::eval (UCommand *command,
       // default = unknown.
       funname = variablename->buildFullname(command, connection);
       if (!variablename->getFullname()) return 0;
-      hmf = ::urbiserver->functiontab.find(funname->str());
+      HMfunctiontab::iterator hmf =
+	::urbiserver->functiontab.find(funname->str());
       if (hmf != ::urbiserver->functiontab.end())
       {
 	connection->send("!!! Custom function call in expressions"
@@ -1439,13 +1176,13 @@ UExpression::eval (UCommand *command,
       }
 
 
+      char errorString[256];
       if (parameters)
-	snprintf(errorString,
-		 errSize,
+	snprintf(errorString, sizeof errorString,
 		 "!!! Error with function eval: %s [nb param=%d]\n",
 		 variablename->getFullname()->str(), parameters->size());
       else
-	snprintf(errorString, errSize,
+	snprintf(errorString, sizeof errorString,
 		 "!!! Error with function eval: %s [no param]\n",
 		 variablename->getFullname()->str());
       connection->send(errorString, command->getTag().c_str());
@@ -1889,6 +1626,278 @@ UExpression::eval (UCommand *command,
     default:
       return 0;
   }
+}
+
+
+UValue*
+UExpression::eval_EXPR_VARIABLE (UCommand *command,
+				 UConnection *connection,
+				 UEventCompound*& ec)
+{
+  assert (type == EXPR_VARIABLE);
+  UVariable *variable = variablename->getVariable(command, connection);
+  if (!variablename->getFullname()) 
+    return 0;
+  UString* devicename = variablename->getDevice();
+  UValue* ret = 0;
+  const char* varname;
+  if (!variable)
+  {
+    varname = variablename->getFullname()->str();
+
+    // Event detection
+    UEventHandler* eh =
+      kernel::findEventHandler(variablename->getFullname(), 0);
+    if (eh)
+    {
+      ret = new UValue(ufloat(1));
+      if  (eh->noPositive())
+	ret->val = 0; // no active (positive) event in the handler
+
+      ec = new UEventCompound
+	(new UEventMatch
+	 (variablename->getFullname(),
+	  0,
+	  command,
+	  connection));
+      return ret;
+    }
+
+    // virtual variables
+    const char* devname = variablename->getDevice()->str();
+    bool ambiguous;
+    UVariable *vari = 0;
+    HMobjtab::iterator itobj;
+    if ((itobj = ::urbiserver->objtab.find(devname)) !=
+	::urbiserver->objtab.end())
+    {
+      vari = itobj->second->
+	searchVariable(variablename->getMethod()->str(), ambiguous);
+      if (ambiguous)
+      {
+	char errorString[256];
+	snprintf(errorString, sizeof errorString,
+		 "!!! Ambiguous multiple inheritance on variable %s\n",
+		 variablename->getFullname()->str());
+	connection->send(errorString,
+			 command->getTag().c_str());
+	return new UValue();
+      }
+
+      variable = vari;
+      if (vari)
+      {
+	devicename->update(vari->method);
+	variablename->device->update(vari->method);
+	variablename->buildFullname(command, connection);
+      }
+    }
+  }
+
+  if (!variable)
+  {
+    char* p;
+    char* pp = const_cast<char*>(strchr(varname, '.'));
+    if (!pp) pp = const_cast<char*> (varname);
+    p = const_cast<char*>(strstr(pp, "__"));
+
+    if (p==varname) // the name starts by __, we skip
+      p = const_cast<char*>(strstr(varname+2, "__"));
+
+    char* p2;
+    if (p)
+    {
+      // could be a list index.... (dirty hack)
+      p[0]=0;
+
+      HMvariabletab::iterator hmv =::urbiserver->variabletab.find(varname);
+      while (hmv == ::urbiserver->variabletab.end()
+	     && p)
+      {
+	p[0]='_';
+	p = const_cast<char*>(strstr(p+2, "__"));
+	if (p)
+	{
+	  p[0] = 0;
+	  hmv = ::urbiserver->variabletab.find(varname);
+	}
+      }
+      if (hmv != ::urbiserver->variabletab.end() && p)
+      {
+	UVariable* tmpvar = hmv->second;
+	tmpvar->get (); // to trigger the UNotifyAccess
+	if (tmpvar->value->dataType == DATA_LIST)
+	{
+	  // welcome to C-string hacking grand master area
+	  // Don't let unaccompagnied children see this.
+	  UValue* xval = tmpvar->value->liststart;
+	  int index;
+	  int curr;
+	  p[0]='_';
+	  p=p+2; // beginning of the index
+	  p2 = strchr(p, '_');
+	  while (p)
+	  {
+	    if (p2) p2[0]=0;
+	    index = atoi(p);
+	    curr=0;
+	    while ((curr!=index) && (xval))
+	    {
+	      xval = xval->next;
+	      curr++;
+	    }
+	    if (!xval)
+	    {
+	      connection->send("!!! Index out of range\n",
+			       command->getTag().c_str());
+	      return new UValue();
+	    }
+	    else
+	    {
+	      if (p2)
+	      {
+		if (xval->dataType != DATA_LIST)
+		{
+		  connection->send("!!! Invalid index usage\n",
+				   command->getTag().c_str());
+		  return new UValue();
+		}
+		else
+		  xval = xval->liststart;
+	      }
+	    }
+
+	    if (p2)
+	      p2[0]='_';
+	    if (p2)
+	      p = p2+2; else
+	      p=0;
+	    if (p)
+	      p2 = strchr(p, '_');
+	  }
+
+	  return xval->copy();
+	}
+      }
+      if (p)
+	p[0]='_';
+    }
+
+    char errorString[256];
+    snprintf(errorString, sizeof errorString, "!!! Unknown identifier: %s\n",
+	     variablename->getFullname()->str());
+    connection->send(errorString, command->getTag().c_str());
+    return 0;
+  }
+
+  if (!variablename->isstatic || firsteval)
+  {
+    ret = variable->get()->copy();
+    // error evaluation for variables (target-val)
+    if (variablename->varerror
+	&& variable->value->dataType == DATA_NUM)
+      ret->val = variable->previous - ret->val;
+
+    if (variablename->varin
+	&& variable->value->dataType == DATA_NUM)
+    {
+      ret->val = variable->target;
+    }
+
+    // normalized variables
+    if (variablename->isnormalized
+	&& variable->rangemax != variable->rangemin)
+    {
+      if (variable->rangemin == -UINFINITY ||
+	  variable->rangemax ==  UINFINITY ||
+	  variable->value->dataType != DATA_NUM)
+      {
+	char errorString[256];
+	snprintf(errorString, sizeof errorString,
+		 "!!! Impossible to normalize:"
+		 " no range defined for variable %s\n",
+		 variablename->getFullname()->str());
+
+	connection->send(errorString, command->getTag().c_str());
+	return 0;
+      }
+
+      ret->val = (ret->val - variable->rangemin) /
+	(variable->rangemax - variable->rangemin);
+    }
+
+    if (variablename->deriv != UNODERIV)
+    {
+      if (variable->autoUpdate)
+      {
+	if (variablename->deriv == UTRUEDERIV)
+	  variablename->deriv = UDERIV;
+	if (variablename->deriv == UTRUEDERIV2)
+	  variablename->deriv = UDERIV2;
+      }
+
+      switch (variablename->deriv)
+      {
+	case UDERIV:
+	  ret->val = 1000. * (variable->previous - variable->previous2)/
+	    (::urbiserver->previousTime - ::urbiserver->previous2Time);
+	  break;
+	case UDERIV2: ret->val = 1000000. * 2 *
+	    ( variable->previous  * (::urbiserver->previous2Time-
+				     ::urbiserver->previous3Time)
+	      - variable->previous2 *(::urbiserver->previousTime-
+				      ::urbiserver->previous3Time)
+	      +
+	      variable->previous3 *
+	      (::urbiserver->previousTime  -
+	       ::urbiserver->previous2Time)
+	      ) / (	 (::urbiserver->previous2Time
+			  - ::urbiserver->previous3Time) *
+			 (::urbiserver->previousTime
+			  - ::urbiserver->previous3Time) *
+			 (::urbiserver->previousTime
+			  - ::urbiserver->previous2Time) );
+
+	  break;
+	case UTRUEDERIV: ret->val = 1000. *
+	    (variable->get()->val - variable->valPrev)/
+	    (::urbiserver->currentTime
+	     - ::urbiserver->previousTime);
+	  break;
+	case UTRUEDERIV2: ret->val = 1000000. * 2 *
+	    ( variable->get()->val	*
+	      (::urbiserver->previousTime -
+	       ::urbiserver->previous2Time) -
+	      variable->valPrev	*
+	      (::urbiserver->currentTime  -
+	       ::urbiserver->previous2Time) +
+	      variable->valPrev2	*
+	      (::urbiserver->currentTime-
+	       ::urbiserver->previousTime)
+	      ) / (	 (::urbiserver->previousTime
+			  - ::urbiserver->previous2Time) *
+			 (::urbiserver->currentTime
+			  - ::urbiserver->previous2Time) *
+			 (::urbiserver->currentTime
+			  - ::urbiserver->previousTime) );
+	  break;
+	default: break;
+      }
+    }
+  }
+
+  // static variables
+  if (variablename->isstatic)
+    if (firsteval)
+    {
+      firsteval = false;
+      staticcache = ret->copy();
+      if (!staticcache)  return 0;
+    }
+    else
+      ret = staticcache->copy();
+
+  return ret;
 }
 
 
