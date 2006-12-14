@@ -66,7 +66,7 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type, ufloat *val)
+UExpression::UExpression(UExpression::Type type, ufloat *val)
 {
   initialize();
 
@@ -83,7 +83,7 @@ UExpression::UExpression(UExpressionType type, ufloat *val)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type, ufloat val)
+UExpression::UExpression(UExpression::Type type, ufloat val)
 {
   initialize();
 
@@ -99,7 +99,7 @@ UExpression::UExpression(UExpressionType type, ufloat val)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type, UString *str)
+UExpression::UExpression(UExpression::Type type, UString *str)
 {
   initialize();
   this->str  = str;
@@ -112,7 +112,7 @@ UExpression::UExpression(UExpressionType type, UString *str)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type, UValue *v)
+UExpression::UExpression(UExpression::Type type, UValue *v)
 {
   initialize();
 
@@ -135,7 +135,7 @@ UExpression::UExpression(UExpressionType type, UValue *v)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type,
+UExpression::UExpression(UExpression::Type type,
 			 UString *oper,
 			 UVariableName *variablename)
 {
@@ -153,7 +153,7 @@ UExpression::UExpression(UExpressionType type,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type, UVariableName* variablename)
+UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
 {
   initialize();
   this->type	 = type; // should be EXPR_VARIABLE or
@@ -166,7 +166,7 @@ UExpression::UExpression(UExpressionType type, UVariableName* variablename)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type,
+UExpression::UExpression(UExpression::Type type,
 			 UVariableName* variablename,
 			 UNamedParameters *parameters)
 {
@@ -181,7 +181,7 @@ UExpression::UExpression(UExpressionType type,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpressionType type,
+UExpression::UExpression(UExpression::Type type,
 			 UNamedParameters *parameters)
 {
   initialize();
@@ -191,7 +191,7 @@ UExpression::UExpression(UExpressionType type,
 }
 
 //! UExpression constructor for composed operation
-UExpression::UExpression(UExpressionType type,
+UExpression::UExpression(UExpression::Type type,
 			 UExpression* expression1,
 			 UExpression* expression2)
 {
@@ -242,7 +242,7 @@ UExpression::UExpression(UExpressionType type,
 }
 
 //! UExpression constructor.
-UExpression::UExpression (UExpressionType _type, UExpression* _expression1,
+UExpression::UExpression (UExpression::Type _type, UExpression* _expression1,
 			  UExpression* _expression2,
 			  UVariableName* _variablename,
 			  UNamedParameters* _parameters, UString* _str,

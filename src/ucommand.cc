@@ -592,7 +592,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
   // Function call
   // morph into the function code
-  if (expression->type == EXPR_FUNCTION)
+  if (expression->type == UExpression::EXPR_FUNCTION)
   {
     UString* functionname =
       expression->variablename->buildFullname(this, connection);
@@ -676,7 +676,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  new UCommand_ASSIGN_VALUE
 	  (
 	    variablename->copy(),
-	    new UExpression(EXPR_VARIABLE,
+	    new UExpression(UExpression::EXPR_VARIABLE,
 			    resultContainer),
 	    0
 	    )
@@ -790,7 +790,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	  delete expression;
 	  expression = new UExpression
-	    (EXPR_VALUE,
+	    (UExpression::EXPR_VALUE,
 	     new UValue((*cbi)->__evalcall(tmparray)));
 	  found_function = true;
 	}
@@ -841,7 +841,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  (
 	    new UExpression
 	    (
-	      EXPR_FUNCTION,
+	      UExpression::EXPR_FUNCTION,
 	      new UVariableName
 	      (
 		new UString("global"),
@@ -852,7 +852,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	      (
 		new UExpression
 		(
-		  EXPR_VALUE,
+		  UExpression::EXPR_VALUE,
 		  new UString(tmpbuffer)
 		  )
 		)
@@ -872,7 +872,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
   {
     // object aliasing here
     if (variablename->nostruct
-	&& expression->type == EXPR_VARIABLE
+	&& expression->type == UExpression::EXPR_VARIABLE
 	&& expression->variablename
 	&& expression->variablename->nostruct)
     {
@@ -1194,7 +1194,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  if (modif->name->equal("cos"))
 	  {
 	    modif_sin = modif->expression;
-	    tmp_phase = new UExpression(EXPR_VALUE, PI/ufloat(2));
+	    tmp_phase = new UExpression(UExpression::EXPR_VALUE, PI/ufloat(2));
 	    modif_phase = tmp_phase;
 	    found = true;
 	    controlled = true;
@@ -1248,7 +1248,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	  if (modif->name->equal("getphase"))
 	  {
-	    if (modif->expression->type != EXPR_VARIABLE)
+	    if (modif->expression->type != UExpression::EXPR_VARIABLE)
 	    {
 	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		       "!!! a variable is expected for"
@@ -1312,7 +1312,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (!controlled)
       {
 	// no controlling modifier => time:0
-	tmp_time = new UExpression(EXPR_VALUE, ufloat(0));
+	tmp_time = new UExpression(UExpression::EXPR_VALUE, ufloat(0));
 	modif_time = tmp_time;
       }
 
@@ -2214,14 +2214,14 @@ UCommand_AUTOASSIGN::execute(UConnection*)
   {
     case 0: /* += */
       extended_expression =
-	new UExpression(EXPR_PLUS,
-			new UExpression(EXPR_VARIABLE, variablename->copy()),
+	new UExpression(UExpression::EXPR_PLUS,
+			new UExpression(UExpression::EXPR_VARIABLE, variablename->copy()),
 			expression->copy());
       break;
     case 1: /* -= */
       extended_expression =
-	new UExpression(EXPR_MINUS,
-			new UExpression(EXPR_VARIABLE, variablename->copy()),
+	new UExpression(UExpression::EXPR_MINUS,
+			new UExpression(UExpression::EXPR_VARIABLE, variablename->copy()),
 			expression->copy());
       break;
   }
@@ -2309,7 +2309,7 @@ UCommand_EXPR::execute(UConnection *connection)
 {
   HMfunctiontab::iterator hmf;
 
-  if (expression->type == EXPR_FUNCTION)
+  if (expression->type == UExpression::EXPR_FUNCTION)
   {
     // Execution & morphing
     UString* funname =
@@ -2380,7 +2380,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	true,
 	0);
 
-      UCommand_EXPR* cexp = new UCommand_EXPR(new UExpression(EXPR_VARIABLE,
+      UCommand_EXPR* cexp = new UCommand_EXPR(new UExpression(UExpression::EXPR_VARIABLE,
 							      resultContainer));
 
       cexp->setTag(this);
@@ -2564,14 +2564,14 @@ UCommand_EXPR::execute(UConnection *connection)
       morph = (UCommand*)
 	new UCommand_EXPR(
 	  new UExpression(
-	    EXPR_FUNCTION,
+	    UExpression::EXPR_FUNCTION,
 	    new UVariableName(new UString("global"),
 			      new UString("exec"),
 			      false,
 			      0),
 	    new UNamedParameters(
 	      new UExpression(
-		EXPR_VALUE,
+		UExpression::EXPR_VALUE,
 		new UString(tmpbuffer)
 		)
 	      )
@@ -3088,7 +3088,7 @@ UCommand_NEW::execute(UConnection *connection)
 	morph = (UCommand*)
 	  new UCommand_EXPR
 	  (new UExpression
-	   (EXPR_FUNCTION,
+	   (UExpression::EXPR_FUNCTION,
 	    new UVariableName
 	    (new UString("global"),
 	     new UString("exec"),
@@ -3096,7 +3096,7 @@ UCommand_NEW::execute(UConnection *connection)
 	     0),
 	    new UNamedParameters
 	    (new UExpression
-	     (EXPR_VALUE,
+	     (UExpression::EXPR_VALUE,
 	      new UString(tmpbuffer)
 	       )
 	      )
@@ -3126,7 +3126,7 @@ UCommand_NEW::execute(UConnection *connection)
     (
       new UExpression
       (
-	EXPR_FUNCTION,
+	UExpression::EXPR_FUNCTION,
 	new UVariableName
 	(
 	  new UString("global"),
@@ -3137,7 +3137,7 @@ UCommand_NEW::execute(UConnection *connection)
 	(
 	  new UExpression
 	  (
-	    EXPR_VALUE,
+	    UExpression::EXPR_VALUE,
 	    new UString(oss.str().c_str())
 	    )
 	  )
@@ -3569,19 +3569,19 @@ UCommand_GROUP::execute(UConnection *connection)
     std::list<UString*>::iterator it = retr->second->members.begin();
     if (it != retr->second->members.end())
     {
-      ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
+      ret = new UNamedParameters(new UExpression(UExpression::EXPR_VALUE, (*it)->copy()),
 				 0);
       it++;
     }
 
     while (it != retr->second->members.end())
     {
-      ret = new UNamedParameters(new UExpression(EXPR_VALUE, (*it)->copy()),
+      ret = new UNamedParameters(new UExpression(UExpression::EXPR_VALUE, (*it)->copy()),
 				 ret);
       it++;
     }
 
-    morph = new UCommand_EXPR(new UExpression(EXPR_LIST, ret));
+    morph = new UCommand_EXPR(new UExpression(UExpression::EXPR_LIST, ret));
 
     persistant = false;
     return status = UMORPH;
@@ -3847,15 +3847,15 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
   if (cmd == -1)
     morph = new UCommand_ASSIGN_VALUE(
       variablename->copy(),
-      new UExpression(EXPR_MINUS,
-		      new UExpression(EXPR_VALUE, ufloat(1)),
-		      new UExpression(EXPR_VARIABLE, variablename->copy())),
+      new UExpression(UExpression::EXPR_MINUS,
+		      new UExpression(UExpression::EXPR_VALUE, ufloat(1)),
+		      new UExpression(UExpression::EXPR_VARIABLE, variablename->copy())),
       0,
       false);
   else
     morph = new UCommand_ASSIGN_VALUE(
       variablename->copy(),
-      new UExpression(EXPR_VALUE, ufloat(cmd)),
+      new UExpression(UExpression::EXPR_VALUE, ufloat(cmd)),
       0,
       false);
 
@@ -4827,7 +4827,7 @@ UCommand_EMIT::execute(UConnection *connection)
 	if (e1)
 	{
 	  delete pevent->expression;
-	  pevent->expression = new UExpression(EXPR_VALUE, e1->copy());
+	  pevent->expression = new UExpression(UExpression::EXPR_VALUE, e1->copy());
 	  delete e1;
 	}
 
@@ -5152,9 +5152,9 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
       new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
 	new UExpression(
-	  EXPR_PLUS,
-	  new UExpression(EXPR_VARIABLE, variablename->copy()),
-	  new UExpression(EXPR_VALUE, ufloat(1))), 0);
+	  UExpression::EXPR_PLUS,
+	  new UExpression(UExpression::EXPR_VARIABLE, variablename->copy()),
+	  new UExpression(UExpression::EXPR_VALUE, ufloat(1))), 0);
 
     persistant = false;
     return status = UMORPH;
@@ -5166,9 +5166,9 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
       new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
 	new UExpression(
-	  EXPR_MINUS,
-	  new UExpression(EXPR_VARIABLE, variablename->copy()),
-	  new UExpression(EXPR_VALUE, ufloat(1))), 0);
+	  UExpression::EXPR_MINUS,
+	  new UExpression(UExpression::EXPR_VARIABLE, variablename->copy()),
+	  new UExpression(UExpression::EXPR_VALUE, ufloat(1))), 0);
 
     persistant = false;
     return status = UMORPH;
@@ -5559,7 +5559,7 @@ UCommand_CLASS::execute(UConnection*)
     {
       switch (param->expression->type)
       {
-	case EXPR_VALUE:
+	case UExpression::EXPR_VALUE:
 	  cdef = new UCommand_DEF(UDEF_VAR,
 				  new UVariableName(
 				    new UString(object),
@@ -5569,7 +5569,7 @@ UCommand_CLASS::execute(UConnection*)
 				  0,
 				  0);
 	  break;
-	case EXPR_FUNCTION:
+	case UExpression::EXPR_FUNCTION:
 	  cdef = new UCommand_DEF(UDEF_FUNCTION,
 				  new UVariableName(
 				    new UString(object),
@@ -5579,7 +5579,7 @@ UCommand_CLASS::execute(UConnection*)
 				  param->expression->parameters,
 				  0);
 	  break;
-	case EXPR_EVENT:
+	case UExpression::EXPR_EVENT:
 	  cdef = new UCommand_DEF(UDEF_EVENT,
 				  new UVariableName(
 				    new UString(object),
@@ -5590,31 +5590,31 @@ UCommand_CLASS::execute(UConnection*)
 				  0);
 	  break;
 
-	case EXPR_VARIABLE:
-	case EXPR_LIST:
-	case EXPR_GROUP:
-	case EXPR_ADDR_VARIABLE:
-	case EXPR_PLUS:
-	case EXPR_MINUS:
-	case EXPR_MULT:
-	case EXPR_DIV:
-	case EXPR_MOD:
-	case EXPR_EXP:
-	case EXPR_NEG:
-	case EXPR_COPY:
-	case EXPR_PROPERTY:
-	case EXPR_TEST_EQ:
-	case EXPR_TEST_REQ:
-	case EXPR_TEST_PEQ:
-	case EXPR_TEST_DEQ:
-	case EXPR_TEST_NE:
-	case EXPR_TEST_GT:
-	case EXPR_TEST_GE:
-	case EXPR_TEST_LT:
-	case EXPR_TEST_LE:
-	case EXPR_TEST_BANG:
-	case EXPR_TEST_AND:
-	case EXPR_TEST_OR:
+	case UExpression::EXPR_VARIABLE:
+	case UExpression::EXPR_LIST:
+	case UExpression::EXPR_GROUP:
+	case UExpression::EXPR_ADDR_VARIABLE:
+	case UExpression::EXPR_PLUS:
+	case UExpression::EXPR_MINUS:
+	case UExpression::EXPR_MULT:
+	case UExpression::EXPR_DIV:
+	case UExpression::EXPR_MOD:
+	case UExpression::EXPR_EXP:
+	case UExpression::EXPR_NEG:
+	case UExpression::EXPR_COPY:
+	case UExpression::EXPR_PROPERTY:
+	case UExpression::EXPR_TEST_EQ:
+	case UExpression::EXPR_TEST_REQ:
+	case UExpression::EXPR_TEST_PEQ:
+	case UExpression::EXPR_TEST_DEQ:
+	case UExpression::EXPR_TEST_NE:
+	case UExpression::EXPR_TEST_GT:
+	case UExpression::EXPR_TEST_GE:
+	case UExpression::EXPR_TEST_LT:
+	case UExpression::EXPR_TEST_LE:
+	case UExpression::EXPR_TEST_BANG:
+	case UExpression::EXPR_TEST_AND:
+	case UExpression::EXPR_TEST_OR:
 	  break;
       }
       if (cdef)
@@ -6572,7 +6572,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	this,
 	new UCommand_WHENEVER
 	(
-	  new UExpression (EXPR_TEST_BANG,
+	  new UExpression (UExpression::EXPR_TEST_BANG,
 			   test->copy (),
 			   0),
 	  command2,
@@ -6889,12 +6889,10 @@ UCommand_LOOPN::~UCommand_LOOPN()
 UCommandStatus
 UCommand_LOOPN::execute(UConnection *connection)
 {
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
-  //if (status == UONQUEUE)
-  //  command->status = UONQUEUE;
-
-  if (expression->type != EXPR_VALUE)
+  if (expression->type != UExpression::EXPR_VALUE)
   {
     UValue *nb = expression->eval(this, connection);
 
@@ -6910,7 +6908,7 @@ UCommand_LOOPN::execute(UConnection *connection)
       return status = UCOMPLETED;
     }
 
-    expression->type = EXPR_VALUE;
+    expression->type = UExpression::EXPR_VALUE;
     expression->dataType = DATA_NUM;
     expression->val = nb->val;
     delete nb;
@@ -7226,7 +7224,8 @@ UCommand_FOREACH::execute(UConnection *connection)
 
   UNodeType nodeType = nodeType_foreach (type);
 
-  UExpression* currentvalue = new UExpression(EXPR_VALUE, ufloat(0));
+  UExpression* currentvalue = 
+    new UExpression(UExpression::EXPR_VALUE, ufloat(0));
   if (!currentvalue)
     return status = UCOMPLETED;
   currentvalue->dataType = position->dataType;

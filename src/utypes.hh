@@ -220,39 +220,6 @@ enum UCommandStatus
   UMORPH
 };
 
-//! The different types for a UExpression.
-enum UExpressionType
-{
-  EXPR_VALUE,
-  EXPR_VARIABLE,
-  EXPR_LIST,
-  EXPR_GROUP,
-  EXPR_ADDR_VARIABLE,
-  EXPR_FUNCTION,
-  EXPR_PLUS,
-  EXPR_MINUS,
-  EXPR_MULT,
-  EXPR_DIV,
-  EXPR_MOD,
-  EXPR_EXP,
-  EXPR_NEG,
-  EXPR_COPY,
-  EXPR_PROPERTY,
-  EXPR_EVENT,
-
-  EXPR_TEST_EQ,
-  EXPR_TEST_REQ,
-  EXPR_TEST_PEQ,
-  EXPR_TEST_DEQ,
-  EXPR_TEST_NE,
-  EXPR_TEST_GT,
-  EXPR_TEST_GE,
-  EXPR_TEST_LT,
-  EXPR_TEST_LE,
-  EXPR_TEST_BANG,
-  EXPR_TEST_AND,
-  EXPR_TEST_OR
-};
 
 enum UEventCompoundType
 {

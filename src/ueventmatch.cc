@@ -48,7 +48,7 @@ UEventMatch::UEventMatch (UString* eventname,
 
   while  (param)
   {
-    if  (param->expression->type == EXPR_VARIABLE)
+    if  (param->expression->type == UExpression::EXPR_VARIABLE)
     {
       ASSERT (param->expression->variablename)
 	varname = param->expression->variablename->

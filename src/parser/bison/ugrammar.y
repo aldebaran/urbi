@@ -67,7 +67,7 @@ class UParser;
 }
 
 %{
-// Output in ugrammar.cc.
+  // Output in ugrammar.cc.
 #include <string>
 #include <iostream>
 #define TRUE  ufloat(1)
@@ -80,97 +80,96 @@ class UParser;
 #include "ugroup.hh"
 #include "userver.hh"
 
-extern UString** globalDelete;
+  extern UString** globalDelete;
 
-/* Memory checking macros, used in the command tree building process */
+  /* Memory checking macros, used in the command tree building process */
 
-#define MEMCHECK(p)						\
- do {								\
-   if (p==0)							\
-     {								\
-       uparser.connection.server->isolate();			\
-       uparser.connection.server->memoryOverflow = true;	\
-     }								\
- } while (0)
-
-#define MEMCHECK1(p, p1)					\
-  do {								\
-    if (p==0)							\
-      {								\
-	uparser.connection.server->isolate();			\
-	uparser.connection.server->memoryOverflow = true;	\
-	delete p1; p1 = 0;					\
-      }								\
+#define MEMCHECK(p)					\
+  do {							\
+    if (p==0)						\
+    {							\
+      uparser.connection.server->isolate();		\
+      uparser.connection.server->memoryOverflow = true;	\
+    }							\
   } while (0)
 
-#define MEMCHECK2(p, p1, p2)					\
-  do {								\
-    if (p==0)							\
-      {								\
-	uparser.connection.server->isolate();			\
-	uparser.connection.server->memoryOverflow = true;	\
-	delete p1; p1 = 0;					\
-	delete p2; p2 = 0;					\
-      }								\
+#define MEMCHECK1(p, p1)				\
+  do {							\
+    if (p==0)						\
+    {							\
+      uparser.connection.server->isolate();		\
+      uparser.connection.server->memoryOverflow = true;	\
+      delete p1; p1 = 0;				\
+    }							\
   } while (0)
 
-#define MEMCHECK3(p, p1, p2, p3)				\
-  do {								\
-    if (p==0)							\
-      {								\
-	uparser.connection.server->isolate();			\
-	uparser.connection.server->memoryOverflow = true;	\
-	delete p1; p1 = 0;					\
-	delete p2; p2 = 0;					\
-	delete p3; p3 = 0;					\
-      }								\
+#define MEMCHECK2(p, p1, p2)				\
+  do {							\
+    if (p==0)						\
+    {							\
+      uparser.connection.server->isolate();		\
+      uparser.connection.server->memoryOverflow = true;	\
+      delete p1; p1 = 0;				\
+      delete p2; p2 = 0;				\
+    }							\
   } while (0)
 
-#define MEMCHECK4(p, p1, p2, p3, p4)				\
-  do {								\
-    if (p==0)							\
-      {								\
-	uparser.connection.server->isolate();			\
-	uparser.connection.server->memoryOverflow = true;	\
-	delete p1; p1 = 0;					\
-	delete p2; p2 = 0;					\
-	delete p3; p3 = 0;					\
-	delete p4; p4 = 0;					\
-      }								\
+#define MEMCHECK3(p, p1, p2, p3)			\
+  do {							\
+    if (p==0)						\
+    {							\
+      uparser.connection.server->isolate();		\
+      uparser.connection.server->memoryOverflow = true;	\
+      delete p1; p1 = 0;				\
+      delete p2; p2 = 0;				\
+      delete p3; p3 = 0;				\
+    }							\
   } while (0)
 
-/// Direct the call from 'bison' to the scanner in the right UParser.
-inline
-yy::parser::token::yytokentype
-yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
-{
-  return p.scanner_.yylex(val, loc, p);
-}
+#define MEMCHECK4(p, p1, p2, p3, p4)			\
+  do {							\
+    if (p==0)						\
+    {							\
+      uparser.connection.server->isolate();		\
+      uparser.connection.server->memoryOverflow = true;	\
+      delete p1; p1 = 0;				\
+      delete p2; p2 = 0;				\
+      delete p3; p3 = 0;				\
+      delete p4; p4 = 0;				\
+    }							\
+  } while (0)
+
+  /// Direct the call from 'bison' to the scanner in the right UParser.
+  inline
+    yy::parser::token::yytokentype
+    yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& p)
+  {
+    return p.scanner_.yylex(val, loc, p);
+  }
 
 
-/// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
 # define NEW_BIN(Res, Op, Lhs, Rhs)		\
-    do {					\
-      Res = new UCommand_TREE(Op, Lhs, Rhs);	\
-      if (Res)					\
-	Res->setTag("__node__");		\
-      MEMCHECK2(Res, Lhs, Rhs);			\
-    } while (0)
+  do {						\
+    Res = new UCommand_TREE(Op, Lhs, Rhs);	\
+    if (Res)					\
+      Res->setTag("__node__");			\
+    MEMCHECK2(Res, Lhs, Rhs);			\
+  } while (0)
 
-/// Create a new UExpression node composing \c Child with \c Op.
+  /// Create a new UExpression node composing \c Child with \c Op.
 # define NEW_EXP_1(Res, Op, Child)			\
   do {							\
-      Res = new UExpression(Op, Child);			\
-      MEMCHECK1(Res, Child);				\
-    } while (0)
+    Res = new UExpression(UExpression::Op, Child);	\
+    MEMCHECK1(Res, Child);				\
+  } while (0)
 
-/// Create a new UExpression node composing \c Lhs and \c Rhs with \c Op.
+  /// Create a new UExpression node composing \c Lhs and \c Rhs with \c Op.
 # define NEW_EXP_2(Res, Op, Lhs, Rhs)			\
   do {							\
-      Res = new UExpression(Op, Lhs, Rhs);		\
-      MEMCHECK2(Res, Lhs, Rhs);				\
-    } while (0)
-
+    Res = new UExpression(UExpression::Op, Lhs, Rhs);	\
+    MEMCHECK2(Res, Lhs, Rhs);				\
+  } while (0)
 
 %}
 
@@ -504,7 +503,7 @@ taggedcommand:
 flags :
      FLAG  {
 
-      UExpression *flagval = new UExpression(EXPR_VALUE,$1);
+      UExpression *flagval = new UExpression(UExpression::EXPR_VALUE,$1);
       MEMCHECK(flagval);
 
       $$ = new UNamedParameters(new UString("flag"),flagval,0);
@@ -513,7 +512,7 @@ flags :
 
   |  FLAG flags  {
 
-      UExpression *flagval = new UExpression(EXPR_VALUE,$1);
+      UExpression *flagval = new UExpression(UExpression::EXPR_VALUE,$1);
       MEMCHECK(flagval);
 
       $$ = new UNamedParameters(new UString("flag"),flagval,$2);
@@ -844,7 +843,7 @@ instruction:
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,(UNamedParameters*)0,
-      	new UExpression(EXPR_VALUE,UINFINITY));
+      	new UExpression(UExpression::EXPR_VALUE,UINFINITY));
       MEMCHECK1($$,$4);
     }
 
@@ -852,7 +851,7 @@ instruction:
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT($4,$6,
-      	new UExpression(EXPR_VALUE,UINFINITY));
+      	new UExpression(UExpression::EXPR_VALUE,UINFINITY));
       MEMCHECK2($$,$4,$6);
     }
 
@@ -1375,26 +1374,26 @@ timeexpr:
 expr:
     NUM {
 
-      $$ = new UExpression(EXPR_VALUE,$1);
+      $$ = new UExpression(UExpression::EXPR_VALUE,$1);
       MEMCHECK($$);
     }
 
   | timeexpr {
 
-      $$ = new UExpression(EXPR_VALUE,$1);
+      $$ = new UExpression(UExpression::EXPR_VALUE,$1);
       MEMCHECK($$);
     }
 
   | STRING {
 
       MEMCHECK($1);
-      $$ = new UExpression(EXPR_VALUE,$1);
+      $$ = new UExpression(UExpression::EXPR_VALUE,$1);
       MEMCHECK1($$,$1);
     }
 
   | "[" parameterlist "]" {
 
-      $$ = new UExpression(EXPR_LIST,$2);
+      $$ = new UExpression(UExpression::EXPR_LIST,$2);
       MEMCHECK1($$,$2);
     }
 
@@ -1402,7 +1401,8 @@ expr:
 
   | property {
 
-       $$ = new UExpression(EXPR_PROPERTY,$1->property,$1->variablename);
+       $$ = new UExpression(UExpression::EXPR_PROPERTY,
+			    $1->property,$1->variablename);
        MEMCHECK1($$,$1);
     }
 
@@ -1433,13 +1433,13 @@ expr:
 
   | TOK_COPY expr  %prec NEG {
 
-      $$ = new UExpression(EXPR_COPY,$2,(UExpression*)0);
+      $$ = new UExpression(UExpression::EXPR_COPY,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
   | "-" expr %prec NEG {
 
-      $$ = new UExpression(EXPR_NEG,$2,(UExpression*)0);
+      $$ = new UExpression(UExpression::EXPR_NEG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
@@ -1451,14 +1451,14 @@ expr:
 
   /* Tests */
 expr:
-    TOK_TRUECONST {
+    "true" {
 
-      $$ = new UExpression(EXPR_VALUE,TRUE);
+      $$ = new UExpression(UExpression::EXPR_VALUE,TRUE);
     }
 
-  | TOK_FALSECONST {
+  | "false" {
 
-      $$ = new UExpression(EXPR_VALUE,FALSE);
+      $$ = new UExpression(UExpression::EXPR_VALUE,FALSE);
     }
 
   | expr TOK_EQ expr  { NEW_EXP_2 ($$, EXPR_TEST_EQ,  $1, $3); }
@@ -1471,9 +1471,9 @@ expr:
   | expr TOK_LT expr  { NEW_EXP_2 ($$, EXPR_TEST_LT,  $1, $3); }
   | expr TOK_LE expr  { NEW_EXP_2 ($$, EXPR_TEST_LE,  $1, $3); }
 
-  | TOK_BANG expr {
+  | "!" expr {
 
-      $$ = new UExpression(EXPR_TEST_BANG,$2,(UExpression*)0);
+      $$ = new UExpression(UExpression::EXPR_TEST_BANG,$2,(UExpression*)0);
       MEMCHECK1($$,$2);
     }
 
@@ -1516,28 +1516,28 @@ parameters:
 rawparameters:
     NUM {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      UExpression *expr = new UExpression(UExpression::EXPR_VALUE,$1);
       $$ = new UNamedParameters(expr);
       MEMCHECK1($$,expr);
     }
 
   | "identifier" {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      UExpression *expr = new UExpression(UExpression::EXPR_VALUE,$1);
       $$ = new UNamedParameters(expr);
       MEMCHECK1($$,expr);
     }
 
   |  NUM rawparameters {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      UExpression *expr = new UExpression(UExpression::EXPR_VALUE,$1);
       $$ = new UNamedParameters(expr,$2);
       MEMCHECK2($$,$2,expr);
     }
 
   |  "identifier" rawparameters {
 
-      UExpression *expr = new UExpression(EXPR_VALUE,$1);
+      UExpression *expr = new UExpression(UExpression::EXPR_VALUE,$1);
       $$ = new UNamedParameters(expr,$2);
       MEMCHECK2($$,$2,expr);
     }
@@ -1604,7 +1604,7 @@ class_declaration:
     "var" "identifier" {
 
       MEMCHECK($2);
-      $$ = new UExpression(EXPR_VALUE,$2);
+      $$ = new UExpression(UExpression::EXPR_VALUE,$2);
       MEMCHECK1($$,$2);
     }
 
@@ -1615,7 +1615,7 @@ class_declaration:
 
   | "function" variable {
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UExpression(EXPR_FUNCTION,$2,(UNamedParameters*)0);
+      $$ = new UExpression(UExpression::EXPR_FUNCTION,$2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
     }
 
@@ -1626,7 +1626,7 @@ class_declaration:
 
   | "event" variable {
       $2->id_type = UDEF_EVENT;
-      $$ = new UExpression(EXPR_EVENT,$2,(UNamedParameters*)0);
+      $$ = new UExpression(UExpression::EXPR_EVENT,$2,(UNamedParameters*)0);
       MEMCHECK1($$,$2);
     }
 ;

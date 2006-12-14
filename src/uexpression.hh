@@ -46,32 +46,67 @@ class UExpression
 {
 public:
   MEMORY_MANAGED;
-  UExpression(UExpressionType type, ufloat *val);
-  UExpression(UExpressionType type, ufloat val);
 
-  UExpression(UExpressionType type, UString *str);
-  UExpression(UExpressionType type, UValue *v);
-  UExpression(UExpressionType type, UValue v);
+  //! The different types for a UExpression.
+  enum Type
+  {
+    EXPR_VALUE,
+    EXPR_VARIABLE,
+    EXPR_LIST,
+    EXPR_GROUP,
+    EXPR_ADDR_VARIABLE,
+    EXPR_FUNCTION,
+    EXPR_PLUS,
+    EXPR_MINUS,
+    EXPR_MULT,
+    EXPR_DIV,
+    EXPR_MOD,
+    EXPR_EXP,
+    EXPR_NEG,
+    EXPR_COPY,
+    EXPR_PROPERTY,
+    EXPR_EVENT,
 
-  UExpression(UExpressionType type,
+    EXPR_TEST_EQ,
+    EXPR_TEST_REQ,
+    EXPR_TEST_PEQ,
+    EXPR_TEST_DEQ,
+    EXPR_TEST_NE,
+    EXPR_TEST_GT,
+    EXPR_TEST_GE,
+    EXPR_TEST_LT,
+    EXPR_TEST_LE,
+    EXPR_TEST_BANG,
+    EXPR_TEST_AND,
+    EXPR_TEST_OR
+  };
+
+  UExpression(Type type, ufloat *val);
+  UExpression(Type type, ufloat val);
+
+  UExpression(Type type, UString *str);
+  UExpression(Type type, UValue *v);
+  UExpression(Type type, UValue v);
+
+  UExpression(Type type,
 	      UExpression* expression1,
 	      UExpression* expression2);
-  UExpression(UExpressionType type, UVariableName* variablename);
-  UExpression(UExpressionType type,
+  UExpression(Type type, UVariableName* variablename);
+  UExpression(Type type,
 	      UVariableName* variablename,
 	      UExpression *expression1);
-  UExpression(UExpressionType type,
+  UExpression(Type type,
 	      UVariableName* variablename,
 	      UNamedParameters *parameters);
-  UExpression(UExpressionType type,
+  UExpression(Type type,
 	      UNamedParameters *parameters);
-  UExpression(UExpressionType type,
+  UExpression(Type type,
 	      UString *oper,
 	      UString *id);
-  UExpression(UExpressionType type,
+  UExpression(Type type,
 	      UString *oper,
 	      UVariableName *variablename);
-  UExpression (UExpressionType type,
+  UExpression (Type type,
 	       UExpression* expression1,
 	       UExpression* expression2,
 	       UVariableName* variablename,
@@ -105,32 +140,45 @@ public:
 
   UExpression*    copy        ();
 
-  UExpressionType type;         ///< Type of the expression.
-  UDataType       dataType;     ///< Type of the expression's data.
+  /// Type of the expression.
+  Type type;
+  /// Type of the expression's data.
+  UDataType       dataType;
 
-  ufloat          val;          ///< numerical value used for the EXPR_NUM
-  UString         *str;         ///< string of the EXPR_STRING or EXPR_FUNCTOR
+  /// numerical value used for the EXPR_NUM.
+  ufloat          val;
+  /// string of the EXPR_STRING or EXPR_FUNCTOR type.
+  UString         *str;
 
-  /** stores a tmp UValue resulting from a function evaluation (which
-   * temporarily is processed as an UExpression), Usually, the value of this is 0.
-   */
+  ///  stores a tmp UValue resulting from a function evaluation (which
+  /// temporarily is processed as an UExpression), Usually, the value
+  /// of this is 0.
   UValue          *tmp_value;
-				///< type.
-  UString         *id;          ///< id of the EXPR_FUNCTOR
-  bool            firsteval;    ///< true on first evaluation (used by static)
-  bool            isconst;      ///< true when the expr is const
-  bool            issofttest;   ///< true when the expr is a soft test
-  UValue          *staticcache; ///< used for static variables
 
-  UExpression     *expression1; ///< Left side of a compound expression.
-  UExpression     *expression2; ///< Right side of a compound expression.
-  UVariableName   *variablename;///< variable when the expression is a
-				///< EXPR_VARIABLE or  EXPR_FUNCTION
-  UNamedParameters *parameters; ///< list of parameters of the EXPR_FUNCTION
-				///< or EXPR_LIST
+  /// id of the EXPR_FUNCTOR
+  UString         *id;
+  /// true on first evaluation (used by static)
+  bool            firsteval;
+  /// true when the expr is const
+  bool            isconst;
+  /// true when the expr is a soft test
+  bool            issofttest;
+  /// used for static variables
+  UValue          *staticcache;
 
-  UExpression      *softtest_time; ///< Time constant for a soft test (0 means
-				   ///< "hard test")
+  /// Left side of a compound expression.
+  UExpression     *expression1;
+  /// Right side of a compound expression.
+  UExpression     *expression2;
+  /// variable when the expression is a EXPR_VARIABLE or EXPR_FUNCTION
+  UVariableName   *variablename;
+
+  /// list of parameters of the EXPR_FUNCTION or EXPR_LIST
+  UNamedParameters *parameters;
+
+  /// Time constant for a soft test (0 means "hard test").
+  UExpression      *softtest_time;
+
 };
 
 #endif
