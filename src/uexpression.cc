@@ -409,7 +409,6 @@ UExpression::eval (UCommand *command,
   UValue *e2;
   UValue *e3;
   UValue *e4;
-  UValue *ret=0;
   UVariable *variable;
   UString* method;
   UString* devicename;
@@ -440,7 +439,7 @@ UExpression::eval (UCommand *command,
   {
     case EXPR_LIST:
     {
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_LIST;
       pevent = parameters;
       e1 = ret;
@@ -493,7 +492,7 @@ UExpression::eval (UCommand *command,
     case EXPR_GROUP:
     {
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       retr = connection->server->grouptab.find(str->str());
       if (retr !=  connection->server->grouptab.end())
       {
@@ -558,7 +557,7 @@ UExpression::eval (UCommand *command,
 	return tmp_value->copy(); // hack to be able to handle complex
       // return types from function calls
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = dataType;
       if (dataType == DATA_NUM) ret->val = val;
       if (dataType == DATA_STRING) ret->str = new UString(str);
@@ -568,7 +567,7 @@ UExpression::eval (UCommand *command,
     case EXPR_ADDR_VARIABLE:
     {
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_STRING;
       // hack here to be able to use objects pointeurs
 
@@ -579,12 +578,12 @@ UExpression::eval (UCommand *command,
 
     case EXPR_VARIABLE:
     {
-
       variable = variablename->getVariable(command, connection);
-      if (!variablename->getFullname()) return 0;
+      if (!variablename->getFullname()) 
+	return 0;
       method = variablename->getMethod();
       devicename = variablename->getDevice();
-
+      UValue* ret = 0;
       const char* varname;
       if (!variable)
       {
@@ -736,7 +735,6 @@ UExpression::eval (UCommand *command,
       if (!variablename->isstatic || firsteval)
       {
 	ret = variable->get()->copy();
-
 	// error evaluation for variables (target-val)
 	if (variablename->varerror
 	    && variable->value->dataType == DATA_NUM)
@@ -845,7 +843,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_PROPERTY:
     {
-
       variable = variablename->getVariable(command, connection);
       if (!variablename->getFullname())
 	return 0;
@@ -860,7 +857,7 @@ UExpression::eval (UCommand *command,
       method = variablename->getMethod();
       devicename = variablename->getDevice();
 
-      ret = new UValue();
+      UValue* ret = new UValue();
 
       if (STREQ(str->str(), "rangemin"))
       {
@@ -929,7 +926,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_FUNCTION:
     {
-
       funname = variablename->buildFullname(command, connection);
 
       // Event detection
@@ -939,7 +935,7 @@ UExpression::eval (UCommand *command,
 	eh = kernel::findEventHandler(funname, 0);
       if (eh)
       {
-	ret = new UValue(ufloat(1));
+	UValue* ret = new UValue(ufloat(1));
 	if  (eh->noPositive())
 	  ret->val = 0; // no active (positive) event in the handler
 
@@ -956,7 +952,7 @@ UExpression::eval (UCommand *command,
 	   || variablename->id->equal("cpuload")
 	   || variablename->id->equal("time")))
       {
-	ret = new UValue();
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 
 	if (STREQ(variablename->id->str(), "freemem"))
@@ -979,7 +975,7 @@ UExpression::eval (UCommand *command,
 	  e2 = parameters->next->expression->eval(command, connection);
 
 	  ENSURE_TYPES_2 (DATA_STRING, DATA_STRING);
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_VOID;
 
 	  // save to file
@@ -1012,6 +1008,7 @@ UExpression::eval (UCommand *command,
 	    e3 = e3->next;
 	    indx++;
 	  }
+	  UValue* ret = 0;
 	  if (!e3)
 	  {
 	    connection->send("!!! Index out of range\n",
@@ -1033,7 +1030,7 @@ UExpression::eval (UCommand *command,
 
 	  ENSURE_TYPES_2 (DATA_LIST, DATA_LIST);
 
-	  ret = e1->copy();
+	  UValue* ret = e1->copy();
 	  e3 = ret->liststart;
 	  while (e3 && e3->next)
 	    e3 = e3->next;
@@ -1075,7 +1072,7 @@ UExpression::eval (UCommand *command,
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_NUM;
 	  ret->val = e1->str->len();
 
@@ -1092,6 +1089,7 @@ UExpression::eval (UCommand *command,
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
+	  UValue* ret;
 	  if (e1->liststart)
 	    ret = e1->liststart->copy();
 	  else
@@ -1105,6 +1103,7 @@ UExpression::eval (UCommand *command,
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
+	  UValue* ret = 0;
 	  if (e1->liststart)
 	  {
 	    ret = new UValue();
@@ -1135,7 +1134,7 @@ UExpression::eval (UCommand *command,
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_LIST);
-	  ret = new UValue(0.0);
+	  UValue* ret = new UValue(0.0);
 
 	  if (e1->liststart)
 	  {
@@ -1154,7 +1153,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "isdef"))
 	{
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_NUM;
 	  ret->val = 0;
 
@@ -1170,7 +1169,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "isvoid"))
 	{
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_NUM;
 	  ret->val = 0;
 
@@ -1191,7 +1190,7 @@ UExpression::eval (UCommand *command,
 	{
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_BINARY;
 	  UCommandQueue* loadQueue = new UCommandQueue (4096, 1048576, false);
 	  // load file
@@ -1233,7 +1232,7 @@ UExpression::eval (UCommand *command,
 	  bool in_load = STREQ(variablename->id->str(), "load");
 	  e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_VOID;
 
 	  // send string in the queue
@@ -1301,7 +1300,7 @@ UExpression::eval (UCommand *command,
 	e3 = parameters->next->next->expression->eval(command, connection);
 
 	ENSURE_TYPES_3 (DATA_STRING, DATA_NUM, DATA_NUM);
-	ret = new UValue();
+	UValue* ret = new UValue();
 	ret->dataType = DATA_STRING;
 
 	if (STREQ(variablename->id->str(), "strsub"))
@@ -1318,7 +1317,7 @@ UExpression::eval (UCommand *command,
 	e1 = parameters->expression->eval(command, connection);
 	e2 = parameters->next->expression->eval(command, connection);
 	ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-	ret = new UValue();
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 
 	if (STREQ(variablename->id->str(), "atan2"))
@@ -1353,7 +1352,7 @@ UExpression::eval (UCommand *command,
 
 	if (STREQ(variablename->id->str(), "string"))
 	{
-	  ret = new UValue();
+	  UValue* ret = new UValue();
 	  ret->dataType = DATA_STRING;
 	  sprintf(errorString, "%d", (int)e1->val);
 	  ret->str = new UString(errorString);
@@ -1362,7 +1361,7 @@ UExpression::eval (UCommand *command,
 	  return ret;
 	}
 
-	ret = new UValue();
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 
 	if (STREQ(variablename->id->str(), "sin"))
@@ -1465,7 +1464,7 @@ UExpression::eval (UCommand *command,
 	delete e2;
 	return 0;
       }
-      ret = e1->add(e2);
+      UValue* ret = e1->add(e2);
       if (expression1->isconst && expression2->isconst)
 	this->isconst = true;
 
@@ -1480,7 +1479,7 @@ UExpression::eval (UCommand *command,
       e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = e1->val - e2->val;
       delete e1;
@@ -1494,7 +1493,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = e1->val * e2->val;
       delete e1;
@@ -1516,7 +1515,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = e1->val / e2->val;
       delete e1;
@@ -1530,7 +1529,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = fmod(e1->val, e2->val);
       delete e1;
@@ -1545,7 +1544,7 @@ UExpression::eval (UCommand *command,
       e2 = expression2->eval(command, connection);
       ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = pow(e1->val, e2->val);
       delete e1;
@@ -1560,7 +1559,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       ENSURE_TYPES_1 (DATA_NUM);
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = -e1->val;
       delete e1;
@@ -1574,7 +1573,7 @@ UExpression::eval (UCommand *command,
 
       if (e1==0) return 0;
 
-      ret = e1->copy();
+      UValue* ret = e1->copy();
       if (ret->dataType == DATA_BINARY)
       {
 	UBinary *binaire = new UBinary(ret->refBinary->ref()->bufferSize, 0);
@@ -1609,7 +1608,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = e1->equal(e2);
       delete e1;
@@ -1622,7 +1621,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       variable = ::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
@@ -1641,7 +1640,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Approximate");
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       d1 = 0;
@@ -1676,7 +1675,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       variable = ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
@@ -1704,7 +1703,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
       ret->val = !e1->equal(e2);
       delete e1;
@@ -1718,7 +1717,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Numerical");
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       ret->val = (e1->val > e2->val);
@@ -1734,7 +1733,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Numerical");
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       ret->val = (e1->val >= e2->val);
@@ -1749,7 +1748,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Numerical");
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       ret->val = (e1->val < e2->val);
@@ -1764,7 +1763,7 @@ UExpression::eval (UCommand *command,
       e1 = expression1->eval(command, connection);
       e2 = expression2->eval(command, connection);
       ENSURE_COMPARISON ("Numerical");
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       ret->val = (e1->val <= e2->val);
@@ -1787,7 +1786,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
       ret->val = e1->val == 0 ? 1 : 0;
@@ -1809,7 +1808,7 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      ret = new UValue();
+      UValue* ret = new UValue();
       if (!ret)
 	return 0;
       ret->dataType = DATA_NUM;
@@ -1846,7 +1845,6 @@ UExpression::eval (UCommand *command,
 
     case EXPR_TEST_OR:
     {
-
       ec1 = 0;
       e1 = expression1->eval(command, connection, ec1);
       if (!e1)
@@ -1854,8 +1852,7 @@ UExpression::eval (UCommand *command,
 	delete ec1;
 	return 0;
       }
-
-      ret = new UValue();
+      UValue* ret = new UValue();
       if (!ret) return 0;
       ret->dataType = DATA_NUM;
 

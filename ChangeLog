@@ -1,5 +1,10 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Shrink the scope of ret
+	* src/uexpression.cc: here.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Add braces
 	* src/uexpression.cc: in this monster.
 
