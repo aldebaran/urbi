@@ -1,5 +1,11 @@
 2006-12-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Match EOF one by one
+	* src/parser/bison/utoken.l: To avoid counting two eol on \n\r for
+	instance.
+
+2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Update uobject
 	* src/Makefile.am: Adjust.
 	* src/utypes.hh: Include utypes-common.hh.

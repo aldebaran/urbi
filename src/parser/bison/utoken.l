@@ -304,7 +304,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "/*"           BEGIN SC_C_COMMENT;
 
 {BLANKS}       locp->step();
-{EOL}+         locp->lines(yyleng); locp->step();
+{EOL}          locp->lines(); locp->step();
 .              {
 		 uparser.error(*locp, std::string ("invalid character: ")
 				      + yytext);
@@ -318,7 +318,7 @@ STRING   \"([^\"]|"\\\"")*\"
   }
 
   [^*/\n\r]+  	;
-  {EOL}+	locp->lines (yyleng);
+  {EOL}	        locp->lines ();
   .             /* Stray `*' and `/'. */;
 
   <<EOF>> {
