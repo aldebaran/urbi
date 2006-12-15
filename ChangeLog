@@ -1,3 +1,9 @@
+2006-12-15  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Remove extra qualification.
+	* src/uexpression.hh (eval_EXPR_FUNCTION): Don't declare with the
+         'UExpression::' qualification because it chokes on g++ 4.1.
+
 2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
 
 	eval_EXPR_FUNCTION
