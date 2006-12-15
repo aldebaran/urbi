@@ -408,11 +408,6 @@ UExpression::eval (UCommand *command,
   UValue *e1=0;
   UValue *e2;
   UValue *e3;
-  UValue *e4;
-  UVariable *variable;
-  UNamedParameters *pevent;
-  std::list<UString*>::iterator it;
-  UExpression *e;
 
   if (issofttest && softtest_time)
   {
@@ -430,7 +425,7 @@ UExpression::eval (UCommand *command,
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_LIST;
-      pevent = parameters;
+      UNamedParameters *pevent = parameters;
       UValue* e1 = ret;
       if (pevent)
       {
@@ -486,10 +481,10 @@ UExpression::eval (UCommand *command,
       {
 	ret->dataType = DATA_LIST;
 
-	it = retr->second->members.begin();
+	std::list<UString*>::iterator it = retr->second->members.begin();
 	if (it !=  retr->second->members.end())
 	{
-	  e = new UExpression (EXPR_GROUP, (*it)->copy());
+	  UExpression *e = new UExpression (EXPR_GROUP, (*it)->copy());
 	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
@@ -511,7 +506,7 @@ UExpression::eval (UCommand *command,
 
 	while (it !=  retr->second->members.end())
 	{
-	  e = new UExpression (EXPR_GROUP, (*it)->copy());
+	  UExpression *e = new UExpression (EXPR_GROUP, (*it)->copy());
 	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
@@ -753,7 +748,7 @@ UExpression::eval (UCommand *command,
 	  e3 = ret->liststart;
 	  while (e3 && e3->next)
 	    e3 = e3->next;
-	  e4 = e2->liststart;
+	  UValue *e4 = e2->liststart;
 
 	  if (e4)
 	    if (!e3)
@@ -1285,7 +1280,8 @@ UExpression::eval (UCommand *command,
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
-      variable = ::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
+      UVariable *variable =
+	::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
       if (variable)
 	ret->val = (ABSF(e1->val - e2->val) <= variable->value->val );
       else
@@ -1307,14 +1303,18 @@ UExpression::eval (UCommand *command,
       ufloat d1 = 0;
       if (expression1->type == EXPR_VARIABLE)
       {
-	variable = expression1->variablename->getVariable(command, connection);
-	if (variable) d1 = variable->delta;
+	UVariable *v =
+	  expression1->variablename->getVariable(command, connection);
+	if (v)
+	  d1 = v->delta;
       }
       ufloat d2 = 0;
       if (expression2->type == EXPR_VARIABLE)
       {
-	variable = expression2->variablename->getVariable(command, connection);
-	if (variable) d2 = variable->delta;
+	UVariable *v =
+	  expression2->variablename->getVariable(command, connection);
+	if (v)
+	  d2 = v->delta;
       }
 
       ret->val = (ABSF(e1->val - e2->val) <= d1+d2 );
@@ -1338,9 +1338,9 @@ UExpression::eval (UCommand *command,
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
 
-      variable = ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
-      if (variable)
-	ret->val = (ABSF( 1 - (e1->val / e2->val)) <= variable->value->val );
+      UVariable *v = ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
+      if (v)
+	ret->val = (ABSF( 1 - (e1->val / e2->val)) <= v->value->val );
       else
 	ret->val = 0;
 
