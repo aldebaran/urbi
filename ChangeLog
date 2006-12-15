@@ -1,5 +1,10 @@
 2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
 
+	More scope reduction
+	* src/uexpression.cc: Here.
+
+2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
+
 	Shorten scopes
 	* src/uexpression.cc: Here.
 

@@ -405,10 +405,6 @@ UExpression::eval (UCommand *command,
 		   UConnection *connection,
 		   UEventCompound*& ec)
 {
-  UValue *e1=0;
-  UValue *e2;
-  UValue *e3;
-
   if (issofttest && softtest_time)
   {
     UValue *v = softtest_time->eval(command, connection);
@@ -480,7 +476,7 @@ UExpression::eval (UCommand *command,
       if (retr !=  connection->server->grouptab.end())
       {
 	ret->dataType = DATA_LIST;
-
+	UValue* e1 = 0;
 	std::list<UString*>::iterator it = retr->second->members.begin();
 	if (it !=  retr->second->members.end())
 	{
@@ -715,7 +711,7 @@ UExpression::eval (UCommand *command,
 	  UValue* e2 = parameters->next->expression->eval(command, connection);
 
 	  ENSURE_TYPES_2 (DATA_LIST, DATA_NUM);
-	  e3 = e1->liststart;
+	  UValue* e3 = e1->liststart;
 	  int indx = 0;
 	  while (e3 && indx != (int)e2->val)
 	  {
@@ -745,7 +741,7 @@ UExpression::eval (UCommand *command,
 	  ENSURE_TYPES_2 (DATA_LIST, DATA_LIST);
 
 	  UValue* ret = e1->copy();
-	  e3 = ret->liststart;
+	  UValue* e3 = ret->liststart;
 	  while (e3 && e3->next)
 	    e3 = e3->next;
 	  UValue *e4 = e2->liststart;
@@ -821,8 +817,8 @@ UExpression::eval (UCommand *command,
 	  {
 	    ret = new UValue();
 	    ret->dataType = DATA_LIST;
-	    e2 = e1->liststart->next;
-	    e3 = ret;
+	    UValue* e2 = e1->liststart->next;
+	    UValue* e3 = ret;
 	    if (e2)
 	    {
 	      e3->liststart = e2->copy();
@@ -851,7 +847,7 @@ UExpression::eval (UCommand *command,
 
 	  if (e1->liststart)
 	  {
-	    e2 = e1->liststart;
+	    UValue* e2 = e1->liststart;
 	    while (e2)
 	    {
 	      e2 = e2->next;
@@ -944,7 +940,7 @@ UExpression::eval (UCommand *command,
 	    || STREQ(variablename->id->str(), "load"))
 	{
 	  bool in_load = STREQ(variablename->id->str(), "load");
-	  e1 = parameters->expression->eval(command, connection);
+	  UValue* e1 = parameters->expression->eval(command, connection);
 	  ENSURE_TYPES_1 (DATA_STRING);
 	  UValue* ret = new UValue();
 	  ret->dataType = DATA_VOID;
@@ -1061,7 +1057,7 @@ UExpression::eval (UCommand *command,
 	      || STREQ(variablename->id->str(), "sqrt")
 	      || STREQ(variablename->id->str(), "string")))
       {
-	e1 = parameters->expression->eval(command, connection);
+	UValue* e1 = parameters->expression->eval(command, connection);
 	ENSURE_TYPES_1 (DATA_NUM);
 
 	if (STREQ(variablename->id->str(), "string"))
@@ -1389,7 +1385,7 @@ UExpression::eval (UCommand *command,
     case EXPR_TEST_BANG:
     {
       UEventCompound* ec1 = 0;
-      e1 = expression1->eval(command, connection, ec1);
+      UValue* e1 = expression1->eval(command, connection, ec1);
 
       if (e1==0)
       {
@@ -1412,7 +1408,7 @@ UExpression::eval (UCommand *command,
     case EXPR_TEST_AND:
     {
       UEventCompound* ec1 = 0;
-      e1 = expression1->eval(command, connection, ec1);
+      UValue* e1 = expression1->eval(command, connection, ec1);
       if (!e1)
       {
 	delete ec1;
@@ -1425,7 +1421,7 @@ UExpression::eval (UCommand *command,
       ret->dataType = DATA_NUM;
 
       UEventCompound* ec2 = 0;
-      e2 = expression2->eval(command, connection, ec2);
+      UValue* e2 = expression2->eval(command, connection, ec2);
       if (!e2)
       {
 	delete ret;
@@ -1457,7 +1453,7 @@ UExpression::eval (UCommand *command,
     case EXPR_TEST_OR:
     {
       UEventCompound* ec1 = 0;
-      e1 = expression1->eval(command, connection, ec1);
+      UValue* e1 = expression1->eval(command, connection, ec1);
       if (!e1)
       {
 	delete ec1;
@@ -1468,7 +1464,7 @@ UExpression::eval (UCommand *command,
       ret->dataType = DATA_NUM;
 
       UEventCompound* ec2 = 0;
-      e2 = expression2->eval(command, connection, ec2);
+      UValue* e2 = expression2->eval(command, connection, ec2);
       if (!e2)
       {
 	delete ret;
@@ -1570,15 +1566,13 @@ UExpression::eval_EXPR_VARIABLE (UCommand *command,
 
   if (!variable)
   {
-    char* p;
     char* pp = const_cast<char*>(strchr(varname, '.'));
-    if (!pp) pp = const_cast<char*> (varname);
-    p = const_cast<char*>(strstr(pp, "__"));
-
+    if (!pp)
+      pp = const_cast<char*> (varname);
+    char* p = const_cast<char*>(strstr(pp, "__"));
     if (p==varname) // the name starts by __, we skip
       p = const_cast<char*>(strstr(varname+2, "__"));
 
-    char* p2;
     if (p)
     {
       // could be a list index.... (dirty hack)
@@ -1609,7 +1603,7 @@ UExpression::eval_EXPR_VARIABLE (UCommand *command,
 	  int curr;
 	  p[0]='_';
 	  p=p+2; // beginning of the index
-	  p2 = strchr(p, '_');
+	  char* p2 = strchr(p, '_');
 	  while (p)
 	  {
 	    if (p2) p2[0]=0;
