@@ -769,12 +769,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 
     ////// module-defined /////
-    bool found_function = false;
+   
     urbi::UTable::iterator hmfi =
       urbi::functionmap.find(functionname->str());
     if (hmfi != urbi::functionmap.end())
     {
-      
+       bool found_function = false;
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   ((cbi != hmfi->second.end()) && (!found_function));
@@ -814,7 +814,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     }
 
     ////// EXTERNAL /////
-    if (!found_function) {
+    
       HMbindertab::iterator it =
         ::urbiserver->functionbindertab.find(functionname->str());
       if (it != ::urbiserver->functionbindertab.end()
@@ -875,7 +875,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  );
 	return ((status = UMORPH));
       }
-    }
+    
   } // fi: expr == function
 
 
