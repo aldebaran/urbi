@@ -184,6 +184,12 @@ private:
   UValue* eval_EXPR_VARIABLE (UCommand *command,
 			      UConnection *connection,
 			      UEventCompound*& ec);
+
+  /// eval() specialized for type == EXPR_FUNCTION.
+  UValue*
+  UExpression::eval_EXPR_FUNCTION (UCommand *command,
+				   UConnection *connection,
+				   UEventCompound*& ec);
 };
 
 #endif

@@ -633,536 +633,7 @@ UExpression::eval (UCommand *command,
     }
 
     case EXPR_FUNCTION:
-    {
-      UString* funname = variablename->buildFullname(command, connection);
-
-      // Event detection
-      UEventHandler* eh;
-      if (parameters)
-	eh = kernel::findEventHandler(funname, parameters->size());
-      else
-	eh = kernel::findEventHandler(funname, 0);
-      if (eh)
-      {
-	UValue* ret = new UValue(ufloat(1));
-	if  (eh->noPositive())
-	  ret->val = 0; // no active (positive) event in the handler
-
-	ec = new UEventCompound (new UEventMatch (funname,
-						  parameters,
-						  command,
-						  connection));
-	return ret;
-      }
-
-      if (parameters == 0 &&
-	  (variablename->id->equal("freemem")
-	   || variablename->id->equal("power")
-	   || variablename->id->equal("cpuload")
-	   || variablename->id->equal("time")))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-
-	if (STREQ(variablename->id->str(), "freemem"))
-	  ret->val = availableMemory - usedMemory;
-	else if (STREQ(variablename->id->str(), "time"))
-	  ret->val = connection->server->getTime();
-	else if (STREQ(variablename->id->str(), "cpuload"))
-	  ret->val = connection->server->cpuload;
-	else if (STREQ(variablename->id->str(), "power"))
-	  ret->val = connection->server->getPower();
-
-	return ret;
-      }
-
-      if (parameters && parameters->size() == 2)
-      {
-	if (STREQ(variablename->id->str(), "save"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  UValue* e2 = parameters->next->expression->eval(command, connection);
-
-	  ENSURE_TYPES_2 (DATA_STRING, DATA_STRING);
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_VOID;
-
-	  // save to file
-
-	  if (connection->server->saveFile(e1->str->str(),
-					   e2->str->str()) == UFAIL)
-	  {
-	    char errorString[256];
-	    snprintf(errorString, sizeof errorString,
-		     "!!! Cannot save to the file %s\n", e1->str->str());
-	    connection->send(errorString, command->getTag().c_str());
-	    delete ret;
-	    ret = 0;
-	  }
-
-	  delete e1;
-	  delete e2;
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "getIndex"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  UValue* e2 = parameters->next->expression->eval(command, connection);
-
-	  ENSURE_TYPES_2 (DATA_LIST, DATA_NUM);
-	  UValue* e3 = e1->liststart;
-	  int indx = 0;
-	  while (e3 && indx != (int)e2->val)
-	  {
-	    e3 = e3->next;
-	    indx++;
-	  }
-	  UValue* ret = 0;
-	  if (!e3)
-	  {
-	    connection->send("!!! Index out of range\n",
-			     command->getTag().c_str());
-	    ret = 0;
-	  }
-	  else
-	    ret = e3->copy();
-
-	  delete e1;
-	  delete e2;
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "cat"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  UValue* e2 = parameters->next->expression->eval(command, connection);
-
-	  ENSURE_TYPES_2 (DATA_LIST, DATA_LIST);
-
-	  UValue* ret = e1->copy();
-	  UValue* e3 = ret->liststart;
-	  while (e3 && e3->next)
-	    e3 = e3->next;
-	  UValue *e4 = e2->liststart;
-
-	  if (e4)
-	    if (!e3)
-	    {
-	      ret->liststart = e4->copy();
-	      e3 = ret->liststart;
-	      e4 = e4->next;
-
-	      while (e4)
-	      {
-		e3->next = e4->copy();
-		e3 = e3->next;
-		e4 = e4->next;
-	      }
-	    }
-	    else
-	      while (e4)
-	      {
-		e3->next = e4->copy();
-		e3 = e3->next;
-		e4 = e4->next;
-	      }
-
-	  delete e1;
-	  delete e2;
-	  return ret;
-	}
-
-      }
-
-      if (parameters && parameters->size() == 1)
-      {
-	if (STREQ(variablename->id->str(), "strlen"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_STRING);
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_NUM;
-	  ret->val = e1->str->len();
-
-	  for (int i=0;i<e1->str->len()-1;i++)
-	    if (e1->str->str()[i] == '\\' &&
-		e1->str->str()[i+1] == '"')
-	      ret->val--;
-
-	  delete e1;
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "head"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_LIST);
-	  UValue* ret;
-	  if (e1->liststart)
-	    ret = e1->liststart->copy();
-	  else
-	    ret = new UValue();
-
-	  delete e1;
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "tail"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_LIST);
-	  UValue* ret = 0;
-	  if (e1->liststart)
-	  {
-	    ret = new UValue();
-	    ret->dataType = DATA_LIST;
-	    UValue* e2 = e1->liststart->next;
-	    UValue* e3 = ret;
-	    if (e2)
-	    {
-	      e3->liststart = e2->copy();
-	      e2 = e2->next;
-	      e3 = e3->liststart;
-	      while (e2)
-	      {
-		e3->next = e2->copy();
-		e2 = e2->next;
-		e3 = e3->next;
-	      }
-	    }
-	  }
-	  else
-	    ret = e1->copy();
-
-	  delete e1;
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "size"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_LIST);
-	  UValue* ret = new UValue(0.0);
-
-	  if (e1->liststart)
-	  {
-	    UValue* e2 = e1->liststart;
-	    while (e2)
-	    {
-	      e2 = e2->next;
-	      ret->val = ret->val + 1;
-	    }
-	  }
-
-	  delete e1;
-	  return ret;
-	}
-
-
-	if (STREQ(variablename->id->str(), "isdef"))
-	{
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_NUM;
-	  ret->val = 0;
-
-	  if (parameters->expression->type == EXPR_VARIABLE)
-	    if ((parameters->expression->variablename->
-		 getVariable(command, connection)) ||
-		(parameters->expression->variablename->isFunction(command,
-								  connection)))
-	      ret->val = 1;
-
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "isvoid"))
-	{
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_NUM;
-	  ret->val = 0;
-
-	  if (parameters->expression->type == EXPR_VARIABLE)
-	  {
-	    UVariable* v = parameters->expression->
-	      variablename->getVariable(command, connection);
-	    if (v==0 || v->value==0)
-	      return ret;
-	    if (v->value->dataType == DATA_VOID)
-	      ret->val = 1;
-	  }
-
-	  return ret;
-	}
-
-	if (STREQ(variablename->id->str(), "loadwav"))
-	{
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_STRING);
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_BINARY;
-	  UCommandQueue* loadQueue = new UCommandQueue (4096, 1048576, false);
-	  // load file
-	  if (connection->server->loadFile(e1->str->str(),
-					   loadQueue) == UFAIL)
-	  {
-	    char errorString[256];
-	    snprintf(errorString, sizeof errorString,
-		     "!!! Cannot load the file %s\n", e1->str->str());
-	    connection->send(errorString, command->getTag().c_str());
-	    delete ret;
-	    delete loadQueue;
-	    ret = 0;
-	  }
-	  else
-	  {
-	    UBinary *binaire =
-	      new UBinary(loadQueue->dataSize(),
-			  new UNamedParameters
-			  (new UExpression(EXPR_VALUE,
-					   new UString("wav")),
-			   0));
-	    memcpy(binaire->buffer,
-		   loadQueue->pop(loadQueue->dataSize()),
-		   loadQueue->dataSize());
-
-	    ret->refBinary = new URefPt<UBinary>(binaire);
-	    delete loadQueue;
-	  }
-
-	  return ret;
-	}
-
-
-	// Exec and load are exactly the same thing with one difference:
-	// exec parse the string, and load, the file whose name is given.
-	if (STREQ(variablename->id->str(), "exec")
-	    || STREQ(variablename->id->str(), "load"))
-	{
-	  bool in_load = STREQ(variablename->id->str(), "load");
-	  UValue* e1 = parameters->expression->eval(command, connection);
-	  ENSURE_TYPES_1 (DATA_STRING);
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_VOID;
-
-	  // send string in the queue
-	  ::urbiserver->systemcommands = false;
-	  if (!connection->stack.empty())
-	    connection->functionTag = new UString("__Funct__");
-	  UParser& p = connection->parser();
-	  if (in_load)
-	  {
-	    std::string f = ::urbiserver->find_file (e1->str->str());
-	    p.process (f.c_str ());
-	  }
-	  else
-	  {
-	    p.process((ubyte*)e1->str->str(), e1->str->len());
-	  }
-
-	  if (connection->functionTag)
-	  {
-	    delete connection->functionTag;
-	    connection->functionTag=0;
-	  }
-	  ::urbiserver->systemcommands = true;
-
-	  if (p.errorMessage[0])
-	  {
-	    // a parsing error occured
-	    if (p.commandTree)
-	    {
-	      delete p.commandTree;
-	      p.commandTree = 0;
-	    }
-	    connection->send(p.errorMessage, "error");
-	  }
-
-	  if (p.commandTree)
-	  {
-	    command->morph = p.commandTree;
-	    command->persistant = false;
-	    p.commandTree = 0;
-	  }
-	  else
-	  {
-	    if (in_load)
-	      connection->send("!!! Error loading the file\n",
-			       command->getTag().c_str());
-	    else
-	      connection->send("!!! Error parsing the exec string\n",
-			       command->getTag().c_str());
-	    delete ret;
-	    ret = 0;
-	  }
-
-	  delete e1;
-	  return ret;
-	}
-      }
-
-      if (parameters &&
-	  parameters->size() == 3 &&
-	  STREQ(variablename->id->str(), "strsub"))
-      {
-	UValue* e1 = parameters->expression->eval(command, connection);
-	UValue* e2 = parameters->next->expression->eval(command, connection);
-	UValue* e3 = parameters->next->next->expression->eval(command, connection);
-
-	ENSURE_TYPES_3 (DATA_STRING, DATA_NUM, DATA_NUM);
-	UValue* ret = new UValue();
-	ret->dataType = DATA_STRING;
-
-	if (STREQ(variablename->id->str(), "strsub"))
-	  ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
-
-	delete e1; delete e2; delete e3;
-	return ret;
-      }
-
-      if (parameters
-	  && parameters->size() == 2
-	  && STREQ(variablename->id->str(), "atan2"))
-      {
-	UValue* e1 = parameters->expression->eval(command, connection);
-	UValue* e2 = parameters->next->expression->eval(command, connection);
-	ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-
-	if (STREQ(variablename->id->str(), "atan2"))
-	  ret->val = atan2(e1->val, e2->val);
-
-	delete e1;
-	delete e2;
-	return ret;
-      }
-      if (parameters
-	  && parameters->size() == 1
-	  && (false
-	      || STREQ(variablename->id->str(), "sin")
-	      || STREQ(variablename->id->str(), "asin")
-	      || STREQ(variablename->id->str(), "cos")
-	      || STREQ(variablename->id->str(), "acos")
-	      || STREQ(variablename->id->str(), "tan")
-	      || STREQ(variablename->id->str(), "atan")
-	      || STREQ(variablename->id->str(), "sgn")
-	      || STREQ(variablename->id->str(), "abs")
-	      || STREQ(variablename->id->str(), "exp")
-	      || STREQ(variablename->id->str(), "log")
-	      || STREQ(variablename->id->str(), "round")
-	      || STREQ(variablename->id->str(), "random")
-	      || STREQ(variablename->id->str(), "trunc")
-	      || STREQ(variablename->id->str(), "sqr")
-	      || STREQ(variablename->id->str(), "sqrt")
-	      || STREQ(variablename->id->str(), "string")))
-      {
-	UValue* e1 = parameters->expression->eval(command, connection);
-	ENSURE_TYPES_1 (DATA_NUM);
-
-	if (STREQ(variablename->id->str(), "string"))
-	{
-	  UValue* ret = new UValue();
-	  ret->dataType = DATA_STRING;
-	  char errorString[256];
-	  sprintf(errorString, "%d", (int)e1->val);
-	  ret->str = new UString(errorString);
-
-	  delete e1;
-	  return ret;
-	}
-
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-
-	if (STREQ(variablename->id->str(), "sin"))
-	  ret->val = sin(e1->val);
-	else if (STREQ(variablename->id->str(), "asin"))
-	  ret->val = asin(e1->val);
-	else if (STREQ(variablename->id->str(), "cos"))
-	  ret->val = cos(e1->val);
-	else if (STREQ(variablename->id->str(), "acos"))
-	  ret->val = acos(e1->val);
-	else if (STREQ(variablename->id->str(), "tan"))
-	  ret->val = tan(e1->val);
-	else if (STREQ(variablename->id->str(), "atan"))
-	  ret->val = atan(e1->val);
-	else if (STREQ(variablename->id->str(), "sgn"))
-	{
-	  // FIXME: No value set of 0.
-	  if (e1->val>0)
-	    ret->val =1;
-	  else if (e1->val<0)
-	    ret->val = -1;
-	}
-	else if (STREQ(variablename->id->str(), "abs"))
-	  ret->val = fabs(e1->val);
-	else if (STREQ(variablename->id->str(), "random"))
-	  ret->val = (rand()%(int)e1->val);
-	else if (STREQ(variablename->id->str(), "round"))
-	{
-	  if (e1->val>=0)
-	    ret->val = (ufloat)(int)(e1->val+0.5);
-	  else
-	    ret->val = (ufloat)(int)(e1->val-0.5);
-	}
-	else if (STREQ(variablename->id->str(), "trunc"))
-	  ret->val = (ufloat)(int)(e1->val);
-	else if (STREQ(variablename->id->str(), "exp"))
-	  ret->val = exp(e1->val);
-	else if (STREQ(variablename->id->str(), "sqr"))
-	  ret->val = e1->val*e1->val;
-	else if (STREQ(variablename->id->str(), "sqrt"))
-	{
-	  if (e1->val<0)
-	  {
-	    connection->send("!!! Negative square root\n",
-			     command->getTag().c_str());
-	    return 0;
-	  }
-	  ret->val = sqrt(e1->val);
-	}
-	else if (STREQ(variablename->id->str(), "log"))
-	{
-	  if (e1->val<0)
-	  {
-	    connection->send("!!! Negative logarithm\n",
-			     command->getTag().c_str());
-	    return 0;
-	  }
-	  ret->val = log(e1->val);
-	}
-
-	delete e1;
-	return ret;
-      }
-
-      // default = unknown.
-      funname = variablename->buildFullname(command, connection);
-      if (!variablename->getFullname()) return 0;
-      HMfunctiontab::iterator hmf =
-	::urbiserver->functiontab.find(funname->str());
-      if (hmf != ::urbiserver->functiontab.end())
-      {
-	connection->send("!!! Custom function call in expressions"
-			 " not allowed in kernel 1\n",
-			 command->getTag().c_str());
-	return 0;
-      }
-
-
-      char errorString[256];
-      if (parameters)
-	snprintf(errorString, sizeof errorString,
-		 "!!! Error with function eval: %s [nb param=%d]\n",
-		 variablename->getFullname()->str(), parameters->size());
-      else
-	snprintf(errorString, sizeof errorString,
-		 "!!! Error with function eval: %s [no param]\n",
-		 variablename->getFullname()->str());
-      connection->send(errorString, command->getTag().c_str());
-      return 0;
-    }
+      return eval_EXPR_FUNCTION (command, connection, ec);
 
     case EXPR_PLUS:
     {
@@ -1469,6 +940,541 @@ UExpression::eval (UCommand *command,
   }
 }
 
+UValue*
+UExpression::eval_EXPR_FUNCTION (UCommand *command,
+				 UConnection *connection,
+				 UEventCompound*& ec)
+{
+  assert (type == EXPR_FUNCTION);
+  UString* funname = variablename->buildFullname(command, connection);
+
+  // Event detection
+  UEventHandler* eh;
+  if (parameters)
+    eh = kernel::findEventHandler(funname, parameters->size());
+  else
+    eh = kernel::findEventHandler(funname, 0);
+  if (eh)
+  {
+    UValue* ret = new UValue(ufloat(1));
+    if  (eh->noPositive())
+      ret->val = 0; // no active (positive) event in the handler
+
+    ec = new UEventCompound (new UEventMatch (funname,
+					      parameters,
+					      command,
+					      connection));
+    return ret;
+  }
+
+  if (parameters == 0 &&
+      (variablename->id->equal("freemem")
+       || variablename->id->equal("power")
+       || variablename->id->equal("cpuload")
+       || variablename->id->equal("time")))
+  {
+    UValue* ret = new UValue();
+    ret->dataType = DATA_NUM;
+
+    if (STREQ(variablename->id->str(), "freemem"))
+      ret->val = availableMemory - usedMemory;
+    else if (STREQ(variablename->id->str(), "time"))
+      ret->val = connection->server->getTime();
+    else if (STREQ(variablename->id->str(), "cpuload"))
+      ret->val = connection->server->cpuload;
+    else if (STREQ(variablename->id->str(), "power"))
+      ret->val = connection->server->getPower();
+
+    return ret;
+  }
+
+  if (parameters && parameters->size() == 2)
+  {
+    if (STREQ(variablename->id->str(), "save"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      UValue* e2 = parameters->next->expression->eval(command, connection);
+
+      ENSURE_TYPES_2 (DATA_STRING, DATA_STRING);
+      UValue* ret = new UValue();
+      ret->dataType = DATA_VOID;
+
+      // save to file
+
+      if (connection->server->saveFile(e1->str->str(),
+				       e2->str->str()) == UFAIL)
+      {
+	char errorString[256];
+	snprintf(errorString, sizeof errorString,
+		 "!!! Cannot save to the file %s\n", e1->str->str());
+	connection->send(errorString, command->getTag().c_str());
+	delete ret;
+	ret = 0;
+      }
+
+      delete e1;
+      delete e2;
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "getIndex"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      UValue* e2 = parameters->next->expression->eval(command, connection);
+
+      ENSURE_TYPES_2 (DATA_LIST, DATA_NUM);
+      UValue* e3 = e1->liststart;
+      int indx = 0;
+      while (e3 && indx != (int)e2->val)
+      {
+	e3 = e3->next;
+	indx++;
+      }
+      UValue* ret = 0;
+      if (!e3)
+      {
+	connection->send("!!! Index out of range\n",
+			 command->getTag().c_str());
+	ret = 0;
+      }
+      else
+	ret = e3->copy();
+
+      delete e1;
+      delete e2;
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "cat"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      UValue* e2 = parameters->next->expression->eval(command, connection);
+
+      ENSURE_TYPES_2 (DATA_LIST, DATA_LIST);
+
+      UValue* ret = e1->copy();
+      UValue* e3 = ret->liststart;
+      while (e3 && e3->next)
+	e3 = e3->next;
+      UValue *e4 = e2->liststart;
+
+      if (e4)
+	if (!e3)
+	{
+	  ret->liststart = e4->copy();
+	  e3 = ret->liststart;
+	  e4 = e4->next;
+
+	  while (e4)
+	  {
+	    e3->next = e4->copy();
+	    e3 = e3->next;
+	    e4 = e4->next;
+	  }
+	}
+	else
+	  while (e4)
+	  {
+	    e3->next = e4->copy();
+	    e3 = e3->next;
+	    e4 = e4->next;
+	  }
+
+      delete e1;
+      delete e2;
+      return ret;
+    }
+
+  }
+
+  if (parameters && parameters->size() == 1)
+  {
+    if (STREQ(variablename->id->str(), "strlen"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      ENSURE_TYPES_1 (DATA_STRING);
+      UValue* ret = new UValue();
+      ret->dataType = DATA_NUM;
+      ret->val = e1->str->len();
+
+      for (int i=0;i<e1->str->len()-1;i++)
+	if (e1->str->str()[i] == '\\' &&
+	    e1->str->str()[i+1] == '"')
+	  ret->val--;
+
+      delete e1;
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "head"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      ENSURE_TYPES_1 (DATA_LIST);
+      UValue* ret;
+      if (e1->liststart)
+	ret = e1->liststart->copy();
+      else
+	ret = new UValue();
+
+      delete e1;
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "tail"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      ENSURE_TYPES_1 (DATA_LIST);
+      UValue* ret = 0;
+      if (e1->liststart)
+      {
+	ret = new UValue();
+	ret->dataType = DATA_LIST;
+	UValue* e2 = e1->liststart->next;
+	UValue* e3 = ret;
+	if (e2)
+	{
+	  e3->liststart = e2->copy();
+	  e2 = e2->next;
+	  e3 = e3->liststart;
+	  while (e2)
+	  {
+	    e3->next = e2->copy();
+	    e2 = e2->next;
+	    e3 = e3->next;
+	  }
+	}
+      }
+      else
+	ret = e1->copy();
+
+      delete e1;
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "size"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      ENSURE_TYPES_1 (DATA_LIST);
+      UValue* ret = new UValue(0.0);
+
+      if (e1->liststart)
+      {
+	UValue* e2 = e1->liststart;
+	while (e2)
+	{
+	  e2 = e2->next;
+	  ret->val = ret->val + 1;
+	}
+      }
+
+      delete e1;
+      return ret;
+    }
+
+
+    if (STREQ(variablename->id->str(), "isdef"))
+    {
+      UValue* ret = new UValue();
+      ret->dataType = DATA_NUM;
+      ret->val = 0;
+
+      if (parameters->expression->type == EXPR_VARIABLE)
+	if ((parameters->expression->variablename->
+	     getVariable(command, connection)) ||
+	    (parameters->expression->variablename->isFunction(command,
+							      connection)))
+	  ret->val = 1;
+
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "isvoid"))
+    {
+      UValue* ret = new UValue();
+      ret->dataType = DATA_NUM;
+      ret->val = 0;
+
+      if (parameters->expression->type == EXPR_VARIABLE)
+      {
+	UVariable* v = parameters->expression->
+	  variablename->getVariable(command, connection);
+	if (v==0 || v->value==0)
+	  return ret;
+	if (v->value->dataType == DATA_VOID)
+	  ret->val = 1;
+      }
+
+      return ret;
+    }
+
+    if (STREQ(variablename->id->str(), "loadwav"))
+    {
+      UValue* e1 = parameters->expression->eval(command, connection);
+      ENSURE_TYPES_1 (DATA_STRING);
+      UValue* ret = new UValue();
+      ret->dataType = DATA_BINARY;
+      UCommandQueue* loadQueue = new UCommandQueue (4096, 1048576, false);
+      // load file
+      if (connection->server->loadFile(e1->str->str(),
+				       loadQueue) == UFAIL)
+      {
+	char errorString[256];
+	snprintf(errorString, sizeof errorString,
+		 "!!! Cannot load the file %s\n", e1->str->str());
+	connection->send(errorString, command->getTag().c_str());
+	delete ret;
+	delete loadQueue;
+	ret = 0;
+      }
+      else
+      {
+	UBinary *binaire =
+	  new UBinary(loadQueue->dataSize(),
+		      new UNamedParameters
+		      (new UExpression(EXPR_VALUE,
+				       new UString("wav")),
+		       0));
+	memcpy(binaire->buffer,
+	       loadQueue->pop(loadQueue->dataSize()),
+	       loadQueue->dataSize());
+
+	ret->refBinary = new URefPt<UBinary>(binaire);
+	delete loadQueue;
+      }
+
+      return ret;
+    }
+
+
+    // Exec and load are exactly the same thing with one difference:
+    // exec parse the string, and load, the file whose name is given.
+    if (STREQ(variablename->id->str(), "exec")
+	|| STREQ(variablename->id->str(), "load"))
+    {
+      bool in_load = STREQ(variablename->id->str(), "load");
+      UValue* e1 = parameters->expression->eval(command, connection);
+      ENSURE_TYPES_1 (DATA_STRING);
+      UValue* ret = new UValue();
+      ret->dataType = DATA_VOID;
+
+      // send string in the queue
+      ::urbiserver->systemcommands = false;
+      if (!connection->stack.empty())
+	connection->functionTag = new UString("__Funct__");
+      UParser& p = connection->parser();
+      if (in_load)
+      {
+	std::string f = ::urbiserver->find_file (e1->str->str());
+	p.process (f.c_str ());
+      }
+      else
+      {
+	p.process((ubyte*)e1->str->str(), e1->str->len());
+      }
+
+      if (connection->functionTag)
+      {
+	delete connection->functionTag;
+	connection->functionTag=0;
+      }
+      ::urbiserver->systemcommands = true;
+
+      if (p.errorMessage[0])
+      {
+	// a parsing error occured
+	if (p.commandTree)
+	{
+	  delete p.commandTree;
+	  p.commandTree = 0;
+	}
+	connection->send(p.errorMessage, "error");
+      }
+
+      if (p.commandTree)
+      {
+	command->morph = p.commandTree;
+	command->persistant = false;
+	p.commandTree = 0;
+      }
+      else
+      {
+	if (in_load)
+	  connection->send("!!! Error loading the file\n",
+			   command->getTag().c_str());
+	else
+	  connection->send("!!! Error parsing the exec string\n",
+			   command->getTag().c_str());
+	delete ret;
+	ret = 0;
+      }
+
+      delete e1;
+      return ret;
+    }
+  }
+
+  if (parameters &&
+      parameters->size() == 3 &&
+      STREQ(variablename->id->str(), "strsub"))
+  {
+    UValue* e1 = parameters->expression->eval(command, connection);
+    UValue* e2 = parameters->next->expression->eval(command, connection);
+    UValue* e3 = parameters->next->next->expression->eval(command, connection);
+
+    ENSURE_TYPES_3 (DATA_STRING, DATA_NUM, DATA_NUM);
+    UValue* ret = new UValue();
+    ret->dataType = DATA_STRING;
+
+    if (STREQ(variablename->id->str(), "strsub"))
+      ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
+
+    delete e1; delete e2; delete e3;
+    return ret;
+  }
+
+  if (parameters
+      && parameters->size() == 2
+      && STREQ(variablename->id->str(), "atan2"))
+  {
+    UValue* e1 = parameters->expression->eval(command, connection);
+    UValue* e2 = parameters->next->expression->eval(command, connection);
+    ENSURE_TYPES_2 (DATA_NUM, DATA_NUM);
+    UValue* ret = new UValue();
+    ret->dataType = DATA_NUM;
+
+    if (STREQ(variablename->id->str(), "atan2"))
+      ret->val = atan2(e1->val, e2->val);
+
+    delete e1;
+    delete e2;
+    return ret;
+  }
+  if (parameters
+      && parameters->size() == 1
+      && (false
+	  || STREQ(variablename->id->str(), "sin")
+	  || STREQ(variablename->id->str(), "asin")
+	  || STREQ(variablename->id->str(), "cos")
+	  || STREQ(variablename->id->str(), "acos")
+	  || STREQ(variablename->id->str(), "tan")
+	  || STREQ(variablename->id->str(), "atan")
+	  || STREQ(variablename->id->str(), "sgn")
+	  || STREQ(variablename->id->str(), "abs")
+	  || STREQ(variablename->id->str(), "exp")
+	  || STREQ(variablename->id->str(), "log")
+	  || STREQ(variablename->id->str(), "round")
+	  || STREQ(variablename->id->str(), "random")
+	  || STREQ(variablename->id->str(), "trunc")
+	  || STREQ(variablename->id->str(), "sqr")
+	  || STREQ(variablename->id->str(), "sqrt")
+	  || STREQ(variablename->id->str(), "string")))
+  {
+    UValue* e1 = parameters->expression->eval(command, connection);
+    ENSURE_TYPES_1 (DATA_NUM);
+
+    if (STREQ(variablename->id->str(), "string"))
+    {
+      UValue* ret = new UValue();
+      ret->dataType = DATA_STRING;
+      char errorString[256];
+      sprintf(errorString, "%d", (int)e1->val);
+      ret->str = new UString(errorString);
+
+      delete e1;
+      return ret;
+    }
+
+    UValue* ret = new UValue();
+    ret->dataType = DATA_NUM;
+
+    if (STREQ(variablename->id->str(), "sin"))
+      ret->val = sin(e1->val);
+    else if (STREQ(variablename->id->str(), "asin"))
+      ret->val = asin(e1->val);
+    else if (STREQ(variablename->id->str(), "cos"))
+      ret->val = cos(e1->val);
+    else if (STREQ(variablename->id->str(), "acos"))
+      ret->val = acos(e1->val);
+    else if (STREQ(variablename->id->str(), "tan"))
+      ret->val = tan(e1->val);
+    else if (STREQ(variablename->id->str(), "atan"))
+      ret->val = atan(e1->val);
+    else if (STREQ(variablename->id->str(), "sgn"))
+    {
+      // FIXME: No value set of 0.
+      if (e1->val>0)
+	ret->val =1;
+      else if (e1->val<0)
+	ret->val = -1;
+    }
+    else if (STREQ(variablename->id->str(), "abs"))
+      ret->val = fabs(e1->val);
+    else if (STREQ(variablename->id->str(), "random"))
+      ret->val = (rand()%(int)e1->val);
+    else if (STREQ(variablename->id->str(), "round"))
+    {
+      if (e1->val>=0)
+	ret->val = (ufloat)(int)(e1->val+0.5);
+      else
+	ret->val = (ufloat)(int)(e1->val-0.5);
+    }
+    else if (STREQ(variablename->id->str(), "trunc"))
+      ret->val = (ufloat)(int)(e1->val);
+    else if (STREQ(variablename->id->str(), "exp"))
+      ret->val = exp(e1->val);
+    else if (STREQ(variablename->id->str(), "sqr"))
+      ret->val = e1->val*e1->val;
+    else if (STREQ(variablename->id->str(), "sqrt"))
+    {
+      if (e1->val<0)
+      {
+	connection->send("!!! Negative square root\n",
+			 command->getTag().c_str());
+	return 0;
+      }
+      ret->val = sqrt(e1->val);
+    }
+    else if (STREQ(variablename->id->str(), "log"))
+    {
+      if (e1->val<0)
+      {
+	connection->send("!!! Negative logarithm\n",
+			 command->getTag().c_str());
+	return 0;
+      }
+      ret->val = log(e1->val);
+    }
+
+    delete e1;
+    return ret;
+  }
+
+  // default = unknown.
+  funname = variablename->buildFullname(command, connection);
+  if (!variablename->getFullname()) return 0;
+  HMfunctiontab::iterator hmf =
+    ::urbiserver->functiontab.find(funname->str());
+  if (hmf != ::urbiserver->functiontab.end())
+  {
+    connection->send("!!! Custom function call in expressions"
+		     " not allowed in kernel 1\n",
+		     command->getTag().c_str());
+    return 0;
+  }
+
+
+  char errorString[256];
+  if (parameters)
+    snprintf(errorString, sizeof errorString,
+	     "!!! Error with function eval: %s [nb param=%d]\n",
+	     variablename->getFullname()->str(), parameters->size());
+  else
+    snprintf(errorString, sizeof errorString,
+	     "!!! Error with function eval: %s [no param]\n",
+	     variablename->getFullname()->str());
+  connection->send(errorString, command->getTag().c_str());
+  return 0;
+}
 
 UValue*
 UExpression::eval_EXPR_VARIABLE (UCommand *command,
