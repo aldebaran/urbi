@@ -1,5 +1,11 @@
 2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
 
+	EVAL_EXPR_BIN_BOOLEAN
+	* src/uexpression.cc: New.
+	Use it
+
+2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
+
 	More scope reduction
 	* src/uexpression.cc: Here.
 

@@ -1210,6 +1210,9 @@ UExpression::eval (UCommand *command,
     case EXPR_EXP:
       EVAL_EXPR_ARITHMETICS(pow(e1->val, e2->val));
 
+#undef EVAL_EXPR_ARITHMETICS
+
+
     case EXPR_DIV:
     {
       UValue* e1 = expression1->eval(command, connection);
@@ -1345,6 +1348,10 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
+    /*----------------------.
+    | Boolean expressions.  |
+    `----------------------*/
+
 #define EVAL_EXPR_COMPARISON(Kind, Comparison)			\
     {								\
       UValue* lhs = expression1->eval(command, connection);	\
@@ -1405,94 +1412,58 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_TEST_AND:
-    {
-      UEventCompound* ec1 = 0;
-      UValue* e1 = expression1->eval(command, connection, ec1);
-      if (!e1)
-      {
-	delete ec1;
-	return 0;
-      }
-
-      UValue* ret = new UValue();
-      if (!ret)
-	return 0;
-      ret->dataType = DATA_NUM;
-
-      UEventCompound* ec2 = 0;
-      UValue* e2 = expression2->eval(command, connection, ec2);
-      if (!e2)
-      {
-	delete ret;
-	delete e1;
-	delete ec1;
-	delete ec2;
-	return 0;
-      }
-
-      ret->val = (ufloat) ( ((int)e1->val) && ((int)e2->val) );
-
-      if (ec1)
-	if (ec2)
-	  ec = new UEventCompound (EC_AND, ec1, ec2);
-	else
-	  ec = new UEventCompound (EC_AND, ec1, new UEventCompound (e2));
-      else
-	if (ec2)
-	  ec = new UEventCompound (EC_AND, new UEventCompound (e1), ec2);
-	else
-	  ec = new UEventCompound (EC_AND, new UEventCompound (e1),
-				   new UEventCompound (e2));
-
-      delete e1;
-      delete e2;
-      return ret;
+#define EVAL_EXPR_BIN_BOOLEAN(Op, Command)				\
+    {									\
+      UEventCompound* ec1 = 0;						\
+      UValue* e1 = expression1->eval(command, connection, ec1);		\
+      if (!e1)								\
+      {									\
+	delete ec1;							\
+	return 0;							\
+      }									\
+									\
+      UValue* ret = new UValue();					\
+      if (!ret)								\
+	return 0;							\
+      ret->dataType = DATA_NUM;						\
+									\
+      UEventCompound* ec2 = 0;						\
+      UValue* e2 = expression2->eval(command, connection, ec2);		\
+      if (!e2)								\
+      {									\
+	delete ret;							\
+	delete e1;							\
+	delete ec1;							\
+	delete ec2;							\
+	return 0;							\
+      }									\
+									\
+      ret->val = (ufloat) ( ((int)e1->val) Op ((int)e2->val) );		\
+									\
+      if (ec1)								\
+	if (ec2)							\
+	  ec = new UEventCompound (Command, ec1, ec2);			\
+	else								\
+	  ec = new UEventCompound (Command, ec1, new UEventCompound (e2)); \
+      else								\
+	if (ec2)							\
+	  ec = new UEventCompound (Command, new UEventCompound (e1), ec2); \
+	else								\
+	  ec = new UEventCompound (Command, new UEventCompound (e1),	\
+				   new UEventCompound (e2));		\
+									\
+      delete e1;							\
+      delete e2;							\
+      return ret;							\
     }
+
+    case EXPR_TEST_AND:
+      EVAL_EXPR_BIN_BOOLEAN(&&, EC_AND);
 
     case EXPR_TEST_OR:
-    {
-      UEventCompound* ec1 = 0;
-      UValue* e1 = expression1->eval(command, connection, ec1);
-      if (!e1)
-      {
-	delete ec1;
-	return 0;
-      }
-      UValue* ret = new UValue();
-      if (!ret) return 0;
-      ret->dataType = DATA_NUM;
+      EVAL_EXPR_BIN_BOOLEAN(||, EC_OR);
 
-      UEventCompound* ec2 = 0;
-      UValue* e2 = expression2->eval(command, connection, ec2);
-      if (!e2)
-      {
-	delete ret;
-	delete e1;
-	delete ec1;
-	delete ec2;
-	return 0;
-      }
-
-      ret->val = (ufloat) ( ((int)e1->val) || ((int)e2->val) );
-
-      if (ec1)
-	if (ec2)
-	  ec = new UEventCompound (EC_OR, ec1, ec2);
-	else
-	  ec = new UEventCompound (EC_OR, ec1, new UEventCompound (e2));
-      else
-	if (ec2)
-	  ec = new UEventCompound (EC_OR, new UEventCompound (e1), ec2);
-	else
-	  ec = new UEventCompound (EC_OR, new UEventCompound (e1),
-				   new UEventCompound (e2));
-
-      delete e2;
-      delete e1;
-      return ret;
-    }
-
+#undef EVAL_EXPR_BIN_BOOLEAN
     default:
       return 0;
   }
