@@ -194,11 +194,10 @@ UServer::initialization()
 
   debugOutput     = false;
 
-
   //The order is important: ghost connection, plugins, urbi.ini
 
   // Ghost connection
-  ghost  = new UGhostConnection(this);
+  ghost = new UGhostConnection(this);
   connectionList.push_front(ghost);
 
   char tmpbuffer_ghostTag[50];

@@ -296,6 +296,17 @@ UConnection::send (const char *s, const char* tag)
   return send((const ubyte*)s, strlen(s));
 }
 
+UErrorValue
+UConnection::sendf (const char* tag, const char* format, ...)
+{
+  char buf[1024];
+  va_list arg;
+  va_start(arg, format);
+  vsnprintf(buf, sizeof buf, format, arg);
+  va_end(arg);
+  return send (buf, tag);
+}
+
 //! Send a buffer through the connection and flush it
 UErrorValue
 UConnection::send (const ubyte *buffer, int length)

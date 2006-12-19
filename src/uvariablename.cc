@@ -1,23 +1,23 @@
 /*! \file uvariablename.cc
-*******************************************************************************
+ *******************************************************************************
 
-File: uvariablename.cc\n
-Implementation of the UVariableName class.
+ File: uvariablename.cc\n
+ Implementation of the UVariableName class.
 
-This file is part of
-%URBI Kernel, version __kernelversion__\n
-(c) Jean-Christophe Baillie, 2004-2005.
+ This file is part of
+ %URBI Kernel, version __kernelversion__\n
+ (c) Jean-Christophe Baillie, 2004-2005.
 
-Permission to use, copy, modify, and redistribute this software for
-non-commercial use is hereby granted.
+ Permission to use, copy, modify, and redistribute this software for
+ non-commercial use is hereby granted.
 
-This software is provided "as is" without warranty of any kind,
-either expressed or implied, including but not limited to the
-implied warranties of fitness for a particular purpose.
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
 
-For more information, comments, bug reports: http://www.urbiforge.net
+ For more information, comments, bug reports: http://www.urbiforge.net
 
-**************************************************************************** */
+ **************************************************************************** */
 
 #include <cstdio>
 #include <cmath>
@@ -151,7 +151,7 @@ UVariableName::~UVariableName()
 
 
 //! UVariableName reset cache access
-  void
+void
 UVariableName::resetCache()
 {
   cached = false;
@@ -162,11 +162,11 @@ UVariableName::resetCache()
 
 //! UVariableName access to variable (with cache)
 /*! If variable is not null, it means that the variable name is
-  constant and that the access to the variable hash table has been done
-  already. This access is then cached to limitate the number of calls to
-  the hash table.
-  */
-  UVariable*
+ constant and that the access to the variable hash table has been done
+ already. This access is then cached to limitate the number of calls to
+ the hash table.
+ */
+UVariable*
 UVariableName::getVariable(UCommand *command, UConnection *connection)
 {
   if (variable)
@@ -186,8 +186,7 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
   else
     i = ::urbiserver->variabletab.find(fullname_->str());
 
-  UVariable *tmpvar =
-    (i != ::urbiserver->variabletab.end()) ? i->second : 0;
+  UVariable *tmpvar = (i != ::urbiserver->variabletab.end()) ? i->second : 0;
 
   if (cached)
     variable = tmpvar;
@@ -197,10 +196,10 @@ UVariableName::getVariable(UCommand *command, UConnection *connection)
 
 //! UVariableName access to function (with cache)
 /*! If function is not null, it means that the function name is
-  constant and that the access to the function hash table has been done
-  already. This access is then cached to limitate the number of calls to
-  the hash table.
-*/
+ constant and that the access to the function hash table has been done
+ already. This access is then cached to limitate the number of calls to
+ the hash table.
+ */
 UFunction*
 UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
@@ -282,10 +281,10 @@ UVariableName::getDevice()
 
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
-  If the building blocks are static, non variable parameters (like static
-  indexes in an array or constant string in a $(...)), cached is set to
-  true to avoid recalculus on next call.
-  */
+ If the building blocks are static, non variable parameters (like static
+ indexes in an array or constant string in a $(...)), cached is set to
+ true to avoid recalculus on next call.
+ */
 UString*
 UVariableName::buildFullname(UCommand *command,
 			     UConnection *connection,
@@ -309,10 +308,7 @@ UVariableName::buildFullname(UCommand *command,
 
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
-      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! dynamic variable evaluation failed\n");
-      connection->send(tmpbuffer, command->getTag().c_str());
+      connection->sendf (command->getTag().c_str(), "!!! dynamic variable evaluation failed\n");
       delete e1;
       if (fullname_)
       {
@@ -372,10 +368,7 @@ UVariableName::buildFullname(UCommand *command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! array index evaluation failed\n");
-	connection->send(tmpbuffer, command->getTag().c_str());
+	connection->sendf (command->getTag().c_str(), "!!! array index evaluation failed\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -388,10 +381,7 @@ UVariableName::buildFullname(UCommand *command,
       else
       {
 	delete e1;
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! invalid array index type\n");
-	connection->send(tmpbuffer, command->getTag().c_str());
+	connection->sendf (command->getTag().c_str(), "!!! invalid array index type\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -421,10 +411,7 @@ UVariableName::buildFullname(UCommand *command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! array index evaluation failed\n");
-	connection->send(tmpbuffer, command->getTag().c_str());
+	connection->sendf (command->getTag().c_str(), "!!! array index evaluation failed\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -438,10 +425,7 @@ UVariableName::buildFullname(UCommand *command,
       else
       {
 	delete e1;
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! invalid array index type\n");
-	connection->send(tmpbuffer, command->getTag().c_str());
+	connection->sendf (command->getTag().c_str(), "!!! invalid array index type\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -532,10 +516,7 @@ UVariableName::buildFullname(UCommand *command,
     }
     else
     {
-      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! invalid prefix resolution\n");
-      connection->send(tmpbuffer, command->getTag().c_str());
+      connection->sendf (command->getTag().c_str(), "!!! invalid prefix resolution\n");
       delete fullname_;
       fullname_ = 0;
       return 0;
@@ -642,7 +623,7 @@ UVariableName::buildFullname(UCommand *command,
 
 
 //! UVariableName name update for functions scope hack
-  void
+void
 UVariableName::nameUpdate(const char* _device, const char* _id)
 {
   if (device)
@@ -691,9 +672,9 @@ UVariableName::copy()
 
 //! Print the variable
 /*! This function is for debugging purpose only.
-  It is not safe, efficient or crash proof. A better version will come later.
-  */
-  void
+ It is not safe, efficient or crash proof. A better version will come later.
+ */
+void
 UVariableName::print()
 {
   ::urbiserver->debug("(VAR root=%d ", rooted);
