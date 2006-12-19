@@ -1,5 +1,13 @@
 2006-12-19  Akim Demaille  <akim.demaille@free.fr>
 
+	Simplifications
+	* src/userver.cc: Use C++ like ctors.
+	Someone will have to clean the warnings.
+	And maybe continue to improve this ctor.
+	Also, use simple iterator variable names (e.g., i).
+
+2006-12-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Use an impossible name for removeFunction
 	* src/userver.cc (UServer::UServer): here.
 

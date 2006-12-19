@@ -89,21 +89,27 @@ int usedMemory;
 UServer::UServer(ufloat frequency,
 		 int freeMemory,
 		 const char* mainName)
+  : isolate_ (false),
+    uservarState (false),
+    frequency_(frequency),
+    securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
+    mainName (new UString(mainName)),
+    debugOutput (false),
+    somethingToDelete (false),
+    cpuoverload (false),
+    cpucount (0),
+    signalcpuoverload (false),
+    cputhreshold (1.2),
+    defcheck (false),
+    stopall (false),
+    systemcommands (true),
+    reseting (false),
+    stage (0)
 {
-  uservarState = false;
-
   ::urbiserver = 0;
-  frequency_      = frequency;
-  securityBuffer_ = malloc(SECURITY_MEMORY_SIZE);
-  this->mainName = new UString(mainName);
-
   memoryOverflow = securityBuffer_ == 0;
-
-  isolate_        = false;
-  debugOutput     = false;
-
+  usedMemory = 0;
   availableMemory = freeMemory;
-
   availableMemory -=  3000000; // Need 3.1Mo at min to run safely.
   // You might hack this for a small
   // size server, but anything with
@@ -111,21 +117,6 @@ UServer::UServer(ufloat frequency,
   // good candidate to run URBI anyway...
   if (availableMemory < 100000)
     memoryOverflow = true;
-
-  somethingToDelete = false;
-
-  cpuoverload = false;
-  cpucount = 0;
-  signalcpuoverload = false;
-  cputhreshold = 1.2;
-  defcheck = false;
-  stopall = false;
-  systemcommands = true;
-
-  // init the memory manager.
-  usedMemory = 0 ;
-  reseting = false;
-  stage = 0;
 
   ADDOBJ(UServer);
   ::urbiserver = this;
@@ -191,7 +182,6 @@ UServer::initialization()
 
   int i = 0;
   char customHeader[1024];
-
   do {
     getCustomHeader(i, (char*)customHeader, 1024);
     if (customHeader[0])
@@ -273,25 +263,23 @@ UServer::work()
   currentTime   = lastTime();
 
   // Execute Timers
-  for (urbi::UTimerTable::iterator ittt = urbi::timermap.begin();
-       ittt != urbi::timermap.end();
-       ittt++)
-    if ((*ittt)->lastTimeCalled - currentTime + (*ittt)->period <
-	frequency_ / 2)
+  for (urbi::UTimerTable::iterator i = urbi::timermap.begin();
+       i != urbi::timermap.end();
+       i++)
+    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
-      (*ittt)->call();
-      (*ittt)->lastTimeCalled = currentTime;
+      (*i)->call();
+      (*i)->lastTimeCalled = currentTime;
     }
 
 
   beforeWork();
 
   // Access & Change variable list
-  for (std::list<UVariable*>::iterator itac =
-	 access_and_change_varlist.begin ();
-       itac != access_and_change_varlist.end ();
-       ++itac)
-    (*itac)->get ();
+  for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
+       i != access_and_change_varlist.end ();
+       ++i)
+    (*i)->get ();
 
   // memory test
   memoryCheck(); // Check for memory availability
@@ -327,50 +315,49 @@ UServer::work()
 
 
   // Scan currently opened connections for ongoing work
-  for (std::list<UConnection*>::iterator retr = connectionList.begin();
-       retr != connectionList.end();
-       retr++)
-    if ((*retr)->isActive())
+  for (std::list<UConnection*>::iterator r = connectionList.begin();
+       r != connectionList.end();
+       r++)
+    if ((*r)->isActive())
     {
-      if (!(*retr)->isBlocked())
-	(*retr)->continueSend();
+      if (!(*r)->isBlocked())
+	(*r)->continueSend();
 
       if (signalMemoryOverflow)
-	(*retr)->errorSignal(UERROR_MEMORY_OVERFLOW);
+	(*r)->errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
-	(*retr)->errorSignal(UERROR_CPU_OVERLOAD);
+	(*r)->errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      (*retr)->errorCheck(UERROR_MEMORY_OVERFLOW);
-      (*retr)->errorCheck(UERROR_MEMORY_WARNING);
-      (*retr)->errorCheck(UERROR_SEND_BUFFER_FULL);
-      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (*retr)->errorCheck(UERROR_CPU_OVERLOAD);
+      (*r)->errorCheck(UERROR_MEMORY_OVERFLOW);
+      (*r)->errorCheck(UERROR_MEMORY_WARNING);
+      (*r)->errorCheck(UERROR_SEND_BUFFER_FULL);
+      (*r)->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      (*r)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      (*r)->errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
-      if ((*retr)->activeCommand)
+      if ((*r)->activeCommand)
       {
-	(*retr)->obstructed = true; // will be changed to 'false'
+	(*r)->obstructed = true; // will be changed to 'false'
 	//if the whole tree is visited
-	(*retr)->treeLock.lock();
-	(*retr)->inwork = true;   // to distinguish this call of
+	(*r)->treeLock.lock();
+	(*r)->inwork = true;   // to distinguish this call of
 	//execute from the one in receive
-	(*retr)->execute((*retr)->activeCommand);
-	(*retr)->inwork = false;
-	(*retr)->treeLock.unlock();
+	(*r)->execute((*r)->activeCommand);
+	(*r)->inwork = false;
+	(*r)->treeLock.unlock();
       }
 
-      if ((*retr)->newDataAdded)
+      if ((*r)->newDataAdded)
       {
 	// used by loadFile and exec to
 	// delay the parsing after the completion
 	// of execute().
-
-	(*retr)->newDataAdded = false;
-	(*retr)->received("");
+	(*r)->newDataAdded = false;
+	(*r)->received("");
       }
     }
 
@@ -379,24 +366,24 @@ UServer::work()
   if (reseting && stage==0)
     stopall = true;
 
-  for (std::list<UConnection*>::iterator retr = connectionList.begin();
-       retr != connectionList.end();
-       retr++)
-    if  ((*retr)->isActive() && (*retr)->activeCommand)
+  for (std::list<UConnection*>::iterator r = connectionList.begin();
+       r != connectionList.end();
+       r++)
+    if  ((*r)->isActive() && (*r)->activeCommand)
     {
-      if ((*retr)->killall || stopall)
+      if ((*r)->killall || stopall)
       {
-	(*retr)->killall = false;
-	delete (*retr)->activeCommand;
-	(*retr)->activeCommand = 0;
+	(*r)->killall = false;
+	delete (*r)->activeCommand;
+	(*r)->activeCommand = 0;
       }
-      else if ((*retr)->activeCommand->toDelete)
+      else if ((*r)->activeCommand->toDelete)
       {
-	delete (*retr)->activeCommand;
-	(*retr)->activeCommand = 0;
+	delete (*r)->activeCommand;
+	(*r)->activeCommand = 0;
       }
       else if (somethingToDelete)
-	(*retr)->activeCommand->deleteMarked();
+	(*r)->activeCommand->deleteMarked();
     }
 
   somethingToDelete = false;
@@ -406,54 +393,52 @@ UServer::work()
 
   UVarSet selfError;
 
-  for (std::list<UVariable*>::iterator iter = reinitList.begin();
-       iter != reinitList.end();)
-
-    if ((*iter)->activity == 2)
+  for (std::list<UVariable*>::iterator i = reinitList.begin();
+       i != reinitList.end();)
+    if ((*i)->activity == 2)
     {
-      (*iter)->activity = 0;
+      (*i)->activity = 0;
       // set previous for stationnary values
-      (*iter)->previous3 = (*iter)->previous;
-      (*iter)->previous2 = (*iter)->previous;
+      (*i)->previous3 = (*i)->previous;
+      (*i)->previous2 = (*i)->previous;
 
-      iter = reinitList.erase(iter);
+      i = reinitList.erase(i);
     }
     else
     {
-      (*iter)->activity = 2;
-      (*iter)->nbAverage = 0;
-      (*iter)->reloop = false;
+      (*i)->activity = 2;
+      (*i)->nbAverage = 0;
+      (*i)->reloop = false;
 
-      if (((*iter)->blendType == UMIX) || ((*iter)->blendType == UADD))
-	if ((*iter)->value->dataType == DATA_NUM)
+      if ((*i)->blendType == UMIX || (*i)->blendType == UADD)
+	if ((*i)->value->dataType == DATA_NUM)
 	{
-	  if ((*iter)->autoUpdate)
-	    selfError = (*iter)->selfSet (&((*iter)->value->val));
+	  if ((*i)->autoUpdate)
+	    selfError = (*i)->selfSet (&((*i)->value->val));
 	  else
-	    selfError = (*iter)->selfSet (&((*iter)->target));
+	    selfError = (*i)->selfSet (&((*i)->target));
 	}
 
-      // set previous for next iteration
-      (*iter)->previous3 = (*iter)->previous2;
-      (*iter)->previous2 = (*iter)->previous;
-      (*iter)->previous  = (*iter)->target;
+      // set previous for next iation
+      (*i)->previous3 = (*i)->previous2;
+      (*i)->previous2 = (*i)->previous;
+      (*i)->previous  = (*i)->target;
 
-      if ((*iter)->speedmodified)
-	(*iter)->reloop = true;
-      (*iter)->speedmodified = false;
+      if ((*i)->speedmodified)
+	(*i)->reloop = true;
+      (*i)->speedmodified = false;
 
-      iter++;
+      i++;
     }
 
   // Execute Hub Updaters
-  for (urbi::UTimerTable::iterator ittt = urbi::updatemap.begin();
-       ittt != urbi::updatemap.end();
-       ittt++)
-    if ((*ittt)->lastTimeCalled - currentTime + (*ittt)->period <
-	frequency_ / 2)
+  for (urbi::UTimerTable::iterator i = urbi::updatemap.begin();
+       i != urbi::updatemap.end();
+       i++)
+    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
-      (*ittt)->call();
-      (*ittt)->lastTimeCalled = currentTime;
+      (*i)->call();
+      (*i)->lastTimeCalled = currentTime;
     }
 
   // after work
@@ -491,12 +476,12 @@ UServer::work()
     if (stage == 1)
     {
       //delete objects first
-      for (HMvariabletab::iterator retr = variabletab.begin();
-	   retr != variabletab.end();
-	   retr++)
-	if (retr->second->value
-	    && retr->second->value->dataType == DATA_OBJ)
-	  varToReset.push_back(retr->second);
+      for (HMvariabletab::iterator i = variabletab.begin();
+	   i != variabletab.end();
+	   i++)
+	if (i->second->value
+	    && i->second->value->dataType == DATA_OBJ)
+	  varToReset.push_back(i->second);
 
       while (!varToReset.empty())
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
@@ -510,11 +495,11 @@ UServer::work()
 	    it++;
 
       //delete the rest
-      for (HMvariabletab::iterator retr = variabletab.begin();
-	   retr != variabletab.end();
-	   retr++)
-	if (retr->second->uservar)
-	  varToReset.push_back(retr->second);
+      for (HMvariabletab::iterator i = variabletab.begin();
+	   i != variabletab.end();
+	   i++)
+	if (i->second->uservar)
+	  varToReset.push_back(i->second);
 
       libport::deep_clear (varToReset);
 
@@ -526,17 +511,17 @@ UServer::work()
       objaliastab.clear();
       tagtab.clear();
 
-      for (std::list<UConnection*>::iterator retr = connectionList.begin();
-	   retr != connectionList.end();
-	   retr++)
-	if  ((*retr)->isActive())
-	  (*retr)->send("*** Reset completed.\n", "reset");
+      for (std::list<UConnection*>::iterator i = connectionList.begin();
+	   i != connectionList.end();
+	   i++)
+	if  ((*i)->isActive())
+	  (*i)->send("*** Reset completed.\n", "reset");
 
       //restart everything
-      for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
-	   retr != urbi::objectlist->end();
-	   retr++)
-	(*retr)->init((*retr)->name);
+      for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
+	   i != urbi::objectlist->end();
+	   i++)
+	(*i)->init((*i)->name);
 
       loadFile("URBI.INI", &ghost->recvQueue());
       char resetsignal[255];
@@ -550,15 +535,15 @@ UServer::work()
 	= variabletab.find("__system__.resetsignal");
       if (findResetSignal != variabletab.end())
       {
-	for (std::list<UConnection*>::iterator retr = connectionList.begin();
-	     retr != connectionList.end();
-	     retr++)
-	  if  ((*retr)->isActive() && (*retr) != ghost)
+	for (std::list<UConnection*>::iterator i = connectionList.begin();
+	     i != connectionList.end();
+	     i++)
+	  if  ((*i)->isActive() && (*i) != ghost)
 	  {
-	    (*retr)->send("*** Reloading\n", "reset");
+	    (*i)->send("*** Reloading\n", "reset");
 
-	    loadFile("CLIENT.INI", &(*retr)->recvQueue());
-	    (*retr)->newDataAdded = true;
+	    loadFile("CLIENT.INI", &(*i)->recvQueue());
+	    (*i)->newDataAdded = true;
 	  }
 	reseting = false;
 	stage = 0;
@@ -846,11 +831,11 @@ UServer::memoryCheck ()
     warningSent = true;
 
     // Scan currently opened connections
-    for (std::list<UConnection*>::iterator retr = connectionList.begin();
-	 retr != connectionList.end();
-	 retr++)
-      if ((*retr)->isActive())
-	(*retr)->warning(UWARNING_MEMORY);
+    for (std::list<UConnection*>::iterator i = connectionList.begin();
+	 i != connectionList.end();
+	 i++)
+      if ((*i)->isActive())
+	(*i)->warning(UWARNING_MEMORY);
   }
 
   // Hysteresis mechanism
