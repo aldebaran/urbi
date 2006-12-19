@@ -52,10 +52,6 @@
 #include "utypes.hh"
 #include "uvariable.hh"
 
-#if (__GNUC__ == 2)
-static const string left = "";
-#endif
-
 namespace
 {
   UNodeType nodeType_foreach (UCommand::Type type)

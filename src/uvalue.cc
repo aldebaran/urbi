@@ -38,11 +38,6 @@
 #include "uconnection.hh"
 #undef private
 
-#if defined __GNUC__ && __GNUC__ == 2
-static const string fixed = "";
-#endif
-
-
 MEMORY_MANAGER_INIT(UValue);
 // **************************************************************************
 //! UValue constructor.

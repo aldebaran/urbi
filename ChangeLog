@@ -1,5 +1,10 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Remove old GCC 2 hacks
+	* src/ucommand.cc, src/uvalue.cc: here.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/uqueue.cc: here.
 
