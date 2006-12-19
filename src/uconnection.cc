@@ -448,7 +448,7 @@ UConnection::received (const ubyte *buffer, int length)
 {
   if (server->memoryOverflow)
   {
-    errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
+    errorSignal(UERROR_MEMORY_OVERFLOW);
     // Block any new incoming command when the system is out of
     // memory
     return UFAIL;
