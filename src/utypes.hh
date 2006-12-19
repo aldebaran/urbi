@@ -23,8 +23,8 @@
 
  **************************************************************************** */
 
-#ifndef UTYPE_HH
-# define UTYPE_HH
+#ifndef UTYPES_HH
+# define UTYPES_HH
 
 # include <list>
 # include "libport/cstring"
@@ -81,7 +81,7 @@ extern  int   availableMemory;
 
 typedef unsigned long IPAdd;
 
-//! Return code values
+/// Return code values
 enum UErrorValue
 {
   USUCCESS,
@@ -89,35 +89,21 @@ enum UErrorValue
   UMEMORYFAIL
 };
 
-//! Return code for variable Update
+/// Return code for variable Update
 enum UVarSet
 {
   UOK,
   USPEEDMAX
 };
 
-//! Type of Errors
-enum UErrorCode
-{
-  UERROR_CRITICAL,
-  UERROR_SYNTAX,
-  UERROR_DIVISION_BY_ZERO,
-  UERROR_RECEIVE_BUFFER_FULL,
-  UERROR_MEMORY_OVERFLOW,
-  UERROR_SEND_BUFFER_FULL,
-  UERROR_RECEIVE_BUFFER_CORRUPTED,
-  UERROR_MEMORY_WARNING,
-  UERROR_CPU_OVERLOAD
-};
-
-//! Type of Bind modes
+/// Type of Bind modes
 enum UBindMode
 {
   UEXTERNAL,
   UINTERNAL
 };
 
-//! Type of binding
+/// Type of binding
 enum UBindType
 {
   UBIND_FUNCTION,
@@ -126,7 +112,7 @@ enum UBindType
   UBIND_OBJECT
 };
 
-//! Type of defs in UCommand_DEF
+/// Type of defs in UCommand_DEF
 enum UDefType
 {
   UDEF_FUNCTION,
@@ -136,15 +122,7 @@ enum UDefType
   UDEF_QUERY
 };
 
-
-
-//! Type of Warnings
-enum UWarningCode
-{
-  UWARNING_MEMORY
-};
-
-//! Type of Derivative
+/// Type of Derivative
 enum UDeriveType
 {
   UNODERIV,
@@ -155,7 +133,7 @@ enum UDeriveType
 };
 
 
-//! Results of a test
+/// Results of a test
 enum UTestResult
 {
   UFALSE,
@@ -163,7 +141,7 @@ enum UTestResult
   UTESTFAIL
 };
 
-//! Possible status for a UCommand
+/// Possible status for a UCommand
 enum UCommandStatus
 {
   UONQUEUE,
@@ -182,7 +160,7 @@ enum UEventCompoundType
   EC_BANG
 };
 
-//! The different Data types
+/// The different Data types
 enum UDataType
 {
   DATA_UNKNOWN,
@@ -206,7 +184,7 @@ using urbi::UQUEUE;
 using urbi::UCANCEL;
 using urbi::UNORMAL;
 
-//! Node type for a UCommand_TREE
+/// Node type for a UCommand_TREE
 enum UNodeType
 {
   UAND,
@@ -215,7 +193,7 @@ enum UNodeType
   UCOMMA
 };
 
-//! Runlevel type for a binary tree exploration
+/// Runlevel type for a binary tree exploration
 enum URunlevel
 {
   UWAITING,
@@ -223,7 +201,7 @@ enum URunlevel
   UTERMINATED
 };
 
-//! Return code values for the setDeviceVar method
+/// Return code values for the setDeviceVar method
 enum UReport
 {
   UDONE,
@@ -236,7 +214,7 @@ typedef unsigned char ubyte;
 # define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
 
-//! URefPt is used to make references to pointers.
+/// URefPt is used to make references to pointers.
 template <class T>
 class URefPt
 {

@@ -23,8 +23,10 @@
 # define UCONNECTION_HH
 
 # include "libport/lockable.hh"
+
 # include "fwd.hh"
-# include "utypes.hh"
+
+# include "ucomplaints.hh"
 # include "parser/uparser.hh"
 # include "uqueue.hh"
 # include "ucommandqueue.hh"

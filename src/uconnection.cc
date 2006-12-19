@@ -28,13 +28,15 @@
 #endif
 
 #include "libport/lockable.hh"
-#include "ubanner.hh"
-#include "uconnection.hh"
-#include "userver.hh"
-#include "uqueue.hh"
-#include "ucommandqueue.hh"
+
 #include "parser/uparser.hh"
+#include "ubanner.hh"
 #include "ucallid.hh"
+#include "ucommandqueue.hh"
+#include "ucomplaints.hh"
+#include "uconnection.hh"
+#include "uqueue.hh"
+#include "userver.hh"
 #include "uvariable.hh"
 
 //! UConnection constructor.
@@ -663,49 +665,6 @@ int
 UConnection::effectiveSend (const ubyte*, int length)
 {
   return length;
-}
-
-namespace
-{
-  const char*
-  message (UErrorCode n)
-  {
-    switch (n)
-    {
-      case UERROR_CRITICAL:
-	return "!!! Critical error\n";
-      case UERROR_SYNTAX:
-	return "!!! Syntax error\n";
-      case UERROR_DIVISION_BY_ZERO:
-	return "!!! Division by zero\n";
-      case UERROR_RECEIVE_BUFFER_FULL:
-	return "!!! Receive buffer full\n";
-      case UERROR_MEMORY_OVERFLOW:
-	return "!!! Out of memory\n";
-      case UERROR_SEND_BUFFER_FULL:
-	return "!!! Send buffer full\n";
-      case UERROR_CPU_OVERLOAD:
-	return "!!! CPU Overload\n";
-      case UERROR_RECEIVE_BUFFER_CORRUPTED:
-	return "!!! Receive buffer corrupted\n";
-      case UERROR_MEMORY_WARNING:
-	return "!!! Memory warning\n";
-    }
-    // This should not be possible.
-    return "!!! Unidentified Error\n";
-  }
-
-  const char*
-  message (UWarningCode n)
-  {
-    switch (n)
-    {
-    case UWARNING_MEMORY:
-      return "!!! Memory overflow warning\n";
-    }
-    // This should not be possible.
-    return "!!! Unidentified warning\n";
-  }
 }
 
 //! Send an error message based on the error number.

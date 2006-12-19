@@ -1,3 +1,10 @@
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
+	ucomplaints.*
+	* src/ucomplaints.cc, src/ucomplaints.hh: New.
+	* src/ucommand.cc, src/uconnection.cc, src/uconnection.hh,
+	* src/utypes.hh, src/Makefile.am: Adjust.
+
 2006-12-19  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Code clean-up.

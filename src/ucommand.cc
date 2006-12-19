@@ -360,7 +360,7 @@ UCommand::strMorph (const std::string& cmd)
      (
       UExpression::EXPR_FUNCTION,
       new UVariableName (new UString("global"), new UString("exec"),
-                         false, 0),
+			 false, 0),
       new UNamedParameters
       (
        new UExpression (UExpression::EXPR_VALUE, new UString(cmd.c_str()))
@@ -2997,9 +2997,9 @@ UCommand_NEW::execute(UConnection *connection)
 	     it != tmp_list.end ();
 	     ++it)
 	{
-          int timeout_tmp = (*it)->receive_message (urbi::NEW_CHANNEL,
-                                                    urbi::UStringSystemMessage
-                                                    (objname));
+	  int timeout_tmp = (*it)->receive_message (urbi::NEW_CHANNEL,
+						    urbi::UStringSystemMessage
+						    (objname));
 
 	  if (timeout_tmp > timeout)
 	    timeout = timeout_tmp;
@@ -6763,7 +6763,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
       theloop_->setTag ("__system__"); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
-        assign = new UCommand_TREE (UPIPE, assign, theloop_);
+	assign = new UCommand_TREE (UPIPE, assign, theloop_);
       else
 	assign = theloop_;
     }
@@ -6861,10 +6861,10 @@ UCommand_LOOP::execute(UConnection*)
   if (command == 0) return status = UCOMPLETED;
 
   morph = new UCommand_TREE(USEMICOLON,
-                            new UCommand_TREE(UAND,
-                                              command->copy(),
-                                              new UCommand_NOOP()),
-                            this);
+			    new UCommand_TREE(UAND,
+					      command->copy(),
+					      new UCommand_NOOP()),
+			    this);
   persistant = true;
   return status = UMORPH;
 }
@@ -6968,9 +6968,9 @@ UCommand_LOOPN::execute(UConnection *connection)
     morph = new UCommand_TREE(nodeType, command->copy(), this);
   else
     morph = new UCommand_TREE(nodeType, new UCommand_TREE(UAND,
-                                                          command->copy(),
-                                                          new UCommand_NOOP()),
-                              this);
+							  command->copy(),
+							  new UCommand_NOOP()),
+			      this);
   persistant = true;
   return status = UMORPH;
 }
@@ -7097,15 +7097,15 @@ UCommand_FOR::execute(UConnection *connection)
 	|| nodeType == UAND)
     {
       if (instr2)
-        morph =
-          new UCommand_TREE(nodeType, command->copy(),
-                            new UCommand_TREE(UPIPE,
-                                              tmp_instr2 = instr2->copy(),
-                                              this
-                                             )
-                           );
+	morph =
+	  new UCommand_TREE(nodeType, command->copy(),
+			    new UCommand_TREE(UPIPE,
+					      tmp_instr2 = instr2->copy(),
+					      this
+					     )
+			   );
       else
-        morph = new UCommand_TREE(nodeType, command->copy(), this);
+	morph = new UCommand_TREE(nodeType, command->copy(), this);
     }
     else
     {
