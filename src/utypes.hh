@@ -299,15 +299,15 @@ class UWaitCounter
 
 
 class TagInfo;
-typedef  urbi::hash_map_type<const char*, UVariable*>::type HMvariabletab ;
-typedef  urbi::hash_map_type<const char*, UFunction*>::type HMfunctiontab ;
-typedef  urbi::hash_map_type<const char*, UObj*>::type HMobjtab ;
-typedef  urbi::hash_map_type<const char*, UGroup*>::type HMgrouptab ;
-typedef  urbi::hash_map_type<const char*, UString*>::type HMaliastab ;
-typedef  urbi::hash_map_type<const char*, UEventHandler*>::type HMemittab ;
-typedef  urbi::hash_map_type<const char*, UBinder*>::type HMbindertab ;
-typedef  urbi::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
-typedef  urbi::hash_map_type<std::string, TagInfo>::type HMtagtab;
+typedef libport::hash_map_type<const char*, UVariable*>::type HMvariabletab;
+typedef libport::hash_map_type<const char*, UFunction*>::type HMfunctiontab;
+typedef libport::hash_map_type<const char*, UObj*>::type HMobjtab;
+typedef libport::hash_map_type<const char*, UGroup*>::type HMgrouptab;
+typedef libport::hash_map_type<const char*, UString*>::type HMaliastab;
+typedef libport::hash_map_type<const char*, UEventHandler*>::type HMemittab;
+typedef libport::hash_map_type<const char*, UBinder*>::type HMbindertab;
+typedef libport::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
+typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;
 
 /** Structure containing informations related to a tag.
  We have a hash table of those.
