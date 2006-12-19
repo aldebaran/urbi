@@ -46,6 +46,8 @@ extern  int   usedMemory;
 /// Total amount of free memory in the system.
 extern  int   availableMemory;
 
+#if 0
+
 // FIXME: Why applying the 1.15 threshold here instead of where we
 // consult usedMemory?
 # define ADDMEM(X)   usedMemory += (int) ((X) * 1.15)
@@ -53,12 +55,21 @@ extern  int   availableMemory;
 
 # define ADDOBJ(X)   ADDMEM (sizeof(X))
 # define FREEOBJ(X)  FREEMEM (sizeof(X))
-
 # define LIBERATE(X)				\
   do {						\
     if ((X) && (X)->liberate() == 0)		\
       delete X;					\
   } while (0)
+
+#else
+
+# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
+# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
+# define ADDOBJ(x)   {usedMemory += ((int)(sizeof(x)*1.15));}
+# define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
+# define LIBERATE(x) if (x && x->liberate()==0) delete (x)
+
+#endif
 
 
 /*------------.

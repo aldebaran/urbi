@@ -1,5 +1,10 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Restore old ADDMEM macros
+	* src/utypes.hh: here.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	ucomplaints.*
 	* src/ucomplaints.cc, src/ucomplaints.hh: New.
 	* src/ucommand.cc, src/uconnection.cc, src/uconnection.hh,
