@@ -192,9 +192,6 @@ private:
   UCommand (const UCommand &c);
 };
 
-extern char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-
-
 class UCommand_TREE : public UCommand
 {
 public:

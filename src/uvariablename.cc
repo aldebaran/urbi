@@ -305,10 +305,11 @@ UVariableName::buildFullname(UCommand *command,
     e1 = str->eval(command, connection);
     cached = str->isconst;
 
-    if ((e1==0) || (e1->str==0) || (e1->dataType != DATA_STRING))
+    if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
+      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	  "!!! dynamic variable evaluation failed\n");
+	       "!!! dynamic variable evaluation failed\n");
       connection->send(tmpbuffer, command->getTag().c_str());
       delete e1;
       if (fullname_)
@@ -369,6 +370,7 @@ UVariableName::buildFullname(UCommand *command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
+	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! array index evaluation failed\n");
 	connection->send(tmpbuffer, command->getTag().c_str());
@@ -378,20 +380,20 @@ UVariableName::buildFullname(UCommand *command,
       }
       if (e1->dataType == DATA_NUM)
 	snprintf(indexstr, fullnameMaxSize, "__%d", (int)e1->val);
+      else if (e1->dataType == DATA_STRING)
+	snprintf(indexstr, fullnameMaxSize, "__%s",
+		 e1->str->str());
       else
-	if (e1->dataType == DATA_STRING)
-	  snprintf(indexstr, fullnameMaxSize, "__%s",
-		   e1->str->str());
-	else
-	{
-	  delete e1;
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		   "!!! invalid array index type\n");
-	  connection->send(tmpbuffer, command->getTag().c_str());
-	  delete fullname_;
-	  fullname_ = 0;
-	  return 0;
-	}
+      {
+	delete e1;
+	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! invalid array index type\n");
+	connection->send(tmpbuffer, command->getTag().c_str());
+	delete fullname_;
+	fullname_ = 0;
+	return 0;
+      }
 
       // Suppress this to make index non static by default
       // if (!itindex->expression->isconst) cached = false;
@@ -417,6 +419,7 @@ UVariableName::buildFullname(UCommand *command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
+	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! array index evaluation failed\n");
 	connection->send(tmpbuffer, command->getTag().c_str());
@@ -433,6 +436,7 @@ UVariableName::buildFullname(UCommand *command,
       else
       {
 	delete e1;
+	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "!!! invalid array index type\n");
 	connection->send(tmpbuffer, command->getTag().c_str());
@@ -475,7 +479,7 @@ UVariableName::buildFullname(UCommand *command,
 	    std::string tmpstr(funid->str());
 	    tmpstr = tmpstr + "." + id->str();
 	    if (::urbiserver->variabletab.find(tmpstr.c_str()) !=
-			       ::urbiserver->variabletab.end()
+		::urbiserver->variabletab.end()
 		|| kernel::eventSymbolDefined (tmpstr.c_str()))
 	      function_symbol = true;
 
@@ -487,7 +491,7 @@ UVariableName::buildFullname(UCommand *command,
 	    if (objit != ::urbiserver->objtab.end())
 	    {
 	      class_symbol =
-		   objit->second->searchVariable(id->str(), ambiguous)
+		objit->second->searchVariable(id->str(), ambiguous)
 		|| objit->second->searchFunction(id->str(), ambiguous)
 		|| objit->second->searchEvent(id->str(), ambiguous);
 	      class_symbol = class_symbol && !ambiguous;
@@ -526,6 +530,7 @@ UVariableName::buildFullname(UCommand *command,
     }
     else
     {
+      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "!!! invalid prefix resolution\n");
       connection->send(tmpbuffer, command->getTag().c_str());

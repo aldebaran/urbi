@@ -1,5 +1,11 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Don't define tmpbuffer globally
+	* src/ucommand.hh, src/ucommand.cc: Define it where used.
+	* src/uvariablename.cc: Adjust.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Update uobject
 
 2006-12-19  Akim Demaille  <demaille@gostai.com>
