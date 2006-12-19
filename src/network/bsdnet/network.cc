@@ -24,11 +24,11 @@ namespace Network
     {}
     bool init(int port);
 
-    virtual int readFD() 
+    virtual int readFD()
     {
       return fd;
     }
-    virtual int writeFD() 
+    virtual int writeFD()
     {
       return -1;
     }
