@@ -866,28 +866,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		"%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 		UU, variablename->getFullname()->str(), UU, UU);
 
-	morph = (UCommand*)
-	  new UCommand_EXPR
-	  (
-	    new UExpression
-	    (
-	      UExpression::EXPR_FUNCTION,
-	      new UVariableName
-	      (
-		new UString("global"),
-		new UString("exec"),
-		false,
-		0),
-	      new UNamedParameters
-	      (
-		new UExpression
-		(
-		  UExpression::EXPR_VALUE,
-		  new UString(tmpbuffer)
-		  )
-		)
-	      )
-	    );
+        strMorph (tmpbuffer);
 	return status = UMORPH;
       }
     }
@@ -2591,23 +2570,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	      "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 	      UU, getTag().c_str(), UU, UU);
 
-      morph = (UCommand*)
-	new UCommand_EXPR(
-	  new UExpression(
-	    UExpression::EXPR_FUNCTION,
-	    new UVariableName(new UString("global"),
-			      new UString("exec"),
-			      false,
-			      0),
-	    new UNamedParameters(
-	      new UExpression(
-		UExpression::EXPR_VALUE,
-		new UString(tmpbuffer)
-		)
-	      )
-	    )
-	  );
-
+      strMorph (tmpbuffer);
       return status = UMORPH;
     }
   }
@@ -3161,24 +3124,7 @@ UCommand_NEW::execute(UConnection *connection)
 	connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "{delete %s}", id->str());
-
-	morph = (UCommand*)
-	  new UCommand_EXPR
-	  (new UExpression
-	   (UExpression::EXPR_FUNCTION,
-	    new UVariableName
-	    (new UString("global"),
-	     new UString("exec"),
-	     false,
-	     0),
-	    new UNamedParameters
-	    (new UExpression
-	     (UExpression::EXPR_VALUE,
-	      new UString(tmpbuffer)
-	       )
-	      )
-	     )
-	    );
+        strMorph (tmpbuffer);
 	return status = UMORPH;
       }
 
@@ -3198,29 +3144,7 @@ UCommand_NEW::execute(UConnection *connection)
   else
     oss << "noop }";
 
-  morph = (UCommand*)
-    new UCommand_EXPR
-    (
-      new UExpression
-      (
-	UExpression::EXPR_FUNCTION,
-	new UVariableName
-	(
-	  new UString("global"),
-	  new UString("exec"),
-	  false,
-	  0),
-	new UNamedParameters
-	(
-	  new UExpression
-	  (
-	    UExpression::EXPR_VALUE,
-	    new UString(oss.str().c_str())
-	    )
-	  )
-	)
-      );
-
+  strMorph (oss.str ());
   return status = UMORPH;
 }
 

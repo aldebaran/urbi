@@ -1,5 +1,13 @@
 2006-12-19  Jean-Christophe Baillie  <baillie@gostai.com>
 
+        strMorph(s) will morph the UCommand into the command written
+        in s, using 'exec' as an intermediary to handle s.
+        
+	code factoring
+	* src/ucommand.cc: use strMorph to factor string->command code.
+
+2006-12-19  Jean-Christophe Baillie  <baillie@gostai.com>
+
         Support for kernel system messages has been added through the USystem
         class that uobjects can inherit. This USystem class is a generic proxy
         to kernel informatio and kernel messages, only usable in pluggin mode.
