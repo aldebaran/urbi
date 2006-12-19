@@ -31,9 +31,6 @@ AC_CONFIG_FILES([build-aux/test.sh], [chmod a=rx build-aux/test.sh])
 
 AC_PROG_CC
 URBI_PROG_CXX
-# Unfortunately -Weffc++ triggers warnings that cannot be avoided
-# when using unions in classes.
-TC_CXX_WARNINGS([-Wno-effc++])
 
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])
