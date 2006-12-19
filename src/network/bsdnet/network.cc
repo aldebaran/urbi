@@ -13,19 +13,27 @@
 #include <list>
 #include <algorithm>
 
-extern UServer * THESERVER;
 namespace Network
 {
 
   class TCPServerPipe: public Pipe
   {
   public:
-    TCPServerPipe(): fd(-1), port(-1) {}
+    TCPServerPipe()
+      : fd(-1), port(-1)
+    {}
     bool init(int port);
 
-    virtual int readFD() {return fd;}
-    virtual int writeFD() {return -1;}
-    virtual void notifyWrite() {}
+    virtual int readFD() 
+    {
+      return fd;
+    }
+    virtual int writeFD() 
+    {
+      return -1;
+    }
+    virtual void notifyWrite()
+    {}
     virtual void notifyRead();
 
   private:
@@ -89,7 +97,7 @@ namespace Network
 
     client_info = gethostbyname((char *)inet_ntoa(client.sin_addr));
     Connection *c = new Connection(cfd);
-    THESERVER->addConnection(c);
+    ::urbiserver->addConnection(c);
     registerNetworkPipe(c);
   }
 
