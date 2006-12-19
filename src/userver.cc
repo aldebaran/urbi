@@ -94,7 +94,7 @@ UServer::UServer(ufloat frequency,
 
   ::urbiserver = 0;
   frequency_      = frequency;
-  securityBuffer_ = malloc(SECURITY_MEMORY_SIZE );
+  securityBuffer_ = malloc(SECURITY_MEMORY_SIZE);
   this->mainName = new UString(mainName);
 
   memoryOverflow = securityBuffer_ == 0;
@@ -302,11 +302,11 @@ UServer::work()
   if (securityBuffer_ == 0 &&
       usedMemory < availableMemory - 2 * SECURITY_MEMORY_SIZE)
   {
-    securityBuffer_ = malloc(2 * SECURITY_MEMORY_SIZE );
+    securityBuffer_ = malloc(2 * SECURITY_MEMORY_SIZE);
     if (securityBuffer_ != 0)
     {
       free(securityBuffer_);
-      securityBuffer_ = malloc(SECURITY_MEMORY_SIZE );
+      securityBuffer_ = malloc(SECURITY_MEMORY_SIZE);
       if (securityBuffer_)
       {
 	memoryOverflow = false;
@@ -316,8 +316,7 @@ UServer::work()
   }
 
   bool signalMemoryOverflow = false;
-  if (memoryOverflow)
-    if (securityBuffer_)
+  if (memoryOverflow && securityBuffer_)
     {
       // free space to ensure the warning messages will
       // be sent without problem.
@@ -336,23 +335,23 @@ UServer::work()
       if (!(*retr)->isBlocked())
 	(*retr)->continueSend();
 
-      if (signalMemoryOverflow) (*retr)->errorSignal(UERROR_MEMORY_OVERFLOW);
+      if (signalMemoryOverflow)
+	(*retr)->errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
 	(*retr)->errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      (*retr)->errorCheck(UERROR_MEMORY_OVERFLOW );
-      (*retr)->errorCheck(UERROR_MEMORY_WARNING );
-      (*retr)->errorCheck(UERROR_SEND_BUFFER_FULL );
-      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_FULL );
-      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED );
-      (*retr)->errorCheck(UERROR_CPU_OVERLOAD );
+      (*retr)->errorCheck(UERROR_MEMORY_OVERFLOW);
+      (*retr)->errorCheck(UERROR_MEMORY_WARNING);
+      (*retr)->errorCheck(UERROR_SEND_BUFFER_FULL);
+      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      (*retr)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      (*retr)->errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
-
-      if ((*retr)->activeCommand!=0)
+      if ((*retr)->activeCommand)
       {
 	(*retr)->obstructed = true; // will be changed to 'false'
 	//if the whole tree is visited
@@ -413,7 +412,6 @@ UServer::work()
     if ((*iter)->activity == 2)
     {
       (*iter)->activity = 0;
-
       // set previous for stationnary values
       (*iter)->previous3 = (*iter)->previous;
       (*iter)->previous2 = (*iter)->previous;
@@ -423,7 +421,6 @@ UServer::work()
     else
     {
       (*iter)->activity = 2;
-
       (*iter)->nbAverage = 0;
       (*iter)->reloop = false;
 
@@ -431,9 +428,9 @@ UServer::work()
 	if ((*iter)->value->dataType == DATA_NUM)
 	{
 	  if ((*iter)->autoUpdate)
-	    selfError = (*iter)->selfSet (&((*iter)->value->val) );
+	    selfError = (*iter)->selfSet (&((*iter)->value->val));
 	  else
-	    selfError = (*iter)->selfSet (&((*iter)->target) );
+	    selfError = (*iter)->selfSet (&((*iter)->target));
 	}
 
       // set previous for next iteration
@@ -499,21 +496,18 @@ UServer::work()
 	   retr++)
 	if (retr->second->value
 	    && retr->second->value->dataType == DATA_OBJ)
-	  varToReset.push_back( retr->second );
+	  varToReset.push_back(retr->second);
 
       while (!varToReset.empty())
-      {
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
 	     it != varToReset.end();)
-	{
 	  if ((*it)->isDeletable())
 	  {
 	    delete *it;
 	    it = varToReset.erase(it);
 	  }
-	  else it++;
-	}
-      }
+	  else
+	    it++;
 
       //delete the rest
       for (HMvariabletab::iterator retr = variabletab.begin();
@@ -847,8 +841,7 @@ UServer::memoryCheck ()
   // you are doing, you better take appropriate measures when this warning
   // reaches your connection...
 
-  if ((usedMemory > (int)(0.8 * availableMemory)) &&
-      (warningSent == false))
+  if (usedMemory > (int)(0.8 * availableMemory) && !warningSent)
   {
     warningSent = true;
 
@@ -856,14 +849,12 @@ UServer::memoryCheck ()
     for (std::list<UConnection*>::iterator retr = connectionList.begin();
 	 retr != connectionList.end();
 	 retr++)
-
       if ((*retr)->isActive())
 	(*retr)->warning(UWARNING_MEMORY);
   }
 
   // Hysteresis mechanism
-  if ((usedMemory < (int)(0.7 * availableMemory)) &&
-      (warningSent == true))
+  if (usedMemory < (int)(0.7 * availableMemory) && warningSent)
     warningSent = false;
 }
 
@@ -933,10 +924,9 @@ UServer::mark(TagInfo * ti)
 {
   for(std::list<UCommand*>::iterator i = ti->commands.begin();
       i != ti->commands.end(); i++)
-  {
     if ((*i)->status != UONQUEUE || (*i)->morphed)
       (*i)->toDelete = true;
-  }
+
   for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
        i != ti->subTags.end();
        i++)

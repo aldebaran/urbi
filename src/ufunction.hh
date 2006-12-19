@@ -37,7 +37,6 @@ namespace kernel
 class UFunction
 {
 public:
-
   UFunction(UString *funname,
 	    UNamedParameters *parameters,
 	    UCommand *command);
