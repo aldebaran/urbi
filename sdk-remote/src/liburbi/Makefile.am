@@ -27,6 +27,7 @@ uclient.cc					\
 uconversion.cc					\
 uobject.cc					\
 uvar.cc						\
+usystem.cc                                      \
 usyncclient.cc
 liburbi_la_LIBADD = $(LIBADD)
 

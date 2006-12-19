@@ -12,7 +12,8 @@ nodist_uobject_headers =			\
 $(uobject_hh)
 
 dist_uobject_headers =				\
-$(uobject_srcdir)/urbi/utypes-common.hh
+$(uobject_srcdir)/urbi/utypes-common.hh         \
+$(uobject_srcdir)/urbi/usystem.hh
 
 dist_uobject_sources =				\
 $(uobject_srcdir)/uvalue-common.cc		\
