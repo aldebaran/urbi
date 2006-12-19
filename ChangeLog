@@ -1,5 +1,9 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Update uobject
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Shorten scopes
 	* src/ucommand.cc (UCommand_ASSIGN_VALUE::execute): here.
 
