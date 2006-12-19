@@ -1,5 +1,13 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Restore the newest definition of FREEMEM
+	* src/utypes.hh: Here.
+	Up till now we had 13/22 errors on Windows.  I suspect we
+	still do after this patch.  Then we'll have to study the uses
+	of ADDMEM, that will be the only remaining culprit.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Functions own their name
 	* src/ufunction.cc, src/ufunction.hh (funname): Now an UString.
 	Private.
