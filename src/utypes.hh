@@ -53,23 +53,21 @@ extern  int   availableMemory;
 # define ADDMEM(X)   usedMemory += (int) ((X) * 1.15)
 # define FREEMEM(X)  ADDMEM (-(X))
 
+#else
+
+# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
+# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
+
+#endif
+
 # define ADDOBJ(X)   ADDMEM (sizeof(X))
 # define FREEOBJ(X)  FREEMEM (sizeof(X))
+
 # define LIBERATE(X)				\
   do {						\
     if ((X) && (X)->liberate() == 0)		\
       delete X;					\
   } while (0)
-
-#else
-
-# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
-# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
-# define ADDOBJ(x)   {usedMemory += ((int)(sizeof(x)*1.15));}
-# define FREEOBJ(x)  {usedMemory -= ((int)(sizeof(x)*1.15));}
-# define LIBERATE(x) if (x && x->liberate()==0) delete (x)
-
-#endif
 
 
 /*------------.

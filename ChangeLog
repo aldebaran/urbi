@@ -1,5 +1,12 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Restore the newest LIBERATE/ADDOBJ/FREEOBJ
+	* src/utypes.hh: here.
+	The problem (early failures on Aibo and Windows) is probably
+	with the definition of ADDMEM and FREEMEM, not these.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Remove old GCC 2 hacks
 	* src/ucommand.cc, src/uvalue.cc: here.
 
