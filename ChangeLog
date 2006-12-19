@@ -1,5 +1,9 @@
 2006-12-19  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update uobject externals 
+
+2006-12-19  Jean-Christophe Baillie  <baillie@gostai.com>
+
         strMorph(s) will morph the UCommand into the command written
         in s, using 'exec' as an intermediary to handle s.
         
