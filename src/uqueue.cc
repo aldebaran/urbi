@@ -330,7 +330,7 @@ UQueue::pop (int length)
     }
   }
 
-  if (bufferSize_ - start_ >= toPop) 
+  if (bufferSize_ - start_ >= toPop)
   {
     // Is the packet continuous across the the internal buffer?  yes,
     // the packet is continuous in the internal buffer
