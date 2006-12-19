@@ -1,3 +1,9 @@
+2006-12-19  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Code clean-up.
+	* src/ucommand.cc: Remove useless casts. Replace unsafe casts by
+          dynamic_cast.
+
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
 	Don't define tmpbuffer globally

@@ -122,7 +122,7 @@ UCommand::UCommand(UCommand::Type _type)
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
    L2: pass a tag or a command ptr to ctor
    */
-  tag="";
+  tag = "";
   if (::urbiserver->systemcommands)
     setTag("__system__"); //untouchable
   else
@@ -225,7 +225,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	gplist = new UCommand_TREE(UAND, clone, gplist);
       }
 
-      morph = (UCommand*) gplist;
+      morph = gplist;
 
       varname->rooted = true;
       varname->fromGroup = true;
@@ -352,27 +352,18 @@ UCommand::isBlocked()
 }
 
 void
-UCommand::strMorph (const std::string &cmd)
+UCommand::strMorph (const std::string& cmd)
 {
-  morph = (UCommand*)
-    new UCommand_EXPR
+  morph = new UCommand_EXPR
     (
      new UExpression
      (
       UExpression::EXPR_FUNCTION,
-      new UVariableName
-      (
-       new UString("global"),
-       new UString("exec"),
-       false,
-       0),
+      new UVariableName (new UString("global"), new UString("exec"),
+                         false, 0),
       new UNamedParameters
       (
-       new UExpression
-       (
-	UExpression::EXPR_VALUE,
-	new UString(cmd.c_str())
-       )
+       new UExpression (UExpression::EXPR_VALUE, new UString(cmd.c_str()))
       )
      )
     );
@@ -462,7 +453,9 @@ UCommand_TREE::deleteMarked()
       }
       else if (tree->command1->type == CMD_TREE)
       {
-	tree = (UCommand_TREE*) tree->command1;
+	tree = dynamic_cast<UCommand_TREE*> (tree->command1);
+	// If tree->command1 wasn't NULL, then tree must NOT be NULL.
+	assert (tree->command1 ? tree != 0 : true);
 	go_to = 1;
 	continue;
       }
@@ -475,7 +468,9 @@ UCommand_TREE::deleteMarked()
       }
       else if (tree->command2->type == CMD_TREE)
       {
-	tree = (UCommand_TREE*) tree->command2;
+	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
+	// If tree->command2 wasn't NULL, then tree must NOT be NULL.
+	assert (tree->command2 ? tree != 0 : true);
 	go_to = 1;
 	continue;
       }
@@ -691,7 +686,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  true,
 	  0);
 
-      morph = (UCommand*)
+      morph =
 	new UCommand_TREE
 	(
 	  UPIPE,
@@ -719,10 +714,14 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    ::urbiserver->objtab.end ())
 	  fundevice->update (connection->stack.front()->self());
 
-	((UCommand_TREE*)morph)->callid =
-	  new UCallid(tmpbuffer,
-		      fundevice->str(),
-		      (UCommand_TREE*)morph);
+	{
+	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
+	  assert (uc_tree);
+	  ((UCommand_TREE*)morph)->callid =
+	    new UCallid(tmpbuffer,
+			fundevice->str(),
+			uc_tree);
+	}
 
 	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
 				    "__result__");
@@ -1746,7 +1745,7 @@ UCommand_ASSIGN_VALUE::copy()
 
   copybase(ret);
   ret->defkey = defkey;
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -1873,7 +1872,7 @@ UCommand_ASSIGN_BINARY::copy()
     new UCommand_ASSIGN_BINARY(ucopy (variablename),
 			       refBinary->copy());
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -2166,7 +2165,7 @@ UCommand_ASSIGN_PROPERTY::copy()
 				 ucopy (oper),
 				 ucopy (expression));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -2252,11 +2251,8 @@ UCommand_AUTOASSIGN::execute(UConnection*)
   if (!extended_expression)
     return status = UCOMPLETED;
 
-  morph =  (UCommand*)
-    new UCommand_ASSIGN_VALUE(variablename->copy(),
-			      extended_expression,
-			      0,
-			      false);
+  morph = new UCommand_ASSIGN_VALUE(variablename->copy(), extended_expression,
+				    0, false);
 
   persistant = false;
   return status = UMORPH;
@@ -2271,7 +2267,7 @@ UCommand_AUTOASSIGN::copy()
 			    ucopy (expression),
 			    assigntype);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -2399,20 +2395,16 @@ UCommand_EXPR::execute(UConnection *connection)
       }
 
       persistant = false;
-      UVariableName* resultContainer = new UVariableName(
-	new UString("__UFnct"),
-	new UString("__result__"),
-	true,
-	0);
+      UVariableName* resultContainer =
+	new UVariableName(new UString("__UFnct"), new UString("__result__"),
+			  true, 0);
 
-      UCommand_EXPR* cexp = new UCommand_EXPR(new UExpression(UExpression::EXPR_VARIABLE,
-							      resultContainer));
+      UCommand_EXPR* cexp =
+	new UCommand_EXPR(new UExpression(UExpression::EXPR_VARIABLE,
+					  resultContainer));
 
       cexp->setTag(this);
-      morph = (UCommand*)
-	new UCommand_TREE(UPIPE,
-			  fun->cmdcopy(getTag()),
-			  cexp);
+      morph = new UCommand_TREE(UPIPE, fun->cmdcopy(getTag()), cexp);
 
       if (morph)
       {
@@ -2439,9 +2431,13 @@ UCommand_EXPR::execute(UConnection *connection)
 	    ::urbiserver->objtab.end ())
 	  fundevice->update (connection->stack.front()->self());
 
-	((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
-						      fundevice->str(),
-						      (UCommand_TREE*)morph);
+	{
+	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
+	  assert (uc_tree);
+	  ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
+							fundevice->str(),
+							uc_tree);
+	}
 	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
 				    "__result__");
 	// creates return variable
@@ -2449,7 +2445,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	  new UVariable (((UCommand_TREE*)morph)->callid->str(),
 			 "__result__",
 			 new UValue ()));
-	if (!((UCommand_TREE*)morph)->callid) return status = UCOMPLETED;
+	if (!((UCommand_TREE*)morph)->callid)
+	  return status = UCOMPLETED;
 	((UCommand_TREE*)morph)->connection = connection;
 
 	UNamedParameters *pvalue = expression->parameters;
@@ -2630,7 +2627,7 @@ UCommand_EXPR::copy()
 {
   UCommand_EXPR *ret = new UCommand_EXPR(ucopy (expression));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -2709,7 +2706,7 @@ UCommand_RETURN::copy()
 {
   UCommand_RETURN *ret = new UCommand_RETURN(ucopy (expression));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -2840,7 +2837,7 @@ UCommand_ECHO::copy()
 		      ucopy (parameters),
 		      ucopy (connectionTag));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -2978,11 +2975,11 @@ UCommand_NEW::execute(UConnection *connection)
 
   objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end()
-      &&  !remoteNew)
+      && !remoteNew)
   {
     char* objname = (char*)obj->str();
     while (::urbiserver->objaliastab.find(objname) !=
-	    ::urbiserver->objaliastab.end())
+	   ::urbiserver->objaliastab.end())
       objname = (char*)::urbiserver->objaliastab[objname]->str();
 
     objit = ::urbiserver->objtab.find(objname);
@@ -2993,18 +2990,18 @@ UCommand_NEW::execute(UConnection *connection)
       if (!sysCall)
       {
 	std::list<urbi::USystem*>& tmp_list =
-	  ::urbiserver->systemObjects[(int) urbi::NEW_CHANNEL];
+	  ::urbiserver->systemObjects[urbi::NEW_CHANNEL];
 
 	for (std::list<urbi::USystem*>::iterator it =
 	     tmp_list.begin ();
 	     it != tmp_list.end ();
 	     ++it)
 	{
-	  int timeout_tmp = (*it)->receive_message
-	    (urbi::NEW_CHANNEL,
-	     urbi::UStringSystemMessage (objname));
+          int timeout_tmp = (*it)->receive_message (urbi::NEW_CHANNEL,
+                                                    urbi::UStringSystemMessage
+                                                    (objname));
 
-	  if  (timeout_tmp > timeout)
+	  if (timeout_tmp > timeout)
 	    timeout = timeout_tmp;
 	}
       }
@@ -3021,7 +3018,7 @@ UCommand_NEW::execute(UConnection *connection)
 
 	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-		 "!!! Unkown object %s\n", obj->str());
+		 "!!! Unknown object %s\n", obj->str());
 	connection->send(tmpbuffer, getTag().c_str());
 	return status = UCOMPLETED;
       }
@@ -3036,7 +3033,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    << "}";
 
 	strMorph (oss.str());
-	morph = (UCommand*) new UCommand_TREE(UPIPE, morph, this);
+	morph = new UCommand_TREE(UPIPE, morph, this);
 
 	return status;
       }
@@ -3188,7 +3185,7 @@ UCommand_NEW::copy()
 				       ucopy (parameters));
 
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -3328,7 +3325,7 @@ UCommand_ALIAS::copy()
 					   ucopy (id),
 					   eraseit);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -3465,7 +3462,7 @@ UCommand_INHERIT::copy()
 					       ucopy (theclass),
 					       eraseit);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -3614,8 +3611,8 @@ UCommand_GROUP::execute(UConnection *connection)
 
     while (it != retr->second->members.end())
     {
-      ret = new UNamedParameters(new UExpression(UExpression::EXPR_VALUE, (*it)->copy()),
-				 ret);
+      ret = new UNamedParameters(new UExpression(UExpression::EXPR_VALUE,
+						 (*it)->copy()), ret);
       it++;
     }
 
@@ -3637,7 +3634,7 @@ UCommand_GROUP::copy()
 					   ucopy (parameters),
 					   grouptype);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -3817,7 +3814,7 @@ UCommand_OPERATOR_ID::copy()
   UCommand_OPERATOR_ID *ret = new UCommand_OPERATOR_ID(ucopy (oper),
 						       ucopy (id));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -3913,7 +3910,7 @@ UCommand_DEVICE_CMD::copy()
     new UCommand_DEVICE_CMD(ucopy (variablename),
 			    new ufloat(cmd));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -4186,7 +4183,7 @@ UCommand_OPERATOR_VAR::copy()
     new UCommand_OPERATOR_VAR(ucopy (oper),
 			      ucopy (variablename));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -4347,7 +4344,7 @@ UCommand_BINDER::copy()
 					     nbparam);
 
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -4704,7 +4701,7 @@ UCommand_OPERATOR::copy()
 {
   UCommand_OPERATOR *ret = new UCommand_OPERATOR(ucopy (oper));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -4785,7 +4782,7 @@ UCommand_WAIT::copy()
 {
   UCommand_WAIT *ret = new UCommand_WAIT(ucopy (expression));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5051,7 +5048,7 @@ UCommand_EMIT::copy()
   UCommand_EMIT *ret =
     new UCommand_EMIT(ucopy (eventname), ucopy (parameters));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5138,7 +5135,7 @@ UCommand_WAIT_TEST::copy()
   UCommand_WAIT_TEST *ret = new UCommand_WAIT_TEST(ucopy (test));
   copybase(ret);
   ret->nbTrue  = 0;
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5205,7 +5202,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   // Main execution
   if (type == CMD_INCREMENT)
   {
-    morph = (UCommand*)
+    morph =
       new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
 	new UExpression(
@@ -5219,7 +5216,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
 
   if (type == CMD_DECREMENT)
   {
-    morph = (UCommand*)
+    morph =
       new UCommand_ASSIGN_VALUE(
 	variablename->copy(),
 	new UExpression(
@@ -5241,7 +5238,7 @@ UCommand_INCDECREMENT::copy()
   UCommand_INCDECREMENT *ret =
     new UCommand_INCDECREMENT(type, ucopy (variablename));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5468,7 +5465,7 @@ UCommand_DEF::execute(UConnection *connection)
 				 0,
 				 0);
 	cdef->setTag(this);
-	morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
+	morph = new UCommand_TREE(UAND, cdef, morph);
       }
       param = param->next;
     }
@@ -5499,7 +5496,7 @@ UCommand_DEF::execute(UConnection *connection)
 				 0,
 				 0);
 	cdef->setTag(this);
-	morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
+	morph = new UCommand_TREE(UAND, cdef, morph);
       }
       list = list->next;
     }
@@ -5520,7 +5517,7 @@ UCommand_DEF::copy()
 				       ucopy (command));
   ret->variablelist = ucopy (variablelist);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5684,7 +5681,7 @@ UCommand_CLASS::execute(UConnection*)
 	if (param == parameters)
 	  morph = cdef;
 	else
-	  morph = (UCommand*) new UCommand_TREE(UAND, cdef, morph);
+	  morph = new UCommand_TREE(UAND, cdef, morph);
       }
     }
 
@@ -5707,7 +5704,7 @@ UCommand_CLASS::copy()
   UCommand_CLASS *ret = new UCommand_CLASS(ucopy (object),
 					   ucopy (parameters));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5805,7 +5802,7 @@ UCommand_IF::copy()
 				     ucopy (command1),
 				     ucopy (command2));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5869,24 +5866,22 @@ UCommand_EVERY::~UCommand_EVERY()
 
 //! UCommand subclass execution function
 UCommandStatus
-UCommand_EVERY::execute(UConnection *connection)
+UCommand_EVERY::execute(UConnection* connection)
 {
   ufloat thetime = connection->server->lastTime();
 
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
-  UValue *interval = duration->eval(this, connection);
-  if (!interval) return status = UCOMPLETED;
+  UValue* interval = duration->eval(this, connection);
+  if (!interval)
+    return status = UCOMPLETED;
 
-  if ((starttime + interval->val <= thetime) ||
-      (firsttime))
+  if (starttime + interval->val <= thetime ||
+      firsttime)
   {
     persistant = true;
-    morph = (UCommand*)
-      new UCommand_TREE(UAND,
-			 command->copy(),
-			 this
-	);
+    morph = new UCommand_TREE(UAND, command->copy(), this);
     starttime = thetime;
     firsttime = false;
     delete interval;
@@ -5904,7 +5899,7 @@ UCommand_EVERY::copy()
   UCommand_EVERY *ret = new UCommand_EVERY(ucopy (duration),
 					   ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -5973,7 +5968,7 @@ UCommand_TIMEOUT::execute(UConnection*)
     return status = UCOMPLETED;
 
   persistant = false;
-  morph = (UCommand*)
+  morph =
     new UCommand_TREE(UAND,
 		       new UCommand_TREE(UPIPE,
 					  new UCommand_WAIT(duration->copy()),
@@ -5995,7 +5990,7 @@ UCommand_TIMEOUT::copy()
   UCommand_TIMEOUT *ret = new UCommand_TIMEOUT(ucopy (duration),
 					       ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6068,7 +6063,7 @@ UCommand_STOPIF::execute(UConnection *connection)
     return status = UCOMPLETED;
 
   persistant = false;
-  morph = (UCommand*)
+  morph =
     new UCommand_TREE(UAND,
 		       new UCommand_AT(CMD_AT,
 				       condition->copy(),
@@ -6085,7 +6080,7 @@ UCommand_STOPIF::execute(UConnection *connection)
     return status = UCOMPLETED;
 
   persistant = false;
-  morph = (UCommand*)
+  morph =
     new UCommand_TREE(UAND,
 		       new UCommand_TREE(UPIPE,
 					  new UCommand_WAIT_TEST(condition->copy()),
@@ -6105,7 +6100,7 @@ UCommand_STOPIF::copy()
   UCommand_STOPIF *ret = new UCommand_STOPIF(ucopy (condition),
 					     ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6179,7 +6174,7 @@ UCommand_FREEZEIF::execute(UConnection*)
 				    new UCommand_NOOP()
     );
   cmd->setTag(tagRef->str());
-  morph = (UCommand*)
+  morph =
     new UCommand_TREE(UAND,
 		      new UCommand_AT(CMD_AT,
 				      condition->copy(),
@@ -6200,7 +6195,7 @@ UCommand_FREEZEIF::copy()
   UCommand_FREEZEIF *ret = new UCommand_FREEZEIF(ucopy (condition),
 						 ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6345,7 +6340,7 @@ UCommand_AT::execute(UConnection *connection)
 	  if (!morph_onleave)
 	    morph_onleave = command2->copy ();
 	  else
-	    morph_onleave = (UCommand*) new UCommand_TREE
+	    morph_onleave = new UCommand_TREE
 	      (UAND, morph_onleave, command2->copy ());
 	  domorph = true;
 	  morph = this;
@@ -6378,7 +6373,7 @@ UCommand_AT::execute(UConnection *connection)
 	{
 	  if (assigncmd)
 	  {
-	    morph = (UCommand*)
+	    morph =
 	      new UCommand_TREE
 	      (UAND,
 		new UCommand_TREE
@@ -6390,8 +6385,7 @@ UCommand_AT::execute(UConnection *connection)
 		);
 	  }
 	  else
-	    morph = (UCommand*)
-	      new UCommand_TREE (UAND, command1->copy (), morph);
+	    morph = new UCommand_TREE (UAND, command1->copy (), morph);
 	}
 	else
 	  reloop_ = true; // we should try again later
@@ -6408,8 +6402,7 @@ UCommand_AT::execute(UConnection *connection)
     if (morph_onleave)
     {
       // at this point, morph is at least equal to "this"
-      morph = (UCommand*) new UCommand_TREE
-	(UAND, morph, morph_onleave);
+      morph = new UCommand_TREE (UAND, morph, morph_onleave);
     }
     morph->background = true;
     persistant = true;
@@ -6428,7 +6421,7 @@ UCommand_AT::copy()
 				     ucopy (command1),
 				     ucopy (command2));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6515,14 +6508,9 @@ UCommand_WHILE::execute(UConnection *connection)
     if (type == CMD_WHILE_PIPE) nodeType = UPIPE;
 
     if (nodeType == UPIPE)
-      morph = (UCommand*)
-	new UCommand_TREE(
-	  UPIPE,
-	  command->copy(),
-	  this
-	  );
+      morph = new UCommand_TREE(UPIPE, command->copy(), this);
     else
-      morph = (UCommand*)
+      morph =
 	new UCommand_TREE(
 	  nodeType,
 	  new UCommand_TREE(
@@ -6548,7 +6536,7 @@ UCommand_WHILE::copy()
 					   ucopy (test),
 					   ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6630,7 +6618,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
   // handle the 'else' construct
   if (command2)
   {
-    morph =  (UCommand*)
+    morph =
       new UCommand_TREE
       (
 	UAND,
@@ -6748,7 +6736,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	  ic != candidates.end ();
 	  ++ic)
     {
-      UCommand* assigncmd;
+      UCommand* assigncmd = 0;
       if (!(*ic)->hasTriggered())
       {
 	if ((*ic)->trigger (currentTime, assigncmd))
@@ -6759,12 +6747,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	    if (!assign)
 	      assign = assigncmd;
 	    else
-	      assign = (UCommand*)
-		new UCommand_TREE
-		(UAND,
-		  assigncmd,
-		  assign
-		  );
+	      assign = new UCommand_TREE (UAND, assigncmd, assign);
 	  }
 	}
 	else
@@ -6776,14 +6759,11 @@ UCommand_WHENEVER::execute(UConnection *connection)
     {
       active_ = true;
       ASSERT (theloop_ == 0);
-      theloop_ = (UCommand*) new UCommand_LOOP (command1->copy ());
+      theloop_ = new UCommand_LOOP (command1->copy ());
       theloop_->setTag ("__system__"); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
-	assign = (UCommand*)
-	  new UCommand_TREE (UPIPE,
-			     assign,
-			     theloop_);
+        assign = new UCommand_TREE (UPIPE, assign, theloop_);
       else
 	assign = theloop_;
     }
@@ -6791,10 +6771,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     if (assign)
     {
       domorph = true;
-      morph = (UCommand*)
-	new UCommand_TREE (UPIPE,
-			   this,
-			   assign);
+      morph = new UCommand_TREE (UPIPE, this, assign);
     }
   }
 
@@ -6817,7 +6794,7 @@ UCommand_WHENEVER::copy()
 						 ucopy (command1),
 						 ucopy (command2));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6883,12 +6860,11 @@ UCommand_LOOP::execute(UConnection*)
 {
   if (command == 0) return status = UCOMPLETED;
 
-  morph = (UCommand*)
-    new UCommand_TREE(USEMICOLON,
-		      new UCommand_TREE(UAND,
-					command->copy(),
-					new UCommand_NOOP()),
-		      this);
+  morph = new UCommand_TREE(USEMICOLON,
+                            new UCommand_TREE(UAND,
+                                              command->copy(),
+                                              new UCommand_NOOP()),
+                            this);
   persistant = true;
   return status = UMORPH;
 }
@@ -6899,7 +6875,7 @@ UCommand_LOOP::copy()
 {
   UCommand_LOOP *ret = new UCommand_LOOP(ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -6989,17 +6965,12 @@ UCommand_LOOPN::execute(UConnection *connection)
   UNodeType nodeType = nodeType_loopn (type);
 
   if (nodeType == UPIPE || nodeType == UAND)
-    morph = (UCommand*)
-      new UCommand_TREE(nodeType,
-			command->copy(),
-			this);
+    morph = new UCommand_TREE(nodeType, command->copy(), this);
   else
-    morph = (UCommand*)
-      new UCommand_TREE(nodeType,
-			new UCommand_TREE(UAND,
-					  command->copy(),
-					  new UCommand_NOOP()),
-			this);
+    morph = new UCommand_TREE(nodeType, new UCommand_TREE(UAND,
+                                                          command->copy(),
+                                                          new UCommand_NOOP()),
+                              this);
   persistant = true;
   return status = UMORPH;
 }
@@ -7012,7 +6983,7 @@ UCommand_LOOPN::copy()
 					   ucopy (expression),
 					   ucopy (command));
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -7104,10 +7075,7 @@ UCommand_FOR::execute(UConnection *connection)
     UCommand *first_instruction = instr1;
 
     instr1 = 0;
-    morph = (UCommand*)
-      new UCommand_TREE(USEMICOLON,
-			first_instruction,
-			this);
+    morph = new UCommand_TREE(USEMICOLON, first_instruction, this);
     persistant = true;
     return status = UMORPH;
   }
@@ -7129,25 +7097,20 @@ UCommand_FOR::execute(UConnection *connection)
 	|| nodeType == UAND)
     {
       if (instr2)
-	morph = (UCommand*)
-	  new UCommand_TREE(nodeType,
-			    command->copy(),
-			    new UCommand_TREE(UPIPE,
-					      tmp_instr2 = instr2->copy(),
-					      this
-			      )
-	    );
+        morph =
+          new UCommand_TREE(nodeType, command->copy(),
+                            new UCommand_TREE(UPIPE,
+                                              tmp_instr2 = instr2->copy(),
+                                              this
+                                             )
+                           );
       else
-	morph = (UCommand*)
-	  new UCommand_TREE(nodeType,
-			    command->copy(),
-			    this
-	    );
+        morph = new UCommand_TREE(nodeType, command->copy(), this);
     }
     else
     {
       if (instr2)
-	morph = (UCommand*)
+	morph =
 	  new UCommand_TREE(nodeType,
 			    new UCommand_TREE(UAND,
 					      new UCommand_TREE
@@ -7161,7 +7124,7 @@ UCommand_FOR::execute(UConnection *connection)
 			    this
 	    );
       else
-	morph = (UCommand*)
+	morph =
 	  new UCommand_TREE(nodeType,
 			    new UCommand_TREE(
 			      UAND,
@@ -7191,7 +7154,7 @@ UCommand_FOR::copy()
 				       ucopy (command));
   ret->first = first;
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -7314,7 +7277,7 @@ UCommand_FOREACH::execute(UConnection *connection)
     return status = UCOMPLETED;
   }
 
-  morph =  (UCommand*)
+  morph =
     new UCommand_TREE(
       nodeType,
       new UCommand_TREE(
@@ -7344,7 +7307,7 @@ UCommand_FOREACH::copy()
 					       ucopy (command));
   copybase(ret);
   position = 0;
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
@@ -7434,7 +7397,7 @@ UCommand_NOOP::copy()
 {
   UCommand_NOOP *ret = new UCommand_NOOP(status == URUNNING);
   copybase(ret);
-  return (UCommand*)ret;
+  return ret;
 }
 
 //! Print the command
