@@ -27,12 +27,12 @@
 
 UFunction* kernel::remoteFunction;
 
-UFunction::UFunction(UString *funname,
+UFunction::UFunction(const UString& funname,
 		     UNamedParameters *parameters,
 		     UCommand *command)
-  : funname (funname),
-    parameters (parameters),
-    command (command)
+  : parameters (parameters),
+    command (command),
+    funname (funname)
 {
   ADDOBJ(UFunction);
 }
@@ -41,23 +41,20 @@ UFunction::UFunction(UString *funname,
 UFunction::~UFunction()
 {
   FREEOBJ(UFunction);
-  delete funname;
   delete parameters;
   delete command;
 }
 
-UString*
-UFunction::name()
+const UString&
+UFunction::name() const
 {
   return funname;
 }
 
 int
-UFunction::nbparam()
+UFunction::nbparam() const
 {
-  if (!parameters) return 0;
-  else
-    return parameters->size();
+  return parameters ? parameters->size() : 0;
 }
 
 UCommand*

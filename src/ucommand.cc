@@ -5338,10 +5338,7 @@ UCommandStatus
 UCommand_DEF::execute(UConnection *connection)
 {
   // Def list query
-  if ((!variablename) &&
-       (!command) &&
-       (!parameters) &&
-       (!variablelist))
+  if (!variablename && !command && !parameters && !variablelist)
   {
     for (HMfunctiontab::iterator retr =
 	    connection->server->functiontab.begin();
@@ -5351,7 +5348,7 @@ UCommand_DEF::execute(UConnection *connection)
       char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
       snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 	       "*** %s : %d param(s)\n",
-	       retr->second->name()->str(),
+	       retr->second->name().str(),
 	       retr->second->nbparam());
 
       connection->send(tmpbuffer, getTag().c_str());
@@ -5363,9 +5360,10 @@ UCommand_DEF::execute(UConnection *connection)
   if (deftype == UDEF_FUNCTION && variablename && command)
   {
     UString* funname = variablename->buildFullname(this, connection);
-    if (!funname) return status = UCOMPLETED;
+    if (!funname) 
+      return status = UCOMPLETED;
 
-    if ((variablename->nostruct) &&
+    if (variablename->nostruct &&
 	(::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
 	 ::urbiserver->grouptab.end()))
     {
@@ -5389,14 +5387,12 @@ UCommand_DEF::execute(UConnection *connection)
       return status = UCOMPLETED;
     }
 
-    UFunction *fun = new UFunction(new UString(funname),
-				   parameters,
-				   command);
+    UFunction *fun = new UFunction(new UString(funname), parameters, command);
     if (fun)
-      connection->server->functiondeftab[fun->name()->str()] = fun;
+      connection->server->functiondeftab[fun->name().str()] = fun;
 
     if (fun && command)
-      connection->server->functiontab[fun->name()->str()] = fun;
+      connection->server->functiontab[fun->name().str()] = fun;
 
     return status = UCOMPLETED;
   }
