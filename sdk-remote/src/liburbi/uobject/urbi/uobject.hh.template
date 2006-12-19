@@ -101,7 +101,7 @@
     if (objecthub)						\
       objecthub->addMember(dynamic_cast<UObject*>(this));	\
     else							\
-      echo("Error: hub name '%s' is unknown\n", #hub);		\
+      ::urbi::echo("Error: hub name '%s' is unknown\n", #hub);	\
   } while (0)
 
 /// Define an attribute and its accessors.

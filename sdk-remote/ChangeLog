@@ -1,5 +1,10 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Add a missing ::urbi::
+	* src/liburbi/uobject/urbi/uobject.hh.template: On echo uses.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Adjust to libport::hash
 	* configure.ac: And remove no-Weffc++.
 
