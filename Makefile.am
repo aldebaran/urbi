@@ -40,3 +40,7 @@ uobject-help uobject-ci uobject-up uobj-ci uob-up:
 
 urbivalid-help urbivalid-ci urbivalid-up:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
+
+maintainer-check: valgrind-check
+valgrind-check:
+	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1

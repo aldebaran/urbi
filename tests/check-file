@@ -48,7 +48,21 @@ shutdown;
 EOF
 
 # Feed the input to the console.
-../src/uconsole $me.in >$me.out
+cmd="../src/uconsole $me.in >$me.out"
+
+if [ x"$USE_VALGRIND" != x ] || [ x"$WITH_VALGRIND" != x ]; then
+  : ${VALGRIND=valgrind}
+  if ($VALGRIND --version) >/dev/null 2>/dev/null; then
+    valgrind="$VALGRIND"
+    valgrind_args="--error-exitcode=242 --log-file-exactly=$me.valgrind.log"
+    $valgrind $valgrind_args -- $cmd
+    test $? -eq 242 && cat $me.valgrind.log
+  fi
+  echo 'Could not find valgrind.' >&2
+  exit 1
+else
+  $cmd
+fi
 
 # Strip the banner.
 filter_output $me.out > $me.out.2
@@ -66,4 +80,4 @@ banner >&2 "Diffs:"
 diff -u $me.expout $me.out >&2
 
 # Do not run rm -rf $me.* because of $me.chk...
-rm -f $me.in $me.out $me.expout
+rm -f $me.in $me.out $me.expout $me.valgrind.log
