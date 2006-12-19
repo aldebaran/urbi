@@ -59,7 +59,7 @@ if [ x"$USE_VALGRIND" != x ] || [ x"$WITH_VALGRIND" != x ]; then
     test $? -eq 242 && cat $me.valgrind.log
   fi
   echo 'Could not find valgrind.' >&2
-  exit 1
+  eval $cmd
 else
   eval $cmd
 fi
