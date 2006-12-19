@@ -78,7 +78,8 @@ uvalue.hh uvalue.cc						\
 uvar.cc								\
 uvariable.hh uvariable.cc					\
 uvariablelist.hh uvariablelist.cc				\
-uvariablename.hh uvariablename.cc
+uvariablename.hh uvariablename.cc                               \
+usystem.cc
 
 # We either build the BSD connection set, or none at all for Aibo.
 if !OPENR

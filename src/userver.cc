@@ -33,6 +33,7 @@
 #include "utypes.hh"
 #include "ughostconnection.hh"
 #include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
 #include "ueventmatch.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
@@ -140,6 +141,11 @@ UServer::UServer(ufloat frequency,
   kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
   kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
   kernel::remoteFunction   = new UFunction(0, 0, 0);
+
+  // initialize system message channels
+  std::list<urbi::USystem*> empty_list;
+  systemObjects.reserve (1); // one system message type known so far.
+  systemObjects.push_back (empty_list);
 }
 
 /// Sets the system.arg list in URBI

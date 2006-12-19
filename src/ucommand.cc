@@ -44,6 +44,7 @@
 #include "ueventinstance.hh"
 #include "ufunction.hh"
 #include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
 #include "userver.hh"
 #include "utypes.hh"
 
@@ -349,6 +350,35 @@ UCommand::isBlocked()
     if (t->blocked)
       return true;
   return false;
+}
+
+void
+UCommand::strMorph (const std::string &cmd)
+{
+  morph = (UCommand*)
+    new UCommand_EXPR
+    (
+     new UExpression
+     (
+      UExpression::EXPR_FUNCTION,
+      new UVariableName
+      (
+       new UString("global"),
+       new UString("exec"),
+       false,
+       0),
+      new UNamedParameters
+      (
+       new UExpression
+       (
+        UExpression::EXPR_VALUE,
+        new UString(cmd.c_str())
+       )
+      )
+     )
+    );
+
+  status = UMORPH;
 }
 
 MEMORY_MANAGER_INIT(UCommand_TREE);
@@ -2874,7 +2904,8 @@ UCommand_NEW::UCommand_NEW(UVariableName* varname,
   obj (obj),
   parameters (parameters),
   noinit (noinit),
-  remoteNew (false)
+  remoteNew (false),
+  sysCall (false)
 {
   ADDOBJ(UCommand_NEW);
 }
@@ -2934,7 +2965,7 @@ UCommand_NEW::execute(UConnection *connection)
     return status = UCOMPLETED;
 
   HMobjtab::iterator objit;
-  if (!remoteNew)
+  if (!remoteNew && !sysCall)
   {
     if (id->equal(obj))
     {
@@ -2968,10 +2999,56 @@ UCommand_NEW::execute(UConnection *connection)
     objit = ::urbiserver->objtab.find(objname);
     if (objit == ::urbiserver->objtab.end())
     {
-      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	       "!!! Unkown object %s\n", obj->str());
-      connection->send(tmpbuffer, getTag().c_str());
-      return status = UCOMPLETED;
+      int timeout = -1;
+
+      if (!sysCall)
+      {
+        std::list<urbi::USystem*>& tmp_list =
+          ::urbiserver->systemObjects[(int) urbi::NEW_CHANNEL];
+
+        for (std::list<urbi::USystem*>::iterator it =
+             tmp_list.begin ();
+             it != tmp_list.end ();
+             ++it)
+        {
+          int timeout_tmp = (*it)->receive_message
+            (urbi::NEW_CHANNEL,
+             urbi::UStringSystemMessage (objname));
+
+          if  (timeout_tmp > timeout)
+            timeout = timeout_tmp;
+        }
+      }
+
+      if (timeout < 0)
+      {
+        if  (sysCall)
+        {
+          snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                   "!!! Autoload timeout for object %s\n", objname);
+          connection->send(tmpbuffer, getTag().c_str());
+        }
+
+        snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+                 "!!! Unkown object %s\n", obj->str());
+        connection->send(tmpbuffer, getTag().c_str());
+        return status = UCOMPLETED;
+      }
+      else
+      {
+        sysCall = true;
+
+        persistant = true;
+        std::ostringstream oss;
+        oss << "{ timeout (" << timeout
+            << ") waituntil(isdef(" << objname << "))"
+            << "}";
+
+        strMorph (oss.str());
+        morph = (UCommand*) new UCommand_TREE(UPIPE, morph, this);
+
+        return status;
+      }
     }
   }
 

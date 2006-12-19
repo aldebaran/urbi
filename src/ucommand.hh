@@ -124,6 +124,9 @@ public:
   bool isBlocked();
   bool isFrozen();
 
+  /// morph the command into "exec (cmd)"
+  void strMorph (const std::string &cmd);
+
   /// Type of the command.
   Type     type;
 
@@ -492,6 +495,8 @@ public:
   bool             noinit;
   /// true when a remote new is waiting
   bool             remoteNew;
+  /// true when a USystem message was answered
+  bool             sysCall;
 };
 
 class UCommand_ALIAS : public UCommand

@@ -155,6 +155,9 @@ public:
   HMobjWaiting             objWaittab;
   /// Hash of all tags currently 'instanciated'
   HMtagtab                 tagtab;
+  /// Array of list of UObjects registered for a system messages
+  /// The system message type is the index.
+  std::vector<std::list<urbi::USystem*> > systemObjects;
 
   /// Variables to reinit (nbAverage=0).
   std::list<UVariable*>         reinitList;

@@ -7,6 +7,7 @@ namespace urbi
 {
   class baseURBIStarter;
   class UGenericCallback;
+  class USystem;
 }
 
 class UASyncCommand;
@@ -34,6 +35,7 @@ class UMonitor;
 class UMultiEventInstance;
 class UNamedParameters;
 class UObj;
+class UObject;
 class UParser;
 class UQueue;
 class UServer;
