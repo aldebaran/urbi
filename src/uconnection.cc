@@ -28,6 +28,7 @@
 #endif
 
 #include "libport/lockable.hh"
+#include "libport/ref-pt.hh"
 
 #include "parser/uparser.hh"
 #include "ubanner.hh"
@@ -464,7 +465,6 @@ UConnection::received (const ubyte *buffer, int length)
   if (receiveBinary_)
   {
     // handles and try to finish the binary transfer
-
     if (length < binCommand->refBinary->ref()->bufferSize - transferedBinary_)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,

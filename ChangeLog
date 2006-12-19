@@ -1,5 +1,29 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Use libport/ref-pt.hh
+	* src/fwd.hh: Complete.
+	* src/parser/bison/ugrammar.y: Adjust.
+	* src/ucallid.cc,
+	* src/ucallid.hh,
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/uconnection.cc,
+	* src/ueventcompound.hh,
+	* src/uexpression.cc,
+	* src/unamedparameters.cc,
+	* src/uobj.cc,
+	* src/uobject.cc,
+	* src/userver.cc,
+	* src/utypes.hh,
+	* src/uvalue.cc,
+	* src/uvalue.hh,
+	* src/uvariable.cc,
+	* src/uvariablelist.cc: 
+	Ditto.
+	Remove includes from the hh files, sort those in cc files.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Restore old ADDMEM macros
 	* src/utypes.hh: here.
 

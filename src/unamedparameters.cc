@@ -19,13 +19,10 @@
 
  **************************************************************************** */
 
-#include <cmath>
-
 #include "unamedparameters.hh"
-#include "ucommand.hh"
-#include "uconnection.hh"
+#include "ucopy.hh"
+#include "uexpression.hh"
 #include "userver.hh"
-
 
 // **************************************************************************
 //! UNamedParameters constructor.

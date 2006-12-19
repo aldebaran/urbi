@@ -25,15 +25,16 @@
 
 #include "libport/containers.hh"
 
-#include "uobj.hh"
-#include "ustring.hh"
-#include "uvalue.hh"
-#include "uvariablename.hh"
-#include "userver.hh"
 #include "uconnection.hh"
-#include "urbi/uobject.hh"
 #include "ueventhandler.hh"
 #include "ufunction.hh"
+#include "uobj.hh"
+#include "urbi/uobject.hh"
+#include "userver.hh"
+#include "ustring.hh"
+#include "uvalue.hh"
+#include "uvariable.hh"
+#include "uvariablename.hh"
 
 // **************************************************************************
 //! UObj constructor.

@@ -26,12 +26,14 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #define snprintf _snprintf
 #endif
 
-#include "uvariablename.hh"
+#include "ucallid.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
-#include "userver.hh"
-#include "ucallid.hh"
+#include "ucopy.hh"
 #include "urbi/uobject.hh"
+#include "userver.hh"
+#include "uvariable.hh"
+#include "uvariablename.hh"
 
 
 MEMORY_MANAGER_INIT(UVariableName);

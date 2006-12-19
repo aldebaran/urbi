@@ -31,9 +31,8 @@
 %debug
 
 %{
+#include "fwd.hh"
 #include "utypes.hh"
-#include "ucommand.hh"
-class UParser;
 %}
 
 // Locations.
@@ -73,15 +72,17 @@ class UParser;
 #define TRUE  ufloat(1)
 #define FALSE ufloat(0)
 
+#include "libport/ref-pt.hh"
+
 #include "parser/uparser.hh"
-
-#include "uconnection.hh"
-#include "uobj.hh"
-#include "ugroup.hh"
-#include "userver.hh"
 #include "ucommand.hh"
+#include "uconnection.hh"
+#include "ugroup.hh"
+#include "uobj.hh"
+#include "uproperty.hh"
+#include "userver.hh"
 
-  extern UString** globalDelete;
+extern UString** globalDelete;
 
   /* Memory checking macros, used in the command tree building process */
 
@@ -375,7 +376,7 @@ root:
 
   | refvariable "=" binary ";" {
 
-      URefPt<UBinary> *ref = new URefPt<UBinary>($3);
+      libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
       MEMCHECK(ref);
       UCommand* tmpcmd = new UCommand_ASSIGN_BINARY($1,ref);
       if (tmpcmd)

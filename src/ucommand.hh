@@ -24,24 +24,15 @@
 
 # include <list>
 
+# include "libport/fwd.hh"
 # include "fwd.hh"
 
-# include "ucopy.hh"
 # include "utypes.hh"
 # include "ustring.hh"
-# include "ucommandqueue.hh"
 # include "uasynccommand.hh"
-
-# include "uexpression.hh"
-# include "unamedparameters.hh"
-# include "uvariablelist.hh"
 # include "uvalue.hh"
 # include "uobj.hh"
-# include "ugroup.hh"
-# include "uproperty.hh"
-# include "uvariablename.hh"
 # include "ubinary.hh"
-# include "ucallid.hh"
 
 
 // ****************************************************************************
@@ -327,7 +318,7 @@ public:
   MEMORY_MANAGED;
 
   UCommand_ASSIGN_BINARY(UVariableName *variablename,
-			 URefPt<UBinary> *refBinary);
+			 libport::RefPt<UBinary> *refBinary);
   virtual ~UCommand_ASSIGN_BINARY();
 
   virtual void print(int l);
@@ -342,7 +333,7 @@ public:
   /// associated variable
   UVariable        *variable;
   /// Binary container
-  URefPt<UBinary>  *refBinary;
+  libport::RefPt<UBinary>  *refBinary;
 
   /// method in the varname
   UString          *method;

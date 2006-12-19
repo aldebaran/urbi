@@ -31,6 +31,7 @@
 #include <cmath>
 
 #include "libport/cstring"
+#include "libport/ref-pt.hh"
 
 #include <sstream>
 
@@ -39,14 +40,17 @@
 #include "ucallid.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
+#include "ucopy.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
 #include "ueventinstance.hh"
 #include "ufunction.hh"
+#include "ugroup.hh"
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
 #include "userver.hh"
 #include "utypes.hh"
+#include "uvariable.hh"
 
 #if (__GNUC__ == 2)
 static const string left = "";
@@ -1791,7 +1795,7 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(UVariableName *variablename,
-					       URefPt<UBinary> *refBinary)
+					       libport::RefPt<UBinary> *refBinary)
   : UCommand(CMD_ASSIGN_BINARY),
     variablename (variablename),
     variable (0),

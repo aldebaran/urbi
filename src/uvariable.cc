@@ -24,16 +24,19 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include "uvariable.hh"
+#ifdef _MSC_VER
+# define snprintf _snprintf
+#endif
+
+#include "libport/ref-pt.hh"
+
 #include "uasyncregister.hh"
-#include "userver.hh"
 #include "ucommand.hh"
-#include "utypes.hh"
 #include "uconnection.hh"
 #include "urbi/uobject.hh"
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#endif
+#include "userver.hh"
+#include "utypes.hh"
+#include "uvariable.hh"
 
 MEMORY_MANAGER_INIT(UVariable);
 

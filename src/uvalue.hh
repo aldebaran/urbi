@@ -22,24 +22,15 @@
 #ifndef UVALUE_HH
 # define UVALUE_HH
 
-# include "libport/ufloat.h"
-
-# include "memorymanager/memorymanager.hh"
-# include "fwd.hh"
-# include "utypes.hh"
-# include "ustring.hh"
-
 # include <string>
 
-namespace urbi
-{
-  class UValue;
-  class UBinary;
-  class UImage;
-  class USound;
-  class UList;
-};
+# include "libport/fwd.hh"
+# include "libport/ufloat.h"
 
+# include "fwd.hh"
+# include "memorymanager/memorymanager.hh"
+# include "utypes.hh"
+# include "ustring.hh"
 
 // ****************************************************************************
 //! Contains a value: can be numeric, string, binary
@@ -66,13 +57,15 @@ public:
   UDataType	  dataType;	///< Type of the value
 
   ufloat val; // must be out of the union in case of reimplementation
-  union {    ///< union of the possible types
-    UString *str;
-    URefPt<UBinary> *refBinary;
+  /// Union of the possible types.
+  union
+  {
+    UString* str;
+    libport::RefPt<UBinary>* refBinary;
   };
 
-  UValue *liststart;
-  UValue *next;
+  UValue* liststart;
+  UValue* next;
 
   UValue* copy();
   UValue* add(UValue* v);
@@ -83,6 +76,6 @@ public:
   urbi::UValue* urbiValue();
 };
 
-UTestResult booleval(UValue *, bool freeme = true);
+UTestResult booleval(UValue* , bool freeme = true);
 
 #endif

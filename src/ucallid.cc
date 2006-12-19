@@ -21,8 +21,7 @@
 
 #include "libport/containers.hh"
 #include "ucallid.hh"
-#include "ustring.hh"
-#include "ucommand.hh"
+#include "uvariable.hh"
 
 // **************************************************************************
 //! UCallid constructor.

@@ -26,8 +26,6 @@
 
 #include "fwd.hh"
 #include "ustring.hh"
-#include "uvariable.hh"
-
 
 // ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command

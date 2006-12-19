@@ -23,19 +23,24 @@
 #include <cstdio>
 #include <sstream>
 
+#include "libport/ref-pt.hh"
+
+#include "ucommand.hh"
+#include "ucopy.hh"
+#include "urbi/uobject.hh"
+#include "userver.hh"
 #include "utypes.hh"
 #include "uvalue.hh"
-#include "ucommand.hh"
+#include "uvariable.hh"
+
+// FIXME: Help!
 #define private protected
 #include "uconnection.hh"
 #undef private
 
-#include "userver.hh"
-#include "urbi/uobject.hh"
-#if (__GNUC__ == 2)
+#if defined __GNUC__ && __GNUC__ == 2
 static const string fixed = "";
 #endif
-
 
 
 MEMORY_MANAGER_INIT(UValue);
@@ -354,7 +359,7 @@ UValue & UValue::operator = (const urbi::UBinary &b)
   //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
   if (sz>0)
     memcpy(bin->buffer, b.common.data, sz);
-  refBinary = new URefPt<UBinary>(bin);
+  refBinary = new libport::RefPt<UBinary>(bin);
   return *this;
 }
 
@@ -516,7 +521,7 @@ UValue::add(UValue *v)
       param = v->refBinary->ref()->parameters->copy();
 
     ret->refBinary =
-      new URefPt<UBinary> (
+      new libport::RefPt<UBinary> (
 	new UBinary(
 	  refBinary->ref()->bufferSize+
 	  v->refBinary->ref()->bufferSize,

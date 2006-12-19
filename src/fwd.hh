@@ -3,18 +3,25 @@
 
 #ifndef KERNEL1_FWD_HH
 # define KERNEL1_FWD_HH
+
 namespace urbi
 {
-  class baseURBIStarter;
+  class UBinary;
   class UGenericCallback;
+  class UImage;
+  class UList;
+  class USound;
   class USystem;
-}
+  class UValue;
+  class baseURBIStarter;
+};
 
 class UASyncCommand;
 class UASyncRegister;
 class UAtCandidate;
 class UBinary;
 class UBinder;
+class UCallid;
 class UCommandQueue;
 class UConnection;
 class UContext;
@@ -37,6 +44,7 @@ class UNamedParameters;
 class UObj;
 class UObject;
 class UParser;
+class UProperty;
 class UQueue;
 class UServer;
 class USound;

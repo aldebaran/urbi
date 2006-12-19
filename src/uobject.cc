@@ -22,16 +22,20 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <cstdarg>
 #include <cstdio>
 #include <list>
-#include "userver.hh"
-#include "uconnection.hh"
-#include "ughostconnection.hh"
-#include "urbi/uobject.hh"
-#include "utypes.hh"
 
 #ifdef _MSC_VER
 # define snprintf _snprintf
 # define vsnprintf _vsnprintf
 #endif
+
+#include "uconnection.hh"
+#include "ughostconnection.hh"
+#include "ugroup.hh"
+#include "urbi/uobject.hh"
+#include "userver.hh"
+#include "utypes.hh"
+#include "uvariable.hh"
+
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist

@@ -28,15 +28,19 @@
 #endif
 
 #include "libport/cstring"
+#include "libport/ref-pt.hh"
 
-#include "uexpression.hh"
+#include "parser/uparser.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
+#include "ucopy.hh"
 #include "ueventcompound.hh"
-#include "ueventmatch.hh"
 #include "ueventinstance.hh"
-#include "parser/uparser.hh"
+#include "ueventmatch.hh"
+#include "uexpression.hh"
+#include "ugroup.hh"
 #include "userver.hh"
+#include "uvariable.hh"
 
 MEMORY_MANAGER_INIT(UExpression);
 // **************************************************************************
@@ -728,7 +732,7 @@ UExpression::eval (UCommand *command,
 	if ((!binaire) || (binaire->buffer == 0)) return 0;
 	binaire->parameters = ret->refBinary->ref()->parameters->copy();
 
-	URefPt<UBinary> *ref = new URefPt<UBinary>(binaire);
+	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(binaire);
 	if (!ref) return 0;
 
 	memcpy(binaire->buffer,
@@ -1238,7 +1242,7 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
 	       loadQueue->pop(loadQueue->dataSize()),
 	       loadQueue->dataSize());
 
-	ret->refBinary = new URefPt<UBinary>(binaire);
+	ret->refBinary = new libport::RefPt<UBinary>(binaire);
 	delete loadQueue;
       }
 

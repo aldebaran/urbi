@@ -224,54 +224,6 @@ typedef unsigned char ubyte;
 
 # define ABSF(x)     (((x)>0)? (x) : (-(x)) )
 
-
-/// URefPt is used to make references to pointers.
-template <class T>
-class URefPt
-{
-public:
-
-  URefPt(T* p_)
-  {
-    p = p_;
-    cpt = 1;
-  }
-
-  ~URefPt()
-  {
-    delete p;
-  }
-
-  int   cpt;
-  T* p;
-
-  T* ref()
-  {
-    return p;
-  }
-
-  int liberate()
-  {
-    cpt--;
-    if (cpt<=0)
-    {
-      delete p;
-      p=0;
-    }
-    return cpt;
-  }
-
-  URefPt *copy()
-  {
-    cpt++;
-    return this;
-  }
-};
-
-
-
-
-
 /** Class containing the number of pending call to a remote new for
  * a given class name (id).
  *  */

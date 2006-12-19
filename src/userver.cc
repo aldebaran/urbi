@@ -25,24 +25,26 @@
 #include <string>
 #include <fstream>
 
-#include "libport/containers.hh"
-
-#include "ubanner.hh"
-#include "userver.hh"
-#include "uconnection.hh"
-#include "utypes.hh"
-#include "ughostconnection.hh"
-#include "urbi/uobject.hh"
-#include "urbi/usystem.hh"
-#include "ueventmatch.hh"
-#include "ueventcompound.hh"
-#include "ueventhandler.hh"
-#include "ufunction.hh"
-
 #ifdef _MSC_VER
 # define snprintf _snprintf
 # define vsnprintf _vsnprintf
 #endif
+
+#include "libport/containers.hh"
+
+#include "ubanner.hh"
+#include "uconnection.hh"
+#include "ueventcompound.hh"
+#include "ueventhandler.hh"
+#include "ueventmatch.hh"
+#include "ufunction.hh"
+#include "ughostconnection.hh"
+#include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
+#include "userver.hh"
+#include "utypes.hh"
+#include "uvariable.hh"
+
 // Global server reference
 UServer    *urbiserver= 0;
 UString    **globalDelete = 0;
