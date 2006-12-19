@@ -28,8 +28,6 @@ TC_PROG([bison], [>= 2.2],   [BISON], [GNU parser generator])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
-# The kernel is far from being ready for this warning.
-TC_CXX_WARNINGS([-Wno-effc++])
 
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])
