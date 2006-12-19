@@ -371,8 +371,8 @@ UCommand::strMorph (const std::string &cmd)
       (
        new UExpression
        (
-        UExpression::EXPR_VALUE,
-        new UString(cmd.c_str())
+	UExpression::EXPR_VALUE,
+	new UString(cmd.c_str())
        )
       )
      )
@@ -593,13 +593,6 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
 UCommandStatus
 UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 {
-  UValue *target;
-  UValue *modifier;
-  //UValue *value;
-  ufloat currentTime;
-  UNamedParameters *modif;
-  //UVariable *vari;
-
   // General initializations
   if (!variable)
   {
@@ -609,11 +602,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     method = variablename->getMethod();
     devicename = variablename->getDevice();
   }
-  currentTime = connection->server->lastTime();
+  ufloat currentTime = connection->server->lastTime();
 
   // Wait in queue if needed
-  if (variable)
-    if (variable->blendType == UQUEUE && variable->nbAverage > 0)
+  if (variable && variable->blendType == UQUEUE && variable->nbAverage > 0)
       return status;
 
   // Broadcasting
@@ -866,7 +858,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 		"%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 		UU, variablename->getFullname()->str(), UU, UU);
 
-        strMorph (tmpbuffer);
+	strMorph (tmpbuffer);
 	return status = UMORPH;
       }
     }
@@ -947,7 +939,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     }
 
     // eval the right side of the assignment and check for errors
-    target = expression->eval(this, connection);
+    UValue *target = expression->eval(this, connection);
     if (target == 0)
       return status = UCOMPLETED;
 
@@ -1000,15 +992,15 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       {
 	char *result = (char*)malloc(sizeof(char)
 				     * (65000+target->str->len()));
-	char *possub;
+	char* possub;
 
 	if (result)
 	{
 	  strcpy (result, target->str->str());
-	  modif = parameters;
+	  UNamedParameters* modif = parameters;
 	  while (modif)
 	  {
-	    modifier = modif->expression->eval(this, connection);
+	    UValue* modifier = modif->expression->eval(this, connection);
 	    if (!modifier)
 	    {
 	      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
@@ -1150,7 +1142,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (parameters)
       {
 	// Check if sinusoidal (=> no start value needed = no integrity check)
-	modif = parameters;
+	UNamedParameters* modif = parameters;
 	bool sinusoidal = false;
 	while (modif)
 	{
@@ -1272,7 +1264,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	  if (modif->name->equal("timelimit"))
 	  {
-	    modifier = modif->expression->eval(this, connection);
+	    UValue *modifier = modif->expression->eval(this, connection);
 	    if ((!modifier) ||
 		(modifier->dataType != DATA_NUM) )
 	    {
@@ -2966,51 +2958,51 @@ UCommand_NEW::execute(UConnection *connection)
 
       if (!sysCall)
       {
-        std::list<urbi::USystem*>& tmp_list =
-          ::urbiserver->systemObjects[(int) urbi::NEW_CHANNEL];
+	std::list<urbi::USystem*>& tmp_list =
+	  ::urbiserver->systemObjects[(int) urbi::NEW_CHANNEL];
 
-        for (std::list<urbi::USystem*>::iterator it =
-             tmp_list.begin ();
-             it != tmp_list.end ();
-             ++it)
-        {
-          int timeout_tmp = (*it)->receive_message
-            (urbi::NEW_CHANNEL,
-             urbi::UStringSystemMessage (objname));
+	for (std::list<urbi::USystem*>::iterator it =
+	     tmp_list.begin ();
+	     it != tmp_list.end ();
+	     ++it)
+	{
+	  int timeout_tmp = (*it)->receive_message
+	    (urbi::NEW_CHANNEL,
+	     urbi::UStringSystemMessage (objname));
 
-          if  (timeout_tmp > timeout)
-            timeout = timeout_tmp;
-        }
+	  if  (timeout_tmp > timeout)
+	    timeout = timeout_tmp;
+	}
       }
 
       if (timeout < 0)
       {
-        if  (sysCall)
-        {
-          snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-                   "!!! Autoload timeout for object %s\n", objname);
-          connection->send(tmpbuffer, getTag().c_str());
-        }
+	if  (sysCall)
+	{
+	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		   "!!! Autoload timeout for object %s\n", objname);
+	  connection->send(tmpbuffer, getTag().c_str());
+	}
 
-        snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-                 "!!! Unkown object %s\n", obj->str());
-        connection->send(tmpbuffer, getTag().c_str());
-        return status = UCOMPLETED;
+	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+		 "!!! Unkown object %s\n", obj->str());
+	connection->send(tmpbuffer, getTag().c_str());
+	return status = UCOMPLETED;
       }
       else
       {
-        sysCall = true;
+	sysCall = true;
 
-        persistant = true;
-        std::ostringstream oss;
-        oss << "{ timeout (" << timeout
-            << ") waituntil(isdef(" << objname << "))"
-            << "}";
+	persistant = true;
+	std::ostringstream oss;
+	oss << "{ timeout (" << timeout
+	    << ") waituntil(isdef(" << objname << "))"
+	    << "}";
 
-        strMorph (oss.str());
-        morph = (UCommand*) new UCommand_TREE(UPIPE, morph, this);
+	strMorph (oss.str());
+	morph = (UCommand*) new UCommand_TREE(UPIPE, morph, this);
 
-        return status;
+	return status;
       }
     }
   }
@@ -3124,7 +3116,7 @@ UCommand_NEW::execute(UConnection *connection)
 	connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
 		 "{delete %s}", id->str());
-        strMorph (tmpbuffer);
+	strMorph (tmpbuffer);
 	return status = UMORPH;
       }
 
