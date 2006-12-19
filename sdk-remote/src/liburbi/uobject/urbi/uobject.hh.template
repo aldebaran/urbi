@@ -145,8 +145,8 @@ namespace urbi
   class baseURBIStarterHub;
 
   // A few list and hashtable types
-  typedef hash_map_type<std::string, std::list<UGenericCallback*> >::type UTable;
-  typedef hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
+  typedef libport::hash_map_type<std::string, std::list<UGenericCallback*> >::type UTable;
+  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
   typedef std::list<baseURBIStarter*> UStartlist;
   typedef std::list<baseURBIStarterHub*> UStartlistHub;
   typedef std::list<UTimerCallback*> UTimerTable;
@@ -825,12 +825,12 @@ namespace urbi
     return (type)val;				\
   }
 
-  inline const UValue & cast(UValue &val, const UValue *) 
+  inline const UValue & cast(UValue &val, const UValue *)
   {
     return val;
   }
-  
-  inline UValue cast(UValue &val,  UValue *) 
+
+  inline UValue cast(UValue &val,  UValue *)
   {
     return val;
   }
