@@ -1,5 +1,10 @@
 2006-12-19  Akim Demaille  <akim.demaille@free.fr>
 
+	Use an impossible name for removeFunction
+	* src/userver.cc (UServer::UServer): here.
+
+2006-12-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Put back the old definition of FREEMEM
 	* src/utypes.hh: here.
 	The test timed out on Windows.

@@ -142,7 +142,7 @@ UServer::UServer(ufloat frequency,
 
   kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
   kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
-  kernel::remoteFunction   = new UFunction("remoteFunction", 0, 0);
+  kernel::remoteFunction   = new UFunction("<remote Function>", 0, 0);
 
   // initialize system message channels
   std::list<urbi::USystem*> empty_list;
