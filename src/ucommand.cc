@@ -5360,7 +5360,7 @@ UCommand_DEF::execute(UConnection *connection)
   if (deftype == UDEF_FUNCTION && variablename && command)
   {
     UString* funname = variablename->buildFullname(this, connection);
-    if (!funname) 
+    if (!funname)
       return status = UCOMPLETED;
 
     if (variablename->nostruct &&
