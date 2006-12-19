@@ -1,5 +1,10 @@
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/uqueue.cc: here.
+
+2006-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Use libport/ref-pt.hh
 	* src/fwd.hh: Complete.
 	* src/parser/bison/ugrammar.y: Adjust.

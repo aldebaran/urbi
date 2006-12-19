@@ -62,9 +62,9 @@
     - USUCCESS: success
     - UFAIL   : memory allocation failed.
 */
-UQueue::UQueue  (int minBufferSize,
-		  int maxBufferSize,
-		  int adaptive)
+UQueue::UQueue (int minBufferSize,
+		int maxBufferSize,
+		int adaptive)
 {
   ADDOBJ(UQueue);
 
@@ -193,30 +193,26 @@ UQueue::push (const ubyte *buffer, int length)
     }
     else
     {
-      // Yes, the internal buffer can be extended.
-
-      ubyte *newBuffer;
-
       // Calculate the required size + 10%, if it fits.
       newSize = (int)(1.10 * newSize);
-      if (newSize%2!=0) newSize++; // hack for short alignment...
-      if ((newSize > maxBufferSize_) && (maxBufferSize_ != 0))
+      if (newSize % 2 != 0)
+	newSize++; // hack for short alignment...
+      if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
 	newSize = maxBufferSize_;
 
       // Realloc the internal buffer
-      newBuffer = (ubyte*)realloc((void*)buffer_, newSize);
-      if (newBuffer == 0) return UMEMORYFAIL; // not enough memory.
+      ubyte *newBuffer = (ubyte*)realloc((void*)buffer_, newSize);
+      if (newBuffer == 0)
+	return UMEMORYFAIL; // not enough memory.
       ADDMEM(newSize - bufferSize_);
 
       buffer_ = newBuffer;
-      if ((end_ < start_) || (bfs == 0 ))
+      if (end_ < start_ || bfs == 0 )
       {
 	// Translate the rightside of the old internal buffer.
-
-	memmove(buffer_ + start_ + (newSize - bufferSize_),
-		buffer_ + start_,
-		bufferSize_ - start_);
-	start_ += (newSize - bufferSize_);
+	memmove(buffer_ + start_ + newSize - bufferSize_,
+		buffer_ + start_, bufferSize_ - start_);
+	start_ += newSize - bufferSize_;
       }
 
       bufferSize_ = newSize;
@@ -227,26 +223,22 @@ UQueue::push (const ubyte *buffer, int length)
   {
     // Do we have to split 'buffer'?
     // No need to split.
-
     memcpy(buffer_ + end_, buffer, length);
     end_ += length;
-    if (end_ == bufferSize_) end_ = 0; // loop the circular geometry.
-
+    if (end_ == bufferSize_)
+      end_ = 0; // loop the circular geometry.
   }
   else
   {
     // Split 'buffer' to fit in the internal circular buffer.
-
     memcpy(buffer_ + end_, buffer, bufferSize_ - end_);
     memcpy(buffer_, buffer + (bufferSize_ - end_), length-(bufferSize_ - end_));
     end_ = length - (bufferSize_ - end_);
   }
 
   dataSize_ += length;
-
   return USUCCESS;
 }
-
 
 
 //! Pops 'length' bytes out of the Queue
@@ -265,7 +257,8 @@ UQueue::pop (int length)
 
   // Actual size of the data to pop.
   toPop = length;
-  if (toPop > dataSize_) return 0; // Not enough data to pop 'length'
+  if (toPop > dataSize_)
+    return 0; // Not enough data to pop 'length'
   if (toPop == 0)
     return buffer_ + start_;  // Pops nothing but gets a pointer to the
 			      // beginning of the buffer.
@@ -273,11 +266,14 @@ UQueue::pop (int length)
   if (adaptive_)
   {
     nbPopCall_++;
-    if (dataSize_ > topDataSize_) topDataSize_ = dataSize_;
-    if (toPop > topOutputSize_)   topOutputSize_ = toPop;
+    if (dataSize_ > topDataSize_)
+      topDataSize_ = dataSize_;
+    if (toPop > topOutputSize_)
+      topOutputSize_ = toPop;
 
-    if (nbPopCall_ > adaptive_ ) { // time out
-
+    if (nbPopCall_ > adaptive_ )
+    {
+      // time out
       nbPopCall_ = 0; // reset
 
       if (topOutputSize_ < (int)(outputBufferSize_ * 0.8))
@@ -298,23 +294,20 @@ UQueue::pop (int length)
       {
 	// We shrink the buffer to the new size: topDataSize_ + 10% (if it fits)
 	topDataSize_ = (int) (topDataSize_ * 1.1);
-	if ((topDataSize_ > maxBufferSize_) && (maxBufferSize_ !=0))
+	if (topDataSize_ > maxBufferSize_ && maxBufferSize_ !=0)
 	  topDataSize_ = maxBufferSize_;
 
 	if (end_ < start_)
 	{
 	  // The data is splitted
-	  memmove(buffer_ + start_ - (bufferSize_ - topDataSize_),
-		  buffer_ + start_,
-		  bufferSize_ - start_);
+	  memmove(buffer_ + start_ - bufferSize_ - topDataSize_,
+		  buffer_ + start_, bufferSize_ - start_);
 	  start_ = start_ - (bufferSize_ - topDataSize_);
 	}
 	else
 	{
 	  // The data is contiguous
-	  memmove(buffer_,
-		  buffer_ + start_,
-		  dataSize_);
+	  memmove(buffer_, buffer_ + start_, dataSize_);
 	  start_ = 0;
 	  end_   = dataSize_;
 	  // the case end_ == bufferSize_ is handled below.
@@ -326,7 +319,8 @@ UQueue::pop (int length)
 	  FREEMEM(bufferSize_ - topDataSize_);
 	  buffer_ = newBuffer;
 	  bufferSize_ = topDataSize_;
-	  if (end_ == bufferSize_ ) end_ =0; // loop the circular geometry.
+	  if (end_ == bufferSize_ )
+	    end_ =0; // loop the circular geometry.
 	}
 	// else... well it should never come to this else anyway.
       }
@@ -336,17 +330,15 @@ UQueue::pop (int length)
     }
   }
 
-  if (bufferSize_ - start_ >= toPop) { // Is the packet continuous across the
-					// the internal buffer?
-    // yes, the packet is continuous in the internal buffer
-
+  if (bufferSize_ - start_ >= toPop) 
+  {
+    // Is the packet continuous across the the internal buffer?  yes,
+    // the packet is continuous in the internal buffer
     int tmp_index = start_;
     start_ += toPop;
     if (start_ == bufferSize_) start_ = 0; // loop the circular geometry.
     dataSize_ -= toPop;
-
     return buffer_ + tmp_index;
-
   }
   else
   {
@@ -361,7 +353,8 @@ UQueue::pop (int length)
       if (theNewSize%2!=0) theNewSize++;
       ubyte* newOutputBuffer = (ubyte*)realloc((void*)outputBuffer_,
 						theNewSize );
-      if (newOutputBuffer == 0) return 0; // not enough memory.
+      if (newOutputBuffer == 0)
+	return 0; // not enough memory.
       ADDMEM(theNewSize - outputBufferSize_);
       outputBuffer_ = newOutputBuffer;
       outputBufferSize_ = theNewSize;
