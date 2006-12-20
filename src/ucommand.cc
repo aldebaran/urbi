@@ -1310,7 +1310,13 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       variable->nbAssigns++;
       assigned = true;
-      startval = *targetvalue;
+
+      // use of previous value as a start value to ensure that the start value
+      // will remain identical when several assignments are run during the same
+      // cycle
+      // old code: startval = *targetvalue;
+      startval = variable->previous;
+
       first = true;
       status = URUNNING;
     }

@@ -1,5 +1,13 @@
 2006-12-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
+        Fix ticket [111].
+	fix synchronous assignment problem with add mode. 
+	* src/ucommand.cc: use previous value as startvalue to insure that it
+        will remain unchanged between several assignments during the same
+        cycle.
+
+2006-12-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	formatting change 
 	* src/ucommand.cc: done.
 
