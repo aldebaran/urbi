@@ -1,5 +1,10 @@
 2006-12-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Fix include.
+	* src/uvalue.hh: Fix typo.
+
+2006-12-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Add missing include.
 	* src/uvalue.hh: include ref-pt.hh from libport.
 

@@ -26,7 +26,7 @@
 
 # include "libport/fwd.hh"
 # include "libport/ufloat.h"
-# include "libport/ref-pt.h"
+# include "libport/ref-pt.hh"
 
 # include "fwd.hh"
 # include "memorymanager/memorymanager.hh"
