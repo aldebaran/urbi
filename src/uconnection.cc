@@ -22,6 +22,7 @@
 #include "libport/cstring"
 #include <cstdio>
 #include <cassert>
+#include <cstdarg>
 
 #ifdef _MSC_VER
 # define snprintf _snprintf
@@ -151,7 +152,7 @@ UConnection::~UConnection()
   // free bindings
 
   for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-	it1 != ::urbiserver->variabletab.end(); it1++ )
+       it1 != ::urbiserver->variabletab.end(); it1++ )
   {
     if (it1->second->binder)
       if (it1->second->binder->removeMonitor(this))
@@ -163,8 +164,8 @@ UConnection::~UConnection()
 
   std::list<HMbindertab::iterator> deletelist;
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
-	it2 != ::urbiserver->functionbindertab.end();
-	it2++)
+       it2 != ::urbiserver->functionbindertab.end();
+       it2++)
   {
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
@@ -177,8 +178,8 @@ UConnection::~UConnection()
   deletelist.clear();
 
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
-	it3 != ::urbiserver->eventbindertab.end();
-	it3++)
+       it3 != ::urbiserver->eventbindertab.end();
+       it3++)
   {
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
@@ -709,7 +710,7 @@ UConnection::error (UErrorCode n)
  - 0 : Memory overflow warning
 
  \param complement is a complement string added at the end
-		   of the warning message.
+ of the warning message.
  */
 UErrorValue
 UConnection::warning (UWarningCode n)
@@ -858,12 +859,12 @@ UConnection::processCommand(UCommand *&command,
 		    if (((*retr)->connectionTag->equal(tmpID->str)) ||
 			(STREQ(tmpID->str->str(), "all")) ||
 			((STREQ(tmpID->str->str(), "other")) &&
-			  (!(*retr)->connectionTag->equal(connectionTag))))
+			 (!(*retr)->connectionTag->equal(connectionTag))))
 		    {
 		      UCommand_TREE* tohook =
 			new UCommand_TREE(UAND,
-					   command->copy(),
-					   0);
+					  command->copy(),
+					  0);
 		      (*retr)->append(tohook);
 		    }
 
@@ -945,12 +946,12 @@ UConnection::processCommand(UCommand *&command,
 	command->flag_nbTrue2 = 0;
 
       if (((command->flagExpr2->softtest_time) &&
-	     (command->flag_nbTrue2 > 0) &&
-	     (server->lastTime() - command->flag_startTrue2 >=
-	      command->flagExpr2->softtest_time->val)) ||
+	   (command->flag_nbTrue2 > 0) &&
+	   (server->lastTime() - command->flag_startTrue2 >=
+	    command->flagExpr2->softtest_time->val)) ||
 
-	   ((command->flag_nbTrue2 >0) &&
-	     (command->flagExpr2->softtest_time==0)) )
+	  ((command->flag_nbTrue2 >0) &&
+	   (command->flagExpr2->softtest_time==0)) )
 	stopit = true;
     }
 

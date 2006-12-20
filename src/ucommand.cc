@@ -6086,7 +6086,7 @@ UCommand_AT::execute(UConnection *connection)
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-      connection->sendf(getTag().c_str(), 
+      connection->sendf(getTag().c_str(),
 			"!!! Invalid name resolution in test. "
 			"Did you define all events and variables?\n");
       return status = UCOMPLETED;
