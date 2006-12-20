@@ -643,7 +643,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	if (ambiguous)
 	{
-	  connection->sendf (getTag().c_str(), "!!! Ambiguous multiple inheritance on function %s\n",
+	  connection->sendf (getTag().c_str(),
+                             "!!! Ambiguous multiple inheritance"
+                             " on function %s\n",
 			     functionname->str());
 	  return status = UCOMPLETED;
 	}
