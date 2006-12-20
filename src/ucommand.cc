@@ -1539,18 +1539,19 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       delete tmpeval;
     }
 
-    if (speed == 0)
-      speed = 0.001;
-
     if (variablename->isnormalized)
       speed = speed * (variable->rangemax - variable->rangemin);
 
-    if (adaptive)
-      targettime = currentTime - starttime +
-	ABSF(targetval - currentVal) / (speed/1000.);
+    if (speed != 0)
+    {
+      if (adaptive)
+        targettime = currentTime - starttime +
+          ABSF(targetval - currentVal) / (speed/1000.);
+      else
+        targettime = ABSF(targetval - startval) / (speed/1000.);
+    }
     else
-      targettime = ABSF(targetval - startval) / (speed/1000.);
-
+      targettime= UINFINITY;
 
     // test for speedmin
     if ((targettime > (currentTime - starttime)) &&
@@ -1570,21 +1571,26 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       if (!adaptive)
 	finished = true;
       *valtmp = variable->nbAverage * *valtmp +
-	targetval;
+        targetval;
     }
     else
-      if (adaptive)
-	*valtmp = variable->nbAverage * *valtmp +
-	  currentVal +
-	  deltaTime*
-	  ((targetval - currentVal) /
-	    (targettime - (currentTime - starttime)) );
+      if (speed != 0)
+      {
+        if (adaptive)
+          *valtmp = variable->nbAverage * *valtmp +
+            currentVal +
+            deltaTime*
+            ((targetval - currentVal) /
+             (targettime - (currentTime - starttime)) );
+        else
+          *valtmp = variable->nbAverage * *valtmp +
+            startval +
+            (currentTime - starttime + deltaTime)*
+            ((targetval - startval) /
+             targettime );
+      }
       else
-	*valtmp = variable->nbAverage * *valtmp +
-	  startval +
-	  (currentTime - starttime + deltaTime)*
-	  ((targetval - startval) /
-	    targettime );
+        *valtmp = variable->nbAverage * *valtmp + currentVal;
 
     return USUCCESS;
   }
