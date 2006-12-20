@@ -20,12 +20,9 @@
  **************************************************************************** */
 
 #include <cmath>
-#include <cstdio>
+#include "libport/cstdio"
 
 #include <sstream>
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
 
 #include "libport/cstring"
 #include "libport/ref-pt.hh"

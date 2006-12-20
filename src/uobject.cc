@@ -20,13 +20,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 **************************************************************************** */
 
 #include <cstdarg>
-#include <cstdio>
+#include "libport/cstdio"
 #include <list>
-
-#ifdef _MSC_VER
-# define snprintf _snprintf
-# define vsnprintf _vsnprintf
-#endif
 
 #include "uconnection.hh"
 #include "ughostconnection.hh"

@@ -19,7 +19,7 @@
  **************************************************************************** */
 
 #include <cstdarg>
-#include <cstdio>
+#include "libport/cstdio"
 #include <list>
 #include "userver.hh"
 #include "uconnection.hh"
@@ -27,10 +27,6 @@
 #include "urbi/usystem.hh"
 #include "utypes.hh"
 
-#ifdef _MSC_VER
-# define snprintf _snprintf
-# define vsnprintf _vsnprintf
-#endif
 #define LIBURBIDEBUG
 
 namespace urbi

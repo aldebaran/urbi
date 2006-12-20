@@ -1,5 +1,18 @@
 2006-12-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Use libport/cstdio.
+	* src/ucommand.cc,
+	* src/uconnection.cc,
+	* src/uexpression.cc,
+	* src/uobj.cc,
+	* src/uobject.cc,
+	* src/userver.cc,
+	* src/usystem.cc,
+	* src/uvariable.cc,
+	* src/uvariablename.cc: Here.
+
+2006-12-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Fix include.
 	* src/uvalue.hh: Fix typo.
 

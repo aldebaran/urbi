@@ -20,14 +20,9 @@
  **************************************************************************** */
 
 #include <string>
-
 #include <cstdlib>
-#include <cstdio>
 
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
-
+#include "libport/cstdio"
 #include "libport/ref-pt.hh"
 
 #include "uasyncregister.hh"

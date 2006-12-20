@@ -20,15 +20,10 @@
  **************************************************************************** */
 
 #include <cstdlib>
-#include <cstdio>
+#include "libport/cstdio"
 #include <cstdarg>
 #include <string>
 #include <fstream>
-
-#ifdef _MSC_VER
-# define snprintf _snprintf
-# define vsnprintf _vsnprintf
-#endif
 
 #include "libport/containers.hh"
 

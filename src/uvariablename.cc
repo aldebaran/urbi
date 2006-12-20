@@ -19,12 +19,8 @@
 
  **************************************************************************** */
 
-#include <cstdio>
+#include "libport/cstdio"
 #include <cmath>
-
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#endif
 
 #include "ucallid.hh"
 #include "ucommand.hh"

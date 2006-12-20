@@ -18,11 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-#include <cstdio>
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
 
+#include "libport/cstdio"
 #include "libport/containers.hh"
 
 #include "uconnection.hh"

@@ -20,13 +20,9 @@
  **************************************************************************** */
 
 #include "libport/cstring"
-#include <cstdio>
+#include "libport/cstdio"
 #include <cassert>
 #include <cstdarg>
-
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
 
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
