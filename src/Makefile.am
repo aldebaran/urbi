@@ -179,3 +179,6 @@ noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
 uconsole_LDADD = libkernel.la $(PTHREAD_LIBS)
 endif
+
+# Clean VC++ debug file. BTW, Do we want to install it?
+CLEANFILES += vc80.pdb
