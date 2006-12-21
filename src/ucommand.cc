@@ -50,6 +50,9 @@
 
 namespace
 {
+  /// A buffer type.
+  typedef char buffer_t[65536];
+
   UNodeType nodeType_foreach (UCommand::Type type)
   {
     switch (type)
@@ -644,8 +647,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	if (ambiguous)
 	{
 	  connection->sendf (getTag().c_str(),
-                             "!!! Ambiguous multiple inheritance"
-                             " on function %s\n",
+			     "!!! Ambiguous multiple inheritance"
+			     " on function %s\n",
 			     functionname->str());
 	  return status = UCOMPLETED;
 	}
@@ -695,8 +698,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       if (morph)
       {
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	sprintf(tmpbuffer, "__UFnct%d", unic());
+	buffer_t buf;
+	sprintf(buf, "__UFnct%d", unic());
 	UString* fundevice = expression->variablename->getDevice();
 
 	// handle the :: case
@@ -710,7 +713,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
 	  assert (uc_tree);
 	  ((UCommand_TREE*)morph)->callid =
-	    new UCallid(tmpbuffer,
+	    new UCallid(buf,
 			fundevice->str(),
 			uc_tree);
 	}
@@ -846,13 +849,13 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	}
 
 	persistant = false;
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	sprintf(tmpbuffer,
+	buffer_t buf;
+	sprintf(buf,
 		"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
 		"%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 		UU, variablename->getFullname()->str(), UU, UU);
 
-	strMorph (tmpbuffer);
+	strMorph (buf);
 	return status = UMORPH;
       }
     }
@@ -895,11 +898,11 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	&& !variablename->fromGroup
 	&& variable->value->dataType == DATA_OBJ)
     {
-      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+      buffer_t buf;
+      snprintf(buf, sizeof buf,
 	       "!!! Warning: %s type mismatch: no object assignment\n",
 	       variablename->getFullname()->str());
-      connection->send(tmpbuffer, getTag().c_str());
+      connection->send(buf, getTag().c_str());
       return status = UCOMPLETED;
     }
 
@@ -1004,17 +1007,17 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	      modifier->str = new UString(ostr.str().c_str());
 	    }
 
-	    char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	    buffer_t buf;
+	    snprintf(buf, sizeof buf,
 		     "$%s", modif->name->str());
-	    if (strstr(modifier->str->str(), tmpbuffer) == 0)
-	      while (char* possub = strstr(result, tmpbuffer))
+	    if (strstr(modifier->str->str(), buf) == 0)
+	      while (char* possub = strstr(result, buf))
 	      {
 		memmove(possub + modifier->str->len(),
-			possub + strlen(tmpbuffer),
+			possub + strlen(buf),
 			strlen(result)
 			- (int)(possub - result)
-			- strlen(tmpbuffer)+1);
+			- strlen(buf)+1);
 		strncpy (possub, modifier->str->str(), modifier->str->len());
 	      }
 
@@ -1134,12 +1137,12 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	// Checking integrity (variable exists), if not sinusoidal
 	if (variable == 0 && !sinusoidal)
 	{
-	  char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	  buffer_t buf;
+	  snprintf(buf, sizeof buf,
 		   "!!! Modificator error: %s unknown (no start value)\n",
 		   variablename->getFullname()->str());
 	  if (!variablename->fromGroup)
-	    connection->send(tmpbuffer, getTag().c_str());
+	    connection->send(buf, getTag().c_str());
 	  delete target;
 	  return status = UCOMPLETED;
 	}
@@ -1545,10 +1548,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     if (speed != 0)
     {
       if (adaptive)
-        targettime = currentTime - starttime +
-          ABSF(targetval - currentVal) / (speed/1000.);
+	targettime = currentTime - starttime +
+	  ABSF(targetval - currentVal) / (speed/1000.);
       else
-        targettime = ABSF(targetval - startval) / (speed/1000.);
+	targettime = ABSF(targetval - startval) / (speed/1000.);
     }
     else
       targettime= UINFINITY;
@@ -1571,26 +1574,26 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       if (!adaptive)
 	finished = true;
       *valtmp = variable->nbAverage * *valtmp +
-        targetval;
+	targetval;
     }
     else
       if (speed != 0)
       {
-        if (adaptive)
-          *valtmp = variable->nbAverage * *valtmp +
-            currentVal +
-            deltaTime*
-            ((targetval - currentVal) /
-             (targettime - (currentTime - starttime)) );
-        else
-          *valtmp = variable->nbAverage * *valtmp +
-            startval +
-            (currentTime - starttime + deltaTime)*
-            ((targetval - startval) /
-             targettime );
+	if (adaptive)
+	  *valtmp = variable->nbAverage * *valtmp +
+	    currentVal +
+	    deltaTime*
+	    ((targetval - currentVal) /
+	     (targettime - (currentTime - starttime)) );
+	else
+	  *valtmp = variable->nbAverage * *valtmp +
+	    startval +
+	    (currentTime - starttime + deltaTime)*
+	    ((targetval - startval) /
+	     targettime );
       }
       else
-        *valtmp = variable->nbAverage * *valtmp + currentVal;
+	*valtmp = variable->nbAverage * *valtmp + currentVal;
 
     return USUCCESS;
   }
@@ -1921,12 +1924,10 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   // variable existence checking
   if (!variable)
   {
-    char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
-	     "!!! Variable %s does not exist\n",
-	     variablename->getFullname()->str());
     if (!variablename->fromGroup)
-      connection->send(tmpbuffer, getTag().c_str());
+      connection->sendf(getTag().c_str(),
+			"!!! Variable %s does not exist\n",
+			variablename->getFullname()->str());
     return status = UCOMPLETED;
   }
 
@@ -2347,8 +2348,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	if (flags)
 	  morph->flags = flags->copy();
 
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	sprintf(tmpbuffer, "__UFnct%d", unic());
+	buffer_t buf;
+	sprintf(buf, "__UFnct%d", unic());
 	UString* fundevice = expression->variablename->getDevice();
 	if (!fundevice)
 	{
@@ -2367,7 +2368,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	{
 	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
 	  assert (uc_tree);
-	  ((UCommand_TREE*)morph)->callid = new UCallid(tmpbuffer,
+	  ((UCommand_TREE*)morph)->callid = new UCallid(buf,
 							fundevice->str(),
 							uc_tree);
 	}
@@ -2394,8 +2395,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
 	    return status = UCOMPLETED;
 	  }
-	  char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	  buffer_t buf;
+	  snprintf(buf, sizeof buf,
 		   "%s.%s",
 		   ((UCommand_TREE*)morph)->callid->str(),
 		   pname->name->str());
@@ -2514,13 +2515,13 @@ UCommand_EXPR::execute(UConnection *connection)
       }
 
       persistant = false;
-      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-      sprintf(tmpbuffer,
+      buffer_t buf;
+      sprintf(buf,
 	      "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
 	      "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
 	      UU, getTag().c_str(), UU, UU);
 
-      strMorph (tmpbuffer);
+      strMorph (buf);
       return status = UMORPH;
     }
   }
@@ -2998,12 +2999,12 @@ UCommand_NEW::execute(UConnection *connection)
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end())
   {
-    char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-    snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+    buffer_t buf;
+    snprintf(buf, sizeof buf,
 	     "!!! %s has already inherited from %s\n", id->str(), obj->str());
     if (creation)
       delete newobj;
-    connection->send(tmpbuffer, getTag().c_str());
+    connection->send(buf, getTag().c_str());
     return status = UCOMPLETED;
   }
 
@@ -3059,10 +3060,10 @@ UCommand_NEW::execute(UConnection *connection)
       if (!valparam)
       {
 	connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
-	char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-	snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+	buffer_t buf;
+	snprintf(buf, sizeof buf,
 		 "{delete %s}", id->str());
-	strMorph (tmpbuffer);
+	strMorph (buf);
 	return status = UMORPH;
       }
 
@@ -3468,21 +3469,21 @@ UCommand_GROUP::execute(UConnection *connection)
 	  retr != connection->server->grouptab.end();
 	  retr++)
     {
-      char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-      snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE,
+      buffer_t buf;
+      snprintf(buf, sizeof buf,
 	       "*** %s = {", retr->first);
 
       for (std::list<UString*>::iterator it = retr->second->members.begin();
 	   it !=  retr->second->members.end();
 	)
       {
-	strncat(tmpbuffer, (*it)->str(), UCommand::MAXSIZE_TMPMESSAGE);
+	strncat(buf, (*it)->str(), sizeof buf);
 	it++;
 	if (it != retr->second->members.end())
-	  strncat(tmpbuffer, ",", UCommand::MAXSIZE_TMPMESSAGE);
+	  strncat(buf, ",", sizeof buf);
       }
-      strncat(tmpbuffer, "}\n", UCommand::MAXSIZE_TMPMESSAGE);
-      connection->send(tmpbuffer, getTag().c_str());
+      strncat(buf, "}\n", sizeof buf);
+      connection->send(buf, getTag().c_str());
     }
     return status = UCOMPLETED;
   }
@@ -3945,11 +3946,11 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 
    if ((!variable) && (!dev))
    {
-   snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+   snprintf(buf,sizeof buf,
    "!!! Unknown identifier: %s\n",
    variablename->getFullname()->str());
 
-   connection->send(tmpbuffer,getTag().c_str());
+   connection->send(buf,getTag().c_str());
    return status = UCOMPLETED;
    }
 
@@ -3961,10 +3962,10 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
    connection->sendf (getTag().c_str(), "*** device description: %s\n",
    dev->detail->str());
 
-   snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+   snprintf(buf,sizeof buf,
    "*** device name: %s\n",
    dev->device->str());
-   connection->send(tmpbuffer,getTag().c_str());
+   connection->send(buf,getTag().c_str());
    }
    std::ostringstream tstr;
 
@@ -4026,14 +4027,14 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 
 
    if (variable->unit)
-   char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-   snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+   buffer_t buf;
+   snprintf(buf,sizeof buf,
    "*** unit: %s\n",
    variable->unit->str());
    else
-   snprintf(tmpbuffer,UCommand::MAXSIZE_TMPMESSAGE,
+   snprintf(buf,sizeof buf,
    "*** unit: unspecified\n");
-   connection->send(tmpbuffer,getTag().c_str());
+   connection->send(buf,getTag().c_str());
    }
 
    return status = UCOMPLETED;
@@ -5767,10 +5768,10 @@ UCommand_TIMEOUT::UCommand_TIMEOUT(UExpression *duration,
   command (command)
 {
   ADDOBJ(UCommand_TIMEOUT);
-  char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-  snprintf(tmpbuffer,
-	   UCommand::MAXSIZE_TMPMESSAGE, "__TAG_timeout_%d", (int)unic());
-  this->tagRef	    = new UString(tmpbuffer);
+  buffer_t buf;
+  snprintf(buf,
+	   sizeof buf, "__TAG_timeout_%d", (int)unic());
+  this->tagRef	    = new UString(buf);
 }
 
 //! UCommand subclass destructor.
@@ -5858,9 +5859,9 @@ UCommand_STOPIF::UCommand_STOPIF(UExpression *condition,
 {
   ADDOBJ(UCommand_STOPIF);
 
-  char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-  snprintf(tmpbuffer, UCommand::MAXSIZE_TMPMESSAGE, "__TAG_stopif_%d", unic());
-  this->tagRef	    = new UString(tmpbuffer);
+  buffer_t buf;
+  snprintf(buf, sizeof buf, "__TAG_stopif_%d", unic());
+  this->tagRef	    = new UString(buf);
 }
 
 //! UCommand subclass destructor.
@@ -5946,12 +5947,12 @@ UCommand_STOPIF::print(int l)
   {
     ::urbiserver->debug("%s  Condition:", tabb);
     condition->print(); ::urbiserver->debug("\n");
-  };
+  }
   if (command)
   {
     ::urbiserver->debug("%s  Command:\n", tabb);
     command->print(l+3);
-  };
+  }
   ::urbiserver->debug("%sEND STOPIF ------\n", tabb);
 }
 
@@ -5961,17 +5962,15 @@ MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_FREEZEIF::UCommand_FREEZEIF(UExpression *condition,
-				      UCommand* command) :
-  UCommand(CMD_FREEZEIF),
-  condition (condition),
-  command (command)
+				      UCommand* command)
+  : UCommand(CMD_FREEZEIF),
+    condition (condition),
+    command (command)
 {
   ADDOBJ(UCommand_FREEZEIF);
-
-  char tmpbuffer[UCommand::MAXSIZE_TMPMESSAGE];
-  snprintf(tmpbuffer,
-	   UCommand::MAXSIZE_TMPMESSAGE, "__TAG_stopif_%d", (int)unic());
-  this->tagRef	    = new UString(tmpbuffer);
+  buffer_t buf;
+  snprintf(buf, sizeof buf, "__TAG_stopif_%d", (int)unic());
+  this->tagRef = new UString(buf);
 }
 
 //! UCommand subclass destructor.

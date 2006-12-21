@@ -165,19 +165,13 @@ public:
   /// true when the command is part of a morphed structure
   bool             morphed;
 
-public:
-
-  /// used by commands to build
-  enum { MAXSIZE_TMPMESSAGE = 65536 };
-
-
 private:
-  /// Command tag
+  /// Command tag.
   std::string      tag;
-  /// Ptr to tag info concerning us
+  /// Ptr to tag info concerning us.
   TagInfo* tagInfo;
-  std::list<UCommand *>::iterator tagInfoPtr; //for fast deletion
-
+  /// For fast deletion.
+  std::list<UCommand *>::iterator tagInfoPtr;
 
   /// Protection against copy
   UCommand (const UCommand &c);
