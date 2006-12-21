@@ -538,12 +538,14 @@ UConnection::received (const ubyte *buffer, int length)
   }
 
   UParser& p = parser();
+#ifndef __linux // XXX DIRTY FIX FOR BUG #113
   if (p.commandTree)
   {
     //reentrency trouble
     treeLock.unlock();
     return USUCCESS;
   }
+#endif
   // Starts processing
   receiving = true;
   server->updateTime();
