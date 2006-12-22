@@ -525,8 +525,6 @@ namespace urbi
     operator std::string ();
     operator UList();
 
-
-
     /// No effect in plugin mode. In remote mode, updates the value
     /// once asynchronously..
     void requestValue();
@@ -869,7 +867,6 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
   class baseURBIStarter
   {
   public:
-
     baseURBIStarter(const std::string& name)
       : name(name)
     {}
