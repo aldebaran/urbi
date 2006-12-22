@@ -103,7 +103,10 @@ public:
   virtual UVariableName** refVarName()  { return 0; };
   virtual UVariableName** refVarName2()  { return 0; };
 
-  const std::string& getTag()  {return tag;}
+  const std::string& getTag() const
+  {
+    return tag;
+  }
   void setTag(const std::string& tag);
   void setTag(UCommand* b); //faster than the one above
   void unsetTag();

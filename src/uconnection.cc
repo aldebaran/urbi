@@ -296,14 +296,19 @@ UConnection::send (const char *s, const char* tag)
 }
 
 UErrorValue
-UConnection::sendf (const char* tag, const char* format, ...)
+UConnection::sendf (const std::string& tag, const char* format, va_list args)
 {
   char buf[1024];
-  va_list arg;
-  va_start(arg, format);
-  vsnprintf(buf, sizeof buf, format, arg);
-  va_end(arg);
-  return send (buf, tag);
+  vsnprintf(buf, sizeof buf, format, args);
+  return send (buf, tag.str());
+}
+
+UErrorValue
+UConnection::sendf (const std::string& tag, const char* format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  return sendf (tag, format, args);
 }
 
 //! Send a buffer through the connection and flush it

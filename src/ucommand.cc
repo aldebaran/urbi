@@ -681,7 +681,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	if (ambiguous)
 	{
-	  connection->sendf (getTag().c_str(),
+	  connection->sendf (getTag(),
 			     "!!! Ambiguous multiple inheritance"
 			     " on function %s\n",
 			     functionname->str());
@@ -701,7 +701,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  || (expression->parameters && !fun->nbparam())
 	  || (!expression->parameters && fun->nbparam()) )
       {
-	connection->sendf (getTag().c_str(),
+	connection->sendf (getTag(),
 			   "!!! Invalid number of arguments for %s"
 			   " (should be %d params)\n",
 			   functionname->str(), fun->nbparam());
@@ -941,7 +941,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
     // Strict variable definition checking
     if (!variable && connection->server->defcheck && !defkey)
-      connection->sendf (getTag().c_str(), "!!! Unknown identifier: %s\n",
+      connection->sendf (getTag(), "!!! Unknown identifier: %s\n",
 			 variablename->getFullname()->str());
 
     // Check the +error flag
@@ -972,7 +972,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     {
       if (::urbiserver->defcheck)
       {
-	connection->sendf (getTag().c_str(), "!!! Warning: %s type mismatch\n",
+	connection->sendf (getTag(), "!!! Warning: %s type mismatch\n",
 			   variablename->getFullname()->str());
 	delete target;
 	return status = UCOMPLETED;
@@ -999,7 +999,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    UValue* modifier = modif->expression->eval(this, connection);
 	    if (!modifier)
 	    {
-	      connection->sendf (getTag().c_str(),
+	      connection->sendf (getTag(),
 				 "!!! String composition failed\n");
 	      delete target;
 	      return status = UCOMPLETED;
@@ -1190,7 +1190,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  {
 	    if (modif->expression->type != UExpression::EXPR_VARIABLE)
 	    {
-	      connection->sendf (getTag().c_str(),
+	      connection->sendf (getTag(),
 				 "!!! a variable is expected for"
 				 " the 'getphase' modifier\n");
 	      return status = UCOMPLETED;
@@ -1202,7 +1202,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    UValue *modifier = modif->expression->eval(this, connection);
 	    if (!modifier || modifier->dataType != DATA_NUM)
 	    {
-	      connection->sendf (getTag().c_str(),
+	      connection->sendf (getTag(),
 				 "!!! Invalid modifier value\n");
 	      delete modifier;
 	      delete target;
@@ -1213,7 +1213,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  }
 	  else
 	  {
-	    connection->sendf (getTag().c_str(),
+	    connection->sendf (getTag(),
 			       "!!! Unkown modifier name\n");
 	    delete target;
 	    return status = UCOMPLETED;
@@ -1747,7 +1747,7 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
       && variable->value->dataType != DATA_BINARY
       && variable->value->dataType != DATA_VOID)
   {
-    connection->sendf (getTag().c_str(), 
+    connection->sendf (getTag(), 
 		       "!!! %s type mismatch\n", 
 		       variablename->getFullname()->str());
     return status = UCOMPLETED;
@@ -1871,14 +1871,14 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (blendmode->dataType != DATA_STRING)
     {
-      connection->sendf (getTag().c_str(),"!!! Invalid blend mode.\n");
+      connection->sendf (getTag(),"!!! Invalid blend mode.\n");
       return status = UCOMPLETED;
     }
 
     if (variable->value->dataType != DATA_NUM &&
 	variable->value->dataType != DATA_BINARY)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! %s type is invalid for mixing\n",
 			 variablename->getFullname()->str());
       return status = UCOMPLETED;
@@ -1898,7 +1898,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
       variable->blendType = UCANCEL;
     else
     {
-      connection->sendf (getTag().c_str(), "!!! Unknown blend mode: %s\n",
+      connection->sendf (getTag(), "!!! Unknown blend mode: %s\n",
 			 blendmode->str->str());
       return status = UCOMPLETED;
     }
@@ -1915,7 +1915,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid range type. NUM expected.\n");
       return status = UCOMPLETED;
     }
@@ -1933,7 +1933,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid delta type. NUM expected.\n");
       return status = UCOMPLETED;
     }
@@ -1952,7 +1952,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (unitval->dataType != DATA_STRING)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid unit type (must be a string).\n");
       return status = UCOMPLETED;
     }
@@ -1960,7 +1960,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
     if (variable->value->dataType != DATA_NUM &&
 	variable->value->dataType != DATA_BINARY)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! %s type is Invalid for unit attribution\n",
 			 variablename->getFullname()->str());
       return status = UCOMPLETED;
@@ -1983,7 +1983,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid range type. NUM expected.\n");
       return status = UCOMPLETED;
     }
@@ -2001,7 +2001,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid speed type. NUM expected.\n");
       return status = UCOMPLETED;
     }
@@ -2019,7 +2019,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid speed type. NUM expected.\n");
       return status = UCOMPLETED;
     }
@@ -2028,7 +2028,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
     return status = UCOMPLETED;
   }
 
-  connection->sendf (getTag().c_str(),
+  connection->sendf (getTag(),
 		     "!!! Unknown property: %s\n", oper->str());
   return status = UCOMPLETED;
 }
@@ -2218,7 +2218,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
 	if (ambiguous)
 	{
-	  connection->sendf (getTag().c_str(),
+	  connection->sendf (getTag(),
 			     "!!! Ambiguous multiple inheritance"
 			     " on function %s\n",
 			     funname->str());
@@ -2237,7 +2237,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	  || (expression->parameters && !fun->nbparam())
 	  || (!expression->parameters && fun->nbparam()) )
       {
-	connection->sendf (getTag().c_str(),
+	connection->sendf (getTag(),
 			   "!!! Invalid number of arguments for %s"
 			   " (should be %d params)\n",
 			   funname->str(), fun->nbparam());
@@ -2720,13 +2720,13 @@ UCommand_NEW::execute(UConnection *connection)
     UString* name = varname->buildFullname(this, connection, false);
     if (!varname->nostruct)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Object names cannot be nested in Kernel 1\n");
       return status = UCOMPLETED;
     }
     if (!name)
     {
-      connection->sendf (getTag().c_str(), "!!! Invalid object name\n");
+      connection->sendf (getTag(), "!!! Invalid object name\n");
       return status = UCOMPLETED;
     }
     id = new UString(name->str());
@@ -2739,14 +2739,14 @@ UCommand_NEW::execute(UConnection *connection)
   {
     if (id->equal(obj))
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Object %s cannot new itself\n", obj->str());
       return status = UCOMPLETED;
     }
 
     if (::urbiserver->objtab.find(id->str()) != ::urbiserver->objtab.end())
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Object %s already exists. Delete it first.\n",
 			 id->str());
       return status = UCOMPLETED;
@@ -2788,10 +2788,10 @@ UCommand_NEW::execute(UConnection *connection)
       if (timeout < 0)
       {
 	if (sysCall)
-	  connection->sendf (getTag().c_str(),
+	  connection->sendf (getTag(),
 			     "!!! Autoload timeout for object %s\n", objname);
 
-	connection->sendf (getTag().c_str(),
+	connection->sendf (getTag(),
 			   "!!! Unknown object %s\n", obj->str());
 	return status = UCOMPLETED;
       }
@@ -3057,7 +3057,7 @@ UCommand_ALIAS::execute(UConnection *connection)
       connection->server->aliastab.find(id0->str());
     if (i != connection->server->aliastab.end())
     {
-      connection->sendf (getTag().c_str(), "*** %25s -> %s\n",
+      connection->sendf (getTag(), "*** %25s -> %s\n",
 			 i->first, i->second->str());
     }
     return status = UCOMPLETED;
@@ -3146,13 +3146,13 @@ UCommand_INHERIT::execute(UConnection *connection)
   HMobjtab::iterator objsub    = ::urbiserver->objtab.find(sub->str());
   if (objsub == ::urbiserver->objtab.end ())
   {
-	connection->sendf (getTag().c_str(), "!!! Object does not exist: %s\n", sub->str());
+	connection->sendf (getTag(), "!!! Object does not exist: %s\n", sub->str());
     return status = UCOMPLETED;
   }
   HMobjtab::iterator objparent = ::urbiserver->objtab.find(parent->str());
   if (objparent == ::urbiserver->objtab.end ())
   {
-	connection->sendf (getTag().c_str(), "!!! Object does not exist: %s\n", parent->str());
+	connection->sendf (getTag(), "!!! Object does not exist: %s\n", parent->str());
     return status = UCOMPLETED;
   }
 
@@ -3163,7 +3163,7 @@ UCommand_INHERIT::execute(UConnection *connection)
 		  objparent->second) !=
 	objsub->second->up.end())
     {
-	    connection->sendf (getTag().c_str(), "!!! %s has already inherited from %s\n",
+	    connection->sendf (getTag(), "!!! %s has already inherited from %s\n",
 	       sub->str(), parent->str());
       return status = UCOMPLETED;
     }
@@ -3178,7 +3178,7 @@ UCommand_INHERIT::execute(UConnection *connection)
 		  objparent->second) ==
 	objsub->second->up.end())
     {
-	    connection->sendf (getTag().c_str(), "!!! %s does not inherit from %s\n",
+	    connection->sendf (getTag(), "!!! %s does not inherit from %s\n",
 	       sub->str(), parent->str());
       return status = UCOMPLETED;
     }
@@ -3429,7 +3429,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
     if (!ok)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! %s: no such connection\n", id->str());
       return status = UCOMPLETED;
     }
@@ -3453,7 +3453,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
     if (!ok)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! %s: no such connection\n", id->str());
       return status = UCOMPLETED;
     }
@@ -3465,7 +3465,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
       return status = UCOMPLETED;
 
     if (STREQ(id->str(), UNKNOWN_TAG))
-      connection->sendf (getTag().c_str(), "!!! cannot block 'notag'\n");
+      connection->sendf (getTag(), "!!! cannot block 'notag'\n");
     else
       connection->server->block(id->str());
 
@@ -3482,7 +3482,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
       return status = UCOMPLETED;
 
     if (STREQ(id->str(), UNKNOWN_TAG))
-      connection->sendf (getTag().c_str(), "!!! cannot freeze 'notag'\n");
+      connection->sendf (getTag(), "!!! cannot freeze 'notag'\n");
     else
       connection->server->freeze(id->str());
 
@@ -3662,7 +3662,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 
       if (!fun && !variable)
       {
-	connection->sendf (getTag().c_str(),
+	connection->sendf (getTag(),
 			   "!!! identifier %s does not exist\n",
 			   fullname->str());
 	return status = UCOMPLETED;
@@ -3688,7 +3688,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	if (idit != ::urbiserver->objtab.end()
 	    && !idit->second->down.empty())
 	{
-	  connection->sendf (getTag().c_str(),
+	  connection->sendf (getTag(),
 			     "!!! This object has subclasses."
 			     " Delete subclasses first.\n");
 	  return status = UCOMPLETED;
@@ -3703,7 +3703,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
       }
       else
       {
-	connection->sendf (getTag().c_str(),
+	connection->sendf (getTag(),
 			   "!!! variable %s already in use or is a system var."
 			   " Cannot delete.\n",
 			   fullname->str());
@@ -3758,10 +3758,10 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 
     if (dev)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "*** device description: %s\n",
 			 dev->detail->str());
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "*** device name: %s\n",
 			 dev->device->str());
     }
@@ -4100,7 +4100,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
   {
     if (connection->receiving) return status = URUNNING;
 
-	connection->sendf (getTag().c_str(), "!!! This command is no longer valid."
+	connection->sendf (getTag(), "!!! This command is no longer valid."
 	     " Please use \"motor on\" instead\n");
 
     return status = UCOMPLETED;
@@ -4108,7 +4108,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
   if (STREQ(oper->str(), "motoroff"))
   {
-	connection->sendf (getTag().c_str(), "!!! This command is no longer valid."
+	connection->sendf (getTag(), "!!! This command is no longer valid."
 	     " Please use \"motor off\" instead\n");
 
     return status = UCOMPLETED;
@@ -4116,14 +4116,14 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
   if (STREQ(oper->str(), "stopall"))
   {
-	connection->sendf (getTag().c_str(), "*** All commands cleared\n");
+	connection->sendf (getTag(), "*** All commands cleared\n");
     connection->server->stopall = true;
     return status = UCOMPLETED;
   }
 
   if (STREQ(oper->str(), "undefall"))
   {
-	connection->sendf (getTag().c_str(), "*** All variables and functions cleared\n");
+	connection->sendf (getTag(), "*** All variables and functions cleared\n");
 
     for (HMvariabletab::iterator i =
 	    connection->server->variabletab.begin();
@@ -4138,7 +4138,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
   }
   if (STREQ(oper->str(), "reset"))
   {
-	connection->sendf (getTag().c_str(), "*** Reset in progress\n");
+	connection->sendf (getTag(), "*** Reset in progress\n");
     ::urbiserver->reseting = true;
 
     return status = UCOMPLETED;
@@ -4146,7 +4146,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
   if (STREQ(oper->str(), "devices"))
   {
-    connection->sendf (getTag().c_str(),
+    connection->sendf (getTag(),
 		       "*** devices is deprecated."
 		       " Use 'group objects' instead.\n");
     return status = UCOMPLETED;
@@ -4281,7 +4281,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	 i++)
       if ((*i)->isActive())
       {
-	connection->sendf (getTag().c_str(), "*** %s (%d.%d.%d.%d)\n",
+	connection->sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
 		 (*i)->connectionTag->str(),
 		 (int) (((*i)->clientIP>>24) % 256),
 		 (int) (((*i)->clientIP>>16) % 256),
@@ -4374,7 +4374,7 @@ UCommand_WAIT::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(), "!!! Invalid type. NUM expected.\n");
+      connection->sendf (getTag(), "!!! Invalid type. NUM expected.\n");
       return status = UCOMPLETED;
     }
     if (nb->val == 0) return status = UCOMPLETED;
@@ -4463,7 +4463,7 @@ UCommand_EMIT::execute(UConnection *connection)
       UValue *dur = duration->eval(this, connection);
       if (!dur)
       {
-		connection->sendf (getTag().c_str(), "!!! Invalid event duration for event %s\n",
+		connection->sendf (getTag(), "!!! Invalid event duration for event %s\n",
 		 eventnamestr);
 	return status = UCOMPLETED;
       }
@@ -4500,7 +4500,7 @@ UCommand_EMIT::execute(UConnection *connection)
     {
       if (::urbiserver->defcheck)
       {
-		connection->sendf (getTag().c_str(), "!!! undefined event %s with %d param(s)\n",
+		connection->sendf (getTag(), "!!! undefined event %s with %d param(s)\n",
 		 ens->str (),
 		 nbargs);
 	return status = UCOMPLETED;
@@ -4907,7 +4907,7 @@ UCommand_DEF::execute(UConnection *connection)
 	    connection->server->functiontab.begin();
 	  i != connection->server->functiontab.end();
 	  i++)
-      connection->sendf (getTag().c_str(), "*** %s : %d param(s)\n",
+      connection->sendf (getTag(), "*** %s : %d param(s)\n",
 			 i->second->name().str(),
 			 i->second->nbparam());
     return status = UCOMPLETED;
@@ -4924,7 +4924,7 @@ UCommand_DEF::execute(UConnection *connection)
 	(::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
 	 ::urbiserver->grouptab.end()))
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! function name conflicts with group %s \n",
 			 variablename->getMethod()->str());
       return status = UCOMPLETED;
@@ -4933,7 +4933,7 @@ UCommand_DEF::execute(UConnection *connection)
     if (connection->server->functiontab.find(funname->str()) !=
 	connection->server->functiontab.end())
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! function %s already exists\n", funname->str());
       return status = UCOMPLETED;
     }
@@ -6063,7 +6063,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! Invalid name resolution in test. "
 			 "Did you define all events and variables?\n");
       return status = UCOMPLETED;
@@ -6347,7 +6347,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      connection->sendf (getTag().c_str(),
+      connection->sendf (getTag(),
 			 "!!! number of loops is non numeric\n");
       delete nb;
       return status = UCOMPLETED;
@@ -6644,7 +6644,7 @@ UCommand_FOREACH::execute(UConnection *connection)
   }
   if (position->dataType != DATA_NUM && position->dataType != DATA_STRING)
   {
-    connection->sendf (getTag().c_str(), "!!! This type is not supported yet\n");
+    connection->sendf (getTag(), "!!! This type is not supported yet\n");
     delete currentvalue;
     return status = UCOMPLETED;
   }
