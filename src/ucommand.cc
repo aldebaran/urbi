@@ -104,7 +104,7 @@ namespace
       default: abort();
     }
   }
-    
+
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
@@ -162,7 +162,7 @@ MEMORY_MANAGER_INIT(UCommand);
 
  \param type is the command type
  */
-UCommand::UCommand(const UCommand::location& l, UCommand::Type _type)
+UCommand::UCommand(const location& l, Type _type)
   : UAst (l),
     type (_type),
     status (UONQUEUE),
@@ -354,7 +354,7 @@ UCommand::setTag(const std::string & tag)
 }
 
 void
-UCommand::setTag(UCommand * cmd)
+UCommand::setTag(UCommand* cmd)
 {
   tag = cmd->tag;
   tagInfo = cmd->tagInfo;
@@ -719,11 +719,11 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       morph =
 	new UCommand_TREE
-	(loc_, 
+	(loc_,
 	 UPIPE,
 	 fun->cmdcopy(),
 	  new UCommand_ASSIGN_VALUE
-	 (loc_, 
+	 (loc_,
 	  variablename->copy(),
 	  new UExpression(UExpression::EXPR_VARIABLE,
 			    resultContainer),
@@ -1033,7 +1033,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  target->str->update(result);
 	  free(result);
 	}
-      
+
       // FIXME: Factor with the following cases.
       // Assignment
       if (variable) // the variable already exists
@@ -1109,7 +1109,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (parameters)
       {
 	// Check if sinusoidal (=> no start value needed = no integrity check)
-	
+
 	bool sinusoidal = false;
 	for (UNamedParameters* modif = parameters; modif; modif = modif->next)
 	  if (modif->name->equal("sin") || modif->name->equal("cos"))
@@ -1485,7 +1485,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       *valtmp = variable->nbAverage * *valtmp +
 	targetval;
     }
-    
+
     if (UValue* v = modif_speed->eval(this, connection))
     {
       speed = ABSF(v->val);
@@ -1616,7 +1616,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	{
 	  if (targetval < 0) targetval = 0;
 	  if (targetval > 1) targetval = 1;
-	  
+
 	  targetval = variable->rangemin + targetval *
 	    (variable->rangemax - variable->rangemin);
 	}
@@ -1624,7 +1624,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       }
 
     ufloat intermediary;
-    intermediary = targetval + 
+    intermediary = targetval +
       amplitude * sin(phase +
 		      (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
 				      targettime ));
@@ -1747,8 +1747,8 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
       && variable->value->dataType != DATA_BINARY
       && variable->value->dataType != DATA_VOID)
   {
-    connection->sendf (getTag(), 
-		       "!!! %s type mismatch\n", 
+    connection->sendf (getTag(),
+		       "!!! %s type mismatch\n",
 		       variablename->getFullname()->str());
     return status = UCOMPLETED;
   }
@@ -2119,7 +2119,7 @@ UCommand_AUTOASSIGN::execute(UConnection*)
 
   morph = new UCommand_ASSIGN_VALUE(loc_, variablename->copy(), extended_expression,
 				    0, false);
-  
+
   persistant = false;
   return status = UMORPH;
 }
@@ -2252,10 +2252,10 @@ UCommand_EXPR::execute(UConnection *connection)
       UCommand_EXPR* cexp =
 	new UCommand_EXPR(loc_, new UExpression(UExpression::EXPR_VARIABLE,
 						resultContainer));
-      
+
       cexp->setTag(this);
       morph = new UCommand_TREE(loc_, UPIPE, fun->cmdcopy(getTag()), cexp);
-      
+
       if (morph)
       {
 	morph->morphed = true;
@@ -3339,7 +3339,7 @@ UCommand_GROUP::execute(UConnection *connection)
 						 (*it)->copy()), ret);
 
     morph = new UCommand_EXPR(loc_, new UExpression(UExpression::EXPR_LIST, ret));
-    
+
     persistant = false;
     return status = UMORPH;
   }
@@ -3567,7 +3567,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
 
   // Main execution
   if (cmd == -1)
-    morph = new UCommand_ASSIGN_VALUE(loc_, 
+    morph = new UCommand_ASSIGN_VALUE(loc_,
 				      variablename->copy(),
 				      new UExpression(UExpression::EXPR_MINUS,
 		      new UExpression(UExpression::EXPR_VALUE, ufloat(1)),
@@ -3575,7 +3575,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
       0,
       false);
   else
-    morph = new UCommand_ASSIGN_VALUE(loc_, 
+    morph = new UCommand_ASSIGN_VALUE(loc_,
 				      variablename->copy(),
 				      new UExpression(UExpression::EXPR_VALUE, ufloat(cmd)),
       0,
@@ -3642,7 +3642,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
   if (!fullname)
     return status = UCOMPLETED;
 
-  if (STREQ(oper->str(), "undef") || STREQ(oper->str(), "delete")) 
+  if (STREQ(oper->str(), "undef") || STREQ(oper->str(), "delete"))
   {
     if (status != URUNNING)
     {
@@ -3966,7 +3966,7 @@ UCommand_BINDER::execute(UConnection *connection)
     case UBIND_EVENT:
       if (::urbiserver->eventbindertab.find(key->str())
 	   == ::urbiserver->eventbindertab.end())
-	::urbiserver->eventbindertab[key->str()] = 
+	::urbiserver->eventbindertab[key->str()] =
 	    new UBinder(fullobjname, fullname,
 			mode, (UBindType)type, nbparam, connection);
       else
@@ -4773,7 +4773,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   if (type == CMD_INCREMENT)
   {
     morph =
-      new UCommand_ASSIGN_VALUE(loc_, 
+      new UCommand_ASSIGN_VALUE(loc_,
 				variablename->copy(),
 				new UExpression(
 	  UExpression::EXPR_PLUS,
@@ -4787,7 +4787,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   if (type == CMD_DECREMENT)
   {
     morph =
-      new UCommand_ASSIGN_VALUE(loc_, 
+      new UCommand_ASSIGN_VALUE(loc_,
 				variablename->copy(),
 				new UExpression(
 	  UExpression::EXPR_MINUS,
@@ -5040,7 +5040,7 @@ UCommand_DEF::execute(UConnection *connection)
 	cdef->setTag(this);
 	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
       }
-    
+
     persistant = false;
     return status = UMORPH;
   }
@@ -5574,7 +5574,7 @@ UCommand_STOPIF::execute(UConnection *connection)
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy())),
      command->copy());
-  
+
   morph->setTag(tagRef->str());
   return status = UMORPH;
 }
@@ -5952,14 +5952,14 @@ UCommand_WHILE::execute(UConnection *connection)
       morph = new UCommand_TREE(loc_, UPIPE, command->copy(), this);
     else
       morph =
-	new UCommand_TREE(loc_, 
+	new UCommand_TREE(loc_,
 			  nodeType,
-			  new UCommand_TREE(loc_, 
+			  new UCommand_TREE(loc_,
 					    UAND,
 					    command->copy(),
 					    new UCommand_NOOP(loc_)),
 			  this);
-    
+
     persistant = true;
     return status = UMORPH;
   }
@@ -6039,11 +6039,11 @@ UCommand_WHENEVER::execute(UConnection *connection)
   {
     morph =
       new UCommand_TREE
-      (loc_, 
+      (loc_,
        UAND,
        this,
 	new UCommand_WHENEVER
-       (loc_, 
+       (loc_,
 	new UExpression (UExpression::EXPR_TEST_BANG,
 			 test->copy (),
 			 0),

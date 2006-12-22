@@ -1,5 +1,11 @@
 2006-12-23  Akim Demaille  <demaille@gostai.com>
 
+	Simplify UCommand uses
+	* src/ucommand.cc: Don't qualify when used by the definer.
+	* src/uconnection.cc: Fix C++ -> C of strings.
+
+2006-12-23  Akim Demaille  <demaille@gostai.com>
+
 	Update UConnection::sendf
 	* src/uconnection.hh, src/uconnection.cc (sendf): Take a string, not
 	a char*.

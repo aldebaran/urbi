@@ -300,7 +300,7 @@ UConnection::sendf (const std::string& tag, const char* format, va_list args)
 {
   char buf[1024];
   vsnprintf(buf, sizeof buf, format, args);
-  return send (buf, tag.str());
+  return send (buf, tag.c_str());
 }
 
 UErrorValue
