@@ -27,6 +27,7 @@
 
 #include "uasyncregister.hh"
 #include "ubinary.hh"
+#include "ubinder.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
 #include "urbi/uobject.hh"
@@ -403,36 +404,35 @@ UVariable::updated()
     return;
 
   if (binder)
-    for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
-	 it != binder->monitors.end();
-	 it++)
+    for (std::list<UMonitor*>::iterator i = binder->monitors.begin();
+	 i != binder->monitors.end();
+	 i++)
       {
-	(*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it)->c->sendc((const ubyte*)"[1,\"", 4);
-	(*it)->c->sendc((const ubyte*)varname->str(), varname->len());
-	(*it)->c->sendc((const ubyte*)"\",", 2);
-	value->echo((*it)->c);
-	(*it)->c->send((const ubyte*)"]\n", 2);
+	(*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*i)->c->sendc((const ubyte*)"[1,\"", 4);
+	(*i)->c->sendc((const ubyte*)varname->str(), varname->len());
+	(*i)->c->sendc((const ubyte*)"\",", 2);
+	value->echo((*i)->c);
+	(*i)->c->send((const ubyte*)"]\n", 2);
       }
 
-  if (!internalBinder.empty())
-    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+  for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalBinder.begin();
-	 itcb != internalBinder.end();
-	 itcb++)
-      {
-	urbi::UList tmparray;
-
-	if ((*itcb)->storage)
-	  {
-	    // monitor with &UVar reference
-	    urbi::UValue *tmpvalue = new urbi::UValue();
-	    tmpvalue->storage = (*itcb)->storage;
-	    tmparray.array.push_back(tmpvalue);
-	  };
-
-	(*itcb)->__evalcall(tmparray); // tmparray is empty here
-      }
+       i != internalBinder.end();
+       i++)
+  {
+    urbi::UList tmparray;
+    
+    if ((*i)->storage)
+    {
+      // monitor with &UVar reference
+      urbi::UValue *tmpvalue = new urbi::UValue();
+      tmpvalue->storage = (*i)->storage;
+      tmparray.array.push_back(tmpvalue);
+    };
+    
+    (*i)->__evalcall(tmparray); // tmparray is empty here
+  }
 }
 
 bool

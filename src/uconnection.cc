@@ -30,6 +30,7 @@
 #include "parser/uparser.hh"
 #include "ubanner.hh"
 #include "ubinary.hh"
+#include "ubinder.hh"
 #include "ucallid.hh"
 #include "ucommandqueue.hh"
 #include "ucomplaints.hh"

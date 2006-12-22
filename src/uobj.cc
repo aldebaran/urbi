@@ -22,6 +22,7 @@
 #include "libport/cstdio"
 #include "libport/containers.hh"
 
+#include "ubinder.hh"
 #include "uconnection.hh"
 #include "ueventhandler.hh"
 #include "ufunction.hh"

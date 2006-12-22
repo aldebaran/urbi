@@ -26,7 +26,6 @@
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
-# include "ubinder.hh"
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;

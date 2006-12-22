@@ -35,6 +35,7 @@
 #include "uasynccommand.hh"
 #include "uatcandidate.hh"
 #include "ubinary.hh"
+#include "ubinder.hh"
 #include "ucallid.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"

@@ -1,5 +1,13 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Less headers
+	* src/userver.hh: Do not include ubinder.hh to lighten the
+	dependencies.
+	* src/ucommand.cc, src/uconnection.cc, src/uobj.cc,
+	* src/uvariable.cc: do it.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Update tests
 	* Makefile.am: Fix.
 
