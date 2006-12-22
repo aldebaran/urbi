@@ -1,6 +1,18 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
 	Clean up
+	* src/ucommand.cc (debug, DEBUG_ATTR, to_string): New.
+	(nodeType_foreach, nodeType_for, nodeType_loopn): Merge into...
+	(nodetype): this.
+	Extend for WHILE.
+	Use them all.
+	Remove useless parens.
+	Rename iterators.
+	Shorten scopes.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
+	Clean up
 	* src/ubinder.hh, src/ubinder.cc: Here.
 	Use simple iterator names.
 

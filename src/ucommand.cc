@@ -53,42 +53,90 @@ namespace
   /// A buffer type.
   typedef char buffer_t[65536];
 
-  UNodeType nodeType_foreach (UCommand::Type type)
+  const char* to_string (UNodeType type)
   {
     switch (type)
     {
-      case UCommand::CMD_FOREACH:      return USEMICOLON;
-      case UCommand::CMD_FOREACH_PIPE: return UPIPE;
-      case UCommand::CMD_FOREACH_AND:  return UAND;
+      case UAND:       return "AND";
+      case UPIPE:      return "PIPE";
+      case USEMICOLON: return "SEMICOLON";
+      case UCOMMA:     return "COMMA";
       default:
 	abort ();
     }
   }
 
-  UNodeType nodeType_loopn (UCommand::Type type)
-  {
-    switch (type)
-    {
-      case UCommand::CMD_LOOPN:	     return USEMICOLON;
-      case UCommand::CMD_LOOPN_PIPE: return UPIPE;
-      case UCommand::CMD_LOOPN_AND:  return UAND;
-      default:
-	abort ();
-    }
-  }
-
-  UNodeType nodeType_for (UCommand::Type type)
+  UNodeType nodetype (UCommand::Type type)
   {
     switch (type)
     {
       case UCommand::CMD_FOR:	    return USEMICOLON;
       case UCommand::CMD_FOR_PIPE:  return UPIPE;
       case UCommand::CMD_FOR_AND:   return UAND;
+
+      case UCommand::CMD_FOREACH:      return USEMICOLON;
+      case UCommand::CMD_FOREACH_PIPE: return UPIPE;
+      case UCommand::CMD_FOREACH_AND:  return UAND;
+
+      case UCommand::CMD_LOOPN:	     return USEMICOLON;
+      case UCommand::CMD_LOOPN_PIPE: return UPIPE;
+      case UCommand::CMD_LOOPN_AND:  return UAND;
+
+      case UCommand::CMD_WHILE:	      return USEMICOLON;
+      case UCommand::CMD_WHILE_PIPE:  return UPIPE;
+      case UCommand::CMD_WHILE_AND:   return UAND;
+
       default:
 	abort ();
     }
   }
 
+  // Use with care, returns a static buffer.
+  const char* tab (unsigned n)
+  {
+    static char tabb[100];
+    strcpy(tabb, "");
+    for (int i=0;i<n;i++)
+      strcat(tabb, " ");
+    return tabb;
+  }
+
+  /// Send debugging messages via the server.
+  void
+  debug (const char* fmt, va_list args)
+  {
+    ::urbiserver->debug (fmt, args);
+  }
+
+  /// Send debugging messages via the server.
+  void
+  debug (const char* fmt, ...)
+  {
+    va_list args;
+    va_start (args, fmt);
+    debug (fmt, args);
+  }
+
+  /// Send debugging messages indented with \a t spaces, via the server.
+  void
+  debug (unsigned t, const char* fmt, ...)
+  {
+    va_list args;
+    va_start (args, fmt);
+    debug ("%s", tab(t));
+    debug (fmt, args);
+  }
+
+  /// Report the value of some attribute.
+#define DEBUG_ATTR(Attr)			\
+  do {						\
+    if (Attr)					\
+    {						\
+      debug(l, "  " # Attr ":\n");		\
+      (Attr)->print();				\
+      debug("\n");				\
+    }						\
+  } while (0)
 }
 
 
@@ -295,7 +343,6 @@ UCommand::setTag(const std::string & tag)
   ti->commands.push_back(this);
   tagInfoPtr = --ti->commands.end();
   tagInfo = ti; //we know he won't die before us
-
 }
 
 void
@@ -490,42 +537,24 @@ UCommand_TREE::deleteMarked()
 void
 UCommand_TREE::print(int l)
 {
-  char tabb[100];
-
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%sTag:[%s] toDelete=%d ",
-		      tabb,
-		      getTag().c_str(),
-		      toDelete);
-
-  switch (node)
-  {
-    case UAND:	     ::urbiserver->debug("Tree AND "); break;
-    case UPIPE:	     ::urbiserver->debug("Tree PIPE "); break;
-    case USEMICOLON: ::urbiserver->debug("Tree SEMICOLON "); break;
-    case UCOMMA:     ::urbiserver->debug("Tree COMMA "); break;
-    default:	     ::urbiserver->debug("UNKNOWN TREE!\n");
-  }
-
-  ::urbiserver->debug("(%ld:%ld) :\n", (long)this, (long)status);
+  debug(l, "Tag:[%s] toDelete=%d Tree %s (%ld:%ld) :\n",
+	getTag().c_str(),
+	toDelete,
+	to_string (node),
+	(long)this, (long)status);
   if (command1)
   {
-    ::urbiserver->debug("%s  Com1 (%ld:%d) up=%ld:\n",
-			tabb,
-			(long)command1, command1->status, (long)command1->up);
+    debug(l, "  Com1 (%ld:%d) up=%ld:\n",
+	  (long)command1, command1->status, (long)command1->up);
     command1->print(l+3);
   }
   if (command2)
   {
-    ::urbiserver->debug("%s  Com2 (%ld:%d) up=%ld:\n",
-			tabb,
-			(long)command2, command2->status, (long)command2->up);
+    debug(l, "  Com2 (%ld:%d) up=%ld:\n",
+	  (long)command2, command2->status, (long)command2->up);
     command2->print(l+3);
   }
-  ::urbiserver->debug("%sEND TREE ------\n", tabb);
+  debug(l, "END TREE ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_VALUE);
@@ -617,16 +646,14 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     if (scanGroups(&UCommand::refVarName2, true))
       return status = UMORPH;
 
-    UFunction *fun;
-    HMfunctiontab::iterator hmf;
-
     ////// INTERNAL /////
 
     ////// Native URBI: user-defined /////
 
-    hmf = ::urbiserver->functiontab.find(functionname->str());
-    bool found = (hmf != ::urbiserver->functiontab.end());
-    if (!found)
+    HMfunctiontab::iterator hmf =
+      ::urbiserver->functiontab.find(functionname->str());
+    UFunction *fun;
+    if (hmf == ::urbiserver->functiontab.end())
     {
       //trying inheritance
       const char* devname = expression->variablename->getDevice()->str();
@@ -776,10 +803,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       urbi::functionmap.find(functionname->str());
     if (hmfi != urbi::functionmap.end())
     {
-
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
-	   ((cbi != hmfi->second.end()) && (!found_function));
+	   cbi != hmfi->second.end() && !found_function;
 	   cbi++)
       {
 	if ((expression->parameters
@@ -831,21 +857,21 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
 		 functionname->str(), it->second->nbparam, UU);
 
-	for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	     it2 != it->second->monitors.end();
-	     it2++)
+	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	     j != it->second->monitors.end();
+	     j++)
 	{
-	  (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
+	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	  (*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    (*it2)->c->sendc((const ubyte*)",", 1);
+	    (*j)->c->sendc((const ubyte*)",", 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    valparam->echo((*it2)->c);
+	    valparam->echo((*j)->c);
 	  }
-	  (*it2)->c->send((const ubyte*)"]\n", 2);
+	  (*j)->c->send((const ubyte*)"]\n", 2);
 	}
 
 	persistant = false;
@@ -1733,34 +1759,19 @@ UCommand_ASSIGN_VALUE::copy()
 void
 UCommand_ASSIGN_VALUE::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] toDelete=%d ",
+	getTag().c_str(), toDelete);
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("ASSIGN VALUE:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] toDelete=%d ",
-		      tabb,
-		      getTag().c_str(), toDelete);
-
-  ::urbiserver->debug("ASSIGN VALUE:\n");
-
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  Variable:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (variablename);
+  DEBUG_ATTR (expression);
   if (parameters)
   {
-    ::urbiserver->debug("%s  Param:{", tabb);
-    parameters->print(); ::urbiserver->debug("}\n");
-  };
-  ::urbiserver->debug("%sEND ASSIGN VALUE ------\n", tabb);
+    debug(l, "  Param:{");
+    parameters->print(); debug("}\n");
+  }
+  debug(l, "END ASSIGN VALUE ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
@@ -1857,27 +1868,18 @@ UCommand_ASSIGN_BINARY::copy()
 void
 UCommand_ASSIGN_BINARY::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("ASSIGN BINARY:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("ASSIGN BINARY:\n");
-
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  Variable:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (variablename);
   if (refBinary)
   {
-    ::urbiserver->debug("%s  Binary:", tabb);
-    refBinary->ref()->print(); ::urbiserver->debug("\n");};
-  ::urbiserver->debug("%sEND ASSIGN BINARY ------\n",
-		      tabb);
+    debug(l, "  Binary:");
+    refBinary->ref()->print(); debug("\n");
+  }
+  debug("%sEND ASSIGN BINARY ------\n",
+		      tab(l));
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_PROPERTY);
@@ -2115,28 +2117,14 @@ UCommand_ASSIGN_PROPERTY::copy()
 void
 UCommand_ASSIGN_PROPERTY::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("ASSIGN PROPERTY [%s]:\n", oper->str());
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  DEBUG_ATTR (variablename);
+  DEBUG_ATTR (expression);
 
-  ::urbiserver->debug("ASSIGN PROPERTY [%s]:\n", oper->str());
-
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  Variable:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
-
-  ::urbiserver->debug("%sEND ASSIGN PROPERTY ------\n", tabb);
+  debug(l, "END ASSIGN PROPERTY ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
@@ -2217,29 +2205,15 @@ UCommand_AUTOASSIGN::copy()
 void
 UCommand_AUTOASSIGN::print(int l)
 {
-  char tabb[100];
-
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
 
-  ::urbiserver->debug("AUTOASSIGN (%d):", assigntype);
+  debug("AUTOASSIGN (%d):", assigntype);
 
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  VariableName:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
-  if (expression)
-  {
-    ::urbiserver->debug("%s  expression:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (variablename);
+  DEBUG_ATTR (expression);
 
-  ::urbiserver->debug("%sEND AUTOASSIGN ------\n", tabb);
+  debug(l, "END AUTOASSIGN ------\n");
 }
 
 
@@ -2497,21 +2471,21 @@ UCommand_EXPR::execute(UConnection *connection)
       snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
 	       funname->str(), it->second->nbparam, UU);
 
-      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	   it2 != it->second->monitors.end();
-	   it2++)
+      for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	   j != it->second->monitors.end();
+	   j++)
       {
-	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
+	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	for (UNamedParameters *pvalue = expression->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*it2)->c->sendc((const ubyte*)",", 1);
+	  (*j)->c->sendc((const ubyte*)",", 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*it2)->c);
+	  valparam->echo((*j)->c);
 	}
-	(*it2)->c->send((const ubyte*)"]\n", 2);
+	(*j)->c->send((const ubyte*)"]\n", 2);
       }
 
       persistant = false;
@@ -2570,23 +2544,13 @@ UCommand_EXPR::copy()
 void
 UCommand_EXPR::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("EXPR:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  DEBUG_ATTR (expression);
 
-  ::urbiserver->debug("EXPR:\n");
-
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
-
-  ::urbiserver->debug("%sEND EXPR ------\n", tabb);
+  debug(l, "END EXPR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_RETURN);
@@ -2649,23 +2613,13 @@ UCommand_RETURN::copy()
 void
 UCommand_RETURN::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("RETURN:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  DEBUG_ATTR (expression);
 
-  ::urbiserver->debug("RETURN:\n");
-
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  }
-
-  ::urbiserver->debug("%sEND RETURN ------\n", tabb);
+  debug(l, "END RETURN ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_ECHO);
@@ -2776,28 +2730,18 @@ UCommand_ECHO::copy()
 void
 UCommand_ECHO::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("ECHO:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("ECHO:\n");
-
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (expression);
   if (parameters)
   {
-    ::urbiserver->debug("%s  Param:{", tabb);
-    parameters->print(); ::urbiserver->debug("}\n");
-  };
+    debug(l, "  Param:{");
+    parameters->print(); debug("}\n");
+  }
 
-  ::urbiserver->debug("%sEND ECHO ------\n", tabb);
+  debug(l, "END ECHO ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_NEW);
@@ -2835,14 +2779,10 @@ UCommand_NEW::~UCommand_NEW()
 UCommandStatus
 UCommand_NEW::execute(UConnection *connection)
 {
-  // Wait for remote new
-  HMobjWaiting::iterator ow;
-
   if (remoteNew)
-  {
-    ow = ::urbiserver->objWaittab.find(id->str());
-    if (ow!=::urbiserver->objWaittab.end()) return status = URUNNING;
-  }
+    if (::urbiserver->objWaittab.find(id->str())
+	!= ::urbiserver->objWaittab.end())
+      return status = URUNNING;
 
   morph = 0;
   char tmpprefixnew[1024];
@@ -2853,14 +2793,13 @@ UCommand_NEW::execute(UConnection *connection)
     UString* name = varname->buildFullname(this, connection, false);
     if (!varname->nostruct)
     {
-	    connection->sendf (getTag().c_str(), "!!! Object names cannot be nested in Kernel 1\n");
-
+      connection->sendf (getTag().c_str(),
+			 "!!! Object names cannot be nested in Kernel 1\n");
       return status = UCOMPLETED;
     }
     if (!name)
     {
-	    connection->sendf (getTag().c_str(), "!!! Invalid object name\n");
-
+      connection->sendf (getTag().c_str(), "!!! Invalid object name\n");
       return status = UCOMPLETED;
     }
     id = new UString(name->str());
@@ -2871,26 +2810,25 @@ UCommand_NEW::execute(UConnection *connection)
   if (!obj)
     return status = UCOMPLETED;
 
-  HMobjtab::iterator objit;
   if (!remoteNew && !sysCall)
   {
     if (id->equal(obj))
     {
-	    connection->sendf (getTag().c_str(), "!!! Object %s cannot new itself\n", obj->str());
-
+      connection->sendf (getTag().c_str(),
+			 "!!! Object %s cannot new itself\n", obj->str());
       return status = UCOMPLETED;
     }
 
-    objit = ::urbiserver->objtab.find(id->str());
-    if (objit != ::urbiserver->objtab.end())
+    if (::urbiserver->objtab.find(id->str()) != ::urbiserver->objtab.end())
     {
-	    connection->sendf (getTag().c_str(), "!!! Object %s already exists. Delete it first.\n", id->str());
-
+      connection->sendf (getTag().c_str(),
+			 "!!! Object %s already exists. Delete it first.\n",
+			 id->str());
       return status = UCOMPLETED;
     }
   }
 
-  objit = ::urbiserver->objtab.find(obj->str());
+  HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->str());
   if (objit == ::urbiserver->objtab.end()
       && !remoteNew)
   {
@@ -2927,10 +2865,12 @@ UCommand_NEW::execute(UConnection *connection)
       {
 	if  (sysCall)
 	{
-	  	  connection->sendf (getTag().c_str(), "!!! Autoload timeout for object %s\n", objname);
+	  connection->sendf (getTag().c_str(),
+			     "!!! Autoload timeout for object %s\n", objname);
 	}
 
-		connection->sendf (getTag().c_str(), "!!! Unknown object %s\n", obj->str());
+	connection->sendf (getTag().c_str(),
+			   "!!! Unknown object %s\n", obj->str());
 	return status = UCOMPLETED;
       }
       else
@@ -2971,8 +2911,9 @@ UCommand_NEW::execute(UConnection *connection)
       (*it2)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
       nb++;
     }
-    ow = ::urbiserver->objWaittab.find(id->str());
-    if (ow!=::urbiserver->objWaittab.end())
+    // Wait for remote new
+    HMobjWaiting::iterator ow = ::urbiserver->objWaittab.find(id->str());
+    if (ow != ::urbiserver->objWaittab.end())
       ow->second->nb += nb;
     else
     {
@@ -3107,31 +3048,25 @@ UCommand_NEW::copy()
 void
 UCommand_NEW::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("NEW:\n");
+  debug("NEW:\n");
 
   if (id)
   {
-    ::urbiserver->debug("%s  Id:[%s]\n", tabb, id->str());
+    debug(l, "  Id:[%s]\n", id->str());
   }
   if (obj)
   {
-    ::urbiserver->debug("%s  Obj:[%s]\n", tabb, obj->str());
+    debug(l, "  Obj:[%s]\n", obj->str());
   }
   if (parameters)
   {
-    ::urbiserver->debug("%s  Param:{", tabb);
-    parameters->print(); ::urbiserver->debug("}\n");
-  };
+    debug(l, "  Param:{");
+    parameters->print(); debug("}\n");
+  }
 
-  ::urbiserver->debug("%sEND NEW ------\n", tabb);
+  debug(l, "END NEW ------\n");
 }
 
 
@@ -3240,28 +3175,18 @@ UCommand_ALIAS::copy()
 void
 UCommand_ALIAS::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("ALIAS (%d) :\n", (int)eraseit);
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("ALIAS (%d) :\n", (int)eraseit);
-
-  if (aliasname)
-  {
-    ::urbiserver->debug("  %s  Aliasname:", tabb);
-    aliasname->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (aliasname);
   if (id)
   {
-    ::urbiserver->debug("  %s  id:", tabb);
-    id->print(); ::urbiserver->debug("\n");
-  };
+    debug("  %s  id:", tab(l));
+    id->print(); debug("\n");
+  }
 
-  ::urbiserver->debug("%sEND ALIAS ------\n", tabb);
+  debug(l, "END ALIAS ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_INHERIT);
@@ -3365,28 +3290,22 @@ UCommand_INHERIT::copy()
 void
 UCommand_INHERIT::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("INHERIT (%d) :\n", (int)eraseit);
+  debug("INHERIT (%d) :\n", (int)eraseit);
 
   if (subclass)
   {
-    ::urbiserver->debug("  %s  subclass:", tabb);
-    subclass->print(); ::urbiserver->debug("\n");
-  };
+    debug("  %s  subclass:", tab(l));
+    subclass->print(); debug("\n");
+  }
   if (theclass)
   {
-    ::urbiserver->debug("  %s  parentclass:", tabb);
-    theclass->print(); ::urbiserver->debug("\n");
-  };
+    debug("  %s  parentclass:", tab(l));
+    theclass->print(); debug("\n");
+  }
 
-  ::urbiserver->debug("%sEND INHERIT ------\n", tabb);
+  debug(l, "END INHERIT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_GROUP);
@@ -3537,18 +3456,12 @@ UCommand_GROUP::copy()
 void
 UCommand_GROUP::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("GROUP :\n");
+  if (id)  { debug(l, "  Id:[%s]\n", id->str());}
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("GROUP :\n");
-  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n", tabb, id->str());}
-
-  ::urbiserver->debug("%sEND GROUP ------\n", tabb);
+  debug(l, "END GROUP ------\n");
 }
 
 
@@ -3705,18 +3618,12 @@ UCommand_OPERATOR_ID::copy()
 void
 UCommand_OPERATOR_ID::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
+  debug("OPERATOR_ID %s:\n", oper->str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  if (id)  { debug(l, "  Id:[%s]\n", id->str());}
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-  ::urbiserver->debug("OPERATOR_ID %s:\n", oper->str());
-
-  if (id)  { ::urbiserver->debug("%s  Id:[%s]\n", tabb, id->str());}
-
-  ::urbiserver->debug("%sEND OPERATOR_ID ------\n", tabb);
+  debug(l, "END OPERATOR_ID ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
@@ -3801,19 +3708,13 @@ UCommand_DEVICE_CMD::copy()
 void
 UCommand_DEVICE_CMD::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("DEVICE_CMD %s:\n", variablename->device->str());
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  if (cmd)  { debug(l, "  Cmd:[%f]\n", cmd);}
 
-  ::urbiserver->debug("DEVICE_CMD %s:\n", variablename->device->str());
-
-  if (cmd)  { ::urbiserver->debug("%s  Cmd:[%f]\n", tabb, cmd);}
-
-  ::urbiserver->debug("%sEND DEVICE_CMD ------\n", tabb);
+  debug(l, "END DEVICE_CMD ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
@@ -4061,21 +3962,15 @@ UCommand_OPERATOR_VAR::copy()
 void
 UCommand_OPERATOR_VAR::print(int l)
 {
-  char tabb[100];
-
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-  ::urbiserver->debug("OPERATOR_VAR %s:\n", oper->str());
+  debug(l, " Tag:[%s] ", getTag().c_str());
+  debug("OPERATOR_VAR %s:\n", oper->str());
   if (variablename)
   {
-    ::urbiserver->debug("  %s  Variablename:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
+    debug("  %s  Variablename:", tab(l));
+    variablename->print(); debug("\n");
+  }
 
-  ::urbiserver->debug("%sEND OPERATOR_VAR ------\n", tabb);
+  debug(l, "END OPERATOR_VAR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_BINDER);
@@ -4123,10 +4018,10 @@ UCommand_BINDER::execute(UConnection *connection)
   }
 
   if (type != 3) // not object binder
-    ::urbiserver->debug("BINDING: %s type(%d) %s[%d] from %s\n",
+    debug("BINDING: %s type(%d) %s[%d] from %s\n",
 			binder->str(), type, fullname->str(), nbparam, fullobjname->str());
   else
-    ::urbiserver->debug("BINDING: %s type(%d) %s\n",
+    debug("BINDING: %s type(%d) %s\n",
 			binder->str(), type, variablename->id->str());
 
   UBindMode mode = UEXTERNAL;
@@ -4222,28 +4117,22 @@ UCommand_BINDER::copy()
 void
 UCommand_BINDER::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("BINDER %s type:%d nbparam:%d:\n",
+  debug("BINDER %s type:%d nbparam:%d:\n",
 		      binder->str(), type, nbparam);
   if (objname)
   {
-    ::urbiserver->debug("  %s  objname:", tabb);
-    objname->print(); ::urbiserver->debug("\n");
-  };
+    debug("  %s  objname:", tab(l));
+    objname->print(); debug("\n");
+  }
   if (variablename)
   {
-    ::urbiserver->debug("  %s  Variablename:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
+    debug("  %s  Variablename:", tab(l));
+    variablename->print(); debug("\n");
+  }
 
-  ::urbiserver->debug("%sEND BINDER ------\n", tabb);
+  debug(l, "END BINDER ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR);
@@ -4288,7 +4177,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
   {
     if (connection->activeCommand)
       connection->activeCommand->print(0);
-    ::urbiserver->debug("*** LOCAL TREE ***\n");
+    debug("*** LOCAL TREE ***\n");
     if (connection->parser().commandTree)
       connection->parser().commandTree->print(0);
     return status = UCOMPLETED;
@@ -4557,16 +4446,10 @@ UCommand_OPERATOR::copy()
 void
 UCommand_OPERATOR::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("OPERATOR %s:\n", oper->str());
-  ::urbiserver->debug("%sEND OPERATOR ------\n", tabb);
+  debug("OPERATOR %s:\n", oper->str());
+  debug(l, "END OPERATOR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WAIT);
@@ -4635,23 +4518,13 @@ UCommand_WAIT::copy()
 void
 UCommand_WAIT::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("WAIT:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
+  DEBUG_ATTR (expression);
 
-  ::urbiserver->debug("WAIT:\n");
-
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
-
-  ::urbiserver->debug("%sEND WAIT ------\n", tabb);
+  debug(l, "END WAIT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_EMIT);
@@ -4755,32 +4628,30 @@ UCommand_EMIT::execute(UConnection *connection)
     HMbindertab::iterator it =
       ::urbiserver->eventbindertab.find(eventnamestr);
 
-    if ((it != ::urbiserver->eventbindertab.end()) &&
-	(
-	  ((parameters) && (it->second->nbparam == parameters->size()))
-	  ||
-	  ((!parameters) && (it->second->nbparam==0))) &&
-	(!it->second->monitors.empty()))
+    if (it != ::urbiserver->eventbindertab.end() 
+	&& ((parameters && it->second->nbparam == parameters->size())
+	    ||(!parameters && it->second->nbparam==0))
+	&& !it->second->monitors.empty())
     {
       char tmpprefix[1024];
       snprintf(tmpprefix, 1024, "[2,\"%s__%d\"",
 	       eventnamestr, it->second->nbparam);
 
-      for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	   it2 != it->second->monitors.end();
-	   it2++)
+      for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	   j != it->second->monitors.end();
+	   j++)
       {
-	(*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*it2)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
+	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*it2)->c->sendc((const ubyte*)",", 1);
+	  (*j)->c->sendc((const ubyte*)",", 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*it2)->c);
+	  valparam->echo((*j)->c);
 	}
-	(*it2)->c->send((const ubyte*)"]\n", 2);
+	(*j)->c->send((const ubyte*)"]\n", 2);
       }
     }
 
@@ -4853,12 +4724,12 @@ UCommand_EMIT::removeEvent ()
     snprintf(tmpprefix, 1024, "[3,\"%s__%d\"]\n",
 	     eventnamestr, it->second->nbparam);
 
-    for (std::list<UMonitor*>::iterator it2 = it->second->monitors.begin();
-	 it2 != it->second->monitors.end();
-	 it2++)
+    for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	 j != it->second->monitors.end();
+	 j++)
     {
-      (*it2)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*it2)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+      (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+      (*j)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
     }
   }
 
@@ -4895,23 +4766,10 @@ UCommand_EMIT::copy()
 void
 UCommand_EMIT::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] EMIT:\n", getTag().c_str());
+  DEBUG_ATTR (eventname);
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("EMIT:\n");
-
-  if (eventname)
-  {
-    ::urbiserver->debug("%s  Event:", tabb);
-    eventname->print(); ::urbiserver->debug("\n");
-  };
-
-  ::urbiserver->debug("%sEND EMIT ------\n", tabb);
+  debug(l, "END EMIT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
@@ -4919,10 +4777,10 @@ MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_WAIT_TEST::UCommand_WAIT_TEST(UExpression* test) :
-  UCommand(CMD_WAIT_TEST),
-  test (test),
-  nbTrue (0)
+UCommand_WAIT_TEST::UCommand_WAIT_TEST(UExpression* test)
+  : UCommand(CMD_WAIT_TEST),
+    test (test),
+    nbTrue (0)
 {
   ADDOBJ(UCommand_WAIT_TEST);
 }
@@ -4938,7 +4796,8 @@ UCommand_WAIT_TEST::~UCommand_WAIT_TEST()
 UCommandStatus
 UCommand_WAIT_TEST::execute(UConnection *connection)
 {
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
@@ -4953,13 +4812,11 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
   else
     nbTrue = 0;
 
-  if (((test->softtest_time) &&
-	 (nbTrue > 0) &&
-	 (connection->server->lastTime() - startTrue >= test->softtest_time->val)) ||
-
-       ((nbTrue >0) &&
-	 (test->softtest_time==0)) )
-
+  if ((test->softtest_time
+       && nbTrue > 0
+       && (connection->server->lastTime() - startTrue
+	   >= test->softtest_time->val)) 
+      || (nbTrue > 0 && test->softtest_time==0))
     return status = UCOMPLETED;
   else
     return status = URUNNING;
@@ -4982,23 +4839,10 @@ UCommand_WAIT_TEST::copy()
 void
 UCommand_WAIT_TEST::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] WAIT_TEST:\n", getTag().c_str());
+  DEBUG_ATTR (test);
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("WAIT_TEST:\n");
-
-  if (test)
-  {
-    ::urbiserver->debug("%s  Test:", tabb);
-    test->print(); ::urbiserver->debug("\n");
-  };
-
-  ::urbiserver->debug("%sEND WAIT_TEST ------\n", tabb);
+  debug(l, "END WAIT_TEST ------\n");
 }
 
 
@@ -5008,9 +4852,9 @@ MEMORY_MANAGER_INIT(UCommand_INCDECREMENT);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommand::Type type,
-					     UVariableName *variablename) :
-  UCommand(type),
-  variablename (variablename)
+					     UVariableName *variablename)
+  : UCommand(type),
+    variablename (variablename)
 {
   ADDOBJ(UCommand_INCDECREMENT);
 }
@@ -5085,27 +4929,18 @@ UCommand_INCDECREMENT::copy()
 void
 UCommand_INCDECREMENT::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("INCDECREMENT:");
-  if (type == CMD_INCREMENT) ::urbiserver->debug("INC\n");
+  debug("INCDECREMENT:");
+  if (type == CMD_INCREMENT)
+    debug("INC\n");
+  else if (type == CMD_DECREMENT)
+    debug("DEC\n");
   else
-    if (type == CMD_DECREMENT) ::urbiserver->debug("DEC\n");
-    else
-      ::urbiserver->debug("UNKNOWN TYPE\n");
+    debug("UNKNOWN TYPE\n");
 
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  Variable:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
-  ::urbiserver->debug("%sEND INCDECREMENT ------\n", tabb);
+  DEBUG_ATTR (variablename);
+  debug(l, "END INCDECREMENT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_DEF);
@@ -5116,8 +4951,8 @@ MEMORY_MANAGER_INIT(UCommand_DEF);
 UCommand_DEF::UCommand_DEF(UDefType deftype,
 			   UVariableName *variablename,
 			   UNamedParameters *parameters,
-			   UCommand* command) :
-  UCommand(CMD_DEF)
+			   UCommand* command)
+  : UCommand(CMD_DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -5133,8 +4968,8 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
  */
 UCommand_DEF::UCommand_DEF(UDefType deftype,
 			   UString *device,
-			   UNamedParameters *parameters) :
-  UCommand(CMD_DEF)
+			   UNamedParameters *parameters)
+  : UCommand(CMD_DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -5149,14 +4984,14 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_DEF::UCommand_DEF(UDefType deftype,
-			   UVariableList *variablelist) :
-  UCommand(CMD_DEF),
-  variablename (0),
-  parameters (0),
-  command (0),
-  device (0),
-  variablelist (variablelist),
-  deftype (deftype)
+			   UVariableList *variablelist)
+  : UCommand(CMD_DEF),
+    variablename (0),
+    parameters (0),
+    command (0),
+    device (0),
+    variablelist (variablelist),
+    deftype (deftype)
 {
   ADDOBJ(UCommand_DEF);
 }
@@ -5181,12 +5016,9 @@ UCommand_DEF::execute(UConnection *connection)
 	    connection->server->functiontab.begin();
 	  retr != connection->server->functiontab.end();
 	  retr++)
-    {
-
       connection->sendf (getTag().c_str(), "*** %s : %d param(s)\n",
-	       retr->second->name().str(),
-	       retr->second->nbparam());
-    }
+			 retr->second->name().str(),
+			 retr->second->nbparam());
     return status = UCOMPLETED;
   }
 
@@ -5201,17 +5033,17 @@ UCommand_DEF::execute(UConnection *connection)
 	(::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
 	 ::urbiserver->grouptab.end()))
     {
-	    connection->sendf (getTag().c_str(), "!!! function name conflicts with group %s \n",
-	       variablename->getMethod()->str());
-
+      connection->sendf (getTag().c_str(),
+			 "!!! function name conflicts with group %s \n",
+			 variablename->getMethod()->str());
       return status = UCOMPLETED;
     }
 
     if (connection->server->functiontab.find(funname->str()) !=
 	connection->server->functiontab.end())
     {
-	    connection->sendf (getTag().c_str(), "!!! function %s already exists\n", funname->str());
-
+      connection->sendf (getTag().c_str(),
+			 "!!! function %s already exists\n", funname->str());
       return status = UCOMPLETED;
     }
 
@@ -5229,12 +5061,14 @@ UCommand_DEF::execute(UConnection *connection)
   if (deftype == UDEF_EVENT && variablename)
   {
     UString* eventname = variablename->buildFullname(this, connection);
-    if (!eventname) return status = UCOMPLETED;
+    if (!eventname)
+      return status = UCOMPLETED;
     int eventnbarg = 0;
-    if (parameters) eventnbarg = parameters->size();
+    if (parameters)
+      eventnbarg = parameters->size();
 
+    // FIXME: What is the logic here?  New, but not storing anything.
     UEventHandler* eh = kernel::findEventHandler(eventname, eventnbarg);
-
     if (!eh)
       eh = new UEventHandler(eventname, eventnbarg);
 
@@ -5275,10 +5109,8 @@ UCommand_DEF::execute(UConnection *connection)
 					   0);
     cdef->setTag(this);
     morph = cdef;
-    param = param->next;
 
-    while (param)
-    {
+    for (param = param->next; param; param = param->next)
       if (param->name)
       {
 	cdef = new UCommand_DEF (UDEF_VAR,
@@ -5291,8 +5123,6 @@ UCommand_DEF::execute(UConnection *connection)
 	cdef->setTag(this);
 	morph = new UCommand_TREE(UAND, cdef, morph);
       }
-      param = param->next;
-    }
     persistant = false;
     return status = UMORPH;
   }
@@ -5308,10 +5138,7 @@ UCommand_DEF::execute(UConnection *connection)
 					   0);
     cdef->setTag(this);
     morph = cdef;
-    list = list->next;
-
-    while (list)
-    {
+    for (list = list->next; list; list = list->next)
       if (list->variablename)
       {
 	list->variablename->local_scope = true;
@@ -5322,8 +5149,6 @@ UCommand_DEF::execute(UConnection *connection)
 	cdef->setTag(this);
 	morph = new UCommand_TREE(UAND, cdef, morph);
       }
-      list = list->next;
-    }
 
     persistant = false;
     return status = UMORPH;
@@ -5351,39 +5176,26 @@ UCommand_DEF::copy()
 void
 UCommand_DEF::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("DEF:\n");
-
-
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  Variablename:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
+  debug("DEF:\n");
+  DEBUG_ATTR (variablename);
   if (variablelist)
   {
-    ::urbiserver->debug("%s  Variablelist: {", tabb);
-    variablelist->print(); ::urbiserver->debug("}\n");
-  };
-
+    debug(l, "  Variablelist: {");
+    variablelist->print(); debug("}\n");
+  }
   if (parameters)
   {
-    ::urbiserver->debug("%s  Param:{", tabb);
-    parameters->print(); ::urbiserver->debug("}\n");
-  };
+    debug(l, "  Param:{");
+    parameters->print(); debug("}\n");
+  }
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
-  ::urbiserver->debug("%sEND DEF ------\n", tabb);
+  }
+  debug(l, "END DEF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_CLASS);
@@ -5538,27 +5350,21 @@ UCommand_CLASS::copy()
 void
 UCommand_CLASS::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("CLASS:\n");
+  debug("CLASS:\n");
 
   if (object)
   {
-    ::urbiserver->debug("%s  Object name: %s\n", tabb,
+    debug(l, "  Object name: %s\n",
 			object->str());
-  };
+  }
   if (parameters)
   {
-    ::urbiserver->debug("%s  Param:{", tabb);
-    parameters->print(); ::urbiserver->debug("}\n");
-  };
-  ::urbiserver->debug("%sEND CLASS ------\n", tabb);
+    debug(l, "  Param:{");
+    parameters->print(); debug("}\n");
+  }
+  debug(l, "END CLASS ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_IF);
@@ -5636,32 +5442,22 @@ UCommand_IF::copy()
 void
 UCommand_IF::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("IF:\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("IF:\n");
-
-  if (test)
-  {
-    ::urbiserver->debug("%s  Test:", tabb);
-    test->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (test);
   if (command1)
   {
-    ::urbiserver->debug("%s  Command1:\n", tabb);
+    debug(l, "  Command1:\n");
     command1->print(l+3);
-  };
+  }
   if (command2)
   {
-    ::urbiserver->debug("%s  Command2:\n", tabb);
+    debug(l, "  Command2:\n");
     command2->print(l+3);
-  };
-  ::urbiserver->debug("%sEND IF ------\n", tabb);
+  }
+  debug(l, "END IF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_EVERY);
@@ -5733,27 +5529,17 @@ UCommand_EVERY::copy()
 void
 UCommand_EVERY::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("EVERY:");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("EVERY:");
-
-  if (duration)
-  {
-    ::urbiserver->debug("%s  Duration:", tabb);
-    duration->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (duration);
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
-  ::urbiserver->debug("%sEND EVERY ------\n", tabb);
+  }
+  debug(l, "END EVERY ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
@@ -5823,27 +5609,17 @@ UCommand_TIMEOUT::copy()
 void
 UCommand_TIMEOUT::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("TIMEOUT:");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("TIMEOUT:");
-
-  if (duration)
-  {
-    ::urbiserver->debug("%s  Duration:", tabb);
-    duration->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (duration);
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
-  ::urbiserver->debug("%sEND TIMEOUT ------\n", tabb);
+  }
+  debug(l, "END TIMEOUT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_STOPIF);
@@ -5933,27 +5709,17 @@ UCommand_STOPIF::copy()
 void
 UCommand_STOPIF::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("STOPIF:");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("STOPIF:");
-
-  if (condition)
-  {
-    ::urbiserver->debug("%s  Condition:", tabb);
-    condition->print(); ::urbiserver->debug("\n");
-  }
+  DEBUG_ATTR (condition);
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
   }
-  ::urbiserver->debug("%sEND STOPIF ------\n", tabb);
+  debug(l, "END STOPIF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
@@ -6026,27 +5792,17 @@ UCommand_FREEZEIF::copy()
 void
 UCommand_FREEZEIF::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("FREEZEIF:");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("FREEZEIF:");
-
-  if (condition)
-  {
-    ::urbiserver->debug("%s  Condition:", tabb);
-    condition->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (condition);
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
-  ::urbiserver->debug("%sEND FREEZEIF ------\n", tabb);
+  }
+  debug(l, "END FREEZEIF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_AT);
@@ -6250,36 +6006,26 @@ UCommand_AT::copy()
 void
 UCommand_AT::print(int l)
 {
-  char tabb[100];
+  debug("%s Tag:[%s] toDelete=%d ",
+		      tab(l), getTag().c_str(), toDelete);
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("AT:");
+  if (type == CMD_AT) debug("\n");
+  else if (type == CMD_AT_AND) debug("(AND)\n");
+  else debug("UNKNOWN TYPE!\n");
 
-  ::urbiserver->debug("%s Tag:[%s] toDelete=%d ",
-		      tabb, getTag().c_str(), toDelete);
-
-  ::urbiserver->debug("AT:");
-  if (type == CMD_AT) ::urbiserver->debug("\n");
-  else if (type == CMD_AT_AND) ::urbiserver->debug("(AND)\n");
-  else ::urbiserver->debug("UNKNOWN TYPE!\n");
-
-  if (test)
-  {
-    ::urbiserver->debug("%s  Test:", tabb);
-    test->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (test);
   if (command1)
   {
-    ::urbiserver->debug("%s  Command1:\n", tabb);
+    debug(l, "  Command1:\n");
     command1->print(l+3);
-  };
+  }
   if (command2)
   {
-    ::urbiserver->debug("%s  Command2:\n", tabb);
+    debug(l, "  Command2:\n");
     command2->print(l+3);
-  };
-  ::urbiserver->debug("%sEND AT ------\n", tabb);
+  }
+  debug(l, "END AT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WHILE);
@@ -6321,10 +6067,7 @@ UCommand_WHILE::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    UNodeType	  nodeType = USEMICOLON;
-
-    if (type == CMD_WHILE)	nodeType = USEMICOLON;
-    if (type == CMD_WHILE_PIPE) nodeType = UPIPE;
+    UNodeType nodeType = nodetype (type);
 
     if (nodeType == UPIPE)
       morph = new UCommand_TREE(UPIPE, command->copy(), this);
@@ -6365,30 +6108,20 @@ UCommand_WHILE::copy()
 void
 UCommand_WHILE::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
+  debug("WHILE:");
+  if (type == CMD_WHILE) debug("\n");
+  else if (type == CMD_WHILE_AND) debug("(AND)\n");
+  else if (type == CMD_WHILE_PIPE) debug("(PIPE)\n");
+  else debug("UNKNOWN TYPE!\n");
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-  ::urbiserver->debug("WHILE:");
-  if (type == CMD_WHILE) ::urbiserver->debug("\n");
-  else if (type == CMD_WHILE_AND) ::urbiserver->debug("(AND)\n");
-  else if (type == CMD_WHILE_PIPE) ::urbiserver->debug("(PIPE)\n");
-  else ::urbiserver->debug("UNKNOWN TYPE!\n");
-
-  if (test)
-  {
-    ::urbiserver->debug("%s  Test:", tabb);
-    test->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (test);
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
-  ::urbiserver->debug("%sEND WHILE ------\n", tabb);
+  }
+  debug(l, "END WHILE ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WHENEVER);
@@ -6463,8 +6196,9 @@ UCommand_WHENEVER::execute(UConnection *connection)
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-	    connection->sendf (getTag().c_str(), "!!! Invalid name resolution in test. "
-	       "Did you define all events and variables?\n");
+      connection->sendf (getTag().c_str(),
+			 "!!! Invalid name resolution in test. "
+			 "Did you define all events and variables?\n");
       return status = UCOMPLETED;
     }
   }
@@ -6473,7 +6207,8 @@ UCommand_WHENEVER::execute(UConnection *connection)
   {
     ec = 0;
     UValue *testeval = test->eval(this, connection, ec);
-    if (!ec) ec = new UEventCompound (testeval);
+    if (!ec)
+      ec = new UEventCompound (testeval);
     reset_reeval ();
 
     testres = booleval(testeval, true);
@@ -6492,25 +6227,24 @@ UCommand_WHENEVER::execute(UConnection *connection)
       mixlist = ec->mixing ();
     }
 
-    for (std::list<UMultiEventInstance*>::iterator imei = mixlist.begin ();
-	 imei != mixlist.end ();
-	 ++imei)
+    for (std::list<UMultiEventInstance*>::iterator i = mixlist.begin ();
+	 i != mixlist.end ();
+	 ++i)
     {
       bool ok = false;
       for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
 	   ic != candidates.end () && !ok;
 	   ++ic)
       {
-	if ((*ic)->equal (*imei))
+	if ((*ic)->equal (*i))
 	{
 	  (*ic)->visited ();
 	  ok = true;
-	  delete *imei;
+	  delete *i;
 	}
       }
       if (!ok)
-	candidates.push_back (new UAtCandidate (currentTime + duration,
-						*imei));
+	candidates.push_back (new UAtCandidate (currentTime + duration, *i));
     }
 
     //cleanup of candidates that do not appear anymore in the mixlist
@@ -6620,32 +6354,26 @@ UCommand_WHENEVER::copy()
 void
 UCommand_WHENEVER::print(int l)
 {
-  char tabb[100];
-
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-  ::urbiserver->debug("WHENEVER:\n");
+  debug(l, " Tag:[%s] ", getTag().c_str());
+  debug("WHENEVER:\n");
 
   if (test)
   {
-    ::urbiserver->debug("%s  Test:", tabb);
+    debug(l, "  Test:");
     test->print();
-    ::urbiserver->debug("\n");
-  };
+    debug("\n");
+  }
   if (command1)
   {
-    ::urbiserver->debug("%s  Command1:\n", tabb);
+    debug(l, "  Command1:\n");
     command1->print(l+3);
-  };
+  }
   if (command2)
   {
-    ::urbiserver->debug("%s  Command2:\n", tabb);
+    debug(l, "  Command2:\n");
     command2->print(l+3);
-  };
-  ::urbiserver->debug("%sEND WHENEVER ------\n", tabb);
+  }
+  debug(l, "END WHENEVER ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOOP);
@@ -6653,10 +6381,10 @@ MEMORY_MANAGER_INIT(UCommand_LOOP);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_LOOP::UCommand_LOOP(UCommand* command) :
-  UCommand(CMD_LOOP),
-  command (command),
-  whenever_hook (0)
+UCommand_LOOP::UCommand_LOOP(UCommand* command)
+  : UCommand(CMD_LOOP),
+    command (command),
+    whenever_hook (0)
 {
   ADDOBJ(UCommand_LOOP);
 }
@@ -6701,23 +6429,17 @@ UCommand_LOOP::copy()
 void
 UCommand_LOOP::print(int l)
 {
-  char tabb[100];
+  debug("%s Tag:[%s] toDelete=%d",
+		      tab(l), getTag().c_str(), toDelete);
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] toDelete=%d",
-		      tabb, getTag().c_str(), toDelete);
-
-  ::urbiserver->debug("LOOP:\n");
+  debug("LOOP:\n");
 
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
-  ::urbiserver->debug("%sEND LOOP ------\n", tabb);
+  }
+  debug(l, "END LOOP ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOOPN);
@@ -6759,7 +6481,8 @@ UCommand_LOOPN::execute(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-	    connection->sendf (getTag().c_str(), "!!! number of loops is non numeric\n");
+      connection->sendf (getTag().c_str(),
+			 "!!! number of loops is non numeric\n");
       delete nb;
       return status = UCOMPLETED;
     }
@@ -6775,7 +6498,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 
   expression->val = expression->val - 1;
 
-  UNodeType nodeType = nodeType_loopn (type);
+  UNodeType nodeType = nodetype (type);
 
   if (nodeType == UPIPE || nodeType == UAND)
     morph = new UCommand_TREE(nodeType, command->copy(), this);
@@ -6806,33 +6529,23 @@ UCommand_LOOPN::copy()
 void
 UCommand_LOOPN::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
+  debug("LOOPN:");
+  if (type == CMD_LOOPN)           debug("\n");
+  else if (type == CMD_LOOPN_AND)  debug("(AND)\n");
+  else if (type == CMD_LOOPN_PIPE) debug("(PIPE)\n");
+  else                             debug("UNKNOWN TYPE!\n");
 
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("LOOPN:");
-  if (type == CMD_LOOPN)           ::urbiserver->debug("\n");
-  else if (type == CMD_LOOPN_AND)  ::urbiserver->debug("(AND)\n");
-  else if (type == CMD_LOOPN_PIPE) ::urbiserver->debug("(PIPE)\n");
-  else                             ::urbiserver->debug("UNKNOWN TYPE!\n");
-
-  if (expression)
-  {
-    ::urbiserver->debug("%s  Expr:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (expression);
   if (command)
   {
-    ::urbiserver->debug("%s  Command (%ld:%d):\n", tabb,
+    debug(l, "  Command (%ld:%d):\n",
 			(long)command,
 			(int)command->status); command->print(l+3);
-  };
+  }
 
-  ::urbiserver->debug("%sEND LOOPN ------\n", tabb);
+  debug(l, "END LOOPN ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_FOR);
@@ -6895,7 +6608,8 @@ UCommand_FOR::execute(UConnection *connection)
 
   persistant = false;
 
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
@@ -6903,7 +6617,7 @@ UCommand_FOR::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    UNodeType nodeType = nodeType_for (type);
+    UNodeType nodeType = nodetype (type);
     tmp_instr2 = 0;
 
     if (nodeType == UPIPE
@@ -6977,46 +6691,37 @@ UCommand_FOR::copy()
 void
 UCommand_FOR::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("FOR:");
-  if (type == CMD_FOR) ::urbiserver->debug("\n");
-  else
-    if (type == CMD_FOR_AND) ::urbiserver->debug("(AND)\n");
-    else
-      if (type == CMD_FOR_PIPE) ::urbiserver->debug("(PIPE)\n");
-      else
-	::urbiserver->debug("UNKNOWN TYPE!\n");
+  debug("FOR:");
+  if (type == CMD_FOR) debug("\n");
+  else if (type == CMD_FOR_AND) debug("(AND)\n");
+  else if (type == CMD_FOR_PIPE) debug("(PIPE)\n");
+  else	debug("UNKNOWN TYPE!\n");
 
   if (test)
   {
-    ::urbiserver->debug("%s  Test:", tabb);
+    debug(l, "  Test:");
     test->print();
-    ::urbiserver->debug("\n");
-  };
+    debug("\n");
+  }
   if (instr1)
   {
-    ::urbiserver->debug("%s  Instr1:\n", tabb);
+    debug(l, "  Instr1:\n");
     instr1->print(l+3);
-  };
+  }
   if (instr2)
   {
-    ::urbiserver->debug("%s  Instr2:\n", tabb);
+    debug(l, "  Instr2:\n");
     instr2->print(l+3);
-  };
+  }
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
+  }
 
-  ::urbiserver->debug("%sEND FOR ------\n", tabb);
+  debug(l, "END FOR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_FOREACH);
@@ -7065,7 +6770,7 @@ UCommand_FOREACH::execute(UConnection *connection)
   if (position == 0)
     return status = UCOMPLETED;
 
-  UNodeType nodeType = nodeType_foreach (type);
+  UNodeType nodeType = nodetype (type);
 
   UExpression* currentvalue =
     new UExpression(UExpression::EXPR_VALUE, ufloat(0));
@@ -7127,41 +6832,27 @@ UCommand_FOREACH::copy()
 void
 UCommand_FOREACH::print(int l)
 {
-  char tabb[100];
+  debug(l, " Tag:[%s] ", getTag().c_str());
 
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-
-  ::urbiserver->debug("FOREACH:");
+  debug("FOREACH:");
   if (type == CMD_FOREACH)
-    ::urbiserver->debug("\n");
+    debug("\n");
   else if (type == CMD_FOREACH_AND)
-    ::urbiserver->debug("(AND)\n");
+    debug("(AND)\n");
   else if (type == CMD_FOREACH_PIPE)
-    ::urbiserver->debug("(PIPE)\n");
+    debug("(PIPE)\n");
   else
-    ::urbiserver->debug("UNKNOWN TYPE!\n");
+    debug("UNKNOWN TYPE!\n");
 
-  if (variablename)
-  {
-    ::urbiserver->debug("%s  VariableName:", tabb);
-    variablename->print(); ::urbiserver->debug("\n");
-  };
-  if (expression)
-  {
-    ::urbiserver->debug("%s  List:", tabb);
-    expression->print(); ::urbiserver->debug("\n");
-  };
+  DEBUG_ATTR (variablename);
+  DEBUG_ATTR (expression);
   if (command)
   {
-    ::urbiserver->debug("%s  Command:\n", tabb);
+    debug(l, "  Command:\n");
     command->print(l+3);
-  };
+  }
 
-  ::urbiserver->debug("%sEND FOREACH ------\n", tabb);
+  debug(l, "END FOREACH ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_NOOP);
@@ -7217,12 +6908,6 @@ UCommand_NOOP::copy()
 void
 UCommand_NOOP::print(int l)
 {
-  char tabb[100];
-
-  strcpy(tabb, "");
-  for (int i=0;i<l;i++)
-    strcat(tabb, " ");
-
-  ::urbiserver->debug("%s Tag:[%s] ", tabb, getTag().c_str());
-  ::urbiserver->debug("NOOP, level =%d\n", (int)status);
+  debug(l, " Tag:[%s] ", getTag().c_str());
+  debug("NOOP, level =%d\n", (int)status);
 }
