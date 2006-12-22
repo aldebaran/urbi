@@ -215,19 +215,23 @@ namespace urbi
 	  //TODO maybe try to reconnect?
 	  return;
 	}
-	if (res == -1) { res=0;continue;}
+	if (res == -1) 
+	{
+	  res=0;
+	  continue;
+	}
 #ifndef WIN32
-	if ( (res != 0) && (FD_ISSET(control_fd[0], &rfds)) ) return;
+	if (res != 0 && FD_ISSET(control_fd[0], &rfds))
+	  return;
 #endif
-      }
-      while (res == 0);
+      } while (res == 0);
       int count = ::recv(sd,
 			 &recvBuffer[recvBufferPosition],
 			 buflen - recvBufferPosition - 1, 0);
       if (count < 0)
       {
 	rc = -1;
-	std::cerr <<"error "<<count<<std::endl;
+	std::cerr << "error " << count << std::endl;
 	//TODO when error will be implemented, send an error msg
 	//TODO maybe try to reconnect?
 	return;
