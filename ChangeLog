@@ -1,5 +1,14 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Prepare for new tests/
+	This checkin probably does not work, but is needed to serialize
+	complex svn directory changes.
+	* tests: Remove.
+	Will be replaced by an svn:externals onto urbivalid.
+	* configure.ac: tests/ is now a package, not a simple subdir.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Less includes in headers
 	* src/uobj.hh, src/ucommand.hh: Remove several includes.
 	* src/parser/bison/ugrammar.y, src/ucommand.cc, src/uconnection.cc,
