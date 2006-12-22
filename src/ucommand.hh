@@ -30,6 +30,7 @@
 # include "utypes.hh"
 # include "ustring.hh"
 # include "uasynccommand.hh"
+# include "uast.hh"
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
@@ -38,7 +39,7 @@
     Specific commands are all derived from UCommand, but they contain
     command specific members.
 */
-class UCommand
+class UCommand : public UAst
 {
 public:
   MEMORY_MANAGED;
@@ -90,7 +91,7 @@ public:
     CMD_LOAD,
   };
 
-  UCommand(Type _type);
+  UCommand(const location&l, Type _type);
   virtual ~UCommand();
 
   virtual void print(int);
@@ -104,7 +105,7 @@ public:
 
   const std::string& getTag()  {return tag;}
   void setTag(const std::string& tag);
-  void setTag(UCommand *b); //faster than the one above
+  void setTag(UCommand* b); //faster than the one above
   void unsetTag();
 
   bool isBlocked();
@@ -120,14 +121,14 @@ public:
   UCommandStatus   status;
 
   /// list of flags of tagged commands
-  UNamedParameters *flags;
+  UNamedParameters* flags;
 
   /// the UCommand_TREE that owns the UCommand
-  UCommand_TREE    *up;
+  UCommand_TREE* up;
   /// position in the owning UCommand_TREE
   UCommand         **position;
   /// stores the target UCommand in case of morphing
-  UCommand         *morph;
+  UCommand* morph;
   /// Whether the command should be deleted once it is UCOMPLETED
   /// (useful for loops).
   bool             persistant;
@@ -141,11 +142,11 @@ public:
   /// start time
   ufloat           startTime;
   /// expression used to store the flags params
-  UExpression      *flagExpr1;
+  UExpression* flagExpr1;
   /// expression used to store the flags params
-  UExpression      *flagExpr2;
+  UExpression* flagExpr2;
   /// expression used to store the flags params
-  UExpression      *flagExpr4;
+  UExpression* flagExpr4;
   /// in case of timeout or condout, stores the type of the flag
   /// (timeout:0), (condout:1).
   int              flagType;
@@ -161,7 +162,7 @@ public:
   bool             morphed;
 
 protected:
-  UCommand* copybase(UCommand *c);
+  UCommand* copybase(UCommand* c);
 
 private:
   /// Command tag.
@@ -180,9 +181,8 @@ class UCommand_TREE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_TREE(UNodeType node,
-		UCommand* command1,
-		UCommand* command2);
+  UCommand_TREE(const UCommand::location& l, UNodeType node,
+		UCommand* command1, UCommand* command2);
   virtual ~UCommand_TREE();
 
   virtual void print(int l);
@@ -194,17 +194,17 @@ public:
   void deleteMarked();
 
   /// Left side of the compound command.
-  UCommand         *command1;
+  UCommand* command1;
   /// Right side of the compound command.
-  UCommand         *command2;
+  UCommand* command2;
   /// context identificator for function calls
-  UCallid          *callid;
+  UCallid* callid;
   /// node type (AND, PIPE, ...)
   UNodeType        node;
   /// The state of execution of command1 and command2.
   URunlevel        runlevel1, runlevel2;
   /// belonging connection
-  UConnection      *connection;
+  UConnection* connection;
 };
 
 class UCommand_ASSIGN_VALUE : public UCommand
@@ -212,50 +212,51 @@ class UCommand_ASSIGN_VALUE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_VALUE(UVariableName *variablename,
+  UCommand_ASSIGN_VALUE(const UCommand::location& l, 
+			UVariableName* variablename,
 			UExpression* expression,
-			UNamedParameters *parameters,
+			UNamedParameters* parameters,
 			bool defkey = true);
   virtual ~UCommand_ASSIGN_VALUE();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
   virtual UVariableName** refVarName()  { return &variablename; };
   virtual UVariableName** refVarName2()  { return &expression->variablename; };
 
   /// variable name
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// associated variable
-  UVariable        *variable;
+  UVariable* variable;
   /// Expression
-  UExpression      *expression;
+  UExpression* expression;
   /// list of parameters
-  UNamedParameters *parameters;
+  UNamedParameters* parameters;
   /// method in the varname
-  UString          *method;
+  UString* method;
   /// device in the varname
-  UString          *devicename;
+  UString* devicename;
 
 private:
 
   // Pointers to modificators to ease further processing
   // in the URUNNING mode.
-  UExpression      *modif_time;
-  UExpression      *modif_sin;
-  UExpression      *modif_phase;
-  UExpression      *modif_smooth;
-  UExpression      *modif_speed;
-  UExpression      *modif_accel;
-  UExpression      *modif_ampli;
-  UExpression      *modif_adaptive;
-  UVariableName    *modif_getphase;
+  UExpression* modif_time;
+  UExpression* modif_sin;
+  UExpression* modif_phase;
+  UExpression* modif_smooth;
+  UExpression* modif_speed;
+  UExpression* modif_accel;
+  UExpression* modif_ampli;
+  UExpression* modif_adaptive;
+  UVariableName* modif_getphase;
 
   /// stored temporary phase for cos modificator
-  UExpression      *tmp_phase;
+  UExpression* tmp_phase;
   /// stored temporary time=0 for direct assignment
-  UExpression      *tmp_time;
+  UExpression* tmp_time;
   /// time limit in case of timeout modificator
   ufloat           endtime;
   /// start value for modificators
@@ -276,7 +277,7 @@ private:
   ufloat           speedmin;
 
   /// destination values
-  ufloat           *valtmp;
+  ufloat* valtmp;
 
   /// true when the assign is finished
   bool             finished;
@@ -303,28 +304,29 @@ class UCommand_ASSIGN_BINARY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_BINARY(UVariableName *variablename,
-			 libport::RefPt<UBinary> *refBinary);
+  UCommand_ASSIGN_BINARY(const UCommand::location& l, 
+			 UVariableName* variablename,
+			 libport::RefPt<UBinary>* refBinary);
   virtual ~UCommand_ASSIGN_BINARY();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
   virtual UVariableName** refVarName()  { return &variablename; };
 
 
   /// variable name
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// associated variable
-  UVariable        *variable;
+  UVariable* variable;
   /// Binary container
-  libport::RefPt<UBinary>  *refBinary;
+  libport::RefPt<UBinary>* refBinary;
 
   /// method in the varname
-  UString          *method;
+  UString* method;
   /// device in the varname
-  UString          *devicename;
+  UString* devicename;
 };
 
 class UCommand_ASSIGN_PROPERTY : public UCommand
@@ -332,31 +334,32 @@ class UCommand_ASSIGN_PROPERTY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_PROPERTY(UVariableName *variablename,
-			   UString *oper,
-			   UExpression *expression);
+  UCommand_ASSIGN_PROPERTY(const UCommand::location& l, 
+			   UVariableName* variablename,
+			   UString* oper,
+			   UExpression* expression);
   virtual ~UCommand_ASSIGN_PROPERTY();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
   virtual UVariableName** refVarName()  { return &variablename; };
 
 
   /// variable name
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// associated variable
-  UVariable        *variable;
+  UVariable* variable;
   /// Property operateur
-  UString          *oper;
+  UString* oper;
   /// assigned expression
-  UExpression      *expression;
+  UExpression* expression;
 
   /// method in the varname
-  UString          *method;
+  UString* method;
   /// device in the varname
-  UString          *devicename;
+  UString* devicename;
 };
 
 class UCommand_AUTOASSIGN : public UCommand
@@ -364,9 +367,10 @@ class UCommand_AUTOASSIGN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AUTOASSIGN (UVariableName* variablename,
-			UExpression* expression,
-			int assigntype);
+  UCommand_AUTOASSIGN (const UCommand::location& l, 
+		       UVariableName* variablename,
+		       UExpression* expression,
+		       int assigntype);
   virtual ~UCommand_AUTOASSIGN();
 
   virtual void print(int l);
@@ -375,9 +379,9 @@ public:
   virtual UCommand*      copy();
 
   /// Name of the iterating variable
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// the list to iterate
-  UExpression      *expression;
+  UExpression* expression;
   /// is it +=(0) or -=(1)?
   int              assigntype;
 };
@@ -388,17 +392,17 @@ class UCommand_EXPR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EXPR(UExpression* expression);
+  UCommand_EXPR(const UCommand::location& l, UExpression* expression);
   virtual ~UCommand_EXPR();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
   virtual UVariableName** refVarName()  { return &expression->variablename; };
 
   /// Expression
-  UExpression      *expression;
+  UExpression* expression;
 };
 
 class UCommand_RETURN : public UCommand
@@ -406,16 +410,17 @@ class UCommand_RETURN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_RETURN(UExpression* expression);
+  UCommand_RETURN(const UCommand::location& l, UExpression* e);
   virtual ~UCommand_RETURN();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* c);
   virtual UCommand*      copy();
 
-  /// Expression
-  UExpression      *expression;
+private:
+  /// Expression.  Useful documentation, ain't it?
+  UExpression* expression;
 };
 
 class UCommand_ECHO : public UCommand
@@ -423,22 +428,23 @@ class UCommand_ECHO : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ECHO(UExpression* expression,
-		UNamedParameters *parameters,
-		UString *connectionTag);
+  UCommand_ECHO(const UCommand::location& l, 
+		UExpression* expression,
+		UNamedParameters* parameters,
+		UString* connectionTag);
   virtual ~UCommand_ECHO();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// Expression
-  UExpression      *expression;
+  UExpression* expression;
   /// list of parameters
-  UNamedParameters *parameters;
+  UNamedParameters* parameters;
   /// tag of the connection to echo to.
-  UString          *connectionTag;
+  UString* connectionTag;
 };
 
 class UCommand_NEW : public UCommand
@@ -446,25 +452,26 @@ class UCommand_NEW : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_NEW(UVariableName* varname,
+  UCommand_NEW(const UCommand::location& l, 
+	       UVariableName* varname,
 	       UString* obj,
-	       UNamedParameters *parameters,
+	       UNamedParameters* parameters,
 	       bool noinit=false);
   virtual ~UCommand_NEW();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// Object name
-  UString          *id;
+  UString* id;
   /// Identifier name
-  UVariableName    *varname;
+  UVariableName* varname;
   /// Object
-  UString          *obj;
+  UString* obj;
   /// list of parameters
-  UNamedParameters *parameters;
+  UNamedParameters* parameters;
   /// tells if 'init' should be called
   bool             noinit;
   /// true when a remote new is waiting
@@ -478,7 +485,8 @@ class UCommand_ALIAS : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ALIAS (UVariableName* aliasname,
+  UCommand_ALIAS (const UCommand::location& l, 
+		  UVariableName* aliasname,
 		  UVariableName* id,
 		  bool eraseit=false);
 
@@ -486,13 +494,13 @@ public:
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// alias name
-  UVariableName           *aliasname;
+  UVariableName* aliasname;
   /// identifier
-  UVariableName           *id;
+  UVariableName* id;
   /// unalias command
   bool                    eraseit;
 };
@@ -502,7 +510,8 @@ class UCommand_INHERIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_INHERIT (UVariableName* subclass,
+  UCommand_INHERIT (const UCommand::location& l,
+		    UVariableName* subclass,
 		    UVariableName* theclass,
 		    bool eraseit=false);
 
@@ -510,13 +519,13 @@ public:
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// subclass that inherits
-  UVariableName           *subclass;
+  UVariableName* subclass;
   /// parent class
-  UVariableName           *theclass;
+  UVariableName* theclass;
   /// uninherit command
   bool                    eraseit;
 };
@@ -526,21 +535,22 @@ class UCommand_GROUP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_GROUP(UString* id,
-		 UNamedParameters *parameters,
+  UCommand_GROUP(const UCommand::location& l, 
+		 UString* id,
+		 UNamedParameters* parameters,
 		 int grouptype = 0);
 
   virtual ~UCommand_GROUP();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// identifier
-  UString              *id;
+  UString* id;
   /// list of group members
-  UNamedParameters     *parameters;
+  UNamedParameters* parameters;
   /// type of group command group/addgroup/delgroup
   int            grouptype;
 };
@@ -551,19 +561,20 @@ class UCommand_OPERATOR_ID : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_OPERATOR_ID (UString* oper,
+  UCommand_OPERATOR_ID (const UCommand::location& l,
+			UString* oper,
 			UString* id);
   virtual ~UCommand_OPERATOR_ID();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// operator name
-  UString          *oper;
+  UString* oper;
   /// identifier
-  UString          *id;
+  UString* id;
 };
 
 class UCommand_DEVICE_CMD : public UCommand
@@ -571,18 +582,19 @@ class UCommand_DEVICE_CMD : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_DEVICE_CMD  (UVariableName* device,
-			ufloat *cmd);
+  UCommand_DEVICE_CMD  (const UCommand::location& l,
+			UVariableName* device,
+			ufloat* cmd);
   virtual ~UCommand_DEVICE_CMD();
   virtual UVariableName** refVarName()  { return &variablename; };
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// the device name embedded in a var name
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// the command (on, off, ...)
   ufloat           cmd;
 };
@@ -592,23 +604,24 @@ class UCommand_OPERATOR_VAR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_OPERATOR_VAR (UString* oper,
+  UCommand_OPERATOR_VAR (const UCommand::location& l,
+			 UString* oper,
 			 UVariableName* variablename);
   virtual ~UCommand_OPERATOR_VAR();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// operator name
-  UString          *oper;
+  UString* oper;
   /// variable
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// cached variable, used by undef
-  UVariable        *variable;
+  UVariable* variable;
   /// cached function, used by undef
-  UFunction        *fun;
+  UFunction* fun;
 };
 
 class UCommand_BINDER : public UCommand
@@ -616,7 +629,8 @@ class UCommand_BINDER : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_BINDER (UVariableName* objname,
+  UCommand_BINDER (const UCommand::location& l,
+		   UVariableName* objname,
 		   UString* binder,
 		   int type,
 		   UVariableName* variablename,
@@ -625,15 +639,15 @@ public:
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// binder name "external" or "internal"
-  UString          *binder;
+  UString* binder;
   /// variable
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// name of the uobject controling the binding
-  UVariableName    *objname;
+  UVariableName* objname;
   /// type of binding: 0:"function", 1:"var", 2:"event"
   int              type;
   /// nb of param in a function binding
@@ -646,16 +660,16 @@ class UCommand_OPERATOR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_OPERATOR (UString* oper);
+  UCommand_OPERATOR (const UCommand::location& l, UString* oper);
   virtual ~UCommand_OPERATOR ();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// operator name
-  UString          *oper;
+  UString* oper;
 };
 
 class UCommand_WAIT : public UCommand
@@ -663,16 +677,16 @@ class UCommand_WAIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WAIT(UExpression* expression);
+  UCommand_WAIT(const UCommand::location& l, UExpression* expression);
   virtual ~UCommand_WAIT();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// Expression
-  UExpression      *expression;
+  UExpression* expression;
 
   /// time to stop waiting.
   ufloat           endtime;
@@ -683,26 +697,26 @@ class UCommand_EMIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EMIT(UVariableName* eventname,
-		UNamedParameters *parameters, UExpression *duration=0);
+  UCommand_EMIT(const UCommand::location& l, UVariableName* eventname,
+		UNamedParameters* parameters, UExpression* duration=0);
   virtual ~UCommand_EMIT();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// terminate and clean the event when the emit ends.
   void removeEvent ();
 
   /// Name of the event
-  UVariableName      *eventname;
+  UVariableName* eventname;
   /// list of parameters
-  UNamedParameters   *parameters;
-  UExpression        *duration;
+  UNamedParameters* parameters;
+  UExpression* duration;
 
   /// char* of the event name
-  const char         *eventnamestr;
+  const char* eventnamestr;
   /// true for the first execution
   bool               firsttime;
   /// time of the end of the signal
@@ -718,16 +732,16 @@ class UCommand_WAIT_TEST : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WAIT_TEST(UExpression* test);
+  UCommand_WAIT_TEST(const UCommand::location& l, UExpression* test);
   virtual ~UCommand_WAIT_TEST();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// test
-  UExpression      *test;
+  UExpression* test;
   /// nb of times the test is true
   int              nbTrue;
   /// time of the last 'true'
@@ -747,17 +761,18 @@ class UCommand_INCDECREMENT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_INCDECREMENT(Type type, UVariableName *variablename);
+  UCommand_INCDECREMENT(const UCommand::location& l,
+			Type type, UVariableName* variablename);
   virtual ~UCommand_INCDECREMENT();
   virtual UVariableName** refVarName()  { return &variablename; };
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// variable
-  UVariableName     *variablename;
+  UVariableName* variablename;
 };
 
 class UCommand_DEF : public UCommand
@@ -765,33 +780,36 @@ class UCommand_DEF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_DEF (UDefType deftype,
-		UVariableName *variablename,
-		UNamedParameters *parameters,
+  UCommand_DEF (const UCommand::location& l,
+		UDefType deftype,
+		UVariableName* variablename,
+		UNamedParameters* parameters,
 		UCommand* command);
-  UCommand_DEF (UDefType deftype,
-		UString *device,
-		UNamedParameters *parameters);
-  UCommand_DEF (UDefType deftype,
-		UVariableList *variablelist);
+  UCommand_DEF (const UCommand::location& l,
+		UDefType deftype,
+		UString* device,
+		UNamedParameters* parameters);
+  UCommand_DEF (const UCommand::location& l,
+		UDefType deftype,
+		UVariableList* variablelist);
 
   virtual ~UCommand_DEF();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// variable
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// list of parameters
-  UNamedParameters *parameters;
+  UNamedParameters* parameters;
   /// Command definition
-  UCommand         *command;
+  UCommand* command;
   /// device name in a "def device {...}"
-  UString          *device;
+  UString* device;
   /// list of variables in a multi def command
-  UVariableList    *variablelist;
+  UVariableList* variablelist;
   /// type of definition (var, function, event)
   UDefType         deftype;
 };
@@ -802,8 +820,8 @@ class UCommand_CLASS : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_CLASS (UString *object,
-		  UNamedParameters *parameters);
+  UCommand_CLASS (const UCommand::location& l, UString* object,
+		  UNamedParameters* parameters);
 
   virtual ~UCommand_CLASS();
 
@@ -813,9 +831,9 @@ public:
   virtual UCommand*      copy();
 
   /// class name
-  UString          *object;
+  UString* object;
   /// list of parameters
-  UNamedParameters *parameters;
+  UNamedParameters* parameters;
 };
 
 
@@ -824,22 +842,21 @@ class UCommand_IF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_IF (UExpression *test,
-	       UCommand* command1,
-	       UCommand* command2);
+  UCommand_IF (const UCommand::location& l, UExpression* test,
+	       UCommand* command1, UCommand* command2);
   virtual ~UCommand_IF();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// test
-  UExpression      *test;
+  UExpression* test;
   /// Command if
-  UCommand         *command1;
+  UCommand* command1;
   /// Command else (0 if no else)
-  UCommand         *command2;
+  UCommand* command2;
 };
 
 class UCommand_EVERY : public UCommand
@@ -847,19 +864,20 @@ class UCommand_EVERY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EVERY (UExpression *duration,
+  UCommand_EVERY (const UCommand::location& l,
+		  UExpression* duration,
 		  UCommand* command);
   virtual ~UCommand_EVERY();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// duration
-  UExpression      *duration;
+  UExpression* duration;
   /// Command
-  UCommand         *command;
+  UCommand* command;
 
   /// indicates the first time the command is run
   bool             firsttime;
@@ -872,7 +890,8 @@ class UCommand_TIMEOUT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_TIMEOUT (UExpression *duration,
+  UCommand_TIMEOUT (const UCommand::location& l, 
+		    UExpression* duration,
 		    UCommand* command);
   virtual ~UCommand_TIMEOUT();
 
@@ -882,11 +901,11 @@ public:
   virtual UCommand*      copy();
 
   /// duration
-  UExpression      *duration;
+  UExpression* duration;
   /// Command
-  UCommand         *command;
+  UCommand* command;
   /// ref of the tag to kill.
-  UString          *tagRef;
+  UString* tagRef;
 };
 
 class UCommand_STOPIF : public UCommand
@@ -894,21 +913,22 @@ class UCommand_STOPIF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_STOPIF (UExpression *condition,
+  UCommand_STOPIF (const UCommand::location& l,
+		   UExpression* condition,
 		   UCommand* command);
   virtual ~UCommand_STOPIF();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// condition
-  UExpression      *condition;
+  UExpression* condition;
   /// Command
-  UCommand         *command;
+  UCommand* command;
   /// ref of the containing tag
-  UString          *tagRef;
+  UString* tagRef;
 };
 
 class UCommand_FREEZEIF : public UCommand
@@ -916,7 +936,8 @@ class UCommand_FREEZEIF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FREEZEIF (UExpression *condition,
+  UCommand_FREEZEIF (const UCommand::location& l,
+		     UExpression* condition,
 		     UCommand* command);
   virtual ~UCommand_FREEZEIF();
 
@@ -926,11 +947,11 @@ public:
   virtual UCommand*      copy();
 
   /// condition
-  UExpression      *condition;
+  UExpression* condition;
   /// Command
-  UCommand         *command;
+  UCommand* command;
   /// ref of the containing tag
-  UString          *tagRef;
+  UString* tagRef;
 };
 
 class UCommand_AT : public UCommand, public UASyncCommand
@@ -938,23 +959,22 @@ class UCommand_AT : public UCommand, public UASyncCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AT (Type type,
-	       UExpression *test,
-	       UCommand* command1,
-	       UCommand* command2);
+  UCommand_AT (const UCommand::location& l,
+	       Type type, UExpression* test,
+	       UCommand* command1, UCommand* command2);
   virtual ~UCommand_AT();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// test
-  UExpression      *test;
+  UExpression* test;
   /// Command if
-  UCommand         *command1;
+  UCommand* command1;
   /// Command else (0 if no else)
-  UCommand         *command2;
+  UCommand* command2;
   /// true when the command has not been executed yet
   bool             firsttime;
   /// list of UMultiEvent candidates
@@ -970,20 +990,19 @@ class UCommand_WHILE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WHILE (Type type,
-		   UExpression *test,
-		   UCommand* command);
+  UCommand_WHILE (const UCommand::location& l, Type type,
+		  UExpression* test, UCommand* command);
   virtual ~UCommand_WHILE();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// test
-  UExpression      *test;
+  UExpression* test;
   /// Command
-  UCommand         *command;
+  UCommand* command;
 };
 
 class UCommand_WHENEVER : public UCommand, public UASyncCommand
@@ -991,22 +1010,21 @@ class UCommand_WHENEVER : public UCommand, public UASyncCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WHENEVER (UExpression *test,
-		      UCommand* command1,
-		      UCommand* command2);
+  UCommand_WHENEVER (const UCommand::location& l, UExpression* test,
+		     UCommand* command1, UCommand* command2);
   virtual ~UCommand_WHENEVER();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// test
-  UExpression      *test;
+  UExpression* test;
   /// Command ok
-  UCommand         *command1;
+  UCommand* command1;
   /// Command onleave
-  UCommand         *command2;
+  UCommand* command2;
   /// true when the command has not been executed yet
   bool             firsttime;
   /// list of UMultiEvent candidates
@@ -1028,7 +1046,7 @@ class UCommand_LOOP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOP (UCommand* command);
+  UCommand_LOOP (const UCommand::location& l, UCommand* command);
   virtual ~UCommand_LOOP();
 
   virtual void print(int l);
@@ -1037,7 +1055,7 @@ public:
   virtual UCommand*      copy();
 
   /// Command
-  UCommand         *command;
+  UCommand* command;
   /// non zero if the loop belongs to a whenever command.
   UCommand*        whenever_hook;
 };
@@ -1047,20 +1065,19 @@ class UCommand_LOOPN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOPN (Type type,
-		   UExpression* expression,
-		   UCommand* command);
+  UCommand_LOOPN (const UCommand::location& l, Type type,
+		  UExpression* expression, UCommand* command);
   virtual ~UCommand_LOOPN();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// Expression
-  UExpression      *expression;
+  UExpression* expression;
   /// Command
-  UCommand         *command;
+  UCommand* command;
 };
 
 class UCommand_FOREACH : public UCommand
@@ -1068,25 +1085,25 @@ class UCommand_FOREACH : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOREACH (Type type,
-		     UVariableName* variablename,
-		     UExpression* expression,
-		     UCommand* command);
+  UCommand_FOREACH (const UCommand::location& l, Type type,
+		    UVariableName* variablename,
+		    UExpression* expression,
+		    UCommand* command);
   virtual ~UCommand_FOREACH();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// Name of the iterating variable
-  UVariableName    *variablename;
+  UVariableName* variablename;
   /// Command
-  UCommand         *command;
+  UCommand* command;
   /// the list to iterate
-  UExpression      *expression;
+  UExpression* expression;
   /// index in the list
-  UValue           *position;
+  UValue* position;
   /// first execution of the command
   bool             firsttime;
 };
@@ -1096,7 +1113,7 @@ class UCommand_FOR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOR (Type type,
+  UCommand_FOR (const UCommand::location& l, Type type,
 		UCommand* instr1,
 		UExpression* test,
 		UCommand* instr2,
@@ -1105,17 +1122,17 @@ public:
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 
   /// 1st part
-  UCommand         *instr1;
+  UCommand* instr1;
   /// 2nd part
-  UCommand         *instr2;
+  UCommand* instr2;
   /// test
-  UExpression      *test;
+  UExpression* test;
   /// Command
-  UCommand         *command;
+  UCommand* command;
   /// true on the first passage
   bool             first;
 };
@@ -1125,12 +1142,12 @@ class UCommand_NOOP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_NOOP(bool zerotime = false);
+  UCommand_NOOP(const UCommand::location& l, bool zerotime = false);
   virtual ~UCommand_NOOP();
 
   virtual void print(int l);
 
-  virtual UCommandStatus execute(UConnection *connection);
+  virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
 };
 

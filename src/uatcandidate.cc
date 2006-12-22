@@ -71,14 +71,15 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 	  std::string device = is->substr (0, is->find ('.'));
 	  std::string id = is->substr (is->find ('.')+1);
 	  UCommand *newcmd = new UCommand_ASSIGN_VALUE
-	    (new UVariableName (new UString (device),
+	    (UCommand::location(),
+	     new UVariableName (new UString (device),
 				new UString (id),
 				true,  0),
 	     new UExpression (UExpression::EXPR_VALUE, (*iuv)), 0);
 	  if (!cmd)
 	    cmd = newcmd;
 	  else
-	    cmd = (UCommand*) new UCommand_TREE (UAND, newcmd, cmd);
+	    cmd = new UCommand_TREE (UCommand::location(), UAND, newcmd, cmd);
 	}
     }
 

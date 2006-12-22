@@ -162,8 +162,9 @@ MEMORY_MANAGER_INIT(UCommand);
 
  \param type is the command type
  */
-UCommand::UCommand(UCommand::Type _type)
-  : type (_type),
+UCommand::UCommand(const UCommand::location& l, UCommand::Type _type)
+  : UAst (l),
+    type (_type),
     status (UONQUEUE),
     flags (0),
     morph (0),
@@ -207,7 +208,7 @@ UCommand::execute(UConnection*)
 UCommand*
 UCommand::copy()
 {
-  return copybase(new UCommand(type));
+  return copybase(new UCommand(loc_, type));
 }
 
 //! UCommand base of hard copy function
@@ -276,7 +277,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	clonename->nostruct = varname->nostruct;
 	clonename->id_type = varname->id_type;
 	clonename->local_scope = varname->local_scope;
-	gplist = new UCommand_TREE(UAND, clone, gplist);
+	gplist = new UCommand_TREE(location(), UAND, clone, gplist);
       }
 
       morph = gplist;
@@ -409,17 +410,18 @@ UCommand::strMorph (const std::string& cmd)
 {
   morph = new UCommand_EXPR
     (
-     new UExpression
-     (
-      UExpression::EXPR_FUNCTION,
-      new UVariableName (new UString("global"), new UString("exec"),
-			 false, 0),
-      new UNamedParameters
+      location(),
+      new UExpression
       (
-       new UExpression (UExpression::EXPR_VALUE, new UString(cmd.c_str()))
-      )
-     )
-    );
+	UExpression::EXPR_FUNCTION,
+	new UVariableName (new UString("global"), new UString("exec"),
+			   false, 0),
+	new UNamedParameters
+	(
+	  new UExpression (UExpression::EXPR_VALUE, new UString(cmd.c_str()))
+	  )
+	)
+      );
 
   status = UMORPH;
 }
@@ -432,10 +434,11 @@ MEMORY_MANAGER_INIT(UCommand_TREE);
  This is useful for the LOAD command which should be run in bg and
  still cannot be persistant (like a AT or WHENEVER).
  */
-UCommand_TREE::UCommand_TREE(UNodeType node,
+UCommand_TREE::UCommand_TREE(const location& l,
+			     UNodeType node,
 			     UCommand* command1,
 			     UCommand* command2)
-  : UCommand(CMD_TREE),
+  : UCommand(l, CMD_TREE),
     command1 (command1),
     command2 (command2),
     callid (0),
@@ -482,9 +485,9 @@ UCommand_TREE::execute(UConnection*)
 UCommand*
 UCommand_TREE::copy()
 {
-  return copybase(new UCommand_TREE(node,
-					 ucopy (command1),
-					 ucopy (command2)));
+  return copybase(new UCommand_TREE(loc_, node,
+				    ucopy (command1),
+				    ucopy (command2)));
 }
 
 //! Deletes sub commands marked for deletion after a stop command
@@ -567,11 +570,12 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_VALUE);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(UVariableName *variablename,
+UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(const location& l,
+					     UVariableName *variablename,
 					     UExpression* expression,
 					     UNamedParameters *parameters,
 					     bool defkey)
-  : UCommand(CMD_ASSIGN_VALUE),
+  : UCommand(l, CMD_ASSIGN_VALUE),
     variablename(variablename),
     variable (0),
     expression (expression),
@@ -715,13 +719,13 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       morph =
 	new UCommand_TREE
-	(
-	  UPIPE,
-	  fun->cmdcopy(),
+	(loc_, 
+	 UPIPE,
+	 fun->cmdcopy(),
 	  new UCommand_ASSIGN_VALUE
-	  (
-	    variablename->copy(),
-	    new UExpression(UExpression::EXPR_VARIABLE,
+	 (loc_, 
+	  variablename->copy(),
+	  new UExpression(UExpression::EXPR_VARIABLE,
 			    resultContainer),
 	    0
 	    )
@@ -1663,7 +1667,7 @@ UCommand*
 UCommand_ASSIGN_VALUE::copy()
 {
   UCommand_ASSIGN_VALUE *ret =
-    new UCommand_ASSIGN_VALUE(ucopy (variablename),
+    new UCommand_ASSIGN_VALUE(loc_, ucopy (variablename),
 			      ucopy (expression),
 			      ucopy (parameters));
 
@@ -1699,9 +1703,10 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(UVariableName *variablename,
+UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(const location& l,
+					       UVariableName *variablename,
 					       libport::RefPt<UBinary> *refBinary)
-  : UCommand(CMD_ASSIGN_BINARY),
+  : UCommand(l, CMD_ASSIGN_BINARY),
     variablename (variablename),
     variable (0),
     refBinary (refBinary),
@@ -1775,7 +1780,7 @@ UCommand*
 UCommand_ASSIGN_BINARY::copy()
 {
   UCommand_ASSIGN_BINARY *ret =
-    new UCommand_ASSIGN_BINARY(ucopy (variablename),
+    new UCommand_ASSIGN_BINARY(loc_, ucopy (variablename),
 			       refBinary->copy());
   return copybase(ret);
 }
@@ -1806,10 +1811,11 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_PROPERTY);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(UVariableName *variablename,
+UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(const location& l,
+						   UVariableName *variablename,
 						   UString *oper,
 						   UExpression *expression)
-  : UCommand(CMD_ASSIGN_PROPERTY),
+  : UCommand(l, CMD_ASSIGN_PROPERTY),
     variablename (variablename),
     variable (0),
     oper (oper),
@@ -2032,7 +2038,7 @@ UCommand*
 UCommand_ASSIGN_PROPERTY::copy()
 {
   UCommand_ASSIGN_PROPERTY *ret =
-    new UCommand_ASSIGN_PROPERTY(ucopy (variablename),
+    new UCommand_ASSIGN_PROPERTY(loc_, ucopy (variablename),
 				 ucopy (oper),
 				 ucopy (expression));
   return copybase(ret);
@@ -2060,10 +2066,11 @@ MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_AUTOASSIGN::UCommand_AUTOASSIGN(UVariableName* variablename,
+UCommand_AUTOASSIGN::UCommand_AUTOASSIGN(const location& l,
+					 UVariableName* variablename,
 					 UExpression* expression,
 					 int assigntype)
-  : UCommand(CMD_ASSIGN_VALUE),
+  : UCommand(l, CMD_ASSIGN_VALUE),
     variablename (variablename),
     expression (expression),
     assigntype (assigntype)
@@ -2110,9 +2117,9 @@ UCommand_AUTOASSIGN::execute(UConnection*)
   if (!extended_expression)
     return status = UCOMPLETED;
 
-  morph = new UCommand_ASSIGN_VALUE(variablename->copy(), extended_expression,
+  morph = new UCommand_ASSIGN_VALUE(loc_, variablename->copy(), extended_expression,
 				    0, false);
-
+  
   persistant = false;
   return status = UMORPH;
 }
@@ -2122,7 +2129,7 @@ UCommand*
 UCommand_AUTOASSIGN::copy()
 {
   UCommand_AUTOASSIGN *ret =
-    new UCommand_AUTOASSIGN(ucopy (variablename),
+    new UCommand_AUTOASSIGN(loc_, ucopy (variablename),
 			    ucopy (expression),
 			    assigntype);
   return copybase(ret);
@@ -2152,8 +2159,9 @@ MEMORY_MANAGER_INIT(UCommand_EXPR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_EXPR::UCommand_EXPR(UExpression* expression)
-  : UCommand(CMD_EXPR),
+UCommand_EXPR::UCommand_EXPR(const location& l,
+			     UExpression* expression)
+  : UCommand(l, CMD_EXPR),
     expression (expression)
 {
   ADDOBJ(UCommand_EXPR);
@@ -2242,12 +2250,12 @@ UCommand_EXPR::execute(UConnection *connection)
 			  true, 0);
 
       UCommand_EXPR* cexp =
-	new UCommand_EXPR(new UExpression(UExpression::EXPR_VARIABLE,
-					  resultContainer));
-
+	new UCommand_EXPR(loc_, new UExpression(UExpression::EXPR_VARIABLE,
+						resultContainer));
+      
       cexp->setTag(this);
-      morph = new UCommand_TREE(UPIPE, fun->cmdcopy(getTag()), cexp);
-
+      morph = new UCommand_TREE(loc_, UPIPE, fun->cmdcopy(getTag()), cexp);
+      
       if (morph)
       {
 	morph->morphed = true;
@@ -2462,7 +2470,7 @@ UCommand_EXPR::execute(UConnection *connection)
 UCommand*
 UCommand_EXPR::copy()
 {
-  return copybase(new UCommand_EXPR(ucopy (expression)));
+  return copybase(new UCommand_EXPR(loc_, ucopy (expression)));
 }
 
 //! Print the command
@@ -2486,8 +2494,9 @@ MEMORY_MANAGER_INIT(UCommand_RETURN);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_RETURN::UCommand_RETURN(UExpression* expression)
-  : UCommand(CMD_RETURN),
+UCommand_RETURN::UCommand_RETURN(const location& l,
+				 UExpression* expression)
+  : UCommand(l, CMD_RETURN),
     expression (expression)
 {
   ADDOBJ(UCommand_RETURN);
@@ -2529,7 +2538,7 @@ UCommand_RETURN::execute(UConnection *connection)
 UCommand*
 UCommand_RETURN::copy()
 {
-  return copybase(new UCommand_RETURN(ucopy (expression)));
+  return copybase(new UCommand_RETURN(loc_, ucopy (expression)));
 }
 
 //! Print the command
@@ -2553,10 +2562,11 @@ MEMORY_MANAGER_INIT(UCommand_ECHO);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_ECHO::UCommand_ECHO(UExpression* expression,
+UCommand_ECHO::UCommand_ECHO(const location& l,
+			     UExpression* expression,
 			     UNamedParameters *parameters,
 			     UString *connectionTag)
-  : UCommand(CMD_ECHO),
+  : UCommand(l, CMD_ECHO),
     expression (expression),
     parameters (parameters),
     connectionTag (connectionTag)
@@ -2635,7 +2645,7 @@ UCommand*
 UCommand_ECHO::copy()
 {
   UCommand_ECHO *ret =
-    new UCommand_ECHO(ucopy (expression),
+    new UCommand_ECHO(loc_, ucopy (expression),
 		      ucopy (parameters),
 		      ucopy (connectionTag));
   return copybase(ret);
@@ -2667,11 +2677,12 @@ MEMORY_MANAGER_INIT(UCommand_NEW);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_NEW::UCommand_NEW(UVariableName* varname,
+UCommand_NEW::UCommand_NEW(const location& l,
+			   UVariableName* varname,
 			   UString* obj,
 			   UNamedParameters *parameters,
 			   bool noinit)
-  : UCommand(CMD_NEW),
+  : UCommand(l, CMD_NEW),
     id (0),
     varname (varname),
     obj (obj),
@@ -2795,7 +2806,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    << "}";
 
 	strMorph (oss.str());
-	morph = new UCommand_TREE(UPIPE, morph, this);
+	morph = new UCommand_TREE(loc_, UPIPE, morph, this);
 	return status;
       }
     }
@@ -2944,7 +2955,7 @@ UCommand_NEW::execute(UConnection *connection)
 UCommand*
 UCommand_NEW::copy()
 {
-  UCommand_NEW *ret = new UCommand_NEW(ucopy (varname),
+  UCommand_NEW *ret = new UCommand_NEW(loc_, ucopy (varname),
 				       ucopy (obj),
 				       ucopy (parameters));
 
@@ -2985,10 +2996,11 @@ MEMORY_MANAGER_INIT(UCommand_ALIAS);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_ALIAS::UCommand_ALIAS(UVariableName* aliasname,
+UCommand_ALIAS::UCommand_ALIAS(const location& l,
+			       UVariableName* aliasname,
 			       UVariableName* id,
 			       bool eraseit)
-  : UCommand(CMD_ALIAS),
+  : UCommand(l, CMD_ALIAS),
     aliasname (aliasname),
     id (id),
     eraseit (eraseit)
@@ -3070,9 +3082,9 @@ UCommand_ALIAS::execute(UConnection *connection)
 UCommand*
 UCommand_ALIAS::copy()
 {
-  return copybase(new UCommand_ALIAS(ucopy (aliasname),
-					   ucopy (id),
-					   eraseit));
+  return copybase(new UCommand_ALIAS(loc_, ucopy (aliasname),
+				     ucopy (id),
+				     eraseit));
 }
 
 //! Print the command
@@ -3101,10 +3113,11 @@ MEMORY_MANAGER_INIT(UCommand_INHERIT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_INHERIT::UCommand_INHERIT(UVariableName* subclass,
+UCommand_INHERIT::UCommand_INHERIT(const location& l,
+				   UVariableName* subclass,
 				   UVariableName* theclass,
 				   bool eraseit) :
-  UCommand(CMD_INHERIT),
+  UCommand(l, CMD_INHERIT),
   subclass (subclass),
   theclass (theclass),
   eraseit (eraseit)
@@ -3183,9 +3196,9 @@ UCommand_INHERIT::execute(UConnection *connection)
 UCommand*
 UCommand_INHERIT::copy()
 {
-  return copybase(new UCommand_INHERIT(ucopy (subclass),
-					       ucopy (theclass),
-					       eraseit));
+  return copybase(new UCommand_INHERIT(loc_, ucopy (subclass),
+				       ucopy (theclass),
+				       eraseit));
 }
 
 //! Print the command
@@ -3218,10 +3231,11 @@ MEMORY_MANAGER_INIT(UCommand_GROUP);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_GROUP::UCommand_GROUP(UString* id,
+UCommand_GROUP::UCommand_GROUP(const location& l,
+			       UString* id,
 			       UNamedParameters* parameters,
 			       int grouptype) :
-  UCommand(CMD_GROUP),
+  UCommand(l, CMD_GROUP),
   id (id),
   parameters (parameters),
   grouptype (grouptype)
@@ -3324,8 +3338,8 @@ UCommand_GROUP::execute(UConnection *connection)
       ret = new UNamedParameters(new UExpression(UExpression::EXPR_VALUE,
 						 (*it)->copy()), ret);
 
-    morph = new UCommand_EXPR(new UExpression(UExpression::EXPR_LIST, ret));
-
+    morph = new UCommand_EXPR(loc_, new UExpression(UExpression::EXPR_LIST, ret));
+    
     persistant = false;
     return status = UMORPH;
   }
@@ -3338,9 +3352,9 @@ UCommand_GROUP::execute(UConnection *connection)
 UCommand*
 UCommand_GROUP::copy()
 {
-  return copybase(new UCommand_GROUP(ucopy (id),
-					   ucopy (parameters),
-					   grouptype));
+  return copybase(new UCommand_GROUP(loc_, ucopy (id),
+				     ucopy (parameters),
+				     grouptype));
 }
 
 //! Print the command
@@ -3366,9 +3380,10 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(UString* oper,
+UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(const location& l,
+					   UString* oper,
 					   UString* id)
-  : UCommand(CMD_GENERIC),
+  : UCommand(l, CMD_GENERIC),
     oper (oper),
     id (id)
 {
@@ -3486,8 +3501,8 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 UCommand*
 UCommand_OPERATOR_ID::copy()
 {
-  return copybase(new UCommand_OPERATOR_ID(ucopy (oper),
-						       ucopy (id)));
+  return copybase(new UCommand_OPERATOR_ID(loc_, ucopy (oper),
+					   ucopy (id)));
 }
 
 //! Print the command
@@ -3510,9 +3525,10 @@ MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_DEVICE_CMD::UCommand_DEVICE_CMD(UVariableName* device,
+UCommand_DEVICE_CMD::UCommand_DEVICE_CMD(const location& l,
+					 UVariableName* device,
 					 ufloat *cmd)
-  : UCommand(CMD_GENERIC),
+  : UCommand(l, CMD_GENERIC),
     variablename (device),
     cmd (*cmd)
 {
@@ -3551,17 +3567,17 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
 
   // Main execution
   if (cmd == -1)
-    morph = new UCommand_ASSIGN_VALUE(
-      variablename->copy(),
-      new UExpression(UExpression::EXPR_MINUS,
+    morph = new UCommand_ASSIGN_VALUE(loc_, 
+				      variablename->copy(),
+				      new UExpression(UExpression::EXPR_MINUS,
 		      new UExpression(UExpression::EXPR_VALUE, ufloat(1)),
 		      new UExpression(UExpression::EXPR_VARIABLE, variablename->copy())),
       0,
       false);
   else
-    morph = new UCommand_ASSIGN_VALUE(
-      variablename->copy(),
-      new UExpression(UExpression::EXPR_VALUE, ufloat(cmd)),
+    morph = new UCommand_ASSIGN_VALUE(loc_, 
+				      variablename->copy(),
+				      new UExpression(UExpression::EXPR_VALUE, ufloat(cmd)),
       0,
       false);
 
@@ -3574,7 +3590,7 @@ UCommand*
 UCommand_DEVICE_CMD::copy()
 {
   UCommand_DEVICE_CMD *ret =
-    new UCommand_DEVICE_CMD(ucopy (variablename),
+    new UCommand_DEVICE_CMD(loc_, ucopy (variablename),
 			    new ufloat(cmd));
   return copybase(ret);
 }
@@ -3600,9 +3616,10 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(UString* oper,
+UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(const location& l,
+					     UString* oper,
 					     UVariableName* variablename)
-  : UCommand(CMD_GENERIC),
+  : UCommand(l, CMD_GENERIC),
     oper (oper),
     variablename (variablename)
 {
@@ -3829,7 +3846,7 @@ UCommand*
 UCommand_OPERATOR_VAR::copy()
 {
   UCommand_OPERATOR_VAR *ret =
-    new UCommand_OPERATOR_VAR(ucopy (oper),
+    new UCommand_OPERATOR_VAR(loc_, ucopy (oper),
 			      ucopy (variablename));
   return copybase(ret);
 }
@@ -3857,12 +3874,13 @@ MEMORY_MANAGER_INIT(UCommand_BINDER);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_BINDER::UCommand_BINDER(UVariableName* objname,
+UCommand_BINDER::UCommand_BINDER(const location& l,
+				 UVariableName* objname,
 				 UString* binder,
 				 int type,
 				 UVariableName* variablename,
 				 int nbparam)
-  : UCommand(CMD_GENERIC),
+  : UCommand(l, CMD_GENERIC),
     binder (binder),
     variablename (variablename),
     objname (objname),
@@ -3983,7 +4001,7 @@ UCommand_BINDER::execute(UConnection *connection)
 UCommand*
 UCommand_BINDER::copy()
 {
-  UCommand_BINDER *ret = new UCommand_BINDER(ucopy (objname),
+  UCommand_BINDER *ret = new UCommand_BINDER(loc_, ucopy (objname),
 					     ucopy (binder),
 					     type,
 					     ucopy (variablename),
@@ -4022,8 +4040,9 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_OPERATOR::UCommand_OPERATOR(UString* oper)
-  : UCommand(CMD_GENERIC),
+UCommand_OPERATOR::UCommand_OPERATOR(const location& l,
+				     UString* oper)
+  : UCommand(l, CMD_GENERIC),
     oper (oper)
 {
   ADDOBJ(UCommand_OPERATOR);
@@ -4305,7 +4324,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 UCommand*
 UCommand_OPERATOR::copy()
 {
-  return copybase(new UCommand_OPERATOR(ucopy (oper)));
+  return copybase(new UCommand_OPERATOR(loc_, ucopy (oper)));
 }
 
 //! Print the command
@@ -4326,8 +4345,9 @@ MEMORY_MANAGER_INIT(UCommand_WAIT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_WAIT::UCommand_WAIT(UExpression* expression) :
-  UCommand(CMD_WAIT),
+UCommand_WAIT::UCommand_WAIT(const location& l,
+			     UExpression* expression) :
+  UCommand(l, CMD_WAIT),
   expression (expression),
   endtime (0)
 {
@@ -4375,7 +4395,7 @@ UCommand_WAIT::execute(UConnection *connection)
 UCommand*
 UCommand_WAIT::copy()
 {
-  return copybase(new UCommand_WAIT(ucopy (expression)));
+  return copybase(new UCommand_WAIT(loc_, ucopy (expression)));
 }
 
 //! Print the command
@@ -4399,10 +4419,11 @@ MEMORY_MANAGER_INIT(UCommand_EMIT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_EMIT::UCommand_EMIT(UVariableName *eventname,
+UCommand_EMIT::UCommand_EMIT(const location& l,
+			     UVariableName *eventname,
 			     UNamedParameters *parameters,
 			     UExpression *duration) :
-  UCommand(CMD_EMIT),
+  UCommand(l, CMD_EMIT),
   eventname (eventname),
   parameters (parameters),
   duration (duration),
@@ -4621,7 +4642,7 @@ UCommand*
 UCommand_EMIT::copy()
 {
   UCommand_EMIT *ret =
-    new UCommand_EMIT(ucopy (eventname), ucopy (parameters));
+    new UCommand_EMIT(loc_, ucopy (eventname), ucopy (parameters));
   return copybase(ret);
 }
 
@@ -4643,8 +4664,9 @@ MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_WAIT_TEST::UCommand_WAIT_TEST(UExpression* test)
-  : UCommand(CMD_WAIT_TEST),
+UCommand_WAIT_TEST::UCommand_WAIT_TEST(const location& l,
+				       UExpression* test)
+  : UCommand(l, CMD_WAIT_TEST),
     test (test),
     nbTrue (0)
 {
@@ -4692,7 +4714,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
 UCommand*
 UCommand_WAIT_TEST::copy()
 {
-  UCommand_WAIT_TEST *ret = new UCommand_WAIT_TEST(ucopy (test));
+  UCommand_WAIT_TEST *ret = new UCommand_WAIT_TEST(loc_, ucopy (test));
   copybase(ret);
   ret->nbTrue  = 0;
   return ret;
@@ -4717,9 +4739,10 @@ MEMORY_MANAGER_INIT(UCommand_INCDECREMENT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_INCDECREMENT::UCommand_INCDECREMENT(UCommand::Type type,
+UCommand_INCDECREMENT::UCommand_INCDECREMENT(const location& l,
+					     Type type,
 					     UVariableName *variablename)
-  : UCommand(type),
+  : UCommand(l, type),
     variablename (variablename)
 {
   ADDOBJ(UCommand_INCDECREMENT);
@@ -4750,9 +4773,9 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   if (type == CMD_INCREMENT)
   {
     morph =
-      new UCommand_ASSIGN_VALUE(
-	variablename->copy(),
-	new UExpression(
+      new UCommand_ASSIGN_VALUE(loc_, 
+				variablename->copy(),
+				new UExpression(
 	  UExpression::EXPR_PLUS,
 	  new UExpression(UExpression::EXPR_VARIABLE, variablename->copy()),
 	  new UExpression(UExpression::EXPR_VALUE, ufloat(1))), 0);
@@ -4764,9 +4787,9 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
   if (type == CMD_DECREMENT)
   {
     morph =
-      new UCommand_ASSIGN_VALUE(
-	variablename->copy(),
-	new UExpression(
+      new UCommand_ASSIGN_VALUE(loc_, 
+				variablename->copy(),
+				new UExpression(
 	  UExpression::EXPR_MINUS,
 	  new UExpression(UExpression::EXPR_VARIABLE, variablename->copy()),
 	  new UExpression(UExpression::EXPR_VALUE, ufloat(1))), 0);
@@ -4783,7 +4806,7 @@ UCommand*
 UCommand_INCDECREMENT::copy()
 {
   UCommand_INCDECREMENT *ret =
-    new UCommand_INCDECREMENT(type, ucopy (variablename));
+    new UCommand_INCDECREMENT(loc_, type, ucopy (variablename));
   return copybase(ret);
 }
 
@@ -4813,11 +4836,12 @@ MEMORY_MANAGER_INIT(UCommand_DEF);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_DEF::UCommand_DEF(UDefType deftype,
+UCommand_DEF::UCommand_DEF(const location& l,
+			   UDefType deftype,
 			   UVariableName *variablename,
 			   UNamedParameters *parameters,
 			   UCommand* command)
-  : UCommand(CMD_DEF)
+  : UCommand(l, CMD_DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -4831,10 +4855,11 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_DEF::UCommand_DEF(UDefType deftype,
+UCommand_DEF::UCommand_DEF(const location& l,
+			   UDefType deftype,
 			   UString *device,
 			   UNamedParameters *parameters)
-  : UCommand(CMD_DEF)
+  : UCommand(l, CMD_DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -4848,9 +4873,10 @@ UCommand_DEF::UCommand_DEF(UDefType deftype,
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_DEF::UCommand_DEF(UDefType deftype,
+UCommand_DEF::UCommand_DEF(const location& l,
+			   UDefType deftype,
 			   UVariableList *variablelist)
-  : UCommand(CMD_DEF),
+  : UCommand(l, CMD_DEF),
     variablename (0),
     parameters (0),
     command (0),
@@ -4965,7 +4991,7 @@ UCommand_DEF::execute(UConnection *connection)
   if (device && !command && parameters)
   {
     UNamedParameters * param = parameters;
-    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,
+    UCommand_DEF *cdef = new UCommand_DEF (loc_, UDEF_VAR,
 					   new UVariableName(device->copy(),
 							     param->name,
 							     true,
@@ -4978,7 +5004,7 @@ UCommand_DEF::execute(UConnection *connection)
     for (param = param->next; param; param = param->next)
       if (param->name)
       {
-	cdef = new UCommand_DEF (UDEF_VAR,
+	cdef = new UCommand_DEF (loc_, UDEF_VAR,
 				 new UVariableName(device->copy(),
 						   param->name,
 						   true,
@@ -4986,7 +5012,7 @@ UCommand_DEF::execute(UConnection *connection)
 				 0,
 				 0);
 	cdef->setTag(this);
-	morph = new UCommand_TREE(UAND, cdef, morph);
+	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
       }
     persistant = false;
     return status = UMORPH;
@@ -4997,7 +5023,7 @@ UCommand_DEF::execute(UConnection *connection)
   {
     UVariableList *list = variablelist;
     list->variablename->local_scope = true;
-    UCommand_DEF *cdef = new UCommand_DEF (UDEF_VAR,
+    UCommand_DEF *cdef = new UCommand_DEF (loc_, UDEF_VAR,
 					   list->variablename->copy(),
 					   0,
 					   0);
@@ -5007,14 +5033,14 @@ UCommand_DEF::execute(UConnection *connection)
       if (list->variablename)
       {
 	list->variablename->local_scope = true;
-	cdef = new UCommand_DEF (UDEF_VAR,
+	cdef = new UCommand_DEF (loc_, UDEF_VAR,
 				 list->variablename->copy(),
 				 0,
 				 0);
 	cdef->setTag(this);
-	morph = new UCommand_TREE(UAND, cdef, morph);
+	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
       }
-
+    
     persistant = false;
     return status = UMORPH;
   }
@@ -5026,7 +5052,7 @@ UCommand_DEF::execute(UConnection *connection)
 UCommand*
 UCommand_DEF::copy()
 {
-  UCommand_DEF *ret = new UCommand_DEF(deftype, ucopy (variablename),
+  UCommand_DEF *ret = new UCommand_DEF(loc_, deftype, ucopy (variablename),
 				       ucopy (parameters),
 				       ucopy (command));
   ret->variablelist = ucopy (variablelist);
@@ -5067,9 +5093,10 @@ MEMORY_MANAGER_INIT(UCommand_CLASS);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_CLASS::UCommand_CLASS(UString *object,
+UCommand_CLASS::UCommand_CLASS(const location& l,
+			       UString *object,
 			       UNamedParameters *parameters) :
-  UCommand(CMD_CLASS),
+  UCommand(l, CMD_CLASS),
   object (object),
   parameters (parameters)
 {
@@ -5118,7 +5145,7 @@ UCommand_CLASS::execute(UConnection*)
       switch (param->expression->type)
       {
 	case UExpression::EXPR_VALUE:
-	  cdef = new UCommand_DEF(UDEF_VAR,
+	  cdef = new UCommand_DEF(loc_, UDEF_VAR,
 				  new UVariableName(
 				    new UString(object),
 				    new UString(param->expression->str),
@@ -5128,7 +5155,7 @@ UCommand_CLASS::execute(UConnection*)
 				  0);
 	  break;
 	case UExpression::EXPR_FUNCTION:
-	  cdef = new UCommand_DEF(UDEF_FUNCTION,
+	  cdef = new UCommand_DEF(loc_, UDEF_FUNCTION,
 				  new UVariableName(
 				    new UString(object),
 				    new UString(param->expression->variablename->id),
@@ -5138,7 +5165,7 @@ UCommand_CLASS::execute(UConnection*)
 				  0);
 	  break;
 	case UExpression::EXPR_EVENT:
-	  cdef = new UCommand_DEF(UDEF_EVENT,
+	  cdef = new UCommand_DEF(loc_, UDEF_EVENT,
 				  new UVariableName(
 				    new UString(object),
 				    new UString(param->expression->variablename->id),
@@ -5181,7 +5208,7 @@ UCommand_CLASS::execute(UConnection*)
 	if (param == parameters)
 	  morph = cdef;
 	else
-	  morph = new UCommand_TREE(UAND, cdef, morph);
+	  morph = new UCommand_TREE(loc_, UAND, cdef, morph);
       }
     }
 
@@ -5201,8 +5228,8 @@ UCommand_CLASS::execute(UConnection*)
 UCommand*
 UCommand_CLASS::copy()
 {
-  return copybase(new UCommand_CLASS(ucopy (object),
-					   ucopy (parameters)));
+  return copybase(new UCommand_CLASS(loc_, ucopy (object),
+				     ucopy (parameters)));
 }
 
 //! Print the command
@@ -5234,10 +5261,11 @@ MEMORY_MANAGER_INIT(UCommand_IF);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_IF::UCommand_IF(UExpression *test,
+UCommand_IF::UCommand_IF(const location& l,
+			 UExpression *test,
 			 UCommand* command1,
 			 UCommand* command2) :
-  UCommand(CMD_IF),
+  UCommand(l, CMD_IF),
   test (test),
   command1 (command1),
   command2 (command2)
@@ -5290,9 +5318,9 @@ UCommand_IF::execute(UConnection *connection)
 UCommand*
 UCommand_IF::copy()
 {
-  return copybase(new UCommand_IF(ucopy (test),
-				     ucopy (command1),
-				     ucopy (command2)));
+  return copybase(new UCommand_IF(loc_, ucopy (test),
+				  ucopy (command1),
+				  ucopy (command2)));
 }
 
 //! Print the command
@@ -5325,9 +5353,10 @@ MEMORY_MANAGER_INIT(UCommand_EVERY);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_EVERY::UCommand_EVERY(UExpression *duration,
+UCommand_EVERY::UCommand_EVERY(const location& l,
+			       UExpression *duration,
 				UCommand* command) :
-  UCommand(CMD_EVERY),
+  UCommand(l, CMD_EVERY),
   duration (duration),
   command (command),
   firsttime (true),
@@ -5361,7 +5390,7 @@ UCommand_EVERY::execute(UConnection* connection)
       firsttime)
   {
     persistant = true;
-    morph = new UCommand_TREE(UAND, command->copy(), this);
+    morph = new UCommand_TREE(loc_, UAND, command->copy(), this);
     starttime = thetime;
     firsttime = false;
     delete interval;
@@ -5376,8 +5405,8 @@ UCommand_EVERY::execute(UConnection* connection)
 UCommand*
 UCommand_EVERY::copy()
 {
-  return copybase(new UCommand_EVERY(ucopy (duration),
-					   ucopy (command)));
+  return copybase(new UCommand_EVERY(loc_, ucopy (duration),
+				     ucopy (command)));
 }
 
 //! Print the command
@@ -5405,9 +5434,10 @@ MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_TIMEOUT::UCommand_TIMEOUT(UExpression *duration,
+UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
+				   UExpression *duration,
 				    UCommand* command) :
-  UCommand(CMD_TIMEOUT),
+  UCommand(l, CMD_TIMEOUT),
   duration (duration),
   command (command)
 {
@@ -5436,16 +5466,17 @@ UCommand_TIMEOUT::execute(UConnection*)
 
   persistant = false;
   morph =
-    new UCommand_TREE(UAND,
-		       new UCommand_TREE(UPIPE,
-					  new UCommand_WAIT(duration->copy()),
-					  new UCommand_OPERATOR_ID(new UString("stop"),
-								   tagRef->copy())),
-		      new UCommand_TREE(UPIPE, command->copy(),
-					new UCommand_OPERATOR_ID(new UString("stop"),
-								 tagRef->copy()))
+    new UCommand_TREE
+    (loc_, UAND,
+     new UCommand_TREE(loc_, UPIPE,
+		       new UCommand_WAIT(loc_, duration->copy()),
+		       new UCommand_OPERATOR_ID(loc_,
+						new UString("stop"),
+						tagRef->copy())),
+     new UCommand_TREE(loc_, UPIPE, command->copy(),
+		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
+						tagRef->copy()))
       );
-
   morph->setTag(tagRef->str());
   return status = UMORPH;
 }
@@ -5454,8 +5485,8 @@ UCommand_TIMEOUT::execute(UConnection*)
 UCommand*
 UCommand_TIMEOUT::copy()
 {
-  return copybase(new UCommand_TIMEOUT(ucopy (duration),
-					       ucopy (command)));
+  return copybase(new UCommand_TIMEOUT(loc_, ucopy (duration),
+				       ucopy (command)));
 }
 
 //! Print the command
@@ -5483,9 +5514,10 @@ MEMORY_MANAGER_INIT(UCommand_STOPIF);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_STOPIF::UCommand_STOPIF(UExpression *condition,
+UCommand_STOPIF::UCommand_STOPIF(const location& l,
+				 UExpression *condition,
 				  UCommand* command)
-  : UCommand(CMD_STOPIF),
+  : UCommand(l, CMD_STOPIF),
     condition (condition),
     command (command)
 {
@@ -5519,31 +5551,30 @@ UCommand_STOPIF::execute(UConnection *connection)
 
   persistant = false;
   morph =
-    new UCommand_TREE(UAND,
-		       new UCommand_AT(CMD_AT,
-				       condition->copy(),
-				       new UCommand_OPERATOR_ID(new UString("stop"),
-								tagRef->copy()),
-				       0),
-		       command->copy()
-      );
+    new UCommand_TREE(
+      loc_, UAND,
+      new UCommand_AT(loc_, CMD_AT,
+		      condition->copy(),
+		      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
+					       tagRef->copy()),
+		      0),
+      command->copy());
   morph->setTag(tagRef->str());
   return status = UMORPH;
-
 
   if (command == 0)
     return status = UCOMPLETED;
 
   persistant = false;
   morph =
-    new UCommand_TREE(UAND,
-		       new UCommand_TREE(UPIPE,
-					  new UCommand_WAIT_TEST(condition->copy()),
-					  new UCommand_OPERATOR_ID(new UString("stop"),
-								   tagRef->copy())),
-		       command->copy()
-      );
-
+    new UCommand_TREE
+    (loc_, UAND,
+     new UCommand_TREE(loc_, UPIPE,
+		       new UCommand_WAIT_TEST(loc_, condition->copy()),
+		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
+						tagRef->copy())),
+     command->copy());
+  
   morph->setTag(tagRef->str());
   return status = UMORPH;
 }
@@ -5552,8 +5583,8 @@ UCommand_STOPIF::execute(UConnection *connection)
 UCommand*
 UCommand_STOPIF::copy()
 {
-  return copybase(new UCommand_STOPIF(ucopy (condition),
-					     ucopy (command)));
+  return copybase(new UCommand_STOPIF(loc_, ucopy (condition),
+				      ucopy (command)));
 }
 
 //! Print the command
@@ -5581,9 +5612,10 @@ MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FREEZEIF::UCommand_FREEZEIF(UExpression *condition,
+UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
+				     UExpression *condition,
 				      UCommand* command)
-  : UCommand(CMD_FREEZEIF),
+  : UCommand(l, CMD_FREEZEIF),
     condition (condition),
     command (command)
 {
@@ -5610,21 +5642,21 @@ UCommand_FREEZEIF::execute(UConnection*)
     return status = UCOMPLETED;
 
   persistant = false;
-  UCommand* cmd = new UCommand_TREE(UPIPE,
+  UCommand* cmd = new UCommand_TREE(loc_, UPIPE,
 				    command->copy(),
-				    new UCommand_NOOP()
+				    new UCommand_NOOP(loc_)
     );
   cmd->setTag(tagRef->str());
   morph =
-    new UCommand_TREE(UAND,
-		      new UCommand_AT(CMD_AT,
-				      condition->copy(),
-				      new UCommand_OPERATOR_ID(new UString("freeze"),
-							       tagRef->copy()),
-				      new UCommand_OPERATOR_ID(new UString("unfreeze"),
-							       tagRef->copy())),
-		      cmd
-      );
+    new UCommand_TREE
+    (loc_, UAND,
+     new UCommand_AT(loc_, CMD_AT,
+		     condition->copy(),
+		     new UCommand_OPERATOR_ID(loc_, new UString("freeze"),
+					      tagRef->copy()),
+		     new UCommand_OPERATOR_ID(loc_, new UString("unfreeze"),
+					      tagRef->copy())),
+     cmd);
 
   return status = UMORPH;
 }
@@ -5633,8 +5665,8 @@ UCommand_FREEZEIF::execute(UConnection*)
 UCommand*
 UCommand_FREEZEIF::copy()
 {
-  return copybase(new UCommand_FREEZEIF(ucopy (condition),
-						 ucopy (command)));
+  return copybase(new UCommand_FREEZEIF(loc_, ucopy (condition),
+					ucopy (command)));
 }
 
 //! Print the command
@@ -5662,11 +5694,12 @@ MEMORY_MANAGER_INIT(UCommand_AT);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_AT::UCommand_AT(UCommand::Type type,
-			  UExpression *test,
-			  UCommand* command1,
-			  UCommand* command2)
-  : UCommand(type),
+UCommand_AT::UCommand_AT(const location& l,
+			 Type type,
+			 UExpression *test,
+			 UCommand* command1,
+			 UCommand* command2)
+  : UCommand(l, type),
     UASyncCommand(),
     test (test),
     command1 (command1),
@@ -5767,7 +5800,7 @@ UCommand_AT::execute(UConnection *connection)
 	    morph_onleave = command2->copy ();
 	  else
 	    morph_onleave =
-	      new UCommand_TREE (UAND, morph_onleave, command2->copy ());
+	      new UCommand_TREE (loc_, UAND, morph_onleave, command2->copy ());
 	  domorph = true;
 	  morph = this;
 	}
@@ -5787,8 +5820,8 @@ UCommand_AT::execute(UConnection *connection)
     morph = this;
     // scan triggering candidates
     for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	  ic != candidates.end ();
-	  ++ic)
+	 ic != candidates.end ();
+	 ++ic)
     {
       UCommand* assigncmd;
       if (!(*ic)->hasTriggered())
@@ -5799,17 +5832,12 @@ UCommand_AT::execute(UConnection *connection)
 	  {
 	    morph =
 	      new UCommand_TREE
-	      (UAND,
-		new UCommand_TREE
-		(UPIPE,
-		  assigncmd,
-		  command1->copy()
-		  ),
-		morph
-		);
+	      (loc_, UAND,
+	       new UCommand_TREE (loc_, UPIPE, assigncmd, command1->copy()),
+	       morph);
 	  }
 	  else
-	    morph = new UCommand_TREE (UAND, command1->copy (), morph);
+	    morph = new UCommand_TREE (loc_, UAND, command1->copy (), morph);
 	}
 	else
 	  reloop_ = true; // we should try again later
@@ -5827,7 +5855,7 @@ UCommand_AT::execute(UConnection *connection)
     if (morph_onleave)
     {
       // at this point, morph is at least equal to "this"
-      morph = new UCommand_TREE (UAND, morph, morph_onleave);
+      morph = new UCommand_TREE (loc_, UAND, morph, morph_onleave);
     }
     morph->background = true;
     persistant = true;
@@ -5841,7 +5869,7 @@ UCommand_AT::execute(UConnection *connection)
 UCommand*
 UCommand_AT::copy()
 {
-  return copybase(new UCommand_AT(type,
+  return copybase(new UCommand_AT(loc_, type,
 				  ucopy (test),
 				  ucopy (command1),
 				  ucopy (command2)));
@@ -5881,10 +5909,11 @@ MEMORY_MANAGER_INIT(UCommand_WHILE);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_WHILE::UCommand_WHILE(UCommand::Type type,
+UCommand_WHILE::UCommand_WHILE(const location& l,
+			       Type type,
 			       UExpression *test,
 			       UCommand* command)
-  : UCommand(type),
+  : UCommand(l, type),
     test (test),
     command (command)
 {
@@ -5920,19 +5949,17 @@ UCommand_WHILE::execute(UConnection *connection)
     UNodeType nodeType = nodetype (type);
 
     if (nodeType == UPIPE)
-      morph = new UCommand_TREE(UPIPE, command->copy(), this);
+      morph = new UCommand_TREE(loc_, UPIPE, command->copy(), this);
     else
       morph =
-	new UCommand_TREE(
-	  nodeType,
-	  new UCommand_TREE(
-	    UAND,
-	    command->copy(),
-	    new UCommand_NOOP()
-	    ),
-	  this
-	  );
-
+	new UCommand_TREE(loc_, 
+			  nodeType,
+			  new UCommand_TREE(loc_, 
+					    UAND,
+					    command->copy(),
+					    new UCommand_NOOP(loc_)),
+			  this);
+    
     persistant = true;
     return status = UMORPH;
   }
@@ -5944,7 +5971,7 @@ UCommand_WHILE::execute(UConnection *connection)
 UCommand*
 UCommand_WHILE::copy()
 {
-  return copybase(new UCommand_WHILE(type, ucopy (test), ucopy (command)));
+  return copybase(new UCommand_WHILE(loc_, type, ucopy (test), ucopy (command)));
 }
 
 //! Print the command
@@ -5970,10 +5997,11 @@ MEMORY_MANAGER_INIT(UCommand_WHENEVER);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_WHENEVER::UCommand_WHENEVER(UExpression *test,
+UCommand_WHENEVER::UCommand_WHENEVER(const location& l,
+				     UExpression *test,
 				     UCommand* command1,
 				     UCommand* command2)
-  : UCommand(CMD_WHENEVER),
+  : UCommand(l, CMD_WHENEVER),
     UASyncCommand(),
     test (test),
     command1 (command1),
@@ -6011,14 +6039,14 @@ UCommand_WHENEVER::execute(UConnection *connection)
   {
     morph =
       new UCommand_TREE
-      (
-	UAND,
-	this,
+      (loc_, 
+       UAND,
+       this,
 	new UCommand_WHENEVER
-	(
-	  new UExpression (UExpression::EXPR_TEST_BANG,
-			   test->copy (),
-			   0),
+       (loc_, 
+	new UExpression (UExpression::EXPR_TEST_BANG,
+			 test->copy (),
+			 0),
 	  command2,
 	  0
 	  )
@@ -6137,7 +6165,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	    if (!assign)
 	      assign = assigncmd;
 	    else
-	      assign = new UCommand_TREE (UAND, assigncmd, assign);
+	      assign = new UCommand_TREE (loc_, UAND, assigncmd, assign);
 	  }
 	}
 	else
@@ -6149,11 +6177,11 @@ UCommand_WHENEVER::execute(UConnection *connection)
     {
       active_ = true;
       ASSERT (theloop_ == 0);
-      theloop_ = new UCommand_LOOP (command1->copy ());
+      theloop_ = new UCommand_LOOP (loc_, command1->copy ());
       theloop_->setTag ("__system__"); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
-	assign = new UCommand_TREE (UPIPE, assign, theloop_);
+	assign = new UCommand_TREE (loc_, UPIPE, assign, theloop_);
       else
 	assign = theloop_;
     }
@@ -6161,7 +6189,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     if (assign)
     {
       domorph = true;
-      morph = new UCommand_TREE (UPIPE, this, assign);
+      morph = new UCommand_TREE (loc_, UPIPE, this, assign);
     }
   }
 
@@ -6180,9 +6208,9 @@ UCommand_WHENEVER::execute(UConnection *connection)
 UCommand*
 UCommand_WHENEVER::copy()
 {
-  return copybase(new UCommand_WHENEVER(ucopy (test),
-						 ucopy (command1),
-						 ucopy (command2)));
+  return copybase(new UCommand_WHENEVER(loc_, ucopy (test),
+					ucopy (command1),
+					ucopy (command2)));
 }
 
 //! Print the command
@@ -6219,8 +6247,9 @@ MEMORY_MANAGER_INIT(UCommand_LOOP);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_LOOP::UCommand_LOOP(UCommand* command)
-  : UCommand(CMD_LOOP),
+UCommand_LOOP::UCommand_LOOP(const location& l,
+			     UCommand* command)
+  : UCommand(l, CMD_LOOP),
     command (command),
     whenever_hook (0)
 {
@@ -6242,10 +6271,10 @@ UCommand_LOOP::execute(UConnection*)
 {
   if (command == 0) return status = UCOMPLETED;
 
-  morph = new UCommand_TREE(USEMICOLON,
-			    new UCommand_TREE(UAND,
+  morph = new UCommand_TREE(loc_, USEMICOLON,
+			    new UCommand_TREE(loc_, UAND,
 					      command->copy(),
-					      new UCommand_NOOP()),
+					      new UCommand_NOOP(loc_)),
 			    this);
   persistant = true;
   return status = UMORPH;
@@ -6255,7 +6284,7 @@ UCommand_LOOP::execute(UConnection*)
 UCommand*
 UCommand_LOOP::copy()
 {
-  return copybase(new UCommand_LOOP(ucopy (command)));
+  return copybase(new UCommand_LOOP(loc_, ucopy (command)));
 }
 
 //! Print the command
@@ -6283,10 +6312,11 @@ MEMORY_MANAGER_INIT(UCommand_LOOPN);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_LOOPN::UCommand_LOOPN(UCommand::Type type,
+UCommand_LOOPN::UCommand_LOOPN(const location& l,
+			       Type type,
 			       UExpression* expression,
 			       UCommand* command)
-  : UCommand(type),
+  : UCommand(l, type),
     expression (expression),
     command (command)
 {
@@ -6337,12 +6367,13 @@ UCommand_LOOPN::execute(UConnection *connection)
   UNodeType nodeType = nodetype (type);
 
   if (nodeType == UPIPE || nodeType == UAND)
-    morph = new UCommand_TREE(nodeType, command->copy(), this);
+    morph = new UCommand_TREE(loc_, nodeType, command->copy(), this);
   else
-    morph = new UCommand_TREE(nodeType, new UCommand_TREE(UAND,
-							  command->copy(),
-							  new UCommand_NOOP()),
-			      this);
+    morph = new UCommand_TREE
+      (loc_, nodeType, new UCommand_TREE(loc_, UAND,
+					 command->copy(),
+					 new UCommand_NOOP(loc_)),
+       this);
   persistant = true;
   return status = UMORPH;
 }
@@ -6351,9 +6382,9 @@ UCommand_LOOPN::execute(UConnection *connection)
 UCommand*
 UCommand_LOOPN::copy()
 {
-  return copybase(new UCommand_LOOPN(type,
-					   ucopy (expression),
-					   ucopy (command)));
+  return copybase(new UCommand_LOOPN(loc_, type,
+				     ucopy (expression),
+				     ucopy (command)));
 }
 
 //! Print the command
@@ -6387,12 +6418,13 @@ MEMORY_MANAGER_INIT(UCommand_FOR);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FOR::UCommand_FOR(UCommand::Type type,
-			    UCommand* instr1,
-			    UExpression* test,
-			    UCommand* instr2,
-			    UCommand* command)
-  : UCommand(type),
+UCommand_FOR::UCommand_FOR(const location& l,
+			   Type type,
+			   UCommand* instr1,
+			   UExpression* test,
+			   UCommand* instr2,
+			   UCommand* command)
+  : UCommand(l, type),
     instr1 (instr1),
     instr2 (instr2),
     test (test),
@@ -6435,7 +6467,7 @@ UCommand_FOR::execute(UConnection *connection)
     UCommand *first_instruction = instr1;
 
     instr1 = 0;
-    morph = new UCommand_TREE(USEMICOLON, first_instruction, this);
+    morph = new UCommand_TREE(loc_, USEMICOLON, first_instruction, this);
     persistant = true;
     return status = UMORPH;
   }
@@ -6459,41 +6491,33 @@ UCommand_FOR::execute(UConnection *connection)
     {
       if (instr2)
 	morph =
-	  new UCommand_TREE(nodeType, command->copy(),
-			    new UCommand_TREE(UPIPE,
+	  new UCommand_TREE(loc_, nodeType, command->copy(),
+			    new UCommand_TREE(loc_, UPIPE,
 					      tmp_instr2 = instr2->copy(),
-					      this
-					     )
-			   );
+					      this));
       else
-	morph = new UCommand_TREE(nodeType, command->copy(), this);
+	morph = new UCommand_TREE(loc_, nodeType, command->copy(), this);
     }
     else
     {
       if (instr2)
 	morph =
-	  new UCommand_TREE(nodeType,
-			    new UCommand_TREE(UAND,
-					      new UCommand_TREE
-					      (
-						UPIPE,
-						command->copy(),
-						tmp_instr2 = instr2->copy()
-						),
-					      new UCommand_NOOP()
-			      ),
-			    this
+	  new UCommand_TREE
+	  (loc_, nodeType,
+	   new UCommand_TREE(loc_, UAND,
+			     new UCommand_TREE
+			     (loc_, UPIPE,
+			      command->copy(), tmp_instr2 = instr2->copy()),
+			     new UCommand_NOOP(loc_)),
+	   this
 	    );
       else
 	morph =
-	  new UCommand_TREE(nodeType,
-			    new UCommand_TREE(
-			      UAND,
-			      command->copy(),
-			      new UCommand_NOOP()
-			      ),
-			    this
-	    );
+	  new UCommand_TREE
+	  (loc_, nodeType,
+	   new UCommand_TREE(loc_, UAND, command->copy(),
+			     new UCommand_NOOP(loc_)),
+	   this);
     }
     if (tmp_instr2)
       tmp_instr2->morphed = true;
@@ -6508,7 +6532,7 @@ UCommand_FOR::execute(UConnection *connection)
 UCommand*
 UCommand_FOR::copy()
 {
-  UCommand_FOR *ret = new UCommand_FOR(type,
+  UCommand_FOR *ret = new UCommand_FOR(loc_, type,
 				       ucopy (instr1),
 				       ucopy (test),
 				       ucopy (instr2),
@@ -6562,19 +6586,19 @@ MEMORY_MANAGER_INIT(UCommand_FOREACH);
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
  */
-UCommand_FOREACH::UCommand_FOREACH(UCommand::Type type,
-				    UVariableName* variablename,
-				    UExpression* expression,
-				    UCommand* command) :
-  UCommand(type)
+UCommand_FOREACH::UCommand_FOREACH(const location& l,
+				   Type type,
+				   UVariableName* variablename,
+				   UExpression* expression,
+				   UCommand* command)
+  : UCommand(l, type),
+    variablename (variablename),
+    command (command),
+    expression (expression),
+    position (0),
+    firsttime (true)
 {
   ADDOBJ(UCommand_FOREACH);
-  this->variablename = variablename;
-  this->expression   = expression;
-  this->command	     = command;
-
-  position = 0;
-  firsttime = true;
 }
 
 //! UCommand subclass destructor.
@@ -6620,24 +6644,19 @@ UCommand_FOREACH::execute(UConnection *connection)
   }
   if (position->dataType != DATA_NUM && position->dataType != DATA_STRING)
   {
-	connection->sendf (getTag().c_str(), "!!! This type is not supported yet\n");
+    connection->sendf (getTag().c_str(), "!!! This type is not supported yet\n");
     delete currentvalue;
     return status = UCOMPLETED;
   }
 
   morph =
-    new UCommand_TREE(
-      nodeType,
-      new UCommand_TREE(
-	UPIPE,
-	new UCommand_ASSIGN_VALUE
-	(
-	  variablename->copy(),
-	  currentvalue,
-	  0),
-	command->copy()),
-      this
-      );
+    new UCommand_TREE
+    (loc_, nodeType,
+     new UCommand_TREE(loc_, UPIPE,
+		       new UCommand_ASSIGN_VALUE
+		       (loc_, variablename->copy(), currentvalue, 0),
+		       command->copy()),
+     this);
   ((UCommand_TREE*)((UCommand_TREE*)morph)->command1)->command1->setTag(this);
 
   position = position->next;
@@ -6649,7 +6668,7 @@ UCommand_FOREACH::execute(UConnection *connection)
 UCommand*
 UCommand_FOREACH::copy()
 {
-  UCommand_FOREACH *ret = new UCommand_FOREACH(type,
+  UCommand_FOREACH *ret = new UCommand_FOREACH(loc_, type,
 					       ucopy (variablename),
 					       ucopy (expression),
 					       ucopy (command));
@@ -6696,8 +6715,9 @@ MEMORY_MANAGER_INIT(UCommand_NOOP);
  executed. It is a truely empty command, used to structure command trees
  like in the { commands... }  case.
  */
-UCommand_NOOP::UCommand_NOOP(bool zerotime) :
-  UCommand(CMD_NOOP)
+UCommand_NOOP::UCommand_NOOP(const location& l,
+			     bool zerotime)
+  : UCommand(l, CMD_NOOP)
 {
   ADDOBJ(UCommand_NOOP);
   // FIXME: Otherwise, what is the value?
@@ -6730,7 +6750,7 @@ UCommandStatus UCommand_NOOP::execute(UConnection *connection)
 UCommand*
 UCommand_NOOP::copy()
 {
-  return copybase(new UCommand_NOOP(status == URUNNING));
+  return copybase(new UCommand_NOOP(loc_, status == URUNNING));
 }
 
 //! Print the command

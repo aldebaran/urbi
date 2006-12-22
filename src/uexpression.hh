@@ -188,8 +188,8 @@ private:
   /// eval() specialized for type == EXPR_FUNCTION.
   UValue*
   eval_EXPR_FUNCTION (UCommand *command,
-                      UConnection *connection,
-                      UEventCompound*& ec);
+		      UConnection *connection,
+		      UEventCompound*& ec);
 };
 
 #endif

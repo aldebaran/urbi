@@ -864,7 +864,7 @@ UConnection::processCommand(UCommand *&command,
 			 (!(*retr)->connectionTag->equal(connectionTag))))
 		    {
 		      UCommand_TREE* tohook =
-			new UCommand_TREE(UAND,
+			new UCommand_TREE(UCommand::location(), UAND,
 					  command->copy(),
 					  0);
 		      (*retr)->append(tohook);

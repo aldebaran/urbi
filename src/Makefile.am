@@ -47,6 +47,7 @@ fwd.hh								\
 memorymanager/blockmemorymanager.hh				\
 memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
 parser/uparser.hh parser/uparser.cc				\
+uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
 uasyncregister.hh uasyncregister.cc				\
 uatcandidate.hh uatcandidate.cc					\
@@ -128,6 +129,7 @@ parser/uparser.hh
 kernelinclude_HEADERS +=			\
 fwd.hh						\
 version.hh					\
+uast.hh						\
 ubinary.hh					\
 ubinder.hh					\
 ucallid.hh					\

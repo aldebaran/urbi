@@ -94,5 +94,4 @@ class UCommand_WAIT_TEST;
 class UCommand_WHENEVER;
 class UCommand_WHILE;
 
-
 #endif //! KERNEL1_FWD_HH

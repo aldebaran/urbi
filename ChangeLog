@@ -1,5 +1,13 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Add location to UCommands
+	* src/uast.hh: New.
+	* src/Makefile.am: Adjust.
+	* src/ucommand.hh (UCommand): Derive from UAst.
+	Adjust all dependencies.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Update test framework
 	* configure.ac: Adjust.
 
