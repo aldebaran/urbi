@@ -46,6 +46,5 @@ URBI_LIBPORT
 
 AC_CONFIG_HEADERS([src/config.h])
 # This is urbivalid.
-AC_CONFIG_SUBDIRS([tests])
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
 AC_OUTPUT

@@ -1,5 +1,10 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Update test framework
+	* configure.ac: Adjust.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Store all the parsed file names
 	* src/parser/uparser.hh, src/parser/uparser.cc (files, files_):
 	New.
