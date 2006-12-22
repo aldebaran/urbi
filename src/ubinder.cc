@@ -52,11 +52,11 @@ UBinder::addMonitor (const UString& objname, UConnection *c)
 {
   UMonitor *m = 0;
 
-  for (monitors_type::iterator mit = monitors.begin();
-       mit != monitors.end() && !m;
-       mit++)
-    if ((*mit)->c == c)
-      m = *mit;
+  for (monitors_type::iterator i = monitors.begin();
+       i != monitors.end() && !m;
+       i++)
+    if ((*i)->c == c)
+      m = *i;
 
   if (!m)
   {
@@ -74,12 +74,12 @@ UBinder::locateMonitor (UConnection *c)
   UMonitor *m = 0;
 
   // locate the connection
-  for (monitors_type::iterator mit = monitors.begin();
-       mit != monitors.end();
-       mit++)
+  for (monitors_type::iterator i = monitors.begin();
+       i != monitors.end();
+       i++)
   {
-    if ((*mit)->c == c)
-      m = (*mit);
+    if ((*i)->c == c)
+      m = (*i);
   }
 
   return m;
@@ -125,25 +125,24 @@ UBinder::removeMonitor(UConnection *c)
 bool
 UBinder::removeMonitor (const UString& objname)
 {
-  for (monitors_type::iterator mit = monitors.begin();
-       mit != monitors.end();
+  for (monitors_type::iterator i = monitors.begin();
+       i != monitors.end();
        )
-  {
-    if ((*mit)->removeObject(objname))
+    if ((*i)->removeObject(objname))
     {
-      delete *mit;
-      mit = monitors.erase(mit);
+      delete *i;
+      i = monitors.erase(i);
     }
     else
-      mit++;
-  }
+      i++;
+
   return monitors.empty();
 }
 
 
-/*****************************************************************/
-/* UMonitor */
-/*****************************************************************/
+/*-----------.
+| UMonitor.  |
+`-----------*/
 
 //! UMonitor constructor
 UMonitor::UMonitor(UConnection *c): c(c)
@@ -151,8 +150,8 @@ UMonitor::UMonitor(UConnection *c): c(c)
 }
 
 //! UMonitor constructor
-UMonitor::UMonitor(const UString& objname, UConnection *c) :
-  c (c)
+UMonitor::UMonitor(const UString& objname, UConnection *c)
+  : c (c)
 {
   addObject(objname);
 }
@@ -174,19 +173,14 @@ UMonitor::addObject(const UString& objname)
 bool
 UMonitor::removeObject(const UString& objname)
 {
-  // locate the object
-  UString *s = 0;
-  for (std::list<UString*>::iterator sit = objects.begin();
-       sit != objects.end() && !s;
-       sit++)
-    if (objname.equal(*sit))
-      s = (*sit);
-
-  if (!s)
-    return false;
-
-  objects.remove(s);
-  delete s;
-
-  return objects.empty();
+  for (std::list<UString*>::iterator i = objects.begin();
+       i != objects.end();
+       i++)
+    if (objname.equal(*i))
+    {
+      objects.remove(*i);
+      delete *i;
+      return objects.empty();
+    }
+  return false;
 }

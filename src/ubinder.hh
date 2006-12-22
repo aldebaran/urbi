@@ -20,13 +20,13 @@
  **************************************************************************** */
 
 #ifndef UBINDER_HH
-#define UBINDER_HH
+# define UBINDER_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "ustring.hh"
-#include "utypes.hh"
+# include "fwd.hh"
+# include "ustring.hh"
+# include "utypes.hh"
 
 // *****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command

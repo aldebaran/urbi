@@ -1,5 +1,11 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Clean up
+	* src/ubinder.hh, src/ubinder.cc: Here.
+	Use simple iterator names.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	debug (va_list)
 	* src/userver.hh, src/userver.cc (debug): One more version,
 	taking a va_list.
