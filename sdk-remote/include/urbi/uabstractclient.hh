@@ -168,8 +168,10 @@ namespace urbi
     virtual ~UAbstractClient();
 
     /// Return current error status, or zero if no error occurred.
-    int error() {return(rc);};
-
+    int error()
+    {
+      return rc;
+    }
 
     // Sending
 

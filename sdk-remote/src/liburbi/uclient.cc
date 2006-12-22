@@ -87,7 +87,7 @@ namespace urbi
       sa.sin_addr.s_addr = inet_addr(host);
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
-	printf("UClient::UClient couldn't resolve host name.\n");
+	printf("UClient::UClient cannot resolve host name.\n");
 	rc = -1;
 	return;
       }
@@ -116,12 +116,9 @@ namespace urbi
     // Check there was no error.
     if (rc)
     {
-      printf("UClient::UClient couldn't connect.\n");
+      std::cerr << "UClient::UClient cannot connect." << std::endl;
       return;
     }
-
-    if (rc)
-      return;
 
     //check that it really worked
     int pos=0;
@@ -130,7 +127,7 @@ namespace urbi
     if (pos<0)
     {
       rc = pos;
-      printf("UClient::UClient couldn't connect: read error %d.\n",rc);
+      printf("UClient::UClient cannot connect: read error %d.\n",rc);
       return;
     }
     else

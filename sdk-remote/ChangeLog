@@ -1,3 +1,9 @@
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
+	Simplify
+	* include/urbi/uabstractclient.hh: Formatting changes.
+	* src/liburbi/uclient.cc: couldn't -> cannot.
+
 2006-12-19  Akim Demaille  <demaille@gostai.com>
 
 	Add a missing ::urbi::
