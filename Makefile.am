@@ -36,13 +36,10 @@ dist-hook:
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += sdk
-SVN_EXTERNALS_PROXY += uobject urbivalid
+SVN_EXTERNALS += sdk tests
+SVN_EXTERNALS_PROXY += uobject
 uobject-help uobject-ci uobject-up uobj-ci uob-up:
 	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
-
-urbivalid-help urbivalid-ci urbivalid-up:
-	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
 
 maintainer-check: valgrind-check
 valgrind-check:

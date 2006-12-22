@@ -1,5 +1,10 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Update tests
+	* Makefile.am: Fix.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Missing include
 	* src/uvariable.cc (ubinary.hh): Include it.
 
