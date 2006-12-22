@@ -1,5 +1,10 @@
 2006-12-23  Akim Demaille  <demaille@gostai.com>
 
+	Fix multiple definitions
+	* src/uast.hh (UAst::UAst): inline the implementation.
+
+2006-12-23  Akim Demaille  <demaille@gostai.com>
+
 	Simplify UCommand uses
 	* src/ucommand.cc: Don't qualify when used by the definer.
 	* src/uconnection.cc: Fix C++ -> C of strings.
