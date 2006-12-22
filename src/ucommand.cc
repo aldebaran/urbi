@@ -699,38 +699,28 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	   && fun->nbparam()
 	   && expression->parameters->size() != fun->nbparam())
 	  || (expression->parameters && !fun->nbparam())
-	  || (!expression->parameters && fun->nbparam()) )
+	  || (!expression->parameters && fun->nbparam()))
       {
 	connection->sendf (getTag(),
 			   "!!! Invalid number of arguments for %s"
 			   " (should be %d params)\n",
 			   functionname->str(), fun->nbparam());
-
 	return status = UCOMPLETED;
       }
 
       persistant = false;
       UVariableName* resultContainer =
-	new UVariableName(
-	  new UString("__UFnct"),
-	  new UString("__result__"),
-	  true,
-	  0);
+	new UVariableName(new UString("__UFnct"), new UString("__result__"),
+			  true, 0);
 
       morph =
 	new UCommand_TREE
-	(loc_,
-	 UPIPE,
-	 fun->cmdcopy(),
-	  new UCommand_ASSIGN_VALUE
-	 (loc_,
-	  variablename->copy(),
-	  new UExpression(UExpression::EXPR_VARIABLE,
-			    resultContainer),
-	    0
-	    )
-	  );
-
+	(loc_, UPIPE, fun->cmdcopy(),
+	 new UCommand_ASSIGN_VALUE (loc_,
+				    variablename->copy(),
+				    new UExpression(UExpression::EXPR_VARIABLE,
+						    resultContainer),
+				    0));
 
       if (morph)
       {
@@ -749,9 +739,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
 	  assert (uc_tree);
 	  ((UCommand_TREE*)morph)->callid =
-	    new UCallid(buf,
-			fundevice->str(),
-			uc_tree);
+	    new UCallid(buf, fundevice->str(), uc_tree);
 	}
 
 	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
@@ -775,7 +763,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  if (!valparam)
 	  {
-	    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+	    connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
 	    return status = UCOMPLETED;
 	  }
 
@@ -831,8 +819,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    if (!valparam)
 	    {
-	      connection->send("!!! EXPR evaluation failed\n",
-			       getTag().c_str());
+	      connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
 	      return status = UCOMPLETED;
 	    }
 	    // urbi::UValue do not see ::UValue, so it must
@@ -1394,9 +1381,9 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	if (targettime <  ABSF ((targetval-startval)/ variable->speedmax))
 	{
 	  if (errorFlag)
-	    connection->send("!!! Warning: request exceeds speedmax."
-			     " Enforcing limitation\n",
-			     getTag().c_str());
+	    connection->sendf(getTag(),
+			      "!!! Warning: request exceeds speedmax."
+			      " Enforcing limitation\n");
 	  targettime = ABSF ((targetval - startval)/ variable->speedmax);
 	}
       delete v;
@@ -1411,8 +1398,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	ABSF(targetval - currentVal)/ speedmin;
 
       if (errorFlag && first)
-	connection->send("!!! low speed: increased to speedmin\n",
-			 getTag().c_str());
+	connection->sendf(getTag(), "!!! low speed: increased to speedmin\n");
     }
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1455,8 +1441,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	ABSF(targetval - currentVal)/speedmin;
 
       if (errorFlag && first)
-	connection->send("!!! low speed: increased to speedmin\n",
-			 getTag().c_str());
+	connection->sendf(getTag(), "!!! low speed: increased to speedmin\n");
     }
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1515,8 +1500,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	ABSF(targetval - currentVal)/ speedmin;
 
       if (errorFlag && first)
-	connection->send("!!! low speed: increased to speedmin\n",
-			 getTag().c_str());
+	connection->sendf(getTag(), "!!! low speed: increased to speedmin\n");
     }
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1635,8 +1619,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       {
 	if (!modif_getphase->getFullname())
 	{
-	  connection->send("!!! Invalid phase variable name\n",
-			   getTag().c_str());
+	  connection->sendf(getTag(), "!!! Invalid phase variable name\n");
 	  return UFAIL;
 	}
 	phasevari = new UVariable(modif_getphase->getFullname()->str(),
@@ -2269,8 +2252,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	UString* fundevice = expression->variablename->getDevice();
 	if (!fundevice)
 	{
-	  connection->send("!!! Function name evaluation failed\n",
-			   getTag().c_str());
+	  connection->sendf(getTag(), "!!! Function name evaluation failed\n");
 	  return status = UCOMPLETED;
 	}
 
@@ -2307,7 +2289,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  if (!valparam)
 	  {
-	    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+	    connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
 	    return status = UCOMPLETED;
 	  }
 	  buffer_t buf;
@@ -2366,8 +2348,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    if (!valparam)
 	    {
-	      connection->send("!!! EXPR evaluation failed\n",
-			       getTag().c_str());
+	      connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
 	      return status = UCOMPLETED;
 	    }
 	    // urbi::UValue do not see ::UValue,
@@ -2391,7 +2372,7 @@ UCommand_EXPR::execute(UConnection *connection)
 	  return status = UCOMPLETED;
 	}
       }
-      connection->send("!!! Invalid function call\n", getTag().c_str());
+      connection->sendf(getTag(), "!!! Invalid function call\n");
       return status = UCOMPLETED;
     }
 
@@ -2442,7 +2423,7 @@ UCommand_EXPR::execute(UConnection *connection)
   UValue* ret = expression->eval(this, connection);
   if (ret == 0)
   {
-    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+    connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
     return status = UCOMPLETED;
   }
 
@@ -2520,11 +2501,10 @@ UCommand_RETURN::execute(UConnection *connection)
     {
       UValue *value = expression->eval(this, connection);
       if (!value)
-	connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+	connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
       else if (value->dataType == DATA_OBJ)
-	connection->send("!!! Functions cannot return objects"
-			 " with Kernel 1\n",
-			 getTag().c_str());
+	connection->sendf(getTag(), "!!! Functions cannot return objects"
+			  " with Kernel 1\n");
       else
 	// FIXME: Why don't we use setReturnVar that calls "store"?
 	ASSERT (connection->stack.front()->returnVar)
@@ -2590,7 +2570,7 @@ UCommand_ECHO::execute(UConnection *connection)
 
   if (ret==0)
   {
-    connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+    connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
     return status = UCOMPLETED;
   }
 
@@ -2921,7 +2901,7 @@ UCommand_NEW::execute(UConnection *connection)
       UValue* valparam = pvalue->expression->eval(this, connection);
       if (!valparam)
       {
-	connection->send("!!! EXPR evaluation failed\n", getTag().c_str());
+	connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
 	buffer_t buf;
 	snprintf(buf, sizeof buf,
 		 "{delete %s}", id->str());
@@ -3028,8 +3008,8 @@ UCommand_ALIAS::execute(UConnection *connection)
     if (id0 && id1
 	&& !connection->server->addAlias(id0->str(), id1->str()))
     {
-      connection->send("!!! Circular alias detected, abort command.\n",
-		       getTag().c_str());
+      connection->sendf(getTag(),
+		       "!!! Circular alias detected, abort command.\n");
       return status = UCOMPLETED;
     }
     return status = UCOMPLETED;
@@ -3314,7 +3294,7 @@ UCommand_GROUP::execute(UConnection *connection)
 	  strncat(buf, ",", sizeof buf);
       }
       strncat(buf, "}\n", sizeof buf);
-      connection->send(buf, getTag().c_str());
+      connection->sendf(getTag(), buf);
     }
     return status = UCOMPLETED;
   }
@@ -3784,14 +3764,14 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	  tstr << "*** current value: binary\n";
 	  break;
       }
-      connection->send(tstr.str().c_str(),getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
     }
 
     if (dev)
     {
       std::ostringstream tstr;
       tstr << "*** current device load: " << dev->device_load->value->val<<'\n';
-      connection->send(tstr.str().c_str(),getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
     }
 
     if (variable)
@@ -3801,36 +3781,35 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	tstr << "*** rangemin: " << variable->rangemin << '\n';
       else
 	tstr << "*** rangemin: -INF\n";
-      connection->send(tstr.str().c_str(),getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
       tstr.str("");
 
       if (variable->rangemax != UINFINITY)
 	tstr << "*** rangemax: " << variable->rangemax << '\n';
       else
 	tstr << "*** rangemax: INF\n";
-      connection->send(tstr.str().c_str(),getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
       tstr.str("");
 
       if (variable->speedmin != -UINFINITY)
 	tstr << "*** speedmin: " << variable->rangemin << '\n';
       else
 	tstr << "*** speedmin: -INF\n";
-      connection->send(tstr.str().c_str(),getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
       tstr.str("");
 
       if (variable->speedmax != UINFINITY)
 	tstr << "*** speedmax: " << variable->rangemax << '\n';
       else
 	tstr << "*** speedmax: INF\n";
-      connection->send(tstr.str().c_str(),getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
       tstr.str("");
 
       if (variable->unit)
-	connection->send(getTag().c_str(),
-			 "*** unit: %s\n",
-			 variable->unit->str());
+	connection->sendf(getTag(),
+			  "*** unit: %s\n", variable->unit->str());
       else
-	connection->send(getTag().c_str(),
+	connection->sendf(getTag(),
 			 "*** unit: unspecified\n");
     }
 
@@ -4070,7 +4049,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     std::ostringstream tstr;
     tstr <<  "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
-    connection->send(tstr.str().c_str(), getTag().c_str());
+    connection->sendf(getTag(), tstr.str().c_str());
     return status = UCOMPLETED;
   }
 
@@ -4198,7 +4177,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	    tstr << "UNKNOWN TYPE";
 	}
 	tstr << '\n';
-	connection->send(tstr.str().c_str(), getTag().c_str());
+	connection->sendf(getTag(), tstr.str().c_str());
       }
     }
 
@@ -4215,7 +4194,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
       std::ostringstream tstr;
       tstr << "*** " << i->second->unforgedName->str() << "["
 	   <<  i->second->nbarg () << "]\n";
-      connection->send(tstr.str().c_str(), getTag().c_str());
+      connection->sendf(getTag(), tstr.str().c_str());
     }
 
     return status = UCOMPLETED;
@@ -4260,7 +4239,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 	    tstr << "UNKNOWN TYPE";
 	}
 	tstr << '\n';
-	connection->send(tstr.str().c_str(), getTag().c_str());
+	connection->sendf(getTag(), tstr.str().c_str());
       }
     }
 
@@ -4566,8 +4545,7 @@ UCommand_EMIT::execute(UConnection *connection)
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    if (!valparam)
 	    {
-	      connection->send("!!! EXPR evaluation failed\n",
-			       getTag().c_str());
+	      connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
 	      return status = UCOMPLETED;
 	    }
 	    // urbi::UValue do not see ::UValue, so it must be
