@@ -1,3 +1,10 @@
+2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Fix includes.
+	* src/ucommand.hh: Move cstdarg to.
+	* src/ucommand.cc: ... Here.
+	* src/userver.hh: Include cstdarg.
+
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
 	Clean up

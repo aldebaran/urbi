@@ -23,6 +23,7 @@
 
 #include "libport/cstdio"
 
+#include <cstdarg>
 #include <cstdlib>
 #include <cmath>
 
@@ -4628,7 +4629,7 @@ UCommand_EMIT::execute(UConnection *connection)
     HMbindertab::iterator it =
       ::urbiserver->eventbindertab.find(eventnamestr);
 
-    if (it != ::urbiserver->eventbindertab.end() 
+    if (it != ::urbiserver->eventbindertab.end()
 	&& ((parameters && it->second->nbparam == parameters->size())
 	    ||(!parameters && it->second->nbparam==0))
 	&& !it->second->monitors.empty())
@@ -4815,7 +4816,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
   if ((test->softtest_time
        && nbTrue > 0
        && (connection->server->lastTime() - startTrue
-	   >= test->softtest_time->val)) 
+	   >= test->softtest_time->val))
       || (nbTrue > 0 && test->softtest_time==0))
     return status = UCOMPLETED;
   else

@@ -22,6 +22,7 @@
 #ifndef USERVER_HH
 # define USERVER_HH
 
+# include <cstdarg>
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
