@@ -19,6 +19,7 @@
 
  **************************************************************************** */
 
+#include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
 #include <cstdarg>
@@ -1056,8 +1057,9 @@ UServer::addAlias(const char* id, const char* variablename)
   }
   else
   {
-    UString* ids = new UString(id); // persistant, no delete associated
-    aliastab[ids->str()] = new UString(variablename);
+    char* id_copy = strdup (id); // XXX we'll leak id_copy forever :|
+    assert (id_copy != 0);
+    aliastab[id_copy] = new UString(variablename);
   }
   return 1;
 }
