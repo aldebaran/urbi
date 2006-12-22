@@ -84,22 +84,22 @@ int usedMemory;
 UServer::UServer(ufloat frequency,
 		 int freeMemory,
 		 const char* mainName)
-  : isolate_ (false),
-    uservarState (false),
-    frequency_(frequency),
-    securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
-    mainName (new UString(mainName)),
+  : reseting (false),
+    stage (0),
     debugOutput (false),
+    mainName (new UString(mainName)),
     somethingToDelete (false),
+    uservarState (false),
     cpuoverload (false),
-    cpucount (0),
     signalcpuoverload (false),
+    cpucount (0),
     cputhreshold (1.2),
     defcheck (false),
     stopall (false),
     systemcommands (true),
-    reseting (false),
-    stage (0)
+    frequency_(frequency),
+    securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
+    isolate_ (false)
 {
   ::urbiserver = 0;
   memoryOverflow = securityBuffer_ == 0;
@@ -207,12 +207,12 @@ UServer::initialization()
 
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
        retr != urbi::objecthublist->end();
-       retr++)
+       ++retr)
     (*retr)->init((*retr)->name);
 
   for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
        retr != urbi::objectlist->end();
-       retr++)
+       ++retr)
     (*retr)->init((*retr)->name);
 
   if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
@@ -259,7 +259,7 @@ UServer::work()
   // Execute Timers
   for (urbi::UTimerTable::iterator i = urbi::timermap.begin();
        i != urbi::timermap.end();
-       i++)
+       ++i)
     if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
       (*i)->call();
@@ -311,7 +311,7 @@ UServer::work()
   // Scan currently opened connections for ongoing work
   for (std::list<UConnection*>::iterator r = connectionList.begin();
        r != connectionList.end();
-       r++)
+       ++r)
     if ((*r)->isActive())
     {
       if (!(*r)->isBlocked())
@@ -362,7 +362,7 @@ UServer::work()
 
   for (std::list<UConnection*>::iterator r = connectionList.begin();
        r != connectionList.end();
-       r++)
+       ++r)
     if  ((*r)->isActive() && (*r)->activeCommand)
     {
       if ((*r)->killall || stopall)
@@ -422,13 +422,13 @@ UServer::work()
 	(*i)->reloop = true;
       (*i)->speedmodified = false;
 
-      i++;
+      ++i;
     }
 
   // Execute Hub Updaters
   for (urbi::UTimerTable::iterator i = urbi::updatemap.begin();
        i != urbi::updatemap.end();
-       i++)
+       ++i)
     if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
       (*i)->call();
@@ -472,7 +472,7 @@ UServer::work()
       //delete objects first
       for (HMvariabletab::iterator i = variabletab.begin();
 	   i != variabletab.end();
-	   i++)
+	   ++i)
 	if (i->second->value
 	    && i->second->value->dataType == DATA_OBJ)
 	  varToReset.push_back(i->second);
@@ -486,12 +486,12 @@ UServer::work()
 	    it = varToReset.erase(it);
 	  }
 	  else
-	    it++;
+	    ++it;
 
       //delete the rest
       for (HMvariabletab::iterator i = variabletab.begin();
 	   i != variabletab.end();
-	   i++)
+	   ++i)
 	if (i->second->uservar)
 	  varToReset.push_back(i->second);
 
@@ -507,14 +507,14 @@ UServer::work()
 
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
-	   i++)
+	   ++i)
 	if  ((*i)->isActive())
 	  (*i)->send("*** Reset completed.\n", "reset");
 
       //restart everything
       for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
 	   i != urbi::objectlist->end();
-	   i++)
+	   ++i)
 	(*i)->init((*i)->name);
 
       loadFile("URBI.INI", &ghost->recvQueue());
@@ -531,7 +531,7 @@ UServer::work()
       {
 	for (std::list<UConnection*>::iterator i = connectionList.begin();
 	     i != connectionList.end();
-	     i++)
+	     ++i)
 	  if  ((*i)->isActive() && (*i) != ghost)
 	  {
 	    (*i)->send("*** Reloading\n", "reset");
@@ -738,7 +738,7 @@ UServer::shutdown()
 ufloat
 UServer::getTime()
 {
-  return (ufloat)0;
+  return 0;
 }
 
 //! Overload this function to return the remaining power of the robot
@@ -748,7 +748,7 @@ UServer::getTime()
 ufloat
 UServer::getPower()
 {
-  return (ufloat)1;
+  return 1;
 }
 
 //! Update the server's time using the robot-specific implementation
@@ -823,7 +823,7 @@ UServer::memoryCheck ()
     // Scan currently opened connections
     for (std::list<UConnection*>::iterator i = connectionList.begin();
 	 i != connectionList.end();
-	 i++)
+	 ++i)
       if ((*i)->isActive())
 	(*i)->warning(UWARNING_MEMORY);
   }
@@ -885,7 +885,7 @@ UServer::getVariable (const char *device,
 
 //! Mark all commands with stopTag in all connection for deletion
 void
-UServer::mark(UString *stopTag)
+UServer::mark(UString* stopTag)
 {
   HMtagtab::iterator it = tagtab.find(stopTag->str());
   if (it == tagtab.end())
@@ -895,16 +895,17 @@ UServer::mark(UString *stopTag)
 }
 
 void
-UServer::mark(TagInfo * ti)
+UServer::mark(TagInfo* ti)
 {
   for(std::list<UCommand*>::iterator i = ti->commands.begin();
-      i != ti->commands.end(); i++)
+      i != ti->commands.end();
+      ++i)
     if ((*i)->status != UONQUEUE || (*i)->morphed)
       (*i)->toDelete = true;
 
   for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
        i != ti->subTags.end();
-       i++)
+       ++i)
     mark(*i);
 }
 
@@ -1050,12 +1051,12 @@ UServer::addAlias(const char* id, const char* variablename)
 
   if (aliastab.find(id) != aliastab.end())
   {
-    UString *alias = aliastab[id];
+    UString* alias = aliastab[id];
     alias->update(variablename);
   }
   else
   {
-    UString *ids = new UString(id); // persistant, no delete associated
+    UString* ids = new UString(id); // persistant, no delete associated
     aliastab[ids->str()] = new UString(variablename);
   }
   return 1;

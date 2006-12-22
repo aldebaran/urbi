@@ -1,5 +1,12 @@
 2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Fix initialization order and code cleanup.
+	* src/userver.cc (ctor): Fix initialization order.
+	  Some code cleanup (including using ++iterator instead of iterator++
+	  where possible).
+
+2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Fix includes.
 	* src/ucommand.hh: Move cstdarg to.
 	* src/ucommand.cc: ... Here.
