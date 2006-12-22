@@ -60,7 +60,10 @@ public:
   void              error           (const char* s, ...);
   void              echo            (const char* s, ...);
   void              echoKey         (const char* key, const char* s, ...);
-  void              debug           (const char* s, ...);
+
+  void debug (const char* s, va_list args);
+  void debug (const char* s, ...);
+
   void              isolate         ();
   void              deIsolate       ();
   bool              isIsolated      ();

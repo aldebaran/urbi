@@ -658,23 +658,19 @@ UServer::echoKey(const char* key, const char* s, ...)
  \param s is the formatted string containing the message
  */
 void
+UServer::debug (const char* s, va_list args)
+{
+  char buf[MAXSIZE_INTERNALMESSAGE];
+  vsnprintf(buf, sizeof buf, s, args);
+  effectiveDisplay(buf);
+}
+
+void
 UServer::debug(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-
-  effectiveDisplay(tmpBuffer_);
-
-  //  used to slow down printing with Aibo...
-  //  ufloat y=4;ufloat x=145;  for (int i=0;i<300000;i++) y = y+ sin(i*x);
+  va_list args;
+  va_start(args, s);
+  debug (s, args);
 }
 
 //! Isolate the server from incoming commands.
