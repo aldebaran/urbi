@@ -26,6 +26,7 @@
 #include "libport/ref-pt.hh"
 
 #include "uasyncregister.hh"
+#include "ubinary.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
 #include "urbi/uobject.hh"

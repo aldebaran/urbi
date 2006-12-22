@@ -1,5 +1,10 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Missing include
+	* src/uvariable.cc (ubinary.hh): Include it.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Prepare for new tests/
 	This checkin probably does not work, but is needed to serialize
 	complex svn directory changes.
