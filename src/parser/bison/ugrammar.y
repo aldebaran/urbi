@@ -591,7 +591,7 @@ command:
 /* INSTRUCTION */
 
 instruction:
-  /* empty */ { $$ = 0; }
+  /* empty */ { $$ = 0; } /* FIXME: THIS IS BAD! REMOVE THIS! */
 
   | TOK_NOOP {
       $$ = new UCommand_NOOP();
@@ -1005,6 +1005,13 @@ instruction:
 
   | TOK_IF "(" expr ")" taggedcommand %prec CMDBLOCK {
 
+      if (!$5)
+      {
+        delete $3;
+        delete $5;
+	error(@$, "Empty then-part within an if.");
+	YYERROR;
+      }
       $$ = new UCommand_IF($3, $5, 0);
       MEMCHECK2($$, $3, $5);
     }
@@ -1073,7 +1080,14 @@ instruction:
     }
 
   | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-
+      if(!$6)
+      {
+	delete $4;
+	delete $6;
+	delete $8;
+	error(@$, "Empty body within an at command.");
+	YYERROR;
+      }
       $$ = new UCommand_AT(UCommand::CMD_AT_AND, $4, $6, $8);
       MEMCHECK3($$, $4, $6, $8);
     }
@@ -1097,7 +1111,14 @@ instruction:
     }
 
   | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {
-
+      if(!$5)
+      {
+	delete $3;
+	delete $5;
+	delete $7;
+	error(@$, "Empty body within a whenever command.");
+	YYERROR;
+      }
       $$ = new UCommand_WHENEVER($3, $5, $7);
       MEMCHECK3($$, $3, $5, $7);
     }
