@@ -25,6 +25,7 @@
 
 #include "libport/ref-pt.hh"
 
+#include "ubinary.hh"
 #include "ucommand.hh"
 #include "ucopy.hh"
 #include "urbi/uobject.hh"

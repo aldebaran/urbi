@@ -1,5 +1,15 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Less includes in headers
+	* src/uobj.hh, src/ucommand.hh: Remove several includes.
+	* src/parser/bison/ugrammar.y, src/ucommand.cc, src/uconnection.cc,
+	* src/uexpression.cc, src/uobj.cc, src/uvalue.cc:
+	Add the missing includes.
+	Rename iterators.
+	Formatting changes.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Simplifications
 	* src/ucommand.hh: Make private most attributes.
 	(copybase): Return the modified argument to please the call sites.

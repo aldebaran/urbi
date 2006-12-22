@@ -20,22 +20,18 @@
  **************************************************************************** */
 
 #ifndef UOBJ_HH
-#define UOBJ_HH
+# define UOBJ_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "ustring.hh"
-#include "ubinder.hh"
-
-
+# include "fwd.hh"
+# include "ustring.hh"
 
 // ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UObj
 {
 public:
-
   UObj(UString *device);
   ~UObj();
 

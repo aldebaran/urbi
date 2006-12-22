@@ -75,6 +75,7 @@
 #include "libport/ref-pt.hh"
 
 #include "parser/uparser.hh"
+#include "ubinary.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
 #include "ugroup.hh"
@@ -397,7 +398,7 @@ root:
       if ($1 && $1->type == UCommand::CMD_TREE)
       {
 	uparser.commandTree = dynamic_cast<UCommand_TREE*> ($1);
-        assert (uparser.commandTree != 0);
+	assert (uparser.commandTree != 0);
       }
       else
 	delete $1;
@@ -1007,8 +1008,8 @@ instruction:
 
       if (!$5)
       {
-        delete $3;
-        delete $5;
+	delete $3;
+	delete $5;
 	error(@$, "Empty then-part within an if.");
 	YYERROR;
       }

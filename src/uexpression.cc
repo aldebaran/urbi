@@ -28,6 +28,7 @@
 #include "libport/ref-pt.hh"
 
 #include "parser/uparser.hh"
+#include "ubinary.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
 #include "ucopy.hh"
@@ -725,14 +726,15 @@ UExpression::eval (UCommand *command,
       UValue* ret = e1->copy();
       if (ret->dataType == DATA_BINARY)
       {
-	UBinary *binaire = new UBinary(ret->refBinary->ref()->bufferSize, 0);
-	if ((!binaire) || (binaire->buffer == 0)) return 0;
-	binaire->parameters = ret->refBinary->ref()->parameters->copy();
+	UBinary *b = new UBinary(ret->refBinary->ref()->bufferSize, 0);
+	if (!b || b->buffer == 0)
+	  return 0;
+	b->parameters = ret->refBinary->ref()->parameters->copy();
 
-	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(binaire);
+	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
 	if (!ref) return 0;
 
-	memcpy(binaire->buffer,
+	memcpy(b->buffer,
 	       ret->refBinary->ref()->buffer,
 	       ret->refBinary->ref()->bufferSize);
 
@@ -1229,17 +1231,17 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
       }
       else
       {
-	UBinary *binaire =
+	UBinary *b =
 	  new UBinary(loadQueue->dataSize(),
 		      new UNamedParameters
 		      (new UExpression(EXPR_VALUE,
 				       new UString("wav")),
 		       0));
-	memcpy(binaire->buffer,
+	memcpy(b->buffer,
 	       loadQueue->pop(loadQueue->dataSize()),
 	       loadQueue->dataSize());
 
-	ret->refBinary = new libport::RefPt<UBinary>(binaire);
+	ret->refBinary = new libport::RefPt<UBinary>(b);
 	delete loadQueue;
       }
 

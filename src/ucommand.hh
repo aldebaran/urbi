@@ -30,10 +30,6 @@
 # include "utypes.hh"
 # include "ustring.hh"
 # include "uasynccommand.hh"
-# include "uvalue.hh"
-# include "uobj.hh"
-# include "ubinary.hh"
-
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
