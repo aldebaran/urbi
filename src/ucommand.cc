@@ -94,6 +94,17 @@ namespace
     }
   }
 
+  const char* kind (UCommand::Type type)
+  {
+    switch (nodetype (type))
+    {
+      case USEMICOLON: return "";
+      case UPIPE:      return " (PIPE)";
+      case UAND:       return " (AND)";
+      default: abort();
+    }
+  }
+    
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
@@ -5722,31 +5733,30 @@ UCommand_AT::execute(UConnection *connection)
       mixlist = ec->mixing ();
     }
 
-    for (std::list<UMultiEventInstance*>::iterator imei = mixlist.begin ();
-	 imei != mixlist.end ();
-	 ++imei)
+    for (std::list<UMultiEventInstance*>::iterator i = mixlist.begin ();
+	 i != mixlist.end ();
+	 ++i)
     {
       bool ok = false;
+      // FIXME: weird enough: we don't use break (which seems to mean
+      // that we can find *i several times), but we free it though.
       for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
 	   ic != candidates.end () && !ok;
 	   ++ic)
-      {
-	if ((*ic)->equal (*imei))
+	if ((*ic)->equal (*i))
 	{
 	  (*ic)->visited ();
 	  ok = true;
-	  delete *imei;
+	  delete *i;
 	}
-      }
+
       if (!ok)
-	candidates.push_back (new UAtCandidate (currentTime + duration,
-						*imei));
+	candidates.push_back (new UAtCandidate (currentTime + duration, *i));
     }
 
     //cleanup of candidates that do not appear anymore in the mixlist
     for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	 ic != candidates.end ();
-      )
+	 ic != candidates.end (); )
       if (!(*ic)->isVisited ())
       {
 	delete *ic;
@@ -5756,8 +5766,8 @@ UCommand_AT::execute(UConnection *connection)
 	  if (!morph_onleave)
 	    morph_onleave = command2->copy ();
 	  else
-	    morph_onleave = new UCommand_TREE
-	      (UAND, morph_onleave, command2->copy ());
+	    morph_onleave =
+	      new UCommand_TREE (UAND, morph_onleave, command2->copy ());
 	  domorph = true;
 	  morph = this;
 	}
@@ -5770,8 +5780,6 @@ UCommand_AT::execute(UConnection *connection)
     delete ec;
     reloop_ = true;
   }
-
-
 
   if (reloop_)
   {
@@ -5809,7 +5817,8 @@ UCommand_AT::execute(UConnection *connection)
     }
 
     // morph if necessary
-    if (morph != this) domorph = true;
+    if (morph != this)
+      domorph = true;
   }
 
   // morphing, if required
@@ -5833,9 +5842,9 @@ UCommand*
 UCommand_AT::copy()
 {
   return copybase(new UCommand_AT(type,
-				     ucopy (test),
-				     ucopy (command1),
-				     ucopy (command2)));
+				  ucopy (test),
+				  ucopy (command1),
+				  ucopy (command2)));
 }
 
 //! Print the command
@@ -5874,10 +5883,10 @@ MEMORY_MANAGER_INIT(UCommand_WHILE);
  */
 UCommand_WHILE::UCommand_WHILE(UCommand::Type type,
 			       UExpression *test,
-			       UCommand* command) :
-  UCommand(type),
-  test (test),
-  command (command)
+			       UCommand* command)
+  : UCommand(type),
+    test (test),
+    command (command)
 {
   ADDOBJ(UCommand_WHILE);
 }
@@ -5894,11 +5903,13 @@ UCommand_WHILE::~UCommand_WHILE()
 UCommandStatus
 UCommand_WHILE::execute(UConnection *connection)
 {
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
   persistant = false;
 
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
   UTestResult testres = booleval(test->eval(this, connection));
 
   if (testres == UTESTFAIL)
@@ -5933,9 +5944,7 @@ UCommand_WHILE::execute(UConnection *connection)
 UCommand*
 UCommand_WHILE::copy()
 {
-  return copybase(new UCommand_WHILE(type,
-					   ucopy (test),
-					   ucopy (command)));
+  return copybase(new UCommand_WHILE(type, ucopy (test), ucopy (command)));
 }
 
 //! Print the command
@@ -5945,12 +5954,7 @@ UCommand_WHILE::copy()
 void
 UCommand_WHILE::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("WHILE:");
-  if (type == CMD_WHILE) debug("\n");
-  else if (type == CMD_WHILE_AND) debug("(AND)\n");
-  else if (type == CMD_WHILE_PIPE) debug("(PIPE)\n");
-  else debug("UNKNOWN TYPE!\n");
+  debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), kind (type));
 
   DEBUG_ATTR (test);
   if (command)
@@ -5997,12 +6001,10 @@ UCommand_WHENEVER::~UCommand_WHENEVER()
 UCommandStatus
 UCommand_WHENEVER::execute(UConnection *connection)
 {
-  UTestResult testres;
-  UEventCompound* ec;
-  bool domorph = false;
-  ufloat currentTime = connection->server->lastTime();
+  if (!test)
+    return status = UCOMPLETED;
 
-  if (!test) return status = UCOMPLETED;
+  ufloat currentTime = connection->server->lastTime();
 
   // handle the 'else' construct
   if (command2)
@@ -6040,15 +6042,16 @@ UCommand_WHENEVER::execute(UConnection *connection)
     }
   }
 
+  bool domorph = false;
   if (reeval ())
   {
-    ec = 0;
+    UEventCompound* ec = 0;
     UValue *testeval = test->eval(this, connection, ec);
     if (!ec)
       ec = new UEventCompound (testeval);
     reset_reeval ();
 
-    testres = booleval(testeval, true);
+    UTestResult testres = booleval(testeval, true);
     if (testres == UTESTFAIL)
       return status = UCOMPLETED;
 

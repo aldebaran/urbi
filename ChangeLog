@@ -1,5 +1,12 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Coding style changes
+	* src/ucommand.cc: here.
+	(kind): New.
+	Use it.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Less headers
 	* src/userver.hh: Do not include ubinder.hh to lighten the
 	dependencies.
