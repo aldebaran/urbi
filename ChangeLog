@@ -1,5 +1,10 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Minor changes
+	* src/ucommand.cc, src/uconnection.cc, src/uconnection.hh: here.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Restyle
 	* src/ucommand.cc: here.
 

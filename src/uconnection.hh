@@ -188,10 +188,11 @@ private:
   /// Each call to effectiveSend() will send packetSize byte (or less)..
   int            packetSize_;
 
-  /// Stores the state of the connection..
-  bool           blocked_;
-  /// True when the connection is receiving binary data.
-  bool           receiveBinary_;
+  /// Stores the state of the connection.
+  bool blocked_;
+
+  /// Whether the connection is receiving binary data.
+  bool receiveBinary_;
 
   /// Nb of bytes already received in bin mode.
   int            transferedBinary_;

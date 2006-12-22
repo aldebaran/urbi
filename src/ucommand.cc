@@ -2285,8 +2285,6 @@ UCommand_EXPR::execute(UConnection *connection)
 	}
 
 	// handle the :: case
-	// FIXME: This is really bizarre, maybe the braces were meant
-	// to be attached to the if?
 	if (expression->variablename->doublecolon
 	    && !connection->stack.empty ()
 	    && (::urbiserver->objtab.find(connection->stack.front()->self())
@@ -6779,7 +6777,8 @@ UCommand_NOOP::UCommand_NOOP(bool zerotime) :
 {
   ADDOBJ(UCommand_NOOP);
   // FIXME: Otherwise, what is the value?
-  if (zerotime) status = URUNNING;
+  if (zerotime)
+    status = URUNNING;
 }
 
 //! UCommand subclass destructor.

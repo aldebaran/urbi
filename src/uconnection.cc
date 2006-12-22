@@ -469,6 +469,7 @@ UConnection::received (const ubyte *buffer, int length)
   bool faillock = false; // if binary append failed to get lock,
   // abort processing
   urbi::BlockLock bl(server);
+  // Lock the connection.
   lock();
   if (receiveBinary_)
   {
@@ -505,6 +506,7 @@ UConnection::received (const ubyte *buffer, int length)
       }
     }
   }
+
   UErrorValue result = recvQueue_.push(buffer, length);
   unlock();
   if (result != USUCCESS)
@@ -1113,7 +1115,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     tree->command1 = processCommand (tree->command1,
 				     tree->runlevel1,
-				     mustReturn );
+				     mustReturn);
 
     if (mustReturn)
     {
