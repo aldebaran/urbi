@@ -37,7 +37,7 @@
 
 // Locations.
 %locations
-%define "filename_type" "std::string"
+%define "filename_type" "const std::string"
 %initial-action
 {
   // Saved when exiting the start symbol.

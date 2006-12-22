@@ -25,6 +25,7 @@
 #ifndef UPARSER_HH
 # define UPARSER_HH
 
+# include <set>
 # include <string>
 # include "fwd.hh"
 # include "utypes.hh"
@@ -98,9 +99,15 @@ private:
 
   /// The Flex scanner.
   UFlexer scanner_;
-  
+
+  /// The file names that were parsed.
+  ///
+  /// Kept because each location point to it.
+  typedef std::set<std::string> files;
+  files files_;
+
   /// The file currently parsed.
-  std::string filename_;
+  const std::string* filename_;
 
   /// The current location.
   location_type loc_;
