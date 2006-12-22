@@ -194,24 +194,17 @@ UCommand::execute(UConnection*)
 UCommand*
 UCommand::copy()
 {
-  UCommand *ret = new UCommand(type);
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand(type));
 }
 
 //! UCommand base of hard copy function
-UErrorValue
-UCommand::copybase(UCommand *command)
+UCommand*
+UCommand::copybase(UCommand* c)
 {
-  command->setTag(this);
-
+  c->setTag(this);
   if (flags)
-  {
-    command->flags = flags->copy();
-    if (!command->flags)
-      return UMEMORYFAIL;
-  }
-  return USUCCESS;
+    c->flags = flags->copy();
+  return c;
 }
 
 
@@ -476,11 +469,9 @@ UCommand_TREE::execute(UConnection*)
 UCommand*
 UCommand_TREE::copy()
 {
-  UCommand_TREE *ret = new UCommand_TREE(node,
+  return copybase(new UCommand_TREE(node,
 					 ucopy (command1),
-					 ucopy (command2));
-  copybase(ret);
-  return ret;
+					 ucopy (command2)));
 }
 
 //! Deletes sub commands marked for deletion after a stop command
@@ -1773,8 +1764,7 @@ UCommand_ASSIGN_BINARY::copy()
   UCommand_ASSIGN_BINARY *ret =
     new UCommand_ASSIGN_BINARY(ucopy (variablename),
 			       refBinary->copy());
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -2032,8 +2022,7 @@ UCommand_ASSIGN_PROPERTY::copy()
     new UCommand_ASSIGN_PROPERTY(ucopy (variablename),
 				 ucopy (oper),
 				 ucopy (expression));
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -2123,8 +2112,7 @@ UCommand_AUTOASSIGN::copy()
     new UCommand_AUTOASSIGN(ucopy (variablename),
 			    ucopy (expression),
 			    assigntype);
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -2461,9 +2449,7 @@ UCommand_EXPR::execute(UConnection *connection)
 UCommand*
 UCommand_EXPR::copy()
 {
-  UCommand_EXPR *ret = new UCommand_EXPR(ucopy (expression));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_EXPR(ucopy (expression)));
 }
 
 //! Print the command
@@ -2530,9 +2516,7 @@ UCommand_RETURN::execute(UConnection *connection)
 UCommand*
 UCommand_RETURN::copy()
 {
-  UCommand_RETURN *ret = new UCommand_RETURN(ucopy (expression));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_RETURN(ucopy (expression)));
 }
 
 //! Print the command
@@ -2641,8 +2625,7 @@ UCommand_ECHO::copy()
     new UCommand_ECHO(ucopy (expression),
 		      ucopy (parameters),
 		      ucopy (connectionTag));
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -2952,8 +2935,7 @@ UCommand_NEW::copy()
 				       ucopy (obj),
 				       ucopy (parameters));
 
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -3075,11 +3057,9 @@ UCommand_ALIAS::execute(UConnection *connection)
 UCommand*
 UCommand_ALIAS::copy()
 {
-  UCommand_ALIAS *ret = new UCommand_ALIAS(ucopy (aliasname),
+  return copybase(new UCommand_ALIAS(ucopy (aliasname),
 					   ucopy (id),
-					   eraseit);
-  copybase(ret);
-  return ret;
+					   eraseit));
 }
 
 //! Print the command
@@ -3190,11 +3170,9 @@ UCommand_INHERIT::execute(UConnection *connection)
 UCommand*
 UCommand_INHERIT::copy()
 {
-  UCommand_INHERIT *ret = new UCommand_INHERIT(ucopy (subclass),
+  return copybase(new UCommand_INHERIT(ucopy (subclass),
 					       ucopy (theclass),
-					       eraseit);
-  copybase(ret);
-  return ret;
+					       eraseit));
 }
 
 //! Print the command
@@ -3347,11 +3325,9 @@ UCommand_GROUP::execute(UConnection *connection)
 UCommand*
 UCommand_GROUP::copy()
 {
-  UCommand_GROUP *ret = new UCommand_GROUP(ucopy (id),
+  return copybase(new UCommand_GROUP(ucopy (id),
 					   ucopy (parameters),
-					   grouptype);
-  copybase(ret);
-  return ret;
+					   grouptype));
 }
 
 //! Print the command
@@ -3497,10 +3473,8 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 UCommand*
 UCommand_OPERATOR_ID::copy()
 {
-  UCommand_OPERATOR_ID *ret = new UCommand_OPERATOR_ID(ucopy (oper),
-						       ucopy (id));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_OPERATOR_ID(ucopy (oper),
+						       ucopy (id)));
 }
 
 //! Print the command
@@ -3589,8 +3563,7 @@ UCommand_DEVICE_CMD::copy()
   UCommand_DEVICE_CMD *ret =
     new UCommand_DEVICE_CMD(ucopy (variablename),
 			    new ufloat(cmd));
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -3845,8 +3818,7 @@ UCommand_OPERATOR_VAR::copy()
   UCommand_OPERATOR_VAR *ret =
     new UCommand_OPERATOR_VAR(ucopy (oper),
 			      ucopy (variablename));
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -4004,8 +3976,7 @@ UCommand_BINDER::copy()
 					     ucopy (variablename),
 					     nbparam);
 
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -4321,9 +4292,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 UCommand*
 UCommand_OPERATOR::copy()
 {
-  UCommand_OPERATOR *ret = new UCommand_OPERATOR(ucopy (oper));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_OPERATOR(ucopy (oper)));
 }
 
 //! Print the command
@@ -4393,9 +4362,7 @@ UCommand_WAIT::execute(UConnection *connection)
 UCommand*
 UCommand_WAIT::copy()
 {
-  UCommand_WAIT *ret = new UCommand_WAIT(ucopy (expression));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_WAIT(ucopy (expression)));
 }
 
 //! Print the command
@@ -4642,8 +4609,7 @@ UCommand_EMIT::copy()
 {
   UCommand_EMIT *ret =
     new UCommand_EMIT(ucopy (eventname), ucopy (parameters));
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -4805,8 +4771,7 @@ UCommand_INCDECREMENT::copy()
 {
   UCommand_INCDECREMENT *ret =
     new UCommand_INCDECREMENT(type, ucopy (variablename));
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -5052,8 +5017,7 @@ UCommand_DEF::copy()
 				       ucopy (parameters),
 				       ucopy (command));
   ret->variablelist = ucopy (variablelist);
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -5224,10 +5188,8 @@ UCommand_CLASS::execute(UConnection*)
 UCommand*
 UCommand_CLASS::copy()
 {
-  UCommand_CLASS *ret = new UCommand_CLASS(ucopy (object),
-					   ucopy (parameters));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_CLASS(ucopy (object),
+					   ucopy (parameters)));
 }
 
 //! Print the command
@@ -5315,11 +5277,9 @@ UCommand_IF::execute(UConnection *connection)
 UCommand*
 UCommand_IF::copy()
 {
-  UCommand_IF *ret = new UCommand_IF(ucopy (test),
+  return copybase(new UCommand_IF(ucopy (test),
 				     ucopy (command1),
-				     ucopy (command2));
-  copybase(ret);
-  return ret;
+				     ucopy (command2)));
 }
 
 //! Print the command
@@ -5403,10 +5363,8 @@ UCommand_EVERY::execute(UConnection* connection)
 UCommand*
 UCommand_EVERY::copy()
 {
-  UCommand_EVERY *ret = new UCommand_EVERY(ucopy (duration),
-					   ucopy (command));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_EVERY(ucopy (duration),
+					   ucopy (command)));
 }
 
 //! Print the command
@@ -5483,10 +5441,8 @@ UCommand_TIMEOUT::execute(UConnection*)
 UCommand*
 UCommand_TIMEOUT::copy()
 {
-  UCommand_TIMEOUT *ret = new UCommand_TIMEOUT(ucopy (duration),
-					       ucopy (command));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_TIMEOUT(ucopy (duration),
+					       ucopy (command)));
 }
 
 //! Print the command
@@ -5583,10 +5539,8 @@ UCommand_STOPIF::execute(UConnection *connection)
 UCommand*
 UCommand_STOPIF::copy()
 {
-  UCommand_STOPIF *ret = new UCommand_STOPIF(ucopy (condition),
-					     ucopy (command));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_STOPIF(ucopy (condition),
+					     ucopy (command)));
 }
 
 //! Print the command
@@ -5666,10 +5620,8 @@ UCommand_FREEZEIF::execute(UConnection*)
 UCommand*
 UCommand_FREEZEIF::copy()
 {
-  UCommand_FREEZEIF *ret = new UCommand_FREEZEIF(ucopy (condition),
-						 ucopy (command));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_FREEZEIF(ucopy (condition),
+						 ucopy (command)));
 }
 
 //! Print the command
@@ -5878,12 +5830,10 @@ UCommand_AT::execute(UConnection *connection)
 UCommand*
 UCommand_AT::copy()
 {
-  UCommand_AT *ret = new UCommand_AT(type,
+  return copybase(new UCommand_AT(type,
 				     ucopy (test),
 				     ucopy (command1),
-				     ucopy (command2));
-  copybase(ret);
-  return ret;
+				     ucopy (command2)));
 }
 
 //! Print the command
@@ -5981,11 +5931,9 @@ UCommand_WHILE::execute(UConnection *connection)
 UCommand*
 UCommand_WHILE::copy()
 {
-  UCommand_WHILE *ret = new UCommand_WHILE(type,
+  return copybase(new UCommand_WHILE(type,
 					   ucopy (test),
-					   ucopy (command));
-  copybase(ret);
-  return ret;
+					   ucopy (command)));
 }
 
 //! Print the command
@@ -6227,11 +6175,9 @@ UCommand_WHENEVER::execute(UConnection *connection)
 UCommand*
 UCommand_WHENEVER::copy()
 {
-  UCommand_WHENEVER *ret = new UCommand_WHENEVER(ucopy (test),
+  return copybase(new UCommand_WHENEVER(ucopy (test),
 						 ucopy (command1),
-						 ucopy (command2));
-  copybase(ret);
-  return ret;
+						 ucopy (command2)));
 }
 
 //! Print the command
@@ -6304,9 +6250,7 @@ UCommand_LOOP::execute(UConnection*)
 UCommand*
 UCommand_LOOP::copy()
 {
-  UCommand_LOOP *ret = new UCommand_LOOP(ucopy (command));
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_LOOP(ucopy (command)));
 }
 
 //! Print the command
@@ -6402,11 +6346,9 @@ UCommand_LOOPN::execute(UConnection *connection)
 UCommand*
 UCommand_LOOPN::copy()
 {
-  UCommand_LOOPN *ret = new UCommand_LOOPN(type,
+  return copybase(new UCommand_LOOPN(type,
 					   ucopy (expression),
-					   ucopy (command));
-  copybase(ret);
-  return ret;
+					   ucopy (command)));
 }
 
 //! Print the command
@@ -6567,8 +6509,7 @@ UCommand_FOR::copy()
 				       ucopy (instr2),
 				       ucopy (command));
   ret->first = first;
-  copybase(ret);
-  return ret;
+  return copybase(ret);
 }
 
 //! Print the command
@@ -6784,9 +6725,7 @@ UCommandStatus UCommand_NOOP::execute(UConnection *connection)
 UCommand*
 UCommand_NOOP::copy()
 {
-  UCommand_NOOP *ret = new UCommand_NOOP(status == URUNNING);
-  copybase(ret);
-  return ret;
+  return copybase(new UCommand_NOOP(status == URUNNING));
 }
 
 //! Print the command

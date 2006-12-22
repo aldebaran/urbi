@@ -101,7 +101,6 @@ public:
 
   virtual UCommandStatus execute(UConnection*);
   virtual UCommand* copy();
-  UErrorValue       copybase(UCommand *command);
 
   UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
   virtual UVariableName** refVarName()  { return 0; };
@@ -164,6 +163,9 @@ public:
   ufloat           flag_startTrue4;
   /// true when the command is part of a morphed structure
   bool             morphed;
+
+protected:
+  UCommand* copybase(UCommand *c);
 
 private:
   /// Command tag.
@@ -240,6 +242,8 @@ public:
   /// device in the varname
   UString          *devicename;
 
+private:
+
   // Pointers to modificators to ease further processing
   // in the URUNNING mode.
   UExpression      *modif_time;
@@ -277,8 +281,6 @@ public:
 
   /// destination values
   ufloat           *valtmp;
-  /// nb destinaton values
-  int              nbval;
 
   /// true when the assign is finished
   bool             finished;
@@ -294,8 +296,6 @@ public:
   bool             assigned;
   /// is the def prefix used?
   bool             defkey;
-
-private:
 
   UErrorValue      processModifiers(UConnection* connection,
 				    ufloat currentTime);
