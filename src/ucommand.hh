@@ -22,6 +22,8 @@
 #ifndef UCOMMAND_HH
 # define UCOMMAND_HH
 
+# include <cstdarg>
+
 # include <list>
 
 # include "libport/fwd.hh"
