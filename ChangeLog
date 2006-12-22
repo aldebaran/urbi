@@ -1,5 +1,13 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Let variables be variables
+	not attributes...
+	* src/ucommand.hh, src/ucommand.cc (tmpeval): Remove.
+	(v): New local variable in several places.
+	Also, factor common code.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Minor changes
 	* src/ucommand.cc, src/uconnection.cc, src/uconnection.hh: here.
 

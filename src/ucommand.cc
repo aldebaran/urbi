@@ -974,28 +974,6 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       variable = 0;
     }
 
-    // VOID init ///////////////////
-    //////////////////////////////////
-
-    if (target->dataType == DATA_VOID) // VOID
-    {
-      if (variable) // the variable already exists
-	variable->set(target);
-      else
-      {
-	variable = new UVariable(variablename->getFullname()->str(),
-				 target->copy());
-	if (!variable)
-	  return status = UCOMPLETED;
-	connection->localVariableCheck(variable);
-	variable->updated();
-      }
-
-      delete target;
-      return status = UCOMPLETED;
-    }
-
-
     // STRING init ///////////////////
     //////////////////////////////////
     if (target->dataType == DATA_STRING)  // STRING
@@ -1047,7 +1025,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  target->str->update(result);
 	  free(result);
 	}
-
+      
+      // FIXME: Factor with the following cases.
       // Assignment
       if (variable) // the variable already exists
 	variable->set(target);
@@ -1066,7 +1045,8 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     }
 
     if (target->dataType == DATA_BINARY
-	|| target->dataType == DATA_LIST)
+	|| target->dataType == DATA_LIST
+	|| target->dataType == DATA_VOID)
     {
       // Assignment
       if (variable) // the variable already exists
@@ -1370,10 +1350,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   // Adaptive mode? (only for "speed" and "time")
   bool adaptive = false;
   if (modif_adaptive)
-    if ((tmpeval = modif_adaptive->eval(this, connection)))
+    if (UValue* v = modif_adaptive->eval(this, connection))
     {
-      adaptive = (tmpeval->val != 0);
-      delete tmpeval;
+      adaptive = (v->val != 0);
+      delete v;
     }
 
   // timeout
@@ -1398,9 +1378,9 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	targetval;
     }
 
-    if ((tmpeval = modif_time->eval(this, connection)))
+    if (UValue* v = modif_time->eval(this, connection))
     {
-      targettime = ABSF(tmpeval->val);
+      targettime = ABSF(v->val);
       //enforce speedmax here
       if (variable->speedmax != UINFINITY)
 	if (targettime <  ABSF ((targetval-startval)/ variable->speedmax))
@@ -1411,7 +1391,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 			     getTag().c_str());
 	  targettime = ABSF ((targetval - startval)/ variable->speedmax);
 	}
-      delete tmpeval;
+      delete v;
     }
 
     // check for speedmin
@@ -1452,10 +1432,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   // smooth
   if (modif_smooth)
   {
-    if ((tmpeval = modif_smooth->eval(this, connection)))
+    if (UValue* v = modif_smooth->eval(this, connection))
     {
-      targettime = ABSF(tmpeval->val);
-      delete tmpeval;
+      targettime = ABSF(v->val);
+      delete v;
     }
 
     // test for speedmin (with linear mvt approximation)
@@ -1498,10 +1478,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	targetval;
     }
     
-    if ((tmpeval = modif_speed->eval(this, connection)))
+    if (UValue* v = modif_speed->eval(this, connection))
     {
-      speed = ABSF(tmpeval->val);
-      delete tmpeval;
+      speed = ABSF(v->val);
+      delete v;
     }
 
     if (variablename->isnormalized)
@@ -1562,10 +1542,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   //accel
   if (modif_accel)
   {
-    if ((tmpeval = modif_accel->eval(this, connection)))
+    if (UValue* v = modif_accel->eval(this, connection))
     {
-      accel = ABSF(tmpeval->val/1000.);
-      delete tmpeval;
+      accel = ABSF(v->val/1000.);
+      delete v;
     }
 
     if (targetval < startval) accel = -accel;
@@ -1595,50 +1575,51 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   if (modif_sin)
   {
     targettime = 0;
-    if ((tmpeval = modif_sin->eval(this, connection)))
+    if (UValue* v = modif_sin->eval(this, connection))
     {
-      targettime = ABSF(tmpeval->val);
-      delete tmpeval;
+      targettime = ABSF(v->val);
+      delete v;
     }
     if (targettime == 0) targettime = 0.1;
 
     phase = 0;
-    if (modif_phase &&
-	(tmpeval = modif_phase->eval(this, connection)))
-    {
-      phase = tmpeval->val;
-      delete tmpeval;
-    }
+    if (modif_phase)
+      if (UValue* v = modif_phase->eval(this, connection))
+      {
+	phase = v->val;
+	delete v;
+      }
 
     amplitude = 0;
-    if (modif_ampli &&
-	(tmpeval = modif_ampli->eval(this, connection)))
-    {
-      amplitude = tmpeval->val;
-      delete tmpeval;
-    }
+    if (modif_ampli)
+      if (UValue* v = modif_ampli->eval(this, connection))
+      {
+	amplitude = v->val;
+	delete v;
+      }
     if (variablename->isnormalized)
       amplitude = amplitude * (variable->rangemax - variable->rangemin);
 
-    if (expression &&
-	(tmpeval = expression->eval(this, connection)))
-    {
-      targetval = tmpeval->val;
-      if (variablename->isnormalized)
+    if (expression)
+      if (UValue* v = expression->eval(this, connection))
       {
-	if (targetval < 0) targetval = 0;
-	if (targetval > 1) targetval = 1;
-
-	targetval = variable->rangemin + targetval *
-	  (variable->rangemax - variable->rangemin);
+	targetval = v->val;
+	if (variablename->isnormalized)
+	{
+	  if (targetval < 0) targetval = 0;
+	  if (targetval > 1) targetval = 1;
+	  
+	  targetval = variable->rangemin + targetval *
+	    (variable->rangemax - variable->rangemin);
+	}
+	delete v;
       }
-      delete tmpeval;
-    }
 
     ufloat intermediary;
-    intermediary = targetval + amplitude * sin(phase +
-					       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
-								targettime ));
+    intermediary = targetval + 
+      amplitude * sin(phase +
+		      (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
+				      targettime ));
     if (modif_getphase)
     {
       UVariable *phasevari = modif_getphase->getVariable(this, connection);
@@ -2309,9 +2290,8 @@ UCommand_EXPR::execute(UConnection *connection)
 	  return status = UCOMPLETED;
 	((UCommand_TREE*)morph)->connection = connection;
 
-	UNamedParameters *pvalue = expression->parameters;
-	UNamedParameters *pname	 = fun->parameters;
-	for (;
+	for (UNamedParameters *pvalue = expression->parameters,
+	       *pname	 = fun->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next, pname = pname->next)
 	{
@@ -2745,9 +2725,7 @@ UCommand_NEW::execute(UConnection *connection)
     id = new UString(name->str());
   }
 
-  if (!id)
-    return status = UCOMPLETED;
-  if (!obj)
+  if (!id || !obj)
     return status = UCOMPLETED;
 
   if (!remoteNew && !sysCall)
@@ -2876,12 +2854,11 @@ UCommand_NEW::execute(UConnection *connection)
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end())
   {
-    buffer_t buf;
-    snprintf(buf, sizeof buf,
-	     "!!! %s has already inherited from %s\n", id->str(), obj->str());
+    connection->sendf(getTag().c_str(),
+		      "!!! %s has already inherited from %s\n",
+		      id->str(), obj->str());
     if (creation)
       delete newobj;
-    connection->send(buf, getTag().c_str());
     return status = UCOMPLETED;
   }
 
@@ -2946,7 +2923,8 @@ UCommand_NEW::execute(UConnection *connection)
       }
 
       oss << valparam->echo();
-      if (pvalue->next) oss << ",";
+      if (pvalue->next)
+	oss << ",";
     }
 
     oss << ") | if (!isdef("

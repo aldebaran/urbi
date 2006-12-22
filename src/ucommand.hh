@@ -227,8 +227,6 @@ public:
   virtual UVariableName** refVarName()  { return &variablename; };
   virtual UVariableName** refVarName2()  { return &expression->variablename; };
 
-
-
   /// variable name
   UVariableName    *variablename;
   /// associated variable
@@ -244,7 +242,6 @@ public:
 
   // Pointers to modificators to ease further processing
   // in the URUNNING mode.
-
   UExpression      *modif_time;
   UExpression      *modif_sin;
   UExpression      *modif_phase;
@@ -254,7 +251,6 @@ public:
   UExpression      *modif_ampli;
   UExpression      *modif_adaptive;
   UVariableName    *modif_getphase;
-  UValue           *tmpeval;
 
   /// stored temporary phase for cos modificator
   UExpression      *tmp_phase;
