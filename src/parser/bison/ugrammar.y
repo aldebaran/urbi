@@ -395,7 +395,10 @@ root:
 
       uparser.commandTree = 0;
       if ($1 && $1->type == UCommand::CMD_TREE)
-	uparser.commandTree = (UCommand_TREE*)$1;
+      {
+	uparser.commandTree = dynamic_cast<UCommand_TREE*> ($1);
+        assert (uparser.commandTree != 0);
+      }
       else
 	delete $1;
     }

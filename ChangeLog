@@ -1,5 +1,11 @@
 2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Remove an unsafe cast.
+	* src/parser/bison/ugrammar.y: Remove an unsafe cast from UCommand* to
+	  UCommand_TREE*. Use dynamic_cast instead.
+
+2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Formatting changes.
 	* src/parser/bison/ugrammar.y: Clean coding-style. Remove useless C
 	 casts excepted where they are necessary to pick up an overload (in
