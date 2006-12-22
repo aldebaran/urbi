@@ -1,5 +1,12 @@
 2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Formatting changes.
+	* src/parser/bison/ugrammar.y: Clean coding-style. Remove useless C
+	 casts excepted where they are necessary to pick up an overload (in
+	 this case: Use static_cast instead).
+
+2006-12-22  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Leak less memory when adding an alias.
 	* src/userver.cc (UServer::addAlias): Leak only a string (char*, not
 	  std::string) instead of leaking that string plus an UString.
