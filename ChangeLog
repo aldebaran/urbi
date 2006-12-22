@@ -1,5 +1,10 @@
 2006-12-22  Akim Demaille  <demaille@gostai.com>
 
+	Restyle
+	* src/ucommand.cc: here.
+
+2006-12-22  Akim Demaille  <demaille@gostai.com>
+
 	Refactor
 	* src/ucommand.cc: A lot of simple by very effective
 	simplifications.

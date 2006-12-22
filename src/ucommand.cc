@@ -2924,7 +2924,8 @@ UCommand_NEW::execute(UConnection *connection)
     initfun = newobj->searchFunction("init", ambiguous);
 
     //hack until we get proper nameresolution
-    if (initfun == kernel::remoteFunction) initfun = 0;
+    if (initfun == kernel::remoteFunction)
+      initfun = 0;
   }
 
   if (parameters || initfun != 0 || component)
@@ -3287,15 +3288,12 @@ UCommand_GROUP::execute(UConnection *connection)
     }
     if (grouptype==0)  g->members.clear();
 
-    UNamedParameters* param = parameters;
-    while (param)
-    {
+    for (UNamedParameters* param = parameters; param; param = param->next)
       if (grouptype == 2)
       {
 	// del
 	for (std::list<UString*>::iterator it = g->members.begin();
-	     it != g->members.end();
-	  )
+	     it != g->members.end(); )
 	  if ((*it)->equal(param->name))
 	    it =g->members.erase(it);
 	  else
@@ -3310,9 +3308,6 @@ UCommand_GROUP::execute(UConnection *connection)
 
 	g->members.push_back(new UString(objname));
       }
-
-      param = param->next;
-    }
 
     return status = UCOMPLETED;
   }
@@ -3330,8 +3325,7 @@ UCommand_GROUP::execute(UConnection *connection)
 	       "*** %s = {", i->first);
 
       for (std::list<UString*>::iterator it = i->second->members.begin();
-	   it !=  i->second->members.end();
-	)
+	   it !=  i->second->members.end(); )
       {
 	strncat(buf, (*it)->str(), sizeof buf);
 	it++;
@@ -3436,8 +3430,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     connection->server->somethingToDelete = true;
     return status = URUNNING;
   }
-
-  if (STREQ(oper->str(), "killall"))
+  else if (STREQ(oper->str(), "killall"))
   {
     bool ok = false;
 
@@ -3462,8 +3455,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     }
     return status = UCOMPLETED;
   }
-
-  if (STREQ(oper->str(), "disconnect"))
+  else if (STREQ(oper->str(), "disconnect"))
   {
     bool ok = false;
     // Scan currently opened connections to locate the connection with the
@@ -3487,8 +3479,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     }
     return status = UCOMPLETED;
   }
-
-  if (STREQ(oper->str(), "block"))
+  else if (STREQ(oper->str(), "block"))
   {
     if (status == URUNNING)
       return status = UCOMPLETED;
@@ -3500,14 +3491,12 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
     return status = URUNNING;
   }
-
-  if (STREQ(oper->str(), "unblock"))
+  else if (STREQ(oper->str(), "unblock"))
   {
     connection->server->unblock(id->str());
     return status = UCOMPLETED;
   }
-
-  if (STREQ(oper->str(), "freeze"))
+  else if (STREQ(oper->str(), "freeze"))
   {
     if (status == URUNNING)
       return status = UCOMPLETED;
@@ -3519,8 +3508,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
     return status = URUNNING;
   }
-
-  if (STREQ(oper->str(), "unfreeze"))
+  else if (STREQ(oper->str(), "unfreeze"))
   {
     connection->server->unfreeze(id->str());
     return status = UCOMPLETED;
@@ -3949,10 +3937,10 @@ UCommand_BINDER::execute(UConnection *connection)
 
   if (type != 3) // not object binder
     debug("BINDING: %s type(%d) %s[%d] from %s\n",
-			binder->str(), type, fullname->str(), nbparam, fullobjname->str());
+	  binder->str(), type, fullname->str(), nbparam, fullobjname->str());
   else
     debug("BINDING: %s type(%d) %s\n",
-			binder->str(), type, variablename->id->str());
+	  binder->str(), type, variablename->id->str());
 
   UBindMode mode = UEXTERNAL;
 
@@ -4018,8 +4006,7 @@ UCommand_BINDER::execute(UConnection *connection)
       if (uobj->binder)
 	uobj->binder->addMonitor(variablename->id, connection);
       else
-	uobj->binder = new UBinder(uobj->device,
-				   uobj->device,
+	uobj->binder = new UBinder(uobj->device, uobj->device,
 				   mode,
 				   (UBindType)type,
 				   0,
