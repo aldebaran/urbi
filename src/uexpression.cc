@@ -1302,11 +1302,13 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
       else
       {
 	if (in_load)
-	  connection->send("!!! Error loading the file\n",
-			   command->getTag().c_str());
+	  connection->sendf(command->getTag(),
+			    "!!! Error loading file: %s\n",
+			    e1->str->str());
 	else
-	  connection->send("!!! Error parsing the exec string\n",
-			   command->getTag().c_str());
+	  connection->sendf(command->getTag(), 
+			    "!!! Error parsing the exec string %s\n",
+			    e1->str->str());
 	delete ret;
 	ret = 0;
       }
