@@ -1,5 +1,10 @@
 2006-12-23  Akim Demaille  <demaille@gostai.com>
 
+	Update tests
+	* src/uexpression.cc: Simplify error message.
+
+2006-12-23  Akim Demaille  <demaille@gostai.com>
+
 	More specific errors
 	* src/uexpression.cc: For "load" and "exec".
 

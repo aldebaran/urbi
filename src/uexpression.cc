@@ -1307,7 +1307,7 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
 			    e1->str->str());
 	else
 	  connection->sendf(command->getTag(), 
-			    "!!! Error parsing the exec string %s\n",
+			    "!!! Error parsing string: %s\n",
 			    e1->str->str());
 	delete ret;
 	ret = 0;
