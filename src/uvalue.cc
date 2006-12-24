@@ -351,7 +351,7 @@ UValue & UValue::operator = (const urbi::UBinary &b)
   int sz = b.common.size;
   UBinary *bin = new UBinary(sz, first);
   bin->bufferSize =  sz;
-  //ctor is allocating bin->buffer = (ubyte *)malloc(sz);
+  //ctor is allocating bin->buffer = static_cast<ubyte*> (malloc (sz));
   if (sz>0)
     memcpy(bin->buffer, b.common.data, sz);
   refBinary = new libport::RefPt<UBinary>(bin);

@@ -27,7 +27,7 @@
 //! UBinary constructor.
 UBinary::UBinary(int bufferSize, UNamedParameters *parameters)
   : bufferSize (bufferSize),
-    buffer ((ubyte*) malloc(bufferSize)), // result tested outside.
+    buffer (static_cast<ubyte*> (malloc (bufferSize))), // result tested outside.
     parameters (parameters)
 {
   ADDOBJ(UBinary);

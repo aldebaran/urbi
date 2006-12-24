@@ -1,5 +1,19 @@
 2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	More restyling.
+	* src/ubinary.cc,
+	* src/ucommand.cc,
+	* src/ughostconnection.cc,
+	* src/uqueue.cc,
+	* src/ustring.cc,
+	* src/usystem.cc,
+	* src/uvalue.cc: Use static_cast where possible. static_cast is ugly
+	  and makes the code harder to read, but it's safer and it's the price
+	  to pay when you deal with unsafe C functions when you should be
+	  using high level C++ abstractions.
+
+2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	Restyle.
 	* src/Makefile.am,
 	* src/uast.hh,

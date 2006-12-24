@@ -976,8 +976,9 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       // Handle String Composition
       if (parameters != 0)
 	// FIXME: 65000 is not dividable by 42 nor 51.
-	if (char *result = (char*)malloc(sizeof(char)
-					 * (65000+target->str->len())))
+	if (char *result =
+	    static_cast<char*> (malloc (sizeof(char)
+					* (65000+target->str->len()))))
 	{
 	  strcpy (result, target->str->str());
 	  UNamedParameters* modif = parameters;

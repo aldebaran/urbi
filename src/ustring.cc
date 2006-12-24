@@ -63,14 +63,14 @@ UString::UString(const UString *s)
   if (s==0)
   {
     len_ = 0;
-    str_ = (char*)malloc(1);
+    str_ = static_cast<char*> (malloc (1));
     strcpy(str_, "");
     fast_armor_ = true;
   }
   else
   {
     len_ = s->len();
-    str_ = (char*)malloc(len_+1);
+    str_ = static_cast<char*> (malloc (len_+1));
     strcpy(str_, s->str());
     fast_armor_ = s->fast_armor_;
   }
@@ -87,7 +87,7 @@ UString::UString(const UString *s1, const UString* s2)
   std::string tmpname = s1->str();
   tmpname = tmpname + "." + s2->str();
 
-  str_ = (char*)malloc(tmpname.length()+1);
+  str_ = static_cast<char*> (malloc (tmpname.length()+1));
   strcpy(str_, tmpname.c_str());
 
   if (str_ != 0)
@@ -153,7 +153,7 @@ void UString::update(const char *s)
     free(str_);
   FREEMEM(len_);
   int slen = strlen(s);
-  str_ = (char*)malloc(slen+1);
+  str_ = static_cast<char*> (malloc (slen+1));
   strcpy(str_, s);
   len_ = slen;
   fast_armor ();
@@ -168,7 +168,7 @@ void UString::update(const UString *s)
     free(str_);
   FREEMEM(len_);
 
-  str_ = (char*)malloc(s->len()+1);
+  str_ = static_cast<char*> (malloc (s->len()+1));
   strcpy(str_, s->str());
   len_ = s->len();
   fast_armor ();
@@ -182,17 +182,21 @@ UString::un_armor ()
   int pos = 0;
   while (pos < len_)
   {
-    if  (cp[0]=='\\' && pos+1<len_)
+    if  (cp[0] == '\\' && pos + 1 < len_)
     {
-      if (   cp[1] == 'n'
+      if (cp[1] == 'n'
 	  || cp[1] == 't'
 	  || cp[1] == '\\'
 	  || cp[1] == '"')
       {
-	if (cp[1] ==  'n') cp[1] = '\n';
-	if (cp[1] ==  't') cp[1] = '\t';
+	if (cp[1] ==  'n')
+          cp[1] = '\n';
+	if (cp[1] ==  't')
+          cp[1] = '\t';
 
-	memmove((void*)cp, (void*)(cp+1), len_-pos);
+	memmove (static_cast<void*> (cp),
+                 static_cast<void*> (cp + 1),
+                 len_ - pos);
 	len_ --;
 	if (cp[0]=='\\')
 	  cp++;

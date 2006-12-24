@@ -83,7 +83,7 @@ UQueue::UQueue (int minBufferSize,
   outputBuffer_    = 0;
 
   // Internal buffer initialization.
-  buffer_ = (ubyte*) malloc(minBufferSize_);
+  buffer_ = static_cast<ubyte*> (malloc (minBufferSize_));
   if (buffer_== 0)
   {
     UError = UFAIL;
@@ -101,7 +101,7 @@ UQueue::UQueue (int minBufferSize,
   topDataSize_     = 0;
 
   // Output buffer initialization (the size can grow later)
-  outputBuffer_ = (ubyte*) malloc(UQueue::INITIAL_BUFFER_SIZE);
+  outputBuffer_ = static_cast<ubyte*> (malloc (UQueue::INITIAL_BUFFER_SIZE));
   if (outputBuffer_== 0)
   {
     free (buffer_);
@@ -182,8 +182,8 @@ UQueue::push (const ubyte *buffer, int length)
 
   bfs = bufferFreeSpace();
 
-  if (bfs < length) { // Is the internal buffer big enough?
-
+  if (bfs < length) // Is the internal buffer big enough?
+  {
     // No. Check if the internal buffer can be extended.
     newSize = bufferSize_ + (length - bfs);
 
@@ -201,7 +201,8 @@ UQueue::push (const ubyte *buffer, int length)
 	newSize = maxBufferSize_;
 
       // Realloc the internal buffer
-      ubyte *newBuffer = (ubyte*)realloc((void*)buffer_, newSize);
+      ubyte *newBuffer =
+	static_cast<ubyte*> (realloc (static_cast<void*> (buffer_), newSize));
       if (newBuffer == 0)
 	return UMEMORYFAIL; // not enough memory.
       ADDMEM(newSize - bufferSize_);
@@ -281,7 +282,8 @@ UQueue::pop (int length)
 	// We shrink the output buffer to the new size: topOutputSize_ + 10%
 	topOutputSize_ = (int)(topOutputSize_ * 1.1);
 
-	ubyte* newOutputBuffer = (ubyte*)realloc(outputBuffer_, topOutputSize_);
+	ubyte* newOutputBuffer =
+	  static_cast<ubyte*> (realloc (outputBuffer_, topOutputSize_));
 	if (newOutputBuffer != 0)
 	{
 	  FREEMEM(outputBufferSize_ - topOutputSize_);
@@ -313,7 +315,7 @@ UQueue::pop (int length)
 	  // the case end_ == bufferSize_ is handled below.
 	}
 
-	ubyte* newBuffer = (ubyte*) realloc (buffer_, topDataSize_);
+	ubyte* newBuffer = static_cast<ubyte*> (realloc (buffer_, topDataSize_));
 	if (newBuffer != 0)
 	{
 	  FREEMEM(bufferSize_ - topDataSize_);
@@ -349,10 +351,12 @@ UQueue::pop (int length)
     if (outputBufferSize_ < toPop)
     {
       // Realloc the internal outputBuffer
-      int theNewSize = (int)(toPop*1.10);
-      if (theNewSize%2!=0) theNewSize++;
-      ubyte* newOutputBuffer = (ubyte*)realloc((void*)outputBuffer_,
-						theNewSize );
+      int theNewSize = (int)(toPop * 1.10);
+      if (theNewSize % 2 != 0)
+	++theNewSize;
+      ubyte* newOutputBuffer =
+	static_cast<ubyte*> (realloc (static_cast<void*> (outputBuffer_),
+				      theNewSize));
       if (newOutputBuffer == 0)
 	return 0; // not enough memory.
       ADDMEM(theNewSize - outputBufferSize_);
@@ -427,18 +431,10 @@ UQueue::virtualPop (int length)
     return buffer_ + start_;  // Pops nothing but gets a pointer to the
 			      // beginning of the buffer.
 
-  if (bufferSize_ - start_ >= toPop) { // Is the packet continuous across the
-					// the internal buffer?
+  // Is the packet continuous across the internal buffer?
+  if (bufferSize_ - start_ >= toPop)
     // yes, the packet is continuous in the internal buffer
-
-    int tmp_index = start_;
-    //start_ += toPop;
-    //if (start_ == bufferSize_) start_ = 0; // loop the circular geometry.
-    //dataSize_ -= toPop;
-
-    return buffer_ + tmp_index;
-
-  }
+    return buffer_ + start_;
   else
   {
     // no, the packet spans then end and the beginning of the buffer
@@ -448,10 +444,12 @@ UQueue::virtualPop (int length)
     if (outputBufferSize_ < toPop)
     {
       // Realloc the internal outputBuffer
-      int theNewSize = (int)(toPop*1.10);
-      if (theNewSize%2!=0) theNewSize++;
-      ubyte* newOutputBuffer = (ubyte*)realloc((void*)outputBuffer_,
-						theNewSize );
+      int theNewSize = (int)(toPop * 1.10);
+      if (theNewSize % 2 != 0)
+	++theNewSize;
+      ubyte* newOutputBuffer =
+	static_cast<ubyte*> (realloc (static_cast<void*> (outputBuffer_),
+				      theNewSize));
       if (newOutputBuffer == 0)
 	// not enough memory.
 	return 0;

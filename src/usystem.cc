@@ -49,7 +49,7 @@ namespace urbi
 
   //! UStringSystemMessage constructor.
   UStringSystemMessage::UStringSystemMessage (const std::string &s) :
-          msg (s)
+	  msg (s)
   {
   }
 
@@ -85,7 +85,7 @@ namespace urbi
 
   int
   USystem::receive_message (const USystemChannel &,
-                            const USystemMessage &)
+			    const USystemMessage &)
   {
     // user defined.
     return 0;
