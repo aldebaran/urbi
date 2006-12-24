@@ -17,21 +17,22 @@
  **************************************************************************** */
 
 #ifndef UASYNCCOMMAND_HH
-#define UASYNCCOMMAND_HH
+# define UASYNCCOMMAND_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
+# include "fwd.hh"
 
-#include "utypes.hh"
-#include "ustring.hh"
-#include "uexpression.hh"
-#include "unamedparameters.hh"
-#include "uvariablelist.hh"
-#include "uvalue.hh"
-#include "uobj.hh"
-#include "uvariablename.hh"
-#include "ueventhandler.hh"
+# include "ucommand.hh"
+# include "utypes.hh"
+# include "ustring.hh"
+# include "uexpression.hh"
+# include "unamedparameters.hh"
+# include "uvariablelist.hh"
+# include "uvalue.hh"
+# include "uobj.hh"
+# include "uvariablename.hh"
+# include "ueventhandler.hh"
 
 // ****************************************************************************
 /** UASyncCommand class is used by At end WHENEVER to store
@@ -40,11 +41,11 @@
  *
  *   UCommand_AT and UCommand_WHENEVER inherit from UASyncCommand
  */
-class UASyncCommand
+class UASyncCommand: public UCommand
 {
 public:
   /** UASyncCommand constructor */
-  UASyncCommand();
+  UASyncCommand (const location& l, Type _type);
 
   /** UASyncCommand destructor */
   virtual ~UASyncCommand();
@@ -96,5 +97,75 @@ UASyncCommand::reset_reeval()
 {
   reeval_ = false;
 }
+
+class UCommand_AT: public UASyncCommand
+{
+public:
+  MEMORY_MANAGED;
+
+  UCommand_AT (const UCommand::location& l,
+	       UCommand::Type type, UExpression* test,
+	       UCommand* command1, UCommand* command2);
+  virtual ~UCommand_AT ();
+
+  virtual void print (int l);
+
+  virtual UCommandStatus execute (UConnection* connection);
+  virtual UCommand* copy ();
+
+  /// test
+  UExpression* test;
+  /// Command if
+  UCommand* command1;
+  /// Command else (0 if no else)
+  UCommand* command2;
+  /// true when the command has not been executed yet
+  bool firsttime;
+  /// list of UMultiEvent candidates
+  std::list<UAtCandidate*> candidates;
+
+private:
+  /// used for optimization
+  bool reloop_;
+};
+
+class UCommand_WHENEVER: public UASyncCommand
+{
+public:
+  MEMORY_MANAGED;
+
+  UCommand_WHENEVER (const UCommand::location& l, UExpression* test,
+		     UCommand* command1, UCommand* command2);
+  virtual ~UCommand_WHENEVER ();
+
+  virtual void print (int l);
+
+  virtual UCommandStatus execute (UConnection* connection);
+  virtual UCommand* copy ();
+
+  /// test
+  UExpression* test;
+  /// Command ok
+  UCommand* command1;
+  /// Command onleave
+  UCommand* command2;
+  /// true when the command has not been executed yet
+  bool firsttime;
+  /// list of UMultiEvent candidates
+  std::list<UAtCandidate*> candidates;
+
+  void noloop()
+  {
+    theloop_ = 0;
+  };
+
+private:
+  /// used for optimization
+  bool reloop_;
+  /// true when 'whenever' has triggered and is still active
+  bool active_;
+  /// the "loop command1" command
+  UCommand* theloop_;
+};
 
 #endif

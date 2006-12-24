@@ -34,9 +34,10 @@
 // **************************************************************************
 // UASyncCommand
 
-UASyncCommand::UASyncCommand()
+UASyncCommand::UASyncCommand (const location& l, Type type)
+  : UCommand (l, type),
+    reeval_ (true)
 {
-  reeval_ = true;
 }
 
 UASyncCommand::~UASyncCommand()

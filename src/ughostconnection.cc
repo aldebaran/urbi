@@ -67,8 +67,8 @@ UGhostConnection::effectiveSend(const ubyte *buffer, int length)
     real_length = 1023;
 
   memcpy (static_cast<void*> (tmpbuf),
-          static_cast<const void*> (buffer),
-          real_length);
+	  static_cast<const void*> (buffer),
+	  real_length);
   tmpbuf[real_length] = 0;
 
   ::urbiserver->debug(tmpbuf);

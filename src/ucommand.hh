@@ -28,8 +28,8 @@
 # include "fwd.hh"
 
 # include "utypes.hh"
+# include "uexpression.hh"
 # include "ustring.hh"
-# include "uasynccommand.hh"
 # include "uast.hh"
 
 // ****************************************************************************
@@ -91,7 +91,7 @@ public:
     CMD_LOAD,
   };
 
-  UCommand(const location&l, Type _type);
+  UCommand (const location& l, Type _type);
   virtual ~UCommand();
 
   virtual void print(int);
@@ -957,37 +957,6 @@ public:
   UString* tagRef;
 };
 
-class UCommand_AT : public UCommand, public UASyncCommand
-{
-public:
-  MEMORY_MANAGED;
-
-  UCommand_AT (const UCommand::location& l,
-	       Type type, UExpression* test,
-	       UCommand* command1, UCommand* command2);
-  virtual ~UCommand_AT();
-
-  virtual void print(int l);
-
-  virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
-
-  /// test
-  UExpression* test;
-  /// Command if
-  UCommand* command1;
-  /// Command else (0 if no else)
-  UCommand* command2;
-  /// true when the command has not been executed yet
-  bool             firsttime;
-  /// list of UMultiEvent candidates
-  std::list<UAtCandidate*> candidates;
-
-private:
-  /// used for optimization
-  bool reloop_;
-};
-
 class UCommand_WHILE : public UCommand
 {
 public:
@@ -1006,42 +975,6 @@ public:
   UExpression* test;
   /// Command
   UCommand* command;
-};
-
-class UCommand_WHENEVER : public UCommand, public UASyncCommand
-{
-public:
-  MEMORY_MANAGED;
-
-  UCommand_WHENEVER (const UCommand::location& l, UExpression* test,
-		     UCommand* command1, UCommand* command2);
-  virtual ~UCommand_WHENEVER();
-
-  virtual void print(int l);
-
-  virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
-
-  /// test
-  UExpression* test;
-  /// Command ok
-  UCommand* command1;
-  /// Command onleave
-  UCommand* command2;
-  /// true when the command has not been executed yet
-  bool             firsttime;
-  /// list of UMultiEvent candidates
-  std::list<UAtCandidate*> candidates;
-
-  void noloop()  {theloop_ = 0;};
-
-private:
-  /// used for optimization
-  bool reloop_;
-  /// true when 'whenever' has triggered and is still active
-  bool active_;
-  /// the "loop command1" command
-  UCommand* theloop_;
 };
 
 class UCommand_LOOP : public UCommand

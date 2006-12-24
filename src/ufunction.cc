@@ -24,6 +24,7 @@
 #include "ufunction.hh"
 #include "userver.hh"
 #include "ucommand.hh"
+#include "unamedparameters.hh"
 
 UFunction* kernel::remoteFunction;
 

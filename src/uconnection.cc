@@ -225,10 +225,10 @@ void UConnection::initialize()
   char customHeader[1024];
 
   do {
-    server->getCustomHeader(i, (char*)customHeader, 1024);
+    server->getCustomHeader(i, customHeader, 1024);
     if (customHeader[0]!=0)
-      send((const char*) customHeader, "start");
-    i++;
+      send(customHeader, "start");
+    ++i;
   } while (customHeader[0]!=0);
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; i++)
@@ -611,8 +611,9 @@ UConnection::received (const ubyte *buffer, int length)
 	// CMD_ASSIGN_BINARY: intercept and execute immediately
 	if (p.binaryCommand)
 	{
-	  binCommand = ((UCommand_ASSIGN_BINARY*)
-			p.commandTree->command1);
+	  binCommand =
+	    dynamic_cast<UCommand_ASSIGN_BINARY*> (p.commandTree->command1);
+	  assert (binCommand != 0);
 
 	  ubyte* buffer =
 	    recvQueue_.pop(binCommand->refBinary->ref()->bufferSize);
@@ -1115,18 +1116,16 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // COMMAND1
 
-    if (tree->callid &&
-	tree->command1 &&
-	tree->runlevel1 == UWAITING)
+    if (tree->callid && tree->command1 && tree->runlevel1 == UWAITING)
       stack.push_front(tree->callid);
 
-    tree->command1 = processCommand (tree->command1,
-				     tree->runlevel1,
+    tree->command1 = processCommand (tree->command1, tree->runlevel1,
 				     mustReturn);
 
     if (mustReturn)
     {
-      tree = (UCommand_TREE*) tree->command1;
+      tree = dynamic_cast<UCommand_TREE*> (tree->command1);
+      assert (tree != 0);
       continue;
     }
 
@@ -1143,10 +1142,10 @@ UConnection::execute(UCommand_TREE*& execCommand)
     }
 
     // COMMAND2
-    if (tree->node == UAND ||
-	tree->node == UCOMMA ||
-	tree->command1 == 0 ||
-	tree->command1->status == UBACKGROUND)
+    if (tree->node == UAND
+	|| tree->node == UCOMMA
+	|| tree->command1 == 0
+	|| tree->command1->status == UBACKGROUND)
     {
       if (tree == lastCommand)
 	obstructed = false;
@@ -1156,7 +1155,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
 				       mustReturn);
       if (mustReturn)
       {
-	tree = (UCommand_TREE*) tree->command2;
+	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
+	assert (tree != 0);
 	continue;
       }
     }

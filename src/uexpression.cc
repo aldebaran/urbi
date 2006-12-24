@@ -30,8 +30,10 @@
 #include "parser/uparser.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
+#include "uasynccommand.hh"
 #include "uconnection.hh"
 #include "ucopy.hh"
+#include "ueventhandler.hh"
 #include "ueventcompound.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"
@@ -39,6 +41,8 @@
 #include "ugroup.hh"
 #include "userver.hh"
 #include "uvariable.hh"
+#include "uvariablename.hh"
+#include "uobj.hh"
 
 MEMORY_MANAGER_INIT(UExpression);
 // **************************************************************************
@@ -1780,7 +1784,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
     case EXPR_VARIABLE:
 
-      variable = variablename->getVariable((UCommand*)cmd, c);
+      variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
       if (!fullname) return UFAIL;
       varname  = variablename->getFullname()->str();
@@ -1804,8 +1808,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  if (variable)
 	  {
 	    c->send("!!! Pure virtual variables not allowed"
-		     " in asynchronous tests.\n",
-		    ((UCommand*)cmd)->getTag().c_str());
+                    " in asynchronous tests.\n",
+                    cmd->getTag().c_str());
 	    return UFAIL;
 	  }
 	}
@@ -1814,20 +1818,20 @@ UExpression::asyncScan(UASyncCommand *cmd,
       if (!variable)
       {
 	// Is this a list?
-	char* p = const_cast<char*>(strstr(varname, "__"));
+	char* p = strstr(varname, "__");
 	char* pnext = p;
 	while (pnext)
 	{
 	  p = pnext;
-	  pnext = strstr(p+2, "__");
+	  pnext = strstr(p + 2, "__");
 	}
 	if (p)
 	{
 	  // could be a list index
-	  p[0]=0;
+	  p[0] = 0;
 	  HMvariabletab::iterator hmv =
 	    ::urbiserver->variabletab.find(varname);
-	  p[0]='_';
+	  p[0] = '_';
 	  if (hmv != ::urbiserver->variabletab.end())
 	    variable = hmv->second;
 	}
@@ -1862,7 +1866,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
     case EXPR_PROPERTY:
 
-      variable = variablename->getVariable((UCommand*)cmd, c);
+      variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
       if (!fullname) return UFAIL;
       if (!variable) return UFAIL;
@@ -1871,7 +1875,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
     case EXPR_FUNCTION:
 
-      fullname = variablename->buildFullname ( (UCommand*)cmd, c);
+      fullname = variablename->buildFullname (cmd, c);
       nbargs = 0;
       if (parameters) nbargs = parameters->size ();
       eh = kernel::findEventHandler(fullname, nbargs);

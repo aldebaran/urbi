@@ -18,7 +18,9 @@
 
 #include "uatcandidate.hh"
 #include "ucommand.hh"
+#include "ueventhandler.hh"
 #include "ueventinstance.hh"
+#include "uvariablename.hh"
 
 // **************************************************************************
 // UAtCandidate

@@ -1,5 +1,45 @@
 2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	UASyncCommand is an UCommand.
+	In my quest to remove evil old-style C casts from the code, I noticed
+	that sometimes, an UASyncCommand* gets casted in an UCommand*. This is
+	plain wrong since UASyncCommand doesn't inherit UCommand. Worse: the
+	resulting UCommand* could be used to call getTag method and this
+	method doesn't exist in UASyncCommand. Since only UCommand_AT and
+	UCommand_WHENEVER use UASyncCommand and since they used to inherit
+	both UCommand and UASyncCommand, I fixed this by making UASyncCommand
+	inherit UCommand and by making UCommand_{WHENEVER,AT} inherit only
+	UASyncCommand. Now it is safe to use an UASyncCommand in the context
+	of an UCommand.
+
+	* src/ucommand.hh: Don't include uasynccommand.hh.
+	  (UCommand_AT, UCommand_WHENEVER): Move to...
+	* src/uasynccommand.hh: Here.
+	  (UASyncCommand): Inherit from UCommand.
+	  (UCommand_AT, UCommand_WHENEVER): Inherit from UASyncCommand.
+
+	* src/ucommand.cc,
+	* src/uasynccommand.cc: Fix initialization lists accordingly.
+
+	* src/uatcandidate.cc,
+	* src/uvariablelist.cc,
+	* src/parser/bison/ugrammar.y,
+	* src/ufunction.cc,
+	* src/uobject.cc,
+	* src/uvariable.cc,
+	* src/uvariablename.cc: Fix includes.
+	* src/uexpression.cc: Ditto + remove formerly invalid (now useless)
+	  casts.
+
+	* src/ustring.cc: Remove useless casts.
+	* src/uconnection.cc: Ditto + rewrite unsafe upward casts using
+	  dynamic_cast and assert when dynamic_cast fails.
+
+	* src/uvariablename.hh,
+	* src/ughostconnection.cc: Aesthetic change.
+
+2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	More restyling.
 	* src/ubinary.cc,
 	* src/ucommand.cc,

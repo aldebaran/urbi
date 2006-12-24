@@ -57,7 +57,7 @@ UString::UString(const char* s)
   fast_armor ();
 }
 
-UString::UString(const UString *s)
+UString::UString(const UString* s)
 {
   ADDOBJ(UString);
   if (s==0)
@@ -80,7 +80,7 @@ UString::UString(const UString *s)
 }
 
 
-UString::UString(const UString *s1, const UString* s2)
+UString::UString(const UString* s1, const UString* s2)
 {
   ADDOBJ(UString);
 
@@ -118,35 +118,36 @@ const char* UString::ext(int deb, int length)
   return str_+deb;
 }
 
-bool UString::equal(const UString *s) const
+bool UString::equal(const UString* s) const
 {
-  if (s==0)
+  if (s == 0)
     return false;
-  return STREQ(s->str(), (const char*)str_);
+  return STREQ(s->str(), str_);
 }
 
-bool UString::tagequal(const UString *s) const
+bool UString::tagequal(const UString* s) const
 {
-  if (s==0)
+  if (s == 0)
     return false;
   char* p = const_cast<char*>(strchr(s->str(), '.'));
-  if (p) p[0]=0;
-  bool res = STREQ(s->str(), (const char*)str_);
   if (p)
-    p[0]='.';
+    *p = 0;
+  bool res = STREQ(s->str(), str_);
+  if (p)
+    *p = '.';
   return res;
 }
 
-bool UString::equal(const char *s) const
+bool UString::equal(const char* s) const
 {
-  if (s==0)
+  if (s == 0)
     return false;
-  return STREQ(s, (const char*)str_);
+  return STREQ(s, str_);
 }
 
-void UString::update(const char *s)
+void UString::update(const char* s)
 {
-  if (s==0 || s == str_ /*|| (STREQ(s,str_)) */)
+  if (s == 0 || s == str_ /*|| (STREQ(s, str_)) */)
     return;
 
   if (str_)
@@ -160,7 +161,7 @@ void UString::update(const char *s)
   ADDMEM(len_);
 }
 
-void UString::update(const UString *s)
+void UString::update(const UString* s)
 {
   if (!s)
     return;
@@ -190,15 +191,15 @@ UString::un_armor ()
 	  || cp[1] == '"')
       {
 	if (cp[1] ==  'n')
-          cp[1] = '\n';
+	  cp[1] = '\n';
 	if (cp[1] ==  't')
-          cp[1] = '\t';
+	  cp[1] = '\t';
 
 	memmove (static_cast<void*> (cp),
-                 static_cast<void*> (cp + 1),
-                 len_ - pos);
-	len_ --;
-	if (cp[0]=='\\')
+		 static_cast<void*> (cp + 1),
+		 len_ - pos);
+	len_--;
+	if (cp[0] == '\\')
 	  cp++;
       }
       else

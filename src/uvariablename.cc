@@ -30,7 +30,9 @@
 #include "userver.hh"
 #include "uvariable.hh"
 #include "uvariablename.hh"
-
+#include "unamedparameters.hh"
+#include "uobj.hh"
+#include "ueventhandler.hh"
 
 MEMORY_MANAGER_INIT(UVariableName);
 
@@ -163,7 +165,7 @@ UVariableName::resetCache()
  the hash table.
  */
 UVariable*
-UVariableName::getVariable(UCommand *command, UConnection *connection)
+UVariableName::getVariable (UCommand* command, UConnection* connection)
 {
   if (variable)
     return variable->toDelete ? 0 : variable;
@@ -274,7 +276,6 @@ UVariableName::getDevice()
   return device;
 }
 
-
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
  If the building blocks are static, non variable parameters (like static
@@ -282,9 +283,9 @@ UVariableName::getDevice()
  true to avoid recalculus on next call.
  */
 UString*
-UVariableName::buildFullname(UCommand *command,
-			     UConnection *connection,
-			     bool withalias)
+UVariableName::buildFullname (UCommand* command,
+			      UConnection* connection,
+			      bool withalias)
 {
   const int		fullnameMaxSize = 1024;
   char			name[fullnameMaxSize];
@@ -304,7 +305,8 @@ UVariableName::buildFullname(UCommand *command,
 
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
-      connection->sendf (command->getTag().c_str(), "!!! dynamic variable evaluation failed\n");
+      connection->sendf (command->getTag().c_str(),
+                         "!!! dynamic variable evaluation failed\n");
       delete e1;
       if (fullname_)
       {
@@ -616,7 +618,6 @@ UVariableName::buildFullname(UCommand *command,
 
   return fullname_;
 }
-
 
 //! UVariableName name update for functions scope hack
 void

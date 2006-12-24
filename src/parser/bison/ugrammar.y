@@ -77,6 +77,7 @@
 #include "parser/uparser.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
+#include "uasynccommand.hh"
 #include "uconnection.hh"
 #include "ugroup.hh"
 #include "uobj.hh"

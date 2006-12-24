@@ -20,13 +20,13 @@
  **************************************************************************** */
 
 #ifndef UVARIABLENAME_HH
-#define UVARIABLENAME_HH
+# define UVARIABLENAME_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "utypes.hh"
-#include "ustring.hh"
+# include "fwd.hh"
+# include "utypes.hh"
+# include "ustring.hh"
 
 // ****************************************************************************
 //! Contains a variable name description
@@ -55,12 +55,11 @@ public:
   void           print();
   UVariableName* copy();
 
-  UVariable*     getVariable(UCommand *command, UConnection *connection);
+  UVariable*     getVariable (UCommand* command, UConnection* connection);
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
-  UString*       buildFullname(UCommand *command,
-			       UConnection *connection,
-			       bool withalias = true);
+  UString*       buildFullname(UCommand* command, UConnection* connection,
+                               bool withalias = true);
   UString*       getFullname()  { return fullname_;};
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();

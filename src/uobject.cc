@@ -30,6 +30,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "userver.hh"
 #include "utypes.hh"
 #include "uvariable.hh"
+#include "uobj.hh"
 
 #define LIBURBIDEBUG
 

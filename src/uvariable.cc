@@ -34,6 +34,7 @@
 #include "userver.hh"
 #include "utypes.hh"
 #include "uvariable.hh"
+#include "uobj.hh"
 
 MEMORY_MANAGER_INIT(UVariable);
 
