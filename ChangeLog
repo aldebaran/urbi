@@ -1,5 +1,13 @@
 2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Revert former change.
+	* src/uexpression.cc: const_cast strstr's return value. It is needed
+	  on Windows/VC++ where strstr is overloaded: when one of its
+	  arguments is const, both are const and the return value is also
+	  const.
+
+2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	UASyncCommand is an UCommand.
 	In my quest to remove evil old-style C casts from the code, I noticed
 	that sometimes, an UASyncCommand* gets casted in an UCommand*. This is

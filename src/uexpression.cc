@@ -1818,7 +1818,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
       if (!variable)
       {
 	// Is this a list?
-	char* p = strstr(varname, "__");
+	char* p = const_cast<char*> (strstr (varname, "__"));
 	char* pnext = p;
 	while (pnext)
 	{
