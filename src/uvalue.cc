@@ -20,7 +20,7 @@
  **************************************************************************** */
 
 #include <cmath>
-#include <cstdio>
+#include "libport/cstdio"
 #include <sstream>
 
 #include "libport/ref-pt.hh"
@@ -117,24 +117,23 @@ UValue::operator urbi::UImage()
 class DumbConnection:public UConnection
 {
 public:
-  DumbConnection():
-    UConnection(::urbiserver, 1000, 1000000, 1000, 1000, 1000)
+  DumbConnection()
+    : UConnection(::urbiserver, 1000, 1000000, 1000, 1000, 1000)
   {}
-  virtual UErrorValue closeConnection	 ()
+  virtual UErrorValue closeConnection ()
   {
     return USUCCESS;
   }
-  char * getData()
+  char* getData()
   {
-    return (char *)sendQueue_.virtualPop(sendQueue_.dataSize());
+    return (char*) sendQueue_.virtualPop(sendQueue_.dataSize());
   }
 protected:
-  virtual int	      effectiveSend	(const ubyte*, int)
+  virtual int effectiveSend (const ubyte*, int)
   {
     return 0;
   }
 };
-
 
 UValue::operator urbi::UBinary()
 {
@@ -660,7 +659,7 @@ UValue::equal(UValue *v)
   switch (dataType)
   {
     case DATA_NUM:
-      return (v->dataType == DATA_NUM && v->val == val);
+      return v->dataType == DATA_NUM && v->val == val;
 
     case DATA_STRING:
       return (v->dataType == DATA_STRING &&

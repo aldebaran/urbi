@@ -215,7 +215,7 @@ class UCommand_ASSIGN_VALUE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_VALUE(const UCommand::location& l, 
+  UCommand_ASSIGN_VALUE(const UCommand::location& l,
 			UVariableName* variablename,
 			UExpression* expression,
 			UNamedParameters* parameters,
@@ -307,7 +307,7 @@ class UCommand_ASSIGN_BINARY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_BINARY(const UCommand::location& l, 
+  UCommand_ASSIGN_BINARY(const UCommand::location& l,
 			 UVariableName* variablename,
 			 libport::RefPt<UBinary>* refBinary);
   virtual ~UCommand_ASSIGN_BINARY();
@@ -337,7 +337,7 @@ class UCommand_ASSIGN_PROPERTY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_PROPERTY(const UCommand::location& l, 
+  UCommand_ASSIGN_PROPERTY(const UCommand::location& l,
 			   UVariableName* variablename,
 			   UString* oper,
 			   UExpression* expression);
@@ -370,7 +370,7 @@ class UCommand_AUTOASSIGN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AUTOASSIGN (const UCommand::location& l, 
+  UCommand_AUTOASSIGN (const UCommand::location& l,
 		       UVariableName* variablename,
 		       UExpression* expression,
 		       int assigntype);
@@ -431,7 +431,7 @@ class UCommand_ECHO : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ECHO(const UCommand::location& l, 
+  UCommand_ECHO(const UCommand::location& l,
 		UExpression* expression,
 		UNamedParameters* parameters,
 		UString* connectionTag);
@@ -455,7 +455,7 @@ class UCommand_NEW : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_NEW(const UCommand::location& l, 
+  UCommand_NEW(const UCommand::location& l,
 	       UVariableName* varname,
 	       UString* obj,
 	       UNamedParameters* parameters,
@@ -488,7 +488,7 @@ class UCommand_ALIAS : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ALIAS (const UCommand::location& l, 
+  UCommand_ALIAS (const UCommand::location& l,
 		  UVariableName* aliasname,
 		  UVariableName* id,
 		  bool eraseit=false);
@@ -538,7 +538,7 @@ class UCommand_GROUP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_GROUP(const UCommand::location& l, 
+  UCommand_GROUP(const UCommand::location& l,
 		 UString* id,
 		 UNamedParameters* parameters,
 		 int grouptype = 0);
@@ -893,7 +893,7 @@ class UCommand_TIMEOUT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_TIMEOUT (const UCommand::location& l, 
+  UCommand_TIMEOUT (const UCommand::location& l,
 		    UExpression* duration,
 		    UCommand* command);
   virtual ~UCommand_TIMEOUT();

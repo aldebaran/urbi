@@ -1306,7 +1306,7 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
 			    "!!! Error loading file: %s\n",
 			    e1->str->str());
 	else
-	  connection->sendf(command->getTag(), 
+	  connection->sendf(command->getTag(),
 			    "!!! Error parsing string: %s\n",
 			    e1->str->str());
 	delete ret;

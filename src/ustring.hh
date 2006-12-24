@@ -91,7 +91,7 @@ UString::setLen(int l)
 }
 
 inline
-std::ostream& 
+std::ostream&
 operator<< (std::ostream& o, const UString& s)
 {
   if (s.str())

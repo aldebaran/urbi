@@ -34,7 +34,7 @@ protected:
 };
 
 inline UAst::UAst (const location& l)
-  : loc_(l) 
+  : loc_(l)
 {
 }
 

@@ -313,7 +313,7 @@ namespace urbi
    UVar::blend()
    {
    if (vardata)
-   return ((UBlendType)vardata->variable->blendType);
+   return (UBlendType)vardata->variable->blendType;
    else
    {
    echo("Internal error on variable 'vardata', should not be zero\n");

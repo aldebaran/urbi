@@ -422,7 +422,7 @@ UVariable::updated()
        i++)
   {
     urbi::UList tmparray;
-    
+
     if ((*i)->storage)
     {
       // monitor with &UVar reference
@@ -430,7 +430,7 @@ UVariable::updated()
       tmpvalue->storage = (*i)->storage;
       tmparray.array.push_back(tmpvalue);
     };
-    
+
     (*i)->__evalcall(tmparray); // tmparray is empty here
   }
 }

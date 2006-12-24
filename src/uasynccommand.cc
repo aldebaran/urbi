@@ -18,7 +18,7 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <cstdio>
+#include "libport/cstdio"
 #include <list>
 
 #include <sstream>

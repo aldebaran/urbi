@@ -15,7 +15,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-#include <cstdio>
+#include "libport/cstdio"
 #include <sstream>
 
 #include "uasyncregister.hh"
