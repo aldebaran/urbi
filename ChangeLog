@@ -1,3 +1,20 @@
+2006-12-24  Akim Demaille  <akim.demaille@free.fr>
+
+	Reduce code bloat in the parser
+	The assembly flags are no longer needed on MIPS to compile
+	the parser.  Maybe we can also leave -O2.
+	* src/parser/bison/ugrammar.y (NEW_EXP, NEW_BIN, MEMCHECK): Remove
+	all these macros, replaced by...
+	(new_exp, new_bin, memcheck): these.
+	(uparser): Rename as...
+	(up): this.
+	(TOK_UECHO): Rename as...
+	(TOK_ECHO): this.
+	Use string instead of token names when possible.
+	* src/parser/bison/utoken.l: Adjust.
+	* src/parser/uparser.hh, src/parser/uparser.cc (UFlexer):
+	Remove, useless.
+
 2006-12-24  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Revert former change.

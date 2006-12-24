@@ -38,21 +38,7 @@
   UParser::token_type						 \
   yyFlexLexer::yylex(UParser::semantic_type* valp,		 \
 		     UParser::location_type* locp,		 \
-		     UParser& uparser)
-
-//! Control class for a flex-scanner
-/*! It has a pointer to the uparser in which it is contained
- */
-class UFlexer
-  : public yyFlexLexer
-{
-public:
-  UFlexer(void *_uparser);
-  void* get_uparser() const;
-private:
-  void *uparser;
-};
-
+		     UParser& up)
 
 //! UParser uses 'flex' and 'bison' as scanner/parser
 /*! The choice of flex/bison is detailed in the comment on the UServer class.
@@ -98,7 +84,7 @@ private:
   int parse_ ();
 
   /// The Flex scanner.
-  UFlexer scanner_;
+  yyFlexLexer scanner_;
 
   /// The file names that were parsed.
   ///

@@ -13,26 +13,12 @@
 #include "ugrammar.hh"
 
 /*----------.
-| UFlexer.  |
-`----------*/
-
-UFlexer::UFlexer(void *_uparser)
-  : uparser(_uparser)
-{}
-
-void *
-UFlexer::get_uparser() const
-{
-  return uparser;
-}
-
-/*----------.
 | UParser.  |
 `----------*/
 
 UParser::UParser(UConnection& cn)
   : connection (cn),
-    scanner_ (this)
+    scanner_ ()
 {}
 
 int

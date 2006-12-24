@@ -31,7 +31,7 @@ typedef yy::parser::token token;
 #define YY_USER_ACTION locp->columns(yyleng);
 
 // Otherwise Flex returns an int instead of an enum.
-#define yyterminate() return token::UEOF
+#define yyterminate() return token::TOK_EOF
 
 /*----------------------------------.
 | Sugar to return semantic values.  |
@@ -186,7 +186,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
 "disinherit"    return token::TOK_DISINHERIT;
-"echo"          return token::TOK_UECHO;
+"echo"          return token::TOK_ECHO;
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;
@@ -306,8 +306,8 @@ STRING   \"([^\"]|"\\\"")*\"
 {BLANKS}       locp->step();
 {EOL}          locp->lines(); locp->step();
 .              {
-		 uparser.error(*locp, std::string ("invalid character: ")
-				      + yytext);
+		 up.error(*locp, std::string ("invalid character: ")
+			  + yytext);
 		 locp->step ();
 	       }
 
@@ -322,7 +322,7 @@ STRING   \"([^\"]|"\\\"")*\"
   .             /* Stray `*' and `/'. */;
 
   <<EOF>> {
-    uparser.error(*locp, std::string ("unexpected end of file in a comment"));
+    up.error(*locp, std::string ("unexpected end of file in a comment"));
     locp->step ();
     BEGIN INITIAL;
   }
