@@ -7,11 +7,7 @@ class Vcs
 
   def local_commit! ( *args )
     common_commit!("k1 <%= rev %>: <%= title %>", *args) do |subject|
-      mail!(:to => %w[akim@lrde.epita.fr
-                      matthieu.nottale@ensta.fr
-                      baillie@gostai.com
-                      sigoure@lrde.epita.fr
-                      yousfi@gostai.com],
+      mail!(:to => %w[kernel1@gostai.com],
             :subject => subject)
     end
   end
