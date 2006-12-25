@@ -349,8 +349,9 @@ take (T* t)
 %type <namedparameters>     parameterlist   "list of parameters"
 %type <namedparameters>     rawparameters   "list of attributes"
 %type <namedparameters>     namedparameters "list of named parameters"
-%type <namedparameters>     flags           "list of flags"
-%type <namedparameters>     flags.0.1       "list of flags (0 or 1)"
+%type <namedparameters>     flag            "a flag"
+%type <namedparameters>     flags.0         "zero or more flags"
+%type <namedparameters>     flags.1         "one or more flags"
 %type <variablelist>        refvariables    "list of variables"
 %type <expr>                softtest        "soft test"
 %type <namedparameters>     identifiers     "list of identifiers"
@@ -451,17 +452,7 @@ taggedcommand:
       $$ = $1;
     }
 
-  | "identifier" ":" command {
-
-      memcheck(up, $1);
-      if ($3)
-      {
-	$3->setTag($1->str());
-      }
-      $$ = $3;
-    }
-
-  | "identifier" flags ":" command {
+  | "identifier" flags.0 ":" command {
 
       memcheck(up, $1);
       if ($4)
@@ -472,18 +463,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | TAG ":" command {
-
-      memcheck(up, $1);
-      if ($3)
-      {
-	$3->setTag($1->str());
-      }
-      $$ = $3;
-    }
-
-
-  | TAG flags ":" command {
+  | TAG flags.0 ":" command {
 
       memcheck(up, $1);
       if ($4)
@@ -494,20 +474,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | STRUCT ":" command {
-
-      memcheck(up, $1.device);
-      memcheck(up, $1.id);
-      if ($3)
-      {
-	$3->setTag(UString($1.device, $1.id).str());
-	delete $1.device;
-	delete $1.id;
-      }
-      $$ = $3;
-    }
-
-  | STRUCT flags ":" command {
+  | STRUCT flags.0 ":" command {
 
       memcheck(up, $1.device);
       memcheck(up, $1.id);
@@ -523,7 +490,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | flags ":" command {
+  | flags.1 ":" command {
 
       memcheck(up, $1);
       if ($3)
@@ -540,49 +507,52 @@ taggedcommand:
 | flags.  |
 `--------*/
 
-// FIXME: Why don't we have real std::lists here???
-// Right recursion.
-flags :
-     FLAG flags.0.1  {
+flag:
+  FLAG
+  {
+    UExpression *flagval = new UExpression(UExpression::VALUE, take($1));
+    memcheck(up, flagval);
+    $$ = new UNamedParameters(new UString("flag"), flagval);
+    memcheck(up, $$, flagval);
+  }
 
-      UExpression *flagval = new UExpression(UExpression::VALUE, *$1);
-      delete $1;
-      memcheck(up, flagval);
+| FLAGTIME "(" expr ")"
+  {
+    $$ = new UNamedParameters(new UString("flagtimeout"), $3);
+    memcheck(up, $$, $3);
+  }
 
-      $$ = new UNamedParameters(new UString("flag"), flagval, $2);
-      memcheck(up, $$, flagval, $2);
-    }
+| FLAGID "(" expr ")"
+  {
+    $$ = new UNamedParameters(new UString("flagid"), $3);
+    memcheck(up, $$, $3);
+  }
 
-  | FLAGTIME "(" expr ")" flags.0.1 {
-
-      $$ = new UNamedParameters(new UString("flagtimeout"), $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | FLAGID "(" expr ")" flags.0.1 {
-
-      $$ = new UNamedParameters(new UString("flagid"), $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | FLAGTEST "(" softtest ")" flags.0.1 {
-
-      if (*$1 == 6)
-	$$ = new UNamedParameters(new UString("flagstop"), $3, $5);
-      else
-	$$ = new UNamedParameters(new UString("flagfreeze"), $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
+| FLAGTEST "(" softtest ")"
+  {
+    $$ = new UNamedParameters(new UString(*$1 == 6 ? "flagstop" : "flagfreeze"),
+			      $3);
+    memcheck(up, $$, $3);
+  }
 ;
 
-// 0 or 1 flags.
-flags.0.1:
-  /* empty. */ { $$ = 0;  }
-| flags        { $$ = $1; }
+// One or more "flag"s.
+flags.1:
+  flag             { $$ = $1;       }
+| flags.1 flag     { $1->next = $2; }
 ;
 
-/* COMMAND */
+// Zero or more "flag"s.
+flags.0:
+  /* empty. */   { $$ = 0; }
+| flags.1        { $$ = $1; }
+;
+
+
+
+/*----------.
+| command.  |
+`----------*/
 
 command:
 
@@ -860,7 +830,7 @@ instruction:
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(UExpression::VALUE,
-						    UINFINITY));
+							UINFINITY));
       memcheck(up, $$, $4);
     }
 
@@ -868,7 +838,7 @@ instruction:
 
       $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(UExpression::VALUE,
-						     UINFINITY));
+							 UINFINITY));
       memcheck(up, $$, $4, $6);
     }
 

@@ -20,14 +20,14 @@
  **************************************************************************** */
 
 #ifndef UNAMEDPARAMETERS_HH
-#define UNAMEDPARAMETERS_HH
+# define UNAMEDPARAMETERS_HH
 
-#include "fwd.hh"
-#include "utypes.hh"
-#include "ustring.hh"
+# include "fwd.hh"
+# include "utypes.hh"
+# include "ustring.hh"
 
-// ****************************************************************************
-//! Contains any list of identifiers, expressions or combinaison of both.
+/// Any list of identifiers, expressions or combinaison of both.
+// FIXME: There should be UNamedParameter, and we should use lists or so.
 class UNamedParameters
 {
 public:

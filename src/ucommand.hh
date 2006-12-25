@@ -28,7 +28,7 @@
 # include "fwd.hh"
 
 # include "utypes.hh"
-# include "uexpression.hh"
+# include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
 # include "ustring.hh"
 # include "uast.hh"
 
