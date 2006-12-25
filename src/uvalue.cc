@@ -334,7 +334,7 @@ UValue & UValue::operator = (const urbi::UBinary &b)
     if (item == "")
       break;
     UNamedParameters * unp =
-      new UNamedParameters(0, new UExpression(UExpression::EXPR_VALUE,
+      new UNamedParameters(0, new UExpression(UExpression::VALUE,
 					      new UString(item.c_str())));
     if (!first)
     {

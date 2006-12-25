@@ -22,15 +22,12 @@
 #include "ueventinstance.hh"
 #include "uvariablename.hh"
 
-// **************************************************************************
-// UAtCandidate
-
 UAtCandidate::UAtCandidate(ufloat endTime,
-			   UMultiEventInstance* mei):
-  endTime_ (endTime),
-  mei_ (mei),
-  checked_ (true),
-  hasTriggered_ (false)
+			   UMultiEventInstance* mei)
+  : endTime_ (endTime),
+    mei_ (mei),
+    checked_ (true),
+    hasTriggered_ (false)
 {
 }
 
@@ -48,42 +45,37 @@ UAtCandidate::equal(UMultiEventInstance* mei)
 bool
 UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 {
-  bool res = false;
-  cmd = 0;
+  if (currentTime < endTime_ || hasTriggered_)
+    return false;
 
-  if (currentTime >= endTime_ && !hasTriggered_)
+  cmd = 0;
+  hasTriggered_ = true;
+
+  for (std::list<UEventInstance*>::iterator i = mei_->instances_.begin ();
+       i != mei_->instances_.end ();
+       ++i)
   {
-    res = true;
-    hasTriggered_ = true;
+    std::list<std::string>::iterator is;
+    std::list<UValue*>::iterator iuv;
+    for (is = (*i)->filter_.begin (), iuv = (*i)->e_->args ().begin ();
+	 is != (*i)->filter_.end ();
+	 ++is, ++iuv)
+      if (!is->empty())
+      {
+	std::string device = is->substr (0, is->find ('.'));
+	std::string id = is->substr (is->find ('.')+1);
+	UCommand *newcmd = new UCommand_ASSIGN_VALUE
+	  (UCommand::location(),
+	   new UVariableName (new UString (device),
+			      new UString (id),
+			      true,  0),
+	   new UExpression (UExpression::VALUE, *iuv), 0);
+	if (!cmd)
+	  cmd = newcmd;
+	else
+	  cmd = new UCommand_TREE (UCommand::location(), UAND, newcmd, cmd);
+      }
   }
 
-  if (res)
-    for (std::list<UEventInstance*>::iterator ii = mei_->instances_.begin ();
-	 ii != mei_->instances_.end ();
-	 ++ii)
-    {
-      std::list<std::string>::iterator is;
-      std::list<UValue*>::iterator iuv;
-      for (is = (*ii)->filter_.begin (),
-	     iuv = (*ii)->e_->args ().begin ();
-	   is != (*ii)->filter_.end ();
-	   ++is, ++iuv)
-	if (!is->empty())
-	{
-	  std::string device = is->substr (0, is->find ('.'));
-	  std::string id = is->substr (is->find ('.')+1);
-	  UCommand *newcmd = new UCommand_ASSIGN_VALUE
-	    (UCommand::location(),
-	     new UVariableName (new UString (device),
-				new UString (id),
-				true,  0),
-	     new UExpression (UExpression::EXPR_VALUE, (*iuv)), 0);
-	  if (!cmd)
-	    cmd = newcmd;
-	  else
-	    cmd = new UCommand_TREE (UCommand::location(), UAND, newcmd, cmd);
-	}
-    }
-
-  return res;
+  return true;
 }

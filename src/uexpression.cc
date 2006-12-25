@@ -72,29 +72,13 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, ufloat *val)
-{
-  initialize();
-
-  this->val  = *val;
-  delete val; //other steal pointer, we copy->destroy
-  this->type = type; // should be EXPR_VALUE
-  this->isconst = true;
-
-  dataType   = DATA_NUM;
-}
-
-
-//! UExpression constructor for numeric value.
-/*! The parameter 'type' is required here only for the sake of uniformity
- between all the different constructors.
- */
 UExpression::UExpression(UExpression::Type type, ufloat val)
 {
   initialize();
 
   this->val  = val;
-  this->type = type; // should be EXPR_VALUE
+  assert (type == VALUE);
+  this->type = type;
   this->isconst = true;
 
   dataType   = DATA_NUM;
@@ -109,7 +93,8 @@ UExpression::UExpression(UExpression::Type type, UString *str)
 {
   initialize();
   this->str  = str;
-  this->type = type; // should be EXPR_VALUE
+  assert (type == VALUE);
+  this->type = type;
   this->isconst = true;
   dataType   = DATA_STRING;
 }
@@ -122,7 +107,8 @@ UExpression::UExpression(UExpression::Type type, UValue *v)
 {
   initialize();
 
-  this->type = type; // should be EXPR_VALUE
+  assert (type == VALUE);
+  this->type = type;
   this->isconst = true;
   dataType   = v->dataType;
 
@@ -151,7 +137,7 @@ UExpression::UExpression(UExpression::Type type,
   if (variablename)
     this->isconst    = variablename->isstatic;
 
-  this->type	   = type; // should be EXPR_PROPERTY
+  this->type	   = type; // should be PROPERTY
   dataType	   = DATA_UNKNOWN;
 }
 
@@ -162,9 +148,9 @@ UExpression::UExpression(UExpression::Type type,
 UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
 {
   initialize();
-  this->type	 = type; // should be EXPR_VARIABLE or
-  //EXPR_ADDR_VARIABLE or EXPR_GROUPLIST
-  if (type == EXPR_ADDR_VARIABLE) dataType = DATA_STRING;
+  this->type	 = type; // should be VARIABLE or
+  //ADDR_VARIABLE or GROUPLIST
+  if (type == ADDR_VARIABLE) dataType = DATA_STRING;
   this->variablename = variablename;
 }
 
@@ -177,7 +163,7 @@ UExpression::UExpression(UExpression::Type type,
 			 UNamedParameters *parameters)
 {
   initialize();
-  this->type	     = type; // should be EXPR_FUNCTION
+  this->type	     = type; // should be FUNCTION
   dataType	     = DATA_UNKNOWN;
   this->variablename = variablename;
   this->parameters   = parameters;
@@ -191,7 +177,7 @@ UExpression::UExpression(UExpression::Type type,
 			 UNamedParameters *parameters)
 {
   initialize();
-  this->type	     = type; // should be EXPR_LIST
+  this->type	     = type; // should be LIST
   dataType	     = DATA_LIST;
   this->parameters   = parameters;
 }
@@ -209,38 +195,38 @@ UExpression::UExpression(UExpression::Type type,
 
   // Compile time calculus reduction
   if (expression1 && expression2
-      && expression1->type == EXPR_VALUE && expression1->dataType == DATA_NUM
-      && expression2->type == EXPR_VALUE && expression2->dataType == DATA_NUM
-      && (type == EXPR_PLUS || type == EXPR_MINUS ||
-	  type == EXPR_MULT || type == EXPR_DIV ||
-	  type == EXPR_EXP)
-      && ! (type == EXPR_DIV && expression2->val == 0))
+      && expression1->type == VALUE && expression1->dataType == DATA_NUM
+      && expression2->type == VALUE && expression2->dataType == DATA_NUM
+      && (type == PLUS || type == MINUS ||
+	  type == MULT || type == DIV ||
+	  type == EXP)
+      && ! (type == DIV && expression2->val == 0))
   {
     switch (type)
     {
-      case EXPR_PLUS:  val = expression1->val + expression2->val; break;
-      case EXPR_MINUS: val = expression1->val - expression2->val; break;
-      case EXPR_MULT:  val = expression1->val * expression2->val; break;
-      case EXPR_DIV:   val = expression1->val / expression2->val; break;
-      case EXPR_EXP:   val = pow (expression1->val , expression2->val); break;
+      case PLUS:  val = expression1->val + expression2->val; break;
+      case MINUS: val = expression1->val - expression2->val; break;
+      case MULT:  val = expression1->val * expression2->val; break;
+      case DIV:   val = expression1->val / expression2->val; break;
+      case EXP:   val = pow (expression1->val , expression2->val); break;
       default:    break;
     }
 
-    this->type = EXPR_VALUE;
+    this->type = VALUE;
     this->isconst = true;
     dataType	 = DATA_NUM;
     delete expression1; this->expression1 = 0;
     delete expression2; this->expression2 = 0;
   }
 
-  if (type == EXPR_NEG
+  if (type == NEG
       && expression1
-      && expression1->type == EXPR_VALUE
+      && expression1->type == VALUE
       && expression1->dataType == DATA_NUM)
   {
     val = - expression1->val;
 
-    this->type = EXPR_VALUE;
+    this->type = VALUE;
     this->isconst = true;
     dataType = DATA_NUM;
     delete expression1; this->expression1 = 0;
@@ -312,7 +298,7 @@ UExpression::print()
   ::urbiserver->debug("[Type:E%d ", type);
   if (isconst)
     ::urbiserver->debug("(const) ");
-  if (type == EXPR_VALUE && dataType == DATA_NUM)
+  if (type == VALUE && dataType == DATA_NUM)
   {
     std::ostringstream tstr;
     tstr << "val="<<val<<" ";
@@ -423,7 +409,7 @@ UExpression::eval (UCommand *command,
 
   switch (type)
   {
-    case EXPR_LIST:
+    case LIST:
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_LIST;
@@ -475,7 +461,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_GROUP:
+    case GROUP:
     {
       UValue* ret = new UValue();
       HMgrouptab::iterator retr = connection->server->grouptab.find(str->str());
@@ -486,7 +472,7 @@ UExpression::eval (UCommand *command,
 	std::list<UString*>::iterator it = retr->second->members.begin();
 	if (it !=  retr->second->members.end())
 	{
-	  UExpression *e = new UExpression (EXPR_GROUP, (*it)->copy());
+	  UExpression *e = new UExpression (GROUP, (*it)->copy());
 	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
@@ -508,7 +494,7 @@ UExpression::eval (UCommand *command,
 
 	while (it !=  retr->second->members.end())
 	{
-	  UExpression *e = new UExpression (EXPR_GROUP, (*it)->copy());
+	  UExpression *e = new UExpression (GROUP, (*it)->copy());
 	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
@@ -535,7 +521,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_VALUE:
+    case VALUE:
     {
       if (tmp_value)
 	return tmp_value->copy(); // hack to be able to handle complex
@@ -548,7 +534,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_ADDR_VARIABLE:
+    case ADDR_VARIABLE:
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_STRING;
@@ -559,10 +545,10 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_VARIABLE:
-      return eval_EXPR_VARIABLE (command, connection, ec);
+    case VARIABLE:
+      return eval_VARIABLE (command, connection, ec);
 
-    case EXPR_PROPERTY:
+    case PROPERTY:
     {
       UVariable *variable = variablename->getVariable(command, connection);
       if (!variablename->getFullname())
@@ -638,10 +624,10 @@ UExpression::eval (UCommand *command,
 
     }
 
-    case EXPR_FUNCTION:
-      return eval_EXPR_FUNCTION (command, connection, ec);
+    case FUNCTION:
+      return eval_FUNCTION (command, connection, ec);
 
-    case EXPR_PLUS:
+    case PLUS:
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
@@ -662,7 +648,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-#define EVAL_EXPR_ARITHMETICS(Value)				\
+#define EVAL_ARITHMETICS(Value)				\
     {								\
       UValue* e1 = expression1->eval(command, connection);	\
       UValue* e2 = expression2->eval(command, connection);	\
@@ -675,22 +661,22 @@ UExpression::eval (UCommand *command,
       return res;						\
     }
 
-    case EXPR_MINUS:
-      EVAL_EXPR_ARITHMETICS(e1->val - e2->val);
+    case MINUS:
+      EVAL_ARITHMETICS(e1->val - e2->val);
 
-    case EXPR_MULT:
-      EVAL_EXPR_ARITHMETICS(e1->val * e2->val);
+    case MULT:
+      EVAL_ARITHMETICS(e1->val * e2->val);
 
-    case EXPR_MOD:
-      EVAL_EXPR_ARITHMETICS(fmod(e1->val, e2->val));
+    case MOD:
+      EVAL_ARITHMETICS(fmod(e1->val, e2->val));
 
-    case EXPR_EXP:
-      EVAL_EXPR_ARITHMETICS(pow(e1->val, e2->val));
+    case EXP:
+      EVAL_ARITHMETICS(pow(e1->val, e2->val));
 
-#undef EVAL_EXPR_ARITHMETICS
+#undef EVAL_ARITHMETICS
 
 
-    case EXPR_DIV:
+    case DIV:
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
@@ -711,7 +697,7 @@ UExpression::eval (UCommand *command,
     }
 
 
-    case EXPR_NEG:
+    case NEG:
     {
       UValue* e1 = expression1->eval(command, connection);
       ENSURE_TYPES_1 (DATA_NUM);
@@ -722,7 +708,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_COPY:
+    case COPY:
     {
       UValue* e1 = expression1->eval(command, connection);
       if (e1==0)
@@ -749,7 +735,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_TEST_REQ:
+    case TEST_REQ:
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
@@ -769,7 +755,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_TEST_DEQ:
+    case TEST_DEQ:
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
@@ -778,7 +764,7 @@ UExpression::eval (UCommand *command,
       ret->dataType = DATA_NUM;
 
       ufloat d1 = 0;
-      if (expression1->type == EXPR_VARIABLE)
+      if (expression1->type == VARIABLE)
       {
 	UVariable *v =
 	  expression1->variablename->getVariable(command, connection);
@@ -786,7 +772,7 @@ UExpression::eval (UCommand *command,
 	  d1 = v->delta;
       }
       ufloat d2 = 0;
-      if (expression2->type == EXPR_VARIABLE)
+      if (expression2->type == VARIABLE)
       {
 	UVariable *v =
 	  expression2->variablename->getVariable(command, connection);
@@ -801,7 +787,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-    case EXPR_TEST_PEQ:
+    case TEST_PEQ:
     {
       UValue* e1 = expression1->eval(command, connection);
       UValue* e2 = expression2->eval(command, connection);
@@ -830,7 +816,7 @@ UExpression::eval (UCommand *command,
     | Boolean expressions.  |
     `----------------------*/
 
-#define EVAL_EXPR_COMPARISON(Kind, Comparison)			\
+#define EVAL_COMPARISON(Kind, Comparison)			\
     {								\
       UValue* lhs = expression1->eval(command, connection);	\
       UValue* rhs = expression2->eval(command, connection);	\
@@ -847,27 +833,27 @@ UExpression::eval (UCommand *command,
       return res;						\
     }
 
-    case EXPR_TEST_EQ:
-      EVAL_EXPR_COMPARISON ("", lhs->equal(rhs));
+    case TEST_EQ:
+      EVAL_COMPARISON ("", lhs->equal(rhs));
 
-    case EXPR_TEST_NE:
-      EVAL_EXPR_COMPARISON ("", !lhs->equal(rhs));
+    case TEST_NE:
+      EVAL_COMPARISON ("", !lhs->equal(rhs));
 
-    case EXPR_TEST_GT:
-      EVAL_EXPR_COMPARISON ("Numerical", lhs->val > rhs->val);
+    case TEST_GT:
+      EVAL_COMPARISON ("Numerical", lhs->val > rhs->val);
 
-    case EXPR_TEST_GE:
-      EVAL_EXPR_COMPARISON ("Numerical", lhs->val >= rhs->val);
+    case TEST_GE:
+      EVAL_COMPARISON ("Numerical", lhs->val >= rhs->val);
 
-    case EXPR_TEST_LT:
-      EVAL_EXPR_COMPARISON ("Numerical", lhs->val < rhs->val);
+    case TEST_LT:
+      EVAL_COMPARISON ("Numerical", lhs->val < rhs->val);
 
-    case EXPR_TEST_LE:
-      EVAL_EXPR_COMPARISON ("Numerical", lhs->val <= rhs->val);
+    case TEST_LE:
+      EVAL_COMPARISON ("Numerical", lhs->val <= rhs->val);
 
-#undef EVAL_EXPR_COMPARISON
+#undef EVAL_COMPARISON
 
-    case EXPR_TEST_BANG:
+    case TEST_BANG:
     {
       UEventCompound* ec1 = 0;
       UValue* e1 = expression1->eval(command, connection, ec1);
@@ -890,7 +876,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-#define EVAL_EXPR_BIN_BOOLEAN(Op, Command)				\
+#define EVAL_BIN_BOOLEAN(Op, Command)				\
     {									\
       UEventCompound* ec1 = 0;						\
       UValue* e1 = expression1->eval(command, connection, ec1);		\
@@ -935,24 +921,24 @@ UExpression::eval (UCommand *command,
       return ret;							\
     }
 
-    case EXPR_TEST_AND:
-      EVAL_EXPR_BIN_BOOLEAN(&&, EC_AND);
+    case TEST_AND:
+      EVAL_BIN_BOOLEAN(&&, EC_AND);
 
-    case EXPR_TEST_OR:
-      EVAL_EXPR_BIN_BOOLEAN(||, EC_OR);
+    case TEST_OR:
+      EVAL_BIN_BOOLEAN(||, EC_OR);
 
-#undef EVAL_EXPR_BIN_BOOLEAN
+#undef EVAL_BIN_BOOLEAN
     default:
       return 0;
   }
 }
 
 UValue*
-UExpression::eval_EXPR_FUNCTION (UCommand *command,
+UExpression::eval_FUNCTION (UCommand *command,
 				 UConnection *connection,
 				 UEventCompound*& ec)
 {
-  assert (type == EXPR_FUNCTION);
+  assert (type == FUNCTION);
   UString* funname = variablename->buildFullname(command, connection);
 
   // Event detection
@@ -1185,7 +1171,7 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
       ret->dataType = DATA_NUM;
       ret->val = 0;
 
-      if (parameters->expression->type == EXPR_VARIABLE)
+      if (parameters->expression->type == VARIABLE)
 	if ((parameters->expression->variablename->
 	     getVariable(command, connection)) ||
 	    (parameters->expression->variablename->isFunction(command,
@@ -1201,7 +1187,7 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
       ret->dataType = DATA_NUM;
       ret->val = 0;
 
-      if (parameters->expression->type == EXPR_VARIABLE)
+      if (parameters->expression->type == VARIABLE)
       {
 	UVariable* v = parameters->expression->
 	  variablename->getVariable(command, connection);
@@ -1238,7 +1224,7 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
 	UBinary *b =
 	  new UBinary(loadQueue->dataSize(),
 		      new UNamedParameters
-		      (new UExpression(EXPR_VALUE,
+		      (new UExpression(VALUE,
 				       new UString("wav")),
 		       0));
 	memcpy(b->buffer,
@@ -1486,11 +1472,11 @@ UExpression::eval_EXPR_FUNCTION (UCommand *command,
 }
 
 UValue*
-UExpression::eval_EXPR_VARIABLE (UCommand *command,
+UExpression::eval_VARIABLE (UCommand *command,
 				 UConnection *connection,
 				 UEventCompound*& ec)
 {
-  assert (type == EXPR_VARIABLE);
+  assert (type == VARIABLE);
   UVariable *variable = variablename->getVariable(command, connection);
   if (!variablename->getFullname())
     return 0;
@@ -1772,7 +1758,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
   switch (type)
   {
-    case EXPR_LIST:
+    case LIST:
       pevent = parameters;
       while (pevent)
       {
@@ -1782,7 +1768,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
       }
       return USUCCESS;
 
-    case EXPR_VARIABLE:
+    case VARIABLE:
 
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
@@ -1808,8 +1794,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  if (variable)
 	  {
 	    c->send("!!! Pure virtual variables not allowed"
-                    " in asynchronous tests.\n",
-                    cmd->getTag().c_str());
+		    " in asynchronous tests.\n",
+		    cmd->getTag().c_str());
 	    return UFAIL;
 	  }
 	}
@@ -1864,7 +1850,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  }
       }
 
-    case EXPR_PROPERTY:
+    case PROPERTY:
 
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
@@ -1873,7 +1859,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
       variable->registerCmd(cmd);
       return USUCCESS;
 
-    case EXPR_FUNCTION:
+    case FUNCTION:
 
       fullname = variablename->buildFullname (cmd, c);
       nbargs = 0;

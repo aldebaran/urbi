@@ -1,3 +1,20 @@
+2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+
+	Simplifications
+	* src/uexpression.hh (UExpression::Type): Remove the EXPR_ prefix.
+	Adjust all uses.
+	(UExpression::UExpression): Remove the ctor that takes an ufloat*,
+	since any it takes a copy.
+	Use assert instead of claiming some belief in comments.
+
+	* src/parser/bison/ugrammar.y (take): New.
+	Use it to free leaking ufloats.
+	There are many more, but the rest of the code must first take
+	ufloats by value, not pointer.
+	(flags.0.1): New.
+	(flags): Use it.
+	* src/uatcandidate.cc (trigger): Simplify the control flow logic.
+
 2006-12-24  Akim Demaille  <akim.demaille@free.fr>
 
 	Reduce code bloat in the parser

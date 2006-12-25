@@ -37,8 +37,8 @@
 
     There is no subclass to UExpression to make it easier to have
     expressions with transforming type, like in the numerical reduction
-    that happends in the parser: 4+5 which is a EXPR_PLUS expression will
-    be transformed into a EXPR_VALUE with value 9. Sub classes would make
+    that happends in the parser: 4+5 which is a PLUS expression will
+    be transformed into a VALUE with value 9. Sub classes would make
     this operation more difficult to do. Furthermore, the memory loss due
     to non subclassing is very low in the case of UExpression.
 */
@@ -50,62 +50,53 @@ public:
   //! The different types for a UExpression.
   enum Type
   {
-    EXPR_VALUE,
-    EXPR_VARIABLE,
-    EXPR_LIST,
-    EXPR_GROUP,
-    EXPR_ADDR_VARIABLE,
-    EXPR_FUNCTION,
-    EXPR_PLUS,
-    EXPR_MINUS,
-    EXPR_MULT,
-    EXPR_DIV,
-    EXPR_MOD,
-    EXPR_EXP,
-    EXPR_NEG,
-    EXPR_COPY,
-    EXPR_PROPERTY,
-    EXPR_EVENT,
+    VALUE,
+    VARIABLE,
+    LIST,
+    GROUP,
+    ADDR_VARIABLE,
+    FUNCTION,
+    PLUS,
+    MINUS,
+    MULT,
+    DIV,
+    MOD,
+    EXP,
+    NEG,
+    COPY,
+    PROPERTY,
+    EVENT,
 
-    EXPR_TEST_EQ,
-    EXPR_TEST_REQ,
-    EXPR_TEST_PEQ,
-    EXPR_TEST_DEQ,
-    EXPR_TEST_NE,
-    EXPR_TEST_GT,
-    EXPR_TEST_GE,
-    EXPR_TEST_LT,
-    EXPR_TEST_LE,
-    EXPR_TEST_BANG,
-    EXPR_TEST_AND,
-    EXPR_TEST_OR
+    TEST_EQ,
+    TEST_REQ,
+    TEST_PEQ,
+    TEST_DEQ,
+    TEST_NE,
+    TEST_GT,
+    TEST_GE,
+    TEST_LT,
+    TEST_LE,
+    TEST_BANG,
+    TEST_AND,
+    TEST_OR
   };
 
-  UExpression(Type type, ufloat *val);
   UExpression(Type type, ufloat val);
 
+  /// The ownership is taken.
   UExpression(Type type, UString *str);
-  UExpression(Type type, UValue *v);
-  UExpression(Type type, UValue v);
 
-  UExpression(Type type,
-	      UExpression* expression1,
-	      UExpression* expression2);
-  UExpression(Type type, UVariableName* variablename);
-  UExpression(Type type,
-	      UVariableName* variablename,
-	      UExpression *expression1);
-  UExpression(Type type,
-	      UVariableName* variablename,
-	      UNamedParameters *parameters);
-  UExpression(Type type,
-	      UNamedParameters *parameters);
-  UExpression(Type type,
-	      UString *oper,
-	      UString *id);
-  UExpression(Type type,
-	      UString *oper,
-	      UVariableName *variablename);
+  UExpression(Type type, UValue *v);
+
+  UExpression(Type type, UExpression* e1, UExpression* e2);
+  UExpression(Type type, UVariableName* v);
+  UExpression(Type type, UVariableName* v, UExpression *e);
+  UExpression(Type type, UVariableName* v, UNamedParameters *p);
+  UExpression(Type type, UNamedParameters *p);
+  UExpression(Type type, UString *op, UString *id);
+  UExpression(Type type, UString *op, UVariableName *v);
+
+  /// The complete ctor, used for copies.
   UExpression (Type type,
 	       UExpression* expression1,
 	       UExpression* expression2,
@@ -145,9 +136,9 @@ public:
   /// Type of the expression's data.
   UDataType       dataType;
 
-  /// numerical value used for the EXPR_NUM.
+  /// numerical value used for the NUM.
   ufloat          val;
-  /// string of the EXPR_STRING or EXPR_FUNCTOR type.
+  /// string of the STRING or FUNCTOR type.
   UString         *str;
 
   ///  stores a tmp UValue resulting from a function evaluation (which
@@ -155,7 +146,7 @@ public:
   /// of this is 0.
   UValue          *tmp_value;
 
-  /// id of the EXPR_FUNCTOR
+  /// id of the FUNCTOR
   UString         *id;
   /// true on first evaluation (used by static)
   bool            firsteval;
@@ -170,24 +161,24 @@ public:
   UExpression     *expression1;
   /// Right side of a compound expression.
   UExpression     *expression2;
-  /// variable when the expression is a EXPR_VARIABLE or EXPR_FUNCTION
+  /// variable when the expression is a VARIABLE or FUNCTION
   UVariableName   *variablename;
 
-  /// list of parameters of the EXPR_FUNCTION or EXPR_LIST
+  /// list of parameters of the FUNCTION or LIST
   UNamedParameters *parameters;
 
   /// Time constant for a soft test (0 means "hard test").
   UExpression      *softtest_time;
 
 private:
-  /// eval() specialized for type == EXPR_VARIABLE.
-  UValue* eval_EXPR_VARIABLE (UCommand *command,
+  /// eval() specialized for type == VARIABLE.
+  UValue* eval_VARIABLE (UCommand *command,
 			      UConnection *connection,
 			      UEventCompound*& ec);
 
-  /// eval() specialized for type == EXPR_FUNCTION.
+  /// eval() specialized for type == FUNCTION.
   UValue*
-  eval_EXPR_FUNCTION (UCommand *command,
+  eval_FUNCTION (UCommand *command,
 		      UConnection *connection,
 		      UEventCompound*& ec);
 };
