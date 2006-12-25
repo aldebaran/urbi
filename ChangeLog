@@ -1,5 +1,10 @@
 2006-12-25  Akim Demaille  <akim.demaille@free.fr>
 
+	Factor handling of tags in the grammar
+	* src/parser/bison/ugrammar.y (tag): New.
+
+2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor the handling of flags
 	I'd really appreciate if someone could add tests on the use
 	of flags...

@@ -330,10 +330,11 @@ take (T* t)
    <str>  OPERATOR_ID        "operator"
    <str>  OPERATOR_ID_PARAM  "param-operator"
    <str>  OPERATOR_VAR       "var-operator"
+%type <str> tag "any kind of tag"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
    "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
-   OPERATOR_ID_PARAM OPERATOR_VAR;
+   OPERATOR_ID_PARAM OPERATOR_VAR tag;
 
 %token <structure>           STRUCT      "structured identifier"
 %token <structure>           REFSTRUCT   "structured ref-identifier"
@@ -441,50 +442,40 @@ taggedcommands:
 | taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, UAND, $1, $3);}
 ;
 
-/* TAGGEDCOMMAND */
+/*----------------.
+| taggedcommand.  |
+`----------------*/
+
+// FIXME: I still use UString here, but that's really stupid, and
+// leaking everywhere.  Should be fixed later.
+tag:
+  "identifier" { $$ = $1; }
+| TAG          { $$ = $1; }
+| STRUCT       {
+		 memcheck(up, $1.device);
+		 memcheck(up, $1.id);
+		 // FIXME: This is stupid, args should not be given as pointers.
+		 $$ = new UString($1.device, $1.id);
+		 delete $1.device;
+		 delete $1.id;
+		}
+;
 
 taggedcommand:
 
     command {
       if ($1)
 	$1->setTag(UNKNOWN_TAG);
-
       $$ = $1;
     }
 
-  | "identifier" flags.0 ":" command {
+  | tag flags.0 ":" command {
 
       memcheck(up, $1);
       if ($4)
       {
 	$4->setTag($1->str());
-	$4->flags = $2;
-      }
-      $$ = $4;
-    }
-
-  | TAG flags.0 ":" command {
-
-      memcheck(up, $1);
-      if ($4)
-      {
-	$4->setTag($1->str());
-	$4->flags = $2;
-      }
-      $$ = $4;
-    }
-
-  | STRUCT flags.0 ":" command {
-
-      memcheck(up, $1.device);
-      memcheck(up, $1.id);
-
-      if ($4)
-      {
-	$4->setTag(UString($1.device, $1.id).str());
-	delete $1.device;
-	delete $1.id;
-
+	delete $1;
 	$4->flags = $2;
       }
       $$ = $4;
