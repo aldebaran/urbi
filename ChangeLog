@@ -1,5 +1,24 @@
 2006-12-25  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
+	Restyle.
+	* src/ucommand.cc,
+	* src/ucommandqueue.cc,
+	* src/uconnection.cc,
+	* src/ueventhandler.cc,
+	* src/ueventmatch.cc,
+	* src/uexpression.cc,
+	* src/ugroup.cc,
+	* src/uobj.cc,
+	* src/uobject.cc,
+	* src/uqueue.cc,
+	* src/uvalue.cc,
+	* src/uvar.cc,
+	* src/uvariable.cc,
+	* src/uvariablename.cc,
+	* src/uvariablename.hh: Here. Formating changes.
+
+2006-12-25  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
 	This should have been done much sooner...
 	change 'inherit' to 'inherits' 
 	* src/parser/bison/ugrammar.y: done.

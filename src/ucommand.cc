@@ -844,7 +844,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (it != ::urbiserver->functionbindertab.end()
 	  && (expression->parameters
 	      ? it->second->nbparam == expression->parameters->size()
-	      : it->second->nbparam==0)
+	      : it->second->nbparam == 0)
 	  && !it->second->monitors.empty())
       {
 	int UU = unic();
@@ -1082,8 +1082,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  return status = UCOMPLETED;
 	}
 
-	if (targetval < 0) targetval = 0;
-	if (targetval > 1) targetval = 1;
+	if (targetval < 0)
+	  targetval = 0;
+	if (targetval > 1)
+	  targetval = 1;
 
 	targetval = variable->rangemin + targetval *
 	  (variable->rangemax - variable->rangemin);
@@ -1540,9 +1542,11 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       delete v;
     }
 
-    if (targetval < startval) accel = -accel;
+    if (targetval < startval)
+      accel = -accel;
 
-    if (accel == 0) accel = 0.001;
+    if (accel == 0)
+      accel = 0.001;
 
     if (variablename->isnormalized)
       accel = accel * (variable->rangemax - variable->rangemin);
@@ -1572,7 +1576,8 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       targettime = ABSF(v->val);
       delete v;
     }
-    if (targettime == 0) targettime = 0.1;
+    if (targettime == 0)
+      targettime = 0.1;
 
     phase = 0;
     if (modif_phase)
@@ -1598,8 +1603,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	targetval = v->val;
 	if (variablename->isnormalized)
 	{
-	  if (targetval < 0) targetval = 0;
-	  if (targetval > 1) targetval = 1;
+	  if (targetval < 0)
+	    targetval = 0;
+	  if (targetval > 1)
+	    targetval = 1;
 
 	  targetval = variable->rangemin + targetval *
 	    (variable->rangemax - variable->rangemin);
@@ -1633,8 +1640,9 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 		       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
 					targettime ));
       int n = (int)(phaseval->val / (PI*ufloat(2)));
-      if (n<0) n--;
-      phaseval->val = phaseval->val - n	 * (PI*ufloat(2));
+      if (n < 0)
+        --n;
+      phaseval->val = phaseval->val - n * (PI * ufloat(2));
     }
 
     *valtmp = variable->nbAverage * *valtmp + intermediary;
@@ -2382,7 +2390,7 @@ UCommand_EXPR::execute(UConnection *connection)
     if (it != ::urbiserver->functionbindertab.end()
 	&& ((expression->parameters
 	     && it->second->nbparam == expression->parameters->size())
-	    || (!expression->parameters && it->second->nbparam==0))
+	    || (!expression->parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
       int UU = unic();
@@ -2568,7 +2576,7 @@ UCommand_ECHO::execute(UConnection *connection)
 {
   UValue* ret = expression->eval(this, connection);
 
-  if (ret==0)
+  if (ret == 0)
   {
     connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
     return status = UCOMPLETED;
@@ -3247,7 +3255,8 @@ UCommand_GROUP::execute(UConnection *connection)
       g = new UGroup(id);
       ::urbiserver->grouptab[g->name->str()] = g;
     }
-    if (grouptype==0)  g->members.clear();
+    if (grouptype == 0)
+      g->members.clear();
 
     for (UNamedParameters* param = parameters; param; param = param->next)
       if (grouptype == 2)
@@ -3347,7 +3356,8 @@ UCommand_GROUP::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("GROUP :\n");
-  if (id)  { debug(l, "  Id:[%s]\n", id->str());}
+  if (id)
+    debug(l, "  Id:[%s]\n", id->str());
 
   debug(l, "END GROUP ------\n");
 }
@@ -3495,7 +3505,8 @@ UCommand_OPERATOR_ID::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("OPERATOR_ID %s:\n", oper->str());
 
-  if (id)  { debug(l, "  Id:[%s]\n", id->str());}
+  if (id)
+    debug(l, "  Id:[%s]\n", id->str());
 
   debug(l, "END OPERATOR_ID ------\n");
 }
@@ -3586,7 +3597,8 @@ UCommand_DEVICE_CMD::print(int l)
 
   debug("DEVICE_CMD %s:\n", variablename->device->str());
 
-  if (cmd)  { debug(l, "  Cmd:[%f]\n", cmd);}
+  if (cmd)
+    debug(l, "  Cmd:[%f]\n", cmd);
 
   debug(l, "END DEVICE_CMD ------\n");
 }
@@ -3720,7 +3732,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	connection->server->devicetab.end())
       dev = connection->server->devicetab[devicename->str()];
 
-    if (dev==0 && devicename->equal(connection->connectionTag->str()))
+    if (dev == 0 && devicename->equal(connection->connectionTag->str()))
       if (connection->server->devicetab.find(method->str()) !=
 	  connection->server->devicetab.end())
 	dev = connection->server->devicetab[method->str()];
@@ -3890,7 +3902,8 @@ UCommand_BINDER::execute(UConnection *connection)
   if (objname)
   {
     fullobjname = objname->id;
-    if (!fullobjname) return status = UCOMPLETED;
+    if (!fullobjname)
+      return status = UCOMPLETED;
   }
 
   if (type != 3) // not object binder
@@ -4077,7 +4090,8 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
   if (STREQ(oper->str(), "motoron"))
   {
-    if (connection->receiving) return status = URUNNING;
+    if (connection->receiving)
+      return status = URUNNING;
 
 	connection->sendf (getTag(), "!!! This command is no longer valid."
 	     " Please use \"motor on\" instead\n");
@@ -4356,7 +4370,8 @@ UCommand_WAIT::execute(UConnection *connection)
       connection->sendf (getTag(), "!!! Invalid type. NUM expected.\n");
       return status = UCOMPLETED;
     }
-    if (nb->val == 0) return status = UCOMPLETED;
+    if (nb->val == 0)
+      return status = UCOMPLETED;
 
     endtime = connection->server->lastTime() + nb->val;
 
@@ -4472,7 +4487,8 @@ UCommand_EMIT::execute(UConnection *connection)
 
     // register event
     int nbargs = 0;
-    if (parameters) nbargs = parameters->size ();
+    if (parameters)
+      nbargs = parameters->size ();
 
     eh = kernel::findEventHandler (ens, nbargs);
     if (!eh)
@@ -4497,7 +4513,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
     if (it != ::urbiserver->eventbindertab.end()
 	&& ((parameters && it->second->nbparam == parameters->size())
-	    ||(!parameters && it->second->nbparam==0))
+	    ||(!parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
       char tmpprefix[1024];
@@ -4682,7 +4698,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
        && nbTrue > 0
        && (connection->server->lastTime() - startTrue
 	   >= test->softtest_time->val))
-      || (nbTrue > 0 && test->softtest_time==0))
+      || (nbTrue > 0 && test->softtest_time == 0))
     return status = UCOMPLETED;
   else
     return status = URUNNING;
@@ -5264,7 +5280,8 @@ UCommand_IF::~UCommand_IF()
 UCommandStatus
 UCommand_IF::execute(UConnection *connection)
 {
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
 
   UTestResult testres = booleval(test->eval(this, connection));
 
@@ -5706,7 +5723,8 @@ UCommand_AT::execute(UConnection *connection)
   bool domorph = false;
   ufloat currentTime = connection->server->lastTime();
 
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
 
   if (firsttime)
   {
@@ -5724,7 +5742,8 @@ UCommand_AT::execute(UConnection *connection)
   {
     ec = 0;
     UValue *testeval = test->eval(this, connection, ec);
-    if (!ec) ec = new UEventCompound (testeval);
+    if (!ec)
+      ec = new UEventCompound (testeval);
     reset_reeval ();
 
     testres = booleval(testeval, true);
@@ -5863,9 +5882,12 @@ UCommand_AT::print(int l)
 		      tab(l), getTag().c_str(), toDelete);
 
   debug("AT:");
-  if (type == CMD_AT) debug("\n");
-  else if (type == CMD_AT_AND) debug("(AND)\n");
-  else debug("UNKNOWN TYPE!\n");
+  if (type == CMD_AT)
+    debug("\n");
+  else if (type == CMD_AT_AND)
+    debug("(AND)\n");
+  else
+    debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR (test);
   if (command1)
@@ -6114,7 +6136,8 @@ UCommand_WHENEVER::execute(UConnection *connection)
       connection->server->somethingToDelete = true;
       // theloop_ is 0 if something has deleted it from the outside (thanks
       // to the 'whenever_hook' attribute), that's why we test here
-      if (theloop_) theloop_->toDelete = true;
+      if (theloop_)
+        theloop_->toDelete = true;
       theloop_ = 0;
     }
   }
@@ -6245,7 +6268,8 @@ UCommand_LOOP::~UCommand_LOOP()
 UCommandStatus
 UCommand_LOOP::execute(UConnection*)
 {
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
   morph = new UCommand_TREE(loc_, USEMICOLON,
 			    new UCommand_TREE(loc_, UAND,
@@ -6373,10 +6397,14 @@ UCommand_LOOPN::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("LOOPN:");
-  if (type == CMD_LOOPN)           debug("\n");
-  else if (type == CMD_LOOPN_AND)  debug("(AND)\n");
-  else if (type == CMD_LOOPN_PIPE) debug("(PIPE)\n");
-  else                             debug("UNKNOWN TYPE!\n");
+  if (type == CMD_LOOPN)
+    debug("\n");
+  else if (type == CMD_LOOPN_AND)
+    debug("(AND)\n");
+  else if (type == CMD_LOOPN_PIPE)
+    debug("(PIPE)\n");
+  else
+    debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR (expression);
   if (command)
@@ -6527,10 +6555,14 @@ UCommand_FOR::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("FOR:");
-  if (type == CMD_FOR) debug("\n");
-  else if (type == CMD_FOR_AND) debug("(AND)\n");
-  else if (type == CMD_FOR_PIPE) debug("(PIPE)\n");
-  else	debug("UNKNOWN TYPE!\n");
+  if (type == CMD_FOR)
+    debug("\n");
+  else if (type == CMD_FOR_AND)
+    debug("(AND)\n");
+  else if (type == CMD_FOR_PIPE)
+    debug("(PIPE)\n");
+  else
+    debug("UNKNOWN TYPE!\n");
 
   if (test)
   {

@@ -30,7 +30,8 @@
 std::string
 kernel::forgeName (UString* name, int nbarg)
 {
-  if (!name) return std::string("error");
+  if (!name)
+    return std::string("error");
 
   std::stringstream s;
   s << name->str() << "|" << nbarg;
@@ -157,7 +158,8 @@ UEventHandler::addEvent(UNamedParameters* parameters,
   while  (param)
   {
     e1 = param->expression->eval (command, connection);
-    if (e1==0) return 0;
+    if (e1==0)
+      return 0;
     args.push_back (e1);
     param = param->next;
   }

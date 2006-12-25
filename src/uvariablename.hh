@@ -59,7 +59,7 @@ public:
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
   UString*       buildFullname(UCommand* command, UConnection* connection,
-                               bool withalias = true);
+			       bool withalias = true);
   UString*       getFullname()  { return fullname_;};
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();

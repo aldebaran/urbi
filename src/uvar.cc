@@ -243,24 +243,24 @@ namespace urbi
     switch(prop)
     {
       case PROP_RANGEMIN:
-	vardata->variable->rangemin =(double)v;
-	break;
+        vardata->variable->rangemin = (double) v;
+        break;
       case PROP_RANGEMAX:
-	vardata->variable->rangemax =(double)v;
-	break;
+        vardata->variable->rangemax = (double) v;
+        break;
       case PROP_SPEEDMIN:
-	vardata->variable->speedmin =(double)v;
-	break;
+        vardata->variable->speedmin = (double) v;
+        break;
       case PROP_SPEEDMAX:
-	vardata->variable->speedmax =(double)v;
-	break;
+        vardata->variable->speedmax = (double) v;
+        break;
       case PROP_DELTA:
-	vardata->variable->delta =(double)v;
-	break;
+        vardata->variable->delta = (double) v;
+        break;
       case PROP_BLEND:
 	if (v.type == DATA_DOUBLE)
 	  //numeric val
-	  vardata->variable->blendType = (UBlendType)(int)(double)v;
+	  vardata->variable->blendType = (UBlendType) (int) (double) v;
 	else if (v.type == DATA_STRING)
 	  vardata->variable->blendType = ublendtype (std::string(v).c_str ());
     }
@@ -279,34 +279,27 @@ namespace urbi
   }
 
   UValue
-  UVar::getProp(UProperty prop)
+  UVar::getProp (UProperty prop)
   {
     if (!vardata)
-      return UValue();
-    switch(prop)
+      return UValue ();
+    switch (prop)
     {
       case PROP_RANGEMIN:
-	return UValue(vardata->variable->rangemin);
-	break;
+        return UValue (vardata->variable->rangemin);
       case PROP_RANGEMAX:
-	return UValue(vardata->variable->rangemax);
-	break;
+        return UValue (vardata->variable->rangemax);
       case PROP_SPEEDMIN:
-	return UValue(vardata->variable->speedmin);
-	break;
+        return UValue (vardata->variable->speedmin);
       case PROP_SPEEDMAX:
-	return UValue(vardata->variable->speedmax);
-	break;
+        return UValue (vardata->variable->speedmax);
       case PROP_DELTA:
-	return UValue(vardata->variable->delta);
-	break;
+        return UValue (vardata->variable->delta);
       case PROP_BLEND:
-	return UValue(vardata->variable->blendType);
-	break;
+        return UValue (vardata->variable->blendType);
     }
-    return UValue();
+    return UValue ();
   }
-
 
   /*
    UBlendType

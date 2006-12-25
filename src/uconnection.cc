@@ -1060,7 +1060,8 @@ UConnection::processCommand(UCommand *&command,
 	  morphed->setTag(command);
 
 	  //morphed->morphed = true;
-	  if (!command->persistant) delete command;
+	  if (!command->persistant)
+	    delete command;
 	  command = morphed;
 	  break;
 

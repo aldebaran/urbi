@@ -150,7 +150,8 @@ UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
   initialize();
   this->type	 = type; // should be VARIABLE or
   //ADDR_VARIABLE or GROUPLIST
-  if (type == ADDR_VARIABLE) dataType = DATA_STRING;
+  if (type == ADDR_VARIABLE)
+    dataType = DATA_STRING;
   this->variablename = variablename;
 }
 
@@ -204,19 +205,30 @@ UExpression::UExpression(UExpression::Type type,
   {
     switch (type)
     {
-      case PLUS:  val = expression1->val + expression2->val; break;
-      case MINUS: val = expression1->val - expression2->val; break;
-      case MULT:  val = expression1->val * expression2->val; break;
-      case DIV:   val = expression1->val / expression2->val; break;
-      case EXP:   val = pow (expression1->val , expression2->val); break;
-      default:    break;
+      case PLUS:
+        val = expression1->val + expression2->val;
+        break;
+      case MINUS:
+        val = expression1->val - expression2->val;
+        break;
+      case MULT:
+        val = expression1->val * expression2->val;
+        break;
+      case DIV:
+        val = expression1->val / expression2->val;
+        break;
+      case EXP:
+        val = pow (expression1->val , expression2->val);
+        break;
     }
 
     this->type = VALUE;
     this->isconst = true;
-    dataType	 = DATA_NUM;
-    delete expression1; this->expression1 = 0;
-    delete expression2; this->expression2 = 0;
+    dataType = DATA_NUM;
+    delete expression1;
+    this->expression1 = 0;
+    delete expression2;
+    this->expression2 = 0;
   }
 
   if (type == NEG
@@ -529,8 +541,10 @@ UExpression::eval (UCommand *command,
 
       UValue* ret = new UValue();
       ret->dataType = dataType;
-      if (dataType == DATA_NUM) ret->val = val;
-      if (dataType == DATA_STRING) ret->str = new UString(str);
+      if (dataType == DATA_NUM)
+        ret->val = val;
+      if (dataType == DATA_STRING)
+        ret->str = new UString(str);
       return ret;
     }
 
@@ -722,7 +736,8 @@ UExpression::eval (UCommand *command,
 	b->parameters = ret->refBinary->ref()->parameters->copy();
 
 	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
-	if (!ref) return 0;
+	if (!ref)
+	  return 0;
 
 	memcpy(b->buffer,
 	       ret->refBinary->ref()->buffer,
@@ -1578,7 +1593,8 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  char* p2 = strchr(p, '_');
 	  while (p)
 	  {
-	    if (p2) p2[0]=0;
+	    if (p2)
+	      p2[0]=0;
 	    index = atoi(p);
 	    curr=0;
 	    while ((curr!=index) && (xval))
@@ -1608,10 +1624,11 @@ UExpression::eval_VARIABLE (UCommand *command,
 	    }
 
 	    if (p2)
-	      p2[0]='_';
+	      p2[0] = '_';
 	    if (p2)
-	      p = p2+2; else
-	      p=0;
+	      p = p2 + 2;
+	    else
+	      p = 0;
 	    if (p)
 	      p2 = strchr(p, '_');
 	  }
@@ -1620,7 +1637,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	}
       }
       if (p)
-	p[0]='_';
+	p[0] = '_';
     }
 
     char errorString[256];
@@ -1772,7 +1789,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
-      if (!fullname) return UFAIL;
+      if (!fullname)
+        return UFAIL;
       varname  = variablename->getFullname()->str();
 
       if (!variable)
@@ -1789,7 +1807,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	    searchVariable(variablename->getMethod()->str(),
 			   ambiguous);
 
-	  if (ambiguous) return UFAIL;
+	  if (ambiguous)
+	    return UFAIL;
 
 	  if (variable)
 	  {
@@ -1854,8 +1873,10 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
-      if (!fullname) return UFAIL;
-      if (!variable) return UFAIL;
+      if (!fullname)
+        return UFAIL;
+      if (!variable)
+        return UFAIL;
       variable->registerCmd(cmd);
       return USUCCESS;
 
@@ -1863,7 +1884,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
       fullname = variablename->buildFullname (cmd, c);
       nbargs = 0;
-      if (parameters) nbargs = parameters->size ();
+      if (parameters)
+        nbargs = parameters->size ();
       eh = kernel::findEventHandler(fullname, nbargs);
 
       if (eh)

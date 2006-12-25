@@ -264,11 +264,14 @@ UVariableName::getMethod()
 UString*
 UVariableName::getDevice()
 {
-  if (device) return device;
+  if (device)
+    return device;
 
-  if (!fullname_) return 0;
+  if (!fullname_)
+    return 0;
   char *pointPos = const_cast<char*>(strstr(fullname_->str(), "."));
-  if (pointPos == 0) return fullname_;
+  if (pointPos == 0)
+    return fullname_;
   pointPos[0] = 0;
 
   device = new UString(fullname_->str());
@@ -306,7 +309,7 @@ UVariableName::buildFullname (UCommand* command,
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
       connection->sendf (command->getTag().c_str(),
-                         "!!! dynamic variable evaluation failed\n");
+			 "!!! dynamic variable evaluation failed\n");
       delete e1;
       if (fullname_)
       {

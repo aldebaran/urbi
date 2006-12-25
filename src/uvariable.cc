@@ -197,22 +197,23 @@ UVariable::~UVariable()
 
 //! Associated variable name initialization
 const char*
-UVariable::setName(const char *s)
+UVariable::setName(const char* s)
 {
   char *pointPos;
 
-  varname    = new UString (s);
+  varname = new UString (s);
 
   pointPos = const_cast<char*>(strstr(varname->str(), "."));
   if (pointPos == 0)
-
     method = new UString("");
   else
     method = new UString(pointPos + 1);
 
-  if (pointPos) pointPos[0] = 0;
+  if (pointPos)
+    pointPos[0] = 0;
   devicename = new UString(varname->str());
-  if (pointPos) pointPos[0] = '.';
+  if (pointPos)
+    pointPos[0] = '.';
 
   return varname->str();
 }
@@ -257,28 +258,38 @@ UVariable::set(UValue *v)
   {
     switch (value->dataType)
     {
-      case DATA_STRING: value->str->update(v->str->str()); break;
-      case DATA_NUM:    setSensorVal(v->val); break;
-      case DATA_LIST:   delete value;value = v->copy(); break;
-      case DATA_BINARY: LIBERATE(value->refBinary);
-			value->refBinary = v->refBinary->copy();
-			break;
+      case DATA_STRING:
+	value->str->update(v->str->str());
+	break;
+      case DATA_NUM:
+	setSensorVal(v->val);
+	break;
+      case DATA_LIST:
+	delete value;
+	value = v->copy();
+	break;
+      case DATA_BINARY:
+	LIBERATE(value->refBinary);
+	value->refBinary = v->refBinary->copy();
+	break;
       case DATA_VOID:   // uninitialized def's
-
-			value->dataType = v->dataType;
-			switch (v->dataType)
-			{
-			  case DATA_STRING:
-			    value->str = new UString(v->str); break;
-			  case DATA_NUM:
-			    initSensorVal(v->val); break;
-			  case DATA_BINARY:
-			    value->refBinary = v->refBinary->copy(); break;
-			  case DATA_LIST:
-			    delete value;value = v->copy(); break;
-			  default: break;
-			}
-      default: break;
+	value->dataType = v->dataType;
+	switch (v->dataType)
+	{
+	  case DATA_STRING:
+	    value->str = new UString(v->str);
+	    break;
+	  case DATA_NUM:
+	    initSensorVal(v->val);
+	    break;
+	  case DATA_BINARY:
+	    value->refBinary = v->refBinary->copy();
+	    break;
+	  case DATA_LIST:
+	    delete value;
+	    value = v->copy();
+	    break;
+	}
     }
   }
 
@@ -315,8 +326,10 @@ UVariable::selfSet(ufloat *valcheck)
 
   if (value->dataType == DATA_NUM)
   {
-    if (*valcheck < rangemin) *valcheck = rangemin;
-    if (*valcheck > rangemax) *valcheck = rangemax;
+    if (*valcheck < rangemin)
+      *valcheck = rangemin;
+    if (*valcheck > rangemax)
+      *valcheck = rangemax;
 
     if (speedmax != UINFINITY)
     {
@@ -340,7 +353,8 @@ UVariable::selfSet(ufloat *valcheck)
   modified = true;
   updated();
 
-  if (speedmodified) return USPEEDMAX;
+  if (speedmodified)
+    return USPEEDMAX;
 
   return UOK ;
 }

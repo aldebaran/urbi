@@ -86,7 +86,10 @@ UValue * UGroup::list( UVariableName *variable)
 //      n=nn;
 //    }
 
-    if (first) current->liststart =n; else current->next = n;
+    if (first)
+      current->liststart =n;
+    else
+      current->next = n;
     current = n;
 
 //current->list = n;

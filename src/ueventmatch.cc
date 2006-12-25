@@ -91,7 +91,8 @@ UEventMatch::~UEventMatch ()
 void
 UEventMatch::findMatches_ ()
 {
-  if (!eventhandler_) return;
+  if (!eventhandler_)
+    return;
 
   std::list<UEvent*>::iterator itevent;
   std::list<UValue*>::iterator ifilter_arg;

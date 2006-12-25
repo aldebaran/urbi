@@ -148,7 +148,8 @@ namespace urbi
 	if (it == ::urbiserver->variabletab.end())
 	  {
 	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-	    if (variable) variable->internalBinder.push_back(this);
+	    if (variable)
+	      variable->internalBinder.push_back(this);
 	  }
 	else
 	{

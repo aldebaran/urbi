@@ -116,38 +116,44 @@ UCommandQueue::popCommand (int &length)
     p0 = (char) (*(buffer_ + position));
     if (cursor_ < dataSize_ - 1)
       p1 = (char) (*(buffer_ + nextposition));
-    else p1 = '-';
+    else
+      p1 = '-';
 
     if (discard_)
     {
       // One char close sequence
-      if ((p0 == closechar_) &&
-	  (closechar2_ == ' ') )
+      if (p0 == closechar_ && closechar2_ == ' ')
       {
 	discard_ = false;
-	if ((closechar_ == '"') &&
-	    (p_1 == '\\'))
+        if (closechar_ == '"' && p_1 == '\\')
 	  discard_ = true; // cancel the closure.
       }
 
       // Two chars close sequence
-      if ((p_1 == closechar_ ) &&
-	  (p0  == closechar2_ ) &&
-	  (closechar2_ != ' '))
+      if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')
 	discard_ = false;
     }
     else
     {
-      if (p0 == '{') bracketlevel_ ++;
-      else if (p0 == '}') bracketlevel_ --;
-      else if (p0 == '[') sbracketlevel_ ++;
-      else if (p0 == ']') sbracketlevel_ --;
-      else if (p0 == '(') parenlevel_ ++;
-      else if (p0 == ')') parenlevel_ --;
+      if (p0 == '{')
+        bracketlevel_++;
+      else if (p0 == '}')
+        bracketlevel_--;
+      else if (p0 == '[')
+        sbracketlevel_++;
+      else if (p0 == ']')
+        sbracketlevel_--;
+      else if (p0 == '(')
+        parenlevel_++;
+      else if (p0 == ')')
+        parenlevel_--;
 
-      if (bracketlevel_ < 0) bracketlevel_ = 0;
-      if (sbracketlevel_ < 0) sbracketlevel_ = 0;
-      if (parenlevel_ < 0) parenlevel_ = 0;
+      if (bracketlevel_ < 0)
+        bracketlevel_ = 0;
+      if (sbracketlevel_ < 0)
+        sbracketlevel_ = 0;
+      if (parenlevel_ < 0)
+        parenlevel_ = 0;
 
       if (p0 == '#')
       {

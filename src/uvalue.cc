@@ -369,7 +369,7 @@ UValue & UValue::operator = (const urbi::UList &l)
   for (int i=0;i<l.size();i++)
   {
     UValue *v = new UValue(l[i]);
-    if(i==0)
+    if(i == 0)
       liststart = v;
     else
       current->next = v;
@@ -505,7 +505,8 @@ UValue::add(UValue *v)
     // concat two binaries (useful for sound)
 
     UValue *ret = new UValue();
-    if (!ret) return 0;
+    if (!ret)
+      return 0;
 
     ret->dataType = DATA_BINARY;
 
@@ -524,10 +525,12 @@ UValue::add(UValue *v)
 	  )
 	);
 
-    if (!ret->refBinary) return 0;
+    if (!ret->refBinary)
+      return 0;
 
     ubyte* p = ret->refBinary->ref()->buffer;
-    if (!p) return 0;
+    if (!p)
+      return 0;
     memcpy(p, refBinary->ref()->buffer, refBinary->ref()->bufferSize);
     memcpy(p+refBinary->ref()->bufferSize,
 	   v->refBinary->ref()->buffer,
@@ -585,7 +588,8 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_STRING)
     {
       UValue *ret = new UValue();
-      if (ret==0) return 0;
+      if (ret == 0)
+        return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -606,7 +610,8 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_NUM)
     {
       UValue *ret = new UValue();
-      if (ret==0) return 0;
+      if (ret == 0)
+        return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -625,12 +630,13 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_STRING)
     {
       UValue *ret = new UValue();
-      if (ret==0) return 0;
+      if (ret == 0)
+        return 0;
 
       ret->dataType = DATA_STRING;
 
       char *tmp_String = new char[v->str->len()+str->len()+1];
-      if (tmp_String==0)
+      if (tmp_String == 0)
       {
 	delete ret;
 	return 0;
@@ -708,7 +714,7 @@ booleval(UValue *v, bool freeme)
 {
   UTestResult res;
 
-  if (v==0)
+  if (v == 0)
     return UTESTFAIL;
 
   if (v->dataType != DATA_NUM)
@@ -772,7 +778,8 @@ UValue::echo(bool hr)
       {
 	o << scanlist->echo(hr);
 	scanlist = scanlist->next;
-	if (scanlist)  o << ",";
+	if (scanlist)
+	  o << ",";
       }
       o << "]";
 
@@ -805,7 +812,8 @@ UValue::echo(bool hr)
       o << "BIN " << refBinary->ref()->bufferSize;
 
       UNamedParameters *param = refBinary->ref()->parameters;
-      if (param) o << " ";
+      if (param)
+        o << " ";
 
       while (param)
       {
@@ -816,7 +824,8 @@ UValue::echo(bool hr)
 	  if (param->expression->dataType == DATA_STRING)
 	    o << param->expression->str->str();
 	}
-	if (param->next) o << " ";
+	if (param->next)
+	  o << " ";
 	param = param->next;
       }
 
