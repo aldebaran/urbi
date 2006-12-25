@@ -1,3 +1,14 @@
+2006-12-25  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	porting r571 (use of kernel1@gostai.com) from trunk 
+	* ChangeLog: done.
+	* vcs/local.rb: done.
+
+2006-12-25  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	change email notification to kernel1@gostai.com 
+	* vcs/local.rb: done.
+
 2006-12-25  Akim Demaille  <akim.demaille@free.fr>
 
 	Factor handling of tags in the grammar
