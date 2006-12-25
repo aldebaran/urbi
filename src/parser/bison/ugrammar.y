@@ -229,7 +229,7 @@ take (T* t)
   TOK_DERIV        "derivation"
   TOK_DERIV2       "second-derivation"
   TOK_DIR          "->"
-  TOK_DISINHERIT   "disinherit"
+  TOK_DISINHERITS  "disinherits"
   TOK_DIV          "/"
   TOK_DOLLAR       "$"
   TOK_DOUBLECOLON  "::"
@@ -250,7 +250,7 @@ take (T* t)
   TOK_IF           "if"
   TOK_IN           "in"
   TOK_INFO         "info"
-  TOK_INHERIT      "inherit"
+  TOK_INHERITS     "inherits"
   TOK_LBRACKET     "{"
   TOK_LOOP         "loop"
   TOK_LOOPN        "loopn"
@@ -683,13 +683,13 @@ instruction:
       memcheck(up, $$, $2, $3);
     }
 
-  | purevariable "inherit" purevariable {
+  | purevariable "inherits" purevariable {
 
     $$ = new UCommand_INHERIT(@$, $1, $3);
       memcheck(up, $$, $1, $3);
     }
 
-  | purevariable "disinherit" purevariable {
+  | purevariable "disinherits" purevariable {
 
     $$ = new UCommand_INHERIT(@$, $1, $3, true);
       memcheck(up, $$, $1, $3);

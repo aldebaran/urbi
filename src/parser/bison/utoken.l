@@ -185,7 +185,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "copy"          return token::TOK_COPY;
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
-"disinherit"    return token::TOK_DISINHERIT;
+"disinherits"   return token::TOK_DISINHERITS;
 "echo"          return token::TOK_ECHO;
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
@@ -200,7 +200,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "group"         return token::TOK_GROUP;
 "if"            return token::TOK_IF;
 "in"            return token::TOK_IN;
-"inherit"       return token::TOK_INHERIT;
+"inherits"      return token::TOK_INHERITS;
 "list"          return token::TOK_GROUPLIST;
 "loop"          return token::TOK_LOOP;
 "loopn"         return token::TOK_LOOPN;
