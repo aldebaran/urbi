@@ -1,5 +1,11 @@
 2006-12-25  Akim Demaille  <akim.demaille@free.fr>
 
+	Rule permutation
+	* src/parser/bison/ugrammar.y: Highlight the similarity bw rules
+	using flags.
+
+2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+
 	Simplifications
 	* src/uexpression.hh (UExpression::Type): Remove the EXPR_ prefix.
 	Adjust all uses.

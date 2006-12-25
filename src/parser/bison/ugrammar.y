@@ -451,6 +451,16 @@ taggedcommand:
       $$ = $1;
     }
 
+  | "identifier" ":" command {
+
+      memcheck(up, $1);
+      if ($3)
+      {
+	$3->setTag($1->str());
+      }
+      $$ = $3;
+    }
+
   | "identifier" flags ":" command {
 
       memcheck(up, $1);
@@ -460,27 +470,6 @@ taggedcommand:
 	$4->flags = $2;
       }
       $$ = $4;
-    }
-
-  | TAG flags ":" command {
-
-      memcheck(up, $1);
-      if ($4)
-      {
-	$4->setTag($1->str());
-	$4->flags = $2;
-      }
-      $$ = $4;
-    }
-
-  | "identifier" ":" command {
-
-      memcheck(up, $1);
-      if ($3)
-      {
-	$3->setTag($1->str());
-      }
-      $$ = $3;
     }
 
   | TAG ":" command {
@@ -493,6 +482,17 @@ taggedcommand:
       $$ = $3;
     }
 
+
+  | TAG flags ":" command {
+
+      memcheck(up, $1);
+      if ($4)
+      {
+	$4->setTag($1->str());
+	$4->flags = $2;
+      }
+      $$ = $4;
+    }
 
   | STRUCT ":" command {
 
