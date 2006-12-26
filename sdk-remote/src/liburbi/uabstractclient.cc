@@ -278,8 +278,8 @@ namespace urbi
 	    && v.binary->type != BINARY_UNKNOWN)
 	  v.binary->buildMessage();
 	sendBin(v.binary->common.data, v.binary->common.size,
-                "BIN %d %s;", v.binary->common.size,
-                v.binary->message.c_str());
+		"BIN %d %s;", v.binary->common.size,
+		v.binary->message.c_str());
 	break;
       case DATA_LIST:
 	{
@@ -519,7 +519,7 @@ namespace urbi
     {
       int ts = SUBCHUNK_SIZE;
       if (ts > tosend-spos)
-        ts = tosend-spos;
+	ts = tosend-spos;
       printf("%d chunk\n", mtime());
       s->uc->sendBin(s->buffer, ts);
       s->buffer += ts;
@@ -530,7 +530,7 @@ namespace urbi
 
     s->uc->sendBin(s->buffer+s->pos, tosend);
     s->uc->send("wait(%s.remain < %d);"
-                " %s: ping;", s->device, playlength / 2, msg.tag.c_str());
+		" %s: ping;", s->device, playlength / 2, msg.tag.c_str());
     // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
     if (s->pos >= s->length )
@@ -543,7 +543,7 @@ namespace urbi
 	if (s->tag && s->tag[0])
 	  s->uc->send("%s: 1;", s->tag);
 	free(s->buffer);
-        free(s->tag);
+	free(s->tag);
 	free(s->device);
 	delete s;
 	return URBI_REMOVE;
@@ -566,21 +566,21 @@ namespace urbi
 	//we don't handle chunkuing for this format
 	return sendBin(sound.data, sound.size,
 		       "%s +report:  %s.val = BIN %d mp3;",
-                       tag, device, sound.size);
+		       tag, device, sound.size);
       }
     if (sound.soundFormat == SOUND_OGG)
       {
 	//we don't handle chunkuing for this format
 	return sendBin(sound.data, sound.size,
 		       "%s +report:  %s.val = BIN %d ogg;",
-                       tag, device, sound.size);
+		       tag, device, sound.size);
       }
 
     if (sound.soundFormat == SOUND_WAV
 	|| sound.soundFormat == SOUND_RAW)
       {
 	send("speaker.sendsoundsaveblend = speaker->blend;"
-             "speaker->blend=queue;");
+	     "speaker->blend=queue;");
 	sendSoundData *s = new sendSoundData();
 	char utag[16];
 	makeUniqueTag(utag);
@@ -595,14 +595,14 @@ namespace urbi
 	s->format = sound.soundFormat;
 	if (sound.soundFormat == SOUND_RAW)
 	  sprintf(s->formatString, "%d %d %d %d",
-                  sound.channels, sound.rate, sound.sampleSize,
-                  (int) sound.sampleFormat);
+		  sound.channels, sound.rate, sound.sampleSize,
+		  (int) sound.sampleFormat);
 	else
 	  s->formatString[0] = 0;
 	s->startNotify = false;
 	UCallbackID cid=setCallback(sendSound_, s, utag);
 	//invoke it 2 times to queue sound
-        if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
+	if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
 				   std::list<BinaryData>()))==URBI_CONTINUE)
 	  {
 	    if (sendSound_(s, UMessage(*this, 0, utag, "*** stop",
@@ -627,8 +627,8 @@ namespace urbi
 
   UCallbackID
   UAbstractClient::setCallback(UCustomCallback cb,
-                               void* cbData,
-                               const char* tag)
+			       void* cbData,
+			       const char* tag)
   {
     return addCallback(tag, *new UCallbackWrapperCCB(cb, cbData));
   }
@@ -640,7 +640,7 @@ namespace urbi
   {
     listLock.lock();
     std::list<UCallbackInfo>:: iterator it = find(callbackList.begin(),
-                                                  callbackList.end(), id);
+						  callbackList.end(), id);
     if (it == callbackList.end())
       {
 	listLock.unlock();
@@ -659,8 +659,8 @@ namespace urbi
   {
     listLock.lock();
     std::list<UCallbackInfo>:: iterator it = find(callbackList.begin(),
-                                                  callbackList.end(),
-                                                  callbackID);
+						  callbackList.end(),
+						  callbackID);
     if (it == callbackList.end())
       {
 	listLock.unlock();
@@ -851,7 +851,7 @@ UAbstractClient::processRecvBuffer()
     {
       //Not in binary mode.
       endline = static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
-                                           recvBufferPosition));
+					   recvBufferPosition));
       if (!endline)
 	return; //no new end of command/start of binary: wait
 
@@ -859,11 +859,11 @@ UAbstractClient::processRecvBuffer()
       //check
       printf("ding %15s\n", recvBuffer);
       endline2 = static_cast<char*> (memchr(recvBuffer, 0,
-                                            recvBufferPosition));
+					    recvBufferPosition));
       if ((unsigned int) endline - (unsigned int) recvBuffer > 50U)
-        printf("WARNING, header unexpectedly long\n");
+	printf("WARNING, header unexpectedly long\n");
       if ((unsigned int) endline > (unsigned int) endline2 && endline2)
-        printf("WARNING, 0 before newline\n");
+	printf("WARNING, 0 before newline\n");
 #endif
 
       //parse the line
@@ -880,7 +880,7 @@ UAbstractClient::processRecvBuffer()
 	  if (found == 1)
 	    currentTag[0] = 0;
 	  else // failure
-          {
+	  {
 	    printf("UAbstractClient::read, fatal error parsing header");
 	    printf(" line was '%s'\n", recvBuffer);
 	    currentTimestamp = 0;
@@ -958,9 +958,9 @@ UAbstractClient::processRecvBuffer()
 	      notifyCallbacks(msg);
 	      //unlistLock.lock();
 	      //prepare for next read, copy the extra
-              memmove(recvBuffer, recvBuffer + parsePosition + 1,
-                      recvBufferPosition - parsePosition - 1);
-              // copy beginning of next cmd
+	      memmove(recvBuffer, recvBuffer + parsePosition + 1,
+		      recvBufferPosition - parsePosition - 1);
+	      // copy beginning of next cmd
 	      recvBufferPosition = recvBufferPosition - parsePosition - 1;
 	      recvBuffer[recvBufferPosition] = 0;
 	      parsePosition = 0;
@@ -1024,7 +1024,7 @@ UAbstractClient::processRecvBuffer()
   }
 
   UCallbackID UAbstractClient::addCallback(const char* tag,
-                                           UCallbackWrapper& w)
+					   UCallbackWrapper& w)
   {
     listLock.lock();
     UCallbackInfo ci(w);
@@ -1043,7 +1043,8 @@ UAbstractClient::processRecvBuffer()
     : client(client), timestamp(timestamp),  tag(tag), value(0)
   {
     rawMessage = std::string(message);
-    while (message[0] ==' ') message++;
+    while (message[0] ==' ')
+      ++message;
     //parse non-value messages
     if (message[0] == '*')
       {

@@ -640,7 +640,7 @@ namespace urbi
       dest.sampleFormat = ssampleFormat;
     if (dest.soundFormat == SOUND_WAV)
       dest.sampleFormat = dest.sampleSize > 8 ? SAMPLE_SIGNED
-                                              : SAMPLE_UNSIGNED;
+					      : SAMPLE_UNSIGNED;
     // That's a big one!
     int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
     if (dest.soundFormat == SOUND_WAV)
@@ -675,30 +675,30 @@ namespace urbi
     if (dest.soundFormat == SOUND_WAV)
       dbuffer += sizeof(wavheader);
     int elementCount = dest.size - (dest.soundFormat == SOUND_WAV ?
-                                    sizeof(wavheader) : 0);
+				    sizeof(wavheader) : 0);
     elementCount /= (dest.channels * (dest.sampleSize / 8));
     switch(ssampleSize * 1000 + dest.sampleSize)
     {
       case 8008:
-        copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
-             elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
-             SAMPLE_SIGNED);
-        break;
+	copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
+	     elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
+	     SAMPLE_SIGNED);
+	break;
       case 16008:
-        copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate,
-             dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-             dest.sampleFormat == SAMPLE_SIGNED);
-        break;
+	copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate,
+	     dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+	     dest.sampleFormat == SAMPLE_SIGNED);
+	break;
       case 16016:
-        copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
-             srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-             dest.sampleFormat == SAMPLE_SIGNED);
-        break;
+	copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+	     dest.sampleFormat == SAMPLE_SIGNED);
+	break;
       case 8016:
-        copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels,
-             srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-             dest.sampleFormat == SAMPLE_SIGNED);
-        break;
+	copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+	     dest.sampleFormat == SAMPLE_SIGNED);
+	break;
     }
     return 0;
   }

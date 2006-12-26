@@ -268,9 +268,11 @@ namespace urbi
   void execute(void)
   {
 #ifdef WIN32
-    while (true) Sleep(100000);
+    while (true)
+      Sleep(100000);
 #else
-    while (true) sleep(100);
+    while (true)
+      sleep(100);
 #endif
   }
 

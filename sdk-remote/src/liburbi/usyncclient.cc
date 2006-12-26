@@ -98,9 +98,11 @@ namespace urbi
   {
     //check there is no tag
     int p = 0;
-    while(format[p]==' ') p++;
+    while (format[p]==' ')
+      ++p;
     while (isalpha(format[p])) p++;
-    while(format[p]==' ') p++;
+    while (format[p]==' ')
+      ++p;
     if (format[p]==':')
     {
       std::cerr <<"FATAL: passing a taged command to syncGet:'"<<format<<"'\n";
@@ -108,8 +110,10 @@ namespace urbi
     }
     //check if there is a command separator
     p = strlen(format) - 1;
-    while (format[p] == ' ') p--;
-    bool hasSep = (format[p] == ';' || format[p] == ',');
+    while (format[p] == ' ')
+      --p;
+    bool hasSep = (format[p] == ';
+    ' || format[p] == ',');
     va_list arg;
     va_start(arg, format);
     sendBufferLock.lock();
@@ -163,13 +167,13 @@ namespace urbi
     {
       //uncompress jpeg
       if (format == IMAGE_YCbCr)
-        convertJPEGtoYCrCb((const byte*) m->value->binary->image.data,
-                           m->value->binary->image.size, (byte*) buffer,
-                           buffersize);
+	convertJPEGtoYCrCb((const byte*) m->value->binary->image.data,
+			   m->value->binary->image.size, (byte*) buffer,
+			   buffersize);
       else
-        convertJPEGtoRGB((const byte*)  m->value->binary->image.data,
-                         m->value->binary->image.size, (byte*) buffer,
-                         buffersize);
+	convertJPEGtoRGB((const byte*)  m->value->binary->image.data,
+			 m->value->binary->image.size, (byte*) buffer,
+			 buffersize);
     }
     else if (format == IMAGE_RGB || format == IMAGE_PPM)
     {
@@ -270,13 +274,13 @@ namespace urbi
   USyncClient::syncGetSound(const char* device, int duration, USound& sound)
   {
     send("syncgetsound = BIN 0;"
-         " loopsound: loop syncgetsound = syncgetsound +  %s.val,"
-         " { "
-         "   wait(%d);"
-         "   stop loopsound;"
-         "   noop;"
-         "   noop;"
-         " };", device, duration);
+	 " loopsound: loop syncgetsound = syncgetsound +  %s.val,"
+	 " { "
+	 "   wait(%d);"
+	 "   stop loopsound;"
+	 "   noop;"
+	 "   noop;"
+	 " };", device, duration);
     UMessage * m = syncGet("syncgetsound;");
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY

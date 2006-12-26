@@ -142,7 +142,7 @@ namespace urbi
 
     if (type == "varaccess")
       echo("Warning: NotifyAccess facility is not available for modules in "
-           "remote mode.\n");
+	   "remote mode.\n");
   };
 
   //! UGenericCallback constructor.
@@ -318,8 +318,8 @@ namespace urbi
     if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST)
       {
 	msg.client.printf("Component Error: "
-                          "unknown message content, type %d\n",
-                          (int) msg.type);
+			  "unknown message content, type %d\n",
+			  (int) msg.type);
 	return URBI_CONTINUE;
       }
 
@@ -327,25 +327,25 @@ namespace urbi
 
     if (array.size()<2)
       {
-        msg.client.printf("Component Error: Invalid number "
-                          "of arguments in the server message: %d\n",
-                          array.size());
+	msg.client.printf("Component Error: Invalid number "
+			  "of arguments in the server message: %d\n",
+			  array.size());
 	return URBI_CONTINUE;
       }
 
     if (array[0].type != DATA_DOUBLE)
       {
 	msg.client.printf("Component Error: "
-                          "unknown server message type %d\n",
-                          (int) array[0].type);
+			  "unknown server message type %d\n",
+			  (int) array[0].type);
 	return URBI_CONTINUE;
       }
 
     if (array[0].type != DATA_DOUBLE)
       {
 	msg.client.printf("Component Error: "
-                          "unknown server message type %d\n",
-                          (int) array[0].type);
+			  "unknown server message type %d\n",
+			  (int) array[0].type);
 	return URBI_CONTINUE;
       }
 
@@ -360,18 +360,18 @@ namespace urbi
 	       ++it)
 	    (*it)->__update(array[2]);
 
-        UTable::iterator monitormapfind = monitormap.find(array[1]);
-        for (std::list<UGenericCallback*>::iterator
+	UTable::iterator monitormapfind = monitormap.find(array[1]);
+	for (std::list<UGenericCallback*>::iterator
 	     cbit = monitormapfind->second.begin();
-             cbit != monitormapfind->second.end();
-             ++cbit)
-        {
-          // test of return value here
-          UList u;
-          u.array.push_back(new UValue());
-          u[0].storage = (*cbit)->storage;
-          (*cbit)->__evalcall(u);
-        }
+	     cbit != monitormapfind->second.end();
+	     ++cbit)
+	{
+	  // test of return value here
+	  UList u;
+	  u.array.push_back(new UValue());
+	  u[0].storage = (*cbit)->storage;
+	  (*cbit)->__evalcall(u);
+	}
       }
 
     // UEM_EVALFUNCTION
@@ -494,8 +494,8 @@ namespace urbi
     // DEFAULT
     else
       msg.client.printf("Component Error: "
-                        "unknown server message type number %d\n",
-                        (int)array[0]);
+			"unknown server message type number %d\n",
+			(int)array[0]);
 
     return URBI_CONTINUE;
   }
