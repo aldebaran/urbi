@@ -5724,12 +5724,6 @@ UCommand_AT::~UCommand_AT()
 UCommandStatus
 UCommand_AT::execute(UConnection *connection)
 {
-  UTestResult testres;
-  UEventCompound* ec;
-  UCommand* morph_onleave = 0;
-  bool domorph = false;
-  ufloat currentTime = connection->server->lastTime();
-
   if (!test)
     return status = UCOMPLETED;
 
@@ -5745,16 +5739,18 @@ UCommand_AT::execute(UConnection *connection)
     }
   }
 
+  UCommand* morph_onleave = 0;
+  bool domorph = false;
+  ufloat currentTime = connection->server->lastTime();
   if (reeval ())
   {
-    ec = 0;
+    UEventCompound* ec = 0;
     UValue *testeval = test->eval(this, connection, ec);
     if (!ec)
       ec = new UEventCompound (testeval);
     reset_reeval ();
 
-    testres = booleval(testeval, true);
-    if (testres == UTESTFAIL)
+    if (booleval(testeval, true) == UTESTFAIL)
       return status = UCOMPLETED;
 
     // softtest evaluation
