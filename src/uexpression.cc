@@ -1109,7 +1109,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       for (int i=0;i<e1->str->len()-1; ++i)
 	if (e1->str->str()[i] == '\\' &&
 	    e1->str->str()[i+1] == '"')
-	  ret->val--;
+	  --ret->val;
 
       delete e1;
       return ret;

@@ -887,7 +887,7 @@ UConnection::processCommand(UCommand *&command,
       {
 	if (command->flag_nbTrue2 == 0)
 	  command->flag_startTrue2 = server->lastTime();
-	command->flag_nbTrue2++;
+	++command->flag_nbTrue2;
       }
       else
 	command->flag_nbTrue2 = 0;
@@ -912,7 +912,7 @@ UConnection::processCommand(UCommand *&command,
       {
 	if (command->flag_nbTrue4 == 0)
 	  command->flag_startTrue4 = server->lastTime();
-	command->flag_nbTrue4++;
+	++command->flag_nbTrue4;
       }
       else
 	command->flag_nbTrue4 = 0;

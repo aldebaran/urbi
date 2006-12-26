@@ -575,7 +575,7 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
 
   if (assigned)
   {
-    variable->nbAssigns--;
+    --variable->nbAssigns;
     if (variable->cancel == this)
       variable->cancel = 0;
   }
@@ -1213,7 +1213,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       else
 	valtmp = &(variable->target); // &variable->target
 
-      variable->nbAssigns++;
+      ++variable->nbAssigns;
       assigned = true;
 
       // use of previous value as a start value to ensure that the start value
@@ -1266,7 +1266,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     // nbAverage back to 0 after work()
     if (variable->blendType != UADD)
       *valtmp = *valtmp / (ufloat)(variable->nbAverage+1);
-    variable->nbAverage++;
+    ++variable->nbAverage;
 
     if (variable->activity == 0)
       connection->server->reinitList.push_front(variable);
@@ -5053,7 +5053,7 @@ UCommand_CLASS::execute(UConnection*)
     = ::urbiserver->objWaittab.find(object->str());
   if (ow != ::urbiserver->objWaittab.end())
   {
-    ow->second->nb--;
+    --ow->second->nb;
     if (ow->second->nb == 0)
       ::urbiserver->objWaittab.erase(ow);
     else
