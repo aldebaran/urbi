@@ -1,11 +1,15 @@
 #include <cstdlib>
-#include <cstdio>
+#include "libport/cstdio"
 
 #include "urbi/uclient.hh"
 
 namespace urbi
 {
-  inline float fabs(float f ) {if (f>0) return f; else return f*(-1.0);}
+  inline float fabs (float f )
+  {
+    if (f>0) return f;
+    else return f*(-1.0);
+  }
   enum UType
   {
     TYPE_BOOL,
@@ -42,7 +46,7 @@ namespace urbi
     if (strncmp(buff,"URBI",4)) return 3;
     if (fread(&devCount,4,1,f)!=1) return 4;
     if (fwrite(&devCount,4,1,of)!=1) return 5;
-    for (int i=0;i<devCount;i++)
+    for (int i=0;i<devCount; ++i)
     {
       char device[256];
       int pos=0;
@@ -73,14 +77,15 @@ int main(int argc, char * argv[])
     }
   FILE * inf;
   FILE * ouf;
-  if (!strcmp(argv[1],"-")) inf=stdin;
-  else inf=fopen(argv[1],"r");
+  if (STREQ(argv[1],"-")) inf=stdin;
+  else
+    inf=fopen(argv[1],"r");
   if (!inf)
     {
       printf("error opening file\n");
       exit(2);
     }
-  if (!strcmp(argv[2],"-"))
+  if (STREQ(argv[2],"-"))
     ouf=stdout;
   else
     ouf=fopen(argv[2],"w");
@@ -98,19 +103,19 @@ int main(int argc, char * argv[])
 
   urbi::UCommand uc;
   int starttime=-1;
-  fseek(inf,sizeof(urbi::UCommand)*(-1),SEEK_END);
+  fseek(inf,sizeof (urbi::UCommand)*(-1),SEEK_END);
   while (ftell(inf)!=endheader)
   {
-    if (fread(&uc,sizeof(urbi::UCommand),1,inf)!=1)
+    if (fread(&uc,sizeof (urbi::UCommand),1,inf)!=1)
       {
 	printf("error reading from file\n");
 	exit(1);
       }
-    fseek(inf,sizeof(urbi::UCommand)*(-2),SEEK_CUR);
+    fseek(inf,sizeof (urbi::UCommand)*(-2),SEEK_CUR);
     if (starttime==-1)
       starttime=uc.timestamp;
     uc.timestamp = starttime-uc.timestamp;
-    fwrite(&uc,sizeof(urbi::UCommand),1,ouf);
+    fwrite(&uc,sizeof (urbi::UCommand),1,ouf);
   }
 
   fclose(inf);

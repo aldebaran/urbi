@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
   d->send("motoron;");
 
   c.send("looptag: loop {");
-  for (int i=0;i<devCount-1;i++)
+  for (int i=0;i<devCount-1; ++i)
     {
       c.setCallback(command,devices[i]);
       c.send("%s: %s.val&",devices[i], devices[i]);

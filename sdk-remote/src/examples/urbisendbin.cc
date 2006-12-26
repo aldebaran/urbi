@@ -3,7 +3,7 @@
 */
 #include "urbi/uclient.hh"
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "libport/sys/stat.h"
 #include "libport/windows.hh"
 
 int main(int argc, char * argv[])
@@ -25,7 +25,7 @@ int main(int argc, char * argv[])
     exit(2);
 
   FILE *f;
-  if (!strcmp(argv[3],"-"))
+  if (STREQ(argv[3],"-"))
     f = stdin;
   else
     f = fopen(argv[3],"r");
@@ -42,7 +42,7 @@ int main(int argc, char * argv[])
   {
     struct stat st;
     stat(argv[3],&st);
-    buffer = (char *)malloc(st.st_size);
+    buffer = static_cast<char *> (malloc (st.st_size));
     if (!buffer)
     {
       printf("not enough memory\n");
@@ -63,13 +63,13 @@ int main(int argc, char * argv[])
   {
     int sz=10000;
     pos = 0;
-    buffer = (char *)malloc(sz);
+    buffer = static_cast<char *> (malloc (sz));
     while (true)
     {
       if (sz-pos < 500)
       {
 	sz += 10000;
-	buffer = (char *)realloc(buffer,sz);
+	buffer = static_cast<char *> (realloc (buffer,sz));
 	if (!buffer)
 	{
 	  printf("not enough memory\n");

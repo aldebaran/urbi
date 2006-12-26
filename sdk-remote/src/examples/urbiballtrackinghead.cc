@@ -36,7 +36,10 @@ Monitor* mon = NULL;
 #endif
 
 //inline double fabs(double a) {return  a>0?a:(a*-1);}
-inline double fsgn(double a) {return a>0?1:-1;}
+inline double fsgn (double a)
+{
+  return a>0?1:-1;
+}
 
 struct PositionData
 {
@@ -100,31 +103,35 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y)
 		       1000000.0/(float)(robotC.getCurrentTime()-stime));
       stime=robotC.getCurrentTime();
     }
-  sframe++;
+  ++sframe;
   return;
   if (fabs(current_x-expect_x)< 100)
     {
       if (fabs(target_x - current_x) > maxcommand_x)
 	command_x = current_x + maxcommand_x*fsgn(target_x - current_x);
-      else command_x = target_x;
+      else
+	command_x = target_x;
       if (fabs(command_x-current_x) > 0.0)
       {
 	robotC.send("headPan.val = %lf,",command_x);
 	expect_x = command_x;
       }
-      else command_x = -1;
+      else
+	command_x = -1;
     }
   if (fabs(current_y-expect_y)< 100)
     {
       if (fabs(target_y - current_y) > maxcommand_y)
 	command_y = current_y + maxcommand_y*fsgn(target_y - current_y);
-      else command_y = target_y;
+      else
+	command_y = target_y;
       if (fabs(command_y-current_y) > 0.0)
       {
 	robotC.send("headTilt.val = %lf,",command_y);
 	expect_y = command_y;
       }
-      else command_y = -1;
+      else
+	command_y = -1;
     }
 
   if (command_x!=-1 || command_y!=-1)
@@ -136,7 +143,7 @@ void BallTrackingHead::doSendCommand(double current_x, double current_y)
 			  1000000.0/(float)(robotC.getCurrentTime()-stime));
 	  stime=robotC.getCurrentTime();
 	}
-      sframe++;
+      ++sframe;
     }
 }
 
@@ -201,12 +208,14 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
 	{
 	  int dt=robotC.getCurrentTime()-frametime;
 	  frametime=robotC.getCurrentTime();
-	  if (interframe == 0) interframe=((float)dt)/50.0;
-	  else interframe=interframe*0.5 +  0.5*((float)dt)/50.0;
+	  if (interframe == 0)
+	    interframe=((float)dt)/50.0;
+	  else
+	    interframe=interframe*0.5 +  0.5*((float)dt)/50.0;
 	  robotC.printf("## %f fps\n",1000.0/interframe);
 	}
     }
-  framenum++;
+  ++framenum;
   int imgsize = 500000;
   if (img.imageFormat == urbi::IMAGE_JPEG)
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data,
@@ -220,15 +229,15 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
   int nummatch=0;
   int w = img.width;
   int h = img.height;
-  for (int i=0;i<img.width;i++)
-    for (int j=0;j<img.height;j++)
+  for (int i=0;i<img.width; ++i)
+    for (int j=0;j<img.height; ++j)
       {
 	unsigned char cb = image[(i+j*w)*3+1];
 	unsigned char cr = image[(i+j*w)*3+2];;
 	if (150 <= cr && cr<=230
 	    && 120 <= cb && cb<=190)
 	  {
-	    nummatch++;
+	    ++nummatch;
 	    xsum+=i;
 	    ysum+=j;
 	  }
@@ -244,16 +253,22 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
       double dy = (-1.0) * (factor_y / (double)h) * dby;
 
 #ifndef LIBURBI_OPENR
-      for (int j=0;j<h;j++) image[(((int)bx)+w*j)*3]=255;
-      for (int j=0;j<w;j++) image[(((int)by)*w+j)*3]=255;
+      for (int j=0;j<h; ++j)
+	image[(((int)bx)+w*j)*3]=255;
+      for (int j=0;j<w; ++j)
+	image[(((int)by)*w+j)*3]=255;
 #endif
 
       target_x = cx+dx;
       target_y = cy+dy;
-      if (target_x > 90.0)  target_x = 90.0;
-      if (target_x < -90.0) target_x = -90.0;
-      if (target_y > 60.0)  target_y = 60.0;
-      if (target_y < -30.0) target_y = -30.0;
+      if (target_x > 90.0)
+	target_x = 90.0;
+      if (target_x < -90.0)
+	target_x = -90.0;
+      if (target_y > 60.0)
+	target_y = 60.0;
+      if (target_y < -30.0)
+	target_y = -30.0;
       doSendCommand(cx, cy);
 
     }

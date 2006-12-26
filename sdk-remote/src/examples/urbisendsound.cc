@@ -1,6 +1,6 @@
 #include "urbi/uclient.hh"
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "libport/sys/stat.h"
 
 urbi::USound snd;
 
@@ -36,7 +36,7 @@ main(int argc, char * argv [])
     exit(2);
 
   FILE *f;
-  if (!strcmp(argv[2],"-"))
+  if (STREQ(argv[2],"-"))
     f = stdin;
   else
     f = fopen(argv[2],"r");
@@ -59,7 +59,7 @@ main(int argc, char * argv [])
     {
       struct stat st;
       stat(argv[2],&st);
-      s.data = (char * )malloc(st.st_size);
+      s.data = static_cast<char *> (malloc (st.st_size));
       s.soundFormat = urbi::SOUND_WAV;
       s.size = st.st_size;
       fread(s.data, 1,st.st_size, f);
@@ -73,7 +73,7 @@ main(int argc, char * argv [])
     }
   else
     {
-      s.data = (char *)malloc(130000);
+      s.data = static_cast<char *> (malloc (130000));
       s.soundFormat = urbi::SOUND_WAV;
       fread(s.data, 44, 1, f);
       int sz=1;

@@ -265,7 +265,7 @@ namespace urbi
 
   int UAbstractClient::send(UValue &v)
   {
-    switch(v.type)
+    switch (v.type)
       {
       case DATA_DOUBLE:
 	send("%lf", v.val);
@@ -490,24 +490,24 @@ namespace urbi
     */
     //handle next chunk
     if (s->format == SOUND_WAV && s->pos==0)
-      s->pos = sizeof(wavheader);
+      s->pos = sizeof (wavheader);
     int tosend = (s->length-s->pos > CHUNK_SIZE) ? CHUNK_SIZE:s->length-s->pos;
 
     //printf("%d start chunk of size %d at offset %d\n", 0, tosend, s->pos);
     int playlength = tosend *1000 / s->bytespersec;
     s->uc->send("%s.val = BIN %d %s %s;",
 		s->device,
-		(int)(tosend+ ((s->format == SOUND_WAV)?sizeof(wavheader):0)),
+		(int)(tosend+ ((s->format == SOUND_WAV)?sizeof (wavheader):0)),
 		(s->format == SOUND_WAV)?"wav":"raw",
 		s->formatString
 		);
     if (s->format == SOUND_WAV)
       {
 	wavheader wh;
-	memcpy(&wh, s->buffer, sizeof(wh));
+	memcpy(&wh, s->buffer, sizeof (wh));
 	wh.datalength=tosend;
 	wh.length=tosend+44-8;
-	s->uc->sendBin(&wh, sizeof(wavheader));
+	s->uc->sendBin(&wh, sizeof (wavheader));
       }
 
 
@@ -1085,7 +1085,7 @@ UAbstractClient::processRecvBuffer()
     tag = b.tag;
     type = b.type;
     value = 0;
-    switch(type)
+    switch (type)
       {
       case MESSAGE_SYSTEM:
       case MESSAGE_ERROR:
@@ -1107,7 +1107,7 @@ UAbstractClient::processRecvBuffer()
   std::ostream& operator <<(std::ostream &s, const UMessage &m)
   {
     s<<"["<<m.timestamp<<":"<<m.tag<<"] ";
-    switch(m.type)
+    switch (m.type)
       {
       case MESSAGE_SYSTEM:
       case MESSAGE_ERROR:

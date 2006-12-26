@@ -14,7 +14,7 @@
 # ifdef WIN32
 #  include "monitor-win.h"
 # else
-# include <cstring>
+# include "libport/cstring"
 # include <cerrno>
 # include <cassert>
 # include <iostream>
@@ -33,20 +33,47 @@ class Monitor
  public:
   // if fastmode enabled, use its own display: better framerate, but
   // irresponsive if not frequently updated
-  Monitor(int,int, const char * name=NULL, bool fastMode = true);
+  Monitor(int, int, const char * name=NULL, bool fastMode = true);
   ~Monitor();
 
   void createWindow(const char* name);
-  int  VisualClass() {return (visual->c_class);}
-  int  Depth()  {return (depth);}
-  int  Width()  {return ((xImage != NULL) ? xImage->width : 0);}
-  int  Height() {return ((xImage != NULL) ? xImage->height : 0);}
-  XImage *X() {return (xImage);};
-  Bool IsShared() {return (isShared);}
-  Bool HasSharedPixmap() {return ((Bool) (sharedPixmap != None));}
-  Pixmap SharedPixmap() {return (sharedPixmap);}
-  void  setName(const char * name) {  XStoreName(display, window, name);}
-  int   setImage(bits8*,int);
+  int  VisualClass ()
+  {
+    return visual->c_class;
+  }
+  int  Depth ()
+  {
+    return depth;
+  }
+  int  Width ()
+  {
+    return xImage != NULL ? xImage->width : 0;
+  }
+  int  Height ()
+  {
+    return xImage != NULL ? xImage->height : 0;
+  }
+  XImage *X ()
+  {
+    return xImage;
+  }
+  Bool IsShared ()
+  {
+    return isShared;
+  }
+  Bool HasSharedPixmap ()
+  {
+    return (Bool) (sharedPixmap != None);
+  }
+  Pixmap SharedPixmap ()
+  {
+    return sharedPixmap;
+  }
+  void  setName (const char * name)
+  {
+    XStoreName(display, window, name);
+  }
+  int   setImage(bits8*, int);
   int   createImage();
   int   destroyImage();
   void  clear();
@@ -64,10 +91,10 @@ class Monitor
   Pixmap          sharedPixmap; // None (0L) if unassigned
   XShmSegmentInfo shmInfo;
 
-  int	               screenNumber,windowsHeight,windowsWidth;
+  int	               screenNumber, windowsHeight, windowsWidth;
   Screen              *screen;
   XWindowAttributes   windowAttributes;
-  int                 x, y,w,h;
+  int                 x, y, w, h;
 
   XEvent              event;
   Atom                atomWMDeleteWindow;

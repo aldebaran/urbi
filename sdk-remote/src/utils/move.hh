@@ -41,14 +41,23 @@ namespace urbi
   {
   public:
     int initialize(UClient * client, bool uploadFiles=true, const char * configFile="moveconfig", bool enableInterrupt=false);
-    const MovementProperties& getWalkProperties() {return pwalk;}
-    const MovementProperties& getTurnProperties() {return pturn;}
+    const MovementProperties& getWalkProperties ()
+    {
+      return pwalk;
+    }
+    const MovementProperties& getTurnProperties ()
+    {
+      return pturn;
+    }
     int walk(float &distance, float relativePrecision,const char * tag=NULL);
     int turn(float &angle,  float relativePrecision, const char * tag=NULL);
     /// Stop current movement as soon as possible
     void interrupt(bool notifyEndMove);
     UCallbackAction moveEnd(const UMessage &msg);
-    UClient * getConnection() {return robot;}
+    UClient * getConnection ()
+    {
+      return robot;
+    }
     //attempt to break movement, still call endmove
 
   private:

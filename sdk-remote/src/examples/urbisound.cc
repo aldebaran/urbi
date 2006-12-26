@@ -26,10 +26,10 @@
  * You can use the sox program to convert it.
  */
 
-#include <cstdio>
+#include "libport/cstdio"
 #include <ctime>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "libport/sys/stat.h"
 
 #include <fcntl.h>
 #include "urbi/uclient.hh"
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   if (argc >= 4)
   {
     outtodsp = false;
-    if (!strcmp(argv[3],"-"))
+    if (STREQ(argv[3],"-"))
       file=stdout;
     else
       file = fopen(argv[3], "wb+");

@@ -69,7 +69,7 @@ namespace urbi
     struct hostent *hen;		// host-to-IP translation
     struct sockaddr_in sa;	// Internet address struct
 
-    memset(&sa, 0, sizeof(sa));
+    memset(&sa, 0, sizeof (sa));
 #ifdef WIN32
     WSADATA wsaData;
     WORD wVersionRequested;
@@ -104,13 +104,13 @@ namespace urbi
     }
 
     // now connect to the remote server.
-    rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+    rc = connect(sd, (struct sockaddr *) &sa, sizeof (sa));
 
     // If we attempt to connect too fast to aperios ipstack it will fail.
     if (rc)
     {
       usleep(20000);
-      rc = connect(sd, (struct sockaddr *) &sa, sizeof(sa));
+      rc = connect(sd, (struct sockaddr *) &sa, sizeof (sa));
     }
 
     // Check there was no error.

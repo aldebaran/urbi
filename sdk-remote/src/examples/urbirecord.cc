@@ -62,7 +62,7 @@ void buildHeader()
 {
   fwrite("URBI",4,1,f);
   fwrite(&devCount,4,1,f);
-  for (int i=0;i<devCount;i++)
+  for (int i=0;i<devCount; ++i)
 	{
 	  fwrite(devices[i],strlen(devices[i])+1,1,f);
 	  short s=i;
@@ -81,7 +81,7 @@ command(const urbi::UMessage &msg)
   //get command id
   static int tme=0;
 
-  for (int i=0;i<devCount;i++)
+  for (int i=0;i<devCount; ++i)
     {
       if (msg.tag != devices[i])
 	{
@@ -92,8 +92,8 @@ command(const urbi::UMessage &msg)
 	  assert (msg.value->type == urbi::DATA_DOUBLE);
 	  uc.value.angle=msg.value->val;
 
-	  fwrite(&uc,sizeof(UCommand),1,f);
-	  tilt++;
+	  fwrite(&uc,sizeof (UCommand),1,f);
+	  ++tilt;
 	  if (! (tilt%100))
 	    {
 	      if (tme)
@@ -126,14 +126,16 @@ int main(int argc, char * argv[])
   urbi::UClient c(argv[1]);
   c.start();
   if (c.error()) exit(2);
-  if (!strcmp(argv[2],"-")) f=stdout;
-  else f=fopen(argv[2],"w");
-  if (!f) exit(3);
+  if (STREQ(argv[2],"-")) f=stdout;
+  else
+    f=fopen(argv[2],"w");
+  if (!f)
+    exit(3);
   buildHeader();
   //c.send("motoroff");
   //build command
   c.send("looptag: loop {");
-  for (int i=0;i<devCount-1;i++)
+  for (int i=0;i<devCount-1; ++i)
   {
     c.setCallback(command,devices[i]);
     c.send("%s: %s.val&",devices[i], devices[i]);

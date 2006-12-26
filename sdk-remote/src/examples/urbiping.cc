@@ -1,6 +1,6 @@
 #include "urbi/uclient.hh"
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "libport/sys/stat.h"
 #include <signal.h>
 #include "libport/windows.hh"
 
@@ -26,7 +26,7 @@ pong(const urbi::UMessage& msg)
 
   avgtime+=ptime;
   printf("ping reply from %s: seq=%d time=%d ms\n", rname, pingCount+1, ptime);
-  pingCount++;
+  ++pingCount;
   received=true;
   if (pingCount==count)
     over = true;
@@ -62,7 +62,8 @@ int main(int argc, char * argv[])
 
   int interval=1000;
 
-  if (argc>2) interval=strtol(argv[2],NULL,0);
+  if (argc>2)
+    interval=strtol(argv[2],NULL,0);
 
   // count initialization
   if (argc>3)
@@ -74,7 +75,7 @@ int main(int argc, char * argv[])
 
   received=true;
 
-  for (int i=0;i<count || (!count);i++)
+  for (int i=0;i<count || (!count); ++i)
     {
       while (!received)
 	usleep(200);
@@ -84,6 +85,7 @@ int main(int argc, char * argv[])
       usleep(interval*1000);
     }
 
-  while (!over) usleep(1000000);
+  while (!over)
+    usleep(1000000);
   showstats(0);
 }

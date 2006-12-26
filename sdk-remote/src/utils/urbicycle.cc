@@ -1,4 +1,4 @@
-#include <cstdio>
+#include "libport/cstdio"
 #include <cstdlib>
 #include <vector>
 
@@ -52,7 +52,7 @@ int parseHeader(FILE *f, FILE * of)
   if (strncmp(buff, "URBI", 4)) return 3;
   if (fread(&devCount, 4, 1, f) != 1) return 4;
   if (fwrite(&devCount, 4, 1, of) != 1) return 5;
-  for (int i = 0; i < devCount; i++)
+  for (int i = 0; i < devCount; ++i)
     {
       char device[256];
       int pos=0;
@@ -75,23 +75,23 @@ int main(int argc, char * argv[])
   if (argc<3)
   {
     printf("usage %s "
-           "infile outfile [jointid] [startval] [direction] [numcycle]\n"
-           "\tDetect and extract cycles in an urbi recorded file\n"
-           "\tJointid is the joint used to detect cycles (0-based value,"
-           " see urbirecord.cpp for id/name correspondance)\n"
-           "\tStartval is the value that will mark the beginning of a cycle"
-           " when reached by the joint, in the direction defined by the"
-           " 'direction' parameter\n"
-           "\tnumcycle is the number of the cycle that will be written to"
-           " 'outfile'\n"
-           "\tSet startval to '-' for 'first value seen'\n", argv[0]);
+	   "infile outfile [jointid] [startval] [direction] [numcycle]\n"
+	   "\tDetect and extract cycles in an urbi recorded file\n"
+	   "\tJointid is the joint used to detect cycles (0-based value,"
+	   " see urbirecord.cpp for id/name correspondance)\n"
+	   "\tStartval is the value that will mark the beginning of a cycle"
+	   " when reached by the joint, in the direction defined by the"
+	   " 'direction' parameter\n"
+	   "\tnumcycle is the number of the cycle that will be written to"
+	   " 'outfile'\n"
+	   "\tSet startval to '-' for 'first value seen'\n", argv[0]);
     exit(1);
   }
 
   FILE* inf = 0;
   FILE* ouf = 0;
 
-  if (!strcmp(argv[1], "-"))
+  if (STREQ(argv[1], "-"))
     inf = stdin;
   else
     inf = fopen(argv[1], "r");
@@ -102,7 +102,7 @@ int main(int argc, char * argv[])
     exit(2);
   }
 
-  if (!strcmp(argv[2], "-"))
+  if (STREQ(argv[2], "-"))
     ouf = stdout;
   else
     ouf = fopen(argv[2], "w");
@@ -130,7 +130,7 @@ int main(int argc, char * argv[])
     sscanf(argv[3], "%d", &joint);
   if (argc > 4)
   {
-    if (!strcmp(argv[4], "-"))
+    if (STREQ(argv[4], "-"))
       init = true;
     else
       sscanf(argv[4], "%f", &startval);
@@ -156,16 +156,16 @@ int main(int argc, char * argv[])
   int buffTime = 0;
 
   int basetime = 0;
-  for (int i = 0; i < devCount; i++)
+  for (int i = 0; i < devCount; ++i)
     buff[i].timestamp = 0;
   //read and handle by block of commands with same timestamp.
   //init:
-  fread(&uc, sizeof(UCommand), 1, inf);
+  fread(&uc, sizeof (UCommand), 1, inf);
   buffTime = uc.timestamp;
   buff[uc.id] = uc;
   while (true)
   {
-    int ok = fread(&uc, sizeof(UCommand), 1, inf);
+    int ok = fread(&uc, sizeof (UCommand), 1, inf);
     if (ok && !basetime)
       basetime = uc.timestamp;
     if (ok && buffTime == 0)
@@ -182,12 +182,12 @@ int main(int argc, char * argv[])
 
       if (buff[joint].timestamp == 0)
       {
-        //cant do anything
-        for (int i = 0; i < devCount; i++)
-          buff[i].timestamp = 0;
-        buff[uc.id] = uc;
-        buffTime = 0;
-        continue;
+	//cant do anything
+	for (int i = 0; i < devCount; ++i)
+	  buff[i].timestamp = 0;
+	buff[uc.id] = uc;
+	buffTime = 0;
+	continue;
       }
 
       startval = buff[joint].value.angle;
@@ -195,19 +195,19 @@ int main(int argc, char * argv[])
       init = false;
       gotLastVal = true;
       lastval = startval;
-      cycle++;
+      ++cycle;
       fprintf(stderr, "cycle %d starts at %d\n", cycle, buffTime - basetime);
     }
 
 
     if (gotLastVal
-        && (!gotSign || (cyclesgn ^ (lastval<startval)))
-        && ((lastval < startval && buff[joint].value.angle >= startval)
-            || (lastval > startval && buff[joint].value.angle <= startval)))
+	&& (!gotSign || (cyclesgn ^ (lastval<startval)))
+	&& ((lastval < startval && buff[joint].value.angle >= startval)
+	    || (lastval > startval && buff[joint].value.angle <= startval)))
     {
       cyclesgn = (lastval > startval);
       gotSign = true;
-      cycle++;
+      ++cycle;
       fprintf(stderr, "cycle %d starts at %d\n", cycle, buffTime - basetime);
     }
 
@@ -217,15 +217,15 @@ int main(int argc, char * argv[])
       gotLastVal = true;
     }
     if (cycle == wantedcycle)
-      for (int i = 0; i < devCount; i++)
-        if (buff[i].timestamp!=0)
-        {
-          buff[i].timestamp -= basetime;
-          fwrite(&buff[i], sizeof(UCommand), 1, ouf);
-        }
+      for (int i = 0; i < devCount; ++i)
+	if (buff[i].timestamp!=0)
+	{
+	  buff[i].timestamp -= basetime;
+	  fwrite(&buff[i], sizeof (UCommand), 1, ouf);
+	}
 
     //flush buffer
-    for (int i = 0; i < devCount; i++)
+    for (int i = 0; i < devCount; ++i)
       buff[i].timestamp = 0;
     buff[uc.id] = uc;
     buffTime = 0;

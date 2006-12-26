@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <cstdio>
+#include "libport/cstdio"
 #include <vector>
 
 #include "urbi/uclient.hh"
@@ -55,16 +55,15 @@ int parseHeader(FILE *f, FILE * of)
   if (fwrite(&devCount, 4, 1, of) != 1)
     return 5;
 
-  for (int i = 0; i < devCount; i++)
+  for (int i = 0; i < devCount; ++i)
   {
     char device[256];
     int pos = 0;
     int a = 0;
     int r = EOF;
-    do
-    {
+    do {
       if ((r = fgetc(f)) == EOF)
-        return 6;
+	return 6;
       device[pos++] = r;
     }
     while (device[pos - 1]);
@@ -89,14 +88,14 @@ int main(int argc, char* argv[])
   if (argc < 4)
   {
     printf("usage %s infile outfile factor [interpolate]\n"
-           "\ttime-scale the urbi file by given factor (>1 means slow-down) \n"
-           "\tInterpolation will only work with integer factors\n", argv[0]);
+	   "\ttime-scale the urbi file by given factor (>1 means slow-down) \n"
+	   "\tInterpolation will only work with integer factors\n", argv[0]);
     exit(1);
   }
   FILE* inf;
   FILE* ouf;
 
-  if (!strcmp(argv[1], "-"))
+  if (STREQ(argv[1], "-"))
     inf = stdin;
   else
     inf = fopen(argv[1], "r");
@@ -105,7 +104,7 @@ int main(int argc, char* argv[])
     printf("error opening file\n");
     exit(2);
   }
-  if (!strcmp(argv[2], "-"))
+  if (STREQ(argv[2], "-"))
     ouf = stdout;
   else
     ouf = fopen(argv[2], "w");
@@ -142,7 +141,7 @@ int main(int argc, char* argv[])
 
   int inittime = 0;
   bool first_time = true;
-  while (fread(&uc, sizeof(UCommand), 1, inf) == 1)
+  while (fread(&uc, sizeof (UCommand), 1, inf) == 1)
   {
     if (starttime == -1)
       starttime = uc.timestamp;
@@ -150,23 +149,24 @@ int main(int argc, char* argv[])
     {
       if (first_time == true)
       {
-        inittime = uc.timestamp;
-        first_time = false;
+	inittime = uc.timestamp;
+	first_time = false;
       }
       fprintf(stderr, "first command for %d at %d   (inittime %d)\n",
-              uc.id, uc.timestamp, inittime);
+	      uc.id, uc.timestamp, inittime);
       if (inittime != uc.timestamp)
-      { //trouble, missed some commands at start
+      {
+	// trouble, missed some commands at start
 	lastuc[uc.id] = uc;
 	lastuc[uc.id].timestamp = (int) (((float)(inittime) - ((float)starttime)) * scale);
 	fprintf(stderr, "miss: adding command for id %d at time %d\n",
-                uc.id, lastuc[uc.id].timestamp);
+		uc.id, lastuc[uc.id].timestamp);
 	//go on processing uc
       }
       else
       {
 	uc.timestamp = (int) (((float)(uc.timestamp) - ((float)starttime)) * scale);
-	fwrite(&uc, sizeof(UCommand), 1, ouf);
+	fwrite(&uc, sizeof (UCommand), 1, ouf);
 	lastuc[uc.id] = uc;
 	continue;
       }
@@ -179,24 +179,24 @@ int main(int argc, char* argv[])
 	//flush all!
 	fprintf(stderr, "flush, %d -1 steps\n", (int) scale);
 	for (int step = 1; step < (int)scale; ++step)
-        {
-          //step 0 already sent, last step will be sent after
+	{
+	  //step 0 already sent, last step will be sent after
 	  for (int dev = 0; dev < devCount; ++dev)
 	  {
 	    if (nextuc[dev].timestamp == -1)
-              continue;
+	      continue;
 	    UCommand suc = lastuc[dev];
 	    suc.timestamp = (lastuc[dev].timestamp * ((int)scale-step) + nextuc[dev].timestamp * step) / (int)scale;
 	    suc.value.angle = (lastuc[dev].value.angle * (float)((int)scale-step) + nextuc[dev].value.angle * (float)step) / (float)((int)scale);
-	    fwrite(&suc, sizeof(UCommand), 1, ouf);
+	    fwrite(&suc, sizeof (UCommand), 1, ouf);
 	  }
 	}
 	//send the last
 	for (int dev = 0; dev < devCount; ++dev)
 	{
 	  if (nextuc[dev].timestamp == -1)
-            continue;
-	  fwrite(&nextuc[dev], sizeof(UCommand), 1, ouf);
+	    continue;
+	  fwrite(&nextuc[dev], sizeof (UCommand), 1, ouf);
 	  lastuc[dev] = nextuc[dev];
 	  nextuc[dev].timestamp = -1;
 	}
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-      fwrite(&uc, sizeof(UCommand), 1, ouf);
+      fwrite(&uc, sizeof (UCommand), 1, ouf);
     }
   }
   //send the last chunk
@@ -213,8 +213,8 @@ int main(int argc, char* argv[])
     for (int dev = 0; dev < devCount; ++dev)
     {
       if (nextuc[dev].timestamp == -1)
-        continue;
-      fwrite(&nextuc[dev], sizeof(UCommand), 1, ouf);
+	continue;
+      fwrite(&nextuc[dev], sizeof (UCommand), 1, ouf);
     }
 
   fclose(inf);

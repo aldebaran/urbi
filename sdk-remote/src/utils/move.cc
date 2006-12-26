@@ -1,6 +1,6 @@
-#include <sys/stat.h>
+#include "libport/sys/stat.h"
 #include <cstdlib>
-#include <cstdio>
+#include "libport/cstdio"
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -41,7 +41,7 @@ namespace urbi
   int Move::initialize(UClient* client,
 		       bool uploadFiles,
 		       const char* configFile,
-                       bool enableInterrupt)
+		       bool enableInterrupt)
   {
     // This is required to parse our configuration file correctly.
     setlocale(LC_ALL, "C");
@@ -61,7 +61,7 @@ namespace urbi
     if (!cf)
     {
       fprintf(stderr, "Failed to open main configuration file %s\n",
-              configFile);
+	      configFile);
       return 1;
     }
     char configPath[M_MAX_PATH];
@@ -82,12 +82,12 @@ namespace urbi
 	line[strlen(line) - 1] = 0;
       int pos = 0;
       while (line[pos] == ' ')
-	pos++;
+	++pos;
       if (line[pos] == 0)
 	continue; //empty line
       static const char format[] = "%s%s%f%f%f";
       int s = sscanf(line, format,
-                     type, name, &lf.value, &lf.speed, &lf.precision);
+		     type, name, &lf.value, &lf.speed, &lf.precision);
       if (s >= 1 && type[0] == '#')
 	continue;
       if (s >= 1 && type[0] == 0)
@@ -110,29 +110,29 @@ namespace urbi
 	  strcat(filePath, name);
 	}
 	else
-          strcpy(filePath, name);
+	  strcpy(filePath, name);
 	FILE* cmdf = fopen(filePath, "r");
 	if (!cmdf)
-        {
-          fprintf(stderr, "cannot open file %s, skipping\n", name);
-          continue;
-        }
+	{
+	  fprintf(stderr, "cannot open file %s, skipping\n", name);
+	  continue;
+	}
 
 	struct stat st;
 	stat(filePath, &st);
-        assert (st.st_size >= 0);
+	assert (st.st_size >= 0);
 	size_t filelength = st.st_size;
-	char* buffer = (char*) malloc(filelength + 200);
+	char* buffer = static_cast<char*> (malloc (filelength + 200));
 	// Read the file.
 	size_t left = filelength;
 	while (left)
 	{
 	  size_t rc = fread(buffer, 1, left, cmdf);
 	  if (!rc)
-          {
-            fprintf(stderr, "error reading file %s\n", name);
-            return 3;
-          }
+	  {
+	    fprintf(stderr, "error reading file %s\n", name);
+	    return 3;
+	  }
 	  left -= rc;
 	}
 	sprintf(&buffer[filelength], "%s :ping;", tag);
@@ -169,34 +169,34 @@ namespace urbi
     pwalk.minSpeed = pwalk.resolution = pwalk.precision = 300000000;
     pwalk.maxSpeed = 0;
     for (std::list<LoadedFile>::iterator it = walks.begin();
-         it != walks.end();
-         ++it)
+	 it != walks.end();
+	 ++it)
     {
       if (it->speed > pwalk.maxSpeed)
-        pwalk.maxSpeed = it->speed;
+	pwalk.maxSpeed = it->speed;
       if (it->speed < pwalk.minSpeed)
-        pwalk.minSpeed = it->speed;
+	pwalk.minSpeed = it->speed;
       if (it->value < pwalk.resolution)
       {
-        pwalk.resolution = it->value;
-        pwalk.precision = it->precision;
+	pwalk.resolution = it->value;
+	pwalk.precision = it->precision;
       }
     }
     pturn.minSpeed = pturn.resolution = pturn.precision = 300000000;
     pturn.maxSpeed = 0;
     for (std::list<LoadedFile>::iterator it = turns.begin();
-         it != turns.end();
-         ++it)
+	 it != turns.end();
+	 ++it)
       {
 	if (it->speed > pturn.maxSpeed)
-          pturn.maxSpeed = it->speed;
+	  pturn.maxSpeed = it->speed;
 	if (it->speed < pturn.minSpeed)
-          pturn.minSpeed = it->speed;
+	  pturn.minSpeed = it->speed;
 	if (it->value < pturn.resolution)
-        {
-          pturn.resolution = it->value;
-          pturn.precision = it->precision;
-        }
+	{
+	  pturn.resolution = it->value;
+	  pturn.precision = it->precision;
+	}
       }
     moving = 0;
     return 0;
@@ -222,7 +222,7 @@ namespace urbi
     /* Looks hairy but that's the right way of declaring a matrix
      * values[N][M] where N = length / 2U and M = 2 */
     std::vector<std::vector<float> > values (length / 2U,
-                                             std::vector<float> (2));
+					     std::vector<float> (2));
     std::vector<int> move (length);
     std::vector<int> bestmove (length);
     std::vector<int> direction (length);
@@ -251,28 +251,28 @@ namespace urbi
       {
 	//calculate best value for move[index]
 	float dist = distance - currentval;
-        // -12/5 = -2 en division entiere.
+	// -12/5 = -2 en division entiere.
 	int cnt = (int) (dist / values[index][direction[index]]);
 	float rest = ffloatpart(dist / values[index][direction[index]]);
 	if (rest > 0.5)
-          cnt++;
+	  ++cnt;
 	if (rest < -0.5)
-          cnt--;
+	  --cnt;
 	move[index] = cnt;
 	currentval += (float) cnt * values[index][direction[index]];
 	/*
 	  std::cerr << "eval ";
 	  for (unsigned int k = 0; k < length / 2; ++k)
-            std::cerr << move[k] << " ";
+	    std::cerr << move[k] << " ";
 	  std::cerr << "(" << currentval << ")";
 	  std::cerr << endl;
 	*/
 	//calculate nummoves
 	int nummoves = 0;
 	for (int i = 0; i <= index; ++i)
-          nummoves += abs(move[i]);
+	  nummoves += abs(move[i]);
 	if (fabs(currentval - distance) < absoluteprecision
-            && (nummoves < bestnummoves || bestnummoves == -1))
+	    && (nummoves < bestnummoves || bestnummoves == -1))
 	{
 	  bestnummoves = nummoves;
 	  for (int k = 0; k < length / 2; ++k)
@@ -282,18 +282,18 @@ namespace urbi
 	do {
 	  currentval -= (float) move[index] * values[index][direction[index]];
 	  move[index] = 0;
-	  index--;
-        } while (index >= 0
-                 && ((currentval>distance && direction[index] == 0)
-                     || (currentval<distance && direction[index] == 1)));
+	  --index;
+	} while (index >= 0
+		 && ((currentval>distance && direction[index] == 0)
+		     || (currentval<distance && direction[index] == 1)));
 	if (index < 0)
-          break;
+	  break;
 	//DEBUG:recalculate currentval
 	/*
 	  std::cerr << "cv: " << currentval;
 	  currentval = 0;
 	  for (unsigned int k = 0; k < length / 2U; ++k)
-            currentval += (float) move[k] * values[k][direction[k]];
+	    currentval += (float) move[k] * values[k][direction[k]];
 	  std::cerr << " " << currentval << std::endl;
 	*/
       }
@@ -301,7 +301,7 @@ namespace urbi
       move[index] += ((direction[index] == 0) ? 1 : -1);
       if (move[index] != 0)
 	currentval += values[index][direction[index]]
-          * (float) ((direction[index] == 0) ? 1 : -1);
+	  * (float) ((direction[index] == 0) ? 1 : -1);
       if (currentval > distance)
 	direction[index + 1] = 1;
       else
@@ -357,7 +357,7 @@ namespace urbi
     /* Looks hairy but that's the right way of declaring a matrix
      * values[N][M] where N = length / 2U and M = 2 */
     std::vector<std::vector<float> > values (length / 2U,
-                                             std::vector<float> (2));
+					     std::vector<float> (2));
     std::vector<int> move (length);
     std::vector<int> bestmove (length);
     std::vector<int> direction (length);
@@ -387,27 +387,28 @@ namespace urbi
       {
 	//calculate best value for move[index]
 	float dist = distance - currentval;
-        // -12/5 = -2 en division entiere.
+	// -12/5 = -2 en division entiere.
 	int cnt = (int) (dist / values[index][direction[index]]);
 	float rest = ffloatpart(dist / values[index][direction[index]]);
 	if (rest > 0.5)
-          cnt++;
+	  ++cnt;
 	if (rest < -0.5)
-          cnt--;
+	  --cnt;
 	move[index] = cnt;
 	currentval += (float) cnt * values[index][direction[index]];
 	/*
 	  std::cerr << "eval ";
-	  for (int k = 0;k<length/2;k++) std::cerr << move[k] <<" ";
+	  for (int k = 0;k<length/2; ++k)
+	    std::cerr << move[k] <<" ";
 	  std::cerr << "(" <<currentval <<")";
 	  std::cerr <<endl;
 	*/
 	//calculate nummoves
 	int nummoves = 0;
 	for (int i = 0; i <= index; ++i)
-          nummoves += abs(move[i]);
-        if (fabs(currentval - distance) < absoluteprecision
-            && (nummoves < bestnummoves || bestnummoves == -1))
+	  nummoves += abs(move[i]);
+	if (fabs(currentval - distance) < absoluteprecision
+	    && (nummoves < bestnummoves || bestnummoves == -1))
 	{
 	  bestnummoves = nummoves;
 	  for (int k = 0; k < length / 2; ++k)
@@ -419,28 +420,29 @@ namespace urbi
 	  move[index] = 0;
 	  --index;
 	}
-        while (index >= 0
-               && ((currentval>distance && direction[index] == 0)
-                   || (currentval<distance && direction[index] == 1)));
+	while (index >= 0
+	       && ((currentval>distance && direction[index] == 0)
+		   || (currentval<distance && direction[index] == 1)));
 	if (index < 0)
-          break;
+	  break;
 	//DEBUG:recalculate currentval
 	/*
 	  std::cerr << "cv: "<<currentval;
 	  currentval = 0;
-	  for (int k = 0;k<length/2;k++) currentval+=(float)move[k]*values[k][direction[k]];
+	  for (int k = 0;k<length/2; ++k)
+	    currentval+=(float)move[k]*values[k][direction[k]];
 	  std::cerr << " " <<currentval <<std::endl;
 	*/
       }
 
       move[index] += (direction[index] == 0) ? 1 : -1;
       if (move[index] != 0)
-        currentval += values[index][direction[index]]
-          * (float)((direction[index] == 0) ? 1 : -1);
+	currentval += values[index][direction[index]]
+	  * (float)((direction[index] == 0) ? 1 : -1);
       if (currentval > distance)
-        direction[index + 1] = 1;
+	direction[index + 1] = 1;
       else
-        direction[index + 1] = 0;
+	direction[index + 1] = 0;
       move[index + 1] = ((direction[index + 1] == 0) ? -1 : 1);
       ++index;
     }

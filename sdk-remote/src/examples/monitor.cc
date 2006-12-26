@@ -8,7 +8,7 @@
 
 ********************************************************************************/
 
-#include <cstdio>
+#include "libport/cstdio"
 #include <cstdlib>
 #include <pthread.h>
 #include "libport/windows.hh"
@@ -55,7 +55,7 @@ Monitor::addList(Monitor *mon)
       pthread_t *pt=new pthread_t;
       monitorList.push_back(mon);
 
-      pthread_create(pt,0, &wrapper, 0);
+      pthread_create(pt, 0, &wrapper, 0);
     }
   else
     monitorList.push_back(mon);
@@ -71,7 +71,7 @@ Monitor::removeList(Monitor * mon)
     {
       XCloseDisplay(display);
       display = NULL;
-    }	// end if
+    }
 }
 
 
@@ -87,7 +87,7 @@ Monitor::processMessages()
       while (XPending(display) > 0)
 	XNextEvent(display, &event);
       for (std::list<Monitor *>::iterator it=monitorList.begin();
-	   it != monitorList.end();it++)
+	   it != monitorList.end(); ++it)
 	(*it)->put();
       pthread_mutex_unlock(&lock);
       usleep(300000);
@@ -104,7 +104,7 @@ Monitor::processMessages()
 	  if (event.xexpose.count == 0)
 	    {
 	      for (std::list<Monitor *>::iterator it=monitorList.begin();
-		   it != monitorList.end();it++)
+		   it != monitorList.end(); ++it)
 		if ((*it)->window == event.xexpose.window)
 		  {
 		    (*it)->put();
@@ -204,9 +204,10 @@ int Monitor::createImage()
   if (D)
     {
       D=strdup(D);
-      char * delim=strstr(D,":");
-      if (delim) *delim=0;
-      if (D[0]!=0 && strcmp(D,"localhost") && strcmp(D,"127.0.0.1"))
+      char * delim=strstr(D, ":");
+      if (delim)
+	*delim=0;
+      if (D[0]!=0 && strcmp(D, "localhost") && strcmp(D, "127.0.0.1"))
 	isShared = false;
       free(D);
     }
@@ -220,22 +221,30 @@ int Monitor::createImage()
     {
       shmInfo.shmid = -1;
       shmInfo.shmaddr = NULL;
-      if ((xImage = XShmCreateImage(localDisplay, visual, depth, ZPixmap, NULL, &shmInfo, w, h)) == NULL)
+      if ((xImage = XShmCreateImage(localDisplay, visual, depth, ZPixmap,
+				    NULL, &shmInfo, w, h)) == NULL)
       {
-	throw("XShmCreateImage");
-      }	// end if
-      if ((shmInfo.shmid = shmget(IPC_PRIVATE, xImage->bytes_per_line * xImage->height, IPC_CREAT | 0777)) < 0) {	// Create segment
-	throw("shmget");
-      }	// end if
-      if ((shmInfo.shmaddr = (char *) shmat(shmInfo.shmid, 0, 0)) < 0) {	// We attach
+	throw ("XShmCreateImage");
+      }
+      if ((shmInfo.shmid = shmget(IPC_PRIVATE, xImage->bytes_per_line *
+				  xImage->height, IPC_CREAT | 0777)) < 0)
+      {
+	// Create segment
+	throw ("shmget");
+      }
+      if ((shmInfo.shmaddr = (char *) shmat(shmInfo.shmid, 0, 0)) < 0)
+      {
+	// We attach
 	shmInfo.shmaddr = NULL;
-	throw("shmat");
-      }	// end if
+	throw ("shmat");
+      }
       xImage->data = shmInfo.shmaddr;
       shmInfo.readOnly = False;
-      if (!XShmAttach(localDisplay, &shmInfo)) {	// X attaches
-	throw("XShmAttach");
-      }	// end if
+      if (!XShmAttach(localDisplay, &shmInfo))
+      {
+	// X attaches
+	throw ("XShmAttach");
+      }
 
 
       XSync(localDisplay, False);
@@ -243,36 +252,42 @@ int Monitor::createImage()
 
       if (XShmPixmapFormat(localDisplay) == ZPixmap)
       {
-	if ((sharedPixmap = XShmCreatePixmap(localDisplay, window, shmInfo.shmaddr, &shmInfo, w, h, depth)) == None)
+	if ((sharedPixmap = XShmCreatePixmap(localDisplay, window,
+					     shmInfo.shmaddr, &shmInfo, w, h,
+					     depth)) == None)
 	{
 	  ;	// HasSharedPixmap() will return false.
-	}	// end if
-      }	// end if
+	}
+      }
     }
     else
     {
-      if ((xImage = XCreateImage(localDisplay, visual, depth, ZPixmap, 0, NULL, w, h, 16, 0)) == NULL)
+      if ((xImage = XCreateImage(localDisplay, visual, depth, ZPixmap, 0,
+				 NULL, w, h, 16, 0)) == NULL)
       {
-	throw("XCreateImage");
-      }	// end if
-      if ((xImage->data = (char *) malloc(xImage->bytes_per_line * xImage->height)) == NULL)
+	throw ("XCreateImage");
+      }
+      if ((xImage->data = static_cast<char *> (malloc (xImage->bytes_per_line
+						       * xImage->height)))
+	   == NULL)
       {
-	throw("malloc");
-      }	// end if
-    }	// end if
-    return (0);
+	throw ("malloc");
+      }
+    }
+    return 0;
   }
   catch(char *function)
   {
-    printf("%s%s:%s\n","Error: Image::Create failed in ",function,((errno == 0) ? "No further info" : strerror(errno)));
+    printf("%s%s:%s\n", "Error: Image::Create failed in ",
+	   function, ((errno == 0) ? "No further info" : strerror(errno)));
 
     destroyImage();
-    return (-1);
-  }	// end if
+    return -1;
+  }
 
-}	// end createImage
+}
 
-/*--------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
 int Monitor::destroyImage()
 {
@@ -306,7 +321,7 @@ int Monitor::destroyImage()
     }
 
   return 0;
-}	// end Image::Destroy
+}
 
 
 void
@@ -316,7 +331,6 @@ Monitor::clear()
     return;
 
   memset(xImage->data, 0, xImage->height * xImage->bytes_per_line);
-
 }
 
 
@@ -355,43 +369,43 @@ Monitor::setImage(bits8* buffer, int bufferlen)
       XNextEvent(localDisplay, &event);
       switch (event.type)
       {
-        case ClientMessage:
-          if ((int) event.xclient.data.l[0] == (int) atomWMDeleteWindow)
-            return (-1);
-          break;
+	case ClientMessage:
+	  if ((int) event.xclient.data.l[0] == (int) atomWMDeleteWindow)
+	    return -1;
+	  break;
 
-        case Expose:
-          if (event.xexpose.count == 0)
-            put();
+	case Expose:
+	  if (event.xexpose.count == 0)
+	    put();
 
-          break;
+	  break;
       }
     }
     else
     {
       //xImage = X();
       imageLine = (bits8 *) xImage->data;
-      for (i = 0; i < bufferlen / 3; i++)
-        setimageat(&imageLine,
-                   *(buffer + i * 3 + 2),
-                   *(buffer + i * 3 + 1),
-                   *(buffer + i * 3 + 0));
+      for (i = 0; i < bufferlen / 3; ++i)
+	setimageat(&imageLine,
+		   *(buffer + i * 3 + 2),
+		   *(buffer + i * 3 + 1),
+		   *(buffer + i * 3 + 0));
       put();
     }
   }
   else
   {
     imageLine = (bits8 *) xImage->data;
-    for (i = 0; i < bufferlen / 3; i++)
+    for (i = 0; i < bufferlen / 3; ++i)
       setimageat(&imageLine,
-                 *(buffer + i * 3 + 2),
-                 *(buffer + i * 3 + 1),
-                 *(buffer + i * 3 + 0));
+		 *(buffer + i * 3 + 2),
+		 *(buffer + i * 3 + 1),
+		 *(buffer + i * 3 + 0));
   }
   return 1; // ?
 }
 
-/*******************************************************************************/
+/**************************************************************************/
 
 void
 Monitor::createWindow(const char *name)
@@ -444,4 +458,4 @@ Monitor::createWindow(const char *name)
   XSelectInput(localDisplay, window, StructureNotifyMask | ExposureMask);
 }
 
-#endif
+#endif // !WIN32

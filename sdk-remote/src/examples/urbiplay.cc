@@ -38,8 +38,8 @@ bool parseHeader(FILE *f)
   if (fread(buff,4,1,f)!=1) return false;
   if (strncmp(buff,"URBI",4)) return false;
   if (fread(&devCount,4,1,f)!=1) return false;
-  devices=(UDev*)malloc(devCount*sizeof(UDev));
-  for (int i=0;i<devCount;i++)
+  devices=static_cast<UDev*> (malloc (devCount*sizeof (UDev)));
+  for (int i=0;i<devCount; ++i)
     {
       char device[256];
       int pos=0;
@@ -67,7 +67,7 @@ void play(urbi::UClient * robot, FILE *f)
   int starttime=0;
   bool commandPending = false;
   int lastCommandTime=0;
-  while (fread(&uc,sizeof(uc),1,f)==1)
+  while (fread(&uc,sizeof (uc),1,f)==1)
     {
       int sleeptime=uc.timestamp;
       if (!starttime)
@@ -78,7 +78,7 @@ void play(urbi::UClient * robot, FILE *f)
       int sleepstop=sleeptime+starttime; //when command should be executed in our timeframe
       //find the device
       UDev * dev=NULL;
-      for (int i=0;i<devCount;i++)
+      for (int i=0;i<devCount; ++i)
 	if (devices[i].id==uc.id)
 	  {
 	    dev=&devices[i];
@@ -122,7 +122,7 @@ void play(urbi::UClient * robot, FILE *f)
 		     1000000.0/(float)(robot->getCurrentTime()-ttime));
 	  ttime=robot->getCurrentTime();
 	}
-      tick++;
+      ++tick;
     }
 
   if (robot && commandPending)
@@ -153,7 +153,7 @@ int main(int argc, char * argv[])
 
   urbi::UClient * robot;
 
-  if ( (!strcmp(argv[1],"-")) || (!strcmp(argv[1],"+")))
+  if ( (STREQ(argv[1],"-")) || (STREQ(argv[1],"+")))
     {
       robot=NULL;
       dumpMode=argv[1][0];
@@ -170,7 +170,7 @@ int main(int argc, char * argv[])
 
   FILE * f;
   do {
-    if (!strcmp(argv[2],"-"))
+    if (STREQ(argv[2],"-"))
       f=stdin;
     else
       f=fopen(argv[2],"r");
@@ -189,6 +189,6 @@ int main(int argc, char * argv[])
     play(robot,f);
     fclose(f);
   }
-  while(loop)
+  while (loop)
     ;
 }

@@ -24,7 +24,7 @@
  * This simple demonstration program display or save images from an Urbi server.
  */
 
-#include <cstdio>
+#include "libport/cstdio"
 #include <csignal>
 
 #include "urbi/usyncclient.hh"
@@ -47,7 +47,7 @@ showImage(const urbi::UMessage &msg)
 
   urbi::UImage& img = msg.value->binary->image;
 
-  static unsigned char* buffer = (unsigned char*) malloc(3*400*400);
+  static unsigned char* buffer = static_cast<unsigned char*> (malloc (3*400*400));
   int sz = 500000;
   static int tme = 0;
   /* Calculate framerate. */
@@ -83,7 +83,7 @@ showImage(const urbi::UMessage &msg)
     }
 
   mon->setImage((bits8 *) buffer, sz);
-  imcount++;
+  ++imcount;
   return urbi::URBI_CONTINUE;
 }
 

@@ -239,7 +239,7 @@ namespace urbi
       jpeg_create_compress(&cinfo);
       mem_destination_mgr *dest = (struct mem_destination_mgr *)
 	(*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
-				   sizeof(mem_destination_mgr));
+				   sizeof (mem_destination_mgr));
 
       cinfo.dest = (jpeg_destination_mgr*)dest;
       dest->pub.init_destination=&init_destination;
@@ -296,7 +296,7 @@ namespace urbi
       jpeg_create_decompress(&cinfo);
       mem_source_mgr *source = (struct mem_source_mgr *)
 	(*cinfo.mem->alloc_small) ((j_common_ptr) & cinfo, JPOOL_PERMANENT,
-				   sizeof(mem_source_mgr));
+				   sizeof (mem_source_mgr));
 
       cinfo.src = (jpeg_source_mgr *) source;
       source->pub.skip_input_data = skip_input_data;
@@ -386,7 +386,7 @@ namespace urbi
     int format = 42; //0 rgb 1 ycbcr
     int targetformat = 42; //0 rgb 1 ycbcr 2 compressed
 
-    switch(dest.imageFormat)
+    switch (dest.imageFormat)
     {
       case IMAGE_RGB:
       case IMAGE_PPM:
@@ -403,7 +403,7 @@ namespace urbi
     }
     int p = 0;
     int c = 0;
-    switch(src.imageFormat)
+    switch (src.imageFormat)
     {
       case IMAGE_YCbCr:
 	format = 1;
@@ -418,7 +418,7 @@ namespace urbi
 	//locate header end
 	p = 0;
 	c = 0;
-	while(c < 3)
+	while (c < 3)
 	  if (src.data[p++] == '\n')
 	    ++c;
 	memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
@@ -458,7 +458,7 @@ namespace urbi
     dest.size = dest.width * dest.height * 3 + 20;
     dest.data = static_cast<unsigned char*> (realloc(dest.data, dest.size));
 
-    switch(dest.imageFormat)
+    switch (dest.imageFormat)
     {
       case IMAGE_RGB:
 	if (format == 1)
@@ -535,7 +535,7 @@ namespace urbi
   void copy(S* src, D* dst,
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
   {
-    int shift = 8 * (sizeof(S) - sizeof(D));
+    int shift = 8 * (sizeof (S) - sizeof (D));
     for (int i = 0; i < count; ++i)
     {
       float soffset = (float)i * ((float)sr / (float)dr);
@@ -549,8 +549,8 @@ namespace urbi
 	s2 = s1; //nothing to interpolate with
       if (!sf)
       {
-	s1 = s1 ^ (1<<(sizeof(S)*8-1));
-	s2 = s2 ^ (1<<(sizeof(S)*8-1));
+	s1 = s1 ^ (1<<(sizeof (S)*8-1));
+	s2 = s2 ^ (1<<(sizeof (S)*8-1));
       }
       int v1 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
       int v2;
@@ -565,8 +565,8 @@ namespace urbi
 	  s2 = s1; //nothing to interpolate with
 	if (!sf)
 	{
-	  s1 = s1 ^ (1<<(sizeof(S)*8-1));
-	  s2 = s2 ^ (1<<(sizeof(S)*8-1));
+	  s1 = s1 ^ (1<<(sizeof (S)*8-1));
+	  s2 = s2 ^ (1<<(sizeof (S)*8-1));
 	}
 	v2 = (int) ((float)(s1)*(1.0-factor) + (float)(s2)*factor);
       }
@@ -583,8 +583,8 @@ namespace urbi
       }
       if (!df)
       {
-	d1 = d1 ^ (1<<(sizeof(D)*8-1));
-	d2 = d2 ^ (1<<(sizeof(D)*8-1));
+	d1 = d1 ^ (1<<(sizeof (D)*8-1));
+	d2 = d2 ^ (1<<(sizeof (D)*8-1));
       }
       if (dc==2)
       {
@@ -644,7 +644,7 @@ namespace urbi
     // That's a big one!
     int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
     if (dest.soundFormat == SOUND_WAV)
-      destSize += sizeof(wavheader);
+      destSize += sizeof (wavheader);
     if (dest.size<destSize)
       dest.data = static_cast<char*> (realloc (dest.data, destSize));
     dest.size = destSize;
@@ -664,20 +664,20 @@ namespace urbi
       wh->bytesperechant = (dest.sampleSize/8)*dest.channels;
       wh->bitperchannel = dest.sampleSize;
       memcpy(wh->data, "data", 4);
-      wh->datalength = destSize - sizeof(wavheader);
+      wh->datalength = destSize - sizeof (wavheader);
     }
 
     //do the conversion and write to dest.data
     char * sbuffer = source.data;
     if (source.soundFormat == SOUND_WAV)
-      sbuffer += sizeof(wavheader);
+      sbuffer += sizeof (wavheader);
     char * dbuffer = dest.data;
     if (dest.soundFormat == SOUND_WAV)
-      dbuffer += sizeof(wavheader);
+      dbuffer += sizeof (wavheader);
     int elementCount = dest.size - (dest.soundFormat == SOUND_WAV ?
-				    sizeof(wavheader) : 0);
+				    sizeof (wavheader) : 0);
     elementCount /= (dest.channels * (dest.sampleSize / 8));
-    switch(ssampleSize * 1000 + dest.sampleSize)
+    switch (ssampleSize * 1000 + dest.sampleSize)
     {
       case 8008:
 	copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,

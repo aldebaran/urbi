@@ -1,6 +1,6 @@
 #include "urbi/uclient.hh"
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "libport/sys/stat.h"
 #include <signal.h>
 #include <assert.h>
 #include "libport/windows.hh"
@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
  c << "camera.format = 0;camera.resolution = 0;noop;noop;";
 
  starttime=c.getCurrentTime();
- c << " for (i=0;i<9;i++) bw:camera.val|";
+ c << " for (i=0;i<9; ++i) bw:camera.val|";
  c << "be:camera.val;";
  urbi::execute();
 }

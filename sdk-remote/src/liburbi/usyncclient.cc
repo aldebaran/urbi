@@ -107,7 +107,7 @@ namespace urbi
     if (format[p] == ':')
     {
       std::cerr << "FATAL: passing a taged command to syncGet:'" << format <<
-        "'\n";
+	"'\n";
       ::exit(1);
     }
     //check if there is a command separator

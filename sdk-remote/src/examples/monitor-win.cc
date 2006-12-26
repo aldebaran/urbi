@@ -25,7 +25,7 @@ wc.lpszClassName = "Monitor";
 RegisterClass(&wc);
 window = CreateWindow("Monitor",title, WS_OVERLAPPED | WS_VISIBLE,
 					CW_USEDEFAULT, CW_USEDEFAULT, w, h+40, NULL, NULL, NULL, NULL);
-//unsigned char * data = (unsigned char *)malloc(w*h*4);
+//unsigned char * data = static_cast<unsigned char *> (malloc (w*h*4));
 //memDC = CreateCompatibleDC ( hDC );
 //memBM = CreateCompatibleBitmap ( hDC , w, h);
 //SelectObject ( memDC, memBM );
@@ -38,7 +38,7 @@ MSG msg;
 while (PeekMessage(&msg, window, 0, 0, PM_REMOVE))
 	DispatchMessage(&msg);
 BITMAPINFO bmi;
-bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+bmi.bmiHeader.biSize = sizeof (BITMAPINFOHEADER);
 bmi.bmiHeader.biWidth = w;
 bmi.bmiHeader.biHeight = -h;
 bmi.bmiHeader.biPlanes = 1;

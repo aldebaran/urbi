@@ -154,7 +154,7 @@ int main(int argc, char * argv[])
     exit(1);
   }
   urbi::UClient * r[2];
-  for (int i=0;i<2;i++)
+  for (int i=0;i<2; ++i)
     {
       r[i]=new urbi::UClient(argv[i+1]);
       r[i]->start();
