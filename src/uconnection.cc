@@ -608,7 +608,7 @@ UConnection::received (const ubyte *buffer, int length)
       {
 	// Process "commandTree"
 
-	// CMD_ASSIGN_BINARY: intercept and execute immediately
+	// ASSIGN_BINARY: intercept and execute immediately
 	if (p.binaryCommand)
 	{
 	  binCommand =
@@ -1012,14 +1012,14 @@ UConnection::processCommand(UCommand *&command,
 
     // Regular command processing
 
-    if (command->type == UCommand::CMD_TREE)
+    if (command->type == UCommand::TREE)
     {
       mustReturn = true;
       return command ;
     }
     else
     {
-      // != CMD_TREE
+      // != TREE
       morphed_up = command->up;
       morphed_position = command->position;
 

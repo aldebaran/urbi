@@ -77,21 +77,21 @@ namespace
   {
     switch (type)
     {
-      case UCommand::CMD_FOR:	    return USEMICOLON;
-      case UCommand::CMD_FOR_PIPE:  return UPIPE;
-      case UCommand::CMD_FOR_AND:   return UAND;
+      case UCommand::FOR:	    return USEMICOLON;
+      case UCommand::FOR_PIPE:  return UPIPE;
+      case UCommand::FOR_AND:   return UAND;
 
-      case UCommand::CMD_FOREACH:      return USEMICOLON;
-      case UCommand::CMD_FOREACH_PIPE: return UPIPE;
-      case UCommand::CMD_FOREACH_AND:  return UAND;
+      case UCommand::FOREACH:      return USEMICOLON;
+      case UCommand::FOREACH_PIPE: return UPIPE;
+      case UCommand::FOREACH_AND:  return UAND;
 
-      case UCommand::CMD_LOOPN:	     return USEMICOLON;
-      case UCommand::CMD_LOOPN_PIPE: return UPIPE;
-      case UCommand::CMD_LOOPN_AND:  return UAND;
+      case UCommand::LOOPN:	     return USEMICOLON;
+      case UCommand::LOOPN_PIPE: return UPIPE;
+      case UCommand::LOOPN_AND:  return UAND;
 
-      case UCommand::CMD_WHILE:	      return USEMICOLON;
-      case UCommand::CMD_WHILE_PIPE:  return UPIPE;
-      case UCommand::CMD_WHILE_AND:   return UAND;
+      case UCommand::WHILE:	      return USEMICOLON;
+      case UCommand::WHILE_PIPE:  return UPIPE;
+      case UCommand::WHILE_AND:   return UAND;
 
       default:
 	abort ();
@@ -445,7 +445,7 @@ UCommand_TREE::UCommand_TREE(const location& l,
 			     UNodeType node,
 			     UCommand* command1,
 			     UCommand* command2)
-  : UCommand(l, CMD_TREE),
+  : UCommand(l, TREE),
     command1 (command1),
     command2 (command2),
     callid (0),
@@ -512,7 +512,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command1;
 	tree->command1 = 0;
       }
-      else if (tree->command1->type == CMD_TREE)
+      else if (tree->command1->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command1);
 	// If tree->command1 wasn't NULL, then tree must NOT be NULL.
@@ -527,7 +527,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command2;
 	tree->command2 = 0;
       }
-      else if (tree->command2->type == CMD_TREE)
+      else if (tree->command2->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
 	// If tree->command2 wasn't NULL, then tree must NOT be NULL.
@@ -582,7 +582,7 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(const location& l,
 					     UExpression* expression,
 					     UNamedParameters *parameters,
 					     bool defkey)
-  : UCommand(l, CMD_ASSIGN_VALUE),
+  : UCommand(l, ASSIGN_VALUE),
     variablename(variablename),
     variable (0),
     expression (expression),
@@ -1704,7 +1704,7 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
 UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(const location& l,
 					       UVariableName *variablename,
 					       libport::RefPt<UBinary> *refBinary)
-  : UCommand(l, CMD_ASSIGN_BINARY),
+  : UCommand(l, ASSIGN_BINARY),
     variablename (variablename),
     variable (0),
     refBinary (refBinary),
@@ -1813,7 +1813,7 @@ UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(const location& l,
 						   UVariableName *variablename,
 						   UString *oper,
 						   UExpression *expression)
-  : UCommand(l, CMD_ASSIGN_PROPERTY),
+  : UCommand(l, ASSIGN_PROPERTY),
     variablename (variablename),
     variable (0),
     oper (oper),
@@ -2068,7 +2068,7 @@ UCommand_AUTOASSIGN::UCommand_AUTOASSIGN(const location& l,
 					 UVariableName* variablename,
 					 UExpression* expression,
 					 int assigntype)
-  : UCommand(l, CMD_ASSIGN_VALUE),
+  : UCommand(l, ASSIGN_VALUE),
     variablename (variablename),
     expression (expression),
     assigntype (assigntype)
@@ -2159,7 +2159,7 @@ MEMORY_MANAGER_INIT(UCommand_EXPR);
  */
 UCommand_EXPR::UCommand_EXPR(const location& l,
 			     UExpression* expression)
-  : UCommand(l, CMD_EXPR),
+  : UCommand(l, EXPR),
     expression (expression)
 {
   ADDOBJ(UCommand_EXPR);
@@ -2492,7 +2492,7 @@ MEMORY_MANAGER_INIT(UCommand_RETURN);
  */
 UCommand_RETURN::UCommand_RETURN(const location& l,
 				 UExpression* expression)
-  : UCommand(l, CMD_RETURN),
+  : UCommand(l, RETURN),
     expression (expression)
 {
   ADDOBJ(UCommand_RETURN);
@@ -2561,7 +2561,7 @@ UCommand_ECHO::UCommand_ECHO(const location& l,
 			     UExpression* expression,
 			     UNamedParameters *parameters,
 			     UString *connectionTag)
-  : UCommand(l, CMD_ECHO),
+  : UCommand(l, ECHO),
     expression (expression),
     parameters (parameters),
     connectionTag (connectionTag)
@@ -2677,7 +2677,7 @@ UCommand_NEW::UCommand_NEW(const location& l,
 			   UString* obj,
 			   UNamedParameters *parameters,
 			   bool noinit)
-  : UCommand(l, CMD_NEW),
+  : UCommand(l, NEW),
     id (0),
     varname (varname),
     obj (obj),
@@ -2995,7 +2995,7 @@ UCommand_ALIAS::UCommand_ALIAS(const location& l,
 			       UVariableName* aliasname,
 			       UVariableName* id,
 			       bool eraseit)
-  : UCommand(l, CMD_ALIAS),
+  : UCommand(l, ALIAS),
     aliasname (aliasname),
     id (id),
     eraseit (eraseit)
@@ -3112,7 +3112,7 @@ UCommand_INHERIT::UCommand_INHERIT(const location& l,
 				   UVariableName* subclass,
 				   UVariableName* theclass,
 				   bool eraseit) :
-  UCommand(l, CMD_INHERIT),
+  UCommand(l, INHERIT),
   subclass (subclass),
   theclass (theclass),
   eraseit (eraseit)
@@ -3230,7 +3230,7 @@ UCommand_GROUP::UCommand_GROUP(const location& l,
 			       UString* id,
 			       UNamedParameters* parameters,
 			       int grouptype) :
-  UCommand(l, CMD_GROUP),
+  UCommand(l, GROUP),
   id (id),
   parameters (parameters),
   grouptype (grouptype)
@@ -3380,7 +3380,7 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(const location& l,
 					   UString* oper,
 					   UString* id)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     oper (oper),
     id (id)
 {
@@ -3526,7 +3526,7 @@ MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 UCommand_DEVICE_CMD::UCommand_DEVICE_CMD(const location& l,
 					 UVariableName* device,
 					 ufloat *cmd)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     variablename (device),
     cmd (*cmd)
 {
@@ -3618,7 +3618,7 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
 UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(const location& l,
 					     UString* oper,
 					     UVariableName* variablename)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     oper (oper),
     variablename (variablename)
 {
@@ -3878,7 +3878,7 @@ UCommand_BINDER::UCommand_BINDER(const location& l,
 				 int type,
 				 UVariableName* variablename,
 				 int nbparam)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     binder (binder),
     variablename (variablename),
     objname (objname),
@@ -4041,7 +4041,7 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR);
  */
 UCommand_OPERATOR::UCommand_OPERATOR(const location& l,
 				     UString* oper)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     oper (oper)
 {
   ADDOBJ(UCommand_OPERATOR);
@@ -4347,7 +4347,7 @@ MEMORY_MANAGER_INIT(UCommand_WAIT);
  */
 UCommand_WAIT::UCommand_WAIT(const location& l,
 			     UExpression* expression) :
-  UCommand(l, CMD_WAIT),
+  UCommand(l, WAIT),
   expression (expression),
   endtime (0)
 {
@@ -4424,7 +4424,7 @@ UCommand_EMIT::UCommand_EMIT(const location& l,
 			     UVariableName *eventname,
 			     UNamedParameters *parameters,
 			     UExpression *duration) :
-  UCommand(l, CMD_EMIT),
+  UCommand(l, EMIT),
   eventname (eventname),
   parameters (parameters),
   duration (duration),
@@ -4667,7 +4667,7 @@ MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
  */
 UCommand_WAIT_TEST::UCommand_WAIT_TEST(const location& l,
 				       UExpression* test)
-  : UCommand(l, CMD_WAIT_TEST),
+  : UCommand(l, WAIT_TEST),
     test (test),
     nbTrue (0)
 {
@@ -4771,7 +4771,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
     return status = UMORPH;
 
   // Main execution
-  if (type == CMD_INCREMENT)
+  if (type == INCREMENT)
   {
     morph =
       new UCommand_ASSIGN_VALUE(loc_,
@@ -4785,7 +4785,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
     return status = UMORPH;
   }
 
-  if (type == CMD_DECREMENT)
+  if (type == DECREMENT)
   {
     morph =
       new UCommand_ASSIGN_VALUE(loc_,
@@ -4821,9 +4821,9 @@ UCommand_INCDECREMENT::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("INCDECREMENT:");
-  if (type == CMD_INCREMENT)
+  if (type == INCREMENT)
     debug("INC\n");
-  else if (type == CMD_DECREMENT)
+  else if (type == DECREMENT)
     debug("DEC\n");
   else
     debug("UNKNOWN TYPE\n");
@@ -4842,7 +4842,7 @@ UCommand_DEF::UCommand_DEF(const location& l,
 			   UVariableName *variablename,
 			   UNamedParameters *parameters,
 			   UCommand* command)
-  : UCommand(l, CMD_DEF)
+  : UCommand(l, DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -4860,7 +4860,7 @@ UCommand_DEF::UCommand_DEF(const location& l,
 			   UDefType deftype,
 			   UString *device,
 			   UNamedParameters *parameters)
-  : UCommand(l, CMD_DEF)
+  : UCommand(l, DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -4877,7 +4877,7 @@ UCommand_DEF::UCommand_DEF(const location& l,
 UCommand_DEF::UCommand_DEF(const location& l,
 			   UDefType deftype,
 			   UVariableList *variablelist)
-  : UCommand(l, CMD_DEF),
+  : UCommand(l, DEF),
     variablename (0),
     parameters (0),
     command (0),
@@ -5097,7 +5097,7 @@ MEMORY_MANAGER_INIT(UCommand_CLASS);
 UCommand_CLASS::UCommand_CLASS(const location& l,
 			       UString *object,
 			       UNamedParameters *parameters) :
-  UCommand(l, CMD_CLASS),
+  UCommand(l, CLASS),
   object (object),
   parameters (parameters)
 {
@@ -5266,7 +5266,7 @@ UCommand_IF::UCommand_IF(const location& l,
 			 UExpression *test,
 			 UCommand* command1,
 			 UCommand* command2) :
-  UCommand(l, CMD_IF),
+  UCommand(l, IF),
   test (test),
   command1 (command1),
   command2 (command2)
@@ -5358,7 +5358,7 @@ MEMORY_MANAGER_INIT(UCommand_EVERY);
 UCommand_EVERY::UCommand_EVERY(const location& l,
 			       UExpression *duration,
 				UCommand* command) :
-  UCommand(l, CMD_EVERY),
+  UCommand(l, EVERY),
   duration (duration),
   command (command),
   firsttime (true),
@@ -5439,7 +5439,7 @@ MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
 UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
 				   UExpression *duration,
 				    UCommand* command) :
-  UCommand(l, CMD_TIMEOUT),
+  UCommand(l, TIMEOUT),
   duration (duration),
   command (command)
 {
@@ -5519,7 +5519,7 @@ MEMORY_MANAGER_INIT(UCommand_STOPIF);
 UCommand_STOPIF::UCommand_STOPIF(const location& l,
 				 UExpression *condition,
 				  UCommand* command)
-  : UCommand(l, CMD_STOPIF),
+  : UCommand(l, STOPIF),
     condition (condition),
     command (command)
 {
@@ -5555,7 +5555,7 @@ UCommand_STOPIF::execute(UConnection *connection)
   morph =
     new UCommand_TREE(
       loc_, UAND,
-      new UCommand_AT(loc_, CMD_AT,
+      new UCommand_AT(loc_, AT,
 		      condition->copy(),
 		      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 					       tagRef->copy()),
@@ -5617,7 +5617,7 @@ MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
 UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
 				     UExpression *condition,
 				      UCommand* command)
-  : UCommand(l, CMD_FREEZEIF),
+  : UCommand(l, FREEZEIF),
     condition (condition),
     command (command)
 {
@@ -5652,7 +5652,7 @@ UCommand_FREEZEIF::execute(UConnection*)
   morph =
     new UCommand_TREE
     (loc_, UAND,
-     new UCommand_AT(loc_, CMD_AT,
+     new UCommand_AT(loc_, AT,
 		     condition->copy(),
 		     new UCommand_OPERATOR_ID(loc_, new UString("freeze"),
 					      tagRef->copy()),
@@ -5889,9 +5889,9 @@ UCommand_AT::print(int l)
 		      tab(l), getTag().c_str(), toDelete);
 
   debug("AT:");
-  if (type == CMD_AT)
+  if (type == AT)
     debug("\n");
-  else if (type == CMD_AT_AND)
+  else if (type == AT_AND)
     debug("(AND)\n");
   else
     debug("UNKNOWN TYPE!\n");
@@ -6007,7 +6007,7 @@ UCommand_WHENEVER::UCommand_WHENEVER(const location& l,
 				     UExpression *test,
 				     UCommand* command1,
 				     UCommand* command2)
-  : UASyncCommand(l, CMD_WHENEVER),
+  : UASyncCommand(l, WHENEVER),
     test (test),
     command1 (command1),
     command2 (command2),
@@ -6255,7 +6255,7 @@ MEMORY_MANAGER_INIT(UCommand_LOOP);
  */
 UCommand_LOOP::UCommand_LOOP(const location& l,
 			     UCommand* command)
-  : UCommand(l, CMD_LOOP),
+  : UCommand(l, LOOP),
     command (command),
     whenever_hook (0)
 {
@@ -6404,14 +6404,10 @@ UCommand_LOOPN::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("LOOPN:");
-  if (type == CMD_LOOPN)
-    debug("\n");
-  else if (type == CMD_LOOPN_AND)
-    debug("(AND)\n");
-  else if (type == CMD_LOOPN_PIPE)
-    debug("(PIPE)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
+  if (type == LOOPN)           debug("\n");
+  else if (type == LOOPN_AND)  debug("(AND)\n");
+  else if (type == LOOPN_PIPE) debug("(PIPE)\n");
+  else                         debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR (expression);
   if (command)
@@ -6562,14 +6558,10 @@ UCommand_FOR::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("FOR:");
-  if (type == CMD_FOR)
-    debug("\n");
-  else if (type == CMD_FOR_AND)
-    debug("(AND)\n");
-  else if (type == CMD_FOR_PIPE)
-    debug("(PIPE)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
+  if (type == FOR) debug("\n");
+  else if (type == FOR_AND) debug("(AND)\n");
+  else if (type == FOR_PIPE) debug("(PIPE)\n");
+  else	debug("UNKNOWN TYPE!\n");
 
   if (test)
   {
@@ -6702,11 +6694,11 @@ UCommand_FOREACH::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("FOREACH:");
-  if (type == CMD_FOREACH)
+  if (type == FOREACH)
     debug("\n");
-  else if (type == CMD_FOREACH_AND)
+  else if (type == FOREACH_AND)
     debug("(AND)\n");
-  else if (type == CMD_FOREACH_PIPE)
+  else if (type == FOREACH_PIPE)
     debug("(PIPE)\n");
   else
     debug("UNKNOWN TYPE!\n");
@@ -6732,7 +6724,7 @@ MEMORY_MANAGER_INIT(UCommand_NOOP);
  */
 UCommand_NOOP::UCommand_NOOP(const location& l,
 			     bool zerotime)
-  : UCommand(l, CMD_NOOP)
+  : UCommand(l, NOOP)
 {
   ADDOBJ(UCommand_NOOP);
   // FIXME: Otherwise, what is the value?
