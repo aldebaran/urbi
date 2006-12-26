@@ -1,5 +1,12 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	if for -> for
+	* src/uvariable.cc: Iterate over empty structures just as on
+	non-empty ones.
+	And use useful identifiers.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	Use #if 0 to comment out code
 	* src/ugroup.cc: here.
 

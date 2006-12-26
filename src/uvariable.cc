@@ -387,29 +387,25 @@ UVariable::get()
 	it->second->get ();
 
   // check for existing notifychange
-  if (!internalAccessBinder.empty())
-  {
-    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+  for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalAccessBinder.begin();
-	itcb != internalAccessBinder.end();
-	itcb++)
+       i != internalAccessBinder.end();
+       ++i)
+  {
+    urbi::UList l;
+    if ((*i)->storage)
     {
-      urbi::UList tmparray;
-
-      if ((*itcb)->storage)
-      {
-	// monitor with &UVar reference
-	urbi::UValue *tmpvalue = new urbi::UValue();
-	tmpvalue->storage = (*itcb)->storage;
-	tmparray.array.push_back(tmpvalue);
-      };
-
-      (*itcb)->__evalcall(tmparray); // tmparray is empty here
+      // monitor with &UVar reference
+      urbi::UValue *v = new urbi::UValue();
+      v->storage = (*i)->storage;
+      l.array.push_back(v);
     }
+    // FIXME: I guess the following comment reads "emptied".
+    (*i)->__evalcall(l); // l is empty here
   }
 
   return value;
-};
+}
 
 //! This function takes care of notifying the monitors that the var is updated
 /*! When the variable is updated, either by the kernel of robot-specific
