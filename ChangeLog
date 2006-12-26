@@ -1,5 +1,11 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	More DEBUG_ATTR
+	* src/ucommand.cc (DEBUG_ATTR_I): New.
+	Use it, and use DEBUG_ATTR also more widely.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	Shorten scopes
 	* src/ucommand.cc (UCommand_AT::execute): here.
 

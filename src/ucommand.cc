@@ -158,6 +158,16 @@ namespace
       debug("\n");				\
     }						\
   } while (0)
+
+/// Attribute that output the ending \n themselves, and support indentation.
+#define DEBUG_ATTR_I(Attr)			\
+  do {						\
+    if (Attr)					\
+    {						\
+      debug(l, "  " # Attr ":\n");		\
+      (Attr)->print(l + 3);			\
+    }						\
+  } while (0)
 }
 
 
@@ -1688,11 +1698,7 @@ UCommand_ASSIGN_VALUE::print(int l)
 
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
   debug(l, "END ASSIGN VALUE ------\n");
 }
 
@@ -2658,11 +2664,7 @@ UCommand_ECHO::print(int l)
   debug("ECHO:\n");
 
   DEBUG_ATTR (expression);
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
 
   debug(l, "END ECHO ------\n");
 }
@@ -2969,18 +2971,10 @@ UCommand_NEW::print(int l)
   debug("NEW:\n");
 
   if (id)
-  {
     debug(l, "  Id:[%s]\n", id->str());
-  }
   if (obj)
-  {
     debug(l, "  Obj:[%s]\n", obj->str());
-  }
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
 
   debug(l, "END NEW ------\n");
 }
@@ -5071,21 +5065,9 @@ UCommand_DEF::print(int l)
 
   debug("DEF:\n");
   DEBUG_ATTR (variablename);
-  if (variablelist)
-  {
-    debug(l, "  Variablelist: {");
-    variablelist->print(); debug("}\n");
-  }
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR(variablelist);
+  DEBUG_ATTR(parameters);
+  DEBUG_ATTR_I(command);
   debug(l, "END DEF ------\n");
 }
 
@@ -5249,11 +5231,7 @@ UCommand_CLASS::print(int l)
     debug(l, "  Object name: %s\n",
 			object->str());
   }
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
   debug(l, "END CLASS ------\n");
 }
 
@@ -5337,16 +5315,8 @@ UCommand_IF::print(int l)
   debug("IF:\n");
 
   DEBUG_ATTR (test);
-  if (command1)
-  {
-    debug(l, "  Command1:\n");
-    command1->print(l+3);
-  }
-  if (command2)
-  {
-    debug(l, "  Command2:\n");
-    command2->print(l+3);
-  }
+  DEBUG_ATTR_I(command1);
+  DEBUG_ATTR_I(command2);
   debug(l, "END IF ------\n");
 }
 
@@ -5423,11 +5393,7 @@ UCommand_EVERY::print(int l)
   debug("EVERY:");
 
   DEBUG_ATTR (duration);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END EVERY ------\n");
 }
 
@@ -5503,11 +5469,7 @@ UCommand_TIMEOUT::print(int l)
   debug("TIMEOUT:");
 
   DEBUG_ATTR (duration);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END TIMEOUT ------\n");
 }
 
@@ -5601,11 +5563,7 @@ UCommand_STOPIF::print(int l)
   debug("STOPIF:");
 
   DEBUG_ATTR (condition);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END STOPIF ------\n");
 }
 
@@ -5683,11 +5641,7 @@ UCommand_FREEZEIF::print(int l)
   debug("FREEZEIF:");
 
   DEBUG_ATTR (condition);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END FREEZEIF ------\n");
 }
 
@@ -5893,16 +5847,8 @@ UCommand_AT::print(int l)
     debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR (test);
-  if (command1)
-  {
-    debug(l, "  Command1:\n");
-    command1->print(l+3);
-  }
-  if (command2)
-  {
-    debug(l, "  Command2:\n");
-    command2->print(l+3);
-  }
+  DEBUG_ATTR_I(command1);
+  DEBUG_ATTR_I(command2);
   debug(l, "END AT ------\n");
 }
 
@@ -5986,11 +5932,7 @@ UCommand_WHILE::print(int l)
   debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), kind (type));
 
   DEBUG_ATTR (test);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END WHILE ------\n");
 }
 
@@ -6225,22 +6167,9 @@ UCommand_WHENEVER::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("WHENEVER:\n");
 
-  if (test)
-  {
-    debug(l, "  Test:");
-    test->print();
-    debug("\n");
-  }
-  if (command1)
-  {
-    debug(l, "  Command1:\n");
-    command1->print(l+3);
-  }
-  if (command2)
-  {
-    debug(l, "  Command2:\n");
-    command2->print(l+3);
-  }
+  DEBUG_ATTR(test);
+  DEBUG_ATTR_I(command1);
+  DEBUG_ATTR_I(command2);
   debug(l, "END WHENEVER ------\n");
 }
 
@@ -6302,11 +6231,7 @@ UCommand_LOOP::print(int l)
 
   debug("LOOP:\n");
 
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END LOOP ------\n");
 }
 
@@ -6451,8 +6376,6 @@ UCommand_FOR::~UCommand_FOR()
 UCommandStatus
 UCommand_FOR::execute(UConnection *connection)
 {
-  UCommand *tmp_instr2;
-
   if (first)
   {
     first = false;
@@ -6487,7 +6410,7 @@ UCommand_FOR::execute(UConnection *connection)
   if (testres == UTRUE)
   {
     UNodeType nodeType = nodetype (type);
-    tmp_instr2 = 0;
+    UCommand *tmp_instr2 = 0;
 
     if (nodeType == UPIPE
 	|| nodeType == UAND)
@@ -6559,27 +6482,10 @@ UCommand_FOR::print(int l)
   else if (type == FOR_PIPE) debug("(PIPE)\n");
   else	debug("UNKNOWN TYPE!\n");
 
-  if (test)
-  {
-    debug(l, "  Test:");
-    test->print();
-    debug("\n");
-  }
-  if (instr1)
-  {
-    debug(l, "  Instr1:\n");
-    instr1->print(l+3);
-  }
-  if (instr2)
-  {
-    debug(l, "  Instr2:\n");
-    instr2->print(l+3);
-  }
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR(test);
+  DEBUG_ATTR_I(instr1);
+  DEBUG_ATTR_I(instr2);
+  DEBUG_ATTR_I(command);
 
   debug(l, "END FOR ------\n");
 }
@@ -6701,11 +6607,7 @@ UCommand_FOREACH::print(int l)
 
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
 
   debug(l, "END FOREACH ------\n");
 }
