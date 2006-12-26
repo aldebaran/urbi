@@ -85,7 +85,7 @@ namespace urbi
     queueLock->unlock();
   }
 
-  UMessage * USyncClient::waitForTag(const char * tag)
+  UMessage* USyncClient::waitForTag(const char* tag)
   {
     syncTag = tag;
     (*syncLock)--;
@@ -94,26 +94,27 @@ namespace urbi
   }
 
 
-  UMessage * USyncClient::syncGet(const char * format, ...)
+  UMessage* USyncClient::syncGet(const char* format, ...)
   {
     //check there is no tag
     int p = 0;
-    while (format[p]==' ')
+    while (format[p] ==' ')
       ++p;
-    while (isalpha(format[p])) p++;
-    while (format[p]==' ')
+    while (isalpha(format[p]))
       ++p;
-    if (format[p]==':')
+    while (format[p] == ' ')
+      ++p;
+    if (format[p] == ':')
     {
-      std::cerr <<"FATAL: passing a taged command to syncGet:'"<<format<<"'\n";
+      std::cerr << "FATAL: passing a taged command to syncGet:'" << format <<
+        "'\n";
       ::exit(1);
     }
     //check if there is a command separator
     p = strlen(format) - 1;
     while (format[p] == ' ')
       --p;
-    bool hasSep = (format[p] == ';
-    ' || format[p] == ',');
+    bool hasSep = (format[p] == ';' || format[p] == ',');
     va_list arg;
     va_start(arg, format);
     sendBufferLock.lock();
@@ -130,21 +131,19 @@ namespace urbi
     makeUniqueTag(tag);
     strcat(tag, ":");
     effectiveSend(tag, strlen(tag));
-    tag[strlen(tag)-1]=0; //restore tag
+    tag[strlen(tag) - 1] = 0; //restore tag
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
-    UMessage *m = waitForTag(tag);
+    UMessage* m = waitForTag(tag);
     return m;
   }
 
-
-
   int
-  USyncClient::syncGetImage(const char *camera,
-			    void *buffer, int &buffersize,
+  USyncClient::syncGetImage(const char* camera,
+			    void* buffer, int& buffersize,
 			    int format, int transmitFormat,
-			    int &width, int &height)
+			    int& width, int& height)
   {
     int f;
     if (format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG)
@@ -171,7 +170,7 @@ namespace urbi
 			   m->value->binary->image.size, (byte*) buffer,
 			   buffersize);
       else
-	convertJPEGtoRGB((const byte*)  m->value->binary->image.data,
+	convertJPEGtoRGB((const byte*) m->value->binary->image.data,
 			 m->value->binary->image.size, (byte*) buffer,
 			 buffersize);
     }
@@ -179,8 +178,8 @@ namespace urbi
     {
       buffersize = std::min(m->value->binary->image.size, buffersize);
       if (m->value->binary->image.imageFormat == IMAGE_YCbCr)
-	convertYCrCbtoRGB((const byte *) m->value->binary->image.data,
-			  buffersize, (byte *) buffer);
+	convertYCrCbtoRGB((const byte*) m->value->binary->image.data,
+			  buffersize, (byte*) buffer);
       else
 	memcpy(buffer, m->value->binary->image.data, buffersize);
 
@@ -220,7 +219,7 @@ namespace urbi
   }
 
   int
-  USyncClient::syncGetDevice(const char *device, double &val)
+  USyncClient::syncGetDevice(const char* device, double& val)
   {
     UMessage *m = syncGet("%s.val;", device);
 
@@ -235,7 +234,7 @@ namespace urbi
   }
 
   int
-  USyncClient::syncGetResult(const char* command, double &val)
+  USyncClient::syncGetResult(const char* command, double& val)
   {
     UMessage *m = syncGet("%s", command);
 
@@ -281,7 +280,7 @@ namespace urbi
 	 "   noop;"
 	 "   noop;"
 	 " };", device, duration);
-    UMessage * m = syncGet("syncgetsound;");
+    UMessage* m = syncGet("syncgetsound;");
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY
 	|| m->value->binary->type != BINARY_SOUND)
@@ -301,7 +300,7 @@ namespace urbi
       return -1;
     sendBufferLock.lock();
     int sent = 0;
-    while (sent<length)
+    while (sent < length)
     {
       int res = ::write(sd, (char*) buffer + sent, length - sent);
       if (res < 0)
