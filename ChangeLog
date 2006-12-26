@@ -1,5 +1,17 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	s/_FLAVORS//
+	* src/ucommand.hh (WHILE_FLAVORS, LOOPN_FLAVORS, FOREACH_FLAVORS)
+	(FOR_FLAVORS, TREE_FLAVORS): Rename as...
+	(WHILE, LOOPN, FOREACH, FOR, TREE): these.
+	These names were just to ease the transition of semantics of
+	these symbols.
+	Adjust all uses.
+
+	* src/uconnection.cc: Use a brand new C++ instruction: for.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor the command flavors
 	* src/utypes.hh (UNodeType): Move to...
 	* src/flavorable.hh (Flavorable::UNodeType): this new class.

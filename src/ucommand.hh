@@ -31,7 +31,6 @@
 # include "uast.hh"
 # include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
 # include "ustring.hh"
-# include "utypes.hh"
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
@@ -48,40 +47,40 @@ public:
   /// The different types for a UCommand.
   enum Type
   {
-    GENERIC,
-    TREE_FLAVORS,
-    ASSIGN_VALUE,
-    ASSIGN_PROPERTY,
-    ASSIGN_BINARY,
-    EXPR,
-    RETURN,
-    ECHO,
-    NEW,
     ALIAS,
-    INHERIT,
-    GROUP,
-    WAIT,
-    WAIT_TEST,
-    INCREMENT,
-    DECREMENT,
-    DEF,
-    CLASS,
-    IF,
-    EVERY,
-    TIMEOUT,
-    STOPIF,
-    FREEZEIF,
+    ASSIGN_BINARY,
+    ASSIGN_PROPERTY,
+    ASSIGN_VALUE,
     AT,
     AT_AND,
-    WHILE_FLAVORS,
-    WHENEVER,
-    LOOP,
-    LOOPN_FLAVORS,
-    FOREACH_FLAVORS,
-    FOR_FLAVORS,
-    NOOP,
+    CLASS,
+    DECREMENT,
+    DEF,
+    ECHO,
     EMIT,
+    EVERY,
+    EXPR,
+    FOREACH,
+    FOR,
+    FREEZEIF,
+    GENERIC,
+    GROUP,
+    IF,
+    INCREMENT,
+    INHERIT,
     LOAD,
+    LOOP,
+    LOOPN,
+    NEW,
+    NOOP,
+    RETURN,
+    STOPIF,
+    TIMEOUT,
+    TREE,
+    WAIT,
+    WAIT_TEST,
+    WHENEVER,
+    WHILE,
   };
 
   UCommand (const location& l, Type _type);

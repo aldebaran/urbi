@@ -424,7 +424,7 @@ root:
   | taggedcommands {
 
       up.commandTree = 0;
-      if ($1 && $1->type == UCommand::TREE_FLAVORS)
+      if ($1 && $1->type == UCommand::TREE)
       {
 	up.commandTree = dynamic_cast<UCommand_TREE*> ($1);
 	assert (up.commandTree != 0);

@@ -796,9 +796,7 @@ UConnection::processCommand(UCommand *&command,
     {
       command->startTime = server->lastTime();
 
-      param = command->flags;
-      while (param)
-      {
+      for (param = command->flags; param; param = param->next)
 	if (param->name)
 	{
 	  if (param->name->equal("flagid"))
@@ -864,9 +862,6 @@ UConnection::processCommand(UCommand *&command,
 		  || param->expression->val == 1)) // 1 = +report
 	    send("*** begin\n", command->getTag().c_str());
 	}
-
-	param = param->next;
-      }
     }
 
     stopit = false;
@@ -933,9 +928,7 @@ UConnection::processCommand(UCommand *&command,
 
     if (stopit)
     {
-      param = command->flags;
-      while (param)
-      {
+      for (param = command->flags; param; param = param->next)
 	if (param->name &&
 	    param->name->equal("flag") &&
 	    param->expression &&
@@ -943,9 +936,6 @@ UConnection::processCommand(UCommand *&command,
 	    (param->expression->val == 3 || // 3 = +end
 	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", command->getTag().c_str());
-
-	param = param->next;
-      }
 
       if (command == lastCommand)
 	lastCommand = command->up;
@@ -956,32 +946,27 @@ UConnection::processCommand(UCommand *&command,
 
     // Regular command processing
 
-    if (command->type == UCommand::TREE_FLAVORS)
+    if (command->type == UCommand::TREE)
     {
       mustReturn = true;
       return command ;
     }
     else
     {
-      // != TREE_FLAVORS
+      // != TREE
       morphed_up = command->up;
       morphed_position = command->position;
 
       switch (command->execute(this))
       {
 	case UCOMPLETED:
-
-	  param = command->flags;
-	  while (param)
-	  {
+	  for (param = command->flags; param; param = param->next)
 	    if (param->name &&
 		param->name->equal("flag") &&
 		param->expression &&
 		(param->expression->val == 3 || // 3 = +end
 		 param->expression->val == 1  )) // 1 = +report
 	      send("*** end\n", command->getTag().c_str());
-	    param = param->next;
-	  }
 
 	  if (command == lastCommand)
 	    lastCommand = command->up;
@@ -1011,10 +996,10 @@ UConnection::processCommand(UCommand *&command,
 
 	default:
 	  // "+bg" flag
-	  if ((command->flagType&8) &&
-	      (command->status == URUNNING))
+	  // FIXME: Nia?  What the heck is happening here???
+	  if ((command->flagType & 8) &&
+	      command->status == URUNNING)
 	    command->status = UBACKGROUND;
-
 	  return command;
       }
     }
@@ -1108,7 +1093,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // STATUS UPDATE
 
-    if ((tree->command1 == 0 && tree->command2 == 0)
+    if (tree->command1 == 0 && tree->command2 == 0
 	|| deletecommand)
     {
       if (tree == lastCommand)
@@ -1150,7 +1135,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	tree->command2 != 0)
     {
       // left reduction
-      ASSERT(tree->position!=0) *(tree->position) = tree->command2;
+      ASSERT(tree->position!=0)
+	*(tree->position) = tree->command2;
       tree->command2->up = tree->up;
       tree->command2->position = tree->position;
       tree->command2->background = tree->background;

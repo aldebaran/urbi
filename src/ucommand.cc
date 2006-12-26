@@ -399,7 +399,7 @@ UCommand_TREE::UCommand_TREE(const location& l,
 			     UNodeType flavor,
 			     UCommand* command1,
 			     UCommand* command2)
-  : UCommand(l, TREE_FLAVORS),
+  : UCommand(l, TREE),
     Flavorable (flavor),
     command1 (command1),
     command2 (command2),
@@ -466,7 +466,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command1;
 	tree->command1 = 0;
       }
-      else if (tree->command1->type == TREE_FLAVORS)
+      else if (tree->command1->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command1);
 	// If tree->command1 wasn't NULL, then tree must NOT be NULL.
@@ -481,7 +481,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command2;
 	tree->command2 = 0;
       }
-      else if (tree->command2->type == TREE_FLAVORS)
+      else if (tree->command2->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
 	// If tree->command2 wasn't NULL, then tree must NOT be NULL.
@@ -5812,7 +5812,7 @@ UCommand_WHILE::UCommand_WHILE(const location& l,
 			       Flavorable::UNodeType flavor,
 			       UExpression *test,
 			       UCommand* command)
-  : UCommand(l, WHILE_FLAVORS),
+  : UCommand(l, WHILE),
     Flavorable (flavor),
     test (test),
     command (command)
@@ -6191,7 +6191,7 @@ UCommand_LOOPN::UCommand_LOOPN(const location& l,
 			       Flavorable::UNodeType flavor,
 			       UExpression* expression,
 			       UCommand* command)
-  : UCommand(l, LOOPN_FLAVORS),
+  : UCommand(l, LOOPN),
     Flavorable (flavor),
     expression (expression),
     command (command)
@@ -6296,7 +6296,7 @@ UCommand_FOR::UCommand_FOR(const location& l,
 			   UExpression* test,
 			   UCommand* instr2,
 			   UCommand* command)
-  : UCommand(l, FOR_FLAVORS),
+  : UCommand(l, FOR),
     Flavorable (flavor),
     instr1 (instr1),
     instr2 (instr2),
@@ -6439,7 +6439,7 @@ UCommand_FOREACH::UCommand_FOREACH(const location& l,
 				   UVariableName* variablename,
 				   UExpression* expression,
 				   UCommand* command)
-  : UCommand(l, FOREACH_FLAVORS),
+  : UCommand(l, FOREACH),
     Flavorable(flavor),
     variablename (variablename),
     command (command),
