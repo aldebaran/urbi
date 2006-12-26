@@ -926,7 +926,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	&& !variablename->fromGroup
 	&& variable->value->dataType == DATA_OBJ)
     {
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Warning: %s type mismatch: no object assignment\n",
 			variablename->getFullname()->str());
       return status = UCOMPLETED;
@@ -1081,7 +1081,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    || variable->rangemax ==  UINFINITY)
 	{
 	  if (!variablename->fromGroup)
-	    connection->sendf(getTag().c_str(),
+	    connection->sendf(getTag(),
 			      "!!! Impossible to normalize:"
 			      " no range defined for variable %s\n",
 			      variablename->getFullname()->str());
@@ -1118,7 +1118,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	if (variable == 0 && !sinusoidal)
 	{
 	  if (!variablename->fromGroup)
-	    connection->sendf(getTag().c_str(),
+	    connection->sendf(getTag(),
 			      "!!! Modificator error: %s unknown"
 			      " (no start value)\n",
 			      variablename->getFullname()->str());
@@ -1133,7 +1133,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	{
 	  if (!modif->expression || !modif->name)
 	  {
-	    connection->sendf(getTag().c_str(), "!!! Invalid modifier\n");
+	    connection->sendf(getTag(), "!!! Invalid modifier\n");
 	    delete target;
 	    return status = UCOMPLETED;
 	  }
@@ -1851,7 +1851,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   if (!variable)
   {
     if (!variablename->fromGroup)
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Variable %s does not exist\n",
 			variablename->getFullname()->str());
     return status = UCOMPLETED;
@@ -2627,7 +2627,7 @@ UCommand_ECHO::execute(UConnection *connection)
       }
 
     if (!ok)
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! %s: no such connection\n", connectionTag->str());
   }
 
@@ -2856,7 +2856,7 @@ UCommand_NEW::execute(UConnection *connection)
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end())
   {
-    connection->sendf(getTag().c_str(),
+    connection->sendf(getTag(),
 		      "!!! %s has already inherited from %s\n",
 		      id->str(), obj->str());
     if (creation)
@@ -3037,7 +3037,7 @@ UCommand_ALIAS::execute(UConnection *connection)
 	    connection->server->aliastab.begin();
 	  i != connection->server->aliastab.end();
 	  i++)
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"*** %25s -> %s\n",
 			i->first, i->second->str());
 
@@ -3746,7 +3746,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 
     if (!variable && !dev)
     {
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Unknown identifier: %s\n",
 			variablename->getFullname()->str());
       return status = UCOMPLETED;
@@ -5738,7 +5738,7 @@ UCommand_AT::execute(UConnection *connection)
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Invalid name resolution in test. "
 			"Did you define all events and variables?\n");
       return status = UCOMPLETED;

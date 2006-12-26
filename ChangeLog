@@ -1,5 +1,10 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	Pass tags as std::string
+	* src/ucommand.cc, src/uvariablename.cc: here.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	Move the doc where it belongs: the header file.
 	* src/uconnection.hh, src/uconnection.cc: here.
 

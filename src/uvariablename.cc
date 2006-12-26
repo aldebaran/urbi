@@ -309,7 +309,7 @@ UVariableName::buildFullname (UCommand* command,
 
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
-      connection->sendf (command->getTag().c_str(),
+      connection->sendf (command->getTag(),
 			 "!!! dynamic variable evaluation failed\n");
       delete e1;
       if (fullname_)
@@ -370,7 +370,7 @@ UVariableName::buildFullname (UCommand* command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	connection->sendf (command->getTag().c_str(),
+	connection->sendf (command->getTag(),
 			   "!!! array index evaluation failed\n");
 	delete fullname_;
 	fullname_ = 0;
@@ -384,7 +384,7 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	delete e1;
-	connection->sendf (command->getTag().c_str(),
+	connection->sendf (command->getTag(),
 			   "!!! invalid array index type\n");
 	delete fullname_;
 	fullname_ = 0;
@@ -415,7 +415,7 @@ UVariableName::buildFullname (UCommand* command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	connection->sendf (command->getTag().c_str(),
+	connection->sendf (command->getTag(),
 			   "!!! array index evaluation failed\n");
 	delete fullname_;
 	fullname_ = 0;
@@ -430,7 +430,7 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	delete e1;
-	connection->sendf (command->getTag().c_str(),
+	connection->sendf (command->getTag(),
 			   "!!! invalid array index type\n");
 	delete fullname_;
 	fullname_ = 0;
@@ -522,7 +522,7 @@ UVariableName::buildFullname (UCommand* command,
     }
     else
     {
-      connection->sendf (command->getTag().c_str(),
+      connection->sendf (command->getTag(),
 			 "!!! invalid prefix resolution\n");
       delete fullname_;
       fullname_ = 0;
