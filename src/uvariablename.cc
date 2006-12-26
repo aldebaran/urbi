@@ -202,9 +202,6 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
 UFunction*
 UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
-  HMfunctiontab::iterator	hmf;
-  UFunction*			tmpfun = 0;
-
   if (function)
     return function;
 
@@ -214,32 +211,29 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if (!fullname_)
     return 0;
 
-  if ((hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
-      ::urbiserver->functiontab.end())
-    tmpfun = hmf->second;
+  UFunction* f = 0;
+  HMfunctiontab::iterator i = ::urbiserver->functiontab.find(fullname_->str());
+  if (i != ::urbiserver->functiontab.end())
+    f = i->second;
 
   if (cached)
-    function = tmpfun;
+    function = f;
 
-  return tmpfun;
+  return f;
 }
 
 //! UVariableName test to know if there is a function with that name
 bool
 UVariableName::isFunction(UCommand *command, UConnection *connection)
 {
-  UFunction* tmpfun = getFunction(command, connection);
-  if (tmpfun)
+  if (getFunction(command, connection))
     return true;
   if (!fullname_)
     return false;
-  if (urbi::functionmap.find(fullname_->str()) !=
-      urbi::functionmap.end())
-    return true;
-  if (::urbiserver->functionbindertab.find(fullname_->str()) !=
-      ::urbiserver->functionbindertab.end())
-    return true;
-  return false;
+  return ((urbi::functionmap.find(fullname_->str())
+	   != urbi::functionmap.end())
+	  || (::urbiserver->functionbindertab.find(fullname_->str())
+	      != ::urbiserver->functionbindertab.end()));
 }
 
 
@@ -252,12 +246,12 @@ UVariableName::getMethod()
 
   if (!fullname_)
     return 0;
-  const char *pointPos = strstr(fullname_->str(), ".");
 
-  if (pointPos == 0)
-    method = new UString("");
-  else
+  if (const char *pointPos = strstr(fullname_->str(), "."))
     method = new UString(pointPos + 1);
+  else
+    method = new UString("");
+
   return method;
 }
 
@@ -270,14 +264,16 @@ UVariableName::getDevice()
 
   if (!fullname_)
     return 0;
-  char *pointPos = const_cast<char*>(strstr(fullname_->str(), "."));
-  if (pointPos == 0)
-    return fullname_;
-  pointPos[0] = 0;
+  if (char *pointPos = const_cast<char*>(strstr(fullname_->str(), ".")))
+    {
+      pointPos[0] = 0;
 
-  device = new UString(fullname_->str());
-  pointPos[0] = '.';
-  return device;
+      device = new UString(fullname_->str());
+      pointPos[0] = '.';
+      return device;
+    }
+  else
+    return fullname_;
 }
 
 //! UVariableName name extraction, witch caching
