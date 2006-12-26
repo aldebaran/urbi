@@ -56,62 +56,6 @@ namespace
   /// A buffer type.
   typedef char buffer_t[65536];
 
-  const char* to_string (UNodeType type)
-  {
-    switch (type)
-    {
-      case UAND:
-	return "AND";
-      case UPIPE:
-	return "PIPE";
-      case USEMICOLON:
-	return "SEMICOLON";
-      case UCOMMA:
-	return "COMMA";
-      default:
-	abort ();
-    }
-  }
-
-  UNodeType nodetype (UCommand::Type type)
-  {
-    switch (type)
-    {
-      case UCommand::FOR:	    return USEMICOLON;
-      case UCommand::FOR_PIPE:  return UPIPE;
-      case UCommand::FOR_AND:   return UAND;
-
-      case UCommand::FOREACH:      return USEMICOLON;
-      case UCommand::FOREACH_PIPE: return UPIPE;
-      case UCommand::FOREACH_AND:  return UAND;
-
-      case UCommand::LOOPN:	     return USEMICOLON;
-      case UCommand::LOOPN_PIPE: return UPIPE;
-      case UCommand::LOOPN_AND:  return UAND;
-
-      case UCommand::WHILE:	      return USEMICOLON;
-      case UCommand::WHILE_PIPE:  return UPIPE;
-      case UCommand::WHILE_AND:   return UAND;
-
-      default:
-	abort ();
-    }
-  }
-
-  const char* kind (UCommand::Type type)
-  {
-    switch (nodetype (type))
-    {
-      case USEMICOLON:
-	return "";
-      case UPIPE:
-	return " (PIPE)";
-      case UAND:
-	return " (AND)";
-      default: abort();
-    }
-  }
-
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
@@ -294,7 +238,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	clonename->nostruct = varname->nostruct;
 	clonename->id_type = varname->id_type;
 	clonename->local_scope = varname->local_scope;
-	gplist = new UCommand_TREE(location(), UAND, clone, gplist);
+	gplist = new UCommand_TREE(location(), Flavorable::UAND, clone, gplist);
       }
 
       morph = gplist;
@@ -452,14 +396,14 @@ MEMORY_MANAGER_INIT(UCommand_TREE);
  still cannot be persistant (like a AT or WHENEVER).
  */
 UCommand_TREE::UCommand_TREE(const location& l,
-			     UNodeType node,
+			     UNodeType flavor,
 			     UCommand* command1,
 			     UCommand* command2)
-  : UCommand(l, TREE),
+  : UCommand(l, TREE_FLAVORS),
+    Flavorable (flavor),
     command1 (command1),
     command2 (command2),
     callid (0),
-    node (node),
     runlevel1 (UWAITING),
     runlevel2 (UWAITING),
     connection (0) // unknown unless there is a context).
@@ -502,7 +446,7 @@ UCommand_TREE::execute(UConnection*)
 UCommand*
 UCommand_TREE::copy()
 {
-  return copybase(new UCommand_TREE(loc_, node,
+  return copybase(new UCommand_TREE(loc_, flavor(),
 				    ucopy (command1),
 				    ucopy (command2)));
 }
@@ -522,7 +466,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command1;
 	tree->command1 = 0;
       }
-      else if (tree->command1->type == TREE)
+      else if (tree->command1->type == TREE_FLAVORS)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command1);
 	// If tree->command1 wasn't NULL, then tree must NOT be NULL.
@@ -537,7 +481,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command2;
 	tree->command2 = 0;
       }
-      else if (tree->command2->type == TREE)
+      else if (tree->command2->type == TREE_FLAVORS)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
 	// If tree->command2 wasn't NULL, then tree must NOT be NULL.
@@ -565,7 +509,7 @@ UCommand_TREE::print(int l)
   debug(l, "Tag:[%s] toDelete=%d Tree %s (%ld:%ld) :\n",
 	getTag().c_str(),
 	toDelete,
-	to_string (node),
+	flavor_string(),
 	(long)this, (long)status);
   if (command1)
   {
@@ -732,7 +676,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       morph =
 	new UCommand_TREE
-	(loc_, UPIPE, fun->cmdcopy(),
+	(loc_, Flavorable::UPIPE, fun->cmdcopy(),
 	 new UCommand_ASSIGN_VALUE (loc_,
 				    variablename->copy(),
 				    new UExpression(UExpression::VARIABLE,
@@ -2259,7 +2203,8 @@ UCommand_EXPR::execute(UConnection *connection)
 						resultContainer));
 
       cexp->setTag(this);
-      morph = new UCommand_TREE(loc_, UPIPE, fun->cmdcopy(getTag()), cexp);
+      morph = new UCommand_TREE(loc_, Flavorable::UPIPE,
+				fun->cmdcopy(getTag()), cexp);
 
       if (morph)
       {
@@ -2804,7 +2749,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    << "}";
 
 	strMorph (oss.str());
-	morph = new UCommand_TREE(loc_, UPIPE, morph, this);
+	morph = new UCommand_TREE(loc_, Flavorable::UPIPE, morph, this);
 	return status;
       }
     }
@@ -5014,7 +4959,7 @@ UCommand_DEF::execute(UConnection *connection)
 				 0,
 				 0);
 	cdef->setTag(this);
-	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
+	morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
     persistant = false;
     return status = UMORPH;
@@ -5036,11 +4981,9 @@ UCommand_DEF::execute(UConnection *connection)
       {
 	list->variablename->local_scope = true;
 	cdef = new UCommand_DEF (loc_, UDEF_VAR,
-				 list->variablename->copy(),
-				 0,
-				 0);
+				 list->variablename->copy(), 0, 0);
 	cdef->setTag(this);
-	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
+	morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
 
     persistant = false;
@@ -5198,7 +5141,7 @@ UCommand_CLASS::execute(UConnection*)
 	if (param == parameters)
 	  morph = cdef;
 	else
-	  morph = new UCommand_TREE(loc_, UAND, cdef, morph);
+	  morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
     }
 
@@ -5369,7 +5312,7 @@ UCommand_EVERY::execute(UConnection* connection)
       firsttime)
   {
     persistant = true;
-    morph = new UCommand_TREE(loc_, UAND, command->copy(), this);
+    morph = new UCommand_TREE(loc_, Flavorable::UAND, command->copy(), this);
     starttime = thetime;
     firsttime = false;
     delete interval;
@@ -5442,13 +5385,13 @@ UCommand_TIMEOUT::execute(UConnection*)
   persistant = false;
   morph =
     new UCommand_TREE
-    (loc_, UAND,
-     new UCommand_TREE(loc_, UPIPE,
+    (loc_, Flavorable::UAND,
+     new UCommand_TREE(loc_, Flavorable::UPIPE,
 		       new UCommand_WAIT(loc_, duration->copy()),
 		       new UCommand_OPERATOR_ID(loc_,
 						new UString("stop"),
 						tagRef->copy())),
-     new UCommand_TREE(loc_, UPIPE, command->copy(),
+     new UCommand_TREE(loc_, Flavorable::UPIPE, command->copy(),
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy()))
       );
@@ -5523,7 +5466,7 @@ UCommand_STOPIF::execute(UConnection *connection)
   persistant = false;
   morph =
     new UCommand_TREE(
-      loc_, UAND,
+      loc_, Flavorable::UAND,
       new UCommand_AT(loc_, AT,
 		      condition->copy(),
 		      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
@@ -5539,8 +5482,8 @@ UCommand_STOPIF::execute(UConnection *connection)
   persistant = false;
   morph =
     new UCommand_TREE
-    (loc_, UAND,
-     new UCommand_TREE(loc_, UPIPE,
+    (loc_, Flavorable::UAND,
+     new UCommand_TREE(loc_, Flavorable::UPIPE,
 		       new UCommand_WAIT_TEST(loc_, condition->copy()),
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy())),
@@ -5609,14 +5552,14 @@ UCommand_FREEZEIF::execute(UConnection*)
     return status = UCOMPLETED;
 
   persistant = false;
-  UCommand* cmd = new UCommand_TREE(loc_, UPIPE,
+  UCommand* cmd = new UCommand_TREE(loc_, Flavorable::UPIPE,
 				    command->copy(),
 				    new UCommand_NOOP(loc_)
     );
   cmd->setTag(tagRef->str());
   morph =
     new UCommand_TREE
-    (loc_, UAND,
+    (loc_, Flavorable::UAND,
      new UCommand_AT(loc_, AT,
 		     condition->copy(),
 		     new UCommand_OPERATOR_ID(loc_, new UString("freeze"),
@@ -5760,7 +5703,8 @@ UCommand_AT::execute(UConnection *connection)
 	    morph_onleave = command2->copy ();
 	  else
 	    morph_onleave =
-	      new UCommand_TREE (loc_, UAND, morph_onleave, command2->copy ());
+	      new UCommand_TREE (loc_, Flavorable::UAND,
+				 morph_onleave, command2->copy ());
 	  domorph = true;
 	  morph = this;
 	}
@@ -5789,15 +5733,15 @@ UCommand_AT::execute(UConnection *connection)
 	if ((*ic)->trigger (currentTime, assigncmd))
 	{
 	  if (assigncmd)
-	  {
 	    morph =
 	      new UCommand_TREE
-	      (loc_, UAND,
-	       new UCommand_TREE (loc_, UPIPE, assigncmd, command1->copy()),
+	      (loc_, Flavorable::UAND,
+	       new UCommand_TREE (loc_, Flavorable::UPIPE,
+				  assigncmd, command1->copy()),
 	       morph);
-	  }
 	  else
-	    morph = new UCommand_TREE (loc_, UAND, command1->copy (), morph);
+	    morph = new UCommand_TREE (loc_, Flavorable::UAND,
+				       command1->copy (), morph);
 	}
 	else
 	  reloop_ = true; // we should try again later
@@ -5815,7 +5759,7 @@ UCommand_AT::execute(UConnection *connection)
     if (morph_onleave)
     {
       // at this point, morph is at least equal to "this"
-      morph = new UCommand_TREE (loc_, UAND, morph, morph_onleave);
+      morph = new UCommand_TREE (loc_, Flavorable::UAND, morph, morph_onleave);
     }
     morph->background = true;
     persistant = true;
@@ -5865,10 +5809,11 @@ MEMORY_MANAGER_INIT(UCommand_WHILE);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_WHILE::UCommand_WHILE(const location& l,
-			       Type type,
+			       Flavorable::UNodeType flavor,
 			       UExpression *test,
 			       UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, WHILE_FLAVORS),
+    Flavorable (flavor),
     test (test),
     command (command)
 {
@@ -5901,20 +5846,20 @@ UCommand_WHILE::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    UNodeType nodeType = nodetype (type);
-
-    if (nodeType == UPIPE)
-      morph = new UCommand_TREE(loc_, UPIPE, command->copy(), this);
-    else
-      morph =
-	new UCommand_TREE(loc_,
-			  nodeType,
-			  new UCommand_TREE(loc_,
-					    UAND,
-					    command->copy(),
-					    new UCommand_NOOP(loc_)),
-			  this);
-
+    switch (flavor())
+    {
+      case UPIPE:
+	morph = new UCommand_TREE(loc_, Flavorable::UPIPE,
+				  command->copy(), this);
+	break;
+      default:
+	morph =
+	  new UCommand_TREE(loc_, flavor(),
+			    new UCommand_TREE(loc_, Flavorable::UAND,
+					      command->copy(),
+					      new UCommand_NOOP(loc_)),
+			    this);
+    }
     persistant = true;
     return status = UMORPH;
   }
@@ -5926,7 +5871,8 @@ UCommand_WHILE::execute(UConnection *connection)
 UCommand*
 UCommand_WHILE::copy()
 {
-  return copybase(new UCommand_WHILE(loc_, type, ucopy (test), ucopy (command)));
+  return copybase(new UCommand_WHILE(loc_, flavor(),
+				     ucopy (test), ucopy (command)));
 }
 
 //! Print the command
@@ -5936,7 +5882,7 @@ UCommand_WHILE::copy()
 void
 UCommand_WHILE::print(int l)
 {
-  debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), kind (type));
+  debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), flavor_string());
 
   DEBUG_ATTR (test);
   DEBUG_ATTR_I(command);
@@ -5989,18 +5935,11 @@ UCommand_WHENEVER::execute(UConnection *connection)
   {
     morph =
       new UCommand_TREE
-      (loc_,
-       UAND,
-       this,
-	new UCommand_WHENEVER
-       (loc_,
-	new UExpression (UExpression::TEST_BANG,
-			 test->copy (),
-			 0),
-	  command2,
-	  0
-	  )
-	);
+      (loc_, Flavorable::UAND, this,
+       new UCommand_WHENEVER (loc_,
+			      new UExpression (UExpression::TEST_BANG,
+					       test->copy (), 0),
+			      command2, 0));
 
     command2 = 0;
     persistant = true;
@@ -6116,7 +6055,8 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	    if (!assign)
 	      assign = assigncmd;
 	    else
-	      assign = new UCommand_TREE (loc_, UAND, assigncmd, assign);
+	      assign = new UCommand_TREE (loc_, Flavorable::UAND,
+					  assigncmd, assign);
 	  }
 	}
 	else
@@ -6132,7 +6072,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
       theloop_->setTag ("__system__"); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
-	assign = new UCommand_TREE (loc_, UPIPE, assign, theloop_);
+	assign = new UCommand_TREE (loc_, Flavorable::UPIPE, assign, theloop_);
       else
 	assign = theloop_;
     }
@@ -6140,7 +6080,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     if (assign)
     {
       domorph = true;
-      morph = new UCommand_TREE (loc_, UPIPE, this, assign);
+      morph = new UCommand_TREE (loc_, Flavorable::UPIPE, this, assign);
     }
   }
 
@@ -6210,8 +6150,8 @@ UCommand_LOOP::execute(UConnection*)
   if (command == 0)
     return status = UCOMPLETED;
 
-  morph = new UCommand_TREE(loc_, USEMICOLON,
-			    new UCommand_TREE(loc_, UAND,
+  morph = new UCommand_TREE(loc_, Flavorable::USEMICOLON,
+			    new UCommand_TREE(loc_, Flavorable::UAND,
 					      command->copy(),
 					      new UCommand_NOOP(loc_)),
 			    this);
@@ -6248,10 +6188,11 @@ MEMORY_MANAGER_INIT(UCommand_LOOPN);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_LOOPN::UCommand_LOOPN(const location& l,
-			       Type type,
+			       Flavorable::UNodeType flavor,
 			       UExpression* expression,
 			       UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, LOOPN_FLAVORS),
+    Flavorable (flavor),
     expression (expression),
     command (command)
 {
@@ -6299,16 +6240,19 @@ UCommand_LOOPN::execute(UConnection *connection)
 
   expression->val = expression->val - 1;
 
-  UNodeType nodeType = nodetype (type);
-
-  if (nodeType == UPIPE || nodeType == UAND)
-    morph = new UCommand_TREE(loc_, nodeType, command->copy(), this);
-  else
-    morph = new UCommand_TREE
-      (loc_, nodeType, new UCommand_TREE(loc_, UAND,
-					 command->copy(),
-					 new UCommand_NOOP(loc_)),
-       this);
+  switch (flavor ())
+  {
+    case UPIPE:
+    case UAND:
+      morph = new UCommand_TREE(loc_, flavor(), command->copy(), this);
+      break;
+    default:
+      morph = new UCommand_TREE
+	(loc_, flavor(), new UCommand_TREE(loc_, Flavorable::UAND,
+					   command->copy(),
+					   new UCommand_NOOP(loc_)),
+	 this);
+  }
   persistant = true;
   return status = UMORPH;
 }
@@ -6317,7 +6261,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 UCommand*
 UCommand_LOOPN::copy()
 {
-  return copybase(new UCommand_LOOPN(loc_, type,
+  return copybase(new UCommand_LOOPN(loc_, flavor(),
 				     ucopy (expression),
 				     ucopy (command)));
 }
@@ -6329,24 +6273,12 @@ UCommand_LOOPN::copy()
 void
 UCommand_LOOPN::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("LOOPN:");
-  if (type == LOOPN)
-    debug("\n");
-  else if (type == LOOPN_AND)
-    debug("(AND)\n");
-  else if (type == LOOPN_PIPE)
-    debug("(PIPE)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
+  debug(l, " Tag:[%s] LOOPN: %s", getTag().c_str(), flavor_string ());
 
   DEBUG_ATTR (expression);
   if (command)
   {
-    debug(l, "  Command (%ld:%d):\n",
-			(long)command,
-			(int)command->status);
+    debug(l, "  Command (%ld:%d):\n", (long)command, (int)command->status);
     command->print(l+3);
   }
 
@@ -6359,12 +6291,13 @@ MEMORY_MANAGER_INIT(UCommand_FOR);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_FOR::UCommand_FOR(const location& l,
-			   Type type,
+			   UNodeType flavor,
 			   UCommand* instr1,
 			   UExpression* test,
 			   UCommand* instr2,
 			   UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, FOR_FLAVORS),
+    Flavorable (flavor),
     instr1 (instr1),
     instr2 (instr2),
     test (test),
@@ -6405,7 +6338,8 @@ UCommand_FOR::execute(UConnection *connection)
     UCommand *first_instruction = instr1;
 
     instr1 = 0;
-    morph = new UCommand_TREE(loc_, USEMICOLON, first_instruction, this);
+    morph = new UCommand_TREE(loc_, Flavorable::USEMICOLON,
+			      first_instruction, this);
     persistant = true;
     return status = UMORPH;
   }
@@ -6421,41 +6355,40 @@ UCommand_FOR::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    UNodeType nodeType = nodetype (type);
     UCommand *tmp_instr2 = 0;
+    switch (flavor())
+    {
+      case UPIPE:
+      case UAND:
+	if (instr2)
+	  morph =
+	    new UCommand_TREE(loc_, flavor(), command->copy(),
+			      new UCommand_TREE(loc_, UPIPE,
+						tmp_instr2 = instr2->copy(),
+						this));
+	else
+	  morph = new UCommand_TREE(loc_, flavor(), command->copy(), this);
+	break;
 
-    if (nodeType == UPIPE
-	|| nodeType == UAND)
-    {
-      if (instr2)
-	morph =
-	  new UCommand_TREE(loc_, nodeType, command->copy(),
-			    new UCommand_TREE(loc_, UPIPE,
-					      tmp_instr2 = instr2->copy(),
-					      this));
-      else
-	morph = new UCommand_TREE(loc_, nodeType, command->copy(), this);
-    }
-    else
-    {
-      if (instr2)
-	morph =
-	  new UCommand_TREE
-	  (loc_, nodeType,
-	   new UCommand_TREE(loc_, UAND,
-			     new UCommand_TREE
-			     (loc_, UPIPE,
-			      command->copy(), tmp_instr2 = instr2->copy()),
-			     new UCommand_NOOP(loc_)),
-	   this
-	    );
-      else
-	morph =
-	  new UCommand_TREE
-	  (loc_, nodeType,
-	   new UCommand_TREE(loc_, UAND, command->copy(),
-			     new UCommand_NOOP(loc_)),
-	   this);
+      default:
+	if (instr2)
+	  morph =
+	    new UCommand_TREE
+	    (loc_, flavor(),
+	     new UCommand_TREE(loc_, UAND,
+			       new UCommand_TREE
+			       (loc_, UPIPE,
+				command->copy(), tmp_instr2 = instr2->copy()),
+			       new UCommand_NOOP(loc_)),
+	     this);
+	else
+	  morph =
+	    new UCommand_TREE
+	    (loc_, flavor(),
+	     new UCommand_TREE(loc_, UAND, command->copy(),
+			       new UCommand_NOOP(loc_)),
+	     this);
+	break;
     }
     if (tmp_instr2)
       tmp_instr2->morphed = true;
@@ -6470,7 +6403,7 @@ UCommand_FOR::execute(UConnection *connection)
 UCommand*
 UCommand_FOR::copy()
 {
-  UCommand_FOR *ret = new UCommand_FOR(loc_, type,
+  UCommand_FOR *ret = new UCommand_FOR(loc_, flavor(),
 				       ucopy (instr1),
 				       ucopy (test),
 				       ucopy (instr2),
@@ -6486,17 +6419,7 @@ UCommand_FOR::copy()
 void
 UCommand_FOR::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("FOR:");
-  if (type == FOR)
-    debug("\n");
-  else if (type == FOR_AND)
-    debug("(AND)\n");
-  else if (type == FOR_PIPE)
-    debug("(PIPE)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
+  debug(l, " Tag:[%s] FOR: %s", getTag().c_str(), flavor_string());
 
   DEBUG_ATTR(test);
   DEBUG_ATTR_I(instr1);
@@ -6512,11 +6435,12 @@ MEMORY_MANAGER_INIT(UCommand_FOREACH);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_FOREACH::UCommand_FOREACH(const location& l,
-				   Type type,
+				   Flavorable::UNodeType flavor,
 				   UVariableName* variablename,
 				   UExpression* expression,
 				   UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, FOREACH_FLAVORS),
+    Flavorable(flavor),
     variablename (variablename),
     command (command),
     expression (expression),
@@ -6552,8 +6476,6 @@ UCommand_FOREACH::execute(UConnection *connection)
   if (position == 0)
     return status = UCOMPLETED;
 
-  UNodeType nodeType = nodetype (type);
-
   UExpression* currentvalue =
     new UExpression(UExpression::VALUE, ufloat(0));
   if (!currentvalue)
@@ -6576,8 +6498,8 @@ UCommand_FOREACH::execute(UConnection *connection)
 
   morph =
     new UCommand_TREE
-    (loc_, nodeType,
-     new UCommand_TREE(loc_, UPIPE,
+    (loc_, flavor(),
+     new UCommand_TREE(loc_, Flavorable::UPIPE,
 		       new UCommand_ASSIGN_VALUE
 		       (loc_, variablename->copy(), currentvalue, 0),
 		       command->copy()),
@@ -6593,7 +6515,7 @@ UCommand_FOREACH::execute(UConnection *connection)
 UCommand*
 UCommand_FOREACH::copy()
 {
-  UCommand_FOREACH *ret = new UCommand_FOREACH(loc_, type,
+  UCommand_FOREACH *ret = new UCommand_FOREACH(loc_, flavor(),
 					       ucopy (variablename),
 					       ucopy (expression),
 					       ucopy (command));
@@ -6609,17 +6531,7 @@ UCommand_FOREACH::copy()
 void
 UCommand_FOREACH::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("FOREACH:");
-  if (type == FOREACH)
-    debug("\n");
-  else if (type == FOREACH_AND)
-    debug("(AND)\n");
-  else if (type == FOREACH_PIPE)
-    debug("(PIPE)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
+  debug(l, " Tag:[%s] FOREACH: %s", getTag().c_str(), flavor_string());
 
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);

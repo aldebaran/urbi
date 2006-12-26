@@ -1,5 +1,28 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	Factor the command flavors
+	* src/utypes.hh (UNodeType): Move to...
+	* src/flavorable.hh (Flavorable::UNodeType): this new class.
+	* src/ucommand.hh, src/ucommand.cc (U
+	(to_string, kind, nodetype): Remove, now useless.
+	(WHILE, WHILE_AND, WHILE_PIPE): Remove, replaced with...
+	(WHILE_FLAVORS): this.
+	(LOOPN, LOOPN_AND, LOOPN_PIPE): Remove, replaced with...
+	(LOOPN_FLAVORS): this.
+	(FOREACH, FOREACH_AND, FOREACH_PIPE): Remove, replaced with...
+	(FOREACH_FLAVORS): this.
+	(FOR, FOR_AND, FOR_PIPE): Remove, replaced with...
+	(FOR_FLAVORS): this.
+	(TREE): Rename as...
+	(TREE_FLAVORS): this.
+	(UCommand_TREE, UCommand_WHILE, UCommand_LOOPN, UCommand_FOREACH)
+	(UCommand_FOR): Inherit from Flavorable.
+	Adjust ctors and copy.
+	(UCommand_TREE::node): Remove, duplicate flavor_.
+	Adjust all uses.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	Restyling
 	* src/uvariablename.cc: Shorten scopes.
 	Use Boolean expressions instead of statements.

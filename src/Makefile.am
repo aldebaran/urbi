@@ -44,6 +44,7 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
+flavorable.hh							\
 memorymanager/blockmemorymanager.hh				\
 memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
 parser/uparser.hh parser/uparser.cc				\
@@ -128,8 +129,11 @@ parser/uparser.hh
 # files for the cores.
 kernelinclude_HEADERS +=			\
 fwd.hh						\
-version.hh					\
+flavorable.hh					\
 uast.hh						\
+uasynccommand.hh				\
+uasyncregister.hh				\
+uatcandidate.hh					\
 ubinary.hh					\
 ubinder.hh					\
 ucallid.hh					\
@@ -138,7 +142,10 @@ ucommandqueue.hh				\
 ucomplaints.hh					\
 uconnection.hh					\
 ucopy.hh					\
+ueventcompound.hh				\
 ueventhandler.hh				\
+ueventinstance.hh				\
+ueventmatch.hh					\
 uexpression.hh					\
 ufunction.hh					\
 ughostconnection.hh				\
@@ -154,12 +161,7 @@ uvalue.hh					\
 uvariable.hh					\
 uvariablelist.hh				\
 uvariablename.hh				\
-uasynccommand.hh				\
-uasyncregister.hh				\
-ueventmatch.hh					\
-ueventcompound.hh				\
-ueventinstance.hh				\
-uatcandidate.hh
+version.hh
 
 urbiinclude_HEADERS = $(uobject_headers)
 

@@ -25,12 +25,13 @@
 # include <list>
 
 # include "libport/fwd.hh"
-# include "fwd.hh"
 
-# include "utypes.hh"
+# include "fwd.hh"
+# include "flavorable.hh"
+# include "uast.hh"
 # include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
 # include "ustring.hh"
-# include "uast.hh"
+# include "utypes.hh"
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
@@ -44,11 +45,11 @@ class UCommand : public UAst
 public:
   MEMORY_MANAGED;
 
-  /// The different types for a UCommand
+  /// The different types for a UCommand.
   enum Type
   {
     GENERIC,
-    TREE,
+    TREE_FLAVORS,
     ASSIGN_VALUE,
     ASSIGN_PROPERTY,
     ASSIGN_BINARY,
@@ -72,20 +73,12 @@ public:
     FREEZEIF,
     AT,
     AT_AND,
-    WHILE,
-    WHILE_AND,
-    WHILE_PIPE,
+    WHILE_FLAVORS,
     WHENEVER,
     LOOP,
-    LOOPN,
-    LOOPN_PIPE,
-    LOOPN_AND,
-    FOREACH,
-    FOREACH_PIPE,
-    FOREACH_AND,
-    FOR,
-    FOR_PIPE,
-    FOR_AND,
+    LOOPN_FLAVORS,
+    FOREACH_FLAVORS,
+    FOR_FLAVORS,
     NOOP,
     EMIT,
     LOAD,
@@ -185,12 +178,12 @@ private:
   UCommand (const UCommand &c);
 };
 
-class UCommand_TREE : public UCommand
+class UCommand_TREE : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_TREE(const UCommand::location& l, UNodeType node,
+  UCommand_TREE(const UCommand::location& l, UNodeType flavor,
 		UCommand* command1, UCommand* command2);
   virtual ~UCommand_TREE();
 
@@ -208,8 +201,6 @@ public:
   UCommand* command2;
   /// context identificator for function calls
   UCallid* callid;
-  /// node type (AND, PIPE, ...)
-  UNodeType        node;
   /// The state of execution of command1 and command2.
   URunlevel        runlevel1, runlevel2;
   /// belonging connection
@@ -984,12 +975,11 @@ public:
   UString* tagRef;
 };
 
-class UCommand_WHILE : public UCommand
+class UCommand_WHILE : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
-
-  UCommand_WHILE (const UCommand::location& l, Type type,
+  UCommand_WHILE (const UCommand::location& l, UNodeType flavor,
 		  UExpression* test, UCommand* command);
   virtual ~UCommand_WHILE();
 
@@ -1023,12 +1013,12 @@ public:
   UCommand*        whenever_hook;
 };
 
-class UCommand_LOOPN : public UCommand
+class UCommand_LOOPN : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOPN (const UCommand::location& l, Type type,
+  UCommand_LOOPN (const UCommand::location& l, UNodeType flavor,
 		  UExpression* expression, UCommand* command);
   virtual ~UCommand_LOOPN();
 
@@ -1043,12 +1033,11 @@ public:
   UCommand* command;
 };
 
-class UCommand_FOREACH : public UCommand
+class UCommand_FOREACH : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
-
-  UCommand_FOREACH (const UCommand::location& l, Type type,
+  UCommand_FOREACH (const UCommand::location& l, UNodeType flavor,
 		    UVariableName* variablename,
 		    UExpression* expression,
 		    UCommand* command);
@@ -1071,15 +1060,13 @@ public:
   bool             firsttime;
 };
 
-class UCommand_FOR : public UCommand
+class UCommand_FOR : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOR (const UCommand::location& l, Type type,
-		UCommand* instr1,
-		UExpression* test,
-		UCommand* instr2,
+  UCommand_FOR (const UCommand::location& l, UNodeType flavor,
+		UCommand* instr1, UExpression* test, UCommand* instr2,
 		UCommand* command);
   virtual ~UCommand_FOR();
 
@@ -1097,7 +1084,7 @@ public:
   /// Command
   UCommand* command;
   /// true on the first passage
-  bool             first;
+  bool first;
 };
 
 class UCommand_NOOP : public UCommand

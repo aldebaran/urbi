@@ -182,15 +182,6 @@ using urbi::UQUEUE;
 using urbi::UCANCEL;
 using urbi::UNORMAL;
 
-/// Node type for a UCommand_TREE
-enum UNodeType
-{
-  UAND,
-  UPIPE,
-  USEMICOLON,
-  UCOMMA
-};
-
 /// Runlevel type for a binary tree exploration
 enum URunlevel
 {

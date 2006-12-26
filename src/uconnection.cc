@@ -812,20 +812,15 @@ UConnection::processCommand(UCommand *&command,
 		       ::urbiserver->connectionList.begin();
 		     retr != ::urbiserver->connectionList.end();
 		     ++retr)
-		  if ((*retr)->isActive())
-
-		    if (((*retr)->connectionTag->equal(tmpID->str)) ||
-			(STREQ(tmpID->str->str(), "all")) ||
-			((STREQ(tmpID->str->str(), "other")) &&
-			 (!(*retr)->connectionTag->equal(connectionTag))))
-		    {
-		      UCommand_TREE* tohook =
-			new UCommand_TREE(UCommand::location(), UAND,
-					  command->copy(),
-					  0);
-		      (*retr)->append(tohook);
-		    }
-
+		  if ((*retr)->isActive()
+		      && ((*retr)->connectionTag->equal(tmpID->str) ||
+			  STREQ(tmpID->str->str(), "all") ||
+			  (STREQ(tmpID->str->str(), "other") &&
+			   !(*retr)->connectionTag->equal(connectionTag))))
+		    (*retr)->append(new UCommand_TREE(UCommand::location(),
+						      Flavorable::UAND,
+						      command->copy(),
+						      0));
 	      delete tmpID;
 	    }
 	    delete command;
@@ -961,14 +956,14 @@ UConnection::processCommand(UCommand *&command,
 
     // Regular command processing
 
-    if (command->type == UCommand::TREE)
+    if (command->type == UCommand::TREE_FLAVORS)
     {
       mustReturn = true;
       return command ;
     }
     else
     {
-      // != TREE
+      // != TREE_FLAVORS
       morphed_up = command->up;
       morphed_position = command->position;
 
@@ -1092,8 +1087,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
     }
 
     // COMMAND2
-    if (tree->node == UAND
-	|| tree->node == UCOMMA
+    if (tree->flavor() == Flavorable::UAND
+	|| tree->flavor() == Flavorable::UCOMMA
 	|| tree->command1 == 0
 	|| tree->command1->status == UBACKGROUND)
     {
