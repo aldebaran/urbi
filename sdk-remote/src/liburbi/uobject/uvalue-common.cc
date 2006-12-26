@@ -18,7 +18,7 @@
 
  **************************************************************************** */
 
-#include <cstdio>
+#include "libport/cstdio"
 
 #include <sstream>
 #include <iostream>
@@ -34,30 +34,31 @@ namespace urbi
 
   void unescape(std::string& data)
   {
-    int src=0, dst=0;
+    int src = 0;
+    int dst = 0;
     while (data[src])
     {
-      if (data[src]!='\\')
-	data[dst]=data[src];
+      if (data[src] != '\\')
+	data[dst] = data[src];
       else
 	switch(data[++src])
 	{
 	  case 'n':
-	    data[dst]='\n';
+	    data[dst] = '\n';
 	    break;
 	  case '\\':
-	    data[dst]='\\';
+	    data[dst] = '\\';
 	    break;
 	  case '"':
-	    data[dst]='"';
+	    data[dst] = '"';
 	    break;
 	  default:
-	    data[dst]=data[src];
+	    data[dst] = data[src];
 	    break;
 	}
 
-      src++;
-      dst++;
+      ++src;
+      ++dst;
     }
     data[dst] = 0;
   }
@@ -65,7 +66,7 @@ namespace urbi
   void unescape(char* data)
   {
     char* src = data;
-    char * dst = data;
+    char* dst = data;
     while (*src)
     {
       if (*src != '\\')
@@ -77,7 +78,7 @@ namespace urbi
 	    *dst = '\n';
 	    break;
 	  case '\\':
-	    *dst='\\';
+	    *dst = '\\';
 	    break;
 	  case '"':
 	    *dst = '"';
@@ -86,8 +87,8 @@ namespace urbi
 	    *dst = *src;
 	}
 
-      src++;
-      dst++;
+      ++src;
+      ++dst;
     }
     *dst = 0;
   }
@@ -99,26 +100,26 @@ namespace urbi
 		    std::list<BinaryData>& bins,
 		    std::list<BinaryData>::iterator& binpos)
   {
-    while (message[pos]==' ')
-      pos++;
+    while (message[pos] == ' ')
+      ++pos;
     if (message[pos] == '"')
     {
       //string
       type = DATA_STRING;
       //get terminating '"'
-      int p=pos+1;
-      while (message[p] && message[p]!='"')
+      int p = pos + 1;
+      while (message[p] && message[p] != '"')
       {
-	if (message[p]=='\\')
-	  p++;
-	p++;
+	if (message[p] == '\\')
+	  ++p;
+	++p;
       }
       if (!message[p])
 	return -p; //parse error
 
-      stringValue = new std::string(message+pos+1, p-pos-1);
+      stringValue = new std::string(message + pos + 1, p - pos - 1);
       unescape(*stringValue);
-      return p+1;
+      return p + 1;
     }
 
     if (message[pos] == '[')
@@ -126,103 +127,104 @@ namespace urbi
       //list message
       type = DATA_LIST;
       list = new UList();
-      pos++;
-      while (message[pos]==' ')
-	pos++;
+      ++pos;
+      while (message[pos] == ' ')
+	++pos;
       while (message[pos])
       {
-	while (message[pos]==' ')
-	  pos++;
-	if (message[pos]==']')
+	while (message[pos] == ' ')
+	  ++pos;
+	if (message[pos] == ']')
 	  break;
-	UValue *v = new UValue();
+	UValue* v = new UValue();
 	int p = v->parse(message, pos, bins, binpos);
-	if (p<0)
+	if (p < 0)
 	  return p;
 	list->array.push_back(v);
 	pos = p;
-	while (message[pos]==' ') pos++;
+	while (message[pos] == ' ')
+	  ++pos;
 	//expect , or rbracket
-	if (message[pos]==']')
+	if (message[pos] == ']')
 	  break;
-	if (message[pos]!=',')
+	if (message[pos] != ',')
 	  return -pos;
-	pos++;
+	++pos;
       }
 
-      if (message[pos]!=']')
+      if (message[pos] != ']')
 	return -pos;
-      return pos+1;
+      return pos + 1;
     }
 
     //OBJ a [x:12, y:4]
-    if (!strncmp(message+pos, "OBJ ", 4))
+    if (!strncmp(message + pos, "OBJ ", 4))
     {
       //obj message
-      pos+=4;
+      pos += 4;
       type = DATA_OBJECT;
       object = new UObjectStruct();
 
-      while (message[pos]==' ')
-	pos++;
-      if (message[pos]!='[')
+      while (message[pos] == ' ')
+	++pos;
+      if (message[pos] != '[')
 	return -pos;
-      pos++;
+      ++pos;
 
       while (message[pos])
       {
-	while (message[pos]==' ')
-	  pos++;
-	if (message[pos]==']')
+	while (message[pos] == ' ')
+	  ++pos;
+	if (message[pos] == ']')
 	  break; //empty object
 	//parse name
 	int p = pos;
-	while (message[p] && message[p]!=':')
-	  p++;
+	while (message[p] && message[p] != ':')
+	  ++p;
 	if (!message[p])
 	  return -p; //parse error
-	p++;
+	++p;
 	UNamedValue nv;
-	nv.name = std::string(message+pos, p-pos-1);
-	pos=p;
-	while (message[pos]==' ')
-	  pos++;
-	UValue *v = new UValue();
+	nv.name = std::string(message + pos, p - pos - 1);
+	pos = p;
+	while (message[pos] == ' ')
+	  ++pos;
+	UValue* v = new UValue();
 	p = v->parse(message, pos, bins, binpos);
-	if (p<0)
+	if (p < 0)
 	  return p;
 	nv.val = v;
 	object->array.push_back(nv);
 	pos = p;
-	while (message[pos]==' ')
-	  pos++;
+	while (message[pos] == ' ')
+	  ++pos;
 	//expect , or rbracket
-	if (message[pos]==']')
+	if (message[pos] == ']')
 	  break;
-	if (message[pos]!=',')
+	if (message[pos] != ',')
 	  return -pos;
-	pos++;
+	++pos;
       }
 
-      if (message[pos]!=']')
+      if (message[pos] != ']')
 	return -pos;
-      return pos+1;
+      return pos + 1;
     }
 
-    if (!strncmp(message+pos,"void",4))
+    if (!strncmp(message+pos, "void", 4))
     {
       //void
       type = DATA_VOID;
-      pos +=4;
+      pos += 4;
       return pos;
     }
 
-    if (!strncmp(message+pos,"BIN ",4))
+    if (!strncmp(message + pos, "BIN ", 4))
     {
       //binary message: delegate
       type = DATA_BINARY;
       binary = new UBinary();
-      pos +=4;
+      pos += 4;
       //parsing type
       int p = binary->parse(message, pos, bins, binpos);
       return p;
@@ -234,7 +236,7 @@ namespace urbi
     if (!count)
       return -pos;
     type = DATA_DOUBLE;
-    pos +=p;
+    pos += p;
     return pos;
   }
 
@@ -253,36 +255,36 @@ namespace urbi
 	if (binary->type != BINARY_NONE
 	    && binary->type != BINARY_UNKNOWN)
 	  binary->buildMessage();
-	s << "BIN "<< binary->common.size << " " << binary->message << ";";
-	s.write((char *)binary->common.data, binary->common.size);
+	s << "BIN "<< binary->common.size << ' ' << binary->message << ';';
+	s.write((char*) binary->common.data, binary->common.size);
 	break;
       case DATA_LIST:
-      {
-	s << "[";
-	int sz = list->size();
-	for (int i=0; i<sz;i++)
 	{
-	  s << (*list)[i];
-	  if (i != sz-1)
-	    s << " , ";
+	  s << '[';
+	  int sz = list->size();
+	  for (int i = 0; i < sz; ++i)
+	  {
+	    s << (*list)[i];
+	    if (i != sz - 1)
+	      s << " , ";
+	  }
+	  s << ']';
 	}
-	s << "]";
-      }
-      break;
+	break;
       case DATA_OBJECT:
-      {
-	s << "OBJ "<<object->refName<<" [";
-	int sz = object->size();
-	for (int i=0; i<sz;i++)
 	{
-	  s << (*object)[i].name << ":";
-	  s<< (*object)[i].val;
-	  if (i != sz-1)
-	    s<< " , ";
+	  s << "OBJ "<<object->refName<<" [";
+	  int sz = object->size();
+	  for (int i = 0; i < sz; ++i)
+	  {
+	    s << (*object)[i].name << ':';
+	    s << (*object)[i].val;
+	    if (i != sz - 1)
+	      s << " , ";
+	  }
+	  s << ']';
 	}
-	s<< "]";
-      }
-      break;
+	break;
       default:
 	s << "<<void>>";
     }
@@ -293,49 +295,50 @@ namespace urbi
   /*----------.
   | UBinary.  |
   `----------*/
-  int UBinary::parse(const char * message, int pos,
+  int UBinary::parse(const char* message, int pos,
 		     std::list<BinaryData>& bins,
 		     std::list<BinaryData>::iterator& binpos)
   {
-    while (message[pos]==' ')
-      pos++;
+    while (message[pos] == ' ')
+      ++pos;
     //find end of header
 
     if (binpos == bins.end()) //no binary data available
       return -1;
 
     //validate size
-    int ps,psize;
-    int count = sscanf(message+pos,"%d%n",&psize,&ps);
-    if (count!=1)
+    int ps;
+    int psize;
+    int count = sscanf(message+pos, "%d%n", &psize, &ps);
+    if (count != 1)
       return -pos;
     if (psize != binpos->size)
     {
-      std::cerr <<"bin size inconsistency\n";
+      std::cerr << "bin size inconsistency\n";
       return -pos;
     }
-    pos +=ps;
+    pos += ps;
     common.size = psize;
     common.data = malloc(psize);
     memcpy(common.data, binpos->data, common.size);
-    binpos++;
-
+    ++binpos;
 
     int p = pos;
-    while (message[p] && message[p]!='\n')
-      p++;
+    while (message[p] && message[p] != '\n')
+      ++p;
     if (!message[p])
       return -p; //parse error
-    this->message = std::string(message+pos, p-pos);
-    p++;
+    this->message = std::string(message + pos, p - pos);
+    ++p;
 
     //trying to parse header to find type
     char type[64];
     memset(type, 0, 64);
     int p2, p3, p4, p5;
-    count = sscanf(message+pos,"%63s %d %d %d %d", type, &p2, &p3, &p4, &p5);
-    //DEBUG fprintf(stderr,"%s:	 %d %s %d %d\n", message, p1, type, p2, p3);
-    if (!strcmp(type, "jpeg"))
+    count = sscanf(message + pos, "%63s %d %d %d %d",
+		   type, &p2, &p3, &p4, &p5);
+    //DEBUG fprintf(stderr, "%s:	 %d %s %d %d\n", message, p1, type, p2, p3);
+    if (STREQ(type, "jpeg"))
     {
       this->type = BINARY_IMAGE;
       image.size = common.size;
@@ -345,7 +348,7 @@ namespace urbi
       return p;
     }
 
-    if (!strcmp(type, "YCbCr"))
+    if (STREQ(type, "YCbCr"))
     {
       this->type = BINARY_IMAGE;
       image.size = common.size;
@@ -355,7 +358,7 @@ namespace urbi
       return p;
     }
 
-    if (!strcmp(type, "rgb"))
+    if (STREQ(type, "rgb"))
     {
       this->type = BINARY_IMAGE;
       image.size = common.size;
@@ -365,7 +368,7 @@ namespace urbi
       return p;
     }
 
-    if (!strcmp(type, "raw"))
+    if (STREQ(type, "raw"))
     {
       this->type = BINARY_SOUND;
       sound.soundFormat = SOUND_RAW;
@@ -377,7 +380,7 @@ namespace urbi
       return p;
     }
 
-    if (!strcmp(type, "wav"))
+    if (STREQ(type, "wav"))
     {
       this->type = BINARY_SOUND;
       sound.soundFormat = SOUND_WAV;
@@ -404,29 +407,29 @@ namespace urbi
     std::ostringstream str;
     if (type == BINARY_IMAGE)
     {
-      switch( image.imageFormat)
+      switch (image.imageFormat)
       {
 	case IMAGE_RGB:
-	  str<<"rgb ";
+	  str << "rgb ";
 	  break;
 	case IMAGE_JPEG:
-	  str<<"jpeg ";
+	  str << "jpeg ";
 	  break;
 	case IMAGE_YCbCr:
-	  str<<"YCbCr ";
+	  str << "YCbCr ";
 	  break;
 	default:
-	  str<<"unknown ";
+	  str << "unknown ";
 	  break;
       }
-      str<<image.width<<" "<<image.height;
+      str << image.width << ' ' << image.height;
     }
     if (type == BINARY_SOUND)
     {
       switch (sound.soundFormat)
       {
 	case SOUND_RAW:
-	  str<<"raw ";
+	  str << "raw ";
 	  break;
 	case SOUND_WAV:
 	  str << "wav ";
@@ -436,9 +439,9 @@ namespace urbi
 	  break;
       }
       str << sound.channels
-	  << " " << sound.rate
-	  << " " << sound.sampleSize
-	  << " " << sound.sampleFormat;
+	  << ' ' << sound.rate
+	  << ' ' << sound.sampleSize
+	  << ' ' << sound.sampleFormat;
     }
 
     if (type == BINARY_UNKNOWN)
@@ -473,14 +476,14 @@ namespace urbi
     : type(DATA_DOUBLE), val(v)
   {}
 
-  UValue::UValue(void * v)
+  UValue::UValue(void* v)
     : type(DATA_STRING)
   {
     std::ostringstream i;
-    i<<"%ptr_"<<(unsigned long)v;
+    i << "%ptr_" << (unsigned long) v;
     stringValue = new std::string(i.str());
   }
-  UValue::UValue(char*	v)
+  UValue::UValue(char* v)
     : type(DATA_STRING), stringValue(new std::string(v))
   {}
 
@@ -517,7 +520,6 @@ namespace urbi
   {
     object = new UObjectStruct(o);
   }
-
 
   UValue::~UValue()
   {
@@ -687,10 +689,10 @@ namespace urbi
     *this = v;
   }
 
-
   /*----------.
   | UBinary.  |
   `----------*/
+
   UBinary::UBinary()
   {
     common.data = 0;
@@ -711,12 +713,11 @@ namespace urbi
     *this = b;
   }
 
-
   UBinary::UBinary(const UImage& i)
   {
     type = BINARY_IMAGE;
     image = i;
-    image.data = (unsigned char*) malloc(image.size);
+    image.data = static_cast<unsigned char*> (malloc (image.size));
     memcpy(image.data, i.data, image.size);
   }
 
@@ -724,14 +725,16 @@ namespace urbi
   {
     type = BINARY_SOUND;
     sound = i;
-    sound.data = (char *)malloc(sound.size);
+    sound.data = static_cast<char*> (malloc (sound.size));
     memcpy(sound.data, i.data, sound.size);
   }
 
-  UBinary& UBinary::operator = (const UBinary& b)
+  UBinary& UBinary::operator= (const UBinary& b)
   {
-    if (common.data)
-      free(common.data);
+    if (this == &b)
+      return *this;
+
+    free(common.data);
 
     type = b.type;
     message = b.message;
@@ -768,15 +771,19 @@ namespace urbi
     *this = b;
   }
 
-  UList& UList::operator = (const UList& b)
+  UList& UList::operator= (const UList& b)
   {
+    if (this == &b)
+      return *this;
+
     offset = 0;
-    for (int i=0;i<size();i++) //relax, its a vector
+    for (int i = 0; i < size(); ++i) //relax, its a vector
       delete array[i];
     array.clear();
 
-    for (std::vector<UValue*>::const_iterator it= b.array.begin();
-	 it !=b.array.end();it++)
+    for (std::vector<UValue*>::const_iterator it = b.array.begin();
+	 it !=b.array.end();
+	 ++it)
       array.push_back(new UValue(**it));
     offset = b.offset;
 
@@ -785,8 +792,8 @@ namespace urbi
 
   UList::~UList()
   {
-    offset=0;
-    for (int i=0;i<size();i++) //relax, its a vector
+    offset = 0;
+    for (int i = 0; i < size(); ++i) //relax, its a vector
       delete array[i];
     array.clear();
   }
@@ -804,14 +811,18 @@ namespace urbi
     *this = b;
   }
 
-  UObjectStruct& UObjectStruct::operator = (const UObjectStruct& b)
+  UObjectStruct& UObjectStruct::operator= (const UObjectStruct& b)
   {
-    for (int i=0;i<size();i++) // Relax, it's a vector.
+    if (this == &b)
+      return *this;
+
+    for (int i = 0; i < size(); ++i) // Relax, it's a vector.
       delete array[i].val;
     array.clear();
 
-    for (std::vector<UNamedValue>::const_iterator it= b.array.begin();
-	 it != b.array.end();it++)
+    for (std::vector<UNamedValue>::const_iterator it = b.array.begin();
+	 it != b.array.end();
+	 ++it)
       array.push_back(UNamedValue(it->name, new UValue(*(it->val))));
 
     return *this;
@@ -819,7 +830,7 @@ namespace urbi
 
   UObjectStruct::~UObjectStruct()
   {
-    for (int i=0; i<size(); i++) //relax, it's a vector
+    for (int i = 0; i < size(); ++i) //relax, it's a vector
       delete array[i].val;
     array.clear();
   }
@@ -829,13 +840,13 @@ namespace urbi
   | UValue.  |
   `---------*/
 
-  UValue& UObjectStruct::operator [](const std::string& s)
+  UValue& UObjectStruct::operator[] (const std::string& s)
   {
-    for (int i=0;i<size();i++)
-      if (array[i].name==s)
+    for (int i = 0; i < size(); ++i)
+      if (array[i].name == s)
 	return *array[i].val;
     static UValue n;
-    return n;
+    return n; // Gni?
   }
 
   /*-------.
@@ -843,9 +854,9 @@ namespace urbi
   `-------*/
 
   void
-  UVar::operator = (const UValue& v)
+  UVar::operator= (const UValue& v)
   {
-    switch(v.type)
+    switch (v.type)
     {
       case DATA_STRING:
 	*this = *v.stringValue;
@@ -861,6 +872,7 @@ namespace urbi
 	break;
       case DATA_VOID:
 	//TODO: do something!
+	abort ();
 	break;
     }
   }

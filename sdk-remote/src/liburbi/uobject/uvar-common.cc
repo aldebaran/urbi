@@ -32,10 +32,10 @@ namespace urbi
   }
 
   //! UVar constructor: object reference + var name
-  UVar::UVar(UObject& obj, const std::string &varname)
+  UVar::UVar(UObject& obj, const std::string& varname)
     : VAR_PROP_INIT
   {
-    name = obj.__name + "." + varname;
+    name = obj.__name + '.' + varname;
     __init();
   }
 
@@ -43,16 +43,16 @@ namespace urbi
   UVar::UVar(const std::string& objname, const std::string& varname)
     : VAR_PROP_INIT
   {
-    name = objname + "." + varname;
+    name = objname + '.' + varname;
     __init();
   }
 
 
   //! UVar initialization
   void
-  UVar::init(const std::string &objname, const std::string &varname)
+  UVar::init(const std::string& objname, const std::string& varname)
   {
-    name = objname + "." + varname;
+    name = objname + '.' + varname;
     __init();
   }
 
