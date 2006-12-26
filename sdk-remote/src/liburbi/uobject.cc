@@ -78,17 +78,17 @@ namespace urbi
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
-  
-  const char * cast(UValue &v, const char ** b) 
+
+  const char* cast(UValue &v, const char** b)
   {
-    static const char * er = "invalid";
+    static const char* er = "invalid";
     if (v.type != DATA_STRING)
       return er;
     return v.stringValue->c_str();
   }
-  
-  
-  std::ostream&  unarmorAndSend(const char* a);
+
+  std::ostream& unarmorAndSend(const char* a);
+
   void uobject_unarmorAndSend(const char* a)
   {
     unarmorAndSend(a);
@@ -96,20 +96,16 @@ namespace urbi
 
   void send(const char* a)
   {
-    std::ostream& s =
-      getDefaultClient() == 0
-      ? std::cerr
+    std::ostream& s = getDefaultClient() == 0 ? std::cerr
       : ((UAbstractClient*)getDefaultClient())->getStream();
     s << a;
   }
 
   void send(void* buf, int size)
   {
-    std::ostream& s =
-      getDefaultClient()==0
-      ? std::cerr
+    std::ostream& s = getDefaultClient() == 0 ? std::cerr
       : ((UAbstractClient*)getDefaultClient())->getStream();
-    s.rdbuf()->sputn((char*)buf, size);
+    s.rdbuf()->sputn(static_cast<char*> (buf), size);
   }
 
 
@@ -145,7 +141,8 @@ namespace urbi
 	       << name << " from " << objname << ";";
 
     if (type == "varaccess")
-      echo("Warning: NotifyAccess facility is not available for modules in remote mode.\n");
+      echo("Warning: NotifyAccess facility is not available for modules in "
+           "remote mode.\n");
   };
 
   //! UGenericCallback constructor.
@@ -155,7 +152,7 @@ namespace urbi
     : objname(objname), name(name)
   {
     t[this->name].push_back(this);
-    URBI(()) << "external " << type << " " << name <<";";
+    URBI(()) << "external " << type << " " << name << ";";
   };
 
   UGenericCallback::~UGenericCallback()
@@ -179,16 +176,17 @@ namespace urbi
     std::string cbname = os.str();
 
     // needed by MSVC
-    //createUCallback(objname, "event", this, &UTimerCallback::call, objname + "." + cbname, eventmap);
+    //createUCallback(objname, "event", this, &UTimerCallback::call, objname +
+    //                "." + cbname, eventmap);
     new UCallbackvoid0<UTimerCallback> (objname, "event", this,
 					&UTimerCallback::call,
-					objname + "." + cbname, eventmap);
+					objname + '.' + cbname, eventmap);
 
     os.str("");
     os.clear();
-    os << "timer_"<<objname<<": every("<<period<<") { emit "
-       <<(objname + "." +cbname)<<";};";
-    URBI(())<<os.str();
+    os << "timer_" << objname << ": every(" << period << ") { emit "
+       << (objname + '.' + cbname) << ";};";
+    URBI(()) << os.str();
   }
 
   UTimerCallback::~UTimerCallback()
@@ -202,7 +200,7 @@ namespace urbi
   void
   UObject::USync(UVar& v)
   {
-    UNotifyChange(v,&UObject::voidfun);
+    UNotifyChange(v, &UObject::voidfun);
   }
 
   // **************************************************************************
@@ -211,14 +209,14 @@ namespace urbi
     : __name(s),
       classname(s),
       derived(false),
-      load(s,"load")
+      load(s, "load")
   {
     objecthub = 0;
     autogroup = false;
 
     lastUObject = this;
     URBI(()) << "class " << __name << "{};";
-    URBI(()) << "external " << "object" << " " << __name <<";";
+    URBI(()) << "external object " << __name << ";";
     period = -1;
   }
 
@@ -294,19 +292,20 @@ namespace urbi
     if (period != -1)
       {
 	//kill previous timer
-	os<<"stop maintimer_"<<__name<<";";
+	os << "stop maintimer_" << __name << ";";
 	URBI(())<<os.str();
       }
     period = t;
-    if (period<=0)
+    if (period <= 0)
       period = 1;
-    std::string cbname = __name+".maintimer";
-    createUCallback(__name,"event",
+    std::string cbname = __name + ".maintimer";
+    createUCallback(__name, "event",
 		    this, &UObject::update, cbname, eventmap);
     os.str("");
     os.clear();
-    os << "maintimer_"<<__name<<": every("<<period<<") { emit "<<cbname<<";};";
-    URBI(())<<os.str();
+    os << "maintimer_" << __name << ": every(" << period << ") "
+    "{ emit "<<cbname<<";};";
+    URBI(()) << os.str();
   }
 
   // This part is specific for standalone linux objects
@@ -318,7 +317,9 @@ namespace urbi
     //check message type
     if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST)
       {
-	msg.client.printf("Component Error: unknown message content, type %d\n",(int)msg.type);
+	msg.client.printf("Component Error: "
+                          "unknown message content, type %d\n",
+                          (int) msg.type);
 	return URBI_CONTINUE;
       }
 
@@ -326,19 +327,25 @@ namespace urbi
 
     if (array.size()<2)
       {
-	msg.client.printf("Component Error: Invalid number of arguments in the server message: %d\n",array.size());
+        msg.client.printf("Component Error: Invalid number "
+                          "of arguments in the server message: %d\n",
+                          array.size());
 	return URBI_CONTINUE;
       }
 
     if (array[0].type != DATA_DOUBLE)
       {
-	msg.client.printf("Component Error: unknown server message type %d\n",(int)array[0].type);
+	msg.client.printf("Component Error: "
+                          "unknown server message type %d\n",
+                          (int) array[0].type);
 	return URBI_CONTINUE;
       }
 
     if (array[0].type != DATA_DOUBLE)
       {
-	msg.client.printf("Component Error: unknown server message type %d\n",(int)array[0].type);
+	msg.client.printf("Component Error: "
+                          "unknown server message type %d\n",
+                          (int) array[0].type);
 	return URBI_CONTINUE;
       }
 
@@ -350,30 +357,30 @@ namespace urbi
 	if (varmapfind != varmap.end())
 	  for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	       it != varmapfind->second.end();
-	       it++)
+	       ++it)
 	    (*it)->__update(array[2]);
 
-	UTable::iterator monitormapfind =
-	  monitormap.find(array[1]);
-	if (monitormapfind != monitormap.end())
-	  for (std::list<UGenericCallback*>::iterator cbit = monitormapfind->second.begin();
-	       cbit != monitormapfind->second.end();
-	       cbit++)
-	    {
-	      // test of return value here
-	      UList u;
-	      u.array.push_back(new UValue());
-	      u[0].storage = (*cbit)->storage;
-	      (*cbit)->__evalcall(u);
-	    }
+        UTable::iterator monitormapfind = monitormap.find(array[1]);
+        for (std::list<UGenericCallback*>::iterator
+	     cbit = monitormapfind->second.begin();
+             cbit != monitormapfind->second.end();
+             ++cbit)
+        {
+          // test of return value here
+          UList u;
+          u.array.push_back(new UValue());
+          u[0].storage = (*cbit)->storage;
+          (*cbit)->__evalcall(u);
+        }
       }
 
     // UEM_EVALFUNCTION
     else if ((USystemExternalMessage)(int)array[0] == UEM_EVALFUNCTION)
       {
-	// For the moment, this iteration is useless since the list will contain
-	// one and only one element. There is no function overloading yet and still
-	// it would probably use a unique name identifier, hence a single element list again.
+	/* For the moment, this iteration is useless since the list will
+	 * contain one and only one element. There is no function overloading
+	 * yet and still it would probably use a unique name identifier, hence
+	 * a single element list again. */
 	if (functionmap.find(array[1]) != functionmap.end())
 	  {
 	    std::list<UGenericCallback*> tmpfun = functionmap[array[1]];
@@ -382,16 +389,17 @@ namespace urbi
 	    UValue retval = (*tmpfunit)->__evalcall(array);
 	    array.setOffset(0);
 	    if (retval.type == DATA_VOID)
-	      URBI(()) << "var " << (std::string)array[2];
+	      URBI(()) << "var " << (std::string) array[2];
 	    else
 	      {
-		URBI(()) << (std::string)array[2] << "=";
+		URBI(()) << (std::string) array[2] << "=";
 		getDefaultClient()->send(retval);//I'd rather not use << for bins
 	      }
 	    URBI(()) << ";";
 	  }
 	else
-	  msg.client.printf("Component Error: %s function unknown.\n",((std::string)array[1]).c_str());
+	  msg.client.printf("Component Error: %s function unknown.\n",
+			    ((std::string) array[1]).c_str());
       }
 
     // UEM_EMITEVENT
@@ -402,7 +410,7 @@ namespace urbi
 	    std::list<UGenericCallback*>  tmpfun = eventmap[array[1]];
 	    for (std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 		 tmpfunit != tmpfun.end();
-		 tmpfunit++)
+		 ++tmpfunit)
 	      {
 		array.setOffset(2);
 		(*tmpfunit)->__evalcall(array);
@@ -419,7 +427,7 @@ namespace urbi
 	    std::list<UGenericCallback*>  tmpfun = eventendmap[array[1]];
 	    for (std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 		 tmpfunit != tmpfun.end();
-		 tmpfunit++)
+		 ++tmpfunit)
 	      {
 		array.setOffset(2);
 		(*tmpfunit)->__evalcall(array);
@@ -434,15 +442,17 @@ namespace urbi
 	std::list<baseURBIStarter*>::iterator found = objectlist->end();
 	for (std::list<baseURBIStarter*>::iterator retr = objectlist->begin();
 	     retr != objectlist->end();
-	     retr++)
+	     ++retr)
 	  if ((*retr)->name == (std::string)array[2])
 	    if (found != objectlist->end())
-	      msg.client.printf("Double object definition %s\n",(*retr)->name.c_str());
+	      msg.client.printf("Double object definition %s\n",
+				(*retr)->name.c_str());
 	    else
 	      found = retr;
 
 	if (found == objectlist->end())
-	  msg.client.printf("Unknown object definition %s\n",((std::string)array[2]).c_str());
+	  msg.client.printf("Unknown object definition %s\n",
+			    ((std::string) array[2]).c_str());
 	else
 	  (*found)->copy((std::string) array[1]);
 
@@ -454,15 +464,17 @@ namespace urbi
 	std::list<baseURBIStarter*>::iterator found = objectlist->end();
 	for (std::list<baseURBIStarter*>::iterator retr = objectlist->begin();
 	     retr != objectlist->end();
-	     retr++)
+	     ++retr)
 	  if ((*retr)->name == (std::string)array[1])
 	    if (found != objectlist->end())
-	      msg.client.printf("Double object definition %s\n",(*retr)->name.c_str());
+	      msg.client.printf("Double object definition %s\n",
+				(*retr)->name.c_str());
 	    else
 	      found = retr;
 
 	if (found == objectlist->end())
-	  msg.client.printf("Unknown object definition %s\n",((std::string)array[1]).c_str());
+	  msg.client.printf("Unknown object definition %s\n",
+			    ((std::string) array[1]).c_str());
 	else
 	  {
 	    // remove the object from objectlist or terminate
@@ -481,7 +493,9 @@ namespace urbi
 
     // DEFAULT
     else
-      msg.client.printf("Component Error: unknown server message type number %d\n",(int)array[0]);
+      msg.client.printf("Component Error: "
+                        "unknown server message type number %d\n",
+                        (int)array[0]);
 
     return URBI_CONTINUE;
   }
@@ -512,7 +526,7 @@ namespace urbi
   {
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       (*it)->update();
     update();
     return 0;
@@ -530,11 +544,11 @@ namespace urbi
     UObjectList* res = new UObjectList();
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       if ((*it)->classname == subclass)
 	res->push_back(*it);
 
-    return(res);
+    return res;
   }
 
 
@@ -544,7 +558,7 @@ namespace urbi
   {
     for (UStartlistHub::iterator retr = objecthublist->begin();
 	 retr != objecthublist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObjectHub();
 
@@ -557,7 +571,7 @@ namespace urbi
   {
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObject();
 
@@ -620,7 +634,7 @@ namespace urbi
 
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       (*retr)->init((*retr)->name);
   }
 

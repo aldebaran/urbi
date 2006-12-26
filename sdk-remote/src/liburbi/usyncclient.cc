@@ -97,7 +97,7 @@ namespace urbi
   UMessage * USyncClient::syncGet(const char * format, ...)
   {
     //check there is no tag
-    int p=0;
+    int p = 0;
     while(format[p]==' ') p++;
     while (isalpha(format[p])) p++;
     while(format[p]==' ') p++;
@@ -107,9 +107,9 @@ namespace urbi
       ::exit(1);
     }
     //check if there is a command separator
-    p = strlen(format)-1;
-    while (format[p]==' ') p--;
-    bool hasSep = (format[p]==';' || format[p]==',');
+    p = strlen(format) - 1;
+    while (format[p] == ' ') p--;
+    bool hasSep = (format[p] == ';' || format[p] == ',');
     va_list arg;
     va_start(arg, format);
     sendBufferLock.lock();
@@ -121,10 +121,10 @@ namespace urbi
       return 0;
     }
     if (!hasSep)
-      strcat(sendBuffer,",");
+      strcat(sendBuffer, ",");
     char tag[70];
     makeUniqueTag(tag);
-    strcat(tag,":");
+    strcat(tag, ":");
     effectiveSend(tag, strlen(tag));
     tag[strlen(tag)-1]=0; //restore tag
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
@@ -147,8 +147,9 @@ namespace urbi
       f = 1;
     else
       f = 0;
-    send("%s.format = %d;noop;noop;", camera, f);	//XXX required to ensure format change is applied
-    UMessage *m = syncGet("%s.val;",camera);
+    //XXX required to ensure format change is applied
+    send("%s.format = %d; noop; noop;", camera, f);
+    UMessage *m = syncGet("%s.val;", camera);
     if (m->value->binary->type != BINARY_IMAGE)
     {
       delete m;
@@ -158,13 +159,17 @@ namespace urbi
     height = m->value->binary->image.height;
 
     int osize = buffersize;
-    if (f == 1  &&  format != IMAGE_JPEG) {	//uncompress jpeg
+    if (f == 1  &&  format != IMAGE_JPEG)
+    {
+      //uncompress jpeg
       if (format == IMAGE_YCbCr)
-	convertJPEGtoYCrCb((const byte *) m->value->binary->image.data, m->value->binary->image.size,
-			   (byte *) buffer, buffersize);
+        convertJPEGtoYCrCb((const byte*) m->value->binary->image.data,
+                           m->value->binary->image.size, (byte*) buffer,
+                           buffersize);
       else
-	convertJPEGtoRGB((const byte *)  m->value->binary->image.data, m->value->binary->image.size,
-			 (byte *) buffer, buffersize);
+        convertJPEGtoRGB((const byte*)  m->value->binary->image.data,
+                         m->value->binary->image.size, (byte*) buffer,
+                         buffersize);
     }
     else if (format == IMAGE_RGB || format == IMAGE_PPM)
     {
@@ -196,7 +201,7 @@ namespace urbi
 
 
   int
-  USyncClient::syncGetNormalizedDevice(const char *device, double &val)
+  USyncClient::syncGetNormalizedDevice(const char* device, double& val)
   {
     UMessage *m = syncGet("%s.valn;", device);
 
@@ -243,10 +248,10 @@ namespace urbi
 
 
   int
-  USyncClient::syncGetDevice(const char *device, const char * access,
-			     double &val)
+  USyncClient::syncGetDevice(const char* device, const char* access,
+			     double& val)
   {
-    UMessage *m = syncGet("%s.%s;", device,access);
+    UMessage *m = syncGet("%s.%s;", device, access);
 
     if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
     {
@@ -262,9 +267,16 @@ namespace urbi
 
 
   int
-  USyncClient::syncGetSound(const char * device, int duration, USound &sound)
+  USyncClient::syncGetSound(const char* device, int duration, USound& sound)
   {
-    send("syncgetsound = BIN 0;loopsound: loop syncgetsound = syncgetsound +  %s.val ,   { wait(%d); stop loopsound; noop;noop; };", device, duration);
+    send("syncgetsound = BIN 0;"
+         " loopsound: loop syncgetsound = syncgetsound +  %s.val,"
+         " { "
+         "   wait(%d);"
+         "   stop loopsound;"
+         "   noop;"
+         "   noop;"
+         " };", device, duration);
     UMessage * m = syncGet("syncgetsound;");
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY
@@ -279,21 +291,22 @@ namespace urbi
   }
 
   int
-  USyncClient::syncSend(const void * buffer, int length)
+  USyncClient::syncSend(const void* buffer, int length)
   {
-    if (rc !=0) return -1;
+    if (rc != 0)
+      return -1;
     sendBufferLock.lock();
     int sent = 0;
     while (sent<length)
     {
-      int res = ::write(sd, (char *) buffer + sent, length - sent);
+      int res = ::write(sd, (char*) buffer + sent, length - sent);
       if (res < 0)
       {
 	rc = res;
 	sendBufferLock.unlock();
 	return res;
       }
-      sent +=res;
+      sent += res;
     }
     sendBufferLock.unlock();
     return 0;

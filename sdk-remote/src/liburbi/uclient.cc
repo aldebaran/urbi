@@ -22,7 +22,7 @@
 **********************************************************************/
 
 #include <cstdlib>
-#include <cstdio>
+#include "libport/cstdio"
 #include <cerrno>
 
 #include <locale.h>
@@ -47,13 +47,13 @@
 namespace urbi
 {
   /*! Establish the connection with the server.
-   Spawn a new thread that will listen to the socket, parse the incoming URBI messages, and notify
-   the appropriate callbacks.
+   Spawn a new thread that will listen to the socket, parse the incoming URBI
+   messages, and notify the appropriate callbacks.
    */
   UClient::UClient(const char *_host, int _port, int _buflen)
     : UAbstractClient(_host, _port, _buflen)
   {
-    setlocale(LC_NUMERIC,"C");
+    setlocale(LC_NUMERIC, "C");
     control_fd[0] = control_fd[1] = -1;
 
 #ifndef WIN32
@@ -127,7 +127,7 @@ namespace urbi
     if (pos<0)
     {
       rc = pos;
-      printf("UClient::UClient cannot connect: read error %d.\n",rc);
+      printf("UClient::UClient cannot connect: read error %d.\n", rc);
       return;
     }
     else
@@ -143,7 +143,7 @@ namespace urbi
     close(sd);
     sd = -1;
     if (control_fd[1] != -1 )
-      ::write(control_fd[1],"a",1);
+      ::write(control_fd[1], "a", 1);
     //must wait for listen thread to terminate
     joinThread(thread);
     if (control_fd[1] != -1)
@@ -165,11 +165,12 @@ namespace urbi
   {
 #if DEBUG
     char output[size+1];
-    memcpy((void*)output, buffer, size);
+    memcpy (static_cast<void*> (output), buffer, size);
     output[size]=0;
     cout << ">>>> SENT : [" << output << "]" << endl;
 #endif
-    if (rc) return -1;
+    if (rc)
+      return -1;
     int pos = 0;
     while (pos!=size)
     {
@@ -204,7 +205,7 @@ namespace urbi
 	tme.tv_sec = 1;
 	tme.tv_usec = 0;
 	res = select(maxfd+1, &rfds, NULL, NULL, &tme);
-	if ( (res < 0) && (errno != EINTR))
+	if (res < 0 && errno != EINTR)
 	{
 	  this->rc = -1;
 #ifdef WIN32
@@ -215,7 +216,7 @@ namespace urbi
 	  //TODO maybe try to reconnect?
 	  return;
 	}
-	if (res == -1) 
+	if (res == -1)
 	{
 	  res=0;
 	  continue;

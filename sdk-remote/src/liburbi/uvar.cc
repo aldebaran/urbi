@@ -28,8 +28,12 @@ namespace urbi
   class UVardata
   {
   public:
-    UVardata() {};
-    ~UVardata() {};
+    UVardata()
+    {
+    }
+    ~UVardata()
+    {
+    }
   };
 
   //! UVar initialization
@@ -98,7 +102,7 @@ namespace urbi
     UVar::blend()
     {
     echo("Properties not implemented in remote mode yet.\n");
-    return (UNORMAL);
+    return UNORMAL;
     }
   */
 
@@ -114,7 +118,7 @@ namespace urbi
 	  if (*it == this)
 	    it=varmapfind->second.erase(it);
 	  else
-	    it++;
+	    ++it;
 
 	if (varmapfind->second.empty())
 	  varmap.erase(varmapfind);
@@ -130,7 +134,7 @@ namespace urbi
 
   //! UVar string assignment
   void
-  UVar::operator = (const std::string& s)
+  UVar::operator= (const std::string& s)
   {
     URBI(()) << name << "=\"" << s << "\";";
   }
@@ -146,35 +150,35 @@ namespace urbi
   }
 
   void
-  UVar::operator = (const UImage& i)
+  UVar::operator= (const UImage& i)
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
     b.type = BINARY_IMAGE;
     b.image = i;
-    (*this)=b;
-    b.common.data=0; //required, dtor frees data
+    (*this) = b;
+    b.common.data = 0; //required, dtor frees data
   }
 
   void
-  UVar::operator = (const USound& i)
+  UVar::operator= (const USound& i)
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
     b.type = BINARY_SOUND;
     b.sound = i;
-    (*this)=b;
-    b.common.data=0; //required, dtor frees data
+    (*this) = b;
+    b.common.data = 0; //required, dtor frees data
   }
 
   void
-  UVar::operator = (const UList& l)
+  UVar::operator= (const UList& l)
   {
     URBI(()) << name << "=";
     UValue v;
     v.type = DATA_LIST;
     v.list = &const_cast<UList&>(l);
-    URBI(()) << v<<";";
+    URBI(()) << v << ";";
     v.type = DATA_VOID;
     v.list = 0;
   }
@@ -182,18 +186,18 @@ namespace urbi
 
   UVar::operator int ()
   {
-    return (int)value;
+    return (int) value;
   };
 
   UVar::operator ufloat ()
   {
-    return (ufloat)value;
+    return (ufloat) value;
   };
 
 
   UVar::operator std::string ()
   {
-    return (std::string)value;
+    return (std::string) value;
   };
 
 
@@ -209,17 +213,17 @@ namespace urbi
 
   UVar::operator UImage()
   {
-    return (UImage)value;
+    return (UImage) value;
   };
 
   UVar::operator USound()
   {
-    return (USound)value;
+    return (USound) value;
   };
 
   UVar::operator UList()
   {
-    return (UList)value;
+    return (UList) value;
   };
 
   //! UVar update

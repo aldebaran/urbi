@@ -250,7 +250,8 @@ namespace urbi
       cinfo.image_width = w;
       cinfo.image_height = h;
       cinfo.input_components = 3;		/* # of color components per pixel */
-      cinfo.in_color_space = ycrcb?JCS_YCbCr:JCS_RGB; /* colorspace of input image */
+      /* colorspace of input image */
+      cinfo.in_color_space = ycrcb ? JCS_YCbCr : JCS_RGB;
 
       jpeg_set_defaults(&cinfo);
 
@@ -336,37 +337,37 @@ namespace urbi
 
     //scale putting (scx, scy) at the center of destination image
     void scaleColorImage(unsigned char * src, int sw, int sh,
-                         int scx, int scy, unsigned char * dst,
-                         int dw, int dh, float sx, float sy)
+			 int scx, int scy, unsigned char * dst,
+			 int dw, int dh, float sx, float sy)
     {
-      for (int x = 0; x < dw; x++)
-        for (int y = 0; y < dh; y++)
-        {
-          //find the corresponding point in source image
-          float fsrcx = (float) (x-dw/2) / sx  + (float) scx;
-          float fsrcy = (float) (y-dh/2) / sy  + (float) scy;
-          int srcx = (int) fsrcx;
-          int srcy = (int) fsrcy;
-          if (srcx <= 0 || srcx >= sw - 1 || srcy <= 0 || srcy >= sh - 1)
-            memset(dst + (x + y * dw) * 3, 0, 3);
-          else //do the bilinear interpolation
-          {
-            float xfactor = fsrcx - (float) srcx;
-            float yfactor = fsrcy - (float) srcy;
-            for (int color = 0; color < 3; color++)
-            {
-              float up = (float) src[(srcx + srcy * sw) * 3 + color]
-                * (1.0 - xfactor)
-                + (float) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
-              float down = (float) src[(srcx + (srcy + 1) * sw) * 3 + color]
-                * (1.0 - xfactor)
-                + (float) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
-                * xfactor;
-              float result = up * (1.0 - yfactor) + down * yfactor;
-              dst[(x + y * dw) * 3 + color] = (unsigned char) result;
-            }
-          }
-        }
+      for (int x = 0; x < dw; ++x)
+	for (int y = 0; y < dh; ++y)
+	{
+	  //find the corresponding point in source image
+	  float fsrcx = (float) (x-dw/2) / sx  + (float) scx;
+	  float fsrcy = (float) (y-dh/2) / sy  + (float) scy;
+	  int srcx = (int) fsrcx;
+	  int srcy = (int) fsrcy;
+	  if (srcx <= 0 || srcx >= sw - 1 || srcy <= 0 || srcy >= sh - 1)
+	    memset(dst + (x + y * dw) * 3, 0, 3);
+	  else //do the bilinear interpolation
+	  {
+	    float xfactor = fsrcx - (float) srcx;
+	    float yfactor = fsrcy - (float) srcy;
+	    for (int color = 0; color < 3; ++color)
+	    {
+	      float up = (float) src[(srcx + srcy * sw) * 3 + color]
+		* (1.0 - xfactor)
+		+ (float) src[(srcx + 1 + srcy * sw) * 3 + color] * xfactor;
+	      float down = (float) src[(srcx + (srcy + 1) * sw) * 3 + color]
+		* (1.0 - xfactor)
+		+ (float) src[(srcx + 1 + (srcy + 1) * sw) * 3 + color]
+		* xfactor;
+	      float result = up * (1.0 - yfactor) + down * yfactor;
+	      dst[(x + y * dw) * 3 + color] = (unsigned char) result;
+	    }
+	  }
+	}
     }
 
   } // anonymous namespace
@@ -389,55 +390,55 @@ namespace urbi
     {
       case IMAGE_RGB:
       case IMAGE_PPM:
-        targetformat = 1;
-        break;
+	targetformat = 1;
+	break;
       case IMAGE_YCbCr:
-        targetformat = 0;
-        break;
+	targetformat = 0;
+	break;
       case IMAGE_JPEG:
-        targetformat = -1;
-        break;
+	targetformat = -1;
+	break;
       case IMAGE_UNKNOWN:
-        break;
+	break;
     }
     int p = 0;
     int c = 0;
     switch(src.imageFormat)
     {
       case IMAGE_YCbCr:
-        format = 1;
-        memcpy(uncompressedData, src.data, src.width * src.height * 3);
-        break;
+	format = 1;
+	memcpy(uncompressedData, src.data, src.width * src.height * 3);
+	break;
       case IMAGE_RGB:
-        format = 0;
-        memcpy(uncompressedData, src.data, src.width * src.height * 3);
-        break;
+	format = 0;
+	memcpy(uncompressedData, src.data, src.width * src.height * 3);
+	break;
       case IMAGE_PPM:
-        format = 0;
-        //locate header end
-        p=0;
-        c=0;
-        while(c < 3)
-          if (src.data[p++] == '\n')
-            c++;
-        memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
-        break;
+	format = 0;
+	//locate header end
+	p = 0;
+	c = 0;
+	while(c < 3)
+	  if (src.data[p++] == '\n')
+	    ++c;
+	memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
+	break;
       case IMAGE_JPEG:
-        if (targetformat == 0)
-        {
-          convertJPEGtoRGB((byte*) src.data, src.size,
-                           (byte*) uncompressedData, usz);
-          format = 0;
-        }
-        else
-        {
-          convertJPEGtoYCrCb((byte*) src.data, src.size,
-                             (byte*) uncompressedData, usz);
-          format = 1;
-        }
-        break;
+	if (targetformat == 0)
+	{
+	  convertJPEGtoRGB((byte*) src.data, src.size,
+			   (byte*) uncompressedData, usz);
+	  format = 0;
+	}
+	else
+	{
+	  convertJPEGtoYCrCb((byte*) src.data, src.size,
+			     (byte*) uncompressedData, usz);
+	  format = 1;
+	}
+	break;
       case IMAGE_UNKNOWN:
-        break;
+	break;
     }
 
     //now resize if target size is different
@@ -445,10 +446,10 @@ namespace urbi
     {
       void* scaled = malloc(dest.width * dest.height * 3);
       scaleColorImage((unsigned char*) uncompressedData, src.width,
-                      src.height, src.width/2, src.height/2,
-                      (unsigned char*) scaled, dest.width, dest.height,
-                      (float) dest.width / (float) src.width,
-                      (float) dest.height / (float) src.height);
+		      src.height, src.width/2, src.height/2,
+		      (unsigned char*) scaled, dest.width, dest.height,
+		      (float) dest.width / (float) src.width,
+		      (float) dest.height / (float) src.height);
       free(uncompressedData);
       uncompressedData = scaled;
     }
@@ -460,47 +461,47 @@ namespace urbi
     switch(dest.imageFormat)
     {
       case IMAGE_RGB:
-        if (format == 1)
-          convertYCrCbtoRGB((byte*) uncompressedData,
-                            dest.width * dest.height * 3, (byte*) dest.data);
-        else
-          memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
-        break;
+	if (format == 1)
+	  convertYCrCbtoRGB((byte*) uncompressedData,
+			    dest.width * dest.height * 3, (byte*) dest.data);
+	else
+	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+	break;
       case IMAGE_YCbCr:
-        if (format == 0)
-          convertRGBtoYCrCb((byte*) uncompressedData,
-                            dest.width * dest.height * 3, (byte*) dest.data);
-        else
-          memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
-        break;
+	if (format == 0)
+	  convertRGBtoYCrCb((byte*) uncompressedData,
+			    dest.width * dest.height * 3, (byte*) dest.data);
+	else
+	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
+	break;
       case IMAGE_PPM:
-        sprintf((char*) dest.data, "P6\n%d %d\n255\n",
-                dest.width, dest.height);
-        if (format == 1)
-          convertYCrCbtoRGB((byte*) uncompressedData,
-                            dest.width * dest.height * 3,
-                            (byte*) dest.data + strlen((char*) dest.data));
-        else
-          memcpy(dest.data + strlen((char*) dest.data),
-                 uncompressedData, dest.width * dest.height * 3);
-        break;
+	sprintf((char*) dest.data, "P6\n%d %d\n255\n",
+		dest.width, dest.height);
+	if (format == 1)
+	  convertYCrCbtoRGB((byte*) uncompressedData,
+			    dest.width * dest.height * 3,
+			    (byte*) dest.data + strlen((char*) dest.data));
+	else
+	  memcpy(dest.data + strlen((char*) dest.data),
+		 uncompressedData, dest.width * dest.height * 3);
+	break;
       case IMAGE_JPEG:
-        /*if (format == 1)
-          convertYCrCbtoJPEG((byte*) uncompressedData,
-                             dest.width * dest.height * 3,
-                             (byte*) dest.data, dsz);
-        else
-          convertRGBtoJPEG((byte*) uncompressedData,
-                           dest.width * dest.height * 3,
-                           (byte*) dest.data, dsz);
-        */
-        fprintf(stderr,
-                "unsupported conversion requested: can't compress to jpeg\n");
-        free(uncompressedData);
-        return 0;
-        break;
+	/*if (format == 1)
+	  convertYCrCbtoJPEG((byte*) uncompressedData,
+			     dest.width * dest.height * 3,
+			     (byte*) dest.data, dsz);
+	else
+	  convertRGBtoJPEG((byte*) uncompressedData,
+			   dest.width * dest.height * 3,
+			   (byte*) dest.data, dsz);
+	*/
+	fprintf(stderr,
+		"unsupported conversion requested: can't compress to jpeg\n");
+	free(uncompressedData);
+	return 0;
+	break;
       case IMAGE_UNKNOWN:
-        break;
+	break;
     }
 
     free(uncompressedData);
@@ -534,16 +535,16 @@ namespace urbi
   void copy(S* src, D* dst,
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
   {
-    int shift = 8*(sizeof(S) - sizeof(D));
-    for (int i=0;i<count;i++)
+    int shift = 8 * (sizeof(S) - sizeof(D));
+    for (int i = 0; i < count; ++i)
     {
-      float soffset = (float)i* ((float)sr /(float)dr);
+      float soffset = (float)i * ((float)sr / (float)dr);
       int so = (int)soffset;
-      float factor = soffset-(float)so;
+      float factor = soffset - (float)so;
       S s1, s2;
-      s1 = src[so*sc];
+      s1 = src[so * sc];
       if (i != count - 1)
-	s2 = src[(so+1)*sc];
+	s2 = src[(so + 1) * sc];
       else
 	s2 = s1; //nothing to interpolate with
       if (!sf)
@@ -596,8 +597,10 @@ namespace urbi
   }
 
   /** Conversion between various sound formats.
-      If any of destination's channel, sampleSize, rate or sampleFormat parameter is 0, values from source will be used.
-      If the destination's datasize is too small, data will be realloc()ed, which means one can set data and datasize to zero, and let convert allocate the memory.
+      If any of destination's channel, sampleSize, rate or sampleFormat
+      parameter is 0, values from source will be used.  If the destination's
+      datasize is too small, data will be realloc()ed, which means one can set
+      data and datasize to zero, and let convert allocate the memory.
   */
   int
   convert (const USound &source, USound &dest)
@@ -608,7 +611,8 @@ namespace urbi
 	(dest.soundFormat != SOUND_RAW
 	 && dest.soundFormat != SOUND_WAV))
       return 1; //conversion not handled yet
-    //phase one: calculate required buffer size, set destination unspecified fields
+    /* phase one: calculate required buffer size, set destination unspecified
+     * fields */
     int schannels, srate, ssampleSize;
     USoundSampleFormat ssampleFormat;
     if (source.soundFormat == SOUND_WAV)
@@ -635,18 +639,19 @@ namespace urbi
     if (!(int)dest.sampleFormat)
       dest.sampleFormat = ssampleFormat;
     if (dest.soundFormat == SOUND_WAV)
-      dest.sampleFormat = ((dest.sampleSize>8)
-			   ? SAMPLE_SIGNED:SAMPLE_UNSIGNED);
+      dest.sampleFormat = dest.sampleSize > 8 ? SAMPLE_SIGNED
+                                              : SAMPLE_UNSIGNED;
+    // That's a big one!
     int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
     if (dest.soundFormat == SOUND_WAV)
-      destSize+= sizeof(wavheader);
+      destSize += sizeof(wavheader);
     if (dest.size<destSize)
-      dest.data = (char *)realloc(dest.data, destSize);
+      dest.data = static_cast<char*> (realloc (dest.data, destSize));
     dest.size = destSize;
     //write destination header if appropriate
     if (dest.soundFormat == SOUND_WAV)
     {
-      wavheader * wh = (wavheader *)dest.data;
+      wavheader* wh = (wavheader*) dest.data;
       memcpy(wh->riff, "RIFF", 4);
       wh->length = dest.size - 8;
       memcpy(wh->wave, "WAVE", 4);
@@ -669,22 +674,31 @@ namespace urbi
     char * dbuffer = dest.data;
     if (dest.soundFormat == SOUND_WAV)
       dbuffer += sizeof(wavheader);
-    int elementCount = dest.size - ((dest.soundFormat == SOUND_WAV)?sizeof(wavheader):0);
-    elementCount /= (dest.channels * (dest.sampleSize/8));
-    switch( ssampleSize*1000 + dest.sampleSize)
+    int elementCount = dest.size - (dest.soundFormat == SOUND_WAV ?
+                                    sizeof(wavheader) : 0);
+    elementCount /= (dest.channels * (dest.sampleSize / 8));
+    switch(ssampleSize * 1000 + dest.sampleSize)
     {
-    case 8008:
-      copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-      break;
-    case 16008:
-      copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-      break;
-    case 16016:
-      copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-      break;
-    case 8016:
-      copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels, srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat == SAMPLE_SIGNED);
-      break;
+      case 8008:
+        copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
+             elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
+             SAMPLE_SIGNED);
+        break;
+      case 16008:
+        copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate,
+             dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+             dest.sampleFormat == SAMPLE_SIGNED);
+        break;
+      case 16016:
+        copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+             srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+             dest.sampleFormat == SAMPLE_SIGNED);
+        break;
+      case 8016:
+        copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels,
+             srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
+             dest.sampleFormat == SAMPLE_SIGNED);
+        break;
     }
     return 0;
   }
