@@ -121,7 +121,10 @@ public:
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
-  UGhostConnection* getGhostConnection()  {return ghost;}
+  UGhostConnection* getGhostConnection ()
+  {
+    return ghost;
+  }
 
   void              freeze          (const std::string &tag);
   void              unfreeze        (const std::string &tag);
@@ -251,7 +254,7 @@ extern int URBI_unicID;
 
 inline int unic()
 {
-  URBI_unicID++;
+  ++URBI_unicID;
   return URBI_unicID;
 }
 

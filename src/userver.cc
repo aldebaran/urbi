@@ -146,10 +146,10 @@ UServer::main (int argc, const char* argv[])
 
   UValue* current = 0;
   arglistv->dataType = DATA_LIST;
-  for (int i=0; i<argc; i++)
+  for (int i = 0; i < argc; ++i)
   {
     UValue* v = new UValue (argv[i]);
-    if (i==0)
+    if (i == 0)
       arglistv->liststart = v;
     else
       current->next = v;
@@ -183,7 +183,7 @@ UServer::initialization()
     getCustomHeader(i, (char*)customHeader, 1024);
     if (customHeader[0])
       display((const char*) customHeader);
-    i++;
+    ++i;
   } while (customHeader[0]!=0);
 
   display(::HEADER_AFTER_CUSTOM);
@@ -445,7 +445,7 @@ UServer::work()
   if (!cpuoverload)
     if  (cpuload > cputhreshold)
     {
-      cpucount++;
+      ++cpucount;
       if (cpucount > 10)
       {
 	cpucount = 0;
@@ -454,7 +454,7 @@ UServer::work()
       }
     }
     else if (cpucount > 0)
-      cpucount--;
+      --cpucount;
 
   if (cpuoverload && cpuload < 1)
   {
@@ -465,7 +465,7 @@ UServer::work()
   // Reseting procedure
   if (reseting)
   {
-    stage++;
+    ++stage;
     if (stage == 1)
     {
       //delete objects first

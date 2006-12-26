@@ -180,7 +180,7 @@ UVariable::~UVariable()
   FREEOBJ(UVariable);
   if (value)
   {
-    if ((value->dataType == DATA_OBJ) && (value->str!=0))
+    if (value->dataType == DATA_OBJ && value->str!=0)
     {
       HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
       if (idit != ::urbiserver->objtab.end())
@@ -378,7 +378,7 @@ UVariable::get()
   if (value->dataType == DATA_OBJ)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
-	 it++)
+	 ++it)
       if (it->second->method
 	  && it->second->devicename
 	  && value->str
@@ -424,7 +424,7 @@ UVariable::updated()
   if (binder)
     for (std::list<UMonitor*>::iterator i = binder->monitors.begin();
 	 i != binder->monitors.end();
-	 i++)
+	 ++i)
       {
 	(*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*i)->c->sendc((const ubyte*)"[1,\"", 4);
@@ -437,7 +437,7 @@ UVariable::updated()
   for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalBinder.begin();
        i != internalBinder.end();
-       i++)
+       ++i)
   {
     urbi::UList tmparray;
 

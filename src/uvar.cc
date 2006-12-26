@@ -30,7 +30,10 @@ namespace urbi
   class UVardata
   {
   public:
-    UVardata(UVariable *v) { variable = v; };
+    UVardata (UVariable *v)
+    {
+      variable = v;
+    }
     ~UVardata() {};
 
     UVariable *variable;
@@ -77,7 +80,7 @@ namespace urbi
 	if ((*it) == this)
 	  it=varmapfind->second.erase(it);
 	else
-	  it++;
+	  ++it;
 
       if (varmapfind->second.empty())
 	varmap.erase(varmapfind);

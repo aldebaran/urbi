@@ -502,7 +502,7 @@ UExpression::eval (UCommand *command,
 	  e1 = ret->liststart;
 	  while (e1->next)
 	    e1 = e1->next;
-	  it++;
+	  ++it;
 	}
 
 	while (it !=  retr->second->members.end())
@@ -528,7 +528,7 @@ UExpression::eval (UCommand *command,
 	    }
 	    delete e3;
 	  }
-	  it++;
+	  ++it;
 	}
       }
       return ret;
@@ -1037,7 +1037,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       while (e3 && indx != (int)e2->val)
       {
 	e3 = e3->next;
-	indx++;
+	++indx;
       }
       UValue* ret = 0;
       if (!e3)
@@ -1106,7 +1106,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       ret->dataType = DATA_NUM;
       ret->val = e1->str->len();
 
-      for (int i=0;i<e1->str->len()-1;i++)
+      for (int i=0;i<e1->str->len()-1; ++i)
 	if (e1->str->str()[i] == '\\' &&
 	    e1->str->str()[i+1] == '"')
 	  ret->val--;
@@ -1591,19 +1591,19 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  UValue* xval = tmpvar->value->liststart;
 	  int index;
 	  int curr;
-	  p[0]='_';
-	  p=p+2; // beginning of the index
+	  p[0] = '_';
+	  p = p + 2; // beginning of the index
 	  char* p2 = strchr(p, '_');
 	  while (p)
 	  {
 	    if (p2)
-	      p2[0]=0;
+	      p2[0] = 0;
 	    index = atoi(p);
-	    curr=0;
-	    while ((curr!=index) && (xval))
+	    curr = 0;
+	    while (curr != index && xval)
 	    {
 	      xval = xval->next;
-	      curr++;
+	      ++curr;
 	    }
 	    if (!xval)
 	    {

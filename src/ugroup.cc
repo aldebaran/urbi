@@ -57,7 +57,7 @@ UValue * UGroup::list( UVariableName *variable)
 
   for (std::list<UAlias*>::iterator it = gr->members.begin();
        (it != gr->members.end()) && current ;
-       it++)
+       ++it)
     {
       UValue *n;
       if ((*it)->members.empty())

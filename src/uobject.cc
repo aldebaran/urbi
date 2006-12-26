@@ -247,7 +247,7 @@ namespace urbi
 
     for (UStartlist::iterator retr = urbi::objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == __name)
 	tmpobj->internalBinder = (*retr);
 
@@ -389,7 +389,7 @@ namespace urbi
   {
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       (*it)->update();
     update();
     return 0;
@@ -407,7 +407,7 @@ namespace urbi
     UObjectList* res = new UObjectList();
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       if ((*it)->classname == subclass)
 	res->push_back(*it);
 
@@ -421,7 +421,7 @@ namespace urbi
   {
     for (UStartlistHub::iterator retr = objecthublist->begin();
 	 retr != objecthublist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObjectHub();
 
@@ -434,7 +434,7 @@ namespace urbi
   {
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObject();
 

@@ -44,7 +44,7 @@ UASyncCommand::~UASyncCommand()
 {
   for  (std::list<UASyncRegister*>::iterator it = regList_.begin ();
 	it != regList_.end ();
-	it++)
+	++it)
     (*it)->unregisterCmd (this);
 }
 

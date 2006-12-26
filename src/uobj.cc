@@ -69,7 +69,7 @@ UObj::~UObj()
   // I'll work on an optimized version later)
   for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
        i != ::urbiserver->variabletab.end();
-       i++)
+       ++i)
     if (i->second->binder
       && i->second->binder->removeMonitor(device))
     {
@@ -81,26 +81,26 @@ UObj::~UObj()
   //clean functions binders
   for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
        i != ::urbiserver->functionbindertab.end();
-       i++)
+       ++i)
     if (i->second->removeMonitor(device))
       deletelist.push_back(i);
 
   for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
        i != deletelist.end();
-       i++)
+       ++i)
     ::urbiserver->functionbindertab.erase((*i));
   deletelist.clear();
 
   //clean events binders
   for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
        i != ::urbiserver->eventbindertab.end();
-       i++)
+       ++i)
     if (i->second->removeMonitor(device))
       deletelist.push_back(i);
 
   for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
        i != deletelist.end();
-       i++)
+       ++i)
     ::urbiserver->eventbindertab.erase((*i));
   deletelist.clear();
 
@@ -112,7 +112,7 @@ UObj::~UObj()
 
     for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
 	 it != binder->monitors.end();
-	 it++)
+	 ++it)
     {
       (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
@@ -150,7 +150,7 @@ UObj::~UObj()
   // clean variables internalBinder
   for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
        i != ::urbiserver->variabletab.end();
-       i++)
+       ++i)
     for (std::list<urbi::UGenericCallback*>::iterator j =
 	 i->second->internalBinder.begin();
 	 j != i->second->internalBinder.end();
@@ -166,7 +166,7 @@ UObj::~UObj()
   // clean variables internalAccessBinder
   for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
        i != ::urbiserver->variabletab.end();
-       i++)
+       ++i)
     for (std::list<urbi::UGenericCallback*>::iterator j =
 	 i->second->internalAccessBinder.begin();
 	 j != i->second->internalAccessBinder.end();
@@ -219,7 +219,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   bool found = false;
   for (std::list<UObj*>::iterator i = up.begin();
        i != up.end();
-       i++)
+       ++i)
   {
     UFunction* tmpres = (*i)->searchFunction(id, ambiguous);
     if (ambiguous)
@@ -259,7 +259,7 @@ UObj::searchVariable(const char* id, bool &ambiguous)
     bool found = false;
     for (std::list<UObj*>::iterator i = up.begin();
 	 i != up.end();
-	 i++)
+	 ++i)
     {
       UVariable* tmpres = (*i)->searchVariable(id, ambiguous);
       if (ambiguous)
@@ -312,7 +312,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
     bool found = false;
     for (std::list<UObj*>::iterator i = up.begin();
 	 i != up.end();
-	 i++)
+	 ++i)
     {
        UEventHandler* tmpres = (*i)->searchEvent(id, ambiguous);
       if (ambiguous)

@@ -274,7 +274,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
       UCommand *gplist = 0;
       for (std::list<UString*>::iterator retr = oo->members.begin();
 	   retr != oo->members.end();
-	   retr++)
+	   ++retr)
       {
 	UCommand *clone = copy();
 	UVariableName*& clonename = *((clone->*refName)());
@@ -820,7 +820,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   cbi != hmfi->second.end() && !found_function;
-	   cbi++)
+	   ++cbi)
       {
 	if ((expression->parameters
 	     && expression->parameters->size() == (*cbi)->nbparam)
@@ -871,7 +871,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	     j != it->second->monitors.end();
-	     j++)
+	     ++j)
 	{
 	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	  (*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -1804,7 +1804,8 @@ UCommand_ASSIGN_BINARY::print(int l)
   if (refBinary)
   {
     debug(l, "  Binary:");
-    refBinary->ref()->print(); debug("\n");
+    refBinary->ref()->print();
+    debug("\n");
   }
   debug("%sEND ASSIGN BINARY ------\n",
 		      tab(l));
@@ -2354,7 +2355,7 @@ UCommand_EXPR::execute(UConnection *connection)
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   cbi != hmfi->second.end();
-	   cbi++)
+	   ++cbi)
       {
 	if ((expression->parameters &&
 	     expression->parameters->size() == (*cbi)->nbparam)
@@ -2413,7 +2414,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
       for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	   j != it->second->monitors.end();
-	   j++)
+	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -2619,7 +2620,7 @@ UCommand_ECHO::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator retr =
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
-	 retr++)
+	 ++retr)
       if ((*retr)->isActive()
 	  && ((*retr)->connectionTag->equal(connectionTag)
 	      || connectionTag->equal("all")
@@ -2821,11 +2822,11 @@ UCommand_NEW::execute(UConnection *connection)
     for (std::list<UMonitor*>::iterator i =
 	   objit->second->binder->monitors.begin();
 	 i != objit->second->binder->monitors.end();
-	 i++)
+	 ++i)
     {
       (*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*i)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
-      nb++;
+      ++nb;
     }
     // Wait for remote new
     HMobjWaiting::iterator ow = ::urbiserver->objWaittab.find(id->str());
@@ -2872,7 +2873,7 @@ UCommand_NEW::execute(UConnection *connection)
   // Here the policy of "a = new b" which does not call init could be
   // enforced with 'noinit'
   // Currently, after discussions, all call to new tries to start init.
-  // if ((!parameters) && (noinit)) return status = UCOMPLETED;
+  // if (!parameters && noinit) return status = UCOMPLETED;
 
   // init constructor call
   //
@@ -3030,7 +3031,7 @@ UCommand_ALIAS::execute(UConnection *connection)
     for (HMaliastab::iterator i =
 	    connection->server->aliastab.begin();
 	  i != connection->server->aliastab.end();
-	  i++)
+	  ++i)
       connection->sendf(getTag(),
 			"*** %25s -> %s\n",
 			i->first, i->second->str());
@@ -3091,7 +3092,8 @@ UCommand_ALIAS::print(int l)
   if (id)
   {
     debug("  %s  id:", tab(l));
-    id->print(); debug("\n");
+    id->print();
+    debug("\n");
   }
 
   debug(l, "END ALIAS ------\n");
@@ -3204,12 +3206,14 @@ UCommand_INHERIT::print(int l)
   if (subclass)
   {
     debug("  %s  subclass:", tab(l));
-    subclass->print(); debug("\n");
+    subclass->print();
+    debug("\n");
   }
   if (theclass)
   {
     debug("  %s  parentclass:", tab(l));
-    theclass->print(); debug("\n");
+    theclass->print();
+    debug("\n");
   }
 
   debug(l, "END INHERIT ------\n");
@@ -3268,7 +3272,7 @@ UCommand_GROUP::execute(UConnection *connection)
 	  if ((*it)->equal(param->name))
 	    it =g->members.erase(it);
 	  else
-	    it++;
+	    ++it;
       }
       else
       {
@@ -3289,7 +3293,7 @@ UCommand_GROUP::execute(UConnection *connection)
     for (HMgrouptab::iterator i =
 	    connection->server->grouptab.begin();
 	  i != connection->server->grouptab.end();
-	  i++)
+	  ++i)
     {
       buffer_t buf;
       snprintf(buf, sizeof buf,
@@ -3299,7 +3303,7 @@ UCommand_GROUP::execute(UConnection *connection)
 	   it !=  i->second->members.end(); )
       {
 	strncat(buf, (*it)->str(), sizeof buf);
-	it++;
+	++it;
 	if (it != i->second->members.end())
 	  strncat(buf, ",", sizeof buf);
       }
@@ -3321,7 +3325,7 @@ UCommand_GROUP::execute(UConnection *connection)
       ret = new UNamedParameters(new UExpression(UExpression::VALUE,
 						 (*it)->copy()),
 				 0);
-      it++;
+      ++it;
     }
 
     for (; it != retr->second->members.end(); ++it)
@@ -3410,7 +3414,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator retr =
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
-	 retr++)
+	 ++retr)
       if (((*retr)->isActive()) &&
 	    ((*retr)->connectionTag->equal(id)))
       {
@@ -3434,7 +3438,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator i =
 	   connection->server->connectionList.begin();
 	 i != connection->server->connectionList.end();
-	 i++)
+	 ++i)
       if ((*i)->isActive() && (*i)->connectionTag->equal(id))
       {
 	ok = true;
@@ -3855,7 +3859,8 @@ UCommand_OPERATOR_VAR::print(int l)
   if (variablename)
   {
     debug("  %s  Variablename:", tab(l));
-    variablename->print(); debug("\n");
+    variablename->print();
+    debug("\n");
   }
 
   debug(l, "END OPERATOR_VAR ------\n");
@@ -4017,12 +4022,14 @@ UCommand_BINDER::print(int l)
   if (objname)
   {
     debug("  %s  objname:", tab(l));
-    objname->print(); debug("\n");
+    objname->print();
+    debug("\n");
   }
   if (variablename)
   {
     debug("  %s  Variablename:", tab(l));
-    variablename->print(); debug("\n");
+    variablename->print();
+    debug("\n");
   }
 
   debug(l, "END BINDER ------\n");
@@ -4151,7 +4158,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (HMvariabletab::iterator i =
 	    connection->server->variabletab.begin();
 	  i != connection->server->variabletab.end();
-	  i++)
+	  ++i)
     {
       UString* fullname = i->second->varname;
       if (fullname)
@@ -4204,7 +4211,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (HMemittab::iterator i =
 	    connection->server->emittab.begin();
 	  i != connection->server->emittab.end();
-	  i++)
+	  ++i)
     {
       std::ostringstream tstr;
       tstr << "*** " << i->second->unforgedName->str() << "["
@@ -4221,7 +4228,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (HMvariabletab::iterator i =
 	    connection->server->variabletab.begin();
 	  i != connection->server->variabletab.end();
-	  i++)
+	  ++i)
     {
       UString* fullname = i->second->varname;
       if (i->second->uservar)
@@ -4272,7 +4279,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator i =
 	   ::urbiserver->connectionList.begin();
 	 i != ::urbiserver->connectionList.end();
-	 i++)
+	 ++i)
       if ((*i)->isActive())
       {
 	connection->sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
@@ -4523,7 +4530,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
       for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	   j != it->second->monitors.end();
-	   j++)
+	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -4548,7 +4555,7 @@ UCommand_EMIT::execute(UConnection *connection)
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   cbi != hmfi->second.end();
-	   cbi++)
+	   ++cbi)
       {
 	if (((parameters) &&
 	       (parameters->size() == (*cbi)->nbparam)) ||
@@ -4577,7 +4584,7 @@ UCommand_EMIT::execute(UConnection *connection)
     }
   }
 
-  if ((thetime > targetTime) && (!firsttime))
+  if (thetime > targetTime && !firsttime)
   {
     removeEvent ();
     return status = UCOMPLETED;
@@ -4609,7 +4616,7 @@ UCommand_EMIT::removeEvent ()
 
     for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	 j != it->second->monitors.end();
-	 j++)
+	 ++j)
     {
       (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*j)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -4624,7 +4631,7 @@ UCommand_EMIT::removeEvent ()
     for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	 hmfi->second.begin();
 	 cbi != hmfi->second.end();
-	 cbi++)
+	 ++cbi)
     {
       urbi::UList tmparray;
       (*cbi)->__evalcall(tmparray);
@@ -4690,7 +4697,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
   {
     if (nbTrue == 0)
       startTrue = connection->server->lastTime();
-    nbTrue++;
+    ++nbTrue;
   }
   else
     nbTrue = 0;
@@ -4901,7 +4908,7 @@ UCommand_DEF::execute(UConnection *connection)
     for (HMfunctiontab::iterator i =
 	    connection->server->functiontab.begin();
 	  i != connection->server->functiontab.end();
-	  i++)
+	  ++i)
       connection->sendf (getTag(), "*** %s : %d param(s)\n",
 			 i->second->name().str(),
 			 i->second->nbparam());
@@ -6325,17 +6332,22 @@ UCommand_LOOPN::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("LOOPN:");
-  if (type == LOOPN)           debug("\n");
-  else if (type == LOOPN_AND)  debug("(AND)\n");
-  else if (type == LOOPN_PIPE) debug("(PIPE)\n");
-  else                         debug("UNKNOWN TYPE!\n");
+  if (type == LOOPN)
+    debug("\n");
+  else if (type == LOOPN_AND)
+    debug("(AND)\n");
+  else if (type == LOOPN_PIPE)
+    debug("(PIPE)\n");
+  else
+    debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR (expression);
   if (command)
   {
     debug(l, "  Command (%ld:%d):\n",
 			(long)command,
-			(int)command->status); command->print(l+3);
+			(int)command->status);
+    command->print(l+3);
   }
 
   debug(l, "END LOOPN ------\n");
@@ -6477,10 +6489,14 @@ UCommand_FOR::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("FOR:");
-  if (type == FOR) debug("\n");
-  else if (type == FOR_AND) debug("(AND)\n");
-  else if (type == FOR_PIPE) debug("(PIPE)\n");
-  else	debug("UNKNOWN TYPE!\n");
+  if (type == FOR)
+    debug("\n");
+  else if (type == FOR_AND)
+    debug("(AND)\n");
+  else if (type == FOR_PIPE)
+    debug("(PIPE)\n");
+  else
+    debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR(test);
   DEBUG_ATTR_I(instr1);

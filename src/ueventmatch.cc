@@ -101,7 +101,7 @@ UEventMatch::findMatches_ ()
 
   for (itevent  = eventhandler_->eventlist().begin ();
        itevent != eventhandler_->eventlist().end ();
-       itevent++)
+       ++itevent)
   {
     ok = true;
     ifilter_arg = filter_.begin ();
@@ -115,8 +115,8 @@ UEventMatch::findMatches_ ()
 	     && !( (*ifilter_arg)->equal (*itevent_arg)) )
 	ok = false;
 
-      ifilter_arg++;
-      itevent_arg++;
+      ++ifilter_arg;
+      ++itevent_arg;
     }
 
     if (ok)
@@ -134,7 +134,7 @@ UEventMatch::reduce (bool st)
     if  ((*itevent)->toDelete() == st)
       itevent = matches_.erase (itevent);
     else
-      itevent++;
+      ++itevent;
   }
 }
 

@@ -185,7 +185,7 @@ UEventHandler::noPositive ()
 {
   for (std::list<UEvent*>::iterator ie = eventlist_.begin ();
        ie != eventlist_.end ();
-       ie++)
+       ++ie)
     if ( !(*ie)->toDelete ()) return false;
 
   return true;

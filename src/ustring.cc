@@ -198,15 +198,15 @@ UString::un_armor ()
 	memmove (static_cast<void*> (cp),
 		 static_cast<void*> (cp + 1),
 		 len_ - pos);
-	len_--;
+	--len_;
 	if (cp[0] == '\\')
-	  cp++;
+	  ++cp;
       }
       else
-	cp++;
+	++cp;
     }
     else
-      cp++;
+      ++cp;
     pos = cp - str_;
   }
 

@@ -100,7 +100,7 @@ UConnection::~UConnection()
   // free bindings
 
   for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-       it1 != ::urbiserver->variabletab.end(); it1++ )
+       it1 != ::urbiserver->variabletab.end(); ++it1)
   {
     if (it1->second->binder)
       if (it1->second->binder->removeMonitor(this))
@@ -113,7 +113,7 @@ UConnection::~UConnection()
   std::list<HMbindertab::iterator> deletelist;
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
-       it2++)
+       ++it2)
   {
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
@@ -121,20 +121,20 @@ UConnection::~UConnection()
 
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
-       itt++)
+       ++itt)
     ::urbiserver->functionbindertab.erase((*itt));
   deletelist.clear();
 
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
        it3 != ::urbiserver->eventbindertab.end();
-       it3++)
+       ++it3)
   {
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
   }
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
-       itt++)
+       ++itt)
     ::urbiserver->eventbindertab.erase((*itt));
   deletelist.clear();
 
@@ -168,7 +168,7 @@ UConnection::closeConnection()
  */
 void UConnection::initialize()
 {
-  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; i++)
+  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
     send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   int i = 0;
@@ -181,7 +181,7 @@ void UConnection::initialize()
     ++i;
   } while (customHeader[0]!=0);
 
-  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; i++)
+  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
     send(::HEADER_AFTER_CUSTOM[i], "start");
   sprintf(customHeader, "*** ID: %s\n", connectionTag->str());
   send(customHeader, "ident");
@@ -811,7 +811,7 @@ UConnection::processCommand(UCommand *&command,
 		for (std::list<UConnection*>::iterator retr =
 		       ::urbiserver->connectionList.begin();
 		     retr != ::urbiserver->connectionList.end();
-		     retr++)
+		     ++retr)
 		  if ((*retr)->isActive())
 
 		    if (((*retr)->connectionTag->equal(tmpID->str)) ||

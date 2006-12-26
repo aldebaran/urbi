@@ -196,7 +196,7 @@ UQueue::push (const ubyte *buffer, int length)
       // Calculate the required size + 10%, if it fits.
       newSize = (int)(1.10 * newSize);
       if (newSize % 2 != 0)
-	newSize++; // hack for short alignment...
+	++newSize; // hack for short alignment...
       if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
 	newSize = maxBufferSize_;
 
@@ -266,7 +266,7 @@ UQueue::pop (int length)
   // Adaptive shrinking behavior
   if (adaptive_)
   {
-    nbPopCall_++;
+    ++nbPopCall_;
     if (dataSize_ > topDataSize_)
       topDataSize_ = dataSize_;
     if (toPop > topOutputSize_)

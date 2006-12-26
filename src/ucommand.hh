@@ -100,8 +100,14 @@ public:
   virtual UCommand* copy();
 
   UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
-  virtual UVariableName** refVarName()  { return 0; };
-  virtual UVariableName** refVarName2()  { return 0; };
+  virtual UVariableName** refVarName ()
+  {
+    return 0;
+  }
+  virtual UVariableName** refVarName2 ()
+  {
+    return 0;
+  }
 
   const std::string& getTag() const
   {
@@ -226,8 +232,14 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &variablename; };
-  virtual UVariableName** refVarName2()  { return &expression->variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
+  virtual UVariableName** refVarName2 ()
+  {
+    return &expression->variablename;
+  }
 
   /// variable name
   UVariableName* variablename;
@@ -316,7 +328,10 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
 
   /// variable name
@@ -347,7 +362,10 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
 
   /// variable name
@@ -402,7 +420,10 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &expression->variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &expression->variablename;
+  }
 
   /// Expression
   UExpression* expression;
@@ -589,7 +610,10 @@ public:
 			UVariableName* device,
 			ufloat* cmd);
   virtual ~UCommand_DEVICE_CMD();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
   virtual void print(int l);
 
@@ -767,7 +791,10 @@ public:
   UCommand_INCDECREMENT(const UCommand::location& l,
 			Type type, UVariableName* variablename);
   virtual ~UCommand_INCDECREMENT();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
   virtual void print(int l);
 

@@ -136,17 +136,17 @@ UCommandQueue::popCommand (int &length)
     else
     {
       if (p0 == '{')
-	bracketlevel_++;
+	++bracketlevel_;
       else if (p0 == '}')
-	bracketlevel_--;
+	--bracketlevel_;
       else if (p0 == '[')
-	sbracketlevel_++;
+	++sbracketlevel_;
       else if (p0 == ']')
-	sbracketlevel_--;
+	--sbracketlevel_;
       else if (p0 == '(')
-	parenlevel_++;
+	++parenlevel_;
       else if (p0 == ')')
-	parenlevel_--;
+	--parenlevel_;
 
       if (bracketlevel_ < 0)
 	bracketlevel_ = 0;
@@ -206,11 +206,11 @@ UCommandQueue::popCommand (int &length)
       return 0;
     }
 
-    cursor_ ++;
-    position ++;
+    ++cursor_;
+    ++position;
     if (position == bufferSize_)
       position = 0;
-    nextposition ++;
+    ++nextposition;
     if (nextposition == bufferSize_)
       nextposition = 0;
 

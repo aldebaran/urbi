@@ -368,7 +368,7 @@ UValue & UValue::operator = (const urbi::UList &l)
   }
   UValue * current = 0;
   dataType = DATA_LIST;
-  for (int i=0;i<l.size();i++)
+  for (int i=0;i<l.size(); ++i)
   {
     UValue *v = new UValue(l[i]);
     if(i == 0)
@@ -403,7 +403,7 @@ UValue::UValue(const urbi::UValue &v)
       UValue * current = this;
       for (std::vector<urbi::UValue *>::iterator it =
 	     v.list->array.begin();
-	   it != v.list->array.end(); it++)
+	   it != v.list->array.end(); ++it)
       {
 	UValue *n = new UValue(*(*it));
 	current->next = n;
@@ -749,7 +749,7 @@ UValue::echo(bool hr)
       bool first = true;
       for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	   it != ::urbiserver->variabletab.end();
-	   it++)
+	   ++it)
 	if (it->second->method
 	    && it->second->devicename
 	    && str
