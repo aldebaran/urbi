@@ -69,7 +69,7 @@ UEventCompound::~UEventCompound ()
 {
   /// keepalive prevents recursive deletion when the compound is reorganized by
   /// another function like @a normalForm.
-  if  (!keepalive_)
+  if (!keepalive_)
   {
     delete ec1_;
     delete ec2_;
@@ -183,7 +183,7 @@ UEventCompound::normalForm ()
   {
     case EC_MATCH:
       ec1_->em_->reduce ();
-      if  (ec1_->em_->matches().empty())
+      if (ec1_->em_->matches().empty())
 	em_ = kernel::eventmatch_true;
       else
 	em_ = kernel::eventmatch_false;

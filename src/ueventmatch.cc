@@ -36,7 +36,7 @@ UEventMatch::UEventMatch (UString* eventname,
 			  UCommand* command,
 			  UConnection* connection)
 {
-  if  (!filter)
+  if (!filter)
     eventhandler_ = kernel::findEventHandler (eventname, 0);
   else
     eventhandler_ = kernel::findEventHandler (eventname, filter->size ());
@@ -46,9 +46,9 @@ UEventMatch::UEventMatch (UString* eventname,
   UValue* e1;
   UString* varname = 0;
 
-  while  (param)
+  while (param)
   {
-    if  (param->expression->type == UExpression::VARIABLE)
+    if (param->expression->type == UExpression::VARIABLE)
     {
       ASSERT (param->expression->variablename)
 	varname = param->expression->variablename->
@@ -111,7 +111,7 @@ UEventMatch::findMatches_ ()
 	   && itevent_arg !=  (*itevent)->args().end ()
 	   && ok)
     {
-      if   ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
+      if ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
 	     && !( (*ifilter_arg)->equal (*itevent_arg)) )
 	ok = false;
 
@@ -131,7 +131,7 @@ UEventMatch::reduce (bool st)
        itevent != matches_.end ();
        )
   {
-    if  ((*itevent)->toDelete() == st)
+    if ((*itevent)->toDelete() == st)
       itevent = matches_.erase (itevent);
     else
       ++itevent;

@@ -244,7 +244,7 @@ namespace urbi
   {
     if (!vardata)
       return;
-    switch(prop)
+    switch (prop)
     {
       case PROP_RANGEMIN:
 	vardata->variable->rangemin = (double) v;

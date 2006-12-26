@@ -28,7 +28,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
   {
     mempool = new BlockPool;
     --mempool->cptr;
-    const int align = sizeof(void*);
+    const int align = sizeof (void*);
     int asz = sz;
     if (asz % align)
       asz = asz + align - (asz % align);
@@ -44,7 +44,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     //save cptr as relative int
     long cpos = (long) mempool->cptr - (long) mempool->ptr;
     mempool->ptr = static_cast<void**> (realloc (mempool->ptr,
-						 newsize * sizeof(void*)));
+						 newsize * sizeof (void*)));
     mempool->cptr = (void**) ((long) mempool->ptr + cpos); //restore cptr
 
     //allocate new data bloc

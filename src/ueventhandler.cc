@@ -155,7 +155,7 @@ UEventHandler::addEvent(UNamedParameters* parameters,
   UValue* e1;
   std::list<UValue*> args;
 
-  while  (param)
+  while (param)
   {
     e1 = param->expression->eval (command, connection);
     if (e1==0)

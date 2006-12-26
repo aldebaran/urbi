@@ -966,7 +966,7 @@ UExpression::eval_FUNCTION (UCommand *command,
   if (eh)
   {
     UValue* ret = new UValue(ufloat(1));
-    if  (eh->noPositive())
+    if (eh->noPositive())
       ret->val = 0; // no active (positive) event in the handler
 
     ec = new UEventCompound (new UEventMatch (funname,
@@ -1511,7 +1511,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     if (eh)
     {
       ret = new UValue(ufloat(1));
-      if  (eh->noPositive())
+      if (eh->noPositive())
 	ret->val = 0; // no active (positive) event in the handler
 
       ec = new UEventCompound
@@ -1931,7 +1931,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  return UFAIL;
 
       if (expression2)
-	if  (expression2->asyncScan(cmd, c) == UFAIL)
+	if (expression2->asyncScan(cmd, c) == UFAIL)
 	  return UFAIL;
       return USUCCESS;
   }

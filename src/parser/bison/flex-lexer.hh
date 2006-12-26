@@ -63,8 +63,14 @@ class FlexLexer
 public:
   virtual ~FlexLexer()	{ }
 
-  const char* YYText()	{ return yytext; }
-  int YYLeng()		{ return yyleng; }
+  const char* YYText ()
+  {
+    return yytext;
+  }
+  int YYLeng ()
+  {
+    return yyleng;
+  }
 
   virtual void
   yy_switch_to_buffer( struct yy_buffer_state* new_buffer ) = 0;
@@ -92,10 +98,19 @@ public:
   virtual void switch_streams( std::istream* new_in = 0,
 			       std::ostream* new_out = 0 ) = 0;
 
-  int lineno() const		{ return yylineno; }
+  int lineno () const
+  {
+    return yylineno;
+  }
 
-  int debug() const		{ return yy_flex_debug; }
-  void set_debug( int flag )	{ yy_flex_debug = flag; }
+  int debug () const
+  {
+    return yy_flex_debug;
+  }
+  void set_debug (int flag )
+  {
+    yy_flex_debug = flag;
+  }
 
 protected:
   char* yytext;

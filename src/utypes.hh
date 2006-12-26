@@ -56,8 +56,8 @@ extern  int   availableMemory;
 # define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
 #endif
 
-# define ADDOBJ(X)   ADDMEM (sizeof(X))
-# define FREEOBJ(X)  FREEMEM (sizeof(X))
+# define ADDOBJ(X)   ADDMEM (sizeof (X))
+# define FREEOBJ(X)  FREEMEM (sizeof (X))
 
 # define LIBERATE(X)				\
   do {						\

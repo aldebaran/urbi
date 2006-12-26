@@ -67,12 +67,12 @@ namespace Network
       return false;
 
     /* fill in socket address */
-    memset(&address, 0, sizeof(struct sockaddr_in));
+    memset(&address, 0, sizeof (struct sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
     address.sin_addr.s_addr = INADDR_ANY;
     /* bind to port */
-    rc = bind(fd, (struct sockaddr *)&address, sizeof(struct sockaddr));
+    rc = bind(fd, (struct sockaddr *)&address, sizeof (struct sockaddr));
     if (rc == -1)
       return false;
     /* listen for connections */
@@ -90,7 +90,7 @@ namespace Network
     int cfd;
     struct sockaddr_in client;
     struct hostent* client_info;
-    socklen_t asize = sizeof(struct sockaddr_in);
+    socklen_t asize = sizeof (struct sockaddr_in);
     cfd = accept(fd, (struct sockaddr*) &client, &asize);
     if (cfd == -1)
       return;
@@ -127,8 +127,8 @@ namespace Network
     maxfd = controlPipe[0];
 #endif
     for (std::list<Pipe*>::iterator i = pList.begin();
-         i != pList.end();
-         ++i)
+	 i != pList.end();
+	 ++i)
       {
 	int f = (*i)->readFD();
 	if (f > 0)
@@ -148,8 +148,8 @@ namespace Network
   {
     std::list<Pipe*>::iterator in;
     for (std::list<Pipe*>::iterator i = pList.begin();
-         i != pList.end();
-         i = in)
+	 i != pList.end();
+	 i = in)
       {
 	in = i;
 	++in;

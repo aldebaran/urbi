@@ -937,7 +937,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (parameters != 0)
 	// FIXME: 65000 is not dividable by 42 nor 51.
 	if (char *result =
-	    static_cast<char*> (malloc (sizeof(char)
+	    static_cast<char*> (malloc (sizeof (char)
 					* (65000+target->str->len()))))
 	{
 	  strcpy (result, target->str->str());

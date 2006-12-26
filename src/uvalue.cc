@@ -200,7 +200,7 @@ UValue::operator urbi::UList()
   }
   urbi::UList l;
   UValue *n = liststart;
-  while(n)
+  while (n)
   {
     l.array.push_back(n->urbiValue());
     n = n->next;
@@ -261,7 +261,7 @@ UValue::operator urbi::USound()
   else if (STREQ(param->expression->str->str(), "wav"))
   {
     snd.soundFormat = urbi::SOUND_WAV;
-    if (((unsigned int)refBinary->ref()->bufferSize > sizeof(wavheader)) &&
+    if (((unsigned int)refBinary->ref()->bufferSize > sizeof (wavheader)) &&
 	(refBinary->ref()->buffer) )
     {
       decoded= true;
@@ -371,7 +371,7 @@ UValue & UValue::operator = (const urbi::UList &l)
   for (int i=0;i<l.size(); ++i)
   {
     UValue *v = new UValue(l[i]);
-    if(i == 0)
+    if (i == 0)
       liststart = v;
     else
       current->next = v;

@@ -183,7 +183,7 @@ UString::un_armor ()
   int pos = 0;
   while (pos < len_)
   {
-    if  (cp[0] == '\\' && pos + 1 < len_)
+    if (cp[0] == '\\' && pos + 1 < len_)
     {
       if (cp[1] == 'n'
 	  || cp[1] == 't'
