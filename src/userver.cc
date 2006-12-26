@@ -39,11 +39,12 @@
 #include "urbi/usystem.hh"
 #include "userver.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 
 // Global server reference
-UServer    *urbiserver= 0;
-UString    **globalDelete = 0;
+UServer *urbiserver= 0;
+UString **globalDelete = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 int URBI_unicID = 10000; ///< unique identifier to create new references
@@ -385,9 +386,6 @@ UServer::work()
   stopall = false;
 
   // Values final assignment and nbAverage reset to 0
-
-  UVarSet selfError;
-
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
     if ((*i)->activity == 2)
@@ -409,9 +407,9 @@ UServer::work()
 	if ((*i)->value->dataType == DATA_NUM)
 	{
 	  if ((*i)->autoUpdate)
-	    selfError = (*i)->selfSet (&((*i)->value->val));
+	    (*i)->selfSet (&((*i)->value->val));
 	  else
-	    selfError = (*i)->selfSet (&((*i)->target));
+	    (*i)->selfSet (&((*i)->target));
 	}
 
       // set previous for next iation

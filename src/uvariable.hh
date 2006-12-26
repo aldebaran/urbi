@@ -29,26 +29,31 @@
 
 #include "memorymanager/memorymanager.hh"
 #include "fwd.hh"
-#include "uvalue.hh"
-#include "ustring.hh"
 #include "utypes.hh"
 #include "uasyncregister.hh"
 
 //! Uvariable is used to store variables
-/*! You can pass to the constructor three importants parameters:
-    - notifyWrite: when true, the device associated to the variable (if there is
-      a device), will be notified by a call to its virtual function notifyWrite()
-      each time the variable has been modified.
-    - notifyRead: when true, the device associated to the variable (if there is
-      a device), will be notified by a call to its virtual function notifyRead()
-      before any access to the variable value. This can be used to update a sensor value
-      only when needed (useful for low bandwith sensor bus).
-    - autoUpdate: when true, assignment are set immediatly, otherwise, they are handled outside
-      of the execution loop. This is useful for sensors or devices whose value can be set/read like
-      joints: the read value should be the real sensed value, not the assigned one.
+/* ! You can pass to the constructor three importants parameters:
 
-      The methods "get" and "set" should be used to get and set the variable value if needed.
- */
+     - notifyWrite: when true, the device associated to the variable
+       (if there is a device), will be notified by a call to its
+       virtual function notifyWrite() each time the variable has been
+       modified.
+
+     - notifyRead: when true, the device associated to the variable
+       (if there is a device), will be notified by a call to its
+       virtual function notifyRead() before any access to the variable
+       value. This can be used to update a sensor value only when
+       needed (useful for low bandwith sensor bus).
+
+     - autoUpdate: when true, assignment are set immediatly,
+       otherwise, they are handled outside of the execution loop. This
+       is useful for sensors or devices whose value can be set/read
+       like joints: the read value should be the real sensed value,
+       not the assigned one.
+
+       The methods get() and set() should be used to get and set the
+       variable value if needed.  */
 class UVariable : public UASyncRegister
 {
 public:
@@ -92,15 +97,10 @@ public:
   UBlendType blendType;
   /// Device unit.
   UString         *unit;
-  /// Rangemin.
   ufloat          rangemin;
-  /// Rangemax.
   ufloat          rangemax;
-  /// Rangemin.
   ufloat          speedmin;
-  /// Rangemax.
   ufloat          speedmax;
-  /// Delta.
   ufloat          delta;
 
   /// Nb superposition of assignments.
@@ -153,20 +153,35 @@ public:
   /// Used for the "cancel" blend type.
   UCommand_ASSIGN_VALUE *cancel;
 
-
   const char*   setName(const char *s);
   const char*   setName(const char *_id, const char* _method);
-  const char*   setName(UString *s)  { return setName(s->str());};
+  const char*   setName(UString *s);
 
-  UVarSet       set(UValue *v);
-  UVarSet       setFloat(ufloat f);
-  UVarSet       selfSet(ufloat *valcheck);
+  /// \name Updates.
+  /// \{
+  /// Return code for variable Update
+  enum UVarSet
+    {
+      UOK,
+      USPEEDMAX
+    };
 
-  void          setSensorVal(ufloat f);
-  void          initSensorVal(ufloat f);
+  UVarSet set(UValue *v);
+  UVarSet setFloat(ufloat f);
+  UVarSet selfSet(ufloat *valcheck);
+  /// \}
+
+  ///  Set a value->val value.
+  ///
+  /// Must be called instead of value->valdirect assignment.
+  void setSensorVal(ufloat f);
+
+  /// Init a value->val value (valPrev and valPrev2 will be init too).
+  void initSensorVal(ufloat f);
+
   /// True when the variable does not contain an object with
   /// subclasses.
-  bool          isDeletable();
+  bool isDeletable();
 
   void          updated();
 
@@ -177,27 +192,5 @@ public:
   void    init();
 
 };
-
-
-
-/// Set a value->val value. Must be called instead of value->val
-///  direct assignment
-inline void
-UVariable::setSensorVal(ufloat f)
-{
-  valPrev2 = valPrev;
-  valPrev = value->val;
-  value->val = f;
-}
-
-//! Init a value->val value (valPrev and valPrev2 will be init too)
-inline void
-UVariable::initSensorVal(ufloat f)
-{
-  value->dataType = DATA_NUM;
-  valPrev2 = f;
-  valPrev = f;
-  value->val = f;
-}
 
 #endif

@@ -37,6 +37,7 @@
 #include "uconnection.hh"
 #include "uqueue.hh"
 #include "userver.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 
 //! UConnection constructor.

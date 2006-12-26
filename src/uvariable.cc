@@ -33,6 +33,7 @@
 #include "urbi/uobject.hh"
 #include "userver.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"
 
@@ -233,6 +234,12 @@ UVariable::setName(const char *_id, const char* _method)
   return varname->str();
 }
 
+const char*
+UVariable::setName(UString *s)
+{
+  return setName(s->str());
+}
+
 //! Set the UValue associated to the variable
 /*! Note that the UValue v is going to be copied. You might
     delete it afterwards.
@@ -241,7 +248,7 @@ UVariable::setName(const char *_id, const char* _method)
     but the function will still perform some range check and call
     UDevice::notifyWrite if necessary.
  */
-UVarSet
+UVariable::UVarSet
 UVariable::set(UValue *v)
 {
   if (!v)
@@ -300,7 +307,7 @@ UVariable::set(UValue *v)
 /*! Here, the type is known to be a float, which saves the
     necessity to have a UValue passed as parameter
 */
-UVarSet
+UVariable::UVarSet
 UVariable::setFloat(ufloat f)
 {
   if (!value)
@@ -308,7 +315,7 @@ UVariable::setFloat(ufloat f)
   else
     setSensorVal(f);
 
-  return selfSet(&(value->val));
+  return selfSet(&value->val);
 }
 
 //! Check the float reference associated to the variable
@@ -318,7 +325,7 @@ UVariable::setFloat(ufloat f)
 
     valcheck can point either on value->val or on target.
 */
-UVarSet
+UVariable::UVarSet
 UVariable::selfSet(ufloat *valcheck)
 {
   ufloat s;
@@ -347,7 +354,7 @@ UVariable::selfSet(ufloat *valcheck)
       }
     }
 
-    target   = *valcheck; // for consistancy reasons
+    target = *valcheck; // for consistancy reasons
   }
 
   modified = true;
@@ -463,4 +470,21 @@ UVariable::isDeletable()
       return false;
   }
   return true;
+}
+
+void
+UVariable::setSensorVal(ufloat f)
+{
+  valPrev2 = valPrev;
+  valPrev = value->val;
+  value->val = f;
+}
+
+void
+UVariable::initSensorVal(ufloat f)
+{
+  value->dataType = DATA_NUM;
+  valPrev2 = f;
+  valPrev = f;
+  value->val = f;
 }

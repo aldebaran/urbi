@@ -94,13 +94,6 @@ enum UErrorValue
   UMEMORYFAIL
 };
 
-/// Return code for variable Update
-enum UVarSet
-{
-  UOK,
-  USPEEDMAX
-};
-
 /// Type of Bind modes
 enum UBindMode
 {

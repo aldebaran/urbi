@@ -1,5 +1,18 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	UVariable::UVarSet
+	* src/utypes.hh (UVarSet): Move to...
+	* src/uvariable.hh (UVariable::UVarSet): here.
+	Adjust all uses.
+	Remove tautologic (and incorrect) documentation.
+	(setName): Move the implementations into the *.cc file.
+	(uvalue.hh, ustring.hh): Remove the includes.
+	Adjust all users that did not properly include uvalue.hh.
+	* src/userver.cc (UServer::work): Remove the useless variable
+	selfError. That frees us from additional includes.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	s/CMD_//
 	* src/ucommand.hh (Type): Remove the CMD_ prefix.
 	Adjust all uses.

@@ -26,13 +26,14 @@
 #include "ucommand.hh"
 #include "uconnection.hh"
 #include "ucopy.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "uvariable.hh"
-#include "uvariablename.hh"
+#include "ueventhandler.hh"
 #include "unamedparameters.hh"
 #include "uobj.hh"
-#include "ueventhandler.hh"
+#include "urbi/uobject.hh"
+#include "userver.hh"
+#include "uvalue.hh"
+#include "uvariable.hh"
+#include "uvariablename.hh"
 
 MEMORY_MANAGER_INIT(UVariableName);
 

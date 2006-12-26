@@ -19,9 +19,10 @@ For more information, comments, bug reports: http://www.urbiforge.com
 
 **************************************************************************** */
 
-#include "uvariable.hh"
-#include "userver.hh"
 #include "urbi/uobject.hh"
+#include "userver.hh"
+#include "uvalue.hh"
+#include "uvariable.hh"
 
 namespace urbi
 {
