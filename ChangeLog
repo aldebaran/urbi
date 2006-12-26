@@ -1,5 +1,10 @@
 2006-12-26  Akim Demaille  <akim.demaille@free.fr>
 
+	Comment changes
+	* src/uvariablename.hh: here.
+
+2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+
 	s/_FLAVORS//
 	* src/ucommand.hh (WHILE_FLAVORS, LOOPN_FLAVORS, FOREACH_FLAVORS)
 	(FOR_FLAVORS, TREE_FLAVORS): Rename as...
