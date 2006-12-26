@@ -85,7 +85,8 @@ inline int exprToInt(UExpression *e)
 }
 UValue::operator urbi::UImage()
 {
-  urbi::UImage img; img.data=0;
+  urbi::UImage img;
+  img.data=0;
   img.size=img.width = img.height=0;
   img.imageFormat=urbi::IMAGE_UNKNOWN;
   if (dataType != DATA_BINARY)
@@ -228,7 +229,8 @@ UValue::operator urbi::USound()
   };
 
   urbi::USound snd;
-  snd.data=0; snd.size = snd.channels = snd.rate = 0;
+  snd.data=0;
+  snd.size = snd.channels = snd.rate = 0;
   snd.soundFormat = urbi::SOUND_UNKNOWN;
   if ((dataType != DATA_BINARY) ||
       (!refBinary) ||
@@ -589,7 +591,7 @@ UValue::add(UValue *v)
     {
       UValue *ret = new UValue();
       if (ret == 0)
-        return 0;
+	return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -611,7 +613,7 @@ UValue::add(UValue *v)
     {
       UValue *ret = new UValue();
       if (ret == 0)
-        return 0;
+	return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -631,7 +633,7 @@ UValue::add(UValue *v)
     {
       UValue *ret = new UValue();
       if (ret == 0)
-        return 0;
+	return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -813,7 +815,7 @@ UValue::echo(bool hr)
 
       UNamedParameters *param = refBinary->ref()->parameters;
       if (param)
-        o << " ";
+	o << " ";
 
       while (param)
       {
@@ -872,10 +874,15 @@ UValue::urbiValue()
 {
   switch (dataType)
   {
-    case DATA_NUM:     return new urbi::UValue(val);
-    case DATA_STRING:  return new urbi::UValue(std::string(str->str()));
-    case DATA_BINARY:  return new urbi::UValue(operator urbi::UBinary()); //FIXME
-    case DATA_LIST:    return new urbi::UValue((urbi::UList)(*this));
-    default: return new urbi::UValue();
+    case DATA_NUM:
+      return new urbi::UValue(val);
+    case DATA_STRING:
+      return new urbi::UValue(std::string(str->str()));
+    case DATA_BINARY:
+      return new urbi::UValue(operator urbi::UBinary()); //FIXME
+    case DATA_LIST:
+      return new urbi::UValue((urbi::UList)(*this));
+    default:
+      return new urbi::UValue();
   };
 }

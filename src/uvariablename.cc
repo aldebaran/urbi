@@ -571,8 +571,10 @@ UVariableName::buildFullname (UCommand* command,
     {
       strncpy(name, past_hmi->second->str(), fullnameMaxSize);
       nostruct = false;
-      delete device; device = 0;
-      delete method; method = 0; // forces recalc of device.method
+      delete device;
+      device = 0;
+      delete method;
+      method = 0; // forces recalc of device.method
       if (variable)
 	variable = 0;
     }

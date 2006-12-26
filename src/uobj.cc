@@ -263,7 +263,7 @@ UObj::searchVariable(const char* id, bool &ambiguous)
     {
       UVariable* tmpres = (*i)->searchVariable(id, ambiguous);
       if (ambiguous)
-        return 0;
+	return 0;
       if (tmpres)
 	if (found)
 	{

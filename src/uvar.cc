@@ -243,20 +243,20 @@ namespace urbi
     switch(prop)
     {
       case PROP_RANGEMIN:
-        vardata->variable->rangemin = (double) v;
-        break;
+	vardata->variable->rangemin = (double) v;
+	break;
       case PROP_RANGEMAX:
-        vardata->variable->rangemax = (double) v;
-        break;
+	vardata->variable->rangemax = (double) v;
+	break;
       case PROP_SPEEDMIN:
-        vardata->variable->speedmin = (double) v;
-        break;
+	vardata->variable->speedmin = (double) v;
+	break;
       case PROP_SPEEDMAX:
-        vardata->variable->speedmax = (double) v;
-        break;
+	vardata->variable->speedmax = (double) v;
+	break;
       case PROP_DELTA:
-        vardata->variable->delta = (double) v;
-        break;
+	vardata->variable->delta = (double) v;
+	break;
       case PROP_BLEND:
 	if (v.type == DATA_DOUBLE)
 	  //numeric val
@@ -286,17 +286,17 @@ namespace urbi
     switch (prop)
     {
       case PROP_RANGEMIN:
-        return UValue (vardata->variable->rangemin);
+	return UValue (vardata->variable->rangemin);
       case PROP_RANGEMAX:
-        return UValue (vardata->variable->rangemax);
+	return UValue (vardata->variable->rangemax);
       case PROP_SPEEDMIN:
-        return UValue (vardata->variable->speedmin);
+	return UValue (vardata->variable->speedmin);
       case PROP_SPEEDMAX:
-        return UValue (vardata->variable->speedmax);
+	return UValue (vardata->variable->speedmax);
       case PROP_DELTA:
-        return UValue (vardata->variable->delta);
+	return UValue (vardata->variable->delta);
       case PROP_BLEND:
-        return UValue (vardata->variable->blendType);
+	return UValue (vardata->variable->blendType);
     }
     return UValue ();
   }

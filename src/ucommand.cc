@@ -60,10 +60,14 @@ namespace
   {
     switch (type)
     {
-      case UAND:       return "AND";
-      case UPIPE:      return "PIPE";
-      case USEMICOLON: return "SEMICOLON";
-      case UCOMMA:     return "COMMA";
+      case UAND:
+	return "AND";
+      case UPIPE:
+	return "PIPE";
+      case USEMICOLON:
+	return "SEMICOLON";
+      case UCOMMA:
+	return "COMMA";
       default:
 	abort ();
     }
@@ -98,9 +102,12 @@ namespace
   {
     switch (nodetype (type))
     {
-      case USEMICOLON: return "";
-      case UPIPE:      return " (PIPE)";
-      case UAND:       return " (AND)";
+      case USEMICOLON:
+	return "";
+      case UPIPE:
+	return " (PIPE)";
+      case UAND:
+	return " (AND)";
       default: abort();
     }
   }
@@ -1641,7 +1648,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 					targettime ));
       int n = (int)(phaseval->val / (PI*ufloat(2)));
       if (n < 0)
-        --n;
+	--n;
       phaseval->val = phaseval->val - n * (PI * ufloat(2));
     }
 
@@ -6137,7 +6144,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
       // theloop_ is 0 if something has deleted it from the outside (thanks
       // to the 'whenever_hook' attribute), that's why we test here
       if (theloop_)
-        theloop_->toDelete = true;
+	theloop_->toDelete = true;
       theloop_ = 0;
     }
   }

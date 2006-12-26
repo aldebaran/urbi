@@ -206,20 +206,20 @@ UExpression::UExpression(UExpression::Type type,
     switch (type)
     {
       case PLUS:
-        val = expression1->val + expression2->val;
-        break;
+	val = expression1->val + expression2->val;
+	break;
       case MINUS:
-        val = expression1->val - expression2->val;
-        break;
+	val = expression1->val - expression2->val;
+	break;
       case MULT:
-        val = expression1->val * expression2->val;
-        break;
+	val = expression1->val * expression2->val;
+	break;
       case DIV:
-        val = expression1->val / expression2->val;
-        break;
+	val = expression1->val / expression2->val;
+	break;
       case EXP:
-        val = pow (expression1->val , expression2->val);
-        break;
+	val = pow (expression1->val , expression2->val);
+	break;
     }
 
     this->type = VALUE;
@@ -241,7 +241,8 @@ UExpression::UExpression(UExpression::Type type,
     this->type = VALUE;
     this->isconst = true;
     dataType = DATA_NUM;
-    delete expression1; this->expression1 = 0;
+    delete expression1;
+    this->expression1 = 0;
   }
 }
 
@@ -542,9 +543,9 @@ UExpression::eval (UCommand *command,
       UValue* ret = new UValue();
       ret->dataType = dataType;
       if (dataType == DATA_NUM)
-        ret->val = val;
+	ret->val = val;
       if (dataType == DATA_STRING)
-        ret->str = new UString(str);
+	ret->str = new UString(str);
       return ret;
     }
 
@@ -1338,7 +1339,9 @@ UExpression::eval_FUNCTION (UCommand *command,
     if (STREQ(variablename->id->str(), "strsub"))
       ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
 
-    delete e1; delete e2; delete e3;
+    delete e1;
+    delete e2;
+    delete e3;
     return ret;
   }
 
@@ -1738,7 +1741,6 @@ UExpression::eval_VARIABLE (UCommand *command,
 			 (::urbiserver->currentTime
 			  - ::urbiserver->previousTime) );
 	  break;
-	default: break;
       }
     }
   }
@@ -1790,7 +1792,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
       if (!fullname)
-        return UFAIL;
+	return UFAIL;
       varname  = variablename->getFullname()->str();
 
       if (!variable)
@@ -1874,9 +1876,9 @@ UExpression::asyncScan(UASyncCommand *cmd,
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
       if (!fullname)
-        return UFAIL;
+	return UFAIL;
       if (!variable)
-        return UFAIL;
+	return UFAIL;
       variable->registerCmd(cmd);
       return USUCCESS;
 
@@ -1885,7 +1887,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
       fullname = variablename->buildFullname (cmd, c);
       nbargs = 0;
       if (parameters)
-        nbargs = parameters->size ();
+	nbargs = parameters->size ();
       eh = kernel::findEventHandler(fullname, nbargs);
 
       if (eh)

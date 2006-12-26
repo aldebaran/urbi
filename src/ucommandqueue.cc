@@ -125,7 +125,7 @@ UCommandQueue::popCommand (int &length)
       if (p0 == closechar_ && closechar2_ == ' ')
       {
 	discard_ = false;
-        if (closechar_ == '"' && p_1 == '\\')
+	if (closechar_ == '"' && p_1 == '\\')
 	  discard_ = true; // cancel the closure.
       }
 
@@ -136,24 +136,24 @@ UCommandQueue::popCommand (int &length)
     else
     {
       if (p0 == '{')
-        bracketlevel_++;
+	bracketlevel_++;
       else if (p0 == '}')
-        bracketlevel_--;
+	bracketlevel_--;
       else if (p0 == '[')
-        sbracketlevel_++;
+	sbracketlevel_++;
       else if (p0 == ']')
-        sbracketlevel_--;
+	sbracketlevel_--;
       else if (p0 == '(')
-        parenlevel_++;
+	parenlevel_++;
       else if (p0 == ')')
-        parenlevel_--;
+	parenlevel_--;
 
       if (bracketlevel_ < 0)
-        bracketlevel_ = 0;
+	bracketlevel_ = 0;
       if (sbracketlevel_ < 0)
-        sbracketlevel_ = 0;
+	sbracketlevel_ = 0;
       if (parenlevel_ < 0)
-        parenlevel_ = 0;
+	parenlevel_ = 0;
 
       if (p0 == '#')
       {
