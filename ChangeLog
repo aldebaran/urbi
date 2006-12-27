@@ -1,5 +1,10 @@
 2006-12-27  Akim Demaille  <akim.demaille@free.fr>
 
+	Style changes
+	* src/ucommand.cc: Use if where switch was not so appropriate.
+
+2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor print, and add consts
 	* src/uasynccommand.cc, src/uasynccommand.hh, src/ubinary.cc,
 	* src/ubinary.hh, src/ucommand.cc, src/ucommand.hh,

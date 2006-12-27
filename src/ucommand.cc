@@ -3466,7 +3466,8 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
   }
 
   // broadcasting
-  if (scanGroups(&UCommand::refVarName, true)) return status = UMORPH;
+  if (scanGroups(&UCommand::refVarName, true))
+    return status = UMORPH;
 
   // Main execution
   if (cmd == -1)
@@ -3630,7 +3631,8 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
   if (STREQ(oper->str(),"info"))
   {
     variable = variablename->getVariable(this,connection);
-    if (!variablename->getFullname()) return status = UCOMPLETED;
+    if (!variablename->getFullname())
+      return status = UCOMPLETED;
     UString* method = variablename->getMethod();
     UString* devicename = variablename->getDevice();
     UDevice* dev = 0;
@@ -4242,7 +4244,6 @@ UCommand_WAIT::~UCommand_WAIT()
 UCommandStatus
 UCommand_WAIT::execute(UConnection *connection)
 {
-
   if (status == UONQUEUE)
   {
     UValue *nb = expression->eval(this, connection);
@@ -4262,9 +4263,8 @@ UCommand_WAIT::execute(UConnection *connection)
     delete nb;
     status = URUNNING;
   }
-  else
-    if (connection->server->lastTime() >= endtime)
-      status = UCOMPLETED;
+  else if (connection->server->lastTime() >= endtime)
+    status = UCOMPLETED;
 
   return status;
 }
@@ -5134,17 +5134,16 @@ UCommand_IF::execute(UConnection *connection)
     persistant = false;
     return status = UMORPH;
   }
+  else if (command2)
+  {
+    morph = command2;
+    setTag (command2);
+    command2 = 0; // avoid delete of command when this is deleted
+    persistant = false;
+    return status = UMORPH;
+  }
   else
-    if (command2)
-    {
-      morph = command2;
-      setTag (command2);
-      command2 = 0; // avoid delete of command when this is deleted
-      persistant = false;
-      return status = UMORPH;
-    }
-    else
-      return status = UCOMPLETED;
+    return status = UCOMPLETED;
 }
 
 //! UCommand subclass hard copy function
@@ -5720,20 +5719,16 @@ UCommand_WHILE::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    switch (flavor())
-    {
-      case UPIPE:
-	morph = new UCommand_TREE(loc_, Flavorable::UPIPE,
-				  command->copy(), this);
-	break;
-      default:
-	morph =
-	  new UCommand_TREE(loc_, flavor(),
+    if (flavor() == UPIPE)
+      morph = new UCommand_TREE(loc_, Flavorable::UPIPE,
+				command->copy(), this);
+    else
+      morph =
+	new UCommand_TREE(loc_, flavor(),
 			    new UCommand_TREE(loc_, Flavorable::UAND,
 					      command->copy(),
 					      new UCommand_NOOP(loc_)),
-			    this);
-    }
+			  this);
     persistant = true;
     return status = UMORPH;
   }
@@ -5923,13 +5918,11 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	{
 	  trigger = true;
 	  if (assigncmd)
-	  {
 	    if (!assign)
 	      assign = assigncmd;
 	    else
 	      assign = new UCommand_TREE (loc_, Flavorable::UAND,
 					  assigncmd, assign);
-	  }
 	}
 	else
 	  reloop_ = true; // we should try again later
@@ -6216,39 +6209,36 @@ UCommand_FOR::execute(UConnection *connection)
   if (testres == UTRUE)
   {
     UCommand *tmp_instr2 = 0;
-    switch (flavor())
+    if (flavor() == UPIPE || flavor() == UAND)
     {
-      case UPIPE:
-      case UAND:
-	if (instr2)
-	  morph =
-	    new UCommand_TREE(loc_, flavor(), command->copy(),
-			      new UCommand_TREE(loc_, UPIPE,
-						tmp_instr2 = instr2->copy(),
-						this));
-	else
-	  morph = new UCommand_TREE(loc_, flavor(), command->copy(), this);
-	break;
-
-      default:
-	if (instr2)
-	  morph =
-	    new UCommand_TREE
-	    (loc_, flavor(),
-	     new UCommand_TREE(loc_, UAND,
-			       new UCommand_TREE
-			       (loc_, UPIPE,
-				command->copy(), tmp_instr2 = instr2->copy()),
-			       new UCommand_NOOP(loc_)),
-	     this);
-	else
-	  morph =
-	    new UCommand_TREE
-	    (loc_, flavor(),
-	     new UCommand_TREE(loc_, UAND, command->copy(),
-			       new UCommand_NOOP(loc_)),
-	     this);
-	break;
+      if (instr2)
+	morph =
+	  new UCommand_TREE(loc_, flavor(), command->copy(),
+			    new UCommand_TREE(loc_, UPIPE,
+					      tmp_instr2 = instr2->copy(),
+					      this));
+      else
+	morph = new UCommand_TREE(loc_, flavor(), command->copy(), this);
+    }
+    else
+    {
+      if (instr2)
+	morph =
+	  new UCommand_TREE
+	  (loc_, flavor(),
+	   new UCommand_TREE(loc_, UAND,
+			     new UCommand_TREE
+			     (loc_, UPIPE,
+			      command->copy(), tmp_instr2 = instr2->copy()),
+			     new UCommand_NOOP(loc_)),
+	   this);
+      else
+	morph =
+	  new UCommand_TREE
+	  (loc_, flavor(),
+	   new UCommand_TREE(loc_, UAND, command->copy(),
+			     new UCommand_NOOP(loc_)),
+	   this);
     }
     if (tmp_instr2)
       tmp_instr2->morphed = true;
