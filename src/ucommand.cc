@@ -26,6 +26,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cmath>
+#include <sstream>
 
 #include "libport/cstring"
 #include "libport/ref-pt.hh"
@@ -68,25 +69,25 @@ namespace
 
   /// Report an error, with "!!! " prepended, and "\n" appended.
   /// \param c     the connection to which the message is sent.
-  /// \param tag   the command's tag
+  /// \param cmd   the command whose tag will be used.
   /// \param fmt   printf-format string.
+  /// \param args  its arguments.
   UErrorValue
-  send_error (UConnection* c, const std::string& tag,
+  send_error (UConnection* c, const UCommand* cmd,
 	      const char* fmt, va_list args)
   {
-    std::string format ("!!! ");
-    format += fmt;
-    format += '\n';
-    return c->sendf (tag, format.c_str (), args);
+    std::ostringstream o;
+    o << "!!! " << fmt << '\n';
+    return c->sendf (cmd->getTag(), o.str ().c_str(), args);
   }
 
   UErrorValue
-  send_error (UConnection* c, const std::string& tag,
+  send_error (UConnection* c, const UCommand* cmd,
 	      const char* fmt, ...)
   {
     va_list args;
     va_start(args, fmt);
-    return send_error (c, tag, fmt, args);
+    return send_error (c, cmd, fmt, args);
   }
 
 
@@ -701,7 +702,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	if (ambiguous)
 	{
-	  send_error(connection, getTag(),
+	  send_error(connection, this,
 		     "Ambiguous multiple inheritance on function %s",
 		     functionname->str());
 	  return UCOMPLETED;
@@ -720,7 +721,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  || (expression->parameters && !fun->nbparam())
 	  || (!expression->parameters && fun->nbparam()))
       {
-	send_error(connection, getTag(),
+	send_error(connection, this,
 		   "Invalid number of arguments for %s"
 		   " (should be %d params)",
 		   functionname->str(), fun->nbparam());
@@ -782,7 +783,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  if (!valparam)
 	  {
-	    send_error(connection, getTag(), "EXPR evaluation failed");
+	    send_error(connection, this, "EXPR evaluation failed");
 	    return UCOMPLETED;
 	  }
 
@@ -838,7 +839,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    if (!valparam)
 	    {
-	      send_error(connection, getTag(), "EXPR evaluation failed");
+	      send_error(connection, this, "EXPR evaluation failed");
 	      return UCOMPLETED;
 	    }
 	    // urbi::UValue do not see ::UValue, so it must
@@ -938,7 +939,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	&& !variablename->fromGroup
 	&& variable->value->dataType == DATA_OBJ)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Warning: %s type mismatch: no object assignment",
 		 variablename->getFullname()->str());
       return UCOMPLETED;
@@ -946,7 +947,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
     // Strict variable definition checking
     if (!variable && connection->server->defcheck && !defkey)
-      send_error(connection, getTag(), "Unknown identifier: %s",
+      send_error(connection, this, "Unknown identifier: %s",
 		 variablename->getFullname()->str());
 
     // Check the +error flag
@@ -977,7 +978,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     {
       if (::urbiserver->defcheck)
       {
-	send_error(connection, getTag(), "Warning: %s type mismatch",
+	send_error(connection, this, "Warning: %s type mismatch",
 		   variablename->getFullname()->str());
 	delete target;
 	return UCOMPLETED;
@@ -1005,7 +1006,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    UValue* modifier = modif->expression->eval(this, connection);
 	    if (!modifier)
 	    {
-	      send_error(connection, getTag(),
+	      send_error(connection, this,
 			 "String composition failed");
 	      delete target;
 	      return UCOMPLETED;
@@ -1093,7 +1094,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    || variable->rangemax ==  UINFINITY)
 	{
 	  if (!variablename->fromGroup)
-	    send_error(connection, getTag(),
+	    send_error(connection, this,
 		       "Impossible to normalize:"
 		       " no range defined for variable %s",
 		       variablename->getFullname()->str());
@@ -1130,7 +1131,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	if (variable == 0 && !sinusoidal)
 	{
 	  if (!variablename->fromGroup)
-	    send_error(connection, getTag(),
+	    send_error(connection, this,
 		       "Modificator error: %s unknown"
 		       " (no start value)",
 		       variablename->getFullname()->str());
@@ -1145,7 +1146,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	{
 	  if (!modif->expression || !modif->name)
 	  {
-	    send_error(connection, getTag(), "Invalid modifier");
+	    send_error(connection, this, "Invalid modifier");
 	    delete target;
 	    return UCOMPLETED;
 	  }
@@ -1198,7 +1199,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  {
 	    if (modif->expression->type != UExpression::VARIABLE)
 	    {
-	      send_error(connection, getTag(),
+	      send_error(connection, this,
 			 "a variable is expected for"
 			 " the 'getphase' modifier");
 	      return UCOMPLETED;
@@ -1210,7 +1211,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    UValue *modifier = modif->expression->eval(this, connection);
 	    if (!modifier || modifier->dataType != DATA_NUM)
 	    {
-	      send_error(connection, getTag(),
+	      send_error(connection, this,
 			 "Invalid modifier value");
 	      delete modifier;
 	      delete target;
@@ -1221,7 +1222,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  }
 	  else
 	  {
-	    send_error(connection, getTag(),
+	    send_error(connection, this,
 		       "Unkown modifier name");
 	    delete target;
 	    return UCOMPLETED;
@@ -1402,7 +1403,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	if (targettime <  ABSF ((targetval-startval)/ variable->speedmax))
 	{
 	  if (errorFlag)
-	    send_error(connection, getTag(),
+	    send_error(connection, this,
 		       "Warning: request exceeds speedmax."
 		       " Enforcing limitation");
 	  targettime = ABSF ((targetval - startval)/ variable->speedmax);
@@ -1419,7 +1420,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	ABSF(targetval - currentVal)/ speedmin;
 
       if (errorFlag && first)
-	send_error(connection, getTag(), "low speed: increased to speedmin");
+	send_error(connection, this, "low speed: increased to speedmin");
     }
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1462,7 +1463,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	ABSF(targetval - currentVal)/speedmin;
 
       if (errorFlag && first)
-	send_error(connection, getTag(), "low speed: increased to speedmin");
+	send_error(connection, this, "low speed: increased to speedmin");
     }
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1521,7 +1522,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	ABSF(targetval - currentVal)/ speedmin;
 
       if (errorFlag && first)
-	send_error(connection, getTag(), "low speed: increased to speedmin");
+	send_error(connection, this, "low speed: increased to speedmin");
     }
 
     if (currentTime - starttime + deltaTime >= targettime)
@@ -1645,7 +1646,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       {
 	if (!modif_getphase->getFullname())
 	{
-	  send_error(connection, getTag(), "Invalid phase variable name");
+	  send_error(connection, this, "Invalid phase variable name");
 	  return UFAIL;
 	}
 	phasevari = new UVariable(modif_getphase->getFullname()->str(),
@@ -1748,7 +1749,7 @@ UCommand_ASSIGN_BINARY::execute_(UConnection *connection)
       && variable->value->dataType != DATA_BINARY
       && variable->value->dataType != DATA_VOID)
   {
-    send_error(connection, getTag(),
+    send_error(connection, this,
 	       "%s type mismatch",
 	       variablename->getFullname()->str());
     return UCOMPLETED;
@@ -1849,7 +1850,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   if (!variable)
   {
     if (!variablename->fromGroup)
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Variable %s does not exist",
 		 variablename->getFullname()->str());
     return UCOMPLETED;
@@ -1867,14 +1868,14 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (blendmode->dataType != DATA_STRING)
     {
-      send_error(connection, getTag(),"Invalid blend mode.");
+      send_error(connection, this,"Invalid blend mode.");
       return UCOMPLETED;
     }
 
     if (variable->value->dataType != DATA_NUM &&
 	variable->value->dataType != DATA_BINARY)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "%s type is invalid for mixing",
 		 variablename->getFullname()->str());
       return UCOMPLETED;
@@ -1894,7 +1895,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
       variable->blendType = UCANCEL;
     else
     {
-      send_error(connection, getTag(), "Unknown blend mode: %s",
+      send_error(connection, this, "Unknown blend mode: %s",
 		 blendmode->str->str());
       return UCOMPLETED;
     }
@@ -1911,7 +1912,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid range type. NUM expected.");
       return UCOMPLETED;
     }
@@ -1929,7 +1930,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid delta type. NUM expected.");
       return UCOMPLETED;
     }
@@ -1948,7 +1949,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (unitval->dataType != DATA_STRING)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid unit type (must be a string).");
       return UCOMPLETED;
     }
@@ -1956,7 +1957,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
     if (variable->value->dataType != DATA_NUM &&
 	variable->value->dataType != DATA_BINARY)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "%s type is Invalid for unit attribution",
 		 variablename->getFullname()->str());
       return UCOMPLETED;
@@ -1979,7 +1980,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid range type. NUM expected.");
       return UCOMPLETED;
     }
@@ -1997,7 +1998,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid speed type. NUM expected.");
       return UCOMPLETED;
     }
@@ -2015,7 +2016,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid speed type. NUM expected.");
       return UCOMPLETED;
     }
@@ -2024,7 +2025,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  send_error(connection, getTag(),
+  send_error(connection, this,
 	     "Unknown property: %s", oper->str());
   return UCOMPLETED;
 }
@@ -2203,7 +2204,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 
 	if (ambiguous)
 	{
-	  send_error(connection, getTag(),
+	  send_error(connection, this,
 		     "Ambiguous multiple inheritance"
 		     " on function %s",
 		     funname->str());
@@ -2222,7 +2223,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  || (expression->parameters && !fun->nbparam())
 	  || (!expression->parameters && fun->nbparam()) )
       {
-	send_error(connection, getTag(),
+	send_error(connection, this,
 		   "Invalid number of arguments for %s"
 		   " (should be %d params)",
 		   funname->str(), fun->nbparam());
@@ -2255,7 +2256,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	UString* fundevice = expression->variablename->getDevice();
 	if (!fundevice)
 	{
-	  send_error(connection, getTag(), "Function name evaluation failed");
+	  send_error(connection, this, "Function name evaluation failed");
 	  return UCOMPLETED;
 	}
 
@@ -2292,7 +2293,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  if (!valparam)
 	  {
-	    send_error(connection, getTag(), "EXPR evaluation failed");
+	    send_error(connection, this, "EXPR evaluation failed");
 	    return UCOMPLETED;
 	  }
 	  buffer_t buf;
@@ -2351,7 +2352,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    if (!valparam)
 	    {
-	      send_error(connection, getTag(), "EXPR evaluation failed");
+	      send_error(connection, this, "EXPR evaluation failed");
 	      return UCOMPLETED;
 	    }
 	    // urbi::UValue do not see ::UValue,
@@ -2375,7 +2376,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  return UCOMPLETED;
 	}
       }
-      send_error(connection, getTag(), "Invalid function call");
+      send_error(connection, this, "Invalid function call");
       return UCOMPLETED;
     }
 
@@ -2426,7 +2427,7 @@ UCommand_EXPR::execute_(UConnection *connection)
   UValue* ret = expression->eval(this, connection);
   if (ret == 0)
   {
-    send_error(connection, getTag(), "EXPR evaluation failed");
+    send_error(connection, this, "EXPR evaluation failed");
     return UCOMPLETED;
   }
 
@@ -2498,9 +2499,9 @@ UCommand_RETURN::execute_(UConnection *connection)
     {
       UValue *value = expression->eval(this, connection);
       if (!value)
-	send_error(connection, getTag(), "EXPR evaluation failed");
+	send_error(connection, this, "EXPR evaluation failed");
       else if (value->dataType == DATA_OBJ)
-	send_error(connection, getTag(), "Functions cannot return objects"
+	send_error(connection, this, "Functions cannot return objects"
 		   " with Kernel 1");
       else
 	// FIXME: Why don't we use setReturnVar that calls "store"?
@@ -2561,7 +2562,7 @@ UCommand_ECHO::execute_(UConnection *connection)
 
   if (ret == 0)
   {
-    send_error(connection, getTag(), "EXPR evaluation failed");
+    send_error(connection, this, "EXPR evaluation failed");
     return UCOMPLETED;
   }
 
@@ -2603,7 +2604,7 @@ UCommand_ECHO::execute_(UConnection *connection)
       }
 
     if (!ok)
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "%s: no such connection", connectionTag->str());
   }
 
@@ -2681,13 +2682,13 @@ UCommand_NEW::execute_(UConnection *connection)
     UString* name = varname->buildFullname(this, connection, false);
     if (!varname->nostruct)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Object names cannot be nested in Kernel 1");
       return UCOMPLETED;
     }
     if (!name)
     {
-      send_error(connection, getTag(), "Invalid object name");
+      send_error(connection, this, "Invalid object name");
       return UCOMPLETED;
     }
     id = new UString(name->str());
@@ -2700,14 +2701,14 @@ UCommand_NEW::execute_(UConnection *connection)
   {
     if (id->equal(obj))
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Object %s cannot new itself", obj->str());
       return UCOMPLETED;
     }
 
     if (::urbiserver->objtab.find(id->str()) != ::urbiserver->objtab.end())
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Object %s already exists. Delete it first.",
 		 id->str());
       return UCOMPLETED;
@@ -2749,10 +2750,10 @@ UCommand_NEW::execute_(UConnection *connection)
       if (timeout < 0)
       {
 	if (sysCall)
-	  send_error(connection, getTag(),
+	  send_error(connection, this,
 		     "Autoload timeout for object %s", objname);
 
-	send_error(connection, getTag(),
+	send_error(connection, this,
 		   "Unknown object %s", obj->str());
 	return UCOMPLETED;
       }
@@ -2822,7 +2823,7 @@ UCommand_NEW::execute_(UConnection *connection)
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end())
   {
-    send_error(connection, getTag(),
+    send_error(connection, this,
 	       "%s has already inherited from %s",
 	       id->str(), obj->str());
     if (creation)
@@ -2882,7 +2883,7 @@ UCommand_NEW::execute_(UConnection *connection)
       UValue* valparam = pvalue->expression->eval(this, connection);
       if (!valparam)
       {
-	send_error(connection, getTag(), "EXPR evaluation failed");
+	send_error(connection, this, "EXPR evaluation failed");
 	buffer_t buf;
 	snprintf(buf, sizeof buf,
 		 "{delete %s}", id->str());
@@ -2975,7 +2976,7 @@ UCommand_ALIAS::execute_(UConnection *connection)
     if (id0 && id1
 	&& !connection->server->addAlias(id0->str(), id1->str()))
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Circular alias detected, abort command.");
       return UCOMPLETED;
     }
@@ -3089,13 +3090,13 @@ UCommand_INHERIT::execute_(UConnection *connection)
   HMobjtab::iterator objsub    = ::urbiserver->objtab.find(sub->str());
   if (objsub == ::urbiserver->objtab.end ())
   {
-    send_error(connection, getTag(), "Object does not exist: %s", sub->str());
+    send_error(connection, this, "Object does not exist: %s", sub->str());
     return UCOMPLETED;
   }
   HMobjtab::iterator objparent = ::urbiserver->objtab.find(parent->str());
   if (objparent == ::urbiserver->objtab.end ())
   {
-    send_error(connection, getTag(), "Object does not exist: %s", parent->str());
+    send_error(connection, this, "Object does not exist: %s", parent->str());
     return UCOMPLETED;
   }
 
@@ -3106,7 +3107,7 @@ UCommand_INHERIT::execute_(UConnection *connection)
 		  objparent->second) !=
 	objsub->second->up.end())
     {
-      send_error(connection, getTag(), "%s has already inherited from %s",
+      send_error(connection, this, "%s has already inherited from %s",
 		 sub->str(), parent->str());
       return UCOMPLETED;
     }
@@ -3121,7 +3122,7 @@ UCommand_INHERIT::execute_(UConnection *connection)
 		  objparent->second) ==
 	objsub->second->up.end())
     {
-      send_error(connection, getTag(), "%s does not inherit from %s",
+      send_error(connection, this, "%s does not inherit from %s",
 		 sub->str(), parent->str());
       return UCOMPLETED;
     }
@@ -3358,7 +3359,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 
     if (!ok)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "%s: no such connection", id->str());
       return UCOMPLETED;
     }
@@ -3382,7 +3383,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 
     if (!ok)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "%s: no such connection", id->str());
       return UCOMPLETED;
     }
@@ -3394,7 +3395,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
       return UCOMPLETED;
 
     if (STREQ(id->str(), UNKNOWN_TAG))
-      send_error(connection, getTag(), "cannot block 'notag'");
+      send_error(connection, this, "cannot block 'notag'");
     else
       connection->server->block(id->str());
 
@@ -3411,7 +3412,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
       return UCOMPLETED;
 
     if (STREQ(id->str(), UNKNOWN_TAG))
-      send_error(connection, getTag(), "cannot freeze 'notag'");
+      send_error(connection, this, "cannot freeze 'notag'");
     else
       connection->server->freeze(id->str());
 
@@ -3585,7 +3586,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
       if (!fun && !variable)
       {
-	send_error(connection, getTag(),
+	send_error(connection, this,
 		   "identifier %s does not exist",
 		   fullname->str());
 	return UCOMPLETED;
@@ -3611,7 +3612,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	if (idit != ::urbiserver->objtab.end()
 	    && !idit->second->down.empty())
 	{
-	  send_error(connection, getTag(),
+	  send_error(connection, this,
 		     "This object has subclasses."
 		     " Delete subclasses first.");
 	  return UCOMPLETED;
@@ -3626,7 +3627,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
       }
       else
       {
-	send_error(connection, getTag(),
+	send_error(connection, this,
 		   "variable %s already in use or is a system var."
 		   " Cannot delete.",
 		   fullname->str());
@@ -3671,7 +3672,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
     if (!variable && !dev)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Unknown identifier: %s",
 		 variablename->getFullname()->str());
       return UCOMPLETED;
@@ -4004,14 +4005,14 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
   {
     if (connection->receiving)
       return URUNNING;
-    send_error(connection, getTag(), "This command is no longer valid."
+    send_error(connection, this, "This command is no longer valid."
 	       " Please use \"motor on\" instead");
     return UCOMPLETED;
   }
 
   if (STREQ(oper->str(), "motoroff"))
   {
-    send_error(connection, getTag(), "This command is no longer valid."
+    send_error(connection, this, "This command is no longer valid."
 	       " Please use \"motor off\" instead");
     return UCOMPLETED;
   }
@@ -4272,7 +4273,7 @@ UCommand_WAIT::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(), "Invalid type. NUM expected.");
+      send_error(connection, this, "Invalid type. NUM expected.");
       return UCOMPLETED;
     }
     if (nb->val == 0)
@@ -4355,7 +4356,7 @@ UCommand_EMIT::execute_(UConnection *connection)
       UValue *dur = duration->eval(this, connection);
       if (!dur)
       {
-	send_error(connection, getTag(), "Invalid event duration for event %s",
+	send_error(connection, this, "Invalid event duration for event %s",
 		   eventnamestr);
 	return UCOMPLETED;
       }
@@ -4393,7 +4394,7 @@ UCommand_EMIT::execute_(UConnection *connection)
     {
       if (::urbiserver->defcheck)
       {
-	send_error(connection, getTag(), "undefined event %s with %d param(s)",
+	send_error(connection, this, "undefined event %s with %d param(s)",
 		   ens->str (),
 		   nbargs);
 	return UCOMPLETED;
@@ -4459,7 +4460,7 @@ UCommand_EMIT::execute_(UConnection *connection)
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    if (!valparam)
 	    {
-	      send_error(connection, getTag(), "EXPR evaluation failed");
+	      send_error(connection, this, "EXPR evaluation failed");
 	      return UCOMPLETED;
 	    }
 	    // urbi::UValue do not see ::UValue, so it must be
@@ -4806,7 +4807,7 @@ UCommand_DEF::execute_(UConnection *connection)
 	(::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
 	 ::urbiserver->grouptab.end()))
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "function name conflicts with group %s ",
 		 variablename->getMethod()->str());
       return UCOMPLETED;
@@ -4815,7 +4816,7 @@ UCommand_DEF::execute_(UConnection *connection)
     if (connection->server->functiontab.find(funname->str()) !=
 	connection->server->functiontab.end())
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "function %s already exists", funname->str());
       return UCOMPLETED;
     }
@@ -5533,7 +5534,7 @@ UCommand_AT::execute_(UConnection *connection)
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid name resolution in test. "
 		 "Did you define all events and variables?");
       return UCOMPLETED;
@@ -5839,7 +5840,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "Invalid name resolution in test. "
 		 "Did you define all events and variables?");
       return UCOMPLETED;
@@ -6099,7 +6100,7 @@ UCommand_LOOPN::execute_(UConnection *connection)
 
     if (nb->dataType != DATA_NUM)
     {
-      send_error(connection, getTag(),
+      send_error(connection, this,
 		 "number of loops is non numeric");
       delete nb;
       return UCOMPLETED;
@@ -6358,7 +6359,7 @@ UCommand_FOREACH::execute_(UConnection *connection)
   }
   if (position->dataType != DATA_NUM && position->dataType != DATA_STRING)
   {
-    send_error(connection, getTag(), "This type is not supported yet");
+    send_error(connection, this, "This type is not supported yet");
     delete currentvalue;
     return UCOMPLETED;
   }
