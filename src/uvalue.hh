@@ -31,7 +31,6 @@
 # include "fwd.hh"
 # include "memorymanager/memorymanager.hh"
 # include "utypes.hh"
-# include "ustring.hh"
 
 // ****************************************************************************
 //! Contains a value: can be numeric, string, binary
@@ -68,7 +67,7 @@ public:
   UValue* liststart;
   UValue* next;
 
-  UValue* copy();
+  UValue* copy() const;
   UValue* add(UValue* v);
   bool	  equal(UValue* v);
   void	  echo(UConnection* connection, bool human_readable=false);

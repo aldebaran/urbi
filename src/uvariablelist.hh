@@ -20,14 +20,11 @@
  **************************************************************************** */
 
 #ifndef UVARIABLELIST_HH
-#define UVARIABLELIST_HH
+# define UVARIABLELIST_HH
 
-#include "fwd.hh"
-#include "utypes.hh"
+# include "fwd.hh"
 
-
-// *****************************************************************************
-//! Contains a list of variable names
+/// A list of UVariableName.
 class UVariableList
 {
 public:
@@ -36,14 +33,16 @@ public:
 
   virtual ~UVariableList();
 
-  void print();
+  void print() const;
 
   UVariableList* rank(int n);
-  int            size();
-  UVariableList* copy();
+  int            size() const;
+  UVariableList* copy() const;
 
-  UVariableName      *variablename; ///< The name
-  UVariableList      *next;         ///< Next element in the list
+  /// The name.
+  UVariableName      *variablename;
+  /// Next element in the list.
+  UVariableList      *next;
 };
 
 #endif

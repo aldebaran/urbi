@@ -282,7 +282,7 @@ UExpression::~UExpression()
 
 //! UExpression hard copy function
 UExpression*
-UExpression::copy()
+UExpression::copy() const
 {
   return new UExpression (type, ucopy (expression1), ucopy (expression2),
 			  ucopy (variablename), ucopy (parameters),

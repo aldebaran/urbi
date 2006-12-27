@@ -35,6 +35,7 @@
 #include "ucommandqueue.hh"
 #include "ucomplaints.hh"
 #include "uconnection.hh"
+#include "unamedparameters.hh"
 #include "uqueue.hh"
 #include "userver.hh"
 #include "uvalue.hh"
@@ -865,15 +866,14 @@ UConnection::processCommand(UCommand *&command,
     if (command->flagType&1)
     {
       UValue *value = command->flagExpr1->eval(command, this);
-      if ((value) &&
-	  (value->dataType == DATA_NUM) &&
-	  (command->startTime + value->val <= server->lastTime()))
+      if (value &&
+	  value->dataType == DATA_NUM &&
+	  command->startTime + value->val <= server->lastTime())
 	stopit = true;
       delete value;
     }
 
     // flag "+stop"
-
     if (command->flagType&2)
     {
       UTestResult testres = booleval(command->flagExpr2->eval(command, this));
@@ -897,7 +897,6 @@ UConnection::processCommand(UCommand *&command,
     }
 
     // flag "+freeze"
-
     if (command->flagType&4)
     {
       UTestResult testres = booleval(command->flagExpr4->eval(command, this));

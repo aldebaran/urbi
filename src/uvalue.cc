@@ -33,6 +33,7 @@
 #include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
+#include "unamedparameters.hh"
 
 // FIXME: Help!
 #define private protected
@@ -97,7 +98,6 @@ UValue::operator urbi::UImage()
   //validate
   if (!(param && param->next && param->next->next && param->next->next))
     return img;
-
 
   if (STREQ(param->expression->str->str(), "rgb"))
     img.imageFormat = urbi::IMAGE_RGB;
@@ -441,8 +441,9 @@ UValue::~UValue()
 }
 
 //! UValue hard copy
+// FIXME: Why don't we have copy-ctors?
 UValue*
-UValue::copy()
+UValue::copy() const
 {
   UValue *ret = new UValue();
   ret->dataType = dataType;
@@ -465,7 +466,7 @@ UValue::copy()
       break;
 
     case DATA_BINARY:
-      ret->refBinary = ucopy (refBinary);
+      ret->refBinary = refBinary->ref() ? refBinary->copy () : 0;
       break;
 
     case DATA_LIST:

@@ -165,16 +165,9 @@ UCommand::execute(UConnection*)
   return UCOMPLETED;
 }
 
-//! UCommand hard copy function
-UCommand*
-UCommand::copy()
-{
-  return copybase(new UCommand(loc_, type));
-}
-
 //! UCommand base of hard copy function
 UCommand*
-UCommand::copybase(UCommand* c)
+UCommand::copybase(UCommand* c) const
 {
   c->setTag(this);
   if (flags)
@@ -185,8 +178,51 @@ UCommand::copybase(UCommand* c)
 
 //! Print command
 void
-UCommand::print(int)
+UCommand::print(unsigned l) const
 {
+  const char* k = 0;
+  switch (type)
+  {
+#define KIND(K) case K: k = #K; break
+    KIND(ALIAS);
+    KIND(ASSIGN_BINARY);
+    KIND(ASSIGN_PROPERTY);
+    KIND(ASSIGN_VALUE);
+    KIND(AT);
+    KIND(AT_AND);
+    KIND(CLASS);
+    KIND(DECREMENT);
+    KIND(DEF);
+    KIND(ECHO);
+    KIND(EMIT);
+    KIND(EVERY);
+    KIND(EXPR);
+    KIND(FOREACH);
+    KIND(FOR);
+    KIND(FREEZEIF);
+    KIND(GENERIC);
+    KIND(GROUP);
+    KIND(IF);
+    KIND(INCREMENT);
+    KIND(INHERIT);
+    KIND(LOAD);
+    KIND(LOOP);
+    KIND(LOOPN);
+    KIND(NEW);
+    KIND(NOOP);
+    KIND(RETURN);
+    KIND(STOPIF);
+    KIND(TIMEOUT);
+    KIND(TREE);
+    KIND(WAIT);
+    KIND(WAIT_TEST);
+    KIND(WHENEVER);
+    KIND(WHILE);
+#undef KIND(K)
+  }
+  debug(l, " Tag:[%s] %s ", getTag().c_str(), k);
+  print_ (l);
+  debug(l, "END %s ------\n", k);
 }
 
 //! Command auto morphing according to group hierarchy
@@ -315,7 +351,7 @@ UCommand::setTag(const std::string & tag)
 }
 
 void
-UCommand::setTag(UCommand* cmd)
+UCommand::setTag(const UCommand* cmd)
 {
   tag = cmd->tag;
   tagInfo = cmd->tagInfo;
@@ -444,7 +480,7 @@ UCommand_TREE::execute(UConnection*)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_TREE::copy()
+UCommand_TREE::copy() const
 {
   return copybase(new UCommand_TREE(loc_, flavor(),
 				    ucopy (command1),
@@ -504,12 +540,11 @@ UCommand_TREE::deleteMarked()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_TREE::print(int l)
+UCommand_TREE::print_(unsigned l) const
 {
-  debug(l, "Tag:[%s] toDelete=%d Tree %s (%ld:%ld) :\n",
-	getTag().c_str(),
-	toDelete,
+  debug(l, "%s toDelete=%d (%ld:%ld) :\n",
 	flavor_string(),
+	toDelete,
 	(long)this, (long)status);
   if (command1)
   {
@@ -1616,7 +1651,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_ASSIGN_VALUE::copy()
+UCommand_ASSIGN_VALUE::copy() const
 {
   UCommand_ASSIGN_VALUE *ret =
     new UCommand_ASSIGN_VALUE(loc_, ucopy (variablename),
@@ -1633,17 +1668,12 @@ UCommand_ASSIGN_VALUE::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_ASSIGN_VALUE::print(int l)
+UCommand_ASSIGN_VALUE::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] toDelete=%d ",
-	getTag().c_str(), toDelete);
-
-  debug("ASSIGN VALUE:\n");
-
+  debug(l, "toDelete=%d ", toDelete);
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
   DEBUG_ATTR(parameters);
-  debug(l, "END ASSIGN VALUE ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
@@ -1725,7 +1755,7 @@ UCommand_ASSIGN_BINARY::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_ASSIGN_BINARY::copy()
+UCommand_ASSIGN_BINARY::copy() const
 {
   UCommand_ASSIGN_BINARY *ret =
     new UCommand_ASSIGN_BINARY(loc_, ucopy (variablename),
@@ -1738,12 +1768,8 @@ UCommand_ASSIGN_BINARY::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_ASSIGN_BINARY::print(int l)
+UCommand_ASSIGN_BINARY::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("ASSIGN BINARY:\n");
-
   DEBUG_ATTR (variablename);
   if (refBinary)
   {
@@ -1751,8 +1777,6 @@ UCommand_ASSIGN_BINARY::print(int l)
     refBinary->ref()->print();
     debug("\n");
   }
-  debug("%sEND ASSIGN BINARY ------\n",
-		      tab(l));
 }
 
 MEMORY_MANAGER_INIT(UCommand_ASSIGN_PROPERTY);
@@ -1984,7 +2008,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_ASSIGN_PROPERTY::copy()
+UCommand_ASSIGN_PROPERTY::copy() const
 {
   UCommand_ASSIGN_PROPERTY *ret =
     new UCommand_ASSIGN_PROPERTY(loc_, ucopy (variablename),
@@ -1998,16 +2022,11 @@ UCommand_ASSIGN_PROPERTY::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_ASSIGN_PROPERTY::print(int l)
+UCommand_ASSIGN_PROPERTY::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("ASSIGN PROPERTY [%s]:\n", oper->str());
-
+  debug("[%s]:\n", oper->str());
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
-
-  debug(l, "END ASSIGN PROPERTY ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
@@ -2075,7 +2094,7 @@ UCommand_AUTOASSIGN::execute(UConnection*)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_AUTOASSIGN::copy()
+UCommand_AUTOASSIGN::copy() const
 {
   UCommand_AUTOASSIGN *ret =
     new UCommand_AUTOASSIGN(loc_, ucopy (variablename),
@@ -2089,17 +2108,11 @@ UCommand_AUTOASSIGN::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_AUTOASSIGN::print(int l)
+UCommand_AUTOASSIGN::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-
-  debug("AUTOASSIGN (%d):", assigntype);
-
+  debug("(%d):", assigntype);
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
-
-  debug(l, "END AUTOASSIGN ------\n");
 }
 
 
@@ -2416,7 +2429,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_EXPR::copy()
+UCommand_EXPR::copy() const
 {
   return copybase(new UCommand_EXPR(loc_, ucopy (expression)));
 }
@@ -2426,15 +2439,9 @@ UCommand_EXPR::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_EXPR::print(int l)
+UCommand_EXPR::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("EXPR:\n");
-
   DEBUG_ATTR (expression);
-
-  debug(l, "END EXPR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_RETURN);
@@ -2483,7 +2490,7 @@ UCommand_RETURN::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_RETURN::copy()
+UCommand_RETURN::copy() const
 {
   return copybase(new UCommand_RETURN(loc_, ucopy (expression)));
 }
@@ -2493,15 +2500,9 @@ UCommand_RETURN::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_RETURN::print(int l)
+UCommand_RETURN::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("RETURN:\n");
-
   DEBUG_ATTR (expression);
-
-  debug(l, "END RETURN ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_ECHO);
@@ -2589,7 +2590,7 @@ UCommand_ECHO::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_ECHO::copy()
+UCommand_ECHO::copy() const
 {
   UCommand_ECHO *ret =
     new UCommand_ECHO(loc_, ucopy (expression),
@@ -2603,16 +2604,10 @@ UCommand_ECHO::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_ECHO::print(int l)
+UCommand_ECHO::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("ECHO:\n");
-
   DEBUG_ATTR (expression);
   DEBUG_ATTR(parameters);
-
-  debug(l, "END ECHO ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_NEW);
@@ -2896,7 +2891,7 @@ UCommand_NEW::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_NEW::copy()
+UCommand_NEW::copy() const
 {
   UCommand_NEW *ret = new UCommand_NEW(loc_, ucopy (varname),
 				       ucopy (obj),
@@ -2910,19 +2905,13 @@ UCommand_NEW::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_NEW::print(int l)
+UCommand_NEW::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("NEW:\n");
-
   if (id)
     debug(l, "  Id:[%s]\n", id->str());
   if (obj)
     debug(l, "  Obj:[%s]\n", obj->str());
   DEBUG_ATTR(parameters);
-
-  debug(l, "END NEW ------\n");
 }
 
 
@@ -3015,7 +3004,7 @@ UCommand_ALIAS::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_ALIAS::copy()
+UCommand_ALIAS::copy() const
 {
   return copybase(new UCommand_ALIAS(loc_, ucopy (aliasname),
 				     ucopy (id),
@@ -3027,12 +3016,9 @@ UCommand_ALIAS::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_ALIAS::print(int l)
+UCommand_ALIAS::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("ALIAS (%d) :\n", (int)eraseit);
-
+  debug("(%d) :\n", (int)eraseit);
   DEBUG_ATTR (aliasname);
   if (id)
   {
@@ -3040,8 +3026,6 @@ UCommand_ALIAS::print(int l)
     id->print();
     debug("\n");
   }
-
-  debug(l, "END ALIAS ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_INHERIT);
@@ -3130,7 +3114,7 @@ UCommand_INHERIT::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_INHERIT::copy()
+UCommand_INHERIT::copy() const
 {
   return copybase(new UCommand_INHERIT(loc_, ucopy (subclass),
 				       ucopy (theclass),
@@ -3142,16 +3126,11 @@ UCommand_INHERIT::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_INHERIT::print(int l)
+UCommand_INHERIT::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("INHERIT (%d) :\n", (int)eraseit);
-
+  debug("(%d) :\n", (int)eraseit);
   DEBUG_ATTR (subclass);
   DEBUG_ATTR (theclass);
-
-  debug(l, "END INHERIT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_GROUP);
@@ -3279,7 +3258,7 @@ UCommand_GROUP::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_GROUP::copy()
+UCommand_GROUP::copy() const
 {
   return copybase(new UCommand_GROUP(loc_, ucopy (id),
 				     ucopy (parameters),
@@ -3291,15 +3270,10 @@ UCommand_GROUP::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_GROUP::print(int l)
+UCommand_GROUP::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("GROUP :\n");
   if (id)
     debug(l, "  Id:[%s]\n", id->str());
-
-  debug(l, "END GROUP ------\n");
 }
 
 
@@ -3431,7 +3405,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_OPERATOR_ID::copy()
+UCommand_OPERATOR_ID::copy() const
 {
   return copybase(new UCommand_OPERATOR_ID(loc_, ucopy (oper),
 					   ucopy (id)));
@@ -3442,13 +3416,11 @@ UCommand_OPERATOR_ID::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_OPERATOR_ID::print(int l)
+UCommand_OPERATOR_ID::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("OPERATOR_ID %s:\n", oper->str());
+  debug("%s:\n", oper->str());
   if (id)
     debug(l, "  Id:[%s]\n", id->str());
-  debug(l, "END OPERATOR_ID ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
@@ -3518,7 +3490,7 @@ UCommand_DEVICE_CMD::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_DEVICE_CMD::copy()
+UCommand_DEVICE_CMD::copy() const
 {
   UCommand_DEVICE_CMD *ret =
     new UCommand_DEVICE_CMD(loc_, ucopy (variablename),
@@ -3531,14 +3503,11 @@ UCommand_DEVICE_CMD::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_DEVICE_CMD::print(int l)
+UCommand_DEVICE_CMD::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("DEVICE_CMD %s:\n", variablename->device->str());
+  debug("%s:\n", variablename->device->str());
   if (cmd)
     debug(l, "  Cmd:[%f]\n", cmd);
-  debug(l, "END DEVICE_CMD ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
@@ -3772,7 +3741,7 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_OPERATOR_VAR::copy()
+UCommand_OPERATOR_VAR::copy() const
 {
   UCommand_OPERATOR_VAR *ret =
     new UCommand_OPERATOR_VAR(loc_, ucopy (oper),
@@ -3785,12 +3754,10 @@ UCommand_OPERATOR_VAR::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_OPERATOR_VAR::print(int l)
+UCommand_OPERATOR_VAR::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("OPERATOR_VAR %s:\n", oper->str());
+  debug("%s:\n", oper->str());
   DEBUG_ATTR (variablename);
-  debug(l, "END OPERATOR_VAR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_BINDER);
@@ -3924,7 +3891,7 @@ UCommand_BINDER::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_BINDER::copy()
+UCommand_BINDER::copy() const
 {
   UCommand_BINDER *ret = new UCommand_BINDER(loc_, ucopy (objname),
 					     ucopy (binder),
@@ -3940,16 +3907,11 @@ UCommand_BINDER::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_BINDER::print(int l)
+UCommand_BINDER::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("BINDER %s type:%d nbparam:%d:\n",
-		      binder->str(), type, nbparam);
+  debug("%s type:%d nbparam:%d:\n", binder->str(), type, nbparam);
   DEBUG_ATTR (objname);
   DEBUG_ATTR (variablename);
-
-  debug(l, "END BINDER ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR);
@@ -4240,7 +4202,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_OPERATOR::copy()
+UCommand_OPERATOR::copy() const
 {
   return copybase(new UCommand_OPERATOR(loc_, ucopy (oper)));
 }
@@ -4250,12 +4212,9 @@ UCommand_OPERATOR::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_OPERATOR::print(int l)
+UCommand_OPERATOR::print_(unsigned) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("OPERATOR %s:\n", oper->str());
-  debug(l, "END OPERATOR ------\n");
+  debug("%s:\n", oper->str());
 }
 
 MEMORY_MANAGER_INIT(UCommand_WAIT);
@@ -4312,7 +4271,7 @@ UCommand_WAIT::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_WAIT::copy()
+UCommand_WAIT::copy() const
 {
   return copybase(new UCommand_WAIT(loc_, ucopy (expression)));
 }
@@ -4322,15 +4281,9 @@ UCommand_WAIT::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_WAIT::print(int l)
+UCommand_WAIT::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("WAIT:\n");
-
   DEBUG_ATTR (expression);
-
-  debug(l, "END WAIT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_EMIT);
@@ -4558,7 +4511,7 @@ UCommand_EMIT::removeEvent ()
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_EMIT::copy()
+UCommand_EMIT::copy() const
 {
   UCommand_EMIT *ret =
     new UCommand_EMIT(loc_, ucopy (eventname), ucopy (parameters));
@@ -4570,11 +4523,9 @@ UCommand_EMIT::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_EMIT::print(int l)
+UCommand_EMIT::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] EMIT:\n", getTag().c_str());
   DEBUG_ATTR (eventname);
-  debug(l, "END EMIT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
@@ -4630,7 +4581,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_WAIT_TEST::copy()
+UCommand_WAIT_TEST::copy() const
 {
   UCommand_WAIT_TEST *ret = new UCommand_WAIT_TEST(loc_, ucopy (test));
   copybase(ret);
@@ -4643,11 +4594,9 @@ UCommand_WAIT_TEST::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_WAIT_TEST::print(int l)
+UCommand_WAIT_TEST::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] WAIT_TEST:\n", getTag().c_str());
   DEBUG_ATTR (test);
-  debug(l, "END WAIT_TEST ------\n");
 }
 
 
@@ -4720,7 +4669,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_INCDECREMENT::copy()
+UCommand_INCDECREMENT::copy() const
 {
   UCommand_INCDECREMENT *ret =
     new UCommand_INCDECREMENT(loc_, type, ucopy (variablename));
@@ -4732,11 +4681,8 @@ UCommand_INCDECREMENT::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_INCDECREMENT::print(int l)
+UCommand_INCDECREMENT::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("INCDECREMENT:");
   if (type == INCREMENT)
     debug("INC\n");
   else if (type == DECREMENT)
@@ -4745,7 +4691,6 @@ UCommand_INCDECREMENT::print(int l)
     debug("UNKNOWN TYPE\n");
 
   DEBUG_ATTR (variablename);
-  debug(l, "END INCDECREMENT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_DEF);
@@ -4965,7 +4910,7 @@ UCommand_DEF::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_DEF::copy()
+UCommand_DEF::copy() const
 {
   UCommand_DEF *ret = new UCommand_DEF(loc_, deftype, ucopy (variablename),
 				       ucopy (parameters),
@@ -4979,16 +4924,12 @@ UCommand_DEF::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_DEF::print(int l)
+UCommand_DEF::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("DEF:\n");
   DEBUG_ATTR (variablename);
   DEBUG_ATTR(variablelist);
   DEBUG_ATTR(parameters);
   DEBUG_ATTR_I(command);
-  debug(l, "END DEF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_CLASS);
@@ -5077,32 +5018,32 @@ UCommand_CLASS::execute(UConnection*)
 				  param->expression->parameters,
 				  0);
 	  break;
-
-	case UExpression::VARIABLE:
-	case UExpression::LIST:
-	case UExpression::GROUP:
+	  // FIXME: This list is sick, we need something else.
 	case UExpression::ADDR_VARIABLE:
-	case UExpression::PLUS:
-	case UExpression::MINUS:
-	case UExpression::MULT:
-	case UExpression::DIV:
-	case UExpression::MOD:
-	case UExpression::EXP:
-	case UExpression::NEG:
 	case UExpression::COPY:
+	case UExpression::DIV:
+	case UExpression::EXP:
+	case UExpression::GROUP:
+	case UExpression::LIST:
+	case UExpression::MINUS:
+	case UExpression::MOD:
+	case UExpression::MULT:
+	case UExpression::NEG:
+	case UExpression::PLUS:
 	case UExpression::PROPERTY:
-	case UExpression::TEST_EQ:
-	case UExpression::TEST_REQ:
-	case UExpression::TEST_PEQ:
-	case UExpression::TEST_DEQ:
-	case UExpression::TEST_NE:
-	case UExpression::TEST_GT:
-	case UExpression::TEST_GE:
-	case UExpression::TEST_LT:
-	case UExpression::TEST_LE:
-	case UExpression::TEST_BANG:
 	case UExpression::TEST_AND:
+	case UExpression::TEST_BANG:
+	case UExpression::TEST_DEQ:
+	case UExpression::TEST_EQ:
+	case UExpression::TEST_GE:
+	case UExpression::TEST_GT:
+	case UExpression::TEST_LE:
+	case UExpression::TEST_LT:
+	case UExpression::TEST_NE:
 	case UExpression::TEST_OR:
+	case UExpression::TEST_PEQ:
+	case UExpression::TEST_REQ:
+	case UExpression::VARIABLE:
 	  break;
       }
       if (cdef)
@@ -5129,7 +5070,7 @@ UCommand_CLASS::execute(UConnection*)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_CLASS::copy()
+UCommand_CLASS::copy() const
 {
   return copybase(new UCommand_CLASS(loc_, ucopy (object),
 				     ucopy (parameters)));
@@ -5140,14 +5081,11 @@ UCommand_CLASS::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_CLASS::print(int l)
+UCommand_CLASS::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("CLASS:\n");
   if (object)
     debug(l, "  Object name: %s\n", object->str());
   DEBUG_ATTR(parameters);
-  debug(l, "END CLASS ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_IF);
@@ -5211,7 +5149,7 @@ UCommand_IF::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_IF::copy()
+UCommand_IF::copy() const
 {
   return copybase(new UCommand_IF(loc_, ucopy (test),
 				  ucopy (command1),
@@ -5223,14 +5161,11 @@ UCommand_IF::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_IF::print(int l)
+UCommand_IF::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("IF:\n");
   DEBUG_ATTR (test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
-  debug(l, "END IF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_EVERY);
@@ -5288,7 +5223,7 @@ UCommand_EVERY::execute(UConnection* connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_EVERY::copy()
+UCommand_EVERY::copy() const
 {
   return copybase(new UCommand_EVERY(loc_, ucopy (duration),
 				     ucopy (command)));
@@ -5299,13 +5234,10 @@ UCommand_EVERY::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_EVERY::print(int l)
+UCommand_EVERY::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("EVERY:");
   DEBUG_ATTR (duration);
   DEBUG_ATTR_I(command);
-  debug(l, "END EVERY ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
@@ -5362,7 +5294,7 @@ UCommand_TIMEOUT::execute(UConnection*)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_TIMEOUT::copy()
+UCommand_TIMEOUT::copy() const
 {
   return copybase(new UCommand_TIMEOUT(loc_, ucopy (duration),
 				       ucopy (command)));
@@ -5373,13 +5305,10 @@ UCommand_TIMEOUT::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_TIMEOUT::print(int l)
+UCommand_TIMEOUT::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("TIMEOUT:");
   DEBUG_ATTR (duration);
   DEBUG_ATTR_I(command);
-  debug(l, "END TIMEOUT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_STOPIF);
@@ -5454,7 +5383,7 @@ UCommand_STOPIF::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_STOPIF::copy()
+UCommand_STOPIF::copy() const
 {
   return copybase(new UCommand_STOPIF(loc_, ucopy (condition),
 				      ucopy (command)));
@@ -5465,13 +5394,10 @@ UCommand_STOPIF::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_STOPIF::print(int l)
+UCommand_STOPIF::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("STOPIF:");
   DEBUG_ATTR (condition);
   DEBUG_ATTR_I(command);
-  debug(l, "END STOPIF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
@@ -5530,7 +5456,7 @@ UCommand_FREEZEIF::execute(UConnection*)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_FREEZEIF::copy()
+UCommand_FREEZEIF::copy() const
 {
   return copybase(new UCommand_FREEZEIF(loc_, ucopy (condition),
 					ucopy (command)));
@@ -5541,13 +5467,10 @@ UCommand_FREEZEIF::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_FREEZEIF::print(int l)
+UCommand_FREEZEIF::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("FREEZEIF:");
   DEBUG_ATTR (condition);
   DEBUG_ATTR_I(command);
-  debug(l, "END FREEZEIF ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_AT);
@@ -5726,7 +5649,7 @@ UCommand_AT::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_AT::copy()
+UCommand_AT::copy() const
 {
   return copybase(new UCommand_AT(loc_, type,
 				  ucopy (test),
@@ -5739,12 +5662,9 @@ UCommand_AT::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_AT::print(int l)
+UCommand_AT::print_(unsigned l) const
 {
-  debug("%s Tag:[%s] toDelete=%d ",
-		      tab(l), getTag().c_str(), toDelete);
-
-  debug("AT:");
+  debug("toDelete=%d ", toDelete);
   if (type == AT)
     debug("\n");
   else if (type == AT_AND)
@@ -5755,7 +5675,6 @@ UCommand_AT::print(int l)
   DEBUG_ATTR (test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
-  debug(l, "END AT ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WHILE);
@@ -5824,7 +5743,7 @@ UCommand_WHILE::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_WHILE::copy()
+UCommand_WHILE::copy() const
 {
   return copybase(new UCommand_WHILE(loc_, flavor(),
 				     ucopy (test), ucopy (command)));
@@ -5835,12 +5754,11 @@ UCommand_WHILE::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_WHILE::print(int l)
+UCommand_WHILE::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), flavor_string());
+  debug(l, "%s\n", flavor_string());
   DEBUG_ATTR (test);
   DEBUG_ATTR_I(command);
-  debug(l, "END WHILE ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_WHENEVER);
@@ -6051,7 +5969,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_WHENEVER::copy()
+UCommand_WHENEVER::copy() const
 {
   return copybase(new UCommand_WHENEVER(loc_, ucopy (test),
 					ucopy (command1),
@@ -6063,14 +5981,11 @@ UCommand_WHENEVER::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_WHENEVER::print(int l)
+UCommand_WHENEVER::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("WHENEVER:\n");
   DEBUG_ATTR(test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
-  debug(l, "END WHENEVER ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOOP);
@@ -6114,7 +6029,7 @@ UCommand_LOOP::execute(UConnection*)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_LOOP::copy()
+UCommand_LOOP::copy() const
 {
   return copybase(new UCommand_LOOP(loc_, ucopy (command)));
 }
@@ -6124,13 +6039,10 @@ UCommand_LOOP::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_LOOP::print(int l)
+UCommand_LOOP::print_(unsigned l) const
 {
-  debug("%s Tag:[%s] toDelete=%d",
-		      tab(l), getTag().c_str(), toDelete);
-  debug("LOOP:\n");
+  debug("toDelete=%d", toDelete);
   DEBUG_ATTR_I(command);
-  debug(l, "END LOOP ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_LOOPN);
@@ -6210,7 +6122,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_LOOPN::copy()
+UCommand_LOOPN::copy() const
 {
   return copybase(new UCommand_LOOPN(loc_, flavor(),
 				     ucopy (expression),
@@ -6222,17 +6134,15 @@ UCommand_LOOPN::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_LOOPN::print(int l)
+UCommand_LOOPN::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] LOOPN: %s", getTag().c_str(), flavor_string ());
+  debug(l, "%s", flavor_string ());
   DEBUG_ATTR (expression);
   if (command)
   {
     debug(l, "  Command (%ld:%d):\n", (long)command, (int)command->status);
     command->print(l+3);
   }
-
-  debug(l, "END LOOPN ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_FOR);
@@ -6351,7 +6261,7 @@ UCommand_FOR::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_FOR::copy()
+UCommand_FOR::copy() const
 {
   UCommand_FOR *ret = new UCommand_FOR(loc_, flavor(),
 				       ucopy (instr1),
@@ -6367,16 +6277,13 @@ UCommand_FOR::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_FOR::print(int l)
+UCommand_FOR::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] FOR: %s", getTag().c_str(), flavor_string());
-
+  debug(l, "%s", flavor_string());
   DEBUG_ATTR(test);
   DEBUG_ATTR_I(instr1);
   DEBUG_ATTR_I(instr2);
   DEBUG_ATTR_I(command);
-
-  debug(l, "END FOR ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_FOREACH);
@@ -6463,14 +6370,18 @@ UCommand_FOREACH::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_FOREACH::copy()
+UCommand_FOREACH::copy() const
 {
   UCommand_FOREACH *ret = new UCommand_FOREACH(loc_, flavor(),
 					       ucopy (variablename),
 					       ucopy (expression),
 					       ucopy (command));
   copybase(ret);
+#if 0
+  // FIXME: Why do we change this attribute here?  Is it the one
+  // of the result that is meant to be initialized?
   position = 0;
+#endif
   return ret;
 }
 
@@ -6479,15 +6390,12 @@ UCommand_FOREACH::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_FOREACH::print(int l)
+UCommand_FOREACH::print_(unsigned l) const
 {
-  debug(l, " Tag:[%s] FOREACH: %s", getTag().c_str(), flavor_string());
-
+  debug(l, "%s", flavor_string());
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
   DEBUG_ATTR_I(command);
-
-  debug(l, "END FOREACH ------\n");
 }
 
 MEMORY_MANAGER_INIT(UCommand_NOOP);
@@ -6531,7 +6439,7 @@ UCommandStatus UCommand_NOOP::execute(UConnection *connection)
 
 //! UCommand subclass hard copy function
 UCommand*
-UCommand_NOOP::copy()
+UCommand_NOOP::copy() const
 {
   return copybase(new UCommand_NOOP(loc_, status == URUNNING));
 }
@@ -6541,8 +6449,7 @@ UCommand_NOOP::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UCommand_NOOP::print(int l)
+UCommand_NOOP::print_(unsigned) const
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-  debug("NOOP, level =%d\n", (int)status);
+  debug("level =%d\n", (int)status);
 }

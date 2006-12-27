@@ -637,23 +637,22 @@ UVariableName::nameUpdate(const char* _device, const char* _id)
 
 //! UNamedParameters hard copy function
 UVariableName*
-UVariableName::copy()
+UVariableName::copy() const
 {
   UVariableName *ret;
 
   if (str)
     ret = new UVariableName(str->copy(), rooted);
+  else if (index_obj)
+    ret = new UVariableName (ucopy (device),
+			     ucopy (index_obj),
+			     ucopy (id),
+			     ucopy (index));
   else
-    if (index_obj)
-      ret = new UVariableName (ucopy (device),
-			       ucopy (index_obj),
-			       ucopy (id),
-			       ucopy (index));
-    else
-      ret = new UVariableName(ucopy (device),
-			      ucopy (id),
-			      rooted,
-			      ucopy (index));
+    ret = new UVariableName(ucopy (device),
+			    ucopy (id),
+			    rooted,
+			    ucopy (index));
 
   ret->isstatic     = isstatic;
   ret->isnormalized = isnormalized;
@@ -673,7 +672,7 @@ UVariableName::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UVariableName::print()
+UVariableName::print() const
 {
   ::urbiserver->debug("(VAR root=%d ", rooted);
   if (device)

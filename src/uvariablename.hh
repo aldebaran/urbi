@@ -52,8 +52,8 @@ public:
 
   virtual ~UVariableName();
 
-  void           print();
-  UVariableName* copy();
+  void           print() const;
+  UVariableName* copy() const;
 
   UVariable*     getVariable (UCommand* command, UConnection* connection);
   UFunction*     getFunction(UCommand *command, UConnection *connection);

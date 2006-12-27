@@ -86,10 +86,11 @@ public:
   UCommand (const location& l, Type _type);
   virtual ~UCommand();
 
-  virtual void print(int);
+  virtual void print(unsigned l) const;
+  virtual void print_(unsigned l) const = 0;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand* copy();
+  virtual UCommand* copy() const = 0;
 
   UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
   virtual UVariableName** refVarName ()
@@ -106,7 +107,7 @@ public:
     return tag;
   }
   void setTag(const std::string& tag);
-  void setTag(UCommand* b); //faster than the one above
+  void setTag(const UCommand* b); //faster than the one above
   void unsetTag();
 
   bool isBlocked();
@@ -142,12 +143,19 @@ public:
 
   /// start time
   ufloat           startTime;
-  /// expression used to store the flags params
+
+  /// \name Hideous hacks we must get rid of.
+  /// \{
+
+  /// Expression used to store the flags params.
   UExpression* flagExpr1;
-  /// expression used to store the flags params
+  /// Expression used to store the flags params.
   UExpression* flagExpr2;
-  /// expression used to store the flags params
+  /// Expression used to store the flags params.
   UExpression* flagExpr4;
+
+  /// \}
+
   /// in case of timeout or condout, stores the type of the flag
   /// (timeout:0), (condout:1).
   int              flagType;
@@ -163,7 +171,7 @@ public:
   bool             morphed;
 
 protected:
-  UCommand* copybase(UCommand* c);
+  UCommand* copybase(UCommand* c) const;
 
 private:
   /// Command tag.
@@ -186,10 +194,10 @@ public:
 		UCommand* command1, UCommand* command2);
   virtual ~UCommand_TREE();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   ///D eletes sub commands marked for deletion
   void deleteMarked();
@@ -218,10 +226,10 @@ public:
 			bool defkey = true);
   virtual ~UCommand_ASSIGN_VALUE();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
     return &variablename;
@@ -314,10 +322,10 @@ public:
 			 libport::RefPt<UBinary>* refBinary);
   virtual ~UCommand_ASSIGN_BINARY();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
     return &variablename;
@@ -348,10 +356,10 @@ public:
 			   UExpression* expression);
   virtual ~UCommand_ASSIGN_PROPERTY();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
     return &variablename;
@@ -384,10 +392,10 @@ public:
 		       int assigntype);
   virtual ~UCommand_AUTOASSIGN();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Name of the iterating variable
   UVariableName* variablename;
@@ -406,10 +414,10 @@ public:
   UCommand_EXPR(const UCommand::location& l, UExpression* expression);
   virtual ~UCommand_EXPR();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
     return &expression->variablename;
@@ -427,10 +435,10 @@ public:
   UCommand_RETURN(const UCommand::location& l, UExpression* e);
   virtual ~UCommand_RETURN();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* c);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
 private:
   /// Expression.  Useful documentation, ain't it?
@@ -448,10 +456,10 @@ public:
 		UString* connectionTag);
   virtual ~UCommand_ECHO();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Expression
   UExpression* expression;
@@ -473,10 +481,10 @@ public:
 	       bool noinit=false);
   virtual ~UCommand_NEW();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Object name
   UString* id;
@@ -506,10 +514,10 @@ public:
 
   virtual ~UCommand_ALIAS();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// alias name
   UVariableName* aliasname;
@@ -531,10 +539,10 @@ public:
 
   virtual ~UCommand_INHERIT();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// subclass that inherits
   UVariableName* subclass;
@@ -556,10 +564,10 @@ public:
 
   virtual ~UCommand_GROUP();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// identifier
   UString* id;
@@ -580,10 +588,10 @@ public:
 			UString* id);
   virtual ~UCommand_OPERATOR_ID();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// operator name
   UString* oper;
@@ -605,10 +613,10 @@ public:
     return &variablename;
   }
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// the device name embedded in a var name
   UVariableName* variablename;
@@ -626,10 +634,10 @@ public:
 			 UVariableName* variablename);
   virtual ~UCommand_OPERATOR_VAR();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// operator name
   UString* oper;
@@ -654,10 +662,10 @@ public:
 		   int nbparam=0);
   virtual ~UCommand_BINDER();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// binder name "external" or "internal"
   UString* binder;
@@ -680,10 +688,10 @@ public:
   UCommand_OPERATOR (const UCommand::location& l, UString* oper);
   virtual ~UCommand_OPERATOR ();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// operator name
   UString* oper;
@@ -697,10 +705,10 @@ public:
   UCommand_WAIT(const UCommand::location& l, UExpression* expression);
   virtual ~UCommand_WAIT();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Expression
   UExpression* expression;
@@ -718,10 +726,10 @@ public:
 		UNamedParameters* parameters, UExpression* duration=0);
   virtual ~UCommand_EMIT();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// terminate and clean the event when the emit ends.
   void removeEvent ();
@@ -752,10 +760,10 @@ public:
   UCommand_WAIT_TEST(const UCommand::location& l, UExpression* test);
   virtual ~UCommand_WAIT_TEST();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// test
   UExpression* test;
@@ -786,10 +794,10 @@ public:
     return &variablename;
   }
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// variable
   UVariableName* variablename;
@@ -815,10 +823,10 @@ public:
 
   virtual ~UCommand_DEF();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// variable
   UVariableName* variablename;
@@ -845,10 +853,10 @@ public:
 
   virtual ~UCommand_CLASS();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// class name
   UString* object;
@@ -866,10 +874,10 @@ public:
 	       UCommand* command1, UCommand* command2);
   virtual ~UCommand_IF();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// test
   UExpression* test;
@@ -889,10 +897,10 @@ public:
 		  UCommand* command);
   virtual ~UCommand_EVERY();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// duration
   UExpression* duration;
@@ -915,10 +923,10 @@ public:
 		    UCommand* command);
   virtual ~UCommand_TIMEOUT();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// duration
   UExpression* duration;
@@ -938,10 +946,10 @@ public:
 		   UCommand* command);
   virtual ~UCommand_STOPIF();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// condition
   UExpression* condition;
@@ -961,10 +969,10 @@ public:
 		     UCommand* command);
   virtual ~UCommand_FREEZEIF();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// condition
   UExpression* condition;
@@ -982,10 +990,10 @@ public:
 		  UExpression* test, UCommand* command);
   virtual ~UCommand_WHILE();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// test
   UExpression* test;
@@ -1001,10 +1009,10 @@ public:
   UCommand_LOOP (const UCommand::location& l, UCommand* command);
   virtual ~UCommand_LOOP();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection*);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Command
   UCommand* command;
@@ -1021,10 +1029,10 @@ public:
 		  UExpression* expression, UCommand* command);
   virtual ~UCommand_LOOPN();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Expression
   UExpression* expression;
@@ -1042,10 +1050,10 @@ public:
 		    UCommand* command);
   virtual ~UCommand_FOREACH();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// Name of the iterating variable
   UVariableName* variablename;
@@ -1069,10 +1077,10 @@ public:
 		UCommand* command);
   virtual ~UCommand_FOR();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 
   /// 1st part
   UCommand* instr1;
@@ -1094,10 +1102,10 @@ public:
   UCommand_NOOP(const UCommand::location& l, bool zerotime = false);
   virtual ~UCommand_NOOP();
 
-  virtual void print(int l);
+  virtual void print_(unsigned l) const;
 
   virtual UCommandStatus execute(UConnection* connection);
-  virtual UCommand*      copy();
+  virtual UCommand* copy() const;
 };
 
 #endif

@@ -129,7 +129,7 @@ public:
   UErrorValue     asyncScan   (UASyncCommand* cmd,
 			       UConnection* c);
 
-  UExpression*    copy        ();
+  UExpression*    copy        () const;
 
   /// Type of the expression.
   Type type;
