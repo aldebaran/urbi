@@ -1,5 +1,12 @@
 2006-12-27  Akim Demaille  <akim.demaille@free.fr>
 
+	Add location to command errors
+	* src/uast.hh (loc): New.
+	* src/ucommand.cc (send_error): Also report the location of
+	the broken command.
+
+2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+
 	On second thought, pass the command to send_error
 	* src/ucommand.cc (send_error): Instead of taking a tag,
 	take a command and use its tag.

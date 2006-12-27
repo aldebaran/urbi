@@ -77,7 +77,10 @@ namespace
 	      const char* fmt, va_list args)
   {
     std::ostringstream o;
-    o << "!!! " << fmt << '\n';
+    // FIXME: This is really bad if file names have %.  We need
+    // something more robust (such using real C++ here instead of C
+    // buffers).
+    o << "!!! " << cmd->loc() << ": " << fmt << '\n';
     return c->sendf (cmd->getTag(), o.str ().c_str(), args);
   }
 
