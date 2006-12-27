@@ -39,11 +39,12 @@
 #include "urbi/usystem.hh"
 #include "userver.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 
 // Global server reference
-UServer    *urbiserver= 0;
-UString    **globalDelete = 0;
+UServer *urbiserver= 0;
+UString **globalDelete = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 int URBI_unicID = 10000; ///< unique identifier to create new references
@@ -145,10 +146,10 @@ UServer::main (int argc, const char* argv[])
 
   UValue* current = 0;
   arglistv->dataType = DATA_LIST;
-  for (int i=0; i<argc; i++)
+  for (int i = 0; i < argc; ++i)
   {
     UValue* v = new UValue (argv[i]);
-    if (i==0)
+    if (i == 0)
       arglistv->liststart = v;
     else
       current->next = v;
@@ -182,7 +183,7 @@ UServer::initialization()
     getCustomHeader(i, (char*)customHeader, 1024);
     if (customHeader[0])
       display((const char*) customHeader);
-    i++;
+    ++i;
   } while (customHeader[0]!=0);
 
   display(::HEADER_AFTER_CUSTOM);
@@ -364,7 +365,7 @@ UServer::work()
   for (std::list<UConnection*>::iterator r = connectionList.begin();
        r != connectionList.end();
        ++r)
-    if  ((*r)->isActive() && (*r)->activeCommand)
+    if ((*r)->isActive() && (*r)->activeCommand)
     {
       if ((*r)->killall || stopall)
       {
@@ -385,9 +386,6 @@ UServer::work()
   stopall = false;
 
   // Values final assignment and nbAverage reset to 0
-
-  UVarSet selfError;
-
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
     if ((*i)->activity == 2)
@@ -409,9 +407,9 @@ UServer::work()
 	if ((*i)->value->dataType == DATA_NUM)
 	{
 	  if ((*i)->autoUpdate)
-	    selfError = (*i)->selfSet (&((*i)->value->val));
+	    (*i)->selfSet (&((*i)->value->val));
 	  else
-	    selfError = (*i)->selfSet (&((*i)->target));
+	    (*i)->selfSet (&((*i)->target));
 	}
 
       // set previous for next iation
@@ -445,9 +443,9 @@ UServer::work()
   cpuload = (latestTime - currentTime)/getFrequency();
 
   if (!cpuoverload)
-    if  (cpuload > cputhreshold)
+    if (cpuload > cputhreshold)
     {
-      cpucount++;
+      ++cpucount;
       if (cpucount > 10)
       {
 	cpucount = 0;
@@ -456,7 +454,7 @@ UServer::work()
       }
     }
     else if (cpucount > 0)
-      cpucount--;
+      --cpucount;
 
   if (cpuoverload && cpuload < 1)
   {
@@ -467,7 +465,7 @@ UServer::work()
   // Reseting procedure
   if (reseting)
   {
-    stage++;
+    ++stage;
     if (stage == 1)
     {
       //delete objects first
@@ -509,7 +507,7 @@ UServer::work()
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
-	if  ((*i)->isActive())
+	if ((*i)->isActive())
 	  (*i)->send("*** Reset completed.\n", "reset");
 
       //restart everything
@@ -533,7 +531,7 @@ UServer::work()
 	for (std::list<UConnection*>::iterator i = connectionList.begin();
 	     i != connectionList.end();
 	     ++i)
-	  if  ((*i)->isActive() && (*i) != ghost)
+	  if ((*i)->isActive() && (*i) != ghost)
 	  {
 	    (*i)->send("*** Reloading\n", "reset");
 
@@ -898,7 +896,7 @@ UServer::mark(UString* stopTag)
 void
 UServer::mark(TagInfo* ti)
 {
-  for(std::list<UCommand*>::iterator i = ti->commands.begin();
+  for (std::list<UCommand*>::iterator i = ti->commands.begin();
       i != ti->commands.end();
       ++i)
     if ((*i)->status != UONQUEUE || (*i)->morphed)

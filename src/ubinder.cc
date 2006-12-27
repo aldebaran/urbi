@@ -54,7 +54,7 @@ UBinder::addMonitor (const UString& objname, UConnection *c)
 
   for (monitors_type::iterator i = monitors.begin();
        i != monitors.end() && !m;
-       i++)
+       ++i)
     if ((*i)->c == c)
       m = *i;
 
@@ -76,7 +76,7 @@ UBinder::locateMonitor (UConnection *c)
   // locate the connection
   for (monitors_type::iterator i = monitors.begin();
        i != monitors.end();
-       i++)
+       ++i)
   {
     if ((*i)->c == c)
       m = (*i);
@@ -134,7 +134,7 @@ UBinder::removeMonitor (const UString& objname)
       i = monitors.erase(i);
     }
     else
-      i++;
+      ++i;
 
   return monitors.empty();
 }
@@ -175,7 +175,7 @@ UMonitor::removeObject(const UString& objname)
 {
   for (std::list<UString*>::iterator i = objects.begin();
        i != objects.end();
-       i++)
+       ++i)
     if (objname.equal(*i))
     {
       objects.remove(*i);

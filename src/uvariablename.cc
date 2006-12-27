@@ -26,13 +26,14 @@
 #include "ucommand.hh"
 #include "uconnection.hh"
 #include "ucopy.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "uvariable.hh"
-#include "uvariablename.hh"
+#include "ueventhandler.hh"
 #include "unamedparameters.hh"
 #include "uobj.hh"
-#include "ueventhandler.hh"
+#include "urbi/uobject.hh"
+#include "userver.hh"
+#include "uvalue.hh"
+#include "uvariable.hh"
+#include "uvariablename.hh"
 
 MEMORY_MANAGER_INIT(UVariableName);
 
@@ -201,9 +202,6 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
 UFunction*
 UVariableName::getFunction(UCommand *command, UConnection *connection)
 {
-  HMfunctiontab::iterator	hmf;
-  UFunction*			tmpfun = 0;
-
   if (function)
     return function;
 
@@ -213,32 +211,29 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if (!fullname_)
     return 0;
 
-  if ((hmf = ::urbiserver->functiontab.find(fullname_->str())) !=
-      ::urbiserver->functiontab.end())
-    tmpfun = hmf->second;
+  UFunction* f = 0;
+  HMfunctiontab::iterator i = ::urbiserver->functiontab.find(fullname_->str());
+  if (i != ::urbiserver->functiontab.end())
+    f = i->second;
 
   if (cached)
-    function = tmpfun;
+    function = f;
 
-  return tmpfun;
+  return f;
 }
 
 //! UVariableName test to know if there is a function with that name
 bool
 UVariableName::isFunction(UCommand *command, UConnection *connection)
 {
-  UFunction* tmpfun = getFunction(command, connection);
-  if (tmpfun)
+  if (getFunction(command, connection))
     return true;
   if (!fullname_)
     return false;
-  if (urbi::functionmap.find(fullname_->str()) !=
-      urbi::functionmap.end())
-    return true;
-  if (::urbiserver->functionbindertab.find(fullname_->str()) !=
-      ::urbiserver->functionbindertab.end())
-    return true;
-  return false;
+  return ((urbi::functionmap.find(fullname_->str())
+	   != urbi::functionmap.end())
+	  || (::urbiserver->functionbindertab.find(fullname_->str())
+	      != ::urbiserver->functionbindertab.end()));
 }
 
 
@@ -251,12 +246,12 @@ UVariableName::getMethod()
 
   if (!fullname_)
     return 0;
-  const char *pointPos = strstr(fullname_->str(), ".");
 
-  if (pointPos == 0)
-    method = new UString("");
-  else
+  if (const char *pointPos = strstr(fullname_->str(), "."))
     method = new UString(pointPos + 1);
+  else
+    method = new UString("");
+
   return method;
 }
 
@@ -264,16 +259,21 @@ UVariableName::getMethod()
 UString*
 UVariableName::getDevice()
 {
-  if (device) return device;
+  if (device)
+    return device;
 
-  if (!fullname_) return 0;
-  char *pointPos = const_cast<char*>(strstr(fullname_->str(), "."));
-  if (pointPos == 0) return fullname_;
-  pointPos[0] = 0;
+  if (!fullname_)
+    return 0;
+  if (char *pointPos = const_cast<char*>(strstr(fullname_->str(), ".")))
+    {
+      pointPos[0] = 0;
 
-  device = new UString(fullname_->str());
-  pointPos[0] = '.';
-  return device;
+      device = new UString(fullname_->str());
+      pointPos[0] = '.';
+      return device;
+    }
+  else
+    return fullname_;
 }
 
 //! UVariableName name extraction, witch caching
@@ -305,8 +305,8 @@ UVariableName::buildFullname (UCommand* command,
 
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
-      connection->sendf (command->getTag().c_str(),
-                         "!!! dynamic variable evaluation failed\n");
+      connection->sendf (command->getTag(),
+			 "!!! dynamic variable evaluation failed\n");
       delete e1;
       if (fullname_)
       {
@@ -366,7 +366,8 @@ UVariableName::buildFullname (UCommand* command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	connection->sendf (command->getTag().c_str(), "!!! array index evaluation failed\n");
+	connection->sendf (command->getTag(),
+			   "!!! array index evaluation failed\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -379,7 +380,8 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	delete e1;
-	connection->sendf (command->getTag().c_str(), "!!! invalid array index type\n");
+	connection->sendf (command->getTag(),
+			   "!!! invalid array index type\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -409,7 +411,8 @@ UVariableName::buildFullname (UCommand* command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	connection->sendf (command->getTag().c_str(), "!!! array index evaluation failed\n");
+	connection->sendf (command->getTag(),
+			   "!!! array index evaluation failed\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -423,7 +426,8 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	delete e1;
-	connection->sendf (command->getTag().c_str(), "!!! invalid array index type\n");
+	connection->sendf (command->getTag(),
+			   "!!! invalid array index type\n");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -491,19 +495,19 @@ UVariableName::buildFullname (UCommand* command,
 	    }
 	    else
 	    {
-	      // does the symbol exist as a symbol local to the connection?
-	      bool local_symbol = false;
 	      std::string tmploc(connection->connectionTag->str());
 	      tmploc = tmploc + "." + id->str();
+	      const char* cp = tmploc.c_str();
 
-	      if (::urbiserver->variabletab.find(tmploc.c_str()) !=
-		  ::urbiserver->variabletab.end()
-		  || ::urbiserver->functiontab.find(tmploc.c_str()) !=
-		  ::urbiserver->functiontab.end()
-		  || kernel::eventSymbolDefined (tmploc.c_str()))
-		local_symbol = true;
+	      // does the symbol exist as a symbol local to the connection?
+	      bool local_symbol =
+		(::urbiserver->variabletab.find(cp)
+		 != ::urbiserver->variabletab.end())
+		|| (::urbiserver->functiontab.find(cp)
+		    != ::urbiserver->functiontab.end())
+		|| kernel::eventSymbolDefined (cp);
 
-	      if ((local_symbol) && (!function_symbol))
+	      if (local_symbol && !function_symbol)
 		device->update(connection->connectionTag->str());
 	      else
 		device->update(funid->str());
@@ -514,7 +518,8 @@ UVariableName::buildFullname (UCommand* command,
     }
     else
     {
-      connection->sendf (command->getTag().c_str(), "!!! invalid prefix resolution\n");
+      connection->sendf (command->getTag(),
+			 "!!! invalid prefix resolution\n");
       delete fullname_;
       fullname_ = 0;
       return 0;
@@ -530,9 +535,8 @@ UVariableName::buildFullname (UCommand* command,
     if (nostruct)
     {
       // Comes from a simple IDENTIFIER
-      char* p =  strchr(name, '.');
       HMaliastab::iterator getobj;
-      if (p)
+      if (char* p = strchr(name, '.'))
 	getobj = ::urbiserver->objaliastab.find(p+1);
       else
 	getobj = ::urbiserver->objaliastab.find(name);
@@ -540,7 +544,7 @@ UVariableName::buildFullname (UCommand* command,
       {
 	UString* newobj = getobj->second;
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
-	while (getobj !=  ::urbiserver->objaliastab.end())
+	while (getobj != ::urbiserver->objaliastab.end())
 	{
 	  newobj = getobj->second;
 	  getobj = ::urbiserver->objaliastab.find(newobj->str());
@@ -548,8 +552,7 @@ UVariableName::buildFullname (UCommand* command,
 	snprintf(name, fullnameMaxSize, "%s", newobj->str());
       }
 
-      p =  strchr(name, '.');
-      if (p)
+      if (char* p = strchr(name, '.'))
 	hmi = ::urbiserver->aliastab.find(p+1);
       else
 	hmi = ::urbiserver->aliastab.find(name);
@@ -562,22 +565,22 @@ UVariableName::buildFullname (UCommand* command,
     {
       past_hmi = hmi;
       hmi = ::urbiserver->aliastab.find(hmi->second->str());
-    };
+    }
 
     if (past_hmi != ::urbiserver->aliastab.end())
     {
       strncpy(name, past_hmi->second->str(), fullnameMaxSize);
       nostruct = false;
-      delete device; device = 0;
-      delete method; method = 0; // forces recalc of device.method
-      if (variable)
-	variable = 0;
+      delete device;
+      device = 0;
+      delete method;
+      method = 0; // forces recalc of device.method
+      variable = 0;
     }
   }
   else if (nostruct)
   {
-    char* p = strchr(name, '.');
-    if (p)
+    if (char* p = strchr(name, '.'))
     {
       if (fullname_)
 	fullname_->update(p+1);
@@ -588,8 +591,7 @@ UVariableName::buildFullname (UCommand* command,
     }
   }
 
-  char* p =  strchr(name, '.');
-  if (p)
+  if (char* p = strchr(name, '.'))
   {
     p[0]=0;
     HMaliastab::iterator getobj = ::urbiserver->objaliastab.find(name);
@@ -598,7 +600,7 @@ UVariableName::buildFullname (UCommand* command,
     {
       UString* newobj = getobj->second;
       getobj = ::urbiserver->objaliastab.find(newobj->str());
-      while (getobj !=  ::urbiserver->objaliastab.end())
+      while (getobj != ::urbiserver->objaliastab.end())
       {
 	newobj = getobj->second;
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
@@ -609,7 +611,6 @@ UVariableName::buildFullname (UCommand* command,
       delete newmethod;
     }
   }
-
 
   if (fullname_)
     fullname_->update(name);

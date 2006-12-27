@@ -196,7 +196,7 @@ UQueue::push (const ubyte *buffer, int length)
       // Calculate the required size + 10%, if it fits.
       newSize = (int)(1.10 * newSize);
       if (newSize % 2 != 0)
-	newSize++; // hack for short alignment...
+	++newSize; // hack for short alignment...
       if (newSize > maxBufferSize_ && maxBufferSize_ != 0)
 	newSize = maxBufferSize_;
 
@@ -266,7 +266,7 @@ UQueue::pop (int length)
   // Adaptive shrinking behavior
   if (adaptive_)
   {
-    nbPopCall_++;
+    ++nbPopCall_;
     if (dataSize_ > topDataSize_)
       topDataSize_ = dataSize_;
     if (toPop > topOutputSize_)
@@ -338,7 +338,8 @@ UQueue::pop (int length)
     // the packet is continuous in the internal buffer
     int tmp_index = start_;
     start_ += toPop;
-    if (start_ == bufferSize_) start_ = 0; // loop the circular geometry.
+    if (start_ == bufferSize_)
+      start_ = 0; // loop the circular geometry.
     dataSize_ -= toPop;
     return buffer_ + tmp_index;
   }
@@ -426,7 +427,8 @@ UQueue::virtualPop (int length)
 
   // Actual size of the data to pop.
   toPop = length;
-  if (toPop > dataSize_) return 0; // Not enough data to pop 'length'
+  if (toPop > dataSize_)
+    return 0; // Not enough data to pop 'length'
   if (toPop == 0)
     return buffer_ + start_;  // Pops nothing but gets a pointer to the
 			      // beginning of the buffer.

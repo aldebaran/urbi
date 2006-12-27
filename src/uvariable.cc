@@ -33,6 +33,7 @@
 #include "urbi/uobject.hh"
 #include "userver.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"
 
@@ -179,7 +180,7 @@ UVariable::~UVariable()
   FREEOBJ(UVariable);
   if (value)
   {
-    if ((value->dataType == DATA_OBJ) && (value->str!=0))
+    if (value->dataType == DATA_OBJ && value->str!=0)
     {
       HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
       if (idit != ::urbiserver->objtab.end())
@@ -197,22 +198,23 @@ UVariable::~UVariable()
 
 //! Associated variable name initialization
 const char*
-UVariable::setName(const char *s)
+UVariable::setName(const char* s)
 {
   char *pointPos;
 
-  varname    = new UString (s);
+  varname = new UString (s);
 
   pointPos = const_cast<char*>(strstr(varname->str(), "."));
   if (pointPos == 0)
-
     method = new UString("");
   else
     method = new UString(pointPos + 1);
 
-  if (pointPos) pointPos[0] = 0;
+  if (pointPos)
+    pointPos[0] = 0;
   devicename = new UString(varname->str());
-  if (pointPos) pointPos[0] = '.';
+  if (pointPos)
+    pointPos[0] = '.';
 
   return varname->str();
 }
@@ -232,6 +234,12 @@ UVariable::setName(const char *_id, const char* _method)
   return varname->str();
 }
 
+const char*
+UVariable::setName(UString *s)
+{
+  return setName(s->str());
+}
+
 //! Set the UValue associated to the variable
 /*! Note that the UValue v is going to be copied. You might
     delete it afterwards.
@@ -240,7 +248,7 @@ UVariable::setName(const char *_id, const char* _method)
     but the function will still perform some range check and call
     UDevice::notifyWrite if necessary.
  */
-UVarSet
+UVariable::UVarSet
 UVariable::set(UValue *v)
 {
   if (!v)
@@ -257,28 +265,38 @@ UVariable::set(UValue *v)
   {
     switch (value->dataType)
     {
-      case DATA_STRING: value->str->update(v->str->str()); break;
-      case DATA_NUM:    setSensorVal(v->val); break;
-      case DATA_LIST:   delete value;value = v->copy(); break;
-      case DATA_BINARY: LIBERATE(value->refBinary);
-			value->refBinary = v->refBinary->copy();
-			break;
+      case DATA_STRING:
+	value->str->update(v->str->str());
+	break;
+      case DATA_NUM:
+	setSensorVal(v->val);
+	break;
+      case DATA_LIST:
+	delete value;
+	value = v->copy();
+	break;
+      case DATA_BINARY:
+	LIBERATE(value->refBinary);
+	value->refBinary = v->refBinary->copy();
+	break;
       case DATA_VOID:   // uninitialized def's
-
-			value->dataType = v->dataType;
-			switch (v->dataType)
-			{
-			  case DATA_STRING:
-			    value->str = new UString(v->str); break;
-			  case DATA_NUM:
-			    initSensorVal(v->val); break;
-			  case DATA_BINARY:
-			    value->refBinary = v->refBinary->copy(); break;
-			  case DATA_LIST:
-			    delete value;value = v->copy(); break;
-			  default: break;
-			}
-      default: break;
+	value->dataType = v->dataType;
+	switch (v->dataType)
+	{
+	  case DATA_STRING:
+	    value->str = new UString(v->str);
+	    break;
+	  case DATA_NUM:
+	    initSensorVal(v->val);
+	    break;
+	  case DATA_BINARY:
+	    value->refBinary = v->refBinary->copy();
+	    break;
+	  case DATA_LIST:
+	    delete value;
+	    value = v->copy();
+	    break;
+	}
     }
   }
 
@@ -289,7 +307,7 @@ UVariable::set(UValue *v)
 /*! Here, the type is known to be a float, which saves the
     necessity to have a UValue passed as parameter
 */
-UVarSet
+UVariable::UVarSet
 UVariable::setFloat(ufloat f)
 {
   if (!value)
@@ -297,7 +315,7 @@ UVariable::setFloat(ufloat f)
   else
     setSensorVal(f);
 
-  return selfSet(&(value->val));
+  return selfSet(&value->val);
 }
 
 //! Check the float reference associated to the variable
@@ -307,7 +325,7 @@ UVariable::setFloat(ufloat f)
 
     valcheck can point either on value->val or on target.
 */
-UVarSet
+UVariable::UVarSet
 UVariable::selfSet(ufloat *valcheck)
 {
   ufloat s;
@@ -315,8 +333,10 @@ UVariable::selfSet(ufloat *valcheck)
 
   if (value->dataType == DATA_NUM)
   {
-    if (*valcheck < rangemin) *valcheck = rangemin;
-    if (*valcheck > rangemax) *valcheck = rangemax;
+    if (*valcheck < rangemin)
+      *valcheck = rangemin;
+    if (*valcheck > rangemax)
+      *valcheck = rangemax;
 
     if (speedmax != UINFINITY)
     {
@@ -334,13 +354,14 @@ UVariable::selfSet(ufloat *valcheck)
       }
     }
 
-    target   = *valcheck; // for consistancy reasons
+    target = *valcheck; // for consistancy reasons
   }
 
   modified = true;
   updated();
 
-  if (speedmodified) return USPEEDMAX;
+  if (speedmodified)
+    return USPEEDMAX;
 
   return UOK ;
 }
@@ -357,7 +378,7 @@ UVariable::get()
   if (value->dataType == DATA_OBJ)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
-	 it++)
+	 ++it)
       if (it->second->method
 	  && it->second->devicename
 	  && value->str
@@ -366,29 +387,25 @@ UVariable::get()
 	it->second->get ();
 
   // check for existing notifychange
-  if (!internalAccessBinder.empty())
-  {
-    for (std::list<urbi::UGenericCallback*>::iterator itcb =
+  for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalAccessBinder.begin();
-	itcb != internalAccessBinder.end();
-	itcb++)
+       i != internalAccessBinder.end();
+       ++i)
+  {
+    urbi::UList l;
+    if ((*i)->storage)
     {
-      urbi::UList tmparray;
-
-      if ((*itcb)->storage)
-      {
-	// monitor with &UVar reference
-	urbi::UValue *tmpvalue = new urbi::UValue();
-	tmpvalue->storage = (*itcb)->storage;
-	tmparray.array.push_back(tmpvalue);
-      };
-
-      (*itcb)->__evalcall(tmparray); // tmparray is empty here
+      // monitor with &UVar reference
+      urbi::UValue *v = new urbi::UValue();
+      v->storage = (*i)->storage;
+      l.array.push_back(v);
     }
+    // FIXME: I guess the following comment reads "emptied".
+    (*i)->__evalcall(l); // l is empty here
   }
 
   return value;
-};
+}
 
 //! This function takes care of notifying the monitors that the var is updated
 /*! When the variable is updated, either by the kernel of robot-specific
@@ -407,7 +424,7 @@ UVariable::updated()
   if (binder)
     for (std::list<UMonitor*>::iterator i = binder->monitors.begin();
 	 i != binder->monitors.end();
-	 i++)
+	 ++i)
       {
 	(*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*i)->c->sendc((const ubyte*)"[1,\"", 4);
@@ -420,7 +437,7 @@ UVariable::updated()
   for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalBinder.begin();
        i != internalBinder.end();
-       i++)
+       ++i)
   {
     urbi::UList tmparray;
 
@@ -449,4 +466,21 @@ UVariable::isDeletable()
       return false;
   }
   return true;
+}
+
+void
+UVariable::setSensorVal(ufloat f)
+{
+  valPrev2 = valPrev;
+  valPrev = value->val;
+  value->val = f;
+}
+
+void
+UVariable::initSensorVal(ufloat f)
+{
+  value->dataType = DATA_NUM;
+  valPrev2 = f;
+  valPrev = f;
+  value->val = f;
 }

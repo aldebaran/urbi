@@ -56,8 +56,8 @@ extern  int   availableMemory;
 # define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
 #endif
 
-# define ADDOBJ(X)   ADDMEM (sizeof(X))
-# define FREEOBJ(X)  FREEMEM (sizeof(X))
+# define ADDOBJ(X)   ADDMEM (sizeof (X))
+# define FREEOBJ(X)  FREEMEM (sizeof (X))
 
 # define LIBERATE(X)				\
   do {						\
@@ -92,13 +92,6 @@ enum UErrorValue
   USUCCESS,
   UFAIL,
   UMEMORYFAIL
-};
-
-/// Return code for variable Update
-enum UVarSet
-{
-  UOK,
-  USPEEDMAX
 };
 
 /// Type of Bind modes
@@ -188,15 +181,6 @@ using urbi::UDISCARD;
 using urbi::UQUEUE;
 using urbi::UCANCEL;
 using urbi::UNORMAL;
-
-/// Node type for a UCommand_TREE
-enum UNodeType
-{
-  UAND,
-  UPIPE,
-  USEMICOLON,
-  UCOMMA
-};
 
 /// Runlevel type for a binary tree exploration
 enum URunlevel

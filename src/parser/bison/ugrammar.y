@@ -164,7 +164,7 @@ yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
 /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
 UCommand*
 new_bin(UParser& up,
-	const yy::parser::location_type& l, enum UNodeType op,
+	const yy::parser::location_type& l, Flavorable::UNodeType op,
 	UCommand* lhs, UCommand* rhs)
 {
   UCommand_TREE*res = new UCommand_TREE(l, op, lhs, rhs);
@@ -229,7 +229,7 @@ take (T* t)
   TOK_DERIV        "derivation"
   TOK_DERIV2       "second-derivation"
   TOK_DIR          "->"
-  TOK_DISINHERIT   "disinherit"
+  TOK_DISINHERITS  "disinherits"
   TOK_DIV          "/"
   TOK_DOLLAR       "$"
   TOK_DOUBLECOLON  "::"
@@ -250,7 +250,7 @@ take (T* t)
   TOK_IF           "if"
   TOK_IN           "in"
   TOK_INFO         "info"
-  TOK_INHERIT      "inherit"
+  TOK_INHERITS     "inherits"
   TOK_LBRACKET     "{"
   TOK_LOOP         "loop"
   TOK_LOOPN        "loopn"
@@ -399,22 +399,24 @@ root:
        especially the end-of-lines, to keep error messages in sync. */
   error
   {
+    // FIXME: We should probably free it.
     up.commandTree = 0;
   }
 
   | refvariable "=" binary ";" {
 
+      // FIXME: A pointer to a ref-pointer?  Sounds absurd.
       libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
       memcheck(up, ref);
-      UCommand* tmpcmd = new UCommand_ASSIGN_BINARY(@$, $1, ref);
-      if (tmpcmd)
-	tmpcmd->setTag("__node__");
-      memcheck(up, tmpcmd, $1, ref);
-      if (tmpcmd)
+      UCommand* c = new UCommand_ASSIGN_BINARY(@$, $1, ref);
+      if (c)
+	c->setTag("__node__");
+      memcheck(up, c, $1, ref);
+      if (c)
 	up.binaryCommand = true;
 
-      up.commandTree  = new UCommand_TREE(@$, USEMICOLON, tmpcmd, 0);
-      if ( up.commandTree )
+      up.commandTree  = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
+      if (up.commandTree)
 	up.commandTree->setTag("__node__");
       memcheck(up, up.commandTree);
     }
@@ -422,7 +424,7 @@ root:
   | taggedcommands {
 
       up.commandTree = 0;
-      if ($1 && $1->type == UCommand::CMD_TREE)
+      if ($1 && $1->type == UCommand::TREE)
       {
 	up.commandTree = dynamic_cast<UCommand_TREE*> ($1);
 	assert (up.commandTree != 0);
@@ -436,10 +438,10 @@ root:
 /* TAGGEDCOMMANDS */
 taggedcommands:
   taggedcommand
-| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, UCOMMA, $1, $3); }
-| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, USEMICOLON, $1, $3); }
-| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, UPIPE, $1, $3); }
-| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, UAND, $1, $3);}
+| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, Flavorable::UCOMMA, $1, $3); }
+| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, Flavorable::USEMICOLON, $1, $3); }
+| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, Flavorable::UPIPE, $1, $3); }
+| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, Flavorable::UAND, $1, $3);}
 ;
 
 /*----------------.
@@ -551,7 +553,8 @@ command:
 
   | "{" taggedcommands "}" {
 
-      $$ = new UCommand_TREE(@$, UPIPE, $2, new UCommand_NOOP(@$, true));
+      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, $2,
+			     new UCommand_NOOP(@$, true));
       $$->setTag("__UGrouped_set_of_commands__");
       ((UCommand_TREE*)$$)->command2->setTag("__system__");
     }
@@ -644,23 +647,22 @@ instruction:
       memcheck(up, $$, $1, $4, $6);
     }
 
-
   | "group" "identifier" "{" identifiers "}" {
 
-    $$ = new UCommand_GROUP(@$, $2, $4);
+      $$ = new UCommand_GROUP(@$, $2, $4);
       memcheck(up, $$, $4, $2);
     }
 
   | "addgroup" "identifier" "{" identifiers "}" {
 
-    $$ = new UCommand_GROUP(@$, $2, $4, 1);
+      $$ = new UCommand_GROUP(@$, $2, $4, 1);
       memcheck(up, $$, $4, $2);
     }
 
 
   | "delgroup" "identifier" "{" identifiers "}" {
 
-    $$ = new UCommand_GROUP(@$, $2, $4, 2);
+      $$ = new UCommand_GROUP(@$, $2, $4, 2);
       memcheck(up, $$, $4, $2);
     }
 
@@ -683,13 +685,13 @@ instruction:
       memcheck(up, $$, $2, $3);
     }
 
-  | purevariable "inherit" purevariable {
+  | purevariable "inherits" purevariable {
 
     $$ = new UCommand_INHERIT(@$, $1, $3);
       memcheck(up, $$, $1, $3);
     }
 
-  | purevariable "disinherit" purevariable {
+  | purevariable "disinherits" purevariable {
 
     $$ = new UCommand_INHERIT(@$, $1, $3, true);
       memcheck(up, $$, $1, $3);
@@ -720,31 +722,12 @@ instruction:
       memcheck(up, $$, $1);
     }
 
-  | OPERATOR_ID "identifier" {
+  | OPERATOR_ID tag {
 
       memcheck(up, $1);
       memcheck(up, $2);
       $$ = new UCommand_OPERATOR_ID(@$, $1, $2);
       memcheck(up, $$, $1, $2);
-    }
-
-  | OPERATOR_ID TAG {
-
-      memcheck(up, $1);
-      memcheck(up, $2);
-      $$ = new UCommand_OPERATOR_ID(@$, $1, $2);
-      memcheck(up, $$, $1, $2);
-    }
-
-  | OPERATOR_ID STRUCT {
-
-      memcheck(up, $1);
-      memcheck(up, $2.device);
-      memcheck(up, $2.id);
-      $$ = new UCommand_OPERATOR_ID(@$, $1, new UString($2.device, $2.id));
-      delete $2.device;
-      delete $2.id;
-      memcheck(up, $$, $1);
     }
 
   | OPERATOR_VAR variable {
@@ -835,25 +818,25 @@ instruction:
 
   | "waituntil" softtest {
 
-    $$ = new UCommand_WAIT_TEST(@$, $2);
+      $$ = new UCommand_WAIT_TEST(@$, $2);
       memcheck(up, $$, $2);
     }
 
-  | refvariable TOK_MINUSMINUS {
+  | refvariable "--" {
 
-    $$ = new UCommand_INCDECREMENT(@$, UCommand::CMD_DECREMENT, $1);
+      $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
       memcheck(up, $$, $1);
     }
 
-  | refvariable TOK_PLUSPLUS {
+  | refvariable "++" {
 
-    $$ = new UCommand_INCDECREMENT(@$, UCommand::CMD_INCREMENT, $1);
+      $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
       memcheck(up, $$, $1);
     }
 
-  | TOK_DEF {
+  | "def" {
 
-    $$ = new UCommand_DEF(@$, UDEF_QUERY, 0, 0, 0);
+      $$ = new UCommand_DEF(@$, UDEF_QUERY, 0, 0, 0);
       memcheck(up, $$)
     }
 
@@ -864,7 +847,7 @@ instruction:
       memcheck(up, $$, $2)
     }
 
-  | TOK_DEF refvariable {
+  | "def" refvariable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
@@ -877,13 +860,13 @@ instruction:
       memcheck(up, $$, $3)
     }
 
-  | TOK_CLASS "identifier" "{" class_declaration_list "}" {
+  | "class" "identifier" "{" class_declaration_list "}" {
 
     $$ = new UCommand_CLASS(@$, $2, $4);
       memcheck(up, $$, $2, $4)
     }
 
-  | TOK_CLASS "identifier" {
+  | "class" "identifier" {
 
     $$ = new UCommand_CLASS(@$, $2, 0);
       memcheck(up, $$, $2)
@@ -938,7 +921,7 @@ instruction:
       }
     }
 
-  | TOK_DEF variable "(" identifiers ")" {
+  | "def" variable "(" identifiers ")" {
 
       up.connection.server->debug("Warning: 'def' is deprecated, use"
 				       "'function' instead\n");
@@ -972,7 +955,7 @@ instruction:
       }
     }
 
-  | TOK_IF "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       if (!$5)
       {
@@ -999,7 +982,7 @@ instruction:
       memcheck(up, $$, $3, $5, $7);
     }
 
-  | TOK_EVERY "(" expr ")" taggedcommand {
+  | "every" "(" expr ")" taggedcommand {
 
     $$ = new UCommand_EVERY(@$, $3, $5);
       memcheck(up, $$, $3, $5);
@@ -1017,7 +1000,7 @@ instruction:
       memcheck(up, $$, $3, $5);
     }
 
-  | TOK_FREEZEIF "(" softtest ")" taggedcommand {
+  | "freezeif" "(" softtest ")" taggedcommand {
 
     $$ = new UCommand_FREEZEIF(@$, $3, $5);
       memcheck(up, $$, $3, $5);
@@ -1025,7 +1008,7 @@ instruction:
 
   | "at" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_AT(@$, UCommand::CMD_AT, $3, $5, 0);
+    $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 
@@ -1038,13 +1021,13 @@ instruction:
 	error(@$, "Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(@$, UCommand::CMD_AT, $3, $5, $7);
+      $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
   | "at" "&" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_AT(@$, UCommand::CMD_AT_AND, $4, $6, 0);
+    $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, 0);
       memcheck(up, $$, $4, $6);
     }
 
@@ -1057,19 +1040,19 @@ instruction:
 	error(@$, "Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(@$, UCommand::CMD_AT_AND, $4, $6, $8);
+      $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
       memcheck(up, $$, $4, $6, $8);
     }
 
   | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_WHILE(@$, UCommand::CMD_WHILE, $3, $5);
+    $$ = new UCommand_WHILE(@$, Flavorable::USEMICOLON, $3, $5);
       memcheck(up, $$, $3, $5);
     }
 
   | "while" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_WHILE(@$, UCommand::CMD_WHILE_PIPE, $4, $6);
+    $$ = new UCommand_WHILE(@$, Flavorable::UPIPE, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
@@ -1094,43 +1077,43 @@ instruction:
 
   | "loop" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_LOOP(@$, $2);
+      $$ = new UCommand_LOOP(@$, $2);
       memcheck(up, $$, $2);
     }
 
   | "foreach" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
-    $$ = new UCommand_FOREACH(@$, UCommand::CMD_FOREACH, $2, $4, $6);
+      $$ = new UCommand_FOREACH(@$, Flavorable::USEMICOLON, $2, $4, $6);
       memcheck(up, $$, $2, $4, $6);
     }
 
   | "foreach" "&" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
-    $$ = new UCommand_FOREACH(@$, UCommand::CMD_FOREACH_AND, $3, $5, $7);
+    $$ = new UCommand_FOREACH(@$, Flavorable::UAND, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
   | "foreach" "|" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
-    $$ = new UCommand_FOREACH(@$, UCommand::CMD_FOREACH_PIPE, $3, $5, $7);
+    $$ = new UCommand_FOREACH(@$, Flavorable::UPIPE, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
   | "loopn" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_LOOPN(@$, UCommand::CMD_LOOPN, $3, $5);
+    $$ = new UCommand_LOOPN(@$, Flavorable::USEMICOLON, $3, $5);
       memcheck(up, $$, $3, $5);
     }
 
   | "loopn" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_LOOPN(@$, UCommand::CMD_LOOPN_PIPE, $4, $6);
+    $$ = new UCommand_LOOPN(@$, Flavorable::UPIPE, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
   | "loopn" "&" "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_LOOPN(@$, UCommand::CMD_LOOPN_AND, $4, $6);
+    $$ = new UCommand_LOOPN(@$, Flavorable::UAND, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
@@ -1138,7 +1121,7 @@ instruction:
 	       expr ";"
 	       instruction ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_FOR(@$, UCommand::CMD_FOR, $3, $5, $7, $9);
+    $$ = new UCommand_FOR(@$, Flavorable::USEMICOLON, $3, $5, $7, $9);
       memcheck(up, $$, $3, $5, $7, $9);
     }
 
@@ -1146,7 +1129,7 @@ instruction:
 		    expr ";"
 		    instruction ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_FOR(@$, UCommand::CMD_FOR_PIPE, $4, $6, $8, $10);
+    $$ = new UCommand_FOR(@$, Flavorable::UPIPE, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);
     }
 
@@ -1154,7 +1137,7 @@ instruction:
 		   expr ";"
 		   instruction ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_FOR(@$, UCommand::CMD_FOR_AND, $4, $6, $8, $10);
+    $$ = new UCommand_FOR(@$, Flavorable::UAND, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);
     }
 ;

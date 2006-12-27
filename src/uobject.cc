@@ -26,11 +26,12 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "uconnection.hh"
 #include "ughostconnection.hh"
 #include "ugroup.hh"
+#include "uobj.hh"
 #include "urbi/uobject.hh"
 #include "userver.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
-#include "uobj.hh"
 
 #define LIBURBIDEBUG
 
@@ -148,7 +149,8 @@ namespace urbi
 	if (it == ::urbiserver->variabletab.end())
 	  {
 	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-	    if (variable) variable->internalBinder.push_back(this);
+	    if (variable)
+	      variable->internalBinder.push_back(this);
 	  }
 	else
 	{
@@ -245,7 +247,7 @@ namespace urbi
 
     for (UStartlist::iterator retr = urbi::objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == __name)
 	tmpobj->internalBinder = (*retr);
 
@@ -387,7 +389,7 @@ namespace urbi
   {
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       (*it)->update();
     update();
     return 0;
@@ -405,7 +407,7 @@ namespace urbi
     UObjectList* res = new UObjectList();
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       if ((*it)->classname == subclass)
 	res->push_back(*it);
 
@@ -419,7 +421,7 @@ namespace urbi
   {
     for (UStartlistHub::iterator retr = objecthublist->begin();
 	 retr != objecthublist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObjectHub();
 
@@ -432,7 +434,7 @@ namespace urbi
   {
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObject();
 

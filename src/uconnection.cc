@@ -37,59 +37,9 @@
 #include "uconnection.hh"
 #include "uqueue.hh"
 #include "userver.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 
-//! UConnection constructor.
-/*! This constructor must be called by any sub class.
-
- Important note on memory management: you should call ADDOBJ(nameofsubclass)
- in the constructor of your UConnection sub class to maintain a valid
- memory occupation evaluation. Symmetricaly, you must call
- FREEOBJ(nameofsubclass) in the UConnection destructor. "nameofsubclass" is
- the name of the sub class used (which will be evaluated with a sizeof
- operator). ADDOBJ and FREEOBJ macros are in utypes.h.
-
- \param userver is the server to which the connection belongs
-
- \param minSendBufferSize UConnection uses an adaptive dynamic queue (UQueue)
- to buffer sent data. This parameter sets the minimal and initial size
- of the queue. Suggested value is 4096.
-
- \param maxSendBufferSize The internal sending UQueue size can grow up to
- maxSendBufferSize.  A good strategy is to have here twice the size of
- the biggest data that could enter the queue, plus a small 10%
- overhead. Typically, the size of the biggest image times two + 10%.
- Zero means "illimited" and is not advised if one wants to control
- the connection's size.
-
- \param packetSize is the maximal size of a packet sent in one shot via a
- call to effectiveSend(). This should be the biggest as possible to
- help emptying the sending queue as fast as possible. Check the
- capacity of your connection to know this limit.
-
- \param minRecvBufferSize UConnection uses an adaptive dynamic queue (UQueue)
- to buffer received data. This parameter sets the minimal and initial
- size of the queue. Suggested value is 4096.
-
- \param maxRecvBufferSize The internal receiving UQueue size can grow up to
- maxRecvBufferSize.A good strategy is to have here twice the size of
- the biggest data that could enter the queue, plus a small 10%
- overhead. Zero means "illimited". Note that binary data are handled
- on specific buffers and are not part of the receiving queue. The
- "biggest size" here means the "biggest ascii command". For URBI
- commands, a good choice is 65536.
-
- Note that all UQueues are, by default, adaptive queues (see the UQueue
- documentation for more details). This default kernel behavior can be
- modified by changing the UConnection::ADAPTIVE constant or, individually by
- using the setSendAdaptive(int) and setReceiveAdaptive(int) method.
-
- When exiting, UError can have the following values:
- - USUCCESS: success
- - UFAIL   : memory allocation failed.
-
- \sa UQueue
- */
 UConnection::UConnection  (UServer *userver,
 			   int minSendBufferSize,
 			   int maxSendBufferSize,
@@ -150,7 +100,7 @@ UConnection::~UConnection()
   // free bindings
 
   for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-       it1 != ::urbiserver->variabletab.end(); it1++ )
+       it1 != ::urbiserver->variabletab.end(); ++it1)
   {
     if (it1->second->binder)
       if (it1->second->binder->removeMonitor(this))
@@ -163,7 +113,7 @@ UConnection::~UConnection()
   std::list<HMbindertab::iterator> deletelist;
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
-       it2++)
+       ++it2)
   {
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
@@ -171,20 +121,20 @@ UConnection::~UConnection()
 
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
-       itt++)
+       ++itt)
     ::urbiserver->functionbindertab.erase((*itt));
   deletelist.clear();
 
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
        it3 != ::urbiserver->eventbindertab.end();
-       it3++)
+       ++it3)
   {
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
   }
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
-       itt++)
+       ++itt)
     ::urbiserver->eventbindertab.erase((*itt));
   deletelist.clear();
 
@@ -218,7 +168,7 @@ UConnection::closeConnection()
  */
 void UConnection::initialize()
 {
-  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; i++)
+  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
     send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   int i = 0;
@@ -231,7 +181,7 @@ void UConnection::initialize()
     ++i;
   } while (customHeader[0]!=0);
 
-  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; i++)
+  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
     send(::HEADER_AFTER_CUSTOM[i], "start");
   sprintf(customHeader, "*** ID: %s\n", connectionTag->str());
   send(customHeader, "ident");
@@ -608,7 +558,7 @@ UConnection::received (const ubyte *buffer, int length)
       {
 	// Process "commandTree"
 
-	// CMD_ASSIGN_BINARY: intercept and execute immediately
+	// ASSIGN_BINARY: intercept and execute immediately
 	if (p.binaryCommand)
 	{
 	  binCommand =
@@ -833,11 +783,6 @@ UConnection::processCommand(UCommand *&command,
   }
 
   UCommand	   *morphed;
-  UCommand_TREE	   *morphed_up;
-  UCommand	   **morphed_position;
-  UNamedParameters *param;
-  bool		   stopit;
-
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
@@ -846,9 +791,7 @@ UConnection::processCommand(UCommand *&command,
     {
       command->startTime = server->lastTime();
 
-      param = command->flags;
-      while (param)
-      {
+      for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name)
 	{
 	  if (param->name->equal("flagid"))
@@ -861,21 +804,16 @@ UConnection::processCommand(UCommand *&command,
 		for (std::list<UConnection*>::iterator retr =
 		       ::urbiserver->connectionList.begin();
 		     retr != ::urbiserver->connectionList.end();
-		     retr++)
-		  if ((*retr)->isActive())
-
-		    if (((*retr)->connectionTag->equal(tmpID->str)) ||
-			(STREQ(tmpID->str->str(), "all")) ||
-			((STREQ(tmpID->str->str(), "other")) &&
-			 (!(*retr)->connectionTag->equal(connectionTag))))
-		    {
-		      UCommand_TREE* tohook =
-			new UCommand_TREE(UCommand::location(), UAND,
-					  command->copy(),
-					  0);
-		      (*retr)->append(tohook);
-		    }
-
+		     ++retr)
+		  if ((*retr)->isActive()
+		      && ((*retr)->connectionTag->equal(tmpID->str) ||
+			  STREQ(tmpID->str->str(), "all") ||
+			  (STREQ(tmpID->str->str(), "other") &&
+			   !(*retr)->connectionTag->equal(connectionTag))))
+		    (*retr)->append(new UCommand_TREE(UCommand::location(),
+						      Flavorable::UAND,
+						      command->copy(),
+						      0));
 	      delete tmpID;
 	    }
 	    delete command;
@@ -907,25 +845,21 @@ UConnection::processCommand(UCommand *&command,
 		 command->getTag().c_str());
 	  }
 
-	  if ((param->name->equal("flag")) &&
-	      (param->expression) &&
-	      (param->expression->val == 10))
+	  if (param->name->equal("flag")
+	      && param->expression
+	      && param->expression->val == 10)
 	    command->flagType += 8;
 
-	  if ((param->name->equal("flag")) &&
-	      (param->expression) &&
-	      (!command->morphed) &&
-	      ((param->expression->val == 4 ) || // 4 = +begin
-	       (param->expression->val == 1 ) )) // 1 = +report
+	  if (param->name->equal("flag")
+	      && param->expression
+	      && !command->morphed
+	      && (param->expression->val == 4 // 4 = +begin
+		  || param->expression->val == 1)) // 1 = +report
 	    send("*** begin\n", command->getTag().c_str());
-
 	}
-
-	param = param->next;
-      }
     }
 
-    stopit = false;
+    bool stopit = false;
 
     // flag "+timeout"
     if (command->flagType&1)
@@ -948,18 +882,17 @@ UConnection::processCommand(UCommand *&command,
       {
 	if (command->flag_nbTrue2 == 0)
 	  command->flag_startTrue2 = server->lastTime();
-	command->flag_nbTrue2++;
+	++command->flag_nbTrue2;
       }
       else
 	command->flag_nbTrue2 = 0;
 
-      if (((command->flagExpr2->softtest_time) &&
-	   (command->flag_nbTrue2 > 0) &&
-	   (server->lastTime() - command->flag_startTrue2 >=
-	    command->flagExpr2->softtest_time->val)) ||
-
-	  ((command->flag_nbTrue2 >0) &&
-	   (command->flagExpr2->softtest_time==0)) )
+      if ((command->flagExpr2->softtest_time
+	   && command->flag_nbTrue2 > 0
+	   && (server->lastTime() - command->flag_startTrue2 >=
+	       command->flagExpr2->softtest_time->val))
+	  || (command->flag_nbTrue2 >0
+	      && command->flagExpr2->softtest_time == 0))
 	stopit = true;
     }
 
@@ -973,7 +906,7 @@ UConnection::processCommand(UCommand *&command,
       {
 	if (command->flag_nbTrue4 == 0)
 	  command->flag_startTrue4 = server->lastTime();
-	command->flag_nbTrue4++;
+	++command->flag_nbTrue4;
       }
       else
 	command->flag_nbTrue4 = 0;
@@ -989,9 +922,7 @@ UConnection::processCommand(UCommand *&command,
 
     if (stopit)
     {
-      param = command->flags;
-      while (param)
-      {
+      for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name &&
 	    param->name->equal("flag") &&
 	    param->expression &&
@@ -999,9 +930,6 @@ UConnection::processCommand(UCommand *&command,
 	    (param->expression->val == 3 || // 3 = +end
 	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", command->getTag().c_str());
-
-	param = param->next;
-      }
 
       if (command == lastCommand)
 	lastCommand = command->up;
@@ -1012,32 +940,28 @@ UConnection::processCommand(UCommand *&command,
 
     // Regular command processing
 
-    if (command->type == UCommand::CMD_TREE)
+    if (command->type == UCommand::TREE)
     {
       mustReturn = true;
       return command ;
     }
     else
     {
-      // != CMD_TREE
-      morphed_up = command->up;
-      morphed_position = command->position;
+      // != TREE
+      UCommand_TREE* morphed_up = command->up;
+      UCommand** morphed_position = command->position;
 
       switch (command->execute(this))
       {
 	case UCOMPLETED:
-
-	  param = command->flags;
-	  while (param)
-	  {
+	  for (UNamedParameters *param = command->flags; param;
+	       param = param->next)
 	    if (param->name &&
 		param->name->equal("flag") &&
 		param->expression &&
 		(param->expression->val == 3 || // 3 = +end
 		 param->expression->val == 1  )) // 1 = +report
 	      send("*** end\n", command->getTag().c_str());
-	    param = param->next;
-	  }
 
 	  if (command == lastCommand)
 	    lastCommand = command->up;
@@ -1060,16 +984,17 @@ UConnection::processCommand(UCommand *&command,
 	  morphed->setTag(command);
 
 	  //morphed->morphed = true;
-	  if (!command->persistant) delete command;
+	  if (!command->persistant)
+	    delete command;
 	  command = morphed;
 	  break;
 
 	default:
 	  // "+bg" flag
-	  if ((command->flagType&8) &&
-	      (command->status == URUNNING))
+	  // FIXME: Nia?  What the heck is happening here???
+	  if ((command->flagType & 8) &&
+	      command->status == URUNNING)
 	    command->status = UBACKGROUND;
-
 	  return command;
       }
     }
@@ -1085,20 +1010,15 @@ UConnection::processCommand(UCommand *&command,
 void
 UConnection::execute(UCommand_TREE*& execCommand)
 {
-  UCommand_TREE* oldtree = 0;
-  UCommand_TREE* tree = execCommand;
-  bool mustReturn = false;
-  bool deletecommand = false;
-
   if (execCommand == 0 || closing)
     return;
 
+  // There are complications to make this a for loop: occurrences of
+  // "continue".
+  UCommand_TREE* tree = execCommand;
   while (tree)
   {
     tree->status = URUNNING;
-
-    // BLOCKED/FREEZED COMMANDS
-    deletecommand = false;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1107,6 +1027,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
       continue;
     }
 
+    // BLOCKED/FREEZED COMMANDS
+    bool deletecommand = false;
     if (tree->isBlocked())
     {
       tree->runlevel1 = UEXPLORED;
@@ -1119,9 +1041,9 @@ UConnection::execute(UCommand_TREE*& execCommand)
     if (tree->callid && tree->command1 && tree->runlevel1 == UWAITING)
       stack.push_front(tree->callid);
 
+    bool mustReturn;
     tree->command1 = processCommand (tree->command1, tree->runlevel1,
 				     mustReturn);
-
     if (mustReturn)
     {
       tree = dynamic_cast<UCommand_TREE*> (tree->command1);
@@ -1142,14 +1064,15 @@ UConnection::execute(UCommand_TREE*& execCommand)
     }
 
     // COMMAND2
-    if (tree->node == UAND
-	|| tree->node == UCOMMA
+    if (tree->flavor() == Flavorable::UAND
+	|| tree->flavor() == Flavorable::UCOMMA
 	|| tree->command1 == 0
 	|| tree->command1->status == UBACKGROUND)
     {
       if (tree == lastCommand)
 	obstructed = false;
 
+      bool mustReturn;
       tree->command2 = processCommand (tree->command2,
 				       tree->runlevel2,
 				       mustReturn);
@@ -1163,7 +1086,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // STATUS UPDATE
 
-    if ((tree->command1 == 0 && tree->command2 == 0)
+    if (tree->command1 == 0 && tree->command2 == 0
 	|| deletecommand)
     {
       if (tree == lastCommand)
@@ -1172,8 +1095,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	execCommand = 0;
 
       if (tree->position)
-	*(tree->position) = 0;
-      oldtree = tree;
+	*tree->position = 0;
 
       for (UNamedParameters *param = tree->flags; param; param = param->next)
 	if (param->name &&
@@ -1182,8 +1104,9 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	    (param->expression->val == 3 || // 3 = +end
 	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", tree->getTag().c_str());
-      tree = tree->up;
 
+      UCommand_TREE* oldtree = tree;
+      tree = tree->up;
       delete oldtree;
       continue;
     }
@@ -1205,14 +1128,14 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	tree->command2 != 0)
     {
       // left reduction
-      ASSERT(tree->position!=0) *(tree->position) = tree->command2;
+      ASSERT(tree->position!=0)
+	*tree->position = tree->command2;
       tree->command2->up = tree->up;
       tree->command2->position = tree->position;
       tree->command2->background = tree->background;
       tree->command2 = 0;
-      oldtree = tree;
+      UCommand_TREE* oldtree = tree;
       tree = tree->up; // cannot be zero
-
       delete oldtree;
       continue;
     }
@@ -1232,7 +1155,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
       tree->command1->position = tree->position;
       tree->command1->background = tree->background;
       tree->command1 = 0;
-      oldtree = tree;
+      UCommand_TREE* oldtree = tree;
       tree = tree->up; // cannot be zero
 
       delete oldtree;
@@ -1240,7 +1163,6 @@ UConnection::execute(UCommand_TREE*& execCommand)
     }
 
     // BACK UP
-
     tree = tree->up;
   }
 

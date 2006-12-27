@@ -73,7 +73,8 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 	if (!cmd)
 	  cmd = newcmd;
 	else
-	  cmd = new UCommand_TREE (UCommand::location(), UAND, newcmd, cmd);
+	  cmd = new UCommand_TREE (UCommand::location(), Flavorable::UAND,
+				   newcmd, cmd);
       }
   }
 

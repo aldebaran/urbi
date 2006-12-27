@@ -25,12 +25,12 @@
 # include <list>
 
 # include "libport/fwd.hh"
-# include "fwd.hh"
 
-# include "utypes.hh"
+# include "fwd.hh"
+# include "flavorable.hh"
+# include "uast.hh"
 # include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
 # include "ustring.hh"
-# include "uast.hh"
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
@@ -44,51 +44,43 @@ class UCommand : public UAst
 public:
   MEMORY_MANAGED;
 
-  /// The different types for a UCommand
+  /// The different types for a UCommand.
   enum Type
   {
-    CMD_GENERIC,
-    CMD_TREE,
-    CMD_ASSIGN_VALUE,
-    CMD_ASSIGN_PROPERTY,
-    CMD_ASSIGN_BINARY,
-    CMD_EXPR,
-    CMD_RETURN,
-    CMD_ECHO,
-    CMD_NEW,
-    CMD_ALIAS,
-    CMD_INHERIT,
-    CMD_GROUP,
-    CMD_WAIT,
-    CMD_WAIT_TEST,
-    CMD_INCREMENT,
-    CMD_DECREMENT,
-    CMD_DEF,
-    CMD_CLASS,
-    CMD_IF,
-    CMD_EVERY,
-    CMD_TIMEOUT,
-    CMD_STOPIF,
-    CMD_FREEZEIF,
-    CMD_AT,
-    CMD_AT_AND,
-    CMD_WHILE,
-    CMD_WHILE_AND,
-    CMD_WHILE_PIPE,
-    CMD_WHENEVER,
-    CMD_LOOP,
-    CMD_LOOPN,
-    CMD_LOOPN_PIPE,
-    CMD_LOOPN_AND,
-    CMD_FOREACH,
-    CMD_FOREACH_PIPE,
-    CMD_FOREACH_AND,
-    CMD_FOR,
-    CMD_FOR_PIPE,
-    CMD_FOR_AND,
-    CMD_NOOP,
-    CMD_EMIT,
-    CMD_LOAD,
+    ALIAS,
+    ASSIGN_BINARY,
+    ASSIGN_PROPERTY,
+    ASSIGN_VALUE,
+    AT,
+    AT_AND,
+    CLASS,
+    DECREMENT,
+    DEF,
+    ECHO,
+    EMIT,
+    EVERY,
+    EXPR,
+    FOREACH,
+    FOR,
+    FREEZEIF,
+    GENERIC,
+    GROUP,
+    IF,
+    INCREMENT,
+    INHERIT,
+    LOAD,
+    LOOP,
+    LOOPN,
+    NEW,
+    NOOP,
+    RETURN,
+    STOPIF,
+    TIMEOUT,
+    TREE,
+    WAIT,
+    WAIT_TEST,
+    WHENEVER,
+    WHILE,
   };
 
   UCommand (const location& l, Type _type);
@@ -100,8 +92,14 @@ public:
   virtual UCommand* copy();
 
   UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
-  virtual UVariableName** refVarName()  { return 0; };
-  virtual UVariableName** refVarName2()  { return 0; };
+  virtual UVariableName** refVarName ()
+  {
+    return 0;
+  }
+  virtual UVariableName** refVarName2 ()
+  {
+    return 0;
+  }
 
   const std::string& getTag() const
   {
@@ -179,12 +177,12 @@ private:
   UCommand (const UCommand &c);
 };
 
-class UCommand_TREE : public UCommand
+class UCommand_TREE : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_TREE(const UCommand::location& l, UNodeType node,
+  UCommand_TREE(const UCommand::location& l, UNodeType flavor,
 		UCommand* command1, UCommand* command2);
   virtual ~UCommand_TREE();
 
@@ -202,8 +200,6 @@ public:
   UCommand* command2;
   /// context identificator for function calls
   UCallid* callid;
-  /// node type (AND, PIPE, ...)
-  UNodeType        node;
   /// The state of execution of command1 and command2.
   URunlevel        runlevel1, runlevel2;
   /// belonging connection
@@ -226,8 +222,14 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &variablename; };
-  virtual UVariableName** refVarName2()  { return &expression->variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
+  virtual UVariableName** refVarName2 ()
+  {
+    return &expression->variablename;
+  }
 
   /// variable name
   UVariableName* variablename;
@@ -316,7 +318,10 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
 
   /// variable name
@@ -347,7 +352,10 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
 
   /// variable name
@@ -402,7 +410,10 @@ public:
 
   virtual UCommandStatus execute(UConnection* connection);
   virtual UCommand*      copy();
-  virtual UVariableName** refVarName()  { return &expression->variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &expression->variablename;
+  }
 
   /// Expression
   UExpression* expression;
@@ -589,7 +600,10 @@ public:
 			UVariableName* device,
 			ufloat* cmd);
   virtual ~UCommand_DEVICE_CMD();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
   virtual void print(int l);
 
@@ -767,7 +781,10 @@ public:
   UCommand_INCDECREMENT(const UCommand::location& l,
 			Type type, UVariableName* variablename);
   virtual ~UCommand_INCDECREMENT();
-  virtual UVariableName** refVarName()  { return &variablename; };
+  virtual UVariableName** refVarName ()
+  {
+    return &variablename;
+  }
 
   virtual void print(int l);
 
@@ -957,12 +974,11 @@ public:
   UString* tagRef;
 };
 
-class UCommand_WHILE : public UCommand
+class UCommand_WHILE : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
-
-  UCommand_WHILE (const UCommand::location& l, Type type,
+  UCommand_WHILE (const UCommand::location& l, UNodeType flavor,
 		  UExpression* test, UCommand* command);
   virtual ~UCommand_WHILE();
 
@@ -996,12 +1012,12 @@ public:
   UCommand*        whenever_hook;
 };
 
-class UCommand_LOOPN : public UCommand
+class UCommand_LOOPN : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOPN (const UCommand::location& l, Type type,
+  UCommand_LOOPN (const UCommand::location& l, UNodeType flavor,
 		  UExpression* expression, UCommand* command);
   virtual ~UCommand_LOOPN();
 
@@ -1016,12 +1032,11 @@ public:
   UCommand* command;
 };
 
-class UCommand_FOREACH : public UCommand
+class UCommand_FOREACH : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
-
-  UCommand_FOREACH (const UCommand::location& l, Type type,
+  UCommand_FOREACH (const UCommand::location& l, UNodeType flavor,
 		    UVariableName* variablename,
 		    UExpression* expression,
 		    UCommand* command);
@@ -1044,15 +1059,13 @@ public:
   bool             firsttime;
 };
 
-class UCommand_FOR : public UCommand
+class UCommand_FOR : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOR (const UCommand::location& l, Type type,
-		UCommand* instr1,
-		UExpression* test,
-		UCommand* instr2,
+  UCommand_FOR (const UCommand::location& l, UNodeType flavor,
+		UCommand* instr1, UExpression* test, UCommand* instr2,
 		UCommand* command);
   virtual ~UCommand_FOR();
 
@@ -1070,7 +1083,7 @@ public:
   /// Command
   UCommand* command;
   /// true on the first passage
-  bool             first;
+  bool first;
 };
 
 class UCommand_NOOP : public UCommand

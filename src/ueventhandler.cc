@@ -30,7 +30,8 @@
 std::string
 kernel::forgeName (UString* name, int nbarg)
 {
-  if (!name) return std::string("error");
+  if (!name)
+    return std::string("error");
 
   std::stringstream s;
   s << name->str() << "|" << nbarg;
@@ -154,10 +155,11 @@ UEventHandler::addEvent(UNamedParameters* parameters,
   UValue* e1;
   std::list<UValue*> args;
 
-  while  (param)
+  while (param)
   {
     e1 = param->expression->eval (command, connection);
-    if (e1==0) return 0;
+    if (e1==0)
+      return 0;
     args.push_back (e1);
     param = param->next;
   }
@@ -183,7 +185,7 @@ UEventHandler::noPositive ()
 {
   for (std::list<UEvent*>::iterator ie = eventlist_.begin ();
        ie != eventlist_.end ();
-       ie++)
+       ++ie)
     if ( !(*ie)->toDelete ()) return false;
 
   return true;

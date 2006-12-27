@@ -59,46 +59,71 @@ public:
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
   UString*       buildFullname(UCommand* command, UConnection* connection,
-                               bool withalias = true);
-  UString*       getFullname()  { return fullname_;};
+			       bool withalias = true);
+  UString*       getFullname ()
+  {
+    return fullname_;
+  }
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();
   UString*       getDevice();
   UString*       getMethod();
 
-  UString*          device;   ///< First part of a compound variable
-  UString*          id;     ///< Variable name (second part of a compound var.)
-  UString*          method;   ///< extracted variable name second part.
-  bool              rooted;///< true when the compound variable starts with '@'
-  UNamedParameters* index;    ///< list of indexes for arrays
-  UNamedParameters* index_obj; ///< list of indexes for arrays in object names
-  UExpression*      str;      ///< string expression for $ variables
-  bool              isstatic; ///< true if the variable is static
-  bool              isnormalized; ///< true if the var is in normalized mode
-  UDeriveType       deriv;    ///< deriv type for the underlying variable
-  bool              varerror; ///< true to request the target-val evaluation
-  bool              varin; ///< true to request the target evaluation
-  UVariable*        variable; ///< the variable associated to the variable name
-  UFunction*        function; ///< the function associated to the variable name
-  bool              fromGroup; ///< the var is part of a command spawned by a
-			       ///< group morphing. this is used to avoid error
-			       ///< messages when the variable does not exist
-  bool         firsttime;///< before the first local function prefix resolution
-  bool         nostruct; ///< is nostruct if it comes from a simple
-			 ///< IDENTIFIER in the parsing phase
-  UDefType          id_type; ///< type of the symbol: UDEF_FUNCTION,
-			     ///< UDEF_VAR or UDEF_EVENT
-  bool              local_scope; ///< name resolution will be limited to
-				 ///< local scope in functions
-  bool              doublecolon; ///< true when the :: construct is used
+  /// First part of a compound variable.
+  UString*          device;
+  /// Variable name (second part of a compound var.).
+  UString*          id;
+  /// Extracted variable name second part..
+  UString*          method;
+  /// True when the compound variable starts with '@'.
+  bool              rooted;
+  /// List of indexes for arrays.
+  UNamedParameters* index;
+  /// List of indexes for arrays in object names.
+  UNamedParameters* index_obj;
+  /// String expression for $ variables.
+  UExpression*      str;
+  /// True if the variable is static.
+  bool              isstatic;
+  /// True if the var is in normalized mode.
+  bool              isnormalized;
+  /// Deriv type for the underlying variable.
+  UDeriveType       deriv;
+  /// True to request the target-val evaluation.
+  bool              varerror;
+  /// True to request the target evaluation.
+  bool              varin;
+  /// The variable associated to the variable name.
+  UVariable*        variable;
+  /// The function associated to the variable name.
+  UFunction*        function;
+  /// The var is part of a command spawned by a.  group morphing. this
+  /// is used to avoid error messages when the variable does not exist
+  bool              fromGroup;
+
+  /// Before the first local function prefix resolution.
+  bool         firsttime;
+  /// Is nostruct if it comes from a simple.  IDENTIFIER in the
+  /// parsing phase
+  bool         nostruct;
+
+  /// Type of the symbol: UDEF_FUNCTION, UDEF_VAR or UDEF_EVENT.
+  UDefType          id_type;
+  /// Name resolution will be limited to local scope in functions.
+  bool              local_scope;
+  /// True when the :: construct is used.
+  bool              doublecolon;
 
 protected:
 
-  UString*		fullname_;	///< used as a hash key
-  bool			localFunction;	///< true for variables
-					///< local to a func.
-  bool			selfFunction;	///< true for variables with self prefix
-  bool			cached;		///< internal
+  /// Used as a hash key.
+  UString*		fullname_;
+  /// True for variables local to a func..
+  bool			localFunction;
+  /// True for variables with self prefix.
+  bool			selfFunction;
+  /// Internal.
+  bool			cached;
 };
 
 #endif

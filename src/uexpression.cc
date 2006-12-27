@@ -150,7 +150,8 @@ UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
   initialize();
   this->type	 = type; // should be VARIABLE or
   //ADDR_VARIABLE or GROUPLIST
-  if (type == ADDR_VARIABLE) dataType = DATA_STRING;
+  if (type == ADDR_VARIABLE)
+    dataType = DATA_STRING;
   this->variablename = variablename;
 }
 
@@ -204,19 +205,30 @@ UExpression::UExpression(UExpression::Type type,
   {
     switch (type)
     {
-      case PLUS:  val = expression1->val + expression2->val; break;
-      case MINUS: val = expression1->val - expression2->val; break;
-      case MULT:  val = expression1->val * expression2->val; break;
-      case DIV:   val = expression1->val / expression2->val; break;
-      case EXP:   val = pow (expression1->val , expression2->val); break;
-      default:    break;
+      case PLUS:
+	val = expression1->val + expression2->val;
+	break;
+      case MINUS:
+	val = expression1->val - expression2->val;
+	break;
+      case MULT:
+	val = expression1->val * expression2->val;
+	break;
+      case DIV:
+	val = expression1->val / expression2->val;
+	break;
+      case EXP:
+	val = pow (expression1->val , expression2->val);
+	break;
     }
 
     this->type = VALUE;
     this->isconst = true;
-    dataType	 = DATA_NUM;
-    delete expression1; this->expression1 = 0;
-    delete expression2; this->expression2 = 0;
+    dataType = DATA_NUM;
+    delete expression1;
+    this->expression1 = 0;
+    delete expression2;
+    this->expression2 = 0;
   }
 
   if (type == NEG
@@ -229,7 +241,8 @@ UExpression::UExpression(UExpression::Type type,
     this->type = VALUE;
     this->isconst = true;
     dataType = DATA_NUM;
-    delete expression1; this->expression1 = 0;
+    delete expression1;
+    this->expression1 = 0;
   }
 }
 
@@ -489,7 +502,7 @@ UExpression::eval (UCommand *command,
 	  e1 = ret->liststart;
 	  while (e1->next)
 	    e1 = e1->next;
-	  it++;
+	  ++it;
 	}
 
 	while (it !=  retr->second->members.end())
@@ -515,7 +528,7 @@ UExpression::eval (UCommand *command,
 	    }
 	    delete e3;
 	  }
-	  it++;
+	  ++it;
 	}
       }
       return ret;
@@ -529,8 +542,10 @@ UExpression::eval (UCommand *command,
 
       UValue* ret = new UValue();
       ret->dataType = dataType;
-      if (dataType == DATA_NUM) ret->val = val;
-      if (dataType == DATA_STRING) ret->str = new UString(str);
+      if (dataType == DATA_NUM)
+	ret->val = val;
+      if (dataType == DATA_STRING)
+	ret->str = new UString(str);
       return ret;
     }
 
@@ -722,7 +737,8 @@ UExpression::eval (UCommand *command,
 	b->parameters = ret->refBinary->ref()->parameters->copy();
 
 	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
-	if (!ref) return 0;
+	if (!ref)
+	  return 0;
 
 	memcpy(b->buffer,
 	       ret->refBinary->ref()->buffer,
@@ -950,7 +966,7 @@ UExpression::eval_FUNCTION (UCommand *command,
   if (eh)
   {
     UValue* ret = new UValue(ufloat(1));
-    if  (eh->noPositive())
+    if (eh->noPositive())
       ret->val = 0; // no active (positive) event in the handler
 
     ec = new UEventCompound (new UEventMatch (funname,
@@ -1021,7 +1037,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       while (e3 && indx != (int)e2->val)
       {
 	e3 = e3->next;
-	indx++;
+	++indx;
       }
       UValue* ret = 0;
       if (!e3)
@@ -1090,10 +1106,10 @@ UExpression::eval_FUNCTION (UCommand *command,
       ret->dataType = DATA_NUM;
       ret->val = e1->str->len();
 
-      for (int i=0;i<e1->str->len()-1;i++)
+      for (int i=0;i<e1->str->len()-1; ++i)
 	if (e1->str->str()[i] == '\\' &&
 	    e1->str->str()[i+1] == '"')
-	  ret->val--;
+	  --ret->val;
 
       delete e1;
       return ret;
@@ -1323,7 +1339,9 @@ UExpression::eval_FUNCTION (UCommand *command,
     if (STREQ(variablename->id->str(), "strsub"))
       ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
 
-    delete e1; delete e2; delete e3;
+    delete e1;
+    delete e2;
+    delete e3;
     return ret;
   }
 
@@ -1493,7 +1511,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     if (eh)
     {
       ret = new UValue(ufloat(1));
-      if  (eh->noPositive())
+      if (eh->noPositive())
 	ret->val = 0; // no active (positive) event in the handler
 
       ec = new UEventCompound
@@ -1573,18 +1591,19 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  UValue* xval = tmpvar->value->liststart;
 	  int index;
 	  int curr;
-	  p[0]='_';
-	  p=p+2; // beginning of the index
+	  p[0] = '_';
+	  p = p + 2; // beginning of the index
 	  char* p2 = strchr(p, '_');
 	  while (p)
 	  {
-	    if (p2) p2[0]=0;
+	    if (p2)
+	      p2[0] = 0;
 	    index = atoi(p);
-	    curr=0;
-	    while ((curr!=index) && (xval))
+	    curr = 0;
+	    while (curr != index && xval)
 	    {
 	      xval = xval->next;
-	      curr++;
+	      ++curr;
 	    }
 	    if (!xval)
 	    {
@@ -1608,10 +1627,11 @@ UExpression::eval_VARIABLE (UCommand *command,
 	    }
 
 	    if (p2)
-	      p2[0]='_';
+	      p2[0] = '_';
 	    if (p2)
-	      p = p2+2; else
-	      p=0;
+	      p = p2 + 2;
+	    else
+	      p = 0;
 	    if (p)
 	      p2 = strchr(p, '_');
 	  }
@@ -1620,7 +1640,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	}
       }
       if (p)
-	p[0]='_';
+	p[0] = '_';
     }
 
     char errorString[256];
@@ -1721,7 +1741,6 @@ UExpression::eval_VARIABLE (UCommand *command,
 			 (::urbiserver->currentTime
 			  - ::urbiserver->previousTime) );
 	  break;
-	default: break;
       }
     }
   }
@@ -1772,7 +1791,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
-      if (!fullname) return UFAIL;
+      if (!fullname)
+	return UFAIL;
       varname  = variablename->getFullname()->str();
 
       if (!variable)
@@ -1789,7 +1809,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	    searchVariable(variablename->getMethod()->str(),
 			   ambiguous);
 
-	  if (ambiguous) return UFAIL;
+	  if (ambiguous)
+	    return UFAIL;
 
 	  if (variable)
 	  {
@@ -1854,8 +1875,10 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
       variable = variablename->getVariable(cmd, c);
       fullname = variablename->getFullname();
-      if (!fullname) return UFAIL;
-      if (!variable) return UFAIL;
+      if (!fullname)
+	return UFAIL;
+      if (!variable)
+	return UFAIL;
       variable->registerCmd(cmd);
       return USUCCESS;
 
@@ -1863,7 +1886,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
       fullname = variablename->buildFullname (cmd, c);
       nbargs = 0;
-      if (parameters) nbargs = parameters->size ();
+      if (parameters)
+	nbargs = parameters->size ();
       eh = kernel::findEventHandler(fullname, nbargs);
 
       if (eh)
@@ -1907,7 +1931,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  return UFAIL;
 
       if (expression2)
-	if  (expression2->asyncScan(cmd, c) == UFAIL)
+	if (expression2->asyncScan(cmd, c) == UFAIL)
 	  return UFAIL;
       return USUCCESS;
   }

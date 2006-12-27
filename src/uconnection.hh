@@ -66,6 +66,58 @@ class UConnection: public urbi::Lockable //queue lock
 
 public:
 
+  /// UConnection constructor.
+  /*! This constructor must be called by any sub class.
+
+    Important note on memory management: you should call
+    ADDOBJ(nameofsubclass) in the constructor of your UConnection sub
+    class to maintain a valid memory occupation
+    evaluation. Symmetricaly, you must call FREEOBJ(nameofsubclass) in
+    the UConnection destructor. "nameofsubclass" is the name of the
+    sub class used (which will be evaluated with a sizeof
+    operator). ADDOBJ and FREEOBJ macros are in utypes.h.
+
+    \param userver is the server to which the connection belongs
+
+    \param minSendBufferSize UConnection uses an adaptive dynamic
+    queue (UQueue) to buffer sent data. This parameter sets the
+    minimal and initial size of the queue. Suggested value is 4096.
+
+    \param maxSendBufferSize The internal sending UQueue size can grow
+    up to maxSendBufferSize.  A good strategy is to have here twice
+    the size of the biggest data that could enter the queue, plus a
+    small 10% overhead. Typically, the size of the biggest image times
+    two + 10%.  Zero means "illimited" and is not advised if one wants
+    to control the connection's size.
+
+    \param packetSize is the maximal size of a packet sent in one shot
+    via a call to effectiveSend(). This should be the biggest as
+    possible to help emptying the sending queue as fast as
+    possible. Check the capacity of your connection to know this
+    limit.
+
+    \param minRecvBufferSize UConnection uses an adaptive dynamic
+    queue (UQueue) to buffer received data. This parameter sets the
+    minimal and initial size of the queue. Suggested value is 4096.
+
+    \param maxRecvBufferSize The internal receiving UQueue size can
+    grow up to maxRecvBufferSize.A good strategy is to have here twice
+    the size of the biggest data that could enter the queue, plus a
+    small 10% overhead. Zero means "illimited". Note that binary data
+    are handled on specific buffers and are not part of the receiving
+    queue. The "biggest size" here means the "biggest ascii
+    command". For URBI commands, a good choice is 65536.
+
+    Note that all UQueues are, by default, adaptive queues (see the
+    UQueue documentation for more details). This default kernel
+    behavior can be modified by changing the UConnection::ADAPTIVE
+    constant or, individually by using the setSendAdaptive(int) and
+    setReceiveAdaptive(int) method.
+
+    When exiting, UError can have the following values: - USUCCESS:
+    success - UFAIL : memory allocation failed.
+
+    \sa UQueue */
   UConnection  (UServer *userver,
 		int minSendBufferSize,
 		int maxSendBufferSize,

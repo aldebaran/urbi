@@ -1,3 +1,42 @@
+2006-12-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	port up to r597 from trunk
+	* src/Makefile.am: .
+	* src/flavorable.hh: New.
+	* src/memorymanager/memorymanager.cc: .
+	* src/network/bsdnet/network.cc: .
+	* src/parser/bison/flex-lexer.hh: .
+	* src/parser/bison/ugrammar.y: .
+	* src/parser/bison/utoken.l: .
+	* src/uasynccommand.cc: .
+	* src/uasyncregister.cc: .
+	* src/uatcandidate.cc: .
+	* src/ubinder.cc: .
+	* src/ucommand.cc: .
+	* src/ucommand.hh: .
+	* src/ucommandqueue.cc: .
+	* src/uconnection.cc: .
+	* src/uconnection.hh: .
+	* src/ueventcompound.cc: .
+	* src/ueventhandler.cc: .
+	* src/ueventinstance.cc: .
+	* src/ueventmatch.cc: .
+	* src/uexpression.cc: .
+	* src/ugroup.cc: .
+	* src/uobj.cc: .
+	* src/uobject.cc: .
+	* src/uqueue.cc: .
+	* src/userver.cc: .
+	* src/userver.hh: .
+	* src/ustring.cc: .
+	* src/utypes.hh: .
+	* src/uvalue.cc: .
+	* src/uvar.cc: .
+	* src/uvariable.cc: .
+	* src/uvariable.hh: .
+	* src/uvariablename.cc: .
+	* src/uvariablename.hh: .
+
 2006-12-25  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	porting r571 (use of kernel1@gostai.com) from trunk 

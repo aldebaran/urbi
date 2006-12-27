@@ -69,7 +69,7 @@ UEventCompound::~UEventCompound ()
 {
   /// keepalive prevents recursive deletion when the compound is reorganized by
   /// another function like @a normalForm.
-  if  (!keepalive_)
+  if (!keepalive_)
   {
     delete ec1_;
     delete ec2_;
@@ -98,7 +98,7 @@ UEventCompound::mixing()
     case EC_MATCH:
       for (std::list<UEvent*>::iterator ievent = em_->matches ().begin ();
 	   ievent != em_->matches ().end ();
-	   ievent++)
+	   ++ievent)
       {
 	UMultiEventInstance* mei;
 	ASSERT (mei = new UMultiEventInstance ());
@@ -112,7 +112,7 @@ UEventCompound::mixing()
       ASSERT (ec2_) res2 = ec2_->mixing ();
       result = res1;
       for (multievents_type::iterator imei2 = res2.begin ();
-	   imei2 != res2.end (); imei2++)
+	   imei2 != res2.end (); ++imei2)
 	result.push_back (*imei2);
       return result;
 
@@ -121,9 +121,9 @@ UEventCompound::mixing()
       ASSERT (ec2_) res2 = ec2_->mixing ();
 
       for (multievents_type::iterator imei1 = res1.begin ();
-	   imei1 != res1.end (); imei1++)
+	   imei1 != res1.end (); ++imei1)
 	for (multievents_type::iterator imei2 = res2.begin ();
-	     imei2 != res2.end (); imei2++)
+	     imei2 != res2.end (); ++imei2)
 	{
 	  UMultiEventInstance* mei;
 	  ASSERT (mei = new UMultiEventInstance (*imei1, *imei2));
@@ -183,7 +183,7 @@ UEventCompound::normalForm ()
   {
     case EC_MATCH:
       ec1_->em_->reduce ();
-      if  (ec1_->em_->matches().empty())
+      if (ec1_->em_->matches().empty())
 	em_ = kernel::eventmatch_true;
       else
 	em_ = kernel::eventmatch_false;

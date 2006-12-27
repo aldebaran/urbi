@@ -56,55 +56,6 @@ namespace
   /// A buffer type.
   typedef char buffer_t[65536];
 
-  const char* to_string (UNodeType type)
-  {
-    switch (type)
-    {
-      case UAND:       return "AND";
-      case UPIPE:      return "PIPE";
-      case USEMICOLON: return "SEMICOLON";
-      case UCOMMA:     return "COMMA";
-      default:
-	abort ();
-    }
-  }
-
-  UNodeType nodetype (UCommand::Type type)
-  {
-    switch (type)
-    {
-      case UCommand::CMD_FOR:	    return USEMICOLON;
-      case UCommand::CMD_FOR_PIPE:  return UPIPE;
-      case UCommand::CMD_FOR_AND:   return UAND;
-
-      case UCommand::CMD_FOREACH:      return USEMICOLON;
-      case UCommand::CMD_FOREACH_PIPE: return UPIPE;
-      case UCommand::CMD_FOREACH_AND:  return UAND;
-
-      case UCommand::CMD_LOOPN:	     return USEMICOLON;
-      case UCommand::CMD_LOOPN_PIPE: return UPIPE;
-      case UCommand::CMD_LOOPN_AND:  return UAND;
-
-      case UCommand::CMD_WHILE:	      return USEMICOLON;
-      case UCommand::CMD_WHILE_PIPE:  return UPIPE;
-      case UCommand::CMD_WHILE_AND:   return UAND;
-
-      default:
-	abort ();
-    }
-  }
-
-  const char* kind (UCommand::Type type)
-  {
-    switch (nodetype (type))
-    {
-      case USEMICOLON: return "";
-      case UPIPE:      return " (PIPE)";
-      case UAND:       return " (AND)";
-      default: abort();
-    }
-  }
-
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
@@ -149,6 +100,16 @@ namespace
       debug(l, "  " # Attr ":\n");		\
       (Attr)->print();				\
       debug("\n");				\
+    }						\
+  } while (0)
+
+/// Attribute that output the ending \n themselves, and support indentation.
+#define DEBUG_ATTR_I(Attr)			\
+  do {						\
+    if (Attr)					\
+    {						\
+      debug(l, "  " # Attr ":\n");		\
+      (Attr)->print(l + 3);			\
     }						\
   } while (0)
 }
@@ -257,7 +218,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
       UCommand *gplist = 0;
       for (std::list<UString*>::iterator retr = oo->members.begin();
 	   retr != oo->members.end();
-	   retr++)
+	   ++retr)
       {
 	UCommand *clone = copy();
 	UVariableName*& clonename = *((clone->*refName)());
@@ -277,7 +238,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	clonename->nostruct = varname->nostruct;
 	clonename->id_type = varname->id_type;
 	clonename->local_scope = varname->local_scope;
-	gplist = new UCommand_TREE(location(), UAND, clone, gplist);
+	gplist = new UCommand_TREE(location(), Flavorable::UAND, clone, gplist);
       }
 
       morph = gplist;
@@ -435,14 +396,14 @@ MEMORY_MANAGER_INIT(UCommand_TREE);
  still cannot be persistant (like a AT or WHENEVER).
  */
 UCommand_TREE::UCommand_TREE(const location& l,
-			     UNodeType node,
+			     UNodeType flavor,
 			     UCommand* command1,
 			     UCommand* command2)
-  : UCommand(l, CMD_TREE),
+  : UCommand(l, TREE),
+    Flavorable (flavor),
     command1 (command1),
     command2 (command2),
     callid (0),
-    node (node),
     runlevel1 (UWAITING),
     runlevel2 (UWAITING),
     connection (0) // unknown unless there is a context).
@@ -485,7 +446,7 @@ UCommand_TREE::execute(UConnection*)
 UCommand*
 UCommand_TREE::copy()
 {
-  return copybase(new UCommand_TREE(loc_, node,
+  return copybase(new UCommand_TREE(loc_, flavor(),
 				    ucopy (command1),
 				    ucopy (command2)));
 }
@@ -505,7 +466,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command1;
 	tree->command1 = 0;
       }
-      else if (tree->command1->type == CMD_TREE)
+      else if (tree->command1->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command1);
 	// If tree->command1 wasn't NULL, then tree must NOT be NULL.
@@ -520,7 +481,7 @@ UCommand_TREE::deleteMarked()
 	delete tree->command2;
 	tree->command2 = 0;
       }
-      else if (tree->command2->type == CMD_TREE)
+      else if (tree->command2->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
 	// If tree->command2 wasn't NULL, then tree must NOT be NULL.
@@ -548,7 +509,7 @@ UCommand_TREE::print(int l)
   debug(l, "Tag:[%s] toDelete=%d Tree %s (%ld:%ld) :\n",
 	getTag().c_str(),
 	toDelete,
-	to_string (node),
+	flavor_string(),
 	(long)this, (long)status);
   if (command1)
   {
@@ -575,7 +536,7 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(const location& l,
 					     UExpression* expression,
 					     UNamedParameters *parameters,
 					     bool defkey)
-  : UCommand(l, CMD_ASSIGN_VALUE),
+  : UCommand(l, ASSIGN_VALUE),
     variablename(variablename),
     variable (0),
     expression (expression),
@@ -614,7 +575,7 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
 
   if (assigned)
   {
-    variable->nbAssigns--;
+    --variable->nbAssigns;
     if (variable->cancel == this)
       variable->cancel = 0;
   }
@@ -715,7 +676,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
       morph =
 	new UCommand_TREE
-	(loc_, UPIPE, fun->cmdcopy(),
+	(loc_, Flavorable::UPIPE, fun->cmdcopy(),
 	 new UCommand_ASSIGN_VALUE (loc_,
 				    variablename->copy(),
 				    new UExpression(UExpression::VARIABLE,
@@ -803,7 +764,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   cbi != hmfi->second.end() && !found_function;
-	   cbi++)
+	   ++cbi)
       {
 	if ((expression->parameters
 	     && expression->parameters->size() == (*cbi)->nbparam)
@@ -844,7 +805,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (it != ::urbiserver->functionbindertab.end()
 	  && (expression->parameters
 	      ? it->second->nbparam == expression->parameters->size()
-	      : it->second->nbparam==0)
+	      : it->second->nbparam == 0)
 	  && !it->second->monitors.empty())
       {
 	int UU = unic();
@@ -854,7 +815,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 
 	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	     j != it->second->monitors.end();
-	     j++)
+	     ++j)
 	{
 	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	  (*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -919,7 +880,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	&& !variablename->fromGroup
 	&& variable->value->dataType == DATA_OBJ)
     {
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Warning: %s type mismatch: no object assignment\n",
 			variablename->getFullname()->str());
       return status = UCOMPLETED;
@@ -976,7 +937,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       if (parameters != 0)
 	// FIXME: 65000 is not dividable by 42 nor 51.
 	if (char *result =
-	    static_cast<char*> (malloc (sizeof(char)
+	    static_cast<char*> (malloc (sizeof (char)
 					* (65000+target->str->len()))))
 	{
 	  strcpy (result, target->str->str());
@@ -1074,7 +1035,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	    || variable->rangemax ==  UINFINITY)
 	{
 	  if (!variablename->fromGroup)
-	    connection->sendf(getTag().c_str(),
+	    connection->sendf(getTag(),
 			      "!!! Impossible to normalize:"
 			      " no range defined for variable %s\n",
 			      variablename->getFullname()->str());
@@ -1082,8 +1043,10 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	  return status = UCOMPLETED;
 	}
 
-	if (targetval < 0) targetval = 0;
-	if (targetval > 1) targetval = 1;
+	if (targetval < 0)
+	  targetval = 0;
+	if (targetval > 1)
+	  targetval = 1;
 
 	targetval = variable->rangemin + targetval *
 	  (variable->rangemax - variable->rangemin);
@@ -1109,7 +1072,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	if (variable == 0 && !sinusoidal)
 	{
 	  if (!variablename->fromGroup)
-	    connection->sendf(getTag().c_str(),
+	    connection->sendf(getTag(),
 			      "!!! Modificator error: %s unknown"
 			      " (no start value)\n",
 			      variablename->getFullname()->str());
@@ -1124,7 +1087,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
 	{
 	  if (!modif->expression || !modif->name)
 	  {
-	    connection->sendf(getTag().c_str(), "!!! Invalid modifier\n");
+	    connection->sendf(getTag(), "!!! Invalid modifier\n");
 	    delete target;
 	    return status = UCOMPLETED;
 	  }
@@ -1250,7 +1213,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
       else
 	valtmp = &(variable->target); // &variable->target
 
-      variable->nbAssigns++;
+      ++variable->nbAssigns;
       assigned = true;
 
       // use of previous value as a start value to ensure that the start value
@@ -1303,7 +1266,7 @@ UCommand_ASSIGN_VALUE::execute(UConnection *connection)
     // nbAverage back to 0 after work()
     if (variable->blendType != UADD)
       *valtmp = *valtmp / (ufloat)(variable->nbAverage+1);
-    variable->nbAverage++;
+    ++variable->nbAverage;
 
     if (variable->activity == 0)
       connection->server->reinitList.push_front(variable);
@@ -1540,9 +1503,11 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       delete v;
     }
 
-    if (targetval < startval) accel = -accel;
+    if (targetval < startval)
+      accel = -accel;
 
-    if (accel == 0) accel = 0.001;
+    if (accel == 0)
+      accel = 0.001;
 
     if (variablename->isnormalized)
       accel = accel * (variable->rangemax - variable->rangemin);
@@ -1572,7 +1537,8 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       targettime = ABSF(v->val);
       delete v;
     }
-    if (targettime == 0) targettime = 0.1;
+    if (targettime == 0)
+      targettime = 0.1;
 
     phase = 0;
     if (modif_phase)
@@ -1598,8 +1564,10 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	targetval = v->val;
 	if (variablename->isnormalized)
 	{
-	  if (targetval < 0) targetval = 0;
-	  if (targetval > 1) targetval = 1;
+	  if (targetval < 0)
+	    targetval = 0;
+	  if (targetval > 1)
+	    targetval = 1;
 
 	  targetval = variable->rangemin + targetval *
 	    (variable->rangemax - variable->rangemin);
@@ -1633,8 +1601,9 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 		       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
 					targettime ));
       int n = (int)(phaseval->val / (PI*ufloat(2)));
-      if (n<0) n--;
-      phaseval->val = phaseval->val - n	 * (PI*ufloat(2));
+      if (n < 0)
+	--n;
+      phaseval->val = phaseval->val - n * (PI * ufloat(2));
     }
 
     *valtmp = variable->nbAverage * *valtmp + intermediary;
@@ -1673,11 +1642,7 @@ UCommand_ASSIGN_VALUE::print(int l)
 
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
   debug(l, "END ASSIGN VALUE ------\n");
 }
 
@@ -1689,7 +1654,7 @@ MEMORY_MANAGER_INIT(UCommand_ASSIGN_BINARY);
 UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(const location& l,
 					       UVariableName *variablename,
 					       libport::RefPt<UBinary> *refBinary)
-  : UCommand(l, CMD_ASSIGN_BINARY),
+  : UCommand(l, ASSIGN_BINARY),
     variablename (variablename),
     variable (0),
     refBinary (refBinary),
@@ -1783,7 +1748,8 @@ UCommand_ASSIGN_BINARY::print(int l)
   if (refBinary)
   {
     debug(l, "  Binary:");
-    refBinary->ref()->print(); debug("\n");
+    refBinary->ref()->print();
+    debug("\n");
   }
   debug("%sEND ASSIGN BINARY ------\n",
 		      tab(l));
@@ -1798,7 +1764,7 @@ UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(const location& l,
 						   UVariableName *variablename,
 						   UString *oper,
 						   UExpression *expression)
-  : UCommand(l, CMD_ASSIGN_PROPERTY),
+  : UCommand(l, ASSIGN_PROPERTY),
     variablename (variablename),
     variable (0),
     oper (oper),
@@ -1836,7 +1802,7 @@ UCommand_ASSIGN_PROPERTY::execute(UConnection *connection)
   if (!variable)
   {
     if (!variablename->fromGroup)
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Variable %s does not exist\n",
 			variablename->getFullname()->str());
     return status = UCOMPLETED;
@@ -2053,7 +2019,7 @@ UCommand_AUTOASSIGN::UCommand_AUTOASSIGN(const location& l,
 					 UVariableName* variablename,
 					 UExpression* expression,
 					 int assigntype)
-  : UCommand(l, CMD_ASSIGN_VALUE),
+  : UCommand(l, ASSIGN_VALUE),
     variablename (variablename),
     expression (expression),
     assigntype (assigntype)
@@ -2144,7 +2110,7 @@ MEMORY_MANAGER_INIT(UCommand_EXPR);
  */
 UCommand_EXPR::UCommand_EXPR(const location& l,
 			     UExpression* expression)
-  : UCommand(l, CMD_EXPR),
+  : UCommand(l, EXPR),
     expression (expression)
 {
   ADDOBJ(UCommand_EXPR);
@@ -2237,7 +2203,8 @@ UCommand_EXPR::execute(UConnection *connection)
 						resultContainer));
 
       cexp->setTag(this);
-      morph = new UCommand_TREE(loc_, UPIPE, fun->cmdcopy(getTag()), cexp);
+      morph = new UCommand_TREE(loc_, Flavorable::UPIPE,
+				fun->cmdcopy(getTag()), cexp);
 
       if (morph)
       {
@@ -2333,7 +2300,7 @@ UCommand_EXPR::execute(UConnection *connection)
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   cbi != hmfi->second.end();
-	   cbi++)
+	   ++cbi)
       {
 	if ((expression->parameters &&
 	     expression->parameters->size() == (*cbi)->nbparam)
@@ -2382,7 +2349,7 @@ UCommand_EXPR::execute(UConnection *connection)
     if (it != ::urbiserver->functionbindertab.end()
 	&& ((expression->parameters
 	     && it->second->nbparam == expression->parameters->size())
-	    || (!expression->parameters && it->second->nbparam==0))
+	    || (!expression->parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
       int UU = unic();
@@ -2392,7 +2359,7 @@ UCommand_EXPR::execute(UConnection *connection)
 
       for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	   j != it->second->monitors.end();
-	   j++)
+	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -2477,7 +2444,7 @@ MEMORY_MANAGER_INIT(UCommand_RETURN);
  */
 UCommand_RETURN::UCommand_RETURN(const location& l,
 				 UExpression* expression)
-  : UCommand(l, CMD_RETURN),
+  : UCommand(l, RETURN),
     expression (expression)
 {
   ADDOBJ(UCommand_RETURN);
@@ -2546,7 +2513,7 @@ UCommand_ECHO::UCommand_ECHO(const location& l,
 			     UExpression* expression,
 			     UNamedParameters *parameters,
 			     UString *connectionTag)
-  : UCommand(l, CMD_ECHO),
+  : UCommand(l, ECHO),
     expression (expression),
     parameters (parameters),
     connectionTag (connectionTag)
@@ -2568,7 +2535,7 @@ UCommand_ECHO::execute(UConnection *connection)
 {
   UValue* ret = expression->eval(this, connection);
 
-  if (ret==0)
+  if (ret == 0)
   {
     connection->sendf(getTag(), "!!! EXPR evaluation failed\n");
     return status = UCOMPLETED;
@@ -2598,7 +2565,7 @@ UCommand_ECHO::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator retr =
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
-	 retr++)
+	 ++retr)
       if ((*retr)->isActive()
 	  && ((*retr)->connectionTag->equal(connectionTag)
 	      || connectionTag->equal("all")
@@ -2612,7 +2579,7 @@ UCommand_ECHO::execute(UConnection *connection)
       }
 
     if (!ok)
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! %s: no such connection\n", connectionTag->str());
   }
 
@@ -2643,11 +2610,7 @@ UCommand_ECHO::print(int l)
   debug("ECHO:\n");
 
   DEBUG_ATTR (expression);
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
 
   debug(l, "END ECHO ------\n");
 }
@@ -2662,7 +2625,7 @@ UCommand_NEW::UCommand_NEW(const location& l,
 			   UString* obj,
 			   UNamedParameters *parameters,
 			   bool noinit)
-  : UCommand(l, CMD_NEW),
+  : UCommand(l, NEW),
     id (0),
     varname (varname),
     obj (obj),
@@ -2786,7 +2749,7 @@ UCommand_NEW::execute(UConnection *connection)
 	    << "}";
 
 	strMorph (oss.str());
-	morph = new UCommand_TREE(loc_, UPIPE, morph, this);
+	morph = new UCommand_TREE(loc_, Flavorable::UPIPE, morph, this);
 	return status;
       }
     }
@@ -2804,11 +2767,11 @@ UCommand_NEW::execute(UConnection *connection)
     for (std::list<UMonitor*>::iterator i =
 	   objit->second->binder->monitors.begin();
 	 i != objit->second->binder->monitors.end();
-	 i++)
+	 ++i)
     {
       (*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*i)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
-      nb++;
+      ++nb;
     }
     // Wait for remote new
     HMobjWaiting::iterator ow = ::urbiserver->objWaittab.find(id->str());
@@ -2841,7 +2804,7 @@ UCommand_NEW::execute(UConnection *connection)
   if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
       newobj->up.end())
   {
-    connection->sendf(getTag().c_str(),
+    connection->sendf(getTag(),
 		      "!!! %s has already inherited from %s\n",
 		      id->str(), obj->str());
     if (creation)
@@ -2855,7 +2818,7 @@ UCommand_NEW::execute(UConnection *connection)
   // Here the policy of "a = new b" which does not call init could be
   // enforced with 'noinit'
   // Currently, after discussions, all call to new tries to start init.
-  // if ((!parameters) && (noinit)) return status = UCOMPLETED;
+  // if (!parameters && noinit) return status = UCOMPLETED;
 
   // init constructor call
   //
@@ -2954,18 +2917,10 @@ UCommand_NEW::print(int l)
   debug("NEW:\n");
 
   if (id)
-  {
     debug(l, "  Id:[%s]\n", id->str());
-  }
   if (obj)
-  {
     debug(l, "  Obj:[%s]\n", obj->str());
-  }
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+  DEBUG_ATTR(parameters);
 
   debug(l, "END NEW ------\n");
 }
@@ -2980,7 +2935,7 @@ UCommand_ALIAS::UCommand_ALIAS(const location& l,
 			       UVariableName* aliasname,
 			       UVariableName* id,
 			       bool eraseit)
-  : UCommand(l, CMD_ALIAS),
+  : UCommand(l, ALIAS),
     aliasname (aliasname),
     id (id),
     eraseit (eraseit)
@@ -3021,8 +2976,8 @@ UCommand_ALIAS::execute(UConnection *connection)
     for (HMaliastab::iterator i =
 	    connection->server->aliastab.begin();
 	  i != connection->server->aliastab.end();
-	  i++)
-      connection->sendf(getTag().c_str(),
+	  ++i)
+      connection->sendf(getTag(),
 			"*** %25s -> %s\n",
 			i->first, i->second->str());
 
@@ -3082,7 +3037,8 @@ UCommand_ALIAS::print(int l)
   if (id)
   {
     debug("  %s  id:", tab(l));
-    id->print(); debug("\n");
+    id->print();
+    debug("\n");
   }
 
   debug(l, "END ALIAS ------\n");
@@ -3097,7 +3053,7 @@ UCommand_INHERIT::UCommand_INHERIT(const location& l,
 				   UVariableName* subclass,
 				   UVariableName* theclass,
 				   bool eraseit) :
-  UCommand(l, CMD_INHERIT),
+  UCommand(l, INHERIT),
   subclass (subclass),
   theclass (theclass),
   eraseit (eraseit)
@@ -3192,16 +3148,8 @@ UCommand_INHERIT::print(int l)
 
   debug("INHERIT (%d) :\n", (int)eraseit);
 
-  if (subclass)
-  {
-    debug("  %s  subclass:", tab(l));
-    subclass->print(); debug("\n");
-  }
-  if (theclass)
-  {
-    debug("  %s  parentclass:", tab(l));
-    theclass->print(); debug("\n");
-  }
+  DEBUG_ATTR (subclass);
+  DEBUG_ATTR (theclass);
 
   debug(l, "END INHERIT ------\n");
 }
@@ -3215,7 +3163,7 @@ UCommand_GROUP::UCommand_GROUP(const location& l,
 			       UString* id,
 			       UNamedParameters* parameters,
 			       int grouptype) :
-  UCommand(l, CMD_GROUP),
+  UCommand(l, GROUP),
   id (id),
   parameters (parameters),
   grouptype (grouptype)
@@ -3247,7 +3195,8 @@ UCommand_GROUP::execute(UConnection *connection)
       g = new UGroup(id);
       ::urbiserver->grouptab[g->name->str()] = g;
     }
-    if (grouptype==0)  g->members.clear();
+    if (grouptype == 0)
+      g->members.clear();
 
     for (UNamedParameters* param = parameters; param; param = param->next)
       if (grouptype == 2)
@@ -3258,7 +3207,7 @@ UCommand_GROUP::execute(UConnection *connection)
 	  if ((*it)->equal(param->name))
 	    it =g->members.erase(it);
 	  else
-	    it++;
+	    ++it;
       }
       else
       {
@@ -3279,7 +3228,7 @@ UCommand_GROUP::execute(UConnection *connection)
     for (HMgrouptab::iterator i =
 	    connection->server->grouptab.begin();
 	  i != connection->server->grouptab.end();
-	  i++)
+	  ++i)
     {
       buffer_t buf;
       snprintf(buf, sizeof buf,
@@ -3289,7 +3238,7 @@ UCommand_GROUP::execute(UConnection *connection)
 	   it !=  i->second->members.end(); )
       {
 	strncat(buf, (*it)->str(), sizeof buf);
-	it++;
+	++it;
 	if (it != i->second->members.end())
 	  strncat(buf, ",", sizeof buf);
       }
@@ -3311,7 +3260,7 @@ UCommand_GROUP::execute(UConnection *connection)
       ret = new UNamedParameters(new UExpression(UExpression::VALUE,
 						 (*it)->copy()),
 				 0);
-      it++;
+      ++it;
     }
 
     for (; it != retr->second->members.end(); ++it)
@@ -3347,13 +3296,16 @@ UCommand_GROUP::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("GROUP :\n");
-  if (id)  { debug(l, "  Id:[%s]\n", id->str());}
+  if (id)
+    debug(l, "  Id:[%s]\n", id->str());
 
   debug(l, "END GROUP ------\n");
 }
 
 
-
+/*-----------------------.
+| UCommand_OPERATOR_ID.  |
+`-----------------------*/
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 // *********************************************************
@@ -3363,7 +3315,7 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(const location& l,
 					   UString* oper,
 					   UString* id)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     oper (oper),
     id (id)
 {
@@ -3399,7 +3351,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator retr =
 	   connection->server->connectionList.begin();
 	 retr != connection->server->connectionList.end();
-	 retr++)
+	 ++retr)
       if (((*retr)->isActive()) &&
 	    ((*retr)->connectionTag->equal(id)))
       {
@@ -3423,7 +3375,7 @@ UCommand_OPERATOR_ID::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator i =
 	   connection->server->connectionList.begin();
 	 i != connection->server->connectionList.end();
-	 i++)
+	 ++i)
       if ((*i)->isActive() && (*i)->connectionTag->equal(id))
       {
 	ok = true;
@@ -3494,9 +3446,8 @@ UCommand_OPERATOR_ID::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("OPERATOR_ID %s:\n", oper->str());
-
-  if (id)  { debug(l, "  Id:[%s]\n", id->str());}
-
+  if (id)
+    debug(l, "  Id:[%s]\n", id->str());
   debug(l, "END OPERATOR_ID ------\n");
 }
 
@@ -3508,7 +3459,7 @@ MEMORY_MANAGER_INIT(UCommand_DEVICE_CMD);
 UCommand_DEVICE_CMD::UCommand_DEVICE_CMD(const location& l,
 					 UVariableName* device,
 					 ufloat *cmd)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     variablename (device),
     cmd (*cmd)
 {
@@ -3585,9 +3536,8 @@ UCommand_DEVICE_CMD::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("DEVICE_CMD %s:\n", variablename->device->str());
-
-  if (cmd)  { debug(l, "  Cmd:[%f]\n", cmd);}
-
+  if (cmd)
+    debug(l, "  Cmd:[%f]\n", cmd);
   debug(l, "END DEVICE_CMD ------\n");
 }
 
@@ -3599,7 +3549,7 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
 UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(const location& l,
 					     UString* oper,
 					     UVariableName* variablename)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     oper (oper),
     variablename (variablename)
 {
@@ -3720,14 +3670,14 @@ UCommand_OPERATOR_VAR::execute(UConnection *connection)
 	connection->server->devicetab.end())
       dev = connection->server->devicetab[devicename->str()];
 
-    if (dev==0 && devicename->equal(connection->connectionTag->str()))
+    if (dev == 0 && devicename->equal(connection->connectionTag->str()))
       if (connection->server->devicetab.find(method->str()) !=
 	  connection->server->devicetab.end())
 	dev = connection->server->devicetab[method->str()];
 
     if (!variable && !dev)
     {
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Unknown identifier: %s\n",
 			variablename->getFullname()->str());
       return status = UCOMPLETED;
@@ -3839,12 +3789,7 @@ UCommand_OPERATOR_VAR::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("OPERATOR_VAR %s:\n", oper->str());
-  if (variablename)
-  {
-    debug("  %s  Variablename:", tab(l));
-    variablename->print(); debug("\n");
-  }
-
+  DEBUG_ATTR (variablename);
   debug(l, "END OPERATOR_VAR ------\n");
 }
 
@@ -3859,7 +3804,7 @@ UCommand_BINDER::UCommand_BINDER(const location& l,
 				 int type,
 				 UVariableName* variablename,
 				 int nbparam)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     binder (binder),
     variablename (variablename),
     objname (objname),
@@ -3890,7 +3835,8 @@ UCommand_BINDER::execute(UConnection *connection)
   if (objname)
   {
     fullobjname = objname->id;
-    if (!fullobjname) return status = UCOMPLETED;
+    if (!fullobjname)
+      return status = UCOMPLETED;
   }
 
   if (type != 3) // not object binder
@@ -4000,16 +3946,8 @@ UCommand_BINDER::print(int l)
 
   debug("BINDER %s type:%d nbparam:%d:\n",
 		      binder->str(), type, nbparam);
-  if (objname)
-  {
-    debug("  %s  objname:", tab(l));
-    objname->print(); debug("\n");
-  }
-  if (variablename)
-  {
-    debug("  %s  Variablename:", tab(l));
-    variablename->print(); debug("\n");
-  }
+  DEBUG_ATTR (objname);
+  DEBUG_ATTR (variablename);
 
   debug(l, "END BINDER ------\n");
 }
@@ -4021,7 +3959,7 @@ MEMORY_MANAGER_INIT(UCommand_OPERATOR);
  */
 UCommand_OPERATOR::UCommand_OPERATOR(const location& l,
 				     UString* oper)
-  : UCommand(l, CMD_GENERIC),
+  : UCommand(l, GENERIC),
     oper (oper)
 {
   ADDOBJ(UCommand_OPERATOR);
@@ -4077,7 +4015,8 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
 
   if (STREQ(oper->str(), "motoron"))
   {
-    if (connection->receiving) return status = URUNNING;
+    if (connection->receiving)
+      return status = URUNNING;
 
 	connection->sendf (getTag(), "!!! This command is no longer valid."
 	     " Please use \"motor on\" instead\n");
@@ -4136,7 +4075,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (HMvariabletab::iterator i =
 	    connection->server->variabletab.begin();
 	  i != connection->server->variabletab.end();
-	  i++)
+	  ++i)
     {
       UString* fullname = i->second->varname;
       if (fullname)
@@ -4189,7 +4128,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (HMemittab::iterator i =
 	    connection->server->emittab.begin();
 	  i != connection->server->emittab.end();
-	  i++)
+	  ++i)
     {
       std::ostringstream tstr;
       tstr << "*** " << i->second->unforgedName->str() << "["
@@ -4206,7 +4145,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (HMvariabletab::iterator i =
 	    connection->server->variabletab.begin();
 	  i != connection->server->variabletab.end();
-	  i++)
+	  ++i)
     {
       UString* fullname = i->second->varname;
       if (i->second->uservar)
@@ -4257,7 +4196,7 @@ UCommandStatus UCommand_OPERATOR::execute(UConnection *connection)
     for (std::list<UConnection*>::iterator i =
 	   ::urbiserver->connectionList.begin();
 	 i != ::urbiserver->connectionList.end();
-	 i++)
+	 ++i)
       if ((*i)->isActive())
       {
 	connection->sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
@@ -4326,7 +4265,7 @@ MEMORY_MANAGER_INIT(UCommand_WAIT);
  */
 UCommand_WAIT::UCommand_WAIT(const location& l,
 			     UExpression* expression) :
-  UCommand(l, CMD_WAIT),
+  UCommand(l, WAIT),
   expression (expression),
   endtime (0)
 {
@@ -4356,7 +4295,8 @@ UCommand_WAIT::execute(UConnection *connection)
       connection->sendf (getTag(), "!!! Invalid type. NUM expected.\n");
       return status = UCOMPLETED;
     }
-    if (nb->val == 0) return status = UCOMPLETED;
+    if (nb->val == 0)
+      return status = UCOMPLETED;
 
     endtime = connection->server->lastTime() + nb->val;
 
@@ -4402,7 +4342,7 @@ UCommand_EMIT::UCommand_EMIT(const location& l,
 			     UVariableName *eventname,
 			     UNamedParameters *parameters,
 			     UExpression *duration) :
-  UCommand(l, CMD_EMIT),
+  UCommand(l, EMIT),
   eventname (eventname),
   parameters (parameters),
   duration (duration),
@@ -4472,7 +4412,8 @@ UCommand_EMIT::execute(UConnection *connection)
 
     // register event
     int nbargs = 0;
-    if (parameters) nbargs = parameters->size ();
+    if (parameters)
+      nbargs = parameters->size ();
 
     eh = kernel::findEventHandler (ens, nbargs);
     if (!eh)
@@ -4497,7 +4438,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
     if (it != ::urbiserver->eventbindertab.end()
 	&& ((parameters && it->second->nbparam == parameters->size())
-	    ||(!parameters && it->second->nbparam==0))
+	    ||(!parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
       char tmpprefix[1024];
@@ -4506,7 +4447,7 @@ UCommand_EMIT::execute(UConnection *connection)
 
       for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	   j != it->second->monitors.end();
-	   j++)
+	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -4531,7 +4472,7 @@ UCommand_EMIT::execute(UConnection *connection)
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
 	   cbi != hmfi->second.end();
-	   cbi++)
+	   ++cbi)
       {
 	if (((parameters) &&
 	       (parameters->size() == (*cbi)->nbparam)) ||
@@ -4560,7 +4501,7 @@ UCommand_EMIT::execute(UConnection *connection)
     }
   }
 
-  if ((thetime > targetTime) && (!firsttime))
+  if (thetime > targetTime && !firsttime)
   {
     removeEvent ();
     return status = UCOMPLETED;
@@ -4592,7 +4533,7 @@ UCommand_EMIT::removeEvent ()
 
     for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	 j != it->second->monitors.end();
-	 j++)
+	 ++j)
     {
       (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
       (*j)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
@@ -4607,7 +4548,7 @@ UCommand_EMIT::removeEvent ()
     for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	 hmfi->second.begin();
 	 cbi != hmfi->second.end();
-	 cbi++)
+	 ++cbi)
     {
       urbi::UList tmparray;
       (*cbi)->__evalcall(tmparray);
@@ -4633,7 +4574,6 @@ UCommand_EMIT::print(int l)
 {
   debug(l, " Tag:[%s] EMIT:\n", getTag().c_str());
   DEBUG_ATTR (eventname);
-
   debug(l, "END EMIT ------\n");
 }
 
@@ -4644,7 +4584,7 @@ MEMORY_MANAGER_INIT(UCommand_WAIT_TEST);
  */
 UCommand_WAIT_TEST::UCommand_WAIT_TEST(const location& l,
 				       UExpression* test)
-  : UCommand(l, CMD_WAIT_TEST),
+  : UCommand(l, WAIT_TEST),
     test (test),
     nbTrue (0)
 {
@@ -4673,7 +4613,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
   {
     if (nbTrue == 0)
       startTrue = connection->server->lastTime();
-    nbTrue++;
+    ++nbTrue;
   }
   else
     nbTrue = 0;
@@ -4682,7 +4622,7 @@ UCommand_WAIT_TEST::execute(UConnection *connection)
        && nbTrue > 0
        && (connection->server->lastTime() - startTrue
 	   >= test->softtest_time->val))
-      || (nbTrue > 0 && test->softtest_time==0))
+      || (nbTrue > 0 && test->softtest_time == 0))
     return status = UCOMPLETED;
   else
     return status = URUNNING;
@@ -4707,7 +4647,6 @@ UCommand_WAIT_TEST::print(int l)
 {
   debug(l, " Tag:[%s] WAIT_TEST:\n", getTag().c_str());
   DEBUG_ATTR (test);
-
   debug(l, "END WAIT_TEST ------\n");
 }
 
@@ -4748,7 +4687,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
     return status = UMORPH;
 
   // Main execution
-  if (type == CMD_INCREMENT)
+  if (type == INCREMENT)
   {
     morph =
       new UCommand_ASSIGN_VALUE(loc_,
@@ -4762,7 +4701,7 @@ UCommand_INCDECREMENT::execute(UConnection *connection)
     return status = UMORPH;
   }
 
-  if (type == CMD_DECREMENT)
+  if (type == DECREMENT)
   {
     morph =
       new UCommand_ASSIGN_VALUE(loc_,
@@ -4798,9 +4737,9 @@ UCommand_INCDECREMENT::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("INCDECREMENT:");
-  if (type == CMD_INCREMENT)
+  if (type == INCREMENT)
     debug("INC\n");
-  else if (type == CMD_DECREMENT)
+  else if (type == DECREMENT)
     debug("DEC\n");
   else
     debug("UNKNOWN TYPE\n");
@@ -4819,7 +4758,7 @@ UCommand_DEF::UCommand_DEF(const location& l,
 			   UVariableName *variablename,
 			   UNamedParameters *parameters,
 			   UCommand* command)
-  : UCommand(l, CMD_DEF)
+  : UCommand(l, DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -4837,7 +4776,7 @@ UCommand_DEF::UCommand_DEF(const location& l,
 			   UDefType deftype,
 			   UString *device,
 			   UNamedParameters *parameters)
-  : UCommand(l, CMD_DEF)
+  : UCommand(l, DEF)
 {
   ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
@@ -4854,7 +4793,7 @@ UCommand_DEF::UCommand_DEF(const location& l,
 UCommand_DEF::UCommand_DEF(const location& l,
 			   UDefType deftype,
 			   UVariableList *variablelist)
-  : UCommand(l, CMD_DEF),
+  : UCommand(l, DEF),
     variablename (0),
     parameters (0),
     command (0),
@@ -4884,7 +4823,7 @@ UCommand_DEF::execute(UConnection *connection)
     for (HMfunctiontab::iterator i =
 	    connection->server->functiontab.begin();
 	  i != connection->server->functiontab.end();
-	  i++)
+	  ++i)
       connection->sendf (getTag(), "*** %s : %d param(s)\n",
 			 i->second->name().str(),
 			 i->second->nbparam());
@@ -4990,7 +4929,7 @@ UCommand_DEF::execute(UConnection *connection)
 				 0,
 				 0);
 	cdef->setTag(this);
-	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
+	morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
     persistant = false;
     return status = UMORPH;
@@ -5012,11 +4951,9 @@ UCommand_DEF::execute(UConnection *connection)
       {
 	list->variablename->local_scope = true;
 	cdef = new UCommand_DEF (loc_, UDEF_VAR,
-				 list->variablename->copy(),
-				 0,
-				 0);
+				 list->variablename->copy(), 0, 0);
 	cdef->setTag(this);
-	morph = new UCommand_TREE(loc_, UAND, cdef, morph);
+	morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
 
     persistant = false;
@@ -5048,21 +4985,9 @@ UCommand_DEF::print(int l)
 
   debug("DEF:\n");
   DEBUG_ATTR (variablename);
-  if (variablelist)
-  {
-    debug(l, "  Variablelist: {");
-    variablelist->print(); debug("}\n");
-  }
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR(variablelist);
+  DEBUG_ATTR(parameters);
+  DEBUG_ATTR_I(command);
   debug(l, "END DEF ------\n");
 }
 
@@ -5074,7 +4999,7 @@ MEMORY_MANAGER_INIT(UCommand_CLASS);
 UCommand_CLASS::UCommand_CLASS(const location& l,
 			       UString *object,
 			       UNamedParameters *parameters) :
-  UCommand(l, CMD_CLASS),
+  UCommand(l, CLASS),
   object (object),
   parameters (parameters)
 {
@@ -5098,7 +5023,7 @@ UCommand_CLASS::execute(UConnection*)
     = ::urbiserver->objWaittab.find(object->str());
   if (ow != ::urbiserver->objWaittab.end())
   {
-    ow->second->nb--;
+    --ow->second->nb;
     if (ow->second->nb == 0)
       ::urbiserver->objWaittab.erase(ow);
     else
@@ -5186,7 +5111,7 @@ UCommand_CLASS::execute(UConnection*)
 	if (param == parameters)
 	  morph = cdef;
 	else
-	  morph = new UCommand_TREE(loc_, UAND, cdef, morph);
+	  morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
     }
 
@@ -5218,19 +5143,10 @@ void
 UCommand_CLASS::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("CLASS:\n");
-
   if (object)
-  {
-    debug(l, "  Object name: %s\n",
-			object->str());
-  }
-  if (parameters)
-  {
-    debug(l, "  Param:{");
-    parameters->print(); debug("}\n");
-  }
+    debug(l, "  Object name: %s\n", object->str());
+  DEBUG_ATTR(parameters);
   debug(l, "END CLASS ------\n");
 }
 
@@ -5243,7 +5159,7 @@ UCommand_IF::UCommand_IF(const location& l,
 			 UExpression *test,
 			 UCommand* command1,
 			 UCommand* command2) :
-  UCommand(l, CMD_IF),
+  UCommand(l, IF),
   test (test),
   command1 (command1),
   command2 (command2)
@@ -5264,7 +5180,8 @@ UCommand_IF::~UCommand_IF()
 UCommandStatus
 UCommand_IF::execute(UConnection *connection)
 {
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
 
   UTestResult testres = booleval(test->eval(this, connection));
 
@@ -5309,20 +5226,10 @@ void
 UCommand_IF::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("IF:\n");
-
   DEBUG_ATTR (test);
-  if (command1)
-  {
-    debug(l, "  Command1:\n");
-    command1->print(l+3);
-  }
-  if (command2)
-  {
-    debug(l, "  Command2:\n");
-    command2->print(l+3);
-  }
+  DEBUG_ATTR_I(command1);
+  DEBUG_ATTR_I(command2);
   debug(l, "END IF ------\n");
 }
 
@@ -5334,7 +5241,7 @@ MEMORY_MANAGER_INIT(UCommand_EVERY);
 UCommand_EVERY::UCommand_EVERY(const location& l,
 			       UExpression *duration,
 				UCommand* command) :
-  UCommand(l, CMD_EVERY),
+  UCommand(l, EVERY),
   duration (duration),
   command (command),
   firsttime (true),
@@ -5368,7 +5275,7 @@ UCommand_EVERY::execute(UConnection* connection)
       firsttime)
   {
     persistant = true;
-    morph = new UCommand_TREE(loc_, UAND, command->copy(), this);
+    morph = new UCommand_TREE(loc_, Flavorable::UAND, command->copy(), this);
     starttime = thetime;
     firsttime = false;
     delete interval;
@@ -5395,15 +5302,9 @@ void
 UCommand_EVERY::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("EVERY:");
-
   DEBUG_ATTR (duration);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END EVERY ------\n");
 }
 
@@ -5415,7 +5316,7 @@ MEMORY_MANAGER_INIT(UCommand_TIMEOUT);
 UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
 				   UExpression *duration,
 				    UCommand* command) :
-  UCommand(l, CMD_TIMEOUT),
+  UCommand(l, TIMEOUT),
   duration (duration),
   command (command)
 {
@@ -5445,13 +5346,13 @@ UCommand_TIMEOUT::execute(UConnection*)
   persistant = false;
   morph =
     new UCommand_TREE
-    (loc_, UAND,
-     new UCommand_TREE(loc_, UPIPE,
+    (loc_, Flavorable::UAND,
+     new UCommand_TREE(loc_, Flavorable::UPIPE,
 		       new UCommand_WAIT(loc_, duration->copy()),
 		       new UCommand_OPERATOR_ID(loc_,
 						new UString("stop"),
 						tagRef->copy())),
-     new UCommand_TREE(loc_, UPIPE, command->copy(),
+     new UCommand_TREE(loc_, Flavorable::UPIPE, command->copy(),
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy()))
       );
@@ -5475,15 +5376,9 @@ void
 UCommand_TIMEOUT::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("TIMEOUT:");
-
   DEBUG_ATTR (duration);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END TIMEOUT ------\n");
 }
 
@@ -5495,7 +5390,7 @@ MEMORY_MANAGER_INIT(UCommand_STOPIF);
 UCommand_STOPIF::UCommand_STOPIF(const location& l,
 				 UExpression *condition,
 				  UCommand* command)
-  : UCommand(l, CMD_STOPIF),
+  : UCommand(l, STOPIF),
     condition (condition),
     command (command)
 {
@@ -5530,8 +5425,8 @@ UCommand_STOPIF::execute(UConnection *connection)
   persistant = false;
   morph =
     new UCommand_TREE(
-      loc_, UAND,
-      new UCommand_AT(loc_, CMD_AT,
+      loc_, Flavorable::UAND,
+      new UCommand_AT(loc_, AT,
 		      condition->copy(),
 		      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 					       tagRef->copy()),
@@ -5546,8 +5441,8 @@ UCommand_STOPIF::execute(UConnection *connection)
   persistant = false;
   morph =
     new UCommand_TREE
-    (loc_, UAND,
-     new UCommand_TREE(loc_, UPIPE,
+    (loc_, Flavorable::UAND,
+     new UCommand_TREE(loc_, Flavorable::UPIPE,
 		       new UCommand_WAIT_TEST(loc_, condition->copy()),
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy())),
@@ -5573,15 +5468,9 @@ void
 UCommand_STOPIF::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("STOPIF:");
-
   DEBUG_ATTR (condition);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END STOPIF ------\n");
 }
 
@@ -5593,7 +5482,7 @@ MEMORY_MANAGER_INIT(UCommand_FREEZEIF);
 UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
 				     UExpression *condition,
 				      UCommand* command)
-  : UCommand(l, CMD_FREEZEIF),
+  : UCommand(l, FREEZEIF),
     condition (condition),
     command (command)
 {
@@ -5620,15 +5509,15 @@ UCommand_FREEZEIF::execute(UConnection*)
     return status = UCOMPLETED;
 
   persistant = false;
-  UCommand* cmd = new UCommand_TREE(loc_, UPIPE,
+  UCommand* cmd = new UCommand_TREE(loc_, Flavorable::UPIPE,
 				    command->copy(),
 				    new UCommand_NOOP(loc_)
     );
   cmd->setTag(tagRef->str());
   morph =
     new UCommand_TREE
-    (loc_, UAND,
-     new UCommand_AT(loc_, CMD_AT,
+    (loc_, Flavorable::UAND,
+     new UCommand_AT(loc_, AT,
 		     condition->copy(),
 		     new UCommand_OPERATOR_ID(loc_, new UString("freeze"),
 					      tagRef->copy()),
@@ -5655,15 +5544,9 @@ void
 UCommand_FREEZEIF::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("FREEZEIF:");
-
   DEBUG_ATTR (condition);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END FREEZEIF ------\n");
 }
 
@@ -5700,35 +5583,33 @@ UCommand_AT::~UCommand_AT()
 UCommandStatus
 UCommand_AT::execute(UConnection *connection)
 {
-  UTestResult testres;
-  UEventCompound* ec;
-  UCommand* morph_onleave = 0;
-  bool domorph = false;
-  ufloat currentTime = connection->server->lastTime();
-
-  if (!test) return status = UCOMPLETED;
+  if (!test)
+    return status = UCOMPLETED;
 
   if (firsttime)
   {
     firsttime = false;
     if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
     {
-      connection->sendf(getTag().c_str(),
+      connection->sendf(getTag(),
 			"!!! Invalid name resolution in test. "
 			"Did you define all events and variables?\n");
       return status = UCOMPLETED;
     }
   }
 
+  UCommand* morph_onleave = 0;
+  bool domorph = false;
+  ufloat currentTime = connection->server->lastTime();
   if (reeval ())
   {
-    ec = 0;
+    UEventCompound* ec = 0;
     UValue *testeval = test->eval(this, connection, ec);
-    if (!ec) ec = new UEventCompound (testeval);
+    if (!ec)
+      ec = new UEventCompound (testeval);
     reset_reeval ();
 
-    testres = booleval(testeval, true);
-    if (testres == UTESTFAIL)
+    if (booleval(testeval, true) == UTESTFAIL)
       return status = UCOMPLETED;
 
     // softtest evaluation
@@ -5777,7 +5658,8 @@ UCommand_AT::execute(UConnection *connection)
 	    morph_onleave = command2->copy ();
 	  else
 	    morph_onleave =
-	      new UCommand_TREE (loc_, UAND, morph_onleave, command2->copy ());
+	      new UCommand_TREE (loc_, Flavorable::UAND,
+				 morph_onleave, command2->copy ());
 	  domorph = true;
 	  morph = this;
 	}
@@ -5806,15 +5688,15 @@ UCommand_AT::execute(UConnection *connection)
 	if ((*ic)->trigger (currentTime, assigncmd))
 	{
 	  if (assigncmd)
-	  {
 	    morph =
 	      new UCommand_TREE
-	      (loc_, UAND,
-	       new UCommand_TREE (loc_, UPIPE, assigncmd, command1->copy()),
+	      (loc_, Flavorable::UAND,
+	       new UCommand_TREE (loc_, Flavorable::UPIPE,
+				  assigncmd, command1->copy()),
 	       morph);
-	  }
 	  else
-	    morph = new UCommand_TREE (loc_, UAND, command1->copy (), morph);
+	    morph = new UCommand_TREE (loc_, Flavorable::UAND,
+				       command1->copy (), morph);
 	}
 	else
 	  reloop_ = true; // we should try again later
@@ -5832,7 +5714,7 @@ UCommand_AT::execute(UConnection *connection)
     if (morph_onleave)
     {
       // at this point, morph is at least equal to "this"
-      morph = new UCommand_TREE (loc_, UAND, morph, morph_onleave);
+      morph = new UCommand_TREE (loc_, Flavorable::UAND, morph, morph_onleave);
     }
     morph->background = true;
     persistant = true;
@@ -5863,21 +5745,16 @@ UCommand_AT::print(int l)
 		      tab(l), getTag().c_str(), toDelete);
 
   debug("AT:");
-  if (type == CMD_AT) debug("\n");
-  else if (type == CMD_AT_AND) debug("(AND)\n");
-  else debug("UNKNOWN TYPE!\n");
+  if (type == AT)
+    debug("\n");
+  else if (type == AT_AND)
+    debug("(AND)\n");
+  else
+    debug("UNKNOWN TYPE!\n");
 
   DEBUG_ATTR (test);
-  if (command1)
-  {
-    debug(l, "  Command1:\n");
-    command1->print(l+3);
-  }
-  if (command2)
-  {
-    debug(l, "  Command2:\n");
-    command2->print(l+3);
-  }
+  DEBUG_ATTR_I(command1);
+  DEBUG_ATTR_I(command2);
   debug(l, "END AT ------\n");
 }
 
@@ -5887,10 +5764,11 @@ MEMORY_MANAGER_INIT(UCommand_WHILE);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_WHILE::UCommand_WHILE(const location& l,
-			       Type type,
+			       Flavorable::UNodeType flavor,
 			       UExpression *test,
 			       UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, WHILE),
+    Flavorable (flavor),
     test (test),
     command (command)
 {
@@ -5923,20 +5801,20 @@ UCommand_WHILE::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    UNodeType nodeType = nodetype (type);
-
-    if (nodeType == UPIPE)
-      morph = new UCommand_TREE(loc_, UPIPE, command->copy(), this);
-    else
-      morph =
-	new UCommand_TREE(loc_,
-			  nodeType,
-			  new UCommand_TREE(loc_,
-					    UAND,
-					    command->copy(),
-					    new UCommand_NOOP(loc_)),
-			  this);
-
+    switch (flavor())
+    {
+      case UPIPE:
+	morph = new UCommand_TREE(loc_, Flavorable::UPIPE,
+				  command->copy(), this);
+	break;
+      default:
+	morph =
+	  new UCommand_TREE(loc_, flavor(),
+			    new UCommand_TREE(loc_, Flavorable::UAND,
+					      command->copy(),
+					      new UCommand_NOOP(loc_)),
+			    this);
+    }
     persistant = true;
     return status = UMORPH;
   }
@@ -5948,7 +5826,8 @@ UCommand_WHILE::execute(UConnection *connection)
 UCommand*
 UCommand_WHILE::copy()
 {
-  return copybase(new UCommand_WHILE(loc_, type, ucopy (test), ucopy (command)));
+  return copybase(new UCommand_WHILE(loc_, flavor(),
+				     ucopy (test), ucopy (command)));
 }
 
 //! Print the command
@@ -5958,14 +5837,9 @@ UCommand_WHILE::copy()
 void
 UCommand_WHILE::print(int l)
 {
-  debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), kind (type));
-
+  debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), flavor_string());
   DEBUG_ATTR (test);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END WHILE ------\n");
 }
 
@@ -5978,7 +5852,7 @@ UCommand_WHENEVER::UCommand_WHENEVER(const location& l,
 				     UExpression *test,
 				     UCommand* command1,
 				     UCommand* command2)
-  : UASyncCommand(l, CMD_WHENEVER),
+  : UASyncCommand(l, WHENEVER),
     test (test),
     command1 (command1),
     command2 (command2),
@@ -6015,18 +5889,11 @@ UCommand_WHENEVER::execute(UConnection *connection)
   {
     morph =
       new UCommand_TREE
-      (loc_,
-       UAND,
-       this,
-	new UCommand_WHENEVER
-       (loc_,
-	new UExpression (UExpression::TEST_BANG,
-			 test->copy (),
-			 0),
-	  command2,
-	  0
-	  )
-	);
+      (loc_, Flavorable::UAND, this,
+       new UCommand_WHENEVER (loc_,
+			      new UExpression (UExpression::TEST_BANG,
+					       test->copy (), 0),
+			      command2, 0));
 
     command2 = 0;
     persistant = true;
@@ -6114,7 +5981,8 @@ UCommand_WHENEVER::execute(UConnection *connection)
       connection->server->somethingToDelete = true;
       // theloop_ is 0 if something has deleted it from the outside (thanks
       // to the 'whenever_hook' attribute), that's why we test here
-      if (theloop_) theloop_->toDelete = true;
+      if (theloop_)
+	theloop_->toDelete = true;
       theloop_ = 0;
     }
   }
@@ -6141,7 +6009,8 @@ UCommand_WHENEVER::execute(UConnection *connection)
 	    if (!assign)
 	      assign = assigncmd;
 	    else
-	      assign = new UCommand_TREE (loc_, UAND, assigncmd, assign);
+	      assign = new UCommand_TREE (loc_, Flavorable::UAND,
+					  assigncmd, assign);
 	  }
 	}
 	else
@@ -6157,7 +6026,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
       theloop_->setTag ("__system__"); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
-	assign = new UCommand_TREE (loc_, UPIPE, assign, theloop_);
+	assign = new UCommand_TREE (loc_, Flavorable::UPIPE, assign, theloop_);
       else
 	assign = theloop_;
     }
@@ -6165,7 +6034,7 @@ UCommand_WHENEVER::execute(UConnection *connection)
     if (assign)
     {
       domorph = true;
-      morph = new UCommand_TREE (loc_, UPIPE, this, assign);
+      morph = new UCommand_TREE (loc_, Flavorable::UPIPE, this, assign);
     }
   }
 
@@ -6198,23 +6067,9 @@ UCommand_WHENEVER::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("WHENEVER:\n");
-
-  if (test)
-  {
-    debug(l, "  Test:");
-    test->print();
-    debug("\n");
-  }
-  if (command1)
-  {
-    debug(l, "  Command1:\n");
-    command1->print(l+3);
-  }
-  if (command2)
-  {
-    debug(l, "  Command2:\n");
-    command2->print(l+3);
-  }
+  DEBUG_ATTR(test);
+  DEBUG_ATTR_I(command1);
+  DEBUG_ATTR_I(command2);
   debug(l, "END WHENEVER ------\n");
 }
 
@@ -6225,7 +6080,7 @@ MEMORY_MANAGER_INIT(UCommand_LOOP);
  */
 UCommand_LOOP::UCommand_LOOP(const location& l,
 			     UCommand* command)
-  : UCommand(l, CMD_LOOP),
+  : UCommand(l, LOOP),
     command (command),
     whenever_hook (0)
 {
@@ -6245,10 +6100,11 @@ UCommand_LOOP::~UCommand_LOOP()
 UCommandStatus
 UCommand_LOOP::execute(UConnection*)
 {
-  if (command == 0) return status = UCOMPLETED;
+  if (command == 0)
+    return status = UCOMPLETED;
 
-  morph = new UCommand_TREE(loc_, USEMICOLON,
-			    new UCommand_TREE(loc_, UAND,
+  morph = new UCommand_TREE(loc_, Flavorable::USEMICOLON,
+			    new UCommand_TREE(loc_, Flavorable::UAND,
 					      command->copy(),
 					      new UCommand_NOOP(loc_)),
 			    this);
@@ -6272,14 +6128,8 @@ UCommand_LOOP::print(int l)
 {
   debug("%s Tag:[%s] toDelete=%d",
 		      tab(l), getTag().c_str(), toDelete);
-
   debug("LOOP:\n");
-
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
   debug(l, "END LOOP ------\n");
 }
 
@@ -6289,10 +6139,11 @@ MEMORY_MANAGER_INIT(UCommand_LOOPN);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_LOOPN::UCommand_LOOPN(const location& l,
-			       Type type,
+			       Flavorable::UNodeType flavor,
 			       UExpression* expression,
 			       UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, LOOPN),
+    Flavorable (flavor),
     expression (expression),
     command (command)
 {
@@ -6340,16 +6191,19 @@ UCommand_LOOPN::execute(UConnection *connection)
 
   expression->val = expression->val - 1;
 
-  UNodeType nodeType = nodetype (type);
-
-  if (nodeType == UPIPE || nodeType == UAND)
-    morph = new UCommand_TREE(loc_, nodeType, command->copy(), this);
-  else
-    morph = new UCommand_TREE
-      (loc_, nodeType, new UCommand_TREE(loc_, UAND,
-					 command->copy(),
-					 new UCommand_NOOP(loc_)),
-       this);
+  switch (flavor ())
+  {
+    case UPIPE:
+    case UAND:
+      morph = new UCommand_TREE(loc_, flavor(), command->copy(), this);
+      break;
+    default:
+      morph = new UCommand_TREE
+	(loc_, flavor(), new UCommand_TREE(loc_, Flavorable::UAND,
+					   command->copy(),
+					   new UCommand_NOOP(loc_)),
+	 this);
+  }
   persistant = true;
   return status = UMORPH;
 }
@@ -6358,7 +6212,7 @@ UCommand_LOOPN::execute(UConnection *connection)
 UCommand*
 UCommand_LOOPN::copy()
 {
-  return copybase(new UCommand_LOOPN(loc_, type,
+  return copybase(new UCommand_LOOPN(loc_, flavor(),
 				     ucopy (expression),
 				     ucopy (command)));
 }
@@ -6370,20 +6224,12 @@ UCommand_LOOPN::copy()
 void
 UCommand_LOOPN::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("LOOPN:");
-  if (type == CMD_LOOPN)           debug("\n");
-  else if (type == CMD_LOOPN_AND)  debug("(AND)\n");
-  else if (type == CMD_LOOPN_PIPE) debug("(PIPE)\n");
-  else                             debug("UNKNOWN TYPE!\n");
-
+  debug(l, " Tag:[%s] LOOPN: %s", getTag().c_str(), flavor_string ());
   DEBUG_ATTR (expression);
   if (command)
   {
-    debug(l, "  Command (%ld:%d):\n",
-			(long)command,
-			(int)command->status); command->print(l+3);
+    debug(l, "  Command (%ld:%d):\n", (long)command, (int)command->status);
+    command->print(l+3);
   }
 
   debug(l, "END LOOPN ------\n");
@@ -6395,12 +6241,13 @@ MEMORY_MANAGER_INIT(UCommand_FOR);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_FOR::UCommand_FOR(const location& l,
-			   Type type,
+			   UNodeType flavor,
 			   UCommand* instr1,
 			   UExpression* test,
 			   UCommand* instr2,
 			   UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, FOR),
+    Flavorable (flavor),
     instr1 (instr1),
     instr2 (instr2),
     test (test),
@@ -6424,8 +6271,6 @@ UCommand_FOR::~UCommand_FOR()
 UCommandStatus
 UCommand_FOR::execute(UConnection *connection)
 {
-  UCommand *tmp_instr2;
-
   if (first)
   {
     first = false;
@@ -6443,7 +6288,8 @@ UCommand_FOR::execute(UConnection *connection)
     UCommand *first_instruction = instr1;
 
     instr1 = 0;
-    morph = new UCommand_TREE(loc_, USEMICOLON, first_instruction, this);
+    morph = new UCommand_TREE(loc_, Flavorable::USEMICOLON,
+			      first_instruction, this);
     persistant = true;
     return status = UMORPH;
   }
@@ -6459,41 +6305,40 @@ UCommand_FOR::execute(UConnection *connection)
 
   if (testres == UTRUE)
   {
-    UNodeType nodeType = nodetype (type);
-    tmp_instr2 = 0;
+    UCommand *tmp_instr2 = 0;
+    switch (flavor())
+    {
+      case UPIPE:
+      case UAND:
+	if (instr2)
+	  morph =
+	    new UCommand_TREE(loc_, flavor(), command->copy(),
+			      new UCommand_TREE(loc_, UPIPE,
+						tmp_instr2 = instr2->copy(),
+						this));
+	else
+	  morph = new UCommand_TREE(loc_, flavor(), command->copy(), this);
+	break;
 
-    if (nodeType == UPIPE
-	|| nodeType == UAND)
-    {
-      if (instr2)
-	morph =
-	  new UCommand_TREE(loc_, nodeType, command->copy(),
-			    new UCommand_TREE(loc_, UPIPE,
-					      tmp_instr2 = instr2->copy(),
-					      this));
-      else
-	morph = new UCommand_TREE(loc_, nodeType, command->copy(), this);
-    }
-    else
-    {
-      if (instr2)
-	morph =
-	  new UCommand_TREE
-	  (loc_, nodeType,
-	   new UCommand_TREE(loc_, UAND,
-			     new UCommand_TREE
-			     (loc_, UPIPE,
-			      command->copy(), tmp_instr2 = instr2->copy()),
-			     new UCommand_NOOP(loc_)),
-	   this
-	    );
-      else
-	morph =
-	  new UCommand_TREE
-	  (loc_, nodeType,
-	   new UCommand_TREE(loc_, UAND, command->copy(),
-			     new UCommand_NOOP(loc_)),
-	   this);
+      default:
+	if (instr2)
+	  morph =
+	    new UCommand_TREE
+	    (loc_, flavor(),
+	     new UCommand_TREE(loc_, UAND,
+			       new UCommand_TREE
+			       (loc_, UPIPE,
+				command->copy(), tmp_instr2 = instr2->copy()),
+			       new UCommand_NOOP(loc_)),
+	     this);
+	else
+	  morph =
+	    new UCommand_TREE
+	    (loc_, flavor(),
+	     new UCommand_TREE(loc_, UAND, command->copy(),
+			       new UCommand_NOOP(loc_)),
+	     this);
+	break;
     }
     if (tmp_instr2)
       tmp_instr2->morphed = true;
@@ -6508,7 +6353,7 @@ UCommand_FOR::execute(UConnection *connection)
 UCommand*
 UCommand_FOR::copy()
 {
-  UCommand_FOR *ret = new UCommand_FOR(loc_, type,
+  UCommand_FOR *ret = new UCommand_FOR(loc_, flavor(),
 				       ucopy (instr1),
 				       ucopy (test),
 				       ucopy (instr2),
@@ -6524,35 +6369,12 @@ UCommand_FOR::copy()
 void
 UCommand_FOR::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
+  debug(l, " Tag:[%s] FOR: %s", getTag().c_str(), flavor_string());
 
-  debug("FOR:");
-  if (type == CMD_FOR) debug("\n");
-  else if (type == CMD_FOR_AND) debug("(AND)\n");
-  else if (type == CMD_FOR_PIPE) debug("(PIPE)\n");
-  else	debug("UNKNOWN TYPE!\n");
-
-  if (test)
-  {
-    debug(l, "  Test:");
-    test->print();
-    debug("\n");
-  }
-  if (instr1)
-  {
-    debug(l, "  Instr1:\n");
-    instr1->print(l+3);
-  }
-  if (instr2)
-  {
-    debug(l, "  Instr2:\n");
-    instr2->print(l+3);
-  }
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR(test);
+  DEBUG_ATTR_I(instr1);
+  DEBUG_ATTR_I(instr2);
+  DEBUG_ATTR_I(command);
 
   debug(l, "END FOR ------\n");
 }
@@ -6563,11 +6385,12 @@ MEMORY_MANAGER_INIT(UCommand_FOREACH);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_FOREACH::UCommand_FOREACH(const location& l,
-				   Type type,
+				   Flavorable::UNodeType flavor,
 				   UVariableName* variablename,
 				   UExpression* expression,
 				   UCommand* command)
-  : UCommand(l, type),
+  : UCommand(l, FOREACH),
+    Flavorable(flavor),
     variablename (variablename),
     command (command),
     expression (expression),
@@ -6603,8 +6426,6 @@ UCommand_FOREACH::execute(UConnection *connection)
   if (position == 0)
     return status = UCOMPLETED;
 
-  UNodeType nodeType = nodetype (type);
-
   UExpression* currentvalue =
     new UExpression(UExpression::VALUE, ufloat(0));
   if (!currentvalue)
@@ -6627,8 +6448,8 @@ UCommand_FOREACH::execute(UConnection *connection)
 
   morph =
     new UCommand_TREE
-    (loc_, nodeType,
-     new UCommand_TREE(loc_, UPIPE,
+    (loc_, flavor(),
+     new UCommand_TREE(loc_, Flavorable::UPIPE,
 		       new UCommand_ASSIGN_VALUE
 		       (loc_, variablename->copy(), currentvalue, 0),
 		       command->copy()),
@@ -6644,7 +6465,7 @@ UCommand_FOREACH::execute(UConnection *connection)
 UCommand*
 UCommand_FOREACH::copy()
 {
-  UCommand_FOREACH *ret = new UCommand_FOREACH(loc_, type,
+  UCommand_FOREACH *ret = new UCommand_FOREACH(loc_, flavor(),
 					       ucopy (variablename),
 					       ucopy (expression),
 					       ucopy (command));
@@ -6660,25 +6481,11 @@ UCommand_FOREACH::copy()
 void
 UCommand_FOREACH::print(int l)
 {
-  debug(l, " Tag:[%s] ", getTag().c_str());
-
-  debug("FOREACH:");
-  if (type == CMD_FOREACH)
-    debug("\n");
-  else if (type == CMD_FOREACH_AND)
-    debug("(AND)\n");
-  else if (type == CMD_FOREACH_PIPE)
-    debug("(PIPE)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
+  debug(l, " Tag:[%s] FOREACH: %s", getTag().c_str(), flavor_string());
 
   DEBUG_ATTR (variablename);
   DEBUG_ATTR (expression);
-  if (command)
-  {
-    debug(l, "  Command:\n");
-    command->print(l+3);
-  }
+  DEBUG_ATTR_I(command);
 
   debug(l, "END FOREACH ------\n");
 }
@@ -6693,7 +6500,7 @@ MEMORY_MANAGER_INIT(UCommand_NOOP);
  */
 UCommand_NOOP::UCommand_NOOP(const location& l,
 			     bool zerotime)
-  : UCommand(l, CMD_NOOP)
+  : UCommand(l, NOOP)
 {
   ADDOBJ(UCommand_NOOP);
   // FIXME: Otherwise, what is the value?

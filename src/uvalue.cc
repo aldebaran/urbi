@@ -85,7 +85,8 @@ inline int exprToInt(UExpression *e)
 }
 UValue::operator urbi::UImage()
 {
-  urbi::UImage img; img.data=0;
+  urbi::UImage img;
+  img.data=0;
   img.size=img.width = img.height=0;
   img.imageFormat=urbi::IMAGE_UNKNOWN;
   if (dataType != DATA_BINARY)
@@ -199,7 +200,7 @@ UValue::operator urbi::UList()
   }
   urbi::UList l;
   UValue *n = liststart;
-  while(n)
+  while (n)
   {
     l.array.push_back(n->urbiValue());
     n = n->next;
@@ -228,7 +229,8 @@ UValue::operator urbi::USound()
   };
 
   urbi::USound snd;
-  snd.data=0; snd.size = snd.channels = snd.rate = 0;
+  snd.data=0;
+  snd.size = snd.channels = snd.rate = 0;
   snd.soundFormat = urbi::SOUND_UNKNOWN;
   if ((dataType != DATA_BINARY) ||
       (!refBinary) ||
@@ -259,7 +261,7 @@ UValue::operator urbi::USound()
   else if (STREQ(param->expression->str->str(), "wav"))
   {
     snd.soundFormat = urbi::SOUND_WAV;
-    if (((unsigned int)refBinary->ref()->bufferSize > sizeof(wavheader)) &&
+    if (((unsigned int)refBinary->ref()->bufferSize > sizeof (wavheader)) &&
 	(refBinary->ref()->buffer) )
     {
       decoded= true;
@@ -366,10 +368,10 @@ UValue & UValue::operator = (const urbi::UList &l)
   }
   UValue * current = 0;
   dataType = DATA_LIST;
-  for (int i=0;i<l.size();i++)
+  for (int i=0;i<l.size(); ++i)
   {
     UValue *v = new UValue(l[i]);
-    if(i==0)
+    if (i == 0)
       liststart = v;
     else
       current->next = v;
@@ -401,7 +403,7 @@ UValue::UValue(const urbi::UValue &v)
       UValue * current = this;
       for (std::vector<urbi::UValue *>::iterator it =
 	     v.list->array.begin();
-	   it != v.list->array.end(); it++)
+	   it != v.list->array.end(); ++it)
       {
 	UValue *n = new UValue(*(*it));
 	current->next = n;
@@ -505,7 +507,8 @@ UValue::add(UValue *v)
     // concat two binaries (useful for sound)
 
     UValue *ret = new UValue();
-    if (!ret) return 0;
+    if (!ret)
+      return 0;
 
     ret->dataType = DATA_BINARY;
 
@@ -524,10 +527,12 @@ UValue::add(UValue *v)
 	  )
 	);
 
-    if (!ret->refBinary) return 0;
+    if (!ret->refBinary)
+      return 0;
 
     ubyte* p = ret->refBinary->ref()->buffer;
-    if (!p) return 0;
+    if (!p)
+      return 0;
     memcpy(p, refBinary->ref()->buffer, refBinary->ref()->bufferSize);
     memcpy(p+refBinary->ref()->bufferSize,
 	   v->refBinary->ref()->buffer,
@@ -585,7 +590,8 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_STRING)
     {
       UValue *ret = new UValue();
-      if (ret==0) return 0;
+      if (ret == 0)
+	return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -606,7 +612,8 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_NUM)
     {
       UValue *ret = new UValue();
-      if (ret==0) return 0;
+      if (ret == 0)
+	return 0;
 
       ret->dataType = DATA_STRING;
 
@@ -625,12 +632,13 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_STRING)
     {
       UValue *ret = new UValue();
-      if (ret==0) return 0;
+      if (ret == 0)
+	return 0;
 
       ret->dataType = DATA_STRING;
 
       char *tmp_String = new char[v->str->len()+str->len()+1];
-      if (tmp_String==0)
+      if (tmp_String == 0)
       {
 	delete ret;
 	return 0;
@@ -708,7 +716,7 @@ booleval(UValue *v, bool freeme)
 {
   UTestResult res;
 
-  if (v==0)
+  if (v == 0)
     return UTESTFAIL;
 
   if (v->dataType != DATA_NUM)
@@ -741,7 +749,7 @@ UValue::echo(bool hr)
       bool first = true;
       for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	   it != ::urbiserver->variabletab.end();
-	   it++)
+	   ++it)
 	if (it->second->method
 	    && it->second->devicename
 	    && str
@@ -772,7 +780,8 @@ UValue::echo(bool hr)
       {
 	o << scanlist->echo(hr);
 	scanlist = scanlist->next;
-	if (scanlist)  o << ",";
+	if (scanlist)
+	  o << ",";
       }
       o << "]";
 
@@ -805,7 +814,8 @@ UValue::echo(bool hr)
       o << "BIN " << refBinary->ref()->bufferSize;
 
       UNamedParameters *param = refBinary->ref()->parameters;
-      if (param) o << " ";
+      if (param)
+	o << " ";
 
       while (param)
       {
@@ -816,7 +826,8 @@ UValue::echo(bool hr)
 	  if (param->expression->dataType == DATA_STRING)
 	    o << param->expression->str->str();
 	}
-	if (param->next) o << " ";
+	if (param->next)
+	  o << " ";
 	param = param->next;
       }
 
@@ -863,10 +874,15 @@ UValue::urbiValue()
 {
   switch (dataType)
   {
-    case DATA_NUM:     return new urbi::UValue(val);
-    case DATA_STRING:  return new urbi::UValue(std::string(str->str()));
-    case DATA_BINARY:  return new urbi::UValue(operator urbi::UBinary()); //FIXME
-    case DATA_LIST:    return new urbi::UValue((urbi::UList)(*this));
-    default: return new urbi::UValue();
+    case DATA_NUM:
+      return new urbi::UValue(val);
+    case DATA_STRING:
+      return new urbi::UValue(std::string(str->str()));
+    case DATA_BINARY:
+      return new urbi::UValue(operator urbi::UBinary()); //FIXME
+    case DATA_LIST:
+      return new urbi::UValue((urbi::UList)(*this));
+    default:
+      return new urbi::UValue();
   };
 }

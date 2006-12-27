@@ -36,7 +36,7 @@ UEventMatch::UEventMatch (UString* eventname,
 			  UCommand* command,
 			  UConnection* connection)
 {
-  if  (!filter)
+  if (!filter)
     eventhandler_ = kernel::findEventHandler (eventname, 0);
   else
     eventhandler_ = kernel::findEventHandler (eventname, filter->size ());
@@ -46,9 +46,9 @@ UEventMatch::UEventMatch (UString* eventname,
   UValue* e1;
   UString* varname = 0;
 
-  while  (param)
+  while (param)
   {
-    if  (param->expression->type == UExpression::VARIABLE)
+    if (param->expression->type == UExpression::VARIABLE)
     {
       ASSERT (param->expression->variablename)
 	varname = param->expression->variablename->
@@ -91,7 +91,8 @@ UEventMatch::~UEventMatch ()
 void
 UEventMatch::findMatches_ ()
 {
-  if (!eventhandler_) return;
+  if (!eventhandler_)
+    return;
 
   std::list<UEvent*>::iterator itevent;
   std::list<UValue*>::iterator ifilter_arg;
@@ -100,7 +101,7 @@ UEventMatch::findMatches_ ()
 
   for (itevent  = eventhandler_->eventlist().begin ();
        itevent != eventhandler_->eventlist().end ();
-       itevent++)
+       ++itevent)
   {
     ok = true;
     ifilter_arg = filter_.begin ();
@@ -110,12 +111,12 @@ UEventMatch::findMatches_ ()
 	   && itevent_arg !=  (*itevent)->args().end ()
 	   && ok)
     {
-      if   ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
+      if ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
 	     && !( (*ifilter_arg)->equal (*itevent_arg)) )
 	ok = false;
 
-      ifilter_arg++;
-      itevent_arg++;
+      ++ifilter_arg;
+      ++itevent_arg;
     }
 
     if (ok)
@@ -130,10 +131,10 @@ UEventMatch::reduce (bool st)
        itevent != matches_.end ();
        )
   {
-    if  ((*itevent)->toDelete() == st)
+    if ((*itevent)->toDelete() == st)
       itevent = matches_.erase (itevent);
     else
-      itevent++;
+      ++itevent;
   }
 }
 

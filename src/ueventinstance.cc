@@ -38,7 +38,7 @@ UEventInstance::UEventInstance (UEventMatch *match, UEvent* e):
   id_ = e_->id ();
   for (std::list<UValue*>::iterator iuv = match->filter ().begin ();
 	iuv != match->filter ().end ();
-	iuv++)
+	++iuv)
     if ((*iuv)->dataType == DATA_VARIABLE)
       filter_.push_back (std::string ((*iuv)->str->str ()));
     else
@@ -73,14 +73,14 @@ UMultiEventInstance::UMultiEventInstance ()
 UMultiEventInstance::UMultiEventInstance (UMultiEventInstance *mei1,
 					  UMultiEventInstance *mei2)
 {
-  for  (std::list<UEventInstance*>::iterator iei1 = mei1->instances_.begin();
+  for (std::list<UEventInstance*>::iterator iei1 = mei1->instances_.begin();
 	iei1 != mei1->instances_.end ();
-	iei1++)
+	++iei1)
     instances_.push_back (new UEventInstance (*iei1));
 
-  for  (std::list<UEventInstance*>::iterator iei2 = mei2->instances_.begin();
+  for (std::list<UEventInstance*>::iterator iei2 = mei2->instances_.begin();
 	iei2 != mei2->instances_.end ();
-	iei2++)
+	++iei2)
     instances_.push_back (new UEventInstance (*iei2));
 }
 

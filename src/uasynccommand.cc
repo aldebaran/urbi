@@ -42,9 +42,9 @@ UASyncCommand::UASyncCommand (const location& l, Type type)
 
 UASyncCommand::~UASyncCommand()
 {
-  for  (std::list<UASyncRegister*>::iterator it = regList_.begin ();
+  for (std::list<UASyncRegister*>::iterator it = regList_.begin ();
 	it != regList_.end ();
-	it++)
+	++it)
     (*it)->unregisterCmd (this);
 }
 

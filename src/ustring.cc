@@ -183,7 +183,7 @@ UString::un_armor ()
   int pos = 0;
   while (pos < len_)
   {
-    if  (cp[0] == '\\' && pos + 1 < len_)
+    if (cp[0] == '\\' && pos + 1 < len_)
     {
       if (cp[1] == 'n'
 	  || cp[1] == 't'
@@ -198,15 +198,15 @@ UString::un_armor ()
 	memmove (static_cast<void*> (cp),
 		 static_cast<void*> (cp + 1),
 		 len_ - pos);
-	len_--;
+	--len_;
 	if (cp[0] == '\\')
-	  cp++;
+	  ++cp;
       }
       else
-	cp++;
+	++cp;
     }
     else
-      cp++;
+      ++cp;
     pos = cp - str_;
   }
 
