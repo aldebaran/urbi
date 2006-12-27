@@ -1,5 +1,12 @@
 2006-12-27  Akim Demaille  <akim.demaille@free.fr>
 
+	send_error
+	* src/ucommand.cc (send_error): New.
+	Use it instead of open coded error strings.
+	It could be part of UCommand, I'm not sure.
+
+2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+
 	execute_
 	* src/utypes.hh (UCommandStatus): Move to...
 	* src/ucommand.hh (UCommand::Status): here.
