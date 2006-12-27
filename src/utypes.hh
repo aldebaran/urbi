@@ -139,17 +139,6 @@ enum UTestResult
   UTESTFAIL
 };
 
-/// Possible status for a UCommand
-enum UCommandStatus
-{
-  UONQUEUE,
-  URUNNING,
-  UCOMPLETED,
-  UBACKGROUND,
-  UMORPH
-};
-
-
 enum UEventCompoundType
 {
   EC_MATCH,

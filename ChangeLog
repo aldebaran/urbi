@@ -1,5 +1,16 @@
 2006-12-27  Akim Demaille  <akim.demaille@free.fr>
 
+	execute_
+	* src/utypes.hh (UCommandStatus): Move to...
+	* src/ucommand.hh (UCommand::Status): here.
+	(execute): Be = 0!!!
+	(execute_): New.
+	Let all the heirs implement it instead of execute.
+	Simplify a bazillion of "return status =".
+	Adjust all dependencies.
+
+2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+
 	Style changes
 	* src/ucommand.cc: Use if where switch was not so appropriate.
 

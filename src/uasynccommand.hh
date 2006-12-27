@@ -110,7 +110,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute (UConnection* connection);
+  virtual Status execute_ (UConnection* connection);
   virtual UCommand* copy () const;
 
   /// test
@@ -140,7 +140,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute (UConnection* connection);
+  virtual Status execute_ (UConnection* connection);
   virtual UCommand* copy () const;
 
   /// test

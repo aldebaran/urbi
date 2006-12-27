@@ -597,7 +597,7 @@ UConnection::received (const ubyte *buffer, int length)
 	    p.commandTree->position = 0;
 	    execute(p.commandTree);
 	    if (p.commandTree &&
-		p.commandTree->status == URUNNING)
+		p.commandTree->status == UCommand::URUNNING)
 	      obstructed = true;
 	  }
 
@@ -952,7 +952,7 @@ UConnection::processCommand(UCommand *&command,
 
       switch (command->execute(this))
       {
-	case UCOMPLETED:
+	case UCommand::UCOMPLETED:
 	  for (UNamedParameters *param = command->flags; param;
 	       param = param->next)
 	    if (param->name &&
@@ -968,8 +968,8 @@ UConnection::processCommand(UCommand *&command,
 	  delete command;
 	  return 0;
 
-	case UMORPH:
-	  command->status = UONQUEUE;
+	case UCommand::UMORPH:
+	  command->status = UCommand::UONQUEUE;
 	  command->morphed = true;
 
 	  morphed = command->morph;
@@ -992,8 +992,8 @@ UConnection::processCommand(UCommand *&command,
 	  // "+bg" flag
 	  // FIXME: Nia?  What the heck is happening here???
 	  if ((command->flagType & 8) &&
-	      command->status == URUNNING)
-	    command->status = UBACKGROUND;
+	      command->status == UCommand::URUNNING)
+	    command->status = UCommand::UBACKGROUND;
 	  return command;
       }
     }
@@ -1017,7 +1017,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
   UCommand_TREE* tree = execCommand;
   while (tree)
   {
-    tree->status = URUNNING;
+    tree->status = UCommand::URUNNING;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1066,7 +1066,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
     if (tree->flavor() == Flavorable::UAND
 	|| tree->flavor() == Flavorable::UCOMMA
 	|| tree->command1 == 0
-	|| tree->command1->status == UBACKGROUND)
+	|| tree->command1->status == UCommand::UBACKGROUND)
     {
       if (tree == lastCommand)
 	obstructed = false;
@@ -1109,11 +1109,13 @@ UConnection::execute(UCommand_TREE*& execCommand)
       delete oldtree;
       continue;
     }
-    else if (((tree->command1 == 0 || tree->command1->status == UBACKGROUND)
-	      && (tree->command2 == 0 || tree->command2->status == UBACKGROUND))
+    else if (((tree->command1 == 0
+	       || tree->command1->status == UCommand::UBACKGROUND)
+	      && (tree->command2 == 0 ||
+		  tree->command2->status == UCommand::UBACKGROUND))
 	     || tree->background == true
 	     || (tree->flagType&8))
-      tree->status = UBACKGROUND;
+      tree->status = UCommand::UBACKGROUND;
 
     tree->runlevel1 = UWAITING;
     tree->runlevel2 = UWAITING;
@@ -1144,7 +1146,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	!tree->toDelete &&
 	tree->command2 == 0 &&
 	tree->command1 != 0 &&
-	tree->command1->status != UBACKGROUND)
+	tree->command1->status != UCommand::UBACKGROUND)
     {
       // right reduction
       // the background hack is here to preserve {at()...} commands.

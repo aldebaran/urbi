@@ -899,7 +899,7 @@ UServer::mark(TagInfo* ti)
   for (std::list<UCommand*>::iterator i = ti->commands.begin();
       i != ti->commands.end();
       ++i)
-    if ((*i)->status != UONQUEUE || (*i)->morphed)
+    if ((*i)->status != UCommand::UONQUEUE || (*i)->morphed)
       (*i)->toDelete = true;
 
   for (std::list<TagInfo*>::iterator i = ti->subTags.begin();

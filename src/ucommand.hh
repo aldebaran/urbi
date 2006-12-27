@@ -89,7 +89,6 @@ public:
   virtual void print(unsigned l) const;
   virtual void print_(unsigned l) const = 0;
 
-  virtual UCommandStatus execute(UConnection*);
   virtual UCommand* copy() const = 0;
 
   UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
@@ -119,9 +118,30 @@ public:
   /// Type of the command.
   Type     type;
 
-  /// Status of the command
-  UCommandStatus   status;
+  /// \name Execution.
+  /// \{
 
+  /// Possible status for a UCommand.
+  enum Status
+  {
+    UONQUEUE,
+    URUNNING,
+    UCOMPLETED,
+    UBACKGROUND,
+    UMORPH
+  };
+
+  /// Status of the command since last execution.
+  Status status;
+
+  /// Run the command.  Set status and return value.
+  /// Just calls execute_ and sets status.
+  virtual Status execute(UConnection*);
+protected:
+  /// Run the command.  Adjust only the exit status.
+  virtual Status execute_(UConnection*) = 0;
+
+public:
   /// list of flags of tagged commands
   UNamedParameters* flags;
 
@@ -196,7 +216,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection*);
+  virtual Status execute_(UConnection*);
   virtual UCommand* copy() const;
 
   ///D eletes sub commands marked for deletion
@@ -228,7 +248,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
@@ -324,7 +344,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
@@ -358,7 +378,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
@@ -394,7 +414,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection*);
+  virtual Status execute_(UConnection*);
   virtual UCommand* copy() const;
 
   /// Name of the iterating variable
@@ -416,7 +436,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
@@ -437,7 +457,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* c);
+  virtual Status execute_(UConnection* c);
   virtual UCommand* copy() const;
 
 private:
@@ -458,7 +478,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// Expression
@@ -483,7 +503,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// Object name
@@ -516,7 +536,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// alias name
@@ -541,7 +561,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// subclass that inherits
@@ -566,7 +586,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// identifier
@@ -590,7 +610,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// operator name
@@ -615,7 +635,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// the device name embedded in a var name
@@ -636,7 +656,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// operator name
@@ -664,7 +684,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// binder name "external" or "internal"
@@ -690,7 +710,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// operator name
@@ -707,7 +727,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// Expression
@@ -728,7 +748,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// terminate and clean the event when the emit ends.
@@ -762,7 +782,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// test
@@ -796,7 +816,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// variable
@@ -825,7 +845,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// variable
@@ -855,7 +875,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection*);
+  virtual Status execute_(UConnection*);
   virtual UCommand* copy() const;
 
   /// class name
@@ -876,7 +896,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// test
@@ -899,7 +919,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// duration
@@ -925,7 +945,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection*);
+  virtual Status execute_(UConnection*);
   virtual UCommand* copy() const;
 
   /// duration
@@ -948,7 +968,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// condition
@@ -971,7 +991,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection*);
+  virtual Status execute_(UConnection*);
   virtual UCommand* copy() const;
 
   /// condition
@@ -992,7 +1012,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// test
@@ -1011,7 +1031,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection*);
+  virtual Status execute_(UConnection*);
   virtual UCommand* copy() const;
 
   /// Command
@@ -1031,7 +1051,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// Expression
@@ -1052,7 +1072,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// Name of the iterating variable
@@ -1079,7 +1099,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 
   /// 1st part
@@ -1104,7 +1124,7 @@ public:
 
   virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute(UConnection* connection);
+  virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
 };
 
