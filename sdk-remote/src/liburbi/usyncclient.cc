@@ -88,6 +88,7 @@ namespace urbi
   UMessage* USyncClient::waitForTag(const char* tag)
   {
     syncTag = tag;
+    queueLock->unlock();
     (*syncLock)--;
     syncTag = "";
     return msg;
@@ -132,6 +133,7 @@ namespace urbi
     strcat(tag, ":");
     effectiveSend(tag, strlen(tag));
     tag[strlen(tag) - 1] = 0; //restore tag
+    queueLock->lock();
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
