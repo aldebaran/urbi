@@ -3148,18 +3148,8 @@ UCommand_INHERIT::print(int l)
 
   debug("INHERIT (%d) :\n", (int)eraseit);
 
-  if (subclass)
-  {
-    debug("  %s  subclass:", tab(l));
-    subclass->print();
-    debug("\n");
-  }
-  if (theclass)
-  {
-    debug("  %s  parentclass:", tab(l));
-    theclass->print();
-    debug("\n");
-  }
+  DEBUG_ATTR (subclass);
+  DEBUG_ATTR (theclass);
 
   debug(l, "END INHERIT ------\n");
 }
@@ -3313,7 +3303,9 @@ UCommand_GROUP::print(int l)
 }
 
 
-
+/*-----------------------.
+| UCommand_OPERATOR_ID.  |
+`-----------------------*/
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 // *********************************************************
@@ -3454,10 +3446,8 @@ UCommand_OPERATOR_ID::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("OPERATOR_ID %s:\n", oper->str());
-
   if (id)
     debug(l, "  Id:[%s]\n", id->str());
-
   debug(l, "END OPERATOR_ID ------\n");
 }
 
@@ -3546,10 +3536,8 @@ UCommand_DEVICE_CMD::print(int l)
   debug(l, " Tag:[%s] ", getTag().c_str());
 
   debug("DEVICE_CMD %s:\n", variablename->device->str());
-
   if (cmd)
     debug(l, "  Cmd:[%f]\n", cmd);
-
   debug(l, "END DEVICE_CMD ------\n");
 }
 
@@ -3801,13 +3789,7 @@ UCommand_OPERATOR_VAR::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("OPERATOR_VAR %s:\n", oper->str());
-  if (variablename)
-  {
-    debug("  %s  Variablename:", tab(l));
-    variablename->print();
-    debug("\n");
-  }
-
+  DEBUG_ATTR (variablename);
   debug(l, "END OPERATOR_VAR ------\n");
 }
 
@@ -3964,18 +3946,8 @@ UCommand_BINDER::print(int l)
 
   debug("BINDER %s type:%d nbparam:%d:\n",
 		      binder->str(), type, nbparam);
-  if (objname)
-  {
-    debug("  %s  objname:", tab(l));
-    objname->print();
-    debug("\n");
-  }
-  if (variablename)
-  {
-    debug("  %s  Variablename:", tab(l));
-    variablename->print();
-    debug("\n");
-  }
+  DEBUG_ATTR (objname);
+  DEBUG_ATTR (variablename);
 
   debug(l, "END BINDER ------\n");
 }
@@ -4602,7 +4574,6 @@ UCommand_EMIT::print(int l)
 {
   debug(l, " Tag:[%s] EMIT:\n", getTag().c_str());
   DEBUG_ATTR (eventname);
-
   debug(l, "END EMIT ------\n");
 }
 
@@ -4676,7 +4647,6 @@ UCommand_WAIT_TEST::print(int l)
 {
   debug(l, " Tag:[%s] WAIT_TEST:\n", getTag().c_str());
   DEBUG_ATTR (test);
-
   debug(l, "END WAIT_TEST ------\n");
 }
 
@@ -5173,14 +5143,9 @@ void
 UCommand_CLASS::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("CLASS:\n");
-
   if (object)
-  {
-    debug(l, "  Object name: %s\n",
-			object->str());
-  }
+    debug(l, "  Object name: %s\n", object->str());
   DEBUG_ATTR(parameters);
   debug(l, "END CLASS ------\n");
 }
@@ -5261,9 +5226,7 @@ void
 UCommand_IF::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("IF:\n");
-
   DEBUG_ATTR (test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
@@ -5339,9 +5302,7 @@ void
 UCommand_EVERY::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("EVERY:");
-
   DEBUG_ATTR (duration);
   DEBUG_ATTR_I(command);
   debug(l, "END EVERY ------\n");
@@ -5415,9 +5376,7 @@ void
 UCommand_TIMEOUT::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("TIMEOUT:");
-
   DEBUG_ATTR (duration);
   DEBUG_ATTR_I(command);
   debug(l, "END TIMEOUT ------\n");
@@ -5509,9 +5468,7 @@ void
 UCommand_STOPIF::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("STOPIF:");
-
   DEBUG_ATTR (condition);
   DEBUG_ATTR_I(command);
   debug(l, "END STOPIF ------\n");
@@ -5587,9 +5544,7 @@ void
 UCommand_FREEZEIF::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
-
   debug("FREEZEIF:");
-
   DEBUG_ATTR (condition);
   DEBUG_ATTR_I(command);
   debug(l, "END FREEZEIF ------\n");
@@ -5883,7 +5838,6 @@ void
 UCommand_WHILE::print(int l)
 {
   debug(l, " Tag:[%s] WHILE%s\n", getTag().c_str(), flavor_string());
-
   DEBUG_ATTR (test);
   DEBUG_ATTR_I(command);
   debug(l, "END WHILE ------\n");
@@ -6113,7 +6067,6 @@ UCommand_WHENEVER::print(int l)
 {
   debug(l, " Tag:[%s] ", getTag().c_str());
   debug("WHENEVER:\n");
-
   DEBUG_ATTR(test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
@@ -6175,9 +6128,7 @@ UCommand_LOOP::print(int l)
 {
   debug("%s Tag:[%s] toDelete=%d",
 		      tab(l), getTag().c_str(), toDelete);
-
   debug("LOOP:\n");
-
   DEBUG_ATTR_I(command);
   debug(l, "END LOOP ------\n");
 }
@@ -6274,7 +6225,6 @@ void
 UCommand_LOOPN::print(int l)
 {
   debug(l, " Tag:[%s] LOOPN: %s", getTag().c_str(), flavor_string ());
-
   DEBUG_ATTR (expression);
   if (command)
   {
