@@ -783,11 +783,6 @@ UConnection::processCommand(UCommand *&command,
   }
 
   UCommand	   *morphed;
-  UCommand_TREE	   *morphed_up;
-  UCommand	   **morphed_position;
-  UNamedParameters *param;
-  bool		   stopit;
-
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
@@ -796,7 +791,7 @@ UConnection::processCommand(UCommand *&command,
     {
       command->startTime = server->lastTime();
 
-      for (param = command->flags; param; param = param->next)
+      for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name)
 	{
 	  if (param->name->equal("flagid"))
@@ -864,7 +859,7 @@ UConnection::processCommand(UCommand *&command,
 	}
     }
 
-    stopit = false;
+    bool stopit = false;
 
     // flag "+timeout"
     if (command->flagType&1)
@@ -892,13 +887,12 @@ UConnection::processCommand(UCommand *&command,
       else
 	command->flag_nbTrue2 = 0;
 
-      if (((command->flagExpr2->softtest_time) &&
-	   (command->flag_nbTrue2 > 0) &&
-	   (server->lastTime() - command->flag_startTrue2 >=
-	    command->flagExpr2->softtest_time->val)) ||
-
-	  ((command->flag_nbTrue2 >0) &&
-	   (command->flagExpr2->softtest_time==0)) )
+      if ((command->flagExpr2->softtest_time
+	   && command->flag_nbTrue2 > 0
+	   && (server->lastTime() - command->flag_startTrue2 >=
+	       command->flagExpr2->softtest_time->val))
+	  || (command->flag_nbTrue2 >0
+	      && command->flagExpr2->softtest_time == 0))
 	stopit = true;
     }
 
@@ -928,7 +922,7 @@ UConnection::processCommand(UCommand *&command,
 
     if (stopit)
     {
-      for (param = command->flags; param; param = param->next)
+      for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name &&
 	    param->name->equal("flag") &&
 	    param->expression &&
@@ -954,13 +948,14 @@ UConnection::processCommand(UCommand *&command,
     else
     {
       // != TREE
-      morphed_up = command->up;
-      morphed_position = command->position;
+      UCommand_TREE* morphed_up = command->up;
+      UCommand** morphed_position = command->position;
 
       switch (command->execute(this))
       {
 	case UCOMPLETED:
-	  for (param = command->flags; param; param = param->next)
+	  for (UNamedParameters *param = command->flags; param;
+	       param = param->next)
 	    if (param->name &&
 		param->name->equal("flag") &&
 		param->expression &&
@@ -1015,20 +1010,15 @@ UConnection::processCommand(UCommand *&command,
 void
 UConnection::execute(UCommand_TREE*& execCommand)
 {
-  UCommand_TREE* oldtree = 0;
-  UCommand_TREE* tree = execCommand;
-  bool mustReturn = false;
-  bool deletecommand = false;
-
   if (execCommand == 0 || closing)
     return;
 
+  // There are complications to make this a for loop: occurrences of
+  // "continue".
+  UCommand_TREE* tree = execCommand;
   while (tree)
   {
     tree->status = URUNNING;
-
-    // BLOCKED/FREEZED COMMANDS
-    deletecommand = false;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1037,6 +1027,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
       continue;
     }
 
+    // BLOCKED/FREEZED COMMANDS
+    bool deletecommand = false;
     if (tree->isBlocked())
     {
       tree->runlevel1 = UEXPLORED;
@@ -1049,9 +1041,9 @@ UConnection::execute(UCommand_TREE*& execCommand)
     if (tree->callid && tree->command1 && tree->runlevel1 == UWAITING)
       stack.push_front(tree->callid);
 
+    bool mustReturn;
     tree->command1 = processCommand (tree->command1, tree->runlevel1,
 				     mustReturn);
-
     if (mustReturn)
     {
       tree = dynamic_cast<UCommand_TREE*> (tree->command1);
@@ -1080,6 +1072,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
       if (tree == lastCommand)
 	obstructed = false;
 
+      bool mustReturn;
       tree->command2 = processCommand (tree->command2,
 				       tree->runlevel2,
 				       mustReturn);
@@ -1102,8 +1095,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	execCommand = 0;
 
       if (tree->position)
-	*(tree->position) = 0;
-      oldtree = tree;
+	*tree->position = 0;
 
       for (UNamedParameters *param = tree->flags; param; param = param->next)
 	if (param->name &&
@@ -1112,8 +1104,9 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	    (param->expression->val == 3 || // 3 = +end
 	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", tree->getTag().c_str());
-      tree = tree->up;
 
+      UCommand_TREE* oldtree = tree;
+      tree = tree->up;
       delete oldtree;
       continue;
     }
@@ -1136,14 +1129,13 @@ UConnection::execute(UCommand_TREE*& execCommand)
     {
       // left reduction
       ASSERT(tree->position!=0)
-	*(tree->position) = tree->command2;
+	*tree->position = tree->command2;
       tree->command2->up = tree->up;
       tree->command2->position = tree->position;
       tree->command2->background = tree->background;
       tree->command2 = 0;
-      oldtree = tree;
+      UCommand_TREE* oldtree = tree;
       tree = tree->up; // cannot be zero
-
       delete oldtree;
       continue;
     }
@@ -1163,7 +1155,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
       tree->command1->position = tree->position;
       tree->command1->background = tree->background;
       tree->command1 = 0;
-      oldtree = tree;
+      UCommand_TREE* oldtree = tree;
       tree = tree->up; // cannot be zero
 
       delete oldtree;
@@ -1171,7 +1163,6 @@ UConnection::execute(UCommand_TREE*& execCommand)
     }
 
     // BACK UP
-
     tree = tree->up;
   }
 
