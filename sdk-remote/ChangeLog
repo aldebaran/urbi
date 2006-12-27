@@ -1,3 +1,10 @@
+2006-12-28  Matthieu Nottale  <nottale@gostai.com>
+
+        Fix a race condition in usyncclient.cc.
+	* src/liburbi/usyncclient.cc: lock listLock before effectively sending the
+	  message in syncGet to avoid a race condition. Unlock it in
+	  waitForTag.
+	  
 2006-12-26  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	More restyling.
