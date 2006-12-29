@@ -1,0 +1,267 @@
+#!/usr/bin/env python
+
+import string
+import sys, os, os.path, filecmp, shutil, stat
+import ast, tools
+
+from stat import ST_MODE
+
+if len(sys.argv) != 2:
+  print "Usage: .. SRCDIR"
+  sys.exit(1)
+srcdir = sys.argv[1]
+
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+arr = nodes.values ()
+final_nodes = filter ((lambda node: node.final), arr)
+final_nodes.sort (lambda x, y: cmp(x.name, y.name))
+
+
+## Globals --------------------------------------------------------------------
+
+non_visitable_types = ["bool",
+                       "int",
+                       "std::string",
+                       "symbol::Symbol",
+                       "const symbol::Symbol",
+                       "OpExp::Oper",
+                       "Location"]
+
+collections = ["exps_type",
+               "fields_type",
+               "fieldinits_type",
+               "DecsList::decs_type"]
+
+
+## Abstract syntax tree C++ clone visitor - header ----------------------------
+
+clone_visitor_hh = file("clone-visitor.hh.tmp", "w")
+sys.stdout = clone_visitor_hh
+
+print """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+/**
+ ** \\file astclone/clone-visitor.hh
+ ** \\brief Declaration of astclone::CloneVisitor.
+ */
+
+#ifndef ASTCLONE_CLONE_VISITOR_HH
+# define ASTCLONE_CLONE_VISITOR_HH
+
+# include "ast/default-visitor.hh"
+
+namespace astclone
+{
+
+  /// \\brief Duplicate an Ast.
+  class CloneVisitor : public ast::DefaultConstVisitor
+  {
+  public:
+    typedef ast::DefaultConstVisitor super_type;
+
+    // Import overloaded virtual functions.
+    using super_type::operator();
+
+    /// Destroy a CloneVisitor.
+    virtual ~CloneVisitor ();
+
+    // Return the cloned Ast.
+    ast::Ast* result_get ();
+
+    template <typename T>
+    T* recurse (const T& t);
+
+    template <typename T>
+    T* recurse (const T* const t);
+
+    /** \\brief Clone a collection object.
+
+    	Using overloading for this method is tempting, but it would
+	lead to the same prototype than the first \\a recurse method.
+
+	A partial specialization for \\a std::list<T> would work, but is
+	not allowed by C++ standard. As a consequence, we are stuck to
+	using different names.
+     */
+    template <typename CollectionType>
+    CollectionType* recurse_collection (const CollectionType& c);
+
+
+    // Visit methods.
+  public:"""
+for node in final_nodes:
+  print "    virtual void operator() (const ast::" + node.name + "&);"
+print """
+    template <typename DecsType>
+    /** \\brief Visit a chunk (i.e., a list of Function, Var, and Type decs).
+     **
+     ** It is exactly the same in the three cases, so the code is
+     ** factored via a template method. */
+    void decs_visit (const DecsType& e);
+
+    // As we can't mix template and virtual methods, we have to
+    // duplicate these methods.  That's too bad.  :(
+    virtual void operator() (const ast::VarDecs&);
+    virtual void operator() (const ast::FunctionDecs&);
+    virtual void operator() (const ast::TypeDecs&);
+
+  protected:
+    /// The cloned Ast.
+    ast::Ast* result_;
+  };
+
+} // namespace ast
+
+# include "astclone/clone-visitor.hxx"
+
+#endif // !ASTCLONE_CLONE_VISITOR_HH"""
+
+# Restore stdout and close files
+sys.stdout = sys.__stdout__
+clone_visitor_hh.close ()
+
+file_fullpath = os.path.join (srcdir, "clone-visitor.hh");
+file_modes = os.stat (file_fullpath) [ST_MODE]
+
+# Change the file modes to write the file
+os.chmod (file_fullpath, file_modes | 0666);
+
+# Check differences and update if any
+tools.lazzy_overwrite (file_fullpath, "clone-visitor.hh.tmp")
+os.remove ("clone-visitor.hh.tmp")
+
+# Prevent generated file modifications
+os.chmod(file_fullpath, file_modes & 0555);
+
+
+## Abstract syntax tree C++ clone visitor - implementation --------------------
+
+# Helper.  Should be part of dev/ast.py?
+def node_all_attributes (node):
+  attrs = []
+  for sup in node.super:
+    sup_attrs = node_all_attributes (sup)
+    if len (sup_attrs) > 0:
+      attrs.extend (sup_attrs)
+  attrs.extend (node.attributes)
+  return attrs
+
+clone_visitor_cc = file("clone-visitor.cc.tmp", "w")
+sys.stdout = clone_visitor_cc
+
+print """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+/**
+ ** \\file astclone/clone-visitor.cc
+ ** \\brief Implementation of astclone::CloneVisitor.
+ */
+
+#include "ast/all.hh"
+#include "astclone/clone-visitor.hh"
+#include "symbol/symbol.hh"
+
+namespace astclone
+{
+  using namespace ast;
+
+  CloneVisitor::~CloneVisitor ()
+  {
+  }
+
+  Ast*
+  CloneVisitor::result_get ()
+  {
+    return result_;
+  }
+"""
+
+for node in final_nodes:
+  print "  void"
+  print "  CloneVisitor::operator() (const ast::" + node.name + "& e)"
+  print "  {"
+  args = node.ctor_args (False, False)
+
+  # Clone recursively the children of E.
+  for a in (node_all_attributes (node)):
+    if not a.init:
+      accessor = "e." + a.name + "_get ()"
+      # Non visitable attributes.
+      if a.type in non_visitable_types:
+        type = a.W_type ()
+        get_deref = ""
+        if a.pointer_p () and a.mandatory:
+          get_deref = "&"
+        print "    " + type + " " + a.name + " = " + \
+              get_deref + accessor + ";"
+
+      # Collection attributes.
+      elif a.root_type () in collections:
+        if a.pointer_p ():
+          print "    " + a.root_type () + "* " + a.name + \
+                " = recurse_collection (" + accessor + ");"
+        else:
+          print "    " + a.root_type () + " " + a.name + \
+                " = *recurse_collection (" + accessor + ");"
+
+      # Visitable attributes.
+      else:
+        print "    " + a.W_type () + " " + a.name + \
+              " = recurse (" + accessor + ");"
+
+  # Result.
+  if node.name == "FunctionDec":
+    # Special case for FunctionDec: copy the sl_needed_ and sl_escapes_ fields.
+    print "    FunctionDec* fundec = "
+    print "      new " + node.name + " (" + args + ");"
+    for a in ["sl_needed", "sl_escapes"]:
+      print "    fundec->" + a + "_set (e." + a + "_get ());"
+    print "    result_ = fundec;"
+  else:
+    # Normal case.
+    print "    result_ = new " + node.name + " (" + args + ");"
+  print """  }
+"""
+
+# Decs nodes.
+print """
+  void
+  CloneVisitor::operator() (const VarDecs& e)
+  {
+    decs_visit<VarDecs> (e);
+  }
+
+  void
+  CloneVisitor::operator() (const FunctionDecs& e)
+  {
+    decs_visit<FunctionDecs> (e);
+  }
+
+  void
+  CloneVisitor::operator() (const TypeDecs& e)
+  {
+    decs_visit<TypeDecs> (e);
+  }
+
+} // namespace ast"""
+
+# Restore stdout and close files
+sys.stdout = sys.__stdout__
+clone_visitor_cc.close ()
+
+file_fullpath = os.path.join (srcdir, "clone-visitor.cc");
+file_modes = os.stat (file_fullpath) [ST_MODE]
+
+# Change the file modes to write the file
+os.chmod (file_fullpath, file_modes | 0666);
+
+# Check differences and update if any
+tools.lazzy_overwrite (file_fullpath, "clone-visitor.cc.tmp")
+os.remove ("clone-visitor.cc.tmp")
+
+# Prevent generated file modifications
+os.chmod(file_fullpath, file_modes & 0555);

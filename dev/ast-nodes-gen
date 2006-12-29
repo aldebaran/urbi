@@ -1,0 +1,448 @@
+#!/usr/bin/env python
+
+import re, string
+import sys, os.path, filecmp, shutil, stat
+import ast, tools
+
+from stat import ST_MODE
+
+if len(sys.argv) != 2:
+  print "Usage: .. SRCDIR"
+  sys.exit(1)
+srcdir = sys.argv[1]
+
+## Globals --------------------------------------------------------------------
+
+re_access_r = re.compile (".*r.*"); re_access_R = re.compile (".*R.*")
+re_access_w = re.compile (".*w.*"); re_access_W = re.compile (".*W.*")
+
+# The generator will accept these types as is, without looking for a
+# particular header.
+atomic_types = ["bool", "int",
+                "VarDec::Kind",
+                "OpExp::Oper",
+                "DecsList::decs_type"]
+includes_map = {
+  "std::string": "<string>",
+
+  "symbol::Symbol": '"symbol/symbol.hh"',
+
+  "exps_type": '"ast/exp.hh"',
+  "fields_type": '"ast/field.hh"',
+  "fieldinits_type": '"ast/field-init.hh"',
+  "VarDecs": '"ast/anydecs.hh"',
+
+  "type::Type": '"type/fwd.hh"',
+  "type::Int": '"type/fwd.hh"'
+  }
+
+## Abstract syntax tree C++ classes generator ---------------------------------
+
+def print_inline_code (node, file, where):
+  if node.inline.has_key(file + ' ' + where):
+    str = node.inline[file + ' ' + where]
+    print str
+
+
+def print_banner(file, name, description):
+  # Document the file.
+  sys.stdout = file
+  print """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+/**
+ ** \\file ast/""" + name + """
+ ** \\brief """ + description + """
+ */
+"""
+
+def guard_name (node, ext):
+  return tools.define_id ("ast_" + node.name + "_" + ext)
+
+def print_guard_open (node, ext):
+  guard = guard_name (node, ext)
+  print "#ifndef " + guard
+  print "# define " + guard
+  print ""
+
+def print_guards_open (node, header, inline, impl):
+  """Output the multiple inclusion guard."""
+  # Shortands
+  define_id = tools.define_id (node.name)
+
+  sys.stdout = header
+  print_guard_open (node, "hh")
+
+  sys.stdout = inline
+  print_guard_open (node, "hxx")
+
+def print_guard_close (node, ext):
+  print "#endif // !" + guard_name (node, ext)
+
+def print_guards_close (node, header, inline, impl):
+  sys.stdout = header
+  # Shortands.
+  print_inline_code (node, "header", "epilogue")
+
+  # Close protection
+  sys.stdout = header
+  print "# include \"ast/" + node.hxx () + "\""
+  print ""
+  print_guard_close (node, "hh")
+  sys.stdout = inline
+  print_guard_close (node, "hxx")
+
+  sys.stdout = impl
+  print_inline_code (node, "impl", "epilogue")
+
+def print_includes (node, header, inline, impl):
+  """Generate the required header inclusions."""
+  # Shortands.
+
+  includes = {}
+  for sup in node.super:
+    includes["\"ast/" + sup.hh () + "\""] = True
+  need_misc_containers = False
+  for attribute in node.attributes:
+    type = attribute.root_type ()
+    if ast.re_list.match (type):
+      need_misc_containers = True
+    if type in includes_map:
+      includes[includes_map[type]] = True
+    elif not type in atomic_types:
+      includes["\"ast/" + tools.file_id (type) + ".hh\""] = True
+
+  # *.hh
+  sys.stdout = header
+  print_inline_code (node, "header", "prologue")
+  for i in includes:
+    print "# include " + i
+
+  # *.hxx
+  sys.stdout = inline
+  print_inline_code (node, "inline", "prologue")
+  print "# include \"ast/" + node.hh () + "\""
+
+  # *.cc
+  sys.stdout = impl
+  print_inline_code (node, "impl", "prologue")
+  if need_misc_containers:
+    print "#include \"misc/containers.hh\""
+  print "#include \"ast/visitor.hh\""
+  print "#include \"ast/" + node.hh () + "\""
+
+def print_namespace_class_open (node, header, inline, impl):
+  # Shortands
+  class_id = node.name
+  # Open namespace
+  for f in [header, inline, impl]:
+    sys.stdout = f
+    print """
+namespace ast
+{
+"""
+    if node.hide:
+      if not (f == inline and len(node.attributes) == 0):
+        print "//<<"
+
+  # Declare class
+  sys.stdout = header
+  decl = "class " + node.name
+  first = True
+  for sup in node.super:
+    if first:
+      decl += ": "
+    else:
+      decl += ", "
+    first = False
+    decl += "public " + sup.name
+  if node.desc:
+    print node.desc
+  else:
+    print "  /// " + node.name + "."
+  print "  " + decl
+  print "  {"
+
+def print_namespace_class_close (node, header, inline, impl):
+  sys.stdout = header
+  print "  };"
+
+  # Close namespace
+  for f in [header, inline, impl]:
+    sys.stdout = f
+    if node.hide:
+      if not (f == inline and len(node.attributes) == 0):
+        print "//>>"
+    print """
+} // namespace ast
+"""
+
+
+def print_ctor_dtor (node, header, inline, impl):
+  """Issue the constructors and destructor."""
+  args = node.ctor_args (False)
+  init = node.ctor_init (False)
+  hide = node.need_duplicate ()
+  if hide:
+    args_h = node.ctor_args (True)
+    init_h = node.ctor_init (True)
+
+  sys.stdout = header
+  print """    /** \\name Ctor & dtor.
+     ** \\{ */
+     public:"""
+  if hide:
+    print "    //<<-"
+  print "    /// Construct " + tools.indef_article (node.name) + " " + \
+        node.name + " node."
+  print tools.wrap_proto ("    " + node.name + " (" + args + ");", 75)
+  if hide:
+    print "    //->>"
+    print "    /// Construct " + tools.indef_article (node.name) + " " + \
+          node.name + " node."
+    print tools.wrap_proto ("    " + node.name + " (" + args_h + ");", 75)
+  print "    /// Destroy " + tools.indef_article (node.name) + " " + \
+        node.name + " node."
+  print "    virtual ~" + node.name + " ();"
+  print "    /** \\} */"
+  sys.stdout = impl
+  if hide:
+    print "  //<<-"
+  if init == "":
+    print tools.wrap_proto ("  " + node.name + "::" + node.name + " ()", 75)
+  else:
+    print tools.wrap_proto ("  " + node.name + "::" + node.name + " (" + \
+          re.sub(" =.*(, )?", "", args) + ")" + ":", 75)
+    print init
+  print "  { }"
+  if hide:
+    print "  //->>"
+    print ""
+    print tools.wrap_proto ("  " + node.name + "::" + node.name + " (" + \
+          re.sub(" =.*(, )?", "", args_h) + ")" + ":", 75)
+    print init_h
+    print "  { }"
+  print ""
+  print "  " + node.name + "::~" + node.name + " ()"
+  print "  {"
+  for a in node.attributes:
+    if a.delete ():
+      print a.delete (),
+  print "  }"
+  print ""
+
+def print_attributes (node, header, inline, impl):
+  # Declare attribute accessors
+  if len(node.attributes) > 0:
+    sys.stdout = header
+    print """
+    /** \\name Accessors.
+     ** \\{ */
+  public:"""
+
+    for a in node.attributes:
+      get_comment = "    /// Return " + a.description () + "."
+      set_comment = "    /// Set " + a.description () + "."
+
+      get_deref = ""
+      set_deref = ""
+      if a.pointer_p () and a.mandatory:
+        get_deref = "*"
+        set_deref = "&"
+
+      # Hide following code to students
+      if a.hide:
+        sys.stdout = header
+        print "    //<<-"
+
+      # Read-only accessor (const get)
+      if re_access_r.match (a.access):
+        sys.stdout = header
+        print get_comment
+        print "    " + ast.decl (a.r_type (), a.name) + "_get () const;"
+        sys.stdout = inline
+        if a.hide:
+          print "  //<<-"
+        print "  inline " + a.r_type ()
+        print "  " + node.name + "::" + a.name + "_get () const"
+        print "  {"
+        print "    return " + get_deref + a.name + "_;"
+        print "  }"
+        if a.hide:
+          print "  //->>"
+
+      # Read/Write accessor (non const get)
+      if re_access_w.match (a.access):
+        sys.stdout = header
+        print get_comment
+        print "    " + ast.decl (a.w_type (), a.name) + "_get ();"
+        sys.stdout = inline
+        if a.hide:
+          print "  //<<-"
+        print "  inline " + a.w_type ()
+        print "  " + node.name + "::" + a.name + "_get ()"
+        print "  {"
+        print "    return " + get_deref + a.name + "_;"
+        print "  }"
+        if a.hide:
+          print "  //->>"
+
+      # Write accessor (set)
+      if re_access_W.match (a.access):
+        sys.stdout = header
+        print set_comment
+        print "    void " + a.name + "_set (" + a.W_type () + ");"
+        sys.stdout = inline
+        if a.hide:
+          print "  //<<-"
+        print "  inline void"
+        print "  " + node.name + "::" + a.name + "_set (" + \
+              ast.decl (a.W_type (), a.name) + ")"
+        print "  {"
+        print "    " + a.name + "_ = "+ a.name +";"
+        print "  }"
+        if a.hide:
+          print "  //->>"
+
+      sys.stdout = inline
+      print ""
+      sys.stdout = header
+      if a.hide:
+        print "    //->>"
+    print "    /** \\} */\n"
+
+    # Declare attributes.
+    print "  protected:"
+    for a in node.attributes:
+      sys.stdout = header
+      if a.hide:
+        print "    //<<-"
+      print "    /// "+ a.desc + "."
+      print "    " + a.attr_decl () + ";"
+      if a.hide:
+        print "    //->>"
+
+
+def declare_visitor(node, header, abstract):
+  "Declare the (possible abstract) `accept' methods for node."
+
+  sys.stdout = header
+  impl = ""
+  if abstract:
+    impl = " = 0"
+  print """
+    /** \\name Visitors entry point.
+     ** \\{ */
+  public:
+    /// Accept a const visitor \\a v.
+    virtual void accept (ConstVisitor& v) const%s;
+    /// Accept a non-const visitor \\a v.
+    virtual void accept (Visitor& v)%s;
+    /** \\} */""" % (impl, impl)
+
+def print_visitor(node, header, inline, impl):
+  """Output the Visitor support routine declaration, and implementation
+  if the class is concrete."""
+
+  if node.final:
+    declare_visitor (node, header, False)
+    sys.stdout = inline
+    print ""
+    sys.stdout = impl
+    print "  void"
+    print "  " + node.name + "::accept (ConstVisitor& v) const"
+    print """  {
+    v (*this);
+  }"""
+    print "  void"
+    print "  " + node.name + "::accept (Visitor& v)"
+    print """  {
+    v (*this);
+  }
+    """
+  # In our design, the class is concrete iff it has a single parent.
+  # This excludes roots, and "joins".
+  elif len (node.super) != 1:
+    declare_visitor (node, header, True)
+
+
+
+
+## Generate the class corresponding to node
+def class_generate(node):
+  # Shortands.
+  define_id = tools.define_id (node.name)
+
+  # Open destination header, inline and implementation files
+  header = file(node.fname ("hh.tmp"),  "w")
+  inline = file(node.fname ("hxx.tmp"), "w")
+  impl   = file(node.fname ("cc.tmp"),  "w")
+
+  # A flag for developpers.
+  # Document the file
+  print_banner (header, node.hh (),
+                "Declaration of ast::" + node.name + ".")
+  print_banner (inline, node.hxx (),
+                "Inline methods of ast::" + node.name + ".")
+  print_banner (impl, node.cc (),
+                "Implementation of ast::" + node.name + ".")
+
+  print_guards_open (node, header, inline, impl)
+  print_includes (node, header, inline, impl)
+
+  print_namespace_class_open(node, header, inline, impl)
+
+  # Print inside hand written code.
+  for f in [(header, "header"),
+            (inline, "inline"),
+            (impl,   "impl")]:
+    sys.stdout = f[0]
+    print_inline_code (node, f[1], "inside")
+
+  # Constructor(s) and destructor.
+  print_ctor_dtor (node, header, inline, impl)
+
+  # Visitor entry point.
+  print_visitor (node, header, inline, impl)
+
+  # Attributes and accessors.
+  print_attributes (node, header, inline, impl)
+
+  # End of declaration.
+  print_namespace_class_close (node, header, inline, impl)
+
+  # Print epilogue.
+  print_guards_close (node, header, inline, impl)
+
+
+  # Restore stdout.
+  sys.stdout = sys.__stdout__
+
+  # Check differences between old and new files.
+  for f in [(header, "hh"),
+            (inline, "hxx"),
+            (impl,   "cc")]:
+    f[0].close ()
+    f = node.fname (f[1])
+    path = os.path.join (srcdir, f);
+    mode = 0555
+
+    # If the file exists, make sure it is writable.
+    if os.access (path, os.F_OK):
+      mode = os.stat (path) [ST_MODE]
+      # Change the file modes to write the file.
+      os.chmod (path, mode | 0666);
+
+    tools.lazzy_overwrite (path, f + ".tmp")
+
+    # Prevent generated files modifications.
+    os.chmod (path, mode & 0555);
+    os.remove (f + ".tmp")
+
+## Main -----------------------------------------------------------------------
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+
+for node in nodes.values ():
+  class_generate (node)

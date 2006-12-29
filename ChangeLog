@@ -1,3 +1,28 @@
+2006-12-29  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	Add ast generator from tiger. NB: the content of ast.yml is currently
+	irrelevant, will be fixed in next commit.
+	add AST generator machinery from tiger lrde project. 
+	* dev/ast-clone-visitor-gen: New.
+	* dev/ast-fwd-gen: New.
+	* dev/ast-graph-gen: New.
+	* dev/ast-nodes-gen: New.
+	* dev/ast-nodes-mk-gen: New.
+	* dev/ast-readme-gen: New.
+	* dev/ast-visitor-gen: New.
+	* dev/ast.py: New.
+	* dev/ast.pyc: New.
+	* dev/count-fixme-lines: New.
+	* dev/cut-bison-actions: New.
+	* dev/diff-r: New.
+	* dev/tools.py: New.
+	* dev/tools.pyc: New.
+	* dev: New.
+	* src/ast/ast.yml: New.
+	* src/ast/clean: New.
+	* src/ast/generate: New.
+	* src/ast: New.
+
 2006-12-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	port up to r597 from trunk

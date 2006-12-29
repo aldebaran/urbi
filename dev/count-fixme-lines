@@ -1,0 +1,10 @@
+#! /usr/bin/perl
+
+while (<>)
+{
+  /\/\/ FIXME: .*\(([0-9]+) lines\)./ and do {
+    $sum += $1;
+  }
+}
+
+print $sum, "\n";

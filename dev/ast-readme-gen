@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+
+import re, string
+import sys, os, stat
+import ast, tools
+
+def usage ():
+  print >>sys.stderr, "Usage: [--student] <in >out"
+
+if len (sys.argv) != 1 and len (sys.argv) != 2:
+  usage ()
+  sys.exit (1)
+
+# Optional --student option.
+stud_p = False
+if len (sys.argv) == 2:
+  if sys.argv[1] == "--student":
+    stud_p = True
+  else:
+    usage ()
+    sys.exit (1)
+
+## Abstract syntax tree overview (README) -------------------------------------
+
+# Starting column of the possible ctor's argument(s).
+ctor_args_start_col = 20
+
+def ctor_args_summary (node, hide):
+  """Print ctor.
+In student mode, if HIDE is True, don't output hidden attributes."""
+  args = []
+  for a in node.attributes:
+    if stud_p and hide and a.hide:
+      continue
+    if not a.init:
+      # Remove namespace qualifiers.
+      attr_type = re.sub ("\w+::", "", a.root_type ());
+      args.append (ast.decl (attr_type, a.name))
+  return string.join (args, ", ")
+
+def print_node_summary (node, depth):
+  name = node.name
+  # Non final classes are printed as abstract ones.
+  if not node.final:
+    name = "/" + name + "/"
+  # Do no print ctors of hidden nodes in student mode. Add a leading
+  # star in front of them, if there is enough space.
+  if stud_p and node.hide:
+    if depth > 0:
+      node_line = "* " + (depth - 1) * "  " + name
+    else:
+      node_line = depth * "  " + name
+  else:
+    args = ctor_args_summary (node, False)
+    node_line = depth * "  " + name
+    node_line += (ctor_args_start_col - len (node_line)) * " "
+    node_line += "(" + args + ")"
+  print node_line
+
+def print_node_rec (node, depth = 0):
+  # Print the node.  
+  print_node_summary (node, depth)
+  # Print all derived classes recursively.
+  derived = node.derived
+  derived.sort (lambda x, y: cmp (x.name, y.name))
+  # Print abstract derived classes first...
+  for d in filter ((lambda node: not node.final), derived):
+    print_node_rec (d, depth + 1)
+  # ..then concrete derived classes.
+  for d in filter ((lambda node: node.final), derived):
+    print_node_rec (d, depth + 1)
+  if (not node.final) or depth <= 1:
+    print
+
+def print_node (node, depth = 0):
+  # Print the node.  
+  print_node_summary (node, depth)
+  # Print immediate derived classes.
+  derived = node.derived
+  derived.sort (lambda x, y: cmp (x.name, y.name))
+  # Print abstract derived classes first...
+  for d in filter ((lambda node: not node.final), derived):
+    print_node_summary (d, depth + 1)
+  # ..then concrete derived classes.
+  for d in filter ((lambda node: node.final), derived):
+    print_node_summary (d, depth + 1)
+  if (not node.final) or depth <= 1:
+    print
+
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+
+# Print Ast hierarchy.
+print """//<<-
+// Generated, do not edit by hand.
+//->>
+* README
+
+Tiger Abstract Syntax Tree nodes with their principal members."""
+if stud_p:
+  print "Incomplete classes are tagged with a `*'."
+print
+
+print_node_rec (nodes["Ast"])
+
+# Print remaining classes.
+top_nodes = filter ((lambda x: nodes[x].super == []), nodes)
+top_nodes.remove ("Ast")
+top_nodes.sort ()
+if len (top_nodes) > 0:
+  print """Some of these classes also inherits from other classes.
+"""
+  for n in top_nodes:
+    if nodes.has_key (n):
+      print_node (nodes[n])

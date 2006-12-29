@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ ! -f fwd.hh ]
+then
+  echo "" > fwd.hh
+fi
+
+if [ ! -f visitor.hh ]
+then
+  echo "" > visitor.hh
+fi
+
+
+../../dev/ast-fwd-gen . < ast.yml
+../../dev/ast-fwd-gen . < ast.yml
+../../dev/ast-visitor-gen . < ast.yml
+../../dev/ast-nodes-gen . < ast.yml
