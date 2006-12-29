@@ -88,7 +88,8 @@ private:
 
   /// The file names that were parsed.
   ///
-  /// Kept because each location point to it.
+  /// Kept because each location point to it, and since they are hooked
+  /// on the AST, they survive the parsing.
   typedef std::set<std::string> files;
   files files_;
 

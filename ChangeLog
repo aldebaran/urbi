@@ -1,3 +1,11 @@
+2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+
+	Fix location tracking
+	When load is executed, we must preserve the current location.
+	* src/parser/uparser.cc (UParser::process_): When loading a file
+	backup the current location and restore it to keep track of
+	the location in the input.
+
 2006-12-27  Akim Demaille  <akim.demaille@free.fr>
 
 	Add location to command errors

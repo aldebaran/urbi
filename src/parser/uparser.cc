@@ -37,7 +37,7 @@ int
 UParser::process(ubyte* command, int length)
 {
   assert (!filename_);
-  // It has been said Flex scanner cannot work with istrstream.
+  // It has been said Flex scanners cannot work with istrstream.
   std::istrstream mem_buff ((char*)command, length);
   std::istream mem_input (mem_buff.rdbuf());
   scanner_.switch_streams(&mem_input, 0);
@@ -47,17 +47,24 @@ UParser::process(ubyte* command, int length)
 int
 UParser::process(const char* fn)
 {
-  // Store in this object the name of the file, and let location point
-  // to it.  Once the parsing finish, clean it.
   assert (!filename_);
-  // Take the adress of the string.
+
+  // Store the filename, and get a point to it.
   filename_ = &(*files_.insert (fn).first);
-  loc_.initialize (filename_);
+
+  // A location pointing to it.
+  location_type loc;
+  loc.initialize (filename_);
+
+  // Exchange with the current location so that we can restore it
+  // afterwards (when reading the input flow, we want to be able to
+  // restore the cursor after having handled a load command).
+  std::swap(loc, loc_);
   std::ifstream f (fn);
   scanner_.switch_streams(&f, 0);
   int res = parse_();
   filename_ = 0;
-  loc_.initialize (0);
+  std::swap(loc, loc_);
   return res;
 }
 
