@@ -1,5 +1,14 @@
 2006-12-29  Akim Demaille  <akim.demaille@free.fr>
 
+	Display the expression locations in errors
+	* src/uexpression.hh, src/uexpression.cc (eval_LIST, eval_GROUP):
+	New, extracted from...
+	(eval): here.
+	(send_error): New.
+	Use it instead of snprintf + send dark incantations.
+
+2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+
 	Put UDefType in its class
 	* src/utypes.hh (UDefType): Move to...
 	* src/ucommand.hh (UCommand_DEF::UDefType): here.

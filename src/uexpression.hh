@@ -170,14 +170,22 @@ public:
   UExpression      *softtest_time;
 
 private:
-  /// eval() specialized for type == VARIABLE.
-  UValue* eval_VARIABLE (UCommand *command, UConnection *connection,
-			 UEventCompound*& ec);
+  /// eval() specialized for type == GROUP.
+  UValue*
+  eval_GROUP (UCommand *command, UConnection *connection);
 
   /// eval() specialized for type == FUNCTION.
   UValue*
   eval_FUNCTION (UCommand *command, UConnection *connection,
 		 UEventCompound*& ec);
+
+  /// eval() specialized for type == LIST.
+  UValue*
+  eval_LIST (UCommand *command, UConnection *connection);
+
+  /// eval() specialized for type == VARIABLE.
+  UValue* eval_VARIABLE (UCommand *command, UConnection *connection,
+			 UEventCompound*& ec);
 };
 
 #endif
