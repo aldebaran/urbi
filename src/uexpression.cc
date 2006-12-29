@@ -265,6 +265,10 @@ UExpression::UExpression(const location& l, UExpression::Type type,
       case EXP:
 	val = pow (expression1->val , expression2->val);
 	break;
+      default:
+	// This case is not possible, but GCC does not seem to be
+	// able to infer it.
+	abort();
     }
 
     this->type = VALUE;
@@ -1721,10 +1725,15 @@ UExpression::eval_VARIABLE (UCommand *command,
 
       switch (variablename->deriv)
       {
+	case UVariableName::UNODERIV:
+	  // Impossible case, but GCC cannot infer it.
+	  abort ();
+
 	case UVariableName::UDERIV:
 	  ret->val = 1000. * (variable->previous - variable->previous2)/
 	    (::urbiserver->previousTime - ::urbiserver->previous2Time);
 	  break;
+
 	case UVariableName::UDERIV2:
 	  ret->val = 1000000. * 2 *
 	    ( variable->previous  * (::urbiserver->previous2Time-
@@ -1743,12 +1752,14 @@ UExpression::eval_VARIABLE (UCommand *command,
 			  - ::urbiserver->previous2Time) );
 
 	  break;
+
 	case UVariableName::UTRUEDERIV:
 	  ret->val = 1000. *
 	    (variable->get()->val - variable->valPrev)/
 	    (::urbiserver->currentTime
 	     - ::urbiserver->previousTime);
 	  break;
+
 	case UVariableName::UTRUEDERIV2:
 	  ret->val = 1000000. * 2 *
 	    ( variable->get()->val	*
