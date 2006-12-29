@@ -435,16 +435,15 @@ UCommand::strMorph (const std::string& cmd)
 {
   morph = new UCommand_EXPR
     (
-      location(),
+      loc(),
       new UExpression
       (
+	loc(),
 	UExpression::FUNCTION,
 	new UVariableName (new UString("global"), new UString("exec"),
 			   false, 0),
 	new UNamedParameters
-	(
-	  new UExpression (UExpression::VALUE, new UString(cmd.c_str()))
-	  )
+	(new UExpression (loc(), UExpression::VALUE, new UString(cmd.c_str())))
 	)
       );
 
@@ -741,7 +740,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	(loc_, Flavorable::UPIPE, fun->cmdcopy(),
 	 new UCommand_ASSIGN_VALUE (loc_,
 				    variablename->copy(),
-				    new UExpression(UExpression::VARIABLE,
+				    new UExpression(loc_,
+						    UExpression::VARIABLE,
 						    resultContainer),
 				    0));
 
@@ -832,8 +832,6 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	     && expression->parameters->size() == (*cbi)->nbparam)
 	    || (!expression->parameters && !(*cbi)->nbparam) )
 	{
-	  // here you could spawn a thread... if only Aprios
-	  // knew how to!
 	  urbi::UList tmparray;
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
@@ -851,9 +849,9 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  }
 
 	  delete expression;
-	  expression = new UExpression
-	    (UExpression::VALUE,
-	     new UValue((*cbi)->__evalcall(tmparray)));
+	  expression =
+	    new UExpression (loc(),  UExpression::VALUE,
+			     new UValue((*cbi)->__evalcall(tmparray)));
 	  found_function = true;
 	}
       }
@@ -1162,7 +1160,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  else if (modif->name->equal("cos"))
 	  {
 	    modif_sin = modif->expression;
-	    tmp_phase = new UExpression(UExpression::VALUE, PI/ufloat(2));
+	    tmp_phase = new UExpression(loc_, UExpression::VALUE, PI/ufloat(2));
 	    modif_phase = tmp_phase;
 	    controlled = true;
 	  }
@@ -1251,7 +1249,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       if (!controlled)
       {
 	// no controlling modifier => time:0
-	tmp_time = new UExpression(UExpression::VALUE, ufloat(0));
+	tmp_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
 	modif_time = tmp_time;
       }
 
@@ -2095,15 +2093,15 @@ UCommand_AUTOASSIGN::execute_(UConnection*)
   {
     case 0: /* += */
       extended_expression =
-	new UExpression(UExpression::PLUS,
-			new UExpression(UExpression::VARIABLE,
+	new UExpression(loc(), UExpression::PLUS,
+			new UExpression(loc(), UExpression::VARIABLE,
 					variablename->copy()),
 			expression->copy());
       break;
     case 1: /* -= */
       extended_expression =
-	new UExpression(UExpression::MINUS,
-			new UExpression(UExpression::VARIABLE,
+	new UExpression(loc(), UExpression::MINUS,
+			new UExpression(loc(), UExpression::VARIABLE,
 					variablename->copy()),
 			expression->copy());
       break;
@@ -2239,7 +2237,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 			  true, 0);
 
       UCommand_EXPR* cexp =
-	new UCommand_EXPR(loc_, new UExpression(UExpression::VARIABLE,
+	new UCommand_EXPR(loc_, new UExpression(loc(), UExpression::VARIABLE,
 						resultContainer));
 
       cexp->setTag(this);
@@ -3263,17 +3261,18 @@ UCommand_GROUP::execute_(UConnection *connection)
     std::list<UString*>::iterator it = retr->second->members.begin();
     if (it != retr->second->members.end())
     {
-      ret = new UNamedParameters(new UExpression(UExpression::VALUE,
+      ret = new UNamedParameters(new UExpression(loc(), UExpression::VALUE,
 						 (*it)->copy()),
 				 0);
       ++it;
     }
 
     for (; it != retr->second->members.end(); ++it)
-      ret = new UNamedParameters(new UExpression(UExpression::VALUE,
+      ret = new UNamedParameters(new UExpression(loc(), UExpression::VALUE,
 						 (*it)->copy()), ret);
 
-    morph = new UCommand_EXPR(loc_, new UExpression(UExpression::LIST, ret));
+    morph = new UCommand_EXPR(loc_, new UExpression(loc(),
+						    UExpression::LIST, ret));
 
     persistant = false;
     return UMORPH;
@@ -3498,19 +3497,23 @@ UCommand_DEVICE_CMD::execute_(UConnection *connection)
 
   // Main execution
   if (cmd == -1)
-    morph = new UCommand_ASSIGN_VALUE(loc_,
-				      variablename->copy(),
-				      new UExpression(UExpression::MINUS,
-						      new UExpression(UExpression::VALUE, ufloat(1)),
-						      new UExpression(UExpression::VARIABLE, variablename->copy())),
-				      0,
-				      false);
+    morph =
+      new UCommand_ASSIGN_VALUE
+      (loc_,
+       variablename->copy(),
+       new UExpression(loc(), UExpression::MINUS,
+		       new UExpression(loc(), UExpression::VALUE, ufloat(1)),
+		       new UExpression(loc(), UExpression::VARIABLE, variablename->copy())),
+       0,
+       false);
   else
-    morph = new UCommand_ASSIGN_VALUE(loc_,
-				      variablename->copy(),
-				      new UExpression(UExpression::VALUE, ufloat(cmd)),
-				      0,
-				      false);
+    morph =
+      new UCommand_ASSIGN_VALUE(loc_,
+				variablename->copy(),
+				new UExpression(loc(), UExpression::VALUE,
+						ufloat(cmd)),
+				0,
+				false);
 
   persistant = false;
   return UMORPH;
@@ -4377,7 +4380,7 @@ UCommand_EMIT::execute_(UConnection *connection)
 	if (e1)
 	{
 	  delete pevent->expression;
-	  pevent->expression = new UExpression(UExpression::VALUE, e1->copy());
+	  pevent->expression = new UExpression(loc(), UExpression::VALUE, e1->copy());
 	  delete e1;
 	}
 
@@ -4665,10 +4668,14 @@ UCommand_INCDECREMENT::execute_(UConnection *connection)
     morph =
       new UCommand_ASSIGN_VALUE(loc_,
 				variablename->copy(),
-				new UExpression(
+				new UExpression(loc(),
 				  UExpression::PLUS,
-				  new UExpression(UExpression::VARIABLE, variablename->copy()),
-				  new UExpression(UExpression::VALUE, ufloat(1))), 0);
+				  new UExpression(loc(),
+						  UExpression::VARIABLE,
+						  variablename->copy()),
+				  new UExpression(loc(),
+						  UExpression::VALUE,
+						  ufloat(1))), 0);
 
     persistant = false;
     return UMORPH;
@@ -4677,12 +4684,15 @@ UCommand_INCDECREMENT::execute_(UConnection *connection)
   if (type == DECREMENT)
   {
     morph =
-      new UCommand_ASSIGN_VALUE(loc_,
-				variablename->copy(),
-				new UExpression(
-				  UExpression::MINUS,
-				  new UExpression(UExpression::VARIABLE, variablename->copy()),
-				  new UExpression(UExpression::VALUE, ufloat(1))), 0);
+      new UCommand_ASSIGN_VALUE
+      (loc_,
+       variablename->copy(),
+       new UExpression(loc(),
+		       UExpression::MINUS,
+		       new UExpression(loc(), UExpression::VARIABLE,
+				       variablename->copy()),
+		       new UExpression(loc(),
+				       UExpression::VALUE, ufloat(1))), 0);
 
     persistant = false;
     return UMORPH;
@@ -5828,7 +5838,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
       new UCommand_TREE
       (loc_, Flavorable::UAND, this,
        new UCommand_WHENEVER (loc_,
-			      new UExpression (UExpression::TEST_BANG,
+			      new UExpression (loc(), UExpression::TEST_BANG,
 					       test->copy (), 0),
 			      command2, 0));
 
@@ -6348,7 +6358,7 @@ UCommand_FOREACH::execute_(UConnection *connection)
     return UCOMPLETED;
 
   UExpression* currentvalue =
-    new UExpression(UExpression::VALUE, ufloat(0));
+    new UExpression(loc(), UExpression::VALUE, ufloat(0));
   if (!currentvalue)
     return UCOMPLETED;
   currentvalue->dataType = position->dataType;

@@ -20,19 +20,17 @@
  **************************************************************************** */
 
 #ifndef UEXPRESSION_HH
-#define UEXPRESSION_HH
+# define UEXPRESSION_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "utypes.hh"
-#include "ustring.hh"
-#include "ucommandqueue.hh"
-#include "memorymanager/memorymanager.hh"
-
+# include "fwd.hh"
+# include "uast.hh"
+# include "utypes.hh"
+# include "memorymanager/memorymanager.hh"
 
 // ****************************************************************************
-//! Contain an expression tree as returned by the parser
+//! An expression tree as returned by the parser
 /*! UExpression class:
 
     There is no subclass to UExpression to make it easier to have
@@ -42,7 +40,7 @@
     this operation more difficult to do. Furthermore, the memory loss due
     to non subclassing is very low in the case of UExpression.
 */
-class UExpression
+class UExpression : public UAst
 {
 public:
   MEMORY_MANAGED;
@@ -81,23 +79,24 @@ public:
     TEST_OR
   };
 
-  UExpression(Type type, ufloat val);
+  UExpression(const location& l, Type type, ufloat val);
 
   /// The ownership is taken.
-  UExpression(Type type, UString *str);
+  UExpression(const location& l, Type type, UString *str);
 
-  UExpression(Type type, UValue *v);
+  UExpression(const location& l, Type type, UValue *v);
 
-  UExpression(Type type, UExpression* e1, UExpression* e2);
-  UExpression(Type type, UVariableName* v);
-  UExpression(Type type, UVariableName* v, UExpression *e);
-  UExpression(Type type, UVariableName* v, UNamedParameters *p);
-  UExpression(Type type, UNamedParameters *p);
-  UExpression(Type type, UString *op, UString *id);
-  UExpression(Type type, UString *op, UVariableName *v);
+  UExpression(const location& l, Type type, UExpression* e1, UExpression* e2);
+  UExpression(const location& l, Type type, UVariableName* v);
+  UExpression(const location& l, Type type, UVariableName* v, UExpression *e);
+  UExpression(const location& l, Type type, UVariableName* v, UNamedParameters *p);
+  UExpression(const location& l, Type type, UNamedParameters *p);
+  UExpression(const location& l, Type type, UString *op, UString *id);
+  UExpression(const location& l, Type type, UString *op, UVariableName *v);
 
   /// The complete ctor, used for copies.
-  UExpression (Type type,
+  UExpression (const location& l,
+	       Type type,
 	       UExpression* expression1,
 	       UExpression* expression2,
 	       UVariableName* variablename,
@@ -114,8 +113,8 @@ public:
 	       UValue* tmp_value);
   ~UExpression();
 
-  void            print       ();
-  void            initialize  ();
+  void print ();
+  void initialize ();
 
   // Backward compatible version of eval.
   UValue*         eval        (UCommand *command,
@@ -172,15 +171,13 @@ public:
 
 private:
   /// eval() specialized for type == VARIABLE.
-  UValue* eval_VARIABLE (UCommand *command,
-			      UConnection *connection,
-			      UEventCompound*& ec);
+  UValue* eval_VARIABLE (UCommand *command, UConnection *connection,
+			 UEventCompound*& ec);
 
   /// eval() specialized for type == FUNCTION.
   UValue*
-  eval_FUNCTION (UCommand *command,
-		      UConnection *connection,
-		      UEventCompound*& ec);
+  eval_FUNCTION (UCommand *command, UConnection *connection,
+		 UEventCompound*& ec);
 };
 
 #endif

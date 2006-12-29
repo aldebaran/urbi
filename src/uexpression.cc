@@ -72,7 +72,9 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, ufloat val)
+UExpression::UExpression(const location& l,
+			 UExpression::Type type, ufloat val)
+ : UAst(l)
 {
   initialize();
 
@@ -89,7 +91,9 @@ UExpression::UExpression(UExpression::Type type, ufloat val)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, UString *str)
+UExpression::UExpression(const location& l,
+			 UExpression::Type type, UString *str)
+ : UAst(l)
 {
   initialize();
   this->str  = str;
@@ -103,7 +107,8 @@ UExpression::UExpression(UExpression::Type type, UString *str)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, UValue *v)
+UExpression::UExpression(const location& l, UExpression::Type type, UValue *v)
+ : UAst(l)
 {
   initialize();
 
@@ -127,9 +132,10 @@ UExpression::UExpression(UExpression::Type type, UValue *v)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UString *oper,
 			 UVariableName *variablename)
+ : UAst(l)
 {
   initialize();
   this->str	     = oper;
@@ -145,7 +151,9 @@ UExpression::UExpression(UExpression::Type type,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
+UExpression::UExpression(const location& l,
+			 UExpression::Type type, UVariableName* variablename)
+ : UAst(l)
 {
   initialize();
   this->type	 = type; // should be VARIABLE or
@@ -159,9 +167,10 @@ UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UVariableName* variablename,
 			 UNamedParameters *parameters)
+ : UAst(l)
 {
   initialize();
   this->type	     = type; // should be FUNCTION
@@ -174,8 +183,9 @@ UExpression::UExpression(UExpression::Type type,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UNamedParameters *parameters)
+  : UAst(l)
 {
   initialize();
   this->type	     = type; // should be LIST
@@ -184,9 +194,10 @@ UExpression::UExpression(UExpression::Type type,
 }
 
 //! UExpression constructor for composed operation
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UExpression* expression1,
 			 UExpression* expression2)
+ : UAst(l)
 {
   initialize();
   this->type	    = type;
@@ -247,16 +258,18 @@ UExpression::UExpression(UExpression::Type type,
 }
 
 //! UExpression constructor.
-UExpression::UExpression (UExpression::Type _type, UExpression* _expression1,
-			  UExpression* _expression2,
-			  UVariableName* _variablename,
-			  UNamedParameters* _parameters, UString* _str,
-			  UString* _id, UExpression* _softtest_time,
-			  UValue* _staticcache, UDataType _dataType,
-			  ufloat _val, bool _isconst,
-			  bool _issofttest, bool _firsteval,
-			  UValue* _tmp_value)
-  : type (_type), dataType (_dataType), val (_val), str (_str),
+UExpression::UExpression(const location& l,
+			 UExpression::Type _type, UExpression* _expression1,
+			 UExpression* _expression2,
+			 UVariableName* _variablename,
+			 UNamedParameters* _parameters, UString* _str,
+			 UString* _id, UExpression* _softtest_time,
+			 UValue* _staticcache, UDataType _dataType,
+			 ufloat _val, bool _isconst,
+			 bool _issofttest, bool _firsteval,
+			 UValue* _tmp_value)
+  : UAst(l),
+    type (_type), dataType (_dataType), val (_val), str (_str),
     tmp_value (_tmp_value), id (_id), firsteval (_firsteval),
     isconst (_isconst), issofttest (_issofttest),staticcache (_staticcache),
     expression1 (_expression1), expression2 (_expression2),
@@ -284,7 +297,8 @@ UExpression::~UExpression()
 UExpression*
 UExpression::copy() const
 {
-  return new UExpression (type, ucopy (expression1), ucopy (expression2),
+  return new UExpression (loc(),
+			  type, ucopy (expression1), ucopy (expression2),
 			  ucopy (variablename), ucopy (parameters),
 			  ucopy (str), ucopy (id), ucopy (softtest_time),
 			  ucopy (staticcache), dataType, val, isconst,
@@ -485,7 +499,7 @@ UExpression::eval (UCommand *command,
 	std::list<UString*>::iterator it = retr->second->members.begin();
 	if (it !=  retr->second->members.end())
 	{
-	  UExpression *e = new UExpression (GROUP, (*it)->copy());
+	  UExpression *e = new UExpression (loc(), GROUP, (*it)->copy());
 	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
@@ -507,7 +521,7 @@ UExpression::eval (UCommand *command,
 
 	while (it !=  retr->second->members.end())
 	{
-	  UExpression *e = new UExpression (GROUP, (*it)->copy());
+	  UExpression *e = new UExpression (loc(), GROUP, (*it)->copy());
 	  UValue* e2 = e->eval(command, connection);
 	  delete e;
 	  if (e2->dataType == DATA_VOID)
@@ -1240,7 +1254,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 	UBinary *b =
 	  new UBinary(loadQueue->dataSize(),
 		      new UNamedParameters
-		      (new UExpression(VALUE,
+		      (new UExpression(loc(), VALUE,
 				       new UString("wav")),
 		       0));
 	memcpy(b->buffer,

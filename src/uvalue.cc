@@ -324,19 +324,21 @@ UValue & UValue::operator = (const urbi::UBinary &b)
 
   dataType = DATA_BINARY;
   //Build named parameters list from getMessage() output
-  UNamedParameters * first=0;
-  UNamedParameters * last=0;
+  UNamedParameters* first=0;
+  UNamedParameters* last=0;
   std::stringstream str;
   str.str(b.getMessage());
-  std::string item;
   while (!!str)
   {
-    item = "";
+    std::string item = "";
     str >> item;
     if (item == "")
       break;
-    UNamedParameters * unp =
-      new UNamedParameters(0, new UExpression(UExpression::VALUE,
+    // FIXME: I don't understand what happens here, the location is
+    // a fake.
+    UNamedParameters* unp =
+      new UNamedParameters(0, new UExpression(UExpression::location(),
+					      UExpression::VALUE,
 					      new UString(item.c_str())));
     if (!first)
     {

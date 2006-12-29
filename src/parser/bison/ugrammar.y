@@ -177,9 +177,10 @@ new_bin(UParser& up,
 /// A new UExpression of type \c t and child \c t1.
 template <class T1>
 UExpression*
-new_exp (UParser& up, UExpression::Type t, T1* t1)
+new_exp (UParser& up, const yy::parser::location_type& l,
+	 UExpression::Type t, T1* t1)
 {
-  UExpression* res = new UExpression(t, t1);
+  UExpression* res = new UExpression(l, t, t1);
   memcheck(up, res, t1);
   return res;
 }
@@ -187,9 +188,10 @@ new_exp (UParser& up, UExpression::Type t, T1* t1)
 /// A new UExpression of type \c t and children \c t1, \c t2.
 template <class T1, class T2>
 UExpression*
-new_exp (UParser& up, UExpression::Type t, T1* t1, T2* t2)
+new_exp (UParser& up, const yy::parser::location_type& l,
+	 UExpression::Type t, T1* t1, T2* t2)
 {
-  UExpression* res = new UExpression(t, t1, t2);
+  UExpression* res = new UExpression(l, t, t1, t2);
   memcheck(up, res, t1, t2);
   return res;
 }
@@ -503,7 +505,7 @@ taggedcommand:
 flag:
   FLAG
   {
-    UExpression *flagval = new UExpression(UExpression::VALUE, take($1));
+    UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
     $$ = new UNamedParameters(new UString("flag"), flagval);
     memcheck(up, $$, flagval);
@@ -803,7 +805,7 @@ instruction:
   | "emit" "(" ")" purevariable {
 
       $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(UExpression::VALUE,
+      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
 							UINFINITY));
       memcheck(up, $$, $4);
     }
@@ -811,7 +813,7 @@ instruction:
   | "emit" "(" ")" purevariable "(" parameterlist ")" {
 
       $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(UExpression::VALUE,
+      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
       memcheck(up, $$, $4, $6);
     }
@@ -1293,31 +1295,31 @@ timeexpr:
 
 expr:
   NUM {
-    $$ = new UExpression(UExpression::VALUE, take($1));
+    $$ = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, $$);
   }
 
 | timeexpr {
-    $$ = new UExpression(UExpression::VALUE, take ($1));
+    $$ = new UExpression(@$, UExpression::VALUE, take ($1));
     memcheck(up, $$);
   }
 
 | STRING {
     memcheck(up, $1);
-    $$ = new UExpression(UExpression::VALUE, $1);
+    $$ = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, $$, $1);
   }
 
 | "[" parameterlist "]" {
 
-    $$ = new UExpression(UExpression::LIST, $2);
+    $$ = new UExpression(@2, UExpression::LIST, $2);
     memcheck(up, $$, $2);
   }
 
 | property {
 
-     $$ = new UExpression(UExpression::PROPERTY,
-			    $1->property, $1->variablename);
+    $$ = new UExpression(@$, UExpression::PROPERTY,
+			 $1->property, $1->variablename);
      memcheck(up, $$, $1);
   }
 
@@ -1329,33 +1331,33 @@ expr:
     //                 $1->id->str());
 
     $1->id_type = UDEF_FUNCTION;
-    $$ = new_exp(up, UExpression::FUNCTION, $1, $3);
+    $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }
 
-| "%" variable		{ $$ = new_exp(up, UExpression::ADDR_VARIABLE, $2); }
-| variable		{ $$ = new_exp(up, UExpression::VARIABLE, $1);      }
-| "group" "identifier"	{ $$ = new_exp(up, UExpression::GROUP, $2);         }
+| "%" variable         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
+| variable             { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
+| "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
 ;
 
 
   /* num expr */
 expr:
-    expr "+" expr	{ $$ = new_exp(up, UExpression::PLUS, $1, $3); }
-  | expr "-" expr	{ $$ = new_exp(up, UExpression::MINUS, $1, $3); }
-  | expr "*" expr	{ $$ = new_exp(up, UExpression::MULT, $1, $3); }
-  | expr "/" expr	{ $$ = new_exp(up, UExpression::DIV,  $1, $3); }
-  | expr "%" expr	{ $$ = new_exp(up, UExpression::MOD,  $1, $3); }
-  | expr "^" expr	{ $$ = new_exp(up, UExpression::EXP,  $1, $3); }
+    expr "+" expr	{ $$ = new_exp(up, @$, UExpression::PLUS,  $1, $3); }
+  | expr "-" expr	{ $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); }
+  | expr "*" expr	{ $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); }
+  | expr "/" expr	{ $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); }
+  | expr "%" expr	{ $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); }
+  | expr "^" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
 
   | TOK_COPY expr  %prec NEG {
 
-      $$ = new UExpression(UExpression::COPY, $2, 0);
+      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
     }
 
   | "-" expr %prec NEG {
 
-      $$ = new UExpression(UExpression::NEG, $2, 0);
+      $$ = new UExpression(@$, UExpression::NEG, $2, 0);
       memcheck(up, $$, $2);
     }
 
@@ -1382,26 +1384,26 @@ expr:
 ;
 
 expr:
-    "true"  { $$ = new UExpression(UExpression::VALUE, TRUE);  }
-  | "false" { $$ = new UExpression(UExpression::VALUE, FALSE); }
+    "true"  { $$ = new UExpression(@$, UExpression::VALUE, TRUE);  }
+  | "false" { $$ = new UExpression(@$, UExpression::VALUE, FALSE); }
 
-  | expr "=="  expr { $$ = new_exp(up, UExpression::TEST_EQ,  $1, $3); }
-  | expr "~="  expr { $$ = new_exp(up, UExpression::TEST_REQ, $1, $3); }
-  | expr "=~=" expr { $$ = new_exp(up, UExpression::TEST_DEQ, $1, $3); }
-  | expr "%="  expr { $$ = new_exp(up, UExpression::TEST_PEQ, $1, $3); }
-  | expr "!="  expr { $$ = new_exp(up, UExpression::TEST_NE,  $1, $3); }
-  | expr ">"   expr { $$ = new_exp(up, UExpression::TEST_GT,  $1, $3); }
-  | expr ">="  expr { $$ = new_exp(up, UExpression::TEST_GE,  $1, $3); }
-  | expr "<"   expr { $$ = new_exp(up, UExpression::TEST_LT,  $1, $3); }
-  | expr "<="  expr { $$ = new_exp(up, UExpression::TEST_LE,  $1, $3); }
+  | expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
+  | expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
+  | expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
+  | expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
+  | expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
+  | expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
+  | expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
+  | expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
+  | expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
 
   | "!" expr {
-      $$ = new UExpression(UExpression::TEST_BANG, $2, 0);
+      $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
       memcheck(up, $$, $2);
     }
 
-  | expr "&&" expr { $$ = new_exp(up, UExpression::TEST_AND, $1, $3); }
-  | expr "||" expr { $$ = new_exp(up, UExpression::TEST_OR,  $1, $3); }
+  | expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
+  | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 
 ;
 
@@ -1430,28 +1432,28 @@ parameters:
 
 rawparameters:
     NUM {
-      UExpression *expr = new UExpression(UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     }
 
   | "identifier" {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, $1);
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     }
 
   |  NUM rawparameters {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     }
 
   |  "identifier" rawparameters {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, $1);
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     }
@@ -1518,30 +1520,30 @@ class_declaration:
     "var" "identifier" {
 
       memcheck(up, $2);
-      $$ = new UExpression(UExpression::VALUE, $2);
+      $$ = new UExpression(@$, UExpression::VALUE, $2);
       memcheck(up, $$, $2);
     }
 
   | "function" variable "(" identifiers ")" {
       $2->id_type = UDEF_FUNCTION;
-      $$ = new_exp(up, UExpression::FUNCTION, $2, $4);
+      $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
     }
 
   | "function" variable {
       $2->id_type = UDEF_FUNCTION;
-      $$ = new UExpression(UExpression::FUNCTION, $2,
+      $$ = new UExpression(@$, UExpression::FUNCTION, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }
 
   | "event" variable "(" identifiers ")" {
       $2->id_type = UDEF_EVENT;
-      $$ = new_exp(up, UExpression::EVENT, $2, $4);
+      $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
     }
 
   | "event" variable {
       $2->id_type = UDEF_EVENT;
-      $$ = new UExpression(UExpression::EVENT, $2,
+      $$ = new UExpression(@$, UExpression::EVENT, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }

@@ -1,5 +1,12 @@
 2006-12-29  Akim Demaille  <akim.demaille@free.fr>
 
+	Attach locations to UExpressions
+	* src/uexpression.hh, src/uexpression.cc (UExpression): Derive
+	from UAst.
+	Adjust all uses.
+
+2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+
 	Remove useless prefix
 	* src/ucommand.hh: No need to specify UCommand:: where we're in it.
 	Besides, it actually comes from UAst.
