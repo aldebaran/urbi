@@ -110,16 +110,6 @@ enum UBindType
   UBIND_OBJECT
 };
 
-/// Type of defs in UCommand_DEF
-enum UDefType
-{
-  UDEF_FUNCTION,
-  UDEF_VAR,
-  UDEF_VARS,
-  UDEF_EVENT,
-  UDEF_QUERY
-};
-
 /// Type of Derivative
 enum UDeriveType
 {

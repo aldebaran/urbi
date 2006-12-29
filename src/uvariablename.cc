@@ -61,7 +61,6 @@ UVariableName::UVariableName(UString* device,
     fromGroup (false),
     firsttime (true),
     nostruct  (false),
-    id_type   (UDEF_VAR),
     local_scope  (false),
     doublecolon (false),
     // Protected.
@@ -95,7 +94,6 @@ UVariableName::UVariableName(UString* objname,
     fromGroup (false),
     firsttime (true),
     nostruct  (false),
-    id_type   (UDEF_VAR),
     local_scope  (false),
     doublecolon (false),
     fullname_ (0),
@@ -125,7 +123,6 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
     function  (0),
     firsttime (true),
     nostruct  (false),
-    id_type   (UDEF_VAR),
     local_scope  (false),
     doublecolon (false),
     fullname_ (0),
@@ -660,7 +657,6 @@ UVariableName::copy() const
   ret->varerror     = varerror;
   ret->fromGroup    = fromGroup;
   ret->nostruct     = nostruct;
-  ret->id_type      = id_type;
   ret->local_scope  = local_scope;
   ret->doublecolon  = doublecolon;
 

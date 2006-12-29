@@ -103,12 +103,10 @@ public:
 
   /// Before the first local function prefix resolution.
   bool         firsttime;
-  /// Is nostruct if it comes from a simple.  IDENTIFIER in the
-  /// parsing phase
+  /// Is nostruct if it comes from a simple IDENTIFIER in the parsing
+  /// phase
   bool         nostruct;
 
-  /// Type of the symbol: UDEF_FUNCTION, UDEF_VAR or UDEF_EVENT.
-  UDefType          id_type;
   /// Name resolution will be limited to local scope in functions.
   bool              local_scope;
   /// True when the :: construct is used.

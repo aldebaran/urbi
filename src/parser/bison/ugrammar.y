@@ -776,35 +776,30 @@ instruction:
 
   | "emit" purevariable {
 
-      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $2, 0);
       memcheck(up, $$, $2);
     }
 
   | "emit" purevariable "(" parameterlist ")" {
 
-      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $2, $4);
       memcheck(up, $$, $2, $4);
     }
 
   | "emit" "(" expr ")" purevariable {
 
-      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $5, 0, $3);
       memcheck(up, $$, $5, $3);
     }
 
   | "emit" "(" expr ")" purevariable "(" parameterlist ")" {
 
-      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
       memcheck(up, $$, $5, $7, $3);
     }
 
   | "emit" "(" ")" purevariable {
 
-      $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
 							UINFINITY));
       memcheck(up, $$, $4);
@@ -812,7 +807,6 @@ instruction:
 
   | "emit" "(" ")" purevariable "(" parameterlist ")" {
 
-      $4->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
       memcheck(up, $$, $4, $6);
@@ -838,27 +832,27 @@ instruction:
 
   | "def" {
 
-      $$ = new UCommand_DEF(@$, UDEF_QUERY, 0, 0, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
       memcheck(up, $$)
     }
 
   | "var" refvariable {
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
       memcheck(up, $$, $2)
     }
 
   | "def" refvariable {
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
       memcheck(up, $$, $2)
     }
 
   | "var" "{" refvariables "}" {
 
-    $$ = new UCommand_DEF(@$, UDEF_VARS, $3);
+    $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
       memcheck(up, $$, $3)
     }
 
@@ -878,16 +872,14 @@ instruction:
   | "event" variable "(" identifiers ")" {
 
       $2->local_scope = true;
-      $2->id_type = UDEF_EVENT;
-      $$ = new UCommand_DEF(@$, UDEF_EVENT, $2, $4, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
       memcheck(up, $$, $2, $4);
     }
 
   | "event" variable {
 
       $2->local_scope = true;
-      $2->id_type = UDEF_EVENT;
-      $$ = new UCommand_DEF(@$, UDEF_EVENT, $2, 0, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
@@ -911,8 +903,7 @@ instruction:
 
     } taggedcommand {
 
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(@$, UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
 
       memcheck(up, $$, $2, $4);
       if (up.connection.functionTag)
@@ -945,8 +936,7 @@ instruction:
 
     } taggedcommand {
 
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(@$, UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
 
       memcheck(up, $$, $2, $4);
       if (up.connection.functionTag)
@@ -1330,7 +1320,6 @@ expr:
     //  $1->nameUpdate(up.connection.connectionTag->str(),
     //                 $1->id->str());
 
-    $1->id_type = UDEF_FUNCTION;
     $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }
 
@@ -1525,24 +1514,20 @@ class_declaration:
     }
 
   | "function" variable "(" identifiers ")" {
-      $2->id_type = UDEF_FUNCTION;
       $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
     }
 
   | "function" variable {
-      $2->id_type = UDEF_FUNCTION;
       $$ = new UExpression(@$, UExpression::FUNCTION, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }
 
   | "event" variable "(" identifiers ")" {
-      $2->id_type = UDEF_EVENT;
       $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
     }
 
   | "event" variable {
-      $2->id_type = UDEF_EVENT;
       $$ = new UExpression(@$, UExpression::EVENT, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);

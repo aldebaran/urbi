@@ -828,6 +828,16 @@ class UCommand_DEF : public UCommand
 public:
   MEMORY_MANAGED;
 
+  /// Type of definitions.
+  enum UDefType
+  {
+    UDEF_FUNCTION,
+    UDEF_VAR,
+    UDEF_VARS,
+    UDEF_EVENT,
+    UDEF_QUERY
+  };
+
   UCommand_DEF (const location& l,
 		UDefType deftype,
 		UVariableName* variablename,

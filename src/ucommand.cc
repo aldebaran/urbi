@@ -49,7 +49,6 @@
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
 #include "userver.hh"
-#include "utypes.hh"
 #include "uvariable.hh"
 
 namespace
@@ -300,7 +299,6 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	clonename->deriv = varname->deriv;
 	clonename->varerror = varname->varerror;
 	clonename->nostruct = varname->nostruct;
-	clonename->id_type = varname->id_type;
 	clonename->local_scope = varname->local_scope;
 	gplist = new UCommand_TREE(location(), Flavorable::UAND, clone, gplist);
       }
@@ -5023,7 +5021,7 @@ UCommand_CLASS::execute_(UConnection*)
       switch (param->expression->type)
       {
 	case UExpression::VALUE:
-	  cdef = new UCommand_DEF(loc_, UDEF_VAR,
+	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_VAR,
 				  new UVariableName(
 				    new UString(object),
 				    new UString(param->expression->str),
@@ -5033,7 +5031,7 @@ UCommand_CLASS::execute_(UConnection*)
 				  0);
 	  break;
 	case UExpression::FUNCTION:
-	  cdef = new UCommand_DEF(loc_, UDEF_FUNCTION,
+	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_FUNCTION,
 				  new UVariableName(
 				    new UString(object),
 				    new UString(param->expression->variablename->id),
@@ -5043,7 +5041,7 @@ UCommand_CLASS::execute_(UConnection*)
 				  0);
 	  break;
 	case UExpression::EVENT:
-	  cdef = new UCommand_DEF(loc_, UDEF_EVENT,
+	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_EVENT,
 				  new UVariableName(
 				    new UString(object),
 				    new UString(param->expression->variablename->id),
