@@ -1,5 +1,13 @@
 2006-12-29  Akim Demaille  <akim.demaille@free.fr>
 
+	More send_error
+	None of these are exercised by the test suite...
+	* src/ucommand.hh (send_error): Now exported.
+	* src/ucommand.cc: Adjust.
+	* src/uvariablename.cc: Use it.
+
+2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+
 	UVariableName::UDeriveType
 	* src/utypes.hh (UDeriveType): Move to...
 	* src/uvariablename.hh: here.

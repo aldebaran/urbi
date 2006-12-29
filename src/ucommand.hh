@@ -1138,4 +1138,22 @@ public:
   virtual UCommand* copy() const;
 };
 
+
+/*--------------------------.
+| Free standing functions.  |
+`--------------------------*/
+
+/// Report an error, with "!!! " prepended, and "\n" appended.
+/// \param c     the connection to which the message is sent.
+/// \param cmd   the command whose tag will be used.
+/// \param fmt   printf-format string.
+/// \param args  its arguments.
+UErrorValue
+send_error (UConnection* c, const UCommand* cmd,
+	    const char* fmt, va_list args);
+
+UErrorValue
+send_error (UConnection* c, const UCommand* cmd,
+	    const char* fmt, ...);
+
 #endif

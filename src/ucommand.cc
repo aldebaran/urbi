@@ -51,6 +51,32 @@
 #include "userver.hh"
 #include "uvariable.hh"
 
+/// Report an error, with "!!! " prepended, and "\n" appended.
+/// \param c     the connection to which the message is sent.
+/// \param cmd   the command whose tag will be used.
+/// \param fmt   printf-format string.
+/// \param args  its arguments.
+UErrorValue
+send_error (UConnection* c, const UCommand* cmd,
+	    const char* fmt, va_list args)
+{
+  std::ostringstream o;
+  // FIXME: This is really bad if file names have %.  We need
+  // something more robust (such using real C++ here instead of C
+  // buffers).
+  o << "!!! " << cmd->loc() << ": " << fmt << '\n';
+  return c->sendf (cmd->getTag(), o.str ().c_str(), args);
+}
+
+UErrorValue
+send_error (UConnection* c, const UCommand* cmd,
+	    const char* fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  return send_error (c, cmd, fmt, args);
+}
+
 namespace
 {
   /// A buffer type.
@@ -65,33 +91,6 @@ namespace
       strcat(tabb, " ");
     return tabb;
   }
-
-  /// Report an error, with "!!! " prepended, and "\n" appended.
-  /// \param c     the connection to which the message is sent.
-  /// \param cmd   the command whose tag will be used.
-  /// \param fmt   printf-format string.
-  /// \param args  its arguments.
-  UErrorValue
-  send_error (UConnection* c, const UCommand* cmd,
-	      const char* fmt, va_list args)
-  {
-    std::ostringstream o;
-    // FIXME: This is really bad if file names have %.  We need
-    // something more robust (such using real C++ here instead of C
-    // buffers).
-    o << "!!! " << cmd->loc() << ": " << fmt << '\n';
-    return c->sendf (cmd->getTag(), o.str ().c_str(), args);
-  }
-
-  UErrorValue
-  send_error (UConnection* c, const UCommand* cmd,
-	      const char* fmt, ...)
-  {
-    va_list args;
-    va_start(args, fmt);
-    return send_error (c, cmd, fmt, args);
-  }
-
 
   /// Send debugging messages via the server.
   void
