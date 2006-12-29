@@ -264,7 +264,7 @@ take (T* t)
   TOK_MULT         "*"
   TOK_NEW          "new"
   TOK_NOOP         "noop"
-  TOK_NORM         "normalized"
+  TOK_NORM         "'n"
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
   TOK_ONLY         "only"
@@ -1201,16 +1201,16 @@ purevariable:
 ;
 
 variable:
-  purevariable			{ $$ = $1;				}
-| "static" purevariable		{ $$ = $2; $$->isstatic = true;		}
-| purevariable TOK_NORM		{ $$ = $1; $$->isnormalized = true;	}
-| purevariable TOK_VARERROR	{ $$ = $1; $$->varerror = true;		}
-| purevariable TOK_VARIN	{ $$ = $1; $$->varin = true;		}
-| purevariable TOK_VAROUT	{ $$ = $1;				}
-| purevariable TOK_DERIV	{ $$ = $1; $$->deriv = UDERIV;		}
-| purevariable TOK_DERIV2	{ $$ = $1; $$->deriv = UDERIV2;		}
-| purevariable TOK_TRUEDERIV	{ $$ = $1; $$->deriv = UTRUEDERIV;	}
-| purevariable TOK_TRUEDERIV2	{ $$ = $1; $$->deriv = UTRUEDERIV2;	}
+  purevariable		{ $$ = $1;				}
+| "static" purevariable	{ $$ = $2; $$->isstatic = true;		}
+| purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
+| purevariable "'e"	{ $$ = $1; $$->varerror = true;		}
+| purevariable "'in"	{ $$ = $1; $$->varin = true;		}
+| purevariable "'out"	{ $$ = $1;				}
+| purevariable "'"	{ $$ = $1; $$->deriv = UVariableName::UDERIV;	  }
+| purevariable "''"	{ $$ = $1; $$->deriv = UVariableName::UDERIV2;	  }
+| purevariable "'d"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; }
+| purevariable "'dd"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;}
 ;
 
 refvariable:

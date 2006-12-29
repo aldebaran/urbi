@@ -110,17 +110,6 @@ enum UBindType
   UBIND_OBJECT
 };
 
-/// Type of Derivative
-enum UDeriveType
-{
-  UNODERIV,
-  UDERIV,
-  UDERIV2,
-  UTRUEDERIV,
-  UTRUEDERIV2
-};
-
-
 /// Results of a test
 enum UTestResult
 {

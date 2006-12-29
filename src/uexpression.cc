@@ -1709,23 +1709,24 @@ UExpression::eval_VARIABLE (UCommand *command,
 	(variable->rangemax - variable->rangemin);
     }
 
-    if (variablename->deriv != UNODERIV)
+    if (variablename->deriv != UVariableName::UNODERIV)
     {
       if (variable->autoUpdate)
       {
-	if (variablename->deriv == UTRUEDERIV)
-	  variablename->deriv = UDERIV;
-	if (variablename->deriv == UTRUEDERIV2)
-	  variablename->deriv = UDERIV2;
+	if (variablename->deriv == UVariableName::UTRUEDERIV)
+	  variablename->deriv = UVariableName::UDERIV;
+	if (variablename->deriv == UVariableName::UTRUEDERIV2)
+	  variablename->deriv = UVariableName::UDERIV2;
       }
 
       switch (variablename->deriv)
       {
-	case UDERIV:
+	case UVariableName::UDERIV:
 	  ret->val = 1000. * (variable->previous - variable->previous2)/
 	    (::urbiserver->previousTime - ::urbiserver->previous2Time);
 	  break;
-	case UDERIV2: ret->val = 1000000. * 2 *
+	case UVariableName::UDERIV2:
+	  ret->val = 1000000. * 2 *
 	    ( variable->previous  * (::urbiserver->previous2Time-
 				     ::urbiserver->previous3Time)
 	      - variable->previous2 *(::urbiserver->previousTime-
@@ -1742,12 +1743,14 @@ UExpression::eval_VARIABLE (UCommand *command,
 			  - ::urbiserver->previous2Time) );
 
 	  break;
-	case UTRUEDERIV: ret->val = 1000. *
+	case UVariableName::UTRUEDERIV:
+	  ret->val = 1000. *
 	    (variable->get()->val - variable->valPrev)/
 	    (::urbiserver->currentTime
 	     - ::urbiserver->previousTime);
 	  break;
-	case UTRUEDERIV2: ret->val = 1000000. * 2 *
+	case UVariableName::UTRUEDERIV2:
+	  ret->val = 1000000. * 2 *
 	    ( variable->get()->val	*
 	      (::urbiserver->previousTime -
 	       ::urbiserver->previous2Time) -
