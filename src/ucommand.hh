@@ -23,6 +23,7 @@
 # define UCOMMAND_HH
 
 # include <list>
+# include <cstdarg>
 
 # include "libport/fwd.hh"
 

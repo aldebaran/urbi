@@ -1,3 +1,8 @@
+2006-12-29  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	Fix includes.
+	* src/ucommand.hh: include cstdarg.
+
 2006-12-29  Akim Demaille  <akim.demaille@free.fr>
 
 	Nuke two warnings
