@@ -1,5 +1,11 @@
 2006-12-29  Akim Demaille  <akim.demaille@free.fr>
 
+	Remove useless prefix
+	* src/ucommand.hh: No need to specify UCommand:: where we're in it.
+	Besides, it actually comes from UAst.
+
+2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+
 	Fix location tracking
 	When load is executed, we must preserve the current location.
 	* src/parser/uparser.cc (UParser::process_): When loading a file

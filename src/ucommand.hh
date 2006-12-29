@@ -210,7 +210,7 @@ class UCommand_TREE : public UCommand, public Flavorable
 public:
   MEMORY_MANAGED;
 
-  UCommand_TREE(const UCommand::location& l, UNodeType flavor,
+  UCommand_TREE(const location& l, UNodeType flavor,
 		UCommand* command1, UCommand* command2);
   virtual ~UCommand_TREE();
 
@@ -239,7 +239,7 @@ class UCommand_ASSIGN_VALUE : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_VALUE(const UCommand::location& l,
+  UCommand_ASSIGN_VALUE(const location& l,
 			UVariableName* variablename,
 			UExpression* expression,
 			UNamedParameters* parameters,
@@ -337,7 +337,7 @@ class UCommand_ASSIGN_BINARY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_BINARY(const UCommand::location& l,
+  UCommand_ASSIGN_BINARY(const location& l,
 			 UVariableName* variablename,
 			 libport::RefPt<UBinary>* refBinary);
   virtual ~UCommand_ASSIGN_BINARY();
@@ -370,7 +370,7 @@ class UCommand_ASSIGN_PROPERTY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ASSIGN_PROPERTY(const UCommand::location& l,
+  UCommand_ASSIGN_PROPERTY(const location& l,
 			   UVariableName* variablename,
 			   UString* oper,
 			   UExpression* expression);
@@ -406,7 +406,7 @@ class UCommand_AUTOASSIGN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_AUTOASSIGN (const UCommand::location& l,
+  UCommand_AUTOASSIGN (const location& l,
 		       UVariableName* variablename,
 		       UExpression* expression,
 		       int assigntype);
@@ -431,7 +431,7 @@ class UCommand_EXPR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EXPR(const UCommand::location& l, UExpression* expression);
+  UCommand_EXPR(const location& l, UExpression* expression);
   virtual ~UCommand_EXPR();
 
   virtual void print_(unsigned l) const;
@@ -452,7 +452,7 @@ class UCommand_RETURN : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_RETURN(const UCommand::location& l, UExpression* e);
+  UCommand_RETURN(const location& l, UExpression* e);
   virtual ~UCommand_RETURN();
 
   virtual void print_(unsigned l) const;
@@ -470,7 +470,7 @@ class UCommand_ECHO : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ECHO(const UCommand::location& l,
+  UCommand_ECHO(const location& l,
 		UExpression* expression,
 		UNamedParameters* parameters,
 		UString* connectionTag);
@@ -494,7 +494,7 @@ class UCommand_NEW : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_NEW(const UCommand::location& l,
+  UCommand_NEW(const location& l,
 	       UVariableName* varname,
 	       UString* obj,
 	       UNamedParameters* parameters,
@@ -527,7 +527,7 @@ class UCommand_ALIAS : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_ALIAS (const UCommand::location& l,
+  UCommand_ALIAS (const location& l,
 		  UVariableName* aliasname,
 		  UVariableName* id,
 		  bool eraseit=false);
@@ -552,7 +552,7 @@ class UCommand_INHERIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_INHERIT (const UCommand::location& l,
+  UCommand_INHERIT (const location& l,
 		    UVariableName* subclass,
 		    UVariableName* theclass,
 		    bool eraseit=false);
@@ -577,7 +577,7 @@ class UCommand_GROUP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_GROUP(const UCommand::location& l,
+  UCommand_GROUP(const location& l,
 		 UString* id,
 		 UNamedParameters* parameters,
 		 int grouptype = 0);
@@ -603,7 +603,7 @@ class UCommand_OPERATOR_ID : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_OPERATOR_ID (const UCommand::location& l,
+  UCommand_OPERATOR_ID (const location& l,
 			UString* oper,
 			UString* id);
   virtual ~UCommand_OPERATOR_ID();
@@ -624,7 +624,7 @@ class UCommand_DEVICE_CMD : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_DEVICE_CMD  (const UCommand::location& l,
+  UCommand_DEVICE_CMD  (const location& l,
 			UVariableName* device,
 			ufloat* cmd);
   virtual ~UCommand_DEVICE_CMD();
@@ -649,7 +649,7 @@ class UCommand_OPERATOR_VAR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_OPERATOR_VAR (const UCommand::location& l,
+  UCommand_OPERATOR_VAR (const location& l,
 			 UString* oper,
 			 UVariableName* variablename);
   virtual ~UCommand_OPERATOR_VAR();
@@ -674,7 +674,7 @@ class UCommand_BINDER : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_BINDER (const UCommand::location& l,
+  UCommand_BINDER (const location& l,
 		   UVariableName* objname,
 		   UString* binder,
 		   int type,
@@ -705,7 +705,7 @@ class UCommand_OPERATOR : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_OPERATOR (const UCommand::location& l, UString* oper);
+  UCommand_OPERATOR (const location& l, UString* oper);
   virtual ~UCommand_OPERATOR ();
 
   virtual void print_(unsigned l) const;
@@ -722,7 +722,7 @@ class UCommand_WAIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WAIT(const UCommand::location& l, UExpression* expression);
+  UCommand_WAIT(const location& l, UExpression* expression);
   virtual ~UCommand_WAIT();
 
   virtual void print_(unsigned l) const;
@@ -742,7 +742,7 @@ class UCommand_EMIT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EMIT(const UCommand::location& l, UVariableName* eventname,
+  UCommand_EMIT(const location& l, UVariableName* eventname,
 		UNamedParameters* parameters, UExpression* duration=0);
   virtual ~UCommand_EMIT();
 
@@ -777,7 +777,7 @@ class UCommand_WAIT_TEST : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_WAIT_TEST(const UCommand::location& l, UExpression* test);
+  UCommand_WAIT_TEST(const location& l, UExpression* test);
   virtual ~UCommand_WAIT_TEST();
 
   virtual void print_(unsigned l) const;
@@ -806,7 +806,7 @@ class UCommand_INCDECREMENT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_INCDECREMENT(const UCommand::location& l,
+  UCommand_INCDECREMENT(const location& l,
 			Type type, UVariableName* variablename);
   virtual ~UCommand_INCDECREMENT();
   virtual UVariableName** refVarName ()
@@ -828,16 +828,16 @@ class UCommand_DEF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_DEF (const UCommand::location& l,
+  UCommand_DEF (const location& l,
 		UDefType deftype,
 		UVariableName* variablename,
 		UNamedParameters* parameters,
 		UCommand* command);
-  UCommand_DEF (const UCommand::location& l,
+  UCommand_DEF (const location& l,
 		UDefType deftype,
 		UString* device,
 		UNamedParameters* parameters);
-  UCommand_DEF (const UCommand::location& l,
+  UCommand_DEF (const location& l,
 		UDefType deftype,
 		UVariableList* variablelist);
 
@@ -868,7 +868,7 @@ class UCommand_CLASS : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_CLASS (const UCommand::location& l, UString* object,
+  UCommand_CLASS (const location& l, UString* object,
 		  UNamedParameters* parameters);
 
   virtual ~UCommand_CLASS();
@@ -890,7 +890,7 @@ class UCommand_IF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_IF (const UCommand::location& l, UExpression* test,
+  UCommand_IF (const location& l, UExpression* test,
 	       UCommand* command1, UCommand* command2);
   virtual ~UCommand_IF();
 
@@ -912,7 +912,7 @@ class UCommand_EVERY : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_EVERY (const UCommand::location& l,
+  UCommand_EVERY (const location& l,
 		  UExpression* duration,
 		  UCommand* command);
   virtual ~UCommand_EVERY();
@@ -938,7 +938,7 @@ class UCommand_TIMEOUT : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_TIMEOUT (const UCommand::location& l,
+  UCommand_TIMEOUT (const location& l,
 		    UExpression* duration,
 		    UCommand* command);
   virtual ~UCommand_TIMEOUT();
@@ -961,7 +961,7 @@ class UCommand_STOPIF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_STOPIF (const UCommand::location& l,
+  UCommand_STOPIF (const location& l,
 		   UExpression* condition,
 		   UCommand* command);
   virtual ~UCommand_STOPIF();
@@ -984,7 +984,7 @@ class UCommand_FREEZEIF : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_FREEZEIF (const UCommand::location& l,
+  UCommand_FREEZEIF (const location& l,
 		     UExpression* condition,
 		     UCommand* command);
   virtual ~UCommand_FREEZEIF();
@@ -1006,7 +1006,7 @@ class UCommand_WHILE : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
-  UCommand_WHILE (const UCommand::location& l, UNodeType flavor,
+  UCommand_WHILE (const location& l, UNodeType flavor,
 		  UExpression* test, UCommand* command);
   virtual ~UCommand_WHILE();
 
@@ -1026,7 +1026,7 @@ class UCommand_LOOP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOP (const UCommand::location& l, UCommand* command);
+  UCommand_LOOP (const location& l, UCommand* command);
   virtual ~UCommand_LOOP();
 
   virtual void print_(unsigned l) const;
@@ -1045,7 +1045,7 @@ class UCommand_LOOPN : public UCommand, public Flavorable
 public:
   MEMORY_MANAGED;
 
-  UCommand_LOOPN (const UCommand::location& l, UNodeType flavor,
+  UCommand_LOOPN (const location& l, UNodeType flavor,
 		  UExpression* expression, UCommand* command);
   virtual ~UCommand_LOOPN();
 
@@ -1064,7 +1064,7 @@ class UCommand_FOREACH : public UCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
-  UCommand_FOREACH (const UCommand::location& l, UNodeType flavor,
+  UCommand_FOREACH (const location& l, UNodeType flavor,
 		    UVariableName* variablename,
 		    UExpression* expression,
 		    UCommand* command);
@@ -1092,7 +1092,7 @@ class UCommand_FOR : public UCommand, public Flavorable
 public:
   MEMORY_MANAGED;
 
-  UCommand_FOR (const UCommand::location& l, UNodeType flavor,
+  UCommand_FOR (const location& l, UNodeType flavor,
 		UCommand* instr1, UExpression* test, UCommand* instr2,
 		UCommand* command);
   virtual ~UCommand_FOR();
@@ -1119,7 +1119,7 @@ class UCommand_NOOP : public UCommand
 public:
   MEMORY_MANAGED;
 
-  UCommand_NOOP(const UCommand::location& l, bool zerotime = false);
+  UCommand_NOOP(const location& l, bool zerotime = false);
   virtual ~UCommand_NOOP();
 
   virtual void print_(unsigned l) const;
