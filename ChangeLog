@@ -1,5 +1,10 @@
 2006-12-29  Akim Demaille  <akim.demaille@free.fr>
 
+	Use abort to please gcc
+	* src/ucomplaints.cc: instead of continuing the execution.
+
+2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+
 	More send_error
 	None of these are exercised by the test suite...
 	* src/ucommand.hh (send_error): Now exported.
