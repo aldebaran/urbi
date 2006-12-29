@@ -1,5 +1,0 @@
-#!/bin/sh
-rm -f *.hh
-rm -f *.hxx
-rm -f *.cc
-rm -f *.mk

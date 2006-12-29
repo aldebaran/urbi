@@ -67,6 +67,11 @@ Ast:
         type: location
         access: rW
         desc: Scanner position information
+    - up:
+        type: 'Ast*'
+        init: '0'
+        access: rW
+        desc: Parent node
 
 Exp:
   super: Ast

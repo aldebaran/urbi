@@ -13,7 +13,7 @@ include $(top_srcdir)/libport/libport.mk
 
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = src tests doc .
+SUBDIRS = src src/ast tests doc .
 
 # build-aux.
 EXTRA_DIST +=					\

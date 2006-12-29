@@ -10,7 +10,7 @@ then
   echo "" > visitor.hh
 fi
 
-
+../../dev/ast-nodes-mk-gen < ast.yml > ast-nodes.mk
 ../../dev/ast-fwd-gen . < ast.yml
 ../../dev/ast-fwd-gen . < ast.yml
 ../../dev/ast-visitor-gen . < ast.yml

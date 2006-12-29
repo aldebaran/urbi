@@ -1,5 +1,37 @@
 2006-12-29  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Ignore the .cc/.hh/.hxx changes, they are the result of 'generate'.
+	The build process is bOrken, need fix.
+
+	attempt to include ast in the build process. Fail
+	* Makefile.am: add src/ast to SUBDIRS.
+	* configure.ac: add src/ast Makefile.
+	* src/ast/Makefile.am: New.
+	* src/ast/assign-exp.cc: New.
+	* src/ast/assign-exp.hh: New.
+	* src/ast/assign-exp.hxx: New.
+	* src/ast/ast-nodes.mk: New.
+	* src/ast/ast.cc: New.
+	* src/ast/ast.hh: New.
+	* src/ast/ast.hxx: New.
+	* src/ast/ast.yml: minor changes.
+	* src/ast/clean: Remove.
+	* src/ast/exp.cc: New.
+	* src/ast/exp.hh: New.
+	* src/ast/exp.hxx: New.
+	* src/ast/fwd.hh: New.
+	* src/ast/generate: add generation of ast-nodes.mk.
+	* src/ast/int-exp.cc: New.
+	* src/ast/int-exp.hh: New.
+	* src/ast/int-exp.hxx: New.
+	* src/ast/location.hh: New.
+	* src/ast/var.cc: New.
+	* src/ast/var.hh: New.
+	* src/ast/var.hxx: New.
+	* src/ast/visitor.hh: New.
+
+2006-12-29  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	add misc namespace for const selectors
 	* misc/select-const.hh: New.
 	* misc: New.
