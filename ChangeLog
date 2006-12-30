@@ -1,5 +1,12 @@
 2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	add *.stamp files 
+	* src/ast/ast-fwd-gen.stamp: New.
+	* src/ast/ast-nodes-gen.stamp: New.
+	* src/ast/ast-visitor-gen.stamp: New.
+
+2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	The was tricky problems because there is also a location.hh in
 	$(builddir) and I didn't find anything more clever than renaming it
 	since ast/location.hh was including... location.hh (which turned out
