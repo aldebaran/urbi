@@ -12,7 +12,7 @@
 namespace ast
 {
 
-  Ast::Ast (const location& location):
+  Ast::Ast (const loc& location):
     location_ (location),
     up_ (0)
   { }

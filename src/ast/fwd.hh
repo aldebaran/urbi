@@ -11,7 +11,6 @@
 
 # include <list>
 # include "misc/fwd.hh"
-# include "misc/xalloc.hh"
 
 namespace ast
 {
@@ -23,6 +22,7 @@ namespace ast
   class Var;
 
 
+/*
   // From decs.hh.
   class Decs;
 
@@ -40,6 +40,7 @@ namespace ast
   typedef std::list<Exp*> exps_type;
   typedef std::list<FieldInit*> fieldinits_type;
   typedef std::list<Field*> fields_type;
+*/
 
   template <template <typename> class Const>
   class GenVisitor;

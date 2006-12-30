@@ -12,7 +12,7 @@
 namespace ast
 {
 
-  Exp::Exp (const location& location):
+  Exp::Exp (const loc& location):
     Ast (location)
   { }
 

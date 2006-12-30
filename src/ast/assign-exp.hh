@@ -22,7 +22,7 @@ namespace ast
      ** \{ */
      public:
     /// Construct an AssignExp node.
-    AssignExp (const location& location, Var* var, Exp* exp);
+    AssignExp (const loc& location, Var* var, Exp* exp);
     /// Destroy an AssignExp node.
     virtual ~AssignExp ();
     /** \} */

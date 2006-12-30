@@ -21,7 +21,7 @@ namespace ast
      ** \{ */
      public:
     /// Construct a Var node.
-    Var (const location& location);
+    Var (const loc& location);
     /// Destroy a Var node.
     virtual ~Var ();
     /** \} */

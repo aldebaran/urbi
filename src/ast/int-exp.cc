@@ -12,7 +12,7 @@
 namespace ast
 {
 
-  IntExp::IntExp (const location& location, int value):
+  IntExp::IntExp (const loc& location, int value):
     Exp (location),
     value_ (value)
   { }

@@ -1,5 +1,6 @@
 ## Process this file with automake --
 include $(srcdir)/ast-nodes.mk
+AM_CPPFLAGS = -I$(srcdir)/.. -I..
 
 EXTRA_DIST = ast.yml
 BUILT_SOURCES = $(BUILT_SOURCES_local)
@@ -8,6 +9,7 @@ BUILT_SOURCES = $(BUILT_SOURCES_local)
 BUILT_SOURCES_local =				\
 	fwd.hh					\
 	visitor.hh				\
+	loc.hh                                  \
 	$(AST_NODES)
 
 gen_dir = $(top_srcdir)/dev
@@ -43,14 +45,6 @@ $(srcdir)/ast-nodes-gen.stamp: $(gen_dir)/ast-nodes-gen $(ast_gen_deps)
 	@mv -f $@.tmp $@
 $(AST_NODES): ast-nodes-gen.stamp
 
-$(srcdir)/README: $(gen_dir)/ast-readme-gen $(ast_gen_deps)
-	$(gen_dir)/ast-readme-gen < $(srcdir)/ast.yml >$@.tmp
-	mv -f $@.tmp $@
-
-$(srcdir)/README.student: $(gen_dir)/ast-readme-gen $(ast_gen_deps)
-	$(gen_dir)/ast-readme-gen --student < $(srcdir)/ast.yml >$@.tmp
-	mv -f $@.tmp $@
-
 $(srcdir)/ast.dot: $(gen_dir)/ast-graph-gen $(ast_gen_deps)
 	$(gen_dir)/ast-graph-gen < $(srcdir)/ast.yml >$@.tmp
 	mv -f $@.tmp $@
@@ -59,9 +53,9 @@ MAINTAINERCLEANFILES = $(BUILT_SOURCES_local)
 
 noinst_LTLIBRARIES = libast.la
 libast_la_SOURCES =					\
-	location.hh					\
 	fwd.hh						\
 	visitor.hh					\
+	loc.hh                                          \
 	$(AST_NODES)					\
 	visitor.hxx					
 

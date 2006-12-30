@@ -14,13 +14,13 @@
 namespace ast
 {
 
-  inline const location&
+  inline const loc&
   Ast::location_get () const
   {
     return location_;
   }
   inline void
-  Ast::location_set (const location& location)
+  Ast::location_set (const loc& location)
   {
     location_ = location;
   }

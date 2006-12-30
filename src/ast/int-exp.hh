@@ -21,7 +21,7 @@ namespace ast
      ** \{ */
      public:
     /// Construct an IntExp node.
-    IntExp (const location& location, int value);
+    IntExp (const loc& location, int value);
     /// Destroy an IntExp node.
     virtual ~IntExp ();
     /** \} */

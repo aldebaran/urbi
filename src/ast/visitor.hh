@@ -37,9 +37,11 @@ namespace ast
     virtual void operator() (typename Const<IntExp>::type&) = 0;
     virtual void operator() (typename Const<Var>::type&) = 0;
 
+/*
     virtual void operator() (typename Const<FunctionDecs>::type&) = 0;
     virtual void operator() (typename Const<VarDecs>::type&) = 0;
     virtual void operator() (typename Const<TypeDecs>::type&) = 0;
+*/
   };
 
   /// Shorthand for a const visitor.

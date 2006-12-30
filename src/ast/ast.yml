@@ -64,7 +64,7 @@ Ast:
     header prologue: '# include "ast/fwd.hh"'
   attributes:
     - location:
-        type: location
+        type: loc
         access: rW
         desc: Scanner position information
     - up:

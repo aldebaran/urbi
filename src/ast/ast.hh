@@ -10,7 +10,7 @@
 # define AST_AST_HH
 
 # include "ast/fwd.hh"
-# include "ast/location.hh"
+# include "ast/loc.hh"
 # include "ast/ast.hh"
 
 namespace ast
@@ -23,7 +23,7 @@ namespace ast
      ** \{ */
      public:
     /// Construct an Ast node.
-    Ast (const location& location);
+    Ast (const loc& location);
     /// Destroy an Ast node.
     virtual ~Ast ();
     /** \} */
@@ -41,9 +41,9 @@ namespace ast
      ** \{ */
   public:
     /// Return scanner position information.
-    const location& location_get () const;
+    const loc& location_get () const;
     /// Set scanner position information.
-    void location_set (const location&);
+    void location_set (const loc&);
     /// Return parent node.
     const Ast& up_get () const;
     /// Set parent node.
@@ -52,7 +52,7 @@ namespace ast
 
   protected:
     /// Scanner position information.
-    location location_;
+    loc location_;
     /// Parent node.
     Ast* up_;
   };

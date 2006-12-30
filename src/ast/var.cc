@@ -12,7 +12,7 @@
 namespace ast
 {
 
-  Var::Var (const location& location):
+  Var::Var (const loc& location):
     Exp (location)
   { }
 

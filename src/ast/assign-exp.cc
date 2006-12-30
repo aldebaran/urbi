@@ -12,7 +12,7 @@
 namespace ast
 {
 
-  AssignExp::AssignExp (const location& location, Var* var, Exp* exp):
+  AssignExp::AssignExp (const loc& location, Var* var, Exp* exp):
     Exp (location),
     var_ (var),
     exp_ (exp)

@@ -1,5 +1,28 @@
 2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Regenerate the tree, fix Makefile.am files and proper svn:ignore
+	fix the build process
+	* src/Makefile.am: add misc directory.
+	* src/ast/Makefile.am: add loc.hh and -I directives to look for
+	src/location.hh.
+	* src/ast/assign-exp.cc: regenerated.
+	* src/ast/assign-exp.hh: regenerated.
+	* src/ast/ast.cc: regenerated.
+	* src/ast/ast.hh: regenerated.
+	* src/ast/ast.hxx: regenerated.
+	* src/ast/ast.yml: change location type to loc.
+	* src/ast/exp.cc: regenerated.
+	* src/ast/exp.hh: regenerated.
+	* src/ast/fwd.hh: regenerated. 
+	* src/ast/generate: remove doublon ast-fwd-gen.
+	* src/ast/int-exp.cc: regenerated.
+	* src/ast/int-exp.hh: regenerated.
+	* src/ast/var.cc: regenerated.
+	* src/ast/var.hh: regenerated.
+	* src/ast/visitor.hh: regenerated.
+
+2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Generation files where tailored for tiger and added some currently
 	unecessary or prematured features blocking the compilation process.
 	fix generation process 
