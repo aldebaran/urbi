@@ -62,9 +62,11 @@ for node in arr:
     print "    virtual void operator() (typename Const<" \
 	  + node.name + ">::type&) = 0;"
 print """
+/*
     virtual void operator() (typename Const<FunctionDecs>::type&) = 0;
     virtual void operator() (typename Const<VarDecs>::type&) = 0;
     virtual void operator() (typename Const<TypeDecs>::type&) = 0;
+*/
   };
 
   /// Shorthand for a const visitor.
