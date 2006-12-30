@@ -10,7 +10,7 @@
 
 namespace ast
 {
-  typedef yy::location location; 
+  typedef yy::location loc;
 }
-²
+
 #endif // !AST_LOCATION_HH

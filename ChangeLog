@@ -1,3 +1,14 @@
+2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	The was tricky problems because there is also a location.hh in
+	$(builddir) and I didn't find anything more clever than renaming it
+	since ast/location.hh was including... location.hh (which turned out
+	to be itself). If someone knows a better way, feel free to "fix" this.
+
+	rename ast/location.hh into ast/loc.hh 
+	* src/ast/loc.hh: New.
+	* src/ast/location.hh: Remove.
+
 2006-12-29  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Ignore the .cc/.hh/.hxx changes, they are the result of 'generate'.
