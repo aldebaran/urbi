@@ -1,5 +1,13 @@
 2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	add default-visitor 
+	* src/ast/Makefile.am: add all.hh and default-visitor.h*.
+	* src/ast/all.hh: New.
+	* src/ast/default-visitor.hh: New.
+	* src/ast/default-visitor.hxx: New.
+
+2006-12-30  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Regenerate the tree, fix Makefile.am files and proper svn:ignore
 	fix the build process
 	* src/Makefile.am: add misc directory.

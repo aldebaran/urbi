@@ -53,9 +53,10 @@ MAINTAINERCLEANFILES = $(BUILT_SOURCES_local)
 
 noinst_LTLIBRARIES = libast.la
 libast_la_SOURCES =					\
+	all.hh                                          \
 	fwd.hh						\
 	visitor.hh					\
 	loc.hh                                          \
 	$(AST_NODES)					\
-	visitor.hxx					
-
+	visitor.hxx					\
+	default-visitor.hh default-visitor.hxx
