@@ -55,9 +55,15 @@ print """
   typedef AnyDecs<VarDec> VarDecs;
   typedef AnyDecs<TypeDec> TypeDecs;
   typedef AnyDecs<FunctionDec> FunctionDecs;
-
+*/
   // From anydecs.hh.
   typedef std::list<Exp*> exps_type;
+  typedef std::pair<Exp*, Exp*> exp_pair_type;
+  typedef std::list<exp_pair_type> exp_pairs_type;
+  typedef std::list<VarDec*> vardecs_type;
+  typedef std::list<Dec*> decs_type;
+
+/*
   typedef std::list<FieldInit*> fieldinits_type;
   typedef std::list<Field*> fields_type;
 */
