@@ -14,7 +14,7 @@ SVN_EXTERNALS += jpeg-6b sdk
 
 # Backward compatibility.
 include_HEADERS =				\
-include/uobject.h				\
+include/uobject.h
 
 urbiinclude_HEADERS =				\
 include/urbi/uabstractclient.hh			\
