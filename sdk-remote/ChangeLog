@@ -1,3 +1,7 @@
+2007-01-03  POTHIER Benoit  <pothier@gostai.com>
+
+	Update libport to fix sem bug on win and linux.
+
 2007-01-02  Akim Demaille  <akim.demaille@free.fr>
 
 	Fix the installation of uobject.h
