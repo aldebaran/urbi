@@ -1,3 +1,7 @@
+2007-01-05  POTHIER Benoit  <pothier@gostai.com>
+
+	Branch 1.0. Remove src/uobject external property to replace by a copy. 
+
 2006-12-15  Matthieu Nottale  <nottale@gostai.com>
 
 	Revert patch that fixes bug but kills aibo
