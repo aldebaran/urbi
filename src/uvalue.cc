@@ -449,32 +449,43 @@ UValue::~UValue()
 UValue*
 UValue::copy() const
 {
-  UValue *res = new UValue();
-  res->dataType = dataType;
-
   switch (dataType)
   {
     case DATA_NUM:
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
       res->val = val;
-      break;
+      return res;
+    }
 
     case DATA_FILE:
     case DATA_STRING:
     case DATA_OBJ:
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
       res->str = new UString(str);
       if (!res->str)
       {
 	delete res;
 	return 0;
       }
-      break;
+      return res;
+    }
 
     case DATA_BINARY:
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
       res->refBinary = refBinary->ref() ? refBinary->copy () : 0;
-      break;
+      return res;
+    }
 
     case DATA_LIST:
     {
+      UValue *res = new UValue();
+      res->dataType = dataType;
       UValue *scanlist = liststart;
       UValue *sret = res;
       if (scanlist == 0)
@@ -492,11 +503,24 @@ UValue::copy() const
 	  sret = sret->next;
 	}
       }
+      return res;
     }
-    break;
+
+    case DATA_VOID:
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
+      return res;
+    }
+
+    case DATA_UNKNOWN:
+    case DATA_FUNCTION:
+    case DATA_VARIABLE:
+      abort ();
   }
 
-  return res;
+  // Pacify warnings.
+  abort ();
 }
 
 
