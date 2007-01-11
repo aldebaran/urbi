@@ -1,5 +1,11 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	renaming
+	(This is to split the following patch.)
+	* src/uvalue.cc: ret -> res.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Fix warnings
 	* src/uvariable.cc: Die on impossible switch cases.
 

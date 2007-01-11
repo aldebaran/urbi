@@ -449,36 +449,36 @@ UValue::~UValue()
 UValue*
 UValue::copy() const
 {
-  UValue *ret = new UValue();
-  ret->dataType = dataType;
+  UValue *res = new UValue();
+  res->dataType = dataType;
 
   switch (dataType)
   {
     case DATA_NUM:
-      ret->val = val;
+      res->val = val;
       break;
 
     case DATA_FILE:
     case DATA_STRING:
     case DATA_OBJ:
-      ret->str = new UString(str);
-      if (!ret->str)
+      res->str = new UString(str);
+      if (!res->str)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
       break;
 
     case DATA_BINARY:
-      ret->refBinary = refBinary->ref() ? refBinary->copy () : 0;
+      res->refBinary = refBinary->ref() ? refBinary->copy () : 0;
       break;
 
     case DATA_LIST:
     {
       UValue *scanlist = liststart;
-      UValue *sret = ret;
+      UValue *sret = res;
       if (scanlist == 0)
-	ret->liststart = 0;
+	res->liststart = 0;
       else
       {
 	sret->liststart = scanlist->copy();
@@ -496,7 +496,7 @@ UValue::copy() const
     break;
   }
 
-  return ret;
+  return res;
 }
 
 
@@ -511,11 +511,11 @@ UValue::add(UValue *v)
   {
     // concat two binaries (useful for sound)
 
-    UValue *ret = new UValue();
-    if (!ret)
+    UValue *res = new UValue();
+    if (!res)
       return 0;
 
-    ret->dataType = DATA_BINARY;
+    res->dataType = DATA_BINARY;
 
     UNamedParameters *param = 0;
     if (refBinary->ref()->parameters)
@@ -523,7 +523,7 @@ UValue::add(UValue *v)
     else if (v->refBinary->ref()->parameters)
       param = v->refBinary->ref()->parameters->copy();
 
-    ret->refBinary =
+    res->refBinary =
       new libport::RefPt<UBinary> (
 	new UBinary(
 	  refBinary->ref()->bufferSize+
@@ -532,17 +532,17 @@ UValue::add(UValue *v)
 	  )
 	);
 
-    if (!ret->refBinary)
+    if (!res->refBinary)
       return 0;
 
-    ubyte* p = ret->refBinary->ref()->buffer;
+    ubyte* p = res->refBinary->ref()->buffer;
     if (!p)
       return 0;
     memcpy(p, refBinary->ref()->buffer, refBinary->ref()->bufferSize);
     memcpy(p+refBinary->ref()->bufferSize,
 	   v->refBinary->ref()->buffer,
 	   v->refBinary->ref()->bufferSize);
-    return ret;
+    return res;
   }
 
   if (dataType == DATA_FILE ||
@@ -556,59 +556,59 @@ UValue::add(UValue *v)
 
   if (dataType == DATA_LIST)
   {
-    UValue *ret = copy();
+    UValue *res = copy();
 
-    if (ret->liststart)
+    if (res->liststart)
     {
-      UValue *scanlist = ret->liststart;
+      UValue *scanlist = res->liststart;
       while (scanlist->next)
 	scanlist = scanlist->next;
 
       scanlist->next = v->copy();
     }
     else
-      ret->liststart = v->copy();
+      res->liststart = v->copy();
 
-    return ret;
+    return res;
   }
 
   if (v->dataType == DATA_LIST)
   {
     // we are not a list
-    UValue *ret = v->copy();
-    UValue * b = ret->liststart;
-    ret->liststart = copy();
-    ret->liststart->next = b;
-    return ret;
+    UValue *res = v->copy();
+    UValue * b = res->liststart;
+    res->liststart = copy();
+    res->liststart->next = b;
+    return res;
   }
 
   if (dataType == DATA_NUM)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = val + v->val;
-      return ret;
+      UValue *res = new UValue();
+      res->dataType = DATA_NUM;
+      res->val = val + v->val;
+      return res;
     }
 
     if (v->dataType == DATA_STRING)
     {
-      UValue *ret = new UValue();
-      if (ret == 0)
+      UValue *res = new UValue();
+      if (res == 0)
 	return 0;
 
-      ret->dataType = DATA_STRING;
+      res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
       ostr << val<<v->str->str();
-      ret->str = new UString(ostr.str().c_str());
-      if (ret->str == 0)
+      res->str = new UString(ostr.str().c_str());
+      if (res->str == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      return ret;
+      return res;
     }
   }
 
@@ -616,47 +616,47 @@ UValue::add(UValue *v)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *ret = new UValue();
-      if (ret == 0)
+      UValue *res = new UValue();
+      if (res == 0)
 	return 0;
 
-      ret->dataType = DATA_STRING;
+      res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
       ostr << str->str()<<v->val;
-      ret->str = new UString(ostr.str().c_str());
+      res->str = new UString(ostr.str().c_str());
 
-      if (ret->str == 0)
+      if (res->str == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      return ret;
+      return res;
     }
 
     if (v->dataType == DATA_STRING)
     {
-      UValue *ret = new UValue();
-      if (ret == 0)
+      UValue *res = new UValue();
+      if (res == 0)
 	return 0;
 
-      ret->dataType = DATA_STRING;
+      res->dataType = DATA_STRING;
 
       char *tmp_String = new char[v->str->len()+str->len()+1];
       if (tmp_String == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
       sprintf(tmp_String, "%s%s", str->str(), v->str->str());
-      ret->str = new UString(tmp_String);
+      res->str = new UString(tmp_String);
       delete[] (tmp_String);
-      if (ret->str == 0)
+      if (res->str == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      return ret;
+      return res;
     }
   }
   return 0;
