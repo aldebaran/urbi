@@ -1,3 +1,9 @@
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
+	Address warnings
+	* src/liburbi/uobject/urbi/uobject.hh.template: here.
+	Also, improve the style, it is unreadable.
+
 2006-12-26  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Restyle.
