@@ -1,3 +1,8 @@
+2007-01-11  Matthieu Nottale  <nottale@gostai.com>
+
+	Add missing variable initialisation
+	* src/parser/uparser.cc: Initialise filename_ in ctor.
+
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
 	Coding style

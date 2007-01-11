@@ -18,7 +18,8 @@
 
 UParser::UParser(UConnection& cn)
   : connection (cn),
-    scanner_ ()
+    scanner_ (),
+    filename_ (0)
 {}
 
 int
