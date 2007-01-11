@@ -148,6 +148,15 @@ public:
   void                flush              ();
 
   UErrorValue         received           (const char *s);
+
+  /// \brief Handle an incoming buffer of data.
+  ///
+  /// Must be called each time a buffer of data is received by the connection.
+  /// \param buffer the incoming buffer
+  /// \param length the length of the buffer
+  /// \return UFAIL       buffer overflow
+  /// \return UMEMORYFAIL critical memory overflow
+  /// \return USUCCESS    otherwise
   UErrorValue         received           (const ubyte *buffer, int length);
 
   int                 sendAdaptive       ();

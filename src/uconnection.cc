@@ -404,14 +404,6 @@ UConnection::received (const char *s)
   return received((const ubyte*) s, strlen(s));
 }
 
-//! Handles a incoming buffer of data.
-/*! Must be called each time a buffer of data is received by the connection.
- \param buffer the incoming buffer
- \param length the length of the buffer
- \return UFAIL buffer overflow
- \return UMEMORYFAIL critical memory overflow
- \return USUCCESS otherwise
- */
 UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
@@ -424,15 +416,17 @@ UConnection::received (const ubyte *buffer, int length)
   }
 
   bool gotlock = false;
-  bool faillock = false; // if binary append failed to get lock,
-  // abort processing
+  // If binary append failed to get lock, abort processing.
+  bool faillock = false;
   libport::BlockLock bl(server);
   // Lock the connection.
   lock();
   if (receiveBinary_)
   {
-    // handles and try to finish the binary transfer
-    if (length < binCommand->refBinary->ref()->bufferSize - transferedBinary_)
+    // Handle and try to finish the binary transfer.
+    int total =
+      binCommand->refBinary->ref()->bufferSize - transferedBinary_;
+    if (length < total)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
 	     buffer,
@@ -445,13 +439,9 @@ UConnection::received (const ubyte *buffer, int length)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
 	     buffer,
-	     binCommand->refBinary->ref()->bufferSize - transferedBinary_);
-
-      buffer += (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
-
-      length -= (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
+	     total);
+      buffer += total;
+      length -= total;
       if (treeLock.tryLock())
       {
 	receiveBinary_ = false;
@@ -999,9 +989,46 @@ UConnection::processCommand(UCommand *&command,
   }
 }
 
+namespace
+{
+  /// Simplify a UCommand_TREE if possible.
+  /// \return whether a simplification was made.
+  // FIXME: Should be with UCommand_TREE, not here.
+  bool simplify (UCommand_TREE* tree)
+  {
+    // left reduction
+    if (!tree->command1 && tree->command2)
+    {
+      ASSERT(tree->position)
+	*tree->position = tree->command2;
+      tree->command2->up = tree->up;
+      tree->command2->position = tree->position;
+      tree->command2->background = tree->background;
+      tree->command2 = 0;
+      return true;
+    }
+
+    // right reduction
+    // the background hack is here to preserve {at()...} commands.
+    if (!tree->command2
+	&& tree->command1
+	&& tree->command1->status != UCommand::UBACKGROUND)
+    {
+      ASSERT(tree->position)
+	*tree->position = tree->command1;
+      tree->command1->up = tree->up;
+      tree->command1->position = tree->position;
+      tree->command1->background = tree->background;
+      tree->command1 = 0;
+      return true;
+    }
+    return false;
+  }
+}
+
 //! Execute a command tree
 /*! This function executes a command tree and
- returns the next node of the tree to process..
+ returns the next node of the tree to process.
 
  \param tree is the UCommand_TREE to execute.
  */
@@ -1045,7 +1072,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
     if (mustReturn)
     {
       tree = dynamic_cast<UCommand_TREE*> (tree->command1);
-      assert (tree != 0);
+      assert (tree);
       continue;
     }
 
@@ -1121,46 +1148,14 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // REDUCTION
 
-    if (tree != lastCommand &&
-	tree != execCommand &&
-	!tree->toDelete &&
-	tree->command1 == 0 &&
-	tree->command2 != 0)
-    {
-      // left reduction
-      ASSERT(tree->position!=0)
-	*tree->position = tree->command2;
-      tree->command2->up = tree->up;
-      tree->command2->position = tree->position;
-      tree->command2->background = tree->background;
-      tree->command2 = 0;
-      UCommand_TREE* oldtree = tree;
-      tree = tree->up; // cannot be zero
-      delete oldtree;
-      continue;
-    }
-
-    if (tree != lastCommand &&
-	tree != execCommand &&
-	!tree->toDelete &&
-	tree->command2 == 0 &&
-	tree->command1 != 0 &&
-	tree->command1->status != UCommand::UBACKGROUND)
-    {
-      // right reduction
-      // the background hack is here to preserve {at()...} commands.
-
-      ASSERT(tree->position!=0) *(tree->position) = tree->command1;
-      tree->command1->up = tree->up;
-      tree->command1->position = tree->position;
-      tree->command1->background = tree->background;
-      tree->command1 = 0;
-      UCommand_TREE* oldtree = tree;
-      tree = tree->up; // cannot be zero
-
-      delete oldtree;
-      continue;
-    }
+    if (tree != lastCommand && tree != execCommand && !tree->toDelete)
+      if (simplify (tree))
+      {
+	UCommand_TREE* oldtree = tree;
+	tree = tree->up; // cannot be zero
+	delete oldtree;
+	continue;
+      }
 
     // BACK UP
     tree = tree->up;

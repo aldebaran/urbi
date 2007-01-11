@@ -1,5 +1,11 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	simplify (UCommand_TREE)
+	* src/uconnection.cc (simplify): New.
+	(UConnection::execute): Use it.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Coding style
 	* src/ucommandqueue.cc: Shorten scopes.
 	Use switch where appropriate.
