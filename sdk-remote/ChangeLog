@@ -1,5 +1,10 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Remove unused code
+	* src/liburbi/usyncclient.cc (callbackThreadStarter): Remove.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Example fix
 	* src/examples/urbisound.cc: Adjust to ubinary.hh.
 

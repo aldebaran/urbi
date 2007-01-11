@@ -27,14 +27,6 @@
 
 namespace urbi
 {
-  static void *callbackThreadStarter(void *objectPtr)
-  {
-    USyncClient *connection = (USyncClient *) objectPtr;
-    connection->callbackThread();
-    return 0;
-  }
-
-
   USyncClient::USyncClient(const char *_host, int _port, int _buflen)
     : UClient(_host, _port, _buflen)
   {
