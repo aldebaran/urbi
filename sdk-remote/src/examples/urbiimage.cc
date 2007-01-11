@@ -3,7 +3,7 @@
  *
  * Sample image acqusition urbi client.
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ showImage(const urbi::UMessage &msg)
 {
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::BINARY_IMAGE)
+      || msg.value->binary->type != urbi::UBinary::BINARY_IMAGE)
     return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
@@ -67,18 +67,18 @@ showImage(const urbi::UMessage &msg)
 
   switch (img.imageFormat)
     {
-    case urbi::IMAGE_JPEG:
+    case urbi::UImage::IMAGE_JPEG:
       urbi::convertJPEGtoRGB((const urbi::byte *) img.data, img.size,
 			     (urbi::byte *) buffer, sz);
       break;
-    case urbi::IMAGE_YCbCr:
+    case urbi::UImage::IMAGE_YCbCr:
       sz = img.size;
       urbi::convertYCrCbtoRGB((const urbi::byte *) img.data, img.size,
 			      (urbi::byte *) buffer);
       break;
-    case urbi::IMAGE_RGB:
-    case urbi::IMAGE_PPM:
-    case urbi::IMAGE_UNKNOWN:
+    case urbi::UImage::IMAGE_RGB:
+    case urbi::UImage::IMAGE_PPM:
+    case urbi::UImage::IMAGE_UNKNOWN:
       break;
     }
 
@@ -147,22 +147,22 @@ main (int argc, char *argv[])
       switch (argv[2][0])
 	{
 	case 'r':
-	  format = urbi::IMAGE_RGB;
+	  format = urbi::UImage::IMAGE_RGB;
 	  break;
 	case 'y':
-	  format = urbi::IMAGE_YCbCr;
+	  format = urbi::UImage::IMAGE_YCbCr;
 	  break;
 	case 'p':
-	  format = urbi::IMAGE_PPM;
+	  format = urbi::UImage::IMAGE_PPM;
 	  break;
 	case 'j':
-	  format = urbi::IMAGE_JPEG;
+	  format = urbi::UImage::IMAGE_JPEG;
 	  break;
 	};
 
       client.syncGetImage("camera", buff, sz,
 			  format,
-			  (format == urbi::IMAGE_JPEG
+			  (format == urbi::UImage::IMAGE_JPEG
 			   ? urbi::URBI_TRANSMIT_JPEG
 			   : urbi::URBI_TRANSMIT_YCbCr),
 			  w, h);

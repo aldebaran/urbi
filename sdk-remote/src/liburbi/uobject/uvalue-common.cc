@@ -252,8 +252,8 @@ namespace urbi
 	s << '"' << *stringValue << '"';
 	break;
       case DATA_BINARY:
-	if (binary->type != BINARY_NONE
-	    && binary->type != BINARY_UNKNOWN)
+	if (binary->type != UBinary::BINARY_NONE
+	    && binary->type != UBinary::BINARY_UNKNOWN)
 	  binary->buildMessage();
 	s << "BIN "<< binary->common.size << ' ' << binary->message << ';';
 	s.write((char*) binary->common.data, binary->common.size);
@@ -344,7 +344,7 @@ namespace urbi
       image.size = common.size;
       image.width = p2;
       image.height = p3;
-      image.imageFormat = IMAGE_JPEG;
+      image.imageFormat = UImage::IMAGE_JPEG;
       return p;
     }
 
@@ -354,7 +354,7 @@ namespace urbi
       image.size = common.size;
       image.width = p2;
       image.height = p3;
-      image.imageFormat = IMAGE_YCbCr;
+      image.imageFormat = UImage::IMAGE_YCbCr;
       return p;
     }
 
@@ -364,31 +364,31 @@ namespace urbi
       image.size = common.size;
       image.width = p2;
       image.height = p3;
-      image.imageFormat = IMAGE_RGB;
+      image.imageFormat = UImage::IMAGE_RGB;
       return p;
     }
 
     if (STREQ(type, "raw"))
     {
       this->type = BINARY_SOUND;
-      sound.soundFormat = SOUND_RAW;
+      sound.soundFormat = USound::SOUND_RAW;
       sound.size = common.size;
       sound.channels = p2;
       sound.rate = p3;
       sound.sampleSize = p4;
-      sound.sampleFormat = (USoundSampleFormat) p5;
+      sound.sampleFormat = (USound::SampleFormat) p5;
       return p;
     }
 
     if (STREQ(type, "wav"))
     {
       this->type = BINARY_SOUND;
-      sound.soundFormat = SOUND_WAV;
+      sound.soundFormat = USound::SOUND_WAV;
       sound.size = common.size;
       sound.channels = p2;
       sound.rate = p3;
       sound.sampleSize = p4;
-      sound.sampleFormat = (USoundSampleFormat) p5;
+      sound.sampleFormat = (USound::SampleFormat) p5;
       return p;
     }
 
@@ -405,47 +405,44 @@ namespace urbi
   std::string UBinary::getMessage() const
   {
     std::ostringstream str;
-    if (type == BINARY_IMAGE)
+    switch (type)
     {
-      switch (image.imageFormat)
-      {
-	case IMAGE_RGB:
-	  str << "rgb ";
-	  break;
-	case IMAGE_JPEG:
-	  str << "jpeg ";
-	  break;
-	case IMAGE_YCbCr:
-	  str << "YCbCr ";
-	  break;
-	default:
-	  str << "unknown ";
-	  break;
-      }
-      str << image.width << ' ' << image.height;
-    }
-    if (type == BINARY_SOUND)
-    {
-      switch (sound.soundFormat)
-      {
-	case SOUND_RAW:
-	  str << "raw ";
-	  break;
-	case SOUND_WAV:
-	  str << "wav ";
-	  break;
-	default:
-	  str << "unknown ";
-	  break;
-      }
-      str << sound.channels
-	  << ' ' << sound.rate
-	  << ' ' << sound.sampleSize
-	  << ' ' << sound.sampleFormat;
-    }
+      case UBinary::BINARY_IMAGE:
+	switch (image.imageFormat)
+	{
+	  case UImage::IMAGE_RGB:
+	    str << "rgb ";
+	    break;
+	  case UImage::IMAGE_JPEG:
+	    str << "jpeg ";
+	    break;
+	  case UImage::IMAGE_YCbCr:
+	    str << "YCbCr ";
+	    break;
+	}
+	str << image.width << ' ' << image.height;
+	break;
 
-    if (type == BINARY_UNKNOWN)
-      str << message;
+      case UBinary::BINARY_SOUND:
+	switch (sound.soundFormat)
+	{
+	  case USound::SOUND_RAW:
+	    str << "raw ";
+	    break;
+	  case USound::SOUND_WAV:
+	    str << "wav ";
+	    break;
+	}
+	str << sound.channels
+	    << ' ' << sound.rate
+	    << ' ' << sound.sampleSize
+	    << ' ' << sound.sampleFormat;
+	break;
+
+      case BINARY_UNKNOWN:
+	str << message;
+	break;
+    }
     return str.str();
   }
 
@@ -601,12 +598,12 @@ namespace urbi
   UValue::operator UImage() const
   {
     if (type != DATA_BINARY
-	|| binary->type != BINARY_IMAGE)
+	|| binary->type != UBinary::BINARY_IMAGE)
     {
       UImage i;
       i.data = 0;
       i.size = i.width = i.height = 0;
-      i.imageFormat = IMAGE_UNKNOWN;
+      i.imageFormat = UImage::IMAGE_UNKNOWN;
       return i;
     }
     else
@@ -615,13 +612,13 @@ namespace urbi
 
   UValue::operator USound() const
   {
-    if (type != DATA_BINARY || binary->type != BINARY_SOUND)
+    if (type != DATA_BINARY || binary->type != UBinary::BINARY_SOUND)
     {
       USound i;
       i.data = 0;
       i.size = i.sampleSize = i.channels = i.rate = 0;
-      i.soundFormat = SOUND_UNKNOWN;
-      i.sampleFormat = SAMPLE_UNSIGNED;
+      i.soundFormat = USound::SOUND_UNKNOWN;
+      i.sampleFormat = USound::SAMPLE_UNSIGNED;
       return i;
     }
     else

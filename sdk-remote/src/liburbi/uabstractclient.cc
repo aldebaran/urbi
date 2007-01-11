@@ -274,8 +274,8 @@ namespace urbi
 	send("\"%s\"", v.stringValue->c_str());
 	break;
       case DATA_BINARY:
-	if (v.binary->type != BINARY_NONE
-	    && v.binary->type != BINARY_UNKNOWN)
+	if (v.binary->type != UBinary::BINARY_NONE
+	    && v.binary->type != UBinary::BINARY_UNKNOWN)
 	  v.binary->buildMessage();
 	sendBin(v.binary->common.data, v.binary->common.size,
 		"BIN %d %s;", v.binary->common.size,
@@ -434,7 +434,7 @@ namespace urbi
     char * device;
     char * tag;
     char formatString[50];
-    USoundFormat format;
+    USound::Format format;
     UAbstractClient * uc;
     bool startNotify;
   };
@@ -489,7 +489,7 @@ namespace urbi
       0}; // no comment...
     */
     //handle next chunk
-    if (s->format == SOUND_WAV && s->pos==0)
+    if (s->format == USound::SOUND_WAV && s->pos==0)
       s->pos = sizeof (wavheader);
     int tosend = (s->length-s->pos > CHUNK_SIZE) ? CHUNK_SIZE:s->length-s->pos;
 
@@ -497,11 +497,11 @@ namespace urbi
     int playlength = tosend *1000 / s->bytespersec;
     s->uc->send("%s.val = BIN %d %s %s;",
 		s->device,
-		(int)(tosend+ ((s->format == SOUND_WAV)?sizeof (wavheader):0)),
-		(s->format == SOUND_WAV)?"wav":"raw",
+		(int)(tosend+ ((s->format == USound::SOUND_WAV)?sizeof (wavheader):0)),
+		(s->format == USound::SOUND_WAV)?"wav":"raw",
 		s->formatString
 		);
-    if (s->format == SOUND_WAV)
+    if (s->format == USound::SOUND_WAV)
       {
 	wavheader wh;
 	memcpy(&wh, s->buffer, sizeof (wh));
@@ -561,14 +561,14 @@ namespace urbi
   UAbstractClient::sendSound(const char* device, const USound& sound,
 			     const char* tag)
   {
-    if (sound.soundFormat == SOUND_MP3)
+    if (sound.soundFormat == USound::SOUND_MP3)
       {
 	//we don't handle chunkuing for this format
 	return sendBin(sound.data, sound.size,
 		       "%s +report:  %s.val = BIN %d mp3;",
 		       tag, device, sound.size);
       }
-    if (sound.soundFormat == SOUND_OGG)
+    if (sound.soundFormat == USound::SOUND_OGG)
       {
 	//we don't handle chunkuing for this format
 	return sendBin(sound.data, sound.size,
@@ -576,8 +576,8 @@ namespace urbi
 		       tag, device, sound.size);
       }
 
-    if (sound.soundFormat == SOUND_WAV
-	|| sound.soundFormat == SOUND_RAW)
+    if (sound.soundFormat == USound::SOUND_WAV
+	|| sound.soundFormat == USound::SOUND_RAW)
       {
 	send("speaker.sendsoundsaveblend = speaker->blend;"
 	     "speaker->blend=queue;");
@@ -593,7 +593,7 @@ namespace urbi
 	s->device = strdup(device);
 	s->pos = 0;
 	s->format = sound.soundFormat;
-	if (sound.soundFormat == SOUND_RAW)
+	if (sound.soundFormat == USound::SOUND_RAW)
 	  sprintf(s->formatString, "%d %d %d %d",
 		  sound.channels, sound.rate, sound.sampleSize,
 		  (int) sound.sampleFormat);

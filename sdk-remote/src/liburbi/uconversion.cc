@@ -388,32 +388,32 @@ namespace urbi
 
     switch (dest.imageFormat)
     {
-      case IMAGE_RGB:
-      case IMAGE_PPM:
+      case UImage::IMAGE_RGB:
+      case UImage::IMAGE_PPM:
 	targetformat = 1;
 	break;
-      case IMAGE_YCbCr:
+      case UImage::IMAGE_YCbCr:
 	targetformat = 0;
 	break;
-      case IMAGE_JPEG:
+      case UImage::IMAGE_JPEG:
 	targetformat = -1;
 	break;
-      case IMAGE_UNKNOWN:
+      case UImage::IMAGE_UNKNOWN:
 	break;
     }
     int p = 0;
     int c = 0;
     switch (src.imageFormat)
     {
-      case IMAGE_YCbCr:
+      case UImage::IMAGE_YCbCr:
 	format = 1;
 	memcpy(uncompressedData, src.data, src.width * src.height * 3);
 	break;
-      case IMAGE_RGB:
+      case UImage::IMAGE_RGB:
 	format = 0;
 	memcpy(uncompressedData, src.data, src.width * src.height * 3);
 	break;
-      case IMAGE_PPM:
+      case UImage::IMAGE_PPM:
 	format = 0;
 	//locate header end
 	p = 0;
@@ -423,7 +423,7 @@ namespace urbi
 	    ++c;
 	memcpy(src.data + p, uncompressedData, src.width * src.height * 3);
 	break;
-      case IMAGE_JPEG:
+      case UImage::IMAGE_JPEG:
 	if (targetformat == 0)
 	{
 	  convertJPEGtoRGB((byte*) src.data, src.size,
@@ -437,7 +437,7 @@ namespace urbi
 	  format = 1;
 	}
 	break;
-      case IMAGE_UNKNOWN:
+      case UImage::IMAGE_UNKNOWN:
 	break;
     }
 
@@ -460,21 +460,21 @@ namespace urbi
 
     switch (dest.imageFormat)
     {
-      case IMAGE_RGB:
+      case UImage::IMAGE_RGB:
 	if (format == 1)
 	  convertYCrCbtoRGB((byte*) uncompressedData,
 			    dest.width * dest.height * 3, (byte*) dest.data);
 	else
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
 	break;
-      case IMAGE_YCbCr:
+      case UImage::IMAGE_YCbCr:
 	if (format == 0)
 	  convertRGBtoYCrCb((byte*) uncompressedData,
 			    dest.width * dest.height * 3, (byte*) dest.data);
 	else
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
 	break;
-      case IMAGE_PPM:
+      case UImage::IMAGE_PPM:
 	sprintf((char*) dest.data, "P6\n%d %d\n255\n",
 		dest.width, dest.height);
 	if (format == 1)
@@ -485,7 +485,7 @@ namespace urbi
 	  memcpy(dest.data + strlen((char*) dest.data),
 		 uncompressedData, dest.width * dest.height * 3);
 	break;
-      case IMAGE_JPEG:
+      case UImage::IMAGE_JPEG:
 	/*if (format == 1)
 	  convertYCrCbtoJPEG((byte*) uncompressedData,
 			     dest.width * dest.height * 3,
@@ -500,7 +500,7 @@ namespace urbi
 	free(uncompressedData);
 	return 0;
 	break;
-      case IMAGE_UNKNOWN:
+      case UImage::IMAGE_UNKNOWN:
 	break;
     }
 
@@ -605,23 +605,22 @@ namespace urbi
   int
   convert (const USound &source, USound &dest)
   {
-    if ((source.soundFormat != SOUND_RAW
-	 && source.soundFormat != SOUND_WAV)
-	||
-	(dest.soundFormat != SOUND_RAW
-	 && dest.soundFormat != SOUND_WAV))
+    if ((source.soundFormat != USound::SOUND_RAW
+	 && source.soundFormat != USound::SOUND_WAV)
+	|| (dest.soundFormat != USound::SOUND_RAW
+	    && dest.soundFormat != USound::SOUND_WAV))
       return 1; //conversion not handled yet
     /* phase one: calculate required buffer size, set destination unspecified
      * fields */
     int schannels, srate, ssampleSize;
-    USoundSampleFormat ssampleFormat;
-    if (source.soundFormat == SOUND_WAV)
+    USound::SampleFormat ssampleFormat;
+    if (source.soundFormat == USound::SOUND_WAV)
       {
 	wavheader * wh = (wavheader *)source.data;
 	schannels = wh->channels;
 	srate = wh->freqechant;
 	ssampleSize = wh->bitperchannel;
-	ssampleFormat = (ssampleSize>8)?SAMPLE_SIGNED:SAMPLE_UNSIGNED;
+	ssampleFormat = (ssampleSize>8)?USound::SAMPLE_SIGNED:USound::SAMPLE_UNSIGNED;
       }
     else
       {
@@ -638,18 +637,18 @@ namespace urbi
       dest.sampleSize = ssampleSize;
     if (!(int)dest.sampleFormat)
       dest.sampleFormat = ssampleFormat;
-    if (dest.soundFormat == SOUND_WAV)
-      dest.sampleFormat = dest.sampleSize > 8 ? SAMPLE_SIGNED
-					      : SAMPLE_UNSIGNED;
+    if (dest.soundFormat == USound::SOUND_WAV)
+      dest.sampleFormat = dest.sampleSize > 8 ? USound::SAMPLE_SIGNED
+					      : USound::SAMPLE_UNSIGNED;
     // That's a big one!
-    int destSize = (int) (( (long long)(source.size- ((source.soundFormat == SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
-    if (dest.soundFormat == SOUND_WAV)
+    int destSize = (int) (( (long long)(source.size- ((source.soundFormat == USound::SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
+    if (dest.soundFormat == USound::SOUND_WAV)
       destSize += sizeof (wavheader);
     if (dest.size<destSize)
       dest.data = static_cast<char*> (realloc (dest.data, destSize));
     dest.size = destSize;
     //write destination header if appropriate
-    if (dest.soundFormat == SOUND_WAV)
+    if (dest.soundFormat == USound::SOUND_WAV)
     {
       wavheader* wh = (wavheader*) dest.data;
       memcpy(wh->riff, "RIFF", 4);
@@ -669,35 +668,35 @@ namespace urbi
 
     //do the conversion and write to dest.data
     char * sbuffer = source.data;
-    if (source.soundFormat == SOUND_WAV)
+    if (source.soundFormat == USound::SOUND_WAV)
       sbuffer += sizeof (wavheader);
     char * dbuffer = dest.data;
-    if (dest.soundFormat == SOUND_WAV)
+    if (dest.soundFormat == USound::SOUND_WAV)
       dbuffer += sizeof (wavheader);
-    int elementCount = dest.size - (dest.soundFormat == SOUND_WAV ?
+    int elementCount = dest.size - (dest.soundFormat == USound::SOUND_WAV ?
 				    sizeof (wavheader) : 0);
     elementCount /= (dest.channels * (dest.sampleSize / 8));
     switch (ssampleSize * 1000 + dest.sampleSize)
     {
       case 8008:
 	copy(sbuffer, dbuffer, schannels, dest.channels, srate, dest.rate,
-	     elementCount, ssampleFormat==SAMPLE_SIGNED, dest.sampleFormat ==
-	     SAMPLE_SIGNED);
+	     elementCount, ssampleFormat==USound::SAMPLE_SIGNED, dest.sampleFormat ==
+	     USound::SAMPLE_SIGNED);
 	break;
       case 16008:
 	copy((short *)sbuffer, dbuffer, schannels, dest.channels, srate,
-	     dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-	     dest.sampleFormat == SAMPLE_SIGNED);
+	     dest.rate, elementCount, ssampleFormat==USound::SAMPLE_SIGNED,
+	     dest.sampleFormat == USound::SAMPLE_SIGNED);
 	break;
       case 16016:
 	copy((short *)sbuffer, (short *)dbuffer, schannels, dest.channels,
-	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-	     dest.sampleFormat == SAMPLE_SIGNED);
+	     srate, dest.rate, elementCount, ssampleFormat==USound::SAMPLE_SIGNED,
+	     dest.sampleFormat == USound::SAMPLE_SIGNED);
 	break;
       case 8016:
 	copy((char *)sbuffer, (short *)dbuffer, schannels, dest.channels,
-	     srate, dest.rate, elementCount, ssampleFormat==SAMPLE_SIGNED,
-	     dest.sampleFormat == SAMPLE_SIGNED);
+	     srate, dest.rate, elementCount, ssampleFormat==USound::SAMPLE_SIGNED,
+	     dest.sampleFormat == USound::SAMPLE_SIGNED);
 	break;
     }
     return 0;

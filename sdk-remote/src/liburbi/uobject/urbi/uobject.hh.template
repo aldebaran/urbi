@@ -29,6 +29,8 @@
 # include "libport/ufloat.h"
 # include "libport/hash.hh"
 
+# include "urbi/fwd.hh"
+# include "urbi/ubinary.hh"
 # include "urbi/utypes-common.hh"
 
 /// This macro must be called once for every UObject class.
@@ -132,18 +134,6 @@
 namespace urbi
 {
 
-  // Forward declarations and global scope structures
-  class UGenericCallback;
-  class UObject;
-  class UObjectData;
-  class UObjectHub;
-  class UTimerCallback;
-  class UValue;
-  class UVar;
-  class UVardata;
-  class baseURBIStarter;
-  class baseURBIStarterHub;
-
   // A few list and hashtable types
   typedef libport::hash_map_type<std::string, std::list<UGenericCallback*> >::type UTable;
   typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
@@ -203,126 +193,6 @@ namespace urbi
     DATA_LIST,
     DATA_OBJECT,
     DATA_VOID
-  };
-
-  enum UBinaryType
-  {
-    BINARY_NONE,
-    BINARY_UNKNOWN,
-    BINARY_IMAGE,
-    BINARY_SOUND
-  };
-
-  enum UImageFormat
-  {
-    IMAGE_RGB=1,     ///< RGB 24 bit/pixel
-    IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
-    IMAGE_JPEG=3,    ///< JPEG
-    IMAGE_PPM=4,     ///< RGB with a PPM header
-    IMAGE_UNKNOWN
-  };
-
-  enum USoundFormat
-  {
-    SOUND_RAW,
-    SOUND_WAV,
-    SOUND_MP3,
-    SOUND_OGG,
-    SOUND_UNKNOWN
-  };
-
-  enum USoundSampleFormat
-  {
-    SAMPLE_SIGNED=1,
-    SAMPLE_UNSIGNED=2
-  };
-
-
-  //internal use: unparsed binary data
-  class BinaryData
-  {
-  public:
-    BinaryData()
-      : data (0), size (0)
-    {}
-    BinaryData(void *d, int s)
-      : data(d), size(s)
-    {}
-    void* data;
-    int size;
-  };
-
-
-  /** Class encapsulating an image.
-
-   This class does not handle its memory: the data field msut be
-   freed manualy.  */
-  class UImage
-  {
-  public:
-    unsigned char         *data;            ///< pointer to image data
-    int                   size;             ///< image size in byte
-    int                   width, height;    ///< size of the image
-    UImageFormat          imageFormat;
-  };
-
-  /** Class encapsulating sound informations.
-
-   This class does not handle its memory: the data field msut be
-   freed manualy.  */
-  class USound
-  {
-  public:
-    char                  *data;            ///< pointer to sound data
-    int                   size;             ///< total size in byte
-    int                   channels;         ///< number of audio channels
-    int                   rate;             ///< rate in Hertz
-    int                   sampleSize;       ///< sample size in bit
-    USoundFormat          soundFormat;      ///< format of the sound data
-    USoundSampleFormat    sampleFormat;     ///< sample format
-
-    bool operator ==(const USound &b) const
-    {
-      return !memcmp(this, &b, sizeof(USound));
-    }
-  };
-
-  /** Class containing binary data of known or unknown type.
-   Handles its memory: the data field will be freed when the destructor is called.
-   */
-  class UBinary
-  {
-  public:
-    UBinaryType             type;
-    union
-    {
-      struct
-      {
-	void                  *data;             ///< binary data
-	int                   size;
-      } common;
-      UImage                image;
-      USound                sound;
-    };
-    /// Extra bin headers(everything after BIN <size> and before ';'.
-    std::string                message;
-
-    UBinary();
-    /// Deep copy constructor.
-    UBinary(const UBinary &b);
-    explicit UBinary(const UImage &);
-    explicit UBinary(const USound &);
-    /// Deep copy.
-    UBinary & operator = (const UBinary &b);
-    /// Build message from structures.
-    void buildMessage();
-    /// Get message extracted from structures.
-    std::string getMessage() const;
-    /// Frees binary buffer.
-    ~UBinary();
-    int parse(const char* message, int pos,
-	      std::list<BinaryData> &bins,
-	      std::list<BinaryData>::iterator &binpos);
   };
 
   /// Class storing URBI List type

@@ -60,7 +60,7 @@ main(int argc, char * argv [])
       struct stat st;
       stat(argv[2],&st);
       s.data = static_cast<char *> (malloc (st.st_size));
-      s.soundFormat = urbi::SOUND_WAV;
+      s.soundFormat = urbi::USound::SOUND_WAV;
       s.size = st.st_size;
       fread(s.data, 1,st.st_size, f);
       snd.data = 0;
@@ -74,7 +74,7 @@ main(int argc, char * argv [])
   else
     {
       s.data = static_cast<char *> (malloc (130000));
-      s.soundFormat = urbi::SOUND_WAV;
+      s.soundFormat = urbi::USound::SOUND_WAV;
       fread(s.data, 44, 1, f);
       int sz=1;
 

@@ -1,5 +1,16 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	ubinary.hh
+	* src/liburbi/uobject/urbi/uobject.hh.template (USound, UBinary)
+	(USound): move to...
+	* src/liburbi/uobject/urbi/ubinary.hh: this new file.
+	Move the enums that define the varieties inside these classes.
+	Adjust all uses.
+	* include/urbi/fwd.hh: Remove.
+	* src/liburbi/uobject/urbi/fwd.hh: New.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	urbi/fwd.hh
 	* include/urbi/fwd.hh: New.
 	* Makefile.am: Adjust.

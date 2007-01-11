@@ -3,7 +3,7 @@
  *
  * Sample demonstration of URBI sound capabilities.
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -121,9 +121,10 @@ getSound(const urbi::UMessage &msg)
 
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::BINARY_SOUND)
+      || msg.value->binary->type != urbi::UBinary::BINARY_SOUND)
     return urbi::URBI_CONTINUE;
-  out.soundFormat = withheader? urbi::SOUND_WAV : urbi::SOUND_RAW;
+  out.soundFormat =
+    withheader? urbi::USound::SOUND_WAV : urbi::USound::SOUND_RAW;
   withheader = false;
   convert(msg.value->binary->sound, out);
   totallength += out.size;

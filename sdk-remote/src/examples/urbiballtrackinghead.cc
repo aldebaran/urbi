@@ -3,7 +3,7 @@
  *
  * Sample demonstration of URBI capabilities.
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -181,7 +181,7 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
 
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::BINARY_IMAGE)
+      || msg.value->binary->type != urbi::UBinary::BINARY_IMAGE)
     return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
@@ -217,7 +217,7 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
     }
   ++framenum;
   int imgsize = 500000;
-  if (img.imageFormat == urbi::IMAGE_JPEG)
+  if (img.imageFormat == urbi::UImage::IMAGE_JPEG)
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data,
 			     img.size, image, imgsize);
   else
