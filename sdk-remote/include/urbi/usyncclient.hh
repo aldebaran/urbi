@@ -1,6 +1,5 @@
-/*! \file usyncclient.hh
+/*! \file urbi/usyncclient.hh
 ****************************************************************************
- * $Id: usyncclient.h,v 1.5 2005/09/21 06:45:36 nottale Exp $
  *
  * Definition of the URBI interface class
  *

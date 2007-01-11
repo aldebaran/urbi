@@ -1,5 +1,11 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	const method
+	* include/urbi/uabstractclient.hh (getCurrentTime): Is const.
+	Adjust all uses.y
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	ubinary.hh
 	* src/liburbi/uobject/urbi/uobject.hh.template (USound, UBinary)
 	(USound): move to...

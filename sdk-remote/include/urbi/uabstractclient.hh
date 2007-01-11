@@ -261,12 +261,11 @@ namespace urbi
     virtual void notifyCallbacks(const UMessage &msg);
 
     /// Notify of an error.
-    virtual void printf(const char * format, ...)=0;
+    virtual void printf(const char * format, ...) = 0;
 
     /// Get time in milliseconds since an unspecified but constant
     /// reference time.
-    virtual unsigned int getCurrentTime()=0;
-
+    virtual unsigned int getCurrentTime() const = 0;
     /// Return the server name or IP address.
     const char * getServerName() {return host;}
 

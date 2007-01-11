@@ -254,8 +254,9 @@ namespace urbi
     va_end(arg);
   }
 
-  unsigned int UClient::getCurrentTime()
+  unsigned int UClient::getCurrentTime() const
   {
+  // FIXME: Put this into libport.
 #ifdef WIN32
     return GetTickCount();
 #else

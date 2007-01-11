@@ -4,7 +4,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,14 +46,11 @@ namespace urbi
     void listenThread();
 
     virtual void printf(const char * format, ...);
-    virtual unsigned int getCurrentTime();
-
+    virtual unsigned int getCurrentTime() const;
 
   protected:
-
     virtual int  effectiveSend(const void * buffer, int size);
     virtual bool canSend(int size);
-
 
     int             sd;                  ///< Socket file descriptor.
   private:
