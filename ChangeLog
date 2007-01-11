@@ -1,5 +1,10 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	-Werror
+	* configure.ac: Pass it.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Shorten scopes, fix warnings
 	* src/uvalue.cc (UValue::copy): Make it clear which missing
 	cases are valid (e.g., DATA_VOID), and which are to reject.
