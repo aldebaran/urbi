@@ -5,8 +5,6 @@
 #endif
 #include <fcntl.h>
 
-#include "libport/lockable.hh"
-#include "libport/semaphore.hh"
 #include "libport/thread.hh"
 
 #include "urbi/usyncclient.hh"
@@ -28,33 +26,33 @@
 namespace urbi
 {
   USyncClient::USyncClient(const char *_host, int _port, int _buflen)
-    : UClient(_host, _port, _buflen)
+    : UClient(_host, _port, _buflen),
+      sem_(),
+      queueLock_(),
+      msg(0),
+      syncLock_(),
+      syncTag ("")
   {
-    sem = new libport::Semaphore();
-    queueLock = new libport::Lockable();
-    syncLock = new libport::Semaphore();
-    msg=0;
-    syncTag = "";
     libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
-      defaultClient =  this;
+      defaultClient = this;
   }
 
   void USyncClient::callbackThread()
   {
     while (true)
     {
-      (*sem)--;
-      queueLock->lock();
+      sem_--;
+      queueLock_.lock();
       if (queue.empty())
       {
 	//we got mysteriously interrupted
-	queueLock->unlock();
+	queueLock_.unlock();
 	continue;
       }
       UMessage *m = queue.front();
       queue.pop_front();
-      queueLock->unlock();
+      queueLock_.unlock();
       UAbstractClient::notifyCallbacks(*m);
       delete m;
     }
@@ -62,26 +60,26 @@ namespace urbi
 
   void USyncClient::notifyCallbacks(const UMessage &msg)
   {
-    queueLock->lock();
+    queueLock_.lock();
     if (syncTag == msg.tag)
     {
       this->msg = new UMessage(msg);
-      (*syncLock)++;
+      syncLock_++;
       syncTag = "";
     }
     else
     {
       queue.push_back(new UMessage(msg));
-      (*sem)++;
+      sem_++;
     }
-    queueLock->unlock();
+    queueLock_.unlock();
   }
 
   UMessage* USyncClient::waitForTag(const char* tag)
   {
     syncTag = tag;
-    queueLock->unlock();
-    (*syncLock)--;
+    queueLock_.unlock();
+    syncLock_--;
     syncTag = "";
     return msg;
   }
@@ -125,7 +123,7 @@ namespace urbi
     strcat(tag, ":");
     effectiveSend(tag, strlen(tag));
     tag[strlen(tag) - 1] = 0; //restore tag
-    queueLock->lock();
+    queueLock_.lock();
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();

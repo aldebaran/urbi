@@ -1,5 +1,13 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Useless pointers
+	* include/urbi/usyncclient.hh, src/liburbi/usyncclient.cc
+	(sem, queueLock, syncLock): Deferences and rename as...
+	(sem_, queueLock_, syncLock_): these.
+	Adjust uses.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	More warnings
 	* src/examples/urbisound.cc, src/liburbi/uvar.cc, src/utils/move.cc:
 	Don't use lrint, a simple static_cast will do.

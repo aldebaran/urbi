@@ -24,6 +24,8 @@
 # define URBI_USYNCCLIENT_HH
 
 # include "libport/fwd.hh"
+# include "libport/lockable.hh"
+# include "libport/semaphore.hh"
 
 # include "urbi/uclient.hh"
 
@@ -83,11 +85,11 @@ namespace urbi
     void callbackThread();
 
   private:
-    libport::Semaphore* sem;
+    libport::Semaphore sem_;
     std::list<UMessage*> queue;
-    libport::Lockable* queueLock;
+    libport::Lockable queueLock_;
     UMessage* msg;
-    libport::Semaphore* syncLock;
+    libport::Semaphore syncLock_;
     std::string syncTag;
   };
 
