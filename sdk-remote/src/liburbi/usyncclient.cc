@@ -38,12 +38,12 @@ namespace urbi
   USyncClient::USyncClient(const char *_host, int _port, int _buflen)
     : UClient(_host, _port, _buflen)
   {
-    sem = new Semaphore();
-    queueLock = new Lockable();
-    syncLock = new Semaphore();
+    sem = new libport::Semaphore();
+    queueLock = new libport::Lockable();
+    syncLock = new libport::Semaphore();
     msg=0;
     syncTag = "";
-    startThread(this, &USyncClient::callbackThread);
+    libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
       defaultClient =  this;
   }

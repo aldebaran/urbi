@@ -4,7 +4,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -266,7 +266,8 @@ namespace urbi
     /// Notify of an error.
     virtual void printf(const char * format, ...)=0;
 
-    /// Get time in milliseconds since an unspecified but constant reference time.
+    /// Get time in milliseconds since an unspecified but constant
+    /// reference time.
     virtual unsigned int getCurrentTime()=0;
 
     /// Return the server name or IP address.
@@ -282,12 +283,12 @@ namespace urbi
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual int effectiveSend(const void * buffer, int size)=0;
 
-    /// Whether successive effectiveSend() of cumulated size 'size' will succeed.
+    /// Whether successive effectiveSend() of cumulated size 'size'
+    /// will succeed.
     virtual bool canSend(int size)=0;
 
-    Lockable & sendBufferLock;
-    Lockable & listLock;
-
+    libport::Lockable& sendBufferLock;
+    libport::Lockable& listLock;
 
     /// Add a callback to the list.
     UCallbackID addCallback(const char * tag, UCallbackWrapper &w);

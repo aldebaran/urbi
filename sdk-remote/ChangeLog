@@ -1,3 +1,10 @@
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
+	Libort up
+	* include/urbi/uabstractclient.hh, include/urbi/usyncclient.hh, 
+	* src/liburbi/uabstractclient.cc, src/liburbi/uclient.cc,
+	* src/liburbi/usyncclient.cc, src/liburbi/usystem.cc: Adjust.
+
 2007-01-04  Akim Demaille  <akim.demaille@free.fr>
 
 	Don't use #warning for MSC

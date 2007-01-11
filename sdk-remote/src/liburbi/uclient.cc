@@ -4,7 +4,7 @@
  *
  * Linux implementation of the URBI interface class
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -133,7 +133,7 @@ namespace urbi
     else
       recvBufferPosition = pos;
     recvBuffer[recvBufferPosition] = 0;
-    thread = startThread(this, &UClient::listenThread);
+    thread = libport::startThread(this, &UClient::listenThread);
     if (!defaultClient)
       defaultClient = this;
   }
@@ -145,7 +145,7 @@ namespace urbi
     if (control_fd[1] != -1 )
       ::write(control_fd[1], "a", 1);
     //must wait for listen thread to terminate
-    joinThread(thread);
+    libport::joinThread(thread);
     if (control_fd[1] != -1)
       close(control_fd[1]);
     if (control_fd[0] != -1)

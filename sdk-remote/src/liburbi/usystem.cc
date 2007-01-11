@@ -18,19 +18,11 @@
 
  **************************************************************************** */
 
-#include <iostream>
-#include <sstream>
-#include <list>
-
+#include "urbi/uobject.hh" // echo
 #include "urbi/usystem.hh"
-
-#include "urbi/usyncclient.hh"
-#include "urbi/uexternal.hh"
 
 namespace urbi
 {
-  // **************************************************************************
-  // USystemMessage
 
   //! USystemMessage constructor.
   USystemMessage::USystemMessage()
@@ -46,8 +38,8 @@ namespace urbi
   // UStringSystemMessage
 
   //! UStringSystemMessage constructor.
-  UStringSystemMessage::UStringSystemMessage (const std::string &s) :
-	  msg (s)
+  UStringSystemMessage::UStringSystemMessage (const std::string& s)
+    : msg (s)
   {
   }
 
@@ -77,14 +69,14 @@ namespace urbi
   }
 
   void
-  USystem::register_channel (const USystemChannel &)
+  USystem::register_channel (const USystemChannel&)
   {
     // nothing to do in remote mode.
   }
 
   int
-  USystem::receive_message (const USystemChannel &,
-			    const USystemMessage &)
+  USystem::receive_message (const USystemChannel&,
+			    const USystemMessage&)
   {
     // user defined.
     return 0;
