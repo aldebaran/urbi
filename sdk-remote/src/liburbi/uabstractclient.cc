@@ -80,14 +80,18 @@ namespace urbi
   class UClientStreambuf: public std::streambuf
   {
   public:
-    UClientStreambuf(UAbstractClient * cl): client(cl)
+    UClientStreambuf(UAbstractClient * cl)
+      : client(cl)
     {
     }
+
   protected:
-    virtual int overflow (int c = EOF );
-    virtual std::streamsize xsputn (char * s, std::streamsize n);
+    virtual int overflow (int c = EOF);
+    // Override std::basic_streambuf<_CharT, _Traits>::xsputn.
+    virtual std::streamsize xsputn (const char* s, std::streamsize n);
+
   private:
-    UAbstractClient * client;
+    UAbstractClient* client;
   };
 
   int UClientStreambuf::overflow (int c )
@@ -100,7 +104,7 @@ namespace urbi
     return c;
   }
 
-  std::streamsize UClientStreambuf::xsputn (char * s, std::streamsize n)
+  std::streamsize UClientStreambuf::xsputn (const char* s, std::streamsize n)
   {
     client->sendBufferLock.lock();
     if (strlen(client->sendBuffer)+1+n > static_cast<unsigned>(client->buflen))
@@ -112,10 +116,10 @@ namespace urbi
     int clen = strlen(client->sendBuffer);
     memcpy(client->sendBuffer+clen, s, n);
     client->sendBuffer[clen+n] = 0;
-    if (strchr(client->sendBuffer, '&') ||
-	strchr(client->sendBuffer, '|') ||
-	strchr(client->sendBuffer, ';') ||
-	strchr(client->sendBuffer, ','))
+    if (strchr(client->sendBuffer, '&')
+	|| strchr(client->sendBuffer, '|')
+	|| strchr(client->sendBuffer, ';')
+	|| strchr(client->sendBuffer, ','))
     {
       client->effectiveSend(client->sendBuffer, strlen(client->sendBuffer));
       client->sendBuffer[0] = 0;
@@ -137,11 +141,9 @@ namespace urbi
     for (std::list<UCallbackInfo>::iterator it = callbackList.begin();
 	 it!=callbackList.end(); inc?it:it++, inc=false)
     {
-      if (
-	(STREQ(msg.tag.c_str(), it->tag)) ||
-	(STREQ(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR) ||
-	(STREQ(it->tag, URBI_WILDCARD_TAG))
-	)
+      if (STREQ(msg.tag.c_str(), it->tag)
+	  || STREQ(it->tag, URBI_ERROR_TAG) && msg.type == MESSAGE_ERROR
+	  || STREQ(it->tag, URBI_WILDCARD_TAG))
       {
 	UCallbackAction ua = it->callback(msg);
 	if (ua == URBI_REMOVE)

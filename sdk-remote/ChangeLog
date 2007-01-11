@@ -1,5 +1,13 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	-Werror
+	* configure.ac: Pass -Werror when supported.
+	* src/liburbi/uabstractclient.cc (xsputn): Fix a genuine
+	bug: the signature was incorrect (lacking a const).
+	* src/liburbi/uconversion.cc: Use %zd for size_t.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Nuke warnings
 	* src/liburbi/uobject/urbi/ubinary.hh,
 	* src/liburbi/uobject/uvalue-common.cc:

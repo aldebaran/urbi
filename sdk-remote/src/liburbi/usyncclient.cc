@@ -182,7 +182,7 @@ namespace urbi
     else
     {
       //jpeg jpeg, or ycrcb ycrcb
-      buffersize = std::min(m->value->binary->image.size, 
+      buffersize = std::min(m->value->binary->image.size,
 			    static_cast<size_t> (buffersize));
       memcpy(buffer, m->value->binary->image.data, buffersize);
     }
