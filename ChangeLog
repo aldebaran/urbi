@@ -1,5 +1,12 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Coding style
+	* src/ucommandqueue.cc: Shorten scopes.
+	Use switch where appropriate.
+	Use array notations where more appropriate than pointers.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	libport up
 	* src/uconnection.cc, src/uconnection.hh,
 	* src/userver.cc, src/userver.hh: Adjust.
