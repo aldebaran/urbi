@@ -32,6 +32,8 @@
 # include "urbi/fwd.hh"
 # include "urbi/ubinary.hh"
 # include "urbi/utypes-common.hh"
+# include "urbi/uvalue.hh"
+# include "urbi/uvar.hh"
 
 /// This macro must be called once for every UObject class.
 # define UStart(x)							\
@@ -106,21 +108,6 @@
       ::urbi::echo("Error: hub name '%s' is unknown\n", #hub);	\
   } while (0)
 
-/// Define an attribute and its accessors.
-# define PRIVATE(vartype,varname)		\
-  private:					\
-    vartype varname;				\
-  public:					\
-    vartype get_ ##  varname ()			\
-    {						\
-      return varname;				\
-    }						\
-    void set_ ##  varname (vartype& v)		\
-    {						\
-      varname = v;				\
-    }						\
-  private:
-
 
 //macro to send urbi commands
 # ifndef URBI
@@ -180,279 +167,6 @@ namespace urbi
   void send(const char* str);
   /// Send buf to the connection hosting the UObject.
   void send(void* buf,int size);
-
-
-  // UValue and other related types
-
-  /// Possible value types a UValue can contain.
-  enum UDataType
-  {
-    DATA_DOUBLE,
-    DATA_STRING,
-    DATA_BINARY,
-    DATA_LIST,
-    DATA_OBJECT,
-    DATA_VOID
-  };
-
-  /// Class storing URBI List type
-  class UList
-  {
-  public:
-    std::vector<UValue *> array;
-    UList();
-    UList(const UList &b);
-    UList & operator = (const UList &b);
-    ~UList();
-    UValue & operator [](int i) {return *array[i+offset];}
-    const UValue & operator [](int i) const {return *array[i+offset];}
-    int size() const {return array.size();}
-    void setOffset(int n) { offset = n;};
-
-  private:
-    int offset;
-  };
-
-  class UNamedValue
-  {
-  public:
-    UNamedValue(const std::string& n, UValue *v)
-      : val(v),name(n)
-    {}
-    UNamedValue()
-      : val(0),name(0)
-    {}
-    UValue *val;
-    std::string name;
-  };
-
-  class UObjectStruct
-  {
-  public:
-    std::string refName;
-    std::vector<UNamedValue> array;
-    UObjectStruct();
-    UObjectStruct(const UObjectStruct &b);
-    UObjectStruct & operator = (const UObjectStruct &b);
-    ~UObjectStruct();
-    UValue & operator [](const std::string& s);
-    UNamedValue & operator [](int i) {return array[i];}
-    int size() {return array.size();}
-  };
-
-  /** Container for a value that handles all types known to URBI.
-   */
-  class UValue
-  {
-  public:
-    UDataType       type;
-    ufloat          val;  ///< value if of type DATA_DOUBLE
-    union
-    {
-      std::string	*stringValue;	///< value if of type DATA_STRING
-      UBinary		*binary;	///< value if of type DATA_BINARY
-      UList		*list;		///< value if of type DATA_LIST
-      UObjectStruct	*object;	///< value if of type DATA_OBJ
-      void           *storage;		///< internal
-    };
-
-    UValue();
-    UValue(const UValue&);
-    explicit UValue(ufloat doubleValue);
-    explicit UValue(int intValue);
-    explicit UValue(long intValue);
-    explicit UValue(unsigned int intValue);
-    explicit UValue(unsigned long intValue);
-    explicit UValue(char * val);
-    explicit UValue(void * val);
-    explicit UValue(const std::string& str);
-    explicit UValue(const UBinary& b);
-    explicit UValue(const UList & l);
-    explicit UValue(const UObjectStruct &o);
-    explicit UValue(const USound &);
-    explicit UValue(const UImage &);
-    operator ufloat() const;
-    operator std::string() const;
-    operator int() const {return (int)(ufloat)(*this);}
-    operator unsigned int() const {return (unsigned int)(ufloat)(*this);}
-    operator long() const {return (int)(ufloat)(*this);}
-    operator unsigned long() const {return (unsigned int)(ufloat)(*this);}
-    operator bool() const {return (bool)(int)(ufloat)(*this);}
-    operator UBinary() const; ///< deep copy
-    operator UList() const; ///< deep copy
-    operator UImage() const; ///< ptr copy
-    operator USound() const; ///< ptr copy
-    UValue& operator=(const UValue&);
-
-    ~UValue();
-
-    /// Parse an uvalue in current message+pos, returns pos of end of
-    /// match -pos of error if error.
-    int parse(const char* message,
-	      int pos,
-	      std::list<BinaryData> &bins,
-	      std::list<BinaryData>::iterator &binpos);
-
-    /// Print itself on \c s, and return it.
-    std::ostream& print (std::ostream& s) const;
-  };
-
-  inline
-  std::ostream&
-  operator<<(std::ostream &s, const UValue &v)
-  {
-    return v.print (s);
-  }
-
-  //! Provides easy access to variable properties
-  class UProp
-  {
-  public:
-
-    void operator =(const UValue &v);
-    void operator =(const double v);
-    void operator =(const std::string & v);
-
-    operator double();
-    operator std::string();
-    operator UValue();
-
-    UProp(UVar &owner, UProperty name)
-      :owner(owner),name(name)
-    {}
-
-  private:
-    UVar & owner;
-    UProperty name;
-
-    //disable copy ctor and equal operator
-    UProp & operator =(const UProp &b);
-    UProp(const UProp &b);
-  };
-
-
-
-  //Helper macro to initialize UProps in UVar constructors
-#   define VAR_PROP_INIT			\
-  rangemin(*this, PROP_RANGEMIN),		\
-  rangemax(*this, PROP_RANGEMAX),		\
-  speedmin(*this, PROP_SPEEDMIN),		\
-  speedmax(*this, PROP_SPEEDMAX),		\
-  delta(*this, PROP_DELTA),			\
-  blend(*this, PROP_BLEND)
-
-
-  /** UVar class definition
-      Each UVar instance corresponds to one URBI variable. The class provides access to
-      the variable properties, and reading/writting the value to/from all known types.
-  */
-  class UVar
-  {
-  public:
-    UVar()
-      : owned (false),
-	VAR_PROP_INIT,
-	vardata (0), name ("noname")
-    {}
-    UVar(UVar&)
-      : owned (false),
-	VAR_PROP_INIT,
-	vardata (0), name ("")
-    {
-      /// FIXME: This is really weird: a copy-ctor that does not use
-      /// the lhs?
-    }
-    UVar(const std::string&);
-    UVar(const std::string&, const std::string&);
-    UVar(UObject&, const std::string&);
-    ~UVar();
-
-    void init(const std::string&,const std::string&);
-    void setOwned();
-    void syncValue ();
-
-    void operator = (ufloat);
-    void operator = (const std::string&);
-    void operator = (const UBinary &);  ///< deep copy
-    void operator = (const UImage &i);  ///< deep copy
-    void operator = (const USound &s);  ///< deep copy
-    void operator = (const UList &l);
-    void operator = (const UValue &v);
-    operator int ();
-    operator bool () {return (int)(*this);}
-    operator UBinary ();   ///< deep copy
-    /// Deep copy, binary will have to be deleted by the user.
-    operator UBinary *();
-    /// In plugin mode, gives direct access to the buffer, which may
-    /// not be valid after the calling function returns. Changes to
-    /// the other fields of the structure have no effect..
-    operator UImage ();
-    /// In plugin mode, gives direct access to the buffer, which may
-    /// not be valid after the calling function returns. Changes to
-    /// the other fields of the structure have no effect..
-    operator USound();
-    operator ufloat ();
-    operator std::string ();
-    operator UList();
-
-    /// No effect in plugin mode. In remote mode, updates the value
-    /// once asynchronously..
-    void requestValue();
-
-    //kernel operators
-    ufloat& in();
-    ufloat& out();
-
-    bool owned; //< is the variable owned by the module?
-
-    //Property accessors
-
-    UProp rangemin;
-    UProp rangemax;
-    UProp speedmin;
-    UProp speedmax;
-    UProp delta;
-    UProp blend;
-
-    UValue getProp(UProperty prop);
-    void setProp(UProperty prop, const UValue &v);
-    void setProp(UProperty prop, double v);
-    void setProp(UProperty prop, const char * v);
-    void setProp(UProperty prop, const std::string& v)
-    {
-      setProp(prop,v.c_str());
-    }
-
-    // internal
-    void __update(UValue&);
-
-  private:
-    /// Xxx only works in softdevice mode.
-    UValue& val()
-    {
-      return value;
-    }
-
-    /// Pointer to internal data specifics.
-    UVardata  *vardata;
-    void __init();
-
-    /// Full name of the variable as seen in URBI.
-    PRIVATE(std::string,name)
-    /// The variable value on the softdevice's side.
-    PRIVATE(UValue,value)
-
-    // Check that the invariant of this class are verified.
-    bool invariant () const;
-  };
-
-  inline void UProp::operator =(const UValue& v) {owner.setProp(name,v);}
-  inline void UProp::operator =(const double v) {owner.setProp(name,v);}
-  inline void UProp::operator =(const std::string& v) {owner.setProp(name,v);}
-  inline UProp::operator double() {return (double)owner.getProp(name);}
-  inline UProp::operator std::string()  {return owner.getProp(name);}
-  inline UProp::operator UValue() {return owner.getProp(name);}
-
 
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the
@@ -685,12 +399,11 @@ namespace urbi
   | Casters.  |
   `----------*/
 
-
-# define SETCAST(type)				\
-  inline type					\
-  cast(UValue &val, type *)			\
+# define SETCAST(Type)				\
+  inline Type					\
+  cast(UValue &val, Type*)			\
   {						\
-    return (type)val;				\
+    return (Type)val;				\
   }
 
   inline const UValue & cast(UValue &val, const UValue *)
@@ -863,11 +576,6 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
   };
 
 
-  /*------------------------------------------------------.
-  | This section is autogenerated. Not for humans eyes ;) |
-  `------------------------------------------------------*/
-
-
   template<typename T>
   class utrait
   {
@@ -896,6 +604,10 @@ template<class I> std::list<I> cast(UValue &val, std::list<I> * inu)
 # endif
 
 %%%% 0 16
+
+  /*-----------------------------------------------------.
+  | This section is autogenerated. Not for humans eyes.  |
+  `-----------------------------------------------------*/
 
        // non void return type
 

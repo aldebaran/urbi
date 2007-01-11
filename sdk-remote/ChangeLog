@@ -1,5 +1,16 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	urbi/uvar.hh, urbi/uvalue.hh
+	* src/liburbi/uobject/urbi/uvalue.hh: New.
+	* src/liburbi/uobject/urbi/uvar.hh: New.
+	* src/liburbi/uobject/urbi/uobject.hh.template: extracted from
+	here.
+	Adjust all uses
+	* src/utils/move.cc: Remove a useless getCurrentTime.
+	And several other weird pieces of code.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	const method
 	* include/urbi/uabstractclient.hh (getCurrentTime): Is const.
 	Adjust all uses.y

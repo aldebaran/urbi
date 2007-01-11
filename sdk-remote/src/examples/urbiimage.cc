@@ -115,12 +115,10 @@ main (int argc, char *argv[])
   int mode = 0;
   if (argc >=5)
     mode = 1;
+
   urbi::USyncClient client (argv[2+mode*2]);
-
-  if (client.error() != 0)
-    urbi::exit(0);
-
-  int t = client.getCurrentTime();
+  if (client.error())
+    urbi::exit(1);
 
   client.setCallback(showImage, "uimg");
 

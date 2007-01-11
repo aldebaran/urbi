@@ -1,7 +1,7 @@
 /// \file urbi/ubinary.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2006 Gostai S.A.S.
+// Copyright (c) 2007 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -36,7 +36,7 @@ namespace urbi
       SOUND_OGG,
       SOUND_UNKNOWN
     };
-    
+
     enum SampleFormat
     {
       SAMPLE_SIGNED=1,
@@ -159,4 +159,4 @@ namespace urbi
 
 } // end namespace urbi
 
-#endif // ! URBI_BINARY_HH
+#endif // ! URBI_UBINARY_HH

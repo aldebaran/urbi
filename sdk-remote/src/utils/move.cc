@@ -187,17 +187,17 @@ namespace urbi
     for (std::list<LoadedFile>::iterator it = turns.begin();
 	 it != turns.end();
 	 ++it)
+    {
+      if (it->speed > pturn.maxSpeed)
+	pturn.maxSpeed = it->speed;
+      if (it->speed < pturn.minSpeed)
+	pturn.minSpeed = it->speed;
+      if (it->value < pturn.resolution)
       {
-	if (it->speed > pturn.maxSpeed)
-	  pturn.maxSpeed = it->speed;
-	if (it->speed < pturn.minSpeed)
-	  pturn.minSpeed = it->speed;
-	if (it->value < pturn.resolution)
-	{
-	  pturn.resolution = it->value;
-	  pturn.precision = it->precision;
-	}
+	pturn.resolution = it->value;
+	pturn.precision = it->precision;
       }
+    }
     moving = 0;
     return 0;
   };
@@ -247,12 +247,12 @@ namespace urbi
     int index = 0;
     while (true)
     {
-      if (index == length / 2U - 1U)
+      if (index == static_cast<int>(length) / 2 - 1)
       {
 	//calculate best value for move[index]
 	float dist = distance - currentval;
 	// -12/5 = -2 en division entiere.
-	int cnt = (int) (dist / values[index][direction[index]]);
+	int cnt = dist / values[index][direction[index]];
 	float rest = ffloatpart(dist / values[index][direction[index]]);
 	if (rest > 0.5)
 	  ++cnt;
@@ -261,12 +261,12 @@ namespace urbi
 	move[index] = cnt;
 	currentval += (float) cnt * values[index][direction[index]];
 	/*
-	  std::cerr << "eval ";
-	  for (unsigned int k = 0; k < length / 2; ++k)
-	    std::cerr << move[k] << " ";
-	  std::cerr << "(" << currentval << ")";
-	  std::cerr << endl;
-	*/
+	 std::cerr << "eval ";
+	 for (unsigned int k = 0; k < length / 2; ++k)
+	 std::cerr << move[k] << " ";
+	 std::cerr << "(" << currentval << ")";
+	 std::cerr << endl;
+	 */
 	//calculate nummoves
 	int nummoves = 0;
 	for (int i = 0; i <= index; ++i)
@@ -275,7 +275,7 @@ namespace urbi
 	    && (nummoves < bestnummoves || bestnummoves == -1))
 	{
 	  bestnummoves = nummoves;
-	  for (int k = 0; k < length / 2; ++k)
+	  for (int k = 0; k < static_cast<int>(length) / 2; ++k)
 	    bestmove[k] = move[k];
 	}
 	//get back one or more level
@@ -290,12 +290,12 @@ namespace urbi
 	  break;
 	//DEBUG:recalculate currentval
 	/*
-	  std::cerr << "cv: " << currentval;
-	  currentval = 0;
-	  for (unsigned int k = 0; k < length / 2U; ++k)
-	    currentval += (float) move[k] * values[k][direction[k]];
-	  std::cerr << " " << currentval << std::endl;
-	*/
+	 std::cerr << "cv: " << currentval;
+	 currentval = 0;
+	 for (unsigned int k = 0; k < length / 2U; ++k)
+	 currentval += (float) move[k] * values[k][direction[k]];
+	 std::cerr << " " << currentval << std::endl;
+	 */
       }
 
       move[index] += ((direction[index] == 0) ? 1 : -1);
@@ -330,8 +330,6 @@ namespace urbi
     it = walks.begin();
     it2 = it;
     sequence.clear();
-    for (unsigned int i = 0; i < length / 2U; ++i, ++it2)
-      ;
     for (unsigned int i = 0; i < length / 2U; ++i, ++it, ++it2)
     {
       char* name = (bestmove[i] > 0) ? it->name : it2->name;
@@ -366,10 +364,7 @@ namespace urbi
     std::list<LoadedFile>::iterator it = turns.begin();
     std::list<LoadedFile>::iterator it2 = it;
 
-    for (int i = 0; i < length / 2; ++i, ++it2)
-      ;
-    // std::cerr << "values: ";
-    for (int i = 0; i < length / 2; ++i, ++it, ++it2)
+    for (int i = 0; i < static_cast<int>(length) / 2; ++i, ++it, ++it2)
     {
       values[i][0] = it->value;
       // The minus is in the negative value in move.
@@ -383,112 +378,109 @@ namespace urbi
     int index = 0;
     while (true)
     {
-      if (index == length / 2 - 1)
+      if (index == static_cast<int> (length) / 2 - 1)
+    {
+      //calculate best value for move[index]
+      float dist = distance - currentval;
+      // -12/5 = -2 en division entiere.
+      int cnt = dist / values[index][direction[index]];
+      float rest = ffloatpart(dist / values[index][direction[index]]);
+      if (rest > 0.5)
+	++cnt;
+      if (rest < -0.5)
+	--cnt;
+      move[index] = cnt;
+      currentval += (float) cnt * values[index][direction[index]];
+      /*
+       std::cerr << "eval ";
+       for (int k = 0;k<length/2; ++k)
+       std::cerr << move[k] <<" ";
+       std::cerr << "(" <<currentval <<")";
+       std::cerr <<endl;
+       */
+      //calculate nummoves
+      int nummoves = 0;
+      for (int i = 0; i <= index; ++i)
+	nummoves += abs(move[i]);
+      if (fabs(currentval - distance) < absoluteprecision
+	  && (nummoves < bestnummoves || bestnummoves == -1))
       {
-	//calculate best value for move[index]
-	float dist = distance - currentval;
-	// -12/5 = -2 en division entiere.
-	int cnt = (int) (dist / values[index][direction[index]]);
-	float rest = ffloatpart(dist / values[index][direction[index]]);
-	if (rest > 0.5)
-	  ++cnt;
-	if (rest < -0.5)
-	  --cnt;
-	move[index] = cnt;
-	currentval += (float) cnt * values[index][direction[index]];
-	/*
-	  std::cerr << "eval ";
-	  for (int k = 0;k<length/2; ++k)
-	    std::cerr << move[k] <<" ";
-	  std::cerr << "(" <<currentval <<")";
-	  std::cerr <<endl;
-	*/
-	//calculate nummoves
-	int nummoves = 0;
-	for (int i = 0; i <= index; ++i)
-	  nummoves += abs(move[i]);
-	if (fabs(currentval - distance) < absoluteprecision
-	    && (nummoves < bestnummoves || bestnummoves == -1))
-	{
-	  bestnummoves = nummoves;
-	  for (int k = 0; k < length / 2; ++k)
-	    bestmove[k] = move[k];
-	}
-	//get back one or more level
-	do {
-	  currentval -= (float) move[index] * values[index][direction[index]];
-	  move[index] = 0;
-	  --index;
-	}
-	while (index >= 0
-	       && ((currentval>distance && direction[index] == 0)
-		   || (currentval<distance && direction[index] == 1)));
-	if (index < 0)
-	  break;
-	//DEBUG:recalculate currentval
-	/*
-	  std::cerr << "cv: "<<currentval;
-	  currentval = 0;
-	  for (int k = 0;k<length/2; ++k)
-	    currentval+=(float)move[k]*values[k][direction[k]];
-	  std::cerr << " " <<currentval <<std::endl;
-	*/
+	bestnummoves = nummoves;
+	for (int k = 0; k < static_cast<int>(length) / 2; ++k)
+	  bestmove[k] = move[k];
       }
-
-      move[index] += (direction[index] == 0) ? 1 : -1;
-      if (move[index] != 0)
-	currentval += values[index][direction[index]]
-	  * (float)((direction[index] == 0) ? 1 : -1);
-      if (currentval > distance)
-	direction[index + 1] = 1;
-      else
-	direction[index + 1] = 0;
-      move[index + 1] = ((direction[index + 1] == 0) ? -1 : 1);
-      ++index;
+      //get back one or more level
+      do {
+	currentval -= (float) move[index] * values[index][direction[index]];
+	move[index] = 0;
+	--index;
+      }
+      while (index >= 0
+	     && ((currentval>distance && direction[index] == 0)
+		 || (currentval<distance && direction[index] == 1)));
+      if (index < 0)
+	break;
+      //DEBUG:recalculate currentval
+      /*
+       std::cerr << "cv: "<<currentval;
+       currentval = 0;
+       for (int k = 0;k<length/2; ++k)
+       currentval+=(float)move[k]*values[k][direction[k]];
+       std::cerr << " " <<currentval <<std::endl;
+       */
     }
 
-    //end, apply best match
-
-    if (tag)
-      strcpy(usertag, tag);
+    move[index] += (direction[index] == 0) ? 1 : -1;
+    if (move[index] != 0)
+      currentval += values[index][direction[index]]
+	* (float)((direction[index] == 0) ? 1 : -1);
+    if (currentval > distance)
+      direction[index + 1] = 1;
     else
-      strcpy(usertag, "notag");
-    if (bestnummoves == -1 || bestnummoves == 0)
-    {
-      distance = 0;
-      moving = 0;
-      robot->send("%s: ping;", this->tag);
-      return 0;
-    }
-    char command[1024];
-    float realmove = 0;
-    command[0] = 0;
+      direction[index + 1] = 0;
+    move[index + 1] = ((direction[index + 1] == 0) ? -1 : 1);
+    ++index;
+  }
+
+  //end, apply best match
+
+  if (tag)
+    strcpy(usertag, tag);
+  else
+    strcpy(usertag, "notag");
+  if (bestnummoves == -1 || bestnummoves == 0)
+  {
+    distance = 0;
     moving = 0;
-    it = turns.begin();
-    it2 = it;
-    sequence.clear();
-    for (int i = 0; i < length / 2; ++i, ++it2)
-      ;
-    // std::cerr << "choice:" ;
-    for (int i = 0; i < length / 2; ++i, ++it, ++it2)
-    {
-      char* name = (bestmove[i] > 0) ? it->name : it2->name;
-      realmove += bestmove[i] * values[i][(bestmove[i] > 0) ? 0 : 1];
-      //	std::cerr << bestmove[i] << " ";
-      for (int j = 0; j < abs(bestmove[i]); ++j)
-      {
-	++moving;
-	if (moving < 4)
-	  sprintf(&command[strlen(command)], "exec(%s);", name);
-	else
-	  sequence.push_back(std::string (name));
-      }
-    }
-    //  std::cerr <<endl;
-    robot->send(command);
-    distance = realmove;
+    robot->send("%s: ping;", this->tag);
     return 0;
   }
+  char command[1024];
+  float realmove = 0;
+  command[0] = 0;
+  moving = 0;
+  it = turns.begin();
+  it2 = it;
+  sequence.clear();
+  for (int i = 0; i < static_cast<int>(length) / 2; ++i, ++it, ++it2)
+  {
+    char* name = (bestmove[i] > 0) ? it->name : it2->name;
+    realmove += bestmove[i] * values[i][(bestmove[i] > 0) ? 0 : 1];
+    //	std::cerr << bestmove[i] << " ";
+    for (int j = 0; j < abs(bestmove[i]); ++j)
+    {
+      ++moving;
+      if (moving < 4)
+	sprintf(&command[strlen(command)], "exec(%s);", name);
+      else
+	sequence.push_back(std::string (name));
+    }
+  }
+  //  std::cerr <<endl;
+  robot->send(command);
+  distance = realmove;
+  return 0;
+}
 
   UCallbackAction Move::moveEnd(const UMessage& msg)
   {
