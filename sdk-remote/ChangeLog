@@ -1,5 +1,10 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Fix a warning
+	* src/liburbi/uvar.cc: Use lrint to cast from double to int.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	-Werror
 	* configure.ac: Pass -Werror when supported.
 	* src/liburbi/uabstractclient.cc (xsputn): Fix a genuine

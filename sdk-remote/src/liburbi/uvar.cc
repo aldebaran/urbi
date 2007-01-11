@@ -18,6 +18,8 @@
 
  **************************************************************************** */
 
+#include <cmath>
+
 #include "urbi/uobject.hh"
 
 #include "urbi/uexternal.hh"
@@ -75,9 +77,9 @@ namespace urbi
   void
   UVar::setProp(UProperty p, double v)
   {
-    //TODO : generalize
-    // FIXME: This is not the right way to do it.
-    int i = v;
+    // FIXME: This is not the right way to do it.  Generalize
+    // conversions between enums and strings.
+    int i = lrint (v);
     if (p == PROP_BLEND && is_blendtype(i))
       URBI(()) << name << "->"<< urbi::name(p) << "="
 	       << urbi::name(static_cast<UBlendType>(i)) << ";";
