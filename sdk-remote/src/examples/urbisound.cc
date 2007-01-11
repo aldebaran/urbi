@@ -68,7 +68,7 @@ bool waswithheader;
 int totallength;
 
 urbi::UCallbackAction
-endProgram(const urbi::UMessage &msg)
+endProgram(const urbi::UMessage&)
 {
   if (waswithheader)
   {
@@ -93,7 +93,7 @@ endProgram(const urbi::UMessage &msg)
 }
 
 urbi::UCallbackAction
-getSound(const urbi::UMessage &msg)
+getSound(const urbi::UMessage& msg)
 {
   static urbi::USound out;
   static bool initialized=false;

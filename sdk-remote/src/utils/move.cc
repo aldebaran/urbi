@@ -252,7 +252,7 @@ namespace urbi
 	//calculate best value for move[index]
 	float dist = distance - currentval;
 	// -12/5 = -2 en division entiere.
-	int cnt = dist / values[index][direction[index]];
+	int cnt = static_cast<int> (dist / values[index][direction[index]]);
 	float rest = ffloatpart(dist / values[index][direction[index]]);
 	if (rest > 0.5)
 	  ++cnt;
@@ -383,7 +383,7 @@ namespace urbi
       //calculate best value for move[index]
       float dist = distance - currentval;
       // -12/5 = -2 en division entiere.
-      int cnt = dist / values[index][direction[index]];
+      int cnt = static_cast<int>(dist / values[index][direction[index]]);
       float rest = ffloatpart(dist / values[index][direction[index]]);
       if (rest > 0.5)
 	++cnt;

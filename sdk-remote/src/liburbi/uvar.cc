@@ -18,8 +18,6 @@
 
  **************************************************************************** */
 
-#include <cmath>
-
 #include "urbi/uobject.hh"
 
 #include "urbi/uexternal.hh"
@@ -79,7 +77,7 @@ namespace urbi
   {
     // FIXME: This is not the right way to do it.  Generalize
     // conversions between enums and strings.
-    int i = lrint (v);
+    int i = static_cast<int>(v);
     if (p == PROP_BLEND && is_blendtype(i))
       URBI(()) << name << "->"<< urbi::name(p) << "="
 	       << urbi::name(static_cast<UBlendType>(i)) << ";";

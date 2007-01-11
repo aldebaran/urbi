@@ -1,5 +1,11 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	More warnings
+	* src/examples/urbisound.cc, src/liburbi/uvar.cc, src/utils/move.cc:
+	Don't use lrint, a simple static_cast will do.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Fix a warning
 	* src/liburbi/uvar.cc: Use lrint to cast from double to int.
 
