@@ -296,7 +296,20 @@ UVariable::set(UValue *v)
 	    delete value;
 	    value = v->copy();
 	    break;
+	  case DATA_UNKNOWN:
+	  case DATA_FILE:
+	  case DATA_FUNCTION:
+	  case DATA_VOID:
+	  case DATA_OBJ:
+	  case DATA_VARIABLE:
+	    abort();
 	}
+      case DATA_VARIABLE:
+      case DATA_UNKNOWN:
+      case DATA_FILE:
+      case DATA_FUNCTION:
+      case DATA_OBJ:
+	abort();
     }
   }
 

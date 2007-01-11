@@ -1,5 +1,10 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Fix warnings
+	* src/uvariable.cc: Die on impossible switch cases.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Update uobject
 	* src/uvalue.cc: Adjust.
 
