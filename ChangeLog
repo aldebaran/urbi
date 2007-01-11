@@ -1,5 +1,12 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Coding style
+	* src/ueventmatch.cc, src/ueventmatch.hh: Improve the coding
+	style: scopes, ctors, for loops, useless braces and parens.
+	The usual stuff.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	UEventCompoundType
 	* src/utypes.hh (UEventCompoundType): Move to.
 	* src/ueventcompound.hh (UEventCompound::Type): here.
