@@ -1,3 +1,8 @@
+2007-01-11  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	fix typos in yml format 
+	* ast/ast.yml: fixed.
+
 2006-12-31  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	commit of the current stage of progress. 

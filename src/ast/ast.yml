@@ -90,7 +90,7 @@ Var:
   super: Exp
   attributes: 
     - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
-    - symbol:  { type: 'symbol::Symbol*', desc: Name of the variable, separated from exp with a dot }
+    - symbol:  { type: 'symbol::Symbol*', desc: Name of the variable separated from exp with a dot }
 
 Tag:
   super: Var
@@ -184,9 +184,10 @@ ReturnCmd:
   super: Cmd
   attributes:
     - exp: { type: 'Exp*', desc: Returned value }
+    - cont: { type: bool, desc: Continuation flag for return& }
 
 AliasCmd:
-  super:Cmd  
+  super: Cmd  
   desc: |2
 
       /** \class ast::AliasCmd
@@ -199,13 +200,13 @@ AliasCmd:
     - alias: { type: 'symbol::Symbol*', desc: Aliased attribute }
 
 InheritsCmd:
-  super:Cmd  
+  super: Cmd  
   attributes:
     - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
     - inherited: { type: 'Exp*', desc: Reference to the inherited object }
 
 DisinheritsCmd:
-  super:Cmd  
+  super: Cmd  
   attributes:
     - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
     - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
@@ -234,7 +235,7 @@ ExternalCmd:
     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
     - attribute: { type: 'symbol::Symbol*', desc: Bound attribute }
     - type: { type: ExternalCmd::Type, access: r, desc: External binding type }
-    - qualifier:  { type: int, desc: Binding qualifier, used to specify the number of args in a function }
+    - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
 WaitCmd:
   super: Cmd
@@ -279,13 +280,13 @@ StringExp:
   super: Exp
   attributes: [ { value: { type: 'std::string', access: r, desc: Stored string value } } ]
 
-ArrayExp:
+ListExp:
   super: Exp
   attributes:
     - value:
         type: 'exps_type*'
         access: r
-        desc: Stored array value
+        desc: Stored list value
 
 MapExp:
   super: Exp
@@ -316,9 +317,9 @@ OpVarExp:
               /** \brief "@" */ addr,
               /** \brief "group" */ group
             };
- attributes:
+  attributes:
     - operand: { type: 'Var*', desc: Operand }
-    - oper: { type: OpVar::Oper, access: r, desc: Operator }
+    - oper: { type: OpVarExp::Oper, access: r, desc: Operator }
 
 NegOpExp:
   super: Exp
@@ -438,7 +439,7 @@ FunctionDec:
   attributes:
     - formals: { type: 'vardecs_type*', desc: Formal arguments }
     - result:  { type: 'NameTy*', mandatory: False, desc: Result type}
-    - body: { type: 'Exp*', access: rwW, Mandatory: False, desc: Instructions }
+    - body: { type: 'Exp*', access: rwW, mandatory: False, desc: Instructions }
 
 EventDec:
   super: Dec
