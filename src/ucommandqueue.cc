@@ -90,11 +90,11 @@ UCommandQueue::popCommand (int &length)
   int position = start_ + cursor_;
   if (position >= bufferSize_)
     position = position - bufferSize_;
-  
+
   int nextposition = position + 1;
   if (nextposition >= bufferSize_)
     nextposition = nextposition - bufferSize_;
-  
+
   int previousposition = position - 1;
   if (previousposition < 0)
     previousposition = previousposition + bufferSize_;
@@ -102,14 +102,14 @@ UCommandQueue::popCommand (int &length)
   if (cursor_ == 0)
     // no previous char at start
     p0 = ' ';
-  
+
   bool found = false;
   while (cursor_ < dataSize_ && !found)
   {
     char p_1 = p0;
     p0 = (char) buffer_[position];
     char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : '-';
-  
+
     if (discard_)
     {
       // One char close sequence
