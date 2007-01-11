@@ -118,14 +118,6 @@ enum UTestResult
   UTESTFAIL
 };
 
-enum UEventCompoundType
-{
-  EC_MATCH,
-  EC_AND,
-  EC_OR,
-  EC_BANG
-};
-
 /// The different Data types
 enum UDataType
 {

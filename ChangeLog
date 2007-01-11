@@ -1,5 +1,15 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	UEventCompoundType
+	* src/utypes.hh (UEventCompoundType): Move to.
+	* src/ueventcompound.hh (UEventCompound::Type): here.
+	* src/ueventcompound.cc: Adjust.
+	Also, use switch when that's more appropriate.
+	And SHORTEN THE SCOPES!
+	* src/uexpression.cc: Adjust.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	simplify (UCommand_TREE)
 	* src/uconnection.cc (simplify): New.
 	(UConnection::execute): Use it.

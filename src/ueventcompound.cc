@@ -21,16 +21,15 @@
 #include "libport/containers.hh"
 
 #include "ueventcompound.hh"
-#include "uasynccommand.hh"
-#include "ueventmatch.hh"
-#include "uvalue.hh"
-#include "userver.hh"
 #include "ueventinstance.hh"
+#include "ueventmatch.hh"
+#include "userver.hh"
+#include "uvalue.hh"
 
 // **************************************************************************
 // UEventCompound
 
-UEventCompound::UEventCompound(UEventCompoundType ectype,
+UEventCompound::UEventCompound(Type ectype,
 			       UEventCompound* ec1,
 			       UEventCompound* ec2)
   : keepalive_ (false),
@@ -143,88 +142,85 @@ UEventCompound::mixing()
 void
 UEventCompound::normalForm ()
 {
-  UEventCompound* ref1;
-  UEventCompound* ref2;
-
-  if (ectype_ == EC_MATCH)
-  {
-    em_->reduce ();
-    return;
-  }
-
-  // EC_OR
-  if (ectype_ == EC_OR)
-  {
-    ASSERT (ec1_)
-      ec1_->normalForm ();
-    ASSERT (ec2_)
-      ec2_->normalForm ();
-    ASSERT (ec1_->ectype_ != EC_BANG);
-    ASSERT (ec2_->ectype_ != EC_BANG);
-    return;
-  }
-
-  // EC_AND
-  if (ectype_ == EC_AND)
-  {
-    ASSERT (ec1_)
-      ec1_->normalForm ();
-    ASSERT (ec2_)
-      ec2_->normalForm ();
-    ASSERT (ec1_->ectype_ != EC_BANG);
-    ASSERT (ec2_->ectype_ != EC_BANG);
-    return;
-  }
-
-  // We are in EC_BANG
-  ASSERT (ectype_ == EC_BANG);
-  ASSERT (ec1_)
-  switch (ec1_->ectype_)
+  switch (ectype_)
   {
     case EC_MATCH:
-      ec1_->em_->reduce ();
-      if (ec1_->em_->matches().empty())
-	em_ = kernel::eventmatch_true;
-      else
-	em_ = kernel::eventmatch_false;
-
-      ectype_ = EC_MATCH;
-      delete ec1_;
-      ec1_=0;
-      return;
-
-    case EC_BANG:
-      ref1 = ec1_->ec1_;
-      ref1->keepalive();
-      delete ec1_;
-      ectype_ = ref1->ectype_;
-      ec1_ = ref1->ec1_;
-      ec2_ = ref1->ec2_;
-      em_ = ref1->em_;
-      return;
-
-    case EC_AND:
-      ref1 = ec1_->ec1_;
-      ref2 = ec1_->ec2_;
-      ref1->keepalive ();
-      ref2->keepalive ();
-      delete ec1_;
-      ectype_ = EC_OR;
-      ec1_ = new UEventCompound (EC_BANG, ref1);
-      ec2_ = new UEventCompound (EC_BANG, ref2);
-      normalForm ();
+      em_->reduce ();
       return;
 
     case EC_OR:
-      ref1 = ec1_->ec1_;
-      ref2 = ec1_->ec2_;
-      ref1->keepalive ();
-      ref2->keepalive ();
-      delete ec1_;
-      ectype_ = EC_AND;
-      ec1_ = new UEventCompound (EC_BANG, ref1);
-      ec2_ = new UEventCompound (EC_BANG, ref2);
-      normalForm ();
+      ASSERT (ec1_)
+	ec1_->normalForm ();
+      ASSERT (ec2_)
+	ec2_->normalForm ();
+      ASSERT (ec1_->ectype_ != EC_BANG);
+      ASSERT (ec2_->ectype_ != EC_BANG);
       return;
+
+    case EC_AND:
+      ASSERT (ec1_)
+	ec1_->normalForm ();
+      ASSERT (ec2_)
+	ec2_->normalForm ();
+      ASSERT (ec1_->ectype_ != EC_BANG);
+      ASSERT (ec2_->ectype_ != EC_BANG);
+      return;
+
+    case EC_BANG:
+      ASSERT (ec1_)
+	switch (ec1_->ectype_)
+	{
+	  case EC_MATCH:
+	    ec1_->em_->reduce ();
+	    if (ec1_->em_->matches().empty())
+	      em_ = kernel::eventmatch_true;
+	    else
+	      em_ = kernel::eventmatch_false;
+	    
+	    ectype_ = EC_MATCH;
+	    delete ec1_;
+	    ec1_=0;
+	    return;
+	    
+	  case EC_BANG:
+	  {
+	    UEventCompound* ref1 = ec1_->ec1_;
+	    ref1->keepalive();
+	    delete ec1_;
+	    ectype_ = ref1->ectype_;
+	    ec1_ = ref1->ec1_;
+	    ec2_ = ref1->ec2_;
+	    em_ = ref1->em_;
+	    return;
+	  }
+	  
+	  case EC_AND:
+	  {
+	    UEventCompound* ref1 = ec1_->ec1_;
+	    UEventCompound* ref2 = ec1_->ec2_;
+	    ref1->keepalive ();
+	    ref2->keepalive ();
+	    delete ec1_;
+	    ectype_ = EC_OR;
+	    ec1_ = new UEventCompound (EC_BANG, ref1);
+	    ec2_ = new UEventCompound (EC_BANG, ref2);
+	    normalForm ();
+	    return;
+	  }
+	  
+	  case EC_OR:
+	  {
+	    UEventCompound* ref1 = ec1_->ec1_;
+	    UEventCompound* ref2 = ec1_->ec2_;
+	    ref1->keepalive ();
+	    ref2->keepalive ();
+	    delete ec1_;
+	    ectype_ = EC_AND;
+	    ec1_ = new UEventCompound (EC_BANG, ref1);
+	    ec2_ = new UEventCompound (EC_BANG, ref2);
+	    normalForm ();
+	    return;
+	  }
+	}
   }
 }

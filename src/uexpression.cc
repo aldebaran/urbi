@@ -825,7 +825,7 @@ UExpression::eval (UCommand *command,
 
       delete e1;
       if (ec1)
-	ec = new UEventCompound (EC_BANG, ec1);
+	ec = new UEventCompound (UEventCompound::EC_BANG, ec1);
       return ret;
     }
 
@@ -875,10 +875,10 @@ UExpression::eval (UCommand *command,
     }
 
     case TEST_AND:
-      EVAL_BIN_BOOLEAN(&&, EC_AND);
+      EVAL_BIN_BOOLEAN(&&, UEventCompound::EC_AND);
 
     case TEST_OR:
-      EVAL_BIN_BOOLEAN(||, EC_OR);
+      EVAL_BIN_BOOLEAN(||, UEventCompound::EC_OR);
 
 #undef EVAL_BIN_BOOLEAN
     default:
