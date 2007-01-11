@@ -108,14 +108,14 @@ getSound(const urbi::UMessage &msg)
       out.channels = 2;
       out.sampleSize = 16;
       out.rate = 16000;
-      out.sampleFormat = urbi::SAMPLE_SIGNED;
+      out.sampleFormat = urbi::USound::SAMPLE_SIGNED;
     }
     else
     {
       out.channels = 0;
       out.sampleSize = 0;
       out.rate = 0;
-      out.sampleFormat = (urbi::USoundSampleFormat)0;
+      out.sampleFormat = (urbi::USound::SampleFormat)0;
     }
   }
 

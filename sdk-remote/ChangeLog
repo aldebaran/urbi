@@ -1,5 +1,10 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Example fix
+	* src/examples/urbisound.cc: Adjust to ubinary.hh.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Simplify delete[]
 	* src/liburbi/uabstractclient.cc: Don't protect it either.
 	Job for restyle?
