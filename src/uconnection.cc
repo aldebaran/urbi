@@ -363,7 +363,7 @@ UConnection::block ()
 UErrorValue
 UConnection::continueSend ()
 {
-  urbi::BlockLock bl(this); //lock this function
+  libport::BlockLock bl(this); //lock this function
   blocked_ = false;	    // continueSend unblocks the connection.
 
   int toSend = sendQueue_.dataSize(); // nb of bytes to send
@@ -426,7 +426,7 @@ UConnection::received (const ubyte *buffer, int length)
   bool gotlock = false;
   bool faillock = false; // if binary append failed to get lock,
   // abort processing
-  urbi::BlockLock bl(server);
+  libport::BlockLock bl(server);
   // Lock the connection.
   lock();
   if (receiveBinary_)

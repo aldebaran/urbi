@@ -60,7 +60,7 @@
     system is actually sending data through the real connection.
  */
 
-class UConnection: public urbi::Lockable //queue lock
+class UConnection: public libport::Lockable //queue lock
 {
   friend class UServer;
 
@@ -216,7 +216,7 @@ public:
   UParser& parser ();
 
   /// Lock access to command tree.
-  urbi::Lockable treeLock;
+  libport::Lockable treeLock;
 
 private:
   /// The parser object.

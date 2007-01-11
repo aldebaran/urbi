@@ -250,7 +250,7 @@ UServer::afterWork()
 void
 UServer::work()
 {
-  urbi::BlockLock bl(this);
+  libport::BlockLock bl(this);
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;

@@ -46,7 +46,7 @@ extern  class UServer   *urbiserver; // Global variable for the server
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class UServer: public urbi::Lockable
+class UServer: public libport::Lockable
 {
 public:
   UServer(ufloat frequency, int freeMemory, const char* mainName);

@@ -1,3 +1,9 @@
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
+	libport up
+	* src/uconnection.cc, src/uconnection.hh,
+	* src/userver.cc, src/userver.hh: Adjust.
+
 2006-12-29  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Fix includes.
