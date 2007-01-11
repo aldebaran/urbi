@@ -79,7 +79,7 @@ namespace urbi
     return UObjectStruct(*v.object);
   }
 
-  const char* cast(UValue &v, const char** b)
+  const char* cast(UValue &v, const char**)
   {
     static const char* er = "invalid";
     if (v.type != DATA_STRING)

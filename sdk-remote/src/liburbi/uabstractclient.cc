@@ -103,7 +103,7 @@ namespace urbi
   std::streamsize UClientStreambuf::xsputn (char * s, std::streamsize n)
   {
     client->sendBufferLock.lock();
-    if (strlen(client->sendBuffer)+1+n > client->buflen)
+    if (strlen(client->sendBuffer)+1+n > static_cast<unsigned>(client->buflen))
     {
       //error
       client->sendBufferLock.unlock();

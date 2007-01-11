@@ -28,6 +28,12 @@ namespace urbi
   class USound
   {
   public:
+    char                  *data;            ///< pointer to sound data
+    int                   size;             ///< total size in byte
+    int                   channels;         ///< number of audio channels
+    int                   rate;             ///< rate in Hertz
+    int                   sampleSize;       ///< sample size in bit
+
     enum Format
     {
       SOUND_RAW,
@@ -37,19 +43,15 @@ namespace urbi
       SOUND_UNKNOWN
     };
 
+    Format          soundFormat;      ///< format of the sound data
+    /// Return a legible definition of imageFormat.
+    const char* format_string () const;
+
     enum SampleFormat
     {
       SAMPLE_SIGNED=1,
       SAMPLE_UNSIGNED=2
     };
-
-
-    char                  *data;            ///< pointer to sound data
-    int                   size;             ///< total size in byte
-    int                   channels;         ///< number of audio channels
-    int                   rate;             ///< rate in Hertz
-    int                   sampleSize;       ///< sample size in bit
-    Format          soundFormat;      ///< format of the sound data
     SampleFormat    sampleFormat;     ///< sample format
 
     bool operator ==(const USound &b) const
@@ -84,6 +86,9 @@ namespace urbi
     };
 
     Format          imageFormat;
+
+    /// Return a legible definition of imageFormat.
+    const char* format_string () const;
   };
 
 

@@ -1,5 +1,15 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Warning fixes
+	* src/liburbi/uobject/urbi/ubinary.hh, 
+	* src/liburbi/uobject/uvalue-common.cc (USound::format_string)
+	(UImage::format_string): New.
+	Use them.
+	* src/liburbi/uabstractclient.cc,
+	* src/liburbi/uobject.cc: Fix warnings.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Remove unused code
 	* src/liburbi/usyncclient.cc (callbackThreadStarter): Remove.
 

@@ -259,32 +259,32 @@ namespace urbi
 	s.write((char*) binary->common.data, binary->common.size);
 	break;
       case DATA_LIST:
+      {
+	s << '[';
+	int sz = list->size();
+	for (int i = 0; i < sz; ++i)
 	{
-	  s << '[';
-	  int sz = list->size();
-	  for (int i = 0; i < sz; ++i)
-	  {
-	    s << (*list)[i];
-	    if (i != sz - 1)
-	      s << " , ";
-	  }
-	  s << ']';
+	  s << (*list)[i];
+	  if (i != sz - 1)
+	    s << " , ";
 	}
-	break;
+	s << ']';
+      }
+      break;
       case DATA_OBJECT:
+      {
+	s << "OBJ "<<object->refName<<" [";
+	int sz = object->size();
+	for (int i = 0; i < sz; ++i)
 	{
-	  s << "OBJ "<<object->refName<<" [";
-	  int sz = object->size();
-	  for (int i = 0; i < sz; ++i)
-	  {
-	    s << (*object)[i].name << ':';
-	    s << (*object)[i].val;
-	    if (i != sz - 1)
-	      s << " , ";
-	  }
-	  s << ']';
+	  s << (*object)[i].name << ':';
+	  s << (*object)[i].val;
+	  if (i != sz - 1)
+	    s << " , ";
 	}
-	break;
+	s << ']';
+      }
+      break;
       default:
 	s << "<<void>>";
     }
@@ -292,12 +292,56 @@ namespace urbi
   }
 
 
+  /*---------.
+  | USound.  |
+  `---------*/
+
+  const char* USound::format_string () const
+  {
+    switch (soundFormat)
+    {
+      case SOUND_RAW:
+	return "raw";
+      case SOUND_WAV:
+	return "wav";
+      case SOUND_MP3:
+	return "mp3";
+      case SOUND_OGG:
+	return "ogg";
+      case SOUND_UNKNOWN:
+	return "unknown format";
+    }
+  }
+
+  /*---------.
+  | UImage.  |
+  `---------*/
+
+  const char* UImage::format_string () const
+  {
+    switch (imageFormat)
+    {
+      case IMAGE_RGB:
+	return "rgb";
+      case IMAGE_JPEG:
+	return "jpeg";
+      case IMAGE_YCbCr:
+	return "YCbCr";
+      case IMAGE_PPM:
+	return "ppm";
+      case IMAGE_UNKNOWN:
+	return "unknown format";
+    }
+  }
+
   /*----------.
   | UBinary.  |
   `----------*/
-  int UBinary::parse(const char* message, int pos,
-		     std::list<BinaryData>& bins,
-		     std::list<BinaryData>::iterator& binpos)
+
+  int
+  UBinary::parse(const char* message, int pos,
+		 std::list<BinaryData>& bins,
+		 std::list<BinaryData>::iterator& binpos)
   {
     while (message[pos] == ' ')
       ++pos;
@@ -404,46 +448,27 @@ namespace urbi
 
   std::string UBinary::getMessage() const
   {
-    std::ostringstream str;
+    std::ostringstream o;
     switch (type)
     {
       case UBinary::BINARY_IMAGE:
-	switch (image.imageFormat)
-	{
-	  case UImage::IMAGE_RGB:
-	    str << "rgb ";
-	    break;
-	  case UImage::IMAGE_JPEG:
-	    str << "jpeg ";
-	    break;
-	  case UImage::IMAGE_YCbCr:
-	    str << "YCbCr ";
-	    break;
-	}
-	str << image.width << ' ' << image.height;
+	o << image.format_string()
+	  << ' ' << image.width << ' ' << image.height;
 	break;
 
       case UBinary::BINARY_SOUND:
-	switch (sound.soundFormat)
-	{
-	  case USound::SOUND_RAW:
-	    str << "raw ";
-	    break;
-	  case USound::SOUND_WAV:
-	    str << "wav ";
-	    break;
-	}
-	str << sound.channels
-	    << ' ' << sound.rate
-	    << ' ' << sound.sampleSize
-	    << ' ' << sound.sampleFormat;
+	o << sound.format_string()
+	  << ' ' << sound.channels
+	  << ' ' << sound.rate
+	  << ' ' << sound.sampleSize
+	  << ' ' << sound.sampleFormat;
 	break;
 
       case BINARY_UNKNOWN:
-	str << message;
+	o << message;
 	break;
     }
-    return str.str();
+    return o.str();
   }
 
   /*---------.
@@ -542,20 +567,20 @@ namespace urbi
 
   UValue::operator ufloat () const
   {
-    ufloat v;
     switch (type)
     {
       case DATA_DOUBLE:
 	return val;
-	break;
 
       case DATA_STRING:
       {
 	std::istringstream tstr(*stringValue);
+	ufloat v;
 	tstr >> v;
 	return v;
       }
       break;
+
       case DATA_BINARY:
       case DATA_LIST:
       case DATA_OBJECT:
