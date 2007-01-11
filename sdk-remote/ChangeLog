@@ -1,5 +1,11 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Simplify delete[]
+	* src/liburbi/uabstractclient.cc: Don't protect it either.
+	Job for restyle?
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	urbi/uvar.hh, urbi/uvalue.hh
 	* src/liburbi/uobject/urbi/uvalue.hh: New.
 	* src/liburbi/uobject/urbi/uvar.hh: New.
