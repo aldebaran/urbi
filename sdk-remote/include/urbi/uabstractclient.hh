@@ -37,18 +37,12 @@
 
 # include "libport/fwd.hh"
 
+# include "urbi/fwd.hh"
 # include "urbi/uobject.hh"
 # include "urbi/uconversion.hh"
 
 namespace urbi
 {
-  /// Connection Buffer size.
-  static const int URBI_BUFLEN	  = 128000 ;
-  /// Standard port of URBI server.
-  static const int URBI_PORT	  = 54000  ;
-  /// Maximum length of an URBI tag.
-  static const int URBI_MAX_TAG_LENGTH = 64;
-
   /// Return values for the callack functions.
   /*! Each callback function, when called, must return with either URBI_CONTINUE
     or URBI_REMOVE:
@@ -62,12 +56,13 @@ namespace urbi
       URBI_REMOVE
     };
 
+  /// Maximum length of an URBI tag.
+  enum { URBI_MAX_TAG_LENGTH = 64 };
+
   typedef unsigned int UCallbackID;
 
 # define DEBUG 0
 
-  class UCallbackList;
-  class UAbstractClient;
 # define UINVALIDCALLBACKID 0
 
   enum UMessageType
@@ -114,13 +109,9 @@ namespace urbi
   /// Callback prototypes.
   typedef UCallbackAction (*UCallback)		   (const UMessage &msg);
 
-
   typedef UCallbackAction (*UCustomCallback)	   (void * callbackData,
 						    const UMessage &msg);
 
-
-  //used internaly
-  class UCallbackWrapper;
 
   //used internaly
   class UCallbackInfo
@@ -155,11 +146,17 @@ namespace urbi
     - Provide an execute() function in the namespace urbi, that never returns,
     and that will be called after initialization.
 
-    See the liburbi-cpp documentation for more informations on how to use this class.
+   See the liburbi-cpp documentation for more informations on
+   how to use this class.
   */
   class UAbstractClient : public std::ostream
   {
   public:
+    /// Connection Buffer size.
+    enum { URBI_BUFLEN = 128000 };
+    /// Standard port of URBI server.
+    enum { URBI_PORT = 54000 } ;
+
     /// Create a new instance and connect to the Urbi server.
     UAbstractClient(const char *_host,
 		    int _port = URBI_PORT,
@@ -585,8 +582,6 @@ namespace urbi
 #  define URBI(a) ::urbi::unarmorAndSend(# a)
 # endif
 
-  class UClient;
-
   static const char semicolon = ';';
   static const char pipe = '|';
   static const char parallel = '&';
@@ -597,16 +592,16 @@ namespace urbi
   /// Terminate your URBI program.
   void exit(int code);
   /// Create a new UClient object
-  UClient & connect(const char * host);
+  UClient& connect(const char * host);
   /// Return the first UClient created by the program. Used by the URBI macro
-  UClient * getDefaultClient();
+  UClient* getDefaultClient();
   /// Redefine the default client
   void setDefaultClient(UClient * cl);
 # ifndef DISABLE_IOSTREAM
   /// Send a possibly armored string to the default client
   std::ostream& unarmorAndSend(const char * str);
 # endif
-  extern UClient * defaultClient;
+  extern UClient* defaultClient;
 
 } // namespace urbi
 
