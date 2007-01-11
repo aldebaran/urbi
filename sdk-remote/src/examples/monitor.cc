@@ -108,13 +108,16 @@ Monitor::processMessages()
 		if ((*it)->window == event.xexpose.window)
 		  {
 		    (*it)->put();
-		    printf("repainting %d\n", event.xexpose.window);
+		    // FIXME: What can be done here instead of these
+		    // two casts?
+		    printf("repainting %d\n",
+			   static_cast<int>(event.xexpose.window));
 		    found = true;
 		    break;
 		  }
 	      if (!found)
 		printf("error: expose event for unknown window %d\n",
-		       event.xexpose.window);
+		       static_cast<int>(event.xexpose.window));
 	    }
 	}
     }
@@ -171,7 +174,7 @@ Monitor::Monitor(int _w, int _h, const char * name, bool _fastMode)
 
   createWindow(name ? name : "XImage - XShm optimized");
   pthread_mutex_unlock(&lock);
-  printf("Monitor created window %d\n", window);
+  printf("Monitor created window %d\n", static_cast<int>(window));
 }
 
 Monitor::~Monitor()

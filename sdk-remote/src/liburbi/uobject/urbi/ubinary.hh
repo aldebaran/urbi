@@ -29,7 +29,7 @@ namespace urbi
   {
   public:
     char                  *data;            ///< pointer to sound data
-    int                   size;             ///< total size in byte
+    size_t size;             ///< total size in byte
     int                   channels;         ///< number of audio channels
     int                   rate;             ///< rate in Hertz
     int                   sampleSize;       ///< sample size in bit
@@ -73,8 +73,8 @@ namespace urbi
   {
   public:
     unsigned char         *data;            ///< pointer to image data
-    int                   size;             ///< image size in byte
-    int                   width, height;    ///< size of the image
+    size_t size;             ///< image size in byte
+    size_t width, height;    ///< size of the image
 
     enum Format
     {
@@ -107,7 +107,7 @@ namespace urbi
       : data(d), size(s)
     {}
     void* data;
-    int size;
+    size_t size;
   };
 
 
@@ -135,14 +135,14 @@ namespace urbi
     {
       struct
       {
-	void                  *data;             ///< binary data
-	int                   size;
+	void* data;             ///< binary data
+	size_t size;
       } common;
-      UImage                image;
-      USound                sound;
+      UImage image;
+      USound sound;
     };
     /// Extra bin headers(everything after BIN <size> and before ';'.
-    std::string                message;
+    std::string message;
 
     UBinary();
     /// Deep copy constructor.

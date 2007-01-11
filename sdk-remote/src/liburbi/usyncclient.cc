@@ -170,7 +170,8 @@ namespace urbi
     }
     else if (format == UImage::IMAGE_RGB || format == UImage::IMAGE_PPM)
     {
-      buffersize = std::min(m->value->binary->image.size, buffersize);
+      buffersize = std::min(m->value->binary->image.size,
+			    static_cast<size_t> (buffersize));
       if (m->value->binary->image.imageFormat == UImage::IMAGE_YCbCr)
 	convertYCrCbtoRGB((const byte*) m->value->binary->image.data,
 			  buffersize, (byte*) buffer);
@@ -178,8 +179,11 @@ namespace urbi
 	memcpy(buffer, m->value->binary->image.data, buffersize);
 
     }
-    else { //jpeg jpeg, or ycrcb ycrcb
-      buffersize = std::min(m->value->binary->image.size, buffersize);
+    else
+    {
+      //jpeg jpeg, or ycrcb ycrcb
+      buffersize = std::min(m->value->binary->image.size, 
+			    static_cast<size_t> (buffersize));
       memcpy(buffer, m->value->binary->image.data, buffersize);
     }
     if (format == UImage::IMAGE_PPM)

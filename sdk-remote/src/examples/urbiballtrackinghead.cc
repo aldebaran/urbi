@@ -229,8 +229,8 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
   int nummatch=0;
   int w = img.width;
   int h = img.height;
-  for (int i=0;i<img.width; ++i)
-    for (int j=0;j<img.height; ++j)
+  for (unsigned i=0;i<img.width; ++i)
+    for (unsigned j=0;j<img.height; ++j)
       {
 	unsigned char cb = image[(i+j*w)*3+1];
 	unsigned char cr = image[(i+j*w)*3+2];;

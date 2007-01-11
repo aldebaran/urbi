@@ -475,7 +475,7 @@ namespace urbi
 	  memcpy(dest.data, uncompressedData, dest.width * dest.height * 3);
 	break;
       case UImage::IMAGE_PPM:
-	sprintf((char*) dest.data, "P6\n%d %d\n255\n",
+	sprintf((char*) dest.data, "P6\n%ud %ud\n255\n",
 		dest.width, dest.height);
 	if (format == 1)
 	  convertYCrCbtoRGB((byte*) uncompressedData,
@@ -641,7 +641,15 @@ namespace urbi
       dest.sampleFormat = dest.sampleSize > 8 ? USound::SAMPLE_SIGNED
 					      : USound::SAMPLE_UNSIGNED;
     // That's a big one!
-    int destSize = (int) (( (long long)(source.size- ((source.soundFormat == USound::SOUND_WAV)?44:0)) * (long long)dest.channels * (long long)dest.rate * (long long)(dest.sampleSize/8)) / ( (long long)schannels*(long long)srate*(long long)(ssampleSize/8)));
+    unsigned destSize =
+      ((long long)(source.size
+		   - ((source.soundFormat == USound::SOUND_WAV)?44:0))
+       * (long long)dest.channels
+       * (long long)dest.rate
+       * (long long)(dest.sampleSize/8))
+      / ((long long)schannels
+	 *(long long)srate
+	 *(long long)(ssampleSize/8));
     if (dest.soundFormat == USound::SOUND_WAV)
       destSize += sizeof (wavheader);
     if (dest.size<destSize)

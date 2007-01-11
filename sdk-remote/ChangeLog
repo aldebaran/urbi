@@ -1,5 +1,20 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
+	Nuke warnings
+	* src/liburbi/uobject/urbi/ubinary.hh,
+	* src/liburbi/uobject/uvalue-common.cc:
+	Use size_t for sizes, not int.
+
+	* src/examples/monitor.cc,
+	* src/examples/urbiballtrackinghead.cc,
+	* src/examples/urbiping.cc,
+	* src/examples/urbitalkie.cc,
+	* src/liburbi/uconversion.cc,
+	* src/liburbi/usyncclient.cc:
+	Various fixes to address compiler warnings.
+
+2007-01-11  Akim Demaille  <demaille@gostai.com>
+
 	Warning fixes
 	* src/liburbi/uobject/urbi/ubinary.hh, 
 	* src/liburbi/uobject/uvalue-common.cc (USound::format_string)

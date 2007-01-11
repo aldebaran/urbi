@@ -311,6 +311,8 @@ namespace urbi
       case SOUND_UNKNOWN:
 	return "unknown format";
     }
+    // To pacify "warning: control reaches end of non-void function".
+    abort();
   }
 
   /*---------.
@@ -332,6 +334,8 @@ namespace urbi
       case IMAGE_UNKNOWN:
 	return "unknown format";
     }
+    // To pacify "warning: control reaches end of non-void function".
+    abort();
   }
 
   /*----------.
@@ -352,8 +356,8 @@ namespace urbi
 
     //validate size
     int ps;
-    int psize;
-    int count = sscanf(message+pos, "%d%n", &psize, &ps);
+    unsigned psize;
+    int count = sscanf(message+pos, "%ud%n", &psize, &ps);
     if (count != 1)
       return -pos;
     if (psize != binpos->size)
@@ -451,12 +455,12 @@ namespace urbi
     std::ostringstream o;
     switch (type)
     {
-      case UBinary::BINARY_IMAGE:
+      case BINARY_IMAGE:
 	o << image.format_string()
 	  << ' ' << image.width << ' ' << image.height;
 	break;
 
-      case UBinary::BINARY_SOUND:
+      case BINARY_SOUND:
 	o << sound.format_string()
 	  << ' ' << sound.channels
 	  << ' ' << sound.rate
@@ -467,6 +471,9 @@ namespace urbi
       case BINARY_UNKNOWN:
 	o << message;
 	break;
+
+      case BINARY_NONE:
+	abort();
     }
     return o.str();
   }
@@ -894,6 +901,10 @@ namespace urbi
 	break;
       case DATA_VOID:
 	//TODO: do something!
+	abort ();
+	break;
+      case DATA_OBJECT:
+	// Not valid currently.
 	abort ();
 	break;
     }

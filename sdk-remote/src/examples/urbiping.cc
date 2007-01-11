@@ -5,15 +5,15 @@
 #include "libport/windows.hh"
 
 urbi::UClient* c;
-unsigned int sendtime;
-unsigned int mintime;
-unsigned int maxtime;
-unsigned int avgtime=0;
-unsigned int pingCount=0;
+unsigned sendtime;
+unsigned mintime;
+unsigned maxtime;
+unsigned avgtime=0;
+unsigned pingCount=0;
 bool over=false;
 char * rname;
 bool received;
-int count;
+unsigned count;
 
 urbi::UCallbackAction
 pong(const urbi::UMessage& msg)
@@ -28,7 +28,7 @@ pong(const urbi::UMessage& msg)
   printf("ping reply from %s: seq=%d time=%d ms\n", rname, pingCount+1, ptime);
   ++pingCount;
   received=true;
-  if (pingCount==count)
+  if (pingCount == count)
     over = true;
   return urbi::URBI_CONTINUE;
 }
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
 
   received=true;
 
-  for (int i=0;i<count || (!count); ++i)
+  for (unsigned i=0; i<count || !count; ++i)
     {
       while (!received)
 	usleep(200);

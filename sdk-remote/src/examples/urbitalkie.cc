@@ -3,17 +3,6 @@
 #include "libport/windows.hh"
 #include "urbi/uclient.hh"
 
-static int mtime()
-{
-  static int base = 0;
-  timeval tv;
-  gettimeofday(&tv, NULL);
-  int tme = tv.tv_sec * 1000 + (tv.tv_usec / 1000);
-  if (!base)
-    base = tme;
-  return tme - base;
-}
-
 class SoundPipe
 {
 public:
@@ -92,7 +81,7 @@ SoundPipe::microNotify(int source, const urbi::UMessage &msg)
 					  lastStacked.size + snd.size);
       memcpy(lastStacked.data + lastStacked.size, snd.data, snd.size);
       lastStacked.size += snd.size;
-      printf("%d queed %d\n", source, lastStacked.size);
+      printf("%d queed %zd\n", source, lastStacked.size);
       free(snd.data);
       snd.data=0;
     }
@@ -139,7 +128,7 @@ SoundPipe::trySend(int source)
   stack[1-source].serverStackPos++;
   pthread_mutex_unlock(&lock[source]);
   pthread_mutex_unlock(&lock[1-source]);
-  printf("%d sent %d\n", source, snd.size);
+  printf("%d sent %zd\n", source, snd.size);
   robot[1-source]->sendSound("speaker", snd,"speak");
   free(snd.data);
   snd.data = 0;
