@@ -244,7 +244,7 @@ UCommand::print(unsigned l) const
     KIND(WAIT_TEST);
     KIND(WHENEVER);
     KIND(WHILE);
-#undef KIND(K)
+#undef KIND
   }
   debug(l, " Tag:[%s] %s ", getTag().c_str(), k);
   print_ (l);

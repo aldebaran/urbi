@@ -1,3 +1,8 @@
+2007-01-12  Akim Demaille  <akim.demaille@free.fr>
+
+	cpp fix
+	* src/ucommand.cc: Fix an #undef.
+
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
 	-Werror
