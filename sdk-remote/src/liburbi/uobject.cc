@@ -485,7 +485,6 @@ namespace urbi
 	      {
 		// delete the object
 		delete (*found);
-		objectlist->erase(found);
 	      }
 	  }
       }

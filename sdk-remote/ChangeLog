@@ -1,3 +1,8 @@
+2007-01-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix segfault when deleting an object. 
+	* src/liburbi/uobject.cc: Remove double-erase of the URBIStarter in objectList.
+
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
 	Useless pointers
