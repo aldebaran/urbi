@@ -357,7 +357,7 @@ namespace urbi
     //validate size
     int ps;
     unsigned psize;
-    int count = sscanf(message+pos, "%ud%n", &psize, &ps);
+    int count = sscanf(message+pos, "%u%n", &psize, &ps);
     if (count != 1)
       return -pos;
     if (psize != binpos->size)
