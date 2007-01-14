@@ -1,3 +1,9 @@
+2007-01-14  Akim Demaille  <akim.demaille@free.fr>
+
+	Catch up with UValue::Type.
+	* src/uobject.cc, src/uvalue.cc, src/uvar.cc: Prepend UValue::
+	where needed.
+
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Kernel side of the API Change made to UObject had to be fixed.

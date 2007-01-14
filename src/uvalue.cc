@@ -392,42 +392,42 @@ UValue::UValue(const urbi::UValue &v)
 {
   ADDOBJ(UValue);
   switch (v.type)
-  {
-    case urbi::DATA_DOUBLE:
+    {
+    case urbi::UValue::DATA_DOUBLE:
       dataType = DATA_NUM;
       this->val = v.val;
       break;
-    case urbi::DATA_STRING:
+    case urbi::UValue::DATA_STRING:
       dataType = DATA_STRING;
       this->str = new UString(v.stringValue->c_str());
       break;
-    case urbi::DATA_LIST:
-    {
-      dataType = DATA_LIST;
-      UValue * current = this;
-      for (std::vector<urbi::UValue *>::iterator it =
-	     v.list->array.begin();
-	   it != v.list->array.end(); ++it)
+    case urbi::UValue::DATA_LIST:
       {
-	UValue *n = new UValue(*(*it));
-	current->next = n;
-	while (current->next)
-	  current = current->next;
-      }
+	dataType = DATA_LIST;
+	UValue * current = this;
+	for (std::vector<urbi::UValue *>::iterator it =
+	       v.list->array.begin();
+	     it != v.list->array.end(); ++it)
+	  {
+	    UValue *n = new UValue(*(*it));
+	    current->next = n;
+	    while (current->next)
+	      current = current->next;
+	  }
 
-      liststart = next;
-      next = 0;
-    }
-    break;
-    case urbi::DATA_BINARY:
+	liststart = next;
+	next = 0;
+      }
+      break;
+    case urbi::UValue::DATA_BINARY:
       *this = *v.binary;
       break;
-    case urbi::DATA_OBJECT: // j'ai pas le courage... //FIXME
+    case urbi::UValue::DATA_OBJECT: // j'ai pas le courage... //FIXME
       dataType = DATA_VOID;
       break;
     default:
       dataType = DATA_VOID;
-  }
+    }
 }
 
 //! UValue destructor.

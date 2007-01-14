@@ -64,21 +64,21 @@ namespace urbi
 
   UBinary cast(UValue& v, UBinary*)
   {
-    if (v.type != DATA_BINARY)
+    if (v.type != UValue::DATA_BINARY)
       return UBinary();
     return UBinary(*v.binary);
   }
 
   UList cast(UValue& v, UList*)
   {
-    if (v.type != DATA_LIST)
+    if (v.type != UValue::DATA_LIST)
       return UList();
     return UList(*v.list);
   }
 
   UObjectStruct cast(UValue& v, UObjectStruct*)
   {
-    if (v.type != DATA_OBJECT)
+    if (v.type != UValue::DATA_OBJECT)
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
@@ -86,7 +86,7 @@ namespace urbi
   const char * cast(UValue& v, const char**)
   {
     static const char * er = "invalid";
-    if (v.type != DATA_STRING)
+    if (v.type != UValue::DATA_STRING)
       return er;
     return v.stringValue->c_str();
   }
