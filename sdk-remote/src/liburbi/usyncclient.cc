@@ -204,7 +204,7 @@ namespace urbi
   {
     UMessage *m = syncGet("%s.valn;", device);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    if (m->type != MESSAGE_DATA || m->value->type != UValue::DATA_DOUBLE)
     {
       delete m;
       return 0;
@@ -219,7 +219,7 @@ namespace urbi
   {
     UMessage *m = syncGet("%s.val;", device);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    if (m->type != MESSAGE_DATA || m->value->type != UValue::DATA_DOUBLE)
     {
       delete m;
       return 0;
@@ -234,7 +234,7 @@ namespace urbi
   {
     UMessage *m = syncGet("%s", command);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    if (m->type != MESSAGE_DATA || m->value->type != UValue::DATA_DOUBLE)
     {
       delete m;
       return 0;
@@ -252,7 +252,7 @@ namespace urbi
   {
     UMessage *m = syncGet("%s.%s;", device, access);
 
-    if (m->type != MESSAGE_DATA || m->value->type != DATA_DOUBLE)
+    if (m->type != MESSAGE_DATA || m->value->type != UValue::DATA_DOUBLE)
     {
       delete m;
       return 0;
@@ -278,7 +278,7 @@ namespace urbi
 	 " };", device, duration);
     UMessage* m = syncGet("syncgetsound;");
     if (m->type != MESSAGE_DATA
-	|| m->value->type != DATA_BINARY
+	|| m->value->type != UValue::DATA_BINARY
 	|| m->value->binary->type != BINARY_SOUND)
 	{
       delete m;

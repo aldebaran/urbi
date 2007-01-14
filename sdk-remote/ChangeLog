@@ -1,3 +1,11 @@
+2007-01-14  Akim Demaille  <akim.demaille@free.fr>
+
+	UValue::Type
+	* src/liburbi/uobject/urbi/uvalue.hh (UDataType): Rename as...
+	(UValue::Type): this.
+	Adjust all uses.
+	* src/liburbi/uobject/uvalue-common.cc: Use C++ ctor style.
+
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix more errors in API reverting. 

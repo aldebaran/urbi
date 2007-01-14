@@ -521,34 +521,29 @@ namespace urbi
   {}
 
   UValue::UValue(const UBinary& b)
-    : type(DATA_BINARY)
-  {
-    binary = new UBinary(b);
-  }
+    : type(DATA_BINARY),
+      binary(new UBinary(b))
+  {}
 
   UValue::UValue(const USound& s)
-    : type(DATA_BINARY)
-  {
-    binary = new UBinary(s);
-  }
+    : type(DATA_BINARY),
+      binary(new UBinary(s))
+  {}
 
   UValue::UValue(const UImage& s)
-    : type(DATA_BINARY)
-  {
-    binary = new UBinary(s);
-  }
+    : type(DATA_BINARY),
+      binary(new UBinary(s))
+  {}
 
   UValue::UValue(const UList& l)
-    : type(DATA_LIST)
-  {
-    list = new UList(l);
-  }
+    : type(DATA_LIST),
+      list(new UList(l))
+  {}
 
   UValue::UValue(const UObjectStruct& o)
-    : type(DATA_OBJECT)
-  {
-    object = new UObjectStruct(o);
-  }
+    : type(DATA_OBJECT),
+      object(new UObjectStruct(o))
+  {}
 
   UValue::~UValue()
   {
@@ -887,23 +882,23 @@ namespace urbi
   {
     switch (v.type)
     {
-      case DATA_STRING:
+      case UValue::DATA_STRING:
 	*this = *v.stringValue;
 	break;
-      case DATA_BINARY:
+      case UValue::DATA_BINARY:
 	*this = *v.binary;
 	break;
-      case DATA_LIST:
+      case UValue::DATA_LIST:
 	*this = *v.list;
 	break;
-      case DATA_DOUBLE:
+      case UValue::DATA_DOUBLE:
 	*this = v.val;
 	break;
-      case DATA_VOID:
+      case UValue::DATA_VOID:
 	//TODO: do something!
 	abort ();
 	break;
-      case DATA_OBJECT:
+      case UValue::DATA_OBJECT:
 	// Not valid currently.
 	abort ();
 	break;

@@ -32,7 +32,7 @@ command(const urbi::UMessage &msg)
 {
   //get command id
   if (msg.type != urbi::MESSAGE_DATA
-      || msg.value->type != urbi::DATA_DOUBLE)
+      || msg.value->type != urbi::UValue::DATA_DOUBLE)
     return urbi::URBI_CONTINUE;
   d->send("%s.val = %lf,", msg.tag.c_str (), (double) *msg.value);
   return urbi::URBI_CONTINUE;

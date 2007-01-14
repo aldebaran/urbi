@@ -176,10 +176,10 @@ namespace urbi
   {
     URBI(()) << name << "=";
     UValue v;
-    v.type = DATA_LIST;
+    v.type = UValue::DATA_LIST;
     v.list = &const_cast<UList&>(l);
     URBI(()) << v << ";";
-    v.type = DATA_VOID;
+    v.type = UValue::DATA_VOID;
     v.list = 0;
   }
 

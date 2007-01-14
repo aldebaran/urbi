@@ -89,7 +89,7 @@ command(const urbi::UMessage &msg)
 	  uc.timestamp=msg.timestamp;
 	  uc.id=i;
 	  assert (msg.type == urbi::MESSAGE_DATA);
-	  assert (msg.value->type == urbi::DATA_DOUBLE);
+	  assert (msg.value->type == urbi::UValue::DATA_DOUBLE);
 	  uc.value.angle=msg.value->val;
 
 	  fwrite(&uc,sizeof (UCommand),1,f);

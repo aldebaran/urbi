@@ -13,7 +13,7 @@ urbi::UCallbackAction
 bw(const urbi::UMessage &msg)
 {
   assert (msg.type == urbi::MESSAGE_DATA);
-  assert (msg.value->type == urbi::DATA_BINARY);
+  assert (msg.value->type == urbi::UValue::DATA_BINARY);
   assert (msg.value->binary->type == urbi::BINARY_IMAGE);
 
   //aproximately, but since bsz is more or less 400k...
