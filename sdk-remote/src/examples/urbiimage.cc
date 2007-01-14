@@ -42,7 +42,7 @@ showImage(const urbi::UMessage &msg)
 {
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::UBinary::BINARY_IMAGE)
+      || msg.value->binary->type != urbi::BINARY_IMAGE)
     return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
@@ -67,18 +67,18 @@ showImage(const urbi::UMessage &msg)
 
   switch (img.imageFormat)
     {
-    case urbi::UImage::IMAGE_JPEG:
+    case urbi::IMAGE_JPEG:
       urbi::convertJPEGtoRGB((const urbi::byte *) img.data, img.size,
 			     (urbi::byte *) buffer, sz);
       break;
-    case urbi::UImage::IMAGE_YCbCr:
+    case urbi::IMAGE_YCbCr:
       sz = img.size;
       urbi::convertYCrCbtoRGB((const urbi::byte *) img.data, img.size,
 			      (urbi::byte *) buffer);
       break;
-    case urbi::UImage::IMAGE_RGB:
-    case urbi::UImage::IMAGE_PPM:
-    case urbi::UImage::IMAGE_UNKNOWN:
+    case urbi::IMAGE_RGB:
+    case urbi::IMAGE_PPM:
+    case urbi::IMAGE_UNKNOWN:
       break;
     }
 
@@ -145,22 +145,22 @@ main (int argc, char *argv[])
       switch (argv[2][0])
 	{
 	case 'r':
-	  format = urbi::UImage::IMAGE_RGB;
+	  format = urbi::IMAGE_RGB;
 	  break;
 	case 'y':
-	  format = urbi::UImage::IMAGE_YCbCr;
+	  format = urbi::IMAGE_YCbCr;
 	  break;
 	case 'p':
-	  format = urbi::UImage::IMAGE_PPM;
+	  format = urbi::IMAGE_PPM;
 	  break;
 	case 'j':
-	  format = urbi::UImage::IMAGE_JPEG;
+	  format = urbi::IMAGE_JPEG;
 	  break;
 	};
 
       client.syncGetImage("camera", buff, sz,
 			  format,
-			  (format == urbi::UImage::IMAGE_JPEG
+			  (format == urbi::IMAGE_JPEG
 			   ? urbi::URBI_TRANSMIT_JPEG
 			   : urbi::URBI_TRANSMIT_YCbCr),
 			  w, h);

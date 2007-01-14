@@ -1,5 +1,11 @@
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix more errors in API reverting. 
+	* src/examples/urbiballtrackinghead.cc: done.
+	* src/examples/urbiimage.cc: done.
+
+2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	The UObject API, however bad looking or problematic it looks should
 	not be modified in the short term to avoid backward incompatibilities
 	that we cannot handle right now. Future rewritting with a fresh and

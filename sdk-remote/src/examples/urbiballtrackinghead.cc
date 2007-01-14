@@ -181,7 +181,7 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
 
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::UBinary::BINARY_IMAGE)
+      || msg.value->binary->type != urbi::BINARY_IMAGE)
     return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
@@ -217,7 +217,7 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
     }
   ++framenum;
   int imgsize = 500000;
-  if (img.imageFormat == urbi::UImage::IMAGE_JPEG)
+  if (img.imageFormat == urbi::IMAGE_JPEG)
     urbi::convertJPEGtoYCrCb((const urbi::byte *) img.data,
 			     img.size, image, imgsize);
   else
