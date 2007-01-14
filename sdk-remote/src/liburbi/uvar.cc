@@ -154,7 +154,7 @@ namespace urbi
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
-    b.type = UBinary::BINARY_IMAGE;
+    b.type = BINARY_IMAGE;
     b.image = i;
     (*this) = b;
     b.common.data = 0; //required, dtor frees data
@@ -165,7 +165,7 @@ namespace urbi
   {
     //we don't use UBinary Image ctor because it copies data
     UBinary b;
-    b.type = UBinary::BINARY_SOUND;
+    b.type = BINARY_SOUND;
     b.sound = i;
     (*this) = b;
     b.common.data = 0; //required, dtor frees data

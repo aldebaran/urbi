@@ -1,3 +1,28 @@
+2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	The UObject API, however bad looking or problematic it looks should
+	not be modified in the short term to avoid backward incompatibilities
+	that we cannot handle right now. Future rewritting with a fresh and
+	new (non conflicting) API will come in the future, until then we fix
+	what is existing or provide backward compatible alternatives.
+
+	JCB: As a rule also, remember that any change impacting the API or GUI 
+	of our products should get my approval first, and, more generally, be
+	necessarily a collegial decision/agreement between the members of the 
+	kernel team.
+
+	revert API change 
+	* examples/urbibandwidth.cc: done.
+	* examples/urbisendsound.cc: done.
+	* examples/urbisound.cc: done.
+	* examples/urbitalkie.cc: done.
+	* liburbi/uabstractclient.cc: done.
+	* liburbi/uconversion.cc: done.
+	* liburbi/uobject/urbi/ubinary.hh: done.
+	* liburbi/uobject/uvalue-common.cc: done.
+	* liburbi/usyncclient.cc: done.
+	* liburbi/uvar.cc: done.
+
 2007-01-12  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix binary parser bug.

@@ -138,14 +138,14 @@ namespace urbi
 			    int& width, int& height)
   {
     int f;
-    if (format == UImage::IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG)
+    if (format == IMAGE_JPEG  || transmitFormat == URBI_TRANSMIT_JPEG)
       f = 1;
     else
       f = 0;
     //XXX required to ensure format change is applied
     send("%s.format = %d; noop; noop;", camera, f);
     UMessage *m = syncGet("%s.val;", camera);
-    if (m->value->binary->type != UBinary::BINARY_IMAGE)
+    if (m->value->binary->type != BINARY_IMAGE)
     {
       delete m;
       return 0;
@@ -154,10 +154,10 @@ namespace urbi
     height = m->value->binary->image.height;
 
     int osize = buffersize;
-    if (f == 1  &&  format != UImage::IMAGE_JPEG)
+    if (f == 1  &&  format != IMAGE_JPEG)
     {
       //uncompress jpeg
-      if (format == UImage::IMAGE_YCbCr)
+      if (format == IMAGE_YCbCr)
 	convertJPEGtoYCrCb((const byte*) m->value->binary->image.data,
 			   m->value->binary->image.size, (byte*) buffer,
 			   buffersize);
@@ -166,11 +166,11 @@ namespace urbi
 			 m->value->binary->image.size, (byte*) buffer,
 			 buffersize);
     }
-    else if (format == UImage::IMAGE_RGB || format == UImage::IMAGE_PPM)
+    else if (format == IMAGE_RGB || format == IMAGE_PPM)
     {
       buffersize = std::min(m->value->binary->image.size,
 			    static_cast<size_t> (buffersize));
-      if (m->value->binary->image.imageFormat == UImage::IMAGE_YCbCr)
+      if (m->value->binary->image.imageFormat == IMAGE_YCbCr)
 	convertYCrCbtoRGB((const byte*) m->value->binary->image.data,
 			  buffersize, (byte*) buffer);
       else
@@ -184,7 +184,7 @@ namespace urbi
 			    static_cast<size_t> (buffersize));
       memcpy(buffer, m->value->binary->image.data, buffersize);
     }
-    if (format == UImage::IMAGE_PPM)
+    if (format == IMAGE_PPM)
     {
       char p6h[20];
       sprintf(p6h, "P6\n%d %d\n255\n", width, height);
@@ -279,7 +279,7 @@ namespace urbi
     UMessage* m = syncGet("syncgetsound;");
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY
-	|| m->value->binary->type != UBinary::BINARY_SOUND)
+	|| m->value->binary->type != BINARY_SOUND)
 	{
       delete m;
       return 0;

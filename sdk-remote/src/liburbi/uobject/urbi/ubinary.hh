@@ -17,6 +17,41 @@
 
 namespace urbi
 {
+
+  /** Backward compatibility **/
+  enum USoundFormat
+  {
+    SOUND_RAW,
+    SOUND_WAV,
+    SOUND_MP3,
+    SOUND_OGG,
+    SOUND_UNKNOWN
+  };
+
+  enum USoundSampleFormat
+  {
+    SAMPLE_SIGNED=1,
+    SAMPLE_UNSIGNED=2
+  };
+
+  enum UImageFormat
+  {
+    IMAGE_RGB=1,     ///< RGB 24 bit/pixel
+    IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
+    IMAGE_JPEG=3,    ///< JPEG
+    IMAGE_PPM=4,     ///< RGB with a PPM header
+    IMAGE_UNKNOWN
+  };
+
+  enum UBinaryType
+  {
+    BINARY_NONE,
+    BINARY_UNKNOWN,
+    BINARY_IMAGE,
+    BINARY_SOUND
+  };
+
+
   /*---------.
   | USound.  |
   `---------*/
@@ -34,16 +69,7 @@ namespace urbi
     int                   rate;             ///< rate in Hertz
     int                   sampleSize;       ///< sample size in bit
 
-    enum Format
-    {
-      SOUND_RAW,
-      SOUND_WAV,
-      SOUND_MP3,
-      SOUND_OGG,
-      SOUND_UNKNOWN
-    };
-
-    Format          soundFormat;      ///< format of the sound data
+    USoundFormat          soundFormat;      ///< format of the sound data
     /// Return a legible definition of imageFormat.
     const char* format_string () const;
 
@@ -52,7 +78,7 @@ namespace urbi
       SAMPLE_SIGNED=1,
       SAMPLE_UNSIGNED=2
     };
-    SampleFormat    sampleFormat;     ///< sample format
+    USoundSampleFormat    sampleFormat;     ///< sample format
 
     bool operator ==(const USound &b) const
     {
@@ -76,16 +102,7 @@ namespace urbi
     size_t size;             ///< image size in byte
     size_t width, height;    ///< size of the image
 
-    enum Format
-    {
-      IMAGE_RGB=1,     ///< RGB 24 bit/pixel
-      IMAGE_YCbCr=2,   ///< YCbCr 24 bit/pixel
-      IMAGE_JPEG=3,    ///< JPEG
-      IMAGE_PPM=4,     ///< RGB with a PPM header
-      IMAGE_UNKNOWN
-    };
-
-    Format          imageFormat;
+    UImageFormat          imageFormat;
 
     /// Return a legible definition of imageFormat.
     const char* format_string () const;
@@ -122,15 +139,8 @@ namespace urbi
   class UBinary
   {
   public:
-    enum Type
-    {
-      BINARY_NONE,
-      BINARY_UNKNOWN,
-      BINARY_IMAGE,
-      BINARY_SOUND
-    };
 
-    Type             type;
+    UBinaryType             type;
     union
     {
       struct

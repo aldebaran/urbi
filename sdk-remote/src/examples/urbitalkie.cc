@@ -63,19 +63,19 @@ SoundPipe::microNotify(int source, const urbi::UMessage &msg)
   snd.channels = 1;
   snd.rate = 16000;
   snd.sampleSize = 16;
-  snd.sampleFormat = urbi::USound::SAMPLE_SIGNED;
+  snd.sampleFormat = urbi::SAMPLE_SIGNED;
 
 
   urbi::USound &lastStacked = stack[source].stack.back();
   if (stack[source].stack.empty() || lastStacked.size > minSendSize)
     {
-      snd.soundFormat = urbi::USound::SOUND_RAW;
+      snd.soundFormat = urbi::SOUND_RAW;
       convert(msg.value->binary->sound, snd);
       stack[source].stack.push_back(snd);
     }
   else
     {
-      snd.soundFormat = urbi::USound::SOUND_RAW;
+      snd.soundFormat = urbi::SOUND_RAW;
       convert(msg.value->binary->sound, snd);
       lastStacked.data = (char *) realloc(lastStacked.data,
 					  lastStacked.size + snd.size);

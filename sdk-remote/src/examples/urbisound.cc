@@ -108,23 +108,23 @@ getSound(const urbi::UMessage& msg)
       out.channels = 2;
       out.sampleSize = 16;
       out.rate = 16000;
-      out.sampleFormat = urbi::USound::SAMPLE_SIGNED;
+      out.sampleFormat = urbi::SAMPLE_SIGNED;
     }
     else
     {
       out.channels = 0;
       out.sampleSize = 0;
       out.rate = 0;
-      out.sampleFormat = (urbi::USound::SampleFormat)0;
+      out.sampleFormat = (urbi::USoundSampleFormat)0;
     }
   }
 
   if (msg.type != urbi::MESSAGE_DATA
       || msg.value->type != urbi::DATA_BINARY
-      || msg.value->binary->type != urbi::UBinary::BINARY_SOUND)
+      || msg.value->binary->type != urbi::BINARY_SOUND)
     return urbi::URBI_CONTINUE;
   out.soundFormat =
-    withheader? urbi::USound::SOUND_WAV : urbi::USound::SOUND_RAW;
+    withheader? urbi::SOUND_WAV : urbi::SOUND_RAW;
   withheader = false;
   convert(msg.value->binary->sound, out);
   totallength += out.size;
