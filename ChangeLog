@@ -1,5 +1,12 @@
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Kernel side of the API Change made to UObject had to be fixed.
+
+	revert UObject API change. 
+	* src/uvalue.cc: done.
+
+2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	update uobject externals to r363
 
 2007-01-12  Akim Demaille  <akim@lrde.epita.fr>

@@ -90,7 +90,7 @@ UValue::operator urbi::UImage()
   urbi::UImage img;
   img.data=0;
   img.size=img.width = img.height=0;
-  img.imageFormat = urbi::UImage::IMAGE_UNKNOWN;
+  img.imageFormat = urbi::IMAGE_UNKNOWN;
   if (dataType != DATA_BINARY)
     return img;
 
@@ -101,13 +101,13 @@ UValue::operator urbi::UImage()
     return img;
 
   if (STREQ(param->expression->str->str(), "rgb"))
-    img.imageFormat = urbi::UImage::IMAGE_RGB;
+    img.imageFormat = urbi::IMAGE_RGB;
   else if (STREQ(param->expression->str->str(), "jpeg"))
-    img.imageFormat = urbi::UImage::IMAGE_JPEG;
+    img.imageFormat = urbi::IMAGE_JPEG;
   else if (STREQ(param->expression->str->str(), "YCbCr"))
-    img.imageFormat = urbi::UImage::IMAGE_YCbCr;
+    img.imageFormat = urbi::IMAGE_YCbCr;
   else
-    img.imageFormat = urbi::UImage::IMAGE_UNKNOWN;
+    img.imageFormat = urbi::IMAGE_UNKNOWN;
 
   img.width = exprToInt(param->next->expression);
   img.height = exprToInt(param->next->next->expression);
@@ -232,7 +232,7 @@ UValue::operator urbi::USound()
   urbi::USound snd;
   snd.data=0;
   snd.size = snd.channels = snd.rate = 0;
-  snd.soundFormat = urbi::USound::SOUND_UNKNOWN;
+  snd.soundFormat = urbi::SOUND_UNKNOWN;
   if ((dataType != DATA_BINARY) ||
       (!refBinary) ||
       (!refBinary->ref()))
@@ -247,7 +247,7 @@ UValue::operator urbi::USound()
 
   if (STREQ(param->expression->str->str(), "raw"))
   {
-    snd.soundFormat = urbi::USound::SOUND_RAW;
+    snd.soundFormat = urbi::SOUND_RAW;
     decoded = (param->next && param->next->next &&
 	       param->next->next->next && param->next->next->next->next);
     if (decoded)
@@ -255,13 +255,13 @@ UValue::operator urbi::USound()
       snd.channels = exprToInt(param->next->expression);
       snd.rate = exprToInt(param->next->next->expression);
       snd.sampleSize = exprToInt(param->next->next->next->expression);
-      snd.sampleFormat = (urbi::USound::SampleFormat)
+      snd.sampleFormat = (urbi::USoundSampleFormat)
 	exprToInt(param->next->next->next->next->expression);
     }
   }
   else if (STREQ(param->expression->str->str(), "wav"))
   {
-    snd.soundFormat = urbi::USound::SOUND_WAV;
+    snd.soundFormat = urbi::SOUND_WAV;
     if (((unsigned int)refBinary->ref()->bufferSize > sizeof (wavheader)) &&
 	(refBinary->ref()->buffer) )
     {
@@ -272,11 +272,11 @@ UValue::operator urbi::USound()
       snd.sampleSize = wh->bitperchannel;
       snd.sampleFormat =
 	(snd.sampleSize>8)
-	? urbi::USound::SAMPLE_SIGNED : urbi::USound::SAMPLE_UNSIGNED;
+	? urbi::SAMPLE_SIGNED : urbi::SAMPLE_UNSIGNED;
     }
   }
   else
-    snd.soundFormat = urbi::USound::SOUND_UNKNOWN;
+    snd.soundFormat = urbi::SOUND_UNKNOWN;
 
 
   if (decoded)
@@ -295,7 +295,7 @@ UValue & UValue::operator = (const urbi::USound &i)
 {
   //avoid code duplication
   urbi::UBinary b;
-  b.type = urbi::UBinary::BINARY_SOUND;
+  b.type = urbi::BINARY_SOUND;
   b.sound = i;
   (*this)=b;
   b.common.data=0;
@@ -308,7 +308,7 @@ UValue & UValue::operator = (const urbi::UImage &i)
 {
   //avoid code duplication
   urbi::UBinary b;
-  b.type = urbi::UBinary::BINARY_IMAGE;
+  b.type = urbi::BINARY_IMAGE;
   b.image = i;
   (*this)=b;
   b.common.data=0;
