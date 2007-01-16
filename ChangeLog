@@ -1,3 +1,11 @@
+2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	The bug was an uninitialized attribute of UParser in the constructor.
+
+	fix ticket #113 
+	* src/parser/uparser.cc: add init of commandTree to 0.
+	* src/uconnection.cc: remove Tsuna temporary fix.
+
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	update externals 

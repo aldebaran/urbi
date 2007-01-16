@@ -17,7 +17,8 @@
 `----------*/
 
 UParser::UParser(UConnection& cn)
-  : connection (cn),
+  : commandTree (0),
+    connection (cn),
     scanner_ (),
     filename_ (0)
 {}
