@@ -833,39 +833,39 @@ instruction:
   | "def" {
 
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
-      memcheck(up, $$)
+      memcheck(up, $$);
     }
 
   | "var" refvariable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
-      memcheck(up, $$, $2)
+      memcheck(up, $$, $2);
     }
 
   | "def" refvariable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
-      memcheck(up, $$, $2)
+      memcheck(up, $$, $2);
     }
 
   | "var" "{" refvariables "}" {
 
     $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
-      memcheck(up, $$, $3)
+    memcheck(up, $$, $3);
     }
 
   | "class" "identifier" "{" class_declaration_list "}" {
 
     $$ = new UCommand_CLASS(@$, $2, $4);
-      memcheck(up, $$, $2, $4)
+    memcheck(up, $$, $2, $4);
     }
 
   | "class" "identifier" {
 
     $$ = new UCommand_CLASS(@$, $2, 0);
-      memcheck(up, $$, $2)
+    memcheck(up, $$, $2);
     }
 
 
@@ -1139,7 +1139,7 @@ instruction:
 
 array:
 
-  /* empty */ { $$ = 0 }
+  /* empty */ { $$ = 0; }
 
   | "[" expr "]" array {
 
@@ -1242,7 +1242,7 @@ property:
 /* NAMEDPARAMETERS */
 
 namedparameters:
-  /* empty */ { $$ = 0 }
+  /* empty */ { $$ = 0; }
 
   | "identifier" ":" expr namedparameters {
 
