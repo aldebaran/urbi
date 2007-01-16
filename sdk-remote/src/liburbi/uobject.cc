@@ -59,7 +59,7 @@ namespace urbi
 
   UBinary cast(UValue& v, UBinary*)
   {
-    if (v.type != UValue::DATA_BINARY)
+    if (v.type != DATA_BINARY)
       return UBinary();
     return UBinary(*v.binary);
   }
@@ -67,14 +67,14 @@ namespace urbi
 
   UList cast(UValue& v, UList*)
   {
-    if (v.type != UValue::DATA_LIST)
+    if (v.type != DATA_LIST)
       return UList();
     return UList(*v.list);
   }
 
   UObjectStruct cast(UValue& v, UObjectStruct*)
   {
-    if (v.type != UValue::DATA_OBJECT)
+    if (v.type != DATA_OBJECT)
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
@@ -82,7 +82,7 @@ namespace urbi
   const char* cast(UValue &v, const char**)
   {
     static const char* er = "invalid";
-    if (v.type != UValue::DATA_STRING)
+    if (v.type != DATA_STRING)
       return er;
     return v.stringValue->c_str();
   }
@@ -315,7 +315,7 @@ namespace urbi
   dispatcher(const UMessage& msg)
   {
     //check message type
-    if (msg.type != MESSAGE_DATA || msg.value->type != UValue::DATA_LIST)
+    if (msg.type != MESSAGE_DATA || msg.value->type != DATA_LIST)
       {
 	msg.client.printf("Component Error: "
 			  "unknown message content, type %d\n",
@@ -333,7 +333,7 @@ namespace urbi
 	return URBI_CONTINUE;
       }
 
-    if (array[0].type != UValue::DATA_DOUBLE)
+    if (array[0].type != DATA_DOUBLE)
       {
 	msg.client.printf("Component Error: "
 			  "unknown server message type %d\n",
@@ -341,7 +341,7 @@ namespace urbi
 	return URBI_CONTINUE;
       }
 
-    if (array[0].type != UValue::DATA_DOUBLE)
+    if (array[0].type != DATA_DOUBLE)
       {
 	msg.client.printf("Component Error: "
 			  "unknown server message type %d\n",
@@ -383,12 +383,12 @@ namespace urbi
 	 * a single element list again. */
 	if (functionmap.find(array[1]) != functionmap.end())
 	  {
-	    std::list<UGenericCallback*>::iterator tmpfunit =
-	      functionmap[array[1]].begin();
+	    std::list<UGenericCallback*> tmpfun = functionmap[array[1]];
+	    std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
 	    array.setOffset(3);
 	    UValue retval = (*tmpfunit)->__evalcall(array);
 	    array.setOffset(0);
-	    if (retval.type == UValue::DATA_VOID)
+	    if (retval.type == DATA_VOID)
 	      URBI(()) << "var " << (std::string) array[2];
 	    else
 	      {

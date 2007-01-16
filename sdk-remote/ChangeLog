@@ -1,3 +1,21 @@
+2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	r365 has been moved to branches/unstable.
+
+	revert to r364. 
+	* src/examples/urbiballtrackinghead.cc: done.
+	* src/examples/urbibandwidth.cc: done.
+	* src/examples/urbiimage.cc: done.
+	* src/examples/urbimirror.cc: done.
+	* src/examples/urbirecord.cc: done.
+	* src/liburbi/uabstractclient.cc: done.
+	* src/liburbi/uobject.cc: done.
+	* src/liburbi/uobject/urbi/uobject.hh.template: done.
+	* src/liburbi/uobject/urbi/uvalue.hh: done.
+	* src/liburbi/uobject/uvalue-common.cc: done.
+	* src/liburbi/usyncclient.cc: done.
+	* src/liburbi/uvar.cc: done.
+
 2007-01-14  Akim Demaille  <akim.demaille@free.fr>
 
 	UValue::Type

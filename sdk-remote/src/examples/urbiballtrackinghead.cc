@@ -152,7 +152,7 @@ urbi::UCallbackAction
 BallTrackingHead::getHead(bool pan, const urbi::UMessage &msg)
 {
   if (msg.type != urbi::MESSAGE_DATA
-      || msg.value->type != urbi::UValue::DATA_DOUBLE)
+      || msg.value->type != urbi::DATA_DOUBLE)
     return urbi::URBI_CONTINUE;
 
   PositionData pd;
@@ -180,7 +180,7 @@ BallTrackingHead::getImage(const urbi::UMessage &msg)
   static int frametime=0;
 
   if (msg.type != urbi::MESSAGE_DATA
-      || msg.value->type != urbi::UValue::DATA_BINARY
+      || msg.value->type != urbi::DATA_BINARY
       || msg.value->binary->type != urbi::BINARY_IMAGE)
     return urbi::URBI_CONTINUE;
 

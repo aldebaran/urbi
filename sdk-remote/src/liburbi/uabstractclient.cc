@@ -266,15 +266,13 @@ namespace urbi
   {
     switch (v.type)
     {
-      case UValue::DATA_DOUBLE:
+      case DATA_DOUBLE:
 	send("%lf", v.val);
 	break;
-
-      case UValue::DATA_STRING:
+      case DATA_STRING:
 	send("\"%s\"", v.stringValue->c_str());
 	break;
-
-      case UValue::DATA_BINARY:
+      case DATA_BINARY:
 	if (v.binary->type != BINARY_NONE
 	    && v.binary->type != BINARY_UNKNOWN)
 	  v.binary->buildMessage();
@@ -282,8 +280,7 @@ namespace urbi
 		"BIN %d %s;", v.binary->common.size,
 		v.binary->message.c_str());
 	break;
-
-      case UValue::DATA_LIST:
+      case DATA_LIST:
       {
 	send("[");
 	int sz = v.list->size();
@@ -296,8 +293,7 @@ namespace urbi
 	send("]");
       }
       break;
-
-      case UValue::DATA_OBJECT:
+      case DATA_OBJECT:
       {
 	send("OBJ %s [", v.object->refName.c_str());
 	int sz = v.object->size();
@@ -311,8 +307,7 @@ namespace urbi
 	send("]");
       }
       break;
-
-      case UValue::DATA_VOID:
+      case DATA_VOID:
 	break;
     };
     return 0;

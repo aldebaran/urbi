@@ -20,6 +20,17 @@ namespace urbi
 
   // UValue and other related types
 
+  /// Possible value types a UValue can contain.
+  enum UDataType
+  {
+    DATA_DOUBLE,
+    DATA_STRING,
+    DATA_BINARY,
+    DATA_LIST,
+    DATA_OBJECT,
+    DATA_VOID
+  };
+
   /// Class storing URBI List type
   class UList
   {
@@ -70,18 +81,7 @@ namespace urbi
   class UValue
   {
   public:
-    /// Possible value types a UValue can contain.
-    enum Type
-    {
-      DATA_DOUBLE,
-      DATA_STRING,
-      DATA_BINARY,
-      DATA_LIST,
-      DATA_OBJECT,
-      DATA_VOID
-    };
-
-    Type       type;
+    UDataType       type;
     ufloat          val;  ///< value if of type DATA_DOUBLE
     union
     {
