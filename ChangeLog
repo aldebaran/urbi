@@ -1,3 +1,10 @@
+2007-01-17  Akim Demaille  <akim.demaille@free.fr>
+
+	Check printf-like functions
+	* src/ucommand.cc, src/ucommand.hh, src/ucommandqueue.cc,
+	* src/uconnection.cc, src/uexpression.cc, src/userver.hh:
+	Use GCC's features to check them.
+
 2007-01-17  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	There was several flaw in the way UNotifyChange was working on

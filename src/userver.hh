@@ -23,6 +23,7 @@
 # define USERVER_HH
 
 # include <cstdarg>
+# include "libport/compiler.hh"
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
@@ -57,12 +58,17 @@ public:
   void              work();
   void              main (int argc, const char* argv[]);
 
-  void              error           (const char* s, ...);
-  void              echo            (const char* s, ...);
-  void              echoKey         (const char* key, const char* s, ...);
+  void error (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echo (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echoKey (const char* key, const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 3, 4)));
 
-  void vdebug (const char* s, va_list args);
-  void debug (const char* s, ...);
+  void vdebug (const char* s, va_list args)
+    __attribute__ ((__format__ (__printf__, 2, 0)));
+  void debug (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
 
   void              isolate         ();
   void              deIsolate       ();
@@ -179,7 +185,7 @@ public:
   /// Flag used to signal a memory overflow.
   bool                     memoryOverflow;
 
-  /// Shows debug or not..
+  /// Shows debug or not.
   bool                     debugOutput;
   /// Name of the main device.
   UString                  *mainName;

@@ -70,6 +70,11 @@ namespace
   UErrorValue
   send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
 	      const char* fmt, ...)
+    __attribute__ ((__format__ (__printf__, 4, 5)));
+
+  UErrorValue
+  send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
+	      const char* fmt, ...)
   {
     va_list args;
     va_start(args, fmt);

@@ -92,6 +92,17 @@ namespace
     return tabb;
   }
 
+
+
+  void debug (const char* fmt, va_list args)
+    __attribute__ ((__format__ (__printf__, 1, 0)));
+
+  void debug (const char* fmt, ...)
+    __attribute__ ((__format__ (__printf__, 1, 2)));
+
+  void debug (unsigned t, const char* fmt, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+
   /// Send debugging messages via the server.
   void
   debug (const char* fmt, va_list args)
@@ -106,6 +117,7 @@ namespace
     va_list args;
     va_start (args, fmt);
     debug (fmt, args);
+    va_end (args);
   }
 
   /// Send debugging messages indented with \a t spaces, via the server.
@@ -3863,21 +3875,21 @@ UCommand_BINDER::execute_(UConnection *connection)
       {
 	if (it->second->binder)
 	  it->second->binder->addMonitor(fullobjname, connection);
-        else
-          it->second->binder = new UBinder(fullobjname, fullname,
-                                           mode,
-                                           (UBindType)type,
-                                           nbparam,
-                                           connection);
-        if ( !it->second->internalAccessBinder.empty ()
-             && std::find (::urbiserver->access_and_change_varlist.begin (),
-                           ::urbiserver->access_and_change_varlist.end (),
-                           it->second) ==
-             ::urbiserver->access_and_change_varlist.end ())
-        {
-          it->second->access_and_change = true;
-          ::urbiserver->access_and_change_varlist.push_back (it->second);
-        }
+	else
+	  it->second->binder = new UBinder(fullobjname, fullname,
+					   mode,
+					   (UBindType)type,
+					   nbparam,
+					   connection);
+	if ( !it->second->internalAccessBinder.empty ()
+	     && std::find (::urbiserver->access_and_change_varlist.begin (),
+			   ::urbiserver->access_and_change_varlist.end (),
+			   it->second) ==
+	     ::urbiserver->access_and_change_varlist.end ())
+	{
+	  it->second->access_and_change = true;
+	  ::urbiserver->access_and_change_varlist.push_back (it->second);
+	}
       }
     }
     break;

@@ -642,7 +642,7 @@ UConnection::error (UErrorCode n)
     char buf[80];
     strncpy (buf, msg, sizeof buf);
     if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end...
+      //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
     server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
@@ -670,7 +670,7 @@ UConnection::warning (UWarningCode n)
     char buf[80];
     strncpy (buf, msg, sizeof buf);
     if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end...
+      //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
     server->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
 		    "UConnection::warning", buf);
