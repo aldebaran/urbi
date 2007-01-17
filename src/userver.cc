@@ -657,7 +657,7 @@ UServer::echoKey(const char* key, const char* s, ...)
  \param s is the formatted string containing the message
  */
 void
-UServer::debug (const char* s, va_list args)
+UServer::vdebug (const char* s, va_list args)
 {
   char buf[MAXSIZE_INTERNALMESSAGE];
   vsnprintf(buf, sizeof buf, s, args);
@@ -669,7 +669,8 @@ UServer::debug(const char* s, ...)
 {
   va_list args;
   va_start(args, s);
-  debug (s, args);
+  vdebug (s, args);
+  va_end(args);
 }
 
 //! Isolate the server from incoming commands.

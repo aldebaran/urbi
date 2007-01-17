@@ -70,8 +70,7 @@ UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 	  static_cast<const void*> (buffer),
 	  real_length);
   tmpbuf[real_length] = 0;
-
-  ::urbiserver->debug(tmpbuf);
+  ::urbiserver->debug("%s",tmpbuf);
 
   return length;
 }

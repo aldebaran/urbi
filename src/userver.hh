@@ -61,7 +61,7 @@ public:
   void              echo            (const char* s, ...);
   void              echoKey         (const char* key, const char* s, ...);
 
-  void debug (const char* s, va_list args);
+  void vdebug (const char* s, va_list args);
   void debug (const char* s, ...);
 
   void              isolate         ();
