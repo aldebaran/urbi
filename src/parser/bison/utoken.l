@@ -28,7 +28,16 @@
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
+// At each match, adjust the end cursor.
 #define YY_USER_ACTION locp->columns(yyleng);
+
+// To avoid differences between versions of Bison, set by hand the
+// initial columns when advancing lines.
+#define LINES(Loc)				\
+ do {						\
+   (Loc)->lines();				\
+   (Loc)->end.column = 1;			\
+ } while (0)
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate() return token::TOK_EOF
@@ -304,7 +313,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "/*"           BEGIN SC_C_COMMENT;
 
 {BLANKS}       locp->step();
-{EOL}          locp->lines(); locp->step();
+{EOL}          LINES(locp); locp->step();
 .              {
 		 up.error(*locp, std::string ("invalid character: ")
 			  + yytext);
@@ -318,7 +327,7 @@ STRING   \"([^\"]|"\\\"")*\"
   }
 
   [^*/\n\r]+  	;
-  {EOL}	        locp->lines ();
+  {EOL}	        LINES(locp);
   .             /* Stray `*' and `/'. */;
 
   <<EOF>> {

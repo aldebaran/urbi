@@ -1,3 +1,11 @@
+2007-01-17  Akim Demaille  <akim@lrde.epita.fr>
+
+	First column is column 1.
+	This code can be simplified when Bison 2.4 is out.
+	* src/parser/uparser.cc (process): Enforce this.
+	* src/parser/bison/utoken.l (LINES): New.
+	Use it.
+
 2007-01-17  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a bug when printing strings containing % in the ghostconnection and a potential send bug in userver
