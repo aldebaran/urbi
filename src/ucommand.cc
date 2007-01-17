@@ -3863,12 +3863,21 @@ UCommand_BINDER::execute_(UConnection *connection)
       {
 	if (it->second->binder)
 	  it->second->binder->addMonitor(fullobjname, connection);
-	else
-	  it->second->binder = new UBinder(fullobjname, fullname,
-					   mode,
-					   (UBindType)type,
-					   nbparam,
-					   connection);
+        else
+          it->second->binder = new UBinder(fullobjname, fullname,
+                                           mode,
+                                           (UBindType)type,
+                                           nbparam,
+                                           connection);
+        if ( !it->second->internalAccessBinder.empty ()
+             && std::find (::urbiserver->access_and_change_varlist.begin (),
+                           ::urbiserver->access_and_change_varlist.end (),
+                           it->second) ==
+             ::urbiserver->access_and_change_varlist.end ())
+        {
+          it->second->access_and_change = true;
+          ::urbiserver->access_and_change_varlist.push_back (it->second);
+        }
       }
     }
     break;

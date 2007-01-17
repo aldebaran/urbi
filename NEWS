@@ -1,3 +1,12 @@
+New in 1.0 RC2:
+
+* inherit changes to 'inherits' (same for disinherit)
+
+* Important bug fix on UNotifyChange: was not working with motor variables
+  like headPan.val from within a UObject. NotifyAccess and NotifyChange
+  simultaneous usage has also been improved in plugin mode.
+
+
 New in 1.0 RC1:
 
 * New support for multi events. Example:

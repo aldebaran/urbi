@@ -1,3 +1,27 @@
+2007-01-17  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	There was several flaw in the way UNotifyChange was working on
+	USensor-tagged UVar. Also, the interaction between UNotifyChange and
+	UNotifyAccess was not working properly in remote mode (you could have
+	a UNotifyChange remote and a UNotifyAccess plugged without any effect,
+	while this should loop the Access).
+
+	I have fixed these problems and will clarify the rationale behind 
+	USensor in a wiki page. By the way, USensor will be renamed in the
+	next commit (*with backward compatibility of course*).
+
+	fix ticket #112 (UNotifyChange with USensor) 
+	* NEWS: Explain the above and the inherits name change.
+	* src/ucommand.cc: add access_and_change_varlist support for remote
+	UVar doing a UNotifyChange on a variable that is already
+	UNotifyAccess'ed from a plugged object.
+	* src/uvar.cc: force update in any case, with a specific flag for the
+	case of an update coming from a UVar operator= assignement (done in a
+	UObject, vs done in the language).
+	* src/uvariable.cc: do not trigger UNotifyChange on a USensor plugged
+	Var when the change comes from UVar operator=.
+	* src/uvariable.hh: add new prototype of updated.
+
 2007-01-17  Akim Demaille  <akim@lrde.epita.fr>
 
 	Warning fixes.

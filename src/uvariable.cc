@@ -426,7 +426,7 @@ UVariable::get()
     set methods.
 */
 void
-UVariable::updated()
+UVariable::updated(bool uvar_assign)
 {
   // triggers associated commands update
   updateRegisteredCmd ();
@@ -448,21 +448,25 @@ UVariable::updated()
       }
 
   for (std::list<urbi::UGenericCallback*>::iterator i =
-	 internalBinder.begin();
+       internalBinder.begin();
        i != internalBinder.end();
        ++i)
   {
-    urbi::UList tmparray;
-
-    if ((*i)->storage)
+    if (!uvar_assign
+        || (*i)->objname != devicename->str ())
     {
-      // monitor with &UVar reference
-      urbi::UValue *tmpvalue = new urbi::UValue();
-      tmpvalue->storage = (*i)->storage;
-      tmparray.array.push_back(tmpvalue);
-    };
+      urbi::UList tmparray;
 
-    (*i)->__evalcall(tmparray); // tmparray is empty here
+      if ((*i)->storage)
+      {
+        // monitor with &UVar reference
+        urbi::UValue *tmpvalue = new urbi::UValue();
+        tmpvalue->storage = (*i)->storage;
+        tmparray.array.push_back(tmpvalue);
+      };
+
+      (*i)->__evalcall(tmparray);//FIXME:shouldn't tmparray content be deleted?
+    }
   }
 }
 

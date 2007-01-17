@@ -183,7 +183,7 @@ public:
   /// subclasses.
   bool isDeletable();
 
-  void          updated();
+  void          updated(bool uvar_assign = false);
 
   UValue*       get();
 
