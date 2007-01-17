@@ -101,9 +101,6 @@ namespace Network
     registerNetworkPipe(c);
   }
 
-  static std::list<Pipe*> pList;
-  static int controlPipe[2] = {-1, -1};
-
   bool
   createTCPServer(int port)
   {
@@ -115,6 +112,16 @@ namespace Network
       }
     return true;
   }
+
+
+  namespace
+  {
+#ifndef WIN32
+    int controlPipe[2] = {-1, -1};
+#endif
+    std::list<Pipe*> pList;
+  }
+
 
   int
   buildFD(fd_set& rd, fd_set& wr)
@@ -222,10 +229,10 @@ namespace Network
   }
 
 #ifdef WIN32
-  static const int delay = 10000;
+  enum { delay = 10000 };
   DWORD WINAPI
 #else
-  static const int delay = 1000000;
+  enum { delay = 1000000 };
   void*
 #endif
   processNetwork(void*)
