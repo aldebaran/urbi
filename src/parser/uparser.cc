@@ -18,10 +18,16 @@
 
 UParser::UParser(UConnection& cn)
   : commandTree (0),
+    binaryCommand (false),
     connection (cn),
     scanner_ (),
-    filename_ (0)
-{}
+    files_(),
+    filename_ (0),
+    loc_()
+{
+  // The first column for locations is 1.
+  loc_.begin.column = loc_.end.column = 1;
+}
 
 int
 UParser::parse_ ()
