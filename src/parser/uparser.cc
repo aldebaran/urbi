@@ -42,11 +42,11 @@ UParser::parse_ ()
 }
 
 int
-UParser::process(ubyte* command, int length)
+UParser::process(const ubyte* command, int length)
 {
   assert (!filename_);
   // It has been said Flex scanners cannot work with istrstream.
-  std::istrstream mem_buff ((char*)command, length);
+  std::istrstream mem_buff (reinterpret_cast<const char*> (command), length);
   std::istream mem_input (mem_buff.rdbuf());
   scanner_.switch_streams(&mem_input, 0);
   return parse_();

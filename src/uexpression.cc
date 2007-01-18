@@ -1215,7 +1215,8 @@ UExpression::eval_FUNCTION (UCommand *command,
       }
       else
       {
-	p.process((ubyte*)e1->str->str(), e1->str->len());
+	p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
+		  e1->str->len());
       }
 
       if (connection->functionTag)

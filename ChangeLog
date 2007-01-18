@@ -1,5 +1,13 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Sanitize casts
+	They trigger warnings.
+	* src/parser/uparser.cc, src/parser/uparser.hh (process): Take
+	a const ubyte*, not a ubyte*.
+	* src/uexpression.cc: Adjust.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Address cast warning
 	* src/uvalue.cc: Use a reinterpret_cast, not a C cast.
 

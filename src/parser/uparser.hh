@@ -55,8 +55,8 @@ public:
 
   UParser(UConnection& cn);
 
-  /// Parse the command from a buffer
-  int process(ubyte* command, int length);
+  /// Parse the command from a buffer.
+  int process(const ubyte* command, int length);
 
   /// Parse a file.
   int process (const char* fn);
