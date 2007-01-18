@@ -147,23 +147,23 @@ public:
   /// list of flags of tagged commands
   UNamedParameters* flags;
 
-  /// the UCommand_TREE that owns the UCommand
+  /// The UCommand_TREE that owns the UCommand.
   UCommand_TREE* up;
-  /// position in the owning UCommand_TREE
+  /// Position in the owning UCommand_TREE.
   UCommand** position;
-  /// stores the target UCommand in case of morphing
+  /// Stores the target UCommand in case of morphing.
   UCommand* morph;
   /// Whether the command should be deleted once it is UCOMPLETED
   /// (useful for loops).
   bool persistant;
-  /// true if the command has been marked for deletion in a stop
+  /// True if the command has been marked for deletion in a stop
   /// command.
   bool toDelete;
-  /// used to put the whole tree in bg mode (after a morphing from a
+  /// Used to put the whole tree in bg mode (after a morphing from a
   /// "at" or "whenever").
   bool background;
 
-  /// start time
+  /// Start time.
   ufloat startTime;
 
   /// \name Hideous hacks we must get rid of.
@@ -293,46 +293,46 @@ private:
   /// stored temporary time=0 for direct assignment
   UExpression* tmp_time;
   /// time limit in case of timeout modificator
-  ufloat           endtime;
+  ufloat endtime;
   /// start value for modificators
-  ufloat           startval;
+  ufloat startval;
   /// target value for modificators
-  ufloat           targetval;
+  ufloat targetval;
   /// start time for modificators
-  ufloat           starttime;
+  ufloat starttime;
   /// target time for modificators
-  ufloat           targettime;
+  ufloat targettime;
   /// ideal value to reach for the next iteration. Used for +error
-  ufloat           idealval;
+  ufloat idealval;
   /// speed for modificators
-  ufloat           speed;
+  ufloat speed;
   /// accel for the accel modificator
-  ufloat           accel;
+  ufloat accel;
   /// minimal speed in a movement
-  ufloat           speedmin;
+  ufloat speedmin;
 
   /// destination values
   ufloat* valtmp;
 
   /// true when the assign is finished
-  bool             finished;
+  bool finished;
   /// true when the motion profile is done
-  bool             profileDone;
+  bool profileDone;
   /// true for 'valn' type assignments
-  bool             isvaln;
+  bool isvaln;
   /// true if +error is set for the command
-  bool             errorFlag;
+  bool errorFlag;
   /// true on the first passage
-  bool             first;
+  bool first;
   /// true when a nbAssign-- has to be done ondelete
-  bool             assigned;
+  bool assigned;
   /// is the def prefix used?
-  bool             defkey;
+  bool defkey;
   /// is the assigned controlled by modifiers?
-  bool             controlled;
+  bool controlled;
 
-  UErrorValue      processModifiers(UConnection* connection,
-				    ufloat currentTime);
+  UErrorValue processModifiers(UConnection* connection,
+			       ufloat currentTime);
 
 };
 
@@ -426,7 +426,7 @@ public:
   /// the list to iterate
   UExpression* expression;
   /// is it +=(0) or -=(1)?
-  int              assigntype;
+  int assigntype;
 };
 
 
@@ -519,11 +519,11 @@ public:
   /// list of parameters
   UNamedParameters* parameters;
   /// tells if 'init' should be called
-  bool             noinit;
+  bool noinit;
   /// true when a remote new is waiting
-  bool             remoteNew;
+  bool remoteNew;
   /// true when a USystem message was answered
-  bool             sysCall;
+  bool sysCall;
 };
 
 class UCommand_ALIAS : public UCommand
@@ -598,7 +598,7 @@ public:
   /// list of group members
   UNamedParameters* parameters;
   /// type of group command group/addgroup/delgroup
-  int            grouptype;
+  int grouptype;
 };
 
 
@@ -698,9 +698,9 @@ public:
   /// name of the uobject controling the binding
   UVariableName* objname;
   /// type of binding: 0:"function", 1:"var", 2:"event"
-  int              type;
+  int type;
   /// nb of param in a function binding
-  int              nbparam;
+  int nbparam;
 };
 
 
@@ -738,7 +738,7 @@ public:
   UExpression* expression;
 
   /// time to stop waiting.
-  ufloat           endtime;
+  ufloat endtime;
 };
 
 class UCommand_EMIT : public UCommand
@@ -767,9 +767,9 @@ public:
   /// char* of the event name
   const char* eventnamestr;
   /// true for the first execution
-  bool               firsttime;
+  bool firsttime;
   /// time of the end of the signal
-  ufloat             targetTime;
+  ufloat targetTime;
   /// the attached UEvent
   UEvent* event;
   /// the associated UEventHandler
@@ -792,11 +792,11 @@ public:
   /// test
   UExpression* test;
   /// nb of times the test is true
-  int              nbTrue;
+  int nbTrue;
   /// time of the last 'true'
-  ufloat           startTrue;
+  ufloat startTrue;
   /// true when the command has not been executed yet
-  bool             firsttime;
+  bool firsttime;
   /// list of UMultiEvent candidates
   std::list<UAtCandidate*> candidates;
 
@@ -873,7 +873,7 @@ public:
   /// list of variables in a multi def command
   UVariableList* variablelist;
   /// type of definition (var, function, event)
-  UDefType         deftype;
+  UDefType deftype;
 };
 
 
@@ -942,9 +942,9 @@ public:
   UCommand* command;
 
   /// indicates the first time the command is run
-  bool             firsttime;
+  bool firsttime;
   /// time of the previous pulse
-  ufloat           starttime;
+  ufloat starttime;
 };
 
 class UCommand_TIMEOUT : public UCommand
@@ -1098,7 +1098,7 @@ public:
   /// index in the list
   UValue* position;
   /// first execution of the command
-  bool             firsttime;
+  bool firsttime;
 };
 
 class UCommand_FOR : public UCommand, public Flavorable
@@ -1164,6 +1164,5 @@ send_error (UConnection* c, const UCommand* cmd,
 
 
 const char* to_string (UCommand::Status s);
-
 
 #endif

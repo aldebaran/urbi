@@ -1,5 +1,10 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/ucommand.hh: here.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Clean up
 	* src/parser/bison/ugrammar.y: Remove a cast.
 
