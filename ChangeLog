@@ -1,5 +1,10 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Fix a load bug
+	* src/ucommand.cc: Add the same exception to load as to exec.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/ucommand.hh: here.
 

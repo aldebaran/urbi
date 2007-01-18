@@ -2099,8 +2099,9 @@ UCommand_AUTOASSIGN::execute_(UConnection*)
   if (!extended_expression)
     return UCOMPLETED;
 
-  morph = new UCommand_ASSIGN_VALUE(loc_, variablename->copy(), extended_expression,
-				    0, false);
+  morph =
+    new UCommand_ASSIGN_VALUE(loc_, variablename->copy(), extended_expression,
+			      0, false);
 
   persistant = false;
   return UMORPH;
@@ -2207,11 +2208,11 @@ UCommand_EXPR::execute_(UConnection *connection)
 
     if (fun)
     {
-      if ((expression->parameters &&
-	   fun->nbparam() &&
-	   expression->parameters->size() != fun->nbparam())
+      if ((expression->parameters
+	   && fun->nbparam()
+	   && expression->parameters->size() != fun->nbparam())
 	  || (expression->parameters && !fun->nbparam())
-	  || (!expression->parameters && fun->nbparam()) )
+	  || (!expression->parameters && fun->nbparam()))
       {
 	send_error(connection, this,
 		   "Invalid number of arguments for %s"
@@ -2256,7 +2257,6 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    && (::urbiserver->objtab.find(connection->stack.front()->self())
 		!= ::urbiserver->objtab.end ()))
 	  fundevice->update (connection->stack.front()->self());
-
 	{
 	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
 	  assert (uc_tree);
@@ -2300,8 +2300,16 @@ UCommand_EXPR::execute_(UConnection *connection)
       }
       return UMORPH;
     }
-    else if (connection->receiving &&
-	     expression->variablename->id->equal("exec"))
+    else if (connection->receiving
+	     && (expression->variablename->id->equal("exec")
+		 || expression->variablename->id->equal("load")))
+      // Some functions are executed at the same time as they are
+      // received (e.g., ping).  For some reason, it is believed that
+      // exec should not be executed asap.  For the same reasons, load
+      // must not (otherwise several things do not work).
+      //
+      // JC thinks there is no reason to try to understand further:
+      // this code is rewritten for k2.
       return URUNNING;
 
     // handle the :: case
