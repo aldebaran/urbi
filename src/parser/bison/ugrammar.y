@@ -417,7 +417,7 @@ root:
       if (c)
 	up.binaryCommand = true;
 
-      up.commandTree  = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
+      up.commandTree = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
       if (up.commandTree)
 	up.commandTree->setTag("__node__");
       memcheck(up, up.commandTree);
@@ -555,10 +555,12 @@ command:
 
   | "{" taggedcommands "}" {
 
-      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, $2,
-			     new UCommand_NOOP(@$, true));
-      $$->setTag("__UGrouped_set_of_commands__");
-      ((UCommand_TREE*)$$)->command2->setTag("__system__");
+      UCommand_TREE* res =
+	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
+			  new UCommand_NOOP(@$, true));
+      res->setTag("__UGrouped_set_of_commands__");
+      res->command2->setTag("__system__");
+      $$ = res;
     }
 ;
 
