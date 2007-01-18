@@ -1,5 +1,10 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	White space changes
+	* src/ucommand.hh: here.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	eval_FUNCTION_EXEC_OR_LOAD
 	* src/uexpression.hh, src/uexpression.cc
         (UExpression::eval_FUNCTION_EXEC_OR_LOAD): New.

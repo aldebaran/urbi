@@ -93,7 +93,7 @@ public:
 
   virtual UCommand* copy() const = 0;
 
-  UCommand*         scanGroups(UVariableName** (UCommand::*refName)(), bool);
+  UCommand* scanGroups(UVariableName** (UCommand::*refName)(), bool);
   virtual UVariableName** refVarName ()
   {
     return 0;
@@ -150,21 +150,21 @@ public:
   /// the UCommand_TREE that owns the UCommand
   UCommand_TREE* up;
   /// position in the owning UCommand_TREE
-  UCommand         **position;
+  UCommand** position;
   /// stores the target UCommand in case of morphing
   UCommand* morph;
   /// Whether the command should be deleted once it is UCOMPLETED
   /// (useful for loops).
-  bool             persistant;
+  bool persistant;
   /// true if the command has been marked for deletion in a stop
   /// command.
-  bool             toDelete;
+  bool toDelete;
   /// used to put the whole tree in bg mode (after a morphing from a
   /// "at" or "whenever").
-  bool             background;
+  bool background;
 
   /// start time
-  ufloat           startTime;
+  ufloat startTime;
 
   /// \name Hideous hacks we must get rid of.
   /// \{
@@ -180,24 +180,24 @@ public:
 
   /// in case of timeout or condout, stores the type of the flag
   /// (timeout:0), (condout:1).
-  int              flagType;
+  int flagType;
   /// nb of times the flag test is true
-  int              flag_nbTrue2;
+  int flag_nbTrue2;
   /// time of the last 'true' for "stop"
-  ufloat           flag_startTrue2;
+  ufloat flag_startTrue2;
   /// nb of times the flag test is true
-  int              flag_nbTrue4;
+  int flag_nbTrue4;
   /// time of the last 'true' for "freeze"
-  ufloat           flag_startTrue4;
+  ufloat flag_startTrue4;
   /// true when the command is part of a morphed structure
-  bool             morphed;
+  bool morphed;
 
 protected:
   UCommand* copybase(UCommand* c) const;
 
 private:
   /// Command tag.
-  std::string      tag;
+  std::string tag;
   /// Ptr to tag info concerning us.
   TagInfo* tagInfo;
   /// For fast deletion.
@@ -771,9 +771,9 @@ public:
   /// time of the end of the signal
   ufloat             targetTime;
   /// the attached UEvent
-  UEvent*            event;
+  UEvent* event;
   /// the associated UEventHandler
-  UEventHandler*     eh;
+  UEventHandler* eh;
 };
 
 class UCommand_WAIT_TEST : public UCommand
@@ -1051,7 +1051,7 @@ public:
   /// Command
   UCommand* command;
   /// non zero if the loop belongs to a whenever command.
-  UCommand*        whenever_hook;
+  UCommand* whenever_hook;
 };
 
 class UCommand_LOOPN : public UCommand, public Flavorable
@@ -1155,7 +1155,7 @@ public:
 UErrorValue
 vsend_error (UConnection* c, const UCommand* cmd,
 	     const char* fmt, va_list args)
-    __attribute__ ((__format__ (__printf__, 3, 0)));
+  __attribute__ ((__format__ (__printf__, 3, 0)));
 
 UErrorValue
 send_error (UConnection* c, const UCommand* cmd,
