@@ -1,5 +1,10 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Use string literals in the parser
+	* src/parser/bison/ugrammar.y: here.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	to_string for Status
 	* src/ucommand.hh, src/ucommand.cc (KIND): Rename as...
         (CASE): this.

@@ -1256,14 +1256,14 @@ namedparameters:
 /* BINARY */
 
 binary:
-    TOK_BIN NUM {
+    "BIN" NUM {
       $$ = new UBinary((int)take($2), 0);
       memcheck(up, $$);
       if ($$ != 0)
 	memcheck(up, $$->buffer, $$);
     }
 
-  | TOK_BIN NUM rawparameters {
+  | "BIN" NUM rawparameters {
 
       $$ = new UBinary((int)take($2), $3);
       memcheck(up, $$, $3);
