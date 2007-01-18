@@ -629,7 +629,8 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(const location& l,
     finished (false),
     profileDone (false),
     assigned (false),
-    defkey (defkey)
+    defkey (defkey),
+    controlled (false)
 {
   ADDOBJ(UCommand_ASSIGN_VALUE);
 }
@@ -1094,7 +1095,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     //////////////////////////////////
     if (target->dataType == DATA_NUM) // NUM
     {
-      bool controlled = false; // is a virtual "time:0" needed?
+      controlled = false; // is a virtual "time:0" needed?
       targetval = target->val;
 
       // Handling normalized correction
@@ -1371,7 +1372,12 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 					ufloat currentTime)
 {
   ufloat deltaTime = connection->server->getFrequency();
-  ufloat currentVal = variable->get()->val;
+  ufloat currentVal;
+  if (controlled)
+    currentVal = variable->get()->val;
+  else
+    currentVal = variable->value->val;
+
   ufloat phase, amplitude;
 
   // Adaptive mode? (only for "speed" and "time")

@@ -328,6 +328,8 @@ private:
   bool             assigned;
   /// is the def prefix used?
   bool             defkey;
+  /// is the assigned controlled by modifiers?
+  bool             controlled;
 
   UErrorValue      processModifiers(UConnection* connection,
 				    ufloat currentTime);

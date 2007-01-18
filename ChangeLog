@@ -1,5 +1,19 @@
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Doing a simple obj.x=7; command was triggering UNotifyAccess on x. In
+	the more general case of controlled assignment, like "obj.x=7
+	time:1s", this call to UVariable::get is necessary to know where to
+	start from. In the case of a simple instantaneous assignment, the call
+	must be avoided for optimization purposes.
+
+	fix a bug in assignment triggering a non necessary call to UVariable::get() 
+	* src/ucommand.cc: set controlled and use it in processModifiers as
+	well.
+	* src/ucommand.hh: moves 'controlled' from local to the call to object
+	attribute (to be seen by all subsequent method calls).
+
+2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	UOwned UVar which are UNotifyAccess'd and UNotifyChange'd in the same
 	UObject should not trigger a loop of calls to UNotifyAccess.
 
