@@ -1,3 +1,10 @@
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Fix creation of groups
+	Fixes groups.chk.
+	* src/uexpression.cc: Weaken preconditions in ctors.
+	Avoid identifier collisions between members and variables.
+
 2007-01-18  Type Your Name Here  <your.mail.here@FIXME.com>
 
 	More format checking

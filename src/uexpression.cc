@@ -106,9 +106,7 @@ void UExpression::initialize()
   issofttest	   = false;
   staticcache	   = 0;
   tmp_value	   = 0;
-
-  this->softtest_time = 0;
-
+  softtest_time = 0;
   dataType  = DATA_UNKNOWN;
 }
 
@@ -117,16 +115,14 @@ void UExpression::initialize()
  between all the different constructors.
  */
 UExpression::UExpression(const location& l,
-			 UExpression::Type type, ufloat val)
+			 UExpression::Type t, ufloat v)
  : UAst(l)
 {
+  assert (t == VALUE);
   initialize();
-
-  this->val  = val;
-  assert (type == VALUE);
-  this->type = type;
-  this->isconst = true;
-
+  val  = v;
+  type = t;
+  isconst = true;
   dataType   = DATA_NUM;
 }
 
@@ -136,14 +132,14 @@ UExpression::UExpression(const location& l,
  between all the different constructors.
  */
 UExpression::UExpression(const location& l,
-			 UExpression::Type type, UString *str)
+			 UExpression::Type t, UString *s)
  : UAst(l)
 {
+  assert (t == VALUE | t == GROUP);
   initialize();
-  this->str  = str;
-  assert (type == VALUE);
-  this->type = type;
-  this->isconst = true;
+  str = s;
+  type = t;
+  isconst = true;
   dataType   = DATA_STRING;
 }
 
@@ -151,20 +147,19 @@ UExpression::UExpression(const location& l,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(const location& l, UExpression::Type type, UValue *v)
+UExpression::UExpression(const location& l, UExpression::Type t, UValue *v)
  : UAst(l)
 {
   initialize();
-
-  assert (type == VALUE);
-  this->type = type;
-  this->isconst = true;
+  assert (t == VALUE);
+  type = t;
+  isconst = true;
   dataType   = v->dataType;
 
   if (v->dataType == DATA_NUM)
-    this->val  = v->val;
+    val  = v->val;
   else if (v->dataType == DATA_STRING)
-    this->str = v->str->copy();
+    str = v->str->copy();
   else
   {
     tmp_value = v;
