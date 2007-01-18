@@ -13,6 +13,17 @@
 #include <list>
 #include <algorithm>
 
+// In the long run, this should be part of libport, but I don't know
+// where actually :( Should it be libport/sys/types.hh?  Or unistd.hh?
+// What standard header should do that?
+
+#ifdef WIN32
+// On windows, file descriptors are defined as u_int (i.e., unsigned int).
+# define LIBPORT_FD_SET(N, P) FD_SET(static_cast<u_int>(N), P)
+#else
+# define LIBPORT_FD_SET(N, P) FD_SET(N, P)
+#endif
+
 namespace Network
 {
 
@@ -130,7 +141,7 @@ namespace Network
     FD_ZERO(&wr);
     int maxfd = 0;
 #ifndef WIN32
-    FD_SET(controlPipe[0], &rd);
+    LIBPORT_FD_SET(controlPipe[0], &rd);
     maxfd = controlPipe[0];
 #endif
     for (std::list<Pipe*>::iterator i = pList.begin();
@@ -139,12 +150,12 @@ namespace Network
       {
 	int f = (*i)->readFD();
 	if (f > 0)
-	  FD_SET(f, &rd);
+	  LIBPORT_FD_SET(f, &rd);
 	if (f > maxfd)
 	  maxfd = f;
 	int g = (*i)->writeFD();
 	if (g > 0)
-	  FD_SET(g, &wr);
+	  LIBPORT_FD_SET(g, &wr);
 	if (g > maxfd)
 	  maxfd = g;
       }

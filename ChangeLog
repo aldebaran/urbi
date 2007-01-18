@@ -1,3 +1,9 @@
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Handle FD_SET portability issues
+	* src/network/bsdnet/network.cc (LIBPORT_FD_SET): New.
+	Use it to address a warning on Windows.
+
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	update externals
