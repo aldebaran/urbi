@@ -1,5 +1,20 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Fix vdebug use
+	* src/ucommand.hh, src/ucommand.cc (send_error): Rename the va_list
+	one as...
+	(vsend_error): this.
+	Call va_end.
+	(tab, debug, vdebug): Move to...
+	* src/userver.hh, src/userver.cc: here.
+	Fix a genuine bug: be sure to call UServer::vdebug, not debug.
+	Use where appropriate.
+	* src/uexpression.hh, src/uexpression.cc (UExpression::print): Now
+	takes an indentation level.
+	* src/unamedparameters.cc: Adjust.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Sanitize casts
 	They trigger warnings.
 	* src/parser/uparser.cc, src/parser/uparser.hh (process): Take

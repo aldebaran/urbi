@@ -1153,8 +1153,8 @@ public:
 /// \param fmt   printf-format string.
 /// \param args  its arguments.
 UErrorValue
-send_error (UConnection* c, const UCommand* cmd,
-	    const char* fmt, va_list args)
+vsend_error (UConnection* c, const UCommand* cmd,
+	     const char* fmt, va_list args)
     __attribute__ ((__format__ (__printf__, 3, 0)));
 
 UErrorValue

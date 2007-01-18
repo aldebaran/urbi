@@ -1062,3 +1062,49 @@ UServer::addAlias(const char* id, const char* variablename)
   }
   return 1;
 }
+
+
+/* Free standing functions. */
+
+namespace
+{
+
+  // Use with care, returns a static buffer.
+  const char* tab (unsigned n)
+  {
+    static char buf[100];
+    assert(n < sizeof buf);
+    for (unsigned i = 0; i < n; ++i)
+      buf[i] = ' ';
+    buf[n] = 0;
+    return buf;
+  }
+
+}
+
+
+void
+vdebug (const char* fmt, va_list args)
+{
+  ::urbiserver->vdebug (fmt, args);
+}
+
+void
+debug (const char* fmt, ...)
+{
+  va_list args;
+  va_start (args, fmt);
+  vdebug (fmt, args);
+  va_end (args);
+}
+
+
+void
+debug (unsigned t, const char* fmt, ...)
+{
+  debug ("%s", tab(t));
+  va_list args;
+  va_start (args, fmt);
+  vdebug (fmt, args);
+  va_end (args);
+}

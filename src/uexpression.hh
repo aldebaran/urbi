@@ -113,8 +113,9 @@ public:
 	       UValue* tmp_value);
   ~UExpression();
 
-  void print ();
-  void initialize ();
+  /// \a t is the indentation level.
+  void print (unsigned t);
+
 
   // Backward compatible version of eval.
   UValue*         eval        (UCommand *command,
@@ -170,6 +171,9 @@ public:
   UExpression      *softtest_time;
 
 private:
+  /// Used to factor ctors.
+  void initialize ();
+
   /// eval() specialized for type == GROUP.
   UValue*
   eval_GROUP (UCommand *command, UConnection *connection);

@@ -57,8 +57,8 @@
 /// \param fmt   printf-format string.
 /// \param args  its arguments.
 UErrorValue
-send_error (UConnection* c, const UCommand* cmd,
-	    const char* fmt, va_list args)
+vsend_error (UConnection* c, const UCommand* cmd,
+	     const char* fmt, va_list args)
 {
   std::ostringstream o;
   // FIXME: This is really bad if file names have %.  We need
@@ -74,7 +74,9 @@ send_error (UConnection* c, const UCommand* cmd,
 {
   va_list args;
   va_start(args, fmt);
-  return send_error (c, cmd, fmt, args);
+  UErrorValue res = vsend_error (c, cmd, fmt, args);
+  va_end(args);
+  return res;
 }
 
 namespace
@@ -82,53 +84,6 @@ namespace
   /// A buffer type.
   typedef char buffer_t[65536];
 
-  // Use with care, returns a static buffer.
-  const char* tab (unsigned n)
-  {
-    static char tabb[100];
-    strcpy(tabb, "");
-    for (unsigned i = 0; i < n; ++i)
-      strcat(tabb, " ");
-    return tabb;
-  }
-
-
-
-  void debug (const char* fmt, va_list args)
-    __attribute__ ((__format__ (__printf__, 1, 0)));
-
-  void debug (const char* fmt, ...)
-    __attribute__ ((__format__ (__printf__, 1, 2)));
-
-  void debug (unsigned t, const char* fmt, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
-
-  /// Send debugging messages via the server.
-  void
-  debug (const char* fmt, va_list args)
-  {
-    ::urbiserver->debug (fmt, args);
-  }
-
-  /// Send debugging messages via the server.
-  void
-  debug (const char* fmt, ...)
-  {
-    va_list args;
-    va_start (args, fmt);
-    debug (fmt, args);
-    va_end (args);
-  }
-
-  /// Send debugging messages indented with \a t spaces, via the server.
-  void
-  debug (unsigned t, const char* fmt, ...)
-  {
-    va_list args;
-    va_start (args, fmt);
-    debug ("%s", tab(t));
-    debug (fmt, args);
-  }
 
   /// Report the value of some attribute.
 #define DEBUG_ATTR(Attr)			\
@@ -148,6 +103,7 @@ namespace
     {						\
       debug(l, "  " # Attr ":\n");		\
       (Attr)->print(l + 3);			\
+      debug("\n");				\
     }						\
   } while (0)
 }
@@ -258,7 +214,8 @@ UCommand::print(unsigned l) const
     KIND(WHILE);
 #undef KIND
   }
-  debug(l, " Tag:[%s] %s ", getTag().c_str(), k);
+  debug(l, " Tag:[%s] %s toDelete=%s\n", 
+	getTag().c_str(), k, toDelete ? "true" : "false");
   print_ (l);
   debug(l, "END %s ------\n", k);
 }
@@ -563,9 +520,9 @@ UCommand_TREE::deleteMarked()
       }
 
     go_to = 2;
-    if (tree->up)
-      if (*tree->position == tree->up->command2)
-	go_to = 0;
+    if (tree->up
+	&& *tree->position == tree->up->command2)
+      go_to = 0;
 
     tree = tree->up;
   }
@@ -578,20 +535,18 @@ UCommand_TREE::deleteMarked()
 void
 UCommand_TREE::print_(unsigned l) const
 {
-  debug(l, "%s toDelete=%d (%ld:%ld) :\n",
-	flavor_string(),
-	toDelete,
-	(long)this, (long)status);
+  debug(l, "%s (%p:%d) :\n",
+	flavor_string(), this, status);
   if (command1)
   {
-    debug(l, "  Com1 (%ld:%d) up=%ld:\n",
-	  (long)command1, command1->status, (long)command1->up);
+    debug(l, "  Com1 (%p:%d) up=%p:\n",
+	  command1, command1->status, command1->up);
     command1->print(l+3);
   }
   if (command2)
   {
-    debug(l, "  Com2 (%ld:%d) up=%ld:\n",
-	  (long)command2, command2->status, (long)command2->up);
+    debug(l, "  Com2 (%p:%d) up=%p:\n",
+	  command2, command2->status, command2->up);
     command2->print(l+3);
   }
   debug(l, "END TREE ------\n");
@@ -1710,9 +1665,8 @@ UCommand_ASSIGN_VALUE::copy() const
 void
 UCommand_ASSIGN_VALUE::print_(unsigned l) const
 {
-  debug(l, "toDelete=%d ", toDelete);
   DEBUG_ATTR (variablename);
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
   DEBUG_ATTR(parameters);
 }
 
@@ -2066,7 +2020,7 @@ UCommand_ASSIGN_PROPERTY::print_(unsigned l) const
 {
   debug("[%s]:\n", oper->str());
   DEBUG_ATTR (variablename);
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
 }
 
 MEMORY_MANAGER_INIT(UCommand_AUTOASSIGN);
@@ -2152,7 +2106,7 @@ UCommand_AUTOASSIGN::print_(unsigned l) const
 {
   debug("(%d):", assigntype);
   DEBUG_ATTR (variablename);
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
 }
 
 
@@ -2481,7 +2435,7 @@ UCommand_EXPR::copy() const
 void
 UCommand_EXPR::print_(unsigned l) const
 {
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
 }
 
 MEMORY_MANAGER_INIT(UCommand_RETURN);
@@ -2542,7 +2496,7 @@ UCommand_RETURN::copy() const
 void
 UCommand_RETURN::print_(unsigned l) const
 {
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
 }
 
 MEMORY_MANAGER_INIT(UCommand_ECHO);
@@ -2646,7 +2600,7 @@ UCommand_ECHO::copy() const
 void
 UCommand_ECHO::print_(unsigned l) const
 {
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
   DEBUG_ATTR(parameters);
 }
 
@@ -3062,7 +3016,7 @@ UCommand_ALIAS::print_(unsigned l) const
   DEBUG_ATTR (aliasname);
   if (id)
   {
-    debug("  %s  id:", tab(l));
+    debug(l+2, "id:");
     id->print();
     debug("\n");
   }
@@ -4334,7 +4288,7 @@ UCommand_WAIT::copy() const
 void
 UCommand_WAIT::print_(unsigned l) const
 {
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
 }
 
 MEMORY_MANAGER_INIT(UCommand_EMIT);
@@ -4647,7 +4601,7 @@ UCommand_WAIT_TEST::copy() const
 void
 UCommand_WAIT_TEST::print_(unsigned l) const
 {
-  DEBUG_ATTR (test);
+  DEBUG_ATTR_I (test);
 }
 
 
@@ -5220,7 +5174,7 @@ UCommand_IF::copy() const
 void
 UCommand_IF::print_(unsigned l) const
 {
-  DEBUG_ATTR (test);
+  DEBUG_ATTR_I (test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
 }
@@ -5293,7 +5247,7 @@ UCommand_EVERY::copy() const
 void
 UCommand_EVERY::print_(unsigned l) const
 {
-  DEBUG_ATTR (duration);
+  DEBUG_ATTR_I (duration);
   DEBUG_ATTR_I(command);
 }
 
@@ -5364,7 +5318,7 @@ UCommand_TIMEOUT::copy() const
 void
 UCommand_TIMEOUT::print_(unsigned l) const
 {
-  DEBUG_ATTR (duration);
+  DEBUG_ATTR_I (duration);
   DEBUG_ATTR_I(command);
 }
 
@@ -5453,7 +5407,7 @@ UCommand_STOPIF::copy() const
 void
 UCommand_STOPIF::print_(unsigned l) const
 {
-  DEBUG_ATTR (condition);
+  DEBUG_ATTR_I(condition);
   DEBUG_ATTR_I(command);
 }
 
@@ -5526,7 +5480,7 @@ UCommand_FREEZEIF::copy() const
 void
 UCommand_FREEZEIF::print_(unsigned l) const
 {
-  DEBUG_ATTR (condition);
+  DEBUG_ATTR_I (condition);
   DEBUG_ATTR_I(command);
 }
 
@@ -5721,7 +5675,6 @@ UCommand_AT::copy() const
 void
 UCommand_AT::print_(unsigned l) const
 {
-  debug("toDelete=%d ", toDelete);
   if (type == AT)
     debug("\n");
   else if (type == AT_AND)
@@ -5729,7 +5682,7 @@ UCommand_AT::print_(unsigned l) const
   else
     debug("UNKNOWN TYPE!\n");
 
-  DEBUG_ATTR (test);
+  DEBUG_ATTR_I(test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
 }
@@ -5810,7 +5763,7 @@ void
 UCommand_WHILE::print_(unsigned l) const
 {
   debug(l, "%s\n", flavor_string());
-  DEBUG_ATTR (test);
+  DEBUG_ATTR_I(test);
   DEBUG_ATTR_I(command);
 }
 
@@ -6034,7 +5987,7 @@ UCommand_WHENEVER::copy() const
 void
 UCommand_WHENEVER::print_(unsigned l) const
 {
-  DEBUG_ATTR(test);
+  DEBUG_ATTR_I(test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);
 }
@@ -6092,7 +6045,6 @@ UCommand_LOOP::copy() const
 void
 UCommand_LOOP::print_(unsigned l) const
 {
-  debug("toDelete=%d", toDelete);
   DEBUG_ATTR_I(command);
 }
 
@@ -6188,10 +6140,10 @@ void
 UCommand_LOOPN::print_(unsigned l) const
 {
   debug(l, "%s", flavor_string ());
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
   if (command)
   {
-    debug(l, "  Command (%ld:%d):\n", (long)command, (int)command->status);
+    debug(l, "  Command (%p:%d):\n", command, (int)command->status);
     command->print(l+3);
   }
 }
@@ -6328,7 +6280,7 @@ void
 UCommand_FOR::print_(unsigned l) const
 {
   debug(l, "%s", flavor_string());
-  DEBUG_ATTR(test);
+  DEBUG_ATTR_I(test);
   DEBUG_ATTR_I(instr1);
   DEBUG_ATTR_I(instr2);
   DEBUG_ATTR_I(command);
@@ -6442,7 +6394,7 @@ UCommand_FOREACH::print_(unsigned l) const
 {
   debug(l, "%s", flavor_string());
   DEBUG_ATTR (variablename);
-  DEBUG_ATTR (expression);
+  DEBUG_ATTR_I (expression);
   DEBUG_ATTR_I(command);
 }
 
@@ -6474,12 +6426,7 @@ UCommand_NOOP::~UCommand_NOOP()
 UCommand::Status UCommand_NOOP::execute_(UConnection *connection)
 {
   if (status == UONQUEUE)
-  {
-    if (!connection->receiving)
-      return URUNNING;
-    else
-      return UONQUEUE;
-  }
+    return !connection->receiving ? URUNNING : UONQUEUE;
   else
     return UCOMPLETED;
 }

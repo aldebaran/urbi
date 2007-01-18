@@ -95,17 +95,17 @@ void
 UNamedParameters::print() const
 {
   if (name)
-    ::urbiserver->debug("%s:", name->str());
+    debug("%s:", name->str());
   if (expression)
   {
-    ::urbiserver->debug("expr=");
-    expression->print();
-    ::urbiserver->debug(" ");
+    debug("expr=");
+    expression->print(0);
+    debug(" ");
   }
   if (next)
   {
-    ::urbiserver->debug(", ");
+    debug(", ");
     next->print();
-    ::urbiserver->debug(" ");
+    debug(" ");
   }
 }

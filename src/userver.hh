@@ -65,6 +65,7 @@ public:
   void echoKey (const char* key, const char* s, ...)
     __attribute__ ((__format__ (__printf__, 3, 4)));
 
+  /// Send debugging data.
   void vdebug (const char* s, va_list args)
     __attribute__ ((__format__ (__printf__, 2, 0)));
   void debug (const char* s, ...)
@@ -263,6 +264,23 @@ inline int unic()
   ++URBI_unicID;
   return URBI_unicID;
 }
+
+
+/* Freestanding functions. */
+
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, va_list args)
+  __attribute__ ((__format__ (__printf__, 1, 0)));
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 1, 2)));
+
+/// Send debugging messages indented with \a t spaces, via ::urbiserver.
+void debug (unsigned t, const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 2, 3)));
+
 
 #endif
 
