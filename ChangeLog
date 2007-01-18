@@ -1,5 +1,10 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Scope reduction
+	* src/uexpression.cc (UExpression::eval_FUNCTION): here.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Fix vdebug use
 	* src/ucommand.hh, src/ucommand.cc (send_error): Rename the va_list
 	one as...

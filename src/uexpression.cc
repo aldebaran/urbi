@@ -1210,8 +1210,6 @@ UExpression::eval_FUNCTION (UCommand *command,
       bool in_load = STREQ(variablename->id->str(), "load");
       UValue* e1 = parameters->expression->eval(command, connection);
       ENSURE_TYPES_1 (DATA_STRING);
-      UValue* ret = new UValue();
-      ret->dataType = DATA_VOID;
 
       // send string in the queue
       ::urbiserver->systemcommands = false;
@@ -1232,7 +1230,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       if (connection->functionTag)
       {
 	delete connection->functionTag;
-	connection->functionTag=0;
+	connection->functionTag = 0;
       }
       ::urbiserver->systemcommands = true;
 
@@ -1260,11 +1258,12 @@ UExpression::eval_FUNCTION (UCommand *command,
 		    ? "Error loading file: %s"
 		    : "Error parsing string: %s"),
 		   e1->str->str());
-	delete ret;
-	ret = 0;
+	return 0;
       }
 
       delete e1;
+      UValue* ret = new UValue();
+      ret->dataType = DATA_VOID;
       return ret;
     }
   }
