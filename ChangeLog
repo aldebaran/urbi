@@ -1,5 +1,10 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Address cast warning
+	* src/uvalue.cc: Use a reinterpret_cast, not a C cast.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Fix creation of groups
 	Fixes groups.chk.
 	* src/uexpression.cc: Weaken preconditions in ctors.

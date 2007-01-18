@@ -266,7 +266,7 @@ UValue::operator urbi::USound()
 	(refBinary->ref()->buffer) )
     {
       decoded= true;
-      wavheader * wh = (wavheader *)refBinary->ref()->buffer;
+      wavheader* wh = reinterpret_cast<wavheader*> (refBinary->ref()->buffer);
       snd.channels = wh->channels;
       snd.rate = wh->freqechant;
       snd.sampleSize = wh->bitperchannel;
