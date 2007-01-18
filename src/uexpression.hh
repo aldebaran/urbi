@@ -47,52 +47,52 @@ public:
 
   //! The different types for a UExpression.
   enum Type
-  {
-    VALUE,
-    VARIABLE,
-    LIST,
-    GROUP,
-    ADDR_VARIABLE,
-    FUNCTION,
-    PLUS,
-    MINUS,
-    MULT,
-    DIV,
-    MOD,
-    EXP,
-    NEG,
-    COPY,
-    PROPERTY,
-    EVENT,
+    {
+      VALUE,
+      VARIABLE,
+      LIST,
+      GROUP,
+      ADDR_VARIABLE,
+      FUNCTION,
+      PLUS,
+      MINUS,
+      MULT,
+      DIV,
+      MOD,
+      EXP,
+      NEG,
+      COPY,
+      PROPERTY,
+      EVENT,
 
-    TEST_EQ,
-    TEST_REQ,
-    TEST_PEQ,
-    TEST_DEQ,
-    TEST_NE,
-    TEST_GT,
-    TEST_GE,
-    TEST_LT,
-    TEST_LE,
-    TEST_BANG,
-    TEST_AND,
-    TEST_OR
-  };
+      TEST_EQ,
+      TEST_REQ,
+      TEST_PEQ,
+      TEST_DEQ,
+      TEST_NE,
+      TEST_GT,
+      TEST_GE,
+      TEST_LT,
+      TEST_LE,
+      TEST_BANG,
+      TEST_AND,
+      TEST_OR
+    };
 
   UExpression(const location& l, Type type, ufloat val);
 
   /// The ownership is taken.
-  UExpression(const location& l, Type type, UString *str);
+  UExpression(const location& l, Type type, UString* str);
 
-  UExpression(const location& l, Type type, UValue *v);
+  UExpression(const location& l, Type type, UValue* v);
 
   UExpression(const location& l, Type type, UExpression* e1, UExpression* e2);
   UExpression(const location& l, Type type, UVariableName* v);
-  UExpression(const location& l, Type type, UVariableName* v, UExpression *e);
-  UExpression(const location& l, Type type, UVariableName* v, UNamedParameters *p);
-  UExpression(const location& l, Type type, UNamedParameters *p);
-  UExpression(const location& l, Type type, UString *op, UString *id);
-  UExpression(const location& l, Type type, UString *op, UVariableName *v);
+  UExpression(const location& l, Type type, UVariableName* v, UExpression* e);
+  UExpression(const location& l, Type type, UVariableName* v, UNamedParameters* p);
+  UExpression(const location& l, Type type, UNamedParameters* p);
+  UExpression(const location& l, Type type, UString* op, UString* id);
+  UExpression(const location& l, Type type, UString* op, UVariableName* v);
 
   /// The complete ctor, used for copies.
   UExpression (const location& l,
@@ -118,57 +118,54 @@ public:
 
 
   // Backward compatible version of eval.
-  UValue*         eval        (UCommand *command,
-			       UConnection *connection);
+  UValue* eval(UCommand* command, UConnection* connection);
 
   // New version of eval, capable of returning a UEventCompound
-  UValue*         eval        (UCommand *command,
-			       UConnection *connection,
-			       UEventCompound*& ec);
+  UValue* eval(UCommand* command, UConnection* connection,
+	       UEventCompound*& ec);
 
-  UErrorValue     asyncScan   (UASyncCommand* cmd,
-			       UConnection* c);
+  UErrorValue asyncScan (UASyncCommand* cmd, UConnection* c);
 
-  UExpression*    copy        () const;
+  UExpression* copy() const;
 
   /// Type of the expression.
   Type type;
   /// Type of the expression's data.
-  UDataType       dataType;
+  UDataType dataType;
 
   /// numerical value used for the NUM.
-  ufloat          val;
+  ufloat val;
   /// string of the STRING or FUNCTOR type.
-  UString         *str;
+  UString* str;
 
   ///  stores a tmp UValue resulting from a function evaluation (which
   /// temporarily is processed as an UExpression), Usually, the value
   /// of this is 0.
-  UValue          *tmp_value;
+  UValue* tmp_value;
 
   /// id of the FUNCTOR
-  UString         *id;
+  UString* id;
   /// true on first evaluation (used by static)
-  bool            firsteval;
+  bool firsteval;
   /// true when the expr is const
-  bool            isconst;
+  bool isconst;
   /// true when the expr is a soft test
-  bool            issofttest;
+  bool issofttest;
   /// used for static variables
-  UValue          *staticcache;
+  UValue* staticcache;
 
   /// Left side of a compound expression.
-  UExpression     *expression1;
+  UExpression* expression1;
   /// Right side of a compound expression.
-  UExpression     *expression2;
+  UExpression* expression2;
   /// variable when the expression is a VARIABLE or FUNCTION
-  UVariableName   *variablename;
+  UVariableName* variablename;
 
   /// list of parameters of the FUNCTION or LIST
-  UNamedParameters *parameters;
+  UNamedParameters* parameters;
 
   /// Time constant for a soft test (0 means "hard test").
-  UExpression      *softtest_time;
+  UExpression* softtest_time;
 
 private:
   /// Used to factor ctors.
@@ -176,19 +173,22 @@ private:
 
   /// eval() specialized for type == GROUP.
   UValue*
-  eval_GROUP (UCommand *command, UConnection *connection);
+  eval_GROUP (UCommand* command, UConnection* connection);
 
   /// eval() specialized for type == FUNCTION.
   UValue*
-  eval_FUNCTION (UCommand *command, UConnection *connection,
+  eval_FUNCTION (UCommand* command, UConnection* connection,
 		 UEventCompound*& ec);
 
-  /// eval() specialized for type == LIST.
+  /// eval_FUNCTION() specialized for variablename = "exec" or "load".
   UValue*
-  eval_LIST (UCommand *command, UConnection *connection);
+  eval_FUNCTION_EXEC_OR_LOAD (UCommand* command, UConnection* connection);
+
+  /// eval() specialized for type == LIST.
+  UValue* eval_LIST (UCommand* command, UConnection* connection);
 
   /// eval() specialized for type == VARIABLE.
-  UValue* eval_VARIABLE (UCommand *command, UConnection *connection,
+  UValue* eval_VARIABLE (UCommand* command, UConnection* connection,
 			 UEventCompound*& ec);
 };
 

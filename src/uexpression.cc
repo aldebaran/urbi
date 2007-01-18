@@ -901,10 +901,78 @@ UExpression::eval (UCommand *command,
   }
 }
 
+
+UValue*
+UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
+					 UConnection* connection)
+{
+  assert (STREQ(variablename->id->str(), "exec")
+	  || STREQ(variablename->id->str(), "load"));
+
+  bool in_load = STREQ(variablename->id->str(), "load");
+  UValue* e1 = parameters->expression->eval(command, connection);
+  ENSURE_TYPES_1 (DATA_STRING);
+
+  // send string in the queue
+  ::urbiserver->systemcommands = false;
+  if (!connection->stack.empty())
+    connection->functionTag = new UString("__Funct__");
+  UParser& p = connection->parser();
+  if (in_load)
+    {
+      std::string f = ::urbiserver->find_file (e1->str->str());
+      p.process (f.c_str ());
+    }
+  else
+    {
+      p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
+		e1->str->len());
+    }
+
+  if (connection->functionTag)
+    {
+      delete connection->functionTag;
+      connection->functionTag = 0;
+    }
+  ::urbiserver->systemcommands = true;
+
+  if (p.errorMessage[0])
+    {
+      // a parsing error occured
+      if (p.commandTree)
+	{
+	  delete p.commandTree;
+	  p.commandTree = 0;
+	}
+      connection->send(p.errorMessage, "error");
+    }
+
+  if (p.commandTree)
+    {
+      command->morph = p.commandTree;
+      command->persistant = false;
+      p.commandTree = 0;
+    }
+  else
+    {
+      send_error(connection, command, this,
+		 (in_load
+		  ? "Error loading file: %s"
+		  : "Error parsing string: %s"),
+		 e1->str->str());
+      return 0;
+    }
+
+  delete e1;
+  UValue* ret = new UValue();
+  ret->dataType = DATA_VOID;
+  return ret;
+}
+
 UValue*
 UExpression::eval_FUNCTION (UCommand *command,
-				 UConnection *connection,
-				 UEventCompound*& ec)
+			    UConnection *connection,
+			    UEventCompound*& ec)
 {
   assert (type == FUNCTION);
   UString* funname = variablename->buildFullname(command, connection);
@@ -1206,66 +1274,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     // exec parse the string, and load, the file whose name is given.
     if (STREQ(variablename->id->str(), "exec")
 	|| STREQ(variablename->id->str(), "load"))
-    {
-      bool in_load = STREQ(variablename->id->str(), "load");
-      UValue* e1 = parameters->expression->eval(command, connection);
-      ENSURE_TYPES_1 (DATA_STRING);
-
-      // send string in the queue
-      ::urbiserver->systemcommands = false;
-      if (!connection->stack.empty())
-	connection->functionTag = new UString("__Funct__");
-      UParser& p = connection->parser();
-      if (in_load)
-      {
-	std::string f = ::urbiserver->find_file (e1->str->str());
-	p.process (f.c_str ());
-      }
-      else
-      {
-	p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
-		  e1->str->len());
-      }
-
-      if (connection->functionTag)
-      {
-	delete connection->functionTag;
-	connection->functionTag = 0;
-      }
-      ::urbiserver->systemcommands = true;
-
-      if (p.errorMessage[0])
-      {
-	// a parsing error occured
-	if (p.commandTree)
-	{
-	  delete p.commandTree;
-	  p.commandTree = 0;
-	}
-	connection->send(p.errorMessage, "error");
-      }
-
-      if (p.commandTree)
-      {
-	command->morph = p.commandTree;
-	command->persistant = false;
-	p.commandTree = 0;
-      }
-      else
-      {
-	send_error(connection, command, this,
-		   (in_load
-		    ? "Error loading file: %s"
-		    : "Error parsing string: %s"),
-		   e1->str->str());
-	return 0;
-      }
-
-      delete e1;
-      UValue* ret = new UValue();
-      ret->dataType = DATA_VOID;
-      return ret;
-    }
+      return eval_FUNCTION_EXEC_OR_LOAD (command, connection);
   }
 
   if (parameters &&
