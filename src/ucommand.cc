@@ -2735,10 +2735,10 @@ UCommand_NEW::execute_(UConnection *connection)
   if (objit == ::urbiserver->objtab.end()
       && !remoteNew)
   {
-    char* objname = (char*)obj->str();
+    const char* objname = obj->str();
     while (::urbiserver->objaliastab.find(objname) !=
 	   ::urbiserver->objaliastab.end())
-      objname = (char*)::urbiserver->objaliastab[objname]->str();
+      objname = ::urbiserver->objaliastab[objname]->str();
 
     objit = ::urbiserver->objtab.find(objname);
     if (objit == ::urbiserver->objtab.end())
@@ -3230,10 +3230,10 @@ UCommand_GROUP::execute_(UConnection *connection)
       }
       else
       {
-	char* objname = (char*)param->name->str();
+	const char* objname = param->name->str();
 	while (::urbiserver->objaliastab.find(objname) !=
 	       ::urbiserver->objaliastab.end())
-	  objname = (char*)::urbiserver->objaliastab[objname]->str();
+	  objname = ::urbiserver->objaliastab[objname]->str();
 
 	g->members.push_back(new UString(objname));
       }
