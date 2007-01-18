@@ -1,5 +1,11 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Add debugging help
+	* src/uexpression.cc: here.
+        Should be in libport/compiler eventually.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Use string literals in the parser
 	* src/parser/bison/ugrammar.y: here.
 

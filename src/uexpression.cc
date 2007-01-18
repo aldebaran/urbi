@@ -19,6 +19,17 @@
 
  **************************************************************************** */
 
+#if 0
+# define ECHO(C) \
+  std::cout << C << std::endl
+#else
+# define ECHO(C)
+#endif
+
+#define PING()					\
+  ECHO (__FILE__ << ":" << __LINE__ << ": " << __PRETTY_FUNCTION__)
+
+
 #include <cmath>
 #include "libport/cstdio"
 
@@ -592,6 +603,7 @@ UExpression::eval (UCommand *command,
     }
 
     case FUNCTION:
+      PING();
       return eval_FUNCTION (command, connection, ec);
 
     case PLUS:
@@ -906,6 +918,11 @@ UValue*
 UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
+#if 0
+  PING();
+  command->print (10);
+#endif
+
   assert (STREQ(variablename->id->str(), "exec")
 	  || STREQ(variablename->id->str(), "load"));
 
@@ -918,11 +935,19 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   if (!connection->stack.empty())
     connection->functionTag = new UString("__Funct__");
   UParser& p = connection->parser();
+
+  ECHO("Parsing " << variablename->id->str() << ':' << e1->str->str());
+
   if (in_load)
     p.process (::urbiserver->find_file (e1->str->str()));
   else
     p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
 	      e1->str->len());
+
+#if 0
+  ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());
+  p.commandTree->print (3);
+#endif
 
   if (connection->functionTag)
     {
