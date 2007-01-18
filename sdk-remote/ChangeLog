@@ -1,3 +1,9 @@
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
+	Portability fixes
+	* src/liburbi/uclient.cc (LIBPORT_FD_SET): New.
+        Use it.
+
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	USensor was really too cryptic, now use UOwned which is much loser to

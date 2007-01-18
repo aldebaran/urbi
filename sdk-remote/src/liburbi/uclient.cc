@@ -30,6 +30,17 @@
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
 
+// In the long run, this should be part of libport, but I don't know
+// where actually :( Should it be libport/sys/types.hh?  Or unistd.hh?
+// What standard header should do that?
+
+#ifdef WIN32
+// On windows, file descriptors are defined as u_int (i.e., unsigned int).
+# define LIBPORT_FD_SET(N, P) FD_SET(static_cast<u_int>(N), P)
+#else
+# define LIBPORT_FD_SET(N, P) FD_SET(N, P)
+#endif
+
 #ifdef WIN32
 # include "libport/windows.hh"
 # include <fcntl.h>
@@ -197,9 +208,9 @@ namespace urbi
 	if (sd==-1)
 	  return;
 	FD_ZERO(&rfds);
-	FD_SET(sd, &rfds);
+	LIBPORT_FD_SET(sd, &rfds);
 #ifndef WIN32
-	FD_SET(control_fd[0], &rfds);
+	LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
 	struct timeval tme;
 	tme.tv_sec = 1;
