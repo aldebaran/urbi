@@ -53,7 +53,7 @@ UParser::process(const ubyte* command, int length)
 }
 
 int
-UParser::process(const char* fn)
+UParser::process(const std::string& fn)
 {
   assert (!filename_);
 
@@ -71,7 +71,7 @@ UParser::process(const char* fn)
   // afterwards (when reading the input flow, we want to be able to
   // restore the cursor after having handled a load command).
   std::swap(loc, loc_);
-  std::ifstream f (fn);
+  std::ifstream f (fn.c_str());
   scanner_.switch_streams(&f, 0);
   int res = parse_();
   filename_ = 0;

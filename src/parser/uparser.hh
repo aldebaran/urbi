@@ -59,7 +59,7 @@ public:
   int process(const ubyte* command, int length);
 
   /// Parse a file.
-  int process (const char* fn);
+  int process (const std::string& fn);
 
   UCommand_TREE *commandTree;
   bool          binaryCommand;

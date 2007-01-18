@@ -1,5 +1,12 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	Use std::string for file names
+	* src/parser/uparser.hh, src/parser/uparser.cc
+        (UParser::process): Take a string.
+	* src/uexpression.cc: Adjust.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	White space changes
 	* src/ucommand.hh: here.
 

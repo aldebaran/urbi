@@ -919,15 +919,10 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     connection->functionTag = new UString("__Funct__");
   UParser& p = connection->parser();
   if (in_load)
-    {
-      std::string f = ::urbiserver->find_file (e1->str->str());
-      p.process (f.c_str ());
-    }
+    p.process (::urbiserver->find_file (e1->str->str()));
   else
-    {
-      p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
-		e1->str->len());
-    }
+    p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
+	      e1->str->len());
 
   if (connection->functionTag)
     {
