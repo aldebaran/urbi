@@ -393,15 +393,15 @@ UValue::UValue(const urbi::UValue &v)
   ADDOBJ(UValue);
   switch (v.type)
     {
-    case urbi::UValue::DATA_DOUBLE:
+    case urbi::DATA_DOUBLE:
       dataType = DATA_NUM;
       this->val = v.val;
       break;
-    case urbi::UValue::DATA_STRING:
+    case urbi::DATA_STRING:
       dataType = DATA_STRING;
       this->str = new UString(v.stringValue->c_str());
       break;
-    case urbi::UValue::DATA_LIST:
+    case urbi::DATA_LIST:
       {
 	dataType = DATA_LIST;
 	UValue * current = this;
@@ -419,10 +419,10 @@ UValue::UValue(const urbi::UValue &v)
 	next = 0;
       }
       break;
-    case urbi::UValue::DATA_BINARY:
+    case urbi::DATA_BINARY:
       *this = *v.binary;
       break;
-    case urbi::UValue::DATA_OBJECT: // j'ai pas le courage... //FIXME
+    case urbi::DATA_OBJECT: // j'ai pas le courage... //FIXME
       dataType = DATA_VOID;
       break;
     default:

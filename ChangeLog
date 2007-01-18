@@ -1,5 +1,13 @@
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	This should go into the 'unstable' branch
+	fix backward compatibility issue. 
+	* src/uobject.cc: revert.
+	* src/uvalue.cc: revert.
+	* src/uvar.cc: revert.
+
+2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	update externals. 
 
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
