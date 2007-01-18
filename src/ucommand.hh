@@ -1163,4 +1163,7 @@ send_error (UConnection* c, const UCommand* cmd,
   __attribute__ ((__format__ (__printf__, 3, 4)));
 
 
+const char* to_string (UCommand::Status s);
+
+
 #endif

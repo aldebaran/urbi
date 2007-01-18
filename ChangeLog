@@ -1,5 +1,14 @@
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
+	to_string for Status
+	* src/ucommand.hh, src/ucommand.cc (KIND): Rename as...
+        (CASE): this.
+        (to_string): New.
+        (UCommand::print): Use it to display the status.
+        (UCommand_NOOP::print): No longer display the status.
+
+2007-01-18  Akim Demaille  <demaille@gostai.com>
+
 	Use std::string for file names
 	* src/parser/uparser.hh, src/parser/uparser.cc
         (UParser::process): Take a string.

@@ -79,6 +79,24 @@ send_error (UConnection* c, const UCommand* cmd,
   return res;
 }
 
+const char* 
+to_string (UCommand::Status s)
+{
+  switch (s)
+  {
+#define CASE(K) case UCommand::K: return #K;
+    CASE(UONQUEUE);
+    CASE(URUNNING);
+    CASE(UCOMPLETED);
+    CASE(UBACKGROUND);
+    CASE(UMORPH);
+#undef CASE
+  }
+  // Pacify warnings.
+  abort ();
+}
+
+
 namespace
 {
   /// A buffer type.
@@ -177,45 +195,47 @@ UCommand::print(unsigned l) const
   const char* k = 0;
   switch (type)
   {
-#define KIND(K) case K: k = #K; break
-    KIND(ALIAS);
-    KIND(ASSIGN_BINARY);
-    KIND(ASSIGN_PROPERTY);
-    KIND(ASSIGN_VALUE);
-    KIND(AT);
-    KIND(AT_AND);
-    KIND(CLASS);
-    KIND(DECREMENT);
-    KIND(DEF);
-    KIND(ECHO);
-    KIND(EMIT);
-    KIND(EVERY);
-    KIND(EXPR);
-    KIND(FOREACH);
-    KIND(FOR);
-    KIND(FREEZEIF);
-    KIND(GENERIC);
-    KIND(GROUP);
-    KIND(IF);
-    KIND(INCREMENT);
-    KIND(INHERIT);
-    KIND(LOAD);
-    KIND(LOOP);
-    KIND(LOOPN);
-    KIND(NEW);
-    KIND(NOOP);
-    KIND(RETURN);
-    KIND(STOPIF);
-    KIND(TIMEOUT);
-    KIND(TREE);
-    KIND(WAIT);
-    KIND(WAIT_TEST);
-    KIND(WHENEVER);
-    KIND(WHILE);
-#undef KIND
+#define CASE(K) case K: k = #K; break
+    CASE(ALIAS);
+    CASE(ASSIGN_BINARY);
+    CASE(ASSIGN_PROPERTY);
+    CASE(ASSIGN_VALUE);
+    CASE(AT);
+    CASE(AT_AND);
+    CASE(CLASS);
+    CASE(DECREMENT);
+    CASE(DEF);
+    CASE(ECHO);
+    CASE(EMIT);
+    CASE(EVERY);
+    CASE(EXPR);
+    CASE(FOREACH);
+    CASE(FOR);
+    CASE(FREEZEIF);
+    CASE(GENERIC);
+    CASE(GROUP);
+    CASE(IF);
+    CASE(INCREMENT);
+    CASE(INHERIT);
+    CASE(LOAD);
+    CASE(LOOP);
+    CASE(LOOPN);
+    CASE(NEW);
+    CASE(NOOP);
+    CASE(RETURN);
+    CASE(STOPIF);
+    CASE(TIMEOUT);
+    CASE(TREE);
+    CASE(WAIT);
+    CASE(WAIT_TEST);
+    CASE(WHENEVER);
+    CASE(WHILE);
+#undef CASE
   }
-  debug(l, " Tag:[%s] %s toDelete=%s\n", 
-	getTag().c_str(), k, toDelete ? "true" : "false");
+  debug(l, " Tag:[%s] %s (toDelete=%s status=%s)\n", 
+	getTag().c_str(), k,
+	toDelete ? "true" : "false",
+	to_string(status));
   print_ (l);
   debug(l, "END %s ------\n", k);
 }
@@ -6445,5 +6465,4 @@ UCommand_NOOP::copy() const
 void
 UCommand_NOOP::print_(unsigned) const
 {
-  debug("level =%d\n", (int)status);
 }
