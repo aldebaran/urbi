@@ -1,10 +1,10 @@
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals 
+	update externals
 
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	small restyling (spaces) 
+	small restyling (spaces)
 	* src/ubinder.cc: done.
 	* src/ubinder.hh: done.
 	* src/uvar.cc: done.
@@ -12,14 +12,14 @@
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	This should go into the 'unstable' branch
-	fix backward compatibility issue. 
+	fix backward compatibility issue.
 	* src/uobject.cc: revert.
 	* src/uvalue.cc: revert.
 	* src/uvar.cc: revert.
 
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals. 
+	update externals.
 
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
@@ -29,7 +29,7 @@
 	start from. In the case of a simple instantaneous assignment, the call
 	must be avoided for optimization purposes.
 
-	fix a bug in assignment triggering a non necessary call to UVariable::get() 
+	fix a bug in assignment triggering a non necessary call to UVariable::get()
 	* src/ucommand.cc: set controlled and use it in processModifiers as
 	well.
 	* src/ucommand.hh: moves 'controlled' from local to the call to object
@@ -40,7 +40,7 @@
 	UOwned UVar which are UNotifyAccess'd and UNotifyChange'd in the same
 	UObject should not trigger a loop of calls to UNotifyAccess.
 
-	fix loop UNotifyChange/Access on UOwned UVar inside the same UObject 
+	fix loop UNotifyChange/Access on UOwned UVar inside the same UObject
 	* src/userver.cc: use special call to get for the
 	notify_access_and_change loop.
 	* src/uvariable.cc: add support for autoloop in get.
@@ -61,11 +61,11 @@
 	a UNotifyChange remote and a UNotifyAccess plugged without any effect,
 	while this should loop the Access).
 
-	I have fixed these problems and will clarify the rationale behind 
+	I have fixed these problems and will clarify the rationale behind
 	USensor in a wiki page. By the way, USensor will be renamed in the
 	next commit (*with backward compatibility of course*).
 
-	fix ticket #112 (UNotifyChange with USensor) 
+	fix ticket #112 (UNotifyChange with USensor)
 	* NEWS: Explain the above and the inherits name change.
 	* src/ucommand.cc: add access_and_change_varlist support for remote
 	UVar doing a UNotifyChange on a variable that is already
@@ -115,13 +115,13 @@
 
 	The bug was an uninitialized attribute of UParser in the constructor.
 
-	fix ticket #113 
+	fix ticket #113
 	* src/parser/uparser.cc: add init of commandTree to 0.
 	* src/uconnection.cc: remove Tsuna temporary fix.
 
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals 
+	update externals
 
 2007-01-14  Akim Demaille  <akim.demaille@free.fr>
 
@@ -133,7 +133,7 @@
 
 	Kernel side of the API Change made to UObject had to be fixed.
 
-	revert UObject API change. 
+	revert UObject API change.
 	* src/uvalue.cc: done.
 
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
