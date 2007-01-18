@@ -49,6 +49,11 @@
 // one.  It will be trivial to factor when we have cleaner asts.
 namespace
 {
+  UErrorValue
+  send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
+	      const char* fmt, va_list args)
+    __attribute__ ((__format__ (__printf__, 4, 0)));
+
   /// Report an error, with "!!! " prepended, and "\n" appended.
   /// \param c     the connection to which the message is sent.
   /// \param cmd   the command whose tag will be used.

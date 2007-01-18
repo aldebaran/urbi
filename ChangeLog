@@ -1,5 +1,10 @@
 2007-01-18  Type Your Name Here  <your.mail.here@FIXME.com>
 
+	More format checking
+	* src/uexpression.cc (send_error): here.
+
+2007-01-18  Type Your Name Here  <your.mail.here@FIXME.com>
+
 	Fix warning
 	* src/ucommand.cc: Remove casts that drop constness.
 	Rather, preserve constness.
