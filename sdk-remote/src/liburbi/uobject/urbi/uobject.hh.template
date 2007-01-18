@@ -58,13 +58,15 @@
  with the same name in the corresponding URBI object.  */
 # define UBindVar(obj,x) x.init(__name,# x)
 
-/** This macro defines a UVar as a sensor/effector couple.
+/** This macro inverts a UVar in/out accesses.
 
  After this call is made, writes by this module affect the sensed
  value, and reads read the target value. Writes by other modules
  and URBI code affect the target value, and reads get the sensed
  value. Without this call, all operations affect the same
  underlying variable.  */
+# define UOwned(x) x.setOwned()
+// for backward compatibility
 # define USensor(x) x.setOwned()
 
 /** Bind the function x in current URBI object to the C++ member

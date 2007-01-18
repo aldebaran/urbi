@@ -1,3 +1,11 @@
+2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	USensor was really too cryptic, now use UOwned which is much loser to
+	the real meaning of what happens.
+
+	add UOwned macro, preserve backward compat with USensor 
+	* src/liburbi/uobject/urbi/uobject.hh.template: add UOwned.
+
 2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	update externals. 
