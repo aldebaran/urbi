@@ -1,3 +1,14 @@
+2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	UOwned UVar which are UNotifyAccess'd and UNotifyChange'd in the same
+	UObject should not trigger a loop of calls to UNotifyAccess.
+
+	fix loop UNotifyChange/Access on UOwned UVar inside the same UObject 
+	* src/userver.cc: use special call to get for the
+	notify_access_and_change loop.
+	* src/uvariable.cc: add support for autoloop in get.
+	* src/uvariable.hh: add new prototype of get.
+
 2007-01-17  Akim Demaille  <akim.demaille@free.fr>
 
 	Check printf-like functions

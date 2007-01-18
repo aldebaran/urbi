@@ -275,7 +275,7 @@ UServer::work()
   for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
        i != access_and_change_varlist.end ();
        ++i)
-    (*i)->get ();
+    (*i)->get (true);
 
   // memory test
   memoryCheck(); // Check for memory availability

@@ -185,7 +185,7 @@ public:
 
   void          updated(bool uvar_assign = false);
 
-  UValue*       get();
+  UValue*       get(bool autoloop = false);
 
   private:
 

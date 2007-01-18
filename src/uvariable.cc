@@ -385,7 +385,7 @@ UVariable::selfSet(ufloat *valcheck)
     the UValue is actually sent back.
 */
 UValue*
-UVariable::get()
+UVariable::get(bool autoloop)
 {
   // recursive call for objects
   if (value->dataType == DATA_OBJ)
@@ -399,22 +399,36 @@ UVariable::get()
 	  && it->second->devicename->equal(value->str))
 	it->second->get ();
 
+  // data preparation for the UNotifyChange/Access loop control
+  int nb_change = internalBinder.size ();
+  std::string change_objname = "";
+  if (nb_change == 1 && autoloop)
+    change_objname = (*internalBinder.begin ())->objname;
+
   // check for existing notifychange
   for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalAccessBinder.begin();
        i != internalAccessBinder.end();
        ++i)
   {
-    urbi::UList l;
-    if ((*i)->storage)
+    // checking if there is a UNotifyChange/Access loop on a UOwned inside
+    // the same object
+    urbi::UVar* tmpvar = static_cast<urbi::UVar*> ((*i)->storage);
+
+    if (!tmpvar->owned
+        || change_objname != (*i)->objname)
     {
-      // monitor with &UVar reference
-      urbi::UValue *v = new urbi::UValue();
-      v->storage = (*i)->storage;
-      l.array.push_back(v);
+      urbi::UList l;
+      if ((*i)->storage)
+      {
+        // monitor with &UVar reference
+        urbi::UValue *v = new urbi::UValue();
+        v->storage = (*i)->storage;
+        l.array.push_back(v);
+      }
+      // FIXME: I guess the following comment reads "emptied".
+      (*i)->__evalcall(l); // l is empty here
     }
-    // FIXME: I guess the following comment reads "emptied".
-    (*i)->__evalcall(l); // l is empty here
   }
 
   return value;
