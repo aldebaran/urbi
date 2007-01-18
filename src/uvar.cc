@@ -34,7 +34,7 @@ namespace urbi
     {
       variable = v;
     }
-    ~UVardata() {};
+    ~UVardata()  {};
 
     UVariable *variable;
   };
@@ -51,7 +51,7 @@ namespace urbi
     if (it == ::urbiserver->variabletab.end())
       // autoupdate unless otherwise specified
       vardata = new UVardata(new UVariable(name.c_str(), new ::UValue(),
-					   false,false,true));
+					   false, false, true));
     else
     {
       vardata = new UVardata(it->second);

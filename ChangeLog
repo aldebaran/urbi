@@ -1,5 +1,12 @@
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	small restyling (spaces) 
+	* src/ubinder.cc: done.
+	* src/ubinder.hh: done.
+	* src/uvar.cc: done.
+
+2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	This should go into the 'unstable' branch
 	fix backward compatibility issue. 
 	* src/uobject.cc: revert.
