@@ -1,3 +1,8 @@
+2007-01-19  Akim Demaille  <demaille@gostai.com>
+
+	-Werror
+	* configure.ac: Now handled by URBI_PROG_CXX.
+
 2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
 	Add missing lock in block memory manager. Fix a double delete when a variable with function scope is deleted. Replace some ustring by std::string
