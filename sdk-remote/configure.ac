@@ -31,7 +31,6 @@ AC_CONFIG_FILES([build-aux/test.sh], [chmod a=rx build-aux/test.sh])
 
 AC_PROG_CC
 URBI_PROG_CXX
-TC_CXX_WARNINGS([-Werror])
 
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])

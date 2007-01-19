@@ -1,3 +1,8 @@
+2007-01-19  Akim Demaille  <demaille@gostai.com>
+
+	-Werror
+	* configure.ac: Let URBI_PROG_CXX handle it.
+
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
 	Portability fixes
