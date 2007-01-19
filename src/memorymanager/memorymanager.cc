@@ -7,18 +7,22 @@ namespace MemoryManager
   int allocatedMemory = 0;
 }
 
+
+#ifndef DISABLE_BLOCKMEMMNGR
+
 BlockPool::BlockPool ()
   : ptr (0), cptr (0), size (0), itemSize (0)
 {
 }
 
-#ifndef DISABLE_BLOCKMEMMNGR
 void
 block_operator_delete(BlockPool* mempool, void* ptr)
 {
+  mempool->lock();
   ++mempool->cptr;
   *mempool->cptr = ptr;
   MemoryManager::allocatedMemory -= mempool->itemSize;
+  mempool->unlock();
 }
 
 // This implementation can't release any memory to malloc.
@@ -27,6 +31,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
   if (!mempool)
   {
     mempool = new BlockPool;
+    mempool->lock();
     --mempool->cptr;
     const int align = sizeof (void*);
     int asz = sz;
@@ -34,7 +39,8 @@ void* block_operator_new(BlockPool* &mempool, int sz)
       asz = asz + align - (asz % align);
     mempool->itemSize = asz;
   }
-
+  else 
+    mempool->lock();
   if (!mempool->ptr || mempool->cptr < mempool->ptr)
   {
     int newsize = (mempool->size * 3) / 2 + DEFAULT_BLOCK_SIZE;
@@ -64,6 +70,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
   void* result = *mempool->cptr;
   --mempool->cptr;
   MemoryManager::allocatedMemory += sz;
+  mempool->unlock();
   return result;
 }
 #endif // !DISABLE_BLOCKMEMMNGR

@@ -6,7 +6,7 @@
 
 #ifndef BLOCKMEMORYMANAGER_HH
 # define BLOCKMEMORYMANAGER_HH
-
+#include "libport/lockable.hh"
 # define DEFAULT_BLOCK_SIZE 100
 
 # define MEMORY_MANAGED				\
@@ -25,7 +25,7 @@
 # define MEMORY_MANAGER_INIT(classname)		\
   BlockPool* classname::mempool_ = 0
 
-class BlockPool
+class BlockPool: public libport::Lockable
 {
  public:
   BlockPool ();
