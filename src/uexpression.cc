@@ -587,7 +587,7 @@ UExpression::eval (UCommand *command,
       if (STREQ(str->str(), "unit"))
       {
 	ret->dataType = DATA_STRING;
-	ret->str = new UString( variable->unit );
+	ret->str = new UString( variable->getUnit().c_str() );
 	return ret;
       }
 
@@ -1625,8 +1625,8 @@ UExpression::eval_VARIABLE (UCommand *command,
       variable = vari;
       if (vari)
       {
-	devicename->update(vari->method);
-	variablename->device->update(vari->method);
+	devicename->update(vari->getMethod());
+	variablename->device->update(vari->getMethod());
 	variablename->buildFullname(command, connection);
       }
     }

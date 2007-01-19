@@ -36,6 +36,7 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"
+#include "ucallid.hh"
 
 MEMORY_MANAGER_INIT(UVariable);
 
@@ -44,7 +45,8 @@ UVariable::UVariable(const char* name, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = _value;
@@ -59,7 +61,8 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = _value;
@@ -75,7 +78,8 @@ UVariable::UVariable(const char* name,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(val);
@@ -90,7 +94,8 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(val);
@@ -105,7 +110,8 @@ UVariable::UVariable(const char* name, const char* str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(str);
@@ -120,7 +126,8 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(str);
@@ -140,16 +147,11 @@ UVariable::init()
   rangemax   = UINFINITY;
   speedmin   = 0;
   speedmax   = UINFINITY;
-  unit       = 0;
   delta      = 0; // delta is 0 by default
   speedmodified = false;
   reloop        = false;
-
   nbAssigns  = 0;
   nbAverage  = 0;
-  varname    = 0;
-  method     = 0;
-  devicename = 0;
   target     = 0;
   previous   = 0;
   previous2  = 0;
@@ -173,7 +175,7 @@ UVariable::~UVariable()
 
   HMvariabletab::iterator hmi;
 
-  if ((hmi = ::urbiserver->variabletab.find(varname->str())) !=
+  if ((hmi = ::urbiserver->variabletab.find(varname.c_str())) !=
       ::urbiserver->variabletab.end())
     ::urbiserver->variabletab.erase(hmi);
 
@@ -189,10 +191,8 @@ UVariable::~UVariable()
     }
     delete value;
   }
-  delete unit;
-  delete varname;
-  delete method;
-  delete devicename;
+  if (context)
+    context->remove(this);
 }
 
 
@@ -200,23 +200,20 @@ UVariable::~UVariable()
 const char*
 UVariable::setName(const char* s)
 {
-  char *pointPos;
+  varname = s;
+  
+  size_t pos = varname.find('.');
+  if (pos==std::string::npos) {
+    method = "";
+    devicename = varname;
+  }
+  else {
+    method = varname.substr(pos + 1, varname.length());
+    devicename = varname.substr(0,pos);
+  }
+ 
 
-  varname = new UString (s);
-
-  pointPos = const_cast<char*>(strstr(varname->str(), "."));
-  if (pointPos == 0)
-    method = new UString("");
-  else
-    method = new UString(pointPos + 1);
-
-  if (pointPos)
-    pointPos[0] = 0;
-  devicename = new UString(varname->str());
-  if (pointPos)
-    pointPos[0] = '.';
-
-  return varname->str();
+  return varname.c_str();
 }
 
 //! Associated variable name initialization
@@ -227,11 +224,11 @@ UVariable::setName(const char *_id, const char* _method)
 
   snprintf(tmpVarName, 1024, "%s.%s", _id, _method);
 
-  varname    = new UString (tmpVarName);
-  method     = new UString(_method);
-  devicename = new UString(_id);
+  varname = tmpVarName;
+  method = _method;
+  devicename = _id;
 
-  return varname->str();
+  return varname.c_str();
 }
 
 const char*
@@ -392,11 +389,10 @@ UVariable::get(bool autoloop)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
 	 ++it)
-      if (it->second->method
-	  && it->second->devicename
+    if (!it->second->getMethod().empty()
 	  && value->str
 	  && it->second->value->dataType != DATA_OBJ
-	  && it->second->devicename->equal(value->str))
+	  && it->second->getDevicename()== (std::string)value->str->str())
 	it->second->get ();
 
   // data preparation for the UNotifyChange/Access loop control
@@ -455,7 +451,7 @@ UVariable::updated(bool uvar_assign)
       {
 	(*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*i)->c->sendc((const ubyte*)"[1,\"", 4);
-	(*i)->c->sendc((const ubyte*)varname->str(), varname->len());
+	(*i)->c->sendc((const ubyte*)varname.c_str(), varname.length());
 	(*i)->c->sendc((const ubyte*)"\",", 2);
 	value->echo((*i)->c);
 	(*i)->c->send((const ubyte*)"]\n", 2);
@@ -467,7 +463,7 @@ UVariable::updated(bool uvar_assign)
        ++i)
   {
     if (!uvar_assign
-        || (*i)->objname != devicename->str ())
+        || (*i)->objname != getDevicename())
     {
       urbi::UList tmparray;
 

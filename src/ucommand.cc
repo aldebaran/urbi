@@ -1953,10 +1953,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    if (variable->unit)
-      variable->unit->update(unitval->str->str());
-    else
-      variable->unit = new UString(unitval->str->str());
+    variable->setUnit(unitval->str->str());
 
     return UCOMPLETED;
   }
@@ -4074,47 +4071,45 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	 i != connection->server->variabletab.end();
 	 ++i)
     {
-      UString* fullname = i->second->varname;
-      if (fullname)
+      
+      std::ostringstream tstr;
+      tstr << "*** " <<  i->second->getVarname() << " = ";
+      switch (i->second->value->dataType)
       {
-	std::ostringstream tstr;
-	tstr << "*** " << fullname->str() << " = ";
-	switch (i->second->value->dataType)
-	{
-	  case DATA_NUM:
-	    tstr << i->second->value->val;
-	    break;
-
-	  case DATA_STRING:
-	    tstr << i->second->value->str->str();
-	    break;
-
-	  case DATA_BINARY:
-	    tstr << "BIN ";
-	    if (i->second->value->refBinary)
-	      tstr << i->second->value->refBinary->ref()->bufferSize;
-	    else
-	      tstr << "0 null";
-	    break;
-
-	  case DATA_LIST:
-	    tstr << "LIST";
-	    break;
-
-	  case DATA_OBJ:
-	    tstr << "OBJ";
-	    break;
-
-	  case DATA_VOID:
-	    tstr << "VOID";
-	    break;
-
-	  default:
-	    tstr << "UNKNOWN TYPE";
-	}
-	tstr << '\n';
-	connection->sendf(getTag(), tstr.str().c_str());
+      case DATA_NUM:
+	tstr << i->second->value->val;
+	break;
+	
+      case DATA_STRING:
+	tstr << i->second->value->str->str();
+	break;
+	
+      case DATA_BINARY:
+	tstr << "BIN ";
+	if (i->second->value->refBinary)
+	  tstr << i->second->value->refBinary->ref()->bufferSize;
+	else
+	  tstr << "0 null";
+	break;
+	
+      case DATA_LIST:
+	tstr << "LIST";
+	break;
+	
+      case DATA_OBJ:
+	tstr << "OBJ";
+	break;
+	
+      case DATA_VOID:
+	tstr << "VOID";
+	break;
+	
+      default:
+	tstr << "UNKNOWN TYPE";
       }
+      tstr << '\n';
+      connection->sendf(getTag(), tstr.str().c_str());
+      
     }
 
     return UCOMPLETED;
@@ -4144,11 +4139,11 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	 i != connection->server->variabletab.end();
 	 ++i)
     {
-      UString* fullname = i->second->varname;
+
       if (i->second->uservar)
       {
 	std::ostringstream tstr;
-	tstr << "*** " << fullname->str() << " = ";
+	tstr << "*** " << i->second->getVarname() << " = ";
 	switch (i->second->value->dataType)
 	{
 	  case DATA_NUM:
@@ -4178,7 +4173,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	connection->sendf(getTag(), tstr.str().c_str());
       }
     }
-
+    
     return UCOMPLETED;
   }
 

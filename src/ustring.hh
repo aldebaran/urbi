@@ -35,7 +35,7 @@ class UString
 {
  public:
   MEMORY_MANAGED;
-  UString(const char* s);
+  UString(const char* s=0);
   UString(const UString *s);
   UString(const UString& s);
   UString(const std::string& s);
@@ -65,6 +65,7 @@ class UString
   bool tagequal(const UString *s) const;
   bool equal(const char *s) const;
 
+  void update(const std::string &s) {update(s.c_str());}
   void update(const char *s);
   void update(const UString *s);
 

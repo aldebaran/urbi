@@ -84,19 +84,15 @@ public:
 	    bool _autoUpdate = true);
   ~UVariable();
 
-  /// Full associated var name if it exists.
-  UString         *varname;
-  /// Method in the varname.
-  UString         *method;
-  /// Device in the varname.
-  UString         *devicename;
+  
+ 
+  
 
   //properties
 
   /// The variable blend type.
   UBlendType blendType;
-  /// Device unit.
-  UString         *unit;
+  
   ufloat          rangemin;
   ufloat          rangemax;
   ufloat          speedmin;
@@ -187,10 +183,26 @@ public:
 
   UValue*       get(bool autoloop = false);
 
+  const std::string & getDevicename() {return devicename;}
+  const std::string & getVarname() {return varname;}
+  const std::string & getMethod() {return method;}
+  const std::string & getUnit() {return unit;}
+  void setUnit(const char *u) {unit =u;}
+  void setContext(UCallid * ctx) {context = ctx;}
   private:
-
+  
+  /// Device in the varname.
+  std::string         devicename;
+   /// Method in the varname.
+  std::string         method;
+  std::string         varname;
+  /// Device unit.
+  std::string         unit;
   void    init();
-
+  UVariable(const UVariable &);
+  UVariable & operator = (const UVariable &);
+  
+  UCallid * context; // context if called in a function
 };
 
 #endif

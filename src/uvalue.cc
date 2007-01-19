@@ -779,16 +779,15 @@ UValue::echo(bool hr)
       for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	   it != ::urbiserver->variabletab.end();
 	   ++it)
-	if (it->second->method
-	    && it->second->devicename
+	if (!it->second->getMethod().empty()
 	    && str
 	    && it->second->value->dataType != DATA_OBJ
-	    && it->second->devicename->equal(str))
+	    && it->second->getDevicename() == (std::string)str->str())
 	{
 	  if (!first)
 	    o << ",";
 	  first = false;
-	  o << it->second->method->str()<< ":";
+	  o << it->second->getMethod()<< ":";
 
 	  // FIXME: It's better be non null!!!	Look at the if above,
 	  // it assumes it is not.

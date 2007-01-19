@@ -1,3 +1,20 @@
+2007-01-19  Matthieu Nottale  <nottale@gostai.com>
+
+	Add missing lock in block memory manager. Fix a double delete when a variable with function scope is deleted. Replace some ustring by std::string
+	* src/memorymanager/blockmemorymanager.hh: BlockMemoryManager now inherits lockable.
+	* src/memorymanager/memorymanager.cc: Lock all calls.
+	* src/ucallid.cc: Register the ucallid to the variables in his list. Add a remove call
+	* src/ucallid.hh: Idem.
+	* src/ucommand.cc: Fix for uvariable/uvariablename modifications.
+	* src/uconnection.cc: Fix for uvariable/uvariablename modifications.
+	* src/uexpression.cc: Fix for uvariable/uvariablename modifications.
+	* src/uobj.cc: Fix for uvariable/uvariablename modifications.
+	* src/ustring.hh: Add a ctor taking a std::string.
+	* src/uvalue.cc: Move some fields to private scope, add accessors.
+	* src/uvalue.hh: Idem.
+	* src/uvariable.cc: Move some fields to private scope, add accessors. Call remove of the owner ucallid in dtor.
+	* src/uvariable.hh: Idem.
+
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
 	Change a cast for portability

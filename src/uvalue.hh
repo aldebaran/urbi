@@ -74,6 +74,8 @@ public:
   std::string  echo(bool human_readable=false);
 
   urbi::UValue* urbiValue();
+  private:
+  UValue& operator = (const UValue &);
 };
 
 UTestResult booleval(UValue* , bool freeme = true);

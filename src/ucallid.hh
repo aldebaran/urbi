@@ -37,6 +37,7 @@ public:
   ~UCallid();
 
   void         store(UVariable *variable);
+  void         remove(UVariable *variable);
   const char*  str();
   const char*  self();
   void         setReturnVar(UVariable *v);
@@ -49,6 +50,7 @@ private:
   UString fun_id;
   UString self_id;
   UCommand_TREE* root;
+  bool dying;
 };
 
 #endif

@@ -56,11 +56,10 @@ UObj::~UObj()
   for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        ++it)
-    if (it->second->method
-	&& it->second->devicename
+    if (!it->second->getMethod().empty()
 	&& device
 	&& it->second->value->dataType != DATA_OBJ
-	&& it->second->devicename->equal(device))
+	&& it->second->getDevicename() == (std::string)device->str())
       varToDelete.push_back(it->second);
 
   libport::deep_clear (varToDelete);
