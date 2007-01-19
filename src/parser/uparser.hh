@@ -25,34 +25,20 @@
 #ifndef UPARSER_HH
 # define UPARSER_HH
 
+# include <set>
 # include <string>
+# include "fwd.hh"
 # include "utypes.hh"
-# undef IN
-
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"
 
-class UCommand_TREE;
 
 # undef  YY_DECL
 # define YY_DECL                                                 \
-  yy::parser::token_type					 \
-  yyFlexLexer::yylex(yy::parser::semantic_type* valp,		 \
-		     yy::parser::location_type* locp, UParser& uparser)
-
-//! Control class for a flex-scanner
-/*! It has a pointer to the uparser in which it is contained
- */
-class UFlexer
-  : public yyFlexLexer
-{
-public:
-  UFlexer(void *_uparser);
-  void* get_uparser() const;
-private:
-  void *uparser;
-};
-
+  UParser::token_type						 \
+  yyFlexLexer::yylex(UParser::semantic_type* valp,		 \
+		     UParser::location_type* locp,		 \
+		     UParser& up)
 
 //! UParser uses 'flex' and 'bison' as scanner/parser
 /*! The choice of flex/bison is detailed in the comment on the UServer class.
@@ -62,31 +48,56 @@ private:
 class UParser
 {
 public:
-  // friend int yylex(yy::parser::semantic_type *lvalp, void *compiler);
-  UParser();
+  typedef yy::parser parser_type;
+  typedef parser_type::token_type token_type;
+  typedef parser_type::semantic_type semantic_type;
+  typedef parser_type::location_type location_type;
 
-  /// Parse the command from a stream.
-  /// (this is how flex C++ handles it, no choice).
-  int process(ubyte* command, int length, UConnection* connection_);
+  UParser(UConnection& cn);
 
-  UConnection   *connection;
+  /// Parse the command from a buffer.
+  int process(const ubyte* command, int length);
+
+  /// Parse a file.
+  int process (const std::string& fn);
+
   UCommand_TREE *commandTree;
   bool          binaryCommand;
 
-  yy::parser::token_type scan(yy::parser::semantic_type* val,
-			      yy::parser::location_type* loc);
+  token_type scan(semantic_type* val, location_type* loc);
 
-  void error (const yy::parser::location_type& l, const std::string& msg);
+  /// Declare an error at \a l about \a msg.
+  void error (const location_type& l, const std::string& msg);
+
+  /// The latest parse error message.
+  char errorMessage[1024];
+
+  /// The connection we belong to.
+  UConnection& connection;
 
 private:
-  // The scanner used in this parser (it is a flex-scanner)
-  UFlexer uflexer;
-  int result;
+  // Give access to loc_ and scanner_.
+  friend int parser_type::parse ();
+  friend token_type yylex (semantic_type*, location_type*, UParser&);
+
+  /// Run the parse.  Expects the scanner to be initialized.
+  int parse_ ();
+
+  /// The Flex scanner.
+  yyFlexLexer scanner_;
+
+  /// The file names that were parsed.
+  ///
+  /// Kept because each location point to it, and since they are hooked
+  /// on the AST, they survive the parsing.
+  typedef std::set<std::string> files;
+  files files_;
+
+  /// The file currently parsed.
+  const std::string* filename_;
+
+  /// The current location.
+  location_type loc_;
 };
-
-
-// Important! These are the "shortcuts" which you can use in your
-// ".l"- and ".y"-files to access the corresponding uparser-object!
-// # define flex_uparser (*static_cast<UParser *> (static_cast<UFlexer *>(this)->get_uparser()))
 
 #endif

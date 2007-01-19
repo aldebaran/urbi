@@ -20,11 +20,12 @@
  **************************************************************************** */
 
 #ifndef UFUNCTION_HH
-#define UFUNCTION_HH
+# define UFUNCTION_HH
 
-#include <string>
-#include <cstdlib>
-#include "fwd.hh"
+# include <string>
+
+# include "fwd.hh"
+# include "ustring.hh"
 
 namespace kernel
 {
@@ -37,19 +38,23 @@ namespace kernel
 class UFunction
 {
 public:
-
-  UFunction(UString *funname,
+  UFunction(const UString& funname,
 	    UNamedParameters *parameters,
 	    UCommand *command);
   ~UFunction();
 
-  UString*   name();
-  int        nbparam();
+  const UString& name() const;
+  int nbparam() const;
   UCommand*  cmdcopy(std::string tag = "",
 		     UNamedParameters *_flags = 0);
-  UString          *funname; ///< name of the function
-  UNamedParameters *parameters; ///< parameters of the function
-  UCommand         *command; ///< body of the function
+  /// Formal arguments.
+  UNamedParameters *parameters;
+  /// Body.
+  UCommand         *command;
+
+private:
+  /// Name.
+  UString funname;
 };
 
 #endif

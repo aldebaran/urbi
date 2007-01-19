@@ -1,12 +1,12 @@
-/*! \file ubinary.hh
+/*! \file uast.hh
  *******************************************************************************
 
- File: ubinary.h\n
- Definition of the UBinary class.
+ File: uast.h\n
+ Definition of the UAst class.
 
  This file is part of
  %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2005.
+ (c) Jean-Christophe Baillie, 2006.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -19,28 +19,34 @@
 
  **************************************************************************** */
 
-#ifndef UBINARY_HH
-# define UBINARY_HH
+#ifndef UAST_HH
+# define UAST_HH
 
-# include "fwd.hh"
-# include "utypes.hh"
+# include "location.hh"
 
-
-/// Binary data, an the binary buffer in particular.
-class UBinary
+class UAst
 {
 public:
-  UBinary(int bufferSize, UNamedParameters *parameters);
-  ~UBinary();
+  typedef yy::location location;
 
-  void     print() const;
+  UAst (const location& l);
 
-  /// The size of the buffer.
-  int               bufferSize;
-  /// The buffer used to store the binary data.
-  ubyte             *buffer;
-  /// The optional parameters of the binary.
-  UNamedParameters  *parameters;
+  const location& loc () const;
+
+protected:
+  location loc_;
 };
 
-#endif
+inline UAst::UAst (const location& l)
+  : loc_(l)
+{
+}
+
+inline
+const UAst::location&
+UAst::loc () const
+{
+  return loc_;
+}
+
+#endif // ! UAST_HH

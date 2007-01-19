@@ -28,315 +28,274 @@
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
+// At each match, adjust the end cursor.
 #define YY_USER_ACTION locp->columns(yyleng);
-// Otherwise Flex returns an int instead of an enum.
-#define yyterminate() return token::UEOF
-%}
 
+// To avoid differences between versions of Bison, set by hand the
+// initial columns when advancing lines.
+#define LINES(Loc)				\
+ do {						\
+   (Loc)->lines();				\
+   (Loc)->end.column = 1;			\
+ } while (0)
+
+// Otherwise Flex returns an int instead of an enum.
+#define yyterminate() return token::TOK_EOF
+
+/*----------------------------------.
+| Sugar to return semantic values.  |
+`----------------------------------*/
+
+// Be bulletproof when memory allocation fails.
+#define SET_VALP_STR(Value)			\
+do {						\
+  valp->str = new UString(Value);		\
+  if (valp->str->str() == 0)			\
+  {						\
+    delete valp->str;				\
+    valp->str = 0;				\
+  }						\
+} while (0)
+
+// Store yytext in valp->str, and return Token.
+#define RETURN_STR_TOKEN(Token)			\
+do {						\
+  SET_VALP_STR(yytext);				\
+  return token::Token;				\
+} while (0);
+
+#define RETURN_VAL_TOKEN(Token, Value)		\
+do {						\
+  valp->val = new ufloat(Value);		\
+  return token::Token;				\
+} while (0)
+
+
+#define RETURN_NUM(Value)      RETURN_VAL_TOKEN(NUM, Value)
+#define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
+#define RETURN_FLAGTIME(Value) RETURN_VAL_TOKEN(FLAGTIME, Value)
+
+
+#define RETURN_TIMEVALUE(Scale)				\
+do {							\
+  yytext[yyleng-1]=0;					\
+  valp->val = new ufloat(atof(yytext) * (Scale));	\
+  return token::TIMEVALUE;				\
+} while (0)
+
+%}
 %option noyywrap
 
-NUMBER   (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+%x SC_C_COMMENT
+
+BLANKS   [ \t]+
+EOL      \n|\r|\n\r|\r\n
 ID       [a-zA-Z_][_A-Za-z0-9]*
-STRING   \"([^"]|"\\\"")*\"
+NUMBER   (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+STRING   \"([^\"]|"\\\"")*\"
+
 %%
 %{
   locp->step();
 %}
 
-"//"[^\n]*           /* eat up one-line comments, C++ like   (//) */
-"#"[^\n]*            /* eat up one-line comments, shell like (#)  */
-\/\*(.|"\n")*\*\/    /* eat up several-lines comments, C++ like   */
+  /*------------.
+  | The rules.  |
+  `------------*/
+
+"inf"         RETURN_NUM(UINFINITY);
+"pi"          RETURN_NUM(3.14159265358979323846264338327950288);
+"off"         RETURN_NUM(0);
+"switch"      RETURN_NUM(-1);
+"on"          RETURN_NUM(1);
 
 
-"inf"         { valp->val = new ufloat(UINFINITY);
-		return token::NUM;
-	      }
+"+report"     RETURN_FLAG(1);
+"+error"      RETURN_FLAG(2);
+"+end"        RETURN_FLAG(3);
+"+begin"      RETURN_FLAG(4);
+"+top"        RETURN_FLAG(7);
+"+bg"         RETURN_FLAG(10);
 
-"pi"          { valp->val = new ufloat(3.14159265358979323846264338327950288);
-		return token::NUM;
-	      }
+"+timeout"    RETURN_VAL_TOKEN(FLAGTIME, 5);
 
-"off"          { valp->val = new ufloat(0);
-		return token::NUM;
-	      }
+"+stop"       RETURN_VAL_TOKEN(FLAGTEST, 7);
+"+freeze"     RETURN_VAL_TOKEN(FLAGTEST, 8);
 
-"switch"      { valp->val = new ufloat(-1);
-		return token::NUM;
-	      }
+"+connection" RETURN_VAL_TOKEN(FLAGID, 9);
 
 
-"on"          { valp->val = new ufloat(1);
-		return token::NUM;
-	      }
-
-
-
-"+report"     { valp->val = new ufloat(1);
-		return token::FLAG;}
-
-"+error"      { valp->val = new ufloat(2);
-		return token::FLAG;}
-
-"+end"        { valp->val = new ufloat(3);
-		return token::FLAG;}
-
-"+begin"      { valp->val = new ufloat(4);
-		return token::FLAG;}
-
-"+timeout"    { valp->val = new ufloat(5);
-		return token::FLAGTIME;}
-
-"+bg"         { valp->val = new ufloat(10);
-		return token::FLAG;}
-
-"+stop"       { valp->val = new ufloat(6);
-		return token::FLAGTEST;}
-
-"+top"        { valp->val = new ufloat(7);
-		return token::FLAG;}
-
-"+freeze"     { valp->val = new ufloat(8);
-		return token::FLAGTEST;}
-
-"+connection" { valp->val = new ufloat(9);
-		return token::FLAGID;}
-
-{NUMBER}"d"   { yytext[yyleng-1]=0;
-		valp->val = new ufloat(atof(yytext) *60000*60*24);
-		return token::TIMEVALUE; }
-
-{NUMBER}"h"   { yytext[yyleng-1]=0;
-		valp->val = new ufloat(atof(yytext) *60000*60);
-		return token::TIMEVALUE; }
-
-{NUMBER}"m"   { yytext[yyleng-1]=0;
-		valp->val = new ufloat(atof(yytext) *60000);
-		return token::TIMEVALUE; }
-
-{NUMBER}"s"   { yytext[yyleng-1]=0;
-		valp->val = new ufloat(atof(yytext) *1000);
-		return token::TIMEVALUE; }
-
-{NUMBER}"ms"  { yytext[yyleng-2]=0;
-		valp->val = new ufloat(atof(yytext));
-		return token::TIMEVALUE; }
-
+{NUMBER}"d"   RETURN_TIMEVALUE(1000*60*60*24);
+{NUMBER}"h"   RETURN_TIMEVALUE(1000*60*60);
+{NUMBER}"m"   RETURN_TIMEVALUE(1000*60);
+{NUMBER}"s"   RETURN_TIMEVALUE(1000);
+{NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIMEVALUE(1);
 
 {NUMBER}      { valp->val = new ufloat(atof(yytext));
 		return token::NUM; }
 
-{STRING}      { valp->str = new UString(yytext+1);
-
-		/* remove 1 to size because of the ending "*/
-		valp->str->setLen( valp->str->len() -1 );
-		if (valp->str->str() == 0)
-		{
-		  delete (valp->str);
-		  valp->str = 0;
-		}
-
-		if (valp->str != 0) {
-		  /* remove ending " */
-		  char* position = const_cast<char*>(&(valp->str->str()[strlen(yytext)-2]));
-		  *position=0;
-
-		  /* unArmor */
-		  valp->str->unArmor();
-		}
-
+{STRING}      { /* Remove ending ". */
+		yytext[yyleng - 1] = 0;
+		SET_VALP_STR(yytext+1);
+		if (valp->str)
+		  valp->str->un_armor();
 		return token::STRING;
 	      }
 
 
-stop       |
-unblock    |
-block      |
-unfreeze   |
-freeze     |
-killall    |
-disconnect   { valp->str = new UString(yytext);
-	       if (valp->str->str() == 0) {
-		  delete (valp->str);
-		  valp->str = 0;
-	       }
-	       return token::OPERATOR_ID;
-	     }
+"block"      |
+"disconnect" |
+"freeze"     |
+"killall"    |
+"stop"       |
+"unblock"    |
+"unfreeze"   RETURN_STR_TOKEN (OPERATOR_ID);
 
-info  |
-undef |
-delete       {
-	       valp->str = new UString(yytext);
-	       if (valp->str->str() == 0) {
-		  delete (valp->str);
-		  valp->str = 0;
-	       }
-	       return token::OPERATOR_VAR;
-	     }
+"delete"  |
+"info"    |
+"undef"   RETURN_STR_TOKEN (OPERATOR_VAR);
 
-mix     |
-add     |
-normal  |
-cancel  |
-discard |
-queue       { valp->str = new UString(yytext);
-	      if (valp->str->str() == 0) {
-		delete (valp->str);
-		valp->str = 0;
-	      }
-	      return token::STRING;
-	    }
+"add"     |
+"cancel"  |
+"discard" |
+"mix"     |
+"normal"  |
+"queue"   RETURN_STR_TOKEN (STRING);
 
-external |
-internal   { valp->str = new UString(yytext);
-	     if (valp->str->str() == 0) {
-		delete (valp->str);
-		valp->str = 0;
-	     }
-	     return token::BINDER;
-	    }
+"external"  |
+"internal"  RETURN_STR_TOKEN (BINDER);
 
-motoron     |
-motoroff    |
-strict      |
-unstrict    |
-ping        |
-devices     |
-connections |
-vars        |
-events      |
-uservars    |
-undefall    |
-reset       |
-commands    |
-debugon     |
-debugoff    |
-quit        |
-stopall     |
-reboot      |
-shutdown      { valp->str = new UString(yytext);
-		if (valp->str->str() == 0) {
-		  delete (valp->str);
-		  valp->str = 0;
-		}
-		return token::OPERATOR;
-	      }
+"commands"    |
+"connections" |
+"debugoff"    |
+"debugon"     |
+"devices"     |
+"events"      |
+"motoroff"    |
+"motoron"     |
+"ping"        |
+"quit"        |
+"reboot"      |
+"reset"       |
+"shutdown"    |
+"stopall"     |
+"strict"      |
+"undefall"    |
+"unstrict"    |
+"uservars"    |
+"vars"        RETURN_STR_TOKEN (OPERATOR);
 
+"BIN"           return token::TOK_BIN;
+"addgroup"      return token::TOK_ADDGROUP;
+"alias"         return token::TOK_ALIAS;
+"at"            return token::TOK_AT;
+"bin"           return token::TOK_BIN;
+"class"         return token::TOK_CLASS;
+"copy"          return token::TOK_COPY;
+"def"           return token::TOK_DEF;
+"delgroup"      return token::TOK_DELGROUP;
+"disinherits"   return token::TOK_DISINHERITS;
+"echo"          return token::TOK_ECHO;
+"else"          return token::TOK_ELSE;
+"emit"          return token::TOK_EMIT;
+"event"         return token::TOK_EVENT;
+"every"         return token::TOK_EVERY;
+"false"         return token::TOK_FALSECONST;
+"for"           return token::TOK_FOR;
+"foreach"       return token::TOK_FOREACH;
+"freezeif"      return token::TOK_FREEZEIF;
+"from"          return token::TOK_FROM;
+"function"      return token::TOK_FUNCTION;
+"group"         return token::TOK_GROUP;
+"if"            return token::TOK_IF;
+"in"            return token::TOK_IN;
+"inherits"      return token::TOK_INHERITS;
+"list"          return token::TOK_GROUPLIST;
+"loop"          return token::TOK_LOOP;
+"loopn"         return token::TOK_LOOPN;
+"new"           return token::TOK_NEW;
+"noop"          return token::TOK_NOOP;
+"object"        return token::TOK_OBJECT;
+"onleave"       return token::TOK_ONLEAVE;
+"only"          return token::TOK_ONLY;
+"return"        return token::TOK_RETURN;
+"static"        return token::TOK_STATIC;
+"stopif"        return token::TOK_STOPIF;
+"subclass"      return token::TOK_SUBCLASS;
+"timeout"       return token::TOK_TIMEOUT;
+"true"          return token::TOK_TRUECONST;
+"unalias"       return token::TOK_UNALIAS;
+"var"           return token::TOK_VAR;
+"'in"           return token::TOK_VARIN;
+"'out"          return token::TOK_VAROUT;
+"wait"          return token::TOK_WAIT;
+"waituntil"     return token::TOK_WAITUNTIL;
+"whenever"      return token::TOK_WHENEVER;
+"while"         return token::TOK_WHILE;
 
-
-if            { return token::IF;}
-else          { return token::ELSE;}
-from          { return token::FROM;}
-var           { return token::VAR;}
-object        { return token::OBJECT;}
-function      { return token::FUNCTION;}
-class         { return token::CLASS;}
-subclass      { return token::SUBCLASS;}
-new           { return token::NEW;}
-event         { return token::EVENT;}
-while         { return token::WHILE;}
-timeout       { return token::TIMEOUT;}
-stopif        { return token::STOPIF;}
-freezeif      { return token::FREEZEIF;}
-every         { return token::EVERY;}
-at            { return token::AT;}
-static        { return token::STATIC;}
-whenever      { return token::WHENEVER;}
-onleave       { return token::ONLEAVE;}
-for           { return token::FOR;}
-foreach       { return token::FOREACH;}
-in            { return token::IN;}
-loop          { return token::LOOP;}
-loopn         { return token::LOOPN;}
-group         { return token::GROUP;}
-addgroup      { return token::ADDGROUP;}
-delgroup      { return token::DELGROUP;}
-alias         { return token::ALIAS;}
-inherit       { return token::INHERIT;}
-disinherit    { return token::DISINHERIT;}
-unalias       { return token::UNALIAS;}
-echo          { return token::UECHO;}
-wait          { return token::WAIT;}
-waituntil     { return token::WAITUNTIL;}
-emit          { return token::EMIT;}
-def           { return token::DEF;}
-return        { return token::RETURN;}
-"BIN"         { return token::BIN;}
-bin           { return token::BIN;}
-noop          { return token::NOOP;}
-true          { return token::TRUECONST;}
-false         { return token::FALSECONST;}
-copy          { return token::COPY;}
-only          { return token::ONLY;}
-list          { return token::GROUPLIST;}
-
-"'n"          { return token::NORM;}
-"'e"          { return token::VARERROR;}
-"'d"          { return token::TRUEDERIV;}
-"'dd"         { return token::TRUEDERIV2;}
-"''"          { return token::DERIV2;}
-"'"           { return token::DERIV;}
-"&&"          { return token::ANDOPERATOR;}
-"||"          { return token::OROPERATOR;}
-";"           { return token::SEMICOLON;}
-"::"          { return token::DOUBLECOLON;}
-":"           { return token::COLON;}
-","           { return token::COMMA;}
-"&"           { return token::AND;}
-"|"           { return token::PIPE;}
-"!"           { return token::BANG;}
-"--"          { return token::MINUSMINUS;}
-"++"          { return token::PLUSPLUS;}
-"+="          { return token::PLUSASSIGN;}
-"-="          { return token::MINUSASSIGN;}
-"*"           { return token::MULT;}
-"/"           { return token::DIV;}
-"+"           { return token::PLUS;}
-"^"           { return token::EXP;}
-"-"           { return token::MINUS;}
-"="           { return token::ASSIGN;}
-"=="          { return token::EQ;}
-"~="          { return token::REQ;}
-"=~="         { return token::DEQ;}
-"%="          { return token::PEQ;}
-"!="          { return token::NE;}
-">"           { return token::GT;}
-"<"           { return token::LT;}
-"<="          { return token::LE;}
-">="          { return token::GE;}
-"->"          { return token::DIR;}
-"~"           { return token::TILDE;}
-"%"           { return token::PERCENT;}
-"@"           { return token::AROBASE;}
-"("           { return token::LPAREN;}
-")"           { return token::RPAREN;}
-"["           { return token::LSBRACKET;}
-"]"           { return token::RSBRACKET;}
-"{"           { return token::LBRACKET;}
-"}"           { return token::RBRACKET;}
-"$"           { return token::DOLLAR;}
-"."           { return token::POINT;}
+"!"             return token::TOK_BANG;
+"!="            return token::TOK_NE;
+"$"             return token::TOK_DOLLAR;
+"%"             return token::TOK_PERCENT;
+"%="            return token::TOK_PEQ;
+"&"             return token::TOK_AND;
+"&&"            return token::TOK_ANDOPERATOR;
+"'"             return token::TOK_DERIV;
+"''"            return token::TOK_DERIV2;
+"'d"            return token::TOK_TRUEDERIV;
+"'dd"           return token::TOK_TRUEDERIV2;
+"'e"            return token::TOK_VARERROR;
+"'n"            return token::TOK_NORM;
+"("             return token::TOK_LPAREN;
+")"             return token::TOK_RPAREN;
+"*"             return token::TOK_MULT;
+"+"             return token::TOK_PLUS;
+"++"            return token::TOK_PLUSPLUS;
+"+="            return token::TOK_PLUSASSIGN;
+","             return token::TOK_COMMA;
+"-"             return token::TOK_MINUS;
+"--"            return token::TOK_MINUSMINUS;
+"-="            return token::TOK_MINUSASSIGN;
+"->"            return token::TOK_DIR;
+"."             return token::TOK_POINT;
+"/"             return token::TOK_DIV;
+":"             return token::TOK_COLON;
+"::"            return token::TOK_DOUBLECOLON;
+";"             return token::TOK_SEMICOLON;
+"<"             return token::TOK_LT;
+"<="            return token::TOK_LE;
+"="             return token::TOK_ASSIGN;
+"=="            return token::TOK_EQ;
+"=~="           return token::TOK_DEQ;
+">"             return token::TOK_GT;
+">="            return token::TOK_GE;
+"@"             return token::TOK_AROBASE;
+"["             return token::TOK_LSBRACKET;
+"]"             return token::TOK_RSBRACKET;
+"^"             return token::TOK_EXP;
+"{"             return token::TOK_LBRACKET;
+"|"             return token::TOK_PIPE;
+"||"            return token::TOK_OROPERATOR;
+"}"             return token::TOK_RBRACKET;
+"~"             return token::TOK_TILDE;
+"~="            return token::TOK_REQ;
 
 
-
-
-{ID}          { valp->str = new UString(yytext);
-		if (valp->str->str() == 0) {
-		  delete (valp->str);
-		  valp->str = 0;
-		}
-		return token::IDENTIFIER; }
+{ID}          RETURN_STR_TOKEN (IDENTIFIER);
 
 
 {ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
 		tmp_position[0] = 0;
 		valp->structure.device = new UString(yytext);
-		if (valp->structure.device->str() == 0) {
-		  delete (valp->structure.device);
+		if (valp->structure.device->str() == 0)
+		{
+		  delete valp->structure.device;
 		  valp->structure.device = 0;
 		}
 		valp->structure.id = new UString(tmp_position+1);
-		if (valp->structure.id->str() == 0) {
-		  delete (valp->structure.id);
+		if (valp->structure.id->str() == 0)
+		{
+		  delete valp->structure.id;
 		  valp->structure.id = 0;
 		}
 		valp->structure.rooted = false;
@@ -344,21 +303,40 @@ list          { return token::GROUPLIST;}
 		return token::STRUCT; }
 
 
-{ID}"."{ID}("."{ID})+   { valp->str = new UString(yytext);
-		     	     if (valp->str->str() == 0) {
-			       delete (valp->str);
-			       valp->str = 0;
-			     }
-			   return token::TAG; }
+{ID}"."{ID}("."{ID})+   RETURN_STR_TOKEN(TAG);
 
+    /*----------------------------.
+    | White spaces and comments.  |
+    `----------------------------*/
 
-[ \t\r]+       locp->step();/* eat up whitespace */
-\n+            locp->lines(yyleng);locp->step();
+("//"|"#").*   locp->step (); // One-line comments.
+"/*"           BEGIN SC_C_COMMENT;
+
+{BLANKS}       locp->step();
+{EOL}          LINES(locp); locp->step();
 .              {
-		 uparser.error(*locp, std::string ("invalid character: ")
-				      + yytext);
+		 up.error(*locp, std::string ("invalid character: ")
+			  + yytext);
 		 locp->step ();
 	       }
+
+<SC_C_COMMENT>{ /* Comments. */
+  "*/" { /* End of the comment. */
+    locp->step ();
+    BEGIN INITIAL;
+  }
+
+  [^*/\n\r]+  	;
+  {EOL}	        LINES(locp);
+  .             /* Stray `*' and `/'. */;
+
+  <<EOF>> {
+    up.error(*locp, std::string ("unexpected end of file in a comment"));
+    locp->step ();
+    BEGIN INITIAL;
+  }
+}
+
 %%
 
 // Local Variables:

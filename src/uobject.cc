@@ -20,18 +20,19 @@ For more information, comments, bug reports: http://www.urbiforge.com
 **************************************************************************** */
 
 #include <cstdarg>
-#include <cstdio>
+#include "libport/cstdio"
 #include <list>
-#include "userver.hh"
+
 #include "uconnection.hh"
 #include "ughostconnection.hh"
+#include "ugroup.hh"
+#include "uobj.hh"
 #include "urbi/uobject.hh"
+#include "userver.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
+#include "uvariable.hh"
 
-#ifdef _MSC_VER
-# define snprintf _snprintf
-# define vsnprintf _vsnprintf
-#endif
 #define LIBURBIDEBUG
 
 //! Global definition of the starterlist
@@ -58,41 +59,41 @@ namespace urbi
 
   UVar& cast(UValue &v, UVar *)
   {
-    return (*((UVar*)v.storage));
+    return *((UVar*)v.storage);
   };
 
-  UBinary cast(UValue &v, UBinary *)
+  UBinary cast(UValue& v, UBinary*)
   {
     if (v.type != DATA_BINARY)
       return UBinary();
     return UBinary(*v.binary);
   }
 
-  UList cast(UValue &v, UList *)
+  UList cast(UValue& v, UList*)
   {
     if (v.type != DATA_LIST)
       return UList();
     return UList(*v.list);
   }
 
-  UObjectStruct cast(UValue &v, UObjectStruct*)
+  UObjectStruct cast(UValue& v, UObjectStruct*)
   {
     if (v.type != DATA_OBJECT)
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
-  
-  const char * cast(UValue &v, const char ** b) 
+
+  const char * cast(UValue& v, const char**)
   {
     static const char * er = "invalid";
     if (v.type != DATA_STRING)
       return er;
     return v.stringValue->c_str();
   }
-  
-  // USeful sending functions
 
-  void uobject_unarmorAndSend(const char * str)
+  // Useful sending functions.
+
+  void uobject_unarmorAndSend(const char* str)
   {
     //feed this to the ghostconnection
     UConnection * ghost = urbiserver->getGhostConnection();
@@ -148,7 +149,8 @@ namespace urbi
 	if (it == ::urbiserver->variabletab.end())
 	  {
 	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-	    if (variable) variable->internalBinder.push_back(this);
+	    if (variable)
+	      variable->internalBinder.push_back(this);
 	  }
 	else
 	{
@@ -245,7 +247,7 @@ namespace urbi
 
     for (UStartlist::iterator retr = urbi::objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == __name)
 	tmpobj->internalBinder = (*retr);
 
@@ -280,17 +282,17 @@ namespace urbi
 	      }
 	    else
 	      ++it2;
-	  }//for
+	  }
 
 	if (tocheck.empty())
 	  todelete.push_back(it);
-      }//for
+      }
 
     for (std::list<UTable::iterator>::iterator dit = todelete.begin();
 	 dit != todelete.end();
 	 ++dit)
       t.erase(*dit);
-  }//function
+  }
 
 
   //! Clean a callback UTimerTable from all callbacks linked to
@@ -309,8 +311,8 @@ namespace urbi
 	  }
 	else
 	  ++it;
-      }//for
-  }//function
+      }
+  }
 
 
   //! UObject cleaner
@@ -387,7 +389,7 @@ namespace urbi
   {
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       (*it)->update();
     update();
     return 0;
@@ -405,7 +407,7 @@ namespace urbi
     UObjectList* res = new UObjectList();
     for (UObjectList::iterator it = members.begin();
 	 it != members.end();
-	 it++)
+	 ++it)
       if ((*it)->classname == subclass)
 	res->push_back(*it);
 
@@ -419,7 +421,7 @@ namespace urbi
   {
     for (UStartlistHub::iterator retr = objecthublist->begin();
 	 retr != objecthublist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObjectHub();
 
@@ -432,7 +434,7 @@ namespace urbi
   {
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();
-	 retr++)
+	 ++retr)
       if ((*retr)->name == name)
 	return (*retr)->getUObject();
 

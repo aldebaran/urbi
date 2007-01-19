@@ -16,19 +16,22 @@
 
  **************************************************************************** */
 
-#include "ueventhandler.hh"
-
 #include <sstream>
 
+#include "libport/containers.hh"
+
 #include "ueventhandler.hh"
+#include "uexpression.hh"
 #include "unamedparameters.hh"
 #include "utypes.hh"
+#include "uvalue.hh"
 #include "userver.hh"
 
 std::string
 kernel::forgeName (UString* name, int nbarg)
 {
-  if (!name) return std::string("error");
+  if (!name)
+    return std::string("error");
 
   std::stringstream s;
   s << name->str() << "|" << nbarg;
@@ -123,11 +126,7 @@ UEvent::UEvent (UEventHandler* eventhandler,
 
 UEvent::~UEvent()
 {
-  // The UEvent owns his UValues and must free them:
-  for (std::list<UValue*>::iterator it = args_.begin ();
-       it != args_.end ();
-       it++)
-    delete *it;
+  libport::deep_clear(args_);
 }
 
 
@@ -156,10 +155,11 @@ UEventHandler::addEvent(UNamedParameters* parameters,
   UValue* e1;
   std::list<UValue*> args;
 
-  while  (param)
+  while (param)
   {
     e1 = param->expression->eval (command, connection);
-    if (e1==0) return 0;
+    if (e1==0)
+      return 0;
     args.push_back (e1);
     param = param->next;
   }
@@ -185,7 +185,7 @@ UEventHandler::noPositive ()
 {
   for (std::list<UEvent*>::iterator ie = eventlist_.begin ();
        ie != eventlist_.end ();
-       ie++)
+       ++ie)
     if ( !(*ie)->toDelete ()) return false;
 
   return true;
@@ -199,4 +199,3 @@ UEventHandler::removeEvent(UEvent* event)
   // triggers associated commands update
   updateRegisteredCmd ();
 }
-

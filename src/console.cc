@@ -4,20 +4,13 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-#ifdef WIN32
-/* Windows doesn't have usleep. Use Sleep instead:
- * http://msdn.microsoft.com/library/default.asp
- * `-> ?url=/library/en-us/dllproc/base/sleep.asp */
-# define usleep(t) Sleep((t) <= 1000 ? 1 : (t) / 1000)
-#endif
+#include "libport/windows.hh"
 #include <fstream>
 
 #include "libport/utime.hh"
 
 #include "userver.hh"
 #include "ughostconnection.hh"
-
-#define URBI_BUFSIZ 1024
 
 class ConsoleServer
   : public UServer
@@ -42,7 +35,7 @@ public:
 
   virtual ufloat getTime()
   {
-    return (ufloat)(urbi::utime() / 1000LL);
+    return static_cast<ufloat>(urbi::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
@@ -63,26 +56,6 @@ public:
       strncpy(header, banner[line], maxlength);
     else
       header[0] = 0;
-  }
-
-  virtual
-  UErrorValue
-  loadFile (const char* filename, UCommandQueue* loadQueue)
-  {
-    std::ifstream is (filename, std::ios::binary);
-    if (!is)
-      return UFAIL;
-
-    char buf[URBI_BUFSIZ];
-    while (is.good ())
-    {
-      is.read (buf, URBI_BUFSIZ);
-      if (loadQueue->push((const ubyte*) buf, is.gcount()) == UFAIL)
-	return UFAIL;
-    }
-    is.close();
-
-    return USUCCESS;
   }
 
   virtual
@@ -110,10 +83,15 @@ main (int argc, const char* argv[])
   const char *in = argc == 2 ? argv[1] : "/dev/stdin";
 
   ConsoleServer s (10);
+
+  // FIXME: Add support for : in the path.
+  if (const char* cp = getenv ("URBI_PATH"))
+    s.path.push_back (cp);
+
   s.initialization ();
   UGhostConnection& c = *s.getGhostConnection ();
 
-  if (s.loadFile(in, c.recvQueue ()) != USUCCESS)
+  if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
   {
     std::cerr << argv[0] << ": failed to process " << in << std::endl;
     return 1;

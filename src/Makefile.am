@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie 
+# URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -44,9 +44,11 @@ uninstall-local:
 
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
+flavorable.hh							\
 memorymanager/blockmemorymanager.hh				\
 memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
 parser/uparser.hh parser/uparser.cc				\
+uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
 uasyncregister.hh uasyncregister.cc				\
 uatcandidate.hh uatcandidate.cc					\
@@ -56,7 +58,9 @@ ubinder.hh ubinder.cc						\
 ucallid.hh ucallid.cc						\
 ucommand.hh ucommand.cc						\
 ucommandqueue.hh ucommandqueue.cc				\
+ucomplaints.hh ucomplaints.cc					\
 uconnection.hh uconnection.cc					\
+ucopy.hh							\
 ueventcompound.hh ueventcompound.cc				\
 ueventhandler.hh ueventhandler.cc				\
 ueventinstance.hh ueventinstance.cc				\
@@ -77,7 +81,8 @@ uvalue.hh uvalue.cc						\
 uvar.cc								\
 uvariable.hh uvariable.cc					\
 uvariablelist.hh uvariablelist.cc				\
-uvariablename.hh uvariablename.cc
+uvariablename.hh uvariablename.cc                               \
+usystem.cc
 
 # We either build the BSD connection set, or none at all for Aibo.
 if !OPENR
@@ -124,14 +129,23 @@ parser/uparser.hh
 # files for the cores.
 kernelinclude_HEADERS +=			\
 fwd.hh						\
-version.hh					\
+flavorable.hh					\
+uast.hh						\
+uasynccommand.hh				\
+uasyncregister.hh				\
+uatcandidate.hh					\
 ubinary.hh					\
 ubinder.hh					\
 ucallid.hh					\
 ucommand.hh					\
 ucommandqueue.hh				\
+ucomplaints.hh					\
 uconnection.hh					\
+ucopy.hh					\
+ueventcompound.hh				\
 ueventhandler.hh				\
+ueventinstance.hh				\
+ueventmatch.hh					\
 uexpression.hh					\
 ufunction.hh					\
 ughostconnection.hh				\
@@ -147,14 +161,9 @@ uvalue.hh					\
 uvariable.hh					\
 uvariablelist.hh				\
 uvariablename.hh				\
-uasynccommand.hh				\
-uasyncregister.hh				\
-ueventmatch.hh					\
-ueventcompound.hh				\
-ueventinstance.hh				\
-uatcandidate.hh
+version.hh
 
-urbiinclude_HEADERS = $(uobject_hh)
+urbiinclude_HEADERS = $(uobject_headers)
 
 parserdir = $(kernelincludedir)/parser
 parser_HEADERS = parser/uparser.hh
@@ -174,3 +183,6 @@ noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
 uconsole_LDADD = libkernel.la $(PTHREAD_LIBS)
 endif
+
+# Clean VC++ debug file. BTW, Do we want to install it?
+CLEANFILES += vc80.pdb

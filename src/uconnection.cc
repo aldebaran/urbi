@@ -20,144 +20,75 @@
  **************************************************************************** */
 
 #include "libport/cstring"
-#include <cstdio>
+#include "libport/cstdio"
 #include <cassert>
-
-#ifdef _MSC_VER
-# define snprintf _snprintf
-#endif
+#include <cstdarg>
 
 #include "libport/lockable.hh"
-#include "ubanner.hh"
-#include "uconnection.hh"
-#include "userver.hh"
-#include "uqueue.hh"
-#include "ucommandqueue.hh"
+#include "libport/ref-pt.hh"
+
 #include "parser/uparser.hh"
+#include "ubanner.hh"
+#include "ubinary.hh"
+#include "ubinder.hh"
 #include "ucallid.hh"
+#include "ucommandqueue.hh"
+#include "ucomplaints.hh"
+#include "uconnection.hh"
+#include "unamedparameters.hh"
+#include "uqueue.hh"
+#include "userver.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 
-char errorMessage[1024]; // Global variable (thanks bison...) to store the
-// the error message when a parsing error occurs.
-
-//! UConnection constructor.
-/*! This constructor must be called by any sub class.
-
- Important note on memory management: you should call ADDOBJ(nameofsubclass)
- in the constructor of your UConnection sub class to maintain a valid
- memory occupation evaluation. Symmetricaly, you must call
- FREEOBJ(nameofsubclass) in the UConnection destructor. "nameofsubclass" is
- the name of the sub class used (which will be evaluated with a sizeof
- operator). ADDOBJ and FREEOBJ macros are in utypes.h.
-
- \param userver is the server to which the connection belongs
- \param minSendBufferSize UConnection uses an adaptive dynamic queue (UQueue)
- to buffer sent data. This parameter sets the minimal and initial size
- of the queue. Suggested value is 4096.
- \param maxSendBufferSize The internal sending UQueue size can grow up to
- maxSendBufferSize.A good strategy is to have here twice the size of
- the biggest data that could enter the queue, plus a small 10%
- overhead. Typically, the size of the biggest image times two + 10%.
- Zero means "illimited" and is not advised if one wants to control
- the connection's size.
- \param packetSize is the maximal size of a packet sent in one shot via a
- call to effectiveSend(). This should be the biggest as possible to
- help emptying the sending queue as fast as possible. Check the
- capacity of your connection to know this limit.
- \param minRecvBufferSize UConnection uses an adaptive dynamic queue (UQueue)
- to buffer received data. This parameter sets the minimal and initial
- size of the queue. Suggested value is 4096.
- \param maxRecvBufferSize The internal receiving UQueue size can grow up to
- maxRecvBufferSize.A good strategy is to have here twice the size of
- the biggest data that could enter the queue, plus a small 10%
- overhead. Zero means "illimited". Note that binary data are handled
- on specific buffers and are not part of the receiving queue. The
- "biggest size" here means the "biggest ascii command". For URBI
- commands, a good choice is 65536.
-
- Note that all UQueues are, by default, adaptive queues (see the UQueue
- documentation for more details). This default kernel behavior can be
- modified by changing the UConnection::ADAPTIVE constant or, individually by
- using the setSendAdaptive(int) and setReceiveAdaptive(int) method.
-
- When exiting, UError can have the following values:
- - USUCCESS: success
- - UFAIL   : memory allocation failed.
-
- \sa UQueue
- */
 UConnection::UConnection  (UServer *userver,
 			   int minSendBufferSize,
 			   int maxSendBufferSize,
 			   int packetSize,
 			   int minRecvBufferSize,
 			   int maxRecvBufferSize)
+  : UError(USUCCESS),
+    server(userver),
+    activeCommand(0),
+    // no active command and no last command at start:
+    lastCommand(0),
+    connectionTag(0),
+    functionTag(0),
+    clientIP(0),
+    killall(false),
+    closing(false),
+    receiving(false),
+    inwork(false),
+    newDataAdded(false),
+    returnMode(false),
+    obstructed(false),
+    parser_(*this),
+    sendQueue_(minSendBufferSize, maxSendBufferSize, UConnection::ADAPTIVE),
+    recvQueue_(minRecvBufferSize, maxRecvBufferSize, UConnection::ADAPTIVE),
+    packetSize_(packetSize),
+    blocked_(false),
+    receiveBinary_(false),
+    sendAdaptive_(UConnection::ADAPTIVE),
+    recvAdaptive_(UConnection::ADAPTIVE),
+    // Initial state of the connection: unblocked, not receiving binary.
+    active_(true)
 {
-  UError = USUCCESS;
   char tmpbuffer_connectionTag[50];
-
-  server	   = userver;
-  packetSize_	   = packetSize;
-  sendAdaptive_	   = UConnection::ADAPTIVE;
-  recvAdaptive_	   = UConnection::ADAPTIVE;
-
-  // Create send queue
-  sendQueue_	   = new UQueue(minSendBufferSize,
-				maxSendBufferSize,
-				sendAdaptive_);
-  if (sendQueue_ == 0 || sendQueue_->UError == UFAIL)
-  {
-    UError = UFAIL;
-    return;
-  }
-
-  // Create receive queue
-  recvQueue_	   = new UCommandQueue(minRecvBufferSize,
-				       maxRecvBufferSize,
-				       sendAdaptive_);
-  if (recvQueue_ == 0 || recvQueue_->UError == UFAIL)
-  {
-    UError = UFAIL;
-    delete sendQueue_;
-    sendQueue_ = 0;
-    return;
-  }
-
-  // Initial state of the connection: unblocked, not receiving binary.
-  blocked_	       = false;
-  receiveBinary_       = false;
-  active_	       = true;
-
-  for (int i = 0; i < MAX_ERRORSIGNALS ; i++)
+  for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
 
-  // no active command and no last command at start:
-  lastCommand = 0;
-  activeCommand = 0;
-
   // initialize the connection tag used to reference local variables
-  sprintf(tmpbuffer_connectionTag, "U%ld", (long)this);
+  sprintf(tmpbuffer_connectionTag, "U%ld", (long) this);
   connectionTag = new UString(tmpbuffer_connectionTag);
   UVariable* cid = new UVariable(tmpbuffer_connectionTag, "connectionID",
 				 tmpbuffer_connectionTag);
-  if (cid) cid->uservar = false;
-  functionTag = 0;
-  killall = false;
-  closing = false;
-  newDataAdded = false;
-  returnMode = false;
-  obstructed = false;
-  receiving  = false;
-  inwork     = false;
-  clientIP   = 0;
+  if (cid)
+    cid->uservar = false;
 }
 
 //! UConnection destructor.
 UConnection::~UConnection()
 {
-  delete recvQueue_;
-  delete sendQueue_;
-
   if (connectionTag)
   {
     UVariable *vari = server->getVariable(connectionTag->str(),
@@ -170,7 +101,7 @@ UConnection::~UConnection()
   // free bindings
 
   for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-	it1 != ::urbiserver->variabletab.end(); it1++ )
+       it1 != ::urbiserver->variabletab.end(); ++it1)
   {
     if (it1->second->binder)
       if (it1->second->binder->removeMonitor(this))
@@ -182,8 +113,8 @@ UConnection::~UConnection()
 
   std::list<HMbindertab::iterator> deletelist;
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
-	it2 != ::urbiserver->functionbindertab.end();
-	it2++)
+       it2 != ::urbiserver->functionbindertab.end();
+       ++it2)
   {
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
@@ -191,20 +122,20 @@ UConnection::~UConnection()
 
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
-       itt++)
+       ++itt)
     ::urbiserver->functionbindertab.erase((*itt));
   deletelist.clear();
 
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
-	it3 != ::urbiserver->eventbindertab.end();
-	it3++)
+       it3 != ::urbiserver->eventbindertab.end();
+       ++it3)
   {
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
   }
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
-       itt++)
+       ++itt)
     ::urbiserver->eventbindertab.erase((*itt));
   deletelist.clear();
 
@@ -238,20 +169,20 @@ UConnection::closeConnection()
  */
 void UConnection::initialize()
 {
-  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; i++)
+  for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
     send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   int i = 0;
   char customHeader[1024];
 
   do {
-    server->getCustomHeader(i, (char*)customHeader, 1024);
+    server->getCustomHeader(i, customHeader, 1024);
     if (customHeader[0]!=0)
-      send((const char*) customHeader, "start");
-    i++;
+      send(customHeader, "start");
+    ++i;
   } while (customHeader[0]!=0);
 
-  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; i++)
+  for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
     send(::HEADER_AFTER_CUSTOM[i], "start");
   sprintf(customHeader, "*** ID: %s\n", connectionTag->str());
   send(customHeader, "ident");
@@ -261,7 +192,7 @@ void UConnection::initialize()
 	       "UConnection::initialize",
 	       customHeader);
 
-  server->loadFile("CLIENT.INI", recvQueue_);
+  server->loadFile("CLIENT.INI", &recvQueue_);
   newDataAdded = true;
 }
 
@@ -278,15 +209,14 @@ UConnection::sendPrefix (const char* tag)
 	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
   else
   {
-    snprintf(tmpBuffer_,
-	     MAXSIZE_TMPBUFFER-3,
+    snprintf(tmpBuffer_, MAXSIZE_TMPBUFFER-3,
 	     "[%08d:%s", (int)server->lastTime(), tag);
-    strcat(tmpBuffer_, "] "); // This splitting method is
-    //used to truncate the
-    // tag if its size is too large.
+    // This splitting method is used to truncate the tag if its size
+    // is too large.
+    strcat(tmpBuffer_, "] ");
   }
 
-  sendQueue_->mark (); // put a marker to indicate the beginning of a message
+  sendQueue_.mark (); // put a marker to indicate the beginning of a message
   sendc((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
   return USUCCESS;
 }
@@ -316,12 +246,20 @@ UConnection::send (const char *s, const char* tag)
   return send((const ubyte*)s, strlen(s));
 }
 
-//! Send a string through the connection but without flushing it
 UErrorValue
-UConnection::sendc (const char *s, const char* tag)
+UConnection::sendf (const std::string& tag, const char* format, va_list args)
 {
-  sendPrefix(tag);
-  return sendc((const ubyte*)s, strlen(s));
+  char buf[1024];
+  vsnprintf(buf, sizeof buf, format, args);
+  return send (buf, tag.c_str());
+}
+
+UErrorValue
+UConnection::sendf (const std::string& tag, const char* format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  return sendf (tag, format, args);
 }
 
 //! Send a buffer through the connection and flush it
@@ -329,8 +267,17 @@ UErrorValue
 UConnection::send (const ubyte *buffer, int length)
 {
   UErrorValue ret = sendc (buffer, length);
-  if (ret != UFAIL) flush ();
+  if (ret != UFAIL)
+    flush ();
   return ret;
+}
+
+//! Send a string through the connection but without flushing it
+UErrorValue
+UConnection::sendc (const char *s, const char* tag)
+{
+  sendPrefix(tag);
+  return sendc((const ubyte*)s, strlen(s));
 }
 
 //! Send a buffer through the connection without flushing it.
@@ -353,10 +300,12 @@ UConnection::send (const ubyte *buffer, int length)
 UErrorValue
 UConnection::sendc (const ubyte *buffer, int length)
 {
-  if (closing) return USUCCESS;
-  if (sendQueue_->locked ()) return UFAIL;
+  if (closing)
+    return USUCCESS;
+  if (sendQueue_.locked ())
+    return UFAIL;
 
-  UErrorValue result = sendQueue_->push(buffer, length);
+  UErrorValue result = sendQueue_.push(buffer, length);
   if (result != USUCCESS)
   {
     if (result == UMEMORYFAIL)
@@ -368,7 +317,7 @@ UConnection::sendc (const ubyte *buffer, int length)
     if (result == UFAIL)
       errorSignal(UERROR_SEND_BUFFER_FULL);
 
-    sendQueue_->revert ();
+    sendQueue_.revert ();
     return UFAIL;
   }
 
@@ -414,16 +363,16 @@ UConnection::block ()
 UErrorValue
 UConnection::continueSend ()
 {
-  urbi::BlockLock bl(this); //lock this function
+  libport::BlockLock bl(this); //lock this function
   blocked_ = false;	    // continueSend unblocks the connection.
 
-  int toSend = sendQueue_->dataSize(); // nb of bytes to send
+  int toSend = sendQueue_.dataSize(); // nb of bytes to send
   if (toSend > packetSize_)
     toSend = packetSize_;
   if (toSend == 0)
     return USUCCESS;
 
-  ubyte* popData = sendQueue_->virtualPop(toSend);
+  ubyte* popData = sendQueue_.virtualPop(toSend);
 
   if (popData != 0)
   {
@@ -432,7 +381,7 @@ UConnection::continueSend ()
     if (wasSent < 0)
       return UFAIL;
     else
-      if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
+      if (wasSent == 0 || sendQueue_.pop(wasSent) != 0)
 	return USUCCESS;
   }
 
@@ -455,34 +404,29 @@ UConnection::received (const char *s)
   return received((const ubyte*) s, strlen(s));
 }
 
-//! Handles a incoming buffer of data.
-/*! Must be called each time a buffer of data is received by the connection.
- \param buffer the incoming buffer
- \param length the length of the buffer
- \return UFAIL buffer overflow
- \return UMEMORYFAIL critical memory overflow
- \return USUCCESS otherwise
- */
 UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
-  bool gotlock = false;
-  bool faillock = false; // if binary append failed to get lock,
-  // abort processing
-  urbi::BlockLock bl(server);
   if (server->memoryOverflow)
   {
-    errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
+    errorSignal(UERROR_MEMORY_OVERFLOW);
     // Block any new incoming command when the system is out of
     // memory
     return UFAIL;
   }
+
+  bool gotlock = false;
+  // If binary append failed to get lock, abort processing.
+  bool faillock = false;
+  libport::BlockLock bl(server);
+  // Lock the connection.
   lock();
   if (receiveBinary_)
   {
-    // handles and try to finish the binary transfer
-
-    if (length < binCommand->refBinary->ref()->bufferSize - transferedBinary_)
+    // Handle and try to finish the binary transfer.
+    int total =
+      binCommand->refBinary->ref()->bufferSize - transferedBinary_;
+    if (length < total)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
 	     buffer,
@@ -495,13 +439,9 @@ UConnection::received (const ubyte *buffer, int length)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
 	     buffer,
-	     binCommand->refBinary->ref()->bufferSize - transferedBinary_);
-
-      buffer += (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
-
-      length -= (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
+	     total);
+      buffer += total;
+      length -= total;
       if (treeLock.tryLock())
       {
 	receiveBinary_ = false;
@@ -514,18 +454,19 @@ UConnection::received (const ubyte *buffer, int length)
       }
     }
   }
-  UErrorValue result = recvQueue_->push(buffer, length);
+
+  UErrorValue result = recvQueue_.push(buffer, length);
   unlock();
   if (result != USUCCESS)
   {
     // Handles memory errors.
-    if (result == UFAIL )
+    if (result == UFAIL)
     {
       errorSignal(UERROR_RECEIVE_BUFFER_FULL);
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
 
-    if (result == UMEMORYFAIL )
+    if (result == UMEMORYFAIL)
     {
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
       server->memoryOverflow = true;
@@ -539,39 +480,38 @@ UConnection::received (const ubyte *buffer, int length)
     newDataAdded = true; //server will call us again right after work
     return USUCCESS;
   }
-  if (!gotlock)
-    if (!treeLock.tryLock())
-    {
-      newDataAdded = true; //server will call us again right after work
-      return USUCCESS;
-    }
 
-  if (server->parser.commandTree)
+  if (!gotlock && !treeLock.tryLock())
+  {
+    newDataAdded = true; //server will call us again right after work
+    return USUCCESS;
+  }
+
+  UParser& p = parser();
+  if (p.commandTree)
   {
     //reentrency trouble
     treeLock.unlock();
     return USUCCESS;
   }
+
   // Starts processing
   receiving = true;
   server->updateTime();
 
   do {
-    ubyte* command = recvQueue_->popCommand(length);
+    ubyte* command = recvQueue_.popCommand(length);
 
     if (command == 0 && length==-1)
     {
-      recvQueue_->clear();
+      recvQueue_.clear();
       length = 0;
     }
 
     if (length !=0)
     {
-      errorMessage[0] = 0; // no error at start (errorMessage string is empty)
-
-      server->parser.commandTree = 0;
       server->systemcommands = false;
-      int result = server->parser.process(command, length, this);
+      int result = p.process(command, length);
       server->systemcommands = true;
 
       if (result == -1)
@@ -583,94 +523,86 @@ UConnection::received (const ubyte *buffer, int length)
 
 
       // Xtrem memory recovery in case of anomaly
-      if (server->memoryOverflow
-	  && server->parser.commandTree)
+      if (server->memoryOverflow && p.commandTree)
       {
-	delete server->parser.commandTree;
-	server->parser.commandTree = 0;
+	delete p.commandTree;
+	p.commandTree = 0;
       }
 
       // Error Message handling
-      if (errorMessage[0] != 0
-	  && !server->memoryOverflow)
+      if (*p.errorMessage && !server->memoryOverflow)
       {
 	// a parsing error occured
-	if (server->parser.commandTree)
-	{
-	  delete server->parser.commandTree;
-	  server->parser.commandTree = 0;
-	}
+	delete p.commandTree;
+	p.commandTree = 0;
 
-	send(errorMessage, "error");
+	send(p.errorMessage, "error");
 
-	errorMessage[ strlen(errorMessage) - 1 ] = 0; // remove '\n'
-	errorMessage[ 42 ] = 0; // cut at 41 characters
+	p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
+	p.errorMessage[ 42 ] = 0; // cut at 41 characters
 	server->error(::DISPLAY_FORMAT, (long)this,
 		      "UConnection::received",
-		      errorMessage);
+		      p.errorMessage);
       }
-      else if (server->parser.commandTree)
-	if (server->parser.commandTree->command1)
+      else if (p.commandTree && p.commandTree->command1)
+      {
+	// Process "commandTree"
+
+	// ASSIGN_BINARY: intercept and execute immediately
+	if (p.binaryCommand)
 	{
-	  // Process "commandTree"
+	  binCommand =
+	    dynamic_cast<UCommand_ASSIGN_BINARY*> (p.commandTree->command1);
+	  assert (binCommand != 0);
 
-	  // CMD_ASSIGN_BINARY: intercept and execute immediately
-	  if (server->parser.binaryCommand)
+	  ubyte* buffer =
+	    recvQueue_.pop(binCommand->refBinary->ref()->bufferSize);
+
+	  if (buffer)
 	  {
-	    binCommand = ((UCommand_ASSIGN_BINARY*)
-			  server->parser.commandTree->command1);
+	    // the binary was all in the queue
+	    memcpy(binCommand->refBinary->ref()->buffer,
+		   buffer,
+		   binCommand->refBinary->ref()->bufferSize);
+	  }
+	  else
+	  {
+	    // not all was there, must set receiveBinary mode on
+	    transferedBinary_ = recvQueue_.dataSize();
+	    memcpy(binCommand->refBinary->ref()->buffer,
+		   recvQueue_.pop(transferedBinary_),
+		   transferedBinary_);
+	    receiveBinary_ = true;
+	  }
+	}
 
-	    ubyte* buffer =
-	      recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
-
-	    if (buffer)
-	    {
-	      // the binary was all in the queue
-	      memcpy(binCommand->refBinary->ref()->buffer,
-		     buffer,
-		     binCommand->refBinary->ref()->bufferSize);
-	    }
-	    else
-	    {
-	      // not all was there, must set receiveBinary mode on
-	      transferedBinary_ = recvQueue_->dataSize();
-	      memcpy(binCommand->refBinary->ref()->buffer,
-		     recvQueue_->pop(transferedBinary_),
-		     transferedBinary_);
-	      receiveBinary_ = true;
-	    }
+	// Pile the command
+	if (!receiveBinary_)
+	{
+	  // immediate execution of simple commands
+	  if (!obstructed)
+	  {
+	    p.commandTree->up = 0;
+	    p.commandTree->position = 0;
+	    execute(p.commandTree);
+	    if (p.commandTree &&
+		p.commandTree->status == UCommand::URUNNING)
+	      obstructed = true;
 	  }
 
-	  // Pile the command
-	  if (!receiveBinary_)
-	  {
-	    //::urbiserver->debug("Received - 5i.\n"); //TRASHME
+	  if (p.commandTree)
+	    append(p.commandTree);
 
-	    // immediate execution of simple commands
-
-	    if (!obstructed)
-	    {
-	      server->parser.commandTree->up = 0;
-	      server->parser.commandTree->position = 0;
-	      execute(server->parser.commandTree);
-	      if (server->parser.commandTree &&
-		  server->parser.commandTree->status == URUNNING)
-		obstructed = true;
-	    }
-
-	    if (server->parser.commandTree)
-	      append(server->parser.commandTree);
-
-	    server->parser.commandTree = 0;
-	  }
-	} // command1
+	  p.commandTree = 0;
+	}
+      }
     }
   } while (length != 0
 	   && !receiveBinary_
 	   && !server->memoryOverflow);
 
   receiving = false;
-  server->parser.commandTree = 0;
+  p.commandTree = 0;
   treeLock.unlock();
   if (server->memoryOverflow)
     return UMEMORYFAIL;
@@ -696,112 +628,67 @@ UConnection::effectiveSend (const ubyte*, int length)
 }
 
 //! Send an error message based on the error number.
-/*! This command sends an error message through the connection, and to the server
- output system, according to the error number n.
+/*! This command sends an error message through the connection, and to the
+ server output system, according to the error number n.
 
- \param n the error number. Use the UErrorCode enum. Can be:
- - 0 : Critical Error
- - 1 : Syntax Error (never used, bison handles it)
- - 2 : Division by zero
- - 3 : Receive buffer full
- - 4 : Out of memory
- - 5 : Send buffer full
- - 6 : Receive buffer corrupted
- - 7 : Memory Warning
- */
+ \param n the error number. */
 UErrorValue
 UConnection::error (UErrorCode n)
 {
-  char errorString[80]; // Max error message = 80 chars
-
-  switch (n)
-  {
-    case UERROR_CRITICAL	    :
-      strcpy(errorString, "!!! Critical error\n"); break;
-    case UERROR_SYNTAX		    :
-      strcpy(errorString, "!!! Syntax error\n"); break;
-    case UERROR_DIVISION_BY_ZERO    :
-      strcpy(errorString, "!!! Division by zero\n"); break;
-    case UERROR_RECEIVE_BUFFER_FULL :
-      strcpy(errorString, "!!! Receive buffer full\n"); break;
-    case UERROR_MEMORY_OVERFLOW	    :
-      strcpy(errorString, "!!! Out of memory\n"); break;
-    case UERROR_SEND_BUFFER_FULL    :
-      strcpy(errorString, "!!! Send buffer full\n"); break;
-    case UERROR_CPU_OVERLOAD	    :
-      strcpy(errorString, "!!! CPU Overload\n"); break;
-    case UERROR_RECEIVE_BUFFER_CORRUPTED :
-      strcpy(errorString, "!!! Receive buffer corrupted\n"); break;
-    default			    :
-      strcpy(errorString, "!!! Unidentified Error\n");
-
-  }
-
-  UErrorValue result = send(errorString, "error");
+  const char* msg = message (n);
+  UErrorValue result = send(msg, "error");
   if (result == USUCCESS)
   {
-    errorString[strlen(errorString) - 1] = 0; // remove the '\n' at the end...
-    server->error(::DISPLAY_FORMAT,
-		  (long)this,
-		  "UConnection::error",
-		  errorString);
+    char buf[80];
+    strncpy (buf, msg, sizeof buf);
+    if (strlen (msg) - 1 < sizeof buf)
+      //remove the '\n' at the end.
+      buf[strlen(msg)-1] = 0;
+    server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
-  return result ;
+  return result;
 }
 
 //! Send a warning message based on the warning number.
-/*! This command sends an warning message through the connection, and to the server
- output system, according to the warning number n.
+
+/*! This command sends an warning message through the connection, and to
+ the server output system, according to the warning number n.
 
  \param n the warning number. Use the UWarningCode enum. Can be:
  - 0 : Memory overflow warning
- \param complement is a complement string added at the end of the warning message.
+
+ \param complement is a complement string added at the end
+ of the warning message.
  */
 UErrorValue
 UConnection::warning (UWarningCode n)
 {
-  char warningString[80]; // Max warning message = 80 chars
-
-  switch (n)
+  const char*msg = message (n);
+  UErrorValue result = send(msg, "warning");
+  if (result == USUCCESS)
   {
-    case UWARNING_MEMORY:
-      strcpy(warningString, "!!! Memory overflow warning\n"); break;
-    default:
-      strcpy(warningString, "!!! Unidentified Warning\n");
-
-  }
-
-  UErrorValue result = send(warningString, "warning");
-  if (result == USUCCESS )
-  {
-    warningString[strlen(warningString)-1] = 0;//remove the '\n' at the end...
-    server->echoKey("WARNG",
-		    ::DISPLAY_FORMAT,
-		    (long)this,
-		    "UConnection::warning",
-		    warningString);
+    char buf[80];
+    strncpy (buf, msg, sizeof buf);
+    if (strlen (msg) - 1 < sizeof buf)
+      //remove the '\n' at the end.
+      buf[strlen(msg)-1] = 0;
+    server->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
+		    "UConnection::warning", buf);
   }
   return result ;
 }
 
 //! Set a flag to insure the error will be send.
-/*! This command sends an error message through the connection, and to the server
- output system, according to the error number n. The difference with the "error"
- function is that is does not actually send the message but set a flag so that the
- message will be sent. The flag is active as long as the message is not actually
- sent. So, using errorSignal is more robust since it guarantees that the message
- will be sent, at all costs.
 
- \param n the error number. Use the UErrorCode enum. Can be:
- - 0 : Critical Error
- - 1 : Syntax Error (never used, bison handles it)
- - 2 : Division by zero
- - 3 : Receive buffer full
- - 4 : Out of memory
- - 5 : Send buffer full
- - 6 : Receive buffer corrupted
- - 7 : Memory Warning
- */
+/*! This command sends an error message through the connection, and
+ to the server output system, according to the error number n. The
+ difference with the "error" function is that is does not actually
+ send the message but set a flag so that the message will be
+ sent. The flag is active as long as the message is not actually
+ sent. So, using errorSignal is more robust since it guarantees
+ that the message will be sent, at all costs.
+
+ \param n the error number. Use the UErrorCode enum.  */
 void
 UConnection::errorSignal (UErrorCode n)
 {
@@ -886,22 +773,14 @@ UConnection::processCommand(UCommand *&command,
   }
 
   UCommand	   *morphed;
-  UCommand_TREE	   *morphed_up;
-  UCommand	   **morphed_position;
-  UNamedParameters *param;
-  bool		   stopit;
-
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
-
     if (command->startTime == -1)
     {
       command->startTime = server->lastTime();
 
-      param = command->flags;
-      while (param)
-      {
+      for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name)
 	{
 	  if (param->name->equal("flagid"))
@@ -914,21 +793,16 @@ UConnection::processCommand(UCommand *&command,
 		for (std::list<UConnection*>::iterator retr =
 		       ::urbiserver->connectionList.begin();
 		     retr != ::urbiserver->connectionList.end();
-		     retr++)
-		  if ((*retr)->isActive())
-
-		    if (((*retr)->connectionTag->equal(tmpID->str)) ||
-			(STREQ(tmpID->str->str(), "all")) ||
-			((STREQ(tmpID->str->str(), "other")) &&
-			  (!(*retr)->connectionTag->equal(connectionTag))))
-		    {
-		      UCommand_TREE* tohook =
-			new UCommand_TREE(UAND,
-					   command->copy(),
-					   0);
-		      (*retr)->append(tohook);
-		    }
-
+		     ++retr)
+		  if ((*retr)->isActive()
+		      && ((*retr)->connectionTag->equal(tmpID->str)
+			  || STREQ(tmpID->str->str(), "all")
+			  || (STREQ(tmpID->str->str(), "other")
+			      && !(*retr)->connectionTag->equal(connectionTag))))
+		    (*retr)->append(new UCommand_TREE(UCommand::location(),
+						      Flavorable::UAND,
+						      command->copy(),
+						      0));
 	      delete tmpID;
 	    }
 	    delete command;
@@ -960,39 +834,34 @@ UConnection::processCommand(UCommand *&command,
 		 command->getTag().c_str());
 	  }
 
-	  if ((param->name->equal("flag")) &&
-	      (param->expression) &&
-	      (param->expression->val == 10))
+	  if (param->name->equal("flag")
+	      && param->expression
+	      && param->expression->val == 10)
 	    command->flagType += 8;
 
-	  if ((param->name->equal("flag")) &&
-	      (param->expression) &&
-	      (!command->morphed) &&
-	      ((param->expression->val == 4 ) || // 4 = +begin
-	       (param->expression->val == 1 ) )) // 1 = +report
+	  if (param->name->equal("flag")
+	      && param->expression
+	      && !command->morphed
+	      && (param->expression->val == 4 // 4 = +begin
+		  || param->expression->val == 1)) // 1 = +report
 	    send("*** begin\n", command->getTag().c_str());
-
 	}
-
-	param = param->next;
-      }
     }
 
-    stopit = false;
+    bool stopit = false;
 
     // flag "+timeout"
     if (command->flagType&1)
     {
       UValue *value = command->flagExpr1->eval(command, this);
-      if ((value) &&
-	  (value->dataType == DATA_NUM) &&
-	  (command->startTime + value->val <= server->lastTime()))
+      if (value &&
+	  value->dataType == DATA_NUM &&
+	  command->startTime + value->val <= server->lastTime())
 	stopit = true;
       delete value;
     }
 
     // flag "+stop"
-
     if (command->flagType&2)
     {
       UTestResult testres = booleval(command->flagExpr2->eval(command, this));
@@ -1001,23 +870,21 @@ UConnection::processCommand(UCommand *&command,
       {
 	if (command->flag_nbTrue2 == 0)
 	  command->flag_startTrue2 = server->lastTime();
-	command->flag_nbTrue2++;
+	++command->flag_nbTrue2;
       }
       else
 	command->flag_nbTrue2 = 0;
 
-      if (((command->flagExpr2->softtest_time) &&
-	     (command->flag_nbTrue2 > 0) &&
-	     (server->lastTime() - command->flag_startTrue2 >=
-	      command->flagExpr2->softtest_time->val)) ||
-
-	   ((command->flag_nbTrue2 >0) &&
-	     (command->flagExpr2->softtest_time==0)) )
+      if ((command->flagExpr2->softtest_time
+	   && command->flag_nbTrue2 > 0
+	   && (server->lastTime() - command->flag_startTrue2 >=
+	       command->flagExpr2->softtest_time->val))
+	  || (command->flag_nbTrue2 >0
+	      && command->flagExpr2->softtest_time == 0))
 	stopit = true;
     }
 
     // flag "+freeze"
-
     if (command->flagType&4)
     {
       UTestResult testres = booleval(command->flagExpr4->eval(command, this));
@@ -1026,36 +893,30 @@ UConnection::processCommand(UCommand *&command,
       {
 	if (command->flag_nbTrue4 == 0)
 	  command->flag_startTrue4 = server->lastTime();
-	command->flag_nbTrue4++;
+	++command->flag_nbTrue4;
       }
       else
 	command->flag_nbTrue4 = 0;
 
-      if (((command->flagExpr4->softtest_time) &&
-	     (command->flag_nbTrue4 > 0) &&
-	     (server->lastTime() - command->flag_startTrue4 >=
-	      command->flagExpr4->softtest_time->val)) ||
-
-	   ((command->flag_nbTrue4 >0) &&
-	     (command->flagExpr4->softtest_time==0)) )
+      if ((command->flagExpr4->softtest_time &&
+	   command->flag_nbTrue4 > 0 &&
+	   (server->lastTime() - command->flag_startTrue4 >=
+	    command->flagExpr4->softtest_time->val)) ||
+	  (command->flag_nbTrue4 >0 &&
+	   command->flagExpr4->softtest_time==0))
 	return command;
     }
 
     if (stopit)
     {
-      param = command->flags;
-      while (param)
-      {
-	if ((param->name) &&
-	    (param->name->equal("flag")) &&
-	    (param->expression) &&
-	    (!command->morphed) &&
-	    ((param->expression->val == 3 ) || // 3 = +end
-	     (param->expression->val == 1 ) )) // 1 = +report
+      for (UNamedParameters *param = command->flags; param; param = param->next)
+	if (param->name &&
+	    param->name->equal("flag") &&
+	    param->expression &&
+	    !command->morphed &&
+	    (param->expression->val == 3 || // 3 = +end
+	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", command->getTag().c_str());
-
-	param = param->next;
-      }
 
       if (command == lastCommand)
 	lastCommand = command->up;
@@ -1066,33 +927,28 @@ UConnection::processCommand(UCommand *&command,
 
     // Regular command processing
 
-    if (command->type == CMD_TREE)
+    if (command->type == UCommand::TREE)
     {
       mustReturn = true;
       return command ;
     }
     else
     {
-      // != CMD_TREE
-      morphed_up = command->up;
-      morphed_position = command->position;
+      // != TREE
+      UCommand_TREE* morphed_up = command->up;
+      UCommand** morphed_position = command->position;
 
       switch (command->execute(this))
       {
-	case UCOMPLETED:
-
-	  param = command->flags;
-	  while (param)
-	  {
-	    if ((param->name) &&
-		(param->name->equal("flag")) &&
-		(param->expression) &&
-		((param->expression->val == 3 ) || // 3 = +end
-		 (param->expression->val == 1 ) )) // 1 = +report
+	case UCommand::UCOMPLETED:
+	  for (UNamedParameters *param = command->flags; param;
+	       param = param->next)
+	    if (param->name &&
+		param->name->equal("flag") &&
+		param->expression &&
+		(param->expression->val == 3 || // 3 = +end
+		 param->expression->val == 1  )) // 1 = +report
 	      send("*** end\n", command->getTag().c_str());
-
-	    param = param->next;
-	  }
 
 	  if (command == lastCommand)
 	    lastCommand = command->up;
@@ -1100,8 +956,8 @@ UConnection::processCommand(UCommand *&command,
 	  delete command;
 	  return 0;
 
-	case UMORPH:
-	  command->status = UONQUEUE;
+	case UCommand::UMORPH:
+	  command->status = UCommand::UONQUEUE;
 	  command->morphed = true;
 
 	  morphed = command->morph;
@@ -1115,45 +971,78 @@ UConnection::processCommand(UCommand *&command,
 	  morphed->setTag(command);
 
 	  //morphed->morphed = true;
-	  if (!command->persistant) delete command;
+	  if (!command->persistant)
+	    delete command;
 	  command = morphed;
 	  break;
 
 	default:
 	  // "+bg" flag
-	  if ((command->flagType&8) &&
-	      (command->status == URUNNING))
-	    command->status = UBACKGROUND;
-
+	  // FIXME: Nia?  What the heck is happening here???
+	  if ((command->flagType & 8) &&
+	      command->status == UCommand::URUNNING)
+	    command->status = UCommand::UBACKGROUND;
 	  return command;
       }
     }
-  }//while(1)
+  }
+}
+
+namespace
+{
+  /// Simplify a UCommand_TREE if possible.
+  /// \return whether a simplification was made.
+  // FIXME: Should be with UCommand_TREE, not here.
+  bool simplify (UCommand_TREE* tree)
+  {
+    // left reduction
+    if (!tree->command1 && tree->command2)
+    {
+      ASSERT(tree->position)
+	*tree->position = tree->command2;
+      tree->command2->up = tree->up;
+      tree->command2->position = tree->position;
+      tree->command2->background = tree->background;
+      tree->command2 = 0;
+      return true;
+    }
+
+    // right reduction
+    // the background hack is here to preserve {at()...} commands.
+    if (!tree->command2
+	&& tree->command1
+	&& tree->command1->status != UCommand::UBACKGROUND)
+    {
+      ASSERT(tree->position)
+	*tree->position = tree->command1;
+      tree->command1->up = tree->up;
+      tree->command1->position = tree->position;
+      tree->command1->background = tree->background;
+      tree->command1 = 0;
+      return true;
+    }
+    return false;
+  }
 }
 
 //! Execute a command tree
 /*! This function executes a command tree and
- returns the next node of the tree to process..
+ returns the next node of the tree to process.
 
  \param tree is the UCommand_TREE to execute.
  */
 void
 UConnection::execute(UCommand_TREE*& execCommand)
 {
-  UCommand_TREE* oldtree = 0;
-  UCommand_TREE* tree = execCommand;
-  bool mustReturn = false;
-  bool deletecommand = false;
-
   if (execCommand == 0 || closing)
     return;
 
+  // There are complications to make this a for loop: occurrences of
+  // "continue".
+  UCommand_TREE* tree = execCommand;
   while (tree)
   {
-    tree->status = URUNNING;
-
-    // BLOCKED/FREEZED COMMANDS
-    deletecommand = false;
+    tree->status = UCommand::URUNNING;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1162,6 +1051,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
       continue;
     }
 
+    // BLOCKED/FREEZED COMMANDS
+    bool deletecommand = false;
     if (tree->isBlocked())
     {
       tree->runlevel1 = UEXPLORED;
@@ -1171,18 +1062,16 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // COMMAND1
 
-    if (tree->callid &&
-	tree->command1 &&
-	tree->runlevel1 == UWAITING)
+    if (tree->callid && tree->command1 && tree->runlevel1 == UWAITING)
       stack.push_front(tree->callid);
 
-    tree->command1 = processCommand (tree->command1,
-				     tree->runlevel1,
-				     mustReturn );
-
+    bool mustReturn;
+    tree->command1 = processCommand (tree->command1, tree->runlevel1,
+				     mustReturn);
     if (mustReturn)
     {
-      tree = (UCommand_TREE*) tree->command1;
+      tree = dynamic_cast<UCommand_TREE*> (tree->command1);
+      assert (tree);
       continue;
     }
 
@@ -1199,28 +1088,29 @@ UConnection::execute(UCommand_TREE*& execCommand)
     }
 
     // COMMAND2
-    if (tree->node == UAND ||
-	tree->node == UCOMMA ||
-	tree->command1 == 0 ||
-	tree->command1->status == UBACKGROUND)
+    if (tree->flavor() == Flavorable::UAND
+	|| tree->flavor() == Flavorable::UCOMMA
+	|| tree->command1 == 0
+	|| tree->command1->status == UCommand::UBACKGROUND)
     {
       if (tree == lastCommand)
 	obstructed = false;
 
+      bool mustReturn;
       tree->command2 = processCommand (tree->command2,
-					tree->runlevel2,
-					mustReturn );
-
+				       tree->runlevel2,
+				       mustReturn);
       if (mustReturn)
       {
-	tree = (UCommand_TREE*) tree->command2;
+	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
+	assert (tree != 0);
 	continue;
       }
     }
 
     // STATUS UPDATE
 
-    if ((tree->command1 == 0 && tree->command2 == 0)
+    if (tree->command1 == 0 && tree->command2 == 0
 	|| deletecommand)
     {
       if (tree == lastCommand)
@@ -1229,86 +1119,44 @@ UConnection::execute(UCommand_TREE*& execCommand)
 	execCommand = 0;
 
       if (tree->position)
-	*(tree->position) = 0;
-      oldtree = tree;
+	*tree->position = 0;
 
-      UNamedParameters *param = tree->flags;
-      while (param)
-      {
-	if ((param->name) &&
-	    (param->name->equal("flag")) &&
-	    (param->expression) &&
-	    ((param->expression->val == 3 ) || // 3 = +end
-	     (param->expression->val == 1 ) )) // 1 = +report
+      for (UNamedParameters *param = tree->flags; param; param = param->next)
+	if (param->name &&
+	    param->name->equal("flag") &&
+	    param->expression &&
+	    (param->expression->val == 3 || // 3 = +end
+	     param->expression->val == 1)) // 1 = +report
 	  send("*** end\n", tree->getTag().c_str());
 
-	param = param->next;
-      }
-
+      UCommand_TREE* oldtree = tree;
       tree = tree->up;
-
       delete oldtree;
       continue;
     }
-    else
-      if ((((tree->command1 == 0) ||
-	      (tree->command1->status == UBACKGROUND)) &&
-
-	     ((tree->command2 == 0) ||
-	      (tree->command2->status == UBACKGROUND))) ||
-
-	   (tree->background == true) ||
-	   (tree->flagType&8))
-	tree->status = UBACKGROUND;
+    else if (((tree->command1 == 0
+	       || tree->command1->status == UCommand::UBACKGROUND)
+	      && (tree->command2 == 0 ||
+		  tree->command2->status == UCommand::UBACKGROUND))
+	     || tree->background == true
+	     || (tree->flagType&8))
+      tree->status = UCommand::UBACKGROUND;
 
     tree->runlevel1 = UWAITING;
     tree->runlevel2 = UWAITING;
 
     // REDUCTION
 
-    if ((tree != lastCommand) &&
-	(tree != execCommand) &&
-	(!tree->toDelete) &&
-	(tree->command1 == 0) &&
-	(tree->command2 != 0))
-    {
-      // left reduction
-      ASSERT(tree->position!=0) *(tree->position) = tree->command2;
-      tree->command2->up = tree->up;
-      tree->command2->position = tree->position;
-      tree->command2->background = tree->background;
-      tree->command2 = 0;
-      oldtree = tree;
-      tree = tree->up; // cannot be zero
-
-      delete oldtree;
-      continue;
-    }
-
-    if ((tree != lastCommand) &&
-	(tree != execCommand) &&
-	(!tree->toDelete) &&
-	(tree->command2 == 0) &&
-	(tree->command1 != 0) &&
-	(tree->command1->status != UBACKGROUND) )
-    {
-      // right reduction
-      // the background hack is here to preserve {at()...} commands.
-
-      ASSERT(tree->position!=0) *(tree->position) = tree->command1;
-      tree->command1->up = tree->up;
-      tree->command1->position = tree->position;
-      tree->command1->background = tree->background;
-      tree->command1 = 0;
-      oldtree = tree;
-      tree = tree->up; // cannot be zero
-
-      delete oldtree;
-      continue;
-    }
+    if (tree != lastCommand && tree != execCommand && !tree->toDelete)
+      if (simplify (tree))
+      {
+	UCommand_TREE* oldtree = tree;
+	tree = tree->up; // cannot be zero
+	delete oldtree;
+	continue;
+      }
 
     // BACK UP
-
     tree = tree->up;
   }
 
@@ -1357,7 +1205,7 @@ UConnection::append(UCommand_TREE *command)
 int
 UConnection::availableSendQueue ()
 {
-  return sendQueue_->bufferMaxFreeSpace();
+  return sendQueue_.bufferMaxFreeSpace();
 }
 
 
@@ -1365,7 +1213,7 @@ UConnection::availableSendQueue ()
 int
 UConnection::sendQueueRemain ()
 {
-  return sendQueue_->dataSize();
+  return sendQueue_.dataSize();
 }
 
 //! Performs a variable prefix check for local storage in function calls

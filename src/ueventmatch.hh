@@ -17,13 +17,13 @@
  **************************************************************************** */
 
 #ifndef UEVENTMATCH_HH
-#define UEVENTMATCH_HH
+# define UEVENTMATCH_HH
 
-#include <list>
-#include <string>
+# include <list>
+# include <string>
 
-#include "fwd.hh"
-#include "ustring.hh"
+# include "fwd.hh"
+# include "ustring.hh"
 
 namespace kernel
 {

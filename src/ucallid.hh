@@ -26,8 +26,6 @@
 
 #include "fwd.hh"
 #include "ustring.hh"
-#include "uvariable.hh"
-
 
 // ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
@@ -38,16 +36,19 @@ public:
   UCallid(const char* fun_id, const char* self_id, UCommand_TREE* root);
   ~UCallid();
 
-  std::list<UVariable*> stack;
-  UString* fun_id;
-  UString* self_id;
-  UCommand_TREE* root;
-  UVariable* returnVar;
-
   void         store(UVariable *variable);
   const char*  str();
   const char*  self();
-  void         setReturnVar( UVariable *v);
+  void         setReturnVar(UVariable *v);
+
+  // FIXME: Should be private, but ucommand.cc currently directly uses it.
+  UVariable* returnVar;
+
+private:
+  std::list<UVariable*> stack;
+  UString fun_id;
+  UString self_id;
+  UCommand_TREE* root;
 };
 
 #endif

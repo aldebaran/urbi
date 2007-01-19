@@ -21,11 +21,10 @@
 
 #include <cmath>
 
-#include "uvariablelist.hh"
-#include "ucommand.hh"
-#include "uconnection.hh"
+#include "ucopy.hh"
 #include "userver.hh"
-
+#include "uvariablelist.hh"
+#include "uvariablename.hh"
 
 // **************************************************************************
 //! UVariableList constructor.
@@ -59,7 +58,7 @@ UVariableList::rank(int n)
 
 //! UVariableList size function
 int
-UVariableList::size()
+UVariableList::size() const
 {
   if (next)
     return next->size() + 1;
@@ -69,15 +68,10 @@ UVariableList::size()
 
 //! UVariableList hard copy function
 UVariableList*
-UVariableList::copy()
+UVariableList::copy() const
 {
-  UVariableList* ret = new UVariableList((UVariableName*)0,
-					 (UVariableList*)0);
-
-  if (variablename) ret->variablename = variablename->copy();
-  if (next)         ret->next = next->copy();
-
-  return ret;
+  return new UVariableList (ucopy (variablename),
+			    ucopy (next));
 }
 
 //! Print the list of parameters
@@ -85,7 +79,7 @@ UVariableList::copy()
     It is not safe, efficient or crash proof. A better version will come later.
 */
 void
-UVariableList::print()
+UVariableList::print() const
 {
   if (variablename)
     {

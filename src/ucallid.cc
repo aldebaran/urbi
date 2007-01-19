@@ -19,32 +19,24 @@
 
  **************************************************************************** */
 
+#include "libport/containers.hh"
 #include "ucallid.hh"
-#include "ustring.hh"
-#include "ucommand.hh"
+#include "uvariable.hh"
 
 // **************************************************************************
 //! UCallid constructor.
-UCallid::UCallid (const char *fun_id, const char *self_id, UCommand_TREE* root)
+UCallid::UCallid (const char *f, const char *s, UCommand_TREE* r)
+  : returnVar (0),
+    fun_id (f),
+    self_id (s),
+    root (r)
 {
-  this->fun_id = new UString(fun_id);
-  this->self_id = new UString(self_id);
-  this->root = root;
-
-  returnVar = 0;
 }
 
 //! UCallid destructor
 UCallid::~UCallid()
 {
-  delete fun_id;
-  delete self_id;
-
-  for (std::list<UVariable*>::iterator iter = stack.begin();
-       iter != stack.end();iter++)
-    delete ((*iter));
-
-  stack.clear();
+  libport::deep_clear (stack);
 }
 
 //! Add a variable to the list of variable to liberate
@@ -58,14 +50,14 @@ UCallid::store(UVariable *variable)
 const char*
 UCallid::str()
 {
-  return (fun_id->str());
+  return fun_id.str();
 }
 
 //! Access to the call self ref
 const char*
 UCallid::self()
 {
-  return (self_id->str());
+  return self_id.str();
 }
 
 //! Set the returnVar in a function call
@@ -75,4 +67,3 @@ UCallid::setReturnVar (UVariable *v)
   returnVar = v;
   store (returnVar);
 }
-

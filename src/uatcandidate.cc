@@ -18,17 +18,16 @@
 
 #include "uatcandidate.hh"
 #include "ucommand.hh"
+#include "ueventhandler.hh"
 #include "ueventinstance.hh"
-
-// **************************************************************************
-// UAtCandidate
+#include "uvariablename.hh"
 
 UAtCandidate::UAtCandidate(ufloat endTime,
-			   UMultiEventInstance* mei):
-  endTime_ (endTime),
-  mei_ (mei),
-  checked_ (true),
-  hasTriggered_ (false)
+			   UMultiEventInstance* mei)
+  : endTime_ (endTime),
+    mei_ (mei),
+    checked_ (true),
+    hasTriggered_ (false)
 {
 }
 
@@ -40,62 +39,46 @@ UAtCandidate::~UAtCandidate ()
 bool
 UAtCandidate::equal(UMultiEventInstance* mei)
 {
-  return ((*mei) == (*mei_));
+  return *mei == *mei_;
 }
 
 bool
 UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 {
-  bool res = false;
+  if (currentTime < endTime_ || hasTriggered_)
+    return false;
+
   cmd = 0;
+  hasTriggered_ = true;
 
-  if ((currentTime >= endTime_) &&
-      !hasTriggered_)
+  for (std::list<UEventInstance*>::iterator i = mei_->instances_.begin ();
+       i != mei_->instances_.end ();
+       ++i)
   {
-    res = true;
-    hasTriggered_ = true;
-  }
-
-  if (res)
-  {
-    UCommand* newcmd;
     std::list<std::string>::iterator is;
     std::list<UValue*>::iterator iuv;
-    std::string device;
-    std::string id;
-
-    for (std::list<UEventInstance*>::iterator ii = mei_->instances_.begin ();
-	 ii != mei_->instances_.end ();
-	 ++ii)
-    {
-      for (is = (*ii)->filter_.begin (), iuv = (*ii)->e_->args ().begin ();
-	   is != (*ii)->filter_.end ();
-	   ++is, ++iuv)
-	if ( !is->empty())
-	{
-	  device = is->substr ( 0, is->find ('.'));
-	  id = is->substr ( is->find ('.')+1 );
-	  newcmd = new UCommand_ASSIGN_VALUE
-	    (new UVariableName (new UString (device.c_str ()),
-				new UString (id.c_str ()),
-				true,  (UNamedParameters*)0),
-	     new UExpression (EXPR_VALUE, (*iuv)),
-	     (UNamedParameters*)0
-	    );
-	  if (!cmd)
-	    cmd = newcmd;
-	  else
-	    cmd = (UCommand*)
-	      new UCommand_TREE
-	      (UAND,
-	       newcmd,
-	       cmd
-	      );
-	}
-    }
+    for (is = (*i)->filter_.begin (), iuv = (*i)->e_->args ().begin ();
+	 is != (*i)->filter_.end ();
+	 ++is, ++iuv)
+      if (!is->empty())
+      {
+	std::string device = is->substr (0, is->find ('.'));
+	std::string id = is->substr (is->find ('.')+1);
+	UCommand *newcmd = new UCommand_ASSIGN_VALUE
+	  (UCommand::location(),
+	   new UVariableName (new UString (device),
+			      new UString (id),
+			      true,  0),
+	   // FIXME: Don't know what happens here, fake location.
+	   new UExpression (UExpression::location (),
+			    UExpression::VALUE, *iuv), 0);
+	if (!cmd)
+	  cmd = newcmd;
+	else
+	  cmd = new UCommand_TREE (UCommand::location(), Flavorable::UAND,
+				   newcmd, cmd);
+      }
   }
 
-  return res;
+  return true;
 }
-
-

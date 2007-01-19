@@ -22,15 +22,11 @@
 #ifndef USERVER_HH
 # define USERVER_HH
 
+# include <cstdarg>
+# include "libport/compiler.hh"
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
-# include "parser/uparser.hh"
-# include "ufunction.hh"
-# include "uvariable.hh"
-# include "ubinder.hh"
-
-# define WAITDEBUG {double xw;for (int i=0;i<400000;i++) xw=sin(xw+i);}
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -50,13 +46,8 @@ extern  class UServer   *urbiserver; // Global variable for the server
     UServer is used to store the UConnection list and the UDevice list.
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
-
-    The versions we used to generate the parser are:
-
-    - flex 2.5.4a
-    - bison 2.2 or greater.
 */
-class UServer: public urbi::Lockable
+class UServer: public libport::Lockable
 {
 public:
   UServer(ufloat frequency, int freeMemory, const char* mainName);
@@ -67,10 +58,19 @@ public:
   void              work();
   void              main (int argc, const char* argv[]);
 
-  void              error           (const char* s, ...);
-  void              echo            (const char* s, ...);
-  void              echoKey         (const char* key, const char* s, ...);
-  void              debug           (const char* s, ...);
+  void error (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echo (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echoKey (const char* key, const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 3, 4)));
+
+  /// Send debugging data.
+  void vdebug (const char* s, va_list args)
+    __attribute__ ((__format__ (__printf__, 2, 0)));
+  void debug (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+
   void              isolate         ();
   void              deIsolate       ();
   bool              isIsolated      ();
@@ -79,10 +79,31 @@ public:
   virtual ufloat    getPower        () = 0;
   virtual void      getCustomHeader (int line, char* header,
 				     int maxlength) = 0;
+
+  /// A list of directory names.
+  typedef std::list<std::string> path_type;
+  /// Where to look for files to load.
+  // Should eventually become an Urbi variable.
+  // Should probably be changeable with an envvar.
+  // By default, empty (not even ".").  We rely on find_file to
+  // return at least the file name.
+  path_type path;
+
+  /// Return the full file name, handle paths.
+  /// Return \a f on failure.
+  virtual std::string find_file (const char* f);
+
+  /// Load a file into the connection.
+  /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue loadFile      (const char *filename,
-				     UCommandQueue* loadQueue) = 0;
+				     UCommandQueue* loadQueue);
+
+  /// Save content to a file
+  /// This function must be redefined by the robot-specific server.
+  /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue saveFile      (const char *filename,
 				     const char * content) = 0;
+
   void              memoryCheck     ();
   int               memory          ();
 
@@ -107,7 +128,10 @@ public:
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
-  UGhostConnection* getGhostConnection()  {return ghost;}
+  UGhostConnection* getGhostConnection ()
+  {
+    return ghost;
+  }
 
   void              freeze          (const std::string &tag);
   void              unfreeze        (const std::string &tag);
@@ -144,6 +168,9 @@ public:
   HMobjWaiting             objWaittab;
   /// Hash of all tags currently 'instanciated'
   HMtagtab                 tagtab;
+  /// Array of list of UObjects registered for a system messages
+  /// The system message type is the index.
+  std::vector<std::list<urbi::USystem*> > systemObjects;
 
   /// Variables to reinit (nbAverage=0).
   std::list<UVariable*>         reinitList;
@@ -156,12 +183,10 @@ public:
   /// List of variables to delete in a reset command.
   std::list<UVariable*>         varToReset;
 
-  /// The main parser object.
-  UParser                  parser;
   /// Flag used to signal a memory overflow.
   bool                     memoryOverflow;
 
-  /// Shows debug or not..
+  /// Shows debug or not.
   bool                     debugOutput;
   /// Name of the main device.
   UString                  *mainName;
@@ -197,7 +222,6 @@ public:
  static const int TCP_PORT            = 54000;
 
 protected:
-
   virtual void     effectiveDisplay         (const char*) = 0;
 
 private:
@@ -237,9 +261,26 @@ extern int URBI_unicID;
 
 inline int unic()
 {
-  URBI_unicID++;
+  ++URBI_unicID;
   return URBI_unicID;
 }
+
+
+/* Freestanding functions. */
+
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, va_list args)
+  __attribute__ ((__format__ (__printf__, 1, 0)));
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 1, 2)));
+
+/// Send debugging messages indented with \a t spaces, via ::urbiserver.
+void debug (unsigned t, const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 2, 3)));
+
 
 #endif
 

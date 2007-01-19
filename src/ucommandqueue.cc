@@ -32,20 +32,18 @@
 */
 UCommandQueue::UCommandQueue  (int minBufferSize,
 				int maxBufferSize,
-				int adaptive) :
-  UQueue (minBufferSize,
-	  maxBufferSize,
-	  adaptive),
-  cursor_         (0),
-  bracketlevel_   (0),
-  sbracketlevel_  (0),
-  parenlevel_     (0),
-  discard_        (false),
-  closechar_      (' '),
-  closechar2_     (' ')
+				int adaptive)
+  : UQueue (minBufferSize, maxBufferSize, adaptive),
+    cursor_         (0),
+    bracketlevel_   (0),
+    sbracketlevel_  (0),
+    parenlevel_     (0),
+    discard_        (false),
+    closechar_      (' '),
+    closechar2_     (' ')
 {
   ADDOBJ(UCommandQueue);
-  FREEOBJ(UQueue); // A tester...
+  FREEOBJ(UQueue); // A tester.
 }
 
 //! UCommandQueue destructor.
@@ -82,11 +80,6 @@ UCommandQueue::~UCommandQueue()
 ubyte*
 UCommandQueue::popCommand (int &length)
 {
-  bool   found;
-  ubyte* result;
-  int    position,nextposition,previousposition;
-  char   p0,p1,p_1;
-
   if (dataSize_ == 0)
   {
     length = 0;
@@ -94,107 +87,114 @@ UCommandQueue::popCommand (int &length)
   }
 
   // Scanning
-
-  position = start_ + cursor_;
+  int position = start_ + cursor_;
   if (position >= bufferSize_)
     position = position - bufferSize_;
 
-  nextposition = position + 1;
+  int nextposition = position + 1;
   if (nextposition >= bufferSize_)
     nextposition = nextposition - bufferSize_;
 
-  previousposition = position - 1;
+  int previousposition = position - 1;
   if (previousposition < 0)
     previousposition = previousposition + bufferSize_;
-  p0 = (char) (*(buffer_ + previousposition)); // extract the previous char.
-  if (cursor_ == 0) p0 = ' '; // no previous char at start
+  char p0 = (char) buffer_[previousposition]; // extract the previous char.
+  if (cursor_ == 0)
+    // no previous char at start
+    p0 = ' ';
 
-  found = false;
-  while ((cursor_ < dataSize_ ) &&
-	 (!found ) )
+  bool found = false;
+  while (cursor_ < dataSize_ && !found)
   {
-    p_1 = p0;
-    p0 = (char) (*(buffer_ + position));
-    if (cursor_ < dataSize_ - 1)
-      p1 = (char) (*(buffer_ + nextposition));
-    else p1 = '-';
+    char p_1 = p0;
+    p0 = (char) buffer_[position];
+    char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : '-';
 
     if (discard_)
     {
       // One char close sequence
-      if ((p0 == closechar_) &&
-	  (closechar2_ == ' ') )
+      if (p0 == closechar_ && closechar2_ == ' ')
       {
 	discard_ = false;
-	if ((closechar_ == '"') &&
-	    (p_1 == '\\'))
+	if (closechar_ == '"' && p_1 == '\\')
 	  discard_ = true; // cancel the closure.
       }
 
       // Two chars close sequence
-      if ((p_1 == closechar_ ) &&
-	  (p0  == closechar2_ ) &&
-	  (closechar2_ != ' '))
+      if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')
 	discard_ = false;
     }
     else
     {
-      if (p0 == '{') bracketlevel_ ++;
-      if (p0 == '}') bracketlevel_ --;
-      if (p0 == '[') sbracketlevel_ ++;
-      if (p0 == ']') sbracketlevel_ --;
-      if (p0 == '(') parenlevel_ ++;
-      if (p0 == ')') parenlevel_ --;
+      switch (p0)
+      {
+	case '{':
+	  ++bracketlevel_;
+	  break;
+	case '}':
+	  --bracketlevel_;
+	  if (bracketlevel_ < 0)
+	    bracketlevel_ = 0;
+	  break;
+	case '[':
+	  ++sbracketlevel_;
+	  break;
+	case ']':
+	  --sbracketlevel_;
+	  if (sbracketlevel_ < 0)
+	    sbracketlevel_ = 0;
+	  break;
+	case '(':
+	  ++parenlevel_;
+	  break;
+	case ')':
+	  --parenlevel_;
+	  if (parenlevel_ < 0)
+	    parenlevel_ = 0;
+	  break;
 
-      if (bracketlevel_ < 0) bracketlevel_ = 0;
-      if (sbracketlevel_ < 0) sbracketlevel_ = 0;
-      if (parenlevel_ < 0) parenlevel_ = 0;
+	case '#':
+	  discard_    = true;
+	  closechar_  = '\n';
+	  closechar2_ = ' ';
+	  break;
 
-      if (p0 == '#')
-      {
-	discard_    = true;
-	closechar_  = '\n';
-	closechar2_ = ' ';
-      }
-      if (p0 == '"')
-      {
-	discard_    = true;
-	closechar_  = '"';
-	closechar2_ = ' ';
-      }
-      if (((p0 == '/') &&
-	   (p1 == '*') ) ||
-	  ((p_1 == '/') &&
-	   (p0 == '*') ))
-      {
-	discard_    = true;
-	closechar_  = '*';
-	closechar2_ = '/';
-      }
-      if (((p0 == '/') &&
-	   (p1 == '/') ) ||
-	  ((p_1 == '/') &&
-	   (p0 == '/') ) )
-      {
-	discard_    = true;
-	closechar_  = '\n';
-	closechar2_ = ' ';
+	case '"':
+	  discard_    = true;
+	  closechar_  = '"';
+	  closechar2_ = ' ';
+	  break;
+
+	default:
+	  if (p0 == '/' && p1 == '*'
+	      || p_1 == '/' && p0 == '*')
+	  {
+	    discard_    = true;
+	    closechar_  = '*';
+	    closechar2_ = '/';
+	  }
+	  if (p0 == '/' && p1 == '/'
+	      || p_1 == '/' && p0 == '/')
+	  {
+	    discard_    = true;
+	    closechar_  = '\n';
+	    closechar2_ = ' ';
+	  }
       }
     }
 
     // , or ; separator, except between paren or brackets
-    if ((((char)(*(buffer_ + position)) == ',' ) ||
-	 ((char)(*(buffer_ + position)) == ';' )) &&
-	(!discard_ ) &&
-	(bracketlevel_ == 0) &&
-	(sbracketlevel_ == 0) &&
-	(parenlevel_ == 0) )
+    if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
+	&& !discard_
+	&& bracketlevel_ == 0
+	&& sbracketlevel_ == 0
+	&& parenlevel_ == 0)
       found = true;
 
     // Emergency escape character: ¤
-    if (((char)(*(buffer_ + position)) == '$' ) &&
-	((char)(*(buffer_ + nextposition)) == '$' ) &&
-	(!discard_ ) )
+    if ((char)buffer_[position] == '$'
+	&& (char)buffer_[nextposition] == '$'
+	&& !discard_)
     {
       length = -1;
       bracketlevel_ = 0;
@@ -205,27 +205,27 @@ UCommandQueue::popCommand (int &length)
       return 0;
     }
 
-    cursor_ ++;
-    position ++;
+    ++cursor_;
+    ++position;
     if (position == bufferSize_)
       position = 0;
-    nextposition ++;
+    ++nextposition;
     if (nextposition == bufferSize_)
       nextposition = 0;
+  }
 
-  };
-
+  ubyte* res;
   if (found)
   {
-    result = pop(cursor_);
+    res = pop(cursor_);
     length = cursor_;
     cursor_ = 0;
   }
   else
   {
-    result = buffer_;
+    res = buffer_;
     length = 0;
   }
 
-  return result;
+  return res;
 }

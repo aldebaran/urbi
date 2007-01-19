@@ -1,56 +1,27 @@
-#include "config.h"
+#include "libport/network.h"
 
-#ifdef WIN32
-# ifndef _WIN32_WINNT
-#  define _WIN32_WINNT 0x0400
-# endif
-# define GROUP __GROUP
-# define _WIN32_WINNT 0x0400
-# include <winsock2.h>
-# undef GROUP
-# define YYTOKENTYPE
-#else
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <unistd.h>
-#endif
 #include "network/bsdnet/connection.hh"
-
-extern UServer * THESERVER;
-/**
- * \file linuxconnection.cpp
- * \brief UConnection specialization for Linux
- * @author Anthony Truchet from a previous work by Arnaud Sarthou
- */
-
-
 
 //! LinuxConnection constructor.
 /*! The constructor calls UConnection::UConnection with the appropriate
  parameters.
  The global variable ::linuxserver saves the need to pass a UServer parameter
  to the LinuxConnection constructor.
-
- UError can have the following values:
- -  USUCCESS: success
- -  UFAIL   : UConnection or memory allocation failed
  */
-Connection::Connection(int connfd) :
-  UConnection	( (UServer*) THESERVER,
-		  Connection::MINSENDBUFFERSIZE,
-		  Connection::MAXSENDBUFFERSIZE,
-		  Connection::PACKETSIZE,
-		  Connection::MINRECVBUFFERSIZE,
-		  Connection::MAXRECVBUFFERSIZE),
-  fd(connfd)
+Connection::Connection(int connfd)
+  : UConnection	(::urbiserver,
+		 Connection::MINSENDBUFFERSIZE,
+		 Connection::MAXSENDBUFFERSIZE,
+		 Connection::PACKETSIZE,
+		 Connection::MINRECVBUFFERSIZE,
+		 Connection::MAXRECVBUFFERSIZE),
+    fd(connfd)
 {
+  // Test the error from UConnection constructor.
   if (UError != USUCCESS)
-    // Test the error from UConnection constructor.
-    //baad
     closeConnection();
   else
     initialize();
-  //block(); //mark as blocked
 }
 
 //! Connection destructor.
@@ -67,7 +38,8 @@ UErrorValue
 Connection::closeConnection()
 {
   int ret;
-  // Setting 'closing' to true tell the kernel not to use the connection any longer
+  // Setting 'closing' to true tell the kernel not to use the
+  // connection any longer
   closing=true;
 #ifdef WIN32
   closesocket(fd);
@@ -82,7 +54,6 @@ Connection::closeConnection()
   else
   {
     fd=-1;
-    //THESERVER.removeConnection(this);
     return USUCCESS;
   }
 }
@@ -95,7 +66,7 @@ Connection::closeConnection()
 void Connection::doRead()
 {
   int n = ::recv(fd, (char *)read_buff, PACKETSIZE, MSG_NOSIGNAL);
-  if(n<=0)
+  if (n<=0)
     //kill us
     closeConnection();
   else
@@ -105,24 +76,23 @@ void Connection::doRead()
 
 int Connection::effectiveSend (const ubyte *buffer, int length)
 {
-  int ret = ::send(fd, (char *)buffer, length, MSG_NOSIGNAL);
-  if(ret<=0)
+  int res = ::send(fd, 
+		   reinterpret_cast<const char *>(buffer), length,
+		   MSG_NOSIGNAL);
+  if (res <= 0)
   {
     //kill us
     closeConnection();
     return -1;
   }
   else
-    return ret; // Number of bytes actually written.
+    return res; // Number of bytes actually written.
 }
 
 void Connection::doWrite()
 {
   continueSend();
-  //block();
 }
-
-
 
 UErrorValue Connection::send(const ubyte *buffer, int length)
 {

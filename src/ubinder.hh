@@ -20,15 +20,15 @@
  **************************************************************************** */
 
 #ifndef UBINDER_HH
-#define UBINDER_HH
+# define UBINDER_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "ustring.hh"
-#include "utypes.hh"
+# include "fwd.hh"
+# include "ustring.hh"
+# include "utypes.hh"
 
-// *****************************************************************************
+// ****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command
 //! A binder associates a var name (function, event or var) to a callback
 //! mechanism that must be called. Only for external mode.
@@ -36,20 +36,23 @@ class UBinder
 {
 public:
 
-  UBinder(UString *objname, UString *id, UBindMode bindMode, UBindType type, int nbparam,
-  	UConnection* c);
+  UBinder(const UString& objname, const UString& id,
+	  UBindMode bindMode, UBindType type, int nbparam,
+	  UConnection* c);
   ~UBinder();
 
-  UString      *id;
+  UString      id;
   UBindMode    bindMode;
   UBindType    type;
   int          nbparam;
-  std::list<UMonitor*> monitors;
 
-  void addMonitor(UString *objname, UConnection *c);
+  typedef std::list<UMonitor*> monitors_type;
+  monitors_type monitors;
 
-  bool removeMonitor(UString *objname, UConnection *c);
-  bool removeMonitor(UString *objname);
+  void addMonitor(const UString& objname, UConnection *c);
+
+  bool removeMonitor(const UString& objname, UConnection *c);
+  bool removeMonitor(const UString& objname);
   bool removeMonitor(UConnection *c);
 
   UMonitor* locateMonitor(UConnection *c);
@@ -58,13 +61,12 @@ public:
 class UMonitor
 {
 public:
-
   UMonitor(UConnection *c);
-  UMonitor(UString *objname, UConnection *c);
+  UMonitor(const UString& objname, UConnection *c);
   ~UMonitor();
 
-  void addObject(UString *objname);
-  bool removeObject(UString *objname);
+  void addObject(const UString& objname);
+  bool removeObject(const UString& objname);
 
   UConnection* c;
   std::list<UString*> objects;

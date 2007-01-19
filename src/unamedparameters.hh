@@ -20,14 +20,12 @@
  **************************************************************************** */
 
 #ifndef UNAMEDPARAMETERS_HH
-#define UNAMEDPARAMETERS_HH
+# define UNAMEDPARAMETERS_HH
 
-#include "fwd.hh"
-#include "utypes.hh"
-#include "ustring.hh"
+# include "fwd.hh"
 
-// ****************************************************************************
-//! Contains any list of identifiers, expressions or combinaison of both.
+/// Any list of identifiers, expressions or combinaison of both.
+// FIXME: There should be UNamedParameter, and we should use lists or so.
 class UNamedParameters
 {
 public:
@@ -38,15 +36,18 @@ public:
   UNamedParameters(UExpression *expression, UNamedParameters* next = 0);
   virtual ~UNamedParameters();
 
-  void print();
+  void print() const;
 
   UNamedParameters* rank(int n);
-  int               size();
-  UNamedParameters* copy();
+  int               size() const;
+  UNamedParameters* copy() const;
 
-  UString            *name;         ///< The name
-  UExpression        *expression;   ///< The expression
-  UNamedParameters   *next;         ///< Next element in the list
+  /// Name.
+  UString            *name;
+  /// Value.
+  UExpression        *expression;
+  /// Next in the list.
+  UNamedParameters   *next;
 };
 
 #endif

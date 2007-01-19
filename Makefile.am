@@ -11,7 +11,7 @@
 include $(top_srcdir)/build-aux/build-aux.mk
 include $(top_srcdir)/libport/libport.mk
 
-ACLOCAL_AMFLAGS = -I build-aux
+ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
 SUBDIRS = src tests doc .
 
@@ -27,15 +27,20 @@ windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj       
 
+# Clean VC++ debug file. BTW, Do we want to install it?
+CLEANFILES += vc80.pdb
+
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
 
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS_PROXY += uobject urbivalid
+SVN_EXTERNALS += sdk tests
+SVN_EXTERNALS_PROXY += uobject
 uobject-help uobject-ci uobject-up uobj-ci uob-up:
 	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
 
-urbivalid-help urbivali-ci urbivalid-up:
-	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
+maintainer-check: valgrind-check
+valgrind-check:
+	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1
