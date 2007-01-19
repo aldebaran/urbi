@@ -1,5 +1,12 @@
 2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
+	branch 1.0: fix a segv when deleting a variable with function scope
+	* src/ucallid.cc: Implement:
+	* src/ucallid.hh: Add a remove function to remove uvariables from list. This function does nothing as soon as dtor has been called.
+	* src/uvariable.hh: Hold a ucallid* , non null if var is of function scope. call its remove function when deleted.
+
+2007-01-19  Matthieu Nottale  <nottale@gostai.com>
+
 	branch 1.0: Add missing mutex lock in custom memory manager 
 	* src/memorymanager/blockmemorymanager.hh,
 	* src/memorymanager/memorymanager.cc: Do it.
