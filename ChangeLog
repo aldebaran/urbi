@@ -1,5 +1,13 @@
 2007-01-20  Akim Demaille  <akim.demaille@free.fr>
 
+	Coding style
+	* src/network/bsdnet/network.cc: Use a more tradional reading
+	of error values.
+	(TCPServerPipe::~TCPServerPipe): close the fd when exiting to
+	free the port asap.
+
+2007-01-20  Akim Demaille  <akim.demaille@free.fr>
+
 	Use perror
 	* src/network/bsdnet/network.cc: Use perror where there are syscall
 	failures.

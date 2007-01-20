@@ -35,6 +35,8 @@ namespace Network
     {}
     bool init(int port);
 
+    ~TCPServerPipe();
+
     virtual int readFD()
     {
       return fd;
@@ -51,6 +53,12 @@ namespace Network
     int fd;
     int port;
   };
+
+  TCPServerPipe::~TCPServerPipe ()
+  {
+    if (fd != -1 && close (fd))
+      perror ("cannot close socket");
+  }
 
   bool
   TCPServerPipe::init(int p)
@@ -73,8 +81,7 @@ namespace Network
 
     // Set the REUSEADDR option to 1 to allow imediate reuse of the port.
     int yes = 1;
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
-		   (char *) &yes, sizeof (yes)) < 0)
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof yes))
     {
       perror ("setsockopt failed");
       return false;
@@ -88,15 +95,14 @@ namespace Network
     address.sin_addr.s_addr = INADDR_ANY;
 
     /* bind to port */
-    if (bind(fd, (struct sockaddr*)&address, sizeof (struct sockaddr))
-	== -1)
+    if (bind(fd, (struct sockaddr*)&address, sizeof (struct sockaddr)))
     {
       perror ("cannot bind");
       return false;
     }
 
     /* listen for connections */
-    if (listen(fd, 1) == -1)
+    if (listen(fd, 1))
     {
       perror ("cannot listen");
       return false;
@@ -209,7 +215,7 @@ namespace Network
   {
     fd_set rd;
     fd_set wr;
-    int mx = buildFD(rd, wr );
+    int mx = buildFD(rd, wr);
     struct timeval tv;
     tv.tv_sec = usDelay / 1000000;
     tv.tv_usec = usDelay - ((usDelay / 1000000) * 1000000);
@@ -229,8 +235,8 @@ namespace Network
       notify(rd, wr);
     }
     if (r < 0)
-      //XXX this is baad, we should realy do something
-      perror("SELECT ERROR:");
+      // FIXME: This is bad, we should really do something.
+      perror("cannot select");
 
     return r > 0;
   }
@@ -242,7 +248,6 @@ namespace Network
 #ifndef WIN32
     if (controlPipe[0] == -1)
       pipe(controlPipe);
-
     p->controlFd = controlPipe[1];
 #endif
   }
@@ -283,8 +288,8 @@ namespace Network
   void Pipe::trigger()
   {
 #ifndef WIN32
-    char  c = 0;
+    char c = 0;
     write(this->controlFd, &c, 1);
 #endif
   }
-};
+}
