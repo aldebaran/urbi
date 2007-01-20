@@ -117,10 +117,10 @@ namespace Network
   {
     TCPServerPipe* tsp = new TCPServerPipe();
     if (!tsp->init(port))
-      {
-	delete tsp;
-	return false;
-      }
+    {
+      delete tsp;
+      return false;
+    }
     return true;
   }
 
@@ -147,18 +147,18 @@ namespace Network
     for (std::list<Pipe*>::iterator i = pList.begin();
 	 i != pList.end();
 	 ++i)
-      {
-	int f = (*i)->readFD();
-	if (f > 0)
-	  LIBPORT_FD_SET(f, &rd);
-	if (f > maxfd)
-	  maxfd = f;
-	int g = (*i)->writeFD();
-	if (g > 0)
-	  LIBPORT_FD_SET(g, &wr);
-	if (g > maxfd)
-	  maxfd = g;
-      }
+    {
+      int f = (*i)->readFD();
+      if (f > 0)
+	LIBPORT_FD_SET(f, &rd);
+      if (f > maxfd)
+	maxfd = f;
+      int g = (*i)->writeFD();
+      if (g > 0)
+	LIBPORT_FD_SET(g, &wr);
+      if (g > maxfd)
+	maxfd = g;
+    }
     return maxfd + 1;
   }
 
@@ -168,24 +168,24 @@ namespace Network
     for (std::list<Pipe*>::iterator i = pList.begin();
 	 i != pList.end();
 	 i = in)
-      {
-	in = i;
-	++in;
-	try {
-	  Pipe* p = *i;
-	  int f = p->readFD();
-	  if (f >= 0 && FD_ISSET(f, &rd))
-	    p->notifyRead();
+    {
+      in = i;
+      ++in;
+      try {
+	Pipe* p = *i;
+	int f = p->readFD();
+	if (f >= 0 && FD_ISSET(f, &rd))
+	  p->notifyRead();
 
-	  f = p->writeFD();
-	  if (f >= 0 && FD_ISSET(f, &wr))
-	    p->notifyWrite();
-	}
-	catch(...)
-	{
-	  //this can happen if the object was destroyed by the notifyRead
-	}
+	f = p->writeFD();
+	if (f >= 0 && FD_ISSET(f, &wr))
+	  p->notifyWrite();
       }
+      catch(...)
+      {
+	//this can happen if the object was destroyed by the notifyRead
+      }
+    }
   }
 
 
@@ -203,16 +203,16 @@ namespace Network
     if (!r)
       return false;
     if (r > 0)
-      {
+    {
 #ifndef WIN32
-	if (FD_ISSET(controlPipe[0], &rd))
-	  {
-	    char buf[128];
-	    read(controlPipe[0], buf, 128);
-	  }
-#endif
-	notify(rd, wr);
+      if (FD_ISSET(controlPipe[0], &rd))
+      {
+	char buf[128];
+	read(controlPipe[0], buf, 128);
       }
+#endif
+      notify(rd, wr);
+    }
     if (r < 0)
       //XXX this is baad, we should realy do something
       perror("SELECT ERROR:");
