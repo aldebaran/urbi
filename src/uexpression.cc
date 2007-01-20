@@ -182,19 +182,19 @@ UExpression::UExpression(const location& l, UExpression::Type t, UValue *v)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(const location& l, UExpression::Type type,
-			 UString *oper,
-			 UVariableName *variablename)
+UExpression::UExpression(const location& l, UExpression::Type t,
+			 UString *o,
+			 UVariableName *v)
  : UAst(l)
 {
+  assert (t == PROPERTY);
   initialize();
-  this->str	     = oper;
-  this->variablename = variablename;
+  str = o;
+  variablename = v;
   if (variablename)
-    this->isconst    = variablename->isstatic;
-
-  this->type	   = type; // should be PROPERTY
-  dataType	   = DATA_UNKNOWN;
+    isconst = variablename->isstatic;
+  type = t;
+  dataType = DATA_UNKNOWN;
 }
 
 //! UExpression constructor for variable
@@ -202,112 +202,105 @@ UExpression::UExpression(const location& l, UExpression::Type type,
  between all the different constructors.
  */
 UExpression::UExpression(const location& l,
-			 UExpression::Type type, UVariableName* variablename)
+			 UExpression::Type t, UVariableName* v)
  : UAst(l)
 {
+  // FIXME: The comment used to accept GROUPLIST, which AD translated
+  // into GROUP.  What should it be?
+  assert (t == VARIABLE || t == ADDR_VARIABLE || t == GROUP);
   initialize();
-  this->type	 = type; // should be VARIABLE or
-  //ADDR_VARIABLE or GROUPLIST
-  if (type == ADDR_VARIABLE)
+  type = t;
+  if (t == ADDR_VARIABLE)
     dataType = DATA_STRING;
-  this->variablename = variablename;
+  variablename = v;
 }
 
 //! UExpression constructor for function
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(const location& l, UExpression::Type type,
-			 UVariableName* variablename,
-			 UNamedParameters *parameters)
+UExpression::UExpression(const location& l, UExpression::Type t,
+			 UVariableName* v,
+			 UNamedParameters *p)
  : UAst(l)
 {
+  assert (t == FUNCTION);
   initialize();
-  this->type	     = type; // should be FUNCTION
-  dataType	     = DATA_UNKNOWN;
-  this->variablename = variablename;
-  this->parameters   = parameters;
+  type = t;
+  dataType = DATA_UNKNOWN;
+  variablename = v;
+  parameters = p;
 }
 
 //! UExpression constructor for function
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(const location& l, UExpression::Type type,
-			 UNamedParameters *parameters)
+UExpression::UExpression(const location& l, UExpression::Type t,
+			 UNamedParameters *p)
   : UAst(l)
 {
+  assert (t == LIST);
   initialize();
-  this->type	     = type; // should be LIST
-  dataType	     = DATA_LIST;
-  this->parameters   = parameters;
+  type = t;
+  dataType = DATA_LIST;
+  parameters = p;
 }
 
 //! UExpression constructor for composed operation
-UExpression::UExpression(const location& l, UExpression::Type type,
-			 UExpression* expression1,
-			 UExpression* expression2)
+UExpression::UExpression(const location& l, UExpression::Type t,
+			 UExpression* e1, UExpression* e2)
  : UAst(l)
 {
   initialize();
-  this->type	    = type;
-
-  this->expression1 = expression1;
-  this->expression2 = expression2;
-
   // Compile time calculus reduction
-  if (expression1 && expression2
-      && expression1->type == VALUE && expression1->dataType == DATA_NUM
-      && expression2->type == VALUE && expression2->dataType == DATA_NUM
-      && (type == PLUS || type == MINUS ||
-	  type == MULT || type == DIV ||
-	  type == EXP)
-      && ! (type == DIV && expression2->val == 0))
+  if (e1 && e2
+      && e1->type == VALUE && e1->dataType == DATA_NUM
+      && e2->type == VALUE && e2->dataType == DATA_NUM
+      && (t == PLUS || t == MINUS || t == MULT || t == DIV || t == EXP)
+      && ! (t == DIV && e2->val == 0))
   {
     switch (type)
     {
       case PLUS:
-	val = expression1->val + expression2->val;
+	val = e1->val + e2->val;
 	break;
       case MINUS:
-	val = expression1->val - expression2->val;
+	val = e1->val - e2->val;
 	break;
       case MULT:
-	val = expression1->val * expression2->val;
+	val = e1->val * e2->val;
 	break;
       case DIV:
-	val = expression1->val / expression2->val;
+	val = e1->val / e2->val;
 	break;
       case EXP:
-	val = pow (expression1->val , expression2->val);
+	val = pow (e1->val , e2->val);
 	break;
       default:
 	// This case is not possible, but GCC does not seem to be
 	// able to infer it.
 	abort();
     }
-
-    this->type = VALUE;
-    this->isconst = true;
+    type = VALUE;
+    isconst = true;
     dataType = DATA_NUM;
-    delete expression1;
-    this->expression1 = 0;
-    delete expression2;
-    this->expression2 = 0;
+    delete e1;
+    delete e2;
   }
-
-  if (type == NEG
-      && expression1
-      && expression1->type == VALUE
-      && expression1->dataType == DATA_NUM)
+  else if (t == NEG && e1 && e1->type == VALUE && e1->dataType == DATA_NUM)
   {
-    val = - expression1->val;
-
-    this->type = VALUE;
-    this->isconst = true;
+    val = -e->val;
+    type = VALUE;
+    isconst = true;
     dataType = DATA_NUM;
-    delete expression1;
-    this->expression1 = 0;
+    delete e1;
+  }
+  else
+  {
+    type = t;
+    expression1 = e1;
+    expression2 = e2;
   }
 }
 

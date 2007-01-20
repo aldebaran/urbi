@@ -1,3 +1,12 @@
+2007-01-20  Akim Demaille  <demaille@gostai.com>
+
+	Coding style
+	* src/uexpression.cc: Use shorten argument names that don't
+	conflict with the member names.
+	Simplify accordingly.
+	Translate comments into asserts.
+	Simplify the logic of the bin expression case.
+
 2007-01-19  Akim Demaille  <demaille@gostai.com>
 
 	-Werror
