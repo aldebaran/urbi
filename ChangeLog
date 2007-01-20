@@ -1,5 +1,11 @@
 2007-01-20  Akim Demaille  <demaille@gostai.com>
 
+	Scope shortening
+	* src/uexpression.cc: here.
+	Use ?:.
+
+2007-01-20  Akim Demaille  <demaille@gostai.com>
+
 	No longer alias urbi::UBlendType, just use it
 	* src/utypes.hh: No longer alias it and its members.
 	* src/ucommand.cc, src/userver.cc, src/uvariable.cc,

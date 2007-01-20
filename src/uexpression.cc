@@ -483,10 +483,7 @@ UExpression::eval (UCommand *command,
   if (issofttest && softtest_time)
   {
     UValue *v = softtest_time->eval(command, connection);
-    if (v)
-      softtest_time->val = v->val;
-    else
-      softtest_time->val = 0;
+    softtest_time->val = v ? v->val : 0;
     delete v;
   }
 
@@ -540,10 +537,9 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      UValue* ret = new UValue();
-
       if (STREQ(str->str(), "rangemin"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 	ret->val = variable->rangemin;
 	return ret;
@@ -551,6 +547,7 @@ UExpression::eval (UCommand *command,
 
       if (STREQ(str->str(), "rangemax"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 	ret->val = variable->rangemax;
 	return ret;
@@ -558,6 +555,7 @@ UExpression::eval (UCommand *command,
 
       if (STREQ(str->str(), "speedmin"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 	ret->val = variable->speedmin;
 	return ret;
@@ -565,6 +563,7 @@ UExpression::eval (UCommand *command,
 
       if (STREQ(str->str(), "speedmax"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 	ret->val = variable->speedmax;
 	return ret;
@@ -572,6 +571,7 @@ UExpression::eval (UCommand *command,
 
       if (STREQ(str->str(), "delta"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_NUM;
 	ret->val = variable->delta;
 	return ret;
@@ -579,6 +579,7 @@ UExpression::eval (UCommand *command,
 
       if (STREQ(str->str(), "unit"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_STRING;
 	ret->str = new UString( variable->getUnit().c_str() );
 	return ret;
@@ -586,6 +587,7 @@ UExpression::eval (UCommand *command,
 
       if (STREQ(str->str(), "blend"))
       {
+	UValue* ret = new UValue();
 	ret->dataType = DATA_STRING;
 	ret->str = new UString(name (variable->blendType));
 	return ret;
@@ -620,7 +622,7 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-#define EVAL_ARITHMETICS(Value)				\
+#define EVAL_ARITHMETICS(Value)					\
     {								\
       UValue* e1 = expression1->eval(command, connection);	\
       UValue* e2 = expression2->eval(command, connection);	\
@@ -991,17 +993,12 @@ UExpression::eval_FUNCTION (UCommand *command,
   UString* funname = variablename->buildFullname(command, connection);
 
   // Event detection
-  UEventHandler* eh;
-  if (parameters)
-    eh = kernel::findEventHandler(funname, parameters->size());
-  else
-    eh = kernel::findEventHandler(funname, 0);
-  if (eh)
+  if (UEventHandler* eh =
+      kernel::findEventHandler(funname, parameters ? parameters->size() : 0))
   {
     UValue* ret = new UValue(ufloat(1));
     if (eh->noPositive())
       ret->val = 0; // no active (positive) event in the handler
-
     ec = new UEventCompound (new UEventMatch (funname,
 					      parameters,
 					      command,
