@@ -35,7 +35,7 @@ public:
 
   virtual ufloat getTime()
   {
-    return static_cast<ufloat>(urbi::utime() / 1000LL);
+    return static_cast<ufloat>(libport::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
@@ -99,12 +99,12 @@ main (int argc, const char* argv[])
 
   c.newDataAdded = true;
 
-  long long startTime = urbi::utime();
+  long long startTime = libport::utime();
 
   while (true)
   {
     ufloat freq = s.getFrequency() * 1000;
-    while (urbi::utime() < (startTime + freq))
+    while (libport::utime() < (startTime + freq))
       usleep (1);
     s.work ();
   }
