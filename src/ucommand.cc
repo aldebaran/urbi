@@ -79,7 +79,7 @@ send_error (UConnection* c, const UCommand* cmd,
   return res;
 }
 
-const char* 
+const char*
 to_string (UCommand::Status s)
 {
   switch (s)
@@ -232,7 +232,7 @@ UCommand::print(unsigned l) const
     CASE(WHILE);
 #undef CASE
   }
-  debug(l, " Tag:[%s] %s (toDelete=%s status=%s)\n", 
+  debug(l, " Tag:[%s] %s (toDelete=%s status=%s)\n",
 	getTag().c_str(), k,
 	toDelete ? "true" : "false",
 	to_string(status));
@@ -644,7 +644,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
   ufloat currentTime = connection->server->lastTime();
 
   // Wait in queue if needed
-  if (variable && variable->blendType == UQUEUE && variable->nbAverage > 0)
+  if (variable && variable->blendType == urbi::UQUEUE && variable->nbAverage > 0)
     return status;
 
   // Broadcasting
@@ -946,7 +946,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	errorFlag = true;
 
     // UCANCEL mode
-    if (variable && variable->blendType == UCANCEL)
+    if (variable && variable->blendType == urbi::UCANCEL)
     {
       variable->nbAverage = 0;
       variable->cancel = this;
@@ -1242,7 +1242,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       delete target;
 
       // UDISCARD mode
-      if (variable->blendType == UDISCARD &&
+      if (variable->blendType == urbi::UDISCARD &&
 	  variable->nbAssigns > 0)
 	return UCOMPLETED;
 
@@ -1286,19 +1286,19 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	return UCOMPLETED;
 
     // Cancel if needed
-    if (variable->blendType == UCANCEL && variable->cancel != this)
+    if (variable->blendType == urbi::UCANCEL && variable->cancel != this)
       return UCOMPLETED;
 
     // Discard if needed
-    if (variable->blendType == UDISCARD && variable->nbAverage > 0)
+    if (variable->blendType == urbi::UDISCARD && variable->nbAverage > 0)
       return UCOMPLETED;
 
     // In normal mode, there is always only one value to consider
-    if (variable->blendType == UNORMAL)
+    if (variable->blendType == urbi::UNORMAL)
       variable->nbAverage = 0;
 
     // In add mode, the current value is always added
-    if (variable->blendType == UADD && variable->nbAverage > 1)
+    if (variable->blendType == urbi::UADD && variable->nbAverage > 1)
       variable->nbAverage = 1;
 
     ///////////////////////////////
@@ -1309,7 +1309,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
     // absorb average and set reinit list to set
     // nbAverage back to 0 after work()
-    if (variable->blendType != UADD)
+    if (variable->blendType != urbi::UADD)
       *valtmp = *valtmp / (ufloat)(variable->nbAverage+1);
     ++variable->nbAverage;
 
@@ -1325,16 +1325,13 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     // of the UADD and UMIX aggregation, but only at the end.
     // Hence the report to reinit list processing.
 
-    if (variable->blendType != UMIX && variable->blendType != UADD)
+    if (variable->blendType != urbi::UMIX && variable->blendType != urbi::UADD)
       variable->selfSet(valtmp);
 
     first = false;
 
     if (finished)
-      if (variable->speedmax != UINFINITY)
-	return URUNNING;
-      else
-	return UCOMPLETED;
+      return variable->speedmax != UINFINITY ? URUNNING : UCOMPLETED;
     else
       return URUNNING;
   }
@@ -1347,11 +1344,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 					ufloat currentTime)
 {
   ufloat deltaTime = connection->server->getFrequency();
-  ufloat currentVal;
-  if (controlled)
-    currentVal = variable->get()->val;
-  else
-    currentVal = variable->value->val;
+  ufloat currentVal = controlled ? variable->get()->val : variable->value->val;
 
   ufloat phase, amplitude;
 
@@ -1753,7 +1746,7 @@ UCommand_ASSIGN_BINARY::execute_(UConnection *connection)
     variable = new UVariable(variablename->getFullname()->str(), value);
     if (!variable)
       return UCOMPLETED;
-    variable->blendType = UQUEUE;
+    variable->blendType = urbi::UQUEUE;
 
     connection->localVariableCheck(variable);
   }
@@ -1872,17 +1865,17 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
     }
 
     if (STREQ(blendmode->str->str(), "normal"))
-      variable->blendType = UNORMAL;
+      variable->blendType = urbi::UNORMAL;
     else if (STREQ(blendmode->str->str(), "mix"))
-      variable->blendType = UMIX;
+      variable->blendType = urbi::UMIX;
     else if (STREQ(blendmode->str->str(), "add"))
-      variable->blendType = UADD;
+      variable->blendType = urbi::UADD;
     else if (STREQ(blendmode->str->str(), "discard"))
-      variable->blendType = UDISCARD;
+      variable->blendType = urbi::UDISCARD;
     else if (STREQ(blendmode->str->str(), "queue"))
-      variable->blendType = UQUEUE;
+      variable->blendType = urbi::UQUEUE;
     else if (STREQ(blendmode->str->str(), "cancel"))
-      variable->blendType = UCANCEL;
+      variable->blendType = urbi::UCANCEL;
     else
     {
       send_error(connection, this, "Unknown blend mode: %s",
@@ -4071,7 +4064,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	 i != connection->server->variabletab.end();
 	 ++i)
     {
-      
+
       std::ostringstream tstr;
       tstr << "*** " <<  i->second->getVarname() << " = ";
       switch (i->second->value->dataType)
@@ -4079,11 +4072,11 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
       case DATA_NUM:
 	tstr << i->second->value->val;
 	break;
-	
+
       case DATA_STRING:
 	tstr << i->second->value->str->str();
 	break;
-	
+
       case DATA_BINARY:
 	tstr << "BIN ";
 	if (i->second->value->refBinary)
@@ -4091,25 +4084,25 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	else
 	  tstr << "0 null";
 	break;
-	
+
       case DATA_LIST:
 	tstr << "LIST";
 	break;
-	
+
       case DATA_OBJ:
 	tstr << "OBJ";
 	break;
-	
+
       case DATA_VOID:
 	tstr << "VOID";
 	break;
-	
+
       default:
 	tstr << "UNKNOWN TYPE";
       }
       tstr << '\n';
       connection->sendf(getTag(), tstr.str().c_str());
-      
+
     }
 
     return UCOMPLETED;
@@ -4173,7 +4166,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	connection->sendf(getTag(), tstr.str().c_str());
       }
     }
-    
+
     return UCOMPLETED;
   }
 

@@ -403,7 +403,7 @@ UServer::work()
       (*i)->nbAverage = 0;
       (*i)->reloop = false;
 
-      if ((*i)->blendType == UMIX || (*i)->blendType == UADD)
+      if ((*i)->blendType == urbi::UMIX || (*i)->blendType == urbi::UADD)
 	if ((*i)->value->dataType == DATA_NUM)
 	{
 	  if ((*i)->autoUpdate)

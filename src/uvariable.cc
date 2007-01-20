@@ -142,7 +142,7 @@ void
 UVariable::init()
 {
   ADDOBJ(UVariable);
-  blendType  = UNORMAL;
+  blendType  = urbi::UNORMAL;
   rangemin   = -UINFINITY;
   rangemax   = UINFINITY;
   speedmin   = 0;
@@ -201,7 +201,7 @@ const char*
 UVariable::setName(const char* s)
 {
   varname = s;
-  
+
   size_t pos = varname.find('.');
   if (pos==std::string::npos) {
     method = "";
@@ -211,7 +211,7 @@ UVariable::setName(const char* s)
     method = varname.substr(pos + 1, varname.length());
     devicename = varname.substr(0,pos);
   }
- 
+
 
   return varname.c_str();
 }
@@ -412,15 +412,15 @@ UVariable::get(bool autoloop)
     urbi::UVar* tmpvar = static_cast<urbi::UVar*> ((*i)->storage);
 
     if (!tmpvar->owned
-        || change_objname != (*i)->objname)
+	|| change_objname != (*i)->objname)
     {
       urbi::UList l;
       if ((*i)->storage)
       {
-        // monitor with &UVar reference
-        urbi::UValue *v = new urbi::UValue();
-        v->storage = (*i)->storage;
-        l.array.push_back(v);
+	// monitor with &UVar reference
+	urbi::UValue *v = new urbi::UValue();
+	v->storage = (*i)->storage;
+	l.array.push_back(v);
       }
       // FIXME: I guess the following comment reads "emptied".
       (*i)->__evalcall(l); // l is empty here
@@ -463,16 +463,16 @@ UVariable::updated(bool uvar_assign)
        ++i)
   {
     if (!uvar_assign
-        || (*i)->objname != getDevicename())
+	|| (*i)->objname != getDevicename())
     {
       urbi::UList tmparray;
 
       if ((*i)->storage)
       {
-        // monitor with &UVar reference
-        urbi::UValue *tmpvalue = new urbi::UValue();
-        tmpvalue->storage = (*i)->storage;
-        tmparray.array.push_back(tmpvalue);
+	// monitor with &UVar reference
+	urbi::UValue *tmpvalue = new urbi::UValue();
+	tmpvalue->storage = (*i)->storage;
+	tmparray.array.push_back(tmpvalue);
       };
 
       (*i)->__evalcall(tmparray);//FIXME:shouldn't tmparray content be deleted?

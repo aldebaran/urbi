@@ -133,15 +133,6 @@ enum UDataType
   DATA_VARIABLE
 };
 
-// UBlendType.
-using urbi::UBlendType;
-using urbi::UMIX;
-using urbi::UADD;
-using urbi::UDISCARD;
-using urbi::UQUEUE;
-using urbi::UCANCEL;
-using urbi::UNORMAL;
-
 /// Runlevel type for a binary tree exploration
 enum URunlevel
 {

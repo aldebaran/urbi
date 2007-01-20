@@ -84,15 +84,15 @@ public:
 	    bool _autoUpdate = true);
   ~UVariable();
 
-  
- 
-  
+
+
+
 
   //properties
 
   /// The variable blend type.
-  UBlendType blendType;
-  
+  urbi::UBlendType blendType;
+
   ufloat          rangemin;
   ufloat          rangemax;
   ufloat          speedmin;
@@ -190,7 +190,7 @@ public:
   void setUnit(const char *u) {unit =u;}
   void setContext(UCallid * ctx) {context = ctx;}
   private:
-  
+
   /// Device in the varname.
   std::string         devicename;
    /// Method in the varname.
@@ -201,7 +201,7 @@ public:
   void    init();
   UVariable(const UVariable &);
   UVariable & operator = (const UVariable &);
-  
+
   UCallid * context; // context if called in a function
 };
 

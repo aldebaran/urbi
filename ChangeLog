@@ -1,5 +1,12 @@
 2007-01-20  Akim Demaille  <demaille@gostai.com>
 
+	No longer alias urbi::UBlendType, just use it
+	* src/utypes.hh: No longer alias it and its members.
+	* src/ucommand.cc, src/userver.cc, src/uvariable.cc,
+	* src/uvariable.hh: Adjust.
+
+2007-01-20  Akim Demaille  <demaille@gostai.com>
+
 	Coding style
 	* src/uexpression.cc: Use shorten argument names that don't
 	conflict with the member names.
