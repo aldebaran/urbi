@@ -496,30 +496,17 @@ UExpression::eval (UCommand *command,
       return eval_GROUP (command, connection);
 
     case VALUE:
-    {
       if (tmp_value)
-	return tmp_value->copy(); // hack to be able to handle complex
-      // return types from function calls
-
-      UValue* ret = new UValue();
-      ret->dataType = dataType;
-      if (dataType == DATA_NUM)
-	ret->val = val;
-      if (dataType == DATA_STRING)
-	ret->str = new UString(str);
-      return ret;
-    }
+	// hack to be able to handle complex
+	return tmp_value->copy();
+      else if (dataType == DATA_NUM)
+	return new UValue (val);
+      else
+	return new UValue (str);
 
     case ADDR_VARIABLE:
-    {
-      UValue* ret = new UValue();
-      ret->dataType = DATA_STRING;
-      // hack here to be able to use objects pointeurs
-
-      ret->str = new UString (variablename->buildFullname(command,
-							  connection));
-      return ret;
-    }
+      // Hack here to be able to use objects pointeurs.
+      return new UValue(variablename->buildFullname(command, connection));
 
     case VARIABLE:
       return eval_VARIABLE (command, connection, ec);

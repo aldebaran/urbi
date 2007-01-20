@@ -1,5 +1,10 @@
 2007-01-20  Akim Demaille  <demaille@gostai.com>
 
+	More UValue ctor uses
+	* src/uexpression.cc: here.
+
+2007-01-20  Akim Demaille  <demaille@gostai.com>
+
 	Use ctors
 	* src/uvalue.hh: Comment changes.
 	* src/uexpression.cc (UExpression::eval): Use the ctors instead
