@@ -290,7 +290,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
   }
   else if (t == NEG && e1 && e1->type == VALUE && e1->dataType == DATA_NUM)
   {
-    val = -e->val;
+    val = -e1->val;
     type = VALUE;
     isconst = true;
     dataType = DATA_NUM;
