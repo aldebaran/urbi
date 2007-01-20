@@ -1,3 +1,7 @@
+2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	change mailto property to kernel1@gostai.com 
+
 2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
 	branch 1.0: fix a segv when deleting a variable with function scope
