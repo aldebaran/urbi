@@ -1,5 +1,12 @@
 2007-01-20  Akim Demaille  <demaille@gostai.com>
 
+	Use ctors
+	* src/uvalue.hh: Comment changes.
+	* src/uexpression.cc (UExpression::eval): Use the ctors instead
+	of constructing by hand, and without telling the object...
+
+2007-01-20  Akim Demaille  <demaille@gostai.com>
+
 	Scope shortening
 	* src/uexpression.cc: here.
 	Use ?:.

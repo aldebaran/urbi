@@ -538,60 +538,25 @@ UExpression::eval (UCommand *command,
       }
 
       if (STREQ(str->str(), "rangemin"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-	ret->val = variable->rangemin;
-	return ret;
-      }
+	return new UValue (variable->rangemin);
 
       if (STREQ(str->str(), "rangemax"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-	ret->val = variable->rangemax;
-	return ret;
-      }
+	return new UValue (variable->rangemax);
 
       if (STREQ(str->str(), "speedmin"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-	ret->val = variable->speedmin;
-	return ret;
-      }
+	return new UValue (variable->speedmin);
 
       if (STREQ(str->str(), "speedmax"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-	ret->val = variable->speedmax;
-	return ret;
-      }
+	return new UValue (variable->speedmax);
 
       if (STREQ(str->str(), "delta"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_NUM;
-	ret->val = variable->delta;
-	return ret;
-      }
+	return new UValue (variable->delta);
 
       if (STREQ(str->str(), "unit"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_STRING;
-	ret->str = new UString( variable->getUnit().c_str() );
-	return ret;
-      }
+	return new UValue (variable->getUnit().c_str());
 
       if (STREQ(str->str(), "blend"))
-      {
-	UValue* ret = new UValue();
-	ret->dataType = DATA_STRING;
-	ret->str = new UString(name (variable->blendType));
-	return ret;
-      }
+	return new UValue (name(variable->blendType));
 
       send_error(connection, command, this, "Unknown property: %s", str->str());
       return 0;

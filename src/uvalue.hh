@@ -54,7 +54,8 @@ public:
   operator urbi::UBinary*();
   ~UValue();
 
-  UDataType	  dataType;	///< Type of the value
+  /// Type of the value.
+  UDataType dataType;
 
   ufloat val; // must be out of the union in case of reimplementation
   /// Union of the possible types.
@@ -74,7 +75,7 @@ public:
   std::string  echo(bool human_readable=false);
 
   urbi::UValue* urbiValue();
-  private:
+private:
   UValue& operator = (const UValue &);
 };
 
