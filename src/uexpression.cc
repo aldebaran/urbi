@@ -502,11 +502,11 @@ UExpression::eval (UCommand *command,
       else if (dataType == DATA_NUM)
 	return new UValue (val);
       else
-	return new UValue (str);
+	return new UValue (str->str());
 
     case ADDR_VARIABLE:
       // Hack here to be able to use objects pointeurs.
-      return new UValue(variablename->buildFullname(command, connection));
+      return new UValue(variablename->buildFullname(command, connection)->str());
 
     case VARIABLE:
       return eval_VARIABLE (command, connection, ec);
