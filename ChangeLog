@@ -1,5 +1,12 @@
 2007-01-20  Akim Demaille  <akim.demaille@free.fr>
 
+	Use perror
+	* src/network/bsdnet/network.cc: Use perror where there are syscall
+	failures.
+	Shorten scopes.
+
+2007-01-20  Akim Demaille  <akim.demaille@free.fr>
+
 	Update libport
 	* src/console.cc: .
 

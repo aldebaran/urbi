@@ -53,42 +53,54 @@ namespace Network
   };
 
   bool
-  TCPServerPipe::init(int port)
+  TCPServerPipe::init(int p)
   {
-    this->port = port;
-    int rc;
-    struct ::sockaddr_in address;
-
+    port = p;
 #ifdef WIN32
-    /* initialize the socket api */
+    // Initialize the socket API.
     WSADATA info;
-    rc = WSAStartup(MAKEWORD(1, 1), &info); /* Winsock 1.1 */
-    if (rc)
+    // Winsock 1.1.
+    if (WSAStartup(MAKEWORD(1, 1), &info))
       return false;
 #endif
-    /* create the socket */
+    // Create the socket.
     fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd == -1)
+    {
+      perror ("cannot create socket");
       return false;
+    }
 
-    /* set the REUSEADDR option to 1 to allow imediate reuse of the port */
+    // Set the REUSEADDR option to 1 to allow imediate reuse of the port.
     int yes = 1;
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
 		   (char *) &yes, sizeof (yes)) < 0)
+    {
+      perror ("setsockopt failed");
       return false;
+    }
 
     /* fill in socket address */
+    struct sockaddr_in address;
     memset(&address, 0, sizeof (struct sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
     address.sin_addr.s_addr = INADDR_ANY;
+
     /* bind to port */
-    rc = bind(fd, (struct sockaddr *)&address, sizeof (struct sockaddr));
-    if (rc == -1)
+    if (bind(fd, (struct sockaddr*)&address, sizeof (struct sockaddr))
+	== -1)
+    {
+      perror ("cannot bind");
       return false;
+    }
+
     /* listen for connections */
     if (listen(fd, 1) == -1)
+    {
+      perror ("cannot listen");
       return false;
+    }
 
     registerNetworkPipe(this);
     return true;
@@ -104,7 +116,10 @@ namespace Network
     socklen_t asize = sizeof (struct sockaddr_in);
     cfd = accept(fd, (struct sockaddr*) &client, &asize);
     if (cfd == -1)
+    {
+      perror ("cannot accept");
       return;
+    }
 
     client_info = gethostbyname((char *) inet_ntoa(client.sin_addr));
     Connection* c = new Connection(cfd);
