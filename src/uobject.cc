@@ -22,6 +22,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <cstdarg>
 #include "libport/cstdio"
 #include <list>
+#include <sstream>
 
 #include "uconnection.hh"
 #include "ughostconnection.hh"
@@ -229,9 +230,9 @@ namespace urbi
 
   //! Generic UVar monitoring without callback
   void
-  UObject::USync(UVar &v)
+  UObject::USync(UVar &)
   {
-    UNotifyChange(v, &UObject::voidfun);
+    // nothing to do here, UVars are always sync'd in plugin mode.
   }
 
   // **************************************************************************
@@ -259,6 +260,19 @@ namespace urbi
     load = 1;
   }
 
+  //! Dummy UObject constructor.
+  UObject::UObject(int index)
+    : derived(false),
+      remote (false)
+  {
+    std::stringstream ss;
+    ss << "dummy" << index;
+    __name = ss.str();
+    classname = __name;
+    objecthub = 0;
+    autogroup = false;
+    period = -1;
+  }
 
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'

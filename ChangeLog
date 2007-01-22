@@ -1,5 +1,11 @@
 2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update to match latest urbi-sdk uobject.hh (with automatic USync) 
+	* src/uobject.cc: support dummy UObject constructor and remove
+	unecessary USync method content.
+
+2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	add support for 'remote' attribute and fix uninitialized attributes
 	* src/uobject.cc: done.
 
