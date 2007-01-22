@@ -1,5 +1,19 @@
 2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	The fact that functions could not be redefined without first deleting
+	them was a design flaw leading to tons of "delete myfun" at the
+	beginning of any .u file. This is fixed now, but function redefinition
+	can still trigger a warning in strict mode.
+
+	Note: what strict mode does or does not do should be "selectable", like
+	Warning flags in gcc. This calls for a bit of brainstorming on how to
+	best do it in URBI.
+
+	allow redefinition of functions, warning in strict mode. 
+	* src/ucommand.cc: delete function def upon redefinition.
+
+2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	update to match latest urbi-sdk uobject.hh (with automatic USync) 
 	* src/uobject.cc: support dummy UObject constructor and remove
 	unecessary USync method content.

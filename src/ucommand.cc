@@ -4835,9 +4835,17 @@ UCommand_DEF::execute_(UConnection *connection)
     if (connection->server->functiontab.find(funname->str()) !=
 	connection->server->functiontab.end())
     {
-      send_error(connection, this,
-		 "function %s already exists", funname->str());
-      return UCOMPLETED;
+      if (::urbiserver->defcheck)
+        send_error(connection, this,
+		 "Warning: function %s already exists", funname->str());
+
+      // undef function
+      UFunction* fun = variablename->getFunction(this, connection);
+      connection->server->functiontab.erase(
+	connection->server->functiontab.find(funname->str()));
+      connection->server->functiondeftab.erase(
+	connection->server->functiondeftab.find(funname->str()));
+      delete fun;
     }
 
     UFunction *fun = new UFunction(new UString(funname), parameters, command);
