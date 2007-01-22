@@ -1,3 +1,8 @@
+2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add support for 'remote' attribute and fix uninitialized attributes
+	* src/uobject.cc: done.
+
 2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	change mailto property to kernel1@gostai.com 

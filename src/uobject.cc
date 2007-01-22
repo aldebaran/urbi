@@ -237,7 +237,11 @@ namespace urbi
   // **************************************************************************
   //! UObject constructor.
   UObject::UObject(const std::string &s)
-    : __name(s)
+    : __name(s),
+      classname(s),
+      derived(false),
+      remote (false),
+      load(s, "load")
   {
     objecthub = 0;
     autogroup = false;
@@ -252,10 +256,6 @@ namespace urbi
 	tmpobj->internalBinder = (*retr);
 
     // default
-    derived = false;
-    classname = __name;
-
-    UBindVar(UObject, load);
     load = 1;
   }
 
