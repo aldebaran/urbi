@@ -146,7 +146,7 @@ UExpression::UExpression(const location& l,
 			 UExpression::Type t, UString *s)
  : UAst(l)
 {
-  assert (t == VALUE | t == GROUP);
+  assert (t == VALUE || t == GROUP);
   initialize();
   str = s;
   type = t;
