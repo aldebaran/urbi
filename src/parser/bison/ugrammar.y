@@ -741,7 +741,7 @@ instruction:
       memcheck(up, $$, $1, $2);
     }
 
-  | BINDER TOK_OBJECT purevariable {
+  | BINDER "object" purevariable {
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, 0, $1, 3, $3);
@@ -1161,7 +1161,7 @@ purevariable:
       memcheck(up, $$, $3);
     }
 
-  | "identifier" array TOK_POINT "identifier" array {
+  | "identifier" array "." "identifier" array {
 
       memcheck(up, $1);
       memcheck(up, $4);
@@ -1340,7 +1340,7 @@ expr:
   | expr "%" expr	{ $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); }
   | expr "^" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
 
-  | TOK_COPY expr  %prec NEG {
+  | "copy" expr  %prec NEG {
 
       $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
