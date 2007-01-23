@@ -1,3 +1,7 @@
+2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	change mailto property. 
+
 2007-01-19  Akim Demaille  <demaille@gostai.com>
 
 	-Werror
