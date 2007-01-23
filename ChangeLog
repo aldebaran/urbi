@@ -1,5 +1,11 @@
 2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
 
+	Dead cpp code
+	* src/network/bsdnet/network.hh (YYTOKENTYPE): Remove this pseudo
+	definition.
+
+2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+
 	|
 	* src/uexpression.cc: Use ||, not |, for Booleans.
 

@@ -5,13 +5,8 @@
 
 # include "libport/network.h"
 
-# ifdef WIN32
-#  define YYTOKENTYPE
-# endif
-
 # include "uconnection.hh"
 # include "userver.hh"
-
 
 namespace Network
 {
