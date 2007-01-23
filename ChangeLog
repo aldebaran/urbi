@@ -1,3 +1,8 @@
+2007-01-23  Matthieu Nottale  <nottale@gostai.com>
+
+	Do not put big buffers on the stack for aibo
+	* src/ucommand.cc: Use a global buffer instead of on the stack ones for aibo.
+
 2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	This FIXME was relative to an old comment that made no sense, because
