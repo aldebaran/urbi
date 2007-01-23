@@ -1,7 +1,6 @@
 #ifndef CONNECTION_HH
 # define CONNECTION_HH
 
-# include <time.h>
 # include <sys/types.h>
 
 /** \file Connection.h.cpp

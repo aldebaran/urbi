@@ -1,5 +1,17 @@
 2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
 
+	Network clean up
+	* src/network/bsdnet/connection.hh: Remove useless includes.
+	* src/network/bsdnet/connection.cc: Shorten scopes.
+	* src/network/bsdnet/network.hh: Remove useless includes.
+	Use a more recent libport.
+	* src/network/bsdnet/network.cc (TCPServerPipe::~TCPServerPipe): 
+	Call shutdown before close.
+	(TCPServerPipe::notifyRead): Shorten scopes.
+	Remove the client_info variable, unused.
+
+2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+
 	Dead cpp code
 	* src/network/bsdnet/network.hh (YYTOKENTYPE): Remove this pseudo
 	definition.

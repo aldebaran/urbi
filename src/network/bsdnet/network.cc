@@ -1,29 +1,11 @@
-#include "network/bsdnet/network.hh"
-#include "network/bsdnet/connection.hh"
-
 #include "libport/cstdio"
-
-#ifndef WIN32
-# include <sys/time.h>
-# include <unistd.h>
-#endif
-
-#include <sys/types.h>
 
 #include <list>
 #include <algorithm>
 
-// In the long run, this should be part of libport, but I don't know
-// where actually :( Should it be libport/sys/types.hh?  Or unistd.hh?
-// What standard header should do that?
-
-#ifdef WIN32
-// On windows, file descriptors are defined as u_int (i.e., unsigned int).
-# define LIBPORT_FD_SET(N, P) FD_SET(static_cast<u_int>(N), P)
-#else
-# define LIBPORT_FD_SET(N, P) FD_SET(N, P)
-#endif
-
+#include "network/bsdnet/network.hh"
+#include "network/bsdnet/connection.hh"
+#include "userver.hh"
 namespace Network
 {
 
@@ -56,8 +38,13 @@ namespace Network
 
   TCPServerPipe::~TCPServerPipe ()
   {
-    if (fd != -1 && close (fd))
-      perror ("cannot close socket");
+    if (fd != -1)
+    {
+      if (shutdown (fd, SHUT_RDWR))
+	perror ("cannot shutdown socket");
+      else if (close (fd))
+	perror ("cannot close socket");
+    }
   }
 
   bool
@@ -116,18 +103,14 @@ namespace Network
   void
   TCPServerPipe::notifyRead()
   {
-    int cfd;
     struct sockaddr_in client;
-    struct hostent* client_info;
     socklen_t asize = sizeof (struct sockaddr_in);
-    cfd = accept(fd, (struct sockaddr*) &client, &asize);
+    int cfd = accept(fd, (struct sockaddr*) &client, &asize);
     if (cfd == -1)
     {
       perror ("cannot accept");
       return;
     }
-
-    client_info = gethostbyname((char *) inet_ntoa(client.sin_addr));
     Connection* c = new Connection(cfd);
     ::urbiserver->addConnection(c);
     registerNetworkPipe(c);

@@ -5,9 +5,6 @@
 
 # include "libport/network.h"
 
-# include "uconnection.hh"
-# include "userver.hh"
-
 namespace Network
 {
   class Pipe

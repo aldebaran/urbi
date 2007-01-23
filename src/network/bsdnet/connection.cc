@@ -1,6 +1,7 @@
 #include "libport/network.h"
 
 #include "network/bsdnet/connection.hh"
+#include "userver.hh"
 
 //! LinuxConnection constructor.
 /*! The constructor calls UConnection::UConnection with the appropriate
@@ -27,7 +28,7 @@ Connection::Connection(int connfd)
 //! Connection destructor.
 Connection::~Connection()
 {
-  if (fd!=0)
+  if (fd)
     closeConnection();
 }
 
@@ -37,19 +38,18 @@ Connection::~Connection()
 UErrorValue
 Connection::closeConnection()
 {
-  int ret;
   // Setting 'closing' to true tell the kernel not to use the
   // connection any longer
-  closing=true;
+  closing = true;
 #ifdef WIN32
   closesocket(fd);
-  ret = 0;//WSACleanup(); //wsastartup called only once!
+  int ret = 0;//WSACleanup(); //wsastartup called only once!
 #else
-  ret = close(fd);
+  int ret = close(fd);
 #endif
   Network::unregisterNetworkPipe(this);
 
-  if (ret!=0)
+  if (ret)
     return UFAIL;
   else
   {
@@ -76,7 +76,7 @@ void Connection::doRead()
 
 int Connection::effectiveSend (const ubyte *buffer, int length)
 {
-  int res = ::send(fd, 
+  int res = ::send(fd,
 		   reinterpret_cast<const char *>(buffer), length,
 		   MSG_NOSIGNAL);
   if (res <= 0)
