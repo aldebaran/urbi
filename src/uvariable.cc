@@ -426,8 +426,7 @@ UVariable::get(bool autoloop)
         v->storage = (*i)->storage;
         l.array.push_back(v);
       }
-      // FIXME: I guess the following comment reads "emptied".
-      (*i)->__evalcall(l); // l is empty here
+      (*i)->__evalcall(l);
     }
   }
 
@@ -479,7 +478,7 @@ UVariable::updated(bool uvar_assign)
         tmparray.array.push_back(tmpvalue);
       };
 
-      (*i)->__evalcall(tmparray);//FIXME:shouldn't tmparray content be deleted?
+      (*i)->__evalcall(tmparray);
     }
   }
 }

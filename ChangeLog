@@ -1,5 +1,14 @@
 2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	This FIXME was relative to an old comment that made no sense, because
+	it was copy-pasted from somewhere else a long time ago. Just ignore
+	the whole thing.
+
+	remove unecessary comments. 
+	* src/uvariable.cc: done.
+
+2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix bug on 'random', ticket #100. 
 	* src/uexpression.cc: check if arg is non zero.
 
