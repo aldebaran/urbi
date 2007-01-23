@@ -1,5 +1,10 @@
 2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix bug on 'random', ticket #100. 
+	* src/uexpression.cc: check if arg is non zero.
+
+2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	update externals for tests. 
 
 2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>

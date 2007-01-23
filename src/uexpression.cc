@@ -1396,7 +1396,13 @@ UExpression::eval_FUNCTION (UCommand *command,
     else if (STREQ(variablename->id->str(), "abs"))
       ret->val = fabs(e1->val);
     else if (STREQ(variablename->id->str(), "random"))
-      ret->val = (rand()%(int)e1->val);
+    {
+      int range =  (int)e1->val;
+      if (range)
+        ret->val = rand()%range;
+      else
+        ret->val = 0;
+    }
     else if (STREQ(variablename->id->str(), "round"))
     {
       if (e1->val>=0)
