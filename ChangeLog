@@ -1,3 +1,7 @@
+2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	update externals for tests. 
+
 2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	The fact that functions could not be redefined without first deleting
