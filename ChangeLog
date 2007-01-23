@@ -1,5 +1,17 @@
 2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
 
+	Factor the flavors in the parser.
+	* src/parser/bison/ugrammar.y (TOK_SEMICOLON, TOK_COMMA, TOK_AND)
+	(TOK_PIPE): They now have the flavor type.
+	Adjust uses.
+	(flavor.opt, pipe.opt): New.
+	Use them to factor family of constructs (e.g., while and while|).
+	* src/parser/bison/utoken.l (RETURN_FLAVOR): New.
+	Use it for these four tokens.
+	* src/parser/uparser.hh: Include flavorable.hh.
+
+2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+
 	Use more literals in the parser.
 	* src/parser/bison/ugrammar.y: Replace uses of TOK_OBJECT, TOK_POINT,
 	and TOK_COPY.

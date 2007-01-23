@@ -33,6 +33,7 @@
 %{
 #include "fwd.hh"
 #include "utypes.hh"
+#include "flavorable.hh"
 %}
 
 // Locations.
@@ -56,6 +57,7 @@
   UVariableList           *variablelist;
   UProperty               *property;
 
+  Flavorable::UNodeType   flavor;
   ufloat                   *val;
   UString                  *str;
   struct {
@@ -213,7 +215,6 @@ take (T* t)
 %token
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
-  TOK_AND          "&"
   TOK_ANDOPERATOR  "&&"
   TOK_AROBASE      "@"
   TOK_ASSIGN       "="
@@ -224,7 +225,6 @@ take (T* t)
   TOK_CLASS        "class"
   TOK_CMDBLOCK     "command block"
   TOK_COLON        ":"
-  TOK_COMMA        ","
   TOK_COPY         "copy"
   TOK_DEF          "def"
   TOK_DELGROUP     "delgroup"
@@ -270,7 +270,6 @@ take (T* t)
   TOK_ONLY         "only"
   TOK_OROPERATOR   "||"
   TOK_PERCENT      "%"
-  TOK_PIPE         "|"
   TOK_PLUS         "+"
   TOK_PLUSASSIGN   "+="
   TOK_PLUSPLUS     "++"
@@ -279,7 +278,6 @@ take (T* t)
   TOK_RETURN       "return"
   TOK_RPAREN       ")"
   TOK_RSBRACKET    "]"
-  TOK_SEMICOLON    ";"
   TOK_STATIC       "static"
   TOK_STOP         "stop"
   TOK_STOPIF       "stopif"
@@ -303,6 +301,13 @@ take (T* t)
   TOK_WHILE        "while"
 
 %token TOK_EOF 0 "end of command"
+
+%token
+  <flavor> TOK_COMMA        ","
+  <flavor> TOK_SEMICOLON    ";"
+  <flavor> TOK_AND          "&"
+  <flavor> TOK_PIPE         "|"
+;
 
 /*------.
 | Val.  |
@@ -437,13 +442,17 @@ root:
 ;
 
 
-/* TAGGEDCOMMANDS */
+
+/*-----------------.
+| taggedcommands.  |
+`-----------------*/
+
 taggedcommands:
   taggedcommand
-| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, Flavorable::UCOMMA, $1, $3); }
-| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, Flavorable::USEMICOLON, $1, $3); }
-| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, Flavorable::UPIPE, $1, $3); }
-| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, Flavorable::UAND, $1, $3);}
+| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
 ;
 
 /*----------------.
@@ -564,7 +573,29 @@ command:
     }
 ;
 
-/* INSTRUCTION */
+
+/*----------.
+| flavors.  |
+`----------*/
+%type <flavor> flavor.opt pipe.opt;
+
+// One or zero "&" or "|", defaulting to ";".
+flavor.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "|"
+| "&"
+;
+
+// One or zero "|", defaulting to ";".
+pipe.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "|"
+;
+
+
+/*--------------.
+| Instruction.  |
+`--------------*/
 
 instruction:
   /* empty */ { $$ = 0; } /* FIXME: THIS IS BAD! REMOVE THIS!
@@ -1038,15 +1069,9 @@ instruction:
       memcheck(up, $$, $4, $6, $8);
     }
 
-  | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_WHILE(@$, Flavorable::USEMICOLON, $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | "while" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_WHILE(@$, Flavorable::UPIPE, $4, $6);
+      $$ = new UCommand_WHILE(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
@@ -1075,63 +1100,24 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "foreach" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
+  | "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
+     %prec CMDBLOCK {
 
-      $$ = new UCommand_FOREACH(@$, Flavorable::USEMICOLON, $2, $4, $6);
-      memcheck(up, $$, $2, $4, $6);
-    }
-
-  | "foreach" "&" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
-
-    $$ = new UCommand_FOREACH(@$, Flavorable::UAND, $3, $5, $7);
+      $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
-  | "foreach" "|" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
+  | "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_FOREACH(@$, Flavorable::UPIPE, $3, $5, $7);
-      memcheck(up, $$, $3, $5, $7);
-    }
-
-  | "loopn" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_LOOPN(@$, Flavorable::USEMICOLON, $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | "loopn" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_LOOPN(@$, Flavorable::UPIPE, $4, $6);
+      $$ = new UCommand_LOOPN(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
-  | "loopn" "&" "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "for" flavor.opt "(" instruction ";"
+		         expr ";"
+		         instruction ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_LOOPN(@$, Flavorable::UAND, $4, $6);
-      memcheck(up, $$, $4, $6);
-    }
-
-  | "for" "(" instruction ";"
-	       expr ";"
-	       instruction ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_FOR(@$, Flavorable::USEMICOLON, $3, $5, $7, $9);
-      memcheck(up, $$, $3, $5, $7, $9);
-    }
-
-  | "for" "|" "(" instruction ";"
-		    expr ";"
-		    instruction ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_FOR(@$, Flavorable::UPIPE, $4, $6, $8, $10);
-      memcheck(up, $$, $4, $6, $8, $10);
-    }
-
-  | "for" "&" "(" instruction ";"
-		   expr ";"
-		   instruction ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_FOR(@$, Flavorable::UAND, $4, $6, $8, $10);
+      $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);
     }
 ;

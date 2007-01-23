@@ -4,9 +4,6 @@
  File: uparser.h\n
  Definition of the UParser class used to make flex/bison reentrant.
 
- This file is based on an example provided by Markus Mottl:
- See: "reent" at http://www.oefai.at/~markus
-
  This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
@@ -29,6 +26,7 @@
 # include <string>
 # include "fwd.hh"
 # include "utypes.hh"
+# include "flavorable.hh"
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"
 

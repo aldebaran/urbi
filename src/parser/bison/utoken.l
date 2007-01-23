@@ -46,6 +46,14 @@ typedef yy::parser::token token;
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
+// For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
+#define RETURN_FLAVOR(Symbol)			\
+ do {						\
+   valp->flavor = Flavorable::U ## Symbol;	\
+   return token::TOK_ ## Symbol;		\
+ } while (0)
+
+
 // Be bulletproof when memory allocation fails.
 #define SET_VALP_STR(Value)			\
 do {						\
@@ -74,7 +82,6 @@ do {						\
 #define RETURN_NUM(Value)      RETURN_VAL_TOKEN(NUM, Value)
 #define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
 #define RETURN_FLAGTIME(Value) RETURN_VAL_TOKEN(FLAGTIME, Value)
-
 
 #define RETURN_TIMEVALUE(Scale)				\
 do {							\
@@ -238,7 +245,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "$"             return token::TOK_DOLLAR;
 "%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
-"&"             return token::TOK_AND;
+"&"             RETURN_FLAVOR(AND);
 "&&"            return token::TOK_ANDOPERATOR;
 "'"             return token::TOK_DERIV;
 "''"            return token::TOK_DERIV2;
@@ -252,7 +259,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "+"             return token::TOK_PLUS;
 "++"            return token::TOK_PLUSPLUS;
 "+="            return token::TOK_PLUSASSIGN;
-","             return token::TOK_COMMA;
+","             RETURN_FLAVOR(COMMA);
 "-"             return token::TOK_MINUS;
 "--"            return token::TOK_MINUSMINUS;
 "-="            return token::TOK_MINUSASSIGN;
@@ -261,7 +268,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "/"             return token::TOK_DIV;
 ":"             return token::TOK_COLON;
 "::"            return token::TOK_DOUBLECOLON;
-";"             return token::TOK_SEMICOLON;
+";"             RETURN_FLAVOR(SEMICOLON);
 "<"             return token::TOK_LT;
 "<="            return token::TOK_LE;
 "="             return token::TOK_ASSIGN;
@@ -274,7 +281,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "]"             return token::TOK_RSBRACKET;
 "^"             return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
-"|"             return token::TOK_PIPE;
+"|"             RETURN_FLAVOR(PIPE);
 "||"            return token::TOK_OROPERATOR;
 "}"             return token::TOK_RBRACKET;
 "~"             return token::TOK_TILDE;
