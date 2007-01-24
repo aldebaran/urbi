@@ -1114,8 +1114,8 @@ instruction:
     }
 
   | "for" flavor.opt "(" instruction ";"
-		         expr ";"
-		         instruction ")" taggedcommand %prec CMDBLOCK {
+			 expr ";"
+			 instruction ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);
