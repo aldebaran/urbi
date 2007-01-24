@@ -1,3 +1,8 @@
+2007-01-24  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	update NEWS file. 
+	* NEWS: add UOwned and function redefinition.
+
 2007-01-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Do not put big buffers on the stack for aibo

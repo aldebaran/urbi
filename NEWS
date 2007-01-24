@@ -1,5 +1,10 @@
 New in 1.0 RC2:
 
+* USensor becomes UOwned (with backward compatibility)
+
+* It is new OK to redefine a function that already exist, you will get a
+  warning in scrict mode only.
+
 * inherit changes to 'inherits' (same for disinherit)
 
 * Important bug fix on UNotifyChange: was not working with motor variables
