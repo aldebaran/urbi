@@ -1,3 +1,8 @@
+2007-01-24  Akim Demaille  <akim@lrde.epita.fr>
+
+	alpha conversion
+	* src/userver.cc (UServer::initialization): Rename some vars.
+
 2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
 
 	Factor the flavors in the parser.

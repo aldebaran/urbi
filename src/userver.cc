@@ -206,16 +206,15 @@ UServer::initialization()
 
 
   // Plugins (internal components)
+  for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+       i != urbi::objecthublist->end();
+       ++i)
+    (*i)->init((*i)->name);
 
-  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
-       retr != urbi::objecthublist->end();
-       ++retr)
-    (*retr)->init((*retr)->name);
-
-  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
-       retr != urbi::objectlist->end();
-       ++retr)
-    (*retr)->init((*retr)->name);
+  for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
+       i != urbi::objectlist->end();
+       ++i)
+    (*i)->init((*i)->name);
 
   if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
@@ -548,7 +547,7 @@ UServer::work()
 //! UServer destructor.
 UServer::~UServer()
 {
-  FREEOBJ(UServer); // Not useful here, but remains for consistency.
+  FREEOBJ(UServer);
 }
 
 //! Displays a formatted error message.
