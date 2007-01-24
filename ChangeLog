@@ -1,5 +1,10 @@
 2007-01-24  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #73 (illegal void operations) 
+	* src/uexpression.cc: done.
+
+2007-01-24  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	remove spaces. 
 	* src/uvariable.hh: done.
 
