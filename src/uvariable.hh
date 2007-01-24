@@ -187,13 +187,13 @@ public:
 
   UValue*       get(bool autoloop = false);
 
-  void setContext(UCallid * ctx) {context = ctx;}
+  void setContext(UCallid * ctx)  {context = ctx;}
 
   private:
 
   /// context if scope is a function
   UCallid * context;
-  
+
   void    init();
 
 };

@@ -1,5 +1,10 @@
 2007-01-24  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	remove spaces. 
+	* src/uvariable.hh: done.
+
+2007-01-24  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Since the major event mechanism rewriting in r265, test lazzy
 	evaluation had been broken on purpose, because we wanted the following
 	code to ping twice:
