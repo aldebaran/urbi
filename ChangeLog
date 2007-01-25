@@ -1,5 +1,10 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Handle URBI_PATH
+	* src/console.cc: in the constructor rather than in the main.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	More passert
 	* src/uexpression.cc: here.
 	Also, remove debugging code.
