@@ -208,8 +208,7 @@ UCommand::print(unsigned l) const
     CASE(ASSIGN_BINARY);
     CASE(ASSIGN_PROPERTY);
     CASE(ASSIGN_VALUE);
-    CASE(AT);
-    CASE(AT_AND);
+    CASE(AT_FLAVOR);
     CASE(CLASS);
     CASE(DECREMENT);
     CASE(DEF);
@@ -5397,7 +5396,7 @@ UCommand_STOPIF::execute_(UConnection *connection)
   morph =
     new UCommand_TREE(
       loc_, Flavorable::UAND,
-      new UCommand_AT(loc_, AT,
+      new UCommand_AT(loc_, Flavorable::USEMICOLON,
 		      condition->copy(),
 		      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 					       tagRef->copy()),
@@ -5485,7 +5484,7 @@ UCommand_FREEZEIF::execute_(UConnection*)
   morph =
     new UCommand_TREE
     (loc_, Flavorable::UAND,
-     new UCommand_AT(loc_, AT,
+     new UCommand_AT(loc_, Flavorable::USEMICOLON,
 		     condition->copy(),
 		     new UCommand_OPERATOR_ID(loc_, new UString("freeze"),
 					      tagRef->copy()),
@@ -5521,14 +5520,15 @@ MEMORY_MANAGER_INIT(UCommand_AT);
 /*! Subclass of UCommand with standard member initialization.
  */
 UCommand_AT::UCommand_AT(const location& l,
-			 Type type,
+			 UNodeType f,
 			 UExpression *test,
-			 UCommand* command1,
-			 UCommand* command2)
-  : UASyncCommand(l, type),
+			 UCommand* cmd1,
+			 UCommand* cmd2)
+  : UASyncCommand(l, AT_FLAVOR),
+    Flavorable (f),
     test (test),
-    command1 (command1),
-    command2 (command2),
+    command1 (cmd1),
+    command2 (cmd2),
     firsttime (true),
     reloop_ (false)
 {
@@ -5554,7 +5554,7 @@ UCommand_AT::execute_(UConnection *connection)
   if (firsttime)
   {
     firsttime = false;
-    if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
+    if (test->asyncScan (this, connection) == UFAIL)
     {
       send_error(connection, this,
 		 "Invalid name resolution in test. "
@@ -5693,7 +5693,7 @@ UCommand_AT::execute_(UConnection *connection)
 UCommand*
 UCommand_AT::copy() const
 {
-  return copybase(new UCommand_AT(loc_, type,
+  return copybase(new UCommand_AT(loc_, flavor(),
 				  ucopy (test),
 				  ucopy (command1),
 				  ucopy (command2)));
@@ -5706,13 +5706,7 @@ UCommand_AT::copy() const
 void
 UCommand_AT::print_(unsigned l) const
 {
-  if (type == AT)
-    debug("\n");
-  else if (type == AT_AND)
-    debug("(AND)\n");
-  else
-    debug("UNKNOWN TYPE!\n");
-
+  debug(l, "%s\n", flavor_string());
   DEBUG_ATTR_I(test);
   DEBUG_ATTR_I(command1);
   DEBUG_ATTR_I(command2);

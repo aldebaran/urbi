@@ -1,5 +1,14 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	UCommand_AT is Flavorable
+	* src/uasynccommand.hh (UCommand_AT): Derive from flavorable.
+	* src/ucommand.cc: Adjust its implementation.
+	* src/ucommand.hh (AT, AT_AND): Remove.
+	(AT_FLAVOR): New, temporary.
+	* src/parser/bison/ugrammar.y: Adjust.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	* src/ucommand.cc, src/uconnection.cc, src/uexpression.cc,
 	* src/userver.cc: Use passert.
 	Fix two incorrect assertions of dynamic_cast.

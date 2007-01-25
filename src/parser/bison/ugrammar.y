@@ -1033,7 +1033,7 @@ instruction:
 
   | "at" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, 0);
+    $$ = new UCommand_AT(@$, Flavorable::USEMICOLON, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 
@@ -1046,13 +1046,13 @@ instruction:
 	error(@$, "Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, $7);
+      $$ = new UCommand_AT(@$, Flavorable::USEMICOLON, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
   | "at" "&" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, 0);
+    $$ = new UCommand_AT(@$,  Flavorable::UAND, $4, $6, 0);
       memcheck(up, $$, $4, $6);
     }
 
@@ -1065,7 +1065,7 @@ instruction:
 	error(@$, "Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
+      $$ = new UCommand_AT(@$, Flavorable::UAND, $4, $6, $8);
       memcheck(up, $$, $4, $6, $8);
     }
 
