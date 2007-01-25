@@ -1,8 +1,8 @@
+#include "libport/assert.hh"
 #include "urbi/uclient.hh"
 #include <sys/types.h>
 #include "libport/sys/stat.h"
 #include <signal.h>
-#include <assert.h>
 #include "libport/windows.hh"
 
 bool over=false;
@@ -12,9 +12,12 @@ static int starttime=0;
 urbi::UCallbackAction
 bw(const urbi::UMessage &msg)
 {
-  assert (msg.type == urbi::MESSAGE_DATA);
-  assert (msg.value->type == urbi::DATA_BINARY);
-  assert (msg.value->binary->type == urbi::BINARY_IMAGE);
+  passert (msg.type,
+	   msg.type == urbi::MESSAGE_DATA);
+  passert (msg.value->type,
+	   msg.value->type == urbi::DATA_BINARY);
+  passert (msg.value->binary->type,
+	   msg.value->binary->type == urbi::BINARY_IMAGE);
 
   //aproximately, but since bsz is more or less 400k...
   totalsize += (msg.value->binary->image.size

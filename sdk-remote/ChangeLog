@@ -1,5 +1,15 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Use pabort and passert
+	* src/examples/urbibandwidth.cc,
+	* src/examples/urbirecord.cc,
+	* src/liburbi/uobject/urbi/utypes-common.hh,
+	* src/liburbi/uobject/uvalue-common.cc,
+	* src/utils/move.cc:
+	Do it.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	reformatting

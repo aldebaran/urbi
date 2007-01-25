@@ -13,7 +13,7 @@
 #ifndef URBI_UTYPES_COMMON_HH
 # define URBI_UTYPES_COMMON_HH
 
-# include <cassert>
+# include "libport/assert.hh"
 
 /// \file  urbi/utypes-common.hh
 /// \brief Types used by the kernel and uobject.
@@ -73,7 +73,7 @@ namespace urbi
     for (int i = 0; is_blendtype (i); ++i)
       if (STREQ (UBlendNames[i], cp))
 	return static_cast<UBlendType> (i);
-    assert (!"unknown blendtype");
+    pabort ("unknown blendtype: " << cp);
   }
 
   /*------------.
@@ -128,7 +128,7 @@ namespace urbi
     for (int i = 0; is_propertytype (i); ++i)
       if (STREQ (UPropertyNames[i], cp))
 	return static_cast<UProperty> (i);
-    assert (!"unknown uproperty");
+    pabort ("unknown uproperty: " << cp);
   }
 
 } // end namespace urbi

@@ -1,3 +1,4 @@
+#include "libport/assert.hh"
 #include "libport/sys/stat.h"
 #include <cstdlib>
 #include "libport/cstdio"
@@ -5,7 +6,6 @@
 #include <iostream>
 #include <vector>
 #include <locale.h>
-#include <cassert>
 
 #include "move.hh"
 
@@ -120,7 +120,7 @@ namespace urbi
 
 	struct stat st;
 	stat(filePath, &st);
-	assert (st.st_size >= 0);
+	passert (st.st_size, st.st_size >= 0);
 	size_t filelength = st.st_size;
 	char* buffer = static_cast<char*> (malloc (filelength + 200));
 	// Read the file.

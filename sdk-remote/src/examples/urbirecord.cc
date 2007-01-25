@@ -1,6 +1,6 @@
+#include "libport/assert.hh"
 #include "urbi/uclient.hh"
 
-#include <cassert>
 #include <signal.h>
 
 
@@ -78,31 +78,28 @@ void buildHeader()
 urbi::UCallbackAction
 command(const urbi::UMessage &msg)
 {
-  //get command id
-  static int tme=0;
-
   for (int i=0;i<devCount; ++i)
+    if (msg.tag != devices[i])
     {
-      if (msg.tag != devices[i])
-	{
-	  UCommand uc;
-	  uc.timestamp=msg.timestamp;
-	  uc.id=i;
-	  assert (msg.type == urbi::MESSAGE_DATA);
-	  assert (msg.value->type == urbi::DATA_DOUBLE);
-	  uc.value.angle=msg.value->val;
+      UCommand uc;
+      uc.timestamp=msg.timestamp;
+      uc.id=i;
+      passert (msg.type, msg.type == urbi::MESSAGE_DATA);
+      passert (msg.value->type, msg.value->type == urbi::DATA_DOUBLE);
+      uc.value.angle=msg.value->val;
 
-	  fwrite(&uc,sizeof (UCommand),1,f);
-	  ++tilt;
-	  if (! (tilt%100))
-	    {
-	      if (tme)
-		fprintf(stderr, ". %f cps\n",
-			100000.0/(float)(msg.client.getCurrentTime()-tme));
-	      tme=msg.client.getCurrentTime();
-	    }
-	  return urbi::URBI_CONTINUE;
-	}
+      fwrite(&uc,sizeof (UCommand),1,f);
+      ++tilt;
+      if (! (tilt%100))
+      {
+	//get command id
+	static int tme=0;
+	if (tme)
+	  fprintf(stderr, ". %f cps\n",
+		  100000.0/(float)(msg.client.getCurrentTime()-tme));
+	tme=msg.client.getCurrentTime();
+      }
+      return urbi::URBI_CONTINUE;
     }
   fprintf (stderr, "error: no device %s\n", msg.tag.c_str ());
   return urbi::URBI_CONTINUE;

@@ -312,7 +312,7 @@ namespace urbi
 	return "unknown format";
     }
     // To pacify "warning: control reaches end of non-void function".
-    abort();
+    pabort(soundFormat);
   }
 
   /*---------.
@@ -335,7 +335,7 @@ namespace urbi
 	return "unknown format";
     }
     // To pacify "warning: control reaches end of non-void function".
-    abort();
+    pabort(imageFormat);
   }
 
   /*----------.
@@ -473,7 +473,7 @@ namespace urbi
 	break;
 
       case BINARY_NONE:
-	abort();
+	pabort(type);
     }
     return o.str();
   }
@@ -901,11 +901,11 @@ namespace urbi
 	break;
       case DATA_VOID:
 	//TODO: do something!
-	abort ();
+	pabort (v);
 	break;
       case DATA_OBJECT:
 	// Not valid currently.
-	abort ();
+	pabort (v);
 	break;
     }
   }
