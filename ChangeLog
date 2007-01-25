@@ -1,5 +1,10 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Less buffers
+	* src/uconnection.cc: More ostringstream.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Less static buffers
 	* src/userver.cc: Use ostringstreams.
 

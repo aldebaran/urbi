@@ -24,6 +24,8 @@
 #include <cassert>
 #include <cstdarg>
 
+#include <sstream>
+
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
 
@@ -73,15 +75,15 @@ UConnection::UConnection  (UServer *userver,
     // Initial state of the connection: unblocked, not receiving binary.
     active_(true)
 {
-  char tmpbuffer_connectionTag[50];
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
 
   // initialize the connection tag used to reference local variables
-  sprintf(tmpbuffer_connectionTag, "U%ld", (long) this);
-  connectionTag = new UString(tmpbuffer_connectionTag);
-  UVariable* cid = new UVariable(tmpbuffer_connectionTag, "connectionID",
-				 tmpbuffer_connectionTag);
+  std::ostringstream o;
+  o << "U" << (long) this;
+  connectionTag = new UString(o.str());
+  UVariable* cid = 
+    new UVariable(o.str().c_str(), "connectionID", o.str().c_str());
   if (cid)
     cid->uservar = false;
 }
