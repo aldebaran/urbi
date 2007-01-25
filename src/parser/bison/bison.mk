@@ -85,7 +85,8 @@ EXTRA_DIST += $(parsedir)/utoken.l
 utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(FLEX) -+ -outoken.cc $(parsedir)/utoken.l
+# -s to disable the default rule (ECHO).
+	$(FLEX) -s -+ -outoken.cc $(parsedir)/utoken.l
 	perl -pi						\
 	     -e 's,<FlexLexer.h>,"parser/bison/flex-lexer.hh",;'\
 	     -e 's/class istream;/#include <iostream>/;'	\

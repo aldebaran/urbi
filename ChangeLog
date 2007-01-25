@@ -1,5 +1,13 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Use passert
+	* src/parser/bison/bison.mk: Pass -s to flex so that it does not
+	generate a default rule using its own ECHO which does not have the
+	same signature as ours.
+	* src/uexpression.cc: Use passert for fun.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Factoring
 	* src/uvariablename.hh, src/uvariablename.cc (update_array_mangling):
 	New.

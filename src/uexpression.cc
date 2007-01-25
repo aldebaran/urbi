@@ -19,17 +19,6 @@
 
  **************************************************************************** */
 
-#if 0
-# define ECHO(C) \
-  std::cout << C << std::endl
-#else
-# define ECHO(C)
-#endif
-
-#define PING()					\
-  ECHO (__FILE__ << ":" << __LINE__ << ": " << __PRETTY_FUNCTION__)
-
-
 #include <cmath>
 #include "libport/cstdio"
 
@@ -549,7 +538,7 @@ UExpression::eval (UCommand *command,
 	return new UValue (name(variable->blendType));
 
       send_error(connection, command, this,
-                 "Unknown property: %s", str->str());
+		 "Unknown property: %s", str->str());
       return 0;
     }
 
@@ -564,9 +553,9 @@ UExpression::eval (UCommand *command,
       if (e1==0 || e1->dataType == DATA_VOID ||
 	  e2==0 || e2->dataType == DATA_VOID)
       {
-        if (e1 && e1->dataType == DATA_VOID
-            || e2 && e2->dataType == DATA_VOID)
-          send_error(connection, command, this, "Invalid type");
+	if (e1 && e1->dataType == DATA_VOID
+	    || e2 && e2->dataType == DATA_VOID)
+	  send_error(connection, command, this, "Invalid type");
 	delete e1;
 	delete e2;
 
@@ -827,11 +816,11 @@ UExpression::eval (UCommand *command,
 									\
       if ((int)e1->val OpAbort 0)					\
       {                                                                 \
-        if (ec1)                                                        \
-          ec = ec1;                                                     \
-        ret->val =  (ufloat) (true OpAbort false);                      \
-        delete e1;                                                      \
-        return ret;                                                     \
+	if (ec1)                                                        \
+	  ec = ec1;                                                     \
+	ret->val =  (ufloat) (true OpAbort false);                      \
+	delete e1;                                                      \
+	return ret;                                                     \
       }                                                                 \
 									\
       UEventCompound* ec2 = 0;						\
@@ -886,8 +875,9 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   command->print (10);
 #endif
 
-  assert (STREQ(variablename->id->str(), "exec")
-	  || STREQ(variablename->id->str(), "load"));
+  passert (variablename->id->str(),
+	   STREQ(variablename->id->str(), "exec")
+	   || STREQ(variablename->id->str(), "load"));
 
   bool in_load = STREQ(variablename->id->str(), "load");
   UValue* e1 = parameters->expression->eval(command, connection);
@@ -1357,9 +1347,9 @@ UExpression::eval_FUNCTION (UCommand *command,
     {
       int range =  (int)e1->val;
       if (range)
-        ret->val = rand()%range;
+	ret->val = rand()%range;
       else
-        ret->val = 0;
+	ret->val = 0;
     }
     else if (STREQ(variablename->id->str(), "round"))
     {
