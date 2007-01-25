@@ -1,5 +1,10 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Fix "bin" parsing
+	* src/parser/bison/ugrammar.y: The alias is "bin", not "BIN".
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Merge 697:736 from the branch "1.0".
 	2007-01-24  Jean-Christophe Baillie  <baillie@gostai.com>
 

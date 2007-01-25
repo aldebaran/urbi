@@ -1244,14 +1244,14 @@ namedparameters:
 /* BINARY */
 
 binary:
-    "BIN" NUM {
+    "bin" NUM {
       $$ = new UBinary((int)take($2), 0);
       memcheck(up, $$);
       if ($$ != 0)
 	memcheck(up, $$->buffer, $$);
     }
 
-  | "BIN" NUM rawparameters {
+  | "bin" NUM rawparameters {
 
       $$ = new UBinary((int)take($2), $3);
       memcheck(up, $$, $3);
