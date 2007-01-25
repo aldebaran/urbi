@@ -333,10 +333,6 @@ UVariableName::buildFullname (UCommand* command,
   if (cached)
     return fullname_;
 
-  const int		fullnameMaxSize = 1024;
-  char			name[fullnameMaxSize];
-  HMaliastab::iterator	hmi;
-
   if (str)
   {
     UValue*e1 = str->eval(command, connection);
@@ -352,23 +348,25 @@ UVariableName::buildFullname (UCommand* command,
       return 0;
     }
 
+    const int fullnameMaxSize = 1024;
+    char name[fullnameMaxSize];
     if (strchr(e1->str->str(), '.') == 0)
     {
       nostruct = true;
       if (connection->stack.empty())
-	snprintf(name, fullnameMaxSize,
+	snprintf(name, sizeof name,
 		 "%s.%s", connection->connectionTag->str(),
 		 e1->str->str());
       else
       {
-	snprintf(name, fullnameMaxSize,
+	snprintf(name, sizeof name,
 		 "%s.%s", "__Funct__",
 		 e1->str->str());
 	localFunction = true;
       }
     }
     else
-      strncpy(name, e1->str->str(), fullnameMaxSize);
+      strncpy(name, e1->str->str(), sizeof name);
 
     delete e1;
     char* p = strchr (name, '.');
@@ -478,11 +476,14 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   // Create the concatened variable name
-  snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
+  const int fullnameMaxSize = 1024;
+  char name[fullnameMaxSize];
+  snprintf(name, sizeof name, "%s.%s", device->str(), id->str());
 
   // Alias updating
   if (withalias)
   {
+    HMaliastab::iterator hmi;
     if (nostruct)
     {
       // Comes from a simple IDENTIFIER
@@ -500,7 +501,7 @@ UVariableName::buildFullname (UCommand* command,
 	  newobj = getobj->second;
 	  getobj = ::urbiserver->objaliastab.find(newobj->str());
 	}
-	snprintf(name, fullnameMaxSize, "%s", newobj->str());
+	snprintf(name, sizeof name, "%s", newobj->str());
       }
 
       if (char* p = strchr(name, '.'))
@@ -521,7 +522,7 @@ UVariableName::buildFullname (UCommand* command,
 
     if (past_hmi != ::urbiserver->aliastab.end())
     {
-      strncpy(name, past_hmi->second->str(), fullnameMaxSize);
+      strncpy(name, past_hmi->second->str(), sizeof name);
       nostruct = false;
       delete device;
       device = 0;
@@ -558,7 +559,7 @@ UVariableName::buildFullname (UCommand* command,
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
       }
       UString* newmethod = new UString(p+1);
-      snprintf(name, fullnameMaxSize, "%s.%s", newobj->str(),
+      snprintf(name, sizeof name, "%s.%s", newobj->str(),
 	       newmethod->str());
       delete newmethod;
     }

@@ -1,5 +1,11 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	I can't do any better
+	* src/uvariablename.cc: Shorten some scopes.
+	But I give up, this file is a nightmare.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	More ostringstream
 	* src/uvariablename.cc: Here.
 	This file has tricky uses of a buffer on thousands of lines
