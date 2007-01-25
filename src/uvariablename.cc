@@ -22,6 +22,8 @@
 #include "libport/cstdio"
 #include <cmath>
 
+#include <sstream>
+
 #include "ucallid.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
@@ -282,7 +284,8 @@ UVariableName::update_array_mangling (UCommand* cmd,
   if (ps != 0)
   {
     // rebuilding name based on index
-    std::string buildstr = s->str ();
+    std::ostringstream o;
+    o << s->str ();
 
     for (UNamedParameters* p = ps; p; p = p->next)
     {
@@ -294,12 +297,10 @@ UVariableName::update_array_mangling (UCommand* cmd,
 	fullname_ = 0;
 	return false;
       }
-      const int	fullnameMaxSize = 1024;
-      char buf[fullnameMaxSize];
       if (e1->dataType == DATA_NUM)
-	snprintf(buf, sizeof buf, "__%d", (int)e1->val);
+	o << "__" << (int)e1->val;
       else if (e1->dataType == DATA_STRING)
-	snprintf(buf, sizeof buf, "__%s", e1->str->str());
+	o << "__" << e1->str->str();
       else
       {
 	delete e1;
@@ -311,11 +312,9 @@ UVariableName::update_array_mangling (UCommand* cmd,
 
       // Suppress this to make index non static by default
       // if (!p->expression->isconst) cached = false;
-
-      buildstr += buf;
       delete e1;
     }
-    s->update (buildstr.c_str());
+    s->update (o.str().c_str());
   }
   return true;
 }
