@@ -24,6 +24,7 @@
 
 #include <sstream>
 
+#include "libport/assert.hh"
 #include "libport/cstring"
 #include "libport/ref-pt.hh"
 

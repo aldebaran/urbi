@@ -1,5 +1,11 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Fix include
+	* src/uexpression.cc (libport/assert.hh): include it for most
+	recent libport.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Coding style changes
 	* src/userver.cc: here.
 
