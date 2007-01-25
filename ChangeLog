@@ -1,5 +1,10 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	More std::ostringstream
+	* src/ucommand.cc: Stop using static buffers.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Stop using large buffers to please the Aibo (and C++ programmers)
 	* src/ucallid.hh, src/ucallid.cc: Now its ctor takes std::strings
 	instead of const char*.

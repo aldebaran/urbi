@@ -844,36 +844,42 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  && !it->second->monitors.empty())
       {
 	int UU = unic();
-	char tmpprefix[1024];
-	snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-		 functionname->str(), it->second->nbparam, UU);
-
-	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	     j != it->second->monitors.end();
-	     ++j)
 	{
-	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
-	  for (UNamedParameters *pvalue = expression->parameters;
-	       pvalue != 0;
-	       pvalue = pvalue->next)
+	  std::ostringstream o;
+	  o << "[0,"
+	    << "\"" << functionname->str()
+	    << "__" << it->second->nbparam << "\","
+	    << "\"__UFnctret.EXTERNAL_" << UU << "\"";
+	  
+	  for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	       j != it->second->monitors.end();
+	       ++j)
 	  {
-	    (*j)->c->sendc((const ubyte*)",", 1);
-	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    valparam->echo((*j)->c);
+	    (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	    (*j)->c->sendc((const ubyte*)o.str().c_str(), o.str().size());
+	    for (UNamedParameters *pvalue = expression->parameters;
+		 pvalue != 0;
+		 pvalue = pvalue->next)
+	    {
+	      (*j)->c->sendc((const ubyte*)",", 1);
+	      UValue* valparam = pvalue->expression->eval(this, connection);
+	      valparam->echo((*j)->c);
+	    }
+	    (*j)->c->send((const ubyte*)"]\n", 2);
 	  }
-	  (*j)->c->send((const ubyte*)"]\n", 2);
 	}
 
 	persistant = false;
-	std::ostringstream o;
-	o << "{"
-	  << "  waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
-	  << variablename->getFullname()->str()
-	  << "=__UFnctret.EXTERNAL_" << UU
-	  << "|delete __UFnctret.EXTERNAL_" << UU
-	  << "}";
-	strMorph (o.str());
+	{
+	  std::ostringstream o;
+	  o << "{"
+	    << "  waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
+	    << variablename->getFullname()->str()
+	    << "=__UFnctret.EXTERNAL_" << UU
+	    << "|delete __UFnctret.EXTERNAL_" << UU
+	    << "}";
+	  strMorph (o.str());
+	}
 	return UMORPH;
       }
     }
@@ -2361,33 +2367,35 @@ UCommand_EXPR::execute_(UConnection *connection)
 	&& !it->second->monitors.empty())
     {
       int UU = unic();
-      char tmpprefix[1024];
-      snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
-	       funname->str(), it->second->nbparam, UU);
-
-      for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	   j != it->second->monitors.end();
-	   ++j)
       {
-	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
-	for (UNamedParameters *pvalue = expression->parameters;
-	     pvalue != 0;
-	     pvalue = pvalue->next)
+	std::ostringstream o;
+	o << "[0,\"" << funname->str() << "__" << it->second->nbparam
+	  << "\",\"__UFnctret.EXTERNAL_" << UU << "\"";
+	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	     j != it->second->monitors.end();
+	     ++j)
 	{
-	  (*j)->c->sendc((const ubyte*)",", 1);
-	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*j)->c);
+	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	  (*j)->c->sendc((const ubyte*)o.str().c_str(), o.str().size());
+	  for (UNamedParameters *pvalue = expression->parameters;
+	       pvalue != 0;
+	       pvalue = pvalue->next)
+	  {
+	    (*j)->c->sendc((const ubyte*)",", 1);
+	    UValue* valparam = pvalue->expression->eval(this, connection);
+	    valparam->echo((*j)->c);
+	  }
+	  (*j)->c->send((const ubyte*)"]\n", 2);
 	}
-	(*j)->c->send((const ubyte*)"]\n", 2);
       }
-
       persistant = false;
-      std::ostringstream o;
-      o << "{waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
-	<< getTag().c_str() << ":__UFnctret.EXTERNAL_"
-	<< UU << "|delete __UFnctret.EXTERNAL_" << UU << "}";
-      strMorph (o.str());
+      {
+	std::ostringstream o;
+	o << "{waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
+	  << getTag().c_str() << ":__UFnctret.EXTERNAL_"
+	  << UU << "|delete __UFnctret.EXTERNAL_" << UU << "}";
+	strMorph (o.str());
+      }
       return UMORPH;
     }
   }
@@ -2746,10 +2754,9 @@ UCommand_NEW::execute_(UConnection *connection)
   // EXTERNAL
   if (objit->second->binder && !remoteNew)
   {
-    char tmpprefixnew[1024];
-    snprintf(tmpprefixnew, 1024, "[4,\"%s\",\"%s\"]\n",
-	     id->str(),
-	     objit->second->device->str());
+    std::ostringstream o;
+    o << "[4,\"" << id->str() << "\",\""
+      << objit->second->device->str() << "\"]\n";
 
     int nb=0;
     for (std::list<UMonitor*>::iterator i =
@@ -2758,7 +2765,7 @@ UCommand_NEW::execute_(UConnection *connection)
 	 ++i)
     {
       (*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*i)->c->send((const ubyte*)tmpprefixnew, strlen(tmpprefixnew));
+      (*i)->c->send((const ubyte*)o.str().c_str(), o.str().size());
       ++nb;
     }
     // Wait for remote new
@@ -4395,16 +4402,14 @@ UCommand_EMIT::execute_(UConnection *connection)
 	    ||(!parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
-      char tmpprefix[1024];
-      snprintf(tmpprefix, 1024, "[2,\"%s__%d\"",
-	       eventnamestr, it->second->nbparam);
-
+      std::ostringstream o;
+      o << "[2,\"" << eventnamestr << "__" << it->second->nbparam << "\"";
       for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	   j != it->second->monitors.end();
 	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
+	(*j)->c->sendc((const ubyte*)o.str().c_str(), o.str().size());
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
@@ -4481,16 +4486,14 @@ UCommand_EMIT::removeEvent ()
       (it->second->nbparam == parameters->size()) &&
       (!it->second->monitors.empty()))
   {
-    char tmpprefix[1024];
-    snprintf(tmpprefix, 1024, "[3,\"%s__%d\"]\n",
-	     eventnamestr, it->second->nbparam);
-
+    std::ostringstream o;
+    o << "[3,\"" << eventnamestr << "__" << it->second->nbparam << "\"]\n";
     for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	 j != it->second->monitors.end();
 	 ++j)
     {
       (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*j)->c->send((const ubyte*)tmpprefix, strlen(tmpprefix));
+      (*j)->c->send((const ubyte*)o.str().c_str(), o.str().size());
     }
   }
 
