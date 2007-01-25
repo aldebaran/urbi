@@ -51,7 +51,7 @@
 	* src/liburbi/usyncclient.cc: done.
 	* src/liburbi/uvar.cc: done.
 
-2007-01-14  Akim Demaille  <akim.demaille@free.fr>
+2007-01-14  Akim Demaille  <demaille.comee.fr>
 
 	UValue::Type
 	* src/liburbi/uobject/urbi/uvalue.hh (UDataType): Rename as...
@@ -211,7 +211,7 @@
 	* src/liburbi/uabstractclient.cc, src/liburbi/uclient.cc,
 	* src/liburbi/usyncclient.cc, src/liburbi/usystem.cc: Adjust.
 
-2007-01-04  Akim Demaille  <akim.demaille@free.fr>
+2007-01-04  Akim Demaille  <demaille.comee.fr>
 
 	Don't use #warning for MSC
 	* include/uobject.h: here.
@@ -221,7 +221,7 @@
 
 	Update libport to fix sem bug on win and linux.
 
-2007-01-02  Akim Demaille  <akim.demaille@free.fr>
+2007-01-02  Akim Demaille  <demaille.comee.fr>
 
 	Fix the installation of uobject.h
 	* Makefile.am: here.
@@ -321,13 +321,13 @@
 	* src/liburbi/uobject/urbi/usystem.hh: New.
 	* src/liburbi/usystem.cc: New.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille.comee.fr>
 
 	Remove min workaround
 	* src/liburbi/uabstractclient.cc: here.
 	It is done in libport.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille.comee.fr>
 
 	windows.h -> windows.hh
 	* src/examples/monitor.cc, src/examples/urbibandwidth.cc,
@@ -337,7 +337,7 @@
 	* src/liburbi/umain.cc: 
 	Adjust.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille.comee.fr>
 
 	Include cassert
 	* src/liburbi/uobject/urbi/utypes-common.hh: here.
@@ -348,7 +348,7 @@
 	Add missing Uvalue 'cast' to self
 	* src/liburbi/uobject/urbi/uobject.hh.template: Do it.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille.comee.fr>
 
 	Factor UBlendType and UProperty handling
 	* src/liburbi/uobject/urbi/utypes-common.hh: New.
@@ -360,7 +360,7 @@
 	* src/liburbi/uobject/uobject.mk: Adjust.
 	* src/liburbi/Makefile.am: Adjust.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille.comee.fr>
 
 	Clean (a bit)
 	* src/liburbi/uobject/urbi/uobject.hh.template: Do not access to
@@ -409,7 +409,7 @@
 	* flags.mk: Fix sdk/config.h.
 	* src/examples/Makefile.am: Simplify.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille.comee.fr>
 
 	Update sdk
 	* Makefile.am (ACLOCAL_AMFLAGS): Pass -I sdk.
@@ -579,7 +579,7 @@
 	the UVar's UValue.
 	* src/examples/urbirecord.cc: Missing include.
 
-2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+2006-11-07  Akim Demaille  <demaille.comee.fr>
 
 	Use reindent on the code
 	* src/liburbi/usyncclient.cc: Formatting changes.
@@ -587,14 +587,14 @@
 	* src/liburbi/uabstractclient.cc: Ditto.
 	* src/liburbi/uconversion.cc: Ditto.
 
-2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+2006-11-07  Akim Demaille  <demaille.comee.fr>
 
 	uobject.hh should not depend on config.h
 	* src/liburbi/uobject/urbi/uobject.hh.template: Let libport stuff
 	do it anyway.
 	* src/liburbi/Makefile.am: Minor simplification.
 
-2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+2006-11-07  Akim Demaille  <demaille.comee.fr>
 
 	urbi/uobject.hh
 	uobject.hh should be in urbi/, not uobject/.
@@ -653,7 +653,7 @@
 
 	Update externals.
 
-2006-11-03  Akim Demaille  <akim.demaille@free.fr>
+2006-11-03  Akim Demaille  <demaille.comee.fr>
 
 	urbi/uclient.hh
 	Rename and move headers.
@@ -713,7 +713,7 @@
 
 	* src/liburbi/uobject/uobject.mk: Fix typos.
 
-2006-11-03  Akim Demaille  <akim.demaille@free.fr>
+2006-11-03  Akim Demaille  <demaille.comee.fr>
 
 	Normalize examples and utils extensions
 	* src/examples/monitor-win.cpp,
@@ -776,12 +776,12 @@
 	encore un...
 	* sdk/umain.cc: uobject.hh.
 
-2006-11-01  Akim Demaille  <akim.demaille@free.fr>
+2006-11-01  Akim Demaille  <demaille.comee.fr>
 
 	One more uobject.h
 	* sdk/Makefile.am: Fix.
 
-2006-11-01  Akim Demaille  <akim.demaille@free.fr>
+2006-11-01  Akim Demaille  <demaille.comee.fr>
 
 	Last bits of transition to uobject/uobject.hh
 	* sdk/Makefile.am, src/liburbi/Makefile.am: Since all the files
@@ -1058,7 +1058,7 @@
 	* src/liburbi/uobject/uvar.cc: Do that.
 	* src/liburbi/uobject/common_uvalue.cc: And do it again.
 
-2006-10-21  Akim Demaille  <akim.demaille@free.fr>
+2006-10-21  Akim Demaille  <demaille.comee.fr>
 
 	Updates
 	* src/liburbi/uobject/common_uvalue.cc: Formatting changes.
@@ -1205,7 +1205,7 @@
 	* src/liburbi/uabstractclient.cpp: Idem.
 	* src/liburbi/Makefile.am: Idem.
 
-2006-10-16  Akim Demaille  <akim.demaille@free.fr>
+2006-10-16  Akim Demaille  <demaille.comee.fr>
 
 	Use install-sh -C for headers.
 	* configure.ac (INSTALL_HEADER): Define.
@@ -1236,7 +1236,7 @@
 	mix our HAVE_* with its.
 	* Makefile.am: Adjust.
 
-2006-10-15  Akim Demaille  <akim.demaille@free.fr>
+2006-10-15  Akim Demaille  <demaille.comee.fr>
 
 	Kill warnings.
 	* src/liburbi/ufloat.h: Do that.
@@ -1510,7 +1510,7 @@
 	* umake/umake.in: Additional work on command line parsing: sort
 	libs, headers and sources, handle directory arguments.
 
-2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+2006-09-26  Akim Demaille  <demaille.comee.fr>
 
 	Fixes.
 	* src/liburbi/uobject/uext.h: Add a missing "public".
@@ -1607,7 +1607,7 @@
 	* build-aux/urbi-var-progs.m4: New.
 	* configure.ac: Use them.
 
-2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+2006-09-26  Akim Demaille  <demaille.comee.fr>
 
 	Put it in urbi::.
 
