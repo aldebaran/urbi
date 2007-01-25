@@ -118,7 +118,7 @@ UExpression::UExpression(const location& l,
 			 UExpression::Type t, ufloat v)
  : UAst(l)
 {
-  assert (t == VALUE);
+  passert (t, t == VALUE);
   initialize();
   val  = v;
   type = t;
@@ -135,7 +135,7 @@ UExpression::UExpression(const location& l,
 			 UExpression::Type t, UString *s)
  : UAst(l)
 {
-  assert (t == VALUE || t == GROUP);
+  passert (t, t == VALUE || t == GROUP);
   initialize();
   str = s;
   type = t;
@@ -151,7 +151,7 @@ UExpression::UExpression(const location& l, UExpression::Type t, UValue *v)
  : UAst(l)
 {
   initialize();
-  assert (t == VALUE);
+  passert (t, t == VALUE);
   type = t;
   isconst = true;
   dataType   = v->dataType;
@@ -176,7 +176,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
 			 UVariableName *v)
  : UAst(l)
 {
-  assert (t == PROPERTY);
+  passert (t, t == PROPERTY);
   initialize();
   str = o;
   variablename = v;
@@ -196,7 +196,7 @@ UExpression::UExpression(const location& l,
 {
   // FIXME: The comment used to accept GROUPLIST, which AD translated
   // into GROUP.  What should it be?
-  assert (t == VARIABLE || t == ADDR_VARIABLE || t == GROUP);
+  passert (t, t == VARIABLE || t == ADDR_VARIABLE || t == GROUP);
   initialize();
   type = t;
   if (t == ADDR_VARIABLE)
@@ -213,7 +213,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
 			 UNamedParameters *p)
  : UAst(l)
 {
-  assert (t == FUNCTION);
+  passert (t, t == FUNCTION);
   initialize();
   type = t;
   dataType = DATA_UNKNOWN;
@@ -229,7 +229,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
 			 UNamedParameters *p)
   : UAst(l)
 {
-  assert (t == LIST);
+  passert (t, t == LIST);
   initialize();
   type = t;
   dataType = DATA_LIST;

@@ -553,7 +553,7 @@ UConnection::received (const ubyte *buffer, int length)
 	{
 	  binCommand =
 	    dynamic_cast<UCommand_ASSIGN_BINARY*> (p.commandTree->command1);
-	  assert (binCommand != 0);
+	  assert (binCommand);
 
 	  ubyte* buffer =
 	    recvQueue_.pop(binCommand->refBinary->ref()->bufferSize);
@@ -1103,7 +1103,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
       if (mustReturn)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
-	assert (tree != 0);
+	assert (tree);
 	continue;
       }
     }

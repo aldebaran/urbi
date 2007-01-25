@@ -526,8 +526,7 @@ UCommand_TREE::deleteMarked()
       else if (tree->command1->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command1);
-	// If tree->command1 wasn't NULL, then tree must NOT be NULL.
-	assert (tree->command1 ? tree != 0 : true);
+	assert (tree);
 	go_to = 1;
 	continue;
       }
@@ -541,8 +540,7 @@ UCommand_TREE::deleteMarked()
       else if (tree->command2->type == TREE)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
-	// If tree->command2 wasn't NULL, then tree must NOT be NULL.
-	assert (tree->command2 ? tree != 0 : true);
+	assert (tree);
 	go_to = 1;
 	continue;
       }
@@ -2795,7 +2793,8 @@ UCommand_NEW::execute_(UConnection *connection)
     else
     {
       UWaitCounter *wc = new UWaitCounter(id, nb);
-      ASSERT(wc!=0) ::urbiserver->objWaittab[wc->id->str()] = wc;
+      ASSERT(wc)
+	::urbiserver->objWaittab[wc->id->str()] = wc;
     }
     // initiate remote new waiting
     remoteNew = true;
@@ -4832,7 +4831,7 @@ UCommand_DEF::execute_(UConnection *connection)
 	connection->server->functiontab.end())
     {
       if (::urbiserver->defcheck)
-        send_error(connection, this,
+	send_error(connection, this,
 		 "Warning: function %s already exists", funname->str());
 
       // undef function
@@ -5975,7 +5974,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     if (trigger && !active_) // we need to start the loop
     {
       active_ = true;
-      ASSERT (theloop_ == 0);
+      ASSERT (!theloop_);
       theloop_ = new UCommand_LOOP (loc_, command1->copy ());
       theloop_->setTag ("__system__"); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;

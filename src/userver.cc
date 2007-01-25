@@ -1055,8 +1055,9 @@ UServer::addAlias(const char* id, const char* variablename)
   }
   else
   {
-    char* id_copy = strdup (id); // XXX we'll leak id_copy forever :|
-    assert (id_copy != 0);
+    // XXX we'll leak id_copy forever :|
+    char* id_copy = strdup (id);
+    assert (id_copy);
     aliastab[id_copy] = new UString(variablename);
   }
   return 1;

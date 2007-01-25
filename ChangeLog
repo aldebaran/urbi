@@ -1,5 +1,11 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	* src/ucommand.cc, src/uconnection.cc, src/uexpression.cc,
+	* src/userver.cc: Use passert.
+	Fix two incorrect assertions of dynamic_cast.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Use passert
 	* src/parser/bison/bison.mk: Pass -s to flex so that it does not
 	generate a default rule using its own ECHO which does not have the
