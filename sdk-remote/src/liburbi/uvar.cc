@@ -43,6 +43,11 @@ namespace urbi
     varmap[name].push_back(this);
     vardata = 0; // unused. For internal softdevices only
     this->owned = false;
+    assert (dummyUObject);
+
+    createUCallback(dummyUObject->__name,
+                    "var",
+                    dummyUObject, &UObject::voidfun, name, monitormap);
   }
 
   //! UVar out value (read mode)

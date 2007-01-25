@@ -152,6 +152,9 @@ namespace urbi
   // For remote mode.
   extern void main(int argc, char *argv[]);
 
+  /// an empty dummy UObject used by UVar to set a NotifyChange
+  /// This avoid coupling a UVar to a particular object
+  extern UObject* dummyUObject;
 
   // Global function of the urbi:: namespace to access kernel features
 
@@ -251,6 +254,8 @@ namespace urbi
   public:
 
     UObject(const std::string&);
+    /// dummy UObject constructor
+    UObject(int); 
     virtual ~UObject();
 
     /// Calls the specified function each time the variable v is modified.
@@ -353,6 +358,9 @@ namespace urbi
     int voidfun() {return  0;};
     /// Add a group with a 's' after the base class name.
     bool autogroup;
+
+    /// Flag to know whether the UObject is in remote mode or not
+    bool remote;
 
     /// Remove all bindings, this method is called by the destructor.
     void clean();

@@ -1,3 +1,60 @@
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	reformatting
+	* src/liburbi/uobject/urbi/uvar.hh: add spaces.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+	This was a serious design flaw to leave up to the user the task of
+	setting USync on a UVar. Most people expect UVars to be synchronized
+	automatically. Saying otherwise: the plugin mode of UObject had
+	naturally all UVars USync'd. Having a different behavior in remote
+	mode breaks consistency. This is fixed now.
+
+	UVar::__init creates a callback to UOBject::voidfun to simulate a
+	UNotifyChange. However, UNotifyChange expects to be called from within
+	a UObject, and we have to pass a dummyUObject to the callback.
+
+	This leads to one extra and sometimes unecessary NotifyChange on
+	"dummy0" (name of the dummyUObject) that should be removed when a
+	future UDeNotifyChange is available, whenever at least one callback is
+	set to the UVar. A call to UNotifyChange should check if a dummy
+	callback is set on the UVar and remove it.
+
+	USync method has been made inactive, but remains for backward compat.
+
+	all UVar are now automatically USync'd
+	* src/liburbi/uobject.cc: define dummyUObject.
+	* src/liburbi/uobject/urbi/uobject.hh.template: declare dummyUObject
+	and dummy UObject constructor.
+	* src/liburbi/uvar.cc: automatically create a callback in the UVar
+	constructor, to keep the UVar in sync.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	remove unused variable.
+	* src/liburbi/uobject.cc: remove lastUObject, was not used.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add support for the 'remote' attribute in UObject
+	* src/liburbi/uobject.cc: add 'remote' and set load default value to 1.
+	* src/liburbi/uobject/urbi/uobject.hh.template: add 'remote'.
+
+	2007-01-21  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	backward compat svn:externals
+
+	2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	change vcs local.rb to point to liburbi-cpp@gostai.com
+	* vcs/local.rb: done.
+
+	2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add mailto property to send mails to liburbi-cpp@gostai.com
+
 2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	change mailto property. 

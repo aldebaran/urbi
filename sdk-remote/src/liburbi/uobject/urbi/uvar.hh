@@ -18,7 +18,7 @@
 # include <string>
 
 /// Define an attribute and its accessors.
-# define PRIVATE(vartype,varname)		\
+# define PRIVATE(vartype, varname)		\
   private:					\
     vartype varname;				\
   public:					\
@@ -49,7 +49,7 @@ namespace urbi
     operator UValue();
 
     UProp(UVar &owner, UProperty name)
-      :owner(owner),name(name)
+      :owner(owner), name(name)
     {}
 
   private:
@@ -98,7 +98,7 @@ namespace urbi
     UVar(UObject&, const std::string&);
     ~UVar();
 
-    void init(const std::string&,const std::string&);
+    void init(const std::string&, const std::string&);
     void setOwned();
     void syncValue ();
 
@@ -110,7 +110,7 @@ namespace urbi
     void operator = (const UList &l);
     void operator = (const UValue &v);
     operator int ();
-    operator bool () {return (int)(*this);}
+    operator bool ()  {return (int)(*this);}
     operator UBinary ();   ///< deep copy
     /// Deep copy, binary will have to be deleted by the user.
     operator UBinary *();
@@ -151,7 +151,7 @@ namespace urbi
     void setProp(UProperty prop, const char * v);
     void setProp(UProperty prop, const std::string& v)
     {
-      setProp(prop,v.c_str());
+      setProp(prop, v.c_str());
     }
 
     // internal
@@ -169,20 +169,20 @@ namespace urbi
     void __init();
 
     /// Full name of the variable as seen in URBI.
-    PRIVATE(std::string,name)
+    PRIVATE(std::string, name)
     /// The variable value on the softdevice's side.
-    PRIVATE(UValue,value)
+    PRIVATE(UValue, value)
 
     // Check that the invariant of this class are verified.
     bool invariant () const;
   };
 
-  inline void UProp::operator =(const UValue& v) {owner.setProp(name,v);}
-  inline void UProp::operator =(const double v) {owner.setProp(name,v);}
-  inline void UProp::operator =(const std::string& v) {owner.setProp(name,v);}
-  inline UProp::operator double() {return (double)owner.getProp(name);}
+  inline void UProp::operator =(const UValue& v)  {owner.setProp(name, v);}
+  inline void UProp::operator =(const double v)  {owner.setProp(name, v);}
+  inline void UProp::operator =(const std::string& v){owner.setProp(name, v);}
+  inline UProp::operator double()  {return (double)owner.getProp(name);}
   inline UProp::operator std::string()  {return owner.getProp(name);}
-  inline UProp::operator UValue() {return owner.getProp(name);}
+  inline UProp::operator UValue()  {return owner.getProp(name);}
 
 } // end namespace urbi
 

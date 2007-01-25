@@ -32,7 +32,7 @@
 //! Global definition of the starterlist
 namespace urbi
 {
-  UObject* lastUObject;
+  UObject* dummyUObject;
 
   STATIC_INSTANCE(UStartlist, objectlist);
   STATIC_INSTANCE(UStartlistHub, objecthublist);
@@ -198,9 +198,9 @@ namespace urbi
 
   //! Generic UVar monitoring without callback
   void
-  UObject::USync(UVar& v)
+  UObject::USync(UVar&)
   {
-    UNotifyChange(v, &UObject::voidfun);
+    //UNotifyChange(v, &UObject::voidfun);
   }
 
   // **************************************************************************
@@ -209,16 +209,34 @@ namespace urbi
     : __name(s),
       classname(s),
       derived(false),
+      remote (true),
       load(s, "load")
   {
     objecthub = 0;
     autogroup = false;
 
-    lastUObject = this;
     URBI(()) << "class " << __name << "{};";
     URBI(()) << "external object " << __name << ";";
     period = -1;
+
+    // default
+    load = 1;
   }
+
+  //! Dummy UObject constructor.
+  UObject::UObject(int index)
+    : derived(false),
+      remote (true)
+  {
+    std::stringstream ss;
+    ss << "dummy" << index;
+    __name = ss.str();
+    classname = __name;
+    objecthub = 0;
+    autogroup = false;
+    period = -1;
+  }
+
 
   /// Clean a callback UTable from all callbacks linked to the object
   /// whose name is 'name'
@@ -631,6 +649,7 @@ namespace urbi
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
 
+    dummyUObject = new UObject (0);
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();
 	 ++retr)
