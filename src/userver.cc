@@ -23,8 +23,10 @@
 #include <cstdlib>
 #include "libport/cstdio"
 #include <cstdarg>
-#include <string>
+
 #include <fstream>
+#include <sstream>
+#include <string>
 
 #include "libport/containers.hh"
 
@@ -197,10 +199,10 @@ UServer::initialization()
   ghost = new UGhostConnection(this);
   connectionList.push_front(ghost);
 
-  char tmpbuffer_ghostTag[50];
-  sprintf(tmpbuffer_ghostTag, "U%ld", (long)ghost);
+  std::ostringstream o;
+  o << 'U' <<  (long)ghost;
 
-  new UVariable(MAINDEVICE, "ghostID", tmpbuffer_ghostTag);
+  new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
   new UVariable(MAINDEVICE, "name", mainName->str());
   uservarState = true;
 
@@ -869,12 +871,10 @@ UVariable*
 UServer::getVariable (const char *device,
 		      const char *property)
 {
-  char tmpbuffer[1024];
-  HMvariabletab::iterator hmi;
-
-  snprintf(tmpbuffer, 1024, "%s.%s", device, property);
-
-  if ((hmi = variabletab.find(tmpbuffer)) != variabletab.end())
+  std::ostringstream o;
+  o << device << '.' << property;
+  HMvariabletab::iterator hmi = variabletab.find(o.str().c_str());
+  if (hmi != variabletab.end())
     return hmi->second;
   else
     return 0;
