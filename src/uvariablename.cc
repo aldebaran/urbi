@@ -284,20 +284,17 @@ UVariableName::buildFullname (UCommand* command,
 			      UConnection* connection,
 			      bool withalias)
 {
-  const int		fullnameMaxSize = 1024;
-  char			name[fullnameMaxSize];
-  char			indexstr[fullnameMaxSize];
-  UValue*		e1;
-  UNamedParameters*	itindex;
-  HMaliastab::iterator	hmi;
-  HMaliastab::iterator	past_hmi;
-
   if (cached)
     return fullname_;
 
+  const int		fullnameMaxSize = 1024;
+  char			name[fullnameMaxSize];
+  char			indexstr[fullnameMaxSize];
+  HMaliastab::iterator	hmi;
+
   if (str)
   {
-    e1 = str->eval(command, connection);
+    UValue*e1 = str->eval(command, connection);
     cached = str->isconst;
 
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
@@ -305,11 +302,8 @@ UVariableName::buildFullname (UCommand* command,
       send_error (connection, command,
 		  "dynamic variable evaluation failed");
       delete e1;
-      if (fullname_)
-      {
-	delete fullname_;
-	fullname_ = 0;
-      }
+      delete fullname_;
+      fullname_ = 0;
       return 0;
     }
 
@@ -342,7 +336,7 @@ UVariableName::buildFullname (UCommand* command,
       id = new UString (p+1);
       p[0]= '.';
     }
-  };
+  }
 
   if (device->equal("local"))
     device->update(connection->connectionTag->str());
@@ -353,14 +347,13 @@ UVariableName::buildFullname (UCommand* command,
   if (index_obj != 0)
   {
     // rebuilding name based on index
-
-    //snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
-    itindex = index_obj;
     std::string buildstr = device->str ();
 
-    while (itindex)
+    for (UNamedParameters* itindex = index_obj;
+	 itindex;
+	 itindex = itindex->next)
     {
-      e1 = itindex->expression->eval(command, connection);
+      UValue* e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
 	send_error(connection, command, "array index evaluation failed");
@@ -386,7 +379,6 @@ UVariableName::buildFullname (UCommand* command,
       // if (!itindex->expression->isconst) cached = false;
 
       buildstr = buildstr + indexstr;
-      itindex = itindex->next;
       delete e1;
     }
     device->update (buildstr.c_str());
@@ -396,14 +388,10 @@ UVariableName::buildFullname (UCommand* command,
   if (index != 0)
   {
     // rebuilding name based on index
-
-    //snprintf(name, fullnameMaxSize, "%s.%s", device->str(), id->str());
-    itindex = index;
     std::string buildstr = id->str ();
-
-    while (itindex)
+    for (UNamedParameters* itindex = index; itindex; itindex = itindex->next)
     {
-      e1 = itindex->expression->eval(command, connection);
+      UValue* e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
 	send_error(connection, command, "array index evaluation failed");
@@ -430,7 +418,6 @@ UVariableName::buildFullname (UCommand* command,
       // if (!itindex->expression->isconst) cached = false;
 
       buildstr = buildstr + indexstr;
-      itindex = itindex->next;
       delete e1;
     }
     id->update (buildstr.c_str());
@@ -551,7 +538,8 @@ UVariableName::buildFullname (UCommand* command,
     }
     else
       hmi = ::urbiserver->aliastab.find(name);
-    past_hmi = hmi;
+
+    HMaliastab::iterator past_hmi = hmi;
 
     while (hmi != ::urbiserver->aliastab.end())
     {

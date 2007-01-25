@@ -1,5 +1,12 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Simplifications
+	* src/parser/bison/ugrammar.y: Use ? :.
+	* src/uvariablename.cc (UVariableName::buildFullname): Shorten
+	scopes.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Fix "bin" parsing
 	* src/parser/bison/ugrammar.y: The alias is "bin", not "BIN".
 

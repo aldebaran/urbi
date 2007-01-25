@@ -1167,13 +1167,10 @@ purevariable:
   | "identifier" array {
 
       memcheck(up, $1);
-      if (up.connection.functionTag)
-	// We are inside a function
-	  $$ = new UVariableName(new UString(up.connection.functionTag),
-				 $1, false, $2);
-      else
-	$$ = new UVariableName(new UString(up.connection.connectionTag),
-			       $1, false, $2);
+      $$ = new UVariableName(new UString(up.connection.functionTag
+					 ? up.connection.functionTag
+					 : up.connection.connectionTag),
+			     $1, false, $2);
       memcheck(up, $$, $1, $2);
       $$->nostruct = true;
     }

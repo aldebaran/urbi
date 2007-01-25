@@ -111,14 +111,14 @@ public:
   /// Temporary value container.
   ufloat          target;
   /// Previous theoretical value container.
-  ufloat          previous, previous2, previous3; 
+  ufloat          previous, previous2, previous3;
   /// Previous sensed value.
   ufloat          previous_sensed;
   /// Variable value.
   UValue          *value;
 
   /// Used for 'd and 'dd calculation.
-  ufloat valPrev, valPrev2; 
+  ufloat valPrev, valPrev2;
 
   /// True when UDevice::notifyRead must be called.
   bool            notifyRead;
