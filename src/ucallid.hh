@@ -32,7 +32,8 @@ class UCallid
 {
 public:
 
-  UCallid(const char* fun_id, const char* self_id, UCommand_TREE* root);
+  UCallid(const std::string& fun_id, const std::string& self_id,
+	  UCommand_TREE* root);
   ~UCallid();
 
   void         store(UVariable* variable);

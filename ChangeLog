@@ -1,5 +1,15 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Stop using large buffers to please the Aibo (and C++ programmers)
+	* src/ucallid.hh, src/ucallid.cc: Now its ctor takes std::strings
+	instead of const char*.
+	* src/ucommand.cc (buffer_t, NOT_ON_AIBO): Remove.
+	Replace all their uses with ostringstreams.	
+	Also, from time to time, make better use of the dynamic casted
+	variables to avoid yet another cast.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Fix include
 	* src/uexpression.cc (libport/assert.hh): include it for most
 	recent libport.

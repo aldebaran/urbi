@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-#include <cassert> 
+#include <cassert>
 #include <iostream>
 #include "userver.hh"
 #include "libport/containers.hh"
@@ -30,7 +30,7 @@
 
 // **************************************************************************
 //! UCallid constructor.
-UCallid::UCallid (const char *f, const char *s, UCommand_TREE* r)
+UCallid::UCallid (const std::string& f, const std::string& s, UCommand_TREE* r)
   : returnVar (0),
     fun_id (f),
     self_id (s),

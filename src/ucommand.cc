@@ -96,13 +96,8 @@ to_string (UCommand::Status s)
   abort ();
 }
 
-
 namespace
 {
-  /// A buffer type.
-  typedef char buffer_t[65536];
-
-
   /// Report the value of some attribute.
 #define DEBUG_ATTR(Attr)			\
   do {						\
@@ -126,15 +121,6 @@ namespace
   } while (0)
 }
 
-/* Aibo has a small stack so do not put big buffers on it
-* keep buffers on the stack for the other platforms to be thread safe
-*/
-#ifdef URBI_ENV_AIBO
-buffer_t buf;
-#define NOT_ON_AIBO(a)
-#else
-#define NOT_ON_AIBO(a) a
-#endif
 MEMORY_MANAGER_INIT(UCommand);
 
 // **************************************************************************
@@ -737,8 +723,6 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
       if (morph)
       {
-	NOT_ON_AIBO(buffer_t buf);
-	sprintf(buf, "__UFnct%d", unic());
 	UString* fundevice = expression->variablename->getDevice();
 
 	// handle the :: case
@@ -751,8 +735,9 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	{
 	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
 	  assert (uc_tree);
-	  ((UCommand_TREE*)morph)->callid =
-	    new UCallid(buf, fundevice->str(), uc_tree);
+	  std::ostringstream o;
+	  o << "__UFnct" << unic();
+	  uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
 	}
 
 	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
@@ -881,13 +866,14 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	}
 
 	persistant = false;
-	NOT_ON_AIBO(buffer_t buf);
-	sprintf(buf,
-		"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-		"%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-		UU, variablename->getFullname()->str(), UU, UU);
-
-	strMorph (buf);
+	std::ostringstream o;
+	o << "{"
+	  << "  waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
+	  << variablename->getFullname()->str()
+	  << "=__UFnctret.EXTERNAL_" << UU
+	  << "|delete __UFnctret.EXTERNAL_" << UU
+	  << "}";
+	strMorph (o.str());
 	return UMORPH;
       }
     }
@@ -1011,17 +997,16 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	      modifier->str = new UString(ostr.str().c_str());
 	    }
 
-	    NOT_ON_AIBO(buffer_t buf);
-	    snprintf(buf, sizeof buf,
-		     "$%s", modif->name->str());
-	    if (strstr(modifier->str->str(), buf) == 0)
-	      while (char* possub = strstr(result, buf))
+	    std::ostringstream o;
+	    o << "$" << modif->name->str();
+	    if (strstr(modifier->str->str(), o.str().c_str()) == 0)
+	      while (char* possub = strstr(result, o.str().c_str()))
 	      {
 		memmove(possub + modifier->str->len(),
-			possub + strlen(buf),
+			possub + o.str().size(),
 			strlen(result)
 			- (int)(possub - result)
-			- strlen(buf)+1);
+			- o.str().size()+1);
 		strncpy (possub, modifier->str->str(), modifier->str->len());
 	      }
 
@@ -2237,8 +2222,6 @@ UCommand_EXPR::execute_(UConnection *connection)
 	if (flags)
 	  morph->flags = flags->copy();
 
-	NOT_ON_AIBO(buffer_t buf);
-	sprintf(buf, "__UFnct%d", unic());
 	UString* fundevice = expression->variablename->getDevice();
 	if (!fundevice)
 	{
@@ -2255,9 +2238,9 @@ UCommand_EXPR::execute_(UConnection *connection)
 	{
 	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
 	  assert (uc_tree);
-	  ((UCommand_TREE*)morph)->callid = new UCallid(buf,
-							fundevice->str(),
-							uc_tree);
+	  std::ostringstream o;
+	  o << "__UFnct"<< unic();
+	  uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
 	}
 	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
 				    "__result__");
@@ -2281,11 +2264,6 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    send_error(connection, this, "EXPR evaluation failed");
 	    return UCOMPLETED;
 	  }
-	  NOT_ON_AIBO(buffer_t buf);
-	  snprintf(buf, sizeof buf,
-		   "%s.%s",
-		   ((UCommand_TREE*)morph)->callid->str(),
-		   pname->name->str());
 	  ((UCommand_TREE*)morph)->callid->store(
 	    new UVariable(((UCommand_TREE*)morph)->callid->str(),
 			  pname->name->str(),
@@ -2405,13 +2383,11 @@ UCommand_EXPR::execute_(UConnection *connection)
       }
 
       persistant = false;
-      NOT_ON_AIBO(buffer_t buf);
-      sprintf(buf,
-	      "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-	      "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-	      UU, getTag().c_str(), UU, UU);
-
-      strMorph (buf);
+      std::ostringstream o;
+      o << "{waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
+	<< getTag().c_str() << ":__UFnctret.EXTERNAL_"
+	<< UU << "|delete __UFnctret.EXTERNAL_" << UU << "}";
+      strMorph (o.str());
       return UMORPH;
     }
   }
@@ -2878,10 +2854,9 @@ UCommand_NEW::execute_(UConnection *connection)
       if (!valparam)
       {
 	send_error(connection, this, "EXPR evaluation failed");
-	NOT_ON_AIBO(buffer_t buf);
-	snprintf(buf, sizeof buf,
-		 "{delete %s}", id->str());
-	strMorph (buf);
+	std::ostringstream o;
+	o << "{delete " << id->str() << "}";
+	strMorph (o.str());
 	return UMORPH;
       }
 
@@ -3227,20 +3202,19 @@ UCommand_GROUP::execute_(UConnection *connection)
 	 i != connection->server->grouptab.end();
 	 ++i)
     {
-      NOT_ON_AIBO(buffer_t buf);
-      snprintf(buf, sizeof buf,
-	       "*** %s = {", i->first);
+      std::ostringstream o;
+      o << "*** " << i->first << " = {";
 
       for (std::list<UString*>::iterator it = i->second->members.begin();
 	   it !=  i->second->members.end(); )
       {
-	strncat(buf, (*it)->str(), sizeof buf);
+	o << (*it)->str();
 	++it;
 	if (it != i->second->members.end())
-	  strncat(buf, ",", sizeof buf);
+	  o << ',';
       }
-      strncat(buf, "}\n", sizeof buf);
-      connection->sendf(getTag(), buf);
+      o << "}\n";
+      connection->sendf(getTag(), o.str().c_str());
     }
     return UCOMPLETED;
   }
@@ -5294,10 +5268,9 @@ UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
   command (command)
 {
   ADDOBJ(UCommand_TIMEOUT);
-  NOT_ON_AIBO(buffer_t buf);
-  snprintf(buf,
-	   sizeof buf, "__TAG_timeout_%d", (int)unic());
-  this->tagRef	    = new UString(buf);
+  std::ostringstream o;
+  o << "__TAG_timeout_" << unic();
+  tagRef = new UString(o.str());
 }
 
 //! UCommand subclass destructor.
@@ -5366,9 +5339,9 @@ UCommand_STOPIF::UCommand_STOPIF(const location& l,
 {
   ADDOBJ(UCommand_STOPIF);
 
-  NOT_ON_AIBO(buffer_t buf);
-  snprintf(buf, sizeof buf, "__TAG_stopif_%d", unic());
-  this->tagRef	    = new UString(buf);
+  std::ostringstream o;
+  o << "__TAG_stopif_" << unic();
+  tagRef = new UString(o.str());
 }
 
 //! UCommand subclass destructor.
@@ -5454,9 +5427,9 @@ UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
     command (command)
 {
   ADDOBJ(UCommand_FREEZEIF);
-  NOT_ON_AIBO(buffer_t buf);
-  snprintf(buf, sizeof buf, "__TAG_stopif_%d", (int)unic());
-  this->tagRef = new UString(buf);
+  std::ostringstream o;
+  o << "__TAG_stopif_" << unic();
+  tagRef = new UString(o.str ());
 }
 
 //! UCommand subclass destructor.
