@@ -188,11 +188,11 @@ UFunction*
 UObj::searchFunction(const char* id, bool &ambiguous)
 {
   UFunction* ret;
-  char namebuffer[1024];
-  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
+  std::ostringstream o;
+  o << device->str() << '.' << id;
 
   // test for pure urbi symbols
-  HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
+  HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(o.str().c_str());
   if (hmf != ::urbiserver->functiontab.end())
   {
     ambiguous = false;
@@ -200,7 +200,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   }
 
   // test for remote uobjects symbols
-  if (::urbiserver->functionbindertab.find(namebuffer)
+  if (::urbiserver->functionbindertab.find(o.str().c_str())
       != ::urbiserver->functionbindertab.end())
   {
     ambiguous = false;
@@ -208,8 +208,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   }
 
   // test for plugged uobjects symbols
-  if (::urbi::functionmap.find(namebuffer)
-      != ::urbi::functionmap.end())
+  if (::urbi::functionmap.find(o.str().c_str()) != ::urbi::functionmap.end())
   {
     ambiguous = false;
     return kernel::remoteFunction;
@@ -222,10 +221,10 @@ UObj::searchFunction(const char* id, bool &ambiguous)
        i != up.end();
        ++i)
   {
-    UFunction* tmpres = (*i)->searchFunction(id, ambiguous);
+    UFunction* f = (*i)->searchFunction(id, ambiguous);
     if (ambiguous)
       return 0;
-    if (tmpres)
+    if (f)
       if (found)
       {
 	ambiguous = true;
@@ -233,7 +232,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
       }
       else
       {
-	ret = tmpres;
+	ret = f;
 	found = true;
       }
   }

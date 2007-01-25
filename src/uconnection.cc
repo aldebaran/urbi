@@ -84,7 +84,7 @@ UConnection::UConnection  (UServer *userver,
   std::ostringstream o;
   o << "U" << (long) this;
   connectionTag = new UString(o.str());
-  UVariable* cid = 
+  UVariable* cid =
     new UVariable(o.str().c_str(), "connectionID", o.str().c_str());
   if (cid)
     cid->uservar = false;
@@ -205,23 +205,22 @@ UErrorValue
 UConnection::sendPrefix (const char* tag)
 {
   static const int MAXSIZE_TMPBUFFER = 1024;
-  static char tmpBuffer_[MAXSIZE_TMPBUFFER];
+  static char buf[MAXSIZE_TMPBUFFER];
 
   if (tag == NULL)
-    snprintf(tmpBuffer_,
-	     MAXSIZE_TMPBUFFER,
+    snprintf(buf, sizeof buf,
 	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
   else
   {
-    snprintf(tmpBuffer_, MAXSIZE_TMPBUFFER-3,
+    snprintf(buf, sizeof buf,
 	     "[%08d:%s", (int)server->lastTime(), tag);
     // This splitting method is used to truncate the tag if its size
     // is too large.
-    strcat(tmpBuffer_, "] ");
+    strcat(buf, "] ");
   }
 
   sendQueue_.mark (); // put a marker to indicate the beginning of a message
-  sendc((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
+  sendc((const ubyte*)buf, strlen(buf));
   return USUCCESS;
 }
 
