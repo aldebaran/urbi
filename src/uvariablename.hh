@@ -131,6 +131,15 @@ protected:
   bool			selfFunction;
   /// Internal.
   bool			cached;
+
+private:
+  /// Update the mangled name for \a s.
+  ///
+  /// Used for the pairs (device, index_obj) and ().
+  /// \return whether there was no error.
+  bool update_array_mangling (UCommand* cmd, UConnection* cn,
+			      UString* s, UNamedParameters* ps);
+
 };
 
 #endif

@@ -273,6 +273,53 @@ UVariableName::getDevice()
     return fullname_;
 }
 
+bool
+UVariableName::update_array_mangling (UCommand* cmd,
+				      UConnection* cn,
+				      UString* s, UNamedParameters* ps)
+{
+  // index on object name
+  if (ps != 0)
+  {
+    // rebuilding name based on index
+    std::string buildstr = s->str ();
+
+    for (UNamedParameters* p = ps; p; p = p->next)
+    {
+      UValue* e1 = p->expression->eval(cmd, cn);
+      if (e1==0)
+      {
+	send_error(cn, cmd, "array index evaluation failed");
+	delete fullname_;
+	fullname_ = 0;
+	return false;
+      }
+      const int	fullnameMaxSize = 1024;
+      char buf[fullnameMaxSize];
+      if (e1->dataType == DATA_NUM)
+	snprintf(buf, sizeof buf, "__%d", (int)e1->val);
+      else if (e1->dataType == DATA_STRING)
+	snprintf(buf, sizeof buf, "__%s", e1->str->str());
+      else
+      {
+	delete e1;
+	send_error(cn, cmd, "invalid array index type");
+	delete fullname_;
+	fullname_ = 0;
+	return false;
+      }
+
+      // Suppress this to make index non static by default
+      // if (!p->expression->isconst) cached = false;
+
+      buildstr += buf;
+      delete e1;
+    }
+    s->update (buildstr.c_str());
+  }
+  return true;
+}
+
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
  If the building blocks are static, non variable parameters (like static
@@ -289,7 +336,6 @@ UVariableName::buildFullname (UCommand* command,
 
   const int		fullnameMaxSize = 1024;
   char			name[fullnameMaxSize];
-  char			indexstr[fullnameMaxSize];
   HMaliastab::iterator	hmi;
 
   if (str)
@@ -344,84 +390,11 @@ UVariableName::buildFullname (UCommand* command,
   cached = true;
 
   // index on object name
-  if (index_obj != 0)
-  {
-    // rebuilding name based on index
-    std::string buildstr = device->str ();
-
-    for (UNamedParameters* itindex = index_obj;
-	 itindex;
-	 itindex = itindex->next)
-    {
-      UValue* e1 = itindex->expression->eval(command, connection);
-      if (e1==0)
-      {
-	send_error(connection, command, "array index evaluation failed");
-	delete fullname_;
-	fullname_ = 0;
-	return 0;
-      }
-      if (e1->dataType == DATA_NUM)
-	snprintf(indexstr, fullnameMaxSize, "__%d", (int)e1->val);
-      else if (e1->dataType == DATA_STRING)
-	snprintf(indexstr, fullnameMaxSize, "__%s",
-		 e1->str->str());
-      else
-      {
-	delete e1;
-	send_error(connection, command, "invalid array index type");
-	delete fullname_;
-	fullname_ = 0;
-	return 0;
-      }
-
-      // Suppress this to make index non static by default
-      // if (!itindex->expression->isconst) cached = false;
-
-      buildstr = buildstr + indexstr;
-      delete e1;
-    }
-    device->update (buildstr.c_str());
-  }
-
+  if (!update_array_mangling (command, connection, device, index_obj))
+    return 0;
   // index on attribute
-  if (index != 0)
-  {
-    // rebuilding name based on index
-    std::string buildstr = id->str ();
-    for (UNamedParameters* itindex = index; itindex; itindex = itindex->next)
-    {
-      UValue* e1 = itindex->expression->eval(command, connection);
-      if (e1==0)
-      {
-	send_error(connection, command, "array index evaluation failed");
-	delete fullname_;
-	fullname_ = 0;
-	return 0;
-      }
-
-      if (e1->dataType == DATA_NUM)
-	snprintf(indexstr, fullnameMaxSize, "__%d", (int)e1->val);
-      else if (e1->dataType == DATA_STRING)
-	snprintf(indexstr, fullnameMaxSize, "__%s",
-		 e1->str->str());
-      else
-      {
-	delete e1;
-	send_error(connection, command, "invalid array index type");
-	delete fullname_;
-	fullname_ = 0;
-	return 0;
-      }
-
-      // Suppress this to make index non static by default
-      // if (!itindex->expression->isconst) cached = false;
-
-      buildstr = buildstr + indexstr;
-      delete e1;
-    }
-    id->update (buildstr.c_str());
-  }
+  if (!update_array_mangling (command, connection, id, index))
+    return 0;
 
   // Local function call
   if ((localFunction || selfFunction)

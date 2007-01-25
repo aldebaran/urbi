@@ -1,5 +1,13 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Factoring
+	* src/uvariablename.hh, src/uvariablename.cc (update_array_mangling):
+	New.
+	Use it.
+re
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Simplifications
 	* src/parser/bison/ugrammar.y: Use ? :.
 	* src/uvariablename.cc (UVariableName::buildFullname): Shorten
