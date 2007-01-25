@@ -1,9 +1,9 @@
-2007-01-24  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-24  Akim Demaille  <demaille@gostai.com>
 
 	alpha conversion
 	* src/userver.cc (UServer::initialization): Rename some vars.
 
-2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-23  Akim Demaille  <demaille@gostai.com>
 
 	Factor the flavors in the parser.
 	* src/parser/bison/ugrammar.y (TOK_SEMICOLON, TOK_COMMA, TOK_AND)
@@ -15,7 +15,7 @@
 	Use it for these four tokens.
 	* src/parser/uparser.hh: Include flavorable.hh.
 
-2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-23  Akim Demaille  <demaille@gostai.com>
 
 	Use more literals in the parser.
 	* src/parser/bison/ugrammar.y: Replace uses of TOK_OBJECT, TOK_POINT,
@@ -23,32 +23,32 @@
 
 2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix mailto property. 
+	fix mailto property.
 
-2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-23  Akim Demaille  <demaille@gostai.com>
 
 	Network clean up
 	* src/network/bsdnet/connection.hh: Remove useless includes.
 	* src/network/bsdnet/connection.cc: Shorten scopes.
 	* src/network/bsdnet/network.hh: Remove useless includes.
 	Use a more recent libport.
-	* src/network/bsdnet/network.cc (TCPServerPipe::~TCPServerPipe): 
+	* src/network/bsdnet/network.cc (TCPServerPipe::~TCPServerPipe):
 	Call shutdown before close.
 	(TCPServerPipe::notifyRead): Shorten scopes.
 	Remove the client_info variable, unused.
 
-2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-23  Akim Demaille  <demaille@gostai.com>
 
 	Dead cpp code
 	* src/network/bsdnet/network.hh (YYTOKENTYPE): Remove this pseudo
 	definition.
 
-2007-01-23  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-23  Akim Demaille  <demaille@gostai.com>
 
 	|
 	* src/uexpression.cc: Use ||, not |, for Booleans.
 
-2007-01-20  Akim Demaille  <akim.demaille@free.fr>
+2007-01-20  Akim Demaille  <demaille@gostai.com>
 
 	Coding style
 	* src/network/bsdnet/network.cc: Use a more tradional reading
@@ -56,14 +56,14 @@
 	(TCPServerPipe::~TCPServerPipe): close the fd when exiting to
 	free the port asap.
 
-2007-01-20  Akim Demaille  <akim.demaille@free.fr>
+2007-01-20  Akim Demaille  <demaille@gostai.com>
 
 	Use perror
 	* src/network/bsdnet/network.cc: Use perror where there are syscall
 	failures.
 	Shorten scopes.
 
-2007-01-20  Akim Demaille  <akim.demaille@free.fr>
+2007-01-20  Akim Demaille  <demaille@gostai.com>
 
 	Update libport
 	* src/console.cc: .
@@ -153,7 +153,7 @@
 
 	Add debugging help
 	* src/uexpression.cc: here.
-        Should be in libport/compiler eventually.
+	Should be in libport/compiler eventually.
 
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
@@ -164,16 +164,16 @@
 
 	to_string for Status
 	* src/ucommand.hh, src/ucommand.cc (KIND): Rename as...
-        (CASE): this.
-        (to_string): New.
-        (UCommand::print): Use it to display the status.
-        (UCommand_NOOP::print): No longer display the status.
+	(CASE): this.
+	(to_string): New.
+	(UCommand::print): Use it to display the status.
+	(UCommand_NOOP::print): No longer display the status.
 
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
 	Use std::string for file names
 	* src/parser/uparser.hh, src/parser/uparser.cc
-        (UParser::process): Take a string.
+	(UParser::process): Take a string.
 	* src/uexpression.cc: Adjust.
 
 2007-01-18  Akim Demaille  <demaille@gostai.com>
@@ -185,8 +185,8 @@
 
 	eval_FUNCTION_EXEC_OR_LOAD
 	* src/uexpression.hh, src/uexpression.cc
-        (UExpression::eval_FUNCTION_EXEC_OR_LOAD): New.
-        Use it.
+	(UExpression::eval_FUNCTION_EXEC_OR_LOAD): New.
+	Use it.
 
 2007-01-18  Akim Demaille  <demaille@gostai.com>
 
@@ -299,7 +299,7 @@
 	* src/uvariable.cc: add support for autoloop in get.
 	* src/uvariable.hh: add new prototype of get.
 
-2007-01-17  Akim Demaille  <akim.demaille@free.fr>
+2007-01-17  Akim Demaille  <demaille@gostai.com>
 
 	Check printf-like functions
 	* src/ucommand.cc, src/ucommand.hh, src/ucommandqueue.cc,
@@ -330,7 +330,7 @@
 	Var when the change comes from UVar operator=.
 	* src/uvariable.hh: add new prototype of updated.
 
-2007-01-17  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-17  Akim Demaille  <demaille@gostai.com>
 
 	Warning fixes.
 	* src/network/bsdnet/network.cc: Don't use static, use the
@@ -338,12 +338,12 @@
 	Use enum to define constants.
 	(controlPipe): Don't define on windows, as it is not used there.
 
-2007-01-17  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-17  Akim Demaille  <demaille@gostai.com>
 
 	More location initialization.
 	* src/parser/uparser.cc (UParser::UParser): here.
 
-2007-01-17  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-17  Akim Demaille  <demaille@gostai.com>
 
 	First column is column 1.
 	This code can be simplified when Bison 2.4 is out.
@@ -358,7 +358,7 @@
 	* src/userver.cc: Add missing call to va_end.
 	* src/userver.hh: Rename overloaded send(va_args) to vsend as the wrong one might be called.
 
-2007-01-16  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-16  Akim Demaille  <demaille@gostai.com>
 
 	Add missing ;.
 	* src/parser/bison/ugrammar.y: here.
@@ -376,7 +376,7 @@
 
 	update externals
 
-2007-01-14  Akim Demaille  <akim.demaille@free.fr>
+2007-01-14  Akim Demaille  <demaille@gostai.com>
 
 	Catch up with UValue::Type.
 	* src/uobject.cc, src/uvalue.cc, src/uvar.cc: Prepend UValue::
@@ -393,12 +393,12 @@
 
 	update uobject externals to r363
 
-2007-01-12  Akim Demaille  <akim@lrde.epita.fr>
+2007-01-12  Akim Demaille  <demaille@gostai.com>
 
 	Update uobject
 	To get Matthieu's fix on scanf use.
 
-2007-01-12  Akim Demaille  <akim.demaille@free.fr>
+2007-01-12  Akim Demaille  <demaille@gostai.com>
 
 	cpp fix
 	* src/ucommand.cc: Fix an #undef.
@@ -478,17 +478,17 @@
 	Fix includes.
 	* src/ucommand.hh: include cstdarg.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Nuke two warnings
 	* src/uexpression.cc: Provide defaults to two switches.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Use abort to please gcc
 	* src/ucomplaints.cc: instead of continuing the execution.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	More send_error
 	None of these are exercised by the test suite...
@@ -496,7 +496,7 @@
 	* src/ucommand.cc: Adjust.
 	* src/uvariablename.cc: Use it.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	UVariableName::UDeriveType
 	* src/utypes.hh (UDeriveType): Move to...
@@ -506,7 +506,7 @@
 	string in the parser as it is in the scanner.
 	Use more string reprensentation for symbols.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Display the expression locations in errors
 	* src/uexpression.hh, src/uexpression.cc (eval_LIST, eval_GROUP):
@@ -515,7 +515,7 @@
 	(send_error): New.
 	Use it instead of snprintf + send dark incantations.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Put UDefType in its class
 	* src/utypes.hh (UDefType): Move to...
@@ -524,20 +524,20 @@
 	* src/uvariablename.hh (id_type): Remove, unused.
 	Adjust all "uses" (that were useless).
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Attach locations to UExpressions
 	* src/uexpression.hh, src/uexpression.cc (UExpression): Derive
 	from UAst.
 	Adjust all uses.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Remove useless prefix
 	* src/ucommand.hh: No need to specify UCommand:: where we're in it.
 	Besides, it actually comes from UAst.
 
-2006-12-29  Akim Demaille  <akim.demaille@free.fr>
+2006-12-29  Akim Demaille  <demaille@gostai.com>
 
 	Fix location tracking
 	When load is executed, we must preserve the current location.
@@ -545,28 +545,28 @@
 	backup the current location and restore it to keep track of
 	the location in the input.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	Add location to command errors
 	* src/uast.hh (loc): New.
 	* src/ucommand.cc (send_error): Also report the location of
 	the broken command.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	On second thought, pass the command to send_error
 	* src/ucommand.cc (send_error): Instead of taking a tag,
 	take a command and use its tag.
 	And use an string stream for the format.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	send_error
 	* src/ucommand.cc (send_error): New.
 	Use it instead of open coded error strings.
 	It could be part of UCommand, I'm not sure.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	execute_
 	* src/utypes.hh (UCommandStatus): Move to...
@@ -577,12 +577,12 @@
 	Simplify a bazillion of "return status =".
 	Adjust all dependencies.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	Style changes
 	* src/ucommand.cc: Use if where switch was not so appropriate.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	Factor print, and add consts
 	* src/uasynccommand.cc, src/uasynccommand.hh, src/ubinary.cc,
@@ -600,12 +600,12 @@
 	(UCommand::print): Adjust to using it.
 	* src/uvalue.cc: Stop using ucopy here, more care is needed.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	More DEBUG_ATTR
 	* src/ucommand.cc: here.
 
-2006-12-27  Akim Demaille  <akim.demaille@free.fr>
+2006-12-27  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/uconnection.cc: here.
@@ -639,12 +639,12 @@
 	* src/uconnection.cc,
 	* src/uexpression.cc: Here.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Comment changes
 	* src/uvariablename.hh: here.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	s/_FLAVORS//
 	* src/ucommand.hh (WHILE_FLAVORS, LOOPN_FLAVORS, FOREACH_FLAVORS)
@@ -656,7 +656,7 @@
 
 	* src/uconnection.cc: Use a brand new C++ instruction: for.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Factor the command flavors
 	* src/utypes.hh (UNodeType): Move to...
@@ -679,7 +679,7 @@
 	(UCommand_TREE::node): Remove, duplicate flavor_.
 	Adjust all uses.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Restyling
 	* src/uvariablename.cc: Shorten scopes.
@@ -713,47 +713,47 @@
 	* src/uvariable.cc,
 	* src/uvariablename.hh: Formatting changes.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	More DEBUG_ATTR
 	* src/ucommand.cc (DEBUG_ATTR_I): New.
 	Use it, and use DEBUG_ATTR also more widely.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/ucommand.cc (UCommand_AT::execute): here.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Pass tags as std::string
 	* src/ucommand.cc, src/uvariablename.cc: here.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Move the doc where it belongs: the header file.
 	* src/uconnection.hh, src/uconnection.cc: here.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Local restyling
 	* src/uvariablename.cc: here.
 	Shorten and cut var scopes.
 	Compute booleans as expressions instead of using statements.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	if for -> for
 	* src/uvariable.cc: Iterate over empty structures just as on
 	non-empty ones.
 	And use useful identifiers.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	Use #if 0 to comment out code
 	* src/ugroup.cc: here.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	UVariable::UVarSet
 	* src/utypes.hh (UVarSet): Move to...
@@ -766,7 +766,7 @@
 	* src/userver.cc (UServer::work): Remove the useless variable
 	selfError. That frees us from additional includes.
 
-2006-12-26  Akim Demaille  <akim.demaille@free.fr>
+2006-12-26  Akim Demaille  <demaille@gostai.com>
 
 	s/CMD_//
 	* src/ucommand.hh (Type): Remove the CMD_ prefix.
@@ -822,12 +822,12 @@
 	change email notification to kernel1@gostai.com
 	* vcs/local.rb: done.
 
-2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+2006-12-25  Akim Demaille  <demaille@gostai.com>
 
 	Factor handling of tags in the grammar
 	* src/parser/bison/ugrammar.y (tag): New.
 
-2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+2006-12-25  Akim Demaille  <demaille@gostai.com>
 
 	Factor the handling of flags
 	I'd really appreciate if someone could add tests on the use
@@ -835,13 +835,13 @@
 	* src/parser/bison/ugrammar.y (flags, flags.0.1): Remove.
 	(flag, flags.0, flags.1): New.
 
-2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+2006-12-25  Akim Demaille  <demaille@gostai.com>
 
 	Rule permutation
 	* src/parser/bison/ugrammar.y: Highlight the similarity bw rules
 	using flags.
 
-2006-12-25  Akim Demaille  <akim.demaille@free.fr>
+2006-12-25  Akim Demaille  <demaille@gostai.com>
 
 	Simplifications
 	* src/uexpression.hh (UExpression::Type): Remove the EXPR_ prefix.
@@ -858,7 +858,7 @@
 	(flags): Use it.
 	* src/uatcandidate.cc (trigger): Simplify the control flow logic.
 
-2006-12-24  Akim Demaille  <akim.demaille@free.fr>
+2006-12-24  Akim Demaille  <demaille@gostai.com>
 
 	Reduce code bloat in the parser
 	The assembly flags are no longer needed on MIPS to compile
@@ -1162,7 +1162,7 @@
 	Add a dirty workaround for bug #113.
 	* src/uconnection.cc (UConnection::received): Here.
 
-2006-12-21  Akim Demaille  <akim@lrde.epita.fr>
+2006-12-21  Akim Demaille  <demaille@gostai.com>
 
 	buffer_t
 	* src/ucommand.cc (buffer_t): New.
@@ -1225,12 +1225,12 @@
 	Add missing include.
 	* src/uvalue.hh: include ref-pt.hh from libport.
 
-2006-12-20  Akim Demaille  <akim.demaille@free.fr>
+2006-12-20  Akim Demaille  <demaille@gostai.com>
 
 	Include cstdarg
 	* src/uconnection.cc: here.
 
-2006-12-19  Akim Demaille  <akim.demaille@free.fr>
+2006-12-19  Akim Demaille  <demaille@gostai.com>
 
 	UConnection::sendf
 	* src/uconnection.hh, src/uconnection.cc (UConnection::sendf): New.
@@ -1240,7 +1240,7 @@
 	(\s*connection->send)\(\1,\s*(.*?)\);/$4f ($5, $3);/gms' src/*c
 	Plus fixes by hand when it matched too well.
 
-2006-12-19  Akim Demaille  <akim.demaille@free.fr>
+2006-12-19  Akim Demaille  <demaille@gostai.com>
 
 	Simplifications
 	* src/userver.cc: Use C++ like ctors.
@@ -1248,12 +1248,12 @@
 	And maybe continue to improve this ctor.
 	Also, use simple iterator variable names (e.g., i).
 
-2006-12-19  Akim Demaille  <akim.demaille@free.fr>
+2006-12-19  Akim Demaille  <demaille@gostai.com>
 
 	Use an impossible name for removeFunction
 	* src/userver.cc (UServer::UServer): here.
 
-2006-12-19  Akim Demaille  <akim.demaille@free.fr>
+2006-12-19  Akim Demaille  <demaille@gostai.com>
 
 	Put back the old definition of FREEMEM
 	* src/utypes.hh: here.
@@ -1430,7 +1430,7 @@
 	* src/uexpression.hh (eval_EXPR_FUNCTION): Don't declare with the
 	 'UExpression::' qualification because it chokes on g++ 4.1.
 
-2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
+2006-12-15  Akim Demaille  <demaille@gostai.com>
 
 	eval_EXPR_FUNCTION
 	* src/uexpression.hh, src/uexpression.cc (eval): Extract
@@ -1438,79 +1438,79 @@
 	(eval_EXPR_FUNCTION): here.
 	No other changes (in spite of what the diff may look like).
 
-2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
+2006-12-15  Akim Demaille  <demaille@gostai.com>
 
 	EVAL_EXPR_BIN_BOOLEAN
 	* src/uexpression.cc: New.
 	Use it
 
-2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
+2006-12-15  Akim Demaille  <demaille@gostai.com>
 
 	More scope reduction
 	* src/uexpression.cc: Here.
 
-2006-12-15  Akim Demaille  <akim@lrde.epita.fr>
+2006-12-15  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/uexpression.cc: Here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/uexpression.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/uexpression.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	reuse name from UBlendType
 	* src/uexpression.cc: here.
 	* src/ucommand.cc: Formatting changes.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Put UCommandType in UCommand
 	* src/utypes.hh (UCommandType): Rename as...
 	* src/ucommand.hh (UCommand::Type): this.
 	Adjust all callers.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/uexpression.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Shorten scopes
 	* src/uexpression.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Factor binaries
 	* src/uexpression.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Do not allow string order-comparison
 	* src/uexpression.cc: Here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Upgrade ENSURE_COMPARISON
 	* src/uexpression.cc (ENSURE_COMPARISON): Be given e1 and e2.
 	Adjust callers.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	EVAL_EXPR_COMPARISON
 	* src/uexpression.cc: New.
 	Use it.
 	Shorten scopes.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	eval_EXPR_VARIABLE
 	* src/uexpression.hh, src/uexpression.cc (eval_EXPR_VARIABLE): New.
@@ -1519,48 +1519,48 @@
 	(errSize): Remove, used, but useless.
 	(errorString): Use a tighter scope.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Shrink the scope of ret
 	* src/uexpression.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Add braces
 	* src/uexpression.cc: in this monster.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
 	* src/parser/bison/ugrammar.y: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	windows.hh
 	* src/console.cc: Adjust.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Clean UExpressions
 	* src/utypes.hh (UExpressionType): Move to...
 	* src/uexpression.hh, src/uexpression.cc (UExpression::Type): Here.
 	Adjust all dependencies.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
 	* src/ucommandqueue.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Update uobject
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Include cassert
 	* src/parser/uparser.cc: here.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Fix location tracking
 	* src/parser/uparser.cc, src/parser/uparser.hh (UParser::loc_):
@@ -1570,13 +1570,13 @@
 	Remove useles includes.
 	* tests/Makefile.am: One less expected failure.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Match EOF one by one
 	* src/parser/bison/utoken.l: To avoid counting two eol on \n\r for
 	instance.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Update uobject
 	* src/Makefile.am: Adjust.
@@ -1585,18 +1585,18 @@
 	* src/uvariable.hh: UBlend -> UBlendType.
 	* src/uvar.cc: Remove what is done elsewhere.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Don't declare static const int in declarations
 	* src/network/bsdnet/connection.hh: Use enums.
 
-2006-12-14  Akim Demaille  <akim.demaille@free.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Remove version.hh.in
 	* src/version.hh.in: Remove.
 	We use the one in build-aux.
 
-2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+2006-12-13  Akim Demaille  <demaille@gostai.com>
 
 	Report file names in parse errors
 	* src/parser/uparser.cc, src/parser/uparser.hh (filename_): New.
@@ -1604,7 +1604,7 @@
 	* tests/check-file: Normalize the path of included files
 	to avoid difference due to builddir, srcdir etc.
 
-2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+2006-12-13  Akim Demaille  <demaille@gostai.com>
 
 	Nuke a few useless includes
 	I have a small computer, and I'm tired of wasted cycles.
@@ -1616,7 +1616,7 @@
 	virtually all the files.
 	Adjust the missing dependencies in *.cc files.
 
-2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+2006-12-13  Akim Demaille  <demaille@gostai.com>
 
 	Minor parser cleanups
 	* src/parser/uparser.cc, src/parser/uparser.hh (parser_type): New.
@@ -1627,17 +1627,17 @@
 	* src/parser/bison/ugrammar.y: Adjust: directly use the UParser's
 	scanner.
 
-2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+2006-12-13  Akim Demaille  <demaille@gostai.com>
 
 	More %printer
 	* src/parser/bison/ugrammar.y: For <val>.
 
-2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+2006-12-13  Akim Demaille  <demaille@gostai.com>
 
 	More concrete tokens
 	* src/parser/bison/ugrammar.y: here.
 
-2006-12-13  Akim Demaille  <akim.demaille@free.fr>
+2006-12-13  Akim Demaille  <demaille@gostai.com>
 
 	Add tests for load
 	* src/console.cc: Support URBI_PATH.
@@ -1817,7 +1817,7 @@
 	More propagation is needed.
 	* src/parser/bison/utoken.l: Adjust.
 
-2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+2006-12-12  Akim Demaille  <demaille@gostai.com>
 
 	Simplify some piece of crap
 	I thought I had seen it all checking student code at EPITA...
@@ -1825,7 +1825,7 @@
 	make it a class member, since it's only used as a local variable.
 	(getVariable): Simplify.
 
-2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+2006-12-12  Akim Demaille  <demaille@gostai.com>
 
 	Simplify scanGroups
 	* src/ucommand.cc: here, using variable aliases.
@@ -1833,19 +1833,19 @@
 	exercise this part.  Someone should write some tests for it.
 	* src/uvariablename.cc: Reduce variable scope.
 
-2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+2006-12-12  Akim Demaille  <demaille@gostai.com>
 
 	Sort tokens
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y:
 	Sort tokens.
 
-2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+2006-12-12  Akim Demaille  <demaille@gostai.com>
 
 	UParser::result
 	* src/parser/uparser.cc, src/parser/uparser.hh: Remove, unused.
 	(IN): Remove this #undef coming out of the blue.
 
-2006-12-12  Akim Demaille  <akim.demaille@free.fr>
+2006-12-12  Akim Demaille  <demaille@gostai.com>
 
 	UParser::errorMessage
 	* src/parser/uparser.cc, src/parser/uparser.hh,
@@ -1895,7 +1895,7 @@
 	* src/uvariablelist.cc: Use ucopy.
 	* vcs/local.rb: Add yousfi@gostai.com.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Some cleanup
 	This code is truly depressing, as soon as one wants to improve
@@ -1907,7 +1907,7 @@
 	changes I no longer feel like documenting, which is bad.
 	Just as the code.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	uvar-common.cc
 	* src/uvar.cc: Remove the code now in uvar-common.cc.
@@ -1927,18 +1927,18 @@
 	pretty-printing.
 	As usual, remove useless braces and parens.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	UVar::invariant
 	* src/uvar.cc: Implement it, and use it.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Formatting
 	* src/uvalue.cc: here.
 	And use case instead of if.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Kill more useless parens
 	* src/console.cc,
@@ -1976,14 +1976,14 @@
 	Fix LIBERATE
 	* src/utypes.hh: Restore the original test.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Fix deep_clear issues
 	* src/ucallid.cc: Swap mem initializers to silent a warning.
 	* src/ueventcompound.cc, src/ueventhandler.cc: Fix/clean the
 	uses of deep_clear.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	use libport::deep_clear
 	* src/ubinder.cc, src/ubinder.hh, src/ucommand.cc,
@@ -1993,13 +1993,13 @@
 	here.
 	And run restyle.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
 	* src/uatcandidate.cc: here.
 	Shorten scopes.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Clean UCallid
 	* src/ucallid.hh, src/ucallid.cc (fun_id, self_id): Be real
@@ -2009,17 +2009,17 @@
 	Use libport::deep_clear.
 	Modernize ctor.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
 	* src/ucommand.cc: Here.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Formatting changes
 	* src/utypes.hh: Make it cuter and more factored.
 
-2006-12-05  Akim Demaille  <akim.demaille@free.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Cleanup UStrings
 	A *lot* more is needed.  For instance it is still unclear
@@ -2356,7 +2356,7 @@
 	* ChangeLog: Here.
 	* configure.ac: And here.
 
-2006-11-16  Akim Demaille  <akim.demaille@free.fr>
+2006-11-16  Akim Demaille  <demaille@gostai.com>
 
 	Use banners in the tests.
 	* tests/check-file: here.
@@ -2498,7 +2498,7 @@
 	Remove some useless parens.
 	* src/ustring.h: Use appropriate C++ headers.
 
-2006-11-13  Akim Demaille  <akim.demaille@free.fr>
+2006-11-13  Akim Demaille  <demaille@gostai.com>
 
 	Use uconsole to check the kernel
 	To run the test, run "make check" (-j accepted).
@@ -2506,7 +2506,7 @@
 	* tests/Makefile.am, tests/check-file: New.
 	* Makefile.am, README, configure.ac: Adjust.
 
-2006-11-13  Akim Demaille  <akim.demaille@free.fr>
+2006-11-13  Akim Demaille  <demaille@gostai.com>
 
 	Use istream::read
 	* src/console.cc: Use read.
@@ -2720,7 +2720,7 @@ the object existence, triggering an error of "object already existing".
 	fix remote uobject new
 	* src/ucommand.cc: fixed.
 
-2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	urbi/uobject.hh
 	* src/ucommand.cc, src/uobject.cc, src/uvalue.cc, src/uvariable.cc,
@@ -2729,7 +2729,7 @@ the object existence, triggering an error of "object already existing".
 	* src/Makefile.am: Don't ship uobject files, uobject.mk does it.
 	Use $(uobject_hh).
 
-2006-11-07  Akim Demaille  <akim.demaille@free.fr>
+2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	install libport
 	As discussed with Matthieu.
@@ -2927,7 +2927,7 @@ This is now fixed.
 	* src/uvalue.cc: change UValue::echo for DATA_STRING; no processing
 	required anymore.
 
-2006-11-04  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-04  Akim Demaille  <demaille@gostai.com>
 
 	Automake 1.10 compatibility
 	* src/Makefile.am: Use init.mk.
@@ -2943,7 +2943,7 @@ This is now fixed.
 	* src/ucommand.h: add support for whenever.
 	* src/userver.cc: remove unecessary debug ouput.
 
-2006-11-01  Akim Demaille  <akim@lrde.epita.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	Use URBI_LIBPORT
 	* configure.ac: Here.
@@ -3134,7 +3134,7 @@ This is now fixed.
 	Formatting changes
 	* src/uvar.cc: Make it more alike its peer.
 
-2006-10-22  Akim Demaille  <akim.demaille@free.fr>
+2006-10-22  Akim Demaille  <demaille@gostai.com>
 
 	Stop using symlinks, Matthieu dislikes them
 	* src/uobject/uobject.cc, src/uobject/uvar.cc: Move to...
@@ -3144,7 +3144,7 @@ This is now fixed.
 	* src/Makefile.am (liburbi_srcdir, uobject_srcdir): New.
 	Use them to use the copies shipped by the enbedded liburbi.
 
-2006-10-22  Akim Demaille  <akim.demaille@free.fr>
+2006-10-22  Akim Demaille  <demaille@gostai.com>
 
 	Fix parser compilation under Aibo
 	* src/parser/bison/bison.mk: Include an explicit compilation
@@ -3156,7 +3156,7 @@ This is now fixed.
 	Just let AM_CPPFLAGS do its job.
 	* configure.ac: Don't define NETWORK_OPENR, OPENR suffices.
 
-2006-10-21  Akim Demaille  <akim.demaille@free.fr>
+2006-10-21  Akim Demaille  <demaille@gostai.com>
 
 	Prepare aibo
 	* src/console.cc: Use libport/utime.hh.
@@ -3165,7 +3165,7 @@ This is now fixed.
 	* src/Makefile.am: Do not compile the Aibo connection kit.
 	Will probably be removed later.
 
-2006-10-21  Akim Demaille  <akim.demaille@free.fr>
+2006-10-21  Akim Demaille  <demaille@gostai.com>
 
 	ChangeLog issues
 
@@ -3234,7 +3234,7 @@ This is now fixed.
 	* src/lockable.h: Do that.
 	* src/userver.cc: Idem.
 
-2006-10-16  Akim Demaille  <akim.demaille@free.fr>
+2006-10-16  Akim Demaille  <demaille@gostai.com>
 
 	Use install-sh -C for headers.
 	* configure.ac (INSTALL_HEADER): Define.
@@ -3263,7 +3263,7 @@ This is now fixed.
 
 	* src/ubanner.cc: Include config.h.
 
-2006-10-15  Akim Demaille  <akim.demaille@free.fr>
+2006-10-15  Akim Demaille  <demaille@gostai.com>
 
 	Fix some warnings.
 	* ucommand.cc: No longer name unused arguments.
@@ -3273,7 +3273,7 @@ This is now fixed.
 	* ueventhandler.cc: Idem.
 	* uconnection.cc: Idem.
 
-2006-10-15  Akim Demaille  <akim.demaille@free.fr>
+2006-10-15  Akim Demaille  <demaille@gostai.com>
 
 	Upgrade build-aux.
 	* configure.ac: Don't use -Weffc++ yet.
@@ -3666,7 +3666,7 @@ This is now fixed.
 	Add libkernel_la_CPPFLAGS because AM_CPPFLAGS is ignored
 	(libkernel_la_CPPFLAGS written in openr.mk).
 
-2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	White space changes.
 	* uconnection.cc: White space changes.
@@ -3745,7 +3745,7 @@ This is now fixed.
 	* userver.h: Reorder includes.
 	* memorymanager/memorymanager.h: Formatting changes.
 
-2006-09-26  Akim Demaille  <akim.demaille@free.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	namespace cleanups.
 	* ucommand.cc: Don't "using" things from std::.
