@@ -850,7 +850,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    << "\"" << functionname->str()
 	    << "__" << it->second->nbparam << "\","
 	    << "\"__UFnctret.EXTERNAL_" << UU << "\"";
-	  
+
 	  for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	       j != it->second->monitors.end();
 	       ++j)
@@ -4479,36 +4479,39 @@ UCommand_EMIT::removeEvent ()
 
   ////// EXTERNAL /////
 
-  HMbindertab::iterator it =
-    ::urbiserver->eventbindertab.find(eventnamestr);
-  if ((it != ::urbiserver->eventbindertab.end()) &&
-      (parameters) &&
-      (it->second->nbparam == parameters->size()) &&
-      (!it->second->monitors.empty()))
   {
-    std::ostringstream o;
-    o << "[3,\"" << eventnamestr << "__" << it->second->nbparam << "\"]\n";
-    for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	 j != it->second->monitors.end();
-	 ++j)
+    HMbindertab::iterator i =
+      ::urbiserver->eventbindertab.find(eventnamestr);
+    if (i != ::urbiserver->eventbindertab.end()
+	&& parameters
+	&& i->second->nbparam == parameters->size()
+	&& !i->second->monitors.empty())
     {
-      (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*j)->c->send((const ubyte*)o.str().c_str(), o.str().size());
+      std::ostringstream o;
+      o << "[3,\"" << eventnamestr << "__" << i->second->nbparam << "\"]\n";
+      for (std::list<UMonitor*>::iterator j = i->second->monitors.begin();
+	   j != i->second->monitors.end();
+	   ++j)
+      {
+	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	(*j)->c->send((const ubyte*)o.str().c_str(), o.str().size());
+      }
     }
   }
 
   ////// INTERNAL /////
-
-  urbi::UTable::iterator hmfi = urbi::eventendmap.find(eventnamestr);
-  if (hmfi != urbi::eventendmap.end())
   {
-    for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	   hmfi->second.begin();
-	 cbi != hmfi->second.end();
-	 ++cbi)
+    urbi::UTable::iterator i = urbi::eventendmap.find(eventnamestr);
+    if (i != urbi::eventendmap.end())
     {
-      urbi::UList tmparray;
-      (*cbi)->__evalcall(tmparray);
+      for (std::list<urbi::UGenericCallback*>::iterator j =
+	     i->second.begin();
+	   j != i->second.end();
+	   ++j)
+      {
+	urbi::UList tmparray;
+	(*j)->__evalcall(tmparray);
+      }
     }
   }
 }
