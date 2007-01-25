@@ -1,6 +1,11 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
 	Less buffers
+	* src/uconnection.cc, src/uobj.cc, src/uvalue.cc: More ostringstreams.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
+	Less buffers
 	* src/uconnection.cc: More ostringstream.
 
 2007-01-25  Akim Demaille  <demaille@gostai.com>

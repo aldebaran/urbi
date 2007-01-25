@@ -666,15 +666,9 @@ UValue::add(UValue *v)
 
       res->dataType = DATA_STRING;
 
-      char *tmp_String = new char[v->str->len()+str->len()+1];
-      if (tmp_String == 0)
-      {
-	delete res;
-	return 0;
-      }
-      sprintf(tmp_String, "%s%s", str->str(), v->str->str());
-      res->str = new UString(tmp_String);
-      delete[] (tmp_String);
+      std::ostringstream o;
+      o << str->str() << '.' << v->str->str();
+      res->str = new UString(o.str());
       if (res->str == 0)
       {
 	delete res;

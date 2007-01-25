@@ -26,6 +26,8 @@
 
 #include <sstream>
 
+#include <sstream>
+
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
 

@@ -19,6 +19,8 @@
 
  **************************************************************************** */
 
+#include <sstream>
+
 #include "libport/cstdio"
 #include "libport/containers.hh"
 
@@ -106,15 +108,15 @@ UObj::~UObj()
   // clean the object binder
   if (binder)
   {
-    char messagetosend[1024];
-    snprintf(messagetosend, 1024, "[5,\"%s\"]\n", device->str());
+    std::ostringstream o;
+    o << "[5,\"" << device->str() << "\"]\n";
 
     for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
 	 it != binder->monitors.end();
 	 ++it)
     {
       (*it)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*it)->c->send((const ubyte*)messagetosend, strlen(messagetosend));
+      (*it)->c->send((const ubyte*)o.str().c_str(), o.str().size());
     }
 
     // in fact here we can delete the binder since it contained only bindings
@@ -243,10 +245,9 @@ UVariable*
 UObj::searchVariable(const char* id, bool &ambiguous)
 {
   UVariable* ret;
-  char namebuffer[1024];
-
-  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
-  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
+  std::ostringstream o;
+  o << device->str() << '.' << id;
+  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(o.str().c_str());
   if (hmv != ::urbiserver->variabletab.end())
   {
     ambiguous = false;
@@ -284,20 +285,18 @@ UEventHandler*
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
   UEventHandler* ret;
-  char namebuffer[1024];
-
-  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
+  std::ostringstream o;
+  o << device->str() << '.' << id;
   bool ok = false;
-  HMemittab::iterator iet;
   HMemittab::iterator ietok = ::urbiserver->emittab.end ();
 
-  for (iet = ::urbiserver->emittab.begin ();
-       iet != ::urbiserver->emittab.end () && !ok;
-       ++iet)
-    if (iet->second->unforgedName->equal (namebuffer))
+  for (HMemittab::iterator i = ::urbiserver->emittab.begin ();
+       i != ::urbiserver->emittab.end () && !ok;
+       ++i)
+    if (i->second->unforgedName->equal (o.str().c_str()))
     {
       ok = true;
-      ietok = iet;
+      ietok = i;
     }
 
   if (ok)
