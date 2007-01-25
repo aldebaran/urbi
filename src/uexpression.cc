@@ -1306,10 +1306,9 @@ UExpression::eval_FUNCTION (UCommand *command,
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_STRING;
-      char errorString[256];
-      sprintf(errorString, "%d", (int)e1->val);
-      ret->str = new UString(errorString);
-
+      std::ostringstream o;
+      o << (int)e1->val;
+      ret->str = new UString(o.str());
       delete e1;
       return ret;
     }
