@@ -961,15 +961,15 @@ std::string
 UServer::find_file (const char* base)
 {
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  {
+    std::string f = *p + "/" + base;
+    std::ifstream is (f.c_str(), std::ios::binary);
+    if (is)
     {
-      std::string f = *p + "/" + base;
-      std::ifstream is (f.c_str(), std::ios::binary);
-      if (is)
-	{
-	  is.close ();
-	  return f;
-	}
+      is.close ();
+      return f;
     }
+  }
   return base;
 }
 
@@ -986,7 +986,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
   while (is.good ())
   {
     char buf[URBI_BUFSIZ];
-    is.read (buf, URBI_BUFSIZ);
+    is.read (buf, sizeof buf);
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;
   }
@@ -1003,7 +1003,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
 void
 UServer::addConnection(UConnection *connection)
 {
-  if (connection == 0 || connection->UError != USUCCESS)
+  if (!connection || connection->UError != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",
 	  "UConnection constructor failed");

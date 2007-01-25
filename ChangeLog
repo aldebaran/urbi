@@ -1,5 +1,10 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Coding style changes
+	* src/userver.cc: here.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Handle URBI_PATH
 	* src/console.cc: in the constructor rather than in the main.
 
