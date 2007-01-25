@@ -208,7 +208,7 @@ UCommand::print(unsigned l) const
     CASE(ASSIGN_BINARY);
     CASE(ASSIGN_PROPERTY);
     CASE(ASSIGN_VALUE);
-    CASE(AT_FLAVOR);
+    CASE(AT);
     CASE(CLASS);
     CASE(DECREMENT);
     CASE(DEF);
@@ -5524,7 +5524,7 @@ UCommand_AT::UCommand_AT(const location& l,
 			 UExpression *test,
 			 UCommand* cmd1,
 			 UCommand* cmd2)
-  : UASyncCommand(l, AT_FLAVOR),
+  : UASyncCommand(l, AT),
     Flavorable (f),
     test (test),
     command1 (cmd1),

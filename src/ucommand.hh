@@ -53,7 +53,7 @@ public:
     ASSIGN_BINARY,
     ASSIGN_PROPERTY,
     ASSIGN_VALUE,
-    AT_FLAVOR,
+    AT,
     CLASS,
     DECREMENT,
     DEF,

@@ -577,7 +577,14 @@ command:
 /*----------.
 | flavors.  |
 `----------*/
-%type <flavor> flavor.opt pipe.opt;
+%type <flavor> and.opt flavor.opt pipe.opt;
+%printer { debug_stream() << $$; } and.opt flavor.opt pipe.opt ";" "|" "&" ",";
+
+// One or zero "&", defaulting to ";".
+and.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "&"
+;
 
 // One or zero "&" or "|", defaulting to ";".
 flavor.opt:
@@ -1031,32 +1038,13 @@ instruction:
       memcheck(up, $$, $3, $5);
     }
 
-  | "at" "(" softtest ")" taggedcommand %prec CMDBLOCK {
+  | "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_AT(@$, Flavorable::USEMICOLON, $3, $5, 0);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
-      $$ = new UCommand_AT(@$, Flavorable::USEMICOLON, $3, $5, $7);
-      memcheck(up, $$, $3, $5, $7);
-    }
-
-  | "at" "&" "(" softtest ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_AT(@$,  Flavorable::UAND, $4, $6, 0);
+      $$ = new UCommand_AT(@$,  $2, $4, $6, 0);
       memcheck(up, $$, $4, $6);
     }
 
-  | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
+  | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {
       if(!$6)
       {
 	delete $4;
@@ -1065,7 +1053,7 @@ instruction:
 	error(@$, "Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(@$, Flavorable::UAND, $4, $6, $8);
+      $$ = new UCommand_AT(@$, $2, $4, $6, $8);
       memcheck(up, $$, $4, $6, $8);
     }
 
@@ -1077,7 +1065,7 @@ instruction:
 
   | "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
+      $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 

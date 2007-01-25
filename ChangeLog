@@ -1,5 +1,12 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	Factor the parsing of "at"
+	* src/ucommand.hh, src/ucommand.cc: Rename AT_FLAVOR as AT.
+	* src/parser/bison/ugrammar.y (and.opt): New.
+	Use it to factor the parsing of at.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	UCommand_AT is Flavorable
 	* src/uasynccommand.hh (UCommand_AT): Derive from flavorable.
 	* src/ucommand.cc: Adjust its implementation.
