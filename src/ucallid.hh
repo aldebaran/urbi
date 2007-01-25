@@ -20,14 +20,13 @@
  **************************************************************************** */
 
 #ifndef UCALLID_HH
-#define UCALLID_HH
+# define UCALLID_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "ustring.hh"
+# include "fwd.hh"
+# include "ustring.hh"
 
-// ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UCallid
 {
@@ -36,11 +35,11 @@ public:
   UCallid(const char* fun_id, const char* self_id, UCommand_TREE* root);
   ~UCallid();
 
-  void         store(UVariable *variable);
-  void         remove(UVariable *variable);
+  void         store(UVariable* variable);
+  void         remove(UVariable* variable);
   const char*  str();
   const char*  self();
-  void         setReturnVar(UVariable *v);
+  void         setReturnVar(UVariable* v);
 
   // FIXME: Should be private, but ucommand.cc currently directly uses it.
   UVariable* returnVar;
@@ -50,6 +49,7 @@ private:
   UString fun_id;
   UString self_id;
   UCommand_TREE* root;
+  /// Whether the destructor is being called.
   bool dying;
 };
 

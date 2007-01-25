@@ -425,6 +425,7 @@ UExpression::eval (UCommand *command,
     if (!e1 || e1->dataType != Type1)		\
     {						\
       delete e1;				\
+      send_error(connection, command, this, "Invalid type"); \
       return 0;					\
     }						\
   } while (0)
@@ -436,6 +437,7 @@ UExpression::eval (UCommand *command,
     {						\
       delete e1;				\
       delete e2;				\
+      send_error(connection, command, this, "Invalid type"); \
       return 0;					\
     }						\
   } while (0)
@@ -449,6 +451,7 @@ UExpression::eval (UCommand *command,
       delete e1;				\
       delete e2;				\
       delete e3;				\
+      send_error(connection, command, this, "Invalid type"); \
       return 0;					\
     }						\
   } while (0)
@@ -545,12 +548,12 @@ UExpression::eval (UCommand *command,
       if (STREQ(str->str(), "blend"))
 	return new UValue (name(variable->blendType));
 
-      send_error(connection, command, this, "Unknown property: %s", str->str());
+      send_error(connection, command, this,
+                 "Unknown property: %s", str->str());
       return 0;
     }
 
     case FUNCTION:
-      PING();
       return eval_FUNCTION (command, connection, ec);
 
     case PLUS:
@@ -561,8 +564,12 @@ UExpression::eval (UCommand *command,
       if (e1==0 || e1->dataType == DATA_VOID ||
 	  e2==0 || e2->dataType == DATA_VOID)
       {
+        if (e1 && e1->dataType == DATA_VOID
+            || e2 && e2->dataType == DATA_VOID)
+          send_error(connection, command, this, "Invalid type");
 	delete e1;
 	delete e2;
+
 	return 0;
       }
       UValue* ret = e1->add(e2);
@@ -803,8 +810,13 @@ UExpression::eval (UCommand *command,
       return ret;
     }
 
-#define EVAL_BIN_BOOLEAN(Op, Command)					\
+#define EVAL_BIN_BOOLEAN(Op, Command, OpAbort)				\
     {									\
+      UValue* ret = new UValue();					\
+      if (!ret)								\
+	return 0;							\
+      ret->dataType = DATA_NUM;						\
+									\
       UEventCompound* ec1 = 0;						\
       UValue* e1 = expression1->eval(command, connection, ec1);		\
       if (!e1)								\
@@ -813,10 +825,14 @@ UExpression::eval (UCommand *command,
 	return 0;							\
       }									\
 									\
-      UValue* ret = new UValue();					\
-      if (!ret)								\
-	return 0;							\
-      ret->dataType = DATA_NUM;						\
+      if ((int)e1->val OpAbort 0)					\
+      {                                                                 \
+        if (ec1)                                                        \
+          ec = ec1;                                                     \
+        ret->val =  (ufloat) (true OpAbort false);                      \
+        delete e1;                                                      \
+        return ret;                                                     \
+      }                                                                 \
 									\
       UEventCompound* ec2 = 0;						\
       UValue* e2 = expression2->eval(command, connection, ec2);		\
@@ -849,10 +865,10 @@ UExpression::eval (UCommand *command,
     }
 
     case TEST_AND:
-      EVAL_BIN_BOOLEAN(&&, UEventCompound::EC_AND);
+      EVAL_BIN_BOOLEAN(&&, UEventCompound::EC_AND, ==);
 
     case TEST_OR:
-      EVAL_BIN_BOOLEAN(||, UEventCompound::EC_OR);
+      EVAL_BIN_BOOLEAN(||, UEventCompound::EC_OR, !=);
 
 #undef EVAL_BIN_BOOLEAN
     default:
@@ -1338,7 +1354,13 @@ UExpression::eval_FUNCTION (UCommand *command,
     else if (STREQ(variablename->id->str(), "abs"))
       ret->val = fabs(e1->val);
     else if (STREQ(variablename->id->str(), "random"))
-      ret->val = (rand()%(int)e1->val);
+    {
+      int range =  (int)e1->val;
+      if (range)
+        ret->val = rand()%range;
+      else
+        ret->val = 0;
+    }
     else if (STREQ(variablename->id->str(), "round"))
     {
       if (e1->val>=0)

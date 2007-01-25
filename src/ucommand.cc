@@ -126,7 +126,15 @@ namespace
   } while (0)
 }
 
-
+/* Aibo has a small stack so do not put big buffers on it
+* keep buffers on the stack for the other platforms to be thread safe
+*/
+#ifdef URBI_ENV_AIBO
+buffer_t buf;
+#define NOT_ON_AIBO(a)
+#else
+#define NOT_ON_AIBO(a) a
+#endif
 MEMORY_MANAGER_INIT(UCommand);
 
 // **************************************************************************
@@ -732,7 +740,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
       if (morph)
       {
-	buffer_t buf;
+	NOT_ON_AIBO(buffer_t buf);
 	sprintf(buf, "__UFnct%d", unic());
 	UString* fundevice = expression->variablename->getDevice();
 
@@ -876,7 +884,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	}
 
 	persistant = false;
-	buffer_t buf;
+	NOT_ON_AIBO(buffer_t buf);
 	sprintf(buf,
 		"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
 		"%s=__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
@@ -1006,7 +1014,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	      modifier->str = new UString(ostr.str().c_str());
 	    }
 
-	    buffer_t buf;
+	    NOT_ON_AIBO(buffer_t buf);
 	    snprintf(buf, sizeof buf,
 		     "$%s", modif->name->str());
 	    if (strstr(modifier->str->str(), buf) == 0)
@@ -2232,7 +2240,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	if (flags)
 	  morph->flags = flags->copy();
 
-	buffer_t buf;
+	NOT_ON_AIBO(buffer_t buf);
 	sprintf(buf, "__UFnct%d", unic());
 	UString* fundevice = expression->variablename->getDevice();
 	if (!fundevice)
@@ -2276,7 +2284,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    send_error(connection, this, "EXPR evaluation failed");
 	    return UCOMPLETED;
 	  }
-	  buffer_t buf;
+	  NOT_ON_AIBO(buffer_t buf);
 	  snprintf(buf, sizeof buf,
 		   "%s.%s",
 		   ((UCommand_TREE*)morph)->callid->str(),
@@ -2400,7 +2408,7 @@ UCommand_EXPR::execute_(UConnection *connection)
       }
 
       persistant = false;
-      buffer_t buf;
+      NOT_ON_AIBO(buffer_t buf);
       sprintf(buf,
 	      "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
 	      "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
@@ -2872,7 +2880,7 @@ UCommand_NEW::execute_(UConnection *connection)
       if (!valparam)
       {
 	send_error(connection, this, "EXPR evaluation failed");
-	buffer_t buf;
+	NOT_ON_AIBO(buffer_t buf);
 	snprintf(buf, sizeof buf,
 		 "{delete %s}", id->str());
 	strMorph (buf);
@@ -3221,7 +3229,7 @@ UCommand_GROUP::execute_(UConnection *connection)
 	 i != connection->server->grouptab.end();
 	 ++i)
     {
-      buffer_t buf;
+      NOT_ON_AIBO(buffer_t buf);
       snprintf(buf, sizeof buf,
 	       "*** %s = {", i->first);
 
@@ -4823,9 +4831,17 @@ UCommand_DEF::execute_(UConnection *connection)
     if (connection->server->functiontab.find(funname->str()) !=
 	connection->server->functiontab.end())
     {
-      send_error(connection, this,
-		 "function %s already exists", funname->str());
-      return UCOMPLETED;
+      if (::urbiserver->defcheck)
+        send_error(connection, this,
+		 "Warning: function %s already exists", funname->str());
+
+      // undef function
+      UFunction* fun = variablename->getFunction(this, connection);
+      connection->server->functiontab.erase(
+	connection->server->functiontab.find(funname->str()));
+      connection->server->functiondeftab.erase(
+	connection->server->functiondeftab.find(funname->str()));
+      delete fun;
     }
 
     UFunction *fun = new UFunction(new UString(funname), parameters, command);
@@ -5280,7 +5296,7 @@ UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
   command (command)
 {
   ADDOBJ(UCommand_TIMEOUT);
-  buffer_t buf;
+  NOT_ON_AIBO(buffer_t buf);
   snprintf(buf,
 	   sizeof buf, "__TAG_timeout_%d", (int)unic());
   this->tagRef	    = new UString(buf);
@@ -5352,7 +5368,7 @@ UCommand_STOPIF::UCommand_STOPIF(const location& l,
 {
   ADDOBJ(UCommand_STOPIF);
 
-  buffer_t buf;
+  NOT_ON_AIBO(buffer_t buf);
   snprintf(buf, sizeof buf, "__TAG_stopif_%d", unic());
   this->tagRef	    = new UString(buf);
 }
@@ -5440,7 +5456,7 @@ UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
     command (command)
 {
   ADDOBJ(UCommand_FREEZEIF);
-  buffer_t buf;
+  NOT_ON_AIBO(buffer_t buf);
   snprintf(buf, sizeof buf, "__TAG_stopif_%d", (int)unic());
   this->tagRef = new UString(buf);
 }

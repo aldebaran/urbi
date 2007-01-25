@@ -110,15 +110,16 @@ public:
   bool            uservar;
   /// Temporary value container.
   ufloat          target;
-  ufloat          previous,
-		  previous2,
-		  previous3; ///< previous theoretical value container
+  /// Previous theoretical value container.
+  ufloat          previous, previous2, previous3; 
   /// Previous sensed value.
   ufloat          previous_sensed;
   /// Variable value.
   UValue          *value;
-  ufloat          valPrev,
-		  valPrev2; // used for 'd and 'dd calculation
+
+  /// Used for 'd and 'dd calculation.
+  ufloat valPrev, valPrev2; 
+
   /// True when UDevice::notifyRead must be called.
   bool            notifyRead;
   /// True when UDevice::notifyWrite must be called.
@@ -136,7 +137,7 @@ public:
   bool            reloop;
 
   /// Cached binder pointer.
-  UBinder         *binder;
+  UBinder* binder;
 
   /// Binder for internal monitors.
   std::list<urbi::UGenericCallback*> internalBinder;
@@ -147,11 +148,11 @@ public:
   bool access_and_change;
 
   /// Used for the "cancel" blend type.
-  UCommand_ASSIGN_VALUE *cancel;
+  UCommand_ASSIGN_VALUE* cancel;
 
-  const char*   setName(const char *s);
-  const char*   setName(const char *_id, const char* _method);
-  const char*   setName(UString *s);
+  const char* setName(const char* s);
+  const char* setName(const char* _id, const char* _method);
+  const char* setName(UString* s);
 
   /// \name Updates.
   /// \{
@@ -162,9 +163,9 @@ public:
       USPEEDMAX
     };
 
-  UVarSet set(UValue *v);
+  UVarSet set(UValue* v);
   UVarSet setFloat(ufloat f);
-  UVarSet selfSet(ufloat *valcheck);
+  UVarSet selfSet(ufloat* valcheck);
   /// \}
 
   ///  Set a value->val value.
@@ -179,30 +180,32 @@ public:
   /// subclasses.
   bool isDeletable();
 
-  void          updated(bool uvar_assign = false);
+  void updated(bool uvar_assign = false);
 
-  UValue*       get(bool autoloop = false);
+  UValue* get(bool autoloop = false);
 
-  const std::string & getDevicename() {return devicename;}
-  const std::string & getVarname() {return varname;}
-  const std::string & getMethod() {return method;}
-  const std::string & getUnit() {return unit;}
+  const std::string& getDevicename() {return devicename;}
+  const std::string& getVarname() {return varname;}
+  const std::string& getMethod() {return method;}
+  const std::string& getUnit() {return unit;}
   void setUnit(const char *u) {unit =u;}
   void setContext(UCallid * ctx) {context = ctx;}
-  private:
 
+private:
   /// Device in the varname.
-  std::string         devicename;
+  std::string devicename;
    /// Method in the varname.
-  std::string         method;
-  std::string         varname;
+  std::string method;
+  std::string varname;
   /// Device unit.
-  std::string         unit;
-  void    init();
-  UVariable(const UVariable &);
-  UVariable & operator = (const UVariable &);
+  std::string unit;
 
-  UCallid * context; // context if called in a function
+  /// Context if scope is a function.
+  UCallid* context;
+
+  void init();
+  UVariable(const UVariable &);
+  UVariable& operator = (const UVariable &);
 };
 
 #endif
