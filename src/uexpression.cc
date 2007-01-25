@@ -897,11 +897,6 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
 	      e1->str->len());
 
-#if 0
-  ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());
-  p.commandTree->print (3);
-#endif
-
   if (connection->functionTag)
     {
       delete connection->functionTag;
@@ -947,7 +942,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 			    UConnection *connection,
 			    UEventCompound*& ec)
 {
-  assert (type == FUNCTION);
+  passert (type, type == FUNCTION);
   UString* funname = variablename->buildFullname(command, connection);
 
   // Event detection
@@ -1411,7 +1406,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 UValue*
 UExpression::eval_GROUP (UCommand *command, UConnection *connection)
 {
-  assert (type == GROUP);
+  passert (type, type == GROUP);
   UValue* ret = new UValue();
   HMgrouptab::iterator retr = connection->server->grouptab.find(str->str());
   if (retr != connection->server->grouptab.end())
@@ -1473,7 +1468,7 @@ UExpression::eval_GROUP (UCommand *command, UConnection *connection)
 UValue*
 UExpression::eval_LIST (UCommand *command, UConnection *connection)
 {
-  assert (type == LIST);
+  passert (type, type == LIST);
   UValue* ret = new UValue();
   ret->dataType = DATA_LIST;
   UNamedParameters *pevent = parameters;
@@ -1529,7 +1524,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 			    UConnection *connection,
 			    UEventCompound*& ec)
 {
-  assert (type == VARIABLE);
+  passert (type, type == VARIABLE);
   UVariable *variable = variablename->getVariable(command, connection);
   if (!variablename->getFullname())
     return 0;

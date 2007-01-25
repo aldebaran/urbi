@@ -1,5 +1,11 @@
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
+	More passert
+	* src/uexpression.cc: here.
+	Also, remove debugging code.
+
+2007-01-25  Akim Demaille  <demaille@gostai.com>
+
 	Factor the parsing of "at"
 	* src/ucommand.hh, src/ucommand.cc: Rename AT_FLAVOR as AT.
 	* src/parser/bison/ugrammar.y (and.opt): New.
