@@ -1,3 +1,8 @@
+2007-01-26  Akim Demaille  <akim.demaille@free.fr>
+
+	Coding style
+	* src/uproperty.hh, src/uproperty.cc: Use C++ ctors.
+
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
 	Alpha conversion
