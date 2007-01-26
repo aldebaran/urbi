@@ -1,3 +1,8 @@
+2007-01-26  POTHIER Benoit  <pothier@gostai.com>
+
+	Dummy change to test buildfarm.
+	* AUTHORS: Change Copyright date.
+
 2007-01-25  Matthieu Nottale  <nottale@gostai.com>
 
 	Remove unjustified abort, replace abort by assert
