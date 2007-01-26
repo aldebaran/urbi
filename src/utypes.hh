@@ -167,8 +167,6 @@ class UWaitCounter
 };
 
 
-
-class TagInfo;
 typedef libport::hash_map_type<const char*, UVariable*>::type HMvariabletab;
 typedef libport::hash_map_type<const char*, UFunction*>::type HMfunctiontab;
 typedef libport::hash_map_type<const char*, UObj*>::type HMobjtab;
