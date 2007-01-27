@@ -1,5 +1,9 @@
 2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	change mailto. 
+
+2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix BIN problem in grammar.y 
 	* src/parser/bison/ugrammar.y: replace "BIN" by TOK_BIN.
 
