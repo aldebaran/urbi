@@ -1,5 +1,9 @@
 2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	revert email that fails in mailto property. 
+
+2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	fix mailto property. 
 
 2007-01-26  Akim Demaille  <akim@lrde.epita.fr>
