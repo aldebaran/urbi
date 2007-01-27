@@ -1,3 +1,8 @@
+2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	fix BIN problem in grammar.y 
+	* src/parser/bison/ugrammar.y: replace "BIN" by TOK_BIN.
+
 2007-01-27  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
 	Catch up with recent stuff in common.
