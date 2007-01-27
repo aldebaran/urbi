@@ -19,17 +19,6 @@
 
  **************************************************************************** */
 
-#if 0
-# define ECHO(C) \
-  std::cout << C << std::endl
-#else
-# define ECHO(C)
-#endif
-
-#define PING()					\
-  ECHO (__FILE__ << ":" << __LINE__ << ": " << __PRETTY_FUNCTION__)
-
-
 #include <cmath>
 #include "libport/cstdio"
 

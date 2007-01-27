@@ -25,6 +25,11 @@
 #include <cstring>
 
 #include "parser/uparser.hh"
+
+#ifdef ECHO
+// libport/compiler.hh has a #define ECHO that conflicts with flex.
+# undef ECHO
+#endif
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 

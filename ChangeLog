@@ -1,3 +1,10 @@
+2007-01-27  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+
+	Catch up with recent stuff in common.
+	* src/console.cc: utime is now in the libport namespace.
+	* src/parser/bison/utoken.l: Handle conflicting CPP defines.
+	* src/uexpression.cc (ECHO, PING): Now provided by libport.
+
 2007-01-26  POTHIER Benoit  <pothier@gostai.com>
 
 	Dummy change to test buildfarm.
