@@ -26,6 +26,7 @@
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
 # include "fwd.hh"
+# include "ustring.hh"
 # include "utypes.hh"
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
@@ -50,6 +51,25 @@ extern  class UServer   *urbiserver; // Global variable for the server
 class UServer: public libport::Lockable
 {
 public:
+  //! UServer constructor.
+  /*! UServer constructor
+
+   Unlike UConstructor, it is not required that you handle the memory
+   management task when you create the robot-specific sub class. The
+   difference in memory between your class and the UServer class is
+   considered as neglectible and included in the security margin. If you
+   don't understand this point, ignore it.
+
+   \param frequency gives the value in msec of the server update,
+   which are the calls to the "work" function. These calls must be done at
+   a fixed, precise, real-time frequency to let the server computer motor
+   trajectories between two "work" calls.
+
+   \param freeMemory indicates the biggest malloc possible on the system
+   when the server has just started. It is used to determine a high
+   limit of memory allocation, thus avoiding later to run out of memory
+   during a new or malloc.
+   */
   UServer(ufloat frequency, int freeMemory, const char* mainName);
 
   virtual ~UServer();
@@ -188,8 +208,12 @@ public:
 
   /// Shows debug or not.
   bool                     debugOutput;
+
+private:
   /// Name of the main device.
-  UString                  *mainName;
+  UString mainName_;
+
+public:
   /// True after a stop command.
   bool                     somethingToDelete;
   /// True after the initialization phase: all vars are uservar then.

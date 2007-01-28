@@ -1,5 +1,14 @@
 2007-01-28  Akim Demaille  <akim@lrde.epita.fr>
 
+	One less UString pointer
+	* src/userver.hh, src/userver.cc (mainName): Remove the indirection,
+	and rename as...
+	(mainName_): this, private.
+	Adjust uses.
+	Put the documentation in the header.
+
+2007-01-28  Akim Demaille  <akim@lrde.epita.fr>
+
 	Simplifications
 	* src/network/bsdnet/network.cc (notify): Simplify the for loop,
 	which had complications whose purpose I do not understand.

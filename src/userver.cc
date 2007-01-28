@@ -66,32 +66,13 @@ int availableMemory;
 int usedMemory;
 
 
-//! UServer constructor.
-/*! UServer constructor
-
- Unlike UConstructor, it is not required that you handle the memory
- management task when you create the robot-specific sub class. The
- difference in memory between your class and the UServer class is
- considered as neglectible and included in the security margin. If you
- don't understand this point, ignore it.
-
- \param frequency gives the value in msec of the server update,
- which are the calls to the "work" function. These calls must be done at
- a fixed, precise, real-time frequency to let the server computer motor
- trajectories between two "work" calls.
-
- \param freeMemory indicates the biggest malloc possible on the system
- when the server has just started. It is used to determine a high
- limit of memory allocation, thus avoiding later to run out of memory
- during a new or malloc.
- */
 UServer::UServer(ufloat frequency,
 		 int freeMemory,
 		 const char* mainName)
   : reseting (false),
     stage (0),
     debugOutput (false),
-    mainName (new UString(mainName)),
+    mainName_ (mainName),
     somethingToDelete (false),
     uservarState (false),
     cpuoverload (false),
@@ -200,10 +181,10 @@ UServer::initialization()
   connectionList.push_front(ghost);
 
   std::ostringstream o;
-  o << 'U' <<  (long)ghost;
+  o << 'U' << (long)ghost;
 
   new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
-  new UVariable(MAINDEVICE, "name", mainName->str());
+  new UVariable(MAINDEVICE, "name", mainName_.str());
   uservarState = true;
 
 
