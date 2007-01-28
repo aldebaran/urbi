@@ -171,19 +171,17 @@ namespace Network
     std::list<Pipe*>::iterator in;
     for (std::list<Pipe*>::iterator i = pList.begin();
 	 i != pList.end();
-	 i = in)
+	 ++i)
     {
-      in = i;
-      ++in;
       try {
-	Pipe* p = *i;
-	int f = p->readFD();
+	Pipe& p = **i;
+	int f = p.readFD();
 	if (f >= 0 && FD_ISSET(f, &rd))
-	  p->notifyRead();
+	  p.notifyRead();
 
-	f = p->writeFD();
+	f = p.writeFD();
 	if (f >= 0 && FD_ISSET(f, &wr))
-	  p->notifyWrite();
+	  p.notifyWrite();
       }
       catch(...)
       {
@@ -204,22 +202,22 @@ namespace Network
     tv.tv_usec = usDelay - ((usDelay / 1000000) * 1000000);
 
     int r = select(mx, &rd, &wr, 0, &tv);
-    if (!r)
+    if (r < 0)
+      // FIXME: This is bad, we should really do something.
+      perror("cannot select");
+    else if (!r)
       return false;
-    if (r > 0)
+    else // 0 < r
     {
 #ifndef WIN32
       if (FD_ISSET(controlPipe[0], &rd))
       {
 	char buf[128];
-	read(controlPipe[0], buf, 128);
+	read(controlPipe[0], buf, sizeof buf);
       }
 #endif
       notify(rd, wr);
     }
-    if (r < 0)
-      // FIXME: This is bad, we should really do something.
-      perror("cannot select");
 
     return r > 0;
   }
@@ -272,7 +270,7 @@ namespace Network
   {
 #ifndef WIN32
     char c = 0;
-    write(this->controlFd, &c, 1);
+    write(controlFd, &c, 1);
 #endif
   }
 }
