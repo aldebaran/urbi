@@ -1,3 +1,9 @@
+2007-01-29  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+
+	Fix includes.
+	* src/network/bsdnet/network.cc: Include unistd.h to get the
+	  definition of close(2).
+
 2007-01-28  Akim Demaille  <akim@lrde.epita.fr>
 
 	One less UString pointer
