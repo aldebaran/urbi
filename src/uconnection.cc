@@ -142,10 +142,6 @@ UConnection::~UConnection()
   DEBUG(("done\n"));
 }
 
-//! UConnection IP associated
-/*! The robot specific part should call the function when the connection is active
- and transmit the IP address of the client, as a long int.
- */
 void
 UConnection::setIP(IPAdd ip)
 {

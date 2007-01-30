@@ -177,7 +177,13 @@ public:
   int                 sendQueueRemain    ();
   UCommandQueue&      recvQueue          ();
   void                localVariableCheck (UVariable *variable);
-  void                setIP              (IPAdd ip);
+
+
+  //! UConnection IP associated
+  /*! The robot specific part should call the function when the
+   connection is active and transmit the IP address of the client,
+   as a long int.  */
+  void setIP (IPAdd ip);
 
   /// Error return code for the constructor.
   UErrorValue         uerror_;
