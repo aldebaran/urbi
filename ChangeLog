@@ -1,5 +1,10 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	Add missing include
+	* src/uvariable.cc: here.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	Use passert, not assert
 	* src/uvariable.cc: here.
 

@@ -22,6 +22,7 @@
 #include <string>
 #include <cstdlib>
 
+#include "libport/assert.hh"
 #include "libport/cstdio"
 #include "libport/ref-pt.hh"
 
