@@ -1,5 +1,11 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	Routine permutation
+	* src/userver.cc: here.
+	No real change.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	Remove C casts
 	* src/userver.cc: Remove some useless C casts.
 	Indentation changes.

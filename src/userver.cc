@@ -121,27 +121,6 @@ UServer::UServer(ufloat frequency,
   systemObjects.push_back (empty_list);
 }
 
-
-void
-UServer::main (int argc, const char* argv[])
-{
-  UValue* arglistv = new UValue ();
-
-  UValue* current = 0;
-  arglistv->dataType = DATA_LIST;
-  for (int i = 0; i < argc; ++i)
-  {
-    UValue* v = new UValue (argv[i]);
-    if (i == 0)
-      arglistv->liststart = v;
-    else
-      current->next = v;
-    current = v;
-  }
-
-  new UVariable(MAINDEVICE, "args", arglistv);
-}
-
 void
 UServer::initialize()
 {
@@ -202,6 +181,27 @@ UServer::initialize()
 
   if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
+}
+
+
+void
+UServer::main (int argc, const char* argv[])
+{
+  UValue* arglistv = new UValue ();
+
+  UValue* current = 0;
+  arglistv->dataType = DATA_LIST;
+  for (int i = 0; i < argc; ++i)
+  {
+    UValue* v = new UValue (argv[i]);
+    if (i == 0)
+      arglistv->liststart = v;
+    else
+      current->next = v;
+    current = v;
+  }
+
+  new UVariable(MAINDEVICE, "args", arglistv);
 }
 
 //! Function called before work
