@@ -26,7 +26,7 @@
 #include "userver.hh"
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection  (UServer * mainserver)
+UGhostConnection::UGhostConnection  (UServer* mainserver)
   : UConnection   (mainserver,
 		   UGhostConnection::MINSENDBUFFERSIZE,
 		   UGhostConnection::MAXSENDBUFFERSIZE,
@@ -38,7 +38,7 @@ UGhostConnection::UGhostConnection  (UServer * mainserver)
 
   // FIXME: What the heck is this suppose to do???
   // Test the error from UConnection constructor.
-  if (UError != USUCCESS)
+  if (uerror_ != USUCCESS)
     return;
 }
 

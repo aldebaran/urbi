@@ -51,7 +51,7 @@ UConnection::UConnection  (UServer *userver,
 			   int packetSize,
 			   int minRecvBufferSize,
 			   int maxRecvBufferSize)
-  : UError(USUCCESS),
+  : uerror_(USUCCESS),
     server(userver),
     activeCommand(0),
     // no active command and no last command at start:
@@ -93,6 +93,7 @@ UConnection::UConnection  (UServer *userver,
 //! UConnection destructor.
 UConnection::~UConnection()
 {
+  DEBUG(("Destroying UConnection..."));
   if (connectionTag)
   {
     UVariable *vari = server->getVariable(connectionTag->str(),
@@ -106,23 +107,19 @@ UConnection::~UConnection()
 
   for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
        it1 != ::urbiserver->variabletab.end(); ++it1)
-  {
-    if (it1->second->binder)
-      if (it1->second->binder->removeMonitor(this))
-      {
-	delete it1->second->binder;
-	it1->second->binder = 0;
-      }
-  }
+    if (it1->second->binder
+	&& it1->second->binder->removeMonitor(this))
+    {
+      delete it1->second->binder;
+      it1->second->binder = 0;
+    }
 
   std::list<HMbindertab::iterator> deletelist;
   for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
        it2 != ::urbiserver->functionbindertab.end();
        ++it2)
-  {
     if (it2->second->removeMonitor(this))
       deletelist.push_back(it2);
-  }
 
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
@@ -133,16 +130,16 @@ UConnection::~UConnection()
   for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
        it3 != ::urbiserver->eventbindertab.end();
        ++it3)
-  {
     if (it3->second->removeMonitor(this))
       deletelist.push_back(it3);
-  }
+
   for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
        itt != deletelist.end();
        ++itt)
     ::urbiserver->eventbindertab.erase((*itt));
   deletelist.clear();
 
+  DEBUG(("done\n"));
 }
 
 //! UConnection IP associated
@@ -204,13 +201,10 @@ void UConnection::initialize()
 UErrorValue
 UConnection::sendPrefix (const char* tag)
 {
-  static const int MAXSIZE_TMPBUFFER = 1024;
-  static char buf[MAXSIZE_TMPBUFFER];
+  enum { MAXSIZE_TMPBUFFER = 1024 };
+  char buf[MAXSIZE_TMPBUFFER];
 
-  if (tag == NULL)
-    snprintf(buf, sizeof buf,
-	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
-  else
+  if (tag)
   {
     snprintf(buf, sizeof buf,
 	     "[%08d:%s", (int)server->lastTime(), tag);
@@ -218,6 +212,9 @@ UConnection::sendPrefix (const char* tag)
     // is too large.
     strcat(buf, "] ");
   }
+  else
+    snprintf(buf, sizeof buf,
+	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
 
   sendQueue_.mark (); // put a marker to indicate the beginning of a message
   sendc((const ubyte*)buf, strlen(buf));

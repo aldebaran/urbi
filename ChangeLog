@@ -1,5 +1,15 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	DEBUG
+	* src/userver.cc (DEBUG): Move to...
+	* src/userver.hh: here.
+	* src/network/bsdnet/connection.cc (UError): Rename as...
+	(uerror_): this.
+	* src/uconnection.cc, src/uconnection.hh, src/uexpression.cc,
+	* src/ughostconnection.cc: Adjust.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	Don't hard code values, use sizeof
 	* src/ughostconnection.cc (UGhostConnection::effectiveSend): here.
 	Add "tmp" is about the most useless word to include in an

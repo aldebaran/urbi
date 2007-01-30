@@ -19,7 +19,7 @@ Connection::Connection(int connfd)
     fd(connfd)
 {
   // Test the error from UConnection constructor.
-  if (UError != USUCCESS)
+  if (uerror_ != USUCCESS)
     closeConnection();
   else
     initialize();
@@ -53,7 +53,7 @@ Connection::closeConnection()
     return UFAIL;
   else
   {
-    fd=-1;
+    fd = -1;
     return USUCCESS;
   }
 }

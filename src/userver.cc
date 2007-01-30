@@ -44,14 +44,6 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 
-// Send debugging instruction.
-#if 0
-// Must be invoked with two pairs of parens.
-# define DEBUG(Msg)  debug Msg
-#else
-# define DEBUG(Msg) ((void) 0)
-#endif
-
 // Global server reference
 UServer *urbiserver= 0;
 UString **globalDelete = 0;
@@ -991,7 +983,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
 void
 UServer::addConnection(UConnection *connection)
 {
-  if (!connection || connection->UError != USUCCESS)
+  if (!connection || connection->uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",
 	  "UConnection constructor failed");

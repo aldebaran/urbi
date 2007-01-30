@@ -871,11 +871,6 @@ UValue*
 UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
-#if 0
-  PING();
-  command->print (10);
-#endif
-
   passert (variablename->id->str(),
 	   STREQ(variablename->id->str(), "exec")
 	   || STREQ(variablename->id->str(), "load"));

@@ -308,8 +308,9 @@ inline int unic()
 }
 
 
-/* Freestanding functions. */
-
+/*-------------------------.
+| Freestanding functions.  |
+`-------------------------*/
 
 /// Send debugging messages via ::urbiserver.
 void debug (const char* fmt, va_list args)
@@ -323,6 +324,13 @@ void debug (const char* fmt, ...)
 void debug (unsigned t, const char* fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3)));
 
+// Send debugging messages.
+#if URBI_DEBUG
+// Must be invoked with two pairs of parens.
+# define DEBUG(Msg)  debug Msg
+#else
+# define DEBUG(Msg) ((void) 0)
+#endif
 
 #endif
 

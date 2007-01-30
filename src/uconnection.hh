@@ -179,8 +179,8 @@ public:
   void                localVariableCheck (UVariable *variable);
   void                setIP              (IPAdd ip);
 
-  /// Error return code for the constructor..
-  UErrorValue         UError;
+  /// Error return code for the constructor.
+  UErrorValue         uerror_;
   /// Reference to the underlying server.
   UServer             *server;
   /// The command to be executed.
