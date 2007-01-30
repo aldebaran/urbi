@@ -44,6 +44,14 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 
+// Send debugging instruction.
+#if 0
+// Must be invoked with two pairs of parens.
+# define DEBUG(Msg)  debug Msg
+#else
+# define DEBUG(Msg) ((void) 0)
+#endif
+
 // Global server reference
 UServer *urbiserver= 0;
 UString **globalDelete = 0;
@@ -52,7 +60,6 @@ const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 int URBI_unicID = 10000; ///< unique identifier to create new references
 
 // Formatting for the echo and error outputs.
-
 const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
 const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
@@ -61,7 +68,6 @@ const char* UNKNOWN_TAG = "notag";
 const char* MAINDEVICE  = "system";
 
 // Memory counter system
-
 int availableMemory;
 int usedMemory;
 
@@ -155,6 +161,7 @@ UServer::initialize()
 
   // Ghost connection
   {
+    DEBUG (("Setting up ghost connection..."));
     ghost = new UGhostConnection(this);
     connectionList.push_front(ghost);
 
@@ -164,23 +171,30 @@ UServer::initialize()
     new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
     new UVariable(MAINDEVICE, "name", mainName_.str());
     uservarState = true;
+    DEBUG (("done\n"));
   }
 
   // Plugins (internal components)
   {
+    DEBUG (("Loading objecthubs..."));
     for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
 	 i != urbi::objecthublist->end();
 	 ++i)
       (*i)->init((*i)->name);
+    DEBUG (("done\n"));
 
+    DEBUG (("Loading hubs..."));
     for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
 	 i != urbi::objectlist->end();
 	 ++i)
       (*i)->init((*i)->name);
+    DEBUG (("done\n"));
   }
 
+  DEBUG (("Loading URBI.INI..."));
   if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
+  DEBUG (("done\n"));
 }
 
 
