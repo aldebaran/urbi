@@ -1,5 +1,10 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	Use passert, not assert
+	* src/uvariable.cc: here.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 737:799 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>

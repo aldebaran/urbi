@@ -301,7 +301,7 @@ UVariable::set(UValue *v)
 	  case DATA_FUNCTION:
 	  case DATA_OBJ:
 	  case DATA_VARIABLE:
-	    assert (!"not reachable");
+	    passert (v->dataType, !"not reachable");
 	}
 	break;
       case DATA_VARIABLE:
@@ -309,7 +309,7 @@ UVariable::set(UValue *v)
       case DATA_FILE:
       case DATA_FUNCTION:
       case DATA_OBJ:
-	assert (!"not reachable");
+	passert (value->dataType, !"not reachable");
     }
   }
 
