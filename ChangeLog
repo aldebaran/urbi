@@ -1,5 +1,10 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	check-html
+	* Makefile.am (check-html): New.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	Add DEBUG traces in the server start up
 	* src/userver.cc: here.
 
