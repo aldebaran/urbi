@@ -1,5 +1,10 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	No static definitions in headers
+	* src/userver.hh: Use enums.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	Routine permutation
 	* src/userver.cc: here.
 	No real change.

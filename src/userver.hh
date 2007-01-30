@@ -233,9 +233,9 @@ private:
 
 public:
   /// True after a stop command.
-  bool                     somethingToDelete;
+  bool somethingToDelete;
   /// True after the initialization phase: all vars are uservar then.
-  bool                     uservarState;
+  bool uservarState;
 
   /// Cpu load expressed as a number between 0 and 1.
   ufloat                   cpuload;
@@ -261,7 +261,7 @@ public:
   bool                     systemcommands;
 
   /// Urbi TCP Port..
- static const int TCP_PORT            = 54000;
+  enum { TCP_PORT = 54000 };
 
 protected:
   virtual void     effectiveDisplay         (const char*) = 0;
@@ -269,9 +269,9 @@ protected:
 private:
   void              mark            (TagInfo*);
   /// Used by echo()& error().
-  static const int MAXSIZE_INTERNALMESSAGE = 1024;
-  /// Amount of security mem..
-  static const int SECURITY_MEMORY_SIZE    = 100000;
+  enum { MAXSIZE_INTERNALMESSAGE = 1024 };
+  /// Amount of security mem.
+  enum { SECURITY_MEMORY_SIZE = 100000 };
 
   /// Frequency of the calls to work().
   ufloat           frequency_;
