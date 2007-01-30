@@ -1,5 +1,12 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
+	Don't hard code values, use sizeof
+	* src/ughostconnection.cc (UGhostConnection::effectiveSend): here.
+	Add "tmp" is about the most useless word to include in an
+	identifier.
+
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
 	check-html
 	* Makefile.am (check-html): New.
 

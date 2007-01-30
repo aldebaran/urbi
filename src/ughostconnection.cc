@@ -61,16 +61,13 @@ UGhostConnection::closeConnection()
 int
 UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 {
-  char tmpbuf[1024];
-  int real_length = length;
-  if (real_length >= 1024)
-    real_length = 1023;
+  char buf[1024];
+  int len = std::min (length, (int) sizeof buf - 1);
 
-  memcpy (static_cast<void*> (tmpbuf),
-	  static_cast<const void*> (buffer),
-	  real_length);
-  tmpbuf[real_length] = 0;
-  ::urbiserver->debug("%s",tmpbuf);
+  memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer),
+	  len);
+  buf[len] = 0;
+  ::urbiserver->debug("%s", buf);
 
   return length;
 }
