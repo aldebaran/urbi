@@ -1,18 +1,18 @@
 2007-01-30  Akim Demaille  <demaille@gostai.com>
 
 	svn merge -r 737:799 https://svn.gostai.com/svn/kernel1/branches/1.0
-	
+
 	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	revert email that fails in mailto property.
 
 	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	change mailto. 
+	change mailto.
 
 	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix BIN problem in grammar.y 
+	fix BIN problem in grammar.y
 	* src/parser/bison/ugrammar.y: replace "BIN" by TOK_BIN.
 
 	2007-01-27  SIGOURE Benoit  <tsuna@lrde.epita.fr>
@@ -112,11 +112,11 @@
 
 2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	revert email that fails in mailto property. 
+	revert email that fails in mailto property.
 
 2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix mailto property. 
+	fix mailto property.
 
 2007-01-26  Akim Demaille  <akim@lrde.epita.fr>
 
@@ -185,7 +185,7 @@
 	* src/ucallid.hh, src/ucallid.cc: Now its ctor takes std::strings
 	instead of const char*.
 	* src/ucommand.cc (buffer_t, NOT_ON_AIBO): Remove.
-	Replace all their uses with ostringstreams.	
+	Replace all their uses with ostringstreams.
 	Also, from time to time, make better use of the dynamic casted
 	variables to avoid yet another cast.
 
