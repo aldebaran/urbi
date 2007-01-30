@@ -74,9 +74,27 @@ public:
 
   virtual ~UServer();
 
-  void              initialization();
-  void              work();
-  void              main (int argc, const char* argv[]);
+  //! Initialization of the server. Displays the header message & init stuff
+  /*! This function must be called once the server is operational and
+   able to print messages. It is a requirement for URBI compliance to print
+   the header at start, so this function *must* be called. Beside, it also
+   do initalization work for the devices and system variables.
+   */
+  void initialize();
+  /// Obsolete name for initialize().
+  void initialization () { initialize(); }
+
+  //! Main processing loop of the server
+  /*! This function must be called every "frequency_" msec to ensure the proper
+   functionning of the server. It will call the command execution, the
+   connection message sending when they are delayed, etc...
+
+   "frequency_" is a parameter of the server, given in the constructor.
+   */
+  void work();
+
+  /// Set the system.args list in URBI.
+  void main (int argc, const char* argv[]);
 
   void error (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
@@ -197,17 +215,17 @@ public:
   /// List of variables to delete after a reset.
   std::list<UVariable*>         resetList;
   /// True when the server is in the process of resting.
-  bool                     reseting;
+  bool reseting;
   /// Reseting stage.
-  int                      stage;
+  int stage;
   /// List of variables to delete in a reset command.
-  std::list<UVariable*>         varToReset;
+  std::list<UVariable*> varToReset;
 
   /// Flag used to signal a memory overflow.
-  bool                     memoryOverflow;
+  bool memoryOverflow;
 
   /// Shows debug or not.
-  bool                     debugOutput;
+  bool debugOutput;
 
 private:
   /// Name of the main device.

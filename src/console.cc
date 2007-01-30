@@ -89,7 +89,7 @@ main (int argc, const char* argv[])
 
   ConsoleServer s (10);
 
-  s.initialization ();
+  s.initialize ();
   UGhostConnection& c = *s.getGhostConnection ();
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)

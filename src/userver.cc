@@ -121,7 +121,7 @@ UServer::UServer(ufloat frequency,
   systemObjects.push_back (empty_list);
 }
 
-/// Sets the system.arg list in URBI
+
 void
 UServer::main (int argc, const char* argv[])
 {
@@ -142,14 +142,8 @@ UServer::main (int argc, const char* argv[])
   new UVariable(MAINDEVICE, "args", arglistv);
 }
 
-//! Initialization of the server. Displays the header message & init stuff
-/*! This function must be called once the server is operational and
- able to print messages. It is a requirement for URBI compliance to print
- the header at start, so this function *must* be called. Beside, it also
- do initalization work for the devices and system variables.
- */
 void
-UServer::initialization()
+UServer::initialize()
 {
   updateTime();
   currentTime = latestTime = lastTime();
@@ -157,47 +151,54 @@ UServer::initialization()
   previous2Time = previousTime - 0.000001; // avoid division by zero at start
   previous3Time = previous2Time - 0.000001; // avoid division by zero at start
 
-  debugOutput     = true;
-  display(::HEADER_BEFORE_CUSTOM);
+  // Display the banner.
+  {
+    bool old_debugOutput = debugOutput;
+    debugOutput = true;
+    display(::HEADER_BEFORE_CUSTOM);
 
-  int i = 0;
-  char customHeader[1024];
-  do {
-    getCustomHeader(i, (char*)customHeader, 1024);
-    if (customHeader[0])
-      display((const char*) customHeader);
-    ++i;
-  } while (customHeader[0]!=0);
+    int i = 0;
+    char customHeader[1024];
+    do {
+      getCustomHeader(i, customHeader, 1024);
+      if (customHeader[0])
+	display(customHeader);
+      ++i;
+    } while (customHeader[0]!=0);
 
-  display(::HEADER_AFTER_CUSTOM);
-  display("Ready.\n");
+    display(::HEADER_AFTER_CUSTOM);
+    display("Ready.\n");
 
-  debugOutput     = false;
+    debugOutput = old_debugOutput;
+  }
 
   //The order is important: ghost connection, plugins, urbi.ini
 
   // Ghost connection
-  ghost = new UGhostConnection(this);
-  connectionList.push_front(ghost);
+  {
+    ghost = new UGhostConnection(this);
+    connectionList.push_front(ghost);
 
-  std::ostringstream o;
-  o << 'U' << (long)ghost;
+    std::ostringstream o;
+    o << 'U' << (long)ghost;
 
-  new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
-  new UVariable(MAINDEVICE, "name", mainName_.str());
-  uservarState = true;
-
+    new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
+    new UVariable(MAINDEVICE, "name", mainName_.str());
+    uservarState = true;
+  }
 
   // Plugins (internal components)
-  for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-       i != urbi::objecthublist->end();
-       ++i)
-    (*i)->init((*i)->name);
+  {
+    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	 i != urbi::objecthublist->end();
+	 ++i)
+      (*i)->init((*i)->name);
 
-  for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-       i != urbi::objectlist->end();
-       ++i)
-    (*i)->init((*i)->name);
+    for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
+	 i != urbi::objectlist->end();
+	 ++i)
+      (*i)->init((*i)->name);
+  }
 
   if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
     ghost->newDataAdded = true;
@@ -222,13 +223,6 @@ UServer::afterWork()
 }
 
 
-//! Main processing loop of the server
-/*! This function must be called every "frequency_" msec to ensure the proper
- functionning of the server. It will call the command execution, the
- connection message sending when they are delayed, etc...
-
- "frequency_" is a parameter of the server, given in the constructor.
- */
 void
 UServer::work()
 {
@@ -252,7 +246,6 @@ UServer::work()
 
 
   beforeWork();
-
   // Access & Change variable list
   for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
        i != access_and_change_varlist.end ();
@@ -1008,7 +1001,7 @@ UServer::removeConnection(UConnection *connection)
 
 //! Adds an alias in the server base
 /*! This function is mostly useful for alias creation at start in the
- initialization() function for example.
+ initialize() function for example.
  return 1 in case of success,  0 if circular alias is detected
  */
 int
