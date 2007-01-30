@@ -1,3 +1,8 @@
+2007-01-30  Akim Demaille  <demaille@gostai.com>
+
+	Use libport/unistd.h
+	* src/network/bsdnet/network.cc: here.
+
 2007-01-29  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
 	Fix includes.
