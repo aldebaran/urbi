@@ -1,3 +1,8 @@
+2007-01-31  POTHIER Benoit  <benoit.pothier@gmx.net>
+
+	Dummy change to test builbot hooks.
+	* README: Here.
+
 2007-01-25  Akim Demaille  <demaille@gostai.com>
 
 	Use pabort and passert
