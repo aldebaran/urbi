@@ -39,8 +39,9 @@ void* block_operator_new(BlockPool* &mempool, int sz)
       asz = asz + align - (asz % align);
     mempool->itemSize = asz;
   }
-  else 
+  else
     mempool->lock();
+
   if (!mempool->ptr || mempool->cptr < mempool->ptr)
   {
     int newsize = (mempool->size * 3) / 2 + DEFAULT_BLOCK_SIZE;
@@ -48,10 +49,10 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     //realloc ptr pool
 
     //save cptr as relative int
-    long cpos = (long) mempool->cptr - (long) mempool->ptr;
-    mempool->ptr = static_cast<void**> (realloc (mempool->ptr,
-						 newsize * sizeof (void*)));
-    mempool->cptr = (void**) ((long) mempool->ptr + cpos); //restore cptr
+    ptrdiff_t cpos = mempool->cptr - mempool->ptr;
+    mempool->ptr = 
+      static_cast<void**>(realloc (mempool->ptr, newsize * sizeof (void*)));
+    mempool->cptr = mempool->ptr + cpos; //restore cptr
 
     //allocate new data bloc
     char* data = static_cast<char *> (malloc ((newsize-mempool->size)
@@ -62,7 +63,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     for (int i = 0; i < newsize-mempool->size; ++i)
     {
       ++mempool->cptr;
-      *mempool->cptr = (data + mempool->itemSize * i);
+      *mempool->cptr = data + mempool->itemSize * i;
     }
     mempool->size = newsize;
   }
