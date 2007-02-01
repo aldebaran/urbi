@@ -255,7 +255,7 @@ namespace urbi
 
     UObject(const std::string&);
     /// dummy UObject constructor
-    UObject(int); 
+    UObject(int);
     virtual ~UObject();
 
     /// Calls the specified function each time the variable v is modified.
@@ -272,7 +272,7 @@ namespace urbi
       UGenericCallback* cb =
 	createUCallback(__name, "var", (T*)this, fun, v.get_name(), monitormap);
       if (cb)
-	cb->storage = (void*)(&v);
+	cb->storage = &v;
     }
 
     /// Calls the specified function when the variable value is updated on request by requestValue().
@@ -291,7 +291,7 @@ namespace urbi
 	createUCallback(__name, "var_onrequest", (T*)this,
 			fun, v.get_name(), monitormap);
       if (cb)
-	cb->storage = (void*)(&v);
+	cb->storage = &v;
     }
 
     /// Calls the specified function each time the variable v is modified.
@@ -319,7 +319,7 @@ namespace urbi
 	createUCallback(__name, "varaccess", (T*)this,
 			fun, v.get_name(), accessmap);
       if (cb)
-	cb->storage = (void*)(&v);
+	cb->storage = &v;
     }
 
     /// Set a timer that will call tune 'fun' function every 't' milliseconds.
@@ -755,7 +755,7 @@ createUCallback(const std::string& objname, const std::string& type,
 		R (*fun) (%%%,% P% %%),
 		const std::string& funname, UTable& t)
 {
-  return ((UGenericCallback*) new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t));
+  return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t);
 }
 
 // callback creation for non-member void return type
@@ -766,7 +766,7 @@ createUCallback(const std::string& objname, const std::string& type,
 		void (*fun) (%%%,% P% %%),
 		const std::string& funname,UTable &t)
 {
-  return ((UGenericCallback*) new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t));
+  return new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t);
 }
 
 // callback creation for non void return type
@@ -778,7 +778,7 @@ createUCallback(const std::string& objname, const std::string& type,
 		R (OBJ::*fun) (%%%,% P% %%),
 		const std::string& funname,UTable &t)
 {
-  return ((UGenericCallback*) new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t));
+  return new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t);
 }
 
 // callback creation for void return type
@@ -790,7 +790,7 @@ createUCallback(const std::string& objname, const std::string& type,
 		void (OBJ::*fun) (%%%,% P% %%),
 		const std::string& funname,UTable &t)
 {
-  return ((UGenericCallback*) new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t));
+  return new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t);
 }
 
 // special case for eventend notification
@@ -801,7 +801,7 @@ createUCallback(const std::string& objname, const std::string& type,
 		void (OBJ::*fun) (%%%,% P% %%),
 		void (OBJ::*end)(), const std::string& funname,UTable &t)
 {
-  return ((UGenericCallback*) new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t));
+  return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t);
 }
 
 %%%%
