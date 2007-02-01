@@ -645,7 +645,7 @@ class UCallback%N% : public UGenericCallback
   {
     // Avoid warnings when we don't use param.
     (void) param;
-    return UValue(((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%));
+    return UValue(((*obj).*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%));
   }
 
  private:
@@ -672,7 +672,7 @@ class UCallbackvoid%N% : public UGenericCallback
   {
     // Avoid warnings when we don't use param.
     (void) param;
-    ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%);
+    ((*obj).*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
     return UValue();
   }
  private:
@@ -723,7 +723,7 @@ class UFCallbackvoid%N% : public UGenericCallback
   {
     // Avoid warnings when we don't use param.
     (void) param;
-    (*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%);
+    (*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
     return UValue();
   }
 
@@ -747,7 +747,7 @@ class UFCallback%N% : public UGenericCallback
   {
     // Avoid warnings when we don't use param.
     (void) param;
-    return UValue((*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%));
+    return UValue((*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%));
   }
 
  private:

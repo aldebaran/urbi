@@ -1,5 +1,10 @@
 2007-02-01  Akim Demaille  <akim.demaille@free.fr>
 
+	Less C casts
+	* urbi/uobject.hh.template: here, use static_casts.
+
+2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+
 	Remove, again, useless casts
 	* urbi/uobject.hh.template: here.
 
