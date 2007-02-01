@@ -1,3 +1,8 @@
+2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+
+	Casts removal
+	* src/liburbi/uobject/urbi/uobject.hh.template: here.
+
 2007-01-31  POTHIER Benoit  <benoit.pothier@gmx.net>
 
 	Dummy change to test builbot hooks.
