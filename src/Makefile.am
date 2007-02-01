@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie
+# URBI - Copyright (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -48,6 +48,7 @@ flavorable.hh							\
 memorymanager/blockmemorymanager.hh				\
 memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
 parser/uparser.hh parser/uparser.cc				\
+tag-info.hh tag-info.cc						\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
 uasyncregister.hh uasyncregister.cc				\
@@ -130,6 +131,7 @@ parser/uparser.hh
 kernelinclude_HEADERS +=			\
 fwd.hh						\
 flavorable.hh					\
+tag-info.hh					\
 uast.hh						\
 uasynccommand.hh				\
 uasyncregister.hh				\

@@ -3,9 +3,11 @@
 
 /// \file tag-info.hh
 
+# include <list>
 # include <string>
 
 # include "fwd.hh"
+# include "utypes.hh" // HMtagtab
 
 /** Structure containing informations related to a tag.
     We have a hash table of those.
@@ -18,9 +20,7 @@
 class TagInfo
 {
 public:
-  TagInfo()
-    :frozen(false), blocked(false), parent(0)
-  {}
+  TagInfo();
 
   bool frozen;
   bool blocked;
@@ -36,7 +36,7 @@ public:
   std::string name;
 
   /// Insert a Taginfo in map,link to parent creating if needed, recursively
-  TagInfo * insert(HMtagtab & tab);
+  TagInfo* insert(HMtagtab& tab);
 };
 
 #endif // !TAG_INFO_HH

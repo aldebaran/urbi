@@ -25,7 +25,7 @@ EXTRA_DIST +=					\
 windows/urbikernel/Debug			\
 windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
-windows/urbikernel/urbikernel.vcproj       
+windows/urbikernel/urbikernel.vcproj
 
 # Clean VC++ debug file. BTW, Do we want to install it?
 CLEANFILES += vc80.pdb

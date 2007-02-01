@@ -1,5 +1,12 @@
 2007-02-01  Akim Demaille  <akim@lrde.epita.fr>
 
+	Fix the previous checkin.
+	* src/Makefile.am: Add tag-info.* where needed.
+	* src/tag-info.hh, src/tag-info.cc: Add missing includes.
+	Remove implementations from the header.
+
+2007-02-01  Akim Demaille  <akim@lrde.epita.fr>
+
 	tag-info.*.
 	* src/tag-info.hh, src/tag-info.cc: New.
 	Built by taking pieces from...

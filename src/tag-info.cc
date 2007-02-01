@@ -1,4 +1,5 @@
 #include "tag-info.hh"
+#include "userver.hh"
 
 TagInfo::TagInfo()
   :frozen(false), blocked(false), parent(0)
