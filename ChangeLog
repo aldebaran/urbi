@@ -1,5 +1,11 @@
 2007-02-01  Akim Demaille  <akim@lrde.epita.fr>
 
+	Bug fix: copy-ctor for TagInfo.
+	* src/tag-info.hh, src/tag-info.cc: Add a copy constructor.
+	Rewrite the code to make it a bit clearer.
+
+2007-02-01  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fix the previous checkin.
 	* src/Makefile.am: Add tag-info.* where needed.
 	* src/tag-info.hh, src/tag-info.cc: Add missing includes.

@@ -298,7 +298,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 
 
 void
-UCommand::setTag(const std::string & tag)
+UCommand::setTag(const std::string& tag)
 {
   if (tag==this->tag)
     return;
@@ -341,10 +341,11 @@ UCommand::setTag(const UCommand* cmd)
 void
 UCommand::unsetTag()
 {
+  // FIXME: Most of this code should be moved into TagInfo.
   if (!tagInfo)
     return; //nothing to do
   tagInfo->commands.erase(tagInfoPtr);
-  TagInfo * ti = tagInfo;
+  TagInfo* ti = tagInfo;
   while (ti && ti->commands.empty() && ti->subTags.empty()
 	 && !ti->frozen && !ti->blocked)
   {
@@ -352,7 +353,7 @@ UCommand::unsetTag()
     if (ti->parent)
       ti->parent->subTags.erase(ti->parentPtr);
     //remove from hash table
-    TagInfo * next = ti->parent;
+    TagInfo* next = ti->parent;
     urbiserver->tagtab.erase(urbiserver->tagtab.find(ti->name));
     //try again on our parent
     ti = next;

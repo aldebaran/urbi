@@ -22,21 +22,28 @@ class TagInfo
 public:
   TagInfo();
 
+  /// Required because of parentPtr.
+  TagInfo(const TagInfo& rhs);
+
+  /// Insert a Taginfo in \a tab, link to parent creating if needed, recursively
+  TagInfo* insert(HMtagtab& tab);
+
   bool frozen;
   bool blocked;
+
   /// All commands with this tag.
   std::list<UCommand*> commands;
 
   /// All tags with this one as direct parent.
-  std::list<TagInfo *> subTags;
-  TagInfo * parent;
+  std::list<TagInfo*> subTags;
+  TagInfo* parent;
 
-  /// iterator in parent child list.
+  /// Iterator on ourselves in parent child list.
+  /// FIXME: Is this really needed?
   std::list<TagInfo*>::iterator parentPtr;
-  std::string name;
 
-  /// Insert a Taginfo in map,link to parent creating if needed, recursively
-  TagInfo* insert(HMtagtab& tab);
+  /// The name of this tag.
+  std::string name;
 };
 
 #endif // !TAG_INFO_HH
