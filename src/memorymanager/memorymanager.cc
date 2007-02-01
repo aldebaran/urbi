@@ -50,7 +50,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
 
     //save cptr as relative int
     ptrdiff_t cpos = mempool->cptr - mempool->ptr;
-    mempool->ptr = 
+    mempool->ptr =
       static_cast<void**>(realloc (mempool->ptr, newsize * sizeof (void*)));
     mempool->cptr = mempool->ptr + cpos; //restore cptr
 
