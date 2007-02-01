@@ -856,16 +856,17 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	       ++j)
 	  {
 	    (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	    (*j)->c->sendc((const ubyte*)o.str().c_str(), o.str().size());
+	    (*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+			   o.str().size());
 	    for (UNamedParameters *pvalue = expression->parameters;
 		 pvalue != 0;
 		 pvalue = pvalue->next)
 	    {
-	      (*j)->c->sendc((const ubyte*)",", 1);
+	      (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
 	      UValue* valparam = pvalue->expression->eval(this, connection);
 	      valparam->echo((*j)->c);
 	    }
-	    (*j)->c->send((const ubyte*)"]\n", 2);
+	    (*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	  }
 	}
 
@@ -1011,7 +1012,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 		memmove(possub + modifier->str->len(),
 			possub + o.str().size(),
 			strlen(result)
-			- (int)(possub - result)
+			- static_cast<int>(possub - result)
 			- o.str().size()+1);
 		strncpy (possub, modifier->str->str(), modifier->str->len());
 	      }
@@ -1639,7 +1640,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       phaseval->val = (phase +
 		       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
 				       targettime ));
-      int n = (int)(phaseval->val / (PI*ufloat(2)));
+      int n = static_cast<int>(phaseval->val / (PI*ufloat(2)));
       if (n < 0)
 	--n;
       phaseval->val = phaseval->val - n * (PI * ufloat(2));
@@ -2377,16 +2378,17 @@ UCommand_EXPR::execute_(UConnection *connection)
 	     ++j)
 	{
 	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*j)->c->sendc((const ubyte*)o.str().c_str(), o.str().size());
+	  (*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+			 o.str().size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    (*j)->c->sendc((const ubyte*)",", 1);
+	    (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    valparam->echo((*j)->c);
 	  }
-	  (*j)->c->send((const ubyte*)"]\n", 2);
+	  (*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
       persistant = false;
@@ -2766,7 +2768,8 @@ UCommand_NEW::execute_(UConnection *connection)
 	 ++i)
     {
       (*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*i)->c->send((const ubyte*)o.str().c_str(), o.str().size());
+      (*i)->c->send(reinterpret_cast<const ubyte*>(o.str().c_str()),
+		    o.str().size());
       ++nb;
     }
     // Wait for remote new
@@ -3775,7 +3778,7 @@ MEMORY_MANAGER_INIT(UCommand_BINDER);
 UCommand_BINDER::UCommand_BINDER(const location& l,
 				 UVariableName* objname,
 				 UString* binder,
-				 int type,
+				 UBindType type,
 				 UVariableName* variablename,
 				 int nbparam)
   : UCommand(l, GENERIC),
@@ -3835,7 +3838,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 	UVariable *variable = new UVariable(key->str(), new UValue());
 	variable->binder = new UBinder(fullobjname, fullname,
 				       mode,
-				       (UBindType)type, nbparam, connection);
+				       type, nbparam, connection);
       }
       else
       {
@@ -3844,7 +3847,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 	else
 	  it->second->binder = new UBinder(fullobjname, fullname,
 					   mode,
-					   (UBindType)type,
+					   type,
 					   nbparam,
 					   connection);
 	if ( !it->second->internalAccessBinder.empty ()
@@ -3865,7 +3868,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 	  == ::urbiserver->functionbindertab.end())
 	::urbiserver->functionbindertab[key->str()] =
 	    new UBinder(fullobjname, fullname,
-			mode, (UBindType)type, nbparam, connection);
+			mode, type, nbparam, connection);
       else
 	::urbiserver->functionbindertab[key->str()]->
 	    addMonitor(fullobjname, connection);
@@ -3876,7 +3879,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 	  == ::urbiserver->eventbindertab.end())
 	::urbiserver->eventbindertab[key->str()] =
 	    new UBinder(fullobjname, fullname,
-			mode, (UBindType)type, nbparam, connection);
+			mode, type, nbparam, connection);
       else
 	::urbiserver->eventbindertab[key->str()]->addMonitor(fullobjname,
 							     connection);
@@ -3895,7 +3898,7 @@ UCommand_BINDER::execute_(UConnection *connection)
       else
 	uobj->binder = new UBinder(uobj->device, uobj->device,
 				   mode,
-				   (UBindType)type,
+				   type,
 				   0,
 				   connection);
       break;
@@ -4174,10 +4177,10 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
       {
 	connection->sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
 			   (*i)->connectionTag->str(),
-			   (int) (((*i)->clientIP>>24) % 256),
-			   (int) (((*i)->clientIP>>16) % 256),
-			   (int) (((*i)->clientIP>>8) % 256),
-			   (int) ((*i)->clientIP     % 256)
+			   static_cast<int>(((*i)->clientIP>>24) % 256),
+			   static_cast<int>(((*i)->clientIP>>16) % 256),
+			   static_cast<int>(((*i)->clientIP>>8) % 256),
+			   static_cast<int>((*i)->clientIP     % 256)
 	  );
       }
 
@@ -4410,16 +4413,17 @@ UCommand_EMIT::execute_(UConnection *connection)
 	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->sendc((const ubyte*)o.str().c_str(), o.str().size());
+	(*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+		       o.str().size());
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*j)->c->sendc((const ubyte*)",", 1);
+	  (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*j)->c);
 	}
-	(*j)->c->send((const ubyte*)"]\n", 2);
+	(*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
       }
     }
 
@@ -4495,7 +4499,8 @@ UCommand_EMIT::removeEvent ()
 	   ++j)
       {
 	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->send((const ubyte*)o.str().c_str(), o.str().size());
+	(*j)->c->send(reinterpret_cast<const ubyte*>(o.str().c_str()),
+		      o.str().size());
       }
     }
   }
@@ -5801,7 +5806,7 @@ UCommand_WHENEVER::~UCommand_WHENEVER()
   delete command2;
   delete test;
   if (theloop_)
-    ((UCommand_LOOP*)theloop_)->whenever_hook = 0;
+    dynamic_cast<UCommand_LOOP*>(theloop_)->whenever_hook = 0;
 }
 
 //! UCommand subclass execution function
@@ -5833,7 +5838,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
   if (firsttime)
   {
     firsttime = false;
-    if (test->asyncScan ((UASyncCommand*)this, connection) == UFAIL)
+    if (test->asyncScan (dynamic_cast<UASyncCommand*>(this), connection) == UFAIL)
     {
       send_error(connection, this,
 		 "Invalid name resolution in test. "

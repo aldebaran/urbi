@@ -782,7 +782,7 @@ instruction:
   | BINDER "object" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, 0, $1, 3, $3);
+      $$ = new UCommand_BINDER(@$, 0, $1, UBIND_OBJECT, $3);
       memcheck(up, $$, $1, $3);
     }
 
@@ -790,21 +790,21 @@ instruction:
   | BINDER "var" purevariable "from" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $5, $1, 1, $3);
+      $$ = new UCommand_BINDER(@$, $5, $1, UBIND_VAR, $3);
       memcheck(up, $$, $1, $3, $5);
     }
 
   | BINDER "function" "(" NUM ")" purevariable "from" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $8, $1, 0, $6, (int)take($4));
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, (int)take($4));
       memcheck(up, $$, $1, $6, $8);
     }
 
   | BINDER "event" "(" NUM ")" purevariable "from" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $8, $1, 2, $6, (int)take ($4));
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, (int)take ($4));
       memcheck(up, $$, $1, $6, $8);
     }
 

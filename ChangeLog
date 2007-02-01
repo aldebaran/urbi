@@ -1,5 +1,14 @@
 2007-02-01  Akim Demaille  <akim.demaille@free.fr>
 
+	Get rid of casts
+	* src/ucommand.hh, src/ucommand.cc (UCommand_BINDER): Use UBindType,
+	instead of a stupid int.
+	Remove many casts.
+	Convert others to C++ style.
+	* src/parser/bison/ugrammar.y: Adjust.
+
+2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+
 	Remove some casts using tmp vars
 	* src/ucommand.cc: here.
 	* src/uobject/: Update.

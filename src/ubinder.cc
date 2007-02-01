@@ -30,8 +30,8 @@
 // **************************************************************************
 //! UBinder constructor.
 UBinder::UBinder (const UString& objname,
-                  const UString& id,
-                  UBindMode bindMode,
+		  const UString& id,
+		  UBindMode bindMode,
 		  UBindType type, int nbparam,
 		  UConnection* c)
   : id (id),

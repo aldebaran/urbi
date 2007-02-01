@@ -680,7 +680,7 @@ public:
   UCommand_BINDER (const location& l,
 		   UVariableName* objname,
 		   UString* binder,
-		   int type,
+		   UBindType type,
 		   UVariableName* variablename,
 		   int nbparam=0);
   virtual ~UCommand_BINDER();
@@ -696,8 +696,8 @@ public:
   UVariableName* variablename;
   /// name of the uobject controling the binding
   UVariableName* objname;
-  /// type of binding: 0:"function", 1:"var", 2:"event"
-  int type;
+  /// type of binding.
+  UBindType type;
   /// nb of param in a function binding
   int nbparam;
 };
