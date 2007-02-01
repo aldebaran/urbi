@@ -177,28 +177,4 @@ typedef libport::hash_map_type<const char*, UBinder*>::type HMbindertab;
 typedef libport::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
 typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;
 
-/** Structure containing informations related to a tag.
- We have a hash table of those.
- An entry survives as long as a command has the tag, or if either froezen or
- blocked is set.
- Each entry is linked to parent entry (a.b ->a) and to all commands having the
- tag.
-*/
-class TagInfo
-{
-  public:
-  TagInfo():frozen(false), blocked(false), parent(0)  {}
-    bool frozen;
-    bool blocked;
-    std::list<UCommand*> commands; ///< All commands with this tag
-    std::list<TagInfo *> subTags; ///< All tags with this one as direct parent
-    TagInfo * parent;
-    std::list<TagInfo*>::iterator parentPtr; ///< iterator in parent child list
-    std::string name;
-
-    /// Insert a Taginfo in map,link to parent creating if needed, recursively
-    TagInfo * insert(HMtagtab & tab);
-};
-
-
 #endif

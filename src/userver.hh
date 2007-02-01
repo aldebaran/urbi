@@ -28,6 +28,7 @@
 # include "fwd.hh"
 # include "ustring.hh"
 # include "utypes.hh"
+# include "tag-info.hh"
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -267,7 +268,7 @@ protected:
   virtual void     effectiveDisplay         (const char*) = 0;
 
 private:
-  void              mark            (TagInfo*);
+  void mark (TagInfo*);
   /// Used by echo()& error().
   enum { MAXSIZE_INTERNALMESSAGE = 1024 };
   /// Amount of security mem.
