@@ -725,6 +725,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       {
 	UString* fundevice = expression->variablename->getDevice();
 
+	UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
+	assert (uc_tree);
 	// handle the :: case
 	if (expression->variablename->doublecolon
 	    && !connection->stack.empty ()
@@ -733,24 +735,22 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  fundevice->update (connection->stack.front()->self());
 
 	{
-	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
-	  assert (uc_tree);
 	  std::ostringstream o;
 	  o << "__UFnct" << unic();
 	  uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
 	}
 
-	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
+	resultContainer->nameUpdate(uc_tree->callid->str(),
 				    "__result__");
 	// creates return variable
-	((UCommand_TREE*)morph)->callid->setReturnVar (
-	  new UVariable (((UCommand_TREE*)morph)->callid->str(),
+	uc_tree->callid->setReturnVar (
+	  new UVariable (uc_tree->callid->str(),
 			 "__result__",
 			 new UValue ()));
 
-	if (!((UCommand_TREE*)morph)->callid)
+	if (!uc_tree->callid)
 	  return UCOMPLETED;
-	((UCommand_TREE*)morph)->connection = connection;
+	uc_tree->connection = connection;
 
 	UNamedParameters *pvalue = expression->parameters;
 	UNamedParameters *pname	 = fun->parameters;
@@ -765,8 +765,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    return UCOMPLETED;
 	  }
 
-	  ((UCommand_TREE*)morph)->callid->store
-	    (new UVariable(((UCommand_TREE*)morph)->callid->str(),
+	  uc_tree->callid->store
+	    (new UVariable(uc_tree->callid->str(),
 			   pname->name->str(),
 			   valparam));
 	}
@@ -2235,6 +2235,9 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  return UCOMPLETED;
 	}
 
+	UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
+	assert (uc_tree);
+
 	// handle the :: case
 	if (expression->variablename->doublecolon
 	    && !connection->stack.empty ()
@@ -2242,22 +2245,20 @@ UCommand_EXPR::execute_(UConnection *connection)
 		!= ::urbiserver->objtab.end ()))
 	  fundevice->update (connection->stack.front()->self());
 	{
-	  UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
-	  assert (uc_tree);
 	  std::ostringstream o;
 	  o << "__UFnct"<< unic();
 	  uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
 	}
-	resultContainer->nameUpdate(((UCommand_TREE*)morph)->callid->str(),
+	resultContainer->nameUpdate(uc_tree->callid->str(),
 				    "__result__");
 	// creates return variable
-	((UCommand_TREE*)morph)->callid->setReturnVar (
-	  new UVariable (((UCommand_TREE*)morph)->callid->str(),
+	uc_tree->callid->setReturnVar (
+	  new UVariable (uc_tree->callid->str(),
 			 "__result__",
 			 new UValue ()));
-	if (!((UCommand_TREE*)morph)->callid)
+	if (!uc_tree->callid)
 	  return UCOMPLETED;
-	((UCommand_TREE*)morph)->connection = connection;
+	uc_tree->connection = connection;
 
 	for (UNamedParameters *pvalue = expression->parameters,
 	       *pname	 = fun->parameters;
@@ -2270,8 +2271,8 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    send_error(connection, this, "EXPR evaluation failed");
 	    return UCOMPLETED;
 	  }
-	  ((UCommand_TREE*)morph)->callid->store(
-	    new UVariable(((UCommand_TREE*)morph)->callid->str(),
+	  uc_tree->callid->store(
+	    new UVariable(uc_tree->callid->str(),
 			  pname->name->str(),
 			  valparam)
 	    );

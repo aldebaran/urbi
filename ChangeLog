@@ -1,5 +1,11 @@
 2007-02-01  Akim Demaille  <akim.demaille@free.fr>
 
+	Remove some casts using tmp vars
+	* src/ucommand.cc: here.
+	* src/uobject/: Update.
+
+2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+
 	C++ casts, enums
 	* uqueue.hh: here, as usual.
 	The declaration of enums could be done by style.
