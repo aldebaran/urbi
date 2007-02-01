@@ -62,7 +62,7 @@ int
 UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 {
   char buf[1024];
-  int len = std::min (length, (int) sizeof buf - 1);
+  int len = std::min (length, static_cast<int>(sizeof buf) - 1);
 
   memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer),
 	  len);
