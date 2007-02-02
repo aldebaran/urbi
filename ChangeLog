@@ -1,5 +1,9 @@
 2007-02-02  Akim Demaille  <akim@lrde.epita.fr>
 
+	* configure.ac: Let URBI_PROG_CXX do it.
+
+2007-02-02  Akim Demaille  <akim@lrde.epita.fr>
+
 	* src/utypes.hh (TagInfo::TagInfo): New copy ctor..
 
 2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
