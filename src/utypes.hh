@@ -198,7 +198,20 @@ typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;
 class TagInfo
 {
   public:
-  TagInfo():frozen(false), blocked(false), parent(0)  {}
+    TagInfo()
+      : frozen(false), blocked(false), parent(0)
+    {}
+
+    TagInfo(const TagInfo& rhs)
+      : frozen(rhs.frozen), blocked(rhs.blocked),
+	commands(rhs.commands), subTags(rhs.subTags), parent(rhs.parent),
+	parentPtr(), name (rhs.name)
+    {
+      // Do not copy singular iterators.
+      if (rhs.parent && rhs.parentPtr != rhs.parent->subTags.end ())
+	parentPtr = rhs.parentPtr;
+    }
+
     bool frozen;
     bool blocked;
     std::list<UCommand*> commands; ///< All commands with this tag
