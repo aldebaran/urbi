@@ -10,7 +10,7 @@
 	* src/liburbi/uobject/urbi/uvalue.hh (UNamedValue): here.
 	Formatting changes.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	Casts removal
 	* src/liburbi/uobject/urbi/uobject.hh.template: here.
@@ -89,7 +89,7 @@
 
 2007-01-23  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	change mailto property. 
+	change mailto property.
 
 2007-01-19  Akim Demaille  <demaille@gostai.com>
 
@@ -100,33 +100,33 @@
 
 	Portability fixes
 	* src/liburbi/uclient.cc (LIBPORT_FD_SET): New.
-        Use it.
+	Use it.
 
 2007-01-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	USensor was really too cryptic, now use UOwned which is much loser to
 	the real meaning of what happens.
 
-	add UOwned macro, preserve backward compat with USensor 
+	add UOwned macro, preserve backward compat with USensor
 	* src/liburbi/uobject/urbi/uobject.hh.template: add UOwned.
 
 2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals. 
+	update externals.
 
 2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals. 
+	update externals.
 
 2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update build-aux externals. 
+	update build-aux externals.
 
 2007-01-16  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	r365 has been moved to branches/unstable.
 
-	revert to r364. 
+	revert to r364.
 	* src/examples/urbiballtrackinghead.cc: done.
 	* src/examples/urbibandwidth.cc: done.
 	* src/examples/urbiimage.cc: done.
@@ -140,7 +140,7 @@
 	* src/liburbi/usyncclient.cc: done.
 	* src/liburbi/uvar.cc: done.
 
-2007-01-14  Akim Demaille  <demaille.comee.fr>
+2007-01-14  Akim Demaille  <demaille@gostai.com>
 
 	UValue::Type
 	* src/liburbi/uobject/urbi/uvalue.hh (UDataType): Rename as...
@@ -150,7 +150,7 @@
 
 2007-01-14  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	fix more errors in API reverting. 
+	fix more errors in API reverting.
 	* src/examples/urbiballtrackinghead.cc: done.
 	* src/examples/urbiimage.cc: done.
 
@@ -162,12 +162,12 @@
 	new (non conflicting) API will come in the future, until then we fix
 	what is existing or provide backward compatible alternatives.
 
-	JCB: As a rule also, remember that any change impacting the API or GUI 
+	JCB: As a rule also, remember that any change impacting the API or GUI
 	of our products should get my approval first, and, more generally, be
-	necessarily a collegial decision/agreement between the members of the 
+	necessarily a collegial decision/agreement between the members of the
 	kernel team.
 
-	revert API change 
+	revert API change
 	* examples/urbibandwidth.cc: done.
 	* examples/urbisendsound.cc: done.
 	* examples/urbisound.cc: done.
@@ -186,7 +186,7 @@
 
 2007-01-12  Matthieu Nottale  <nottale@gostai.com>
 
-	Fix segfault when deleting an object. 
+	Fix segfault when deleting an object.
 	* src/liburbi/uobject.cc: Remove double-erase of the URBIStarter in objectList.
 
 2007-01-11  Akim Demaille  <demaille@gostai.com>
@@ -234,7 +234,7 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
 	Warning fixes
-	* src/liburbi/uobject/urbi/ubinary.hh, 
+	* src/liburbi/uobject/urbi/ubinary.hh,
 	* src/liburbi/uobject/uvalue-common.cc (USound::format_string)
 	(UImage::format_string): New.
 	Use them.
@@ -296,11 +296,11 @@
 2007-01-11  Akim Demaille  <demaille@gostai.com>
 
 	Libort up
-	* include/urbi/uabstractclient.hh, include/urbi/usyncclient.hh, 
+	* include/urbi/uabstractclient.hh, include/urbi/usyncclient.hh,
 	* src/liburbi/uabstractclient.cc, src/liburbi/uclient.cc,
 	* src/liburbi/usyncclient.cc, src/liburbi/usystem.cc: Adjust.
 
-2007-01-04  Akim Demaille  <demaille.comee.fr>
+2007-01-04  Akim Demaille  <demaille@gostai.com>
 
 	Don't use #warning for MSC
 	* include/uobject.h: here.
@@ -310,18 +310,18 @@
 
 	Update libport to fix sem bug on win and linux.
 
-2007-01-02  Akim Demaille  <demaille.comee.fr>
+2007-01-02  Akim Demaille  <demaille@gostai.com>
 
 	Fix the installation of uobject.h
 	* Makefile.am: here.
 
 2006-12-28  Matthieu Nottale  <nottale@gostai.com>
 
-        Fix a race condition in usyncclient.cc.
+	Fix a race condition in usyncclient.cc.
 	* src/liburbi/usyncclient.cc: lock listLock before effectively sending the
 	  message in syncGet to avoid a race condition. Unlock it in
 	  waitForTag.
-	  
+
 2006-12-26  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	More restyling.
@@ -399,34 +399,34 @@
 
 2006-12-19  Jean-Christophe Baillie  <baillie@gostai.com>
 
-        Add support for kernel system message through the USystem API.
-        UObjects that inherit from USystem will have access to the
-        register_channel and receive_message methods to handle system
-        messages, only in pluggin mode.
-        
+	Add support for kernel system message through the USystem API.
+	UObjects that inherit from USystem will have access to the
+	register_channel and receive_message methods to handle system
+	messages, only in pluggin mode.
+
 	Add support for kernel system messages in UObject with USystem
 	* src/liburbi/Makefile.am: add usystem in the compile process.
 	* src/liburbi/uobject/uobject.mk: add usystem to install process.
 	* src/liburbi/uobject/urbi/usystem.hh: New.
 	* src/liburbi/usystem.cc: New.
 
-2006-12-14  Akim Demaille  <demaille.comee.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Remove min workaround
 	* src/liburbi/uabstractclient.cc: here.
 	It is done in libport.
 
-2006-12-14  Akim Demaille  <demaille.comee.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	windows.h -> windows.hh
 	* src/examples/monitor.cc, src/examples/urbibandwidth.cc,
-	* src/examples/urbiping.cc, src/examples/urbiplay.cc, 
+	* src/examples/urbiping.cc, src/examples/urbiplay.cc,
 	* src/examples/urbisendbin.cc, src/examples/urbitalkie.cc,
 	* src/liburbi/uabstractclient.cc, src/liburbi/uclient.cc,
-	* src/liburbi/umain.cc: 
+	* src/liburbi/umain.cc:
 	Adjust.
 
-2006-12-14  Akim Demaille  <demaille.comee.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Include cassert
 	* src/liburbi/uobject/urbi/utypes-common.hh: here.
@@ -437,19 +437,19 @@
 	Add missing Uvalue 'cast' to self
 	* src/liburbi/uobject/urbi/uobject.hh.template: Do it.
 
-2006-12-14  Akim Demaille  <demaille.comee.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Factor UBlendType and UProperty handling
 	* src/liburbi/uobject/urbi/utypes-common.hh: New.
 	Extend.
 	* src/liburbi/uobject/urbi/uobject.hh.template: Extracted from
 	here.
-	* src/liburbi/uobject/uvar-common.cc, src/liburbi/uvar.cc: 
+	* src/liburbi/uobject/uvar-common.cc, src/liburbi/uvar.cc:
 	Remove code now in utypes-common.hh.
 	* src/liburbi/uobject/uobject.mk: Adjust.
 	* src/liburbi/Makefile.am: Adjust.
 
-2006-12-14  Akim Demaille  <demaille.comee.fr>
+2006-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Clean (a bit)
 	* src/liburbi/uobject/urbi/uobject.hh.template: Do not access to
@@ -472,8 +472,8 @@
 2006-12-13  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	Use C++ vectors instead of evil C arrays.
-        In fact it's also because variable size C-style arrays are not
-        standard C++ (although they're provided by G++ as a GNU extension).
+	In fact it's also because variable size C-style arrays are not
+	standard C++ (although they're provided by G++ as a GNU extension).
 	* src/utils/move.cc,
 	* src/utils/urbicycle.cc,
 	* src/utils/urbiscale.cc: Use vectors.
@@ -498,7 +498,7 @@
 	* flags.mk: Fix sdk/config.h.
 	* src/examples/Makefile.am: Simplify.
 
-2006-12-05  Akim Demaille  <demaille.comee.fr>
+2006-12-05  Akim Demaille  <demaille@gostai.com>
 
 	Update sdk
 	* Makefile.am (ACLOCAL_AMFLAGS): Pass -I sdk.
@@ -668,7 +668,7 @@
 	the UVar's UValue.
 	* src/examples/urbirecord.cc: Missing include.
 
-2006-11-07  Akim Demaille  <demaille.comee.fr>
+2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	Use reindent on the code
 	* src/liburbi/usyncclient.cc: Formatting changes.
@@ -676,14 +676,14 @@
 	* src/liburbi/uabstractclient.cc: Ditto.
 	* src/liburbi/uconversion.cc: Ditto.
 
-2006-11-07  Akim Demaille  <demaille.comee.fr>
+2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	uobject.hh should not depend on config.h
 	* src/liburbi/uobject/urbi/uobject.hh.template: Let libport stuff
 	do it anyway.
 	* src/liburbi/Makefile.am: Minor simplification.
 
-2006-11-07  Akim Demaille  <demaille.comee.fr>
+2006-11-07  Akim Demaille  <demaille@gostai.com>
 
 	urbi/uobject.hh
 	uobject.hh should be in urbi/, not uobject/.
@@ -742,7 +742,7 @@
 
 	Update externals.
 
-2006-11-03  Akim Demaille  <demaille.comee.fr>
+2006-11-03  Akim Demaille  <demaille@gostai.com>
 
 	urbi/uclient.hh
 	Rename and move headers.
@@ -802,7 +802,7 @@
 
 	* src/liburbi/uobject/uobject.mk: Fix typos.
 
-2006-11-03  Akim Demaille  <demaille.comee.fr>
+2006-11-03  Akim Demaille  <demaille@gostai.com>
 
 	Normalize examples and utils extensions
 	* src/examples/monitor-win.cpp,
@@ -865,12 +865,12 @@
 	encore un...
 	* sdk/umain.cc: uobject.hh.
 
-2006-11-01  Akim Demaille  <demaille.comee.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	One more uobject.h
 	* sdk/Makefile.am: Fix.
 
-2006-11-01  Akim Demaille  <demaille.comee.fr>
+2006-11-01  Akim Demaille  <demaille@gostai.com>
 
 	Last bits of transition to uobject/uobject.hh
 	* sdk/Makefile.am, src/liburbi/Makefile.am: Since all the files
@@ -1147,7 +1147,7 @@
 	* src/liburbi/uobject/uvar.cc: Do that.
 	* src/liburbi/uobject/common_uvalue.cc: And do it again.
 
-2006-10-21  Akim Demaille  <demaille.comee.fr>
+2006-10-21  Akim Demaille  <demaille@gostai.com>
 
 	Updates
 	* src/liburbi/uobject/common_uvalue.cc: Formatting changes.
@@ -1294,7 +1294,7 @@
 	* src/liburbi/uabstractclient.cpp: Idem.
 	* src/liburbi/Makefile.am: Idem.
 
-2006-10-16  Akim Demaille  <demaille.comee.fr>
+2006-10-16  Akim Demaille  <demaille@gostai.com>
 
 	Use install-sh -C for headers.
 	* configure.ac (INSTALL_HEADER): Define.
@@ -1325,7 +1325,7 @@
 	mix our HAVE_* with its.
 	* Makefile.am: Adjust.
 
-2006-10-15  Akim Demaille  <demaille.comee.fr>
+2006-10-15  Akim Demaille  <demaille@gostai.com>
 
 	Kill warnings.
 	* src/liburbi/ufloat.h: Do that.
@@ -1599,7 +1599,7 @@
 	* umake/umake.in: Additional work on command line parsing: sort
 	libs, headers and sources, handle directory arguments.
 
-2006-09-26  Akim Demaille  <demaille.comee.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Fixes.
 	* src/liburbi/uobject/uext.h: Add a missing "public".
@@ -1696,7 +1696,7 @@
 	* build-aux/urbi-var-progs.m4: New.
 	* configure.ac: Use them.
 
-2006-09-26  Akim Demaille  <demaille.comee.fr>
+2006-09-26  Akim Demaille  <demaille@gostai.com>
 
 	Put it in urbi::.
 
