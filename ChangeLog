@@ -1,3 +1,12 @@
+2007-02-06  Akim Demaille  <demaille@gostai.com>
+
+	Restore weird loop
+	Reported by MN.
+	* src/network/bsdnet/network.cc (notify): Use two iterators
+	to walk that list.
+	(pipes_type): New.
+	Use it.
+
 2007-02-01  Akim Demaille  <akim@lrde.epita.fr>
 
 	Bug fix: copy-ctor for TagInfo.

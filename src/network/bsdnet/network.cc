@@ -136,7 +136,8 @@ namespace Network
 #ifndef WIN32
     int controlPipe[2] = {-1, -1};
 #endif
-    std::list<Pipe*> pList;
+    typedef std::list<Pipe*> pipes_type;
+    pipes_type pList;
   }
 
 
@@ -150,7 +151,7 @@ namespace Network
     LIBPORT_FD_SET(controlPipe[0], &rd);
     maxfd = controlPipe[0];
 #endif
-    for (std::list<Pipe*>::iterator i = pList.begin();
+    for (pipes_type::iterator i = pList.begin();
 	 i != pList.end();
 	 ++i)
     {
@@ -170,25 +171,35 @@ namespace Network
 
   void notify(fd_set& rd, fd_set& wr)
   {
-    std::list<Pipe*>::iterator in;
-    for (std::list<Pipe*>::iterator i = pList.begin();
-	 i != pList.end();
-	 ++i)
-    {
-      try {
-	Pipe& p = **i;
-	int f = p.readFD();
-	if (f >= 0 && FD_ISSET(f, &rd))
-	  p.notifyRead();
+    // We cannot use a simple loop with a single iterator here,
+    // because calls to notifyRead or notifyWrite can call
+    // unregisterNetworkPipe which changes pList, resulting in an
+    // invalidated iterator.  So we do need two iterators to walk the
+    // list.
 
-	f = p.writeFD();
-	if (f >= 0 && FD_ISSET(f, &wr))
-	  p.notifyWrite();
-      }
-      catch(...)
+    for (pipes_type::iterator i = pList.begin(); i != pList.end(); )
+    {
+      // Next iterator.
+      pipes_type::iterator in = i;
+      ++in;
       {
-	//this can happen if the object was destroyed by the notifyRead
+	try
+	{
+	  Pipe& p = **i;
+	  int f = p.readFD();
+	  if (f >= 0 && FD_ISSET(f, &rd))
+	    p.notifyRead();
+
+	  f = p.writeFD();
+	  if (f >= 0 && FD_ISSET(f, &wr))
+	    p.notifyWrite();
+	}
+	catch(...)
+	{
+	  //this can happen if the object was destroyed by the notifyRead
+	}
       }
+      i = in;
     }
   }
 
@@ -237,7 +248,7 @@ namespace Network
 
   void unregisterNetworkPipe(Pipe* p)
   {
-    std::list<Pipe*>::iterator i = std::find(pList.begin(), pList.end(), p);
+    pipes_type::iterator i = std::find(pList.begin(), pList.end(), p);
     if (i != pList.end())
       pList.erase(i);
   }
