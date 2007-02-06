@@ -27,33 +27,9 @@
 
 #include <locale.h>
 #include "urbi/uclient.hh"
+#include "libport/network.h"
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
-
-// In the long run, this should be part of libport, but I don't know
-// where actually :( Should it be libport/sys/types.hh?  Or unistd.hh?
-// What standard header should do that?
-
-#ifdef WIN32
-// On windows, file descriptors are defined as u_int (i.e., unsigned int).
-# define LIBPORT_FD_SET(N, P) FD_SET(static_cast<u_int>(N), P)
-#else
-# define LIBPORT_FD_SET(N, P) FD_SET(N, P)
-#endif
-
-#ifdef WIN32
-# include "libport/windows.hh"
-# include <fcntl.h>
-# include <io.h>
-# include <winsock.h>
-#else
-# include <sys/time.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <netdb.h>
-# include <unistd.h>
-#endif
 
 namespace urbi
 {
@@ -77,10 +53,8 @@ namespace urbi
 #endif
 
     // Address resolution stage.
-    struct hostent *hen;		// host-to-IP translation
     struct sockaddr_in sa;	// Internet address struct
-
-    memset(&sa, 0, sizeof (sa));
+    memset(&sa, 0, sizeof sa);
 #ifdef WIN32
     WSADATA wsaData;
     WORD wVersionRequested;
@@ -90,8 +64,8 @@ namespace urbi
     sa.sin_family = AF_INET;
     sa.sin_port = htons(port);
 
-    hen = gethostbyname(host);
-
+    // host-to-IP translation
+    struct hostent* hen = gethostbyname(host);
     if (!hen)
     {
       // maybe it is an IP address
@@ -115,13 +89,13 @@ namespace urbi
     }
 
     // now connect to the remote server.
-    rc = connect(sd, (struct sockaddr *) &sa, sizeof (sa));
+    rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
 
     // If we attempt to connect too fast to aperios ipstack it will fail.
     if (rc)
     {
       usleep(20000);
-      rc = connect(sd, (struct sockaddr *) &sa, sizeof (sa));
+      rc = connect(sd, (struct sockaddr *) &sa, sizeof sa);
     }
 
     // Check there was no error.
@@ -151,16 +125,20 @@ namespace urbi
 
   UClient::~UClient()
   {
-    close(sd);
+    if (close(sd) == -1)
+      perror ("cannot close sd");
     sd = -1;
-    if (control_fd[1] != -1 )
-      ::write(control_fd[1], "a", 1);
-    //must wait for listen thread to terminate
+    if (control_fd[1] != -1
+	&& ::write(control_fd[1], "a", 1) == -1)
+      perror ("cannot write to control_fd[1]");
+    // Must wait for listen thread to terminate.
     libport::joinThread(thread);
-    if (control_fd[1] != -1)
-      close(control_fd[1]);
-    if (control_fd[0] != -1)
-      close(control_fd[0]);
+    if (control_fd[1] != -1
+	&& close(control_fd[1]) == -1)
+      perror ("cannot close controlfd[1]");
+    if (control_fd[0] != -1
+	&& close(control_fd[0]) == -1)
+      perror ("cannot close controlfd[0]");
   }
 
 
@@ -277,15 +255,10 @@ namespace urbi
 #endif
   }
 
-  void execute(void)
+  void execute()
   {
-#ifdef WIN32
-    while (true)
-      Sleep(100000);
-#else
     while (true)
       sleep(100);
-#endif
   }
 
   void exit(int code)
