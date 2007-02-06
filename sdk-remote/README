@@ -16,7 +16,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 // Contact: Jean-Christophe Baillie
-// URL:     http://www.urbiforge.com
+// URL:     http://www.gostai.com
 
 This is liburbi-cpp, a C++ library for URBI.
 It provides an API to connect to an URBI server, send messages

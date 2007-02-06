@@ -1,5 +1,34 @@
 2007-02-06  Akim Demaille  <demaille@gostai.com>
 
+	2007-02-06  Akim Demaille  <demaille@gostai.com>
+
+	Don't std::string(0)
+	* src/liburbi/uobject/urbi/uvalue.hh (UNamedValue::UNamedValue): here.
+
+	2007-02-02  Matthieu Nottale  <nottale@gostai.com>
+
+	Robustify against malformed binary.
+	* src/liburbi/uabstractclient.cc: Try to survive when server lies
+	about the binary size.
+
+	2007-02-02  Akim Demaille  <akim@lrde.epita.fr>
+
+	Don't pass -Werror.
+	* configure.ac: Let URBI_PROG_CXX do it.
+
+	2007-01-31  POTHIER Benoit  <benoit.pothier@gmx.net>
+
+	Dummy change to test hooks.
+	* README: Change web site address.
+
+	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	update externals.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+2007-02-06  Akim Demaille  <demaille@gostai.com>
+
 	Restore casts
 	* src/liburbi/uobject/urbi/uobject.hh.template: But this
 	time as documented dynamic casts.

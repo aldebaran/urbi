@@ -894,10 +894,18 @@ namespace urbi
 	  }
 
 	  currentCommand = strstr(recvBuffer, "]");
-
+	  if (!currentCommand) {
+	    //reset all
+	    nBracket = 0;
+	    inString = false;
+	    parsePosition = 0;
+	    recvBufferPosition = 0;
+	    return;
+	  }
+	  
 	  ++currentCommand;
 	  parsePosition = (long) currentCommand - (long) recvBuffer;
-
+	 
 	  //reinit just to be sure:
 	  nBracket = 0;
 	  inString = false;
