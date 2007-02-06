@@ -1,5 +1,10 @@
 2007-02-06  Matthieu Nottale  <nottale@gostai.com>
 
+	Fix partial merge in 701: forgot changes in uvariable.cc
+	* src/uvariable.cc: Here.
+
+2007-02-06  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix a memory leak when calling internal module functions. Replace an abort by assert.
 	* src/ucommand.cc: Here.
 
