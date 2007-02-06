@@ -26,6 +26,12 @@
 #include <cerrno>
 
 #include <locale.h>
+
+#ifndef WIN32
+# include <sys/time.h>
+# include <time.h>
+#endif
+
 #include "urbi/uclient.hh"
 #include "libport/network.h"
 #include "libport/lockable.hh"
