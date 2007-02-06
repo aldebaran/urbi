@@ -93,7 +93,8 @@ to_string (UCommand::Status s)
 #undef CASE
   }
   // Pacify warnings.
-  abort ();
+  assert (!"not reachable");
+  abort();
 }
 
 
@@ -839,6 +840,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    // urbi::UValue do not see ::UValue, so it must
 	    // be valparam who does the job.
 	    tmparray.array.push_back(valparam->urbiValue());
+	    delete valparam;
 	  }
 
 	  delete expression;
