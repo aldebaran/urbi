@@ -516,11 +516,11 @@ UValue::copy() const
     case DATA_UNKNOWN:
     case DATA_FUNCTION:
     case DATA_VARIABLE:
-      abort ();
+      pabort ("unexpected case: " << dataType);
   }
 
   // Pacify warnings.
-  abort ();
+  pabort ("Impossible");
 }
 
 

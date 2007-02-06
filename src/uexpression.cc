@@ -270,7 +270,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
       default:
 	// This case is not possible, but GCC does not seem to be
 	// able to infer it.
-	abort();
+	pabort (type);
     }
     type = VALUE;
     isconst = true;
@@ -642,8 +642,10 @@ UExpression::eval (UCommand *command,
 	UBinary *b = new UBinary(ret->refBinary->ref()->bufferSize, 0);
 	if (!b || b->buffer == 0)
 	  return 0;
-	b->parameters = ret->refBinary->ref()->parameters->copy();
-
+	if (ret->refBinary->ref()->parameters)
+	  b->parameters = ret->refBinary->ref()->parameters->copy();
+	else
+	  b->parameters = 0;
 	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
 	if (!ref)
 	  return 0;
@@ -1715,7 +1717,7 @@ UExpression::eval_VARIABLE (UCommand *command,
       {
 	case UVariableName::UNODERIV:
 	  // Impossible case, but GCC cannot infer it.
-	  abort ();
+	  pabort ("not reachable");
 
 	case UVariableName::UDERIV:
 	  ret->val = 1000. * (variable->previous - variable->previous2)/

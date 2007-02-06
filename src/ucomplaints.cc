@@ -27,7 +27,7 @@ message (UErrorCode n)
     case UERROR_MEMORY_WARNING:
       return "!!! Memory warning\n";
   }
-  abort ();
+  pabort ("unexpected case:" << n);
 }
 
 const char*
@@ -38,5 +38,5 @@ message (UWarningCode n)
     case UWARNING_MEMORY:
       return "!!! Memory overflow warning\n";
   }
-  abort ();
+  pabort ("unexpected case: " << n);
 }
