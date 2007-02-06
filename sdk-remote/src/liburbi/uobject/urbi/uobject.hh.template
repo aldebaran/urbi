@@ -262,7 +262,17 @@ namespace urbi
     template <class T>
     void UNotifyChange (UVar& v, int (T::*fun) ())
     {
-      createUCallback(__name, "var", this, fun, v.get_name(), monitormap);
+      // This call register both an UObject (say of type
+      // UObjectDerived), and a callback working on it (named here
+      // fun).  createUCallback wants both the object and the callback
+      // to have the same type, which is not the casem this is static
+      // type of the former is UObject (its runtime type is indeed
+      // UObjectDerived though), and the callback wants a
+      // UObjectDerived.  So we need a cast, until a more elegant way
+      // is found (e.g., using free standing functions instead of a
+      // member functions).
+      createUCallback(__name, "var",
+		      dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
     }
 
     /// Calls the specified function each time the variable v is modified.
@@ -270,7 +280,8 @@ namespace urbi
     void UNotifyChange (UVar& v, int (T::*fun) (UVar&))
     {
       UGenericCallback* cb =
-	createUCallback(__name, "var", this, fun, v.get_name(), monitormap);
+	createUCallback(__name, "var",
+			dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
       if (cb)
 	cb->storage = &v;
     }
@@ -280,8 +291,8 @@ namespace urbi
     template <class T>
     void UNotifyOnRequest (UVar& v, int (T::*fun) ())
     {
-      createUCallback(__name, "var_onrequest", this,
-		      fun, v.get_name(), monitormap);
+      createUCallback(__name, "var_onrequest",
+		      dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
     }
 
     /// Calls the specified function when the variable value is updated on
@@ -290,8 +301,8 @@ namespace urbi
     void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&))
     {
       UGenericCallback* cb =
-	createUCallback(__name, "var_onrequest", this,
-			fun, v.get_name(), monitormap);
+	createUCallback(__name, "var_onrequest",
+			dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
       if (cb)
 	cb->storage = &v;
     }
@@ -300,7 +311,8 @@ namespace urbi
     template <class T>
     void UNotifyChange (const std::string& name, int (T::*fun) ())
     {
-      createUCallback(__name, "var", this, fun, name, monitormap);
+      createUCallback(__name, "var",
+		      dynamic_cast<T*>(this), fun, name, monitormap);
     }
 
     /// Calls the specified function each time the variable v is modified.
@@ -308,7 +320,8 @@ namespace urbi
     void UNotifyChange (const std::string& name, int (T::*fun) (UVar&))
     {
       UGenericCallback* cb =
-	createUCallback(__name, "var", this, fun, name, monitormap);
+	createUCallback(__name, "var",
+			dynamic_cast<T*>(this), fun, name, monitormap);
       if (cb)
 	cb->storage = new UVar(name);
     }
@@ -318,8 +331,8 @@ namespace urbi
     void UNotifyAccess (UVar& v, int (T::*fun) (UVar&))
     {
       UGenericCallback* cb =
-	createUCallback(__name, "varaccess", this,
-			fun, v.get_name(), accessmap);
+	createUCallback(__name, "varaccess",
+			dynamic_cast<T*>(this), fun, v.get_name(), accessmap);
       if (cb)
 	cb->storage = &v;
     }
@@ -328,7 +341,8 @@ namespace urbi
     template <class T>
     void USetTimer(ufloat t, int (T::*fun) ())
     {
-      new UTimerCallbackobj<T> (__name, t, this, fun, timermap);
+      new UTimerCallbackobj<T> (__name, t,
+				dynamic_cast<T*>(this), fun, timermap);
     }
 
     /// Request permanent synchronization for v.
