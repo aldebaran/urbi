@@ -40,10 +40,22 @@ namespace urbi
     UList(const UList &b);
     UList & operator = (const UList &b);
     ~UList();
-    UValue & operator [](int i) {return *array[i+offset];}
-    const UValue & operator [](int i) const {return *array[i+offset];}
-    int size() const {return array.size();}
-    void setOffset(int n) { offset = n;};
+    UValue & operator [](int i)
+    {
+      return *array[i+offset];
+    }
+    const UValue & operator [](int i) const 
+    {
+      return *array[i+offset];
+    }
+    int size() const
+    {
+      return array.size();
+    }
+    void setOffset(int n)
+    {
+      offset = n;
+    }
 
   private:
     int offset;
@@ -52,11 +64,11 @@ namespace urbi
   class UNamedValue
   {
   public:
-    UNamedValue(const std::string& n, UValue *v)
+    UNamedValue(const std::string& n, UValue* v)
       : val(v),name(n)
     {}
     UNamedValue()
-      : val(0),name(0)
+      : val(0),name()
     {}
     UValue *val;
     std::string name;
@@ -65,15 +77,24 @@ namespace urbi
   class UObjectStruct
   {
   public:
-    std::string refName;
-    std::vector<UNamedValue> array;
     UObjectStruct();
     UObjectStruct(const UObjectStruct &b);
-    UObjectStruct & operator = (const UObjectStruct &b);
+    UObjectStruct& operator = (const UObjectStruct &b);
     ~UObjectStruct();
-    UValue & operator [](const std::string& s);
-    UNamedValue & operator [](int i) {return array[i];}
-    int size() {return array.size();}
+
+    UValue& operator [](const std::string& s);
+    UNamedValue& operator [](int i)
+    {
+      return array[i];
+    }
+
+    int size() const
+    {
+      return array.size();
+    }
+
+    std::string refName;
+    std::vector<UNamedValue> array;
   };
 
   /** Container for a value that handles all types known to URBI.

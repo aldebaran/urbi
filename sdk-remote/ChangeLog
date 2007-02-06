@@ -1,3 +1,9 @@
+2007-02-06  Akim Demaille  <demaille@gostai.com>
+
+	Don't std::string(0)
+	* src/liburbi/uobject/urbi/uvalue.hh (UNamedValue): here.
+	Formatting changes.
+
 2007-02-01  Akim Demaille  <akim.demaille@free.fr>
 
 	Casts removal
