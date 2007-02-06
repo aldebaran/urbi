@@ -1,6 +1,7 @@
 /// \file ucomplaints.cc
 
 #include <cstdlib>
+#include "libport/assert.hh"
 #include "ucomplaints.hh"
 
 const char*
