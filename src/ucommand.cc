@@ -4077,6 +4077,22 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
+  if (STREQ(oper->str(), "functions"))
+  {
+     for (HMfunctiontab::iterator i =
+	   connection->server->functiontab.begin();
+	 i != connection->server->functiontab.end();
+	 ++i)
+    {
+      std::ostringstream tstr;
+      tstr << "*** " << i->second->name().str() << " [" 
+        << i->second->nbparam() << ']';
+      tstr << '\n';
+      connection->sendf(getTag(), tstr.str().c_str());
+    }
+    return UCOMPLETED;
+  }
+  
   if (STREQ(oper->str(), "vars"))
   {
     for (HMvariabletab::iterator i =
