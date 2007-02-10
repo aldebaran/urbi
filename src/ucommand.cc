@@ -93,7 +93,7 @@ to_string (UCommand::Status s)
 #undef CASE
   }
   // Pacify warnings.
-  abort ();
+  pabort ("unexpected case:" << s);
 }
 
 namespace
@@ -790,6 +790,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    // urbi::UValue do not see ::UValue, so it must
 	    // be valparam who does the job.
 	    tmparray.array.push_back(valparam->urbiValue());
+	    delete valparam;
 	  }
 
 	  delete expression;
@@ -4014,6 +4015,22 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     connection->sendf (getTag(),
 		       "*** devices is deprecated."
 		       " Use 'group objects' instead.\n");
+    return UCOMPLETED;
+  }
+
+  if (STREQ(oper->str(), "functions"))
+  {
+     for (HMfunctiontab::iterator i =
+	   connection->server->functiontab.begin();
+	 i != connection->server->functiontab.end();
+	 ++i)
+    {
+      std::ostringstream tstr;
+      tstr << "*** " << i->second->name().str() << " ["
+	<< i->second->nbparam() << ']';
+      tstr << '\n';
+      connection->sendf(getTag(), tstr.str().c_str());
+    }
     return UCOMPLETED;
   }
 

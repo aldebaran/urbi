@@ -190,6 +190,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "undefall"    |
 "unstrict"    |
 "uservars"    |
+"functions"   |
 "vars"        RETURN_STR_TOKEN (OPERATOR);
 
 "BIN"           return token::TOK_BIN;

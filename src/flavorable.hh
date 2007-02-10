@@ -41,7 +41,7 @@ public:
       case UCOMMA:
 	return "COMMA";
       default:
-	abort ();
+	pabort ("unexpected flavor: " << flavor_);
     }
   }
 

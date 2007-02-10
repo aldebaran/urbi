@@ -20,7 +20,8 @@
  **************************************************************************** */
 
 #include <cstdlib>
-
+#include <sstream>
+#include <iostream>
 #include "libport/cstring"
 
 #include "ustring.hh"
@@ -179,37 +180,42 @@ void UString::update(const UString* s)
 char*
 UString::un_armor ()
 {
-  char* cp = str_;
-  int pos = 0;
-  while (pos < len_)
+  char * src = str_;
+  char * dst = str_;
+  char * end = str_+len_;
+  while (src != end) 
   {
-    if (cp[0] == '\\' && pos + 1 < len_)
+    if (*src == '\\' && end - src >1) 
     {
-      if (cp[1] == 'n'
-	  || cp[1] == 't'
-	  || cp[1] == '\\'
-	  || cp[1] == '"')
-      {
-	if (cp[1] ==  'n')
-	  cp[1] = '\n';
-	if (cp[1] ==  't')
-	  cp[1] = '\t';
-
-	memmove (static_cast<void*> (cp),
-		 static_cast<void*> (cp + 1),
-		 len_ - pos);
-	--len_;
-	if (cp[0] == '\\')
-	  ++cp;
+      if (src[1]=='n')
+	*dst = '\n';
+      else if (src[1]=='t')
+	*dst = '\t';
+      else if (src[1]=='\\')
+	*dst = '\\';
+      else 
+      { //maybe an integer
+	int v,pos;
+	int count = sscanf(src+1, "%d%n", &v, &pos);
+	if (count)
+	{
+	  *dst = static_cast<char>(v);
+	  src += pos-1; //because we do src++ below
+	}
+	else
+	  *dst = src[1];
       }
-      else
-	++cp;
+      
+      src++;
     }
     else
-      ++cp;
-    pos = cp - str_;
+      *dst = *src;
+    dst++;
+    src++;
   }
-
+  
+  len_ = dst - str_;
+  str_[len_] = 0;
   return str_;
 }
 
@@ -224,9 +230,23 @@ UString::armor ()
   res.reserve (len_);
   for (char* cp = str_; *cp; ++cp)
   {
-    if (*cp=='"' || *cp=='\\')
+    if (*cp=='\n')
+      res += "\\n";
+    else if (*cp=='\t')
+      res += "\\t";
+    else if (*cp=='"' || *cp=='\\') 
+    {
       res += '\\';
-    res += *cp;
+      res += *cp;
+    }
+    else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127) 
+      {
+	std::ostringstream str;
+      str << '\\' <<static_cast<unsigned int>(static_cast<unsigned char>(*cp));
+	res += str.str();
+      }
+    else
+      res += *cp;
   }
   return res;
 }

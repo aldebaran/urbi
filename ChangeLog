@@ -1,3 +1,19 @@
+2007-02-10  Akim Demaille  <akim.demaille@free.fr>
+
+	svn merge -r 826:832 https://svn.gostai.com/svn/kernel1/branches/1.0
+	2007-02-09  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix armor/unarmor.
+	* src/ustring.cc: Armor \n, \t and character not in 32-127
+	range. Unarmor \n \t \<anychar> and \number.
+			 More efficient unarmor implementation.
+
+	2007-02-07  Matthieu Nottale  <nottale@gostai.com>
+
+	Add the 'functions' keyword, send the list of functions (as 'vars').
+	* src/parser/bison/utoken.l: Here,
+	* src/ucommand.cc: and here.
+
 2007-02-06  Akim Demaille  <demaille@gostai.com>
 
 	Fix include
