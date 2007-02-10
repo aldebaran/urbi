@@ -24,6 +24,8 @@
 #include <iostream>
 #include "libport/cstring"
 
+#include "libport/escape.hh"
+
 #include "ustring.hh"
 #include "userver.hh"
 
@@ -180,12 +182,12 @@ void UString::update(const UString* s)
 char*
 UString::un_armor ()
 {
-  char * src = str_;
-  char * dst = str_;
-  char * end = str_+len_;
-  while (src != end) 
+  char* src = str_;
+  char* dst = str_;
+  char* end = str_+len_;
+  while (src != end)
   {
-    if (*src == '\\' && end - src >1) 
+    if (*src == '\\' && end - src >1)
     {
       if (src[1]=='n')
 	*dst = '\n';
@@ -193,7 +195,7 @@ UString::un_armor ()
 	*dst = '\t';
       else if (src[1]=='\\')
 	*dst = '\\';
-      else 
+      else
       { //maybe an integer
 	int v,pos;
 	int count = sscanf(src+1, "%d%n", &v, &pos);
@@ -205,7 +207,7 @@ UString::un_armor ()
 	else
 	  *dst = src[1];
       }
-      
+
       src++;
     }
     else
@@ -213,7 +215,7 @@ UString::un_armor ()
     dst++;
     src++;
   }
-  
+
   len_ = dst - str_;
   str_[len_] = 0;
   return str_;
@@ -226,29 +228,9 @@ UString::armor ()
   if (fast_armor_)
     return std::string (str_);
 
-  std::string res;
-  res.reserve (len_);
-  for (char* cp = str_; *cp; ++cp)
-  {
-    if (*cp=='\n')
-      res += "\\n";
-    else if (*cp=='\t')
-      res += "\\t";
-    else if (*cp=='"' || *cp=='\\') 
-    {
-      res += '\\';
-      res += *cp;
-    }
-    else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127) 
-      {
-	std::ostringstream str;
-      str << '\\' <<static_cast<unsigned int>(static_cast<unsigned char>(*cp));
-	res += str.str();
-      }
-    else
-      res += *cp;
-  }
-  return res;
+  std::ostringstream s;
+  s << libport::escape (str_);
+  return s.str();
 }
 
 void

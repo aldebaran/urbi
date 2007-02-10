@@ -110,6 +110,14 @@ include uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
+## ------------- ##
+## ../libport/.  ##
+## ------------- ##
+
+include $(top_srcdir)/libport/libport-sources.mk
+nodist_libkernel_la_SOURCES += $(libport_sources)
+
+
 ## ----------------- ##
 ## Sub directories.  ##
 ## ----------------- ##
