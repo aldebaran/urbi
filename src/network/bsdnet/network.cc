@@ -42,6 +42,7 @@ namespace Network
   {
     if (fd != -1)
     {
+      std::cerr << "Shuting down :" << fd << std::endl;
       if (shutdown (fd, SHUT_RDWR))
 	perror ("cannot shutdown socket");
       else if (close (fd))
@@ -203,18 +204,24 @@ namespace Network
     }
   }
 
-
   bool
   selectAndProcess(int usDelay)
   {
     fd_set rd;
     fd_set wr;
     int mx = buildFD(rd, wr);
-    struct timeval tv;
+    timeval tv;
     tv.tv_sec = usDelay / 1000000;
     tv.tv_usec = usDelay - ((usDelay / 1000000) * 1000000);
 
+    std::cerr << "Calling select (" << mx
+	      << ", rd = " << rd
+	      << ", wr = " << wr
+	      << ", ex = " << 0
+	      << ", tv = " << tv
+	      << ")...";
     int r = select(mx, &rd, &wr, 0, &tv);
+    std::cerr << " got: " << r << std::endl;
     if (r < 0)
       // FIXME: This is bad, we should really do something.
       perror("cannot select");
@@ -226,7 +233,8 @@ namespace Network
       if (FD_ISSET(controlPipe[0], &rd))
       {
 	char buf[128];
-	read(controlPipe[0], buf, sizeof buf);
+	if (read(controlPipe[0], buf, sizeof buf) == -1)
+	  perror ("cannot read controlPipe[0]");
       }
 #endif
       notify(rd, wr);
@@ -274,7 +282,8 @@ namespace Network
     CreateThread(NULL, 0, processNetwork, 0, 0, &tid);
 #else
     pthread_t* pt = new pthread_t;
-    pthread_create(pt, 0, &processNetwork, 0);
+    if (pthread_create(pt, 0, &processNetwork, 0))
+      perror ("cannot create thread");
 #endif
   }
 
@@ -283,7 +292,8 @@ namespace Network
   {
 #ifndef WIN32
     char c = 0;
-    write(controlFd, &c, 1);
+    if (write(controlFd, &c, 1) == -1)
+      perror ("cannot write to controlFD");
 #endif
   }
 }
