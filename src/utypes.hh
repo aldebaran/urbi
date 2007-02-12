@@ -94,6 +94,21 @@ enum UErrorValue
   UMEMORYFAIL
 };
 
+inline
+std::ostream&
+operator<< (std::ostream& o, UErrorValue v)
+{
+  switch (v)
+  {
+#define CASE(V) case V: o << #V; break;
+    CASE(USUCCESS);
+    CASE(UFAIL);
+    CASE(UMEMORYFAIL);
+#undef CASE
+  }
+  return o;
+}
+
 /// Type of Bind modes
 enum UBindMode
 {
