@@ -42,7 +42,6 @@ namespace Network
   {
     if (fd != -1)
     {
-      std::cerr << "Shuting down :" << fd << std::endl;
       if (shutdown (fd, SHUT_RDWR))
 	perror ("cannot shutdown socket");
       else if (close (fd))
@@ -214,14 +213,7 @@ namespace Network
     tv.tv_sec = usDelay / 1000000;
     tv.tv_usec = usDelay - ((usDelay / 1000000) * 1000000);
 
-    std::cerr << "Calling select (" << mx
-	      << ", rd = " << rd
-	      << ", wr = " << wr
-	      << ", ex = " << 0
-	      << ", tv = " << tv
-	      << ")...";
     int r = select(mx, &rd, &wr, 0, &tv);
-    std::cerr << " got: " << r << std::endl;
     if (r < 0)
       // FIXME: This is bad, we should really do something.
       perror("cannot select");
