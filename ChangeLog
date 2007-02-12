@@ -1,5 +1,10 @@
 2007-02-12  Akim Demaille  <akim.demaille@free.fr>
 
+	Pretend C++ is a scoped language
+	* src/uconnection.cc: And reuse the identifiers.
+
+2007-02-12  Akim Demaille  <akim.demaille@free.fr>
+
 	Revert debug traces
 	I checked in bits I didn't mean to check in, for I forgot -N.
 	The following describes the previous patch, not what it

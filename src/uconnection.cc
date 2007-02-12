@@ -96,47 +96,45 @@ UConnection::~UConnection()
   DEBUG(("Destroying UConnection..."));
   if (connectionTag)
   {
-    UVariable *vari = server->getVariable(connectionTag->str(),
-					  "connectionID");
-    delete vari;
+    delete server->getVariable(connectionTag->str(), "connectionID");
     delete connectionTag;
   }
   delete activeCommand;
 
   // free bindings
 
-  for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-       it1 != ::urbiserver->variabletab.end(); ++it1)
-    if (it1->second->binder
-	&& it1->second->binder->removeMonitor(this))
+  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
+       i != ::urbiserver->variabletab.end(); ++i)
+    if (i->second->binder
+	&& i->second->binder->removeMonitor(this))
     {
-      delete it1->second->binder;
-      it1->second->binder = 0;
+      delete i->second->binder;
+      i->second->binder = 0;
     }
 
   std::list<HMbindertab::iterator> deletelist;
-  for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
-       it2 != ::urbiserver->functionbindertab.end();
-       ++it2)
-    if (it2->second->removeMonitor(this))
-      deletelist.push_back(it2);
+  for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
+       i != ::urbiserver->functionbindertab.end();
+       ++i)
+    if (i->second->removeMonitor(this))
+      deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
-       itt != deletelist.end();
-       ++itt)
-    ::urbiserver->functionbindertab.erase((*itt));
+  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
+       i != deletelist.end();
+       ++i)
+    ::urbiserver->functionbindertab.erase(*i);
   deletelist.clear();
 
-  for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
-       it3 != ::urbiserver->eventbindertab.end();
-       ++it3)
-    if (it3->second->removeMonitor(this))
-      deletelist.push_back(it3);
+  for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
+       i != ::urbiserver->eventbindertab.end();
+       ++i)
+    if (i->second->removeMonitor(this))
+      deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
-       itt != deletelist.end();
-       ++itt)
-    ::urbiserver->eventbindertab.erase((*itt));
+  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
+       i != deletelist.end();
+       ++i)
+    ::urbiserver->eventbindertab.erase(*i);
   deletelist.clear();
 
   DEBUG(("done\n"));
