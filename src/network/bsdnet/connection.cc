@@ -1,3 +1,5 @@
+#define ENABLE_DEBUG_TRACES 1
+#include "libport/compiler.hh"
 #include "libport/network.h"
 
 #include "network/bsdnet/connection.hh"
@@ -28,8 +30,19 @@ Connection::Connection(int connfd)
 //! Connection destructor.
 Connection::~Connection()
 {
-  if (fd)
+  if (fd != -1)
     closeConnection();
+}
+
+std::ostream&
+Connection::print (std::ostream& o) const
+{
+  return o
+    << "Connection "
+    << "{ controlFd = " << controlFd
+    << ", fd = " << fd
+    << " }";
+
 }
 
 //! Close the connection
@@ -38,6 +51,7 @@ Connection::~Connection()
 UErrorValue
 Connection::closeConnection()
 {
+  ECHO("IN");
   // Setting 'closing' to true tell the kernel not to use the
   // connection any longer
   closing = true;
@@ -46,6 +60,8 @@ Connection::closeConnection()
   int ret = 0;//WSACleanup(); //wsastartup called only once!
 #else
   int ret = close(fd);
+  if (ret)
+    perror ("cannot close connection fd");
 #endif
   Network::unregisterNetworkPipe(this);
 
@@ -65,13 +81,14 @@ Connection::closeConnection()
 
 void Connection::doRead()
 {
-  int n = ::recv(fd, (char *)read_buff, PACKETSIZE, MSG_NOSIGNAL);
+  ECHO("IN");
+  int n = ::recv(fd, (char*)read_buff, PACKETSIZE, MSG_NOSIGNAL);
   if (n<=0)
     //kill us
     closeConnection();
   else
     received(read_buff, n);
-
+  ECHO("OUT");
 }
 
 int Connection::effectiveSend (const ubyte *buffer, int length)
@@ -91,7 +108,9 @@ int Connection::effectiveSend (const ubyte *buffer, int length)
 
 void Connection::doWrite()
 {
+  ECHO("IN");
   continueSend();
+  ECHO("OUT");
 }
 
 UErrorValue Connection::send(const ubyte *buffer, int length)

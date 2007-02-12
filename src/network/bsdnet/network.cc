@@ -1,3 +1,5 @@
+#define ENABLE_DEBUG_TRACES 1
+#include "libport/compiler.hh"
 #include "libport/cstdio"
 
 #include "libport/unistd.h"
@@ -11,26 +13,23 @@
 namespace Network
 {
 
+  /*----------------.
+  | TCPServerPipe.  |
+  `----------------*/
+  
   class TCPServerPipe: public Pipe
   {
   public:
-    TCPServerPipe()
-      : fd(-1), port(-1)
-    {}
+    TCPServerPipe();
     bool init(int port);
-
     ~TCPServerPipe();
 
-    virtual int readFD()
-    {
-      return fd;
-    }
-    virtual int writeFD()
-    {
-      return -1;
-    }
-    virtual void notifyWrite()
-    {}
+    virtual std::ostream& print (std::ostream& o) const;
+
+    virtual int readFD();
+    virtual int writeFD();
+
+    virtual void notifyWrite();
     virtual void notifyRead();
 
   private:
@@ -38,20 +37,41 @@ namespace Network
     int port;
   };
 
+  TCPServerPipe::TCPServerPipe()
+    : fd(-1), port(-1)
+  {
+    PING();
+  }
+
+  std::ostream&
+  TCPServerPipe::print(std::ostream& o) const
+  {
+    return o
+      << "TCPServerPipe "
+      << "{ controlFd = " << controlFd
+      << ", fd = " << fd
+      << ", port = " << port
+      << '}';
+  }
+
   TCPServerPipe::~TCPServerPipe ()
   {
+    ECHO("IN");
     if (fd != -1)
     {
+      std::cerr << "Shuting down :" << fd << std::endl;
       if (shutdown (fd, SHUT_RDWR))
 	perror ("cannot shutdown socket");
       else if (close (fd))
 	perror ("cannot close socket");
     }
+    ECHO("out");
   }
 
   bool
   TCPServerPipe::init(int p)
   {
+    ECHO("IN");
     port = p;
 #ifdef WIN32
     // Initialize the socket API.
@@ -77,14 +97,14 @@ namespace Network
     }
 
     /* fill in socket address */
-    struct sockaddr_in address;
-    memset(&address, 0, sizeof (struct sockaddr_in));
+    sockaddr_in address;
+    memset(&address, 0, sizeof (sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
     address.sin_addr.s_addr = INADDR_ANY;
 
     /* bind to port */
-    if (bind(fd, (struct sockaddr*)&address, sizeof (struct sockaddr)))
+    if (bind(fd, (sockaddr*)&address, sizeof (sockaddr)))
     {
       perror ("cannot bind");
       return false;
@@ -98,16 +118,32 @@ namespace Network
     }
 
     registerNetworkPipe(this);
+    ECHO("OUT");
     return true;
   }
 
 
+  int
+  TCPServerPipe::readFD()
+  {
+    PING();
+    return fd;
+  }
+  
+  int
+  TCPServerPipe::writeFD()
+  {
+    PING();
+    return -1;
+  }
+  
   void
   TCPServerPipe::notifyRead()
   {
-    struct sockaddr_in client;
-    socklen_t asize = sizeof (struct sockaddr_in);
-    int cfd = accept(fd, (struct sockaddr*) &client, &asize);
+    ECHO("IN");
+    sockaddr_in client;
+    socklen_t asize = sizeof (sockaddr_in);
+    int cfd = accept(fd, (sockaddr*) &client, &asize);
     if (cfd == -1)
     {
       perror ("cannot accept");
@@ -116,11 +152,30 @@ namespace Network
     Connection* c = new Connection(cfd);
     ::urbiserver->addConnection(c);
     registerNetworkPipe(c);
+    ECHO("OUT");
+  }
+
+  void 
+  TCPServerPipe::notifyWrite()
+  {
+    PING();
+  }
+
+  
+  /*-------------------------.
+  | Freestanding functions.  |
+  `-------------------------*/
+
+  std::ostream&
+  operator<< (std::ostream& o, const Pipe& p)
+  {
+    return p.print (o);
   }
 
   bool
   createTCPServer(int port)
   {
+    PING();
     TCPServerPipe* tsp = new TCPServerPipe();
     if (!tsp->init(port))
     {
@@ -171,6 +226,7 @@ namespace Network
 
   void notify(fd_set& rd, fd_set& wr)
   {
+    ECHO("IN");
     // We cannot use a simple loop with a single iterator here,
     // because calls to notifyRead or notifyWrite can call
     // unregisterNetworkPipe which changes pList, resulting in an
@@ -201,11 +257,13 @@ namespace Network
       }
       i = in;
     }
+    ECHO("OUT");
   }
 
   bool
   selectAndProcess(int usDelay)
   {
+    ECHO("IN");
     fd_set rd;
     fd_set wr;
     int mx = buildFD(rd, wr);
@@ -213,7 +271,14 @@ namespace Network
     tv.tv_sec = usDelay / 1000000;
     tv.tv_usec = usDelay - ((usDelay / 1000000) * 1000000);
 
+    std::cerr << "Calling select (" << mx
+	      << ", rd = " << rd
+	      << ", wr = " << wr
+	      << ", ex = " << 0
+	      << ", tv = " << tv
+	      << ")...";
     int r = select(mx, &rd, &wr, 0, &tv);
+    std::cerr << " got: " << r << std::endl;
     if (r < 0)
       // FIXME: This is bad, we should really do something.
       perror("cannot select");
@@ -232,25 +297,30 @@ namespace Network
       notify(rd, wr);
     }
 
+    ECHO("OUT");
     return r > 0;
   }
 
 
   void registerNetworkPipe(Pipe* p)
   {
+    ECHO("IN");
     pList.push_back(p);
 #ifndef WIN32
     if (controlPipe[0] == -1)
       pipe(controlPipe);
     p->controlFd = controlPipe[1];
 #endif
+    ECHO("OUT");
   }
 
   void unregisterNetworkPipe(Pipe* p)
   {
+    ECHO("IN: " << *p);
     pipes_type::iterator i = std::find(pList.begin(), pList.end(), p);
     if (i != pList.end())
       pList.erase(i);
+    ECHO("OUT");
   }
 
 #ifdef WIN32
@@ -283,7 +353,9 @@ namespace Network
   void Pipe::trigger()
   {
 #ifndef WIN32
+    PING();
     char c = 0;
+    std::cerr << "trigger" << std::endl;
     if (write(controlFd, &c, 1) == -1)
       perror ("cannot write to controlFD");
 #endif

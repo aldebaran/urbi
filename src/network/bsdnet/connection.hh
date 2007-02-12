@@ -36,6 +36,8 @@ public:
   virtual ~Connection();
   virtual UErrorValue closeConnection ();
 
+  virtual std::ostream& print (std::ostream& o) const;
+
   /*ENABLE_URBI_MEM*/
 
   //! Called when the underlying fd is ready to be read
@@ -52,13 +54,6 @@ public:
     doWrite();
   }
   virtual UErrorValue send  (const ubyte *buffer, int length);
-protected:
-  //! Overloading this function is requiered by UConnection
-  virtual int effectiveSend (const ubyte *buffer, int length);
-  //! The file descriptor of the connection
-  int	fd;
-  //! The reception buffer
-  unsigned char read_buff[PACKETSIZE];
 
 public:
   //! Accessor for the underlying file descriptor
@@ -79,6 +74,14 @@ public:
     else
       return -1;
   }
+
+protected:
+  //! Overloading this function is requiered by UConnection
+  virtual int effectiveSend (const ubyte *buffer, int length);
+  //! The file descriptor of the connection
+  int fd;
+  //! The reception buffer
+  unsigned char read_buff[PACKETSIZE];
 };
 
 #endif // !CONNECTION_HH
