@@ -1,3 +1,8 @@
+2007-02-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Use operator== for UString
+	* src/ucommand.cc: here.
+
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
 	Let UGroup own their memory

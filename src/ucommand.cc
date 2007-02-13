@@ -1809,7 +1809,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
 
   // blend
-  if (STREQ(oper->str(), "blend"))
+  if (*oper == "blend")
   {
     UValue *blendmode = expression->eval(this, connection);
     if (blendmode == 0)
@@ -1853,7 +1853,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   }
 
   // rangemax
-  if (STREQ(oper->str(), "rangemax"))
+  if (*oper == "rangemax")
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
@@ -1871,7 +1871,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   }
 
   // delta
-  if (STREQ(oper->str(), "delta"))
+  if (*oper == "delta")
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
@@ -1890,7 +1890,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 
 
   // unit
-  if (STREQ(oper->str(), "unit"))
+  if (*oper == "unit")
   {
     UValue *unitval = expression->eval(this, connection);
     if (unitval == 0)
@@ -1918,7 +1918,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   }
 
   // rangemin
-  if (STREQ(oper->str(), "rangemin"))
+  if (*oper == "rangemin")
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
@@ -1936,7 +1936,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   }
 
   // speedmax
-  if (STREQ(oper->str(), "speedmax"))
+  if (*oper == "speedmax")
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
@@ -1954,7 +1954,7 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   }
 
   // speedmin
-  if (STREQ(oper->str(), "speedmin"))
+  if (*oper == "speedmin")
   {
     UValue *nb = expression->eval(this, connection);
     if (nb == 0)
@@ -3133,12 +3133,10 @@ UCommand_GROUP::~UCommand_GROUP()
 UCommand::Status
 UCommand_GROUP::execute_(UConnection *connection)
 {
-  HMgrouptab::iterator hma;
-  UGroup *g;
-
   if (parameters)
   {
-    hma = ::urbiserver->grouptab.find(id->str());
+    HMgrouptab::iterator hma = ::urbiserver->grouptab.find(id->str());
+    UGroup *g;
     if (hma != ::urbiserver->grouptab.end())
       g = hma->second;
     else
@@ -3176,8 +3174,7 @@ UCommand_GROUP::execute_(UConnection *connection)
   // full query
   if (!id)
   {
-    for (HMgrouptab::iterator i =
-	   connection->server->grouptab.begin();
+    for (HMgrouptab::iterator i = connection->server->grouptab.begin();
 	 i != connection->server->grouptab.end();
 	 ++i)
     {
@@ -3280,7 +3277,7 @@ UCommand_OPERATOR_ID::~UCommand_OPERATOR_ID()
 UCommand::Status
 UCommand_OPERATOR_ID::execute_(UConnection *connection)
 {
-  if (STREQ(oper->str(), "stop"))
+  if (*oper == "stop")
   {
     if (status == URUNNING)
       return UCOMPLETED;
@@ -3288,7 +3285,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     connection->server->somethingToDelete = true;
     return URUNNING;
   }
-  else if (STREQ(oper->str(), "killall"))
+  else if (*oper == "killall")
   {
     bool ok = false;
 
@@ -3313,7 +3310,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     }
     return UCOMPLETED;
   }
-  else if (STREQ(oper->str(), "disconnect"))
+  else if (*oper == "disconnect")
   {
     bool ok = false;
     // Scan currently opened connections to locate the connection with the
@@ -3337,7 +3334,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     }
     return UCOMPLETED;
   }
-  else if (STREQ(oper->str(), "block"))
+  else if (*oper == "block")
   {
     if (status == URUNNING)
       return UCOMPLETED;
@@ -3349,12 +3346,12 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 
     return URUNNING;
   }
-  else if (STREQ(oper->str(), "unblock"))
+  else if (*oper == "unblock")
   {
     connection->server->unblock(id->str());
     return UCOMPLETED;
   }
-  else if (STREQ(oper->str(), "freeze"))
+  else if (*oper == "freeze")
   {
     if (status == URUNNING)
       return UCOMPLETED;
@@ -3366,7 +3363,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 
     return URUNNING;
   }
-  else if (STREQ(oper->str(), "unfreeze"))
+  else if (*oper == "unfreeze")
   {
     connection->server->unfreeze(id->str());
     return UCOMPLETED;
@@ -3518,7 +3515,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
   if (!fullname)
     return UCOMPLETED;
 
-  if (STREQ(oper->str(), "undef") || STREQ(oper->str(), "delete"))
+  if (*oper == "undef" || *oper == "delete")
   {
     if (status != URUNNING)
     {
@@ -3928,7 +3925,7 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 //! UCommand subclass execution function
 UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 {
-  if (STREQ(oper->str(), "ping"))
+  if (*oper == "ping")
   {
 #ifdef ENABLE_BENCH
     dotest(connection->server);
@@ -3940,7 +3937,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "commands"))
+  if (*oper == "commands")
   {
     if (connection->activeCommand)
       connection->activeCommand->print(0);
@@ -3950,19 +3947,19 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "strict"))
+  if (*oper == "strict")
   {
     connection->server->defcheck = true;
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "unstrict"))
+  if (*oper == "unstrict")
   {
     connection->server->defcheck = false;
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "motoron"))
+  if (*oper == "motoron")
   {
     if (connection->receiving)
       return URUNNING;
@@ -3971,21 +3968,21 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "motoroff"))
+  if (*oper == "motoroff")
   {
     send_error(connection, this, "This command is no longer valid."
 	       " Please use \"motor off\" instead");
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "stopall"))
+  if (*oper == "stopall")
   {
     connection->sendf (getTag(), "*** All commands cleared\n");
     connection->server->stopall = true;
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "undefall"))
+  if (*oper == "undefall")
   {
     connection->sendf (getTag(), "*** All variables and functions cleared\n");
 
@@ -4000,7 +3997,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 
     return UCOMPLETED;
   }
-  if (STREQ(oper->str(), "reset"))
+  if (*oper == "reset")
   {
     connection->sendf (getTag(), "*** Reset in progress\n");
     ::urbiserver->reseting = true;
@@ -4008,7 +4005,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "devices"))
+  if (*oper == "devices")
   {
     connection->sendf (getTag(),
 		       "*** devices is deprecated."
@@ -4016,7 +4013,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "functions"))
+  if (*oper == "functions")
   {
      for (HMfunctiontab::iterator i =
 	   connection->server->functiontab.begin();
@@ -4032,7 +4029,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "vars"))
+  if (*oper == "vars")
   {
     for (HMvariabletab::iterator i =
 	   connection->server->variabletab.begin();
@@ -4083,7 +4080,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "events"))
+  if (*oper == "events")
   {
     for (HMemittab::iterator i =
 	   connection->server->emittab.begin();
@@ -4100,7 +4097,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
   }
 
 
-  if (STREQ(oper->str(), "uservars"))
+  if (*oper == "uservars")
   {
     for (HMvariabletab::iterator i =
 	   connection->server->variabletab.begin();
@@ -4145,13 +4142,13 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "debugon"))
+  if (*oper == "debugon")
   {
     connection->server->debugOutput = true;
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "connections"))
+  if (*oper == "connections")
   {
     for (std::list<UConnection*>::iterator i =
 	   ::urbiserver->connectionList.begin();
@@ -4171,25 +4168,25 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "debugoff"))
+  if (*oper == "debugoff")
   {
     connection->server->debugOutput = false;
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "quit"))
+  if (*oper == "quit")
   {
     connection->closeConnection();
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "reboot"))
+  if (*oper == "reboot")
   {
     connection->server->reboot();
     return UCOMPLETED;
   }
 
-  if (STREQ(oper->str(), "shutdown"))
+  if (*oper == "shutdown")
   {
     connection->server->shutdown();
     return UCOMPLETED;
