@@ -101,11 +101,11 @@ UValue::operator urbi::UImage()
   if (!(param && param->next && param->next->next && param->next->next))
     return img;
 
-  if (STREQ(param->expression->str->str(), "rgb"))
+  if (*param->expression->str == "rgb")
     img.imageFormat = urbi::IMAGE_RGB;
-  else if (STREQ(param->expression->str->str(), "jpeg"))
+  else if (*param->expression->str == "jpeg")
     img.imageFormat = urbi::IMAGE_JPEG;
-  else if (STREQ(param->expression->str->str(), "YCbCr"))
+  else if (*param->expression->str == "YCbCr")
     img.imageFormat = urbi::IMAGE_YCbCr;
   else
     img.imageFormat = urbi::IMAGE_UNKNOWN;
@@ -246,7 +246,7 @@ UValue::operator urbi::USound()
   if (!param->expression->str)
     return snd;
 
-  if (STREQ(param->expression->str->str(), "raw"))
+  if (*param->expression->str == "raw")
   {
     snd.soundFormat = urbi::SOUND_RAW;
     decoded = (param->next && param->next->next &&
@@ -260,7 +260,7 @@ UValue::operator urbi::USound()
 	exprToInt(param->next->next->next->next->expression);
     }
   }
-  else if (STREQ(param->expression->str->str(), "wav"))
+  else if (*param->expression->str == "wav")
   {
     snd.soundFormat = urbi::SOUND_WAV;
     if (((unsigned int)refBinary->ref()->bufferSize > sizeof (wavheader)) &&
@@ -694,12 +694,10 @@ UValue::equal(UValue *v)
       return v->dataType == DATA_NUM && v->val == val;
 
     case DATA_STRING:
-      return (v->dataType == DATA_STRING &&
-	      STREQ(str->str(), v->str->str()));
+      return v->dataType == DATA_STRING && *str == v->str->str();
 
     case DATA_FILE:
-      return (v->dataType == DATA_FILE &&
-	      STREQ(str->str(), v->str->str()));
+      return v->dataType == DATA_FILE && *str == v->str->str();
 
     case DATA_BINARY:
       if (v->dataType != DATA_BINARY)

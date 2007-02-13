@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include <cassert>
 #include <cstdlib>
@@ -232,6 +234,7 @@ UServer::afterWork()
 void
 UServer::work()
 {
+  ECHO("Work in...");
   libport::BlockLock bl(this);
   // CPU Overload test
   updateTime();
@@ -259,8 +262,7 @@ UServer::work()
     (*i)->get (true);
 
   // memory test
-  memoryCheck(); // Check for memory availability
-
+    memoryCheck(); // Check for memory availability
   // recover the security memory space, with a margin (size x 2)
   // if the margin can be malloced, then freed, then remalloced with
   // the correct size, then the memoryOverflow error is removed.
@@ -279,7 +281,6 @@ UServer::work()
       }
     }
   }
-
   bool signalMemoryOverflow = false;
   if (memoryOverflow && securityBuffer_)
     {
@@ -289,7 +290,6 @@ UServer::work()
       securityBuffer_ = 0;
       signalMemoryOverflow = true;
     }
-
 
   // Scan currently opened connections for ongoing work
   for (std::list<UConnection*>::iterator r = connectionList.begin();
@@ -437,6 +437,7 @@ UServer::work()
     else if (cpucount > 0)
       --cpucount;
 
+
   if (cpuoverload && cpuload < 1)
   {
     cpuoverload = false;
@@ -524,6 +525,7 @@ UServer::work()
       }
     }
   }
+  ECHO("Work... done");
 }
 
 //! UServer destructor.

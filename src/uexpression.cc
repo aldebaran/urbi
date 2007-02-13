@@ -517,25 +517,25 @@ UExpression::eval (UCommand *command,
 	return 0;
       }
 
-      if (STREQ(str->str(), "rangemin"))
+      if (*str == "rangemin")
 	return new UValue (variable->rangemin);
 
-      if (STREQ(str->str(), "rangemax"))
+      if (*str == "rangemax")
 	return new UValue (variable->rangemax);
 
-      if (STREQ(str->str(), "speedmin"))
+      if (*str == "speedmin")
 	return new UValue (variable->speedmin);
 
-      if (STREQ(str->str(), "speedmax"))
+      if (*str == "speedmax")
 	return new UValue (variable->speedmax);
 
-      if (STREQ(str->str(), "delta"))
+      if (*str == "delta")
 	return new UValue (variable->delta);
 
-      if (STREQ(str->str(), "unit"))
+      if (*str == "unit")
 	return new UValue (variable->getUnit().c_str());
 
-      if (STREQ(str->str(), "blend"))
+      if (*str == "blend")
 	return new UValue (name(variable->blendType));
 
       send_error(connection, command, this,
@@ -874,10 +874,10 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
   passert (variablename->id->str(),
-	   STREQ(variablename->id->str(), "exec")
-	   || STREQ(variablename->id->str(), "load"));
+	   *variablename->id == "exec"
+	   || *variablename->id == "load");
 
-  bool in_load = STREQ(variablename->id->str(), "load");
+  bool in_load = *variablename->id == "load";
   UValue* e1 = parameters->expression->eval(command, connection);
   ENSURE_TYPES_1 (DATA_STRING);
 
@@ -966,13 +966,13 @@ UExpression::eval_FUNCTION (UCommand *command,
     UValue* ret = new UValue();
     ret->dataType = DATA_NUM;
 
-    if (STREQ(variablename->id->str(), "freemem"))
+    if (*variablename->id == "freemem")
       ret->val = availableMemory - usedMemory;
-    else if (STREQ(variablename->id->str(), "time"))
+    else if (*variablename->id == "time")
       ret->val = connection->server->getTime();
-    else if (STREQ(variablename->id->str(), "cpuload"))
+    else if (*variablename->id == "cpuload")
       ret->val = connection->server->cpuload;
-    else if (STREQ(variablename->id->str(), "power"))
+    else if (*variablename->id == "power")
       ret->val = connection->server->getPower();
 
     return ret;
@@ -980,7 +980,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 
   if (parameters && parameters->size() == 2)
   {
-    if (STREQ(variablename->id->str(), "save"))
+    if (*variablename->id == "save")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       UValue* e2 = parameters->next->expression->eval(command, connection);
@@ -1005,7 +1005,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "getIndex"))
+    if (*variablename->id == "getIndex")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       UValue* e2 = parameters->next->expression->eval(command, connection);
@@ -1032,7 +1032,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "cat"))
+    if (*variablename->id == "cat")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       UValue* e2 = parameters->next->expression->eval(command, connection);
@@ -1076,7 +1076,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 
   if (parameters && parameters->size() == 1)
   {
-    if (STREQ(variablename->id->str(), "strlen"))
+    if (*variablename->id == "strlen")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       ENSURE_TYPES_1 (DATA_STRING);
@@ -1093,7 +1093,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "head"))
+    if (*variablename->id == "head")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       ENSURE_TYPES_1 (DATA_LIST);
@@ -1107,7 +1107,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "tail"))
+    if (*variablename->id == "tail")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       ENSURE_TYPES_1 (DATA_LIST);
@@ -1138,7 +1138,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "size"))
+    if (*variablename->id == "size")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       ENSURE_TYPES_1 (DATA_LIST);
@@ -1159,7 +1159,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     }
 
 
-    if (STREQ(variablename->id->str(), "isdef"))
+    if (*variablename->id == "isdef")
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
@@ -1175,7 +1175,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "isvoid"))
+    if (*variablename->id == "isvoid")
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_NUM;
@@ -1194,7 +1194,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return ret;
     }
 
-    if (STREQ(variablename->id->str(), "loadwav"))
+    if (*variablename->id == "loadwav")
     {
       UValue* e1 = parameters->expression->eval(command, connection);
       ENSURE_TYPES_1 (DATA_STRING);
@@ -1233,14 +1233,14 @@ UExpression::eval_FUNCTION (UCommand *command,
 
     // Exec and load are exactly the same thing with one difference:
     // exec parse the string, and load, the file whose name is given.
-    if (STREQ(variablename->id->str(), "exec")
-	|| STREQ(variablename->id->str(), "load"))
+    if (*variablename->id == "exec"
+	|| *variablename->id == "load")
       return eval_FUNCTION_EXEC_OR_LOAD (command, connection);
   }
 
   if (parameters &&
       parameters->size() == 3 &&
-      STREQ(variablename->id->str(), "strsub"))
+      *variablename->id == "strsub")
   {
     UValue* e1 = parameters->expression->eval(command, connection);
     UValue* e2 = parameters->next->expression->eval(command, connection);
@@ -1250,7 +1250,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     UValue* ret = new UValue();
     ret->dataType = DATA_STRING;
 
-    if (STREQ(variablename->id->str(), "strsub"))
+    if (*variablename->id == "strsub")
       ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
 
     delete e1;
@@ -1261,7 +1261,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 
   if (parameters
       && parameters->size() == 2
-      && STREQ(variablename->id->str(), "atan2"))
+      && *variablename->id == "atan2")
   {
     UValue* e1 = parameters->expression->eval(command, connection);
     UValue* e2 = parameters->next->expression->eval(command, connection);
@@ -1269,7 +1269,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     UValue* ret = new UValue();
     ret->dataType = DATA_NUM;
 
-    if (STREQ(variablename->id->str(), "atan2"))
+    if (*variablename->id == "atan2")
       ret->val = atan2(e1->val, e2->val);
 
     delete e1;
@@ -1279,27 +1279,27 @@ UExpression::eval_FUNCTION (UCommand *command,
   if (parameters
       && parameters->size() == 1
       && (false
-	  || STREQ(variablename->id->str(), "sin")
-	  || STREQ(variablename->id->str(), "asin")
-	  || STREQ(variablename->id->str(), "cos")
-	  || STREQ(variablename->id->str(), "acos")
-	  || STREQ(variablename->id->str(), "tan")
-	  || STREQ(variablename->id->str(), "atan")
-	  || STREQ(variablename->id->str(), "sgn")
-	  || STREQ(variablename->id->str(), "abs")
-	  || STREQ(variablename->id->str(), "exp")
-	  || STREQ(variablename->id->str(), "log")
-	  || STREQ(variablename->id->str(), "round")
-	  || STREQ(variablename->id->str(), "random")
-	  || STREQ(variablename->id->str(), "trunc")
-	  || STREQ(variablename->id->str(), "sqr")
-	  || STREQ(variablename->id->str(), "sqrt")
-	  || STREQ(variablename->id->str(), "string")))
+	  || *variablename->id == "sin"
+	  || *variablename->id == "asin"
+	  || *variablename->id == "cos"
+	  || *variablename->id == "acos"
+	  || *variablename->id == "tan"
+	  || *variablename->id == "atan"
+	  || *variablename->id == "sgn"
+	  || *variablename->id == "abs"
+	  || *variablename->id == "exp"
+	  || *variablename->id == "log"
+	  || *variablename->id == "round"
+	  || *variablename->id == "random"
+	  || *variablename->id == "trunc"
+	  || *variablename->id == "sqr"
+	  || *variablename->id == "sqrt"
+	  || *variablename->id == "string"))
   {
     UValue* e1 = parameters->expression->eval(command, connection);
     ENSURE_TYPES_1 (DATA_NUM);
 
-    if (STREQ(variablename->id->str(), "string"))
+    if (*variablename->id == "string")
     {
       UValue* ret = new UValue();
       ret->dataType = DATA_STRING;
@@ -1313,19 +1313,19 @@ UExpression::eval_FUNCTION (UCommand *command,
     UValue* ret = new UValue();
     ret->dataType = DATA_NUM;
 
-    if (STREQ(variablename->id->str(), "sin"))
+    if (*variablename->id == "sin")
       ret->val = sin(e1->val);
-    else if (STREQ(variablename->id->str(), "asin"))
+    else if (*variablename->id == "asin")
       ret->val = asin(e1->val);
-    else if (STREQ(variablename->id->str(), "cos"))
+    else if (*variablename->id == "cos")
       ret->val = cos(e1->val);
-    else if (STREQ(variablename->id->str(), "acos"))
+    else if (*variablename->id == "acos")
       ret->val = acos(e1->val);
-    else if (STREQ(variablename->id->str(), "tan"))
+    else if (*variablename->id == "tan")
       ret->val = tan(e1->val);
-    else if (STREQ(variablename->id->str(), "atan"))
+    else if (*variablename->id == "atan")
       ret->val = atan(e1->val);
-    else if (STREQ(variablename->id->str(), "sgn"))
+    else if (*variablename->id == "sgn")
     {
       // FIXME: No value set of 0.
       if (e1->val>0)
@@ -1333,9 +1333,9 @@ UExpression::eval_FUNCTION (UCommand *command,
       else if (e1->val<0)
 	ret->val = -1;
     }
-    else if (STREQ(variablename->id->str(), "abs"))
+    else if (*variablename->id == "abs")
       ret->val = fabs(e1->val);
-    else if (STREQ(variablename->id->str(), "random"))
+    else if (*variablename->id == "random")
     {
       int range =  (int)e1->val;
       if (range)
@@ -1343,20 +1343,20 @@ UExpression::eval_FUNCTION (UCommand *command,
       else
 	ret->val = 0;
     }
-    else if (STREQ(variablename->id->str(), "round"))
+    else if (*variablename->id == "round")
     {
       if (e1->val>=0)
 	ret->val = (ufloat)(int)(e1->val+0.5);
       else
 	ret->val = (ufloat)(int)(e1->val-0.5);
     }
-    else if (STREQ(variablename->id->str(), "trunc"))
+    else if (*variablename->id == "trunc")
       ret->val = (ufloat)(int)(e1->val);
-    else if (STREQ(variablename->id->str(), "exp"))
+    else if (*variablename->id == "exp")
       ret->val = exp(e1->val);
-    else if (STREQ(variablename->id->str(), "sqr"))
+    else if (*variablename->id == "sqr")
       ret->val = e1->val*e1->val;
-    else if (STREQ(variablename->id->str(), "sqrt"))
+    else if (*variablename->id == "sqrt")
     {
       if (e1->val<0)
       {
@@ -1365,7 +1365,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       }
       ret->val = sqrt(e1->val);
     }
-    else if (STREQ(variablename->id->str(), "log"))
+    else if (*variablename->id == "log")
     {
       if (e1->val<0)
       {

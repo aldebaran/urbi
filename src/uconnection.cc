@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include "libport/cstring"
 #include "libport/cstdio"
@@ -578,6 +580,7 @@ UConnection::received (const ubyte *buffer, int length)
 	  {
 	    p.commandTree->up = 0;
 	    p.commandTree->position = 0;
+	    PING();
 	    execute(p.commandTree);
 	    if (p.commandTree &&
 		p.commandTree->status == UCommand::URUNNING)
@@ -790,8 +793,8 @@ UConnection::processCommand(UCommand *&command,
 		     ++i)
 		  if ((*i)->isActive()
 		      && (*(*i)->connectionTag == *tmpID->str
-			  || STREQ(tmpID->str->str(), "all")
-			  || (STREQ(tmpID->str->str(), "other")
+			  || *tmpID->str == "all"
+			  || (*tmpID->str == "other"
 			      && !(*(*i)->connectionTag == *connectionTag))))
 		    (*i)->append(new UCommand_TREE(UCommand::location(),
 						   Flavorable::UAND,
@@ -1028,6 +1031,7 @@ namespace
 void
 UConnection::execute(UCommand_TREE*& execCommand)
 {
+  PING();
   if (execCommand == 0 || closing)
     return;
 
@@ -1161,6 +1165,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
     delete execCommand;
     execCommand = 0;
   }
+  PING();
 }
 
 //! Append a command to the command queue

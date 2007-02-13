@@ -1830,17 +1830,17 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    if (STREQ(blendmode->str->str(), "normal"))
+    if (*blendmode->str == "normal")
       variable->blendType = urbi::UNORMAL;
-    else if (STREQ(blendmode->str->str(), "mix"))
+    else if (*blendmode->str == "mix")
       variable->blendType = urbi::UMIX;
-    else if (STREQ(blendmode->str->str(), "add"))
+    else if (*blendmode->str == "add")
       variable->blendType = urbi::UADD;
-    else if (STREQ(blendmode->str->str(), "discard"))
+    else if (*blendmode->str == "discard")
       variable->blendType = urbi::UDISCARD;
-    else if (STREQ(blendmode->str->str(), "queue"))
+    else if (*blendmode->str == "queue")
       variable->blendType = urbi::UQUEUE;
-    else if (STREQ(blendmode->str->str(), "cancel"))
+    else if (*blendmode->str == "cancel")
       variable->blendType = urbi::UCANCEL;
     else
     {
@@ -3339,7 +3339,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     if (status == URUNNING)
       return UCOMPLETED;
 
-    if (STREQ(id->str(), UNKNOWN_TAG))
+    if (*id == UNKNOWN_TAG)
       send_error(connection, this, "cannot block 'notag'");
     else
       connection->server->block(id->str());
@@ -3356,7 +3356,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     if (status == URUNNING)
       return UCOMPLETED;
 
-    if (STREQ(id->str(), UNKNOWN_TAG))
+    if (*id == UNKNOWN_TAG)
       send_error(connection, this, "cannot freeze 'notag'");
     else
       connection->server->freeze(id->str());
@@ -3601,7 +3601,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
   //FIXME: Either remove or fix this code.
 #if 0
-  if (STREQ(oper->str(),"info"))
+  if (*oper == "info")
   {
     variable = variablename->getVariable(this,connection);
     if (!variablename->getFullname())

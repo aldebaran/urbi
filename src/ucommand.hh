@@ -1146,6 +1146,16 @@ public:
 | Free standing functions.  |
 `--------------------------*/
 
+inline
+std::ostream&
+operator<<(std::ostream& o, const UCommand& u)
+{
+  // Yeah, we don't really use O here.  Too bad.
+  u.print(0);
+  return o;
+}
+
+
 /// Report an error, with "!!! " prepended, and "\n" appended.
 /// \param c     the connection to which the message is sent.
 /// \param cmd   the command whose tag will be used.
