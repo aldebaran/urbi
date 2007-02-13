@@ -292,7 +292,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   for (HMemittab::iterator i = ::urbiserver->emittab.begin ();
        i != ::urbiserver->emittab.end () && !ok;
        ++i)
-    if (i->second->unforgedName->equal (o.str().c_str()))
+    if (*i->second->unforgedName == o.str().c_str())
     {
       ok = true;
       ietok = i;

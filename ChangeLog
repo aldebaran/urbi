@@ -1,5 +1,14 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Pretend we program in C++ and use operators
+	* src/ustring.hh, src/ustring.cc (equal): Remove, replaced by...
+	(operator==): these two.
+	* src/ubinder.cc, src/ucommand.cc, src/uconnection.cc,
+	* src/ueventhandler.cc, src/uexpression.cc, src/uobj.cc,
+	* src/uvariablename.cc: Use them.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	Less new (but not older)
 	* src/ubinder.hh, src/ubinder.cc (Monitor::objects): Let it
 	be a list of UString, not of UString*.

@@ -67,8 +67,8 @@ UVariableName::UVariableName(UString* device,
     doublecolon (false),
     // Protected.
     fullname_ (0),
-    localFunction (device && device->equal("__Funct__")),
-    selfFunction (device && device->equal("self")),
+    localFunction (device && *device == "__Funct__"),
+    selfFunction (device && *device == "self"),
     cached    (false)
 {
   ADDOBJ(UVariableName);
@@ -99,8 +99,8 @@ UVariableName::UVariableName(UString* objname,
     local_scope  (false),
     doublecolon (false),
     fullname_ (0),
-    localFunction (device && device->equal("__Funct__")),
-    selfFunction (device && device->equal("self")),
+    localFunction (device && *device == "__Funct__"),
+    selfFunction (device && *device == "self"),
     cached    (false)
 {
   ADDOBJ(UVariableName);
@@ -381,7 +381,7 @@ UVariableName::buildFullname (UCommand* command,
     }
   }
 
-  if (device->equal("local"))
+  if (*device == "local")
     device->update(connection->connectionTag->str());
 
   cached = true;

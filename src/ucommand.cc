@@ -908,7 +908,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     errorFlag = false;
     for (UNamedParameters *param = flags; param; param = param->next)
       if (param->name &&
-	  param->name->equal("flag") &&
+	  *param->name == "flag" &&
 	  param->expression &&
 	  param->expression->val == 2) // 2 = +error
 	errorFlag = true;
@@ -1074,7 +1074,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	bool sinusoidal = false;
 	for (UNamedParameters* modif = parameters; modif; modif = modif->next)
-	  if (modif->name->equal("sin") || modif->name->equal("cos"))
+	  if (*modif->name == "sin" || *modif->name == "cos")
 	  {
 	    sinusoidal = true;
 	    break;
@@ -1104,51 +1104,51 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    return UCOMPLETED;
 	  }
 
-	  if (modif->name->equal("sin"))
+	  if (*modif->name == "sin")
 	  {
 	    modif_sin = modif->expression;
 	    controlled = true;
 	  }
-	  else if (modif->name->equal("cos"))
+	  else if (*modif->name == "cos")
 	  {
 	    modif_sin = modif->expression;
 	    tmp_phase = new UExpression(loc_, UExpression::VALUE, PI/ufloat(2));
 	    modif_phase = tmp_phase;
 	    controlled = true;
 	  }
-	  else if (modif->name->equal("ampli"))
+	  else if (*modif->name == "ampli")
 	  {
 	    modif_ampli = modif->expression;
 	  }
-	  else if (modif->name->equal("smooth"))
+	  else if (*modif->name == "smooth")
 	  {
 	    modif_smooth = modif->expression;
 	    controlled = true;
 	  }
-	  else if (modif->name->equal("time"))
+	  else if (*modif->name == "time")
 	  {
 	    modif_time = modif->expression;
 	    controlled = true;
 	  }
-	  else if (modif->name->equal("speed"))
+	  else if (*modif->name == "speed")
 	  {
 	    modif_speed = modif->expression;
 	    controlled = true;
 	  }
-	  else if (modif->name->equal("accel"))
+	  else if (*modif->name == "accel")
 	  {
 	    modif_accel = modif->expression;
 	    controlled = true;
 	  }
-	  else if (modif->name->equal("adaptive"))
+	  else if (*modif->name == "adaptive")
 	  {
 	    modif_adaptive = modif->expression;
 	  }
-	  else if (modif->name->equal("phase"))
+	  else if (*modif->name == "phase")
 	  {
 	    modif_phase = modif->expression;
 	  }
-	  else if (modif->name->equal("getphase"))
+	  else if (*modif->name == "getphase")
 	  {
 	    if (modif->expression->type != UExpression::VARIABLE)
 	    {
@@ -1159,7 +1159,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    }
 	    modif_getphase = modif->expression->variablename;
 	  }
-	  else if (modif->name->equal("timelimit"))
+	  else if (*modif->name == "timelimit")
 	  {
 	    UValue *modifier = modif->expression->eval(this, connection);
 	    if (!modifier || modifier->dataType != DATA_NUM)
@@ -2252,8 +2252,8 @@ UCommand_EXPR::execute_(UConnection *connection)
       return UMORPH;
     }
     else if (connection->receiving
-	     && (expression->variablename->id->equal("exec")
-		 || expression->variablename->id->equal("load")))
+	     && (*expression->variablename->id == "exec"
+		 || *expression->variablename->id == "load"))
       // Some functions are executed at the same time as they are
       // received (e.g., ping).  For some reason, it is believed that
       // exec should not be executed asap.  For the same reasons, load
@@ -2517,7 +2517,7 @@ UCommand_ECHO::execute_(UConnection *connection)
   }
 
   for (UNamedParameters *param = parameters; param; param = param->next)
-    if (param->name->equal("connection"))
+    if (*param->name == "connection")
     {
       UValue *e1 = param->expression->eval(this, connection);
       if (e1 && e1->dataType == DATA_STRING)
@@ -2542,10 +2542,10 @@ UCommand_ECHO::execute_(UConnection *connection)
 	 i != connection->server->connectionList.end();
 	 ++i)
       if ((*i)->isActive()
-	  && ((*i)->connectionTag->equal(*connectionTag)
-	      || connectionTag->equal("all")
-	      || (!(*i)->connectionTag->equal(*connection->connectionTag)
-		  && connectionTag->equal("other"))))
+	  && (*(*i)->connectionTag == *connectionTag
+	      || *connectionTag == "all"
+	      || (!(*(*i)->connectionTag == *connection->connectionTag)
+		  && *connectionTag == "other")))
       {
 	ok = true;
 	(*i)->sendc("*** ", getTag().c_str());
@@ -2649,7 +2649,7 @@ UCommand_NEW::execute_(UConnection *connection)
 
   if (!remoteNew && !sysCall)
   {
-    if (id->equal(*obj))
+    if (*id == *obj)
     {
       send_error(connection, this,
 		 "Object %s cannot new itself", obj->str());
@@ -3157,7 +3157,7 @@ UCommand_GROUP::execute_(UConnection *connection)
 	// del
 	for (std::list<UString*>::iterator it = g->members.begin();
 	     it != g->members.end(); )
-	  if ((*it)->equal(*param->name))
+	  if (**it == *param->name)
 	    it =g->members.erase(it);
 	  else
 	    ++it;
@@ -3301,7 +3301,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 	 i != connection->server->connectionList.end();
 	 ++i)
       if ((*i)->isActive() &&
-	  (*i)->connectionTag->equal(*id))
+	  *(*i)->connectionTag == *id)
       {
 	ok = true;
 	(*i)->killall = true;
@@ -3324,7 +3324,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 	   connection->server->connectionList.begin();
 	 i != connection->server->connectionList.end();
 	 ++i)
-      if ((*i)->isActive() && (*i)->connectionTag->equal(*id))
+      if ((*i)->isActive() && *(*i)->connectionTag == *id)
       {
 	ok = true;
 	(*i)->disactivate();

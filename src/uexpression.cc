@@ -958,10 +958,10 @@ UExpression::eval_FUNCTION (UCommand *command,
   }
 
   if (parameters == 0 &&
-      (variablename->id->equal("freemem")
-       || variablename->id->equal("power")
-       || variablename->id->equal("cpuload")
-       || variablename->id->equal("time")))
+      (*variablename->id == "freemem"
+       || *variablename->id == "power"
+       || *variablename->id == "cpuload"
+       || *variablename->id == "time"))
   {
     UValue* ret = new UValue();
     ret->dataType = DATA_NUM;

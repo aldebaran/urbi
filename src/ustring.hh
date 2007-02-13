@@ -20,11 +20,12 @@
  **************************************************************************** */
 
 #ifndef USTRING_HH
-#define USTRING_HH
+# define USTRING_HH
 
-#include <string>
-#include <iosfwd>
-#include "memorymanager/memorymanager.hh"
+# include "libport/cstring"
+# include <string>
+# include <iosfwd>
+# include "memorymanager/memorymanager.hh"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a
@@ -56,13 +57,11 @@ class UString
 
   UString* copy() const;
   const char* ext(int deb, int length);
-  bool equal(const UString &s) const;
-  bool tagequal(const UString &s) const;
-  bool equal(const char *s) const;
+  bool tagequal(const UString& s) const;
 
-  void update(const std::string &s);
-  void update(const char *s);
-  void update(const UString *s);
+  void update(const std::string& s);
+  void update(const char* s);
+  void update(const UString* s);
 
   void setLen(int l);
 
@@ -70,6 +69,20 @@ class UString
   int  len_;
   char* str_;
 };
+
+inline
+bool
+operator== (const UString& lhs, const UString& rhs)
+{
+  return STREQ(lhs.str(), rhs.str());
+}
+
+inline
+bool
+operator== (const UString& lhs, const char* rhs)
+{
+  return STREQ(lhs.str(), rhs);
+}
 
 inline
 UString*
@@ -80,7 +93,7 @@ UString::copy() const
 
 inline
 void
-UString::update(const std::string &s)
+UString::update(const std::string& s)
 {
   update(s.c_str());
 }
@@ -101,4 +114,4 @@ operator<< (std::ostream& o, const UString& s)
     return o << "<null UString>";
 }
 
-#endif
+#endif // !USTRING_HH

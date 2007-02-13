@@ -90,11 +90,6 @@ const char* UString::ext(int deb, int length)
   return str_+deb;
 }
 
-bool UString::equal(const UString& s) const
-{
-  return STREQ(s.str(), str_);
-}
-
 bool UString::tagequal(const UString& s) const
 {
   // Oh, my God...
@@ -105,13 +100,6 @@ bool UString::tagequal(const UString& s) const
   if (p)
     *p = '.';
   return res;
-}
-
-bool UString::equal(const char* s) const
-{
-  if (s == 0)
-    return false;
-  return STREQ(s, str_);
 }
 
 void UString::update(const char* s)

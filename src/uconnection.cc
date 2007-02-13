@@ -777,7 +777,7 @@ UConnection::processCommand(UCommand *&command,
       for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name)
 	{
-	  if (param->name->equal("flagid"))
+	  if (*param->name == "flagid")
 	  {
 	    param->name->update("noflag");
 	    UValue* tmpID = param->expression->eval(command, this);
@@ -789,10 +789,10 @@ UConnection::processCommand(UCommand *&command,
 		     retr != ::urbiserver->connectionList.end();
 		     ++retr)
 		  if ((*retr)->isActive()
-		      && ((*retr)->connectionTag->equal(*tmpID->str)
+		      && (*(*retr)->connectionTag == *tmpID->str
 			  || STREQ(tmpID->str->str(), "all")
 			  || (STREQ(tmpID->str->str(), "other")
-			      && !(*retr)->connectionTag->equal(*connectionTag))))
+			      && !(*(*retr)->connectionTag == *connectionTag))))
 		    (*retr)->append(new UCommand_TREE(UCommand::location(),
 						      Flavorable::UAND,
 						      command->copy(),
@@ -803,7 +803,7 @@ UConnection::processCommand(UCommand *&command,
 	    return 0;
 	  }
 
-	  if (param->name->equal("flagtimeout"))
+	  if (*param->name == "flagtimeout")
 	  {
 	    command->flagType += 1;
 	    command->flagExpr1 = param->expression;
@@ -811,7 +811,7 @@ UConnection::processCommand(UCommand *&command,
 		 " Use timeout(time) command instead.\n",
 		 command->getTag().c_str());
 	  }
-	  if (param->name->equal("flagstop"))
+	  if (*param->name == "flagstop")
 	  {
 	    command->flagType += 2;
 	    command->flagExpr2 = param->expression;
@@ -819,7 +819,7 @@ UConnection::processCommand(UCommand *&command,
 		 " Use stopif(test) command instead.\n",
 		 command->getTag().c_str());
 	  }
-	  if (param->name->equal("flagfreeze"))
+	  if (*param->name == "flagfreeze")
 	  {
 	    command->flagType += 4;
 	    command->flagExpr4 = param->expression;
@@ -828,12 +828,12 @@ UConnection::processCommand(UCommand *&command,
 		 command->getTag().c_str());
 	  }
 
-	  if (param->name->equal("flag")
+	  if (*param->name == "flag"
 	      && param->expression
 	      && param->expression->val == 10)
 	    command->flagType += 8;
 
-	  if (param->name->equal("flag")
+	  if (*param->name == "flag"
 	      && param->expression
 	      && !command->morphed
 	      && (param->expression->val == 4 // 4 = +begin
@@ -905,7 +905,7 @@ UConnection::processCommand(UCommand *&command,
     {
       for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name &&
-	    param->name->equal("flag") &&
+	    *param->name == "flag" &&
 	    param->expression &&
 	    !command->morphed &&
 	    (param->expression->val == 3 || // 3 = +end
@@ -938,7 +938,7 @@ UConnection::processCommand(UCommand *&command,
 	  for (UNamedParameters *param = command->flags; param;
 	       param = param->next)
 	    if (param->name &&
-		param->name->equal("flag") &&
+		*param->name == "flag" &&
 		param->expression &&
 		(param->expression->val == 3 || // 3 = +end
 		 param->expression->val == 1  )) // 1 = +report
@@ -1117,7 +1117,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
       for (UNamedParameters *param = tree->flags; param; param = param->next)
 	if (param->name &&
-	    param->name->equal("flag") &&
+	    *param->name == "flag" &&
 	    param->expression &&
 	    (param->expression->val == 3 || // 3 = +end
 	     param->expression->val == 1)) // 1 = +report
