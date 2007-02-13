@@ -779,7 +779,7 @@ UConnection::processCommand(UCommand *&command,
 	{
 	  if (*param->name == "flagid")
 	  {
-	    param->name->update("noflag");
+	    *param->name = "noflag";
 	    UValue* tmpID = param->expression->eval(command, this);
 	    if (tmpID)
 	    {

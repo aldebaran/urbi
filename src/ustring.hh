@@ -59,9 +59,9 @@ class UString
   const char* ext(int deb, int length);
   bool tagequal(const UString& s) const;
 
-  void update(const std::string& s);
-  void update(const char* s);
-  void update(const UString* s);
+  UString& operator= (const std::string& s);
+  UString& operator= (const char* s);
+  UString& operator= (const UString* s);
 
   void setLen(int l);
 
@@ -92,10 +92,10 @@ UString::copy() const
 }
 
 inline
-void
-UString::update(const std::string& s)
+UString&
+UString::operator=(const std::string& s)
 {
-  update(s.c_str());
+  return *this = s.c_str();
 }
 
 inline void

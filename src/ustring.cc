@@ -102,10 +102,11 @@ bool UString::tagequal(const UString& s) const
   return res;
 }
 
-void UString::update(const char* s)
+UString&
+UString::operator=(const char* s)
 {
   if (s == 0 || s == str_ /*|| (STREQ(s, str_)) */)
-    return;
+    return *this;
 
   if (str_)
     free(str_);
@@ -115,12 +116,14 @@ void UString::update(const char* s)
   strcpy(str_, s);
   len_ = slen;
   ADDMEM(len_);
+  return *this;
 }
 
-void UString::update(const UString* s)
+UString&
+UString::operator=(const UString* s)
 {
   if (!s)
-    return;
+    return *this;
   if (str_)
     free(str_);
   FREEMEM(len_);
@@ -129,4 +132,5 @@ void UString::update(const UString* s)
   strcpy(str_, s->str());
   len_ = s->len();
   ADDMEM(len_);
+  return *this;
 }

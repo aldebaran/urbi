@@ -264,7 +264,7 @@ UVariable::set(UValue *v)
     switch (value->dataType)
     {
       case DATA_STRING:
-	value->str->update(v->str->str());
+	*value->str = v->str->str();
 	break;
       case DATA_NUM:
 	setSensorVal(v->val);

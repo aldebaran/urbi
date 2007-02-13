@@ -1571,8 +1571,8 @@ UExpression::eval_VARIABLE (UCommand *command,
       variable = vari;
       if (vari)
       {
-	devicename->update(vari->getMethod());
-	variablename->device->update(vari->getMethod());
+	*devicename = vari->getMethod();
+	*variablename->device = vari->getMethod();
 	variablename->buildFullname(command, connection);
       }
     }

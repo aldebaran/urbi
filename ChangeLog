@@ -1,5 +1,14 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Pretend C++ support assignment operators
+	* src/ustring.hh, src/ustring.cc (update): Remove.
+	(operator=): New.
+	* src/ucommand.cc, src/uconnection.cc, src/uexpression.cc,
+	* src/userver.cc, src/uvariable.cc, src/uvariablename.cc:
+	Use them.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	/! Dangerous checkin
 	* src/memorymanager/blockmemorymanager.hh: Add a placement new
 	to please mipsel-linux-g++-3.3.2.

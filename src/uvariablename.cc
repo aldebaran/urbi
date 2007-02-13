@@ -264,13 +264,13 @@ UVariableName::getDevice()
   if (!fullname_)
     return 0;
   if (char *pointPos = const_cast<char*>(strstr(fullname_->str(), ".")))
-    {
-      pointPos[0] = 0;
+  {
+    pointPos[0] = 0;
 
-      device = new UString(fullname_->str());
-      pointPos[0] = '.';
-      return device;
-    }
+    device = new UString(fullname_->str());
+    pointPos[0] = '.';
+    return device;
+  }
   else
     return fullname_;
 }
@@ -314,7 +314,7 @@ UVariableName::update_array_mangling (UCommand* cmd,
       // if (!p->expression->isconst) cached = false;
       delete e1;
     }
-    s->update (o.str().c_str());
+    *s = o.str().c_str();
   }
   return true;
 }
@@ -382,7 +382,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   if (*device == "local")
-    device->update(connection->connectionTag->str());
+    *device = connection->connectionTag->str();
 
   cached = true;
 
@@ -404,12 +404,12 @@ UVariableName::buildFullname (UCommand* command,
       if (funid)
       {
 	if (selfFunction)
-	  device->update(funid->self());
+	  *device = funid->self();
 
 	if (localFunction)
 	{
 	  if (local_scope)
-	    device->update(funid->str());
+	    *device = funid->str();
 	  else
 	  {
 	    // does the symbol exist as a symbol local to the function call?
@@ -439,9 +439,9 @@ UVariableName::buildFullname (UCommand* command,
 	    if (class_symbol)
 	    {
 	      if (!function_symbol)
-		device->update(funid->self());
+		*device = funid->self();
 	      else
-		device->update(funid->str());
+		*device = funid->str();
 	    }
 	    else
 	    {
@@ -458,9 +458,9 @@ UVariableName::buildFullname (UCommand* command,
 		|| kernel::eventSymbolDefined (cp);
 
 	      if (local_symbol && !function_symbol)
-		device->update(connection->connectionTag->str());
+		*device = connection->connectionTag->str();
 	      else
-		device->update(funid->str());
+		*device = funid->str();
 	    }
 	  }
 	}
@@ -536,7 +536,7 @@ UVariableName::buildFullname (UCommand* command,
     if (char* p = strchr(name, '.'))
     {
       if (fullname_)
-	fullname_->update(p+1);
+	*fullname_ = p+1;
       else
 	fullname_ = new UString(p+1);
 
@@ -566,7 +566,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   if (fullname_)
-    fullname_->update(name);
+    *fullname_ = name;
   else
     fullname_ = new UString(name);
 
@@ -578,12 +578,12 @@ void
 UVariableName::nameUpdate(const char* _device, const char* _id)
 {
   if (device)
-    device->update(_device);
+    *device = _device;
   else
     device = new UString(_device);
 
   if (id)
-    id->update(_id);
+    *id = _id;
   else
     id = new UString(_id);
 }

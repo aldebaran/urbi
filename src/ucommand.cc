@@ -701,7 +701,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    && !connection->stack.empty ()
 	    && ::urbiserver->objtab.find(connection->stack.front()->self())!=
 	    ::urbiserver->objtab.end ())
-	  fundevice->update (connection->stack.front()->self());
+	  *fundevice = connection->stack.front()->self();
 
 	{
 	  std::ostringstream o;
@@ -752,8 +752,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	::urbiserver->objtab.end ())
     {
       // rebuild name with parent class
-      expression->variablename->device->
-	update(connection->stack.front()->self());
+      *expression->variablename->device = connection->stack.front()->self();
       expression->variablename->resetCache (); // this deletes funname pointeur
       functionname = expression->variablename->buildFullname(this, connection);
       if (!functionname)
@@ -878,7 +877,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	HMaliastab::iterator hmi =
 	  ::urbiserver->objaliastab.find(variablename->id->str());
 	if (hmi != ::urbiserver->objaliastab.end())
-	  hmi->second->update(objname);
+	  *hmi->second = objname;
 	else
 	{
 	  UString* objalias = new UString(*variablename->method);
@@ -990,7 +989,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    delete modifier;
 	    modif = modif->next;
 	  }
-	  target->str->update(result);
+	  *target->str = result;
 	  free(result);
 	}
 
@@ -2214,7 +2213,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    && !connection->stack.empty ()
 	    && (::urbiserver->objtab.find(connection->stack.front()->self())
 		!= ::urbiserver->objtab.end ()))
-	  fundevice->update (connection->stack.front()->self());
+	  *fundevice = connection->stack.front()->self();
 	{
 	  std::ostringstream o;
 	  o << "__UFnct"<< unic();
@@ -2270,8 +2269,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	::urbiserver->objtab.end ())
     {
       // rebuild name with parent class
-      expression->variablename->device->
-	update(connection->stack.front()->self());
+      *expression->variablename->device = connection->stack.front()->self();
       expression->variablename->resetCache (); // this deletes funname pointeur
       funname = expression->variablename->buildFullname(this, connection);
       if (!funname)

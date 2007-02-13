@@ -941,7 +941,7 @@ std::string
 UServer::find_file (const char* base)
 {
   assert(base);
-  //  DEBUG(("Looking for file %s\n", base));
+  //DEBUG(("Looking for file %s\n", base));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;
@@ -949,11 +949,11 @@ UServer::find_file (const char* base)
     if (is)
     {
       is.close ();
-      //      DEBUG(("File %s found: %s\n", base, f.c_str()));
+      //DEBUG(("File %s found: %s\n", base, f.c_str()));
       return f;
     }
   }
-  //  DEBUG(("File %s not found in path\n", base));
+  //DEBUG(("File %s not found in path\n", base));
   return base;
 }
 
@@ -1035,7 +1035,7 @@ UServer::addAlias(const char* id, const char* variablename)
   if (aliastab.find(id) != aliastab.end())
   {
     UString* alias = aliastab[id];
-    alias->update(variablename);
+    *alias = variablename;
   }
   else
   {
