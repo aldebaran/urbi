@@ -784,19 +784,19 @@ UConnection::processCommand(UCommand *&command,
 	    if (tmpID)
 	    {
 	      if (tmpID->dataType == DATA_STRING)
-		for (std::list<UConnection*>::iterator retr =
+		for (std::list<UConnection*>::iterator i =
 		       ::urbiserver->connectionList.begin();
-		     retr != ::urbiserver->connectionList.end();
-		     ++retr)
-		  if ((*retr)->isActive()
-		      && (*(*retr)->connectionTag == *tmpID->str
+		     i != ::urbiserver->connectionList.end();
+		     ++i)
+		  if ((*i)->isActive()
+		      && (*(*i)->connectionTag == *tmpID->str
 			  || STREQ(tmpID->str->str(), "all")
 			  || (STREQ(tmpID->str->str(), "other")
-			      && !(*(*retr)->connectionTag == *connectionTag))))
-		    (*retr)->append(new UCommand_TREE(UCommand::location(),
-						      Flavorable::UAND,
-						      command->copy(),
-						      0));
+			      && !(*(*i)->connectionTag == *connectionTag))))
+		    (*i)->append(new UCommand_TREE(UCommand::location(),
+						   Flavorable::UAND,
+						   command->copy(),
+						   0));
 	      delete tmpID;
 	    }
 	    delete command;
