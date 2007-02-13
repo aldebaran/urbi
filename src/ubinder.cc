@@ -178,7 +178,7 @@ UMonitor::removeObject(const UString& objname)
   for (std::list<UString*>::iterator i = objects.begin();
        i != objects.end();
        ++i)
-    if (objname.equal(*i))
+    if (objname.equal(**i))
     {
       objects.remove(*i);
       delete *i;

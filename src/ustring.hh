@@ -35,13 +35,12 @@ class UString
 {
  public:
   MEMORY_MANAGED;
-  UString(const char* s=0);
-  UString(const UString* s);
+  UString(const char* s = 0);
   UString(const UString& s);
   UString(const std::string& s);
 
   /// Concat \c s1 and \c s2 with a dot in the middle.
-  UString(const UString* s1, const UString* s2);
+  UString(const UString& s1, const UString& s2);
 
   ~UString();
 
@@ -55,17 +54,13 @@ class UString
     return len_;
   }
 
-  UString* copy() const
-  {
-    return new UString(this);
-  }
-
+  UString* copy() const;
   const char* ext(int deb, int length);
-  bool equal(const UString *s) const;
-  bool tagequal(const UString *s) const;
+  bool equal(const UString &s) const;
+  bool tagequal(const UString &s) const;
   bool equal(const char *s) const;
 
-  void update(const std::string &s) {update(s.c_str());}
+  void update(const std::string &s);
   void update(const char *s);
   void update(const UString *s);
 
@@ -75,6 +70,20 @@ class UString
   int  len_;
   char* str_;
 };
+
+inline
+UString*
+UString::copy() const
+{
+  return new UString(*this);
+}
+
+inline
+void
+UString::update(const std::string &s)
+{
+  update(s.c_str());
+}
 
 inline void
 UString::setLen(int l)

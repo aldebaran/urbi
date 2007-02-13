@@ -1,5 +1,18 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Address a bit of the UString mess
+	* src/ustring.hh, src/ustring.cc: Start to spread some more &
+	instead of *.
+	* src/parser/bison/ugrammar.y, src/ubinder.cc, src/ucommand.cc,
+	* src/uconnection.cc, src/ueventhandler.cc, src/ugroup.cc,
+	* src/uobj.cc, src/userver.cc, src/userver.hh, src/uvalue.cc,
+	* src/uvariable.cc: Adjust in the most stupid way: add a *
+	to arguments.
+	Later passes will improve the code.
+	Let's do that bit after bit.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	An iterator has to be named i
 	* src/uasyncregister.cc: Unless you have a good reason :).
 	Remove useless includes.

@@ -139,7 +139,7 @@ UEventHandler::UEventHandler (UString* name, int nbarg):
 {
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
-  unforgedName = new UString (name);
+  unforgedName = new UString (*name);
 }
 
 UEventHandler::~UEventHandler()

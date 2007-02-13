@@ -39,14 +39,14 @@
 // **************************************************************************
 //! UObj constructor.
 UObj::UObj (UString *device)
-  : device (new UString(device)),
+  : device (new UString(*device)),
     binder (0),
     internalBinder (0)
 {
   ::urbiserver->objtab[this->device->str()] = this;
   UValue* objvalue = new UValue();
   objvalue->dataType = DATA_OBJ;
-  objvalue->str = new UString(device);
+  objvalue->str = new UString(*device);
   new UVariable(this->device->str(), objvalue);
 }
 
@@ -72,7 +72,7 @@ UObj::~UObj()
        i != ::urbiserver->variabletab.end();
        ++i)
     if (i->second->binder
-      && i->second->binder->removeMonitor(device))
+      && i->second->binder->removeMonitor(*device))
     {
       delete i->second->binder;
       i->second->binder = 0;
@@ -83,7 +83,7 @@ UObj::~UObj()
   for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
        i != ::urbiserver->functionbindertab.end();
        ++i)
-    if (i->second->removeMonitor(device))
+    if (i->second->removeMonitor(*device))
       deletelist.push_back(i);
 
   for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
@@ -96,7 +96,7 @@ UObj::~UObj()
   for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
        i != ::urbiserver->eventbindertab.end();
        ++i)
-    if (i->second->removeMonitor(device))
+    if (i->second->removeMonitor(*device))
       deletelist.push_back(i);
 
   for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
@@ -337,7 +337,7 @@ UObj::searchEvent(const char* id, bool &ambiguous)
 
 UWaitCounter::UWaitCounter(UString *id, int nb)
 {
-  this->id = new UString(id);
+  this->id = new UString(*id);
   this->nb = nb;
 }
 

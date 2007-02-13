@@ -881,8 +881,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  hmi->second->update(objname);
 	else
 	{
-	  UString* objalias = new UString(variablename->method);
-	  ::urbiserver->objaliastab[objalias->str()] = new UString(objname);
+	  UString* objalias = new UString(*variablename->method);
+	  ::urbiserver->objaliastab[objalias->str()] = new UString(*objname);
 	}
 	return UCOMPLETED;
       }
@@ -2521,7 +2521,7 @@ UCommand_ECHO::execute_(UConnection *connection)
     {
       UValue *e1 = param->expression->eval(this, connection);
       if (e1 && e1->dataType == DATA_STRING)
-	connectionTag = new UString(e1->str);
+	connectionTag = new UString(*e1->str);
       delete e1;
     }
 
@@ -2537,20 +2537,20 @@ UCommand_ECHO::execute_(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator retr =
+    for (std::list<UConnection*>::iterator i =
 	   connection->server->connectionList.begin();
-	 retr != connection->server->connectionList.end();
-	 ++retr)
-      if ((*retr)->isActive()
-	  && ((*retr)->connectionTag->equal(connectionTag)
+	 i != connection->server->connectionList.end();
+	 ++i)
+      if ((*i)->isActive()
+	  && ((*i)->connectionTag->equal(*connectionTag)
 	      || connectionTag->equal("all")
-	      || (!(*retr)->connectionTag->equal(connection->connectionTag)
+	      || (!(*i)->connectionTag->equal(*connection->connectionTag)
 		  && connectionTag->equal("other"))))
       {
 	ok = true;
-	(*retr)->sendc("*** ", getTag().c_str());
-	ret->echo((*retr), true);
-	(*retr)->endline();
+	(*i)->sendc("*** ", getTag().c_str());
+	ret->echo((*i), true);
+	(*i)->endline();
       }
 
     if (!ok)
@@ -2649,7 +2649,7 @@ UCommand_NEW::execute_(UConnection *connection)
 
   if (!remoteNew && !sysCall)
   {
-    if (id->equal(obj))
+    if (id->equal(*obj))
     {
       send_error(connection, this,
 		 "Object %s cannot new itself", obj->str());
@@ -3157,7 +3157,7 @@ UCommand_GROUP::execute_(UConnection *connection)
 	// del
 	for (std::list<UString*>::iterator it = g->members.begin();
 	     it != g->members.end(); )
-	  if ((*it)->equal(param->name))
+	  if ((*it)->equal(*param->name))
 	    it =g->members.erase(it);
 	  else
 	    ++it;
@@ -3201,13 +3201,13 @@ UCommand_GROUP::execute_(UConnection *connection)
   }
 
   // specific query
-  HMgrouptab::iterator retr = connection->server->grouptab.find(id->str());
-  if (retr !=  connection->server->grouptab.end())
+  HMgrouptab::iterator i = connection->server->grouptab.find(id->str());
+  if (i !=  connection->server->grouptab.end())
   {
     UNamedParameters *ret = 0;
 
-    std::list<UString*>::iterator it = retr->second->members.begin();
-    if (it != retr->second->members.end())
+    std::list<UString*>::iterator it = i->second->members.begin();
+    if (it != i->second->members.end())
     {
       ret = new UNamedParameters(new UExpression(loc(), UExpression::VALUE,
 						 (*it)->copy()),
@@ -3215,7 +3215,7 @@ UCommand_GROUP::execute_(UConnection *connection)
       ++it;
     }
 
-    for (; it != retr->second->members.end(); ++it)
+    for (; it != i->second->members.end(); ++it)
       ret = new UNamedParameters(new UExpression(loc(), UExpression::VALUE,
 						 (*it)->copy()), ret);
 
@@ -3296,15 +3296,15 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator retr =
+    for (std::list<UConnection*>::iterator i =
 	   connection->server->connectionList.begin();
-	 retr != connection->server->connectionList.end();
-	 ++retr)
-      if (((*retr)->isActive()) &&
-	  ((*retr)->connectionTag->equal(id)))
+	 i != connection->server->connectionList.end();
+	 ++i)
+      if ((*i)->isActive() &&
+	  (*i)->connectionTag->equal(*id))
       {
 	ok = true;
-	(*retr)->killall = true;
+	(*i)->killall = true;
       }
 
     if (!ok)
@@ -3324,7 +3324,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 	   connection->server->connectionList.begin();
 	 i != connection->server->connectionList.end();
 	 ++i)
-      if ((*i)->isActive() && (*i)->connectionTag->equal(id))
+      if ((*i)->isActive() && (*i)->connectionTag->equal(*id))
       {
 	ok = true;
 	(*i)->disactivate();
@@ -3795,7 +3795,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 
   UBindMode mode = UEXTERNAL;
 
-  UString *key = new UString(fullname);
+  UString *key = new UString(*fullname);
 
   switch (type)
   {
@@ -3806,16 +3806,16 @@ UCommand_BINDER::execute_(UConnection *connection)
       if (it == ::urbiserver->variabletab.end())
       {
 	UVariable *variable = new UVariable(key->str(), new UValue());
-	variable->binder = new UBinder(fullobjname, fullname,
+	variable->binder = new UBinder(*fullobjname, *fullname,
 				       mode,
 				       type, nbparam, connection);
       }
       else
       {
 	if (it->second->binder)
-	  it->second->binder->addMonitor(fullobjname, connection);
+	  it->second->binder->addMonitor(*fullobjname, connection);
 	else
-	  it->second->binder = new UBinder(fullobjname, fullname,
+	  it->second->binder = new UBinder(*fullobjname, *fullname,
 					   mode,
 					   type,
 					   nbparam,
@@ -3837,21 +3837,21 @@ UCommand_BINDER::execute_(UConnection *connection)
       if (::urbiserver->functionbindertab.find(key->str())
 	  == ::urbiserver->functionbindertab.end())
 	::urbiserver->functionbindertab[key->str()] =
-	    new UBinder(fullobjname, fullname,
+	    new UBinder(*fullobjname, *fullname,
 			mode, type, nbparam, connection);
       else
 	::urbiserver->functionbindertab[key->str()]->
-	    addMonitor(fullobjname, connection);
+	    addMonitor(*fullobjname, connection);
       break;
 
     case UBIND_EVENT:
       if (::urbiserver->eventbindertab.find(key->str())
 	  == ::urbiserver->eventbindertab.end())
 	::urbiserver->eventbindertab[key->str()] =
-	    new UBinder(fullobjname, fullname,
+	    new UBinder(*fullobjname, *fullname,
 			mode, type, nbparam, connection);
       else
-	::urbiserver->eventbindertab[key->str()]->addMonitor(fullobjname,
+	::urbiserver->eventbindertab[key->str()]->addMonitor(*fullobjname,
 							     connection);
       break;
 
@@ -3864,9 +3864,9 @@ UCommand_BINDER::execute_(UConnection *connection)
       else
 	uobj = new UObj(variablename->id);
       if (uobj->binder)
-	uobj->binder->addMonitor(variablename->id, connection);
+	uobj->binder->addMonitor(*variablename->id, connection);
       else
-	uobj->binder = new UBinder(uobj->device, uobj->device,
+	uobj->binder = new UBinder(*uobj->device, *uobj->device,
 				   mode,
 				   type,
 				   0,
@@ -4814,7 +4814,7 @@ UCommand_DEF::execute_(UConnection *connection)
       delete fun;
     }
 
-    UFunction *fun = new UFunction(new UString(funname), parameters, command);
+    UFunction *fun = new UFunction(*new UString(*funname), parameters, command);
     if (fun)
       connection->server->functiondeftab[fun->name().str()] = fun;
 
@@ -5005,8 +5005,8 @@ UCommand_CLASS::execute_(UConnection*)
 	case UExpression::VALUE:
 	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_VAR,
 				  new UVariableName(
-				    new UString(object),
-				    new UString(param->expression->str),
+				    new UString(*object),
+				    new UString(*param->expression->str),
 				    true,
 				    0),
 				  0,
@@ -5015,8 +5015,8 @@ UCommand_CLASS::execute_(UConnection*)
 	case UExpression::FUNCTION:
 	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_FUNCTION,
 				  new UVariableName(
-				    new UString(object),
-				    new UString(param->expression->variablename->id),
+				    new UString(*object),
+				    new UString(*param->expression->variablename->id),
 				    true,
 				    0),
 				  param->expression->parameters,
@@ -5025,8 +5025,8 @@ UCommand_CLASS::execute_(UConnection*)
 	case UExpression::EVENT:
 	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_EVENT,
 				  new UVariableName(
-				    new UString(object),
-				    new UString(param->expression->variablename->id),
+				    new UString(*object),
+				    new UString(*param->expression->variablename->id),
 				    true,
 				    0),
 				  param->expression->parameters,
@@ -6337,7 +6337,7 @@ UCommand_FOREACH::execute_(UConnection *connection)
   if (position->dataType == DATA_NUM)
     currentvalue->val = position->val;
   if (position->dataType == DATA_STRING)
-    currentvalue->str = new UString(position->str);
+    currentvalue->str = new UString(*position->str);
   if (position->dataType == DATA_BINARY)
   {
     // add support here

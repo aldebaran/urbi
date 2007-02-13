@@ -789,10 +789,10 @@ UConnection::processCommand(UCommand *&command,
 		     retr != ::urbiserver->connectionList.end();
 		     ++retr)
 		  if ((*retr)->isActive()
-		      && ((*retr)->connectionTag->equal(tmpID->str)
+		      && ((*retr)->connectionTag->equal(*tmpID->str)
 			  || STREQ(tmpID->str->str(), "all")
 			  || (STREQ(tmpID->str->str(), "other")
-			      && !(*retr)->connectionTag->equal(connectionTag))))
+			      && !(*retr)->connectionTag->equal(*connectionTag))))
 		    (*retr)->append(new UCommand_TREE(UCommand::location(),
 						      Flavorable::UAND,
 						      command->copy(),

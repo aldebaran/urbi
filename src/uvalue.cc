@@ -466,7 +466,7 @@ UValue::copy() const
     {
       UValue *res = new UValue();
       res->dataType = dataType;
-      res->str = new UString(str);
+      res->str = new UString(*str);
       if (!res->str)
       {
 	delete res;

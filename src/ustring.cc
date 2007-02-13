@@ -53,33 +53,12 @@ UString::UString(const char* s)
   ADDMEM(len_);
 }
 
-UString::UString(const UString* s)
-{
-  ADDOBJ(UString);
-  if (s==0)
-  {
-    len_ = 0;
-    str_ = static_cast<char*> (malloc (1));
-    strcpy(str_, "");
-  }
-  else
-  {
-    len_ = s->len();
-    str_ = static_cast<char*> (malloc (len_+1));
-    strcpy(str_, s->str());
-  }
-  if (str_ == 0)
-    len_ = 0;
-  ADDMEM(len_);
-}
-
-
-UString::UString(const UString* s1, const UString* s2)
+UString::UString(const UString& s1, const UString& s2)
 {
   ADDOBJ(UString);
 
-  std::string tmpname = s1->str();
-  tmpname = tmpname + "." + s2->str();
+  std::string tmpname = s1.str();
+  tmpname = tmpname + "." + s2.str();
 
   str_ = static_cast<char*> (malloc (tmpname.length()+1));
   strcpy(str_, tmpname.c_str());
@@ -111,21 +90,18 @@ const char* UString::ext(int deb, int length)
   return str_+deb;
 }
 
-bool UString::equal(const UString* s) const
+bool UString::equal(const UString& s) const
 {
-  if (s == 0)
-    return false;
-  return STREQ(s->str(), str_);
+  return STREQ(s.str(), str_);
 }
 
-bool UString::tagequal(const UString* s) const
+bool UString::tagequal(const UString& s) const
 {
-  if (s == 0)
-    return false;
-  char* p = const_cast<char*>(strchr(s->str(), '.'));
+  // Oh, my God...
+  char* p = const_cast<char*>(strchr(s.str(), '.'));
   if (p)
     *p = 0;
-  bool res = STREQ(s->str(), str_);
+  bool res = STREQ(s.str(), str_);
   if (p)
     *p = '.';
   return res;

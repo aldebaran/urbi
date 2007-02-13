@@ -469,7 +469,7 @@ tag:
 		 memcheck(up, $1.device);
 		 memcheck(up, $1.id);
 		 // FIXME: This is stupid, args should not be given as pointers.
-		 $$ = new UString($1.device, $1.id);
+		 $$ = new UString(*$1.device, *$1.id);
 		 delete $1.device;
 		 delete $1.id;
 		}
@@ -1157,8 +1157,8 @@ purevariable:
 
       memcheck(up, $1);
       $$ = new UVariableName(new UString(up.connection.functionTag
-					 ? up.connection.functionTag
-					 : up.connection.connectionTag),
+					 ? *up.connection.functionTag
+					 : *up.connection.connectionTag),
 			     $1, false, $2);
       memcheck(up, $$, $1, $2);
       $$->nostruct = true;

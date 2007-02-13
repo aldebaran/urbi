@@ -282,7 +282,7 @@ UVariable::set(UValue *v)
 	switch (v->dataType)
 	{
 	  case DATA_STRING:
-	    value->str = new UString(v->str);
+	    value->str = new UString(*v->str);
 	    break;
 	  case DATA_NUM:
 	    initSensorVal(v->val);

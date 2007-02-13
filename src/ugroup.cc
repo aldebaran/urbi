@@ -29,7 +29,7 @@
 //! UGroup constructor.
 UGroup::UGroup (UString *name)
 {
-  this->name = new UString(name);
+  this->name = new UString(*name);
 }
 
 UGroup::UGroup (char *name)

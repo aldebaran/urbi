@@ -940,6 +940,7 @@ UServer::unblock(const std::string &tag)
 std::string
 UServer::find_file (const char* base)
 {
+  assert(base);
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;
@@ -947,9 +948,11 @@ UServer::find_file (const char* base)
     if (is)
     {
       is.close ();
+      //      DEBUG(("File %s found: %s\n", base, f.c_str()));
       return f;
     }
   }
+  //  DEBUG(("File %s not found in path\n", base));
   return base;
 }
 

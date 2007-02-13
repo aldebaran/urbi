@@ -134,14 +134,14 @@ public:
 
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue loadFile      (const char *filename,
-				     UCommandQueue* loadQueue);
+  virtual UErrorValue loadFile (const char *filename,
+				UCommandQueue* loadQueue);
 
   /// Save content to a file
   /// This function must be redefined by the robot-specific server.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue saveFile      (const char *filename,
-				     const char * content) = 0;
+  virtual UErrorValue saveFile (const char *filename,
+				const char * content) = 0;
 
   void              memoryCheck     ();
   int               memory          ();
