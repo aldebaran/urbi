@@ -1,5 +1,12 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Handle escapes in the scanner itself
+	* src/parser/bison/utoken.l: Do that.
+	* src/parser/bison/ugrammar.y: Add a std::string field to %union.
+	* src/ustring.cc (armor): Use hex escapes.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	Rename ugrammar's str as ustr
 	* src/parser/bison/ugrammar.y,
 	* src/parser/bison/utoken.l: Adjust all uses.

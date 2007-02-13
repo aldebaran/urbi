@@ -36,12 +36,12 @@ class UString
  public:
   MEMORY_MANAGED;
   UString(const char* s);
-  UString(const UString *s);
+  UString(const UString* s);
   UString(const UString& s);
   UString(const std::string& s);
 
   /// Concat \c s1 and \c s2 with a dot in the middle.
-  UString(const UString *s1, const UString *s2);
+  UString(const UString* s1, const UString* s2);
 
   ~UString();
 

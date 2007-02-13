@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include "libport/cstring"
 
 #include "ustring.hh"
@@ -226,11 +227,13 @@ UString::armor ()
       res += *cp;
     }
     else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127)
-      {
-	std::ostringstream str;
-      str << '\\' <<static_cast<unsigned int>(static_cast<unsigned char>(*cp));
-	res += str.str();
-      }
+    {
+      std::ostringstream str;
+      str << "\\x"
+	  << std::hex << std::setfill ('0') << std::setw (2)
+	  << static_cast<unsigned int>(static_cast<unsigned char>(*cp));
+      res += str.str();
+    }
     else
       res += *cp;
   }

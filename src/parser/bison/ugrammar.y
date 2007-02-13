@@ -58,6 +58,7 @@
 
   ufloat                   *val;
   UString                  *ustr;
+  std::string		   *str;
   struct {
     UString *device;
     UString *id;
