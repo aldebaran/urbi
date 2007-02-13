@@ -1,5 +1,11 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Remove UString::(un_)?armor
+	* src/ustring.hh, src/ustring.cc (un_armor, armor): Remove.
+	* src/uvalue.cc: Just call libport::escape here.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 857:860 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-02-13  Akim Demaille  <demaille@gostai.com>

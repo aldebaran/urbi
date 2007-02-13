@@ -71,12 +71,6 @@ class UString
 
   void setLen(int l);
 
-  /// Decode \n, \\, \", and \t, in place.
-  char* un_armor();
-
-  // Return the string with " and \ escaped.
-  std::string armor();
-
  private:
   int  len_;
   char* str_;

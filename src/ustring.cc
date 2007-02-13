@@ -24,8 +24,6 @@
 #include <iostream>
 #include "libport/cstring"
 
-#include "libport/escape.hh"
-
 #include "ustring.hh"
 #include "userver.hh"
 
@@ -167,54 +165,4 @@ void UString::update(const UString* s)
   strcpy(str_, s->str());
   len_ = s->len();
   ADDMEM(len_);
-}
-
-char*
-UString::un_armor ()
-{
-  char* src = str_;
-  char* dst = str_;
-  char* end = str_+len_;
-  while (src != end)
-  {
-    if (*src == '\\' && end - src >1)
-    {
-      if (src[1]=='n')
-	*dst = '\n';
-      else if (src[1]=='t')
-	*dst = '\t';
-      else if (src[1]=='\\')
-	*dst = '\\';
-      else
-      { //maybe an integer
-	int v,pos;
-	int count = sscanf(src+1, "%d%n", &v, &pos);
-	if (count)
-	{
-	  *dst = static_cast<char>(v);
-	  src += pos-1; //because we do src++ below
-	}
-	else
-	  *dst = src[1];
-      }
-
-      src++;
-    }
-    else
-      *dst = *src;
-    dst++;
-    src++;
-  }
-
-  len_ = dst - str_;
-  str_[len_] = 0;
-  return str_;
-}
-
-std::string
-UString::armor ()
-{
-  std::ostringstream s;
-  s << libport::escape (str_);
-  return s.str();
 }

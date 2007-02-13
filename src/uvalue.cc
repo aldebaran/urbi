@@ -23,6 +23,7 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include "libport/escape.hh"
 #include "libport/ref-pt.hh"
 
 #include "ubinary.hh"
@@ -821,7 +822,7 @@ UValue::echo(bool hr)
     {
       std::ostringstream o;
       if (!hr)
-	o << "\"" << str->armor() << "\"";
+	o << "\"" << libport::escape(str->str()) << "\"";
       else
 	o << str->str ();
       return o.str();
