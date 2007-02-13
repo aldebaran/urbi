@@ -3143,8 +3143,8 @@ UCommand_GROUP::execute_(UConnection *connection)
       g = hma->second;
     else
     {
-      g = new UGroup(id);
-      ::urbiserver->grouptab[g->name->str()] = g;
+      g = new UGroup(*id);
+      ::urbiserver->grouptab[g->name.str()] = g;
     }
     if (grouptype == 0)
       g->members.clear();

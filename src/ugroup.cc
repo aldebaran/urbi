@@ -27,20 +27,14 @@
 
 // **************************************************************************
 //! UGroup constructor.
-UGroup::UGroup (UString *name)
+UGroup::UGroup (const UString& name)
+  : name (name)
 {
-  this->name = new UString(*name);
-}
-
-UGroup::UGroup (char *name)
-{
-  this->name = new UString(name);
 }
 
 //! UGroup destructor
 UGroup::~UGroup()
 {
-  delete name;
 }
 
 

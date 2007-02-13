@@ -363,8 +363,8 @@ namespace urbi
       g = hma->second;
     else
       {
-	g = new UGroup(new UString(gpname.c_str()));
-	::urbiserver->grouptab[g->name->str()] = g;
+	g = new UGroup(gpname);
+	::urbiserver->grouptab[g->name.str()] = g;
       }
 
     g->members.push_back(new UString(__name.c_str()));
