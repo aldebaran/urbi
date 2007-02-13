@@ -69,7 +69,7 @@ public:
   bool removeObject(const UString& objname);
 
   UConnection* c;
-  std::list<UString*> objects;
+  std::list<UString> objects;
 };
 
 #endif

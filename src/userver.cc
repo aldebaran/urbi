@@ -941,6 +941,7 @@ std::string
 UServer::find_file (const char* base)
 {
   assert(base);
+  //  DEBUG(("Looking for file %s\n", base));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;

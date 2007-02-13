@@ -1,5 +1,11 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Less new (but not older)
+	* src/ubinder.hh, src/ubinder.cc (Monitor::objects): Let it
+	be a list of UString, not of UString*.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	Address a bit of the UString mess
 	* src/ustring.hh, src/ustring.cc: Start to spread some more &
 	instead of *.
