@@ -57,11 +57,11 @@ typedef yy::parser::token token;
 // Be bulletproof when memory allocation fails.
 #define SET_VALP_STR(Value)			\
 do {						\
-  valp->str = new UString(Value);		\
-  if (valp->str->str() == 0)			\
+  valp->ustr = new UString(Value);		\
+  if (valp->ustr->str() == 0)			\
   {						\
-    delete valp->str;				\
-    valp->str = 0;				\
+    delete valp->ustr;				\
+    valp->ustr = 0;				\
   }						\
 } while (0)
 
@@ -93,7 +93,7 @@ do {							\
 %}
 %option noyywrap
 
-%x SC_C_COMMENT
+%x SC_C_COMMENT SC_STRING
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -141,13 +141,7 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}      { valp->val = new ufloat(atof(yytext));
 		return token::NUM; }
 
-{STRING}      { /* Remove ending ". */
-		yytext[yyleng - 1] = 0;
-		SET_VALP_STR(yytext+1);
-		if (valp->str)
-		  valp->str->un_armor();
-		return token::STRING;
-	      }
+\"            valp->str = new std::string; BEGIN SC_STRING;
 
 
 "block"      |
@@ -312,6 +306,56 @@ STRING   \"([^\"]|"\\\"")*\"
 
 
 {ID}"."{ID}("."{ID})+   RETURN_STR_TOKEN(TAG);
+
+
+    /*----------.
+    | Strings.  |
+    `----------*/
+
+<SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
+     \" {
+       BEGIN INITIAL;
+       UString* u = new UString (*valp->str);
+       delete valp->str;
+       valp->ustr = u;
+       return token::STRING;
+     }
+
+     \\[0-7]{3}		{
+       long c = strtol (yytext + 1, 0, 8);
+       if (c > 255)
+	 up.error(*locp, "invalid escape");
+       else
+   	 *valp->str += c;
+     }
+
+     \\x[0-9a-fA-F]{2}	{
+       *valp->str += strtol (yytext + 2, 0, 16);
+     }
+
+     \\a	*valp->str += '\a';
+     \\b	*valp->str += '\b';
+     \\f	*valp->str += '\f';
+     \\n	*valp->str += '\n';
+     \\r	*valp->str += '\r';
+     \\t	*valp->str += '\t';
+     \\v	*valp->str += '\v';
+     \\[\\""]   *valp->str += yytext[1];
+     \\.	up.error (*locp, "unrecognized escape");
+
+
+     [^\"\n\r\\]+      valp->str->append (yytext, yyleng);
+
+     {EOL}+    locp->lines (yyleng); valp->str->append (yyleng, '\n');
+
+     <<EOF>> {
+       up.error (*locp, "unexpected end of file in a string");
+       BEGIN INITIAL;
+       return token::STRING;
+     }
+}
+
+
 
     /*----------------------------.
     | White spaces and comments.  |
