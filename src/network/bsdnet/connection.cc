@@ -3,6 +3,14 @@
 #include "network/bsdnet/connection.hh"
 #include "userver.hh"
 
+// Mac OSX does not have MSG_NOSIGNAL, used by send and recv to ask
+// for events to become errno rather than signals.  But it supports
+// the socket option SO_NOSIGPIPE.
+#ifndef MSG_NOSIGNAL
+# define MSG_NOSIGNAL 0
+#endif
+
+
 //! LinuxConnection constructor.
 /*! The constructor calls UConnection::UConnection with the appropriate
  parameters.
@@ -76,11 +84,6 @@ Connection::closeConnection()
     return USUCCESS;
   }
 }
-
-// Try for a trick on Mac OS X
-#ifndef MSG_NOSIGNAL
-# define MSG_NOSIGNAL 0
-#endif
 
 void Connection::doRead()
 {

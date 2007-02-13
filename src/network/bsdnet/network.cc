@@ -91,15 +91,15 @@ namespace Network
       return false;
     }
 
-    // Do not send a SIGPIPE, rather return EPIPE.
-    // FIXME: There might be portability issues here.  Note that
-    // this is the Mac OSX way to say "MSG_NOSIGNAL".
+    // Do not send a SIGPIPE, rather return EPIPE.  See the comment
+    // for MSG_NOSIGNAL in connection.cc.
+#ifdef SO_NOSIGPIPE
     if (setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof yes))
     {
       perror ("setsockopt failed");
       return false;
     }
-
+#endif
 
     // Fill in socket address.
     sockaddr_in address;
