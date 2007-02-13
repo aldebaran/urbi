@@ -1,3 +1,21 @@
+2007-02-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Add debugging traces to network handling
+	* src/network/bsdnet/network.hh
+	* src/network/bsdnet/network.cc (Pipe::Pipe): Be useful.
+	(Pipe::print, operator<<(ostream, Pipe)): New.
+	* src/network/bsdnet/connection.hh,
+	* src/network/bsdnet/connection.cc (~Connection): Don't test
+	for a null fd: we actually use -1 to this end.
+	(Connection::print): New.
+	(closeConnection): Do nothing if the fd is -1.
+	(doRead, effectiveSend): Use perror.
+	Can someone tell me why notifyRead calls doRead instead of
+	being doRead?
+	(TCPServerPipe::print): New.
+	(TCPServerPipe::init): Ask for errno instead of a signal for
+	broken pipes.
+
 2007-02-12  Akim Demaille  <akim.demaille@free.fr>
 
 	Debugging traces

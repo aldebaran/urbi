@@ -1,3 +1,4 @@
+#include "libport/compiler.hh"
 #include "libport/cstdio"
 
 #include "libport/unistd.h"
@@ -11,32 +12,45 @@
 namespace Network
 {
 
+  /*----------------.
+  | TCPServerPipe.  |
+  `----------------*/
+
   class TCPServerPipe: public Pipe
   {
   public:
-    TCPServerPipe()
-      : fd(-1), port(-1)
-    {}
+    TCPServerPipe();
     bool init(int port);
-
     ~TCPServerPipe();
 
-    virtual int readFD()
-    {
-      return fd;
-    }
-    virtual int writeFD()
-    {
-      return -1;
-    }
-    virtual void notifyWrite()
-    {}
+    virtual std::ostream& print (std::ostream& o) const;
+
+    virtual int readFD();
+    virtual int writeFD();
+
+    virtual void notifyWrite();
     virtual void notifyRead();
 
   private:
     int fd;
     int port;
   };
+
+  TCPServerPipe::TCPServerPipe()
+    : Pipe(), fd(-1), port(-1)
+  {
+  }
+
+  std::ostream&
+  TCPServerPipe::print(std::ostream& o) const
+  {
+    return o
+      << "TCPServerPipe "
+      << "{ controlFd = " << controlFd
+      << ", fd = " << fd
+      << ", port = " << port
+      << '}';
+  }
 
   TCPServerPipe::~TCPServerPipe ()
   {
@@ -62,6 +76,7 @@ namespace Network
 #endif
     // Create the socket.
     fd = socket(AF_INET, SOCK_STREAM, 0);
+    ECHO("Created socket: " << fd);
     if (fd == -1)
     {
       perror ("cannot create socket");
@@ -76,21 +91,31 @@ namespace Network
       return false;
     }
 
-    /* fill in socket address */
-    struct sockaddr_in address;
-    memset(&address, 0, sizeof (struct sockaddr_in));
+    // Do not send a SIGPIPE, rather return EPIPE.
+    // FIXME: There might be portability issues here.  Note that
+    // this is the Mac OSX way to say "MSG_NOSIGNAL".
+    if (setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof yes))
+    {
+      perror ("setsockopt failed");
+      return false;
+    }
+
+
+    // Fill in socket address.
+    sockaddr_in address;
+    memset(&address, 0, sizeof (sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
     address.sin_addr.s_addr = INADDR_ANY;
 
-    /* bind to port */
-    if (bind(fd, (struct sockaddr*)&address, sizeof (struct sockaddr)))
+    // Bind to port.
+    if (bind(fd, (sockaddr*)&address, sizeof (sockaddr)))
     {
       perror ("cannot bind");
       return false;
     }
 
-    /* listen for connections */
+    // Listen for connections.
     if (listen(fd, 1))
     {
       perror ("cannot listen");
@@ -102,12 +127,24 @@ namespace Network
   }
 
 
+  int
+  TCPServerPipe::readFD()
+  {
+    return fd;
+  }
+
+  int
+  TCPServerPipe::writeFD()
+  {
+    return -1;
+  }
+
   void
   TCPServerPipe::notifyRead()
   {
-    struct sockaddr_in client;
-    socklen_t asize = sizeof (struct sockaddr_in);
-    int cfd = accept(fd, (struct sockaddr*) &client, &asize);
+    sockaddr_in client;
+    socklen_t asize = sizeof (sockaddr_in);
+    int cfd = accept(fd, (sockaddr*) &client, &asize);
     if (cfd == -1)
     {
       perror ("cannot accept");
@@ -116,6 +153,23 @@ namespace Network
     Connection* c = new Connection(cfd);
     ::urbiserver->addConnection(c);
     registerNetworkPipe(c);
+  }
+
+  void
+  TCPServerPipe::notifyWrite()
+  {
+    // FIXME: It this really ok to ignore?
+  }
+
+
+  /*-------------------------.
+  | Freestanding functions.  |
+  `-------------------------*/
+
+  std::ostream&
+  operator<< (std::ostream& o, const Pipe& p)
+  {
+    return p.print (o);
   }
 
   bool
@@ -212,7 +266,6 @@ namespace Network
     timeval tv;
     tv.tv_sec = usDelay / 1000000;
     tv.tv_usec = usDelay - ((usDelay / 1000000) * 1000000);
-
     int r = select(mx, &rd, &wr, 0, &tv);
     if (r < 0)
       // FIXME: This is bad, we should really do something.
@@ -279,6 +332,15 @@ namespace Network
 #endif
   }
 
+
+
+  /*-------.
+  | Pipe.  |
+  `-------*/
+
+  Pipe::Pipe ()
+    : controlFd (-1)
+  {}
 
   void Pipe::trigger()
   {
