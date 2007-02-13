@@ -1,5 +1,15 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	/! Dangerous checkin
+	* src/memorymanager/blockmemorymanager.hh: Add a placement new
+	to please mipsel-linux-g++-3.3.2.
+	I'm not used to write placement new operators, and I'm really
+	afraid of what is needed for the delete operator...
+	I'm have to study books to ensure this is not completely
+	fucked up.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	Pretend we program in C++ and use operators
 	* src/ustring.hh, src/ustring.cc (equal): Remove, replaced by...
 	(operator==): these two.
