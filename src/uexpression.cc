@@ -250,7 +250,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
       && (t == PLUS || t == MINUS || t == MULT || t == DIV || t == EXP)
       && ! (t == DIV && e2->val == 0))
   {
-    switch (type)
+    switch (t)
     {
       case PLUS:
 	val = e1->val + e2->val;
@@ -270,7 +270,7 @@ UExpression::UExpression(const location& l, UExpression::Type t,
       default:
 	// This case is not possible, but GCC does not seem to be
 	// able to infer it.
-	pabort (type);
+	pabort (t);
     }
     type = VALUE;
     isconst = true;
