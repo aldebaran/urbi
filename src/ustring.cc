@@ -31,8 +31,7 @@ MEMORY_MANAGER_INIT(UString);
 
 UString::UString(const UString& s)
   : len_ (s.len_),
-    str_ (s.str_ ? strdup (s.str_) : 0),
-    fast_armor_ (s.fast_armor_)
+    str_ (s.str_ ? strdup (s.str_) : 0)
 {
   ADDOBJ(UString);
   ADDMEM(len_);
@@ -40,22 +39,18 @@ UString::UString(const UString& s)
 
 UString::UString(const std::string& s)
   : len_ (s.size ()),
-    str_ (strdup (s.c_str ())),
-    fast_armor_ (false)
+    str_ (strdup (s.c_str ()))
 {
   ADDOBJ(UString);
   ADDMEM(len_);
-  fast_armor ();
 }
 
 UString::UString(const char* s)
   : len_ (s ? strlen(s) : 0),
-    str_ (s ? strdup (s) : strdup("")),
-    fast_armor_ (false)
+    str_ (s ? strdup (s) : strdup(""))
 {
   ADDOBJ(UString);
   ADDMEM(len_);
-  fast_armor ();
 }
 
 UString::UString(const UString* s)
@@ -66,14 +61,12 @@ UString::UString(const UString* s)
     len_ = 0;
     str_ = static_cast<char*> (malloc (1));
     strcpy(str_, "");
-    fast_armor_ = true;
   }
   else
   {
     len_ = s->len();
     str_ = static_cast<char*> (malloc (len_+1));
     strcpy(str_, s->str());
-    fast_armor_ = s->fast_armor_;
   }
   if (str_ == 0)
     len_ = 0;
@@ -95,7 +88,6 @@ UString::UString(const UString* s1, const UString* s2)
     len_ = tmpname.length();
   else
     len_ = 0;
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -158,7 +150,6 @@ void UString::update(const char* s)
   str_ = static_cast<char*> (malloc (slen+1));
   strcpy(str_, s);
   len_ = slen;
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -173,7 +164,6 @@ void UString::update(const UString* s)
   str_ = static_cast<char*> (malloc (s->len()+1));
   strcpy(str_, s->str());
   len_ = s->len();
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -183,9 +173,9 @@ UString::un_armor ()
   char * src = str_;
   char * dst = str_;
   char * end = str_+len_;
-  while (src != end) 
+  while (src != end)
   {
-    if (*src == '\\' && end - src >1) 
+    if (*src == '\\' && end - src >1)
     {
       if (src[1]=='n')
 	*dst = '\n';
@@ -193,7 +183,7 @@ UString::un_armor ()
 	*dst = '\t';
       else if (src[1]=='\\')
 	*dst = '\\';
-      else 
+      else
       { //maybe an integer
 	int v,pos;
 	int count = sscanf(src+1, "%d%n", &v, &pos);
@@ -205,7 +195,7 @@ UString::un_armor ()
 	else
 	  *dst = src[1];
       }
-      
+
       src++;
     }
     else
@@ -213,7 +203,7 @@ UString::un_armor ()
     dst++;
     src++;
   }
-  
+
   len_ = dst - str_;
   str_[len_] = 0;
   return str_;
@@ -222,10 +212,6 @@ UString::un_armor ()
 std::string
 UString::armor ()
 {
-  // speedup
-  if (fast_armor_)
-    return std::string (str_);
-
   std::string res;
   res.reserve (len_);
   for (char* cp = str_; *cp; ++cp)
@@ -234,12 +220,12 @@ UString::armor ()
       res += "\\n";
     else if (*cp=='\t')
       res += "\\t";
-    else if (*cp=='"' || *cp=='\\') 
+    else if (*cp=='"' || *cp=='\\')
     {
       res += '\\';
       res += *cp;
     }
-    else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127) 
+    else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127)
       {
 	std::ostringstream str;
       str << '\\' <<static_cast<unsigned int>(static_cast<unsigned char>(*cp));
@@ -249,10 +235,4 @@ UString::armor ()
       res += *cp;
   }
   return res;
-}
-
-void
-UString::fast_armor ()
-{
-  fast_armor_= !strchr (str_, '"') && !strchr (str_, '\\');
 }
