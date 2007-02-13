@@ -241,11 +241,11 @@ namespace Network
 	{
 	  Pipe& p = **i;
 	  int f = p.readFD();
-	  if (f >= 0 && FD_ISSET(f, &rd))
+	  if (f >= 0 && LIBPORT_FD_ISSET(f, &rd))
 	    p.notifyRead();
 
 	  f = p.writeFD();
-	  if (f >= 0 && FD_ISSET(f, &wr))
+	  if (f >= 0 && LIBPORT_FD_ISSET(f, &wr))
 	    p.notifyWrite();
 	}
 	catch(...)
@@ -275,7 +275,7 @@ namespace Network
     else // 0 < r
     {
 #ifndef WIN32
-      if (FD_ISSET(controlPipe[0], &rd))
+      if (LIBPORT_FD_ISSET(controlPipe[0], &rd))
       {
 	char buf[128];
 	if (read(controlPipe[0], buf, sizeof buf) == -1)
