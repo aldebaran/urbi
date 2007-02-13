@@ -33,8 +33,7 @@ MEMORY_MANAGER_INIT(UString);
 
 UString::UString(const UString& s)
   : len_ (s.len_),
-    str_ (s.str_ ? strdup (s.str_) : 0),
-    fast_armor_ (s.fast_armor_)
+    str_ (s.str_ ? strdup (s.str_) : 0)
 {
   ADDOBJ(UString);
   ADDMEM(len_);
@@ -42,22 +41,18 @@ UString::UString(const UString& s)
 
 UString::UString(const std::string& s)
   : len_ (s.size ()),
-    str_ (strdup (s.c_str ())),
-    fast_armor_ (false)
+    str_ (strdup (s.c_str ()))
 {
   ADDOBJ(UString);
   ADDMEM(len_);
-  fast_armor ();
 }
 
 UString::UString(const char* s)
   : len_ (s ? strlen(s) : 0),
-    str_ (s ? strdup (s) : strdup("")),
-    fast_armor_ (false)
+    str_ (s ? strdup (s) : strdup(""))
 {
   ADDOBJ(UString);
   ADDMEM(len_);
-  fast_armor ();
 }
 
 UString::UString(const UString* s)
@@ -68,14 +63,12 @@ UString::UString(const UString* s)
     len_ = 0;
     str_ = static_cast<char*> (malloc (1));
     strcpy(str_, "");
-    fast_armor_ = true;
   }
   else
   {
     len_ = s->len();
     str_ = static_cast<char*> (malloc (len_+1));
     strcpy(str_, s->str());
-    fast_armor_ = s->fast_armor_;
   }
   if (str_ == 0)
     len_ = 0;
@@ -97,7 +90,6 @@ UString::UString(const UString* s1, const UString* s2)
     len_ = tmpname.length();
   else
     len_ = 0;
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -160,7 +152,6 @@ void UString::update(const char* s)
   str_ = static_cast<char*> (malloc (slen+1));
   strcpy(str_, s);
   len_ = slen;
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -175,7 +166,6 @@ void UString::update(const UString* s)
   str_ = static_cast<char*> (malloc (s->len()+1));
   strcpy(str_, s->str());
   len_ = s->len();
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -224,17 +214,7 @@ UString::un_armor ()
 std::string
 UString::armor ()
 {
-  // speedup
-  if (fast_armor_)
-    return std::string (str_);
-
   std::ostringstream s;
   s << libport::escape (str_);
   return s.str();
-}
-
-void
-UString::fast_armor ()
-{
-  fast_armor_= !strchr (str_, '"') && !strchr (str_, '\\');
 }

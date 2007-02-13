@@ -78,11 +78,8 @@ class UString
   std::string armor();
 
  private:
-  void fast_armor();
-
   int  len_;
   char* str_;
-  bool fast_armor_;
 };
 
 inline void
