@@ -1,5 +1,11 @@
 2007-02-13  Akim Demaille  <demaille@gostai.com>
 
+	Rename ugrammar's str as ustr
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l: Adjust all uses.
+
+2007-02-13  Akim Demaille  <demaille@gostai.com>
+
 	Remove fast_armor support
 	It is way too buggy: the flag is sometimes incorrectly preserved,
 	and it focused on too few case: \ and ", while there are many more.

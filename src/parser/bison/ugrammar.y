@@ -57,7 +57,7 @@
   UProperty               *property;
 
   ufloat                   *val;
-  UString                  *str;
+  UString                  *ustr;
   struct {
     UString *device;
     UString *id;
@@ -323,16 +323,16 @@ take (T* t)
  | Str.  |
  `------*/
 %token
-   <str>  IDENTIFIER         "identifier"
-   <str>  TAG                "tag"
-   <str>  STRING             "string"
-   <str>  SWITCH             "switch"
-   <str>  BINDER             "binder"
-   <str>  OPERATOR           "operator command"
-   <str>  OPERATOR_ID        "operator"
-   <str>  OPERATOR_ID_PARAM  "param-operator"
-   <str>  OPERATOR_VAR       "var-operator"
-%type <str> tag "any kind of tag"
+   <ustr>  IDENTIFIER         "identifier"
+   <ustr>  TAG                "tag"
+   <ustr>  STRING             "string"
+   <ustr>  SWITCH             "switch"
+   <ustr>  BINDER             "binder"
+   <ustr>  OPERATOR           "operator command"
+   <ustr>  OPERATOR_ID        "operator"
+   <ustr>  OPERATOR_ID_PARAM  "param-operator"
+   <ustr>  OPERATOR_VAR       "var-operator"
+%type <ustr> tag "any kind of tag"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
    "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID

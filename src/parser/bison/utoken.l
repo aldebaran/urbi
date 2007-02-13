@@ -54,11 +54,11 @@ typedef yy::parser::token token;
 // Be bulletproof when memory allocation fails.
 #define SET_VALP_STR(Value)			\
 do {						\
-  valp->str = new UString(Value);		\
-  if (valp->str->str() == 0)			\
+  valp->ustr = new UString(Value);		\
+  if (valp->ustr->str() == 0)			\
   {						\
-    delete valp->str;				\
-    valp->str = 0;				\
+    delete valp->ustr;				\
+    valp->ustr = 0;				\
   }						\
 } while (0)
 
@@ -142,8 +142,8 @@ STRING   \"([^\"]|"\\\"")*\"
 {STRING}      { /* Remove ending ". */
 		yytext[yyleng - 1] = 0;
 		SET_VALP_STR(yytext+1);
-		if (valp->str)
-		  valp->str->un_armor();
+		if (valp->ustr)
+		  valp->ustr->un_armor();
 		return token::STRING;
 	      }
 
