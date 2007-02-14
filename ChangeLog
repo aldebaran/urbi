@@ -1,5 +1,10 @@
 2007-02-14  Akim Demaille  <akim.demaille@free.fr>
 
+	Respect the tradition
+	* src/uobject.cc: For iterator names.
+
+2007-02-14  Akim Demaille  <akim.demaille@free.fr>
+
 	Process doc last
 	* Makefile.am (SUBDIRS): here.
 

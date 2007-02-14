@@ -250,11 +250,11 @@ namespace urbi
     UString tmps(__name.c_str()); // quelle merde ces UString!!!!
     UObj* tmpobj = new UObj(&tmps);
 
-    for (UStartlist::iterator retr = urbi::objectlist->begin();
-	 retr != objectlist->end();
-	 ++retr)
-      if ((*retr)->name == __name)
-	tmpobj->internalBinder = (*retr);
+    for (UStartlist::iterator i = urbi::objectlist->begin();
+	 i != objectlist->end();
+	 ++i)
+      if ((*i)->name == __name)
+	tmpobj->internalBinder = *i;
 
     // default
     load = 1;
@@ -277,54 +277,54 @@ namespace urbi
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
   void
-  cleanTable(UTable &t, std::string name)
+  cleanTable(UTable &t, const std::string& name)
   {
     std::list<UTable::iterator> todelete;
-    for (UTable::iterator it = t.begin();
-	 it != t.end();
-	 ++it)
+    for (UTable::iterator i = t.begin();
+	 i != t.end();
+	 ++i)
       {
-	std::list<UGenericCallback*>& tocheck = it->second;
-	for (std::list<UGenericCallback*>::iterator it2 = tocheck.begin();
-	     it2 != tocheck.end();
+	std::list<UGenericCallback*>& tocheck = i->second;
+	for (std::list<UGenericCallback*>::iterator j = tocheck.begin();
+	     j != tocheck.end();
 	     )
 	  {
-	    if ((*it2)->objname == name)
+	    if ((*j)->objname == name)
 	      {
-		delete *it2;
-		it2 = tocheck.erase(it2);
+		delete *j;
+		j = tocheck.erase(j);
 	      }
 	    else
-	      ++it2;
+	      ++j;
 	  }
 
 	if (tocheck.empty())
-	  todelete.push_back(it);
+	  todelete.push_back(i);
       }
 
-    for (std::list<UTable::iterator>::iterator dit = todelete.begin();
-	 dit != todelete.end();
-	 ++dit)
-      t.erase(*dit);
+    for (std::list<UTable::iterator>::iterator i = todelete.begin();
+	 i != todelete.end();
+	 ++i)
+      t.erase(*i);
   }
 
 
   //! Clean a callback UTimerTable from all callbacks linked to
   //! the object whose name is 'name'
   void
-  cleanTimerTable(UTimerTable &t, std::string name)
+  cleanTimerTable(UTimerTable &t, const std::string& name)
   {
-    for (UTimerTable::iterator it = t.begin();
-	 it != t.end();
+    for (UTimerTable::iterator i = t.begin();
+	 i != t.end();
 	 )
       {
-	if ((*it)->objname == name)
+	if ((*i)->objname == name)
 	  {
-	    delete *it;
-	    it = t.erase(it);
+	    delete *i;
+	    i = t.erase(i);
 	  }
 	else
-	  ++it;
+	  ++i;
       }
   }
 
