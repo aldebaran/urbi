@@ -95,29 +95,29 @@ namespace urbi
   void uobject_unarmorAndSend(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection* ghost = urbiserver->getGhostConnection();
+    UConnection& ghost = *urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
-      ghost->received((const unsigned char *)(str+1), strlen(str)-2);
+      ghost.received((const unsigned char *)(str+1), strlen(str)-2);
     else
-      ghost->received(str);
+      ghost.received(str);
 
-    ghost->newDataAdded = true;
+    ghost.newDataAdded = true;
   }
 
   void send(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection* ghost = urbiserver->getGhostConnection();
-    ghost->received(str);
-    ghost->newDataAdded = true;
+    UConnection& ghost = *urbiserver->getGhostConnection();
+    ghost.received(str);
+    ghost.newDataAdded = true;
   }
 
   void send(void* buf, int size)
   {
     //feed this to the ghostconnection
-    UConnection* ghost = urbiserver->getGhostConnection();
-    ghost->received((const unsigned char *)(buf), size);
-    ghost->newDataAdded = true;
+    UConnection& ghost = *urbiserver->getGhostConnection();
+    ghost.received((const unsigned char *)(buf), size);
+    ghost.newDataAdded = true;
   }
 
 
