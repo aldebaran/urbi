@@ -34,8 +34,6 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "uvalue.hh"
 #include "uvariable.hh"
 
-#define LIBURBIDEBUG
-
 //! Global definition of the starterlist
 namespace urbi
 {
@@ -84,9 +82,9 @@ namespace urbi
     return UObjectStruct(*v.object);
   }
 
-  const char * cast(UValue& v, const char**)
+  const char* cast(UValue& v, const char**)
   {
-    static const char * er = "invalid";
+    static const char* er = "invalid";
     if (v.type != DATA_STRING)
       return er;
     return v.stringValue->c_str();
@@ -97,7 +95,7 @@ namespace urbi
   void uobject_unarmorAndSend(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection * ghost = urbiserver->getGhostConnection();
+    UConnection* ghost = urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
       ghost->received((const unsigned char *)(str+1), strlen(str)-2);
     else
@@ -109,7 +107,7 @@ namespace urbi
   void send(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection * ghost = urbiserver->getGhostConnection();
+    UConnection* ghost = urbiserver->getGhostConnection();
     ghost->received(str);
     ghost->newDataAdded = true;
   }
@@ -117,7 +115,7 @@ namespace urbi
   void send(void* buf, int size)
   {
     //feed this to the ghostconnection
-    UConnection * ghost = urbiserver->getGhostConnection();
+    UConnection* ghost = urbiserver->getGhostConnection();
     ghost->received((const unsigned char *)(buf), size);
     ghost->newDataAdded = true;
   }
@@ -139,59 +137,57 @@ namespace urbi
   {
     nbparam = size;
 
-    if (type == "function"
-	|| type== "event"
-	|| type=="eventend")
+    if (type == "function" || type == "event" || type == "eventend")
       t[this->name].push_back(this);
 
     if (type == "var" || type=="var_onrequest")
+    {
+      HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
+      if (it == ::urbiserver->variabletab.end())
       {
-	HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-	if (it == ::urbiserver->variabletab.end())
-	  {
-	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-	    if (variable)
-	      variable->internalBinder.push_back(this);
-	  }
-	else
+	UVariable *v = new UVariable(name.c_str(), new ::UValue());
+	if (v)
+	  v->internalBinder.push_back(this);
+      }
+      else
+      {
+	it->second->internalBinder.push_back(this);
+	if ( !it->second->internalAccessBinder.empty ()
+	     && std::find (::urbiserver->access_and_change_varlist.begin (),
+			   ::urbiserver->access_and_change_varlist.end (),
+			   it->second) ==
+	     ::urbiserver->access_and_change_varlist.end ())
 	{
-	  it->second->internalBinder.push_back(this);
-	  if ( !it->second->internalAccessBinder.empty ()
-	       && std::find (::urbiserver->access_and_change_varlist.begin (),
-			     ::urbiserver->access_and_change_varlist.end (),
-			     it->second) ==
-	       ::urbiserver->access_and_change_varlist.end ())
-	  {
-	    it->second->access_and_change = true;
-	    ::urbiserver->access_and_change_varlist.push_back (it->second);
-	  }
+	  it->second->access_and_change = true;
+	  ::urbiserver->access_and_change_varlist.push_back (it->second);
 	}
       }
+    }
 
     if (type == "varaccess")
+    {
+      HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
+      if (it == ::urbiserver->variabletab.end())
       {
-	HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-	if (it == ::urbiserver->variabletab.end())
-	  {
-	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
-	    if (variable)
-	      variable->internalAccessBinder.push_back(this);
-	  }
-	else
+	UVariable *v = new UVariable(name.c_str(), new ::UValue());
+	if (v)
+	  v->internalAccessBinder.push_back(this);
+      }
+      else
+      {
+	it->second->internalAccessBinder.push_back(this);
+	if ( (!it->second->internalBinder.empty ()
+	      || it->second->binder)
+	     && std::find (::urbiserver->access_and_change_varlist.begin (),
+			   ::urbiserver->access_and_change_varlist.end (),
+			   it->second) ==
+	     ::urbiserver->access_and_change_varlist.end ())
 	{
-	  it->second->internalAccessBinder.push_back(this);
-	  if ( (!it->second->internalBinder.empty ()
-		|| it->second->binder)
-	       && std::find (::urbiserver->access_and_change_varlist.begin (),
-			     ::urbiserver->access_and_change_varlist.end (),
-			     it->second) ==
-	       ::urbiserver->access_and_change_varlist.end ())
-	  {
-	    it->second->access_and_change = true;
-	    ::urbiserver->access_and_change_varlist.push_back (it->second);
-	  }
+	  it->second->access_and_change = true;
+	  ::urbiserver->access_and_change_varlist.push_back (it->second);
 	}
       }
+    }
   }
 
   //! UGenericCallback constructor.
@@ -283,24 +279,24 @@ namespace urbi
     for (UTable::iterator i = t.begin();
 	 i != t.end();
 	 ++i)
+    {
+      std::list<UGenericCallback*>& tocheck = i->second;
+      for (std::list<UGenericCallback*>::iterator j = tocheck.begin();
+	   j != tocheck.end();
+	)
       {
-	std::list<UGenericCallback*>& tocheck = i->second;
-	for (std::list<UGenericCallback*>::iterator j = tocheck.begin();
-	     j != tocheck.end();
-	     )
-	  {
-	    if ((*j)->objname == name)
-	      {
-		delete *j;
-		j = tocheck.erase(j);
-	      }
-	    else
-	      ++j;
-	  }
-
-	if (tocheck.empty())
-	  todelete.push_back(i);
+	if ((*j)->objname == name)
+	{
+	  delete *j;
+	  j = tocheck.erase(j);
+	}
+	else
+	  ++j;
       }
+
+      if (tocheck.empty())
+	todelete.push_back(i);
+    }
 
     for (std::list<UTable::iterator>::iterator i = todelete.begin();
 	 i != todelete.end();
@@ -316,16 +312,16 @@ namespace urbi
   {
     for (UTimerTable::iterator i = t.begin();
 	 i != t.end();
-	 )
+      )
+    {
+      if ((*i)->objname == name)
       {
-	if ((*i)->objname == name)
-	  {
-	    delete *i;
-	    i = t.erase(i);
-	  }
-	else
-	  ++i;
+	delete *i;
+	i = t.erase(i);
       }
+      else
+	++i;
+    }
   }
 
 
@@ -355,17 +351,15 @@ namespace urbi
   void
   UObject::UJoinGroup(const std::string& gpname)
   {
-    HMgrouptab::iterator hma;
+    HMgrouptab::iterator hma = ::urbiserver->grouptab.find(gpname.c_str());
     UGroup *g;
-
-    hma = ::urbiserver->grouptab.find(gpname.c_str());
     if (hma != ::urbiserver->grouptab.end())
       g = hma->second;
     else
-      {
-	g = new UGroup(gpname);
-	::urbiserver->grouptab[g->name.str()] = g;
-      }
+    {
+      g = new UGroup(gpname);
+      ::urbiserver->grouptab[g->name.str()] = g;
+    }
 
     g->members.push_back(new UString(__name.c_str()));
   }
@@ -401,10 +395,10 @@ namespace urbi
   int
   UObjectHub::updateGlobal()
   {
-    for (UObjectList::iterator it = members.begin();
-	 it != members.end();
-	 ++it)
-      (*it)->update();
+    for (UObjectList::iterator i = members.begin();
+	 i != members.end();
+	 ++i)
+      (*i)->update();
     update();
     return 0;
   }
@@ -419,11 +413,11 @@ namespace urbi
   UObjectHub::getSubClass(const std::string& subclass)
   {
     UObjectList* res = new UObjectList();
-    for (UObjectList::iterator it = members.begin();
-	 it != members.end();
-	 ++it)
-      if ((*it)->classname == subclass)
-	res->push_back(*it);
+    for (UObjectList::iterator i = members.begin();
+	 i != members.end();
+	 ++i)
+      if ((*i)->classname == subclass)
+	res->push_back(*i);
 
     return res;
   }
@@ -433,11 +427,11 @@ namespace urbi
   UObjectHub*
   getUObjectHub(const std::string& name)
   {
-    for (UStartlistHub::iterator retr = objecthublist->begin();
-	 retr != objecthublist->end();
-	 ++retr)
-      if ((*retr)->name == name)
-	return (*retr)->getUObjectHub();
+    for (UStartlistHub::iterator i = objecthublist->begin();
+	 i != objecthublist->end();
+	 ++i)
+      if ((*i)->name == name)
+	return (*i)->getUObjectHub();
 
     return 0;
   }
@@ -446,11 +440,11 @@ namespace urbi
   UObject*
   getUObject(const std::string& name)
   {
-    for (UStartlist::iterator retr = objectlist->begin();
-	 retr != objectlist->end();
-	 ++retr)
-      if ((*retr)->name == name)
-	return (*retr)->getUObject();
+    for (UStartlist::iterator i = objectlist->begin();
+	 i != objectlist->end();
+	 ++i)
+      if ((*i)->name == name)
+	return (*i)->getUObject();
 
     return 0;
   }
@@ -459,13 +453,13 @@ namespace urbi
   void
   echo(const char* format, ... )
   {
-    char tmpoutput[1024];
+    char buf[1024];
 
     va_list arg;
     va_start(arg, format);
-    vsnprintf(tmpoutput, 1024, format, arg);
+    vsnprintf(buf, sizeof buf, format, arg);
     va_end(arg);
 
-    ::urbiserver->debug(tmpoutput);
+    ::urbiserver->debug(buf);
   }
 }
