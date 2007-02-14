@@ -90,6 +90,7 @@ to_string (UCommand::Status s)
     CASE(UCOMPLETED);
     CASE(UBACKGROUND);
     CASE(UMORPH);
+    CASE(UFALLTHRU);
 #undef CASE
   }
   // Pacify warnings.
@@ -588,6 +589,254 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
   }
 }
 
+// Function call. morph into the function code
+UCommand::Status
+UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
+{
+  passert (expression, expression->type == UExpression::FUNCTION);
+  UString* functionname =
+    expression->variablename->buildFullname(this, connection);
+  if (!functionname)
+    return UCOMPLETED;
+
+  if (scanGroups(&UCommand::refVarName2, true))
+    return UMORPH;
+
+  ////// INTERNAL /////
+
+  ////// Native URBI: user-defined /////
+
+  HMfunctiontab::iterator hmf =
+    ::urbiserver->functiontab.find(functionname->str());
+  UFunction *fun;
+  if (hmf == ::urbiserver->functiontab.end())
+  {
+    //trying inheritance
+    const char* devname = expression->variablename->getDevice()->str();
+    fun = 0;
+    HMobjtab::iterator itobj;
+    if ((itobj = ::urbiserver->objtab.find(devname)) !=
+	::urbiserver->objtab.end())
+    {
+      bool ambiguous;
+      fun = itobj->second->searchFunction
+	(expression->variablename->getMethod()->str(), ambiguous);
+
+      //hack until we get proper nameresolution
+      if (fun == kernel::remoteFunction)
+	fun = 0;
+
+      if (ambiguous)
+      {
+	send_error(connection, this,
+		   "Ambiguous multiple inheritance on function %s",
+		   functionname->str());
+	return UCOMPLETED;
+      }
+    }
+  }
+  else
+    fun = hmf->second;
+
+
+  if (fun)
+  {
+    if ((expression->parameters
+	 && fun->nbparam()
+	 && expression->parameters->size() != fun->nbparam())
+	|| (expression->parameters && !fun->nbparam())
+	|| (!expression->parameters && fun->nbparam()))
+    {
+      send_error(connection, this,
+		 "Invalid number of arguments for %s"
+		 " (should be %d params)",
+		 functionname->str(), fun->nbparam());
+      return UCOMPLETED;
+    }
+
+    persistant = false;
+    UVariableName* resultContainer =
+      new UVariableName(new UString("__UFnct"), new UString("__result__"),
+			true, 0);
+
+    morph =
+      new UCommand_TREE
+      (loc_, Flavorable::UPIPE, fun->cmdcopy(),
+       new UCommand_ASSIGN_VALUE (loc_,
+				  variablename->copy(),
+				  new UExpression(loc_,
+						  UExpression::VARIABLE,
+						  resultContainer),
+				  0));
+
+    if (morph)
+    {
+      UString* fundevice = expression->variablename->getDevice();
+
+      UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
+      assert (uc_tree);
+      // handle the :: case
+      if (expression->variablename->doublecolon
+	  && !connection->stack.empty ()
+	  && ::urbiserver->objtab.find(connection->stack.front()->self())!=
+	  ::urbiserver->objtab.end ())
+	*fundevice = connection->stack.front()->self();
+
+      {
+	std::ostringstream o;
+	o << "__UFnct" << unic();
+	uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
+      }
+
+      resultContainer->nameUpdate(uc_tree->callid->str(),
+				  "__result__");
+      // creates return variable
+      uc_tree->callid->setReturnVar (
+	new UVariable (uc_tree->callid->str(),
+		       "__result__",
+		       new UValue ()));
+
+      if (!uc_tree->callid)
+	return UCOMPLETED;
+      uc_tree->connection = connection;
+
+      UNamedParameters *pvalue = expression->parameters;
+      UNamedParameters *pname	 = fun->parameters;
+      for (;
+	   pvalue != 0;
+	   pvalue = pvalue->next, pname = pname->next)
+      {
+	UValue* valparam = pvalue->expression->eval(this, connection);
+	if (!valparam)
+	{
+	  send_error(connection, this, "EXPR evaluation failed");
+	  return UCOMPLETED;
+	}
+
+	uc_tree->callid->store
+	  (new UVariable(uc_tree->callid->str(),
+			 pname->name->str(),
+			 valparam));
+      }
+    }
+
+    return UMORPH;
+  }
+
+
+  // handle the :: case
+  if (expression->variablename->doublecolon
+      && !connection->stack.empty ()
+      && ::urbiserver->objtab.find(connection->stack.front()->self())!=
+      ::urbiserver->objtab.end ())
+  {
+    // rebuild name with parent class
+    *expression->variablename->device = connection->stack.front()->self();
+    expression->variablename->resetCache (); // this deletes funname pointeur
+    functionname = expression->variablename->buildFullname(this, connection);
+    if (!functionname)
+      return UCOMPLETED;
+  }
+
+
+  ////// module-defined /////
+  bool found_function = false;
+  urbi::UTable::iterator hmfi =
+    urbi::functionmap.find(functionname->str());
+  if (hmfi != urbi::functionmap.end())
+  {
+    for (std::list<urbi::UGenericCallback*>::iterator cbi =
+	   hmfi->second.begin();
+	 cbi != hmfi->second.end() && !found_function;
+	 ++cbi)
+    {
+      if ((expression->parameters
+	   && expression->parameters->size() == (*cbi)->nbparam)
+	  || (!expression->parameters && !(*cbi)->nbparam) )
+      {
+	urbi::UList tmparray;
+	for (UNamedParameters *pvalue = expression->parameters;
+	     pvalue != 0;
+	     pvalue = pvalue->next)
+	{
+	  UValue* valparam = pvalue->expression->eval(this, connection);
+	  if (!valparam)
+	  {
+	    send_error(connection, this, "EXPR evaluation failed");
+	    return UCOMPLETED;
+	  }
+	  // urbi::UValue do not see ::UValue, so it must
+	  // be valparam who does the job.
+	  tmparray.array.push_back(valparam->urbiValue());
+	  delete valparam;
+	}
+
+	delete expression;
+	expression =
+	  new UExpression (loc(),  UExpression::VALUE,
+			   new UValue((*cbi)->__evalcall(tmparray)));
+	found_function = true;
+      }
+    }
+  }
+
+  ////// EXTERNAL /////
+  if (!found_function)
+  {
+    HMbindertab::iterator it =
+      ::urbiserver->functionbindertab.find(functionname->str());
+    if (it != ::urbiserver->functionbindertab.end()
+	&& (expression->parameters
+	    ? it->second->nbparam == expression->parameters->size()
+	    : it->second->nbparam == 0)
+	&& !it->second->monitors.empty())
+    {
+      int UU = unic();
+      {
+	std::ostringstream o;
+	o << "[0,"
+	  << "\"" << functionname->str()
+	  << "__" << it->second->nbparam << "\","
+	  << "\"__UFnctret.EXTERNAL_" << UU << "\"";
+
+	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
+	     j != it->second->monitors.end();
+	     ++j)
+	{
+	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
+	  (*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+			 o.str().size());
+	  for (UNamedParameters *pvalue = expression->parameters;
+	       pvalue != 0;
+	       pvalue = pvalue->next)
+	  {
+	    (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
+	    UValue* valparam = pvalue->expression->eval(this, connection);
+	    valparam->echo((*j)->c);
+	  }
+	  (*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
+	}
+      }
+
+      persistant = false;
+      {
+	std::ostringstream o;
+	o << "{"
+	  << "  waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
+	  << variablename->getFullname()->str()
+	  << "=__UFnctret.EXTERNAL_" << UU
+	  << "|delete __UFnctret.EXTERNAL_" << UU
+	  << "}";
+	strMorph (o.str());
+      }
+      return UMORPH;
+    }
+  }
+  // FIXME: Check that it is indeed possible to reach that point.
+  // If it is not, get rid of the enum value UFALLTHRU, it is useless.
+  return UFALLTHRU;
+}
+
 //! UCommand subclass execution function
 UCommand::Status
 UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
@@ -604,7 +853,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
   ufloat currentTime = connection->server->lastTime();
 
   // Wait in queue if needed
-  if (variable && variable->blendType == urbi::UQUEUE && variable->nbAverage > 0)
+  if (variable
+      && variable->blendType == urbi::UQUEUE && variable->nbAverage > 0)
     return status;
 
   // Broadcasting
@@ -615,246 +865,10 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
   // morph into the function code
   if (expression->type == UExpression::FUNCTION)
   {
-    UString* functionname =
-      expression->variablename->buildFullname(this, connection);
-    if (!functionname)
-      return UCOMPLETED;
-
-    if (scanGroups(&UCommand::refVarName2, true))
-      return UMORPH;
-
-    ////// INTERNAL /////
-
-    ////// Native URBI: user-defined /////
-
-    HMfunctiontab::iterator hmf =
-      ::urbiserver->functiontab.find(functionname->str());
-    UFunction *fun;
-    if (hmf == ::urbiserver->functiontab.end())
-    {
-      //trying inheritance
-      const char* devname = expression->variablename->getDevice()->str();
-      fun = 0;
-      HMobjtab::iterator itobj;
-      if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	  ::urbiserver->objtab.end())
-      {
-	bool ambiguous;
-	fun = itobj->second->searchFunction
-	  (expression->variablename->getMethod()->str(), ambiguous);
-
-	//hack until we get proper nameresolution
-	if (fun == kernel::remoteFunction)
-	  fun = 0;
-
-	if (ambiguous)
-	{
-	  send_error(connection, this,
-		     "Ambiguous multiple inheritance on function %s",
-		     functionname->str());
-	  return UCOMPLETED;
-	}
-      }
-    }
-    else
-      fun = hmf->second;
-
-
-    if (fun)
-    {
-      if ((expression->parameters
-	   && fun->nbparam()
-	   && expression->parameters->size() != fun->nbparam())
-	  || (expression->parameters && !fun->nbparam())
-	  || (!expression->parameters && fun->nbparam()))
-      {
-	send_error(connection, this,
-		   "Invalid number of arguments for %s"
-		   " (should be %d params)",
-		   functionname->str(), fun->nbparam());
-	return UCOMPLETED;
-      }
-
-      persistant = false;
-      UVariableName* resultContainer =
-	new UVariableName(new UString("__UFnct"), new UString("__result__"),
-			  true, 0);
-
-      morph =
-	new UCommand_TREE
-	(loc_, Flavorable::UPIPE, fun->cmdcopy(),
-	 new UCommand_ASSIGN_VALUE (loc_,
-				    variablename->copy(),
-				    new UExpression(loc_,
-						    UExpression::VARIABLE,
-						    resultContainer),
-				    0));
-
-      if (morph)
-      {
-	UString* fundevice = expression->variablename->getDevice();
-
-	UCommand_TREE* uc_tree = dynamic_cast<UCommand_TREE*> (morph);
-	assert (uc_tree);
-	// handle the :: case
-	if (expression->variablename->doublecolon
-	    && !connection->stack.empty ()
-	    && ::urbiserver->objtab.find(connection->stack.front()->self())!=
-	    ::urbiserver->objtab.end ())
-	  *fundevice = connection->stack.front()->self();
-
-	{
-	  std::ostringstream o;
-	  o << "__UFnct" << unic();
-	  uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
-	}
-
-	resultContainer->nameUpdate(uc_tree->callid->str(),
-				    "__result__");
-	// creates return variable
-	uc_tree->callid->setReturnVar (
-	  new UVariable (uc_tree->callid->str(),
-			 "__result__",
-			 new UValue ()));
-
-	if (!uc_tree->callid)
-	  return UCOMPLETED;
-	uc_tree->connection = connection;
-
-	UNamedParameters *pvalue = expression->parameters;
-	UNamedParameters *pname	 = fun->parameters;
-	for (;
-	     pvalue != 0;
-	     pvalue = pvalue->next, pname = pname->next)
-	{
-	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  if (!valparam)
-	  {
-	    send_error(connection, this, "EXPR evaluation failed");
-	    return UCOMPLETED;
-	  }
-
-	  uc_tree->callid->store
-	    (new UVariable(uc_tree->callid->str(),
-			   pname->name->str(),
-			   valparam));
-	}
-      }
-
-      return UMORPH;
-    }
-
-
-    // handle the :: case
-    if (expression->variablename->doublecolon
-	&& !connection->stack.empty ()
-	&& ::urbiserver->objtab.find(connection->stack.front()->self())!=
-	::urbiserver->objtab.end ())
-    {
-      // rebuild name with parent class
-      *expression->variablename->device = connection->stack.front()->self();
-      expression->variablename->resetCache (); // this deletes funname pointeur
-      functionname = expression->variablename->buildFullname(this, connection);
-      if (!functionname)
-	return UCOMPLETED;
-    }
-
-
-    ////// module-defined /////
-    bool found_function = false;
-    urbi::UTable::iterator hmfi =
-      urbi::functionmap.find(functionname->str());
-    if (hmfi != urbi::functionmap.end())
-    {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	     hmfi->second.begin();
-	   cbi != hmfi->second.end() && !found_function;
-	   ++cbi)
-      {
-	if ((expression->parameters
-	     && expression->parameters->size() == (*cbi)->nbparam)
-	    || (!expression->parameters && !(*cbi)->nbparam) )
-	{
-	  urbi::UList tmparray;
-	  for (UNamedParameters *pvalue = expression->parameters;
-	       pvalue != 0;
-	       pvalue = pvalue->next)
-	  {
-	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    if (!valparam)
-	    {
-	      send_error(connection, this, "EXPR evaluation failed");
-	      return UCOMPLETED;
-	    }
-	    // urbi::UValue do not see ::UValue, so it must
-	    // be valparam who does the job.
-	    tmparray.array.push_back(valparam->urbiValue());
-	    delete valparam;
-	  }
-
-	  delete expression;
-	  expression =
-	    new UExpression (loc(),  UExpression::VALUE,
-			     new UValue((*cbi)->__evalcall(tmparray)));
-	  found_function = true;
-	}
-      }
-    }
-
-    ////// EXTERNAL /////
-    if (!found_function)
-    {
-      HMbindertab::iterator it =
-	::urbiserver->functionbindertab.find(functionname->str());
-      if (it != ::urbiserver->functionbindertab.end()
-	  && (expression->parameters
-	      ? it->second->nbparam == expression->parameters->size()
-	      : it->second->nbparam == 0)
-	  && !it->second->monitors.empty())
-      {
-	int UU = unic();
-	{
-	  std::ostringstream o;
-	  o << "[0,"
-	    << "\"" << functionname->str()
-	    << "__" << it->second->nbparam << "\","
-	    << "\"__UFnctret.EXTERNAL_" << UU << "\"";
-
-	  for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	       j != it->second->monitors.end();
-	       ++j)
-	  {
-	    (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	    (*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
-			   o.str().size());
-	    for (UNamedParameters *pvalue = expression->parameters;
-		 pvalue != 0;
-		 pvalue = pvalue->next)
-	    {
-	      (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
-	      UValue* valparam = pvalue->expression->eval(this, connection);
-	      valparam->echo((*j)->c);
-	    }
-	    (*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
-	  }
-	}
-
-	persistant = false;
-	{
-	  std::ostringstream o;
-	  o << "{"
-	    << "  waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
-	    << variablename->getFullname()->str()
-	    << "=__UFnctret.EXTERNAL_" << UU
-	    << "|delete __UFnctret.EXTERNAL_" << UU
-	    << "}";
-	  strMorph (o.str());
-	}
-	return UMORPH;
-      }
-    }
+    Status s = execute_function_call (connection);
+    if (s != UFALLTHRU)
+      return s;
   }
-
 
   ////////////////////////////////////////
   // Initialization phase (first pass)

@@ -129,7 +129,12 @@ public:
     URUNNING,
     UCOMPLETED,
     UBACKGROUND,
-    UMORPH
+    UMORPH,
+    /// If a function returns this value, its caller should not return
+    /// it, but rather fallthru to the next instruction.  This dirty
+    /// hack should be removed once we have refactored the code using
+    /// it.
+    UFALLTHRU,
   };
 
   /// Status of the command since last execution.
@@ -274,6 +279,9 @@ public:
   UString* devicename;
 
 private:
+
+  // Function call. morph into the function code
+  Status execute_function_call(UConnection *connection);
 
   // Pointers to modificators to ease further processing
   // in the URUNNING mode.
