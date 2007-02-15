@@ -1,3 +1,9 @@
+2007-02-15  Akim Demaille  <akim@lrde.epita.fr>
+
+	Restore missing parens
+	* src/uqueue.cc: Fix a bug reported by MN, introduced by myself
+	in 501: the removal of important parens.
+
 2007-02-15  Akim Demaille  <akim.demaille@free.fr>
 
 	UCommand_ASSIGN_VALUE::execute_function_call
