@@ -1,5 +1,10 @@
 2007-02-15  Akim Demaille  <akim@lrde.epita.fr>
 
+	Indentation fixes
+	* src/liburbi/uobject/urbi/uobject.hh.template: here.
+
+2007-02-15  Akim Demaille  <akim@lrde.epita.fr>
+
 	Avoid useless std::string
 	* src/liburbi/uobject/urbi/uobject.hh.template: rely on literal
 	string concatenation by the compiler.
