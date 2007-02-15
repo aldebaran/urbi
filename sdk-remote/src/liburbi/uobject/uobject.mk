@@ -17,6 +17,7 @@ $(uobject_srcdir)/urbi/ubinary.hh		\
 $(uobject_srcdir)/urbi/utypes-common.hh		\
 $(uobject_srcdir)/urbi/uvalue.hh		\
 $(uobject_srcdir)/urbi/uvar.hh			\
+$(uobject_srcdir)/urbi/ustarter.hh		\
 $(uobject_srcdir)/urbi/usystem.hh
 
 dist_uobject_sources =				\

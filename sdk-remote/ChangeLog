@@ -1,3 +1,10 @@
+2007-02-15  Akim Demaille  <akim.demaille@free.fr>
+
+	ustarter.hh
+	* src/liburbi/uobject/urbi/ustarter.hh: New.
+	* src/liburbi/uobject/urbi/uobject.hh.template: Extracted from here.
+	* src/liburbi/uobject/uobject.mk: Adjust.
+
 2007-02-06  Akim Demaille  <demaille@gostai.com>
 
 	Fix includes
