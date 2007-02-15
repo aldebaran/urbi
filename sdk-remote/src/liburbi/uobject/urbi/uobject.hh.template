@@ -61,7 +61,7 @@
  UValue.  */
 # define UBindFunction(obj,x)						\
   ::urbi::createUCallback(__name, "function", this,			\
-			  (&obj::x),__name+"."+std::string(# x),	\
+			  (&obj::x), __name + "." #x,			\
 			  ::urbi::functionmap)
 
 /** Registers a function x in current object that will be called each
@@ -71,7 +71,7 @@
  */
 # define UBindEvent(obj,x)						\
   ::urbi::createUCallback(__name, "event", this,			\
-			  (&obj::x),__name+"."+std::string(# x),	\
+			  (&obj::x), __name + "." #x,			\
 			  ::urbi::eventmap)
 
 /** Registers a function x in current object that will be called each
@@ -82,13 +82,13 @@
  */
 # define UBindEventEnd(obj,x,fun)					\
   ::urbi::createUCallback(__name, "eventend", this,			\
-			  (&obj::x),(&obj::fun),__name+"."+std::string(# x), \
+			  (&obj::x),(&obj::fun), __name + "." #x,	\
 			  ::urbi::eventendmap)
 
 /// Register current object to the UObjectHub named 'hub'.
 # define URegister(hub)						\
   do {								\
-    objecthub = ::urbi::getUObjectHub((std::string) #hub);	\
+    objecthub = ::urbi::getUObjectHub(#hub);			\
     if (objecthub)						\
       objecthub->addMember(dynamic_cast<UObject*>(this));	\
     else							\
@@ -241,7 +241,7 @@ namespace urbi
     template <class T>
     void UNotifyChange (UVar& v, int (T::*fun) ())
     {
-      // This call register both an UObject (say of type
+      // This call registers both an UObject (say of type
       // UObjectDerived), and a callback working on it (named here
       // fun).  createUCallback wants both the object and the callback
       // to have the same type, which is not the casem this is static

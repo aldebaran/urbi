@@ -1,3 +1,10 @@
+2007-02-15  Akim Demaille  <akim@lrde.epita.fr>
+
+	Avoid useless std::string
+	* src/liburbi/uobject/urbi/uobject.hh.template: rely on literal
+	string concatenation by the compiler.
+	Rely on conversion from const char* to std::string too.
+
 2007-02-15  Akim Demaille  <akim.demaille@free.fr>
 
 	ustarter.hh
