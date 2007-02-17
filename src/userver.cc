@@ -244,8 +244,8 @@ UServer::work()
   currentTime   = lastTime();
 
   // Execute Timers
-  for (urbi::UTimerTable::iterator i = urbi::timermap.begin();
-       i != urbi::timermap.end();
+  for (urbi::UTimerTable::iterator i = urbi::timermap->begin();
+       i != urbi::timermap->end();
        ++i)
     if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
@@ -406,8 +406,8 @@ UServer::work()
     }
 
   // Execute Hub Updaters
-  for (urbi::UTimerTable::iterator i = urbi::updatemap.begin();
-       i != urbi::updatemap.end();
+  for (urbi::UTimerTable::iterator i = urbi::updatemap->begin();
+       i != urbi::updatemap->end();
        ++i)
     if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {

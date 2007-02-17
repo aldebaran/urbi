@@ -45,7 +45,7 @@ namespace urbi
   UVar::__init()
   {
     owned = false;
-    varmap[name].push_back(this);
+    (*varmap)[name].push_back(this);
 
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
     if (it == ::urbiserver->variabletab.end())
@@ -71,9 +71,9 @@ namespace urbi
   //! UVar destructor.
   UVar::~UVar()
   {
-    UVarTable::iterator varmapfind = varmap.find(name);
+    UVarTable::iterator varmapfind = varmap->find(name);
 
-    if (varmapfind != varmap.end())
+    if (varmapfind != varmap->end())
     {
       for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	   it != varmapfind->second.end();)
@@ -83,7 +83,7 @@ namespace urbi
 	  ++it;
 
       if (varmapfind->second.empty())
-	varmap.erase(varmapfind);
+	varmap->erase(varmapfind);
     }
     delete vardata;
   }

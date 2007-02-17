@@ -229,8 +229,8 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
     return true;
   if (!fullname_)
     return false;
-  return ((urbi::functionmap.find(fullname_->str())
-	   != urbi::functionmap.end())
+  return ((urbi::functionmap->find(fullname_->str())
+	   != urbi::functionmap->end())
 	  || (::urbiserver->functionbindertab.find(fullname_->str())
 	      != ::urbiserver->functionbindertab.end()));
 }

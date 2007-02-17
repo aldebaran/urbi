@@ -1,5 +1,12 @@
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
+	Adjust to *maps becoming SingletonPtr
+	* src/ucommand.cc, src/uobj.cc, src/userver.cc, src/uvar.cc,
+	* src/uvariablename.cc: Catch up with changes in liburbi-cpp
+	[426].
+
+2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+
 	uobject-hub-common.cc
 	* src/uobject.cc: Remove factored functions.
 

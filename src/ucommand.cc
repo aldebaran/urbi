@@ -742,8 +742,8 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   ////// module-defined /////
   bool found_function = false;
   urbi::UTable::iterator hmfi =
-    urbi::functionmap.find(functionname->str());
-  if (hmfi != urbi::functionmap.end())
+    urbi::functionmap->find(functionname->str());
+  if (hmfi != urbi::functionmap->end())
   {
     for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	   hmfi->second.begin();
@@ -2292,8 +2292,8 @@ UCommand_EXPR::execute_(UConnection *connection)
 
     ////// module-defined /////
 
-    urbi::UTable::iterator hmfi = urbi::functionmap.find(funname->str());
-    if (hmfi != urbi::functionmap.end())
+    urbi::UTable::iterator hmfi = urbi::functionmap->find(funname->str());
+    if (hmfi != urbi::functionmap->end())
     {
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
@@ -4425,8 +4425,8 @@ UCommand_EMIT::execute_(UConnection *connection)
 
     ////// INTERNAL /////
 
-    urbi::UTable::iterator hmfi = urbi::eventmap.find(eventnamestr);
-    if (hmfi != urbi::eventmap.end())
+    urbi::UTable::iterator hmfi = urbi::eventmap->find(eventnamestr);
+    if (hmfi != urbi::eventmap->end())
     {
       for (std::list<urbi::UGenericCallback*>::iterator cbi =
 	     hmfi->second.begin();
@@ -4502,18 +4502,14 @@ UCommand_EMIT::removeEvent ()
 
   ////// INTERNAL /////
   {
-    urbi::UTable::iterator i = urbi::eventendmap.find(eventnamestr);
-    if (i != urbi::eventendmap.end())
-    {
-      for (std::list<urbi::UGenericCallback*>::iterator j =
-	     i->second.begin();
-	   j != i->second.end();
-	   ++j)
+    urbi::UTable::iterator i = urbi::eventendmap->find(eventnamestr);
+    if (i != urbi::eventendmap->end())
+      for (std::list<urbi::UGenericCallback*>::iterator j = i->second.begin();
+	   j != i->second.end(); ++j)
       {
 	urbi::UList tmparray;
 	(*j)->__evalcall(tmparray);
       }
-    }
   }
 }
 
@@ -4521,9 +4517,9 @@ UCommand_EMIT::removeEvent ()
 UCommand*
 UCommand_EMIT::copy() const
 {
-  UCommand_EMIT *ret =
-    new UCommand_EMIT(loc_, ucopy (eventname), ucopy (parameters));
-  return copybase(ret);
+  return copybase(new UCommand_EMIT(loc_,
+				    ucopy (eventname),
+				    ucopy (parameters)));
 }
 
 //! Print the command
@@ -4686,9 +4682,7 @@ UCommand_INCDECREMENT::execute_(UConnection *connection)
 UCommand*
 UCommand_INCDECREMENT::copy() const
 {
-  UCommand_INCDECREMENT *ret =
-    new UCommand_INCDECREMENT(loc_, type, ucopy (variablename));
-  return copybase(ret);
+  return copybase(new UCommand_INCDECREMENT(loc_, type, ucopy (variablename)));
 }
 
 //! Print the command

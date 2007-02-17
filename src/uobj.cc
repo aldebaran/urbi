@@ -208,7 +208,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   }
 
   // test for plugged uobjects symbols
-  if (::urbi::functionmap.find(o.str().c_str()) != ::urbi::functionmap.end())
+  if (::urbi::functionmap->find(o.str().c_str()) != ::urbi::functionmap->end())
   {
     ambiguous = false;
     return kernel::remoteFunction;
