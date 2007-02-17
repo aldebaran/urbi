@@ -362,6 +362,49 @@ UExpression::copy() const
     }						\
   } while (0)
 
+namespace
+{
+  const char*
+  to_string (UExpression::Type s)
+  {
+    switch (s)
+    {
+#define CASE(K) case UExpression::K: return #K;
+      CASE (VALUE);
+      CASE (VARIABLE);
+      CASE (LIST);
+      CASE (GROUP);
+      CASE (ADDR_VARIABLE);
+      CASE (FUNCTION);
+      CASE (PLUS);
+      CASE (MINUS);
+      CASE (MULT);
+      CASE (DIV);
+      CASE (MOD);
+      CASE (EXP);
+      CASE (NEG);
+      CASE (COPY);
+      CASE (PROPERTY);
+      CASE (EVENT);
+      CASE (TEST_EQ);
+      CASE (TEST_REQ);
+      CASE (TEST_PEQ);
+      CASE (TEST_DEQ);
+      CASE (TEST_NE);
+      CASE (TEST_GT);
+      CASE (TEST_GE);
+      CASE (TEST_LT);
+      CASE (TEST_LE);
+      CASE (TEST_BANG);
+      CASE (TEST_AND);
+      CASE (TEST_OR);
+#undef CASE
+    }
+    // Pacify warnings.
+    pabort ("unexpected case:" << s);
+  }
+}
+
 //! Print the expression
 /*! This function is for debugging purpose only.
  It is not safe, efficient or crash proof. A better version will come later.
@@ -369,7 +412,7 @@ UExpression::copy() const
 void
 UExpression::print(unsigned t)
 {
-  debug(t, "[Type:E%d ", type);
+  debug(t, "[Type: %s ", to_string (type));
   if (isconst)
     debug("(const) ");
   if (type == VALUE && dataType == DATA_NUM)
