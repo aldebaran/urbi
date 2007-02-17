@@ -110,6 +110,11 @@ namespace urbi
 
   // A few list and hashtable types
   typedef libport::hash_map_type<std::string, std::list<UGenericCallback*> >::type UTable;
+
+  //! Clean a callback UTable from all callbacks linked to the
+  //! object whose name is 'name'.
+  void cleanTable(UTable &t, const std::string& name);
+
   typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
   typedef std::list<UTimerCallback*> UTimerTable;
   typedef std::list<UObject*> UObjectList;

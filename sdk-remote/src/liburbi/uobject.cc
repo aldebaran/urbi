@@ -34,58 +34,9 @@ namespace urbi
 {
   UObject* dummyUObject;
 
-  STATIC_INSTANCE(UStartlist, objectlist);
-  STATIC_INSTANCE(UStartlistHub, objecthublist);
-
-  UVarTable varmap;
-  UTable functionmap;
-  UTable monitormap;
-  UTable accessmap;
-  UTable eventmap;
-  UTable eventendmap;
-
-  UTimerTable timermap;
-  UTimerTable updatemap;
-
   UCallbackAction dispatcher(const UMessage& msg);
   UCallbackAction debug(const UMessage& msg);
 
-
-  UVar& cast(UValue& v, UVar*)
-  {
-    return (*((UVar*)v.storage));
-  };
-
-
-  UBinary cast(UValue& v, UBinary*)
-  {
-    if (v.type != DATA_BINARY)
-      return UBinary();
-    return UBinary(*v.binary);
-  }
-
-
-  UList cast(UValue& v, UList*)
-  {
-    if (v.type != DATA_LIST)
-      return UList();
-    return UList(*v.list);
-  }
-
-  UObjectStruct cast(UValue& v, UObjectStruct*)
-  {
-    if (v.type != DATA_OBJECT)
-      return UObjectStruct();
-    return UObjectStruct(*v.object);
-  }
-
-  const char* cast(UValue &v, const char**)
-  {
-    static const char* er = "invalid";
-    if (v.type != DATA_STRING)
-      return er;
-    return v.stringValue->c_str();
-  }
 
   std::ostream& unarmorAndSend(const char* a);
 
@@ -237,43 +188,6 @@ namespace urbi
     period = -1;
   }
 
-
-  /// Clean a callback UTable from all callbacks linked to the object
-  /// whose name is 'name'
-  namespace
-  {
-    void
-    cleanTable(UTable& t, const std::string& name)
-    {
-      std::list<UTable::iterator> todelete;
-      for (UTable::iterator it = t.begin();
-	   it != t.end();
-	   ++it)
-	{
-	  std::list<UGenericCallback*>& tocheck = (*it).second;
-	  for (std::list<UGenericCallback*>::iterator it2 = tocheck.begin();
-	       it2 != tocheck.end();
-	       )
-	    {
-	      if ((*it2)->objname == name)
-		{
-		  delete *it2;
-		  it2 = tocheck.erase(it2);
-		}
-	      else
-		++it2;
-	    }
-
-	  if (tocheck.empty())
-	    todelete.push_back(it);
-	}
-
-      for (std::list<UTable::iterator>::iterator dit = todelete.begin();
-	   dit != todelete.end();
-	   ++dit)
-	t.erase(*dit);
-    }
-  }
 
   //! UObject cleaner
   void

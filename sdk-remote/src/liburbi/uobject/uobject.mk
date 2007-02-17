@@ -21,6 +21,7 @@ $(uobject_srcdir)/urbi/ustarter.hh		\
 $(uobject_srcdir)/urbi/usystem.hh
 
 dist_uobject_sources =				\
+$(uobject_srcdir)/uobject-common.cc		\
 $(uobject_srcdir)/uvalue-common.cc		\
 $(uobject_srcdir)/uvar-common.cc
 
