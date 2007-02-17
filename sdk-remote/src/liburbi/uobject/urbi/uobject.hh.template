@@ -122,16 +122,16 @@ namespace urbi
   typedef int UReturn;
 
   // Lists and hashtables used.
-  extern UVarTable varmap;
-  extern UTable functionmap;
-  extern UTable eventmap;
-  extern UTable eventendmap;
-  extern UTable monitormap;
-  extern UTable accessmap;
+  EXTERN_STATIC_INSTANCE(UTable, accessmap);
+  EXTERN_STATIC_INSTANCE(UTable, eventendmap);
+  EXTERN_STATIC_INSTANCE(UTable, eventmap);
+  EXTERN_STATIC_INSTANCE(UTable, functionmap);
+  EXTERN_STATIC_INSTANCE(UTable, monitormap);
+  EXTERN_STATIC_INSTANCE(UVarTable, varmap);
 
   // Timer and update maps.
-  extern UTimerTable timermap;
-  extern UTimerTable updatemap;
+  EXTERN_STATIC_INSTANCE(UTimerTable, timermap);
+  EXTERN_STATIC_INSTANCE(UTimerTable, updatemap);
 
   // For remote mode.
   extern void main(int argc, char *argv[]);
@@ -143,7 +143,7 @@ namespace urbi
   // Global function of the urbi:: namespace to access kernel features
 
   /// Write a message to the server debug output. Printf syntax.
-  void echo(const char * format, ... );
+  void echo(const char* format, ... );
   /// Retrieve a UObjectHub based on its name or return 0 if not found.
   UObjectHub* getUObjectHub(const std::string& n);
   /// Retrieve a UObject based on its name or return 0 if not found.
@@ -151,11 +151,11 @@ namespace urbi
 
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
-  void uobject_unarmorAndSend(const char * str);
+  void uobject_unarmorAndSend(const char* str);
   /// Send the string to the connection hosting the UObject.
   void send(const char* str);
   /// Send buf to the connection hosting the UObject.
-  void send(void* buf,int size);
+  void send(void* buf, int size);
 
   //! Function and Event storage mechanism
   /*! This heavily overloaded class is the only way in C++ to make life easy from the
@@ -178,7 +178,7 @@ namespace urbi
     virtual UValue __evalcall(UList &param)  = 0;
 
     /// Used to store the UVar* pointeur for var monitoring.
-    void   *storage;
+    void* storage;
     /// Period of timers.
     ufloat period;
     /// Nb params of the callbacked function.
@@ -198,7 +198,7 @@ namespace urbi
   class UTimerCallback
   {
   public:
-    UTimerCallback(const std::string& objname, ufloat period, UTimerTable &tt);
+    UTimerCallback(const std::string& objname, ufloat period, UTimerTable& tt);
     virtual ~UTimerCallback();
 
     virtual void call() = 0;

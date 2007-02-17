@@ -1,5 +1,22 @@
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
+	Use SingletonPtr for global tables
+	This is a workaround to make sure that tables that register the
+	UObject are not destroyed before the UObjects themselves, since
+	the latter try to unregister themselves from the former.  Using
+	SingletonPtr we also make sure that the tables are created
+	when we try to use them, and since the SingletonPtr does not
+	deallocate the objects, we don't have problems during the
+	deallocation...  Of course eventually we will need to find a
+	means to deallocate these tables.
+	* src/liburbi/uobject/urbi/uobject.hh.template,
+	* src/liburbi/uobject/uobject-common.cc
+	(accessmap, eventendmapm eventmap, functionmap, monitormap)
+	(varmap, timermap, updatemap): Now SingletonPtr.
+	* src/liburbi/uobject.cc, src/liburbi/uvar.cc: Adjust uses.
+
+2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+
 	getUObjectHub
 	* src/liburbi/uobject.cc (getUObjectHub): Move to.
 	* src/liburbi/uobject/uobject-hub-common.cc: here.

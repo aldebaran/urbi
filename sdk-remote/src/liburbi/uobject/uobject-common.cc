@@ -27,20 +27,22 @@ namespace urbi
   STATIC_INSTANCE(UStartlist, objectlist);
   STATIC_INSTANCE(UStartlistHub, objecthublist);
 
-  UVarTable varmap;
-  UTable functionmap;
-  UTable monitormap;
-  UTable accessmap;
-  UTable eventmap;
-  UTable eventendmap;
+  // Lists and hashtables used.
+  STATIC_INSTANCE(UTable, accessmap);
+  STATIC_INSTANCE(UTable, eventendmap);
+  STATIC_INSTANCE(UTable, eventmap);
+  STATIC_INSTANCE(UTable, functionmap);
+  STATIC_INSTANCE(UTable, monitormap);
+  STATIC_INSTANCE(UVarTable, varmap);
 
-  UTimerTable timermap;
-  UTimerTable updatemap;
+  // Timer and update maps.
+  STATIC_INSTANCE(UTimerTable, timermap);
+  STATIC_INSTANCE(UTimerTable, updatemap);
 
   UVar& cast(UValue &v, UVar *)
   {
     return *((UVar*)v.storage);
-  };
+  }
 
   UBinary cast(UValue& v, UBinary*)
   {
