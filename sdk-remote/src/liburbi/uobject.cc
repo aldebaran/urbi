@@ -443,19 +443,6 @@ namespace urbi
     // nothing happend in remote mode...
   }
 
-  //! retrieve a UObjectHub based on its name
-  UObjectHub*
-  getUObjectHub(const std::string& name)
-  {
-    for (UStartlistHub::iterator retr = objecthublist->begin();
-	 retr != objecthublist->end();
-	 ++retr)
-      if ((*retr)->name == name)
-	return (*retr)->getUObjectHub();
-
-    return 0;
-  }
-
   //! echo method
   void
   echo(const char* format, ...)

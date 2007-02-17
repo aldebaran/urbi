@@ -1,5 +1,11 @@
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
+	getUObjectHub
+	* src/liburbi/uobject.cc (getUObjectHub): Move to.
+	* src/liburbi/uobject/uobject-hub-common.cc: here.
+
+2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor UObjectHub
 	* src/liburbi/uobject/uobject-hub-common.cc: New.
 	* src/liburbi/uobject.cc: Extacted from here.

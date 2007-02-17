@@ -64,6 +64,24 @@ namespace urbi
     return res;
   }
 
+
+  /*-------------------------.
+  | Freestanding functions.  |
+  `-------------------------*/
+
+  //! retrieve a UObjectHub based on its name
+  UObjectHub*
+  getUObjectHub(const std::string& name)
+  {
+    for (UStartlistHub::iterator i = objecthublist->begin();
+	 i != objecthublist->end();
+	 ++i)
+      if ((*i)->name == name)
+	return (*i)->getUObjectHub();
+
+    return 0;
+  }
+
   //! Retrieve a UObject based on its name.
   UObject*
   getUObject(const std::string& name)
