@@ -1,3 +1,8 @@
+2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+
+	Update uobject/
+	* src/uobject.cc: Remove parts now factored in uobject-common.cc.
+
 2007-02-15  Akim Demaille  <akim@lrde.epita.fr>
 
 	Restore missing parens

@@ -40,55 +40,8 @@ namespace urbi
 
   UObject* lastUObject;
 
-  STATIC_INSTANCE(UStartlist, objectlist);
-  STATIC_INSTANCE(UStartlistHub, objecthublist);
-
   const std::string externalModuleTag = "__ExternalMessage__";
 
-  UVarTable varmap;
-  UTable functionmap;
-  UTable monitormap;
-  UTable accessmap;
-  UTable eventmap;
-  UTable eventendmap;
-
-  UTimerTable timermap;
-  UTimerTable updatemap;
-
-
-  UVar& cast(UValue &v, UVar *)
-  {
-    return *((UVar*)v.storage);
-  };
-
-  UBinary cast(UValue& v, UBinary*)
-  {
-    if (v.type != DATA_BINARY)
-      return UBinary();
-    return UBinary(*v.binary);
-  }
-
-  UList cast(UValue& v, UList*)
-  {
-    if (v.type != DATA_LIST)
-      return UList();
-    return UList(*v.list);
-  }
-
-  UObjectStruct cast(UValue& v, UObjectStruct*)
-  {
-    if (v.type != DATA_OBJECT)
-      return UObjectStruct();
-    return UObjectStruct(*v.object);
-  }
-
-  const char* cast(UValue& v, const char**)
-  {
-    static const char* er = "invalid";
-    if (v.type != DATA_STRING)
-      return er;
-    return v.stringValue->c_str();
-  }
 
   // Useful sending functions.
 
@@ -270,49 +223,13 @@ namespace urbi
     period = -1;
   }
 
-  //! Clean a callback UTable from all callbacks linked to the
-  //! object whose name is 'name'
-  void
-  cleanTable(UTable &t, const std::string& name)
-  {
-    std::list<UTable::iterator> todelete;
-    for (UTable::iterator i = t.begin();
-	 i != t.end();
-	 ++i)
-    {
-      std::list<UGenericCallback*>& tocheck = i->second;
-      for (std::list<UGenericCallback*>::iterator j = tocheck.begin();
-	   j != tocheck.end();
-	)
-      {
-	if ((*j)->objname == name)
-	{
-	  delete *j;
-	  j = tocheck.erase(j);
-	}
-	else
-	  ++j;
-      }
-
-      if (tocheck.empty())
-	todelete.push_back(i);
-    }
-
-    for (std::list<UTable::iterator>::iterator i = todelete.begin();
-	 i != todelete.end();
-	 ++i)
-      t.erase(*i);
-  }
-
 
   //! Clean a callback UTimerTable from all callbacks linked to
   //! the object whose name is 'name'
   void
   cleanTimerTable(UTimerTable &t, const std::string& name)
   {
-    for (UTimerTable::iterator i = t.begin();
-	 i != t.end();
-      )
+    for (UTimerTable::iterator i = t.begin(); i != t.end(); )
     {
       if ((*i)->objname == name)
       {
