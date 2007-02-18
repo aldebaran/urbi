@@ -208,6 +208,7 @@ private:
   UVariable& operator = (const UVariable &);
 };
 
+inline
 std::ostream&
 operator<< (std::ostream& o, const UVariable& v)
 {

@@ -197,7 +197,7 @@ UVariable::~UVariable()
 }
 
 std::ostream&
-UVariable::print(std::ostream& o)
+UVariable::print(std::ostream& o) const
 {
 #define UV_PRINT(Id) " " #Id " = " << Id
   return
