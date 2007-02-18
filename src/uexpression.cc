@@ -1089,26 +1089,19 @@ UExpression::eval_FUNCTION (UCommand *command,
       UValue *e4 = e2->liststart;
 
       if (e4)
+      {
 	if (!e3)
 	{
 	  ret->liststart = e4->copy();
 	  e3 = ret->liststart;
 	  e4 = e4->next;
-
-	  while (e4)
-	  {
-	    e3->next = e4->copy();
-	    e3 = e3->next;
-	    e4 = e4->next;
-	  }
 	}
-	else
-	  while (e4)
-	  {
-	    e3->next = e4->copy();
-	    e3 = e3->next;
-	    e4 = e4->next;
-	  }
+	for (; e4; e4 = e4->next)
+	{
+	  e3->next = e4->copy();
+	  e3 = e3->next;
+	}
+      }
 
       delete e1;
       delete e2;

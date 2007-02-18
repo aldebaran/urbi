@@ -1,3 +1,9 @@
+2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+
+	Factor loops
+	* src/uexpression.cc (UExpression::eval_FUNCTION): Factor two
+	while loops ending both branches of an if.
+
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
 	* src/uexpression.cc (to_string): New, for UExpression::Type.
