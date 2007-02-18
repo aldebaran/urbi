@@ -23,8 +23,12 @@
 # define USERVER_HH
 
 # include <cstdarg>
+
+# include <sstream>
+
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
+
 # include "fwd.hh"
 # include "ustring.hh"
 # include "utypes.hh"
@@ -300,12 +304,22 @@ UServer::lastTime()
   return lastTime_;
 }
 
-extern int URBI_unicID;
 
-inline int unic()
+inline 
+int unic()
 {
-  ++URBI_unicID;
-  return URBI_unicID;
+  /// Unique identifier to create new references.
+  static int cnt = 10000; 
+  return ++cnt;
+}
+
+// Return an identifier starting with \a prefix, ending with a unique int.
+inline
+std::string unic (const char* prefix)
+{
+  std::ostringstream o;
+  o << prefix << unic();
+  return o.str();
 }
 
 

@@ -1,5 +1,15 @@
 2007-02-18  Akim Demaille  <akim.demaille@free.fr>
 
+	unic("PREFIX")
+	* src/userver.hh, src/userver.cc (URBI_unicID): Now a static
+	variable of...
+	(uniq()): this.
+	(unic(const char*)): New.
+	* src/ucommand.cc: Use it instead of unic().
+	(copy): Get rid of the ret temp var when we can.
+
+2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor loops
 	* src/uexpression.cc (UExpression::eval_FUNCTION): Factor two
 	while loops ending both branches of an if.

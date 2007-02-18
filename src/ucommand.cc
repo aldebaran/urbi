@@ -682,11 +682,8 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	  ::urbiserver->objtab.end ())
 	*fundevice = connection->stack.front()->self();
 
-      {
-	std::ostringstream o;
-	o << "__UFnct" << unic();
-	uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
-      }
+      uc_tree->callid = new UCallid(unic("__UFnct"),
+				    fundevice->str(), uc_tree);
 
       resultContainer->nameUpdate(uc_tree->callid->str(),
 				  "__result__");
@@ -791,13 +788,13 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	    : it->second->nbparam == 0)
 	&& !it->second->monitors.empty())
     {
-      int UU = unic();
+      std::string uid = unic("__UFnctret.EXTERNAL_");
       {
 	std::ostringstream o;
 	o << "[0,"
 	  << "\"" << functionname->str()
 	  << "__" << it->second->nbparam << "\","
-	  << "\"__UFnctret.EXTERNAL_" << UU << "\"";
+	  << "\"" << uid << "\"";
 
 	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	     j != it->second->monitors.end();
@@ -822,10 +819,10 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       {
 	std::ostringstream o;
 	o << "{"
-	  << "  waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
+	  << "  waituntil(isdef(" << uid << "))|"
 	  << variablename->getFullname()->str()
-	  << "=__UFnctret.EXTERNAL_" << UU
-	  << "|delete __UFnctret.EXTERNAL_" << UU
+	  << "=" << uid
+	  << "|delete " << uid
 	  << "}";
 	strMorph (o.str());
       }
@@ -1744,10 +1741,8 @@ UCommand_ASSIGN_BINARY::execute_(UConnection *connection)
 UCommand*
 UCommand_ASSIGN_BINARY::copy() const
 {
-  UCommand_ASSIGN_BINARY *ret =
-    new UCommand_ASSIGN_BINARY(loc_, ucopy (variablename),
-			       refBinary->copy());
-  return copybase(ret);
+  return copybase(new UCommand_ASSIGN_BINARY(loc_, ucopy (variablename),
+					     refBinary->copy()));
 }
 
 //! Print the command
@@ -1994,11 +1989,9 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
 UCommand*
 UCommand_ASSIGN_PROPERTY::copy() const
 {
-  UCommand_ASSIGN_PROPERTY *ret =
-    new UCommand_ASSIGN_PROPERTY(loc_, ucopy (variablename),
-				 ucopy (oper),
-				 ucopy (expression));
-  return copybase(ret);
+  return copybase(new UCommand_ASSIGN_PROPERTY(loc_, ucopy (variablename),
+					       ucopy (oper),
+					       ucopy (expression)));
 }
 
 //! Print the command
@@ -2081,11 +2074,9 @@ UCommand_AUTOASSIGN::execute_(UConnection*)
 UCommand*
 UCommand_AUTOASSIGN::copy() const
 {
-  UCommand_AUTOASSIGN *ret =
-    new UCommand_AUTOASSIGN(loc_, ucopy (variablename),
-			    ucopy (expression),
-			    assigntype);
-  return copybase(ret);
+  return copybase(new UCommand_AUTOASSIGN(loc_, ucopy (variablename),
+					  ucopy (expression),
+					  assigntype));
 }
 
 //! Print the command
@@ -2228,11 +2219,9 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    && (::urbiserver->objtab.find(connection->stack.front()->self())
 		!= ::urbiserver->objtab.end ()))
 	  *fundevice = connection->stack.front()->self();
-	{
-	  std::ostringstream o;
-	  o << "__UFnct"<< unic();
-	  uc_tree->callid = new UCallid(o.str(), fundevice->str(), uc_tree);
-	}
+
+	uc_tree->callid = new UCallid(unic("__UFnct"),
+				      fundevice->str(), uc_tree);
 	resultContainer->nameUpdate(uc_tree->callid->str(),
 				    "__result__");
 	// creates return variable
@@ -2350,11 +2339,11 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    || (!expression->parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
-      int UU = unic();
+      std::string uid = unic("__UFnctret.EXTERNAL_");
       {
 	std::ostringstream o;
 	o << "[0,\"" << funname->str() << "__" << it->second->nbparam
-	  << "\",\"__UFnctret.EXTERNAL_" << UU << "\"";
+	  << "\",\"" << uid << "\"";
 	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
 	     j != it->second->monitors.end();
 	     ++j)
@@ -2376,9 +2365,9 @@ UCommand_EXPR::execute_(UConnection *connection)
       persistant = false;
       {
 	std::ostringstream o;
-	o << "{waituntil(isdef(__UFnctret.EXTERNAL_" << UU << "))|"
-	  << getTag().c_str() << ":__UFnctret.EXTERNAL_"
-	  << UU << "|delete __UFnctret.EXTERNAL_" << UU << "}";
+	o << "{waituntil(isdef(" << uid << "))|"
+	  << getTag().c_str() << ":" << uid
+	  << "|delete " << uid << "}";
 	strMorph (o.str());
       }
       return UMORPH;
@@ -2578,11 +2567,9 @@ UCommand_ECHO::execute_(UConnection *connection)
 UCommand*
 UCommand_ECHO::copy() const
 {
-  UCommand_ECHO *ret =
-    new UCommand_ECHO(loc_, ucopy (expression),
-		      ucopy (parameters),
-		      ucopy (connectionTag));
-  return copybase(ret);
+  return copybase(new UCommand_ECHO(loc_, ucopy (expression),
+				    ucopy (parameters),
+				    ucopy (connectionTag)));
 }
 
 //! Print the command
@@ -2809,11 +2796,10 @@ UCommand_NEW::execute_(UConnection *connection)
   // we have a clear reference to the inherited object in this case. It will
   // be fixed later.
 
-  int UU = unic();
   persistant = false;
-  std::ostringstream oss;
-  std::string tmpval("__UInitret.tmpval_");
+  std::string uid = unic("__UInitret.tmpval_");
 
+  std::ostringstream oss;
   oss << "{ ";
 
   bool component = false;
@@ -2837,7 +2823,7 @@ UCommand_NEW::execute_(UConnection *connection)
 
   if (parameters || initfun != 0 || component)
   {
-    oss << tmpval << UU << "=" << id->str() << ".init(";
+    oss << uid << "=" << id->str() << ".init(";
 
     for (UNamedParameters *pvalue = parameters;
 	 pvalue != 0;
@@ -2859,12 +2845,12 @@ UCommand_NEW::execute_(UConnection *connection)
     }
 
     oss << ") | if (!isdef("
-	<< tmpval << UU << ") || ((" << tmpval << UU << "!=0) && (!isvoid("
-	<< tmpval << UU << ")))) { "
+	<< uid << ") || ((" << uid << "!=0) && (!isvoid("
+	<< uid << ")))) { "
 	<< "echo \"Error: Constructor failed, object deleted\";"
 	<< " delete "
 	<< id->str() << "} | if (isdef("
-	<< tmpval << UU << ")) delete " << tmpval << UU
+	<< uid << ")) delete " << uid
 	<< "}";
   }
   else
@@ -2879,11 +2865,9 @@ UCommand_NEW::execute_(UConnection *connection)
 UCommand*
 UCommand_NEW::copy() const
 {
-  UCommand_NEW *ret = new UCommand_NEW(loc_, ucopy (varname),
-				       ucopy (obj),
-				       ucopy (parameters));
-
-  return copybase(ret);
+  return copybase(new UCommand_NEW(loc_, ucopy (varname),
+				   ucopy (obj),
+				   ucopy (parameters)));
 }
 
 //! Print the command
@@ -3480,10 +3464,8 @@ UCommand_DEVICE_CMD::execute_(UConnection *connection)
 UCommand*
 UCommand_DEVICE_CMD::copy() const
 {
-  UCommand_DEVICE_CMD *ret =
-    new UCommand_DEVICE_CMD(loc_, ucopy (variablename),
-			    new ufloat(cmd));
-  return copybase(ret);
+  return copybase(new UCommand_DEVICE_CMD(loc_, ucopy (variablename),
+					  new ufloat(cmd)));
 }
 
 //! Print the command
@@ -3732,10 +3714,8 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 UCommand*
 UCommand_OPERATOR_VAR::copy() const
 {
-  UCommand_OPERATOR_VAR *ret =
-    new UCommand_OPERATOR_VAR(loc_, ucopy (oper),
-			      ucopy (variablename));
-  return copybase(ret);
+  return copybase(new UCommand_OPERATOR_VAR(loc_, ucopy (oper),
+			      ucopy (variablename)));
 }
 
 //! Print the command
@@ -3891,13 +3871,11 @@ UCommand_BINDER::execute_(UConnection *connection)
 UCommand*
 UCommand_BINDER::copy() const
 {
-  UCommand_BINDER *ret = new UCommand_BINDER(loc_, ucopy (objname),
-					     ucopy (binder),
-					     type,
-					     ucopy (variablename),
-					     nbparam);
-
-  return copybase(ret);
+  return copybase(new UCommand_BINDER(loc_, ucopy (objname),
+				      ucopy (binder),
+				      type,
+				      ucopy (variablename),
+				      nbparam));
 }
 
 //! Print the command
@@ -5269,9 +5247,7 @@ UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
   command (command)
 {
   ADDOBJ(UCommand_TIMEOUT);
-  std::ostringstream o;
-  o << "__TAG_timeout_" << unic();
-  tagRef = new UString(o.str());
+  tagRef = new UString(unic("__TAG_timeout_"));
 }
 
 //! UCommand subclass destructor.
@@ -5339,10 +5315,7 @@ UCommand_STOPIF::UCommand_STOPIF(const location& l,
     command (command)
 {
   ADDOBJ(UCommand_STOPIF);
-
-  std::ostringstream o;
-  o << "__TAG_stopif_" << unic();
-  tagRef = new UString(o.str());
+  tagRef = new UString(unic("__TAG_stopif_"));
 }
 
 //! UCommand subclass destructor.
@@ -5428,9 +5401,7 @@ UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
     command (command)
 {
   ADDOBJ(UCommand_FREEZEIF);
-  std::ostringstream o;
-  o << "__TAG_stopif_" << unic();
-  tagRef = new UString(o.str ());
+  tagRef = new UString(unic("__TAG_stopif_"));
 }
 
 //! UCommand subclass destructor.
