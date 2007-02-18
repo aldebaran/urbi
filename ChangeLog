@@ -1,5 +1,11 @@
 2007-02-18  Akim Demaille  <akim.demaille@free.fr>
 
+	UVariable::print
+	* src/uvariable.hh, src/uvariable.cc (UVariable::print)
+	(operator<< (ostream, UVariable): New.
+
+2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+
 	unic("PREFIX")
 	* src/userver.hh, src/userver.cc (URBI_unicID): Now a static
 	variable of...

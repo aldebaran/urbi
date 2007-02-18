@@ -20,17 +20,17 @@
  **************************************************************************** */
 
 #ifndef UVARIABLE_HH
-#define UVARIABLE_HH
+# define UVARIABLE_HH
 
-#include <string>
-#include <list>
+# include <string>
+# include <list>
 
-#include <cstdlib>
+# include <cstdlib>
 
-#include "memorymanager/memorymanager.hh"
-#include "fwd.hh"
-#include "utypes.hh"
-#include "uasyncregister.hh"
+# include "memorymanager/memorymanager.hh"
+# include "fwd.hh"
+# include "utypes.hh"
+# include "uasyncregister.hh"
 
 //! Uvariable is used to store variables
 /* ! You can pass to the constructor three importants parameters:
@@ -84,8 +84,8 @@ public:
 	    bool _autoUpdate = true);
   ~UVariable();
 
-
-
+  /// For debugging.
+  std::ostream& print (std::ostream& o) const;
 
 
   //properties
@@ -207,5 +207,11 @@ private:
   UVariable(const UVariable &);
   UVariable& operator = (const UVariable &);
 };
+
+std::ostream&
+operator<< (std::ostream& o, const UVariable& v)
+{
+  return v.print(o);
+}
 
 #endif

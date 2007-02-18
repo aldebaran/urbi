@@ -196,6 +196,20 @@ UVariable::~UVariable()
     context->remove(this);
 }
 
+std::ostream&
+UVariable::print(std::ostream& o)
+{
+#define UV_PRINT(Id) " " #Id " = " << Id
+  return
+    o << "Uvariable {"
+      << UV_PRINT(devicename) << ','
+      << UV_PRINT(method) << ','
+      << UV_PRINT(varname) << ','
+      << UV_PRINT(unit)
+      << " }";
+#undef UV_PRINT
+}
+
 
 //! Associated variable name initialization
 const char*
@@ -204,11 +218,13 @@ UVariable::setName(const char* s)
   varname = s;
 
   size_t pos = varname.find('.');
-  if (pos==std::string::npos) {
+  if (pos==std::string::npos)
+  {
     method = "";
     devicename = varname;
   }
-  else {
+  else
+  {
     method = varname.substr(pos + 1, varname.length());
     devicename = varname.substr(0,pos);
   }
