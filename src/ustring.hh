@@ -79,9 +79,24 @@ operator== (const UString& lhs, const UString& rhs)
 
 inline
 bool
+operator!= (const UString& lhs, const UString& rhs)
+{
+  return !(lhs == rhs);
+}
+
+
+inline
+bool
 operator== (const UString& lhs, const char* rhs)
 {
   return STREQ(lhs.str(), rhs);
+}
+
+inline
+bool
+operator!= (const UString& lhs, const char* rhs)
+{
+  return !(lhs == rhs);
 }
 
 inline
