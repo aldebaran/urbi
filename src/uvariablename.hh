@@ -135,7 +135,7 @@ protected:
 private:
   /// Update the mangled name for \a s.
   ///
-  /// Used for the pairs (device, index_obj) and ().
+  /// Used for the pairs (device, index_obj) and (id, index).
   /// \return whether there was no error.
   bool update_array_mangling (UCommand* cmd, UConnection* cn,
 			      UString* s, UNamedParameters* ps);
