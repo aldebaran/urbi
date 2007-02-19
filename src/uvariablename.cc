@@ -186,6 +186,20 @@ UVariableName::resetCache()
   fullname_ = 0;
 }
 
+UString*
+UVariableName::set_fullname (const char* s)
+{
+  UString* res = update (fullname_, s);
+#if 0
+  if (device && id
+      && *res != std::string (device->str()) + "." + std::string(id->str()))
+    std::cerr << "Warning, \"" << *res << "\" != \""
+	      << *device << "\".\"" << *id << "\"" << std::endl;
+#endif
+  return res;
+}
+
+
 //! UVariableName access to variable (with cache)
 /*! If variable is not null, it means that the variable name is
  constant and that the access to the variable hash table has been done
@@ -379,6 +393,18 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
   return true;
 }
 
+/// Descend ::urbiserver->objaliastab looking for \a cp.
+const char*
+resolve_aliases(const char* cp)
+{
+  for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(cp);
+       i != ::urbiserver->objaliastab.end();
+       i = ::urbiserver->objaliastab.find(cp))
+    cp = i->second->str();
+  return cp;
+}
+
+
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
  If the building blocks are static, non variable parameters (like static
@@ -488,9 +514,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   // Create the concatened variable name
-  const int fullnameMaxSize = 1024;
-  char name[fullnameMaxSize];
-  snprintf(name, sizeof name, "%s.%s", device->str(), id->str());
+  std::string name = std::string(device->str()) + "." + id->str();
   ECHO(name);
 
   // Alias updating
@@ -499,25 +523,12 @@ UVariableName::buildFullname (UCommand* command,
     HMaliastab::iterator hmi;
     if (nostruct)
     {
-      // Comes from a simple IDENTIFIER
-      HMaliastab::iterator getobj =
-	::urbiserver->objaliastab.find(suffix(name));
-      if (getobj != ::urbiserver->objaliastab.end())
-      {
-	UString* newobj = getobj->second;
-	getobj = ::urbiserver->objaliastab.find(newobj->str());
-	while (getobj != ::urbiserver->objaliastab.end())
-	{
-	  newobj = getobj->second;
-	  getobj = ::urbiserver->objaliastab.find(newobj->str());
-	}
-	strlcpy(name, newobj->str(), sizeof name);
-      }
-
-      hmi = ::urbiserver->aliastab.find(suffix(name));
+      // Comes from a simple IDENTIFIER.
+      const char* cp = resolve_aliases(suffix(name.c_str()));
+      hmi = ::urbiserver->aliastab.find(suffix(cp));
     }
     else
-      hmi = ::urbiserver->aliastab.find(name);
+      hmi = ::urbiserver->aliastab.find(name.c_str());
 
     HMaliastab::iterator past_hmi = hmi;
     while (hmi != ::urbiserver->aliastab.end())
@@ -528,7 +539,7 @@ UVariableName::buildFullname (UCommand* command,
 
     if (past_hmi != ::urbiserver->aliastab.end())
     {
-      strlcpy(name, past_hmi->second->str(), sizeof name);
+      name = past_hmi->second->str();
       nostruct = false;
       delete device;
       device = 0;
@@ -539,29 +550,17 @@ UVariableName::buildFullname (UCommand* command,
   }
   else if (nostruct)
   {
-    if (const char* p = strchr(name, '.'))
-      return set_fullname (p+1);
+    if (name.find('.') != std::string::npos)
+      return set_fullname (suffix(name.c_str()));
   }
 
-  if (char* p = strchr(name, '.'))
+  if (name.find('.') != std::string::npos)
   {
-    p[0]=0;
-    HMaliastab::iterator getobj = ::urbiserver->objaliastab.find(name);
-    p[0]='.';
-    if (getobj != ::urbiserver->objaliastab.end())
-    {
-      UString* newobj = getobj->second;
-      getobj = ::urbiserver->objaliastab.find(newobj->str());
-      while (getobj != ::urbiserver->objaliastab.end())
-      {
-	newobj = getobj->second;
-	getobj = ::urbiserver->objaliastab.find(newobj->str());
-      }
-      snprintf(name, sizeof name, "%s.%s", newobj->str(), p+1);
-    }
+    const char* cp = resolve_aliases(prefix(name.c_str()).c_str());
+    name = std::string(cp) + "." + suffix(name.c_str());
   }
 
-  return set_fullname (name);
+  return set_fullname (name.c_str());
 }
 
 //! UVariableName name update for functions scope hack

@@ -156,11 +156,4 @@ UVariableName::getFullname ()
   return fullname_;
 }
 
-inline
-UString*
-UVariableName::set_fullname (const char* s)
-{
-  return update (fullname_, s);
-}
-
 #endif

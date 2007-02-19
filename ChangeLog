@@ -1,5 +1,16 @@
 2007-02-19  Akim Demaille  <akim.demaille@free.fr>
 
+	Get rid of buffers
+	* src/uvariablename.hh (set_fullname): Move to...
+	* src/uvariablename.cc: here.
+	(resolve_aliases): New.
+	This simple function was really hard to extract from the code
+	and its lack of documentation...  I hope I have it right.
+	Use it.
+	Use std::strings instead of buffers.
+
+2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+
 	More UString operators
 	* src/ustring.hh (operator!=): New.
 
