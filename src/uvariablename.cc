@@ -339,6 +339,46 @@ UVariableName::update_array_mangling (UCommand* cmd,
   return true;
 }
 
+bool
+UVariableName::build_from_str(UCommand* command, UConnection* connection)
+{
+  assert(str);
+  UValue*e1 = str->eval(command, connection);
+  cached = str->isconst;
+
+  if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
+  {
+    send_error (connection, command,
+		"dynamic variable evaluation failed");
+    delete e1;
+    delete fullname_;
+    fullname_ = 0;
+    return false;
+  }
+
+  // The name is composed of two parts: PREFIX.SUFFIX.
+  const char* cp = e1->str->str();
+  if (strchr(cp, '.'))
+  {
+    update(device, prefix(cp).c_str());
+    update(id, suffix(cp));
+  }
+  else
+  {
+    nostruct = true;
+    if (connection->stack.empty())
+      update (device, connection->connectionTag->str());
+    else
+    {
+      update(device, "__Funct__");
+      localFunction = true;
+    }
+    update(id, cp);
+  }
+  delete e1;
+  return true;
+}
+
 //! UVariableName name extraction, witch caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
  If the building blocks are static, non variable parameters (like static
@@ -353,52 +393,8 @@ UVariableName::buildFullname (UCommand* command,
   if (cached)
     return fullname_;
 
-  if (str)
-  {
-    UValue*e1 = str->eval(command, connection);
-    cached = str->isconst;
-
-    if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
-    {
-      send_error (connection, command,
-		  "dynamic variable evaluation failed");
-      delete e1;
-      delete fullname_;
-      fullname_ = 0;
+  if (str && !build_from_str (command, connection))
       return 0;
-    }
-
-    const int fullnameMaxSize = 1024;
-    char name[fullnameMaxSize];
-    if (strchr(e1->str->str(), '.') == 0)
-    {
-      nostruct = true;
-      if (connection->stack.empty())
-	snprintf(name, sizeof name,
-		 "%s.%s", connection->connectionTag->str(),
-		 e1->str->str());
-      else
-      {
-	snprintf(name, sizeof name,
-		 "__Funct__.%s", e1->str->str());
-	localFunction = true;
-      }
-    }
-    else
-      strlcpy(name, e1->str->str(), sizeof name);
-
-    delete e1;
-    char* p = strchr (name, '.');
-    ASSERT (p!=0)
-    {
-      p[0]=0;
-      delete device;
-      delete id;
-      device = new UString (name);
-      id = new UString (p+1);
-      p[0]= '.';
-    }
-  }
 
   if (*device == "local")
     *device = connection->connectionTag->str();

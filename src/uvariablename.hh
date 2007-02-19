@@ -55,8 +55,16 @@ public:
   UVariable*     getVariable (UCommand* command, UConnection* connection);
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
+
   UString*       buildFullname(UCommand* command, UConnection* connection,
 			       bool withalias = true);
+
+private:
+  /// Update \a id and \a device using \a str.
+  /// \returns false if there was an error.
+  bool build_from_str(UCommand* command, UConnection* connection);
+
+public:
   UString* getFullname ();
   UString* set_fullname (const char* s);
 
