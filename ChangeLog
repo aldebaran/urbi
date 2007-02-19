@@ -1,5 +1,11 @@
 2007-02-19  Akim Demaille  <akim.demaille@free.fr>
 
+	update UString
+	* src/ustring.hh (update): New.
+	Hopefully, should disapear in the future, together with UStrings.
+
+2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Use libport::m?has
 	* src/ucommand.cc, src/uvariablename.cc: Here.
 

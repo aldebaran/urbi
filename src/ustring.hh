@@ -114,4 +114,17 @@ operator<< (std::ostream& o, const UString& s)
     return o << "<null UString>";
 }
 
+// Update a pointer to UString.
+inline
+UString*
+update (UString*& s, const char* v)
+{
+  if (s)
+    *s = v;
+  else
+    s = new UString(v);
+  return s;
+}
+
+
 #endif // !USTRING_HH
