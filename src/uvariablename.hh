@@ -57,10 +57,9 @@ public:
   bool           isFunction(UCommand *command, UConnection *connection);
   UString*       buildFullname(UCommand* command, UConnection* connection,
 			       bool withalias = true);
-  UString*       getFullname ()
-  {
-    return fullname_;
-  }
+  UString* getFullname ();
+  UString* set_fullname (const char* s);
+
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();
   UString*       getDevice();
@@ -141,5 +140,19 @@ private:
 			      UString* s, UNamedParameters* ps);
 
 };
+
+inline
+UString*
+UVariableName::getFullname ()
+{
+  return fullname_;
+}
+
+inline
+UString*
+UVariableName::set_fullname (const char* s)
+{
+  return update (fullname_, s);
+}
 
 #endif

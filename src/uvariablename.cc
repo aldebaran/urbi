@@ -18,10 +18,11 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include "libport/cstdio"
 #include <cmath>
-
 #include <sstream>
 
 #include "libport/containers.hh"
@@ -38,6 +39,31 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uvariablename.hh"
+
+namespace
+{
+  /// Return the part after the first `.', or the whole string if there is none.
+  const char*
+  suffix (const char* name)
+  {
+    if (const char* p = strchr(name, '.'))
+      return p + 1;
+    else
+      return name;
+  }
+
+  /// Return the part before the `.', or an empty string.
+  std::string
+  prefix (const char* name)
+  {
+    if (const char* p = strchr(name, '.'))
+      return std::string(name, p - name);
+    else
+      return "";
+  }
+}
+
+
 
 MEMORY_MANAGER_INIT(UVariableName);
 
@@ -172,8 +198,14 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
   if (variable)
     return variable->toDelete ? 0 : variable;
 
+  PING();
   if (!fullname_ || !cached)
     buildFullname(command, connection);
+
+  if (fullname_)
+    ECHO(*fullname_);
+  else
+    ECHO("<NULL>");
 
   if (!fullname_)
     return 0;
@@ -245,12 +277,7 @@ UVariableName::getMethod()
   if (!fullname_)
     return 0;
 
-  if (const char *pointPos = strstr(fullname_->str(), "."))
-    method = new UString(pointPos + 1);
-  else
-    method = new UString("");
-
-  return method;
+  return method = new UString(suffix(fullname_->str()));
 }
 
 //! UVariableName access to device (with cache)
@@ -262,14 +289,8 @@ UVariableName::getDevice()
 
   if (!fullname_)
     return 0;
-  if (char *pointPos = const_cast<char*>(strstr(fullname_->str(), ".")))
-  {
-    pointPos[0] = 0;
-
-    device = new UString(fullname_->str());
-    pointPos[0] = '.';
-    return device;
-  }
+  if (strchr(fullname_->str(), '.'))
+    return device = new UString(prefix(fullname_->str()));
   else
     return fullname_;
 }
@@ -359,13 +380,12 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	snprintf(name, sizeof name,
-		 "%s.%s", "__Funct__",
-		 e1->str->str());
+		 "__Funct__.%s", e1->str->str());
 	localFunction = true;
       }
     }
     else
-      strncpy(name, e1->str->str(), sizeof name);
+      strlcpy(name, e1->str->str(), sizeof name);
 
     delete e1;
     char* p = strchr (name, '.');
@@ -399,8 +419,7 @@ UVariableName::buildFullname (UCommand* command,
     firsttime = false;
     if (!connection->stack.empty())
     {
-      UCallid *funid = connection->stack.front();
-      if (funid)
+      if (UCallid *funid = connection->stack.front())
       {
 	if (selfFunction)
 	  *device = funid->self();
@@ -415,17 +434,18 @@ UVariableName::buildFullname (UCommand* command,
 	    bool function_symbol = false;
 	    std::string tmpstr(funid->str());
 	    tmpstr = tmpstr + "." + id->str();
-	    if (libport::mhas(::urbiserver->variabletab, tmpstr.c_str())
-		|| kernel::eventSymbolDefined (tmpstr.c_str()))
+	    const char* cp = tmpstr.c_str();
+	    if (libport::mhas(::urbiserver->variabletab, cp)
+		|| kernel::eventSymbolDefined (cp))
 	      function_symbol = true;
 
 	    // does the symbol exist as an object symbol (direct on inherited)?
 	    bool class_symbol = false;
-	    bool ambiguous = true;
 
 	    HMobjtab::iterator objit =::urbiserver->objtab.find(funid->self());
 	    if (objit != ::urbiserver->objtab.end())
 	    {
+	      bool ambiguous = true;
 	      class_symbol =
 		objit->second->searchVariable(id->str(), ambiguous)
 		|| objit->second->searchFunction(id->str(), ambiguous)
@@ -475,6 +495,7 @@ UVariableName::buildFullname (UCommand* command,
   const int fullnameMaxSize = 1024;
   char name[fullnameMaxSize];
   snprintf(name, sizeof name, "%s.%s", device->str(), id->str());
+  ECHO(name);
 
   // Alias updating
   if (withalias)
@@ -483,11 +504,8 @@ UVariableName::buildFullname (UCommand* command,
     if (nostruct)
     {
       // Comes from a simple IDENTIFIER
-      HMaliastab::iterator getobj;
-      if (char* p = strchr(name, '.'))
-	getobj = ::urbiserver->objaliastab.find(p+1);
-      else
-	getobj = ::urbiserver->objaliastab.find(name);
+      HMaliastab::iterator getobj =
+	::urbiserver->objaliastab.find(suffix(name));
       if (getobj != ::urbiserver->objaliastab.end())
       {
 	UString* newobj = getobj->second;
@@ -497,13 +515,10 @@ UVariableName::buildFullname (UCommand* command,
 	  newobj = getobj->second;
 	  getobj = ::urbiserver->objaliastab.find(newobj->str());
 	}
-	snprintf(name, sizeof name, "%s", newobj->str());
+	strlcpy(name, newobj->str(), sizeof name);
       }
 
-      if (char* p = strchr(name, '.'))
-	hmi = ::urbiserver->aliastab.find(p+1);
-      else
-	hmi = ::urbiserver->aliastab.find(name);
+      hmi = ::urbiserver->aliastab.find(suffix(name));
     }
     else
       hmi = ::urbiserver->aliastab.find(name);
@@ -517,7 +532,7 @@ UVariableName::buildFullname (UCommand* command,
 
     if (past_hmi != ::urbiserver->aliastab.end())
     {
-      strncpy(name, past_hmi->second->str(), sizeof name);
+      strlcpy(name, past_hmi->second->str(), sizeof name);
       nostruct = false;
       delete device;
       device = 0;
@@ -528,15 +543,8 @@ UVariableName::buildFullname (UCommand* command,
   }
   else if (nostruct)
   {
-    if (char* p = strchr(name, '.'))
-    {
-      if (fullname_)
-	*fullname_ = p+1;
-      else
-	fullname_ = new UString(p+1);
-
-      return fullname_;
-    }
+    if (const char* p = strchr(name, '.'))
+      return set_fullname (p+1);
   }
 
   if (char* p = strchr(name, '.'))
@@ -553,34 +561,19 @@ UVariableName::buildFullname (UCommand* command,
 	newobj = getobj->second;
 	getobj = ::urbiserver->objaliastab.find(newobj->str());
       }
-      UString* newmethod = new UString(p+1);
-      snprintf(name, sizeof name, "%s.%s", newobj->str(),
-	       newmethod->str());
-      delete newmethod;
+      snprintf(name, sizeof name, "%s.%s", newobj->str(), p+1);
     }
   }
 
-  if (fullname_)
-    *fullname_ = name;
-  else
-    fullname_ = new UString(name);
-
-  return fullname_;
+  return set_fullname (name);
 }
 
 //! UVariableName name update for functions scope hack
 void
 UVariableName::nameUpdate(const char* _device, const char* _id)
 {
-  if (device)
-    *device = _device;
-  else
-    device = new UString(_device);
-
-  if (id)
-    *id = _id;
-  else
-    id = new UString(_id);
+  update(device, _device);
+  update(id, _id);
 }
 
 //! UNamedParameters hard copy function
