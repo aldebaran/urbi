@@ -24,6 +24,8 @@
 
 #include <sstream>
 
+#include "libport/containers.hh"
+
 #include "ucallid.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
@@ -178,8 +180,7 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
 
   HMvariabletab::iterator i;
   if (nostruct &&
-      (::urbiserver->objtab.find(getMethod()->str())
-       != ::urbiserver->objtab.end()))
+      libport::mhas(::urbiserver->objtab, getMethod()->str()))
     i = ::urbiserver->variabletab.find(getMethod()->str());
   else
     i = ::urbiserver->variabletab.find(fullname_->str());
@@ -229,10 +230,8 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
     return true;
   if (!fullname_)
     return false;
-  return ((urbi::functionmap->find(fullname_->str())
-	   != urbi::functionmap->end())
-	  || (::urbiserver->functionbindertab.find(fullname_->str())
-	      != ::urbiserver->functionbindertab.end()));
+  return (libport::mhas (*urbi::functionmap, fullname_->str())
+	  || libport::mhas (::urbiserver->functionbindertab, fullname_->str()));
 }
 
 
@@ -416,8 +415,7 @@ UVariableName::buildFullname (UCommand* command,
 	    bool function_symbol = false;
 	    std::string tmpstr(funid->str());
 	    tmpstr = tmpstr + "." + id->str();
-	    if (::urbiserver->variabletab.find(tmpstr.c_str()) !=
-		::urbiserver->variabletab.end()
+	    if (libport::mhas(::urbiserver->variabletab, tmpstr.c_str())
 		|| kernel::eventSymbolDefined (tmpstr.c_str()))
 	      function_symbol = true;
 
@@ -451,10 +449,8 @@ UVariableName::buildFullname (UCommand* command,
 
 	      // does the symbol exist as a symbol local to the connection?
 	      bool local_symbol =
-		(::urbiserver->variabletab.find(cp)
-		 != ::urbiserver->variabletab.end())
-		|| (::urbiserver->functiontab.find(cp)
-		    != ::urbiserver->functiontab.end())
+		libport::mhas(::urbiserver->variabletab, cp)
+		|| libport::mhas(::urbiserver->functiontab, cp)
 		|| kernel::eventSymbolDefined (cp);
 
 	      if (local_symbol && !function_symbol)
@@ -513,7 +509,6 @@ UVariableName::buildFullname (UCommand* command,
       hmi = ::urbiserver->aliastab.find(name);
 
     HMaliastab::iterator past_hmi = hmi;
-
     while (hmi != ::urbiserver->aliastab.end())
     {
       past_hmi = hmi;

@@ -29,6 +29,8 @@
 #include <sstream>
 
 #include "libport/cstring"
+
+#include "libport/containers.hh"
 #include "libport/ref-pt.hh"
 
 #include <sstream>
@@ -678,8 +680,8 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       // handle the :: case
       if (expression->variablename->doublecolon
 	  && !connection->stack.empty ()
-	  && ::urbiserver->objtab.find(connection->stack.front()->self())!=
-	  ::urbiserver->objtab.end ())
+	  && libport::mhas(::urbiserver->objtab,
+			   connection->stack.front()->self()))
 	*fundevice = connection->stack.front()->self();
 
       uc_tree->callid = new UCallid(unic("__UFnct"),
@@ -724,8 +726,8 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   // handle the :: case
   if (expression->variablename->doublecolon
       && !connection->stack.empty ()
-      && ::urbiserver->objtab.find(connection->stack.front()->self())!=
-      ::urbiserver->objtab.end ())
+      && libport::mhas(::urbiserver->objtab,
+		       connection->stack.front()->self()))
   {
     // rebuild name with parent class
     *expression->variablename->device = connection->stack.front()->self();
@@ -1815,8 +1817,6 @@ UCommand_ASSIGN_PROPERTY::execute_(UConnection *connection)
   }
 
   // Property handling
-
-
   // blend
   if (*oper == "blend")
   {
@@ -2216,8 +2216,8 @@ UCommand_EXPR::execute_(UConnection *connection)
 	// handle the :: case
 	if (expression->variablename->doublecolon
 	    && !connection->stack.empty ()
-	    && (::urbiserver->objtab.find(connection->stack.front()->self())
-		!= ::urbiserver->objtab.end ()))
+	    && libport::mhas(::urbiserver->objtab,
+			     connection->stack.front()->self()))
 	  *fundevice = connection->stack.front()->self();
 
 	uc_tree->callid = new UCallid(unic("__UFnct"),
@@ -2268,8 +2268,8 @@ UCommand_EXPR::execute_(UConnection *connection)
     // handle the :: case
     if (expression->variablename->doublecolon
 	&& !connection->stack.empty ()
-	&& ::urbiserver->objtab.find(connection->stack.front()->self())!=
-	::urbiserver->objtab.end ())
+	&& libport::mhas(::urbiserver->objtab,
+			 connection->stack.front()->self()))
     {
       // rebuild name with parent class
       *expression->variablename->device = connection->stack.front()->self();
@@ -2620,8 +2620,7 @@ UCommand::Status
 UCommand_NEW::execute_(UConnection *connection)
 {
   if (remoteNew &&
-      ::urbiserver->objWaittab.find(id->str())
-      != ::urbiserver->objWaittab.end())
+      libport::mhas(::urbiserver->objWaittab, id->str()))
     return URUNNING;
 
   morph = 0;
@@ -2655,7 +2654,7 @@ UCommand_NEW::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    if (::urbiserver->objtab.find(id->str()) != ::urbiserver->objtab.end())
+    if (libport::mhas(::urbiserver->objtab, id->str()))
     {
       send_error(connection, this,
 		 "Object %s already exists. Delete it first.",
@@ -2669,8 +2668,7 @@ UCommand_NEW::execute_(UConnection *connection)
       && !remoteNew)
   {
     const char* objname = obj->str();
-    while (::urbiserver->objaliastab.find(objname) !=
-	   ::urbiserver->objaliastab.end())
+    while (libport::mhas(::urbiserver->objaliastab, objname))
       objname = ::urbiserver->objaliastab[objname]->str();
 
     objit = ::urbiserver->objtab.find(objname);
@@ -2770,8 +2768,7 @@ UCommand_NEW::execute_(UConnection *connection)
   else
     newobj = idit->second;
 
-  if (std::find(newobj->up.begin(), newobj->up.end(), objit->second) !=
-      newobj->up.end())
+  if (libport::has(newobj->up, objit->second))
   {
     send_error(connection, this,
 	       "%s has already inherited from %s",
@@ -3048,10 +3045,7 @@ UCommand_INHERIT::execute_(UConnection *connection)
 
   if (!eraseit)
   {
-    if (std::find(objsub->second->up.begin(),
-		  objsub->second->up.end(),
-		  objparent->second) !=
-	objsub->second->up.end())
+    if (libport::has(objsub->second->up, objparent->second))
     {
       send_error(connection, this, "%s has already inherited from %s",
 		 sub->str(), parent->str());
@@ -3063,10 +3057,7 @@ UCommand_INHERIT::execute_(UConnection *connection)
   }
   else
   {
-    if (std::find(objsub->second->up.begin(),
-		  objsub->second->up.end(),
-		  objparent->second) ==
-	objsub->second->up.end())
+    if (!libport::has(objsub->second->up, objparent->second))
     {
       send_error(connection, this, "%s does not inherit from %s",
 		 sub->str(), parent->str());
@@ -3159,8 +3150,7 @@ UCommand_GROUP::execute_(UConnection *connection)
       else
       {
 	const char* objname = param->name->str();
-	while (::urbiserver->objaliastab.find(objname) !=
-	       ::urbiserver->objaliastab.end())
+	while (libport::mhas(::urbiserver->objaliastab, objname))
 	  objname = ::urbiserver->objaliastab[objname]->str();
 
 	g->members.push_back(new UString(objname));
@@ -3523,8 +3513,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	if (!variable && variablename->nostruct)
 	{
 	  UString* objname = variablename->getMethod();
-	  if (::urbiserver->variabletab.find(objname->str()) !=
-	      ::urbiserver->variabletab.end())
+	  if (libport::mhas(::urbiserver->variabletab, objname->str()))
 	    variable = ::urbiserver->variabletab[objname->str()];
 	}
       }
@@ -3606,13 +3595,11 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
     UString* devicename = variablename->getDevice();
     UDevice* dev = 0;
 
-    if (connection->server->devicetab.find(devicename->str()) !=
-	connection->server->devicetab.end())
+    if (libport::has(connection->server->devicetab, devicename->str()))
       dev = connection->server->devicetab[devicename->str()];
 
     if (dev == 0 && devicename->equal(connection->connectionTag->str()))
-      if (connection->server->devicetab.find(method->str()) !=
-	  connection->server->devicetab.end())
+      if (libport::has(connection->server->devicetab, method->str()))
 	dev = connection->server->devicetab[method->str()];
 
     if (!variable && !dev)
@@ -3809,11 +3796,9 @@ UCommand_BINDER::execute_(UConnection *connection)
 					   type,
 					   nbparam,
 					   connection);
-	if ( !it->second->internalAccessBinder.empty ()
-	     && std::find (::urbiserver->access_and_change_varlist.begin (),
-			   ::urbiserver->access_and_change_varlist.end (),
-			   it->second) ==
-	     ::urbiserver->access_and_change_varlist.end ())
+	if (!it->second->internalAccessBinder.empty ()
+	     && !libport::has (::urbiserver->access_and_change_varlist,
+			       it->second))
 	{
 	  it->second->access_and_change = true;
 	  ::urbiserver->access_and_change_varlist.push_back (it->second);
@@ -3823,8 +3808,7 @@ UCommand_BINDER::execute_(UConnection *connection)
     break;
 
     case UBIND_FUNCTION:
-      if (::urbiserver->functionbindertab.find(key->str())
-	  == ::urbiserver->functionbindertab.end())
+      if (!libport::mhas(::urbiserver->functionbindertab, key->str()))
 	::urbiserver->functionbindertab[key->str()] =
 	    new UBinder(*fullobjname, *fullname,
 			mode, type, nbparam, connection);
@@ -3834,8 +3818,7 @@ UCommand_BINDER::execute_(UConnection *connection)
       break;
 
     case UBIND_EVENT:
-      if (::urbiserver->eventbindertab.find(key->str())
-	  == ::urbiserver->eventbindertab.end())
+      if (!libport::mhas(::urbiserver->eventbindertab, key->str()))
 	::urbiserver->eventbindertab[key->str()] =
 	    new UBinder(*fullobjname, *fullname,
 			mode, type, nbparam, connection);
@@ -3847,8 +3830,7 @@ UCommand_BINDER::execute_(UConnection *connection)
     case UBIND_OBJECT:
     {
       UObj* uobj;
-      if (::urbiserver->objtab.find(variablename->id->str()) !=
-	  ::urbiserver->objtab.end())
+      if (libport::mhas(::urbiserver->objtab, variablename->id->str()))
 	uobj = ::urbiserver->objtab[variablename->id->str()];
       else
 	uobj = new UObj(variablename->id);
@@ -4770,8 +4752,8 @@ UCommand_DEF::execute_(UConnection *connection)
       return UCOMPLETED;
 
     if (variablename->nostruct &&
-	(::urbiserver->grouptab.find(variablename->getMethod()->str()) !=
-	 ::urbiserver->grouptab.end()))
+	(libport::mhas(::urbiserver->grouptab,
+		       variablename->getMethod()->str())))
     {
       send_error(connection, this,
 		 "function name conflicts with group %s ",
@@ -4779,8 +4761,7 @@ UCommand_DEF::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    if (connection->server->functiontab.find(funname->str()) !=
-	connection->server->functiontab.end())
+    if (libport::mhas(connection->server->functiontab, funname->str()))
     {
       if (::urbiserver->defcheck)
 	send_error(connection, this,
