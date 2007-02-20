@@ -114,7 +114,7 @@ UCommandQueue::popCommand (int &length)
     {
       // One char close sequence
       if (p0 == closechar_ && closechar2_ == ' ')
-	discard_ = closechar_ == '"' && p_1 == '\\'
+	discard_ = closechar_ == '"' && p_1 == '\\';
 
       // Two chars close sequence
       if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')
