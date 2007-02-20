@@ -241,6 +241,7 @@ UCommand*
 UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 		     bool with_nostruct)
 {
+  //  PING();
   if (!(this->*refName)())
     // We are in a non broadcastable command.
     return 0;
@@ -250,22 +251,18 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 
   if (!varname->rooted && devicename)
   {
-    HMgrouptab::iterator hmg;
+    UGroup* oo;
     if (varname->nostruct && with_nostruct)
-      hmg = ::urbiserver->grouptab.find(method->str());
+      oo = libport::find0(::urbiserver->grouptab, method->str());
     else
-      hmg = ::urbiserver->grouptab.find(devicename->str());
+      oo = libport::find0(::urbiserver->grouptab, devicename->str());
 
-    UGroup *oo = 0;
-    if (hmg != ::urbiserver->grouptab.end())
-      oo = hmg->second;
-
-    if (oo && oo->members.size() > 0)
+    if (oo && !oo->members.empty())
     {
       UCommand *gplist = 0;
-      for (std::list<UString*>::iterator retr = oo->members.begin();
-	   retr != oo->members.end();
-	   ++retr)
+      for (std::list<UString*>::iterator i = oo->members.begin();
+	   i != oo->members.end();
+	   ++i)
       {
 	UCommand *clone = copy();
 	UVariableName*& clonename = *((clone->*refName)());
@@ -273,10 +270,10 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 
 	// FIXME: Why don't we use clone here on the UVariableName.
 	if (varname->nostruct && with_nostruct)
-	  clonename = new UVariableName(devicename->copy(), (*retr)->copy(),
+	  clonename = new UVariableName(devicename->copy(), (*i)->copy(),
 					false, ucopy (varname->index));
 	else
-	  clonename = new UVariableName((*retr)->copy(), method->copy(),
+	  clonename = new UVariableName((*i)->copy(), method->copy(),
 					false, ucopy (varname->index));
 
 	clonename->isnormalized = varname->isnormalized;
@@ -608,14 +605,11 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 
   ////// Native URBI: user-defined /////
 
-  HMfunctiontab::iterator hmf =
-    ::urbiserver->functiontab.find(functionname->str());
-  UFunction *fun;
-  if (hmf == ::urbiserver->functiontab.end())
+  UFunction *fun = libport::find0(urbiserver->functiontab, functionname->str());
+  if (!fun)
   {
     //trying inheritance
     const char* devname = expression->variablename->getDevice()->str();
-    fun = 0;
     HMobjtab::iterator itobj;
     if ((itobj = ::urbiserver->objtab.find(devname)) !=
 	::urbiserver->objtab.end())
@@ -637,8 +631,6 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       }
     }
   }
-  else
-    fun = hmf->second;
 
 
   if (fun)
@@ -740,8 +732,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 
   ////// module-defined /////
   bool found_function = false;
-  urbi::UTable::iterator hmfi =
-    urbi::functionmap->find(functionname->str());
+  urbi::UTable::iterator hmfi = urbi::functionmap->find(functionname->str());
   if (hmfi != urbi::functionmap->end())
   {
     for (std::list<urbi::UGenericCallback*>::iterator cbi =
@@ -782,24 +773,24 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   ////// EXTERNAL /////
   if (!found_function)
   {
-    HMbindertab::iterator it =
-      ::urbiserver->functionbindertab.find(functionname->str());
-    if (it != ::urbiserver->functionbindertab.end()
+    UBinder* b = libport::find0(::urbiserver->functionbindertab,
+				functionname->str());
+    if (b
 	&& (expression->parameters
-	    ? it->second->nbparam == expression->parameters->size()
-	    : it->second->nbparam == 0)
-	&& !it->second->monitors.empty())
+	    ? b->nbparam == expression->parameters->size()
+	    : b->nbparam == 0)
+	&& !b->monitors.empty())
     {
       std::string uid = unic("__UFnctret.EXTERNAL_");
       {
 	std::ostringstream o;
 	o << "[0,"
 	  << "\"" << functionname->str()
-	  << "__" << it->second->nbparam << "\","
+	  << "__" << b->nbparam << "\","
 	  << "\"" << uid << "\"";
 
-	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	     j != it->second->monitors.end();
+	for (std::list<UMonitor*>::iterator j = b->monitors.begin();
+	     j != b->monitors.end();
 	     ++j)
 	{
 	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);

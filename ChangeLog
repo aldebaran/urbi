@@ -1,6 +1,12 @@
 2007-02-20  Akim Demaille  <demaille@gostai.com>
 
 	Use find0
+	* src/ucommand.cc (UCommand::scanGroups)
+	(UCommand_ASSIGN_VALUE::execute_function_call): here.
+
+2007-02-20  Akim Demaille  <demaille@gostai.com>
+
+	Use find0
 	* src/uvariablename.cc (UVariableName::getVariable)
 	(UVariableName::getFunction, UVariableName::buildFullname): Here.
 
