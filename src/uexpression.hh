@@ -175,6 +175,18 @@ private:
   UValue*
   eval_GROUP (UCommand* command, UConnection* connection);
 
+  /// Functions with no arguments.
+  UValue*
+  eval_FUNCTION_0 (UConnection *connection);
+
+  /// Unary functions.
+  UValue*
+  eval_FUNCTION_1 (UCommand *command, UConnection *connection);
+
+  /// Binary functions.
+  UValue*
+  eval_FUNCTION_2 (UCommand *command, UConnection *connection);
+
   /// eval() specialized for type == FUNCTION.
   UValue*
   eval_FUNCTION (UCommand* command, UConnection* connection,
