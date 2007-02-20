@@ -1933,7 +1933,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	}
       }
     }
-    
+
     case PROPERTY:
     {
       UVariable* variable = variablename->getVariable(cmd, c);
