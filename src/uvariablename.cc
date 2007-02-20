@@ -399,7 +399,7 @@ resolve_aliases(const char* cp)
 }
 
 
-//! UVariableName name extraction, witch caching
+//! UVariableName name extraction, with caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
  If the building blocks are static, non variable parameters (like static
  indexes in an array or constant string in a $(...)), cached is set to
@@ -514,16 +514,14 @@ UVariableName::buildFullname (UCommand* command,
   // Alias updating
   if (withalias)
   {
-    HMaliastab::iterator hmi;
+    const char* cp;
     if (nostruct)
-    {
       // Comes from a simple IDENTIFIER.
-      const char* cp = resolve_aliases(suffix(name.c_str()));
-      hmi = ::urbiserver->aliastab.find(suffix(cp));
-    }
+      cp = suffix(resolve_aliases(suffix(name.c_str())));
     else
-      hmi = ::urbiserver->aliastab.find(name.c_str());
+      cp = name.c_str();
 
+    HMaliastab::iterator hmi= ::urbiserver->aliastab.find(cp);
     HMaliastab::iterator past_hmi = hmi;
     while (hmi != ::urbiserver->aliastab.end())
     {

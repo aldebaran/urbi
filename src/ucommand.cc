@@ -1112,7 +1112,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  {
 	    modif_sin = modif->expression;
 	    // FIXME: delete modif_phase before?
-	    modif_phase = new UExpression(loc_, 
+	    modif_phase = new UExpression(loc_,
 					  UExpression::VALUE, PI/ufloat(2));
 	    controlled = true;
 	  }

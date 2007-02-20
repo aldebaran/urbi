@@ -1,5 +1,12 @@
 2007-02-20  Akim Demaille  <demaille@gostai.com>
 
+	Racfor buildfullname
+	* src/uvariablename.cc: This code is really really hard to
+	understand.  There seems to be a call the resolve_aliases
+	hidden right afterward these bits, but I'm not sure...
+
+2007-02-20  Akim Demaille  <demaille@gostai.com>
+
 	UCommand::tmp_*
 	* src/ucommand.hh, src/ucommand.cc (tmp_phase, tmp_time): remove.
 
