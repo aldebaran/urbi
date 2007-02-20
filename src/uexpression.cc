@@ -919,11 +919,12 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   passert (variablename->id->str(),
 	   *variablename->id == "exec"
 	   || *variablename->id == "load");
-
+  PING();
   bool in_load = *variablename->id == "load";
   UValue* e1 = parameters->expression->eval(command, connection);
   ENSURE_TYPES_1 (DATA_STRING);
 
+  PING();
   // send string in the queue
   ::urbiserver->systemcommands = false;
   if (!connection->stack.empty())
@@ -938,6 +939,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
 	      e1->str->len());
 
+  PING();
   if (connection->functionTag)
     {
       delete connection->functionTag;
@@ -945,6 +947,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     }
   ::urbiserver->systemcommands = true;
 
+  PING();
   if (p.errorMessage[0])
     {
       // a parsing error occured
@@ -955,6 +958,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 	}
       connection->send(p.errorMessage, "error");
     }
+  PING();
 
   if (p.commandTree)
     {
@@ -971,6 +975,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 		 e1->str->str());
       return 0;
     }
+  PING();
 
   delete e1;
   UValue* ret = new UValue();
@@ -983,6 +988,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 			    UConnection *connection,
 			    UEventCompound*& ec)
 {
+  PING();
   passert (type, type == FUNCTION);
   UString* funname = variablename->buildFullname(command, connection);
 
@@ -1110,6 +1116,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 
   }
 
+  PING();
   if (parameters && parameters->size() == 1)
   {
     if (*variablename->id == "strlen")
@@ -1274,6 +1281,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       return eval_FUNCTION_EXEC_OR_LOAD (command, connection);
   }
 
+  PING();
   if (parameters &&
       parameters->size() == 3 &&
       *variablename->id == "strsub")
@@ -1829,19 +1837,11 @@ UErrorValue
 UExpression::asyncScan(UASyncCommand *cmd,
 		       UConnection *c)
 {
-  UVariable *variable;
-  UNamedParameters *pevent;
-  HMfunctiontab::iterator hmf;
-  std::list<UString*>::iterator it;
-  UEventHandler* eh;
-  UString* fullname;
-  const char* varname;
-  int nbargs;
-
   switch (type)
   {
     case LIST:
-      pevent = parameters;
+    {
+      UNamedParameters *pevent = parameters;
       while (pevent)
       {
 	if (pevent->expression->asyncScan(cmd, c) == UFAIL)
@@ -1849,14 +1849,15 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	pevent = pevent->next;
       }
       return USUCCESS;
+    }
 
     case VARIABLE:
-
-      variable = variablename->getVariable(cmd, c);
-      fullname = variablename->getFullname();
+    {
+      UVariable* variable = variablename->getVariable(cmd, c);
+      UString* fullname = variablename->getFullname();
       if (!fullname)
 	return UFAIL;
-      varname  = variablename->getFullname()->str();
+      const char* varname  = variablename->getFullname()->str();
 
       if (!variable)
       {
@@ -1916,44 +1917,42 @@ UExpression::asyncScan(UASyncCommand *cmd,
       else
       {
 	// It is not a variable but it could be an event
-	eh = kernel::findEventHandler(fullname, 0);
-	if (eh)
+	if (UEventHandler* eh = kernel::findEventHandler(fullname, 0))
 	{
 	  eh->registerCmd(cmd);
 	  return USUCCESS;
 	}
+	else if (c->server->defcheck) //strict
+	  return UFAIL;
 	else
-	  if (c->server->defcheck) //strict
-	    return UFAIL;
-	  else
-	  {
-	    variable = new UVariable (fullname->str (),
-				      new UValue (ufloat (0)));
-	    variable->registerCmd(cmd);
-	    return USUCCESS;
-	  }
+	{
+	  variable = new UVariable (fullname->str (),
+				    new UValue (ufloat (0)));
+	  variable->registerCmd(cmd);
+	  return USUCCESS;
+	}
       }
-
+    }
+    
     case PROPERTY:
-
-      variable = variablename->getVariable(cmd, c);
-      fullname = variablename->getFullname();
-      if (!fullname)
-	return UFAIL;
+    {
+      UVariable* variable = variablename->getVariable(cmd, c);
       if (!variable)
+	return UFAIL;
+      UString* fullname = variablename->getFullname();
+      if (!fullname)
 	return UFAIL;
       variable->registerCmd(cmd);
       return USUCCESS;
+    }
 
     case FUNCTION:
-
-      fullname = variablename->buildFullname (cmd, c);
-      nbargs = 0;
+    {
+      UString* fullname = variablename->buildFullname (cmd, c);
+      int nbargs = 0;
       if (parameters)
 	nbargs = parameters->size ();
-      eh = kernel::findEventHandler(fullname, nbargs);
-
-      if (eh)
+      if (UEventHandler* eh = kernel::findEventHandler(fullname, nbargs))
       {
 	// This is an event
 	eh->registerCmd (cmd);
@@ -1962,7 +1961,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
       else
       {
 	// is it a known kernel function?
-	if ( kernel::isCoreFunction (variablename->id))
+	if (kernel::isCoreFunction (variablename->id))
 	{
 	  UNamedParameters* param = parameters;
 	  while (param)
@@ -1981,14 +1980,16 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	    return UFAIL;
 	  else
 	  {
-	    eh = new UEventHandler (fullname, nbargs);
+	    UEventHandler* eh = new UEventHandler (fullname, nbargs);
 	    eh->registerCmd (cmd);
 	    return USUCCESS;
 	  }
 	}
       }
+    }
 
     default:
+    {
       if (expression1)
 	if (expression1->asyncScan(cmd, c) == UFAIL)
 	  return UFAIL;
@@ -1997,5 +1998,6 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	if (expression2->asyncScan(cmd, c) == UFAIL)
 	  return UFAIL;
       return USUCCESS;
+    }
   }
 }
