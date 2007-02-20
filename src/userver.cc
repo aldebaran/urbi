@@ -533,6 +533,38 @@ UServer::~UServer()
   FREEOBJ(UServer);
 }
 
+void
+UServer::vecho_key(const char* key, const char* s, va_list args)
+{
+  // This local declaration is rather unefficient but is necessary
+  // to insure that the server could be made semi-reentrant.
+
+  char key_[6];
+
+  if (key == NULL)
+    key_[0] = 0;
+  else
+  {
+    strncpy(key_, key, 5);
+    key_[5] = 0;
+  }
+
+  char buf1[MAXSIZE_INTERNALMESSAGE];
+  vsnprintf(buf1, sizeof buf1, s, args);
+  char buf2[MAXSIZE_INTERNALMESSAGE];
+  snprintf(buf2, sizeof buf2, "%-90s [%5s]\n", buf1, key_);
+  display(buf2);
+}
+
+void
+UServer::echoKey(const char* key, const char* s, ...)
+{
+  va_list args;
+  va_start(args, s);
+  vecho_key(key, s, args);
+  va_end(args);
+}
+
 //! Displays a formatted error message.
 /*! This function uses the virtual URobot::display() function to make the
  message printing robot-specific.
@@ -543,22 +575,10 @@ UServer::~UServer()
 void
 UServer::error(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [ERROR]\n",
-	   tmpBuffer_);
-
-  display(internalMessage_);
+  va_list args;
+  va_start(args, s);
+  vecho_key("ERROR", s, args);
+  va_end(args);
 }
 
 //! Displays a formatted message.
@@ -574,62 +594,10 @@ UServer::error(const char* s, ...)
 void
 UServer::echo(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [     ]\n",
-	   tmpBuffer_);
-
-  display(internalMessage_);
-}
-
-//! Displays a formatted message, with a key
-/*! This function uses the virtual URobot::display() function to make the
- message printing robot-specific.
- It formats the output in a standard URBI way by adding a key between
- brackets at the end. This key can be "" or NULL.It can be used to
- visually extract information from the flux of messages printed by
- the server.
- \param key is the message key. Maxlength = 5 chars.
- \param s is the formatted string containing the message.
- */
-void
-UServer::echoKey(const char* key, const char* s, ...)
-{
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-  char key_[6];
-
-  if (key == NULL)
-    key_[0] = 0;
-  else
-  {
-    strncpy(key_, key, 5);
-    key_[5] = 0;
-  }
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [%5s]\n",
-	   tmpBuffer_, key_);
-
-  display(internalMessage_);
+  va_list args;
+  va_start(args, s);
+  vecho_key("     ", s, args);
+  va_end(args);
 }
 
 //! Displays a raw message for debug

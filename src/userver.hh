@@ -105,6 +105,20 @@ public:
     __attribute__ ((__format__ (__printf__, 2, 3)));
   void echo (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
+
+
+  //! Display a formatted message, with a key.
+  /*! This function uses the virtual URobot::display() function to make the
+   message printing robot-specific.
+   It formats the output in a standard URBI way by adding a key between
+   brackets at the end. This key can be "" or NULL.It can be used to
+   visually extract information from the flux of messages printed by
+   the server.
+   \param key is the message key. Maxlength = 5 chars.
+   \param s   is the formatted string containing the message.
+   */
+  void vecho_key (const char* key, const char* s, va_list args)
+    __attribute__ ((__format__ (__printf__, 3, 0)));
   void echoKey (const char* key, const char* s, ...)
     __attribute__ ((__format__ (__printf__, 3, 4)));
 
@@ -305,11 +319,11 @@ UServer::lastTime()
 }
 
 
-inline 
+inline
 int unic()
 {
   /// Unique identifier to create new references.
-  static int cnt = 10000; 
+  static int cnt = 10000;
   return ++cnt;
 }
 

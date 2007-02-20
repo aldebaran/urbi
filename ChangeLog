@@ -1,5 +1,11 @@
 2007-02-20  Akim Demaille  <demaille@gostai.com>
 
+	vecho_key
+	* src/userver.hh, src/userver.cc (vecho_key): New.
+	(echoKey, error, echo): Use it.
+
+2007-02-20  Akim Demaille  <demaille@gostai.com>
+
 	More UValue ctors
 	* src/uvalue.hh, src/uvalue.cc
 	(UValue::UValue (dataType, const char*)): New.
