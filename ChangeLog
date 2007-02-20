@@ -1,5 +1,16 @@
 2007-02-20  Akim Demaille  <demaille@gostai.com>
 
+	Tidy uobj.cc
+	* src/uobj.cc (remove): New.
+	(~UObj): Use it.
+	(UWaitCounter): Move its methods...
+	* src/utypes.hh: here.
+	(UWaitCounter::id): Now an UString.
+	(~UWaitCounter): Remove, now useless.
+	* src/ucommand.cc: Adjust.
+
+2007-02-20  Akim Demaille  <demaille@gostai.com>
+
 	Racfor buildfullname
 	* src/uvariablename.cc: This code is really really hard to
 	understand.  There seems to be a call the resolve_aliases

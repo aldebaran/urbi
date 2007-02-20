@@ -2731,9 +2731,9 @@ UCommand_NEW::execute_(UConnection *connection)
       ow->second->nb += nb;
     else
     {
-      UWaitCounter *wc = new UWaitCounter(id, nb);
+      UWaitCounter *wc = new UWaitCounter(*id, nb);
       ASSERT(wc)
-	::urbiserver->objWaittab[wc->id->str()] = wc;
+	::urbiserver->objWaittab[wc->id.str()] = wc;
     }
     // initiate remote new waiting
     remoteNew = true;

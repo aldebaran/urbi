@@ -35,6 +35,7 @@
 # include "fwd.hh"
 
 # include "urbi/utypes-common.hh"
+# include "ustring.hh"
 
 /*--------------------.
 | Memory allocation.  |
@@ -166,19 +167,20 @@ enum UReport
 
 typedef unsigned char ubyte;
 
-# define ABSF(x)     (((x)>0)? (x) : (-(x)) )
+# define ABSF(x)     (((x)>0)? (x) : (-(x)))
 
-/** Class containing the number of pending call to a remote new for
- * a given class name (id).
- *  */
+/// The number of pending call to a remote new for a given class name (id).
 class UWaitCounter
 {
-  public:
-    UWaitCounter(UString *id, int nb);
-    ~UWaitCounter();
-
-   UString* id; ///< class name
-   int nb; ///< nb of waiting calls
+public:
+  UWaitCounter(const UString& id, int nb)
+    : id(id),
+      nb(nb)
+  {
+  }
+  
+  UString id; ///< class name
+  int nb; ///< nb of waiting calls
 };
 
 

@@ -50,6 +50,23 @@ UObj::UObj (UString *device)
   new UVariable(this->device->str(), objvalue);
 }
 
+
+// Empty event binders.
+void
+remove (HMbindertab& t, UString& s)
+{
+  std::list<HMbindertab::iterator> deletelist;
+  for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
+    if (i->second->removeMonitor(s))
+      deletelist.push_back(i);
+
+  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
+       i != deletelist.end();
+       ++i)
+    t.erase((*i));
+  deletelist.clear();
+}
+
 //! UObj destructor
 UObj::~UObj()
 {
@@ -78,32 +95,10 @@ UObj::~UObj()
       i->second->binder = 0;
     }
 
-  std::list<HMbindertab::iterator> deletelist;
-  //clean functions binders
-  for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
-       i != ::urbiserver->functionbindertab.end();
-       ++i)
-    if (i->second->removeMonitor(*device))
-      deletelist.push_back(i);
-
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    ::urbiserver->functionbindertab.erase((*i));
-  deletelist.clear();
-
-  //clean events binders
-  for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
-       i != ::urbiserver->eventbindertab.end();
-       ++i)
-    if (i->second->removeMonitor(*device))
-      deletelist.push_back(i);
-
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    ::urbiserver->eventbindertab.erase((*i));
-  deletelist.clear();
+  // clean functions binders.
+  remove(::urbiserver->functionbindertab, *device);
+  // Clean events binders.
+  remove(::urbiserver->eventbindertab, *device);
 
   // clean the object binder
   if (binder)
@@ -144,7 +139,7 @@ UObj::~UObj()
     if (internalBinder->getUObject()->derived)
       // this deletes the associated UObject
       delete internalBinder;
-    else if (internalBinder->getUObject())
+    else
       delete internalBinder->getUObject();
   }
 
@@ -208,7 +203,7 @@ UObj::searchFunction(const char* id, bool &ambiguous) const
   }
 
   // test for plugged uobjects symbols
-  if (::urbi::functionmap->find(o.str().c_str()) != ::urbi::functionmap->end())
+  if (libport::mhas(*::urbi::functionmap, o.str().c_str()))
   {
     ambiguous = false;
     return kernel::remoteFunction;
@@ -329,19 +324,4 @@ UObj::searchEvent(const char* id, bool &ambiguous) const
     ambiguous = false;
     return ret;
   }
-}
-
-/*********************************************/
-/* UWaitCounter                              */
-/*********************************************/
-
-UWaitCounter::UWaitCounter(UString *id, int nb)
-{
-  this->id = new UString(*id);
-  this->nb = nb;
-}
-
-UWaitCounter::~UWaitCounter()
-{
-  delete id;
 }
