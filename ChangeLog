@@ -1,5 +1,10 @@
 2007-02-20  Akim Demaille  <demaille@gostai.com>
 
+	Expect no conflicts
+	* src/parser/bison/ugrammar.y: here.
+
+2007-02-20  Akim Demaille  <demaille@gostai.com>
+
 	Regen bison++
 	* src/parser/bison/bison.mk: Add the missing dependency rules.
 
