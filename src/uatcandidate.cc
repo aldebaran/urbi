@@ -16,6 +16,7 @@
 
  **************************************************************************** */
 
+#include "uvalue.hh"
 #include "uatcandidate.hh"
 #include "ucommand.hh"
 #include "ueventhandler.hh"
@@ -71,7 +72,7 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
 			      true,  0),
 	   // FIXME: Don't know what happens here, fake location.
 	   new UExpression (UExpression::location (),
-			    UExpression::VALUE, *iuv), 0);
+			    UExpression::VALUE, (*iuv)->copy()), 0);
 	if (!cmd)
 	  cmd = newcmd;
 	else
