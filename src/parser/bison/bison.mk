@@ -5,6 +5,8 @@
 # A Bison wrapper for C++.
 BISONXX = $(top_builddir)/build-aux/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
+$(BISONXX): $(BISONXX_IN)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/bison++
 
 parsedir = $(top_srcdir)/src/parser/bison
 
