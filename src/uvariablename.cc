@@ -224,19 +224,16 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
   if (!fullname_)
     return 0;
 
-  HMvariabletab::iterator i;
+  UVariable *v;
   if (nostruct &&
       libport::mhas(::urbiserver->objtab, getMethod()->str()))
-    i = ::urbiserver->variabletab.find(getMethod()->str());
+    v = libport::find0(::urbiserver->variabletab, getMethod()->str());
   else
-    i = ::urbiserver->variabletab.find(fullname_->str());
-
-  UVariable *tmpvar = (i != ::urbiserver->variabletab.end()) ? i->second : 0;
-
+    v = libport::find0(::urbiserver->variabletab, fullname_->str());
   if (cached)
-    variable = tmpvar;
+    variable = v;
 
-  return tmpvar;
+  return v;
 }
 
 //! UVariableName access to function (with cache)
@@ -257,10 +254,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if (!fullname_)
     return 0;
 
-  UFunction* f = 0;
-  HMfunctiontab::iterator i = ::urbiserver->functiontab.find(fullname_->str());
-  if (i != ::urbiserver->functiontab.end())
-    f = i->second;
+  UFunction* f = libport::find0(::urbiserver->functiontab, fullname_->str());
 
   if (cached)
     function = f;
@@ -464,14 +458,14 @@ UVariableName::buildFullname (UCommand* command,
 	    // does the symbol exist as an object symbol (direct on inherited)?
 	    bool class_symbol = false;
 
-	    HMobjtab::iterator objit =::urbiserver->objtab.find(funid->self());
-	    if (objit != ::urbiserver->objtab.end())
+	    if (const UObj* u = libport::find0(::urbiserver->objtab,
+					       funid->self()))
 	    {
 	      bool ambiguous = true;
 	      class_symbol =
-		objit->second->searchVariable(id->str(), ambiguous)
-		|| objit->second->searchFunction(id->str(), ambiguous)
-		|| objit->second->searchEvent(id->str(), ambiguous);
+		u->searchVariable(id->str(), ambiguous)
+		|| u->searchFunction(id->str(), ambiguous)
+		|| u->searchEvent(id->str(), ambiguous);
 	      class_symbol = class_symbol && !ambiguous;
 	    }
 
