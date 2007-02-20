@@ -76,6 +76,17 @@ UValue::UValue(const char* str)
   ADDOBJ(UValue);
 }
 
+UValue::UValue(UDataType t, const char* s)
+  : dataType (t),
+    val(0),
+    str(new UString(s)),
+    liststart(0),
+    next(0)
+{
+  passert(t, t == DATA_FILE || t == DATA_STRING || t == DATA_OBJ);
+  ADDOBJ(UValue);
+}
+
 #define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
 
 inline int exprToInt(UExpression *e)
@@ -406,16 +417,15 @@ UValue::UValue(const urbi::UValue &v)
       {
 	dataType = DATA_LIST;
 	UValue * current = this;
-	for (std::vector<urbi::UValue *>::iterator it =
+	for (std::vector<urbi::UValue *>::iterator i =
 	       v.list->array.begin();
-	     it != v.list->array.end(); ++it)
+	     i != v.list->array.end(); ++i)
 	  {
-	    UValue *n = new UValue(*(*it));
+	    UValue *n = new UValue(**i);
 	    current->next = n;
 	    while (current->next)
 	      current = current->next;
 	  }
-
 	liststart = next;
 	next = 0;
       }
@@ -453,27 +463,12 @@ UValue::copy() const
   switch (dataType)
   {
     case DATA_NUM:
-    {
-      UValue *res = new UValue();
-      res->dataType = dataType;
-      res->val = val;
-      return res;
-    }
+      return new UValue(val);
 
     case DATA_FILE:
     case DATA_STRING:
     case DATA_OBJ:
-    {
-      UValue *res = new UValue();
-      res->dataType = dataType;
-      res->str = new UString(*str);
-      if (!res->str)
-      {
-	delete res;
-	return 0;
-      }
-      return res;
-    }
+      return new UValue(dataType, str->str());
 
     case DATA_BINARY:
     {
@@ -508,11 +503,7 @@ UValue::copy() const
     }
 
     case DATA_VOID:
-    {
-      UValue *res = new UValue();
-      res->dataType = dataType;
-      return res;
-    }
+      return new UValue();
 
     case DATA_UNKNOWN:
     case DATA_FUNCTION:

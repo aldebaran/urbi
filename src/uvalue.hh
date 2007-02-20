@@ -43,6 +43,9 @@ public:
   UValue(const char* str);
   UValue(const urbi::UValue&);
 
+  /// \pre \a t is DATA_FILE, or DATA_STRING, or DATA_OBJ.
+  UValue(UDataType t, const char* s);
+
   UValue& operator = (const urbi::UBinary&);
   UValue& operator = (const urbi::UImage&);
   UValue& operator = (const urbi::USound&);
