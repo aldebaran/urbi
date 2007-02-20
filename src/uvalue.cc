@@ -660,23 +660,7 @@ UValue::add(UValue *v)
     }
 
     if (v->dataType == DATA_STRING)
-    {
-      UValue *res = new UValue();
-      if (res == 0)
-	return 0;
-
-      res->dataType = DATA_STRING;
-
-      std::ostringstream o;
-      o << str->str() << '.' << v->str->str();
-      res->str = new UString(o.str());
-      if (res->str == 0)
-      {
-	delete res;
-	return 0;
-      }
-      return res;
-    }
+      return new UValue((std::string(str->str()) + v->str->str()).c_str());
   }
   return 0;
 }
