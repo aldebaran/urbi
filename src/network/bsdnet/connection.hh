@@ -23,7 +23,7 @@ public:
     // This is also the size of the buffer
     PACKETSIZE	     = 16384,
     MINRECVBUFFERSIZE = 4096,
-    MAXRECVBUFFERSIZE = 32768,
+    MAXRECVBUFFERSIZE = 1048576,
   };
 
   //! Creates a new connection from the connection file descriptor

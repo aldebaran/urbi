@@ -44,7 +44,7 @@ public:
   static const int MAXSENDBUFFERSIZE = 1048576;
   static const int PACKETSIZE        = 32768;
   static const int MINRECVBUFFERSIZE = 4096;
-  static const int MAXRECVBUFFERSIZE = 32768;
+  static const int MAXRECVBUFFERSIZE = 1048576;
 
 protected:
   virtual int   effectiveSend     (const ubyte *buffer, int length);
