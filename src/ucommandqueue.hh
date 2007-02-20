@@ -20,10 +20,10 @@
  **************************************************************************** */
 
 #ifndef UCOMMANDQUEUE_HH
-#define UCOMMANDQUEUE_HH
+# define UCOMMANDQUEUE_HH
 
-#include "fwd.hh"
-#include "uqueue.hh"
+# include "fwd.hh"
+# include "uqueue.hh"
 
 /// UQueue with facilities to pop a well formed command.
 /*! UCommandqueue is a UQueue with the popCommand(int &length) function to

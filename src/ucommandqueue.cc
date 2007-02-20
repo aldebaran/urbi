@@ -31,8 +31,8 @@
     behavior.
 */
 UCommandQueue::UCommandQueue  (int minBufferSize,
-				int maxBufferSize,
-				int adaptive)
+			       int maxBufferSize,
+			       int adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
     cursor_         (0),
     bracketlevel_   (0),
@@ -114,11 +114,7 @@ UCommandQueue::popCommand (int &length)
     {
       // One char close sequence
       if (p0 == closechar_ && closechar2_ == ' ')
-      {
-	discard_ = false;
-	if (closechar_ == '"' && p_1 == '\\')
-	  discard_ = true; // cancel the closure.
-      }
+	discard_ = closechar_ == '"' && p_1 == '\\'
 
       // Two chars close sequence
       if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')
