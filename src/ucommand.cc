@@ -18,16 +18,15 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 #include "config.h"
 
 #include "libport/cstdio"
-
 #include <cstdarg>
 #include <cstdlib>
 #include <cmath>
 #include <sstream>
-
 #include "libport/cstring"
 
 #include "libport/containers.hh"
@@ -171,6 +170,9 @@ UCommand::~UCommand()
 UCommand::Status
 UCommand::execute(UConnection* c)
 {
+#ifdef ENABLE_DEBUG_TRACES
+  print(0);
+#endif
   return status = execute_ (c);
 }
 
@@ -300,7 +302,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 void
 UCommand::setTag(const std::string& tag)
 {
-  if (tag==this->tag)
+  if (tag == this->tag)
     return;
   if (tag != "")
     unsetTag();
@@ -394,7 +396,6 @@ UCommand::strMorph (const std::string& cmd)
 	(new UExpression (loc(), UExpression::VALUE, new UString(cmd.c_str())))
 	)
       );
-
   status = UMORPH;
 }
 
@@ -606,12 +607,10 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   {
     //trying inheritance
     const char* devname = expression->variablename->getDevice()->str();
-    HMobjtab::iterator itobj;
-    if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	::urbiserver->objtab.end())
+    if (UObj* o = libport::find0(::urbiserver->objtab, devname))
     {
       bool ambiguous;
-      fun = itobj->second->searchFunction
+      fun = o->searchFunction
 	(expression->variablename->getMethod()->str(), ambiguous);
 
       //hack until we get proper nameresolution
@@ -2608,7 +2607,6 @@ UCommand_NEW::execute_(UConnection *connection)
   if (remoteNew &&
       libport::mhas(::urbiserver->objWaittab, id->str()))
     return URUNNING;
-
   morph = 0;
   if (!id)
   {
@@ -2743,16 +2741,13 @@ UCommand_NEW::execute_(UConnection *connection)
   if (objit->second->internalBinder)
     objit->second->internalBinder->copy(std::string(id->str()));
 
+  UObj* newobj = libport::find0(::urbiserver->objtab, id->str());
   bool creation = false;
-  UObj* newobj;
-  HMobjtab::iterator idit = ::urbiserver->objtab.find(id->str());
-  if (idit == ::urbiserver->objtab.end())
+  if (!newobj)
   {
     newobj = new UObj(id);
     creation = true;
   }
-  else
-    newobj = idit->second;
 
   if (libport::has(newobj->up, objit->second))
   {
@@ -2838,7 +2833,7 @@ UCommand_NEW::execute_(UConnection *connection)
   }
   else
     oss << "noop }";
-
+  ECHO(oss.str ());
   strMorph (oss.str ());
   return UMORPH;
 }
