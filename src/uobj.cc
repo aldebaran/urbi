@@ -55,7 +55,7 @@ UObj::~UObj()
 {
   // Removal of all variable bindings
   std::list<UVariable*> varToDelete;
-  for (HMvariabletab::iterator  it = ::urbiserver->variabletab.begin();
+  for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
        it != ::urbiserver->variabletab.end();
        ++it)
     if (!it->second->getMethod().empty()
@@ -185,7 +185,7 @@ UObj::~UObj()
 }
 
 UFunction*
-UObj::searchFunction(const char* id, bool &ambiguous)
+UObj::searchFunction(const char* id, bool &ambiguous) const
 {
   UFunction* ret;
   std::ostringstream o;
@@ -217,7 +217,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
   // try recursively with parents
   ret = 0;
   bool found = false;
-  for (std::list<UObj*>::iterator i = up.begin();
+  for (std::list<UObj*>::const_iterator i = up.begin();
        i != up.end();
        ++i)
   {
@@ -241,7 +241,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
 }
 
 UVariable*
-UObj::searchVariable(const char* id, bool &ambiguous)
+UObj::searchVariable(const char* id, bool &ambiguous) const
 {
   UVariable* ret;
   std::ostringstream o;
@@ -256,7 +256,7 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   {
     ret   = 0;
     bool found = false;
-    for (std::list<UObj*>::iterator i = up.begin();
+    for (std::list<UObj*>::const_iterator i = up.begin();
 	 i != up.end();
 	 ++i)
     {
@@ -281,15 +281,15 @@ UObj::searchVariable(const char* id, bool &ambiguous)
 }
 
 UEventHandler*
-UObj::searchEvent(const char* id, bool &ambiguous)
+UObj::searchEvent(const char* id, bool &ambiguous) const
 {
   UEventHandler* ret;
   std::ostringstream o;
   o << device->str() << '.' << id;
   bool ok = false;
-  HMemittab::iterator ietok = ::urbiserver->emittab.end ();
+  HMemittab::const_iterator ietok = ::urbiserver->emittab.end ();
 
-  for (HMemittab::iterator i = ::urbiserver->emittab.begin ();
+  for (HMemittab::const_iterator i = ::urbiserver->emittab.begin ();
        i != ::urbiserver->emittab.end () && !ok;
        ++i)
     if (*i->second->unforgedName == o.str().c_str())
@@ -307,11 +307,11 @@ UObj::searchEvent(const char* id, bool &ambiguous)
   {
     ret   = 0;
     bool found = false;
-    for (std::list<UObj*>::iterator i = up.begin();
+    for (std::list<UObj*>::const_iterator i = up.begin();
 	 i != up.end();
 	 ++i)
     {
-       UEventHandler* tmpres = (*i)->searchEvent(id, ambiguous);
+      UEventHandler* tmpres = (*i)->searchEvent(id, ambiguous);
       if (ambiguous)
 	return 0;
       if (tmpres)
