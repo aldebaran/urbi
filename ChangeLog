@@ -1,5 +1,10 @@
 2007-02-20  Akim Demaille  <demaille@gostai.com>
 
+	UCommand::tmp_*
+	* src/ucommand.hh, src/ucommand.cc (tmp_phase, tmp_time): remove.
+
+2007-02-20  Akim Demaille  <demaille@gostai.com>
+
 	Use find0
 	* src/ucommand.cc (UCommand::scanGroups)
 	(UCommand_ASSIGN_VALUE::execute_function_call): here.

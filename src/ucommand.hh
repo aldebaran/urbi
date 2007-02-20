@@ -295,10 +295,6 @@ private:
   UExpression* modif_adaptive;
   UVariableName* modif_getphase;
 
-  /// stored temporary phase for cos modificator
-  UExpression* tmp_phase;
-  /// stored temporary time=0 for direct assignment
-  UExpression* tmp_time;
   /// time limit in case of timeout modificator
   ufloat endtime;
   /// start value for modificators

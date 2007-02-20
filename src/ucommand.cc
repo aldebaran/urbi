@@ -558,8 +558,6 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(const location& l,
     modif_ampli (0),
     modif_adaptive (0),
     modif_getphase (0),
-    tmp_phase (0),
-    tmp_time (0),
     endtime (-1),
     finished (false),
     profileDone (false),
@@ -577,8 +575,6 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
   delete expression;
   delete variablename;
   delete parameters;
-  delete tmp_phase;
-  delete tmp_time;
 
   if (assigned)
   {
@@ -1115,8 +1111,9 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  else if (*modif->name == "cos")
 	  {
 	    modif_sin = modif->expression;
-	    tmp_phase = new UExpression(loc_, UExpression::VALUE, PI/ufloat(2));
-	    modif_phase = tmp_phase;
+	    // FIXME: delete modif_phase before?
+	    modif_phase = new UExpression(loc_, 
+					  UExpression::VALUE, PI/ufloat(2));
 	    controlled = true;
 	  }
 	  else if (*modif->name == "ampli")
@@ -1202,11 +1199,9 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
       // virtual "time:0" if no modifier specified (controlled == false)
       if (!controlled)
-      {
 	// no controlling modifier => time:0
-	tmp_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
-	modif_time = tmp_time;
-      }
+	// FIXME: delete modif_time before?
+	modif_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
 
       // clean the temporary target UValue
       delete target;
