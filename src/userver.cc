@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-// #define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include <cassert>
@@ -261,7 +261,7 @@ UServer::work()
     (*i)->get (true);
 
   // memory test
-    memoryCheck(); // Check for memory availability
+  memoryCheck(); // Check for memory availability
   // recover the security memory space, with a margin (size x 2)
   // if the margin can be malloced, then freed, then remalloced with
   // the correct size, then the memoryOverflow error is removed.
@@ -282,13 +282,13 @@ UServer::work()
   }
   bool signalMemoryOverflow = false;
   if (memoryOverflow && securityBuffer_)
-    {
-      // free space to ensure the warning messages will
-      // be sent without problem.
-      free (securityBuffer_);
-      securityBuffer_ = 0;
-      signalMemoryOverflow = true;
-    }
+  {
+    // Free space to ensure the warning messages will be sent without
+    // problem.
+    free (securityBuffer_);
+    securityBuffer_ = 0;
+    signalMemoryOverflow = true;
+  }
 
   // Scan currently opened connections for ongoing work
   for (std::list<UConnection*>::iterator r = connectionList.begin();
@@ -503,25 +503,20 @@ UServer::work()
       ghost->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
       ghost->newDataAdded = true;
     }
-    else
+    else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
-      HMvariabletab::iterator findResetSignal
-	= variabletab.find("__system__.resetsignal");
-      if (findResetSignal != variabletab.end())
-      {
-	for (std::list<UConnection*>::iterator i = connectionList.begin();
-	     i != connectionList.end();
-	     ++i)
-	  if ((*i)->isActive() && (*i) != ghost)
-	  {
-	    (*i)->send("*** Reloading\n", "reset");
+      for (std::list<UConnection*>::iterator i = connectionList.begin();
+	   i != connectionList.end();
+	   ++i)
+	if ((*i)->isActive() && (*i) != ghost)
+	{
+	  (*i)->send("*** Reloading\n", "reset");
 
-	    loadFile("CLIENT.INI", &(*i)->recvQueue());
-	    (*i)->newDataAdded = true;
-	  }
-	reseting = false;
-	stage = 0;
-      }
+	  loadFile("CLIENT.INI", &(*i)->recvQueue());
+	  (*i)->newDataAdded = true;
+	}
+      reseting = false;
+      stage = 0;
     }
   }
   ECHO("Work... done");
