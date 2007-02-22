@@ -48,13 +48,8 @@ extern  int   availableMemory;
 
 // FIXME: Why applying the 1.15 threshold here instead of where we
 // consult usedMemory?
-#if 0
 # define ADDMEM(X)   usedMemory += (int) ((X) * 1.15)
-# define FREEMEM(X)  ADDMEM (-(X))
-#else
-# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
-# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
-#endif
+# define FREEMEM(X)  usedMemory -= (int) ((X) * 1.15)
 
 # define ADDOBJ(X)   ADDMEM (sizeof (X))
 # define FREEOBJ(X)  FREEMEM (sizeof (X))
