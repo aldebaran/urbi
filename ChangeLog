@@ -1,5 +1,23 @@
 2007-02-22  Akim Demaille  <demaille@gostai.com>
 
+	svn merge -r 860:941 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-02-21  Akim Demaille  <demaille@gostai.com>
+	Do not use -relax-branch
+	This option was used to enable long branches in the parser
+	generated code.  This was needed because the rules used to use
+	long macros which resulted in a huge switch statement.  Passing
+	-O0 sufficed to address the issue.  In addition, I changed the
+	macros into functions, which made -O0 useless.  Nevertheless
+	the use -relax-branch was introduced, hoping that it would
+	relieve us.  It actually made GCC produce incorrect code on
+	the Aibo, with mysterious crashes.
+	Removing the use of this option (and of -O0) solves this.
+	Aibo works again.
+	* src/parser/bison/bison.mk: Remove the use of PARSER_CXXFLAGS.
+
+2007-02-22  Akim Demaille  <demaille@gostai.com>
+
 	Use libport::mhas
 	* src/userver.cc (UServer::work): Here.
 
