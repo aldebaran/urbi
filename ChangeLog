@@ -1,3 +1,9 @@
+2007-02-22  Matthieu Nottale  <nottale@gostai.com>
+
+	Add a parameter to createTCPServer to specify address to bind to 
+	* src/network/bsdnet/network.cc: Here, propagate in  TCPServerPipe::init.
+	* src/network/bsdnet/network.hh: Also here.
+
 2007-02-22  Akim Demaille  <akim.demaille@free.fr>
 
 	Fix #133
