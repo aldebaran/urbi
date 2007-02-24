@@ -162,7 +162,14 @@ public:
 				const char * content) = 0;
 
   void              memoryCheck     ();
-  int               memory          ();
+
+  //! Evaluate how much memory is available for a malloc
+  /*! This function tries to evaluate how much memory is available for a malloc,
+   using brute force dichotomic allocation. This is the only known way to get
+   this information on most systems (like OPENR).
+   */
+  // FIXME: Why is this a member function?
+  size_t memory () const;
 
   UVariable*        getVariable     ( const char *device,
 				      const char *property);

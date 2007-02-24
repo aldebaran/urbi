@@ -775,30 +775,25 @@ UServer::memoryCheck ()
     warningSent = false;
 }
 
-//! Evaluate how much memory is available for a malloc
-/*! This function tries to evaluate how much memory is available for a malloc,
- using brute force dichotomic allocation. This is the only known way to get
- this information on most systems (like OPENR).
- */
-int
-UServer::memory()
+size_t
+UServer::memory() const
 {
-  int memo1 = 0;
-  int memo2 = 50000000;
-  int memo;
-  while (memo1+1 < memo2)
+  size_t low = 0;
+  size_t high = 50000000;
+  size_t mid = 0;
+  while (low + 1 < high)
   {
-    memo = (memo1 + memo2)/2;
-    if (void *buf = malloc(memo))
+    mid = (low + high)/2;
+    if (void *buf = malloc(mid))
     {
       free(buf);
-      memo1 = memo;
+      low = mid;
     }
     else
-      memo2 = memo;
+      high = mid;
   }
 
-  return memo;
+  return mid;
 }
 
 //! Get a variable in the hash table
