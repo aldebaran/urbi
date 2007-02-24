@@ -1027,7 +1027,7 @@ UExpression::eval_FUNCTION_1 (UCommand *command, UConnection *connection)
     ret->dataType = DATA_NUM;
     ret->val = e1->str->size();
 
-    for (int i=0;i<e1->str->size()-1; ++i)
+    for (size_t i=0; i < e1->str->size()-1; ++i)
       if (e1->str->c_str()[i] == '\\' &&
 	  e1->str->c_str()[i+1] == '"')
 	--ret->val;
@@ -1446,7 +1446,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     ret->dataType = DATA_STRING;
 
     if (*variablename->id == "strsub")
-      ret->str = new UString(e1->str->ext((int)e2->val, (int)e3->val));
+      ret->str = new UString(e1->str->str().substr((int)e2->val, (int)e3->val));
 
     delete e1;
     delete e2;

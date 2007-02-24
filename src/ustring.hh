@@ -25,7 +25,9 @@
 # include "libport/cstring"
 # include <string>
 # include <iosfwd>
+
 # include "memorymanager/memorymanager.hh"
+# include "mem-track.hh"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a
@@ -36,7 +38,7 @@ class UString
 {
  public:
   MEMORY_MANAGED;
-  UString(const char* s = 0);
+  UString(const char* s);
   UString(const UString& s);
   UString(const std::string& s);
 
@@ -45,18 +47,27 @@ class UString
 
   ~UString();
 
-  const char* c_str() const
+  /// The underlying standard string.
+  const std::string& str() const
   {
     return str_;
   }
 
-  int size() const
+  /// The content as a C string.
+  const char* c_str() const
   {
-    return len_;
+    return str_.c_str();
+  }
+
+  /// The length of the string.
+  size_t size() const
+  {
+    return str_.size();
   }
 
   UString* copy() const;
-  const char* ext(int deb, int length);
+
+  // Whether \a s up to its first `.' (or the entire string) is equal to this.
   bool tagequal(const UString& s) const;
 
   UString& operator= (const std::string& s);
@@ -64,15 +75,43 @@ class UString
   UString& operator= (const UString* s);
 
  private:
-  int  len_;
-  char* str_;
+  std::string str_;
 };
+
+inline
+UString*
+UString::copy() const
+{
+  return new UString(*this);
+}
+
+inline
+UString&
+UString::operator=(const std::string& s)
+{
+  FREEMEM(size());
+  str_ = s;
+  ADDMEM(size());
+  return *this;
+}
+
+
+/*-------------------------.
+| Freestanding functions.  |
+`-------------------------*/
+
+inline
+std::ostream&
+operator<< (std::ostream& o, const UString& s)
+{
+  return o << s.str();
+}
 
 inline
 bool
 operator== (const UString& lhs, const UString& rhs)
 {
-  return STREQ(lhs.c_str(), rhs.c_str());
+  return lhs.str() == rhs.str();
 }
 
 inline
@@ -87,7 +126,7 @@ inline
 bool
 operator== (const UString& lhs, const char* rhs)
 {
-  return STREQ(lhs.c_str(), rhs);
+  return lhs.str() == rhs;
 }
 
 inline
@@ -97,31 +136,7 @@ operator!= (const UString& lhs, const char* rhs)
   return !(lhs == rhs);
 }
 
-inline
-UString*
-UString::copy() const
-{
-  return new UString(*this);
-}
-
-inline
-UString&
-UString::operator=(const std::string& s)
-{
-  return *this = s.c_str();
-}
-
-inline
-std::ostream&
-operator<< (std::ostream& o, const UString& s)
-{
-  if (s.c_str())
-    return o << s.c_str();
-  else
-    return o << "<null UString>";
-}
-
-// Update a pointer to UString.
+/// Update a pointer to UString.
 inline
 UString*
 update (UString*& s, const char* v)
@@ -132,6 +147,5 @@ update (UString*& s, const char* v)
     s = new UString(v);
   return s;
 }
-
 
 #endif // !USTRING_HH

@@ -1,5 +1,14 @@
 2007-02-24  Akim Demaille  <akim.demaille@free.fr>
 
+	Let UString use std::string
+	* src/ustring.hh, src/ustring.cc (len_): Remove.
+	Adjust ctors to refuse construction from 0.
+	(len_): Now a std::string.
+	Adjust all the code
+	* src/uexpression.cc, src/uvariablename.cc: Adjust.
+
+2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+
 	mem-track.hh
 	This is needed because ustring.hh needs to include utypes.hh,
 	and conversely.  Of course, it does not work.  And huge *.hh

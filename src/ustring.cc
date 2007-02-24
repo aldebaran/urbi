@@ -30,107 +30,69 @@
 MEMORY_MANAGER_INIT(UString);
 
 UString::UString(const UString& s)
-  : len_ (s.len_),
-    str_ (s.str_ ? strdup (s.str_) : 0)
+  : str_ (s.str_)
 {
   ADDOBJ(UString);
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 UString::UString(const std::string& s)
-  : len_ (s.size ()),
-    str_ (strdup (s.c_str ()))
+  : str_ (s)
 {
   ADDOBJ(UString);
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 UString::UString(const char* s)
-  : len_ (s ? strlen(s) : 0),
-    str_ (s ? strdup (s) : strdup(""))
+  : str_ (s)
 {
   ADDOBJ(UString);
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 UString::UString(const UString& s1, const UString& s2)
+  : str_ (s1.str_ + "." + s2.str_)
 {
   ADDOBJ(UString);
-
-  std::string tmpname = s1.c_str();
-  tmpname = tmpname + "." + s2.c_str();
-
-  str_ = static_cast<char*> (malloc (tmpname.length()+1));
-  strcpy(str_, tmpname.c_str());
-
-  if (str_ != 0)
-    len_ = tmpname.length();
-  else
-    len_ = 0;
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 
 UString::~UString()
 {
   FREEOBJ(UString);
-  if (str_)
-    free(str_);
-  FREEMEM(len_);
-}
-
-const char* UString::ext(int deb, int length)
-{
-  if (length<0)
-    length=0;
-  if (deb>=len_)
-    return str_+len_;
-  if (deb+length<len_)
-    str_[deb+length]=0;
-  return str_+deb;
+  FREEMEM(size());
 }
 
 bool UString::tagequal(const UString& s) const
 {
-  // Oh, my God...
-  char* p = const_cast<char*>(strchr(s.c_str(), '.'));
-  if (p)
-    *p = 0;
-  bool res = STREQ(s.c_str(), str_);
-  if (p)
-    *p = '.';
-  return res;
+  // Get the prefix of S: the part before the first `.', or the whole string.
+  size_t pos = s.str().find('.');
+  std::string pre =
+    ((pos && pos != std::string::npos)
+     ? s.str().substr (pos - 1, s.size())
+     : s.str());
+
+  // Check that we are equal to that prefix.
+  return str_ == pre;
 }
 
 UString&
 UString::operator=(const char* s)
 {
-  if (s == 0 || s == str_ /*|| (STREQ(s, str_)) */)
-    return *this;
-
-  if (str_)
-    free(str_);
-  FREEMEM(len_);
-  int slen = strlen(s);
-  str_ = static_cast<char*> (malloc (slen+1));
-  strcpy(str_, s);
-  len_ = slen;
-  ADDMEM(len_);
+  assert (s);
+  FREEMEM(size());
+  str_ = s;
+  ADDMEM(size());
   return *this;
 }
 
 UString&
 UString::operator=(const UString* s)
 {
-  if (!s)
-    return *this;
-  if (str_)
-    free(str_);
-  FREEMEM(len_);
-
-  str_ = static_cast<char*> (malloc (s->size()+1));
-  strcpy(str_, s->c_str());
-  len_ = s->size();
-  ADDMEM(len_);
+  assert (s);
+  FREEMEM(size());
+  str_ = s->str_;
+  ADDMEM(size());
   return *this;
 }

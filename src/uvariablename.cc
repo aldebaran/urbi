@@ -189,14 +189,13 @@ UVariableName::resetCache()
 UString*
 UVariableName::set_fullname (const char* s)
 {
-  UString* res = update (fullname_, s);
+  return update (fullname_, s);
 #if 0
   if (device && id
       && *res != std::string (device->c_str()) + "." + std::string(id->c_str()))
     std::cerr << "Warning, \"" << *res << "\" != \""
 	      << *device << "\".\"" << *id << "\"" << std::endl;
 #endif
-  return res;
 }
 
 
