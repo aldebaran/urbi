@@ -783,19 +783,13 @@ UServer::memoryCheck ()
 int
 UServer::memory()
 {
+  int memo1 = 0;
+  int memo2 = 50000000;
   int memo;
-  int memo1;
-  int memo2;
-  void *buf;
-
-  memo  = 50000000;
-  memo1 = 0;
-  memo2 = memo;
-  while (memo2 > memo1+1)
+  while (memo1+1 < memo2)
   {
     memo = (memo1 + memo2)/2;
-    buf = malloc(memo);
-    if (buf)
+    if (void *buf = malloc(memo))
     {
       free(buf);
       memo1 = memo;
