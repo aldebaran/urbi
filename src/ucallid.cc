@@ -66,16 +66,16 @@ UCallid::remove(UVariable *variable)
 
 //! Access to the call ID
 const char*
-UCallid::str()
+UCallid::c_str()
 {
-  return fun_id.str();
+  return fun_id.c_str();
 }
 
 //! Access to the call self ref
 const char*
 UCallid::self()
 {
-  return self_id.str();
+  return self_id.c_str();
 }
 
 //! Set the returnVar in a function call

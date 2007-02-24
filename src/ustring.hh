@@ -45,12 +45,12 @@ class UString
 
   ~UString();
 
-  const char* str() const
+  const char* c_str() const
   {
     return str_;
   }
 
-  int len() const
+  int size() const
   {
     return len_;
   }
@@ -63,8 +63,6 @@ class UString
   UString& operator= (const char* s);
   UString& operator= (const UString* s);
 
-  void setLen(int l);
-
  private:
   int  len_;
   char* str_;
@@ -74,7 +72,7 @@ inline
 bool
 operator== (const UString& lhs, const UString& rhs)
 {
-  return STREQ(lhs.str(), rhs.str());
+  return STREQ(lhs.c_str(), rhs.c_str());
 }
 
 inline
@@ -89,7 +87,7 @@ inline
 bool
 operator== (const UString& lhs, const char* rhs)
 {
-  return STREQ(lhs.str(), rhs);
+  return STREQ(lhs.c_str(), rhs);
 }
 
 inline
@@ -113,18 +111,12 @@ UString::operator=(const std::string& s)
   return *this = s.c_str();
 }
 
-inline void
-UString::setLen(int l)
-{
-  len_ = l;
-}
-
 inline
 std::ostream&
 operator<< (std::ostream& o, const UString& s)
 {
-  if (s.str())
-    return o << s.str();
+  if (s.c_str())
+    return o << s.c_str();
   else
     return o << "<null UString>";
 }

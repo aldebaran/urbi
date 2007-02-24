@@ -489,7 +489,7 @@ taggedcommand:
       memcheck(up, $1);
       if ($4)
       {
-	$4->setTag($1->str());
+	$4->setTag($1->c_str());
 	delete $1;
 	$4->flags = $2;
       }
@@ -1292,8 +1292,8 @@ expr:
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
-    //  $1->nameUpdate(up.connection.connectionTag->str(),
-    //                 $1->id->str());
+    //  $1->nameUpdate(up.connection.connectionTag->c_str(),
+    //                 $1->id->c_str());
 
     $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }

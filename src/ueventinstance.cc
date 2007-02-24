@@ -40,7 +40,7 @@ UEventInstance::UEventInstance (UEventMatch *match, UEvent* e):
 	iuv != match->filter ().end ();
 	++iuv)
     if ((*iuv)->dataType == DATA_VARIABLE)
-      filter_.push_back (std::string ((*iuv)->str->str ()));
+      filter_.push_back (std::string ((*iuv)->str->c_str()));
     else
       filter_.push_back (std::string ());
 }

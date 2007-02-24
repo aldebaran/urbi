@@ -34,7 +34,7 @@ kernel::forgeName (UString* name, int nbarg)
     return std::string("error");
 
   std::stringstream s;
-  s << name->str() << "|" << nbarg;
+  s << name->c_str() << "|" << nbarg;
   return s.str();
 }
 

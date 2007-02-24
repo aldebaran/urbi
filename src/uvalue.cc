@@ -94,7 +94,7 @@ inline int exprToInt(UExpression *e)
   if (e->dataType == DATA_NUM)
     return (int)e->val;
   else
-    return strtol(e->str->str(), 0, 0);
+    return strtol(e->str->c_str(), 0, 0);
 }
 
 UValue::operator urbi::UImage()
@@ -163,7 +163,7 @@ UValue::operator urbi::UBinary()
       if (param->expression->dataType == ::DATA_NUM)
 	msg<< " "<<(int)param->expression->val;
       else if (param->expression->dataType == ::DATA_STRING)
-	msg << " "<<param->expression->str->str();
+	msg << " "<<param->expression->str->c_str();
     }
     param = param->next;
   }
@@ -191,7 +191,7 @@ UValue::operator urbi::UBinary*()
       if (param->expression->dataType == ::DATA_NUM)
 	msg<< " "<<(int)param->expression->val;
       else if (param->expression->dataType == ::DATA_STRING)
-	msg << " "<<param->expression->str->str();
+	msg << " "<<param->expression->str->c_str();
     }
     param = param->next;
   }
@@ -468,7 +468,7 @@ UValue::copy() const
     case DATA_FILE:
     case DATA_STRING:
     case DATA_OBJ:
-      return new UValue(dataType, str->str());
+      return new UValue(dataType, str->c_str());
 
     case DATA_BINARY:
     {
@@ -617,7 +617,7 @@ UValue::add(UValue *v)
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << val<<v->str->str();
+      ostr << val<<v->str->c_str();
       res->str = new UString(ostr.str().c_str());
       if (res->str == 0)
       {
@@ -639,7 +639,7 @@ UValue::add(UValue *v)
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << str->str()<<v->val;
+      ostr << str->c_str()<<v->val;
       res->str = new UString(ostr.str().c_str());
 
       if (res->str == 0)
@@ -651,7 +651,7 @@ UValue::add(UValue *v)
     }
 
     if (v->dataType == DATA_STRING)
-      return new UValue((std::string(str->str()) + v->str->str()).c_str());
+      return new UValue((std::string(str->c_str()) + v->str->c_str()).c_str());
   }
   return 0;
 }
@@ -669,10 +669,10 @@ UValue::equal(UValue *v)
       return v->dataType == DATA_NUM && v->val == val;
 
     case DATA_STRING:
-      return v->dataType == DATA_STRING && *str == v->str->str();
+      return v->dataType == DATA_STRING && *str == v->str->c_str();
 
     case DATA_FILE:
-      return v->dataType == DATA_FILE && *str == v->str->str();
+      return v->dataType == DATA_FILE && *str == v->str->c_str();
 
     case DATA_BINARY:
       if (v->dataType != DATA_BINARY)
@@ -750,7 +750,7 @@ UValue::echo(bool hr)
 	if (!it->second->getMethod().empty()
 	    && str
 	    && it->second->value->dataType != DATA_OBJ
-	    && it->second->getDevicename() == (std::string)str->str())
+	    && it->second->getDevicename() == (std::string)str->c_str())
 	{
 	  if (!first)
 	    o << ",";
@@ -795,9 +795,9 @@ UValue::echo(bool hr)
     {
       std::ostringstream o;
       if (!hr)
-	o << "\"" << libport::escape(str->str()) << "\"";
+	o << "\"" << libport::escape(str->c_str()) << "\"";
       else
-	o << str->str ();
+	o << str->c_str();
       return o.str();
     }
 
@@ -820,7 +820,7 @@ UValue::echo(bool hr)
 	  if (param->expression->dataType == DATA_NUM)
 	    o << (int)param->expression->val;
 	  if (param->expression->dataType == DATA_STRING)
-	    o << param->expression->str->str();
+	    o << param->expression->str->c_str();
 	}
 	if (param->next)
 	  o << " ";
@@ -873,7 +873,7 @@ UValue::urbiValue()
     case DATA_NUM:
       return new urbi::UValue(val);
     case DATA_STRING:
-      return new urbi::UValue(std::string(str->str()));
+      return new urbi::UValue(std::string(str->c_str()));
     case DATA_BINARY:
       return new urbi::UValue(operator urbi::UBinary()); //FIXME
     case DATA_LIST:

@@ -43,11 +43,11 @@ UObj::UObj (UString *device)
     binder (0),
     internalBinder (0)
 {
-  ::urbiserver->objtab[this->device->str()] = this;
+  ::urbiserver->objtab[this->device->c_str()] = this;
   UValue* objvalue = new UValue();
   objvalue->dataType = DATA_OBJ;
   objvalue->str = new UString(*device);
-  new UVariable(this->device->str(), objvalue);
+  new UVariable(this->device->c_str(), objvalue);
 }
 
 
@@ -78,7 +78,7 @@ UObj::~UObj()
     if (!it->second->getMethod().empty()
 	&& device
 	&& it->second->value->dataType != DATA_OBJ
-	&& it->second->getDevicename() == (std::string)device->str())
+	&& it->second->getDevicename() == (std::string)device->c_str())
       varToDelete.push_back(it->second);
 
   libport::deep_clear (varToDelete);
@@ -104,7 +104,7 @@ UObj::~UObj()
   if (binder)
   {
     std::ostringstream o;
-    o << "[5,\"" << device->str() << "\"]\n";
+    o << "[5,\"" << device->c_str() << "\"]\n";
 
     for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
 	 it != binder->monitors.end();
@@ -120,7 +120,7 @@ UObj::~UObj()
   }
 
   // Remove the object from the hashtable
-  HMobjtab::iterator idit = ::urbiserver->objtab.find(device->str());
+  HMobjtab::iterator idit = ::urbiserver->objtab.find(device->c_str());
   ASSERT (idit != ::urbiserver->objtab.end())
     ::urbiserver->objtab.erase(idit);
 
@@ -151,7 +151,7 @@ UObj::~UObj()
 	 i->second->internalBinder.begin();
 	 j != i->second->internalBinder.end();
 	)
-      if ((*j)->objname == device->str())
+      if ((*j)->objname == device->c_str())
       {
 	delete *j;
 	j = i->second->internalBinder.erase(j);
@@ -167,7 +167,7 @@ UObj::~UObj()
 	 i->second->internalAccessBinder.begin();
 	 j != i->second->internalAccessBinder.end();
 	)
-      if ((*j)->objname == device->str())
+      if ((*j)->objname == device->c_str())
       {
 	delete *j;
 	j = i->second->internalAccessBinder.erase(j);
@@ -184,7 +184,7 @@ UObj::searchFunction(const char* id, bool &ambiguous) const
 {
   UFunction* ret;
   std::ostringstream o;
-  o << device->str() << '.' << id;
+  o << device->c_str() << '.' << id;
 
   // test for pure urbi symbols
   HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(o.str().c_str());
@@ -240,7 +240,7 @@ UObj::searchVariable(const char* id, bool &ambiguous) const
 {
   UVariable* ret;
   std::ostringstream o;
-  o << device->str() << '.' << id;
+  o << device->c_str() << '.' << id;
   HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(o.str().c_str());
   if (hmv != ::urbiserver->variabletab.end())
   {
@@ -280,7 +280,7 @@ UObj::searchEvent(const char* id, bool &ambiguous) const
 {
   UEventHandler* ret;
   std::ostringstream o;
-  o << device->str() << '.' << id;
+  o << device->c_str() << '.' << id;
   bool ok = false;
   HMemittab::const_iterator ietok = ::urbiserver->emittab.end ();
 

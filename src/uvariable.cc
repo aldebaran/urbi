@@ -185,7 +185,7 @@ UVariable::~UVariable()
   {
     if (value->dataType == DATA_OBJ && value->str!=0)
     {
-      HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
+      HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
       if (idit != ::urbiserver->objtab.end())
 	delete idit->second;
       // NB: idit is removed from objtab in the destructor of UObj
@@ -251,7 +251,7 @@ UVariable::setName(const char *_id, const char* _method)
 const char*
 UVariable::setName(UString *s)
 {
-  return setName(s->str());
+  return setName(s->c_str());
 }
 
 //! Set the UValue associated to the variable
@@ -280,7 +280,7 @@ UVariable::set(UValue *v)
     switch (value->dataType)
     {
       case DATA_STRING:
-	*value->str = v->str->str();
+	*value->str = v->str->c_str();
 	break;
       case DATA_NUM:
 	setSensorVal(v->val);
@@ -412,7 +412,7 @@ UVariable::get(bool autoloop)
     if (!it->second->getMethod().empty()
 	  && value->str
 	  && it->second->value->dataType != DATA_OBJ
-	  && it->second->getDevicename()== (std::string)value->str->str())
+	  && it->second->getDevicename()== (std::string)value->str->c_str())
 	it->second->get ();
 
   // data preparation for the UNotifyChange/Access loop control
@@ -506,7 +506,7 @@ UVariable::isDeletable()
       value->dataType == DATA_OBJ &&
       value->str)
   {
-    HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
+    HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
     if ((idit != ::urbiserver->objtab.end()) &&
 	(!idit->second->down.empty()) )
       return false;

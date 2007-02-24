@@ -95,7 +95,7 @@ void
 UNamedParameters::print() const
 {
   if (name)
-    debug("%s:", name->str());
+    debug("%s:", name->c_str());
   if (expression)
   {
     debug("expr=");

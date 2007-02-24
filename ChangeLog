@@ -1,3 +1,34 @@
+2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+
+	Morph slowly UString into std::string
+	* src/ustring.hh, src/ustring.cc (str, len): Rename as...
+	(c_str, size): these.
+	(setLen): Remove, unused, and frankly, should never have existed.
+
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/parser/uparser.cc,
+	* src/ucallid.cc,
+	* src/ucallid.hh,
+	* src/ucommand.cc,
+	* src/uconnection.cc,
+	* src/ueventhandler.cc,
+	* src/ueventinstance.cc,
+	* src/ueventmatch.cc,
+	* src/uexpression.cc,
+	* src/ufunction.cc,
+	* src/ugroup.cc,
+	* src/unamedparameters.cc,
+	* src/uobj.cc,
+	* src/uobject.cc,
+	* src/userver.cc,
+	* src/uvalue.cc,
+	* src/uvar.cc,
+	* src/uvariable.cc,
+	* src/uvariablename.cc:
+	Adjust.
+	Also, name ostringstreams as o.
+
 2007-02-22  Akim Demaille  <demaille@gostai.com>
 
 	svn merge -r 860:941 https://svn.gostai.com/svn/kernel1/branches/1.0

@@ -38,7 +38,7 @@ public:
 
   void         store(UVariable* variable);
   void         remove(UVariable* variable);
-  const char*  str();
+  const char*  c_str();
   const char*  self();
   void         setReturnVar(UVariable* v);
 

@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-// #define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "libport/cstring"
@@ -98,7 +98,7 @@ UConnection::~UConnection()
   DEBUG(("Destroying UConnection..."));
   if (connectionTag)
   {
-    delete server->getVariable(connectionTag->str(), "connectionID");
+    delete server->getVariable(connectionTag->c_str(), "connectionID");
     delete connectionTag;
   }
   delete activeCommand;
@@ -181,10 +181,10 @@ void UConnection::initialize()
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
     send(::HEADER_AFTER_CUSTOM[i], "start");
-  sprintf(customHeader, "*** ID: %s\n", connectionTag->str());
+  sprintf(customHeader, "*** ID: %s\n", connectionTag->c_str());
   send(customHeader, "ident");
 
-  sprintf(customHeader, "%s created", connectionTag->str());
+  sprintf(customHeader, "%s created", connectionTag->c_str());
   server->echo(::DISPLAY_FORMAT, (long)this,
 	       "UConnection::initialize",
 	       customHeader);
@@ -1228,7 +1228,7 @@ UConnection::localVariableCheck (UVariable *variable)
   if (!stack.empty())
   {
     UCallid* cid = stack.front();
-    if (variable->getDevicename() == (std::string)cid->str())
+    if (variable->getDevicename() == (std::string)cid->c_str())
       cid->store(variable);
   }
 }

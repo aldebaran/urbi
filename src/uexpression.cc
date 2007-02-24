@@ -73,7 +73,7 @@ namespace
     // something more robust (such using real C++ here instead of C
     // buffers).
     o << "!!! " << e->loc() << ": " << fmt << '\n';
-    return c->sendf (cmd->getTag(), o.str ().c_str(), args);
+    return c->sendf (cmd->getTag(), o.str().c_str(), args);
   }
 
   UErrorValue
@@ -420,14 +420,14 @@ UExpression::print(unsigned t)
     debug("(const) ");
   if (type == VALUE && dataType == DATA_NUM)
   {
-    std::ostringstream tstr;
-    tstr << "val=" << val << " ";
-    debug("%s", tstr.str().c_str());
+    std::ostringstream o;
+    o << "val=" << val << " ";
+    debug("%s", o.str().c_str());
   }
   if (str)
-    debug("str='%s' ", str->str());
+    debug("str='%s' ", str->c_str());
   if (id)
-    debug("id='%s' ", id->str());
+    debug("id='%s' ", id->c_str());
   UDEBUG_EXPR_I (expression1);
   UDEBUG_EXPR_I (expression2);
   UDEBUG_EXPR (variablename);
@@ -541,11 +541,11 @@ UExpression::eval (UCommand *command,
       else if (dataType == DATA_NUM)
 	return new UValue (val);
       else
-	return new UValue (str->str());
+	return new UValue (str->c_str());
 
     case ADDR_VARIABLE:
       // Hack here to be able to use objects pointeurs.
-      return new UValue(variablename->buildFullname(command, connection)->str());
+      return new UValue(variablename->buildFullname(command, connection)->c_str());
 
     case VARIABLE:
       return eval_VARIABLE (command, connection, ec);
@@ -559,7 +559,7 @@ UExpression::eval (UCommand *command,
       {
 	send_error(connection, command, this,
 		   "Unknown identifier: %s",
-		   variablename->getFullname()->str());
+		   variablename->getFullname()->c_str());
 	return 0;
       }
 
@@ -585,7 +585,7 @@ UExpression::eval (UCommand *command,
 	return new UValue (name(variable->blendType));
 
       send_error(connection, command, this,
-		 "Unknown property: %s", str->str());
+		 "Unknown property: %s", str->c_str());
       return 0;
     }
 
@@ -919,7 +919,7 @@ UValue*
 UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
-  passert (variablename->id->str(),
+  passert (variablename->id->c_str(),
 	   *variablename->id == "exec"
 	   || *variablename->id == "load");
   PING();
@@ -934,13 +934,13 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     connection->functionTag = new UString("__Funct__");
   UParser& p = connection->parser();
 
-  ECHO("Parsing " << variablename->id->str() << ':' << e1->str->str());
+  ECHO("Parsing " << variablename->id->c_str() << ':' << e1->str->c_str());
 
   if (in_load)
-    p.process (::urbiserver->find_file (e1->str->str()));
+    p.process (::urbiserver->find_file (e1->str->c_str()));
   else
-    p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
-	      e1->str->len());
+    p.process(reinterpret_cast<const ubyte*>(e1->str->c_str()),
+	      e1->str->size());
 
   PING();
   if (connection->functionTag)
@@ -975,7 +975,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 		 (in_load
 		  ? "Error loading file: %s"
 		  : "Error parsing string: %s"),
-		 e1->str->str());
+		 e1->str->c_str());
       return 0;
     }
   PING();
@@ -1025,11 +1025,11 @@ UExpression::eval_FUNCTION_1 (UCommand *command, UConnection *connection)
     ENSURE_TYPES_1 (DATA_STRING);
     UValue* ret = new UValue();
     ret->dataType = DATA_NUM;
-    ret->val = e1->str->len();
+    ret->val = e1->str->size();
 
-    for (int i=0;i<e1->str->len()-1; ++i)
-      if (e1->str->str()[i] == '\\' &&
-	  e1->str->str()[i+1] == '"')
+    for (int i=0;i<e1->str->size()-1; ++i)
+      if (e1->str->c_str()[i] == '\\' &&
+	  e1->str->c_str()[i+1] == '"')
 	--ret->val;
 
     delete e1;
@@ -1145,11 +1145,11 @@ UExpression::eval_FUNCTION_1 (UCommand *command, UConnection *connection)
     ret->dataType = DATA_BINARY;
     UCommandQueue* loadQueue = new UCommandQueue (4096, 1048576, false);
     // load file
-    if (connection->server->loadFile(e1->str->str(),
+    if (connection->server->loadFile(e1->str->c_str(),
 				     loadQueue) == UFAIL)
     {
       send_error(connection, command, this,
-		 "Cannot load the file %s", e1->str->str());
+		 "Cannot load the file %s", e1->str->c_str());
       delete ret;
       delete loadQueue;
       ret = 0;
@@ -1302,11 +1302,11 @@ UExpression::eval_FUNCTION_2 (UCommand *command,
 
     // save to file
 
-    if (connection->server->saveFile(e1->str->str(),
-				     e2->str->str()) == UFAIL)
+    if (connection->server->saveFile(e1->str->c_str(),
+				     e2->str->c_str()) == UFAIL)
     {
       send_error(connection, command, this, "Cannot save to the file %s",
-		 e1->str->str());
+		 e1->str->c_str());
       delete ret;
       ret = 0;
     }
@@ -1459,7 +1459,7 @@ UExpression::eval_FUNCTION (UCommand *command,
   funname = variablename->buildFullname(command, connection);
   if (!variablename->getFullname()) return 0;
   HMfunctiontab::iterator hmf =
-    ::urbiserver->functiontab.find(funname->str());
+    ::urbiserver->functiontab.find(funname->c_str());
   if (hmf != ::urbiserver->functiontab.end())
   {
     send_error(connection, command, this,
@@ -1470,7 +1470,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 
   send_error(connection, command, this,
 	     "Error with function eval: %s [nb param=%d]",
-	     variablename->getFullname()->str(),
+	     variablename->getFullname()->c_str(),
 	     parameters ? parameters->size() : 0);
   return 0;
 }
@@ -1481,7 +1481,7 @@ UExpression::eval_GROUP (UCommand *command, UConnection *connection)
 {
   passert (type, type == GROUP);
   UValue* ret = new UValue();
-  HMgrouptab::iterator retr = connection->server->grouptab.find(str->str());
+  HMgrouptab::iterator retr = connection->server->grouptab.find(str->c_str());
   if (retr != connection->server->grouptab.end())
   {
     ret->dataType = DATA_LIST;
@@ -1494,7 +1494,7 @@ UExpression::eval_GROUP (UCommand *command, UConnection *connection)
       delete e;
       if (e2->dataType == DATA_VOID)
       {
-	ret->liststart = new UValue((*it)->str());
+	ret->liststart = new UValue((*it)->c_str());
 	delete e2;
       }
       else
@@ -1516,7 +1516,7 @@ UExpression::eval_GROUP (UCommand *command, UConnection *connection)
       delete e;
       if (e2->dataType == DATA_VOID)
       {
-	e1->next = new UValue((*it)->str());
+	e1->next = new UValue((*it)->c_str());
 	delete e2;
 	e1 = e1->next;
       }
@@ -1606,7 +1606,7 @@ UExpression::eval_VARIABLE (UCommand *command,
   const char* varname;
   if (!variable)
   {
-    varname = variablename->getFullname()->str();
+    varname = variablename->getFullname()->c_str();
 
     // Event detection
     UEventHandler* eh =
@@ -1627,7 +1627,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     }
 
     // virtual variables
-    const char* devname = variablename->getDevice()->str();
+    const char* devname = variablename->getDevice()->c_str();
     bool ambiguous;
     UVariable *vari = 0;
     HMobjtab::iterator itobj;
@@ -1635,12 +1635,12 @@ UExpression::eval_VARIABLE (UCommand *command,
 	::urbiserver->objtab.end())
     {
       vari = itobj->second->
-	searchVariable(variablename->getMethod()->str(), ambiguous);
+	searchVariable(variablename->getMethod()->c_str(), ambiguous);
       if (ambiguous)
       {
 	send_error(connection, command, this,
 		   "Ambiguous multiple inheritance on variable %s",
-		   variablename->getFullname()->str());
+		   variablename->getFullname()->c_str());
 	return new UValue();
       }
 
@@ -1742,7 +1742,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     }
 
     send_error(connection, command, this, "Unknown identifier: %s",
-	       variablename->getFullname()->str());
+	       variablename->getFullname()->c_str());
     return 0;
   }
 
@@ -1771,7 +1771,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	send_error(connection, command, this,
 		   "Impossible to normalize: "
 		   "no range defined for variable %s",
-		   variablename->getFullname()->str());
+		   variablename->getFullname()->c_str());
 	return 0;
       }
 
@@ -1889,12 +1889,12 @@ UExpression::asyncScan(UASyncCommand *cmd,
       UString* fullname = variablename->getFullname();
       if (!fullname)
 	return UFAIL;
-      const char* varname  = variablename->getFullname()->str();
+      const char* varname  = variablename->getFullname()->c_str();
 
       if (!variable)
       {
 	// Is this a virtual variable?
-	const char* devname = variablename->getDevice()->str();
+	const char* devname = variablename->getDevice()->c_str();
 	bool ambiguous;
 
 	HMobjtab::iterator itobj;
@@ -1902,7 +1902,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	    ::urbiserver->objtab.end())
 	{
 	  variable = itobj->second->
-	    searchVariable(variablename->getMethod()->str(),
+	    searchVariable(variablename->getMethod()->c_str(),
 			   ambiguous);
 
 	  if (ambiguous)
@@ -1958,7 +1958,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  return UFAIL;
 	else
 	{
-	  variable = new UVariable (fullname->str (),
+	  variable = new UVariable (fullname->c_str(),
 				    new UValue (ufloat (0)));
 	  variable->registerCmd(cmd);
 	  return USUCCESS;

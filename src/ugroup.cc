@@ -59,9 +59,9 @@ UValue * UGroup::list( UVariableName *variable)
 	  //terminal group, handle it for him
 	  //child node
 	  char vname[1024];
-	  strcpy(vname, (*it)->device->str());
+	  strcpy(vname, (*it)->device->c_str());
 	  strcat(vname, ".");
-	  strcat(vname, variable->method->str());
+	  strcat(vname, variable->method->c_str());
 	  if ( ::urbiserver->variabletab.find(vname) ==  ::urbiserver->variabletab.end())
 	    //no variable? could be...
 	    n=new UValue("null");
@@ -70,7 +70,7 @@ UValue * UGroup::list( UVariableName *variable)
 	}
 
       else
-	n =  ::urbiserver->grouptab[(*it)->device->str()]->list(variable);
+	n =  ::urbiserver->grouptab[(*it)->device->c_str()]->list(variable);
 
       //    while (n && n->dataType == DATA_LIST)
       {

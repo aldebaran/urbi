@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
+#include "libport/compiler.hh"
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
@@ -57,8 +57,8 @@ UString::UString(const UString& s1, const UString& s2)
 {
   ADDOBJ(UString);
 
-  std::string tmpname = s1.str();
-  tmpname = tmpname + "." + s2.str();
+  std::string tmpname = s1.c_str();
+  tmpname = tmpname + "." + s2.c_str();
 
   str_ = static_cast<char*> (malloc (tmpname.length()+1));
   strcpy(str_, tmpname.c_str());
@@ -93,10 +93,10 @@ const char* UString::ext(int deb, int length)
 bool UString::tagequal(const UString& s) const
 {
   // Oh, my God...
-  char* p = const_cast<char*>(strchr(s.str(), '.'));
+  char* p = const_cast<char*>(strchr(s.c_str(), '.'));
   if (p)
     *p = 0;
-  bool res = STREQ(s.str(), str_);
+  bool res = STREQ(s.c_str(), str_);
   if (p)
     *p = '.';
   return res;
@@ -128,9 +128,9 @@ UString::operator=(const UString* s)
     free(str_);
   FREEMEM(len_);
 
-  str_ = static_cast<char*> (malloc (s->len()+1));
-  strcpy(str_, s->str());
-  len_ = s->len();
+  str_ = static_cast<char*> (malloc (s->size()+1));
+  strcpy(str_, s->c_str());
+  len_ = s->size();
   ADDMEM(len_);
   return *this;
 }

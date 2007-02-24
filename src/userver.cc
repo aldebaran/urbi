@@ -89,6 +89,7 @@ UServer::UServer(ufloat frequency,
   memoryOverflow = securityBuffer_ == 0;
   usedMemory = 0;
   availableMemory = freeMemory;
+  // FIXME: What the heck???  We don't even check if it fits!!!
   availableMemory -=  3000000; // Need 3.1Mo at min to run safely.
   // You might hack this for a small
   // size server, but anything with
@@ -162,7 +163,7 @@ UServer::initialize()
     o << 'U' << (long)ghost;
 
     new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
-    new UVariable(MAINDEVICE, "name", mainName_.str());
+    new UVariable(MAINDEVICE, "name", mainName_.c_str());
     uservarState = true;
     DEBUG (("done\n"));
   }
@@ -233,7 +234,6 @@ UServer::afterWork()
 void
 UServer::work()
 {
-  ECHO("Work in...");
   libport::BlockLock bl(this);
   // CPU Overload test
   updateTime();
@@ -519,7 +519,6 @@ UServer::work()
       stage = 0;
     }
   }
-  ECHO("Work... done");
 }
 
 //! UServer destructor.
@@ -749,8 +748,6 @@ UServer::getCustomHeader (int, char* header, int)
 void
 UServer::memoryCheck ()
 {
-  static bool warningSent = false;
-
   if (usedMemory > availableMemory)
   {
     memoryOverflow = true;
@@ -760,7 +757,7 @@ UServer::memoryCheck ()
   // Issue a warning when memory reaches 80% of use (except if you know what
   // you are doing, you better take appropriate measures when this warning
   // reaches your connection...
-
+  static bool warningSent = false;
   if (usedMemory > (int)(0.8 * availableMemory) && !warningSent)
   {
     warningSent = true;
@@ -815,13 +812,8 @@ UVariable*
 UServer::getVariable (const char *device,
 		      const char *property)
 {
-  std::ostringstream o;
-  o << device << '.' << property;
-  HMvariabletab::iterator hmi = variabletab.find(o.str().c_str());
-  if (hmi != variabletab.end())
-    return hmi->second;
-  else
-    return 0;
+  std::string n = std::string (device) + "." + property;
+  return libport::find0(variabletab, n.c_str());
 }
 
 
@@ -830,7 +822,7 @@ UServer::getVariable (const char *device,
 void
 UServer::mark(UString* stopTag)
 {
-  HMtagtab::iterator it = tagtab.find(stopTag->str());
+  HMtagtab::iterator it = tagtab.find(stopTag->c_str());
   if (it == tagtab.end())
     return; //no command with this tag
   TagInfo* ti = &it->second;
@@ -989,7 +981,7 @@ UServer::addAlias(const char* id, const char* variablename)
 
   while (getobj != ::urbiserver->aliastab.end())
   {
-    newobj = getobj->second->str();
+    newobj = getobj->second->c_str();
     if (STREQ(newobj, id))
       return 0;
 

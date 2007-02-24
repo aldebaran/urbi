@@ -180,7 +180,7 @@ namespace urbi
   UVar::operator std::string ()
   {
     if (vardata && vardata->variable->value->dataType == ::DATA_STRING)
-      return std::string(vardata->variable->value->str->str());
+      return std::string(vardata->variable->value->str->c_str());
     else
       return std::string("");
   }

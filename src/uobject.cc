@@ -275,7 +275,7 @@ namespace urbi
     else
     {
       g = new UGroup(gpname);
-      ::urbiserver->grouptab[g->name.str()] = g;
+      ::urbiserver->grouptab[g->name.c_str()] = g;
     }
 
     g->members.push_back(new UString(__name.c_str()));

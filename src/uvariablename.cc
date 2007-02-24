@@ -192,7 +192,7 @@ UVariableName::set_fullname (const char* s)
   UString* res = update (fullname_, s);
 #if 0
   if (device && id
-      && *res != std::string (device->str()) + "." + std::string(id->str()))
+      && *res != std::string (device->c_str()) + "." + std::string(id->c_str()))
     std::cerr << "Warning, \"" << *res << "\" != \""
 	      << *device << "\".\"" << *id << "\"" << std::endl;
 #endif
@@ -226,10 +226,10 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
 
   UVariable *v;
   if (nostruct &&
-      libport::mhas(::urbiserver->objtab, getMethod()->str()))
-    v = libport::find0(::urbiserver->variabletab, getMethod()->str());
+      libport::mhas(::urbiserver->objtab, getMethod()->c_str()))
+    v = libport::find0(::urbiserver->variabletab, getMethod()->c_str());
   else
-    v = libport::find0(::urbiserver->variabletab, fullname_->str());
+    v = libport::find0(::urbiserver->variabletab, fullname_->c_str());
   if (cached)
     variable = v;
 
@@ -254,7 +254,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if (!fullname_)
     return 0;
 
-  UFunction* f = libport::find0(::urbiserver->functiontab, fullname_->str());
+  UFunction* f = libport::find0(::urbiserver->functiontab, fullname_->c_str());
 
   if (cached)
     function = f;
@@ -270,8 +270,8 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
     return true;
   if (!fullname_)
     return false;
-  return (libport::mhas (*urbi::functionmap, fullname_->str())
-	  || libport::mhas (::urbiserver->functionbindertab, fullname_->str()));
+  return (libport::mhas (*urbi::functionmap, fullname_->c_str())
+	  || libport::mhas (::urbiserver->functionbindertab, fullname_->c_str()));
 }
 
 
@@ -285,7 +285,7 @@ UVariableName::getMethod()
   if (!fullname_)
     return 0;
 
-  return method = new UString(suffix(fullname_->str()));
+  return method = new UString(suffix(fullname_->c_str()));
 }
 
 //! UVariableName access to device (with cache)
@@ -297,8 +297,8 @@ UVariableName::getDevice()
 
   if (!fullname_)
     return 0;
-  if (strchr(fullname_->str(), '.'))
-    return device = new UString(prefix(fullname_->str()));
+  if (strchr(fullname_->c_str(), '.'))
+    return device = new UString(prefix(fullname_->c_str()));
   else
     return fullname_;
 }
@@ -313,7 +313,7 @@ UVariableName::update_array_mangling (UCommand* cmd,
   {
     // rebuilding name based on index
     std::ostringstream o;
-    o << s->str ();
+    o << s->c_str();
 
     for (UNamedParameters* p = ps; p; p = p->next)
     {
@@ -328,7 +328,7 @@ UVariableName::update_array_mangling (UCommand* cmd,
       if (e1->dataType == DATA_NUM)
 	o << "__" << (int)e1->val;
       else if (e1->dataType == DATA_STRING)
-	o << "__" << e1->str->str();
+	o << "__" << e1->str->c_str();
       else
       {
 	delete e1;
@@ -365,7 +365,7 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
   }
 
   // The name is composed of two parts: PREFIX.SUFFIX.
-  const char* cp = e1->str->str();
+  const char* cp = e1->str->c_str();
   if (strchr(cp, '.'))
   {
     update(device, prefix(cp).c_str());
@@ -375,7 +375,7 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
   {
     nostruct = true;
     if (connection->stack.empty())
-      update (device, connection->connectionTag->str());
+      update (device, connection->connectionTag->c_str());
     else
     {
       update(device, "__Funct__");
@@ -394,7 +394,7 @@ resolve_aliases(const char* cp)
   for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(cp);
        i != ::urbiserver->objaliastab.end();
        i = ::urbiserver->objaliastab.find(cp))
-    cp = i->second->str();
+    cp = i->second->c_str();
   return cp;
 }
 
@@ -417,7 +417,7 @@ UVariableName::buildFullname (UCommand* command,
       return 0;
 
   if (*device == "local")
-    *device = connection->connectionTag->str();
+    *device = connection->connectionTag->c_str();
 
   cached = true;
 
@@ -443,13 +443,13 @@ UVariableName::buildFullname (UCommand* command,
 	if (localFunction)
 	{
 	  if (local_scope)
-	    *device = funid->str();
+	    *device = funid->c_str();
 	  else
 	  {
 	    // does the symbol exist as a symbol local to the function call?
 	    bool function_symbol = false;
-	    std::string tmpstr(funid->str());
-	    tmpstr = tmpstr + "." + id->str();
+	    std::string tmpstr(funid->c_str());
+	    tmpstr = tmpstr + "." + id->c_str();
 	    const char* cp = tmpstr.c_str();
 	    if (libport::mhas(::urbiserver->variabletab, cp)
 		|| kernel::eventSymbolDefined (cp))
@@ -463,9 +463,9 @@ UVariableName::buildFullname (UCommand* command,
 	    {
 	      bool ambiguous = true;
 	      class_symbol =
-		u->searchVariable(id->str(), ambiguous)
-		|| u->searchFunction(id->str(), ambiguous)
-		|| u->searchEvent(id->str(), ambiguous);
+		u->searchVariable(id->c_str(), ambiguous)
+		|| u->searchFunction(id->c_str(), ambiguous)
+		|| u->searchEvent(id->c_str(), ambiguous);
 	      class_symbol = class_symbol && !ambiguous;
 	    }
 
@@ -475,12 +475,12 @@ UVariableName::buildFullname (UCommand* command,
 	      if (!function_symbol)
 		*device = funid->self();
 	      else
-		*device = funid->str();
+		*device = funid->c_str();
 	    }
 	    else
 	    {
-	      std::string tmploc(connection->connectionTag->str());
-	      tmploc = tmploc + "." + id->str();
+	      std::string tmploc(connection->connectionTag->c_str());
+	      tmploc = tmploc + "." + id->c_str();
 	      const char* cp = tmploc.c_str();
 
 	      // does the symbol exist as a symbol local to the connection?
@@ -490,9 +490,9 @@ UVariableName::buildFullname (UCommand* command,
 		|| kernel::eventSymbolDefined (cp);
 
 	      if (local_symbol && !function_symbol)
-		*device = connection->connectionTag->str();
+		*device = connection->connectionTag->c_str();
 	      else
-		*device = funid->str();
+		*device = funid->c_str();
 	    }
 	  }
 	}
@@ -508,7 +508,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   // Create the concatened variable name
-  std::string name = std::string(device->str()) + "." + id->str();
+  std::string name = std::string(device->c_str()) + "." + id->c_str();
   ECHO(name);
 
   // Alias updating
@@ -526,12 +526,12 @@ UVariableName::buildFullname (UCommand* command,
     while (hmi != ::urbiserver->aliastab.end())
     {
       past_hmi = hmi;
-      hmi = ::urbiserver->aliastab.find(hmi->second->str());
+      hmi = ::urbiserver->aliastab.find(hmi->second->c_str());
     }
 
     if (past_hmi != ::urbiserver->aliastab.end())
     {
-      name = past_hmi->second->str();
+      name = past_hmi->second->c_str();
       nostruct = false;
       delete device;
       device = 0;
@@ -603,8 +603,8 @@ UVariableName::print() const
 {
   ::urbiserver->debug("(VAR root=%d ", rooted);
   if (device)
-    ::urbiserver->debug("device='%s' ", device->str());
+    ::urbiserver->debug("device='%s' ", device->c_str());
   if (id)
-    ::urbiserver->debug("id='%s' ", id->str());
+    ::urbiserver->debug("id='%s' ", id->c_str());
   ::urbiserver->debug(") ");
 }
