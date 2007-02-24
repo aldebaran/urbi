@@ -45,6 +45,7 @@ uninstall-local:
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
 flavorable.hh							\
+mem-track.hh							\
 memorymanager/blockmemorymanager.hh				\
 memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
 parser/uparser.hh parser/uparser.cc				\
@@ -140,6 +141,7 @@ kernelinclude_HEADERS +=			\
 fwd.hh						\
 flavorable.hh					\
 tag-info.hh					\
+mem-track.hh					\
 uast.hh						\
 uasynccommand.hh				\
 uasyncregister.hh				\

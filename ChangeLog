@@ -1,5 +1,16 @@
 2007-02-24  Akim Demaille  <akim.demaille@free.fr>
 
+	mem-track.hh
+	This is needed because ustring.hh needs to include utypes.hh,
+	and conversely.  Of course, it does not work.  And huge *.hh
+	files are bad.
+	* src/mem-track.hh: New.
+	Extracted from...
+	* src/utypes.hh: here.
+	* src/Makefile.am: Adjust.
+
+2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+
 	Fix uninitialized variable warning
 	* src/userver.hh, src/userver.cc (memory): here.
 	While we're at it, give this function a proper prototype,

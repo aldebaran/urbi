@@ -33,38 +33,10 @@
 # include "libport/ufloat.h"
 
 # include "fwd.hh"
+# include "mem-track.hh"
 
 # include "urbi/utypes-common.hh"
 # include "ustring.hh"
-
-/*--------------------.
-| Memory allocation.  |
-`--------------------*/
-
-/// Keep track of how much memory has been used for commands, buffers,
-/// etc.
-extern  int   usedMemory;
-/// Total amount of free memory in the system.
-extern  int   availableMemory;
-
-// FIXME: Why applying the 1.15 threshold here instead of where we
-// consult usedMemory?
-#if 0
-# define ADDMEM(X)   usedMemory += static_cast<int> ((X) * 1.15)
-# define FREEMEM(X)  ADDMEM (-(X))
-#else
-# define ADDMEM(x)   {usedMemory += (static_cast<int>(x*1.15));}
-# define FREEMEM(x)  {usedMemory -= (static_cast<int>(x*1.15));}
-#endif
-
-# define ADDOBJ(X)   ADDMEM (sizeof (X))
-# define FREEOBJ(X)  FREEMEM (sizeof (X))
-
-# define LIBERATE(X)				\
-  do {						\
-    if ((X) && (X)->liberate() == 0)		\
-      delete X;					\
-  } while (0)
 
 
 /*------------.
@@ -178,7 +150,7 @@ public:
       nb(nb)
   {
   }
-  
+
   UString id; ///< class name
   int nb; ///< nb of waiting calls
 };
