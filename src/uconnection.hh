@@ -60,7 +60,7 @@
     system is actually sending data through the real connection.
  */
 
-class UConnection: public urbi::Lockable //queue lock
+class UConnection: public libport::Lockable //queue lock
 {
   friend class UServer;
 
@@ -148,6 +148,15 @@ public:
   void                flush              ();
 
   UErrorValue         received           (const char *s);
+
+  /// \brief Handle an incoming buffer of data.
+  ///
+  /// Must be called each time a buffer of data is received by the connection.
+  /// \param buffer the incoming buffer
+  /// \param length the length of the buffer
+  /// \return UFAIL       buffer overflow
+  /// \return UMEMORYFAIL critical memory overflow
+  /// \return USUCCESS    otherwise
   UErrorValue         received           (const ubyte *buffer, int length);
 
   int                 sendAdaptive       ();
@@ -168,10 +177,16 @@ public:
   int                 sendQueueRemain    ();
   UCommandQueue&      recvQueue          ();
   void                localVariableCheck (UVariable *variable);
-  void                setIP              (IPAdd ip);
 
-  /// Error return code for the constructor..
-  UErrorValue         UError;
+
+  //! UConnection IP associated
+  /*! The robot specific part should call the function when the
+   connection is active and transmit the IP address of the client,
+   as a long int.  */
+  void setIP (IPAdd ip);
+
+  /// Error return code for the constructor.
+  UErrorValue         uerror_;
   /// Reference to the underlying server.
   UServer             *server;
   /// The command to be executed.
@@ -216,7 +231,7 @@ public:
   UParser& parser ();
 
   /// Lock access to command tree.
-  urbi::Lockable treeLock;
+  libport::Lockable treeLock;
 
 private:
   /// The parser object.

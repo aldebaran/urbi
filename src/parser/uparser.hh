@@ -4,9 +4,6 @@
  File: uparser.h\n
  Definition of the UParser class used to make flex/bison reentrant.
 
- This file is based on an example provided by Markus Mottl:
- See: "reent" at http://www.oefai.at/~markus
-
  This file is part of
  %URBI Kernel, version __kernelversion__\n
  (c) Jean-Christophe Baillie, 2004-2005.
@@ -29,6 +26,7 @@
 # include <string>
 # include "fwd.hh"
 # include "utypes.hh"
+# include "flavorable.hh"
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"
 
@@ -55,11 +53,11 @@ public:
 
   UParser(UConnection& cn);
 
-  /// Parse the command from a buffer
-  int process(ubyte* command, int length);
+  /// Parse the command from a buffer.
+  int process(const ubyte* command, int length);
 
   /// Parse a file.
-  int process (const char* fn);
+  int process (const std::string& fn);
 
   UCommand_TREE *commandTree;
   bool          binaryCommand;
@@ -88,7 +86,8 @@ private:
 
   /// The file names that were parsed.
   ///
-  /// Kept because each location point to it.
+  /// Kept because each location point to it, and since they are hooked
+  /// on the AST, they survive the parsing.
   typedef std::set<std::string> files;
   files files_;
 

@@ -20,12 +20,12 @@
  **************************************************************************** */
 
 #ifndef UGROUP_HH
-#define UGROUP_HH
+# define UGROUP_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "ustring.hh"
+# include "fwd.hh"
+# include "ustring.hh"
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
@@ -33,13 +33,12 @@ class UGroup
 {
 public:
 
-  UGroup(UString *name);
-  UGroup(char *name);
+  UGroup(const UString& name);
 
   ~UGroup();
 
   std::list<UString*> members;
-  UString      *name;
+  UString name;
 };
 
 #endif

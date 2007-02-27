@@ -6,13 +6,21 @@
 
 #ifndef BLOCKMEMORYMANAGER_HH
 # define BLOCKMEMORYMANAGER_HH
-
+# include "libport/lockable.hh"
 # define DEFAULT_BLOCK_SIZE 100
+
+/* The placement new is required on the Aibo to support
+   std::list<UString>.  */
 
 # define MEMORY_MANAGED				\
   void* operator new(size_t sz)			\
   {						\
     return block_operator_new(mempool_, sz);	\
+  }						\
+						\
+  void* operator new(size_t, void* ptr)		\
+  {						\
+    return ptr;					\
   }						\
 						\
   void operator delete (void *ptr)		\
@@ -25,7 +33,7 @@
 # define MEMORY_MANAGER_INIT(classname)		\
   BlockPool* classname::mempool_ = 0
 
-class BlockPool
+class BlockPool: public libport::Lockable
 {
  public:
   BlockPool ();

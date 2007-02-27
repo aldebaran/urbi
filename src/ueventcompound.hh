@@ -17,16 +17,12 @@
  **************************************************************************** */
 
 #ifndef UEVENTCOMPOUND_HH
-#define UEVENTCOMPOUND_HH
+# define UEVENTCOMPOUND_HH
 
-#include <list>
-#include <string>
+# include <list>
 
-#include "fwd.hh"
-#include "utypes.hh"
+# include "fwd.hh"
 
-
-// ****************************************************************************
 /** UEventCompound stores a complete multi instanciation of a given event
  * expression.
  *
@@ -38,13 +34,21 @@
 class UEventCompound
 {
 public:
+  enum Type
+  {
+    EC_MATCH,
+    EC_AND,
+    EC_OR,
+    EC_BANG
+  };
+
   /** UEventCompound constructor for compound UEventMatch.
    * @param ectype The type of the compound (EC_AND, EC_OR or EC_BANG)
    * @param ec1 A pointeur to the first side of the compound
    * @param ec2 A pointeur to the second side of the compound or 0 in the case
    * of EC_BANG
    */
-  UEventCompound(UEventCompoundType ectype,
+  UEventCompound(Type ectype,
 		 UEventCompound* ec1,
 		 UEventCompound* ec2 = 0);
 
@@ -92,7 +96,7 @@ protected:
   bool keepalive_;
 
   /// Type of the UEventCompound
-  UEventCompoundType ectype_;
+  Type ectype_;
 
   /// Left part of the compound, if any (0 otherwise)
   UEventCompound* ec1_;
@@ -104,4 +108,4 @@ protected:
   UEventMatch* em_;
 };
 
-#endif
+#endif // ! UEVENTCOMPOUND_HH

@@ -18,7 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
+//#define ENABLE_DEBUG_TRACES
 #include "libport/cstring"
 #include <cstdlib>
 #include "ufunction.hh"
@@ -35,6 +35,7 @@ UFunction::UFunction(const UString& funname,
     command (command),
     funname (funname)
 {
+  ECHO("TOTO");
   ADDOBJ(UFunction);
 }
 
@@ -65,10 +66,10 @@ UFunction::cmdcopy(std::string _tag, UNamedParameters *_flags)
   if (_tag != "")
     tmpcmd->setTag(_tag);
   if (_flags)
-    {
-      delete tmpcmd->flags;
-      tmpcmd->flags = _flags->copy();
-    }
+  {
+    delete tmpcmd->flags;
+    tmpcmd->flags = _flags->copy();
+  }
 
   return tmpcmd;
 }

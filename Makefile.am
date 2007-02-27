@@ -25,7 +25,7 @@ EXTRA_DIST +=					\
 windows/urbikernel/Debug			\
 windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
-windows/urbikernel/urbikernel.vcproj       
+windows/urbikernel/urbikernel.vcproj
 
 # Clean VC++ debug file. BTW, Do we want to install it?
 CLEANFILES += vc80.pdb
@@ -44,3 +44,6 @@ uobject-help uobject-ci uobject-up uobj-ci uob-up:
 maintainer-check: valgrind-check
 valgrind-check:
 	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1
+
+check-html:
+	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@

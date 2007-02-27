@@ -28,7 +28,11 @@ class UAst
 {
 public:
   typedef yy::location location;
+
   UAst (const location& l);
+
+  const location& loc () const;
+
 protected:
   location loc_;
 };
@@ -36,6 +40,13 @@ protected:
 inline UAst::UAst (const location& l)
   : loc_(l)
 {
+}
+
+inline
+const UAst::location&
+UAst::loc () const
+{
+  return loc_;
 }
 
 #endif // ! UAST_HH

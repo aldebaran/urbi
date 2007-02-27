@@ -29,7 +29,9 @@
 
 // **************************************************************************
 //! UBinder constructor.
-UBinder::UBinder (const UString& objname, const UString& id, UBindMode bindMode,
+UBinder::UBinder (const UString& objname,
+		  const UString& id,
+		  UBindMode bindMode,
 		  UBindType type, int nbparam,
 		  UConnection* c)
   : id (id),
@@ -48,7 +50,7 @@ UBinder::~UBinder ()
 
 //! Add a monitoring connection to the list if it is not already there
 void
-UBinder::addMonitor (const UString& objname, UConnection *c)
+UBinder::addMonitor (const UString& objname, UConnection* c)
 {
   UMonitor *m = 0;
 
@@ -60,7 +62,7 @@ UBinder::addMonitor (const UString& objname, UConnection *c)
 
   if (!m)
   {
-    m = new UMonitor(objname,c);
+    m = new UMonitor(objname, c);
     monitors.push_back(m);
   }
   else
@@ -150,7 +152,7 @@ UMonitor::UMonitor(UConnection *c): c(c)
 }
 
 //! UMonitor constructor
-UMonitor::UMonitor(const UString& objname, UConnection *c)
+UMonitor::UMonitor(const UString& objname, UConnection* c)
   : c (c)
 {
   addObject(objname);
@@ -159,27 +161,25 @@ UMonitor::UMonitor(const UString& objname, UConnection *c)
 //! UMonitor destructor
 UMonitor::~UMonitor()
 {
-  libport::deep_clear (objects);
 }
 
 //! UMonitor addObject
 void
 UMonitor::addObject(const UString& objname)
 {
-  objects.push_back(new UString(objname));
+  objects.push_back(objname);
 }
 
 //! Monitor removeObject, returns true if objects is empty
 bool
 UMonitor::removeObject(const UString& objname)
 {
-  for (std::list<UString*>::iterator i = objects.begin();
+  for (std::list<UString>::iterator i = objects.begin();
        i != objects.end();
        ++i)
-    if (objname.equal(*i))
+    if (objname == *i)
     {
-      objects.remove(*i);
-      delete *i;
+      objects.erase(i);
       return objects.empty();
     }
   return false;

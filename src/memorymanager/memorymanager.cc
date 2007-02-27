@@ -7,18 +7,22 @@ namespace MemoryManager
   int allocatedMemory = 0;
 }
 
+
+#ifndef DISABLE_BLOCKMEMMNGR
+
 BlockPool::BlockPool ()
   : ptr (0), cptr (0), size (0), itemSize (0)
 {
 }
 
-#ifndef DISABLE_BLOCKMEMMNGR
 void
 block_operator_delete(BlockPool* mempool, void* ptr)
 {
+  mempool->lock();
   ++mempool->cptr;
   *mempool->cptr = ptr;
   MemoryManager::allocatedMemory -= mempool->itemSize;
+  mempool->unlock();
 }
 
 // This implementation can't release any memory to malloc.
@@ -27,6 +31,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
   if (!mempool)
   {
     mempool = new BlockPool;
+    mempool->lock();
     --mempool->cptr;
     const int align = sizeof (void*);
     int asz = sz;
@@ -34,6 +39,8 @@ void* block_operator_new(BlockPool* &mempool, int sz)
       asz = asz + align - (asz % align);
     mempool->itemSize = asz;
   }
+  else
+    mempool->lock();
 
   if (!mempool->ptr || mempool->cptr < mempool->ptr)
   {
@@ -42,10 +49,10 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     //realloc ptr pool
 
     //save cptr as relative int
-    long cpos = (long) mempool->cptr - (long) mempool->ptr;
-    mempool->ptr = static_cast<void**> (realloc (mempool->ptr,
-						 newsize * sizeof (void*)));
-    mempool->cptr = (void**) ((long) mempool->ptr + cpos); //restore cptr
+    ptrdiff_t cpos = mempool->cptr - mempool->ptr;
+    mempool->ptr =
+      static_cast<void**>(realloc (mempool->ptr, newsize * sizeof (void*)));
+    mempool->cptr = mempool->ptr + cpos; //restore cptr
 
     //allocate new data bloc
     char* data = static_cast<char *> (malloc ((newsize-mempool->size)
@@ -56,7 +63,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     for (int i = 0; i < newsize-mempool->size; ++i)
     {
       ++mempool->cptr;
-      *mempool->cptr = (data + mempool->itemSize * i);
+      *mempool->cptr = data + mempool->itemSize * i;
     }
     mempool->size = newsize;
   }
@@ -64,6 +71,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
   void* result = *mempool->cptr;
   --mempool->cptr;
   MemoryManager::allocatedMemory += sz;
+  mempool->unlock();
   return result;
 }
 #endif // !DISABLE_BLOCKMEMMNGR

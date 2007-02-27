@@ -5,6 +5,8 @@
 # A Bison wrapper for C++.
 BISONXX = $(top_builddir)/build-aux/bison++
 BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
+$(BISONXX): $(BISONXX_IN)
+	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/bison++
 
 parsedir = $(top_srcdir)/src/parser/bison
 
@@ -20,33 +22,6 @@ BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UGRAMMAR_Y) ugrammar.stamp ugrammar.output
 nodist_libkernel_la_SOURCES = $(FROM_UGRAMMAR_Y)
 
-## ------------- ##
-## ugrammar.lo.  ##
-## ------------- ##
-
-# We need to pass -O0 when compiling ugrammar.cc with mipsel-linux-c++,
-# to avoid this:
-#
-#  {standard input}: Assembler messages:
-#  {standard input}:4842: Error: Branch out of range
-#  {standard input}:5216: Error: Branch out of range
-#  {standard input}:5395: Error: Branch out of range
-#  {standard input}:5435: Error: Branch out of range
-#  {standard input}:5485: Error: Branch out of range
-#  {standard input}:5541: Error: Branch out of range
-#  {standard input}:5569: Error: Branch out of range
-#  {standard input}:5595: Error: Branch out of range
-#  
-# This is an edited copy of Automake's compilation rule so that we can
-# insert $(PARSER_CXXFLAGS) *after* $(CXXFLAGS) to override -O2.
-# Using foo_CXXFLAGS does not suffice, since CXXFLAGS, a user
-# variable, appears last.
-ugrammar.lo: ugrammar.cc
-@am__fastdepCXX_TRUE@	if $(LTCXXCOMPILE) $(PARSER_CXXFLAGS) -MT ugrammar.lo -MD -MP -MF "$(DEPDIR)/ugrammar.Tpo" -c -o ugrammar.lo `test -f 'ugrammar.cc' || echo '$(srcdir)/'`ugrammar.cc; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/ugrammar.Tpo" "$(DEPDIR)/ugrammar.Plo"; else rm -f "$(DEPDIR)/ugrammar.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ugrammar.cc' object='ugrammar.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) $(PARSER_CXXFLAGS) -c -o ugrammar.lo `test -f 'ugrammar.cc' || echo '$(srcdir)/'`ugrammar.cc
 
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
@@ -85,7 +60,8 @@ EXTRA_DIST += $(parsedir)/utoken.l
 utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(FLEX) -+ -outoken.cc $(parsedir)/utoken.l
+# -s to disable the default rule (ECHO).
+	$(FLEX) -s -+ -outoken.cc $(parsedir)/utoken.l
 	perl -pi						\
 	     -e 's,<FlexLexer.h>,"parser/bison/flex-lexer.hh",;'\
 	     -e 's/class istream;/#include <iostream>/;'	\

@@ -18,7 +18,12 @@ class ConsoleServer
 public:
   ConsoleServer(int freq)
     : UServer(freq, 64000000, "console")
-  {}
+  {
+    // FIXME: Add support for : in the path.
+    if (const char* cp = getenv ("URBI_PATH"))
+      path.push_back (cp);
+  }
+
   virtual ~ConsoleServer()
   {}
 
@@ -35,7 +40,7 @@ public:
 
   virtual ufloat getTime()
   {
-    return static_cast<ufloat>(urbi::utime() / 1000LL);
+    return static_cast<ufloat>(libport::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
@@ -84,11 +89,7 @@ main (int argc, const char* argv[])
 
   ConsoleServer s (10);
 
-  // FIXME: Add support for : in the path.
-  if (const char* cp = getenv ("URBI_PATH"))
-    s.path.push_back (cp);
-
-  s.initialization ();
+  s.initialize ();
   UGhostConnection& c = *s.getGhostConnection ();
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
@@ -99,12 +100,12 @@ main (int argc, const char* argv[])
 
   c.newDataAdded = true;
 
-  long long startTime = urbi::utime();
+  long long startTime = libport::utime();
 
   while (true)
   {
     ufloat freq = s.getFrequency() * 1000;
-    while (urbi::utime() < (startTime + freq))
+    while (libport::utime() < (startTime + freq))
       usleep (1);
     s.work ();
   }

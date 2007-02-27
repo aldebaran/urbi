@@ -18,11 +18,17 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include "libport/cstring"
 #include "libport/cstdio"
 #include <cassert>
 #include <cstdarg>
+
+#include <sstream>
+
+#include <sstream>
 
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
@@ -35,6 +41,7 @@
 #include "ucommandqueue.hh"
 #include "ucomplaints.hh"
 #include "uconnection.hh"
+#include "unamedparameters.hh"
 #include "uqueue.hh"
 #include "userver.hh"
 #include "uvalue.hh"
@@ -46,7 +53,7 @@ UConnection::UConnection  (UServer *userver,
 			   int packetSize,
 			   int minRecvBufferSize,
 			   int maxRecvBufferSize)
-  : UError(USUCCESS),
+  : uerror_(USUCCESS),
     server(userver),
     activeCommand(0),
     // no active command and no last command at start:
@@ -72,15 +79,15 @@ UConnection::UConnection  (UServer *userver,
     // Initial state of the connection: unblocked, not receiving binary.
     active_(true)
 {
-  char tmpbuffer_connectionTag[50];
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
 
   // initialize the connection tag used to reference local variables
-  sprintf(tmpbuffer_connectionTag, "U%ld", (long) this);
-  connectionTag = new UString(tmpbuffer_connectionTag);
-  UVariable* cid = new UVariable(tmpbuffer_connectionTag, "connectionID",
-				 tmpbuffer_connectionTag);
+  std::ostringstream o;
+  o << "U" << (long) this;
+  connectionTag = new UString(o.str());
+  UVariable* cid =
+    new UVariable(o.str().c_str(), "connectionID", o.str().c_str());
   if (cid)
     cid->uservar = false;
 }
@@ -88,62 +95,53 @@ UConnection::UConnection  (UServer *userver,
 //! UConnection destructor.
 UConnection::~UConnection()
 {
+  DEBUG(("Destroying UConnection..."));
   if (connectionTag)
   {
-    UVariable *vari = server->getVariable(connectionTag->str(),
-					  "connectionID");
-    delete vari;
+    delete server->getVariable(connectionTag->c_str(), "connectionID");
     delete connectionTag;
   }
   delete activeCommand;
 
   // free bindings
 
-  for (HMvariabletab::iterator it1 = ::urbiserver->variabletab.begin();
-       it1 != ::urbiserver->variabletab.end(); ++it1)
-  {
-    if (it1->second->binder)
-      if (it1->second->binder->removeMonitor(this))
-      {
-	delete it1->second->binder;
-	it1->second->binder = 0;
-      }
-  }
+  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
+       i != ::urbiserver->variabletab.end(); ++i)
+    if (i->second->binder
+	&& i->second->binder->removeMonitor(this))
+    {
+      delete i->second->binder;
+      i->second->binder = 0;
+    }
 
   std::list<HMbindertab::iterator> deletelist;
-  for (HMbindertab::iterator it2 = ::urbiserver->functionbindertab.begin();
-       it2 != ::urbiserver->functionbindertab.end();
-       ++it2)
-  {
-    if (it2->second->removeMonitor(this))
-      deletelist.push_back(it2);
-  }
+  for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
+       i != ::urbiserver->functionbindertab.end();
+       ++i)
+    if (i->second->removeMonitor(this))
+      deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
-       itt != deletelist.end();
-       ++itt)
-    ::urbiserver->functionbindertab.erase((*itt));
+  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
+       i != deletelist.end();
+       ++i)
+    ::urbiserver->functionbindertab.erase(*i);
   deletelist.clear();
 
-  for (HMbindertab::iterator it3 = ::urbiserver->eventbindertab.begin();
-       it3 != ::urbiserver->eventbindertab.end();
-       ++it3)
-  {
-    if (it3->second->removeMonitor(this))
-      deletelist.push_back(it3);
-  }
-  for (std::list<HMbindertab::iterator>::iterator itt = deletelist.begin();
-       itt != deletelist.end();
-       ++itt)
-    ::urbiserver->eventbindertab.erase((*itt));
+  for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
+       i != ::urbiserver->eventbindertab.end();
+       ++i)
+    if (i->second->removeMonitor(this))
+      deletelist.push_back(i);
+
+  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
+       i != deletelist.end();
+       ++i)
+    ::urbiserver->eventbindertab.erase(*i);
   deletelist.clear();
 
+  DEBUG(("done\n"));
 }
 
-//! UConnection IP associated
-/*! The robot specific part should call the function when the connection is active
- and transmit the IP address of the client, as a long int.
- */
 void
 UConnection::setIP(IPAdd ip)
 {
@@ -183,10 +181,10 @@ void UConnection::initialize()
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
     send(::HEADER_AFTER_CUSTOM[i], "start");
-  sprintf(customHeader, "*** ID: %s\n", connectionTag->str());
+  sprintf(customHeader, "*** ID: %s\n", connectionTag->c_str());
   send(customHeader, "ident");
 
-  sprintf(customHeader, "%s created", connectionTag->str());
+  sprintf(customHeader, "%s created", connectionTag->c_str());
   server->echo(::DISPLAY_FORMAT, (long)this,
 	       "UConnection::initialize",
 	       customHeader);
@@ -199,24 +197,23 @@ void UConnection::initialize()
 UErrorValue
 UConnection::sendPrefix (const char* tag)
 {
-  static const int MAXSIZE_TMPBUFFER = 1024;
-  static char tmpBuffer_[MAXSIZE_TMPBUFFER];
+  enum { MAXSIZE_TMPBUFFER = 1024 };
+  char buf[MAXSIZE_TMPBUFFER];
 
-  if (tag == NULL)
-    snprintf(tmpBuffer_,
-	     MAXSIZE_TMPBUFFER,
-	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
-  else
+  if (tag)
   {
-    snprintf(tmpBuffer_, MAXSIZE_TMPBUFFER-3,
+    snprintf(buf, sizeof buf,
 	     "[%08d:%s", (int)server->lastTime(), tag);
     // This splitting method is used to truncate the tag if its size
     // is too large.
-    strcat(tmpBuffer_, "] ");
+    strcat(buf, "] ");
   }
+  else
+    snprintf(buf, sizeof buf,
+	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
 
   sendQueue_.mark (); // put a marker to indicate the beginning of a message
-  sendc((const ubyte*)tmpBuffer_, strlen(tmpBuffer_));
+  sendc((const ubyte*)buf, strlen(buf));
   return USUCCESS;
 }
 
@@ -362,7 +359,7 @@ UConnection::block ()
 UErrorValue
 UConnection::continueSend ()
 {
-  urbi::BlockLock bl(this); //lock this function
+  libport::BlockLock bl(this); //lock this function
   blocked_ = false;	    // continueSend unblocks the connection.
 
   int toSend = sendQueue_.dataSize(); // nb of bytes to send
@@ -403,14 +400,6 @@ UConnection::received (const char *s)
   return received((const ubyte*) s, strlen(s));
 }
 
-//! Handles a incoming buffer of data.
-/*! Must be called each time a buffer of data is received by the connection.
- \param buffer the incoming buffer
- \param length the length of the buffer
- \return UFAIL buffer overflow
- \return UMEMORYFAIL critical memory overflow
- \return USUCCESS otherwise
- */
 UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
@@ -423,15 +412,17 @@ UConnection::received (const ubyte *buffer, int length)
   }
 
   bool gotlock = false;
-  bool faillock = false; // if binary append failed to get lock,
-  // abort processing
-  urbi::BlockLock bl(server);
+  // If binary append failed to get lock, abort processing.
+  bool faillock = false;
+  libport::BlockLock bl(server);
   // Lock the connection.
   lock();
   if (receiveBinary_)
   {
-    // handles and try to finish the binary transfer
-    if (length < binCommand->refBinary->ref()->bufferSize - transferedBinary_)
+    // Handle and try to finish the binary transfer.
+    int total =
+      binCommand->refBinary->ref()->bufferSize - transferedBinary_;
+    if (length < total)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
 	     buffer,
@@ -444,13 +435,9 @@ UConnection::received (const ubyte *buffer, int length)
     {
       memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
 	     buffer,
-	     binCommand->refBinary->ref()->bufferSize - transferedBinary_);
-
-      buffer += (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
-
-      length -= (binCommand->refBinary->ref()->bufferSize -
-		 transferedBinary_);
+	     total);
+      buffer += total;
+      length -= total;
       if (treeLock.tryLock())
       {
 	receiveBinary_ = false;
@@ -497,14 +484,13 @@ UConnection::received (const ubyte *buffer, int length)
   }
 
   UParser& p = parser();
-#ifndef __linux // XXX DIRTY FIX FOR BUG #113
   if (p.commandTree)
   {
     //reentrency trouble
     treeLock.unlock();
     return USUCCESS;
   }
-#endif
+
   // Starts processing
   receiving = true;
   server->updateTime();
@@ -563,7 +549,7 @@ UConnection::received (const ubyte *buffer, int length)
 	{
 	  binCommand =
 	    dynamic_cast<UCommand_ASSIGN_BINARY*> (p.commandTree->command1);
-	  assert (binCommand != 0);
+	  assert (binCommand);
 
 	  ubyte* buffer =
 	    recvQueue_.pop(binCommand->refBinary->ref()->bufferSize);
@@ -594,9 +580,10 @@ UConnection::received (const ubyte *buffer, int length)
 	  {
 	    p.commandTree->up = 0;
 	    p.commandTree->position = 0;
+	    PING();
 	    execute(p.commandTree);
 	    if (p.commandTree &&
-		p.commandTree->status == URUNNING)
+		p.commandTree->status == UCommand::URUNNING)
 	      obstructed = true;
 	  }
 
@@ -652,7 +639,7 @@ UConnection::error (UErrorCode n)
     char buf[80];
     strncpy (buf, msg, sizeof buf);
     if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end...
+      //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
     server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
   }
@@ -680,7 +667,7 @@ UConnection::warning (UWarningCode n)
     char buf[80];
     strncpy (buf, msg, sizeof buf);
     if (strlen (msg) - 1 < sizeof buf)
-      //remove the '\n' at the end...
+      //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
     server->echoKey("WARNG", ::DISPLAY_FORMAT, (long)this,
 		    "UConnection::warning", buf);
@@ -786,7 +773,6 @@ UConnection::processCommand(UCommand *&command,
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
-
     if (command->startTime == -1)
     {
       command->startTime = server->lastTime();
@@ -794,33 +780,33 @@ UConnection::processCommand(UCommand *&command,
       for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name)
 	{
-	  if (param->name->equal("flagid"))
+	  if (*param->name == "flagid")
 	  {
-	    param->name->update("noflag");
+	    *param->name = "noflag";
 	    UValue* tmpID = param->expression->eval(command, this);
 	    if (tmpID)
 	    {
 	      if (tmpID->dataType == DATA_STRING)
-		for (std::list<UConnection*>::iterator retr =
+		for (std::list<UConnection*>::iterator i =
 		       ::urbiserver->connectionList.begin();
-		     retr != ::urbiserver->connectionList.end();
-		     ++retr)
-		  if ((*retr)->isActive()
-		      && ((*retr)->connectionTag->equal(tmpID->str) ||
-			  STREQ(tmpID->str->str(), "all") ||
-			  (STREQ(tmpID->str->str(), "other") &&
-			   !(*retr)->connectionTag->equal(connectionTag))))
-		    (*retr)->append(new UCommand_TREE(UCommand::location(),
-						      Flavorable::UAND,
-						      command->copy(),
-						      0));
+		     i != ::urbiserver->connectionList.end();
+		     ++i)
+		  if ((*i)->isActive()
+		      && (*(*i)->connectionTag == *tmpID->str
+			  || *tmpID->str == "all"
+			  || (*tmpID->str == "other"
+			      && !(*(*i)->connectionTag == *connectionTag))))
+		    (*i)->append(new UCommand_TREE(UCommand::location(),
+						   Flavorable::UAND,
+						   command->copy(),
+						   0));
 	      delete tmpID;
 	    }
 	    delete command;
 	    return 0;
 	  }
 
-	  if (param->name->equal("flagtimeout"))
+	  if (*param->name == "flagtimeout")
 	  {
 	    command->flagType += 1;
 	    command->flagExpr1 = param->expression;
@@ -828,7 +814,7 @@ UConnection::processCommand(UCommand *&command,
 		 " Use timeout(time) command instead.\n",
 		 command->getTag().c_str());
 	  }
-	  if (param->name->equal("flagstop"))
+	  if (*param->name == "flagstop")
 	  {
 	    command->flagType += 2;
 	    command->flagExpr2 = param->expression;
@@ -836,7 +822,7 @@ UConnection::processCommand(UCommand *&command,
 		 " Use stopif(test) command instead.\n",
 		 command->getTag().c_str());
 	  }
-	  if (param->name->equal("flagfreeze"))
+	  if (*param->name == "flagfreeze")
 	  {
 	    command->flagType += 4;
 	    command->flagExpr4 = param->expression;
@@ -845,12 +831,12 @@ UConnection::processCommand(UCommand *&command,
 		 command->getTag().c_str());
 	  }
 
-	  if (param->name->equal("flag")
+	  if (*param->name == "flag"
 	      && param->expression
 	      && param->expression->val == 10)
 	    command->flagType += 8;
 
-	  if (param->name->equal("flag")
+	  if (*param->name == "flag"
 	      && param->expression
 	      && !command->morphed
 	      && (param->expression->val == 4 // 4 = +begin
@@ -865,15 +851,14 @@ UConnection::processCommand(UCommand *&command,
     if (command->flagType&1)
     {
       UValue *value = command->flagExpr1->eval(command, this);
-      if ((value) &&
-	  (value->dataType == DATA_NUM) &&
-	  (command->startTime + value->val <= server->lastTime()))
+      if (value &&
+	  value->dataType == DATA_NUM &&
+	  command->startTime + value->val <= server->lastTime())
 	stopit = true;
       delete value;
     }
 
     // flag "+stop"
-
     if (command->flagType&2)
     {
       UTestResult testres = booleval(command->flagExpr2->eval(command, this));
@@ -897,7 +882,6 @@ UConnection::processCommand(UCommand *&command,
     }
 
     // flag "+freeze"
-
     if (command->flagType&4)
     {
       UTestResult testres = booleval(command->flagExpr4->eval(command, this));
@@ -924,7 +908,7 @@ UConnection::processCommand(UCommand *&command,
     {
       for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name &&
-	    param->name->equal("flag") &&
+	    *param->name == "flag" &&
 	    param->expression &&
 	    !command->morphed &&
 	    (param->expression->val == 3 || // 3 = +end
@@ -953,11 +937,11 @@ UConnection::processCommand(UCommand *&command,
 
       switch (command->execute(this))
       {
-	case UCOMPLETED:
+	case UCommand::UCOMPLETED:
 	  for (UNamedParameters *param = command->flags; param;
 	       param = param->next)
 	    if (param->name &&
-		param->name->equal("flag") &&
+		*param->name == "flag" &&
 		param->expression &&
 		(param->expression->val == 3 || // 3 = +end
 		 param->expression->val == 1  )) // 1 = +report
@@ -969,8 +953,8 @@ UConnection::processCommand(UCommand *&command,
 	  delete command;
 	  return 0;
 
-	case UMORPH:
-	  command->status = UONQUEUE;
+	case UCommand::UMORPH:
+	  command->status = UCommand::UONQUEUE;
 	  command->morphed = true;
 
 	  morphed = command->morph;
@@ -993,23 +977,61 @@ UConnection::processCommand(UCommand *&command,
 	  // "+bg" flag
 	  // FIXME: Nia?  What the heck is happening here???
 	  if ((command->flagType & 8) &&
-	      command->status == URUNNING)
-	    command->status = UBACKGROUND;
+	      command->status == UCommand::URUNNING)
+	    command->status = UCommand::UBACKGROUND;
 	  return command;
       }
     }
   }
 }
 
+namespace
+{
+  /// Simplify a UCommand_TREE if possible.
+  /// \return whether a simplification was made.
+  // FIXME: Should be with UCommand_TREE, not here.
+  bool simplify (UCommand_TREE* tree)
+  {
+    // left reduction
+    if (!tree->command1 && tree->command2)
+    {
+      ASSERT(tree->position)
+	*tree->position = tree->command2;
+      tree->command2->up = tree->up;
+      tree->command2->position = tree->position;
+      tree->command2->background = tree->background;
+      tree->command2 = 0;
+      return true;
+    }
+
+    // right reduction
+    // the background hack is here to preserve {at()...} commands.
+    if (!tree->command2
+	&& tree->command1
+	&& tree->command1->status != UCommand::UBACKGROUND)
+    {
+      ASSERT(tree->position)
+	*tree->position = tree->command1;
+      tree->command1->up = tree->up;
+      tree->command1->position = tree->position;
+      tree->command1->background = tree->background;
+      tree->command1 = 0;
+      return true;
+    }
+    return false;
+  }
+}
+
 //! Execute a command tree
 /*! This function executes a command tree and
- returns the next node of the tree to process..
+ returns the next node of the tree to process.
 
  \param tree is the UCommand_TREE to execute.
  */
 void
 UConnection::execute(UCommand_TREE*& execCommand)
 {
+  PING();
   if (execCommand == 0 || closing)
     return;
 
@@ -1018,7 +1040,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
   UCommand_TREE* tree = execCommand;
   while (tree)
   {
-    tree->status = URUNNING;
+    tree->status = UCommand::URUNNING;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1047,7 +1069,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
     if (mustReturn)
     {
       tree = dynamic_cast<UCommand_TREE*> (tree->command1);
-      assert (tree != 0);
+      assert (tree);
       continue;
     }
 
@@ -1067,7 +1089,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
     if (tree->flavor() == Flavorable::UAND
 	|| tree->flavor() == Flavorable::UCOMMA
 	|| tree->command1 == 0
-	|| tree->command1->status == UBACKGROUND)
+	|| tree->command1->status == UCommand::UBACKGROUND)
     {
       if (tree == lastCommand)
 	obstructed = false;
@@ -1079,7 +1101,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
       if (mustReturn)
       {
 	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
-	assert (tree != 0);
+	assert (tree);
 	continue;
       }
     }
@@ -1099,7 +1121,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
       for (UNamedParameters *param = tree->flags; param; param = param->next)
 	if (param->name &&
-	    param->name->equal("flag") &&
+	    *param->name == "flag" &&
 	    param->expression &&
 	    (param->expression->val == 3 || // 3 = +end
 	     param->expression->val == 1)) // 1 = +report
@@ -1110,57 +1132,27 @@ UConnection::execute(UCommand_TREE*& execCommand)
       delete oldtree;
       continue;
     }
-    else if (((tree->command1 == 0 || tree->command1->status == UBACKGROUND)
-	      && (tree->command2 == 0 || tree->command2->status == UBACKGROUND))
+    else if (((tree->command1 == 0
+	       || tree->command1->status == UCommand::UBACKGROUND)
+	      && (tree->command2 == 0 ||
+		  tree->command2->status == UCommand::UBACKGROUND))
 	     || tree->background == true
 	     || (tree->flagType&8))
-      tree->status = UBACKGROUND;
+      tree->status = UCommand::UBACKGROUND;
 
     tree->runlevel1 = UWAITING;
     tree->runlevel2 = UWAITING;
 
     // REDUCTION
 
-    if (tree != lastCommand &&
-	tree != execCommand &&
-	!tree->toDelete &&
-	tree->command1 == 0 &&
-	tree->command2 != 0)
-    {
-      // left reduction
-      ASSERT(tree->position!=0)
-	*tree->position = tree->command2;
-      tree->command2->up = tree->up;
-      tree->command2->position = tree->position;
-      tree->command2->background = tree->background;
-      tree->command2 = 0;
-      UCommand_TREE* oldtree = tree;
-      tree = tree->up; // cannot be zero
-      delete oldtree;
-      continue;
-    }
-
-    if (tree != lastCommand &&
-	tree != execCommand &&
-	!tree->toDelete &&
-	tree->command2 == 0 &&
-	tree->command1 != 0 &&
-	tree->command1->status != UBACKGROUND)
-    {
-      // right reduction
-      // the background hack is here to preserve {at()...} commands.
-
-      ASSERT(tree->position!=0) *(tree->position) = tree->command1;
-      tree->command1->up = tree->up;
-      tree->command1->position = tree->position;
-      tree->command1->background = tree->background;
-      tree->command1 = 0;
-      UCommand_TREE* oldtree = tree;
-      tree = tree->up; // cannot be zero
-
-      delete oldtree;
-      continue;
-    }
+    if (tree != lastCommand && tree != execCommand && !tree->toDelete)
+      if (simplify (tree))
+      {
+	UCommand_TREE* oldtree = tree;
+	tree = tree->up; // cannot be zero
+	delete oldtree;
+	continue;
+      }
 
     // BACK UP
     tree = tree->up;
@@ -1173,6 +1165,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
     delete execCommand;
     execCommand = 0;
   }
+  PING();
 }
 
 //! Append a command to the command queue
@@ -1235,7 +1228,7 @@ UConnection::localVariableCheck (UVariable *variable)
   if (!stack.empty())
   {
     UCallid* cid = stack.front();
-    if (variable->devicename->equal(cid->str()))
+    if (variable->getDevicename() == (std::string)cid->c_str())
       cid->store(variable);
   }
 }

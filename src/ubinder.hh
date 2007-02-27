@@ -28,7 +28,7 @@
 # include "ustring.hh"
 # include "utypes.hh"
 
-// *****************************************************************************
+// ****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command
 //! A binder associates a var name (function, event or var) to a callback
 //! mechanism that must be called. Only for external mode.
@@ -69,7 +69,7 @@ public:
   bool removeObject(const UString& objname);
 
   UConnection* c;
-  std::list<UString*> objects;
+  std::list<UString> objects;
 };
 
 #endif

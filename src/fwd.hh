@@ -16,6 +16,7 @@ namespace urbi
   class baseURBIStarter;
 };
 
+class TagInfo;
 class UASyncCommand;
 class UASyncRegister;
 class UAtCandidate;

@@ -20,17 +20,17 @@
  **************************************************************************** */
 
 #ifndef UVARIABLE_HH
-#define UVARIABLE_HH
+# define UVARIABLE_HH
 
-#include <string>
-#include <list>
+# include <string>
+# include <list>
 
-#include <cstdlib>
+# include <cstdlib>
 
-#include "memorymanager/memorymanager.hh"
-#include "fwd.hh"
-#include "utypes.hh"
-#include "uasyncregister.hh"
+# include "memorymanager/memorymanager.hh"
+# include "fwd.hh"
+# include "utypes.hh"
+# include "uasyncregister.hh"
 
 //! Uvariable is used to store variables
 /* ! You can pass to the constructor three importants parameters:
@@ -84,19 +84,15 @@ public:
 	    bool _autoUpdate = true);
   ~UVariable();
 
-  /// Full associated var name if it exists.
-  UString         *varname;
-  /// Method in the varname.
-  UString         *method;
-  /// Device in the varname.
-  UString         *devicename;
+  /// For debugging.
+  std::ostream& print (std::ostream& o) const;
+
 
   //properties
 
   /// The variable blend type.
-  UBlendType blendType;
-  /// Device unit.
-  UString         *unit;
+  urbi::UBlendType blendType;
+
   ufloat          rangemin;
   ufloat          rangemax;
   ufloat          speedmin;
@@ -114,15 +110,16 @@ public:
   bool            uservar;
   /// Temporary value container.
   ufloat          target;
-  ufloat          previous,
-		  previous2,
-		  previous3; ///< previous theoretical value container
+  /// Previous theoretical value container.
+  ufloat          previous, previous2, previous3;
   /// Previous sensed value.
   ufloat          previous_sensed;
   /// Variable value.
   UValue          *value;
-  ufloat          valPrev,
-		  valPrev2; // used for 'd and 'dd calculation
+
+  /// Used for 'd and 'dd calculation.
+  ufloat valPrev, valPrev2;
+
   /// True when UDevice::notifyRead must be called.
   bool            notifyRead;
   /// True when UDevice::notifyWrite must be called.
@@ -140,7 +137,7 @@ public:
   bool            reloop;
 
   /// Cached binder pointer.
-  UBinder         *binder;
+  UBinder* binder;
 
   /// Binder for internal monitors.
   std::list<urbi::UGenericCallback*> internalBinder;
@@ -151,11 +148,11 @@ public:
   bool access_and_change;
 
   /// Used for the "cancel" blend type.
-  UCommand_ASSIGN_VALUE *cancel;
+  UCommand_ASSIGN_VALUE* cancel;
 
-  const char*   setName(const char *s);
-  const char*   setName(const char *_id, const char* _method);
-  const char*   setName(UString *s);
+  const char* setName(const char* s);
+  const char* setName(const char* _id, const char* _method);
+  const char* setName(UString* s);
 
   /// \name Updates.
   /// \{
@@ -166,9 +163,9 @@ public:
       USPEEDMAX
     };
 
-  UVarSet set(UValue *v);
+  UVarSet set(UValue* v);
   UVarSet setFloat(ufloat f);
-  UVarSet selfSet(ufloat *valcheck);
+  UVarSet selfSet(ufloat* valcheck);
   /// \}
 
   ///  Set a value->val value.
@@ -183,14 +180,39 @@ public:
   /// subclasses.
   bool isDeletable();
 
-  void          updated();
+  void updated(bool uvar_assign = false);
 
-  UValue*       get();
+  UValue* get(bool autoloop = false);
 
-  private:
+  const std::string& getDevicename() {return devicename;}
+  const std::string& getVarname() {return varname;}
+  const std::string& getMethod() {return method;}
+  const std::string& getUnit() {return unit;}
+  void setUnit(const char *u) {unit =u;}
+  void setContext(UCallid * ctx) {context = ctx;}
 
-  void    init();
+private:
+  /// Device in the varname.
+  std::string devicename;
+   /// Method in the varname.
+  std::string method;
+  std::string varname;
+  /// Device unit.
+  std::string unit;
 
+  /// Context if scope is a function.
+  UCallid* context;
+
+  void init();
+  UVariable(const UVariable &);
+  UVariable& operator = (const UVariable &);
 };
+
+inline
+std::ostream&
+operator<< (std::ostream& o, const UVariable& v)
+{
+  return v.print(o);
+}
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef CONNECTION_HH
 # define CONNECTION_HH
 
-# include <time.h>
 # include <sys/types.h>
 
 /** \file Connection.h.cpp
@@ -24,7 +23,7 @@ public:
     // This is also the size of the buffer
     PACKETSIZE	     = 16384,
     MINRECVBUFFERSIZE = 4096,
-    MAXRECVBUFFERSIZE = 32768,
+    MAXRECVBUFFERSIZE = 1048576,
   };
 
   //! Creates a new connection from the connection file descriptor
@@ -36,6 +35,8 @@ public:
   Connection(int connfd);
   virtual ~Connection();
   virtual UErrorValue closeConnection ();
+
+  virtual std::ostream& print (std::ostream& o) const;
 
   /*ENABLE_URBI_MEM*/
 
@@ -52,14 +53,7 @@ public:
   {
     doWrite();
   }
-  virtual UErrorValue send  (const ubyte *buffer, int length);
-protected:
-  //! Overloading this function is requiered by UConnection
-  virtual int effectiveSend (const ubyte *buffer, int length);
-  //! The file descriptor of the connection
-  int	fd;
-  //! The reception buffer
-  unsigned char read_buff[PACKETSIZE];
+  virtual UErrorValue send (const ubyte *buffer, int length);
 
 public:
   //! Accessor for the underlying file descriptor
@@ -80,6 +74,14 @@ public:
     else
       return -1;
   }
+
+protected:
+  //! Overloading this function is requiered by UConnection
+  virtual int effectiveSend (const ubyte *buffer, int length);
+  //! The file descriptor of the connection
+  int fd;
+  //! The reception buffer
+  unsigned char read_buff[PACKETSIZE];
 };
 
 #endif // !CONNECTION_HH

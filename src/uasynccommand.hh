@@ -98,20 +98,19 @@ UASyncCommand::reset_reeval()
   reeval_ = false;
 }
 
-class UCommand_AT: public UASyncCommand
+class UCommand_AT: public UASyncCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_AT (const UCommand::location& l,
-	       UCommand::Type type, UExpression* test,
-	       UCommand* command1, UCommand* command2);
+  UCommand_AT (const UCommand::location& l, UNodeType flavor,
+	       UExpression* test, UCommand* cmd1, UCommand* cmd2);
   virtual ~UCommand_AT ();
 
-  virtual void print (int l);
+  virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute (UConnection* connection);
-  virtual UCommand* copy ();
+  virtual Status execute_ (UConnection* connection);
+  virtual UCommand* copy () const;
 
   /// test
   UExpression* test;
@@ -138,10 +137,10 @@ public:
 		     UCommand* command1, UCommand* command2);
   virtual ~UCommand_WHENEVER ();
 
-  virtual void print (int l);
+  virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute (UConnection* connection);
-  virtual UCommand* copy ();
+  virtual Status execute_ (UConnection* connection);
+  virtual UCommand* copy () const;
 
   /// test
   UExpression* test;

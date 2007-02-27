@@ -20,21 +20,17 @@
  **************************************************************************** */
 
 #include "uproperty.hh"
-#include "uvariablename.hh"
 #include "ustring.hh"
+#include "uvariablename.hh"
 
-
-// **************************************************************************
-//! UProperty constructor
-UProperty::UProperty( UVariableName *variablename,
-		      UString *property)
+UProperty::UProperty (UVariableName* variablename,
+		      UString* property)
+  : variablename (variablename),
+    property (property)
 {
-  this->variablename = variablename;
-  this->property = property;
 }
 
-//! UProperty destructor
-UProperty:: ~UProperty()
+UProperty::~UProperty()
 {
   delete variablename;
   delete property;

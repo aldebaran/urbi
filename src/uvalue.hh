@@ -31,7 +31,6 @@
 # include "fwd.hh"
 # include "memorymanager/memorymanager.hh"
 # include "utypes.hh"
-# include "ustring.hh"
 
 // ****************************************************************************
 //! Contains a value: can be numeric, string, binary
@@ -44,6 +43,9 @@ public:
   UValue(const char* str);
   UValue(const urbi::UValue&);
 
+  /// \pre \a t is DATA_FILE, or DATA_STRING, or DATA_OBJ.
+  UValue(UDataType t, const char* s);
+
   UValue& operator = (const urbi::UBinary&);
   UValue& operator = (const urbi::UImage&);
   UValue& operator = (const urbi::USound&);
@@ -55,7 +57,8 @@ public:
   operator urbi::UBinary*();
   ~UValue();
 
-  UDataType	  dataType;	///< Type of the value
+  /// Type of the value.
+  UDataType dataType;
 
   ufloat val; // must be out of the union in case of reimplementation
   /// Union of the possible types.
@@ -68,13 +71,15 @@ public:
   UValue* liststart;
   UValue* next;
 
-  UValue* copy();
+  UValue* copy() const;
   UValue* add(UValue* v);
   bool	  equal(UValue* v);
   void	  echo(UConnection* connection, bool human_readable=false);
   std::string  echo(bool human_readable=false);
 
   urbi::UValue* urbiValue();
+private:
+  UValue& operator = (const UValue &);
 };
 
 UTestResult booleval(UValue* , bool freeme = true);

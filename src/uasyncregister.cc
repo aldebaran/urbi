@@ -21,10 +21,6 @@
 #include "uasyncregister.hh"
 #include "uasynccommand.hh"
 
-//FIXME: used only for debugging purposes
-#include "userver.hh"
-#include "utypes.hh"
-
 // **************************************************************************
 // UASyncRegister
 
@@ -34,10 +30,10 @@ UASyncRegister::UASyncRegister ()
 
 UASyncRegister::~UASyncRegister()
 {
-  for (std::list<UASyncCommand*>::iterator it = register_.begin ();
-	it != register_.end ();
-	++it)
-    (*it)->registered_out (this);
+  for (std::list<UASyncCommand*>::iterator i = register_.begin ();
+	i != register_.end ();
+	++i)
+    (*i)->registered_out (this);
 }
 
 void
@@ -56,8 +52,8 @@ UASyncRegister::unregisterCmd(UASyncCommand* cmd)
 void
 UASyncRegister::updateRegisteredCmd ()
 {
-  for (std::list<UASyncCommand*>::iterator it = register_.begin ();
-	it != register_.end ();
-	++it)
-    (*it)->force_reeval ();
+  for (std::list<UASyncCommand*>::iterator i = register_.begin ();
+	i != register_.end ();
+	++i)
+    (*i)->force_reeval ();
 }

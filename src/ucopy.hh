@@ -10,7 +10,7 @@ namespace
   template <typename T>
   inline
   T*
-  ucopy (T* t)
+  ucopy (const T* t)
   {
     return t ? t->copy () : 0;
   }

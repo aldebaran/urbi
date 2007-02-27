@@ -1,5 +1,7 @@
-/// !file ucomplaints.cc
+/// \file ucomplaints.cc
 
+#include <cstdlib>
+#include "libport/assert.hh"
 #include "ucomplaints.hh"
 
 const char*
@@ -26,8 +28,7 @@ message (UErrorCode n)
     case UERROR_MEMORY_WARNING:
       return "!!! Memory warning\n";
   }
-  // This should not be possible.
-  return "!!! Unidentified Error\n";
+  pabort ("unexpected case:" << n);
 }
 
 const char*
@@ -38,6 +39,5 @@ message (UWarningCode n)
     case UWARNING_MEMORY:
       return "!!! Memory overflow warning\n";
   }
-  // This should not be possible.
-  return "!!! Unidentified warning\n";
+  pabort ("unexpected case: " << n);
 }

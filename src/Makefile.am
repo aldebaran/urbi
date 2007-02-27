@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie
+# URBI - Copyright (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -45,9 +45,11 @@ uninstall-local:
 dist_libkernel_la_SOURCES =					\
 fwd.hh								\
 flavorable.hh							\
+mem-track.hh							\
 memorymanager/blockmemorymanager.hh				\
 memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
 parser/uparser.hh parser/uparser.cc				\
+tag-info.hh tag-info.cc						\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
 uasyncregister.hh uasyncregister.cc				\
@@ -109,6 +111,14 @@ include uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
+## ------------- ##
+## ../libport/.  ##
+## ------------- ##
+
+include $(top_srcdir)/libport/libport-sources.mk
+nodist_libkernel_la_SOURCES += $(libport_sources)
+
+
 ## ----------------- ##
 ## Sub directories.  ##
 ## ----------------- ##
@@ -130,6 +140,8 @@ parser/uparser.hh
 kernelinclude_HEADERS +=			\
 fwd.hh						\
 flavorable.hh					\
+tag-info.hh					\
+mem-track.hh					\
 uast.hh						\
 uasynccommand.hh				\
 uasyncregister.hh				\

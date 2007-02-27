@@ -22,6 +22,7 @@
 #include <string>
 #include <cstdlib>
 
+#include "libport/assert.hh"
 #include "libport/cstdio"
 #include "libport/ref-pt.hh"
 
@@ -36,6 +37,7 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"
+#include "ucallid.hh"
 
 MEMORY_MANAGER_INIT(UVariable);
 
@@ -44,7 +46,8 @@ UVariable::UVariable(const char* name, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = _value;
@@ -59,7 +62,8 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = _value;
@@ -75,7 +79,8 @@ UVariable::UVariable(const char* name,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(val);
@@ -90,7 +95,8 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(val);
@@ -105,7 +111,8 @@ UVariable::UVariable(const char* name, const char* str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(str);
@@ -120,7 +127,8 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(str);
@@ -135,21 +143,16 @@ void
 UVariable::init()
 {
   ADDOBJ(UVariable);
-  blendType  = UNORMAL;
+  blendType  = urbi::UNORMAL;
   rangemin   = -UINFINITY;
   rangemax   = UINFINITY;
   speedmin   = 0;
   speedmax   = UINFINITY;
-  unit       = 0;
   delta      = 0; // delta is 0 by default
   speedmodified = false;
   reloop        = false;
-
   nbAssigns  = 0;
   nbAverage  = 0;
-  varname    = 0;
-  method     = 0;
-  devicename = 0;
   target     = 0;
   previous   = 0;
   previous2  = 0;
@@ -173,7 +176,7 @@ UVariable::~UVariable()
 
   HMvariabletab::iterator hmi;
 
-  if ((hmi = ::urbiserver->variabletab.find(varname->str())) !=
+  if ((hmi = ::urbiserver->variabletab.find(varname.c_str())) !=
       ::urbiserver->variabletab.end())
     ::urbiserver->variabletab.erase(hmi);
 
@@ -182,17 +185,29 @@ UVariable::~UVariable()
   {
     if (value->dataType == DATA_OBJ && value->str!=0)
     {
-      HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
+      HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
       if (idit != ::urbiserver->objtab.end())
 	delete idit->second;
       // NB: idit is removed from objtab in the destructor of UObj
     }
     delete value;
   }
-  delete unit;
-  delete varname;
-  delete method;
-  delete devicename;
+  if (context)
+    context->remove(this);
+}
+
+std::ostream&
+UVariable::print(std::ostream& o) const
+{
+#define UV_PRINT(Id) " " #Id " = " << Id
+  return
+    o << "Uvariable {"
+      << UV_PRINT(devicename) << ','
+      << UV_PRINT(method) << ','
+      << UV_PRINT(varname) << ','
+      << UV_PRINT(unit)
+      << " }";
+#undef UV_PRINT
 }
 
 
@@ -200,23 +215,22 @@ UVariable::~UVariable()
 const char*
 UVariable::setName(const char* s)
 {
-  char *pointPos;
+  varname = s;
 
-  varname = new UString (s);
-
-  pointPos = const_cast<char*>(strstr(varname->str(), "."));
-  if (pointPos == 0)
-    method = new UString("");
+  size_t pos = varname.find('.');
+  if (pos==std::string::npos)
+  {
+    method = "";
+    devicename = varname;
+  }
   else
-    method = new UString(pointPos + 1);
+  {
+    method = varname.substr(pos + 1, varname.length());
+    devicename = varname.substr(0,pos);
+  }
 
-  if (pointPos)
-    pointPos[0] = 0;
-  devicename = new UString(varname->str());
-  if (pointPos)
-    pointPos[0] = '.';
 
-  return varname->str();
+  return varname.c_str();
 }
 
 //! Associated variable name initialization
@@ -227,17 +241,17 @@ UVariable::setName(const char *_id, const char* _method)
 
   snprintf(tmpVarName, 1024, "%s.%s", _id, _method);
 
-  varname    = new UString (tmpVarName);
-  method     = new UString(_method);
-  devicename = new UString(_id);
+  varname = tmpVarName;
+  method = _method;
+  devicename = _id;
 
-  return varname->str();
+  return varname.c_str();
 }
 
 const char*
 UVariable::setName(UString *s)
 {
-  return setName(s->str());
+  return setName(s->c_str());
 }
 
 //! Set the UValue associated to the variable
@@ -266,7 +280,7 @@ UVariable::set(UValue *v)
     switch (value->dataType)
     {
       case DATA_STRING:
-	value->str->update(v->str->str());
+	*value->str = v->str->c_str();
 	break;
       case DATA_NUM:
 	setSensorVal(v->val);
@@ -284,7 +298,7 @@ UVariable::set(UValue *v)
 	switch (v->dataType)
 	{
 	  case DATA_STRING:
-	    value->str = new UString(v->str);
+	    value->str = new UString(*v->str);
 	    break;
 	  case DATA_NUM:
 	    initSensorVal(v->val);
@@ -296,7 +310,23 @@ UVariable::set(UValue *v)
 	    delete value;
 	    value = v->copy();
 	    break;
+	  case DATA_VOID:
+	    //this can happen. do nothing
+	    break;
+	  case DATA_UNKNOWN:
+	  case DATA_FILE:
+	  case DATA_FUNCTION:
+	  case DATA_OBJ:
+	  case DATA_VARIABLE:
+	    passert (v->dataType, !"not reachable");
 	}
+	break;
+      case DATA_VARIABLE:
+      case DATA_UNKNOWN:
+      case DATA_FILE:
+      case DATA_FUNCTION:
+      case DATA_OBJ:
+	passert (value->dataType, !"not reachable");
     }
   }
 
@@ -372,19 +402,24 @@ UVariable::selfSet(ufloat *valcheck)
     the UValue is actually sent back.
 */
 UValue*
-UVariable::get()
+UVariable::get(bool autoloop)
 {
   // recursive call for objects
   if (value->dataType == DATA_OBJ)
     for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
 	 it != ::urbiserver->variabletab.end();
 	 ++it)
-      if (it->second->method
-	  && it->second->devicename
+    if (!it->second->getMethod().empty()
 	  && value->str
 	  && it->second->value->dataType != DATA_OBJ
-	  && it->second->devicename->equal(value->str))
+	  && it->second->getDevicename()== (std::string)value->str->c_str())
 	it->second->get ();
+
+  // data preparation for the UNotifyChange/Access loop control
+  int nb_change = internalBinder.size ();
+  std::string change_objname = "";
+  if (nb_change == 1 && autoloop)
+    change_objname = (*internalBinder.begin ())->objname;
 
   // check for existing notifychange
   for (std::list<urbi::UGenericCallback*>::iterator i =
@@ -392,16 +427,23 @@ UVariable::get()
        i != internalAccessBinder.end();
        ++i)
   {
-    urbi::UList l;
-    if ((*i)->storage)
+    // checking if there is a UNotifyChange/Access loop on a UOwned inside
+    // the same object
+    urbi::UVar* tmpvar = static_cast<urbi::UVar*> ((*i)->storage);
+
+    if (!tmpvar->owned
+	|| change_objname != (*i)->objname)
     {
-      // monitor with &UVar reference
-      urbi::UValue *v = new urbi::UValue();
-      v->storage = (*i)->storage;
-      l.array.push_back(v);
+      urbi::UList l;
+      if ((*i)->storage)
+      {
+	// monitor with &UVar reference
+	urbi::UValue *v = new urbi::UValue();
+	v->storage = (*i)->storage;
+	l.array.push_back(v);
+      }
+      (*i)->__evalcall(l);
     }
-    // FIXME: I guess the following comment reads "emptied".
-    (*i)->__evalcall(l); // l is empty here
   }
 
   return value;
@@ -413,7 +455,7 @@ UVariable::get()
     set methods.
 */
 void
-UVariable::updated()
+UVariable::updated(bool uvar_assign)
 {
   // triggers associated commands update
   updateRegisteredCmd ();
@@ -428,28 +470,32 @@ UVariable::updated()
       {
 	(*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
 	(*i)->c->sendc((const ubyte*)"[1,\"", 4);
-	(*i)->c->sendc((const ubyte*)varname->str(), varname->len());
+	(*i)->c->sendc((const ubyte*)varname.c_str(), varname.length());
 	(*i)->c->sendc((const ubyte*)"\",", 2);
 	value->echo((*i)->c);
 	(*i)->c->send((const ubyte*)"]\n", 2);
       }
 
   for (std::list<urbi::UGenericCallback*>::iterator i =
-	 internalBinder.begin();
+       internalBinder.begin();
        i != internalBinder.end();
        ++i)
   {
-    urbi::UList tmparray;
-
-    if ((*i)->storage)
+    if (!uvar_assign
+	|| (*i)->objname != getDevicename())
     {
-      // monitor with &UVar reference
-      urbi::UValue *tmpvalue = new urbi::UValue();
-      tmpvalue->storage = (*i)->storage;
-      tmparray.array.push_back(tmpvalue);
-    };
+      urbi::UList tmparray;
 
-    (*i)->__evalcall(tmparray); // tmparray is empty here
+      if ((*i)->storage)
+      {
+	// monitor with &UVar reference
+	urbi::UValue *tmpvalue = new urbi::UValue();
+	tmpvalue->storage = (*i)->storage;
+	tmparray.array.push_back(tmpvalue);
+      };
+
+      (*i)->__evalcall(tmparray);
+    }
   }
 }
 
@@ -460,7 +506,7 @@ UVariable::isDeletable()
       value->dataType == DATA_OBJ &&
       value->str)
   {
-    HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->str());
+    HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
     if ((idit != ::urbiserver->objtab.end()) &&
 	(!idit->second->down.empty()) )
       return false;

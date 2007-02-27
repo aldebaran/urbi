@@ -18,13 +18,17 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
 #include <cstdarg>
-#include <string>
+
 #include <fstream>
+#include <sstream>
+#include <string>
 
 #include "libport/containers.hh"
 
@@ -47,10 +51,8 @@ UServer *urbiserver= 0;
 UString **globalDelete = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
-int URBI_unicID = 10000; ///< unique identifier to create new references
 
 // Formatting for the echo and error outputs.
-
 const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
 const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
@@ -59,37 +61,17 @@ const char* UNKNOWN_TAG = "notag";
 const char* MAINDEVICE  = "system";
 
 // Memory counter system
-
 int availableMemory;
 int usedMemory;
 
 
-//! UServer constructor.
-/*! UServer constructor
-
- Unlike UConstructor, it is not required that you handle the memory
- management task when you create the robot-specific sub class. The
- difference in memory between your class and the UServer class is
- considered as neglectible and included in the security margin. If you
- don't understand this point, ignore it.
-
- \param frequency gives the value in msec of the server update,
- which are the calls to the "work" function. These calls must be done at
- a fixed, precise, real-time frequency to let the server computer motor
- trajectories between two "work" calls.
-
- \param freeMemory indicates the biggest malloc possible on the system
- when the server has just started. It is used to determine a high
- limit of memory allocation, thus avoiding later to run out of memory
- during a new or malloc.
- */
 UServer::UServer(ufloat frequency,
 		 int freeMemory,
 		 const char* mainName)
   : reseting (false),
     stage (0),
     debugOutput (false),
-    mainName (new UString(mainName)),
+    mainName_ (mainName),
     somethingToDelete (false),
     uservarState (false),
     cpuoverload (false),
@@ -107,6 +89,7 @@ UServer::UServer(ufloat frequency,
   memoryOverflow = securityBuffer_ == 0;
   usedMemory = 0;
   availableMemory = freeMemory;
+  // FIXME: What the heck???  We don't even check if it fits!!!
   availableMemory -=  3000000; // Need 3.1Mo at min to run safely.
   // You might hack this for a small
   // size server, but anything with
@@ -138,7 +121,77 @@ UServer::UServer(ufloat frequency,
   systemObjects.push_back (empty_list);
 }
 
-/// Sets the system.arg list in URBI
+void
+UServer::initialize()
+{
+  updateTime();
+  currentTime = latestTime = lastTime();
+  previousTime = currentTime - 0.000001; // avoid division by zero at start
+  previous2Time = previousTime - 0.000001; // avoid division by zero at start
+  previous3Time = previous2Time - 0.000001; // avoid division by zero at start
+
+  // Display the banner.
+  {
+    bool old_debugOutput = debugOutput;
+    debugOutput = true;
+    display(::HEADER_BEFORE_CUSTOM);
+
+    int i = 0;
+    char customHeader[1024];
+    do {
+      getCustomHeader(i, customHeader, 1024);
+      if (customHeader[0])
+	display(customHeader);
+      ++i;
+    } while (customHeader[0]!=0);
+
+    display(::HEADER_AFTER_CUSTOM);
+    display("Ready.\n");
+
+    debugOutput = old_debugOutput;
+  }
+
+  //The order is important: ghost connection, plugins, urbi.ini
+
+  // Ghost connection
+  {
+    DEBUG (("Setting up ghost connection..."));
+    ghost = new UGhostConnection(this);
+    connectionList.push_front(ghost);
+
+    std::ostringstream o;
+    o << 'U' << (long)ghost;
+
+    new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
+    new UVariable(MAINDEVICE, "name", mainName_.c_str());
+    uservarState = true;
+    DEBUG (("done\n"));
+  }
+
+  // Plugins (internal components)
+  {
+    DEBUG (("Loading objecthubs..."));
+    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	 i != urbi::objecthublist->end();
+	 ++i)
+      (*i)->init((*i)->name);
+    DEBUG (("done\n"));
+
+    DEBUG (("Loading hubs..."));
+    for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
+	 i != urbi::objectlist->end();
+	 ++i)
+      (*i)->init((*i)->name);
+    DEBUG (("done\n"));
+  }
+
+  DEBUG (("Loading URBI.INI..."));
+  if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
+    ghost->newDataAdded = true;
+  DEBUG (("done\n"));
+}
+
+
 void
 UServer::main (int argc, const char* argv[])
 {
@@ -157,68 +210,6 @@ UServer::main (int argc, const char* argv[])
   }
 
   new UVariable(MAINDEVICE, "args", arglistv);
-}
-
-//! Initialization of the server. Displays the header message & init stuff
-/*! This function must be called once the server is operational and
- able to print messages. It is a requirement for URBI compliance to print
- the header at start, so this function *must* be called. Beside, it also
- do initalization work for the devices and system variables.
- */
-void
-UServer::initialization()
-{
-  updateTime();
-  currentTime = latestTime = lastTime();
-  previousTime = currentTime - 0.000001; // avoid division by zero at start
-  previous2Time = previousTime - 0.000001; // avoid division by zero at start
-  previous3Time = previous2Time - 0.000001; // avoid division by zero at start
-
-  debugOutput     = true;
-  display(::HEADER_BEFORE_CUSTOM);
-
-  int i = 0;
-  char customHeader[1024];
-  do {
-    getCustomHeader(i, (char*)customHeader, 1024);
-    if (customHeader[0])
-      display((const char*) customHeader);
-    ++i;
-  } while (customHeader[0]!=0);
-
-  display(::HEADER_AFTER_CUSTOM);
-  display("Ready.\n");
-
-  debugOutput     = false;
-
-  //The order is important: ghost connection, plugins, urbi.ini
-
-  // Ghost connection
-  ghost = new UGhostConnection(this);
-  connectionList.push_front(ghost);
-
-  char tmpbuffer_ghostTag[50];
-  sprintf(tmpbuffer_ghostTag, "U%ld", (long)ghost);
-
-  new UVariable(MAINDEVICE, "ghostID", tmpbuffer_ghostTag);
-  new UVariable(MAINDEVICE, "name", mainName->str());
-  uservarState = true;
-
-
-  // Plugins (internal components)
-
-  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
-       retr != urbi::objecthublist->end();
-       ++retr)
-    (*retr)->init((*retr)->name);
-
-  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
-       retr != urbi::objectlist->end();
-       ++retr)
-    (*retr)->init((*retr)->name);
-
-  if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
-    ghost->newDataAdded = true;
 }
 
 //! Function called before work
@@ -240,17 +231,10 @@ UServer::afterWork()
 }
 
 
-//! Main processing loop of the server
-/*! This function must be called every "frequency_" msec to ensure the proper
- functionning of the server. It will call the command execution, the
- connection message sending when they are delayed, etc...
-
- "frequency_" is a parameter of the server, given in the constructor.
- */
 void
 UServer::work()
 {
-  urbi::BlockLock bl(this);
+  libport::BlockLock bl(this);
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;
@@ -259,8 +243,8 @@ UServer::work()
   currentTime   = lastTime();
 
   // Execute Timers
-  for (urbi::UTimerTable::iterator i = urbi::timermap.begin();
-       i != urbi::timermap.end();
+  for (urbi::UTimerTable::iterator i = urbi::timermap->begin();
+       i != urbi::timermap->end();
        ++i)
     if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
@@ -270,16 +254,14 @@ UServer::work()
 
 
   beforeWork();
-
   // Access & Change variable list
   for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
        i != access_and_change_varlist.end ();
        ++i)
-    (*i)->get ();
+    (*i)->get (true);
 
   // memory test
   memoryCheck(); // Check for memory availability
-
   // recover the security memory space, with a margin (size x 2)
   // if the margin can be malloced, then freed, then remalloced with
   // the correct size, then the memoryOverflow error is removed.
@@ -298,17 +280,15 @@ UServer::work()
       }
     }
   }
-
   bool signalMemoryOverflow = false;
   if (memoryOverflow && securityBuffer_)
-    {
-      // free space to ensure the warning messages will
-      // be sent without problem.
-      free (securityBuffer_);
-      securityBuffer_ = 0;
-      signalMemoryOverflow = true;
-    }
-
+  {
+    // Free space to ensure the warning messages will be sent without
+    // problem.
+    free (securityBuffer_);
+    securityBuffer_ = 0;
+    signalMemoryOverflow = true;
+  }
 
   // Scan currently opened connections for ongoing work
   for (std::list<UConnection*>::iterator r = connectionList.begin();
@@ -403,7 +383,7 @@ UServer::work()
       (*i)->nbAverage = 0;
       (*i)->reloop = false;
 
-      if ((*i)->blendType == UMIX || (*i)->blendType == UADD)
+      if ((*i)->blendType == urbi::UMIX || (*i)->blendType == urbi::UADD)
 	if ((*i)->value->dataType == DATA_NUM)
 	{
 	  if ((*i)->autoUpdate)
@@ -425,8 +405,8 @@ UServer::work()
     }
 
   // Execute Hub Updaters
-  for (urbi::UTimerTable::iterator i = urbi::updatemap.begin();
-       i != urbi::updatemap.end();
+  for (urbi::UTimerTable::iterator i = urbi::updatemap->begin();
+       i != urbi::updatemap->end();
        ++i)
     if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
     {
@@ -455,6 +435,7 @@ UServer::work()
     }
     else if (cpucount > 0)
       --cpucount;
+
 
   if (cpuoverload && cpuload < 1)
   {
@@ -522,25 +503,20 @@ UServer::work()
       ghost->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
       ghost->newDataAdded = true;
     }
-    else
+    else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
-      HMvariabletab::iterator findResetSignal
-	= variabletab.find("__system__.resetsignal");
-      if (findResetSignal != variabletab.end())
-      {
-	for (std::list<UConnection*>::iterator i = connectionList.begin();
-	     i != connectionList.end();
-	     ++i)
-	  if ((*i)->isActive() && (*i) != ghost)
-	  {
-	    (*i)->send("*** Reloading\n", "reset");
+      for (std::list<UConnection*>::iterator i = connectionList.begin();
+	   i != connectionList.end();
+	   ++i)
+	if ((*i)->isActive() && (*i) != ghost)
+	{
+	  (*i)->send("*** Reloading\n", "reset");
 
-	    loadFile("CLIENT.INI", &(*i)->recvQueue());
-	    (*i)->newDataAdded = true;
-	  }
-	reseting = false;
-	stage = 0;
-      }
+	  loadFile("CLIENT.INI", &(*i)->recvQueue());
+	  (*i)->newDataAdded = true;
+	}
+      reseting = false;
+      stage = 0;
     }
   }
 }
@@ -548,7 +524,39 @@ UServer::work()
 //! UServer destructor.
 UServer::~UServer()
 {
-  FREEOBJ(UServer); // Not useful here, but remains for consistency.
+  FREEOBJ(UServer);
+}
+
+void
+UServer::vecho_key(const char* key, const char* s, va_list args)
+{
+  // This local declaration is rather unefficient but is necessary
+  // to insure that the server could be made semi-reentrant.
+
+  char key_[6];
+
+  if (key == NULL)
+    key_[0] = 0;
+  else
+  {
+    strncpy(key_, key, 5);
+    key_[5] = 0;
+  }
+
+  char buf1[MAXSIZE_INTERNALMESSAGE];
+  vsnprintf(buf1, sizeof buf1, s, args);
+  char buf2[MAXSIZE_INTERNALMESSAGE];
+  snprintf(buf2, sizeof buf2, "%-90s [%5s]\n", buf1, key_);
+  display(buf2);
+}
+
+void
+UServer::echoKey(const char* key, const char* s, ...)
+{
+  va_list args;
+  va_start(args, s);
+  vecho_key(key, s, args);
+  va_end(args);
 }
 
 //! Displays a formatted error message.
@@ -561,22 +569,10 @@ UServer::~UServer()
 void
 UServer::error(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [ERROR]\n",
-	   tmpBuffer_);
-
-  display(internalMessage_);
+  va_list args;
+  va_start(args, s);
+  vecho_key("ERROR", s, args);
+  va_end(args);
 }
 
 //! Displays a formatted message.
@@ -592,62 +588,10 @@ UServer::error(const char* s, ...)
 void
 UServer::echo(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [     ]\n",
-	   tmpBuffer_);
-
-  display(internalMessage_);
-}
-
-//! Displays a formatted message, with a key
-/*! This function uses the virtual URobot::display() function to make the
- message printing robot-specific.
- It formats the output in a standard URBI way by adding a key between
- brackets at the end. This key can be "" or NULL.It can be used to
- visually extract information from the flux of messages printed by
- the server.
- \param key is the message key. Maxlength = 5 chars.
- \param s is the formatted string containing the message.
- */
-void
-UServer::echoKey(const char* key, const char* s, ...)
-{
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-  char key_[6];
-
-  if (key == NULL)
-    key_[0] = 0;
-  else
-  {
-    strncpy(key_, key, 5);
-    key_[5] = 0;
-  }
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [%5s]\n",
-	   tmpBuffer_, key_);
-
-  display(internalMessage_);
+  va_list args;
+  va_start(args, s);
+  vecho_key("     ", s, args);
+  va_end(args);
 }
 
 //! Displays a raw message for debug
@@ -657,7 +601,7 @@ UServer::echoKey(const char* key, const char* s, ...)
  \param s is the formatted string containing the message
  */
 void
-UServer::debug (const char* s, va_list args)
+UServer::vdebug (const char* s, va_list args)
 {
   char buf[MAXSIZE_INTERNALMESSAGE];
   vsnprintf(buf, sizeof buf, s, args);
@@ -669,7 +613,8 @@ UServer::debug(const char* s, ...)
 {
   va_list args;
   va_start(args, s);
-  debug (s, args);
+  vdebug (s, args);
+  va_end(args);
 }
 
 //! Isolate the server from incoming commands.
@@ -803,8 +748,6 @@ UServer::getCustomHeader (int, char* header, int)
 void
 UServer::memoryCheck ()
 {
-  static bool warningSent = false;
-
   if (usedMemory > availableMemory)
   {
     memoryOverflow = true;
@@ -814,7 +757,7 @@ UServer::memoryCheck ()
   // Issue a warning when memory reaches 80% of use (except if you know what
   // you are doing, you better take appropriate measures when this warning
   // reaches your connection...
-
+  static bool warningSent = false;
   if (usedMemory > (int)(0.8 * availableMemory) && !warningSent)
   {
     warningSent = true;
@@ -832,36 +775,25 @@ UServer::memoryCheck ()
     warningSent = false;
 }
 
-//! Evaluate how much memory is available for a malloc
-/*! This function tries to evaluate how much memory is available for a malloc,
- using brute force dichotomic allocation. This is the only known way to get
- this information on most systems (like OPENR).
- */
-int
-UServer::memory()
+size_t
+UServer::memory() const
 {
-  int memo;
-  int memo1;
-  int memo2;
-  void *buf;
-
-  memo  = 50000000;
-  memo1 = 0;
-  memo2 = memo;
-  while (memo2 > memo1+1)
+  size_t low = 0;
+  size_t high = 50000000;
+  size_t mid = 0;
+  while (low + 1 < high)
   {
-    memo = (memo1 + memo2)/2;
-    buf = malloc(memo);
-    if (buf)
+    mid = (low + high)/2;
+    if (void *buf = malloc(mid))
     {
       free(buf);
-      memo1 = memo;
+      low = mid;
     }
     else
-      memo2 = memo;
+      high = mid;
   }
 
-  return memo;
+  return mid;
 }
 
 //! Get a variable in the hash table
@@ -869,15 +801,8 @@ UVariable*
 UServer::getVariable (const char *device,
 		      const char *property)
 {
-  char tmpbuffer[1024];
-  HMvariabletab::iterator hmi;
-
-  snprintf(tmpbuffer, 1024, "%s.%s", device, property);
-
-  if ((hmi = variabletab.find(tmpbuffer)) != variabletab.end())
-    return hmi->second;
-  else
-    return 0;
+  std::string n = std::string (device) + "." + property;
+  return libport::find0(variabletab, n.c_str());
 }
 
 
@@ -886,7 +811,7 @@ UServer::getVariable (const char *device,
 void
 UServer::mark(UString* stopTag)
 {
-  HMtagtab::iterator it = tagtab.find(stopTag->str());
+  HMtagtab::iterator it = tagtab.find(stopTag->c_str());
   if (it == tagtab.end())
     return; //no command with this tag
   TagInfo* ti = &it->second;
@@ -899,7 +824,7 @@ UServer::mark(TagInfo* ti)
   for (std::list<UCommand*>::iterator i = ti->commands.begin();
       i != ti->commands.end();
       ++i)
-    if ((*i)->status != UONQUEUE || (*i)->morphed)
+    if ((*i)->status != UCommand::UONQUEUE || (*i)->morphed)
       (*i)->toDelete = true;
 
   for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
@@ -960,16 +885,20 @@ UServer::unblock(const std::string &tag)
 std::string
 UServer::find_file (const char* base)
 {
+  assert(base);
+  //DEBUG(("Looking for file %s\n", base));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  {
+    std::string f = *p + "/" + base;
+    std::ifstream is (f.c_str(), std::ios::binary);
+    if (is)
     {
-      std::string f = *p + "/" + base;
-      std::ifstream is (f.c_str(), std::ios::binary);
-      if (is)
-	{
-	  is.close ();
-	  return f;
-	}
+      is.close ();
+      //DEBUG(("File %s found: %s\n", base, f.c_str()));
+      return f;
     }
+  }
+  //DEBUG(("File %s not found in path\n", base));
   return base;
 }
 
@@ -986,7 +915,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
   while (is.good ())
   {
     char buf[URBI_BUFSIZ];
-    is.read (buf, URBI_BUFSIZ);
+    is.read (buf, sizeof buf);
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;
   }
@@ -1003,7 +932,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
 void
 UServer::addConnection(UConnection *connection)
 {
-  if (connection == 0 || connection->UError != USUCCESS)
+  if (!connection || connection->uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",
 	  "UConnection constructor failed");
@@ -1027,7 +956,7 @@ UServer::removeConnection(UConnection *connection)
 
 //! Adds an alias in the server base
 /*! This function is mostly useful for alias creation at start in the
- initialization() function for example.
+ initialize() function for example.
  return 1 in case of success,  0 if circular alias is detected
  */
 int
@@ -1041,7 +970,7 @@ UServer::addAlias(const char* id, const char* variablename)
 
   while (getobj != ::urbiserver->aliastab.end())
   {
-    newobj = getobj->second->str();
+    newobj = getobj->second->c_str();
     if (STREQ(newobj, id))
       return 0;
 
@@ -1051,13 +980,60 @@ UServer::addAlias(const char* id, const char* variablename)
   if (aliastab.find(id) != aliastab.end())
   {
     UString* alias = aliastab[id];
-    alias->update(variablename);
+    *alias = variablename;
   }
   else
   {
-    char* id_copy = strdup (id); // XXX we'll leak id_copy forever :|
-    assert (id_copy != 0);
+    // XXX we'll leak id_copy forever :|
+    char* id_copy = strdup (id);
+    assert (id_copy);
     aliastab[id_copy] = new UString(variablename);
   }
   return 1;
+}
+
+
+/* Free standing functions. */
+
+namespace
+{
+
+  // Use with care, returns a static buffer.
+  const char* tab (unsigned n)
+  {
+    static char buf[100];
+    assert(n < sizeof buf);
+    for (unsigned i = 0; i < n; ++i)
+      buf[i] = ' ';
+    buf[n] = 0;
+    return buf;
+  }
+
+}
+
+
+void
+vdebug (const char* fmt, va_list args)
+{
+  ::urbiserver->vdebug (fmt, args);
+}
+
+void
+debug (const char* fmt, ...)
+{
+  va_list args;
+  va_start (args, fmt);
+  vdebug (fmt, args);
+  va_end (args);
+}
+
+
+void
+debug (unsigned t, const char* fmt, ...)
+{
+  debug ("%s", tab(t));
+  va_list args;
+  va_start (args, fmt);
+  vdebug (fmt, args);
+  va_end (args);
 }

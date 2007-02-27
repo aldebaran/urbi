@@ -20,11 +20,14 @@
  **************************************************************************** */
 
 #ifndef USTRING_HH
-#define USTRING_HH
+# define USTRING_HH
 
-#include <string>
-#include <iosfwd>
-#include "memorymanager/memorymanager.hh"
+# include "libport/cstring"
+# include <string>
+# include <iosfwd>
+
+# include "memorymanager/memorymanager.hh"
+# include "mem-track.hh"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a
@@ -36,68 +39,113 @@ class UString
  public:
   MEMORY_MANAGED;
   UString(const char* s);
-  UString(const UString *s);
   UString(const UString& s);
   UString(const std::string& s);
 
   /// Concat \c s1 and \c s2 with a dot in the middle.
-  UString(const UString *s1, const UString *s2);
+  UString(const UString& s1, const UString& s2);
 
   ~UString();
 
-  const char* str() const
+  /// The underlying standard string.
+  const std::string& str() const
   {
     return str_;
   }
 
-  int len() const
+  /// The content as a C string.
+  const char* c_str() const
   {
-    return len_;
+    return str_.c_str();
   }
 
-  UString* copy() const
+  /// The length of the string.
+  size_t size() const
   {
-    return new UString(this);
+    return str_.size();
   }
 
-  const char* ext(int deb, int length);
-  bool equal(const UString *s) const;
-  bool tagequal(const UString *s) const;
-  bool equal(const char *s) const;
+  UString* copy() const;
 
-  void update(const char *s);
-  void update(const UString *s);
+  // Whether \a s up to its first `.' (or the entire string) is equal to this.
+  bool tagequal(const UString& s) const;
 
-  void setLen(int l);
-
-  /// Decode \n, \\, \", and \t, in place.
-  char* un_armor();
-
-  // Return the string with " and \ escaped.
-  std::string armor();
+  UString& operator= (const std::string& s);
+  UString& operator= (const char* s);
+  UString& operator= (const UString* s);
 
  private:
-  void fast_armor();
-
-  int  len_;
-  char* str_;
-  bool fast_armor_;
+  std::string str_;
 };
 
-inline void
-UString::setLen(int l)
+inline
+UString*
+UString::copy() const
 {
-  len_ = l;
+  return new UString(*this);
 }
+
+inline
+UString&
+UString::operator=(const std::string& s)
+{
+  FREEMEM(size());
+  str_ = s;
+  ADDMEM(size());
+  return *this;
+}
+
+
+/*-------------------------.
+| Freestanding functions.  |
+`-------------------------*/
 
 inline
 std::ostream&
 operator<< (std::ostream& o, const UString& s)
 {
-  if (s.str())
-    return o << s.str();
-  else
-    return o << "<null UString>";
+  return o << s.str();
 }
 
-#endif
+inline
+bool
+operator== (const UString& lhs, const UString& rhs)
+{
+  return lhs.str() == rhs.str();
+}
+
+inline
+bool
+operator!= (const UString& lhs, const UString& rhs)
+{
+  return !(lhs == rhs);
+}
+
+
+inline
+bool
+operator== (const UString& lhs, const char* rhs)
+{
+  return lhs.str() == rhs;
+}
+
+inline
+bool
+operator!= (const UString& lhs, const char* rhs)
+{
+  return !(lhs == rhs);
+}
+
+/// Update a pointer to UString.
+inline
+UString*
+update (UString*& s, const char* v)
+{
+  if (s)
+    *s = v;
+  else
+    s = new UString(v);
+  return s;
+}
+
+#endif // !USTRING_HH

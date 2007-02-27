@@ -23,8 +23,6 @@
 # define UNAMEDPARAMETERS_HH
 
 # include "fwd.hh"
-# include "utypes.hh"
-# include "ustring.hh"
 
 /// Any list of identifiers, expressions or combinaison of both.
 // FIXME: There should be UNamedParameter, and we should use lists or so.
@@ -38,11 +36,11 @@ public:
   UNamedParameters(UExpression *expression, UNamedParameters* next = 0);
   virtual ~UNamedParameters();
 
-  void print();
+  void print() const;
 
   UNamedParameters* rank(int n);
-  int               size();
-  UNamedParameters* copy();
+  int               size() const;
+  UNamedParameters* copy() const;
 
   /// Name.
   UString            *name;

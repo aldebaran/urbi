@@ -34,7 +34,7 @@ kernel::forgeName (UString* name, int nbarg)
     return std::string("error");
 
   std::stringstream s;
-  s << name->str() << "|" << nbarg;
+  s << name->c_str() << "|" << nbarg;
   return s.str();
 }
 
@@ -62,7 +62,7 @@ kernel::eventSymbolDefined (const char* symbol)
   for (iet = ::urbiserver->emittab.begin ();
        iet != ::urbiserver->emittab.end () && !ok;
        ++iet)
-    if ( iet->second->unforgedName->equal (symbol))
+    if (*iet->second->unforgedName == symbol)
       ok = true;
 
   return ok;
@@ -71,40 +71,40 @@ kernel::eventSymbolDefined (const char* symbol)
 bool
 kernel::isCoreFunction (UString *fullname)
 {
-  return ( (fullname->equal ("freemem")) ||
-	   (fullname->equal ("power")) ||
-	   (fullname->equal ("cpuload")) ||
-	   (fullname->equal ("time")) ||
-	   (fullname->equal ("save")) ||
-	   (fullname->equal ("getIndex")) ||
-	   (fullname->equal ("cat")) ||
-	   (fullname->equal ("strlen")) ||
-	   (fullname->equal ("head")) ||
-	   (fullname->equal ("tail")) ||
-	   (fullname->equal ("size")) ||
-	   (fullname->equal ("isdef")) ||
-	   (fullname->equal ("isvoid")) ||
-	   (fullname->equal ("load")) ||
-	   (fullname->equal ("loadwav")) ||
-	   (fullname->equal ("exec")) ||
-	   (fullname->equal ("strsub")) ||
-	   (fullname->equal ("atan2")) ||
-	   (fullname->equal ("sin")) ||
-	   (fullname->equal ("asin")) ||
-	   (fullname->equal ("cos")) ||
-	   (fullname->equal ("acos")) ||
-	   (fullname->equal ("string")) ||
-	   (fullname->equal ("tan")) ||
-	   (fullname->equal ("atan")) ||
-	   (fullname->equal ("sgn")) ||
-	   (fullname->equal ("abs")) ||
-	   (fullname->equal ("exp")) ||
-	   (fullname->equal ("log")) ||
-	   (fullname->equal ("round")) ||
-	   (fullname->equal ("random")) ||
-	   (fullname->equal ("trunc")) ||
-	   (fullname->equal ("sqr")) ||
-	   (fullname->equal ("sqrt"))
+  return ( (*fullname == "freemem") ||
+	   (*fullname == "power") ||
+	   (*fullname == "cpuload") ||
+	   (*fullname == "time") ||
+	   (*fullname == "save") ||
+	   (*fullname == "getIndex") ||
+	   (*fullname == "cat") ||
+	   (*fullname == "strlen") ||
+	   (*fullname == "head") ||
+	   (*fullname == "tail") ||
+	   (*fullname == "size") ||
+	   (*fullname == "isdef") ||
+	   (*fullname == "isvoid") ||
+	   (*fullname == "load") ||
+	   (*fullname == "loadwav") ||
+	   (*fullname == "exec") ||
+	   (*fullname == "strsub") ||
+	   (*fullname == "atan2") ||
+	   (*fullname == "sin") ||
+	   (*fullname == "asin") ||
+	   (*fullname == "cos") ||
+	   (*fullname == "acos") ||
+	   (*fullname == "string") ||
+	   (*fullname == "tan") ||
+	   (*fullname == "atan") ||
+	   (*fullname == "sgn") ||
+	   (*fullname == "abs") ||
+	   (*fullname == "exp") ||
+	   (*fullname == "log") ||
+	   (*fullname == "round") ||
+	   (*fullname == "random") ||
+	   (*fullname == "trunc") ||
+	   (*fullname == "sqr") ||
+	   (*fullname == "sqrt")
 	   );
 }
 
@@ -139,7 +139,7 @@ UEventHandler::UEventHandler (UString* name, int nbarg):
 {
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
-  unforgedName = new UString (name);
+  unforgedName = new UString (*name);
 }
 
 UEventHandler::~UEventHandler()

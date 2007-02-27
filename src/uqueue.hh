@@ -20,9 +20,9 @@
  **************************************************************************** */
 
 #ifndef UQUEUE_HH
-#define UQUEUE_HH
+# define UQUEUE_HH
 
-#include "utypes.hh"
+# include "utypes.hh"
 
 /// Dynamic expendable and shrinkable circular FIFO buffer
 /*! UQueue is a FIFO buffer which is both dynamic and circular.
@@ -73,7 +73,7 @@ public:
 
 protected:
 
-  static const int INITIAL_BUFFER_SIZE = 4096; ///< initial size of the
+  enum { INITIAL_BUFFER_SIZE = 4096 }; ///< initial size of the
 					       ///< output buffer used by pop.
 
   ubyte          *buffer_;       ///< queue internal buffer (circular).
@@ -115,7 +115,7 @@ protected:
 inline UErrorValue
 UQueue::push (const char *s)
 {
-  return  push((const ubyte*)s,strlen(s));
+  return push(reinterpret_cast<const ubyte*>(s), strlen(s));
 }
 
 //! returns the available free space in the buffer.
@@ -145,6 +145,5 @@ UQueue::locked()
 {
   return locked_;
 }
-
 
 #endif

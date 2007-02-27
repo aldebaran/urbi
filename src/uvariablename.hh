@@ -22,11 +22,8 @@
 #ifndef UVARIABLENAME_HH
 # define UVARIABLENAME_HH
 
-# include <list>
-
 # include "fwd.hh"
-# include "utypes.hh"
-# include "ustring.hh"
+# include "memorymanager/memorymanager.hh"
 
 // ****************************************************************************
 //! Contains a variable name description
@@ -52,18 +49,25 @@ public:
 
   virtual ~UVariableName();
 
-  void           print();
-  UVariableName* copy();
+  void           print() const;
+  UVariableName* copy() const;
 
   UVariable*     getVariable (UCommand* command, UConnection* connection);
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
+
   UString*       buildFullname(UCommand* command, UConnection* connection,
 			       bool withalias = true);
-  UString*       getFullname ()
-  {
-    return fullname_;
-  }
+
+private:
+  /// Update \a id and \a device using \a str.
+  /// \returns false if there was an error.
+  bool build_from_str(UCommand* command, UConnection* connection);
+
+public:
+  UString* getFullname ();
+  UString* set_fullname (const char* s);
+
   void           nameUpdate(const char* _device, const char* _id);
   void           resetCache();
   UString*       getDevice();
@@ -87,8 +91,20 @@ public:
   bool              isstatic;
   /// True if the var is in normalized mode.
   bool              isnormalized;
+
+  /// Type of Derivative
+  enum UDeriveType
+  {
+    UNODERIV,
+    UDERIV,
+    UDERIV2,
+    UTRUEDERIV,
+    UTRUEDERIV2
+  };
+
   /// Deriv type for the underlying variable.
   UDeriveType       deriv;
+
   /// True to request the target-val evaluation.
   bool              varerror;
   /// True to request the target evaluation.
@@ -103,12 +119,10 @@ public:
 
   /// Before the first local function prefix resolution.
   bool         firsttime;
-  /// Is nostruct if it comes from a simple.  IDENTIFIER in the
-  /// parsing phase
+  /// Is nostruct if it comes from a simple IDENTIFIER in the parsing
+  /// phase
   bool         nostruct;
 
-  /// Type of the symbol: UDEF_FUNCTION, UDEF_VAR or UDEF_EVENT.
-  UDefType          id_type;
   /// Name resolution will be limited to local scope in functions.
   bool              local_scope;
   /// True when the :: construct is used.
@@ -124,6 +138,22 @@ protected:
   bool			selfFunction;
   /// Internal.
   bool			cached;
+
+private:
+  /// Update the mangled name for \a s.
+  ///
+  /// Used for the pairs (device, index_obj) and (id, index).
+  /// \return whether there was no error.
+  bool update_array_mangling (UCommand* cmd, UConnection* cn,
+			      UString* s, UNamedParameters* ps);
+
 };
+
+inline
+UString*
+UVariableName::getFullname ()
+{
+  return fullname_;
+}
 
 #endif

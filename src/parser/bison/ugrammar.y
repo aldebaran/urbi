@@ -22,6 +22,7 @@
 
  **************************************************************************** */
 
+%expect 0
 %require "2.2"
 %error-verbose
 %defines
@@ -33,6 +34,7 @@
 %{
 #include "fwd.hh"
 #include "utypes.hh"
+#include "flavorable.hh"
 %}
 
 // Locations.
@@ -56,8 +58,10 @@
   UVariableList           *variablelist;
   UProperty               *property;
 
+  Flavorable::UNodeType   flavor;
   ufloat                   *val;
-  UString                  *str;
+  UString                  *ustr;
+  std::string		   *str;
   struct {
     UString *device;
     UString *id;
@@ -177,9 +181,10 @@ new_bin(UParser& up,
 /// A new UExpression of type \c t and child \c t1.
 template <class T1>
 UExpression*
-new_exp (UParser& up, UExpression::Type t, T1* t1)
+new_exp (UParser& up, const yy::parser::location_type& l,
+	 UExpression::Type t, T1* t1)
 {
-  UExpression* res = new UExpression(t, t1);
+  UExpression* res = new UExpression(l, t, t1);
   memcheck(up, res, t1);
   return res;
 }
@@ -187,9 +192,10 @@ new_exp (UParser& up, UExpression::Type t, T1* t1)
 /// A new UExpression of type \c t and children \c t1, \c t2.
 template <class T1, class T2>
 UExpression*
-new_exp (UParser& up, UExpression::Type t, T1* t1, T2* t2)
+new_exp (UParser& up, const yy::parser::location_type& l,
+	 UExpression::Type t, T1* t1, T2* t2)
 {
-  UExpression* res = new UExpression(t, t1, t2);
+  UExpression* res = new UExpression(l, t, t1, t2);
   memcheck(up, res, t1, t2);
   return res;
 }
@@ -211,7 +217,6 @@ take (T* t)
 %token
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
-  TOK_AND          "&"
   TOK_ANDOPERATOR  "&&"
   TOK_AROBASE      "@"
   TOK_ASSIGN       "="
@@ -222,7 +227,6 @@ take (T* t)
   TOK_CLASS        "class"
   TOK_CMDBLOCK     "command block"
   TOK_COLON        ":"
-  TOK_COMMA        ","
   TOK_COPY         "copy"
   TOK_DEF          "def"
   TOK_DELGROUP     "delgroup"
@@ -262,13 +266,12 @@ take (T* t)
   TOK_MULT         "*"
   TOK_NEW          "new"
   TOK_NOOP         "noop"
-  TOK_NORM         "normalized"
+  TOK_NORM         "'n"
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
   TOK_ONLY         "only"
   TOK_OROPERATOR   "||"
   TOK_PERCENT      "%"
-  TOK_PIPE         "|"
   TOK_PLUS         "+"
   TOK_PLUSASSIGN   "+="
   TOK_PLUSPLUS     "++"
@@ -277,7 +280,6 @@ take (T* t)
   TOK_RETURN       "return"
   TOK_RPAREN       ")"
   TOK_RSBRACKET    "]"
-  TOK_SEMICOLON    ";"
   TOK_STATIC       "static"
   TOK_STOP         "stop"
   TOK_STOPIF       "stopif"
@@ -302,6 +304,13 @@ take (T* t)
 
 %token TOK_EOF 0 "end of command"
 
+%token
+  <flavor> TOK_COMMA        ","
+  <flavor> TOK_SEMICOLON    ";"
+  <flavor> TOK_AND          "&"
+  <flavor> TOK_PIPE         "|"
+;
+
 /*------.
 | Val.  |
 `------*/
@@ -321,16 +330,16 @@ take (T* t)
  | Str.  |
  `------*/
 %token
-   <str>  IDENTIFIER         "identifier"
-   <str>  TAG                "tag"
-   <str>  STRING             "string"
-   <str>  SWITCH             "switch"
-   <str>  BINDER             "binder"
-   <str>  OPERATOR           "operator command"
-   <str>  OPERATOR_ID        "operator"
-   <str>  OPERATOR_ID_PARAM  "param-operator"
-   <str>  OPERATOR_VAR       "var-operator"
-%type <str> tag "any kind of tag"
+   <ustr>  IDENTIFIER         "identifier"
+   <ustr>  TAG                "tag"
+   <ustr>  STRING             "string"
+   <ustr>  SWITCH             "switch"
+   <ustr>  BINDER             "binder"
+   <ustr>  OPERATOR           "operator command"
+   <ustr>  OPERATOR_ID        "operator"
+   <ustr>  OPERATOR_ID_PARAM  "param-operator"
+   <ustr>  OPERATOR_VAR       "var-operator"
+%type <ustr> tag "any kind of tag"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
    "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
@@ -415,7 +424,7 @@ root:
       if (c)
 	up.binaryCommand = true;
 
-      up.commandTree  = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
+      up.commandTree = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
       if (up.commandTree)
 	up.commandTree->setTag("__node__");
       memcheck(up, up.commandTree);
@@ -435,13 +444,17 @@ root:
 ;
 
 
-/* TAGGEDCOMMANDS */
+
+/*-----------------.
+| taggedcommands.  |
+`-----------------*/
+
 taggedcommands:
   taggedcommand
-| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, Flavorable::UCOMMA, $1, $3); }
-| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, Flavorable::USEMICOLON, $1, $3); }
-| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, Flavorable::UPIPE, $1, $3); }
-| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, Flavorable::UAND, $1, $3);}
+| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
 ;
 
 /*----------------.
@@ -457,7 +470,7 @@ tag:
 		 memcheck(up, $1.device);
 		 memcheck(up, $1.id);
 		 // FIXME: This is stupid, args should not be given as pointers.
-		 $$ = new UString($1.device, $1.id);
+		 $$ = new UString(*$1.device, *$1.id);
 		 delete $1.device;
 		 delete $1.id;
 		}
@@ -476,7 +489,7 @@ taggedcommand:
       memcheck(up, $1);
       if ($4)
       {
-	$4->setTag($1->str());
+	$4->setTag($1->c_str());
 	delete $1;
 	$4->flags = $2;
       }
@@ -503,7 +516,7 @@ taggedcommand:
 flag:
   FLAG
   {
-    UExpression *flagval = new UExpression(UExpression::VALUE, take($1));
+    UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
     $$ = new UNamedParameters(new UString("flag"), flagval);
     memcheck(up, $$, flagval);
@@ -553,14 +566,45 @@ command:
 
   | "{" taggedcommands "}" {
 
-      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, $2,
-			     new UCommand_NOOP(@$, true));
-      $$->setTag("__UGrouped_set_of_commands__");
-      ((UCommand_TREE*)$$)->command2->setTag("__system__");
+      UCommand_TREE* res =
+	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
+			  new UCommand_NOOP(@$, true));
+      res->setTag("__UGrouped_set_of_commands__");
+      res->command2->setTag("__system__");
+      $$ = res;
     }
 ;
 
-/* INSTRUCTION */
+
+/*----------.
+| flavors.  |
+`----------*/
+%type <flavor> and.opt flavor.opt pipe.opt;
+%printer { debug_stream() << $$; } and.opt flavor.opt pipe.opt ";" "|" "&" ",";
+
+// One or zero "&", defaulting to ";".
+and.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "&"
+;
+
+// One or zero "&" or "|", defaulting to ";".
+flavor.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "|"
+| "&"
+;
+
+// One or zero "|", defaulting to ";".
+pipe.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "|"
+;
+
+
+/*--------------.
+| Instruction.  |
+`--------------*/
 
 instruction:
   /* empty */ { $$ = 0; } /* FIXME: THIS IS BAD! REMOVE THIS!
@@ -737,10 +781,10 @@ instruction:
       memcheck(up, $$, $1, $2);
     }
 
-  | BINDER TOK_OBJECT purevariable {
+  | BINDER "object" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, 0, $1, 3, $3);
+      $$ = new UCommand_BINDER(@$, 0, $1, UBIND_OBJECT, $3);
       memcheck(up, $$, $1, $3);
     }
 
@@ -748,21 +792,21 @@ instruction:
   | BINDER "var" purevariable "from" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $5, $1, 1, $3);
+      $$ = new UCommand_BINDER(@$, $5, $1, UBIND_VAR, $3);
       memcheck(up, $$, $1, $3, $5);
     }
 
   | BINDER "function" "(" NUM ")" purevariable "from" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $8, $1, 0, $6, (int)take($4));
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, (int)take($4));
       memcheck(up, $$, $1, $6, $8);
     }
 
   | BINDER "event" "(" NUM ")" purevariable "from" purevariable {
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $8, $1, 2, $6, (int)take ($4));
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, (int)take ($4));
       memcheck(up, $$, $1, $6, $8);
     }
 
@@ -774,44 +818,38 @@ instruction:
 
   | "emit" purevariable {
 
-      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $2, 0);
       memcheck(up, $$, $2);
     }
 
   | "emit" purevariable "(" parameterlist ")" {
 
-      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $2, $4);
       memcheck(up, $$, $2, $4);
     }
 
   | "emit" "(" expr ")" purevariable {
 
-      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $5, 0, $3);
       memcheck(up, $$, $5, $3);
     }
 
   | "emit" "(" expr ")" purevariable "(" parameterlist ")" {
 
-      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
       memcheck(up, $$, $5, $7, $3);
     }
 
   | "emit" "(" ")" purevariable {
 
-      $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(UExpression::VALUE,
+      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
 							UINFINITY));
       memcheck(up, $$, $4);
     }
 
   | "emit" "(" ")" purevariable "(" parameterlist ")" {
 
-      $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(UExpression::VALUE,
+      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
       memcheck(up, $$, $4, $6);
     }
@@ -836,56 +874,54 @@ instruction:
 
   | "def" {
 
-      $$ = new UCommand_DEF(@$, UDEF_QUERY, 0, 0, 0);
-      memcheck(up, $$)
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
+      memcheck(up, $$);
     }
 
   | "var" refvariable {
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
-      memcheck(up, $$, $2)
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
+      memcheck(up, $$, $2);
     }
 
   | "def" refvariable {
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
-      memcheck(up, $$, $2)
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
+      memcheck(up, $$, $2);
     }
 
   | "var" "{" refvariables "}" {
 
-    $$ = new UCommand_DEF(@$, UDEF_VARS, $3);
-      memcheck(up, $$, $3)
+    $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
+    memcheck(up, $$, $3);
     }
 
   | "class" "identifier" "{" class_declaration_list "}" {
 
     $$ = new UCommand_CLASS(@$, $2, $4);
-      memcheck(up, $$, $2, $4)
+    memcheck(up, $$, $2, $4);
     }
 
   | "class" "identifier" {
 
     $$ = new UCommand_CLASS(@$, $2, 0);
-      memcheck(up, $$, $2)
+    memcheck(up, $$, $2);
     }
 
 
   | "event" variable "(" identifiers ")" {
 
       $2->local_scope = true;
-      $2->id_type = UDEF_EVENT;
-      $$ = new UCommand_DEF(@$, UDEF_EVENT, $2, $4, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
       memcheck(up, $$, $2, $4);
     }
 
   | "event" variable {
 
       $2->local_scope = true;
-      $2->id_type = UDEF_EVENT;
-      $$ = new UCommand_DEF(@$, UDEF_EVENT, $2, 0, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
@@ -909,8 +945,7 @@ instruction:
 
     } taggedcommand {
 
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(@$, UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
 
       memcheck(up, $$, $2, $4);
       if (up.connection.functionTag)
@@ -943,8 +978,7 @@ instruction:
 
     } taggedcommand {
 
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(@$, UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
 
       memcheck(up, $$, $2, $4);
       if (up.connection.functionTag)
@@ -1006,32 +1040,13 @@ instruction:
       memcheck(up, $$, $3, $5);
     }
 
-  | "at" "(" softtest ")" taggedcommand %prec CMDBLOCK {
+  | "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, 0);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
-      $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, $7);
-      memcheck(up, $$, $3, $5, $7);
-    }
-
-  | "at" "&" "(" softtest ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, 0);
+      $$ = new UCommand_AT(@$,  $2, $4, $6, 0);
       memcheck(up, $$, $4, $6);
     }
 
-  | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
+  | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {
       if(!$6)
       {
 	delete $4;
@@ -1040,25 +1055,19 @@ instruction:
 	error(@$, "Empty body within an at command.");
 	YYERROR;
       }
-      $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
+      $$ = new UCommand_AT(@$, $2, $4, $6, $8);
       memcheck(up, $$, $4, $6, $8);
     }
 
-  | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_WHILE(@$, Flavorable::USEMICOLON, $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | "while" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_WHILE(@$, Flavorable::UPIPE, $4, $6);
+      $$ = new UCommand_WHILE(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
   | "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
+      $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 
@@ -1081,63 +1090,24 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "foreach" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
+  | "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
+     %prec CMDBLOCK {
 
-      $$ = new UCommand_FOREACH(@$, Flavorable::USEMICOLON, $2, $4, $6);
-      memcheck(up, $$, $2, $4, $6);
-    }
-
-  | "foreach" "&" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
-
-    $$ = new UCommand_FOREACH(@$, Flavorable::UAND, $3, $5, $7);
+      $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
-  | "foreach" "|" purevariable "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
+  | "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_FOREACH(@$, Flavorable::UPIPE, $3, $5, $7);
-      memcheck(up, $$, $3, $5, $7);
-    }
-
-  | "loopn" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_LOOPN(@$, Flavorable::USEMICOLON, $3, $5);
-      memcheck(up, $$, $3, $5);
-    }
-
-  | "loopn" "|" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_LOOPN(@$, Flavorable::UPIPE, $4, $6);
+      $$ = new UCommand_LOOPN(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);
     }
 
-  | "loopn" "&" "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "for" flavor.opt "(" instruction ";"
+			 expr ";"
+			 instruction ")" taggedcommand %prec CMDBLOCK {
 
-    $$ = new UCommand_LOOPN(@$, Flavorable::UAND, $4, $6);
-      memcheck(up, $$, $4, $6);
-    }
-
-  | "for" "(" instruction ";"
-	       expr ";"
-	       instruction ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_FOR(@$, Flavorable::USEMICOLON, $3, $5, $7, $9);
-      memcheck(up, $$, $3, $5, $7, $9);
-    }
-
-  | "for" "|" "(" instruction ";"
-		    expr ";"
-		    instruction ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_FOR(@$, Flavorable::UPIPE, $4, $6, $8, $10);
-      memcheck(up, $$, $4, $6, $8, $10);
-    }
-
-  | "for" "&" "(" instruction ";"
-		   expr ";"
-		   instruction ")" taggedcommand %prec CMDBLOCK {
-
-    $$ = new UCommand_FOR(@$, Flavorable::UAND, $4, $6, $8, $10);
+      $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);
     }
 ;
@@ -1147,7 +1117,7 @@ instruction:
 
 array:
 
-  /* empty */ { $$ = 0 }
+  /* empty */ { $$ = 0; }
 
   | "[" expr "]" array {
 
@@ -1167,7 +1137,7 @@ purevariable:
       memcheck(up, $$, $3);
     }
 
-  | "identifier" array TOK_POINT "identifier" array {
+  | "identifier" array "." "identifier" array {
 
       memcheck(up, $1);
       memcheck(up, $4);
@@ -1187,13 +1157,10 @@ purevariable:
   | "identifier" array {
 
       memcheck(up, $1);
-      if (up.connection.functionTag)
-	// We are inside a function
-	  $$ = new UVariableName(new UString(up.connection.functionTag),
-				 $1, false, $2);
-      else
-	$$ = new UVariableName(new UString(up.connection.connectionTag),
-			       $1, false, $2);
+      $$ = new UVariableName(new UString(up.connection.functionTag
+					 ? *up.connection.functionTag
+					 : *up.connection.connectionTag),
+			     $1, false, $2);
       memcheck(up, $$, $1, $2);
       $$->nostruct = true;
     }
@@ -1209,16 +1176,16 @@ purevariable:
 ;
 
 variable:
-  purevariable			{ $$ = $1;				}
-| "static" purevariable		{ $$ = $2; $$->isstatic = true;		}
-| purevariable TOK_NORM		{ $$ = $1; $$->isnormalized = true;	}
-| purevariable TOK_VARERROR	{ $$ = $1; $$->varerror = true;		}
-| purevariable TOK_VARIN	{ $$ = $1; $$->varin = true;		}
-| purevariable TOK_VAROUT	{ $$ = $1;				}
-| purevariable TOK_DERIV	{ $$ = $1; $$->deriv = UDERIV;		}
-| purevariable TOK_DERIV2	{ $$ = $1; $$->deriv = UDERIV2;		}
-| purevariable TOK_TRUEDERIV	{ $$ = $1; $$->deriv = UTRUEDERIV;	}
-| purevariable TOK_TRUEDERIV2	{ $$ = $1; $$->deriv = UTRUEDERIV2;	}
+  purevariable		{ $$ = $1;				}
+| "static" purevariable	{ $$ = $2; $$->isstatic = true;		}
+| purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
+| purevariable "'e"	{ $$ = $1; $$->varerror = true;		}
+| purevariable "'in"	{ $$ = $1; $$->varin = true;		}
+| purevariable "'out"	{ $$ = $1;				}
+| purevariable "'"	{ $$ = $1; $$->deriv = UVariableName::UDERIV;	  }
+| purevariable "''"	{ $$ = $1; $$->deriv = UVariableName::UDERIV2;	  }
+| purevariable "'d"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; }
+| purevariable "'dd"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;}
 ;
 
 refvariable:
@@ -1250,7 +1217,7 @@ property:
 /* NAMEDPARAMETERS */
 
 namedparameters:
-  /* empty */ { $$ = 0 }
+  /* empty */ { $$ = 0; }
 
   | "identifier" ":" expr namedparameters {
 
@@ -1264,14 +1231,14 @@ namedparameters:
 /* BINARY */
 
 binary:
-    TOK_BIN NUM {
+    "bin" NUM {
       $$ = new UBinary((int)take($2), 0);
       memcheck(up, $$);
       if ($$ != 0)
 	memcheck(up, $$->buffer, $$);
     }
 
-  | TOK_BIN NUM rawparameters {
+  | "bin" NUM rawparameters {
 
       $$ = new UBinary((int)take($2), $3);
       memcheck(up, $$, $3);
@@ -1293,31 +1260,31 @@ timeexpr:
 
 expr:
   NUM {
-    $$ = new UExpression(UExpression::VALUE, take($1));
+    $$ = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, $$);
   }
 
 | timeexpr {
-    $$ = new UExpression(UExpression::VALUE, take ($1));
+    $$ = new UExpression(@$, UExpression::VALUE, take ($1));
     memcheck(up, $$);
   }
 
 | STRING {
     memcheck(up, $1);
-    $$ = new UExpression(UExpression::VALUE, $1);
+    $$ = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, $$, $1);
   }
 
 | "[" parameterlist "]" {
 
-    $$ = new UExpression(UExpression::LIST, $2);
+    $$ = new UExpression(@2, UExpression::LIST, $2);
     memcheck(up, $$, $2);
   }
 
 | property {
 
-     $$ = new UExpression(UExpression::PROPERTY,
-			    $1->property, $1->variablename);
+    $$ = new UExpression(@$, UExpression::PROPERTY,
+			 $1->property, $1->variablename);
      memcheck(up, $$, $1);
   }
 
@@ -1325,37 +1292,36 @@ expr:
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
-    //  $1->nameUpdate(up.connection.connectionTag->str(),
-    //                 $1->id->str());
+    //  $1->nameUpdate(up.connection.connectionTag->c_str(),
+    //                 $1->id->c_str());
 
-    $1->id_type = UDEF_FUNCTION;
-    $$ = new_exp(up, UExpression::FUNCTION, $1, $3);
+    $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }
 
-| "%" variable		{ $$ = new_exp(up, UExpression::ADDR_VARIABLE, $2); }
-| variable		{ $$ = new_exp(up, UExpression::VARIABLE, $1);      }
-| "group" "identifier"	{ $$ = new_exp(up, UExpression::GROUP, $2);         }
+| "%" variable         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
+| variable             { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
+| "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
 ;
 
 
   /* num expr */
 expr:
-    expr "+" expr	{ $$ = new_exp(up, UExpression::PLUS, $1, $3); }
-  | expr "-" expr	{ $$ = new_exp(up, UExpression::MINUS, $1, $3); }
-  | expr "*" expr	{ $$ = new_exp(up, UExpression::MULT, $1, $3); }
-  | expr "/" expr	{ $$ = new_exp(up, UExpression::DIV,  $1, $3); }
-  | expr "%" expr	{ $$ = new_exp(up, UExpression::MOD,  $1, $3); }
-  | expr "^" expr	{ $$ = new_exp(up, UExpression::EXP,  $1, $3); }
+    expr "+" expr	{ $$ = new_exp(up, @$, UExpression::PLUS,  $1, $3); }
+  | expr "-" expr	{ $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); }
+  | expr "*" expr	{ $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); }
+  | expr "/" expr	{ $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); }
+  | expr "%" expr	{ $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); }
+  | expr "^" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
 
-  | TOK_COPY expr  %prec NEG {
+  | "copy" expr  %prec NEG {
 
-      $$ = new UExpression(UExpression::COPY, $2, 0);
+      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
     }
 
   | "-" expr %prec NEG {
 
-      $$ = new UExpression(UExpression::NEG, $2, 0);
+      $$ = new UExpression(@$, UExpression::NEG, $2, 0);
       memcheck(up, $$, $2);
     }
 
@@ -1382,26 +1348,26 @@ expr:
 ;
 
 expr:
-    "true"  { $$ = new UExpression(UExpression::VALUE, TRUE);  }
-  | "false" { $$ = new UExpression(UExpression::VALUE, FALSE); }
+    "true"  { $$ = new UExpression(@$, UExpression::VALUE, TRUE);  }
+  | "false" { $$ = new UExpression(@$, UExpression::VALUE, FALSE); }
 
-  | expr "=="  expr { $$ = new_exp(up, UExpression::TEST_EQ,  $1, $3); }
-  | expr "~="  expr { $$ = new_exp(up, UExpression::TEST_REQ, $1, $3); }
-  | expr "=~=" expr { $$ = new_exp(up, UExpression::TEST_DEQ, $1, $3); }
-  | expr "%="  expr { $$ = new_exp(up, UExpression::TEST_PEQ, $1, $3); }
-  | expr "!="  expr { $$ = new_exp(up, UExpression::TEST_NE,  $1, $3); }
-  | expr ">"   expr { $$ = new_exp(up, UExpression::TEST_GT,  $1, $3); }
-  | expr ">="  expr { $$ = new_exp(up, UExpression::TEST_GE,  $1, $3); }
-  | expr "<"   expr { $$ = new_exp(up, UExpression::TEST_LT,  $1, $3); }
-  | expr "<="  expr { $$ = new_exp(up, UExpression::TEST_LE,  $1, $3); }
+  | expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
+  | expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
+  | expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
+  | expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
+  | expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
+  | expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
+  | expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
+  | expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
+  | expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
 
   | "!" expr {
-      $$ = new UExpression(UExpression::TEST_BANG, $2, 0);
+      $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
       memcheck(up, $$, $2);
     }
 
-  | expr "&&" expr { $$ = new_exp(up, UExpression::TEST_AND, $1, $3); }
-  | expr "||" expr { $$ = new_exp(up, UExpression::TEST_OR,  $1, $3); }
+  | expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
+  | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 
 ;
 
@@ -1430,28 +1396,28 @@ parameters:
 
 rawparameters:
     NUM {
-      UExpression *expr = new UExpression(UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     }
 
   | "identifier" {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, $1);
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     }
 
   |  NUM rawparameters {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     }
 
   |  "identifier" rawparameters {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, $1);
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     }
@@ -1518,30 +1484,26 @@ class_declaration:
     "var" "identifier" {
 
       memcheck(up, $2);
-      $$ = new UExpression(UExpression::VALUE, $2);
+      $$ = new UExpression(@$, UExpression::VALUE, $2);
       memcheck(up, $$, $2);
     }
 
   | "function" variable "(" identifiers ")" {
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new_exp(up, UExpression::FUNCTION, $2, $4);
+      $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
     }
 
   | "function" variable {
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UExpression(UExpression::FUNCTION, $2,
+      $$ = new UExpression(@$, UExpression::FUNCTION, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }
 
   | "event" variable "(" identifiers ")" {
-      $2->id_type = UDEF_EVENT;
-      $$ = new_exp(up, UExpression::EVENT, $2, $4);
+      $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
     }
 
   | "event" variable {
-      $2->id_type = UDEF_EVENT;
-      $$ = new UExpression(UExpression::EVENT, $2,
+      $$ = new UExpression(@$, UExpression::EVENT, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }

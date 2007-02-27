@@ -35,53 +35,45 @@ UEventMatch::UEventMatch (UString* eventname,
 			  UNamedParameters* filter,
 			  UCommand* command,
 			  UConnection* connection)
+   :  eventhandler_ (kernel::findEventHandler (eventname,
+					       filter ? filter->size () : 0)),
+      state_ (true), // default is positive event
+      deleteable_(true) // can be deleted
 {
-  if (!filter)
-    eventhandler_ = kernel::findEventHandler (eventname, 0);
-  else
-    eventhandler_ = kernel::findEventHandler (eventname, filter->size ());
-
   // Build the args list by evaluating the UNamedParameters
-  UNamedParameters* param = filter;
-  UValue* e1;
-  UString* varname = 0;
-
-  while (param)
+  for (UNamedParameters* param = filter; param; param = param->next)
   {
+    UValue* e1;
     if (param->expression->type == UExpression::VARIABLE)
     {
+      UString* varname = 0;
       ASSERT (param->expression->variablename)
 	varname = param->expression->variablename->
 		 buildFullname (command, connection);
       ASSERT (varname);
-      e1 = new UValue (varname->str ());
-      e1->dataType = DATA_VARIABLE; // this is a dirty hack. It means that the
-				    // UValue does not contain a value, but a
-				    // variable name instead.
+      e1 = new UValue (varname->c_str());
+      // this is a dirty hack. It means that the UValue does not
+      // contain a value, but a variable name instead.
+      e1->dataType = DATA_VARIABLE;
     }
     else
       e1 = param->expression->eval (command, connection);
-    ASSERT (e1) filter_.push_back (e1);
-    param = param->next;
+    ASSERT (e1)
+      filter_.push_back (e1);
   }
 
   // applies the filter to known events
   findMatches_ ();
-  state_ = true; // default is positive event
-  deleteable_ = true; // can be deleted
 }
 
 UEventMatch::UEventMatch (UEventHandler* eh)
+  : eventhandler_ (eh),
+    state_ (true), // default is positive event
+    deleteable_ (false) // cannot be deleted, this is a system eventmatch
 {
-  eventhandler_ = eh;
-
   // applies an empty filter to all events in eh
   findMatches_ ();
-
-  state_ = true; // default is positive event
-  deleteable_ = false; // cannot be deleted, this is a system eventmatch
 }
-
 
 UEventMatch::~UEventMatch ()
 {
@@ -94,25 +86,22 @@ UEventMatch::findMatches_ ()
   if (!eventhandler_)
     return;
 
-  std::list<UEvent*>::iterator itevent;
-  std::list<UValue*>::iterator ifilter_arg;
-  std::list<UValue*>::iterator itevent_arg;
-  bool ok;
-
-  for (itevent  = eventhandler_->eventlist().begin ();
+  for (std::list<UEvent*>::iterator
+	 itevent = eventhandler_->eventlist().begin ();
        itevent != eventhandler_->eventlist().end ();
        ++itevent)
   {
-    ok = true;
-    ifilter_arg = filter_.begin ();
-    itevent_arg = (*itevent)->args().begin();
+    bool ok = true;
+    std::list<UValue*>::iterator
+      ifilter_arg = filter_.begin (),
+      itevent_arg = (*itevent)->args().begin();
 
     while (ifilter_arg != filter_.end ()
-	   && itevent_arg !=  (*itevent)->args().end ()
+	   && itevent_arg != (*itevent)->args().end ()
 	   && ok)
     {
-      if ( ((*ifilter_arg)->dataType != DATA_VARIABLE)
-	     && !( (*ifilter_arg)->equal (*itevent_arg)) )
+      if ((*ifilter_arg)->dataType != DATA_VARIABLE
+	  && !(*ifilter_arg)->equal (*itevent_arg))
 	ok = false;
 
       ++ifilter_arg;
@@ -130,12 +119,10 @@ UEventMatch::reduce (bool st)
   for (std::list<UEvent*>::iterator itevent = matches_.begin ();
        itevent != matches_.end ();
        )
-  {
     if ((*itevent)->toDelete() == st)
       itevent = matches_.erase (itevent);
     else
       ++itevent;
-  }
 }
 
 void

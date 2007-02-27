@@ -302,7 +302,7 @@ UQueue::pop (int length)
 	if (end_ < start_)
 	{
 	  // The data is splitted
-	  memmove(buffer_ + start_ - bufferSize_ - topDataSize_,
+	  memmove(buffer_ + start_ - (bufferSize_ - topDataSize_),
 		  buffer_ + start_, bufferSize_ - start_);
 	  start_ = start_ - (bufferSize_ - topDataSize_);
 	}

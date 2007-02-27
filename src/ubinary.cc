@@ -20,10 +20,9 @@
  **************************************************************************** */
 
 #include "ubinary.hh"
+#include "unamedparameters.hh"
 #include "userver.hh"
 
-
-// **************************************************************************
 //! UBinary constructor.
 UBinary::UBinary(int bufferSize, UNamedParameters *parameters)
   : bufferSize (bufferSize),
@@ -52,7 +51,7 @@ UBinary::~UBinary()
     It is not safe, efficient or crash proof. A better version will come later.
 */
 void
-UBinary::print()
+UBinary::print() const
 {
   ::urbiserver->debug("(BIN %d)",bufferSize);
 }

@@ -23,9 +23,16 @@
 # define USERVER_HH
 
 # include <cstdarg>
+
+# include <sstream>
+
+# include "libport/compiler.hh"
 # include "libport/lockable.hh"
+
 # include "fwd.hh"
+# include "ustring.hh"
 # include "utypes.hh"
+# include "tag-info.hh"
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -46,23 +53,80 @@ extern  class UServer   *urbiserver; // Global variable for the server
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class UServer: public urbi::Lockable
+class UServer: public libport::Lockable
 {
 public:
+  //! UServer constructor.
+  /*! UServer constructor
+
+   Unlike UConstructor, it is not required that you handle the memory
+   management task when you create the robot-specific sub class. The
+   difference in memory between your class and the UServer class is
+   considered as neglectible and included in the security margin. If you
+   don't understand this point, ignore it.
+
+   \param frequency gives the value in msec of the server update,
+   which are the calls to the "work" function. These calls must be done at
+   a fixed, precise, real-time frequency to let the server computer motor
+   trajectories between two "work" calls.
+
+   \param freeMemory indicates the biggest malloc possible on the system
+   when the server has just started. It is used to determine a high
+   limit of memory allocation, thus avoiding later to run out of memory
+   during a new or malloc.
+   */
   UServer(ufloat frequency, int freeMemory, const char* mainName);
 
   virtual ~UServer();
 
-  void              initialization();
-  void              work();
-  void              main (int argc, const char* argv[]);
+  //! Initialization of the server. Displays the header message & init stuff
+  /*! This function must be called once the server is operational and
+   able to print messages. It is a requirement for URBI compliance to print
+   the header at start, so this function *must* be called. Beside, it also
+   do initalization work for the devices and system variables.
+   */
+  void initialize();
+  /// Obsolete name for initialize().
+  void initialization () { initialize(); }
 
-  void              error           (const char* s, ...);
-  void              echo            (const char* s, ...);
-  void              echoKey         (const char* key, const char* s, ...);
+  //! Main processing loop of the server
+  /*! This function must be called every "frequency_" msec to ensure the proper
+   functionning of the server. It will call the command execution, the
+   connection message sending when they are delayed, etc...
 
-  void debug (const char* s, va_list args);
-  void debug (const char* s, ...);
+   "frequency_" is a parameter of the server, given in the constructor.
+   */
+  void work();
+
+  /// Set the system.args list in URBI.
+  void main (int argc, const char* argv[]);
+
+  void error (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echo (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+
+
+  //! Display a formatted message, with a key.
+  /*! This function uses the virtual URobot::display() function to make the
+   message printing robot-specific.
+   It formats the output in a standard URBI way by adding a key between
+   brackets at the end. This key can be "" or NULL.It can be used to
+   visually extract information from the flux of messages printed by
+   the server.
+   \param key is the message key. Maxlength = 5 chars.
+   \param s   is the formatted string containing the message.
+   */
+  void vecho_key (const char* key, const char* s, va_list args)
+    __attribute__ ((__format__ (__printf__, 3, 0)));
+  void echoKey (const char* key, const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 3, 4)));
+
+  /// Send debugging data.
+  void vdebug (const char* s, va_list args)
+    __attribute__ ((__format__ (__printf__, 2, 0)));
+  void debug (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
 
   void              isolate         ();
   void              deIsolate       ();
@@ -88,17 +152,24 @@ public:
 
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue loadFile      (const char *filename,
-				     UCommandQueue* loadQueue);
+  virtual UErrorValue loadFile (const char *filename,
+				UCommandQueue* loadQueue);
 
   /// Save content to a file
   /// This function must be redefined by the robot-specific server.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue saveFile      (const char *filename,
-				     const char * content) = 0;
+  virtual UErrorValue saveFile (const char *filename,
+				const char * content) = 0;
 
   void              memoryCheck     ();
-  int               memory          ();
+
+  //! Evaluate how much memory is available for a malloc
+  /*! This function tries to evaluate how much memory is available for a malloc,
+   using brute force dichotomic allocation. This is the only known way to get
+   this information on most systems (like OPENR).
+   */
+  // FIXME: Why is this a member function?
+  size_t memory () const;
 
   UVariable*        getVariable     ( const char *device,
 				      const char *property);
@@ -170,23 +241,27 @@ public:
   /// List of variables to delete after a reset.
   std::list<UVariable*>         resetList;
   /// True when the server is in the process of resting.
-  bool                     reseting;
+  bool reseting;
   /// Reseting stage.
-  int                      stage;
+  int stage;
   /// List of variables to delete in a reset command.
-  std::list<UVariable*>         varToReset;
+  std::list<UVariable*> varToReset;
 
   /// Flag used to signal a memory overflow.
-  bool                     memoryOverflow;
+  bool memoryOverflow;
 
-  /// Shows debug or not..
-  bool                     debugOutput;
+  /// Shows debug or not.
+  bool debugOutput;
+
+private:
   /// Name of the main device.
-  UString                  *mainName;
+  UString mainName_;
+
+public:
   /// True after a stop command.
-  bool                     somethingToDelete;
+  bool somethingToDelete;
   /// True after the initialization phase: all vars are uservar then.
-  bool                     uservarState;
+  bool uservarState;
 
   /// Cpu load expressed as a number between 0 and 1.
   ufloat                   cpuload;
@@ -212,17 +287,17 @@ public:
   bool                     systemcommands;
 
   /// Urbi TCP Port..
- static const int TCP_PORT            = 54000;
+  enum { TCP_PORT = 54000 };
 
 protected:
   virtual void     effectiveDisplay         (const char*) = 0;
 
 private:
-  void              mark            (TagInfo*);
+  void mark (TagInfo*);
   /// Used by echo()& error().
-  static const int MAXSIZE_INTERNALMESSAGE = 1024;
-  /// Amount of security mem..
-  static const int SECURITY_MEMORY_SIZE    = 100000;
+  enum { MAXSIZE_INTERNALMESSAGE = 1024 };
+  /// Amount of security mem.
+  enum { SECURITY_MEMORY_SIZE = 100000 };
 
   /// Frequency of the calls to work().
   ufloat           frequency_;
@@ -250,13 +325,48 @@ UServer::lastTime()
   return lastTime_;
 }
 
-extern int URBI_unicID;
 
-inline int unic()
+inline
+int unic()
 {
-  ++URBI_unicID;
-  return URBI_unicID;
+  /// Unique identifier to create new references.
+  static int cnt = 10000;
+  return ++cnt;
 }
+
+// Return an identifier starting with \a prefix, ending with a unique int.
+inline
+std::string unic (const char* prefix)
+{
+  std::ostringstream o;
+  o << prefix << unic();
+  return o.str();
+}
+
+
+/*-------------------------.
+| Freestanding functions.  |
+`-------------------------*/
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, va_list args)
+  __attribute__ ((__format__ (__printf__, 1, 0)));
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 1, 2)));
+
+/// Send debugging messages indented with \a t spaces, via ::urbiserver.
+void debug (unsigned t, const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 2, 3)));
+
+// Send debugging messages.
+#if URBI_DEBUG
+// Must be invoked with two pairs of parens.
+# define DEBUG(Msg)  debug Msg
+#else
+# define DEBUG(Msg) ((void) 0)
+#endif
 
 #endif
 

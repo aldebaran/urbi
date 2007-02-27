@@ -28,7 +28,16 @@
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
+// At each match, adjust the end cursor.
 #define YY_USER_ACTION locp->columns(yyleng);
+
+// To avoid differences between versions of Bison, set by hand the
+// initial columns when advancing lines.
+#define LINES(Loc)				\
+ do {						\
+   (Loc)->lines();				\
+   (Loc)->end.column = 1;			\
+ } while (0)
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate() return token::TOK_EOF
@@ -37,14 +46,22 @@ typedef yy::parser::token token;
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
+// For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
+#define RETURN_FLAVOR(Symbol)			\
+ do {						\
+   valp->flavor = Flavorable::U ## Symbol;	\
+   return token::TOK_ ## Symbol;		\
+ } while (0)
+
+
 // Be bulletproof when memory allocation fails.
 #define SET_VALP_STR(Value)			\
 do {						\
-  valp->str = new UString(Value);		\
-  if (valp->str->str() == 0)			\
+  valp->ustr = new UString(Value);		\
+  if (valp->ustr->c_str() == 0)			\
   {						\
-    delete valp->str;				\
-    valp->str = 0;				\
+    delete valp->ustr;				\
+    valp->ustr = 0;				\
   }						\
 } while (0)
 
@@ -66,7 +83,6 @@ do {						\
 #define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
 #define RETURN_FLAGTIME(Value) RETURN_VAL_TOKEN(FLAGTIME, Value)
 
-
 #define RETURN_TIMEVALUE(Scale)				\
 do {							\
   yytext[yyleng-1]=0;					\
@@ -77,7 +93,7 @@ do {							\
 %}
 %option noyywrap
 
-%x SC_C_COMMENT
+%x SC_C_COMMENT SC_STRING
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -125,13 +141,7 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}      { valp->val = new ufloat(atof(yytext));
 		return token::NUM; }
 
-{STRING}      { /* Remove ending ". */
-		yytext[yyleng - 1] = 0;
-		SET_VALP_STR(yytext+1);
-		if (valp->str)
-		  valp->str->un_armor();
-		return token::STRING;
-	      }
+\"            valp->str = new std::string; BEGIN SC_STRING;
 
 
 "block"      |
@@ -174,6 +184,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "undefall"    |
 "unstrict"    |
 "uservars"    |
+"functions"   |
 "vars"        RETURN_STR_TOKEN (OPERATOR);
 
 "BIN"           return token::TOK_BIN;
@@ -229,7 +240,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "$"             return token::TOK_DOLLAR;
 "%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
-"&"             return token::TOK_AND;
+"&"             RETURN_FLAVOR(AND);
 "&&"            return token::TOK_ANDOPERATOR;
 "'"             return token::TOK_DERIV;
 "''"            return token::TOK_DERIV2;
@@ -243,7 +254,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "+"             return token::TOK_PLUS;
 "++"            return token::TOK_PLUSPLUS;
 "+="            return token::TOK_PLUSASSIGN;
-","             return token::TOK_COMMA;
+","             RETURN_FLAVOR(COMMA);
 "-"             return token::TOK_MINUS;
 "--"            return token::TOK_MINUSMINUS;
 "-="            return token::TOK_MINUSASSIGN;
@@ -252,7 +263,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "/"             return token::TOK_DIV;
 ":"             return token::TOK_COLON;
 "::"            return token::TOK_DOUBLECOLON;
-";"             return token::TOK_SEMICOLON;
+";"             RETURN_FLAVOR(SEMICOLON);
 "<"             return token::TOK_LT;
 "<="            return token::TOK_LE;
 "="             return token::TOK_ASSIGN;
@@ -265,7 +276,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "]"             return token::TOK_RSBRACKET;
 "^"             return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
-"|"             return token::TOK_PIPE;
+"|"             RETURN_FLAVOR(PIPE);
 "||"            return token::TOK_OROPERATOR;
 "}"             return token::TOK_RBRACKET;
 "~"             return token::TOK_TILDE;
@@ -278,13 +289,13 @@ STRING   \"([^\"]|"\\\"")*\"
 {ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
 		tmp_position[0] = 0;
 		valp->structure.device = new UString(yytext);
-		if (valp->structure.device->str() == 0)
+		if (valp->structure.device->c_str() == 0)
 		{
 		  delete valp->structure.device;
 		  valp->structure.device = 0;
 		}
 		valp->structure.id = new UString(tmp_position+1);
-		if (valp->structure.id->str() == 0)
+		if (valp->structure.id->c_str() == 0)
 		{
 		  delete valp->structure.id;
 		  valp->structure.id = 0;
@@ -296,6 +307,56 @@ STRING   \"([^\"]|"\\\"")*\"
 
 {ID}"."{ID}("."{ID})+   RETURN_STR_TOKEN(TAG);
 
+
+    /*----------.
+    | Strings.  |
+    `----------*/
+
+<SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
+     \" {
+       BEGIN INITIAL;
+       UString* u = new UString (*valp->str);
+       delete valp->str;
+       valp->ustr = u;
+       return token::STRING;
+     }
+
+     \\[0-7]{3}		{
+       long c = strtol (yytext + 1, 0, 8);
+       if (c > 255)
+	 up.error(*locp, "invalid escape");
+       else
+   	 *valp->str += c;
+     }
+
+     \\x[0-9a-fA-F]{2}	{
+       *valp->str += strtol (yytext + 2, 0, 16);
+     }
+
+     \\a	*valp->str += '\a';
+     \\b	*valp->str += '\b';
+     \\f	*valp->str += '\f';
+     \\n	*valp->str += '\n';
+     \\r	*valp->str += '\r';
+     \\t	*valp->str += '\t';
+     \\v	*valp->str += '\v';
+     \\[\\""]   *valp->str += yytext[1];
+     \\.	up.error (*locp, "unrecognized escape");
+
+
+     [^\"\n\r\\]+      valp->str->append (yytext, yyleng);
+
+     {EOL}+    locp->lines (yyleng); valp->str->append (yyleng, '\n');
+
+     <<EOF>> {
+       up.error (*locp, "unexpected end of file in a string");
+       BEGIN INITIAL;
+       return token::STRING;
+     }
+}
+
+
+
     /*----------------------------.
     | White spaces and comments.  |
     `----------------------------*/
@@ -304,7 +365,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "/*"           BEGIN SC_C_COMMENT;
 
 {BLANKS}       locp->step();
-{EOL}          locp->lines(); locp->step();
+{EOL}          LINES(locp); locp->step();
 .              {
 		 up.error(*locp, std::string ("invalid character: ")
 			  + yytext);
@@ -318,7 +379,7 @@ STRING   \"([^\"]|"\\\"")*\"
   }
 
   [^*/\n\r]+  	;
-  {EOL}	        locp->lines ();
+  {EOL}	        LINES(locp);
   .             /* Stray `*' and `/'. */;
 
   <<EOF>> {

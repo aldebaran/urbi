@@ -34,7 +34,7 @@ namespace urbi
     {
       variable = v;
     }
-    ~UVardata() {};
+    ~UVardata()  {};
 
     UVariable *variable;
   };
@@ -45,13 +45,13 @@ namespace urbi
   UVar::__init()
   {
     owned = false;
-    varmap[name].push_back(this);
+    (*varmap)[name].push_back(this);
 
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
     if (it == ::urbiserver->variabletab.end())
       // autoupdate unless otherwise specified
       vardata = new UVardata(new UVariable(name.c_str(), new ::UValue(),
-					   false,false,true));
+					   false, false, true));
     else
     {
       vardata = new UVardata(it->second);
@@ -71,9 +71,9 @@ namespace urbi
   //! UVar destructor.
   UVar::~UVar()
   {
-    UVarTable::iterator varmapfind = varmap.find(name);
+    UVarTable::iterator varmapfind = varmap->find(name);
 
-    if (varmapfind != varmap.end())
+    if (varmapfind != varmap->end())
     {
       for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	   it != varmapfind->second.end();)
@@ -83,7 +83,7 @@ namespace urbi
 	  ++it;
 
       if (varmapfind->second.empty())
-	varmap.erase(varmapfind);
+	varmap->erase(varmapfind);
     }
     delete vardata;
   }
@@ -100,7 +100,10 @@ namespace urbi
     vardata->variable->value->dataType = ::DATA_NUM;
 
     if (owned)
+    {
       vardata->variable->setSensorVal(n);
+      vardata->variable->updated (true);
+    }
     else
       vardata->variable->setFloat(n);
   }
@@ -177,7 +180,7 @@ namespace urbi
   UVar::operator std::string ()
   {
     if (vardata && vardata->variable->value->dataType == ::DATA_STRING)
-      return std::string(vardata->variable->value->str->str());
+      return std::string(vardata->variable->value->str->c_str());
     else
       return std::string("");
   }
