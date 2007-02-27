@@ -1,3 +1,8 @@
+2007-02-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add support for automerge from trunk.
+	* .automerge: New.
+
 2007-01-11  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
 	fix typos in yml format 
