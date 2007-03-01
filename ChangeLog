@@ -1,5 +1,10 @@
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
+	Update externals
+	* Makefile.am: sdk no longer exists.
+
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
 	Use more std::string
 	Valgrind finds fishy things around here.  Let's clean and then
 	track the problems.
