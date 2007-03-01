@@ -20,7 +20,7 @@ namespace Network
   {
   public:
     TCPServerPipe();
-    bool init(int port);
+    bool init(int port, const std::string & address);
     ~TCPServerPipe();
 
     virtual std::ostream& print (std::ostream& o) const;
@@ -64,7 +64,7 @@ namespace Network
   }
 
   bool
-  TCPServerPipe::init(int p)
+  TCPServerPipe::init(int p, const std::string& addr)
   {
     port = p;
 #ifdef WIN32
@@ -106,7 +106,17 @@ namespace Network
     memset(&address, 0, sizeof (sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
-    address.sin_addr.s_addr = INADDR_ANY;
+    if (addr.empty() || addr == "0.0.0.0")
+      address.sin_addr.s_addr = INADDR_ANY;
+    else
+    {
+      //attempt name resolution
+      hostent* hp = gethostbyname (addr.c_str());
+      if (!hp) //assume IP address in case of failure
+	address.sin_addr.s_addr = inet_addr(addr.c_str());
+      else
+	address.sin_addr.s_addr = *(int*)hp->h_addr;
+    }
 
     // Bind to port.
     if (bind(fd, (sockaddr*)&address, sizeof (sockaddr)))
@@ -173,10 +183,13 @@ namespace Network
   }
 
   bool
-  createTCPServer(int port)
+  createTCPServer(int port, const char * address)
   {
     TCPServerPipe* tsp = new TCPServerPipe();
-    if (!tsp->init(port))
+    std::string addr;
+    if (address)
+      addr = address;
+    if (!tsp->init(port, addr))
     {
       delete tsp;
       return false;

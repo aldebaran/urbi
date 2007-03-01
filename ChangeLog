@@ -1,5 +1,76 @@
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
+	svn merge -r 941:970 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-02-22  Matthieu Nottale  <nottale@gostai.com>
+	Add a parameter to createTCPServer to specify address to bind to
+	* src/network/bsdnet/network.cc: Here, propagate in  TCPServerPipe::init.
+	* src/network/bsdnet/network.hh: Also here.
+
+	2007-02-22  Akim Demaille  <akim.demaille@free.fr>
+	Fix #133
+	We focused on the fact that the current code is boggus and
+	missed the fact that my proposal was addressing one issue, but
+	introducing another one.  We were trading one bug for another,
+	the latter having a much bigger impact.
+
+	I suggested to replace
+
+	# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
+	# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
+
+	which duplicates the computation and fails to parens x
+	properly (and there are indeed places where it mattered since
+	x was something like a + b), by
+
+	# define ADDMEM(X)   usedMemory += (int) ((X) * 1.15)
+	# define FREEMEM(X)  ADDMEM (-(X))
+
+	Unfortunately that fails when X is unsigned (which is the case
+	when ADDOBJ and FREEOBJ pass it a sizeof result): FREEMEM
+	then negates a size_t, which results in a huge positive size_t.
+	But this huge size_t is immediately added to usedMemory, so
+	it should nevertheless yield the correct result!
+
+	Enter 1.15 that screws it all, as the following program
+	demonstrates
+
+	#include <iostream>
+	#include <string>
+
+	#define ECHO(C) std::cout << #C " = " << C << std::endl;
+
+	int main ()
+	{
+	  char tab[18];
+	  ECHO (sizeof tab);
+	  ECHO (- (int) (sizeof tab));
+
+	  ECHO ((- sizeof tab));
+	  ECHO (+ (- (int) (sizeof tab)));
+
+	  ECHO (1.15 * sizeof tab);
+	  ECHO (- (int) (1.15 * sizeof tab));
+
+	  ECHO (1.15 * (- sizeof tab));
+	  ECHO (+ (int) (1.15 * (- sizeof tab)));
+	}
+
+	which results in:
+
+	sizeof tab = 18
+	- (int) (sizeof tab) = -18
+	(- sizeof tab) = 4294967278      <== overflow
+	+ (- (int) (sizeof tab)) = -18   <== but ok
+	1.15 * sizeof tab = 20.7
+	- (int) (1.15 * sizeof tab) = -20
+	1.15 * (- sizeof tab) = 4.93921e+09     <=== overflow
+	+ (int) (1.15 * (- sizeof tab)) = 2147483647  <=== deadly
+
+	* src/utypes.hh (FREEMEM): Avoid negating a posibly unsigned value.
+
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
 	Less const char*
 	* src/uvariablename.cc (resolve_aliases): Work string -> string.
 
