@@ -1,5 +1,9 @@
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
+	* src/uvariablename.cc (resolve_aliases): Add missing const.
+
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 941:970 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-02-22  Matthieu Nottale  <nottale@gostai.com>

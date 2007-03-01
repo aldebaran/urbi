@@ -362,7 +362,7 @@ namespace
   std::string
   resolve_aliases(const std::string& s)
   {
-    std::string* res = &s;
+    const std::string* res = &s;
     for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(res->c_str());
 	 i != ::urbiserver->objaliastab.end();
 	 i = ::urbiserver->objaliastab.find(res->c_str()))
