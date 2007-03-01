@@ -260,7 +260,7 @@ UVariableName::getMethod()
   if (!fullname_)
     return 0;
 
-  return method = new UString(suffix(fullname_->c_str()));
+  return method = new UString(suffix(*fullname_));
 }
 
 //! UVariableName access to device (with cache)
@@ -273,7 +273,7 @@ UVariableName::getDevice()
   if (!fullname_)
     return 0;
   if (strchr(fullname_->c_str(), '.'))
-    return device = new UString(prefix(fullname_->c_str()));
+    return device = new UString(prefix(*fullname_));
   else
     return fullname_;
 }
@@ -340,11 +340,11 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
   }
 
   // The name is composed of two parts: PREFIX.SUFFIX.
-  const char* cp = e1->str->c_str();
-  if (strchr(cp, '.'))
+  const std::string& n = e1->str->str();
+  if (n.find('.') != std::string::npos)
   {
-    update(device, prefix(cp).c_str());
-    update(id, suffix(cp));
+    update(device, prefix(n).c_str());
+    update(id, suffix(n));
   }
   else
   {
@@ -356,23 +356,33 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
       update(device, "__Funct__");
       localFunction = true;
     }
-    update(id, cp);
+    update(id, n);
   }
   delete e1;
   return true;
 }
 
-/// Descend ::urbiserver->objaliastab looking for \a cp.
-const char*
-resolve_aliases(const char* cp)
+namespace
 {
-  for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(cp);
-       i != ::urbiserver->objaliastab.end();
-       i = ::urbiserver->objaliastab.find(cp))
-    cp = i->second->c_str();
-  return cp;
-}
+  /// Descend ::urbiserver->objaliastab looking for \a cp.
+  const char*
+  resolve_aliases(const char* cp)
+  {
+    for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(cp);
+	 i != ::urbiserver->objaliastab.end();
+	 i = ::urbiserver->objaliastab.find(cp))
+      cp = i->second->c_str();
+    return cp;
+  }
 
+  /// Descend ::urbiserver->objaliastab looking for \a cp.
+  inline
+  const char*
+  resolve_aliases(const std::string& n)
+  {
+    return resolve_aliases(n.c_str());
+  }
+}
 
 //! UVariableName name extraction, with caching
 /*! This method builds the name of the variable (or function) and stores it in fullname_.
@@ -489,14 +499,12 @@ UVariableName::buildFullname (UCommand* command,
   // Alias updating
   if (withalias)
   {
-    const char* cp;
+    std::string n = name;
     if (nostruct)
       // Comes from a simple IDENTIFIER.
-      cp = suffix(resolve_aliases(suffix(name.c_str())));
-    else
-      cp = name.c_str();
+      n = suffix(std::string(resolve_aliases(suffix(n))));
 
-    HMaliastab::iterator hmi= ::urbiserver->aliastab.find(cp);
+    HMaliastab::iterator hmi= ::urbiserver->aliastab.find(n.c_str());
     HMaliastab::iterator past_hmi = hmi;
     while (hmi != ::urbiserver->aliastab.end())
     {
@@ -518,13 +526,13 @@ UVariableName::buildFullname (UCommand* command,
   else if (nostruct)
   {
     if (name.find('.') != std::string::npos)
-      return set_fullname (suffix(name.c_str()));
+      return set_fullname(suffix(name).c_str());
   }
 
   if (name.find('.') != std::string::npos)
   {
-    const char* cp = resolve_aliases(prefix(name.c_str()).c_str());
-    name = std::string(cp) + "." + suffix(name.c_str());
+    const char* cp = resolve_aliases(prefix(name));
+    name = std::string(cp) + "." + suffix(name);
   }
 
   return set_fullname (name.c_str());

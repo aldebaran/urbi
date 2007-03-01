@@ -134,15 +134,29 @@ operator!= (const UString& lhs, const char* rhs)
 }
 
 /// Return the part after the first `.', or the whole string if there is none.
-const char* suffix (const char* name);
+std::string suffix (const std::string& name);
 
 /// Return the part before the `.', or an empty string.
-std::string prefix (const char* name);
+std::string prefix (const std::string& name);
+
+/// Return the part after the first `.', or the whole string if there is none.
+inline
+std::string suffix (const UString& name)
+{
+  return suffix(name.str());
+}
+
+/// Return the part before the `.', or an empty string.
+inline
+std::string prefix (const UString& name)
+{
+  return prefix(name.str());
+}
 
 /// Update a pointer to UString.
 inline
 UString*
-update (UString*& s, const char* v)
+update (UString*& s, const std::string& v)
 {
   if (s)
     *s = v;

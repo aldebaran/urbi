@@ -92,20 +92,22 @@ UString::operator=(const UString* s)
 
 // Return the part before the `.', or an empty string.
 std::string
-prefix (const char* name)
+prefix (const std::string& name)
 {
-  if (const char* p = strchr(name, '.'))
-    return std::string(name, p - name);
+  size_t pos = name.find('.');
+  if (pos != std::string::npos)
+    return name.substr(0, pos);
   else
     return "";
 }
 
 // Return the part after the first `.', or the whole string if there is none.
-const char*
-suffix (const char* name)
+std::string
+suffix (const std::string& name)
 {
-  if (const char* p = strchr(name, '.'))
-    return p + 1;
+  size_t pos = name.find('.');
+  if (pos != std::string::npos)
+    return name.substr(pos + 1);
   else
     return name;
 }
