@@ -1228,7 +1228,7 @@ UConnection::localVariableCheck (UVariable *variable)
   if (!stack.empty())
   {
     UCallid* cid = stack.front();
-    if (variable->getDevicename() == (std::string)cid->c_str())
+    if (variable->getDevicename() == cid->str())
       cid->store(variable);
   }
 }

@@ -1,5 +1,13 @@
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
+	Use UString for UCallid
+	* src/ucallid.hh, src/ucallid.cc: Append _ to private members.
+	* src/ucommand.cc, src/uconnection.cc: Adjust.
+	* src/uvariablename.hh, src/uvariablename.cc: Ditto.
+	(updateName): Add more flavors.
+
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
 	* src/uvariablename.cc (resolve_aliases): Add missing const.
 
 2007-03-01  Akim Demaille  <demaille@gostai.com>

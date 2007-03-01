@@ -669,18 +669,16 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       if (expression->variablename->doublecolon
 	  && !connection->stack.empty ()
 	  && libport::mhas(::urbiserver->objtab,
-			   connection->stack.front()->self()))
+			   connection->stack.front()->self().c_str()))
 	*fundevice = connection->stack.front()->self();
 
       uc_tree->callid = new UCallid(unic("__UFnct"),
 				    fundevice->c_str(), uc_tree);
 
-      resultContainer->nameUpdate(uc_tree->callid->c_str(),
-				  "__result__");
+      resultContainer->nameUpdate(uc_tree->callid->str(), "__result__");
       // creates return variable
       uc_tree->callid->setReturnVar (
-	new UVariable (uc_tree->callid->c_str(),
-		       "__result__",
+	new UVariable (uc_tree->callid->str().c_str(), "__result__",
 		       new UValue ()));
 
       if (!uc_tree->callid)
@@ -701,7 +699,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	}
 
 	uc_tree->callid->store
-	  (new UVariable(uc_tree->callid->c_str(),
+	  (new UVariable(uc_tree->callid->str().c_str(),
 			 pname->name->c_str(),
 			 valparam));
       }
@@ -715,7 +713,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   if (expression->variablename->doublecolon
       && !connection->stack.empty ()
       && libport::mhas(::urbiserver->objtab,
-		       connection->stack.front()->self()))
+		       connection->stack.front()->self().c_str()))
   {
     // rebuild name with parent class
     *expression->variablename->device = connection->stack.front()->self();
@@ -2202,17 +2200,16 @@ UCommand_EXPR::execute_(UConnection *connection)
 	if (expression->variablename->doublecolon
 	    && !connection->stack.empty ()
 	    && libport::mhas(::urbiserver->objtab,
-			     connection->stack.front()->self()))
+			     connection->stack.front()->self().c_str()))
 	  *fundevice = connection->stack.front()->self();
 
 	uc_tree->callid = new UCallid(unic("__UFnct"),
 				      fundevice->c_str(), uc_tree);
-	resultContainer->nameUpdate(uc_tree->callid->c_str(),
+	resultContainer->nameUpdate(uc_tree->callid->str(),
 				    "__result__");
 	// creates return variable
 	uc_tree->callid->setReturnVar (
-	  new UVariable (uc_tree->callid->c_str(),
-			 "__result__",
+	  new UVariable (uc_tree->callid->str().c_str(), "__result__",
 			 new UValue ()));
 	if (!uc_tree->callid)
 	  return UCOMPLETED;
@@ -2230,7 +2227,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    return UCOMPLETED;
 	  }
 	  uc_tree->callid->store(
-	    new UVariable(uc_tree->callid->c_str(),
+	    new UVariable(uc_tree->callid->str().c_str(),
 			  pname->name->c_str(),
 			  valparam)
 	    );
@@ -2254,7 +2251,7 @@ UCommand_EXPR::execute_(UConnection *connection)
     if (expression->variablename->doublecolon
 	&& !connection->stack.empty ()
 	&& libport::mhas(::urbiserver->objtab,
-			 connection->stack.front()->self()))
+			 connection->stack.front()->self().c_str()))
     {
       // rebuild name with parent class
       *expression->variablename->device = connection->stack.front()->self();

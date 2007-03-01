@@ -38,20 +38,20 @@ public:
 
   void         store(UVariable* variable);
   void         remove(UVariable* variable);
-  const char*  c_str();
-  const char*  self();
+  const UString& str() const;
+  const UString& self() const;
   void         setReturnVar(UVariable* v);
 
   // FIXME: Should be private, but ucommand.cc currently directly uses it.
   UVariable* returnVar;
 
 private:
-  std::list<UVariable*> stack;
-  UString fun_id;
-  UString self_id;
-  UCommand_TREE* root;
+  std::list<UVariable*> stack_;
+  UString fun_id_;
+  UString self_id_;
+  UCommand_TREE* root_;
   /// Whether the destructor is being called.
-  bool dying;
+  bool dying_;
 };
 
 #endif

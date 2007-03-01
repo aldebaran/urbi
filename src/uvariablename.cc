@@ -168,7 +168,7 @@ UVariableName::set_fullname (const char* s)
   return update (fullname_, s);
 #if 0
   if (device && id
-      && *res != std::string (device->c_str()) + "." + std::string(id->c_str()))
+      && *res != device->str().str() + "." + id->str())
     std::cerr << "Warning, \"" << *res << "\" != \""
 	      << *device << "\".\"" << *id << "\"" << std::endl;
 #endif
@@ -416,14 +416,13 @@ UVariableName::buildFullname (UCommand* command,
 	if (localFunction)
 	{
 	  if (local_scope)
-	    *device = funid->c_str();
+	    *device = funid->str();
 	  else
 	  {
 	    // does the symbol exist as a symbol local to the function call?
 	    bool function_symbol = false;
-	    std::string tmpstr(funid->c_str());
-	    tmpstr = tmpstr + "." + id->c_str();
-	    const char* cp = tmpstr.c_str();
+	    std::string n = funid->str().str() + "." + id->str();
+	    const char* cp = n.c_str();
 	    if (libport::mhas(::urbiserver->variabletab, cp)
 		|| kernel::eventSymbolDefined (cp))
 	      function_symbol = true;
@@ -432,7 +431,7 @@ UVariableName::buildFullname (UCommand* command,
 	    bool class_symbol = false;
 
 	    if (const UObj* u = libport::find0(::urbiserver->objtab,
-					       funid->self()))
+					       funid->self().c_str()))
 	    {
 	      bool ambiguous = true;
 	      class_symbol =
@@ -448,12 +447,12 @@ UVariableName::buildFullname (UCommand* command,
 	      if (!function_symbol)
 		*device = funid->self();
 	      else
-		*device = funid->c_str();
+		*device = funid->str();
 	    }
 	    else
 	    {
 	      std::string tmploc(connection->connectionTag->c_str());
-	      tmploc = tmploc + "." + id->c_str();
+	      tmploc = tmploc + "." + id->str();
 	      const char* cp = tmploc.c_str();
 
 	      // does the symbol exist as a symbol local to the connection?
@@ -465,7 +464,7 @@ UVariableName::buildFullname (UCommand* command,
 	      if (local_symbol && !function_symbol)
 		*device = connection->connectionTag->c_str();
 	      else
-		*device = funid->c_str();
+		*device = funid->str();
 	    }
 	  }
 	}
@@ -481,7 +480,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   // Create the concatened variable name
-  std::string name = std::string(device->c_str()) + "." + id->c_str();
+  std::string name = device->str() + "." + id->str();
   ECHO(name);
 
   // Alias updating
@@ -529,6 +528,20 @@ UVariableName::nameUpdate(const char* _device, const char* _id)
 {
   update(device, _device);
   update(id, _id);
+}
+
+//! UVariableName name update for functions scope hack
+void
+UVariableName::nameUpdate(const std::string& _device, const std::string& _id)
+{
+  nameUpdate(_device.c_str(), _id.c_str());
+}
+
+//! UVariableName name update for functions scope hack
+void
+UVariableName::nameUpdate(const UString& _device, const UString& _id)
+{
+  nameUpdate(_device.str(), _id.str());
 }
 
 //! UNamedParameters hard copy function
