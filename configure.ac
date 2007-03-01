@@ -15,7 +15,8 @@ AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip nostdinc])
 ## Parameters.  ##
 ## ------------ ##
 
-URBI_KERNEL_DIRS([engine])
+URBI_PACKAGE_KIND([kernel])
+URBI_DIRS([engine])
 
 URBI_DOC
 

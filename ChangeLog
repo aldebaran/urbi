@@ -1,5 +1,9 @@
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
+	* configure.ac: Use URBI_PACKAGE_KIND.
+
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
 	Update externals
 	* Makefile.am: sdk no longer exists.
 
