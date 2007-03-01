@@ -359,23 +359,17 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
 namespace
 {
   /// Descend ::urbiserver->objaliastab looking for \a cp.
-  const char*
-  resolve_aliases(const char* cp)
+  std::string
+  resolve_aliases(const std::string& s)
   {
-    for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(cp);
+    std::string* res = &s;
+    for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(res->c_str());
 	 i != ::urbiserver->objaliastab.end();
-	 i = ::urbiserver->objaliastab.find(cp))
-      cp = i->second->c_str();
-    return cp;
+	 i = ::urbiserver->objaliastab.find(res->c_str()))
+      res = &i->second->str();
+    return *res;
   }
 
-  /// Descend ::urbiserver->objaliastab looking for \a cp.
-  inline
-  const char*
-  resolve_aliases(const std::string& n)
-  {
-    return resolve_aliases(n.c_str());
-  }
 }
 
 //! UVariableName name extraction, with caching
@@ -496,7 +490,7 @@ UVariableName::buildFullname (UCommand* command,
     std::string n = name;
     if (nostruct)
       // Comes from a simple IDENTIFIER.
-      n = suffix(std::string(resolve_aliases(suffix(n))));
+      n = suffix(resolve_aliases(suffix(n)));
 
     HMaliastab::iterator hmi= ::urbiserver->aliastab.find(n.c_str());
     HMaliastab::iterator past_hmi = hmi;
@@ -524,10 +518,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   if (name.find('.') != std::string::npos)
-  {
-    const char* cp = resolve_aliases(prefix(name));
-    name = std::string(cp) + "." + suffix(name);
-  }
+    name = resolve_aliases(prefix(name)) + "." + suffix(name);
 
   return set_fullname (name.c_str());
 }

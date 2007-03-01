@@ -1,5 +1,10 @@
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
+	Less const char*
+	* src/uvariablename.cc (resolve_aliases): Work string -> string.
+
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
 	* configure.ac: Use URBI_PACKAGE_KIND.
 
 2007-03-01  Akim Demaille  <demaille@gostai.com>
@@ -36,10 +41,10 @@
 	Automerge is now usable, it will keep conflicts on ChangeLog, to be
 	resolved by hand until some smart trick is found.
 	Please, use automerge now to handle merging in a nice and automatic
-	way. 
+	way.
 	NB: the automerge script is located in common/automerge
 
-	add automerge support. 
+	add automerge support.
 	* .automerge: New.
 
 2007-02-24  Akim Demaille  <akim.demaille@free.fr>
