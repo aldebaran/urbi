@@ -42,6 +42,10 @@ class UString
   UString(const UString& s);
   UString(const std::string& s);
 
+  UString& operator= (const char* s);
+  UString& operator= (const UString* s);
+  UString& operator= (const std::string& s);
+
   /// Concat \c s1 and \c s2 with a dot in the middle.
   UString(const UString& s1, const UString& s2);
 
@@ -66,13 +70,6 @@ class UString
   }
 
   UString* copy() const;
-
-  // Whether \a s up to its first `.' (or the entire string) is equal to this.
-  bool tagequal(const UString& s) const;
-
-  UString& operator= (const std::string& s);
-  UString& operator= (const char* s);
-  UString& operator= (const UString* s);
 
  private:
   std::string str_;
@@ -135,6 +132,12 @@ operator!= (const UString& lhs, const char* rhs)
 {
   return !(lhs == rhs);
 }
+
+/// Return the part after the first `.', or the whole string if there is none.
+const char* suffix (const char* name);
+
+/// Return the part before the `.', or an empty string.
+std::string prefix (const char* name);
 
 /// Update a pointer to UString.
 inline

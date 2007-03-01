@@ -40,30 +40,6 @@
 #include "uvariable.hh"
 #include "uvariablename.hh"
 
-namespace
-{
-  /// Return the part after the first `.', or the whole string if there is none.
-  const char*
-  suffix (const char* name)
-  {
-    if (const char* p = strchr(name, '.'))
-      return p + 1;
-    else
-      return name;
-  }
-
-  /// Return the part before the `.', or an empty string.
-  std::string
-  prefix (const char* name)
-  {
-    if (const char* p = strchr(name, '.'))
-      return std::string(name, p - name);
-    else
-      return "";
-  }
-}
-
-
 
 MEMORY_MANAGER_INIT(UVariableName);
 
