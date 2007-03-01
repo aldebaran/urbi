@@ -187,14 +187,8 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
   if (variable)
     return variable->toDelete ? 0 : variable;
 
-  PING();
   if (!fullname_ || !cached)
     buildFullname(command, connection);
-
-  if (fullname_)
-    ECHO(*fullname_);
-  else
-    ECHO("<NULL>");
 
   if (!fullname_)
     return 0;
