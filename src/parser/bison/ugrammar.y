@@ -73,8 +73,6 @@
   // Output in ugrammar.cc.
 #include <string>
 #include <iostream>
-#define TRUE  ufloat(1)
-#define FALSE ufloat(0)
 
 #include "libport/ref-pt.hh"
 
@@ -1348,27 +1346,26 @@ expr:
 ;
 
 expr:
-    "true"  { $$ = new UExpression(@$, UExpression::VALUE, TRUE);  }
-  | "false" { $$ = new UExpression(@$, UExpression::VALUE, FALSE); }
+  "true"  { $$ = new UExpression(@$, UExpression::VALUE, ufloat(1)); }
+| "false" { $$ = new UExpression(@$, UExpression::VALUE, ufloat(0)); }
 
-  | expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
-  | expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
-  | expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
-  | expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
-  | expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
-  | expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
-  | expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
-  | expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
-  | expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
+| expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
+| expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
+| expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
+| expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
+| expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
+| expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
+| expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
+| expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
+| expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
 
-  | "!" expr {
-      $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
-      memcheck(up, $$, $2);
-    }
+| "!" expr {
+    $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
+    memcheck(up, $$, $2);
+  }
 
-  | expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
-  | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
-
+| expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
+| expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 ;
 
 

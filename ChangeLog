@@ -1,3 +1,9 @@
+2007-03-01  Akim Demaille  <demaille@gostai.com>
+
+	Don't define TRUE & FALSE
+	There are conflicts on Windows.
+	* src/parser/bison/ugrammar.y: Inline the uses of TRUE and FALSE.
+
 2007-03-01  Akim Demaille  <akim.demaille@free.fr>
 
 	tagequal
