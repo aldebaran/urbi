@@ -3833,6 +3833,12 @@ UCommand_BINDER::~UCommand_BINDER()
 UCommand::Status
 UCommand_BINDER::execute_(UConnection *connection)
 {
+#ifdef REMOTE_UOBJECT_DISABLED
+  send_error(connection, this,
+             "Remote binding not allowed in the free version.");
+  return UCOMPLETED;
+#endif
+
   UString *fullname = variablename->buildFullname(this, connection);
   if (!fullname)
     return UCOMPLETED;
