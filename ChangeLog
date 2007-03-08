@@ -1,5 +1,16 @@
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
+	Hide UGhostConnection
+	So that cores only need uconnection.hh, but not ughostconnection.hh.
+	* include/kernel/userver.hh (getGhostConnection): Return a
+	UConnection instead of a UGhostConnection, so that we don't need
+	the type UGhostConnection (and its header).
+	(ghost): Rename as...
+	(ghost_): this.
+	* src/console.cc, src/uobject.cc, src/userver.cc: Adjust.
+
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
 	cores need uconnection.hh
 	* src/ucomplaints.hh, src/uconnection.hh: Move to...
 	* include/kernel/ucomplaints.hh, include/kernel/uconnection.hh: here.

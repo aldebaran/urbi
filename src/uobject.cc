@@ -50,7 +50,7 @@ namespace urbi
   void uobject_unarmorAndSend(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection& ghost = *urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
       ghost.received((const unsigned char *)(str+1), strlen(str)-2);
     else
@@ -62,7 +62,7 @@ namespace urbi
   void send(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection& ghost = *urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->getGhostConnection();
     ghost.received(str);
     ghost.newDataAdded = true;
   }
@@ -70,7 +70,7 @@ namespace urbi
   void send(void* buf, int size)
   {
     //feed this to the ghostconnection
-    UConnection& ghost = *urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->getGhostConnection();
     ghost.received((const unsigned char *)(buf), size);
     ghost.newDataAdded = true;
   }

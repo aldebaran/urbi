@@ -160,11 +160,11 @@ UServer::initialize()
   // Ghost connection
   {
     DEBUG (("Setting up ghost connection..."));
-    ghost = new UGhostConnection(this);
-    connectionList.push_front(ghost);
+    ghost_ = new UGhostConnection(this);
+    connectionList.push_front(ghost_);
 
     std::ostringstream o;
-    o << 'U' << (long)ghost;
+    o << 'U' << (long)ghost_;
 
     new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
     new UVariable(MAINDEVICE, "name", mainName_.c_str());
@@ -190,8 +190,8 @@ UServer::initialize()
   }
 
   DEBUG (("Loading URBI.INI..."));
-  if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
-    ghost->newDataAdded = true;
+  if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
+    ghost_->newDataAdded = true;
   DEBUG (("done\n"));
 }
 
@@ -501,18 +501,18 @@ UServer::work()
 	   ++i)
 	(*i)->init((*i)->name);
 
-      loadFile("URBI.INI", &ghost->recvQueue());
+      loadFile("URBI.INI", &ghost_->recvQueue());
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
-      ghost->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
-      ghost->newDataAdded = true;
+      ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
+      ghost_->newDataAdded = true;
     }
     else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
-	if ((*i)->isActive() && (*i) != ghost)
+	if ((*i)->isActive() && (*i) != ghost_)
 	{
 	  (*i)->send("*** Reloading\n", "reset");
 
@@ -956,6 +956,13 @@ UServer::removeConnection(UConnection *connection)
        "UServer::removeConnection",
        "Connection closed", (long)connection);
   delete connection;
+}
+
+
+UConnection& 
+UServer::getGhostConnection ()
+{
+  return *ghost_;
 }
 
 //! Adds an alias in the server base

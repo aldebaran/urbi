@@ -10,8 +10,7 @@
 #include "libport/utime.hh"
 
 #include "kernel/userver.hh"
-
-#include "ughostconnection.hh"
+#include "kernel/uconnection.hh"
 
 class ConsoleServer
   : public UServer
@@ -91,7 +90,7 @@ main (int argc, const char* argv[])
   ConsoleServer s (10);
 
   s.initialize ();
-  UGhostConnection& c = *s.getGhostConnection ();
+  UConnection& c = s.getGhostConnection ();
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
   {
