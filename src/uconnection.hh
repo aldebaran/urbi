@@ -241,7 +241,7 @@ private:
 protected:
 
   /// Default adaptive behavior for Send/Recv..
-  static const int ADAPTIVE = 100;
+  enum { ADAPTIVE = 100 };
 
   virtual int         effectiveSend     (const ubyte*, int length) = 0;
   UErrorValue         error             (UErrorCode n);
@@ -252,7 +252,7 @@ protected:
 
 private:
   /// Max number of error signals used..
-  static const int MAX_ERRORSIGNALS = 20;
+  enum { MAX_ERRORSIGNALS = 20 };
 
   UQueue         sendQueue_;
   UCommandQueue  recvQueue_;

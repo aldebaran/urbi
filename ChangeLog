@@ -1,5 +1,13 @@
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
+	Kill a few static consts
+	* src/uconnection.hh: here.
+	* src/ughostconnection.hh: And here.
+	Move them...
+	* src/ughostconnection.cc: here.
+
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
 	Move installed headers in include/kernel
 	* src/fwd.hh, src/mem-track.hh,
 	* src/memorymanager/blockmemorymanager.hh,

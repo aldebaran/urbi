@@ -36,16 +36,7 @@ class UGhostConnection : public UConnection
 public:
   UGhostConnection  ( UServer *mainserver );
   virtual ~UGhostConnection ();
-
   virtual UErrorValue   closeConnection    ();
-
-  // Parameters used by the constructor.
-
-  static const int MINSENDBUFFERSIZE = 4096;
-  static const int MAXSENDBUFFERSIZE = 1048576;
-  static const int PACKETSIZE        = 32768;
-  static const int MINRECVBUFFERSIZE = 4096;
-  static const int MAXRECVBUFFERSIZE = 1048576;
 
 protected:
   virtual int   effectiveSend     (const ubyte *buffer, int length);

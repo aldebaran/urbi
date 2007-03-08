@@ -27,14 +27,25 @@
 #include "ughostconnection.hh"
 
 
+// Parameters used by the constructor.
+
+enum
+{
+  MINSENDBUFFERSIZE = 4096,
+  MAXSENDBUFFERSIZE = 1048576,
+  PACKETSIZE        = 32768,
+  MINRECVBUFFERSIZE = 4096,
+  MAXRECVBUFFERSIZE = 1048576,
+};
+
 //! UGhostConnection constructor.
 UGhostConnection::UGhostConnection  (UServer* mainserver)
   : UConnection   (mainserver,
-		   UGhostConnection::MINSENDBUFFERSIZE,
-		   UGhostConnection::MAXSENDBUFFERSIZE,
-		   UGhostConnection::PACKETSIZE,
-		   UGhostConnection::MINRECVBUFFERSIZE,
-		   UGhostConnection::MAXRECVBUFFERSIZE)
+		   MINSENDBUFFERSIZE,
+		   MAXSENDBUFFERSIZE,
+		   PACKETSIZE,
+		   MINRECVBUFFERSIZE,
+		   MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
 
