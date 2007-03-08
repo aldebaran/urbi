@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include "libport/assert.hh"
-#include "ucomplaints.hh"
+#include "kernel/ucomplaints.hh"
 
 const char*
 message (UErrorCode n)

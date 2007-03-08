@@ -32,12 +32,13 @@
 #include "libport/ref-pt.hh"
 
 #include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 #include "parser/uparser.hh"
+#include "ucommandqueue.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "uasynccommand.hh"
-#include "uconnection.hh"
 #include "ucopy.hh"
 #include "ueventhandler.hh"
 #include "ueventcompound.hh"

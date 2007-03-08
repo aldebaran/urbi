@@ -38,6 +38,7 @@
 #include "urbi/usystem.hh"
 
 #include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 #include "uasynccommand.hh"
 #include "uatcandidate.hh"
@@ -45,11 +46,11 @@
 #include "ubinder.hh"
 #include "ucallid.hh"
 #include "ucommand.hh"
-#include "uconnection.hh"
 #include "ucopy.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
 #include "ueventinstance.hh"
+#include "parser/uparser.hh"
 #include "ufunction.hh"
 #include "ugroup.hh"
 #include "unamedparameters.hh"

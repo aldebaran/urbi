@@ -8,8 +8,7 @@
 # include <sys/types.h>
 
 # include "kernel/utypes.hh"
-
-# include "uconnection.hh"
+# include "kernel/uconnection.hh"
 
 # include "network/bsdnet/network.hh"
 

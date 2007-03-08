@@ -30,10 +30,10 @@
 #include "urbi/uobject.hh"
 
 #include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 #include "ucallid.hh"
 #include "ucommand.hh"
-#include "uconnection.hh"
 #include "ucopy.hh"
 #include "ueventhandler.hh"
 #include "unamedparameters.hh"

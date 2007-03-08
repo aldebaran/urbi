@@ -77,12 +77,12 @@
 #include "libport/ref-pt.hh"
 
 #include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 #include "parser/uparser.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "uasynccommand.hh"
-#include "uconnection.hh"
 #include "ugroup.hh"
 #include "unamedparameters.hh"
 #include "uobj.hh"

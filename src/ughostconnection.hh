@@ -23,9 +23,7 @@
 # define UGHOSTCONNECTION_HH
 
 # include "kernel/fwd.hh"
-
-# include "uconnection.hh"
-
+# include "kernel/uconnection.hh"
 
 /// UGhostConnection is a invisible connection used to read URBI.INI
 /*! This implentation of UConnection is trivial and does nothing.

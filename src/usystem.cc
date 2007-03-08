@@ -26,8 +26,8 @@
 
 #include "kernel/utypes.hh"
 #include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
-#include "uconnection.hh"
 #include "ughostconnection.hh"
 
 #define LIBURBIDEBUG

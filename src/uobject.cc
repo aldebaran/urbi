@@ -28,8 +28,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
+#include "kernel/uconnection.hh"
 
-#include "uconnection.hh"
 #include "ughostconnection.hh"
 #include "ugroup.hh"
 #include "uobj.hh"

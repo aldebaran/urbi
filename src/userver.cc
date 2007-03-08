@@ -32,18 +32,21 @@
 
 #include "libport/containers.hh"
 
+#include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
+
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
 
 #include "ubanner.hh"
-#include "uconnection.hh"
+#include "ucommand.hh"
+#include "ucommandqueue.hh"
+#include "uqueue.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
 #include "ueventmatch.hh"
 #include "ufunction.hh"
 #include "ughostconnection.hh"
-#include "urbi/uobject.hh"
-#include "urbi/usystem.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 

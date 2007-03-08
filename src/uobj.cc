@@ -26,9 +26,9 @@
 
 #include "kernel/userver.hh"
 #include "kernel/ustring.hh"
+#include "kernel/uconnection.hh"
 
 #include "ubinder.hh"
-#include "uconnection.hh"
 #include "ueventhandler.hh"
 #include "ufunction.hh"
 #include "uobj.hh"

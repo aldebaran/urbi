@@ -27,6 +27,8 @@
 #include "libport/ref-pt.hh"
 
 #include "urbi/uobject.hh"
+
+#include "kernel/uconnection.hh"
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
 
@@ -36,11 +38,8 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "unamedparameters.hh"
+#include "uqueue.hh"
 
-// FIXME: Help!
-#define private protected
-#include "uconnection.hh"
-#undef private
 
 MEMORY_MANAGER_INIT(UValue);
 // **************************************************************************
@@ -129,7 +128,7 @@ UValue::operator urbi::UImage()
   return img;
 }
 
-class DumbConnection:public UConnection
+class DumbConnection : public UConnection
 {
 public:
   DumbConnection()
@@ -141,7 +140,7 @@ public:
   }
   char* getData()
   {
-    return (char*) sendQueue_.virtualPop(sendQueue_.dataSize());
+    return (char*) send_queue().virtualPop(send_queue().dataSize());
   }
 protected:
   virtual int effectiveSend (const ubyte*, int)

@@ -59,8 +59,8 @@ ubinder.hh ubinder.cc						\
 ucallid.hh ucallid.cc						\
 ucommand.hh ucommand.cc						\
 ucommandqueue.hh ucommandqueue.cc				\
-ucomplaints.hh ucomplaints.cc					\
-uconnection.hh uconnection.cc					\
+ucomplaints.cc							\
+uconnection.cc							\
 ucopy.hh							\
 ueventcompound.hh ueventcompound.cc				\
 ueventhandler.hh ueventhandler.cc				\

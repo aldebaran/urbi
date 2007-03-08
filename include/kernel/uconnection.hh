@@ -27,11 +27,8 @@
 # include "libport/lockable.hh"
 
 # include "kernel/fwd.hh"
-
-# include "ucomplaints.hh"
-# include "parser/uparser.hh"
-# include "uqueue.hh"
-# include "ucommandqueue.hh"
+# include "kernel/utypes.hh"
+# include "kernel/ucomplaints.hh"
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
@@ -175,7 +172,10 @@ public:
   void                append             (UCommand_TREE *command);
   int                 availableSendQueue ();
   int                 sendQueueRemain    ();
+
   UCommandQueue&      recvQueue          ();
+  UQueue& UConnection::send_queue();
+
   void                localVariableCheck (UVariable *variable);
 
 
@@ -234,8 +234,8 @@ public:
   libport::Lockable treeLock;
 
 private:
-  /// The parser object.
-  UParser parser_;
+  /// Our parser.  A pointer to stop dependencies.
+  UParser* parser_;
   /// \}
 
 protected:
@@ -254,8 +254,11 @@ private:
   /// Max number of error signals used..
   enum { MAX_ERRORSIGNALS = 20 };
 
-  UQueue         sendQueue_;
-  UCommandQueue  recvQueue_;
+  /// A pointer to stop dependencies.
+  UQueue* sendQueue_;
+
+  /// A pointer to stop dependencies.
+  UCommandQueue* recvQueue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
   int            packetSize_;
@@ -290,7 +293,14 @@ UConnection::sendAdaptive()
 inline UCommandQueue&
 UConnection::recvQueue()
 {
-  return recvQueue_;
+  return *recvQueue_;
+}
+
+//! Accessor for sendQueue_
+inline UQueue&
+UConnection::send_queue()
+{
+  return *sendQueue_;
 }
 
 //! Accessor for receiveAdaptive_
@@ -318,7 +328,7 @@ inline
 UParser&
 UConnection::parser ()
 {
-  return parser_;
+  return *parser_;
 }
 
 #endif

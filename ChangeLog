@@ -1,5 +1,20 @@
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
+	cores need uconnection.hh
+	* src/ucomplaints.hh, src/uconnection.hh: Move to...
+	* include/kernel/ucomplaints.hh, include/kernel/uconnection.hh: here.
+
+	* Makefile.am, src/Makefile.am,
+	* src/network/bsdnet/connection.hh, src/parser/bison/ugrammar.y,
+	* src/uasynccommand.cc, src/ucommand.cc, src/ucomplaints.cc,
+	* src/uconnection.cc, src/uexpression.cc, src/ughostconnection.hh,
+	* src/uobj.cc, src/uobject.cc, src/userver.cc, src/usystem.cc,
+	* src/uvalue.cc, src/uvariable.cc, src/uvariablename.cc:
+	Adjust.
+	And remove the #define private protected trick...
+
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
 	Kill a few static consts
 	* src/uconnection.hh: here.
 	* src/ughostconnection.hh: And here.

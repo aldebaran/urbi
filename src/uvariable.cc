@@ -30,12 +30,12 @@
 
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
+#include "kernel/uconnection.hh"
 
 #include "uasyncregister.hh"
 #include "ubinary.hh"
 #include "ubinder.hh"
 #include "ucommand.hh"
-#include "uconnection.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"
