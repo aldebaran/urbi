@@ -33,23 +33,26 @@ CLEANFILES += vc80.pdb
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
 
-## ----------------- ##
-## Install headers.  ##
-## ----------------- ##
+
+## -------------------------- ##
+## Installed kernel headers.  ##
+## -------------------------- ##
 
 kernelincludekerneldir = $(kernelincludedir)/kernel
 kernelincludekernel_HEADERS =			\
 include/kernel/blockmemorymanager.hh		\
 include/kernel/fwd.hh				\
-include/kernel/ucomplaints.hh			\
-include/kernel/uconnection.hh			\
 include/kernel/mem-track.hh			\
 include/kernel/memorymanager.hh			\
 include/kernel/tag-info.hh			\
+include/kernel/uasyncregister.hh 		\
+include/kernel/ucomplaints.hh			\
+include/kernel/uconnection.hh			\
 include/kernel/userver.hh			\
 include/kernel/ustring.hh			\
-include/kernel/utypes.hh
-
+include/kernel/utypes.hh			\
+include/kernel/uvalue.hh 			\
+include/kernel/uvariable.hh 
 
 ## --------------- ##
 ## Svn externals.  ##

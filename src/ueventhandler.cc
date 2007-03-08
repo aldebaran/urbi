@@ -22,10 +22,11 @@
 
 #include "kernel/utypes.hh"
 #include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+
 #include "ueventhandler.hh"
 #include "uexpression.hh"
 #include "unamedparameters.hh"
-#include "uvalue.hh"
 
 std::string
 kernel::forgeName (UString* name, int nbarg)

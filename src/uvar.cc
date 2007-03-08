@@ -22,9 +22,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "urbi/uobject.hh"
 
 #include "kernel/userver.hh"
-
-#include "uvalue.hh"
-#include "uvariable.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 namespace urbi
 {

@@ -27,14 +27,13 @@
 #include "kernel/userver.hh"
 #include "kernel/ustring.hh"
 #include "kernel/uconnection.hh"
-
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 #include "ubinder.hh"
 #include "ueventhandler.hh"
 #include "ufunction.hh"
 #include "uobj.hh"
 #include "urbi/uobject.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "uvariablename.hh"
 
 // **************************************************************************

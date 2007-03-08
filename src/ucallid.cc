@@ -27,9 +27,9 @@
 #include "kernel/fwd.hh"
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
+#include "kernel/uvariable.hh"
 
 #include "ucallid.hh"
-#include "uvariable.hh"
 
 // **************************************************************************
 //! UCallid constructor.

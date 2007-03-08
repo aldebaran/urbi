@@ -29,12 +29,12 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
 #include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 #include "ughostconnection.hh"
 #include "ugroup.hh"
 #include "uobj.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 
 //! Global definition of the starterlist
 namespace urbi

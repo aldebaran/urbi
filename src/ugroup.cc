@@ -21,9 +21,9 @@
 
 #include "kernel/ustring.hh"
 #include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
 
 #include "ugroup.hh"
-#include "uvalue.hh"
 #include "uvariablename.hh"
 
 // **************************************************************************

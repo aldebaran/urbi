@@ -22,12 +22,12 @@
 
 #include "kernel/utypes.hh"
 #include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
 
 #include "uasynccommand.hh"
 #include "ueventhandler.hh"
 #include "ueventmatch.hh"
 #include "unamedparameters.hh"
-#include "uvalue.hh"
 #include "uvariablename.hh"
 
 UEventMatch* kernel::eventmatch_true;

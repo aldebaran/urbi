@@ -23,12 +23,12 @@
 //FIXME for debugging purposes only
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
 
 #include "uasynccommand.hh"
 #include "ueventhandler.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"
-#include "uvalue.hh"
 
 
 // **************************************************************************

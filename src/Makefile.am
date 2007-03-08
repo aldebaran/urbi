@@ -51,7 +51,7 @@ parser/uparser.hh parser/uparser.cc				\
 tag-info.cc							\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
-uasyncregister.hh uasyncregister.cc				\
+uasyncregister.cc						\
 uatcandidate.hh uatcandidate.cc					\
 ubanner.hh ubanner.cc						\
 ubinary.hh ubinary.cc						\
@@ -77,9 +77,9 @@ uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
 userver.cc							\
 ustring.cc							\
-uvalue.hh uvalue.cc						\
+uvalue.cc							\
 uvar.cc								\
-uvariable.hh uvariable.cc					\
+uvariable.cc							\
 uvariablelist.hh uvariablelist.cc				\
 uvariablename.hh uvariablename.cc                               \
 usystem.cc

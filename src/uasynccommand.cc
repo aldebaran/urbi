@@ -26,9 +26,9 @@
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
 #include "kernel/uconnection.hh"
+#include "kernel/uasyncregister.hh"
 
 #include "uasynccommand.hh"
-#include "uasyncregister.hh"
 #include "ucommand.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"

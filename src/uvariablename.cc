@@ -31,15 +31,14 @@
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
-
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 #include "ucallid.hh"
 #include "ucommand.hh"
 #include "ucopy.hh"
 #include "ueventhandler.hh"
 #include "unamedparameters.hh"
 #include "uobj.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "uvariablename.hh"
 
 

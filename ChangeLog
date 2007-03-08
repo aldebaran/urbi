@@ -1,3 +1,20 @@
+2007-03-08  Akim Demaille  <akim.demaille@free.fr>
+
+	Install uasyncregister.hh, uvariable.hh and uvalue.hh
+	* src/uasyncregister.hh, src/uvariable.hh, src/uvalue.hh:
+	Move to...
+	* include/kernel/uasyncregister.hh, include/kernel/uvariable.hh,
+	* include/kernel/uvalue.hh: here.
+
+	* Makefile.am, src/Makefile.am, src/uasynccommand.cc,
+	* src/uasyncregister.cc, src/uatcandidate.cc, src/ubinder.cc,
+	* src/ucallid.cc, src/ucommand.cc, src/uconnection.cc,
+	* src/ueventcompound.cc, src/ueventhandler.cc, src/ueventhandler.hh,
+	* src/ueventinstance.cc, src/ueventmatch.cc, src/uexpression.cc,
+	* src/ugroup.cc, src/uobj.cc, src/uobject.cc, src/userver.cc,
+	* src/uvalue.cc, src/uvar.cc, src/uvariable.cc, src/uvariablename.cc:
+	Adjust.
+
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
 	Hide UGhostConnection

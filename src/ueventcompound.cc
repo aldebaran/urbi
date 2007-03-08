@@ -21,11 +21,11 @@
 #include "libport/containers.hh"
 
 #include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
 
 #include "ueventcompound.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"
-#include "uvalue.hh"
 
 // **************************************************************************
 // UEventCompound

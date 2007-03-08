@@ -16,7 +16,8 @@
 
  **************************************************************************** */
 
-#include "uvalue.hh"
+#include "kernel/uvalue.hh"
+
 #include "uatcandidate.hh"
 #include "ucommand.hh"
 #include "ueventhandler.hh"

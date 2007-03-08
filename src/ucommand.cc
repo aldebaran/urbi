@@ -39,6 +39,8 @@
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 #include "uasynccommand.hh"
 #include "uatcandidate.hh"
@@ -54,8 +56,6 @@
 #include "ufunction.hh"
 #include "ugroup.hh"
 #include "unamedparameters.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "uvariablename.hh"
 #include "uvariablelist.hh"
 

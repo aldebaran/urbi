@@ -37,6 +37,8 @@
 
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 #include "ubanner.hh"
 #include "ucommand.hh"
@@ -47,8 +49,6 @@
 #include "ueventmatch.hh"
 #include "ufunction.hh"
 #include "ughostconnection.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 
 // Global server reference
 UServer *urbiserver= 0;
@@ -959,7 +959,7 @@ UServer::removeConnection(UConnection *connection)
 }
 
 
-UConnection& 
+UConnection&
 UServer::getGhostConnection ()
 {
   return *ghost_;

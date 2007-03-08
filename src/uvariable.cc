@@ -28,16 +28,16 @@
 
 #include "urbi/uobject.hh"
 
+#include "kernel/uconnection.hh"
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
-#include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+#include "kernel/uasyncregister.hh"
 
-#include "uasyncregister.hh"
 #include "ubinary.hh"
 #include "ubinder.hh"
 #include "ucommand.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "uobj.hh"
 #include "ucallid.hh"
 

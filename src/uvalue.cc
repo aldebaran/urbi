@@ -31,12 +31,12 @@
 #include "kernel/uconnection.hh"
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "ucopy.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "unamedparameters.hh"
 #include "uqueue.hh"
 

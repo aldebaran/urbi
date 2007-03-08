@@ -17,14 +17,13 @@
  **************************************************************************** */
 
 #ifndef UEVENTHANDLER_HH
-#define UEVENTHANDLER_HH
+# define UEVENTHANDLER_HH
 
-#include <list>
-#include <string>
+# include <list>
+# include <string>
 
-#include "kernel/fwd.hh"
-
-#include "uasyncregister.hh"
+# include "kernel/fwd.hh"
+# include "kernel/uasyncregister.hh"
 
 namespace kernel
 {

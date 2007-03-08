@@ -33,6 +33,8 @@
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 #include "parser/uparser.hh"
 #include "ucommandqueue.hh"
@@ -47,8 +49,6 @@
 #include "uexpression.hh"
 #include "ugroup.hh"
 #include "unamedparameters.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "uvariablename.hh"
 #include "uobj.hh"
 

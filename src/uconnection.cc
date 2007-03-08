@@ -35,6 +35,8 @@
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 #include "parser/uparser.hh"
 #include "ubanner.hh"
@@ -46,8 +48,6 @@
 #include "unamedparameters.hh"
 #include "uqueue.hh"
 #include "uqueue.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 
 UConnection::UConnection (UServer *userver,
 			  int minSendBufferSize,
