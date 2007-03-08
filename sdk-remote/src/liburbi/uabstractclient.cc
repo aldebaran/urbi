@@ -180,6 +180,8 @@ namespace urbi
       parsePosition (0),
       inString (false),
       nBracket (0),
+      binaryMode(false),
+      system(false),
       uid (0),
       stream(this)
   {
@@ -777,7 +779,6 @@ namespace urbi
   void
   UAbstractClient::processRecvBuffer()
   {
-    static bool binaryMode = false;
     char* endline;
     while (true)
     {
@@ -902,10 +903,13 @@ namespace urbi
 	    recvBufferPosition = 0;
 	    return;
 	  }
-	  
+
 	  ++currentCommand;
+	  while (*currentCommand == ' ')
+	    ++currentCommand;
+	  system = (*currentCommand == '!' || *currentCommand == '*');
 	  parsePosition = (long) currentCommand - (long) recvBuffer;
-	 
+
 	  //reinit just to be sure:
 	  nBracket = 0;
 	  inString = false;
@@ -981,7 +985,7 @@ namespace urbi
 	      //this should not happen: \n should have been handled by binary code below
 	      fprintf(stderr, "FATAL PARSE ERROR\n");
 	    }
-	    if (!strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
+	    if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
 	    {
 	      //very important: scan starts below current point
 	      //compute length

@@ -273,15 +273,6 @@ namespace urbi
       return URBI_CONTINUE;
     }
 
-    if (array[0].type != DATA_DOUBLE)
-    {
-      msg.client.printf("Component Error: "
-			"unknown server message type %d\n",
-			(int) array[0].type);
-      return URBI_CONTINUE;
-    }
-
-
     // UEM_ASSIGNVALUE
     if ((USystemExternalMessage)(int)array[0] == UEM_ASSIGNVALUE)
     {

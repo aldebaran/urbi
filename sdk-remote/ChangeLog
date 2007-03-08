@@ -1,3 +1,113 @@
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
+	svn merge -r 374:432 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
+
+
+	2007-02-28  POTHIER Benoit  <benoit.pothier@gmx.net>
+
+	Change release version.
+	Now the version is 1.0RC and not 1.0RCX
+	* configure.ac: Here.
+
+	2007-02-28  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	It's my mistake, wrong copy/paste in r25...
+
+	remove duplicated code. 
+	* uobject.cc: remove to if that where identical and following each
+	other...
+
+	2007-02-21  Rémi Humbert  <humbert@gostai.com>
+
+	Update svn:externals
+
+	Update svn:externals, use libport revision 618 instead of revision 577
+
+	2007-02-07  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix bug when parsing system messages containing 'BIN' , and a potential bug due to a static variable that should have been an instance var
+	* include/urbi/uabstractclient.hh: Here,
+	* src/liburbi/uabstractclient.cc: and here.
+
+	2007-02-06  Akim Demaille  <demaille@gostai.com>
+
+	Don't std::string(0)
+	* src/liburbi/uobject/urbi/uvalue.hh (UNamedValue::UNamedValue): here.
+
+	2007-02-02  Matthieu Nottale  <nottale@gostai.com>
+
+	Robustify against malformed binary.
+	* src/liburbi/uabstractclient.cc: Try to survive when server lies about the binary size.
+
+	2007-02-02  Akim Demaille  <akim@lrde.epita.fr>
+
+	Don't pass -Werror.
+	* configure.ac: Let URBI_PROG_CXX do it.
+
+	2007-01-31  POTHIER Benoit  <benoit.pothier@gmx.net>
+
+	Dummy change to test hooks.
+	* README: Change web site address.
+
+	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	update externals. 
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	reformatting 
+	* src/liburbi/uobject/urbi/uvar.hh: add spaces.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+	This was a serious design flaw to leave up to the user the task of
+	setting USync on a UVar. Most people expect UVars to be synchronized
+	automatically. Saying otherwise: the plugin mode of UObject had
+	naturally all UVars USync'd. Having a different behavior in remote
+	mode breaks consistency. This is fixed now.
+
+	UVar::__init creates a callback to UOBject::voidfun to simulate a
+	UNotifyChange. However, UNotifyChange expects to be called from within
+	a UObject, and we have to pass a dummyUObject to the callback.
+
+	This leads to one extra and sometimes unecessary NotifyChange on
+	"dummy0" (name of the dummyUObject) that should be removed when a
+	future UDeNotifyChange is available, whenever at least one callback is 
+	set to the UVar. A call to UNotifyChange should check if a dummy
+	callback is set on the UVar and remove it.
+
+	USync method has been made inactive, but remains for backward compat.
+
+	all UVar are now automatically USync'd
+	* src/liburbi/uobject.cc: define dummyUObject.
+	* src/liburbi/uobject/urbi/uobject.hh.template: declare dummyUObject
+	and dummy UObject constructor.
+	* src/liburbi/uvar.cc: automatically create a callback in the UVar
+	constructor, to keep the UVar in sync.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	remove unused variable. 
+	* src/liburbi/uobject.cc: remove lastUObject, was not used.
+
+	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add support for the 'remote' attribute in UObject 
+	* src/liburbi/uobject.cc: add 'remote' and set load default value to 1.
+	* src/liburbi/uobject/urbi/uobject.hh.template: add 'remote'.
+
+	2007-01-21  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	backward compat svn:externals 
+
+	2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	change vcs local.rb to point to liburbi-cpp@gostai.com 
+	* vcs/local.rb: done.
+
+	2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	add mailto property to send mails to liburbi-cpp@gostai.com 
+
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
 	Use SingletonPtr for global tables
@@ -18,14 +128,14 @@
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
 	getUObjectHub
-	* src/liburbi/uobject.cc (getUObjectHub): Move to.
+	* src/liburbi/uobject.cc (getUObjectHub): Move to...
 	* src/liburbi/uobject/uobject-hub-common.cc: here.
 
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
 	Factor UObjectHub
 	* src/liburbi/uobject/uobject-hub-common.cc: New.
-	* src/liburbi/uobject.cc: Extacted from here.
+	* src/liburbi/uobject.cc: Extracted from here.
 	* src/liburbi/uobject/uobject.mk: Adjust.
 
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>

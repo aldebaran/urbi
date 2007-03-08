@@ -1,3 +1,12 @@
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
+	merging branches/1.0 in here.
+
+	2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+
+	Remove a few useless casts
+	* urbi/uobject.hh.template: here.
+
 2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	Less C casts

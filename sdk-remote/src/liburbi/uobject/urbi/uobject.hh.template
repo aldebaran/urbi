@@ -525,7 +525,6 @@ namespace urbi
   };
 
   // void return type
-
   template <class OBJ%%, class P% %%>
   class UCallbackvoid%N% : public UGenericCallback
   {
@@ -535,7 +534,7 @@ namespace urbi
 		     void (OBJ::*fun) (%%%,% P% %%),
 		     const std::string& funname, UTable &t)
       : UGenericCallback(objname, type, funname,%N%, t),
-      obj(obj), fun(fun)
+	obj(obj), fun(fun)
     {
     }
 

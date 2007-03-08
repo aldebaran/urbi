@@ -2,7 +2,7 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([URBI SDK], [1.0-rc1], [bugs@gostai.com], [urbi-sdk])
+AC_INIT([URBI SDK], [1.0RC], [bugs@gostai.com], [urbi-sdk])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
