@@ -26,6 +26,8 @@
 
 #include <locale.h>
 
+#include "libport/unistd.h"
+
 #ifndef WIN32
 # include <sys/time.h>
 # include <time.h>
