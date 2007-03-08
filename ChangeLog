@@ -1,5 +1,10 @@
 2007-03-08  Akim Demaille  <akim.demaille@free.fr>
 
+	Fix member function declaration
+	* include/kernel/uconnection.hh: Remove spurious qualifier.
+
+2007-03-08  Akim Demaille  <akim.demaille@free.fr>
+
 	Install uasyncregister.hh, uvariable.hh and uvalue.hh
 	* src/uasyncregister.hh, src/uvariable.hh, src/uvalue.hh:
 	Move to...

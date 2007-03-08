@@ -174,7 +174,7 @@ public:
   int                 sendQueueRemain    ();
 
   UCommandQueue&      recvQueue          ();
-  UQueue& UConnection::send_queue();
+  UQueue& send_queue();
 
   void                localVariableCheck (UVariable *variable);
 

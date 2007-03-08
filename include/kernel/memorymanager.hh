@@ -6,7 +6,8 @@
  */
 namespace MemoryManager
 {
-  extern int allocatedMemory; ///< Allocated total
+  /// Allocated total.
+  extern int allocatedMemory;
   /* later
      void * alloc(int sz);
      void  free(void * );
@@ -17,7 +18,7 @@ namespace MemoryManager
 # ifndef DISABLE_BLOCKMEMMNGR
 #  include "kernel/blockmemorymanager.hh"
 # else
-#  define  MEMORY_MANAGED
+#  define MEMORY_MANAGED
 #  define MEMORY_MANAGER_INIT(classname)
 # endif
 
