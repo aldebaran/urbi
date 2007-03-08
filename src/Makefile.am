@@ -18,7 +18,7 @@ kernelinclude_HEADERS =
 
 AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
 # Find the kernel headers exported to the cores.
-AM_CPPFLAGS += -I $(top_srcdir)/include
+AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 
