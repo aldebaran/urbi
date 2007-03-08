@@ -1,3 +1,10 @@
+2007-03-08  Akim Demaille  <akim.demaille@free.fr>
+
+	* include/urbi/uabstractclient.hh, src/liburbi/swig/swig_python.hh,
+	* src/liburbi/swig/swig_ruby.hh, src/liburbi/uabstractclient.cc,
+	* src/liburbi/uclient.cc, src/liburbi/umain.cc:
+	Fix Doxygen issues.
+
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
 	svn merge -r 374:432 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0

@@ -1,4 +1,4 @@
-/*! \file swig_python.h
+/*! \file swig_python.hh
  * Python binding.
  */
 #ifndef SWIG_PYTHON_H

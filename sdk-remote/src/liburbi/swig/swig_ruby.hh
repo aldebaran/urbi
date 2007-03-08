@@ -1,4 +1,4 @@
-/*! \file swig_ruby.h
+/*! \file swig_ruby.hh
  * Ruby binding.
  */
 #ifndef SWIG_RUBY_H

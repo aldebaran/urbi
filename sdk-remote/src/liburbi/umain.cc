@@ -1,8 +1,6 @@
-/*! \file main.cc
+/*! \file umain.cc
  *******************************************************************************
-
- File: main.cc\n
- Constains the main() function.
+ The main() function.
 
  This file is part of liburbi-cpp\n
  (c) Jean-Christophe Baillie, 2004-2006.

@@ -327,10 +327,10 @@ namespace urbi
 
     /// Currently parsing binary
     bool binaryMode;
-    
+
     /// Parsing a system message
     bool system;
-    
+
     /// Position of end of header.
     int	endOfHeaderPosition;
     char currentTag[URBI_MAX_TAG_LENGTH];

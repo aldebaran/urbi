@@ -1,6 +1,5 @@
-/*! \file uclient.cpp
+/*! \file uclient.cc
 ****************************************************************************
- * $Id: uclient.cpp,v 1.9 2005/09/30 17:48:00 nottale Exp $
  *
  * Linux implementation of the URBI interface class
  *

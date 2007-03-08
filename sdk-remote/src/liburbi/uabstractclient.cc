@@ -1,7 +1,5 @@
-/*! \file uabstractclient.cpp
+/*! \file uabstractclient.cc
 ****************************************************************************
- * $Id: uabstractclient.cpp,v 1.13 2005/09/30 17:48:00 nottale Exp $
- *
  * Definition of the URBI interface class
  *
  * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
