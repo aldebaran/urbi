@@ -31,6 +31,8 @@
 #include "libport/cstring"
 #include "libport/ref-pt.hh"
 
+#include "kernel/userver.hh"
+
 #include "parser/uparser.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
@@ -43,7 +45,8 @@
 #include "ueventmatch.hh"
 #include "uexpression.hh"
 #include "ugroup.hh"
-#include "userver.hh"
+#include "unamedparameters.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
 #include "uvariablename.hh"
 #include "uobj.hh"

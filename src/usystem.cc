@@ -21,11 +21,14 @@
 #include <cstdarg>
 #include "libport/cstdio"
 #include <list>
-#include "userver.hh"
+
+#include "urbi/usystem.hh"
+
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+
 #include "uconnection.hh"
 #include "ughostconnection.hh"
-#include "urbi/usystem.hh"
-#include "utypes.hh"
 
 #define LIBURBIDEBUG
 

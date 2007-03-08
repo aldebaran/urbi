@@ -24,8 +24,10 @@
 
 # include <set>
 # include <string>
-# include "fwd.hh"
-# include "utypes.hh"
+
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
+
 # include "flavorable.hh"
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"

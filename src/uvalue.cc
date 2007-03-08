@@ -26,12 +26,13 @@
 #include "libport/escape.hh"
 #include "libport/ref-pt.hh"
 
+#include "urbi/uobject.hh"
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "ucopy.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "unamedparameters.hh"

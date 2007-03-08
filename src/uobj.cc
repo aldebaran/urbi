@@ -24,14 +24,15 @@
 #include "libport/cstdio"
 #include "libport/containers.hh"
 
+#include "kernel/userver.hh"
+#include "kernel/ustring.hh"
+
 #include "ubinder.hh"
 #include "uconnection.hh"
 #include "ueventhandler.hh"
 #include "ufunction.hh"
 #include "uobj.hh"
 #include "urbi/uobject.hh"
-#include "userver.hh"
-#include "ustring.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uvariablename.hh"

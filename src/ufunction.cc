@@ -18,11 +18,13 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-//#define ENABLE_DEBUG_TRACES
+
 #include "libport/cstring"
 #include <cstdlib>
+
+#include "kernel/userver.hh"
+
 #include "ufunction.hh"
-#include "userver.hh"
 #include "ucommand.hh"
 #include "unamedparameters.hh"
 

@@ -22,8 +22,8 @@
 #ifndef UVARIABLENAME_HH
 # define UVARIABLENAME_HH
 
-# include "fwd.hh"
-# include "memorymanager/memorymanager.hh"
+# include "kernel/fwd.hh"
+# include "kernel/memorymanager.hh"
 
 // ****************************************************************************
 //! Contains a variable name description

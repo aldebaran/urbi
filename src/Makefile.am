@@ -17,6 +17,8 @@ include $(top_srcdir)/build-aux/init.mk
 kernelinclude_HEADERS =
 
 AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
+# Find the kernel headers exported to the cores.
+AM_CPPFLAGS += -I $(top_srcdir)/include
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 
@@ -43,13 +45,10 @@ uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
 dist_libkernel_la_SOURCES =					\
-fwd.hh								\
 flavorable.hh							\
-mem-track.hh							\
-memorymanager/blockmemorymanager.hh				\
-memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
+memorymanager/memorymanager.cc					\
 parser/uparser.hh parser/uparser.cc				\
-tag-info.hh tag-info.cc						\
+tag-info.cc							\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
 uasyncregister.hh uasyncregister.cc				\
@@ -76,9 +75,8 @@ uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
-userver.hh userver.cc						\
-ustring.hh ustring.cc						\
-utypes.hh							\
+userver.cc							\
+ustring.cc							\
 uvalue.hh uvalue.cc						\
 uvar.cc								\
 uvariable.hh uvariable.cc					\
@@ -131,59 +129,15 @@ parser/uparser.hh
 # This case is handled by parser/bison/bison.mk itself.
 
 
-## ----------------- ##
-## Install headers.  ##
-## ----------------- ##
-
-# This is a kludge: for the time being, install all the server include
-# files for the cores.
-kernelinclude_HEADERS +=			\
-fwd.hh						\
-flavorable.hh					\
-tag-info.hh					\
-mem-track.hh					\
-uast.hh						\
-uasynccommand.hh				\
-uasyncregister.hh				\
-uatcandidate.hh					\
-ubinary.hh					\
-ubinder.hh					\
-ucallid.hh					\
-ucommand.hh					\
-ucommandqueue.hh				\
-ucomplaints.hh					\
-uconnection.hh					\
-ucopy.hh					\
-ueventcompound.hh				\
-ueventhandler.hh				\
-ueventinstance.hh				\
-ueventmatch.hh					\
-uexpression.hh					\
-ufunction.hh					\
-ughostconnection.hh				\
-ugroup.hh					\
-unamedparameters.hh				\
-uobj.hh						\
-uproperty.hh					\
-uqueue.hh					\
-userver.hh					\
-ustring.hh					\
-utypes.hh					\
-uvalue.hh					\
-uvariable.hh					\
-uvariablelist.hh				\
-uvariablename.hh				\
-version.hh
-
 urbiinclude_HEADERS = $(uobject_headers)
 
-parserdir = $(kernelincludedir)/parser
-parser_HEADERS = parser/uparser.hh
-
-memorymanagerdir = $(kernelincludedir)/memorymanager
-memorymanager_HEADERS =				\
-memorymanager/blockmemorymanager.hh		\
-memorymanager/memorymanager.hh
+## parserdir = $(kernelincludedir)/parser
+## parser_HEADERS = parser/uparser.hh
+## 
+## memorymanagerdir = $(kernelincludedir)/memorymanager
+## memorymanager_HEADERS =				\
+## memorymanager/blockmemorymanager.hh		\
+## memorymanager/memorymanager.hh
 
 
 ## ---------- ##

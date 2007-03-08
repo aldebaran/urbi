@@ -32,8 +32,8 @@
 %debug
 
 %{
-#include "fwd.hh"
-#include "utypes.hh"
+#include "kernel/fwd.hh"
+#include "kernel/utypes.hh"
 #include "flavorable.hh"
 %}
 
@@ -76,15 +76,19 @@
 
 #include "libport/ref-pt.hh"
 
+#include "kernel/userver.hh"
+
 #include "parser/uparser.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "uasynccommand.hh"
 #include "uconnection.hh"
 #include "ugroup.hh"
+#include "unamedparameters.hh"
 #include "uobj.hh"
 #include "uproperty.hh"
-#include "userver.hh"
+#include "uvariablename.hh"
+#include "uvariablelist.hh"
 
 extern UString** globalDelete;
 

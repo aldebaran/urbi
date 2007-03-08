@@ -20,12 +20,12 @@
 
 #include "libport/containers.hh"
 
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
 #include "ueventhandler.hh"
 #include "uexpression.hh"
 #include "unamedparameters.hh"
-#include "utypes.hh"
 #include "uvalue.hh"
-#include "userver.hh"
 
 std::string
 kernel::forgeName (UString* name, int nbarg)

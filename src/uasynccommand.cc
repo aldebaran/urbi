@@ -23,11 +23,13 @@
 
 #include <sstream>
 
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+
 #include "uasynccommand.hh"
+#include "uasyncregister.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
-#include "userver.hh"
-#include "utypes.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"
 

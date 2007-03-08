@@ -19,12 +19,13 @@
 
  **************************************************************************** */
 
+#include "kernel/userver.hh"
+#include "kernel/ustring.hh"
+#include "kernel/utypes.hh"
+
 #include "ucopy.hh"
 #include "uexpression.hh"
 #include "unamedparameters.hh"
-#include "userver.hh"
-#include "ustring.hh"
-#include "utypes.hh"
 
 // **************************************************************************
 //! UNamedParameters constructor.

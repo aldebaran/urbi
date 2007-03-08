@@ -21,10 +21,13 @@
 
 #include <cassert>
 #include <iostream>
-#include "userver.hh"
+
 #include "libport/containers.hh"
-#include "fwd.hh"
-#include "utypes.hh"
+
+#include "kernel/fwd.hh"
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+
 #include "ucallid.hh"
 #include "uvariable.hh"
 

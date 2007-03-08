@@ -1,5 +1,90 @@
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
+	Move installed headers in include/kernel
+	* src/fwd.hh, src/mem-track.hh,
+	* src/memorymanager/blockmemorymanager.hh,
+	* src/memorymanager/memorymanager.hh,
+	* src/tag-info.hh, src/userver.hh, src/ustring.hh,
+	* src/utypes.hh:
+	Move to...
+	* include/kernel/blockmemorymanager.hh,
+	* include/kernel/fwd.hh,
+	* include/kernel/mem-track.hh,
+	* include/kernel/memorymanager.hh,
+	* include/kernel/tag-info.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/ustring.hh,
+	* include/kernel/utypes.hh:
+	Here.
+
+	* Makefile.am,
+	* src/Makefile.am,
+	* src/console.cc,
+	* src/memorymanager/memorymanager.cc,
+	* src/network/bsdnet/connection.cc,
+	* src/network/bsdnet/connection.hh,
+	* src/network/bsdnet/network.cc,
+	* src/parser/bison/ugrammar.y,
+	* src/parser/uparser.hh,
+	* src/tag-info.cc,
+	* src/uasynccommand.cc,
+	* src/uasynccommand.hh,
+	* src/uasyncregister.hh,
+	* src/uatcandidate.hh,
+	* src/ubinary.cc,
+	* src/ubinary.hh,
+	* src/ubinder.cc,
+	* src/ubinder.hh,
+	* src/ucallid.cc,
+	* src/ucallid.hh,
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/ucommandqueue.cc,
+	* src/ucommandqueue.hh,
+	* src/uconnection.cc,
+	* src/uconnection.hh,
+	* src/ueventcompound.cc,
+	* src/ueventcompound.hh,
+	* src/ueventhandler.cc,
+	* src/ueventhandler.hh,
+	* src/ueventinstance.cc,
+	* src/ueventinstance.hh,
+	* src/ueventmatch.cc,
+	* src/ueventmatch.hh,
+	* src/uexpression.cc,
+	* src/uexpression.hh,
+	* src/ufunction.cc,
+	* src/ufunction.hh,
+	* src/ughostconnection.cc,
+	* src/ughostconnection.hh,
+	* src/ugroup.cc,
+	* src/ugroup.hh,
+	* src/unamedparameters.cc,
+	* src/unamedparameters.hh,
+	* src/uobj.cc,
+	* src/uobj.hh,
+	* src/uobject.cc,
+	* src/uproperty.cc,
+	* src/uproperty.hh,
+	* src/uqueue.cc,
+	* src/uqueue.hh,
+	* src/userver.cc,
+	* src/ustring.cc,
+	* src/usystem.cc,
+	* src/uvalue.cc,
+	* src/uvalue.hh,
+	* src/uvar.cc,
+	* src/uvariable.cc,
+	* src/uvariable.hh,
+	* src/uvariablelist.cc,
+	* src/uvariablelist.hh,
+	* src/uvariablename.cc,
+	* src/uvariablename.hh:
+	Adjust.
+	And beware of some useless inclusions.
+
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 970:979 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-03-06  Jean-Christophe Baillie  <baillie@gostai.com>

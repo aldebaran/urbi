@@ -24,8 +24,8 @@
 
 # include <list>
 
-# include "fwd.hh"
-# include "ustring.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
 
 //! Contains a group definition, as a result of a GROUP command
 class UCallid

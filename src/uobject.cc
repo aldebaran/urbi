@@ -24,13 +24,15 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <list>
 #include <sstream>
 
+#include "urbi/uobject.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+
 #include "uconnection.hh"
 #include "ughostconnection.hh"
 #include "ugroup.hh"
 #include "uobj.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 

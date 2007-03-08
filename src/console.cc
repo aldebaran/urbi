@@ -9,7 +9,8 @@
 
 #include "libport/utime.hh"
 
-#include "userver.hh"
+#include "kernel/userver.hh"
+
 #include "ughostconnection.hh"
 
 class ConsoleServer

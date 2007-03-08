@@ -17,15 +17,13 @@
  **************************************************************************** */
 
 #ifndef UATCANDIDATE_HH
-#define UATCANDIDATE_HH
+# define UATCANDIDATE_HH
 
-#include <list>
-#include <string>
+# include <list>
+# include <string>
 
-#include "fwd.hh"
-#include "utypes.hh"
-#include "ustring.hh"
-
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
 
 // ****************************************************************************
 /** UAtCandidate is a pending UMultiEventInstance that can trigger in a @c at

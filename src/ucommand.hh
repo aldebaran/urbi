@@ -28,11 +28,12 @@
 # include "libport/fwd.hh"
 # include "libport/compiler.hh"
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+
 # include "flavorable.hh"
 # include "uast.hh"
 # include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
-# include "ustring.hh"
+
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.

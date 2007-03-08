@@ -5,9 +5,10 @@
 #include <list>
 #include <algorithm>
 
+#include "kernel/userver.hh"
+
 #include "network/bsdnet/network.hh"
 #include "network/bsdnet/connection.hh"
-#include "userver.hh"
 
 namespace Network
 {

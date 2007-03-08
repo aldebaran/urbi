@@ -25,11 +25,10 @@
 # include <string>
 # include <list>
 
-# include <cstdlib>
+# include "kernel/memorymanager.hh"
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
 
-# include "memorymanager/memorymanager.hh"
-# include "fwd.hh"
-# include "utypes.hh"
 # include "uasyncregister.hh"
 
 //! Uvariable is used to store variables

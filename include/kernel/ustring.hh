@@ -26,8 +26,8 @@
 # include <string>
 # include <iosfwd>
 
-# include "memorymanager/memorymanager.hh"
-# include "mem-track.hh"
+# include "kernel/memorymanager.hh"
+# include "kernel/mem-track.hh"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a

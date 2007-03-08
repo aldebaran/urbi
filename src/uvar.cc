@@ -20,7 +20,9 @@ For more information, comments, bug reports: http://www.urbiforge.com
 **************************************************************************** */
 
 #include "urbi/uobject.hh"
-#include "userver.hh"
+
+#include "kernel/userver.hh"
+
 #include "uvalue.hh"
 #include "uvariable.hh"
 

@@ -27,6 +27,10 @@
 
 #include "libport/containers.hh"
 
+#include "urbi/uobject.hh"
+
+#include "kernel/userver.hh"
+
 #include "ucallid.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
@@ -34,8 +38,6 @@
 #include "ueventhandler.hh"
 #include "unamedparameters.hh"
 #include "uobj.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uvariablename.hh"

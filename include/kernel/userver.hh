@@ -29,10 +29,10 @@
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
 
-# include "fwd.hh"
-# include "ustring.hh"
-# include "utypes.hh"
-# include "tag-info.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
+# include "kernel/utypes.hh"
+# include "kernel/tag-info.hh"
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;

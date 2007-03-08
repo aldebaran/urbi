@@ -24,17 +24,14 @@
 
 # include <list>
 
-# include "fwd.hh"
-# include "ustring.hh"
+# include "kernel/ustring.hh"
 
 // *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UGroup
 {
 public:
-
   UGroup(const UString& name);
-
   ~UGroup();
 
   std::list<UString*> members;

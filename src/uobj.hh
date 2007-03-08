@@ -24,8 +24,7 @@
 
 # include <list>
 
-# include "fwd.hh"
-# include "ustring.hh"
+# include "kernel/fwd.hh"
 
 //! Contains a group definition, as a result of a GROUP command
 class UObj

@@ -32,6 +32,9 @@
 
 #include "libport/containers.hh"
 
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+
 #include "ubanner.hh"
 #include "uconnection.hh"
 #include "ueventcompound.hh"
@@ -41,8 +44,6 @@
 #include "ughostconnection.hh"
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
-#include "userver.hh"
-#include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 

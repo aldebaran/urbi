@@ -24,8 +24,8 @@
 #include <iostream>
 #include "libport/cstring"
 
-#include "ustring.hh"
-#include "userver.hh"
+#include "kernel/ustring.hh"
+#include "kernel/userver.hh"
 
 MEMORY_MANAGER_INIT(UString);
 

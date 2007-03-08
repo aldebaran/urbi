@@ -32,11 +32,11 @@
 # include "libport/hash.hh"
 # include "libport/ufloat.h"
 
-# include "fwd.hh"
-# include "mem-track.hh"
-
 # include "urbi/utypes-common.hh"
-# include "ustring.hh"
+
+# include "kernel/fwd.hh"
+# include "kernel/mem-track.hh"
+# include "kernel/ustring.hh"
 
 
 /*------------.

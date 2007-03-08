@@ -22,7 +22,7 @@
 #ifndef UQUEUE_HH
 # define UQUEUE_HH
 
-# include "utypes.hh"
+# include "kernel/utypes.hh"
 
 /// Dynamic expendable and shrinkable circular FIFO buffer
 /*! UQueue is a FIFO buffer which is both dynamic and circular.

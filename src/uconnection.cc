@@ -33,6 +33,8 @@
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
 
+#include "kernel/userver.hh"
+
 #include "parser/uparser.hh"
 #include "ubanner.hh"
 #include "ubinary.hh"
@@ -43,7 +45,6 @@
 #include "uconnection.hh"
 #include "unamedparameters.hh"
 #include "uqueue.hh"
-#include "userver.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 

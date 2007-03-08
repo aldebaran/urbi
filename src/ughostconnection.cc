@@ -21,9 +21,11 @@
 
 #include "libport/cstring"
 
-#include "utypes.hh"
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+
 #include "ughostconnection.hh"
-#include "userver.hh"
+
 
 //! UGhostConnection constructor.
 UGhostConnection::UGhostConnection  (UServer* mainserver)

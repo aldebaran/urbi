@@ -15,7 +15,7 @@ namespace MemoryManager
 
 
 # ifndef DISABLE_BLOCKMEMMNGR
-#  include "memorymanager/blockmemorymanager.hh"
+#  include "kernel/blockmemorymanager.hh"
 # else
 #  define  MEMORY_MANAGED
 #  define MEMORY_MANAGER_INIT(classname)

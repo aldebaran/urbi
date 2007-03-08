@@ -22,8 +22,8 @@
 #include <list>
 #include <string>
 
-#include "fwd.hh"
-#include "ustring.hh"
+#include "kernel/fwd.hh"
+
 #include "uasyncregister.hh"
 
 namespace kernel

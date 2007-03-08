@@ -34,6 +34,11 @@
 
 #include <sstream>
 
+#include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
+
+#include "kernel/userver.hh"
+
 #include "uasynccommand.hh"
 #include "uatcandidate.hh"
 #include "ubinary.hh"
@@ -47,10 +52,11 @@
 #include "ueventinstance.hh"
 #include "ufunction.hh"
 #include "ugroup.hh"
-#include "urbi/uobject.hh"
-#include "urbi/usystem.hh"
-#include "userver.hh"
+#include "unamedparameters.hh"
+#include "uvalue.hh"
 #include "uvariable.hh"
+#include "uvariablename.hh"
+#include "uvariablelist.hh"
 
 /// Report an error, with "!!! " prepended, and "\n" appended.
 /// \param c     the connection to which the message is sent.
@@ -3730,7 +3736,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 {
 #ifdef REMOTE_UOBJECT_DISABLED
   send_error(connection, this,
-             "Remote binding not allowed in the free version.");
+	     "Remote binding not allowed in the free version.");
   return UCOMPLETED;
 #endif
 

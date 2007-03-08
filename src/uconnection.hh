@@ -26,7 +26,7 @@
 
 # include "libport/lockable.hh"
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
 
 # include "ucomplaints.hh"
 # include "parser/uparser.hh"

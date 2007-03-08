@@ -26,14 +26,16 @@
 #include "libport/cstdio"
 #include "libport/ref-pt.hh"
 
+#include "urbi/uobject.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+
 #include "uasyncregister.hh"
 #include "ubinary.hh"
 #include "ubinder.hh"
 #include "ucommand.hh"
 #include "uconnection.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"

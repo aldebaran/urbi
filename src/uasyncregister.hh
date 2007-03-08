@@ -17,13 +17,12 @@
  **************************************************************************** */
 
 #ifndef UASYNCREGISTER_HH
-#define UASYNCREGISTER_HH
+# define UASYNCREGISTER_HH
 
-#include <list>
-#include <string>
+# include <list>
+# include <string>
 
-#include "fwd.hh"
-#include "ustring.hh"
+# include "kernel/fwd.hh"
 
 /// UASyncRegister class, used to register UASyncCommand notifications
 class UASyncRegister

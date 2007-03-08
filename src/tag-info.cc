@@ -1,5 +1,5 @@
-#include "tag-info.hh"
-#include "userver.hh"
+#include "kernel/tag-info.hh"
+#include "kernel/userver.hh"
 
 TagInfo::TagInfo()
   : frozen(false), blocked(false),
