@@ -1,3 +1,23 @@
+2007-03-08  Akim Demaille  <demaille@gostai.com>
+
+	svn merge -r 970:979 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-03-06  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	This flag enforces the business decision described here:
+	https://core.gostai.com/projects/business/wiki/ProductOfferStrategy
+
+	It allows to build an URBI Engine that will reject any remote UObject
+	'external' request, effectively disabling UNotifyChange,
+	UBindFunction, etc, which makes this remote UObject useless.
+
+	A simple -DREMOTE_UOBJECT_DISABLED flag in configure will build this
+	crippled version.
+
+	add the REMOTE_UOBJECT_DISABLED flag for the 'free' version  
+	* src/ucommand.cc: exit from UCommand_BINDER if the
+	REMOTE_UOBJECT_DISABLED flag is on.
+
 2007-03-01  Akim Demaille  <demaille@gostai.com>
 
 	Use UString for UCallid
