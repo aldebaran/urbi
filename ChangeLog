@@ -1,3 +1,8 @@
+2007-03-12  POTHIER Benoit  <pothier@gostai.com>
+
+	Update banner copyright date.
+	* src/ubanner.cc: Here.
+
 2007-03-06  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	This flag enforces the business decision described here:
