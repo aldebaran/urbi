@@ -1,5 +1,17 @@
 2007-03-13  Akim Demaille  <akim.demaille@free.fr>
 
+	svn merge -r 970:996 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-03-12  POTHIER Benoit  <pothier@gostai.com>
+	Remove space in the banner.
+	* src/ubanner.cc: Here.
+
+	2007-03-12  POTHIER Benoit  <pothier@gostai.com>
+	Update banner copyright date.
+	* src/ubanner.cc: Here.
+
+2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Change the handling of externals (experimental)
 	No longer subscribe to uobject in ./src, subscribe to src/uobject
 	in ".".  Several issues seems easier to deal with this way.  If
@@ -169,7 +181,7 @@
 	A simple -DREMOTE_UOBJECT_DISABLED flag in configure will build this
 	crippled version.
 
-	add the REMOTE_UOBJECT_DISABLED flag for the 'free' version  
+	add the REMOTE_UOBJECT_DISABLED flag for the 'free' version
 	* src/ucommand.cc: exit from UCommand_BINDER if the
 	REMOTE_UOBJECT_DISABLED flag is on.
 
