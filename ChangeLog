@@ -1,5 +1,9 @@
 2007-03-13  Akim Demaille  <akim.demaille@free.fr>
 
+	* src/uobject.cc (algorithm): Include it.
+
+2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+
 	svn merge -r 970:996 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-03-12  POTHIER Benoit  <pothier@gostai.com>

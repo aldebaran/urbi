@@ -23,6 +23,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "libport/cstdio"
 #include <list>
 #include <sstream>
+#include <algorithm>
 
 #include "urbi/uobject.hh"
 
