@@ -478,6 +478,7 @@ namespace urbi
     return o.str();
   }
 
+
   /*---------.
   | UValue.  |
   `---------*/
@@ -487,68 +488,76 @@ namespace urbi
     : type(DATA_VOID), val (0), storage(0)
   {}
 
+  // All the following mess could be avoid if we used templates...
+  // boost::any could be very useful here.  Some day, hopefully...
 
-  UValue::UValue(ufloat v)
-    : type(DATA_DOUBLE), val(v)
-  {}
+#define UVALUE_OPERATORS(Args, DataType, Field, Value)	\
+  UValue::UValue(Args)					\
+    : type(DataType), Field(Value)			\
+  {}							\
+							\
+  UValue& UValue::operator=(Args)			\
+  {							\
+    passert (type, type == DATA_VOID);			\
+    type = DATA_DOUBLE;					\
+    Field = Value;					\
+    return *this;					\
+  }
 
-  UValue::UValue(int v)
-    : type(DATA_DOUBLE), val(v)
-  {}
-  UValue::UValue(unsigned int v)
-    : type(DATA_DOUBLE), val(v)
-  {}
-  UValue::UValue(long v)
-    : type(DATA_DOUBLE), val(v)
-  {}
-  UValue::UValue(unsigned long v)
-    : type(DATA_DOUBLE), val(v)
-  {}
+#define UVALUE_DOUBLE(Type)			\
+  UVALUE_OPERATORS(Type v, DATA_DOUBLE, val, v)
 
-  UValue::UValue(void* v)
-    : type(DATA_STRING)
+  UVALUE_DOUBLE(ufloat)
+  UVALUE_DOUBLE(int)
+  UVALUE_DOUBLE(unsigned int)
+  UVALUE_DOUBLE(long)
+  UVALUE_DOUBLE(unsigned long)
+
+#undef UVALUE_DOUBLE
+
+
+  /*----------------------.
+  | UValue: DATA_STRING.  |
+  `----------------------*/
+
+namespace
+{
+  std::string*
+  ptr_string (const void* v)
   {
     std::ostringstream i;
     i << "%ptr_" << (unsigned long) v;
-    stringValue = new std::string(i.str());
+    return new std::string(i.str());
   }
-  UValue::UValue(char* v)
-    : type(DATA_STRING), stringValue(new std::string(v))
-  {}
+}
 
-  UValue::UValue(const std::string& v)
-    : type(DATA_STRING), stringValue(new std::string(v))
-  {}
+#define UVALUE_STRING(Type)			\
+  UVALUE_OPERATORS(Type v, DATA_STRING, stringValue, new std::string(v))
 
-  UValue::UValue(const UBinary& b)
-    : type(DATA_BINARY)
-  {
-    binary = new UBinary(b);
-  }
+  UVALUE_STRING(const char*)
+  UVALUE_STRING(const std::string&)
+  UVALUE_OPERATORS(const void* v, DATA_STRING, stringValue, ptr_string(v))
 
-  UValue::UValue(const USound& s)
-    : type(DATA_BINARY)
-  {
-    binary = new UBinary(s);
-  }
+#undef UVALUE_STRING
 
-  UValue::UValue(const UImage& s)
-    : type(DATA_BINARY)
-  {
-    binary = new UBinary(s);
-  }
+  /*----------------------.
+  | UValue: DATA_BINARY.  |
+  `----------------------*/
 
-  UValue::UValue(const UList& l)
-    : type(DATA_LIST)
-  {
-    list = new UList(l);
-  }
+#define UVALUE_BINARY(Type)			\
+  UVALUE_OPERATORS(Type v, DATA_BINARY, binary, new UBinary(v))
 
-  UValue::UValue(const UObjectStruct& o)
-    : type(DATA_OBJECT)
-  {
-    object = new UObjectStruct(o);
-  }
+  UVALUE_BINARY(const UBinary&)
+  UVALUE_BINARY(const USound&)
+  UVALUE_BINARY(const UImage&)
+
+#undef UVALUE_BINARY
+
+  UVALUE_OPERATORS(const UList& v, DATA_LIST, list, new UList(v))
+  UVALUE_OPERATORS(const UObjectStruct& v,
+		   DATA_OBJECT, object, new UObjectStruct(v))
+
+#undef UVALUE_OPERATORS
 
   UValue::~UValue()
   {

@@ -15,6 +15,8 @@
 #ifndef URBI_UVALUE_HH
 # define URBI_UVALUE_HH
 
+# include "urbi/ubinary.hh"
+
 namespace urbi
 {
 
@@ -115,19 +117,32 @@ namespace urbi
 
     UValue();
     UValue(const UValue&);
-    explicit UValue(ufloat doubleValue);
-    explicit UValue(int intValue);
-    explicit UValue(long intValue);
-    explicit UValue(unsigned int intValue);
-    explicit UValue(unsigned long intValue);
-    explicit UValue(char * val);
-    explicit UValue(void * val);
-    explicit UValue(const std::string& str);
-    explicit UValue(const UBinary& b);
-    explicit UValue(const UList & l);
-    explicit UValue(const UObjectStruct &o);
-    explicit UValue(const USound &);
-    explicit UValue(const UImage &);
+
+#define CTOR_AND_ASSIGN(Type)			\
+    explicit UValue(Type);			\
+    UValue& operator=(Type);
+
+    // UFloats.
+    CTOR_AND_ASSIGN(ufloat);
+    CTOR_AND_ASSIGN(int);
+    CTOR_AND_ASSIGN(long);
+    CTOR_AND_ASSIGN(unsigned int);
+    CTOR_AND_ASSIGN(unsigned long);
+
+    // Strings.
+    CTOR_AND_ASSIGN(const char*);
+    CTOR_AND_ASSIGN(const void*);
+    CTOR_AND_ASSIGN(const std::string&);
+
+    // Others.
+    CTOR_AND_ASSIGN(const UBinary&);
+    CTOR_AND_ASSIGN(const UList&);
+    CTOR_AND_ASSIGN(const UObjectStruct&);
+    CTOR_AND_ASSIGN(const USound&);
+    CTOR_AND_ASSIGN(const UImage&);
+
+#undef CTOR_AND_ASSIGN
+
     operator ufloat() const;
     operator std::string() const;
     operator int() const {return (int)(ufloat)(*this);}
@@ -140,6 +155,23 @@ namespace urbi
     operator UImage() const; ///< ptr copy
     operator USound() const; ///< ptr copy
     UValue& operator=(const UValue&);
+
+    /// An operator , that behaves like an assignment.
+    /// The only difference is when the rhs is void, in which case it
+    /// is the regular comma which is used.
+    /// This allows to write "uval, expr" to mean "compute expr and
+    /// assign its result to uval, unless expr is void".
+    template <typename T>
+    UValue& operator, (const T& rhs)
+    {
+      return *this = rhs;
+    }
+
+    /// This operator does nothing, but helps with the previous operator,.
+    /// Indeed, when writing "uval, void_expr", the compiler complains
+    /// about uval being evaluated for nothing.  Let's have it believe
+    /// we're doing something...
+    UValue& operator()() { return *this; }
 
     ~UValue();
 

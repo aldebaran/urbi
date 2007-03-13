@@ -1,5 +1,19 @@
 2007-03-13  Akim Demaille  <akim.demaille@free.fr>
 
+	Experimentation to work around VC++ troubles with void (ticket:26)
+        * src/liburbi/uobject/urbi/uvalue.hh,
+        * src/liburbi/uobject/uvalue-common.cc,
+        Use macros to factor the common ctor declarations.
+        Duplicate all the ctors as assignment operators.
+        (operator,, operator()): New.
+        * src/liburbi/uobject/urbi/ucallbacks.hh.template: Use these two
+        to make specialization for void useless.
+	Suggested by Thierry Geraud.
+        * src/liburbi/uobject.cc: Adjust (restore old clean code instead
+        of what pleases VC++).
+
+2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+
 	ucallbacks.hh.template
 	* src/liburbi/uobject/urbi/uobject.hh.template:
 	Split into...

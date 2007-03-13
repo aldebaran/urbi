@@ -122,16 +122,15 @@ namespace urbi
     tt.push_back(this);
     lastTimeCalled = -9999999;
     std::ostringstream os;
-    os << "timer"<<tt.size();
+    os << "timer"<< tt.size();
     //register oursselves as an event
     std::string cbname = os.str();
 
-    // needed by MSVC
-    // createUCallback(objname, "event", this, &UTimerCallback::call, objname +
-    //                "." + cbname, eventmap);
-    new UCallbackvoid0<UTimerCallback> (objname, "event", this,
-					&UTimerCallback::call,
-					objname + '.' + cbname, eventmap);
+    createUCallback(objname, "event", this, &UTimerCallback::call,
+		    objname + "." + cbname, eventmap);
+    //new UCallbackvoid0<UTimerCallback> (objname, "event", this,
+    //				&UTimerCallback::call,
+    //				objname + '.' + cbname, eventmap);
 
     os.str("");
     os.clear();
