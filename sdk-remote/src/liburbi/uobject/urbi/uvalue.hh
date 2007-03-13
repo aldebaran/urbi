@@ -44,7 +44,7 @@ namespace urbi
     {
       return *array[i+offset];
     }
-    const UValue & operator [](int i) const 
+    const UValue & operator [](int i) const
     {
       return *array[i+offset];
     }

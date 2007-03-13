@@ -127,7 +127,7 @@ namespace urbi
     std::string cbname = os.str();
 
     // needed by MSVC
-    //createUCallback(objname, "event", this, &UTimerCallback::call, objname +
+    // createUCallback(objname, "event", this, &UTimerCallback::call, objname +
     //                "." + cbname, eventmap);
     new UCallbackvoid0<UTimerCallback> (objname, "event", this,
 					&UTimerCallback::call,

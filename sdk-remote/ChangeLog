@@ -1,3 +1,19 @@
+2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+
+	ucallbacks.hh.template
+	* src/liburbi/uobject/urbi/uobject.hh.template:
+	Split into...
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template,
+	* src/liburbi/uobject/urbi/uobject.hh:
+	these new files.
+	* src/liburbi/uobject/uobject.mk: Adjust.
+
+	* src/liburbi/uobject/urbi/uvalue.hh,
+	* src/liburbi/uobject.cc: White space changes.
+
+	* src/liburbi/uobject/urbi/fwd.hh: Complete.
+	* src/liburbi/uobject/urbi/ubinary.hh: Add missing includes.
+
 2007-03-08  Akim Demaille  <akim.demaille@free.fr>
 
 	* src/liburbi/uclient.cc: Include libport/unistd.h to get

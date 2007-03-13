@@ -1,0 +1,407 @@
+/*! \file urbi/ucallbacks.hh
+ *******************************************************************************
+
+ Definition of the callback classes.
+
+ This file is part of UObject Component Architecture\n
+ Copyright (c) 2006, 2007 Gostai S.A.S.
+
+ Permission to use, copy, modify, and redistribute this software for
+ non-commercial use is hereby granted.
+
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
+
+ For more information, comments, bug reports: http://www.urbiforge.com
+
+ **************************************************************************** */
+
+#ifndef URBI_UCALLBACKS_HH
+# define URBI_UCALLBACKS_HH
+
+# include <list>
+# include <string>
+
+# include "libport/singleton-ptr.hh"
+# include "libport/hash.hh"
+
+# include "urbi/uvalue.hh"
+
+namespace urbi
+{
+
+  // A few list and hashtable types
+  typedef libport::hash_map_type<std::string,
+				 std::list<UGenericCallback*> >::type UTable;
+
+  //! Clean a callback UTable from all callbacks linked to the
+  //! object whose name is 'name'.
+  void cleanTable(UTable &t, const std::string& name);
+
+  typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
+  typedef std::list<UTimerCallback*> UTimerTable;
+  typedef std::list<UObject*> UObjectList;
+
+  // Lists and hashtables used.
+  EXTERN_STATIC_INSTANCE(UTable, accessmap);
+  EXTERN_STATIC_INSTANCE(UTable, eventendmap);
+  EXTERN_STATIC_INSTANCE(UTable, eventmap);
+  EXTERN_STATIC_INSTANCE(UTable, functionmap);
+  EXTERN_STATIC_INSTANCE(UTable, monitormap);
+  EXTERN_STATIC_INSTANCE(UVarTable, varmap);
+
+  // Timer and update maps.
+  EXTERN_STATIC_INSTANCE(UTimerTable, timermap);
+  EXTERN_STATIC_INSTANCE(UTimerTable, updatemap);
+
+  //! Function and Event storage mechanism
+  /*! This heavily overloaded class is the only way in C++ to make life easy from the
+    the interface user point's of view.
+  */
+
+  class UGenericCallback
+  {
+  public:
+    UGenericCallback(const std::string& objname,
+		     const std::string& type,
+		     const std::string& name,
+		     int size, UTable &t);
+    UGenericCallback(const std::string& objname,
+		     const std::string& type,
+		     const std::string& name, UTable &t);
+    virtual ~UGenericCallback();
+    std::string getName() { return name;};
+
+    virtual UValue __evalcall(UList &param)  = 0;
+
+    /// Used to store the UVar* pointeur for var monitoring.
+    void* storage;
+    /// Period of timers.
+    ufloat period;
+    /// Nb params of the callbacked function.
+    int    nbparam;
+    /// Name of the UObject that has created the callback.
+    std::string objname;
+
+  private:
+    std::string name;
+  };
+
+
+  //! Timer mechanism
+  /*! This class stores a callback as a class method
+   */
+
+  class UTimerCallback
+  {
+  public:
+    UTimerCallback(const std::string& objname, ufloat period, UTimerTable& tt);
+    virtual ~UTimerCallback();
+
+    virtual void call() = 0;
+
+    ufloat period;
+    ufloat lastTimeCalled;
+    std::string objname;
+  };
+
+  // UTimerCallback subclasses
+
+  template <class T>
+  class UTimerCallbackobj : public UTimerCallback
+  {
+  public:
+    UTimerCallbackobj(const std::string& objname,
+		      ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt)
+      : UTimerCallback(objname, period,tt), obj(obj), fun(fun)
+    {}
+
+    virtual void call()
+    {
+      ((*obj).*fun)();
+    }
+  private:
+    T* obj;
+    int (T::*fun) ();
+  };
+
+
+  /*----------.
+  | Casters.  |
+  `----------*/
+
+# define SETCAST(Type)				\
+  inline Type					\
+  cast(UValue& val, Type*)			\
+  {						\
+    return (Type)val;				\
+  }
+
+  inline const UValue& cast(UValue& val, const UValue*)
+  {
+    return val;
+  }
+
+  inline UValue cast(UValue& val, UValue*)
+  {
+    return val;
+  }
+  SETCAST(int);
+  SETCAST(unsigned int);
+  SETCAST(long);
+  SETCAST(unsigned long);
+  SETCAST(ufloat);
+  SETCAST(std::string);
+  SETCAST(const std::string);
+  SETCAST(bool);
+  SETCAST(UImage);
+  SETCAST(USound);
+  UVar& cast(UValue &val, UVar *var);
+  UBinary cast(UValue &v, UBinary * b);
+  UList cast(UValue &v, UList *l);
+  UObjectStruct cast(UValue &v, UObjectStruct *o);
+  const char * cast(UValue &v, const char ** b);
+
+#ifndef UOBJECT_NO_LIST_CAST
+  template<class I>
+  std::list<I>
+  cast(UValue& val, std::list<I>* inu)
+  {
+    std::list<I> res;
+    if (val.type != DATA_LIST)
+      //cast just the element
+      res.push_back(cast(val, static_cast<I*>(0)));
+    else
+      for (int i = 0; i<val.list->size(); i++)
+	res.push_back(cast(*val.list->array[i], static_cast<I*>(0)));
+    return res;
+  }
+#endif
+
+  template<typename T>
+  class utrait
+  {
+  public:
+    typedef T noref;
+  };
+
+# ifndef _MSC_VER
+
+  template<typename T>
+  class utrait<T&>
+  {
+  public:
+    typedef T noref;
+  };
+
+# else
+
+  template<>
+  class utrait<UVar&>
+  {
+    public:
+    typedef UVar noref;
+  };
+
+# endif
+
+  /*-----------------------------------------------------.
+  | This section is autogenerated. Not for humans eyes.  |
+  `-----------------------------------------------------*/
+
+  %%%% 0 16
+
+  // non void return type
+
+  template <class OBJ, class R%%, class P% %%>
+  class UCallback%N% : public UGenericCallback
+  {
+    public:
+    UCallback%N%(const std::string& objname, const std::string& type,
+		 OBJ* obj,
+		 R (OBJ::*fun) (%%%,% P% %%),
+		 const std::string& funname, UTable &t)
+      : UGenericCallback(objname, type, funname, %N%, t),
+      obj(obj), fun(fun)
+    {
+    }
+
+    virtual UValue __evalcall(UList& param)
+    {
+      // Avoid warnings when we don't use param.
+      (void) param;
+      return UValue(((*obj).*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%));
+    }
+
+    private:
+    OBJ* obj;
+    R (OBJ::*fun) (%%%,% P% %%);
+  };
+
+  // void return type
+  template <class OBJ%%, class P% %%>
+  class UCallbackvoid%N% : public UGenericCallback
+  {
+    public:
+    UCallbackvoid%N%(const std::string& objname, const std::string& type,
+		     OBJ* obj,
+		     void (OBJ::*fun) (%%%,% P% %%),
+		     const std::string& funname, UTable &t)
+      : UGenericCallback(objname, type, funname,%N%, t),
+	obj(obj), fun(fun)
+    {
+    }
+
+    virtual UValue __evalcall(UList &param)
+    {
+      // Avoid warnings when we don't use param.
+      (void) param;
+      ((*obj).*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      return UValue();
+    }
+    private:
+    OBJ* obj;
+    void (OBJ::*fun) (%%%,% P% %%);
+  };
+
+  // void return type : special case for notifyend event callbacks
+
+  template <class OBJ%%, class P% %%>
+  class UCallbacknotifyend%N% : public UGenericCallback
+  {
+    public:
+    UCallbacknotifyend%N%(const std::string& objname, const std::string& type,
+			  OBJ* obj,
+			  void (OBJ::*fun) (%%%,% P% %%),
+			  void (OBJ::*end)(),const std::string& funname,
+			  UTable &t)
+      : UGenericCallback(objname, type, funname,%N%, t),
+      obj(obj), fun(end)
+    {
+    }
+
+    virtual UValue __evalcall(UList &)
+    {
+      ((*obj).*fun)();
+      return UValue();
+    }
+
+    private:
+    OBJ* obj;
+    void (OBJ::*fun) ();
+  };
+
+  // void non-member function
+  template <class INU %%, class P% %%>
+  class UFCallbackvoid%N% : public UGenericCallback
+  {
+    public:
+    UFCallbackvoid%N%(const std::string& objname, const std::string& type,
+		      void (*fun) (%%%,% P% %%),
+		      const std::string& funname, UTable &t)
+      : UGenericCallback(objname, type, funname,%N%, t),  fun(fun)
+    {
+    }
+
+    virtual UValue __evalcall(UList &param)
+    {
+      // Avoid warnings when we don't use param.
+      (void) param;
+      (*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      return UValue();
+    }
+
+    private:
+    void (*fun) (%%%,% P% %%);
+  };
+
+  // non void non-member function
+  template <class R%%, class P% %%>
+  class UFCallback%N% : public UGenericCallback
+  {
+    public:
+    UFCallback%N%(const std::string& objname, const std::string& type,
+		  R (*fun) (%%%,% P% %%),
+		  const std::string& funname, UTable &t)
+      : UGenericCallback(objname, type, funname,%N%, t),  fun(fun)
+    {
+    }
+
+    virtual UValue __evalcall(UList& param)
+    {
+      // Avoid warnings when we don't use param.
+      (void) param;
+      return UValue((*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%));
+    }
+
+    private:
+    R (*fun) (%%%,% P% %%);
+  };
+
+  // callback creation for non-member non void return type
+
+  template <class R%%, class P% %%>
+  UGenericCallback*
+  createUCallback(const std::string& objname, const std::string& type,
+		  R (*fun) (%%%,% P% %%),
+		  const std::string& funname, UTable& t)
+  {
+    return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t);
+  }
+
+  // callback creation for non-member void return type
+  // inline required since one of them is not a template
+  template <%%%,% class P% %%> inline
+    UGenericCallback*
+    createUCallback(const std::string& objname, const std::string& type,
+		    void (*fun) (%%%,% P% %%),
+		    const std::string& funname, UTable &t)
+  {
+    return new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t);
+  }
+
+  // callback creation for non void return type
+
+  template <class OBJ, class R%%, class P% %%>
+  UGenericCallback*
+  createUCallback(const std::string& objname, const std::string& type,
+		  OBJ* obj,
+		  R (OBJ::*fun) (%%%,% P% %%),
+		  const std::string& funname, UTable &t)
+  {
+    return new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t);
+  }
+
+  // callback creation for void return type
+
+  template <class OBJ%%, class P% %%>
+  UGenericCallback*
+  createUCallback(const std::string& objname, const std::string& type,
+		  OBJ* obj,
+		  void (OBJ::*fun) (%%%,% P% %%),
+		  const std::string& funname, UTable &t)
+  {
+    return new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t);
+  }
+
+  // special case for eventend notification
+  template <class OBJ%%, class P% %%>
+  UGenericCallback*
+  createUCallback(const std::string& objname, const std::string& type,
+		  OBJ* obj,
+		  void (OBJ::*fun) (%%%,% P% %%),
+		  void (OBJ::*end)(), const std::string& funname, UTable &t)
+  {
+    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, type,obj,fun,end,funname,t);
+  }
+
+  %%%%
+
+} // end namespace urbi
+
+#endif // ! URBI_UCALLBACKS_HH
+
+/// Local Variables:
+/// mode: c++
+/// End:

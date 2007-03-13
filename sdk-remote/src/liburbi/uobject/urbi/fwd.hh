@@ -8,11 +8,13 @@ namespace urbi
 {
   class UAbstractClient;
   class UBinary;
+  class UBinaryData;
   class UCallbackList;
   class UCallbackWrapper;
   class UClient;
   class UGenericCallback;
   class UImage;
+  class UList;
   class UObject;
   class UObjectData;
   class UObjectHub;

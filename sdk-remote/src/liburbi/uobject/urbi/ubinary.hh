@@ -15,6 +15,8 @@
 #ifndef URBI_UBINARY_HH
 # define URBI_UBINARY_HH
 
+# include <list>
+
 namespace urbi
 {
 

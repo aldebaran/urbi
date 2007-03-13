@@ -6,14 +6,15 @@
 ## --------------------- ##
 
 uobject_srcdir = $(srcdir)/uobject
-uobject_hh = $(uobject_srcdir)/urbi/uobject.hh
+ucallbacks_hh = $(uobject_srcdir)/urbi/ucallbacks.hh
 
 nodist_uobject_headers =			\
-$(uobject_hh)
+$(ucallbacks_hh)
 
 dist_uobject_headers =				\
 $(uobject_srcdir)/urbi/fwd.hh			\
 $(uobject_srcdir)/urbi/ubinary.hh		\
+$(uobject_srcdir)/urbi/uobject.hh		\
 $(uobject_srcdir)/urbi/utypes-common.hh		\
 $(uobject_srcdir)/urbi/uvalue.hh		\
 $(uobject_srcdir)/urbi/uvar.hh			\
@@ -31,22 +32,22 @@ uobject_sources = $(nodist_uobject_sources) $(dist_uobject_sources)
 
 EXTRA_DIST += $(dist_uobject_headers) $(dist_uobject_sources)
 
-## ------------ ##
-## uobject.hh.  ##
-## ------------ ##
+## --------------- ##
+## ucallbacks.hh.  ##
+## --------------- ##
 
 EXTRA_DIST +=					\
 $(uobject_srcdir)/template_autogen.pl		\
-$(uobject_hh).template
-MAINTAINERCLEANFILES += $(uobject_hh)
-BUILT_SOURCES += $(uobject_hh)
+$(ucallbacks_hh).template
+MAINTAINERCLEANFILES += $(ucallbacks_hh)
+BUILT_SOURCES += $(ucallbacks_hh)
 
-$(uobject_hh): $(uobject_hh).template $(uobject_srcdir)/template_autogen.pl
-	rm -f uobject.hh.tmp $(uobject_hh)
-	$(uobject_srcdir)/template_autogen.pl $(uobject_hh).template >uobject.hh.tmp
+$(ucallbacks_hh): $(ucallbacks_hh).template $(uobject_srcdir)/template_autogen.pl
+	rm -f $@.tmp $@
+	$(uobject_srcdir)/template_autogen.pl $(ucallbacks_hh).template >$@.tmp
 # Avoid accidental edition.
-	chmod a-w uobject.hh.tmp
-	mv uobject.hh.tmp $(uobject_hh)
+	chmod a-w $@.tmp
+	mv $@.tmp $@
 
 
 ## ------------ ##
