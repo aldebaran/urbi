@@ -41,7 +41,7 @@
 
 	It's my mistake, wrong copy/paste in r25...
 
-	remove duplicated code. 
+	remove duplicated code.
 	* uobject.cc: remove to if that where identical and following each
 	other...
 
@@ -79,11 +79,11 @@
 
 	2007-01-27  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals. 
+	update externals.
 
 	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	reformatting 
+	reformatting
 	* src/liburbi/uobject/urbi/uvar.hh: add spaces.
 
 	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
@@ -99,7 +99,7 @@
 
 	This leads to one extra and sometimes unecessary NotifyChange on
 	"dummy0" (name of the dummyUObject) that should be removed when a
-	future UDeNotifyChange is available, whenever at least one callback is 
+	future UDeNotifyChange is available, whenever at least one callback is
 	set to the UVar. A call to UNotifyChange should check if a dummy
 	callback is set on the UVar and remove it.
 
@@ -114,27 +114,27 @@
 
 	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	remove unused variable. 
+	remove unused variable.
 	* src/liburbi/uobject.cc: remove lastUObject, was not used.
 
 	2007-01-22  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	add support for the 'remote' attribute in UObject 
+	add support for the 'remote' attribute in UObject
 	* src/liburbi/uobject.cc: add 'remote' and set load default value to 1.
 	* src/liburbi/uobject/urbi/uobject.hh.template: add 'remote'.
 
 	2007-01-21  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	backward compat svn:externals 
+	backward compat svn:externals
 
 	2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	change vcs local.rb to point to liburbi-cpp@gostai.com 
+	change vcs local.rb to point to liburbi-cpp@gostai.com
 	* vcs/local.rb: done.
 
 	2007-01-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	add mailto property to send mails to liburbi-cpp@gostai.com 
+	add mailto property to send mails to liburbi-cpp@gostai.com
 
 2007-02-17  Akim Demaille  <akim.demaille@free.fr>
 
