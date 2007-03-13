@@ -26,7 +26,6 @@
 # include "libport/ufloat.h"
 
 # include "urbi/fwd.hh"
-# include "urbi/ubinary.hh"
 # include "urbi/ucallbacks.hh"
 # include "urbi/utypes-common.hh"
 # include "urbi/uvar.hh"
@@ -240,6 +239,7 @@ namespace urbi
     bool   derived;
 
     UObjectList members;
+
     /// The hub, if it exists.
     UObjectHub  *objecthub;
 
@@ -276,14 +276,6 @@ namespace urbi
     ufloat period;
   };
 
-}
-
-// This file needs the definition of UObject.
-// To be cleaned later.
-# include "urbi/ustarter.hh"
-
-namespace urbi
-{
 
   //! Main UObjectHub class definition
   class UObjectHub
@@ -312,6 +304,10 @@ namespace urbi
   };
 
 } // end namespace urbi
+
+// This file needs the definition of UObject, so included last.
+// To be cleaned later.
+# include "urbi/ustarter.hh"
 
 #endif // ! URBI_UOBJECT_HH
 

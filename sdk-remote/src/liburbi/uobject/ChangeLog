@@ -1,3 +1,9 @@
+2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Tidy
+	* src/liburbi/uobject/urbi/fwd.hh: Remove incorrect decl.
+	* src/liburbi/uobject/urbi/uobject.hh: Reorder includes.
+
 2007-03-08  Akim Demaille  <demaille@gostai.com>
 
 	merging branches/1.0 in here.
