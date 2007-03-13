@@ -122,7 +122,7 @@ namespace Network
   }
 
   bool
-  createTCPServer(int port, const char * address)
+  createTCPServer(int port, const char* address)
   {
     TCPServerPipe* tsp = new TCPServerPipe();
     std::string addr;
