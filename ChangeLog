@@ -1,3 +1,11 @@
+2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Change the handling of externals (experimental)
+	No longer subscribe to uobject in ./src, subscribe to src/uobject
+	in ".".  Several issues seems easier to deal with this way.  If
+	it works well, I'll lift the other externals.
+	* Makefile.am: src/uobject is now a local external.
+
 2007-03-08  Akim Demaille  <akim.demaille@free.fr>
 
 	This seems to totally confuse cccl, which loses the arguments

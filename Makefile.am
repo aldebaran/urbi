@@ -57,10 +57,7 @@ include/kernel/uvariable.hh
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += tests
-SVN_EXTERNALS_PROXY += uobject
-uobject-help uobject-ci uobject-up uobj-ci uob-up:
-	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
+SVN_EXTERNALS += tests src/uobject
 
 maintainer-check: valgrind-check
 valgrind-check:
