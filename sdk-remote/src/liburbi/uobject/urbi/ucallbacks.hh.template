@@ -220,7 +220,7 @@ namespace urbi
 		 R (OBJ::*fun) (%%%,% P% %%),
 		 const std::string& funname, UTable &t)
       : UGenericCallback(objname, type, funname, %N%, t),
-      obj(obj), fun(fun)
+	obj(obj), fun(fun)
     {
     }
 
