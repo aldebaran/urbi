@@ -1,5 +1,9 @@
 2007-03-21  Akim Demaille  <akim.demaille@free.fr>
 
+	* Makefile.am (CLEANFILES): Remove what's handled by init.mk.
+
+2007-03-21  Akim Demaille  <akim.demaille@free.fr>
+
 	Catch up with the trunk
 	No longer make uobject an external of src, let src/uobject be
 	an external of ".".
