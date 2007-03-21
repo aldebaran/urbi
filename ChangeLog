@@ -1,3 +1,8 @@
+2007-03-21  Akim Demaille  <akim.demaille@free.fr>
+
+	Update externals.
+	* configure.ac: Use URBI_TESTS.
+
 2007-03-12  POTHIER Benoit  <pothier@gostai.com>
 
 	Remove space in the banner.
