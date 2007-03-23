@@ -118,30 +118,39 @@ namespace urbi
     UValue();
     UValue(const UValue&);
 
-#define CTOR_AND_ASSIGN(Type)			\
+    /// We use an operator , that behaves like an assignment.  The
+    /// only difference is when the rhs is void, in which case it is
+    /// the regular comma which is used.  This allows to write "uval,
+    /// expr" to mean "compute expr and assign its result to uval,
+    /// unless expr is void".
+#define CTOR_AND_ASSIGN_AND_COMMA(Type)		\
     explicit UValue(Type);			\
-    UValue& operator=(Type);
+    UValue& operator=(Type);			\
+    UValue& operator, (Type rhs)		\
+    {						\
+      return *this = rhs;			\
+    }
 
     // UFloats.
-    CTOR_AND_ASSIGN(ufloat);
-    CTOR_AND_ASSIGN(int);
-    CTOR_AND_ASSIGN(long);
-    CTOR_AND_ASSIGN(unsigned int);
-    CTOR_AND_ASSIGN(unsigned long);
+    CTOR_AND_ASSIGN_AND_COMMA(ufloat);
+    CTOR_AND_ASSIGN_AND_COMMA(int);
+    CTOR_AND_ASSIGN_AND_COMMA(long);
+    CTOR_AND_ASSIGN_AND_COMMA(unsigned int);
+    CTOR_AND_ASSIGN_AND_COMMA(unsigned long);
 
     // Strings.
-    CTOR_AND_ASSIGN(const char*);
-    CTOR_AND_ASSIGN(const void*);
-    CTOR_AND_ASSIGN(const std::string&);
+    CTOR_AND_ASSIGN_AND_COMMA(const char*);
+    CTOR_AND_ASSIGN_AND_COMMA(const void*);
+    CTOR_AND_ASSIGN_AND_COMMA(const std::string&);
 
     // Others.
-    CTOR_AND_ASSIGN(const UBinary&);
-    CTOR_AND_ASSIGN(const UList&);
-    CTOR_AND_ASSIGN(const UObjectStruct&);
-    CTOR_AND_ASSIGN(const USound&);
-    CTOR_AND_ASSIGN(const UImage&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UBinary&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UList&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UObjectStruct&);
+    CTOR_AND_ASSIGN_AND_COMMA(const USound&);
+    CTOR_AND_ASSIGN_AND_COMMA(const UImage&);
 
-#undef CTOR_AND_ASSIGN
+#undef CTOR_AND_ASSIGN_AND_COMMA
 
     operator ufloat() const;
     operator std::string() const;
@@ -156,16 +165,6 @@ namespace urbi
     operator USound() const; ///< ptr copy
     UValue& operator=(const UValue&);
 
-    /// An operator , that behaves like an assignment.
-    /// The only difference is when the rhs is void, in which case it
-    /// is the regular comma which is used.
-    /// This allows to write "uval, expr" to mean "compute expr and
-    /// assign its result to uval, unless expr is void".
-    template <typename T>
-    UValue& operator, (const T& rhs)
-    {
-      return *this = rhs;
-    }
 
     /// This operator does nothing, but helps with the previous operator,.
     /// Indeed, when writing "uval, void_expr", the compiler complains

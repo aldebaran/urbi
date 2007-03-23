@@ -30,6 +30,9 @@
 # include "urbi/utypes-common.hh"
 # include "urbi/uvar.hh"
 
+// Tell our users that it is fine to use void returning functions.
+#define USE_VOID 1
+
 /** Bind a variable to an object.
 
  This macro can only be called from within a class inheriting from

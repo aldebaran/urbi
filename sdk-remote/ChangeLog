@@ -1,3 +1,10 @@
+2007-03-23  Akim Demaille  <demaille@gostai.com>
+
+	Try another workaround for #26
+	* src/liburbi/uobject/urbi/uvalue.hh (operator,): Don't template
+	it, define it for each possible case.
+	* src/liburbi/uobject/urbi/uobject.hh (USE_VOID): Define it.
+
 2007-03-13  Akim Demaille  <akim.demaille@free.fr>
 
 	Experimentation to work around VC++ troubles with void (ticket:26)
