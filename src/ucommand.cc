@@ -5165,8 +5165,7 @@ UCommand_EVERY::execute_(UConnection* connection)
 {
   ufloat thetime = connection->server->lastTime();
 
-  if (command == 0)
-    return UCOMPLETED;
+  assert (command);
 
   UValue* interval = duration->eval(this, connection);
   if (!interval)
@@ -5235,8 +5234,7 @@ UCommand_TIMEOUT::~UCommand_TIMEOUT()
 UCommand::Status
 UCommand_TIMEOUT::execute_(UConnection*)
 {
-  if (command == 0)
-    return UCOMPLETED;
+  assert (command);
 
   persistant = false;
   morph =
@@ -5324,8 +5322,7 @@ UCommand_STOPIF::execute_(UConnection *connection)
   morph->setTag(tagRef->c_str());
   return UMORPH;
 
-  if (command == 0)
-    return UCOMPLETED;
+  assert (command);
 
   persistant = false;
   morph =
@@ -5389,8 +5386,7 @@ UCommand_FREEZEIF::~UCommand_FREEZEIF()
 UCommand::Status
 UCommand_FREEZEIF::execute_(UConnection*)
 {
-  if (command == 0)
-    return UCOMPLETED;
+  assert(command);
 
   persistant = false;
   UCommand* cmd = new UCommand_TREE(loc_, Flavorable::UPIPE,
@@ -5658,8 +5654,7 @@ UCommand_WHILE::~UCommand_WHILE()
 UCommand::Status
 UCommand_WHILE::execute_(UConnection *connection)
 {
-  if (command == 0)
-    return UCOMPLETED;
+  assert (command);
 
   persistant = false;
 
@@ -5961,8 +5956,7 @@ UCommand_LOOP::~UCommand_LOOP()
 UCommand::Status
 UCommand_LOOP::execute_(UConnection*)
 {
-  if (command == 0)
-    return UCOMPLETED;
+  assert(command);
 
   morph = new UCommand_TREE(loc_, Flavorable::USEMICOLON,
 			    new UCommand_TREE(loc_, Flavorable::UAND,
@@ -6019,8 +6013,7 @@ UCommand_LOOPN::~UCommand_LOOPN()
 UCommand::Status
 UCommand_LOOPN::execute_(UConnection *connection)
 {
-  if (command == 0)
-    return UCOMPLETED;
+  assert (command);
 
   if (expression->type != UExpression::VALUE)
   {
@@ -6135,8 +6128,7 @@ UCommand_FOR::execute_(UConnection *connection)
       instr2->setTag(this);
   }
 
-  if (command == 0)
-    return UCOMPLETED;
+  assert (command);
 
   if (instr1)
   {
@@ -6348,14 +6340,11 @@ MEMORY_MANAGER_INIT(UCommand_NOOP);
  executed. It is a truely empty command, used to structure command trees
  like in the { commands... }  case.
  */
-UCommand_NOOP::UCommand_NOOP(const location& l,
-			     bool zerotime)
-  : UCommand(l, NOOP)
+UCommand_NOOP::UCommand_NOOP(const location& l, kind k)
+  : UCommand(l, NOOP),
+    kind_ (k)
 {
   ADDOBJ(UCommand_NOOP);
-  // FIXME: Otherwise, what is the value?
-  if (zerotime)
-    status = URUNNING;
 }
 
 //! UCommand subclass destructor.
@@ -6365,19 +6354,29 @@ UCommand_NOOP::~UCommand_NOOP()
 }
 
 //! UCommand subclass execution function
-UCommand::Status UCommand_NOOP::execute_(UConnection *connection)
+UCommand::Status
+UCommand_NOOP::execute_(UConnection *connection)
 {
-  if (status == UONQUEUE)
-    return !connection->receiving ? URUNNING : UONQUEUE;
-  else
-    return UCOMPLETED;
+  switch (kind_)
+  {
+    case regular:
+      if (status == UONQUEUE)
+	return !connection->receiving ? URUNNING : UONQUEUE;
+      else
+	return UCOMPLETED;
+    case zerotime:
+    case spontaneous:
+      return UCOMPLETED;
+  }
+  // Please GCC.
+  abort();
 }
 
 //! UCommand subclass hard copy function
 UCommand*
 UCommand_NOOP::copy() const
 {
-  return copybase(new UCommand_NOOP(loc_, status == URUNNING));
+  return copybase(new UCommand_NOOP(loc_, kind_));
 }
 
 //! Print the command

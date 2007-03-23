@@ -1,5 +1,21 @@
 2007-03-23  Akim Demaille  <demaille@gostai.com>
 
+	svn merge -r 1007:1011 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-03-23  Akim Demaille  <demaille@gostai.com>
+	Fix #114 and #141
+	* src/ucommand.hh, src/ucommand.cc (UCommand_NOOP::kind)
+	(UCommand_NOOP::kind_): New.
+	Adjust dependencies.
+	* src/parser/bison/ugrammar.y (spontaneous, warn, warn_spontaneous):
+	New.
+	Use the latter to warn about suspicious empty instructions instead
+	of making them hard error.
+	No longer create an instruction equal to 0, rather make it a
+	spontaneous noop.
+
+2007-03-23  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 996:1007 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-03-23  Akim Demaille  <demaille@gostai.com>
