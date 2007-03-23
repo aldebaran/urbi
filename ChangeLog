@@ -1,5 +1,18 @@
 2007-03-23  Akim Demaille  <demaille@gostai.com>
 
+	Fix #144
+	* src/parser/uparser.cc: Debug trace changes.
+	* src/ucommandqueue.hh, src/ucommandqueue.cc (bracketlevel_)
+	(sbracketlevel_, parenlevel_): Remove.  Replaced by...
+	(closers_): this new member.
+	Let the members be private, not protected.
+	(popCommand): When a closing mismatch happens, return the sentence
+	to the parser which will report the error.
+
+	* src/userver.cc: Reoder two instructions.
+
+2007-03-23  Akim Demaille  <demaille@gostai.com>
+
 	More debugging traces
 	* src/parser/uparser.cc: Insert debugging traces.
 	* src/ucommand.cc: Likewise.

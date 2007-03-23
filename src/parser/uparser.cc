@@ -1,5 +1,6 @@
 /// \file uparser.cc
 
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include <cstdlib>
@@ -60,6 +61,7 @@ UParser::process(const ubyte* command, int length)
   ECHO("Parsing string: ==================" << std::endl
        << loc_ << ':' << std::endl
        << std::string (reinterpret_cast<const char*>(command), length)
+       << std::endl
        << "==================================");
   return parse_();
 }

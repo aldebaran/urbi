@@ -146,9 +146,9 @@ void
 UServer::main (int argc, const char* argv[])
 {
   UValue* arglistv = new UValue ();
+  arglistv->dataType = DATA_LIST;
 
   UValue* current = 0;
-  arglistv->dataType = DATA_LIST;
   for (int i = 0; i < argc; ++i)
   {
     UValue* v = new UValue (argv[i]);
@@ -1000,7 +1000,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
   std::ifstream is (f.c_str(), std::ios::binary);
   if (!is)
     return UFAIL;
-  
+
   while (is.good ())
   {
     char buf[URBI_BUFSIZ];
