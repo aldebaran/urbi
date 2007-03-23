@@ -70,6 +70,7 @@
   // Output in ugrammar.cc.
 #include <string>
 #include <iostream>
+#include <sstream>
 #define TRUE  ufloat(1)
 #define FALSE ufloat(0)
 
@@ -151,6 +152,34 @@ memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
     delete p3; p3 = 0;
     delete p4; p4 = 0;
   }
+}
+
+/// Whether the \a command was the empty command.
+bool
+spontaneous (const UCommand& u)
+{
+  const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
+  return noop && noop->is_spontaneous();
+}
+
+/// Issue a warning.
+void
+warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+{
+  std::ostringstream o;
+  o << "!!! " << l << ": " << m << "\n" << std::ends;
+  up.connection.send(o.str().c_str(), "warning");
+}
+
+/// Complain if \a command is not spontaneous.
+void
+warn_spontaneous(UParser& up,
+		 const yy::parser::location_type& l, const UCommand& u)
+{
+  if (spontaneous(u))
+    warn (up, l,
+	  "implicit empty instruction.  "
+	  "Use 'noop' to make it explicit.");
 }
 
 /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -558,7 +587,7 @@ command:
 
       UCommand_TREE* res =
 	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
-			  new UCommand_NOOP(@$, true));
+			  new UCommand_NOOP(@$, UCommand_NOOP::zerotime));
       res->setTag("__UGrouped_set_of_commands__");
       res->command2->setTag("__system__");
       $$ = res;
@@ -568,13 +597,16 @@ command:
 /* INSTRUCTION */
 
 instruction:
-  /* empty */ { $$ = 0; } /* FIXME: THIS IS BAD! REMOVE THIS!
-			     FIXME: I WHOLEHEARTEDLY AGREE! */
+  /* empty */
+  {
+    $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
+  }
 
-  | "noop" {
+  | "noop"
+  {
     $$ = new UCommand_NOOP(@$);
     memcheck(up, $$);
-    }
+  }
 
   | refvariable "=" expr namedparameters {
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
@@ -919,8 +951,7 @@ instruction:
 
   | "def" variable "(" identifiers ")" {
 
-      up.connection.server->debug("Warning: 'def' is deprecated, use"
-				       "'function' instead\n");
+      warn (up, @$, "'def' is deprecated, use 'function' instead");
       if (up.connection.functionTag)
       {
 	delete $2;
@@ -950,29 +981,16 @@ instruction:
       }
     }
 
-  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-      if (!$5)
-      {
-	delete $3;
-	delete $5;
-	error(@$, "Empty then-part within an if.");
-	YYERROR;
-      }
+  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 
-  | "if" "(" expr ")" taggedcommand "else" taggedcommand {
-
-      if (!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty then-part within an if.");
-	YYERROR;
-      }
+  | "if" "(" expr ")" taggedcommand "else" taggedcommand
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1007,15 +1025,9 @@ instruction:
       memcheck(up, $$, $3, $5);
     }
 
-  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
+  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1027,16 +1039,9 @@ instruction:
     }
 
   | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$6)
-      {
-	delete $4;
-	delete $6;
-	delete $8;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
-      $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
-      memcheck(up, $$, $4, $6, $8);
+     warn_spontaneous(up, @6, *$6);
+     $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
+     memcheck(up, $$, $4, $6, $8);
     }
 
   | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
@@ -1058,14 +1063,7 @@ instruction:
     }
 
   | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within a whenever command.");
-	YYERROR;
-      }
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1184,8 +1182,8 @@ purevariable:
       memcheck(up, $1);
       if (up.connection.functionTag)
 	// We are inside a function
-	  $$ = new UVariableName(new UString(up.connection.functionTag),
-				 $1, false, $2);
+	$$ = new UVariableName(new UString(up.connection.functionTag),
+			       $1, false, $2);
       else
 	$$ = new UVariableName(new UString(up.connection.connectionTag),
 			       $1, false, $2);

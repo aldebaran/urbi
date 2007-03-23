@@ -1132,14 +1132,28 @@ class UCommand_NOOP : public UCommand
 {
 public:
   MEMORY_MANAGED;
+  enum kind
+  {
+    regular,     //< Inserts a delay when run.
+    zerotime,    //< No delay.
+    spontaneous, //< Was an empty instruction.  No delay.
+  };
 
-  UCommand_NOOP(const location& l, bool zerotime = false);
+  /// If \a zerotime, then don't even wait for a cycle to pass.
+  UCommand_NOOP(const location& l, kind k = regular);
   virtual ~UCommand_NOOP();
 
   virtual void print_(unsigned l) const;
 
   virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
+
+  bool is_spontaneous() const
+  {
+    return kind_ == spontaneous;
+  }
+private:
+  kind kind_;
 };
 
 
