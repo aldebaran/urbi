@@ -21,6 +21,9 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
+
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
@@ -200,9 +203,9 @@ void
 UServer::main (int argc, const char* argv[])
 {
   UValue* arglistv = new UValue ();
+  arglistv->dataType = DATA_LIST;
 
   UValue* current = 0;
-  arglistv->dataType = DATA_LIST;
   for (int i = 0; i < argc; ++i)
   {
     UValue* v = new UValue (argv[i]);
@@ -886,6 +889,18 @@ UServer::unblock(const std::string &tag)
     it->second.blocked = false;
 }
 
+namespace
+{
+  bool
+  file_readable (const std::string& s)
+  {
+    std::ifstream is (s.c_str(), std::ios::binary);
+    bool res = is;
+    is.close();
+    return res;
+  }
+}
+
 std::string
 UServer::find_file (const char* base)
 {
@@ -894,15 +909,15 @@ UServer::find_file (const char* base)
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;
-    std::ifstream is (f.c_str(), std::ios::binary);
-    if (is)
+    ECHO("find_file(" << base << ") testing " << f);
+    if (file_readable(f))
     {
-      is.close ();
-      //DEBUG(("File %s found: %s\n", base, f.c_str()));
+      ECHO("find_file(" << base << ") = " << f);
       return f;
     }
   }
-  //DEBUG(("File %s not found in path\n", base));
+  if (!file_readable(base))
+    error ("cannot find file: %s", base);
   return base;
 }
 
@@ -1012,7 +1027,7 @@ namespace
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
-    static char buf[100];
+    static char buf[1024];
     assert(n < sizeof buf);
     for (unsigned i = 0; i < n; ++i)
       buf[i] = ' ';

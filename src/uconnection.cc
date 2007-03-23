@@ -523,7 +523,6 @@ UConnection::received (const ubyte *buffer, int length)
       }
       server->memoryCheck();
 
-
       // Xtrem memory recovery in case of anomaly
       if (server->memoryOverflow && p.commandTree)
       {

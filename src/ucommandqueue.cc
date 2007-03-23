@@ -19,6 +19,8 @@
 
  **************************************************************************** */
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 #include <cstdlib>
 #include "libport/cstring"
 
@@ -37,12 +39,10 @@ UCommandQueue::UCommandQueue  (int minBufferSize,
 			       int adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
     cursor_         (0),
-    bracketlevel_   (0),
-    sbracketlevel_  (0),
-    parenlevel_     (0),
     discard_        (false),
     closechar_      (' '),
-    closechar2_     (' ')
+    closechar2_     (' '),
+    closers_()
 {
   ADDOBJ(UCommandQueue);
   FREEOBJ(UQueue); // A tester.
@@ -56,29 +56,6 @@ UCommandQueue::~UCommandQueue()
 }
 
 
-//! Pops the next command in the queue.
-/*! popCommand scan the buffer to a terminating ',' or ';' symbol by removing
-    any text between:
-
-    - { and }
-    - [ and ]
-    - / * and * /
-    - // and \\n
-    - # and \\n
-    - (and )
-
-    This function is interruptible which means that is does not rescan the
-    entire buffer from the start each time it is called, but it stores it's
-    internal state before quitting and starts again where it left. This
-    is important when the buffer comes from a TCP/IP entry connection where
-    instructions typically arrive in several shots.
-
-    The final ',' or ';' is the last character of the popped data.
-
-    \param length the length of the extracted command. zero means "no command
-	   is available yet".
-    \return a pointer to the the data popped or 0 in case of error.
-*/
 ubyte*
 UCommandQueue::popCommand (int &length)
 {
@@ -127,28 +104,25 @@ UCommandQueue::popCommand (int &length)
       switch (p0)
       {
 	case '{':
-	  ++bracketlevel_;
-	  break;
-	case '}':
-	  --bracketlevel_;
-	  if (bracketlevel_ < 0)
-	    bracketlevel_ = 0;
+	  closers_.push_back('}');
 	  break;
 	case '[':
-	  ++sbracketlevel_;
-	  break;
-	case ']':
-	  --sbracketlevel_;
-	  if (sbracketlevel_ < 0)
-	    sbracketlevel_ = 0;
+	  closers_.push_back(']');
 	  break;
 	case '(':
-	  ++parenlevel_;
+	  closers_.push_back(')');
 	  break;
 	case ')':
-	  --parenlevel_;
-	  if (parenlevel_ < 0)
-	    parenlevel_ = 0;
+	case ']':
+	case '}':
+	  if (!closers_.empty() && closers_.back() == p0)
+	    closers_.pop_back();
+	  else
+	    // This is a syntax error.  Empty the set of closers so
+	    // that we finish as if the sentence was correct.  It will
+	    // be given to the parser which will report the error
+	    // itself.
+	    closers_.clear();
 	  break;
 
 	case '#':
@@ -184,9 +158,7 @@ UCommandQueue::popCommand (int &length)
     // , or ; separator, except between paren or brackets
     if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
 	&& !discard_
-	&& bracketlevel_ == 0
-	&& sbracketlevel_ == 0
-	&& parenlevel_ == 0)
+	&& closers_.empty())
       found = true;
 
     // Emergency escape character: ¤
@@ -195,9 +167,7 @@ UCommandQueue::popCommand (int &length)
 	&& !discard_)
     {
       length = -1;
-      bracketlevel_ = 0;
-      sbracketlevel_ = 0;
-      parenlevel_ = 0;
+      closers_.clear();
       cursor_ = 0;
       discard_  = false;
       return 0;
@@ -224,6 +194,8 @@ UCommandQueue::popCommand (int &length)
     res = buffer_;
     length = 0;
   }
-
+  ECHO("Sending {{{"
+       << std::string(reinterpret_cast<const char*>(res), length)
+       << "}}}");
   return res;
 }

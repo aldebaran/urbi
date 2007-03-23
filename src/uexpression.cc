@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 // #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
@@ -923,11 +925,17 @@ UValue*
 UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
-  passert (variablename->id->c_str(),
-	   *variablename->id == "exec"
-	   || *variablename->id == "load");
+#ifdef ENABLE_DEBUG_TRACES
   PING();
+  if (command)
+    command->print (10);
+  PING();
+#endif
+
+  passert (variablename->id->c_str(),
+	   *variablename->id == "exec" || *variablename->id == "load");
   bool in_load = *variablename->id == "load";
+
   UValue* e1 = parameters->expression->eval(command, connection);
   ENSURE_TYPES_1 (DATA_STRING);
 
@@ -946,7 +954,12 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     p.process(reinterpret_cast<const ubyte*>(e1->str->c_str()),
 	      e1->str->size());
 
-  PING();
+#ifdef ENABLE_DEBUG_TRACES
+  ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());
+  if (p.commandTree)
+    p.commandTree->print (3);
+#endif
+
   if (connection->functionTag)
     {
       delete connection->functionTag;
@@ -985,9 +998,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   PING();
 
   delete e1;
-  UValue* ret = new UValue();
-  ret->dataType = DATA_VOID;
-  return ret;
+  return new UValue();
 }
 
 UValue*

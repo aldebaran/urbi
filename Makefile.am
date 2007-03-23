@@ -27,9 +27,6 @@ windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj
 
-# Clean VC++ debug file. BTW, Do we want to install it?
-CLEANFILES += vc80.pdb
-
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
 

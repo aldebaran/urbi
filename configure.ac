@@ -53,7 +53,6 @@ URBI_LIBPORT
 ## -------- ##
 
 AC_CONFIG_HEADERS([src/config.h])
-# This is urbivalid.
 URBI_TESTS
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

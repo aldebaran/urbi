@@ -22,6 +22,8 @@
 #ifndef UCOMMANDQUEUE_HH
 # define UCOMMANDQUEUE_HH
 
+# include <vector>
+
 # include "kernel/fwd.hh"
 
 # include "uqueue.hh"
@@ -36,27 +38,52 @@
 class UCommandQueue : public UQueue
 {
 public:
-
   UCommandQueue  (int minBufferSize = 0,
 		  int maxBufferSize = -1,
 		  int adaptive = 0);
 
   virtual ~UCommandQueue ();
 
+  //! Pops the next command in the queue.
+  /*! Scan the buffer to a terminating ',' or ';' symbol by removing
+   any text between:
+
+   - { and }
+   - [ and ]
+   - / * and * /
+   - // and \\n
+   - # and \\n
+   - (and )
+
+   This function is interruptible which means that is does not rescan the
+   entire buffer from the start each time it is called, but it stores it's
+   internal state before quitting and starts again where it left. This
+   is important when the buffer comes from a TCP/IP entry connection where
+   instructions typically arrive in several shots.
+
+   The final ',' or ';' is the last character of the popped data.
+
+   \param length   of the extracted command. zero means "no command
+		   is available yet".
+   \return a pointer to the the data popped or 0 in case of error.
+   */
   ubyte*              popCommand        (int &length);
 
-protected:
+private:
 
-  int            cursor_;        ///< internal position of the preparsing cursor
-				 ///< it's an offset of start_
-  int            bracketlevel_;  ///< Stores how many brackets are open
-  int            sbracketlevel_; ///< Stores how many square brackets are open
-  int            parenlevel_;    ///< Stores how many parenthesis are open
-  bool           discard_;       ///< True when a commentary is active;
-  char           closechar_;     ///< used to store the 1st closing character
-				 ///< for the commentary detection.
-  char           closechar2_;    ///< used to store thezq 2nd closing character
-				 ///< for the commentary detection.
+  /// internal position of the preparsing cursor. It's an offset of
+  /// start_
+  int            cursor_;
+  /// True when a commentary is active;
+  bool           discard_;
+  /// Used to store the 1st closing character for the commentary
+  /// detection.
+  char           closechar_;
+  /// Used to store thezq 2nd closing character for the commentary
+  /// detection.
+  char           closechar2_;
+  /// A stack of expected closing braces: ), ], } etc.
+  std::vector<char> closers_;
 };
 
-#endif
+#endif // !UCOMMANDQUEUE_HH
