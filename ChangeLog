@@ -1,3 +1,8 @@
+2007-03-23  Akim Demaille  <demaille@gostai.com>
+
+	Fix tests invocation
+	* configure.ac (URBI_TESTS): Call it.
+
 2007-03-13  Akim Demaille  <akim.demaille@free.fr>
 
 	* src/uobject.cc (algorithm): Include it.
