@@ -1,3 +1,15 @@
+2007-03-23  Akim Demaille  <demaille@gostai.com>
+
+	More debugging traces
+	* src/parser/uparser.cc: Insert debugging traces.
+	* src/ucommand.cc: Likewise.
+	* src/uexpression.cc: Ditto.
+	* src/userver.cc (file_readable): New.
+	(find_file): New.
+	Report an error when the file is not found.
+	(tab): Use a bigger buffer, as I triggered the assertion for
+	its previous size...
+
 2007-03-21  Akim Demaille  <akim.demaille@free.fr>
 
 	* Makefile.am (CLEANFILES): Remove what's handled by init.mk.

@@ -19,6 +19,9 @@
 
  **************************************************************************** */
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
+
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
@@ -958,19 +961,33 @@ UServer::unblock(const std::string &tag)
     it->second.blocked = false;
 }
 
+namespace
+{
+  bool
+  file_readable (const std::string& s)
+  {
+    std::ifstream is (s.c_str(), std::ios::binary);
+    bool res = is;
+    is.close();
+    return res;
+  }
+}
+
 std::string
 UServer::find_file (const char* base)
 {
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  {
+    std::string f = *p + "/" + base;
+    ECHO("find_file(" << base << ") testing " << f);
+    if (file_readable(f))
     {
-      std::string f = *p + "/" + base;
-      std::ifstream is (f.c_str(), std::ios::binary);
-      if (is)
-	{
-	  is.close ();
-	  return f;
-	}
+      ECHO("find_file(" << base << ") = " << f);
+      return f;
     }
+  }
+  if (!file_readable(base))
+    error ("cannot find file: %s", base);
   return base;
 }
 
@@ -983,7 +1000,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
   std::ifstream is (f.c_str(), std::ios::binary);
   if (!is)
     return UFAIL;
-
+  
   while (is.good ())
   {
     char buf[URBI_BUFSIZ];
@@ -1072,7 +1089,7 @@ namespace
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
-    static char buf[100];
+    static char buf[1024];
     assert(n < sizeof buf);
     for (unsigned i = 0; i < n; ++i)
       buf[i] = ' ';

@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include <cmath>
 #include "libport/cstdio"
@@ -591,7 +593,7 @@ UExpression::eval (UCommand *command,
       }
 
       send_error(connection, command, this,
-                 "Unknown property: %s", str->str());
+		 "Unknown property: %s", str->str());
       return 0;
     }
 
@@ -606,9 +608,9 @@ UExpression::eval (UCommand *command,
       if (e1==0 || e1->dataType == DATA_VOID ||
 	  e2==0 || e2->dataType == DATA_VOID)
       {
-        if (e1 && e1->dataType == DATA_VOID
-            || e2 && e2->dataType == DATA_VOID)
-          send_error(connection, command, this, "Invalid type");
+	if (e1 && e1->dataType == DATA_VOID
+	    || e2 && e2->dataType == DATA_VOID)
+	  send_error(connection, command, this, "Invalid type");
 	delete e1;
 	delete e2;
 
@@ -696,7 +698,7 @@ UExpression::eval (UCommand *command,
 	  return 0;
 	if (ret->refBinary->ref()->parameters)
 	  b->parameters = ret->refBinary->ref()->parameters->copy();
-	else 
+	else
 	  b->parameters = 0;
 	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
 	if (!ref)
@@ -871,11 +873,11 @@ UExpression::eval (UCommand *command,
 									\
       if ((int)e1->val OpAbort 0)					\
       {                                                                 \
-        if (ec1)                                                        \
-          ec = ec1;                                                     \
-        ret->val =  (ufloat) (true OpAbort false);                      \
-        delete e1;                                                      \
-        return ret;                                                     \
+	if (ec1)                                                        \
+	  ec = ec1;                                                     \
+	ret->val =  (ufloat) (true OpAbort false);                      \
+	delete e1;                                                      \
+	return ret;                                                     \
       }                                                                 \
 									\
       UEventCompound* ec2 = 0;						\
@@ -925,9 +927,11 @@ UValue*
 UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
-#if 0
+#ifdef ENABLE_DEBUG_TRACES
   PING();
-  command->print (10);
+  if (command)
+    command->print (10);
+  PING();
 #endif
 
   assert (STREQ(variablename->id->str(), "exec")
@@ -951,9 +955,10 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
 	      e1->str->len());
 
-#if 0
+#ifdef ENABLE_DEBUG_TRACES
   ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());
-  p.commandTree->print (3);
+  if (p.commandTree)
+    p.commandTree->print (3);
 #endif
 
   if (connection->functionTag)
@@ -991,9 +996,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     }
 
   delete e1;
-  UValue* ret = new UValue();
-  ret->dataType = DATA_VOID;
-  return ret;
+  return new UValue();
 }
 
 UValue*
@@ -1406,9 +1409,9 @@ UExpression::eval_FUNCTION (UCommand *command,
     {
       int range =  (int)e1->val;
       if (range)
-        ret->val = rand()%range;
+	ret->val = rand()%range;
       else
-        ret->val = 0;
+	ret->val = 0;
     }
     else if (STREQ(variablename->id->str(), "round"))
     {

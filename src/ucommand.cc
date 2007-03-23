@@ -79,7 +79,7 @@ send_error (UConnection* c, const UCommand* cmd,
   return res;
 }
 
-const char* 
+const char*
 to_string (UCommand::Status s)
 {
   switch (s)
@@ -241,7 +241,7 @@ UCommand::print(unsigned l) const
     CASE(WHILE);
 #undef CASE
   }
-  debug(l, " Tag:[%s] %s (toDelete=%s status=%s)\n", 
+  debug(l, " Tag:[%s] %s (toDelete=%s status=%s)\n",
 	getTag().c_str(), k,
 	toDelete ? "true" : "false",
 	to_string(status));
@@ -3835,7 +3835,7 @@ UCommand_BINDER::execute_(UConnection *connection)
 {
 #ifdef REMOTE_UOBJECT_DISABLED
   send_error(connection, this,
-             "Remote binding not allowed in the free version.");
+	     "Remote binding not allowed in the free version.");
   return UCOMPLETED;
 #endif
 
@@ -4091,14 +4091,14 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	 ++i)
     {
       std::ostringstream tstr;
-      tstr << "*** " << i->second->name().str() << " [" 
-        << i->second->nbparam() << ']';
+      tstr << "*** " << i->second->name().str() << " ["
+	<< i->second->nbparam() << ']';
       tstr << '\n';
       connection->sendf(getTag(), tstr.str().c_str());
     }
     return UCOMPLETED;
   }
-  
+
   if (STREQ(oper->str(), "vars"))
   {
     for (HMvariabletab::iterator i =
@@ -4868,7 +4868,7 @@ UCommand_DEF::execute_(UConnection *connection)
 	connection->server->functiontab.end())
     {
       if (::urbiserver->defcheck)
-        send_error(connection, this,
+	send_error(connection, this,
 		 "Warning: function %s already exists", funname->str());
 
       // undef function
