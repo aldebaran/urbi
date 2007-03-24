@@ -83,16 +83,18 @@ namespace Network
     address.sin_port = htons((unsigned short) port);
     if (addr.empty() || addr == "0.0.0.0")
       address.sin_addr.s_addr = INADDR_ANY;
-    else {
+    else
+    {
       //attempt name resolution
       hostent* hp = gethostbyname (addr.c_str());
       if (!hp) //assume IP address in case of failure
-	address.sin_addr.s_addr = inet_addr(addr.c_str());
+        // FIXME: Check that inet_addr did not return INADDR_NONE.
+	address.sin_addr.s_addr = inet_addr (addr.c_str());
       else
-	address.sin_addr.s_addr = *(int*)hp->h_addr;
+	address.sin_addr.s_addr = inet_addr (hp->h_addr);
     }
     /* bind to port */
-    rc = bind(fd, (struct sockaddr *)&address, sizeof (struct sockaddr));
+    rc = bind(fd, (struct sockaddr*) &address, sizeof (struct sockaddr));
     if (rc == -1)
       return false;
     /* listen for connections */

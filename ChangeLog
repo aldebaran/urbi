@@ -1,3 +1,17 @@
+2007-03-24  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+
+	Fix bug #146 (compilation on ARM): memory alignment and bad code.
+	* src/network/bsdnet/network.cc (TCPServerPipe::init): Fix wrong usage
+	of the struct hostent returned by gethostbyname: the code was
+	converting a char* representing an IP address (eg: "127.0.0.1") in
+	int* and then dereferencing this int in hope to get the numerical IP
+	address. oO
+	* src/uvalue.cc (UValue::operator urbi::USound): Declare the local
+	`struct wavheader' as __attribute__ __packed__.  A raw buffer of bytes
+	is casted in a pointer to struct wavheader, this requires that the
+	compiler does not align the members of the structure on word
+	boundaries.
+
 2007-03-23  Akim Demaille  <demaille@gostai.com>
 
 	Fix #114 and #141
