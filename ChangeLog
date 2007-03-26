@@ -1,3 +1,9 @@
+2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+
+	Fix a bug introduced in r1014.
+	* src/network/bsdnet/network.cc (TCPServerPipe::init): Properly
+	transform the IP address returned by gethostbyname into a in_addr_t.
+
 2007-03-24  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
 	Fix bug #146 (compilation on ARM): memory alignment and bad code.

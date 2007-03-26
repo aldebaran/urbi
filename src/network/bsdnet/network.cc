@@ -91,7 +91,24 @@ namespace Network
         // FIXME: Check that inet_addr did not return INADDR_NONE.
 	address.sin_addr.s_addr = inet_addr (addr.c_str());
       else
-	address.sin_addr.s_addr = inet_addr (hp->h_addr);
+      {
+        /* hp->h_addr is now a char* such as the IP is:
+         *    a.b.c.d
+         * where
+         *    a = hp->h_addr[0]
+         *    b = hp->h_addr[1]
+         *    c = hp->h_addr[2]
+         *    d = hp->h_addr[3]
+         * hence the following calculation.  Don't cast this to an int*
+         * because of the alignment problems (eg: ARM) and also because
+         * sizeof (int) is not necessarily 4.
+         */
+        in_addr_t ip = (hp->h_addr[0] << 24)
+          + (hp->h_addr[1] << 16)
+          + (hp->h_addr[2] << 8)
+          + hp->h_addr[3];
+	address.sin_addr.s_addr = ip;
+      }
     }
     /* bind to port */
     rc = bind(fd, (struct sockaddr*) &address, sizeof (struct sockaddr));
