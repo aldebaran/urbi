@@ -1,5 +1,11 @@
 2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
+	Fix portability on Win32.
+	* src/network/bsdnet/network.cc: Don't use in_addr_t, use uint32_t
+	instead.
+
+2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+
 	Fix a bug introduced in r1014.
 	* src/network/bsdnet/network.cc (TCPServerPipe::init): Properly
 	transform the IP address returned by gethostbyname into a in_addr_t.

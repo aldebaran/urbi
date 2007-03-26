@@ -103,7 +103,7 @@ namespace Network
          * because of the alignment problems (eg: ARM) and also because
          * sizeof (int) is not necessarily 4.
          */
-        in_addr_t ip = (hp->h_addr[0] << 24)
+        uint32_t ip = (hp->h_addr[0] << 24)
           + (hp->h_addr[1] << 16)
           + (hp->h_addr[2] << 8)
           + hp->h_addr[3];
