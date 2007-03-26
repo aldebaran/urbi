@@ -1,3 +1,9 @@
+2007-03-26  POTHIER Benoit  <pothier@gostai.com>
+
+	Revert [1014] [1015] [1016], waiting for a working fix.
+	* src/network/bsdnet/network.cc: .
+	* src/uvalue.cc: .
+
 2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
 	Fix portability on Win32.

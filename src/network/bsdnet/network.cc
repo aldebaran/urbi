@@ -83,35 +83,16 @@ namespace Network
     address.sin_port = htons((unsigned short) port);
     if (addr.empty() || addr == "0.0.0.0")
       address.sin_addr.s_addr = INADDR_ANY;
-    else
-    {
+    else {
       //attempt name resolution
       hostent* hp = gethostbyname (addr.c_str());
       if (!hp) //assume IP address in case of failure
-        // FIXME: Check that inet_addr did not return INADDR_NONE.
-	address.sin_addr.s_addr = inet_addr (addr.c_str());
+	address.sin_addr.s_addr = inet_addr(addr.c_str());
       else
-      {
-        /* hp->h_addr is now a char* such as the IP is:
-         *    a.b.c.d
-         * where
-         *    a = hp->h_addr[0]
-         *    b = hp->h_addr[1]
-         *    c = hp->h_addr[2]
-         *    d = hp->h_addr[3]
-         * hence the following calculation.  Don't cast this to an int*
-         * because of the alignment problems (eg: ARM) and also because
-         * sizeof (int) is not necessarily 4.
-         */
-        uint32_t ip = (hp->h_addr[0] << 24)
-          + (hp->h_addr[1] << 16)
-          + (hp->h_addr[2] << 8)
-          + hp->h_addr[3];
-	address.sin_addr.s_addr = ip;
-      }
+	address.sin_addr.s_addr = *(int*)hp->h_addr;
     }
     /* bind to port */
-    rc = bind(fd, (struct sockaddr*) &address, sizeof (struct sockaddr));
+    rc = bind(fd, (struct sockaddr *)&address, sizeof (struct sockaddr));
     if (rc == -1)
       return false;
     /* listen for connections */
