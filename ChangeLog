@@ -1,5 +1,17 @@
 2007-03-29  Akim Demaille  <demaille@gostai.com>
 
+	Fix int/size_t usage
+	It's quite to PITA to still be working on the branch.
+	Much of this was already done in the trunk.  We're wasting our
+	time on this crap of branch 1.0.
+	* src/memorymanager/blockmemorymanager.hh,
+	* src/memorymanager/memorymanager.cc,
+	* src/memorymanager/memorymanager.hh:
+	Use appropriate types: size_t and ptrdiff_t, not int.
+	This fixes warnings on VC++.
+
+2007-03-29  Akim Demaille  <demaille@gostai.com>
+
 	Determinize long-identifiers.chk
 	It passes on MingW for weird reasons documented in the code.
 	* src/uvariablename.cc (buildFullname): Beware of snprintf.
