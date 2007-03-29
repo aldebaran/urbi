@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include "libport/cstdio"
 #include <cmath>
@@ -284,9 +286,34 @@ UVariableName::buildFullname (UCommand* command,
 			      UConnection* connection,
 			      bool withalias)
 {
-  const int		fullnameMaxSize = 1024;
-  char			name[fullnameMaxSize];
-  char			indexstr[fullnameMaxSize];
+  /* The behavior of snprintf is not portable when we hit the limit.
+   For instance:
+
+   #include <string>
+   #include <cstdlib>
+   #include <iostream>
+   
+   int main()
+   {
+     char buf[10];
+     const char* lng = "012345678901234567890123456789";
+     snprintf (buf, sizeof buf, "%s", lng);
+     std::cout << buf << std::endl;
+     return 0;
+   }
+
+   gives "0123456789$" on MingW, and "012345678" on OSX.
+
+   So to make sure we do nothing silly (such as the $ on MingW),
+   leave at least one 0 at the end.  Of course the right answer is
+   to use stringstreams.  That's already done in the trunk.
+   */
+  const int		fullnameMaxSize = 1023;
+  char			name[fullnameMaxSize + 1];
+  char			indexstr[fullnameMaxSize + 1];
+  name[fullnameMaxSize] = 0;
+  indexstr[fullnameMaxSize] = 0;
+
   UValue*		e1;
   UNamedParameters*	itindex;
   HMaliastab::iterator	hmi;
@@ -609,6 +636,7 @@ UVariableName::buildFullname (UCommand* command,
   else
     fullname_ = new UString(name);
 
+  ECHO(*fullname_);
   return fullname_;
 }
 

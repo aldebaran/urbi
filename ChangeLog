@@ -1,3 +1,9 @@
+2007-03-29  Akim Demaille  <demaille@gostai.com>
+
+	Determinize long-identifiers.chk
+	It passes on MingW for weird reasons documented in the code.
+	* src/uvariablename.cc (buildFullname): Beware of snprintf.
+
 2007-03-26  POTHIER Benoit  <pothier@gostai.com>
 
 	Revert [1014] [1015] [1016], waiting for a working fix.
