@@ -1,3 +1,16 @@
+2007-03-30  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+
+	Fix bug #146 (compilation on ARM): memory alignment.
+	* src/network/bsdnet/network.cc (TCPServerPipe::init): Fix dangerous
+	usage of the struct hostent returned by gethostbyname.  The code
+	expected that sizeof (int) == 4 and wasn't friendly with processors
+	subject to alignment issues (ARM, SPARC, among others).
+	* src/uvalue.cc (UValue::operator urbi::USound): Declare the local
+	`struct wavheader' as __attribute__ __packed__.  A raw buffer of bytes
+	is casted in a pointer to struct wavheader, this requires that the
+	compiler does not align the members of the structure on word
+	boundaries.
+
 2007-03-29  Akim Demaille  <demaille@gostai.com>
 
 	Fix int/size_t usage
@@ -18,9 +31,9 @@
 
 2007-03-26  POTHIER Benoit  <pothier@gostai.com>
 
-	Revert [1014] [1015] [1016], waiting for a working fix.
-	* src/network/bsdnet/network.cc: .
-	* src/uvalue.cc: .
+	Revert the 3 previous changes, waiting for a working fix.
+	* src/network/bsdnet/network.cc,
+	* src/uvalue.cc: Here.
 
 2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
