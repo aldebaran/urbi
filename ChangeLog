@@ -1,3 +1,9 @@
+2007-04-01  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Forevermore solve bug #146 (compilation on ARM/memory alignment).
+	* src/network/bsdnet/network.cc: Use memcpy to preserve the byte
+	order.
+
 2007-03-30  SIGOURE Benoit  <tsuna@lrde.epita.fr>
 
 	Fix bug #146 (compilation on ARM): memory alignment.

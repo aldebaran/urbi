@@ -101,13 +101,10 @@ namespace Network
          *    d = hp->h_addr[3]
          * hence the following calculation.  Don't cast this to an int*
          * because of the alignment problems (eg: ARM) and also because
-         * sizeof (int) is not necessarily 4.
+         * sizeof (int) is not necessarily 4 and also because the result
+         * depends on the endianness of the host.
          */
-        in_addr_t ip = (hp->h_addr[0] << 24)
-          + (hp->h_addr[1] << 16)
-          + (hp->h_addr[2] << 8)
-          + hp->h_addr[3];
-	address.sin_addr.s_addr = ip;
+	memcpy (&address.sin_addr, hp->h_addr, hp->h_length);
       }
     }
     /* bind to port */
