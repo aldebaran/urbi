@@ -935,20 +935,20 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     }
 
     // eval the right side of the assignment and check for errors
-    UValue *target = expression->eval(this, connection);
-    if (target == 0)
+    UValue *rhs = expression->eval(this, connection);
+    if (rhs == 0)
       return UCOMPLETED;
 
     // Check type compatibility if the left side variable already exists
     if (variable &&
 	variable->value->dataType != DATA_VOID &&
-	target->dataType != variable->value->dataType)
+	rhs->dataType != variable->value->dataType)
     {
       if (::urbiserver->defcheck)
       {
 	send_error(connection, this, "Warning: %s type mismatch",
 		   variablename->getFullname()->c_str());
-	delete target;
+	delete rhs;
 	return UCOMPLETED;
       }
 
@@ -956,7 +956,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       variable = 0;
     }
 
-    switch (target->dataType)
+    switch (rhs->dataType)
     {
       case DATA_UNKNOWN:
       case DATA_FILE:
@@ -972,18 +972,18 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  // FIXME: 65000 is not dividable by 42 nor 51.
 	  if (char *result =
 	      static_cast<char*> (malloc (sizeof (char)
-					  * (65000+target->str->size()))))
+					  * (65000+rhs->str->size()))))
 	  {
-	    strcpy (result, target->str->c_str());
-	    UNamedParameters* modif = parameters;
-	    while (modif)
+	    strcpy (result, rhs->str->c_str());
+
+	    for (UNamedParameters* i = parameters; i; i = i->next)
 	    {
-	      UValue* modifier = modif->expression->eval(this, connection);
+	      UValue* modifier = i->expression->eval(this, connection);
 	      if (!modifier)
 	      {
 		send_error(connection, this,
 			   "String composition failed");
-		delete target;
+		delete rhs;
 		return UCOMPLETED;
 	      }
 
@@ -995,7 +995,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 		modifier->str = new UString(ostr.str().c_str());
 	      }
 
-	      std::string n = std::string("$") + modif->name->c_str();
+	      std::string n = std::string("$") + i->name->c_str();
 	      if (strstr(modifier->str->c_str(), n.c_str()) == 0)
 		while (char* possub = strstr(result, n.c_str()))
 		{
@@ -1008,27 +1008,26 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 		}
 
 	      delete modifier;
-	      modif = modif->next;
 	    }
-	    *target->str = result;
+	    *rhs->str = result;
 	    free(result);
 	  }
 
 	// FIXME: Factor with the following cases.
 	// Assignment
 	if (variable) // the variable already exists
-	  variable->set(target);
+	  variable->set(rhs);
 	else
 	{
 	  variable = new UVariable(variablename->getFullname()->c_str(),
-				   target->copy());
+				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
 	  connection->localVariableCheck(variable);
 	  variable->updated();
 	}
 
-	delete target;
+	delete rhs;
 	return UCOMPLETED;
 
       case DATA_BINARY:
@@ -1036,23 +1035,23 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       case DATA_VOID:
 	// Assignment
 	if (variable) // the variable already exists
-	  variable->set(target);
+	  variable->set(rhs);
 	else
 	{
 	  variable = new UVariable(variablename->getFullname()->c_str(),
-				   target->copy());
+				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
 	  connection->localVariableCheck(variable);
 	  variable->updated();
 	}
 
-	delete target;
+	delete rhs;
 	return UCOMPLETED;
 
       case DATA_NUM:
 	controlled = false; // is a virtual "time:0" needed?
-	targetval = target->val;
+	targetval = rhs->val;
 
 	// Handling normalized correction
 	if (variable && variablename->isnormalized)
@@ -1065,7 +1064,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 			 "Impossible to normalize:"
 			 " no range defined for variable %s",
 			 variablename->getFullname()->c_str());
-	    delete target;
+	    delete rhs;
 	    return UCOMPLETED;
 	  }
 
@@ -1092,7 +1091,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 			 "Modificator error: %s unknown"
 			 " (no start value)",
 			 variablename->getFullname()->c_str());
-	    delete target;
+	    delete rhs;
 	    return UCOMPLETED;
 	  }
 
@@ -1104,7 +1103,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    if (!modif->expression || !modif->name)
 	    {
 	      send_error(connection, this, "Invalid modifier");
-	      delete target;
+	      delete rhs;
 	      return UCOMPLETED;
 	    }
 
@@ -1172,7 +1171,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 		send_error(connection, this,
 			   "Invalid modifier value");
 		delete modifier;
-		delete target;
+		delete rhs;
 		return UCOMPLETED;
 	      }
 	      endtime = currentTime + modifier->val;
@@ -1182,7 +1181,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    {
 	      send_error(connection, this,
 			 "Unkown modifier name");
-	      delete target;
+	      delete rhs;
 	      return UCOMPLETED;
 	    }
 	  }
@@ -1192,7 +1191,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	if (!variable)
 	{
 	  variable = new UVariable(variablename->getFullname()->c_str(),
-				   target->copy());
+				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
 	  connection->localVariableCheck(variable);
@@ -1208,8 +1207,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  // FIXME: delete modif_time before?
 	  modif_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
 
-	// clean the temporary target UValue
-	delete target;
+	// clean the temporary rhs UValue
+	delete rhs;
 
 	// UDISCARD mode
 	if (variable->blendType == urbi::UDISCARD &&

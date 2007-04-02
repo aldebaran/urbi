@@ -1,5 +1,12 @@
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
+	A for loop
+	* src/ucommand.cc (UCommand_ASSIGN_VALUE::execute_): Use a for
+	loop instead of a while loop.
+	Rename the "target" variable as "rhs" for readability.
+
+2007-04-02  Akim Demaille  <demaille@gostai.com>
+
 	Factoring
 	* src/ucommand.cc (has_sinusoidal_modifier): New.
 	Use it.
