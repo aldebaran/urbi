@@ -43,12 +43,12 @@ class BlockPool: public libport::Lockable
   /// Current position in pool.
   void** cptr;
   /// Pool size in number of items.
-  int size;
-  int itemSize;
+  size_t size;
+  size_t itemSize;
 };
 
 void block_operator_delete(BlockPool* mempool, void* ptr);
 
-void* block_operator_new(BlockPool* &mempool, int sz);
+void* block_operator_new(BlockPool* &mempool, size_t sz);
 
 #endif // !BLOCKMEMORYMANAGER_HH

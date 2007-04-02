@@ -239,7 +239,7 @@ UValue::operator urbi::USound()
     short bitperchannel;
     char data[4];
     int datalength;
-  };
+  } __attribute__ ((__packed__));
 
   urbi::USound snd;
   snd.data=0;

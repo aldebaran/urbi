@@ -1,3 +1,67 @@
+2007-04-02  Akim Demaille  <demaille@gostai.com>
+
+	svn merge -r 1011:1038 https://svn.gostai.com/svn/kernel1/branches/1.0
+	2007-04-01  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Forevermore solve bug #146 (compilation on ARM/memory alignment).
+	* src/network/bsdnet/network.cc: Use memcpy to preserve the byte
+	order.
+
+	2007-03-30  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+	Fix bug #146 (compilation on ARM): memory alignment.
+	* src/network/bsdnet/network.cc (TCPServerPipe::init): Fix dangerous
+	usage of the struct hostent returned by gethostbyname.  The code
+	expected that sizeof (int) == 4 and wasn't friendly with processors
+	subject to alignment issues (ARM, SPARC, among others).
+	* src/uvalue.cc (UValue::operator urbi::USound): Declare the local
+	`struct wavheader' as __attribute__ __packed__.  A raw buffer of bytes
+	is casted in a pointer to struct wavheader, this requires that the
+	compiler does not align the members of the structure on word
+	boundaries.
+
+	2007-03-29  Akim Demaille  <demaille@gostai.com>
+	Fix int/size_t usage
+	It's quite to PITA to still be working on the branch.
+	Much of this was already done in the trunk.  We're wasting our
+	time on this crap of branch 1.0.
+	* src/memorymanager/blockmemorymanager.hh,
+	* src/memorymanager/memorymanager.cc,
+	* src/memorymanager/memorymanager.hh:
+	Use appropriate types: size_t and ptrdiff_t, not int.
+	This fixes warnings on VC++.
+
+	2007-03-29  Akim Demaille  <demaille@gostai.com>
+	Determinize long-identifiers.chk
+	It passes on MingW for weird reasons documented in the code.
+	* src/uvariablename.cc (buildFullname): Beware of snprintf.
+
+	2007-03-26  POTHIER Benoit  <pothier@gostai.com>
+	Revert the 3 previous changes, waiting for a working fix.
+	* src/network/bsdnet/network.cc,
+	* src/uvalue.cc: Here.
+
+	2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+	Fix portability on Win32.
+	* src/network/bsdnet/network.cc: Don't use in_addr_t, use uint32_t
+	instead.
+
+	2007-03-26  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+	Fix a bug introduced in r1014.
+	* src/network/bsdnet/network.cc (TCPServerPipe::init): Properly
+	transform the IP address returned by gethostbyname into a in_addr_t.
+
+	2007-03-24  SIGOURE Benoit  <tsuna@lrde.epita.fr>
+	Fix bug #146 (compilation on ARM): memory alignment and bad code.
+	* src/network/bsdnet/network.cc (TCPServerPipe::init): Fix wrong usage
+	of the struct hostent returned by gethostbyname: the code was
+	converting a char* representing an IP address (eg: "127.0.0.1") in
+	int* and then dereferencing this int in hope to get the numerical IP
+	address. oO
+	* src/uvalue.cc (UValue::operator urbi::USound): Declare the local
+	`struct wavheader' as __attribute__ __packed__.  A raw buffer of bytes
+	is casted in a pointer to struct wavheader, this requires that the
+	compiler does not align the members of the structure on word
+	boundaries.
+
 2007-03-23  Akim Demaille  <demaille@gostai.com>
 
 	svn merge -r 1007:1011 https://svn.gostai.com/svn/kernel1/branches/1.0

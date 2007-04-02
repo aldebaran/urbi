@@ -114,13 +114,28 @@ namespace Network
       //attempt name resolution
       hostent* hp = gethostbyname (addr.c_str());
       if (!hp) //assume IP address in case of failure
-	address.sin_addr.s_addr = inet_addr(addr.c_str());
+	// FIXME: Check that inet_addr did not return INADDR_NONE.
+	address.sin_addr.s_addr = inet_addr (addr.c_str());
       else
-	address.sin_addr.s_addr = *(int*)hp->h_addr;
+      {
+	/* hp->h_addr is now a char* such as the IP is:
+	 *    a.b.c.d
+	 * where
+	 *    a = hp->h_addr[0]
+	 *    b = hp->h_addr[1]
+	 *    c = hp->h_addr[2]
+	 *    d = hp->h_addr[3]
+	 * hence the following calculation.  Don't cast this to an int*
+	 * because of the alignment problems (eg: ARM) and also because
+	 * sizeof (int) is not necessarily 4 and also because the result
+	 * depends on the endianness of the host.
+	 */
+	memcpy (&address.sin_addr, hp->h_addr, hp->h_length);
+      }
     }
 
     // Bind to port.
-    if (bind(fd, (sockaddr*)&address, sizeof (sockaddr)))
+    if (bind(fd, (sockaddr*) &address, sizeof (sockaddr)) == -1)
     {
       perror ("cannot bind");
       return false;

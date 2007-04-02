@@ -7,7 +7,7 @@
 namespace MemoryManager
 {
   /// Allocated total.
-  extern int allocatedMemory;
+  extern size_t allocatedMemory;
   /* later
      void * alloc(int sz);
      void  free(void * );
