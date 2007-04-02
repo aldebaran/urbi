@@ -828,6 +828,18 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   return UFALLTHRU;
 }
 
+namespace
+{
+  // Check if sinusoidal (=> no start value needed = no integrity check)
+  bool has_sinusoidal_modifier (const UNamedParameters* mod)
+  {
+    for (const UNamedParameters* i = mod; i; i = i->next)
+      if (*i->name == "sin" || *i->name == "cos")
+	return true;
+    return false;
+  }
+}
+
 //! UCommand subclass execution function
 UCommand::Status
 UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
@@ -909,10 +921,10 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     // Check the +error flag
     errorFlag = false;
     for (UNamedParameters *param = flags; param; param = param->next)
-      if (param->name &&
-	  *param->name == "flag" &&
-	  param->expression &&
-	  param->expression->val == 2) // 2 = +error
+      if (param->name
+	  && *param->name == "flag"
+	  && param->expression
+	  && param->expression->val == 2) // 2 = +error
 	errorFlag = true;
 
     // UCANCEL mode
@@ -1072,18 +1084,8 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	// Handling FLAGS
 	if (parameters)
 	{
-	  // Check if sinusoidal (=> no start value needed = no integrity check)
-
-	  bool sinusoidal = false;
-	  for (UNamedParameters* modif = parameters; modif; modif = modif->next)
-	    if (*modif->name == "sin" || *modif->name == "cos")
-	    {
-	      sinusoidal = true;
-	      break;
-	    }
-
 	  // Checking integrity (variable exists), if not sinusoidal
-	  if (variable == 0 && !sinusoidal)
+	  if (variable == 0 && !has_sinusoidal_modifier (parameters))
 	  {
 	    if (!variablename->fromGroup)
 	      send_error(connection, this,
@@ -1215,11 +1217,9 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  return UCOMPLETED;
 
 	// init valarray for a "val" assignment
-	ufloat *targetvalue;
-	if (!controlled)
-	  targetvalue = &(variable->value->val); // prevents a read access
-	else
-	  targetvalue =  &(variable->get()->val);
+	ufloat *targetvalue = (!controlled
+			       ? &variable->value->val // prevents a read access
+			       : &variable->get()->val);
 
 	if (variable->autoUpdate)
 	  valtmp = targetvalue;	      // &variable->value->val
@@ -1313,8 +1313,6 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 {
   ufloat deltaTime = connection->server->getFrequency();
   ufloat currentVal = controlled ? variable->get()->val : variable->value->val;
-
-  ufloat phase, amplitude;
 
   // Adaptive mode? (only for "speed" and "time")
   bool adaptive = false;
@@ -1551,7 +1549,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     if (targettime == 0)
       targettime = 0.1;
 
-    phase = 0;
+    ufloat phase = 0;
     if (modif_phase)
       if (UValue* v = modif_phase->eval(this, connection))
       {
@@ -1559,7 +1557,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	delete v;
       }
 
-    amplitude = 0;
+    ufloat amplitude = 0;
     if (modif_ampli)
       if (UValue* v = modif_ampli->eval(this, connection))
       {

@@ -1,5 +1,13 @@
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
+	Factoring
+	* src/ucommand.cc (has_sinusoidal_modifier): New.
+	Use it.
+	Reduce a couple of variable scopes.
+	* tests-local.mk: New.
+
+2007-04-02  Akim Demaille  <demaille@gostai.com>
+
 	if < switch
 	* src/ucommand.cc (UCommand_ASSIGN_VALUE::execute_): Use switch
 	to switch, not if.
