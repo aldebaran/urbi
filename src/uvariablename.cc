@@ -288,7 +288,7 @@ UVariableName::update_array_mangling (UCommand* cmd,
     for (UNamedParameters* p = ps; p; p = p->next)
     {
       UValue* e1 = p->expression->eval(cmd, cn);
-      if (e1==0)
+      if (e1 == 0)
       {
 	send_error(cn, cmd, "array index evaluation failed");
 	delete fullname_;
@@ -359,16 +359,22 @@ UVariableName::build_from_str(UCommand* command, UConnection* connection)
 
 namespace
 {
+  /// Descend \a tab looking for \a cp.
+  std::string
+  resolve_aliases(const HMaliastab& tab, const std::string& s)
+  {
+    const std::string* res = &s;
+    for (HMaliastab::const_iterator i = tab.find(res->c_str()); i != tab.end();
+	 i = tab.find(res->c_str()))
+      res = &i->second->str();
+    return *res;
+  }
+
   /// Descend ::urbiserver->objaliastab looking for \a cp.
   std::string
   resolve_aliases(const std::string& s)
   {
-    const std::string* res = &s;
-    for (HMaliastab::iterator i = ::urbiserver->objaliastab.find(res->c_str());
-	 i != ::urbiserver->objaliastab.end();
-	 i = ::urbiserver->objaliastab.find(res->c_str()))
-      res = &i->second->str();
-    return *res;
+    return resolve_aliases (::urbiserver->objaliastab, s);
   }
 
 }
@@ -492,17 +498,10 @@ UVariableName::buildFullname (UCommand* command,
       // Comes from a simple IDENTIFIER.
       n = suffix(resolve_aliases(suffix(n)));
 
-    HMaliastab::iterator hmi= ::urbiserver->aliastab.find(n.c_str());
-    HMaliastab::iterator past_hmi = hmi;
-    while (hmi != ::urbiserver->aliastab.end())
+    std::string resolved = resolve_aliases (::urbiserver->aliastab, n);
+    if (resolved != n)
     {
-      past_hmi = hmi;
-      hmi = ::urbiserver->aliastab.find(hmi->second->c_str());
-    }
-
-    if (past_hmi != ::urbiserver->aliastab.end())
-    {
-      name = past_hmi->second->c_str();
+      name = resolved;
       nostruct = false;
       delete device;
       device = 0;
