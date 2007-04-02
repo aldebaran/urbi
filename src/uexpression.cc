@@ -21,9 +21,6 @@
 // #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
-// #define ENABLE_DEBUG_TRACES
-#include "libport/compiler.hh"
-
 #include <cmath>
 #include "libport/cstdio"
 
@@ -1617,7 +1614,7 @@ UExpression::eval_VARIABLE (UCommand *command,
   if (!variablename->getFullname())
     return 0;
   UString* devicename = variablename->getDevice();
-  UValue* ret = 0;
+
   const char* varname;
   if (!variable)
   {
@@ -1628,9 +1625,9 @@ UExpression::eval_VARIABLE (UCommand *command,
       kernel::findEventHandler(variablename->getFullname(), 0);
     if (eh)
     {
-      ret = new UValue(ufloat(1));
+      UValue* res = new UValue(ufloat(1));
       if (eh->noPositive())
-	ret->val = 0; // no active (positive) event in the handler
+	res->val = 0; // no active (positive) event in the handler
 
       ec = new UEventCompound
 	(new UEventMatch
@@ -1638,7 +1635,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  0,
 	  command,
 	  connection));
-      return ret;
+      return res;
     }
 
     // virtual variables
@@ -1669,6 +1666,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     }
   }
 
+  UValue* ret = 0;
   if (!variable)
   {
     char* pp = const_cast<char*>(strchr(varname, '.'));
@@ -1704,8 +1702,6 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  // welcome to C-string hacking grand master area
 	  // Don't let unaccompagnied children see this.
 	  UValue* xval = tmpvar->value->liststart;
-	  int index;
-	  int curr;
 	  p[0] = '_';
 	  p = p + 2; // beginning of the index
 	  char* p2 = strchr(p, '_');
@@ -1713,8 +1709,8 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  {
 	    if (p2)
 	      p2[0] = 0;
-	    index = atoi(p);
-	    curr = 0;
+	    int index = atoi(p);
+	    int curr = 0;
 	    while (curr != index && xval)
 	    {
 	      xval = xval->next;

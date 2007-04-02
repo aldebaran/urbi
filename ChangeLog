@@ -1,5 +1,9 @@
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
+	* src/uexpression.cc: Scope reduction.
+
+2007-04-02  Akim Demaille  <demaille@gostai.com>
+
 	* src/uvariablename.cc (resolve_alias): Introduce a binary version.
 	Use to factor some code.
 
