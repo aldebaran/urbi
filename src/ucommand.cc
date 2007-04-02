@@ -874,9 +874,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	&& expression->variablename->nostruct)
     {
       UString* objname = expression->variablename->id;
-
-      HMobjtab::iterator objit = ::urbiserver->objtab.find(objname->c_str());
-      if (objit != ::urbiserver->objtab.end())
+      if (libport::mhas(::urbiserver->objtab, objname->c_str()))
       {
 	// the use of 'id' is a hack that works.
 	HMaliastab::iterator hmi =
@@ -4384,9 +4382,8 @@ UCommand_EMIT::execute_(UConnection *connection)
 	   cbi != hmfi->second.end();
 	   ++cbi)
       {
-	if (((parameters) &&
-	     (parameters->size() == (*cbi)->nbparam)) ||
-	    ((!parameters) && (!(*cbi)->nbparam)) )
+	if (parameters && parameters->size() == (*cbi)->nbparam
+	    || !parameters && !(*cbi)->nbparam)
 	{
 	  urbi::UList tmparray;
 	  for (UNamedParameters *pvalue = parameters;

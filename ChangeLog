@@ -1,5 +1,10 @@
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
+	Use mhas
+	* src/ucommand.cc (UCommand_ASSIGN_VALUE::execute_): here.
+
+2007-04-02  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 1011:1038 https://svn.gostai.com/svn/kernel1/branches/1.0
 	2007-04-01  Benoit Sigoure  <tsuna@lrde.epita.fr>
 	Forevermore solve bug #146 (compilation on ARM/memory alignment).
