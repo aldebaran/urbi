@@ -1,3 +1,11 @@
+2007-04-02  Akim Demaille  <akim.demaille@free.fr>
+
+	undefall
+	* src/ucommand.cc (UCommand_OPERATOR::execute_): When handling
+	undefall, iterate instead of staying on begin().
+	Currently, it SEGVs (instead of hanging, that's an improvement :).
+	* src/uexpression.cc: Formatting changes.
+
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
 	* src/uexpression.cc: Scope reduction.

@@ -1943,8 +1943,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	{
 	  // could be a list index
 	  p[0] = 0;
-	  HMvariabletab::iterator hmv =
-	    ::urbiserver->variabletab.find(varname);
+	  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
 	  p[0] = '_';
 	  if (hmv != ::urbiserver->variabletab.end())
 	    variable = hmv->second;

@@ -2833,7 +2833,7 @@ UCommand_NEW::execute_(UConnection *connection)
   }
   else
     oss << "noop }";
-  ECHO(oss.c_str());
+  ECHO(oss.str());
   strMorph (oss.str());
   return UMORPH;
 }
@@ -3764,8 +3764,7 @@ UCommand_BINDER::execute_(UConnection *connection)
   {
     case UBIND_VAR:
     {
-      HMvariabletab::iterator it =
-	::urbiserver->variabletab.find(key->c_str());
+      HMvariabletab::iterator it = ::urbiserver->variabletab.find(key->c_str());
       if (it == ::urbiserver->variabletab.end())
       {
 	UVariable *variable = new UVariable(key->c_str(), new UValue());
@@ -3884,7 +3883,8 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 # include "testspeed.hh"
 #endif
 //! UCommand subclass execution function
-UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
+UCommand::Status
+UCommand_OPERATOR::execute_(UConnection *connection)
 {
   if (*oper == "ping")
   {
@@ -3947,9 +3947,8 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
   {
     connection->sendf (getTag(), "*** All variables and functions cleared\n");
 
-    for (HMvariabletab::iterator i =
-	   connection->server->variabletab.begin();
-	 i != connection->server->variabletab.end();)
+    for (HMvariabletab::iterator i = connection->server->variabletab.begin();
+	 i != connection->server->variabletab.end(); ++i)
       delete i->second;
 
     connection->server->variabletab.clear();
@@ -3958,6 +3957,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 
     return UCOMPLETED;
   }
+
   if (*oper == "reset")
   {
     connection->sendf (getTag(), "*** Reset in progress\n");
@@ -4035,7 +4035,6 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
       }
       o << '\n';
       connection->sendf(getTag(), o.str().c_str());
-
     }
 
     return UCOMPLETED;
@@ -4060,12 +4059,10 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "uservars")
   {
-    for (HMvariabletab::iterator i =
-	   connection->server->variabletab.begin();
+    for (HMvariabletab::iterator i = connection->server->variabletab.begin();
 	 i != connection->server->variabletab.end();
 	 ++i)
     {
-
       if (i->second->uservar)
       {
 	std::ostringstream o;
