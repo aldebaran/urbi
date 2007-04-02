@@ -1,5 +1,11 @@
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
+	if < switch
+	* src/ucommand.cc (UCommand_ASSIGN_VALUE::execute_): Use switch
+	to switch, not if.
+
+2007-04-02  Akim Demaille  <demaille@gostai.com>
+
 	Use mhas
 	* src/ucommand.cc (UCommand_ASSIGN_VALUE::execute_): here.
 

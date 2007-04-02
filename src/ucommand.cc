@@ -944,298 +944,299 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       variable = 0;
     }
 
-    // STRING init ///////////////////
-    //////////////////////////////////
-    if (target->dataType == DATA_STRING)  // STRING
+    switch (target->dataType)
     {
-      // Handle String Composition
-      if (parameters != 0)
-	// FIXME: 65000 is not dividable by 42 nor 51.
-	if (char *result =
-	    static_cast<char*> (malloc (sizeof (char)
-					* (65000+target->str->size()))))
-	{
-	  strcpy (result, target->str->c_str());
-	  UNamedParameters* modif = parameters;
-	  while (modif)
+      case DATA_UNKNOWN:
+      case DATA_FILE:
+      case DATA_OBJ:
+      case DATA_FUNCTION:
+      case DATA_VARIABLE:
+	// FIXME: Were implicitly ignored by the previous code, a list of if's.
+	break;
+
+      case DATA_STRING:
+	// Handle String Composition
+	if (parameters != 0)
+	  // FIXME: 65000 is not dividable by 42 nor 51.
+	  if (char *result =
+	      static_cast<char*> (malloc (sizeof (char)
+					  * (65000+target->str->size()))))
 	  {
-	    UValue* modifier = modif->expression->eval(this, connection);
-	    if (!modifier)
+	    strcpy (result, target->str->c_str());
+	    UNamedParameters* modif = parameters;
+	    while (modif)
 	    {
-	      send_error(connection, this,
-			 "String composition failed");
-	      delete target;
-	      return UCOMPLETED;
-	    }
-
-	    if (modifier->dataType == DATA_NUM)
-	    {
-	      modifier->dataType = DATA_STRING;
-	      std::ostringstream ostr;
-	      ostr << modifier->val;
-	      modifier->str = new UString(ostr.str().c_str());
-	    }
-
-	    std::string n = std::string("$") + modif->name->c_str();
-	    if (strstr(modifier->str->c_str(), n.c_str()) == 0)
-	      while (char* possub = strstr(result, n.c_str()))
+	      UValue* modifier = modif->expression->eval(this, connection);
+	      if (!modifier)
 	      {
-		memmove(possub + modifier->str->size(),
-			possub + n.size(),
-			strlen(result)
-			- static_cast<int>(possub - result)
-			- n.size()+1);
-		strncpy (possub, modifier->str->c_str(), modifier->str->size());
+		send_error(connection, this,
+			   "String composition failed");
+		delete target;
+		return UCOMPLETED;
 	      }
 
-	    delete modifier;
-	    modif = modif->next;
-	  }
-	  *target->str = result;
-	  free(result);
-	}
+	      if (modifier->dataType == DATA_NUM)
+	      {
+		modifier->dataType = DATA_STRING;
+		std::ostringstream ostr;
+		ostr << modifier->val;
+		modifier->str = new UString(ostr.str().c_str());
+	      }
 
-      // FIXME: Factor with the following cases.
-      // Assignment
-      if (variable) // the variable already exists
-	variable->set(target);
-      else
-      {
-	variable = new UVariable(variablename->getFullname()->c_str(),
-				 target->copy());
-	if (!variable)
-	  return UCOMPLETED;
-	connection->localVariableCheck(variable);
-	variable->updated();
-      }
+	      std::string n = std::string("$") + modif->name->c_str();
+	      if (strstr(modifier->str->c_str(), n.c_str()) == 0)
+		while (char* possub = strstr(result, n.c_str()))
+		{
+		  memmove(possub + modifier->str->size(),
+			  possub + n.size(),
+			  strlen(result)
+			  - static_cast<int>(possub - result)
+			  - n.size()+1);
+		  strncpy (possub, modifier->str->c_str(), modifier->str->size());
+		}
 
-      delete target;
-      return UCOMPLETED;
-    }
-
-    if (target->dataType == DATA_BINARY
-	|| target->dataType == DATA_LIST
-	|| target->dataType == DATA_VOID)
-    {
-      // Assignment
-      if (variable) // the variable already exists
-	variable->set(target);
-      else
-      {
-	variable = new UVariable(variablename->getFullname()->c_str(),
-				 target->copy());
-	if (!variable)
-	  return UCOMPLETED;
-	connection->localVariableCheck(variable);
-	variable->updated();
-      }
-
-      delete target;
-      return UCOMPLETED;
-    }
-
-    // NUM init ///////////////////
-    //////////////////////////////////
-    if (target->dataType == DATA_NUM) // NUM
-    {
-      controlled = false; // is a virtual "time:0" needed?
-      targetval = target->val;
-
-      // Handling normalized correction
-      if (variable && variablename->isnormalized)
-      {
-	if (variable->rangemin == -UINFINITY
-	    || variable->rangemax ==  UINFINITY)
-	{
-	  if (!variablename->fromGroup)
-	    send_error(connection, this,
-		       "Impossible to normalize:"
-		       " no range defined for variable %s",
-		       variablename->getFullname()->c_str());
-	  delete target;
-	  return UCOMPLETED;
-	}
-
-	if (targetval < 0)
-	  targetval = 0;
-	if (targetval > 1)
-	  targetval = 1;
-
-	targetval = variable->rangemin + targetval *
-	  (variable->rangemax - variable->rangemin);
-      }
-
-      // Store init time
-      starttime = currentTime;
-
-      // Handling FLAGS
-      if (parameters)
-      {
-	// Check if sinusoidal (=> no start value needed = no integrity check)
-
-	bool sinusoidal = false;
-	for (UNamedParameters* modif = parameters; modif; modif = modif->next)
-	  if (*modif->name == "sin" || *modif->name == "cos")
-	  {
-	    sinusoidal = true;
-	    break;
+	      delete modifier;
+	      modif = modif->next;
+	    }
+	    *target->str = result;
+	    free(result);
 	  }
 
-	// Checking integrity (variable exists), if not sinusoidal
-	if (variable == 0 && !sinusoidal)
+	// FIXME: Factor with the following cases.
+	// Assignment
+	if (variable) // the variable already exists
+	  variable->set(target);
+	else
 	{
-	  if (!variablename->fromGroup)
-	    send_error(connection, this,
-		       "Modificator error: %s unknown"
-		       " (no start value)",
-		       variablename->getFullname()->c_str());
-	  delete target;
-	  return UCOMPLETED;
+	  variable = new UVariable(variablename->getFullname()->c_str(),
+				   target->copy());
+	  if (!variable)
+	    return UCOMPLETED;
+	  connection->localVariableCheck(variable);
+	  variable->updated();
 	}
 
-	speed = 0;
+	delete target;
+	return UCOMPLETED;
 
-	// Initialize modifiers
-	for (UNamedParameters* modif = parameters; modif; modif = modif->next)
+      case DATA_BINARY:
+      case DATA_LIST:
+      case DATA_VOID:
+	// Assignment
+	if (variable) // the variable already exists
+	  variable->set(target);
+	else
 	{
-	  if (!modif->expression || !modif->name)
+	  variable = new UVariable(variablename->getFullname()->c_str(),
+				   target->copy());
+	  if (!variable)
+	    return UCOMPLETED;
+	  connection->localVariableCheck(variable);
+	  variable->updated();
+	}
+
+	delete target;
+	return UCOMPLETED;
+
+      case DATA_NUM:
+	controlled = false; // is a virtual "time:0" needed?
+	targetval = target->val;
+
+	// Handling normalized correction
+	if (variable && variablename->isnormalized)
+	{
+	  if (variable->rangemin == -UINFINITY
+	      || variable->rangemax ==  UINFINITY)
 	  {
-	    send_error(connection, this, "Invalid modifier");
+	    if (!variablename->fromGroup)
+	      send_error(connection, this,
+			 "Impossible to normalize:"
+			 " no range defined for variable %s",
+			 variablename->getFullname()->c_str());
 	    delete target;
 	    return UCOMPLETED;
 	  }
 
-	  if (*modif->name == "sin")
-	  {
-	    modif_sin = modif->expression;
-	    controlled = true;
-	  }
-	  else if (*modif->name == "cos")
-	  {
-	    modif_sin = modif->expression;
-	    // FIXME: delete modif_phase before?
-	    modif_phase = new UExpression(loc_,
-					  UExpression::VALUE, PI/ufloat(2));
-	    controlled = true;
-	  }
-	  else if (*modif->name == "ampli")
-	  {
-	    modif_ampli = modif->expression;
-	  }
-	  else if (*modif->name == "smooth")
-	  {
-	    modif_smooth = modif->expression;
-	    controlled = true;
-	  }
-	  else if (*modif->name == "time")
-	  {
-	    modif_time = modif->expression;
-	    controlled = true;
-	  }
-	  else if (*modif->name == "speed")
-	  {
-	    modif_speed = modif->expression;
-	    controlled = true;
-	  }
-	  else if (*modif->name == "accel")
-	  {
-	    modif_accel = modif->expression;
-	    controlled = true;
-	  }
-	  else if (*modif->name == "adaptive")
-	  {
-	    modif_adaptive = modif->expression;
-	  }
-	  else if (*modif->name == "phase")
-	  {
-	    modif_phase = modif->expression;
-	  }
-	  else if (*modif->name == "getphase")
-	  {
-	    if (modif->expression->type != UExpression::VARIABLE)
+	  if (targetval < 0)
+	    targetval = 0;
+	  if (targetval > 1)
+	    targetval = 1;
+
+	  targetval = variable->rangemin + targetval *
+	    (variable->rangemax - variable->rangemin);
+	}
+
+	// Store init time
+	starttime = currentTime;
+
+	// Handling FLAGS
+	if (parameters)
+	{
+	  // Check if sinusoidal (=> no start value needed = no integrity check)
+
+	  bool sinusoidal = false;
+	  for (UNamedParameters* modif = parameters; modif; modif = modif->next)
+	    if (*modif->name == "sin" || *modif->name == "cos")
 	    {
-	      send_error(connection, this,
-			 "a variable is expected for"
-			 " the 'getphase' modifier");
-	      return UCOMPLETED;
+	      sinusoidal = true;
+	      break;
 	    }
-	    modif_getphase = modif->expression->variablename;
-	  }
-	  else if (*modif->name == "timelimit")
+
+	  // Checking integrity (variable exists), if not sinusoidal
+	  if (variable == 0 && !sinusoidal)
 	  {
-	    UValue *modifier = modif->expression->eval(this, connection);
-	    if (!modifier || modifier->dataType != DATA_NUM)
-	    {
+	    if (!variablename->fromGroup)
 	      send_error(connection, this,
-			 "Invalid modifier value");
-	      delete modifier;
+			 "Modificator error: %s unknown"
+			 " (no start value)",
+			 variablename->getFullname()->c_str());
+	    delete target;
+	    return UCOMPLETED;
+	  }
+
+	  speed = 0;
+
+	  // Initialize modifiers
+	  for (UNamedParameters* modif = parameters; modif; modif = modif->next)
+	  {
+	    if (!modif->expression || !modif->name)
+	    {
+	      send_error(connection, this, "Invalid modifier");
 	      delete target;
 	      return UCOMPLETED;
 	    }
-	    endtime = currentTime + modifier->val;
-	    delete modifier;
-	  }
-	  else
-	  {
-	    send_error(connection, this,
-		       "Unkown modifier name");
-	    delete target;
-	    return UCOMPLETED;
+
+	    if (*modif->name == "sin")
+	    {
+	      modif_sin = modif->expression;
+	      controlled = true;
+	    }
+	    else if (*modif->name == "cos")
+	    {
+	      modif_sin = modif->expression;
+	      // FIXME: delete modif_phase before?
+	      modif_phase = new UExpression(loc_,
+					    UExpression::VALUE, PI/ufloat(2));
+	      controlled = true;
+	    }
+	    else if (*modif->name == "ampli")
+	    {
+	      modif_ampli = modif->expression;
+	    }
+	    else if (*modif->name == "smooth")
+	    {
+	      modif_smooth = modif->expression;
+	      controlled = true;
+	    }
+	    else if (*modif->name == "time")
+	    {
+	      modif_time = modif->expression;
+	      controlled = true;
+	    }
+	    else if (*modif->name == "speed")
+	    {
+	      modif_speed = modif->expression;
+	      controlled = true;
+	    }
+	    else if (*modif->name == "accel")
+	    {
+	      modif_accel = modif->expression;
+	      controlled = true;
+	    }
+	    else if (*modif->name == "adaptive")
+	    {
+	      modif_adaptive = modif->expression;
+	    }
+	    else if (*modif->name == "phase")
+	    {
+	      modif_phase = modif->expression;
+	    }
+	    else if (*modif->name == "getphase")
+	    {
+	      if (modif->expression->type != UExpression::VARIABLE)
+	      {
+		send_error(connection, this,
+			   "a variable is expected for"
+			   " the 'getphase' modifier");
+		return UCOMPLETED;
+	      }
+	      modif_getphase = modif->expression->variablename;
+	    }
+	    else if (*modif->name == "timelimit")
+	    {
+	      UValue *modifier = modif->expression->eval(this, connection);
+	      if (!modifier || modifier->dataType != DATA_NUM)
+	      {
+		send_error(connection, this,
+			   "Invalid modifier value");
+		delete modifier;
+		delete target;
+		return UCOMPLETED;
+	      }
+	      endtime = currentTime + modifier->val;
+	      delete modifier;
+	    }
+	    else
+	    {
+	      send_error(connection, this,
+			 "Unkown modifier name");
+	      delete target;
+	      return UCOMPLETED;
+	    }
 	  }
 	}
-      }
 
-      // create var if it does not already exist
-      if (!variable)
-      {
-	variable = new UVariable(variablename->getFullname()->c_str(),
-				 target->copy());
+	// create var if it does not already exist
 	if (!variable)
+	{
+	  variable = new UVariable(variablename->getFullname()->c_str(),
+				   target->copy());
+	  if (!variable)
+	    return UCOMPLETED;
+	  connection->localVariableCheck(variable);
+	}
+
+	// correct the type of VOID variables (comming from a def)
+	if (variable->value->dataType == DATA_VOID)
+	  variable->value->dataType = DATA_NUM;
+
+	// virtual "time:0" if no modifier specified (controlled == false)
+	if (!controlled)
+	  // no controlling modifier => time:0
+	  // FIXME: delete modif_time before?
+	  modif_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
+
+	// clean the temporary target UValue
+	delete target;
+
+	// UDISCARD mode
+	if (variable->blendType == urbi::UDISCARD &&
+	    variable->nbAssigns > 0)
 	  return UCOMPLETED;
-	connection->localVariableCheck(variable);
-      }
 
-      // correct the type of VOID variables (comming from a def)
-      if (variable->value->dataType == DATA_VOID)
-	variable->value->dataType = DATA_NUM;
+	// init valarray for a "val" assignment
+	ufloat *targetvalue;
+	if (!controlled)
+	  targetvalue = &(variable->value->val); // prevents a read access
+	else
+	  targetvalue =  &(variable->get()->val);
 
-      // virtual "time:0" if no modifier specified (controlled == false)
-      if (!controlled)
-	// no controlling modifier => time:0
-	// FIXME: delete modif_time before?
-	modif_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
+	if (variable->autoUpdate)
+	  valtmp = targetvalue;	      // &variable->value->val
+	else
+	  valtmp = &(variable->target); // &variable->target
 
-      // clean the temporary target UValue
-      delete target;
+	++variable->nbAssigns;
+	assigned = true;
 
-      // UDISCARD mode
-      if (variable->blendType == urbi::UDISCARD &&
-	  variable->nbAssigns > 0)
-	return UCOMPLETED;
+	// use of previous value as a start value to ensure that the start value
+	// will remain identical when several assignments are run during the same
+	// cycle
+	// old code: startval = *targetvalue;
+	startval = variable->previous;
 
-      // init valarray for a "val" assignment
-      ufloat *targetvalue;
-      if (!controlled)
-	targetvalue = &(variable->value->val); // prevents a read access
-      else
-	targetvalue =  &(variable->get()->val);
-
-      if (variable->autoUpdate)
-	valtmp = targetvalue;	      // &variable->value->val
-      else
-	valtmp = &(variable->target); // &variable->target
-
-      ++variable->nbAssigns;
-      assigned = true;
-
-      // use of previous value as a start value to ensure that the start value
-      // will remain identical when several assignments are run during the same
-      // cycle
-      // old code: startval = *targetvalue;
-      startval = variable->previous;
-
-      first = true;
-      status = URUNNING;
+	first = true;
+	status = URUNNING;
     }
   }
 
