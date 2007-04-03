@@ -1,3 +1,9 @@
+2007-04-03  Akim Demaille  <akim.demaille@free.fr>
+
+	From hanging to segv
+	* src/ucommand.cc (UCommand_OPERATOR::execute_): Iterate when
+	running "undefall".
+
 2007-04-02  Akim Demaille  <demaille@gostai.com>
 
 	tests-local.mk

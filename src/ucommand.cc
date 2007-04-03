@@ -4058,7 +4058,8 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 
     for (HMvariabletab::iterator i =
 	   connection->server->variabletab.begin();
-	 i != connection->server->variabletab.end();)
+	 i != connection->server->variabletab.end();
+	 ++i)
       delete i->second;
 
     connection->server->variabletab.clear();
