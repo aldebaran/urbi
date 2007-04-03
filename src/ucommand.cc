@@ -138,6 +138,13 @@ buffer_t buf;
 #endif
 MEMORY_MANAGER_INIT(UCommand);
 
+
+
+///cache the location of notag and system taginfos
+TagInfo * UCommand::notagTagInfo = 0;
+TagInfo * UCommand::systemTagInfo = 0;
+
+
 // **************************************************************************
 //! UCommand constructor.
 /*! The parameter 'type' is required here to describe the type of the command.
@@ -168,9 +175,9 @@ UCommand::UCommand(const location& l, Type _type)
    */
   tag = "";
   if (::urbiserver->systemcommands)
-    setTag("__system__"); //untouchable
+    setTag(systemTagInfo); //untouchable
   else
-    setTag("notag"); //untouchable
+    setTag(notagTagInfo); //untouchable
 }
 
 //! UCommand destructor.
@@ -179,6 +186,22 @@ UCommand::~UCommand()
   unsetTag();
   delete flags;
 }
+
+
+void
+UCommand::initializeTagInfos() 
+{
+  TagInfo t;
+  t.blocked = t.frozen = false;
+  t.name = "__system__";
+  systemTagInfo = t.insert(urbiserver->tagtab);
+  //insert a dummy command in list, so that the taginfo is never deleted
+  systemTagInfo->commands.push_back(0);
+  t.name = "notag";
+  notagTagInfo =  t.insert(urbiserver->tagtab);
+  notagTagInfo->commands.push_back(0);
+}
+
 
 UCommand::Status
 UCommand::execute(UConnection* c)
@@ -371,6 +394,19 @@ UCommand::setTag(const std::string & tag)
   ti->commands.push_back(this);
   tagInfoPtr = --ti->commands.end();
   tagInfo = ti; //we know he won't die before us
+}
+
+
+void
+UCommand::setTag(TagInfo* ti)
+{
+  this->tag = ti->name;
+  tagInfo = ti;
+  if (tagInfo)
+  {
+    tagInfo->commands.push_back(this);
+    tagInfoPtr = --tagInfo->commands.end();
+  }
 }
 
 void
@@ -6009,7 +6045,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
       active_ = true;
       ASSERT (theloop_ == 0);
       theloop_ = new UCommand_LOOP (loc_, command1->copy ());
-      theloop_->setTag ("__system__"); //untouchable
+      theloop_->setTag (systemTagInfo); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
 	assign = new UCommand_TREE (loc_, Flavorable::UPIPE, assign, theloop_);

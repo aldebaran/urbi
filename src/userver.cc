@@ -207,7 +207,8 @@ UServer::initialization()
   new UVariable(MAINDEVICE, "name", mainName->str());
   uservarState = true;
 
-
+  // cached taginfos
+  UCommand::initializeTagInfos();
   // Plugins (internal components)
 
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
@@ -1090,7 +1091,9 @@ namespace
   const char* tab (unsigned n)
   {
     static char buf[1024];
-    assert(n < sizeof buf);
+    if (n >= sizeof buf)
+      n = sizeof buf - 1;
+    
     for (unsigned i = 0; i < n; ++i)
       buf[i] = ' ';
     buf[n] = 0;

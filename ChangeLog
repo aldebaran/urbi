@@ -1,3 +1,10 @@
+2007-04-03  Matthieu Nottale  <nottale@gostai.com>
+
+	Optimise by caching TagInfo structures for 'notag' and '__system__' tag.
+	* src/ucommand.cc,
+	* src/ucommand.hh: Add two static TagInfo* in UCommand, and a static method to initialise them. Use them instead of the tag strings "__system__" and "notag".
+	* src/userver.cc: Call UCommand::initializeTagInfos in UServer::initialization. Replace an assert by code handling the condition as it can happen without being a problem.
+
 2007-04-03  Akim Demaille  <akim.demaille@free.fr>
 
 	From hanging to segv
