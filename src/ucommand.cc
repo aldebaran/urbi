@@ -155,6 +155,8 @@ UCommand::UCommand(const location& l, Type _type)
   : UAst (l),
     type (_type),
     status (UONQUEUE),
+    myconnection(0),
+    groupOfCommands(false),
     flags (0),
     morph (0),
     persistant (false),
@@ -183,13 +185,15 @@ UCommand::UCommand(const location& l, Type _type)
 //! UCommand destructor.
 UCommand::~UCommand()
 {
+  if (myconnection && flags && flags->notifyEnd)
+    myconnection->send("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;
 }
 
 
 void
-UCommand::initializeTagInfos() 
+UCommand::initializeTagInfos()
 {
   TagInfo t;
   t.blocked = t.frozen = false;
@@ -206,6 +210,7 @@ UCommand::initializeTagInfos()
 UCommand::Status
 UCommand::execute(UConnection* c)
 {
+  myconnection = c;
   return status = execute_ (c);
 }
 
@@ -216,6 +221,8 @@ UCommand::copybase(UCommand* c) const
   c->setTag(this);
   if (flags)
     c->flags = flags->copy();
+  c->myconnection = myconnection;
+  c->groupOfCommands = groupOfCommands;
   return c;
 }
 

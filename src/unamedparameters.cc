@@ -33,7 +33,8 @@ UNamedParameters::UNamedParameters(UString* name,
 				   UNamedParameters* next)
   : name       (name),
     expression (expression),
-    next       (next)
+    next       (next),
+    notifyEnd  (false)
 {
   ADDOBJ(UNamedParameters);
 }
@@ -43,7 +44,8 @@ UNamedParameters::UNamedParameters(UExpression *expression,
 				   UNamedParameters* next)
   : name       (0),
     expression (expression),
-    next       (next)
+    next       (next),
+    notifyEnd  (false)
 {
   ADDOBJ(UNamedParameters);
 }

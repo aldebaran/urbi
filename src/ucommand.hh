@@ -137,6 +137,12 @@ public:
   /// Status of the command since last execution.
   Status status;
 
+  /// Quick hack to get the connection where the command is executed in
+  UConnection* myconnection;
+
+  /// Hack used to know if this command is a { ... } placeholder
+  bool         groupOfCommands;
+
   /// Run the command.  Set status and return value.
   /// Just calls execute_ and sets status.
   virtual Status execute(UConnection*);
@@ -208,7 +214,7 @@ private:
 
   /// Protection against copy
   UCommand (const UCommand &c);
-  
+
   protected:
   /// Cached often used taginfo
   static TagInfo * systemTagInfo;

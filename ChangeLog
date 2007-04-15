@@ -1,3 +1,17 @@
+2007-04-15  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	fix ticket 151, problem with +end flags not triggering properly 
+	* src/parser/bison/ugrammar.y: add notifyEnd optimization in UCommand
+	and the groupOfCommands flag to mark {...} types of commands.
+	* src/ucommand.cc: add handling of +end in the dtor of UCommand.
+	* src/ucommand.hh: add necessary attributes for notifyEnd and
+	groupOfCommands.
+	* src/uconnection.cc: remove the handling of +end from the tree
+	machinery, it's now handled by UCommand dtor.
+	* src/unamedparameters.cc: add an optimization to avoid having to scan
+	the whole list of flags to know if +end is there.
+	* src/unamedparameters.hh: add .
+
 2007-04-03  Matthieu Nottale  <nottale@gostai.com>
 
 	Optimise by caching TagInfo structures for 'notag' and '__system__' tag.

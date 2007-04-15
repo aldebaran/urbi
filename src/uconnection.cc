@@ -908,15 +908,6 @@ UConnection::processCommand(UCommand *&command,
 
     if (stopit)
     {
-      for (UNamedParameters *param = command->flags; param; param = param->next)
-	if (param->name &&
-	    param->name->equal("flag") &&
-	    param->expression &&
-	    !command->morphed &&
-	    (param->expression->val == 3 || // 3 = +end
-	     param->expression->val == 1)) // 1 = +report
-	  send("*** end\n", command->getTag().c_str());
-
       if (command == lastCommand)
 	lastCommand = command->up;
 
@@ -940,14 +931,6 @@ UConnection::processCommand(UCommand *&command,
       switch (command->execute(this))
       {
 	case UCommand::UCOMPLETED:
-	  for (UNamedParameters *param = command->flags; param;
-	       param = param->next)
-	    if (param->name &&
-		param->name->equal("flag") &&
-		param->expression &&
-		(param->expression->val == 3 || // 3 = +end
-		 param->expression->val == 1  )) // 1 = +report
-	      send("*** end\n", command->getTag().c_str());
 
 	  if (command == lastCommand)
 	    lastCommand = command->up;
@@ -966,10 +949,8 @@ UConnection::processCommand(UCommand *&command,
 	  if (command->flags)
 	    morphed->flags = command->flags->copy();
 
-
 	  morphed->setTag(command);
 
-	  //morphed->morphed = true;
 	  if (!command->persistant)
 	    delete command;
 	  command = morphed;
@@ -1039,9 +1020,14 @@ UConnection::execute(UCommand_TREE*& execCommand)
   // There are complications to make this a for loop: occurrences of
   // "continue".
   UCommand_TREE* tree = execCommand;
+
   while (tree)
   {
     tree->status = UCommand::URUNNING;
+
+    // Requests a +end notification for {...} type of trees
+    if (tree->groupOfCommands)
+      tree->myconnection = this;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1119,14 +1105,6 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
       if (tree->position)
 	*tree->position = 0;
-
-      for (UNamedParameters *param = tree->flags; param; param = param->next)
-	if (param->name &&
-	    param->name->equal("flag") &&
-	    param->expression &&
-	    (param->expression->val == 3 || // 3 = +end
-	     param->expression->val == 1)) // 1 = +report
-	  send("*** end\n", tree->getTag().c_str());
 
       UCommand_TREE* oldtree = tree;
       tree = tree->up;
