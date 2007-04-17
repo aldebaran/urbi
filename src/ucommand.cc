@@ -195,15 +195,16 @@ UCommand::~UCommand()
 void
 UCommand::initializeTagInfos()
 {
+  TagInfo * dummy = new TagInfo();//empty name, no parent, not a pb
+  
   TagInfo t;
-  t.blocked = t.frozen = false;
   t.name = "__system__";
   systemTagInfo = t.insert(urbiserver->tagtab);
-  //insert a dummy command in list, so that the taginfo is never deleted
-  systemTagInfo->commands.push_back(0);
+  //insert a dummy tag in subtag list, so that the taginfo is never deleted
+  systemTagInfo->subTags.push_back(dummy);
   t.name = "notag";
   notagTagInfo =  t.insert(urbiserver->tagtab);
-  notagTagInfo->commands.push_back(0);
+  notagTagInfo->subTags.push_back(dummy);
 }
 
 

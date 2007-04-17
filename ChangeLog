@@ -1,3 +1,8 @@
+2007-04-17  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix a segfault when 'stop notag'. 
+	* src/ucommand.cc: Use dummy subtags instead of dummy null commands to boost notag and __system__'s TagInfo reference counting: fixes a segfault when calling 'stop notag'.
+
 2007-04-15  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix ticket 151, problem with +end flags not triggering properly 
