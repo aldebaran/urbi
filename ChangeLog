@@ -1,5 +1,10 @@
 2007-04-19  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix bug #137 on invalid prefix resolution. 
+	* src/uconnection.cc: do not simplify scoping nodes.
+
+2007-04-19  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	minor reformat. 
 	* src/uconnection.cc: reduce to 80 col.
 

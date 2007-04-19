@@ -977,6 +977,9 @@ namespace
   // FIXME: Should be with UCommand_TREE, not here.
   bool simplify (UCommand_TREE* tree)
   {
+    // Do not simplify nodes that hold scoping information
+    if (tree->callid) return false;
+
     // left reduction
     if (!tree->command1 && tree->command2)
     {
