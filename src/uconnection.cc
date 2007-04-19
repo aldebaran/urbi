@@ -779,7 +779,9 @@ UConnection::processCommand(UCommand *&command,
     {
       command->startTime = server->lastTime();
 
-      for (UNamedParameters *param = command->flags; param; param = param->next)
+      for (UNamedParameters *param = command->flags;
+           param;
+           param = param->next)
 	if (param->name)
 	{
 	  if (param->name->equal("flagid"))

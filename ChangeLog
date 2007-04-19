@@ -1,3 +1,8 @@
+2007-04-19  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	minor reformat. 
+	* src/uconnection.cc: reduce to 80 col.
+
 2007-04-17  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a segfault when 'stop notag'. 
