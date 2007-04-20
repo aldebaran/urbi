@@ -33,6 +33,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
+#include "ufunction.hh"
 
 #define LIBURBIDEBUG
 
@@ -138,6 +139,23 @@ namespace urbi
     : storage(0), objname(objname), name(name)
   {
     nbparam = size;
+
+    // Autodetect redefined members higher in the hierarchy of an object
+    // If one is found, cancel the binding.
+    if  (type == "function")
+    {
+      UObj* srcobj;
+      HMobjtab::iterator it = ::urbiserver->objtab.find(objname.c_str ());
+      if (it != ::urbiserver->objtab.end())
+      {
+        srcobj = it->second;
+        bool ambiguous;
+        std::string member = name.substr (name.find ('.') + 1);
+        UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+        if (fun && fun != kernel::remoteFunction && !ambiguous)
+          return;
+      }
+    }
 
     if (type == "function"
 	|| type== "event"

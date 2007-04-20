@@ -3943,15 +3943,33 @@ UCommand_BINDER::execute_(UConnection *connection)
     break;
 
     case UBIND_FUNCTION:
+    {
+      // Autodetect redefined members higher in the hierarchy of an object
+      // If one is found, cancel the binding.
+      UObj* srcobj;
+      HMobjtab::iterator it = ::urbiserver->objtab.find(fullobjname->str ());
+      if (it != ::urbiserver->objtab.end())
+      {
+        srcobj = it->second;
+        bool ambiguous;
+        std::string member (fullname->str ());
+        member = member.substr (member.find ('.') + 1);
+        UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+        if (fun && fun != kernel::remoteFunction && !ambiguous)
+          break;
+      }
+
+      // do the binding
       if (::urbiserver->functionbindertab.find(key->str())
-	  == ::urbiserver->functionbindertab.end())
-	::urbiserver->functionbindertab[key->str()] =
-	    new UBinder(fullobjname, fullname,
-			mode, (UBindType)type, nbparam, connection);
+          == ::urbiserver->functionbindertab.end())
+        ::urbiserver->functionbindertab[key->str()] =
+          new UBinder(fullobjname, fullname,
+                      mode, (UBindType)type, nbparam, connection);
       else
-	::urbiserver->functionbindertab[key->str()]->
-	    addMonitor(fullobjname, connection);
-      break;
+        ::urbiserver->functionbindertab[key->str()]->
+          addMonitor(fullobjname, connection);
+    }
+    break;
 
     case UBIND_EVENT:
       if (::urbiserver->eventbindertab.find(key->str())

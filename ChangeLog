@@ -1,3 +1,30 @@
+2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	This fix partialy solve the problem described in ticket #150.
+	Limitations are:
+
+	- Methods that want to benefit from the inhibition mechanism must be
+	declared (with UBindFunction) in init, not in the UObject C++
+	constructor. Otherwise, since the URBI object hierarchy is not yet
+	updated	when the C++ ctor is executed, the inhibition mechanism fails
+	to detect the previously defined version of the bound function.
+
+	- The inhibition is performed when 'new' is executed, never after. So
+	if you redefine b.refresh after you have newed c, it will fail to
+	inhibate the binding. You must keep the order: b = new uBot;redefine
+	b.refresh;c = new b;
+
+	This is fragile of course and it's a dirty hack. However, fixing it
+	properly would need the introduction of a vtable cache at the object
+	level, which is almost impossible to "hack" with k1, knowing
+	that k1 does not really know objects... We will fix that in k2 with a
+	clean underlying structure.
+
+	partialy fix bug #150 (the feature is usable, but fragile)
+	* src/ucommand.cc: add inhibition code when a remote binded function
+	is already user-redefined somewhere higher in the object hierarchy.
+	* src/uobject.cc: same thing but for plugged uobjects.
+
 2007-04-19  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	fix bug #137 on invalid prefix resolution. 
