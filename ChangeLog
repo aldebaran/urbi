@@ -1,5 +1,10 @@
 2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	fix ticket #24 
+	* src/uvalue.cc: add std::fixed formater.
+
+2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	This fix partialy solve the problem described in ticket #150.
 	Limitations are:
 

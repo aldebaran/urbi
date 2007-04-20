@@ -625,7 +625,7 @@ UValue::add(UValue *v)
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << val<<v->str->str();
+      ostr << std::fixed << val << v->str->str();
       res->str = new UString(ostr.str().c_str());
       if (res->str == 0)
       {
@@ -647,7 +647,7 @@ UValue::add(UValue *v)
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << str->str()<<v->val;
+      ostr << str->str() << std::fixed << v->val;
       res->str = new UString(ostr.str().c_str());
 
       if (res->str == 0)
