@@ -1,5 +1,11 @@
 2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	remove too restricting ASSERT, fix ticket #136. 
+	* src/ucommand.cc: change ASSERT in if, for the case when the
+	expression evaluation fail (it leads to a legitimate unasserted case).
+
+2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	revert change from previous commit: std::fixed should not be used. 
 	* src/uvalue.cc: std::fixed does not behave as it should.
 

@@ -4596,7 +4596,7 @@ void
 UCommand_EMIT::removeEvent ()
 {
   // unregister event
-  ASSERT (event && eh) // free the event
+  if (event && eh) // free the event
     eh->removeEvent (event);
 
   ////// EXTERNAL /////
