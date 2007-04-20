@@ -4232,6 +4232,28 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
   }
 
 
+  if (STREQ(oper->str(), "taglist"))
+  {
+    for (HMtagtab::iterator i =
+	   connection->server->tagtab.begin();
+	 i != connection->server->tagtab.end();
+	 ++i)
+    {
+      std::ostringstream tstr;
+      if (i->second.name != "__system__" &&
+          i->second.name != "__node__" &&
+          i->second.name != "__UGrouped_set_of_commands__" &&
+          i->second.name != "notag")
+      {
+        tstr << "*** " << i->second.name << "\n";
+        connection->sendf(getTag(), tstr.str().c_str());
+      }
+    }
+
+    connection->sendf(getTag(), "*** end of tag list.\n");
+    return UCOMPLETED;
+  }
+
   if (STREQ(oper->str(), "uservars"))
   {
     for (HMvariabletab::iterator i =

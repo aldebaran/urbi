@@ -1,3 +1,7 @@
+New in 1.0
+
+* New keyword 'taglist' displays the tags of currently running commands.
+
 New in 1.0 RC2:
 
 * USensor becomes UOwned (with backward compatibility)

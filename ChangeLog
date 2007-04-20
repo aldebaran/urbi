@@ -1,5 +1,16 @@
 2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	That was a request after last years "coupe de robotique" experience.
+	I'm pretty sure the syntax will evolve in k2, but we will keep this
+	backward compatible and it will be usable right now.
+
+	add a 'taglist' keyword to display the list of currently running tags.
+	* NEWS: signal the feature.
+	* src/parser/bison/utoken.l: add the keyword.
+	* src/ucommand.cc: add the code that does the job.
+
+2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	remove too restricting ASSERT, fix ticket #136. 
 	* src/ucommand.cc: change ASSERT in if, for the case when the
 	expression evaluation fail (it leads to a legitimate unasserted case).
