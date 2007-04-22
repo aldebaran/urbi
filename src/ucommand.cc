@@ -31,8 +31,6 @@
 #include "libport/cstring"
 #include "libport/ref-pt.hh"
 
-#include <sstream>
-
 #include "uasynccommand.hh"
 #include "uatcandidate.hh"
 #include "ubinary.hh"
@@ -196,7 +194,7 @@ void
 UCommand::initializeTagInfos()
 {
   TagInfo * dummy = new TagInfo();//empty name, no parent, not a pb
-  
+
   TagInfo t;
   t.name = "__system__";
   systemTagInfo = t.insert(urbiserver->tagtab);
