@@ -138,9 +138,9 @@ MEMORY_MANAGER_INIT(UCommand);
 
 
 
-///cache the location of notag and system taginfos
-TagInfo * UCommand::notagTagInfo = 0;
-TagInfo * UCommand::systemTagInfo = 0;
+/// Cache the location of notag and system taginfos
+TagInfo* UCommand::notagTagInfo = 0;
+TagInfo* UCommand::systemTagInfo = 0;
 
 
 // **************************************************************************
@@ -168,12 +168,12 @@ UCommand::UCommand(const location& l, Type _type)
     flag_nbTrue2 (0),
     flag_nbTrue4 (0),
     morphed (false),
+    tag (""),
     tagInfo (0)
 {
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
    L2: pass a tag or a command ptr to ctor
    */
-  tag = "";
   if (::urbiserver->systemcommands)
     setTag(systemTagInfo); //untouchable
   else
@@ -193,12 +193,13 @@ UCommand::~UCommand()
 void
 UCommand::initializeTagInfos()
 {
-  TagInfo * dummy = new TagInfo();//empty name, no parent, not a pb
+  // empty name, no parent, not a pb
+  TagInfo* dummy = new TagInfo();
 
   TagInfo t;
   t.name = "__system__";
   systemTagInfo = t.insert(urbiserver->tagtab);
-  //insert a dummy tag in subtag list, so that the taginfo is never deleted
+  // insert a dummy tag in subtag list, so that the taginfo is never deleted
   systemTagInfo->subTags.push_back(dummy);
   t.name = "notag";
   notagTagInfo =  t.insert(urbiserver->tagtab);
@@ -298,7 +299,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
     else
       hmg = ::urbiserver->grouptab.find(devicename->str());
 
-    UGroup *oo = 0;
+    UGroup* oo = 0;
     if (hmg != ::urbiserver->grouptab.end())
       oo = hmg->second;
 
@@ -346,7 +347,7 @@ TagInfo*
 TagInfo::insert(HMtagtab &tab)
 {
   HMtagtab::iterator i = tab.insert(HMtagtab::value_type(name, *this)).first;
-  TagInfo * result = &i->second;
+  TagInfo* result = &i->second;
 
   //remove last part of tag
   size_t pos = name.find_last_of('.');
@@ -355,7 +356,7 @@ TagInfo::insert(HMtagtab &tab)
 
   std::string subtag = name.substr(0, pos);
   HMtagtab::iterator it = tab.find(subtag);
-  TagInfo *parent;
+  TagInfo* parent;
   if (it == tab.end())
   {
     TagInfo t;
@@ -377,7 +378,7 @@ TagInfo::insert(HMtagtab &tab)
 void
 UCommand::setTag(const std::string & tag)
 {
-  if (tag==this->tag)
+  if (tag == this->tag)
     return;
   if (tag != "")
     unsetTag();
@@ -434,7 +435,7 @@ UCommand::unsetTag()
   if (!tagInfo)
     return; //nothing to do
   tagInfo->commands.erase(tagInfoPtr);
-  TagInfo * ti = tagInfo;
+  TagInfo* ti = tagInfo;
   while (ti && ti->commands.empty() && ti->subTags.empty()
 	 && !ti->frozen && !ti->blocked)
   {
@@ -442,7 +443,7 @@ UCommand::unsetTag()
     if (ti->parent)
       ti->parent->subTags.erase(ti->parentPtr);
     //remove from hash table
-    TagInfo * next = ti->parent;
+    TagInfo* next = ti->parent;
     urbiserver->tagtab.erase(urbiserver->tagtab.find(ti->name));
     //try again on our parent
     ti = next;
@@ -556,7 +557,7 @@ void
 UCommand_TREE::deleteMarked()
 {
   int go_to = 1;
-  UCommand_TREE *tree = this;
+  UCommand_TREE* tree = this;
 
   while (tree != up)
   {
@@ -591,8 +592,7 @@ UCommand_TREE::deleteMarked()
       }
 
     go_to = 2;
-    if (tree->up
-	&& *tree->position == tree->up->command2)
+    if (tree->up && *tree->position == tree->up->command2)
       go_to = 0;
 
     tree = tree->up;
@@ -720,7 +720,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
     HMfunctiontab::iterator hmf =
       ::urbiserver->functiontab.find(functionname->str());
-    UFunction *fun;
+    UFunction* fun;
     if (hmf == ::urbiserver->functiontab.end())
     {
       //trying inheritance
@@ -869,7 +869,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    || (!expression->parameters && !(*cbi)->nbparam) )
 	{
 	  urbi::UList tmparray;
-	  for (UNamedParameters *pvalue = expression->parameters;
+	  for (UNamedParameters* pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
@@ -1005,7 +1005,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     }
 
     // eval the right side of the assignment and check for errors
-    UValue *target = expression->eval(this, connection);
+    UValue* target = expression->eval(this, connection);
     if (target == 0)
       return UCOMPLETED;
 
