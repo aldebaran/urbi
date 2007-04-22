@@ -22,7 +22,6 @@
 #include <cmath>
 #include "libport/cstdio"
 #include <sstream>
-#include <iomanip>
 
 #include "libport/ref-pt.hh"
 
