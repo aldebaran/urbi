@@ -1,3 +1,7 @@
+2007-04-24  Akim Demaille  <demaille@gostai.com>
+
+	* src/liburbi/uobject/urbi/ustarter.hh: Include <algorithm>.
+
 2007-03-23  Akim Demaille  <demaille@gostai.com>
 
 	Try another workaround for #26

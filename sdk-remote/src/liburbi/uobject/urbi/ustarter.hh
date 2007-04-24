@@ -15,6 +15,7 @@
 #ifndef URBI_STARTER_HH
 # define URBI_STARTER_HH
 
+# include <algorithm>
 # include <string>
 
 # include "urbi/fwd.hh"
