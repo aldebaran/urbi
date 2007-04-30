@@ -506,7 +506,8 @@ UServer::work()
       functiontab.clear();  //This leaks awfuly...
       grouptab.clear();
       objaliastab.clear();
-      tagtab.clear();
+      // do not clear tagtab, everything is refcounted and will be cleared when commands will be
+      //tagtab.clear();
 
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();

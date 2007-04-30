@@ -1,3 +1,8 @@
+2007-04-30  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix a segfault when reseting.
+	* src/userver.cc: Do not clear tagtab when reseting, its content is refcounted.
+
 2007-04-22  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Minor code cleanup.
