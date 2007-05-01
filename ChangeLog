@@ -1,5 +1,10 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Improve reset messages. 
+	* userver.cc: make the series of messages more useful.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Fix ticket #85 
 	* src/ucommand.cc: remove dead code.
 

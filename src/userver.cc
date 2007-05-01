@@ -521,7 +521,7 @@ UServer::work()
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive())
-	  (*i)->send("*** Reset completed.\n", "reset");
+	  (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
 
       //restart hubs
       for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
@@ -554,10 +554,11 @@ UServer::work()
 	     ++i)
 	  if ((*i)->isActive() && (*i) != ghost)
 	  {
-	    (*i)->send("*** Reloading\n", "reset");
+	    (*i)->send("*** Restart completed.\n", "reset");
 
 	    loadFile("CLIENT.INI", &(*i)->recvQueue());
 	    (*i)->newDataAdded = true;
+	    (*i)->send("*** Ready.\n", "reset");
 	  }
 	reseting = false;
 	stage = 0;
