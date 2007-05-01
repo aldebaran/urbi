@@ -1,5 +1,9 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update externals of uobject. 
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	The problem here was that plugged UObjects were using the
 	ghostconnection of URBI.INI, so anything that was initialized via
 	urbi::send in the constructor was in fact executed *after* URBI.INI
