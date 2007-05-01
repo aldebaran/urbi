@@ -49,6 +49,7 @@ UGhostConnection::~UGhostConnection()
 UErrorValue
 UGhostConnection::closeConnection()
 {
+  closing = true;
   return USUCCESS;
 }
 

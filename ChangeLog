@@ -1,5 +1,15 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	This prepare the next step which will be to use ghostconnections as
+	support for UObject::send method. These "hosting connections" (should
+	be named "contexts" in k2 jargon) can be closed and so the closing
+	mechanism must be enforced properly.
+
+	add a conservative closing=true for a closing GhostConnection.
+	* ughostconnection.cc: add closing=true in the closeConnection method.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Reformating. 
 	* src/ughostconnection.cc: done.
 
