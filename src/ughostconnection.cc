@@ -35,11 +35,6 @@ UGhostConnection::UGhostConnection  (UServer * mainserver)
 		   UGhostConnection::MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
-
-  // FIXME: What the heck is this suppose to do???
-  // Test the error from UConnection constructor.
-  if (UError != USUCCESS)
-    return;
 }
 
 //! UGhostConnection destructor.
