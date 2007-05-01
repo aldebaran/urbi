@@ -1,3 +1,8 @@
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	Minor reformating. 
+	* src/userver.cc: done.
+
 2007-04-30  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a segfault when reseting.

@@ -500,13 +500,14 @@ UServer::work()
 
       libport::deep_clear (varToReset);
 
-      //variabletab.clear();
       aliastab.clear();
       emittab.clear();
       functiontab.clear();  //This leaks awfuly...
       grouptab.clear();
       objaliastab.clear();
-      // do not clear tagtab, everything is refcounted and will be cleared when commands will be
+
+      // do not clear tagtab, everything is refcounted and will be cleared
+      // when commands will be
       //tagtab.clear();
 
       for (std::list<UConnection*>::iterator i = connectionList.begin();
@@ -1094,7 +1095,7 @@ namespace
     static char buf[1024];
     if (n >= sizeof buf)
       n = sizeof buf - 1;
-    
+
     for (unsigned i = 0; i < n; ++i)
       buf[i] = ' ';
     buf[n] = 0;
