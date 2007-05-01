@@ -455,7 +455,9 @@ UConnection::received (const ubyte *buffer, int length)
     }
   }
 
+  // Add to Queue
   UErrorValue result = recvQueue_.push(buffer, length);
+
   unlock();
   if (result != USUCCESS)
   {

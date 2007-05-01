@@ -198,7 +198,6 @@ UServer::initialization()
 
   // Ghost connection
   ghost = new UGhostConnection(this);
-  connectionList.push_front(ghost);
 
   char tmpbuffer_ghostTag[50];
   sprintf(tmpbuffer_ghostTag, "U%ld", (long)ghost);

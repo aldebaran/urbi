@@ -35,11 +35,13 @@ UGhostConnection::UGhostConnection  (UServer * mainserver)
 		   UGhostConnection::MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
+  ::urbiserver->connectionList.push_front (dynamic_cast<UConnection*> (this));
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
+  ::urbiserver->connectionList.remove (dynamic_cast<UConnection*> (this));
   FREEOBJ(UGhostConnection);
 }
 

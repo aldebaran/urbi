@@ -1,5 +1,28 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	The problem here was that plugged UObjects were using the
+	ghostconnection of URBI.INI, so anything that was initialized via
+	urbi::send in the constructor was in fact executed *after* URBI.INI
+	code. It was impossible to use the result of a new in URBI.INI if this
+	new was introducing some dynamically created code, typically with
+	walk.
+
+	Now, every UObject has its own connection (in fact it's activated only
+	if you use UObject::send). UObject::send is the method to use if you
+	want to send code to URBI, from within a UObject. It works fine in
+	plugged and remote mode.
+	
+	fix bug #128: now plugged UObjects use a dedicated ghostconnection. 
+	* src/uconnection.cc: add a comment.
+	* src/ughostconnection.cc: add maintenance of connectionList, done
+	automatically by UGhostConnection, there was no reason not to do so.
+	* src/uobject.cc: implement plugged version of UObject::send,
+	initialize gc.
+	* src/userver.cc: remove unecessary connectionList registration for
+	the main UGhostConnection.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	This prepare the next step which will be to use ghostconnections as
 	support for UObject::send method. These "hosting connections" (should
 	be named "contexts" in k2 jargon) can be closed and so the closing

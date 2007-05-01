@@ -259,6 +259,7 @@ namespace urbi
     : __name(s),
       classname(s),
       derived(false),
+      gc (0),
       remote (false),
       load(s, "load")
   {
@@ -281,6 +282,7 @@ namespace urbi
   //! Dummy UObject constructor.
   UObject::UObject(int index)
     : derived(false),
+      gc (0),
       remote (false)
   {
     std::stringstream ss;
@@ -368,6 +370,7 @@ namespace urbi
   UObject::~UObject()
   {
     clean();
+    delete gc;
   }
 
   void
@@ -394,6 +397,15 @@ namespace urbi
     period = t;
     new UTimerCallbackobj<UObject>(__name, t, this,
 				   &UObject::update, updatemap);
+  }
+
+  int
+  UObject::send (const std::string& s)
+  {
+    if (!gc)
+      gc = new UGhostConnection (::urbiserver);
+
+    return gc->received (s.c_str ());
   }
 
   // **************************************************************************
