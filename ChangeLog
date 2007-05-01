@@ -1,5 +1,11 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	add proper support for adaptive queues (following ticket #92) 
+	* uconnection.hh: fix accessors, they do something now.
+	* uqueue.hh: add accessor for adaptive_.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	update NEWS. 
 	* NEWS: add note about UObject::send.
 

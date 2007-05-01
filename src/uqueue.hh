@@ -68,6 +68,7 @@ public:
   void                mark              ();
   void                revert            ();
   bool                locked            ();
+  void                setAdaptive       (int adaptive);
 
   UErrorValue         UError;///< err code for the constructor
 
@@ -115,7 +116,7 @@ protected:
 inline UErrorValue
 UQueue::push (const char *s)
 {
-  return  push((const ubyte*)s,strlen(s));
+  return  push((const ubyte*)s, strlen(s));
 }
 
 //! returns the available free space in the buffer.
@@ -146,5 +147,11 @@ UQueue::locked()
   return locked_;
 }
 
+//! Adaptive accessor
+inline void
+UQueue::setAdaptive (int adaptive)
+{
+  adaptive_ = adaptive;
+}
 
 #endif

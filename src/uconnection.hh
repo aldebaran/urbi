@@ -291,7 +291,7 @@ UConnection::recvQueue()
 inline int
 UConnection::receiveAdaptive()
 {
-return recvAdaptive_;
+  return recvAdaptive_;
 }
 
 //! Sets sendAdaptive_
@@ -299,6 +299,7 @@ inline void
 UConnection::setSendAdaptive (int sendAdaptive)
 {
   sendAdaptive_ = sendAdaptive;
+  sendQueue_.setAdaptive (sendAdaptive_);
 }
 
 //! Sets receiveAdaptive_
@@ -306,6 +307,7 @@ inline void
 UConnection::setReceiveAdaptive (int receiveAdaptive)
 {
   recvAdaptive_ = receiveAdaptive;
+  recvQueue_.setAdaptive (recvAdaptive_);
 }
 
 inline
