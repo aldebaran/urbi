@@ -1,5 +1,10 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Fix ticket #85 
+	* src/ucommand.cc: remove dead code.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	make undefall deprecated. 
 	* src/ucommand.cc: undefall is now deprecated, use reset instead.
 

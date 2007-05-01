@@ -5514,21 +5514,6 @@ UCommand_STOPIF::execute_(UConnection *connection)
       command->copy());
   morph->setTag(tagRef->str());
   return UMORPH;
-
-  assert (command);
-
-  persistant = false;
-  morph =
-    new UCommand_TREE
-    (loc_, Flavorable::UAND,
-     new UCommand_TREE(loc_, Flavorable::UPIPE,
-		       new UCommand_WAIT_TEST(loc_, condition->copy()),
-		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
-						tagRef->copy())),
-     command->copy());
-
-  morph->setTag(tagRef->str());
-  return UMORPH;
 }
 
 //! UCommand subclass hard copy function
