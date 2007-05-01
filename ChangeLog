@@ -1,5 +1,10 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Minor reformat 
+	* src/ughostconnection.cc: done.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Deleting a variable on which a UVar was set could result in
 	catastrophic server crash, because some plugged UObject will assign
 	something to this UVar, using the pointer to the UVariable in cache,
