@@ -1,5 +1,11 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Fix the bug on reset (ticket #21) 
+	* src/uobject.cc: UHubObjects dtor must release their timers.
+	* src/userver.cc: add proper destruction/recreation of hubs.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Minor reformating. 
 	* src/userver.cc: done.
 

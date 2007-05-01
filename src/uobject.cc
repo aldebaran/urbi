@@ -406,6 +406,7 @@ namespace urbi
   //! UObjectHub destructor.
   UObjectHub::~UObjectHub()
   {
+    cleanTimerTable(updatemap, name);
   }
 
   void

@@ -491,6 +491,13 @@ UServer::work()
 	  else
 	    ++it;
 
+      //delete hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	delete (*i)->getUObjectHub ();
+
+
       //delete the rest
       for (HMvariabletab::iterator i = variabletab.begin();
 	   i != variabletab.end();
@@ -516,12 +523,19 @@ UServer::work()
 	if ((*i)->isActive())
 	  (*i)->send("*** Reset completed.\n", "reset");
 
-      //restart everything
+      //restart hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	(*i)->init((*i)->name);
+
+      //restart uobjects
       for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
 	   i != urbi::objectlist->end();
 	   ++i)
 	(*i)->init((*i)->name);
 
+      //reload URBI.INI
       loadFile("URBI.INI", &ghost->recvQueue());
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
@@ -534,6 +548,7 @@ UServer::work()
 	= variabletab.find("__system__.resetsignal");
       if (findResetSignal != variabletab.end())
       {
+        //reload CLIENT.INI
 	for (std::list<UConnection*>::iterator i = connectionList.begin();
 	     i != connectionList.end();
 	     ++i)
