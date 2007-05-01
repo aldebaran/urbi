@@ -3675,18 +3675,24 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
       }
 
       // variable is not an object or it does not have subclasses
-      if (variable->nbAssigns == 0 && variable->uservar)
+      if (variable->nbAssigns == 0 && variable->uservar
+          && variable->useCpt == 0)
       {
 	variable->toDelete = true;
 	return URUNNING;
       }
       else
       {
-	send_error(connection, this,
-		   "variable %s already in use or is a system var."
-		   " Cannot delete.",
-		   fullname->str());
-	return UCOMPLETED;
+        if (variable->useCpt)
+          send_error(connection, this,
+                     "variable %s attached to a UVar, free it first",
+                     fullname->str());
+        else
+          send_error(connection, this,
+                     "variable %s already in use or is a system var."
+                     " Cannot delete.",
+                     fullname->str());
+        return UCOMPLETED;
       }
     }
 

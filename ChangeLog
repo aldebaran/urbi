@@ -1,5 +1,27 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	Deleting a variable on which a UVar was set could result in
+	catastrophic server crash, because some plugged UObject will assign
+	something to this UVar, using the pointer to the UVariable in cache,
+	and the UVariable is not valid anymore.
+
+	This patch add a mechanism to set a UVar in "zombie" mode when it's
+	corresponding UVariable is deleted. We should do more (error
+	reporting, etc) but this is at least a first step and the server does
+	not crash anymore.
+
+	There is also now a ref counter in the UVar that prevent the attached
+	UVariable to be deliberately deleted by the user. Now an error
+	message is displayed.
+
+	fix bug found in ticket #2.
+	* src/ucommand.cc: refuse to delete a variable with UVar on it.
+	* src/uvar.cc: handle proper ref counting, and zombie mode.
+	* src/uvariable.cc: handle ref counting and zombie mode.
+	* src/uvariable.hh: add useCpt counter.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	Improve reset messages. 
 	* userver.cc: make the series of messages more useful.
 

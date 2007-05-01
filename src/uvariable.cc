@@ -167,6 +167,7 @@ UVariable::init()
   activity   = 0;
   binder     = 0;
   access_and_change = false;
+  useCpt     = 0;
 }
 
 //! UVariable destructor
@@ -184,6 +185,15 @@ UVariable::~UVariable()
       ::urbiserver->variabletab.end())
     ::urbiserver->variabletab.erase(hmi);
 
+  // Disactivate corresponding UVars
+  urbi::UVarTable::iterator varmapfind = urbi::varmap.find(varname->str ());
+  if (varmapfind != urbi::varmap.end())
+  {
+    for (std::list<urbi::UVar*>::iterator it = varmapfind->second.begin();
+         it != varmapfind->second.end();++it)
+       (*it)->setZombie ();
+  }
+
   FREEOBJ(UVariable);
   if (value)
   {
@@ -200,7 +210,7 @@ UVariable::~UVariable()
   delete varname;
   delete method;
   delete devicename;
-  
+
   if (context)
     context->remove(this);
 }
