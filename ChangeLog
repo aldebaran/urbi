@@ -1,5 +1,10 @@
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update NEWS. 
+	* NEWS: add note about UObject::send.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	update externals of uobject. 
 
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
