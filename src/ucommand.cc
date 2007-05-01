@@ -4114,17 +4114,8 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (STREQ(oper->str(), "undefall"))
   {
-    connection->sendf (getTag(), "*** All variables and functions cleared\n");
-
-    for (HMvariabletab::iterator i =
-	   connection->server->variabletab.begin();
-	 i != connection->server->variabletab.end();
-	 ++i)
-      delete i->second;
-
-    connection->server->variabletab.clear();
-    connection->server->functiontab.clear();
-    connection->server->emittab.clear();
+    connection->sendf (getTag(),
+                       "*** undefall is deprecated. Use 'reset' instead\n");
 
     return UCOMPLETED;
   }
