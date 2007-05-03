@@ -246,6 +246,11 @@ namespace urbi
     /// The hub, if it exists.
     UObjectHub  *objecthub;
 
+    /// The connection used by send().
+    UGhostConnection* gc;
+    /// Send a command to URBI.
+    int send(const std::string& s);
+
     /// Set a timer that will call the update function every 'period'
     /// milliseconds
     void USetUpdate(ufloat period);

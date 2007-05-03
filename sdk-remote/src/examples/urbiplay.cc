@@ -44,7 +44,8 @@ bool parseHeader(FILE *f)
       char device[256];
       int pos=0;
       do {
-	if ((device[pos++]=fgetc(f)) == EOF)
+	device[pos++] = fgetc(f);
+        if (feof (f))
 	  return false;
       } while (device[pos-1]);
       devices[i].name = strdup(device);

@@ -1,3 +1,28 @@
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	UObject::send can be used in remote or plugged mode to send commands
+	to URBI. In plugged mode, the commands are immediately executed.
+
+	add support of UObject::send
+	* urbi/fwd.hh: define UGhostConnection for plugged UObjects.
+	* urbi/uobject.hh.template: add gc and send in UObject.
+
+2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	This method is called by a UVariable destructor for every UVar that
+	points to the destructed UVariable, effectively making the UVar
+	ineffective. It's just a first step in what should be done: proper
+	messages should be sent on the UObject side to let the user know that
+	something bad has just happened.
+
+	At least, the server does not crash anymore and that's the minimum we
+	can do for our users.
+
+	See subsequent commits for remote implementation of uvar.cc.
+
+	add a setZombie method to UVar.
+	* urbi/uvar.hh: add setZombie.
+
 2007-03-13  Akim Demaille  <akim.demaille@free.fr>
 
 	Tidy

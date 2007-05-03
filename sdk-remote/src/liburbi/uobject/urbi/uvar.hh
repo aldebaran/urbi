@@ -157,6 +157,8 @@ namespace urbi
     // internal
     void __update(UValue&);
 
+    void setZombie ();
+
   private:
     /// Xxx only works in softdevice mode.
     UValue& val()

@@ -159,6 +159,7 @@ namespace urbi
     : __name(s),
       classname(s),
       derived(false),
+      gc (0),
       remote (true),
       load(s, "load")
   {
@@ -176,6 +177,7 @@ namespace urbi
   //! Dummy UObject constructor.
   UObject::UObject(int index)
     : derived(false),
+      gc (0),
       remote (true)
   {
     std::stringstream ss;
@@ -422,7 +424,12 @@ namespace urbi
   }
 
 
-
+  int
+  UObject::send (const std::string& s)
+  {
+    URBI(()) << s;
+    return 0;
+  }
 
   // **************************************************************************
 

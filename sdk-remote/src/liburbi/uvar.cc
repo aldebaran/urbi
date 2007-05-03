@@ -130,6 +130,14 @@ namespace urbi
       }
   }
 
+  //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
+  void
+  UVar::setZombie ()
+  {
+    // no effect in remote mode.
+  }
+
+
   //! UVar float assignment
   void
   UVar::operator = (ufloat n)

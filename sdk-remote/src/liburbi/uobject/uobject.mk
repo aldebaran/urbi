@@ -48,12 +48,3 @@ $(ucallbacks_hh): $(ucallbacks_hh).template $(uobject_srcdir)/template_autogen.p
 # Avoid accidental edition.
 	chmod a-w $@.tmp
 	mv $@.tmp $@
-
-
-## ------------ ##
-## Svn sugars.  ##
-## ------------ ##
-
-# svn-externals.mk must be included for this to work.
-SVN_EXTERNALS += uobject
-

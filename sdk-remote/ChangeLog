@@ -1,3 +1,55 @@
+2007-05-03  Akim Demaille  <demaille@gostai.com>
+
+	svn merge -r 435:465 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	add remote support for UObject::send
+	* uobject.cc: gc is set but not used, URBI(()) is used to send
+	commands in the UObject shared connection.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	try to fix a warning that put the bf in red.
+	* src/examples/urbiplay.cc: use feof instead of the return value of
+	fgetc.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	add UVar::setZombie.
+	* uvar.cc: done.
+
+	2007-04-24  Akim Demaille  <demaille@gostai.com>
+	Factor bug fixes
+	* src/utils/parse-header.hh: New, extracted from...
+	* src/utils/urbicycle.cc, src/utils/urbireverse.cc,
+	* src/utils/urbiscale.cc: here, so that the fix that existed
+	only in urbiscale is also available in the other two.
+	Factoring the code is not an option.
+	* src/utils/urbiwalk.cc: Space changes.
+	* src/utils/Makefile.am: Adjust.
+
+	2007-04-02  Akim Demaille  <demaille@gostai.com>
+	Address #31 again
+	* Makefile.am: Install the headers twice instead of trying
+	to symlink them, for portability sake.
+	(install-data-local): Remove our previous symlink.
+
+	2007-03-29  Akim Demaille  <demaille@gostai.com>
+	Double libport install
+	This should address a problem reported by N. Despres, but I
+	don't have the web working, I don't know the ticket number.
+	* Makefile.am (install-data-local): Symlink a second installation
+	of libport in includedir.
+
+	2007-03-29  Akim Demaille  <demaille@gostai.com>
+	Remove SVN_EXTERNALS declaration
+	* src/liburbi/uobject/uobject.mk: We no longer use inner
+	externals.  Besides, it does not always make sense to have an
+	external for uobject: liburbi-cpp owns it.
+
+	2007-03-29  Akim Demaille  <demaille@gostai.com>
+	Fix recursion order, and update externals.
+	* Makefile.am (SUBDIRS): Because of sdk/config.h, go into sdk
+	before src.
+
 2007-04-24  Akim Demaille  <demaille@gostai.com>
 
 	* src/liburbi/uobject/urbi/ustarter.hh: Include <algorithm>.
