@@ -1,3 +1,244 @@
+2007-05-03  Akim Demaille  <demaille@gostai.com>
+
+	svn merge -r 1038:1078 https://svn.gostai.com/svn/kernel1/branches/1.0
+	NB: Since there are some files which have moved (the exported
+	headers are now in include/kernel, not in src/), svn merge failed
+	to do it right:
+	svn merge -r 1038:1078 https://svn.gostai.com/svn/kernel1/branches/1.0
+	C    src/ucommand.cc
+	Skipped missing target: 'src/uconnection.hh'
+	U    src/parser/bison/utoken.l
+	U    src/parser/bison/ugrammar.y
+	U    src/ucommand.hh
+	C    src/uqueue.hh
+	C    src/uobject.cc
+	U    src/unamedparameters.cc
+	C    src/uvalue.cc
+	C    src/uvariable.cc
+	U    src/uvar.cc
+	C    src/userver.cc
+	U    src/unamedparameters.hh
+	C    src/uconnection.cc
+	Skipped missing target: 'src/uvariable.hh'
+	C    src/ughostconnection.cc
+	Skipped missing target: 'ChangeLog'
+	C    tests-local.mk
+	U    NEWS
+	 U   .
+
+	So I had to complete the command with the following:
+	svn diff -r 1038:1078 https://svn.gostai.com/svn/kernel1/branches/1.0/src/uconnection.hh | patch include/kernel/uconnection.hh
+	svn diff -r 1038:1078 https://svn.gostai.com/svn/kernel1/branches/1.0/src/uvariable.hh | patch include/kernel/uvariable.hh
+
+	Note that besides, several other adjustments were needed.  I tried
+	not to break anything, but it just... hangs.  I have no idea why.
+	So this checkin is fucked up.  And I'm fed up.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	add proper support for adaptive queues (following ticket #92)
+	* uconnection.hh: fix accessors, they do something now.
+	* uqueue.hh: add accessor for adaptive_.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	update NEWS.
+	* NEWS: add note about UObject::send.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	update externals of uobject.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	The problem here was that plugged UObjects were using the
+	ghostconnection of URBI.INI, so anything that was initialized via
+	urbi::send in the constructor was in fact executed *after* URBI.INI
+	code. It was impossible to use the result of a new in URBI.INI if this
+	new was introducing some dynamically created code, typically with
+	walk.
+
+	Now, every UObject has its own connection (in fact it's activated only
+	if you use UObject::send). UObject::send is the method to use if you
+	want to send code to URBI, from within a UObject. It works fine in
+	plugged and remote mode.
+
+	fix bug #128: now plugged UObjects use a dedicated ghostconnection.
+	* src/uconnection.cc: add a comment.
+	* src/ughostconnection.cc: add maintenance of connectionList, done
+	automatically by UGhostConnection, there was no reason not to do so.
+	* src/uobject.cc: implement plugged version of UObject::send,
+	initialize gc.
+	* src/userver.cc: remove unecessary connectionList registration for
+	the main UGhostConnection.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	This prepare the next step which will be to use ghostconnections as
+	support for UObject::send method. These "hosting connections" (should
+	be named "contexts" in k2 jargon) can be closed and so the closing
+	mechanism must be enforced properly.
+
+	add a conservative closing=true for a closing GhostConnection.
+	* ughostconnection.cc: add closing=true in the closeConnection method.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Reformating.
+	* src/ughostconnection.cc: done.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Minor reformat
+	* src/ughostconnection.cc: done.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Deleting a variable on which a UVar was set could result in
+	catastrophic server crash, because some plugged UObject will assign
+	something to this UVar, using the pointer to the UVariable in cache,
+	and the UVariable is not valid anymore.
+
+	This patch add a mechanism to set a UVar in "zombie" mode when it's
+	corresponding UVariable is deleted. We should do more (error
+	reporting, etc) but this is at least a first step and the server does
+	not crash anymore.
+
+	There is also now a ref counter in the UVar that prevent the attached
+	UVariable to be deliberately deleted by the user. Now an error
+	message is displayed.
+
+	fix bug found in ticket #2.
+	* src/ucommand.cc: refuse to delete a variable with UVar on it.
+	* src/uvar.cc: handle proper ref counting, and zombie mode.
+	* src/uvariable.cc: handle ref counting and zombie mode.
+	* src/uvariable.hh: add useCpt counter.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Improve reset messages.
+	* userver.cc: make the series of messages more useful.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Fix ticket #85
+	* src/ucommand.cc: remove dead code.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	make undefall deprecated.
+	* src/ucommand.cc: undefall is now deprecated, use reset instead.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Fix the bug on reset (ticket #21)
+	* src/uobject.cc: UHubObjects dtor must release their timers.
+	* src/userver.cc: add proper destruction/recreation of hubs.
+
+	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	Minor reformating.
+	* src/userver.cc: done.
+
+	2007-04-30  Matthieu Nottale  <nottale@gostai.com>
+	Fix a segfault when reseting.
+	* src/userver.cc: Do not clear tagtab when reseting, its content
+	is refcounted.
+
+	2007-04-22  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Minor code cleanup.
+	* src/ucommand.cc: Formatting changes.
+
+	2007-04-22  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Remove a duplicate include.
+	* src/ucommand.cc: Here (sstream).
+
+	2007-04-22  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Remove useless include.
+	* src/uvalue.cc: Don't include iomanip.
+
+	2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+	That was a request after last years "coupe de robotique" experience.
+	I'm pretty sure the syntax will evolve in k2, but we will keep this
+	backward compatible and it will be usable right now.
+
+	add a 'taglist' keyword to display the list of currently running tags.
+	* NEWS: signal the feature.
+	* src/parser/bison/utoken.l: add the keyword.
+	* src/ucommand.cc: add the code that does the job.
+
+	2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+	remove too restricting ASSERT, fix ticket #136.
+	* src/ucommand.cc: change ASSERT in if, for the case when the
+	expression evaluation fail (it leads to a legitimate unasserted case).
+
+	2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+	revert change from previous commit: std::fixed should not be used.
+	* src/uvalue.cc: std::fixed does not behave as it should.
+
+	2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+	fix ticket #24
+	* src/uvalue.cc: add std::fixed formater.
+
+	2007-04-20  Jean-Christophe Baillie  <baillie@gostai.com>
+	This fix partialy solve the problem described in ticket #150.
+	Limitations are:
+
+	- Methods that want to benefit from the inhibition mechanism must be
+	declared (with UBindFunction) in init, not in the UObject C++
+	constructor. Otherwise, since the URBI object hierarchy is not yet
+	updated	when the C++ ctor is executed, the inhibition mechanism fails
+	to detect the previously defined version of the bound function.
+
+	- The inhibition is performed when 'new' is executed, never after. So
+	if you redefine b.refresh after you have newed c, it will fail to
+	inhibate the binding. You must keep the order: b = new uBot;redefine
+	b.refresh;c = new b;
+
+	This is fragile of course and it's a dirty hack. However, fixing it
+	properly would need the introduction of a vtable cache at the object
+	level, which is almost impossible to "hack" with k1, knowing
+	that k1 does not really know objects... We will fix that in k2 with a
+	clean underlying structure.
+
+	partialy fix bug #150 (the feature is usable, but fragile)
+	* src/ucommand.cc: add inhibition code when a remote binded function
+	is already user-redefined somewhere higher in the object hierarchy.
+	* src/uobject.cc: same thing but for plugged uobjects.
+
+	2007-04-19  Jean-Christophe Baillie  <baillie@gostai.com>
+	fix bug #137 on invalid prefix resolution.
+	* src/uconnection.cc: do not simplify scoping nodes.
+
+	2007-04-19  Jean-Christophe Baillie  <baillie@gostai.com>
+	minor reformat.
+	* src/uconnection.cc: reduce to 80 col.
+
+	2007-04-17  Matthieu Nottale  <nottale@gostai.com>
+	Fix a segfault when 'stop notag'.
+	* src/ucommand.cc: Use dummy subtags instead of dummy null
+	commands to boost notag and __system__'s TagInfo reference
+	counting: fixes a segfault when calling 'stop notag'.
+
+	2007-04-15  Jean-Christophe Baillie  <baillie@gostai.com>
+	fix ticket 151, problem with +end flags not triggering properly
+	* src/parser/bison/ugrammar.y: add notifyEnd optimization in UCommand
+	and the groupOfCommands flag to mark {...} types of commands.
+	* src/ucommand.cc: add handling of +end in the dtor of UCommand.
+	* src/ucommand.hh: add necessary attributes for notifyEnd and
+	groupOfCommands.
+	* src/uconnection.cc: remove the handling of +end from the tree
+	machinery, it's now handled by UCommand dtor.
+	* src/unamedparameters.cc: add an optimization to avoid having to scan
+	the whole list of flags to know if +end is there.
+	* src/unamedparameters.hh: add .
+
+	2007-04-03  Matthieu Nottale  <nottale@gostai.com>
+	Optimise by caching TagInfo structures for 'notag' and '__system__' tag.
+	* src/ucommand.cc,
+	* src/ucommand.hh: Add two static TagInfo* in UCommand, and a
+	static method to initialise them. Use them instead of the tag
+	strings "__system__" and "notag".
+	* src/userver.cc: Call UCommand::initializeTagInfos in
+	UServer::initialization. Replace an assert by code handling the
+	condition as it can happen without being a problem.
+
+	2007-04-03  Akim Demaille  <akim.demaille@free.fr>
+	From hanging to segv
+	* src/ucommand.cc (UCommand_OPERATOR::execute_): Iterate when
+	running "undefall".
+
+	2007-04-02  Akim Demaille  <demaille@gostai.com>
+	tests-local.mk
+	* tests-local.mk: New.
+
 2007-04-02  Akim Demaille  <akim.demaille@free.fr>
 
 	undefall

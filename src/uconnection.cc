@@ -1220,6 +1220,22 @@ UConnection::sendQueueRemain ()
   return sendQueue_->dataSize();
 }
 
+//! Sets sendAdaptive_
+void
+UConnection::setSendAdaptive (int sendAdaptive)
+{
+  sendAdaptive_ = sendAdaptive;
+  sendQueue_->setAdaptive (sendAdaptive_);
+}
+
+//! Sets receiveAdaptive_
+void
+UConnection::setReceiveAdaptive (int receiveAdaptive)
+{
+  recvAdaptive_ = receiveAdaptive;
+  recvQueue_->setAdaptive (recvAdaptive_);
+}
+
 //! Performs a variable prefix check for local storage in function calls
 /*! When a new variable is created inside a connection, it is necessary to
  check if it is not a variable local to some function, in that case it

@@ -109,6 +109,7 @@ public:
   }
   void setTag(const std::string& tag);
   void setTag(const UCommand* b); //faster than the one above
+  void setTag(TagInfo * ti); //faster, no hash acces
   void unsetTag();
 
   bool isBlocked();
@@ -140,6 +141,12 @@ public:
 
   /// Status of the command since last execution.
   Status status;
+
+  /// Quick hack to get the connection where the command is executed in
+  UConnection* myconnection;
+
+  /// Hack used to know if this command is a { ... } placeholder
+  bool         groupOfCommands;
 
   /// Run the command.  Set status and return value.
   /// Just calls execute_ and sets status.
@@ -197,6 +204,8 @@ public:
   /// true when the command is part of a morphed structure
   bool morphed;
 
+  /// initialize the cached taginfos
+  static void initializeTagInfos();
 protected:
   UCommand* copybase(UCommand* c) const;
 
@@ -210,6 +219,12 @@ private:
 
   /// Protection against copy
   UCommand (const UCommand &c);
+
+  protected:
+  /// Cached often used taginfo
+  static TagInfo * systemTagInfo;
+  /// Cached often used taginfo
+  static TagInfo * notagTagInfo;
 };
 
 class UCommand_TREE : public UCommand, public Flavorable

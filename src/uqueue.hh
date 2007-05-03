@@ -68,6 +68,7 @@ public:
   void                mark              ();
   void                revert            ();
   bool                locked            ();
+  void                setAdaptive       (int adaptive);
 
   UErrorValue         UError;///< err code for the constructor
 
@@ -144,6 +145,13 @@ inline bool
 UQueue::locked()
 {
   return locked_;
+}
+
+//! Adaptive accessor
+inline void
+UQueue::setAdaptive (int adaptive)
+{
+  adaptive_ = adaptive;
 }
 
 #endif

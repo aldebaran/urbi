@@ -58,6 +58,8 @@ namespace urbi
       vardata = new UVardata(it->second);
       //XXX why?? owned = !vardata->variable->autoUpdate;
     }
+
+    ++vardata->variable->useCpt;
   }
 
   //! set own mode
@@ -86,15 +88,25 @@ namespace urbi
       if (varmapfind->second.empty())
 	varmap->erase(varmapfind);
     }
+
+    if (vardata)
+      --vardata->variable->useCpt;
     delete vardata;
   }
 
+  //! Set the UVar in "zombie" mode  (the attached UVariable is dead)
+  void
+  UVar::setZombie ()
+  {
+    delete vardata;
+    vardata = 0;
+  }
 
   //! UVar float assignment
   void
   UVar::operator = (ufloat n)
   {
-    if (!invariant())
+    if (!invariant() || !vardata)
       return;
 
     // type mismatch is not integrated at this stage
@@ -113,7 +125,7 @@ namespace urbi
   void
   UVar::operator = (const std::string& s)
   {
-    if (!invariant())
+    if (!invariant() || !vardata)
       return;
 
     if (vardata->variable->value->dataType == ::DATA_VOID)
@@ -128,7 +140,7 @@ namespace urbi
   void
   UVar::operator = (const UBinary &b)
   {
-    if (!invariant())
+    if (!invariant() || !vardata)
       return;
     *vardata->variable->value=b;
     vardata->variable->updated();
@@ -138,7 +150,7 @@ namespace urbi
   void
   UVar::operator = (const UImage &b)
   {
-    if (!invariant())
+    if (!invariant() || !vardata)
       return;
     *vardata->variable->value=b;
     vardata->variable->updated();
@@ -149,7 +161,7 @@ namespace urbi
   void
   UVar::operator = (const USound &b)
   {
-    if (!invariant())
+    if (!invariant() || !vardata)
       return;
     *vardata->variable->value=b;
     vardata->variable->updated();
@@ -158,7 +170,7 @@ namespace urbi
   void
   UVar::operator = (const UList &l)
   {
-    if (!invariant())
+    if (!invariant() || !vardata)
       return;
     *vardata->variable->value=l;
     vardata->variable->updated();
@@ -188,7 +200,10 @@ namespace urbi
 
   UVar::operator UList()
   {
-    return (UList)*vardata->variable->value;
+    if (vardata)
+      return (UList)*vardata->variable->value;
+    else
+      return UList ();
   }
 
   UVar::operator UBinary()
@@ -211,12 +226,18 @@ namespace urbi
 
   UVar::operator UImage()
   {
-    return (UImage)*vardata->variable->value;
+    if (vardata)
+      return (UImage)*vardata->variable->value;
+    else
+      return UImage (); // FIXME: what does this UImage contain??
   }
 
   UVar::operator USound()
   {
-    return (USound)*vardata->variable->value;
+    if (vardata)
+      return (USound)*vardata->variable->value;
+    else
+      return USound (); // FIXME: what does this USound contain??
   }
 
 
@@ -309,26 +330,11 @@ namespace urbi
     return UValue ();
   }
 
-  /*
-   UBlendType
-   UVar::blend()
-   {
-   if (vardata)
-   return (UBlendType)vardata->variable->blendType;
-   else
-   {
-   echo("Internal error on variable 'vardata', should not be zero\n");
-   return UNORMAL;
-   }
-   }*/
-
-
   void
   UVar::requestValue()
   {
     //do nothing
   }
-
 
   //! UVar update
   void
@@ -336,5 +342,4 @@ namespace urbi
   {
     value = v;
   }
-
 }

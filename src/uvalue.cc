@@ -572,11 +572,11 @@ UValue::add(UValue *v)
 
   if (dataType == DATA_LIST)
   {
-    UValue *res = copy();
+    UValue* res = copy();
 
     if (res->liststart)
     {
-      UValue *scanlist = res->liststart;
+      UValue* scanlist = res->liststart;
       while (scanlist->next)
 	scanlist = scanlist->next;
 
@@ -591,8 +591,8 @@ UValue::add(UValue *v)
   if (v->dataType == DATA_LIST)
   {
     // we are not a list
-    UValue *res = v->copy();
-    UValue * b = res->liststart;
+    UValue* res = v->copy();
+    UValue* b = res->liststart;
     res->liststart = copy();
     res->liststart->next = b;
     return res;
@@ -602,7 +602,7 @@ UValue::add(UValue *v)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *res = new UValue();
+      UValue* res = new UValue();
       res->dataType = DATA_NUM;
       res->val = val + v->val;
       return res;
@@ -610,14 +610,14 @@ UValue::add(UValue *v)
 
     if (v->dataType == DATA_STRING)
     {
-      UValue *res = new UValue();
+      UValue* res = new UValue();
       if (res == 0)
 	return 0;
 
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << val<<v->str->c_str();
+      ostr << val << v->str->c_str();
       res->str = new UString(ostr.str().c_str());
       if (res->str == 0)
       {
@@ -632,14 +632,14 @@ UValue::add(UValue *v)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *res = new UValue();
+      UValue* res = new UValue();
       if (res == 0)
 	return 0;
 
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << str->c_str()<<v->val;
+      ostr << str->c_str() << v->val;
       res->str = new UString(ostr.str().c_str());
 
       if (res->str == 0)

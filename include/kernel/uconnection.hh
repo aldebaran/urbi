@@ -307,21 +307,7 @@ UConnection::send_queue()
 inline int
 UConnection::receiveAdaptive()
 {
-return recvAdaptive_;
-}
-
-//! Sets sendAdaptive_
-inline void
-UConnection::setSendAdaptive (int sendAdaptive)
-{
-  sendAdaptive_ = sendAdaptive;
-}
-
-//! Sets receiveAdaptive_
-inline void
-UConnection::setReceiveAdaptive (int receiveAdaptive)
-{
-  recvAdaptive_ = receiveAdaptive;
+  return recvAdaptive_;
 }
 
 inline

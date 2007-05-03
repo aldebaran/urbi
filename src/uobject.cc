@@ -36,6 +36,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "ughostconnection.hh"
 #include "ugroup.hh"
 #include "uobj.hh"
+#include "ufunction.hh"
 
 //! Global definition of the starterlist
 namespace urbi
@@ -93,7 +94,24 @@ namespace urbi
   {
     nbparam = size;
 
-    if (type == "function" || type == "event" || type == "eventend")
+    // Autodetect redefined members higher in the hierarchy of an object
+    // If one is found, cancel the binding.
+    if (type == "function")
+    {
+      UObj* srcobj;
+      HMobjtab::iterator it = ::urbiserver->objtab.find(objname.c_str ());
+      if (it != ::urbiserver->objtab.end())
+      {
+	srcobj = it->second;
+	bool ambiguous;
+	std::string member = name.substr (name.find ('.') + 1);
+	UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+	if (fun && fun != kernel::remoteFunction && !ambiguous)
+	  return;
+      }
+    }
+
+    if (type == "function" || type== "event" || type=="eventend")
       t[this->name].push_back(this);
 
     if (type == "var" || type=="var_onrequest")
@@ -193,6 +211,7 @@ namespace urbi
     : __name(s),
       classname(s),
       derived(false),
+      gc (0),
       remote (false),
       load(s, "load")
   {
@@ -215,6 +234,7 @@ namespace urbi
   //! Dummy UObject constructor.
   UObject::UObject(int index)
     : derived(false),
+      gc (0),
       remote (false)
   {
     std::stringstream ss;
@@ -266,6 +286,7 @@ namespace urbi
   UObject::~UObject()
   {
     clean();
+    delete gc;
   }
 
   void
@@ -292,7 +313,22 @@ namespace urbi
 				   &UObject::update, updatemap);
   }
 
+  int
+  UObject::send (const std::string& s)
+  {
+    if (!gc)
+      gc = new UGhostConnection (::urbiserver);
+
+    return gc->received (s.c_str ());
+  }
+
   // **************************************************************************
+
+  //! UObjectHub destructor.
+  UObjectHub::~UObjectHub()
+  {
+    cleanTimerTable(updatemap, name);
+  }
 
   void
   UObjectHub::USetUpdate(ufloat t)

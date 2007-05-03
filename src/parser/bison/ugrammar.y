@@ -550,6 +550,8 @@ flag:
     UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
     $$ = new UNamedParameters(new UString("flag"), flagval);
+    if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
+      $$->notifyEnd = true;
     memcheck(up, $$, flagval);
   }
 
@@ -576,7 +578,10 @@ flag:
 // One or more "flag"s.
 flags.1:
   flag             { $$ = $1;       }
-| flags.1 flag     { $1->next = $2; }
+| flags.1 flag     { $1->next = $2;
+                     if ($2->notifyEnd)
+                       $1->notifyEnd = true; // propagate the +end flag optim
+                   }
 ;
 
 // Zero or more "flag"s.
@@ -600,6 +605,7 @@ command:
       UCommand_TREE* res =
 	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
 			  new UCommand_NOOP(@$, UCommand_NOOP::zerotime));
+      res->groupOfCommands = true;
       res->setTag("__UGrouped_set_of_commands__");
       res->command2->setTag("__system__");
       $$ = res;

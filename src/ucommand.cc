@@ -32,8 +32,6 @@
 #include "libport/containers.hh"
 #include "libport/ref-pt.hh"
 
-#include <sstream>
-
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
 
@@ -132,6 +130,13 @@ namespace
 
 MEMORY_MANAGER_INIT(UCommand);
 
+
+
+/// Cache the location of notag and system taginfos
+TagInfo* UCommand::notagTagInfo = 0;
+TagInfo* UCommand::systemTagInfo = 0;
+
+
 // **************************************************************************
 //! UCommand constructor.
 /*! The parameter 'type' is required here to describe the type of the command.
@@ -142,6 +147,8 @@ UCommand::UCommand(const location& l, Type _type)
   : UAst (l),
     type (_type),
     status (UONQUEUE),
+    myconnection(0),
+    groupOfCommands(false),
     flags (0),
     morph (0),
     persistant (false),
@@ -155,24 +162,44 @@ UCommand::UCommand(const location& l, Type _type)
     flag_nbTrue2 (0),
     flag_nbTrue4 (0),
     morphed (false),
+    tag (""),
     tagInfo (0)
 {
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
    L2: pass a tag or a command ptr to ctor
    */
-  tag = "";
   if (::urbiserver->systemcommands)
-    setTag("__system__"); //untouchable
+    setTag(systemTagInfo); //untouchable
   else
-    setTag("notag"); //untouchable
+    setTag(notagTagInfo); //untouchable
 }
 
 //! UCommand destructor.
 UCommand::~UCommand()
 {
+  if (myconnection && flags && flags->notifyEnd)
+    myconnection->send("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;
 }
+
+
+void
+UCommand::initializeTagInfos()
+{
+  // empty name, no parent, not a pb
+  TagInfo* dummy = new TagInfo();
+
+  TagInfo t;
+  t.name = "__system__";
+  systemTagInfo = t.insert(urbiserver->tagtab);
+  // insert a dummy tag in subtag list, so that the taginfo is never deleted
+  systemTagInfo->subTags.push_back(dummy);
+  t.name = "notag";
+  notagTagInfo =  t.insert(urbiserver->tagtab);
+  notagTagInfo->subTags.push_back(dummy);
+}
+
 
 UCommand::Status
 UCommand::execute(UConnection* c)
@@ -180,6 +207,7 @@ UCommand::execute(UConnection* c)
 #ifdef ENABLE_DEBUG_TRACES
   print(0);
 #endif
+  myconnection = c;
   return status = execute_ (c);
 }
 
@@ -190,6 +218,8 @@ UCommand::copybase(UCommand* c) const
   c->setTag(this);
   if (flags)
     c->flags = flags->copy();
+  c->myconnection = myconnection;
+  c->groupOfCommands = groupOfCommands;
   return c;
 }
 
@@ -305,7 +335,6 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
   return 0;
 }
 
-
 void
 UCommand::setTag(const std::string& tag)
 {
@@ -332,6 +361,19 @@ UCommand::setTag(const std::string& tag)
   ti->commands.push_back(this);
   tagInfoPtr = --ti->commands.end();
   tagInfo = ti; //we know he won't die before us
+}
+
+
+void
+UCommand::setTag(TagInfo* ti)
+{
+  this->tag = ti->name;
+  tagInfo = ti;
+  if (tagInfo)
+  {
+    tagInfo->commands.push_back(this);
+    tagInfoPtr = --tagInfo->commands.end();
+  }
 }
 
 void
@@ -475,7 +517,7 @@ void
 UCommand_TREE::deleteMarked()
 {
   int go_to = 1;
-  UCommand_TREE *tree = this;
+  UCommand_TREE* tree = this;
 
   while (tree != up)
   {
@@ -508,8 +550,7 @@ UCommand_TREE::deleteMarked()
       }
 
     go_to = 2;
-    if (tree->up
-	&& *tree->position == tree->up->command2)
+    if (tree->up && *tree->position == tree->up->command2)
       go_to = 0;
 
     tree = tree->up;
@@ -746,8 +787,8 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	  || (!expression->parameters && !(*cbi)->nbparam) )
       {
 	urbi::UList tmparray;
-	for (UNamedParameters *pvalue = expression->parameters;
-	     pvalue != 0;
+	for (UNamedParameters* pvalue = expression->parameters;
+	     pvalue;
 	     pvalue = pvalue->next)
 	{
 	  UValue* valparam = pvalue->expression->eval(this, connection);
@@ -935,7 +976,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     }
 
     // eval the right side of the assignment and check for errors
-    UValue *rhs = expression->eval(this, connection);
+    UValue* rhs = expression->eval(this, connection);
     if (rhs == 0)
       return UCOMPLETED;
 
@@ -2127,9 +2168,8 @@ UCommand_EXPR::execute_(UConnection *connection)
       //trying inheritance
       const char* devname = expression->variablename->getDevice()->c_str();
       fun = 0;
-      HMobjtab::iterator itobj;
-      if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	  ::urbiserver->objtab.end())
+      HMobjtab::iterator itobj = ::urbiserver->objtab.find(devname);
+      if (itobj != ::urbiserver->objtab.end())
       {
 	bool ambiguous;
 	fun = itobj->second->
@@ -3011,7 +3051,7 @@ UCommand_INHERIT::execute_(UConnection *connection)
   if (!sub || !parent)
     return UCOMPLETED;
 
-  HMobjtab::iterator objsub    = ::urbiserver->objtab.find(sub->c_str());
+  HMobjtab::iterator objsub = ::urbiserver->objtab.find(sub->c_str());
   if (objsub == ::urbiserver->objtab.end ())
   {
     send_error(connection, this, "Object does not exist: %s", sub->c_str());
@@ -3535,17 +3575,23 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
       }
 
       // variable is not an object or it does not have subclasses
-      if (variable->nbAssigns == 0 && variable->uservar)
+      if (variable->nbAssigns == 0 && variable->uservar
+	  && variable->useCpt == 0)
       {
 	variable->toDelete = true;
 	return URUNNING;
       }
       else
       {
-	send_error(connection, this,
-		   "variable %s already in use or is a system var."
-		   " Cannot delete.",
-		   fullname->c_str());
+	if (variable->useCpt)
+	  send_error(connection, this,
+		     "variable %s attached to a UVar, free it first",
+		     fullname->c_str());
+	else
+	  send_error(connection, this,
+		     "variable %s already in use or is a system var."
+		     " Cannot delete.",
+		     fullname->c_str());
 	return UCOMPLETED;
       }
     }
@@ -3751,7 +3797,8 @@ UCommand_BINDER::execute_(UConnection *connection)
 
   if (type != 3) // not object binder
     debug("BINDING: %s type(%d) %s[%d] from %s\n",
-	  binder->c_str(), type, fullname->c_str(), nbparam, fullobjname->c_str());
+	  binder->c_str(), type, fullname->c_str(),
+	  nbparam, fullobjname->c_str());
   else
     debug("BINDING: %s type(%d) %s\n",
 	  binder->c_str(), type, variablename->id->c_str());
@@ -3794,14 +3841,32 @@ UCommand_BINDER::execute_(UConnection *connection)
     break;
 
     case UBIND_FUNCTION:
-      if (!libport::mhas(::urbiserver->functionbindertab, key->c_str()))
+    {
+      // Autodetect redefined members higher in the hierarchy of an object
+      // If one is found, cancel the binding.
+      HMobjtab::iterator it = ::urbiserver->objtab.find(fullobjname->c_str());
+      if (it != ::urbiserver->objtab.end())
+      {
+	UObj* srcobj = it->second;
+	bool ambiguous;
+	std::string member (fullname->str ());
+	member = member.substr (member.find ('.') + 1);
+	UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+	if (fun && fun != kernel::remoteFunction && !ambiguous)
+	  break;
+      }
+
+      // do the binding
+      if (::urbiserver->functionbindertab.find(key->c_str())
+	  == ::urbiserver->functionbindertab.end())
 	::urbiserver->functionbindertab[key->c_str()] =
-	    new UBinder(*fullobjname, *fullname,
-			mode, type, nbparam, connection);
+	  new UBinder(*fullobjname, *fullname,
+		      mode, type, nbparam, connection);
       else
 	::urbiserver->functionbindertab[key->c_str()]->
-	    addMonitor(*fullobjname, connection);
-      break;
+	  addMonitor(*fullobjname, connection);
+    }
+    break;
 
     case UBIND_EVENT:
       if (!libport::mhas(::urbiserver->eventbindertab, key->c_str()))
@@ -3945,16 +4010,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "undefall")
   {
-    connection->sendf (getTag(), "*** All variables and functions cleared\n");
-
-    for (HMvariabletab::iterator i = connection->server->variabletab.begin();
-	 i != connection->server->variabletab.end(); ++i)
-      delete i->second;
-
-    connection->server->variabletab.clear();
-    connection->server->functiontab.clear();
-    connection->server->emittab.clear();
-
+    connection->sendf (getTag(),
+		       "*** undefall is deprecated. Use 'reset' instead\n");
     return UCOMPLETED;
   }
 
@@ -4056,6 +4113,26 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
+  if (*oper == "taglist")
+  {
+    for (HMtagtab::iterator i = connection->server->tagtab.begin();
+	 i != connection->server->tagtab.end();
+	 ++i)
+    {
+      std::ostringstream tstr;
+      if (i->second.name != "__system__" &&
+	  i->second.name != "__node__" &&
+	  i->second.name != "__UGrouped_set_of_commands__" &&
+	  i->second.name != "notag")
+      {
+	tstr << "*** " << i->second.name << "\n";
+	connection->sendf(getTag(), tstr.str().c_str());
+      }
+    }
+
+    connection->sendf(getTag(), "*** end of tag list.\n");
+    return UCOMPLETED;
+  }
 
   if (*oper == "uservars")
   {
@@ -4417,7 +4494,7 @@ void
 UCommand_EMIT::removeEvent ()
 {
   // unregister event
-  ASSERT (event && eh) // free the event
+  if (event && eh) // free the event
     eh->removeEvent (event);
 
   ////// EXTERNAL /////
@@ -5313,21 +5390,6 @@ UCommand_STOPIF::execute_(UConnection *connection)
       command->copy());
   morph->setTag(tagRef->c_str());
   return UMORPH;
-
-  assert (command);
-
-  persistant = false;
-  morph =
-    new UCommand_TREE
-    (loc_, Flavorable::UAND,
-     new UCommand_TREE(loc_, Flavorable::UPIPE,
-		       new UCommand_WAIT_TEST(loc_, condition->copy()),
-		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
-						tagRef->copy())),
-     command->copy());
-
-  morph->setTag(tagRef->c_str());
-  return UMORPH;
 }
 
 //! UCommand subclass hard copy function
@@ -5874,7 +5936,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
       active_ = true;
       ASSERT (!theloop_);
       theloop_ = new UCommand_LOOP (loc_, command1->copy ());
-      theloop_->setTag ("__system__"); //untouchable
+      theloop_->setTag (systemTagInfo); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
 	assign = new UCommand_TREE (loc_, Flavorable::UPIPE, assign, theloop_);

@@ -105,6 +105,8 @@ public:
   /// Stage of usage in the reinit list: 0 (off), 1(in) or 2(going
   /// out).
   int             activity;
+  /// Nb of UVar pointing to this UVariable
+  int             useCpt;
   /// Indicates user variables.
   bool            uservar;
   /// Temporary value container.

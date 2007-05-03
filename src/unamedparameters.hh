@@ -48,6 +48,9 @@ public:
   UExpression        *expression;
   /// Next in the list.
   UNamedParameters   *next;
+
+  /// Horrible hack to speed up the flag scanning done in UCommand dctor
+  bool               notifyEnd;
 };
 
 #endif

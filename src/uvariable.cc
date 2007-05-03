@@ -165,6 +165,7 @@ UVariable::init()
   activity   = 0;
   binder     = 0;
   access_and_change = false;
+  useCpt     = 0;
 }
 
 //! UVariable destructor
@@ -176,16 +177,25 @@ UVariable::~UVariable()
   if (access_and_change)
     ::urbiserver->access_and_change_varlist.remove (this);
 
-  HMvariabletab::iterator hmi;
+  {
+    HMvariabletab::iterator i = ::urbiserver->variabletab.find(varname.c_str());
+    if (i != ::urbiserver->variabletab.end())
+      ::urbiserver->variabletab.erase(i);
+  }
 
-  if ((hmi = ::urbiserver->variabletab.find(varname.c_str())) !=
-      ::urbiserver->variabletab.end())
-    ::urbiserver->variabletab.erase(hmi);
+  // Disactivate corresponding UVars
+  {
+    urbi::UVarTable::iterator i = urbi::varmap->find(varname.c_str ());
+    if (i != urbi::varmap->end())
+      for (std::list<urbi::UVar*>::iterator j = i->second.begin();
+	   j != i->second.end(); ++j)
+	(*j)->setZombie ();
+  }
 
   FREEOBJ(UVariable);
   if (value)
   {
-    if (value->dataType == DATA_OBJ && value->str!=0)
+    if (value->dataType == DATA_OBJ && value->str)
     {
       HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
       if (idit != ::urbiserver->objtab.end())
@@ -194,6 +204,7 @@ UVariable::~UVariable()
     }
     delete value;
   }
+
   if (context)
     context->remove(this);
 }

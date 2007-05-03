@@ -18,10 +18,7 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-//#define ENABLE_DEBUG_TRACES
-#include "libport/compiler.hh"
-
-//#define ENABLE_DEBUG_TRACES
+#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include <cassert>
@@ -164,8 +161,6 @@ UServer::initialize()
   {
     DEBUG (("Setting up ghost connection..."));
     ghost_ = new UGhostConnection(this);
-    connectionList.push_front(ghost_);
-
     std::ostringstream o;
     o << 'U' << (long)ghost_;
 
@@ -174,6 +169,9 @@ UServer::initialize()
     uservarState = true;
     DEBUG (("done\n"));
   }
+
+  // Cached taginfos.
+  UCommand::initializeTagInfos();
 
   // Plugins (internal components)
   {
@@ -475,6 +473,13 @@ UServer::work()
 	  else
 	    ++it;
 
+      //delete hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	delete (*i)->getUObjectHub ();
+
+
       //delete the rest
       for (HMvariabletab::iterator i = variabletab.begin();
 	   i != variabletab.end();
@@ -484,26 +489,35 @@ UServer::work()
 
       libport::deep_clear (varToReset);
 
-      //variabletab.clear();
       aliastab.clear();
       emittab.clear();
       functiontab.clear();  //This leaks awfuly...
       grouptab.clear();
       objaliastab.clear();
-      tagtab.clear();
+
+      // do not clear tagtab, everything is refcounted and will be cleared
+      // when commands will be
+      //tagtab.clear();
 
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive())
-	  (*i)->send("*** Reset completed.\n", "reset");
+	  (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
 
-      //restart everything
+      //restart hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	(*i)->init((*i)->name);
+
+      //restart uobjects
       for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
 	   i != urbi::objectlist->end();
 	   ++i)
 	(*i)->init((*i)->name);
 
+      //reload URBI.INI
       loadFile("URBI.INI", &ghost_->recvQueue());
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
@@ -512,16 +526,17 @@ UServer::work()
     }
     else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
+      //reload CLIENT.INI
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive() && (*i) != ghost_)
-	{
-	  (*i)->send("*** Reloading\n", "reset");
-
-	  loadFile("CLIENT.INI", &(*i)->recvQueue());
-	  (*i)->newDataAdded = true;
-	}
+	  {
+	    (*i)->send("*** Restart completed.\n", "reset");
+	    loadFile("CLIENT.INI", &(*i)->recvQueue());
+	    (*i)->newDataAdded = true;
+	    (*i)->send("*** Ready.\n", "reset");
+	  }
       reseting = false;
       stage = 0;
     }
@@ -1028,7 +1043,9 @@ namespace
   const char* tab (unsigned n)
   {
     static char buf[1024];
-    assert(n < sizeof buf);
+    if (n >= sizeof buf)
+      n = sizeof buf - 1;
+
     for (unsigned i = 0; i < n; ++i)
       buf[i] = ' ';
     buf[n] = 0;
