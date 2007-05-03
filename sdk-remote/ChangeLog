@@ -1,5 +1,13 @@
 2007-05-03  Akim Demaille  <demaille@gostai.com>
 
+	UObjectHub common code
+	* src/liburbi/uobject/uobject-hub-common.cc (UObjectHub::~UObjectHub):
+	Move to...
+	* src/liburbi/uobject.cc: here, since now the kernel uses a different
+	version, it is no longer common.
+
+2007-05-03  Akim Demaille  <demaille@gostai.com>
+
 	svn merge -r 435:465 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
 
 	2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>

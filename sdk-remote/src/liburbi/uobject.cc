@@ -433,6 +433,10 @@ namespace urbi
 
   // **************************************************************************
 
+  UObjectHub::~UObjectHub()
+  {
+  }
+
   void
   UObjectHub::USetUpdate(ufloat t)
   {

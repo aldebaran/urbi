@@ -33,11 +33,6 @@ namespace urbi
   {
   }
 
-  //! UObjectHub destructor.
-  UObjectHub::~UObjectHub()
-  {
-  }
-
   int
   UObjectHub::updateGlobal()
   {
