@@ -48,16 +48,13 @@ UGhostConnection::UGhostConnection  (UServer* mainserver)
 		   MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
-
-  // FIXME: What the heck is this suppose to do???
-  // Test the error from UConnection constructor.
-  if (uerror_ != USUCCESS)
-    return;
+  ::urbiserver->connectionList.push_front (this);
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
+  ::urbiserver->connectionList.remove (this);
   FREEOBJ(UGhostConnection);
 }
 
@@ -67,6 +64,7 @@ UGhostConnection::~UGhostConnection()
 UErrorValue
 UGhostConnection::closeConnection()
 {
+  closing = true;
   return USUCCESS;
 }
 

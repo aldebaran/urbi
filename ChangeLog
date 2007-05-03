@@ -1,5 +1,16 @@
 2007-05-03  Akim Demaille  <demaille@gostai.com>
 
+	Finish the merge -r 1038:1078
+	I guess I ran "svn revert src/ughostconnection.cc" when I meant
+	"svn resolved", since Emacs had the right contents, but the
+	file on the disk did not have the modifications.
+	make check passes again.
+	* src/ughostconnection.cc: Apply the changes, but getting rid of
+	the useless casts.
+	* src/userver.cc: Don't activate debug traces.
+
+2007-05-03  Akim Demaille  <demaille@gostai.com>
+
 	Minor changes to improve the similarity with the code before
 	the breaking merge.  Of course, it still does not make check.
 	* src/ucommand.cc, src/uobject.cc: Formatting changes.
