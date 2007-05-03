@@ -98,20 +98,19 @@ namespace urbi
     // If one is found, cancel the binding.
     if (type == "function")
     {
-      UObj* srcobj;
       HMobjtab::iterator it = ::urbiserver->objtab.find(objname.c_str ());
       if (it != ::urbiserver->objtab.end())
       {
-	srcobj = it->second;
-	bool ambiguous;
+	UObj* srcobj = it->second;
 	std::string member = name.substr (name.find ('.') + 1);
+	bool ambiguous;
 	UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
 	if (fun && fun != kernel::remoteFunction && !ambiguous)
 	  return;
       }
     }
 
-    if (type == "function" || type== "event" || type=="eventend")
+    if (type == "function" || type == "event" || type =="eventend")
       t[this->name].push_back(this);
 
     if (type == "var" || type=="var_onrequest")

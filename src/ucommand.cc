@@ -3857,8 +3857,7 @@ UCommand_BINDER::execute_(UConnection *connection)
       }
 
       // do the binding
-      if (::urbiserver->functionbindertab.find(key->c_str())
-	  == ::urbiserver->functionbindertab.end())
+      if (!libport::mhas(::urbiserver->functionbindertab, key->c_str()))
 	::urbiserver->functionbindertab[key->c_str()] =
 	  new UBinder(*fullobjname, *fullname,
 		      mode, type, nbparam, connection);
