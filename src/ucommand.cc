@@ -183,7 +183,7 @@ UCommand::UCommand(const location& l, Type _type)
 //! UCommand destructor.
 UCommand::~UCommand()
 {
-  if (myconnection && flags && flags->notifyEnd)
+  if (myconnection && flags && flags->notifyEnd && !morph)
     myconnection->send("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;

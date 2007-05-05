@@ -30,22 +30,24 @@
 //! UNamedParameters constructor.
 UNamedParameters::UNamedParameters(UString* name,
 				   UExpression *expression,
-				   UNamedParameters* next)
+				   UNamedParameters* next,
+                                   bool notifyEnd)
   : name       (name),
     expression (expression),
     next       (next),
-    notifyEnd  (false)
+    notifyEnd  (notifyEnd)
 {
   ADDOBJ(UNamedParameters);
 }
 
 //! UNamedParameters constructor (for expression list only)
 UNamedParameters::UNamedParameters(UExpression *expression,
-				   UNamedParameters* next)
+				   UNamedParameters* next,
+                                   bool notifyEnd)
   : name       (0),
     expression (expression),
     next       (next),
-    notifyEnd  (false)
+    notifyEnd  (notifyEnd)
 {
   ADDOBJ(UNamedParameters);
 }
@@ -86,7 +88,8 @@ UNamedParameters::copy() const
   return
     new UNamedParameters(ucopy (name),
 			 ucopy (expression),
-			 ucopy (next));
+			 ucopy (next),
+                         notifyEnd);
 }
 
 //! Print the list of parameters
