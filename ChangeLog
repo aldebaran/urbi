@@ -4,6 +4,10 @@
 
 2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update test externals.
+
+2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	The bug appeared when a plugged UOwned UVar was notified on change and
 	access, and a remote UObject var "notifychanging" it. UOwned was
 	preventing the UVar::get call, from the autoloop mechanism used to make
