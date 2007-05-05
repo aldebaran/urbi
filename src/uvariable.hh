@@ -187,7 +187,7 @@ public:
 
   void          updated(bool uvar_assign = false);
 
-  UValue*       get(bool autoloop = false);
+  UValue*       get();
 
   void setContext(UCallid * ctx)  {context = ctx;}
 

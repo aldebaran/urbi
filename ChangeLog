@@ -1,3 +1,18 @@
+2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	The bug appeared when a plugged UOwned UVar was notified on change and
+	access, and a remote UObject var "notifychanging" it. UOwned was
+	preventing the UVar::get call, from the autoloop mechanism used to make
+	sure UVar that are both change/access notified are constantly updated.
+	This security was not necessary because the UVar = operator was
+	already preventing UOwner variable against notifychange calls when a
+	notifyaccess was triggered.
+
+	Fix bug in notifychange/access interaction with UOwned UVars. 
+	* src/userver.cc: change UVariable::get usage.
+	* src/uvariable.cc: remove double blocking mechanism, change get.
+	* src/uvariable.hh: change UVarialbe::get API.
+
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	add proper support for adaptive queues (following ticket #92) 
