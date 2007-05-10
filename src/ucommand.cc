@@ -1228,6 +1228,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  else if (modif->name->equal("adaptive"))
 	  {
 	    modif_adaptive = modif->expression;
+	    controlled = true;
 	  }
 	  else if (modif->name->equal("phase"))
 	  {

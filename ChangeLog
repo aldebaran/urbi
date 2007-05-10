@@ -1,3 +1,8 @@
+2007-05-10  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix bug: adaptive modifier alone did not trigger notifyaccess callbacks
+	* src/ucommand.cc: Set 'controlled' to true on UCommand_ASSIGN_VALUE when adaptive modifier is found.
+
 2007-05-07  Matthieu Nottale  <nottale@gostai.com>
 
 	Increase max buffer size to 30M 
