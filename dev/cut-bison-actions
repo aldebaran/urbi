@@ -1,0 +1,17 @@
+#! /bin/sh
+
+exec perl -0777 -pi -e '
+$re = qr{
+           \{([^"]|\n)        # Do not match a brace followed by a double
+                              # quote, as it could match the LBRACE token.
+           (?:
+              (?> [^{}]+ )    # Non-braces without backtracking
+            |
+              (??{ $re })     # Group with matching braces
+           )*
+           \}
+        }x;
+
+($prologue, $body, $epilogue) = ($_ =~ m/(.*%%)(.*)(%%.*)/s);
+$body =~ s/$re//g;
+$_ = $prologue . $body . $epilogue;' "$@"

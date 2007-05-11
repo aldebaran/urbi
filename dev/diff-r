@@ -1,0 +1,107 @@
+#! /bin/sh
+
+# rdiff FROM TO -- diff two directories/tarballs ignoring annoying files.
+
+tmp=/tmp/rdiff-$$
+
+# untar LABEL FILE
+# ----------------
+# LABEL should be "from" or "to".
+function untar ()
+{
+  label=$1
+  file=$2
+  case $file in (/*);; (*) arg=`pwd`/$file;; esac
+  mkdir -p $tmp/$label
+  case $file in
+   *.gz  | *.tgz  )
+      (cd $tmp/$label && tar --gzip  -xf $file)
+      name=$(basename $file | sed 's/\.\(tar\..*\|tgz\|tbz2\)//')
+      echo "$tmp/$label/$name"
+      ;;
+   *.bz2 | *.tbz2 )
+      (cd $tmp/$label && tar --bzip2 -xf $file)
+      name=$(basename $file | sed 's/\.\(tar\..*\|tgz\|tbz2\)//')
+      echo "$tmp/$label/$name"
+      ;;
+   * )
+      echo "$file"
+      ;;
+  esac
+}
+
+trap 'rm -rf $tmp' 0 1 2 13 15
+
+arg1=$(untar from $1)
+arg2=$(untar to   $2)
+shift 2
+
+diff --ignore-blank-lines --ignore-all-space --unified --recursive \
+     --ignore-matching-lines='^[ \t]*//' \
+     --ignore-matching-lines='\$Id' \
+     --new-file \
+     -x 'ABOUT-NLS' \
+     -x 'CVS' \
+     -x '.svn' \
+     -x '_build' \
+     -x 'Makefile' \
+     -x 'Makefile.in' \
+     -x 'aclocal.m4' \
+     -x 'configure' \
+     -x 'config.status' \
+     -x 'config.h*' \
+     -x 'config.cache' \
+     -x 'config.guess' \
+     -x 'config.sub' \
+     -x 'autom4te.cache' \
+     -x 'auto' \
+     -x 'depcomp' \
+     -x 'install-sh' \
+     -x 'libtool.m4' \
+     -x 'lt*.m4' \
+     -x 'ltmain.sh' \
+     -x 'argz.m4' \
+     -x 'missing' \
+     -x 'mkinstalldirs' \
+     -x 'stamp-h[0-9]' \
+     -x 'TAGS' \
+     -x '*.[ao]' \
+     -x '*.hi' \
+     -x '.deps' \
+     -x '*~' \
+     -x 'parse/location.hh' \
+     -x 'stack.hh' \
+     -x 'parsetiger.cc' \
+     -x 'parsetiger.hh' \
+     -x 'parse*output' \
+     -x 'scantiger.cc' \
+     -x 'testsuite' \
+     -x 'tc-check.err' \
+     -x 'tc-check.out' \
+     -x '*.bak' \
+     -x '*.log' \
+     -x 'log' \
+     -x 'po' \
+     -x 'intl' \
+     -x '*.info*' \
+     -x '*.diff' \
+     -x '*.patch' \
+     -x '*.rej' \
+     -x '*.orig' \
+     -x '*.aux' \
+     -x '*.bbl' \
+     -x '*.blg' \
+     -x '*.dvi' \
+     -x '*.tpt' \
+     -x '*.pdf' \
+     -x 'tiger_*.py' \
+     -x 'tiger_*-wrap.cc' \
+     -x '*.ps' \
+     -x 'useless-end-marker' \
+     $arg1 $arg2 "$@" |
+  sed -e '/^diff/s/ --.*useless-end-marker//g' \
+      -e "s,$tmp/,,g" \
+      -e "/^\(diff\|+++\|---\)/s,`pwd`/,,g" |
+     less
+
+exit 0

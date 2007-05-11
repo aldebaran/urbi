@@ -1,3 +1,33 @@
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
+	Update
+	* bootstrap: Strengthen.
+	* src/Makefile.am, configure.ac: Go into src/ast.
+	Most of the following tools are imported from kernel2, but
+	have been updated.
+	* dev/ast-clone-visitor-gen: New.
+	* dev/ast-fwd-gen: New.
+	* dev/ast-graph-gen: New.
+	* dev/ast-nodes-gen: New.
+	* dev/ast-nodes-mk-gen: New.
+	* dev/ast-readme-gen: New.
+	* dev/ast-visitor-gen: New.
+	* dev/ast.py: New.
+	* dev/count-fixme-lines: New.
+	* dev/cut-bison-actions: New.
+	* dev/diff-r: New.
+	* dev/tools.py: New.
+
+	* src/ast/Makefile.am: New.
+	* src/ast/all.hh: New.
+	* src/ast/ast.yml: New.
+	* src/ast/default-visitor.hh: New.
+	* src/ast/default-visitor.hxx: New.
+	* src/ast/loc.hh: New.
+	* src/ast/visitor.hxx: New.
+	* src/ast: New.
+	* src/kernel.mk: New.
+
 2007-05-03  Akim Demaille  <demaille@gostai.com>
 
 	Finish the merge -r 1038:1078

@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import ast, tools
+
+if len(sys.argv) != 1:
+  print "Usage: .."
+  sys.exit(1)
+
+## Abstract syntax tree C++ Makefile.am ---------------------------------------
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+
+# Output the files in an indented way: subclasses are more indented
+# than super classes.  When there is multiple inheritance, consider
+# only the first super class.
+
+print "AST_NODES =",
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp(x.name, y.name))
+for node in arr:
+  files =       node.fname ("hh") + \
+          " " + node.fname ("hxx") + \
+          " " + node.fname ("cc")
+  
+  print " \\\n\t  " + files,
+print

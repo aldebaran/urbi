@@ -1,0 +1,492 @@
+#
+# Possible values:
+#  * class
+#    Description of classes.
+#    + name
+#      a C++ class name.
+#
+#    + desc
+#      a (Doxygen) comment describing the class.
+#
+#    + hide
+#      if True, output within <<- and ->>.
+#
+#    + super
+#      a possibly empty space separated list of superclass names.
+#
+#  * attributes:
+#    + name
+#      a C++ attribute name
+#
+#    + type
+#      a C++ type name
+#
+#    + abstract
+#      If True, don't output.
+#
+#    + mandatory
+#      + True
+#        *_get methods return a const ref.
+#      + False
+#        *_get methods return a const pointer.
+#
+#    + init=VALUE
+#      If set, the value used to initialize the member.
+#      This attribute will not have a argument in the constructors.
+#
+#    + owned
+#      - True: Pointer members are "delete"'d.
+#      - False: They are not.
+#
+#    + access composed by [ 'r', 'w, 'W' ]
+#      - r: provide a *_get const accessor.
+#      - w: provide a *_get accessor that returns a reference
+#        for possible modifications.
+#      - W: provide a *_set accessor.
+#    + desc, a short description of the attribute
+#    + hide, some code in the final tarball (no fixme)
+#
+# Defaults:
+#  * class:
+#    + desc: the name of the class
+#
+#  * attributes:
+#    + mandatory: True
+#    + access: rw
+#    + owned: True
+#
+
+---
+
+# Generic classes
+
+Ast:
+  inline:
+    header prologue: '# include "ast/fwd.hh"'
+  attributes:
+    - location:
+        type: loc
+        access: rW
+        desc: Scanner position information
+    - up:
+        type: 'Ast*'
+        init: '0'
+        access: rW
+        desc: Parent node
+
+Cmd:
+  super: Ast
+
+Exp:
+  super: Cmd
+
+# Tags & scope
+
+Tag:
+  super: Ast
+  attributes:
+    - subtag:  { type: 'Tag*', desc: sub-tag of the complete tag (or null if root) }
+
+StringTag:
+  super: Tag
+  attributes:
+    - tag: { type: 'std::string', desc: Stored tag string value } 
+
+ExpTag:
+  super: Tag
+  attributes:
+    - tag: { type: 'Exp*', desc: Stored tag expression value to be evaluated at runtime } 
+
+TagCmd:
+  super: Cmd
+  attributes:
+    - tag: { type: 'Tag*', desc: Tag of the sub ast } 
+    - cmd: { type: 'Cmd*', desc: The tagged commands } 
+
+ScopeCmd:
+  super: Cmd
+  attributes:
+    - cmd: { type: 'Cmd*', desc: The scoped commands } 
+
+
+# Commands
+
+AndCmd:
+  super: Cmd
+  attributes:
+    - left: { type: 'Cmd*', desc: Left side of the and-command }
+    - right: { type: 'Cmd*', desc: Right side of the and-command }
+  
+PipeCmd:
+  super: Cmd
+  attributes:
+    - left: { type: 'Cmd*', desc: Left side of the pipe-command }
+    - right: { type: 'Cmd*', desc: Right side of the pipe-command }
+
+CommaCmd:
+  super: Cmd
+  attributes:
+    - left: { type: 'Cmd*', desc: Left side of the comma-command }
+    - right: { type: 'Cmd*', desc: Right side of the comma-command }
+
+SemicolonCmd:
+  super: Cmd
+  attributes:
+    - left: { type: 'Cmd*', desc: Left side of the semicolon-command }
+    - right: { type: 'Cmd*', desc: Right side of the semicolon-command }
+
+
+# Identifier constructs
+
+DotExp:
+  super: Exp
+  attributes: 
+    - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
+    - symbol:  { type: 'symbol::Symbol*', desc: Name of the variable separated from exp with a dot }
+
+IdExp:
+  super: Exp
+  attributes:
+    - symbol:  { type: 'symbol::Symbol*', desc: Name of the symbol to be name-resolved }
+
+Var:
+  super: DotExp
+
+ArrowExp:
+  super: Exp
+  attributes: 
+    - var: { type: 'Var*', desc: variable whose property is accessed }
+    - symbol:  { type: 'symbol::Symbol*', desc: Name of the property }
+
+
+# Commands
+
+TagOpCmd:
+  super: Cmd
+  inline:
+    header inside: |2
+
+        public:
+          /// Operator qualifier.
+          enum Oper
+            {
+              /** \brief "stop" */ stop,
+              /** \brief "freeze" */ freeze,
+              /** \brief "unfreeze" */ unfreeze,
+              /** \brief "block" */ block,
+              /** \brief "unblock" */ unblock,
+            };
+  attributes:
+    - tag: { type: Tag*, desc: Tag of the tag-operation command }
+    - oper: { type: TagOpCmd::Oper, access: r, desc: Operator }
+
+IfCmd:
+  super: Cmd
+  attributes:
+    - test: { type: 'Exp*', desc: Condition }
+    - thenclause:
+        type: Cmd*
+        desc: Instructions executed if condition is true
+    - elseclause:
+        type: Cmd*
+        desc: Instructions executed if condition is false
+
+AtCmd:
+  super: Cmd
+  attributes:
+    - test: { type: 'Exp*', desc: Condition }
+    - atclause:
+        type: Cmd*
+        desc: Instructions executed at the moment when condition becomes true
+    - onleaveclause:
+        type: Cmd*
+        desc: Instructions executed onleave
+
+WheneverCmd:
+  super: Cmd
+  attributes:
+    - test: { type: 'Exp*', desc: Condition }
+    - wheneverclause:
+        type: Cmd*
+        desc: Instructions executed whenever condition is true
+    - elseclause:
+        type: Cmd*
+        desc: Instructions executed whenever condition is false
+
+AssignCmd:
+  super: Cmd
+  attributes:
+    - lvalue: { type: 'Var*', desc: Reference to the affected variable }
+    - exp: { type: 'Exp*', desc: Assigned value }
+
+ReturnCmd:
+  super: Cmd
+  attributes:
+    - exp: { type: 'Exp*', desc: Returned value }
+    - cont: { type: bool, desc: Continuation flag for return& }
+
+AliasCmd:
+  super: Cmd  
+  desc: |2
+
+      /** \class ast::AliasCmd
+       ** \brief Set an alias flag in the object given, to point to one of 
+       ** its attribute (typically, 'val'). For backward compat only.
+       */
+
+  attributes:
+    - obj: { type: 'Exp*', desc: Reference to the object to alias }
+    - alias: { type: 'symbol::Symbol*', desc: Aliased attribute }
+
+InheritsCmd:
+  super: Cmd  
+  attributes:
+    - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
+    - inherited: { type: 'Exp*', desc: Reference to the inherited object }
+
+DisinheritsCmd:
+  super: Cmd  
+  attributes:
+    - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
+    - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
+
+DeleteCmd:
+  super: Cmd
+  attributes:
+    - obj:
+        type: 'Exp*'
+        desc: Reference to the object to delete
+
+ExternalCmd:
+  super: Cmd
+  inline:
+    header inside: |2
+
+        public:
+          /// External binding type.
+          enum Type
+            {
+              /** \brief "var" */ var,
+              /** \brief "function" */ function,
+              /** \brief "event" */ event
+            };
+  attributes:
+    - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
+    - attribute: { type: 'symbol::Symbol*', desc: Bound attribute }
+    - type: { type: ExternalCmd::Type, access: r, desc: External binding type }
+    - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
+
+WaitCmd:
+  super: Cmd
+  attributes:
+    - duration: { type: 'Exp*', desc: Time to wait }
+
+WaituntilCmd:
+  super: Cmd
+  attributes:
+    - condition: { type: 'Exp*', desc: Condition to wait }
+
+EmitCmd:
+  super: Cmd
+  attributes:
+    - name:
+        type: 'Exp*'       
+        desc: Reference to the called event
+    - args:
+        type: 'exps_type*'
+        desc: List of arguments passed to the event
+
+
+# Expressions
+
+ExecExp:
+  super: Exp
+  attributes: 
+    - toexec:
+        type: 'Exp*'
+        access: r
+        desc: String to execute
+
+FloatExp:
+  super: Exp
+  attributes: [ { value: { type: ufloat, access: r, desc: Stored integer value } } ]
+
+StringExp:
+  super: Exp
+  attributes: [ { value: { type: 'std::string', access: r, desc: Stored string value } } ]
+
+ListExp:
+  super: Exp
+  attributes:
+    - value:
+        type: 'exps_type*'
+        access: r
+        desc: Stored list value
+
+MapExp:
+  super: Exp
+  attributes:
+    - value:
+        type: 'exp_pairs_type*'
+        access: r
+        desc: Stored pair values
+
+RefExp:
+  super: Exp
+  attributes: 
+    - value:
+        type: 'Exp*'
+        access: r
+        desc: Stored reference
+
+OpVarExp:
+  super: Exp
+  inline:
+    header inside: |2
+
+        public:
+          /// Operator qualifier.
+          enum Oper
+            {
+              /** \brief "copy" */ copy,
+              /** \brief "@" */ addr,
+              /** \brief "group" */ group
+            };
+  attributes:
+    - operand: { type: 'Var*', desc: Operand }
+    - oper: { type: OpVarExp::Oper, access: r, desc: Operator }
+
+NegOpExp:
+  super: Exp
+  attributes: [ { operand: { type: 'Exp*', desc: Operand of the negation operator } } ]
+
+OpExp:
+  super: Exp
+  inline:
+    header inside: |2
+
+        public:
+          /// Operator qualifier.
+          enum Oper
+            {
+              // Arithmetics.
+              /** \brief "+" */ add,
+              /** \brief "-" */ sub,
+              /** \brief "*" */ mul,
+              /** \brief "/" */ div,
+              /** \brief "^" */ exp,
+              /** \brief "%" */ mod,
+
+              // Logics.
+              /** \brief "&&" */ and,
+              /** \brief "||" */ or,
+
+              // Comparison.
+              /** \brief "=" */  eq,
+              /** \brief "~=" */ req,
+              /** \brief "<>" */ ne,
+              /** \brief "<" */  lt,
+              /** \brief "<=" */ le,
+              /** \brief ">" */  gt,
+              /** \brief ">=" */ ge
+            };
+  attributes:
+    - left: { type: 'Exp*', desc: Left operand }
+    - oper: { type: OpExp::Oper, access: r, desc: Operator }
+    - right: { type: 'Exp*', desc: Right operand }
+ 
+CallExp:
+  super: Exp
+  attributes:
+    - name:
+        type: 'Exp*'       
+        desc: Reference to the called function        
+    - args:
+        type: 'exps_type*'
+        desc: List of arguments passed to the function
+
+ArrayExp:
+  super: Exp
+  attributes:
+    - name:
+        type: 'Exp*'       
+        desc: Reference to the array   
+    - arg:
+        type: 'Exp*'
+        desc: Index of the array
+
+NewExp:
+  super: Exp
+  attributes:
+    - obj:
+        type: 'Exp*'
+        desc: Reference to the object to clone
+    - args:
+        type: 'exps_type*'
+        desc: List of arguments passed to the constructor
+
+
+# Types (embryonic for now)
+
+Ty:
+  super: Ast
+
+NameTy:
+  super: Ty
+  attributes:
+    - name:
+        type: 'symbol::Symbol'
+        owned: False
+        desc: The name of the type
+        access: rW
+
+
+# Declarations
+
+Dec:
+  super: Cmd
+  attributes:
+    - exp:
+        type: 'Var*'
+        mandatory: False
+        desc: Object the variable is attached to (or null if root)
+    - symbol:
+        type: 'symbol::Symbol*'
+        desc: Name of the variable, separated from exp with a dot
+
+VarDec:
+  super: Dec
+  attributes:
+    - type_name:
+        type: NameTy*
+        mandatory: False
+        desc: Optional type of the declared variable
+    - init:
+        type: Exp*
+        mandatory: False
+        desc: The initial value (expression) assigned to the variable
+
+FunctionDec:
+  super: Dec
+  attributes:
+    - formals: { type: 'vardecs_type*', desc: Formal arguments }
+    - result:  { type: 'NameTy*', mandatory: False, desc: Result type}
+    - body: { type: 'Exp*', access: rwW, mandatory: False, desc: Instructions }
+
+EventDec:
+  super: Dec
+  attributes:
+    - formals: { type: 'vardecs_type*', desc: Formal arguments }
+
+ClassDec:
+  super: Dec
+  attributes:
+    - inherits: { type: 'exps_type*', mandatory: False, desc: Inherited classes }
+    - decs: { type: 'decs_type*', mandatory: False, desc: List of declarations }
+
+TagDec:
+  super: Dec
+
+# Local Variables:
+# mode: text
+# End:

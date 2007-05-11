@@ -21,6 +21,9 @@ AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
 AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
+SUBDIRS =                                       \
+        ast                                     \
+	.
 
 ## ----------- ##
 ## libkernel.  ##
