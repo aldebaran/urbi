@@ -1,5 +1,16 @@
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
+	ast.yml fixes
+	* dev/ast_params.py: New.
+	Extend it.
+	Was extracted from...
+	* dev/ast-nodes-gen: here.
+	Use it.
+	* dev/ast.py: Ditto.
+	* src/ast/Makefile.am (ast_gen_deps): Complete.
+
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
 	Fix typoes
 	* src/ast/ast.yml: Don't use the "or" and "and" keywords.
 	Remove meaningless comments.

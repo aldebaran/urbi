@@ -3,6 +3,7 @@
 import re, string
 import sys, os
 import ast, tools
+import ast_params
 
 if len(sys.argv) != 2:
   print "Usage: .. SRCDIR"
@@ -13,26 +14,6 @@ srcdir = sys.argv[1]
 
 re_access_r = re.compile (".*r.*"); re_access_R = re.compile (".*R.*")
 re_access_w = re.compile (".*w.*"); re_access_W = re.compile (".*W.*")
-
-# The generator will accept these types as is, without looking for a
-# particular header.
-atomic_types = ["bool", "int",
-		"VarDec::Kind",
-		"OpExp::Oper",
-		"DecsList::decs_type"]
-includes_map = {
-  "std::string": "<string>",
-
-  "libport::Symbol": '"libport/symbol.hh"',
-
-  "exps_type": '"ast/exp.hh"',
-  "fields_type": '"ast/field.hh"',
-  "fieldinits_type": '"ast/field-init.hh"',
-  "VarDecs": '"ast/anydecs.hh"',
-
-  "type::Type": '"type/fwd.hh"',
-  "type::Int": '"type/fwd.hh"'
-  }
 
 ## Abstract syntax tree C++ classes generator ---------------------------------
 
@@ -106,9 +87,9 @@ def print_includes (node, header, inline, impl):
     type = attribute.root_type ()
     if ast.re_list.match (type):
       need_misc_containers = True
-    if type in includes_map:
-      includes[includes_map[type]] = True
-    elif not type in atomic_types:
+    if type in ast_params.includes_map:
+      includes[ast_params.includes_map[type]] = True
+    elif not type in ast_params.atomic_types:
       includes["\"ast/" + tools.file_id (type) + ".hh\""] = True
 
   # *.hh
@@ -189,7 +170,7 @@ def print_ctor_dtor (node, header, inline, impl):
   sys.stdout = header
   print """    /** \\name Ctor & dtor.
      ** \\{ */
-     public:"""
+  public:"""
   if hide:
     print "    //<<-"
   print "    /// Construct " + tools.indef_article (node.name) + " " + \

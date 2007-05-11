@@ -13,7 +13,8 @@ BUILT_SOURCES_local =				\
 	$(AST_NODES)
 
 gen_dir = $(top_srcdir)/dev
-ast_gen_deps = $(gen_dir)/ast.py $(gen_dir)/tools.py $(srcdir)/ast.yml
+ast_gen_deps = $(gen_dir)/ast.py $(gen_dir)/ast_params.py \
+	       $(gen_dir)/tools.py $(srcdir)/ast.yml
 $(srcdir)/ast-nodes.mk: $(gen_dir)/ast-nodes-mk-gen $(ast_gen_deps)
 	$(gen_dir)/ast-nodes-mk-gen < $(srcdir)/ast.yml >$@.tmp
 	mv -f $@.tmp $@

@@ -5,14 +5,7 @@
 import string, re, sys, syck, tools
 
 from tools import warning
-
-atomic_types = ["bool", "int",
-		"VarDec::Kind",
-		"OpExp::Oper", "OpExp::Kind",
-		"AssignExp::Kind",
-		"IfExp::Kind",
-		"LetExp::Kind",
-		"SeqExp::Kind"]
+from ast_params import atomic_types
 
 re_list = re.compile ("[a-zA-Z_][a-zA-Z_0-9:]*(s|list)_type$")
 
