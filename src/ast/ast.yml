@@ -170,11 +170,11 @@ TagOpCmd:
           /// Operator qualifier.
           enum Oper
             {
-              /** \brief "stop" */ stop,
-              /** \brief "freeze" */ freeze,
-              /** \brief "unfreeze" */ unfreeze,
-              /** \brief "block" */ block,
-              /** \brief "unblock" */ unblock,
+              stop,
+              freeze,
+              unfreeze,
+              block,
+              unblock,
             };
   attributes:
     - tag: { type: Tag*, desc: Tag of the tag-operation command }
@@ -266,9 +266,9 @@ ExternalCmd:
           /// External binding type.
           enum Type
             {
-              /** \brief "var" */ var,
-              /** \brief "function" */ function,
-              /** \brief "event" */ event
+              var,
+              function,
+              event,
             };
   attributes:
     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
@@ -348,9 +348,9 @@ OpVarExp:
           /// Operator qualifier.
           enum Oper
             {
-              /** \brief "copy" */ copy,
-              /** \brief "@" */ addr,
-              /** \brief "group" */ group
+              copy,  ///< Copy
+              addr,  ///< @
+              group, ///< group
             };
   attributes:
     - operand: { type: 'Var*', desc: Operand }
@@ -370,25 +370,25 @@ OpExp:
           enum Oper
             {
               // Arithmetics.
-              /** \brief "+" */ add,
-              /** \brief "-" */ sub,
-              /** \brief "*" */ mul,
-              /** \brief "/" */ div,
-              /** \brief "^" */ exp,
-              /** \brief "%" */ mod,
+              add,   ///< "+"
+              sub,   ///< "-"
+              mul,   ///< "*"
+              div,   ///< "/"
+              exp,   ///< "^"
+              mod,   ///< "%"
 
               // Logics.
-              /** \brief "&&" */ and,
-              /** \brief "||" */ or,
+              land,   ///< "&&"
+              lor,    ///< "||"
 
               // Comparison.
-              /** \brief "=" */  eq,
-              /** \brief "~=" */ req,
-              /** \brief "<>" */ ne,
-              /** \brief "<" */  lt,
-              /** \brief "<=" */ le,
-              /** \brief ">" */  gt,
-              /** \brief ">=" */ ge
+              eq,   ///< "="
+              req,  ///< "~="
+              ne,   ///< "<>"
+              lt,   ///< "<"
+              le,   ///< "<="
+              gt,   ///< ">"
+              ge,   ///< ">="
             };
   attributes:
     - left: { type: 'Exp*', desc: Left operand }

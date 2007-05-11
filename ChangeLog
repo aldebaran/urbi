@@ -1,5 +1,11 @@
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
+	Fix typoes
+	* src/ast/ast.yml: Don't use the "or" and "and" keywords.
+	Remove meaningless comments.
+
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
 	Various updates and fixes
 	* src/kernel.mk: Grow stronger.
 	* src/Makefile.am: Use it.
