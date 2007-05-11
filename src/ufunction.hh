@@ -24,8 +24,8 @@
 
 # include <string>
 
-# include "fwd.hh"
-# include "ustring.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
 
 namespace kernel
 {

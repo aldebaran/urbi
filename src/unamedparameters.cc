@@ -19,12 +19,13 @@
 
  **************************************************************************** */
 
+#include "kernel/userver.hh"
+#include "kernel/ustring.hh"
+#include "kernel/utypes.hh"
+
 #include "ucopy.hh"
 #include "uexpression.hh"
 #include "unamedparameters.hh"
-#include "userver.hh"
-#include "ustring.hh"
-#include "utypes.hh"
 
 // **************************************************************************
 //! UNamedParameters constructor.
@@ -33,7 +34,8 @@ UNamedParameters::UNamedParameters(UString* name,
 				   UNamedParameters* next)
   : name       (name),
     expression (expression),
-    next       (next)
+    next       (next),
+    notifyEnd  (false)
 {
   ADDOBJ(UNamedParameters);
 }
@@ -43,7 +45,8 @@ UNamedParameters::UNamedParameters(UExpression *expression,
 				   UNamedParameters* next)
   : name       (0),
     expression (expression),
-    next       (next)
+    next       (next),
+    notifyEnd  (false)
 {
   ADDOBJ(UNamedParameters);
 }

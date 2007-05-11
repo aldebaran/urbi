@@ -21,8 +21,9 @@
 
 #include <cmath>
 
+#include "kernel/userver.hh"
+
 #include "ucopy.hh"
-#include "userver.hh"
 #include "uvariablelist.hh"
 #include "uvariablename.hh"
 

@@ -1,3 +1,6 @@
+#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
+
 #include "config.h"
 #include "version.hh"
 
@@ -9,8 +12,8 @@
 
 #include "libport/utime.hh"
 
-#include "userver.hh"
-#include "ughostconnection.hh"
+#include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 class ConsoleServer
   : public UServer
@@ -90,7 +93,8 @@ main (int argc, const char* argv[])
   ConsoleServer s (10);
 
   s.initialize ();
-  UGhostConnection& c = *s.getGhostConnection ();
+  UConnection& c = s.getGhostConnection ();
+  DEBUG(("Got ghost connection\n"));
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
   {
@@ -102,6 +106,7 @@ main (int argc, const char* argv[])
 
   long long startTime = libport::utime();
 
+  DEBUG(("Going to work...\n"));
   while (true)
   {
     ufloat freq = s.getFrequency() * 1000;

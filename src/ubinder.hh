@@ -24,9 +24,9 @@
 
 # include <list>
 
-# include "fwd.hh"
-# include "ustring.hh"
-# include "utypes.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
+# include "kernel/utypes.hh"
 
 // ****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command

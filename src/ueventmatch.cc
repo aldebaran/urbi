@@ -20,10 +20,15 @@
 
 #include "libport/containers.hh"
 
-#include "ueventmatch.hh"
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+
 #include "uasynccommand.hh"
-#include "utypes.hh"
-#include "userver.hh"
+#include "ueventhandler.hh"
+#include "ueventmatch.hh"
+#include "unamedparameters.hh"
+#include "uvariablename.hh"
 
 UEventMatch* kernel::eventmatch_true;
 UEventMatch* kernel::eventmatch_false;

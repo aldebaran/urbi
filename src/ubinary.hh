@@ -22,9 +22,8 @@
 #ifndef UBINARY_HH
 # define UBINARY_HH
 
-# include "fwd.hh"
-# include "utypes.hh"
-
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
 
 /// Binary data, an the binary buffer in particular.
 class UBinary

@@ -19,11 +19,12 @@
 
  **************************************************************************** */
 
+#include "kernel/ustring.hh"
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+
 #include "ugroup.hh"
-#include "ustring.hh"
-#include "uvalue.hh"
 #include "uvariablename.hh"
-#include "userver.hh"
 
 // **************************************************************************
 //! UGroup constructor.

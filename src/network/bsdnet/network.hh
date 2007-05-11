@@ -37,7 +37,8 @@ namespace Network
   void registerNetworkPipe(Pipe* p);
   void unregisterNetworkPipe(Pipe* p);
 
-  bool createTCPServer(int port);
+  /// Create a tcp server pipe, binding on specified address/port.
+  bool createTCPServer(int port, const char *address=0);
 
   /// Perform the select with a delay of usedDelay microseconds.
   /// \returns  whether at least one action was performed

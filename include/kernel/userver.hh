@@ -29,10 +29,10 @@
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
 
-# include "fwd.hh"
-# include "ustring.hh"
-# include "utypes.hh"
-# include "tag-info.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
+# include "kernel/utypes.hh"
+# include "kernel/tag-info.hh"
 
 extern  const char* EXTERNAL_MESSAGE_TAG;
 extern  const char* DISPLAY_FORMAT;
@@ -192,10 +192,9 @@ public:
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
   int               addAlias        (const char* id, const char* variablename);
-  UGhostConnection* getGhostConnection ()
-  {
-    return ghost;
-  }
+
+  // A usual connection to stop dependencies.
+  UConnection& getGhostConnection ();
 
   void              freeze          (const std::string &tag);
   void              unfreeze        (const std::string &tag);
@@ -308,7 +307,7 @@ private:
   /// Store the time on the last call to updateTime();.
   ufloat           lastTime_;
   /// The ghost connection used for URBI.INI.
-  UGhostConnection *ghost;
+  UGhostConnection* ghost_;
 };
 
 //! Accessor for frequency_.

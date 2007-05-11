@@ -26,20 +26,20 @@
 #include "libport/escape.hh"
 #include "libport/ref-pt.hh"
 
+#include "urbi/uobject.hh"
+
+#include "kernel/uconnection.hh"
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "ucopy.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "utypes.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 #include "unamedparameters.hh"
+#include "uqueue.hh"
 
-// FIXME: Help!
-#define private protected
-#include "uconnection.hh"
-#undef private
 
 MEMORY_MANAGER_INIT(UValue);
 // **************************************************************************
@@ -128,7 +128,7 @@ UValue::operator urbi::UImage()
   return img;
 }
 
-class DumbConnection:public UConnection
+class DumbConnection : public UConnection
 {
 public:
   DumbConnection()
@@ -140,7 +140,7 @@ public:
   }
   char* getData()
   {
-    return (char*) sendQueue_.virtualPop(sendQueue_.dataSize());
+    return (char*) send_queue().virtualPop(send_queue().dataSize());
   }
 protected:
   virtual int effectiveSend (const ubyte*, int)
@@ -239,7 +239,7 @@ UValue::operator urbi::USound()
     short bitperchannel;
     char data[4];
     int datalength;
-  };
+  } __attribute__ ((__packed__));
 
   urbi::USound snd;
   snd.data=0;
@@ -572,11 +572,11 @@ UValue::add(UValue *v)
 
   if (dataType == DATA_LIST)
   {
-    UValue *res = copy();
+    UValue* res = copy();
 
     if (res->liststart)
     {
-      UValue *scanlist = res->liststart;
+      UValue* scanlist = res->liststart;
       while (scanlist->next)
 	scanlist = scanlist->next;
 
@@ -591,8 +591,8 @@ UValue::add(UValue *v)
   if (v->dataType == DATA_LIST)
   {
     // we are not a list
-    UValue *res = v->copy();
-    UValue * b = res->liststart;
+    UValue* res = v->copy();
+    UValue* b = res->liststart;
     res->liststart = copy();
     res->liststart->next = b;
     return res;
@@ -602,7 +602,7 @@ UValue::add(UValue *v)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *res = new UValue();
+      UValue* res = new UValue();
       res->dataType = DATA_NUM;
       res->val = val + v->val;
       return res;
@@ -610,14 +610,14 @@ UValue::add(UValue *v)
 
     if (v->dataType == DATA_STRING)
     {
-      UValue *res = new UValue();
+      UValue* res = new UValue();
       if (res == 0)
 	return 0;
 
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << val<<v->str->c_str();
+      ostr << val << v->str->c_str();
       res->str = new UString(ostr.str().c_str());
       if (res->str == 0)
       {
@@ -632,14 +632,14 @@ UValue::add(UValue *v)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *res = new UValue();
+      UValue* res = new UValue();
       if (res == 0)
 	return 0;
 
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << str->c_str()<<v->val;
+      ostr << str->c_str() << v->val;
       res->str = new UString(ostr.str().c_str());
 
       if (res->str == 0)

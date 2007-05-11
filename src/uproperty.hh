@@ -22,7 +22,7 @@
 #ifndef UPROPERTY_HH
 # define UPROPERTY_HH
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
 
 //! Contains a group definition, as a result of a GROUP command
 class UProperty

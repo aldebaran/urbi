@@ -26,12 +26,9 @@
 
 # include "libport/lockable.hh"
 
-# include "fwd.hh"
-
-# include "ucomplaints.hh"
-# include "parser/uparser.hh"
-# include "uqueue.hh"
-# include "ucommandqueue.hh"
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
+# include "kernel/ucomplaints.hh"
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
@@ -175,7 +172,10 @@ public:
   void                append             (UCommand_TREE *command);
   int                 availableSendQueue ();
   int                 sendQueueRemain    ();
+
   UCommandQueue&      recvQueue          ();
+  UQueue& send_queue();
+
   void                localVariableCheck (UVariable *variable);
 
 
@@ -234,14 +234,14 @@ public:
   libport::Lockable treeLock;
 
 private:
-  /// The parser object.
-  UParser parser_;
+  /// Our parser.  A pointer to stop dependencies.
+  UParser* parser_;
   /// \}
 
 protected:
 
   /// Default adaptive behavior for Send/Recv..
-  static const int ADAPTIVE = 100;
+  enum { ADAPTIVE = 100 };
 
   virtual int         effectiveSend     (const ubyte*, int length) = 0;
   UErrorValue         error             (UErrorCode n);
@@ -252,10 +252,13 @@ protected:
 
 private:
   /// Max number of error signals used..
-  static const int MAX_ERRORSIGNALS = 20;
+  enum { MAX_ERRORSIGNALS = 20 };
 
-  UQueue         sendQueue_;
-  UCommandQueue  recvQueue_;
+  /// A pointer to stop dependencies.
+  UQueue* sendQueue_;
+
+  /// A pointer to stop dependencies.
+  UCommandQueue* recvQueue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
   int            packetSize_;
@@ -290,35 +293,28 @@ UConnection::sendAdaptive()
 inline UCommandQueue&
 UConnection::recvQueue()
 {
-  return recvQueue_;
+  return *recvQueue_;
+}
+
+//! Accessor for sendQueue_
+inline UQueue&
+UConnection::send_queue()
+{
+  return *sendQueue_;
 }
 
 //! Accessor for receiveAdaptive_
 inline int
 UConnection::receiveAdaptive()
 {
-return recvAdaptive_;
-}
-
-//! Sets sendAdaptive_
-inline void
-UConnection::setSendAdaptive (int sendAdaptive)
-{
-  sendAdaptive_ = sendAdaptive;
-}
-
-//! Sets receiveAdaptive_
-inline void
-UConnection::setReceiveAdaptive (int receiveAdaptive)
-{
-  recvAdaptive_ = receiveAdaptive;
+  return recvAdaptive_;
 }
 
 inline
 UParser&
 UConnection::parser ()
 {
-  return parser_;
+  return *parser_;
 }
 
 #endif

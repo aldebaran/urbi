@@ -25,11 +25,10 @@
 # include <string>
 # include <list>
 
-# include <cstdlib>
+# include "kernel/memorymanager.hh"
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
 
-# include "memorymanager/memorymanager.hh"
-# include "fwd.hh"
-# include "utypes.hh"
 # include "uasyncregister.hh"
 
 //! Uvariable is used to store variables
@@ -106,6 +105,8 @@ public:
   /// Stage of usage in the reinit list: 0 (off), 1(in) or 2(going
   /// out).
   int             activity;
+  /// Nb of UVar pointing to this UVariable
+  int             useCpt;
   /// Indicates user variables.
   bool            uservar;
   /// Temporary value container.

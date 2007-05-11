@@ -21,11 +21,12 @@
 #include <algorithm>
 #include "libport/containers.hh"
 
+#include "kernel/ustring.hh"
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+
 #include "ubinder.hh"
-#include "ustring.hh"
-#include "uvalue.hh"
 #include "uvariablename.hh"
-#include "userver.hh"
 
 // **************************************************************************
 //! UBinder constructor.

@@ -32,8 +32,8 @@
 %debug
 
 %{
-#include "fwd.hh"
-#include "utypes.hh"
+#include "kernel/fwd.hh"
+#include "kernel/utypes.hh"
 #include "flavorable.hh"
 %}
 
@@ -73,20 +73,23 @@
   // Output in ugrammar.cc.
 #include <string>
 #include <iostream>
-#define TRUE  ufloat(1)
-#define FALSE ufloat(0)
+#include <sstream>
 
 #include "libport/ref-pt.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 #include "parser/uparser.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "uasynccommand.hh"
-#include "uconnection.hh"
 #include "ugroup.hh"
+#include "unamedparameters.hh"
 #include "uobj.hh"
 #include "uproperty.hh"
-#include "userver.hh"
+#include "uvariablename.hh"
+#include "uvariablelist.hh"
 
 extern UString** globalDelete;
 
@@ -154,6 +157,34 @@ memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
     delete p3; p3 = 0;
     delete p4; p4 = 0;
   }
+}
+
+/// Whether the \a command was the empty command.
+bool
+spontaneous (const UCommand& u)
+{
+  const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
+  return noop && noop->is_spontaneous();
+}
+
+/// Issue a warning.
+void
+warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+{
+  std::ostringstream o;
+  o << "!!! " << l << ": " << m << "\n" << std::ends;
+  up.connection.send(o.str().c_str(), "warning");
+}
+
+/// Complain if \a command is not spontaneous.
+void
+warn_spontaneous(UParser& up,
+		 const yy::parser::location_type& l, const UCommand& u)
+{
+  if (spontaneous(u))
+    warn (up, l,
+	  "implicit empty instruction.  "
+	  "Use 'noop' to make it explicit.");
 }
 
 /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -519,6 +550,8 @@ flag:
     UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
     $$ = new UNamedParameters(new UString("flag"), flagval);
+    if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
+      $$->notifyEnd = true;
     memcheck(up, $$, flagval);
   }
 
@@ -545,7 +578,10 @@ flag:
 // One or more "flag"s.
 flags.1:
   flag             { $$ = $1;       }
-| flags.1 flag     { $1->next = $2; }
+| flags.1 flag     { $1->next = $2;
+                     if ($2->notifyEnd)
+                       $1->notifyEnd = true; // propagate the +end flag optim
+                   }
 ;
 
 // Zero or more "flag"s.
@@ -568,7 +604,8 @@ command:
 
       UCommand_TREE* res =
 	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
-			  new UCommand_NOOP(@$, true));
+			  new UCommand_NOOP(@$, UCommand_NOOP::zerotime));
+      res->groupOfCommands = true;
       res->setTag("__UGrouped_set_of_commands__");
       res->command2->setTag("__system__");
       $$ = res;
@@ -607,13 +644,16 @@ pipe.opt:
 `--------------*/
 
 instruction:
-  /* empty */ { $$ = 0; } /* FIXME: THIS IS BAD! REMOVE THIS!
-			     FIXME: I WHOLEHEARTEDLY AGREE! */
+  /* empty */
+  {
+    $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
+  }
 
-  | "noop" {
+  | "noop"
+  {
     $$ = new UCommand_NOOP(@$);
     memcheck(up, $$);
-    }
+  }
 
   | refvariable "=" expr namedparameters {
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
@@ -958,8 +998,7 @@ instruction:
 
   | "def" variable "(" identifiers ")" {
 
-      up.connection.server->debug("Warning: 'def' is deprecated, use"
-				       "'function' instead\n");
+      warn (up, @$, "'def' is deprecated, use 'function' instead");
       if (up.connection.functionTag)
       {
 	delete $2;
@@ -989,29 +1028,16 @@ instruction:
       }
     }
 
-  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-      if (!$5)
-      {
-	delete $3;
-	delete $5;
-	error(@$, "Empty then-part within an if.");
-	YYERROR;
-      }
+  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 
-  | "if" "(" expr ")" taggedcommand "else" taggedcommand {
-
-      if (!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty then-part within an if.");
-	YYERROR;
-      }
+  | "if" "(" expr ")" taggedcommand "else" taggedcommand
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1047,16 +1073,9 @@ instruction:
     }
 
   | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$6)
-      {
-	delete $4;
-	delete $6;
-	delete $8;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
-      $$ = new UCommand_AT(@$, $2, $4, $6, $8);
-      memcheck(up, $$, $4, $6, $8);
+     warn_spontaneous(up, @6, *$6);
+     $$ = new UCommand_AT(@$, $2, $4, $6, $8);
+     memcheck(up, $$, $4, $6, $8);
     }
 
   | "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
@@ -1072,14 +1091,7 @@ instruction:
     }
 
   | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within a whenever command.");
-	YYERROR;
-      }
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1348,27 +1360,26 @@ expr:
 ;
 
 expr:
-    "true"  { $$ = new UExpression(@$, UExpression::VALUE, TRUE);  }
-  | "false" { $$ = new UExpression(@$, UExpression::VALUE, FALSE); }
+  "true"  { $$ = new UExpression(@$, UExpression::VALUE, ufloat(1)); }
+| "false" { $$ = new UExpression(@$, UExpression::VALUE, ufloat(0)); }
 
-  | expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
-  | expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
-  | expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
-  | expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
-  | expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
-  | expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
-  | expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
-  | expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
-  | expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
+| expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
+| expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
+| expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
+| expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
+| expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
+| expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
+| expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
+| expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
+| expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
 
-  | "!" expr {
-      $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
-      memcheck(up, $$, $2);
-    }
+| "!" expr {
+    $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
+    memcheck(up, $$, $2);
+  }
 
-  | expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
-  | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
-
+| expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
+| expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 ;
 
 

@@ -33,26 +33,28 @@
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
 
+#include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+
 #include "parser/uparser.hh"
 #include "ubanner.hh"
 #include "ubinary.hh"
 #include "ubinder.hh"
 #include "ucallid.hh"
 #include "ucommandqueue.hh"
-#include "ucomplaints.hh"
-#include "uconnection.hh"
+#include "ucommandqueue.hh"
 #include "unamedparameters.hh"
 #include "uqueue.hh"
-#include "userver.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
+#include "uqueue.hh"
 
-UConnection::UConnection  (UServer *userver,
-			   int minSendBufferSize,
-			   int maxSendBufferSize,
-			   int packetSize,
-			   int minRecvBufferSize,
-			   int maxRecvBufferSize)
+UConnection::UConnection (UServer *userver,
+			  int minSendBufferSize,
+			  int maxSendBufferSize,
+			  int packetSize,
+			  int minRecvBufferSize,
+			  int maxRecvBufferSize)
   : uerror_(USUCCESS),
     server(userver),
     activeCommand(0),
@@ -68,9 +70,11 @@ UConnection::UConnection  (UServer *userver,
     newDataAdded(false),
     returnMode(false),
     obstructed(false),
-    parser_(*this),
-    sendQueue_(minSendBufferSize, maxSendBufferSize, UConnection::ADAPTIVE),
-    recvQueue_(minRecvBufferSize, maxRecvBufferSize, UConnection::ADAPTIVE),
+    parser_(new UParser (*this)),
+    sendQueue_(new UQueue (minSendBufferSize, maxSendBufferSize,
+			   UConnection::ADAPTIVE)),
+    recvQueue_(new UCommandQueue (minRecvBufferSize, maxRecvBufferSize,
+				  UConnection::ADAPTIVE)),
     packetSize_(packetSize),
     blocked_(false),
     receiveBinary_(false),
@@ -104,7 +108,6 @@ UConnection::~UConnection()
   delete activeCommand;
 
   // free bindings
-
   for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
        i != ::urbiserver->variabletab.end(); ++i)
     if (i->second->binder
@@ -139,6 +142,9 @@ UConnection::~UConnection()
     ::urbiserver->eventbindertab.erase(*i);
   deletelist.clear();
 
+  delete parser_;
+  delete sendQueue_;
+  delete recvQueue_;
   DEBUG(("done\n"));
 }
 
@@ -189,7 +195,7 @@ void UConnection::initialize()
 	       "UConnection::initialize",
 	       customHeader);
 
-  server->loadFile("CLIENT.INI", &recvQueue_);
+  server->loadFile("CLIENT.INI", recvQueue_);
   newDataAdded = true;
 }
 
@@ -212,7 +218,7 @@ UConnection::sendPrefix (const char* tag)
     snprintf(buf, sizeof buf,
 	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
 
-  sendQueue_.mark (); // put a marker to indicate the beginning of a message
+  sendQueue_->mark (); // put a marker to indicate the beginning of a message
   sendc((const ubyte*)buf, strlen(buf));
   return USUCCESS;
 }
@@ -298,10 +304,10 @@ UConnection::sendc (const ubyte *buffer, int length)
 {
   if (closing)
     return USUCCESS;
-  if (sendQueue_.locked ())
+  if (sendQueue_->locked ())
     return UFAIL;
 
-  UErrorValue result = sendQueue_.push(buffer, length);
+  UErrorValue result = sendQueue_->push(buffer, length);
   if (result != USUCCESS)
   {
     if (result == UMEMORYFAIL)
@@ -313,7 +319,7 @@ UConnection::sendc (const ubyte *buffer, int length)
     if (result == UFAIL)
       errorSignal(UERROR_SEND_BUFFER_FULL);
 
-    sendQueue_.revert ();
+    sendQueue_->revert ();
     return UFAIL;
   }
 
@@ -362,13 +368,13 @@ UConnection::continueSend ()
   libport::BlockLock bl(this); //lock this function
   blocked_ = false;	    // continueSend unblocks the connection.
 
-  int toSend = sendQueue_.dataSize(); // nb of bytes to send
+  int toSend = sendQueue_->dataSize(); // nb of bytes to send
   if (toSend > packetSize_)
     toSend = packetSize_;
   if (toSend == 0)
     return USUCCESS;
 
-  ubyte* popData = sendQueue_.virtualPop(toSend);
+  ubyte* popData = sendQueue_->virtualPop(toSend);
 
   if (popData != 0)
   {
@@ -377,7 +383,7 @@ UConnection::continueSend ()
     if (wasSent < 0)
       return UFAIL;
     else
-      if (wasSent == 0 || sendQueue_.pop(wasSent) != 0)
+      if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
 	return USUCCESS;
   }
 
@@ -451,7 +457,7 @@ UConnection::received (const ubyte *buffer, int length)
     }
   }
 
-  UErrorValue result = recvQueue_.push(buffer, length);
+  UErrorValue result = recvQueue_->push(buffer, length);
   unlock();
   if (result != USUCCESS)
   {
@@ -496,11 +502,11 @@ UConnection::received (const ubyte *buffer, int length)
   server->updateTime();
 
   do {
-    ubyte* command = recvQueue_.popCommand(length);
+    ubyte* command = recvQueue_->popCommand(length);
 
     if (command == 0 && length==-1)
     {
-      recvQueue_.clear();
+      recvQueue_->clear();
       length = 0;
     }
 
@@ -516,7 +522,6 @@ UConnection::received (const ubyte *buffer, int length)
 	server->memoryOverflow = true;
       }
       server->memoryCheck();
-
 
       // Xtrem memory recovery in case of anomaly
       if (server->memoryOverflow && p.commandTree)
@@ -552,7 +557,7 @@ UConnection::received (const ubyte *buffer, int length)
 	  assert (binCommand);
 
 	  ubyte* buffer =
-	    recvQueue_.pop(binCommand->refBinary->ref()->bufferSize);
+	    recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
 
 	  if (buffer)
 	  {
@@ -564,9 +569,9 @@ UConnection::received (const ubyte *buffer, int length)
 	  else
 	  {
 	    // not all was there, must set receiveBinary mode on
-	    transferedBinary_ = recvQueue_.dataSize();
+	    transferedBinary_ = recvQueue_->dataSize();
 	    memcpy(binCommand->refBinary->ref()->buffer,
-		   recvQueue_.pop(transferedBinary_),
+		   recvQueue_->pop(transferedBinary_),
 		   transferedBinary_);
 	    receiveBinary_ = true;
 	  }
@@ -1204,7 +1209,7 @@ UConnection::append(UCommand_TREE *command)
 int
 UConnection::availableSendQueue ()
 {
-  return sendQueue_.bufferMaxFreeSpace();
+  return sendQueue_->bufferMaxFreeSpace();
 }
 
 
@@ -1212,7 +1217,23 @@ UConnection::availableSendQueue ()
 int
 UConnection::sendQueueRemain ()
 {
-  return sendQueue_.dataSize();
+  return sendQueue_->dataSize();
+}
+
+//! Sets sendAdaptive_
+void
+UConnection::setSendAdaptive (int sendAdaptive)
+{
+  sendAdaptive_ = sendAdaptive;
+  sendQueue_->setAdaptive (sendAdaptive_);
+}
+
+//! Sets receiveAdaptive_
+void
+UConnection::setReceiveAdaptive (int receiveAdaptive)
+{
+  recvAdaptive_ = receiveAdaptive;
+  recvQueue_->setAdaptive (recvAdaptive_);
 }
 
 //! Performs a variable prefix check for local storage in function calls
@@ -1228,7 +1249,7 @@ UConnection::localVariableCheck (UVariable *variable)
   if (!stack.empty())
   {
     UCallid* cid = stack.front();
-    if (variable->getDevicename() == (std::string)cid->c_str())
+    if (variable->getDevicename() == cid->str())
       cid->store(variable);
   }
 }

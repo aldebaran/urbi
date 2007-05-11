@@ -1,14 +1,15 @@
 #ifndef CONNECTION_HH
 # define CONNECTION_HH
 
-# include <sys/types.h>
-
 /** \file Connection.h.cpp
  *  \brief the linux specialization of the UConnection class of the URBI kernel.
  *  @author Anthony Truchet from a previous work by Arnaud Sarthou  */
 
-# include "uconnection.hh"
-# include "utypes.hh"
+# include <sys/types.h>
+
+# include "kernel/utypes.hh"
+# include "kernel/uconnection.hh"
+
 # include "network/bsdnet/network.hh"
 
 //! LinuxConnection implements an TCP/IP client connection.

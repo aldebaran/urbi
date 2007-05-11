@@ -18,7 +18,7 @@
 #include "libport/cstdio"
 #include <sstream>
 
-#include "uasyncregister.hh"
+#include "kernel/uasyncregister.hh"
 #include "uasynccommand.hh"
 
 // **************************************************************************

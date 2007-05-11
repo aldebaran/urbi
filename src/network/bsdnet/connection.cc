@@ -1,7 +1,8 @@
 #include "libport/network.h"
 
+#include "kernel/userver.hh"
+
 #include "network/bsdnet/connection.hh"
-#include "userver.hh"
 
 // Mac OSX does not have MSG_NOSIGNAL, used by send and recv to ask
 // for events to become errno rather than signals.  But it supports

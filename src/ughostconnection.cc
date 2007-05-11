@@ -21,30 +21,40 @@
 
 #include "libport/cstring"
 
-#include "utypes.hh"
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+
 #include "ughostconnection.hh"
-#include "userver.hh"
+
+
+// Parameters used by the constructor.
+
+enum
+{
+  MINSENDBUFFERSIZE = 4096,
+  MAXSENDBUFFERSIZE = 1048576,
+  PACKETSIZE        = 32768,
+  MINRECVBUFFERSIZE = 4096,
+  MAXRECVBUFFERSIZE = 1048576,
+};
 
 //! UGhostConnection constructor.
 UGhostConnection::UGhostConnection  (UServer* mainserver)
   : UConnection   (mainserver,
-		   UGhostConnection::MINSENDBUFFERSIZE,
-		   UGhostConnection::MAXSENDBUFFERSIZE,
-		   UGhostConnection::PACKETSIZE,
-		   UGhostConnection::MINRECVBUFFERSIZE,
-		   UGhostConnection::MAXRECVBUFFERSIZE)
+		   MINSENDBUFFERSIZE,
+		   MAXSENDBUFFERSIZE,
+		   PACKETSIZE,
+		   MINRECVBUFFERSIZE,
+		   MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
-
-  // FIXME: What the heck is this suppose to do???
-  // Test the error from UConnection constructor.
-  if (uerror_ != USUCCESS)
-    return;
+  ::urbiserver->connectionList.push_front (this);
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
+  ::urbiserver->connectionList.remove (this);
   FREEOBJ(UGhostConnection);
 }
 
@@ -54,6 +64,7 @@ UGhostConnection::~UGhostConnection()
 UErrorValue
 UGhostConnection::closeConnection()
 {
+  closing = true;
   return USUCCESS;
 }
 

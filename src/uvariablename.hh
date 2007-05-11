@@ -22,8 +22,8 @@
 #ifndef UVARIABLENAME_HH
 # define UVARIABLENAME_HH
 
-# include "fwd.hh"
-# include "memorymanager/memorymanager.hh"
+# include "kernel/fwd.hh"
+# include "kernel/memorymanager.hh"
 
 // ****************************************************************************
 //! Contains a variable name description
@@ -68,8 +68,11 @@ public:
   UString* getFullname ();
   UString* set_fullname (const char* s);
 
-  void           nameUpdate(const char* _device, const char* _id);
-  void           resetCache();
+  void nameUpdate(const char* _device, const char* _id);
+  void nameUpdate(const std::string& _device, const std::string& _id);
+  void nameUpdate(const UString& _device, const UString& _id);
+
+  void resetCache();
   UString*       getDevice();
   UString*       getMethod();
 

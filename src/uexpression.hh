@@ -24,10 +24,11 @@
 
 # include <list>
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
+# include "kernel/memorymanager.hh"
+
 # include "uast.hh"
-# include "utypes.hh"
-# include "memorymanager/memorymanager.hh"
 
 // ****************************************************************************
 //! An expression tree as returned by the parser

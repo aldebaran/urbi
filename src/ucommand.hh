@@ -28,11 +28,12 @@
 # include "libport/fwd.hh"
 # include "libport/compiler.hh"
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+
 # include "flavorable.hh"
 # include "uast.hh"
 # include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
-# include "ustring.hh"
+
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
@@ -108,6 +109,7 @@ public:
   }
   void setTag(const std::string& tag);
   void setTag(const UCommand* b); //faster than the one above
+  void setTag(TagInfo * ti); //faster, no hash acces
   void unsetTag();
 
   bool isBlocked();
@@ -139,6 +141,12 @@ public:
 
   /// Status of the command since last execution.
   Status status;
+
+  /// Quick hack to get the connection where the command is executed in
+  UConnection* myconnection;
+
+  /// Hack used to know if this command is a { ... } placeholder
+  bool         groupOfCommands;
 
   /// Run the command.  Set status and return value.
   /// Just calls execute_ and sets status.
@@ -196,6 +204,8 @@ public:
   /// true when the command is part of a morphed structure
   bool morphed;
 
+  /// initialize the cached taginfos
+  static void initializeTagInfos();
 protected:
   UCommand* copybase(UCommand* c) const;
 
@@ -209,6 +219,12 @@ private:
 
   /// Protection against copy
   UCommand (const UCommand &c);
+
+  protected:
+  /// Cached often used taginfo
+  static TagInfo * systemTagInfo;
+  /// Cached often used taginfo
+  static TagInfo * notagTagInfo;
 };
 
 class UCommand_TREE : public UCommand, public Flavorable
@@ -1135,14 +1151,28 @@ class UCommand_NOOP : public UCommand
 {
 public:
   MEMORY_MANAGED;
+  enum kind
+  {
+    regular,     //< Inserts a delay when run.
+    zerotime,    //< No delay.
+    spontaneous, //< Was an empty instruction.  No delay.
+  };
 
-  UCommand_NOOP(const location& l, bool zerotime = false);
+  /// If \a zerotime, then don't even wait for a cycle to pass.
+  UCommand_NOOP(const location& l, kind k = regular);
   virtual ~UCommand_NOOP();
 
   virtual void print_(unsigned l) const;
 
   virtual Status execute_(UConnection* connection);
   virtual UCommand* copy() const;
+
+  bool is_spontaneous() const
+  {
+    return kind_ == spontaneous;
+  }
+private:
+  kind kind_;
 };
 
 

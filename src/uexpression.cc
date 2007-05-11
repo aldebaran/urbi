@@ -18,7 +18,6 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
 // #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
@@ -31,11 +30,16 @@
 #include "libport/cstring"
 #include "libport/ref-pt.hh"
 
+#include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+
 #include "parser/uparser.hh"
+#include "ucommandqueue.hh"
 #include "ubinary.hh"
 #include "ucommand.hh"
 #include "uasynccommand.hh"
-#include "uconnection.hh"
 #include "ucopy.hh"
 #include "ueventhandler.hh"
 #include "ueventcompound.hh"
@@ -43,8 +47,7 @@
 #include "ueventmatch.hh"
 #include "uexpression.hh"
 #include "ugroup.hh"
-#include "userver.hh"
-#include "uvariable.hh"
+#include "unamedparameters.hh"
 #include "uvariablename.hh"
 #include "uobj.hh"
 
@@ -919,11 +922,17 @@ UValue*
 UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
-  passert (variablename->id->c_str(),
-	   *variablename->id == "exec"
-	   || *variablename->id == "load");
+#ifdef ENABLE_DEBUG_TRACES
   PING();
+  if (command)
+    command->print (10);
+  PING();
+#endif
+
+  passert (variablename->id->c_str(),
+	   *variablename->id == "exec" || *variablename->id == "load");
   bool in_load = *variablename->id == "load";
+
   UValue* e1 = parameters->expression->eval(command, connection);
   ENSURE_TYPES_1 (DATA_STRING);
 
@@ -942,7 +951,12 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     p.process(reinterpret_cast<const ubyte*>(e1->str->c_str()),
 	      e1->str->size());
 
-  PING();
+#ifdef ENABLE_DEBUG_TRACES
+  ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());
+  if (p.commandTree)
+    p.commandTree->print (3);
+#endif
+
   if (connection->functionTag)
     {
       delete connection->functionTag;
@@ -981,9 +995,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   PING();
 
   delete e1;
-  UValue* ret = new UValue();
-  ret->dataType = DATA_VOID;
-  return ret;
+  return new UValue();
 }
 
 UValue*
@@ -1602,7 +1614,7 @@ UExpression::eval_VARIABLE (UCommand *command,
   if (!variablename->getFullname())
     return 0;
   UString* devicename = variablename->getDevice();
-  UValue* ret = 0;
+
   const char* varname;
   if (!variable)
   {
@@ -1613,9 +1625,9 @@ UExpression::eval_VARIABLE (UCommand *command,
       kernel::findEventHandler(variablename->getFullname(), 0);
     if (eh)
     {
-      ret = new UValue(ufloat(1));
+      UValue* res = new UValue(ufloat(1));
       if (eh->noPositive())
-	ret->val = 0; // no active (positive) event in the handler
+	res->val = 0; // no active (positive) event in the handler
 
       ec = new UEventCompound
 	(new UEventMatch
@@ -1623,7 +1635,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  0,
 	  command,
 	  connection));
-      return ret;
+      return res;
     }
 
     // virtual variables
@@ -1654,6 +1666,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     }
   }
 
+  UValue* ret = 0;
   if (!variable)
   {
     char* pp = const_cast<char*>(strchr(varname, '.'));
@@ -1689,8 +1702,6 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  // welcome to C-string hacking grand master area
 	  // Don't let unaccompagnied children see this.
 	  UValue* xval = tmpvar->value->liststart;
-	  int index;
-	  int curr;
 	  p[0] = '_';
 	  p = p + 2; // beginning of the index
 	  char* p2 = strchr(p, '_');
@@ -1698,8 +1709,8 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  {
 	    if (p2)
 	      p2[0] = 0;
-	    index = atoi(p);
-	    curr = 0;
+	    int index = atoi(p);
+	    int curr = 0;
 	    while (curr != index && xval)
 	    {
 	      xval = xval->next;
@@ -1932,8 +1943,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	{
 	  // could be a list index
 	  p[0] = 0;
-	  HMvariabletab::iterator hmv =
-	    ::urbiserver->variabletab.find(varname);
+	  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
 	  p[0] = '_';
 	  if (hmv != ::urbiserver->variabletab.end())
 	    variable = hmv->second;

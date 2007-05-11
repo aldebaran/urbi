@@ -1,5 +1,8 @@
 /// \file uparser.cc
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
+
 #include <cstdlib>
 #include <cassert>
 
@@ -38,7 +41,13 @@ UParser::parse_ ()
 
   parser_type p(*this);
   p.set_debug_level (!!getenv ("YYDEBUG"));
-  return p.parse();
+#ifdef ENABLE_DEBUG_TRACES
+  p.set_debug_level(true);
+#endif
+  ECHO("====================== Parse begin");
+  int res = p.parse();
+  ECHO("====================== Parse end: " << res);
+  return res;
 }
 
 int
@@ -49,6 +58,11 @@ UParser::process(const ubyte* command, int length)
   std::istrstream mem_buff (reinterpret_cast<const char*> (command), length);
   std::istream mem_input (mem_buff.rdbuf());
   scanner_.switch_streams(&mem_input, 0);
+  ECHO("Parsing string: ==================" << std::endl
+       << loc_ << ':' << std::endl
+       << std::string (reinterpret_cast<const char*>(command), length)
+       << std::endl
+       << "==================================");
   return parse_();
 }
 
@@ -57,7 +71,7 @@ UParser::process(const std::string& fn)
 {
   assert (!filename_);
 
-  // Store the filename, and get a point to it.
+  // Store the filename, and get a pointer to it.
   filename_ = &(*files_.insert (fn).first);
 
   // A location pointing to it.
@@ -73,6 +87,7 @@ UParser::process(const std::string& fn)
   std::swap(loc, loc_);
   std::ifstream f (fn.c_str());
   scanner_.switch_streams(&f, 0);
+  ECHO("Parsing file: " << *filename_);
   int res = parse_();
   filename_ = 0;
   std::swap(loc, loc_);

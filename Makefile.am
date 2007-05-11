@@ -11,9 +11,9 @@
 include $(top_srcdir)/build-aux/build-aux.mk
 include $(top_srcdir)/libport/libport.mk
 
-ACLOCAL_AMFLAGS = -I build-aux -I sdk
+ACLOCAL_AMFLAGS = -I build-aux
 
-SUBDIRS = src src/ast tests doc .
+SUBDIRS = src tests . doc
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -27,19 +27,34 @@ windows/urbikernel/urbikernel.sln		\
 windows/urbikernel/urbikernel.suo          	\
 windows/urbikernel/urbikernel.vcproj
 
-# Clean VC++ debug file. BTW, Do we want to install it?
-CLEANFILES += vc80.pdb
-
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
+
+
+## -------------------------- ##
+## Installed kernel headers.  ##
+## -------------------------- ##
+
+kernelincludekerneldir = $(kernelincludedir)/kernel
+kernelincludekernel_HEADERS =			\
+include/kernel/blockmemorymanager.hh		\
+include/kernel/fwd.hh				\
+include/kernel/mem-track.hh			\
+include/kernel/memorymanager.hh			\
+include/kernel/tag-info.hh			\
+include/kernel/uasyncregister.hh 		\
+include/kernel/ucomplaints.hh			\
+include/kernel/uconnection.hh			\
+include/kernel/userver.hh			\
+include/kernel/ustring.hh			\
+include/kernel/utypes.hh			\
+include/kernel/uvalue.hh 			\
+include/kernel/uvariable.hh 
 
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += sdk tests
-SVN_EXTERNALS_PROXY += uobject
-uobject-help uobject-ci uobject-up uobj-ci uob-up:
-	cd src && $(MAKE) $(AM_MAKEFLAGS) $@
+SVN_EXTERNALS += tests src/uobject
 
 maintainer-check: valgrind-check
 valgrind-check:

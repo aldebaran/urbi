@@ -26,8 +26,8 @@
 # include <string>
 # include <iosfwd>
 
-# include "memorymanager/memorymanager.hh"
-# include "mem-track.hh"
+# include "kernel/memorymanager.hh"
+# include "kernel/mem-track.hh"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a
@@ -41,6 +41,10 @@ class UString
   UString(const char* s);
   UString(const UString& s);
   UString(const std::string& s);
+
+  UString& operator= (const char* s);
+  UString& operator= (const UString* s);
+  UString& operator= (const std::string& s);
 
   /// Concat \c s1 and \c s2 with a dot in the middle.
   UString(const UString& s1, const UString& s2);
@@ -66,13 +70,6 @@ class UString
   }
 
   UString* copy() const;
-
-  // Whether \a s up to its first `.' (or the entire string) is equal to this.
-  bool tagequal(const UString& s) const;
-
-  UString& operator= (const std::string& s);
-  UString& operator= (const char* s);
-  UString& operator= (const UString* s);
 
  private:
   std::string str_;
@@ -136,10 +133,30 @@ operator!= (const UString& lhs, const char* rhs)
   return !(lhs == rhs);
 }
 
+/// Return the part after the first `.', or the whole string if there is none.
+std::string suffix (const std::string& name);
+
+/// Return the part before the `.', or an empty string.
+std::string prefix (const std::string& name);
+
+/// Return the part after the first `.', or the whole string if there is none.
+inline
+std::string suffix (const UString& name)
+{
+  return suffix(name.str());
+}
+
+/// Return the part before the `.', or an empty string.
+inline
+std::string prefix (const UString& name)
+{
+  return prefix(name.str());
+}
+
 /// Update a pointer to UString.
 inline
 UString*
-update (UString*& s, const char* v)
+update (UString*& s, const std::string& v)
 {
   if (s)
     *s = v;

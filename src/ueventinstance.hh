@@ -17,13 +17,12 @@
  **************************************************************************** */
 
 #ifndef UEVENTINSTANCE_HH
-#define UEVENTINSTANCE_HH
+# define UEVENTINSTANCE_HH
 
-#include <list>
-#include <string>
+# include <list>
+# include <string>
 
-#include "fwd.hh"
-#include "ustring.hh"
+# include "kernel/fwd.hh"
 
 
 // ****************************************************************************

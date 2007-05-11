@@ -22,7 +22,7 @@
 #ifndef UNAMEDPARAMETERS_HH
 # define UNAMEDPARAMETERS_HH
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
 
 /// Any list of identifiers, expressions or combinaison of both.
 // FIXME: There should be UNamedParameter, and we should use lists or so.
@@ -48,6 +48,9 @@ public:
   UExpression        *expression;
   /// Next in the list.
   UNamedParameters   *next;
+
+  /// Horrible hack to speed up the flag scanning done in UCommand dctor
+  bool               notifyEnd;
 };
 
 #endif

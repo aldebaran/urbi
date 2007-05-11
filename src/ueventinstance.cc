@@ -20,14 +20,16 @@
 
 #include "libport/containers.hh"
 
-#include "ueventinstance.hh"
-#include "uasynccommand.hh"
-#include "ueventmatch.hh"
-#include "ueventhandler.hh"
-
 //FIXME for debugging purposes only
-#include "userver.hh"
-#include "utypes.hh"
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+
+#include "uasynccommand.hh"
+#include "ueventhandler.hh"
+#include "ueventinstance.hh"
+#include "ueventmatch.hh"
+
 
 // **************************************************************************
 // UEventInstance

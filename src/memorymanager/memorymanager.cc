@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include <iostream>
-#include "memorymanager/memorymanager.hh"
+#include "kernel/memorymanager.hh"
 
 namespace MemoryManager
 {
-  int allocatedMemory = 0;
+  size_t allocatedMemory = 0;
 }
 
 
@@ -26,7 +26,7 @@ block_operator_delete(BlockPool* mempool, void* ptr)
 }
 
 // This implementation can't release any memory to malloc.
-void* block_operator_new(BlockPool* &mempool, int sz)
+void* block_operator_new(BlockPool* &mempool, size_t sz)
 {
   if (!mempool)
   {
@@ -34,7 +34,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     mempool->lock();
     --mempool->cptr;
     const int align = sizeof (void*);
-    int asz = sz;
+    size_t asz = sz;
     if (asz % align)
       asz = asz + align - (asz % align);
     mempool->itemSize = asz;
@@ -44,7 +44,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
 
   if (!mempool->ptr || mempool->cptr < mempool->ptr)
   {
-    int newsize = (mempool->size * 3) / 2 + DEFAULT_BLOCK_SIZE;
+    size_t newsize = (mempool->size * 3) / 2 + DEFAULT_BLOCK_SIZE;
 
     //realloc ptr pool
 
@@ -60,7 +60,7 @@ void* block_operator_new(BlockPool* &mempool, int sz)
     //std::cerr <<"alloc of size "<<newsize<<" "<<(void*)data<<std::endl;
     //std::cerr << mempool->itemSize<<" for "<<sz<<std::endl;
     //std::cerr <<"pool base: "<<mempool->ptr<<std::endl;
-    for (int i = 0; i < newsize-mempool->size; ++i)
+    for (size_t i = 0; i < newsize-mempool->size; ++i)
     {
       ++mempool->cptr;
       *mempool->cptr = data + mempool->itemSize * i;

@@ -32,19 +32,23 @@
 
 #include "libport/containers.hh"
 
+#include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+
 #include "ubanner.hh"
-#include "uconnection.hh"
+#include "ucommand.hh"
+#include "ucommandqueue.hh"
+#include "uqueue.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
 #include "ueventmatch.hh"
 #include "ufunction.hh"
 #include "ughostconnection.hh"
-#include "urbi/uobject.hh"
-#include "urbi/usystem.hh"
-#include "userver.hh"
-#include "utypes.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 
 // Global server reference
 UServer *urbiserver= 0;
@@ -156,17 +160,18 @@ UServer::initialize()
   // Ghost connection
   {
     DEBUG (("Setting up ghost connection..."));
-    ghost = new UGhostConnection(this);
-    connectionList.push_front(ghost);
-
+    ghost_ = new UGhostConnection(this);
     std::ostringstream o;
-    o << 'U' << (long)ghost;
+    o << 'U' << (long)ghost_;
 
     new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
     new UVariable(MAINDEVICE, "name", mainName_.c_str());
     uservarState = true;
     DEBUG (("done\n"));
   }
+
+  // Cached taginfos.
+  UCommand::initializeTagInfos();
 
   // Plugins (internal components)
   {
@@ -186,8 +191,8 @@ UServer::initialize()
   }
 
   DEBUG (("Loading URBI.INI..."));
-  if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
-    ghost->newDataAdded = true;
+  if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
+    ghost_->newDataAdded = true;
   DEBUG (("done\n"));
 }
 
@@ -196,9 +201,9 @@ void
 UServer::main (int argc, const char* argv[])
 {
   UValue* arglistv = new UValue ();
+  arglistv->dataType = DATA_LIST;
 
   UValue* current = 0;
-  arglistv->dataType = DATA_LIST;
   for (int i = 0; i < argc; ++i)
   {
     UValue* v = new UValue (argv[i]);
@@ -468,6 +473,13 @@ UServer::work()
 	  else
 	    ++it;
 
+      //delete hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	delete (*i)->getUObjectHub ();
+
+
       //delete the rest
       for (HMvariabletab::iterator i = variabletab.begin();
 	   i != variabletab.end();
@@ -477,44 +489,54 @@ UServer::work()
 
       libport::deep_clear (varToReset);
 
-      //variabletab.clear();
       aliastab.clear();
       emittab.clear();
       functiontab.clear();  //This leaks awfuly...
       grouptab.clear();
       objaliastab.clear();
-      tagtab.clear();
+
+      // do not clear tagtab, everything is refcounted and will be cleared
+      // when commands will be
+      //tagtab.clear();
 
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive())
-	  (*i)->send("*** Reset completed.\n", "reset");
+	  (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
 
-      //restart everything
+      //restart hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	(*i)->init((*i)->name);
+
+      //restart uobjects
       for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
 	   i != urbi::objectlist->end();
 	   ++i)
 	(*i)->init((*i)->name);
 
-      loadFile("URBI.INI", &ghost->recvQueue());
+      //reload URBI.INI
+      loadFile("URBI.INI", &ghost_->recvQueue());
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
-      ghost->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
-      ghost->newDataAdded = true;
+      ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
+      ghost_->newDataAdded = true;
     }
     else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
+      //reload CLIENT.INI
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
-	if ((*i)->isActive() && (*i) != ghost)
-	{
-	  (*i)->send("*** Reloading\n", "reset");
-
-	  loadFile("CLIENT.INI", &(*i)->recvQueue());
-	  (*i)->newDataAdded = true;
-	}
+	if ((*i)->isActive() && (*i) != ghost_)
+	  {
+	    (*i)->send("*** Restart completed.\n", "reset");
+	    loadFile("CLIENT.INI", &(*i)->recvQueue());
+	    (*i)->newDataAdded = true;
+	    (*i)->send("*** Ready.\n", "reset");
+	  }
       reseting = false;
       stage = 0;
     }
@@ -882,6 +904,18 @@ UServer::unblock(const std::string &tag)
     it->second.blocked = false;
 }
 
+namespace
+{
+  bool
+  file_readable (const std::string& s)
+  {
+    std::ifstream is (s.c_str(), std::ios::binary);
+    bool res = is;
+    is.close();
+    return res;
+  }
+}
+
 std::string
 UServer::find_file (const char* base)
 {
@@ -890,15 +924,15 @@ UServer::find_file (const char* base)
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;
-    std::ifstream is (f.c_str(), std::ios::binary);
-    if (is)
+    ECHO("find_file(" << base << ") testing " << f);
+    if (file_readable(f))
     {
-      is.close ();
-      //DEBUG(("File %s found: %s\n", base, f.c_str()));
+      ECHO("find_file(" << base << ") = " << f);
       return f;
     }
   }
-  //DEBUG(("File %s not found in path\n", base));
+  if (!file_readable(base))
+    error ("cannot find file: %s", base);
   return base;
 }
 
@@ -954,6 +988,13 @@ UServer::removeConnection(UConnection *connection)
   delete connection;
 }
 
+
+UConnection&
+UServer::getGhostConnection ()
+{
+  return *ghost_;
+}
+
 //! Adds an alias in the server base
 /*! This function is mostly useful for alias creation at start in the
  initialize() function for example.
@@ -1001,8 +1042,10 @@ namespace
   // Use with care, returns a static buffer.
   const char* tab (unsigned n)
   {
-    static char buf[100];
-    assert(n < sizeof buf);
+    static char buf[1024];
+    if (n >= sizeof buf)
+      n = sizeof buf - 1;
+
     for (unsigned i = 0; i < n; ++i)
       buf[i] = ' ';
     buf[n] = 0;

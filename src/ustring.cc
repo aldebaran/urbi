@@ -24,8 +24,8 @@
 #include <iostream>
 #include "libport/cstring"
 
-#include "ustring.hh"
-#include "userver.hh"
+#include "kernel/ustring.hh"
+#include "kernel/userver.hh"
 
 MEMORY_MANAGER_INIT(UString);
 
@@ -64,19 +64,6 @@ UString::~UString()
   FREEMEM(size());
 }
 
-bool UString::tagequal(const UString& s) const
-{
-  // Get the prefix of S: the part before the first `.', or the whole string.
-  size_t pos = s.str().find('.');
-  std::string pre =
-    ((pos && pos != std::string::npos)
-     ? s.str().substr (pos - 1, s.size())
-     : s.str());
-
-  // Check that we are equal to that prefix.
-  return str_ == pre;
-}
-
 UString&
 UString::operator=(const char* s)
 {
@@ -95,4 +82,32 @@ UString::operator=(const UString* s)
   str_ = s->str_;
   ADDMEM(size());
   return *this;
+}
+
+
+/*-------------------------.
+| Freestanding functions.  |
+`-------------------------*/
+
+
+// Return the part before the `.', or an empty string.
+std::string
+prefix (const std::string& name)
+{
+  size_t pos = name.find('.');
+  if (pos != std::string::npos)
+    return name.substr(0, pos);
+  else
+    return "";
+}
+
+// Return the part after the first `.', or the whole string if there is none.
+std::string
+suffix (const std::string& name)
+{
+  size_t pos = name.find('.');
+  if (pos != std::string::npos)
+    return name.substr(pos + 1);
+  else
+    return name;
 }

@@ -17,6 +17,8 @@ include $(top_srcdir)/build-aux/init.mk
 kernelinclude_HEADERS =
 
 AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
+# Find the kernel headers exported to the cores.
+AM_CPPFLAGS += -I$(top_srcdir)/include
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
 
 
@@ -43,16 +45,13 @@ uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
 dist_libkernel_la_SOURCES =					\
-fwd.hh								\
 flavorable.hh							\
-mem-track.hh							\
-memorymanager/blockmemorymanager.hh				\
-memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
+memorymanager/memorymanager.cc					\
 parser/uparser.hh parser/uparser.cc				\
-tag-info.hh tag-info.cc						\
+tag-info.cc							\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
-uasyncregister.hh uasyncregister.cc				\
+uasyncregister.cc						\
 uatcandidate.hh uatcandidate.cc					\
 ubanner.hh ubanner.cc						\
 ubinary.hh ubinary.cc						\
@@ -60,8 +59,8 @@ ubinder.hh ubinder.cc						\
 ucallid.hh ucallid.cc						\
 ucommand.hh ucommand.cc						\
 ucommandqueue.hh ucommandqueue.cc				\
-ucomplaints.hh ucomplaints.cc					\
-uconnection.hh uconnection.cc					\
+ucomplaints.cc							\
+uconnection.cc							\
 ucopy.hh							\
 ueventcompound.hh ueventcompound.cc				\
 ueventhandler.hh ueventhandler.cc				\
@@ -76,12 +75,11 @@ uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
-userver.hh userver.cc						\
-ustring.hh ustring.cc						\
-utypes.hh							\
-uvalue.hh uvalue.cc						\
+userver.cc							\
+ustring.cc							\
+uvalue.cc							\
 uvar.cc								\
-uvariable.hh uvariable.cc					\
+uvariable.cc							\
 uvariablelist.hh uvariablelist.cc				\
 uvariablename.hh uvariablename.cc                               \
 usystem.cc
@@ -131,64 +129,15 @@ parser/uparser.hh
 # This case is handled by parser/bison/bison.mk itself.
 
 
-## ----------------- ##
-## Install headers.  ##
-## ----------------- ##
-
-# This is a kludge: for the time being, install all the server include
-# files for the cores.
-kernelinclude_HEADERS +=			\
-fwd.hh						\
-flavorable.hh					\
-tag-info.hh					\
-mem-track.hh					\
-uast.hh						\
-uasynccommand.hh				\
-uasyncregister.hh				\
-uatcandidate.hh					\
-ubinary.hh					\
-ubinder.hh					\
-ucallid.hh					\
-ucommand.hh					\
-ucommandqueue.hh				\
-ucomplaints.hh					\
-uconnection.hh					\
-ucopy.hh					\
-ueventcompound.hh				\
-ueventhandler.hh				\
-ueventinstance.hh				\
-ueventmatch.hh					\
-uexpression.hh					\
-ufunction.hh					\
-ughostconnection.hh				\
-ugroup.hh					\
-unamedparameters.hh				\
-uobj.hh						\
-uproperty.hh					\
-uqueue.hh					\
-userver.hh					\
-ustring.hh					\
-utypes.hh					\
-uvalue.hh					\
-uvariable.hh					\
-uvariablelist.hh				\
-uvariablename.hh				\
-version.hh
-
 urbiinclude_HEADERS = $(uobject_headers)
 
-parserdir = $(kernelincludedir)/parser
-parser_HEADERS = parser/uparser.hh
-
-memorymanagerdir = $(kernelincludedir)/memorymanager
-memorymanager_HEADERS =				\
-memorymanager/blockmemorymanager.hh		\
-memorymanager/memorymanager.hh
-
-miscdir = $(kernelincludedir)/misc
-misc_HEADERS =                                  \
-misc/fwd.hh                                     \
-misc/select-const.hh
+## parserdir = $(kernelincludedir)/parser
+## parser_HEADERS = parser/uparser.hh
+## 
+## memorymanagerdir = $(kernelincludedir)/memorymanager
+## memorymanager_HEADERS =				\
+## memorymanager/blockmemorymanager.hh		\
+## memorymanager/memorymanager.hh
 
 
 ## ---------- ##

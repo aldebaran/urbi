@@ -28,9 +28,9 @@
 # include "libport/ufloat.h"
 # include "libport/ref-pt.hh"
 
-# include "fwd.hh"
-# include "memorymanager/memorymanager.hh"
-# include "utypes.hh"
+# include "kernel/fwd.hh"
+# include "kernel/memorymanager.hh"
+# include "kernel/utypes.hh"
 
 // ****************************************************************************
 //! Contains a value: can be numeric, string, binary

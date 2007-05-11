@@ -20,11 +20,12 @@
 
 #include "libport/containers.hh"
 
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+
 #include "ueventcompound.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"
-#include "userver.hh"
-#include "uvalue.hh"
 
 // **************************************************************************
 // UEventCompound
@@ -176,12 +177,12 @@ UEventCompound::normalForm ()
 	      em_ = kernel::eventmatch_true;
 	    else
 	      em_ = kernel::eventmatch_false;
-	    
+
 	    ectype_ = EC_MATCH;
 	    delete ec1_;
 	    ec1_=0;
 	    return;
-	    
+
 	  case EC_BANG:
 	  {
 	    UEventCompound* ref1 = ec1_->ec1_;
@@ -193,7 +194,7 @@ UEventCompound::normalForm ()
 	    em_ = ref1->em_;
 	    return;
 	  }
-	  
+
 	  case EC_AND:
 	  {
 	    UEventCompound* ref1 = ec1_->ec1_;
@@ -207,7 +208,7 @@ UEventCompound::normalForm ()
 	    normalForm ();
 	    return;
 	  }
-	  
+
 	  case EC_OR:
 	  {
 	    UEventCompound* ref1 = ec1_->ec1_;

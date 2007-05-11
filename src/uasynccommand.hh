@@ -21,18 +21,12 @@
 
 # include <list>
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
 
 # include "ucommand.hh"
-# include "utypes.hh"
-# include "ustring.hh"
 # include "uexpression.hh"
-# include "unamedparameters.hh"
-# include "uvariablelist.hh"
-# include "uvalue.hh"
 # include "uobj.hh"
-# include "uvariablename.hh"
-# include "ueventhandler.hh"
 
 // ****************************************************************************
 /** UASyncCommand class is used by At end WHENEVER to store

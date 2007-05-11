@@ -19,8 +19,9 @@
 
  **************************************************************************** */
 
+#include "kernel/ustring.hh"
+
 #include "uproperty.hh"
-#include "ustring.hh"
 #include "uvariablename.hh"
 
 UProperty::UProperty (UVariableName* variablename,

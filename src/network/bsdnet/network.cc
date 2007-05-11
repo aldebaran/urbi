@@ -5,9 +5,10 @@
 #include <list>
 #include <algorithm>
 
+#include "kernel/userver.hh"
+
 #include "network/bsdnet/network.hh"
 #include "network/bsdnet/connection.hh"
-#include "userver.hh"
 
 namespace Network
 {
@@ -20,7 +21,7 @@ namespace Network
   {
   public:
     TCPServerPipe();
-    bool init(int port);
+    bool init(int port, const std::string & address);
     ~TCPServerPipe();
 
     virtual std::ostream& print (std::ostream& o) const;
@@ -64,7 +65,7 @@ namespace Network
   }
 
   bool
-  TCPServerPipe::init(int p)
+  TCPServerPipe::init(int p, const std::string& addr)
   {
     port = p;
 #ifdef WIN32
@@ -106,10 +107,35 @@ namespace Network
     memset(&address, 0, sizeof (sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
-    address.sin_addr.s_addr = INADDR_ANY;
+    if (addr.empty() || addr == "0.0.0.0")
+      address.sin_addr.s_addr = INADDR_ANY;
+    else
+    {
+      //attempt name resolution
+      hostent* hp = gethostbyname (addr.c_str());
+      if (!hp) //assume IP address in case of failure
+	// FIXME: Check that inet_addr did not return INADDR_NONE.
+	address.sin_addr.s_addr = inet_addr (addr.c_str());
+      else
+      {
+	/* hp->h_addr is now a char* such as the IP is:
+	 *    a.b.c.d
+	 * where
+	 *    a = hp->h_addr[0]
+	 *    b = hp->h_addr[1]
+	 *    c = hp->h_addr[2]
+	 *    d = hp->h_addr[3]
+	 * hence the following calculation.  Don't cast this to an int*
+	 * because of the alignment problems (eg: ARM) and also because
+	 * sizeof (int) is not necessarily 4 and also because the result
+	 * depends on the endianness of the host.
+	 */
+	memcpy (&address.sin_addr, hp->h_addr, hp->h_length);
+      }
+    }
 
     // Bind to port.
-    if (bind(fd, (sockaddr*)&address, sizeof (sockaddr)))
+    if (bind(fd, (sockaddr*) &address, sizeof (sockaddr)) == -1)
     {
       perror ("cannot bind");
       return false;
@@ -173,10 +199,13 @@ namespace Network
   }
 
   bool
-  createTCPServer(int port)
+  createTCPServer(int port, const char* address)
   {
     TCPServerPipe* tsp = new TCPServerPipe();
-    if (!tsp->init(port))
+    std::string addr;
+    if (address)
+      addr = address;
+    if (!tsp->init(port, addr))
     {
       delete tsp;
       return false;

@@ -19,9 +19,10 @@
 
  **************************************************************************** */
 
+#include "kernel/userver.hh"
+
 #include "ubinary.hh"
 #include "unamedparameters.hh"
-#include "userver.hh"
 
 //! UBinary constructor.
 UBinary::UBinary(int bufferSize, UNamedParameters *parameters)

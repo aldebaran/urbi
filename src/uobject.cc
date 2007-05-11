@@ -23,16 +23,20 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "libport/cstdio"
 #include <list>
 #include <sstream>
+#include <algorithm>
 
-#include "uconnection.hh"
+#include "urbi/uobject.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uconnection.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+
 #include "ughostconnection.hh"
 #include "ugroup.hh"
 #include "uobj.hh"
-#include "urbi/uobject.hh"
-#include "userver.hh"
-#include "utypes.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
+#include "ufunction.hh"
 
 //! Global definition of the starterlist
 namespace urbi
@@ -48,7 +52,7 @@ namespace urbi
   void uobject_unarmorAndSend(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection& ghost = *urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
       ghost.received((const unsigned char *)(str+1), strlen(str)-2);
     else
@@ -60,7 +64,7 @@ namespace urbi
   void send(const char* str)
   {
     //feed this to the ghostconnection
-    UConnection& ghost = *urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->getGhostConnection();
     ghost.received(str);
     ghost.newDataAdded = true;
   }
@@ -68,7 +72,7 @@ namespace urbi
   void send(void* buf, int size)
   {
     //feed this to the ghostconnection
-    UConnection& ghost = *urbiserver->getGhostConnection();
+    UConnection& ghost = urbiserver->getGhostConnection();
     ghost.received((const unsigned char *)(buf), size);
     ghost.newDataAdded = true;
   }
@@ -90,7 +94,23 @@ namespace urbi
   {
     nbparam = size;
 
-    if (type == "function" || type == "event" || type == "eventend")
+    // Autodetect redefined members higher in the hierarchy of an object
+    // If one is found, cancel the binding.
+    if (type == "function")
+    {
+      HMobjtab::iterator it = ::urbiserver->objtab.find(objname.c_str ());
+      if (it != ::urbiserver->objtab.end())
+      {
+	UObj* srcobj = it->second;
+	std::string member = name.substr (name.find ('.') + 1);
+	bool ambiguous;
+	UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+	if (fun && fun != kernel::remoteFunction && !ambiguous)
+	  return;
+      }
+    }
+
+    if (type == "function" || type == "event" || type =="eventend")
       t[this->name].push_back(this);
 
     if (type == "var" || type=="var_onrequest")
@@ -190,6 +210,7 @@ namespace urbi
     : __name(s),
       classname(s),
       derived(false),
+      gc (0),
       remote (false),
       load(s, "load")
   {
@@ -212,6 +233,7 @@ namespace urbi
   //! Dummy UObject constructor.
   UObject::UObject(int index)
     : derived(false),
+      gc (0),
       remote (false)
   {
     std::stringstream ss;
@@ -263,6 +285,7 @@ namespace urbi
   UObject::~UObject()
   {
     clean();
+    delete gc;
   }
 
   void
@@ -289,7 +312,22 @@ namespace urbi
 				   &UObject::update, updatemap);
   }
 
+  int
+  UObject::send (const std::string& s)
+  {
+    if (!gc)
+      gc = new UGhostConnection (::urbiserver);
+
+    return gc->received (s.c_str ());
+  }
+
   // **************************************************************************
+
+  //! UObjectHub destructor.
+  UObjectHub::~UObjectHub()
+  {
+    cleanTimerTable(updatemap, name);
+  }
 
   void
   UObjectHub::USetUpdate(ufloat t)
