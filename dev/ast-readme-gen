@@ -40,8 +40,8 @@ In student mode, if HIDE is True, don't output hidden attributes."""
 
 def print_node_summary (node, depth):
   name = node.name
-  # Non final classes are printed as abstract ones.
-  if not node.final:
+  # Non concrete classes are printed as abstract ones.
+  if not node.concrete:
     name = "/" + name + "/"
   # Do no print ctors of hidden nodes in student mode. Add a leading
   # star in front of them, if there is enough space.
@@ -58,33 +58,33 @@ def print_node_summary (node, depth):
   print node_line
 
 def print_node_rec (node, depth = 0):
-  # Print the node.  
+  # Print the node.
   print_node_summary (node, depth)
   # Print all derived classes recursively.
   derived = node.derived
   derived.sort (lambda x, y: cmp (x.name, y.name))
   # Print abstract derived classes first...
-  for d in filter ((lambda node: not node.final), derived):
+  for d in filter ((lambda node: not node.concrete), derived):
     print_node_rec (d, depth + 1)
   # ..then concrete derived classes.
-  for d in filter ((lambda node: node.final), derived):
+  for d in filter ((lambda node: node.concrete), derived):
     print_node_rec (d, depth + 1)
-  if (not node.final) or depth <= 1:
+  if (not node.concrete) or depth <= 1:
     print
 
 def print_node (node, depth = 0):
-  # Print the node.  
+  # Print the node.
   print_node_summary (node, depth)
   # Print immediate derived classes.
   derived = node.derived
   derived.sort (lambda x, y: cmp (x.name, y.name))
   # Print abstract derived classes first...
-  for d in filter ((lambda node: not node.final), derived):
+  for d in filter ((lambda node: not node.concrete), derived):
     print_node_summary (d, depth + 1)
   # ..then concrete derived classes.
-  for d in filter ((lambda node: node.final), derived):
+  for d in filter ((lambda node: node.concrete), derived):
     print_node_summary (d, depth + 1)
-  if (not node.final) or depth <= 1:
+  if (not node.concrete) or depth <= 1:
     print
 
 loader = ast.Loader ()

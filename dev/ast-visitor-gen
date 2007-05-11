@@ -58,7 +58,7 @@ namespace ast
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
-  if node.final:
+  if node.concrete:
     print "    virtual void operator() (typename Const<" \
 	  + node.name + ">::type&) = 0;"
 print """

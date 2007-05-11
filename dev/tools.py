@@ -3,7 +3,7 @@
 ## ----------------------------------------------------------------------------
 
 import string, re, sys
-import os, filecmp, shutil, stat
+import os, stat, filecmp, shutil
 
 ## Display a warning.
 def warning (msg):
@@ -13,7 +13,18 @@ def warning (msg):
   sys.stdout = out
 
 
-## Overwrite file if different.
+## Display an error message and exit.
+def error (msg):
+  out = sys.stdout
+  sys.stdout = sys.stderr
+  print "Error: " + msg
+  sys.stdout = out
+  sys.exit (1)
+
+
+## Overwrite ref with new if different, or nonexistant.
+## Remove the write permission on the result to avoid accidental edition
+## of generated files.
 def lazy_overwrite (ref, new):
   if not os.path.isfile (ref):
     print "> Create: " + ref
@@ -30,13 +41,16 @@ def lazy_overwrite (ref, new):
   # Remove the temporary source file.
   os.remove(new)
 
+
 ## String helpers -------------------------------------------------------------
 
-## Return a conventional macro identifier.
+## Return a conventional macro identifier from a class name.
+## (FooBar -> FOO_BAR).
 def define_id (s):
   return re.sub ("([^_])([A-Z])", "\\1_\\2", s).upper ()
 
-## Return a conventional file name.
+## Return a conventional file name from a class name.
+## (FooBar -> foo-bar).
 def file_id (s):
   return re.sub ("^-", "", re.sub ("([A-Z])", "-\\1", s)).lower ()
 

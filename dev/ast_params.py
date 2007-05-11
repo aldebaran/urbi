@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # The generator will accept these types as is, without looking for a
 # particular header.  Also, they are handled by copy.
 atomic_types = ["bool", "int",
@@ -35,3 +33,7 @@ includes_map = {
   "type::Type": '"type/fwd.hh"',
   "type::Int": '"type/fwd.hh"'
   }
+
+
+# The function to clear a list of pointers.
+deep_clear = "libport::deep_clear"

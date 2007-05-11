@@ -324,7 +324,7 @@ def print_visitor(node, header, inline, impl):
   """Output the Visitor support routine declaration, and implementation
   if the class is concrete."""
 
-  if node.final:
+  if node.concrete:
     declare_visitor (node, header, False)
     sys.stdout = inline
     print ""

@@ -25,7 +25,7 @@ classes = nodes.values ()
 classes.sort (lambda x, y: cmp (x.name, y.name))
 
 # Abstract classes.
-abstract_classes = filter ((lambda x: not x.final), classes)
+abstract_classes = filter ((lambda x: not x.concrete), classes)
 print """
   /* Abstract classes. */
   {

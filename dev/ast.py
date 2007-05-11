@@ -1,12 +1,13 @@
 ## ---------------------------------------------------------------------------
-## Abstract syntax tree XML tools
+## Abstract syntax tree YAML tools.
 ## ---------------------------------------------------------------------------
 
 import string, re, sys, syck, tools
+import ast_params
 
-from tools import warning
-from ast_params import atomic_types
+from tools import warning, error
 
+# Match the typedef denoting a list to deep_clear.
 re_list = re.compile ("[a-zA-Z_][a-zA-Z_0-9:]*(s|list)_type$")
 
 def decl (type, name):
@@ -44,7 +45,7 @@ class Attribute:
   def atomic_p (self):
     """If this an atomic type?  I.e. a type to copy instead of passing
     as a reference."""
-    return self.root_type () in atomic_types;
+    return self.root_type () in ast_params.atomic_types;
 
   def pointer_p (self):
     "Is this a pointer type?"
@@ -104,15 +105,14 @@ class Attribute:
     if self.owned:
       if self.pointer_p ():
 	if re_list.match (self.root_type ()):
-	  res += "    libport::deep_clear (*" + self.name + "_);\n"
+	  res += "    " + ast_params.deep_clear + " (*" + self.name + "_);\n"
 	res += "    delete " + self.name + "_;\n"
       else:
 	if re_list.match (self.root_type ()):
-	  res += "    libport::deep_clear (" + self.name + "_);\n"
+	  res += "    " + ast_params.deep_clear + " (" + self.name + "_);\n"
       if self.hide and res:
 	res = "    //<<-\n" + res + "    //->>\n"
     return res;
-
 
 class Node:
   def __init__(self, name, dict):
@@ -123,14 +123,28 @@ class Node:
     self.inline = {}
     self.hide = False
     self.attributes = []
-    self.final = True
+    # Is the class concrete? (Default is false.)
+    self.concrete = False
 
     for key in dict:
-      if not key in [ 'super', 'attributes', 'desc', 'inline', 'hide' ]:
+      # PySyck changed its behavior WRT duplicate keys
+      # See: http://pyyaml.org/ticket/16
+      # We should NOT rely on this behavior especially because this isn't
+      # valid YAML code according to the spec:
+      # "YAML mappings require key uniqueness"
+      # http://yaml.org/spec/current.html#id2507367
+      if isinstance (key, tuple):
+	(realkey, value) = key
+	error ('The node ' + name + ' has a duplicate key `' + realkey + "'")
+      if not key in ['super', 'concrete', 'attributes', 'desc',
+		     'inline', 'hide']:
 	warning ('unknown Node attribute: ' + key)
       self.__dict__[key] = dict[key]
 
-    self.super = self.super.split () or []
+    # If we have only one super-class, Syck parsed this as a single value but
+    # we want a list here.
+    if (not isinstance (self.super, list)):
+      self.super = [self.super]
 
     self.attributes = map (self.attribute_of_dict, self.attributes)
 
@@ -220,16 +234,30 @@ class Node:
       first = False
     return init
 
+  def is_a (self, class_name):
+    if self.name == class_name:
+      return True
+    for super in self.super:
+      if super.is_a (class_name):
+	return True
+    return False
+
 
 class Loader:
 
+  # Automatically set terminal classes in the class hierarchy as
+  # concrete.
   def final_compute (self, ast):
     "Must be called before resolve_super since it needs class names."
     for i in ast.values ():
+      # Skip classes already tagged as concrete ones.
+      if i.concrete:
+	continue
       for j in ast.values ():
 	if i.name in j.super:
-	  i.final = False
+	  i.concrete = False
 	  break
+	i.concrete = True
 
   def parse (self, file):
     dict = syck.load (file.read ())
@@ -240,12 +268,14 @@ class Loader:
     return nodes
 
   def resolve_super (self, ast):
-    """Remplace all the references by name to the super class by references
+    """Replace all the references by name to the super class by references
     to the super class itself."""
     for n in ast.values ():
       sups = n.super
       n.super = []
       for sup in sups:
+	if sup == '':
+	  continue
 	n.super.append (ast[sup])
 	ast[sup].derived.append (n)
 

@@ -1,5 +1,17 @@
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
+	Make ast generation more robust, and more alike tc's
+	* dev/ast_params.py (deep_clear): New.
+	* dev/ast-clone-visitor-gen, dev/ast-graph-gen, dev/ast-nodes-gen,
+	* dev/ast-readme-gen, dev/ast-visitor-gen, dev/ast.py, dev/tools.py:
+	Use it.
+	Update with current version in tc.
+	Make it (slightly) more generic.
+	(node.final): Rename as...
+	(node.concrete): this.
+
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
 	ast.yml fixes
 	* dev/ast_params.py: New.
 	Extend it.

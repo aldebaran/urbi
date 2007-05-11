@@ -14,8 +14,8 @@ srcdir = sys.argv[1]
 loader = ast.Loader ()
 nodes = loader.load (sys.stdin)
 arr = nodes.values ()
-final_nodes = filter ((lambda node: node.final), arr)
-final_nodes.sort (lambda x, y: cmp(x.name, y.name))
+concrete_nodes = filter ((lambda node: node.concrete), arr)
+concrete_nodes.sort (lambda x, y: cmp(x.name, y.name))
 
 
 ## Globals --------------------------------------------------------------------
@@ -92,7 +92,7 @@ namespace astclone
 
     // Visit methods.
   public:"""
-for node in final_nodes:
+for node in concrete_nodes:
   print "    virtual void operator() (const ast::" + node.name + "&);"
 print """
     template <typename DecsType>
@@ -171,7 +171,7 @@ namespace astclone
   }
 """
 
-for node in final_nodes:
+for node in concrete_nodes:
   print "  void"
   print "  CloneVisitor::operator() (const ast::" + node.name + "& e)"
   print "  {"
