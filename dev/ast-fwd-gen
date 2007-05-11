@@ -29,7 +29,7 @@ print """\
 # define AST_FWD_HH
 
 # include <list>
-# include "misc/fwd.hh"
+# include "libport/fwd.hh"
 
 namespace ast
 {
@@ -68,8 +68,8 @@ print """
 
   template <template <typename> class Const>
   class GenVisitor;
-  typedef GenVisitor<misc::constify_traits> ConstVisitor;
-  typedef GenVisitor<misc::id_traits> Visitor;
+  typedef GenVisitor<libport::constify_traits> ConstVisitor;
+  typedef GenVisitor<libport::id_traits> Visitor;
 
 } // namespace ast
 

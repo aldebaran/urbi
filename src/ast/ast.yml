@@ -142,12 +142,12 @@ DotExp:
   super: Exp
   attributes: 
     - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
-    - symbol:  { type: 'symbol::Symbol*', desc: Name of the variable separated from exp with a dot }
+    - symbol:  { type: 'libport::Symbol*', desc: Name of the variable separated from exp with a dot }
 
 IdExp:
   super: Exp
   attributes:
-    - symbol:  { type: 'symbol::Symbol*', desc: Name of the symbol to be name-resolved }
+    - symbol:  { type: 'libport::Symbol*', desc: Name of the symbol to be name-resolved }
 
 Var:
   super: DotExp
@@ -156,7 +156,7 @@ ArrowExp:
   super: Exp
   attributes: 
     - var: { type: 'Var*', desc: variable whose property is accessed }
-    - symbol:  { type: 'symbol::Symbol*', desc: Name of the property }
+    - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
 
 
 # Commands
@@ -236,7 +236,7 @@ AliasCmd:
 
   attributes:
     - obj: { type: 'Exp*', desc: Reference to the object to alias }
-    - alias: { type: 'symbol::Symbol*', desc: Aliased attribute }
+    - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
 
 InheritsCmd:
   super: Cmd  
@@ -272,7 +272,7 @@ ExternalCmd:
             };
   attributes:
     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
-    - attribute: { type: 'symbol::Symbol*', desc: Bound attribute }
+    - attribute: { type: 'libport::Symbol*', desc: Bound attribute }
     - type: { type: ExternalCmd::Type, access: r, desc: External binding type }
     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
@@ -435,7 +435,7 @@ NameTy:
   super: Ty
   attributes:
     - name:
-        type: 'symbol::Symbol'
+        type: 'libport::Symbol'
         owned: False
         desc: The name of the type
         access: rW
@@ -451,7 +451,7 @@ Dec:
         mandatory: False
         desc: Object the variable is attached to (or null if root)
     - symbol:
-        type: 'symbol::Symbol*'
+        type: 'libport::Symbol*'
         desc: Name of the variable, separated from exp with a dot
 
 VarDec:

@@ -1,5 +1,15 @@
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
+	Various updates and fixes
+	* src/kernel.mk: Grow stronger.
+	* src/Makefile.am: Use it.
+	* configure.ac: .
+	* dev/ast-clone-visitor-gen, dev/ast-fwd-gen, dev/ast-nodes-gen,
+	* dev/ast-visitor-gen, dev/ast.py, src/ast/ast.yml: Adjust to the
+	fact that most of our tools are in libport, not in misc/ or symbol/.
+
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
 	Update
 	* bootstrap: Strengthen.
 	* src/Makefile.am, configure.ac: Go into src/ast.

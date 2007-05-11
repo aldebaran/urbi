@@ -34,7 +34,7 @@ print """#ifndef AST_VISITOR_HH
 
 # include <functional>
 # include "ast/fwd.hh"
-# include "misc/select-const.hh"
+# include "libport/select-const.hh"
 
 namespace ast
 {
@@ -70,9 +70,9 @@ print """
   };
 
   /// Shorthand for a const visitor.
-  typedef GenVisitor<misc::constify_traits> ConstVisitor;
+  typedef GenVisitor<libport::constify_traits> ConstVisitor;
   /// Shorthand for a non const visitor.
-  typedef GenVisitor<misc::id_traits> Visitor;
+  typedef GenVisitor<libport::id_traits> Visitor;
 
 } // namespace ast
 

@@ -154,7 +154,7 @@ print """\
 
 #include "ast/all.hh"
 #include "astclone/clone-visitor.hh"
-#include "symbol/symbol.hh"
+#include "libport/symbol.hh"
 
 namespace astclone
 {

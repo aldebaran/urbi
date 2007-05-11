@@ -6,8 +6,8 @@ class Vcs
   protocol_version '0.1'
 
   def local_commit! ( *args )
-    common_commit!("k1 <%= rev %>: <%= title %>", *args) do |subject|
-      mail!(:to => %w[kernel1@gostai.com],
+    common_commit!("k2.0 <%= rev %>: <%= title %>", *args) do |subject|
+      mail!(:to => %w[kernel2@gostai.com],
             :subject => subject)
     end
   end

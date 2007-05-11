@@ -7,12 +7,12 @@ import string, re, sys, syck, tools
 from tools import warning
 
 atomic_types = ["bool", "int",
-                "VarDec::Kind",
-                "OpExp::Oper", "OpExp::Kind",
-                "AssignExp::Kind",
-                "IfExp::Kind",
-                "LetExp::Kind",
-                "SeqExp::Kind"]
+		"VarDec::Kind",
+		"OpExp::Oper", "OpExp::Kind",
+		"AssignExp::Kind",
+		"IfExp::Kind",
+		"LetExp::Kind",
+		"SeqExp::Kind"]
 
 re_list = re.compile ("[a-zA-Z_][a-zA-Z_0-9:]*(s|list)_type$")
 
@@ -37,7 +37,7 @@ class Attribute:
     self.hide = False
     for key in dict:
       if not key in [ 'type', 'mandatory', 'init', 'owned', 'access',
-                      'desc', 'hide' ]:
+		      'desc', 'hide' ]:
 	warning ('unknown Attribute attribute: ' + key + ' from ' + name)
       self.__dict__[key] = dict[key]
     self.init = str (self.init)
@@ -62,9 +62,9 @@ class Attribute:
     res = self.root_type ()
     if not self.atomic_p ():
       if self.mandatory:
-        res = "const " + res + "&"
+	res = "const " + res + "&"
       else:
-        res = "const " + res + "*"
+	res = "const " + res + "*"
     return res
 
   def w_type (self):
@@ -110,14 +110,14 @@ class Attribute:
     res = ""
     if self.owned:
       if self.pointer_p ():
-        if re_list.match (self.root_type ()):
-          res += "    misc::deep_clear (*" + self.name + "_);\n"
-        res += "    delete " + self.name + "_;\n"
+	if re_list.match (self.root_type ()):
+	  res += "    libport::deep_clear (*" + self.name + "_);\n"
+	res += "    delete " + self.name + "_;\n"
       else:
-        if re_list.match (self.root_type ()):
-          res += "    misc::deep_clear (" + self.name + "_);\n"        
+	if re_list.match (self.root_type ()):
+	  res += "    libport::deep_clear (" + self.name + "_);\n"
       if self.hide and res:
-        res = "    //<<-\n" + res + "    //->>\n"
+	res = "    //<<-\n" + res + "    //->>\n"
     return res;
 
 
@@ -138,7 +138,7 @@ class Node:
       self.__dict__[key] = dict[key]
 
     self.super = self.super.split () or []
-                             
+
     self.attributes = map (self.attribute_of_dict, self.attributes)
 
   def attribute_of_dict (self, dict):
@@ -170,12 +170,12 @@ class Node:
     That's the case there are hidden arguments with no default value."""
     for a in self.attributes:
       if a.hide and not a.init:
-        return True
+	return True
     # If a parent class has an hidden attribute, we also need
     # two constructors.
     for sup in self.super:
       if sup.need_duplicate ():
-        return True
+	return True
     return False
 
   def ctor_args (self, hide, decl_p = True):
@@ -186,16 +186,16 @@ class Node:
     for sup in self.super:
       sup_args = sup.ctor_args (hide, decl_p)
       if sup_args != "":
-        args.append (sup_args)
+	args.append (sup_args)
 
     for a in self.attributes:
       if hide and a.hide:
-        continue
+	continue
       if not a.init:
-        if decl_p:
-          args.append (decl (a.W_type (), a.name))
-        else:
-          args.append (a.name)
+	if decl_p:
+	  args.append (decl (a.W_type (), a.name))
+	else:
+	  args.append (a.name)
 
     return string.join (args, ", ")
 
@@ -205,25 +205,25 @@ class Node:
     first = True
     for sup in self.super:
       if not first:
-        init += ",\n"
+	init += ",\n"
       init += "    " + sup.name + " (" + sup.ctor_args (hide, False) + ")"
       first = False
     for a in self.attributes:
       if hide and a.hide:
-        continue
+	continue
       if a.hide:
-        if first:
-          init += "    /*<<-*/ "
-        else:
-          init += "\n    /*<<-*/, "
+	if first:
+	  init += "    /*<<-*/ "
+	else:
+	  init += "\n    /*<<-*/, "
       else:
-        if first:
-          init += "    "
-        else:
-          init += ",\n    "
+	if first:
+	  init += "    "
+	else:
+	  init += ",\n    "
       init += a.ctor_init ()
       if a.hide:
-        init += " /*->>*/"
+	init += " /*->>*/"
       first = False
     return init
 
@@ -234,9 +234,9 @@ class Loader:
     "Must be called before resolve_super since it needs class names."
     for i in ast.values ():
       for j in ast.values ():
-        if i.name in j.super:
-          i.final = False
-          break
+	if i.name in j.super:
+	  i.final = False
+	  break
 
   def parse (self, file):
     dict = syck.load (file.read ())
@@ -253,8 +253,8 @@ class Loader:
       sups = n.super
       n.super = []
       for sup in sups:
-        n.super.append (ast[sup])
-        ast[sup].derived.append (n)
+	n.super.append (ast[sup])
+	ast[sup].derived.append (n)
 
   def load (self, file):
     ast = self.parse (file)

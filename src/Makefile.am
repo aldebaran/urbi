@@ -12,18 +12,15 @@
 ## Initialization.  ##
 ## ---------------- ##
 
-include $(top_srcdir)/build-aux/init.mk
-
-kernelinclude_HEADERS =
-
-AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
-# Find the kernel headers exported to the cores.
-AM_CPPFLAGS += -I$(top_srcdir)/include
-AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
+include kernel.mk
 
 SUBDIRS =                                       \
         ast                                     \
 	.
+
+# Defined in sub mk files, e.g., src/parser/bison/bison.mk.
+# FIXME: Might not be needed after all.
+kernelinclude_HEADERS =
 
 ## ----------- ##
 ## libkernel.  ##

@@ -4,8 +4,6 @@ import re, string
 import sys, os
 import ast, tools
 
-from stat import ST_MODE
-
 if len(sys.argv) != 2:
   print "Usage: .. SRCDIR"
   sys.exit(1)
@@ -25,7 +23,7 @@ atomic_types = ["bool", "int",
 includes_map = {
   "std::string": "<string>",
 
-  "symbol::Symbol": '"symbol/symbol.hh"',
+  "libport::Symbol": '"libport/symbol.hh"',
 
   "exps_type": '"ast/exp.hh"',
   "fields_type": '"ast/field.hh"',
@@ -128,7 +126,7 @@ def print_includes (node, header, inline, impl):
   sys.stdout = impl
   print_inline_code (node, "impl", "prologue")
   if need_misc_containers:
-    print "#include \"misc/containers.hh\""
+    print "#include \"libport/containers.hh\""
   print "#include \"ast/visitor.hh\""
   print "#include \"ast/" + node.hh () + "\""
 

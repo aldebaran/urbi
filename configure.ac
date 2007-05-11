@@ -55,6 +55,6 @@ URBI_LIBPORT
 AC_CONFIG_HEADERS([src/config.h])
 URBI_TESTS
 AC_CONFIG_FILES([Makefile
-                   src/Makefile
-                     src/ast/Makefile])
+		   src/Makefile
+		     src/ast/Makefile])
 AC_OUTPUT
