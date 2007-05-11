@@ -4,8 +4,8 @@ atomic_types = ["bool", "int",
 		"VarDec::Kind",
 		"OpExp::Oper",
 		"DecsList::decs_type",
-		"ExternalCmd::Type",
-		"TagOpCmd::Oper",
+		"ExternalExp::Type",
+		"TagOpExp::Oper",
 		"OpVarExp::Oper",
 		"ufloat"]
 

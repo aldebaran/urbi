@@ -8,9 +8,6 @@
 #    + desc
 #      a (Doxygen) comment describing the class.
 #
-#    + hide
-#      if True, output within <<- and ->>.
-#
 #    + super
 #      a possibly empty space separated list of superclass names.
 #
@@ -38,13 +35,12 @@
 #      - True: Pointer members are "delete"'d.
 #      - False: They are not.
 #
-#    + access composed by [ 'r', 'w, 'W' ]
+#    + access composed by [ 'r', 'w', 'W' ]
 #      - r: provide a *_get const accessor.
 #      - w: provide a *_get accessor that returns a reference
 #        for possible modifications.
 #      - W: provide a *_set accessor.
 #    + desc, a short description of the attribute
-#    + hide, some code in the final tarball (no fixme)
 #
 # Defaults:
 #  * class:
@@ -74,11 +70,8 @@ Ast:
         access: rW
         desc: Parent node
 
-Cmd:
-  super: Ast
-
 Exp:
-  super: Cmd
+  super: Ast
 
 # Tags & scope
 
@@ -97,43 +90,35 @@ ExpTag:
   attributes:
     - tag: { type: 'Exp*', desc: Stored tag expression value to be evaluated at runtime } 
 
-TagCmd:
-  super: Cmd
+TagExp:
+  super: Exp
   attributes:
     - tag: { type: 'Tag*', desc: Tag of the sub ast } 
-    - cmd: { type: 'Cmd*', desc: The tagged commands } 
+    - exp: { type: 'Exp*', desc: The tagged expression } 
 
-ScopeCmd:
-  super: Cmd
+ScopeExp:
+  super: Exp
   attributes:
-    - cmd: { type: 'Cmd*', desc: The scoped commands } 
+    - exp: { type: 'Exp*', desc: The scoped expression } 
 
 
-# Commands
-
-AndCmd:
-  super: Cmd
+BinaryExp:
+  super: Exp
   attributes:
-    - left: { type: 'Cmd*', desc: Left side of the and-command }
-    - right: { type: 'Cmd*', desc: Right side of the and-command }
+    - left: { type: 'Exp*', desc: Left side of the and-command }
+    - right: { type: 'Exp*', desc: Right side of the and-command }
+
+AndExp:
+  super: BinaryExp
   
-PipeCmd:
-  super: Cmd
-  attributes:
-    - left: { type: 'Cmd*', desc: Left side of the pipe-command }
-    - right: { type: 'Cmd*', desc: Right side of the pipe-command }
+PipeExp:
+  super: BinaryExp
 
-CommaCmd:
-  super: Cmd
-  attributes:
-    - left: { type: 'Cmd*', desc: Left side of the comma-command }
-    - right: { type: 'Cmd*', desc: Right side of the comma-command }
+CommaExp:
+  super: BinaryExp
 
-SemicolonCmd:
-  super: Cmd
-  attributes:
-    - left: { type: 'Cmd*', desc: Left side of the semicolon-command }
-    - right: { type: 'Cmd*', desc: Right side of the semicolon-command }
+SemicolonExp:
+  super: BinaryExp
 
 
 # Identifier constructs
@@ -159,10 +144,9 @@ ArrowExp:
     - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
 
 
-# Commands
 
-TagOpCmd:
-  super: Cmd
+TagOpExp:
+  super: Exp
   inline:
     header inside: |2
 
@@ -178,58 +162,58 @@ TagOpCmd:
             };
   attributes:
     - tag: { type: Tag*, desc: Tag of the tag-operation command }
-    - oper: { type: TagOpCmd::Oper, access: r, desc: Operator }
+    - oper: { type: TagOpExp::Oper, access: r, desc: Operator }
 
-IfCmd:
-  super: Cmd
+IfExp:
+  super: Exp
   attributes:
     - test: { type: 'Exp*', desc: Condition }
     - thenclause:
-        type: Cmd*
+        type: Exp*
         desc: Instructions executed if condition is true
     - elseclause:
-        type: Cmd*
+        type: Exp*
         desc: Instructions executed if condition is false
 
-AtCmd:
-  super: Cmd
+AtExp:
+  super: Exp
   attributes:
     - test: { type: 'Exp*', desc: Condition }
     - atclause:
-        type: Cmd*
+        type: Exp*
         desc: Instructions executed at the moment when condition becomes true
     - onleaveclause:
-        type: Cmd*
+        type: Exp*
         desc: Instructions executed onleave
 
-WheneverCmd:
-  super: Cmd
+WheneverExp:
+  super: Exp
   attributes:
     - test: { type: 'Exp*', desc: Condition }
     - wheneverclause:
-        type: Cmd*
+        type: Exp*
         desc: Instructions executed whenever condition is true
     - elseclause:
-        type: Cmd*
+        type: Exp*
         desc: Instructions executed whenever condition is false
 
-AssignCmd:
-  super: Cmd
+AssignExp:
+  super: Exp
   attributes:
     - lvalue: { type: 'Var*', desc: Reference to the affected variable }
     - exp: { type: 'Exp*', desc: Assigned value }
 
-ReturnCmd:
-  super: Cmd
+ReturnExp:
+  super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: Returned value }
     - cont: { type: bool, desc: Continuation flag for return& }
 
-AliasCmd:
-  super: Cmd  
+AliasExp:
+  super: Exp  
   desc: |2
 
-      /** \class ast::AliasCmd
+      /** \class ast::AliasExp
        ** \brief Set an alias flag in the object given, to point to one of 
        ** its attribute (typically, 'val'). For backward compat only.
        */
@@ -238,27 +222,27 @@ AliasCmd:
     - obj: { type: 'Exp*', desc: Reference to the object to alias }
     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
 
-InheritsCmd:
-  super: Cmd  
+InheritsExp:
+  super: Exp  
   attributes:
     - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
     - inherited: { type: 'Exp*', desc: Reference to the inherited object }
 
-DisinheritsCmd:
-  super: Cmd  
+DisinheritsExp:
+  super: Exp  
   attributes:
     - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
     - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
 
-DeleteCmd:
-  super: Cmd
+DeleteExp:
+  super: Exp
   attributes:
     - obj:
         type: 'Exp*'
         desc: Reference to the object to delete
 
-ExternalCmd:
-  super: Cmd
+ExternalExp:
+  super: Exp
   inline:
     header inside: |2
 
@@ -273,21 +257,21 @@ ExternalCmd:
   attributes:
     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
     - attribute: { type: 'libport::Symbol*', desc: Bound attribute }
-    - type: { type: ExternalCmd::Type, access: r, desc: External binding type }
+    - type: { type: ExternalExp::Type, access: r, desc: External binding type }
     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
-WaitCmd:
-  super: Cmd
+WaitExp:
+  super: Exp
   attributes:
     - duration: { type: 'Exp*', desc: Time to wait }
 
-WaituntilCmd:
-  super: Cmd
+WaitUntilExp:
+  super: Exp
   attributes:
     - condition: { type: 'Exp*', desc: Condition to wait }
 
-EmitCmd:
-  super: Cmd
+EmitExp:
+  super: Exp
   attributes:
     - name:
         type: 'Exp*'       
@@ -446,7 +430,7 @@ NameTy:
 # Declarations
 
 Dec:
-  super: Cmd
+  super: Exp
   attributes:
     - exp:
         type: 'Var*'

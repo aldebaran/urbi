@@ -1,5 +1,13 @@
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
+	Take into account the comment on the ast
+	* src/ast/ast.yml (Cmd): Remove, use only Exp.
+	Adjust all *Cmd into *Exp.
+	(BinaryExp): New, to factor AndExp, SemicolonExp etc.
+	* dev/ast_params.py: Adjust.
+
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
 	Make it compile
 	* src/ast/ast.yml (MapExp, ClassDec): Comment out so that it
 	compiles.
