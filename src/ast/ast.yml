@@ -323,13 +323,15 @@ ListExp:
         access: r
         desc: Stored list value
 
-MapExp:
-  super: Exp
-  attributes:
-    - value:
-        type: 'exp_pairs_type*'
-        access: r
-        desc: Stored pair values
+## FIXME: Disabled because I don't know how to free the exp_pairs_type
+## pointer.  The machinery is not ready.
+##MapExp:
+##  super: Exp
+##  attributes:
+##    - value:
+##        type: 'exp_pairs_type*'
+##        access: r
+##        desc: Stored pair values
 
 RefExp:
   super: Exp
@@ -478,11 +480,14 @@ EventDec:
   attributes:
     - formals: { type: 'vardecs_type*', desc: Formal arguments }
 
-ClassDec:
-  super: Dec
-  attributes:
-    - inherits: { type: 'exps_type*', mandatory: False, desc: Inherited classes }
-    - decs: { type: 'decs_type*', mandatory: False, desc: List of declarations }
+## FIXME: This does not work currently, because the machinery is not ready
+## to free lists of pairs.
+##
+## ClassDec:
+##   super: Dec
+##   attributes:
+##     - inherits: { type: 'exps_type*', mandatory: False, desc: Inherited classes }
+##     - decs: { type: 'decs_type*', mandatory: False, desc: List of declarations }
 
 TagDec:
   super: Dec

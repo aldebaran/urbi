@@ -1,5 +1,11 @@
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
+	Make it compile
+	* src/ast/ast.yml (MapExp, ClassDec): Comment out so that it
+	compiles.
+
+2007-05-11  Akim Demaille  <demaille@gostai.com>
+
 	Make ast generation more robust, and more alike tc's
 	* dev/ast_params.py (deep_clear): New.
 	* dev/ast-clone-visitor-gen, dev/ast-graph-gen, dev/ast-nodes-gen,
