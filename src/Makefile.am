@@ -28,6 +28,7 @@ kernelinclude_HEADERS =
 
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static
+libkernel_la_LIBADD = ast/libast.la
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \

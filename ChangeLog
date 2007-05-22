@@ -1,5 +1,10 @@
 2007-05-22  Akim Demaille  <akim.demaille@free.fr>
 
+	Make it linkable
+	* src/Makefile.am: Link libast into libkernel.
+
+2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+
 	Make it compilable
 	* src/ast/all.hh: Include all the headers we need.
 	* src/parser/bison/ugrammar.y: Disable all the actions.
