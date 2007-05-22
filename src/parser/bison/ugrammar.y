@@ -403,6 +403,7 @@ take (T* t)
 %token <structure>           REFSTRUCT   "structured ref-identifier"
 
 %type <expr>                expr            "expression"
+%type <expr>                expr.opt        "optional expression"
 %type <val>                 timeexpr        "time expression"
 %type <expr>                taggedcommands  "set of commands"
 %type <expr>                taggedcommand   "tagged command"
@@ -466,7 +467,7 @@ root:
     up.commandTree = 0;
   }
 
-  | refvariable "=" binary ";" {
+| refvariable "=" binary ";" {
     /*
       // FIXME: A pointer to a ref-pointer?  Sounds absurd.
       libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
@@ -484,7 +485,7 @@ root:
       memcheck(up, up.commandTree);
      */
     }
-  | taggedcommands {
+| taggedcommands {
     /*
       up.commandTree = 0;
       if ($1 && $1->type == UCommand::TREE)
@@ -539,7 +540,7 @@ taggedcommand:
       $$ = $1;
     */}
 
-  | tag flags.0 ":" command {/*
+| tag flags.0 ":" command {/*
 
       memcheck(up, $1);
       if ($4)
@@ -551,7 +552,7 @@ taggedcommand:
       $$ = $4;
     */}
 
-  | flags.1 ":" command {/*
+| flags.1 ":" command {/*
 
       memcheck(up, $1);
       if ($3)
@@ -624,7 +625,7 @@ command:
 
     statement
 
-  | "{" taggedcommands "}" {/*
+| "{" taggedcommands "}" {/*
 
       UCommand_TREE* res =
 	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
@@ -668,169 +669,158 @@ pipe.opt:
 `------------*/
 
 statement:
-  /* empty */
+/* empty */
   {/*
     $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
   */}
 
-  | "noop"
+| "noop"
   {/*
     $$ = new UCommand_NOOP(@$);
     memcheck(up, $$);
   */}
 
-  | refvariable "=" expr namedparameters {/*
+| refvariable "=" expr namedparameters {/*
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
     memcheck(up, $$, $1, $3, $4);
     */}
 
-  | refvariable "+=" expr {/*
+| refvariable "+=" expr {/*
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 0);
     memcheck(up, $$, $1, $3);
     */}
 
-  | refvariable "-=" expr {/*
+| refvariable "-=" expr {/*
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 1);
     memcheck(up, $$, $1, $3);
     */}
 
-
-  | "var" refvariable "=" expr namedparameters {/*
+| "var" refvariable "=" expr namedparameters {/*
 
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
       memcheck(up, $$, $2, $4, $5);
     */}
 
-  | property "=" expr {/*
+| property "=" expr {/*
 
     $$ = new UCommand_ASSIGN_PROPERTY(@$, $1->variablename, $1->property, $3);
       memcheck(up, $$, $1, $1, $3);
     */}
 
-  | expr {/*
+| expr {/*
 
     $$ = new UCommand_EXPR(@$, $1);
       memcheck(up, $$, $1);
     */}
 
-  | refvariable NUM {/*
+| refvariable "number" {/*
 
       // FIXME: Leak
       $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
       memcheck(up, $$, $1);
     */}
 
-  | "return" {/*
+| "return" expr.opt   { $$ = new ast::ReturnExp(@$, 0, false); }
 
-    $$ = new UCommand_RETURN(@$, 0);
-      memcheck(up, $$);
-    */}
-
-  | "return" expr {/*
-
-    $$ = new UCommand_RETURN(@$, $2);
-      memcheck(up, $$, $2);
-    */}
-
-  | "echo" expr namedparameters {/*
+| "echo" expr namedparameters {/*
 
     $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
     */}
 
-  | refvariable "=" "new" "identifier" {/*
+| refvariable "=" "new" "identifier" {/*
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, 0, true);
       memcheck(up, $$, $1, $4);
     */}
 
-  | refvariable "=" "new" "identifier" "(" parameterlist ")" {/*
+| refvariable "=" "new" "identifier" "(" parameterlist ")" {/*
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, $6);
       memcheck(up, $$, $1, $4, $6);
     */}
 
-  | "group" "identifier" "{" identifiers "}" {/*
+| "group" "identifier" "{" identifiers "}" {/*
 
       $$ = new UCommand_GROUP(@$, $2, $4);
       memcheck(up, $$, $4, $2);
     */}
 
-  | "addgroup" "identifier" "{" identifiers "}" {/*
+| "addgroup" "identifier" "{" identifiers "}" {/*
 
       $$ = new UCommand_GROUP(@$, $2, $4, 1);
       memcheck(up, $$, $4, $2);
     */}
 
 
-  | "delgroup" "identifier" "{" identifiers "}" {/*
+| "delgroup" "identifier" "{" identifiers "}" {/*
 
       $$ = new UCommand_GROUP(@$, $2, $4, 2);
       memcheck(up, $$, $4, $2);
     */}
 
    /*
-  | GROUP "identifier" {
+| GROUP "identifier" {
 
       $$ = new UCommand_GROUP(@$, $2, 0);
       memcheck(up, $$, $2);
     }
 */
-  | "group" {/*
+| "group" {/*
 
     $$ = new UCommand_GROUP(@$, 0, 0);
       memcheck(up, $$);
     */}
 
-  | "alias" purevariable purevariable {/*
+| "alias" purevariable purevariable {/*
 
     $$ = new UCommand_ALIAS(@$, $2, $3);
       memcheck(up, $$, $2, $3);
     */}
 
-  | purevariable "inherits" purevariable {/*
+| purevariable "inherits" purevariable {/*
 
     $$ = new UCommand_INHERIT(@$, $1, $3);
       memcheck(up, $$, $1, $3);
     */}
 
-  | purevariable "disinherits" purevariable {/*
+| purevariable "disinherits" purevariable {/*
 
     $$ = new UCommand_INHERIT(@$, $1, $3, true);
       memcheck(up, $$, $1, $3);
     */}
 
-  | "alias" purevariable {/*
+| "alias" purevariable {/*
 
     $$ = new UCommand_ALIAS(@$, $2, 0);
       memcheck(up, $$, $2);
     */}
 
-  | "unalias" purevariable {/*
+| "unalias" purevariable {/*
 
     $$ = new UCommand_ALIAS(@$, $2, 0, true);
       memcheck(up, $$, $2);
     */}
 
-  | "alias" {/*
+| "alias" {/*
 
     $$ = new UCommand_ALIAS(@$, 0, 0);
       memcheck(up, $$);
   */}
 
-  | OPERATOR {/*
+| OPERATOR {/*
 
       memcheck(up, $1);
       $$ = new UCommand_OPERATOR(@$, $1);
       memcheck(up, $$, $1);
     */}
 
-  | OPERATOR_ID tag {/*
+| OPERATOR_ID tag {/*
 
       memcheck(up, $1);
       memcheck(up, $2);
@@ -838,14 +828,14 @@ statement:
       memcheck(up, $$, $1, $2);
     */}
 
-  | OPERATOR_VAR variable {/*
+| OPERATOR_VAR variable {/*
 
       memcheck(up, $1);
       $$ = new UCommand_OPERATOR_VAR(@$, $1, $2);
       memcheck(up, $$, $1, $2);
     */}
 
-  | BINDER "object" purevariable {/*
+| BINDER "object" purevariable {/*
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, 0, $1, UBIND_OBJECT, $3);
@@ -853,103 +843,103 @@ statement:
     */}
 
 
-  | BINDER "var" purevariable "from" purevariable {/*
+| BINDER "var" purevariable "from" purevariable {/*
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, $5, $1, UBIND_VAR, $3);
       memcheck(up, $$, $1, $3, $5);
     */}
 
-  | BINDER "function" "(" NUM ")" purevariable "from" purevariable {/*
+| BINDER "function" "(" "number" ")" purevariable "from" purevariable {/*
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, (int)take($4));
       memcheck(up, $$, $1, $6, $8);
     */}
 
-  | BINDER "event" "(" NUM ")" purevariable "from" purevariable {/*
+| BINDER "event" "(" "number" ")" purevariable "from" purevariable {/*
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, (int)take ($4));
       memcheck(up, $$, $1, $6, $8);
     */}
 
-  | "wait" expr {/*
+| "wait" expr {/*
 
     $$ = new UCommand_WAIT(@$, $2);
       memcheck(up, $$, $2);
     */}
 
-  | "emit" purevariable {/*
+| "emit" purevariable {/*
 
       $$ = new UCommand_EMIT(@$, $2, 0);
       memcheck(up, $$, $2);
     */}
 
-  | "emit" purevariable "(" parameterlist ")" {/*
+| "emit" purevariable "(" parameterlist ")" {/*
 
       $$ = new UCommand_EMIT(@$, $2, $4);
       memcheck(up, $$, $2, $4);
     */}
 
-  | "emit" "(" expr ")" purevariable {/*
+| "emit" "(" expr ")" purevariable {/*
 
       $$ = new UCommand_EMIT(@$, $5, 0, $3);
       memcheck(up, $$, $5, $3);
     */}
 
-  | "emit" "(" expr ")" purevariable "(" parameterlist ")" {/*
+| "emit" "(" expr ")" purevariable "(" parameterlist ")" {/*
 
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
       memcheck(up, $$, $5, $7, $3);
     */}
 
-  | "emit" "(" ")" purevariable {/*
+| "emit" "(" ")" purevariable {/*
 
       $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
 							UINFINITY));
       memcheck(up, $$, $4);
     */}
 
-  | "emit" "(" ")" purevariable "(" parameterlist ")" {/*
+| "emit" "(" ")" purevariable "(" parameterlist ")" {/*
 
       $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
       memcheck(up, $$, $4, $6);
     */}
 
-  | "waituntil" softtest {/*
+| "waituntil" softtest {/*
 
       $$ = new UCommand_WAIT_TEST(@$, $2);
       memcheck(up, $$, $2);
     */}
 
-  | refvariable "--" {/*
+| refvariable "--" {/*
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
       memcheck(up, $$, $1);
     */}
 
-  | refvariable "++" {/*
+| refvariable "++" {/*
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
       memcheck(up, $$, $1);
     */}
 
-  | "def" {/*
+| "def" {/*
 
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
       memcheck(up, $$);
     */}
 
-  | "var" refvariable {/*
+| "var" refvariable {/*
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
       memcheck(up, $$, $2);
     */}
 
-  | "def" refvariable {/*
+| "def" refvariable {/*
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
@@ -962,34 +952,34 @@ statement:
     memcheck(up, $$, $3);
     */}
 
-  | "class" "identifier" "{" class_declaration_list "}" {/*
+| "class" "identifier" "{" class_declaration_list "}" {/*
 
     $$ = new UCommand_CLASS(@$, $2, $4);
     memcheck(up, $$, $2, $4);
     */}
 
-  | "class" "identifier" {/*
+| "class" "identifier" {/*
 
     $$ = new UCommand_CLASS(@$, $2, 0);
     memcheck(up, $$, $2);
     */}
 
 
-  | "event" variable "(" identifiers ")" {/*
+| "event" variable "(" identifiers ")" {/*
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
       memcheck(up, $$, $2, $4);
     */}
 
-  | "event" variable {/*
+| "event" variable {/*
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
       memcheck(up, $$, $2);
     */}
 
-  | "function" variable "(" identifiers ")" {/*
+| "function" variable "(" identifiers ")" {/*
 
       if (up.connection.functionTag)
       {
@@ -1020,7 +1010,7 @@ statement:
       }
     */}
 
-  | "def" variable "(" identifiers ")" {/*
+| "def" variable "(" identifiers ")" {/*
 
       warn (up, @$, "'def' is deprecated, use 'function' instead");
       if (up.connection.functionTag)
@@ -1052,94 +1042,94 @@ statement:
       }
     */}
 
-  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
+| "if" "(" expr ")" taggedcommand %prec CMDBLOCK
     {/*
       warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     */}
 
-  | "if" "(" expr ")" taggedcommand "else" taggedcommand
+| "if" "(" expr ")" taggedcommand "else" taggedcommand
     {/*
       warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     */}
 
-  | "every" "(" expr ")" taggedcommand {/*
+| "every" "(" expr ")" taggedcommand {/*
 
     $$ = new UCommand_EVERY(@$, $3, $5);
       memcheck(up, $$, $3, $5);
     */}
 
-  | "timeout" "(" expr ")" taggedcommand {/*
+| "timeout" "(" expr ")" taggedcommand {/*
 
     $$ = new UCommand_TIMEOUT(@$, $3, $5);
       memcheck(up, $$, $3, $5);
     */}
 
-  | "stopif" "(" softtest ")" taggedcommand {/*
+| "stopif" "(" softtest ")" taggedcommand {/*
 
     $$ = new UCommand_STOPIF(@$, $3, $5);
       memcheck(up, $$, $3, $5);
     */}
 
-  | "freezeif" "(" softtest ")" taggedcommand {/*
+| "freezeif" "(" softtest ")" taggedcommand {/*
 
     $$ = new UCommand_FREEZEIF(@$, $3, $5);
       memcheck(up, $$, $3, $5);
     */}
 
-  | "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {/*
+| "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {/*
 
       $$ = new UCommand_AT(@$,  $2, $4, $6, 0);
       memcheck(up, $$, $4, $6);
     */}
 
-  | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {/*
+| "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {/*
      warn_spontaneous(up, @6, *$6);
      $$ = new UCommand_AT(@$, $2, $4, $6, $8);
      memcheck(up, $$, $4, $6, $8);
     */}
 
-  | "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {/*
+| "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {/*
 
       $$ = new UCommand_WHILE(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);
     */}
 
-  | "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {/*
+| "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {/*
 
       $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     */}
 
-  | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {/*
+| "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {/*
       warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     */}
 
-  | "loop" taggedcommand %prec CMDBLOCK {/*
+| "loop" taggedcommand %prec CMDBLOCK {/*
 
       $$ = new UCommand_LOOP(@$, $2);
       memcheck(up, $$, $2);
     */}
 
-  | "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
+| "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
      %prec CMDBLOCK {/*
 
       $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     */}
 
-  | "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {/*
+| "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {/*
 
       $$ = new UCommand_LOOPN(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);
     */}
 
-  | "for" flavor.opt "(" statement ";"
+| "for" flavor.opt "(" statement ";"
 			 expr ";"
 			 statement ")" taggedcommand %prec CMDBLOCK {/*
 
@@ -1155,7 +1145,7 @@ array:
 
   /* empty */ {/* $$ = 0; */}
 
-  | "[" expr "]" array {/*
+| "[" expr "]" array {/*
 
       $$ = new UNamedParameters($2, $4);
       memcheck(up, $$, $2, $4);
@@ -1173,7 +1163,7 @@ purevariable:
       memcheck(up, $$, $3);
     */}
 
-  | "identifier" array "." "identifier" array {/*
+| "identifier" array "." "identifier" array {/*
 
       memcheck(up, $1);
       memcheck(up, $4);
@@ -1181,7 +1171,7 @@ purevariable:
       memcheck(up, $$, $1, $2, $4, $5);
     */}
 
-  | "identifier" "::" "identifier" {/*
+| "identifier" "::" "identifier" {/*
 
       memcheck(up, $1);
       memcheck(up, $3);
@@ -1190,7 +1180,7 @@ purevariable:
       memcheck(up, $$, $1, $3);
     */}
 
-  | "identifier" array {/*
+| "identifier" array {/*
 
       memcheck(up, $1);
       $$ = new UVariableName(new UString(up.connection.functionTag
@@ -1201,7 +1191,7 @@ purevariable:
       $$->nostruct = true;
     */}
 
-  | STRUCT array {/*
+| STRUCT array {/*
 
       memcheck(up, $1.device);
       memcheck(up, $1.id);
@@ -1230,7 +1220,7 @@ refvariable:
       $$ = $1;
     */}
 
-  | "only" variable {/*
+| "only" variable {/*
 
       $$ = $2;
       $$->rooted = true;
@@ -1255,7 +1245,7 @@ property:
 namedparameters:
   /* empty */ {/* $$ = 0; */}
 
-  | "identifier" ":" expr namedparameters {/*
+| "identifier" ":" expr namedparameters {/*
 
       memcheck(up, $1);
       $$ = new UNamedParameters($1, $3, $4);
@@ -1267,14 +1257,14 @@ namedparameters:
 /* BINARY */
 
 binary:
-    "bin" NUM {/*
+    "bin" "number" {/*
       $$ = new UBinary((int)take($2), 0);
       memcheck(up, $$);
       if ($$ != 0)
 	memcheck(up, $$->buffer, $$);
     */}
 
-  | "bin" NUM rawparameters {/*
+| "bin" "number" rawparameters {/*
 
       $$ = new UBinary((int)take($2), $3);
       memcheck(up, $$, $3);
@@ -1284,7 +1274,9 @@ binary:
 ;
 
 
-/* TIMEEXPR */
+/*---------.
+| TIMEEXPR |
+`---------*/
 
 timeexpr:
  TIMEVALUE           {/* $$ = $1;  */}
@@ -1292,10 +1284,12 @@ timeexpr:
 ;
 
 
-/* EXPR */
+/*-----.
+| EXPR |
+`-----*/
 
 expr:
-  NUM {/*
+  "number" {/*
     $$ = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, $$);
   */}
@@ -1343,34 +1337,39 @@ expr:
   /* num expr */
 expr:
     expr "+" expr	{/* $$ = new_exp(up, @$, UExpression::PLUS,  $1, $3); */}
-  | expr "-" expr	{/* $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); */}
-  | expr "*" expr	{/* $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); */}
-  | expr "/" expr	{/* $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); */}
-  | expr "%" expr	{/* $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); */}
-  | expr "^" expr	{/* $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); */}
+| expr "-" expr	{/* $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); */}
+| expr "*" expr	{/* $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); */}
+| expr "/" expr	{/* $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); */}
+| expr "%" expr	{/* $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); */}
+| expr "^" expr	{/* $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); */}
 
-  | "copy" expr  %prec NEG {/*
+| "copy" expr  %prec NEG {/*
 
       $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
     */}
 
-  | "-" expr %prec NEG {/*
+| "-" expr %prec NEG {/*
 
       $$ = new UExpression(@$, UExpression::NEG, $2, 0);
       memcheck(up, $$, $2);
     */}
 
-  | "(" expr ")" {/*
+| "(" expr ")" {/*
 
       $$ = $2;
     */}
 ;
 
+expr.opt:
+  /* nothing */ { $$ = 0; }
+| expr          { $$ = $1; }
+;
 
-  /*--------.
-  | Tests.  |
-  `--------*/
+
+/*--------.
+| Tests.  |
+`--------*/
 %token
   TOK_EQ   "=="
   TOK_GT   ">"
@@ -1412,7 +1411,7 @@ expr:
 parameterlist:
   /* empty */ {/* $$ = 0; */}
 
-  | parameters
+| parameters
 ;
 
 parameters:
@@ -1422,7 +1421,7 @@ parameters:
       memcheck(up, $$, $1);
     */}
 
-  | expr "," parameters {/*
+| expr "," parameters {/*
 
       $$ = new UNamedParameters($1, $3);
       memcheck(up, $$, $1, $3);
@@ -1430,27 +1429,27 @@ parameters:
 ;
 
 rawparameters:
-    NUM {/*
+    "number" {/*
       UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     */}
 
-  | "identifier" {/*
+| "identifier" {/*
 
       UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     */}
 
-  |  NUM rawparameters {/*
+| "number" rawparameters {/*
 
       UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     */}
 
-  |  "identifier" rawparameters {/*
+| "identifier" rawparameters {/*
 
       UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr, $2);
@@ -1458,17 +1457,20 @@ rawparameters:
     */}
 ;
 
-/* SOFTTEST */
+
+/*---------.
+| softtest |
+`---------*/
 
 softtest:
-    expr
-  | expr "~" expr  {/*
+  expr
+| expr "~" expr  {/*
 
       $$ = $1;
       $$->issofttest = true;
       $$->softtest_time = $3;
     */}
-  | "(" expr "~" expr ")" {/*
+| "(" expr "~" expr ")" {/*
 
       $$ = $2;
       $$->issofttest = true;
@@ -1476,19 +1478,22 @@ softtest:
     */}
 ;
 
-/* "identifier"S */
+
+/*--------------.
+| identifiers.  |
+`--------------*/
 
 identifiers:
   /* empty */  {/* $$ = 0; */}
 
-  | "identifier" {/*
+| "identifier" {/*
 
       memcheck(up, $1);
       $$ = new UNamedParameters($1, 0);
       memcheck(up, $$, $1);
     */}
 
-  | "var" "identifier" {/*
+| "var" "identifier" {/*
 
       memcheck(up, $2);
       $$ = new UNamedParameters($2, 0);
@@ -1496,20 +1501,19 @@ identifiers:
     */}
 
 
-  | "identifier" "," identifiers {/*
+| "identifier" "," identifiers {/*
 
       memcheck(up, $1);
       $$ = new UNamedParameters($1, 0, $3);
       memcheck(up, $$, $3, $1);
     */}
 
-  | "var" "identifier" "," identifiers {/*
+| "var" "identifier" "," identifiers {/*
 
       memcheck(up, $2);
       $$ = new UNamedParameters($2, 0, $4);
       memcheck(up, $$, $4, $2);
     */}
-
 ;
 
 /* CLASS_DELCARATION & CLASS_DECLARATION_LIST */
@@ -1523,21 +1527,21 @@ class_declaration:
       memcheck(up, $$, $2);
     */}
 
-  | "function" variable "(" identifiers ")" {/*
+| "function" variable "(" identifiers ")" {/*
       $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
     */}
 
-  | "function" variable {/*
+| "function" variable {/*
       $$ = new UExpression(@$, UExpression::FUNCTION, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     */}
 
-  | "event" variable "(" identifiers ")" {/*
+| "event" variable "(" identifiers ")" {/*
       $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
     */}
 
-  | "event" variable {/*
+| "event" variable {/*
       $$ = new UExpression(@$, UExpression::EVENT, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
@@ -1548,12 +1552,12 @@ class_declaration:
 class_declaration_list:
   /* empty */  {/* $$ = 0; */}
 
-  | class_declaration {/*
+| class_declaration {/*
       $$ = new UNamedParameters($1, 0);
       memcheck(up, $$, $1);
     */}
 
-  | class_declaration ";" class_declaration_list {/*
+| class_declaration ";" class_declaration_list {/*
       $$ = new UNamedParameters($1, $3);
       memcheck(up, $$, $3, $1);
     */}
@@ -1564,13 +1568,13 @@ class_declaration_list:
 refvariables:
   /* empty */  {/* $$ = 0; */}
 
-  | refvariable {/*
+| refvariable {/*
       memcheck(up, $1);
       $$ = new UVariableList($1);
       memcheck(up, $$, $1);
     */}
 
-  | refvariable ";" refvariables {/*
+| refvariable ";" refvariables {/*
       memcheck(up, $1);
       $$ = new UVariableList($1, $3);
       memcheck(up, $$, $3, $1);

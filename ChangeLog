@@ -1,5 +1,13 @@
 2007-05-22  Akim Demaille  <akim.demaille@free.fr>
 
+	Bind "return"
+	* src/ast/all.hh: Include all the *-exp.hh headers.
+	* src/parser/bison/ugrammar.y (expr.opt): New.
+	Activate the code for "return".
+	NUM -> "number".
+
+2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+
 	Activate some rules
 	* src/parser/bison/ugrammar.y: <command> -> <expr>.
 	instruction -> statement.
