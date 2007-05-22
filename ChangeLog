@@ -1,3 +1,12 @@
+2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+
+	Make it compilable
+	* src/ast/all.hh: Include all the headers we need.
+	* src/parser/bison/ugrammar.y: Disable all the actions.
+	For the time being, this is still the old grammar, nothing
+	was changed.
+	Many simplifications are needed.
+
 2007-05-11  Akim Demaille  <demaille@gostai.com>
 
 	Take into account the comment on the ast
