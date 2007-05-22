@@ -189,7 +189,7 @@ warn_spontaneous(UParser& up,
 {
   if (spontaneous(u))
     warn (up, l,
-	  "implicit empty instruction.  "
+	  "implicit empty statement.  "
 	  "Use 'noop' to make it explicit.");
 }
 
@@ -404,10 +404,10 @@ take (T* t)
 
 %type <expr>                expr            "expression"
 %type <val>                 timeexpr        "time expression"
-%type <command>             taggedcommands  "set of commands"
-%type <command>             taggedcommand   "tagged command"
-%type <command>             command         "command"
-%type <command>             instruction     "instruction"
+%type <expr>                taggedcommands  "set of commands"
+%type <expr>                taggedcommand   "tagged command"
+%type <expr>                command         "command"
+%type <expr>                statement       "statement"
 %type <namedparameters>     parameters      "parameters"
 %type <namedparameters>     array           "array"
 %type <namedparameters>     parameterlist   "list of parameters"
@@ -506,10 +506,10 @@ root:
 
 taggedcommands:
   taggedcommand
-| taggedcommands "," taggedcommands { /* $$ = new_bin(up, @$, $2, $1, $3); */ }
-| taggedcommands ";" taggedcommands {/* $$ = new_bin(up, @$, $2, $1, $3); */}
-| taggedcommands "|" taggedcommands {/* $$ = new_bin(up, @$, $2, $1, $3); */}
-| taggedcommands "&" taggedcommands {/* $$ = new_bin(up, @$, $2, $1, $3); */}
+| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
 ;
 
 /*----------------.
@@ -622,7 +622,7 @@ flags.0:
 
 command:
 
-    instruction
+    statement
 
   | "{" taggedcommands "}" {/*
 
@@ -663,11 +663,11 @@ pipe.opt:
 ;
 
 
-/*--------------.
-| Instruction.  |
-`--------------*/
+/*------------.
+| Statement.  |
+`------------*/
 
-instruction:
+statement:
   /* empty */
   {/*
     $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
@@ -1139,9 +1139,9 @@ instruction:
       memcheck(up, $$, $4, $6);
     */}
 
-  | "for" flavor.opt "(" instruction ";"
+  | "for" flavor.opt "(" statement ";"
 			 expr ";"
-			 instruction ")" taggedcommand %prec CMDBLOCK {/*
+			 statement ")" taggedcommand %prec CMDBLOCK {/*
 
       $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);

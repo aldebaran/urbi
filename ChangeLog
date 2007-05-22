@@ -1,5 +1,12 @@
 2007-05-22  Akim Demaille  <akim.demaille@free.fr>
 
+	Activate some rules
+	* src/parser/bison/ugrammar.y: <command> -> <expr>.
+	instruction -> statement.
+	Use new_bin.
+
+2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+
 	Make it linkable
 	* src/Makefile.am: Link libast into libkernel.
 
