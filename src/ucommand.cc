@@ -6428,6 +6428,7 @@ UCommand_FOREACH::UCommand_FOREACH(const location& l,
     command (command),
     expression (expression),
     position (0),
+    list(0),
     firsttime (true)
 {
   ADDOBJ(UCommand_FOREACH);
@@ -6440,6 +6441,7 @@ UCommand_FOREACH::~UCommand_FOREACH()
   delete command;
   delete variablename;
   delete expression;
+  delete list;
 }
 
 //! UCommand subclass execution function
@@ -6449,7 +6451,8 @@ UCommand_FOREACH::execute_(UConnection *connection)
   if (firsttime)
   {
     firsttime = false;
-    position = expression->eval(this, connection);
+    list =  expression->eval(this, connection);
+    position = list;
     if (position == 0)
       return UCOMPLETED;
     if (position->dataType == DATA_LIST)

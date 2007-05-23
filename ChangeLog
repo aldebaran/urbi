@@ -1,3 +1,9 @@
+2007-05-23  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix leak in foreach command.
+	* src/ucommand.cc,
+	* src/ucommand.hh: Add a 'list' field containing the result of the evaluation of 'expression', delete it in dtor.
+
 2007-05-10  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix bug: adaptive modifier alone did not trigger notifyaccess callbacks
