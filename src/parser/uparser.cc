@@ -24,8 +24,6 @@ UParser::UParser(UConnection& cn)
     binaryCommand (false),
     connection (cn),
     scanner_ (),
-    files_(),
-    filename_ (0),
     loc_()
 {
   // The first column for locations is 1.
@@ -53,7 +51,6 @@ UParser::parse_ ()
 int
 UParser::process(const ubyte* command, int length)
 {
-  assert (!filename_);
   // It has been said Flex scanners cannot work with istrstream.
   std::istrstream mem_buff (reinterpret_cast<const char*> (command), length);
   std::istream mem_input (mem_buff.rdbuf());
@@ -69,14 +66,9 @@ UParser::process(const ubyte* command, int length)
 int
 UParser::process(const std::string& fn)
 {
-  assert (!filename_);
-
-  // Store the filename, and get a pointer to it.
-  filename_ = &(*files_.insert (fn).first);
-
   // A location pointing to it.
   location_type loc;
-  loc.initialize (filename_);
+  loc.initialize (new libport::Symbol(fn));
   // The convention for the first column changed: make sure the first
   // column is column 1.
   loc.begin.column = loc.end.column = 1;
@@ -87,9 +79,8 @@ UParser::process(const std::string& fn)
   std::swap(loc, loc_);
   std::ifstream f (fn.c_str());
   scanner_.switch_streams(&f, 0);
-  ECHO("Parsing file: " << *filename_);
+  ECHO("Parsing file: " << fn);
   int res = parse_();
-  filename_ = 0;
   std::swap(loc, loc_);
   return res;
 }

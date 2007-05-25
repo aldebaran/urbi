@@ -86,16 +86,6 @@ private:
   /// The Flex scanner.
   yyFlexLexer scanner_;
 
-  /// The file names that were parsed.
-  ///
-  /// Kept because each location point to it, and since they are hooked
-  /// on the AST, they survive the parsing.
-  typedef std::set<std::string> files;
-  files files_;
-
-  /// The file currently parsed.
-  const std::string* filename_;
-
   /// The current location.
   location_type loc_;
 };

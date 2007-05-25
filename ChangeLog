@@ -1,5 +1,14 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Use libport::Symbol for locations
+	* src/parser/bison/ugrammar.y: Use Symbol for file names.
+	* src/ast/loc.hh: Include libport/symbol.hh.
+	* src/parser/uparser.hh, src/parser/uparser.cc: Remove the
+	handling of the allocated file names, now handled by Symbol
+	(not quite true).
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Minor parser simplifications
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y: Rename
 	the tokens for the logical and and or.

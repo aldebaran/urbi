@@ -1,11 +1,12 @@
 /**
- ** \file ast/location.hh
- ** \brief Definition of ast::Location.
+ ** \file ast/loc.hh
+ ** \brief Definition of ast::loc.
  */
 
-#ifndef AST_LOCATION_HH
-# define AST_LOCATION_HH
+#ifndef AST_LOC_HH
+# define AST_LOC_HH
 
+# include "libport/symbol.hh"
 # include "location.hh"
 
 namespace ast
@@ -13,4 +14,4 @@ namespace ast
   typedef yy::location loc;
 }
 
-#endif // !AST_LOCATION_HH
+#endif // !AST_LOC_HH

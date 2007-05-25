@@ -41,7 +41,10 @@
 
 // Locations.
 %locations
-%define "filename_type" "const std::string"
+// We use pointers to store the filename in the locations.  This saves
+// space (pointers), time (no deep copy), but leaves the problem of
+// deallocation.  The class Symbol provides this.
+%define "filename_type" "libport::Symbol"
 %initial-action
 {
   // Saved when exiting the start symbol.
@@ -52,8 +55,7 @@
 /* Possible data type returned by the bison parsing mechanism */
 %union
 {
-  ast::Ast                *ast;
-  ast::Exp                *expr;
+  ast::Exp *expr;
 }
 
 // Old junk we should get rid of.
