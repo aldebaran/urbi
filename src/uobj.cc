@@ -281,40 +281,27 @@ UObj::searchVariable(const char* id, bool &ambiguous)
   }
 }
 
-UEventHandler*
+bool
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
-  UEventHandler* ret;
   char namebuffer[1024];
 
   snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
-  bool ok = false;
-  HMemittab::iterator iet;
-  HMemittab::iterator ietok = ::urbiserver->emittab.end ();
-
-  for (iet = ::urbiserver->emittab.begin ();
-       iet != ::urbiserver->emittab.end () && !ok;
-       ++iet)
-    if (iet->second->unforgedName->equal (namebuffer))
-    {
-      ok = true;
-      ietok = iet;
-    }
-
-  if (ok)
+  
+  if (kernel::eventSymbolDefined (namebuffer))
   {
     ambiguous = false;
-    return ietok->second;
+    return true;
   }
+
   else
   {
-    ret   = 0;
     bool found = false;
     for (std::list<UObj*>::iterator i = up.begin();
 	 i != up.end();
 	 ++i)
     {
-       UEventHandler* tmpres = (*i)->searchEvent(id, ambiguous);
+       bool tmpres = (*i)->searchEvent(id, ambiguous);
       if (ambiguous)
 	return 0;
       if (tmpres)
@@ -325,12 +312,11 @@ UObj::searchEvent(const char* id, bool &ambiguous)
 	}
 	else
 	{
-	  ret = tmpres;
 	  found = true;
 	}
     }
     ambiguous = false;
-    return ret;
+    return found;
   }
 }
 

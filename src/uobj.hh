@@ -44,7 +44,7 @@ public:
 
   UFunction*    searchFunction(const char* id, bool& ambiguous);
   UVariable*    searchVariable(const char* id, bool& ambiguous);
-  UEventHandler*  searchEvent   (const char* id, bool& ambiguous);
+  bool  searchEvent   (const char* id, bool& ambiguous);
 };
 
 #endif

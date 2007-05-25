@@ -129,13 +129,13 @@ UEvent::~UEvent()
 
 UEventHandler::UEventHandler (UString* name, int nbarg):
   UASyncRegister(),
-  nbarg_ (nbarg),
-  emit2(::urbiserver->emit2tab[name->str()])
+  nbarg_ (nbarg)
 {
+  unforgedName = new UString (name);
+  ::urbiserver->emit2tab[unforgedName->str()];
 
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
-  unforgedName = new UString (name);
   
 }
 
@@ -161,7 +161,6 @@ UEventHandler::addEvent(UNamedParameters* parameters,
     param = param->next;
   }
   UEvent* e = new UEvent(this, args);
-  emit2++;
   ASSERT(e) eventlist_.push_back(e);
 
   // triggers associated commands update
@@ -173,7 +172,6 @@ UEventHandler::addEvent(UNamedParameters* parameters,
 UEvent*
 UEventHandler::addEvent(UEvent* e)
 {
-  emit2++;
   ASSERT(e) eventlist_.push_back(e);
   return e;
 }
@@ -193,7 +191,6 @@ UEventHandler::noPositive ()
 void
 UEventHandler::removeEvent(UEvent* event)
 {
-  emit2--;
   eventlist_.remove(event);
 
   // triggers associated commands update
