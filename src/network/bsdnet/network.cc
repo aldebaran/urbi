@@ -216,8 +216,8 @@ namespace Network
 
   namespace
   {
-#if !defined(WIN32) || defined(__MINGW32__)
-    int controlPipe[2] = {-1, -1};
+#if !defined(WIN32)
+    int controlPipe[2] = { -1, -1 };
 #endif
     typedef std::list<Pipe*> pipes_type;
     pipes_type pList;
@@ -230,7 +230,7 @@ namespace Network
     FD_ZERO(&rd);
     FD_ZERO(&wr);
     int maxfd = 0;
-#if !defined(WIN32) || defined(__MINGW32__)
+#if !defined(WIN32)
     LIBPORT_FD_SET(controlPipe[0], &rd);
     maxfd = controlPipe[0];
 #endif
@@ -303,7 +303,7 @@ namespace Network
       return false;
     else // 0 < r
     {
-#if !defined(WIN32) || defined(__MINGW32__)
+#if !defined(WIN32)
       if (LIBPORT_FD_ISSET(controlPipe[0], &rd))
       {
 	char buf[128];
@@ -321,7 +321,7 @@ namespace Network
   void registerNetworkPipe(Pipe* p)
   {
     pList.push_back(p);
-#if !defined(WIN32) || defined(__MINGW32__)
+#if !defined(WIN32)
     if (controlPipe[0] == -1)
       pipe(controlPipe);
     p->controlFd = controlPipe[1];
@@ -351,7 +351,7 @@ namespace Network
 
   void startNetworkProcessingThread()
   {
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     DWORD tid;
     CreateThread(NULL, 0, processNetwork, 0, 0, &tid);
 #else
