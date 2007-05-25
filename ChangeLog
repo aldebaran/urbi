@@ -1,6 +1,12 @@
 2007-05-25  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Partial revert of r1111.
+	* src/network/bsdnet/network.cc: Revert another part of r1111 that
+	breaks on MinGW.
+
+2007-05-25  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Partial revert of r1111.
 	* src/network/bsdnet/network.cc: Don't try to use `pipe' or pthread
 	functions on MinGW.
 
