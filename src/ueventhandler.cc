@@ -57,15 +57,9 @@ kernel::eventSymbolDefined (const char* symbol)
   // table: there must be a boolean table that stores the fact that a given
   // event name is in use or not.
 
-  bool ok = false;
-  HMemittab::iterator iet;
-  for (iet = ::urbiserver->emittab.begin ();
-       iet != ::urbiserver->emittab.end () && !ok;
-       ++iet)
-    if ( iet->second->unforgedName->equal (symbol))
-      ok = true;
-
-  return ok;
+  HMemit2tab::iterator i = ::urbiserver->emit2tab.find(symbol);
+  return (i!= ::urbiserver->emit2tab.end());
+  
 }
 
 bool
@@ -135,11 +129,14 @@ UEvent::~UEvent()
 
 UEventHandler::UEventHandler (UString* name, int nbarg):
   UASyncRegister(),
-  nbarg_ (nbarg)
+  nbarg_ (nbarg),
+  emit2(::urbiserver->emit2tab[name->str()])
 {
+
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
   unforgedName = new UString (name);
+  
 }
 
 UEventHandler::~UEventHandler()
@@ -164,17 +161,19 @@ UEventHandler::addEvent(UNamedParameters* parameters,
     param = param->next;
   }
   UEvent* e = new UEvent(this, args);
+  emit2++;
   ASSERT(e) eventlist_.push_back(e);
 
   // triggers associated commands update
   updateRegisteredCmd ();
-
+ 
   return e;
 }
 
 UEvent*
 UEventHandler::addEvent(UEvent* e)
 {
+  emit2++;
   ASSERT(e) eventlist_.push_back(e);
   return e;
 }
@@ -194,6 +193,7 @@ UEventHandler::noPositive ()
 void
 UEventHandler::removeEvent(UEvent* event)
 {
+  emit2--;
   eventlist_.remove(event);
 
   // triggers associated commands update

@@ -190,6 +190,10 @@ private:
 
   /// List of triggered events
   std::list<UEvent*> eventlist_;
+  
+  
+  /// Iterator on corresponding entry on emit2tab hash
+  int& emit2;
 };
 
 

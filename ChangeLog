@@ -1,3 +1,12 @@
+2007-05-25  Matthieu Nottale  <nottale@gostai.com>
+
+	Optimize kernel::eventSymbolDefined
+	* ueventhandler.cc: kernel::eventSymbolDefined now performs a find on urbiserver::emit2tab. An entry in this hash is added if not present in  UEventHandler ctor.
+	                    Additionaly, the entry in emit2tab is a counter on the number of active events with this name
+	* ueventhandler.hh: .
+	* userver.hh,
+	* utypes.hh: Defines a new hash_map type and an instance in userver: emit2tab.
+
 2007-05-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix leak in foreach command.
