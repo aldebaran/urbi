@@ -1,5 +1,12 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Minor parser simplifications
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y: Rename
+	the tokens for the logical and and or.
+	Use newer Bison features.
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Clean up a bit the scanning of numbers
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y:
 	Now scan integers and floats differently.

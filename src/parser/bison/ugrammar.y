@@ -261,7 +261,7 @@ new_exp (UParser&, const yy::parser::location_type& l,
 %token
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
-  TOK_ANDOPERATOR  "&&"
+  TOK_LAND         "&&"
   TOK_AROBASE      "@"
   TOK_ASSIGN       "="
   TOK_AT           "at"
@@ -314,7 +314,7 @@ new_exp (UParser&, const yy::parser::location_type& l,
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
   TOK_ONLY         "only"
-  TOK_OROPERATOR   "||"
+  TOK_LOR          "||"
   TOK_PERCENT      "%"
   TOK_PLUS         "+"
   TOK_PLUSASSIGN   "+="
@@ -385,10 +385,7 @@ new_exp (UParser&, const yy::parser::location_type& l,
    <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
 %type <ustr> tag "any kind of tag"
-// FIXME: Simplify once Bison 2.4 is out.
-%printer { debug_stream() << *$$; }
-   "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
-   OPERATOR_ID_PARAM OPERATOR_VAR tag;
+%printer { debug_stream() << *$$; } <ustr>;
 
 %token <structure>           STRUCT      "structured identifier"
 %token <structure>           REFSTRUCT   "structured ref-identifier"
@@ -432,7 +429,7 @@ new_exp (UParser&, const yy::parser::location_type& l,
 %left  "*" "/" "%"
 %left  NEG     /* Negation--unary minus */
 %right "^"
-%right TOK_NORM
+%right "'n"
 
 %right "," ";"
 %left  "&" "|"

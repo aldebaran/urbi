@@ -250,7 +250,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
 "&"             RETURN_FLAVOR(AND);
-"&&"            return token::TOK_ANDOPERATOR;
+"&&"            return token::TOK_LAND;
 "'"             return token::TOK_DERIV;
 "''"            return token::TOK_DERIV2;
 "'d"            return token::TOK_TRUEDERIV;
@@ -286,7 +286,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "^"             return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
 "|"             RETURN_FLAVOR(PIPE);
-"||"            return token::TOK_OROPERATOR;
+"||"            return token::TOK_LOR;
 "}"             return token::TOK_RBRACKET;
 "~"             return token::TOK_TILDE;
 "~="            return token::TOK_REQ;
