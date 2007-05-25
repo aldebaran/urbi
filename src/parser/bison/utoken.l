@@ -237,7 +237,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "while"         return token::TOK_WHILE;
 
 "!"             return token::TOK_BANG;
-"!="            return token::TOK_NE;
+"!="            return token::TOK_NEQ;
 "$"             return token::TOK_DOLLAR;
 "%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
@@ -251,7 +251,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "'n"            return token::TOK_NORM;
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
-"*"             return token::TOK_MULT;
+"*"             return token::TOK_STAR;
 "+"             return token::TOK_PLUS;
 "++"            return token::TOK_PLUSPLUS;
 "+="            return token::TOK_PLUSASSIGN;
@@ -265,13 +265,13 @@ STRING   \"([^\"]|"\\\"")*\"
 ":"             return token::TOK_COLON;
 "::"            return token::TOK_DOUBLECOLON;
 ";"             RETURN_FLAVOR(SEMICOLON);
-"<"             return token::TOK_LT;
-"<="            return token::TOK_LE;
+"<"             return token::TOK_LTH;
+"<="            return token::TOK_LEQ;
 "="             return token::TOK_ASSIGN;
-"=="            return token::TOK_EQ;
+"=="            return token::TOK_EQU;
 "=~="           return token::TOK_DEQ;
-">"             return token::TOK_GT;
-">="            return token::TOK_GE;
+">"             return token::TOK_GTH;
+">="            return token::TOK_GEQ;
 "@"             return token::TOK_AROBASE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;

@@ -1,5 +1,13 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Token/type more alike
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y: Let
+	token names be token names instead of operation names, and
+	use token names closer to those introduced in the previous
+	changeset.
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	More OpExp
 	* src/ast/ast.yml (OpExp::type): Fix some docs.
 	Let them all be 3 characters long, except logical and, land,

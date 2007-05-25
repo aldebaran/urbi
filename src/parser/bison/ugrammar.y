@@ -316,7 +316,7 @@ take (T* t)
   TOK_MINUS        "-"
   TOK_MINUSASSIGN  "-="
   TOK_MINUSMINUS   "--"
-  TOK_MULT         "*"
+  TOK_STAR         "*"
   TOK_NEW          "new"
   TOK_NOOP         "noop"
   TOK_NORM         "'n"
@@ -1372,13 +1372,13 @@ expr.opt:
 | Tests.  |
 `--------*/
 %token
-  TOK_EQ   "=="
-  TOK_GT   ">"
-  TOK_LE   "<="
-  TOK_LT   "<"
+  TOK_EQU   "=="
+  TOK_GTH   ">"
+  TOK_LEQ   "<="
+  TOK_LTH   "<"
   TOK_PEQ  "%="
-  TOK_NE   "!="
-  TOK_GE   ">="
+  TOK_NEQ   "!="
+  TOK_GEQ   ">="
   TOK_DEQ  "=~="
   TOK_REQ  "~="
 ;
