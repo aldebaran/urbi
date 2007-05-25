@@ -1,5 +1,9 @@
 2007-05-25  mefyl  <mefyl@lrde.epita.fr>
 
+	Update externals.
+
+2007-05-25  mefyl  <mefyl@lrde.epita.fr>
+
 	Use Unix networking under MinGW
 	* src/network/bsdnet/connection.cc,
 	* src/network/bsdnet/network.cc: Here.
