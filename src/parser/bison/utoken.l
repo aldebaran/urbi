@@ -54,21 +54,10 @@ typedef yy::parser::token token;
  } while (0)
 
 
-// Be bulletproof when memory allocation fails.
-#define SET_VALP_STR(Value)			\
-do {						\
-  valp->ustr = new UString(Value);		\
-  if (valp->ustr->c_str() == 0)			\
-  {						\
-    delete valp->ustr;				\
-    valp->ustr = 0;				\
-  }						\
-} while (0)
-
 // Store yytext in valp->str, and return Token.
 #define RETURN_STR_TOKEN(Token)			\
 do {						\
-  SET_VALP_STR(yytext);				\
+  valp->str = new std::string(yytext);		\
   return token::Token;				\
 } while (0);
 
@@ -87,13 +76,13 @@ do {						\
 
 #define RETURN_NUM(Value)      RETURN_FVAL_TOKEN(FLOAT, Value)
 #define RETURN_FLAG(Value)     RETURN_IVAL_TOKEN(FLAG, Value)
-#define RETURN_FLAGTIME(Value) RETURN_FVAL_TOKEN(FLAGTIME, Value)
+#define RETURN_FLAG_TIME(Value) RETURN_FVAL_TOKEN(FLAG_TIME, Value)
 
-#define RETURN_TIMEVALUE(Scale)				\
+#define RETURN_TIME_VALUE(Scale)			\
 do {							\
   yytext[yyleng-1]=0;					\
   valp->fval = atof(yytext) * (Scale);			\
-  return token::TIMEVALUE;				\
+  return token::TIME_VALUE;				\
 } while (0)
 
 %}
@@ -132,19 +121,19 @@ STRING   \"([^\"]|"\\\"")*\"
 "+top"        RETURN_FLAG(7);
 "+bg"         RETURN_FLAG(10);
 
-"+timeout"    RETURN_IVAL_TOKEN(FLAGTIME, 5);
+"+timeout"    RETURN_IVAL_TOKEN(FLAG_TIME, 5);
 
-"+stop"       RETURN_IVAL_TOKEN(FLAGTEST, 7);
-"+freeze"     RETURN_IVAL_TOKEN(FLAGTEST, 8);
+"+stop"       RETURN_IVAL_TOKEN(FLAG_TEST, 7);
+"+freeze"     RETURN_IVAL_TOKEN(FLAG_TEST, 8);
 
-"+connection" RETURN_IVAL_TOKEN(FLAGID, 9);
+"+connection" RETURN_IVAL_TOKEN(FLAG_ID, 9);
 
 
-{NUMBER}"d"   RETURN_TIMEVALUE(1000*60*60*24);
-{NUMBER}"h"   RETURN_TIMEVALUE(1000*60*60);
-{NUMBER}"m"   RETURN_TIMEVALUE(1000*60);
-{NUMBER}"s"   RETURN_TIMEVALUE(1000);
-{NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIMEVALUE(1);
+{NUMBER}"d"   RETURN_TIME_VALUE(1000*60*60*24);
+{NUMBER}"h"   RETURN_TIME_VALUE(1000*60*60);
+{NUMBER}"m"   RETURN_TIME_VALUE(1000*60);
+{NUMBER}"s"   RETURN_TIME_VALUE(1000);
+{NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIME_VALUE(1);
 
 {FLOAT}       { valp->fval = atof(yytext); return token::FLOAT;   }
 {INTEGER}     { valp->ival = atoi(yytext); return token::INTEGER; }
@@ -211,7 +200,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;
 "every"         return token::TOK_EVERY;
-"false"         return token::TOK_FALSECONST;
+"false"         return token::TOK_FALSE;
 "for"           return token::TOK_FOR;
 "foreach"       return token::TOK_FOREACH;
 "freezeif"      return token::TOK_FREEZEIF;
@@ -234,7 +223,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "stopif"        return token::TOK_STOPIF;
 "subclass"      return token::TOK_SUBCLASS;
 "timeout"       return token::TOK_TIMEOUT;
-"true"          return token::TOK_TRUECONST;
+"true"          return token::TOK_TRUE;
 "unalias"       return token::TOK_UNALIAS;
 "var"           return token::TOK_VAR;
 "'in"           return token::TOK_VARIN;
@@ -303,9 +292,6 @@ STRING   \"([^\"]|"\\\"")*\"
 <SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
      \" {
        BEGIN INITIAL;
-       UString* u = new UString (*valp->str);
-       delete valp->str;
-       valp->ustr = u;
        return token::STRING;
      }
 

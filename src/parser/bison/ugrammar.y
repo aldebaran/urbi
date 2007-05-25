@@ -66,9 +66,6 @@
   UVariableName           *variable;
   UVariableList           *variablelist;
   UProperty               *property;
-
-  UString                  *ustr;
-  std::string		   *str;
 }
 
 %code // Output in ugrammar.cc.
@@ -95,163 +92,175 @@
 #include "uvariablename.hh"
 #include "uvariablelist.hh"
 
-extern UString** globalDelete;
-
-/* Memory checking macros, used in the command tree building process */
-
-void
-memcheck (UParser& up, const void* p)
-{
-  if (!p)
+  extern UString** globalDelete;
+  
+  namespace
   {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-  }
-}
-
-template <class T1>
-void
-memcheck(UParser& up, const void* p, T1*& p1)
-{
-  if (!p)
+    /* Memory checking macros, used in the command tree building process */
+    
+    void
+    memcheck (UParser& up, const void* p)
+    {
+      if (!p)
+      {
+        up.connection.server->isolate();
+        up.connection.server->memoryOverflow = true;
+      }
+    }
+    
+    template <class T1>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1)
+    {
+      if (!p)
+      {
+        up.connection.server->isolate();
+        up.connection.server->memoryOverflow = true;
+        delete p1; p1 = 0;
+      }
+    }
+    
+    template <class T1, class T2>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2)
+    {
+      if (!p)
+      {
+        up.connection.server->isolate();
+        up.connection.server->memoryOverflow = true;
+        delete p1; p1 = 0;
+        delete p2; p2 = 0;
+      }
+    }
+    
+    template <class T1, class T2, class T3>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3)
+    {
+      if (!p)
+      {
+        up.connection.server->isolate();
+        up.connection.server->memoryOverflow = true;
+        delete p1; p1 = 0;
+        delete p2; p2 = 0;
+        delete p3; p3 = 0;
+      }
+    }
+    
+    template <class T1, class T2, class T3, class T4>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
+    {
+      if (!p)
+      {
+        up.connection.server->isolate();
+        up.connection.server->memoryOverflow = true;
+        delete p1; p1 = 0;
+        delete p2; p2 = 0;
+        delete p3; p3 = 0;
+        delete p4; p4 = 0;
+      }
+    }
+  
+    /// Whether the \a command was the empty command.
+    bool
+    spontaneous (const UCommand& u)
+    {
+      const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
+      return noop && noop->is_spontaneous();
+    }
+    
+    /// Issue a warning.
+    void
+    warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+    {
+      std::ostringstream o;
+      o << "!!! " << l << ": " << m << "\n" << std::ends;
+      up.connection.send(o.str().c_str(), "warning");
+    }
+    
+    /// Complain if \a command is not spontaneous.
+    void
+    warn_spontaneous(UParser& up,
+  		   const yy::parser::location_type& l, const UCommand& u)
+    {
+      if (spontaneous(u))
+        warn (up, l,
+  	    "implicit empty statement.  "
+  	    "Use 'noop' to make it explicit.");
+    }
+    
+    /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+    ast::Exp*
+    new_bin(UParser& up,
+  	  const yy::parser::location_type& l, Flavorable::UNodeType op,
+  	  ast::Exp* lhs, ast::Exp* rhs)
+    {
+      ast::BinaryExp* res;
+      switch (op)
+      {
+        case Flavorable::UAND:
+  	res = new ast::AndExp (l, lhs, rhs);
+  	break;
+        case Flavorable::UCOMMA:
+  	res = new ast::CommaExp (l, lhs, rhs);
+  	break;
+        case Flavorable::UPIPE:
+  	res = new ast::PipeExp (l, lhs, rhs);
+  	break;
+        case Flavorable::USEMICOLON:
+  	res = new ast::SemicolonExp (l, lhs, rhs);
+  	break;
+      }
+      /*
+       if (res)
+       res->setTag("__node__");
+       */
+      memcheck(up, res, lhs, rhs);
+      return res;
+    }
+    
+    /// A new UExpression of type \c t and child \c t1.
+    template <class T1>
+    UExpression*
+    new_exp (UParser& up, const yy::parser::location_type& l,
+  	   UExpression::Type t, T1* t1)
+    {
+      UExpression* res = new UExpression(l, t, t1);
+      memcheck(up, res, t1);
+      return res;
+    }
+    
+    /// A new expression of operator \c o and children \c t1, \c t2.
+    ast::OpExp*
+    new_exp (UParser&, const yy::parser::location_type& l,
+  	   ast::OpExp::type o, ast::Exp* t1, ast::Exp* t2)
+    {
+      ast::OpExp* res = new ast::OpExp(l, t1, t2, o);
+      // memcheck(up, res, t1, t2);
+      return res;
+    }
+    
+    /// Return the value pointed to be \a s, and delete it.
+    template <typename T>
+    T
+    take (T* s)
+    {
+      T res = *s;
+      delete s;
+      return res;
+    }
+  } // anon namespace
+  
+  /// Direct the call from 'bison' to the scanner in the right UParser.
+  inline
+  yy::parser::token_type
+  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
   {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
+    return up.scanner_.yylex(val, loc, up);
   }
-}
-
-template <class T1, class T2>
-void
-memcheck(UParser& up, const void* p, T1*& p1, T2*& p2)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-    delete p2; p2 = 0;
-  }
-}
-
-template <class T1, class T2, class T3>
-void
-memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-    delete p2; p2 = 0;
-    delete p3; p3 = 0;
-  }
-}
-
-template <class T1, class T2, class T3, class T4>
-void
-memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-    delete p2; p2 = 0;
-    delete p3; p3 = 0;
-    delete p4; p4 = 0;
-  }
-}
-
-/// Whether the \a command was the empty command.
-bool
-spontaneous (const UCommand& u)
-{
-  const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
-  return noop && noop->is_spontaneous();
-}
-
-/// Issue a warning.
-void
-warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
-{
-  std::ostringstream o;
-  o << "!!! " << l << ": " << m << "\n" << std::ends;
-  up.connection.send(o.str().c_str(), "warning");
-}
-
-/// Complain if \a command is not spontaneous.
-void
-warn_spontaneous(UParser& up,
-		 const yy::parser::location_type& l, const UCommand& u)
-{
-  if (spontaneous(u))
-    warn (up, l,
-	  "implicit empty statement.  "
-	  "Use 'noop' to make it explicit.");
-}
-
-/// Direct the call from 'bison' to the scanner in the right UParser.
-inline
-yy::parser::token_type
-yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
-{
-  return up.scanner_.yylex(val, loc, up);
-}
-
-
-/// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-ast::Exp*
-new_bin(UParser& up,
-	const yy::parser::location_type& l, Flavorable::UNodeType op,
-	ast::Exp* lhs, ast::Exp* rhs)
-{
-  ast::BinaryExp* res;
-  switch (op)
-  {
-    case Flavorable::UAND:
-      res = new ast::AndExp (l, lhs, rhs);
-      break;
-    case Flavorable::UCOMMA:
-      res = new ast::CommaExp (l, lhs, rhs);
-      break;
-    case Flavorable::UPIPE:
-      res = new ast::PipeExp (l, lhs, rhs);
-      break;
-    case Flavorable::USEMICOLON:
-      res = new ast::SemicolonExp (l, lhs, rhs);
-      break;
-  }
-  /*
-  if (res)
-    res->setTag("__node__");
-   */
-  memcheck(up, res, lhs, rhs);
-  return res;
-}
-
-/// A new UExpression of type \c t and child \c t1.
-template <class T1>
-UExpression*
-new_exp (UParser& up, const yy::parser::location_type& l,
-	 UExpression::Type t, T1* t1)
-{
-  UExpression* res = new UExpression(l, t, t1);
-  memcheck(up, res, t1);
-  return res;
-}
-
-/// A new expression of operator \c o and children \c t1, \c t2.
-ast::OpExp*
-new_exp (UParser&, const yy::parser::location_type& l,
-	 ast::OpExp::type o, ast::Exp* t1, ast::Exp* t2)
-{
-  ast::OpExp* res = new ast::OpExp(l, t1, t2, o);
-  // memcheck(up, res, t1, t2);
-  return res;
-}
-
-}
+    
+} // %code requires.
 
 /* Tokens and nonterminal symbols, with their type */
 
@@ -284,7 +293,7 @@ new_exp (UParser&, const yy::parser::location_type& l,
   TOK_EVERY        "every"
   TOK_EXP          "^"
   TOK_EXPRBLOCK    "expression block"
-  TOK_FALSECONST   "false"
+  TOK_FALSE        "false"
   TOK_FOR          "for"
   TOK_FOREACH      "foreach"
   TOK_FREEZEIF     "freezeif"
@@ -327,7 +336,7 @@ new_exp (UParser&, const yy::parser::location_type& l,
   TOK_SUBCLASS     "subclass"
   TOK_TILDE        "~"
   TOK_TIMEOUT      "timeout"
-  TOK_TRUECONST    "true"
+  TOK_TRUE         "true"
   TOK_TRUEDERIV    "command-derivation"
   TOK_TRUEDERIV2   "second-command-derivation"
   TOK_ECHO         "echo"
@@ -360,32 +369,38 @@ new_exp (UParser&, const yy::parser::location_type& l,
 %token
   <ival> INTEGER    "integer"
   <fval> FLOAT      "float"
-  <fval> TIMEVALUE  "time"
+  <fval> TIME_VALUE  "time"
   <fval> FLAG       "flag"
-  <fval> FLAGTEST   "flag test"
-  <fval> FLAGID     "flag identifier"
-  <fval> FLAGTIME   "flag time"
+  <fval> FLAG_TEST   "flag test"
+  <fval> FLAG_ID     "flag identifier"
+  <fval> FLAG_TIME   "flag time"
 %type <fval> number;
 %printer { debug_stream() << $$; } <fval> <ival>;
 
- /*------.
- | Str.  |
- `------*/
+
+ /*----------.
+ | Strings.  |
+ `----------*/
+%union
+{
+  std::string		   *str;
+  UString                  *ustr;
+}
+
 %token
-   <ustr>  IDENTIFIER         "identifier"
-   <ustr>  STRING             "string"
-   <ustr>  SWITCH             "switch"
+   <str>  STRING        "string"
+   <str>  IDENTIFIER    "identifier"
    <ustr>  BINDER             "binder"
    <ustr>  OPERATOR           "operator command"
    <ustr>  OPERATOR_ID        "operator"
    <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
-%type <ustr> tag "any kind of tag"
-%printer { debug_stream() << *$$; } <ustr>;
+%type <ustr> ustring tag "any kind of tag"
+%printer { debug_stream() << *$$; } <str> <ustr>;
 
 %type <expr>                expr            "expression"
 %type <expr>                expr.opt        "optional expression"
-%type <fval>                timeexpr        "time expression"
+%type <fval>                time_expr       "time expression"
 %type <expr>                taggedcommands  "set of commands"
 %type <expr>                taggedcommand   "tagged command"
 %type <expr>                command         "command"
@@ -552,19 +567,19 @@ flag:
     memcheck(up, $$, flagval);
   */}
 
-| FLAGTIME "(" expr ")"
+| FLAG_TIME "(" expr ")"
   {/*
     $$ = new UNamedParameters(new UString("flagtimeout"), $3);
     memcheck(up, $$, $3);
   */}
 
-| FLAGID "(" expr ")"
+| FLAG_ID "(" expr ")"
   {/*
     $$ = new UNamedParameters(new UString("flagid"), $3);
     memcheck(up, $$, $3);
   */}
 
-| FLAGTEST "(" softtest ")"
+| FLAG_TEST "(" softtest ")"
   {/*
     $$ = new UNamedParameters(new UString(*$1 == 6 ? "flagstop" : "flagfreeze"),
 			      $3);
@@ -1234,13 +1249,13 @@ binary:
 ;
 
 
-/*---------.
-| TIMEEXPR |
-`---------*/
+/*------------.
+| time_expr.  |
+`------------*/
 
-timeexpr:
- TIMEVALUE           
-| timeexpr TIMEVALUE { $$ += $2; }
+time_expr:
+  TIME_VALUE           
+| time_expr TIME_VALUE { $$ += $2; }
 ;
 
 
@@ -1249,26 +1264,32 @@ number:
 | "float"
 ;
 
+ustring:
+  "string"  { $$ = new UString(take($1)); }
+;
+
 /*-----.
 | EXPR |
 `-----*/
 
 expr:
-  number {/*
-    $$ = new UExpression(@$, UExpression::VALUE, $1);
-    memcheck(up, $$);
-  */}
+  number
+  {
+    $$ = new ast::FloatExp(@$, $1);
+    // memcheck(up, $$);
+  }
 
-| timeexpr {/*
-    $$ = new UExpression(@$, UExpression::VALUE, $1);
-    memcheck(up, $$);
-  */}
+| time_expr
+  {
+    $$ = new ast::FloatExp(@$, $1);
+    // memcheck(up, $$);
+  }
 
-| STRING {/*
-    memcheck(up, $1);
-    $$ = new UExpression(@$, UExpression::VALUE, $1);
-    memcheck(up, $$, $1);
-  */}
+| "string"
+  {
+    $$ = new ast::StringExp(@$, take($1));
+    //memcheck(up, $$, $1);
+  }
 
 | "[" parameterlist "]" {/*
 
@@ -1350,8 +1371,8 @@ expr.opt:
 ;
 
 expr:
-  "true"  {/* $$ = new UExpression(@$, UExpression::VALUE, ufloat(1)); */}
-| "false" {/* $$ = new UExpression(@$, UExpression::VALUE, ufloat(0)); */}
+  "true"  {/* $$ = new UExpression(@$, UExpression::VALUE, 1); */}
+| "false" {/* $$ = new UExpression(@$, UExpression::VALUE, 0); */}
 
 | expr "=="  expr { $$ = new_exp(up, @$, ast::OpExp::equ, $1, $3); }
 | expr "~="  expr { $$ = new_exp(up, @$, ast::OpExp::req, $1, $3); }

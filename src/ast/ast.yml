@@ -294,11 +294,19 @@ ExecExp:
 
 FloatExp:
   super: Exp
-  attributes: [ { value: { type: ufloat, access: r, desc: Stored integer value } } ]
+  attributes:
+    - value:
+        type: ufloat
+        access: r
+        desc: Float value
 
 StringExp:
   super: Exp
-  attributes: [ { value: { type: 'std::string', access: r, desc: Stored string value } } ]
+  attributes:
+    - value:
+        type: 'std::string'
+        access: r
+        desc: String value
 
 ListExp:
   super: Exp

@@ -1,5 +1,22 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Cleanup string scanning
+	* src/parser/bison/utoken.l: Let the scanner use only std::string.
+	(SET_VALP_STR): Remove, inlined in the single remaining use.
+	Use std::string, not UString.
+	Add underscores to a few places that need them.
+	Adjust to the following token name changes.
+	* src/parser/bison/ugrammar.y: Put private functions in the
+	anonymous namespace.
+	(take): Welcome back.
+	(TOK_FALSECONST, TOK_TRUECONST): Rename as...
+	(TOK_FALSE, TOK_TRUE): ... these.
+	(ustring): New.
+	(STRING, IDENTIFIER): Now string.
+	* src/ast/ast.yml: Layout changes.
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Remove STRUCT hacks
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y
 	(STRUCT, TAG, %union structure, array): Remove.
