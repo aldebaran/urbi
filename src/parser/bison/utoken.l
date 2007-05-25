@@ -295,27 +295,6 @@ STRING   \"([^\"]|"\\\"")*\"
 {ID}          RETURN_STR_TOKEN (IDENTIFIER);
 
 
-{ID}"."{ID}   { char* tmp_position = strchr(yytext,'.');
-		tmp_position[0] = 0;
-		valp->structure.device = new UString(yytext);
-		if (valp->structure.device->c_str() == 0)
-		{
-		  delete valp->structure.device;
-		  valp->structure.device = 0;
-		}
-		valp->structure.id = new UString(tmp_position+1);
-		if (valp->structure.id->c_str() == 0)
-		{
-		  delete valp->structure.id;
-		  valp->structure.id = 0;
-		}
-		valp->structure.rooted = false;
-
-		return token::STRUCT; }
-
-
-{ID}"."{ID}("."{ID})+   RETURN_STR_TOKEN(TAG);
-
 
     /*----------.
     | Strings.  |

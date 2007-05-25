@@ -1,5 +1,12 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Remove STRUCT hacks
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y
+	(STRUCT, TAG, %union structure, array): Remove.
+	(purevariable): Handle "." and "[...]".
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Use libport::Symbol for locations
 	* src/parser/bison/ugrammar.y: Use Symbol for file names.
 	* src/ast/loc.hh: Include libport/symbol.hh.

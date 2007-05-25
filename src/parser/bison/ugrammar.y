@@ -69,11 +69,6 @@
 
   UString                  *ustr;
   std::string		   *str;
-  struct {
-    UString *device;
-    UString *id;
-    bool rooted;
-  }                        structure;
 }
 
 %code // Output in ugrammar.cc.
@@ -378,7 +373,6 @@ new_exp (UParser&, const yy::parser::location_type& l,
  `------*/
 %token
    <ustr>  IDENTIFIER         "identifier"
-   <ustr>  TAG                "tag"
    <ustr>  STRING             "string"
    <ustr>  SWITCH             "switch"
    <ustr>  BINDER             "binder"
@@ -389,9 +383,6 @@ new_exp (UParser&, const yy::parser::location_type& l,
 %type <ustr> tag "any kind of tag"
 %printer { debug_stream() << *$$; } <ustr>;
 
-%token <structure>           STRUCT      "structured identifier"
-%token <structure>           REFSTRUCT   "structured ref-identifier"
-
 %type <expr>                expr            "expression"
 %type <expr>                expr.opt        "optional expression"
 %type <fval>                timeexpr        "time expression"
@@ -400,7 +391,6 @@ new_exp (UParser&, const yy::parser::location_type& l,
 %type <expr>                command         "command"
 %type <expr>                statement       "statement"
 %type <namedparameters>     parameters      "parameters"
-%type <namedparameters>     array           "array"
 %type <namedparameters>     parameterlist   "list of parameters"
 %type <namedparameters>     rawparameters   "list of attributes"
 %type <namedparameters>     namedparameters "list of named parameters"
@@ -510,16 +500,8 @@ taggedcommands:
 // FIXME: I still use UString here, but that's really stupid, and
 // leaking everywhere.  Should be fixed later.
 tag:
-  "identifier" {/* $$ = $1; */}
-| TAG          {/* $$ = $1; */}
-| STRUCT       {/*
-		 memcheck(up, $1.device);
-		 memcheck(up, $1.id);
-		 // FIXME: This is stupid, args should not be given as pointers.
-		 $$ = new UString(*$1.device, *$1.id);
-		 delete $1.device;
-		 delete $1.id;
-		*/}
+  "identifier"             {/* $$ = $1; */}
+| tag "." "identifier"     {/* $$ = $1; */}
 ;
 
 taggedcommand:
@@ -1139,21 +1121,10 @@ statement:
 ;
 
 
-/* ARRAY */
 
-array:
-
-  /* empty */ {/* $$ = 0; */}
-
-| "[" expr "]" array {/*
-
-      $$ = new UNamedParameters($2, $4);
-      memcheck(up, $$, $2, $4);
-    */}
-;
-
-
-/* VARID, PUREVARIABLE, VARIABLE, REFVARIABLE */
+/*-------------------------------------------.
+| VARID, PUREVARIABLE, VARIABLE, REFVARIABLE |
+`-------------------------------------------*/
 
 purevariable:
 
@@ -1163,7 +1134,15 @@ purevariable:
       memcheck(up, $$, $3);
     */}
 
-| "identifier" array "." "identifier" array {/*
+| purevariable "[" expr "]" {/*
+
+      memcheck(up, $1);
+      memcheck(up, $4);
+      $$ = new UVariableName($1, $2, $4, $5);
+      memcheck(up, $$, $1, $2, $4, $5);
+    */}
+
+| purevariable "." "identifier" {/*
 
       memcheck(up, $1);
       memcheck(up, $4);
@@ -1178,25 +1157,6 @@ purevariable:
       $$ = new UVariableName($1, $3, true, 0);
       if ($$) $$->doublecolon = true;
       memcheck(up, $$, $1, $3);
-    */}
-
-| "identifier" array {/*
-
-      memcheck(up, $1);
-      $$ = new UVariableName(new UString(up.connection.functionTag
-					 ? *up.connection.functionTag
-					 : *up.connection.connectionTag),
-			     $1, false, $2);
-      memcheck(up, $$, $1, $2);
-      $$->nostruct = true;
-    */}
-
-| STRUCT array {/*
-
-      memcheck(up, $1.device);
-      memcheck(up, $1.id);
-      $$ = new UVariableName($1.device, $1.id, false, $2);
-      memcheck(up, $$, $1.device, $1.id, $2);
     */}
 
 ;
