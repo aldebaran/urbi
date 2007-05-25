@@ -67,7 +67,7 @@ Connection::closeConnection()
   if (fd == -1)
     // We are already closed.
     return USUCCESS;
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
   closesocket(fd);
   int ret = 0;//WSACleanup(); //wsastartup called only once!
 #else

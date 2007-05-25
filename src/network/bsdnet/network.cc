@@ -68,7 +68,7 @@ namespace Network
   TCPServerPipe::init(int p, const std::string& addr)
   {
     port = p;
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
     // Initialize the socket API.
     WSADATA info;
     // Winsock 1.1.
@@ -216,7 +216,7 @@ namespace Network
 
   namespace
   {
-#ifndef WIN32
+#if !defined(WIN32) || defined(__MINGW32__)
     int controlPipe[2] = {-1, -1};
 #endif
     typedef std::list<Pipe*> pipes_type;
@@ -230,7 +230,7 @@ namespace Network
     FD_ZERO(&rd);
     FD_ZERO(&wr);
     int maxfd = 0;
-#ifndef WIN32
+#if !defined(WIN32) || defined(__MINGW32__)
     LIBPORT_FD_SET(controlPipe[0], &rd);
     maxfd = controlPipe[0];
 #endif
@@ -303,7 +303,7 @@ namespace Network
       return false;
     else // 0 < r
     {
-#ifndef WIN32
+#if !defined(WIN32) || defined(__MINGW32__)
       if (LIBPORT_FD_ISSET(controlPipe[0], &rd))
       {
 	char buf[128];
@@ -321,7 +321,7 @@ namespace Network
   void registerNetworkPipe(Pipe* p)
   {
     pList.push_back(p);
-#ifndef WIN32
+#if !defined(WIN32) || defined(__MINGW32__)
     if (controlPipe[0] == -1)
       pipe(controlPipe);
     p->controlFd = controlPipe[1];
@@ -335,7 +335,7 @@ namespace Network
       pList.erase(i);
   }
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
   enum { delay = 10000 };
   DWORD WINAPI
 #else
@@ -351,7 +351,7 @@ namespace Network
 
   void startNetworkProcessingThread()
   {
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
     DWORD tid;
     CreateThread(NULL, 0, processNetwork, 0, 0, &tid);
 #else
@@ -373,7 +373,7 @@ namespace Network
 
   void Pipe::trigger()
   {
-#ifndef WIN32
+#if !defined(WIN32) || defined(__MINGW32__)
     char c = 0;
     if (write(controlFd, &c, 1) == -1)
       perror ("cannot write to controlFD");
