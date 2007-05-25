@@ -1387,23 +1387,24 @@ expr:
   "true"  {/* $$ = new UExpression(@$, UExpression::VALUE, ufloat(1)); */}
 | "false" {/* $$ = new UExpression(@$, UExpression::VALUE, ufloat(0)); */}
 
-| expr "=="  expr {/* $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); */}
-| expr "~="  expr {/* $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); */}
-| expr "=~=" expr {/* $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); */}
-| expr "%="  expr {/* $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); */}
-| expr "!="  expr {/* $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); */}
-| expr ">"   expr {/* $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); */}
-| expr ">="  expr {/* $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); */}
-| expr "<"   expr {/* $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); */}
-| expr "<="  expr {/* $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); */}
+| expr "=="  expr { $$ = new_exp(up, @$, ast::OpExp::equ, $1, $3); }
+| expr "~="  expr { $$ = new_exp(up, @$, ast::OpExp::req, $1, $3); }
+| expr "!="  expr { $$ = new_exp(up, @$, ast::OpExp::neq, $1, $3); }
+| expr ">"   expr { $$ = new_exp(up, @$, ast::OpExp::gth, $1, $3); }
+| expr ">="  expr { $$ = new_exp(up, @$, ast::OpExp::geq, $1, $3); }
+| expr "<"   expr { $$ = new_exp(up, @$, ast::OpExp::lth, $1, $3); }
+| expr "<="  expr { $$ = new_exp(up, @$, ast::OpExp::leq, $1, $3); }
+
+| expr "=~=" expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
+| expr "%="  expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 
 | "!" expr {/*
     $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
     memcheck(up, $$, $2);
   */}
 
-| expr "&&" expr {/* $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); */}
-| expr "||" expr {/* $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); */}
+| expr "&&" expr { $$ = new_exp(up, @$, ast::OpExp::land, $1, $3); }
+| expr "||" expr { $$ = new_exp(up, @$, ast::OpExp::lor,  $1, $3); }
 ;
 
 

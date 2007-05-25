@@ -1,5 +1,13 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	More OpExp
+	* src/ast/ast.yml (OpExp::type): Fix some docs.
+	Let them all be 3 characters long, except logical and, land,
+	which I don't see how I could name in 3 letters (lnd? lan? lad?).
+	* src/parser/bison/ugrammar.y: Use those that were declared.
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Support arithmetics with OpExp
 	* src/ast/ast.yml (BinaryExp): Use lhs and rhs, not left and right.
 	(OpExp): Derive from BinaryExp.

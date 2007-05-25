@@ -365,17 +365,17 @@ OpExp:
               mod,   ///< "%"
 
               // Logics.
-              land,   ///< "&&"
-              lor,    ///< "||"
+              land,  ///< "&&"
+              lor,   ///< "||"
 
               // Comparison.
-              eq,   ///< "="
+              equ,  ///< "=="
               req,  ///< "~="
-              ne,   ///< "<>"
-              lt,   ///< "<"
-              le,   ///< "<="
-              gt,   ///< ">"
-              ge,   ///< ">="
+              neq,  ///< "!="
+              lth,  ///< "<"
+              leq,  ///< "<="
+              gth,  ///< ">"
+              geq,  ///< ">="
             };
   attributes:
     - oper: { type: OpExp::type, access: r, desc: Operator }
