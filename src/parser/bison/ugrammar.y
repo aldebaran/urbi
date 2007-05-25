@@ -33,12 +33,10 @@
 
 %code requires
 {
-// FIXME: Use %code header etc. once Bison 2.4 is out.
 // Output in ugrammar.hh.
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "ast/fwd.hh"
-#include "flavorable.hh"
 }
 
 // Locations.
@@ -56,14 +54,17 @@
 {
   ast::Ast                *ast;
   ast::Exp                *expr;
+}
+
+// Old junk we should get rid of.
+%union
+{
   UBinary                 *binary;
   UNamedParameters        *namedparameters;
   UVariableName           *variable;
   UVariableList           *variablelist;
   UProperty               *property;
 
-  Flavorable::UNodeType   flavor;
-  ufloat                   *val;
   UString                  *ustr;
   std::string		   *str;
   struct {
@@ -357,16 +358,14 @@ take (T* t)
 
 %token TOK_EOF 0 "end of command"
 
-%token
-  <flavor> TOK_COMMA        ","
-  <flavor> TOK_SEMICOLON    ";"
-  <flavor> TOK_AND          "&"
-  <flavor> TOK_PIPE         "|"
-;
-
 /*------.
 | Val.  |
 `------*/
+
+%union
+{
+  ufloat *val;
+}
 
 %token
   <val> NUM        "number"
@@ -640,6 +639,18 @@ command:
 /*----------.
 | flavors.  |
 `----------*/
+%code requires
+{
+#include "flavorable.hh"
+};
+%union { Flavorable::UNodeType flavor; };
+%token
+  <flavor> TOK_COMMA        ","
+  <flavor> TOK_SEMICOLON    ";"
+  <flavor> TOK_AND          "&"
+  <flavor> TOK_PIPE         "|"
+;
+
 %type <flavor> and.opt flavor.opt pipe.opt;
 %printer { debug_stream() << $$; } and.opt flavor.opt pipe.opt ";" "|" "&" ",";
 

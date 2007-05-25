@@ -1,5 +1,11 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Tidy ugrammar.y
+	* src/parser/bison/ugrammar.y: Put flavor stuff together.
+	Tidy a bit.
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Token/type more alike
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y: Let
 	token names be token names instead of operation names, and
