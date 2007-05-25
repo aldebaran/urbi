@@ -1,5 +1,10 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Some more arithmetics
+	* src/parser/bison/ugrammar.y: Handle unary - and ().
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Cleanup string scanning
 	* src/parser/bison/utoken.l: Let the scanner use only std::string.
 	(SET_VALP_STR): Remove, inlined in the single remaining use.

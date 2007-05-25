@@ -224,7 +224,7 @@
     template <class T1>
     UExpression*
     new_exp (UParser& up, const yy::parser::location_type& l,
-  	   UExpression::Type t, T1* t1)
+	     UExpression::Type t, T1* t1)
     {
       UExpression* res = new UExpression(l, t, t1);
       memcheck(up, res, t1);
@@ -1330,22 +1330,13 @@ expr:
 | expr "/" expr	{ $$ = new_exp(up, @$, ast::OpExp::div, $1, $3); }
 | expr "%" expr	{ $$ = new_exp(up, @$, ast::OpExp::mod, $1, $3); }
 | expr "^" expr	{ $$ = new_exp(up, @$, ast::OpExp::exp, $1, $3); }
+| "-" expr %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
+| "(" expr ")"  {  $$ = $2; }
 
 | "copy" expr  %prec NEG {/*
 
       $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
-    */}
-
-| "-" expr %prec NEG {/*
-
-      $$ = new UExpression(@$, UExpression::NEG, $2, 0);
-      memcheck(up, $$, $2);
-    */}
-
-| "(" expr ")" {/*
-
-      $$ = $2;
     */}
 ;
 
