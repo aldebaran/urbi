@@ -243,14 +243,13 @@ new_exp (UParser& up, const yy::parser::location_type& l,
   return res;
 }
 
-/// A new UExpression of type \c t and children \c t1, \c t2.
-template <class T1, class T2>
-UExpression*
-new_exp (UParser& up, const yy::parser::location_type& l,
-	 UExpression::Type t, T1* t1, T2* t2)
+/// A new expression of operator \c o and children \c t1, \c t2.
+ast::OpExp*
+new_exp (UParser&, const yy::parser::location_type& l,
+	 ast::OpExp::type o, ast::Exp* t1, ast::Exp* t2)
 {
-  UExpression* res = new UExpression(l, t, t1, t2);
-  memcheck(up, res, t1, t2);
+  ast::OpExp* res = new ast::OpExp(l, t1, t2, o);
+  // memcheck(up, res, t1, t2);
   return res;
 }
 
@@ -534,7 +533,7 @@ tag:
 
 taggedcommand:
 
-    command {/*
+  command {/*
       if ($1)
 	$1->setTag(UNKNOWN_TAG);
       $$ = $1;
@@ -1334,14 +1333,16 @@ expr:
 ;
 
 
-  /* num expr */
+  /*---------.
+  | num expr |
+  `---------*/
 expr:
-    expr "+" expr	{/* $$ = new_exp(up, @$, UExpression::PLUS,  $1, $3); */}
-| expr "-" expr	{/* $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); */}
-| expr "*" expr	{/* $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); */}
-| expr "/" expr	{/* $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); */}
-| expr "%" expr	{/* $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); */}
-| expr "^" expr	{/* $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); */}
+  expr "+" expr	{ $$ = new_exp(up, @$, ast::OpExp::add, $1, $3); }
+| expr "-" expr	{ $$ = new_exp(up, @$, ast::OpExp::sub, $1, $3); }
+| expr "*" expr	{ $$ = new_exp(up, @$, ast::OpExp::mul, $1, $3); }
+| expr "/" expr	{ $$ = new_exp(up, @$, ast::OpExp::div, $1, $3); }
+| expr "%" expr	{ $$ = new_exp(up, @$, ast::OpExp::mod, $1, $3); }
+| expr "^" expr	{ $$ = new_exp(up, @$, ast::OpExp::exp, $1, $3); }
 
 | "copy" expr  %prec NEG {/*
 

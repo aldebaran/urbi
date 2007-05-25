@@ -104,9 +104,10 @@ ScopeExp:
 
 BinaryExp:
   super: Exp
+  desc: /// Expressions with two sub expressions
   attributes:
-    - left: { type: 'Exp*', desc: Left side of the and-command }
-    - right: { type: 'Exp*', desc: Right side of the and-command }
+    - lhs: { type: 'Exp*', desc: Left-hand side expression }
+    - rhs: { type: 'Exp*', desc: Right-hand side expression }
 
 AndExp:
   super: BinaryExp
@@ -152,7 +153,7 @@ TagOpExp:
 
         public:
           /// Operator qualifier.
-          enum Oper
+          enum type
             {
               stop,
               freeze,
@@ -162,7 +163,7 @@ TagOpExp:
             };
   attributes:
     - tag: { type: Tag*, desc: Tag of the tag-operation command }
-    - oper: { type: TagOpExp::Oper, access: r, desc: Operator }
+    - oper: { type: TagOpExp::type, access: r, desc: Operator }
 
 IfExp:
   super: Exp
@@ -332,7 +333,7 @@ OpVarExp:
 
         public:
           /// Operator qualifier.
-          enum Oper
+          enum type
             {
               copy,  ///< Copy
               addr,  ///< @
@@ -340,20 +341,20 @@ OpVarExp:
             };
   attributes:
     - operand: { type: 'Var*', desc: Operand }
-    - oper: { type: OpVarExp::Oper, access: r, desc: Operator }
+    - oper: { type: OpVarExp::type, access: r, desc: Operator }
 
 NegOpExp:
   super: Exp
   attributes: [ { operand: { type: 'Exp*', desc: Operand of the negation operator } } ]
 
 OpExp:
-  super: Exp
+  super: BinaryExp
   inline:
     header inside: |2
 
         public:
           /// Operator qualifier.
-          enum Oper
+          enum type
             {
               // Arithmetics.
               add,   ///< "+"
@@ -377,9 +378,7 @@ OpExp:
               ge,   ///< ">="
             };
   attributes:
-    - left: { type: 'Exp*', desc: Left operand }
-    - oper: { type: OpExp::Oper, access: r, desc: Operator }
-    - right: { type: 'Exp*', desc: Right operand }
+    - oper: { type: OpExp::type, access: r, desc: Operator }
  
 CallExp:
   super: Exp

@@ -2,11 +2,11 @@
 # particular header.  Also, they are handled by copy.
 atomic_types = ["bool", "int",
 		"VarDec::Kind",
-		"OpExp::Oper",
+		"OpExp::type",
 		"DecsList::decs_type",
 		"ExternalExp::Type",
-		"TagOpExp::Oper",
-		"OpVarExp::Oper",
+		"TagOpExp::type",
+		"OpVarExp::type",
 		"ufloat"]
 
 # In most cases, the name of the header to include can be computed

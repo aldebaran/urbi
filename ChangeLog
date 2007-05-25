@@ -1,3 +1,12 @@
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
+	Support arithmetics with OpExp
+	* src/ast/ast.yml (BinaryExp): Use lhs and rhs, not left and right.
+	(OpExp): Derive from BinaryExp.
+	Rename "Oper" occurrences as "type".
+	* dev/ast_params.py: Adjust.
+	* src/parser/bison/ugrammar.y (new_exp): Adjust to using ast::OpExp.
+
 2007-05-22  Akim Demaille  <akim.demaille@free.fr>
 
 	Bind "return"
