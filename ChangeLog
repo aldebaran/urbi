@@ -1,5 +1,15 @@
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
+	Clean up a bit the scanning of numbers
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y:
+	Now scan integers and floats differently.
+	Store the semantic values using regular floats or integers.
+	A lot of commented code remains to update, but anyway type checking
+	will tell.
+	(take): Remove, now useless.
+
+2007-05-25  Akim Demaille  <demaille@gostai.com>
+
 	Tidy ugrammar.y
 	* src/parser/bison/ugrammar.y: Put flavor stuff together.
 	Tidy a bit.

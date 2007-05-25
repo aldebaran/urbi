@@ -72,21 +72,27 @@ do {						\
   return token::Token;				\
 } while (0);
 
-#define RETURN_VAL_TOKEN(Token, Value)		\
+#define RETURN_FVAL_TOKEN(Token, Value)		\
 do {						\
-  valp->val = new ufloat(Value);		\
+  valp->fval = Value;				\
+  return token::Token;				\
+} while (0)
+
+#define RETURN_IVAL_TOKEN(Token, Value)		\
+do {						\
+  valp->ival = Value;				\
   return token::Token;				\
 } while (0)
 
 
-#define RETURN_NUM(Value)      RETURN_VAL_TOKEN(NUM, Value)
-#define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
-#define RETURN_FLAGTIME(Value) RETURN_VAL_TOKEN(FLAGTIME, Value)
+#define RETURN_NUM(Value)      RETURN_FVAL_TOKEN(FLOAT, Value)
+#define RETURN_FLAG(Value)     RETURN_IVAL_TOKEN(FLAG, Value)
+#define RETURN_FLAGTIME(Value) RETURN_FVAL_TOKEN(FLAGTIME, Value)
 
 #define RETURN_TIMEVALUE(Scale)				\
 do {							\
   yytext[yyleng-1]=0;					\
-  valp->val = new ufloat(atof(yytext) * (Scale));	\
+  valp->fval = atof(yytext) * (Scale);			\
   return token::TIMEVALUE;				\
 } while (0)
 
@@ -98,7 +104,9 @@ do {							\
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
 ID       [a-zA-Z_][_A-Za-z0-9]*
-NUMBER   (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+INTEGER  [0-9]+
+FLOAT    \.[0-9]+|[0-9]+\.[0-9]*
+NUMBER   {INTEGER}|{FLOAT}
 STRING   \"([^\"]|"\\\"")*\"
 
 %%
@@ -116,7 +124,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "switch"      RETURN_NUM(-1);
 "on"          RETURN_NUM(1);
 
-
+  /*  FIXME: This is really sick. */
 "+report"     RETURN_FLAG(1);
 "+error"      RETURN_FLAG(2);
 "+end"        RETURN_FLAG(3);
@@ -124,12 +132,12 @@ STRING   \"([^\"]|"\\\"")*\"
 "+top"        RETURN_FLAG(7);
 "+bg"         RETURN_FLAG(10);
 
-"+timeout"    RETURN_VAL_TOKEN(FLAGTIME, 5);
+"+timeout"    RETURN_IVAL_TOKEN(FLAGTIME, 5);
 
-"+stop"       RETURN_VAL_TOKEN(FLAGTEST, 7);
-"+freeze"     RETURN_VAL_TOKEN(FLAGTEST, 8);
+"+stop"       RETURN_IVAL_TOKEN(FLAGTEST, 7);
+"+freeze"     RETURN_IVAL_TOKEN(FLAGTEST, 8);
 
-"+connection" RETURN_VAL_TOKEN(FLAGID, 9);
+"+connection" RETURN_IVAL_TOKEN(FLAGID, 9);
 
 
 {NUMBER}"d"   RETURN_TIMEVALUE(1000*60*60*24);
@@ -138,8 +146,8 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}"s"   RETURN_TIMEVALUE(1000);
 {NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIMEVALUE(1);
 
-{NUMBER}      { valp->val = new ufloat(atof(yytext));
-		return token::NUM; }
+{FLOAT}       { valp->fval = atof(yytext); return token::FLOAT;   }
+{INTEGER}     { valp->ival = atoi(yytext); return token::INTEGER; }
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 

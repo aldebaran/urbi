@@ -254,19 +254,9 @@ new_exp (UParser&, const yy::parser::location_type& l,
   return res;
 }
 
-/// Take the value, free the pointer.
-template <class T>
-inline
-T
-take (T* t)
-{
-  T res(*t);
-  delete t;
-  return res;
-}
 }
 
-/* List of all tokens and terminal symbols, with their type */
+/* Tokens and nonterminal symbols, with their type */
 
 %token
   TOK_ADDGROUP     "addgroup"
@@ -358,25 +348,28 @@ take (T* t)
 
 %token TOK_EOF 0 "end of command"
 
-/*------.
-| Val.  |
-`------*/
+
+
+/*----------.
+| Numbers.  |
+`----------*/
 
 %union
 {
-  ufloat *val;
+  float fval;
+  int   ival;
 }
 
 %token
-  <val> NUM        "number"
-  <val> TIMEVALUE  "time"
-  <val> FLAG       "flag"
-  <val> FLAGTEST   "flag test"
-  <val> FLAGID     "flag identifier"
-  <val> FLAGTIME   "flag time"
-// FIXME: Simplify once Bison 2.4 is out.
-%printer { debug_stream() << *$$; }
-  NUM TIMEVALUE FLAG FLAGTEST FLAGID FLAGTIME;
+  <ival> INTEGER    "integer"
+  <fval> FLOAT      "float"
+  <fval> TIMEVALUE  "time"
+  <fval> FLAG       "flag"
+  <fval> FLAGTEST   "flag test"
+  <fval> FLAGID     "flag identifier"
+  <fval> FLAGTIME   "flag time"
+%type <fval> number;
+%printer { debug_stream() << $$; } <fval> <ival>;
 
  /*------.
  | Str.  |
@@ -402,7 +395,7 @@ take (T* t)
 
 %type <expr>                expr            "expression"
 %type <expr>                expr.opt        "optional expression"
-%type <val>                 timeexpr        "time expression"
+%type <fval>                timeexpr        "time expression"
 %type <expr>                taggedcommands  "set of commands"
 %type <expr>                taggedcommand   "tagged command"
 %type <expr>                command         "command"
@@ -570,7 +563,7 @@ taggedcommand:
 flag:
   FLAG
   {/*
-    UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
+    UExpression *flagval = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, flagval);
     $$ = new UNamedParameters(new UString("flag"), flagval);
     if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
@@ -726,9 +719,7 @@ statement:
       memcheck(up, $$, $1);
     */}
 
-| refvariable "number" {/*
-
-      // FIXME: Leak
+| refvariable number {/*
       $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
       memcheck(up, $$, $1);
     */}
@@ -860,17 +851,17 @@ statement:
       memcheck(up, $$, $1, $3, $5);
     */}
 
-| BINDER "function" "(" "number" ")" purevariable "from" purevariable {/*
+| BINDER "function" "(" "integer" ")" purevariable "from" purevariable {/*
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, (int)take($4));
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, $4);
       memcheck(up, $$, $1, $6, $8);
     */}
 
-| BINDER "event" "(" "number" ")" purevariable "from" purevariable {/*
+| BINDER "event" "(" "integer" ")" purevariable "from" purevariable {/*
 
       memcheck(up, $1);
-      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, (int)take ($4));
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, $4);
       memcheck(up, $$, $1, $6, $8);
     */}
 
@@ -1267,16 +1258,16 @@ namedparameters:
 /* BINARY */
 
 binary:
-    "bin" "number" {/*
-      $$ = new UBinary((int)take($2), 0);
+    "bin" "integer" {/*
+      $$ = new UBinary($2, 0);
       memcheck(up, $$);
       if ($$ != 0)
 	memcheck(up, $$->buffer, $$);
     */}
 
-| "bin" "number" rawparameters {/*
+| "bin" "integer" rawparameters {/*
 
-      $$ = new UBinary((int)take($2), $3);
+      $$ = new UBinary($2, $3);
       memcheck(up, $$, $3);
       if ($$ != 0)
 	memcheck(up, $$->buffer, $$, $3);
@@ -1289,23 +1280,28 @@ binary:
 `---------*/
 
 timeexpr:
- TIMEVALUE           {/* $$ = $1;  */}
-| timeexpr TIMEVALUE {/* $$ = new ufloat(take($1)+take($2));  */}
+ TIMEVALUE           
+| timeexpr TIMEVALUE { $$ += $2; }
 ;
 
+
+number:
+  "integer"  { $$ = $1; }
+| "float"
+;
 
 /*-----.
 | EXPR |
 `-----*/
 
 expr:
-  "number" {/*
-    $$ = new UExpression(@$, UExpression::VALUE, take($1));
+  number {/*
+    $$ = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, $$);
   */}
 
 | timeexpr {/*
-    $$ = new UExpression(@$, UExpression::VALUE, take ($1));
+    $$ = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, $$);
   */}
 
@@ -1442,11 +1438,12 @@ parameters:
 ;
 
 rawparameters:
-    "number" {/*
-      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
-      $$ = new UNamedParameters(expr);
-      memcheck(up, $$, expr);
-    */}
+ number
+ {/*
+   UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
+   $$ = new UNamedParameters(expr);
+   memcheck(up, $$, expr);
+ */}
 
 | "identifier" {/*
 
@@ -1455,9 +1452,9 @@ rawparameters:
       memcheck(up, $$, expr);
     */}
 
-| "number" rawparameters {/*
+| number rawparameters {/*
 
-      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     */}
