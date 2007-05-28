@@ -137,7 +137,7 @@ class Node:
 	(realkey, value) = key
 	error ('The node ' + name + ' has a duplicate key `' + realkey + "'")
       if not key in ['super', 'concrete', 'attributes', 'desc',
-		     'inline', 'hide']:
+		     'inline', 'hide', 'printer']:
 	warning ('unknown Node attribute: ' + key)
       self.__dict__[key] = dict[key]
 

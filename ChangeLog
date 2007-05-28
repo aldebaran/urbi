@@ -1,3 +1,13 @@
+2007-05-28  mefyl  <mefyl@lrde.epita.fr>
+
+	Add print-visitor generator.
+	* dev/ast-print-visitor-gen: New. Printer generator.
+	* dev/ast.py: Accept 'printer' attribute.
+	* src/ast/Makefile.am: Add files.
+	* src/ast/ast.yml: Add a few printer.
+	* src/ast/print-visitor.cc,
+	* src/ast/print-visitor.hh: New. Generated files.
+
 2007-05-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Compilation fixes.

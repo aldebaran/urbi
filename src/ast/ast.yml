@@ -83,23 +83,23 @@ Tag:
 StringTag:
   super: Tag
   attributes:
-    - tag: { type: 'std::string', desc: Stored tag string value } 
+    - tag: { type: 'std::string', desc: Stored tag string value }
 
 ExpTag:
   super: Tag
   attributes:
-    - tag: { type: 'Exp*', desc: Stored tag expression value to be evaluated at runtime } 
+    - tag: { type: 'Exp*', desc: Stored tag expression value to be evaluated at runtime }
 
 TagExp:
   super: Exp
   attributes:
-    - tag: { type: 'Tag*', desc: Tag of the sub ast } 
-    - exp: { type: 'Exp*', desc: The tagged expression } 
+    - tag: { type: 'Tag*', desc: Tag of the sub ast }
+    - exp: { type: 'Exp*', desc: The tagged expression }
 
 ScopeExp:
   super: Exp
   attributes:
-    - exp: { type: 'Exp*', desc: The scoped expression } 
+    - exp: { type: 'Exp*', desc: The scoped expression }
 
 
 BinaryExp:
@@ -111,7 +111,8 @@ BinaryExp:
 
 AndExp:
   super: BinaryExp
-  
+  printer: ~lhs ; " & " ; ~rhs
+
 PipeExp:
   super: BinaryExp
 
@@ -126,7 +127,7 @@ SemicolonExp:
 
 DotExp:
   super: Exp
-  attributes: 
+  attributes:
     - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
     - symbol:  { type: 'libport::Symbol*', desc: Name of the variable separated from exp with a dot }
 
@@ -140,7 +141,7 @@ Var:
 
 ArrowExp:
   super: Exp
-  attributes: 
+  attributes:
     - var: { type: 'Var*', desc: variable whose property is accessed }
     - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
 
@@ -211,11 +212,11 @@ ReturnExp:
     - cont: { type: bool, desc: Continuation flag for return& }
 
 AliasExp:
-  super: Exp  
+  super: Exp
   desc: |2
 
       /** \class ast::AliasExp
-       ** \brief Set an alias flag in the object given, to point to one of 
+       ** \brief Set an alias flag in the object given, to point to one of
        ** its attribute (typically, 'val'). For backward compat only.
        */
 
@@ -224,13 +225,13 @@ AliasExp:
     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
 
 InheritsExp:
-  super: Exp  
+  super: Exp
   attributes:
     - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
     - inherited: { type: 'Exp*', desc: Reference to the inherited object }
 
 DisinheritsExp:
-  super: Exp  
+  super: Exp
   attributes:
     - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
     - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
@@ -275,7 +276,7 @@ EmitExp:
   super: Exp
   attributes:
     - name:
-        type: 'Exp*'       
+        type: 'Exp*'
         desc: Reference to the called event
     - args:
         type: 'exps_type*'
@@ -286,7 +287,7 @@ EmitExp:
 
 ExecExp:
   super: Exp
-  attributes: 
+  attributes:
     - toexec:
         type: 'Exp*'
         access: r
@@ -299,6 +300,7 @@ FloatExp:
         type: ufloat
         access: r
         desc: Float value
+  printer: $value
 
 StringExp:
   super: Exp
@@ -328,7 +330,7 @@ ListExp:
 
 RefExp:
   super: Exp
-  attributes: 
+  attributes:
     - value:
         type: 'Exp*'
         access: r
@@ -387,13 +389,13 @@ OpExp:
             };
   attributes:
     - oper: { type: OpExp::type, access: r, desc: Operator }
- 
+
 CallExp:
   super: Exp
   attributes:
     - name:
-        type: 'Exp*'       
-        desc: Reference to the called function        
+        type: 'Exp*'
+        desc: Reference to the called function
     - args:
         type: 'exps_type*'
         desc: List of arguments passed to the function
@@ -402,8 +404,8 @@ ArrayExp:
   super: Exp
   attributes:
     - name:
-        type: 'Exp*'       
-        desc: Reference to the array   
+        type: 'Exp*'
+        desc: Reference to the array
     - arg:
         type: 'Exp*'
         desc: Index of the array

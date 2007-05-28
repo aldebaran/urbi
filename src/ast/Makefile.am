@@ -9,6 +9,8 @@ BUILT_SOURCES += $(BUILT_SOURCES_local)
 BUILT_SOURCES_local =				\
 	fwd.hh					\
 	visitor.hh				\
+	print-visitor.hh			\
+	print-visitor.cc			\
 	loc.hh                                  \
 	$(AST_NODES)
 
@@ -37,6 +39,15 @@ $(srcdir)/ast-visitor-gen.stamp: $(gen_dir)/ast-visitor-gen $(ast_gen_deps)
 	@mv -f $@.tmp $@
 visitor.hh: ast-visitor-gen.stamp
 
+EXTRA_DIST += ast-print-visitor-gen.stamp
+$(srcdir)/ast-print-visitor-gen.stamp: $(gen_dir)/ast-print-visitor-gen $(ast_gen_deps)
+	@rm -rf $@
+	@rm -rf $@.tmp
+	@touch $@.tmp
+	$(gen_dir)/ast-print-visitor-gen $(srcdir) < $(srcdir)/ast.yml
+	@mv -f $@.tmp $@
+print-visitor.hh print-visitor.cc: ast-print-visitor-gen.stamp
+
 EXTRA_DIST += ast-nodes-gen.stamp
 $(srcdir)/ast-nodes-gen.stamp: $(gen_dir)/ast-nodes-gen $(ast_gen_deps)
 	@rm -rf $@
@@ -60,4 +71,5 @@ libast_la_SOURCES =					\
 	loc.hh                                          \
 	$(AST_NODES)					\
 	visitor.hxx					\
-	default-visitor.hh default-visitor.hxx
+	default-visitor.hh default-visitor.hxx		\
+	print-visitor.hh print-visitor.cc

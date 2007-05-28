@@ -1,0 +1,136 @@
+#!/usr/bin/env python
+
+import re
+import sys, os, os.path, filecmp, shutil, stat
+import ast, tools
+
+from stat import ST_MODE
+
+if len(sys.argv) != 2:
+  print "Usage: .. SRCDIR"
+  sys.exit(1)
+srcdir = sys.argv[1]
+
+## Abstract syntax tree C++ visitor - header ----------------------------------
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+
+header = """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+"""
+
+visitor_hh = file("print-visitor.hh.tmp", "w")
+sys.stdout = visitor_hh
+
+print header
+
+print """\
+/**
+ ** \\file ast/print-visitor.hh
+ ** \\brief Definition of ast::PrintVisitor.
+ */
+
+#ifndef AST_PRINT_VISITOR_HH
+# define AST_PRINT_VISITOR_HH
+
+# include <functional>
+# include <ostream>
+# include "ast/visitor.hh"
+# include "ast/fwd.hh"
+# include "libport/select-const.hh"
+
+namespace ast
+{
+
+  /** \\brief Ast pretty-printer.
+   **/
+
+  class PrintVisitor : public GenVisitor<libport::constify_traits>
+  {
+    /** \\name Ctor & dtor.
+     ** \\{ */
+  public:
+    /// Super class type.
+    typedef GenVisitor<libport::constify_traits> super_type;
+
+    /// Construct a PrintVisitor.
+    PrintVisitor (std::ostream& s);
+
+    /// Destroy a PrintVisitor.
+    virtual ~PrintVisitor ();
+    /** \\} */
+
+    using super_type::operator();
+"""
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp(x.name, y.name))
+for node in arr:
+
+  print "    virtual void operator() (const %s&);" % (node.name)
+
+print """
+  private:
+    std::ostream* stream_;
+  };
+
+} // namespace ast
+
+// # include "ast/print-visitor.hxx"
+
+#endif // !AST_PRINT_VISITOR_HH"""
+
+visitor_cc = file("print-visitor.cc.tmp", "w")
+sys.stdout = visitor_cc
+
+print header
+
+print """\
+# include "print-visitor.hh"
+# include "all.hh"
+
+namespace ast
+{
+"""
+
+for node in arr:
+  name = ''
+  action = ''
+  if 'printer' in node.__dict__: # if a printer is defined
+    actions = node.printer.split(';')
+    for a in actions:
+      a = a.lstrip(' ').rstrip(' ')
+      if a[0] == '~':
+        # Handle '~foo' variables
+        action += '    node.%s_get().accept(*this);\n' % (a[1:])
+      else:
+        # Handle '$foo' variables
+        p = re.compile('\\$(\\w*)')
+        a = p.sub('node.\\1_get()', a)
+        action += '    *stream_ << %s;\n' % (a)
+    name = 'node'
+  else:
+    action = '    /* No printer defined */\n'
+
+  print """\
+  void PrintVisitor::operator() (const %s& %s)
+  {
+%s  }
+""" % (node.name, name, action)
+
+print """} // namespace ast
+"""
+
+
+# Restore stdout and close files
+sys.stdout = sys.__stdout__
+visitor_hh.close ()
+visitor_cc.close ()
+
+file_fullpath = os.path.join (srcdir, "print-visitor.hh");
+# Check differences and update if any
+tools.lazy_overwrite (file_fullpath, "print-visitor.hh.tmp")
+
+file_fullpath = os.path.join (srcdir, "print-visitor.cc");
+tools.lazy_overwrite (file_fullpath, "print-visitor.cc.tmp")
