@@ -76,6 +76,22 @@ class UString
   // Return the string with " and \ escaped.
   std::string armor();
 
+  /// put "p1.p2" in name
+  static inline void makeName(char * name, const UString &p1, 
+				const UString & p2) {
+    memcpy(name,  p1.str(), p1.len());
+    name[p1.len()] = '.';
+    memcpy(name + p1.len() +1, p2.str(), p2.len());
+    name[p1.len() + 1 + p2.len()] = 0;
+  }
+
+  /// put "p1.p2" in name
+  static inline void makeName(char * name, const UString &p1, 
+				const char * p2) {
+    memcpy(name,  p1.str(), p1.len());
+    name[p1.len()] = '.';
+    strcpy(name + p1.len() +1, p2);
+  }
  private:
   int  len_;
   char* str_;

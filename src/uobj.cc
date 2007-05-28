@@ -188,7 +188,7 @@ UObj::searchFunction(const char* id, bool &ambiguous)
 {
   UFunction* ret;
   char namebuffer[1024];
-  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
+  UString::makeName(namebuffer, device, id);
 
   // test for pure urbi symbols
   HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(namebuffer);
@@ -245,8 +245,8 @@ UObj::searchVariable(const char* id, bool &ambiguous)
 {
   UVariable* ret;
   char namebuffer[1024];
+  UString::makeName(namebuffer, device, id);
 
-  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
   HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(namebuffer);
   if (hmv != ::urbiserver->variabletab.end())
   {
@@ -285,9 +285,8 @@ bool
 UObj::searchEvent(const char* id, bool &ambiguous)
 {
   char namebuffer[1024];
+  UString::makeName(namebuffer, device, id);
 
-  snprintf(namebuffer, 1024, "%s.%s", device->str(), id);
-  
   if (kernel::eventSymbolDefined (namebuffer))
   {
     ambiguous = false;

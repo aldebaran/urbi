@@ -343,15 +343,14 @@ UVariableName::buildFullname (UCommand* command,
     if (strchr(e1->str->str(), '.') == 0)
     {
       nostruct = true;
-      if (connection->stack.empty())
-	snprintf(name, fullnameMaxSize,
-		 "%s.%s", connection->connectionTag->str(),
-		 e1->str->str());
+      if (connection->stack.empty()) 
+	UString::makeName(name, *connection->connectionTag, *e1->str);	
       else
-      {
-	snprintf(name, fullnameMaxSize,
-		 "%s.%s", "__Funct__",
-		 e1->str->str());
+      { //ugly, but optimised with good reasons
+	memcpy(name, "__Funct__",  9);
+	name[9] = '.';
+	memcpy(name+10, e1->str->str(), e1->str->len());
+	name[10+e1->str->len()] = 0;
 	localFunction = true;
       }
     }

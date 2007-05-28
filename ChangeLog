@@ -1,3 +1,10 @@
+2007-05-28  Matthieu Nottale  <nottale@gostai.com>
+
+	Optimisation: replace sprintfs with strcpy.
+	* src/uobj.cc: Use UString::makeName where possible.
+	* src/ustring.hh: Add two static inline functions to form a "a.b" name from two UString/char* optimising the implementation.
+	* src/uvariablename.cc: Use UString::makeName where possible.
+
 2007-05-25  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix critical bug in previous patch, optimize more.
