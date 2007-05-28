@@ -93,11 +93,11 @@
 #include "uvariablelist.hh"
 
   extern UString** globalDelete;
-  
+
   namespace
   {
     /* Memory checking macros, used in the command tree building process */
-    
+
     void
     memcheck (UParser& up, const void* p)
     {
@@ -107,7 +107,7 @@
         up.connection.server->memoryOverflow = true;
       }
     }
-    
+
     template <class T1>
     void
     memcheck(UParser& up, const void* p, T1*& p1)
@@ -119,7 +119,7 @@
         delete p1; p1 = 0;
       }
     }
-    
+
     template <class T1, class T2>
     void
     memcheck(UParser& up, const void* p, T1*& p1, T2*& p2)
@@ -132,7 +132,7 @@
         delete p2; p2 = 0;
       }
     }
-    
+
     template <class T1, class T2, class T3>
     void
     memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3)
@@ -146,7 +146,7 @@
         delete p3; p3 = 0;
       }
     }
-    
+
     template <class T1, class T2, class T3, class T4>
     void
     memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
@@ -161,7 +161,7 @@
         delete p4; p4 = 0;
       }
     }
-  
+
     /// Whether the \a command was the empty command.
     bool
     spontaneous (const UCommand& u)
@@ -169,7 +169,7 @@
       const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
       return noop && noop->is_spontaneous();
     }
-    
+
     /// Issue a warning.
     void
     warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
@@ -178,7 +178,7 @@
       o << "!!! " << l << ": " << m << "\n" << std::ends;
       up.connection.send(o.str().c_str(), "warning");
     }
-    
+
     /// Complain if \a command is not spontaneous.
     void
     warn_spontaneous(UParser& up,
@@ -189,28 +189,28 @@
   	    "implicit empty statement.  "
   	    "Use 'noop' to make it explicit.");
     }
-    
+
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     ast::Exp*
     new_bin(UParser& up,
   	  const yy::parser::location_type& l, Flavorable::UNodeType op,
   	  ast::Exp* lhs, ast::Exp* rhs)
     {
-      ast::BinaryExp* res;
+      ast::BinaryExp* res = 0;
       switch (op)
       {
         case Flavorable::UAND:
-  	res = new ast::AndExp (l, lhs, rhs);
-  	break;
+          res = new ast::AndExp (l, lhs, rhs);
+          break;
         case Flavorable::UCOMMA:
-  	res = new ast::CommaExp (l, lhs, rhs);
-  	break;
+          res = new ast::CommaExp (l, lhs, rhs);
+          break;
         case Flavorable::UPIPE:
-  	res = new ast::PipeExp (l, lhs, rhs);
-  	break;
+          res = new ast::PipeExp (l, lhs, rhs);
+          break;
         case Flavorable::USEMICOLON:
-  	res = new ast::SemicolonExp (l, lhs, rhs);
-  	break;
+          res = new ast::SemicolonExp (l, lhs, rhs);
+          break;
       }
       /*
        if (res)
@@ -219,7 +219,7 @@
       memcheck(up, res, lhs, rhs);
       return res;
     }
-    
+
     /// A new UExpression of type \c t and child \c t1.
     template <class T1>
     UExpression*
@@ -230,7 +230,7 @@
       memcheck(up, res, t1);
       return res;
     }
-    
+
     /// A new expression of operator \c o and children \c t1, \c t2.
     ast::OpExp*
     new_exp (UParser&, const yy::parser::location_type& l,
@@ -240,7 +240,7 @@
       // memcheck(up, res, t1, t2);
       return res;
     }
-    
+
     /// Return the value pointed to be \a s, and delete it.
     template <typename T>
     T
@@ -251,7 +251,7 @@
       return res;
     }
   } // anon namespace
-  
+
   /// Direct the call from 'bison' to the scanner in the right UParser.
   inline
   yy::parser::token_type
@@ -259,7 +259,7 @@
   {
     return up.scanner_.yylex(val, loc, up);
   }
-    
+
 } // %code requires.
 
 /* Tokens and nonterminal symbols, with their type */
@@ -1254,7 +1254,7 @@ binary:
 `------------*/
 
 time_expr:
-  TIME_VALUE           
+  TIME_VALUE
 | time_expr TIME_VALUE { $$ += $2; }
 ;
 

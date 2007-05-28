@@ -1,3 +1,11 @@
+2007-05-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Compilation fixes.
+	* NEWS: Add a slot for changes in 2.0.
+	* src/ast/all.hh: Remove a useless include of a non-existent file.
+	* src/parser/bison/ugrammar.y: Initialize a pointer that may be
+	returned uninitialized otherwise.
+
 2007-05-25  Akim Demaille  <demaille@gostai.com>
 
 	Some more arithmetics

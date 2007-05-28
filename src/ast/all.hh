@@ -31,7 +31,6 @@
 # include "ast/if-exp.hh"
 # include "ast/inherits-exp.hh"
 # include "ast/list-exp.hh"
-# include "ast/map-exp.hh"
 # include "ast/neg-op-exp.hh"
 # include "ast/new-exp.hh"
 # include "ast/op-exp.hh"
