@@ -319,14 +319,28 @@
 
 %token
    <str>  STRING        "string"
-   <str>  IDENTIFIER    "identifier"
    <ustr>  BINDER             "binder"
    <ustr>  OPERATOR           "operator command"
    <ustr>  OPERATOR_ID        "operator"
    <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
 %type <ustr> ustring tag "any kind of tag"
+%destructor { delete $$; } <str> <ustr>;
 %printer { debug_stream() << *$$; } <str> <ustr>;
+
+
+ /*----------.
+ | Symbols.  |
+ `----------*/
+%union
+{
+  libport::Symbol* symbol;
+}
+
+%token <symbol> IDENTIFIER    "identifier"
+%destructor { delete $$; } <symbol>;
+%printer { debug_stream() << *$$; } <symbol>;
+
 
 %type <expr>                expr            "expression"
 %type <expr>                expr.opt        "optional expression"

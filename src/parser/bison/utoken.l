@@ -281,7 +281,10 @@ STRING   \"([^\"]|"\\\"")*\"
 "~="            return token::TOK_REQ;
 
 
-{ID}          RETURN_STR_TOKEN (IDENTIFIER);
+{ID}       {						
+             valp->symbol = new libport::Symbol(yytext);			
+	     return token::IDENTIFIER;				
+           }
 
 
 

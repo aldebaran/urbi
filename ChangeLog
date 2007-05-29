@@ -1,5 +1,10 @@
 2007-05-29  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y:
+	Use Symbols for identifiers.
+
+2007-05-29  Akim Demaille  <demaille@gostai.com>
+
 	Remove memcheck from the parser
 	* src/parser/bison/ugrammar.y (memcheck): Remove definitions and
 	uses.
