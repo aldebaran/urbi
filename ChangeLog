@@ -1,5 +1,14 @@
 2007-05-29  Akim Demaille  <demaille@gostai.com>
 
+	Remove memcheck from the parser
+	* src/parser/bison/ugrammar.y (memcheck): Remove definitions and
+	uses.
+	Declare private functions as static.
+	Comment some of them out, now that the compiler sees they're not used.
+	(new_bin): Simplify: the UParser is no longer needed.
+
+2007-05-29  Akim Demaille  <demaille@gostai.com>
+
 	parameter -> argument
 	* src/parser/bison/ugrammar.y: Use argument when more appropriate
 	than parameter.
