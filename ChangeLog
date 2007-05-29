@@ -1,3 +1,10 @@
+2007-05-29  Matthieu Nottale  <nottale@gostai.com>
+
+	Add the 'runningcommands' keyword, fix a bug in tag mechanism.
+	* parser/bison/utoken.l: Add the runningcommands keyword.
+	* ucommand.cc: Implement runningcommands.
+	              Add missing unsetTag call in optimised implementations of setTag.
+
 2007-05-28  Matthieu Nottale  <nottale@gostai.com>
 
 	Optimisation: replace sprintfs with strcpy.

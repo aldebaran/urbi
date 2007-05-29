@@ -407,6 +407,10 @@ UCommand::setTag(const std::string & tag)
 void
 UCommand::setTag(TagInfo* ti)
 {
+  if (tag == ti->name)
+    return;
+  if (tag != "")
+    unsetTag();
   this->tag = ti->name;
   tagInfo = ti;
   if (tagInfo)
@@ -419,6 +423,10 @@ UCommand::setTag(TagInfo* ti)
 void
 UCommand::setTag(const UCommand* cmd)
 {
+  if (tag == cmd->tag)
+    return;
+  if (tag != "")
+    unsetTag();
   tag = cmd->tag;
   tagInfo = cmd->tagInfo;
   if (tagInfo)
@@ -4249,7 +4257,25 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
     connection->sendf(getTag(), "*** end of tag list.\n");
     return UCOMPLETED;
   }
+  if (STREQ(oper->str(), "runningcommands"))
+  {
+    for (HMtagtab::iterator i =
+	   connection->server->tagtab.begin();
+	 i != connection->server->tagtab.end();
+	 ++i)
+    {
+      for (std::list<UCommand *>::iterator j = i->second.commands.begin();
+	   j != i->second.commands.end(); j++)
+      {
+	std::ostringstream tstr;
+	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
+	connection->sendf(getTag(), tstr.str().c_str());
+      }   
+    }
 
+    connection->sendf(getTag(), "*** end of tag list.\n");
+    return UCOMPLETED;
+  }
   if (STREQ(oper->str(), "uservars"))
   {
     for (HMvariabletab::iterator i =
