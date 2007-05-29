@@ -62,7 +62,6 @@
 %union
 {
   UBinary                 *binary;
-  UNamedParameters        *namedparameters;
   UVariableName           *variable;
   UVariableList           *variablelist;
   UProperty               *property;
@@ -86,7 +85,6 @@
 #include "ucommand.hh"
 #include "uasynccommand.hh"
 #include "ugroup.hh"
-#include "unamedparameters.hh"
 #include "uobj.hh"
 #include "uproperty.hh"
 #include "uvariablename.hh"
@@ -103,8 +101,8 @@
     {
       if (!p)
       {
-        up.connection.server->isolate();
-        up.connection.server->memoryOverflow = true;
+	up.connection.server->isolate();
+	up.connection.server->memoryOverflow = true;
       }
     }
 
@@ -114,9 +112,9 @@
     {
       if (!p)
       {
-        up.connection.server->isolate();
-        up.connection.server->memoryOverflow = true;
-        delete p1; p1 = 0;
+	up.connection.server->isolate();
+	up.connection.server->memoryOverflow = true;
+	delete p1; p1 = 0;
       }
     }
 
@@ -126,10 +124,10 @@
     {
       if (!p)
       {
-        up.connection.server->isolate();
-        up.connection.server->memoryOverflow = true;
-        delete p1; p1 = 0;
-        delete p2; p2 = 0;
+	up.connection.server->isolate();
+	up.connection.server->memoryOverflow = true;
+	delete p1; p1 = 0;
+	delete p2; p2 = 0;
       }
     }
 
@@ -139,11 +137,11 @@
     {
       if (!p)
       {
-        up.connection.server->isolate();
-        up.connection.server->memoryOverflow = true;
-        delete p1; p1 = 0;
-        delete p2; p2 = 0;
-        delete p3; p3 = 0;
+	up.connection.server->isolate();
+	up.connection.server->memoryOverflow = true;
+	delete p1; p1 = 0;
+	delete p2; p2 = 0;
+	delete p3; p3 = 0;
       }
     }
 
@@ -153,12 +151,12 @@
     {
       if (!p)
       {
-        up.connection.server->isolate();
-        up.connection.server->memoryOverflow = true;
-        delete p1; p1 = 0;
-        delete p2; p2 = 0;
-        delete p3; p3 = 0;
-        delete p4; p4 = 0;
+	up.connection.server->isolate();
+	up.connection.server->memoryOverflow = true;
+	delete p1; p1 = 0;
+	delete p2; p2 = 0;
+	delete p3; p3 = 0;
+	delete p4; p4 = 0;
       }
     }
 
@@ -185,7 +183,7 @@
   		   const yy::parser::location_type& l, const UCommand& u)
     {
       if (spontaneous(u))
-        warn (up, l,
+	warn (up, l,
   	    "implicit empty statement.  "
   	    "Use 'noop' to make it explicit.");
     }
@@ -199,18 +197,18 @@
       ast::BinaryExp* res = 0;
       switch (op)
       {
-        case Flavorable::UAND:
-          res = new ast::AndExp (l, lhs, rhs);
-          break;
-        case Flavorable::UCOMMA:
-          res = new ast::CommaExp (l, lhs, rhs);
-          break;
-        case Flavorable::UPIPE:
-          res = new ast::PipeExp (l, lhs, rhs);
-          break;
-        case Flavorable::USEMICOLON:
-          res = new ast::SemicolonExp (l, lhs, rhs);
-          break;
+	case Flavorable::UAND:
+	  res = new ast::AndExp (l, lhs, rhs);
+	  break;
+	case Flavorable::UCOMMA:
+	  res = new ast::CommaExp (l, lhs, rhs);
+	  break;
+	case Flavorable::UPIPE:
+	  res = new ast::PipeExp (l, lhs, rhs);
+	  break;
+	case Flavorable::USEMICOLON:
+	  res = new ast::SemicolonExp (l, lhs, rhs);
+	  break;
       }
       /*
        if (res)
@@ -405,24 +403,24 @@
 %type <expr>                taggedcommand   "tagged command"
 %type <expr>                command         "command"
 %type <expr>                statement       "statement"
-%type <namedparameters>     parameters      "parameters"
-%type <namedparameters>     parameterlist   "list of parameters"
-%type <namedparameters>     rawparameters   "list of attributes"
-%type <namedparameters>     namedparameters "list of named parameters"
-%type <namedparameters>     flag            "a flag"
-%type <namedparameters>     flags.0         "zero or more flags"
-%type <namedparameters>     flags.1         "one or more flags"
+%type <named_arguments>     arguments      "arguments"
+%type <named_arguments>     argument_list   "list of arguments"
+%type <named_arguments>     rawarguments   "list of attributes"
+%type <named_arguments>     namedarguments "list of named arguments"
+%type <named_arguments>     flag            "a flag"
+%type <named_arguments>     flags.0         "zero or more flags"
+%type <named_arguments>     flags.1         "one or more flags"
 %type <variablelist>        refvariables    "list of variables"
 %type <expr>                softtest        "soft test"
-%type <namedparameters>     identifiers     "list of identifiers"
+%type <named_arguments>     identifiers     "list of identifiers"
 %type <expr>                class_declaration "class declaration"
-%type <namedparameters>     class_declaration_list "class declaration list"
+%type <named_arguments>     class_declaration_list "class declaration list"
 %type <binary>              binary          "binary"
 %type <property>            property        "property"
 %type <variable>            variable        "variable"
 %type <variable>            purevariable    "pure variable"
 %type <variable>            refvariable     "ref-variable"
-//%type  <namedparameters>     purevariables   "list of pure variables"
+//%type  <named_arguments>     purevariables   "list of pure variables"
 
 
 /*----------------------.
@@ -561,7 +559,7 @@ flag:
   {/*
     UExpression *flagval = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, flagval);
-    $$ = new UNamedParameters(new UString("flag"), flagval);
+    $$ = new UNamedArguments(new UString("flag"), flagval);
     if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
       $$->notifyEnd = true;
     memcheck(up, $$, flagval);
@@ -569,19 +567,19 @@ flag:
 
 | FLAG_TIME "(" expr ")"
   {/*
-    $$ = new UNamedParameters(new UString("flagtimeout"), $3);
+    $$ = new UNamedArguments(new UString("flagtimeout"), $3);
     memcheck(up, $$, $3);
   */}
 
 | FLAG_ID "(" expr ")"
   {/*
-    $$ = new UNamedParameters(new UString("flagid"), $3);
+    $$ = new UNamedArguments(new UString("flagid"), $3);
     memcheck(up, $$, $3);
   */}
 
 | FLAG_TEST "(" softtest ")"
   {/*
-    $$ = new UNamedParameters(new UString(*$1 == 6 ? "flagstop" : "flagfreeze"),
+    $$ = new UNamedArguments(new UString(*$1 == 6 ? "flagstop" : "flagfreeze"),
 			      $3);
     memcheck(up, $$, $3);
   */}
@@ -679,7 +677,7 @@ statement:
     memcheck(up, $$);
   */}
 
-| refvariable "=" expr namedparameters {/*
+| refvariable "=" expr namedarguments {/*
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
     memcheck(up, $$, $1, $3, $4);
     */}
@@ -696,7 +694,7 @@ statement:
     memcheck(up, $$, $1, $3);
     */}
 
-| "var" refvariable "=" expr namedparameters {/*
+| "var" refvariable "=" expr namedarguments {/*
 
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
@@ -722,7 +720,7 @@ statement:
 
 | "return" expr.opt   { $$ = new ast::ReturnExp(@$, 0, false); }
 
-| "echo" expr namedparameters {/*
+| "echo" expr namedarguments {/*
 
     $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
@@ -735,7 +733,7 @@ statement:
       memcheck(up, $$, $1, $4);
     */}
 
-| refvariable "=" "new" "identifier" "(" parameterlist ")" {/*
+| refvariable "=" "new" "identifier" "(" argument_list ")" {/*
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, $6);
@@ -873,7 +871,7 @@ statement:
       memcheck(up, $$, $2);
     */}
 
-| "emit" purevariable "(" parameterlist ")" {/*
+| "emit" purevariable "(" argument_list ")" {/*
 
       $$ = new UCommand_EMIT(@$, $2, $4);
       memcheck(up, $$, $2, $4);
@@ -885,7 +883,7 @@ statement:
       memcheck(up, $$, $5, $3);
     */}
 
-| "emit" "(" expr ")" purevariable "(" parameterlist ")" {/*
+| "emit" "(" expr ")" purevariable "(" argument_list ")" {/*
 
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
       memcheck(up, $$, $5, $7, $3);
@@ -898,7 +896,7 @@ statement:
       memcheck(up, $$, $4);
     */}
 
-| "emit" "(" ")" purevariable "(" parameterlist ")" {/*
+| "emit" "(" ")" purevariable "(" argument_list ")" {/*
 
       $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
@@ -1215,15 +1213,15 @@ property:
 ;
 
 
-/* NAMEDPARAMETERS */
+/* NAMEDARGUMENTS */
 
-namedparameters:
+namedarguments:
   /* empty */ {/* $$ = 0; */}
 
-| "identifier" ":" expr namedparameters {/*
+| "identifier" ":" expr namedarguments {/*
 
       memcheck(up, $1);
-      $$ = new UNamedParameters($1, $3, $4);
+      $$ = new UNamedArguments($1, $3, $4);
       memcheck(up, $$, $1, $4, $3);
     */}
 ;
@@ -1239,7 +1237,7 @@ binary:
 	memcheck(up, $$->buffer, $$);
     */}
 
-| "bin" "integer" rawparameters {/*
+| "bin" "integer" rawarguments {/*
 
       $$ = new UBinary($2, $3);
       memcheck(up, $$, $3);
@@ -1291,7 +1289,7 @@ expr:
     //memcheck(up, $$, $1);
   }
 
-| "[" parameterlist "]" {/*
+| "[" argument_list "]" {/*
 
     $$ = new UExpression(@2, UExpression::LIST, $2);
     memcheck(up, $$, $2);
@@ -1304,7 +1302,7 @@ expr:
      memcheck(up, $$, $1);
   */}
 
-| refvariable "(" parameterlist ")"  {/*
+| refvariable "(" argument_list ")"  {/*
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
@@ -1331,7 +1329,7 @@ expr:
 | expr "%" expr	{ $$ = new_exp(up, @$, ast::OpExp::mod, $1, $3); }
 | expr "^" expr	{ $$ = new_exp(up, @$, ast::OpExp::exp, $1, $3); }
 | "-" expr %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
-| "(" expr ")"  {  $$ = $2; }
+| "(" expr ")"  { $$ = $2; }
 
 | "copy" expr  %prec NEG {/*
 
@@ -1386,54 +1384,54 @@ expr:
 ;
 
 
-/* PARAMETERLIST, PARAMETERS, PARAMETERSERIES */
+/* ARGUMENT_LIST, ARGUMENTS */
 
-parameterlist:
+argument_list:
   /* empty */ {/* $$ = 0; */}
 
-| parameters
+| arguments
 ;
 
-parameters:
-    expr {/*
+arguments:
+  expr {/*
 
-      $$ = new UNamedParameters($1);
+      $$ = new UNamedArguments($1);
       memcheck(up, $$, $1);
     */}
 
-| expr "," parameters {/*
+| arguments "," expr {/*
 
-      $$ = new UNamedParameters($1, $3);
+      $$ = new UNamedArguments($1, $3);
       memcheck(up, $$, $1, $3);
     */}
 ;
 
-rawparameters:
+rawarguments:
  number
  {/*
    UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-   $$ = new UNamedParameters(expr);
+   $$ = new UNamedArguments(expr);
    memcheck(up, $$, expr);
  */}
 
 | "identifier" {/*
 
       UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-      $$ = new UNamedParameters(expr);
+      $$ = new UNamedArguments(expr);
       memcheck(up, $$, expr);
     */}
 
-| number rawparameters {/*
+| number rawarguments {/*
 
       UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-      $$ = new UNamedParameters(expr, $2);
+      $$ = new UNamedArguments(expr, $2);
       memcheck(up, $$, $2, expr);
     */}
 
-| "identifier" rawparameters {/*
+| "identifier" rawarguments {/*
 
       UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-      $$ = new UNamedParameters(expr, $2);
+      $$ = new UNamedArguments(expr, $2);
       memcheck(up, $$, $2, expr);
     */}
 ;
@@ -1470,14 +1468,14 @@ identifiers:
 | "identifier" {/*
 
       memcheck(up, $1);
-      $$ = new UNamedParameters($1, 0);
+      $$ = new UNamedArguments($1, 0);
       memcheck(up, $$, $1);
     */}
 
 | "var" "identifier" {/*
 
       memcheck(up, $2);
-      $$ = new UNamedParameters($2, 0);
+      $$ = new UNamedArguments($2, 0);
       memcheck(up, $$, $2);
     */}
 
@@ -1485,14 +1483,14 @@ identifiers:
 | "identifier" "," identifiers {/*
 
       memcheck(up, $1);
-      $$ = new UNamedParameters($1, 0, $3);
+      $$ = new UNamedArguments($1, 0, $3);
       memcheck(up, $$, $3, $1);
     */}
 
 | "var" "identifier" "," identifiers {/*
 
       memcheck(up, $2);
-      $$ = new UNamedParameters($2, 0, $4);
+      $$ = new UNamedArguments($2, 0, $4);
       memcheck(up, $$, $4, $2);
     */}
 ;
@@ -1514,7 +1512,7 @@ class_declaration:
 
 | "function" variable {/*
       $$ = new UExpression(@$, UExpression::FUNCTION, $2,
-			   static_cast<UNamedParameters*> (0));
+			   static_cast<UNamedArguments*> (0));
       memcheck(up, $$, $2);
     */}
 
@@ -1524,7 +1522,7 @@ class_declaration:
 
 | "event" variable {/*
       $$ = new UExpression(@$, UExpression::EVENT, $2,
-			   static_cast<UNamedParameters*> (0));
+			   static_cast<UNamedArguments*> (0));
       memcheck(up, $$, $2);
     */}
 ;
@@ -1534,12 +1532,12 @@ class_declaration_list:
   /* empty */  {/* $$ = 0; */}
 
 | class_declaration {/*
-      $$ = new UNamedParameters($1, 0);
+      $$ = new UNamedArguments($1, 0);
       memcheck(up, $$, $1);
     */}
 
 | class_declaration ";" class_declaration_list {/*
-      $$ = new UNamedParameters($1, $3);
+      $$ = new UNamedArguments($1, $3);
       memcheck(up, $$, $3, $1);
     */}
 ;

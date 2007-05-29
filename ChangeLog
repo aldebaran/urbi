@@ -1,3 +1,9 @@
+2007-05-29  Akim Demaille  <demaille@gostai.com>
+
+	parameter -> argument
+	* src/parser/bison/ugrammar.y: Use argument when more appropriate
+	than parameter.
+
 2007-05-28  mefyl  <mefyl@lrde.epita.fr>
 
 	Add print-visitor generator.
