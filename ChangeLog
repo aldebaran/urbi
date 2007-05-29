@@ -1,3 +1,8 @@
+2007-05-29  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Wrong token definition for derivations
+	* ugrammar.y: Fixed definition for first and second derivation.
+
 2007-05-29  Matthieu Nottale  <nottale@gostai.com>
 
 	Add the 'runningcommands' keyword, fix a bug in tag mechanism.
