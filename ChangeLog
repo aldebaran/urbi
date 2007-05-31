@@ -1,5 +1,16 @@
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
+	PrintVisitor -> PrettyPrinter
+	* dev/ast-print-visitor-gen: Rename as...
+	* dev/ast-pretty-printer-gen: ... this.
+	Adjust the output accordingly.
+	* src/ast/print-visitor.hh, src/ast/print-visitor.cc: Remove.
+	* src/ast/Makefile.am: Adjust.
+	Factor some bits.
+	Use shorter and simpler stamp file names.
+
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
 	Tags are expressions
 	* src/ast/ast.yml (Tag, StringTag, ExpTag): Remove.
 	(TagExp): Now the tag is an Exp*.
