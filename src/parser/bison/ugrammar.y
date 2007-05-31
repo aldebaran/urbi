@@ -323,7 +323,7 @@
    <ustr>  OPERATOR_ID        "operator"
    <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
-%type <ustr> ustring tag "any kind of tag"
+%type <ustr> ustring;
 %destructor { delete $$; } <str> <ustr>;
 %printer { debug_stream() << *$$; } <str> <ustr>;
 
@@ -348,10 +348,10 @@
 %type <expr>                taggedcommand   "tagged command"
 %type <expr>                command         "command"
 %type <expr>                statement       "statement"
-%type <named_arguments>     arguments      "arguments"
+%type <named_arguments>     arguments       "arguments"
 %type <named_arguments>     argument_list   "list of arguments"
-%type <named_arguments>     rawarguments   "list of attributes"
-%type <named_arguments>     namedarguments "list of named arguments"
+%type <named_arguments>     rawarguments    "list of attributes"
+%type <named_arguments>     namedarguments  "list of named arguments"
 %type <named_arguments>     flag            "a flag"
 %type <named_arguments>     flags.0         "zero or more flags"
 %type <named_arguments>     flags.1         "one or more flags"
@@ -452,12 +452,8 @@ taggedcommands:
 | taggedcommand.  |
 `----------------*/
 
-// FIXME: I still use UString here, but that's really stupid, and
-// leaking everywhere.  Should be fixed later.
-tag:
-  "identifier"             {/* $$ = $1; */}
-| tag "." "identifier"     {/* $$ = $1; */}
-;
+%type <expr> tag;
+tag: expr;
 
 taggedcommand:
 
@@ -467,16 +463,11 @@ taggedcommand:
       $$ = $1;
     */}
 
-| tag flags.0 ":" command {/*
-
-      if ($4)
-      {
-	$4->setTag($1->c_str());
-	delete $1;
-	$4->flags = $2;
-      }
-      $$ = $4;
-    */}
+| tag flags.0 ":" command
+  { 
+    $$ = new ast::TagExp (@$, $1, $4);
+    // FIXME: $2 ignored.
+  }
 
 | flags.1 ":" command {/*
 

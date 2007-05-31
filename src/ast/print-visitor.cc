@@ -100,11 +100,6 @@ namespace ast
     /* No printer defined */
   }
 
-  void PrintVisitor::operator() (const ExpTag& )
-  {
-    /* No printer defined */
-  }
-
   void PrintVisitor::operator() (const ExternalExp& )
   {
     /* No printer defined */
@@ -191,16 +186,6 @@ namespace ast
   }
 
   void PrintVisitor::operator() (const StringExp& )
-  {
-    /* No printer defined */
-  }
-
-  void PrintVisitor::operator() (const StringTag& )
-  {
-    /* No printer defined */
-  }
-
-  void PrintVisitor::operator() (const Tag& )
   {
     /* No printer defined */
   }

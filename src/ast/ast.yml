@@ -81,25 +81,10 @@ Exp:
 ## Tags.  ##
 ## ------ ##
 
-Tag:
-  super: Ast
-  attributes:
-    - subtag:  { type: 'Tag*', desc: sub-tag of the complete tag (or null if root) }
-
-StringTag:
-  super: Tag
-  attributes:
-    - tag: { type: 'std::string', desc: Stored tag string value }
-
-ExpTag:
-  super: Tag
-  attributes:
-    - tag: { type: 'Exp*', desc: Stored tag expression value to be evaluated at runtime }
-
 TagExp:
   super: Exp
   attributes:
-    - tag: { type: 'Tag*', desc: Tag of the sub ast }
+    - tag: { type: 'Exp*', desc: The tagging expression }
     - exp: { type: 'Exp*', desc: The tagged expression }
 
 

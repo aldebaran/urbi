@@ -57,7 +57,6 @@ namespace ast
     virtual void operator() (const EventDec&);
     virtual void operator() (const ExecExp&);
     virtual void operator() (const Exp&);
-    virtual void operator() (const ExpTag&);
     virtual void operator() (const ExternalExp&);
     virtual void operator() (const FloatExp&);
     virtual void operator() (const FunctionDec&);
@@ -76,8 +75,6 @@ namespace ast
     virtual void operator() (const ScopeExp&);
     virtual void operator() (const SemicolonExp&);
     virtual void operator() (const StringExp&);
-    virtual void operator() (const StringTag&);
-    virtual void operator() (const Tag&);
     virtual void operator() (const TagDec&);
     virtual void operator() (const TagExp&);
     virtual void operator() (const TagOpExp&);

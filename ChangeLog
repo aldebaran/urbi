@@ -1,5 +1,13 @@
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
+	Tags are expressions
+	* src/ast/ast.yml (Tag, StringTag, ExpTag): Remove.
+	(TagExp): Now the tag is an Exp*.
+	* src/ast/print-visitor.hh, src/ast/print-visitor.cc: Regen.
+	* src/parser/bison/ugrammar.y: Implement the action for "tag : exp".
+
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
 	Fix typo
 	* src/parser/bison/ugrammar.y: here.
 
