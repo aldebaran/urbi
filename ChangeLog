@@ -1,5 +1,17 @@
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
+	Clarify the scanning of numbers
+	* src/parser/bison/utoken.l (RETURN_STR_TOKEN, RETURN_IVAL_TOKEN)
+	(RETURN_FVAL_TOKEN): Rename as...
+	(RETURN_STR, RETURN_IVAL, RETURN_FVAL): these.
+	(RETURN_NUM, RETURN_FLAG, RETURN_FLAG_TIME): Remove.
+	Replace the last two with RETURN_IVAL instead of floats as before.
+	(RETURN_VALUE): New, used to implement others.
+	* src/parser/bison/ugrammar.y: Be sure to receive the flags as
+	integers, not floats.  This is not correct yet, but less incorrect.
+
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
 	* src/ast/ast.yml: Comment changes.
 
 2007-05-29  Akim Demaille  <demaille@gostai.com>

@@ -290,22 +290,21 @@
 | Numbers.  |
 `----------*/
 
-%union
-{
-  float fval;
-  int   ival;
-}
-
+%union { int ival; }
 %token
   <ival> INTEGER    "integer"
+  <ival> FLAG       "flag"
+  <ival> FLAG_TEST  "flag test"
+  <ival> FLAG_ID    "flag identifier"
+  <ival> FLAG_TIME  "flag time"
+%printer { debug_stream() << $$; } <ival>;
+
+%union { float fval; }
+%token
   <fval> FLOAT      "float"
-  <fval> TIME_VALUE  "time"
-  <fval> FLAG       "flag"
-  <fval> FLAG_TEST   "flag test"
-  <fval> FLAG_ID     "flag identifier"
-  <fval> FLAG_TIME   "flag time"
+  <fval> TIME_VALUE "time"
 %type <fval> number;
-%printer { debug_stream() << $$; } <fval> <ival>;
+%printer { debug_stream() << $$; } <fval>;
 
 
  /*----------.

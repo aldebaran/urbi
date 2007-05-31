@@ -46,44 +46,35 @@ typedef yy::parser::token token;
 | Sugar to return semantic values.  |
 `----------------------------------*/
 
-// For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
-#define RETURN_FLAVOR(Symbol)			\
+#define RETURN_VALUE(Token, Field, Value)	\
  do {						\
-   valp->flavor = Flavorable::U ## Symbol;	\
-   return token::TOK_ ## Symbol;		\
+   valp->Field = Value;				\
+   return token::Token;				\
  } while (0)
 
 
+
+// For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
+#define RETURN_FLAVOR(Symbol)					\
+  RETURN_VALUE(TOK_ ## Symbol, flavor, Flavorable::U ## Symbol)
+
 // Store yytext in valp->str, and return Token.
-#define RETURN_STR_TOKEN(Token)			\
-do {						\
-  valp->str = new std::string(yytext);		\
-  return token::Token;				\
-} while (0);
+#define RETURN_STR(Token)				\
+  RETURN_VALUE(Token, str, new std::string(yytext))
+ 
+/// Return an fval of type Token with Value.
+#define RETURN_FVAL(Token, Value)		\
+  RETURN_VALUE(Token, fval, Value)
 
-#define RETURN_FVAL_TOKEN(Token, Value)		\
-do {						\
-  valp->fval = Value;				\
-  return token::Token;				\
-} while (0)
+/// Return an ival of type Token with Value.
+#define RETURN_IVAL(Token, Value)		\
+  RETURN_VALUE(Token, ival, Value)
 
-#define RETURN_IVAL_TOKEN(Token, Value)		\
-do {						\
-  valp->ival = Value;				\
-  return token::Token;				\
-} while (0)
-
-
-#define RETURN_NUM(Value)      RETURN_FVAL_TOKEN(FLOAT, Value)
-#define RETURN_FLAG(Value)     RETURN_IVAL_TOKEN(FLAG, Value)
-#define RETURN_FLAG_TIME(Value) RETURN_FVAL_TOKEN(FLAG_TIME, Value)
-
-#define RETURN_TIME_VALUE(Scale)			\
-do {							\
-  yytext[yyleng-1]=0;					\
-  valp->fval = atof(yytext) * (Scale);			\
-  return token::TIME_VALUE;				\
-} while (0)
+#define RETURN_TIME_VALUE(Scale)				\
+  do {								\
+    yytext[yyleng-1]=0;						\
+    RETURN_VALUE(TIME_VALUE, fval, atof(yytext) * (Scale));	\
+  } while (0)
 
 %}
 %option noyywrap
@@ -107,26 +98,26 @@ STRING   \"([^\"]|"\\\"")*\"
   | The rules.  |
   `------------*/
 
-"inf"         RETURN_NUM(UINFINITY);
-"pi"          RETURN_NUM(3.14159265358979323846264338327950288);
-"off"         RETURN_NUM(0);
-"switch"      RETURN_NUM(-1);
-"on"          RETURN_NUM(1);
+"inf"         RETURN_FVAL(FLOAT, UINFINITY);
+"pi"          RETURN_FVAL(FLOAT, 3.14159265358979323846264338327950288);
+"off"         RETURN_FVAL(FLOAT, 0);
+"switch"      RETURN_FVAL(FLOAT, -1);
+"on"          RETURN_FVAL(FLOAT, 1);
 
   /*  FIXME: This is really sick. */
-"+report"     RETURN_FLAG(1);
-"+error"      RETURN_FLAG(2);
-"+end"        RETURN_FLAG(3);
-"+begin"      RETURN_FLAG(4);
-"+top"        RETURN_FLAG(7);
-"+bg"         RETURN_FLAG(10);
+"+report"     RETURN_IVAL(FLAG, 1);
+"+error"      RETURN_IVAL(FLAG, 2);
+"+end"        RETURN_IVAL(FLAG, 3);
+"+begin"      RETURN_IVAL(FLAG, 4);
+"+top"        RETURN_IVAL(FLAG, 7);
+"+bg"         RETURN_IVAL(FLAG, 10);
 
-"+timeout"    RETURN_IVAL_TOKEN(FLAG_TIME, 5);
+"+timeout"    RETURN_IVAL(FLAG_TIME, 5);
 
-"+stop"       RETURN_IVAL_TOKEN(FLAG_TEST, 7);
-"+freeze"     RETURN_IVAL_TOKEN(FLAG_TEST, 8);
+"+stop"       RETURN_IVAL(FLAG_TEST, 7);
+"+freeze"     RETURN_IVAL(FLAG_TEST, 8);
 
-"+connection" RETURN_IVAL_TOKEN(FLAG_ID, 9);
+"+connection" RETURN_IVAL(FLAG_ID, 9);
 
 
 {NUMBER}"d"   RETURN_TIME_VALUE(1000*60*60*24);
@@ -135,8 +126,9 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}"s"   RETURN_TIME_VALUE(1000);
 {NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIME_VALUE(1);
 
-{FLOAT}       { valp->fval = atof(yytext); return token::FLOAT;   }
-{INTEGER}     { valp->ival = atoi(yytext); return token::INTEGER; }
+  /* FIXME: atof and atoi are no good. */
+{FLOAT}       { RETURN_FVAL(FLOAT,   atof(yytext)); }
+{INTEGER}     { RETURN_IVAL(INTEGER, atoi(yytext)); }
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 
@@ -147,21 +139,21 @@ STRING   \"([^\"]|"\\\"")*\"
 "killall"    |
 "stop"       |
 "unblock"    |
-"unfreeze"   RETURN_STR_TOKEN (OPERATOR_ID);
+"unfreeze"   RETURN_STR (OPERATOR_ID);
 
 "delete"  |
 "info"    |
-"undef"   RETURN_STR_TOKEN (OPERATOR_VAR);
+"undef"   RETURN_STR (OPERATOR_VAR);
 
 "add"     |
 "cancel"  |
 "discard" |
 "mix"     |
 "normal"  |
-"queue"   RETURN_STR_TOKEN (STRING);
+"queue"   RETURN_STR (STRING);
 
 "external"  |
-"internal"  RETURN_STR_TOKEN (BINDER);
+"internal"  RETURN_STR (BINDER);
 
 "commands"    |
 "connections" |
@@ -183,7 +175,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "uservars"    |
 "functions"   |
 "taglist"     |
-"vars"        RETURN_STR_TOKEN (OPERATOR);
+"vars"        RETURN_STR (OPERATOR);
 
 "BIN"           return token::TOK_BIN;
 "addgroup"      return token::TOK_ADDGROUP;
@@ -281,11 +273,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "~="            return token::TOK_REQ;
 
 
-{ID}       {						
-             valp->symbol = new libport::Symbol(yytext);			
-	     return token::IDENTIFIER;				
-           }
-
+{ID}     RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
 
 
     /*----------.
