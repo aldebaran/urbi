@@ -262,13 +262,13 @@ STRING   \"([^\"]|"\\\"")*\"
 ">"             return token::TOK_GTH;
 ">="            return token::TOK_GEQ;
 "@"             return token::TOK_AROBASE;
-"["             return token::TOK_LSBRACKET;
-"]"             return token::TOK_RSBRACKET;
+"["             return token::TOK_LBRACKET;
+"]"             return token::TOK_RBRACKET;
 "^"             return token::TOK_EXP;
-"{"             return token::TOK_LBRACKET;
+"{"             return token::TOK_LBRACE;
 "|"             RETURN_FLAVOR(PIPE);
 "||"            return token::TOK_LOR;
-"}"             return token::TOK_RBRACKET;
+"}"             return token::TOK_RBRACE;
 "~"             return token::TOK_TILDE;
 "~="            return token::TOK_REQ;
 

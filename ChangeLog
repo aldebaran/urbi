@@ -1,5 +1,13 @@
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
+	Let braces be braces, and brackets be brackets
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y
+	(TOK_LBRACKET, TOK_RBRACKET, TOK_LSBRACKET, TOK_RSBRACKET):
+	Rename as...
+	(TOK_LBRACE, TOK_RRACE, TOK_LBRACKET, TOK_RBRACKET): these.
+
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
 	Clarify the scanning of numbers
 	* src/parser/bison/utoken.l (RETURN_STR_TOKEN, RETURN_IVAL_TOKEN)
 	(RETURN_FVAL_TOKEN): Rename as...
