@@ -636,7 +636,7 @@ statement:
       $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
     */}
 
-| "return" expr.opt   { $$ = new ast::ReturnExp(@$, 0, false); }
+| "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
 
 | "echo" expr namedarguments {/*
 

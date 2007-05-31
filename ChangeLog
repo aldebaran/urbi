@@ -1,5 +1,11 @@
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
+	* dev/ast-pretty-printer-gen: Remove useless import.
+	* src/parser/bison/ugrammar.y: Do return the value given to
+	"return".
+
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
 	PrintVisitor -> PrettyPrinter
 	* dev/ast-print-visitor-gen: Rename as...
 	* dev/ast-pretty-printer-gen: ... this.

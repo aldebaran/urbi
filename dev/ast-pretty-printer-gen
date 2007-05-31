@@ -4,8 +4,6 @@ import re
 import sys, os, os.path, filecmp, shutil, stat
 import ast, tools
 
-from stat import ST_MODE
-
 if len(sys.argv) != 2:
   print "Usage: .. SRCDIR"
   sys.exit(1)
