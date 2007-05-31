@@ -1,5 +1,10 @@
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
+	Fix typo
+	* src/parser/bison/ugrammar.y: here.
+
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
 	Let braces be braces, and brackets be brackets
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y
 	(TOK_LBRACKET, TOK_RBRACKET, TOK_LSBRACKET, TOK_RSBRACKET):

@@ -259,7 +259,7 @@
   TOK_RBRACE       "}"
   TOK_RETURN       "return"
   TOK_RPAREN       ")"
-  TOK_SBRACKET     "]"
+  TOK_RBRACKET     "]"
   TOK_STATIC       "static"
   TOK_STOP         "stop"
   TOK_STOPIF       "stopif"
