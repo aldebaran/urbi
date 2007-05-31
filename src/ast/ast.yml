@@ -54,7 +54,10 @@
 
 ---
 
-# Generic classes
+
+## -------------- ##
+## Root classes.  ##
+## -------------- ##
 
 Ast:
   inline:
@@ -73,7 +76,10 @@ Ast:
 Exp:
   super: Ast
 
-# Tags & scope
+
+## ------ ##
+## Tags.  ##
+## ------ ##
 
 Tag:
   super: Ast
@@ -95,6 +101,11 @@ TagExp:
   attributes:
     - tag: { type: 'Tag*', desc: Tag of the sub ast }
     - exp: { type: 'Exp*', desc: The tagged expression }
+
+
+## ------- ##
+## Scope.  ##
+## ------- ##
 
 ScopeExp:
   super: Exp

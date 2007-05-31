@@ -1,3 +1,7 @@
+2007-05-31  Akim Demaille  <demaille@gostai.com>
+
+	* src/ast/ast.yml: Comment changes.
+
 2007-05-29  Akim Demaille  <demaille@gostai.com>
 
 	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y:
