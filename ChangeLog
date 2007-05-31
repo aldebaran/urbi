@@ -1,3 +1,8 @@
+2007-05-31  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix a bug in timeout command
+	* src/ucommand.cc: in UCommand_TIMEOUT::execute: setTag on intermediate nodes instead of morphed node.
+
 2007-05-29  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Wrong token definition for derivations

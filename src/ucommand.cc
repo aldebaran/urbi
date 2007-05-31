@@ -5472,7 +5472,10 @@ UCommand_TIMEOUT::execute_(UConnection*)
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy()))
       );
-  morph->setTag(tagRef->str());
+  //we cant tag morph as morphing engine will override us
+  static_cast<UCommand_TREE*>(morph)->command1->setTag(tagRef->str());
+  static_cast<UCommand_TREE*>(morph)->command2->setTag(tagRef->str());
+
   return UMORPH;
 }
 
