@@ -1,3 +1,8 @@
+2007-06-04  Akim Demaille  <demaille@gostai.com>
+
+	* src/parser/bison/bison.mk (ugrammar.stamp): Depend on output-to-html
+	too.
+
 2007-05-31  Akim Demaille  <demaille@gostai.com>
 
 	* dev/ast-pretty-printer-gen: Remove useless import.

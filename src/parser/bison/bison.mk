@@ -27,7 +27,8 @@ nodist_libkernel_la_SOURCES = $(FROM_UGRAMMAR_Y)
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 EXTRA_DIST += $(parsedir)/ugrammar.y
-ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN) $(parsedir)/bison.mk
+ugrammar_deps = $(BISONXX_IN) $(parsedir)/bison.mk $(top_srcdir)/build-aux/output-to-html
+ugrammar.stamp: $(parsedir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
