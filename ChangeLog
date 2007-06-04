@@ -1,5 +1,12 @@
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
+	Finish broken merge
+	merge -r 1038:1078 failed to include the modifications for
+	uconnection.cc.
+	* src/uconnection.cc: Import the changes documented in 2007-06-04.
+
+2007-06-04  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/ueventhandler.cc: Sort commutable lines.
 	Promote for over while.
