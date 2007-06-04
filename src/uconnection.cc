@@ -963,6 +963,7 @@ UConnection::processCommand(UCommand *&command,
 	  command->morphed = true;
 
 	  morphed = command->morph;
+          morphed->myconnection = command->myconnection;
 	  morphed->toDelete = command->toDelete;
 	  morphed->up = morphed_up;
 	  morphed->position = morphed_position;

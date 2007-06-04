@@ -183,7 +183,7 @@ public:
 
   void updated(bool uvar_assign = false);
 
-  UValue* get(bool autoloop = false);
+  UValue* get();
 
   const std::string& getDevicename() {return devicename;}
   const std::string& getVarname() {return varname;}

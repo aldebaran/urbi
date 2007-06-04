@@ -162,6 +162,7 @@ typedef libport::hash_map_type<const char*, UObj*>::type HMobjtab;
 typedef libport::hash_map_type<const char*, UGroup*>::type HMgrouptab;
 typedef libport::hash_map_type<const char*, UString*>::type HMaliastab;
 typedef libport::hash_map_type<const char*, UEventHandler*>::type HMemittab;
+typedef libport::hash_map_type<const char*, int>::type HMemit2tab;
 typedef libport::hash_map_type<const char*, UBinder*>::type HMbindertab;
 typedef libport::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
 typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;

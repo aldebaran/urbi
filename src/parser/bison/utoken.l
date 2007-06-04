@@ -186,6 +186,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "uservars"    |
 "functions"   |
 "taglist"     |
+"runningcommands" |
 "vars"        RETURN_STR_TOKEN (OPERATOR);
 
 "BIN"           return token::TOK_BIN;

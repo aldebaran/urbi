@@ -275,53 +275,36 @@ UObj::searchVariable(const char* id, bool &ambiguous) const
   }
 }
 
-UEventHandler*
+bool
 UObj::searchEvent(const char* id, bool &ambiguous) const
 {
-  UEventHandler* ret;
   std::ostringstream o;
   o << device->c_str() << '.' << id;
-  bool ok = false;
-  HMemittab::const_iterator ietok = ::urbiserver->emittab.end ();
-
-  for (HMemittab::const_iterator i = ::urbiserver->emittab.begin ();
-       i != ::urbiserver->emittab.end () && !ok;
-       ++i)
-    if (*i->second->unforgedName == o.str().c_str())
-    {
-      ok = true;
-      ietok = i;
-    }
-
-  if (ok)
+  if (kernel::eventSymbolDefined (o.str().c_str()))
   {
     ambiguous = false;
-    return ietok->second;
+    return true;
   }
   else
   {
-    ret   = 0;
     bool found = false;
     for (std::list<UObj*>::const_iterator i = up.begin();
 	 i != up.end();
 	 ++i)
     {
-      UEventHandler* tmpres = (*i)->searchEvent(id, ambiguous);
+      bool tmpres = (*i)->searchEvent(id, ambiguous);
       if (ambiguous)
-	return 0;
+	return false;
       if (tmpres)
 	if (found)
 	{
 	  ambiguous = true;
-	  return 0;
+	  return false;
 	}
 	else
-	{
-	  ret = tmpres;
 	  found = true;
-	}
     }
     ambiguous = false;
-    return ret;
+    return found;
   }
 }
