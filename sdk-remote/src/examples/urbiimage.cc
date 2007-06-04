@@ -47,8 +47,10 @@ showImage(const urbi::UMessage &msg)
 
   urbi::UImage& img = msg.value->binary->image;
 
-  static unsigned char* buffer = static_cast<unsigned char*> (malloc (3*400*400));
-  int sz = 500000;
+  static unsigned char* buffer = 0;
+  if (!buffer)
+    buffer = static_cast<unsigned char*> (malloc (3*img.width*img.height));
+  int sz = 3*img.width*img.height;
   static int tme = 0;
   /* Calculate framerate. */
   if (!(imcount % 20))
@@ -101,7 +103,7 @@ main (int argc, char *argv[])
   signal(SIGINT, closeandquit);
   mon = NULL;
 
-  if (argc != 3)
+  if (argc < 3)
     {
       fprintf(stderr,
 	      "Missing argument\n"

@@ -475,10 +475,11 @@ namespace urbi
   main(int argc, char* argv[])
   {
     // Retrieving command line arguments
-    if (argc!=2)
+    if (argc<2)
     {
       std::cout << "usage:\n"
-		<< argv[0] << " <URBI Server IP>" << std::endl;
+		<< argv[0] << " <URBI Server IP> [port [buffer length]]"
+		<< std::endl;
       exit(0);
     }
 
@@ -486,7 +487,13 @@ namespace urbi
     std::cout << "Running Remote Component '" << argv[0]
 	      << "' on " << argv[1] << std::endl;
     //we need a usyncclient connect(argv[1]);
-    new USyncClient(argv[1]);
+    int port = UAbstractClient::URBI_PORT;
+    int buflen = UAbstractClient::URBI_BUFLEN;
+    if (argc>2)
+      port = strtol(argv[2],0,0);
+    if (argc>3)
+      buflen = strtol(argv[3],0,0);
+    new USyncClient(argv[1],port, buflen);
 
 
 #ifdef LIBURBIDEBUG

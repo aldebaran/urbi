@@ -45,7 +45,8 @@ namespace urbi
    messages, and notify the appropriate callbacks.
    */
   UClient::UClient(const char *_host, int _port, int _buflen)
-    : UAbstractClient(_host, _port, _buflen)
+    : UAbstractClient(_host, _port, _buflen),
+      thread(0)
   {
     setlocale(LC_NUMERIC, "C");
     control_fd[0] = control_fd[1] = -1;
@@ -138,8 +139,13 @@ namespace urbi
     if (control_fd[1] != -1
 	&& ::write(control_fd[1], "a", 1) == -1)
       perror ("cannot write to control_fd[1]");
-    // Must wait for listen thread to terminate.
-    libport::joinThread(thread);
+
+    // If the connection has failed while building the client, the
+    // thread is not created.
+    if (thread)
+      // Must wait for listen thread to terminate.
+      libport::joinThread(thread);
+
     if (control_fd[1] != -1
 	&& close(control_fd[1]) == -1)
       perror ("cannot close controlfd[1]");

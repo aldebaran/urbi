@@ -1,3 +1,31 @@
+2007-06-04  Akim Demaille  <demaille@gostai.com>
+
+	merge -r 465:472 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
+	
+	2007-05-30  Nicolas Despres  <despres@gostai.com>
+	Do not join thread if constructor failed.
+
+	* src/liburbi/uclient.cc: Do that.
+
+	2007-05-25  POTHIER Benoit  <pothier@gostai.com>
+	Do not compile lijpeg programs.
+	* configure.ac: Here.
+
+	2007-05-21  Matthieu Nottale  <nottale@gostai.com>
+	Fix urbiimage command line check
+	* urbiimage.cc: More than 3 arguments is also valid.
+
+	2007-05-07  Matthieu Nottale  <nottale@gostai.com>
+	Allow setting of port and buffer length on remote uobjects command line
+	* src/liburbi/uobject.cc: Check command line for the presence of a
+	2nd and 3dr arg, interpret as port number and buffer size,
+	update usage accordingly.
+
+	2007-05-07  Matthieu Nottale  <nottale@gostai.com>
+	Remove arbitrary limit on image size.
+	* src/examples/urbiimage.cc: Initialize image buffer on recepiton of
+	first image.
+
 2007-05-03  Akim Demaille  <demaille@gostai.com>
 
 	UObjectHub common code
