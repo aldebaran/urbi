@@ -1,5 +1,11 @@
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/ueventhandler.cc: Sort commutable lines.
+	Promote for over while.
+
+2007-06-04  Akim Demaille  <demaille@gostai.com>
+
 	The attribute UVariableName::rooted is not removed (that was
 	the effect of the "only" keyword) because it appears to be
 	set and checked in other places.
