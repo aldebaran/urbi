@@ -47,11 +47,11 @@
 
 	2007-05-25  Matthieu Nottale  <nottale@gostai.com>
 	Fix critical bug in previous patch, optimize more.
-	* ueventhandler.cc: use the char* in unForgedName to insert 
+	* ueventhandler.cc: use the char* in unForgedName to insert
 	into emit2tab in UEventHandler ctor.
 	* ueventhandler.hh: Remove unused emit2 attribute.
 	* uobj.cc: use eventSymbolDefined in searchEvent intead of iterating.
-	* uobj.hh: Change prototype of searchEvent to return a bool, 
+	* uobj.hh: Change prototype of searchEvent to return a bool,
 	nobody uses the return value except for !0 check.
 
 	2007-05-25  Matthieu Nottale  <nottale@gostai.com>
@@ -78,11 +78,11 @@
 	when adaptive modifier is found.
 
 	2007-05-07  Matthieu Nottale  <nottale@gostai.com>
-	Increase max buffer size to 30M 
+	Increase max buffer size to 30M
 	* src/network/bsdnet/connection.hh: Here.
 
 	2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
-	fix bug #155 (+report inconsistant behavior) 
+	fix bug #155 (+report inconsistant behavior)
 	* src/ucommand.cc: donnot report the end of morphed commands.
 	* src/uconnection.cc: transmit the connection information during
 	morphing.
@@ -104,7 +104,7 @@
 	already preventing UOwner variable against notifychange calls when a
 	notifyaccess was triggered.
 
-	Fix bug in notifychange/access interaction with UOwned UVars. 
+	Fix bug in notifychange/access interaction with UOwned UVars.
 	* src/userver.cc: change UVariable::get usage.
 	* src/uvariable.cc: remove double blocking mechanism, change get.
 	* src/uvariable.hh: change UVarialbe::get API.
