@@ -25,9 +25,6 @@
 #include "libport/cstdio"
 #include <cassert>
 #include <cstdarg>
-
-#include <sstream>
-
 #include <sstream>
 
 #include "libport/lockable.hh"
@@ -307,6 +304,7 @@ UConnection::sendc (const ubyte *buffer, int length)
   if (sendQueue_->locked ())
     return UFAIL;
 
+  // Add to Queue
   UErrorValue result = sendQueue_->push(buffer, length);
   if (result != USUCCESS)
   {
@@ -911,15 +909,6 @@ UConnection::processCommand(UCommand *&command,
 
     if (stopit)
     {
-      for (UNamedParameters *param = command->flags; param; param = param->next)
-	if (param->name &&
-	    *param->name == "flag" &&
-	    param->expression &&
-	    !command->morphed &&
-	    (param->expression->val == 3 || // 3 = +end
-	     param->expression->val == 1)) // 1 = +report
-	  send("*** end\n", command->getTag().c_str());
-
       if (command == lastCommand)
 	lastCommand = command->up;
 
@@ -943,15 +932,6 @@ UConnection::processCommand(UCommand *&command,
       switch (command->execute(this))
       {
 	case UCommand::UCOMPLETED:
-	  for (UNamedParameters *param = command->flags; param;
-	       param = param->next)
-	    if (param->name &&
-		*param->name == "flag" &&
-		param->expression &&
-		(param->expression->val == 3 || // 3 = +end
-		 param->expression->val == 1  )) // 1 = +report
-	      send("*** end\n", command->getTag().c_str());
-
 	  if (command == lastCommand)
 	    lastCommand = command->up;
 
@@ -963,16 +943,15 @@ UConnection::processCommand(UCommand *&command,
 	  command->morphed = true;
 
 	  morphed = command->morph;
+	  morphed->myconnection = command->myconnection;
 	  morphed->toDelete = command->toDelete;
 	  morphed->up = morphed_up;
 	  morphed->position = morphed_position;
 	  if (command->flags)
 	    morphed->flags = command->flags->copy();
 
-
 	  morphed->setTag(command);
 
-	  //morphed->morphed = true;
 	  if (!command->persistant)
 	    delete command;
 	  command = morphed;
@@ -997,6 +976,10 @@ namespace
   // FIXME: Should be with UCommand_TREE, not here.
   bool simplify (UCommand_TREE* tree)
   {
+    // Do not simplify nodes that hold scoping information
+    if (tree->callid)
+      return false;
+
     // left reduction
     if (!tree->command1 && tree->command2)
     {
@@ -1043,9 +1026,14 @@ UConnection::execute(UCommand_TREE*& execCommand)
   // There are complications to make this a for loop: occurrences of
   // "continue".
   UCommand_TREE* tree = execCommand;
+
   while (tree)
   {
     tree->status = UCommand::URUNNING;
+
+    // Requests a +end notification for {...} type of trees
+    if (tree->groupOfCommands)
+      tree->myconnection = this;
 
     //check if freezed
     if (tree->isFrozen())
@@ -1123,14 +1111,6 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
       if (tree->position)
 	*tree->position = 0;
-
-      for (UNamedParameters *param = tree->flags; param; param = param->next)
-	if (param->name &&
-	    *param->name == "flag" &&
-	    param->expression &&
-	    (param->expression->val == 3 || // 3 = +end
-	     param->expression->val == 1)) // 1 = +report
-	  send("*** end\n", tree->getTag().c_str());
 
       UCommand_TREE* oldtree = tree;
       tree = tree->up;

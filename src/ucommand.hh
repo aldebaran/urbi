@@ -1116,6 +1116,8 @@ public:
   UExpression* expression;
   /// index in the list
   UValue* position;
+  /// result of eval() of expression
+  UValue* list;
   /// first execution of the command
   bool firsttime;
 };

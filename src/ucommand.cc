@@ -177,7 +177,7 @@ UCommand::UCommand(const location& l, Type _type)
 //! UCommand destructor.
 UCommand::~UCommand()
 {
-  if (myconnection && flags && flags->notifyEnd)
+  if (myconnection && flags && flags->notifyEnd && !morph)
     myconnection->send("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;
@@ -367,6 +367,10 @@ UCommand::setTag(const std::string& tag)
 void
 UCommand::setTag(TagInfo* ti)
 {
+  if (tag == ti->name)
+    return;
+  if (tag != "")
+    unsetTag();
   this->tag = ti->name;
   tagInfo = ti;
   if (tagInfo)
@@ -379,6 +383,10 @@ UCommand::setTag(TagInfo* ti)
 void
 UCommand::setTag(const UCommand* cmd)
 {
+  if (tag == cmd->tag)
+    return;
+  if (tag != "")
+    unsetTag();
   tag = cmd->tag;
   tagInfo = cmd->tagInfo;
   if (tagInfo)
@@ -1188,6 +1196,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    else if (*modif->name == "adaptive")
 	    {
 	      modif_adaptive = modif->expression;
+	      controlled = true;
 	    }
 	    else if (*modif->name == "phase")
 	    {
@@ -4133,6 +4142,22 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
+  if (*oper == "runningcommands")
+  {
+    for (HMtagtab::iterator i = connection->server->tagtab.begin();
+	 i != connection->server->tagtab.end();
+	 ++i)
+    {
+      for (std::list<UCommand *>::iterator j = i->second.commands.begin();
+	   j != i->second.commands.end(); j++)
+      {
+	std::ostringstream tstr;
+	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
+	connection->sendf(getTag(), tstr.str().c_str());
+      }
+    }
+  }
+
   if (*oper == "uservars")
   {
     for (HMvariabletab::iterator i = connection->server->variabletab.begin();
@@ -5317,7 +5342,10 @@ UCommand_TIMEOUT::execute_(UConnection*)
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy()))
       );
-  morph->setTag(tagRef->c_str());
+  // We can't tag morph as morphing engine will override us.
+  static_cast<UCommand_TREE*>(morph)->command1->setTag(tagRef->c_str());
+  static_cast<UCommand_TREE*>(morph)->command2->setTag(tagRef->c_str());
+
   return UMORPH;
 }
 
@@ -6289,6 +6317,7 @@ UCommand_FOREACH::UCommand_FOREACH(const location& l,
     command (command),
     expression (expression),
     position (0),
+    list(0),
     firsttime (true)
 {
   ADDOBJ(UCommand_FOREACH);
@@ -6301,6 +6330,7 @@ UCommand_FOREACH::~UCommand_FOREACH()
   delete command;
   delete variablename;
   delete expression;
+  delete list;
 }
 
 //! UCommand subclass execution function
@@ -6310,7 +6340,8 @@ UCommand_FOREACH::execute_(UConnection *connection)
   if (firsttime)
   {
     firsttime = false;
-    position = expression->eval(this, connection);
+    list =  expression->eval(this, connection);
+    position = list;
     if (position == 0)
       return UCOMPLETED;
     if (position->dataType == DATA_LIST)

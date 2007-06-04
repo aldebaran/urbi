@@ -415,7 +415,7 @@ UVariable::selfSet(ufloat *valcheck)
     the UValue is actually sent back.
 */
 UValue*
-UVariable::get(bool autoloop)
+UVariable::get()
 {
   // recursive call for objects
   if (value->dataType == DATA_OBJ)
@@ -428,35 +428,21 @@ UVariable::get(bool autoloop)
 	  && it->second->getDevicename()== (std::string)value->str->c_str())
 	it->second->get ();
 
-  // data preparation for the UNotifyChange/Access loop control
-  int nb_change = internalBinder.size ();
-  std::string change_objname = "";
-  if (nb_change == 1 && autoloop)
-    change_objname = (*internalBinder.begin ())->objname;
-
   // check for existing notifychange
   for (std::list<urbi::UGenericCallback*>::iterator i =
 	 internalAccessBinder.begin();
        i != internalAccessBinder.end();
        ++i)
   {
-    // checking if there is a UNotifyChange/Access loop on a UOwned inside
-    // the same object
-    urbi::UVar* tmpvar = static_cast<urbi::UVar*> ((*i)->storage);
-
-    if (!tmpvar->owned
-	|| change_objname != (*i)->objname)
+    urbi::UList l;
+    if ((*i)->storage)
     {
-      urbi::UList l;
-      if ((*i)->storage)
-      {
-	// monitor with &UVar reference
-	urbi::UValue *v = new urbi::UValue();
-	v->storage = (*i)->storage;
-	l.array.push_back(v);
-      }
-      (*i)->__evalcall(l);
+      // monitor with &UVar reference
+      urbi::UValue *v = new urbi::UValue();
+      v->storage = (*i)->storage;
+      l.array.push_back(v);
     }
+    (*i)->__evalcall(l);
   }
 
   return value;

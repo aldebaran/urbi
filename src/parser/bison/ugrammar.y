@@ -210,8 +210,8 @@
   TOK_COPY         "copy"
   TOK_DEF          "def"
   TOK_DELGROUP     "delgroup"
-  TOK_DERIV        "derivation"
-  TOK_DERIV2       "second-derivation"
+  TOK_DERIV        "'"
+  TOK_DERIV2       "''"
   TOK_DIR          "->"
   TOK_DISINHERITS  "disinherits"
   TOK_DIV          "/"
@@ -249,7 +249,6 @@
   TOK_NORM         "'n"
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
-  TOK_ONLY         "only"
   TOK_LOR          "||"
   TOK_PERCENT      "%"
   TOK_PLUS         "+"
@@ -267,8 +266,8 @@
   TOK_TILDE        "~"
   TOK_TIMEOUT      "timeout"
   TOK_TRUE         "true"
-  TOK_TRUEDERIV    "command-derivation"
-  TOK_TRUEDERIV2   "second-command-derivation"
+  TOK_TRUEDERIV    "'d"
+  TOK_TRUEDERIV2   "''d"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
   TOK_UNBLOCK      "unblock"
@@ -355,7 +354,7 @@
 %type <named_arguments>     flag            "a flag"
 %type <named_arguments>     flags.0         "zero or more flags"
 %type <named_arguments>     flags.1         "one or more flags"
-%type <variablelist>        refvariables    "list of variables"
+%type <variablelist>        variables       "list of variables"
 %type <expr>                softtest        "soft test"
 %type <named_arguments>     identifiers     "list of identifiers"
 %type <expr>                class_declaration "class declaration"
@@ -364,7 +363,6 @@
 %type <property>            property        "property"
 %type <variable>            variable        "variable"
 %type <variable>            purevariable    "pure variable"
-%type <variable>            refvariable     "ref-variable"
 //%type  <named_arguments>     purevariables   "list of pure variables"
 
 
@@ -405,8 +403,8 @@ root:
     up.commandTree = 0;
   }
 
-| refvariable "=" binary ";" {
-    /*
+  | variable "=" binary ";" {
+     /*
       // FIXME: A pointer to a ref-pointer?  Sounds absurd.
       libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
       UCommand* c = new UCommand_ASSIGN_BINARY(@$, $1, ref);
@@ -464,7 +462,7 @@ taggedcommand:
     */}
 
 | tag flags.0 ":" command
-  { 
+  {
     $$ = new ast::TagExp (@$, $1, $4);
     // FIXME: $2 ignored.
   }
@@ -602,21 +600,20 @@ statement:
     $$ = new UCommand_NOOP(@$);
   */}
 
-| refvariable "=" expr namedarguments {/*
+| variable "=" expr namedarguments {/*
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
     */}
 
-| refvariable "+=" expr {/*
-
+| variable "+=" expr {/*
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 0);
     */}
 
-| refvariable "-=" expr {/*
+| variable "-=" expr {/*
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 1);
     */}
 
-| "var" refvariable "=" expr namedarguments {/*
+| "var" variable "=" expr namedarguments {/*
 
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
@@ -632,7 +629,7 @@ statement:
     $$ = new UCommand_EXPR(@$, $1);
     */}
 
-| refvariable number {/*
+| variable number {/*
       $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
     */}
 
@@ -643,12 +640,11 @@ statement:
     $$ = new UCommand_ECHO(@$, $2, $3, 0);
     */}
 
-| refvariable "=" "new" "identifier" {/*
-
+| variable "=" "new" "identifier" {/*
       $$ = new UCommand_NEW(@$, $1, $4, 0, true);
     */}
 
-| refvariable "=" "new" "identifier" "(" argument_list ")" {/*
+| variable "=" "new" "identifier" "(" argument_list ")" {/*
 
       $$ = new UCommand_NEW(@$, $1, $4, $6);
     */}
@@ -788,12 +784,12 @@ statement:
       $$ = new UCommand_WAIT_TEST(@$, $2);
     */}
 
-| refvariable "--" {/*
+| variable "--" {/*
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
     */}
 
-| refvariable "++" {/*
+| variable "++" {/*
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
     */}
@@ -803,19 +799,19 @@ statement:
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
     */}
 
-| "var" refvariable {/*
+| "var" variable {/*
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
     */}
 
-| "def" refvariable {/*
+| "def" variable {/*
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
     */}
 
-| "var" "{/*" refvariables "*/}" {/*
+| "var" "{" variables "}" {/*
 
     $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
     */}
@@ -988,7 +984,7 @@ statement:
 
 
 /*-------------------------------------------.
-| VARID, PUREVARIABLE, VARIABLE, REFVARIABLE |
+| VARID, PUREVARIABLE, VARIABLE, VARIABLE |
 `-------------------------------------------*/
 
 purevariable:
@@ -1028,20 +1024,6 @@ variable:
 | purevariable "'d"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; */}
 | purevariable "'dd"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;*/}
 ;
-
-refvariable:
-    variable {/*
-
-      $$ = $1;
-    */}
-
-| "only" variable {/*
-
-      $$ = $2;
-      $$->rooted = true;
-  */}
-;
-
 
 /* PROPERTY */
 
@@ -1130,7 +1112,7 @@ expr:
 			 $1->property, $1->variablename);
   */}
 
-| refvariable "(" argument_list ")"  {/*
+| variable "(" argument_list ")"  {/*
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
@@ -1348,16 +1330,16 @@ class_declaration_list:
     */}
 ;
 
-/* REFVARIABLES */
+/* VARIABLES */
 
-refvariables:
+variables:
   /* empty */  {/* $$ = 0; */}
 
-| refvariable {/*
+| variable {/*
       $$ = new UVariableList($1);
     */}
 
-| refvariable ";" refvariables {/*
+| variable ";" variables {/*
       $$ = new UVariableList($1, $3);
     */}
 ;
@@ -1367,7 +1349,7 @@ refvariables:
 %%
 
 // The error function that 'bison' calls.
-void 
+void
 yy::parser::error(const location_type& l, const std::string& m)
 {
   up.error (l, m);

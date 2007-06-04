@@ -61,7 +61,7 @@ typedef yy::parser::token token;
 // Store yytext in valp->str, and return Token.
 #define RETURN_STR(Token)				\
   RETURN_VALUE(Token, str, new std::string(yytext))
- 
+
 /// Return an fval of type Token with Value.
 #define RETURN_FVAL(Token, Value)		\
   RETURN_VALUE(Token, fval, Value)
@@ -155,27 +155,28 @@ STRING   \"([^\"]|"\\\"")*\"
 "external"  |
 "internal"  RETURN_STR (BINDER);
 
-"commands"    |
-"connections" |
-"debugoff"    |
-"debugon"     |
-"devices"     |
-"events"      |
-"motoroff"    |
-"motoron"     |
-"ping"        |
-"quit"        |
-"reboot"      |
-"reset"       |
-"shutdown"    |
-"stopall"     |
-"strict"      |
-"undefall"    |
-"unstrict"    |
-"uservars"    |
-"functions"   |
-"taglist"     |
-"vars"        RETURN_STR (OPERATOR);
+"commands"        |
+"connections"     |
+"debugoff"        |
+"debugon"         |
+"devices"         |
+"events"          |
+"functions"       |
+"motoroff"        |
+"motoron"         |
+"ping"            |
+"quit"            |
+"reboot"          |
+"reset"           |
+"runningcommands" |
+"shutdown"        |
+"stopall"         |
+"strict"          |
+"taglist"         |
+"undefall"        |
+"unstrict"        |
+"uservars"        |
+"vars"            RETURN_STR (OPERATOR);
 
 "BIN"           return token::TOK_BIN;
 "addgroup"      return token::TOK_ADDGROUP;
@@ -209,7 +210,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "noop"          return token::TOK_NOOP;
 "object"        return token::TOK_OBJECT;
 "onleave"       return token::TOK_ONLEAVE;
-"only"          return token::TOK_ONLY;
 "return"        return token::TOK_RETURN;
 "static"        return token::TOK_STATIC;
 "stopif"        return token::TOK_STOPIF;

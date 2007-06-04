@@ -1,5 +1,141 @@
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1088:1149 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-06-04  Akim Demaille  <demaille@gostai.com>
+	Finish broken merge
+	merge -r 1038:1078 failed to include the modifications for
+	uconnection.cc.
+	* src/uconnection.cc: Import the changes documented in 2007-06-04.
+
+	2007-06-04  Akim Demaille  <demaille@gostai.com>
+	Formatting changes
+	* src/ueventhandler.cc: Sort commutable lines.
+	Promote for over while.
+
+	2007-06-04  Akim Demaille  <demaille@gostai.com>
+	The attribute UVariableName::rooted is not removed (that was
+	the effect of the "only" keyword) because it appears to be
+	set and checked in other places.
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y: Remove
+	the "only" keyword.
+	This was validated by JCB.
+	(refvariable): Remove, use variable instead.
+	(refvariables): Rename as...
+	(variables): this.
+
+	2007-06-04  Akim Demaille  <demaille@gostai.com>
+	merge -r 1078:1138 https://svn.gostai.com/svn/kernel1/branches/1.0
+	Note that, again, I had to apply some of the changes by hand,
+	since some files were moved in include/kernel.
+	Also, I had to fill properly Matthieu's ChangeLog entries.
+
+	2007-05-31  Matthieu Nottale  <nottale@gostai.com>
+	Fix a bug in timeout command
+	* src/ucommand.cc: in UCommand_TIMEOUT::execute: setTag on
+	intermediate nodes instead of morphed node.
+
+	2007-05-29  Guillaume Deslandes  <deslandes@gostai.com>
+	Wrong token definition for derivations
+	* ugrammar.y: Fixed definition for first and second derivation.
+
+	2007-05-29  Matthieu Nottale  <nottale@gostai.com>
+	Add the 'runningcommands' keyword, fix a bug in tag mechanism.
+	* parser/bison/utoken.l: Add the runningcommands keyword.
+	* ucommand.cc: Implement runningcommands.
+	Add missing unsetTag call in optimised implementations of setTag.
+
+	2007-05-28  Matthieu Nottale  <nottale@gostai.com>
+	Optimisation: replace sprintfs with strcpy.
+	* src/uobj.cc: Use UString::makeName where possible.
+	* src/ustring.hh: Add two static inline functions to form a "a.b"
+	name from two UString/char* optimising the implementation.
+	* src/uvariablename.cc: Use UString::makeName where possible.
+
+	2007-05-25  Matthieu Nottale  <nottale@gostai.com>
+	Fix critical bug in previous patch, optimize more.
+	* ueventhandler.cc: use the char* in unForgedName to insert
+	into emit2tab in UEventHandler ctor.
+	* ueventhandler.hh: Remove unused emit2 attribute.
+	* uobj.cc: use eventSymbolDefined in searchEvent intead of iterating.
+	* uobj.hh: Change prototype of searchEvent to return a bool,
+	nobody uses the return value except for !0 check.
+
+	2007-05-25  Matthieu Nottale  <nottale@gostai.com>
+	Optimize kernel::eventSymbolDefined
+	* ueventhandler.cc: kernel::eventSymbolDefined now performs a find
+	on urbiserver::emit2tab. An entry in this hash is added if not
+	present in  UEventHandler ctor.
+	Additionaly, the entry in emit2tab is a counter on the number of
+	active events with this name
+	* ueventhandler.hh: .
+	* userver.hh,
+	* utypes.hh: Defines a new hash_map type and an instance in
+	userver: emit2tab.
+
+	2007-05-23  Matthieu Nottale  <nottale@gostai.com>
+	Fix leak in foreach command.
+	* src/ucommand.cc,
+	* src/ucommand.hh: Add a 'list' field containing the result of the
+	evaluation of 'expression', delete it in dtor.
+
+	2007-05-10  Matthieu Nottale  <nottale@gostai.com>
+	Fix bug: adaptive modifier alone did not trigger notifyaccess callbacks
+	* src/ucommand.cc: Set 'controlled' to true on UCommand_ASSIGN_VALUE
+	when adaptive modifier is found.
+
+	2007-05-07  Matthieu Nottale  <nottale@gostai.com>
+	Increase max buffer size to 30M
+	* src/network/bsdnet/connection.hh: Here.
+
+	2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
+	fix bug #155 (+report inconsistant behavior)
+	* src/ucommand.cc: donnot report the end of morphed commands.
+	* src/uconnection.cc: transmit the connection information during
+	morphing.
+	* src/unamedparameters.cc: copy notifyEnd when copying flags.
+	* src/unamedparameters.hh: adapt ctor to contain notifyEnd.
+
+	2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
+	update test externals.
+
+	2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
+	update test externals.
+
+	2007-05-05  Jean-Christophe Baillie  <baillie@gostai.com>
+	The bug appeared when a plugged UOwned UVar was notified on change and
+	access, and a remote UObject var "notifychanging" it. UOwned was
+	preventing the UVar::get call, from the autoloop mechanism used to make
+	sure UVar that are both change/access notified are constantly updated.
+	This security was not necessary because the UVar = operator was
+	already preventing UOwner variable against notifychange calls when a
+	notifyaccess was triggered.
+
+	Fix bug in notifychange/access interaction with UOwned UVars.
+	* src/userver.cc: change UVariable::get usage.
+	* src/uvariable.cc: remove double blocking mechanism, change get.
+	* src/uvariable.hh: change UVarialbe::get API.
+
+	2007-05-25  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Partial revert of r1111.
+	* src/network/bsdnet/network.cc: Revert another part of r1111 that
+	breaks on MinGW.
+
+	2007-05-25  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Partial revert of r1111.
+	* src/network/bsdnet/network.cc: Don't try to use `pipe' or pthread
+	functions on MinGW.
+
+	2007-05-25  mefyl  <mefyl@lrde.epita.fr>
+	Update externals.
+
+	2007-05-25  mefyl  <mefyl@lrde.epita.fr>
+	Use Unix networking under MinGW
+	* src/network/bsdnet/connection.cc,
+	* src/network/bsdnet/network.cc: Here.
+
+2007-06-04  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/bison.mk (ugrammar.stamp): Depend on output-to-html
 	too.
 

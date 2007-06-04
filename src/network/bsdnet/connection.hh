@@ -20,11 +20,11 @@ public:
   enum
   {
     MINSENDBUFFERSIZE = 4096,
-    MAXSENDBUFFERSIZE = 1048576,
+    MAXSENDBUFFERSIZE = 33554432,
     // This is also the size of the buffer
     PACKETSIZE	     = 16384,
     MINRECVBUFFERSIZE = 4096,
-    MAXRECVBUFFERSIZE = 1048576,
+    MAXRECVBUFFERSIZE = 33554432,
   };
 
   //! Creates a new connection from the connection file descriptor

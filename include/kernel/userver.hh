@@ -221,8 +221,10 @@ public:
   HMaliastab               objaliastab;
   /// Hash of group definitions.
   HMgrouptab               grouptab;
-  /// Hash of events.
+  /// Hash of events, one entry per (name,nbArgs).
   HMemittab                emittab;
+  /// Hash of events, one entry per name.
+  HMemit2tab               emit2tab;
   /// Hash of function binders.
   HMbindertab              functionbindertab;
   /// Hash of event binders.
