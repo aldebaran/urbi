@@ -221,7 +221,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "noop"          return token::TOK_NOOP;
 "object"        return token::TOK_OBJECT;
 "onleave"       return token::TOK_ONLEAVE;
-"only"          return token::TOK_ONLY;
 "return"        return token::TOK_RETURN;
 "static"        return token::TOK_STATIC;
 "stopif"        return token::TOK_STOPIF;

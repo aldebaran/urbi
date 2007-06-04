@@ -1,5 +1,17 @@
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
+	The attribute UVariableName::rooted is not removed (that was
+	the effect of the "only" keyword) because it appears to be
+	set and checked in other places.
+	* src/parser/bison/utoken.l, src/parser/bison/ugrammar.y: Remove
+	the "only" keyword.
+	This was validated by JCB.
+	(refvariable): Remove, use variable instead.
+	(refvariables): Rename as...
+	(variables): this.
+
+2007-06-04  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1078:1138 https://svn.gostai.com/svn/kernel1/branches/1.0
 	Note that, again, I had to apply some of the changes by hand,
 	since some files were moved in include/kernel.

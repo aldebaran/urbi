@@ -300,7 +300,6 @@ take (T* t)
   TOK_NORM         "'n"
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
-  TOK_ONLY         "only"
   TOK_OROPERATOR   "||"
   TOK_PERCENT      "%"
   TOK_PLUS         "+"
@@ -393,7 +392,7 @@ take (T* t)
 %type <namedparameters>     flag            "a flag"
 %type <namedparameters>     flags.0         "zero or more flags"
 %type <namedparameters>     flags.1         "one or more flags"
-%type <variablelist>        refvariables    "list of variables"
+%type <variablelist>        variables       "list of variables"
 %type <expr>                softtest        "soft test"
 %type <namedparameters>     identifiers     "list of identifiers"
 %type <expr>                class_declaration "class declaration"
@@ -402,7 +401,6 @@ take (T* t)
 %type <property>            property        "property"
 %type <variable>            variable        "variable"
 %type <variable>            purevariable    "pure variable"
-%type <variable>            refvariable     "ref-variable"
 //%type  <namedparameters>     purevariables   "list of pure variables"
 
 
@@ -443,7 +441,7 @@ root:
     up.commandTree = 0;
   }
 
-  | refvariable "=" binary ";" {
+  | variable "=" binary ";" {
 
       // FIXME: A pointer to a ref-pointer?  Sounds absurd.
       libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
@@ -579,9 +577,9 @@ flag:
 flags.1:
   flag             { $$ = $1;       }
 | flags.1 flag     { $1->next = $2;
-                     if ($2->notifyEnd)
-                       $1->notifyEnd = true; // propagate the +end flag optim
-                   }
+		     if ($2->notifyEnd)
+		       $1->notifyEnd = true; // propagate the +end flag optim
+		   }
 ;
 
 // Zero or more "flag"s.
@@ -655,25 +653,25 @@ instruction:
     memcheck(up, $$);
   }
 
-  | refvariable "=" expr namedparameters {
+  | variable "=" expr namedparameters {
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
     memcheck(up, $$, $1, $3, $4);
     }
 
-  | refvariable "+=" expr {
+  | variable "+=" expr {
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 0);
     memcheck(up, $$, $1, $3);
     }
 
-  | refvariable "-=" expr {
+  | variable "-=" expr {
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 1);
     memcheck(up, $$, $1, $3);
     }
 
 
-  | "var" refvariable "=" expr namedparameters {
+  | "var" variable "=" expr namedparameters {
 
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
@@ -692,7 +690,7 @@ instruction:
       memcheck(up, $$, $1);
     }
 
-  | refvariable NUM {
+  | variable NUM {
 
       // FIXME: Leak
       $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
@@ -717,14 +715,14 @@ instruction:
       memcheck(up, $$, $2, $3);
     }
 
-  | refvariable "=" "new" "identifier" {
+  | variable "=" "new" "identifier" {
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, 0, true);
       memcheck(up, $$, $1, $4);
     }
 
-  | refvariable "=" "new" "identifier" "(" parameterlist ")" {
+  | variable "=" "new" "identifier" "(" parameterlist ")" {
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, $6);
@@ -900,13 +898,13 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | refvariable "--" {
+  | variable "--" {
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
       memcheck(up, $$, $1);
     }
 
-  | refvariable "++" {
+  | variable "++" {
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
       memcheck(up, $$, $1);
@@ -918,21 +916,21 @@ instruction:
       memcheck(up, $$);
     }
 
-  | "var" refvariable {
+  | "var" variable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
-  | "def" refvariable {
+  | "def" variable {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
-  | "var" "{" refvariables "}" {
+  | "var" "{" variables "}" {
 
     $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
     memcheck(up, $$, $3);
@@ -1139,7 +1137,7 @@ array:
 ;
 
 
-/* VARID, PUREVARIABLE, VARIABLE, REFVARIABLE */
+/* VARID, PUREVARIABLE, VARIABLE, VARIABLE */
 
 purevariable:
 
@@ -1198,19 +1196,6 @@ variable:
 | purevariable "''"	{ $$ = $1; $$->deriv = UVariableName::UDERIV2;	  }
 | purevariable "'d"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; }
 | purevariable "'dd"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;}
-;
-
-refvariable:
-    variable {
-
-      $$ = $1;
-    }
-
-  | "only" variable {
-
-      $$ = $2;
-      $$->rooted = true;
-  }
 ;
 
 
@@ -1300,7 +1285,7 @@ expr:
      memcheck(up, $$, $1);
   }
 
-| refvariable "(" parameterlist ")"  {
+| variable "(" parameterlist ")"  {
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
@@ -1535,18 +1520,18 @@ class_declaration_list:
     }
 ;
 
-/* REFVARIABLES */
+/* VARIABLES */
 
-refvariables:
+variables:
   /* empty */  { $$ = 0; }
 
-  | refvariable {
+  | variable {
       memcheck(up, $1);
       $$ = new UVariableList($1);
       memcheck(up, $$, $1);
     }
 
-  | refvariable ";" refvariables {
+  | variable ";" variables {
       memcheck(up, $1);
       $$ = new UVariableList($1, $3);
       memcheck(up, $$, $3, $1);
