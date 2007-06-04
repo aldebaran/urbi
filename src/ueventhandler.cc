@@ -59,7 +59,7 @@ kernel::eventSymbolDefined (const char* symbol)
 
   HMemit2tab::iterator i = ::urbiserver->emit2tab.find(symbol);
   return (i!= ::urbiserver->emit2tab.end());
-  
+
 }
 
 bool
@@ -136,7 +136,7 @@ UEventHandler::UEventHandler (UString* name, int nbarg):
 
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
-  
+
 }
 
 UEventHandler::~UEventHandler()
@@ -165,7 +165,7 @@ UEventHandler::addEvent(UNamedParameters* parameters,
 
   // triggers associated commands update
   updateRegisteredCmd ();
- 
+
   return e;
 }
 
