@@ -30,13 +30,13 @@ class UNamedParameters
 {
 public:
   UNamedParameters(UString* name,
-		   UExpression *expression,
-		   UNamedParameters* next=0,
-                   bool notifyEnd=false);
+		   UExpression* expression,
+		   UNamedParameters* next = 0,
+		   bool notifyEnd = false);
 
   UNamedParameters(UExpression *expression,
-                   UNamedParameters* next = 0,
-                   bool notifyEnd=false);
+		   UNamedParameters* next = 0,
+		   bool notifyEnd = false);
 
   virtual ~UNamedParameters();
 
