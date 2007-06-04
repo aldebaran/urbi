@@ -567,9 +567,9 @@ flag:
 flags.1:
   flag             { $$ = $1;       }
 | flags.1 flag     { $1->next = $2;
-                     if ($2->notifyEnd)
-                       $1->notifyEnd = true; // propagate the +end flag optim
-                   }
+		     if ($2->notifyEnd)
+		       $1->notifyEnd = true; // propagate the +end flag optim
+		   }
 ;
 
 // Zero or more "flag"s.

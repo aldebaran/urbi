@@ -547,7 +547,7 @@ UServer::work()
 	= variabletab.find("__system__.resetsignal");
       if (findResetSignal != variabletab.end())
       {
-        //reload CLIENT.INI
+	//reload CLIENT.INI
 	for (std::list<UConnection*>::iterator i = connectionList.begin();
 	     i != connectionList.end();
 	     ++i)
