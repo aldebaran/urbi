@@ -1872,8 +1872,10 @@
 
 	branch 1.0: fix a segv when deleting a variable with function scope
 	* src/ucallid.cc: Implement:
-	* src/ucallid.hh: Add a remove function to remove uvariables from list. This function does nothing as soon as dtor has been called.
-	* src/uvariable.hh: Hold a ucallid* , non null if var is of function scope. call its remove function when deleted.
+        * src/ucallid.hh: Add a remove function to remove uvariables from
+        list. This function does nothing as soon as dtor has been called.
+        * src/uvariable.hh: Hold a ucallid* , non null if var is of function
+        scope. call its remove function when deleted.
 
 	2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
@@ -1997,10 +1999,14 @@
 
 2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
-	Add missing lock in block memory manager. Fix a double delete when a variable with function scope is deleted. Replace some ustring by std::string
-	* src/memorymanager/blockmemorymanager.hh: BlockMemoryManager now inherits lockable.
+        Add missing lock in block memory manager. Fix a double delete when a
+        variable with function scope is deleted. Replace some ustring by
+        std::string
+        * src/memorymanager/blockmemorymanager.hh: BlockMemoryManager now
+        inherits lockable.
 	* src/memorymanager/memorymanager.cc: Lock all calls.
-	* src/ucallid.cc: Register the ucallid to the variables in his list. Add a remove call
+        * src/ucallid.cc: Register the ucallid to the variables in his list.
+        Add a remove call
 	* src/ucallid.hh: Idem.
 	* src/ucommand.cc: Fix for uvariable/uvariablename modifications.
 	* src/uconnection.cc: Fix for uvariable/uvariablename modifications.
@@ -2009,7 +2015,8 @@
 	* src/ustring.hh: Add a ctor taking a std::string.
 	* src/uvalue.cc: Move some fields to private scope, add accessors.
 	* src/uvalue.hh: Idem.
-	* src/uvariable.cc: Move some fields to private scope, add accessors. Call remove of the owner ucallid in dtor.
+        * src/uvariable.cc: Move some fields to private scope, add accessors.
+        Call remove of the owner ucallid in dtor.
 	* src/uvariable.hh: Idem.
 
 2007-01-18  Akim Demaille  <demaille@gostai.com>
@@ -2236,10 +2243,13 @@
 
 2007-01-17  Matthieu Nottale  <nottale@gostai.com>
 
-	Fix a bug when printing strings containing % in the ghostconnection and a potential send bug in userver
-	* src/ughostconnection.cc: Do not pass string to print in the format field. pass ("%s", str) instead.
+        Fix a bug when printing strings containing % in the ghostconnection
+        and a potential send bug in userver
+        * src/ughostconnection.cc: Do not pass string to print in the format
+        field. pass ("%s", str) instead.
 	* src/userver.cc: Add missing call to va_end.
-	* src/userver.hh: Rename overloaded send(va_args) to vsend as the wrong one might be called.
+        * src/userver.hh: Rename overloaded send(va_args) to vsend as the
+        wrong one might be called.
 
 2007-01-16  Akim Demaille  <demaille@gostai.com>
 
@@ -4010,7 +4020,8 @@
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix timeout command behavior.
-	* src/ucommand.cc: Fix timeout command morphing: command can last less than timeout.
+        * src/ucommand.cc: Fix timeout command morphing: command can last less
+        than timeout.
 
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
@@ -4020,7 +4031,8 @@
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a segfault(assert fail) in uconnection.cc
-	* src/ucommand.cc: Add missing initialisation of runlevel1 in UCOMMAND_TREE ctor.
+        * src/ucommand.cc: Add missing initialisation of runlevel1 in
+        UCOMMAND_TREE ctor.
 
 2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
