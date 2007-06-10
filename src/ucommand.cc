@@ -154,6 +154,7 @@ UCommand::UCommand(const location& l, Type _type)
     persistant (false),
     toDelete (false),
     background (false),
+    frozen (false),
     startTime (-1),
     flagExpr1 (0),
     flagExpr2 (0),
@@ -424,7 +425,14 @@ UCommand::isFrozen()
 {
   for (TagInfo* t = tagInfo; t; t = t->parent)
     if (t->frozen)
+    {
+      // set the command in the frozen state. The 'execute' method is responsible to 
+      // reset the state to unfrozen once the command continues running.
+      frozen = true;
+
       return true;
+    }
+
   return false;
 }
 
@@ -1128,6 +1136,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	// Store init time
 	starttime = currentTime;
+        lastExec = starttime;
 
 	// Handling FLAGS
 	if (parameters)
@@ -1322,6 +1331,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     // Process the active modifiers
     if (processModifiers(connection, currentTime) == UFAIL)
       return UCOMPLETED;
+    lastExec = currentTime;
     ///////////////////////////////
 
     // absorb average and set reinit list to set
@@ -1362,6 +1372,12 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 {
   ufloat deltaTime = connection->server->getFrequency();
   ufloat currentVal = controlled ? variable->get()->val : variable->value->val;
+
+  if (frozen)
+  {
+    frozen = false;
+    starttime += currentTime - lastExec;
+  }
 
   // Adaptive mode? (only for "speed" and "time")
   bool adaptive = false;
@@ -4315,9 +4331,19 @@ UCommand_WAIT::execute_(UConnection *connection)
     delete nb;
     status = URUNNING;
   }
-  else if (connection->server->lastTime() >= endtime)
-    status = UCOMPLETED;
+  else
+  {
+    if (frozen)
+    {
+      frozen = false;
+      endtime += connection->server->lastTime() - lastExec;
+    }
 
+    if (connection->server->lastTime() >= endtime)
+      status = UCOMPLETED;
+  }
+
+  lastExec = connection->server->lastTime();
   return status;
 }
 

@@ -1,3 +1,17 @@
+2007-06-10  Jean-Christophe Baillie  <baillie@gostai.com>
+
+        Until now, freezing a time controlled command (like wait or a modified
+	assignement) did not freeze the internal time of the command, which
+	resulted in an abrupt reajustement when the command was unfrozen. This
+	patch fixes the problem on wait and assignments, and the corresponding
+	tests has been added.
+	add a first attempt in "time freezing" capabilities. 
+	* src/ucommand.cc: the WAIT and ASSIGN_VALUE commands now store the
+        'lastExec' time and a flag when they have been frozen. Upon
+	unfreezing, the internal time-oriented variables are adjusted based on
+	the difference between the current time and lastExec..
+	* src/ucommand.hh: add lastExec and the 'frozen' flag.
+
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
 	Finish broken merge

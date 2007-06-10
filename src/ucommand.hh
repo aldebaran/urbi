@@ -175,8 +175,14 @@ public:
   /// "at" or "whenever").
   bool background;
 
+  /// true when the command is frozen (used to "stop time flow")
+  bool frozen;
+
   /// Start time.
   ufloat startTime;
+
+  /// Time of last execution.
+  ufloat lastExec;
 
   /// \name Hideous hacks we must get rid of.
   /// \{
