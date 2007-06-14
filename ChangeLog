@@ -1,5 +1,9 @@
 2007-06-14  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/ugrammar.y: Formatting changes.
+
+2007-06-14  Akim Demaille  <demaille@gostai.com>
+
 	Fix communication bw scanner and parser
 	* src/parser/bison/ugrammar.y: The scanner no longer uses
 	UStrings.

@@ -983,9 +983,9 @@ statement:
 
 
 
-/*----------------------------------------.
-| VARID, PUREVARIABLE, VARIABLE, VARIABLE |
-`----------------------------------------*/
+/*--------------------------------.
+| VARID, PUREVARIABLE, VARIABLE.  |
+`--------------------------------*/
 
 purevariable:
 
@@ -1025,7 +1025,10 @@ variable:
 | purevariable "'dd"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;*/}
 ;
 
-/* PROPERTY */
+
+/*---------.
+| PROPERTY |
+`---------*/
 
 property:
 
@@ -1036,7 +1039,9 @@ property:
 ;
 
 
-/* NAMEDARGUMENTS */
+/*---------------.
+| NAMEDARGUMENTS |
+`---------------*/
 
 namedarguments:
   /* empty */ {/* $$ = 0; */}
@@ -1048,7 +1053,9 @@ namedarguments:
 ;
 
 
-/* BINARY */
+/*-------.
+| BINARY |
+`-------*/
 
 binary:
     "bin" "integer" {/*
@@ -1081,25 +1088,15 @@ ustring:
   "string"  { $$ = new UString(take($1)); }
 ;
 
-/*-----.
-| EXPR |
-`-----*/
+
+/*-------.
+| expr.  |
+`-------*/
 
 expr:
-  number
-  {
-    $$ = new ast::FloatExp(@$, $1);
-  }
-
-| time_expr
-  {
-    $$ = new ast::FloatExp(@$, $1);
-  }
-
-| "string"
-  {
-    $$ = new ast::StringExp(@$, take($1));
-  }
+  number    { $$ = new ast::FloatExp(@$, $1);        }
+| time_expr { $$ = new ast::FloatExp(@$, $1);        }
+| "string"  { $$ = new ast::StringExp(@$, take($1)); }
 
 | "[" argument_list "]" {/*
 
