@@ -531,12 +531,12 @@ UServer::work()
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive() && (*i) != ghost_)
-	  {
-	    (*i)->send("*** Restart completed.\n", "reset");
-	    loadFile("CLIENT.INI", &(*i)->recvQueue());
-	    (*i)->newDataAdded = true;
-	    (*i)->send("*** Ready.\n", "reset");
-	  }
+	{
+	  (*i)->send("*** Restart completed.\n", "reset");
+	  loadFile("CLIENT.INI", &(*i)->recvQueue());
+	  (*i)->newDataAdded = true;
+	  (*i)->send("*** Ready.\n", "reset");
+	}
       reseting = false;
       stage = 0;
     }

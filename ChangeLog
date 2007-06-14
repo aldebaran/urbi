@@ -1,5 +1,10 @@
 2007-06-14  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1138:1157 https://svn.gostai.com/svn/kernel1/branches/1.0
+	Space changes only.
+
+2007-06-14  Akim Demaille  <demaille@gostai.com>
+
 	* src/uexpression.cc: Use for instead of while.
 
 2007-06-14  Akim Demaille  <demaille@gostai.com>
