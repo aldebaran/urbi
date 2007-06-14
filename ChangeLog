@@ -1,3 +1,10 @@
+2007-06-14  Akim Demaille  <demaille@gostai.com>
+
+	Readability
+	* src/ucommand.cc: Formatting changes.
+	* src/uexpression.cc (UExpression::eval_VARIABLE): Improve the
+	readability of the code handle derives.
+
 2007-06-10  Jean-Christophe Baillie  <baillie@gostai.com>
 
         Until now, freezing a time controlled command (like wait or a modified

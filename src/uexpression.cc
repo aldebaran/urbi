@@ -1812,23 +1812,19 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  break;
 
 	case UVariableName::UDERIV2:
+	{
+	  ufloat 
+	    t12 = ::urbiserver->previousTime - ::urbiserver->previous2Time,
+	    t13 = ::urbiserver->previousTime - ::urbiserver->previous3Time,
+	    t23 = ::urbiserver->previous2Time - ::urbiserver->previous3Time;
 	  ret->val = 1000000. * 2 *
-	    ( variable->previous  * (::urbiserver->previous2Time-
-				     ::urbiserver->previous3Time)
-	      - variable->previous2 *(::urbiserver->previousTime-
-				      ::urbiserver->previous3Time)
-	      +
-	      variable->previous3 *
-	      (::urbiserver->previousTime  -
-	       ::urbiserver->previous2Time)
-	      ) / (	 (::urbiserver->previous2Time
-			  - ::urbiserver->previous3Time) *
-			 (::urbiserver->previousTime
-			  - ::urbiserver->previous3Time) *
-			 (::urbiserver->previousTime
-			  - ::urbiserver->previous2Time) );
+	    (variable->previous * t23
+	     - variable->previous2 * t13
+	     + variable->previous3 * t12
+	      ) / (t23 * t13 * t12);
 
-	  break;
+	}
+	break;
 
 	case UVariableName::UTRUEDERIV:
 	  ret->val = 1000. *
@@ -1838,27 +1834,22 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  break;
 
 	case UVariableName::UTRUEDERIV2:
+	{
+	  ufloat
+	    t01 = ::urbiserver->currentTime - ::urbiserver->previousTime,
+	    t02 = ::urbiserver->currentTime - ::urbiserver->previous2Time,
+	    t12 = ::urbiserver->previousTime - ::urbiserver->previous2Time;
 	  ret->val = 1000000. * 2 *
-	    ( variable->get()->val	*
-	      (::urbiserver->previousTime -
-	       ::urbiserver->previous2Time) -
-	      variable->valPrev	*
-	      (::urbiserver->currentTime  -
-	       ::urbiserver->previous2Time) +
-	      variable->valPrev2	*
-	      (::urbiserver->currentTime-
-	       ::urbiserver->previousTime)
-	      ) / (	 (::urbiserver->previousTime
-			  - ::urbiserver->previous2Time) *
-			 (::urbiserver->currentTime
-			  - ::urbiserver->previous2Time) *
-			 (::urbiserver->currentTime
-			  - ::urbiserver->previousTime) );
-	  break;
+	    (variable->get()->val * t12
+	     - variable->valPrev * t02
+	     + variable->valPrev2 * t01
+	      ) / (t12 * t02 * t01);
+	}
+	break;
       }
     }
   }
-
+  
   // static variables
   if (variablename->isstatic)
     if (firsteval)

@@ -309,6 +309,8 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	delete clonename;
 
 	// FIXME: Why don't we use clone here on the UVariableName.
+	// There are some attributes that are not copied (e.g.,
+	// isstatic).  This is way too error-prone.
 	if (varname->nostruct && with_nostruct)
 	  clonename = new UVariableName(devicename->copy(), (*i)->copy(),
 					false, ucopy (varname->index));
@@ -426,7 +428,7 @@ UCommand::isFrozen()
   for (TagInfo* t = tagInfo; t; t = t->parent)
     if (t->frozen)
     {
-      // set the command in the frozen state. The 'execute' method is responsible to 
+      // set the command in the frozen state. The 'execute' method is responsible to
       // reset the state to unfrozen once the command continues running.
       frozen = true;
 
@@ -1136,7 +1138,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	// Store init time
 	starttime = currentTime;
-        lastExec = starttime;
+	lastExec = starttime;
 
 	// Handling FLAGS
 	if (parameters)
