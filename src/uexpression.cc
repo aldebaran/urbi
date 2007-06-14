@@ -1813,7 +1813,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 
 	case UVariableName::UDERIV2:
 	{
-	  ufloat 
+	  ufloat
 	    t12 = ::urbiserver->previousTime - ::urbiserver->previous2Time,
 	    t13 = ::urbiserver->previousTime - ::urbiserver->previous3Time,
 	    t23 = ::urbiserver->previous2Time - ::urbiserver->previous3Time;
@@ -1849,7 +1849,7 @@ UExpression::eval_VARIABLE (UCommand *command,
       }
     }
   }
-  
+
   // static variables
   if (variablename->isstatic)
     if (firsteval)
