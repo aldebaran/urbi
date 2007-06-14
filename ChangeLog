@@ -1,5 +1,9 @@
 2007-06-14  Akim Demaille  <demaille@gostai.com>
 
+	* src/uexpression.cc: Use for instead of while.
+
+2007-06-14  Akim Demaille  <demaille@gostai.com>
+
 	Readability
 	* src/ucommand.cc: Formatting changes.
 	* src/uexpression.cc (UExpression::eval_VARIABLE): Improve the

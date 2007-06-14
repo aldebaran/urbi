@@ -1875,13 +1875,9 @@ UExpression::asyncScan(UASyncCommand *cmd,
   {
     case LIST:
     {
-      UNamedParameters *pevent = parameters;
-      while (pevent)
-      {
-	if (pevent->expression->asyncScan(cmd, c) == UFAIL)
+      for (UNamedParameters *p = parameters; p; p = p->next)
+	if (p->expression->asyncScan(cmd, c) == UFAIL)
 	  return UFAIL;
-	pevent = pevent->next;
-      }
       return USUCCESS;
     }
 
