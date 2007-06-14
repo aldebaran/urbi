@@ -1,3 +1,9 @@
+2007-06-14  Akim Demaille  <demaille@gostai.com>
+
+	Fix communication bw scanner and parser
+	* src/parser/bison/ugrammar.y: The scanner no longer uses
+	UStrings.
+
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 1088:1149 https://svn.gostai.com/svn/kernel1/trunk

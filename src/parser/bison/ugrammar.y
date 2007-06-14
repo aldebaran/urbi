@@ -316,12 +316,12 @@
 }
 
 %token
-   <str>  STRING        "string"
-   <ustr>  BINDER             "binder"
-   <ustr>  OPERATOR           "operator command"
-   <ustr>  OPERATOR_ID        "operator"
-   <ustr>  OPERATOR_ID_PARAM  "param-operator"
-   <ustr>  OPERATOR_VAR       "var-operator"
+   <str>  STRING             "string"
+   <str>  BINDER             "binder"
+   <str>  OPERATOR           "operator command"
+   <str>  OPERATOR_ID        "operator"
+   <str>  OPERATOR_ID_PARAM  "param-operator"
+   <str>  OPERATOR_VAR       "var-operator"
 %type <ustr> ustring;
 %destructor { delete $$; } <str> <ustr>;
 %printer { debug_stream() << *$$; } <str> <ustr>;
@@ -983,9 +983,9 @@ statement:
 
 
 
-/*-------------------------------------------.
+/*----------------------------------------.
 | VARID, PUREVARIABLE, VARIABLE, VARIABLE |
-`-------------------------------------------*/
+`----------------------------------------*/
 
 purevariable:
 
