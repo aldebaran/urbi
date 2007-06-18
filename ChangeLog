@@ -1,5 +1,9 @@
 2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	update externals (tests). 
+
+2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
         The +freeze flag notifies when the command gets frozen/unfrozen.
 
 	add support for +freeze flag. 
