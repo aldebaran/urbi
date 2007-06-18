@@ -32,11 +32,13 @@ public:
   UNamedParameters(UString* name,
 		   UExpression* expression,
 		   UNamedParameters* next = 0,
-		   bool notifyEnd = false);
+		   bool notifyEnd = false,
+                   bool notifyFreeze = false);
 
   UNamedParameters(UExpression *expression,
 		   UNamedParameters* next = 0,
-		   bool notifyEnd = false);
+		   bool notifyEnd = false,
+                   bool notifyFreeze = false);
 
   virtual ~UNamedParameters();
 
@@ -55,6 +57,7 @@ public:
 
   /// Horrible hack to speed up the flag scanning done in UCommand dctor
   bool               notifyEnd;
+  bool               notifyFreeze;
 };
 
 #endif

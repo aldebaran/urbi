@@ -1,3 +1,15 @@
+2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
+
+        The +freeze flag notifies when the command gets frozen/unfrozen.
+
+	add support for +freeze flag. 
+	* src/parser/bison/ugrammar.y: add the same optim like for +end.
+	* src/parser/bison/utoken.l: add +freeze (and +stop at the same time).
+	* src/ucommand.cc: handle the notification.
+	* src/unamedparameters.cc: add notifyFreeze boolean to fasten
+	treatment.
+	* src/unamedparameters.hh: define notifyFreeze.
+
 2007-06-14  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 1138:1157 https://svn.gostai.com/svn/kernel1/branches/1.0

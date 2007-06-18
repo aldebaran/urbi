@@ -430,10 +430,16 @@ UCommand::isFrozen()
     {
       // set the command in the frozen state. The 'execute' method is responsible to
       // reset the state to unfrozen once the command continues running.
+      if (!frozen && myconnection && flags && flags->notifyFreeze && !morph)
+        myconnection->send("*** frozen\n", getTag().c_str());
+
       frozen = true;
 
       return true;
     }
+
+  if (frozen && myconnection && flags && flags->notifyFreeze && !morph)
+    myconnection->send("*** unfrozen\n", getTag().c_str());
 
   return false;
 }

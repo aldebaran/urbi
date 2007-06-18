@@ -550,6 +550,8 @@ flag:
     $$ = new UNamedParameters(new UString("flag"), flagval);
     if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
       $$->notifyEnd = true;
+    if (flagval->val == 11)
+      $$->notifyFreeze = true;
     memcheck(up, $$, flagval);
   }
 
@@ -579,6 +581,8 @@ flags.1:
 | flags.1 flag     { $1->next = $2;
 		     if ($2->notifyEnd)
 		       $1->notifyEnd = true; // propagate the +end flag optim
+                     if ($2->notifyFreeze)
+                       $1->notifyFreeze = true; // propagate the +freeze flag
 		   }
 ;
 

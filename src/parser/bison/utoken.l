@@ -123,11 +123,8 @@ STRING   \"([^\"]|"\\\"")*\"
 "+begin"      RETURN_FLAG(4);
 "+top"        RETURN_FLAG(7);
 "+bg"         RETURN_FLAG(10);
-
-"+timeout"    RETURN_VAL_TOKEN(FLAGTIME, 5);
-
-"+stop"       RETURN_VAL_TOKEN(FLAGTEST, 7);
-"+freeze"     RETURN_VAL_TOKEN(FLAGTEST, 8);
+"+freeze"     RETURN_FLAG(11);
+"+stop"       RETURN_FLAG(12);
 
 "+connection" RETURN_VAL_TOKEN(FLAGID, 9);
 
