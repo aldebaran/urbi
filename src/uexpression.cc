@@ -121,8 +121,7 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(const location& l,
-			 UExpression::Type t, ufloat v)
+UExpression::UExpression(const location& l, UExpression::Type t, ufloat v)
  : UAst(l)
 {
   passert (t, t == VALUE);
@@ -138,8 +137,7 @@ UExpression::UExpression(const location& l,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(const location& l,
-			 UExpression::Type t, UString *s)
+UExpression::UExpression(const location& l, UExpression::Type t, UString *s)
  : UAst(l)
 {
   passert (t, t == VALUE || t == GROUP);
@@ -203,7 +201,7 @@ UExpression::UExpression(const location& l,
 {
   // FIXME: The comment used to accept GROUPLIST, which AD translated
   // into GROUP.  What should it be?
-  passert (t, t == VARIABLE || t == ADDR_VARIABLE || t == GROUP);
+  passert (t, t == ADDR_VARIABLE || t == GROUP || t == VARIABLE);
   initialize();
   type = t;
   if (t == ADDR_VARIABLE)

@@ -1,5 +1,11 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	class-definition.chk
+	* src/parser/bison/ugrammar.y: Comment a weakness.
+	* src/uexpression.cc: Formatting changes.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	Simplify class defs
 	* src/parser/bison/ugrammar.y (formal_arguments): New.
 	(class_declaration): Use it to factor.

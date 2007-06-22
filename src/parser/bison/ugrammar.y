@@ -1285,7 +1285,7 @@ expr:
 
 | property {
     $$ = new UExpression(@$, UExpression::PROPERTY,
-                        $1->property, $1->variablename);
+			$1->property, $1->variablename);
      memcheck(up, $$, $1);
   }
 
@@ -1483,6 +1483,7 @@ formal_arguments:
 ;
 
 class_declaration:
+// FIXME: Should be s/"identifier"/variable/, but then the kernel SEGVes.
   "var" "identifier" {
     $$ = new_exp(up, @$, UExpression::VALUE, $2);
   }
