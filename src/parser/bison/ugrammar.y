@@ -490,9 +490,7 @@ flags.0:
 `----------*/
 
 command:
-
-    statement
-
+  statement
 | "{" taggedcommands "}" {}
 ;
 
@@ -540,141 +538,76 @@ pipe.opt:
 `------------*/
 
 statement:
-  /* empty */
-  {}
-
-| "noop"
-  {}
-
+  /* empty */ {}
+| "noop"      {}
 | variable "=" expr namedarguments {}
-
 | variable "+=" expr {}
-
 | variable "-=" expr {}
-
 | "var" variable "=" expr namedarguments {}
-
 | property "=" expr {}
-
 | expr {}
-
 | variable number {}
-
-| "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
-
 | "echo" expr namedarguments {}
-
 | variable "=" "new" "identifier" {}
-
 | variable "=" "new" "identifier" "(" exprs ")" {}
-
 | "group" "identifier" "{" identifiers "}" {}
-
 | "addgroup" "identifier" "{" identifiers "}" {}
-
-
 | "delgroup" "identifier" "{" identifiers "}" {}
-
 | "group" {}
-
 | "alias" purevariable purevariable {}
-
 | purevariable "inherits" purevariable {}
-
 | purevariable "disinherits" purevariable {}
-
 | "alias" purevariable {}
-
 | "unalias" purevariable {}
-
 | "alias" {}
-
 | OPERATOR {}
-
 | OPERATOR_ID tag {}
-
 | OPERATOR_VAR variable {}
-
 | BINDER "object" purevariable {}
-
-
 | BINDER "var" purevariable "from" purevariable {}
-
 | BINDER "function" "(" "integer" ")" purevariable "from" purevariable {}
-
 | BINDER "event" "(" "integer" ")" purevariable "from" purevariable {}
-
 | "wait" expr {}
-
 | "emit" purevariable {}
-
 | "emit" purevariable "(" exprs ")" {}
-
 | "emit" "(" expr ")" purevariable {}
-
 | "emit" "(" expr ")" purevariable "(" exprs ")" {}
-
 | "emit" "(" ")" purevariable {}
-
 | "emit" "(" ")" purevariable "(" exprs ")" {}
-
 | "waituntil" softtest {}
-
 | variable "--" {}
-
 | variable "++" {}
-
 | "def" {}
-
 | "var" variable {}
-
 | "def" variable {}
-
 | "var" "{" variables "}" {}
-
 | "class" "identifier" "{" class_declaration_list "}" {}
-
 | "class" "identifier" {}
-
-
 | "event" name formal_arguments {}
-
 | "function" name formal_arguments {} taggedcommand {}
+;
 
-| "if" "(" expr ")" taggedcommand %prec CMDBLOCK
-    {}
-
-| "if" "(" expr ")" taggedcommand "else" taggedcommand
-    {}
-
-| "every" "(" expr ")" taggedcommand {}
-
-| "timeout" "(" expr ")" taggedcommand {}
-
-| "stopif" "(" softtest ")" taggedcommand {}
-
-| "freezeif" "(" softtest ")" taggedcommand {}
-
-| "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {}
-
+/* Control flow. */
+statement:
+  "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {}
 | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {}
-
-| "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
-
-| "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {}
-
-| "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {}
-
-| "loop" taggedcommand %prec CMDBLOCK {}
-
-| "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
-     %prec CMDBLOCK {}
-
-| "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
-
+| "every" "(" expr ")" taggedcommand {}
+| "if" "(" expr ")" taggedcommand %prec CMDBLOCK    {}
+| "if" "(" expr ")" taggedcommand "else" taggedcommand  {}
 | "for" flavor.opt "(" statement ";"
 			 expr ";"
 			 statement ")" taggedcommand %prec CMDBLOCK {}
+| "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
+     %prec CMDBLOCK {}
+| "freezeif" "(" softtest ")" taggedcommand {}
+| "loop" taggedcommand %prec CMDBLOCK {}
+| "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
+| "stopif" "(" softtest ")" taggedcommand {}
+| "timeout" "(" expr ")" taggedcommand {}
+| "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
+| "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {}
+| "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {}
+| "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
 ;
 
 

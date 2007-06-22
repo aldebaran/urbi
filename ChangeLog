@@ -1,5 +1,9 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/ugrammar.y: Formatting changes.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	Simplify raw_arguments handling
 	* src/parser/bison/ugrammar.y (raw_argument): New.
 	(rawargument): Rename as...
