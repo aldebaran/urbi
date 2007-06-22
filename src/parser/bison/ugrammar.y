@@ -540,16 +540,9 @@ pipe.opt:
 statement:
   /* empty */ {}
 | "noop"      {}
-| variable "=" expr namedarguments {}
-| variable "+=" expr {}
-| variable "-=" expr {}
-| "var" variable "=" expr namedarguments {}
-| property "=" expr {}
 | expr {}
 | variable number {}
 | "echo" expr namedarguments {}
-| variable "=" "new" "identifier" {}
-| variable "=" "new" "identifier" "(" exprs ")" {}
 | "group" "identifier" "{" identifiers "}" {}
 | "addgroup" "identifier" "{" identifiers "}" {}
 | "delgroup" "identifier" "{" identifiers "}" {}
@@ -575,8 +568,6 @@ statement:
 | "emit" "(" ")" purevariable {}
 | "emit" "(" ")" purevariable "(" exprs ")" {}
 | "waituntil" softtest {}
-| variable "--" {}
-| variable "++" {}
 | "def" {}
 | "var" variable {}
 | "def" variable {}
@@ -587,7 +578,24 @@ statement:
 | "function" name formal_arguments {} taggedcommand {}
 ;
 
-/* Control flow. */
+/*------------------------.
+| Statement: Assignment.  |
+`------------------------*/
+statement:
+        variable "=" expr namedarguments {}
+| "var" variable "=" expr namedarguments {}
+| variable "+=" expr {}
+| variable "-=" expr {}
+| property "=" expr {}
+| variable "=" "new" "identifier" {}
+| variable "=" "new" "identifier" "(" exprs ")" {}
+| variable "--" {}
+| variable "++" {}
+;
+
+/*--------------------------.
+| Statement: Control flow.  |
+`--------------------------*/
 statement:
   "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {}
 | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {}
