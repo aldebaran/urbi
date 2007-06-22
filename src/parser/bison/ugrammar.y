@@ -342,7 +342,6 @@
 %type <expr>                expr.opt        "optional expression"
 %type <fval>                time_expr       "time expression"
 %type <expr>                taggedcommands  "set of commands"
-%type <expr>                taggedcommand   "tagged command"
 %type <expr>                command         "command"
 %type <expr>                statement       "statement"
 %type <named_arguments>     exprs           "zero or more expressions"
@@ -424,30 +423,26 @@ raw_arguments:
 `-----------------*/
 
 taggedcommands:
-  taggedcommand
+  command
 | taggedcommands "," taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
 | taggedcommands ";" taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
 | taggedcommands "|" taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
 | taggedcommands "&" taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
 ;
 
-/*----------------.
-| taggedcommand.  |
-`----------------*/
+
+/*-----------------------------.
+| tagged and flagged command.  |
+`-----------------------------*/
 
 %type <expr> tag;
 tag: expr;
 
-taggedcommand:
-
-  command {}
-
-| tag flags.0 ":" command
+command:
+  tag flags.0 ":" command
   {
     $$ = new ast::TagExp (@$, $1, $4);
-    // FIXME: $2 ignored.
   }
-
 | flags.1 ":" command {}
 ;
 
@@ -457,17 +452,10 @@ taggedcommand:
 `--------*/
 
 flag:
-  FLAG
-  {}
-
-| FLAG_TIME "(" expr ")"
-  {}
-
-| FLAG_ID "(" expr ")"
-  {}
-
-| FLAG_TEST "(" softtest ")"
-  {}
+  FLAG                        {}
+| FLAG_TIME "(" expr ")"      {}
+| FLAG_ID "(" expr ")"        {}
+| FLAG_TEST "(" softtest ")"  {}
 ;
 
 // One or more "flag"s.
@@ -539,8 +527,7 @@ pipe.opt:
 statement:
   /* empty */ {}
 | "noop"      {}
-| expr {}
-| variable number {}
+| expr        {}
 | "echo" expr namedarguments {}
 | "group" "identifier" "{" identifiers "}" {}
 | "addgroup" "identifier" "{" identifiers "}" {}
@@ -574,14 +561,14 @@ statement:
 | "class" "identifier" "{" class_declaration_list "}" {}
 | "class" "identifier" {}
 | "event" name formal_arguments {}
-| "function" name formal_arguments {} taggedcommand {}
+| "function" name formal_arguments {} command {}
 ;
 
 /*------------------------.
 | Statement: Assignment.  |
 `------------------------*/
 statement:
-        variable "=" expr namedarguments {}
+	variable "=" expr namedarguments {}
 | "var" variable "=" expr namedarguments {}
 | variable "+=" expr {}
 | variable "-=" expr {}
@@ -596,32 +583,32 @@ statement:
 | Statement: Control flow.  |
 `--------------------------*/
 statement:
-  "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {}
-| "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {}
-| "every" "(" expr ")" taggedcommand {}
-| "if" "(" expr ")" taggedcommand %prec CMDBLOCK    {}
-| "if" "(" expr ")" taggedcommand "else" taggedcommand  {}
+  "at" and.opt "(" softtest ")" command %prec CMDBLOCK {}
+| "at" and.opt "(" softtest ")" command "onleave" command {}
+| "every" "(" expr ")" command {}
+| "if" "(" expr ")" command %prec CMDBLOCK    {}
+| "if" "(" expr ")" command "else" command  {}
 | "for" flavor.opt "(" statement ";"
 			 expr ";"
-			 statement ")" taggedcommand %prec CMDBLOCK {}
+			 statement ")" command %prec CMDBLOCK {}
 | "foreach" flavor.opt name "in" expr "{" taggedcommands "}"
      %prec CMDBLOCK {}
-| "freezeif" "(" softtest ")" taggedcommand {}
-| "loop" taggedcommand %prec CMDBLOCK {}
-| "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
-| "stopif" "(" softtest ")" taggedcommand {}
-| "timeout" "(" expr ")" taggedcommand {}
+| "freezeif" "(" softtest ")" command {}
+| "loop" command %prec CMDBLOCK {}
+| "loopn" flavor.opt "(" expr ")" command %prec CMDBLOCK {}
+| "stopif" "(" softtest ")" command {}
+| "timeout" "(" expr ")" command {}
 | "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
-| "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {}
-| "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {}
-| "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
+| "whenever" "(" softtest ")" command %prec CMDBLOCK {}
+| "whenever" "(" softtest ")" command "else" command {}
+| "while" pipe.opt "(" expr ")" command %prec CMDBLOCK {}
 ;
 
 
 
-/*-------------------------------.
+/*-----------------------.
 | Name, Name, Variable.  |
-`-------------------------------*/
+`-----------------------*/
 
 name:
   "identifier"
@@ -672,7 +659,6 @@ property:
 
 namedarguments:
   /* empty */ {}
-
 | "identifier" ":" expr namedarguments {}
 ;
 
@@ -701,16 +687,12 @@ expr:
   number    { $$ = new ast::FloatExp(@$, $1);        }
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
-
 | "[" exprs "]" {}
-
 | property {}
-
 | variable "(" exprs ")"  {}
-
-| "%" variable         {}
-| variable             {}
-| "group" "identifier" {}
+| "%" variable            {}
+| variable                {}
+| "group" "identifier"    {}
 ;
 
 
@@ -726,7 +708,6 @@ expr:
 | expr "^" expr	{ $$ = new_exp(up, @$, ast::OpExp::exp, $1, $3); }
 | "-" expr %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
-
 | "copy" expr  %prec NEG {}
 ;
 

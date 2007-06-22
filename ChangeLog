@@ -1,5 +1,11 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	taggedcommand == command
+	* src/parser/bison/ugrammar.y (taggedcommand): Remove, use only
+	command.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	Merge name and purevariable
 	* src/parser/bison/ugrammar.y (name): Accept what purevariable
 	used to accept.
