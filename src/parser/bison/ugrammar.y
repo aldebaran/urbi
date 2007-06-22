@@ -869,37 +869,6 @@ statement:
       }
     */}
 
-| "def" variable "(" identifiers ")" {/*
-
-      warn (up, @$, "'def' is deprecated, use 'function' instead");
-      if (up.connection.functionTag)
-      {
-	delete $2;
-	delete $4;
-	$2 = 0;
-	delete up.connection.functionTag;
-	up.connection.functionTag = 0;
-	error(@$, "Nested function def not allowed.");
-	YYERROR;
-      }
-      else
-      {
-	up.connection.functionTag = new UString("__Funct__");
-	globalDelete = &up.connection.functionTag;
-      }
-
-    */} taggedcommand {/*
-
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
-
-      if (up.connection.functionTag)
-      {
-	delete up.connection.functionTag;
-	up.connection.functionTag = 0;
-	globalDelete = 0;
-      }
-    */}
-
 | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
     {/*
       warn_spontaneous(up, @5, *$5);
