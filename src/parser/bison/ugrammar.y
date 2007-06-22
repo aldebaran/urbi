@@ -402,9 +402,8 @@ take (T* t)
 %type <namedparameters>     class_declaration_list "class declaration list"
 %type <binary>              binary          "binary"
 %type <property>            property        "property"
-%type <variable>            variable        "variable"
-%type <variable>            purevariable    "pure variable"
-//%type  <namedparameters>     purevariables   "list of pure variables"
+%type <variable>            name        "name"
+
 
 
 /*----------------------.
@@ -697,7 +696,7 @@ instruction:
       memcheck(up, $$, $1);
     }
 
-  | variable NUM {
+  | name NUM {
 
       // FIXME: Leak
       $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
@@ -768,31 +767,31 @@ instruction:
       memcheck(up, $$);
     }
 
-  | "alias" purevariable purevariable {
+  | "alias" name name {
 
     $$ = new UCommand_ALIAS(@$, $2, $3);
       memcheck(up, $$, $2, $3);
     }
 
-  | purevariable "inherits" purevariable {
+  | name "inherits" name {
 
     $$ = new UCommand_INHERIT(@$, $1, $3);
       memcheck(up, $$, $1, $3);
     }
 
-  | purevariable "disinherits" purevariable {
+  | name "disinherits" name {
 
     $$ = new UCommand_INHERIT(@$, $1, $3, true);
       memcheck(up, $$, $1, $3);
     }
 
-  | "alias" purevariable {
+  | "alias" name {
 
     $$ = new UCommand_ALIAS(@$, $2, 0);
       memcheck(up, $$, $2);
     }
 
-  | "unalias" purevariable {
+  | "unalias" name {
 
     $$ = new UCommand_ALIAS(@$, $2, 0, true);
       memcheck(up, $$, $2);
@@ -819,14 +818,14 @@ instruction:
       memcheck(up, $$, $1, $2);
     }
 
-  | OPERATOR_VAR variable {
+  | OPERATOR_VAR name {
 
       memcheck(up, $1);
       $$ = new UCommand_OPERATOR_VAR(@$, $1, $2);
       memcheck(up, $$, $1, $2);
     }
 
-  | BINDER "object" purevariable {
+  | BINDER "object" name {
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, 0, $1, UBIND_OBJECT, $3);
@@ -834,21 +833,21 @@ instruction:
     }
 
 
-  | BINDER "var" purevariable "from" purevariable {
+  | BINDER "var" name "from" name {
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, $5, $1, UBIND_VAR, $3);
       memcheck(up, $$, $1, $3, $5);
     }
 
-  | BINDER "function" "(" NUM ")" purevariable "from" purevariable {
+  | BINDER "function" "(" NUM ")" name "from" name {
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, (int)take($4));
       memcheck(up, $$, $1, $6, $8);
     }
 
-  | BINDER "event" "(" NUM ")" purevariable "from" purevariable {
+  | BINDER "event" "(" NUM ")" name "from" name {
 
       memcheck(up, $1);
       $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, (int)take ($4));
@@ -861,38 +860,38 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "emit" purevariable {
+  | "emit" name {
 
       $$ = new UCommand_EMIT(@$, $2, 0);
       memcheck(up, $$, $2);
     }
 
-  | "emit" purevariable "(" parameterlist ")" {
+  | "emit" name "(" parameterlist ")" {
 
       $$ = new UCommand_EMIT(@$, $2, $4);
       memcheck(up, $$, $2, $4);
     }
 
-  | "emit" "(" expr ")" purevariable {
+  | "emit" "(" expr ")" name {
 
       $$ = new UCommand_EMIT(@$, $5, 0, $3);
       memcheck(up, $$, $5, $3);
     }
 
-  | "emit" "(" expr ")" purevariable "(" parameterlist ")" {
+  | "emit" "(" expr ")" name "(" parameterlist ")" {
 
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
       memcheck(up, $$, $5, $7, $3);
     }
 
-  | "emit" "(" ")" purevariable {
+  | "emit" "(" ")" name {
 
       $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
 							UINFINITY));
       memcheck(up, $$, $4);
     }
 
-  | "emit" "(" ")" purevariable "(" parameterlist ")" {
+  | "emit" "(" ")" name "(" parameterlist ")" {
 
       $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
@@ -923,14 +922,14 @@ instruction:
       memcheck(up, $$);
     }
 
-  | "var" variable {
+  | "var" name {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
-  | "def" variable {
+  | "def" name {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
@@ -956,21 +955,21 @@ instruction:
     }
 
 
-  | "event" variable "(" identifiers ")" {
+  | "event" name "(" identifiers ")" {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
       memcheck(up, $$, $2, $4);
     }
 
-  | "event" variable {
+  | "event" name {
 
       $2->local_scope = true;
       $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
-  | "function" variable "(" identifiers ")" {
+  | "function" name "(" identifiers ")" {
 
       if (up.connection.functionTag)
       {
@@ -1001,7 +1000,7 @@ instruction:
       }
     }
 
-  | "def" variable "(" identifiers ")" {
+  | "def" name "(" identifiers ")" {
 
       warn (up, @$, "'def' is deprecated, use 'function' instead");
       if (up.connection.functionTag)
@@ -1107,7 +1106,7 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
+  | "foreach" flavor.opt name "in" expr "{" taggedcommands "}"
      %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
@@ -1144,9 +1143,9 @@ array:
 ;
 
 
-/* VARID, PUREVARIABLE, VARIABLE, VARIABLE */
+/* VARID, NAME, NAME, NAME */
 
-purevariable:
+name:
 
     "$" "(" expr ")" {
 
@@ -1194,12 +1193,8 @@ purevariable:
 
 %type <variable> lvalue;
 lvalue:
-  purevariable		{ $$ = $1;				}
-| purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
-;
-
-variable:
-  purevariable		{ $$ = $1;				}
+  name		{ $$ = $1;				}
+| name "'n"	{ $$ = $1; $$->isnormalized = true;	}
 ;
 
 
@@ -1207,7 +1202,7 @@ variable:
 
 property:
 
-    purevariable "->" "identifier" {
+    name "->" "identifier" {
 
       $$ = new UProperty($1, $3);
       memcheck(up, $$, $1, $3);
@@ -1287,7 +1282,7 @@ expr:
      memcheck(up, $$, $1);
   }
 
-| variable "(" parameterlist ")"  {
+| name "(" parameterlist ")"  {
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
@@ -1297,7 +1292,7 @@ expr:
     $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }
 
-| "%" variable         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
+| "%" name         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
 | "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
 ;
 
@@ -1311,12 +1306,12 @@ expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 ;
 
 rvalue:
-  purevariable
-| "static" purevariable	{ $$ = $2; $$->isstatic = true;	}
-| purevariable derive   { $$->deriv = $2; 		}
-| purevariable "'e"	{ $$->varerror = true;		}
-| purevariable "'in"	{ $$->varin = true;		}
-| purevariable "'out"   // FIXME: Nothing to do???
+  name
+| "static" name	{ $$ = $2; $$->isstatic = true;	}
+| name derive   { $$->deriv = $2; 		}
+| name "'e"	{ $$->varerror = true;		}
+| name "'in"	{ $$->varin = true;		}
+| name "'out"   // FIXME: Nothing to do???
 
 
 %type <derive> derive;
@@ -1506,16 +1501,16 @@ formal_arguments:
 ;
 
 class_declaration:
-// FIXME: Should be s/"identifier"/variable/, but then the kernel SEGVes.
+// FIXME: Should be s/"identifier"/name/, but then the kernel SEGVes.
   "var" "identifier" {
     $$ = new_exp(up, @$, UExpression::VALUE, $2);
   }
 
-| "function" variable formal_arguments {
+| "function" name formal_arguments {
     $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $3);
   }
 
-| "event" variable formal_arguments {
+| "event" name formal_arguments {
     $$ = new_exp(up, @$, UExpression::EVENT, $2, $3);
   }
 ;
@@ -1540,13 +1535,13 @@ class_declaration_list:
 variables:
   /* empty */  { $$ = 0; }
 
-  | variable {
+  | name {
       memcheck(up, $1);
       $$ = new UVariableList($1);
       memcheck(up, $$, $1);
     }
 
-  | variable ";" variables {
+  | name ";" variables {
       memcheck(up, $1);
       $$ = new UVariableList($1, $3);
       memcheck(up, $$, $3, $1);

@@ -1,5 +1,12 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	purevariable|variable -> name
+	* src/parser/bison/ugrammar.y (variable, purevariable): Fuse
+	into...
+	(name): this.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	lvalue
 	* src/parser/bison/ugrammar.y (lvalue): New.
 	Use where appropriate (assignments).
