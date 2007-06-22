@@ -394,6 +394,7 @@ take (T* t)
 %type <namedparameters>     flags.1         "one or more flags"
 %type <variablelist>        variables       "list of variables"
 %type <expr>                softtest        "soft test"
+%type <namedparameters>     formal_arguments
 %type <namedparameters>     identifiers     "list of identifiers"
 %type <namedparameters>     identifiers.1   "one or more identifiers"
 %type <expr>                class_declaration "class declaration"
@@ -1278,15 +1279,13 @@ expr:
   }
 
 | "[" parameterlist "]" {
-
     $$ = new UExpression(@2, UExpression::LIST, $2);
     memcheck(up, $$, $2);
   }
 
 | property {
-
     $$ = new UExpression(@$, UExpression::PROPERTY,
-			 $1->property, $1->variablename);
+                        $1->property, $1->variablename);
      memcheck(up, $$, $1);
   }
 
@@ -1478,34 +1477,23 @@ identifiers:
 
 /* CLASS_DECLARATION & CLASS_DECLARATION_LIST */
 
+formal_arguments:
+  /* empty */         { $$ = 0;  }
+| "(" identifiers ")" { $$ = $2; }
+;
+
 class_declaration:
+  "var" "identifier" {
+    $$ = new_exp(up, @$, UExpression::VALUE, $2);
+  }
 
-    "var" "identifier" {
+| "function" variable formal_arguments {
+    $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $3);
+  }
 
-      memcheck(up, $2);
-      $$ = new UExpression(@$, UExpression::VALUE, $2);
-      memcheck(up, $$, $2);
-    }
-
-  | "function" variable "(" identifiers ")" {
-      $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
-    }
-
-  | "function" variable {
-      $$ = new UExpression(@$, UExpression::FUNCTION, $2,
-			   static_cast<UNamedParameters*> (0));
-      memcheck(up, $$, $2);
-    }
-
-  | "event" variable "(" identifiers ")" {
-      $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
-    }
-
-  | "event" variable {
-      $$ = new UExpression(@$, UExpression::EVENT, $2,
-			   static_cast<UNamedParameters*> (0));
-      memcheck(up, $$, $2);
-    }
+| "event" variable formal_arguments {
+    $$ = new_exp(up, @$, UExpression::EVENT, $2, $3);
+  }
 ;
 
 
