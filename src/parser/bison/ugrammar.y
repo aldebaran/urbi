@@ -35,6 +35,7 @@
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "flavorable.hh"
+#include "uvariablename.hh" // UDeriveType
 %}
 
 // Locations.
@@ -55,6 +56,7 @@
   UBinary                 *binary;
   UNamedParameters        *namedparameters;
   UVariableName           *variable;
+  UVariableName::UDeriveType derive;
   UVariableList           *variablelist;
   UProperty               *property;
 
@@ -88,7 +90,6 @@
 #include "unamedparameters.hh"
 #include "uobj.hh"
 #include "uproperty.hh"
-#include "uvariablename.hh"
 #include "uvariablelist.hh"
 
 extern UString** globalDelete;
@@ -1195,13 +1196,6 @@ variable:
   purevariable		{ $$ = $1;				}
 | "static" purevariable	{ $$ = $2; $$->isstatic = true;		}
 | purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
-| purevariable "'e"	{ $$ = $1; $$->varerror = true;		}
-| purevariable "'in"	{ $$ = $1; $$->varin = true;		}
-| purevariable "'out"	{ $$ = $1;				}
-| purevariable "'"	{ $$ = $1; $$->deriv = UVariableName::UDERIV;	  }
-| purevariable "''"	{ $$ = $1; $$->deriv = UVariableName::UDERIV2;	  }
-| purevariable "'d"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; }
-| purevariable "'dd"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;}
 ;
 
 
@@ -1300,8 +1294,32 @@ expr:
   }
 
 | "%" variable         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
-| variable             { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 | "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
+;
+
+
+/*-----------------------.
+| variables as rvalues.  |
+`-----------------------*/
+
+%type <variable> rvalue;
+expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
+;
+
+rvalue:
+  purevariable          
+| purevariable derive   { $$->deriv = $2; 		}
+| purevariable "'e"	{ $$->varerror = true;		}
+| purevariable "'in"	{ $$->varin = true;		}
+| purevariable "'out"   // FIXME: Nothing to do???
+
+
+%type <derive> derive;
+derive:
+  "'"	{ $$ = UVariableName::UDERIV;	 }
+| "''"	{ $$ = UVariableName::UDERIV2;	 }
+| "'d"	{ $$ = UVariableName::UTRUEDERIV;  }
+| "'dd"	{ $$ = UVariableName::UTRUEDERIV2; }
 ;
 
 

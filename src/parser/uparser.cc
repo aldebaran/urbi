@@ -13,7 +13,6 @@
 #include <string>
 
 #include "uparser.hh"
-#include "ugrammar.hh"
 
 /*----------.
 | UParser.  |
