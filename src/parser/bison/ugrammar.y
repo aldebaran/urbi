@@ -444,7 +444,7 @@ root:
     up.commandTree = 0;
   }
 
-  | variable "=" binary ";" {
+  | lvalue "=" binary ";" {
 
       // FIXME: A pointer to a ref-pointer?  Sounds absurd.
       libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
@@ -660,25 +660,25 @@ instruction:
     memcheck(up, $$);
   }
 
-  | variable "=" expr namedparameters {
+  | lvalue "=" expr namedparameters {
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
     memcheck(up, $$, $1, $3, $4);
     }
 
-  | variable "+=" expr {
+  | lvalue "+=" expr {
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 0);
     memcheck(up, $$, $1, $3);
     }
 
-  | variable "-=" expr {
+  | lvalue "-=" expr {
 
     $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 1);
     memcheck(up, $$, $1, $3);
     }
 
 
-  | "var" variable "=" expr namedparameters {
+  | "var" lvalue "=" expr namedparameters {
 
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
@@ -706,30 +706,30 @@ instruction:
 
   | "return" {
 
-    $$ = new UCommand_RETURN(@$, 0);
+      $$ = new UCommand_RETURN(@$, 0);
       memcheck(up, $$);
     }
 
   | "return" expr {
 
-    $$ = new UCommand_RETURN(@$, $2);
+      $$ = new UCommand_RETURN(@$, $2);
       memcheck(up, $$, $2);
     }
 
   | "echo" expr namedparameters {
 
-    $$ = new UCommand_ECHO(@$, $2, $3, 0);
+      $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
     }
 
-  | variable "=" "new" "identifier" {
+  | lvalue "=" "new" "identifier" {
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, 0, true);
       memcheck(up, $$, $1, $4);
     }
 
-  | variable "=" "new" "identifier" "(" parameterlist ")" {
+  | lvalue "=" "new" "identifier" "(" parameterlist ")" {
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, $6);
@@ -905,13 +905,13 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | variable "--" {
+  | lvalue "--" {
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
       memcheck(up, $$, $1);
     }
 
-  | variable "++" {
+  | lvalue "++" {
 
       $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
       memcheck(up, $$, $1);
@@ -1192,10 +1192,14 @@ purevariable:
 
 ;
 
+%type <variable> lvalue;
+lvalue:
+  purevariable		{ $$ = $1;				}
+| purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
+;
+
 variable:
   purevariable		{ $$ = $1;				}
-| "static" purevariable	{ $$ = $2; $$->isstatic = true;		}
-| purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
 ;
 
 
@@ -1307,7 +1311,8 @@ expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 ;
 
 rvalue:
-  purevariable          
+  purevariable
+| "static" purevariable	{ $$ = $2; $$->isstatic = true;	}
 | purevariable derive   { $$->deriv = $2; 		}
 | purevariable "'e"	{ $$->varerror = true;		}
 | purevariable "'in"	{ $$->varin = true;		}

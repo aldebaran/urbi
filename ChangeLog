@@ -1,5 +1,13 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	lvalue
+	* src/parser/bison/ugrammar.y (lvalue): New.
+	Use where appropriate (assignments).
+	(rvalue): "static" belongs to here.
+	(variable): Adjust.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/ugrammar.y (derive): New.
 	(ravlue): New.
 	(variable): Adjust.
