@@ -1230,18 +1230,21 @@ softtest:
 | identifiers.  |
 `--------------*/
 
+// "var"?
 var.opt:
   /* empty. */
 | "var"
 ;
 
+// One or several comma-separated identifiers.
 identifiers.1:
   var.opt "identifier"
-| identifiers.1 "," "identifier"
-  ;
+| var.opt identifiers.1 "," "identifier"
+;
 
+// Zero or several comma-separated identifiers.
 identifiers:
-  /* empty */ 
+  /* empty */
 | identifiers.1
 ;
 

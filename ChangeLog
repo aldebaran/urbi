@@ -1,5 +1,11 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	Fix and comment
+	* src/parser/bison/ugrammar.y (identifiers): More comments.
+	Always accept "var".
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	parser: name, identifiers
 	* src/parser/bison/ugrammar.y (identifiers): Fix its definition
 	that allowed trailing commas.
