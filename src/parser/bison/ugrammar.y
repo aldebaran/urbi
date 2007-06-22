@@ -1461,7 +1461,7 @@ identifiers.1:
     memcheck(up, $$, $2);
   }
 
-| var.opt "identifier" "," identifiers.1 
+| var.opt "identifier" "," identifiers.1
   {
     memcheck(up, $2);
     $$ = new UNamedParameters($2, 0, $4);
