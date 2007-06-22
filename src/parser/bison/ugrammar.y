@@ -561,7 +561,7 @@ statement:
 | "class" "identifier" "{" class_declaration_list "}" {}
 | "class" "identifier" {}
 | "event" name formal_arguments {}
-| "function" name formal_arguments {} command {}
+| "function" name formal_arguments command {}
 ;
 
 /*------------------------.

@@ -1,5 +1,9 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/ugrammar.y: Remove an empty mid-rule action.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	taggedcommands -> commands.
 	* src/parser/bison/ugrammar.y (taggedcommands): Rename as...
 	(commands): this.
