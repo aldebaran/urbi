@@ -588,7 +588,7 @@ pipe.opt:
 `------------*/
 
 statement:
-/* empty */
+  /* empty */
   {/*
     $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
   */}
@@ -981,13 +981,13 @@ purevariable:
 
 variable:
   purevariable		{/* $$ = $1;				*/}
-| "static" purevariable	{/* $$ = $2; $$->isstatic = true;		*/}
+| "static" purevariable	{/* $$ = $2; $$->isstatic = true;	*/}
 | purevariable "'n"	{/* $$ = $1; $$->isnormalized = true;	*/}
-| purevariable "'e"	{/* $$ = $1; $$->varerror = true;		*/}
+| purevariable "'e"	{/* $$ = $1; $$->varerror = true;	*/}
 | purevariable "'in"	{/* $$ = $1; $$->varin = true;		*/}
 | purevariable "'out"	{/* $$ = $1;				*/}
 | purevariable "'"	{/* $$ = $1; $$->deriv = UVariableName::UDERIV;	  */}
-| purevariable "''"	{/* $$ = $1; $$->deriv = UVariableName::UDERIV2;	  */}
+| purevariable "''"	{/* $$ = $1; $$->deriv = UVariableName::UDERIV2;  */}
 | purevariable "'d"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; */}
 | purevariable "'dd"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;*/}
 ;
