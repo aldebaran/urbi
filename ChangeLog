@@ -1,5 +1,9 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/ugrammar.y (class_declaration): Accept complex var names.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/ugrammar.y: Throw the parser actions away.
 	They clutter the file.
 

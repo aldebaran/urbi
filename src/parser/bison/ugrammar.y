@@ -906,9 +906,9 @@ identifiers:
 `-------------------------------------------*/
 
 class_declaration:
-  "var" "identifier"
+  "var"      name
 | "function" name formal_arguments
-| "event" name formal_arguments
+| "event"    name formal_arguments
 ;
 
 /* It used to be possible to not have the parens for empty identifiers.
