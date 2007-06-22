@@ -1,5 +1,11 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	Fix previous fix checkin
+	* src/parser/bison/ugrammar.y (identifiers): Accept "var" where
+	appropriate...
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	Fix and comment
 	* src/parser/bison/ugrammar.y (identifiers): More comments.
 	Always accept "var".

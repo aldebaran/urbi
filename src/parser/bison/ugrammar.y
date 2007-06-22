@@ -1239,7 +1239,7 @@ var.opt:
 // One or several comma-separated identifiers.
 identifiers.1:
   var.opt "identifier"
-| var.opt identifiers.1 "," "identifier"
+| identifiers.1 "," var.opt "identifier"
 ;
 
 // Zero or several comma-separated identifiers.
