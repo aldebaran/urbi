@@ -1,5 +1,12 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	Renamings
+	* src/parser/bison/ugrammar.y (ustring): Remove, useless currently.
+	(arguments, argument_list): Rename as...
+	(exprs.1, exprs): these.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/ugrammar.y: Remove "def" support for functions.
 
 2007-06-14  Akim Demaille  <demaille@gostai.com>

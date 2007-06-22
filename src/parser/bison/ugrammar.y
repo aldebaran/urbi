@@ -312,7 +312,6 @@
 %union
 {
   std::string		   *str;
-  UString                  *ustr;
 }
 
 %token
@@ -322,9 +321,8 @@
    <str>  OPERATOR_ID        "operator"
    <str>  OPERATOR_ID_PARAM  "param-operator"
    <str>  OPERATOR_VAR       "var-operator"
-%type <ustr> ustring;
-%destructor { delete $$; } <str> <ustr>;
-%printer { debug_stream() << *$$; } <str> <ustr>;
+%destructor { delete $$; } <str>;
+%printer { debug_stream() << *$$; } <str>;
 
 
  /*----------.
@@ -347,8 +345,8 @@
 %type <expr>                taggedcommand   "tagged command"
 %type <expr>                command         "command"
 %type <expr>                statement       "statement"
-%type <named_arguments>     arguments       "arguments"
-%type <named_arguments>     argument_list   "list of arguments"
+%type <named_arguments>     exprs           "zero or more expressions"
+%type <named_arguments>     exprs.1         "one or more expressions"
 %type <named_arguments>     rawarguments    "list of attributes"
 %type <named_arguments>     namedarguments  "list of named arguments"
 %type <named_arguments>     flag            "a flag"
@@ -644,7 +642,7 @@ statement:
       $$ = new UCommand_NEW(@$, $1, $4, 0, true);
     */}
 
-| variable "=" "new" "identifier" "(" argument_list ")" {/*
+| variable "=" "new" "identifier" "(" exprs ")" {/*
 
       $$ = new UCommand_NEW(@$, $1, $4, $6);
     */}
@@ -752,7 +750,7 @@ statement:
       $$ = new UCommand_EMIT(@$, $2, 0);
     */}
 
-| "emit" purevariable "(" argument_list ")" {/*
+| "emit" purevariable "(" exprs ")" {/*
 
       $$ = new UCommand_EMIT(@$, $2, $4);
     */}
@@ -762,7 +760,7 @@ statement:
       $$ = new UCommand_EMIT(@$, $5, 0, $3);
     */}
 
-| "emit" "(" expr ")" purevariable "(" argument_list ")" {/*
+| "emit" "(" expr ")" purevariable "(" exprs ")" {/*
 
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
     */}
@@ -773,7 +771,7 @@ statement:
 							UINFINITY));
     */}
 
-| "emit" "(" ")" purevariable "(" argument_list ")" {/*
+| "emit" "(" ")" purevariable "(" exprs ")" {/*
 
       $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
@@ -1053,10 +1051,6 @@ number:
 | "float"
 ;
 
-ustring:
-  "string"  { $$ = new UString(take($1)); }
-;
-
 
 /*-------.
 | expr.  |
@@ -1067,7 +1061,7 @@ expr:
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 
-| "[" argument_list "]" {/*
+| "[" exprs "]" {/*
 
     $$ = new UExpression(@2, UExpression::LIST, $2);
   */}
@@ -1078,7 +1072,7 @@ expr:
 			 $1->property, $1->variablename);
   */}
 
-| variable "(" argument_list ")"  {/*
+| variable "(" exprs ")"  {/*
 
     //if (($1) && ($1->device) &&
     //    ($1->device->equal(up.connection.functionTag)))
@@ -1158,24 +1152,18 @@ expr:
 ;
 
 
-/* ARGUMENT_LIST, ARGUMENTS */
+/*--------------.
+| Expressions.  |
+`--------------*/
 
-argument_list:
-  /* empty */ {/* $$ = 0; */}
-
-| arguments
+exprs:
+  /* empty */ {}
+| exprs.1     {}
 ;
 
-arguments:
-  expr {/*
-
-      $$ = new UNamedArguments($1);
-    */}
-
-| arguments "," expr {/*
-
-      $$ = new UNamedArguments($1, $3);
-    */}
+exprs.1:
+  expr             {}
+| exprs.1 "," expr {}
 ;
 
 rawarguments:
