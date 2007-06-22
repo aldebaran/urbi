@@ -1,3 +1,9 @@
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
+	Fix list of identifiers handling
+	* src/parser/bison/ugrammar.y (var.opt, identifiers.1): New.
+	(identifiers): Use them.
+
 2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	update externals (tests). 

@@ -395,6 +395,7 @@ take (T* t)
 %type <variablelist>        variables       "list of variables"
 %type <expr>                softtest        "soft test"
 %type <namedparameters>     identifiers     "list of identifiers"
+%type <namedparameters>     identifiers.1   "one or more identifiers"
 %type <expr>                class_declaration "class declaration"
 %type <namedparameters>     class_declaration_list "class declaration list"
 %type <binary>              binary          "binary"
@@ -581,8 +582,8 @@ flags.1:
 | flags.1 flag     { $1->next = $2;
 		     if ($2->notifyEnd)
 		       $1->notifyEnd = true; // propagate the +end flag optim
-                     if ($2->notifyFreeze)
-                       $1->notifyFreeze = true; // propagate the +freeze flag
+		     if ($2->notifyFreeze)
+		       $1->notifyFreeze = true; // propagate the +freeze flag
 		   }
 ;
 
@@ -1441,43 +1442,41 @@ softtest:
     }
 ;
 
-/* "identifier"S */
+/*--------------.
+| identifiers.  |
+`--------------*/
 
-identifiers:
-  /* empty */  { $$ = 0; }
-
-  | "identifier" {
-
-      memcheck(up, $1);
-      $$ = new UNamedParameters($1, 0);
-      memcheck(up, $$, $1);
-    }
-
-  | "var" "identifier" {
-
-      memcheck(up, $2);
-      $$ = new UNamedParameters($2, 0);
-      memcheck(up, $$, $2);
-    }
-
-
-  | "identifier" "," identifiers {
-
-      memcheck(up, $1);
-      $$ = new UNamedParameters($1, 0, $3);
-      memcheck(up, $$, $3, $1);
-    }
-
-  | "var" "identifier" "," identifiers {
-
-      memcheck(up, $2);
-      $$ = new UNamedParameters($2, 0, $4);
-      memcheck(up, $$, $4, $2);
-    }
-
+// "var"?
+var.opt:
+  /* empty. */
+| "var"
 ;
 
-/* CLASS_DELCARATION & CLASS_DECLARATION_LIST */
+// One or several comma-separated identifiers.
+identifiers.1:
+  var.opt "identifier"
+  {
+    memcheck(up, $2);
+    $$ = new UNamedParameters($2, 0);
+    memcheck(up, $$, $2);
+  }
+
+| var.opt "identifier" "," identifiers.1 
+  {
+    memcheck(up, $2);
+    $$ = new UNamedParameters($2, 0, $4);
+    memcheck(up, $$, $2, $4);
+  }
+;
+
+// Zero or several comma-separated identifiers.
+identifiers:
+  /* empty */    { $$ = 0;  }
+| identifiers.1  { $$ = $1; }
+;
+
+
+/* CLASS_DECLARATION & CLASS_DECLARATION_LIST */
 
 class_declaration:
 
