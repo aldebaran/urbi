@@ -1,5 +1,14 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	Simplify raw_arguments handling
+	* src/parser/bison/ugrammar.y (raw_argument): New.
+	(rawargument): Rename as...
+	(raw_arguments): this.
+	Now accept no raw_argument at all.
+	Adjust uses.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/ugrammar.y (class_declaration): Accept complex var names.
 
 2007-06-22  Akim Demaille  <demaille@gostai.com>

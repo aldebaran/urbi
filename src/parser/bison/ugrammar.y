@@ -347,7 +347,7 @@
 %type <expr>                statement       "statement"
 %type <named_arguments>     exprs           "zero or more expressions"
 %type <named_arguments>     exprs.1         "one or more expressions"
-%type <named_arguments>     rawarguments    "list of attributes"
+%type <named_arguments>     raw_arguments   "list of attributes"
 %type <named_arguments>     namedarguments  "list of named arguments"
 %type <named_arguments>     flag            "a flag"
 %type <named_arguments>     flags.0         "zero or more flags"
@@ -400,10 +400,24 @@ root:
     // FIXME: We should probably free it.
     up.commandTree = 0;
   }
-| variable "=" binary ";"
+| variable "=" binary ";"  {}
 | taggedcommands           {}
 ;
 
+binary:
+  "bin" "integer" raw_arguments {}
+;
+
+raw_argument:
+  number                    {}
+| "identifier"              {}
+;
+
+// raw_argument*
+raw_arguments:
+  /* empty */
+| raw_arguments raw_argument {}
+;
 
 
 /*-----------------.
@@ -734,17 +748,6 @@ namedarguments:
 ;
 
 
-/*-------.
-| BINARY |
-`-------*/
-
-binary:
-    "bin" "integer" {}
-
-| "bin" "integer" rawarguments {}
-;
-
-
 /*------------.
 | time_expr.  |
 `------------*/
@@ -853,17 +856,6 @@ exprs:
 exprs.1:
   expr             {}
 | exprs.1 "," expr {}
-;
-
-rawarguments:
- number
- {}
-
-| "identifier" {}
-
-| number rawarguments {}
-
-| "identifier" rawarguments {}
 ;
 
 
