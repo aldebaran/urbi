@@ -1,5 +1,11 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	taggedcommands -> commands.
+	* src/parser/bison/ugrammar.y (taggedcommands): Rename as...
+	(commands): this.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	taggedcommand == command
 	* src/parser/bison/ugrammar.y (taggedcommand): Remove, use only
 	command.

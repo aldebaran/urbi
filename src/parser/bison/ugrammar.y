@@ -341,7 +341,7 @@
 %type <expr>                expr            "expression"
 %type <expr>                expr.opt        "optional expression"
 %type <fval>                time_expr       "time expression"
-%type <expr>                taggedcommands  "set of commands"
+%type <expr>                commands        "scheduled commands"
 %type <expr>                command         "command"
 %type <expr>                statement       "statement"
 %type <named_arguments>     exprs           "zero or more expressions"
@@ -399,7 +399,7 @@ root:
     up.commandTree = 0;
   }
 | variable "=" binary ";"  {}
-| taggedcommands           {}
+| commands           {}
 ;
 
 binary:
@@ -418,16 +418,16 @@ raw_arguments:
 ;
 
 
-/*-----------------.
-| taggedcommands.  |
-`-----------------*/
+/*-----------.
+| commands.  |
+`-----------*/
 
-taggedcommands:
+commands:
   command
-| taggedcommands "," taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
-| taggedcommands ";" taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
-| taggedcommands "|" taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
-| taggedcommands "&" taggedcommands { $$ = new_bin(@$, $2, $1, $3); }
+| commands "," commands { $$ = new_bin(@$, $2, $1, $3); }
+| commands ";" commands { $$ = new_bin(@$, $2, $1, $3); }
+| commands "|" commands { $$ = new_bin(@$, $2, $1, $3); }
+| commands "&" commands { $$ = new_bin(@$, $2, $1, $3); }
 ;
 
 
@@ -478,7 +478,7 @@ flags.0:
 
 command:
   statement
-| "{" taggedcommands "}" {}
+| "{" commands "}" {}
 ;
 
 
@@ -591,7 +591,7 @@ statement:
 | "for" flavor.opt "(" statement ";"
 			 expr ";"
 			 statement ")" command %prec CMDBLOCK {}
-| "foreach" flavor.opt name "in" expr "{" taggedcommands "}"
+| "foreach" flavor.opt name "in" expr "{" commands "}"
      %prec CMDBLOCK {}
 | "freezeif" "(" softtest ")" command {}
 | "loop" command %prec CMDBLOCK {}
