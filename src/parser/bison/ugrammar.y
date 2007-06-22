@@ -360,8 +360,7 @@
 %type <binary>              binary          "binary"
 %type <property>            property        "property"
 %type <variable>            variable        "variable"
-%type <variable>            purevariable    "pure variable"
-//%type  <named_arguments>     purevariables   "list of pure variables"
+%type <variable>            name            "slot name"
 
 
 /*----------------------.
@@ -547,26 +546,26 @@ statement:
 | "addgroup" "identifier" "{" identifiers "}" {}
 | "delgroup" "identifier" "{" identifiers "}" {}
 | "group" {}
-| "alias" purevariable purevariable {}
-| purevariable "inherits" purevariable {}
-| purevariable "disinherits" purevariable {}
-| "alias" purevariable {}
-| "unalias" purevariable {}
+| "alias" name name {}
+| name "inherits" name {}
+| name "disinherits" name {}
+| "alias" name {}
+| "unalias" name {}
 | "alias" {}
 | OPERATOR {}
 | OPERATOR_ID tag {}
 | OPERATOR_VAR variable {}
-| BINDER "object" purevariable {}
-| BINDER "var" purevariable "from" purevariable {}
-| BINDER "function" "(" "integer" ")" purevariable "from" purevariable {}
-| BINDER "event" "(" "integer" ")" purevariable "from" purevariable {}
+| BINDER "object" name {}
+| BINDER "var" name "from" name {}
+| BINDER "function" "(" "integer" ")" name "from" name {}
+| BINDER "event" "(" "integer" ")" name "from" name {}
 | "wait" expr {}
-| "emit" purevariable {}
-| "emit" purevariable "(" exprs ")" {}
-| "emit" "(" expr ")" purevariable {}
-| "emit" "(" expr ")" purevariable "(" exprs ")" {}
-| "emit" "(" ")" purevariable {}
-| "emit" "(" ")" purevariable "(" exprs ")" {}
+| "emit" name {}
+| "emit" name "(" exprs ")" {}
+| "emit" "(" expr ")" name {}
+| "emit" "(" expr ")" name "(" exprs ")" {}
+| "emit" "(" ")" name {}
+| "emit" "(" ")" name "(" exprs ")" {}
 | "waituntil" softtest {}
 | "def" {}
 | "var" variable {}
@@ -605,7 +604,7 @@ statement:
 | "for" flavor.opt "(" statement ";"
 			 expr ";"
 			 statement ")" taggedcommand %prec CMDBLOCK {}
-| "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
+| "foreach" flavor.opt name "in" expr "{" taggedcommands "}"
      %prec CMDBLOCK {}
 | "freezeif" "(" softtest ")" taggedcommand {}
 | "loop" taggedcommand %prec CMDBLOCK {}
@@ -621,13 +620,15 @@ statement:
 
 
 /*-------------------------------.
-| Name, Purevariable, Variable.  |
+| Name, Name, Variable.  |
 `-------------------------------*/
 
 name:
   "identifier"
+| "$" "(" expr ")"
 | name "." "identifier"
 | name "[" expr "]"
+| name "::" "identifier"  // FIXME: Get rid of it, it's useless.
 ;
 
 /*
@@ -642,29 +643,17 @@ names:
 ;
 */
 
-purevariable:
-
-    "$" "(" expr ")" {}
-
-| purevariable "[" expr "]" {}
-
-| purevariable "." "identifier" {}
-
-| "identifier" "::" "identifier" {}
-
-;
-
 variable:
-  purevariable		{}
-| "static" purevariable	{}
-| purevariable "'n"	{}
-| purevariable "'e"	{}
-| purevariable "'in"	{}
-| purevariable "'out"	{}
-| purevariable "'"	{}
-| purevariable "''"	{}
-| purevariable "'d"	{}
-| purevariable "'dd"	{}
+  name		{}
+| "static" name	{}
+| name "'n"	{}
+| name "'e"	{}
+| name "'in"	{}
+| name "'out"	{}
+| name "'"	{}
+| name "''"	{}
+| name "'d"	{}
+| name "'dd"	{}
 ;
 
 
@@ -673,8 +662,7 @@ variable:
 `---------*/
 
 property:
-
-    purevariable "->" "identifier" {}
+    name "->" "identifier" {}
 ;
 
 
