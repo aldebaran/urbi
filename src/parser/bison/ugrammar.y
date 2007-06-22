@@ -400,34 +400,8 @@ root:
     // FIXME: We should probably free it.
     up.commandTree = 0;
   }
-
-  | variable "=" binary ";" {
-     /*
-      // FIXME: A pointer to a ref-pointer?  Sounds absurd.
-      libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
-      UCommand* c = new UCommand_ASSIGN_BINARY(@$, $1, ref);
-      if (c)
-	c->setTag("__node__");
-      if (c)
-	up.binaryCommand = true;
-
-      up.commandTree = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
-      if (up.commandTree)
-	up.commandTree->setTag("__node__");
-     */
-    }
-| taggedcommands {
-    /*
-      up.commandTree = 0;
-      if ($1 && $1->type == UCommand::TREE)
-      {
-	up.commandTree = dynamic_cast<UCommand_TREE*> ($1);
-	assert (up.commandTree != 0);
-      }
-      else
-	delete $1;
-    */
-    }
+| variable "=" binary ";"
+| taggedcommands           {}
 ;
 
 
@@ -453,11 +427,7 @@ tag: expr;
 
 taggedcommand:
 
-  command {/*
-      if ($1)
-	$1->setTag(UNKNOWN_TAG);
-      $$ = $1;
-    */}
+  command {}
 
 | tag flags.0 ":" command
   {
@@ -465,15 +435,7 @@ taggedcommand:
     // FIXME: $2 ignored.
   }
 
-| flags.1 ":" command {/*
-
-      if ($3)
-      {
-	$3->setTag(UNKNOWN_TAG);
-	$3->flags = $1;
-      }
-      $$ = $3;
-    */}
+| flags.1 ":" command {}
 ;
 
 
@@ -483,43 +445,28 @@ taggedcommand:
 
 flag:
   FLAG
-  {/*
-    UExpression *flagval = new UExpression(@$, UExpression::VALUE, $1);
-    $$ = new UNamedArguments(new UString("flag"), flagval);
-    if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
-      $$->notifyEnd = true;
-  */}
+  {}
 
 | FLAG_TIME "(" expr ")"
-  {/*
-    $$ = new UNamedArguments(new UString("flagtimeout"), $3);
-  */}
+  {}
 
 | FLAG_ID "(" expr ")"
-  {/*
-    $$ = new UNamedArguments(new UString("flagid"), $3);
-  */}
+  {}
 
 | FLAG_TEST "(" softtest ")"
-  {/*
-    $$ = new UNamedArguments(new UString(*$1 == 6 ? "flagstop" : "flagfreeze"),
-			      $3);
-  */}
+  {}
 ;
 
 // One or more "flag"s.
 flags.1:
-  flag             {/* $$ = $1;       */}
-| flags.1 flag     {/* $1->next = $2;
-		     if ($2->notifyEnd)
-		       $1->notifyEnd = true; // propagate the +end flag optim
-		   */}
+  flag             {}
+| flags.1 flag     {}
 ;
 
 // Zero or more "flag"s.
 flags.0:
-  /* empty. */   {/* $$ = 0; */}
-| flags.1        {/* $$ = $1; */}
+  /* empty. */   {}
+| flags.1        {}
 ;
 
 
@@ -532,16 +479,7 @@ command:
 
     statement
 
-| "{" taggedcommands "}" {/*
-
-      UCommand_TREE* res =
-	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
-			  new UCommand_NOOP(@$, UCommand_NOOP::zerotime));
-      res->groupOfCommands = true;
-      res->setTag("__UGrouped_set_of_commands__");
-      res->command2->setTag("__system__");
-      $$ = res;
-    */}
+| "{" taggedcommands "}" {}
 ;
 
 
@@ -589,357 +527,140 @@ pipe.opt:
 
 statement:
   /* empty */
-  {/*
-    $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
-  */}
+  {}
 
 | "noop"
-  {/*
-    $$ = new UCommand_NOOP(@$);
-  */}
+  {}
 
-| variable "=" expr namedarguments {/*
-    $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
-    */}
+| variable "=" expr namedarguments {}
 
-| variable "+=" expr {/*
-    $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 0);
-    */}
+| variable "+=" expr {}
 
-| variable "-=" expr {/*
+| variable "-=" expr {}
 
-    $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 1);
-    */}
+| "var" variable "=" expr namedarguments {}
 
-| "var" variable "=" expr namedarguments {/*
+| property "=" expr {}
 
-      $2->local_scope = true;
-      $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
-    */}
+| expr {}
 
-| property "=" expr {/*
-
-    $$ = new UCommand_ASSIGN_PROPERTY(@$, $1->variablename, $1->property, $3);
-    */}
-
-| expr {/*
-
-    $$ = new UCommand_EXPR(@$, $1);
-    */}
-
-| variable number {/*
-      $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
-    */}
+| variable number {}
 
 | "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
 
-| "echo" expr namedarguments {/*
+| "echo" expr namedarguments {}
 
-    $$ = new UCommand_ECHO(@$, $2, $3, 0);
-    */}
+| variable "=" "new" "identifier" {}
 
-| variable "=" "new" "identifier" {/*
-      $$ = new UCommand_NEW(@$, $1, $4, 0, true);
-    */}
+| variable "=" "new" "identifier" "(" exprs ")" {}
 
-| variable "=" "new" "identifier" "(" exprs ")" {/*
+| "group" "identifier" "{" identifiers "}" {}
 
-      $$ = new UCommand_NEW(@$, $1, $4, $6);
-    */}
+| "addgroup" "identifier" "{" identifiers "}" {}
 
-| "group" "identifier" "{" identifiers "}" {/*
 
-      $$ = new UCommand_GROUP(@$, $2, $4);
-    */}
+| "delgroup" "identifier" "{" identifiers "}" {}
 
-| "addgroup" "identifier" "{" identifiers "}" {/*
+| "group" {}
 
-      $$ = new UCommand_GROUP(@$, $2, $4, 1);
-    */}
+| "alias" purevariable purevariable {}
 
+| purevariable "inherits" purevariable {}
 
-| "delgroup" "identifier" "{" identifiers "}" {/*
+| purevariable "disinherits" purevariable {}
 
-      $$ = new UCommand_GROUP(@$, $2, $4, 2);
-    */}
+| "alias" purevariable {}
 
-   /*
-| GROUP "identifier" {
+| "unalias" purevariable {}
 
-      $$ = new UCommand_GROUP(@$, $2, 0);
-    }
-*/
-| "group" {/*
+| "alias" {}
 
-    $$ = new UCommand_GROUP(@$, 0, 0);
-    */}
+| OPERATOR {}
 
-| "alias" purevariable purevariable {/*
+| OPERATOR_ID tag {}
 
-    $$ = new UCommand_ALIAS(@$, $2, $3);
-    */}
+| OPERATOR_VAR variable {}
 
-| purevariable "inherits" purevariable {/*
+| BINDER "object" purevariable {}
 
-    $$ = new UCommand_INHERIT(@$, $1, $3);
-    */}
 
-| purevariable "disinherits" purevariable {/*
+| BINDER "var" purevariable "from" purevariable {}
 
-    $$ = new UCommand_INHERIT(@$, $1, $3, true);
-    */}
+| BINDER "function" "(" "integer" ")" purevariable "from" purevariable {}
 
-| "alias" purevariable {/*
+| BINDER "event" "(" "integer" ")" purevariable "from" purevariable {}
 
-    $$ = new UCommand_ALIAS(@$, $2, 0);
-    */}
+| "wait" expr {}
 
-| "unalias" purevariable {/*
+| "emit" purevariable {}
 
-    $$ = new UCommand_ALIAS(@$, $2, 0, true);
-    */}
+| "emit" purevariable "(" exprs ")" {}
 
-| "alias" {/*
+| "emit" "(" expr ")" purevariable {}
 
-    $$ = new UCommand_ALIAS(@$, 0, 0);
-  */}
+| "emit" "(" expr ")" purevariable "(" exprs ")" {}
 
-| OPERATOR {/*
+| "emit" "(" ")" purevariable {}
 
-      $$ = new UCommand_OPERATOR(@$, $1);
-    */}
+| "emit" "(" ")" purevariable "(" exprs ")" {}
 
-| OPERATOR_ID tag {/*
+| "waituntil" softtest {}
 
-      $$ = new UCommand_OPERATOR_ID(@$, $1, $2);
-    */}
+| variable "--" {}
 
-| OPERATOR_VAR variable {/*
+| variable "++" {}
 
-      $$ = new UCommand_OPERATOR_VAR(@$, $1, $2);
-    */}
+| "def" {}
 
-| BINDER "object" purevariable {/*
+| "var" variable {}
 
-      $$ = new UCommand_BINDER(@$, 0, $1, UBIND_OBJECT, $3);
-    */}
+| "def" variable {}
 
+| "var" "{" variables "}" {}
 
-| BINDER "var" purevariable "from" purevariable {/*
+| "class" "identifier" "{" class_declaration_list "}" {}
 
-      $$ = new UCommand_BINDER(@$, $5, $1, UBIND_VAR, $3);
-    */}
+| "class" "identifier" {}
 
-| BINDER "function" "(" "integer" ")" purevariable "from" purevariable {/*
 
-      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, $4);
-    */}
+| "event" name formal_arguments {}
 
-| BINDER "event" "(" "integer" ")" purevariable "from" purevariable {/*
-
-      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, $4);
-    */}
-
-| "wait" expr {/*
-
-    $$ = new UCommand_WAIT(@$, $2);
-    */}
-
-| "emit" purevariable {/*
-
-      $$ = new UCommand_EMIT(@$, $2, 0);
-    */}
-
-| "emit" purevariable "(" exprs ")" {/*
-
-      $$ = new UCommand_EMIT(@$, $2, $4);
-    */}
-
-| "emit" "(" expr ")" purevariable {/*
-
-      $$ = new UCommand_EMIT(@$, $5, 0, $3);
-    */}
-
-| "emit" "(" expr ")" purevariable "(" exprs ")" {/*
-
-      $$ = new UCommand_EMIT(@$, $5, $7, $3);
-    */}
-
-| "emit" "(" ")" purevariable {/*
-
-      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
-							UINFINITY));
-    */}
-
-| "emit" "(" ")" purevariable "(" exprs ")" {/*
-
-      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
-							 UINFINITY));
-    */}
-
-| "waituntil" softtest {/*
-
-      $$ = new UCommand_WAIT_TEST(@$, $2);
-    */}
-
-| variable "--" {/*
-
-      $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
-    */}
-
-| variable "++" {/*
-
-      $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
-    */}
-
-| "def" {/*
-
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
-    */}
-
-| "var" variable {/*
-
-      $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
-    */}
-
-| "def" variable {/*
-
-      $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
-    */}
-
-| "var" "{" variables "}" {/*
-
-    $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
-    */}
-
-| "class" "identifier" "{" class_declaration_list "}" {/*
-
-    $$ = new UCommand_CLASS(@$, $2, $4);
-    */}
-
-| "class" "identifier" {/*
-
-    $$ = new UCommand_CLASS(@$, $2, 0);
-    */}
-
-
-| "event" name formal_arguments {/*
-
-      $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $3, 0);
-    */}
-
-| "function" name formal_arguments {/*
-
-      if (up.connection.functionTag)
-      {
-	delete $2;
-	delete $3;
-	$2 = 0;
-	delete up.connection.functionTag;
-	up.connection.functionTag = 0;
-	error(@$, "Nested function def not allowed.");
-	YYERROR;
-      }
-      else
-      {
-	up.connection.functionTag = new UString("__Funct__");
-	globalDelete = &up.connection.functionTag;
-      }
-
-    */} taggedcommand {/*
-
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $3, $5);
-
-      if (up.connection.functionTag)
-      {
-	delete up.connection.functionTag;
-	up.connection.functionTag = 0;
-	globalDelete = 0;
-      }
-    */}
+| "function" name formal_arguments {} taggedcommand {}
 
 | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
-    {/*
-      warn_spontaneous(up, @5, *$5);
-      $$ = new UCommand_IF(@$, $3, $5, 0);
-    */}
+    {}
 
 | "if" "(" expr ")" taggedcommand "else" taggedcommand
-    {/*
-      warn_spontaneous(up, @5, *$5);
-      $$ = new UCommand_IF(@$, $3, $5, $7);
-    */}
+    {}
 
-| "every" "(" expr ")" taggedcommand {/*
+| "every" "(" expr ")" taggedcommand {}
 
-    $$ = new UCommand_EVERY(@$, $3, $5);
-    */}
+| "timeout" "(" expr ")" taggedcommand {}
 
-| "timeout" "(" expr ")" taggedcommand {/*
+| "stopif" "(" softtest ")" taggedcommand {}
 
-    $$ = new UCommand_TIMEOUT(@$, $3, $5);
-    */}
+| "freezeif" "(" softtest ")" taggedcommand {}
 
-| "stopif" "(" softtest ")" taggedcommand {/*
+| "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {}
 
-    $$ = new UCommand_STOPIF(@$, $3, $5);
-    */}
+| "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {}
 
-| "freezeif" "(" softtest ")" taggedcommand {/*
+| "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
 
-    $$ = new UCommand_FREEZEIF(@$, $3, $5);
-    */}
+| "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {}
 
-| "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {/*
+| "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {}
 
-      $$ = new UCommand_AT(@$,  $2, $4, $6, 0);
-    */}
-
-| "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {/*
-     warn_spontaneous(up, @6, *$6);
-     $$ = new UCommand_AT(@$, $2, $4, $6, $8);
-    */}
-
-| "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {/*
-
-      $$ = new UCommand_WHILE(@$, $2, $4, $6);
-    */}
-
-| "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {/*
-
-      $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
-    */}
-
-| "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {/*
-      warn_spontaneous(up, @5, *$5);
-      $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
-    */}
-
-| "loop" taggedcommand %prec CMDBLOCK {/*
-
-      $$ = new UCommand_LOOP(@$, $2);
-    */}
+| "loop" taggedcommand %prec CMDBLOCK {}
 
 | "foreach" flavor.opt purevariable "in" expr "{" taggedcommands "}"
-     %prec CMDBLOCK {/*
+     %prec CMDBLOCK {}
 
-      $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
-    */}
-
-| "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {/*
-
-      $$ = new UCommand_LOOPN(@$, $2, $4, $6);
-    */}
+| "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {}
 
 | "for" flavor.opt "(" statement ";"
 			 expr ";"
-			 statement ")" taggedcommand %prec CMDBLOCK {/*
-
-      $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
-    */}
+			 statement ")" taggedcommand %prec CMDBLOCK {}
 ;
 
 
@@ -968,40 +689,27 @@ names:
 
 purevariable:
 
-    "$" "(" expr ")" {/*
+    "$" "(" expr ")" {}
 
-      $$ = new UVariableName($3);
-    */}
+| purevariable "[" expr "]" {}
 
-| purevariable "[" expr "]" {/*
+| purevariable "." "identifier" {}
 
-      $$ = new UVariableName($1, $2, $4, $5);
-    */}
-
-| purevariable "." "identifier" {/*
-
-      $$ = new UVariableName($1, $2, $4, $5);
-    */}
-
-| "identifier" "::" "identifier" {/*
-
-      $$ = new UVariableName($1, $3, true, 0);
-      if ($$) $$->doublecolon = true;
-    */}
+| "identifier" "::" "identifier" {}
 
 ;
 
 variable:
-  purevariable		{/* $$ = $1;				*/}
-| "static" purevariable	{/* $$ = $2; $$->isstatic = true;	*/}
-| purevariable "'n"	{/* $$ = $1; $$->isnormalized = true;	*/}
-| purevariable "'e"	{/* $$ = $1; $$->varerror = true;	*/}
-| purevariable "'in"	{/* $$ = $1; $$->varin = true;		*/}
-| purevariable "'out"	{/* $$ = $1;				*/}
-| purevariable "'"	{/* $$ = $1; $$->deriv = UVariableName::UDERIV;	  */}
-| purevariable "''"	{/* $$ = $1; $$->deriv = UVariableName::UDERIV2;  */}
-| purevariable "'d"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; */}
-| purevariable "'dd"	{/* $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;*/}
+  purevariable		{}
+| "static" purevariable	{}
+| purevariable "'n"	{}
+| purevariable "'e"	{}
+| purevariable "'in"	{}
+| purevariable "'out"	{}
+| purevariable "'"	{}
+| purevariable "''"	{}
+| purevariable "'d"	{}
+| purevariable "'dd"	{}
 ;
 
 
@@ -1011,10 +719,7 @@ variable:
 
 property:
 
-    purevariable "->" "identifier" {/*
-
-      $$ = new UProperty($1, $3);
-    */}
+    purevariable "->" "identifier" {}
 ;
 
 
@@ -1023,12 +728,9 @@ property:
 `---------------*/
 
 namedarguments:
-  /* empty */ {/* $$ = 0; */}
+  /* empty */ {}
 
-| "identifier" ":" expr namedarguments {/*
-
-      $$ = new UNamedArguments($1, $3, $4);
-    */}
+| "identifier" ":" expr namedarguments {}
 ;
 
 
@@ -1037,14 +739,9 @@ namedarguments:
 `-------*/
 
 binary:
-    "bin" "integer" {/*
-      $$ = new UBinary($2, 0);
-    */}
+    "bin" "integer" {}
 
-| "bin" "integer" rawarguments {/*
-
-      $$ = new UBinary($2, $3);
-    */}
+| "bin" "integer" rawarguments {}
 ;
 
 
@@ -1073,30 +770,15 @@ expr:
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 
-| "[" exprs "]" {/*
+| "[" exprs "]" {}
 
-    $$ = new UExpression(@2, UExpression::LIST, $2);
-  */}
+| property {}
 
-| property {/*
+| variable "(" exprs ")"  {}
 
-    $$ = new UExpression(@$, UExpression::PROPERTY,
-			 $1->property, $1->variablename);
-  */}
-
-| variable "(" exprs ")"  {/*
-
-    //if (($1) && ($1->device) &&
-    //    ($1->device->equal(up.connection.functionTag)))
-    //  $1->nameUpdate(up.connection.connectionTag->c_str(),
-    //                 $1->id->c_str());
-
-    $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
-  */}
-
-| "%" variable         {/* $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); */}
-| variable             {/* $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      */}
-| "group" "identifier" {/* $$ = new_exp(up, @$, UExpression::GROUP, $2);         */}
+| "%" variable         {}
+| variable             {}
+| "group" "identifier" {}
 ;
 
 
@@ -1113,10 +795,7 @@ expr:
 | "-" expr %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
 
-| "copy" expr  %prec NEG {/*
-
-      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
-    */}
+| "copy" expr  %prec NEG {}
 ;
 
 expr.opt:
@@ -1141,8 +820,8 @@ expr.opt:
 ;
 
 expr:
-  "true"  {/* $$ = new UExpression(@$, UExpression::VALUE, 1); */}
-| "false" {/* $$ = new UExpression(@$, UExpression::VALUE, 0); */}
+  "true"  {}
+| "false" {}
 
 | expr "=="  expr { $$ = new_exp(up, @$, ast::OpExp::equ, $1, $3); }
 | expr "~="  expr { $$ = new_exp(up, @$, ast::OpExp::req, $1, $3); }
@@ -1155,9 +834,7 @@ expr:
 | expr "=~=" expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 | expr "%="  expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 
-| "!" expr {/*
-    $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
-  */}
+| "!" expr {}
 
 | expr "&&" expr { $$ = new_exp(up, @$, ast::OpExp::land, $1, $3); }
 | expr "||" expr { $$ = new_exp(up, @$, ast::OpExp::lor,  $1, $3); }
@@ -1180,28 +857,13 @@ exprs.1:
 
 rawarguments:
  number
- {/*
-   UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-   $$ = new UNamedArguments(expr);
- */}
+ {}
 
-| "identifier" {/*
+| "identifier" {}
 
-      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-      $$ = new UNamedArguments(expr);
-    */}
+| number rawarguments {}
 
-| number rawarguments {/*
-
-      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-      $$ = new UNamedArguments(expr, $2);
-    */}
-
-| "identifier" rawarguments {/*
-
-      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
-      $$ = new UNamedArguments(expr, $2);
-    */}
+| "identifier" rawarguments {}
 ;
 
 
@@ -1211,18 +873,8 @@ rawarguments:
 
 softtest:
   expr
-| expr "~" expr  {/*
-
-      $$ = $1;
-      $$->issofttest = true;
-      $$->softtest_time = $3;
-    */}
-| "(" expr "~" expr ")" {/*
-
-      $$ = $2;
-      $$->issofttest = true;
-      $$->softtest_time = $4;
-    */}
+| expr "~" expr  {}
+| "(" expr "~" expr ")" {}
 ;
 
 
@@ -1267,29 +919,19 @@ formal_arguments:
 ;
 
 class_declaration_list:
-  /* empty */  {/* $$ = 0; */}
-
-| class_declaration {/*
-      $$ = new UNamedArguments($1, 0);
-    */}
-
-| class_declaration ";" class_declaration_list {/*
-      $$ = new UNamedArguments($1, $3);
-    */}
+  /* empty */  {}
+| class_declaration {}
+| class_declaration ";" class_declaration_list {}
 ;
 
-/* VARIABLES */
+/*----------.
+| variables |
+`----------*/
 
 variables:
-  /* empty */  {/* $$ = 0; */}
-
-| variable {/*
-      $$ = new UVariableList($1);
-    */}
-
-| variable ";" variables {/*
-      $$ = new UVariableList($1, $3);
-    */}
+  /* empty */  {}
+| variable {}
+| variable ";" variables {}
 ;
 
 /* End of grammar */

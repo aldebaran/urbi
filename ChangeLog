@@ -1,5 +1,10 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/ugrammar.y: Throw the parser actions away.
+	They clutter the file.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	Fix previous fix checkin
 	* src/parser/bison/ugrammar.y (identifiers): Accept "var" where
 	appropriate...
