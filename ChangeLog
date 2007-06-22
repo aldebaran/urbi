@@ -1,5 +1,17 @@
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
+	parser: name, identifiers
+	* src/parser/bison/ugrammar.y (identifiers): Fix its definition
+	that allowed trailing commas.
+	(var.opt, identifiers.1): New.
+	(name, formal_arguments): New.
+	Use them to factor function and event declarations/definitions.
+	Note that we break backward compatibility here, since now
+	formal_arguments can no longer be empty.  This is because it
+	simplifies the task for now.
+
+2007-06-22  Akim Demaille  <demaille@gostai.com>
+
 	Renamings
 	* src/parser/bison/ugrammar.y (ustring): Remove, useless currently.
 	(arguments, argument_list): Rename as...

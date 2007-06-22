@@ -825,24 +825,18 @@ statement:
     */}
 
 
-| "event" variable "(" identifiers ")" {/*
+| "event" name formal_arguments {/*
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $3, 0);
     */}
 
-| "event" variable {/*
-
-      $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
-    */}
-
-| "function" variable "(" identifiers ")" {/*
+| "function" name formal_arguments {/*
 
       if (up.connection.functionTag)
       {
 	delete $2;
-	delete $4;
+	delete $3;
 	$2 = 0;
 	delete up.connection.functionTag;
 	up.connection.functionTag = 0;
@@ -857,7 +851,7 @@ statement:
 
     */} taggedcommand {/*
 
-      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $3, $5);
 
       if (up.connection.functionTag)
       {
@@ -950,9 +944,27 @@ statement:
 
 
 
-/*--------------------------------.
-| VARID, PUREVARIABLE, VARIABLE.  |
-`--------------------------------*/
+/*-------------------------------.
+| Name, Purevariable, Variable.  |
+`-------------------------------*/
+
+name:
+  "identifier"
+| name "." "identifier"
+| name "[" expr "]"
+;
+
+/*
+names.1:
+  name
+| names "," name
+;
+
+names:
+  // nothing.
+| names.1
+;
+*/
 
 purevariable:
 
@@ -1218,59 +1230,38 @@ softtest:
 | identifiers.  |
 `--------------*/
 
-identifiers:
-  /* empty */  {/* $$ = 0; */}
-
-| "identifier" {/*
-
-      $$ = new UNamedArguments($1, 0);
-    */}
-
-| "var" "identifier" {/*
-
-      $$ = new UNamedArguments($2, 0);
-    */}
-
-
-| "identifier" "," identifiers {/*
-
-      $$ = new UNamedArguments($1, 0, $3);
-    */}
-
-| "var" "identifier" "," identifiers {/*
-
-      $$ = new UNamedArguments($2, 0, $4);
-    */}
+var.opt:
+  /* empty. */
+| "var"
 ;
 
-/* CLASS_DELCARATION & CLASS_DECLARATION_LIST */
+identifiers.1:
+  var.opt "identifier"
+| identifiers.1 "," "identifier"
+  ;
+
+identifiers:
+  /* empty */ 
+| identifiers.1
+;
+
+
+/*-------------------------------------------.
+| class_declaration & class_declaration_list |
+`-------------------------------------------*/
 
 class_declaration:
-
-    "var" "identifier" {/*
-
-      $$ = new UExpression(@$, UExpression::VALUE, $2);
-    */}
-
-| "function" variable "(" identifiers ")" {/*
-      $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
-    */}
-
-| "function" variable {/*
-      $$ = new UExpression(@$, UExpression::FUNCTION, $2,
-			   static_cast<UNamedArguments*> (0));
-    */}
-
-| "event" variable "(" identifiers ")" {/*
-      $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
-    */}
-
-| "event" variable {/*
-      $$ = new UExpression(@$, UExpression::EVENT, $2,
-			   static_cast<UNamedArguments*> (0));
-    */}
+  "var" "identifier"
+| "function" name formal_arguments
+| "event" name formal_arguments
 ;
 
+/* It used to be possible to not have the parens for empty identifiers.
+   For the time being, this is disabled because it goes against
+   factoring.  Might be reintroduced later. */
+formal_arguments:
+  "(" identifiers ")"
+;
 
 class_declaration_list:
   /* empty */  {/* $$ = 0; */}
