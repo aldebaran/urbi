@@ -516,9 +516,9 @@ pipe.opt:
 ;
 
 
-/*------------.
+/*-------.
 | Stmt.  |
-`------------*/
+`-------*/
 
 stmt:
   /* empty */ {}
@@ -653,9 +653,9 @@ property:
 ;
 
 
-/*---------------.
-| NAMEDARGUMENTS |
-`---------------*/
+/*-----------------.
+| namedarguments.  |
+`-----------------*/
 
 namedarguments:
   /* empty */ {}
@@ -707,7 +707,7 @@ expr:
 | expr "/" expr	{ $$ = new_exp(up, @$, ast::OpExp::div, $1, $3); }
 | expr "%" expr	{ $$ = new_exp(up, @$, ast::OpExp::mod, $1, $3); }
 | expr "^" expr	{ $$ = new_exp(up, @$, ast::OpExp::exp, $1, $3); }
-| "-" expr %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
+| "-" expr     %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
 | "copy" expr  %prec NEG {}
 ;
@@ -722,13 +722,13 @@ expr.opt:
 | Tests.  |
 `--------*/
 %token
-  TOK_EQU   "=="
-  TOK_GTH   ">"
-  TOK_LEQ   "<="
-  TOK_LTH   "<"
+  TOK_EQU  "=="
+  TOK_GTH  ">"
+  TOK_LEQ  "<="
+  TOK_LTH  "<"
   TOK_PEQ  "%="
-  TOK_NEQ   "!="
-  TOK_GEQ   ">="
+  TOK_NEQ  "!="
+  TOK_GEQ  ">="
   TOK_DEQ  "=~="
   TOK_REQ  "~="
 ;
@@ -744,7 +744,6 @@ expr:
 | expr ">="  expr { $$ = new_exp(up, @$, ast::OpExp::geq, $1, $3); }
 | expr "<"   expr { $$ = new_exp(up, @$, ast::OpExp::lth, $1, $3); }
 | expr "<="  expr { $$ = new_exp(up, @$, ast::OpExp::leq, $1, $3); }
-
 | expr "=~=" expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 | expr "%="  expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 
