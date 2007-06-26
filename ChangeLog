@@ -1,5 +1,19 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	More AST generation
+	* dev/ast-default-visitor-gen: New.
+	* dev/ast-pretty-printer-gen: Fix some errors.
+	Don't output a pretty printing rule if there is none.
+	Derive from the default visitor rather than the (empty) visitor.
+	Provide an operator<<.
+	* src/ast/Makefile.am: Factor the generation rules using %-rules.
+	* src/ast/all.hh: Include pretty-printer.hh.
+	* src/ast/ast.yml: More doc.
+	* src/ast/default-visitor.hh, src/ast/default-visitor.hxx: Remove.
+	Now generated.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	delete globalDelete
 	* src/userver.cc, src/parser/bison/ugrammar.y (globalDelete):
 	Remove.

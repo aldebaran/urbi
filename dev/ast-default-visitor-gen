@@ -1,0 +1,176 @@
+#!/usr/bin/env python
+
+import re
+import sys, os, os.path, filecmp, shutil, stat
+import ast, tools
+
+if len(sys.argv) != 2:
+  print "Usage: .. SRCDIR"
+  sys.exit(1)
+srcdir = sys.argv[1]
+
+## Abstract syntax tree C++ visitor - header ----------------------------------
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+
+header = """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+"""
+
+## --------------- ##
+## The *.hh file.  ##
+## --------------- ##
+
+visitor_hh = file("default-visitor.hh.tmp", "w")
+sys.stdout = visitor_hh
+
+print header
+
+print """\
+/**
+ ** \\file ast/default-visitor.hh
+ ** \\brief Definition of ast::DefaultVisitor.
+ */
+
+#ifndef AST_DEFAULT_VISITOR_HH
+# define AST_DEFAULT_VISITOR_HH
+
+# include <functional>
+# include <ostream>
+# include "ast/visitor.hh"
+# include "ast/fwd.hh"
+# include "libport/select-const.hh"
+
+namespace ast
+{
+
+  /** \brief Just visit the whole Ast tree.
+   **
+   ** GenDefaultVisitor<CONSTNESS-SELECTOR> visits the whole Ast tree,
+   ** but does nothing else. */
+  template < template<typename> class Const >
+  class GenDefaultVisitor : public GenVisitor<Const>
+  {
+  public:
+    /// Super class type.
+    typedef GenVisitor<libport::constify_traits> super_type;
+
+    /** \\name Ctor & dtor.
+     ** \\{ */
+    /// Construct a Default Visitor.
+    GenDefaultVisitor ();
+
+    /// Destroy a Default Visitor.
+    virtual ~GenDefaultVisitor ();
+    /** \\} */
+
+    // Import from super class.
+    using super_type::operator();
+
+    // Useful shortcut for pointer types.
+    template<class E> void operator() (E* e);
+
+    /** \name Visit nodes.
+     ** \{ */
+"""
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp(x.name, y.name))
+for node in arr:
+  print "    virtual void operator() (typename Const<%s>::type&);" % (node.name)
+
+print """
+    /** \} */
+  };
+
+  /// Shorthand for a const visitor.
+  typedef GenDefaultVisitor<libport::constify_traits> DefaultConstVisitor;
+  /// Shorthand for a non const visitor.
+  typedef GenDefaultVisitor<libport::id_traits> DefaultVisitor;
+
+} // namespace ast
+
+# include "ast/default-visitor.hxx"
+
+#endif // !AST_DEFAULT_VISITOR_HH
+"""
+
+
+## ---------------- ##
+## The *.hxx file.  ##
+## ---------------- ##
+
+visitor_hxx = file("default-visitor.hxx.tmp", "w")
+sys.stdout = visitor_hxx
+
+print header
+
+print """\
+/**
+ ** \\file ast/default-visitor.hxx
+ ** \\brief Implementation of ast::DefaultVisitor.
+ */
+
+#ifndef AST_DEFAULT_VISITOR_HXX
+# define AST_DEFAULT_VISITOR_HXX
+
+# include "default-visitor.hh"
+# include "all.hh"
+
+namespace ast
+{
+
+  template <template <typename> class Const>
+  GenDefaultVisitor<Const>::GenDefaultVisitor () :
+    GenVisitor<Const> ()
+  {
+  }
+
+  template <template <typename> class Const>
+  GenDefaultVisitor<Const>::~GenDefaultVisitor ()
+  {
+  }
+
+  template <template <typename> class Const>
+  template <class E>
+  void
+  GenDefaultVisitor<Const>::operator() (E* e)
+  {
+    e->accept (*this);
+  }
+
+"""
+
+for node in arr:
+  if 'default' in node.__dict__:
+    action = node.default
+    var = ' n'
+  else:
+    action = '// No action defined.'
+    var = ''
+
+  print """\
+  template <template <typename> class Const>
+  void
+  GenDefaultVisitor<Const>::operator() (typename Const<%s>::type&%s)
+  {
+    %s
+  }
+""" % (node.name, var, action)
+
+print """} // namespace ast
+#endif // !AST_DEFAULT_VISITOR_HH
+"""
+
+
+# Restore stdout and close files
+sys.stdout = sys.__stdout__
+visitor_hh.close ()
+visitor_hxx.close ()
+
+file_fullpath = os.path.join (srcdir, "default-visitor.hh");
+tools.lazy_overwrite (file_fullpath, "default-visitor.hh.tmp")
+
+file_fullpath = os.path.join (srcdir, "default-visitor.hxx");
+tools.lazy_overwrite (file_fullpath, "default-visitor.hxx.tmp")

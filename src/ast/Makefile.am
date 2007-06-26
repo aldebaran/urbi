@@ -9,6 +9,7 @@ BUILT_SOURCES += $(BUILT_SOURCES_local)
 BUILT_SOURCES_local =					\
 	fwd.hh						\
 	visitor.hh					\
+	default-visitor.hh default-visitor.hxx		\
 	pretty-printer.hh pretty-printer.cc		\
 	$(AST_NODES)
 
@@ -19,49 +20,42 @@ $(srcdir)/ast-nodes.mk: $(gen_dir)/ast-nodes-mk-gen $(ast_gen_deps)
 	$(gen_dir)/ast-nodes-mk-gen < $(srcdir)/ast.yml >$@.tmp
 	mv -f $@.tmp $@
 
-# fwd.hh.
-EXTRA_DIST += fwd.stamp
-$(srcdir)/fwd.stamp: $(gen_dir)/ast-fwd-gen $(ast_gen_deps)
+## -------------------------- ##
+## Using the AST generators.  ##
+## -------------------------- ##
+
+# We use GNU Make extensions.
+AUTOMAKE_OPTIONS += -Wno-gnu
+$(srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
 	@rm -rf $@
 	@rm -rf $@.tmp
 	@touch $@.tmp
-	$(gen_dir)/ast-fwd-gen $(srcdir) < $(srcdir)/ast.yml
+	$(gen_dir)/ast-$*-gen $(srcdir) < $(srcdir)/ast.yml
 	@mv -f $@.tmp $@
-fwd.hh: fwd.stamp
+
+# fwd.hh.
+EXTRA_DIST += fwd.stamp
+fwd.hh: $(srcdir)/fwd.stamp
 
 # AST itself.
 EXTRA_DIST += ast.stamp
-$(srcdir)/ast.stamp: $(gen_dir)/ast-nodes-gen $(ast_gen_deps)
-	@rm -rf $@
-	@rm -rf $@.tmp
-	@touch $@.tmp
-	$(gen_dir)/ast-nodes-gen $(srcdir) < $(srcdir)/ast.yml
-	@mv -f $@.tmp $@
-$(AST_NODES): ast.stamp
+$(AST_NODES): $(srcdir)/ast.stamp
 
 $(srcdir)/ast.dot: $(gen_dir)/ast-graph-gen $(ast_gen_deps)
 	$(gen_dir)/ast-graph-gen < $(srcdir)/ast.yml >$@.tmp
 	mv -f $@.tmp $@
 
+# DefaultVisitor
+EXTRA_DIST += default-visitor.stamp
+default-visitor.hh default-visitor.hxx: $(srcdir)/default-visitor.stamp
+
 # Visitor.
 EXTRA_DIST += visitor.stamp
-$(srcdir)/visitor.stamp: $(gen_dir)/ast-visitor-gen $(ast_gen_deps)
-	@rm -rf $@
-	@rm -rf $@.tmp
-	@touch $@.tmp
-	$(gen_dir)/ast-visitor-gen $(srcdir) < $(srcdir)/ast.yml
-	@mv -f $@.tmp $@
-visitor.hh: visitor.stamp
+visitor.hh: $(srcdir)/visitor.stamp
 
 # PrettyPrinter.
 EXTRA_DIST += pretty-printer.stamp
-$(srcdir)/pretty-printer.stamp: $(gen_dir)/ast-pretty-printer-gen $(ast_gen_deps)
-	@rm -rf $@
-	@rm -rf $@.tmp
-	@touch $@.tmp
-	$(gen_dir)/ast-pretty-printer-gen $(srcdir) < $(srcdir)/ast.yml
-	@mv -f $@.tmp $@
-pretty-printer.hh pretty-printer.cc: pretty-printer.stamp
+pretty-printer.hh pretty-printer.cc: $(srcdir)/pretty-printer.stamp
 
 
 MAINTAINERCLEANFILES += $(BUILT_SOURCES_local)
@@ -71,5 +65,4 @@ libast_la_SOURCES =					\
 	all.hh                                          \
 	loc.hh                                          \
 	visitor.hxx					\
-	default-visitor.hh default-visitor.hxx		\
 	$(BUILT_SOURCES_local)

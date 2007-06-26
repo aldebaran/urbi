@@ -26,32 +26,31 @@ print header
 
 print """\
 /**
- ** \\file ast/printer.hh
+ ** \\file ast/pretty-printer.hh
  ** \\brief Definition of ast::PrettyPrinter.
  */
 
-#ifndef AST_PRETTY_PRINT_HH
-# define AST_PRETTY_PRINT_HH
+#ifndef AST_PRETTY_PRINTER_HH
+# define AST_PRETTY_PRINTER_HH
 
 # include <functional>
 # include <ostream>
-# include "ast/visitor.hh"
+# include "ast/default-visitor.hh"
 # include "ast/fwd.hh"
 # include "libport/select-const.hh"
 
 namespace ast
 {
 
-  /** \\brief Ast pretty-printer.
-   **/
+  /// Ast pretty-printer.
 
-  class PrettyPrinter : public GenVisitor<libport::constify_traits>
+  class PrettyPrinter : public DefaultConstVisitor
   {
     /** \\name Ctor & dtor.
      ** \\{ */
   public:
     /// Super class type.
-    typedef GenVisitor<libport::constify_traits> super_type;
+    typedef DefaultConstVisitor super_type;
 
     /// Construct a PrettyPrinter.
     PrettyPrinter (std::ostream& s);
@@ -65,19 +64,29 @@ namespace ast
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
-
-  print "    virtual void operator() (const %s&);" % (node.name)
+  if 'printer' in node.__dict__:
+    print "    virtual void operator() (const %s&);" % (node.name)
 
 print """
   private:
-    std::ostream* stream_;
+    std::ostream* ostr_;
   };
 
 } // namespace ast
 
+inline
+std::ostream&
+operator<< (std::ostream& o, const ast::Ast& a)
+{
+  ast::PrettyPrinter p (o);
+  p(a);
+  return o;
+}
+
 // # include "ast/pretty-printer.hxx"
 
-#endif // !AST_PRETTY_PRINTER_HH"""
+#endif // !AST_PRETTY_PRINTER_HH
+"""
 
 visitor_cc = file("pretty-printer.cc.tmp", "w")
 sys.stdout = visitor_cc
@@ -106,12 +115,9 @@ for node in arr:
 	# Handle '$foo' variables
 	p = re.compile('\\$(\\w*)')
 	a = p.sub('node.\\1_get()', a)
-	action += '    *stream_ << %s;\n' % (a)
+	action += '    *ostr_ << %s;\n' % (a)
     name = 'node'
-  else:
-    action = '    /* No printer defined */\n'
-
-  print """\
+    print """\
   void PrettyPrinter::operator() (const %s& %s)
   {
 %s  }

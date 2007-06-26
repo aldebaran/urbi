@@ -47,4 +47,6 @@
 # include "ast/wait-until-exp.hh"
 # include "ast/whenever-exp.hh"
 
+# include "ast/pretty-printer.hh"
+
 #endif // !AST_ALL_HH

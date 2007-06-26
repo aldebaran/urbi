@@ -42,6 +42,14 @@
 #      - W: provide a *_set accessor.
 #    + desc, a short description of the attribute
 #
+#    + default
+#      The code to output in the default visitor.  The current node
+#      is in the variable "n".
+#
+#    + printer
+#      The way the node is pretty-printed, using so ad-hoc syntactic
+#      sugar.  FIXME: Document.
+#
 # Defaults:
 #  * class:
 #    + desc: the name of the class
