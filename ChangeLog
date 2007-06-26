@@ -1,5 +1,13 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	variable -> lvalue
+	* src/parser/bison/ugrammar.y (variable): Rename as...
+	(lvalue): this.
+	Beware that some uses are now "name" uses.
+	We sticked to the grammar of the trunk.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	names, rvalue
 	Get closer to the current trunk's grammar.
 	* src/parser/bison/ugrammar.y (variable): Extract...

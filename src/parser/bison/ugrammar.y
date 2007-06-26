@@ -360,7 +360,7 @@
 %type <named_arguments>     class_declaration_list "class declaration list"
 %type <binary>              binary          "binary"
 %type <property>            property        "property"
-%type <variable>            variable        "variable"
+%type <variable>            lvalue          "lvalue"
 %type <variable>            name            "slot name"
 
 
@@ -400,7 +400,7 @@ root:
     // FIXME: We should probably free it.
     up.commandTree = 0;
   }
-| variable "=" binary ";"  {}
+| lvalue "=" binary ";"  {}
 | commands           {}
 ;
 
@@ -543,7 +543,7 @@ statement:
 | "alias" {}
 | OPERATOR {}
 | OPERATOR_ID tag {}
-| OPERATOR_VAR variable {}
+| OPERATOR_VAR name {}
 | BINDER "object" name {}
 | BINDER "var" name "from" name {}
 | BINDER "function" "(" "integer" ")" name "from" name {}
@@ -557,8 +557,8 @@ statement:
 | "emit" "(" ")" name "(" exprs ")" {}
 | "waituntil" softtest {}
 | "def" {}
-| "var" variable {}
-| "def" variable {}
+| "var" name {}
+| "def" name {}
 | "var" "{" names "}" {}
 | "class" "identifier" "{" class_declaration_list "}" {}
 | "class" "identifier" {}
@@ -570,15 +570,15 @@ statement:
 | Statement: Assignment.  |
 `------------------------*/
 statement:
-	variable "=" expr namedarguments {}
-| "var" variable "=" expr namedarguments {}
-| variable "+=" expr {}
-| variable "-=" expr {}
+	lvalue "=" expr namedarguments {}
+| "var" lvalue "=" expr namedarguments {}
+| lvalue "+=" expr {}
+| lvalue "-=" expr {}
 | property "=" expr {}
-| variable "=" "new" "identifier" {}
-| variable "=" "new" "identifier" "(" exprs ")" {}
-| variable "--" {}
-| variable "++" {}
+| lvalue "=" "new" "identifier" {}
+| lvalue "=" "new" "identifier" "(" exprs ")" {}
+| lvalue "--" {}
+| lvalue "++" {}
 ;
 
 /*--------------------------.
@@ -622,10 +622,10 @@ name:
 
 
 /*-----------.
-| Variable.  |
+| Lvalue.  |
 `-----------*/
 
-variable:
+lvalue:
   name		{}
 | name "'n"	{}
 ;
@@ -698,8 +698,8 @@ expr:
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 | "[" exprs "]" {}
 | property {}
-| variable "(" exprs ")"  {}
-| "%" variable            {}
+| name "(" exprs ")"  {}
+| "%" name            {}
 | "group" "identifier"    {}
 ;
 
