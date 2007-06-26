@@ -1,5 +1,11 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	Fix dependencies
+	* src/ast/Makefile.am (ast.stamp): Rename as...
+	(nodes.stamp): this, to match the generator name.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	Fix operator << generation
 	* dev/ast-pretty-printer-gen: Put it in the ast namespace.
 

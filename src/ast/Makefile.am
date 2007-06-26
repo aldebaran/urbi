@@ -38,8 +38,8 @@ EXTRA_DIST += fwd.stamp
 fwd.hh: $(srcdir)/fwd.stamp
 
 # AST itself.
-EXTRA_DIST += ast.stamp
-$(AST_NODES): $(srcdir)/ast.stamp
+EXTRA_DIST += nodes.stamp
+$(AST_NODES): $(srcdir)/nodes.stamp
 
 $(srcdir)/ast.dot: $(gen_dir)/ast-graph-gen $(ast_gen_deps)
 	$(gen_dir)/ast-graph-gen < $(srcdir)/ast.yml >$@.tmp
