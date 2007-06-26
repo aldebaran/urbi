@@ -223,7 +223,6 @@
   TOK_EVENT        "event"
   TOK_EVERY        "every"
   TOK_EXP          "^"
-  TOK_EXPRBLOCK    "expression block"
   TOK_FALSE        "false"
   TOK_FOR          "for"
   TOK_FOREACH      "foreach"
@@ -342,9 +341,8 @@
 %type <expr>                expr            "expression"
 %type <expr>                expr.opt        "optional expression"
 %type <fval>                time_expr       "time expression"
-%type <expr>                commands        "scheduled commands"
-%type <expr>                command         "command"
-%type <expr>                statement       "statement"
+%type <expr>                stmts           "scheduled statements"
+%type <expr>                stmt            "statement"
 %type <named_arguments>     exprs           "zero or more expressions"
 %type <named_arguments>     exprs.1         "one or more expressions"
 %type <named_arguments>     raw_arguments   "list of attributes"
@@ -378,7 +376,7 @@
 
 %right "," ";"
 %left  "&" "|"
-%left  CMDBLOCK EXPRBLOCK
+%left  CMDBLOCK
 %left  "else" "onleave"
 %nonassoc "="
 
@@ -400,7 +398,7 @@ root:
     up.commandTree = 0;
   }
 | lvalue "=" binary ";"  {}
-| commands           {}
+| stmts           {}
 ;
 
 binary:
@@ -419,32 +417,32 @@ raw_arguments:
 ;
 
 
-/*-----------.
-| commands.  |
-`-----------*/
+/*--------.
+| stmts.  |
+`--------*/
 
-commands:
-  command
-| commands "," commands { $$ = new_bin(@$, $2, $1, $3); }
-| commands ";" commands { $$ = new_bin(@$, $2, $1, $3); }
-| commands "|" commands { $$ = new_bin(@$, $2, $1, $3); }
-| commands "&" commands { $$ = new_bin(@$, $2, $1, $3); }
+stmts:
+  stmt
+| stmts "," stmts { $$ = new_bin(@$, $2, $1, $3); }
+| stmts ";" stmts { $$ = new_bin(@$, $2, $1, $3); }
+| stmts "|" stmts { $$ = new_bin(@$, $2, $1, $3); }
+| stmts "&" stmts { $$ = new_bin(@$, $2, $1, $3); }
 ;
 
 
-/*-----------------------------.
-| tagged and flagged command.  |
-`-----------------------------*/
+/*--------------------------.
+| tagged and flagged stmt.  |
+`--------------------------*/
 
 %type <expr> tag;
 tag: expr;
 
-command:
-  tag flags.0 ":" command
+stmt:
+  tag flags.0 ":" stmt
   {
     $$ = new ast::TagExp (@$, $1, $4);
   }
-| flags.1 ":" command {}
+| flags.1 ":" stmt {}
 ;
 
 
@@ -473,13 +471,12 @@ flags.0:
 
 
 
-/*----------.
-| command.  |
-`----------*/
+/*-------.
+| stmt.  |
+`-------*/
 
-command:
-  statement
-| "{" commands "}" {}
+stmt:
+  "{" stmts "}" {}
 ;
 
 
@@ -522,10 +519,10 @@ pipe.opt:
 
 
 /*------------.
-| Statement.  |
+| Stmt.  |
 `------------*/
 
-statement:
+stmt:
   /* empty */ {}
 | "noop"      {}
 | expr        {}
@@ -562,13 +559,13 @@ statement:
 | "class" "identifier" "{" class_declaration_list "}" {}
 | "class" "identifier" {}
 | "event" name formal_arguments {}
-| "function" name formal_arguments command {}
+| "function" name formal_arguments stmt {}
 ;
 
-/*------------------------.
-| Statement: Assignment.  |
-`------------------------*/
-statement:
+/*-------------------.
+| Stmt: Assignment.  |
+`-------------------*/
+stmt:
 	lvalue "=" expr namedarguments {}
 | "var" lvalue "=" expr namedarguments {}
 | lvalue "+=" expr {}
@@ -580,29 +577,26 @@ statement:
 | lvalue "++" {}
 ;
 
-/*--------------------------.
-| Statement: Control flow.  |
-`--------------------------*/
-statement:
-  "at" and.opt "(" softtest ")" command %prec CMDBLOCK {}
-| "at" and.opt "(" softtest ")" command "onleave" command {}
-| "every" "(" expr ")" command {}
-| "if" "(" expr ")" command %prec CMDBLOCK    {}
-| "if" "(" expr ")" command "else" command  {}
-| "for" flavor.opt "(" statement ";"
-			 expr ";"
-			 statement ")" command %prec CMDBLOCK {}
-| "foreach" flavor.opt name "in" expr "{" commands "}"
-     %prec CMDBLOCK {}
-| "freezeif" "(" softtest ")" command {}
-| "loop" command %prec CMDBLOCK {}
-| "loopn" flavor.opt "(" expr ")" command %prec CMDBLOCK {}
-| "stopif" "(" softtest ")" command {}
-| "timeout" "(" expr ")" command {}
+/*---------------------.
+| Stmt: Control flow.  |
+`---------------------*/
+stmt:
+  "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK {}
+| "at" and.opt "(" softtest ")" stmt "onleave" stmt {}
+| "every" "(" expr ")" stmt {}
+| "if" "(" expr ")" stmt %prec CMDBLOCK    {}
+| "if" "(" expr ")" stmt "else" stmt  {}
+| "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK {}
+| "foreach" flavor.opt name "in" expr "{" stmts "}"    %prec CMDBLOCK {}
+| "freezeif" "(" softtest ")" stmt {}
+| "loop" stmt %prec CMDBLOCK {}
+| "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK {}
+| "stopif" "(" softtest ")" stmt {}
+| "timeout" "(" expr ")" stmt {}
 | "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
-| "whenever" "(" softtest ")" command %prec CMDBLOCK {}
-| "whenever" "(" softtest ")" command "else" command {}
-| "while" pipe.opt "(" expr ")" command %prec CMDBLOCK {}
+| "whenever" "(" softtest ")" stmt %prec CMDBLOCK {}
+| "whenever" "(" softtest ")" stmt "else" stmt {}
+| "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK {}
 ;
 
 

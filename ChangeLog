@@ -1,5 +1,14 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	Merge command and statement into stmt
+	* src/parser/bison/ugrammar.y (statement, command): Merge into...
+	(stmt): this.
+	(commands): Rename as...
+	(stmts): this.
+	(TOK_EXPRBLOCK, EXPRBLOCK): Remove, unused.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1187:1189 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-06-26  Akim Demaille  <demaille@gostai.com>
