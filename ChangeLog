@@ -1,5 +1,10 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	Remove dead token
+	* src/parser/bison/ugrammar.y (TOK_CMDBLOCK): Remove.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1157:1186 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 2007-06-26  Akim Demaille  <demaille@gostai.com>
