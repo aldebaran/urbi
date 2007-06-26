@@ -207,7 +207,6 @@
   TOK_BIN          "bin"
   TOK_BLOCK        "block"
   TOK_CLASS        "class"
-  TOK_CMDBLOCK     "command block"
   TOK_COLON        ":"
   TOK_COPY         "copy"
   TOK_DEF          "def"
