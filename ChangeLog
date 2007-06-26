@@ -1,5 +1,10 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	Fix warnings
+	* dev/ast.py: "default" is a valid Node attribute.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	Finish the pretty printer
 	* dev/ast-pretty-printer-gen: Provide a ctor and dtor.
 	(PrettyPrinter::ostr_): Let it be a reference.

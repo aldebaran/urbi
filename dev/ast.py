@@ -30,8 +30,13 @@ class Attribute:
     self.desc = ""
     self.hide = False
     for key in dict:
-      if not key in [ 'type', 'mandatory', 'init', 'owned', 'access',
-		      'desc', 'hide' ]:
+      if not key in [ 'access',
+		      'desc', 
+                      'hide',
+                      'init', 
+                      'mandatory', 
+                      'owned', 
+                      'type']:
 	warning ('unknown Attribute attribute: ' + key + ' from ' + name)
       self.__dict__[key] = dict[key]
     self.init = str (self.init)
@@ -136,8 +141,14 @@ class Node:
       if isinstance (key, tuple):
 	(realkey, value) = key
 	error ('The node ' + name + ' has a duplicate key `' + realkey + "'")
-      if not key in ['super', 'concrete', 'attributes', 'desc',
-		     'inline', 'hide', 'printer']:
+      if not key in ['attributes', 
+                     'concrete',
+                     'default',
+                     'desc', 
+                     'hide',
+		     'inline',
+                     'printer',
+                     'super']:
 	warning ('unknown Node attribute: ' + key)
       self.__dict__[key] = dict[key]
 
