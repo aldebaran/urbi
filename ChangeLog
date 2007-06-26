@@ -1,5 +1,102 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1149:1187 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-06-26  Akim Demaille  <demaille@gostai.com>
+	merge -r 1157:1186 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-06-26  Akim Demaille  <demaille@gostai.com>
+	* src/parser/bison/ugrammar.y (variables): Rename as...
+	(names): this.
+
+	2007-06-22  Akim Demaille  <demaille@gostai.com>
+	purevariable|variable -> name
+	* src/parser/bison/ugrammar.y (variable, purevariable): Fuse
+	into...
+	(name): this.
+
+	2007-06-22  Akim Demaille  <demaille@gostai.com>
+	lvalue
+	* src/parser/bison/ugrammar.y (lvalue): New.
+	Use where appropriate (assignments).
+	(rvalue): "static" belongs to here.
+	(variable): Adjust.
+
+	2007-06-22  Akim Demaille  <demaille@gostai.com>
+	* src/parser/bison/ugrammar.y (derive): New.
+	(ravlue): New.
+	(variable): Adjust.
+	* src/parser/bison/flex-lexer.hh, src/parser/uparser.cc,
+	* src/parser/uparser.hh: Adjust includes.
+
+	2007-06-22  Akim Demaille  <demaille@gostai.com>
+	class-definition.chk
+	* src/parser/bison/ugrammar.y: Comment a weakness.
+	* src/uexpression.cc: Formatting changes.
+
+	2007-06-22  Akim Demaille  <demaille@gostai.com>
+	Simplify class defs
+	* src/parser/bison/ugrammar.y (formal_arguments): New.
+	(class_declaration): Use it to factor.
+
+	2007-06-22  Akim Demaille  <demaille@gostai.com>
+	Fix list of identifiers handling
+	* src/parser/bison/ugrammar.y (var.opt, identifiers.1): New.
+	(identifiers): Use them.
+
+	2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
+	update externals (tests). 
+
+	2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
+        The +freeze flag notifies when the command gets frozen/unfrozen.
+
+	add support for +freeze flag. 
+	* src/parser/bison/ugrammar.y: add the same optim like for +end.
+	* src/parser/bison/utoken.l: add +freeze (and +stop at the same time).
+	* src/ucommand.cc: handle the notification.
+	* src/unamedparameters.cc: add notifyFreeze boolean to fasten
+	treatment.
+	* src/unamedparameters.hh: define notifyFreeze.
+
+	2007-06-14  Akim Demaille  <demaille@gostai.com>
+	merge -r 1138:1157 https://svn.gostai.com/svn/kernel1/branches/1.0
+	Space changes only.
+
+	2007-06-14  Akim Demaille  <demaille@gostai.com>
+	* src/uexpression.cc: Use for instead of while.
+
+	2007-06-14  Akim Demaille  <demaille@gostai.com>
+	Readability
+	* src/ucommand.cc: Formatting changes.
+	* src/uexpression.cc (UExpression::eval_VARIABLE): Improve the
+	readability of the code handle derives.
+
+	2007-06-10  Jean-Christophe Baillie  <baillie@gostai.com>
+        Until now, freezing a time controlled command (like wait or a modified
+	assignement) did not freeze the internal time of the command, which
+	resulted in an abrupt reajustement when the command was unfrozen. This
+	patch fixes the problem on wait and assignments, and the corresponding
+	tests has been added.
+	add a first attempt in "time freezing" capabilities. 
+	* src/ucommand.cc: the WAIT and ASSIGN_VALUE commands now store the
+        'lastExec' time and a flag when they have been frozen. Upon
+	unfreezing, the internal time-oriented variables are adjusted based on
+	the difference between the current time and lastExec..
+	* src/ucommand.hh: add lastExec and the 'frozen' flag.
+
+	2007-06-04  Akim Demaille  <demaille@gostai.com>
+	Finish broken merge
+	merge -r 1038:1078 failed to include the modifications for
+	uconnection.cc.
+	* src/uconnection.cc: Import the changes documented in 2007-06-04.
+
+	2007-06-04  Akim Demaille  <demaille@gostai.com>
+	Formatting changes
+	* src/ueventhandler.cc: Sort commutable lines.
+	Promote for over while.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	variable -> lvalue
 	* src/parser/bison/ugrammar.y (variable): Rename as...
 	(lvalue): this.

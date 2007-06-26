@@ -29,6 +29,7 @@
 # include "kernel/utypes.hh"
 
 # include "flavorable.hh"
+# include "uvariablename.hh"
 # include "ugrammar.hh"
 # include "parser/bison/flex-lexer.hh"
 

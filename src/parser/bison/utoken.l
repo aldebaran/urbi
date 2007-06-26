@@ -111,14 +111,8 @@ STRING   \"([^\"]|"\\\"")*\"
 "+begin"      RETURN_IVAL(FLAG, 4);
 "+top"        RETURN_IVAL(FLAG, 7);
 "+bg"         RETURN_IVAL(FLAG, 10);
-
-"+timeout"    RETURN_IVAL(FLAG_TIME, 5);
-
-"+stop"       RETURN_IVAL(FLAG_TEST, 7);
-"+freeze"     RETURN_IVAL(FLAG_TEST, 8);
-
-"+connection" RETURN_IVAL(FLAG_ID, 9);
-
+"+freeze"     RETURN_IVAL(FLAG, 11);
+"+stop"       RETURN_IVAL(FLAG, 12);
 
 {NUMBER}"d"   RETURN_TIME_VALUE(1000*60*60*24);
 {NUMBER}"h"   RETURN_TIME_VALUE(1000*60*60);

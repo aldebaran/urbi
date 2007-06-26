@@ -53,6 +53,9 @@
 # include <iostream>
 
 # include "ucommand.hh"
+// FIXME: These are because we don't use Bison 2.4 yet.
+# include "flavorable.hh"
+# include "uvariablename.hh"
 # include "ugrammar.hh"
 
 struct yy_buffer_state;
