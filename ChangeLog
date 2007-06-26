@@ -1,3 +1,13 @@
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
+	names, rvalue
+	Get closer to the current trunk's grammar.
+	* src/parser/bison/ugrammar.y (variable): Extract...
+	(rvalue): this.
+	(variables): Rename as...
+	(names): this.
+	And be actually a list of "name"s, not of "variable"s.
+
 2007-06-22  Akim Demaille  <demaille@gostai.com>
 
 	* src/parser/bison/ugrammar.y: Remove an empty mid-rule action.

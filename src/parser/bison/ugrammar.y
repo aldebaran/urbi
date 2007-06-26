@@ -37,6 +37,7 @@
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "ast/fwd.hh"
+#include "uvariablename.hh" // UDeriveType
 }
 
 // Locations.
@@ -56,6 +57,7 @@
 %union
 {
   ast::Exp *expr;
+  UVariableName::UDeriveType derive;
 }
 
 // Old junk we should get rid of.
@@ -351,7 +353,7 @@
 %type <named_arguments>     flag            "a flag"
 %type <named_arguments>     flags.0         "zero or more flags"
 %type <named_arguments>     flags.1         "one or more flags"
-%type <variablelist>        variables       "list of variables"
+%type <variablelist>        names           "list of names"
 %type <expr>                softtest        "soft test"
 %type <named_arguments>     identifiers     "list of identifiers"
 %type <expr>                class_declaration "class declaration"
@@ -557,7 +559,7 @@ statement:
 | "def" {}
 | "var" variable {}
 | "def" variable {}
-| "var" "{" variables "}" {}
+| "var" "{" names "}" {}
 | "class" "identifier" "{" class_declaration_list "}" {}
 | "class" "identifier" {}
 | "event" name formal_arguments {}
@@ -606,9 +608,9 @@ statement:
 
 
 
-/*-----------------------.
-| Name, Name, Variable.  |
-`-----------------------*/
+/*-------.
+| Name.  |
+`-------*/
 
 name:
   "identifier"
@@ -618,38 +620,45 @@ name:
 | name "::" "identifier"  // FIXME: Get rid of it, it's useless.
 ;
 
-/*
-names.1:
-  name
-| names "," name
-;
 
-names:
-  // nothing.
-| names.1
-;
-*/
+/*-----------.
+| Variable.  |
+`-----------*/
 
 variable:
   name		{}
-| "static" name	{}
 | name "'n"	{}
+;
+
+// Names as rvalues.
+expr:
+  rvalue
+;
+
+rvalue:
+  name
+| "static" name	{}
+| name derive   {}
 | name "'e"	{}
 | name "'in"	{}
-| name "'out"	{}
-| name "'"	{}
-| name "''"	{}
-| name "'d"	{}
-| name "'dd"	{}
+| name "'out"   {}
+;
+
+%type <derive> derive;
+derive:
+  "'"	{ $$ = UVariableName::UDERIV;	   }
+| "''"	{ $$ = UVariableName::UDERIV2;	   }
+| "'d"	{ $$ = UVariableName::UTRUEDERIV;  }
+| "'dd"	{ $$ = UVariableName::UTRUEDERIV2; }
 ;
 
 
-/*---------.
-| PROPERTY |
-`---------*/
+/*-----------.
+| property.  |
+`-----------*/
 
 property:
-    name "->" "identifier" {}
+  name "->" "identifier" {}
 ;
 
 
@@ -691,10 +700,11 @@ expr:
 | property {}
 | variable "(" exprs ")"  {}
 | "%" variable            {}
-| variable                {}
 | "group" "identifier"    {}
 ;
 
+
+// FIXME: import the rvalue/lvalue/name stuff.
 
   /*---------.
   | num expr |
@@ -826,14 +836,14 @@ class_declaration_list:
 | class_declaration ";" class_declaration_list {}
 ;
 
-/*----------.
-| variables |
-`----------*/
+/*--------.
+| names.  |
+`--------*/
 
-variables:
+names:
   /* empty */  {}
-| variable {}
-| variable ";" variables {}
+| name {}
+| name ";" names {}
 ;
 
 /* End of grammar */
