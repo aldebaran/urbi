@@ -125,8 +125,7 @@ for node in arr:
   name = ''
   action = ''
   if 'printer' in node.__dict__: # if a printer is defined
-    actions = node.printer.split(';')
-    for a in actions:
+    for a in node.printer: # for each action in the printer
       a = a.lstrip(' ').rstrip(' ')
       if a[0] == '~':
 	# Handle '~foo' variables

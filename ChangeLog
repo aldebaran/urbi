@@ -1,3 +1,10 @@
+2007-06-26  mefyl  <mefyl@lrde.epita.fr>
+
+	Fix pretty-printer generator.
+	* src/ast/ast.yml: Document. Use Yaml list instead of
+        semicolon-separated list.
+	* dev/ast-pretty-printer-gen: Adapt.
+
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
 	YieldExp

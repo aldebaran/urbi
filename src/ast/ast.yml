@@ -48,7 +48,11 @@
 #
 #    + printer
 #      The way the node is pretty-printed, using so ad-hoc syntactic
-#      sugar.  FIXME: Document.
+#      sugar. A pretty-printer is specified by actions in a yaml list.
+#      The available actions are:
+#      - $foo: print the foo_ member of the node.
+#      - ~bar: pretty-print recursively the bar_ child of the node.
+#      - Any valid C++ code in the context of the printing method.
 #
 # Defaults:
 #  * class:
@@ -116,19 +120,31 @@ BinaryExp:
 
 AndExp:
   super: BinaryExp
-  printer: ~lhs ; " & " ; ~rhs
+  printer:
+    - ~lhs
+    - '" & "'
+    - ~rhs
 
 PipeExp:
   super: BinaryExp
-  printer: ~lhs ; " | " ; ~rhs
+  printer:
+    - ~lhs
+    - '" | "'
+    - ~rhs
 
 CommaExp:
   super: BinaryExp
-  printer: ~lhs ; " , " ; ~rhs
+  printer:
+    - ~lhs
+    - '" , "'
+    - ~rhs
 
 SemicolonExp:
   super: BinaryExp
-  printer: ~lhs ; " <.,> " ; ~rhs
+  printer:
+    - ~lhs
+    - '" <.,> "'
+    - ~rhs
 
 
 # Identifier constructs
@@ -283,7 +299,8 @@ WheneverExp:
 YieldExp:
   super: Exp
   desc: /// Also known as nop, noop etc.
-  printer: "noop"
+  printer:
+    - '"noop"'
 
 EmitExp:
   super: Exp
@@ -313,7 +330,8 @@ FloatExp:
         type: ufloat
         access: r
         desc: Float value
-  printer: $value
+  printer:
+    - $value
 
 StringExp:
   super: Exp
