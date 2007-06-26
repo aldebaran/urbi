@@ -92,7 +92,7 @@
 #include "uproperty.hh"
 #include "uvariablelist.hh"
 
-extern UString** globalDelete;
+static UString** globalDelete;
 
 /* Memory checking macros, used in the command tree building process */
 

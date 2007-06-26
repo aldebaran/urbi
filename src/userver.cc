@@ -52,7 +52,6 @@
 
 // Global server reference
 UServer *urbiserver= 0;
-UString **globalDelete = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 

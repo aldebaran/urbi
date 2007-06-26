@@ -1,5 +1,11 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	Var scope
+	* src/userver.cc (globalDelete): Move to...
+	* src/parser/bison/ugrammar.y: here, as static.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	Remove dead token
 	* src/parser/bison/ugrammar.y (TOK_CMDBLOCK): Remove.
 
