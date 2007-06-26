@@ -1,5 +1,9 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1157:1186 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/ugrammar.y (variables): Rename as...
 	(names): this.
 
