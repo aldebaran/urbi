@@ -393,7 +393,7 @@ take (T* t)
 %type <namedparameters>     flag            "a flag"
 %type <namedparameters>     flags.0         "zero or more flags"
 %type <namedparameters>     flags.1         "one or more flags"
-%type <variablelist>        variables       "list of variables"
+%type <variablelist>        names           "list of names"
 %type <expr>                softtest        "soft test"
 %type <namedparameters>     formal_arguments
 %type <namedparameters>     identifiers     "list of identifiers"
@@ -936,7 +936,7 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "var" "{" variables "}" {
+  | "var" "{" names "}" {
 
     $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
     memcheck(up, $$, $3);
@@ -1530,9 +1530,11 @@ class_declaration_list:
     }
 ;
 
-/* VARIABLES */
+/*--------.
+| names.  |
+`--------*/
 
-variables:
+names:
   /* empty */  { $$ = 0; }
 
   | name {
@@ -1541,7 +1543,7 @@ variables:
       memcheck(up, $$, $1);
     }
 
-  | name ";" variables {
+  | name ";" names {
       memcheck(up, $1);
       $$ = new UVariableList($1, $3);
       memcheck(up, $$, $3, $1);
