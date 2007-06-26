@@ -76,16 +76,16 @@ print """
     std::ostream& ostr_;
   };
 
-} // namespace ast
+  inline
+  std::ostream&
+  operator<< (std::ostream& o, const Ast& a)
+  {
+    PrettyPrinter p (o);
+    p(a);
+    return o;
+  }
 
-inline
-std::ostream&
-operator<< (std::ostream& o, const ast::Ast& a)
-{
-  ast::PrettyPrinter p (o);
-  p(a);
-  return o;
-}
+} // namespace ast
 
 // # include "ast/pretty-printer.hxx"
 

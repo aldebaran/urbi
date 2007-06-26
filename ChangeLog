@@ -1,5 +1,10 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	Fix operator << generation
+	* dev/ast-pretty-printer-gen: Put it in the ast namespace.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	Fix warnings
 	* dev/ast.py: "default" is a valid Node attribute.
 
