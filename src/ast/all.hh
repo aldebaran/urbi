@@ -46,6 +46,7 @@
 # include "ast/wait-exp.hh"
 # include "ast/wait-until-exp.hh"
 # include "ast/whenever-exp.hh"
+# include "ast/yield-exp.hh"
 
 # include "ast/pretty-printer.hh"
 

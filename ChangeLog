@@ -1,5 +1,13 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	YieldExp
+	* src/ast/ast.yml (YieldExp): New.
+	Complete a few printers.
+	* src/ast/all.hh: Adjust.
+	* src/parser/bison/ugrammar.y: Use it.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	Fix dependencies
 	* src/ast/Makefile.am (ast.stamp): Rename as...
 	(nodes.stamp): this, to match the generator name.

@@ -396,7 +396,7 @@ root:
     up.commandTree = 0;
   }
 | lvalue "=" binary ";"  {}
-| stmts           {}
+| stmts  { std::cerr << "Result: " << *$1 << std::endl; }
 ;
 
 binary:
@@ -521,8 +521,8 @@ pipe.opt:
 `-------*/
 
 stmt:
-  /* empty */ {}
-| "noop"      {}
+  /* empty */ { $$ = new ast::YieldExp (@$); }
+| "noop"      { $$ = new ast::YieldExp (@$); }
 | expr        {}
 | "echo" expr namedarguments {}
 | "group" "identifier" "{" identifiers "}" {}

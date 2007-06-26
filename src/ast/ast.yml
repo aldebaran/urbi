@@ -80,6 +80,7 @@ Ast:
         init: '0'
         access: rW
         desc: Parent node
+  default: super_type::operator() (n);
 
 Exp:
   super: Ast
@@ -119,12 +120,15 @@ AndExp:
 
 PipeExp:
   super: BinaryExp
+  printer: ~lhs ; " | " ; ~rhs
 
 CommaExp:
   super: BinaryExp
+  printer: ~lhs ; " , " ; ~rhs
 
 SemicolonExp:
   super: BinaryExp
+  printer: ~lhs ; " <.,> " ; ~rhs
 
 
 # Identifier constructs
@@ -192,29 +196,6 @@ AtExp:
         type: Exp*
         desc: Instructions executed onleave
 
-WheneverExp:
-  super: Exp
-  attributes:
-    - test: { type: 'Exp*', desc: Condition }
-    - wheneverclause:
-        type: Exp*
-        desc: Instructions executed whenever condition is true
-    - elseclause:
-        type: Exp*
-        desc: Instructions executed whenever condition is false
-
-AssignExp:
-  super: Exp
-  attributes:
-    - lvalue: { type: 'Var*', desc: Reference to the affected variable }
-    - exp: { type: 'Exp*', desc: Assigned value }
-
-ReturnExp:
-  super: Exp
-  attributes:
-    - exp: { type: 'Exp*', desc: Returned value }
-    - cont: { type: bool, desc: Continuation flag for return& }
-
 AliasExp:
   super: Exp
   desc: |2
@@ -227,6 +208,12 @@ AliasExp:
   attributes:
     - obj: { type: 'Exp*', desc: Reference to the object to alias }
     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
+
+AssignExp:
+  super: Exp
+  attributes:
+    - lvalue: { type: 'Var*', desc: Reference to the affected variable }
+    - exp: { type: 'Exp*', desc: Assigned value }
 
 InheritsExp:
   super: Exp
@@ -266,6 +253,12 @@ ExternalExp:
     - type: { type: ExternalExp::Type, access: r, desc: External binding type }
     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
+ReturnExp:
+  super: Exp
+  attributes:
+    - exp: { type: 'Exp*', desc: Returned value }
+    - cont: { type: bool, desc: Continuation flag for return& }
+
 WaitExp:
   super: Exp
   attributes:
@@ -275,6 +268,22 @@ WaitUntilExp:
   super: Exp
   attributes:
     - condition: { type: 'Exp*', desc: Condition to wait }
+
+WheneverExp:
+  super: Exp
+  attributes:
+    - test: { type: 'Exp*', desc: Condition }
+    - wheneverclause:
+        type: Exp*
+        desc: Instructions executed whenever condition is true
+    - elseclause:
+        type: Exp*
+        desc: Instructions executed whenever condition is false
+
+YieldExp:
+  super: Exp
+  desc: /// Also known as nop, noop etc.
+  printer: "noop"
 
 EmitExp:
   super: Exp
