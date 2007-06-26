@@ -1,5 +1,12 @@
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
+	delete globalDelete
+	* src/userver.cc, src/parser/bison/ugrammar.y (globalDelete):
+	Remove.
+	Also, comment changes.
+
+2007-06-26  Akim Demaille  <demaille@gostai.com>
+
 	Merge command and statement into stmt
 	* src/parser/bison/ugrammar.y (statement, command): Merge into...
 	(stmt): this.

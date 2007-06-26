@@ -92,8 +92,6 @@
 #include "uvariablename.hh"
 #include "uvariablelist.hh"
 
-  extern UString** globalDelete;
-
   namespace
   {
 
@@ -614,9 +612,9 @@ name:
 ;
 
 
-/*-----------.
+/*---------.
 | Lvalue.  |
-`-----------*/
+`---------*/
 
 lvalue:
   name		{}
@@ -772,9 +770,9 @@ exprs.1:
 ;
 
 
-/*---------.
-| softtest |
-`---------*/
+/*-----------.
+| softtest.  |
+`-----------*/
 
 softtest:
   expr
@@ -806,9 +804,9 @@ identifiers:
 ;
 
 
-/*-------------------------------------------.
-| class_declaration & class_declaration_list |
-`-------------------------------------------*/
+/*---------------------------------------------.
+| class_declaration & class_declaration_list.  |
+`---------------------------------------------*/
 
 class_declaration:
   "var"      name
@@ -848,11 +846,6 @@ void
 yy::parser::error(const location_type& l, const std::string& m)
 {
   up.error (l, m);
-  if (globalDelete)
-  {
-    delete *globalDelete;
-    *globalDelete = 0;
-  }
 }
 
 // Local Variables:
