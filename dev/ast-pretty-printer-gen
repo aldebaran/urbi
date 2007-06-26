@@ -19,6 +19,10 @@ header = """\
 //->>
 """
 
+## --------------- ##
+## The *.hh file.  ##
+## --------------- ##
+
 visitor_hh = file("pretty-printer.hh.tmp", "w")
 sys.stdout = visitor_hh
 
@@ -43,7 +47,6 @@ namespace ast
 {
 
   /// Ast pretty-printer.
-
   class PrettyPrinter : public DefaultConstVisitor
   {
     /** \\name Ctor & dtor.
@@ -69,7 +72,8 @@ for node in arr:
 
 print """
   private:
-    std::ostream* ostr_;
+    // The stream we output to.
+    std::ostream& ostr_;
   };
 
 } // namespace ast
@@ -88,6 +92,12 @@ operator<< (std::ostream& o, const ast::Ast& a)
 #endif // !AST_PRETTY_PRINTER_HH
 """
 
+
+## --------------- ##
+## The *.cc file.  ##
+## --------------- ##
+
+
 visitor_cc = file("pretty-printer.cc.tmp", "w")
 sys.stdout = visitor_cc
 
@@ -99,6 +109,16 @@ print """\
 
 namespace ast
 {
+
+  PrettyPrinter::PrettyPrinter (std::ostream& ostr)
+    : ostr_ (ostr)
+  {
+  }
+
+  PrettyPrinter::~PrettyPrinter ()
+  {
+  }
+
 """
 
 for node in arr:
@@ -115,7 +135,7 @@ for node in arr:
 	# Handle '$foo' variables
 	p = re.compile('\\$(\\w*)')
 	a = p.sub('node.\\1_get()', a)
-	action += '    *ostr_ << %s;\n' % (a)
+	action += '    ostr_ << %s;\n' % (a)
     name = 'node'
     print """\
   void PrettyPrinter::operator() (const %s& %s)
