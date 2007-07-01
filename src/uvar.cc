@@ -101,6 +101,14 @@ namespace urbi
     vardata = 0;
   }
 
+  //! UVar float reset  (deep assignment)
+  void
+  UVar::reset (ufloat n)
+  {
+    *this = n;
+    vardata->variable->previous = n;
+  }
+
   //! UVar float assignment
   void
   UVar::operator = (ufloat n)

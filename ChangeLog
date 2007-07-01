@@ -1,3 +1,11 @@
+2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	UVar::reset can be used to set both the value and the previousval of a
+	UVariable, which does a "deep" reset of this value.
+
+	add support for UVar::reset. 
+	* src/uvar.cc: done.
+
 2007-05-31  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a bug in timeout command
