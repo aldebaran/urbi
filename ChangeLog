@@ -1,5 +1,16 @@
 2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	This time, we use a cache mechanism to hold the current cycle variable
+	value.
+
+	Fix ticket #111 (again). 
+	* src/ucommand.cc: use cyclevalue with a cache mechanism to initialize
+	startval.
+	* src/uvariable.cc: init cycleBeginTime to an impossible value (-1).
+	* src/uvariable.hh: declare cycleBeginTime and cyclevalue.
+
+2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	This is a backward move that reintroduces ticket 111, but it will fix
 	a much bigger problem where Aldeb is currently stuck. A future better
 	fix of 111 is on the way.

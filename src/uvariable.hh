@@ -119,8 +119,10 @@ public:
   ufloat          previous,
 		  previous2,
 		  previous3; ///< previous theoretical value container
-  /// Previous sensed value.
-  ufloat          previous_sensed;
+  /// Sensed value at the beginning of the cycle.
+  ufloat          cyclevalue;
+  /// Time of the last cycle beginning  (used to update cyclevalue)
+  ufloat          cycleBeginTime;
   /// Variable value.
   UValue          *value;
   ufloat          valPrev,

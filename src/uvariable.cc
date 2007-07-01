@@ -168,6 +168,8 @@ UVariable::init()
   binder     = 0;
   access_and_change = false;
   useCpt     = 0;
+
+  cycleBeginTime = -1;
 }
 
 //! UVariable destructor

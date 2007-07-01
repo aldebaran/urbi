@@ -1329,7 +1329,13 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
       // the "fix" below is insane. I paste back the old code...
       //startval = variable->previous;
-      startval = *targetvalue;
+      if (variable->cycleBeginTime < currentTime)
+      {
+        variable->cyclevalue = *targetvalue;
+        variable->cycleBeginTime = currentTime;
+      }
+
+      startval = variable->cyclevalue;
 
       first = true;
       status = URUNNING;
