@@ -1326,7 +1326,10 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       // will remain identical when several assignments are run during the same
       // cycle
       // old code: startval = *targetvalue;
-      startval = variable->previous;
+
+      // the "fix" below is insane. I paste back the old code...
+      //startval = variable->previous;
+      startval = *targetvalue;
 
       first = true;
       status = URUNNING;

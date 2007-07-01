@@ -1,5 +1,14 @@
 2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
+	This is a backward move that reintroduces ticket 111, but it will fix
+	a much bigger problem where Aldeb is currently stuck. A future better
+	fix of 111 is on the way.
+
+	Fix bug aldeb before robocup. 
+	* src/ucommand.cc: reset old code.
+
+2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	UVar::reset can be used to set both the value and the previousval of a
 	UVariable, which does a "deep" reset of this value.
 
