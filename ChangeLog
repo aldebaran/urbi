@@ -1,3 +1,10 @@
+2007-07-06  Akim Demaille  <demaille@gostai.com>
+
+	Coding style
+	* src/ucommand.cc: Prefer for to while.
+	Reduce scopes.
+	Formatting changes.
+
 2007-06-26  Akim Demaille  <demaille@gostai.com>
 
 	Var scope
