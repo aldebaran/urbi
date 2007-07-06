@@ -1,5 +1,9 @@
 2007-07-06  Akim Demaille  <demaille@gostai.com>
 
+	* include/kernel/utypes.hh: Use libport::hash_map.
+
+2007-07-06  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes
 	* src/ucommand.cc: here.
 
