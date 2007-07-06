@@ -143,7 +143,7 @@ SemicolonExp:
   super: BinaryExp
   printer:
     - ~lhs
-    - '" <.,> "'
+    - '" ; "'
     - ~rhs
 
 
