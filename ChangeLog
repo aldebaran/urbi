@@ -1,3 +1,10 @@
+2007-07-06  Akim Demaille  <demaille@gostai.com>
+
+	Fix pretty-printer generator
+	* dev/ast-pretty-printer-gen: Do not declare a formal arg name
+	if you don't use it.
+	Use a shorter name.
+
 2007-06-26  mefyl  <mefyl@lrde.epita.fr>
 
 	Fix pretty-printer generator.
