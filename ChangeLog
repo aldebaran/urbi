@@ -1,5 +1,10 @@
 2007-07-06  Akim Demaille  <demaille@gostai.com>
 
+	Formatting changes
+	* src/ucommand.cc: here.
+
+2007-07-06  Akim Demaille  <demaille@gostai.com>
+
 	Coding style
 	* src/ucommand.cc: Prefer for to while.
 	Reduce scopes.

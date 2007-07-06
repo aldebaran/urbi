@@ -5033,10 +5033,10 @@ MEMORY_MANAGER_INIT(UCommand_CLASS);
  */
 UCommand_CLASS::UCommand_CLASS(const location& l,
 			       UString *object,
-			       UNamedParameters *parameters) :
-  UCommand(l, CLASS),
-  object (object),
-  parameters (parameters)
+			       UNamedParameters *parameters)
+  : UCommand(l, CLASS),
+    object (object),
+    parameters (parameters)
 {
   ADDOBJ(UCommand_CLASS);
 }
