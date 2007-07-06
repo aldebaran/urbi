@@ -38,10 +38,8 @@ print """\
 # define AST_PRETTY_PRINTER_HH
 
 # include <functional>
-# include <ostream>
+# include <iosfwd>
 # include "ast/default-visitor.hh"
-# include "ast/fwd.hh"
-# include "libport/select-const.hh"
 
 namespace ast
 {
@@ -104,8 +102,9 @@ sys.stdout = visitor_cc
 print header
 
 print """\
-# include "pretty-printer.hh"
-# include "all.hh"
+#include <ostream>
+#include "pretty-printer.hh"
+#include "all.hh"
 
 namespace ast
 {
@@ -138,7 +137,7 @@ for node in arr:
 	if p.search(a):
 	  name = ' n'
 	  a = p.sub('n.\\1_get()', a)
-        action += '    ostr_ << %s;\n' % (a)
+	action += '    ostr_ << %s;\n' % (a)
     print """\
   void PrettyPrinter::operator() (const %s&%s)
   {

@@ -1,5 +1,10 @@
 2007-07-06  Akim Demaille  <demaille@gostai.com>
 
+	Less includes
+	* dev/ast-pretty-printer-gen: Optimize the includes.
+
+2007-07-06  Akim Demaille  <demaille@gostai.com>
+
 	Fix Semicolon pretty printing
 	* src/ast/ast.yml: here.
 
