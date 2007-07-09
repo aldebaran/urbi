@@ -1,5 +1,17 @@
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
+	Upgrade pretty-print generation
+	* dev/ast-nodes-gen (print_guard_open, print_guard_close)
+	(print_banner): Take the file as argument.
+	Don't change the current stdout.
+	* dev/ast-pretty-printer-gen: Use them.
+	Create an hxx file.
+	* dev/tools.py (banner): New.
+	(print_banner): Use it.
+	* src/ast/Makefile.am: Adjust.
+
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1189:1216 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-07-09  Akim Demaille  <demaille@gostai.com>

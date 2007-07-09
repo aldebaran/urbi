@@ -83,3 +83,15 @@ def wrap_proto (fundec, width):
       line += piece + sep
   output += line
   return output
+
+def banner(name, description):
+  '''Given a name and description, return the file's banner.'''
+  return """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+/**
+ ** \\file """ + name + """
+ ** \\brief """ + description + """
+ */
+"""

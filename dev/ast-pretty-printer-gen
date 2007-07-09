@@ -13,11 +13,6 @@ srcdir = sys.argv[1]
 loader = ast.Loader ()
 nodes = loader.load (sys.stdin)
 
-header = """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-"""
 
 ## --------------- ##
 ## The *.hh file.  ##
@@ -26,18 +21,11 @@ header = """\
 visitor_hh = file("pretty-printer.hh.tmp", "w")
 sys.stdout = visitor_hh
 
-print header
-
-print """\
-/**
- ** \\file ast/pretty-printer.hh
- ** \\brief Definition of ast::PrettyPrinter.
- */
-
+print tools.banner("ast/pretty-printer.hh",
+                   "Definition of ast::PrettyPrinter.") + """
 #ifndef AST_PRETTY_PRINTER_HH
 # define AST_PRETTY_PRINTER_HH
 
-# include <functional>
 # include <iosfwd>
 # include "ast/default-visitor.hh"
 
@@ -74,6 +62,34 @@ print """
     std::ostream& ostr_;
   };
 
+  std::ostream& operator<< (std::ostream& o, const Ast& a);
+
+} // namespace ast
+
+# include "ast/pretty-printer.hxx"
+
+#endif // !AST_PRETTY_PRINTER_HH
+"""
+
+
+## ---------------- ##
+## The *.hxx file.  ##
+## ---------------- ##
+
+visitor_hxx = file("pretty-printer.hxx.tmp", "w")
+sys.stdout = visitor_hxx
+
+print tools.banner("ast/pretty-printer.hxx",
+                   "Inline implementation of ast::PrettyPrinter.") + """
+
+#ifndef AST_PRETTY_PRINTER_HXX
+# define AST_PRETTY_PRINTER_HXX
+
+# include "pretty-printer.hh"
+
+namespace ast
+{
+
   inline
   std::ostream&
   operator<< (std::ostream& o, const Ast& a)
@@ -83,13 +99,21 @@ print """
     return o;
   }
 
+  inline
+  PrettyPrinter::PrettyPrinter (std::ostream& ostr)
+    : ostr_ (ostr)
+  {
+  }
+
+  inline
+  PrettyPrinter::~PrettyPrinter ()
+  {
+  }
+
 } // namespace ast
 
-// # include "ast/pretty-printer.hxx"
-
-#endif // !AST_PRETTY_PRINTER_HH
+#endif // !AST_PRETTY_PRINTER_HXX
 """
-
 
 ## --------------- ##
 ## The *.cc file.  ##
@@ -99,24 +123,14 @@ print """
 visitor_cc = file("pretty-printer.cc.tmp", "w")
 sys.stdout = visitor_cc
 
-print header
-
-print """\
+print tools.banner("ast/pretty-printer.cc",
+                   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
 #include "pretty-printer.hh"
 #include "all.hh"
 
 namespace ast
 {
-
-  PrettyPrinter::PrettyPrinter (std::ostream& ostr)
-    : ostr_ (ostr)
-  {
-  }
-
-  PrettyPrinter::~PrettyPrinter ()
-  {
-  }
 
 """
 
@@ -151,11 +165,14 @@ print """} // namespace ast
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
 visitor_hh.close ()
+visitor_hxx.close ()
 visitor_cc.close ()
 
 file_fullpath = os.path.join (srcdir, "pretty-printer.hh");
-# Check differences and update if any
 tools.lazy_overwrite (file_fullpath, "pretty-printer.hh.tmp")
+
+file_fullpath = os.path.join (srcdir, "pretty-printer.hxx");
+tools.lazy_overwrite (file_fullpath, "pretty-printer.hxx.tmp")
 
 file_fullpath = os.path.join (srcdir, "pretty-printer.cc");
 tools.lazy_overwrite (file_fullpath, "pretty-printer.cc.tmp")

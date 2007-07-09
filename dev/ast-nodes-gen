@@ -24,40 +24,26 @@ def print_inline_code (node, file, where):
 
 
 def print_banner(file, name, description):
-  # Document the file.
-  sys.stdout = file
-  print """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-/**
- ** \\file ast/""" + name + """
- ** \\brief """ + description + """
- */
-"""
+  print >>file, tools.banner("ast/" + name,  description)
 
 def guard_name (node, ext):
   return tools.define_id ("ast_" + node.name + "_" + ext)
 
-def print_guard_open (node, ext):
+def print_guard_open (file, node, ext):
   guard = guard_name (node, ext)
-  print "#ifndef " + guard
-  print "# define " + guard
-  print ""
+  print >>file, "#ifndef " + guard
+  print >>file, "# define " + guard
+  print >>file, ""
 
 def print_guards_open (node, header, inline, impl):
   """Output the multiple inclusion guard."""
   # Shortands
   define_id = tools.define_id (node.name)
+  print_guard_open (header, node, "hh")
+  print_guard_open (inline, node, "hxx")
 
-  sys.stdout = header
-  print_guard_open (node, "hh")
-
-  sys.stdout = inline
-  print_guard_open (node, "hxx")
-
-def print_guard_close (node, ext):
-  print "#endif // !" + guard_name (node, ext)
+def print_guard_close (file, node, ext):
+  print >>file, "#endif // !" + guard_name (node, ext)
 
 def print_guards_close (node, header, inline, impl):
   sys.stdout = header
@@ -65,12 +51,10 @@ def print_guards_close (node, header, inline, impl):
   print_inline_code (node, "header", "epilogue")
 
   # Close protection
-  sys.stdout = header
-  print "# include \"ast/" + node.hxx () + "\""
-  print ""
-  print_guard_close (node, "hh")
-  sys.stdout = inline
-  print_guard_close (node, "hxx")
+  print >>header, "# include \"ast/" + node.hxx () + "\""
+  print >>header, ""
+  print_guard_close (header, node, "hh")
+  print_guard_close (inline, node, "hxx")
 
   sys.stdout = impl
   print_inline_code (node, "impl", "epilogue")
@@ -101,29 +85,28 @@ def print_includes (node, header, inline, impl):
   # *.hxx
   sys.stdout = inline
   print_inline_code (node, "inline", "prologue")
-  print "# include \"ast/" + node.hh () + "\""
+  print >>inline, "# include \"ast/" + node.hh () + "\""
 
   # *.cc
   sys.stdout = impl
   print_inline_code (node, "impl", "prologue")
   if need_misc_containers:
-    print "#include \"libport/containers.hh\""
-  print "#include \"ast/visitor.hh\""
-  print "#include \"ast/" + node.hh () + "\""
+    print >>impl, "#include \"libport/containers.hh\""
+  print >>impl, "#include \"ast/visitor.hh\""
+  print >>impl, "#include \"ast/" + node.hh () + "\""
 
 def print_namespace_class_open (node, header, inline, impl):
   # Shortands
   class_id = node.name
   # Open namespace
   for f in [header, inline, impl]:
-    sys.stdout = f
-    print """
+    print >>f, """
 namespace ast
 {
 """
     if node.hide:
       if not (f == inline and len(node.attributes) == 0):
-	print "//<<"
+	print >>f, "//<<"
 
   # Declare class
   sys.stdout = header

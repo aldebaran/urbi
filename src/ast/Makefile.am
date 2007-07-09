@@ -6,11 +6,11 @@ EXTRA_DIST += ast.yml
 BUILT_SOURCES += $(BUILT_SOURCES_local)
 # Don't use LOCAL_BUILT_SOURCES since it looks like the SOURCES of the
 # program `LOCAL_BUILT' and triggers Automake warnings.
-BUILT_SOURCES_local =					\
-	fwd.hh						\
-	visitor.hh					\
-	default-visitor.hh default-visitor.hxx		\
-	pretty-printer.hh pretty-printer.cc		\
+BUILT_SOURCES_local =						\
+	fwd.hh							\
+	visitor.hh						\
+	default-visitor.hh default-visitor.hxx			\
+	pretty-printer.hh pretty-printer.hxx pretty-printer.cc	\
 	$(AST_NODES)
 
 gen_dir = $(top_srcdir)/dev
@@ -55,7 +55,7 @@ visitor.hh: $(srcdir)/visitor.stamp
 
 # PrettyPrinter.
 EXTRA_DIST += pretty-printer.stamp
-pretty-printer.hh pretty-printer.cc: $(srcdir)/pretty-printer.stamp
+pretty-printer.hh pretty-printer.hxx pretty-printer.cc: $(srcdir)/pretty-printer.stamp
 
 
 MAINTAINERCLEANFILES += $(BUILT_SOURCES_local)
