@@ -1,3 +1,8 @@
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
+	Make debug traces more io like
+	* src/object/object.cc (dump): Include the address.
+
 2007-07-09  Guillaume Deslandes  <deslandes@gostai.com>
 
 	* fwd.hh: Add undef for DECLARE.

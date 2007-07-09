@@ -17,7 +17,7 @@ namespace object
   std::ostream&
   Object::dump (std::ostream& o) const
   {
-    o << kind_get() << " { " << libport::incendl;
+    o << kind_get() << '_' << this << " {" << libport::incendl;
     special_slots_dump (o);
     for (slots_type::const_iterator i = slots_.begin ();
 	 i != slots_.end (); ++i)
