@@ -11,10 +11,12 @@ int
 main ()
 {
   Integer i (23);
+  i["value 2"] = new Integer(5);
   ECHO(i);
 
   Object o;
-  o[Symbol("num")] = new Integer(23);
-  o[Symbol("drink")] = new Integer(51);
+  o["drink"] = new Integer(51);
+  o["name"]  = new String("Pastis");
+  o["degre"] = new Float(.45);
   ECHO(o);
 }

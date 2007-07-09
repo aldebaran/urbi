@@ -1,5 +1,10 @@
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
+	More object-test
+	* src/object/object-test.cc: Strengthen.
+
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
 	Factor print and rename it as dump
 	* src/object/atom.cc, src/object/atom.hh, src/object/atom.hxx,
 	* src/object/object.cc, src/object/object.hh, src/object/object.hxx
