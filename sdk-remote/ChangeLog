@@ -1,3 +1,26 @@
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
+	merge -r 472:478 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
+
+	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	In remote mode, there is no difference between a operator= and reset
+	action on UVar.
+
+	add support for UVar::reset 
+	* src/liburbi/uvar.cc: done.
+
+	2007-06-05  Matthieu Nottale  <nottale@gostai.com>
+	Fix a bug: message field for system messages and errors
+	contains a whitespace at the beoginning.
+	* src/liburbi/uabstractclient.cc: Replace the
+	beginning-to-message offset from 3 to 4 (*** ).
+
+	2007-06-05  Matthieu Nottale  <nottale@gostai.com>
+	Add  options to urbiimage, and use convert. 
+	* src/examples/urbiimage.cc: Add options to set port, reconstruct, 
+	      jpegfactor, framerate, and device to use.
+	   Use convert instead of convert*to* with a switch.
+
 2007-06-04  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 465:472 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0

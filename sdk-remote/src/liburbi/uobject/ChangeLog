@@ -1,3 +1,11 @@
+2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	UVar reset does a deep reseting of the UVar value, including
+	previousval.
+
+	add UVar::reset. 
+	* uvar.hh: done.
+
 2007-05-01  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	UObject::send can be used in remote or plugged mode to send commands

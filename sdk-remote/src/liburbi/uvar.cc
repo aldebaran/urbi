@@ -137,6 +137,12 @@ namespace urbi
     // no effect in remote mode.
   }
 
+  //! UVar reset  (deep assignement)
+  void
+  UVar::reset (ufloat n)
+  {
+    *this = n;
+  }
 
   //! UVar float assignment
   void

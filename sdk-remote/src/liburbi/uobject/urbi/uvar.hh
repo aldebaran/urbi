@@ -102,6 +102,7 @@ namespace urbi
     void setOwned();
     void syncValue ();
 
+    void reset      (ufloat);
     void operator = (ufloat);
     void operator = (const std::string&);
     void operator = (const UBinary &);  ///< deep copy
