@@ -1,5 +1,15 @@
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
+	object::Object
+	* configure.ac: Automake 1.10.
+	(src/object): New directory.
+	* src/Makefile.am: Ditto.
+	* src/object/Makefile.am, src/object/fwd.hh, src/object/object.cc,
+	* src/object/object.hh, src/object/object.hxx: New.
+	* src/runner/runner.hh: Remove useless includes.
+
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
 	Fix kernel.mk
 	* src/kernel.mk (AM_CPPFLAGS): $(uobject_srcdir) is defined
 	in src/Makefile.am only, although kernel.mk is used in several

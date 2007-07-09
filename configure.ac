@@ -9,7 +9,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip nostdinc])
+AM_INIT_AUTOMAKE([1.10 foreign tar-ustar -Wall dist-zip nostdinc])
 
 ## ------------ ##
 ## Parameters.  ##
@@ -57,5 +57,6 @@ URBI_TESTS
 AC_CONFIG_FILES([Makefile
 		   src/Makefile
 		     src/ast/Makefile
+		     src/object/Makefile
 		     src/runner/Makefile])
 AC_OUTPUT

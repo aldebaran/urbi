@@ -6,8 +6,6 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
-# include <functional>
-# include <ostream>
 # include "ast/default-visitor.hh"
 
 namespace runner
