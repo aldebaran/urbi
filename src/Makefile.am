@@ -26,7 +26,8 @@ kernelinclude_HEADERS =
 
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static
-libkernel_la_LIBADD = ast/libast.la object/libobject.la runner/librunner.la
+libkernel_la_LIBADD = \
+ast/libast.la object/libobject.la runner/librunner.la $(libport_la)
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
@@ -107,13 +108,6 @@ include $(top_srcdir)/build-aux/svn-externals.mk
 include uobject/uobject.mk
 nodist_libkernel_la_SOURCES += $(uobject_sources)
 
-
-## ------------- ##
-## ../libport/.  ##
-## ------------- ##
-
-include $(top_srcdir)/libport/libport-sources.mk
-nodist_libkernel_la_SOURCES += $(libport_sources)
 
 
 ## ----------------- ##

@@ -1,3 +1,15 @@
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
+	object::Object
+	* src/object/atom.cc, src/object/atom.hh, src/object/atom.hxx: New.
+	* src/object/fwd.hh: Adjust.
+	* src/kernel.mk, src/object/Makefile.am: Adjust.
+	* src/Makefile.am: Adjust.
+	* src/object/object-test.cc: New.
+	* src/object/object.hxx: Add missing inlines.
+	(print): Move from here, to...
+	* src/object/object.cc: here.
+
 2007-07-09  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Fix ast.yml type error on TagOpExp, update svn:ignore

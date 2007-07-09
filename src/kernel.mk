@@ -1,4 +1,6 @@
 include $(top_srcdir)/build-aux/init.mk
+# Get $(libport_la).
+include $(top_srcdir)/libport/libport-sources.mk
 
 # Find the kernel public headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include

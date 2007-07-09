@@ -13,27 +13,22 @@
 namespace object
 {
 
+  inline
   Object::Object ()
   {}
 
+  inline
   Object::~Object ()
   {}
   
+  inline
   rObject& 
   Object::operator[] (const Object::key_type& k)
   {
     return slots_[k];
   }
 
-  std::ostream& 
-  Object::print (std::ostream& o) const
-  {
-    for (slots_type::const_iterator i = slots_.begin ();
-	 i != slots_.end (); ++i)
-      o << i->first << " -> " << i->second << libport::iendl;
-    return o;
-  }
-
+  inline
   std::ostream&
   operator<< (std::ostream& o, const Object& v)
   {

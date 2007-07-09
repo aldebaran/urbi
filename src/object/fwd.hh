@@ -16,7 +16,6 @@ namespace object
   typedef libport::shared_ptr< What > r ## What;
 
   DECLARE(Object);
-  DECLARE(Float);
 
 } // namespace object
 
