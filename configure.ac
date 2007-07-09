@@ -56,5 +56,6 @@ AC_CONFIG_HEADERS([src/config.h])
 URBI_TESTS
 AC_CONFIG_FILES([Makefile
 		   src/Makefile
-		     src/ast/Makefile])
+		     src/ast/Makefile
+		     src/runner/Makefile])
 AC_OUTPUT

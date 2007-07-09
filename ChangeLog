@@ -1,3 +1,10 @@
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
+	Add Runner framework
+	* src/runner/Makefile.am, src/runner/runner.cc,
+	* src/runner/runner.hh, src/runner/runner.hxx: New.
+	* configure.ac, src/Makefile.am: Adjust.
+
 2007-07-06  Akim Demaille  <demaille@gostai.com>
 
 	Less includes

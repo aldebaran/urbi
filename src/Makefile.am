@@ -14,9 +14,7 @@
 
 include kernel.mk
 
-SUBDIRS =                                       \
-        ast                                     \
-	.
+SUBDIRS = ast runner .
 
 # Defined in sub mk files, e.g., src/parser/bison/bison.mk.
 # FIXME: Might not be needed after all.
@@ -28,7 +26,7 @@ kernelinclude_HEADERS =
 
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static
-libkernel_la_LIBADD = ast/libast.la
+libkernel_la_LIBADD = ast/libast.la runner/librunner.la
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
