@@ -11,16 +11,16 @@ namespace object
   /*--------.
   | Float.  |
   `--------*/
-  const char float_traits::prefix[] = "Float";
+  const char float_traits::kind[] = "Float";
 
   /*----------.
   | Integer.  |
   `----------*/
-  const char integer_traits::prefix[] = "Integer";
+  const char integer_traits::kind[] = "Integer";
 
   /*---------.
   | String.  |
   `---------*/
-  const char string_traits::prefix[] = "String";
+  const char string_traits::kind[] = "String";
 
 } // namespace object

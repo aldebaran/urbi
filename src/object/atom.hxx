@@ -24,15 +24,18 @@ namespace object
 
   template <typename Traits>
   inline
-  std::ostream&
-  Atom<Traits>::print (std::ostream& o) const
+  std::string
+  Atom<Traits>::kind_get () const
   {
-    o << Traits::prefix << " { " << libport::incendl
-      << "value = " << value_;
-    Object::print (o);
-    o << libport::decendl
-      << "}";
-    return o;
+    return Traits::kind;
+  }
+
+  template <typename Traits>
+  inline
+  std::ostream&
+  Atom<Traits>::special_slots_dump (std::ostream& o) const
+  {
+    return o << "value" << " -> " << value_ << libport::iendl;
   }
 
 } // namespace object

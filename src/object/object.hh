@@ -27,8 +27,14 @@ namespace object
     virtual ~Object ();
     /** \} */
 
+    /// Return the kind of this Object.  Used by dump.
+    virtual std::string kind_get () const;
+
     /// Report the content on \p o.  For debugging purpose.
-    virtual std::ostream& print (std::ostream& o) const;
+    virtual std::ostream& dump (std::ostream& o) const;
+
+    /// Dump the special slots if there are.
+    virtual std::ostream& special_slots_dump (std::ostream& o) const;
 
     /// \name The slots.
     /// \{

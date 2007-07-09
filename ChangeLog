@@ -1,5 +1,18 @@
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
+	Factor print and rename it as dump
+	* src/object/atom.cc, src/object/atom.hh, src/object/atom.hxx,
+	* src/object/object.cc, src/object/object.hh, src/object/object.hxx
+	(print): Rename as...
+	(dump): this, to avoid SWIG problems.
+	Call special_slots_dump and kind_get
+	(special_slots_dump, kind_get): New.
+	(prefix): Rename as...
+	(kind): this.
+	* src/object/object-test.cc: Strengthen.
+
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
 	object::Object
 	* src/object/atom.cc, src/object/atom.hh, src/object/atom.hxx: New.
 	* src/object/fwd.hh: Adjust.

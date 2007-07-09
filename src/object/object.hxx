@@ -20,19 +20,26 @@ namespace object
   inline
   Object::~Object ()
   {}
-  
+
   inline
-  rObject& 
+  rObject&
   Object::operator[] (const Object::key_type& k)
   {
     return slots_[k];
   }
 
   inline
+  std::string
+  Object::kind_get () const
+  {
+    return "Object";
+  }
+
+  inline
   std::ostream&
   operator<< (std::ostream& o, const Object& v)
   {
-    return v.print (o);
+    return v.dump (o);
   }
 
 } // namespace object

@@ -29,8 +29,11 @@ namespace object
     /// Base class.
     typedef Object super_type;
 
-    /// Report the content on \p o.  For debugging purpose.
-    virtual std::ostream& print (std::ostream& o) const;
+    /// The kind of Atom.
+    virtual std::string kind_get () const;
+
+    /// For debugging.
+    std::ostream& special_slots_dump (std::ostream& o) const;
 
   private:
     /// The value.
@@ -45,7 +48,7 @@ namespace object
   struct float_traits
   {
     typedef libport::ufloat type;
-    static const char prefix[];
+    static const char kind[];
   };
 
   typedef Atom<float_traits> Float;
@@ -57,7 +60,7 @@ namespace object
   struct integer_traits
   {
     typedef int type;
-    static const char prefix[];
+    static const char kind[];
   };
 
   typedef Atom<integer_traits> Integer;
@@ -69,7 +72,7 @@ namespace object
   struct string_traits
   {
     typedef std::string type;
-    static const char prefix[];
+    static const char kind[];
   };
 
   typedef Atom<string_traits> String;
