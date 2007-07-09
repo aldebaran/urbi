@@ -113,8 +113,10 @@ public:
   ufloat          target;
   /// Previous theoretical value container.
   ufloat          previous, previous2, previous3;
-  /// Previous sensed value.
-  ufloat          previous_sensed;
+  /// Sensed value at the beginning of the cycle.
+  ufloat          cyclevalue;
+  /// Time of the last cycle beginning  (used to update cyclevalue)
+  ufloat          cycleBeginTime;
   /// Variable value.
   UValue          *value;
 

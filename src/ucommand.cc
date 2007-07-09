@@ -1295,14 +1295,23 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	++variable->nbAssigns;
 	assigned = true;
 
-	// use of previous value as a start value to ensure that the start value
-	// will remain identical when several assignments are run during the same
-	// cycle
-	// old code: startval = *targetvalue;
-	startval = variable->previous;
+      // use of previous value as a start value to ensure that the start value
+      // will remain identical when several assignments are run during the same
+      // cycle
+      // old code: startval = *targetvalue;
 
-	first = true;
-	status = URUNNING;
+      // the "fix" below is insane. I paste back the old code...
+      //startval = variable->previous;
+      if (variable->cycleBeginTime < currentTime)
+      {
+	variable->cyclevalue = *targetvalue;
+	variable->cycleBeginTime = currentTime;
+      }
+
+      startval = variable->cyclevalue;
+
+      first = true;
+      status = URUNNING;
     }
   }
 
