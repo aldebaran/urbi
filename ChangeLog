@@ -1,3 +1,9 @@
+2007-07-09  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix ast.yml type error on TagOpExp, update svn:ignore
+	* src/ast/ast.yml: 'tag' attribute of TagOpExp is
+	of type Exp* not Tag*.
+
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
 	object::Object

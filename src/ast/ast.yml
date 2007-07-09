@@ -187,7 +187,7 @@ TagOpExp:
               unblock,
             };
   attributes:
-    - tag: { type: Tag*, desc: Tag of the tag-operation command }
+    - tag: { type: Exp*, desc: Tag of the tag-operation command }
     - oper: { type: TagOpExp::type, access: r, desc: Operator }
 
 IfExp:
