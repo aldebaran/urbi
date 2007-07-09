@@ -156,15 +156,15 @@ public:
 };
 
 
-typedef libport::hash_map_type<const char*, UVariable*>::type HMvariabletab;
-typedef libport::hash_map_type<const char*, UFunction*>::type HMfunctiontab;
-typedef libport::hash_map_type<const char*, UObj*>::type HMobjtab;
-typedef libport::hash_map_type<const char*, UGroup*>::type HMgrouptab;
-typedef libport::hash_map_type<const char*, UString*>::type HMaliastab;
-typedef libport::hash_map_type<const char*, UEventHandler*>::type HMemittab;
-typedef libport::hash_map_type<const char*, int>::type HMemit2tab;
-typedef libport::hash_map_type<const char*, UBinder*>::type HMbindertab;
-typedef libport::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
-typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;
+typedef libport::hash_map<const char*, UVariable*> HMvariabletab;
+typedef libport::hash_map<const char*, UFunction*> HMfunctiontab;
+typedef libport::hash_map<const char*, UObj*> HMobjtab;
+typedef libport::hash_map<const char*, UGroup*> HMgrouptab;
+typedef libport::hash_map<const char*, UString*> HMaliastab;
+typedef libport::hash_map<const char*, UEventHandler*> HMemittab;
+typedef libport::hash_map<const char*, int> HMemit2tab;
+typedef libport::hash_map<const char*, UBinder*> HMbindertab;
+typedef libport::hash_map<const char*, UWaitCounter*> HMobjWaiting;
+typedef libport::hash_map<std::string, TagInfo> HMtagtab;
 
 #endif

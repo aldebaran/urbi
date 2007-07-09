@@ -1295,14 +1295,23 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	++variable->nbAssigns;
 	assigned = true;
 
-	// use of previous value as a start value to ensure that the start value
-	// will remain identical when several assignments are run during the same
-	// cycle
-	// old code: startval = *targetvalue;
-	startval = variable->previous;
+      // use of previous value as a start value to ensure that the start value
+      // will remain identical when several assignments are run during the same
+      // cycle
+      // old code: startval = *targetvalue;
 
-	first = true;
-	status = URUNNING;
+      // the "fix" below is insane. I paste back the old code...
+      //startval = variable->previous;
+      if (variable->cycleBeginTime < currentTime)
+      {
+	variable->cyclevalue = *targetvalue;
+	variable->cycleBeginTime = currentTime;
+      }
+
+      startval = variable->cyclevalue;
+
+      first = true;
+      status = URUNNING;
     }
   }
 
@@ -5033,10 +5042,10 @@ MEMORY_MANAGER_INIT(UCommand_CLASS);
  */
 UCommand_CLASS::UCommand_CLASS(const location& l,
 			       UString *object,
-			       UNamedParameters *parameters) :
-  UCommand(l, CLASS),
-  object (object),
-  parameters (parameters)
+			       UNamedParameters *parameters)
+  : UCommand(l, CLASS),
+    object (object),
+    parameters (parameters)
 {
   ADDOBJ(UCommand_CLASS);
 }
@@ -5074,12 +5083,11 @@ UCommand_CLASS::execute_(UConnection*)
   // morph into a series of & for each element of the class
   morph = 0;
 
-  UNamedParameters * param = parameters;
-  UCommand_DEF *cdef=0;
-  while (param)
+  for (UNamedParameters *param = parameters; param; param = param->next)
   {
     if (param->expression)
     {
+      UCommand_DEF* cdef = 0;
       switch (param->expression->type)
       {
 	case UExpression::VALUE:
@@ -5149,8 +5157,6 @@ UCommand_CLASS::execute_(UConnection*)
 	  morph = new UCommand_TREE(loc_, Flavorable::UAND, cdef, morph);
       }
     }
-
-    param = param->next;
   }
 
   if (morph)
@@ -5190,11 +5196,11 @@ MEMORY_MANAGER_INIT(UCommand_IF);
 UCommand_IF::UCommand_IF(const location& l,
 			 UExpression *test,
 			 UCommand* command1,
-			 UCommand* command2) :
-  UCommand(l, IF),
-  test (test),
-  command1 (command1),
-  command2 (command2)
+			 UCommand* command2)
+  : UCommand(l, IF),
+    test (test),
+    command1 (command1),
+    command2 (command2)
 {
   ADDOBJ(UCommand_IF);
 }
@@ -5268,12 +5274,12 @@ MEMORY_MANAGER_INIT(UCommand_EVERY);
  */
 UCommand_EVERY::UCommand_EVERY(const location& l,
 			       UExpression *duration,
-			       UCommand* command) :
-  UCommand(l, EVERY),
-  duration (duration),
-  command (command),
-  firsttime (true),
-  starttime (0)
+			       UCommand* command)
+  : UCommand(l, EVERY),
+    duration (duration),
+    command (command),
+    firsttime (true),
+    starttime (0)
 {
   ADDOBJ(UCommand_EVERY);
 }

@@ -1,5 +1,55 @@
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1189:1216 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-07-09  Akim Demaille  <demaille@gostai.com>
+	merge -r 1186:1213 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	This time, we use a cache mechanism to hold the current cycle variable
+	value.
+
+	Fix ticket #111 (again). 
+	* src/ucommand.cc: use cyclevalue with a cache mechanism to initialize
+	startval.
+	* src/uvariable.cc: init cycleBeginTime to an impossible value (-1).
+	* src/uvariable.hh: declare cycleBeginTime and cyclevalue.
+
+	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	This is a backward move that reintroduces ticket 111, but it will fix
+	a much bigger problem where Aldeb is currently stuck. A future better
+	fix of 111 is on the way.
+
+	Fix bug aldeb before robocup. 
+	* src/ucommand.cc: reset old code.
+
+	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+	UVar::reset can be used to set both the value and the previousval of a
+	UVariable, which does a "deep" reset of this value.
+
+	add support for UVar::reset. 
+	* src/uvar.cc: done.
+
+	2007-07-06  Akim Demaille  <demaille@gostai.com>
+	* include/kernel/utypes.hh: Use libport::hash_map.
+
+	2007-07-06  Akim Demaille  <demaille@gostai.com>
+	Formatting changes
+	* src/ucommand.cc: here.
+
+	2007-07-06  Akim Demaille  <demaille@gostai.com>
+	Coding style
+	* src/ucommand.cc: Prefer for to while.
+	Reduce scopes.
+	Formatting changes.
+
+	2007-06-26  Akim Demaille  <demaille@gostai.com>
+	Var scope
+	* src/userver.cc (globalDelete): Move to...
+	* src/parser/bison/ugrammar.y: here, as static.
+
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
 	Add Runner framework
 	* src/runner/Makefile.am, src/runner/runner.cc,
 	* src/runner/runner.hh, src/runner/runner.hxx: New.
