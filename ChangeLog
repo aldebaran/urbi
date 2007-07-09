@@ -1,5 +1,14 @@
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
+	Fix kernel.mk
+	* src/kernel.mk (AM_CPPFLAGS): $(uobject_srcdir) is defined
+	in src/Makefile.am only, although kernel.mk is used in several
+	places, so open code its value here.
+	A better and longer implementation might add a new uobject/*.mk
+	file just to define this variable.  Probably overkill.
+
+2007-07-09  Akim Demaille  <demaille@gostai.com>
+
 	Upgrade pretty-print generation
 	* dev/ast-nodes-gen (print_guard_open, print_guard_close)
 	(print_banner): Take the file as argument.

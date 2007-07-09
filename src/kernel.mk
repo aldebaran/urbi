@@ -10,6 +10,6 @@ AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_builddir)/src
 AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
 
 # Find uobject headers.
-AM_CPPFLAGS += -I$(uobject_srcdir)
+AM_CPPFLAGS += -I$(srcdir)/uobject
 
 AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
