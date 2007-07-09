@@ -11,12 +11,12 @@
 
 namespace object
 {
-#define DECLARE(What)				\
+# define DECLARE(What)				\
   class What;					\
   typedef libport::shared_ptr< What > r ## What;
 
   DECLARE(Object);
-
+# undef DECLARE
 } // namespace object
 
 #endif // !OBJECT_FWD_HH
