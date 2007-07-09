@@ -1,3 +1,8 @@
+2007-07-09  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Reorder subdirs in src/Makefile.am
+	* Makefile.am: Reorder subdirs, '.' comes firt.
+
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
 	More object-test

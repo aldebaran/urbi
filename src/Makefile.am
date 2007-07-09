@@ -14,7 +14,7 @@
 
 include kernel.mk
 
-SUBDIRS = ast object runner .
+SUBDIRS = . ast object runner
 
 # Defined in sub mk files, e.g., src/parser/bison/bison.mk.
 # FIXME: Might not be needed after all.
@@ -126,7 +126,7 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 ## parserdir = $(kernelincludedir)/parser
 ## parser_HEADERS = parser/uparser.hh
-## 
+##
 ## memorymanagerdir = $(kernelincludedir)/memorymanager
 ## memorymanager_HEADERS =				\
 ## memorymanager/blockmemorymanager.hh		\
