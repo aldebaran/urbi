@@ -8,9 +8,39 @@
 namespace object
 {
 
+  Object::parent_rtype&
+  Object::lookup (const key_type& k)
+  {
+    /// Look in local slots.
+    slots_type::iterator it = slots_.find (k);
+    if (it != slots_.end ())
+      return it->second;
+    /// Look in parent slots (depth first search)
+    for (parents_type::const_iterator i = parents_.begin ();
+	 i != parents_.end (); ++i)
+    {
+      parent_rtype& tmp_lookup = (*i)->lookup (k);
+      if (tmp_lookup != *i)
+	return tmp_lookup;
+    }
+    /// If not found, throw exception
+    throw std::exception ();
+  }
+
   std::ostream&
   Object::special_slots_dump (std::ostream& o) const
   {
+    o << "parents : ";
+    if (parents_.begin () != parents_.end ())
+    {
+      o << libport::incendl;
+      for (parents_type::const_iterator i = parents_.begin ();
+	   i != parents_.end (); ++i)
+	((**i)["name"])->special_slots_dump (o);
+      o << libport::decendl;
+    }
+    else
+      o << " <> " << libport::iendl;
     return o;
   }
 
@@ -26,6 +56,5 @@ namespace object
       << "}";
     return o;
   }
-
 
 } // namespace object

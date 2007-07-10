@@ -1,3 +1,14 @@
+2007-07-10  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Add parent list and lookup method
+	* object-test.cc: Test new features.
+	* object.cc (lookup) : New, depth first version.
+	(special_slots_dump) : Print parents.
+	* object.hh: Add typedefs and methods for parents.
+	Add method for lookup.
+	* object.hxx (parent_add) : New, add parent to object
+	(parent_remove) : New, remove parent from object.
+
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
 	Make debug traces more io like

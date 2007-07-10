@@ -36,6 +36,23 @@ namespace object
   }
 
   inline
+  Object&
+  Object::parent_add (const parent_rtype& p)
+  {
+    if (parents_.end () == find (parents_.begin (), parents_.end (), p))
+      parents_.push_back (p);
+    return *this;
+  }
+
+  inline
+  Object&
+  Object::parent_remove (const parent_rtype& p)
+  {
+    parents_.remove (p);
+    return *this;
+  }
+
+  inline
   std::ostream&
   operator<< (std::ostream& o, const Object& v)
   {

@@ -7,6 +7,8 @@
 # define OBJECT_OBJECT_HH
 
 # include <iosfwd>
+# include <list>
+# include <algorithm>
 # include "libport/hash.hh"
 # include "libport/symbol.hh"
 # include "object/fwd.hh"
@@ -45,11 +47,30 @@ namespace object
 
     /// R/w access to the slots.
     rObject& operator[] (const key_type& k);
+    /// Lookup field in object hierarchy.
+    rObject& lookup (const key_type& k);
+    /// \}
+
+    /// \name The parents.
+    /// \{
+    /// The parent type.
+    typedef Object parent_type;
+    /// The refs to parents.
+    typedef rObject parent_rtype;
+    /// The parents.
+    typedef std::list<parent_rtype> parents_type;
+
+    /// Add parent.
+    Object& parent_add (const parent_rtype& p);
+    /// Remove parent.
+    Object& parent_remove (const parent_rtype& p);
     /// \}
 
   private:
     /// The slots.
     slots_type slots_;
+    /// The parents.
+    parents_type parents_;
   };
 
   /// Report \p v on \p o.  For debugging purpose.
