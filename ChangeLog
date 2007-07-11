@@ -1,3 +1,15 @@
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
+	CallExp
+	* src/ast/ast.yml (CallExp): The name called is a Symbol.
+	* src/parser/bison/ugrammar.y: Let "(" have precedence over "!".
+	Remove dead %union definitions.
+	Use exps_type for exprs.
+	Add empty actions to silence some Bison warnings.
+	Change the syntax of function calls to take a identifier as
+	name, not an expression.
+	(exprs): Implement.
+
 2007-07-11  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add slot handling to Object

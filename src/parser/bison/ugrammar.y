@@ -52,24 +52,15 @@
   @$ = up.loc_;
 }
 
-
-/* Possible data type returned by the bison parsing mechanism */
 %union
 {
-  ast::Exp *expr;
+  ast::Exp*       expr;
+  ast::exps_type* exprs;
+
   UVariableName::UDeriveType derive;
 }
 
 %printer { EVALUATE(*$$); } <expr>;
-
-// Old junk we should get rid of.
-%union
-{
-  UBinary                 *binary;
-  UVariableName           *variable;
-  UVariableList           *variablelist;
-  UProperty               *property;
-}
 
 %code // Output in ugrammar.cc.
 {
@@ -366,8 +357,8 @@
 %type <fval>                time_expr       "time expression"
 %type <expr>                stmts           "scheduled statements"
 %type <expr>                stmt            "statement"
-%type <named_arguments>     exprs           "zero or more expressions"
-%type <named_arguments>     exprs.1         "one or more expressions"
+%type <exprs>     	    exprs           "zero or more expressions"
+%type <exprs>               exprs.1         "one or more expressions"
 %type <named_arguments>     raw_arguments   "list of attributes"
 %type <named_arguments>     namedarguments  "list of named arguments"
 %type <named_arguments>     flag            "a flag"
@@ -388,7 +379,12 @@
 | Operator precedence.  |
 `----------------------*/
 
+ /*
+   ! < ( so that !m(x) be read as !(m(x)).
+ */
+
 // FIXME: This is sick!  Puke puke puke.
+%left "("
 %left  "||" "&&" "!"
 %left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
 %left  "-" "+"
@@ -435,7 +431,7 @@ raw_argument:
 
 // raw_argument*
 raw_arguments:
-  /* empty */
+  /* empty */                {}
 | raw_arguments raw_argument {}
 ;
 
@@ -629,11 +625,11 @@ stmt:
 `-------*/
 
 name:
-  "identifier"
-| "$" "(" expr ")"
-| name "." "identifier"
-| name "[" expr "]"
-| name "::" "identifier"  // FIXME: Get rid of it, it's useless.
+  "identifier"             {}
+| "$" "(" expr ")"         {}
+| name "." "identifier"    {}
+| name "[" expr "]"        {}
+| name "::" "identifier"   {} // FIXME: Get rid of it, it's useless.
 ;
 
 
@@ -648,7 +644,7 @@ lvalue:
 
 // Names as rvalues.
 expr:
-  rvalue
+  rvalue        {}
 ;
 
 rvalue:
@@ -714,7 +710,7 @@ expr:
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 | "[" exprs "]" {}
 | property {}
-| name "(" exprs ")"  {}
+| "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, take($1), $3); }
 | "%" name            {}
 | "group" "identifier"    {}
 ;
@@ -784,13 +780,13 @@ expr:
 `--------------*/
 
 exprs:
-  /* empty */ {}
-| exprs.1     {}
+  /* empty */ { $$ = new ast::exps_type; }
+| exprs.1     { $$ = $1; }
 ;
 
 exprs.1:
-  expr             {}
-| exprs.1 "," expr {}
+  expr             { $$ = new ast::exps_type; $$->push_back ($1); }
+| exprs.1 "," expr { $$->push_back($3); }
 ;
 
 
@@ -823,8 +819,8 @@ identifiers.1:
 
 // Zero or several comma-separated identifiers.
 identifiers:
-  /* empty */
-| identifiers.1
+  /* empty */     {}
+| identifiers.1   {}
 ;
 
 
@@ -833,9 +829,9 @@ identifiers:
 `---------------------------------------------*/
 
 class_declaration:
-  "var"      name
-| "function" name formal_arguments
-| "event"    name formal_arguments
+  "var"      name                    {}
+| "function" name formal_arguments   {}
+| "event"    name formal_arguments   {}
 ;
 
 /* It used to be possible to not have the parens for empty identifiers.

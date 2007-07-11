@@ -1,4 +1,4 @@
-#
+#							-*- Yaml -*-
 # Possible values:
 #  * class
 #    Description of classes.
@@ -464,8 +464,8 @@ CallExp:
   super: Exp
   attributes:
     - name:
-        type: 'Exp*'
-        desc: Reference to the called function
+        type: 'libport::Symbol'
+        desc: Name of the called function
     - args:
         type: 'exps_type*'
         desc: List of arguments passed to the function
