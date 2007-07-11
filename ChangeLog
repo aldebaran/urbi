@@ -1,5 +1,12 @@
 2007-07-11  Akim Demaille  <demaille@gostai.com>
 
+	Clean and update
+	* dev/ast-fwd-gen: Remove dead code.
+	Use tools.
+	Remove useless imports.
+
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
 	Start running
 	* src/parser/bison/ugrammar.y (EVALUATE): Scafolding to run
 	the runner.
