@@ -1,5 +1,10 @@
 2007-07-11  Akim Demaille  <demaille@gostai.com>
 
+	Add missing inline
+	* src/ast/ast.yml: For inline code.
+
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
 	* dev/ast-default-visitor-gen: Do not output default visits for abstract nodes.
 	* dev/ast-nodes-gen: Comment changes.
 

@@ -169,8 +169,6 @@ ArrowExp:
     - var: { type: 'Var*', desc: variable whose property is accessed }
     - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
 
-
-
 TagOpExp:
   super: Exp
   inline:
@@ -428,6 +426,7 @@ OpExp:
 
     inline inside: |2
 
+        inline
         std::ostream&
         operator<< (std::ostream&o, OpExp::type t)
         {
