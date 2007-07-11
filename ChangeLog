@@ -1,5 +1,15 @@
 2007-07-11  Akim Demaille  <demaille@gostai.com>
 
+	Start running
+	* src/parser/bison/ugrammar.y (EVALUATE): Scafolding to run
+	the runner.
+	Use it in a couple of places.
+	* src/runner/runner.cc, src/runner/runner.hh (eval): New.
+	(result, operator()): New.
+	* src/runner/runner.hxx: Fix missing inlines.
+
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
 	Add missing inline
 	* src/ast/ast.yml: For inline code.
 

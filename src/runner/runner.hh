@@ -7,6 +7,7 @@
 # define RUNNER_RUNNER_HH
 
 # include "ast/default-visitor.hh"
+# include "object/object.hh"
 
 namespace runner
 {
@@ -14,20 +15,40 @@ namespace runner
   /// Ast pretty-printer.
   class Runner : public ast::DefaultConstVisitor
   {
-    /** \name Ctor & dtor.
-     ** \{ */
   public:
+    /// \name Useful shorthands.
+    /// \{
     /// Super class type.
     typedef ast::DefaultConstVisitor super_type;
+    ///
+    typedef object::rObject rObject;
+    /// \}
 
+    /// \name Ctor & dtor.
+    /// \{
     /// Construct a Runner.
     Runner ();
 
     /// Destroy a Runner.
     virtual ~Runner ();
-    /** \} */
+    /// \}
 
+    /// \name Evaluation.
+    /// \{
+    /// Evaluate a tree and return the \a current_ that results.
+    rObject eval (const ast::Ast& e);
+    rObject result ();
+
+    /// Import from super.
     using super_type::operator();
+
+    virtual void operator() (const ast::FloatExp& e);
+    virtual void operator() (const ast::SemicolonExp& e);
+    /// \}
+
+  private:
+    /// The current value during the evaluation of the ast.
+    rObject current_;
   };
 
 } // namespace runner

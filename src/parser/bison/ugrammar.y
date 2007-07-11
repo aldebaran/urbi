@@ -60,6 +60,8 @@
   UVariableName::UDeriveType derive;
 }
 
+%printer { EVALUATE(*$$); } <expr>;
+
 // Old junk we should get rid of.
 %union
 {
@@ -81,6 +83,7 @@
 #include "kernel/uconnection.hh"
 
 #include "ast/all.hh"
+#include "runner/runner.hh"
 
 #include "parser/uparser.hh"
 #include "ubinary.hh"
@@ -91,6 +94,19 @@
 #include "uproperty.hh"
 #include "uvariablename.hh"
 #include "uvariablelist.hh"
+
+#define EVALUATE(Tree)					\
+ do {							\
+    std::cerr << "Command: " << Tree << std::endl;	\
+    runner::Runner r;					\
+    r(Tree);						\
+    std::cerr << "Result: ";				\
+    if (r.result())					\
+      std::cerr << *r.result();				\
+    else						\
+      std::cerr << "<NULL>";				\
+    std::cerr << std::endl;				\
+ } while (0)
 
   namespace
   {
@@ -120,12 +136,12 @@
     static
     void
     warn_spontaneous(UParser& up,
-  		   const yy::parser::location_type& l, const UCommand& u)
+		     const yy::parser::location_type& l, const UCommand& u)
     {
       if (spontaneous(u))
 	warn (up, l,
-  	    "implicit empty statement.  "
-  	    "Use 'noop' to make it explicit.");
+	    "implicit empty statement.  "
+	    "Use 'noop' to make it explicit.");
     }
 #endif
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
@@ -134,19 +150,27 @@
     new_bin(const yy::parser::location_type& l, Flavorable::UNodeType op,
 	    ast::Exp* lhs, ast::Exp* rhs)
     {
+      ast::Exp* res = 0;
       switch (op)
       {
 	case Flavorable::UAND:
-	  return new ast::AndExp (l, lhs, rhs);
+	  res = new ast::AndExp (l, lhs, rhs);
+	  break;
 	case Flavorable::UCOMMA:
-	  return new ast::CommaExp (l, lhs, rhs);
+	  res = new ast::CommaExp (l, lhs, rhs);
+	  break;
 	case Flavorable::UPIPE:
-	  return new ast::PipeExp (l, lhs, rhs);
+	  res = new ast::PipeExp (l, lhs, rhs);
+	  break;
 	case Flavorable::USEMICOLON:
-	  return new ast::SemicolonExp (l, lhs, rhs);
+	  res = new ast::SemicolonExp (l, lhs, rhs);
+	  break;
 	default:
 	  pabort(op);
+
       }
+      EVALUATE(*res);
+      return res;
     }
 
     /// A new UExpression of type \c t and child \c t1.
@@ -164,9 +188,10 @@
     static
     ast::OpExp*
     new_exp (UParser&, const yy::parser::location_type& l,
-  	   ast::OpExp::type o, ast::Exp* t1, ast::Exp* t2)
+	     ast::OpExp::type o, ast::Exp* t1, ast::Exp* t2)
     {
       ast::OpExp* res = new ast::OpExp(l, t1, t2, o);
+      EVALUATE(*res);
       return res;
     }
 
@@ -396,7 +421,7 @@ root:
     up.commandTree = 0;
   }
 | lvalue "=" binary ";"  {}
-| stmts  { std::cerr << "Result: " << *$1 << std::endl; }
+| stmts                  { EVALUATE(*$1); }
 ;
 
 binary:

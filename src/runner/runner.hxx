@@ -11,12 +11,28 @@
 namespace runner
 {
 
+  inline
   Runner::Runner ()
   {}
 
+  inline
   Runner::~Runner ()
   {}
 
+  inline
+  Runner::rObject
+  Runner::eval (const ast::Ast& e)
+  {
+    e.accept (*this);
+    return current_;
+  }
+
+  inline
+  Runner::rObject
+  Runner::result ()
+  {
+    return current_;
+  }
 
 } // namespace runner
 
