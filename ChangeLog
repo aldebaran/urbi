@@ -1,5 +1,11 @@
 2007-07-11  Akim Demaille  <demaille@gostai.com>
 
+	Minor improvements
+	* dev/ast-visitor-gen: Use C++ comments.
+	Use lazy_install and banner.
+
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
 	Recurse in src last
 	* src/Makefile.am (SUBDIRS): Restore the correct order.
 	The issue we are trying to workaround is the fact that libport

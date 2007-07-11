@@ -17,18 +17,9 @@ nodes = loader.load (sys.stdin)
 visitor_hh = file("visitor.hh.tmp", "w")
 sys.stdout = visitor_hh
 
-print """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-/**
- ** \\file ast/visitor.hh
- ** \\brief Definition of ast::Visitor.
- */
-
-"""
-
-print """#ifndef AST_VISITOR_HH
+print tools.banner("ast/visitor.hh",
+		   "Definition of ast::Visitor.") + """
+#ifndef AST_VISITOR_HH
 # define AST_VISITOR_HH
 
 # include <functional>
@@ -61,11 +52,6 @@ for node in arr:
     print "    virtual void operator() (typename Const<" \
 	  + node.name + ">::type&) = 0;"
 print """
-/*
-    virtual void operator() (typename Const<FunctionDecs>::type&) = 0;
-    virtual void operator() (typename Const<VarDecs>::type&) = 0;
-    virtual void operator() (typename Const<TypeDecs>::type&) = 0;
-*/
   };
 
   /// Shorthand for a const visitor.
@@ -82,7 +68,4 @@ print """
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
 visitor_hh.close ()
-
-file_fullpath = os.path.join (srcdir, "visitor.hh");
-# Check differences and update if any
-tools.lazy_overwrite (file_fullpath, "visitor.hh.tmp")
+tools.lazy_install (srcdir, "visitor.hh")
