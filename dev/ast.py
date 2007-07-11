@@ -37,7 +37,7 @@ class Attribute:
 		      'mandatory',
 		      'owned',
 		      'type']:
-	warning ('unknown Attribute attribute: ' + key + ' from ' + name)
+	warning ('unknown Attribute attribute: ' + name + "::" + key)
       self.__dict__[key] = dict[key]
     self.init = str (self.init)
 
@@ -140,7 +140,7 @@ class Node:
       # http://yaml.org/spec/current.html#id2507367
       if isinstance (key, tuple):
 	(realkey, value) = key
-	error ('The node ' + name + ' has a duplicate key `' + realkey + "'")
+	error ('duplicate key: ' + name + "::" + realkey)
       if not key in ['attributes',
 		     'concrete',
 		     'default',
@@ -149,7 +149,7 @@ class Node:
 		     'inline',
 		     'printer',
 		     'super']:
-	warning ('unknown Node attribute: ' + key)
+	warning ('unknown Node attribute: ' + name + "::" + key)
       self.__dict__[key] = dict[key]
 
     # If we have only one super-class, Syck parsed this as a single value but
