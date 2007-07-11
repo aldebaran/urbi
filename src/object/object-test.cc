@@ -56,10 +56,10 @@ main ()
   NEWLINE();
   try
   {
-  rObject left_nosuch = (*left).lookup ("no such attr");
-  ECHO(*left_nosuch);
+    rObject left_nosuch = (*left).lookup ("no such attr");
+    ECHO(*left_nosuch);
   }
-  catch (std::exception e)
+  catch (std::exception)
   { }
 
   return 0;
