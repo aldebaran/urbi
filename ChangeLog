@@ -1,3 +1,8 @@
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
+	Fix identification
+	* configure.ac: .
+
 2007-07-10  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add parent list and lookup method
