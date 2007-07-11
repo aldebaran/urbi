@@ -23,16 +23,9 @@ header = """\
 ## --------------- ##
 
 visitor_hh = file("default-visitor.hh.tmp", "w")
-sys.stdout = visitor_hh
 
-print header
-
-print """\
-/**
- ** \\file ast/default-visitor.hh
- ** \\brief Definition of ast::DefaultVisitor.
- */
-
+print >>visitor_hh, tools.banner("ast/default-visitor.hh",
+		   "Definition of ast::DefaultVisitor.") + """
 #ifndef AST_DEFAULT_VISITOR_HH
 # define AST_DEFAULT_VISITOR_HH
 
@@ -45,7 +38,7 @@ print """\
 namespace ast
 {
 
-  /** \brief Just visit the whole Ast tree.
+  /** \\brief Just visit the whole Ast tree.
    **
    ** GenDefaultVisitor<CONSTNESS-SELECTOR> visits the whole Ast tree,
    ** but does nothing else. */
@@ -71,16 +64,16 @@ namespace ast
     // Useful shortcut for pointer types.
     template<class E> void operator() (E* e);
 
-    /** \name Visit nodes.
-     ** \{ */
+    /// \\name Visit nodes.
+    /// \\{
 """
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
-  print "    virtual void operator() (typename Const<%s>::type&);" % (node.name)
+  print >>visitor_hh, "    virtual void operator() (typename Const<%s>::type&);" % (node.name)
 
-print """
-    /** \} */
+print >>visitor_hh, """
+    /// \\}
   };
 
   /// Shorthand for a const visitor.
@@ -103,14 +96,8 @@ print """
 visitor_hxx = file("default-visitor.hxx.tmp", "w")
 sys.stdout = visitor_hxx
 
-print header
-
-print """\
-/**
- ** \\file ast/default-visitor.hxx
- ** \\brief Implementation of ast::DefaultVisitor.
- */
-
+print >>visitor_hxx, tools.banner("ast/default-visitor.hxx",
+                                  "Implementation of ast::DefaultVisitor.") + """
 #ifndef AST_DEFAULT_VISITOR_HXX
 # define AST_DEFAULT_VISITOR_HXX
 
@@ -168,8 +155,5 @@ sys.stdout = sys.__stdout__
 visitor_hh.close ()
 visitor_hxx.close ()
 
-file_fullpath = os.path.join (srcdir, "default-visitor.hh");
-tools.lazy_overwrite (file_fullpath, "default-visitor.hh.tmp")
-
-file_fullpath = os.path.join (srcdir, "default-visitor.hxx");
-tools.lazy_overwrite (file_fullpath, "default-visitor.hxx.tmp")
+tools.lazy_install(srcdir, "default-visitor.hh");
+tools.lazy_install(srcdir, "default-visitor.hxx");
