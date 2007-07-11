@@ -45,10 +45,17 @@ namespace object
     /// The slots.
     typedef libport::hash_map<key_type, rObject> slots_type;
 
-    /// R/w access to the slots.
+    /// R/w access to the slots. Returns same slot as \c lookup,
+    //  or create slot if \c lookup fails.
     rObject& operator[] (const key_type& k);
     /// Lookup field in object hierarchy.
     rObject& lookup (const key_type& k);
+    /// Update value in slot returned by \c lookup.
+    Object& update_slot (const key_type& k, rObject& o);
+    /// Set slot value in local slot. Create slot if necessary.
+    Object& set_slot (const key_type& k, rObject& o);
+    /// Remove slot.
+    Object& remove_slot (const key_type& k);
     /// \}
 
     /// \name The parents.

@@ -25,7 +25,38 @@ namespace object
   rObject&
   Object::operator[] (const Object::key_type& k)
   {
-    return slots_[k];
+    try
+    {
+      return lookup (k);
+    }
+    catch (std::exception e)
+    {
+      return slots_[k];
+    }
+  }
+
+  inline
+  Object&
+  Object::update_slot (const Object::key_type& k, rObject& o)
+  {
+    lookup (k) = o;
+    return *this;
+  }
+
+  inline
+  Object&
+  Object::set_slot (const Object::key_type& k, rObject& o)
+  {
+    slots_[k] = o;
+    return *this;
+  }
+
+  inline
+  Object&
+  Object::remove_slot (const Object::key_type& k)
+  {
+    slots_.erase (k);
+    return *this;
   }
 
   inline

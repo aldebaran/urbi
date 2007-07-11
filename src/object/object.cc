@@ -8,7 +8,7 @@
 namespace object
 {
 
-  Object::parent_rtype&
+  rObject&
   Object::lookup (const key_type& k)
   {
     /// Look in local slots.
@@ -18,11 +18,13 @@ namespace object
     /// Look in parent slots (depth first search)
     for (parents_type::const_iterator i = parents_.begin ();
 	 i != parents_.end (); ++i)
-    {
-      parent_rtype& tmp_lookup = (*i)->lookup (k);
-      if (tmp_lookup != *i)
+      try
+      {
+	rObject& tmp_lookup = (*i)->lookup (k);
 	return tmp_lookup;
-    }
+      }
+      catch (std::exception)
+      { }
     /// If not found, throw exception
     throw std::exception ();
   }
