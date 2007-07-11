@@ -1,5 +1,10 @@
 2007-07-11  Akim Demaille  <demaille@gostai.com>
 
+	Pretty-print an OpExp
+	* src/ast/ast.yml (OpExp): Implement the pretty-printer.
+
+2007-07-11  Akim Demaille  <demaille@gostai.com>
+
 	Improve dev/ framework
 	* dev/tools.py (lazy_install): New.
 	* dev/ast-clone-visitor-gen, dev/ast-default-visitor-gen,

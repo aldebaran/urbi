@@ -391,6 +391,7 @@ NegOpExp:
 OpExp:
   super: BinaryExp
   inline:
+    header prologue: '# include "libport/assert.hh"'
     header inside: |2
 
         public:
@@ -398,16 +399,16 @@ OpExp:
           enum type
             {
               // Arithmetics.
-              add,   ///< "+"
-              sub,   ///< "-"
-              mul,   ///< "*"
-              div,   ///< "/"
-              exp,   ///< "^"
-              mod,   ///< "%"
+              add,  ///< "+"
+              sub,  ///< "-"
+              mul,  ///< "*"
+              div,  ///< "/"
+              exp,  ///< "^"
+              mod,  ///< "%"
 
               // Logics.
-              land,  ///< "&&"
-              lor,   ///< "||"
+              land, ///< "&&"
+              lor,  ///< "||"
 
               // Comparison.
               equ,  ///< "=="
@@ -418,8 +419,47 @@ OpExp:
               gth,  ///< ">"
               geq,  ///< ">="
             };
+                  
+          /// Pretty printing the operator.
+          const char* as_string (OpExp::type t) const;
+
+    header after: |2
+      std::ostream& operator<< (std::ostream&o, OpExp::type t);
+
+    inline inside: |2
+
+        std::ostream&
+        operator<< (std::ostream&o, OpExp::type t)
+        {
+          switch (t)
+          {
+      # define CASE(From, To) case OpExp::From: return o << To; break
+            CASE (add, "+");
+            CASE (sub, "-");
+            CASE (mul, "*");
+            CASE (div, "/");
+            CASE (exp, "^");
+            CASE (mod, "%");
+            CASE (land,"&&");
+            CASE (lor, "||");
+            CASE (equ, "==");
+            CASE (req, "~=");
+            CASE (neq, "!=");
+            CASE (lth, "<");
+            CASE (leq, "<=");
+            CASE (gth, ">");
+            CASE (geq, ">=");
+      # undef CASE
+          }
+          pabort("unreachable");
+        }
+
   attributes:
     - oper: { type: OpExp::type, access: r, desc: Operator }
+  printer:
+    - ~lhs
+    - $oper
+    - ~rhs
 
 CallExp:
   super: Exp
