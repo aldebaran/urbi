@@ -4,9 +4,9 @@ import re
 import sys
 import ast, tools
 
-if len(sys.argv) != 1:
-  print "Usage: .."
-  sys.exit(1)
+if len(sys.argv) != 2:
+  tools.error ("Usage: .. SRCDIR")
+srcdir = sys.argv[1]
 
 ## Abstract syntax tree C++ Makefile.am ---------------------------------------
 loader = ast.Loader ()
@@ -16,13 +16,17 @@ nodes = loader.load (sys.stdin)
 # than super classes.  When there is multiple inheritance, consider
 # only the first super class.
 
-print "AST_NODES =",
+mk = file("ast-nodes.mk.tmp",  "w")
+print >>mk, "AST_NODES =",
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
   files =       node.fname ("hh") + \
-          " " + node.fname ("hxx") + \
-          " " + node.fname ("cc")
-  
-  print " \\\n\t  " + files,
-print
+	  " " + node.fname ("hxx") + \
+	  " " + node.fname ("cc")
+
+  print >>mk, " \\\n\t  " + files,
+print >>mk
+
+mk.close()
+tools.lazy_install (srcdir, "ast-nodes.mk")

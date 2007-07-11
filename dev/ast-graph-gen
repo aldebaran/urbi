@@ -4,8 +4,7 @@ import sys
 import ast
 
 if len (sys.argv) != 1:
-  print "Usage: .."
-  sys.exit (1)
+  tools.error("Usage: .. SRCDIR")
 
 ## Abstract syntax tree graph -------------------------------------------------
 

@@ -5,8 +5,7 @@ import sys, os
 import ast, tools
 
 if len (sys.argv) != 2:
-  print "Usage: .. SRCDIR"
-  sys.exit (1)
+  tools.error("Usage: .. SRCDIR")
 srcdir = sys.argv[1]
 
 ## Abstract syntax tree C++ forward declarations ------------------------------

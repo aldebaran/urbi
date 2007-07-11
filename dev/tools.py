@@ -15,10 +15,7 @@ def warning (msg):
 
 ## Display an error message and exit.
 def error (msg):
-  out = sys.stdout
-  sys.stdout = sys.stderr
-  print "Error: " + msg
-  sys.stdout = out
+  print >>sys.stderr, "Error: " + msg
   sys.exit (1)
 
 
@@ -28,19 +25,20 @@ def error (msg):
 def lazy_overwrite (ref, new):
   if not os.path.isfile (ref):
     print "> Create: " + ref
-    shutil.copy (new, ref)
   elif not filecmp.cmp (ref, new):
     print "> Overwrite: " + ref
     # Change the file modes to write the file
     file_modes = os.stat (ref) [stat.ST_MODE]
     os.chmod (ref, file_modes | 0666);
-    shutil.copy (new, ref)
+    shutil.move (ref, ref + "~")
+  shutil.move (new, ref)
   # Prevent generated file modifications
   file_modes = os.stat (ref) [stat.ST_MODE]
   os.chmod(ref, file_modes & 0555);
-  # Remove the temporary source file.
-  os.remove(new)
 
+def lazy_install (srcdir, name):
+   """Install name.tmp as srcdir/name."""
+   lazy_overwrite (os.path.join (srcdir, name), name + ".tmp")
 
 ## String helpers -------------------------------------------------------------
 

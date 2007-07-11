@@ -7,8 +7,7 @@ import ast, tools
 from stat import ST_MODE
 
 if len(sys.argv) != 2:
-  print "Usage: .. SRCDIR"
-  sys.exit(1)
+  tools.error("Usage: .. SRCDIR")
 srcdir = sys.argv[1]
 
 loader = ast.Loader ()
@@ -79,7 +78,7 @@ namespace astclone
 
     /** \\brief Clone a collection object.
 
-    	Using overloading for this method is tempting, but it would
+	Using overloading for this method is tempting, but it would
 	lead to the same prototype than the first \\a recurse method.
 
 	A partial specialization for \\a std::list<T> would work, but is

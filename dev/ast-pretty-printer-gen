@@ -5,8 +5,7 @@ import sys, os, os.path, filecmp, shutil, stat
 import ast, tools
 
 if len(sys.argv) != 2:
-  print "Usage: .. SRCDIR"
-  sys.exit(1)
+  tools.error("Usage: .. SRCDIR")
 srcdir = sys.argv[1]
 
 ## Abstract syntax tree C++ visitor - header ----------------------------------
@@ -22,7 +21,7 @@ visitor_hh = file("pretty-printer.hh.tmp", "w")
 sys.stdout = visitor_hh
 
 print tools.banner("ast/pretty-printer.hh",
-                   "Definition of ast::PrettyPrinter.") + """
+		   "Definition of ast::PrettyPrinter.") + """
 #ifndef AST_PRETTY_PRINTER_HH
 # define AST_PRETTY_PRINTER_HH
 
@@ -80,7 +79,7 @@ visitor_hxx = file("pretty-printer.hxx.tmp", "w")
 sys.stdout = visitor_hxx
 
 print tools.banner("ast/pretty-printer.hxx",
-                   "Inline implementation of ast::PrettyPrinter.") + """
+		   "Inline implementation of ast::PrettyPrinter.") + """
 
 #ifndef AST_PRETTY_PRINTER_HXX
 # define AST_PRETTY_PRINTER_HXX
@@ -124,7 +123,7 @@ visitor_cc = file("pretty-printer.cc.tmp", "w")
 sys.stdout = visitor_cc
 
 print tools.banner("ast/pretty-printer.cc",
-                   "Implementation of ast::PrettyPrinter.") + """
+		   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
 #include "pretty-printer.hh"
 #include "all.hh"
@@ -168,11 +167,6 @@ visitor_hh.close ()
 visitor_hxx.close ()
 visitor_cc.close ()
 
-file_fullpath = os.path.join (srcdir, "pretty-printer.hh");
-tools.lazy_overwrite (file_fullpath, "pretty-printer.hh.tmp")
-
-file_fullpath = os.path.join (srcdir, "pretty-printer.hxx");
-tools.lazy_overwrite (file_fullpath, "pretty-printer.hxx.tmp")
-
-file_fullpath = os.path.join (srcdir, "pretty-printer.cc");
-tools.lazy_overwrite (file_fullpath, "pretty-printer.cc.tmp")
+tools.lazy_install (srcdir, "pretty-printer.hh")
+tools.lazy_install (srcdir, "pretty-printer.hxx")
+tools.lazy_install (srcdir, "pretty-printer.cc")

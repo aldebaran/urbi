@@ -16,9 +16,6 @@ BUILT_SOURCES_local =						\
 gen_dir = $(top_srcdir)/dev
 ast_gen_deps = $(gen_dir)/ast.py $(gen_dir)/ast_params.py \
 	       $(gen_dir)/tools.py $(srcdir)/ast.yml
-$(srcdir)/ast-nodes.mk: $(gen_dir)/ast-nodes-mk-gen $(ast_gen_deps)
-	$(gen_dir)/ast-nodes-mk-gen < $(srcdir)/ast.yml >$@.tmp
-	mv -f $@.tmp $@
 
 ## -------------------------- ##
 ## Using the AST generators.  ##
@@ -33,6 +30,9 @@ $(srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
 	$(gen_dir)/ast-$*-gen $(srcdir) < $(srcdir)/ast.yml
 	@mv -f $@.tmp $@
 
+# ast-nodes.mk
+ast-nodes.mk: $(srcdir)/ast-nodes.stamp
+
 # fwd.hh.
 EXTRA_DIST += fwd.stamp
 fwd.hh: $(srcdir)/fwd.stamp
@@ -41,6 +41,7 @@ fwd.hh: $(srcdir)/fwd.stamp
 EXTRA_DIST += nodes.stamp
 $(AST_NODES): $(srcdir)/nodes.stamp
 
+# ast.dot
 $(srcdir)/ast.dot: $(gen_dir)/ast-graph-gen $(ast_gen_deps)
 	$(gen_dir)/ast-graph-gen < $(srcdir)/ast.yml >$@.tmp
 	mv -f $@.tmp $@
