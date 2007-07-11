@@ -53,5 +53,22 @@ main ()
   (*right).parent_add (right_top);
   ECHOVAL(bottom, rightonly);
 
+  NEWLINE();
+  // Add hierachy loop
+  (*top).parent_add (bottom);
+  ECHOVAL(top, val);
+  ECHOVAL(top, lval);
+  try
+  {
+    ECHOVAL(top, top_nosuch);
+  }
+  catch (std::exception)
+  {
+    std::cerr << "top_nosuch : " << "not found" << " OK" << std::endl;
+  }
+
+  // FIXME: hierarchy loops must be broken to prevent mem leaks
+  (*top).parent_remove (bottom);
+
   return 0;
 }

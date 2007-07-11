@@ -11,16 +11,28 @@ namespace object
   rObject&
   Object::lookup (const key_type& k)
   {
+    lookup_set_type lu;
+    return lookup(k, lu);
+  }
+
+  rObject&
+  Object::lookup (const key_type& k, Object::lookup_set_type& lu)
+  {
     /// Look in local slots.
     slots_type::iterator it = slots_.find (k);
     if (it != slots_.end ())
       return it->second;
+
+    if (lu.find (this) != lu.end ())
+      throw std::exception ();
+    lu.insert (this);
+
     /// Look in parent slots (depth first search)
     for (parents_type::const_iterator i = parents_.begin ();
 	 i != parents_.end (); ++i)
       try
       {
-	rObject& tmp_lookup = (*i)->lookup (k);
+	rObject& tmp_lookup = (*i)->lookup (k, lu);
 	return tmp_lookup;
       }
       catch (std::exception)

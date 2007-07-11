@@ -7,6 +7,7 @@
 # define OBJECT_OBJECT_HH
 
 # include <iosfwd>
+# include <set>
 # include <list>
 # include <algorithm>
 # include "libport/hash.hh"
@@ -44,6 +45,8 @@ namespace object
     typedef libport::Symbol key_type;
     /// The slots.
     typedef libport::hash_map<key_type, rObject> slots_type;
+    /// The slot set for lookup.
+    typedef std::set<Object*> lookup_set_type;
 
     /// R/w access to the slots. Returns same slot as \c lookup,
     //  or create slot if \c lookup fails.
@@ -74,6 +77,9 @@ namespace object
     /// \}
 
   private:
+    /// Lookup field in object hierarchy.
+    rObject& lookup (const key_type& k, lookup_set_type& lu);
+
     /// The slots.
     slots_type slots_;
     /// The parents.
