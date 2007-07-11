@@ -70,7 +70,12 @@ namespace ast
 arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
-  print >>visitor_hh, "    virtual void operator() (typename Const<%s>::type&);" % (node.name)
+  # Do not output functions for abstract nodes, we might create
+  # black holes: if the visitor runs into them, it won't get out.
+  # Unless the user asks for troubles.
+  if node.concrete or 'default' in node.__dict__:
+    print >>visitor_hh, \
+        "    virtual void operator() (typename Const<%s>::type&);" % (node.name)
 
 print >>visitor_hh, """
     /// \\}
@@ -129,14 +134,14 @@ namespace ast
 """
 
 for node in arr:
-  if 'default' in node.__dict__:
-    action = node.default
-    var = ' n'
-  else:
-    action = '// No action defined.'
-    var = ''
-
-  print """\
+  if node.concrete or 'default' in node.__dict__:
+    if 'default' in node.__dict__:
+      action = node.default
+      var = ' n'
+    else:
+      action = '// No action defined.'
+      var = ''
+    print """\
   template <template <typename> class Const>
   void
   GenDefaultVisitor<Const>::operator() (typename Const<%s>::type&%s)

@@ -293,14 +293,14 @@ def declare_visitor(node, header, abstract):
   if abstract:
     impl = " = 0"
   print """
-    /** \\name Visitors entry point.
-     ** \\{ */
+    /// \\name Visitors entry point.
+    /// \\{
   public:
     /// Accept a const visitor \\a v.
     virtual void accept (ConstVisitor& v) const%s;
     /// Accept a non-const visitor \\a v.
     virtual void accept (Visitor& v)%s;
-    /** \\} */""" % (impl, impl)
+    /// \\}""" % (impl, impl)
 
 def print_visitor(node, header, inline, impl):
   """Output the Visitor support routine declaration, and implementation
