@@ -14,7 +14,7 @@
 
 include kernel.mk
 
-SUBDIRS = . ast object runner
+SUBDIRS = ast object runner .
 
 # Defined in sub mk files, e.g., src/parser/bison/bison.mk.
 # FIXME: Might not be needed after all.
