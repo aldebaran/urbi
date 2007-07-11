@@ -116,7 +116,7 @@ except ImportError:
     fatal "Python module \`syck' is required"
   fi
 
-  python dev/ast-nodes-mk-gen <src/ast/ast.yml >src/ast/ast-nodes.mk \
+  python dev/ast-nodes-mk-gen src/ast <src/ast/ast.yml \
     || {
       rv=$?
       cat >&2 <<EOF
