@@ -101,7 +101,7 @@
 	This time, we use a cache mechanism to hold the current cycle variable
 	value.
 
-	Fix ticket #111 (again). 
+	Fix ticket #111 (again).
 	* src/ucommand.cc: use cyclevalue with a cache mechanism to initialize
 	startval.
 	* src/uvariable.cc: init cycleBeginTime to an impossible value (-1).
@@ -112,14 +112,14 @@
 	a much bigger problem where Aldeb is currently stuck. A future better
 	fix of 111 is on the way.
 
-	Fix bug aldeb before robocup. 
+	Fix bug aldeb before robocup.
 	* src/ucommand.cc: reset old code.
 
 	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
 	UVar::reset can be used to set both the value and the previousval of a
 	UVariable, which does a "deep" reset of this value.
 
-	add support for UVar::reset. 
+	add support for UVar::reset.
 	* src/uvar.cc: done.
 
 	2007-07-06  Akim Demaille  <demaille@gostai.com>
@@ -168,7 +168,7 @@
 
 	Fix pretty-printer generator.
 	* src/ast/ast.yml: Document. Use Yaml list instead of
-        semicolon-separated list.
+	semicolon-separated list.
 	* dev/ast-pretty-printer-gen: Adapt.
 
 2007-06-26  Akim Demaille  <demaille@gostai.com>
@@ -286,12 +286,12 @@
 	(identifiers): Use them.
 
 	2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
-	update externals (tests). 
+	update externals (tests).
 
 	2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
-        The +freeze flag notifies when the command gets frozen/unfrozen.
+	The +freeze flag notifies when the command gets frozen/unfrozen.
 
-	add support for +freeze flag. 
+	add support for +freeze flag.
 	* src/parser/bison/ugrammar.y: add the same optim like for +end.
 	* src/parser/bison/utoken.l: add +freeze (and +stop at the same time).
 	* src/ucommand.cc: handle the notification.
@@ -313,14 +313,14 @@
 	readability of the code handle derives.
 
 	2007-06-10  Jean-Christophe Baillie  <baillie@gostai.com>
-        Until now, freezing a time controlled command (like wait or a modified
+	Until now, freezing a time controlled command (like wait or a modified
 	assignement) did not freeze the internal time of the command, which
 	resulted in an abrupt reajustement when the command was unfrozen. This
 	patch fixes the problem on wait and assignments, and the corresponding
 	tests has been added.
-	add a first attempt in "time freezing" capabilities. 
+	add a first attempt in "time freezing" capabilities.
 	* src/ucommand.cc: the WAIT and ASSIGN_VALUE commands now store the
-        'lastExec' time and a flag when they have been frozen. Upon
+	'lastExec' time and a flag when they have been frozen. Upon
 	unfreezing, the internal time-oriented variables are adjusted based on
 	the difference between the current time and lastExec..
 	* src/ucommand.hh: add lastExec and the 'frozen' flag.
