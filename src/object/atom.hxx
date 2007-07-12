@@ -15,7 +15,20 @@ namespace object
   inline
   Atom<Traits>::Atom (const typename Traits::type& v)
     : value_(v)
-  {}
+  {
+    // FIXME: I don't know how do make it better for the time being.
+    // Help me if you can.
+    switch (kind_get())
+      {
+# define CASE(Kind) case kind_ ## Kind: parent_add (Kind ## _class); break
+	CASE(float);
+	CASE(integer);
+	CASE(string);
+# undef CASE
+      default:
+	pabort (kind_get());
+      }
+  }
 
   template <typename Traits>
   inline
@@ -24,10 +37,18 @@ namespace object
 
   template <typename Traits>
   inline
-  std::string
+  Object::kind_type
   Atom<Traits>::kind_get () const
   {
-    return Traits::kind;
+    return static_cast<Object::kind_type>(Traits::kind);
+  }
+
+  template <typename Traits>
+  inline
+  typename Traits::type
+  Atom<Traits>::value_get () const
+  {
+    return value_;
   }
 
   template <typename Traits>

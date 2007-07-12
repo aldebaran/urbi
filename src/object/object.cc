@@ -7,6 +7,28 @@
 
 namespace object
 {
+  /*-------.
+  | kind.  |
+  `-------*/
+
+  const char*
+  Object::string_of (Object::kind_type k)
+  {
+    switch (k)
+      {
+#define CASE(Kind) case kind_ ## Kind: return #Kind; break
+	CASE(object);
+	CASE(float);
+	CASE(integer);
+	CASE(string);
+#undef CASE
+      }
+    pabort("unreachable");
+  }
+
+  /*--------.
+  | Slots.  |
+  `--------*/
 
   rObject&
   Object::lookup (const key_type& k)
@@ -90,9 +112,29 @@ namespace object
       rObject res = clone(object_class);
       return res;
     }
+
+    /// Create the Integer class.
+    static
+    rObject
+    new_integer_class (rObject object_class)
+    {
+      rObject res = clone(object_class);
+      return res;
+    }
+
+    /// Create the Float class.
+    static
+    rObject
+    new_string_class (rObject object_class)
+    {
+      rObject res = clone(object_class);
+      return res;
+    }
   }
 
-  static rObject object_class = new_object_class();
-  static rObject float_class = new_float_class(object_class);
+  rObject object_class = new_object_class();
+  rObject float_class = new_float_class(object_class);
+  rObject integer_class = new_integer_class(object_class);
+  rObject string_class = new_string_class(object_class);
 
 } // namespace object

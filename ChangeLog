@@ -1,3 +1,19 @@
+2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
+
+	Add some primitives for Floats
+	* src/object/fwd.hh (float_traits, Float, rFloat, integer_traits)
+	(Integer, rInteger, string_traits, String, rString): Fwd decl
+	or declare them.
+	* src/object/atom.cc, src/object/atom.hh, src/object/atom.hxx:
+	(kind_type, string_of): New.
+	(kind_get): Now return the kind, not a string.
+	* src/object/object.cc, src/object/object.hh, src/object/object.hxx:
+	(float_class_add, float_class_div, float_class_mul, float_class_sub):
+	New.
+
+	* src/object/object-test-primitives.cc: New.
+	* src/object/Makefile.am: Adjust.
+
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 1216:1261 https://svn.gostai.com/svn/kernel1/trunk

@@ -15,11 +15,46 @@ namespace object
 
   inline
   Object::Object ()
+    : parents_ (), slots_ ()
   {}
 
   inline
   Object::~Object ()
   {}
+
+
+  /*-------.
+  | kind.  |
+  `-------*/
+
+  inline
+  Object::kind_type
+  Object::kind_get () const
+  {
+    return kind_object;
+  }
+
+
+  /*----------.
+  | Parents.  |
+  `----------*/
+
+  inline
+  Object&
+  Object::parent_add (const parent_rtype& p)
+  {
+    if (parents_.end () == find (parents_.begin (), parents_.end (), p))
+      parents_.push_back (p);
+    return *this;
+  }
+
+  inline
+  Object&
+  Object::parent_remove (const parent_rtype& p)
+  {
+    parents_.remove (p);
+    return *this;
+  }
 
 
   /*--------.
@@ -61,35 +96,6 @@ namespace object
   Object::remove_slot (const Object::key_type& k)
   {
     slots_.erase (k);
-    return *this;
-  }
-
-  inline
-  std::string
-  Object::kind_get () const
-  {
-    return "Object";
-  }
-
-
-  /*----------.
-  | Parents.  |
-  `----------*/
-
-  inline
-  Object&
-  Object::parent_add (const parent_rtype& p)
-  {
-    if (parents_.end () == find (parents_.begin (), parents_.end (), p))
-      parents_.push_back (p);
-    return *this;
-  }
-
-  inline
-  Object&
-  Object::parent_remove (const parent_rtype& p)
-  {
-    parents_.remove (p);
     return *this;
   }
 

@@ -30,7 +30,10 @@ namespace object
     typedef Object super_type;
 
     /// The kind of Atom.
-    virtual std::string kind_get () const;
+    virtual kind_type kind_get () const;
+
+    /// The held value.
+    typename Traits::type value_get () const;
 
     /// For debugging.
     std::ostream& special_slots_dump (std::ostream& o) const;
@@ -48,11 +51,19 @@ namespace object
   struct float_traits
   {
     typedef libport::ufloat type;
-    static const char kind[];
+    enum { kind = Object::kind_float };
   };
 
-  typedef Atom<float_traits> Float;
+# define DECLARE(Name, Op)				\
+  rFloat float_class_ ## Name (rObject lhs, rObject rhs);
+  
+  DECLARE(add, +)
+  DECLARE(div, /)
+  DECLARE(mul, *)
+  DECLARE(sub, -)
 
+# undef DECLARE
+  
   /*----------.
   | Integer.  |
   `----------*/
@@ -60,10 +71,8 @@ namespace object
   struct integer_traits
   {
     typedef int type;
-    static const char kind[];
+    enum { kind = Object::kind_integer };
   };
-
-  typedef Atom<integer_traits> Integer;
 
   /*---------.
   | String.  |
@@ -72,10 +81,8 @@ namespace object
   struct string_traits
   {
     typedef std::string type;
-    static const char kind[];
+    enum { kind = Object::kind_string };
   };
-
-  typedef Atom<string_traits> String;
 
 } // namespace object
 
