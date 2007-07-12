@@ -30,18 +30,24 @@ namespace object
   | Slots.  |
   `--------*/
 
-  rObject&
-  Object::lookup (const key_type& k)
+  const rObject&
+  Object::lookup (const key_type& k) const
   {
     lookup_set_type lu;
     return lookup(k, lu);
   }
 
   rObject&
-  Object::lookup (const key_type& k, Object::lookup_set_type& lu)
+  Object::lookup (const key_type& k)
+  {
+    return const_cast<rObject&>(const_cast<const Object*>(this)->lookup(k));
+  }
+
+  const rObject&
+  Object::lookup (const key_type& k, Object::lookup_set_type& lu) const
   {
     /// Look in local slots.
-    slots_type::iterator it = slots_.find (k);
+    slots_type::const_iterator it = slots_.find (k);
     if (it != slots_.end ())
       return it->second;
 
@@ -54,7 +60,7 @@ namespace object
 	 i != parents_.end (); ++i)
       try
       {
-	rObject& tmp_lookup = (*i)->lookup (k, lu);
+	const rObject& tmp_lookup = (*i)->lookup (k, lu);
 	return tmp_lookup;
       }
       catch (std::exception)
@@ -66,30 +72,44 @@ namespace object
   std::ostream&
   Object::special_slots_dump (std::ostream& o) const
   {
-    o << "parents : ";
-    if (parents_.begin () != parents_.end ())
-    {
-      o << libport::incendl;
-      for (parents_type::const_iterator i = parents_.begin ();
-	   i != parents_.end (); ++i)
-	((**i)["name"])->special_slots_dump (o);
-      o << libport::decendl;
-    }
-    else
-      o << " <> " << libport::iendl;
     return o;
+  }
+
+  std::ostream&
+  Object::id_dump (std::ostream& o) const
+  {
+    try
+    {
+      // Should be an rString that knows how to print itself.
+      lookup("type")->special_slots_dump (o);
+    }
+    catch (std::exception e)
+    {}
+    return o << '_' << this;
   }
 
   std::ostream&
   Object::dump (std::ostream& o) const
   {
-    o << kind_get() << '_' << this << " {" << libport::incendl;
+    id_dump (o);
+    o << " {" << libport::incendl;
+    if (parents_.begin () != parents_.end ())
+      {
+	o << "parents : ";
+	for (parents_type::const_iterator i = parents_.begin ();
+	     i != parents_.end (); ++i)
+	  {
+	    if (i != parents_.begin())
+	      o << ", ";
+	    (*i)->id_dump (o);
+	  }
+	o << libport::iendl;
+      }
     special_slots_dump (o);
     for (slots_type::const_iterator i = slots_.begin ();
 	 i != slots_.end (); ++i)
-      o << i->first << " -> " << *i->second << libport::iendl;
-    o << libport::decindent
-      << "}";
+      o << i->first << " : " << *i->second << libport::iendl;
+    o << libport::decindent << "}";
     return o;
   }
 
@@ -110,6 +130,7 @@ namespace object
     new_float_class (rObject object_class)
     {
       rObject res = clone(object_class);
+      // res["type"] = new String ("Float");
       return res;
     }
 
@@ -119,6 +140,7 @@ namespace object
     new_integer_class (rObject object_class)
     {
       rObject res = clone(object_class);
+      // res["type"] = new String ("Integer");
       return res;
     }
 
@@ -128,13 +150,14 @@ namespace object
     new_string_class (rObject object_class)
     {
       rObject res = clone(object_class);
+      // res["type"] = new String ("String");
       return res;
     }
   }
 
   rObject object_class = new_object_class();
+  rObject string_class = new_string_class(object_class);
   rObject float_class = new_float_class(object_class);
   rObject integer_class = new_integer_class(object_class);
-  rObject string_class = new_string_class(object_class);
 
 } // namespace object

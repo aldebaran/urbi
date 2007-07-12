@@ -1,3 +1,16 @@
+2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
+
+	Use "type" just as IO does
+	* src/object/object.hh, src/object/object.cc (lookup_set_type): Now
+	const.
+	(lookup): Now const too.
+	(lookup): New, not const.
+	(id_lookup): New.
+	Use "type", not "name".
+	* src/object/object-test-lookup.cc, src/object/object-test-parent.cc,
+	* src/object/object-test-slot.cc, src/object/object-test.cc:
+	Use "type", not "name".
+
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
 		merge -r 1261:1269 https://svn.gostai.com/svn/kernel1/trunk

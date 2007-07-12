@@ -14,7 +14,7 @@ main ()
   NEWLINE();
   Object o;
   o["drink"] = new Integer(51);
-  o["name"]  = new String("Pastis");
+  o["type"]  = new String("Pastis");
   o["degre"] = new Float(.45);
   o["x"] = new Object();
   (*o["x"])["val"] = new String("o.x.val");

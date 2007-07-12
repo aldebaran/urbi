@@ -8,19 +8,19 @@ int
 main ()
 {
   rObject top = new Object ();
-  (*top)["name"] = new String("Top_Class");
+  (*top)["type"] = new String("Top_Class");
   (*top)["val"]  = new Integer(42);
 
   rObject left = new Object ();
-  (*left)["name"] = new String("Left_class");
+  (*left)["type"] = new String("Left_class");
   (*left)["lval"] = new String("Left_Value");
 
   rObject right = new Object ();
-  (*right)["name"] = new String("Right_class");
+  (*right)["type"] = new String("Right_class");
   (*right)["rval"] = new String("Right_Value");
 
   rObject bottom = new Object ();
-  (*bottom)["name"] = new String("Bottom_class");
+  (*bottom)["type"] = new String("Bottom_class");
   (*bottom)["bval"] = new String("Bottom_Value");
 
   (*left).parent_add (top);

@@ -72,12 +72,13 @@ namespace object
     /// The slots.
     typedef libport::hash_map<key_type, rObject> slots_type;
     /// The slot set for lookup.
-    typedef std::set<Object*> lookup_set_type;
+    typedef std::set<const Object*> lookup_set_type;
 
     /// R/w access to the slots. Returns same slot as \c lookup,
     //  or create slot if \c lookup fails.
     rObject& operator[] (const key_type& k);
     /// Lookup field in object hierarchy.
+    const rObject& lookup (const key_type& k) const;
     rObject& lookup (const key_type& k);
     /// Update value in slot returned by \c lookup.
     Object& update_slot (const key_type& k, rObject& o);
@@ -89,6 +90,9 @@ namespace object
 
     /// \name Printing.
     /// \{
+    /// Report a short string describing the identity.
+    std::ostream& id_dump (std::ostream& o) const;
+
     /// Report the content on \p o.  For debugging purpose.
     virtual std::ostream& dump (std::ostream& o) const;
 
@@ -98,7 +102,7 @@ namespace object
 
   private:
     /// Lookup field in object hierarchy.
-    rObject& lookup (const key_type& k, lookup_set_type& lu);
+    const rObject& lookup (const key_type& k, lookup_set_type& lu) const;
 
     /// The parents.
     parents_type parents_;
