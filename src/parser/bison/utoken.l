@@ -70,11 +70,17 @@ typedef yy::parser::token token;
 #define RETURN_IVAL(Token, Value)		\
   RETURN_VALUE(Token, ival, Value)
 
+// Return an operator whose string representation is kept as a Symbol.
+#define RETURN_OP(Token)						\
+  RETURN_VALUE (TOK_ ## Token, symbol, new libport::Symbol(yytext));
+
 #define RETURN_TIME_VALUE(Scale)				\
   do {								\
     yytext[yyleng-1]=0;						\
     RETURN_VALUE(TIME_VALUE, fval, atof(yytext) * (Scale));	\
   } while (0)
+
+
 
 %}
 %option noyywrap
@@ -219,13 +225,27 @@ STRING   \"([^\"]|"\\\"")*\"
 "whenever"      return token::TOK_WHENEVER;
 "while"         return token::TOK_WHILE;
 
-"!"             return token::TOK_BANG;
+"!"             RETURN_OP(BANG);
+"%"             RETURN_OP(PERCENT);
+"*"             RETURN_OP(STAR);
+"+"             RETURN_OP(PLUS);
+"-"             RETURN_OP(MINUS);
+"/"             RETURN_OP(DIV);
+"<"             RETURN_OP(LTH);
+"<="            RETURN_OP(LEQ);
+"=="            RETURN_OP(EQU);
+"=~="           RETURN_OP(DEQ);
+">"             RETURN_OP(GTH);
+">="            RETURN_OP(GEQ);
+"^"             RETURN_OP(EXP);
+"&&"            RETURN_OP(LAND);
+"||"            RETURN_OP(LOR);
+
+"="             return token::TOK_ASSIGN;
 "!="            return token::TOK_NEQ;
 "$"             return token::TOK_DOLLAR;
-"%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
-"&"             RETURN_FLAVOR(AND);
-"&&"            return token::TOK_LAND;
+
 "'"             return token::TOK_DERIV;
 "''"            return token::TOK_DERIV2;
 "'d"            return token::TOK_TRUEDERIV;
@@ -234,37 +254,26 @@ STRING   \"([^\"]|"\\\"")*\"
 "'n"            return token::TOK_NORM;
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
-"*"             return token::TOK_STAR;
-"+"             return token::TOK_PLUS;
 "++"            return token::TOK_PLUSPLUS;
 "+="            return token::TOK_PLUSASSIGN;
-","             RETURN_FLAVOR(COMMA);
-"-"             return token::TOK_MINUS;
 "--"            return token::TOK_MINUSMINUS;
 "-="            return token::TOK_MINUSASSIGN;
 "->"            return token::TOK_DIR;
 "."             return token::TOK_POINT;
-"/"             return token::TOK_DIV;
 ":"             return token::TOK_COLON;
 "::"            return token::TOK_DOUBLECOLON;
-";"             RETURN_FLAVOR(SEMICOLON);
-"<"             return token::TOK_LTH;
-"<="            return token::TOK_LEQ;
-"="             return token::TOK_ASSIGN;
-"=="            return token::TOK_EQU;
-"=~="           return token::TOK_DEQ;
-">"             return token::TOK_GTH;
-">="            return token::TOK_GEQ;
 "@"             return token::TOK_AROBASE;
 "["             return token::TOK_LBRACKET;
 "]"             return token::TOK_RBRACKET;
-"^"             return token::TOK_EXP;
 "{"             return token::TOK_LBRACE;
-"|"             RETURN_FLAVOR(PIPE);
-"||"            return token::TOK_LOR;
 "}"             return token::TOK_RBRACE;
 "~"             return token::TOK_TILDE;
 "~="            return token::TOK_REQ;
+
+"&"             RETURN_FLAVOR(AND);
+"|"             RETURN_FLAVOR(PIPE);
+";"             RETURN_FLAVOR(SEMICOLON);
+","             RETURN_FLAVOR(COMMA);
 
 
 {ID}     RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));
@@ -285,7 +294,7 @@ STRING   \"([^\"]|"\\\"")*\"
        if (c > 255)
 	 up.error(*locp, "invalid escape");
        else
-   	 *valp->str += c;
+	 *valp->str += c;
      }
 
      \\x[0-9a-fA-F]{2}	{
@@ -337,7 +346,7 @@ STRING   \"([^\"]|"\\\"")*\"
     BEGIN INITIAL;
   }
 
-  [^*/\n\r]+  	;
+  [^*/\n\r]+	;
   {EOL}	        LINES(locp);
   .             /* Stray `*' and `/'. */;
 

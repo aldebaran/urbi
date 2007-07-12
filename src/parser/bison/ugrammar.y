@@ -135,6 +135,17 @@
 	    "Use 'noop' to make it explicit.");
     }
 #endif
+    /// Return the value pointed to be \a s, and delete it.
+    template <typename T>
+    static
+    T
+    take (T* s)
+    {
+      T res = *s;
+      delete s;
+      return res;
+    }
+
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     static
     ast::Exp*
@@ -177,25 +188,18 @@
 
     /// A new expression of operator \c o and children \c t1, \c t2.
     static
-    ast::OpExp*
+    ast::Exp*
     new_exp (UParser&, const yy::parser::location_type& l,
-	     ast::OpExp::type o, ast::Exp* t1, ast::Exp* t2)
+	     libport::Symbol* s, ast::Exp* t1, ast::Exp* t2)
     {
-      ast::OpExp* res = new ast::OpExp(l, t1, t2, o);
+      ast::exps_type* args = new ast::exps_type;
+      args->push_back(t1);
+      args->push_back(t2);
+      ast::CallExp* res = new ast::CallExp(l, take(s), args);
       EVALUATE(*res);
       return res;
     }
 
-    /// Return the value pointed to be \a s, and delete it.
-    template <typename T>
-    static
-    T
-    take (T* s)
-    {
-      T res = *s;
-      delete s;
-      return res;
-    }
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -213,11 +217,9 @@
 %token
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
-  TOK_LAND         "&&"
   TOK_AROBASE      "@"
   TOK_ASSIGN       "="
   TOK_AT           "at"
-  TOK_BANG         "!"
   TOK_BIN          "bin"
   TOK_BLOCK        "block"
   TOK_CLASS        "class"
@@ -229,14 +231,12 @@
   TOK_DERIV2       "''"
   TOK_DIR          "->"
   TOK_DISINHERITS  "disinherits"
-  TOK_DIV          "/"
   TOK_DOLLAR       "$"
   TOK_DOUBLECOLON  "::"
   TOK_ELSE         "else"
   TOK_EMIT         "emit"
   TOK_EVENT        "event"
   TOK_EVERY        "every"
-  TOK_EXP          "^"
   TOK_FALSE        "false"
   TOK_FOR          "for"
   TOK_FOREACH      "foreach"
@@ -254,18 +254,13 @@
   TOK_LOOPN        "loopn"
   TOK_LPAREN       "("
   TOK_LBRACKET     "["
-  TOK_MINUS        "-"
   TOK_MINUSASSIGN  "-="
   TOK_MINUSMINUS   "--"
-  TOK_STAR         "*"
   TOK_NEW          "new"
   TOK_NOOP         "noop"
   TOK_NORM         "'n"
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
-  TOK_LOR          "||"
-  TOK_PERCENT      "%"
-  TOK_PLUS         "+"
   TOK_PLUSASSIGN   "+="
   TOK_PLUSPLUS     "++"
   TOK_POINT        "."
@@ -721,13 +716,24 @@ expr:
   /*---------.
   | num expr |
   `---------*/
+// The name of the operators are the name of the messages.
+%token
+  <symbol> TOK_BANG    "!"             
+  <symbol> TOK_PERCENT "%"
+  <symbol> TOK_STAR    "*"
+  <symbol> TOK_PLUS    "+"
+  <symbol> TOK_MINUS   "-"
+  <symbol> TOK_DIV     "/"
+  <symbol> TOK_EXP     "^"
+;
+
 expr:
-  expr "+" expr	{ $$ = new_exp(up, @$, ast::OpExp::add, $1, $3); }
-| expr "-" expr	{ $$ = new_exp(up, @$, ast::OpExp::sub, $1, $3); }
-| expr "*" expr	{ $$ = new_exp(up, @$, ast::OpExp::mul, $1, $3); }
-| expr "/" expr	{ $$ = new_exp(up, @$, ast::OpExp::div, $1, $3); }
-| expr "%" expr	{ $$ = new_exp(up, @$, ast::OpExp::mod, $1, $3); }
-| expr "^" expr	{ $$ = new_exp(up, @$, ast::OpExp::exp, $1, $3); }
+  expr "+" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "-" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "*" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "/" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "%" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "^" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
 | "-" expr     %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
 | "copy" expr  %prec NEG {}
@@ -743,35 +749,40 @@ expr.opt:
 | Tests.  |
 `--------*/
 %token
-  TOK_EQU  "=="
-  TOK_GTH  ">"
-  TOK_LEQ  "<="
-  TOK_LTH  "<"
-  TOK_PEQ  "%="
-  TOK_NEQ  "!="
-  TOK_GEQ  ">="
-  TOK_DEQ  "=~="
-  TOK_REQ  "~="
+  <symbol> TOK_EQU  "=="
+  <symbol> TOK_GTH  ">"
+  <symbol> TOK_LEQ  "<="
+  <symbol> TOK_LTH  "<"
+  <symbol> TOK_PEQ  "%="
+  <symbol> TOK_NEQ  "!="
+  <symbol> TOK_GEQ  ">="
+  <symbol> TOK_DEQ  "=~="
+  <symbol> TOK_REQ  "~="
+;
+
+%token
+  <symbol> TOK_LAND  "&&"
+  <symbol> TOK_LOR   "||"
 ;
 
 expr:
   "true"  {}
 | "false" {}
 
-| expr "=="  expr { $$ = new_exp(up, @$, ast::OpExp::equ, $1, $3); }
-| expr "~="  expr { $$ = new_exp(up, @$, ast::OpExp::req, $1, $3); }
-| expr "!="  expr { $$ = new_exp(up, @$, ast::OpExp::neq, $1, $3); }
-| expr ">"   expr { $$ = new_exp(up, @$, ast::OpExp::gth, $1, $3); }
-| expr ">="  expr { $$ = new_exp(up, @$, ast::OpExp::geq, $1, $3); }
-| expr "<"   expr { $$ = new_exp(up, @$, ast::OpExp::lth, $1, $3); }
-| expr "<="  expr { $$ = new_exp(up, @$, ast::OpExp::leq, $1, $3); }
+| expr "=="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "~="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "!="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr ">"   expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr ">="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "<"   expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "<="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
 | expr "=~=" expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 | expr "%="  expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
 
 | "!" expr {}
 
-| expr "&&" expr { $$ = new_exp(up, @$, ast::OpExp::land, $1, $3); }
-| expr "||" expr { $$ = new_exp(up, @$, ast::OpExp::lor,  $1, $3); }
+| expr "&&" expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "||" expr { $$ = new_exp(up, @$, $2, $1, $3); }
 ;
 
 

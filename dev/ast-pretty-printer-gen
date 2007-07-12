@@ -26,6 +26,11 @@ print tools.banner("ast/pretty-printer.hh",
 # define AST_PRETTY_PRINTER_HH
 
 # include <iosfwd>
+
+# include "libport/indent.hh"
+# include "libport/pair.hh"
+# include "libport/separator.hh"
+
 # include "ast/default-visitor.hh"
 
 namespace ast

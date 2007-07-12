@@ -1,3 +1,17 @@
+2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
+
+	Operators are syntactic sugar for method calls
+	* dev/ast-pretty-printer-gen: We now use more libport tools.
+	* src/ast/ast.yml (CallExp): Provide a printer.
+	* src/parser/bison/utoken.l (RETURN_OP): New.
+	Use it for binary operators for a start.
+	* src/parser/bison/ugrammar.y (take): Move higher to make it
+	usable ealier.
+	(new_exp): Use CallExp instead of OpExp.
+	(TOK_BANG, TOK_PERCENT, TOK_STAR, TOK_PLUS, TOK_MINUS)
+	(TOK_DIV, TOK_EXP, TOK_EQU, TOK_GTH, TOK_LEQ, TOK_LTH, TOK_PEQ)
+	(TOK_NEQ, TOK_GEQ, TOK_DEQ, TOK_REQ): Use their symbol value.
+
 2007-07-11  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Handle hirarchy loop case
