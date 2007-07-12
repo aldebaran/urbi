@@ -56,14 +56,14 @@ namespace object
 
 # define DECLARE(Name, Op)				\
   rFloat float_class_ ## Name (rObject lhs, rObject rhs);
-  
+
   DECLARE(add, +)
   DECLARE(div, /)
   DECLARE(mul, *)
   DECLARE(sub, -)
 
 # undef DECLARE
-  
+
   /*----------.
   | Integer.  |
   `----------*/

@@ -1,5 +1,11 @@
 2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
 
+	CallExp::printer
+	* src/ast/ast.yml (CallExp::printer): Output the target.
+	* src/object/atom.hh: Space changes.
+
+2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
+
 	Add some primitives for Floats
 	* src/object/fwd.hh (float_traits, Float, rFloat, integer_traits)
 	(Integer, rInteger, string_traits, String, rString): Fwd decl

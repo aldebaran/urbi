@@ -476,7 +476,13 @@ CallExp:
         type: 'exps_type*'
         desc: Arguments passed to the function
   printer:
-    - '" . "'
+    - '{
+         if (n.target_get())
+           {
+             n.target_get()->accept(*this);
+             ostr_ << " . ";
+           }
+       }'
     - $name
     - '"("'
     - libport::separate (n.args_get (), libport::make_pair (',', libport::iendl));
