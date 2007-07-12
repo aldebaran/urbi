@@ -154,17 +154,18 @@ for node in arr:
         if attr == None:
           raise 'No such attribute \'%s\' for node \'%s\'' % (attrName, node.name)
         mandatory = attr.mandatory
+        child = 'n.%s_get()' % (a[1:])
         if a[0] == '~':
           if mandatory:
-            action += '    n.%s_get().accept(*this);\n' % (a[1:])
+            action += '    %s.accept(*this);\n' % child
           else:
-            action += '    n.%s_get()->accept(*this);\n' % (a[1:])
+            action += '    if (%s) %s->accept(*this);\n' % (child, child)
         else:
           if mandatory:
-            a = 'n.' + a[1:]
+            action += '    ostr_ << %s;\n' % (child)
           else:
-            a = '*n.' + a[1:]
-          action += '    ostr_ << %s_get();\n' % a
+            action += '    if (%s) ostr_ << *%s;\n' % (child, child)
+
       elif a[0] == '{':
         a = re.compile('^').sub('    ', a)
         action += a + '\n'
