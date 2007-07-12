@@ -1,3 +1,14 @@
+2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
+	merge -r 1216:1261 https://svn.gostai.com/svn/kernel1/trunk
+	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+	Fix previous patch: use automerge.
+	* .automerge: Update.
+
+	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+	Fix logic operators precedence.
+	* src/parser/bison/ugrammar.y: Here.
+
 2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
 
 	clone

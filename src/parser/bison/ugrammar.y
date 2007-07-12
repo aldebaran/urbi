@@ -379,13 +379,13 @@
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
-// FIXME: This is sick!  Puke puke puke.
-%left "("
-%left  "||" "&&" "!"
+%left  "||"
+%left "&&"
 %left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
 %left  "-" "+"
 %left  "*" "/" "%"
-%left  NEG     /* Negation--unary minus */
+%left  "!" NEG     /* Negation--unary minus */
+%left "("
 %right "^"
 %right "'n"
 
@@ -719,7 +719,7 @@ expr:
   `---------*/
 // The name of the operators are the name of the messages.
 %token
-  <symbol> TOK_BANG    "!"             
+  <symbol> TOK_BANG    "!"
   <symbol> TOK_PERCENT "%"
   <symbol> TOK_STAR    "*"
   <symbol> TOK_PLUS    "+"
