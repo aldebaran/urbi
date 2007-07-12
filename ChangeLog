@@ -1,5 +1,9 @@
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
+	Update the test suite external.
+
+2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1259:1266 https://svn.gostai.com/svn/kernel1/branches/1.0
 	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 	Warn on use of operator ^. Add operator **.
