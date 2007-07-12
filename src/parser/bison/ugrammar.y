@@ -409,12 +409,12 @@ take (T* t)
 | Operator precedence.  |
 `----------------------*/
 
-// FIXME: This is sick!  Puke puke puke.
-%left  "||" "&&" "!"
+%left  "||"
+%left "&&"
 %left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
 %left  "-" "+"
 %left  "*" "/" "%"
-%left  NEG     /* Negation--unary minus */
+%left  "!" NEG     /* Negation--unary minus */
 %right "^"
 %right TOK_NORM
 

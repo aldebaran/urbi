@@ -1,3 +1,8 @@
+2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
+	Fix logic operators precedence.
+	* src/parser/bison/ugrammar.y: Here.
+
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 1186:1213 https://svn.gostai.com/svn/kernel1/branches/1.0
