@@ -21,6 +21,11 @@ namespace object
   Object::~Object ()
   {}
 
+
+  /*--------.
+  | Slots.  |
+  `--------*/
+
   inline
   rObject&
   Object::operator[] (const Object::key_type& k)
@@ -66,6 +71,11 @@ namespace object
     return "Object";
   }
 
+
+  /*----------.
+  | Parents.  |
+  `----------*/
+
   inline
   Object&
   Object::parent_add (const parent_rtype& p)
@@ -81,6 +91,22 @@ namespace object
   {
     parents_.remove (p);
     return *this;
+  }
+
+
+
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  inline
+  rObject
+  clone (rObject ref)
+  {
+    rObject res = new Object;
+    res->parent_add (ref);
+    return res;
   }
 
   inline

@@ -71,4 +71,28 @@ namespace object
     return o;
   }
 
+  namespace
+  {
+    /// Create the Object class.
+    static
+    rObject
+    new_object_class ()
+    {
+      // It has no parents, and for the time being, no contents.
+      return new Object;
+    }
+
+    /// Create the Float class.
+    static
+    rObject
+    new_float_class (rObject object_class)
+    {
+      rObject res = clone(object_class);
+      return res;
+    }
+  }
+
+  static rObject object_class = new_object_class();
+  static rObject float_class = new_float_class(object_class);
+
 } // namespace object

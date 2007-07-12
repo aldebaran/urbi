@@ -86,6 +86,14 @@ namespace object
     parents_type parents_;
   };
 
+  /// Clone, i.e., create a fresh object with this class as sole parent.
+  // It is tempting to make it const, but then the list of parents
+  // must be const too.
+  // Not a member function because we want the shared_ptr, which
+  // is not available via this.
+  rObject clone (rObject ref);
+  
+
   /// Report \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);
 
