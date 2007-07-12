@@ -274,7 +274,10 @@ STRING   \"([^\"]|"\\\"")*\"
 "@"             return token::TOK_AROBASE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
-"^"             return token::TOK_EXP;
+"^"             { up.warn(*locp, "The use of '^' for exponent operator"
+                          " is deprecated. Use '**' instead.");
+                  return token::TOK_EXP; }
+"**"            return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
 "|"             return token::TOK_PIPE;
 "||"            return token::TOK_OROPERATOR;

@@ -547,6 +547,19 @@ UConnection::received (const ubyte *buffer, int length)
       }
       else if (p.commandTree && p.commandTree->command1)
       {
+        // Warnings handling
+        if (*p.warning && !server->memoryOverflow)
+        {
+          // a warning was emitted
+          send(p.warning, "warn ");
+
+          p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
+          p.errorMessage[ 42 ] = 0; // cut at 41 characters
+          server->error(::DISPLAY_FORMAT, (long)this,
+                        "UConnection::received",
+                        p.warning);
+        }
+
 	// Process "commandTree"
 
 	// ASSIGN_BINARY: intercept and execute immediately

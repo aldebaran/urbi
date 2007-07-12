@@ -1,5 +1,15 @@
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
+	Warn on use of operator ^. Add operator **.
+	* src/parser/uparser.cc,
+	* src/parser/uparser.hh: Add a mehod to emit warnings.
+	* src/parser/bison/utoken.l: Emit warnings on ^.
+        Scan ** as exponent operator.
+	* src/uconnection.cc,
+	* src/uexpression.cc: Report warnings through the connection.
+
+2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
 	Fix logic operators precedence.
 	* src/parser/bison/ugrammar.y: Here.
 
