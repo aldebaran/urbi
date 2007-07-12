@@ -70,8 +70,17 @@ public:
   /// Declare an error at \a l about \a msg.
   void error (const location_type& l, const std::string& msg);
 
+  /// Warn at \a l about \a msg.
+  void warn (const location_type& l, const std::string& msg);
+
+  /// Size of the message buffers
+  static const int msgMaxSize = 1024;
+
   /// The latest parse error message.
-  char errorMessage[1024];
+  char errorMessage[msgMaxSize];
+
+  /// The latest warning
+  char warning[msgMaxSize];
 
   /// The connection we belong to.
   UConnection& connection;

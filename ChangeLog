@@ -1,5 +1,17 @@
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1259:1266 https://svn.gostai.com/svn/kernel1/branches/1.0
+	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+	Warn on use of operator ^. Add operator **.
+	* src/parser/uparser.cc,
+	* src/parser/uparser.hh: Add a mehod to emit warnings.
+	* src/parser/bison/utoken.l: Emit warnings on ^.
+        Scan ** as exponent operator.
+	* src/uconnection.cc,
+	* src/uexpression.cc: Report warnings through the connection.
+
+2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
 	Fix previous patch: use automerge.
 	* .automerge: Update.
 
