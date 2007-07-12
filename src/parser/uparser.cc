@@ -34,6 +34,7 @@ UParser::parse_ ()
 {
   commandTree = 0;
   errorMessage[0] = 0;
+  warning[0] = 0;
   binaryCommand = false;
 
   parser_type p(*this);
@@ -92,4 +93,13 @@ UParser::error (const yy::parser::location_type& l, const std::string& msg)
   o << "!!! " << l << ": " << msg << "\n" << std::ends;
   strncpy(errorMessage, o.str().c_str(),
 	  std::min(sizeof (errorMessage), o.str().size()));
+}
+
+void
+UParser::warn (const yy::parser::location_type& l, const std::string& msg)
+{
+  std::ostringstream sstr;
+  sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
+  strncpy(warning, sstr.str().c_str(),
+	  std::min(sizeof (warning), sstr.str().size()));
 }

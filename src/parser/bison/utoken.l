@@ -237,7 +237,10 @@ STRING   \"([^\"]|"\\\"")*\"
 "=~="           RETURN_OP(DEQ);
 ">"             RETURN_OP(GTH);
 ">="            RETURN_OP(GEQ);
-"^"             RETURN_OP(EXP);
+"^"             { up.warn(*locp, "The use of '^' for exponent operator"
+                          " is deprecated. Use '**' instead.");
+                  RETURN_OP(EXP); }
+"**"            RETURN_OP(EXP);
 "&&"            RETURN_OP(LAND);
 "||"            RETURN_OP(LOR);
 
