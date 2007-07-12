@@ -40,6 +40,7 @@
 #      - w: provide a *_get accessor that returns a reference
 #        for possible modifications.
 #      - W: provide a *_set accessor.
+#
 #    + desc, a short description of the attribute
 #
 #    + default
@@ -52,7 +53,7 @@
 #      The available actions are:
 #      - $foo: print the foo_ member of the node.
 #      - ~bar: pretty-print recursively the bar_ child of the node.
-#      - Any valid C++ code in the context of the printing method.
+#      - Any valid rhs for operator <<.
 #
 # Defaults:
 #  * class:
@@ -463,13 +464,18 @@ OpExp:
 CallExp:
   super: Exp
   attributes:
+    - target:
+        type: 'Exp*'
+        desc: The target of the message passing.
+        mandatory: False
     - name:
         type: 'libport::Symbol'
         desc: Name of the called function
     - args:
         type: 'exps_type*'
-        desc: List of arguments passed to the function
+        desc: Arguments passed to the function
   printer:
+    - '" . "'
     - $name
     - '"("'
     - libport::separate (n.args_get (), libport::make_pair (',', libport::iendl));

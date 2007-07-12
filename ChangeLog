@@ -1,5 +1,13 @@
 2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
 
+	CallExp: optional target
+	* src/ast/ast.yml: The CallExp can have an empty target.
+	Disable the printing of the target, as the infrastructure is
+	not ready yet.
+	* src/parser/bison/ugrammar.y: Adjust.
+
+2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
+
 	Operators are syntactic sugar for method calls
 	* dev/ast-pretty-printer-gen: We now use more libport tools.
 	* src/ast/ast.yml (CallExp): Provide a printer.

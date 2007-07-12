@@ -169,33 +169,34 @@
 	  break;
 	default:
 	  pabort(op);
-
       }
       EVALUATE(*res);
       return res;
     }
 
-    /// A new UExpression of type \c t and child \c t1.
-    template <class T1>
-    static
-    UExpression*
-    new_exp (UParser& up, const yy::parser::location_type& l,
-	     UExpression::Type t, T1* t1)
-    {
-      UExpression* res = new UExpression(l, t, t1);
-      return res;
-    }
-
-    /// A new expression of operator \c o and children \c t1, \c t2.
+#if 0
+    /// "<target> . <method> ()".
     static
     ast::Exp*
-    new_exp (UParser&, const yy::parser::location_type& l,
-	     libport::Symbol* s, ast::Exp* t1, ast::Exp* t2)
+    new_exp (const yy::parser::location_type& l,
+	     ast::Exp* target, libport::Symbol* method)
     {
       ast::exps_type* args = new ast::exps_type;
-      args->push_back(t1);
-      args->push_back(t2);
-      ast::CallExp* res = new ast::CallExp(l, take(s), args);
+      ast::CallExp* res = new ast::CallExp(l, target, take(method), args);
+      EVALUATE(*res);
+      return res;
+    }
+#endif
+
+    /// "<target> . <method> (<arg1>)".
+    static
+    ast::Exp*
+    new_exp (const yy::parser::location_type& l,
+	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
+    {
+      ast::exps_type* args = new ast::exps_type;
+      args->push_back(arg1);
+      ast::CallExp* res = new ast::CallExp(l, target, take(method), args);
       EVALUATE(*res);
       return res;
     }
@@ -705,7 +706,7 @@ expr:
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 | "[" exprs "]" {}
 | property {}
-| "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, take($1), $3); }
+| "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, 0, take($1), $3); }
 | "%" name            {}
 | "group" "identifier"    {}
 ;
@@ -728,12 +729,12 @@ expr:
 ;
 
 expr:
-  expr "+" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "-" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "*" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "/" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "%" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "^" expr	{ $$ = new_exp(up, @$, $2, $1, $3); }
+  expr "+" expr	{ $$ = new_exp(@$, $1, $2, $3); }
+| expr "-" expr	{ $$ = new_exp(@$, $1, $2, $3); }
+| expr "*" expr	{ $$ = new_exp(@$, $1, $2, $3); }
+| expr "/" expr	{ $$ = new_exp(@$, $1, $2, $3); }
+| expr "%" expr	{ $$ = new_exp(@$, $1, $2, $3); }
+| expr "^" expr	{ $$ = new_exp(@$, $1, $2, $3); }
 | "-" expr     %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
 | "copy" expr  %prec NEG {}
@@ -749,14 +750,14 @@ expr.opt:
 | Tests.  |
 `--------*/
 %token
+  <symbol> TOK_DEQ  "=~="
   <symbol> TOK_EQU  "=="
+  <symbol> TOK_GEQ  ">="
   <symbol> TOK_GTH  ">"
   <symbol> TOK_LEQ  "<="
   <symbol> TOK_LTH  "<"
-  <symbol> TOK_PEQ  "%="
   <symbol> TOK_NEQ  "!="
-  <symbol> TOK_GEQ  ">="
-  <symbol> TOK_DEQ  "=~="
+  <symbol> TOK_PEQ  "%="
   <symbol> TOK_REQ  "~="
 ;
 
@@ -769,20 +770,20 @@ expr:
   "true"  {}
 | "false" {}
 
-| expr "=="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "~="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "!="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr ">"   expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr ">="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "<"   expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "<="  expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "=~=" expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
-| expr "%="  expr { /* $$ = new_exp(up, @$, ???, $1, $3); */ }
+| expr "!="  expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "%="  expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "<"   expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "<="  expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "=="  expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "=~=" expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr ">"   expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr ">="  expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "~="  expr { $$ = new_exp(@$, $1, $2, $3); }
 
 | "!" expr {}
 
-| expr "&&" expr { $$ = new_exp(up, @$, $2, $1, $3); }
-| expr "||" expr { $$ = new_exp(up, @$, $2, $1, $3); }
+| expr "&&" expr  { $$ = new_exp(@$, $1, $2, $3); }
+| expr "||" expr  { $$ = new_exp(@$, $1, $2, $3); }
 ;
 
 
