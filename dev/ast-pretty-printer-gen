@@ -142,20 +142,34 @@ for node in arr:
   # The name of the formal argument, if needed, with a leading space.
   name = ''
   action = ''
+  p = re.compile('\\$(\\w+)')
   if 'printer' in node.__dict__: # if a printer is defined
     for a in node.printer: # for each action in the printer
       a = a.lstrip(' ').rstrip(' ')
-      if a[0] == '~':
+      if a[0] == '~' or a[0] == '$':
 	# Handle '~foo' variables
 	name = ' n'
-	action += '    n.%s_get().accept(*this);\n' % (a[1:])
+        attrName = a[1:]
+        attr = node.attribute(attrName)
+        if attr == None:
+          raise 'No such attribute \'%s\' for node \'%s\'' % (attrName, node.name)
+        mandatory = attr.mandatory
+        if a[0] == '~':
+          if mandatory:
+            action += '    n.%s_get().accept(*this);\n' % (a[1:])
+          else:
+            action += '    n.%s_get()->accept(*this);\n' % (a[1:])
+        else:
+          if mandatory:
+            a = 'n.' + a[1:]
+          else:
+            a = '*n.' + a[1:]
+          action += '    ostr_ << %s_get();\n' % a
+      elif a[0] == '{':
+        a = re.compile('^').sub('    ', a)
+        action += a + '\n'
       else:
-	# Handle '$foo' variables
-	p = re.compile('\\$(\\w*)')
-	if p.search(a):
-	  name = ' n'
-	  a = p.sub('n.\\1_get()', a)
-	action += '    ostr_ << %s;\n' % (a)
+        action += '    ostr_ << %s;\n' % (a)
     print """\
   void PrettyPrinter::operator() (const %s&%s)
   {

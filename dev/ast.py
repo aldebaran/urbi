@@ -163,6 +163,19 @@ class Node:
     for att_name, att_dict in dict.iteritems ():
       return Attribute (att_name, att_dict)
 
+  # Search the 'name' attribute of this node.
+  # Perform lookup in parents nodes if not found in current
+  # Raise string exception if not found
+  def attribute (self, name):
+    for attr in self.attributes:
+      if attr.name == name:
+        return attr
+    for parent in self.super:
+      attr = parent.attribute(name)
+      if attr != None:
+        return attr
+    return None
+
   def guard (self):
     """The CPP guard."""
     return self.name.upper ()

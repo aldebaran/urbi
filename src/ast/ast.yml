@@ -51,8 +51,9 @@
 #      The way the node is pretty-printed, using so ad-hoc syntactic
 #      sugar. A pretty-printer is specified by actions in a yaml list.
 #      The available actions are:
-#      - $foo: print the foo_ member of the node.
-#      - ~bar: pretty-print recursively the bar_ child of the node.
+#      - $foo: Pretty-print the foo_ attribute of the node.
+#      - ~bar: Pretty-print recursively the bar_ child of the node.
+#      - '{ /* code */ }': Insert a block of code
 #      - Any valid rhs for operator <<.
 #
 # Defaults:
@@ -418,7 +419,7 @@ OpExp:
               gth,  ///< ">"
               geq,  ///< ">="
             };
-                  
+
           /// Pretty printing the operator.
           const char* as_string (OpExp::type t) const;
 
