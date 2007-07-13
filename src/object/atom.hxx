@@ -58,7 +58,7 @@ namespace object
   std::ostream&
   Atom<Traits>::special_slots_dump (std::ostream& o) const
   {
-    return o << "value" << " -> " << value_ << libport::iendl;
+    return o << "value" << " = " << value_ << libport::iendl;
   }
 
 } // namespace object

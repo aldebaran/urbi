@@ -22,7 +22,7 @@ namespace runner
       args.push_back (eval (*a));
     // Ask the target for the handler of the message.
     rObject prim = args[0]->lookup (e.name_get ());
-    
+
     // It'd better be a primitive, for the time being.
     current_ = prim.cast<object::Primitive>()->value_get()(args);
   }

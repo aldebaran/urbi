@@ -93,7 +93,7 @@ namespace object
     o << " {" << libport::incendl;
     if (parents_.begin () != parents_.end ())
       {
-	o << "parents : ";
+	o << "parents = ";
 	for (parents_type::const_iterator i = parents_.begin ();
 	     i != parents_.end (); ++i)
 	  {
@@ -105,7 +105,7 @@ namespace object
       }
     special_slots_dump (o);
     BOOST_FOREACH (slot_type s, slots_)
-      o << s.first << " :-> " << *s.second << libport::iendl;
+      o << s.first << " = " << *s.second << libport::iendl;
     o << libport::decindent << "}";
     return o;
   }
