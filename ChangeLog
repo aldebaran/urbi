@@ -1,5 +1,13 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+		merge -r 1266:1300 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-07-13  Akim Demaille  <demaille@gostai.com>
+	Fix ''d
+	* src/parser/bison/ugrammar.y: Actually, it's 'dd.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Remove incorrect nonterminal aliases
 	* src/urbi/trunk/kernel1/src/parser/bison/ugrammar.y: Remove
 	explicit strings that were made to be aliases for terminals,

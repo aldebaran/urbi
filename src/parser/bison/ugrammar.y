@@ -318,7 +318,7 @@ take (T* t)
   TOK_TIMEOUT      "timeout"
   TOK_TRUECONST    "true"
   TOK_TRUEDERIV    "'d"
-  TOK_TRUEDERIV2   "''d"
+  TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
   TOK_UNBLOCK      "unblock"
