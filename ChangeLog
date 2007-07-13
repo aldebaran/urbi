@@ -1,3 +1,11 @@
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
+	Remove incorrect nonterminal aliases
+	* src/urbi/trunk/kernel1/src/parser/bison/ugrammar.y: Remove
+	explicit strings that were made to be aliases for terminals,
+	but it is not accepted but Bison like this, it believes they
+	are fresh tokens.
+
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
 	Update the test suite external.

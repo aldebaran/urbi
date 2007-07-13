@@ -369,39 +369,39 @@ take (T* t)
    <ustr>  OPERATOR_ID        "operator"
    <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
-%type <ustr> tag "any kind of tag"
+%type <ustr> tag
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
    "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
    OPERATOR_ID_PARAM OPERATOR_VAR tag;
 
-%token <structure>           STRUCT      "structured identifier"
-%token <structure>           REFSTRUCT   "structured ref-identifier"
+%token <structure>           STRUCT   
+%token <structure>           REFSTRUCT
 
-%type <expr>                expr            "expression"
-%type <val>                 timeexpr        "time expression"
-%type <command>             taggedcommands  "set of commands"
-%type <command>             taggedcommand   "tagged command"
-%type <command>             command         "command"
-%type <command>             instruction     "instruction"
-%type <namedparameters>     parameters      "parameters"
-%type <namedparameters>     array           "array"
-%type <namedparameters>     parameterlist   "list of parameters"
-%type <namedparameters>     rawparameters   "list of attributes"
-%type <namedparameters>     namedparameters "list of named parameters"
-%type <namedparameters>     flag            "a flag"
-%type <namedparameters>     flags.0         "zero or more flags"
-%type <namedparameters>     flags.1         "one or more flags"
-%type <variablelist>        names           "list of names"
-%type <expr>                softtest        "soft test"
+%type <expr>                expr            
+%type <val>                 timeexpr        
+%type <command>             taggedcommands  
+%type <command>             taggedcommand   
+%type <command>             command         
+%type <command>             instruction     
+%type <namedparameters>     parameters      
+%type <namedparameters>     array           
+%type <namedparameters>     parameterlist   
+%type <namedparameters>     rawparameters   
+%type <namedparameters>     namedparameters 
+%type <namedparameters>     flag            
+%type <namedparameters>     flags.0         
+%type <namedparameters>     flags.1         
+%type <variablelist>        names           
+%type <expr>                softtest        
 %type <namedparameters>     formal_arguments
-%type <namedparameters>     identifiers     "list of identifiers"
-%type <namedparameters>     identifiers.1   "one or more identifiers"
-%type <expr>                class_declaration "class declaration"
-%type <namedparameters>     class_declaration_list "class declaration list"
-%type <binary>              binary          "binary"
-%type <property>            property        "property"
-%type <variable>            name        "name"
+%type <namedparameters>     identifiers     
+%type <namedparameters>     identifiers.1   
+%type <expr>                class_declaration
+%type <namedparameters>     class_declaration_list
+%type <binary>              binary
+%type <property>            property
+%type <variable>            name
 
 
 
@@ -1307,7 +1307,7 @@ expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 rvalue:
   name
 | "static" name	{ $$ = $2; $$->isstatic = true;	}
-| name derive   { $$->deriv = $2; 		}
+| name derive   { $$->deriv = $2;		}
 | name "'e"	{ $$->varerror = true;		}
 | name "'in"	{ $$->varin = true;		}
 | name "'out"   // FIXME: Nothing to do???
