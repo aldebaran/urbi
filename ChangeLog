@@ -1,5 +1,11 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	More primitives
+	* src/object/primitives.cc: Add shutdown and reboot primitives.
+	Unfortunately not yet callable.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Upgrade grammar
 	* src/parser/bison/ugrammar.y: Remove all types, use <expr> instead.
 	(new_exp): Activate and use it.

@@ -8,6 +8,8 @@
 #include "object/object.hh"
 #include "object/atom.hh"
 
+#include "kernel/userver.hh"
+
 namespace object
 {
 
@@ -18,6 +20,43 @@ namespace object
   rObject string_class;
 
 
+  /*--------------------.
+  | Object primitives.  |
+  `--------------------*/
+
+  // FIXME: I have put them here, but it's probably not the best
+  // place.  We probably needed something like a Server object.
+
+#define SERVER_FUNCTION(Function)				\
+  rObject							\
+  object_class_ ## Function (objects_type args)			\
+  {								\
+    ::urbiserver->Function();					\
+    /* Return the current object to return something. */	\
+    return args[0];						\
+  }
+  SERVER_FUNCTION(reboot)
+  SERVER_FUNCTION(shutdown)
+#undef SERVER_FUNCTION
+
+  namespace
+  {
+
+    /// Initialize the Object class.
+    static
+    void
+    object_class_initialize ()
+    {
+#define DECLARE(Name)							\
+      float_class->slot_set (#Name,					\
+			     new Primitive(object_class_ ## Name));
+      DECLARE(reboot);
+      DECLARE(shutdown);
+#undef DECLARE
+    }
+
+  }
+  
   /*-------------------.
   | Float primitives.  |
   `-------------------*/
@@ -159,12 +198,6 @@ float_peq (libport::ufloat l, libport::ufloat r)
 
   namespace
   {
-    /// Initialize the Object class.
-    static
-    void
-    object_class_initialize ()
-    {
-    }
 
     /// Initialize the Integer class.
     static
