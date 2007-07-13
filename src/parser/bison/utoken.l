@@ -275,8 +275,8 @@ STRING   \"([^\"]|"\\\"")*\"
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
 "^"             { up.warn(*locp, "The use of '^' for exponent operator"
-                          " is deprecated. Use '**' instead.");
-                  return token::TOK_EXP; }
+			  " is deprecated. Use '**' instead.");
+		  return token::TOK_EXP; }
 "**"            return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
 "|"             return token::TOK_PIPE;
@@ -329,7 +329,7 @@ STRING   \"([^\"]|"\\\"")*\"
        if (c > 255)
 	 up.error(*locp, "invalid escape");
        else
-   	 *valp->str += c;
+	 *valp->str += c;
      }
 
      \\x[0-9a-fA-F]{2}	{
@@ -381,7 +381,7 @@ STRING   \"([^\"]|"\\\"")*\"
     BEGIN INITIAL;
   }
 
-  [^*/\n\r]+  	;
+  [^*/\n\r]+	;
   {EOL}	        LINES(locp);
   .             /* Stray `*' and `/'. */;
 

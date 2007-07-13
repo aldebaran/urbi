@@ -1,3 +1,8 @@
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
+	Fix ''d
+	* src/parser/bison/ugrammar.y: Actually, it's 'dd.
+
 2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
 	Warn on use of operator ^. Add operator **.
