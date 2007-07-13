@@ -9,11 +9,10 @@
 ################################################################################
 
 include $(top_srcdir)/build-aux/build-aux.mk
-include $(top_srcdir)/libport/libport.mk
 
 ACLOCAL_AMFLAGS = -I build-aux
 
-SUBDIRS = src . doc
+SUBDIRS = libport src . doc
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -54,7 +53,7 @@ include/kernel/uvariable.hh
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += tests src/uobject
+SVN_EXTERNALS += tests libport src/uobject
 
 maintainer-check: valgrind-check
 valgrind-check:
