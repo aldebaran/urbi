@@ -1,5 +1,10 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	Runner::CallExp
+	* src/runner/runner.cc (CallExp): Actually call the primitive.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Fix the definition of the slots of the primitive classes
 	Here's the catch: I was using the operator[] to define the
 	type of each base class, but operator[] updates the slots, i.e.,

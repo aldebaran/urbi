@@ -20,6 +20,11 @@ namespace runner
       args.push_back (eval (*e.target_get()));
     BOOST_FOREACH(ast::Exp* a, e.args_get())
       args.push_back (eval (*a));
+    // Ask the target for the handler of the message.
+    rObject prim = args[0]->lookup (e.name_get ());
+    
+    // It'd better be a primitive, for the time being.
+    current_ = prim.cast<object::Primitive>()->value_get()(args);
   }
 
   void
