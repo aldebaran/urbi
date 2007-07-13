@@ -1,5 +1,14 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	operator<< for slot_type
+	* src/object/object.hh (slot_type): Define directly instead of
+	asking slots_type::value_type.
+	(operator<<): New one for slot_type.
+	* src/object/object.hxx: Implement it.
+	* src/object/object.cc: Use it.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Remove OpExp
 	* src/ast/ast.yml (OpExp):
 	Remove, handled by CallExp now.

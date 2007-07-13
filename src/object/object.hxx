@@ -124,6 +124,13 @@ namespace object
     return v.dump (o);
   }
 
+  inline
+  std::ostream&
+  operator<< (std::ostream& o, const Object::slot_type& s)
+  {
+    return o << s.first << " = " << *s.second;
+  }
+
 } // namespace object
 
 #endif // !OBJECT_OBJECT_HXX

@@ -68,8 +68,8 @@ namespace object
     typedef libport::Symbol key_type;
     /// The slots.
     typedef libport::hash_map<key_type, rObject> slots_type;
-    /// One slot, a pair<const key_type, rObject>.
-    typedef slots_type::value_type slot_type;
+    /// One slot.
+    typedef std::pair<const key_type, rObject> slot_type;
     /// The slot set for lookup.
     typedef std::set<const Object*> lookup_set_type;
 
@@ -116,8 +116,11 @@ namespace object
   // is not available via this.
   rObject clone (rObject ref);
 
-  /// Report \p v on \p o.  For debugging purpose.
+  /// Report Object \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);
+
+  /// Report slot \p s on \p o.  For debugging purpose.
+  std::ostream& operator<< (std::ostream& o, const Object::slot_type& s);
 
 } // namespace object
 
