@@ -1,5 +1,23 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	Fix the initialization of the base class objects
+	* src/object/primitives.hh, src/object/primitives.cc: New, taken
+	from...
+	* src/object/object.cc, src/object/object.hh, src/object/object.hxx:
+	Here.
+	* src/object/Makefile.am: Adjust.
+	* src/object/primitives.hh, src/object/primitives.cc
+	(root_classes_initialize, root_classes_initialized): New.
+	* src/object/object.cc, src/object/object.hh, src/object/object.hxx:
+	Use some assertions.
+	More is needed.
+	Use BOOST_FOREACH (it's cool!).
+	(id_dump): Use directly the String value instead on relying on the
+	behavior of operator<<.
+	* src/object/atom.hxx (primitives.hh): Include.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Don't run the tests
 	K2 is far from being ready for it.
 	* Makefile.am (SUBDIRS): Remove tests for the time being.
@@ -46,7 +64,7 @@
 	* src/parser/uparser.cc,
 	* src/parser/uparser.hh: Add a mehod to emit warnings.
 	* src/parser/bison/utoken.l: Emit warnings on ^.
-        Scan ** as exponent operator.
+	Scan ** as exponent operator.
 	* src/uconnection.cc,
 	* src/uexpression.cc: Report warnings through the connection.
 

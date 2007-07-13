@@ -9,7 +9,7 @@
 # include <iosfwd>
 # include <set>
 # include <list>
-# include <algorithm>
+
 # include "libport/hash.hh"
 # include "libport/symbol.hh"
 # include "object/fwd.hh"
@@ -52,17 +52,15 @@ namespace object
 
     /// \name The parents.
     /// \{
-    /// The parent type.
-    typedef Object parent_type;
     /// The refs to parents.
-    typedef rObject parent_rtype;
+    typedef rObject parent_type;
     /// The parents.
-    typedef std::list<parent_rtype> parents_type;
+    typedef std::list<parent_type> parents_type;
 
     /// Add parent.
-    Object& parent_add (const parent_rtype& p);
+    Object& parent_add (const parent_type& p);
     /// Remove parent.
-    Object& parent_remove (const parent_rtype& p);
+    Object& parent_remove (const parent_type& p);
     /// \}
 
     /// \name The slots.
@@ -116,15 +114,10 @@ namespace object
   // Not a member function because we want the shared_ptr, which
   // is not available via this.
   rObject clone (rObject ref);
-  
+
 
   /// Report \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);
-
-  extern rObject object_class;
-  extern rObject float_class;
-  extern rObject integer_class;
-  extern rObject string_class;
 
 } // namespace object
 

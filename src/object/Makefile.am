@@ -9,7 +9,9 @@ atom.hxx					\
 atom.cc						\
 object.hh					\
 object.hxx					\
-object.cc
+object.cc					\
+primitives.hh					\
+primitives.cc
 
 
 ## ------- ##
@@ -18,11 +20,11 @@ object.cc
 
 check_HEADERS = object-test.hh
 check_PROGRAMS =				\
-		object-test			\
-		object-test-parent		\
-		object-test-lookup		\
-		object-test-slot		\
-		object-test-primitives
+object-test					\
+object-test-parent				\
+object-test-lookup				\
+object-test-slot				\
+object-test-primitives
 
 object_test_SOURCES = object-test.cc
 object_test_lookup_SOURCES = object-test-lookup.cc

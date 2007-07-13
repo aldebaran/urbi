@@ -3,7 +3,10 @@
  ** \brief Implementation of object::Object.
  */
 
+#include <algorithm>
+#include <boost/foreach.hpp>
 #include "object/object.hh"
+#include "object/atom.hh"
 
 namespace object
 {
@@ -56,12 +59,10 @@ namespace object
     lu.insert (this);
 
     /// Look in parent slots (depth first search)
-    for (parents_type::const_iterator i = parents_.begin ();
-	 i != parents_.end (); ++i)
+    BOOST_FOREACH (parent_type p, parents_)
       try
       {
-	const rObject& tmp_lookup = (*i)->lookup (k, lu);
-	return tmp_lookup;
+	return p->lookup (k, lu);
       }
       catch (std::exception)
       { }
@@ -80,8 +81,8 @@ namespace object
   {
     try
     {
-      // Should be an rString that knows how to print itself.
-      lookup("type")->special_slots_dump (o);
+      // Should be an rString.
+      o << lookup("type").cast<String>()->value_get ();
     }
     catch (std::exception e)
     {}
@@ -112,52 +113,5 @@ namespace object
     o << libport::decindent << "}";
     return o;
   }
-
-  namespace
-  {
-    /// Create the Object class.
-    static
-    rObject
-    new_object_class ()
-    {
-      // It has no parents, and for the time being, no contents.
-      return new Object;
-    }
-
-    /// Create the Float class.
-    static
-    rObject
-    new_float_class (rObject object_class)
-    {
-      rObject res = clone(object_class);
-      // res["type"] = new String ("Float");
-      return res;
-    }
-
-    /// Create the Integer class.
-    static
-    rObject
-    new_integer_class (rObject object_class)
-    {
-      rObject res = clone(object_class);
-      // res["type"] = new String ("Integer");
-      return res;
-    }
-
-    /// Create the Float class.
-    static
-    rObject
-    new_string_class (rObject object_class)
-    {
-      rObject res = clone(object_class);
-      // res["type"] = new String ("String");
-      return res;
-    }
-  }
-
-  rObject object_class = new_object_class();
-  rObject string_class = new_string_class(object_class);
-  rObject float_class = new_float_class(object_class);
-  rObject integer_class = new_integer_class(object_class);
 
 } // namespace object

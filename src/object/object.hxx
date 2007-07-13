@@ -41,8 +41,9 @@ namespace object
 
   inline
   Object&
-  Object::parent_add (const parent_rtype& p)
+  Object::parent_add (const parent_type& p)
   {
+    assert(p);
     if (parents_.end () == find (parents_.begin (), parents_.end (), p))
       parents_.push_back (p);
     return *this;
@@ -50,8 +51,9 @@ namespace object
 
   inline
   Object&
-  Object::parent_remove (const parent_rtype& p)
+  Object::parent_remove (const parent_type& p)
   {
+    assert(p);
     parents_.remove (p);
     return *this;
   }

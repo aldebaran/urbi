@@ -7,6 +7,7 @@
 # define OBJECT_ATOM_HH
 
 # include "object/atom.hh"
+# include "object/primitives.hh"
 
 namespace object
 {
