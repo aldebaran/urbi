@@ -3,6 +3,8 @@
  ** \brief Creation of the root Objects.
  */
 
+#include <cmath>
+
 #include "object/object.hh"
 #include "object/atom.hh"
 
@@ -20,7 +22,62 @@ namespace object
   | Float primitives.  |
   `-------------------*/
 
-#define DECLARE(Name, Operator)						\
+static libport::ufloat
+float_req (libport::ufloat l, libport::ufloat r)
+{
+  // FIXME: get epsilontilde from environment
+
+  // ENSURE_COMPARISON ("Approximate", l, r);
+  // UVariable *epsilontilde =
+  //   ::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
+  // if (epsilontilde)
+  //   $EXEC$
+  // else
+  //   return 0;
+
+# define epsilontilde 0.0001
+  return fabs(l - r) <= epsilontilde;
+# undef epsilontilde
+}
+
+static float
+float_deq (libport::ufloat l, libport::ufloat r)
+{
+  // FIXME: get deltas for l and r
+
+  // ENSURE_COMPARISON ("Approximate", l, r);
+  libport::ufloat dl = 0.f;
+  libport::ufloat dr = 0.f;
+  // dl = 0, get l->delta
+  // dr = 0, get r->delta
+
+  return fabs(l - r) <= dl + dr;
+}
+
+static float
+float_peq (libport::ufloat l, libport::ufloat r)
+{
+  // FIXME: get epsilonpercent from environment
+  // FIXME: return error on div by 0
+
+  // ENSURE_COMPARISON ("Approximate", l, r);
+  // UVariable *epsilonpercent =
+  //   ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
+  // if (epsilonpercent)
+  //   $EXEC$
+  // else
+  //   return 0;
+
+  if (r == 0)
+    // FIXME: error
+    return 0;
+
+# define epsilonpercent 0.0001
+  return fabs(1.f - l / r) < epsilonpercent;
+# undef epsilonpercent
+}
+
+#define DECLARE(Name, Call)						\
     rObject								\
     float_class_ ## Name (objects_type args)				\
     {									\
@@ -28,15 +85,42 @@ namespace object
       assert(args[1]->kind_get() == Object::kind_float);		\
       rFloat l = args[0].unsafe_cast<Float> ();				\
       rFloat r = args[1].unsafe_cast<Float> ();				\
-      return new Float(l->value_get () Operator r->value_get());	\
+      return new Float(Call);	\
     }
 
-    DECLARE(add, +)
-    DECLARE(div, /)
-    DECLARE(mul, *)
-    DECLARE(sub, -)
-#undef DECLARE
+#define DECLARE_M(Name, Method)						\
+  DECLARE(Name, Method(l->value_get(), r->value_get()))
 
+
+#define DECLARE_OP(Name, Operator)					\
+  DECLARE(Name, l->value_get() Operator r->value_get())
+
+
+  DECLARE_OP(add, +)
+  DECLARE_OP(div, /)
+  DECLARE_OP(mul, *)
+  DECLARE_OP(sub, -)
+  DECLARE_M(pow, powf)
+  DECLARE_M(mod, fmod)
+
+  DECLARE_OP(land, &&)
+  DECLARE_OP(lor, ||)
+
+  DECLARE_OP(equ, ==)
+  DECLARE_M(req, float_req) //REQ ~=
+  DECLARE_M(deq, float_deq) //DEQ =~=
+  DECLARE_M(peq, float_peq) //PEQ %=
+  DECLARE_OP(neq, !=)
+
+  DECLARE_OP(lth, <)
+  DECLARE_OP(leq, <=)
+  DECLARE_OP(gth, >)
+  DECLARE_OP(geq, >=)
+
+#undef DECLARE_M
+#undef DECLARE_OP
+#undef DECLARE
+#
   namespace
   {
     /// Initialize the Float class.
@@ -48,10 +132,27 @@ namespace object
       float_class->slot_set (#Operator,					\
 			     new Primitive(float_class_ ## Name));
 
-      DECLARE(add, +);
-      DECLARE(div, /);
-      DECLARE(mul, *);
-      DECLARE(sub, -);
+      DECLARE(add, +)
+      DECLARE(div, /)
+      DECLARE(mul, *)
+      DECLARE(sub, -)
+      DECLARE(pow, **)
+      DECLARE(mod, %)
+
+      DECLARE(land, &&)
+      DECLARE(lor, ||)
+
+      DECLARE(equ, ==)
+      DECLARE(req, ~=)
+      DECLARE(deq, =~=)
+      DECLARE(peq, %=)
+      DECLARE(neq, !=)
+
+      DECLARE(lth, <)
+      DECLARE(leq, <=)
+      DECLARE(gth, >)
+      DECLARE(geq, >=)
+
 #undef DECLARE
     }
   }

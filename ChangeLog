@@ -1,5 +1,10 @@
 2007-07-13  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Add primitives for floats
+	* src/object/primitives.cc: Add operators and base functions.
+
+2007-07-13  Guillaume Deslandes  <deslandes@gostai.com>
+
 	* all.hh: Remove include of ast/op-exp.hh.
 
 2007-07-13  Akim Demaille  <demaille@gostai.com>
