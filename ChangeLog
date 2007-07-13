@@ -1,5 +1,16 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1269:1298 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-07-13  Akim Demaille  <demaille@gostai.com>
+	Remove incorrect nonterminal aliases
+	* src/urbi/trunk/kernel1/src/parser/bison/ugrammar.y: Remove
+	explicit strings that were made to be aliases for terminals,
+	but it is not accepted but Bison like this, it believes they
+	are fresh tokens.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Tidy grammar
 	* src/parser/bison/ugrammar.y: Reorder some rules.
 	Remove the strings that Bison interprets as tokens, not aliases
