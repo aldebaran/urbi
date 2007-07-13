@@ -1,5 +1,25 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	Fix the definition of the slots of the primitive classes
+	Here's the catch: I was using the operator[] to define the
+	type of each base class, but operator[] updates the slots, i.e.,
+	it first looks for the slot in the hierarchy, and then updates
+	it!  As a result, it was only the version of Object that was
+	changed several times, and every other class was pointing to it.
+	* src/object/fwd.hh: Simplify.
+
+	* src/object/object.cc, src/object/object.hh, src/object/object.hxx
+	(set_slot, update_slot, remove_slot): Rename as...
+	(slot_set, slot_update, slot_remove): these.
+	Use BOOST_FOREACH.
+	* src/object/primitives.cc: Don't put in the anonymous namespace
+	what must be visible from other compilation units.
+	Use slot_set.
+	* src/object/object-test-primitives.cc: Add missing dereferencing.
+	* src/object/object-test-slot.cc: Adjust.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Improve primitive support
 	* src/object/fwd.hh (APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT)
 	(APPLY_ON_ALL_PRIMITIVES, objects_type, primitive_type): New.

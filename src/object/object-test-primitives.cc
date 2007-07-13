@@ -13,7 +13,7 @@ main ()
   rFloat f3 = new Float (3);
   objects_type args;
 
-  ECHO("Float: " << float_class);
+  ECHO("Float: " << *float_class);
 
   ECHO("2: " << *f2);
   ECHO("3: " << *f3);

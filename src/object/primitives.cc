@@ -20,8 +20,6 @@ namespace object
   | Float primitives.  |
   `-------------------*/
 
-  namespace 
-  {
 #define DECLARE(Name, Operator)						\
     rObject								\
     float_class_ ## Name (objects_type args)				\
@@ -39,15 +37,17 @@ namespace object
     DECLARE(sub, -)
 #undef DECLARE
 
-
+  namespace
+  {
     /// Initialize the Float class.
     static
     void
     float_class_initialize ()
     {
 #define DECLARE(Name, Operator)						\
-      (*float_class)[#Operator] = new Primitive (float_class_ ## Name);
-      
+      float_class->slot_set (#Operator,					\
+			     new Primitive(float_class_ ## Name));
+
       DECLARE(add, +);
       DECLARE(div, /);
       DECLARE(mul, *);
@@ -106,18 +106,17 @@ namespace object
       // from which any String is a clone, we can initialize the
       // "type" field for all of them, including Object.
 #define DECLARE(What, Name)				\
-      (*What ## _class) ["type"] = new String (#Name);
+      What ## _class->slot_set("type", new String (#Name));
       APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
       // Now finalize the construction for each base class:
       // bind some initial methods.
-      
 #define DECLARE(What, Name)			\
       What ## _class_initialize ();
       APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
-      
+
       return true;
     }
 

@@ -38,21 +38,21 @@ main ()
   // Update parent value
   NEWLINE();
   rObject update_val (new String("update_val"));
-  (*left).update_slot ("val", update_val);
+  (*left).slot_update ("val", update_val);
   ECHOVAL(top, val);
   ECHOVAL(left, val);
 
   // Redefine parent attribute in local class
   NEWLINE();
   rObject set_val (new String("set_val"));
-  (*left).set_slot ("val", set_val);
+  (*left).slot_set ("val", set_val);
   ECHOVAL(top, val);
   ECHOVAL(left, val);
 
   // Add new attribute to local class
   NEWLINE();
   rObject new_val (new String("new_val"));
-  (*left).set_slot ("new_val", new_val);
+  (*left).slot_set ("new_val", new_val);
   ECHO(*top);
   ECHO(*left);
 
@@ -65,7 +65,7 @@ main ()
 
   // Remove slot
   NEWLINE();
-  (*left).remove_slot ("new_val");
+  (*left).slot_remove ("new_val");
   ECHO(*left);
 
   return 0;

@@ -12,12 +12,8 @@
 namespace object
 {
 
-# define DECLARE(What)				\
-  class What;					\
-  typedef libport::shared_ptr< What > r ## What
-
-  DECLARE(Object);
-# undef DECLARE
+  class Object;
+  typedef libport::shared_ptr<Object> rObject;
 
   typedef std::vector<rObject> objects_type;
   typedef rObject (*primitive_type) (objects_type);

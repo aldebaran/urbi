@@ -79,7 +79,7 @@ namespace object
 
   inline
   Object&
-  Object::update_slot (const Object::key_type& k, rObject& o)
+  Object::slot_update (const Object::key_type& k, rObject o)
   {
     lookup (k) = o;
     return *this;
@@ -87,7 +87,7 @@ namespace object
 
   inline
   Object&
-  Object::set_slot (const Object::key_type& k, rObject& o)
+  Object::slot_set (const Object::key_type& k, rObject o)
   {
     slots_[k] = o;
     return *this;
@@ -95,7 +95,7 @@ namespace object
 
   inline
   Object&
-  Object::remove_slot (const Object::key_type& k)
+  Object::slot_remove (const Object::key_type& k)
   {
     slots_.erase (k);
     return *this;

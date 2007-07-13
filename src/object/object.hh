@@ -68,6 +68,8 @@ namespace object
     typedef libport::Symbol key_type;
     /// The slots.
     typedef libport::hash_map<key_type, rObject> slots_type;
+    /// One slot, a pair<const key_type, rObject>.
+    typedef slots_type::value_type slot_type;
     /// The slot set for lookup.
     typedef std::set<const Object*> lookup_set_type;
 
@@ -78,11 +80,11 @@ namespace object
     const rObject& lookup (const key_type& k) const;
     rObject& lookup (const key_type& k);
     /// Update value in slot returned by \c lookup.
-    Object& update_slot (const key_type& k, rObject& o);
+    Object& slot_update (const key_type& k, rObject o);
     /// Set slot value in local slot. Create slot if necessary.
-    Object& set_slot (const key_type& k, rObject& o);
+    Object& slot_set (const key_type& k, rObject o);
     /// Remove slot.
-    Object& remove_slot (const key_type& k);
+    Object& slot_remove (const key_type& k);
     /// \}
 
     /// \name Printing.
@@ -113,7 +115,6 @@ namespace object
   // Not a member function because we want the shared_ptr, which
   // is not available via this.
   rObject clone (rObject ref);
-
 
   /// Report \p v on \p o.  For debugging purpose.
   std::ostream& operator<< (std::ostream& o, const Object& v);

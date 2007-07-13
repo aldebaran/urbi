@@ -104,9 +104,8 @@ namespace object
 	o << libport::iendl;
       }
     special_slots_dump (o);
-    for (slots_type::const_iterator i = slots_.begin ();
-	 i != slots_.end (); ++i)
-      o << i->first << " : " << *i->second << libport::iendl;
+    BOOST_FOREACH (slot_type s, slots_)
+      o << s.first << " :-> " << *s.second << libport::iendl;
     o << libport::decindent << "}";
     return o;
   }
