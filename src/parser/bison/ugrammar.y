@@ -174,7 +174,6 @@
       return res;
     }
 
-#if 0
     /// "<target> . <method> ()".
     static
     ast::Exp*
@@ -183,10 +182,8 @@
     {
       ast::exps_type* args = new ast::exps_type;
       ast::CallExp* res = new ast::CallExp(l, target, take(method), args);
-      EVALUATE(*res);
       return res;
     }
-#endif
 
     /// "<target> . <method> (<arg1>)".
     static
@@ -197,7 +194,6 @@
       ast::exps_type* args = new ast::exps_type;
       args->push_back(arg1);
       ast::CallExp* res = new ast::CallExp(l, target, take(method), args);
-      EVALUATE(*res);
       return res;
     }
 
@@ -313,6 +309,7 @@
   <fval> FLOAT      "float"
   <fval> TIME_VALUE "time"
 %type <fval> number;
+%type <fval> time_expr "time expression";
 %printer { debug_stream() << $$; } <fval>;
 
 
@@ -348,28 +345,28 @@
 %printer { debug_stream() << *$$; } <symbol>;
 
 
-%type <expr>                expr            "expression"
-%type <expr>                expr.opt        "optional expression"
-%type <fval>                time_expr       "time expression"
-%type <expr>                stmts           "scheduled statements"
-%type <expr>                stmt            "statement"
-%type <exprs>     	    exprs           "zero or more expressions"
-%type <exprs>               exprs.1         "one or more expressions"
-%type <named_arguments>     raw_arguments   "list of attributes"
-%type <named_arguments>     namedarguments  "list of named arguments"
-%type <named_arguments>     flag            "a flag"
-%type <named_arguments>     flags.0         "zero or more flags"
-%type <named_arguments>     flags.1         "one or more flags"
-%type <variablelist>        names           "list of names"
-%type <expr>                softtest        "soft test"
-%type <named_arguments>     identifiers     "list of identifiers"
-%type <expr>                class_declaration "class declaration"
-%type <named_arguments>     class_declaration_list "class declaration list"
-%type <binary>              binary          "binary"
-%type <property>            property        "property"
-%type <variable>            lvalue          "lvalue"
-%type <variable>            name            "slot name"
+%type <expr>  class_declaration      "class declaration"
+%type <expr>  class_declaration_list "class declaration list"
+%type <expr>  expr                   "expression"
+%type <expr>  expr.opt               "optional expression"
+%type <expr>  flag                   "a flag"
+%type <expr>  flags.0                "zero or more flags"
+%type <expr>  flags.1                "one or more flags"
+%type <expr>  identifiers            "list of identifiers"
+%type <expr>  lvalue                 "lvalue"
+%type <expr>  name                   "slot name"
+%type <expr>  namedarguments         "list of named arguments"
+%type <expr>  names                  "list of names"
+%type <expr>  property               "property"
+%type <expr>  raw_arguments          "list of attributes"
+%type <expr>  softtest               "soft test"
+%type <expr>  stmt                   "statement"
+%type <expr>  stmts                  "scheduled statements"
 
+%type <binary>  binary  "binary"
+
+%type <exprs>	    exprs           "zero or more expressions"
+%type <exprs>               exprs.1         "one or more expressions"
 
 /*----------------------.
 | Operator precedence.  |
@@ -621,9 +618,9 @@ stmt:
 `-------*/
 
 name:
-  "identifier"             {}
+  "identifier"             { $$ = new_exp(@$, 0, $1); }
 | "$" "(" expr ")"         {}
-| name "." "identifier"    {}
+| name "." "identifier"    { $$ = new_exp(@$, $1, $3); }
 | name "[" expr "]"        {}
 | name "::" "identifier"   {} // FIXME: Get rid of it, it's useless.
 ;
@@ -767,8 +764,8 @@ expr.opt:
 ;
 
 expr:
-  "true"  {}
-| "false" {}
+  "false" { $$ = new ast::FloatExp(@$, 0); }
+| "true"  { $$ = new ast::FloatExp(@$, 1); }
 
 | expr "!="  expr { $$ = new_exp(@$, $1, $2, $3); }
 | expr "%="  expr { $$ = new_exp(@$, $1, $2, $3); }
