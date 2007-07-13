@@ -309,7 +309,7 @@
   <fval> FLOAT      "float"
   <fval> TIME_VALUE "time"
 %type <fval> number;
-%type <fval> time_expr "time expression";
+%type <fval> time_expr;
 %printer { debug_stream() << $$; } <fval>;
 
 
@@ -345,28 +345,25 @@
 %printer { debug_stream() << *$$; } <symbol>;
 
 
-%type <expr>  class_declaration      "class declaration"
-%type <expr>  class_declaration_list "class declaration list"
-%type <expr>  expr                   "expression"
-%type <expr>  expr.opt               "optional expression"
-%type <expr>  flag                   "a flag"
-%type <expr>  flags.0                "zero or more flags"
-%type <expr>  flags.1                "one or more flags"
-%type <expr>  identifiers            "list of identifiers"
-%type <expr>  lvalue                 "lvalue"
-%type <expr>  name                   "slot name"
-%type <expr>  namedarguments         "list of named arguments"
-%type <expr>  names                  "list of names"
-%type <expr>  property               "property"
-%type <expr>  raw_arguments          "list of attributes"
-%type <expr>  softtest               "soft test"
-%type <expr>  stmt                   "statement"
-%type <expr>  stmts                  "scheduled statements"
+%type <expr>  class_declaration
+%type <expr>  class_declaration_list
+%type <expr>  expr
+%type <expr>  expr.opt
+%type <expr>  flag
+%type <expr>  flags.0
+%type <expr>  flags.1
+%type <expr>  identifiers
+%type <expr>  lvalue
+%type <expr>  name
+%type <expr>  namedarguments
+%type <expr>  names
+%type <expr>  property
+%type <expr>  raw_arguments
+%type <expr>  softtest
+%type <expr>  stmt
+%type <expr>  stmts
 
-%type <binary>  binary  "binary"
-
-%type <exprs>	    exprs           "zero or more expressions"
-%type <exprs>               exprs.1         "one or more expressions"
+%type <binary>  binary
 
 /*----------------------.
 | Operator precedence.  |
@@ -737,12 +734,6 @@ expr:
 | "copy" expr  %prec NEG {}
 ;
 
-expr.opt:
-  /* nothing */ { $$ = 0; }
-| expr          { $$ = $1; }
-;
-
-
 /*--------.
 | Tests.  |
 `--------*/
@@ -783,10 +774,18 @@ expr:
 | expr "||" expr  { $$ = new_exp(@$, $1, $2, $3); }
 ;
 
+expr.opt:
+  /* nothing */ { $$ = 0; }
+| expr          { $$ = $1; }
+;
+
 
 /*--------------.
 | Expressions.  |
 `--------------*/
+
+%type <exprs>	exprs;
+%type <exprs>   exprs.1;
 
 exprs:
   /* empty */ { $$ = new ast::exps_type; }

@@ -1,5 +1,12 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	Tidy grammar
+	* src/parser/bison/ugrammar.y: Reorder some rules.
+	Remove the strings that Bison interprets as tokens, not aliases
+	for nonterminals.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	More primitives
 	* src/object/primitives.cc: Add shutdown and reboot primitives.
 	Unfortunately not yet callable.
