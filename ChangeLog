@@ -1,3 +1,7 @@
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
+	* src/ast/ast.yml (CallExp::printer): Fix it.
+
 2007-07-12  Akim Demaille  <akim.demaille@gmail.com>
 
 	Fix pretty printing of CallExp

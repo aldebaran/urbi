@@ -479,7 +479,7 @@ CallExp:
     - '{
          if (n.target_get())
            {
-             target_get()->accept(*this);
+             n.target_get()->accept(*this);
              ostr_ << " . ";
            }
        }'
