@@ -375,28 +375,28 @@ take (T* t)
    "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
    OPERATOR_ID_PARAM OPERATOR_VAR tag;
 
-%token <structure>           STRUCT   
+%token <structure>           STRUCT
 %token <structure>           REFSTRUCT
 
-%type <expr>                expr            
-%type <val>                 timeexpr        
-%type <command>             taggedcommands  
-%type <command>             taggedcommand   
-%type <command>             command         
-%type <command>             instruction     
-%type <namedparameters>     parameters      
-%type <namedparameters>     array           
-%type <namedparameters>     parameterlist   
-%type <namedparameters>     rawparameters   
-%type <namedparameters>     namedparameters 
-%type <namedparameters>     flag            
-%type <namedparameters>     flags.0         
-%type <namedparameters>     flags.1         
-%type <variablelist>        names           
-%type <expr>                softtest        
+%type <expr>                expr
+%type <val>                 timeexpr
+%type <command>             taggedcommands
+%type <command>             taggedcommand
+%type <command>             command
+%type <command>             instruction
+%type <namedparameters>     parameters
+%type <namedparameters>     array
+%type <namedparameters>     parameterlist
+%type <namedparameters>     rawparameters
+%type <namedparameters>     namedparameters
+%type <namedparameters>     flag
+%type <namedparameters>     flags.0
+%type <namedparameters>     flags.1
+%type <variablelist>        names
+%type <expr>                softtest
 %type <namedparameters>     formal_arguments
-%type <namedparameters>     identifiers     
-%type <namedparameters>     identifiers.1   
+%type <namedparameters>     identifiers
+%type <namedparameters>     identifiers.1
 %type <expr>                class_declaration
 %type <namedparameters>     class_declaration_list
 %type <binary>              binary
