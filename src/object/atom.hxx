@@ -24,9 +24,10 @@ namespace object
 # define CASE(Kind) case kind_ ## Kind: parent_add (Kind ## _class); break
 	CASE(float);
 	CASE(integer);
+	CASE(primitive);
 	CASE(string);
 # undef CASE
-      default:
+      case kind_object:
 	pabort (kind_get());
       }
   }

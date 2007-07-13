@@ -10,48 +10,82 @@ namespace object
 {
 
   rObject object_class;
-  rObject string_class;
   rObject float_class;
   rObject integer_class;
+  rObject primitive_class;
+  rObject string_class;
+
+
+  /*-------------------.
+  | Float primitives.  |
+  `-------------------*/
+
+  namespace 
+  {
+#define DECLARE(Name, Operator)						\
+    rObject								\
+    float_class_ ## Name (objects_type args)				\
+    {									\
+      assert(args[0]->kind_get() == Object::kind_float);		\
+      assert(args[1]->kind_get() == Object::kind_float);		\
+      rFloat l = args[0].unsafe_cast<Float> ();				\
+      rFloat r = args[1].unsafe_cast<Float> ();				\
+      return new Float(l->value_get () Operator r->value_get());	\
+    }
+
+    DECLARE(add, +)
+    DECLARE(div, /)
+    DECLARE(mul, *)
+    DECLARE(sub, -)
+#undef DECLARE
+
+
+    /// Initialize the Float class.
+    static
+    void
+    float_class_initialize ()
+    {
+#define DECLARE(Name, Operator)						\
+      (*float_class)[#Operator] = new Primitive (float_class_ ## Name);
+      
+      DECLARE(add, +);
+      DECLARE(div, /);
+      DECLARE(mul, *);
+      DECLARE(sub, -);
+#undef DECLARE
+    }
+  }
 
   namespace
   {
-    /// Create the Object class.
+    /// Initialize the Object class.
     static
-    rObject
-    new_object_class ()
+    void
+    object_class_initialize ()
     {
-      // It has no parents, and for the time being, no contents.
-      return new Object;
     }
 
-    /// Create the Float class.
+    /// Initialize the Integer class.
     static
-    rObject
-    new_float_class (rObject object_class)
+    void
+    integer_class_initialize ()
     {
-      rObject res = clone(object_class);
-      return res;
     }
 
-    /// Create the Integer class.
+    /// Initialize the Primitive class.
     static
-    rObject
-    new_integer_class (rObject object_class)
+    void
+    primitive_class_initialize ()
     {
-      rObject res = clone(object_class);
-      return res;
     }
 
-    /// Create the Float class.
+    /// Initialize the Float class.
     static
-    rObject
-    new_string_class (rObject object_class)
+    void
+    string_class_initialize ()
     {
-      rObject res = clone(object_class);
-      return res;
     }
-    
+
     /// Initialize the root classes.
     /// There are some dependency issues.  For instance, String
     /// is a clone of Object, but Object[type] is a String.
@@ -60,22 +94,30 @@ namespace object
     bool
     root_classes_initialize ()
     {
-      object_class = new_object_class();
-      string_class = new_string_class(object_class);
-      float_class = new_float_class(object_class);
-      integer_class = new_integer_class(object_class);
+      object_class = new Object;
+      // Construct the (empty) objects for the base classes.
+      // They all derive from Object.
+#define DECLARE(What, Name)			\
+      What ## _class = clone(object_class);
+      APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE);
+#undef DECLARE
 
       // Now that these classes exists, in particular string_class
       // from which any String is a clone, we can initialize the
-      // "type" field for all of them.
-#define DECLARE(What, Name)      \
+      // "type" field for all of them, including Object.
+#define DECLARE(What, Name)				\
       (*What ## _class) ["type"] = new String (#Name);
-
-  DECLARE(float, Float);
-  DECLARE(integer, Integer);
-  DECLARE(string, String);
-
+      APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
+
+      // Now finalize the construction for each base class:
+      // bind some initial methods.
+      
+#define DECLARE(What, Name)			\
+      What ## _class_initialize ();
+      APPLY_ON_ALL_PRIMITIVES(DECLARE);
+#undef DECLARE
+      
       return true;
     }
 
@@ -84,6 +126,5 @@ namespace object
     // Not static so that GCC does not complain that it is unused.
     bool root_classes_initialized = root_classes_initialize();
   }
-
 
 } // namespace object

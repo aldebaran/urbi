@@ -36,10 +36,9 @@ namespace object
     /// The kinds of primitive objects.
     enum kind_type
       {
-	kind_object,
-	kind_float,
-	kind_integer,
-	kind_string,
+#define CASE(What, Name) kind_ ## What,
+	APPLY_ON_ALL_PRIMITIVES(CASE)
+#undef CASE
       };
 
     /// Return the kind of this Object.

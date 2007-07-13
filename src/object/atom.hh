@@ -54,15 +54,6 @@ namespace object
     enum { kind = Object::kind_float };
   };
 
-# define DECLARE(Name, Op)				\
-  rFloat float_class_ ## Name (rObject lhs, rObject rhs);
-
-  DECLARE(add, +)
-  DECLARE(div, /)
-  DECLARE(mul, *)
-  DECLARE(sub, -)
-
-# undef DECLARE
 
   /*----------.
   | Integer.  |
@@ -73,6 +64,18 @@ namespace object
     typedef int type;
     enum { kind = Object::kind_integer };
   };
+
+
+  /*------------.
+  | Primitive.  |
+  `------------*/
+
+  struct primitive_traits
+  {
+    typedef primitive_type type;
+    enum { kind = Object::kind_primitive };
+  };
+
 
   /*---------.
   | String.  |

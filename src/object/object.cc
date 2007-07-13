@@ -19,11 +19,8 @@ namespace object
   {
     switch (k)
       {
-#define CASE(Kind) case kind_ ## Kind: return #Kind; break
-	CASE(object);
-	CASE(float);
-	CASE(integer);
-	CASE(string);
+#define CASE(What, Name) case kind_ ## What: return #Name; break;
+	APPLY_ON_ALL_PRIMITIVES(CASE);
 #undef CASE
       }
     pabort("unreachable");

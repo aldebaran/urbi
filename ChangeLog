@@ -1,5 +1,19 @@
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
+	Improve primitive support
+	* src/object/fwd.hh (APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT)
+	(APPLY_ON_ALL_PRIMITIVES, objects_type, primitive_type): New.
+	Use these macros where possible to factor the list of primitives.
+	(primitive): A new kind of Atom.
+	* src/object/atom.cc, src/object/atom.hh, src/object/atom.hxx:
+	Move the declaration of the float_class primitives to...
+	* src/object/primitives.hh, src/object/primitives.cc: Here.
+	(primitive_traits): New.
+	* src/object/object.cc, src/object/object.hh: Adjust.
+	* src/object/object-test-primitives.cc: Ditto.
+
+2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Fix the initialization of the base class objects
 	* src/object/primitives.hh, src/object/primitives.cc: New, taken
 	from...

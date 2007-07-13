@@ -42,6 +42,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
+    virtual void operator() (const ast::CallExp& e);
     virtual void operator() (const ast::FloatExp& e);
     virtual void operator() (const ast::SemicolonExp& e);
     /// \}

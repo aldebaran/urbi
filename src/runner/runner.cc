@@ -3,11 +3,24 @@
  ** \brief Implementation of runner::Runner.
  */
 
+#include <boost/foreach.hpp>
 #include "runner/runner.hh"
 #include "object/atom.hh"
 
 namespace runner
 {
+
+  void
+  Runner::operator() (const ast::CallExp& e)
+  {
+    // Gather the arguments...
+    object::objects_type args;
+    // ... including the target if there is one.
+    if (e.target_get())
+      args.push_back (eval (*e.target_get()));
+    BOOST_FOREACH(ast::Exp* a, e.args_get())
+      args.push_back (eval (*a));
+  }
 
   void
   Runner::operator() (const ast::FloatExp& e)

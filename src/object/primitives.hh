@@ -12,8 +12,39 @@ namespace object
 {
 
   extern rObject object_class;
+
+  /*--------.
+  | Float.  |
+  `--------*/
+
   extern rObject float_class;
+
+# define DECLARE(Name, Op)				\
+  rObject float_class_ ## Name (objects_type args);
+
+  DECLARE(add, +)
+  DECLARE(div, /)
+  DECLARE(mul, *)
+  DECLARE(sub, -)
+
+# undef DECLARE
+
+  /*----------.
+  | Integer.  |
+  `----------*/
+
   extern rObject integer_class;
+
+  /*------------.
+  | Primitive.  |
+  `------------*/
+
+  extern rObject primitive_class;
+
+  /*---------.
+  | String.  |
+  `---------*/
+
   extern rObject string_class;
 
 } // namespace object
