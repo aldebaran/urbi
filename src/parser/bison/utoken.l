@@ -170,10 +170,8 @@ STRING   \"([^\"]|"\\\"")*\"
 "motoron"         |
 "ping"            |
 "quit"            |
-"reboot"          |
 "reset"           |
 "runningcommands" |
-"shutdown"        |
 "stopall"         |
 "strict"          |
 "taglist"         |

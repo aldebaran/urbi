@@ -1,5 +1,17 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Bind shutdown and reboot
+	* src/object/primitives.hh, src/object/primitives.cc
+	(connection_class): New.
+	(object_class_initialize): Bind to Object, not Float.
+	* src/parser/bison/utoken.l (reboot, shutdown): No longer special.
+	* src/parser/bison/ugrammar.y (expr): The printer should not
+	evaluate.
+	(stmt, lvalue, rvalue, expr): Pass the $1 where appropriate.
+	* src/runner/runner.cc (CallExp): Default target is Connection.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Factor
 	* src/parser/bison/ugrammar.y (new_exp): Factor the two
 	implementations.

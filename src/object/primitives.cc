@@ -13,9 +13,10 @@
 namespace object
 {
 
-  rObject object_class;
+  rObject connection_class;
   rObject float_class;
   rObject integer_class;
+  rObject object_class;
   rObject primitive_class;
   rObject string_class;
 
@@ -48,15 +49,16 @@ namespace object
     object_class_initialize ()
     {
 #define DECLARE(Name)							\
-      float_class->slot_set (#Name,					\
-			     new Primitive(object_class_ ## Name));
+      object_class->slot_set (#Name,					\
+			      new Primitive(object_class_ ## Name));
       DECLARE(reboot);
       DECLARE(shutdown);
 #undef DECLARE
     }
 
   }
-  
+
+
   /*-------------------.
   | Float primitives.  |
   `-------------------*/
@@ -250,6 +252,10 @@ float_peq (libport::ufloat l, libport::ufloat r)
       What ## _class_initialize ();
       APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
+
+      // Some plain classes, initialized by hand currently.
+      connection_class = clone (object_class);
+      connection_class->slot_set("type", new String ("Connection"));
 
       return true;
     }

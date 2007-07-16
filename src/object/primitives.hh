@@ -12,6 +12,7 @@ namespace object
 {
 
   extern rObject object_class;
+  extern rObject connection_class;
 
   /*--------.
   | Float.  |
@@ -19,6 +20,8 @@ namespace object
 
   extern rObject float_class;
 
+  // FIXME: Do we really want to declare them?  They are only
+  // for sake of the test suite.
 # define DECLARE(Name, Op)				\
   rObject float_class_ ## Name (objects_type args);
 

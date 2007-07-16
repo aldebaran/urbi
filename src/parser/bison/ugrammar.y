@@ -60,7 +60,7 @@
   UVariableName::UDeriveType derive;
 }
 
-%printer { EVALUATE(*$$); } <expr>;
+%printer { debug_stream() << *$$; } <expr>;
 
 %code // Output in ugrammar.cc.
 {
@@ -355,6 +355,7 @@
 %type <expr>  flags.1
 %type <expr>  identifiers
 %type <expr>  lvalue
+%type <expr>  rvalue
 %type <expr>  name
 %type <expr>  namedarguments
 %type <expr>  names
@@ -533,7 +534,7 @@ pipe.opt:
 stmt:
   /* empty */ { $$ = new ast::YieldExp (@$); }
 | "noop"      { $$ = new ast::YieldExp (@$); }
-| expr        { $$ = 0; }
+| expr        { $$ = $1; }
 | "echo" expr namedarguments { $$ = 0; }
 | "group" "identifier" "{" identifiers "}" { $$ = 0; }
 | "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
@@ -627,17 +628,17 @@ name:
 `---------*/
 
 lvalue:
-  name		{ $$ = 0; }
+  name		{ $$ = $1; }
 | name "'n"	{ $$ = 0; }
 ;
 
 // Names as rvalues.
 expr:
-  rvalue        { $$ = 0; }
+  rvalue        { $$ = $1; }
 ;
 
 rvalue:
-  name
+  name          { $$ = $1; }
 | "static" name	{ /* FIXME: Fill. */ }
 | name derive   { /* FIXME: Fill. */ }
 | name "'e"	{ /* FIXME: Fill. */ }
