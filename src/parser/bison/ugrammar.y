@@ -169,7 +169,6 @@
 	default:
 	  pabort(op);
       }
-      EVALUATE(*res);
       return res;
     }
 

@@ -1,5 +1,10 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Remove debug scafolding
+	* src/parser/bison/ugrammar.y (new_bin): Here.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Fix and simplification
 	* src/parser/bison/ugrammar.y (<exprs>): Fix its printer.
 	(expr.opt): Use it for emit.
