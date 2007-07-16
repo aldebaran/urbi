@@ -580,8 +580,6 @@ stmt:
 | lvalue "+=" expr { $$ = 0; }
 | lvalue "-=" expr { $$ = 0; }
 | property "=" expr { $$ = 0; }
-| lvalue "=" "new" "identifier" { $$ = 0; }
-| lvalue "=" "new" "identifier" "(" exprs ")" { $$ = 0; }
 | lvalue "--" { $$ = 0; }
 | lvalue "++" { $$ = 0; }
 ;
@@ -703,6 +701,8 @@ expr:
 | "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, 0, take($1), $3); }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
+| "new" "identifier"               { $$ = 0; }
+| "new" "identifier" "(" exprs ")" { $$ = 0; }
 ;
 
 
