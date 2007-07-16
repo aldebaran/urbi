@@ -250,12 +250,10 @@ take (T* t)
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
   TOK_ANDOPERATOR  "&&"
-  TOK_AROBASE      "@"
   TOK_ASSIGN       "="
   TOK_AT           "at"
   TOK_BANG         "!"
   TOK_BIN          "bin"
-  TOK_BLOCK        "block"
   TOK_CLASS        "class"
   TOK_COLON        ":"
   TOK_COPY         "copy"
@@ -280,10 +278,8 @@ take (T* t)
   TOK_FROM         "from"
   TOK_FUNCTION     "function"
   TOK_GROUP        "group"
-  TOK_GROUPLIST    "group list"
   TOK_IF           "if"
   TOK_IN           "in"
-  TOK_INFO         "info"
   TOK_INHERITS     "inherits"
   TOK_LBRACKET     "{"
   TOK_LOOP         "loop"
@@ -310,9 +306,7 @@ take (T* t)
   TOK_RPAREN       ")"
   TOK_RSBRACKET    "]"
   TOK_STATIC       "static"
-  TOK_STOP         "stop"
   TOK_STOPIF       "stopif"
-  TOK_SUBCLASS     "subclass"
   TOK_TILDE        "~"
   TOK_TIMEOUT      "timeout"
   TOK_TRUECONST    "true"
@@ -320,8 +314,6 @@ take (T* t)
   TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
-  TOK_UNBLOCK      "unblock"
-  TOK_UNIT         "unit"
   TOK_VAR          "var"
   TOK_VARERROR     "'e"
   TOK_VARIN        "'in"
@@ -362,20 +354,16 @@ take (T* t)
    <ustr>  IDENTIFIER         "identifier"
    <ustr>  TAG                "tag"
    <ustr>  STRING             "string"
-   <ustr>  SWITCH             "switch"
    <ustr>  BINDER             "binder"
    <ustr>  OPERATOR           "operator command"
    <ustr>  OPERATOR_ID        "operator"
-   <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
 %type <ustr> tag
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
-   "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
-   OPERATOR_ID_PARAM OPERATOR_VAR tag;
+   "identifier" TAG STRING BINDER OPERATOR OPERATOR_ID OPERATOR_VAR tag;
 
 %token <structure>           STRUCT
-%token <structure>           REFSTRUCT
 
 %type <expr>                expr
 %type <val>                 timeexpr
