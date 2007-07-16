@@ -273,7 +273,6 @@ take (T* t)
   TOK_EVENT        "event"
   TOK_EVERY        "every"
   TOK_EXP          "^"
-  TOK_EXPRBLOCK    "expression block"
   TOK_FALSECONST   "false"
   TOK_FOR          "for"
   TOK_FOREACH      "foreach"
@@ -420,7 +419,7 @@ take (T* t)
 
 %right "," ";"
 %left  "&" "|"
-%left  CMDBLOCK EXPRBLOCK
+%left  CMDBLOCK
 %left  "else" "onleave"
 %nonassoc "="
 

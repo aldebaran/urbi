@@ -1,3 +1,10 @@
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
+	Remove dead keyword
+	* configure.ac: Set version.
+	* src/parser/bison/ugrammar.y (TOK_EXPRBLOCK): Remove, useless.
+	* src/uconnection.cc: Space changes.
+
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
 		merge -r 1266:1300 https://svn.gostai.com/svn/kernel1/branches/1.0
