@@ -7,6 +7,8 @@ AM_CPPFLAGS += -I$(top_srcdir)/include
 
 # Find the kernel private headers.
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_builddir)/src
+# Find the uobject headers
+AM_CPPFLAGS += -I$(top_srcdir)/src/uobject
 
 # Find libport headers.
 AM_CPPFLAGS += $(LIBPORT_CPPFLAGS)
