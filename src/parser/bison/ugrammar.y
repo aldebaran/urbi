@@ -65,25 +65,11 @@
 {
 #include <string>
 #include <iostream>
-#include <sstream>
-
-#include "libport/ref-pt.hh"
-
-#include "kernel/userver.hh"
-#include "kernel/uconnection.hh"
 
 #include "ast/all.hh"
 #include "runner/runner.hh"
 
 #include "parser/uparser.hh"
-#include "ubinary.hh"
-#include "ucommand.hh"
-#include "uasynccommand.hh"
-#include "ugroup.hh"
-#include "uobj.hh"
-#include "uproperty.hh"
-#include "uvariablename.hh"
-#include "uvariablelist.hh"
 
 #define EVALUATE(Tree)					\
  do {							\
@@ -270,7 +256,7 @@
   TOK_TIMEOUT      "timeout"
   TOK_TRUE         "true"
   TOK_TRUEDERIV    "'d"
-  TOK_TRUEDERIV2   "''d"
+  TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
   TOK_UNBLOCK      "unblock"

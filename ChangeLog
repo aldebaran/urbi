@@ -1,5 +1,12 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Use includes
+	* src/parser/bison/ugrammar.y: Remove useless includes.
+	(''d): Actually it's named...
+	('dd): this.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Remove debug scafolding
 	* src/parser/bison/ugrammar.y (new_bin): Here.
 
