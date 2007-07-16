@@ -191,9 +191,8 @@
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
-      ast::exps_type* args = new ast::exps_type;
-      args->push_back(arg1);
-      ast::CallExp* res = new ast::CallExp(l, target, take(method), args);
+      ast::Exp* res = new_exp (l, target, method);
+      dynamic_cast<ast::CallExp*>(res)->args_get().push_back(arg1);
       return res;
     }
 

@@ -1,5 +1,11 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Factor
+	* src/parser/bison/ugrammar.y (new_exp): Factor the two
+	implementations.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Avoid undefined values
 	* src/parser/bison/ugrammar.y: Actions not defined should set
 	the result to 0 to avoid stupid debugging sessions.
