@@ -1,5 +1,14 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Avoid undefined values
+	* src/parser/bison/ugrammar.y: Actions not defined should set
+	the result to 0 to avoid stupid debugging sessions.
+	(OPERATOR, OPERATOR_ID, OPERATOR_ID_PARAM, OPERATOR_VAR)
+	(BINDER): Now use a Symbol for them.
+	* src/parser/bison/utoken.l: Adjust their scanning.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Make first compilation easier
 	* src/ast/Makefile.am: If location.hh is not generated, ask for it.
 	* src/parser/bison/bison.mk (generate-parser): New, a hook for

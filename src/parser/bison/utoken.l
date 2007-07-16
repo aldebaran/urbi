@@ -58,10 +58,6 @@ typedef yy::parser::token token;
 #define RETURN_FLAVOR(Symbol)					\
   RETURN_VALUE(TOK_ ## Symbol, flavor, Flavorable::U ## Symbol)
 
-// Store yytext in valp->str, and return Token.
-#define RETURN_STR(Token)				\
-  RETURN_VALUE(Token, str, new std::string(yytext))
-
 /// Return an fval of type Token with Value.
 #define RETURN_FVAL(Token, Value)		\
   RETURN_VALUE(Token, fval, Value)
@@ -70,9 +66,17 @@ typedef yy::parser::token token;
 #define RETURN_IVAL(Token, Value)		\
   RETURN_VALUE(Token, ival, Value)
 
+// Store yytext in valp->str, and return Token.
+#define RETURN_STR(Token)				\
+  RETURN_VALUE(Token, str, new std::string(yytext))
+
+// Store yytext in valp->symbol, and return Token.
+#define RETURN_SYMBOL(Token)					\
+  RETURN_VALUE(Token, symbol, new libport::Symbol(yytext))
+
 // Return an operator whose string representation is kept as a Symbol.
-#define RETURN_OP(Token)						\
-  RETURN_VALUE (TOK_ ## Token, symbol, new libport::Symbol(yytext));
+#define RETURN_OP(Token)			\
+  RETURN_SYMBOL(TOK_ ## Token)
 
 #define RETURN_TIME_VALUE(Scale)				\
   do {								\
@@ -139,11 +143,11 @@ STRING   \"([^\"]|"\\\"")*\"
 "killall"    |
 "stop"       |
 "unblock"    |
-"unfreeze"   RETURN_STR (OPERATOR_ID);
+"unfreeze"   RETURN_SYMBOL (OPERATOR_ID);
 
 "delete"  |
 "info"    |
-"undef"   RETURN_STR (OPERATOR_VAR);
+"undef"   RETURN_SYMBOL (OPERATOR_VAR);
 
 "add"     |
 "cancel"  |
@@ -153,7 +157,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "queue"   RETURN_STR (STRING);
 
 "external"  |
-"internal"  RETURN_STR (BINDER);
+"internal"  RETURN_SYMBOL (BINDER);
 
 "commands"        |
 "connections"     |
@@ -176,7 +180,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "undefall"        |
 "unstrict"        |
 "uservars"        |
-"vars"            RETURN_STR (OPERATOR);
+"vars"            RETURN_SYMBOL (OPERATOR);
 
 "BIN"           return token::TOK_BIN;
 "addgroup"      return token::TOK_ADDGROUP;

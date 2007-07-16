@@ -318,16 +318,12 @@
  `----------*/
 %union
 {
-  std::string		   *str;
+  std::string	   *str;
 }
 
+// FIXME: Arguably, could be a Symbol too.
 %token
    <str>  STRING             "string"
-   <str>  BINDER             "binder"
-   <str>  OPERATOR           "operator command"
-   <str>  OPERATOR_ID        "operator"
-   <str>  OPERATOR_ID_PARAM  "param-operator"
-   <str>  OPERATOR_VAR       "var-operator"
 %destructor { delete $$; } <str>;
 %printer { debug_stream() << *$$; } <str>;
 
@@ -340,7 +336,13 @@
   libport::Symbol* symbol;
 }
 
-%token <symbol> IDENTIFIER    "identifier"
+%token
+   <symbol> IDENTIFIER         "identifier"
+   <symbol> BINDER             "binder"
+   <symbol> OPERATOR           "operator command"
+   <symbol> OPERATOR_ID        "operator"
+   <symbol> OPERATOR_ID_PARAM  "param-operator"
+   <symbol> OPERATOR_VAR       "var-operator"
 %destructor { delete $$; } <symbol>;
 %printer { debug_stream() << *$$; } <symbol>;
 
@@ -362,8 +364,6 @@
 %type <expr>  softtest
 %type <expr>  stmt
 %type <expr>  stmts
-
-%type <binary>  binary
 
 /*----------------------.
 | Operator precedence.  |
@@ -406,23 +406,23 @@ root:
     // FIXME: We should probably free it.
     up.commandTree = 0;
   }
-| lvalue "=" binary ";"  {}
+| lvalue "=" binary ";"  { /* FIXME: */ }
 | stmts                  { EVALUATE(*$1); }
 ;
 
 binary:
-  "bin" "integer" raw_arguments {}
+  "bin" "integer" raw_arguments { /* FIXME: Fill. */ }
 ;
 
 raw_argument:
-  number                    {}
-| "identifier"              {}
+  number                    { /* FIXME: Fill. */ }
+| "identifier"              { /* FIXME: Fill. */ }
 ;
 
 // raw_argument*
 raw_arguments:
-  /* empty */                {}
-| raw_arguments raw_argument {}
+  /* empty */                { $$ = 0; }
+| raw_arguments raw_argument { $$ = 0; }
 ;
 
 
@@ -451,7 +451,7 @@ stmt:
   {
     $$ = new ast::TagExp (@$, $1, $4);
   }
-| flags.1 ":" stmt {}
+| flags.1 ":" stmt { $$ = 0; }
 ;
 
 
@@ -460,22 +460,22 @@ stmt:
 `--------*/
 
 flag:
-  FLAG                        {}
-| FLAG_TIME "(" expr ")"      {}
-| FLAG_ID "(" expr ")"        {}
-| FLAG_TEST "(" softtest ")"  {}
+  FLAG                        { $$ = 0; }
+| FLAG_TIME "(" expr ")"      { $$ = 0; }
+| FLAG_ID "(" expr ")"        { $$ = 0; }
+| FLAG_TEST "(" softtest ")"  { $$ = 0; }
 ;
 
 // One or more "flag"s.
 flags.1:
-  flag             {}
-| flags.1 flag     {}
+  flag             { $$ = 0; }
+| flags.1 flag     { $$ = 0; }
 ;
 
 // Zero or more "flag"s.
 flags.0:
-  /* empty. */   {}
-| flags.1        {}
+  /* empty. */   { $$ = 0; }
+| flags.1        { $$ = 0; }
 ;
 
 
@@ -485,7 +485,7 @@ flags.0:
 `-------*/
 
 stmt:
-  "{" stmts "}" {}
+  "{" stmts "}" { $$ = 0; }
 ;
 
 
@@ -534,78 +534,78 @@ pipe.opt:
 stmt:
   /* empty */ { $$ = new ast::YieldExp (@$); }
 | "noop"      { $$ = new ast::YieldExp (@$); }
-| expr        {}
-| "echo" expr namedarguments {}
-| "group" "identifier" "{" identifiers "}" {}
-| "addgroup" "identifier" "{" identifiers "}" {}
-| "delgroup" "identifier" "{" identifiers "}" {}
-| "group" {}
-| "alias" name name {}
-| name "inherits" name {}
-| name "disinherits" name {}
-| "alias" name {}
-| "unalias" name {}
-| "alias" {}
-| OPERATOR {}
-| OPERATOR_ID tag {}
-| OPERATOR_VAR name {}
-| BINDER "object" name {}
-| BINDER "var" name "from" name {}
-| BINDER "function" "(" "integer" ")" name "from" name {}
-| BINDER "event" "(" "integer" ")" name "from" name {}
-| "wait" expr {}
-| "emit" name {}
-| "emit" name "(" exprs ")" {}
-| "emit" "(" expr ")" name {}
-| "emit" "(" expr ")" name "(" exprs ")" {}
-| "emit" "(" ")" name {}
-| "emit" "(" ")" name "(" exprs ")" {}
-| "waituntil" softtest {}
-| "def" {}
-| "var" name {}
-| "def" name {}
-| "var" "{" names "}" {}
-| "class" "identifier" "{" class_declaration_list "}" {}
-| "class" "identifier" {}
-| "event" name formal_arguments {}
-| "function" name formal_arguments stmt {}
+| expr        { $$ = 0; }
+| "echo" expr namedarguments { $$ = 0; }
+| "group" "identifier" "{" identifiers "}" { $$ = 0; }
+| "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
+| "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
+| "group" { $$ = 0; }
+| "alias" name name { $$ = 0; }
+| name "inherits" name {$$ = 0; }
+| name "disinherits" name {$$ = 0; }
+| "alias" name {$$ = 0; }
+| "unalias" name {$$ = 0; }
+| "alias" {$$ = 0; }
+| OPERATOR { $$ = 0; }
+| OPERATOR_ID tag { $$ = 0; }
+| OPERATOR_VAR name { $$ = 0; }
+| BINDER "object" name { $$ = 0; }
+| BINDER "var" name "from" name { $$ = 0; }
+| BINDER "function" "(" "integer" ")" name "from" name { $$ = 0; }
+| BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
+| "wait" expr { $$ = 0; }
+| "emit" name { $$ = 0; }
+| "emit" name "(" exprs ")" { $$ = 0; }
+| "emit" "(" expr ")" name { $$ = 0; }
+| "emit" "(" expr ")" name "(" exprs ")" { $$ = 0; }
+| "emit" "(" ")" name { $$ = 0; }
+| "emit" "(" ")" name "(" exprs ")" { $$ = 0; }
+| "waituntil" softtest { $$ = 0; }
+| "def" { $$ = 0; }
+| "var" name { $$ = 0; }
+| "def" name { $$ = 0; }
+| "var" "{" names "}" { $$ = 0; }
+| "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
+| "class" "identifier" { $$ = 0; }
+| "event" name formal_arguments { $$ = 0; }
+| "function" name formal_arguments stmt { $$ = 0; }
 ;
 
 /*-------------------.
 | Stmt: Assignment.  |
 `-------------------*/
 stmt:
-	lvalue "=" expr namedarguments {}
-| "var" lvalue "=" expr namedarguments {}
-| lvalue "+=" expr {}
-| lvalue "-=" expr {}
-| property "=" expr {}
-| lvalue "=" "new" "identifier" {}
-| lvalue "=" "new" "identifier" "(" exprs ")" {}
-| lvalue "--" {}
-| lvalue "++" {}
+	lvalue "=" expr namedarguments { $$ = 0; }
+| "var" lvalue "=" expr namedarguments { $$ = 0; }
+| lvalue "+=" expr { $$ = 0; }
+| lvalue "-=" expr { $$ = 0; }
+| property "=" expr { $$ = 0; }
+| lvalue "=" "new" "identifier" { $$ = 0; }
+| lvalue "=" "new" "identifier" "(" exprs ")" { $$ = 0; }
+| lvalue "--" { $$ = 0; }
+| lvalue "++" { $$ = 0; }
 ;
 
 /*---------------------.
 | Stmt: Control flow.  |
 `---------------------*/
 stmt:
-  "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK {}
-| "at" and.opt "(" softtest ")" stmt "onleave" stmt {}
-| "every" "(" expr ")" stmt {}
-| "if" "(" expr ")" stmt %prec CMDBLOCK    {}
-| "if" "(" expr ")" stmt "else" stmt  {}
-| "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK {}
-| "foreach" flavor.opt name "in" expr "{" stmts "}"    %prec CMDBLOCK {}
-| "freezeif" "(" softtest ")" stmt {}
-| "loop" stmt %prec CMDBLOCK {}
-| "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK {}
-| "stopif" "(" softtest ")" stmt {}
-| "timeout" "(" expr ")" stmt {}
+  "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK { $$ = 0; }
+| "at" and.opt "(" softtest ")" stmt "onleave" stmt { $$ = 0; }
+| "every" "(" expr ")" stmt { $$ = 0; }
+| "if" "(" expr ")" stmt %prec CMDBLOCK    { $$ = 0; }
+| "if" "(" expr ")" stmt "else" stmt  { $$ = 0; }
+| "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK { $$ = 0; }
+| "foreach" flavor.opt name "in" expr "{" stmts "}"    %prec CMDBLOCK { $$ = 0; }
+| "freezeif" "(" softtest ")" stmt { $$ = 0; }
+| "loop" stmt %prec CMDBLOCK { $$ = 0; }
+| "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
+| "stopif" "(" softtest ")" stmt { $$ = 0; }
+| "timeout" "(" expr ")" stmt { $$ = 0; }
 | "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
-| "whenever" "(" softtest ")" stmt %prec CMDBLOCK {}
-| "whenever" "(" softtest ")" stmt "else" stmt {}
-| "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK {}
+| "whenever" "(" softtest ")" stmt %prec CMDBLOCK { $$ = 0; }
+| "whenever" "(" softtest ")" stmt "else" stmt { $$ = 0; }
+| "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
 ;
 
 
@@ -616,10 +616,10 @@ stmt:
 
 name:
   "identifier"             { $$ = new_exp(@$, 0, $1); }
-| "$" "(" expr ")"         {}
+| "$" "(" expr ")"         { $$ = 0; }
 | name "." "identifier"    { $$ = new_exp(@$, $1, $3); }
-| name "[" expr "]"        {}
-| name "::" "identifier"   {} // FIXME: Get rid of it, it's useless.
+| name "[" expr "]"        { $$ = 0; }
+| name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
 ;
 
 
@@ -628,22 +628,22 @@ name:
 `---------*/
 
 lvalue:
-  name		{}
-| name "'n"	{}
+  name		{ $$ = 0; }
+| name "'n"	{ $$ = 0; }
 ;
 
 // Names as rvalues.
 expr:
-  rvalue        {}
+  rvalue        { $$ = 0; }
 ;
 
 rvalue:
   name
-| "static" name	{}
-| name derive   {}
-| name "'e"	{}
-| name "'in"	{}
-| name "'out"   {}
+| "static" name	{ /* FIXME: Fill. */ }
+| name derive   { /* FIXME: Fill. */ }
+| name "'e"	{ /* FIXME: Fill. */ }
+| name "'in"	{ /* FIXME: Fill. */ }
+| name "'out"   { /* FIXME: Fill. */ }
 ;
 
 %type <derive> derive;
@@ -660,7 +660,7 @@ derive:
 `-----------*/
 
 property:
-  name "->" "identifier" {}
+  name "->" "identifier" { $$ = 0; }
 ;
 
 
@@ -669,8 +669,8 @@ property:
 `-----------------*/
 
 namedarguments:
-  /* empty */ {}
-| "identifier" ":" expr namedarguments {}
+  /* empty */ { $$ = 0; }
+| "identifier" ":" expr namedarguments { $$ = 0; }
 ;
 
 
@@ -698,11 +698,11 @@ expr:
   number    { $$ = new ast::FloatExp(@$, $1);        }
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
-| "[" exprs "]" {}
-| property {}
+| "[" exprs "]" { $$ = 0; }
+| property { $$ = 0; }
 | "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, 0, take($1), $3); }
-| "%" name            {}
-| "group" "identifier"    {}
+| "%" name            { $$ = 0; }
+| "group" "identifier"    { $$ = 0; }
 ;
 
 
@@ -731,7 +731,7 @@ expr:
 | expr "^" expr	{ $$ = new_exp(@$, $1, $2, $3); }
 | "-" expr     %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
-| "copy" expr  %prec NEG {}
+| "copy" expr  %prec NEG { $$ = 0; }
 ;
 
 /*--------.
@@ -768,7 +768,7 @@ expr:
 | expr ">="  expr { $$ = new_exp(@$, $1, $2, $3); }
 | expr "~="  expr { $$ = new_exp(@$, $1, $2, $3); }
 
-| "!" expr {}
+| "!" expr { $$ = 0; }
 
 | expr "&&" expr  { $$ = new_exp(@$, $1, $2, $3); }
 | expr "||" expr  { $$ = new_exp(@$, $1, $2, $3); }
@@ -804,8 +804,8 @@ exprs.1:
 
 softtest:
   expr
-| expr "~" expr  {}
-| "(" expr "~" expr ")" {}
+| expr "~" expr  { $$ = 0; }
+| "(" expr "~" expr ")" { $$ = 0; }
 ;
 
 
@@ -827,8 +827,8 @@ identifiers.1:
 
 // Zero or several comma-separated identifiers.
 identifiers:
-  /* empty */     {}
-| identifiers.1   {}
+  /* empty */     { $$ = 0; }
+| identifiers.1   { $$ = 0; }
 ;
 
 
@@ -837,9 +837,9 @@ identifiers:
 `---------------------------------------------*/
 
 class_declaration:
-  "var"      name                    {}
-| "function" name formal_arguments   {}
-| "event"    name formal_arguments   {}
+  "var"      name                    { $$ = 0; }
+| "function" name formal_arguments   { $$ = 0; }
+| "event"    name formal_arguments   { $$ = 0; }
 ;
 
 /* It used to be possible to not have the parens for empty identifiers.
@@ -850,9 +850,9 @@ formal_arguments:
 ;
 
 class_declaration_list:
-  /* empty */  {}
-| class_declaration {}
-| class_declaration ";" class_declaration_list {}
+  /* empty */  { $$ = 0; }
+| class_declaration { $$ = 0; }
+| class_declaration ";" class_declaration_list { $$ = 0; }
 ;
 
 /*--------.
@@ -860,9 +860,9 @@ class_declaration_list:
 `--------*/
 
 names:
-  /* empty */  {}
-| name {}
-| name ";" names {}
+  /* empty */    { $$ = 0; }
+| name           { $$ = 0; }
+| name ";" names { $$ = 0; }
 ;
 
 /* End of grammar */
