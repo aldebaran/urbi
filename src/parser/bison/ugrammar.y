@@ -552,11 +552,10 @@ stmt:
 | BINDER "var" name "from" name { $$ = 0; }
 | BINDER "function" "(" "integer" ")" name "from" name { $$ = 0; }
 | BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
+| "emit" name args                  { $$ = 0; }
+| "emit" "(" expr.opt ")" name args { $$ = 0; }
 | "wait" expr { $$ = 0; }
-| "emit" name args              { $$ = 0; }
-| "emit" "(" expr ")" name args { $$ = 0; }
-| "emit" "(" ")" name args      { $$ = 0; }
-| "waituntil" softtest { $$ = 0; }
+| "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }
 | "def" name { $$ = 0; }
@@ -780,7 +779,7 @@ expr.opt:
 `--------------*/
 
 %union { ast::exps_type* exprs; };
-%printer { debug_stream() << libport::separate ($@, ','); } <exprs>;
+%printer { debug_stream() << libport::separate (*$$, ','); } <exprs>;
 %type <exprs> exprs;
 %type <exprs> exprs.1;
 %type <exprs> args;

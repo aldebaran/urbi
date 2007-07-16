@@ -1,5 +1,11 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Fix and simplification
+	* src/parser/bison/ugrammar.y (<exprs>): Fix its printer.
+	(expr.opt): Use it for emit.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Factor effective arguments
 	* src/parser/bison/ugrammar.y (args): New.
 	Use it where it factors the grammar without changing it.
