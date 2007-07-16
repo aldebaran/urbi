@@ -1,5 +1,31 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1298:1320 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-07-16  Akim Demaille  <demaille@gostai.com>
+	Nuke keywords that are not used
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l: Remove
+	keyword that are scanned at all, or not used anywhere in the
+	grammar.
+	Some (e.g., "stop" and "switch") actually used to be specific
+	terminals, but they are now part of a wider family (OPERATOR_ID,
+	TOK_NUMBER).
+
+	2007-07-16  Akim Demaille  <demaille@gostai.com>
+	Remove dead keyword
+	* configure.ac: Set version.
+	* src/parser/bison/ugrammar.y (TOK_EXPRBLOCK): Remove, useless.
+	* src/uconnection.cc: Space changes.
+
+	2007-07-13  Akim Demaille  <demaille@gostai.com>
+	merge -r 1266:1300 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-07-13  Akim Demaille  <demaille@gostai.com>
+	Fix ''d
+	* src/parser/bison/ugrammar.y: Actually, it's 'dd.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Use includes
 	* src/parser/bison/ugrammar.y: Remove useless includes.
 	(''d): Actually it's named...

@@ -205,7 +205,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "if"            return token::TOK_IF;
 "in"            return token::TOK_IN;
 "inherits"      return token::TOK_INHERITS;
-"list"          return token::TOK_GROUPLIST;
+
 "loop"          return token::TOK_LOOP;
 "loopn"         return token::TOK_LOOPN;
 "new"           return token::TOK_NEW;
@@ -215,7 +215,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "return"        return token::TOK_RETURN;
 "static"        return token::TOK_STATIC;
 "stopif"        return token::TOK_STOPIF;
-"subclass"      return token::TOK_SUBCLASS;
 "timeout"       return token::TOK_TIMEOUT;
 "true"          return token::TOK_TRUE;
 "unalias"       return token::TOK_UNALIAS;
@@ -267,7 +266,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "."             return token::TOK_POINT;
 ":"             return token::TOK_COLON;
 "::"            return token::TOK_DOUBLECOLON;
-"@"             return token::TOK_AROBASE;
 "["             return token::TOK_LBRACKET;
 "]"             return token::TOK_RBRACKET;
 "{"             return token::TOK_LBRACE;
