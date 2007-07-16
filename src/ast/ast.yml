@@ -411,7 +411,7 @@ CallExp:
        }'
     - $name
     - '"("'
-    - libport::separate (n.args_get (), libport::make_pair (',', libport::iendl));
+    - libport::separate (n.args_get (), libport::make_pair (',', libport::iendl))
     - '")"'
 
 ArrayExp:

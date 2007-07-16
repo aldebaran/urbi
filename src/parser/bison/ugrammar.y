@@ -55,7 +55,6 @@
 %union
 {
   ast::Exp*       expr;
-  ast::exps_type* exprs;
 
   UVariableName::UDeriveType derive;
 }
@@ -554,12 +553,9 @@ stmt:
 | BINDER "function" "(" "integer" ")" name "from" name { $$ = 0; }
 | BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
 | "wait" expr { $$ = 0; }
-| "emit" name { $$ = 0; }
-| "emit" name "(" exprs ")" { $$ = 0; }
-| "emit" "(" expr ")" name { $$ = 0; }
-| "emit" "(" expr ")" name "(" exprs ")" { $$ = 0; }
-| "emit" "(" ")" name { $$ = 0; }
-| "emit" "(" ")" name "(" exprs ")" { $$ = 0; }
+| "emit" name args              { $$ = 0; }
+| "emit" "(" expr ")" name args { $$ = 0; }
+| "emit" "(" ")" name args      { $$ = 0; }
 | "waituntil" softtest { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }
@@ -701,8 +697,7 @@ expr:
 | "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, 0, take($1), $3); }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
-| "new" "identifier"               { $$ = 0; }
-| "new" "identifier" "(" exprs ")" { $$ = 0; }
+| "new" "identifier" args          { $$ = 0; }
 ;
 
 
@@ -784,8 +779,11 @@ expr.opt:
 | Expressions.  |
 `--------------*/
 
-%type <exprs>	exprs;
-%type <exprs>   exprs.1;
+%union { ast::exps_type* exprs; };
+%printer { debug_stream() << libport::separate ($@, ','); } <exprs>;
+%type <exprs> exprs;
+%type <exprs> exprs.1;
+%type <exprs> args;
 
 exprs:
   /* empty */ { $$ = new ast::exps_type; }
@@ -797,6 +795,11 @@ exprs.1:
 | exprs.1 "," expr { $$->push_back($3); }
 ;
 
+// Effective arguments: 0 or more arguments in parens, or nothing.
+args:
+  /* empty */   { $$ = new ast::exps_type; }
+| "(" exprs ")" { $$ = $2; }
+;
 
 /*-----------.
 | softtest.  |

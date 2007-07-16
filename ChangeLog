@@ -1,5 +1,11 @@
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
+	Factor effective arguments
+	* src/parser/bison/ugrammar.y (args): New.
+	Use it where it factors the grammar without changing it.
+
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
 	Class instantiations are regular expressions
 	* src/parser/bison/ugrammar.y (stmt): Move the special
 	"class" instantiation to...
