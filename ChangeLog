@@ -1,3 +1,10 @@
+2007-07-16  Akim Demaille  <demaille@gostai.com>
+
+	Make first compilation easier
+	* src/ast/Makefile.am: If location.hh is not generated, ask for it.
+	* src/parser/bison/bison.mk (generate-parser): New, a hook for
+	the previous Makefile.
+
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
 	libport/Makefile.am

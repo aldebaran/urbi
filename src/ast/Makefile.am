@@ -17,6 +17,19 @@ gen_dir = $(top_srcdir)/dev
 ast_gen_deps = $(gen_dir)/ast.py $(gen_dir)/ast_params.py \
 	       $(gen_dir)/tools.py $(srcdir)/ast.yml
 
+
+## -------- ##
+## loc.hh.  ##
+## -------- ##
+
+# loc.hh includes parse/location.hh, so make sure the latter is built
+# before.
+BUILT_SOURCES += 			\
+src/location.hh
+
+src/location.hh: $(top_srcdir)/src/parser/bison/ugrammar.y
+	cd $(top_builddir)/src && $(MAKE) $(AM_MAKEFLAGS) generate-parser
+
 ## -------------------------- ##
 ## Using the AST generators.  ##
 ## -------------------------- ##

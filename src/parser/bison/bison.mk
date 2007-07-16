@@ -41,6 +41,14 @@ $(FROM_UGRAMMAR_Y): ugrammar.stamp
 	  $(MAKE) $(AM_MAKEFLAGS) ugrammar.stamp; \
 	fi
 
+# We tried several times to run make from ast/ to build position.hh
+# and location.hh.  Unfortunately, because of different, but
+# equivalent, paths, BSD Make was unable to build them.  The following
+# hook is here to address this.
+.PHONY: generate-parser
+generate-parser: $(FROM_UGRAMMAR_Y)
+
+
 ## -------------- ##
 ## Flex Scanner.  ##
 ## -------------- ##
