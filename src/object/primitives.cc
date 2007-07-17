@@ -28,6 +28,25 @@ namespace object
   // FIXME: I have put them here, but it's probably not the best
   // place.  We probably needed something like a Server object.
 
+  rObject							
+  object_class_clone (objects_type args)			
+  {
+    return clone(args[0]);
+  }
+
+  rObject							
+  object_class_init (objects_type args)			
+  {
+    return args[0];
+  }
+
+  rObject							
+  object_class_print (objects_type args)			
+  {
+    std::cout << *args[0] << std::endl;
+    return args[0];
+  }
+
 #define SERVER_FUNCTION(Function)				\
   rObject							\
   object_class_ ## Function (objects_type args)			\
@@ -51,6 +70,9 @@ namespace object
 #define DECLARE(Name)							\
       object_class->slot_set (#Name,					\
 			      new Primitive(object_class_ ## Name));
+      DECLARE(clone);
+      DECLARE(init);
+      DECLARE(print);
       DECLARE(reboot);
       DECLARE(shutdown);
 #undef DECLARE

@@ -1,5 +1,13 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	new Object
+	* src/object/primitives.cc (object_class_print)
+	(object_class_clone, object_class_init): New.
+	(object_class_initialize): Bind them.
+	* src/parser/bison/ugrammar.y (new "id"): Run clone and init.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	Connetion -> Context to please JC
 	* src/object/primitives.cc, src/object/primitives.hh,
 	* src/parser/bison/ugrammar.y, src/runner/runner.hxx: Do it.

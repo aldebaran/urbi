@@ -158,12 +158,21 @@
     static
     ast::Exp*
     new_exp (const yy::parser::location_type& l,
-	     ast::Exp* target, libport::Symbol* method)
+	     ast::Exp* target, libport::Symbol method)
     {
       ast::exps_type* args = new ast::exps_type;
       args->push_front (target);
-      ast::CallExp* res = new ast::CallExp(l, take(method), args);
+      ast::CallExp* res = new ast::CallExp(l, method, args);
       return res;
+    }
+
+    /// "<target> . <method> ()".
+    static
+    ast::Exp*
+    new_exp (const yy::parser::location_type& l,
+	     ast::Exp* target, libport::Symbol* method)
+    {
+      return new_exp (l, target, take(method));
     }
 
     /// "<target> . <method> (<arg1>)".
@@ -677,7 +686,15 @@ expr:
     }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
-| "new" "identifier" args { $$ = 0; }
+| "new" "identifier" args
+  {
+    // Compiled as
+    // id clone () . init (args);
+    ast::exps_type* args = new ast::exps_type;
+    args->push_back (new_exp(@1 + @2, 0, "clone"));
+    args->splice(args->end(), *$3);
+    $$ = new ast::CallExp (@$, "init", args);
+  }
 ;
 
 
