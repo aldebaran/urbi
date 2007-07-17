@@ -1,3 +1,10 @@
+2007-07-17  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Put Target as first arg for CallExp
+	* src/ast/ast.yml (CallExp): remove target.
+	* src/parser/bison/ugrammar.y (CallExp): use target as arg[0].
+	* src/runner/runner.cc: use aeg[0] as target.
+
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
 	Revamp the handling of lvalues

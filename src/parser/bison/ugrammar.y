@@ -165,7 +165,8 @@
 	     ast::Exp* target, libport::Symbol* method)
     {
       ast::exps_type* args = new ast::exps_type;
-      ast::CallExp* res = new ast::CallExp(l, target, take(method), args);
+      args->push_front (target);
+      ast::CallExp* res = new ast::CallExp(l, take(method), args);
       return res;
     }
 
@@ -673,7 +674,11 @@ expr:
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 | "[" exprs "]" { $$ = 0; }
-| "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, 0, take($1), $3); }
+| "identifier" "(" exprs ")"
+    {
+      (*$3).push_front (0);
+      $$ = new ast::CallExp(@$, take($1), $3);
+    }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
 | "new" "identifier" args          { $$ = 0; }

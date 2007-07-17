@@ -391,10 +391,6 @@ NegOpExp:
 CallExp:
   super: Exp
   attributes:
-    - target:
-        type: 'Exp*'
-        desc: The target of the message passing.
-        mandatory: False
     - name:
         type: 'libport::Symbol'
         desc: Name of the called function
@@ -403,9 +399,9 @@ CallExp:
         desc: Arguments passed to the function
   printer:
     - '{
-         if (n.target_get())
+         if (n.args_get().front ())
            {
-             n.target_get()->accept(*this);
+             n.args_get().front ()->accept(*this);
              ostr_ << " . ";
            }
        }'

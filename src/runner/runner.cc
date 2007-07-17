@@ -19,8 +19,8 @@ namespace runner
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for IO.
     rObject tgt = 0;
-    if (e.target_get())
-      tgt = eval (*e.target_get());
+    if (e.args_get().front ())
+      tgt = eval (*e.args_get().front ());
     else
       tgt = object::connection_class;
 
