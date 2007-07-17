@@ -1041,7 +1041,7 @@ UConnection::execute(ast::Ast*& execCommand)
   if (!execCommand || closing)
     return;
 
-  std::cerr << "Command is: " << *execCommand << std::endl;
+  // std::cerr << "Command is: " << *execCommand << std::endl;
   runner::Runner r;
   r(execCommand);
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
