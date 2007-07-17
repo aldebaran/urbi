@@ -373,7 +373,7 @@ root:
     up.commandTree = 0;
   }
 | lvalue "=" binary ";"  { /* FIXME: */ }
-| stmts                  { EVALUATE(*$1); }
+| stmts                  { up.commandTree = $1; }
 ;
 
 binary:

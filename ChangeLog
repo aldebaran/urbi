@@ -1,5 +1,12 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	"Return" results
+	* src/parser/bison/ugrammar.y: Set up.commandTree.
+	* src/uconnection.cc (execute): Send back the result for
+	floats only at the moment.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	AX_*
 	* configure.ac: Catch them.
 

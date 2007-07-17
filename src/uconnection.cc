@@ -27,6 +27,8 @@
 #include <cstdarg>
 #include <sstream>
 
+#include <boost/lexical_cast.hpp>
+
 #include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
 
@@ -36,6 +38,8 @@
 #include "kernel/uvariable.hh"
 
 #include "ast/ast.hh"
+#include "object/object.hh"
+#include "object/atom.hh"
 #include "runner/runner.hh"
 
 #include "parser/uparser.hh"
@@ -1031,19 +1035,27 @@ void
 UConnection::execute(ast::Ast*& execCommand)
 {
   PING();
-  if (execCommand == 0 || closing)
+  if (!execCommand || closing)
     return;
 
-#define EVALUATE(Tree)						\
- do {								\
-    std::cerr << "Command: " << Tree << std::endl;		\
-    runner::Runner r;						\
-    r(Tree);							\
-    std::cerr << "Result: "					\
-	      << libport::deref << r.result() << std::endl;	\
- } while (0)
+  std::cerr << "Command is: " << *execCommand << std::endl;
+  runner::Runner r;
+  r(execCommand);
+  //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 
-  EVALUATE(execCommand);
+  // "Display" the result.
+  std::ostringstream os;
+  switch (r.result()->kind_get())
+  {
+    case object::Object::kind_float:
+      os << r.result().cast<object::Float>()->value_get();
+      break;
+    default:
+      break;
+  }
+  // The prefix should be (getTag().c_str()) instead of 0.
+  sendc(os.str().c_str(), 0);
+  endline();
 
   delete execCommand;
   execCommand = 0;
