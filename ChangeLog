@@ -1,5 +1,44 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	Revamp the handling of lvalues
+	The current grammar is way too hard to transform to support
+	several kinds of lvalues, including with messages.  The following
+	shows the problem:
+
+	%%
+	target: /* empty */
+	      | expr "."
+	
+	name: target "identifier"
+	
+	expr: name
+	    | target "identifier" "(" ")"
+	    | "%" name
+
+	This grammar has a reduce/reduce conflict: on "% id .", the
+	parser does not know whether it will read "% id . id", in
+	which case it should reduce "name -> expr" to "% _expr ._ id"
+	-> "% _target id_" -> "_% var_" -> "expr", or read "_% name_ . id ()"
+	-> "_expr ._ id ()" -> "_target id ()_" -> expr.  The grammar is
+	not ambiguous, but it is not LR.  Of course GLR would do, but
+	we try to avoid it.
+
+	So it is decided that lvalue will be basically *parsed* as
+	any kind of expr, but a run time check during the parsing
+	(in the action) will select only those that we consider as
+	value lvalues.
+
+	* src/ast/ast.yml (AssignExp): The lhs is a CallExp.
+	* src/parser/bison/ugrammar.y (rvalue): Remove, use only expr.
+	(libport::deref): Use it to print pointers, so that even if they
+	are null, we don't dump core.
+	Use lexical_cast.
+	(lvalue): Now a CallExp.
+	Assign all its former rules to expr, introduce a new one that
+	filters Expr* that are correct.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	Grammar clean up
 	* src/parser/bison/ugrammar.y: Let foreach use a single identifier,
 	not a complex name.

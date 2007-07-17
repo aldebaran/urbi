@@ -228,7 +228,7 @@ AliasExp:
 AssignExp:
   super: Exp
   attributes:
-    - lvalue: { type: 'Var*', desc: Reference to the affected variable }
+    - lvalue: { type: 'CallExp*', desc: Reference to the affected variable }
     - exp: { type: 'Exp*', desc: Assigned value }
 
 InheritsExp:

@@ -54,16 +54,17 @@
 %union
 {
   ast::Exp*       expr;
-
-  UVariableName::UDeriveType derive;
+  ast::CallExp*   call;
 }
 
-%printer { debug_stream() << *$$; } <expr>;
+%printer { debug_stream() << libport::deref << $$; } <expr>;
 
 %code // Output in ugrammar.cc.
 {
 #include <string>
 #include <iostream>
+
+#include <boost/lexical_cast.hpp>
 
 #include "ast/all.hh"
 #include "runner/runner.hh"
@@ -295,7 +296,7 @@
 %token
    <str>  STRING             "string"
 %destructor { delete $$; } <str>;
-%printer { debug_stream() << *$$; } <str>;
+%printer { debug_stream() << libport::deref << $$; } <str>;
 
 
  /*----------.
@@ -313,7 +314,7 @@
    <symbol> OPERATOR_ID        "operator"
    <symbol> OPERATOR_VAR       "var-operator"
 %destructor { delete $$; } <symbol>;
-%printer { debug_stream() << *$$; } <symbol>;
+%printer { debug_stream() << libport::deref << $$; } <symbol>;
 
 
 %type <expr>  class_declaration
@@ -324,12 +325,10 @@
 %type <expr>  flags.0
 %type <expr>  flags.1
 %type <expr>  identifiers
-%type <expr>  lvalue
-%type <expr>  rvalue
+%type <call>  lvalue
 %type <expr>  name
 %type <expr>  namedarguments
 %type <expr>  names
-%type <expr>  property
 %type <expr>  raw_arguments
 %type <expr>  softtest
 %type <expr>  stmt
@@ -541,11 +540,10 @@ stmt:
 | Stmt: Assignment.  |
 `-------------------*/
 stmt:
-	lvalue "=" expr namedarguments { $$ = 0; }
+	lvalue "=" expr namedarguments { $$ = new ast::AssignExp (@$, $1, $3); }
 | "var" lvalue "=" expr namedarguments { $$ = 0; }
 | lvalue "+=" expr { $$ = 0; }
 | lvalue "-=" expr { $$ = 0; }
-| property "=" expr { $$ = 0; }
 | lvalue "--" { $$ = 0; }
 | lvalue "++" { $$ = 0; }
 ;
@@ -591,23 +589,29 @@ name:
 | Lvalue.  |
 `---------*/
 
+// An lvalue is a CallExp without arguments.
 lvalue:
-  name		{ $$ = $1; }
-| name "'n"	{ $$ = 0; }
+  expr
+  {
+    $$ = dynamic_cast<ast::CallExp*>($1);
+    if (!$$
+	&& $$->args_get().size() != 0)
+    {
+      error(@$, (std::string ("invalid lvalue: ")
+		 + boost::lexical_cast<std::string>(*$1)));
+      YYERROR;
+    }
+  }
 ;
 
-// Names as rvalues.
 expr:
-  rvalue        { $$ = $1; }
-;
-
-rvalue:
   name          { $$ = $1; }
 | "static" name	{ /* FIXME: Fill. */ }
 | name derive   { /* FIXME: Fill. */ }
 | name "'e"	{ /* FIXME: Fill. */ }
 | name "'in"	{ /* FIXME: Fill. */ }
 | name "'out"   { /* FIXME: Fill. */ }
+| name "'n"	{ $$ = 0; }
 ;
 
 %code requires
@@ -629,11 +633,7 @@ derive:
 ;
 
 
-/*-----------.
-| property.  |
-`-----------*/
-
-property:
+expr:
   name "->" "identifier" { $$ = 0; }
 ;
 
@@ -673,7 +673,6 @@ expr:
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 | "[" exprs "]" { $$ = 0; }
-| property { $$ = 0; }
 | "identifier" "(" exprs ")"  { $$ = new ast::CallExp(@$, 0, take($1), $3); }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
@@ -759,7 +758,13 @@ expr.opt:
 `--------------*/
 
 %union { ast::exps_type* exprs; };
-%printer { debug_stream() << libport::separate (*$$, ','); } <exprs>;
+%printer
+{
+  if ($$)
+    debug_stream() << libport::separate (*$$, ',');
+  else
+    debug_stream() << "NULL";
+} <exprs>;
 %type <exprs> exprs;
 %type <exprs> exprs.1;
 %type <exprs> args;
