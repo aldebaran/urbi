@@ -409,6 +409,7 @@ UConnection::received (const char *s)
 UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
+  PING();
   if (server->memoryOverflow)
   {
     errorSignal(UERROR_MEMORY_OVERFLOW);
@@ -461,6 +462,7 @@ UConnection::received (const ubyte *buffer, int length)
 
   UErrorValue result = recvQueue_->push(buffer, length);
   unlock();
+  PING();
   if (result != USUCCESS)
   {
     // Handles memory errors.
@@ -492,8 +494,10 @@ UConnection::received (const ubyte *buffer, int length)
   }
 
   UParser& p = parser();
+  PING();
   if (p.commandTree)
   {
+    PING();
     //reentrency trouble
     treeLock.unlock();
     return USUCCESS;
@@ -759,8 +763,8 @@ UConnection::isActive()
 
 #if 0
 // There is still a lot of code to move from here to elsewhere.
-ast::Ast*
-UConnection::processCommand(ast::Ast*& command,
+UCommand*
+UConnection::processCommand(UCommand*& command,
 			    URunlevel &rl,
 			    bool &mustReturn)
 {
@@ -776,7 +780,6 @@ UConnection::processCommand(ast::Ast*& command,
   rl = UEXPLORED;
 
   // Handle blocked/freezed commands
-
   if (command->isFrozen())
     return command;
 
@@ -786,7 +789,6 @@ UConnection::processCommand(ast::Ast*& command,
     return 0;
   }
 
-  ast::Ast* morphed;
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
@@ -935,7 +937,7 @@ UConnection::processCommand(ast::Ast*& command,
     if (command->type == UCommand::TREE)
     {
       mustReturn = true;
-      return command ;
+      return command;
     }
     else
     {
@@ -948,15 +950,15 @@ UConnection::processCommand(ast::Ast*& command,
 	case UCommand::UCOMPLETED:
 	  if (command == lastCommand)
 	    lastCommand = command->up;
-
 	  delete command;
 	  return 0;
 
 	case UCommand::UMORPH:
+	{
 	  command->status = UCommand::UONQUEUE;
 	  command->morphed = true;
 
-	  morphed = command->morph;
+	  UCommand *morphed = command->morph;
 	  morphed->myconnection = command->myconnection;
 	  morphed->toDelete = command->toDelete;
 	  morphed->up = morphed_up;
@@ -970,6 +972,7 @@ UConnection::processCommand(ast::Ast*& command,
 	    delete command;
 	  command = morphed;
 	  break;
+	}
 
 	default:
 	  // "+bg" flag

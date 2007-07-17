@@ -1,5 +1,16 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1332:1336 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-07-17  Akim Demaille  <demaille@gostai.com>
+	Fix warning output
+	* src/uconnection.cc (received): Process the warnings similarly
+	to the errors.
+	Add a few PINGs.
+	(UConnection::processCommand::morphed): Reduce its scope.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	"Return" results
 	* src/parser/bison/ugrammar.y: Set up.commandTree.
 	* src/uconnection.cc (execute): Send back the result for
