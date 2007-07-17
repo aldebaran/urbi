@@ -1,5 +1,10 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	We do use bison 2.3a+
+	* src/parser/bison/flex-lexer.hh: Remove useless includes.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	Initial support for assignment
 	* src/ast/ast.yml (AssignExp): Rename members.
 	* src/parser/bison/ugrammar.y: An lvalue has 1 argument: the
