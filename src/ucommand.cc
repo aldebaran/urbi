@@ -2453,7 +2453,8 @@ UCommand_EXPR::execute_(UConnection *connection)
     delete ret;
     return UMORPH;
   }
-  
+
+#if 1
   // "Display" the result.
   if (ret->dataType != DATA_VOID)
   {
@@ -2464,6 +2465,16 @@ UCommand_EXPR::execute_(UConnection *connection)
     connection->endline();
   else
     connection->flush ();
+#else
+  // "Display" the result.
+  if (ret->dataType != DATA_VOID)
+    connection << prefix(getTag()) << *ret;
+  if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
+    connection << std::endl;
+  else
+    connection << std::flush;
+#endif
+
   delete ret;
   return UCOMPLETED;
 }

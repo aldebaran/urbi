@@ -203,17 +203,12 @@ UConnection::sendPrefix (const char* tag)
   enum { MAXSIZE_TMPBUFFER = 1024 };
   char buf[MAXSIZE_TMPBUFFER];
 
-  if (tag)
-  {
-    snprintf(buf, sizeof buf,
-	     "[%08d:%s", (int)server->lastTime(), tag);
-    // This splitting method is used to truncate the tag if its size
-    // is too large.
-    strcat(buf, "] ");
-  }
-  else
-    snprintf(buf, sizeof buf,
-	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
+  snprintf(buf, sizeof buf,
+	   "[%08d:%s", 
+	   (int)server->lastTime(), tag ? tag : ::UNKNOWN_TAG);
+  // This splitting method is used to truncate the tag if its size
+  // is too large.
+  strcat(buf, "] ");
 
   sendQueue_->mark (); // put a marker to indicate the beginning of a message
   sendc((const ubyte*)buf, strlen(buf));
