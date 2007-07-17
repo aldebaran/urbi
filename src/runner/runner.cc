@@ -6,7 +6,6 @@
 #include <boost/foreach.hpp>
 
 #include "object/atom.hh"
-#include "object/primitives.hh"
 
 #include "runner/runner.hh"
 
@@ -14,28 +13,38 @@ namespace runner
 {
 
   void
+  Runner::operator() (const ast::AssignExp& e)
+  {
+    assert (e.lhs_get().args_get().size () == 1);
+    rObject tgt = target(e.lhs_get().args_get().front());
+    libport::Symbol s = e.lhs_get().name_get();
+    tgt->slot_set (s, eval(e.rhs_get()));
+  }
+
+
+  void
   Runner::operator() (const ast::CallExp& e)
   {
-    // FIXME: For the time being, if there is no target, it is the
-    // Connection object which is used, sort of a Lobby for IO.
-    rObject tgt = 0;
-    if (e.args_get().front ())
-      tgt = eval (*e.args_get().front ());
-    else
-      tgt = object::connection_class;
+    // Iterate over arguments, with a special case for the target.
+    ast::exps_type::const_iterator
+      i = e.args_get().begin(),
+      i_end = e.args_get().end();
+    rObject tgt = target(*i);
 
     // Ask the target for the handler of the message.
-    // It'd better be a primitive, for the time being.
-    rObject prim = tgt->lookup (e.name_get ());
+    rObject val = tgt->lookup (e.name_get ());
 
     // Gather the arguments, including the target.
     object::objects_type args;
     args.push_back (tgt);
-    BOOST_FOREACH(ast::Exp* a, e.args_get())
-      args.push_back (eval (*a));
+    for (++i; i != i_end; ++i)
+      args.push_back (eval (**i));
 
-    // Evaluate the call.  A primitive hopefully.
-    current_ = prim.cast<object::Primitive>()->value_get()(args);
+    // We may have to run a primitive.
+    if (val->kind_get () == object::Object::kind_primitive)
+      current_ = val.cast<object::Primitive>()->value_get()(args);
+    else
+      current_ = val;
   }
 
   void

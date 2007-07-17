@@ -595,8 +595,8 @@ lvalue:
   expr
   {
     $$ = dynamic_cast<ast::CallExp*>($1);
-    if (!$$
-	&& $$->args_get().size() != 0)
+    // There is an implicit target: the current object, 0.
+    if (!$$ || $$->args_get().size() != 1)
     {
       error(@$, (std::string ("invalid lvalue: ")
 		 + boost::lexical_cast<std::string>(*$1)));

@@ -39,9 +39,14 @@ namespace runner
     rObject eval (const ast::Ast& e);
     rObject result ();
 
+    // FIXME: For the time being, if there is no target, it is the
+    // Connection object which is used, sort of a Lobby for IO.
+    rObject target (ast::Exp* n);
+
     /// Import from super.
     using super_type::operator();
 
+    virtual void operator() (const ast::AssignExp& e);
     virtual void operator() (const ast::CallExp& e);
     virtual void operator() (const ast::FloatExp& e);
     virtual void operator() (const ast::SemicolonExp& e);

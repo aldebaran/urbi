@@ -1,3 +1,13 @@
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
+	Initial support for assignment
+	* src/ast/ast.yml (AssignExp): Rename members.
+	* src/parser/bison/ugrammar.y: An lvalue has 1 argument: the
+	current object.
+	* src/runner/runner.hh, src/runner/runner.hxx (target): New.
+	* src/runner/runner.hh, src/runner/runner.cc (AssignExp): New.
+	(CallExp): Activate only if it has to be activated.
+
 2007-07-17  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Put Target as first arg for CallExp
