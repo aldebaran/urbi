@@ -1,3 +1,11 @@
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
+	Grammar clean up
+	* src/parser/bison/ugrammar.y: Let foreach use a single identifier,
+	not a complex name.
+	Group derive stuff together.
+	Remove dead comment.
+
 2007-07-16  Guillaume Deslandes  <deslandes@gostai.com>
 
 	* src/kernel.mk: Add include dir for UObject headers.

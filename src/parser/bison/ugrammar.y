@@ -37,7 +37,6 @@
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "ast/fwd.hh"
-#include "uvariablename.hh" // UDeriveType
 }
 
 // Locations.
@@ -205,8 +204,6 @@
   TOK_COPY         "copy"
   TOK_DEF          "def"
   TOK_DELGROUP     "delgroup"
-  TOK_DERIV        "'"
-  TOK_DERIV2       "''"
   TOK_DIR          "->"
   TOK_DISINHERITS  "disinherits"
   TOK_DOLLAR       "$"
@@ -249,8 +246,6 @@
   TOK_TILDE        "~"
   TOK_TIMEOUT      "timeout"
   TOK_TRUE         "true"
-  TOK_TRUEDERIV    "'d"
-  TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
   TOK_VAR          "var"
@@ -316,7 +311,6 @@
    <symbol> BINDER             "binder"
    <symbol> OPERATOR           "operator command"
    <symbol> OPERATOR_ID        "operator"
-   <symbol> OPERATOR_ID_PARAM  "param-operator"
    <symbol> OPERATOR_VAR       "var-operator"
 %destructor { delete $$; } <symbol>;
 %printer { debug_stream() << *$$; } <symbol>;
@@ -517,11 +511,11 @@ stmt:
 | "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "group" { $$ = 0; }
 | "alias" name name { $$ = 0; }
-| name "inherits" name {$$ = 0; }
-| name "disinherits" name {$$ = 0; }
-| "alias" name {$$ = 0; }
-| "unalias" name {$$ = 0; }
-| "alias" {$$ = 0; }
+| name "inherits" name { $$ = 0; }
+| name "disinherits" name { $$ = 0; }
+| "alias" name { $$ = 0; }
+| "unalias" name { $$ = 0; }
+| "alias" { $$ = 0; }
 | OPERATOR { $$ = 0; }
 | OPERATOR_ID tag { $$ = 0; }
 | OPERATOR_VAR name { $$ = 0; }
@@ -566,7 +560,7 @@ stmt:
 | "if" "(" expr ")" stmt %prec CMDBLOCK    { $$ = 0; }
 | "if" "(" expr ")" stmt "else" stmt  { $$ = 0; }
 | "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK { $$ = 0; }
-| "foreach" flavor.opt name "in" expr "{" stmts "}"    %prec CMDBLOCK { $$ = 0; }
+| "foreach" flavor.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK { $$ = 0; }
 | "freezeif" "(" softtest ")" stmt { $$ = 0; }
 | "loop" stmt %prec CMDBLOCK { $$ = 0; }
 | "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
@@ -616,6 +610,16 @@ rvalue:
 | name "'out"   { /* FIXME: Fill. */ }
 ;
 
+%code requires
+{
+#include "uvariablename.hh" // UDeriveType
+};
+%union { UVariableName::UDeriveType derive; };
+%token
+  TOK_DERIV        "'"
+  TOK_DERIV2       "''"
+  TOK_TRUEDERIV    "'d"
+  TOK_TRUEDERIV2   "'dd";
 %type <derive> derive;
 derive:
   "'"	{ $$ = UVariableName::UDERIV;	   }
@@ -677,7 +681,6 @@ expr:
 ;
 
 
-// FIXME: import the rvalue/lvalue/name stuff.
 
   /*---------.
   | num expr |
