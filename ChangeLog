@@ -1,5 +1,10 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	AX_*
+	* configure.ac: Catch them.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1320:1332 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-07-17  Akim Demaille  <demaille@gostai.com>

@@ -1,4 +1,5 @@
 m4_pattern_forbid([^ACX_])dnl
+m4_pattern_forbid([^AX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
