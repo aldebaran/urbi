@@ -1,3 +1,10 @@
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
+	* src/ucommand.hh, src/ucommand.cc (UCommand_EXPR::execute_function_call): New.
+	Extracted from...
+	(UCommand_EXPR::execute_): here.
+	Scope reduction.
+
 2007-07-16  Akim Demaille  <demaille@gostai.com>
 
 	Nuke keywords that are not used
