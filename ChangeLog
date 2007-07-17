@@ -1,5 +1,13 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	Fix warning output
+	* src/uconnection.cc (received): Process the warnings similarly
+	to the errors.
+	Add a few PINGs.
+	(UConnection::processCommand::morphed): Reduce its scope.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	Clean up some UConnection::send
 	* src/ucommand.cc: Show what I'd like to write.
 	* src/uconnection.cc (sendPrefix): Factor.
