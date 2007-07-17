@@ -71,17 +71,13 @@
 
 #include "parser/uparser.hh"
 
-#define EVALUATE(Tree)					\
- do {							\
-    std::cerr << "Command: " << Tree << std::endl;	\
-    runner::Runner r;					\
-    r(Tree);						\
-    std::cerr << "Result: ";				\
-    if (r.result())					\
-      std::cerr << *r.result();				\
-    else						\
-      std::cerr << "<NULL>";				\
-    std::cerr << std::endl;				\
+#define EVALUATE(Tree)						\
+ do {								\
+    std::cerr << "Command: " << Tree << std::endl;		\
+    runner::Runner r;						\
+    r(Tree);							\
+    std::cerr << "Result: "					\
+	      << libport::deref << r.result() << std::endl;	\
  } while (0)
 
   namespace

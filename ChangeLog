@@ -1,5 +1,9 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	* src/parser/bison/ugrammar.y (EVALUATE): Simplify.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	We do use bison 2.3a+
 	* src/parser/bison/flex-lexer.hh: Remove useless includes.
 
