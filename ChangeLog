@@ -1,5 +1,21 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1320:1332 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-07-17  Akim Demaille  <demaille@gostai.com>
+	Clean up some UConnection::send
+	* src/ucommand.cc: Show what I'd like to write.
+	* src/uconnection.cc (sendPrefix): Factor.
+
+	2007-07-17  Akim Demaille  <demaille@gostai.com>
+	* src/ucommand.hh, src/ucommand.cc
+	(UCommand_EXPR::execute_function_call): New.
+	Extracted from...
+	(UCommand_EXPR::execute_): here.
+	Scope reduction.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	Hook to the regular input mechanism
 	* include/kernel/fwd.hh (ast::Ast): New.
 	* include/kernel/uconnection.hh, src/uconnection.cc: No longer
