@@ -1,5 +1,22 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	Hook to the regular input mechanism
+	* include/kernel/fwd.hh (ast::Ast): New.
+	* include/kernel/uconnection.hh, src/uconnection.cc: No longer
+	use UCommand, but rather ast::Ast.
+	Adjust dependencies.
+	Comment out obsolete code.
+	(processCommand): Remove.
+	(execute): Update to use the Ast.
+	Comment the code for "binary commands".
+	Fix the handling of warnings.
+	* src/parser/uparser.hh (commandTree): Now an AST.
+	* src/ucommand.cc: Comment out code that no longer makes sense.
+	* src/uexpression.cc: Ditto.
+	* src/userver.cc: Ditto.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	* src/parser/bison/ugrammar.y (EVALUATE): Simplify.
 
 2007-07-17  Akim Demaille  <demaille@gostai.com>

@@ -168,8 +168,8 @@ public:
   void                activate           ();
   void                disactivate        ();
   bool                isActive           ();
-  void                execute            (UCommand_TREE* &execCommand);
-  void                append             (UCommand_TREE *command);
+  void                execute            (ast::Ast* &execCommand);
+  void                append             (ast::Ast *command);
   int                 availableSendQueue ();
   int                 sendQueueRemain    ();
 
@@ -190,9 +190,9 @@ public:
   /// Reference to the underlying server.
   UServer             *server;
   /// The command to be executed.
-  UCommand_TREE       *activeCommand;
+  ast::Ast* activeCommand;
   /// Store the position of the last command added.
-  UCommand_TREE       *lastCommand;
+  ast::Ast* lastCommand;
 
 
   /// Temporarily stores bin command while binary transfer occurs.
@@ -246,9 +246,6 @@ protected:
   virtual int         effectiveSend     (const ubyte*, int length) = 0;
   UErrorValue         error             (UErrorCode n);
   UErrorValue         warning           (UWarningCode n);
-  UCommand*           processCommand    (UCommand *&command,
-					 URunlevel &rl,
-					 bool &mustReturn);
 
 private:
   /// Max number of error signals used..

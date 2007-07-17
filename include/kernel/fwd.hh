@@ -56,6 +56,12 @@ class UVariable;
 class UVariableList;
 class UVariableName;
 
+// FIXME: Should not be here, but we don't want to export ast/ either.
+namespace ast
+{
+  class Ast;
+}
+
 // From ucommand.hh.
 class UCommand;
 class UCommand_ALIAS;

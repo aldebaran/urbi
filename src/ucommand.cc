@@ -4006,11 +4006,14 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "commands")
   {
+#if 0
+    // Code disabled for k2.
     if (connection->activeCommand)
       connection->activeCommand->print(0);
     debug("*** LOCAL TREE ***\n");
     if (connection->parser().commandTree)
       connection->parser().commandTree->print(0);
+#endif
     return UCOMPLETED;
   }
 

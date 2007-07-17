@@ -62,8 +62,10 @@ public:
   /// Parse a file.
   int process (const std::string& fn);
 
-  UCommand_TREE *commandTree;
-  bool          binaryCommand;
+  /// The last AST read by process().
+  ast::Ast *commandTree;
+
+  bool binaryCommand;
 
   token_type scan(semantic_type* val, location_type* loc);
 

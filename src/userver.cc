@@ -40,6 +40,8 @@
 #include "kernel/uvalue.hh"
 #include "kernel/uvariable.hh"
 
+#include "ast/ast.hh"
+
 #include "ubanner.hh"
 #include "ucommand.hh"
 #include "ucommandqueue.hh"
@@ -357,6 +359,7 @@ UServer::work()
 	delete (*r)->activeCommand;
 	(*r)->activeCommand = 0;
       }
+#if 0
       else if ((*r)->activeCommand->toDelete)
       {
 	delete (*r)->activeCommand;
@@ -364,6 +367,7 @@ UServer::work()
       }
       else if (somethingToDelete)
 	(*r)->activeCommand->deleteMarked();
+#endif
     }
 
   somethingToDelete = false;

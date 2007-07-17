@@ -35,6 +35,8 @@
 #include "kernel/uvalue.hh"
 #include "kernel/uvariable.hh"
 
+#include "ast/ast.hh"
+
 #include "parser/uparser.hh"
 #include "ucommandqueue.hh"
 #include "ubinary.hh"
@@ -985,8 +987,10 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 
   if (p.commandTree)
     {
+#if 0
       command->morph = p.commandTree;
       command->persistant = false;
+#endif
       p.commandTree = 0;
     }
   else

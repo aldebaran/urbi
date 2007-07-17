@@ -35,12 +35,15 @@
 #include "kernel/uvalue.hh"
 #include "kernel/uvariable.hh"
 
+#include "ast/ast.hh"
+#include "runner/runner.hh"
+
 #include "parser/uparser.hh"
 #include "ubanner.hh"
 #include "ubinary.hh"
 #include "ubinder.hh"
 #include "ucallid.hh"
-#include "ucommandqueue.hh"
+#include "ucommand.hh"
 #include "ucommandqueue.hh"
 #include "unamedparameters.hh"
 #include "uqueue.hh"
@@ -421,6 +424,7 @@ UConnection::received (const ubyte *buffer, int length)
   libport::BlockLock bl(server);
   // Lock the connection.
   lock();
+#if 0
   if (receiveBinary_)
   {
     // Handle and try to finish the binary transfer.
@@ -454,6 +458,7 @@ UConnection::received (const ubyte *buffer, int length)
       }
     }
   }
+#endif
 
   UErrorValue result = recvQueue_->push(buffer, length);
   unlock();
@@ -543,23 +548,24 @@ UConnection::received (const ubyte *buffer, int length)
 		      "UConnection::received",
 		      p.errorMessage);
       }
-      else if (p.commandTree && p.commandTree->command1)
+
+      // Warnings handling
+      if (*p.warning && !server->memoryOverflow)
       {
-	// Warnings handling
-	if (*p.warning && !server->memoryOverflow)
-	{
-	  // a warning was emitted
-	  send(p.warning, "warn ");
+	// a warning was emitted
+	send(p.warning, "warn ");
 
-	  p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
-	  p.errorMessage[ 42 ] = 0; // cut at 41 characters
-	  server->error(::DISPLAY_FORMAT, (long)this,
-			"UConnection::received",
-			p.warning);
-	}
+	p.warning[ strlen(p.warning) - 1 ] = 0; // remove '\n'
+	p.warning[ 42 ] = 0; // cut at 41 characters
+	server->error(::DISPLAY_FORMAT, (long)this,
+		      "UConnection::received",
+		      p.warning);
+      }
 
+      if (p.commandTree)
+      {
 	// Process "commandTree"
-
+#if 0
 	// ASSIGN_BINARY: intercept and execute immediately
 	if (p.binaryCommand)
 	{
@@ -587,25 +593,24 @@ UConnection::received (const ubyte *buffer, int length)
 	    receiveBinary_ = true;
 	  }
 	}
-
-	// Pile the command
-	if (!receiveBinary_)
+	else
+#endif
 	{
 	  // immediate execution of simple commands
 	  if (!obstructed)
 	  {
-	    p.commandTree->up = 0;
-	    p.commandTree->position = 0;
-	    PING();
 	    execute(p.commandTree);
+#if 0
 	    if (p.commandTree &&
 		p.commandTree->status == UCommand::URUNNING)
 	      obstructed = true;
+#endif
 	  }
 
+#if 0
 	  if (p.commandTree)
 	    append(p.commandTree);
-
+#endif
 	  p.commandTree = 0;
 	}
       }
@@ -753,13 +758,10 @@ UConnection::isActive()
   return active_;
 }
 
-//! Execute a command
-/*! This function executes a regular command.
-
- \param command is the UCommand to execute.
- */
-UCommand*
-UConnection::processCommand(UCommand *&command,
+#if 0
+// There is still a lot of code to move from here to elsewhere.
+ast::Ast*
+UConnection::processCommand(ast::Ast*& command,
 			    URunlevel &rl,
 			    bool &mustReturn)
 {
@@ -785,7 +787,7 @@ UConnection::processCommand(UCommand *&command,
     return 0;
   }
 
-  UCommand	   *morphed;
+  ast::Ast* morphed;
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
@@ -981,6 +983,7 @@ UConnection::processCommand(UCommand *&command,
     }
   }
 }
+#endif
 
 namespace
 {
@@ -1030,139 +1033,26 @@ namespace
  \param tree is the UCommand_TREE to execute.
  */
 void
-UConnection::execute(UCommand_TREE*& execCommand)
+UConnection::execute(ast::Ast*& execCommand)
 {
   PING();
   if (execCommand == 0 || closing)
     return;
 
-  // There are complications to make this a for loop: occurrences of
-  // "continue".
-  UCommand_TREE* tree = execCommand;
+#define EVALUATE(Tree)						\
+ do {								\
+    std::cerr << "Command: " << Tree << std::endl;		\
+    runner::Runner r;						\
+    r(Tree);							\
+    std::cerr << "Result: "					\
+	      << libport::deref << r.result() << std::endl;	\
+ } while (0)
 
-  while (tree)
-  {
-    tree->status = UCommand::URUNNING;
+  EVALUATE(execCommand);
 
-    // Requests a +end notification for {...} type of trees
-    if (tree->groupOfCommands)
-      tree->myconnection = this;
+  delete execCommand;
+  execCommand = 0;
 
-    //check if freezed
-    if (tree->isFrozen())
-    {
-      tree = tree->up;
-      continue;
-    }
-
-    // BLOCKED/FREEZED COMMANDS
-    bool deletecommand = false;
-    if (tree->isBlocked())
-    {
-      tree->runlevel1 = UEXPLORED;
-      tree->runlevel2 = UEXPLORED;
-      deletecommand = true;
-    }
-
-    // COMMAND1
-
-    if (tree->callid && tree->command1 && tree->runlevel1 == UWAITING)
-      stack.push_front(tree->callid);
-
-    bool mustReturn;
-    tree->command1 = processCommand (tree->command1, tree->runlevel1,
-				     mustReturn);
-    if (mustReturn)
-    {
-      tree = dynamic_cast<UCommand_TREE*> (tree->command1);
-      assert (tree);
-      continue;
-    }
-
-    if (tree->callid)
-    {
-      assert (!stack.empty ());
-      stack.pop_front();
-      if (returnMode)
-      {
-	delete tree->command1;
-	tree->command1 = 0;
-	returnMode = false;
-      }
-    }
-
-    // COMMAND2
-    if (tree->flavor() == Flavorable::UAND
-	|| tree->flavor() == Flavorable::UCOMMA
-	|| tree->command1 == 0
-	|| tree->command1->status == UCommand::UBACKGROUND)
-    {
-      if (tree == lastCommand)
-	obstructed = false;
-
-      bool mustReturn;
-      tree->command2 = processCommand (tree->command2,
-				       tree->runlevel2,
-				       mustReturn);
-      if (mustReturn)
-      {
-	tree = dynamic_cast<UCommand_TREE*> (tree->command2);
-	assert (tree);
-	continue;
-      }
-    }
-
-    // STATUS UPDATE
-
-    if (tree->command1 == 0 && tree->command2 == 0
-	|| deletecommand)
-    {
-      if (tree == lastCommand)
-	lastCommand = tree->up;
-      if (tree == execCommand)
-	execCommand = 0;
-
-      if (tree->position)
-	*tree->position = 0;
-
-      UCommand_TREE* oldtree = tree;
-      tree = tree->up;
-      delete oldtree;
-      continue;
-    }
-    else if (((tree->command1 == 0
-	       || tree->command1->status == UCommand::UBACKGROUND)
-	      && (tree->command2 == 0 ||
-		  tree->command2->status == UCommand::UBACKGROUND))
-	     || tree->background == true
-	     || (tree->flagType&8))
-      tree->status = UCommand::UBACKGROUND;
-
-    tree->runlevel1 = UWAITING;
-    tree->runlevel2 = UWAITING;
-
-    // REDUCTION
-
-    if (tree != lastCommand && tree != execCommand && !tree->toDelete)
-      if (simplify (tree))
-      {
-	UCommand_TREE* oldtree = tree;
-	tree = tree->up; // cannot be zero
-	delete oldtree;
-	continue;
-      }
-
-    // BACK UP
-    tree = tree->up;
-  }
-
-  if (execCommand &&
-      execCommand->command1 == 0 &&
-      execCommand->command2 == 0)
-  {
-    delete execCommand;
-    execCommand = 0;
-  }
   PING();
 }
 
@@ -1180,8 +1070,9 @@ UConnection::execute(UCommand_TREE*& execCommand)
  \param command is the UCommand to append.
  */
 void
-UConnection::append(UCommand_TREE *command)
+UConnection::append(ast::Ast *command)
 {
+#if 0
   if (activeCommand == 0)
   {
     activeCommand = command;
@@ -1194,7 +1085,7 @@ UConnection::append(UCommand_TREE *command)
     command->up = lastCommand;
     command->position = &(lastCommand->command2);
   }
-
+#endif
   lastCommand = command;
 }
 
