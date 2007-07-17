@@ -1,5 +1,11 @@
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
+	Connetion -> Context to please JC
+	* src/object/primitives.cc, src/object/primitives.hh,
+	* src/parser/bison/ugrammar.y, src/runner/runner.hxx: Do it.
+
+2007-07-17  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1332:1336 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-07-17  Akim Demaille  <demaille@gostai.com>

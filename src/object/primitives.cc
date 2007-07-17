@@ -13,7 +13,7 @@
 namespace object
 {
 
-  rObject connection_class;
+  rObject context_class;
   rObject float_class;
   rObject integer_class;
   rObject object_class;
@@ -254,8 +254,8 @@ float_peq (libport::ufloat l, libport::ufloat r)
 #undef DECLARE
 
       // Some plain classes, initialized by hand currently.
-      connection_class = clone (object_class);
-      connection_class->slot_set("type", new String ("Connection"));
+      context_class = clone (object_class);
+      context_class->slot_set("type", new String ("Context"));
 
       return true;
     }

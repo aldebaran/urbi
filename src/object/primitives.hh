@@ -12,7 +12,7 @@ namespace object
 {
 
   extern rObject object_class;
-  extern rObject connection_class;
+  extern rObject context_class;
 
   /*--------.
   | Float.  |

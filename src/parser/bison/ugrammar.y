@@ -677,7 +677,7 @@ expr:
     }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
-| "new" "identifier" args          { $$ = 0; }
+| "new" "identifier" args { $$ = 0; }
 ;
 
 

@@ -41,7 +41,7 @@ namespace runner
   {
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for IO.
-    return n ? eval (*n) : object::connection_class;
+    return n ? eval (*n) : object::context_class;
   }
 
 } // namespace runner
