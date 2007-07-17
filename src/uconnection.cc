@@ -204,7 +204,7 @@ UConnection::sendPrefix (const char* tag)
   char buf[MAXSIZE_TMPBUFFER];
 
   snprintf(buf, sizeof buf,
-	   "[%08d:%s", 
+	   "[%08d:%s",
 	   (int)server->lastTime(), tag ? tag : ::UNKNOWN_TAG);
   // This splitting method is used to truncate the tag if its size
   // is too large.
