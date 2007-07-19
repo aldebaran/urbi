@@ -250,10 +250,12 @@ take (T* t)
   TOK_ADDGROUP     "addgroup"
   TOK_ALIAS        "alias"
   TOK_ANDOPERATOR  "&&"
+  TOK_AROBASE      "@"
   TOK_ASSIGN       "="
   TOK_AT           "at"
   TOK_BANG         "!"
   TOK_BIN          "bin"
+  TOK_BLOCK        "block"
   TOK_CLASS        "class"
   TOK_COLON        ":"
   TOK_COPY         "copy"
@@ -271,6 +273,7 @@ take (T* t)
   TOK_EVENT        "event"
   TOK_EVERY        "every"
   TOK_EXP          "^"
+  TOK_EXPRBLOCK    "expression block"
   TOK_FALSECONST   "false"
   TOK_FOR          "for"
   TOK_FOREACH      "foreach"
@@ -278,8 +281,10 @@ take (T* t)
   TOK_FROM         "from"
   TOK_FUNCTION     "function"
   TOK_GROUP        "group"
+  TOK_GROUPLIST    "group list"
   TOK_IF           "if"
   TOK_IN           "in"
+  TOK_INFO         "info"
   TOK_INHERITS     "inherits"
   TOK_LBRACKET     "{"
   TOK_LOOP         "loop"
@@ -306,7 +311,9 @@ take (T* t)
   TOK_RPAREN       ")"
   TOK_RSBRACKET    "]"
   TOK_STATIC       "static"
+  TOK_STOP         "stop"
   TOK_STOPIF       "stopif"
+  TOK_SUBCLASS     "subclass"
   TOK_TILDE        "~"
   TOK_TIMEOUT      "timeout"
   TOK_TRUECONST    "true"
@@ -314,6 +321,8 @@ take (T* t)
   TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
+  TOK_UNBLOCK      "unblock"
+  TOK_UNIT         "unit"
   TOK_VAR          "var"
   TOK_VARERROR     "'e"
   TOK_VARIN        "'in"
@@ -354,41 +363,45 @@ take (T* t)
    <ustr>  IDENTIFIER         "identifier"
    <ustr>  TAG                "tag"
    <ustr>  STRING             "string"
+   <ustr>  SWITCH             "switch"
    <ustr>  BINDER             "binder"
    <ustr>  OPERATOR           "operator command"
    <ustr>  OPERATOR_ID        "operator"
+   <ustr>  OPERATOR_ID_PARAM  "param-operator"
    <ustr>  OPERATOR_VAR       "var-operator"
-%type <ustr> tag
+%type <ustr> tag "any kind of tag"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
-   "identifier" TAG STRING BINDER OPERATOR OPERATOR_ID OPERATOR_VAR tag;
+   "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
+   OPERATOR_ID_PARAM OPERATOR_VAR tag;
 
-%token <structure>           STRUCT
+%token <structure>           STRUCT      "structured identifier"
+%token <structure>           REFSTRUCT   "structured ref-identifier"
 
-%type <expr>                expr
-%type <val>                 timeexpr
-%type <command>             taggedcommands
-%type <command>             taggedcommand
-%type <command>             command
-%type <command>             instruction
-%type <namedparameters>     parameters
-%type <namedparameters>     array
-%type <namedparameters>     parameterlist
-%type <namedparameters>     rawparameters
-%type <namedparameters>     namedparameters
-%type <namedparameters>     flag
-%type <namedparameters>     flags.0
-%type <namedparameters>     flags.1
-%type <variablelist>        names
-%type <expr>                softtest
+%type <expr>                expr            "expression"
+%type <val>                 timeexpr        "time expression"
+%type <command>             taggedcommands  "set of commands"
+%type <command>             taggedcommand   "tagged command"
+%type <command>             command         "command"
+%type <command>             instruction     "instruction"
+%type <namedparameters>     parameters      "parameters"
+%type <namedparameters>     array           "array"
+%type <namedparameters>     parameterlist   "list of parameters"
+%type <namedparameters>     rawparameters   "list of attributes"
+%type <namedparameters>     namedparameters "list of named parameters"
+%type <namedparameters>     flag            "a flag"
+%type <namedparameters>     flags.0         "zero or more flags"
+%type <namedparameters>     flags.1         "one or more flags"
+%type <variablelist>        names           "list of names"
+%type <expr>                softtest        "soft test"
 %type <namedparameters>     formal_arguments
-%type <namedparameters>     identifiers
-%type <namedparameters>     identifiers.1
-%type <expr>                class_declaration
-%type <namedparameters>     class_declaration_list
-%type <binary>              binary
-%type <property>            property
-%type <variable>            name
+%type <namedparameters>     identifiers     "list of identifiers"
+%type <namedparameters>     identifiers.1   "one or more identifiers"
+%type <expr>                class_declaration "class declaration"
+%type <namedparameters>     class_declaration_list "class declaration list"
+%type <binary>              binary          "binary"
+%type <property>            property        "property"
+%type <variable>            name        "name"
 
 
 
@@ -407,7 +420,7 @@ take (T* t)
 
 %right "," ";"
 %left  "&" "|"
-%left  CMDBLOCK
+%left  CMDBLOCK EXPRBLOCK
 %left  "else" "onleave"
 %nonassoc "="
 
@@ -1294,7 +1307,7 @@ expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 rvalue:
   name
 | "static" name	{ $$ = $2; $$->isstatic = true;	}
-| name derive   { $$->deriv = $2;		}
+| name derive   { $$->deriv = $2; 		}
 | name "'e"	{ $$->varerror = true;		}
 | name "'in"	{ $$->varin = true;		}
 | name "'out"   // FIXME: Nothing to do???

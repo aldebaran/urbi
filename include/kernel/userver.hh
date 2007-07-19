@@ -23,11 +23,10 @@
 # define USERVER_HH
 
 # include <cstdarg>
-
 # include <sstream>
+# include <boost/thread.hpp>
 
 # include "libport/compiler.hh"
-# include "libport/lockable.hh"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
@@ -53,7 +52,7 @@ extern  class UServer   *urbiserver; // Global variable for the server
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class UServer: public libport::Lockable
+class UServer
 {
 public:
   //! UServer constructor.
@@ -253,6 +252,9 @@ public:
 
   /// Shows debug or not.
   bool debugOutput;
+
+  /// Used to synchronize message reception.
+  boost::recursive_mutex mutex;
 
 private:
   /// Name of the main device.

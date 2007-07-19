@@ -1,3 +1,5 @@
+#include <boost/thread.hpp>
+
 #include "libport/compiler.hh"
 #include "libport/cstdio"
 
@@ -337,12 +339,11 @@ namespace Network
 
 #ifdef WIN32
   enum { delay = 10000 };
-  DWORD WINAPI
 #else
   enum { delay = 1000000 };
-  void*
 #endif
-  processNetwork(void*)
+
+  void processNetwork()
   {
     while (true)
       selectAndProcess(delay);
@@ -351,14 +352,7 @@ namespace Network
 
   void startNetworkProcessingThread()
   {
-#ifdef WIN32
-    DWORD tid;
-    CreateThread(NULL, 0, processNetwork, 0, 0, &tid);
-#else
-    pthread_t* pt = new pthread_t;
-    if (pthread_create(pt, 0, &processNetwork, 0))
-      perror ("cannot create thread");
-#endif
+    boost::thread networkThread(&processNetwork);
   }
 
 

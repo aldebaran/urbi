@@ -29,6 +29,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <boost/thread.hpp>
 
 #include "libport/containers.hh"
 
@@ -238,7 +239,7 @@ UServer::afterWork()
 void
 UServer::work()
 {
-  libport::BlockLock bl(this);
+  boost::recursive_mutex::scoped_lock lock(mutex);
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;
@@ -322,13 +323,14 @@ UServer::work()
       if ((*r)->activeCommand)
       {
 	(*r)->obstructed = true; // will be changed to 'false'
-	//if the whole tree is visited
-	(*r)->treeLock.lock();
-	(*r)->inwork = true;   // to distinguish this call of
-	//execute from the one in receive
-	(*r)->execute((*r)->activeCommand);
-	(*r)->inwork = false;
-	(*r)->treeLock.unlock();
+        {
+          //if the whole tree is visited
+          boost::try_mutex::scoped_lock((*r)->treeMutex);
+          (*r)->inwork = true;   // to distinguish this call of
+          //execute from the one in receive
+          (*r)->execute((*r)->activeCommand);
+          (*r)->inwork = false;
+        }
       }
 
       if ((*r)->newDataAdded)

@@ -6,7 +6,7 @@
 
 #ifndef BLOCKMEMORYMANAGER_HH
 # define BLOCKMEMORYMANAGER_HH
-# include "libport/lockable.hh"
+# include <boost/thread.hpp>
 # define DEFAULT_BLOCK_SIZE 100
 
 /* The placement new is required on the Aibo to support
@@ -33,7 +33,7 @@
 # define MEMORY_MANAGER_INIT(classname)		\
   BlockPool* classname::mempool_ = 0
 
-class BlockPool: public libport::Lockable
+class BlockPool
 {
  public:
   BlockPool ();
@@ -45,6 +45,8 @@ class BlockPool: public libport::Lockable
   /// Pool size in number of items.
   size_t size;
   size_t itemSize;
+
+  boost::mutex mutex;
 };
 
 void block_operator_delete(BlockPool* mempool, void* ptr);

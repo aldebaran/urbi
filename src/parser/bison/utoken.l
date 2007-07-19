@@ -211,7 +211,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "if"            return token::TOK_IF;
 "in"            return token::TOK_IN;
 "inherits"      return token::TOK_INHERITS;
-
+"list"          return token::TOK_GROUPLIST;
 "loop"          return token::TOK_LOOP;
 "loopn"         return token::TOK_LOOPN;
 "new"           return token::TOK_NEW;
@@ -221,6 +221,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "return"        return token::TOK_RETURN;
 "static"        return token::TOK_STATIC;
 "stopif"        return token::TOK_STOPIF;
+"subclass"      return token::TOK_SUBCLASS;
 "timeout"       return token::TOK_TIMEOUT;
 "true"          return token::TOK_TRUECONST;
 "unalias"       return token::TOK_UNALIAS;
@@ -268,6 +269,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "=~="           return token::TOK_DEQ;
 ">"             return token::TOK_GT;
 ">="            return token::TOK_GE;
+"@"             return token::TOK_AROBASE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
 "^"             { up.warn(*locp, "The use of '^' for exponent operator"

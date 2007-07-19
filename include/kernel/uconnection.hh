@@ -22,9 +22,8 @@
 #ifndef UCONNECTION_HH
 # define UCONNECTION_HH
 
-#include <cstdarg>
-
-# include "libport/lockable.hh"
+# include <cstdarg>
+# include <boost/thread.hpp>
 
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
@@ -57,7 +56,7 @@
     system is actually sending data through the real connection.
  */
 
-class UConnection: public libport::Lockable //queue lock
+class UConnection
 {
   friend class UServer;
 
@@ -231,7 +230,7 @@ public:
   UParser& parser ();
 
   /// Lock access to command tree.
-  libport::Lockable treeLock;
+  boost::try_mutex treeMutex;
 
 private:
   /// Our parser.  A pointer to stop dependencies.
@@ -280,6 +279,8 @@ private:
   /// True when the connection is reading to send/receive data (usualy
   /// set at "true" on start).
   bool           active_;
+
+  boost::mutex mutex_;
 };
 
 //! Accessor for sendAdaptive_

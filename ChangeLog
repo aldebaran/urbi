@@ -1,111 +1,144 @@
-2007-07-17  Akim Demaille  <demaille@gostai.com>
+2007-07-19  Thomas Moulard  <thomas.moulard@gmail.com>
 
-	Fix warning output
-	* src/uconnection.cc (received): Process the warnings similarly
-	to the errors.
-	Add a few PINGs.
-	(UConnection::processCommand::morphed): Reduce its scope.
+	Merge boost-thread, 1.0 into trunk.
+	* .automerge: Update revision.
+	* ChangeLog,
+	* Makefile.am,
+	* configure.ac,
+	* include/kernel/blockmemorymanager.hh,
+	* include/kernel/uconnection.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/uvariable.hh,
+	* src/Makefile.am,
+	* src/memorymanager/memorymanager.cc,
+	* src/network/bsdnet/network.cc,
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/uconnection.cc,
+	* src/uexpression.cc,
+	* src/userver.cc: Import branches.
 
-2007-07-17  Akim Demaille  <demaille@gostai.com>
-
-	Clean up some UConnection::send
-	* src/ucommand.cc: Show what I'd like to write.
-	* src/uconnection.cc (sendPrefix): Factor.
-
-2007-07-17  Akim Demaille  <demaille@gostai.com>
-
-	* src/ucommand.hh, src/ucommand.cc (UCommand_EXPR::execute_function_call): New.
-	Extracted from...
-	(UCommand_EXPR::execute_): here.
-	Scope reduction.
-
-2007-07-16  Akim Demaille  <demaille@gostai.com>
-
-	Nuke keywords that are not used
-	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l: Remove
-	keyword that are scanned at all, or not used anywhere in the
-	grammar.
-	Some (e.g., "stop" and "switch") actually used to be specific
-	terminals, but they are now part of a wider family (OPERATOR_ID,
-	TOK_NUMBER).
-
-2007-07-16  Akim Demaille  <demaille@gostai.com>
-
-	Remove dead keyword
-	* configure.ac: Set version.
-	* src/parser/bison/ugrammar.y (TOK_EXPRBLOCK): Remove, useless.
-	* src/uconnection.cc: Space changes.
-
-2007-07-13  Akim Demaille  <demaille@gostai.com>
-
-		merge -r 1266:1300 https://svn.gostai.com/svn/kernel1/branches/1.0
+	Automerge: svn merge -r 1186:1340 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-07-13  Akim Demaille  <demaille@gostai.com>
+
 	Fix ''d
 	* src/parser/bison/ugrammar.y: Actually, it's 'dd.
 
-2007-07-13  Akim Demaille  <demaille@gostai.com>
-
-	Remove incorrect nonterminal aliases
-	* src/urbi/trunk/kernel1/src/parser/bison/ugrammar.y: Remove
-	explicit strings that were made to be aliases for terminals,
-	but it is not accepted but Bison like this, it believes they
-	are fresh tokens.
-
-2007-07-12  mefyl  <mefyl@lrde.epita.fr>
-
-	Update the test suite external.
-
-2007-07-12  mefyl  <mefyl@lrde.epita.fr>
-
-	merge -r 1259:1266 https://svn.gostai.com/svn/kernel1/branches/1.0
 	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
 	Warn on use of operator ^. Add operator **.
 	* src/parser/uparser.cc,
 	* src/parser/uparser.hh: Add a mehod to emit warnings.
 	* src/parser/bison/utoken.l: Emit warnings on ^.
-        Scan ** as exponent operator.
+	        Scan ** as exponent operator.
 	* src/uconnection.cc,
 	* src/uexpression.cc: Report warnings through the connection.
 
-2007-07-12  mefyl  <mefyl@lrde.epita.fr>
-
-	Fix previous patch: use automerge.
-	* .automerge: Update.
-
-2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
 
 	Fix logic operators precedence.
 	* src/parser/bison/ugrammar.y: Here.
 
-2007-07-09  Akim Demaille  <demaille@gostai.com>
-
-	merge -r 1186:1213 https://svn.gostai.com/svn/kernel1/branches/1.0
-
 	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	This time, we use a cache mechanism to hold the current cycle variable
 	value.
 
-	Fix ticket #111 (again).
+	Fix ticket #111 (again). 
 	* src/ucommand.cc: use cyclevalue with a cache mechanism to initialize
 	startval.
 	* src/uvariable.cc: init cycleBeginTime to an impossible value (-1).
 	* src/uvariable.hh: declare cycleBeginTime and cyclevalue.
 
 	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	This is a backward move that reintroduces ticket 111, but it will fix
 	a much bigger problem where Aldeb is currently stuck. A future better
 	fix of 111 is on the way.
 
-	Fix bug aldeb before robocup.
+	Fix bug aldeb before robocup. 
 	* src/ucommand.cc: reset old code.
 
 	2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
+
 	UVar::reset can be used to set both the value and the previousval of a
 	UVariable, which does a "deep" reset of this value.
 
-	add support for UVar::reset.
+	add support for UVar::reset. 
 	* src/uvar.cc: done.
+
+2007-07-13  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Fix compilation flags.
+	* src/Makefile.am: Remove pthreads flags.
+	* src/network/bsdnet/network.cc: Fix return type.
+
+2007-07-13  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Fix mutex in UServer.
+	* include/kernel/userver.hh: Change mutex into recursive_mutex.
+	* src/uconnection.cc: Idem.
+	* src/userver.cc: Idem.
+
+2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Fix mutex order.
+	* src/uconnection.cc: Here.
+
+2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Replace mutexes in UConnection.
+	* include/kernel/uconnection.hh: Replace treeLock by treeMutex.
+	* src/uconnection.cc: Idem.
+	* src/userver.cc: Idem.
+
+2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Fix missing mutex.
+	* include/kernel/uconnection.hh: Remove obsolete mutexes.
+	* src/uconnection.cc: Add missing mutex.
+
+2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Replace mutexes in memory manager.
+	* include/kernel/blockmemorymanager.hh: Here.
+	* src/memorymanager/memorymanager.cc: Here.
+	* include/kernel/uconnection.hh: Fix missing include.
+
+2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Fix mutexes.
+	* include/kernel/uconnection.hh: Add mutex.
+	* include/kernel/userver.hh: Idem.
+	* src/uconnection.cc:
+        Use mutexes defined in the classes UConnection and UServer.
+
+2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Replace libport locks by boost mutexes.
+	* include/kernel/uconnection.hh: Remove inheritance from Lockable.
+	* src/uconnection.cc:
+        Replace libport's BlockLocks by boost's scopedLocks.
+
+2007-07-10  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Remove dead code.
+	* src/network/bsdnet/network.cc: Here.
+
+2007-07-10  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Use Boost.Thread in network.
+	* src/network/bsdnet/network.cc: Here.
+	* src/Makefile.am: Add boost parameters into
+                           CXXFLAGS and LDFLAGS.
+
+2007-07-10  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Check that Boost.Thread is available
+	* configure.ac: Add Boost.Thread check.
 
 2007-07-06  Akim Demaille  <demaille@gostai.com>
 
@@ -186,13 +219,13 @@
 
 2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	update externals (tests).
+	update externals (tests). 
 
 2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
         The +freeze flag notifies when the command gets frozen/unfrozen.
 
-	add support for +freeze flag.
+	add support for +freeze flag. 
 	* src/parser/bison/ugrammar.y: add the same optim like for +end.
 	* src/parser/bison/utoken.l: add +freeze (and +stop at the same time).
 	* src/ucommand.cc: handle the notification.
@@ -223,7 +256,7 @@
 	resulted in an abrupt reajustement when the command was unfrozen. This
 	patch fixes the problem on wait and assignments, and the corresponding
 	tests has been added.
-	add a first attempt in "time freezing" capabilities.
+	add a first attempt in "time freezing" capabilities. 
 	* src/ucommand.cc: the WAIT and ASSIGN_VALUE commands now store the
         'lastExec' time and a flag when they have been frozen. Upon
 	unfreezing, the internal time-oriented variables are adjusted based on

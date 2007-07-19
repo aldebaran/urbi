@@ -27,7 +27,6 @@
 #include <cstdarg>
 #include <sstream>
 
-#include "libport/lockable.hh"
 #include "libport/ref-pt.hh"
 
 #include "kernel/userver.hh"
@@ -203,12 +202,17 @@ UConnection::sendPrefix (const char* tag)
   enum { MAXSIZE_TMPBUFFER = 1024 };
   char buf[MAXSIZE_TMPBUFFER];
 
-  snprintf(buf, sizeof buf,
-	   "[%08d:%s",
-	   (int)server->lastTime(), tag ? tag : ::UNKNOWN_TAG);
-  // This splitting method is used to truncate the tag if its size
-  // is too large.
-  strcat(buf, "] ");
+  if (tag)
+  {
+    snprintf(buf, sizeof buf,
+	     "[%08d:%s", (int)server->lastTime(), tag);
+    // This splitting method is used to truncate the tag if its size
+    // is too large.
+    strcat(buf, "] ");
+  }
+  else
+    snprintf(buf, sizeof buf,
+	     "[%08d:%s] ", (int)server->lastTime(), ::UNKNOWN_TAG);
 
   sendQueue_->mark (); // put a marker to indicate the beginning of a message
   sendc((const ubyte*)buf, strlen(buf));
@@ -358,7 +362,7 @@ UConnection::block ()
 UErrorValue
 UConnection::continueSend ()
 {
-  libport::BlockLock bl(this); //lock this function
+  boost::mutex::scoped_lock lock(mutex_);
   blocked_ = false;	    // continueSend unblocks the connection.
 
   int toSend = sendQueue_->dataSize(); // nb of bytes to send
@@ -402,7 +406,6 @@ UConnection::received (const char *s)
 UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
-  PING();
   if (server->memoryOverflow)
   {
     errorSignal(UERROR_MEMORY_OVERFLOW);
@@ -414,46 +417,48 @@ UConnection::received (const ubyte *buffer, int length)
   bool gotlock = false;
   // If binary append failed to get lock, abort processing.
   bool faillock = false;
-  libport::BlockLock bl(server);
-  // Lock the connection.
-  lock();
-  if (receiveBinary_)
+
+  UErrorValue result = UFAIL;
+
+  boost::recursive_mutex::scoped_lock serverLock(server->mutex);
+  boost::try_mutex::scoped_try_lock treeLock(treeMutex, false);
+
   {
-    // Handle and try to finish the binary transfer.
-    int total =
-      binCommand->refBinary->ref()->bufferSize - transferedBinary_;
-    if (length < total)
-    {
-      memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
-	     buffer,
-	     length);
-      transferedBinary_ += length;
-      unlock();
-      return USUCCESS;
-    }
-    else
-    {
-      memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
-	     buffer,
-	     total);
-      buffer += total;
-      length -= total;
-      if (treeLock.tryLock())
+    boost::mutex::scoped_lock lock(mutex_);
+
+    if (receiveBinary_)
       {
-	receiveBinary_ = false;
-	append(binCommand->up);
-	gotlock = true;
+        // Handle and try to finish the binary transfer.
+        int total =
+          binCommand->refBinary->ref()->bufferSize - transferedBinary_;
+        if (length < total)
+          {
+            memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
+                   buffer,
+                   length);
+            transferedBinary_ += length;
+            return USUCCESS;
+          }
+        else
+          {
+            memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
+                   buffer,
+                   total);
+            buffer += total;
+            length -= total;
+            if (treeLock.try_lock())
+              {
+                receiveBinary_ = false;
+                append(binCommand->up);
+                gotlock = true;
+              }
+            else
+              faillock = true;
+          }
       }
-      else
-      {
-	faillock = true;
-      }
-    }
+    result = recvQueue_->push(buffer, length);
   }
 
-  UErrorValue result = recvQueue_->push(buffer, length);
-  unlock();
-  PING();
   if (result != USUCCESS)
   {
     // Handles memory errors.
@@ -478,21 +483,17 @@ UConnection::received (const ubyte *buffer, int length)
     return USUCCESS;
   }
 
-  if (!gotlock && !treeLock.tryLock())
+  if (!gotlock && !treeLock.try_lock())
   {
     newDataAdded = true; //server will call us again right after work
     return USUCCESS;
   }
 
   UParser& p = parser();
-  PING();
+
+  //reentrency trouble
   if (p.commandTree)
-  {
-    PING();
-    //reentrency trouble
-    treeLock.unlock();
     return USUCCESS;
-  }
 
   // Starts processing
   receiving = true;
@@ -542,22 +543,21 @@ UConnection::received (const ubyte *buffer, int length)
 		      "UConnection::received",
 		      p.errorMessage);
       }
-
-      // Warnings handling
-      if (*p.warning && !server->memoryOverflow)
+      else if (p.commandTree && p.commandTree->command1)
       {
-	// a warning was emitted
-	send(p.warning, "warn ");
+        // Warnings handling
+        if (*p.warning && !server->memoryOverflow)
+        {
+          // a warning was emitted
+          send(p.warning, "warn ");
 
-	p.warning[ strlen(p.warning) - 1 ] = 0; // remove '\n'
-	p.warning[ 42 ] = 0; // cut at 41 characters
-	server->error(::DISPLAY_FORMAT, (long)this,
-		      "UConnection::received",
-		      p.warning);
-      }
+          p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
+          p.errorMessage[ 42 ] = 0; // cut at 41 characters
+          server->error(::DISPLAY_FORMAT, (long)this,
+                        "UConnection::received",
+                        p.warning);
+        }
 
-      if (p.commandTree && p.commandTree->command1)
-      {
 	// Process "commandTree"
 
 	// ASSIGN_BINARY: intercept and execute immediately
@@ -616,7 +616,6 @@ UConnection::received (const ubyte *buffer, int length)
 
   receiving = false;
   p.commandTree = 0;
-  treeLock.unlock();
   if (server->memoryOverflow)
     return UMEMORYFAIL;
 
@@ -775,6 +774,7 @@ UConnection::processCommand(UCommand *&command,
   rl = UEXPLORED;
 
   // Handle blocked/freezed commands
+
   if (command->isFrozen())
     return command;
 
@@ -784,6 +784,7 @@ UConnection::processCommand(UCommand *&command,
     return 0;
   }
 
+  UCommand	   *morphed;
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
@@ -932,7 +933,7 @@ UConnection::processCommand(UCommand *&command,
     if (command->type == UCommand::TREE)
     {
       mustReturn = true;
-      return command;
+      return command ;
     }
     else
     {
@@ -945,15 +946,15 @@ UConnection::processCommand(UCommand *&command,
 	case UCommand::UCOMPLETED:
 	  if (command == lastCommand)
 	    lastCommand = command->up;
+
 	  delete command;
 	  return 0;
 
 	case UCommand::UMORPH:
-	{
 	  command->status = UCommand::UONQUEUE;
 	  command->morphed = true;
 
-	  UCommand *morphed = command->morph;
+	  morphed = command->morph;
 	  morphed->myconnection = command->myconnection;
 	  morphed->toDelete = command->toDelete;
 	  morphed->up = morphed_up;
@@ -967,7 +968,6 @@ UConnection::processCommand(UCommand *&command,
 	    delete command;
 	  command = morphed;
 	  break;
-	}
 
 	default:
 	  // "+bg" flag
@@ -1032,7 +1032,7 @@ void
 UConnection::execute(UCommand_TREE*& execCommand)
 {
   PING();
-  if (!execCommand || closing)
+  if (execCommand == 0 || closing)
     return;
 
   // There are complications to make this a for loop: occurrences of
