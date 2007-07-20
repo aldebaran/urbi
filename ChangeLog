@@ -1,5 +1,13 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Activate function calls
+	* src/parser/bison/ugrammar.y: Generalize the function call syntax.
+	Delete lists that have been spliced.
+	(new_exp): Return type is CallExp.
+	(name): Type is CallExp.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Remove debug scafolding
 	Thanks to Ted and Julian (Valgrind).
 	* src/parser/bison/ugrammar.y: Activate dtors.

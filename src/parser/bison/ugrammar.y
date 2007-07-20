@@ -149,7 +149,7 @@
 
     /// "<target> . <method> ()".
     static
-    ast::Exp*
+    ast::CallExp*
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol method)
     {
@@ -161,7 +161,7 @@
 
     /// "<target> . <method> ()".
     static
-    ast::Exp*
+    ast::CallExp*
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method)
     {
@@ -170,12 +170,12 @@
 
     /// "<target> . <method> (<arg1>)".
     static
-    ast::Exp*
+    ast::CallExp*
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
-      ast::Exp* res = new_exp (l, target, method);
-      dynamic_cast<ast::CallExp*>(res)->args_get().push_back(arg1);
+      ast::CallExp* res = new_exp (l, target, method);
+      res->args_get().push_back(arg1);
       return res;
     }
 
@@ -331,7 +331,9 @@
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call>;
 
+%type <call>  name
 %type <call>  lvalue
+
 %type <expr>  class_declaration
 %type <expr>  class_declaration_list
 %type <expr>  expr
@@ -339,7 +341,6 @@
 %type <expr>  flag
 %type <expr>  flags.0
 %type <expr>  flags.1
-%type <expr>  name
 %type <expr>  namedarguments
 %type <expr>  names
 %type <expr>  raw_arguments
@@ -698,22 +699,24 @@ expr:
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
 | "[" exprs "]" { $$ = 0; }
-| "identifier" "(" exprs ")"
+| name "(" exprs ")"
     {
-      (*$3).push_front (0);
-      $$ = new ast::CallExp(@$, take($1), $3);
+      $1->args_get().splice($1->args_get().end(), *$3);
+      delete $3;
+      $$ = $1;
     }
 | "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
 | "new" "identifier" args
   {
     // Compiled as
-    // id clone () . init (args);
+    // id . clone () . init (args);
     // Parent class.
     ast::Exp* parent = new_exp (@2, 0, $2);
     ast::exps_type* args = new ast::exps_type;
     args->push_back (new_exp(@1 + @2, parent, "clone"));
     args->splice(args->end(), *$3);
+    delete $3;
     $$ = new ast::CallExp (@$, "init", args);
   }
 ;
