@@ -1,5 +1,11 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Fix again ast-nodes.mk generation
+	* src/ast/Makefile.am: Use always the same name, with $(srcdir),
+	so that Make realizes it must update it.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Fix make check
 	* src/object/Makefile.am (LDADD): Add libast.
 	* src/object/object-test.hh (urbiserver): New.
