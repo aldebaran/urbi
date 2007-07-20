@@ -40,11 +40,19 @@ namespace runner
     for (++i; i != i_end; ++i)
       args.push_back (eval (**i));
 
-    // We may have to run a primitive.
-    if (val->kind_get () == object::Object::kind_primitive)
-      current_ = val.cast<object::Primitive>()->value_get()(args);
-    else
-      current_ = val;
+    // We may have to run a primitive, or some code.
+    switch (val->kind_get ())
+    {
+      case object::Object::kind_primitive:
+	current_ = val.cast<object::Primitive>()->value_get()(args);
+	break;
+      case object::Object::kind_code:
+	current_ = eval (*val.cast<object::Code>()->value_get());
+	break;
+      default:
+	current_ = val;
+	break;
+    }
   }
 
   void
@@ -60,7 +68,6 @@ namespace runner
     // FIXME: Arguments.
     current_ = new object::Code (e.body_get());
   }
-
 
 
   void

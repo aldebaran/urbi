@@ -410,9 +410,15 @@ CallExp:
            }
        }'
     - $name
-    - '"("'
-    - libport::separate (n.args_get (), libport::make_pair (',', libport::iendl))
-    - '")"'
+    - '{
+          if (n.args_get ().size() >= 2)
+            ostr_ << "("
+                  << libport::separate (exps_type (++n.args_get ().begin(), 
+                                                   n.args_get ().end()),
+                                        libport::make_pair (",",
+                                                            libport::iendl))
+                  << ")";
+       }'
 
 ArrayExp:
   super: Exp
@@ -505,5 +511,5 @@ TagDec:
   super: Dec
 
 # Local Variables:
-# mode: text
+# mode: yaml
 # End:
