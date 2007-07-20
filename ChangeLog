@@ -1,5 +1,12 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Fix lazy_overwrite
+	* dev/tools.py (warning): Simplify.
+	(lazy_overwrite): Do not recreate the file if it is not
+	needed!
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Fix dependency on ast-nodes.mk
 	* src/ast/Makefile.am: Depend on nodes-mk.stamp since the
 	generator is ast-nodes-mk-gen.

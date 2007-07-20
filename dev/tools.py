@@ -7,10 +7,7 @@ import os, stat, filecmp, shutil
 
 ## Display a warning.
 def warning (msg):
-  out = sys.stdout
-  sys.stdout = sys.stderr
-  print "Warning: " + msg
-  sys.stdout = out
+  print >>sys.stderr, "Warning: " + msg
 
 
 ## Display an error message and exit.
@@ -19,22 +16,25 @@ def error (msg):
   sys.exit (1)
 
 
-## Overwrite ref with new if different, or nonexistant.
+## Overwrite old with new if different, or nonexistant.
 ## Remove the write permission on the result to avoid accidental edition
 ## of generated files.
-def lazy_overwrite (ref, new):
-  if not os.path.isfile (ref):
-    print "> Create: " + ref
-  elif not filecmp.cmp (ref, new):
-    print "> Overwrite: " + ref
+def lazy_overwrite (old, new):
+  if not os.path.isfile (old):
+    print "> Create: " + old
+    shutil.move (new, old)
+  elif not filecmp.cmp (old, new):
+    print "> Overwrite: " + old
     # Change the file modes to write the file
-    file_modes = os.stat (ref) [stat.ST_MODE]
-    os.chmod (ref, file_modes | 0666);
-    shutil.move (ref, ref + "~")
-  shutil.move (new, ref)
+    file_modes = os.stat (old) [stat.ST_MODE]
+    os.chmod (old, file_modes | 0666);
+    shutil.move (old, old + "~")
+    shutil.move (new, old)
+  else:
+    shutil.remove (new)
   # Prevent generated file modifications
-  file_modes = os.stat (ref) [stat.ST_MODE]
-  os.chmod(ref, file_modes & 0555);
+  file_modes = os.stat (old) [stat.ST_MODE]
+  os.chmod(old, file_modes & 0555);
 
 def lazy_install (srcdir, name):
    """Install name.tmp as srcdir/name."""
