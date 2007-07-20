@@ -8,6 +8,8 @@
 
 # include "libport/deref.hh"
 
+# include "ast/pretty-printer.hh"
+
 # include "object/atom.hh"
 # include "object/primitives.hh"
 
@@ -40,6 +42,9 @@ namespace object
   Object::kind_type
   Atom<Traits>::kind_get () const
   {
+    // As is usual for integer values, Traits::kind is an enum whose
+    // value is a kind_type.  So we have to cast it back to its type
+    // here.
     return static_cast<Object::kind_type>(Traits::kind);
   }
 

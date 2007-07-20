@@ -1,5 +1,13 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Warning: does not work!
+	* src/object/atom.hxx (ast/pretty-printer.hh): Include.
+	* src/parser/bison/ugrammar.y: Deactivate dtors.
+	* src/runner/runner.cc: Add debug scafolding.
+	* src/uconnection.cc, src/uexpression.cc: Do not free the Ast.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Prettify 
 	* src/ast/ast.yml (CallExp::printer): Don't display useless parens.
 	* src/object/Makefile.am: Don't compile atom.cc, it's empty.

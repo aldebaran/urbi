@@ -532,7 +532,9 @@ UConnection::received (const ubyte *buffer, int length)
       // Xtrem memory recovery in case of anomaly
       if (server->memoryOverflow && p.commandTree)
       {
-	delete p.commandTree;
+	// FIXME: 2007-07-20: Currently we can't free the commandTree,
+	// we might kill function bodies.
+	// delete p.commandTree;
 	p.commandTree = 0;
       }
 
@@ -540,7 +542,9 @@ UConnection::received (const ubyte *buffer, int length)
       if (*p.errorMessage && !server->memoryOverflow)
       {
 	// a parsing error occured
-	delete p.commandTree;
+	// FIXME: 2007-07-20: Currently we can't free the commandTree,
+	// we might kill function bodies.
+	//delete p.commandTree;
 	p.commandTree = 0;
 
 	send(p.errorMessage, "error");

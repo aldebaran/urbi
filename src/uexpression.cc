@@ -973,7 +973,9 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
       // a parsing error occured
       if (p.commandTree)
 	{
-	  delete p.commandTree;
+	  // FIXME: 2007-07-20: Currently we can't free the commandTree,
+	  // we might kill function bodies.
+	  //delete p.commandTree;
 	  p.commandTree = 0;
 	}
       connection->send(p.errorMessage, "error");
