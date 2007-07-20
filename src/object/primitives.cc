@@ -14,6 +14,7 @@ namespace object
 {
 
   rObject context_class;
+  rObject code_class;
   rObject float_class;
   rObject integer_class;
   rObject object_class;
@@ -76,6 +77,19 @@ namespace object
       DECLARE(reboot);
       DECLARE(shutdown);
 #undef DECLARE
+    }
+
+  }
+
+
+  namespace
+  {
+
+    /// Initialize the Code class.
+    static
+    void
+    code_class_initialize ()
+    {
     }
 
   }

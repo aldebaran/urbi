@@ -44,6 +44,17 @@ namespace object
   };
 
 
+  /*-------.
+  | Code.  |
+  `-------*/
+
+  struct code_traits
+  {
+    typedef const ast::Exp* type;
+    enum { kind = Object::kind_code };
+  };
+
+
   /*--------.
   | Float.  |
   `--------*/

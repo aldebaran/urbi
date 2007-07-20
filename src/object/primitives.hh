@@ -12,6 +12,7 @@ namespace object
 {
 
   extern rObject object_class;
+  extern rObject code_class;
   extern rObject context_class;
 
   /*--------.

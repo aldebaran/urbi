@@ -27,6 +27,7 @@
 # include "ast/exec-exp.hh"
 # include "ast/external-exp.hh"
 # include "ast/float-exp.hh"
+# include "ast/function.hh"
 # include "ast/id-exp.hh"
 # include "ast/if-exp.hh"
 # include "ast/inherits-exp.hh"

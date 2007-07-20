@@ -51,13 +51,6 @@
   @$ = up.loc_;
 }
 
-%union
-{
-  ast::Exp*       expr;
-  ast::CallExp*   call;
-}
-
-%printer { debug_stream() << libport::deref << $$; } <expr>;
 
 %code // Output in ugrammar.cc.
 {
@@ -311,6 +304,7 @@
 %union
 {
   libport::Symbol* symbol;
+  ast::symbols_type* symbols;
 }
 
 %token
@@ -319,10 +313,25 @@
    <symbol> OPERATOR           "operator command"
    <symbol> OPERATOR_ID        "operator"
    <symbol> OPERATOR_VAR       "var-operator"
+%type <symbols>  identifiers identifiers.1 formal_arguments
 %destructor { delete $$; } <symbol>;
 %printer { debug_stream() << libport::deref << $$; } <symbol>;
+%printer { debug_stream() << libport::separate (*$$, ", "); } <symbols>;
 
 
+/*--------------.
+| Expressions.  |
+`--------------*/
+
+%union
+{
+  ast::Exp*       expr;
+  ast::CallExp*   call;
+}
+
+%printer { debug_stream() << libport::deref << $$; } <expr> <call>;
+
+%type <call>  lvalue
 %type <expr>  class_declaration
 %type <expr>  class_declaration_list
 %type <expr>  expr
@@ -330,8 +339,6 @@
 %type <expr>  flag
 %type <expr>  flags.0
 %type <expr>  flags.1
-%type <expr>  identifiers
-%type <call>  lvalue
 %type <expr>  name
 %type <expr>  namedarguments
 %type <expr>  names
@@ -426,7 +433,7 @@ stmt:
   {
     $$ = new ast::TagExp (@$, $1, $4);
   }
-| flags.1 ":" stmt { $$ = 0; }
+| flags.1 ":" stmt { $$ = $3; }
 ;
 
 
@@ -591,9 +598,9 @@ name:
 ;
 
 
-/*---------.
-| Lvalue.  |
-`---------*/
+/*------------.
+| Variables.  |
+`------------*/
 
 // An lvalue is a CallExp without arguments.
 lvalue:
@@ -643,6 +650,18 @@ expr:
   name "->" "identifier" { $$ = 0; }
 ;
 
+
+/*------------.
+| Functions.  |
+`------------*/
+
+// Anonymous function.
+expr:
+  "function" formal_arguments "{" stmts "}"
+    {
+      $$ = new ast::Function (@$, take($2), $4);
+    }
+;
 
 /*-----------------.
 | namedarguments.  |
@@ -781,7 +800,7 @@ expr.opt:
 %printer
 {
   if ($$)
-    debug_stream() << libport::separate (*$$, ',');
+    debug_stream() << libport::separate (*$$, ", ");
   else
     debug_stream() << "NULL";
 } <exprs>;
@@ -829,13 +848,21 @@ var.opt:
 // One or several comma-separated identifiers.
 identifiers.1:
   var.opt "identifier"
+  {
+    $$ = new ast::symbols_type;
+    $$->push_back($2);
+  }
 | identifiers.1 "," var.opt "identifier"
+  {
+    $$ = $1;
+    $$->push_back($4);
+  }
 ;
 
 // Zero or several comma-separated identifiers.
 identifiers:
-  /* empty */     { $$ = 0; }
-| identifiers.1   { $$ = 0; }
+  /* empty */     { $$ = new ast::symbols_type; }
+| identifiers.1   { $$ = $1; }
 ;
 
 
@@ -853,7 +880,7 @@ class_declaration:
    For the time being, this is disabled because it goes against
    factoring.  Might be reintroduced later. */
 formal_arguments:
-  "(" identifiers ")"
+  "(" identifiers ")" { $$ = $2; }
 ;
 
 class_declaration_list:

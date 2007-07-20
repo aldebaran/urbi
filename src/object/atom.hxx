@@ -6,6 +6,8 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
+# include "libport/deref.hh"
+
 # include "object/atom.hh"
 # include "object/primitives.hh"
 
@@ -17,15 +19,11 @@ namespace object
   Atom<Traits>::Atom (const typename Traits::type& v)
     : value_(v)
   {
-    // FIXME: I don't know how do make it better for the time being.
-    // Help me if you can.
     switch (kind_get())
       {
-# define CASE(Kind) case kind_ ## Kind: parent_add (Kind ## _class); break
-	CASE(float);
-	CASE(integer);
-	CASE(primitive);
-	CASE(string);
+# define CASE(What, Name)					\
+	case kind_ ## What: parent_add (What ## _class); break;
+	APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
       case kind_object:
 	pabort (kind_get());
@@ -58,7 +56,7 @@ namespace object
   std::ostream&
   Atom<Traits>::special_slots_dump (std::ostream& o) const
   {
-    return o << "value" << " = " << value_ << libport::iendl;
+    return o << "value" << " = " << libport::deref << value_ << libport::iendl;
   }
 
 } // namespace object

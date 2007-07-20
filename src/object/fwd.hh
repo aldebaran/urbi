@@ -9,22 +9,27 @@
 # include "libport/fwd.hh"
 # include "libport/shared-ptr.hh"
 
+namespace ast
+{
+  class Exp;
+}
+
 namespace object
 {
 
+  // rObject & objects_type.
   class Object;
   typedef libport::shared_ptr<Object> rObject;
-
   typedef std::vector<rObject> objects_type;
-  typedef rObject (*primitive_type) (objects_type);
 
-  template <typename Traits>
-  class Atom;
+  // primitive_type.
+  typedef rObject (*primitive_type) (objects_type);
 
   /// Macro should be a binary macro whose first arg, \p What, is the
   /// lower case C++ name, and the second argument, \p Name, the
   /// capitalized Urbi name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
+  Macro(code,      Code)				\
   Macro(float,     Float)				\
   Macro(integer,   Integer)				\
   Macro(primitive, Primitive)				\
@@ -34,6 +39,10 @@ namespace object
   Macro(object,    Object)			\
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)
 
+
+  // All the atoms.
+  template <typename Traits>
+  class Atom;
 
 # define DECLARE(What, Name)				\
   struct What ## _traits;				\

@@ -230,6 +230,10 @@ AssignExp:
   attributes:
     - lhs: { type: 'CallExp*', desc: Reference to the affected variable }
     - rhs: { type: 'Exp*', desc: Assigned value }
+  printer:
+    - ~lhs
+    - '" = "'
+    - ~rhs
 
 InheritsExp:
   super: Exp
@@ -471,12 +475,17 @@ VarDec:
         mandatory: False
         desc: The initial value (expression) assigned to the variable
 
-FunctionDec:
-  super: Dec
+Function:
+  super: Exp
   attributes:
-    - formals: { type: 'vardecs_type*', desc: Formal arguments }
-    - result:  { type: 'NameTy*', mandatory: False, desc: Result type}
-    - body: { type: 'Exp*', access: rwW, mandatory: False, desc: Instructions }
+    - formals: { type: 'symbols_type', desc: Formal arguments }
+    - body: { type: 'Exp*', access: rwW, mandatory: False, desc: Body }
+  printer:
+    - '"function ("'
+    - libport::separate (n.formals_get(), ", ")
+    - '") {"'
+    - ~body
+    - '"}"'
 
 EventDec:
   super: Dec

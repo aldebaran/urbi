@@ -1,5 +1,33 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Support function (but not yet calls)
+	* src/ast/all.hh (function.hh): Include.
+	* src/ast/ast.yml (AssignExp::printer): New.
+	(FunctionDec): Rename as...
+	(Function): this.
+	Derive from Exp, not Dec: it does not have a name.
+	Remove the "result" attribute, we are not typed.
+	Add printer description.
+
+	* src/object/fwd.hh: Tidy.
+	(APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT): Add code/Code.
+	* src/object/atom.cc: Empty.
+	* src/object/atom.hh, src/object/atom.hxx (code_traits): New.
+	Use APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT.
+	(special_slots_dump): Use libport::deref since code is actually
+	a pointer.
+	* src/object/primitives.hh, src/object/primitives.cc
+	(code_class, code_class_initialize): New.
+	* src/parser/bison/ugrammar.y: Sort things together.
+	(<symbols>): New type.
+	Use it.
+	(function <id> <args> { <expr> }): New.
+
+	* src/runner/runner.hh, src/runner/runner.cc (Function):
+	Preliminary support.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	shutil.rm does not exist
 	* dev/tools.py: Use os.remove.
 

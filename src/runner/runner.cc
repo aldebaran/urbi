@@ -53,6 +53,16 @@ namespace runner
     current_ = new object::Float (e.value_get());
   }
 
+
+  void
+  Runner::operator() (const ast::Function& e)
+  {
+    // FIXME: Arguments.
+    current_ = new object::Code (e.body_get());
+  }
+
+
+
   void
   Runner::operator() (const ast::SemicolonExp& e)
   {
