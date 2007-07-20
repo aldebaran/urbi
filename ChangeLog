@@ -1,3 +1,11 @@
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
+	Remove debug scafolding
+	Thanks to Ted and Julian (Valgrind).
+	* src/parser/bison/ugrammar.y: Activate dtors.
+	* src/runner/runner.cc: Remove debug traces.
+	* src/uconnection.cc (UConnection::execute): Deactivate delete.
+
 2007-07-20  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Remove extra delete in uconnection.cc (execute)

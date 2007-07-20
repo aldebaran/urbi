@@ -1064,6 +1064,9 @@ UConnection::execute(ast::Ast*& execCommand)
   sendc(os.str().c_str(), 0);
   endline();
 
+  // FIXME: 2007-07-20: Currently we can't free the commandTree,
+  // we might kill function bodies.
+  // delete execCommand;
   execCommand = 0;
 
   PING();

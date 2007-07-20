@@ -294,7 +294,7 @@
 // FIXME: Arguably, could be a Symbol too.
 %token
    <str>  STRING             "string"
- // %destructor { delete $$; } <str>;
+%destructor { delete $$; } <str>;
 %printer { debug_stream() << libport::deref << $$; } <str>;
 
 
@@ -314,7 +314,7 @@
    <symbol> OPERATOR_ID        "operator"
    <symbol> OPERATOR_VAR       "var-operator"
 %type <symbols> identifiers identifiers.1 formal_arguments
- //%destructor { delete $$; } <symbol>;
+%destructor { delete $$; } <symbol>;
 %printer { debug_stream() << libport::deref << $$; } <symbol>;
 %printer { debug_stream() << libport::separate (*$$, ", "); } <symbols>;
 

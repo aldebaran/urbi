@@ -48,7 +48,6 @@ namespace runner
 	break;
       case object::Object::kind_code:
 	current_ = eval (*val.cast<object::Code>()->value_get());
-	std::cerr << "Call result: " << *current_ << std::endl;
 	break;
       default:
 	current_ = val;
@@ -67,9 +66,6 @@ namespace runner
   Runner::operator() (const ast::Function& e)
   {
     // FIXME: Arguments.
-    std::cerr << "Return: " << e.body_get()
-	      << ": " << e.body_get()->location_get()
-	      << ": " << *e.body_get() << std::endl;
     current_ = new object::Code (e.body_get());
   }
 
