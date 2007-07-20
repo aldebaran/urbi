@@ -221,7 +221,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "var"           return token::TOK_VAR;
 "'in"           return token::TOK_VARIN;
 "'out"          return token::TOK_VAROUT;
-"wait"          return token::TOK_WAIT;
+"wait"          RETURN_OP(WAIT);
 "waituntil"     return token::TOK_WAITUNTIL;
 "whenever"      return token::TOK_WHENEVER;
 "while"         return token::TOK_WHILE;

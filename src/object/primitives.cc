@@ -60,6 +60,15 @@ namespace object
   SERVER_FUNCTION(shutdown)
 #undef SERVER_FUNCTION
 
+  rObject
+  object_class_wait (objects_type args)
+  {
+    // FIXME: Currently does nothing.  A stub so that we
+    // accept "wait 2s" as is used in the test suite.
+    return args[0];
+  }
+
+
   namespace
   {
 
@@ -76,6 +85,7 @@ namespace object
       DECLARE(print);
       DECLARE(reboot);
       DECLARE(shutdown);
+      DECLARE(wait);
 #undef DECLARE
     }
 

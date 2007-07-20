@@ -76,39 +76,6 @@
   namespace
   {
 
-#if 0 // FIXME: Not used yet.
-
-    /// Whether the \a command was the empty command.
-    static
-    bool
-    spontaneous (const UCommand& u)
-    {
-      const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
-      return noop && noop->is_spontaneous();
-    }
-
-    /// Issue a warning.
-    static
-    void
-    warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
-    {
-      std::ostringstream o;
-      o << "!!! " << l << ": " << m << "\n" << std::ends;
-      up.connection.send(o.str().c_str(), "warning");
-    }
-
-    /// Complain if \a command is not spontaneous.
-    static
-    void
-    warn_spontaneous(UParser& up,
-		     const yy::parser::location_type& l, const UCommand& u)
-    {
-      if (spontaneous(u))
-	warn (up, l,
-	    "implicit empty statement.  "
-	    "Use 'noop' to make it explicit.");
-    }
-#endif
     /// Return the value pointed to be \a s, and delete it.
     template <typename T>
     static
@@ -193,69 +160,69 @@
 
 /* Tokens and nonterminal symbols, with their type */
 
-%token
-  TOK_ADDGROUP     "addgroup"
-  TOK_ALIAS        "alias"
-  TOK_ASSIGN       "="
-  TOK_AT           "at"
-  TOK_BIN          "bin"
-  TOK_CLASS        "class"
-  TOK_COLON        ":"
-  TOK_COPY         "copy"
-  TOK_DEF          "def"
-  TOK_DELGROUP     "delgroup"
-  TOK_DIR          "->"
-  TOK_DISINHERITS  "disinherits"
-  TOK_DOLLAR       "$"
-  TOK_DOUBLECOLON  "::"
-  TOK_ELSE         "else"
-  TOK_EMIT         "emit"
-  TOK_EVENT        "event"
-  TOK_EVERY        "every"
-  TOK_FALSE        "false"
-  TOK_FOR          "for"
-  TOK_FOREACH      "foreach"
-  TOK_FREEZEIF     "freezeif"
-  TOK_FROM         "from"
-  TOK_FUNCTION     "function"
-  TOK_GROUP        "group"
-  TOK_IF           "if"
-  TOK_IN           "in"
-  TOK_INHERITS     "inherits"
-  TOK_LBRACE       "{"
-  TOK_LOOP         "loop"
-  TOK_LOOPN        "loopn"
-  TOK_LPAREN       "("
-  TOK_LBRACKET     "["
-  TOK_MINUSASSIGN  "-="
-  TOK_MINUSMINUS   "--"
-  TOK_NEW          "new"
-  TOK_NOOP         "noop"
-  TOK_NORM         "'n"
-  TOK_OBJECT       "object"
-  TOK_ONLEAVE      "onleave"
-  TOK_PLUSASSIGN   "+="
-  TOK_PLUSPLUS     "++"
-  TOK_POINT        "."
-  TOK_RBRACE       "}"
-  TOK_RETURN       "return"
-  TOK_RPAREN       ")"
-  TOK_RBRACKET     "]"
-  TOK_STATIC       "static"
-  TOK_STOPIF       "stopif"
-  TOK_TILDE        "~"
-  TOK_TIMEOUT      "timeout"
-  TOK_TRUE         "true"
-  TOK_ECHO         "echo"
-  TOK_UNALIAS      "unalias"
-  TOK_VAR          "var"
-  TOK_VARERROR     "'e"
-  TOK_VARIN        "'in"
-  TOK_VAROUT       "'out"
-  TOK_WAIT         "wait"
-  TOK_WAITUNTIL    "waituntil"
-  TOK_WHENEVER     "whenever"
-  TOK_WHILE        "while"
+%token  
+         TOK_ADDGROUP     "addgroup"
+         TOK_ALIAS        "alias"
+         TOK_ASSIGN       "="
+         TOK_AT           "at"
+         TOK_BIN          "bin"
+         TOK_CLASS        "class"
+         TOK_COLON        ":"
+         TOK_COPY         "copy"
+         TOK_DEF          "def"
+         TOK_DELGROUP     "delgroup"
+         TOK_DIR          "->"
+         TOK_DISINHERITS  "disinherits"
+         TOK_DOLLAR       "$"
+         TOK_DOUBLECOLON  "::"
+         TOK_ELSE         "else"
+         TOK_EMIT         "emit"
+         TOK_EVENT        "event"
+         TOK_EVERY        "every"
+         TOK_FALSE        "false"
+         TOK_FOR          "for"
+         TOK_FOREACH      "foreach"
+         TOK_FREEZEIF     "freezeif"
+         TOK_FROM         "from"
+         TOK_FUNCTION     "function"
+         TOK_GROUP        "group"
+         TOK_IF           "if"
+         TOK_IN           "in"
+         TOK_INHERITS     "inherits"
+         TOK_LBRACE       "{"
+         TOK_LOOP         "loop"
+         TOK_LOOPN        "loopn"
+         TOK_LPAREN       "("
+         TOK_LBRACKET     "["
+         TOK_MINUSASSIGN  "-="
+         TOK_MINUSMINUS   "--"
+         TOK_NEW          "new"
+         TOK_NOOP         "noop"
+         TOK_NORM         "'n"
+         TOK_OBJECT       "object"
+         TOK_ONLEAVE      "onleave"
+         TOK_PLUSASSIGN   "+="
+         TOK_PLUSPLUS     "++"
+         TOK_POINT        "."
+         TOK_RBRACE       "}"
+         TOK_RETURN       "return"
+         TOK_RPAREN       ")"
+         TOK_RBRACKET     "]"
+         TOK_STATIC       "static"
+         TOK_STOPIF       "stopif"
+         TOK_TILDE        "~"
+         TOK_TIMEOUT      "timeout"
+         TOK_TRUE         "true"
+         TOK_ECHO         "echo"
+         TOK_UNALIAS      "unalias"
+         TOK_VAR          "var"
+         TOK_VARERROR     "'e"
+         TOK_VARIN        "'in"
+         TOK_VAROUT       "'out"
+<symbol> TOK_WAIT         "wait"
+         TOK_WAITUNTIL    "waituntil"
+         TOK_WHENEVER     "whenever"
+         TOK_WHILE        "while"
 
 %token TOK_EOF 0 "end of command"
 
@@ -515,8 +482,8 @@ pipe.opt:
 `-------*/
 
 stmt:
-  /* empty */ { $$ = new ast::YieldExp (@$); }
-| "noop"      { $$ = new ast::YieldExp (@$); }
+  /* empty */ { $$ = new ast::Noop (@$); }
+| "noop"      { $$ = new ast::Noop (@$); }
 | expr        { $$ = $1; }
 | "echo" expr namedarguments { $$ = 0; }
 | "group" "identifier" "{" identifiers "}" { $$ = 0; }
@@ -538,7 +505,7 @@ stmt:
 | BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
 | "emit" name args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" name args { $$ = 0; }
-| "wait" expr { $$ = 0; }
+| "wait" expr 			    { $$ = new_exp (@$, 0, $1, $2); }
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }

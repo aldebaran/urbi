@@ -1051,18 +1051,25 @@ UConnection::execute(ast::Ast*& execCommand)
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 
   // "Display" the result.
-  std::ostringstream os;
-  switch (r.result()->kind_get())
+  if (r.result())
   {
-    case object::Object::kind_float:
-      os << r.result().cast<object::Float>()->value_get();
-      break;
-    default:
-      break;
+    std::ostringstream os;
+    switch (r.result()->kind_get())
+    {
+      case object::Object::kind_float:
+	// FIXME: std::fixed leaks to every use of os.
+	os << std::fixed << r.result().cast<object::Float>()->value_get();
+	break;
+      default:
+	break;
+    }
+    // The prefix should be (getTag().c_str()) instead of 0.
+    if (!os.str().empty())
+    {
+      sendc(os.str().c_str(), 0);
+      endline();
+    }
   }
-  // The prefix should be (getTag().c_str()) instead of 0.
-  sendc(os.str().c_str(), 0);
-  endline();
 
   // FIXME: 2007-07-20: Currently we can't free the commandTree,
   // we might kill function bodies.

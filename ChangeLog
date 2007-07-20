@@ -1,5 +1,19 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	"Support" wait & noop
+	* src/ast/ast.yml (YieldExp): Rename as...
+	(Noop): this.
+	* src/ast/all.hh: Adjust.
+	* src/object/primitives.cc (object_class_wait): New.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l
+	(wait): Store its symbol.
+	Use it to implement it as a CallExp.
+	Remove useless code.
+	* src/uconnection.cc (execute): Display something only if there
+	is something to display.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Fix again ast-nodes.mk generation
 	* src/ast/Makefile.am: Use always the same name, with $(srcdir),
 	so that Make realizes it must update it.

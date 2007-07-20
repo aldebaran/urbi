@@ -300,7 +300,7 @@ WheneverExp:
         type: Exp*
         desc: Instructions executed whenever condition is false
 
-YieldExp:
+Noop:
   super: Exp
   desc: /// Also known as nop, noop etc.
   printer:
