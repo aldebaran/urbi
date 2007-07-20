@@ -1,3 +1,11 @@
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
+	Let all the classes be accessible
+	* src/object/primitives.cc (root_classes_initialize): Register
+	the root classes in Object.
+	* src/parser/bison/ugrammar.y (new id): Properly clone the base
+	class, not the Context.
+
 2007-07-17  Akim Demaille  <demaille@gostai.com>
 
 	new Object

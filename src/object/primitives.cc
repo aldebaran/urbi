@@ -279,6 +279,14 @@ float_peq (libport::ufloat l, libport::ufloat r)
       context_class = clone (object_class);
       context_class->slot_set("type", new String ("Context"));
 
+      // Register all these classes in Object, so that when we look up
+      // for "Object" for instance, we find it.
+#define DECLARE(What, Name)			\
+      object_class->slot_set(#Name, What ## _class);
+      APPLY_ON_ALL_PRIMITIVES(DECLARE);
+#undef DECLARE
+      object_class->slot_set("Context", context_class);
+
       return true;
     }
 

@@ -690,8 +690,10 @@ expr:
   {
     // Compiled as
     // id clone () . init (args);
+    // Parent class.
+    ast::Exp* parent = new_exp (@2, 0, $2);
     ast::exps_type* args = new ast::exps_type;
-    args->push_back (new_exp(@1 + @2, 0, "clone"));
+    args->push_back (new_exp(@1 + @2, parent, "clone"));
     args->splice(args->end(), *$3);
     $$ = new ast::CallExp (@$, "init", args);
   }
