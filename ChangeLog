@@ -1,5 +1,11 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Fix dependency on ast-nodes.mk
+	* src/ast/Makefile.am: Depend on nodes-mk.stamp since the
+	generator is ast-nodes-mk-gen.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Improve ast-fwd-gen
 	* dev/ast_params.py (fwd_hh_epilogue): New.
 	* dev/ast-fwd-gen: Use it.

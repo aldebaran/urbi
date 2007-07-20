@@ -44,7 +44,7 @@ $(srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
 	@mv -f $@.tmp $@
 
 # ast-nodes.mk
-ast-nodes.mk: $(srcdir)/nodes.stamp
+ast-nodes.mk: $(srcdir)/nodes-mk.stamp
 
 # fwd.hh.
 EXTRA_DIST += fwd.stamp
