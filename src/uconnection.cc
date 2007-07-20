@@ -1064,7 +1064,6 @@ UConnection::execute(ast::Ast*& execCommand)
   sendc(os.str().c_str(), 0);
   endline();
 
-  delete execCommand;
   execCommand = 0;
 
   PING();

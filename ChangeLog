@@ -1,3 +1,8 @@
+2007-07-20  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Remove extra delete in uconnection.cc (execute)
+	* src/uconnection.cc: here.
+
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
 	Warning: does not work!
