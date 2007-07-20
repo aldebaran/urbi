@@ -1,5 +1,12 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Improve ast-fwd-gen
+	* dev/ast_params.py (fwd_hh_epilogue): New.
+	* dev/ast-fwd-gen: Use it.
+	Modernize.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Let all the classes be accessible
 	* src/object/primitives.cc (root_classes_initialize): Register
 	the root classes in Object.

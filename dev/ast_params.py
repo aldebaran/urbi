@@ -37,3 +37,14 @@ includes_map = {
 
 # The function to clear a list of pointers.
 deep_clear = "libport::deep_clear"
+
+# The end of the fwd.hh file.
+fwd_hh_epilogue = """
+
+  // List types.
+  typedef std::list<Exp*> exps_type;
+  typedef std::pair<Exp*, Exp*> exp_pair_type;
+  typedef std::list<exp_pair_type> exp_pairs_type;
+  typedef std::list<VarDec*> vardecs_type;
+  typedef std::list<Dec*> decs_type;
+"""

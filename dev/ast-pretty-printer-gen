@@ -149,28 +149,28 @@ for node in arr:
       if a[0] == '~' or a[0] == '$':
 	# Handle '~foo' variables
 	name = ' n'
-        attrName = a[1:]
-        attr = node.attribute(attrName)
-        if attr == None:
-          raise 'No such attribute \'%s\' for node \'%s\'' % (attrName, node.name)
-        mandatory = attr.mandatory
-        child = 'n.%s_get()' % (a[1:])
-        if a[0] == '~':
-          if mandatory:
-            action += '    %s.accept(*this);\n' % child
-          else:
-            action += '    if (%s) %s->accept(*this);\n' % (child, child)
-        else:
-          if mandatory:
-            action += '    ostr_ << %s;\n' % (child)
-          else:
-            action += '    if (%s) ostr_ << *%s;\n' % (child, child)
+	attrName = a[1:]
+	attr = node.attribute(attrName)
+	if attr == None:
+	  raise 'No such attribute \'%s\' for node \'%s\'' % (attrName, node.name)
+	mandatory = attr.mandatory
+	child = 'n.%s_get()' % (a[1:])
+	if a[0] == '~':
+	  if mandatory:
+	    action += '    %s.accept(*this);\n' % child
+	  else:
+	    action += '    if (%s) %s->accept(*this);\n' % (child, child)
+	else:
+	  if mandatory:
+	    action += '    ostr_ << %s;\n' % (child)
+	  else:
+	    action += '    if (%s) ostr_ << *%s;\n' % (child, child)
 
       elif a[0] == '{':
-        a = re.compile('^').sub('    ', a)
-        action += a + '\n'
+	a = re.compile('^').sub('    ', a)
+	action += a + '\n'
       else:
-        action += '    ostr_ << %s;\n' % (a)
+	action += '    ostr_ << %s;\n' % (a)
     print """\
   void PrettyPrinter::operator() (const %s&%s)
   {
