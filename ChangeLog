@@ -1,5 +1,11 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	Fix make check
+	* src/object/Makefile.am (LDADD): Add libast.
+	* src/object/object-test.hh (urbiserver): New.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Activate function calls
 	* src/parser/bison/ugrammar.y: Generalize the function call syntax.
 	Delete lists that have been spliced.

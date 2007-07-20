@@ -28,5 +28,14 @@ do						\
 
 # define NEWLINE()  std::cerr << std::endl
 
+// We don't want to link against libkernel.la, but we use some of its
+// primitives.
+struct UServer
+{
+  void shutdown () { std::exit(0); };
+  void reboot ()   { std::exit(1); };
+};
+
+UServer urbiserver;
 
 #endif // !OBJECT_TEST_HH_
