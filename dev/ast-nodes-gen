@@ -376,7 +376,6 @@ def class_generate(node):
   # Print epilogue.
   print_guards_close (node, header, inline, impl)
 
-
   # Restore stdout.
   sys.stdout = sys.__stdout__
 
@@ -385,9 +384,7 @@ def class_generate(node):
 	    (inline, "hxx"),
 	    (impl,   "cc")]:
     f[0].close ()
-    f = node.fname (f[1])
-    path = os.path.join (srcdir, f);
-    tools.lazy_overwrite (path, f + ".tmp")
+    tools.lazy_install (srcdir, node.fname (f[1]))
 
 ## Main -----------------------------------------------------------------------
 loader = ast.Loader ()

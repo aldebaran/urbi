@@ -17,6 +17,7 @@ includes_map = {
   "ufloat": '"libport/ufloat.h"',
 
   "libport::Symbol": '"libport/symbol.hh"',
+  "symbols_type": '"ast/fwd.hh"',
 
   "exps_type": '"ast/exp.hh"',
 
@@ -30,8 +31,6 @@ includes_map = {
   "fieldinits_type": '"ast/field-init.hh"',
   "VarDecs": '"ast/anydecs.hh"',
 
-  "type::Type": '"type/fwd.hh"',
-  "type::Int": '"type/fwd.hh"'
   }
 
 
@@ -47,4 +46,8 @@ fwd_hh_epilogue = """
   typedef std::list<exp_pair_type> exp_pairs_type;
   typedef std::list<VarDec*> vardecs_type;
   typedef std::list<Dec*> decs_type;
+
+  // FIXME: Should not be pointers, but the machinery is not ready
+  // for that.
+  typedef std::list<libport::Symbol*> symbols_type;
 """

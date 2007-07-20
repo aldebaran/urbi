@@ -75,7 +75,7 @@ for node in arr:
   # Unless the user asks for troubles.
   if node.concrete or 'default' in node.__dict__:
     print >>visitor_hh, \
-        "    virtual void operator() (typename Const<%s>::type&);" % (node.name)
+	"    virtual void operator() (typename Const<%s>::type&);" % (node.name)
 
 print >>visitor_hh, """
     /// \\}
@@ -102,7 +102,7 @@ visitor_hxx = file("default-visitor.hxx.tmp", "w")
 sys.stdout = visitor_hxx
 
 print >>visitor_hxx, tools.banner("ast/default-visitor.hxx",
-                                  "Implementation of ast::DefaultVisitor.") + """
+				  "Implementation of ast::DefaultVisitor.") + """
 #ifndef AST_DEFAULT_VISITOR_HXX
 # define AST_DEFAULT_VISITOR_HXX
 
@@ -113,8 +113,8 @@ namespace ast
 {
 
   template <template <typename> class Const>
-  GenDefaultVisitor<Const>::GenDefaultVisitor () :
-    GenVisitor<Const> ()
+  GenDefaultVisitor<Const>::GenDefaultVisitor ()
+    : GenVisitor<Const> ()
   {
   }
 
