@@ -31,7 +31,7 @@ def lazy_overwrite (old, new):
     shutil.move (old, old + "~")
     shutil.move (new, old)
   else:
-    shutil.remove (new)
+    os.remove (new)
   # Prevent generated file modifications
   file_modes = os.stat (old) [stat.ST_MODE]
   os.chmod(old, file_modes & 0555);

@@ -1,5 +1,10 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	shutil.rm does not exist
+	* dev/tools.py: Use os.remove.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	Clean up
 	* dev/ast_params.py: Support symbols_type.
 	* dev/ast-clone-visitor-gen: Use tools.banner.
