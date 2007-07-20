@@ -514,7 +514,12 @@ stmt:
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
 | "event" name formal_arguments { $$ = 0; }
-| "function" name formal_arguments stmt { $$ = 0; }
+| "function" name formal_arguments stmt
+  { 
+    // Compiled as "name = function args stmt".
+    $$ = new ast::AssignExp (@$, $2,
+			     new ast::Function (@$, take($3), $4));
+  }
 ;
 
 /*-------------------.

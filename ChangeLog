@@ -1,5 +1,13 @@
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
+	function name args body
+	* src/parser/bison/ugrammar.y: Recognize it.
+	* tests-local.mk, Makefile.am: Reactivate the tests.
+	IT DOES NOT WORK WELL, because recent changes in tests/
+	made it less robust.
+
+2007-07-20  Akim Demaille  <demaille@gostai.com>
+
 	"Support" wait & noop
 	* src/ast/ast.yml (YieldExp): Rename as...
 	(Noop): this.
