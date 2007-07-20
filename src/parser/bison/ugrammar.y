@@ -550,8 +550,8 @@ stmt:
 | "var" lvalue "=" expr namedarguments { $$ = 0; }
 | lvalue "+=" expr { $$ = 0; }
 | lvalue "-=" expr { $$ = 0; }
-| lvalue "--" { $$ = 0; }
-| lvalue "++" { $$ = 0; }
+| lvalue "--"      { $$ = 0; }
+| lvalue "++"      { $$ = 0; }
 ;
 
 /*---------------------.

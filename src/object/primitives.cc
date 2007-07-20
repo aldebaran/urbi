@@ -28,20 +28,20 @@ namespace object
   // FIXME: I have put them here, but it's probably not the best
   // place.  We probably needed something like a Server object.
 
-  rObject							
-  object_class_clone (objects_type args)			
+  rObject
+  object_class_clone (objects_type args)
   {
     return clone(args[0]);
   }
 
-  rObject							
-  object_class_init (objects_type args)			
+  rObject
+  object_class_init (objects_type args)
   {
     return args[0];
   }
 
-  rObject							
-  object_class_print (objects_type args)			
+  rObject
+  object_class_print (objects_type args)
   {
     std::cout << *args[0] << std::endl;
     return args[0];
@@ -183,7 +183,7 @@ float_peq (libport::ufloat l, libport::ufloat r)
 #undef DECLARE_M
 #undef DECLARE_OP
 #undef DECLARE
-#
+
   namespace
   {
     /// Initialize the Float class.
