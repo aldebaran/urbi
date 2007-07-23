@@ -269,7 +269,7 @@ take (T* t)
   TOK_EMIT         "emit"
   TOK_EVENT        "event"
   TOK_EVERY        "every"
-  TOK_EXP          "^"
+  TOK_EXP          "**"
   TOK_EXPRBLOCK    "expression block"
   TOK_FALSECONST   "false"
   TOK_FOR          "for"
@@ -408,7 +408,7 @@ take (T* t)
 %left  "-" "+"
 %left  "*" "/" "%"
 %left  "!" NEG     /* Negation--unary minus */
-%right "^"
+%right "**"
 %right TOK_NORM
 
 %right "," ";"
@@ -1343,7 +1343,7 @@ expr:
   | expr "*" expr	{ $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); }
   | expr "/" expr	{ $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); }
   | expr "%" expr	{ $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); }
-  | expr "^" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
+  | expr "**" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
 
   | TOK_COPY expr  %prec NEG {
 

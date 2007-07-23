@@ -1,3 +1,9 @@
+2007-07-23  mefyl  <mefyl@lrde.epita.fr>
+
+	Use '**' instead of '^'. Update tests external.
+	* src/parser/bison/ugrammar.y: Use '**' instead of '^' in the grammar.
+	* tests-local.mk: Do not check new tests from trunk which fail.
+
 2007-07-13  Akim Demaille  <demaille@gostai.com>
 
 	Fix ''d
