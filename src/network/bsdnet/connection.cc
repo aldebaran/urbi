@@ -55,7 +55,7 @@ Connection::print (std::ostream& o) const
 //! Close the connection
 /*!
  */
-UErrorValue
+UConnection&
 Connection::closeConnection()
 {
   // Setting 'closing' to true tell the kernel not to use the
@@ -66,7 +66,7 @@ Connection::closeConnection()
   // about them: should they be before "closing = true"?
   if (fd == -1)
     // We are already closed.
-    return USUCCESS;
+    CONN_ERR_RET(USUCCESS);
 #if defined(WIN32) && !defined(__MINGW32__)
   closesocket(fd);
   int ret = 0;//WSACleanup(); //wsastartup called only once!
@@ -78,11 +78,11 @@ Connection::closeConnection()
   Network::unregisterNetworkPipe(this);
 
   if (ret)
-    return UFAIL;
+    CONN_ERR_RET(UFAIL);
   else
   {
     fd = -1;
-    return USUCCESS;
+    CONN_ERR_RET(USUCCESS);
   }
 }
 
@@ -117,9 +117,17 @@ void Connection::doWrite()
   continueSend();
 }
 
-UErrorValue Connection::send(const ubyte* buffer, int length)
+UConnection& Connection::send(const ubyte* buffer, int length)
 {
   if (sendQueueRemain() == 0)
     trigger();
-  return UConnection::send(buffer, length);
+  return (*this) << msend(buffer, length);
+}
+
+//! Send a "\n" through the connection
+UConnection& Connection::endline ()
+{
+  //FIXME: test send error
+  (*this) << msend((const ubyte*)"\n", 1);
+  CONN_ERR_RET(USUCCESS);
 }

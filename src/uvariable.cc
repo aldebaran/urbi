@@ -469,12 +469,12 @@ UVariable::updated(bool uvar_assign)
 	 i != binder->monitors.end();
 	 ++i)
       {
-	(*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*i)->c->sendc((const ubyte*)"[1,\"", 4);
-	(*i)->c->sendc((const ubyte*)varname.c_str(), varname.length());
-	(*i)->c->sendc((const ubyte*)"\",", 2);
+	*((*i)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
+	*((*i)->c) << UConnection::msendc((const ubyte*)"[1,\"", 4);
+	*((*i)->c) << UConnection::msendc((const ubyte*)varname.c_str(), varname.length());
+	*((*i)->c) << UConnection::msendc((const ubyte*)"\",", 2);
 	value->echo((*i)->c);
-	(*i)->c->send((const ubyte*)"]\n", 2);
+	*((*i)->c) << UConnection::msend((const ubyte*)"]\n", 2);
       }
 
   for (std::list<urbi::UGenericCallback*>::iterator i =

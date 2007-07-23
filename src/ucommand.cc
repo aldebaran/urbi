@@ -1,23 +1,23 @@
 /*! \file ucommand.cc
- *******************************************************************************
+*******************************************************************************
 
- File: ucommand.cc\n
- Implementation of the UCommand class.
+File: ucommand.cc\n
+Implementation of the UCommand class.
 
- This file is part of
- %URBI Kernel, version __kernelversion__\n
- (c) Jean-Christophe Baillie, 2004-2005.
+This file is part of
+%URBI Kernel, version __kernelversion__\n
+(c) Jean-Christophe Baillie, 2004-2005.
 
- Permission to use, copy, modify, and redistribute this software for
- non-commercial use is hereby granted.
+Permission to use, copy, modify, and redistribute this software for
+non-commercial use is hereby granted.
 
- This software is provided "as is" without warranty of any kind,
- either expressed or implied, including but not limited to the
- implied warranties of fitness for a particular purpose.
+This software is provided "as is" without warranty of any kind,
+either expressed or implied, including but not limited to the
+implied warranties of fitness for a particular purpose.
 
- For more information, comments, bug reports: http://www.urbiforge.net
+For more information, comments, bug reports: http://www.urbiforge.net
 
- **************************************************************************** */
+**************************************************************************** */
 // #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 #include "config.h"
@@ -71,7 +71,8 @@ vsend_error (UConnection* c, const UCommand* cmd,
   // something more robust (such using real C++ here instead of C
   // buffers).
   o << "!!! " << cmd->loc() << ": " << fmt << '\n';
-  return c->sendf (cmd->getTag(), o.str().c_str(), args);
+  *c << UConnection::msendf (cmd->getTag(), o.str().c_str(), args);
+  return c->error ();
 }
 
 UErrorValue
@@ -141,8 +142,8 @@ TagInfo* UCommand::systemTagInfo = 0;
 //! UCommand constructor.
 /*! The parameter 'type' is required here to describe the type of the command.
 
- \param type is the command type
- */
+  \param type is the command type
+*/
 UCommand::UCommand(const location& l, Type _type)
   : UAst (l),
     type (_type),
@@ -167,8 +168,8 @@ UCommand::UCommand(const location& l, Type _type)
     tagInfo (0)
 {
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
-   L2: pass a tag or a command ptr to ctor
-   */
+    L2: pass a tag or a command ptr to ctor
+  */
   if (::urbiserver->systemcommands)
     setTag(systemTagInfo); //untouchable
   else
@@ -179,7 +180,7 @@ UCommand::UCommand(const location& l, Type _type)
 UCommand::~UCommand()
 {
   if (myconnection && flags && flags->notifyEnd && !morph)
-    myconnection->send("*** end\n", getTag().c_str());
+    *myconnection << UConnection::msend("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;
 }
@@ -431,7 +432,7 @@ UCommand::isFrozen()
       // set the command in the frozen state. The 'execute' method is responsible to
       // reset the state to unfrozen once the command continues running.
       if (!frozen && myconnection && flags && flags->notifyFreeze && !morph)
-	myconnection->send("*** frozen\n", getTag().c_str());
+	*myconnection << UConnection::msend("*** frozen\n", getTag().c_str());
 
       frozen = true;
 
@@ -439,7 +440,7 @@ UCommand::isFrozen()
     }
 
   if (frozen && myconnection && flags && flags->notifyFreeze && !morph)
-    myconnection->send("*** unfrozen\n", getTag().c_str());
+    *myconnection << UConnection::msend("*** unfrozen\n", getTag().c_str());
 
   return false;
 }
@@ -458,17 +459,17 @@ UCommand::strMorph (const std::string& cmd)
 {
   morph = new UCommand_EXPR
     (
+     loc(),
+     new UExpression
+     (
       loc(),
-      new UExpression
-      (
-	loc(),
-	UExpression::FUNCTION,
-	new UVariableName (new UString("global"), new UString("exec"),
-			   false, 0),
-	new UNamedParameters
-	(new UExpression (loc(), UExpression::VALUE, new UString(cmd.c_str())))
-	)
-      );
+      UExpression::FUNCTION,
+      new UVariableName (new UString("global"), new UString("exec"),
+			 false, 0),
+      new UNamedParameters
+      (new UExpression (loc(), UExpression::VALUE, new UString(cmd.c_str())))
+      )
+     );
   status = UMORPH;
 }
 
@@ -476,10 +477,10 @@ MEMORY_MANAGER_INIT(UCommand_TREE);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
- The background parameter lets the tree execute in background.
- This is useful for the LOAD command which should be run in bg and
- still cannot be persistant (like a AT or WHENEVER).
- */
+  The background parameter lets the tree execute in background.
+  This is useful for the LOAD command which should be run in bg and
+  still cannot be persistant (like a AT or WHENEVER).
+*/
 UCommand_TREE::UCommand_TREE(const location& l,
 			     UNodeType flavor,
 			     UCommand* command1,
@@ -583,8 +584,8 @@ UCommand_TREE::deleteMarked()
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_TREE::print_(unsigned l) const
 {
@@ -750,8 +751,8 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       resultContainer->nameUpdate(uc_tree->callid->str(), "__result__");
       // creates return variable
       uc_tree->callid->setReturnVar (
-	new UVariable (uc_tree->callid->str().c_str(), "__result__",
-		       new UValue ()));
+				     new UVariable (uc_tree->callid->str().c_str(), "__result__",
+						    new UValue ()));
 
       if (!uc_tree->callid)
 	return UCOMPLETED;
@@ -859,18 +860,18 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	     j != b->monitors.end();
 	     ++j)
 	{
-	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
-			 o.str().size());
+	  *((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
+	  *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+					    o.str().size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
+	    *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    valparam->echo((*j)->c);
 	  }
-	  (*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
+	  *((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
 
@@ -1088,7 +1089,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-	  connection->localVariableCheck(variable);
+	  *connection << UConnection::mlocalVariableCheck(variable);
 	  variable->updated();
 	}
 
@@ -1107,7 +1108,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-	  connection->localVariableCheck(variable);
+	  *connection << UConnection::mlocalVariableCheck(variable);
 	  variable->updated();
 	}
 
@@ -1261,7 +1262,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-	  connection->localVariableCheck(variable);
+	  *connection << UConnection::mlocalVariableCheck(variable);
 	}
 
 	// correct the type of VOID variables (comming from a def)
@@ -1295,23 +1296,23 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	++variable->nbAssigns;
 	assigned = true;
 
-      // use of previous value as a start value to ensure that the start value
-      // will remain identical when several assignments are run during the same
-      // cycle
-      // old code: startval = *targetvalue;
+	// use of previous value as a start value to ensure that the start value
+	// will remain identical when several assignments are run during the same
+	// cycle
+	// old code: startval = *targetvalue;
 
-      // the "fix" below is insane. I paste back the old code...
-      //startval = variable->previous;
-      if (variable->cycleBeginTime < currentTime)
-      {
-        variable->cyclevalue = *targetvalue;
-        variable->cycleBeginTime = currentTime;
-      }
+	// the "fix" below is insane. I paste back the old code...
+	//startval = variable->previous;
+	if (variable->cycleBeginTime < currentTime)
+	{
+	  variable->cyclevalue = *targetvalue;
+	  variable->cycleBeginTime = currentTime;
+	}
 
-      startval = variable->cyclevalue;
+	startval = variable->cyclevalue;
 
-      first = true;
-      status = URUNNING;
+	first = true;
+	status = URUNNING;
     }
   }
 
@@ -1510,8 +1511,8 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	((targetval - startval) * 0.5 *
 	 (ufloat(1)+sin(-(PI/ufloat(2))+ PI*(currentTime - starttime + deltaTime) /
 			targettime
-	   ))
-	  );
+			))
+	 );
     return USUCCESS;
   }
 
@@ -1683,7 +1684,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	}
 	phasevari = new UVariable(modif_getphase->getFullname()->c_str(),
 				  ufloat(0));
-	connection->localVariableCheck(phasevari);
+	*connection << UConnection::mlocalVariableCheck(phasevari);
       }
 
       UValue *phaseval = phasevari->value;
@@ -1721,8 +1722,8 @@ UCommand_ASSIGN_VALUE::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_ASSIGN_VALUE::print_(unsigned l) const
 {
@@ -1796,7 +1797,7 @@ UCommand_ASSIGN_BINARY::execute_(UConnection *connection)
       return UCOMPLETED;
     variable->blendType = urbi::UQUEUE;
 
-    connection->localVariableCheck(variable);
+    *connection << UConnection::mlocalVariableCheck(variable);
   }
   else if (variable->value->dataType == DATA_BINARY)
     LIBERATE(variable->value->refBinary);
@@ -1818,8 +1819,8 @@ UCommand_ASSIGN_BINARY::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_ASSIGN_BINARY::print_(unsigned l) const
 {
@@ -2065,8 +2066,8 @@ UCommand_ASSIGN_PROPERTY::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_ASSIGN_PROPERTY::print_(unsigned l) const
 {
@@ -2150,8 +2151,8 @@ UCommand_AUTOASSIGN::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_AUTOASSIGN::print_(unsigned l) const
 {
@@ -2294,8 +2295,8 @@ UCommand_EXPR::execute_(UConnection *connection)
 				    "__result__");
 	// creates return variable
 	uc_tree->callid->setReturnVar (
-	  new UVariable (uc_tree->callid->str().c_str(), "__result__",
-			 new UValue ()));
+				       new UVariable (uc_tree->callid->str().c_str(), "__result__",
+						      new UValue ()));
 	if (!uc_tree->callid)
 	  return UCOMPLETED;
 	uc_tree->connection = connection;
@@ -2312,10 +2313,10 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    return UCOMPLETED;
 	  }
 	  uc_tree->callid->store(
-	    new UVariable(uc_tree->callid->str().c_str(),
-			  pname->name->c_str(),
-			  valparam)
-	    );
+				 new UVariable(uc_tree->callid->str().c_str(),
+					       pname->name->c_str(),
+					       valparam)
+				 );
 	}
       }
       return UMORPH;
@@ -2383,13 +2384,13 @@ UCommand_EXPR::execute_(UConnection *connection)
 
 	  if (ret.dataType != DATA_VOID)
 	  {
-	    connection->sendPrefix(getTag().c_str());
+	    *connection << UConnection::msendPrefix(getTag().c_str());
 	    ret.echo(connection);
 	  }
 	  if (ret.dataType != DATA_BINARY && ret.dataType != DATA_VOID)
-	    connection->endline();
+	    *connection << UConnection::mendl;
 	  else
-	    connection->flush ();
+	    *connection << UConnection::mflush;
 	  return UCOMPLETED;
 	}
       }
@@ -2416,18 +2417,18 @@ UCommand_EXPR::execute_(UConnection *connection)
 	     j != it->second->monitors.end();
 	     ++j)
 	{
-	  (*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	  (*j)->c->sendc(reinterpret_cast<const ubyte*>(n.c_str()),
+	  *((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
+	  *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(n.c_str()),
 			 n.size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
+	    *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    valparam->echo((*j)->c);
 	  }
-	  (*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
+	  *((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
       persistant = false;
@@ -2459,13 +2460,13 @@ UCommand_EXPR::execute_(UConnection *connection)
 
   if (ret->dataType != DATA_VOID)
   {
-    connection->sendPrefix(getTag().c_str());
+    *connection << UConnection::msendPrefix(getTag().c_str());
     ret->echo(connection);
   }
   if (ret->dataType!=DATA_BINARY && ret->dataType != DATA_VOID)
-    connection->endline();
+    *connection << UConnection::mendl;
   else
-    connection->flush ();
+    *connection << UConnection::mflush;
   delete ret;
   return UCOMPLETED;
 }
@@ -2479,8 +2480,8 @@ UCommand_EXPR::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_EXPR::print_(unsigned l) const
 {
@@ -2540,8 +2541,8 @@ UCommand_RETURN::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_RETURN::print_(unsigned l) const
 {
@@ -2596,9 +2597,9 @@ UCommand_ECHO::execute_(UConnection *connection)
 
   if (!connectionTag)
   {
-    connection->sendc("*** ", getTag().c_str());
+    *connection << UConnection::msendc("*** ", getTag().c_str());
     ret->echo(connection, true);
-    connection->endline();
+    *connection << UConnection::mendl;
   }
   else
   {
@@ -2617,9 +2618,9 @@ UCommand_ECHO::execute_(UConnection *connection)
 		  && *connectionTag == "other")))
       {
 	ok = true;
-	(*i)->sendc("*** ", getTag().c_str());
+	(**i) << UConnection::msendc("*** ", getTag().c_str());
 	ret->echo((*i), true);
-	(*i)->endline();
+	(**i) << UConnection::mendl;
       }
 
     if (!ok)
@@ -2642,8 +2643,8 @@ UCommand_ECHO::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_ECHO::print_(unsigned l) const
 {
@@ -2801,8 +2802,8 @@ UCommand_NEW::execute_(UConnection *connection)
 	 i != objit->second->binder->monitors.end();
 	 ++i)
     {
-      (*i)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-      (*i)->c->send(reinterpret_cast<const ubyte*>(n.c_str()), n.size());
+      *((*i)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
+      *((*i)->c) << UConnection::msend(reinterpret_cast<const ubyte*>(n.c_str()), n.size());
       ++nb;
     }
     // Wait for remote new
@@ -2932,8 +2933,8 @@ UCommand_NEW::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_NEW::print_(unsigned l) const
 {
@@ -2996,9 +2997,9 @@ UCommand_ALIAS::execute_(UConnection *connection)
 	   connection->server->aliastab.begin();
 	 i != connection->server->aliastab.end();
 	 ++i)
-      connection->sendf(getTag(),
-			"*** %25s -> %s\n",
-			i->first, i->second->c_str());
+      *connection << UConnection::msendf(getTag(),
+					 "*** %25s -> %s\n",
+					 i->first, i->second->c_str());
 
     return UCOMPLETED;
   }
@@ -3011,8 +3012,8 @@ UCommand_ALIAS::execute_(UConnection *connection)
       connection->server->aliastab.find(id0->c_str());
     if (i != connection->server->aliastab.end())
     {
-      connection->sendf (getTag(), "*** %25s -> %s\n",
-			 i->first, i->second->c_str());
+      *connection << UConnection::msendf (getTag(), "*** %25s -> %s\n",
+					  i->first, i->second->c_str());
     }
     return UCOMPLETED;
   }
@@ -3043,8 +3044,8 @@ UCommand_ALIAS::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_ALIAS::print_(unsigned l) const
 {
@@ -3147,8 +3148,8 @@ UCommand_INHERIT::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_INHERIT::print_(unsigned l) const
 {
@@ -3241,7 +3242,7 @@ UCommand_GROUP::execute_(UConnection *connection)
 	  o << ',';
       }
       o << "}\n";
-      connection->sendf(getTag(), o.str().c_str());
+      *connection << UConnection::msendf(getTag(), o.str().c_str());
     }
     return UCOMPLETED;
   }
@@ -3287,8 +3288,8 @@ UCommand_GROUP::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_GROUP::print_(unsigned l) const
 {
@@ -3298,8 +3299,8 @@ UCommand_GROUP::print_(unsigned l) const
 
 
 /*-----------------------.
-| UCommand_OPERATOR_ID.  |
-`-----------------------*/
+  | UCommand_OPERATOR_ID.  |
+  `-----------------------*/
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_ID);
 // *********************************************************
@@ -3373,8 +3374,8 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
       if ((*i)->isActive() && *(*i)->connectionTag == *id)
       {
 	ok = true;
-	(*i)->disactivate();
-	(*i)->closeConnection();
+	(**i) << UConnection::mdisactivate;
+	(**i) << UConnection::mclose;
       }
 
     if (!ok)
@@ -3433,8 +3434,8 @@ UCommand_OPERATOR_ID::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_OPERATOR_ID::print_(unsigned l) const
 {
@@ -3523,8 +3524,8 @@ UCommand_DEVICE_CMD::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_DEVICE_CMD::print_(unsigned l) const
 {
@@ -3642,9 +3643,9 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
     {
       // undef function
       connection->server->functiontab.erase(
-	connection->server->functiontab.find(fullname->c_str()));
+					    connection->server->functiontab.find(fullname->c_str()));
       connection->server->functiondeftab.erase(
-	connection->server->functiondeftab.find(fullname->c_str()));
+					       connection->server->functiondeftab.find(fullname->c_str()));
 
       delete fun;
       return UCOMPLETED;
@@ -3684,12 +3685,12 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
     if (dev)
     {
-      connection->sendf (getTag(),
-			 "*** device description: %s\n",
-			 dev->detail->c_str());
-      connection->sendf (getTag(),
-			 "*** device name: %s\n",
-			 dev->device->c_str());
+      *connection << UConnection::msendf (getTag(),
+					  "*** device description: %s\n",
+					  dev->detail->c_str());
+      *connection << UConnection::msendf (getTag(),
+					  "*** device name: %s\n",
+					  dev->device->c_str());
     }
     if (variable)
     {
@@ -3710,14 +3711,15 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	  tstr << "*** current value: binary\n";
 	  break;
       }
-      connection->sendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
     }
 
     if (dev)
     {
       std::ostringstream tstr;
-      tstr << "*** current device load: " << dev->device_load->value->val<<'\n';
-      connection->sendf(getTag(), tstr.c_str().c_str());
+      tstr << "*** current device load: "
+	   << dev->device_load->value->val << '\n';
+      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
     }
 
     if (variable)
@@ -3727,36 +3729,37 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	tstr << "*** rangemin: " << variable->rangemin << '\n';
       else
 	tstr << "*** rangemin: -INF\n";
-      connection->sendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->rangemax != UINFINITY)
 	tstr << "*** rangemax: " << variable->rangemax << '\n';
       else
 	tstr << "*** rangemax: INF\n";
-      connection->sendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->speedmin != -UINFINITY)
 	tstr << "*** speedmin: " << variable->rangemin << '\n';
       else
 	tstr << "*** speedmin: -INF\n";
-      connection->sendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->speedmax != UINFINITY)
 	tstr << "*** speedmax: " << variable->rangemax << '\n';
       else
 	tstr << "*** speedmax: INF\n";
-      connection->sendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->unit)
-	connection->sendf(getTag(),
-			  "*** unit: %s\n", variable->unit->c_str());
+	*connection << UConnection::msendf(getTag(),
+					   "*** unit: %s\n",
+					   variable->unit->c_str());
       else
-	connection->sendf(getTag(),
-			  "*** unit: unspecified\n");
+	*connection << UConnection::msendf(getTag(),
+					   "*** unit: unspecified\n");
     }
 
     return UCOMPLETED;
@@ -3771,13 +3774,13 @@ UCommand*
 UCommand_OPERATOR_VAR::copy() const
 {
   return copybase(new UCommand_OPERATOR_VAR(loc_, ucopy (oper),
-			      ucopy (variablename)));
+					    ucopy (variablename)));
 }
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_OPERATOR_VAR::print_(unsigned l) const
 {
@@ -3852,62 +3855,62 @@ UCommand_BINDER::execute_(UConnection *connection)
   switch (type)
   {
     case UBIND_VAR:
-    {
-      HMvariabletab::iterator it = ::urbiserver->variabletab.find(key->c_str());
-      if (it == ::urbiserver->variabletab.end())
       {
-	UVariable *variable = new UVariable(key->c_str(), new UValue());
-	variable->binder = new UBinder(*fullobjname, *fullname,
-				       mode,
-				       type, nbparam, connection);
-      }
-      else
-      {
-	if (it->second->binder)
-	  it->second->binder->addMonitor(*fullobjname, connection);
-	else
-	  it->second->binder = new UBinder(*fullobjname, *fullname,
-					   mode,
-					   type,
-					   nbparam,
-					   connection);
-	if (!it->second->internalAccessBinder.empty ()
-	     && !libport::has (::urbiserver->access_and_change_varlist,
-			       it->second))
+	HMvariabletab::iterator it = ::urbiserver->variabletab.find(key->c_str());
+	if (it == ::urbiserver->variabletab.end())
 	{
-	  it->second->access_and_change = true;
-	  ::urbiserver->access_and_change_varlist.push_back (it->second);
+	  UVariable *variable = new UVariable(key->c_str(), new UValue());
+	  variable->binder = new UBinder(*fullobjname, *fullname,
+					 mode,
+					 type, nbparam, connection);
+	}
+	else
+	{
+	  if (it->second->binder)
+	    it->second->binder->addMonitor(*fullobjname, connection);
+	  else
+	    it->second->binder = new UBinder(*fullobjname, *fullname,
+					     mode,
+					     type,
+					     nbparam,
+					     connection);
+	  if (!it->second->internalAccessBinder.empty ()
+	      && !libport::has (::urbiserver->access_and_change_varlist,
+				it->second))
+	  {
+	    it->second->access_and_change = true;
+	    ::urbiserver->access_and_change_varlist.push_back (it->second);
+	  }
 	}
       }
-    }
-    break;
+      break;
 
     case UBIND_FUNCTION:
-    {
-      // Autodetect redefined members higher in the hierarchy of an object
-      // If one is found, cancel the binding.
-      HMobjtab::iterator it = ::urbiserver->objtab.find(fullobjname->c_str());
-      if (it != ::urbiserver->objtab.end())
       {
-	UObj* srcobj = it->second;
-	bool ambiguous;
-	std::string member (fullname->str ());
-	member = member.substr (member.find ('.') + 1);
-	UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
-	if (fun && fun != kernel::remoteFunction && !ambiguous)
-	  break;
-      }
+	// Autodetect redefined members higher in the hierarchy of an object
+	// If one is found, cancel the binding.
+	HMobjtab::iterator it = ::urbiserver->objtab.find(fullobjname->c_str());
+	if (it != ::urbiserver->objtab.end())
+	{
+	  UObj* srcobj = it->second;
+	  bool ambiguous;
+	  std::string member (fullname->str ());
+	  member = member.substr (member.find ('.') + 1);
+	  UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+	  if (fun && fun != kernel::remoteFunction && !ambiguous)
+	    break;
+	}
 
-      // do the binding
-      if (!libport::mhas(::urbiserver->functionbindertab, key->c_str()))
-	::urbiserver->functionbindertab[key->c_str()] =
-	  new UBinder(*fullobjname, *fullname,
-		      mode, type, nbparam, connection);
-      else
-	::urbiserver->functionbindertab[key->c_str()]->
-	  addMonitor(*fullobjname, connection);
-    }
-    break;
+	// do the binding
+	if (!libport::mhas(::urbiserver->functionbindertab, key->c_str()))
+	  ::urbiserver->functionbindertab[key->c_str()] =
+	      new UBinder(*fullobjname, *fullname,
+			  mode, type, nbparam, connection);
+	else
+	  ::urbiserver->functionbindertab[key->c_str()]->
+	      addMonitor(*fullobjname, connection);
+      }
+      break;
 
     case UBIND_EVENT:
       if (!libport::mhas(::urbiserver->eventbindertab, key->c_str()))
@@ -3916,26 +3919,26 @@ UCommand_BINDER::execute_(UConnection *connection)
 			mode, type, nbparam, connection);
       else
 	::urbiserver->eventbindertab[key->c_str()]->addMonitor(*fullobjname,
-							     connection);
+							       connection);
       break;
 
     case UBIND_OBJECT:
-    {
-      UObj* uobj;
-      if (libport::mhas(::urbiserver->objtab, variablename->id->c_str()))
-	uobj = ::urbiserver->objtab[variablename->id->c_str()];
-      else
-	uobj = new UObj(variablename->id);
-      if (uobj->binder)
-	uobj->binder->addMonitor(*variablename->id, connection);
-      else
-	uobj->binder = new UBinder(*uobj->device, *uobj->device,
-				   mode,
-				   type,
-				   0,
-				   connection);
-      break;
-    }
+      {
+	UObj* uobj;
+	if (libport::mhas(::urbiserver->objtab, variablename->id->c_str()))
+	  uobj = ::urbiserver->objtab[variablename->id->c_str()];
+	else
+	  uobj = new UObj(variablename->id);
+	if (uobj->binder)
+	  uobj->binder->addMonitor(*variablename->id, connection);
+	else
+	  uobj->binder = new UBinder(*uobj->device, *uobj->device,
+				     mode,
+				     type,
+				     0,
+				     connection);
+	break;
+      }
   }
 
   return UCOMPLETED;
@@ -3954,8 +3957,8 @@ UCommand_BINDER::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_BINDER::print_(unsigned l) const
 {
@@ -4000,7 +4003,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     std::ostringstream o;
     o <<  "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
-    connection->sendf(getTag(), o.str().c_str());
+    *connection << UConnection::msendf(getTag(), o.str().c_str());
     return UCOMPLETED;
   }
 
@@ -4044,21 +4047,21 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "stopall")
   {
-    connection->sendf (getTag(), "*** All commands cleared\n");
+    *connection << UConnection::msendf (getTag(), "*** All commands cleared\n");
     connection->server->stopall = true;
     return UCOMPLETED;
   }
 
   if (*oper == "undefall")
   {
-    connection->sendf (getTag(),
-		       "*** undefall is deprecated. Use 'reset' instead\n");
+    *connection << UConnection::msendf (getTag(),
+					"*** undefall is deprecated. Use 'reset' instead\n");
     return UCOMPLETED;
   }
 
   if (*oper == "reset")
   {
-    connection->sendf (getTag(), "*** Reset in progress\n");
+    *connection << UConnection::msendf (getTag(), "*** Reset in progress\n");
     ::urbiserver->reseting = true;
 
     return UCOMPLETED;
@@ -4066,7 +4069,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "devices")
   {
-    connection->sendf (getTag(),
+    *connection << UConnection::msendf (getTag(),
 		       "*** devices is deprecated."
 		       " Use 'group objects' instead.\n");
     return UCOMPLETED;
@@ -4074,7 +4077,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "functions")
   {
-     for (HMfunctiontab::iterator i =
+    for (HMfunctiontab::iterator i =
 	   connection->server->functiontab.begin();
 	 i != connection->server->functiontab.end();
 	 ++i)
@@ -4083,7 +4086,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       o << "*** " << i->second->name().c_str() << " ["
 	<< i->second->nbparam() << ']';
       o << '\n';
-      connection->sendf(getTag(), o.str().c_str());
+      *connection << UConnection::msendf(getTag(), o.str().c_str());
     }
     return UCOMPLETED;
   }
@@ -4100,39 +4103,39 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       o << "*** " <<  i->second->getVarname() << " = ";
       switch (i->second->value->dataType)
       {
-      case DATA_NUM:
-	o << i->second->value->val;
-	break;
+	case DATA_NUM:
+	  o << i->second->value->val;
+	  break;
 
-      case DATA_STRING:
-	o << i->second->value->str->c_str();
-	break;
+	case DATA_STRING:
+	  o << i->second->value->str->c_str();
+	  break;
 
-      case DATA_BINARY:
-	o << "BIN ";
-	if (i->second->value->refBinary)
-	  o << i->second->value->refBinary->ref()->bufferSize;
-	else
-	  o << "0 null";
-	break;
+	case DATA_BINARY:
+	  o << "BIN ";
+	  if (i->second->value->refBinary)
+	    o << i->second->value->refBinary->ref()->bufferSize;
+	  else
+	    o << "0 null";
+	  break;
 
-      case DATA_LIST:
-	o << "LIST";
-	break;
+	case DATA_LIST:
+	  o << "LIST";
+	  break;
 
-      case DATA_OBJ:
-	o << "OBJ";
-	break;
+	case DATA_OBJ:
+	  o << "OBJ";
+	  break;
 
-      case DATA_VOID:
-	o << "VOID";
-	break;
+	case DATA_VOID:
+	  o << "VOID";
+	  break;
 
-      default:
-	o << "UNKNOWN TYPE";
+	default:
+	  o << "UNKNOWN TYPE";
       }
       o << '\n';
-      connection->sendf(getTag(), o.str().c_str());
+      *connection << UConnection::msendf(getTag(), o.str().c_str());
     }
 
     return UCOMPLETED;
@@ -4147,8 +4150,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     {
       std::ostringstream o;
       o << "*** " << i->second->unforgedName->c_str() << "["
-	   <<  i->second->nbarg () << "]\n";
-      connection->sendf(getTag(), o.str().c_str());
+	<<  i->second->nbarg () << "]\n";
+      *connection << UConnection::msendf(getTag(), o.str().c_str());
     }
 
     return UCOMPLETED;
@@ -4167,11 +4170,11 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  i->second.name != "notag")
       {
 	tstr << "*** " << i->second.name << "\n";
-	connection->sendf(getTag(), tstr.str().c_str());
+	*connection << UConnection::msendf(getTag(), tstr.str().c_str());
       }
     }
 
-    connection->sendf(getTag(), "*** end of tag list.\n");
+    *connection << UConnection::msendf(getTag(), "*** end of tag list.\n");
     return UCOMPLETED;
   }
 
@@ -4186,7 +4189,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       {
 	std::ostringstream tstr;
 	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
-	connection->sendf(getTag(), tstr.str().c_str());
+	*connection << UConnection::msendf(getTag(), tstr.str().c_str());
       }
     }
   }
@@ -4227,7 +4230,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	    o << "UNKNOWN TYPE";
 	}
 	o << '\n';
-	connection->sendf(getTag(), o.str().c_str());
+	*connection << UConnection::msendf(getTag(), o.str().c_str());
       }
     }
 
@@ -4248,13 +4251,13 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	 ++i)
       if ((*i)->isActive())
       {
-	connection->sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
+	*connection << UConnection::msendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
 			   (*i)->connectionTag->c_str(),
 			   static_cast<int>(((*i)->clientIP>>24) % 256),
 			   static_cast<int>(((*i)->clientIP>>16) % 256),
 			   static_cast<int>(((*i)->clientIP>>8) % 256),
 			   static_cast<int>((*i)->clientIP     % 256)
-	  );
+			   );
       }
 
     return UCOMPLETED;
@@ -4268,7 +4271,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "quit")
   {
-    connection->closeConnection();
+    *connection << UConnection::mclose;
     return UCOMPLETED;
   }
 
@@ -4296,8 +4299,8 @@ UCommand_OPERATOR::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_OPERATOR::print_(unsigned) const
 {
@@ -4373,8 +4376,8 @@ UCommand_WAIT::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_WAIT::print_(unsigned l) const
 {
@@ -4495,18 +4498,18 @@ UCommand_EMIT::execute_(UConnection *connection)
 	   j != it->second->monitors.end();
 	   ++j)
       {
-	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
-		       o.str().size());
+	*((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
+	*((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+					  o.str().size());
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*j)->c->sendc(reinterpret_cast<const ubyte*>(","), 1);
+	  *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(","), 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*j)->c);
 	}
-	(*j)->c->send(reinterpret_cast<const ubyte*>("]\n"), 2);
+	*((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>("]\n"), 2);
       }
     }
 
@@ -4580,9 +4583,9 @@ UCommand_EMIT::removeEvent ()
 	   j != i->second->monitors.end();
 	   ++j)
       {
-	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->send(reinterpret_cast<const ubyte*>(o.str().c_str()),
-		      o.str().size());
+	*((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
+	*((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>(o.str().c_str()),
+					 o.str().size());
       }
     }
   }
@@ -4611,8 +4614,8 @@ UCommand_EMIT::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_EMIT::print_(unsigned l) const
 {
@@ -4682,8 +4685,8 @@ UCommand_WAIT_TEST::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_WAIT_TEST::print_(unsigned l) const
 {
@@ -4733,13 +4736,13 @@ UCommand_INCDECREMENT::execute_(UConnection *connection)
       new UCommand_ASSIGN_VALUE(loc_,
 				variablename->copy(),
 				new UExpression(loc(),
-				  UExpression::PLUS,
-				  new UExpression(loc(),
-						  UExpression::VARIABLE,
-						  variablename->copy()),
-				  new UExpression(loc(),
-						  UExpression::VALUE,
-						  ufloat(1))), 0);
+						UExpression::PLUS,
+						new UExpression(loc(),
+								UExpression::VARIABLE,
+								variablename->copy()),
+						new UExpression(loc(),
+								UExpression::VALUE,
+								ufloat(1))), 0);
 
     persistant = false;
     return UMORPH;
@@ -4774,8 +4777,8 @@ UCommand_INCDECREMENT::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_INCDECREMENT::print_(unsigned l) const
 {
@@ -4865,9 +4868,9 @@ UCommand_DEF::execute_(UConnection *connection)
 	   connection->server->functiontab.begin();
 	 i != connection->server->functiontab.end();
 	 ++i)
-      connection->sendf (getTag(), "*** %s : %d param(s)\n",
-			 i->second->name().c_str(),
-			 i->second->nbparam());
+      *connection << UConnection::msendf (getTag(), "*** %s : %d param(s)\n",
+					  i->second->name().c_str(),
+					  i->second->nbparam());
     return UCOMPLETED;
   }
 
@@ -4892,14 +4895,14 @@ UCommand_DEF::execute_(UConnection *connection)
     {
       if (::urbiserver->defcheck)
 	send_error(connection, this,
-		 "Warning: function %s already exists", funname->c_str());
+		   "Warning: function %s already exists", funname->c_str());
 
       // undef function
       UFunction* fun = variablename->getFunction(this, connection);
       connection->server->functiontab.erase(
-	connection->server->functiontab.find(funname->c_str()));
+					    connection->server->functiontab.find(funname->c_str()));
       connection->server->functiondeftab.erase(
-	connection->server->functiondeftab.find(funname->c_str()));
+					       connection->server->functiondeftab.find(funname->c_str()));
       delete fun;
     }
 
@@ -4947,7 +4950,7 @@ UCommand_DEF::execute_(UConnection *connection)
     // Variable definition
 
     variable = new UVariable(variablename->getFullname()->c_str(), new UValue());
-    connection->localVariableCheck(variable);
+    *connection << UConnection::mlocalVariableCheck(variable);
 
     return UCOMPLETED;
   }
@@ -5024,8 +5027,8 @@ UCommand_DEF::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_DEF::print_(unsigned l) const
 {
@@ -5093,30 +5096,30 @@ UCommand_CLASS::execute_(UConnection*)
 	case UExpression::VALUE:
 	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_VAR,
 				  new UVariableName(
-				    new UString(*object),
-				    new UString(*param->expression->str),
-				    true,
-				    0),
+						    new UString(*object),
+						    new UString(*param->expression->str),
+						    true,
+						    0),
 				  0,
 				  0);
 	  break;
 	case UExpression::FUNCTION:
 	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_FUNCTION,
 				  new UVariableName(
-				    new UString(*object),
-				    new UString(*param->expression->variablename->id),
-				    true,
-				    0),
+						    new UString(*object),
+						    new UString(*param->expression->variablename->id),
+						    true,
+						    0),
 				  param->expression->parameters,
 				  0);
 	  break;
 	case UExpression::EVENT:
 	  cdef = new UCommand_DEF(loc_, UCommand_DEF::UDEF_EVENT,
 				  new UVariableName(
-				    new UString(*object),
-				    new UString(*param->expression->variablename->id),
-				    true,
-				    0),
+						    new UString(*object),
+						    new UString(*param->expression->variablename->id),
+						    true,
+						    0),
 				  param->expression->parameters,
 				  0);
 	  break;
@@ -5178,8 +5181,8 @@ UCommand_CLASS::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_CLASS::print_(unsigned l) const
 {
@@ -5257,8 +5260,8 @@ UCommand_IF::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_IF::print_(unsigned l) const
 {
@@ -5329,8 +5332,8 @@ UCommand_EVERY::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_EVERY::print_(unsigned l) const
 {
@@ -5381,7 +5384,7 @@ UCommand_TIMEOUT::execute_(UConnection*)
      new UCommand_TREE(loc_, Flavorable::UPIPE, command->copy(),
 		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
 						tagRef->copy()))
-      );
+     );
   // We can't tag morph as morphing engine will override us.
   static_cast<UCommand_TREE*>(morph)->command1->setTag(tagRef->c_str());
   static_cast<UCommand_TREE*>(morph)->command2->setTag(tagRef->c_str());
@@ -5399,8 +5402,8 @@ UCommand_TIMEOUT::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_TIMEOUT::print_(unsigned l) const
 {
@@ -5448,13 +5451,13 @@ UCommand_STOPIF::execute_(UConnection *connection)
   persistant = false;
   morph =
     new UCommand_TREE(
-      loc_, Flavorable::UAND,
-      new UCommand_AT(loc_, Flavorable::USEMICOLON,
-		      condition->copy(),
-		      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
-					       tagRef->copy()),
-		      0),
-      command->copy());
+		      loc_, Flavorable::UAND,
+		      new UCommand_AT(loc_, Flavorable::USEMICOLON,
+				      condition->copy(),
+				      new UCommand_OPERATOR_ID(loc_, new UString("stop"),
+							       tagRef->copy()),
+				      0),
+		      command->copy());
   morph->setTag(tagRef->c_str());
   return UMORPH;
 }
@@ -5469,8 +5472,8 @@ UCommand_STOPIF::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_STOPIF::print_(unsigned l) const
 {
@@ -5513,7 +5516,7 @@ UCommand_FREEZEIF::execute_(UConnection*)
   UCommand* cmd = new UCommand_TREE(loc_, Flavorable::UPIPE,
 				    command->copy(),
 				    new UCommand_NOOP(loc_)
-    );
+				    );
   cmd->setTag(tagRef->c_str());
   morph =
     new UCommand_TREE
@@ -5539,8 +5542,8 @@ UCommand_FREEZEIF::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_FREEZEIF::print_(unsigned l) const
 {
@@ -5735,8 +5738,8 @@ UCommand_AT::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_AT::print_(unsigned l) const
 {
@@ -5815,8 +5818,8 @@ UCommand_WHILE::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_WHILE::print_(unsigned l) const
 {
@@ -5943,7 +5946,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     //cleanup of candidates that do not appear anymore in the mixlist
     for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
 	 ic != candidates.end ();
-      )
+	 )
       if (!(*ic)->isVisited ())
       {
 	delete *ic;
@@ -6040,8 +6043,8 @@ UCommand_WHENEVER::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_WHENEVER::print_(unsigned l) const
 {
@@ -6097,8 +6100,8 @@ UCommand_LOOP::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_LOOP::print_(unsigned l) const
 {
@@ -6190,8 +6193,8 @@ UCommand_LOOPN::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_LOOPN::print_(unsigned l) const
 {
@@ -6329,8 +6332,8 @@ UCommand_FOR::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_FOR::print_(unsigned l) const
 {
@@ -6445,8 +6448,8 @@ UCommand_FOREACH::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_FOREACH::print_(unsigned l) const
 {
@@ -6460,10 +6463,10 @@ MEMORY_MANAGER_INIT(UCommand_NOOP);
 // *********************************************************
 //! UCommand subclass constructor.
 /*! Subclass of UCommand with standard member initialization.
- If zerotime is true, the noop command will be terminated as soon as it is
- executed. It is a truely empty command, used to structure command trees
- like in the { commands... }  case.
- */
+  If zerotime is true, the noop command will be terminated as soon as it is
+  executed. It is a truely empty command, used to structure command trees
+  like in the { commands... }  case.
+*/
 UCommand_NOOP::UCommand_NOOP(const location& l, kind k)
   : UCommand(l, NOOP),
     kind_ (k)
@@ -6505,8 +6508,8 @@ UCommand_NOOP::copy() const
 
 //! Print the command
 /*! This function is for debugging purpose only.
- It is not safe, efficient or crash proof. A better version will come later.
- */
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
 void
 UCommand_NOOP::print_(unsigned) const
 {

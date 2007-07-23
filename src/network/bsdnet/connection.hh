@@ -35,7 +35,7 @@ public:
    * is thus responsible for its deletion, and the declaration of its allocation*/
   Connection(int connfd);
   virtual ~Connection();
-  virtual UErrorValue closeConnection ();
+  virtual UConnection& closeConnection ();
 
   virtual std::ostream& print (std::ostream& o) const;
 
@@ -54,7 +54,7 @@ public:
   {
     doWrite();
   }
-  virtual UErrorValue send (const ubyte *buffer, int length);
+  virtual UConnection& send (const ubyte *buffer, int length);
 
 public:
   //! Accessor for the underlying file descriptor
@@ -83,6 +83,9 @@ protected:
   int fd;
   //! The reception buffer
   unsigned char read_buff[PACKETSIZE];
+
+public:
+  virtual UConnection& endline ();
 };
 
 #endif // !CONNECTION_HH

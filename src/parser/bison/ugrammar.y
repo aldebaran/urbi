@@ -174,7 +174,7 @@ warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
 {
   std::ostringstream o;
   o << "!!! " << l << ": " << m << "\n" << std::ends;
-  up.connection.send(o.str().c_str(), "warning");
+  up.connection << UConnection::msend(o.str().c_str(), "warning");
 }
 
 /// Complain if \a command is not spontaneous.

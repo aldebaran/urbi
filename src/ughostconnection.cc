@@ -61,11 +61,11 @@ UGhostConnection::~UGhostConnection()
 //! Close the connection
 /*! This function does nothing. The ghost connection cannot be closed.
 */
-UErrorValue
+UConnection&
 UGhostConnection::closeConnection()
 {
   closing = true;
-  return USUCCESS;
+  CONN_ERR_RET(USUCCESS);
 }
 
 //! Does nothing. No output for the ghosts...
@@ -81,4 +81,13 @@ UGhostConnection::effectiveSend(const ubyte *buffer, int length)
   ::urbiserver->debug("%s", buf);
 
   return length;
+}
+
+//! Send a "\n" through the connection
+UConnection&
+UGhostConnection::endline ()
+{
+  //FIXME: test send error
+  (*this) << msend((const ubyte*)"\n", 1);
+  CONN_ERR_RET(USUCCESS);
 }

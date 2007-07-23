@@ -1,3 +1,29 @@
+2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Use UConnection as a stream
+	This still needs cleaning.
+	It will be done after more intensibve testing.
+	* include/kernel/ucomplaints.hh (message): New. Unify functions for
+	error and warning messages.
+	* include/kernel/uconnection.hh: .
+	* src/network/bsdnet/connection.cc: Fixed prototypes.
+	(endline): Moved implementation from UConnection here.
+	* Src/network/bsdnet/connection.hh: Idem.
+	* src/parser/bison/ugrammar.y: Fixed calls.
+	* src/ucommand.cc: .
+	* src/ucomplaints.cc (messages): New. Static array for messages.
+	(message): New. Unified function.
+	* src/uconnection.cc: Fixed calls.
+	* src/uexpression.cc: Fixed calls.
+	* src/ughostconnection.cc: Fixed prototypes.
+	(endline): Moved implementation from UConnection here.
+	* src/ughostconnection.hh: Idem.
+	* src/uobj.cc: Fixed calls.
+	* src/uobject.cc: Fixed calls.
+	* src/userver.cc: Fixed calls.
+	* src/uvalue.cc: Fixed prototypes and calls.
+	* src/uvariable.cc: Fixed calls.
+
 2007-07-23  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 1340:1362 https://svn.gostai.com/svn/kernel1/branches/1.0
