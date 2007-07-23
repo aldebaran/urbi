@@ -164,6 +164,32 @@ float_peq (libport::ufloat l, libport::ufloat r)
 # undef epsilonpercent
 }
 
+static float
+float_sgn (libport::ufloat x)
+{
+  if (x > 0)
+    return 1;
+  else if (x < 0)
+    return -1;
+  return 0;
+}
+
+static float
+float_random (libport::ufloat x)
+{
+  float res = 0.f;
+  const long long range = libport::to_long_long (x);
+  if (range != 0)
+    res = rand () % range;
+  return res;
+}
+
+static float
+float_sqr (libport::ufloat x)
+{
+  return x * x;
+}
+
 #define DECLARE(Name, Call)						\
     rObject								\
     float_class_ ## Name (objects_type args)				\
@@ -172,7 +198,16 @@ float_peq (libport::ufloat l, libport::ufloat r)
       assert(args[1]->kind_get() == Object::kind_float);		\
       rFloat l = args[0].unsafe_cast<Float> ();				\
       rFloat r = args[1].unsafe_cast<Float> ();				\
-      return new Float(Call);	\
+      return new Float(Call);                                           \
+    }
+
+#define DECLARE_U(Name, Call)                                           \
+    rObject								\
+    float_class_ ## Name (objects_type args)				\
+    {									\
+      assert(args[1]->kind_get() == Object::kind_float);		\
+      rFloat x = args[1].unsafe_cast<Float> ();				\
+      return new Float(Call);                                           \
     }
 
 #define DECLARE_M(Name, Method)						\
@@ -181,6 +216,9 @@ float_peq (libport::ufloat l, libport::ufloat r)
 
 #define DECLARE_OP(Name, Operator)					\
   DECLARE(Name, l->value_get() Operator r->value_get())
+
+#define DECLARE_U_M(Name, Method)					\
+  DECLARE_U(Name, Method(x->value_get()))
 
 
   DECLARE_OP(add, +)
@@ -204,9 +242,28 @@ float_peq (libport::ufloat l, libport::ufloat r)
   DECLARE_OP(gth, >)
   DECLARE_OP(geq, >=)
 
+
+  DECLARE_U_M(sin, sin)
+  DECLARE_U_M(asin, asin)
+  DECLARE_U_M(cos, cos)
+  DECLARE_U_M(acos, acos)
+  DECLARE_U_M(tan, tan)
+  DECLARE_U_M(atan, atan)
+  DECLARE_U_M(sgn, float_sgn)
+  DECLARE_U_M(abs, fabs)
+  DECLARE_U_M(exp, exp)
+  DECLARE_U_M(log, log)
+  DECLARE_U_M(round, round)
+  DECLARE_U_M(random, float_random)
+  DECLARE_U_M(trunc, trunc)
+  DECLARE_U_M(sqr, float_sqr)
+  DECLARE_U_M(sqrt, sqrt)
+
+#undef DECLARE_U_M
 #undef DECLARE_M
 #undef DECLARE_OP
 #undef DECLARE
+#undef DECLARE_U
 
   namespace
   {
@@ -218,6 +275,9 @@ float_peq (libport::ufloat l, libport::ufloat r)
 #define DECLARE(Name, Operator)						\
       float_class->slot_set (#Operator,					\
 			     new Primitive(float_class_ ## Name));
+
+#define DECLARE_(Name)                                                  \
+      DECLARE(Name, Name)
 
       DECLARE(add, +)
       DECLARE(div, /)
@@ -240,6 +300,23 @@ float_peq (libport::ufloat l, libport::ufloat r)
       DECLARE(gth, >)
       DECLARE(geq, >=)
 
+      DECLARE_(sin)
+      DECLARE_(asin)
+      DECLARE_(cos)
+      DECLARE_(acos)
+      DECLARE_(tan)
+      DECLARE_(atan)
+      DECLARE_(sgn)
+      DECLARE_(abs)
+      DECLARE_(exp)
+      DECLARE_(log)
+      DECLARE_(round)
+      DECLARE_(random)
+      DECLARE_(trunc)
+      DECLARE_(sqr)
+      DECLARE_(sqrt)
+
+#undef DECLARE_
 #undef DECLARE
     }
   }

@@ -1,3 +1,8 @@
+2007-07-23  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Add math primitives.
+	* src/object/primitives.cc: Here.
+
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
 	function name args body
