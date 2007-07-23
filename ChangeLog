@@ -1,3 +1,9 @@
+2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix argument index for method calls in objects
+	* src/object/object-test-primitives.cc: Here.
+	* src/object/primitives.cc: Add target.
+
 2007-07-23  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Add math primitives.

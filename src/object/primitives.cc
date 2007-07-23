@@ -194,10 +194,10 @@ float_sqr (libport::ufloat x)
     rObject								\
     float_class_ ## Name (objects_type args)				\
     {									\
-      assert(args[0]->kind_get() == Object::kind_float);		\
       assert(args[1]->kind_get() == Object::kind_float);		\
-      rFloat l = args[0].unsafe_cast<Float> ();				\
-      rFloat r = args[1].unsafe_cast<Float> ();				\
+      assert(args[2]->kind_get() == Object::kind_float);		\
+      rFloat l = args[1].unsafe_cast<Float> ();				\
+      rFloat r = args[2].unsafe_cast<Float> ();				\
       return new Float(Call);                                           \
     }
 
@@ -214,6 +214,7 @@ float_sqr (libport::ufloat x)
   DECLARE(Name, Method(l->value_get(), r->value_get()))
 
 
+  //FIXME: check if rvalue is 0 for % and / operators
 #define DECLARE_OP(Name, Operator)					\
   DECLARE(Name, l->value_get() Operator r->value_get())
 
