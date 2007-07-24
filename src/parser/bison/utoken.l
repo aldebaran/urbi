@@ -190,7 +190,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;
-"echo"          return token::TOK_ECHO;
+"echo"          RETURN_OP(ECHO);
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;
@@ -240,7 +240,7 @@ STRING   \"([^\"]|"\\\"")*\"
 ">="            RETURN_OP(GEQ);
 "^"             { up.warn(*locp, "The use of '^' for exponent operator"
 			  " is deprecated. Use '**' instead.");
-                  RETURN_VALUE(TOK_EXP, symbol, new libport::Symbol("**")); }
+		  RETURN_VALUE(TOK_EXP, symbol, new libport::Symbol("**")); }
 "**"            RETURN_OP(EXP);
 "&&"            RETURN_OP(LAND);
 "||"            RETURN_OP(LOR);

@@ -1,3 +1,9 @@
+2007-07-24  Akim Demaille  <demaille@gostai.com>
+
+	echo as a symbol
+	* src/parser/bison/utoken.l (echo): Use RETURN_OP.
+	* src/parser/bison/ugrammar.y: Adjust.
+
 2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Prepare to handle AndExp.
