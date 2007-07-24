@@ -5,9 +5,12 @@
 
 #include <cmath>
 
+#include <boost/lexical_cast.hpp>
+
 #include "object/object.hh"
 #include "object/atom.hh"
 
+#include "kernel/uconnection.hh"
 #include "kernel/userver.hh"
 
 namespace object
@@ -99,11 +102,27 @@ namespace object
   namespace
   {
 
+    rObject
+    context_class_echo (objects_type args)
+    {
+      assert(args[0]->kind_get() == Object::kind_context);
+      const UConnection& c = *args[0].unsafe_cast<Context>()->value_get();
+      const_cast<UConnection&>(c)
+	.send (boost::lexical_cast<std::string>(*args[1]).c_str());
+      return args[0];
+    }
+
+
     /// Initialize the Code class.
     static
     void
     code_class_initialize ()
     {
+#define DECLARE(Name)							\
+      context_class->slot_set (#Name,					\
+			       new Primitive(context_class_ ## Name));
+      DECLARE(echo);
+#undef DECLARE
     }
 
   }
