@@ -1,3 +1,14 @@
+2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Prepare to handle AndExp.
+	* src/parser/uparser.cc (parse_): Don't even look at YYDEBUG if
+	ENABLE_DEBUG_TRACES is defined.
+	* src/runner/runner.hh (operator()): Override for AndExp.
+	* src/runner/runner.cc: Dummy (empty) implementation.
+	* src/uqueue.hh (ctor),
+	* src/ucommandqueue.hh (ctor): Mark as explicit.
+	* src/userver.cc: Fix some comments.
+
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
 	Context is per connection

@@ -38,9 +38,9 @@
 class UCommandQueue : public UQueue
 {
 public:
-  UCommandQueue  (int minBufferSize = 0,
-		  int maxBufferSize = -1,
-		  int adaptive = 0);
+  explicit UCommandQueue  (int minBufferSize = 0,
+                           int maxBufferSize = -1,
+                           int adaptive = 0);
 
   virtual ~UCommandQueue ();
 

@@ -46,9 +46,9 @@ class UQueue
 {
 public:
 
-  UQueue  (int minBufferSize = 0,
-	   int maxBufferSize = -1,
-	   int adaptive = 0);
+  explicit UQueue  (int minBufferSize = 0,
+                    int maxBufferSize = -1,
+                    int adaptive = 0);
 
   virtual ~UQueue ();
 

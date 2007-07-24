@@ -400,7 +400,7 @@ UServer::work()
 	    (*i)->selfSet (&((*i)->target));
 	}
 
-      // set previous for next iation
+      // set previous for next iteration
       (*i)->previous3 = (*i)->previous2;
       (*i)->previous2 = (*i)->previous;
       (*i)->previous  = (*i)->target;
@@ -494,7 +494,7 @@ UServer::work()
 
       aliastab.clear();
       emittab.clear();
-      functiontab.clear();  //This leaks awfuly...
+      functiontab.clear();  //This leaks awfully...
       grouptab.clear();
       objaliastab.clear();
 

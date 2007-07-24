@@ -42,9 +42,10 @@ UParser::parse_ ()
   hasWarning_ = false;
 
   parser_type p(*this);
-  p.set_debug_level (!!getenv ("YYDEBUG"));
 #ifdef ENABLE_DEBUG_TRACES
   p.set_debug_level(true);
+#else
+  p.set_debug_level (!!getenv ("YYDEBUG"));
 #endif
   ECHO("====================== Parse begin");
   int res = p.parse();
@@ -53,7 +54,7 @@ UParser::parse_ ()
 }
 
 int
-UParser::process(const ubyte* command, int length)
+UParser::process (const ubyte* command, int length)
 {
   // It has been said Flex scanners cannot work with istrstream.
   std::istrstream mem_buff (reinterpret_cast<const char*> (command), length);

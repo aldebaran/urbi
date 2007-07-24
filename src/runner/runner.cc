@@ -21,6 +21,10 @@ namespace runner
     tgt->slot_set (s, eval(e.rhs_get()));
   }
 
+  void
+  Runner::operator() (const ast::AndExp&)
+  {
+  }
 
   void
   Runner::operator() (const ast::CallExp& e)
