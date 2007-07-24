@@ -84,7 +84,7 @@
 
 2007-07-20  Akim Demaille  <demaille@gostai.com>
 
-	Prettify 
+	Prettify
 	* src/ast/ast.yml (CallExp::printer): Don't display useless parens.
 	* src/object/Makefile.am: Don't compile atom.cc, it's empty.
 	* src/runner/runner.cc (CallExp): Initial attempt to call a Code.
@@ -264,9 +264,9 @@
 	%%
 	target: /* empty */
 	      | expr "."
-	
+
 	name: target "identifier"
-	
+
 	expr: name
 	    | target "identifier" "(" ")"
 	    | "%" name
