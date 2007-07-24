@@ -4002,8 +4002,9 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     std::ostringstream o;
     o << "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
-    //std::cout << getTag() << std::endl << o.str() << std::endl;
+    // std::cout << getTag() << std::endl << o.str() << std::endl;
     *connection << UConnection::msendf(getTag(), o.str().c_str());
+    //*connection << UConnection::msend(o.str().c_str(),getTag().c_str ());
     return UCOMPLETED;
   }
 

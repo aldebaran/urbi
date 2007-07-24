@@ -1,3 +1,10 @@
+2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
+
+	* include/kernel/uconnection.hh: Patch to fix read errors.
+	Not complete
+	* src/ucommand.cc: Remove extra debug info.
+	* src/uconnection.cc: Idem uconnection.hh.
+
 2007-07-24  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Restore crushed modifications.
