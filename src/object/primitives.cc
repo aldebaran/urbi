@@ -92,6 +92,10 @@ namespace object
   }
 
 
+  /*-------.
+  | Code.  |
+  `-------*/
+
   namespace
   {
 
@@ -104,121 +108,137 @@ namespace object
 
   }
 
+  /*----------.
+  | Context.  |
+  `----------*/
 
-  /*-------------------.
-  | Float primitives.  |
-  `-------------------*/
+  namespace
+  {
 
-static libport::ufloat
-float_req (libport::ufloat l, libport::ufloat r)
-{
-  // FIXME: get epsilontilde from environment
+    /// Initialize the Integer class.
+    static
+    void
+    context_class_initialize ()
+    {
+    }
 
-  // ENSURE_COMPARISON ("Approximate", l, r);
-  // UVariable *epsilontilde =
-  //   ::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
-  // if (epsilontilde)
-  //   $EXEC$
-  // else
-  //   return 0;
+  }
+
+
+  /*--------.
+  | Float.  |
+  `--------*/
+
+  static libport::ufloat
+  float_req (libport::ufloat l, libport::ufloat r)
+  {
+    // FIXME: get epsilontilde from environment
+
+    // ENSURE_COMPARISON ("Approximate", l, r);
+    // UVariable *epsilontilde =
+    //   ::urbiserver->getVariable(MAINDEVICE, "epsilontilde");
+    // if (epsilontilde)
+    //   $EXEC$
+    // else
+    //   return 0;
 
 # define epsilontilde 0.0001
-  return fabs(l - r) <= epsilontilde;
+    return fabs(l - r) <= epsilontilde;
 # undef epsilontilde
-}
+  }
 
-static float
-float_deq (libport::ufloat l, libport::ufloat r)
-{
-  // FIXME: get deltas for l and r
+  static float
+  float_deq (libport::ufloat l, libport::ufloat r)
+  {
+    // FIXME: get deltas for l and r
 
-  // ENSURE_COMPARISON ("Approximate", l, r);
-  libport::ufloat dl = 0.f;
-  libport::ufloat dr = 0.f;
-  // dl = 0, get l->delta
-  // dr = 0, get r->delta
+    // ENSURE_COMPARISON ("Approximate", l, r);
+    libport::ufloat dl = 0.f;
+    libport::ufloat dr = 0.f;
+    // dl = 0, get l->delta
+    // dr = 0, get r->delta
 
-  return fabs(l - r) <= dl + dr;
-}
+    return fabs(l - r) <= dl + dr;
+  }
 
-static float
-float_peq (libport::ufloat l, libport::ufloat r)
-{
-  // FIXME: get epsilonpercent from environment
-  // FIXME: return error on div by 0
+  static float
+  float_peq (libport::ufloat l, libport::ufloat r)
+  {
+    // FIXME: get epsilonpercent from environment
+    // FIXME: return error on div by 0
 
-  // ENSURE_COMPARISON ("Approximate", l, r);
-  // UVariable *epsilonpercent =
-  //   ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
-  // if (epsilonpercent)
-  //   $EXEC$
-  // else
-  //   return 0;
+    // ENSURE_COMPARISON ("Approximate", l, r);
+    // UVariable *epsilonpercent =
+    //   ::urbiserver->getVariable(MAINDEVICE, "epsilonpercent");
+    // if (epsilonpercent)
+    //   $EXEC$
+    // else
+    //   return 0;
 
-  if (r == 0)
-    // FIXME: error
-    return 0;
+    if (r == 0)
+      // FIXME: error
+      return 0;
 
 # define epsilonpercent 0.0001
-  return fabs(1.f - l / r) < epsilonpercent;
+    return fabs(1.f - l / r) < epsilonpercent;
 # undef epsilonpercent
-}
+  }
 
-static float
-float_sgn (libport::ufloat x)
-{
-  if (x > 0)
-    return 1;
-  else if (x < 0)
-    return -1;
-  return 0;
-}
+  static float
+  float_sgn (libport::ufloat x)
+  {
+    if (x > 0)
+      return 1;
+    else if (x < 0)
+      return -1;
+    return 0;
+  }
 
-static float
-float_random (libport::ufloat x)
-{
-  float res = 0.f;
-  const long long range = libport::to_long_long (x);
-  if (range != 0)
-    res = rand () % range;
-  return res;
-}
+  static float
+  float_random (libport::ufloat x)
+  {
+    float res = 0.f;
+    const long long range = libport::to_long_long (x);
+    if (range != 0)
+      res = rand () % range;
+    return res;
+  }
 
-static float
-float_sqr (libport::ufloat x)
-{
-  return x * x;
-}
+  static float
+  float_sqr (libport::ufloat x)
+  {
+    return x * x;
+  }
 
-#define DECLARE(Name, Call)						\
-    rObject								\
-    float_class_ ## Name (objects_type args)				\
-    {									\
-      assert(args[0]->kind_get() == Object::kind_float);		\
-      assert(args[1]->kind_get() == Object::kind_float);		\
-      rFloat l = args[0].unsafe_cast<Float> ();				\
-      rFloat r = args[1].unsafe_cast<Float> ();				\
-      return new Float(Call);                                           \
-    }
+#define DECLARE(Name, Call)				\
+  rObject						\
+  float_class_ ## Name (objects_type args)		\
+  {							\
+    assert(args[0]->kind_get() == Object::kind_float);	\
+    assert(args[1]->kind_get() == Object::kind_float);	\
+    rFloat l = args[0].unsafe_cast<Float> ();		\
+    rFloat r = args[1].unsafe_cast<Float> ();		\
+    return new Float(Call);				\
+  }
 
-#define DECLARE_U(Name, Call)                                           \
-    rObject								\
-    float_class_ ## Name (objects_type args)				\
-    {									\
-      assert(args[1]->kind_get() == Object::kind_float);		\
-      rFloat x = args[1].unsafe_cast<Float> ();				\
-      return new Float(Call);                                           \
-    }
+#define DECLARE_U(Name, Call)				\
+  rObject						\
+  float_class_ ## Name (objects_type args)		\
+  {							\
+    assert(args[1]->kind_get() == Object::kind_float);	\
+    rFloat x = args[1].unsafe_cast<Float> ();		\
+    return new Float(Call);				\
+  }
 
-#define DECLARE_M(Name, Method)						\
+#define DECLARE_M(Name, Method)				\
   DECLARE(Name, Method(l->value_get(), r->value_get()))
 
 
   //FIXME: check if rvalue is 0 for % and / operators
-#define DECLARE_OP(Name, Operator)					\
+#define DECLARE_OP(Name, Operator)			\
   DECLARE(Name, l->value_get() Operator r->value_get())
 
-#define DECLARE_U_M(Name, Method)					\
+#define DECLARE_U_M(Name, Method)		\
   DECLARE_U(Name, Method(x->value_get()))
 
 
@@ -277,49 +297,49 @@ float_sqr (libport::ufloat x)
       float_class->slot_set (#Operator,					\
 			     new Primitive(float_class_ ## Name));
 
-#define DECLARE_(Name)                                                  \
+#define DECLARE_(Name)				\
       DECLARE(Name, Name)
 
       DECLARE(add, +)
-      DECLARE(div, /)
-      DECLARE(mul, *)
-      DECLARE(sub, -)
-      DECLARE(pow, **)
-      DECLARE(mod, %)
+	DECLARE(div, /)
+	DECLARE(mul, *)
+	DECLARE(sub, -)
+	DECLARE(pow, **)
+	DECLARE(mod, %)
 
-      DECLARE(land, &&)
-      DECLARE(lor, ||)
+	DECLARE(land, &&)
+	DECLARE(lor, ||)
 
-      DECLARE(equ, ==)
-      DECLARE(req, ~=)
-      DECLARE(deq, =~=)
-      DECLARE(peq, %=)
-      DECLARE(neq, !=)
+	DECLARE(equ, ==)
+	DECLARE(req, ~=)
+	DECLARE(deq, =~=)
+	DECLARE(peq, %=)
+	DECLARE(neq, !=)
 
-      DECLARE(lth, <)
-      DECLARE(leq, <=)
-      DECLARE(gth, >)
-      DECLARE(geq, >=)
+	DECLARE(lth, <)
+	DECLARE(leq, <=)
+	DECLARE(gth, >)
+	DECLARE(geq, >=)
 
-      DECLARE_(sin)
-      DECLARE_(asin)
-      DECLARE_(cos)
-      DECLARE_(acos)
-      DECLARE_(tan)
-      DECLARE_(atan)
-      DECLARE_(sgn)
-      DECLARE_(abs)
-      DECLARE_(exp)
-      DECLARE_(log)
-      DECLARE_(round)
-      DECLARE_(random)
-      DECLARE_(trunc)
-      DECLARE_(sqr)
-      DECLARE_(sqrt)
+	DECLARE_(sin)
+	DECLARE_(asin)
+	DECLARE_(cos)
+	DECLARE_(acos)
+	DECLARE_(tan)
+	DECLARE_(atan)
+	DECLARE_(sgn)
+	DECLARE_(abs)
+	DECLARE_(exp)
+	DECLARE_(log)
+	DECLARE_(round)
+	DECLARE_(random)
+	DECLARE_(trunc)
+	DECLARE_(sqr)
+	DECLARE_(sqrt)
 
 #undef DECLARE_
 #undef DECLARE
-    }
+	}
   }
 
   namespace
@@ -359,35 +379,30 @@ float_sqr (libport::ufloat x)
       // They all derive from Object.
 #define DECLARE(What, Name)			\
       What ## _class = clone(object_class);
-      APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(DECLARE);
+      APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE);
 #undef DECLARE
 
       // Now that these classes exists, in particular string_class
       // from which any String is a clone, we can initialize the
       // "type" field for all of them, including Object.
-#define DECLARE(What, Name)				\
+#define DECLARE(What, Name)					\
       What ## _class->slot_set("type", new String (#Name));
-      APPLY_ON_GLOBAL_PRIMITIVES(DECLARE);
+      APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
       // Now finalize the construction for each base class:
       // bind some initial methods.
 #define DECLARE(What, Name)			\
       What ## _class_initialize ();
-      APPLY_ON_GLOBAL_PRIMITIVES(DECLARE);
+      APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
-
-      // Some plain classes, initialized by hand currently.
-      context_class = clone (object_class);
-      context_class->slot_set("type", new String ("Context"));
 
       // Register all these classes in Object, so that when we look up
       // for "Object" for instance, we find it.
-#define DECLARE(What, Name)			\
+#define DECLARE(What, Name)				\
       object_class->slot_set(#Name, What ## _class);
-      APPLY_ON_GLOBAL_PRIMITIVES(DECLARE);
+      APPLY_ON_ALL_PRIMITIVES(DECLARE);
 #undef DECLARE
-      object_class->slot_set("Context", context_class);
 
       return true;
     }

@@ -541,28 +541,28 @@ UConnection::received (const ubyte *buffer, int length)
       // Error messages & warnigns handling
       if (!server->memoryOverflow)
       {
-        // Warnings handling
-        if (p.hasWarning())
-        {
-          send(p.warning_get().c_str(), "warn ");
-          server->error(::DISPLAY_FORMAT, (long)this,
-                        "UConnection::received",
-                        p.warning_get().c_str());
-        }
+	// Warnings handling
+	if (p.hasWarning())
+	{
+	  send(p.warning_get().c_str(), "warn ");
+	  server->error(::DISPLAY_FORMAT, (long)this,
+			"UConnection::received",
+			p.warning_get().c_str());
+	}
 
-        // Errors handling
-        if (p.hasError())
-        {
-          // FIXME: 2007-07-20: Currently we can't free the commandTree,
-          // we might kill function bodies.
-          //delete p.commandTree;
-          p.commandTree = 0;
+	// Errors handling
+	if (p.hasError())
+	{
+	  // FIXME: 2007-07-20: Currently we can't free the commandTree,
+	  // we might kill function bodies.
+	  //delete p.commandTree;
+	  p.commandTree = 0;
 
-          send(p.error_get().c_str(), "error");
-          server->error(::DISPLAY_FORMAT, (long)this,
-                        "UConnection::received",
-                        p.error_get().c_str());
-        }
+	  send(p.error_get().c_str(), "error");
+	  server->error(::DISPLAY_FORMAT, (long)this,
+			"UConnection::received",
+			p.error_get().c_str());
+	}
       }
 
       if (p.commandTree)
@@ -1042,7 +1042,7 @@ UConnection::execute(ast::Ast*& execCommand)
     return;
 
   // std::cerr << "Command is: " << *execCommand << std::endl;
-  runner::Runner r;
+  runner::Runner r(*this);
   r(execCommand);
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 

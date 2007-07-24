@@ -1,3 +1,25 @@
+2007-07-24  Akim Demaille  <demaille@gostai.com>
+
+	rContext
+	* src/object/fwd.hh (APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT)
+	(APPLY_ON_ALL_PRIMITIVES): New.
+	* src/object/atom.hh, src/object/atom.hxx (kernel/fwd.hh):
+	Include to get UConnection.
+	(context_traits): New.
+	Fix Doc.
+	(op<<(UConnection)): New.
+	* src/object/object.hh, src/object/object.cc: Handle ALL
+	primitives, not just GLOBAL.
+	* src/object/primitives.cc (context_class_initialize): New.
+	(root_classes_initialize): Call it.
+	Use APPLY_ON_ALL_PRIMITIVES_*, since Context is to handle too.
+	* src/runner/runner.hh, src/runner/runner.hxx (Runner::Runner):
+	Take a UConnection as arg.
+	(context_): New.
+	(target): Use it.
+	(rContext): New typedef.
+	* src/uconnection.cc: Adjust Runner construction.
+
 2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Update externals.

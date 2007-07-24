@@ -6,6 +6,7 @@
 #ifndef OBJECT_FLOAT_HH
 # define OBJECT_FLOAT_HH
 
+# include "kernel/fwd.hh"
 # include "libport/ufloat.h"
 # include "object/object.hh"
 
@@ -50,8 +51,21 @@ namespace object
 
   struct code_traits
   {
+    // FIXME: Can be ref?
     typedef const ast::Exp* type;
     enum { kind = Object::kind_code };
+  };
+
+
+  /*----------.
+  | Context.  |
+  `----------*/
+
+  struct context_traits
+  {
+    // FIXME: Can be ref?
+    typedef const UConnection* type;
+    enum { kind = Object::kind_context };
   };
 
 

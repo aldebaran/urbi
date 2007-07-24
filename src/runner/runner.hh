@@ -6,6 +6,8 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
+# include "kernel/fwd.hh"  // UConnection
+
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
 
@@ -20,14 +22,14 @@ namespace runner
     /// \{
     /// Super class type.
     typedef ast::DefaultConstVisitor super_type;
-    ///
     typedef object::rObject rObject;
+    typedef object::rContext rContext;
     /// \}
 
     /// \name Ctor & dtor.
     /// \{
     /// Construct a Runner.
-    Runner ();
+    Runner (UConnection& ctx);
 
     /// Destroy a Runner.
     virtual ~Runner ();
@@ -54,6 +56,10 @@ namespace runner
     /// \}
 
   private:
+    /// The URBI Context used to evaluate.
+    /// Wraps an UConnection.
+    rContext context_;
+
     /// The current value during the evaluation of the ast.
     rObject current_;
   };

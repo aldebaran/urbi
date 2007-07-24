@@ -1,10 +1,10 @@
 /**
- ** \file object/atom.hh
- ** \brief Definition of object::Float.
+ ** \file object/atom.hxx
+ ** \brief Inline implementation of atoms.
  */
 
-#ifndef OBJECT_ATOM_HH
-# define OBJECT_ATOM_HH
+#ifndef OBJECT_ATOM_HXX
+# define OBJECT_ATOM_HXX
 
 # include "libport/deref.hh"
 
@@ -12,6 +12,15 @@
 
 # include "object/atom.hh"
 # include "object/primitives.hh"
+
+/// How to print a UConnection.
+/// Used by the atom object::Context.
+inline
+std::ostream&
+operator<< (std::ostream& o, const UConnection& c)
+{
+  return o << "UConnection_" << static_cast<const void*>(&c);
+}
 
 namespace object
 {
@@ -25,7 +34,7 @@ namespace object
       {
 # define CASE(What, Name)					\
 	case kind_ ## What: parent_add (What ## _class); break;
-	APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(CASE)
+	APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
       case kind_object:
 	pabort (kind_get());
@@ -66,6 +75,4 @@ namespace object
 
 } // namespace object
 
-# include "object/atom.hxx"
-
-#endif // !OBJECT_ATOM_HH
+#endif // !OBJECT_ATOM_HXX

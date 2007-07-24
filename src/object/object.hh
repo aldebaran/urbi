@@ -37,7 +37,7 @@ namespace object
     enum kind_type
       {
 #define CASE(What, Name) kind_ ## What,
-	APPLY_ON_GLOBAL_PRIMITIVES(CASE)
+	APPLY_ON_ALL_PRIMITIVES(CASE)
 #undef CASE
       };
 

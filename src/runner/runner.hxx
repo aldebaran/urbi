@@ -7,13 +7,15 @@
 # define RUNNER_RUNNER_HXX
 
 # include "runner/runner.hh"
-# include "object/primitives.hh" //connection_class
+# include "object/atom.hh" // object::Context
 
 namespace runner
 {
 
   inline
-  Runner::Runner ()
+  Runner::Runner (UConnection& ctx)
+    : context_ (new object::Context(&ctx)),
+      current_ (0)
   {}
 
   inline
@@ -41,7 +43,10 @@ namespace runner
   {
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for IO.
-    return n ? eval (*n) : object::context_class;
+    if (n) 
+      return eval (*n);
+    else
+      return context_;
   }
 
 } // namespace runner
