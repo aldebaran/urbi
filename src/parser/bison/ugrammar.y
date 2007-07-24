@@ -160,7 +160,7 @@
 
 /* Tokens and nonterminal symbols, with their type */
 
-%token  
+%token
          TOK_ADDGROUP     "addgroup"
          TOK_ALIAS        "alias"
          TOK_ASSIGN       "="
@@ -515,7 +515,7 @@ stmt:
 | "class" "identifier" { $$ = 0; }
 | "event" name formal_arguments { $$ = 0; }
 | "function" name formal_arguments stmt
-  { 
+  {
     // Compiled as "name = function args stmt".
     $$ = new ast::AssignExp (@$, $2,
 			     new ast::Function (@$, take($3), $4));
@@ -670,7 +670,7 @@ expr:
   number    { $$ = new ast::FloatExp(@$, $1);        }
 | time_expr { $$ = new ast::FloatExp(@$, $1);        }
 | "string"  { $$ = new ast::StringExp(@$, take($1)); }
-| "[" exprs "]" { $$ = 0; }
+| "[" exprs "]" { $$ = new ast::ListExp(@$, $2); }
 | name "(" exprs ")"
     {
       $1->args_get().splice($1->args_get().end(), *$3);

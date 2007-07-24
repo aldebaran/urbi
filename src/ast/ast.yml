@@ -352,6 +352,12 @@ ListExp:
         type: 'exps_type*'
         access: r
         desc: Stored list value
+  printer:
+    - '"["'
+    - '{
+        ostr_ << libport::separate (n.value_get(), ", ");
+       }'
+    - '"]"'
 
 ## FIXME: Disabled because I don't know how to free the exp_pairs_type
 ## pointer.  The machinery is not ready.
@@ -413,7 +419,7 @@ CallExp:
     - '{
           if (n.args_get ().size() >= 2)
             ostr_ << "("
-                  << libport::separate (exps_type (++n.args_get ().begin(), 
+                  << libport::separate (exps_type (++n.args_get ().begin(),
                                                    n.args_get ().end()),
                                         libport::make_pair (",",
                                                             libport::iendl))

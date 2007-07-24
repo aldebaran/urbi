@@ -1,3 +1,10 @@
+2007-07-24  mefyl  <mefyl@lrde.epita.fr>
+
+	Build and pretty-print ListExp ast nodes.
+	* dev/ast-pretty-printer-gen: Don't warn about unused variables.
+	* src/ast/ast.yml: Add printer for ListExp.
+	* src/parser/bison/ugrammar.y: Build ListExp ast node.
+
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
 	rContext

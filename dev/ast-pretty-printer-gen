@@ -130,8 +130,17 @@ sys.stdout = visitor_cc
 print tools.banner("ast/pretty-printer.cc",
 		   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 #include "pretty-printer.hh"
 #include "all.hh"
+
+namespace
+{
+  // hack to avoid warnings aboute unused values
+  inline void ignore(const void*)
+  {}
+}
 
 namespace ast
 {
@@ -139,8 +148,6 @@ namespace ast
 """
 
 for node in arr:
-  # The name of the formal argument, if needed, with a leading space.
-  name = ''
   action = ''
   p = re.compile('\\$(\\w+)')
   if 'printer' in node.__dict__: # if a printer is defined
@@ -148,7 +155,6 @@ for node in arr:
       a = a.lstrip(' ').rstrip(' ')
       if a[0] == '~' or a[0] == '$':
 	# Handle '~foo' variables
-	name = ' n'
 	attrName = a[1:]
 	attr = node.attribute(attrName)
 	if attr == None:
@@ -172,10 +178,12 @@ for node in arr:
       else:
 	action += '    ostr_ << %s;\n' % (a)
     print """\
-  void PrettyPrinter::operator() (const %s&%s)
+  void PrettyPrinter::operator() (const %s& n)
   {
+    // Don't warn about unused arguments
+    ignore(&n);
 %s  }
-""" % (node.name, name, action)
+""" % (node.name, action)
 
 print """} // namespace ast
 """
