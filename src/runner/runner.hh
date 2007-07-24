@@ -29,7 +29,7 @@ namespace runner
     /// \name Ctor & dtor.
     /// \{
     /// Construct a Runner.
-    Runner (UConnection& ctx);
+    Runner (rContext ctx);
 
     /// Destroy a Runner.
     virtual ~Runner ();

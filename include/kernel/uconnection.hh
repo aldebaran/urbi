@@ -30,6 +30,8 @@
 # include "kernel/utypes.hh"
 # include "kernel/ucomplaints.hh"
 
+# include "object/fwd.hh"
+
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
     here on the kind of underlying connection (TCP, IPC, OPENR, ...).
@@ -277,6 +279,10 @@ private:
   /// True when the connection is reading to send/receive data (usualy
   /// set at "true" on start).
   bool           active_;
+
+  /// The Context into which the code is evaluated.
+  /// This is this connection, wrapped into an Urbi object.
+  object::rContext context_;
 };
 
 //! Accessor for sendAdaptive_

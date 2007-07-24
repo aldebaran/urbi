@@ -51,7 +51,8 @@
 #include "ucommandqueue.hh"
 #include "unamedparameters.hh"
 #include "uqueue.hh"
-#include "uqueue.hh"
+
+#include "object/atom.hh" // object::Context
 
 UConnection::UConnection (UServer *userver,
 			  int minSendBufferSize,
@@ -85,7 +86,8 @@ UConnection::UConnection (UServer *userver,
     sendAdaptive_(UConnection::ADAPTIVE),
     recvAdaptive_(UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
-    active_(true)
+    active_(true),
+    context_(new object::Context(this))
 {
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
@@ -1042,7 +1044,7 @@ UConnection::execute(ast::Ast*& execCommand)
     return;
 
   // std::cerr << "Command is: " << *execCommand << std::endl;
-  runner::Runner r(*this);
+  runner::Runner r(context_);
   r(execCommand);
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 

@@ -1,5 +1,16 @@
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
+	Context is per connection
+	Each connection must store its own rContext, otherwise we
+	create it for each evaluation of a command, therefore keep the
+	same one for all the connection life.
+	* include/kernel/uconnection.hh (context_): New.
+	* src/runner/runner.hh, src/runner/runner.hxx (context_): Take
+	it as an rContext.
+	* src/uconnection.cc (execute): Adjust.
+
+2007-07-24  Akim Demaille  <demaille@gostai.com>
+
 	Give details on failures
 	* src/object/object.cc (lookup): Send a readable exception.
 
