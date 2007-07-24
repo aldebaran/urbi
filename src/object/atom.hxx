@@ -25,7 +25,7 @@ namespace object
       {
 # define CASE(What, Name)					\
 	case kind_ ## What: parent_add (What ## _class); break;
-	APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(CASE)
+	APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(CASE)
 # undef CASE
       case kind_object:
 	pabort (kind_get());

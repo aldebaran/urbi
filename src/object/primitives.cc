@@ -359,7 +359,7 @@ float_sqr (libport::ufloat x)
       // They all derive from Object.
 #define DECLARE(What, Name)			\
       What ## _class = clone(object_class);
-      APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE);
+      APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(DECLARE);
 #undef DECLARE
 
       // Now that these classes exists, in particular string_class
@@ -367,14 +367,14 @@ float_sqr (libport::ufloat x)
       // "type" field for all of them, including Object.
 #define DECLARE(What, Name)				\
       What ## _class->slot_set("type", new String (#Name));
-      APPLY_ON_ALL_PRIMITIVES(DECLARE);
+      APPLY_ON_GLOBAL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
       // Now finalize the construction for each base class:
       // bind some initial methods.
 #define DECLARE(What, Name)			\
       What ## _class_initialize ();
-      APPLY_ON_ALL_PRIMITIVES(DECLARE);
+      APPLY_ON_GLOBAL_PRIMITIVES(DECLARE);
 #undef DECLARE
 
       // Some plain classes, initialized by hand currently.
@@ -385,7 +385,7 @@ float_sqr (libport::ufloat x)
       // for "Object" for instance, we find it.
 #define DECLARE(What, Name)			\
       object_class->slot_set(#Name, What ## _class);
-      APPLY_ON_ALL_PRIMITIVES(DECLARE);
+      APPLY_ON_GLOBAL_PRIMITIVES(DECLARE);
 #undef DECLARE
       object_class->slot_set("Context", context_class);
 

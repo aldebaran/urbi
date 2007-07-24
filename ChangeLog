@@ -1,3 +1,13 @@
+2007-07-24  Akim Demaille  <demaille@gostai.com>
+
+	ALL => GLOBAL
+	* src/object/atom.hxx, src/object/fwd.hh, src/object/object.cc,
+	* src/object/object.hh, src/object/primitives.cc
+	(APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT, APPLY_ON_ALL_PRIMITIVES):
+	Rename as...
+	(APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT, APPLY_ON_GLOBAL_PRIMITIVES):
+	these.
+
 2007-07-24  mefyl  <mefyl@lrde.epita.fr>
 
 	Reduce code duplication. Use strings instead of char*.

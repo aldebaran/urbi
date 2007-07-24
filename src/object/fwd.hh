@@ -28,16 +28,16 @@ namespace object
   /// Macro should be a binary macro whose first arg, \p What, is the
   /// lower case C++ name, and the second argument, \p Name, the
   /// capitalized Urbi name.
-# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
+# define APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(code,      Code)				\
   Macro(float,     Float)				\
   Macro(integer,   Integer)				\
   Macro(primitive, Primitive)				\
   Macro(string,    String)
 
-# define APPLY_ON_ALL_PRIMITIVES(Macro)		\
-  Macro(object,    Object)			\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)
+# define APPLY_ON_GLOBAL_PRIMITIVES(Macro)		\
+  Macro(object,    Object)				\
+  APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(Macro)
 
 
   // All the atoms.
@@ -49,7 +49,7 @@ namespace object
   typedef Atom< What ## _traits > Name;			\
   typedef libport::shared_ptr < Name > r ## Name;
 
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE)
+  APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(DECLARE)
 # undef DECLARE
 
 } // namespace object

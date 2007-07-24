@@ -20,7 +20,7 @@ namespace object
     switch (k)
       {
 #define CASE(What, Name) case kind_ ## What: return #Name; break;
-	APPLY_ON_ALL_PRIMITIVES(CASE);
+	APPLY_ON_GLOBAL_PRIMITIVES(CASE);
 #undef CASE
       }
     pabort("unreachable");
