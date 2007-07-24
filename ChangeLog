@@ -1,3 +1,8 @@
+2007-07-24  Akim Demaille  <demaille@gostai.com>
+
+	Add k2 tests
+	* tests-local.mk (TESTS): Extend it.
+
 2007-07-24  mefyl  <mefyl@lrde.epita.fr>
 
 	Report "^" as "**" in the scanner.

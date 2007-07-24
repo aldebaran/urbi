@@ -1,6 +1,8 @@
 # This file is loaded by tests/Makefile.am.  It contains things that
 # are specific to a given project or even Svn branch.
 
+TESTS += $(notdir $(wildcard $(srcdir)/k2/*.chk))
+
 XFAIL_TESTS += 					\
 armor-simple.chk				\
 arithmetics-failures.chk			\
@@ -38,6 +40,8 @@ object_events.chk				\
 onleave2.chk					\
 speed_zero.chk					\
 size.chk					\
+switch.chk					\
 synchro_assignment.chk				\
 tag.chk						\
 variable-qualifiers.chk
+
