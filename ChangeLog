@@ -1,3 +1,8 @@
+2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Update externals.
+	* configure.ac: List kernelteam@gostai.com.
+
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
 	ALL => GLOBAL
