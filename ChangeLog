@@ -1,3 +1,45 @@
+2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
+
+	merge -r 1362:1367 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+ -This line, and those below, will be ignored--
+
+--Preview of the message that will be sent--
+
+URL: https://svn.gostai.com/svn/kernel1/trunk
+Your comments (if any) will appear here.
+
+2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Your ChangeLog entry will appear here.
+
+ .automerge |    2 +-
+ ChangeLog  |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+Index: ChangeLog
+===================================================================
+--- ChangeLog	(revision 1367)
++++ ChangeLog	(working copy)
+@@ -1,3 +1,5 @@
++	merge -r 1362:1367 https://svn.gostai.com/svn/kernel1/branches/1.0
++
+ 2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
+
+ 	Use UConnection as a stream
+Index: .automerge
+===================================================================
+--- .automerge	(revision 1367)
++++ .automerge	(working copy)
+@@ -1 +1 @@
+-1362 | branches/1.0
++1367 | branches/1.0
+
+--- Internal stuff, DO NOT change please ---
+args:
+extra_files: /home/deslandes/work/kernel1/trunk:/home/deslandes/work/kernel1/trunk/ChangeLog
+vi: ft=diff:noet:tw=76:
+
 2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Use UConnection as a stream
