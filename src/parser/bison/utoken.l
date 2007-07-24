@@ -240,7 +240,7 @@ STRING   \"([^\"]|"\\\"")*\"
 ">="            RETURN_OP(GEQ);
 "^"             { up.warn(*locp, "The use of '^' for exponent operator"
 			  " is deprecated. Use '**' instead.");
-		  RETURN_OP(EXP); }
+                  RETURN_VALUE(TOK_EXP, symbol, new libport::Symbol("**")); }
 "**"            RETURN_OP(EXP);
 "&&"            RETURN_OP(LAND);
 "||"            RETURN_OP(LOR);
