@@ -194,10 +194,10 @@ float_sqr (libport::ufloat x)
     rObject								\
     float_class_ ## Name (objects_type args)				\
     {									\
+      assert(args[0]->kind_get() == Object::kind_float);		\
       assert(args[1]->kind_get() == Object::kind_float);		\
-      assert(args[2]->kind_get() == Object::kind_float);		\
-      rFloat l = args[1].unsafe_cast<Float> ();				\
-      rFloat r = args[2].unsafe_cast<Float> ();				\
+      rFloat l = args[0].unsafe_cast<Float> ();				\
+      rFloat r = args[1].unsafe_cast<Float> ();				\
       return new Float(Call);                                           \
     }
 

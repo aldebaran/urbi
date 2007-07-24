@@ -1,3 +1,8 @@
+2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
+
+	* src/object/object-test-primitives.cc: Remove extra arg.
+	* src/object/primitives.cc: Restore argument indexes.
+
 2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Fix argument index for method calls in objects
