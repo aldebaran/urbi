@@ -2,44 +2,6 @@
 
 	merge -r 1362:1367 https://svn.gostai.com/svn/kernel1/branches/1.0
 
- -This line, and those below, will be ignored--
-
---Preview of the message that will be sent--
-
-URL: https://svn.gostai.com/svn/kernel1/trunk
-Your comments (if any) will appear here.
-
-2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
-
-	Your ChangeLog entry will appear here.
-
- .automerge |    2 +-
- ChangeLog  |    2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-Index: ChangeLog
-===================================================================
---- ChangeLog	(revision 1367)
-+++ ChangeLog	(working copy)
-@@ -1,3 +1,5 @@
-+	merge -r 1362:1367 https://svn.gostai.com/svn/kernel1/branches/1.0
-+
- 2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
-
- 	Use UConnection as a stream
-Index: .automerge
-===================================================================
---- .automerge	(revision 1367)
-+++ .automerge	(working copy)
-@@ -1 +1 @@
--1362 | branches/1.0
-+1367 | branches/1.0
-
---- Internal stuff, DO NOT change please ---
-args:
-extra_files: /home/deslandes/work/kernel1/trunk:/home/deslandes/work/kernel1/trunk/ChangeLog
-vi: ft=diff:noet:tw=76:
-
 2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Use UConnection as a stream
@@ -110,7 +72,7 @@ vi: ft=diff:noet:tw=76:
 	* src/parser/uparser.cc,
 	* src/parser/uparser.hh: Add a mehod to emit warnings.
 	* src/parser/bison/utoken.l: Emit warnings on ^.
-	        Scan ** as exponent operator.
+		Scan ** as exponent operator.
 	* src/uconnection.cc,
 	* src/uexpression.cc: Report warnings through the connection.
 
@@ -191,14 +153,14 @@ vi: ft=diff:noet:tw=76:
 	* include/kernel/uconnection.hh: Add mutex.
 	* include/kernel/userver.hh: Idem.
 	* src/uconnection.cc:
-        Use mutexes defined in the classes UConnection and UServer.
+	Use mutexes defined in the classes UConnection and UServer.
 
 2007-07-12  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Replace libport locks by boost mutexes.
 	* include/kernel/uconnection.hh: Remove inheritance from Lockable.
 	* src/uconnection.cc:
-        Replace libport's BlockLocks by boost's scopedLocks.
+	Replace libport's BlockLocks by boost's scopedLocks.
 
 2007-07-10  Thomas Moulard  <thomas.moulard@gmail.com>
 
@@ -210,7 +172,7 @@ vi: ft=diff:noet:tw=76:
 	Use Boost.Thread in network.
 	* src/network/bsdnet/network.cc: Here.
 	* src/Makefile.am: Add boost parameters into
-                           CXXFLAGS and LDFLAGS.
+			   CXXFLAGS and LDFLAGS.
 
 2007-07-10  Thomas Moulard  <thomas.moulard@gmail.com>
 
@@ -300,7 +262,7 @@ vi: ft=diff:noet:tw=76:
 
 2007-06-18  Jean-Christophe Baillie  <baillie@gostai.com>
 
-        The +freeze flag notifies when the command gets frozen/unfrozen.
+	The +freeze flag notifies when the command gets frozen/unfrozen.
 
 	add support for +freeze flag.
 	* src/parser/bison/ugrammar.y: add the same optim like for +end.
@@ -328,14 +290,14 @@ vi: ft=diff:noet:tw=76:
 
 2007-06-10  Jean-Christophe Baillie  <baillie@gostai.com>
 
-        Until now, freezing a time controlled command (like wait or a modified
+	Until now, freezing a time controlled command (like wait or a modified
 	assignement) did not freeze the internal time of the command, which
 	resulted in an abrupt reajustement when the command was unfrozen. This
 	patch fixes the problem on wait and assignments, and the corresponding
 	tests has been added.
 	add a first attempt in "time freezing" capabilities.
 	* src/ucommand.cc: the WAIT and ASSIGN_VALUE commands now store the
-        'lastExec' time and a flag when they have been frozen. Upon
+	'lastExec' time and a flag when they have been frozen. Upon
 	unfreezing, the internal time-oriented variables are adjusted based on
 	the difference between the current time and lastExec..
 	* src/ucommand.hh: add lastExec and the 'frozen' flag.
@@ -2214,10 +2176,10 @@ vi: ft=diff:noet:tw=76:
 
 	branch 1.0: fix a segv when deleting a variable with function scope
 	* src/ucallid.cc: Implement:
-        * src/ucallid.hh: Add a remove function to remove uvariables from
-        list. This function does nothing as soon as dtor has been called.
-        * src/uvariable.hh: Hold a ucallid* , non null if var is of function
-        scope. call its remove function when deleted.
+	* src/ucallid.hh: Add a remove function to remove uvariables from
+	list. This function does nothing as soon as dtor has been called.
+	* src/uvariable.hh: Hold a ucallid* , non null if var is of function
+	scope. call its remove function when deleted.
 
 	2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
@@ -2341,14 +2303,14 @@ vi: ft=diff:noet:tw=76:
 
 2007-01-19  Matthieu Nottale  <nottale@gostai.com>
 
-        Add missing lock in block memory manager. Fix a double delete when a
-        variable with function scope is deleted. Replace some ustring by
-        std::string
-        * src/memorymanager/blockmemorymanager.hh: BlockMemoryManager now
-        inherits lockable.
+	Add missing lock in block memory manager. Fix a double delete when a
+	variable with function scope is deleted. Replace some ustring by
+	std::string
+	* src/memorymanager/blockmemorymanager.hh: BlockMemoryManager now
+	inherits lockable.
 	* src/memorymanager/memorymanager.cc: Lock all calls.
-        * src/ucallid.cc: Register the ucallid to the variables in his list.
-        Add a remove call
+	* src/ucallid.cc: Register the ucallid to the variables in his list.
+	Add a remove call
 	* src/ucallid.hh: Idem.
 	* src/ucommand.cc: Fix for uvariable/uvariablename modifications.
 	* src/uconnection.cc: Fix for uvariable/uvariablename modifications.
@@ -2357,8 +2319,8 @@ vi: ft=diff:noet:tw=76:
 	* src/ustring.hh: Add a ctor taking a std::string.
 	* src/uvalue.cc: Move some fields to private scope, add accessors.
 	* src/uvalue.hh: Idem.
-        * src/uvariable.cc: Move some fields to private scope, add accessors.
-        Call remove of the owner ucallid in dtor.
+	* src/uvariable.cc: Move some fields to private scope, add accessors.
+	Call remove of the owner ucallid in dtor.
 	* src/uvariable.hh: Idem.
 
 2007-01-18  Akim Demaille  <demaille@gostai.com>
@@ -2585,13 +2547,13 @@ vi: ft=diff:noet:tw=76:
 
 2007-01-17  Matthieu Nottale  <nottale@gostai.com>
 
-        Fix a bug when printing strings containing % in the ghostconnection
-        and a potential send bug in userver
-        * src/ughostconnection.cc: Do not pass string to print in the format
-        field. pass ("%s", str) instead.
+	Fix a bug when printing strings containing % in the ghostconnection
+	and a potential send bug in userver
+	* src/ughostconnection.cc: Do not pass string to print in the format
+	field. pass ("%s", str) instead.
 	* src/userver.cc: Add missing call to va_end.
-        * src/userver.hh: Rename overloaded send(va_args) to vsend as the
-        wrong one might be called.
+	* src/userver.hh: Rename overloaded send(va_args) to vsend as the
+	wrong one might be called.
 
 2007-01-16  Akim Demaille  <demaille@gostai.com>
 
@@ -4362,8 +4324,8 @@ vi: ft=diff:noet:tw=76:
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix timeout command behavior.
-        * src/ucommand.cc: Fix timeout command morphing: command can last less
-        than timeout.
+	* src/ucommand.cc: Fix timeout command morphing: command can last less
+	than timeout.
 
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
@@ -4373,8 +4335,8 @@ vi: ft=diff:noet:tw=76:
 2006-11-23  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a segfault(assert fail) in uconnection.cc
-        * src/ucommand.cc: Add missing initialisation of runlevel1 in
-        UCOMMAND_TREE ctor.
+	* src/ucommand.cc: Add missing initialisation of runlevel1 in
+	UCOMMAND_TREE ctor.
 
 2006-11-23  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
 
