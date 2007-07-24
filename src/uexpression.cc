@@ -968,7 +968,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 
   // FIXME: Errors and warning are already reported in UConnection.
   //        Are these two blocks dead-code?
-  if (p.errorMessage[0])
+  if (p.hasError())
     {
       // a parsing error occured
       if (p.commandTree)
@@ -978,14 +978,14 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 	  //delete p.commandTree;
 	  p.commandTree = 0;
 	}
-      connection->send(p.errorMessage, "error");
+      connection->send(p.error_get().c_str(), "error");
     }
 
   PING();
 
-  if (p.warning[0])
+  if (p.hasWarning())
     // a warning was emitted
-    connection->send(p.warning, "warn ");
+    connection->send(p.warning_get().c_str(), "warn ");
 
   if (p.commandTree)
     {

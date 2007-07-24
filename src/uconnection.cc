@@ -538,35 +538,31 @@ UConnection::received (const ubyte *buffer, int length)
 	p.commandTree = 0;
       }
 
-      // Error Message handling
-      if (*p.errorMessage && !server->memoryOverflow)
+      // Error messages & warnigns handling
+      if (!server->memoryOverflow)
       {
-	// a parsing error occured
-	// FIXME: 2007-07-20: Currently we can't free the commandTree,
-	// we might kill function bodies.
-	//delete p.commandTree;
-	p.commandTree = 0;
+        // Warnings handling
+        if (p.hasWarning())
+        {
+          send(p.warning_get().c_str(), "warn ");
+          server->error(::DISPLAY_FORMAT, (long)this,
+                        "UConnection::received",
+                        p.warning_get().c_str());
+        }
 
-	send(p.errorMessage, "error");
+        // Errors handling
+        if (p.hasError())
+        {
+          // FIXME: 2007-07-20: Currently we can't free the commandTree,
+          // we might kill function bodies.
+          //delete p.commandTree;
+          p.commandTree = 0;
 
-	p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
-	p.errorMessage[ 42 ] = 0; // cut at 41 characters
-	server->error(::DISPLAY_FORMAT, (long)this,
-		      "UConnection::received",
-		      p.errorMessage);
-      }
-
-      // Warnings handling
-      if (*p.warning && !server->memoryOverflow)
-      {
-	// a warning was emitted
-	send(p.warning, "warn ");
-
-	p.warning[ strlen(p.warning) - 1 ] = 0; // remove '\n'
-	p.warning[ 42 ] = 0; // cut at 41 characters
-	server->error(::DISPLAY_FORMAT, (long)this,
-		      "UConnection::received",
-		      p.warning);
+          send(p.error_get().c_str(), "error");
+          server->error(::DISPLAY_FORMAT, (long)this,
+                        "UConnection::received",
+                        p.error_get().c_str());
+        }
       }
 
       if (p.commandTree)

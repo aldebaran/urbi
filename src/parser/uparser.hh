@@ -75,22 +75,44 @@ public:
   /// Warn at \a l about \a msg.
   void warn (const location_type& l, const std::string& msg);
 
-  /// Size of the message buffers
-  static const int msgMaxSize = 1024;
-
-  /// The latest parse error message.
-  char errorMessage[msgMaxSize];
-
-  /// The latest warning
-  char warning[msgMaxSize];
-
   /// The connection we belong to.
   UConnection& connection;
+
+  /// @name Errors and warnings handling
+  /// @{
+
+  /// Whether an error occured during parsing.
+  bool hasError() const;
+  /// Give latest error message.
+  /**
+   *  Precondition: hasError()
+   */
+  std::string error_get() const;
+
+  /// Whether a warning occured during parsing.
+  bool hasWarning() const;
+  /// Give latest warning message.
+  /**
+   *  Precondition: hasWarning()
+   */
+  std::string warning_get() const;
+
+  /// @}
 
 private:
   // Give access to loc_ and scanner_.
   friend int parser_type::parse ();
   friend token_type yylex (semantic_type*, location_type*, UParser&);
+
+  /// Whether an error occured
+  bool hasError_;
+  /// The latest parse error message.
+  std::string error_;
+
+  /// Whether a warning occured
+  bool hasWarning_;
+  /// The latest warning
+  std::string warning_;
 
   /// Run the parse.  Expects the scanner to be initialized.
   int parse_ ();

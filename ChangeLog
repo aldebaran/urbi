@@ -1,3 +1,13 @@
+2007-07-24  mefyl  <mefyl@lrde.epita.fr>
+
+	Reduce code duplication. Use strings instead of char*.
+	* src/parser/uparser.cc,
+	* src/parser/uparser.hh: Use std::string instead of char*.
+          Add accessors for errors and warnings handling.
+	* src/uconnection.cc,
+	* src/uexpression.cc: Use the new interface for
+          errors and warnings handling.
+
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
 	Add k2 tests

@@ -22,6 +22,10 @@ UParser::UParser(UConnection& cn)
   : commandTree (0),
     binaryCommand (false),
     connection (cn),
+    hasError_(false),
+    error_ (),
+    hasWarning_(false),
+    warning_ (),
     scanner_ (),
     loc_()
 {
@@ -33,9 +37,9 @@ int
 UParser::parse_ ()
 {
   commandTree = 0;
-  errorMessage[0] = 0;
-  warning[0] = 0;
   binaryCommand = false;
+  hasError_ = false;
+  hasWarning_ = false;
 
   parser_type p(*this);
   p.set_debug_level (!!getenv ("YYDEBUG"));
@@ -85,21 +89,57 @@ UParser::process(const std::string& fn)
   return res;
 }
 
+namespace
+{
+  /// Helper to format error and warning messages.
+  std::string errorFormat(const yy::parser::location_type& l,
+                          const std::string& msg)
+  {
+    std::ostringstream o;
+    o << "!!! " << l << ": " << msg << "\n" << std::ends;
+    return o.str();
+  }
+}
 
 void
 UParser::error (const yy::parser::location_type& l, const std::string& msg)
 {
-  std::ostringstream o;
-  o << "!!! " << l << ": " << msg << "\n" << std::ends;
-  strncpy(errorMessage, o.str().c_str(),
-	  std::min(sizeof (errorMessage), o.str().size()));
+  hasError_ = true;
+  error_ = errorFormat(l, msg);
 }
 
 void
 UParser::warn (const yy::parser::location_type& l, const std::string& msg)
 {
-  std::ostringstream sstr;
-  sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
-  strncpy(warning, sstr.str().c_str(),
-	  std::min(sizeof (warning), sstr.str().size()));
+  hasWarning_ = true;
+  warning_ = errorFormat(l, msg);
+}
+
+bool
+UParser::hasError () const
+{
+  return hasError_;
+}
+
+std::string
+UParser::error_get () const
+{
+  // precondition
+  assert(hasError());
+
+  return error_;
+}
+
+bool
+UParser::hasWarning () const
+{
+  return hasWarning_;
+}
+
+std::string
+UParser::warning_get () const
+{
+  // precondition
+  assert(hasWarning());
+  return warning_;
 }
