@@ -4,7 +4,9 @@
  */
 
 #include <algorithm>
+#include <stdexcept>
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #include "object/object.hh"
 #include "object/atom.hh"
 
@@ -52,7 +54,8 @@ namespace object
       return it->second;
 
     if (lu.find (this) != lu.end ())
-      throw std::exception ();
+      throw std::invalid_argument (std::string("cannot find: ")
+				   + boost::lexical_cast<std::string>(k));
     lu.insert (this);
 
     /// Look in parent slots (depth first search)
@@ -64,7 +67,8 @@ namespace object
       catch (std::exception)
       { }
     /// If not found, throw exception
-    throw std::exception ();
+    throw std::invalid_argument (std::string("cannot find: ")
+				 + boost::lexical_cast<std::string>(k));
   }
 
   std::ostream&
