@@ -137,7 +137,7 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 ## parserdir = $(kernelincludedir)/parser
 ## parser_HEADERS = parser/uparser.hh
-##
+## 
 ## memorymanagerdir = $(kernelincludedir)/memorymanager
 ## memorymanager_HEADERS =				\
 ## memorymanager/blockmemorymanager.hh		\

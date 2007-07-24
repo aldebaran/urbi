@@ -963,6 +963,8 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     }
   ::urbiserver->systemcommands = true;
 
+  PING();
+
   // FIXME: Errors and warning are already reported in UConnection.
   //        Are these two blocks dead-code?
   if (p.errorMessage[0])
@@ -975,6 +977,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 	}
       *connection << UConnection::msend(p.errorMessage, "error");
     }
+
   PING();
 
   if (p.warning[0])

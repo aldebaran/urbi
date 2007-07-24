@@ -111,9 +111,8 @@ public:
   bool            uservar;
   /// Temporary value container.
   ufloat          target;
-  ufloat          previous,
-		  previous2,
-		  previous3; ///< previous theoretical value container
+  /// Previous theoretical value container.
+  ufloat          previous, previous2, previous3;
   /// Sensed value at the beginning of the cycle.
   ufloat          cyclevalue;
   /// Time of the last cycle beginning  (used to update cyclevalue)

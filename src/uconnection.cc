@@ -415,7 +415,7 @@ UConnection::mkPrefix (const ubyte* tag) const
 {
   std::stringstream ss;
   ss << "["
-     << std::setw(8) << std::setfill('0') << (int)server->lastTime()
+     << std::setw(8) << std::setfill('G') << (int)server->lastTime()
      << ":"
      << ((tag != 0) ? tag : (const ubyte*)::UNKNOWN_TAG)
      << "] ";
@@ -620,6 +620,7 @@ UConnection::received (const char *s)
 UConnection&
 UConnection::received (const ubyte *buffer, int length)
 {
+  PING();
   if (server->memoryOverflow)
   {
     errorSignal(UERROR_MEMORY_OVERFLOW);
@@ -830,6 +831,7 @@ UConnection::received (const ubyte *buffer, int length)
 
   receiving = false;
   p.commandTree = 0;
+  treeLock.unlock();
   if (server->memoryOverflow)
     CONN_ERR_RET(UMEMORYFAIL);
 
@@ -992,7 +994,6 @@ UConnection::processCommand(UCommand *&command,
   rl = UEXPLORED;
 
   // Handle blocked/freezed commands
-
   if (command->isFrozen())
     return command;
 
@@ -1002,7 +1003,6 @@ UConnection::processCommand(UCommand *&command,
     return 0;
   }
 
-  UCommand	   *morphed;
   while (true)
   {
     // timeout, stop , freeze and connection flags initialization
@@ -1151,7 +1151,7 @@ UConnection::processCommand(UCommand *&command,
     if (command->type == UCommand::TREE)
     {
       mustReturn = true;
-      return command ;
+      return command;
     }
     else
     {
@@ -1164,15 +1164,15 @@ UConnection::processCommand(UCommand *&command,
 	case UCommand::UCOMPLETED:
 	  if (command == lastCommand)
 	    lastCommand = command->up;
-
 	  delete command;
 	  return 0;
 
 	case UCommand::UMORPH:
+	{
 	  command->status = UCommand::UONQUEUE;
 	  command->morphed = true;
 
-	  morphed = command->morph;
+	  UCommand *morphed = command->morph;
 	  morphed->myconnection = command->myconnection;
 	  morphed->toDelete = command->toDelete;
 	  morphed->up = morphed_up;
@@ -1186,6 +1186,7 @@ UConnection::processCommand(UCommand *&command,
 	    delete command;
 	  command = morphed;
 	  break;
+	}
 
 	default:
 	  // "+bg" flag
@@ -1253,7 +1254,7 @@ UConnection&
 UConnection::execute(UCommand_TREE*& execCommand)
 {
   PING();
-  if (execCommand == 0 || closing)
+  if (!execCommand || closing)
     return *this;
 
   // There are complications to make this a for loop: occurrences of

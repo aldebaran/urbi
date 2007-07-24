@@ -466,6 +466,7 @@ public:
   virtual void print_(unsigned l) const;
 
   virtual Status execute_(UConnection* connection);
+  Status execute_function_call(UConnection* connection);
   virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {

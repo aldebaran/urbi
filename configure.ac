@@ -9,7 +9,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip nostdinc])
+AM_INIT_AUTOMAKE([1.10 foreign tar-ustar -Wall dist-zip nostdinc])
 
 ## ------------ ##
 ## Parameters.  ##
@@ -30,12 +30,12 @@ TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
 TC_CXX_WARNINGS([[-Wcast-align],
- 		 [-Wcast-qual],
- 		 [-Wmissing-prototypes],
- 		 [-Wstrict-prototypes],
- 		 [-Wwrite-strings],
- 		 [-Wbad-function-cast],
- 		 [-Wmissing-declarations]])
+		 [-Wcast-qual],
+		 [-Wmissing-prototypes],
+		 [-Wstrict-prototypes],
+		 [-Wwrite-strings],
+		 [-Wbad-function-cast],
+		 [-Wmissing-declarations]])
 
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])

@@ -1,3 +1,17 @@
+2007-07-24  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Restore crushed modifications.
+        (crushed while merging boost-thread branch into trunk in r1341)
+	* configure.ac,
+	* include/kernel/uvariable.hh,
+	* src/Makefile.am,
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/uconnection.cc,
+	* src/uexpression.cc: Here.
+
 2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
 
 	merge -r 1362:1367 https://svn.gostai.com/svn/kernel1/branches/1.0

@@ -711,8 +711,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	|| (!expression->parameters && fun->nbparam()))
     {
       send_error(connection, this,
-		 "Invalid number of arguments for %s"
-		 " (should be %d params)",
+		 "Invalid number of arguments for %s (should be %d)",
 		 functionname->c_str(), fun->nbparam());
       return UCOMPLETED;
     }
@@ -1002,7 +1001,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
     // eval the right side of the assignment and check for errors
     UValue* rhs = expression->eval(this, connection);
-    if (rhs == 0)
+    if (!rhs)
       return UCOMPLETED;
 
     // Check type compatibility if the left side variable already exists
@@ -1062,7 +1061,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	      }
 
 	      std::string n = std::string("$") + i->name->c_str();
-	      if (strstr(modifier->str->c_str(), n.c_str()) == 0)
+	      if (!strstr(modifier->str->c_str(), n.c_str()))
 		while (char* possub = strstr(result, n.c_str()))
 		{
 		  memmove(possub + modifier->str->size(),
@@ -2463,7 +2462,7 @@ UCommand_EXPR::execute_(UConnection *connection)
     *connection << UConnection::msendPrefix(getTag().c_str());
     ret->echo(connection);
   }
-  if (ret->dataType!=DATA_BINARY && ret->dataType != DATA_VOID)
+  if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
     *connection << UConnection::mendl;
   else
     *connection << UConnection::mflush;
@@ -2580,7 +2579,7 @@ UCommand_ECHO::execute_(UConnection *connection)
 {
   UValue* ret = expression->eval(this, connection);
 
-  if (ret == 0)
+  if (!ret)
   {
     send_error(connection, this, "EXPR evaluation failed");
     return UCOMPLETED;
@@ -3197,7 +3196,7 @@ UCommand_GROUP::execute_(UConnection *connection)
       g = new UGroup(*id);
       ::urbiserver->grouptab[g->name.c_str()] = g;
     }
-    if (grouptype == 0)
+    if (!grouptype)
       g->members.clear();
 
     for (UNamedParameters* param = parameters; param; param = param->next)
@@ -4001,8 +4000,9 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     dotest(connection->server);
 #endif
     std::ostringstream o;
-    o <<  "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
+    o << "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
+    //std::cout << getTag() << std::endl << o.str() << std::endl;
     *connection << UConnection::msendf(getTag(), o.str().c_str());
     return UCOMPLETED;
   }
