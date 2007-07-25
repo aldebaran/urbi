@@ -151,19 +151,6 @@ UConnection::setIP(IPAdd ip)
   clientIP = ip;
   return *this;
 }
-
-//! UConnection close. Must be redefined by the robot-specific sub class.
-/*! The implementation of this function must set 'closing' to true, to
-  tell the UConnection to stop sending data.
-*/
-// UConnection&
-// UConnection::closeConnection()
-// {
-//   //FIXME: when closing, send and receive return USUCCESS... (TED: ASK JC)
-//   closing = true;
-//   CONN_ERR_RET(USUCCESS);
-// }
-
 //! Initializes the connection, by sending the standard header for URBI
 /*! This function must be called once the connection is operational and
   able to send data. It is a requirement for URBI compliance to send
@@ -173,7 +160,7 @@ UConnection&
 UConnection::initialize()
 {
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
-    (*this) << msend(::HEADER_BEFORE_CUSTOM[i], "start");
+    (*this) << send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   int i = 0;
   char customHeader[1024];
@@ -181,14 +168,14 @@ UConnection::initialize()
   do {
     server->getCustomHeader(i, customHeader, 1024);
     if (customHeader[0]!=0)
-      (*this) << msend(customHeader, "start");
+      (*this) << send(customHeader, "start");
     ++i;
   } while (customHeader[0]!=0);
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
-    (*this) << msend(::HEADER_AFTER_CUSTOM[i], "start");
+    (*this) << send(::HEADER_AFTER_CUSTOM[i], "start");
   sprintf(customHeader, "*** ID: %s\n", connectionTag->c_str());
-  (*this) << msend(customHeader, "ident");
+  (*this) << send(customHeader, "ident");
 
   sprintf(customHeader, "%s created", connectionTag->c_str());
   server->echo(::DISPLAY_FORMAT, (long)this,
@@ -203,53 +190,54 @@ UConnection::initialize()
 # if 1 // use connection as stream
 
 UConnection&
-UConnection::mblock (UConnection& c)
+UConnection::block (UConnection& c)
 {
   return c.block ();
 }
 
 //! Send a "\n" through the connection
 UConnection&
-UConnection::mendl (UConnection& c)
+UConnection::endl (UConnection& c)
 {
   return c.endline ();
 }
 
 /// Flushes the connection buffer into the network
 UConnection&
-UConnection::mflush (UConnection& c)
+UConnection::flush (UConnection& c)
 {
   return c.flush ();
 }
 
 UConnection&
-UConnection::mcontinue (UConnection& c)
+UConnection::continueSend (UConnection& c)
 {
   return c.continueSend();
 }
 
 UConnection&
-UConnection::mactivate (UConnection& c)
+UConnection::activate (UConnection& c)
 {
-  return c << msetActivate (true);
+  return c << setActivate (true);
 }
 
 UConnection&
-UConnection::mdisactivate (UConnection& c)
+UConnection::disactivate (UConnection& c)
 {
-  return c << msetActivate (false);
+  return c << setActivate (false);
 }
 
 UConnection&
-UConnection::mclose (UConnection& c)
+UConnection::close (UConnection& c)
 {
   return c.closeConnection ();
 }
 
+//! Send a message prefix [time:tag] through the connection
 UConnection&
 UConnection::operator<< (_Prefix __pref)
 {
-  return (*this) << msendc (0, 0, (const ubyte*)__pref._tag);
+  return (*this) << sendc (0, 0, (const ubyte*)__pref._tag);
 }
 
 UConnection&
@@ -263,14 +251,14 @@ UConnection::operator<< (_Send __msg)
     sendQueue_->mark (); // put a marker to indicate the beginning of a message
 
     // UErrorValue ret =
-    sendc(__msg._tag, __msg._taglen);
+    sendc_(__msg._tag, __msg._taglen);
     // .error ();
 
     //FIXME: check error
   }
   if (__msg._buf != 0)
   {
-    UErrorValue ret = sendc (__msg._buf, __msg._buflen).error ();
+    UErrorValue ret = sendc_ (__msg._buf, __msg._buflen).error ();
     free ((void*)__msg._buf);
 
     if (__msg._flush && ret != UFAIL)
@@ -284,27 +272,21 @@ UConnection::operator<< (_Send __msg)
 UConnection&
 UConnection::operator<< (_ErrorSignal __err)
 {
-  return (*this).errorSignal (__err._n);
+  return (*this).errorSignal_set (__err._n);
 }
 
 UConnection&
 UConnection::operator<< (_ErrorCheck __err)
 {
-  return (*this).errorCheck (__err._n);
+  return (*this).errorCheckAndSend (__err._n);
 }
 
-//FIXME: clone code from activate
 UConnection&
 UConnection::operator<< (_Activate __act)
 {
+  // Reminder: this code is the same as activate()
   active_ = __act._st;
   return *this;
-}
-
-UConnection&
-UConnection::operator<< (_IPAddress __ip)
-{
-  return (*this).setIP (__ip._addr);
 }
 
 UConnection&
@@ -319,10 +301,10 @@ UConnection::operator<< (_RecvAdaptative __adap)
   return (*this).setReceiveAdaptive (__adap._val);
 }
 
-//FIXME: revert code if needed
 UConnection&
 UConnection::operator<< (_MsgCode __msg)
 {
+  // Reminder: this function is a merge of send_warning and send_error
   const char* msg = message (__msg._t, __msg._n);
 
   UErrorValue result = UFAIL;
@@ -330,10 +312,10 @@ UConnection::operator<< (_MsgCode __msg)
   switch (__msg._t)
   {
     case UERRORCODE:
-      (*this) << msend(msg, "error");
+      (*this) << send(msg, "error");
       break;
     case UWARNINGCODE:
-      (*this) << msend(msg, "warning");
+      (*this) << send(msg, "warning");
       break;
     default:
       break;
@@ -369,13 +351,13 @@ UConnection::operator<< (_MsgCode __msg)
 UConnection&
 UConnection::operator<< (UWarningCode __id)
 {
-  return *this << mmsg (UWARNINGCODE, __id);
+  return *this << msg (UWARNINGCODE, __id);
 }
 
 UConnection&
 UConnection::operator<< (UErrorCode __id)
 {
-  return *this << mmsg (UERRORCODE, __id);
+  return *this << msg (UERRORCODE, __id);
 }
 
 UConnection&
@@ -393,15 +375,8 @@ UConnection::operator<< (_Append __cmd)
 UConnection&
 UConnection::operator<< (_Received __cmd)
 {
-  return received (__cmd._val, __cmd._len);
+  return received_ (__cmd._val, __cmd._len);
 }
-
-UConnection&
-UConnection::operator<< (_LocalVariableCheck __var)
-{
-  return (*this).localVariableCheck (__var._val);
-}
-
 
 UConnection&
 UConnection::operator<< (UConnection& m (UConnection&))
@@ -411,6 +386,7 @@ UConnection::operator<< (UConnection& m (UConnection&))
 
 # endif // 1
 
+//! Generate prefix string to be send before a message
 std::string
 UConnection::mkPrefix (const ubyte* tag) const
 {
@@ -423,71 +399,6 @@ UConnection::mkPrefix (const ubyte* tag) const
 
   return ss.str ();
 }
-
-//! Send a message prefix [time:tag] through the connection
-// UConnection&
-// UConnection::sendPrefix (const char* tag)
-// {
-//   std::string pref = mkPrefix ((const ubyte*)tag);
-
-//   sendQueue_->mark (); // put a marker to indicate the beginning of a message
-//   //FIXME: check error
-//   (*this) << msendc((const ubyte*)pref.c_str (), pref.length ());
-//   CONN_ERR_RET(USUCCESS);
-// }
-
-//! Send a string through the connection.
-/*! A tag is automatically added to output the message string and the
-  resulting string is sent via send(const ubyte*,int).
-  \param s the string to send
-  \param tag the tag of the message. Default is "notag"
-  \return
-  - USUCCESS: successful
-  - UFAIL   : could not send the string
-  \sa send(const ubyte*,int)
-*/
-// UConnection&
-// UConnection::send (const char *s, const char* tag)
-// {
-//   //FIXME: get error
-//   sendPrefix(tag);
-//   return send((const ubyte*)s, strlen(s));
-// }
-
-// UConnection&
-// UConnection::sendf (const std::string& tag, const char* format, va_list args)
-// {
-//   char buf[1024];
-//   vsnprintf(buf, sizeof buf, format, args);
-//   return send (buf, tag.c_str());
-// }
-
-// UConnection&
-// UConnection::sendf (const std::string& tag, const char* format, ...)
-// {
-//   va_list args;
-//   va_start(args, format);
-//   return sendf (tag, format, args);
-// }
-
-// //! Send a buffer through the connection and flush it
-// UConnection&
-// UConnection::send (const ubyte *buffer, int length)
-// {
-//   UErrorValue ret = sendc (buffer, length).error ();
-//   if (ret != UFAIL)
-//     flush ();
-//   CONN_ERR_RET(ret);
-// }
-
-//! Send a string through the connection but without flushing it
-// UConnection&
-// UConnection::sendc (const char *s, const char* tag)
-// {
-//   //FIXME: check error for prefix
-//   sendPrefix(tag);
-//   return sendc((const ubyte*)s, strlen(s));
-// }
 
 //! Send a buffer through the connection without flushing it.
 /*! The function piles the buffer in the sending queue and calls continueSend()
@@ -507,7 +418,7 @@ UConnection::mkPrefix (const ubyte* tag) const
   \sa send(const char*)
 */
 UConnection&
-UConnection::sendc (const ubyte *buffer, int length)
+UConnection::sendc_ (const ubyte *buffer, int length)
 {
   if (closing)
     CONN_ERR_RET(USUCCESS);
@@ -610,16 +521,14 @@ UConnection::continueSend ()
   \return UMEMORYFAIL critical memory overflow
   \return USUCCESS otherwise
 */
-//FIXME: if deleted, put code in operator<< (_Received)
 UConnection&
-UConnection::received (const char *s)
+UConnection::received_ (const char *s)
 {
-  return received((const ubyte*) s, strlen(s));
+  return received_((const ubyte*) s, strlen(s));
 }
 
-//FIXME: if deleted, put code in operator<< (_Received)
 UConnection&
-UConnection::received (const ubyte *buffer, int length)
+UConnection::received_ (const ubyte *buffer, int length)
 {
   PING();
   if (server->memoryOverflow)
@@ -751,7 +660,7 @@ UConnection::received (const ubyte *buffer, int length)
 	delete p.commandTree;
 	p.commandTree = 0;
 
-	(*this) << msend(p.errorMessage, "error");
+	(*this) << send(p.errorMessage, "error");
 
 	p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
 	p.errorMessage[ 42 ] = 0; // cut at 41 characters
@@ -765,7 +674,7 @@ UConnection::received (const ubyte *buffer, int length)
         if (*p.warning && !server->memoryOverflow)
         {
           // a warning was emitted
-          (*this) << msend(p.warning, "warn ");
+          (*this) << send(p.warning, "warn ");
 
           p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
           p.errorMessage[ 42 ] = 0; // cut at 41 characters
@@ -862,10 +771,10 @@ UConnection::effectiveSend (const ubyte*, int length)
 
   \param n the error number. */
 UConnection&
-UConnection::error (UErrorCode n)
+UConnection::send_error (UErrorCode n)
 {
   const char* msg = message (UERRORCODE, n);
-  UErrorValue result = ((*this) << msend(msg, "error")).error ();
+  UErrorValue result = ((*this) << send(msg, "error")).error ();
   if (result == USUCCESS)
   {
     char buf[80];
@@ -890,10 +799,10 @@ UConnection::error (UErrorCode n)
   of the warning message.
 */
 UConnection&
-UConnection::warning (UWarningCode n)
+UConnection::send_warning (UWarningCode n)
 {
   const char*msg = message (UWARNINGCODE, n);
-  UErrorValue result = ((*this) << msend(msg, "warning")).error ();
+  UErrorValue result = ((*this) << send(msg, "warning")).error ();
   if (result == USUCCESS)
   {
     char buf[80];
@@ -919,7 +828,7 @@ UConnection::warning (UWarningCode n)
 
   \param n the error number. Use the UErrorCode enum.  */
 UConnection&
-UConnection::errorSignal (UErrorCode n)
+UConnection::errorSignal_set (UErrorCode n)
 {
   errorSignals_[(int)n] = true;
   return *this;
@@ -929,10 +838,10 @@ UConnection::errorSignal (UErrorCode n)
 /*! If the message can be sent, the errorSignal is canceled, otherwise not.
  */
 UConnection&
-UConnection::errorCheck (UErrorCode n)
+UConnection::errorCheckAndSend (UErrorCode n)
 {
   if (errorSignals_[(int)n]
-      && (error(n).error () == USUCCESS))
+      && (send_error(n).error () == USUCCESS))
     errorSignals_[(int)n] = false;
   return *this;
 }
@@ -1044,7 +953,7 @@ UConnection::processCommand(UCommand *&command,
 	  {
 	    command->flagType += 1;
 	    command->flagExpr1 = param->expression;
-	    (*this) << msend("!!! Warning: +timeout flag is obsolete."
+	    (*this) << send("!!! Warning: +timeout flag is obsolete."
 			     " Use timeout(time) command instead.\n",
 			     command->getTag().c_str());
 	  }
@@ -1052,7 +961,7 @@ UConnection::processCommand(UCommand *&command,
 	  {
 	    command->flagType += 2;
 	    command->flagExpr2 = param->expression;
-	    (*this) << msend("!!! Warning: +stop flag is obsolete."
+	    (*this) << send("!!! Warning: +stop flag is obsolete."
 			     " Use stopif(test) command instead.\n",
 			     command->getTag().c_str());
 	  }
@@ -1060,7 +969,7 @@ UConnection::processCommand(UCommand *&command,
 	  {
 	    command->flagType += 4;
 	    command->flagExpr4 = param->expression;
-	    (*this) << msend("!!! Warning: +freeze flag is obsolete."
+	    (*this) << send("!!! Warning: +freeze flag is obsolete."
 			     " Use freezeif(test) command instead.\n",
 			     command->getTag().c_str());
 	  }
@@ -1075,7 +984,7 @@ UConnection::processCommand(UCommand *&command,
 	      && !command->morphed
 	      && (param->expression->val == 4 // 4 = +begin
 		  || param->expression->val == 1)) // 1 = +report
-	    (*this) << msend("*** begin\n", command->getTag().c_str());
+	    (*this) << send("*** begin\n", command->getTag().c_str());
 	}
     }
 
@@ -1248,9 +1157,7 @@ namespace
 
   \param tree is the UCommand_TREE to execute.
 */
-//FIXME: if deleted, put code in operator<< (_Execute)
 //FIXME: find, store (and return ?) error if send fails
-
 UConnection&
 UConnection::execute(UCommand_TREE*& execCommand)
 {
@@ -1402,7 +1309,6 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
   \param command is the UCommand to append.
 */
-//FIXME: if deleted, put code in operator<< (_Append)
 //FIXME: error code ?
 UConnection&
 UConnection::append(UCommand_TREE *command)

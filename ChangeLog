@@ -1,5 +1,21 @@
 2007-07-25  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Names and code cleaning in UConnection, call fixes
+	* include/kernel/uconnection.hh: .
+	* src/network/bsdnet/connection.cc: .
+	* src/parser/bison/ugrammar.y: .
+	* src/ucommand.cc: .
+	* src/uconnection.cc: .
+	* src/uexpression.cc: .
+	* src/ughostconnection.cc: .
+	* src/uobj.cc: .
+	* src/uobject.cc: .
+	* src/userver.cc: .
+	* src/uvalue.cc: .
+	* src/uvariable.cc: .
+
+2007-07-25  Guillaume Deslandes  <deslandes@gostai.com>
+
 	Fix invalid read in UConnection
 	* include/kernel/uconnection.hh: Here.
 	* src/uconnection.cc: Here.

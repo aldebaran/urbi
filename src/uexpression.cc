@@ -76,7 +76,7 @@ namespace
     // something more robust (such using real C++ here instead of C
     // buffers).
     o << "!!! " << e->loc() << ": " << fmt << '\n';
-    *c << UConnection::msendf (cmd->getTag(), o.str().c_str(), args);
+    *c << UConnection::sendf (cmd->getTag(), o.str().c_str(), args);
     return c->error ();
   }
 
@@ -975,14 +975,14 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 	  delete p.commandTree;
 	  p.commandTree = 0;
 	}
-      *connection << UConnection::msend(p.errorMessage, "error");
+      *connection << UConnection::send(p.errorMessage, "error");
     }
 
   PING();
 
   if (p.warning[0])
     // a warning was emitted
-    *connection << UConnection::msend(p.warning, "warn ");
+    *connection << UConnection::send(p.warning, "warn ");
 
   if (p.commandTree)
     {

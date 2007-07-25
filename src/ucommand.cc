@@ -71,7 +71,7 @@ vsend_error (UConnection* c, const UCommand* cmd,
   // something more robust (such using real C++ here instead of C
   // buffers).
   o << "!!! " << cmd->loc() << ": " << fmt << '\n';
-  *c << UConnection::msendf (cmd->getTag(), o.str().c_str(), args);
+  *c << UConnection::sendf (cmd->getTag(), o.str().c_str(), args);
   return c->error ();
 }
 
@@ -180,7 +180,7 @@ UCommand::UCommand(const location& l, Type _type)
 UCommand::~UCommand()
 {
   if (myconnection && flags && flags->notifyEnd && !morph)
-    *myconnection << UConnection::msend("*** end\n", getTag().c_str());
+    *myconnection << UConnection::send("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;
 }
@@ -432,7 +432,7 @@ UCommand::isFrozen()
       // set the command in the frozen state. The 'execute' method is responsible to
       // reset the state to unfrozen once the command continues running.
       if (!frozen && myconnection && flags && flags->notifyFreeze && !morph)
-	*myconnection << UConnection::msend("*** frozen\n", getTag().c_str());
+	*myconnection << UConnection::send("*** frozen\n", getTag().c_str());
 
       frozen = true;
 
@@ -440,7 +440,7 @@ UCommand::isFrozen()
     }
 
   if (frozen && myconnection && flags && flags->notifyFreeze && !morph)
-    *myconnection << UConnection::msend("*** unfrozen\n", getTag().c_str());
+    *myconnection << UConnection::send("*** unfrozen\n", getTag().c_str());
 
   return false;
 }
@@ -859,18 +859,18 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	     j != b->monitors.end();
 	     ++j)
 	{
-	  *((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
-	  *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
-					    o.str().size());
+	  *((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	  *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+					   o.str().size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(","), 1);
+	    *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    valparam->echo((*j)->c);
 	  }
-	  *((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>("]\n"), 2);
+	  *((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
 
@@ -1088,7 +1088,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-	  *connection << UConnection::mlocalVariableCheck(variable);
+	  connection->localVariableCheck(variable);
 	  variable->updated();
 	}
 
@@ -1107,7 +1107,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-	  *connection << UConnection::mlocalVariableCheck(variable);
+	  connection->localVariableCheck(variable);
 	  variable->updated();
 	}
 
@@ -1261,7 +1261,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-	  *connection << UConnection::mlocalVariableCheck(variable);
+	  connection->localVariableCheck(variable);
 	}
 
 	// correct the type of VOID variables (comming from a def)
@@ -1683,7 +1683,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	}
 	phasevari = new UVariable(modif_getphase->getFullname()->c_str(),
 				  ufloat(0));
-	*connection << UConnection::mlocalVariableCheck(phasevari);
+	connection->localVariableCheck(phasevari);
       }
 
       UValue *phaseval = phasevari->value;
@@ -1796,7 +1796,7 @@ UCommand_ASSIGN_BINARY::execute_(UConnection *connection)
       return UCOMPLETED;
     variable->blendType = urbi::UQUEUE;
 
-    *connection << UConnection::mlocalVariableCheck(variable);
+    connection->localVariableCheck(variable);
   }
   else if (variable->value->dataType == DATA_BINARY)
     LIBERATE(variable->value->refBinary);
@@ -2383,13 +2383,13 @@ UCommand_EXPR::execute_(UConnection *connection)
 
 	  if (ret.dataType != DATA_VOID)
 	  {
-	    *connection << UConnection::msendPrefix(getTag().c_str());
+	    *connection << UConnection::prefix(getTag().c_str());
 	    ret.echo(connection);
 	  }
 	  if (ret.dataType != DATA_BINARY && ret.dataType != DATA_VOID)
-	    *connection << UConnection::mendl;
+	    *connection << UConnection::endl;
 	  else
-	    *connection << UConnection::mflush;
+	    *connection << UConnection::flush;
 	  return UCOMPLETED;
 	}
       }
@@ -2416,18 +2416,18 @@ UCommand_EXPR::execute_(UConnection *connection)
 	     j != it->second->monitors.end();
 	     ++j)
 	{
-	  *((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
-	  *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(n.c_str()),
+	  *((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	  *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(n.c_str()),
 			 n.size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(","), 1);
+	    *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    valparam->echo((*j)->c);
 	  }
-	  *((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>("]\n"), 2);
+	  *((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
       persistant = false;
@@ -2459,13 +2459,13 @@ UCommand_EXPR::execute_(UConnection *connection)
 
   if (ret->dataType != DATA_VOID)
   {
-    *connection << UConnection::msendPrefix(getTag().c_str());
+    *connection << UConnection::prefix(getTag().c_str());
     ret->echo(connection);
   }
   if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
-    *connection << UConnection::mendl;
+    *connection << UConnection::endl;
   else
-    *connection << UConnection::mflush;
+    *connection << UConnection::flush;
   delete ret;
   return UCOMPLETED;
 }
@@ -2596,9 +2596,9 @@ UCommand_ECHO::execute_(UConnection *connection)
 
   if (!connectionTag)
   {
-    *connection << UConnection::msendc("*** ", getTag().c_str());
+    *connection << UConnection::sendc("*** ", getTag().c_str());
     ret->echo(connection, true);
-    *connection << UConnection::mendl;
+    *connection << UConnection::endl;
   }
   else
   {
@@ -2617,9 +2617,9 @@ UCommand_ECHO::execute_(UConnection *connection)
 		  && *connectionTag == "other")))
       {
 	ok = true;
-	(**i) << UConnection::msendc("*** ", getTag().c_str());
+	(**i) << UConnection::sendc("*** ", getTag().c_str());
 	ret->echo((*i), true);
-	(**i) << UConnection::mendl;
+	(**i) << UConnection::endl;
       }
 
     if (!ok)
@@ -2801,8 +2801,8 @@ UCommand_NEW::execute_(UConnection *connection)
 	 i != objit->second->binder->monitors.end();
 	 ++i)
     {
-      *((*i)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
-      *((*i)->c) << UConnection::msend(reinterpret_cast<const ubyte*>(n.c_str()), n.size());
+      *((*i)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+      *((*i)->c) << UConnection::send(reinterpret_cast<const ubyte*>(n.c_str()), n.size());
       ++nb;
     }
     // Wait for remote new
@@ -2996,9 +2996,9 @@ UCommand_ALIAS::execute_(UConnection *connection)
 	   connection->server->aliastab.begin();
 	 i != connection->server->aliastab.end();
 	 ++i)
-      *connection << UConnection::msendf(getTag(),
-					 "*** %25s -> %s\n",
-					 i->first, i->second->c_str());
+      *connection << UConnection::sendf(getTag(),
+					"*** %25s -> %s\n",
+					i->first, i->second->c_str());
 
     return UCOMPLETED;
   }
@@ -3011,8 +3011,8 @@ UCommand_ALIAS::execute_(UConnection *connection)
       connection->server->aliastab.find(id0->c_str());
     if (i != connection->server->aliastab.end())
     {
-      *connection << UConnection::msendf (getTag(), "*** %25s -> %s\n",
-					  i->first, i->second->c_str());
+      *connection << UConnection::sendf (getTag(), "*** %25s -> %s\n",
+					 i->first, i->second->c_str());
     }
     return UCOMPLETED;
   }
@@ -3241,7 +3241,7 @@ UCommand_GROUP::execute_(UConnection *connection)
 	  o << ',';
       }
       o << "}\n";
-      *connection << UConnection::msendf(getTag(), o.str().c_str());
+      *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
     return UCOMPLETED;
   }
@@ -3373,8 +3373,8 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
       if ((*i)->isActive() && *(*i)->connectionTag == *id)
       {
 	ok = true;
-	(**i) << UConnection::mdisactivate;
-	(**i) << UConnection::mclose;
+	(**i) << UConnection::disactivate;
+	(**i) << UConnection::close;
       }
 
     if (!ok)
@@ -3684,12 +3684,12 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
     if (dev)
     {
-      *connection << UConnection::msendf (getTag(),
-					  "*** device description: %s\n",
-					  dev->detail->c_str());
-      *connection << UConnection::msendf (getTag(),
-					  "*** device name: %s\n",
-					  dev->device->c_str());
+      *connection << UConnection::sendf (getTag(),
+					 "*** device description: %s\n",
+					 dev->detail->c_str());
+      *connection << UConnection::sendf (getTag(),
+					 "*** device name: %s\n",
+					 dev->device->c_str());
     }
     if (variable)
     {
@@ -3710,7 +3710,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	  tstr << "*** current value: binary\n";
 	  break;
       }
-      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::sendf(getTag(), tstr.c_str().c_str());
     }
 
     if (dev)
@@ -3718,7 +3718,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
       std::ostringstream tstr;
       tstr << "*** current device load: "
 	   << dev->device_load->value->val << '\n';
-      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::sendf(getTag(), tstr.c_str().c_str());
     }
 
     if (variable)
@@ -3728,37 +3728,37 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	tstr << "*** rangemin: " << variable->rangemin << '\n';
       else
 	tstr << "*** rangemin: -INF\n";
-      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::sendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->rangemax != UINFINITY)
 	tstr << "*** rangemax: " << variable->rangemax << '\n';
       else
 	tstr << "*** rangemax: INF\n";
-      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::sendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->speedmin != -UINFINITY)
 	tstr << "*** speedmin: " << variable->rangemin << '\n';
       else
 	tstr << "*** speedmin: -INF\n";
-      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::sendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->speedmax != UINFINITY)
 	tstr << "*** speedmax: " << variable->rangemax << '\n';
       else
 	tstr << "*** speedmax: INF\n";
-      *connection << UConnection::msendf(getTag(), tstr.c_str().c_str());
+      *connection << UConnection::sendf(getTag(), tstr.c_str().c_str());
       tstr.str("");
 
       if (variable->unit)
-	*connection << UConnection::msendf(getTag(),
-					   "*** unit: %s\n",
-					   variable->unit->c_str());
+	*connection << UConnection::sendf(getTag(),
+					  "*** unit: %s\n",
+					  variable->unit->c_str());
       else
-	*connection << UConnection::msendf(getTag(),
-					   "*** unit: unspecified\n");
+	*connection << UConnection::sendf(getTag(),
+					  "*** unit: unspecified\n");
     }
 
     return UCOMPLETED;
@@ -4003,8 +4003,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     o << "*** pong time="<<std::left <<connection->server->getTime()<<'\n';
 
     // std::cout << getTag() << std::endl << o.str() << std::endl;
-    *connection << UConnection::msendf(getTag(), o.str().c_str());
-    //*connection << UConnection::msend(o.str().c_str(),getTag().c_str ());
+    *connection << UConnection::sendf(getTag(), o.str().c_str());
+    //*connection << UConnection::send(o.str().c_str(),getTag().c_str ());
     return UCOMPLETED;
   }
 
@@ -4048,21 +4048,21 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "stopall")
   {
-    *connection << UConnection::msendf (getTag(), "*** All commands cleared\n");
+    *connection << UConnection::sendf (getTag(), "*** All commands cleared\n");
     connection->server->stopall = true;
     return UCOMPLETED;
   }
 
   if (*oper == "undefall")
   {
-    *connection << UConnection::msendf (getTag(),
-					"*** undefall is deprecated. Use 'reset' instead\n");
+    *connection << UConnection::sendf (getTag(),
+				       "*** undefall is deprecated. Use 'reset' instead\n");
     return UCOMPLETED;
   }
 
   if (*oper == "reset")
   {
-    *connection << UConnection::msendf (getTag(), "*** Reset in progress\n");
+    *connection << UConnection::sendf (getTag(), "*** Reset in progress\n");
     ::urbiserver->reseting = true;
 
     return UCOMPLETED;
@@ -4070,9 +4070,9 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "devices")
   {
-    *connection << UConnection::msendf (getTag(),
-		       "*** devices is deprecated."
-		       " Use 'group objects' instead.\n");
+    *connection << UConnection::sendf (getTag(),
+				       "*** devices is deprecated."
+				       " Use 'group objects' instead.\n");
     return UCOMPLETED;
   }
 
@@ -4087,7 +4087,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       o << "*** " << i->second->name().c_str() << " ["
 	<< i->second->nbparam() << ']';
       o << '\n';
-      *connection << UConnection::msendf(getTag(), o.str().c_str());
+      *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
     return UCOMPLETED;
   }
@@ -4136,7 +4136,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  o << "UNKNOWN TYPE";
       }
       o << '\n';
-      *connection << UConnection::msendf(getTag(), o.str().c_str());
+      *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
 
     return UCOMPLETED;
@@ -4152,7 +4152,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       std::ostringstream o;
       o << "*** " << i->second->unforgedName->c_str() << "["
 	<<  i->second->nbarg () << "]\n";
-      *connection << UConnection::msendf(getTag(), o.str().c_str());
+      *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
 
     return UCOMPLETED;
@@ -4171,11 +4171,11 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  i->second.name != "notag")
       {
 	tstr << "*** " << i->second.name << "\n";
-	*connection << UConnection::msendf(getTag(), tstr.str().c_str());
+	*connection << UConnection::sendf(getTag(), tstr.str().c_str());
       }
     }
 
-    *connection << UConnection::msendf(getTag(), "*** end of tag list.\n");
+    *connection << UConnection::sendf(getTag(), "*** end of tag list.\n");
     return UCOMPLETED;
   }
 
@@ -4190,7 +4190,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       {
 	std::ostringstream tstr;
 	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
-	*connection << UConnection::msendf(getTag(), tstr.str().c_str());
+	*connection << UConnection::sendf(getTag(), tstr.str().c_str());
       }
     }
   }
@@ -4231,7 +4231,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	    o << "UNKNOWN TYPE";
 	}
 	o << '\n';
-	*connection << UConnection::msendf(getTag(), o.str().c_str());
+	*connection << UConnection::sendf(getTag(), o.str().c_str());
       }
     }
 
@@ -4252,12 +4252,12 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	 ++i)
       if ((*i)->isActive())
       {
-	*connection << UConnection::msendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
-			   (*i)->connectionTag->c_str(),
-			   static_cast<int>(((*i)->clientIP>>24) % 256),
-			   static_cast<int>(((*i)->clientIP>>16) % 256),
-			   static_cast<int>(((*i)->clientIP>>8) % 256),
-			   static_cast<int>((*i)->clientIP     % 256)
+	*connection << UConnection::sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
+					   (*i)->connectionTag->c_str(),
+					   static_cast<int>(((*i)->clientIP>>24) % 256),
+					   static_cast<int>(((*i)->clientIP>>16) % 256),
+					   static_cast<int>(((*i)->clientIP>>8) % 256),
+					   static_cast<int>((*i)->clientIP     % 256)
 			   );
       }
 
@@ -4272,7 +4272,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "quit")
   {
-    *connection << UConnection::mclose;
+    *connection << UConnection::close;
     return UCOMPLETED;
   }
 
@@ -4499,18 +4499,18 @@ UCommand_EMIT::execute_(UConnection *connection)
 	   j != it->second->monitors.end();
 	   ++j)
       {
-	*((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
-	*((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
-					  o.str().size());
+	*((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	*((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+					 o.str().size());
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  *((*j)->c) << UConnection::msendc(reinterpret_cast<const ubyte*>(","), 1);
+	  *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo((*j)->c);
 	}
-	*((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>("]\n"), 2);
+	*((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
       }
     }
 
@@ -4584,9 +4584,9 @@ UCommand_EMIT::removeEvent ()
 	   j != i->second->monitors.end();
 	   ++j)
       {
-	*((*j)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
-	*((*j)->c) << UConnection::msend(reinterpret_cast<const ubyte*>(o.str().c_str()),
-					 o.str().size());
+	*((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	*((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>(o.str().c_str()),
+					o.str().size());
       }
     }
   }
@@ -4869,9 +4869,9 @@ UCommand_DEF::execute_(UConnection *connection)
 	   connection->server->functiontab.begin();
 	 i != connection->server->functiontab.end();
 	 ++i)
-      *connection << UConnection::msendf (getTag(), "*** %s : %d param(s)\n",
-					  i->second->name().c_str(),
-					  i->second->nbparam());
+      *connection << UConnection::sendf (getTag(), "*** %s : %d param(s)\n",
+					 i->second->name().c_str(),
+					 i->second->nbparam());
     return UCOMPLETED;
   }
 
@@ -4951,7 +4951,7 @@ UCommand_DEF::execute_(UConnection *connection)
     // Variable definition
 
     variable = new UVariable(variablename->getFullname()->c_str(), new UValue());
-    *connection << UConnection::mlocalVariableCheck(variable);
+    connection->localVariableCheck(variable);
 
     return UCOMPLETED;
   }

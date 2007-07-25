@@ -302,22 +302,22 @@ UServer::work()
     if ((*r)->isActive())
     {
       if (!(*r)->isBlocked())
-	(**r) << UConnection::mcontinue;
+	(**r) << UConnection::continueSend;
 
       if (signalMemoryOverflow)
-	(**r) << UConnection::merrorSignal(UERROR_MEMORY_OVERFLOW);
+	(**r) << UConnection::errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
-	(**r) << UConnection::merrorSignal(UERROR_CPU_OVERLOAD);
+	(**r) << UConnection::errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      (**r) << UConnection::merrorCheck(UERROR_MEMORY_OVERFLOW);
-      (**r) << UConnection::merrorCheck(UERROR_MEMORY_WARNING);
-      (**r) << UConnection::merrorCheck(UERROR_SEND_BUFFER_FULL);
-      (**r) << UConnection::merrorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (**r) << UConnection::merrorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (**r) << UConnection::merrorCheck(UERROR_CPU_OVERLOAD);
+      (**r) << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
+      (**r) << UConnection::errorCheck(UERROR_MEMORY_WARNING);
+      (**r) << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
+      (**r) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      (**r) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      (**r) << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
       if ((*r)->activeCommand)
@@ -339,7 +339,7 @@ UServer::work()
 	// delay the parsing after the completion
 	// of execute().
 	(*r)->newDataAdded = false;
-	(**r) << UConnection::mreceived("");
+	(**r) << UConnection::received("");
       }
     }
 
@@ -504,7 +504,7 @@ UServer::work()
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive())
-	  (**i) << UConnection::msend("*** Reset completed. Now, restarting...\n", "reset");
+	  (**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
 
       //restart hubs
       for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
@@ -533,10 +533,10 @@ UServer::work()
 	   ++i)
 	if ((*i)->isActive() && (*i) != ghost_)
 	{
-	  (**i) << UConnection::msend("*** Restart completed.\n", "reset");
+	  (**i) << UConnection::send("*** Restart completed.\n", "reset");
 	  loadFile("CLIENT.INI", &(*i)->recvQueue());
 	  (*i)->newDataAdded = true;
-	  (**i) << UConnection::msend("*** Ready.\n", "reset");
+	  (**i) << UConnection::send("*** Ready.\n", "reset");
 	}
       reseting = false;
       stage = 0;

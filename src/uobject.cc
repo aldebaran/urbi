@@ -54,9 +54,9 @@ namespace urbi
     //feed this to the ghostconnection
     UConnection& ghost = urbiserver->getGhostConnection();
     if (strlen(str)>=2 && str[0]=='(')
-      ghost << UConnection::mreceived((const unsigned char *)(str+1), strlen(str)-2);
+      ghost << UConnection::received((const unsigned char *)(str+1), strlen(str)-2);
     else
-      ghost << UConnection::mreceived(str);
+      ghost << UConnection::received(str);
 
     ghost.newDataAdded = true;
   }
@@ -65,7 +65,7 @@ namespace urbi
   {
     //feed this to the ghostconnection
     UConnection& ghost = urbiserver->getGhostConnection();
-    ghost << UConnection::mreceived(str);
+    ghost << UConnection::received(str);
     ghost.newDataAdded = true;
   }
 
@@ -73,7 +73,7 @@ namespace urbi
   {
     //feed this to the ghostconnection
     UConnection& ghost = urbiserver->getGhostConnection();
-    ghost << UConnection::mreceived((const unsigned char *)(buf), size);
+    ghost << UConnection::received((const unsigned char *)(buf), size);
     ghost.newDataAdded = true;
   }
 
@@ -318,7 +318,7 @@ namespace urbi
     if (!gc)
       gc = new UGhostConnection (::urbiserver);
 
-    return (*gc << UConnection::mreceived (s.c_str ())).error ();
+    return (*gc << UConnection::received (s.c_str ())).error ();
   }
 
   // **************************************************************************

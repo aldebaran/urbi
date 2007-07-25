@@ -71,7 +71,7 @@ Connection::closeConnection()
   closesocket(fd);
   int ret = 0;//WSACleanup(); //wsastartup called only once!
 #else
-  int ret = close(fd);
+  int ret = ::close(fd);
   if (ret)
     perror ("cannot close connection fd");
 #endif
@@ -121,13 +121,13 @@ UConnection& Connection::send(const ubyte* buffer, int length)
 {
   if (sendQueueRemain() == 0)
     trigger();
-  return (*this) << msend(buffer, length);
+  return (*this) << UConnection::send(buffer, length);
 }
 
 //! Send a "\n" through the connection
 UConnection& Connection::endline ()
 {
   //FIXME: test send error
-  (*this) << msend((const ubyte*)"\n", 1);
+  (*this) <<UConnection:: send((const ubyte*)"\n", 1);
   CONN_ERR_RET(USUCCESS);
 }

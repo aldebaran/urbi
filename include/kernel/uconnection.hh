@@ -135,17 +135,21 @@ public:
   UConnection&         initialize         ();
 
 protected:
+  //! UConnection close. Must be redefined by the robot-specific sub class.
+  /*! The implementation of this function must set 'closing' to true, to
+    tell the UConnection to stop sending data.
+  */
   virtual UConnection& closeConnection    () = 0;
 
 #if 1
 public:
-  static UConnection& mblock (UConnection& c);
-  static UConnection& mendl (UConnection& c);
-  static UConnection& mflush (UConnection& c);
-  static UConnection& mcontinue (UConnection& c);
-  static UConnection& mactivate (UConnection& c);
-  static UConnection& mdisactivate (UConnection& c);
-  static UConnection& mclose (UConnection& c);
+  static UConnection& block (UConnection& c);
+  static UConnection& endl (UConnection& c);
+  static UConnection& flush (UConnection& c);
+  static UConnection& continueSend (UConnection& c);
+  static UConnection& activate (UConnection& c);
+  static UConnection& disactivate (UConnection& c);
+  static UConnection& close (UConnection& c);
 
   UConnection& operator<< (UConnection& m (UConnection&));
 
@@ -157,45 +161,51 @@ public:
     bool _flush;
   };
 
-  static inline _Send msendf (const std::string& __tag,
-			      const char* __format, ...)
+  static inline _Send sendf (const std::string& __tag,
+			     const char* __format, ...)
   {
     va_list args;
     va_start(args, __format);
-    const _Send tmp = msendf (__tag, __format, args);
+    const _Send tmp = sendf (__tag, __format, args);
     va_end(args);
     return tmp;
   }
 
-  static inline _Send msendf (const std::string& __tag,
-			      const char* __format, va_list __args)
+  static inline _Send sendf (const std::string& __tag,
+			     const char* __format, va_list __args)
   {
     char buf[1024];
     vsnprintf(buf, 1023, __format, __args);
-    return msend (buf, __tag.c_str());
+    return send (buf, __tag.c_str());
   }
 
-  static inline _Send msend (const char *__s, const char* __tag)
+  //! Send a string through the connection.
+  /*! A tag is automatically added to output the message string and the
+    resulting string is sent via send(const ubyte*,int).
+    \param __s the string to send
+    \param __tag the tag of the message. Default is "notag"
+  */
+  static inline _Send send (const char *__s, const char* __tag)
   {
-    return msend ((const ubyte*) __s, ((__s != 0) ? strlen (__s) : 0),
-		  (const ubyte*) __tag);
+    return send ((const ubyte*) __s, ((__s != 0) ? strlen (__s) : 0),
+		 (const ubyte*) __tag);
   }
 
-  static inline _Send msendc (const char* __buf, const char* __tag)
+  static inline _Send sendc (const char* __buf, const char* __tag)
   {
-    return msendc ((const ubyte*)__buf, ((__buf != 0) ? strlen (__buf) : 0),
-		   (const ubyte*)__tag);
+    return sendc ((const ubyte*)__buf, ((__buf != 0) ? strlen (__buf) : 0),
+		  (const ubyte*)__tag);
   }
 
-  static inline _Send msendc (const ubyte* __buf, int __len,
-			      const ubyte* __tag = 0)
+  static inline _Send sendc (const ubyte* __buf, int __len,
+			     const ubyte* __tag = 0)
   {
-    return msend (__buf, __len, __tag, false);
+    return send (__buf, __len, __tag, false);
   }
 
-  static inline _Send msend (const ubyte* __buf, int __buflen,
-			     const ubyte* __tag = 0,
-			     bool __flush = true)
+  static inline _Send send (const ubyte* __buf, int __buflen,
+			    const ubyte* __tag = 0,
+			    bool __flush = true)
   {
     _Send __msg;
     __msg._tag = __tag;
@@ -210,7 +220,7 @@ public:
 
 
   struct _Prefix { const char* _tag; };
-  static inline _Prefix msendPrefix (const char * __tag)
+  static inline _Prefix prefix (const char * __tag)
   {
     _Prefix __pref;
     __pref._tag = __tag;
@@ -219,7 +229,7 @@ public:
   UConnection& operator<< (_Prefix __pref);
 
   struct _ErrorSignal { UErrorCode _n; };
-  static inline _ErrorSignal merrorSignal (UErrorCode __n)
+  static inline _ErrorSignal errorSignal (UErrorCode __n)
   {
     _ErrorSignal __err;
     __err._n = __n;
@@ -228,7 +238,7 @@ public:
   UConnection& operator<< (_ErrorSignal __pref);
 
   struct _ErrorCheck { UErrorCode _n; };
-  static inline _ErrorCheck merrorCheck (UErrorCode __n)
+  static inline _ErrorCheck errorCheck (UErrorCode __n)
   {
     _ErrorCheck __err;
     __err._n = __n;
@@ -237,7 +247,7 @@ public:
   UConnection& operator<< (_ErrorCheck __pref);
 
   struct _Activate { bool _st; };
-  static inline _Activate msetActivate (bool __st)
+  static inline _Activate setActivate (bool __st)
   {
     _Activate __act;
     __act._st = __st;
@@ -245,17 +255,8 @@ public:
   }
   UConnection& operator<< (_Activate __act);
 
-  struct _IPAddress { IPAdd _addr; };
-  static inline _IPAddress msetIP ( IPAdd __addr)
-  {
-    _IPAddress __ip;
-    __ip._addr = __addr;
-    return __ip;
-  }
-  UConnection& operator<< (_IPAddress __ip);
-
   struct _SendAdaptative { int _val; };
-  static inline _SendAdaptative msetSendAdaptative (int __val)
+  static inline _SendAdaptative sendAdaptative (int __val)
   {
     _SendAdaptative __adap;
     __adap._val = __val;
@@ -264,7 +265,7 @@ public:
   UConnection& operator<< (_SendAdaptative __adap);
 
   struct _RecvAdaptative { int _val; };
-  static inline _RecvAdaptative msetReceiveAdaptative (int __val)
+  static inline _RecvAdaptative receiveAdaptative (int __val)
   {
     _RecvAdaptative __adap;
     __adap._val = __val;
@@ -273,7 +274,7 @@ public:
   UConnection& operator<< (_RecvAdaptative __adap);
 
   struct _MsgCode { UMsgType _t; int _n; };
-  static inline _MsgCode mmsg (UMsgType __t, int __n)
+  static inline _MsgCode msg (UMsgType __t, int __n)
   {
     _MsgCode __msg;
     __msg._t = __t;
@@ -305,53 +306,36 @@ public:
   UConnection& operator<< (_Append __cmd);
 
   struct _Received { const ubyte* _val; int _len; };
-  static inline _Received mreceived (const ubyte* __val, int __len)
+  static inline _Received received (const ubyte* __val, int __len)
   {
     _Received __cmd;
     __cmd._val = __val;
     __cmd._len = __len;
     return __cmd;
   }
-  static inline _Received mreceived (const char* __val)
+  static inline _Received received (const char* __val)
   {
-    return mreceived((const ubyte*) __val,
+    return received((const ubyte*) __val,
 		     ((__val != 0) ? strlen (__val) : 0));
   }
   UConnection& operator<< (_Received __cmd);
 
-  struct _LocalVariableCheck { UVariable* _val; };
-  static inline _LocalVariableCheck mlocalVariableCheck (UVariable* __val)
-  {
-    _LocalVariableCheck __var;
-    __var._val = __val;
-    return __var;
-  }
-  UConnection& operator<< (_LocalVariableCheck __cmd);
 #endif // 1
 
 protected:
   std::string		mkPrefix	   (const ubyte* tag) const;
 
-//   UConnection&		sendPrefix         (const char* tag = 0);
-//   UConnection&		send               (const char *s, const char* tag = 0);
-//   virtual UConnection&	send               (const ubyte *buffer, int length);
-//   UConnection&		sendf (const std::string& tag, const char* format, va_list args);
-//   UConnection&		sendf (const std::string& tag, const char* format, ...);
-//   UConnection&		sendc              (const char *s, const char* tag = 0);
-
-  virtual UConnection&	sendc              (const ubyte *buffer, int length);
+  virtual UConnection&	sendc_             (const ubyte *buffer, int length);
   virtual UConnection&	endline            () = 0;
 
 public:
   bool                isBlocked          ();
-
-protected:
   UConnection&        block              ();
   UConnection&        continueSend       ();
   UConnection&        flush              ();
 
 protected:
-  UConnection&        received           (const char *s);
+  UConnection&        received_           (const char *s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -361,41 +345,40 @@ protected:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UConnection&        received           (const ubyte *buffer, int length);
+  UConnection&        received_          (const ubyte *buffer, int length);
 
 public:
   int                 sendAdaptive       ();
   int                 receiveAdaptive    ();
-
-protected:
   UConnection&        setSendAdaptive    (int sendAdaptive);
   UConnection&        setReceiveAdaptive (int receiveAdaptive);
 
-  UConnection&        errorSignal        (UErrorCode n);
-  UConnection&        errorCheck         (UErrorCode n);
+  UConnection&        errorSignal_set    (UErrorCode n);
+  UConnection&        errorCheckAndSend  (UErrorCode n);
 
-  UConnection&        activate           (); // OK
-  UConnection&        disactivate        (); // OK
-public:
-  bool                isActive           (); // OK : accessor
+  UConnection&        activate           ();
+  UConnection&        disactivate        ();
+  bool                isActive           ();
+
 protected:
-  UConnection&        execute            (UCommand_TREE* &execCommand); // OK (move code if removed)
-  UConnection&        append             (UCommand_TREE *command); // OK
+  UConnection&        execute            (UCommand_TREE* &execCommand);
+  UConnection&        append             (UCommand_TREE *command);
+
 public:
-  int                 availableSendQueue (); // OK : accessor
-  int                 sendQueueRemain    (); // OK : accessor
+  int                 availableSendQueue ();
+  int                 sendQueueRemain    ();
 
-  UCommandQueue&      recvQueue          (); // OK : accessor
-  UQueue& send_queue(); // OK : accessor
-protected:
-  UConnection&        localVariableCheck (UVariable *variable); // OK
+  UCommandQueue&      recvQueue          ();
+  UQueue& send_queue();
+  UConnection&        localVariableCheck (UVariable *variable);
 
 
+public:
   //! UConnection IP associated
   /*! The robot specific part should call the function when the
     connection is active and transmit the IP address of the client,
     as a long int.  */
-  UConnection& setIP (IPAdd ip); // OK : to remove
+  UConnection& setIP (IPAdd ip);
 
 public:
   /// Error return code for the constructor.
@@ -456,15 +439,15 @@ protected:
   /// Default adaptive behavior for Send/Recv..
   enum { ADAPTIVE = 100 };
 
-  virtual int         effectiveSend     (const ubyte*, int length) = 0; // OK : don't touch
-  UConnection&        error             (UErrorCode n); // OK : don't remove (may be removed)
-  UConnection&        warning           (UWarningCode n); // OK : don't remove (may be removed)
+  virtual int         effectiveSend     (const ubyte*, int length) = 0;
+  UConnection&        send_error        (UErrorCode n);
+  UConnection&        send_warning      (UWarningCode n);
   UCommand*           processCommand    (UCommand *&command,
 					 URunlevel &rl,
-					 bool &mustReturn); // OK : don't touch
+					 bool &mustReturn);
 
 public:
-  UErrorValue         error             () const; // OK : accessor
+  UErrorValue         error             () const;
 
 protected:
   /// Store error on commands

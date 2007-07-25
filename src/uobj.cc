@@ -110,8 +110,8 @@ UObj::~UObj()
 	 it != binder->monitors.end();
 	 ++it)
     {
-      *((*it)->c) << UConnection::msendPrefix(EXTERNAL_MESSAGE_TAG);
-      *((*it)->c) << UConnection::msend((const ubyte*)o.str().c_str(), o.str().size());
+      *((*it)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+      *((*it)->c) << UConnection::send((const ubyte*)o.str().c_str(), o.str().size());
     }
 
     // in fact here we can delete the binder since it contained only bindings
