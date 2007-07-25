@@ -51,7 +51,7 @@ namespace runner
 	current_ = val.cast<object::Primitive>()->value_get()(args);
 	break;
       case object::Object::kind_code:
-	current_ = eval (*val.cast<object::Code>()->value_get());
+	current_ = eval (val.cast<object::Code>()->value_get());
 	break;
       default:
 	current_ = val;
@@ -71,7 +71,7 @@ namespace runner
   Runner::operator() (const ast::Function& e)
   {
     // FIXME: Arguments.
-    current_ = new object::Code (e.body_get());
+    current_ = new object::Code (*e.body_get());
   }
 
 

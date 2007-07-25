@@ -1,3 +1,24 @@
+2007-07-25  Akim Demaille  <akim@lrde.epita.fr>
+
+	Clean a bit
+	* src/object/atom.hh, src/object/atom.hxx (Atom::Atom): Don't take
+	the arg as ref, as it prevents the type of the arg from being a ref.
+	(value_get): Remove the non-const one.
+	(code_traits, context_traits): Take a ref, not a pointer.
+	(context_traits): Doesn't need to be const.
+	* src/object/fwd.hh
+	(APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT, APPLY_ON_ALL_PRIMITIVES):
+	Remove.
+	(APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT)
+	(APPLY_ON_GLOBAL_PRIMITIVES): Rename back as...
+	(APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT, APPLY_ON_ALL_PRIMITIVES):
+	these, since we do not need the others
+	* src/object/primitives.cc: Use cast instead of safe_cast + assert.
+	Fix indentation and semicolon use.
+	Comment changes.
+	* src/runner/runner.cc: Adjust.
+	* src/uconnection.cc: Ditto.
+
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
 	Implement echo

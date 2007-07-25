@@ -21,7 +21,7 @@ namespace object
      ** \{ */
   public:
     /// Construct an Atom with value \p v.
-    Atom (const typename Traits::type& v);
+    Atom (const typename Traits::type v);
 
     /// Destroy an Atom.
     virtual ~Atom ();
@@ -34,7 +34,6 @@ namespace object
     virtual kind_type kind_get () const;
 
     /// The held value.
-    const typename Traits::type value_get () const;
     typename Traits::type value_get ();
 
     /// For debugging.
@@ -52,8 +51,7 @@ namespace object
 
   struct code_traits
   {
-    // FIXME: Can be ref?
-    typedef const ast::Exp* type;
+    typedef const ast::Exp& type;
     enum { kind = Object::kind_code };
   };
 
@@ -64,8 +62,7 @@ namespace object
 
   struct context_traits
   {
-    // FIXME: Can be ref?
-    typedef const UConnection* type;
+    typedef UConnection& type;
     enum { kind = Object::kind_context };
   };
 

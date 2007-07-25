@@ -28,20 +28,13 @@ namespace object
   /// Macro should be a binary macro whose first arg, \p What, is the
   /// lower case C++ name, and the second argument, \p Name, the
   /// capitalized Urbi name.
-# define APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(Macro)	\
+# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(code,      Code)				\
+  Macro(context,   Context)				\
   Macro(float,     Float)				\
   Macro(integer,   Integer)				\
   Macro(primitive, Primitive)				\
   Macro(string,    String)
-
-# define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
-  Macro(context,    Context)				\
-  APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(Macro)
-
-# define APPLY_ON_GLOBAL_PRIMITIVES(Macro)		\
-  Macro(object,    Object)				\
-  APPLY_ON_GLOBAL_PRIMITIVES_BUT_OBJECT(Macro)
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   Macro(object,    Object)				\

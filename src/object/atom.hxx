@@ -27,7 +27,7 @@ namespace object
 
   template <typename Traits>
   inline
-  Atom<Traits>::Atom (const typename Traits::type& v)
+  Atom<Traits>::Atom (const typename Traits::type v)
     : value_(v)
   {
     switch (kind_get())
@@ -55,14 +55,6 @@ namespace object
     // value is a kind_type.  So we have to cast it back to its type
     // here.
     return static_cast<Object::kind_type>(Traits::kind);
-  }
-
-  template <typename Traits>
-  inline
-  const typename Traits::type
-  Atom<Traits>::value_get () const
-  {
-    return value_;
   }
 
   template <typename Traits>

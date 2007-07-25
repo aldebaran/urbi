@@ -105,10 +105,8 @@ namespace object
     rObject
     context_class_echo (objects_type args)
     {
-      assert(args[0]->kind_get() == Object::kind_context);
-      const UConnection& c = *args[0].unsafe_cast<Context>()->value_get();
-      const_cast<UConnection&>(c)
-	.send (boost::lexical_cast<std::string>(*args[1]).c_str());
+      UConnection& c = args[0].cast<Context>()->value_get();
+      c.send (boost::lexical_cast<std::string>(*args[1]).c_str());
       return args[0];
     }
 
@@ -314,52 +312,56 @@ namespace object
     {
 #define DECLARE(Name, Operator)						\
       float_class->slot_set (#Operator,					\
-			     new Primitive(float_class_ ## Name));
+			     new Primitive(float_class_ ## Name))
 
 #define DECLARE_(Name)				\
       DECLARE(Name, Name)
 
-      DECLARE(add, +)
-	DECLARE(div, /)
-	DECLARE(mul, *)
-	DECLARE(sub, -)
-	DECLARE(pow, **)
-	DECLARE(mod, %)
+      DECLARE(add, +);
+      DECLARE(div, /);
+      DECLARE(mul, *);
+      DECLARE(sub, -);
+      DECLARE(pow, **);
+      DECLARE(mod, %);
 
-	DECLARE(land, &&)
-	DECLARE(lor, ||)
+      DECLARE(land, &&);
+      DECLARE(lor, ||);
 
-	DECLARE(equ, ==)
-	DECLARE(req, ~=)
-	DECLARE(deq, =~=)
-	DECLARE(peq, %=)
-	DECLARE(neq, !=)
+      DECLARE(equ, ==);
+      DECLARE(req, ~=);
+      DECLARE(deq, =~=);
+      DECLARE(peq, %=);
+      DECLARE(neq, !=);
 
-	DECLARE(lth, <)
-	DECLARE(leq, <=)
-	DECLARE(gth, >)
-	DECLARE(geq, >=)
+      DECLARE(lth, <);
+      DECLARE(leq, <=);
+      DECLARE(gth, >);
+      DECLARE(geq, >=);
 
-	DECLARE_(sin)
-	DECLARE_(asin)
-	DECLARE_(cos)
-	DECLARE_(acos)
-	DECLARE_(tan)
-	DECLARE_(atan)
-	DECLARE_(sgn)
-	DECLARE_(abs)
-	DECLARE_(exp)
-	DECLARE_(log)
-	DECLARE_(round)
-	DECLARE_(random)
-	DECLARE_(trunc)
-	DECLARE_(sqr)
-	DECLARE_(sqrt)
+      DECLARE_(sin);
+      DECLARE_(asin);
+      DECLARE_(cos);
+      DECLARE_(acos);
+      DECLARE_(tan);
+      DECLARE_(atan);
+      DECLARE_(sgn);
+      DECLARE_(abs);
+      DECLARE_(exp);
+      DECLARE_(log);
+      DECLARE_(round);
+      DECLARE_(random);
+      DECLARE_(trunc);
+      DECLARE_(sqr);
+      DECLARE_(sqrt);
 
 #undef DECLARE_
 #undef DECLARE
-	}
+    }
   }
+
+  /*----------.
+  | Integer.  |
+  `----------*/
 
   namespace
   {
@@ -371,6 +373,15 @@ namespace object
     {
     }
 
+  }
+
+  /*------------.
+  | Primitive.  |
+  `------------*/
+
+  namespace
+  {
+
     /// Initialize the Primitive class.
     static
     void
@@ -378,12 +389,29 @@ namespace object
     {
     }
 
-    /// Initialize the Float class.
+  }
+  /*--------.
+  | String.  |
+  `--------*/
+
+  namespace
+  {
+
+    /// Initialize the String class.
     static
     void
     string_class_initialize ()
     {
     }
+
+  }
+
+    /*------------------------.
+    | Global initialization.  |
+    `------------------------*/
+
+  namespace
+  {
 
     /// Initialize the root classes.
     /// There are some dependency issues.  For instance, String

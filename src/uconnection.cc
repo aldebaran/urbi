@@ -87,7 +87,7 @@ UConnection::UConnection (UServer *userver,
     recvAdaptive_(UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
     active_(true),
-    context_(new object::Context(this))
+    context_(new object::Context(*this))
 {
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
