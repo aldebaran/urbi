@@ -52,6 +52,7 @@ namespace runner
     virtual void operator() (const ast::AndExp& e);
     virtual void operator() (const ast::CallExp& e);
     virtual void operator() (const ast::FloatExp& e);
+    virtual void operator() (const ast::StringExp& e);
     virtual void operator() (const ast::Function& e);
     virtual void operator() (const ast::SemicolonExp& e);
     virtual void operator() (const ast::ListExp& e);

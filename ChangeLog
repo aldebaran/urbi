@@ -1,5 +1,11 @@
 2007-07-26  mefyl  <mefyl@lrde.epita.fr>
 
+	Handle literal strings.
+	* src/runner/runner.cc,
+	* src/runner/runner.hh: Here.
+
+2007-07-26  mefyl  <mefyl@lrde.epita.fr>
+
 	Handle literal lists.
 	* src/object/fwd.hh: Add `list' to the primitive list.
 	* src/uconnection.cc: Result printing moved ...

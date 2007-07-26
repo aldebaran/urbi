@@ -98,4 +98,10 @@ namespace runner
     operator() (e.rhs_get());
   }
 
+  void
+  Runner::operator() (const ast::StringExp& e)
+  {
+    current_ = new object::String(e.value_get());
+  }
+
 } // namespace runner
