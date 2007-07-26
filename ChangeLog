@@ -1,3 +1,11 @@
+2007-07-26  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Handle unary negation.
+	* src/object/atom.hh: Fix documentation.
+	* src/runner/runner.cc,
+	* src/runner/runner.hh: Handle unary negation.
+	* src/runner/runner.hxx: Remove buggy include.
+
 2007-07-26  mefyl  <mefyl@lrde.epita.fr>
 
 	Handle literal strings.

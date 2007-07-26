@@ -92,11 +92,22 @@ namespace runner
 
 
   void
+  Runner::operator() (const ast::NegOpExp& e)
+  {
+    rObject val = eval (e.operand_get ());
+    assert (val->kind_get() == object::Object::kind_float);
+    current_ =
+      new object::Float (-1 * val.cast<object::Float>()->value_get ());
+  }
+
+
+  void
   Runner::operator() (const ast::SemicolonExp& e)
   {
     operator() (e.lhs_get());
     operator() (e.rhs_get());
   }
+
 
   void
   Runner::operator() (const ast::StringExp& e)

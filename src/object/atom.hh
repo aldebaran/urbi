@@ -1,6 +1,6 @@
 /**
- ** \file object/float.hh
- ** \brief Definition of object::Float.
+ ** \file object/atom.hh
+ ** \brief Definition of atomic objects (code, float, string).
  */
 
 #ifndef OBJECT_FLOAT_HH

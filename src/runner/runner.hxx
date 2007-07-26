@@ -52,6 +52,4 @@ namespace runner
 
 } // namespace runner
 
-# include "runner/runner.hxx"
-
 #endif // !RUNNER_RUNNER_HXX
