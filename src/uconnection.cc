@@ -1014,15 +1014,8 @@ UConnection::execute(ast::Ast*& execCommand)
   if (r.result())
   {
     std::ostringstream os;
-    switch (r.result()->kind_get())
-    {
-      case object::Object::kind_float:
-	// FIXME: std::fixed leaks to every use of os.
-	os << std::fixed << r.result().cast<object::Float>()->value_get();
-	break;
-      default:
-	break;
-    }
+    r.result()->print(os);
+
     // The prefix should be (getTag().c_str()) instead of 0.
     if (!os.str().empty())
     {

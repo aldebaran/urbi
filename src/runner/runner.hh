@@ -54,6 +54,7 @@ namespace runner
     virtual void operator() (const ast::FloatExp& e);
     virtual void operator() (const ast::Function& e);
     virtual void operator() (const ast::SemicolonExp& e);
+    virtual void operator() (const ast::ListExp& e);
     /// \}
 
   private:

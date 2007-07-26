@@ -95,6 +95,9 @@ namespace object
     /// Report the content on \p o.  For debugging purpose.
     virtual std::ostream& dump (std::ostream& o) const;
 
+    /// Print out the value. Suitable for user interaction.
+    virtual std::ostream& print (std::ostream& o) const;
+
     /// Dump the special slots if there are.
     virtual std::ostream& special_slots_dump (std::ostream& o) const;
     /// \}

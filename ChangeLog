@@ -1,3 +1,17 @@
+2007-07-26  mefyl  <mefyl@lrde.epita.fr>
+
+	Handle literal lists.
+	* src/object/fwd.hh: Add `list' to the primitive list.
+	* src/uconnection.cc: Result printing moved ...
+	* src/object/atom.hh,
+	* src/object/atom.hxx: ... here, inside the new `print' method.
+	* src/object/object.cc,
+	* src/object/object.hh: Add the `print' method.
+	* src/object/primitives.cc,
+	* src/object/primitives.hh: Add list declaration and initialization.
+	* src/runner/runner.cc,
+	* src/runner/runner.hh: Handle literal lists.
+
 2007-07-25  Akim Demaille  <akim@lrde.epita.fr>
 	Clean a bit
 	* src/object/atom.hh, src/object/atom.hxx (Atom::Atom): Don't take

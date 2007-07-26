@@ -51,6 +51,12 @@ namespace object
 
   extern rObject string_class;
 
+  /*-------.
+  | List.  |
+  `-------*/
+
+  extern rObject list_class;
+
 } // namespace object
 
 #endif // !OBJECT_PRIMITIVES_HH

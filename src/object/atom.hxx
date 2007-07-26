@@ -6,6 +6,8 @@
 #ifndef OBJECT_ATOM_HXX
 # define OBJECT_ATOM_HXX
 
+# include <boost/foreach.hpp>
+
 # include "libport/deref.hh"
 
 # include "ast/pretty-printer.hh"
@@ -60,9 +62,86 @@ namespace object
   template <typename Traits>
   inline
   typename Traits::type
-  Atom<Traits>::value_get ()
+  Atom<Traits>::value_get () const
   {
     return value_;
+  }
+
+  template <typename Traits>
+  inline
+  std::ostream& Atom<Traits>::print(std::ostream& o) const
+  {
+    assert(0);
+    return o;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<float_traits>::print(std::ostream& out) const
+  {
+    // FIXME: std::fixed leaks to every use of os.
+    out << std::fixed << value_get();
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<list_traits>::print(std::ostream& out) const
+  {
+    std::list<rObject> values = value_get();
+    out << "[";
+    bool first = true;
+    BOOST_FOREACH (const rObject& o, values)
+    {
+      if (first)
+        first = false;
+      else
+        out << ", ";
+      o->print(out);
+    }
+    out << "]";
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<context_traits>::print(std::ostream& out) const
+  {
+    // FIXME: For now, don't print anything.
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<code_traits>::print(std::ostream& out) const
+  {
+    // FIXME: For now, don't print anything.
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<integer_traits>::print(std::ostream& out) const
+  {
+    out << value_get();
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<primitive_traits>::print(std::ostream& out) const
+  {
+    // FIXME
+    assert(!"Printing primitives isn't handled!");
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream& Atom<string_traits>::print(std::ostream& out) const
+  {
+    out << "\"" << value_get() << "\"";
+    return out;
   }
 
   template <typename Traits>
@@ -71,6 +150,16 @@ namespace object
   Atom<Traits>::special_slots_dump (std::ostream& o) const
   {
     return o << "value" << " = " << libport::deref << value_ << libport::iendl;
+  }
+
+  template <>
+  inline
+  std::ostream&
+  Atom<list_traits>::special_slots_dump (std::ostream& o) const
+  {
+    o << "value" << " = " << libport::deref;
+    print(o);
+    return o << libport::iendl;
   }
 
 } // namespace object

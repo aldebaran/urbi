@@ -34,10 +34,12 @@ namespace object
     virtual kind_type kind_get () const;
 
     /// The held value.
-    typename Traits::type value_get ();
+    typename Traits::type value_get () const;
 
     /// For debugging.
     std::ostream& special_slots_dump (std::ostream& o) const;
+
+    std::ostream& print(std::ostream& out) const;
 
   private:
     /// The value.
@@ -108,6 +110,17 @@ namespace object
   {
     typedef std::string type;
     enum { kind = Object::kind_string };
+  };
+
+
+  /*-------.
+  | List.  |
+  `-------*/
+
+  struct list_traits
+  {
+    typedef std::list<rObject> type;
+    enum { kind = Object::kind_list };
   };
 
 } // namespace object

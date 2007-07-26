@@ -68,6 +68,22 @@ namespace runner
 
 
   void
+  Runner::operator() (const ast::ListExp& e)
+  {
+    // list values
+    std::list<object::rObject> values;
+    // Evaluate every expression in the list
+    // FIXME: parallelized?
+    BOOST_FOREACH (const ast::Exp* v, e.value_get())
+    {
+      operator() (*v);
+      values.push_back(current_);
+    }
+    current_ = new object::List (values);
+  }
+
+
+  void
   Runner::operator() (const ast::Function& e)
   {
     // FIXME: Arguments.

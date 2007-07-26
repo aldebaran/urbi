@@ -114,4 +114,11 @@ namespace object
     return o;
   }
 
+  std::ostream&
+  Object::print(std::ostream& out) const
+  {
+    // FIXME: For now, don't print anything.
+    return out;
+  }
+
 } // namespace object

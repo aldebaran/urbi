@@ -23,6 +23,7 @@ namespace object
   rObject object_class;
   rObject primitive_class;
   rObject string_class;
+  rObject list_class;
 
 
   /*--------------------.
@@ -390,6 +391,7 @@ namespace object
     }
 
   }
+
   /*--------.
   | String.  |
   `--------*/
@@ -401,6 +403,22 @@ namespace object
     static
     void
     string_class_initialize ()
+    {
+    }
+
+  }
+
+  /*-------.
+  | List.  |
+  `-------*/
+
+  namespace
+  {
+
+    /// Initialize the List class.
+    static
+    void
+    list_class_initialize ()
     {
     }
 
