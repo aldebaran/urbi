@@ -97,7 +97,7 @@ namespace
                           const std::string& msg)
   {
     std::ostringstream o;
-    o << "!!! " << l << ": " << msg << "\n" << std::ends;
+    o << "!!! " << l << ": " << msg << '\n' << std::ends;
     return o.str();
   }
 }

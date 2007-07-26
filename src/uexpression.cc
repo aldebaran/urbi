@@ -421,7 +421,7 @@ UExpression::print(unsigned t)
   if (type == VALUE && dataType == DATA_NUM)
   {
     std::ostringstream o;
-    o << "val=" << val << " ";
+    o << "val=" << val << ' ';
     debug("%s", o.str().c_str());
   }
   if (str)

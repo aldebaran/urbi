@@ -62,7 +62,7 @@ public:
 private:
 
   /** The matching filter.
-   * Variables name are stored in full name and wildcards are stored as "*".
+   * Variables name are stored in full name and wildcards are stored as '*'.
    * This filter can be paired with the content of the UEvent::args to execute
    * the matching.
    */

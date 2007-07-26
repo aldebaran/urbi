@@ -45,7 +45,7 @@ UString::UString(const char* s)
 }
 
 UString::UString(const UString& s1, const UString& s2)
-  : str_ (s1.str_ + "." + s2.str_)
+  : str_ (s1.str_ + '.' + s2.str_)
 {
 }
 

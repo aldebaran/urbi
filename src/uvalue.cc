@@ -157,9 +157,9 @@ UValue::operator urbi::UBinary()
     if (param->expression)
     {
       if (param->expression->dataType == ::DATA_NUM)
-	msg<< " "<<(int)param->expression->val;
+	msg<< ' '<<(int)param->expression->val;
       else if (param->expression->dataType == ::DATA_STRING)
-	msg << " "<<param->expression->str->c_str();
+	msg << ' '<<param->expression->str->c_str();
     }
     param = param->next;
   }
@@ -185,9 +185,9 @@ UValue::operator urbi::UBinary*()
     if (param->expression)
     {
       if (param->expression->dataType == ::DATA_NUM)
-	msg<< " "<<(int)param->expression->val;
+	msg<< ' '<<(int)param->expression->val;
       else if (param->expression->dataType == ::DATA_STRING)
-	msg << " "<<param->expression->str->c_str();
+	msg << ' '<<param->expression->str->c_str();
     }
     param = param->next;
   }
@@ -736,23 +736,23 @@ UValue::echo(bool hr)
 	    && it->second->getDevicename() == (std::string)str->c_str())
 	{
 	  if (!first)
-	    o << ",";
+	    o << ',';
 	  first = false;
-	  o << it->second->getMethod()<< ":";
+	  o << it->second->getMethod()<< ':';
 
 	  // FIXME: It's better be non null!!!	Look at the if above,
 	  // it assumes it is not.
 	  if (it->second->value)
 	    o << it->second->value->echo(hr);
 	}
-      o << "]";
+      o << ']';
       return o.str();
     }
 
     case DATA_LIST:
     {
       std::ostringstream o;
-      o << "[";
+      o << '[';
 
       UValue *scanlist = liststart;
       while (scanlist)
@@ -760,9 +760,9 @@ UValue::echo(bool hr)
 	o << scanlist->echo(hr);
 	scanlist = scanlist->next;
 	if (scanlist)
-	  o << ",";
+	  o << ',';
       }
-      o << "]";
+      o << ']';
 
       return o.str();
     }
@@ -794,7 +794,7 @@ UValue::echo(bool hr)
 
       UNamedParameters *param = refBinary->ref()->parameters;
       if (param)
-	o << " ";
+	o << ' ';
 
       while (param)
       {
@@ -806,13 +806,13 @@ UValue::echo(bool hr)
 	    o << param->expression->str->c_str();
 	}
 	if (param->next)
-	  o << " ";
+	  o << ' ';
 	param = param->next;
       }
 
       if (!hr)
       {
-	o << "\n";
+	o << '\n';
 
 	/* FIXME
 	 if (connection->availableSendQueue() >

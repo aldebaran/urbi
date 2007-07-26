@@ -732,7 +732,7 @@ UVariable*
 UServer::getVariable (const std::string& device,
 		      const std::string& property)
 {
-  std::string n = device + "." + property;
+  std::string n = device + '.' + property;
   return libport::find0 (variabletab, n.c_str());
 }
 
@@ -830,7 +830,7 @@ UServer::find_file (const std::string& base)
 {
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
-    std::string f = *p + "/" + base;
+    std::string f = *p + '/' + base;
     ECHO("find_file(" << base << ") testing " << f);
     if (file_readable(f))
     {

@@ -165,7 +165,7 @@ UVariableName::set_fullname (const char* s)
   return update (fullname_, s);
 #if 0
   if (device && id
-      && *res != device->str().str() + "." + id->str())
+      && *res != device->str().str() + '.' + id->str())
     std::cerr << "Warning, \"" << *res << "\" != \""
 	      << *device << "\".\"" << *id << "\"" << std::endl;
 #endif
@@ -424,7 +424,7 @@ UVariableName::buildFullname (UCommand* command,
 	  {
 	    // does the symbol exist as a symbol local to the function call?
 	    bool function_symbol = false;
-	    std::string n = funid->str().str() + "." + id->str();
+	    std::string n = funid->str().str() + '.' + id->str();
 	    const char* cp = n.c_str();
 	    if (libport::mhas(::urbiserver->getVariableTab (), cp)
 		|| kernel::eventSymbolDefined (cp))
@@ -455,7 +455,7 @@ UVariableName::buildFullname (UCommand* command,
 	    else
 	    {
 	      std::string tmploc(connection->connectionTag->c_str());
-	      tmploc = tmploc + "." + id->str();
+	      tmploc = tmploc + '.' + id->str();
 	      const char* cp = tmploc.c_str();
 
 	      // does the symbol exist as a symbol local to the connection?
@@ -483,7 +483,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   // Create the concatened variable name
-  std::string name = device->str() + "." + id->str();
+  std::string name = device->str() + '.' + id->str();
   ECHO(name);
 
   // Alias updating
@@ -513,7 +513,7 @@ UVariableName::buildFullname (UCommand* command,
   }
 
   if (name.find('.') != std::string::npos)
-    name = resolve_aliases(prefix(name)) + "." + suffix(name);
+    name = resolve_aliases(prefix(name)) + '.' + suffix(name);
 
   return set_fullname (name.c_str());
 }

@@ -94,7 +94,7 @@ UConnection::UConnection (UServer *userver,
 
   // initialize the connection tag used to reference local variables
   std::ostringstream o;
-  o << "U" << (long) this;
+  o << 'U' << (long) this;
   connectionTag = new UString(o.str());
   UVariable* cid =
     new UVariable(o.str().c_str(), "connectionID", o.str().c_str());

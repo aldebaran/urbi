@@ -110,7 +110,7 @@ namespace object
     special_slots_dump (o);
     BOOST_FOREACH (slot_type s, slots_)
       o << s << libport::iendl;
-    o << libport::decindent << "}";
+    o << libport::decindent << '}';
     return o;
   }
 

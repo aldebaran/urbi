@@ -78,7 +78,7 @@ public:
    * Bangs are on pushed back on leafs and leafs of the form !event
    * are replaced by their boolean equivalent EC_TRUE or
    * EC_FALSE, depending on the content of the UEventMatch 'event'.
-   * Finally, compounds like "X && EC_TRUE" are replaced by "X" and "X &&
+   * Finally, compounds like "X && EC_TRUE" are replaced by 'X' and "X &&
    * EC_FALSE" by "EC_FALSE", and equivalent reductions with 'or'.
    *
    * At the end, it remains only a series of non negative events (UEventMatch)

@@ -875,9 +875,9 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	o << "{"
 	  << "  waituntil(isdef(" << uid << "))|"
 	  << variablename->getFullname()->c_str()
-	  << "=" << uid
+	  << '=' << uid
 	  << "|delete " << uid
-	  << "}";
+	  << '}';
 	strMorph (o.str());
       }
       return UMORPH;
@@ -2404,8 +2404,8 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
     {
       std::ostringstream o;
       o << "{waituntil(isdef(" << uid << "))|"
-	<< getTag().c_str() << ":" << uid
-	<< "|delete " << uid << "}";
+	<< getTag().c_str() << ':' << uid
+	<< "|delete " << uid << '}';
       strMorph (o.str());
     }
     return UMORPH;
@@ -2767,7 +2767,7 @@ UCommand_NEW::execute_(UConnection *connection)
 	std::ostringstream oss;
 	oss << "{ timeout (" << timeout
 	    << ") waituntil(isdef(" << objname << "))"
-	    << "}";
+	    << '}';
 
 	strMorph (oss.str());
 	morph = new UCommand_TREE(loc_, Flavorable::UPIPE, morph, this);
@@ -2871,7 +2871,7 @@ UCommand_NEW::execute_(UConnection *connection)
 
   if (parameters || initfun != 0 || component)
   {
-    oss << uid << "=" << id->c_str() << ".init(";
+    oss << uid << '=' << id->c_str() << ".init(";
 
     for (UNamedParameters *pvalue = parameters;
 	 pvalue != 0;
@@ -2882,14 +2882,14 @@ UCommand_NEW::execute_(UConnection *connection)
       {
 	send_error(connection, this, "EXPR evaluation failed");
 	std::ostringstream o;
-	o << "{delete " << id->c_str() << "}";
+	o << "{delete " << id->c_str() << '}';
 	strMorph (o.str());
 	return UMORPH;
       }
 
       oss << valparam->echo();
       if (pvalue->next)
-	oss << ",";
+	oss << ',';
     }
 
     oss << ") | if (!isdef("
@@ -2899,7 +2899,7 @@ UCommand_NEW::execute_(UConnection *connection)
 	<< " delete "
 	<< id->c_str() << "} | if (isdef("
 	<< uid << ")) delete " << uid
-	<< "}";
+	<< '}';
   }
   else
     oss << "noop }";
@@ -4141,7 +4141,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  i->second.name != "__UGrouped_set_of_commands__" &&
 	  i->second.name != "notag")
       {
-	tstr << "*** " << i->second.name << "\n";
+	tstr << "*** " << i->second.name << '\n';
 	connection->sendf(getTag(), tstr.str().c_str());
       }
     }
@@ -4160,7 +4160,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	   j != i->second.commands.end(); j++)
       {
 	std::ostringstream tstr;
-	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
+	tstr << "*** "<< i->second.name<<' ' << (*j)->loc() << '\n';
 	connection->sendf(getTag(), tstr.str().c_str());
       }
     }

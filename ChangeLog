@@ -1,5 +1,22 @@
 2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Use characters instead of strings, wherever possible.
+	* src/object/atom.hxx,
+	* src/object/object.cc,
+	* src/parser/uparser.cc,
+	* src/ucommand.cc,
+	* src/uconnection.cc,
+	* src/ueventcompound.hh,
+	* src/ueventhandler.cc,
+	* src/ueventinstance.hh,
+	* src/uexpression.cc,
+	* src/userver.cc,
+	* src/ustring.cc,
+	* src/uvalue.cc,
+	* src/uvariablename.cc: Here.
+
+2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Split the UServer::work method.
 	* include/kernel/userver.hh (work_exec_timers_,
 	work_access_and_change_, work_handle_connections_,

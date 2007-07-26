@@ -89,7 +89,7 @@ namespace object
   std::ostream& Atom<list_traits>::print(std::ostream& out) const
   {
     std::list<rObject> values = value_get();
-    out << "[";
+    out << '[';
     bool first = true;
     BOOST_FOREACH (const rObject& o, values)
     {
@@ -99,7 +99,7 @@ namespace object
         out << ", ";
       o->print(out);
     }
-    out << "]";
+    out << ']';
     return out;
   }
 
