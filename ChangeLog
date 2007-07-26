@@ -20,6 +20,11 @@
 
 2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Remove dead code.
+	* src/userver.cc (work): #if 0 ... #endif.
+
+2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Code clean up in UServer.
 	Remove useless memory checks.  Attempt to use accessors instead of
 	public attributes.

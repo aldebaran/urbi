@@ -314,15 +314,6 @@ UServer::work()
 	delete (*r)->activeCommand;
 	(*r)->activeCommand = 0;
       }
-#if 0
-      else if ((*r)->activeCommand->toDelete)
-      {
-	delete (*r)->activeCommand;
-	(*r)->activeCommand = 0;
-      }
-      else if (somethingToDelete)
-	(*r)->activeCommand->deleteMarked();
-#endif
     }
 
   somethingToDelete = false;
