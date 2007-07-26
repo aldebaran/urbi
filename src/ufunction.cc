@@ -38,13 +38,11 @@ UFunction::UFunction(const UString& funname,
     funname (funname)
 {
   ECHO("TOTO");
-  ADDOBJ(UFunction);
 }
 
 
 UFunction::~UFunction()
 {
-  FREEOBJ(UFunction);
   delete parameters;
   delete command;
 }

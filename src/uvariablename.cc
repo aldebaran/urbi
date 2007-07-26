@@ -76,7 +76,6 @@ UVariableName::UVariableName(UString* device,
     selfFunction (device && *device == "self"),
     cached    (false)
 {
-  ADDOBJ(UVariableName);
 }
 
 //! UVariableName constructor for variable of the type device[...][...].id[...][...]...
@@ -108,7 +107,6 @@ UVariableName::UVariableName(UString* objname,
     selfFunction (device && *device == "self"),
     cached    (false)
 {
-  ADDOBJ(UVariableName);
 }
 
 
@@ -137,13 +135,11 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
     selfFunction    (false),
     cached    (false)
 {
-  ADDOBJ(UVariableName);
 }
 
 //! UVariableName destructor.
 UVariableName::~UVariableName()
 {
-  FREEOBJ(UVariableName);
   delete device;
   delete id;
   delete method;

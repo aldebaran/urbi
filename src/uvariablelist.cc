@@ -34,13 +34,11 @@ UVariableList::UVariableList(UVariableName *variablename,
   : variablename (variablename),
     next         (next)
 {
-  ADDOBJ(UVariableList);
 }
 
 //! UVariableList destructor.
 UVariableList::~UVariableList()
 {
-  FREEOBJ(UVariableList);
   delete variablename;
   delete next;
 }

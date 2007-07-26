@@ -67,7 +67,6 @@ UQueue::UQueue (int minBufferSize,
 		int maxBufferSize,
 		int adaptive)
 {
-  ADDOBJ(UQueue);
 
   if (minBufferSize != 0)
     minBufferSize_ = minBufferSize;
@@ -90,7 +89,6 @@ UQueue::UQueue (int minBufferSize,
     UError = UFAIL;
     return;
   }
-  ADDMEM(minBufferSize_);
 
   bufferSize_      = minBufferSize_;
   start_           = 0;
@@ -106,12 +104,10 @@ UQueue::UQueue (int minBufferSize,
   if (outputBuffer_== 0)
   {
     free (buffer_);
-    FREEMEM(bufferSize_);
     buffer_ = 0;
     UError = UFAIL;
     return;
   }
-  ADDMEM(UQueue::INITIAL_BUFFER_SIZE);
   outputBufferSize_ = UQueue::INITIAL_BUFFER_SIZE;
   topOutputSize_ = 0;
 
@@ -125,18 +121,15 @@ UQueue::UQueue (int minBufferSize,
 //! UQueue destructor.
 UQueue::~UQueue()
 {
-  FREEOBJ(UQueue);
 
   if (buffer_)
   {
     free (buffer_);
-    FREEMEM(bufferSize_);
   }
 
   if (outputBuffer_)
   {
     free (outputBuffer_);
-    FREEMEM(outputBufferSize_);
   }
 }
 
@@ -202,11 +195,9 @@ UQueue::push (const ubyte *buffer, int length)
 	newSize = maxBufferSize_;
 
       // Realloc the internal buffer
-      ubyte *newBuffer =
+      ubyte* newBuffer =
 	static_cast<ubyte*> (realloc (static_cast<void*> (buffer_), newSize));
-      if (newBuffer == 0)
-	return UMEMORYFAIL; // not enough memory.
-      ADDMEM(newSize - bufferSize_);
+      assert (newBuffer != 0);
 
       buffer_ = newBuffer;
       if (end_ < start_ || bfs == 0 )
@@ -287,7 +278,6 @@ UQueue::pop (int length)
 	  static_cast<ubyte*> (realloc (outputBuffer_, topOutputSize_));
 	if (newOutputBuffer != 0)
 	{
-	  FREEMEM(outputBufferSize_ - topOutputSize_);
 	  outputBuffer_ = newOutputBuffer;
 	  outputBufferSize_ = topOutputSize_;
 	}
@@ -319,7 +309,6 @@ UQueue::pop (int length)
 	ubyte* newBuffer = static_cast<ubyte*> (realloc (buffer_, topDataSize_));
 	if (newBuffer != 0)
 	{
-	  FREEMEM(bufferSize_ - topDataSize_);
 	  buffer_ = newBuffer;
 	  bufferSize_ = topDataSize_;
 	  if (end_ == bufferSize_ )
@@ -361,7 +350,6 @@ UQueue::pop (int length)
 				      theNewSize));
       if (newOutputBuffer == 0)
 	return 0; // not enough memory.
-      ADDMEM(theNewSize - outputBufferSize_);
       outputBuffer_ = newOutputBuffer;
       outputBufferSize_ = theNewSize;
     }
@@ -456,7 +444,6 @@ UQueue::virtualPop (int length)
       if (newOutputBuffer == 0)
 	// not enough memory.
 	return 0;
-      ADDMEM(theNewSize - outputBufferSize_);
       outputBuffer_ = newOutputBuffer;
       outputBufferSize_ = theNewSize;
     }

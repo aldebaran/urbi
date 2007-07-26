@@ -90,7 +90,6 @@ UServer::UServer(ufloat frequency,
 {
   ::urbiserver = 0;
 
-  ADDOBJ(UServer);
   ::urbiserver = this;
 
   // Create system events
@@ -495,7 +494,6 @@ UServer::work()
 //! UServer destructor.
 UServer::~UServer()
 {
-  FREEOBJ(UServer);
 }
 
 void

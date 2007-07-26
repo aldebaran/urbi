@@ -38,7 +38,6 @@ kernelincludekerneldir = $(kernelincludedir)/kernel
 kernelincludekernel_HEADERS =			\
 include/kernel/blockmemorymanager.hh		\
 include/kernel/fwd.hh				\
-include/kernel/mem-track.hh			\
 include/kernel/memorymanager.hh			\
 include/kernel/tag-info.hh			\
 include/kernel/uasyncregister.hh 		\

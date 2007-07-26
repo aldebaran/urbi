@@ -493,7 +493,6 @@ UCommand_TREE::UCommand_TREE(const location& l,
     runlevel2 (UWAITING),
     connection (0) // unknown unless there is a context).
 {
-  ADDOBJ(UCommand_TREE);
 
   background = false;
   if (command1)
@@ -511,7 +510,6 @@ UCommand_TREE::UCommand_TREE(const location& l,
 //! UCommand subclass destructor.
 UCommand_TREE::~UCommand_TREE()
 {
-  FREEOBJ(UCommand_TREE);
 
   delete command1;
   delete command2;
@@ -638,13 +636,11 @@ UCommand_ASSIGN_VALUE::UCommand_ASSIGN_VALUE(const location& l,
     defkey (defkey),
     controlled (false)
 {
-  ADDOBJ(UCommand_ASSIGN_VALUE);
 }
 
 //! UCommand subclass destructor.
 UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
 {
-  FREEOBJ(UCommand_ASSIGN_VALUE);
   delete expression;
   delete variablename;
   delete parameters;
@@ -1745,15 +1741,12 @@ UCommand_ASSIGN_BINARY::UCommand_ASSIGN_BINARY(const location& l,
     method (0),
     devicename (0)
 {
-  ADDOBJ(UCommand_ASSIGN_BINARY);
 }
 
 //! UCommand subclass destructor.
 UCommand_ASSIGN_BINARY::~UCommand_ASSIGN_BINARY()
 {
-  FREEOBJ(UCommand_ASSIGN_BINARY);
   delete variablename;
-  LIBERATE(refBinary);
 }
 
 //! UCommand subclass execution function
@@ -1797,8 +1790,6 @@ UCommand_ASSIGN_BINARY::execute_(UConnection *connection)
 
     connection->localVariableCheck(variable);
   }
-  else if (variable->value->dataType == DATA_BINARY)
-    LIBERATE(variable->value->refBinary);
 
   variable->value->dataType = DATA_BINARY;
   variable->value->refBinary = refBinary->copy();
@@ -1848,13 +1839,11 @@ UCommand_ASSIGN_PROPERTY::UCommand_ASSIGN_PROPERTY(const location& l,
     method (0),
     devicename (0)
 {
-  ADDOBJ(UCommand_ASSIGN_PROPERTY);
 }
 
 //! UCommand subclass destructor.
 UCommand_ASSIGN_PROPERTY::~UCommand_ASSIGN_PROPERTY()
 {
-  FREEOBJ(UCommand_ASSIGN_PROPERTY);
   delete variablename;
   delete expression;
   delete oper;
@@ -2088,13 +2077,11 @@ UCommand_AUTOASSIGN::UCommand_AUTOASSIGN(const location& l,
     expression (expression),
     assigntype (assigntype)
 {
-  ADDOBJ(UCommand_AUTOASSIGN);
 }
 
 //! UCommand subclass destructor.
 UCommand_AUTOASSIGN::~UCommand_AUTOASSIGN()
 {
-  FREEOBJ(UCommand_AUTOASSIGN);
   delete variablename;
   delete expression;
 }
@@ -2170,13 +2157,11 @@ UCommand_EXPR::UCommand_EXPR(const location& l,
   : UCommand(l, EXPR),
     expression (expression)
 {
-  ADDOBJ(UCommand_EXPR);
 }
 
 //! UCommand subclass destructor.
 UCommand_EXPR::~UCommand_EXPR()
 {
-  FREEOBJ(UCommand_EXPR);
   delete expression;
 }
 
@@ -2506,13 +2491,11 @@ UCommand_RETURN::UCommand_RETURN(const location& l,
   : UCommand(l, RETURN),
     expression (expression)
 {
-  ADDOBJ(UCommand_RETURN);
 }
 
 //! UCommand subclass destructor.
 UCommand_RETURN::~UCommand_RETURN()
 {
-  FREEOBJ(UCommand_RETURN);
   delete expression;
 }
 
@@ -2571,13 +2554,11 @@ UCommand_ECHO::UCommand_ECHO(const location& l,
     parameters (parameters),
     connectionTag (connectionTag)
 {
-  ADDOBJ(UCommand_ECHO);
 }
 
 //! UCommand subclass destructor.
 UCommand_ECHO::~UCommand_ECHO()
 {
-  FREEOBJ(UCommand_ECHO);
   delete expression;
   delete parameters;
 }
@@ -2679,13 +2660,11 @@ UCommand_NEW::UCommand_NEW(const location& l,
     remoteNew (false),
     sysCall (false)
 {
-  ADDOBJ(UCommand_NEW);
 }
 
 //! UCommand subclass destructor.
 UCommand_NEW::~UCommand_NEW()
 {
-  FREEOBJ(UCommand_NEW);
   delete varname;
   delete obj;
   delete id;
@@ -2968,13 +2947,11 @@ UCommand_ALIAS::UCommand_ALIAS(const location& l,
     id (id),
     eraseit (eraseit)
 {
-  ADDOBJ(UCommand_ALIAS);
 }
 
 //! UCommand subclass destructor.
 UCommand_ALIAS::~UCommand_ALIAS()
 {
-  FREEOBJ(UCommand_ALIAS);
   delete id;
   delete aliasname;
 }
@@ -3081,13 +3058,11 @@ UCommand_INHERIT::UCommand_INHERIT(const location& l,
   theclass (theclass),
   eraseit (eraseit)
 {
-  ADDOBJ(UCommand_INHERIT);
 }
 
 //! UCommand subclass destructor.
 UCommand_INHERIT::~UCommand_INHERIT()
 {
-  FREEOBJ(UCommand_INHERIT);
   delete subclass;
   delete theclass;
 }
@@ -3180,13 +3155,11 @@ UCommand_GROUP::UCommand_GROUP(const location& l,
   parameters (parameters),
   grouptype (grouptype)
 {
-  ADDOBJ(UCommand_GROUP);
 }
 
 //! UCommand subclass destructor.
 UCommand_GROUP::~UCommand_GROUP()
 {
-  FREEOBJ(UCommand_GROUP);
   delete id;
 }
 
@@ -3322,13 +3295,11 @@ UCommand_OPERATOR_ID::UCommand_OPERATOR_ID(const location& l,
     oper (oper),
     id (id)
 {
-  ADDOBJ(UCommand_OPERATOR_ID);
 }
 
 //! UCommand subclass destructor.
 UCommand_OPERATOR_ID::~UCommand_OPERATOR_ID()
 {
-  FREEOBJ(UCommand_OPERATOR_ID);
   delete oper;
   delete id;
 }
@@ -3464,13 +3435,11 @@ UCommand_DEVICE_CMD::UCommand_DEVICE_CMD(const location& l,
     variablename (device),
     cmd (*cmd)
 {
-  ADDOBJ(UCommand_DEVICE_CMD);
 }
 
 //! UCommand subclass destructor.
 UCommand_DEVICE_CMD::~UCommand_DEVICE_CMD()
 {
-  FREEOBJ(UCommand_DEVICE_CMD);
   delete variablename;
 }
 
@@ -3554,13 +3523,11 @@ UCommand_OPERATOR_VAR::UCommand_OPERATOR_VAR(const location& l,
     oper (oper),
     variablename (variablename)
 {
-  ADDOBJ(UCommand_OPERATOR_VAR);
 }
 
 //! UCommand subclass destructor.
 UCommand_OPERATOR_VAR::~UCommand_OPERATOR_VAR()
 {
-  FREEOBJ(UCommand_OPERATOR_VAR);
   delete oper;
   delete variablename;
 }
@@ -3812,13 +3779,11 @@ UCommand_BINDER::UCommand_BINDER(const location& l,
     type (type),
     nbparam (nbparam)
 {
-  ADDOBJ(UCommand_BINDER);
 }
 
 //! UCommand subclass destructor.
 UCommand_BINDER::~UCommand_BINDER()
 {
-  FREEOBJ(UCommand_BINDER);
   delete binder;
   delete variablename;
   delete objname;
@@ -3983,13 +3948,11 @@ UCommand_OPERATOR::UCommand_OPERATOR(const location& l,
   : UCommand(l, GENERIC),
     oper (oper)
 {
-  ADDOBJ(UCommand_OPERATOR);
 }
 
 //! UCommand subclass destructor.
 UCommand_OPERATOR::~UCommand_OPERATOR()
 {
-  FREEOBJ(UCommand_OPERATOR);
   delete oper;
 }
 
@@ -4327,13 +4290,11 @@ UCommand_WAIT::UCommand_WAIT(const location& l,
   expression (expression),
   endtime (0)
 {
-  ADDOBJ(UCommand_WAIT);
 }
 
 //! UCommand subclass destructor.
 UCommand_WAIT::~UCommand_WAIT()
 {
-  FREEOBJ(UCommand_WAIT);
   delete expression;
 }
 
@@ -4411,13 +4372,11 @@ UCommand_EMIT::UCommand_EMIT(const location& l,
   event (0),
   eh (0)
 {
-  ADDOBJ(UCommand_EMIT);
 }
 
 //! UCommand subclass destructor.
 UCommand_EMIT::~UCommand_EMIT()
 {
-  FREEOBJ(UCommand_EMIT);
   if (event && eh)
     removeEvent ();
 
@@ -4642,13 +4601,11 @@ UCommand_WAIT_TEST::UCommand_WAIT_TEST(const location& l,
     test (test),
     nbTrue (0)
 {
-  ADDOBJ(UCommand_WAIT_TEST);
 }
 
 //! UCommand subclass destructor.
 UCommand_WAIT_TEST::~UCommand_WAIT_TEST()
 {
-  FREEOBJ(UCommand_WAIT_TEST);
   delete test;
 }
 
@@ -4714,13 +4671,11 @@ UCommand_INCDECREMENT::UCommand_INCDECREMENT(const location& l,
   : UCommand(l, type),
     variablename (variablename)
 {
-  ADDOBJ(UCommand_INCDECREMENT);
 }
 
 //! UCommand subclass destructor.
 UCommand_INCDECREMENT::~UCommand_INCDECREMENT()
 {
-  FREEOBJ(UCommand_INCDECREMENT);
   delete variablename;
 }
 
@@ -4813,7 +4768,6 @@ UCommand_DEF::UCommand_DEF(const location& l,
 			   UCommand* command)
   : UCommand(l, DEF)
 {
-  ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
   this->variablename = variablename;
   this->parameters   = parameters;
@@ -4831,7 +4785,6 @@ UCommand_DEF::UCommand_DEF(const location& l,
 			   UNamedParameters *parameters)
   : UCommand(l, DEF)
 {
-  ADDOBJ(UCommand_DEF);
   this->deftype	     = deftype;
   this->variablename = 0;
   this->parameters   = parameters;
@@ -4854,13 +4807,11 @@ UCommand_DEF::UCommand_DEF(const location& l,
     variablelist (variablelist),
     deftype (deftype)
 {
-  ADDOBJ(UCommand_DEF);
 }
 
 //! UCommand subclass destructor.
 UCommand_DEF::~UCommand_DEF()
 {
-  FREEOBJ(UCommand_DEF);
   delete variablename;
   delete variablelist;
   delete device;
@@ -5059,13 +5010,11 @@ UCommand_CLASS::UCommand_CLASS(const location& l,
     object (object),
     parameters (parameters)
 {
-  ADDOBJ(UCommand_CLASS);
 }
 
 //! UCommand subclass destructor.
 UCommand_CLASS::~UCommand_CLASS()
 {
-  FREEOBJ(UCommand_CLASS);
   delete object;
   delete parameters;
 }
@@ -5214,13 +5163,11 @@ UCommand_IF::UCommand_IF(const location& l,
     command1 (command1),
     command2 (command2)
 {
-  ADDOBJ(UCommand_IF);
 }
 
 //! UCommand subclass destructor.
 UCommand_IF::~UCommand_IF()
 {
-  FREEOBJ(UCommand_IF);
   delete command1;
   delete command2;
   delete test;
@@ -5293,13 +5240,11 @@ UCommand_EVERY::UCommand_EVERY(const location& l,
     firsttime (true),
     starttime (0)
 {
-  ADDOBJ(UCommand_EVERY);
 }
 
 //! UCommand subclass destructor.
 UCommand_EVERY::~UCommand_EVERY()
 {
-  FREEOBJ(UCommand_EVERY);
   delete command;
   delete duration;
 }
@@ -5362,14 +5307,12 @@ UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
   duration (duration),
   command (command)
 {
-  ADDOBJ(UCommand_TIMEOUT);
   tagRef = new UString(unique ("__TAG_timeout_"));
 }
 
 //! UCommand subclass destructor.
 UCommand_TIMEOUT::~UCommand_TIMEOUT()
 {
-  FREEOBJ(UCommand_TIMEOUT);
   delete command;
   delete duration;
   delete tagRef;
@@ -5432,14 +5375,12 @@ UCommand_STOPIF::UCommand_STOPIF(const location& l,
     condition (condition),
     command (command)
 {
-  ADDOBJ(UCommand_STOPIF);
   tagRef = new UString(unique ("__TAG_stopif_"));
 }
 
 //! UCommand subclass destructor.
 UCommand_STOPIF::~UCommand_STOPIF()
 {
-  FREEOBJ(UCommand_STOPIF);
   delete command;
   delete condition;
   delete tagRef;
@@ -5502,14 +5443,12 @@ UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
     condition (condition),
     command (command)
 {
-  ADDOBJ(UCommand_FREEZEIF);
   tagRef = new UString(unique("__TAG_stopif_"));
 }
 
 //! UCommand subclass destructor.
 UCommand_FREEZEIF::~UCommand_FREEZEIF()
 {
-  FREEOBJ(UCommand_FREEZEIF);
   delete command;
   delete condition;
   delete tagRef;
@@ -5578,13 +5517,11 @@ UCommand_AT::UCommand_AT(const location& l,
     firsttime (true),
     reloop_ (false)
 {
-  ADDOBJ(UCommand_AT);
 }
 
 //! UCommand subclass destructor.
 UCommand_AT::~UCommand_AT()
 {
-  FREEOBJ(UCommand_AT);
   delete command1;
   delete command2;
   delete test;
@@ -5772,13 +5709,11 @@ UCommand_WHILE::UCommand_WHILE(const location& l,
     test (test),
     command (command)
 {
-  ADDOBJ(UCommand_WHILE);
 }
 
 //! UCommand subclass destructor.
 UCommand_WHILE::~UCommand_WHILE()
 {
-  FREEOBJ(UCommand_WHILE);
   delete command;
   delete test;
 }
@@ -5855,13 +5790,11 @@ UCommand_WHENEVER::UCommand_WHENEVER(const location& l,
     active_ (false),
     theloop_ (0)
 {
-  ADDOBJ(UCommand_WHENEVER);
 }
 
 //! UCommand subclass destructor.
 UCommand_WHENEVER::~UCommand_WHENEVER()
 {
-  FREEOBJ(UCommand_WHENEVER);
   delete command1;
   delete command2;
   delete test;
@@ -6073,13 +6006,11 @@ UCommand_LOOP::UCommand_LOOP(const location& l,
     command (command),
     whenever_hook (0)
 {
-  ADDOBJ(UCommand_LOOP);
 }
 
 //! UCommand subclass destructor.
 UCommand_LOOP::~UCommand_LOOP()
 {
-  FREEOBJ(UCommand_LOOP);
   delete command;
   if (whenever_hook)
     ((UCommand_WHENEVER*)whenever_hook)->noloop ();
@@ -6131,13 +6062,11 @@ UCommand_LOOPN::UCommand_LOOPN(const location& l,
     expression (expression),
     command (command)
 {
-  ADDOBJ(UCommand_LOOPN);
 }
 
 //! UCommand subclass destructor.
 UCommand_LOOPN::~UCommand_LOOPN()
 {
-  FREEOBJ(UCommand_LOOPN);
   delete command;
   delete expression;
 }
@@ -6235,13 +6164,11 @@ UCommand_FOR::UCommand_FOR(const location& l,
     command (command),
     first (true)
 {
-  ADDOBJ(UCommand_FOR);
 }
 
 //! UCommand subclass destructor.
 UCommand_FOR::~UCommand_FOR()
 {
-  FREEOBJ(UCommand_FOR);
   delete command;
   delete instr1;
   delete instr2;
@@ -6372,13 +6299,11 @@ UCommand_FOREACH::UCommand_FOREACH(const location& l,
     list(0),
     firsttime (true)
 {
-  ADDOBJ(UCommand_FOREACH);
 }
 
 //! UCommand subclass destructor.
 UCommand_FOREACH::~UCommand_FOREACH()
 {
-  FREEOBJ(UCommand_FOREACH);
   delete command;
   delete variablename;
   delete expression;
@@ -6480,13 +6405,11 @@ UCommand_NOOP::UCommand_NOOP(const location& l, kind k)
   : UCommand(l, NOOP),
     kind_ (k)
 {
-  ADDOBJ(UCommand_NOOP);
 }
 
 //! UCommand subclass destructor.
 UCommand_NOOP::~UCommand_NOOP()
 {
-  FREEOBJ(UCommand_NOOP);
 }
 
 //! UCommand subclass execution function

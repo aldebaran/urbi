@@ -32,45 +32,33 @@ MEMORY_MANAGER_INIT(UString);
 UString::UString(const UString& s)
   : str_ (s.str_)
 {
-  ADDOBJ(UString);
-  ADDMEM(size());
 }
 
 UString::UString(const std::string& s)
   : str_ (s)
 {
-  ADDOBJ(UString);
-  ADDMEM(size());
 }
 
 UString::UString(const char* s)
   : str_ (s)
 {
-  ADDOBJ(UString);
-  ADDMEM(size());
 }
 
 UString::UString(const UString& s1, const UString& s2)
   : str_ (s1.str_ + "." + s2.str_)
 {
-  ADDOBJ(UString);
-  ADDMEM(size());
 }
 
 
 UString::~UString()
 {
-  FREEOBJ(UString);
-  FREEMEM(size());
 }
 
 UString&
 UString::operator=(const char* s)
 {
   assert (s);
-  FREEMEM(size());
   str_ = s;
-  ADDMEM(size());
   return *this;
 }
 
@@ -78,9 +66,7 @@ UString&
 UString::operator=(const UString* s)
 {
   assert (s);
-  FREEMEM(size());
   str_ = s->str_;
-  ADDMEM(size());
   return *this;
 }
 

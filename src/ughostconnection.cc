@@ -47,7 +47,6 @@ UGhostConnection::UGhostConnection  (UServer* mainserver)
 		   MINRECVBUFFERSIZE,
 		   MAXRECVBUFFERSIZE)
 {
-  ADDOBJ(UGhostConnection);
   ::urbiserver->connectionList.push_front (this);
 }
 
@@ -55,7 +54,6 @@ UGhostConnection::UGhostConnection  (UServer* mainserver)
 UGhostConnection::~UGhostConnection()
 {
   ::urbiserver->connectionList.remove (this);
-  FREEOBJ(UGhostConnection);
 }
 
 //! Close the connection

@@ -44,15 +44,11 @@ UCommandQueue::UCommandQueue  (int minBufferSize,
     closechar2_     (' '),
     closers_()
 {
-  ADDOBJ(UCommandQueue);
-  FREEOBJ(UQueue); // A tester.
 }
 
 //! UCommandQueue destructor.
 UCommandQueue::~UCommandQueue()
 {
-  ADDOBJ(UQueue);
-  FREEOBJ(UCommandQueue);
 }
 
 

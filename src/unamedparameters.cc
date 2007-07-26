@@ -40,7 +40,6 @@ UNamedParameters::UNamedParameters(UString* name,
     notifyEnd  (notifyEnd),
     notifyFreeze (notifyFreeze)
 {
-  ADDOBJ(UNamedParameters);
 }
 
 //! UNamedParameters constructor (for expression list only)
@@ -54,13 +53,11 @@ UNamedParameters::UNamedParameters(UExpression *expression,
     notifyEnd  (notifyEnd),
     notifyFreeze (notifyFreeze)
 {
-  ADDOBJ(UNamedParameters);
 }
 
 //! UNamedParameters destructor.
 UNamedParameters::~UNamedParameters()
 {
-  FREEOBJ(UNamedParameters);
   delete name;
   delete expression;
   delete next;

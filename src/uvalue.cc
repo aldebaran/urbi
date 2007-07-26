@@ -51,7 +51,6 @@ UValue::UValue()
     liststart (0),
     next (0)
 {
-  ADDOBJ(UValue);
 }
 
 //! UValue constructor.
@@ -62,7 +61,6 @@ UValue::UValue(ufloat val)
     liststart (0),
     next (0)
 {
-  ADDOBJ(UValue);
 }
 
 //! UValue constructor.
@@ -73,7 +71,6 @@ UValue::UValue(const char* str)
     liststart (0),
     next (0)
 {
-  ADDOBJ(UValue);
 }
 
 UValue::UValue(UDataType t, const char* s)
@@ -84,7 +81,6 @@ UValue::UValue(UDataType t, const char* s)
     next(0)
 {
   passert(t, t == DATA_FILE || t == DATA_STRING || t == DATA_OBJ);
-  ADDOBJ(UValue);
 }
 
 #define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
@@ -331,11 +327,6 @@ UValue & UValue::operator = (const urbi::UImage &i)
 UValue & UValue::operator = (const urbi::UBinary &b)
 {
   //TODO: cleanup
-  if (dataType == DATA_BINARY && refBinary)
-  {
-    LIBERATE(refBinary);
-  }
-
   dataType = DATA_BINARY;
   //Build named parameters list from getMessage() output
   UNamedParameters* first=0;
@@ -376,13 +367,9 @@ UValue & UValue::operator = (const urbi::UBinary &b)
   return *this;
 }
 
-UValue & UValue::operator = (const urbi::UList &l)
+UValue & UValue::operator= (const urbi::UList &l)
 {
-  if (dataType == DATA_BINARY && refBinary)
-  {
-    LIBERATE(refBinary);
-  }
-  UValue * current = 0;
+  UValue* current = 0;
   dataType = DATA_LIST;
   for (int i=0;i<l.size(); ++i)
   {
@@ -402,7 +389,6 @@ UValue::UValue(const urbi::UValue &v)
     liststart (0),
     next (0)
 {
-  ADDOBJ(UValue);
   switch (v.type)
     {
     case urbi::DATA_DOUBLE:
@@ -444,13 +430,10 @@ UValue::UValue(const urbi::UValue &v)
 //! UValue destructor.
 UValue::~UValue()
 {
-  FREEOBJ(UValue);
   if (dataType == DATA_STRING
       || dataType == DATA_OBJ)
     delete str;
 
-  if (dataType == DATA_BINARY)
-    LIBERATE(refBinary);
   delete liststart;
   delete next;
 }

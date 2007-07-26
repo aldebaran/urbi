@@ -68,14 +68,6 @@ public:
   /// UConnection constructor.
   /*! This constructor must be called by any sub class.
 
-    Important note on memory management: you should call
-    ADDOBJ(nameofsubclass) in the constructor of your UConnection sub
-    class to maintain a valid memory occupation
-    evaluation. Symmetricaly, you must call FREEOBJ(nameofsubclass) in
-    the UConnection destructor. "nameofsubclass" is the name of the
-    sub class used (which will be evaluated with a sizeof
-    operator). ADDOBJ and FREEOBJ macros are in utypes.h.
-
     \param userver is the server to which the connection belongs
 
     \param minSendBufferSize UConnection uses an adaptive dynamic

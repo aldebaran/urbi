@@ -144,7 +144,6 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
 void
 UVariable::init()
 {
-  ADDOBJ(UVariable);
   blendType  = urbi::UNORMAL;
   rangemin   = -UINFINITY;
   rangemax   = UINFINITY;
@@ -194,7 +193,6 @@ UVariable::~UVariable()
 	(*j)->setZombie ();
   }
 
-  FREEOBJ(UVariable);
   if (value)
   {
     if (value->dataType == DATA_OBJ && value->str)
@@ -305,7 +303,6 @@ UVariable::set(UValue *v)
 	value = v->copy();
 	break;
       case DATA_BINARY:
-	LIBERATE(value->refBinary);
 	value->refBinary = v->refBinary->copy();
 	break;
       case DATA_VOID:   // uninitialized def's

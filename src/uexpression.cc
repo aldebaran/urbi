@@ -102,7 +102,6 @@ MEMORY_MANAGER_INIT(UExpression);
 //! UExpression base constructor called by every specific constructor.
 void UExpression::initialize()
 {
-  ADDOBJ(UExpression);
 
   expression1	   = 0;
   expression2	   = 0;
@@ -319,13 +318,11 @@ UExpression::UExpression(const location& l,
     variablename (_variablename), parameters (_parameters),
     softtest_time (_softtest_time)
 {
-  ADDOBJ (UExpression);
 }
 
 //! UExpression destructor.
 UExpression::~UExpression()
 {
-  FREEOBJ(UExpression);
 
   delete str;
   delete id;
@@ -703,7 +700,6 @@ UExpression::eval (UCommand *command,
 	       ret->refBinary->ref()->buffer,
 	       ret->refBinary->ref()->bufferSize);
 
-	LIBERATE(ret->refBinary);
 	ret->refBinary = ref;
       }
       delete e1;
@@ -1016,17 +1012,14 @@ UExpression::eval_FUNCTION_0 (UConnection *connection)
   passert (type, type == FUNCTION);
   passert (parameters, parameters == 0);
 
-  if (*variablename->id == "freemem"
-      || *variablename->id == "power"
+  if (*variablename->id == "power"
       || *variablename->id == "cpuload"
       || *variablename->id == "time")
   {
     UValue* ret = new UValue();
     ret->dataType = DATA_NUM;
 
-    if (*variablename->id == "freemem")
-      ret->val = availableMemory - usedMemory;
-    else if (*variablename->id == "time")
+    if (*variablename->id == "time")
       ret->val = connection->server->getTime();
     else if (*variablename->id == "cpuload")
       ret->val = connection->server->cpuload;

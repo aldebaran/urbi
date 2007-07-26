@@ -27,12 +27,12 @@
 # include <iosfwd>
 
 # include "kernel/memorymanager.hh"
-# include "kernel/mem-track.hh"
 
 //! UString is used to handle strings in the URBI server
 /*! The only reason why we had to introduce UString is to keep a
     tight control on how memory is managed, as far as strings are concerned.
-    This class does all the ADDMEM/FREEMEM job for you. Use it.
+    Since we no longer manage memory, this class is now useless and ought to
+    be either removed or replaced by Symbol.
 */
 class UString
 {
@@ -86,9 +86,7 @@ inline
 UString&
 UString::operator=(const std::string& s)
 {
-  FREEMEM(size());
   str_ = s;
-  ADDMEM(size());
   return *this;
 }
 

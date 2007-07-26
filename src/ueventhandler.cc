@@ -76,7 +76,6 @@ kernel::isCoreFunction (UString *fullname)
 	  || *fullname == "cpuload"
 	  || *fullname == "exec"
 	  || *fullname == "exp"
-	  || *fullname == "freemem"
 	  || *fullname == "getIndex"
 	  || *fullname == "head"
 	  || *fullname == "isdef"

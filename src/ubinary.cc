@@ -30,20 +30,15 @@ UBinary::UBinary(int bufferSize, UNamedParameters *parameters)
     buffer (static_cast<ubyte*> (malloc (bufferSize))), // result tested outside.
     parameters (parameters)
 {
-  ADDOBJ(UBinary);
-  if (buffer)
-    ADDMEM(bufferSize);
 }
 
 //! UBinary destructor.
 UBinary::~UBinary()
 {
-  FREEOBJ(UBinary);
   delete parameters;
   if (buffer)
   {
     free(buffer);
-    FREEMEM(bufferSize);
   }
 }
 

@@ -35,7 +35,6 @@
 # include "urbi/utypes-common.hh"
 
 # include "kernel/fwd.hh"
-# include "kernel/mem-track.hh"
 # include "kernel/ustring.hh"
 
 
@@ -64,7 +63,6 @@ enum UErrorValue
 {
   USUCCESS,
   UFAIL,
-  UMEMORYFAIL
 };
 
 inline
@@ -76,7 +74,6 @@ operator<< (std::ostream& o, UErrorValue v)
 #define CASE(V) case V: o << #V; break;
     CASE(USUCCESS);
     CASE(UFAIL);
-    CASE(UMEMORYFAIL);
 #undef CASE
   }
   return o;
@@ -86,7 +83,7 @@ operator<< (std::ostream& o, UErrorValue v)
 enum UBindMode
 {
   UEXTERNAL,
-  UINTERNAL
+  UINTERNAL,
 };
 
 /// Type of binding

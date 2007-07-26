@@ -1,3 +1,27 @@
+2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Remove the memory tracking related code.
+	* include/kernel/mem-track.hh: Remove.
+	* Makefile.am,
+	* include/kernel/uconnection.hh,
+	* include/kernel/ustring.hh,
+	* include/kernel/utypes.hh,
+	* src/ubinary.cc,
+	* src/ucommand.cc,
+	* src/ucommandqueue.cc,
+	* src/ueventhandler.cc,
+	* src/uexpression.cc,
+	* src/ufunction.cc,
+	* src/ughostconnection.cc,
+	* src/unamedparameters.cc,
+	* src/uqueue.cc,
+	* src/userver.cc,
+	* src/ustring.cc,
+	* src/uvalue.cc,
+	* src/uvariable.cc,
+	* src/uvariablelist.cc,
+	* src/uvariablename.cc: Adjust.
+
 2007-07-26  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Handle unary negation.
