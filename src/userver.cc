@@ -71,7 +71,6 @@ int usedMemory;
 
 
 UServer::UServer(ufloat frequency,
-		 int freeMemory,
 		 const char* mainName)
   : reseting (false),
     stage (0),
@@ -87,21 +86,9 @@ UServer::UServer(ufloat frequency,
     stopall (false),
     systemcommands (true),
     frequency_(frequency),
-    securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
     isolate_ (false)
 {
   ::urbiserver = 0;
-  memoryOverflow = securityBuffer_ == 0;
-  usedMemory = 0;
-  availableMemory = freeMemory;
-  // FIXME: What the heck???  We don't even check if it fits!!!
-  availableMemory -=  3000000; // Need 3.1Mo at min to run safely.
-  // You might hack this for a small
-  // size server, but anything with
-  // less than 3Mb of memory is not a
-  // good candidate to run URBI anyway...
-  if (availableMemory < 100000)
-    memoryOverflow = true;
 
   ADDOBJ(UServer);
   ::urbiserver = this;
@@ -266,36 +253,6 @@ UServer::work()
        ++i)
     (*i)->get ();
 
-  // memory test
-  memoryCheck(); // Check for memory availability
-  // recover the security memory space, with a margin (size x 2)
-  // if the margin can be malloced, then freed, then remalloced with
-  // the correct size, then the memoryOverflow error is removed.
-  if (securityBuffer_ == 0 &&
-      usedMemory < availableMemory - 2 * SECURITY_MEMORY_SIZE)
-  {
-    securityBuffer_ = malloc(2 * SECURITY_MEMORY_SIZE);
-    if (securityBuffer_ != 0)
-    {
-      free(securityBuffer_);
-      securityBuffer_ = malloc(SECURITY_MEMORY_SIZE);
-      if (securityBuffer_)
-      {
-	memoryOverflow = false;
-	deIsolate();
-      }
-    }
-  }
-  bool signalMemoryOverflow = false;
-  if (memoryOverflow && securityBuffer_)
-  {
-    // Free space to ensure the warning messages will be sent without
-    // problem.
-    free (securityBuffer_);
-    securityBuffer_ = 0;
-    signalMemoryOverflow = true;
-  }
-
   // Scan currently opened connections for ongoing work
   for (std::list<UConnection*>::iterator r = connectionList.begin();
        r != connectionList.end();
@@ -305,8 +262,6 @@ UServer::work()
       if (!(*r)->isBlocked())
 	(*r)->continueSend();
 
-      if (signalMemoryOverflow)
-	(*r)->errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
 	(*r)->errorSignal(UERROR_CPU_OVERLOAD);
@@ -760,74 +715,13 @@ UServer::getCustomHeader (int, char* header, int)
   header[0] = 0; // empty string
 }
 
-//! Check if there is enough free memory to run
-/*! Every time there is a new, a malloc, a delete or free or a strdup in the
- server, the global variable "usedMemory" is updated. The "memoryCheck"
- function checks that the currently used memory is less than the maximum
- availableMemory declared at the the server initialization.
- If it is more than the maximum, an memoryOverflow is raised and the
- server enter isolation mode.
-
- \sa isIsolated()
- */
-void
-UServer::memoryCheck ()
-{
-  if (usedMemory > availableMemory)
-  {
-    memoryOverflow = true;
-    isolate_ = true;
-  }
-
-  // Issue a warning when memory reaches 80% of use (except if you know what
-  // you are doing, you better take appropriate measures when this warning
-  // reaches your connection...
-  static bool warningSent = false;
-  if (usedMemory > (int)(0.8 * availableMemory) && !warningSent)
-  {
-    warningSent = true;
-
-    // Scan currently opened connections
-    for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
-      if ((*i)->isActive())
-	(*i)->warning(UWARNING_MEMORY);
-  }
-
-  // Hysteresis mechanism
-  if (usedMemory < (int)(0.7 * availableMemory) && warningSent)
-    warningSent = false;
-}
-
-size_t
-UServer::memory() const
-{
-  size_t low = 0;
-  size_t high = 50000000;
-  size_t mid = 0;
-  while (low + 1 < high)
-  {
-    mid = (low + high)/2;
-    if (void *buf = malloc(mid))
-    {
-      free(buf);
-      low = mid;
-    }
-    else
-      high = mid;
-  }
-
-  return mid;
-}
-
 //! Get a variable in the hash table
 UVariable*
-UServer::getVariable (const char *device,
-		      const char *property)
+UServer::getVariable (const std::string& device,
+		      const std::string& property)
 {
-  std::string n = std::string (device) + "." + property;
-  return libport::find0(variabletab, n.c_str());
+  std::string n = device + "." + property;
+  return libport::find0 (variabletab, n.c_str());
 }
 
 
@@ -920,10 +814,8 @@ namespace
 }
 
 std::string
-UServer::find_file (const char* base)
+UServer::find_file (const std::string& base)
 {
-  assert(base);
-  //DEBUG(("Looking for file %s\n", base));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;
@@ -935,14 +827,14 @@ UServer::find_file (const char* base)
     }
   }
   if (!file_readable(base))
-    error ("cannot find file: %s", base);
+    error ((std::string ("cannot find file: ") + base).c_str ());
   return base;
 }
 
 #define URBI_BUFSIZ 1024
 
 UErrorValue
-UServer::loadFile (const char* base, UCommandQueue* q)
+UServer::loadFile (const std::string& base, UCommandQueue* q)
 {
   std::string f = find_file (base);
   std::ifstream is (f.c_str(), std::ios::binary);
@@ -967,14 +859,14 @@ UServer::loadFile (const char* base, UCommandQueue* q)
  value and UError return code
  */
 void
-UServer::addConnection(UConnection *connection)
+UServer::addConnection(UConnection& connection)
 {
-  if (!connection || connection->uerror_ != USUCCESS)
+  if (connection.uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",
 	  "UConnection constructor failed");
   else
-    connectionList.push_front(connection);
+    connectionList.push_front (&connection);
 }
 
 //! Remove a connection from the connection list
@@ -982,13 +874,13 @@ UServer::addConnection(UConnection *connection)
  value and UError return code
  */
 void
-UServer::removeConnection(UConnection *connection)
+UServer::removeConnection(UConnection& connection)
 {
-  connectionList.remove(connection);
+  connectionList.remove (&connection);
   echo(::DISPLAY_FORMAT1, (long)this,
        "UServer::removeConnection",
-       "Connection closed", (long)connection);
-  delete connection;
+       "Connection closed", (long) &connection);
+  delete &connection;
 }
 
 
@@ -1004,34 +896,34 @@ UServer::getGhostConnection ()
  return 1 in case of success,  0 if circular alias is detected
  */
 int
-UServer::addAlias(const char* id, const char* variablename)
+UServer::addAlias(const std::string& id, const std::string& variablename)
 {
-  if (STREQ(id, variablename))
+  if (id == variablename)
     return 0;
 
-  const char* newobj = variablename;
+  const char* newobj = variablename.c_str ();
   HMaliastab::iterator getobj = ::urbiserver->aliastab.find(newobj);
 
   while (getobj != ::urbiserver->aliastab.end())
   {
     newobj = getobj->second->c_str();
-    if (STREQ(newobj, id))
+    if (id == newobj)
       return 0;
 
     getobj = ::urbiserver->aliastab.find(newobj);
   }
 
-  if (aliastab.find(id) != aliastab.end())
+  if (aliastab.find(id.c_str ()) != aliastab.end())
   {
-    UString* alias = aliastab[id];
-    *alias = variablename;
+    UString* alias = aliastab[id.c_str ()];
+    *alias = variablename.c_str ();
   }
   else
   {
     // XXX we'll leak id_copy forever :|
-    char* id_copy = strdup (id);
+    char* id_copy = strdup (id.c_str ());
     assert (id_copy);
-    aliastab[id_copy] = new UString(variablename);
+    aliastab[id_copy] = new UString (variablename.c_str ());
   }
   return 1;
 }

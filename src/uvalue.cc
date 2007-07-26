@@ -744,8 +744,8 @@ UValue::echo(bool hr)
       std::ostringstream o;
       o << "OBJ [";
       bool first = true;
-      for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
-	   it != ::urbiserver->variabletab.end();
+      for (HMvariabletab::iterator it = ::urbiserver->getVariableTab ().begin();
+	   it != ::urbiserver->getVariableTab ().end();
 	   ++it)
 	if (!it->second->getMethod().empty()
 	    && str

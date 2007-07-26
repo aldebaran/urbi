@@ -1,5 +1,4 @@
 2007-07-25  Akim Demaille  <akim@lrde.epita.fr>
-
 	Clean a bit
 	* src/object/atom.hh, src/object/atom.hxx (Atom::Atom): Don't take
 	the arg as ref, as it prevents the type of the arg from being a ref.
@@ -18,6 +17,45 @@
 	Comment changes.
 	* src/runner/runner.cc: Adjust.
 	* src/uconnection.cc: Ditto.
+
+2007-07-24  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Code clean up in UServer.
+	Remove useless memory checks.  Attempt to use accessors instead of
+	public attributes.
+	* include/kernel/userver.hh: Move inline code to the .hxx file.
+	(ctor): Remove the 2nd argument
+	(freeMemory).
+	(initialization): Remove the objsolete method.
+	(find_file, loadFile, saveFile): Use std::string.
+	(memoryCheck): Remove.
+	(addConnection, removeConnection, addAlias): Use references instead
+	of pointers (because NULL pointers are unexpected there).
+	(isRunningSystemCommands, setSystemCommand, getTag, getGroupTab,
+	getFunctionTab, getObjTab, getFunctionBinderTab, getAliasTab,
+	isDefChecking, setDefCheck, getObjWaitTab, getAliasTab,
+	getVariableTab, getFunctionDefTab, getEventBinderTab,
+	hasSomethingToDelete): New accessors.
+	(unic): Rename as unique.
+	* include/kernel/userver.hxx: New.
+	* Makefile.am: Add new file.
+	* src/object/Makefile.am: Use libkernel.la to build the tests
+	(needed on my machine because UConnection::send is used).
+	* src/object/object-test.hh: Don't declare a global UServer since
+	libkernel.la provides one.
+	* src/console.cc,
+	* src/network/bsdnet/network.cc,
+	* src/ucommand.cc,
+	* src/uconnection.cc,
+	* src/ueventhandler.cc,
+	* src/uexpression.cc,
+	* src/uobj.cc,
+	* src/uobject.cc,
+	* src/userver.cc,
+	* src/uvalue.cc,
+	* src/uvar.cc,
+	* src/uvariable.cc,
+	* src/uvariablename.cc: Adjust accordingly (use new accessors etc).
 
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 

@@ -177,7 +177,7 @@ namespace Network
       return;
     }
     Connection* c = new Connection(cfd);
-    ::urbiserver->addConnection(c);
+    ::urbiserver->addConnection(*c);
     registerNetworkPipe(c);
   }
 

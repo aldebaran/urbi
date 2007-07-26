@@ -114,8 +114,8 @@ UConnection::~UConnection()
   delete activeCommand;
 
   // free bindings
-  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
-       i != ::urbiserver->variabletab.end(); ++i)
+  for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
+       i != ::urbiserver->getVariableTab ().end(); ++i)
     if (i->second->binder
 	&& i->second->binder->removeMonitor(this))
     {
@@ -124,8 +124,8 @@ UConnection::~UConnection()
     }
 
   std::list<HMbindertab::iterator> deletelist;
-  for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
-       i != ::urbiserver->functionbindertab.end();
+  for (HMbindertab::iterator i = ::urbiserver->getFunctionBinderTab ().begin();
+       i != ::urbiserver->getFunctionBinderTab ().end();
        ++i)
     if (i->second->removeMonitor(this))
       deletelist.push_back(i);
@@ -133,11 +133,11 @@ UConnection::~UConnection()
   for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
        i != deletelist.end();
        ++i)
-    ::urbiserver->functionbindertab.erase(*i);
+    ::urbiserver->getFunctionBinderTab ().erase(*i);
   deletelist.clear();
 
-  for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
-       i != ::urbiserver->eventbindertab.end();
+  for (HMbindertab::iterator i = ::urbiserver->getEventBinderTab ().begin();
+       i != ::urbiserver->getEventBinderTab ().end();
        ++i)
     if (i->second->removeMonitor(this))
       deletelist.push_back(i);
@@ -145,7 +145,7 @@ UConnection::~UConnection()
   for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
        i != deletelist.end();
        ++i)
-    ::urbiserver->eventbindertab.erase(*i);
+    ::urbiserver->getEventBinderTab ().erase(*i);
   deletelist.clear();
 
   delete parser_;
@@ -312,12 +312,6 @@ UConnection::sendc (const ubyte *buffer, int length)
   UErrorValue result = sendQueue_->push(buffer, length);
   if (result != USUCCESS)
   {
-    if (result == UMEMORYFAIL)
-    {
-      errorSignal(UERROR_SEND_BUFFER_FULL);
-      server->memoryOverflow = true;
-      server->isolate();
-    }
     if (result == UFAIL)
       errorSignal(UERROR_SEND_BUFFER_FULL);
 
@@ -389,7 +383,6 @@ UConnection::continueSend ()
 	return USUCCESS;
   }
 
-  server->memoryOverflow = true;
   server->isolate();
 
   return UFAIL;
@@ -412,13 +405,6 @@ UErrorValue
 UConnection::received (const ubyte *buffer, int length)
 {
   PING();
-  if (server->memoryOverflow)
-  {
-    errorSignal(UERROR_MEMORY_OVERFLOW);
-    // Block any new incoming command when the system is out of
-    // memory
-    return UFAIL;
-  }
 
   bool gotlock = false;
   // If binary append failed to get lock, abort processing.
@@ -474,12 +460,6 @@ UConnection::received (const ubyte *buffer, int length)
       errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
 
-    if (result == UMEMORYFAIL)
-    {
-      errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      server->memoryOverflow = true;
-      server->isolate();
-    }
     return result;
   }
 
@@ -520,51 +500,36 @@ UConnection::received (const ubyte *buffer, int length)
 
     if (length !=0)
     {
-      server->systemcommands = false;
+      server->setSystemCommand (false);
       int result = p.process(command, length);
-      server->systemcommands = true;
+      server->setSystemCommand (true);
 
       if (result == -1)
       {
-	server->isolate();
-	server->memoryOverflow = true;
-      }
-      server->memoryCheck();
-
-      // Xtrem memory recovery in case of anomaly
-      if (server->memoryOverflow && p.commandTree)
-      {
-	// FIXME: 2007-07-20: Currently we can't free the commandTree,
-	// we might kill function bodies.
-	// delete p.commandTree;
-	p.commandTree = 0;
+        abort ();
       }
 
-      // Error messages & warnigns handling
-      if (!server->memoryOverflow)
+      // Warnings handling
+      if (p.hasWarning())
       {
-	// Warnings handling
-	if (p.hasWarning())
-	{
-	  send(p.warning_get().c_str(), "warn ");
-	  server->error(::DISPLAY_FORMAT, (long)this,
-			"UConnection::received",
-			p.warning_get().c_str());
-	}
+        send(p.warning_get().c_str(), "warn ");
+        server->error(::DISPLAY_FORMAT, (long)this,
+                      "UConnection::received",
+                      p.warning_get().c_str());
+      }
 
-	// Errors handling
-	if (p.hasError())
-	{
-	  // FIXME: 2007-07-20: Currently we can't free the commandTree,
-	  // we might kill function bodies.
-	  //delete p.commandTree;
-	  p.commandTree = 0;
+      // Errors handling
+      if (p.hasError())
+      {
+        // FIXME: 2007-07-20: Currently we can't free the commandTree,
+        // we might kill function bodies.
+        //delete p.commandTree;
+        p.commandTree = 0;
 
-	  send(p.error_get().c_str(), "error");
-	  server->error(::DISPLAY_FORMAT, (long)this,
-			"UConnection::received",
-			p.error_get().c_str());
-	}
+        send(p.error_get().c_str(), "error");
+        server->error(::DISPLAY_FORMAT, (long)this,
+                      "UConnection::received",
+                      p.error_get().c_str());
       }
 
       if (p.commandTree)
@@ -621,14 +586,11 @@ UConnection::received (const ubyte *buffer, int length)
       }
     }
   } while (length != 0
-	   && !receiveBinary_
-	   && !server->memoryOverflow);
+	   && !receiveBinary_);
 
   receiving = false;
   p.commandTree = 0;
   treeLock.unlock();
-  if (server->memoryOverflow)
-    return UMEMORYFAIL;
 
   return USUCCESS;
 }

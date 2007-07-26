@@ -938,7 +938,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 
   PING();
   // send string in the queue
-  ::urbiserver->systemcommands = false;
+  ::urbiserver->setSystemCommand (false);
   if (!connection->stack.empty())
     connection->functionTag = new UString("__Funct__");
   UParser& p = connection->parser();
@@ -962,7 +962,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
       delete connection->functionTag;
       connection->functionTag = 0;
     }
-  ::urbiserver->systemcommands = true;
+  ::urbiserver->setSystemCommand (true);
 
   PING();
 
@@ -1483,8 +1483,8 @@ UExpression::eval_FUNCTION (UCommand *command,
   funname = variablename->buildFullname(command, connection);
   if (!variablename->getFullname()) return 0;
   HMfunctiontab::iterator hmf =
-    ::urbiserver->functiontab.find(funname->c_str());
-  if (hmf != ::urbiserver->functiontab.end())
+    ::urbiserver->getFunctionTab ().find(funname->c_str());
+  if (hmf != ::urbiserver->getFunctionTab ().end())
   {
     send_error(connection, command, this,
 	       "Custom function call in expressions"
@@ -1505,8 +1505,8 @@ UExpression::eval_GROUP (UCommand *command, UConnection *connection)
 {
   passert (type, type == GROUP);
   UValue* ret = new UValue();
-  HMgrouptab::iterator retr = connection->server->grouptab.find(str->c_str());
-  if (retr != connection->server->grouptab.end())
+  HMgrouptab::iterator retr = connection->server->getGroupTab ().find(str->c_str());
+  if (retr != connection->server->getGroupTab ().end())
   {
     ret->dataType = DATA_LIST;
     UValue* e1 = 0;
@@ -1655,8 +1655,8 @@ UExpression::eval_VARIABLE (UCommand *command,
     bool ambiguous;
     UVariable *vari = 0;
     HMobjtab::iterator itobj;
-    if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	::urbiserver->objtab.end())
+    if ((itobj = ::urbiserver->getObjTab ().find(devname)) !=
+	::urbiserver->getObjTab ().end())
     {
       vari = itobj->second->
 	searchVariable(variablename->getMethod()->c_str(), ambiguous);
@@ -1693,8 +1693,8 @@ UExpression::eval_VARIABLE (UCommand *command,
       // could be a list index.... (dirty hack)
       p[0]=0;
 
-      HMvariabletab::iterator hmv =::urbiserver->variabletab.find(varname);
-      while (hmv == ::urbiserver->variabletab.end()
+      HMvariabletab::iterator hmv =::urbiserver->getVariableTab ().find(varname);
+      while (hmv == ::urbiserver->getVariableTab ().end()
 	     && p)
       {
 	p[0]='_';
@@ -1702,10 +1702,10 @@ UExpression::eval_VARIABLE (UCommand *command,
 	if (p)
 	{
 	  p[0] = 0;
-	  hmv = ::urbiserver->variabletab.find(varname);
+	  hmv = ::urbiserver->getVariableTab ().find(varname);
 	}
       }
-      if (hmv != ::urbiserver->variabletab.end() && p)
+      if (hmv != ::urbiserver->getVariableTab ().end() && p)
       {
 	UVariable* tmpvar = hmv->second;
 	tmpvar->get (); // to trigger the UNotifyAccess
@@ -1908,8 +1908,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	bool ambiguous;
 
 	HMobjtab::iterator itobj;
-	if ((itobj = ::urbiserver->objtab.find(devname)) !=
-	    ::urbiserver->objtab.end())
+	if ((itobj = ::urbiserver->getObjTab ().find(devname)) !=
+	    ::urbiserver->getObjTab ().end())
 	{
 	  variable = itobj->second->
 	    searchVariable(variablename->getMethod()->c_str(),
@@ -1942,9 +1942,9 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	{
 	  // could be a list index
 	  p[0] = 0;
-	  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(varname);
+	  HMvariabletab::iterator hmv = ::urbiserver->getVariableTab ().find(varname);
 	  p[0] = '_';
-	  if (hmv != ::urbiserver->variabletab.end())
+	  if (hmv != ::urbiserver->getVariableTab ().end())
 	    variable = hmv->second;
 	}
       }
@@ -1963,7 +1963,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  eh->registerCmd(cmd);
 	  return USUCCESS;
 	}
-	else if (c->server->defcheck) //strict
+	else if (c->server->isDefChecking ()) //strict
 	  return UFAIL;
 	else
 	{
@@ -2017,7 +2017,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	else
 	{
 	  // it is not a known function
-	  if (c->server->defcheck) //strict
+	  if (c->server->isDefChecking ()) //strict
 	    return UFAIL;
 	  else
 	  {

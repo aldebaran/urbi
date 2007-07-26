@@ -98,8 +98,8 @@ namespace urbi
     // If one is found, cancel the binding.
     if (type == "function")
     {
-      HMobjtab::iterator it = ::urbiserver->objtab.find(objname.c_str ());
-      if (it != ::urbiserver->objtab.end())
+      HMobjtab::iterator it = ::urbiserver->getObjTab ().find(objname.c_str ());
+      if (it != ::urbiserver->getObjTab ().end())
       {
 	UObj* srcobj = it->second;
 	std::string member = name.substr (name.find ('.') + 1);
@@ -115,8 +115,8 @@ namespace urbi
 
     if (type == "var" || type=="var_onrequest")
     {
-      HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-      if (it == ::urbiserver->variabletab.end())
+      HMvariabletab::iterator it = ::urbiserver->getVariableTab ().find(name.c_str());
+      if (it == ::urbiserver->getVariableTab ().end())
       {
 	UVariable *v = new UVariable(name.c_str(), new ::UValue());
 	if (v)
@@ -139,8 +139,8 @@ namespace urbi
 
     if (type == "varaccess")
     {
-      HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-      if (it == ::urbiserver->variabletab.end())
+      HMvariabletab::iterator it = ::urbiserver->getVariableTab ().find(name.c_str());
+      if (it == ::urbiserver->getVariableTab ().end())
       {
 	UVariable *v = new UVariable(name.c_str(), new ::UValue());
 	if (v)
@@ -291,14 +291,14 @@ namespace urbi
   void
   UObject::UJoinGroup(const std::string& gpname)
   {
-    HMgrouptab::iterator hma = ::urbiserver->grouptab.find(gpname.c_str());
+    HMgrouptab::iterator hma = ::urbiserver->getGroupTab ().find(gpname.c_str());
     UGroup *g;
-    if (hma != ::urbiserver->grouptab.end())
+    if (hma != ::urbiserver->getGroupTab ().end())
       g = hma->second;
     else
     {
       g = new UGroup(gpname);
-      ::urbiserver->grouptab[g->name.c_str()] = g;
+      ::urbiserver->getGroupTab ()[g->name.c_str()] = g;
     }
 
     g->members.push_back(new UString(__name.c_str()));

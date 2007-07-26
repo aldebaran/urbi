@@ -43,7 +43,7 @@ UObj::UObj (UString *device)
     binder (0),
     internalBinder (0)
 {
-  ::urbiserver->objtab[this->device->c_str()] = this;
+  ::urbiserver->getObjTab ()[this->device->c_str()] = this;
   UValue* objvalue = new UValue();
   objvalue->dataType = DATA_OBJ;
   objvalue->str = new UString(*device);
@@ -72,8 +72,8 @@ UObj::~UObj()
 {
   // Removal of all variable bindings
   std::list<UVariable*> varToDelete;
-  for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
-       it != ::urbiserver->variabletab.end();
+  for (HMvariabletab::iterator it = ::urbiserver->getVariableTab ().begin();
+       it != ::urbiserver->getVariableTab ().end();
        ++it)
     if (!it->second->getMethod().empty()
 	&& device
@@ -85,8 +85,8 @@ UObj::~UObj()
 
   // clean variables binders (a bit brutal, we scan all wariables...
   // I'll work on an optimized version later)
-  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
-       i != ::urbiserver->variabletab.end();
+  for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
+       i != ::urbiserver->getVariableTab ().end();
        ++i)
     if (i->second->binder
       && i->second->binder->removeMonitor(*device))
@@ -96,9 +96,9 @@ UObj::~UObj()
     }
 
   // clean functions binders.
-  remove(::urbiserver->functionbindertab, *device);
+  remove(::urbiserver->getFunctionBinderTab (), *device);
   // Clean events binders.
-  remove(::urbiserver->eventbindertab, *device);
+  remove(::urbiserver->getEventBinderTab (), *device);
 
   // clean the object binder
   if (binder)
@@ -120,9 +120,9 @@ UObj::~UObj()
   }
 
   // Remove the object from the hashtable
-  HMobjtab::iterator idit = ::urbiserver->objtab.find(device->c_str());
-  ASSERT (idit != ::urbiserver->objtab.end())
-    ::urbiserver->objtab.erase(idit);
+  HMobjtab::iterator idit = ::urbiserver->getObjTab ().find(device->c_str());
+  ASSERT (idit != ::urbiserver->getObjTab ().end())
+    ::urbiserver->getObjTab ().erase(idit);
 
   // Remove the objects from the subclass list of its parents
   for (std::list<UObj*>::iterator i = up.begin();
@@ -144,8 +144,8 @@ UObj::~UObj()
   }
 
   // clean variables internalBinder
-  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
-       i != ::urbiserver->variabletab.end();
+  for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
+       i != ::urbiserver->getVariableTab ().end();
        ++i)
     for (std::list<urbi::UGenericCallback*>::iterator j =
 	 i->second->internalBinder.begin();
@@ -160,8 +160,8 @@ UObj::~UObj()
 	++j;
 
   // clean variables internalAccessBinder
-  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
-       i != ::urbiserver->variabletab.end();
+  for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
+       i != ::urbiserver->getVariableTab ().end();
        ++i)
     for (std::list<urbi::UGenericCallback*>::iterator j =
 	 i->second->internalAccessBinder.begin();
@@ -187,16 +187,16 @@ UObj::searchFunction(const char* id, bool &ambiguous) const
   o << device->c_str() << '.' << id;
 
   // test for pure urbi symbols
-  HMfunctiontab::iterator hmf = ::urbiserver->functiontab.find(o.str().c_str());
-  if (hmf != ::urbiserver->functiontab.end())
+  HMfunctiontab::iterator hmf = ::urbiserver->getFunctionTab ().find(o.str().c_str());
+  if (hmf != ::urbiserver->getFunctionTab ().end())
   {
     ambiguous = false;
     return hmf->second;
   }
 
   // test for remote uobjects symbols
-  if (::urbiserver->functionbindertab.find(o.str().c_str())
-      != ::urbiserver->functionbindertab.end())
+  if (::urbiserver->getFunctionBinderTab ().find(o.str().c_str())
+      != ::urbiserver->getFunctionBinderTab ().end())
   {
     ambiguous = false;
     return kernel::remoteFunction;
@@ -241,8 +241,8 @@ UObj::searchVariable(const char* id, bool &ambiguous) const
   UVariable* ret;
   std::ostringstream o;
   o << device->c_str() << '.' << id;
-  HMvariabletab::iterator hmv = ::urbiserver->variabletab.find(o.str().c_str());
-  if (hmv != ::urbiserver->variabletab.end())
+  HMvariabletab::iterator hmv = ::urbiserver->getVariableTab ().find(o.str().c_str());
+  if (hmv != ::urbiserver->getVariableTab ().end())
   {
     ambiguous = false;
     return hmv->second;

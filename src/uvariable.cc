@@ -56,7 +56,7 @@ UVariable::UVariable(const char* name, UValue* _value,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(name)] = this;
+  ::urbiserver->getVariableTab ()[setName(name)] = this;
 }
 
 //! UVariable constructor.
@@ -72,7 +72,7 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(_id, _method)] = this;
+  ::urbiserver->getVariableTab ()[setName(_id, _method)] = this;
 }
 
 //! UVariable constructor.
@@ -89,7 +89,7 @@ UVariable::UVariable(const char* name,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(name)] = this;
+  ::urbiserver->getVariableTab ()[setName(name)] = this;
 }
 
 //! UVariable constructor.
@@ -105,7 +105,7 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(_id, _method)] = this;
+  ::urbiserver->getVariableTab ()[setName(_id, _method)] = this;
 }
 
 //! UVariable constructor.
@@ -121,7 +121,7 @@ UVariable::UVariable(const char* name, const char* str,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(name)] = this;
+  ::urbiserver->getVariableTab ()[setName(name)] = this;
 }
 
 //! UVariable constructor.
@@ -137,7 +137,7 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
   notifyRead   = _notifyRead;
   notifyWrite = _notifyWrite;
   autoUpdate = _autoUpdate;
-  ::urbiserver->variabletab[setName(_id, _method)] = this;
+  ::urbiserver->getVariableTab ()[setName(_id, _method)] = this;
 }
 
 //! general initialisation called by constructors
@@ -180,9 +180,9 @@ UVariable::~UVariable()
     ::urbiserver->access_and_change_varlist.remove (this);
 
   {
-    HMvariabletab::iterator i = ::urbiserver->variabletab.find(varname.c_str());
-    if (i != ::urbiserver->variabletab.end())
-      ::urbiserver->variabletab.erase(i);
+    HMvariabletab::iterator i = ::urbiserver->getVariableTab ().find(varname.c_str());
+    if (i != ::urbiserver->getVariableTab ().end())
+      ::urbiserver->getVariableTab ().erase(i);
   }
 
   // Disactivate corresponding UVars
@@ -199,10 +199,10 @@ UVariable::~UVariable()
   {
     if (value->dataType == DATA_OBJ && value->str)
     {
-      HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
-      if (idit != ::urbiserver->objtab.end())
+      HMobjtab::iterator idit = ::urbiserver->getObjTab ().find(value->str->c_str());
+      if (idit != ::urbiserver->getObjTab ().end())
 	delete idit->second;
-      // NB: idit is removed from objtab in the destructor of UObj
+      // NB: idit is removed from getObjTab () in the destructor of UObj
     }
     delete value;
   }
@@ -421,8 +421,8 @@ UVariable::get()
 {
   // recursive call for objects
   if (value->dataType == DATA_OBJ)
-    for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
-	 it != ::urbiserver->variabletab.end();
+    for (HMvariabletab::iterator it = ::urbiserver->getVariableTab ().begin();
+	 it != ::urbiserver->getVariableTab ().end();
 	 ++it)
     if (!it->second->getMethod().empty()
 	  && value->str
@@ -507,8 +507,8 @@ UVariable::isDeletable()
       value->dataType == DATA_OBJ &&
       value->str)
   {
-    HMobjtab::iterator idit = ::urbiserver->objtab.find(value->str->c_str());
-    if ((idit != ::urbiserver->objtab.end()) &&
+    HMobjtab::iterator idit = ::urbiserver->getObjTab ().find(value->str->c_str());
+    if ((idit != ::urbiserver->getObjTab ().end()) &&
 	(!idit->second->down.empty()) )
       return false;
   }

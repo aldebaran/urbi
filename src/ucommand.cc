@@ -169,7 +169,7 @@ UCommand::UCommand(const location& l, Type _type)
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
    L2: pass a tag or a command ptr to ctor
    */
-  if (::urbiserver->systemcommands)
+  if (::urbiserver->isRunningSystemCommands ())
     setTag(systemTagInfo); //untouchable
   else
     setTag(notagTagInfo); //untouchable
@@ -193,11 +193,11 @@ UCommand::initializeTagInfos()
 
   TagInfo t;
   t.name = "__system__";
-  systemTagInfo = t.insert(urbiserver->tagtab);
+  systemTagInfo = t.insert(urbiserver->getTagTab ());
   // insert a dummy tag in subtag list, so that the taginfo is never deleted
   systemTagInfo->subTags.push_back(dummy);
   t.name = "notag";
-  notagTagInfo =  t.insert(urbiserver->tagtab);
+  notagTagInfo =  t.insert(urbiserver->getTagTab ());
   notagTagInfo->subTags.push_back(dummy);
 }
 
@@ -293,9 +293,9 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
   {
     UGroup* oo;
     if (varname->nostruct && with_nostruct)
-      oo = libport::find0(::urbiserver->grouptab, method->c_str());
+      oo = libport::find0(::urbiserver->getGroupTab (), method->c_str());
     else
-      oo = libport::find0(::urbiserver->grouptab, devicename->c_str());
+      oo = libport::find0(::urbiserver->getGroupTab (), devicename->c_str());
 
     if (oo && !oo->members.empty())
     {
@@ -348,14 +348,14 @@ UCommand::setTag(const std::string& tag)
   this->tag = tag;
 
   TagInfo* ti;
-  HMtagtab::iterator it = urbiserver->tagtab.find(tag);
+  HMtagtab::iterator it = urbiserver->getTagTab ().find(tag);
 
-  if (it == urbiserver->tagtab.end())
+  if (it == urbiserver->getTagTab ().end())
   {
     TagInfo t;
     t.blocked = t.frozen = false;
     t.name = tag;
-    ti = t.insert(urbiserver->tagtab);
+    ti = t.insert(urbiserver->getTagTab ());
   }
   else
     ti = &it->second;
@@ -416,7 +416,7 @@ UCommand::unsetTag()
       ti->parent->subTags.erase(ti->parentPtr);
     //remove from hash table
     TagInfo* next = ti->parent;
-    urbiserver->tagtab.erase(urbiserver->tagtab.find(ti->name));
+    urbiserver->getTagTab ().erase(urbiserver->getTagTab ().find(ti->name));
     //try again on our parent
     ti = next;
   }
@@ -675,12 +675,12 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   ////// Native URBI: user-defined /////
 
   UFunction *fun =
-    libport::find0(urbiserver->functiontab, functionname->c_str());
+    libport::find0(urbiserver->getFunctionTab (), functionname->c_str());
   if (!fun)
   {
     //trying inheritance
     const char* devname = expression->variablename->getDevice()->c_str();
-    if (UObj* o = libport::find0(::urbiserver->objtab, devname))
+    if (UObj* o = libport::find0(::urbiserver->getObjTab (), devname))
     {
       bool ambiguous;
       fun = o->searchFunction
@@ -739,12 +739,12 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       // handle the :: case
       if (expression->variablename->doublecolon
 	  && !connection->stack.empty ()
-	  && libport::mhas(::urbiserver->objtab,
+	  && libport::mhas(::urbiserver->getObjTab (),
 			   connection->stack.front()->self().c_str()))
 	*fundevice = connection->stack.front()->self();
 
-      uc_tree->callid = new UCallid(unic("__UFnct"),
-				    fundevice->c_str(), uc_tree);
+      uc_tree->callid = new UCallid (unique ("__UFnct"),
+                                     fundevice->c_str (), uc_tree);
 
       resultContainer->nameUpdate(uc_tree->callid->str(), "__result__");
       // creates return variable
@@ -783,7 +783,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   // handle the :: case
   if (expression->variablename->doublecolon
       && !connection->stack.empty ()
-      && libport::mhas(::urbiserver->objtab,
+      && libport::mhas(::urbiserver->getObjTab (),
 		       connection->stack.front()->self().c_str()))
   {
     // rebuild name with parent class
@@ -838,7 +838,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
   ////// EXTERNAL /////
   if (!found_function)
   {
-    UBinder* b = libport::find0(::urbiserver->functionbindertab,
+    UBinder* b = libport::find0(::urbiserver->getFunctionBinderTab (),
 				functionname->c_str());
     if (b
 	&& (expression->parameters
@@ -846,7 +846,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	    : b->nbparam == 0)
 	&& !b->monitors.empty())
     {
-      std::string uid = unic("__UFnctret.EXTERNAL_");
+      std::string uid = unique ("__UFnctret.EXTERNAL_");
       {
 	std::ostringstream o;
 	o << "[0,"
@@ -950,17 +950,17 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	&& expression->variablename->nostruct)
     {
       UString* objname = expression->variablename->id;
-      if (libport::mhas(::urbiserver->objtab, objname->c_str()))
+      if (libport::mhas(::urbiserver->getObjTab (), objname->c_str()))
       {
 	// the use of 'id' is a hack that works.
 	HMaliastab::iterator hmi =
-	  ::urbiserver->objaliastab.find(variablename->id->c_str());
-	if (hmi != ::urbiserver->objaliastab.end())
+	  ::urbiserver->getObjAliasTab ().find(variablename->id->c_str());
+	if (hmi != ::urbiserver->getObjAliasTab ().end())
 	  *hmi->second = objname;
 	else
 	{
 	  UString* objalias = new UString(*variablename->method);
-	  ::urbiserver->objaliastab[objalias->c_str()] = new UString(*objname);
+	  ::urbiserver->getObjAliasTab ()[objalias->c_str()] = new UString(*objname);
 	}
 	return UCOMPLETED;
       }
@@ -978,7 +978,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     }
 
     // Strict variable definition checking
-    if (!variable && connection->server->defcheck && !defkey)
+    if (!variable && connection->server->isDefChecking () && !defkey)
       send_error(connection, this, "Unknown identifier: %s",
 		 variablename->getFullname()->c_str());
 
@@ -1008,7 +1008,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	variable->value->dataType != DATA_VOID &&
 	rhs->dataType != variable->value->dataType)
     {
-      if (::urbiserver->defcheck)
+      if (::urbiserver->isDefChecking ())
       {
 	send_error(connection, this, "Warning: %s type mismatch",
 		   variablename->getFullname()->c_str());
@@ -2201,15 +2201,15 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 
   UFunction* fun = 0;
   HMfunctiontab::iterator hmf =
-    ::urbiserver->functiontab.find(funname->c_str());
-  if (hmf != ::urbiserver->functiontab.end())
+    ::urbiserver->getFunctionTab ().find(funname->c_str());
+  if (hmf != ::urbiserver->getFunctionTab ().end())
     fun = hmf->second;
   else
   {
     //trying inheritance
     const char* devname = expression->variablename->getDevice()->c_str();
-    HMobjtab::iterator itobj = ::urbiserver->objtab.find(devname);
-    if (itobj != ::urbiserver->objtab.end())
+    HMobjtab::iterator itobj = ::urbiserver->getObjTab ().find(devname);
+    if (itobj != ::urbiserver->getObjTab ().end())
     {
       bool ambiguous;
       fun = itobj->second->
@@ -2279,12 +2279,12 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
       // handle the :: case
       if (expression->variablename->doublecolon
 	  && !connection->stack.empty ()
-	  && libport::mhas(::urbiserver->objtab,
+	  && libport::mhas(::urbiserver->getObjTab (),
 			   connection->stack.front()->self().c_str()))
 	*fundevice = connection->stack.front()->self();
 
-      uc_tree->callid = new UCallid(unic("__UFnct"),
-				    fundevice->c_str(), uc_tree);
+      uc_tree->callid = new UCallid (unique ("__UFnct"),
+                                     fundevice->c_str (), uc_tree);
       resultContainer->nameUpdate(uc_tree->callid->str(),
 				  "__result__");
       // creates return variable
@@ -2326,7 +2326,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
   // handle the :: case
   if (expression->variablename->doublecolon
       && !connection->stack.empty ()
-      && libport::mhas(::urbiserver->objtab,
+      && libport::mhas(::urbiserver->getObjTab (),
 		       connection->stack.front()->self().c_str()))
   {
     // rebuild name with parent class
@@ -2385,14 +2385,14 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 
   ////// EXTERNAL /////
   HMbindertab::iterator it =
-    ::urbiserver->functionbindertab.find(funname->c_str());
-  if (it != ::urbiserver->functionbindertab.end()
+    ::urbiserver->getFunctionBinderTab ().find(funname->c_str());
+  if (it != ::urbiserver->getFunctionBinderTab ().end()
       && ((expression->parameters
 	   && it->second->nbparam == expression->parameters->size())
 	  || (!expression->parameters && it->second->nbparam == 0))
       && !it->second->monitors.empty())
   {
-    std::string uid = unic("__UFnctret.EXTERNAL_");
+    std::string uid = unique ("__UFnctret.EXTERNAL_");
     {
       std::ostringstream o;
       o << "[0,\"" << funname->c_str() << "__" << it->second->nbparam
@@ -2697,7 +2697,7 @@ UCommand::Status
 UCommand_NEW::execute_(UConnection *connection)
 {
   if (remoteNew &&
-      libport::mhas(::urbiserver->objWaittab, id->c_str()))
+      libport::mhas(::urbiserver->getObjWaitTab (), id->c_str()))
     return URUNNING;
   morph = 0;
   if (!id)
@@ -2730,7 +2730,7 @@ UCommand_NEW::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    if (libport::mhas(::urbiserver->objtab, id->c_str()))
+    if (libport::mhas(::urbiserver->getObjTab (), id->c_str()))
     {
       send_error(connection, this,
 		 "Object %s already exists. Delete it first.",
@@ -2739,16 +2739,16 @@ UCommand_NEW::execute_(UConnection *connection)
     }
   }
 
-  HMobjtab::iterator objit = ::urbiserver->objtab.find(obj->c_str());
-  if (objit == ::urbiserver->objtab.end()
+  HMobjtab::iterator objit = ::urbiserver->getObjTab ().find(obj->c_str());
+  if (objit == ::urbiserver->getObjTab ().end()
       && !remoteNew)
   {
     const char* objname = obj->c_str();
-    while (libport::mhas(::urbiserver->objaliastab, objname))
-      objname = ::urbiserver->objaliastab[objname]->c_str();
+    while (libport::mhas(::urbiserver->getObjAliasTab (), objname))
+      objname = ::urbiserver->getObjAliasTab ()[objname]->c_str();
 
-    objit = ::urbiserver->objtab.find(objname);
-    if (objit == ::urbiserver->objtab.end())
+    objit = ::urbiserver->getObjTab ().find(objname);
+    if (objit == ::urbiserver->getObjTab ().end())
     {
       int timeout = -1;
 
@@ -2815,14 +2815,14 @@ UCommand_NEW::execute_(UConnection *connection)
       ++nb;
     }
     // Wait for remote new
-    HMobjWaiting::iterator ow = ::urbiserver->objWaittab.find(id->c_str());
-    if (ow != ::urbiserver->objWaittab.end())
+    HMobjWaiting::iterator ow = ::urbiserver->getObjWaitTab ().find(id->c_str());
+    if (ow != ::urbiserver->getObjWaitTab ().end())
       ow->second->nb += nb;
     else
     {
       UWaitCounter *wc = new UWaitCounter(*id, nb);
       ASSERT(wc)
-	::urbiserver->objWaittab[wc->id.c_str()] = wc;
+	::urbiserver->getObjWaitTab () [wc->id.c_str()] = wc;
     }
     // initiate remote new waiting
     remoteNew = true;
@@ -2832,7 +2832,7 @@ UCommand_NEW::execute_(UConnection *connection)
   if (objit->second->internalBinder)
     objit->second->internalBinder->copy(std::string(id->c_str()));
 
-  UObj* newobj = libport::find0(::urbiserver->objtab, id->c_str());
+  UObj* newobj = libport::find0(::urbiserver->getObjTab (), id->c_str());
   bool creation = false;
   if (!newobj)
   {
@@ -2866,7 +2866,7 @@ UCommand_NEW::execute_(UConnection *connection)
   // be fixed later.
 
   persistant = false;
-  std::string uid = unic("__UInitret.tmpval_");
+  std::string uid = unique ("__UInitret.tmpval_");
 
   std::ostringstream oss;
   oss << "{ ";
@@ -3002,8 +3002,8 @@ UCommand_ALIAS::execute_(UConnection *connection)
   if (!aliasname && !id)
   {
     for (HMaliastab::iterator i =
-	   connection->server->aliastab.begin();
-	 i != connection->server->aliastab.end();
+	   connection->server->getAliasTab ().begin();
+	 i != connection->server->getAliasTab ().end();
 	 ++i)
       connection->sendf(getTag(),
 			"*** %25s -> %s\n",
@@ -3017,8 +3017,8 @@ UCommand_ALIAS::execute_(UConnection *connection)
   {
     UString *id0 = aliasname->buildFullname(this, connection, false);
     HMaliastab::iterator i =
-      connection->server->aliastab.find(id0->c_str());
-    if (i != connection->server->aliastab.end())
+      connection->server->getAliasTab ().find(id0->c_str());
+    if (i != connection->server->getAliasTab ().end())
     {
       connection->sendf (getTag(), "*** %25s -> %s\n",
 			 i->first, i->second->c_str());
@@ -3031,9 +3031,9 @@ UCommand_ALIAS::execute_(UConnection *connection)
   {
     UString *id0 = aliasname->buildFullname(this, connection, false);
     HMaliastab::iterator i =
-      connection->server->aliastab.find(id0->c_str());
-    if (i != connection->server->aliastab.end())
-      connection->server->aliastab.erase(i);
+      connection->server->getAliasTab ().find(id0->c_str());
+    if (i != connection->server->getAliasTab ().end())
+      connection->server->getAliasTab ().erase(i);
 
     return UCOMPLETED;
   }
@@ -3102,14 +3102,14 @@ UCommand_INHERIT::execute_(UConnection *connection)
   if (!sub || !parent)
     return UCOMPLETED;
 
-  HMobjtab::iterator objsub = ::urbiserver->objtab.find(sub->c_str());
-  if (objsub == ::urbiserver->objtab.end ())
+  HMobjtab::iterator objsub = ::urbiserver->getObjTab ().find(sub->c_str());
+  if (objsub == ::urbiserver->getObjTab ().end ())
   {
     send_error(connection, this, "Object does not exist: %s", sub->c_str());
     return UCOMPLETED;
   }
-  HMobjtab::iterator objparent = ::urbiserver->objtab.find(parent->c_str());
-  if (objparent == ::urbiserver->objtab.end ())
+  HMobjtab::iterator objparent = ::urbiserver->getObjTab ().find(parent->c_str());
+  if (objparent == ::urbiserver->getObjTab ().end ())
   {
     send_error(connection, this, "Object does not exist: %s", parent->c_str());
     return UCOMPLETED;
@@ -3196,14 +3196,14 @@ UCommand_GROUP::execute_(UConnection *connection)
 {
   if (parameters)
   {
-    HMgrouptab::iterator hma = ::urbiserver->grouptab.find(id->c_str());
+    HMgrouptab::iterator hma = ::urbiserver->getGroupTab ().find(id->c_str());
     UGroup *g;
-    if (hma != ::urbiserver->grouptab.end())
+    if (hma != ::urbiserver->getGroupTab ().end())
       g = hma->second;
     else
     {
       g = new UGroup(*id);
-      ::urbiserver->grouptab[g->name.c_str()] = g;
+      ::urbiserver->getGroupTab ()[g->name.c_str()] = g;
     }
     if (!grouptype)
       g->members.clear();
@@ -3222,8 +3222,8 @@ UCommand_GROUP::execute_(UConnection *connection)
       else
       {
 	const char* objname = param->name->c_str();
-	while (libport::mhas(::urbiserver->objaliastab, objname))
-	  objname = ::urbiserver->objaliastab[objname]->c_str();
+	while (libport::mhas(::urbiserver->getObjAliasTab (), objname))
+	  objname = ::urbiserver->getObjAliasTab ()[objname]->c_str();
 
 	g->members.push_back(new UString(objname));
       }
@@ -3234,8 +3234,8 @@ UCommand_GROUP::execute_(UConnection *connection)
   // full query
   if (!id)
   {
-    for (HMgrouptab::iterator i = connection->server->grouptab.begin();
-	 i != connection->server->grouptab.end();
+    for (HMgrouptab::iterator i = connection->server->getGroupTab ().begin();
+	 i != connection->server->getGroupTab ().end();
 	 ++i)
     {
       std::ostringstream o;
@@ -3256,8 +3256,8 @@ UCommand_GROUP::execute_(UConnection *connection)
   }
 
   // specific query
-  HMgrouptab::iterator i = connection->server->grouptab.find(id->c_str());
-  if (i !=  connection->server->grouptab.end())
+  HMgrouptab::iterator i = connection->server->getGroupTab ().find(id->c_str());
+  if (i !=  connection->server->getGroupTab ().end())
   {
     UNamedParameters *ret = 0;
 
@@ -3342,7 +3342,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     if (status == URUNNING)
       return UCOMPLETED;
     connection->server->mark(id);
-    connection->server->somethingToDelete = true;
+    connection->server->hasSomethingToDelete ();
     return URUNNING;
   }
   else if (*oper == "killall")
@@ -3585,8 +3585,8 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	if (!variable && variablename->nostruct)
 	{
 	  UString* objname = variablename->getMethod();
-	  if (libport::mhas(::urbiserver->variabletab, objname->c_str()))
-	    variable = ::urbiserver->variabletab[objname->c_str()];
+	  if (libport::mhas(::urbiserver->getVariableTab (), objname->c_str()))
+	    variable = ::urbiserver->getVariableTab ()[objname->c_str()];
 	}
       }
 
@@ -3614,8 +3614,8 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	  variable->value->str)
       {
 	HMobjtab::iterator idit =
-	  ::urbiserver->objtab.find(variable->value->str->c_str());
-	if (idit != ::urbiserver->objtab.end()
+	  ::urbiserver->getObjTab ().find(variable->value->str->c_str());
+	if (idit != ::urbiserver->getObjTab ().end()
 	    && !idit->second->down.empty())
 	{
 	  send_error(connection, this,
@@ -3650,10 +3650,10 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
     if (fun)
     {
       // undef function
-      connection->server->functiontab.erase(
-	connection->server->functiontab.find(fullname->c_str()));
-      connection->server->functiondeftab.erase(
-	connection->server->functiondeftab.find(fullname->c_str()));
+      connection->server->getFunctionTab ().erase(
+	connection->server->getFunctionTab ().find(fullname->c_str()));
+      connection->server->getFunctionDefTab ().erase(
+	connection->server->getFunctionDefTab ().find(fullname->c_str()));
 
       delete fun;
       return UCOMPLETED;
@@ -3862,8 +3862,8 @@ UCommand_BINDER::execute_(UConnection *connection)
   {
     case UBIND_VAR:
     {
-      HMvariabletab::iterator it = ::urbiserver->variabletab.find(key->c_str());
-      if (it == ::urbiserver->variabletab.end())
+      HMvariabletab::iterator it = ::urbiserver->getVariableTab ().find(key->c_str());
+      if (it == ::urbiserver->getVariableTab ().end())
       {
 	UVariable *variable = new UVariable(key->c_str(), new UValue());
 	variable->binder = new UBinder(*fullobjname, *fullname,
@@ -3895,8 +3895,8 @@ UCommand_BINDER::execute_(UConnection *connection)
     {
       // Autodetect redefined members higher in the hierarchy of an object
       // If one is found, cancel the binding.
-      HMobjtab::iterator it = ::urbiserver->objtab.find(fullobjname->c_str());
-      if (it != ::urbiserver->objtab.end())
+      HMobjtab::iterator it = ::urbiserver->getObjTab ().find(fullobjname->c_str());
+      if (it != ::urbiserver->getObjTab ().end())
       {
 	UObj* srcobj = it->second;
 	bool ambiguous;
@@ -3908,31 +3908,31 @@ UCommand_BINDER::execute_(UConnection *connection)
       }
 
       // do the binding
-      if (!libport::mhas(::urbiserver->functionbindertab, key->c_str()))
-	::urbiserver->functionbindertab[key->c_str()] =
+      if (!libport::mhas(::urbiserver->getFunctionBinderTab (), key->c_str()))
+	::urbiserver->getFunctionBinderTab ()[key->c_str()] =
 	  new UBinder(*fullobjname, *fullname,
 		      mode, type, nbparam, connection);
       else
-	::urbiserver->functionbindertab[key->c_str()]->
+	::urbiserver->getFunctionBinderTab ()[key->c_str()]->
 	  addMonitor(*fullobjname, connection);
     }
     break;
 
     case UBIND_EVENT:
-      if (!libport::mhas(::urbiserver->eventbindertab, key->c_str()))
-	::urbiserver->eventbindertab[key->c_str()] =
+      if (!libport::mhas(::urbiserver->getEventBinderTab (), key->c_str()))
+	::urbiserver->getEventBinderTab ()[key->c_str()] =
 	    new UBinder(*fullobjname, *fullname,
 			mode, type, nbparam, connection);
       else
-	::urbiserver->eventbindertab[key->c_str()]->addMonitor(*fullobjname,
+	::urbiserver->getEventBinderTab ()[key->c_str()]->addMonitor(*fullobjname,
 							     connection);
       break;
 
     case UBIND_OBJECT:
     {
       UObj* uobj;
-      if (libport::mhas(::urbiserver->objtab, variablename->id->c_str()))
-	uobj = ::urbiserver->objtab[variablename->id->c_str()];
+      if (libport::mhas(::urbiserver->getObjTab (), variablename->id->c_str()))
+	uobj = ::urbiserver->getObjTab ()[variablename->id->c_str()];
       else
 	uobj = new UObj(variablename->id);
       if (uobj->binder)
@@ -4028,13 +4028,13 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "strict")
   {
-    connection->server->defcheck = true;
+    connection->server->setDefCheck (true);
     return UCOMPLETED;
   }
 
   if (*oper == "unstrict")
   {
-    connection->server->defcheck = false;
+    connection->server->setDefCheck (false);
     return UCOMPLETED;
   }
 
@@ -4087,8 +4087,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
   if (*oper == "functions")
   {
      for (HMfunctiontab::iterator i =
-	   connection->server->functiontab.begin();
-	 i != connection->server->functiontab.end();
+	   connection->server->getFunctionTab ().begin();
+	 i != connection->server->getFunctionTab ().end();
 	 ++i)
     {
       std::ostringstream o;
@@ -4103,8 +4103,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
   if (*oper == "vars")
   {
     for (HMvariabletab::iterator i =
-	   connection->server->variabletab.begin();
-	 i != connection->server->variabletab.end();
+	   connection->server->getVariableTab ().begin();
+	 i != connection->server->getVariableTab ().end();
 	 ++i)
     {
 
@@ -4168,8 +4168,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "taglist")
   {
-    for (HMtagtab::iterator i = connection->server->tagtab.begin();
-	 i != connection->server->tagtab.end();
+    for (HMtagtab::iterator i = connection->server->getTagTab ().begin();
+	 i != connection->server->getTagTab ().end();
 	 ++i)
     {
       std::ostringstream tstr;
@@ -4189,8 +4189,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "runningcommands")
   {
-    for (HMtagtab::iterator i = connection->server->tagtab.begin();
-	 i != connection->server->tagtab.end();
+    for (HMtagtab::iterator i = connection->server->getTagTab ().begin();
+	 i != connection->server->getTagTab ().end();
 	 ++i)
     {
       for (std::list<UCommand *>::iterator j = i->second.commands.begin();
@@ -4205,8 +4205,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "uservars")
   {
-    for (HMvariabletab::iterator i = connection->server->variabletab.begin();
-	 i != connection->server->variabletab.end();
+    for (HMvariabletab::iterator i = connection->server->getVariableTab ().begin();
+	 i != connection->server->getVariableTab ().end();
 	 ++i)
     {
       if (i->second->uservar)
@@ -4478,7 +4478,7 @@ UCommand_EMIT::execute_(UConnection *connection)
     eh = kernel::findEventHandler (ens, nbargs);
     if (!eh)
     {
-      if (::urbiserver->defcheck)
+      if (::urbiserver->isDefChecking ())
       {
 	send_error(connection, this, "undefined event %s with %d param(s)",
 		   ens->c_str(),
@@ -4494,9 +4494,9 @@ UCommand_EMIT::execute_(UConnection *connection)
     ////// EXTERNAL /////
 
     HMbindertab::iterator it =
-      ::urbiserver->eventbindertab.find(eventnamestr);
+      ::urbiserver->getEventBinderTab ().find(eventnamestr);
 
-    if (it != ::urbiserver->eventbindertab.end()
+    if (it != ::urbiserver->getEventBinderTab ().end()
 	&& ((parameters && it->second->nbparam == parameters->size())
 	    ||(!parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
@@ -4580,8 +4580,8 @@ UCommand_EMIT::removeEvent ()
 
   {
     HMbindertab::iterator i =
-      ::urbiserver->eventbindertab.find(eventnamestr);
-    if (i != ::urbiserver->eventbindertab.end()
+      ::urbiserver->getEventBinderTab ().find(eventnamestr);
+    if (i != ::urbiserver->getEventBinderTab ().end()
 	&& parameters
 	&& i->second->nbparam == parameters->size()
 	&& !i->second->monitors.empty())
@@ -4874,8 +4874,8 @@ UCommand_DEF::execute_(UConnection *connection)
   if (!variablename && !command && !parameters && !variablelist)
   {
     for (HMfunctiontab::iterator i =
-	   connection->server->functiontab.begin();
-	 i != connection->server->functiontab.end();
+	   connection->server->getFunctionTab ().begin();
+	 i != connection->server->getFunctionTab ().end();
 	 ++i)
       connection->sendf (getTag(), "*** %s : %d param(s)\n",
 			 i->second->name().c_str(),
@@ -4891,7 +4891,7 @@ UCommand_DEF::execute_(UConnection *connection)
       return UCOMPLETED;
 
     if (variablename->nostruct &&
-	(libport::mhas(::urbiserver->grouptab,
+	(libport::mhas(::urbiserver->getGroupTab (),
 		       variablename->getMethod()->c_str())))
     {
       send_error(connection, this,
@@ -4900,27 +4900,27 @@ UCommand_DEF::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    if (libport::mhas(connection->server->functiontab, funname->c_str()))
+    if (libport::mhas(connection->server->getFunctionTab (), funname->c_str()))
     {
-      if (::urbiserver->defcheck)
+      if (::urbiserver->isDefChecking ())
 	send_error(connection, this,
 		 "Warning: function %s already exists", funname->c_str());
 
       // undef function
       UFunction* fun = variablename->getFunction(this, connection);
-      connection->server->functiontab.erase(
-	connection->server->functiontab.find(funname->c_str()));
-      connection->server->functiondeftab.erase(
-	connection->server->functiondeftab.find(funname->c_str()));
+      connection->server->getFunctionTab ().erase(
+	connection->server->getFunctionTab ().find(funname->c_str()));
+      connection->server->getFunctionDefTab ().erase(
+	connection->server->getFunctionDefTab ().find(funname->c_str()));
       delete fun;
     }
 
     UFunction *fun = new UFunction(*new UString(*funname), parameters, command);
     if (fun)
-      connection->server->functiondeftab[fun->name().c_str()] = fun;
+      connection->server->getFunctionDefTab ()[fun->name().c_str()] = fun;
 
     if (fun && command)
-      connection->server->functiontab[fun->name().c_str()] = fun;
+      connection->server->getFunctionTab ()[fun->name().c_str()] = fun;
 
     return UCOMPLETED;
   }
@@ -5076,12 +5076,12 @@ UCommand_CLASS::execute_(UConnection*)
 {
   // remote new processing
   HMobjWaiting::iterator ow
-    = ::urbiserver->objWaittab.find(object->c_str());
-  if (ow != ::urbiserver->objWaittab.end())
+    = ::urbiserver->getObjWaitTab ().find(object->c_str());
+  if (ow != ::urbiserver->getObjWaitTab ().end())
   {
     --ow->second->nb;
     if (ow->second->nb == 0)
-      ::urbiserver->objWaittab.erase(ow);
+      ::urbiserver->getObjWaitTab ().erase(ow);
     else
       return URUNNING;
   }
@@ -5363,7 +5363,7 @@ UCommand_TIMEOUT::UCommand_TIMEOUT(const location& l,
   command (command)
 {
   ADDOBJ(UCommand_TIMEOUT);
-  tagRef = new UString(unic("__TAG_timeout_"));
+  tagRef = new UString(unique ("__TAG_timeout_"));
 }
 
 //! UCommand subclass destructor.
@@ -5433,7 +5433,7 @@ UCommand_STOPIF::UCommand_STOPIF(const location& l,
     command (command)
 {
   ADDOBJ(UCommand_STOPIF);
-  tagRef = new UString(unic("__TAG_stopif_"));
+  tagRef = new UString(unique ("__TAG_stopif_"));
 }
 
 //! UCommand subclass destructor.
@@ -5503,7 +5503,7 @@ UCommand_FREEZEIF::UCommand_FREEZEIF(const location& l,
     command (command)
 {
   ADDOBJ(UCommand_FREEZEIF);
-  tagRef = new UString(unic("__TAG_stopif_"));
+  tagRef = new UString(unique("__TAG_stopif_"));
 }
 
 //! UCommand subclass destructor.
@@ -5972,7 +5972,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     if (candidates.empty () && active_) // whenever stops
     {
       active_ = false;
-      connection->server->somethingToDelete = true;
+      connection->server->hasSomethingToDelete ();
       // theloop_ is 0 if something has deleted it from the outside (thanks
       // to the 'whenever_hook' attribute), that's why we test here
       if (theloop_)

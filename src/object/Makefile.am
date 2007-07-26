@@ -31,5 +31,5 @@ object_test_parent_SOURCES = object-test-parent.cc
 object_test_primitives_SOURCES = object-test-primitives.cc
 object_test_slot_SOURCES = object-test-slot.cc
 
-LDADD = libobject.la ../ast/libast.la $(libport_la)
+LDADD = libobject.la ../ast/libast.la ../libkernel.la $(libport_la)
 TESTS = $(check_PROGRAMS)

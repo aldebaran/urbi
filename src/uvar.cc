@@ -48,8 +48,8 @@ namespace urbi
     owned = false;
     (*varmap)[name].push_back(this);
 
-    HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
-    if (it == ::urbiserver->variabletab.end())
+    HMvariabletab::iterator it = ::urbiserver->getVariableTab ().find(name.c_str());
+    if (it == ::urbiserver->getVariableTab ().end())
       // autoupdate unless otherwise specified
       vardata = new UVardata(new UVariable(name.c_str(), new ::UValue(),
 					   false, false, true));

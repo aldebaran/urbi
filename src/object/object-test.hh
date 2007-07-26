@@ -36,6 +36,4 @@ struct UServer
   void reboot ()   { std::exit(1); };
 };
 
-UServer urbiserver;
-
 #endif // !OBJECT_TEST_HH_

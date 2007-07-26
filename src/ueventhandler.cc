@@ -116,7 +116,7 @@ UEvent::UEvent (UEventHandler* eventhandler,
   args_ (args)
 {
   toDelete_ = false;
-  id_ = unic ();
+  id_ = unique ();
 }
 
 UEvent::~UEvent()

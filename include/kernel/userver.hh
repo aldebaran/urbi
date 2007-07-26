@@ -19,6 +19,7 @@
 
  **************************************************************************** */
 
+
 #ifndef USERVER_HH
 # define USERVER_HH
 
@@ -34,15 +35,17 @@
 # include "kernel/utypes.hh"
 # include "kernel/tag-info.hh"
 
-extern  const char* EXTERNAL_MESSAGE_TAG;
-extern  const char* DISPLAY_FORMAT;
-extern  const char* DISPLAY_FORMAT1;
-extern  const char* DISPLAY_FORMAT2;
+extern const char* EXTERNAL_MESSAGE_TAG;
+extern const char* UNKNOWN_TAG;
 
-extern  const char* MAINDEVICE;
+extern const char* DISPLAY_FORMAT;
+extern const char* DISPLAY_FORMAT1;
+extern const char* DISPLAY_FORMAT2;
 
-extern  const char* UNKNOWN_TAG;
-extern  class UServer   *urbiserver; // Global variable for the server
+extern const char* MAINDEVICE;
+
+/// Global variable for the server
+extern class UServer* urbiserver;
 
 
 //! UServer class: handles all URBI system processing.
@@ -70,14 +73,10 @@ public:
    a fixed, precise, real-time frequency to let the server computer motor
    trajectories between two "work" calls.
 
-   \param freeMemory indicates the biggest malloc possible on the system
-   when the server has just started. It is used to determine a high
-   limit of memory allocation, thus avoiding later to run out of memory
-   during a new or malloc.
    */
-  UServer(ufloat frequency, int freeMemory, const char* mainName);
+  UServer (ufloat frequency, const char* mainName);
 
-  virtual ~UServer();
+  virtual ~UServer ();
 
   //! Initialization of the server. Displays the header message & init stuff
   /*! This function must be called once the server is operational and
@@ -85,9 +84,7 @@ public:
    the header at start, so this function *must* be called. Beside, it also
    do initalization work for the devices and system variables.
    */
-  void initialize();
-  /// Obsolete name for initialize().
-  void initialization () { initialize(); }
+  void initialize ();
 
   //! Main processing loop of the server
   /*! This function must be called every "frequency_" msec to ensure the proper
@@ -96,7 +93,7 @@ public:
 
    "frequency_" is a parameter of the server, given in the constructor.
    */
-  void work();
+  void work ();
 
   /// Set the system.args list in URBI.
   void main (int argc, const char* argv[]);
@@ -128,17 +125,18 @@ public:
   void debug (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
 
-  void              isolate         ();
-  void              deIsolate       ();
-  bool              isIsolated      ();
+  void isolate ();
+  void deIsolate ();
+  bool isIsolated ();
 
-  virtual ufloat    getTime         () = 0;
-  virtual ufloat    getPower        () = 0;
-  virtual void      getCustomHeader (int line, char* header,
-				     int maxlength) = 0;
+  virtual ufloat getTime () = 0;
+  virtual ufloat getPower () = 0;
+  virtual void getCustomHeader (int line, char* header,
+                                int maxlength) = 0;
 
   /// A list of directory names.
   typedef std::list<std::string> path_type;
+
   /// Where to look for files to load.
   // Should eventually become an Urbi variable.
   // Should probably be changeable with an envvar.
@@ -148,202 +146,243 @@ public:
 
   /// Return the full file name, handle paths.
   /// Return \a f on failure.
-  virtual std::string find_file (const char* f);
+  virtual std::string find_file (const std::string& file_name);
 
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue loadFile (const char *filename,
+  virtual UErrorValue loadFile (const std::string& file_name,
 				UCommandQueue* loadQueue);
 
   /// Save content to a file
   /// This function must be redefined by the robot-specific server.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
-  virtual UErrorValue saveFile (const char *filename,
-				const char * content) = 0;
+  virtual UErrorValue saveFile (const std::string& filename,
+				const std::string& content) = 0;
 
-  void              memoryCheck     ();
+  /// FIXME: Doc?
+  UVariable* getVariable (const std::string& device,
+                          const std::string& property);
 
-  //! Evaluate how much memory is available for a malloc
-  /*! This function tries to evaluate how much memory is available for a malloc,
-   using brute force dichotomic allocation. This is the only known way to get
-   this information on most systems (like OPENR).
-   */
-  // FIXME: Why is this a member function?
-  size_t memory () const;
-
-  UVariable*        getVariable     ( const char *device,
-				      const char *property);
-
-
-  ufloat            getFrequency    ();
-  void              mark            (UString *stopTag);
-  virtual void      reboot          () = 0;
-  virtual void      shutdown        () = 0;
-  virtual void      beforeWork      ();
-  virtual void      afterWork       ();
+  //! Accessor for frequency_.
+  ufloat getFrequency ();
+  void mark (UString* stopTag);
+  virtual void reboot () = 0;
+  virtual void shutdown () = 0;
+  virtual void beforeWork ();
+  virtual void afterWork ();
 
   /// Display a message on the robot console
-  void              display         (const char*);
+  void display (const char*);
   /// Display a set of messages on the robot console.
-  void              display         (const char**);
+  void display (const char**);
 
-  ufloat            lastTime        ();
-  void              updateTime      ();
-  void              addConnection   (UConnection* connection);
-  void              removeConnection(UConnection* connection);
-  int               addAlias        (const char* id, const char* variablename);
+  //! Accessor for lastTime_.
+  ufloat lastTime ();
+  void updateTime ();
+  void addConnection (UConnection& connection);
+  void removeConnection (UConnection& connection);
+  int addAlias (const std::string& id, const std::string& variablename);
 
   // A usual connection to stop dependencies.
   UConnection& getGhostConnection ();
 
-  void              freeze          (const std::string &tag);
-  void              unfreeze        (const std::string &tag);
-  void              block           (const std::string &tag);
-  void              unblock         (const std::string &tag);
-  /// List of active connections: includes one UGhostConnection.
-  std::list<UConnection*>  connectionList;
+  void freeze (const std::string& tag);
+  void unfreeze (const std::string& tag);
+  void block (const std::string& tag);
+  void unblock (const std::string& tag);
+
+  bool isRunningSystemCommands () const;
+  void setSystemCommand (bool val);
+
+  /// Hash of all tags currently 'instanciated'
+  const HMtagtab& getTagTab () const;
+  /// Hash of all tags currently 'instanciated'
+  HMtagtab& getTagTab ();
+
+  /// Hash of group definitions.
+  const HMgrouptab& getGroupTab () const;
+  /// Hash of group definitions.
+  HMgrouptab& getGroupTab ();
+
+  /// Hash of group definitions.
+  const HMfunctiontab& getFunctionTab () const;
+  /// Hash of group definitions.
+  HMfunctiontab& getFunctionTab ();
+
+  /// Hash of objects hierarchy.
+  const HMobjtab& getObjTab () const;
+  /// Hash of objects hierarchy.
+  HMobjtab& getObjTab ();
+
+  /// Hash of function binders.
+  const HMbindertab& getFunctionBinderTab () const;
+  /// Hash of function binders.
+  HMbindertab& getFunctionBinderTab ();
+
+  /// Hash of obj alias definitions.
+  const HMaliastab& getObjAliasTab () const;
+  /// Hash of obj alias definitions.
+  HMaliastab& getObjAliasTab ();
+
+  /// True when the server is paranoid on def checking.
+  bool isDefChecking () const;
+  void setDefCheck (bool val);
+
+  /// Hash of obj name waiting for a remote new.
+  const HMobjWaiting& getObjWaitTab () const;
+  /// Hash of obj name waiting for a remote new.
+  HMobjWaiting& getObjWaitTab ();
+
+  /// Hash of alias definitions.
+  const HMaliastab& getAliasTab () const;
+  HMaliastab& getAliasTab ();
 
   /// Hash of variable values.
-  HMvariabletab            variabletab;
+  const HMvariabletab& getVariableTab () const;
+  HMvariabletab& getVariableTab ();
 
+  /// Hash of functions definition markers.
+  const HMfunctiontab& getFunctionDefTab () const;
+  HMfunctiontab& getFunctionDefTab ();
+
+  /// Hash of event binders.
+  const HMbindertab& getEventBinderTab () const;
+  HMbindertab& getEventBinderTab ();
+
+  void hasSomethingToDelete ();
+
+protected:
+  virtual void     effectiveDisplay         (const char*) = 0;
+
+private:
+  friend class TagInfo;
+
+public: // FIXME remove from the public section.
+  /// List of active connections: includes one UGhostConnection.
+  std::list<UConnection*> connectionList;
+private:
+
+  /// FIXME: Comment me.
+  void mark (TagInfo*);
+
+  /// Hash of variable values.
+  HMvariabletab variabletab;
+
+public: // FIXME remove from the public section.
   /// Hash of variable that have both an access and change notify
-  std::list<UVariable*>    access_and_change_varlist;
+  std::list<UVariable*> access_and_change_varlist;
+private:
 
   /// Hash of function definition.
-  HMfunctiontab            functiontab;
+  HMfunctiontab functiontab;
   /// Hash of functions definition markers.
-  HMfunctiontab            functiondeftab;
+  HMfunctiontab functiondeftab;
   /// Hash of objects hierarchy.
-  HMobjtab                 objtab;
+  HMobjtab objtab;
   /// Hash of alias definitions.
-  HMaliastab               aliastab;
+  HMaliastab aliastab;
   /// Hash of obj alias definitions.
-  HMaliastab               objaliastab;
+  HMaliastab objaliastab;
   /// Hash of group definitions.
-  HMgrouptab               grouptab;
+  HMgrouptab grouptab;
   /// Hash of events, one entry per (name,nbArgs).
-  HMemittab                emittab;
+public:
+  HMemittab emittab;
   /// Hash of events, one entry per name.
-  HMemit2tab               emit2tab;
+  HMemit2tab emit2tab;
+private:
   /// Hash of function binders.
-  HMbindertab              functionbindertab;
+  HMbindertab functionbindertab;
   /// Hash of event binders.
-  HMbindertab              eventbindertab;
+  HMbindertab eventbindertab;
   /// Hash of obj name waiting for a remote new.
-  HMobjWaiting             objWaittab;
+  HMobjWaiting objWaittab;
   /// Hash of all tags currently 'instanciated'
-  HMtagtab                 tagtab;
+  HMtagtab tagtab;
+
+public: // FIXME: remove this from the public section
   /// Array of list of UObjects registered for a system messages
   /// The system message type is the index.
   std::vector<std::list<urbi::USystem*> > systemObjects;
 
   /// Variables to reinit (nbAverage=0).
-  std::list<UVariable*>         reinitList;
+  std::list<UVariable*> reinitList;
+private:
   /// List of variables to delete after a reset.
-  std::list<UVariable*>         resetList;
+  std::list<UVariable*> resetList;
+public:
   /// True when the server is in the process of resting.
   bool reseting;
+private:
   /// Reseting stage.
   int stage;
   /// List of variables to delete in a reset command.
   std::list<UVariable*> varToReset;
 
-  /// Flag used to signal a memory overflow.
-  bool memoryOverflow;
-
+public:
   /// Shows debug or not.
   bool debugOutput;
 
-private:
   /// Name of the main device.
-  UString mainName_;
+  std::string mainName_;
 
-public:
   /// True after a stop command.
   bool somethingToDelete;
   /// True after the initialization phase: all vars are uservar then.
   bool uservarState;
 
   /// Cpu load expressed as a number between 0 and 1.
-  ufloat                   cpuload;
+  ufloat cpuload;
   /// True when there is a cpu overload.
-  bool                     cpuoverload;
+  bool cpuoverload;
   /// A signal must be sent to every connection.
-  bool                     signalcpuoverload;
+  bool signalcpuoverload;
   /// Nb of recent cpu overloads.
-  int                      cpucount;
+  int cpucount;
   /// Threshold for cpu overload alert.
-  ufloat                   cputhreshold;
+  ufloat cputhreshold;
+private:
   /// True when the server is paranoid on def checking.
-  bool                     defcheck;
-  ufloat                   previous2Time,
-			   previous3Time,
-			   currentTime,
-			   previousTime,
-			   latestTime; ///< used to detect cpu overload
+  bool defcheck;
+
+public:
+  ufloat previous2Time;
+  ufloat previous3Time;
+  ufloat currentTime;
+  ufloat previousTime;
+  ufloat latestTime; ///< used to detect cpu overload
+
   /// Stops all commands in all connections.
-  bool                     stopall;
+  bool stopall;
+private:
+
   /// False inside parsing, true otherwise for commands created by the
   /// kernel.
-  bool                     systemcommands;
+  bool systemcommands;
 
-  /// Urbi TCP Port..
-  enum { TCP_PORT = 54000 };
-
-protected:
-  virtual void     effectiveDisplay         (const char*) = 0;
-
-private:
-  void mark (TagInfo*);
-  /// Used by echo()& error().
-  enum { MAXSIZE_INTERNALMESSAGE = 1024 };
-  /// Amount of security mem.
-  enum { SECURITY_MEMORY_SIZE = 100000 };
+  enum
+  {
+    /// Urbi TCP Port..
+    TCP_PORT = 54000,
+    /// Used by echo() & error().
+    MAXSIZE_INTERNALMESSAGE = 1024,
+  };
 
   /// Frequency of the calls to work().
-  ufloat           frequency_;
-  /// Stores memory for emergency use..
-  void*            securityBuffer_;
+  ufloat frequency_;
   /// Is the server isolated.
-  bool             isolate_;
+  bool isolate_;
   /// Store the time on the last call to updateTime();.
-  ufloat           lastTime_;
+  ufloat lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
 };
 
-//! Accessor for frequency_.
-inline ufloat
-UServer::getFrequency()
-{
-  return frequency_;
-}
+/// Unique identifier to create new references.
+int unique ();
 
-//! Accessor for lastTime_.
-inline ufloat
-UServer::lastTime()
-{
-  return lastTime_;
-}
-
-
-inline
-int unic()
-{
-  /// Unique identifier to create new references.
-  static int cnt = 10000;
-  return ++cnt;
-}
-
-// Return an identifier starting with \a prefix, ending with a unique int.
-inline
-std::string unic (const char* prefix)
-{
-  std::ostringstream o;
-  o << prefix << unic();
-  return o.str();
-}
-
+/// Return an identifier starting with \a prefix, ending with a unique int.
+std::string unique (const std::string& prefix);
 
 /*-------------------------.
 | Freestanding functions.  |
@@ -362,12 +401,14 @@ void debug (unsigned t, const char* fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3)));
 
 // Send debugging messages.
-#if URBI_DEBUG
+# if URBI_DEBUG
 // Must be invoked with two pairs of parens.
-# define DEBUG(Msg)  debug Msg
-#else
-# define DEBUG(Msg) ((void) 0)
-#endif
+#  define DEBUG(Msg)  debug Msg
+# else
+#  define DEBUG(Msg) ((void) 0)
+# endif
+
+# include "userver.hxx"
 
 #endif
 

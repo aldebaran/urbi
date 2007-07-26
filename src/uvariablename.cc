@@ -196,10 +196,10 @@ UVariableName::getVariable (UCommand* command, UConnection* connection)
 
   UVariable *v;
   if (nostruct &&
-      libport::mhas(::urbiserver->objtab, getMethod()->c_str()))
-    v = libport::find0(::urbiserver->variabletab, getMethod()->c_str());
+      libport::mhas(::urbiserver->getObjTab (), getMethod()->c_str()))
+    v = libport::find0(::urbiserver->getVariableTab (), getMethod()->c_str());
   else
-    v = libport::find0(::urbiserver->variabletab, fullname_->c_str());
+    v = libport::find0(::urbiserver->getVariableTab (), fullname_->c_str());
   if (cached)
     variable = v;
 
@@ -224,7 +224,7 @@ UVariableName::getFunction(UCommand *command, UConnection *connection)
   if (!fullname_)
     return 0;
 
-  UFunction* f = libport::find0(::urbiserver->functiontab, fullname_->c_str());
+  UFunction* f = libport::find0(::urbiserver->getFunctionTab (), fullname_->c_str());
 
   if (cached)
     function = f;
@@ -241,7 +241,7 @@ UVariableName::isFunction(UCommand *command, UConnection *connection)
   if (!fullname_)
     return false;
   return (libport::mhas (*urbi::functionmap, fullname_->c_str())
-	  || libport::mhas (::urbiserver->functionbindertab, fullname_->c_str()));
+	  || libport::mhas (::urbiserver->getFunctionBinderTab (), fullname_->c_str()));
 }
 
 
@@ -370,11 +370,11 @@ namespace
     return *res;
   }
 
-  /// Descend ::urbiserver->objaliastab looking for \a cp.
+  /// Descend ::urbiserver->getObjAliasTab () looking for \a cp.
   std::string
   resolve_aliases(const std::string& s)
   {
-    return resolve_aliases (::urbiserver->objaliastab, s);
+    return resolve_aliases (::urbiserver->getObjAliasTab (), s);
   }
 
 }
@@ -430,14 +430,14 @@ UVariableName::buildFullname (UCommand* command,
 	    bool function_symbol = false;
 	    std::string n = funid->str().str() + "." + id->str();
 	    const char* cp = n.c_str();
-	    if (libport::mhas(::urbiserver->variabletab, cp)
+	    if (libport::mhas(::urbiserver->getVariableTab (), cp)
 		|| kernel::eventSymbolDefined (cp))
 	      function_symbol = true;
 
 	    // does the symbol exist as an object symbol (direct on inherited)?
 	    bool class_symbol = false;
 
-	    if (const UObj* u = libport::find0(::urbiserver->objtab,
+	    if (const UObj* u = libport::find0(::urbiserver->getObjTab (),
 					       funid->self().c_str()))
 	    {
 	      bool ambiguous = true;
@@ -464,8 +464,8 @@ UVariableName::buildFullname (UCommand* command,
 
 	      // does the symbol exist as a symbol local to the connection?
 	      bool local_symbol =
-		libport::mhas(::urbiserver->variabletab, cp)
-		|| libport::mhas(::urbiserver->functiontab, cp)
+		libport::mhas(::urbiserver->getVariableTab (), cp)
+		|| libport::mhas(::urbiserver->getFunctionTab (), cp)
 		|| kernel::eventSymbolDefined (cp);
 
 	      if (local_symbol && !function_symbol)
@@ -498,7 +498,7 @@ UVariableName::buildFullname (UCommand* command,
       // Comes from a simple IDENTIFIER.
       n = suffix(resolve_aliases(suffix(n)));
 
-    std::string resolved = resolve_aliases (::urbiserver->aliastab, n);
+    std::string resolved = resolve_aliases (::urbiserver->getAliasTab (), n);
     if (resolved != n)
     {
       name = resolved;
