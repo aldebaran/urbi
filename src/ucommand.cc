@@ -4034,7 +4034,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
   if (*oper == "reset")
   {
     connection->sendf (getTag(), "*** Reset in progress\n");
-    ::urbiserver->reseting = true;
+    ::urbiserver->resetting = true;
 
     return UCOMPLETED;
   }

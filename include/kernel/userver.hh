@@ -168,7 +168,15 @@ public:
   void mark (UString* stopTag);
   virtual void reboot () = 0;
   virtual void shutdown () = 0;
+  //! Function called before work
+  /*! Redefine this virtual function if you need to do pre-processing before
+    the work function starts.
+  */
   virtual void beforeWork ();
+  //! Function called after work
+  /*! Redefine this virtual function if you need to do post-processing
+    before the work function ends.
+  */
   virtual void afterWork ();
 
   /// Display a message on the robot console
@@ -265,6 +273,25 @@ private:
   /// FIXME: Comment me.
   void mark (TagInfo*);
 
+  /// \{ Various parts of @c UServer::work.
+  /// Execute Timers
+  void work_exec_timers_ ();
+  /// Access & Change variable list
+  void work_access_and_change_ ();
+  /// Scan currently opened connections for ongoing work
+  void work_handle_connections_ ();
+  /// Scan currently opened connections for deleting marked commands or
+  /// killall order
+  void work_handle_stopall_ ();
+  /// Values final assignment and nbAverage reset to 0
+  void work_blend_values_ ();
+  /// Execute Hub Updaters
+  void work_execute_hub_updater_ ();
+  void work_test_cpuoverload_ ();
+  /// Resetting procedure
+  void work_reset_if_needed_ ();
+  /// \}
+
   /// Hash of variable values.
   HMvariabletab variabletab;
 
@@ -311,10 +338,10 @@ private:
   /// List of variables to delete after a reset.
   std::list<UVariable*> resetList;
 public:
-  /// True when the server is in the process of resting.
-  bool reseting;
+  /// True when the server is in the process of resetting.
+  bool resetting;
 private:
-  /// Reseting stage.
+  /// Resetting stage.
   int stage;
   /// List of variables to delete in a reset command.
   std::list<UVariable*> varToReset;

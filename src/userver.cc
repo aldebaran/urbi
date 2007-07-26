@@ -72,7 +72,7 @@ int usedMemory;
 
 UServer::UServer(ufloat frequency,
 		 const char* mainName)
-  : reseting (false),
+  : resetting (false),
     stage (0),
     debugOutput (false),
     mainName_ (mainName),
@@ -204,29 +204,21 @@ UServer::main (int argc, const char* argv[])
   new UVariable(MAINDEVICE, "args", arglistv);
 }
 
-//! Function called before work
-/*! Redefine this virtual function if you need to do pre-processing before
- the work function starts.
- */
 void
 UServer::beforeWork()
 {
 }
 
-//! Function called after work
-/*! Redefine this virtual function if you need to do post-processing before
- the work function ends.
- */
 void
 UServer::afterWork()
 {
 }
 
-
 void
-UServer::work()
+UServer::work ()
 {
   libport::BlockLock bl(this);
+
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;
@@ -234,7 +226,29 @@ UServer::work()
   previousTime  = currentTime;
   currentTime   = lastTime();
 
-  // Execute Timers
+  work_exec_timers_ ();
+
+  beforeWork();
+
+  work_access_and_change_ ();
+  work_handle_connections_ ();
+  work_handle_stopall_ ();
+  work_blend_values_ ();
+  work_execute_hub_updater_ ();
+
+  afterWork();
+
+  updateTime();
+  latestTime = lastTime();
+
+  work_test_cpuoverload_ ();
+
+  work_reset_if_needed_ ();
+}
+
+void
+UServer::work_exec_timers_ ()
+{
   for (urbi::UTimerTable::iterator i = urbi::timermap->begin();
        i != urbi::timermap->end();
        ++i)
@@ -243,16 +257,20 @@ UServer::work()
       (*i)->call();
       (*i)->lastTimeCalled = currentTime;
     }
+}
 
-
-  beforeWork();
-  // Access & Change variable list
+void
+UServer::work_access_and_change_ ()
+{
   for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
        i != access_and_change_varlist.end ();
        ++i)
     (*i)->get ();
+}
 
-  // Scan currently opened connections for ongoing work
+void
+UServer::work_handle_connections_ ()
+{
   for (std::list<UConnection*>::iterator r = connectionList.begin();
        r != connectionList.end();
        ++r)
@@ -294,10 +312,12 @@ UServer::work()
 	(*r)->received("");
       }
     }
+}
 
-  // Scan currently opened connections for deleting marked
-  // commands or killall order
-  if (reseting && stage==0)
+void
+UServer::work_handle_stopall_ ()
+{
+  if (resetting && stage==0)
     stopall = true;
 
   for (std::list<UConnection*>::iterator r = connectionList.begin();
@@ -315,8 +335,11 @@ UServer::work()
 
   somethingToDelete = false;
   stopall = false;
+}
 
-  // Values final assignment and nbAverage reset to 0
+void
+UServer::work_blend_values_ ()
+{
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
     if ((*i)->activity == 2)
@@ -354,8 +377,11 @@ UServer::work()
 
       ++i;
     }
+}
 
-  // Execute Hub Updaters
+void
+UServer::work_execute_hub_updater_ ()
+{
   for (urbi::UTimerTable::iterator i = urbi::updatemap->begin();
        i != urbi::updatemap->end();
        ++i)
@@ -364,13 +390,11 @@ UServer::work()
       (*i)->call();
       (*i)->lastTimeCalled = currentTime;
     }
+}
 
-  // after work
-  afterWork();
-
-  updateTime();
-  latestTime = lastTime();
-
+void
+UServer::work_test_cpuoverload_ ()
+{
   cpuload = (latestTime - currentTime)/getFrequency();
 
   if (!cpuoverload)
@@ -387,105 +411,106 @@ UServer::work()
     else if (cpucount > 0)
       --cpucount;
 
-
   if (cpuoverload && cpuload < 1)
   {
     cpuoverload = false;
     cpucount = 0;
   }
+}
 
-  // Reseting procedure
-  if (reseting)
+void
+UServer::work_reset_if_needed_ ()
+{
+  if (!resetting)
+    return;
+  ++stage;
+  if (stage == 1)
   {
-    ++stage;
-    if (stage == 1)
-    {
-      //delete objects first
-      for (HMvariabletab::iterator i = variabletab.begin();
-	   i != variabletab.end();
-	   ++i)
-	if (i->second->value
-	    && i->second->value->dataType == DATA_OBJ)
-	  varToReset.push_back(i->second);
+    //delete objects first
+    for (HMvariabletab::iterator i = variabletab.begin();
+         i != variabletab.end();
+         ++i)
+      if (i->second->value
+          && i->second->value->dataType == DATA_OBJ)
+        varToReset.push_back(i->second);
 
-      while (!varToReset.empty())
-	for (std::list<UVariable*>::iterator it = varToReset.begin();
-	     it != varToReset.end();)
-	  if ((*it)->isDeletable())
-	  {
-	    delete *it;
-	    it = varToReset.erase(it);
-	  }
-	  else
-	    ++it;
+    while (!varToReset.empty())
+      for (std::list<UVariable*>::iterator it = varToReset.begin();
+           it != varToReset.end();)
+        if ((*it)->isDeletable())
+        {
+          delete *it;
+          it = varToReset.erase(it);
+        }
+        else
+          ++it;
 
-      //delete hubs
-      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	   i != urbi::objecthublist->end();
-	   ++i)
-	delete (*i)->getUObjectHub ();
+    //delete hubs
+    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+         i != urbi::objecthublist->end();
+         ++i)
+      delete (*i)->getUObjectHub ();
 
+    //delete the rest
+    for (HMvariabletab::iterator i = variabletab.begin();
+         i != variabletab.end();
+         ++i)
+      if (i->second->uservar)
+        varToReset.push_back(i->second);
 
-      //delete the rest
-      for (HMvariabletab::iterator i = variabletab.begin();
-	   i != variabletab.end();
-	   ++i)
-	if (i->second->uservar)
-	  varToReset.push_back(i->second);
+    libport::deep_clear (varToReset);
 
-      libport::deep_clear (varToReset);
+    aliastab.clear();
+    emittab.clear();
+    functiontab.clear();  //This leaks awfully...
+    grouptab.clear();
+    objaliastab.clear();
 
-      aliastab.clear();
-      emittab.clear();
-      functiontab.clear();  //This leaks awfully...
-      grouptab.clear();
-      objaliastab.clear();
+    // do not clear tagtab, everything is refcounted and will be cleared
+    // when commands will be
+    //tagtab.clear();
 
-      // do not clear tagtab, everything is refcounted and will be cleared
-      // when commands will be
-      //tagtab.clear();
+    for (std::list<UConnection*>::iterator i = connectionList.begin();
+         i != connectionList.end();
+         ++i)
+      if ((*i)->isActive())
+        (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
 
-      for (std::list<UConnection*>::iterator i = connectionList.begin();
-	   i != connectionList.end();
-	   ++i)
-	if ((*i)->isActive())
-	  (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
+    //restart hubs
+    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+         i != urbi::objecthublist->end();
+         ++i)
+      (*i)->init((*i)->name);
 
-      //restart hubs
-      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	   i != urbi::objecthublist->end();
-	   ++i)
-	(*i)->init((*i)->name);
+    //restart uobjects
+    for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
+         i != urbi::objectlist->end();
+         ++i)
+      (*i)->init((*i)->name);
 
-      //restart uobjects
-      for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-	   i != urbi::objectlist->end();
-	   ++i)
-	(*i)->init((*i)->name);
+    //reload URBI.INI
+    loadFile("URBI.INI", &ghost_->recvQueue());
+    char resetsignal[255];
+    strcpy(resetsignal, "var __system__.resetsignal;");
+    ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
+    ghost_->newDataAdded = true;
 
-      //reload URBI.INI
-      loadFile("URBI.INI", &ghost_->recvQueue());
-      char resetsignal[255];
-      strcpy(resetsignal, "var __system__.resetsignal;");
-      ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
-      ghost_->newDataAdded = true;
-    }
-    else if (libport::mhas(variabletab, "__system__.resetsignal"))
-    {
-      //reload CLIENT.INI
-      for (std::list<UConnection*>::iterator i = connectionList.begin();
-	   i != connectionList.end();
-	   ++i)
-	if ((*i)->isActive() && (*i) != ghost_)
-	{
-	  (*i)->send("*** Restart completed.\n", "reset");
-	  loadFile("CLIENT.INI", &(*i)->recvQueue());
-	  (*i)->newDataAdded = true;
-	  (*i)->send("*** Ready.\n", "reset");
-	}
-      reseting = false;
-      stage = 0;
-    }
+  }
+  else if (libport::mhas(variabletab, "__system__.resetsignal"))
+  {
+    //reload CLIENT.INI
+    for (std::list<UConnection*>::iterator i = connectionList.begin();
+         i != connectionList.end();
+         ++i)
+      if ((*i)->isActive() && (*i) != ghost_)
+      {
+        (*i)->send("*** Restart completed.\n", "reset");
+        loadFile("CLIENT.INI", &(*i)->recvQueue());
+        (*i)->newDataAdded = true;
+        (*i)->send("*** Ready.\n", "reset");
+      }
+    resetting = false;
+    stage = 0;
   }
 }
 

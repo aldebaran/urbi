@@ -1,5 +1,16 @@
 2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Split the UServer::work method.
+	* include/kernel/userver.hh (work_exec_timers_,
+	work_access_and_change_, work_handle_connections_,
+	work_handle_stopall_, work_blend_values_, work_execute_hub_updater_,
+	work_test_cpuoverload_, work_reset_if_needed_): New.
+	(reseting): Rename as `resetting'.
+	* src/userver.cc: Implement.
+	* src/ucommand.cc: Adjust.
+
+2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	More memory-tracking-related clean up.
 	* include/kernel/ucomplaints.hh,
 	* src/ucomplaints.cc,
