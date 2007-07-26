@@ -267,8 +267,6 @@ UServer::work()
 	signalcpuoverload = false;
       }
 
-      (*r)->errorCheck(UERROR_MEMORY_OVERFLOW);
-      (*r)->errorCheck(UERROR_MEMORY_WARNING);
       (*r)->errorCheck(UERROR_SEND_BUFFER_FULL);
       (*r)->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
       (*r)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);

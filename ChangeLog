@@ -1,5 +1,13 @@
 2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	More memory-tracking-related clean up.
+	* include/kernel/ucomplaints.hh,
+	* src/ucomplaints.cc,
+	* src/userver.cc: Remove UERROR_MEMORY_OVERFLOW and
+	UERROR_MEMORY_WARNING.
+
+2007-07-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Remove the memory tracking related code.
 	* include/kernel/mem-track.hh: Remove.
 	* Makefile.am,
