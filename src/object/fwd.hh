@@ -55,6 +55,8 @@ namespace object
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE)
 # undef DECLARE
 
+  class UrbiException;
+
 } // namespace object
 
 #endif // !OBJECT_FWD_HH

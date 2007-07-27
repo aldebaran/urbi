@@ -1,5 +1,14 @@
 2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
 
+	Add UrbiException class, handle some maths errors.
+	* src/object/Makefile.am: Add urbi-exception to libobject sources.
+	* src/object/float-class.cc: Handle /0 and %0 errors.
+	* src/object/fwd.hh: Add UrbiException.
+	* src/object/urbi-exception.cc: New.
+	* src/object/urbi-exception.hh: New.
+
+2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
+
 	Split primitices.cc.
 	* src/object/Makefile.am: Add new files to libobject sources.
 	* src/object/code-class.cc: New.

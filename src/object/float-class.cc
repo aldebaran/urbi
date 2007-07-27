@@ -8,6 +8,7 @@
 #include "object/float-class.hh"
 #include "object/object.hh"
 #include "object/atom.hh"
+#include "object/urbi-exception.hh"
 
 namespace object
 {
@@ -16,6 +17,34 @@ namespace object
   /*-------------------.
   | Float primitives.  |
   `-------------------*/
+
+  // This macro is used to generate modulo
+  // and division functions.
+#define FCT_OP_PROTECTED(Name, Operator, ErrorMessage)                  \
+  static                                                                \
+  libport::ufloat                                                       \
+  float_##Name (libport::ufloat l, libport::ufloat r)                   \
+  {                                                                     \
+    if (r == 0)                                                         \
+      throw UrbiException("Operator " #Operator, ErrorMessage);         \
+    return l Operator r;                                                \
+  }
+
+#define FCT_M_PROTECTED(Name, Method, ErrorMessage)                     \
+  static                                                                \
+  libport::ufloat                                                       \
+  float_##Name (libport::ufloat l, libport::ufloat r)                   \
+  {                                                                     \
+    if (r == 0)                                                         \
+      throw UrbiException(#Method, ErrorMessage);                       \
+    return Method(l, r);                                                \
+  }
+
+  FCT_OP_PROTECTED(div, /, "division by 0")
+  FCT_M_PROTECTED(mod, fmod, "modulo by 0")
+
+#undef FCT_M_PROTECTED
+#undef FCT_OP_PROTECTED
 
   static libport::ufloat
   float_req (libport::ufloat l, libport::ufloat r)
@@ -131,11 +160,11 @@ namespace object
 
 
   DECLARE_OP(add, +)
-  DECLARE_OP(div, /)
+  DECLARE_M(div, float_div)
   DECLARE_OP(mul, *)
   DECLARE_OP(sub, -)
   DECLARE_M(pow, powf)
-  DECLARE_M(mod, fmod)
+  DECLARE_M(mod, float_mod)
 
   DECLARE_OP(land, &&)
   DECLARE_OP(lor, ||)

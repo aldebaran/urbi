@@ -28,7 +28,9 @@ object-class.cc					\
 primitive-class.hh				\
 primitive-class.cc				\
 string-class.hh					\
-string-class.cc
+string-class.cc					\
+urbi-exception.hh				\
+urbi-exception.cc
 
 
 
