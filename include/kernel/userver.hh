@@ -35,6 +35,12 @@
 # include "kernel/utypes.hh"
 # include "kernel/tag-info.hh"
 
+//# include "runner/scheduler.hh"
+namespace runner
+{
+  class Scheduler;
+}
+
 extern const char* EXTERNAL_MESSAGE_TAG;
 extern const char* UNKNOWN_TAG;
 
@@ -259,14 +265,21 @@ public:
 
   void hasSomethingToDelete ();
 
+  const runner::Scheduler& getScheduler () const;
+  runner::Scheduler& getScheduler ();
+
 protected:
   virtual void     effectiveDisplay         (const char*) = 0;
 
 private:
   friend class TagInfo;
 
+  // Pointer to stop the header dependency.
+  runner::Scheduler* scheduler_;
+
 public: // FIXME remove from the public section.
   /// List of active connections: includes one UGhostConnection.
+  // FIXME: This is meant to become a runner::Job and move out of this class.
   std::list<UConnection*> connectionList;
 private:
 

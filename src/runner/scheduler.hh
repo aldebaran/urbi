@@ -31,4 +31,6 @@ namespace runner
 
 } // namespace runner
 
+# include "scheduler.hxx"
+
 #endif // !RUNNER_SCHEDULER_HH

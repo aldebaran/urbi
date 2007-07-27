@@ -14,10 +14,12 @@ namespace runner
 {
 
   inline
-  Runner::Runner (rContext ctx)
-    : context_ (ctx),
+  Runner::Runner (rContext ctx, Scheduler& sched)
+    : Job (sched),
+      context_ (ctx),
       current_ (0)
-  {}
+  {
+  }
 
   inline
   Runner::~Runner ()
@@ -52,7 +54,7 @@ namespace runner
 
   inline
   void
-  Runner::run ()
+  Runner::work ()
   {
   }
 

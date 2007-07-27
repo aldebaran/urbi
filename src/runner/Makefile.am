@@ -9,4 +9,5 @@ job.hxx						\
 runner.hh					\
 runner.hxx					\
 runner.cc					\
-scheduler.hh
+scheduler.hh					\
+scheduler.hxx

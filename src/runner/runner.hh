@@ -11,9 +11,11 @@
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
 # include "runner/job.hh"
+# include "runner/scheduler.hh"
 
 namespace runner
 {
+
 
   /// Ast executor.
   class Runner : public ast::DefaultConstVisitor, public Job
@@ -30,14 +32,11 @@ namespace runner
     /// \name Ctor & dtor.
     /// \{
     /// Construct a Runner.
-    Runner (rContext ctx);
+    Runner (rContext ctx, Scheduler& scheduler);
 
     /// Destroy a Runner.
     virtual ~Runner ();
     /// \}
-
-    /// Do the actual work.  Implementation of \c Job::run.
-    virtual void run ();
 
     /// \name Evaluation.
     /// \{
@@ -63,12 +62,16 @@ namespace runner
     virtual void operator() (const ast::ListExp& e);
     /// \}
 
+  protected:
+    /// Do the actual work.  Implementation of \c Job::run.
+    virtual void work ();
+
   private:
     /// The URBI Context used to evaluate.
-    /// Wraps an UConnection.
+    /// Wraps an UConnection (ATM).
     rContext context_;
 
-    /// The current value during the evaluation of the ast.
+    /// The current value during the evaluation of the AST.
     rObject current_;
   };
 

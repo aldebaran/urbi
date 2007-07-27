@@ -197,6 +197,18 @@ UServer::getEventBinderTab ()
   return eventbindertab;
 }
 
+inline const runner::Scheduler&
+UServer::getScheduler () const
+{
+  return *scheduler_;
+}
+
+inline runner::Scheduler&
+UServer::getScheduler ()
+{
+  return *scheduler_;
+}
+
 inline
 int unique ()
 {

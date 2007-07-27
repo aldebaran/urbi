@@ -13,6 +13,28 @@
 
 2007-07-27  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Start to integrate the Scheduler in the UServer.
+	* include/kernel/userver.hh (getScheduler): New.
+	* include/kernel/userver.hxx (getScheduler): Implement.
+	* src/runner/job.hh: A Job is copyable.  Change the interface:
+	(ctor): Take a Scheduler in argument.
+	(setScheduler, getScheduler): New.
+	(run): No longer virtual, calls a protected pure virtual `work'
+	instead.
+	(work, terminate): New.
+	(start, stop): Become protected.
+	* src/runner/job.hxx: Add lots of assert.
+	(setScheduler, getScheduler, run, terminate, start, stop): Implement.
+	* src/runner/runner.hh,
+	* src/runner/runner.hxx: Adjust accordingly.
+	* src/runner/scheduler.hxx: New.
+	* src/runner/scheduler.hh: Include the .hxx file.
+	* src/uconnection.cc (execute): Give the Scheduler to the Runner.
+	* src/userver.cc: Adjust.
+	* src/runner/Makefile.am: Add the new file.
+
+2007-07-27  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Add new classes for the Scheduler.
 	The Scheduler itself is not yet used.
 	* src/runner/job.hh: New.

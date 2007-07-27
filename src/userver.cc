@@ -52,6 +52,8 @@
 #include "ufunction.hh"
 #include "ughostconnection.hh"
 
+#include "runner/scheduler.hh"
+
 // Global server reference
 UServer *urbiserver= 0;
 
@@ -72,7 +74,8 @@ int usedMemory;
 
 UServer::UServer(ufloat frequency,
 		 const char* mainName)
-  : resetting (false),
+  : scheduler_ (new runner::Scheduler),
+    resetting (false),
     stage (0),
     debugOutput (false),
     mainName_ (mainName),
@@ -88,8 +91,6 @@ UServer::UServer(ufloat frequency,
     frequency_(frequency),
     isolate_ (false)
 {
-  ::urbiserver = 0;
-
   ::urbiserver = this;
 
   // Create system events
@@ -293,11 +294,11 @@ UServer::work_handle_connections_ ()
       // Run the connection's command queue:
       if ((*r)->activeCommand)
       {
-	(*r)->obstructed = true; // will be changed to 'false'
-	//if the whole tree is visited
+	(*r)->obstructed = true; // will be changed to 'false' if the whole
+                                 // tree is visited
 	(*r)->treeLock.lock();
-	(*r)->inwork = true;   // to distinguish this call of
-	//execute from the one in receive
+	(*r)->inwork = true; // to distinguish this call of execute from the
+                             // one in receive
 	(*r)->execute((*r)->activeCommand);
 	(*r)->inwork = false;
 	(*r)->treeLock.unlock();
@@ -305,9 +306,8 @@ UServer::work_handle_connections_ ()
 
       if ((*r)->newDataAdded)
       {
-	// used by loadFile and exec to
-	// delay the parsing after the completion
-	// of execute().
+	// used by loadFile and exec to delay the parsing after the
+	// completion of execute().
 	(*r)->newDataAdded = false;
 	(*r)->received("");
       }

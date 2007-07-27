@@ -1006,7 +1006,7 @@ UConnection::execute(ast::Ast*& execCommand)
     return;
 
   // std::cerr << "Command is: " << *execCommand << std::endl;
-  runner::Runner r(context_);
+  runner::Runner r(context_, ::urbiserver->getScheduler ());
   r(execCommand);
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 

@@ -6,30 +6,82 @@
 #ifndef RUNNER_JOB_HXX
 # define RUNNER_JOB_HXX
 
+# include <cassert>
 # include "runner/job.hh"
 
 namespace runner
 {
 
   inline
-  Job::Job ()
+  Job::Job (Scheduler& scheduler)
+    : scheduler_ (&scheduler),
+      started_ (false)
   {
+    assert (scheduler_);
   }
 
   inline
   Job::~Job ()
   {
+    assert (scheduler_);
+    scheduler_ = 0;
+    started_ = false;
   }
 
   inline
   void
-  Job::start ()
+  Job::setScheduler (Scheduler& scheduler)
+  {
+    scheduler_ = &scheduler;
+    assert (scheduler_);
+  }
+
+  inline
+  const Scheduler&
+  Job::getScheduler () const
+  {
+    assert (scheduler_);
+    return *scheduler_;
+  }
+
+  inline
+  Scheduler&
+  Job::getScheduler ()
+  {
+    assert (scheduler_);
+    return *scheduler_;
+  }
+
+  inline
+  void
+  Job::run ()
+  {
+    assert (scheduler_);
+    if (!started_)
+    {
+      started_ = true;
+      start ();
+    }
+    work ();
+  }
+
+  inline
+  void
+  Job::terminate ()
+  {
+    assert (scheduler_);
+    assert (started_);
+    stop ();
+    started_ = false;
+  }
+
+  inline
+  void Job::start ()
   {
   }
 
   inline
-  void
-  Job::stop ()
+  void Job::stop ()
   {
   }
 
