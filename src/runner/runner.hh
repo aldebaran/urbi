@@ -10,12 +10,13 @@
 
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
+# include "runner/job.hh"
 
 namespace runner
 {
 
-  /// Ast pretty-printer.
-  class Runner : public ast::DefaultConstVisitor
+  /// Ast executor.
+  class Runner : public ast::DefaultConstVisitor, public Job
   {
   public:
     /// \name Useful shorthands.
@@ -34,6 +35,9 @@ namespace runner
     /// Destroy a Runner.
     virtual ~Runner ();
     /// \}
+
+    /// Do the actual work.  Implementation of \c Job::run.
+    virtual void run ();
 
     /// \name Evaluation.
     /// \{

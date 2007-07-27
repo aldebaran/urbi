@@ -43,11 +43,17 @@ namespace runner
   Runner::target (ast::Exp* n)
   {
     // FIXME: For the time being, if there is no target, it is the
-    // Connection object which is used, sort of a Lobby for IO.
+    // Connection object which is used, sort of a Lobby for Io.
     if (n)
       return eval (*n);
     else
       return context_;
+  }
+
+  inline
+  void
+  Runner::run ()
+  {
   }
 
 } // namespace runner
