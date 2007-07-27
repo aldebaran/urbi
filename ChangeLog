@@ -1,3 +1,11 @@
+2007-07-27  mefyl  <mefyl@lrde.epita.fr>
+
+	Add concatenation operator on lists.
+	* src/object/primitives.cc: Here.
+	* src/object/atom.hh,
+	* src/object/atom.hxx,
+	* src/object/fwd.hh: Aesthetic changes and coding-style fixes.
+
 2007-07-27  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Add new classes for the Scheduler.

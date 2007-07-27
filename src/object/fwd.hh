@@ -35,14 +35,13 @@ namespace object
   Macro(context,   Context)				\
   Macro(float,     Float)				\
   Macro(integer,   Integer)				\
-  Macro(primitive, Primitive)				\
-  Macro(string,    String)                              \
   Macro(list,      List)                                \
+  Macro(primitive, Primitive)				\
+  Macro(string,    String)
 
 # define APPLY_ON_ALL_PRIMITIVES(Macro)			\
   Macro(object,    Object)				\
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)             \
-
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)
 
   // All the atoms.
   template <typename Traits>
@@ -51,7 +50,7 @@ namespace object
 # define DECLARE(What, Name)				\
   struct What ## _traits;				\
   typedef Atom< What ## _traits > Name;			\
-  typedef libport::shared_ptr < Name > r ## Name;       \
+  typedef libport::shared_ptr < Name > r ## Name;
 
   APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE)
 # undef DECLARE

@@ -91,6 +91,17 @@ namespace object
   };
 
 
+  /*-------.
+  | List.  |
+  `-------*/
+
+  struct list_traits
+  {
+    typedef std::list<rObject> type;
+    enum { kind = Object::kind_list };
+  };
+
+
   /*------------.
   | Primitive.  |
   `------------*/
@@ -110,17 +121,6 @@ namespace object
   {
     typedef std::string type;
     enum { kind = Object::kind_string };
-  };
-
-
-  /*-------.
-  | List.  |
-  `-------*/
-
-  struct list_traits
-  {
-    typedef std::list<rObject> type;
-    enum { kind = Object::kind_list };
   };
 
 } // namespace object
