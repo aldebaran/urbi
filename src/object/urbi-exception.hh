@@ -32,7 +32,7 @@ namespace object
     /// \}
 
     /// Return the exception's error message.
-    virtual const char* UrbiException::what () const throw ();
+    virtual const char* what () const throw ();
 
   private:
     /// Error message.

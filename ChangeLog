@@ -1,5 +1,12 @@
 2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
 
+	Fix minor problems in UrbiException.
+	* src/object/urbi-exception.cc: Aesthetic change.
+	* src/object/urbi-exception.hh:
+        Remove superfluous prototype specification.
+
+2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
+
 	Add UrbiException class, handle some maths errors.
 	* src/object/Makefile.am: Add urbi-exception to libobject sources.
 	* src/object/float-class.cc: Handle /0 and %0 errors.

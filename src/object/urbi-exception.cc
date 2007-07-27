@@ -18,7 +18,8 @@ namespace object
   UrbiException::~UrbiException () throw ()
   {}
 
-  const char* UrbiException::what () const throw ()
+  const char*
+  UrbiException::what () const throw ()
   {
     return msg_.c_str();
   }
