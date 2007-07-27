@@ -8,54 +8,52 @@
 #include "object/list-class.hh"
 #include "object/atom.hh"
 #include "object/object.hh"
+#include "primitives.hh"
 
 namespace object
 {
   rObject list_class;
 
-  /*------------------.
-  | List primitives.  |
-  `------------------*/
+  /*----------------------------.
+  | Primitives implementation.  |
+  `----------------------------*/
 
-  /// Concatenate two list
-  /**
-   * @return A fresh list, concatenation of \a lsh and \a rhs
-   */
-  static rList list_concat(rList& lhs, const rList& rhs)
+  namespace
   {
-    // Copy lhs
-    list_traits::type res(lhs->value_get());
+    /// Concatenate two list
+    /**
+     * @return A fresh list, concatenation of \a lhs and \a rhs
+     */
+    static const list_traits::type
+    list_concat(const list_traits::type& lhs,
+                const list_traits::type& rhs)
+    {
+      // Copy lhs
+      list_traits::type res(lhs);
 
-    // Append rhs
+      // Append rhs
 
-    // FIXME: I can't explain why, but the line below result in an
-    // infinite loop. Use foreach instead for now.
+      // FIXME: I can't explain why, but the line below result in an
+      // infinite loop. Use foreach instead for now.
 
-    //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
-    BOOST_FOREACH (const rObject& o, rhs->value_get())
-      res.push_back(o);
+      //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
+      BOOST_FOREACH (const rObject& o, rhs)
+        res.push_back(o);
 
-    return new List(res);
+      return res;
+    }
   }
 
-  rObject
-  list_class_ip_concat (objects_type args)
-  {
-    assert(args[0]->kind_get() == Object::kind_list);
-    assert(args[1]->kind_get() == Object::kind_list);
-    rList lhs = args[0].unsafe_cast<List>();
-    rList rhs = args[1].unsafe_cast<List>();
-    rList res = list_concat(lhs, rhs);
-    return res;
-  }
+  /*-------------------------.
+  | Primitives declaration.  |
+  `-------------------------*/
 
+  PRIMITIVE_2(list, concat, list_concat, List, List, List);
 
-  /// Initialize the List class.
   void
   list_class_initialize ()
   {
-    list_class->slot_set ("+",
-                          new Primitive(list_class_ip_concat));
+    DECLARE_PRIMITIVE(list, +, concat);
   }
 
 }; // namespace object

@@ -127,132 +127,111 @@ namespace object
     return x * x;
   }
 
-#define DECLARE(Name, Call)				\
-  rObject						\
-  float_class_ ## Name (objects_type args)		\
-  {							\
-    assert(args[0]->kind_get() == Object::kind_float);	\
-    assert(args[1]->kind_get() == Object::kind_float);	\
-    rFloat l = args[0].unsafe_cast<Float> ();		\
-    rFloat r = args[1].unsafe_cast<Float> ();		\
-    return new Float(Call);				\
+#define PRIMITIVE_1_FLOAT(Name, Call)                   \
+  rObject                                               \
+  float_class_ ## Name (objects_type args)              \
+  {                                                     \
+    FETCH_ARG(1, Float);                                \
+    return new Float(Call(arg1->value_get()));          \
   }
 
-#define DECLARE_U(Name, Call)				\
-  rObject						\
-  float_class_ ## Name (objects_type args)		\
-  {							\
-    assert(args[1]->kind_get() == Object::kind_float);	\
-    rFloat x = args[1].unsafe_cast<Float> ();		\
-    return new Float(Call);				\
-  }
+#define PRIMITIVE_2_FLOAT(Name, Call)                   \
+  PRIMITIVE_2(float, Name, Call, Float, Float, Float)
 
-#define DECLARE_M(Name, Method)				\
-  DECLARE(Name, Method(l->value_get(), r->value_get()))
-
+#define PRIMITIVE_OP_FLOAT(Name, Op)                    \
+  PRIMITIVE_OP(float, Name, Op, Float, Float, Float)
 
   //FIXME: check if rvalue is 0 for % and / operators
-#define DECLARE_OP(Name, Operator)			\
-  DECLARE(Name, l->value_get() Operator r->value_get())
+  PRIMITIVE_OP_FLOAT(add, +)
+  PRIMITIVE_2_FLOAT(div, float_div)
+  PRIMITIVE_OP_FLOAT(mul, *)
+  PRIMITIVE_OP_FLOAT(sub, -)
+  PRIMITIVE_2_FLOAT(pow, powf)
+  PRIMITIVE_2_FLOAT(mod, float_mod)
 
-#define DECLARE_U_M(Name, Method)		\
-  DECLARE_U(Name, Method(x->value_get()))
+  PRIMITIVE_OP_FLOAT(land, &&)
+  PRIMITIVE_OP_FLOAT(lor, ||)
 
+  PRIMITIVE_OP_FLOAT(equ, ==)
+  PRIMITIVE_2_FLOAT(req, float_req) //REQ ~=
+  PRIMITIVE_2_FLOAT(deq, float_deq) //DEQ =~=
+  PRIMITIVE_2_FLOAT(peq, float_peq) //PEQ %=
+  PRIMITIVE_OP_FLOAT(neq, !=)
 
-  DECLARE_OP(add, +)
-  DECLARE_M(div, float_div)
-  DECLARE_OP(mul, *)
-  DECLARE_OP(sub, -)
-  DECLARE_M(pow, powf)
-  DECLARE_M(mod, float_mod)
+  PRIMITIVE_OP_FLOAT(lth, <)
+  PRIMITIVE_OP_FLOAT(leq, <=)
+  PRIMITIVE_OP_FLOAT(gth, >)
+  PRIMITIVE_OP_FLOAT(geq, >=)
 
-  DECLARE_OP(land, &&)
-  DECLARE_OP(lor, ||)
+  PRIMITIVE_1_FLOAT(sin, sin)
+  PRIMITIVE_1_FLOAT(asin, asin)
+  PRIMITIVE_1_FLOAT(cos, cos)
+  PRIMITIVE_1_FLOAT(acos, acos)
+  PRIMITIVE_1_FLOAT(tan, tan)
+  PRIMITIVE_1_FLOAT(atan, atan)
+  PRIMITIVE_1_FLOAT(sgn, float_sgn)
+  PRIMITIVE_1_FLOAT(abs, fabs)
+  PRIMITIVE_1_FLOAT(exp, exp)
+  PRIMITIVE_1_FLOAT(log, log)
+  PRIMITIVE_1_FLOAT(round, round)
+  PRIMITIVE_1_FLOAT(random, float_random)
+  PRIMITIVE_1_FLOAT(trunc, trunc)
+  PRIMITIVE_1_FLOAT(sqr, float_sqr)
+  PRIMITIVE_1_FLOAT(sqrt, sqrt)
 
-  DECLARE_OP(equ, ==)
-  DECLARE_M(req, float_req) //REQ ~=
-  DECLARE_M(deq, float_deq) //DEQ =~=
-  DECLARE_M(peq, float_peq) //PEQ %=
-  DECLARE_OP(neq, !=)
-
-  DECLARE_OP(lth, <)
-  DECLARE_OP(leq, <=)
-  DECLARE_OP(gth, >)
-  DECLARE_OP(geq, >=)
-
-
-  DECLARE_U_M(sin, sin)
-  DECLARE_U_M(asin, asin)
-  DECLARE_U_M(cos, cos)
-  DECLARE_U_M(acos, acos)
-  DECLARE_U_M(tan, tan)
-  DECLARE_U_M(atan, atan)
-  DECLARE_U_M(sgn, float_sgn)
-  DECLARE_U_M(abs, fabs)
-  DECLARE_U_M(exp, exp)
-  DECLARE_U_M(log, log)
-  DECLARE_U_M(round, round)
-  DECLARE_U_M(random, float_random)
-  DECLARE_U_M(trunc, trunc)
-  DECLARE_U_M(sqr, float_sqr)
-  DECLARE_U_M(sqrt, sqrt)
-
-#undef DECLARE_U_M
-#undef DECLARE_M
-#undef DECLARE_OP
-#undef DECLARE
-#undef DECLARE_U
+#undef PRIMITIVE_2_FLOAT
+#undef PRIMITIVE_1_FLOAT
+#undef PRIMITIVE_OP_FLOAT
 
   /// Initialize the Float class.
   void
   float_class_initialize ()
   {
-#define DECLARE(Name, Operator)						\
-      float_class->slot_set (#Operator,					\
-			     new Primitive(float_class_ ## Name))
+#define DECLARE(Call, Name)                      \
+    DECLARE_PRIMITIVE(float, Name, Call)
 
-#define DECLARE_(Name)				\
-      DECLARE(Name, Name)
+    DECLARE(add, +);
+    DECLARE(div, /);
+    DECLARE(mul, *);
+    DECLARE(sub, -);
+    DECLARE(pow, **);
+    DECLARE(mod, %);
 
-      DECLARE(add, +);
-      DECLARE(div, /);
-      DECLARE(mul, *);
-      DECLARE(sub, -);
-      DECLARE(pow, **);
-      DECLARE(mod, %);
+    DECLARE(land, &&);
+    DECLARE(lor, ||);
 
-      DECLARE(land, &&);
-      DECLARE(lor, ||);
+    DECLARE(equ, ==);
+    DECLARE(req, ~=);
+    DECLARE(deq, =~=);
+    DECLARE(peq, %=);
+    DECLARE(neq, !=);
 
-      DECLARE(equ, ==);
-      DECLARE(req, ~=);
-      DECLARE(deq, =~=);
-      DECLARE(peq, %=);
-      DECLARE(neq, !=);
+    DECLARE(lth, <);
+    DECLARE(leq, <=);
+    DECLARE(gth, >);
+    DECLARE(geq, >=);
+#undef  DECLARE
 
-      DECLARE(lth, <);
-      DECLARE(leq, <=);
-      DECLARE(gth, >);
-      DECLARE(geq, >=);
+#define DECLARE(Name)                      \
+    DECLARE_PRIMITIVE(float, Name, Name)
 
-      DECLARE_(sin);
-      DECLARE_(asin);
-      DECLARE_(cos);
-      DECLARE_(acos);
-      DECLARE_(tan);
-      DECLARE_(atan);
-      DECLARE_(sgn);
-      DECLARE_(abs);
-      DECLARE_(exp);
-      DECLARE_(log);
-      DECLARE_(round);
-      DECLARE_(random);
-      DECLARE_(trunc);
-      DECLARE_(sqr);
-      DECLARE_(sqrt);
-
-#undef DECLARE_
+    DECLARE(sin);
+    DECLARE(asin);
+    DECLARE(cos);
+    DECLARE(acos);
+    DECLARE(tan);
+    DECLARE(atan);
+    DECLARE(sgn);
+    DECLARE(abs);
+    DECLARE(exp);
+    DECLARE(log);
+    DECLARE(round);
+    DECLARE(random);
+    DECLARE(trunc);
+    DECLARE(sqr);
+    DECLARE(sqrt);
 #undef DECLARE
+
   }
 
 }; // namespace object

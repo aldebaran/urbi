@@ -20,6 +20,10 @@ namespace object
     /** \name Ctor & dtor.
      ** \{ */
   public:
+
+    /// Give access to Traits. Useful in macros.
+    typedef Traits traits;
+
     /// Construct an Atom with value \p v.
     Atom (const typename Traits::type v);
 

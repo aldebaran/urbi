@@ -1,3 +1,13 @@
+2007-07-27  mefyl  <mefyl@lrde.epita.fr>
+
+	Generalize and document primitive-generation macros.
+	* src/object/atom.hh: Add an access to the traits, for macros.
+	* src/object/primitives.hh: Add generic macros for
+          primitives generation,.
+	* src/object/float-class.cc: Remove float-dedicated macros
+          and use generic ones.
+	* src/object/list-class.cc: Use macros.
+
 2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Fix minor problems in UrbiException.
