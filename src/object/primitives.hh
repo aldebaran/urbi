@@ -8,55 +8,18 @@
 
 # include "object/fwd.hh"
 
+# include "object/code-class.hh"
+# include "object/context-class.hh"
+# include "object/float-class.hh"
+# include "object/integer-class.hh"
+# include "object/list-class.hh"
+# include "object/object-class.hh"
+# include "object/primitive-class.hh"
+# include "object/string-class.hh"
+
 namespace object
 {
-
-  extern rObject object_class;
-  extern rObject code_class;
-  extern rObject context_class;
-
-  /*--------.
-  | Float.  |
-  `--------*/
-
-  extern rObject float_class;
-
-  // FIXME: Do we really want to declare them?  They are only
-  // for sake of the test suite.
-# define DECLARE(Name, Op)				\
-  rObject float_class_ ## Name (objects_type args);
-
-  DECLARE(add, +)
-  DECLARE(div, /)
-  DECLARE(mul, *)
-  DECLARE(sub, -)
-
-# undef DECLARE
-
-  /*----------.
-  | Integer.  |
-  `----------*/
-
-  extern rObject integer_class;
-
-  /*------------.
-  | Primitive.  |
-  `------------*/
-
-  extern rObject primitive_class;
-
-  /*---------.
-  | String.  |
-  `---------*/
-
-  extern rObject string_class;
-
-  /*-------.
-  | List.  |
-  `-------*/
-
-  extern rObject list_class;
-
-} // namespace object
+  void root_classes_initialize ();
+}; // namespace object
 
 #endif // !OBJECT_PRIMITIVES_HH

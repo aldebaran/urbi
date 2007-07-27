@@ -9,6 +9,7 @@
 # include <ostream>
 # include "libport/indent.hh"
 # include "object/object.hh"
+# include "object/primitives.hh"
 
 namespace object
 {
@@ -16,7 +17,9 @@ namespace object
   inline
   Object::Object ()
     : parents_ (), slots_ ()
-  {}
+  {
+    root_classes_initialize();
+  }
 
   inline
   Object::~Object ()

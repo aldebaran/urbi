@@ -1,3 +1,28 @@
+2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Split primitices.cc.
+	* src/object/Makefile.am: Add new files to libobject sources.
+	* src/object/code-class.cc: New.
+	* src/object/code-class.hh: New.
+	* src/object/context-class.cc: New.
+	* src/object/context-class.hh: New.
+	* src/object/float-class.cc: New.
+	* src/object/float-class.hh: New.
+	* src/object/integer-class.cc: New.
+	* src/object/integer-class.hh: New.
+	* src/object/list-class.cc: New.
+	* src/object/list-class.hh: New.
+	* src/object/object-class.cc: New.
+	* src/object/object-class.hh: New.
+	* src/object/object.hxx: Call root_classes_initialize function.
+	* src/object/primitive-class.cc: New.
+	* src/object/primitive-class.hh: New.
+	* src/object/primitives.cc:
+        Remove moved code and fix static initialization problem.
+	* src/object/primitives.hh: Add root_classes_initialize prototype.
+	* src/object/string-class.cc: New.
+	* src/object/string-class.hh: New.
+
 2007-07-27  mefyl  <mefyl@lrde.epita.fr>
 
 	Temporarily remove %destructor to fix memory errors.
