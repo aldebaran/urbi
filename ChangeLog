@@ -13,6 +13,14 @@
 
 2007-07-27  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Coding style changes.
+	* src/runner/job.hh (setScheduler): Rename as scheduler_set.
+	(getScheduler) Rename as scheduler_get.
+	* src/runner/job.hxx: Adjust.
+	* src/runner/runner.hh: Aesthetic change.
+
+2007-07-27  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Start to integrate the Scheduler in the UServer.
 	* include/kernel/userver.hh (getScheduler): New.
 	* include/kernel/userver.hxx (getScheduler): Implement.

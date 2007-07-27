@@ -16,7 +16,6 @@
 namespace runner
 {
 
-
   /// Ast executor.
   class Runner : public ast::DefaultConstVisitor, public Job
   {

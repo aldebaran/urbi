@@ -17,9 +17,9 @@ namespace runner
     explicit Job (Scheduler& scheduler);
     virtual ~Job ();
 
-    void setScheduler (Scheduler& scheduler);
-    const Scheduler& getScheduler () const;
-    Scheduler& getScheduler ();
+    void scheduler_set (Scheduler& scheduler);
+    const Scheduler& scheduler_get () const;
+    Scheduler& scheduler_get ();
 
     /// Start to do some work (or continue unfinished work).
     void run ();

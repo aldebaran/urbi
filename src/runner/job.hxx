@@ -30,7 +30,7 @@ namespace runner
 
   inline
   void
-  Job::setScheduler (Scheduler& scheduler)
+  Job::scheduler_set (Scheduler& scheduler)
   {
     scheduler_ = &scheduler;
     assert (scheduler_);
@@ -38,7 +38,7 @@ namespace runner
 
   inline
   const Scheduler&
-  Job::getScheduler () const
+  Job::scheduler_get () const
   {
     assert (scheduler_);
     return *scheduler_;
@@ -46,7 +46,7 @@ namespace runner
 
   inline
   Scheduler&
-  Job::getScheduler ()
+  Job::scheduler_get ()
   {
     assert (scheduler_);
     return *scheduler_;
