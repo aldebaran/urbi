@@ -281,7 +281,9 @@
    <symbol> OPERATOR_ID        "operator"
    <symbol> OPERATOR_VAR       "var-operator"
 %type <symbols> identifiers identifiers.1 formal_arguments
-%destructor { delete $$; } <symbol>;
+// FIXME: this destructor entails double frees and invalid pointer
+// frees.
+// %destructor { delete $$; } <symbol>;
 %printer { debug_stream() << libport::deref << $$; } <symbol>;
 %printer { debug_stream() << libport::separate (*$$, ", "); } <symbols>;
 
