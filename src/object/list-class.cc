@@ -24,12 +24,11 @@ namespace object
     /**
      * @return A fresh list, concatenation of \a lhs and \a rhs
      */
-    static const list_traits::type
-    list_concat(const list_traits::type& lhs,
-                const list_traits::type& rhs)
+    static rList
+    concat(rList lhs, rList rhs)
     {
       // Copy lhs
-      list_traits::type res(lhs);
+      list_traits::type res(lhs->value_get());
 
       // Append rhs
 
@@ -37,23 +36,64 @@ namespace object
       // infinite loop. Use foreach instead for now.
 
       //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
-      BOOST_FOREACH (const rObject& o, rhs)
+      BOOST_FOREACH (const rObject& o, rhs->value_get())
         res.push_back(o);
 
-      return res;
+      return new List(res);
     }
+
+    /// Give the first element of \a l.
+    static rObject
+    front(rList l)
+    {
+      return l->value_get().front();
+    }
+
+    /// Give the last element of \a l.
+    static rObject
+    back(rList l)
+    {
+      return l->value_get().back();
+    }
+
+    /// Give \a l without the first element.
+    static rObject
+    tail(rList l)
+    {
+      List::traits::type res(l->value_get());
+      res.pop_front();
+      return new List(res);
+    }
+
   }
 
   /*-------------------------.
   | Primitives declaration.  |
   `-------------------------*/
 
-  PRIMITIVE_2(list, concat, list_concat, List, List, List);
+#define PRIMITIVE_1_LIST(Name)                  \
+  PRIMITIVE_1(list, Name, Name, List)
+
+#define PRIMITIVE_2_LIST(Name, Type2)           \
+  PRIMITIVE_2(list, Name, Name, List, Type2)
+
+  PRIMITIVE_2_LIST(concat, List);
+  PRIMITIVE_1_LIST(front);
+  PRIMITIVE_1_LIST(back);
+  PRIMITIVE_1_LIST(tail);
 
   void
   list_class_initialize ()
   {
-    DECLARE_PRIMITIVE(list, +, concat);
+#define DECLARE(Name, Implem)                   \
+    DECLARE_PRIMITIVE(list, Name, Implem)
+
+    DECLARE(+, concat);
+    DECLARE(front, front);
+    DECLARE(head, front);
+    DECLARE(tail, tail);
+    DECLARE(back, back);
+#undef DECLARE
   }
 
 }; // namespace object

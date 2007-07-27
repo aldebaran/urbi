@@ -136,10 +136,10 @@ namespace object
   }
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
-  PRIMITIVE_2(float, Name, Call, Float, Float, Float)
+  PRIMITIVE_2_V(float, Name, Call, Float, Float, Float)
 
 #define PRIMITIVE_OP_FLOAT(Name, Op)                    \
-  PRIMITIVE_OP(float, Name, Op, Float, Float, Float)
+  PRIMITIVE_OP_V(float, Name, Op, Float, Float, Float)
 
   //FIXME: check if rvalue is 0 for % and / operators
   PRIMITIVE_OP_FLOAT(add, +)

@@ -1,5 +1,13 @@
 2007-07-27  mefyl  <mefyl@lrde.epita.fr>
 
+	Improve primitive-generation macros. Add list primitives.
+	* src/object/primitives.hh: Macro now can act whether on Urbi object,
+          whether on C++ values.
+	* src/object/float-class.cc: Use new macros.
+	* src/object/list-class.cc: Add head, tail, front and back primitives.
+
+2007-07-27  mefyl  <mefyl@lrde.epita.fr>
+
 	Generalize and document primitive-generation macros.
 	* src/object/atom.hh: Add an access to the traits, for macros.
 	* src/object/primitives.hh: Add generic macros for
