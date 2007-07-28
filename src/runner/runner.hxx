@@ -35,13 +35,6 @@ namespace runner
 
   inline
   Runner::rObject
-  Runner::result ()
-  {
-    return current_;
-  }
-
-  inline
-  Runner::rObject
   Runner::target (ast::Exp* n)
   {
     // FIXME: For the time being, if there is no target, it is the

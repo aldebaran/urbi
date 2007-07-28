@@ -1,3 +1,54 @@
+2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Properly build the AST and return values from the Runner.
+
+	This patch does two things:
+	  1. The connection no longer prints results from the Runner.  It's
+	     the runner that sends the result to the context (which happens
+	     to be the connection for now).
+	  2. UConnection::execute was implemented quick'n'dirty: once it had
+	     something to execute, it executed it and discarded the AST.
+	     For instance, in "1;2;", since the input is chunked at ";" and
+	     ",", it got "1;noop" and "2;noop" and executed them both.  Now
+	     it builds "1;2;noop" and starts the execution only once.
+
+	Because of the 1st point, and since our only form of context for now
+	is the UConnection, intermediate results in functions are printed in
+	the console.
+
+	Because of the 2nd point, it frequently happens that parse errors
+	appear before the result of the correct code preceding them.  This
+	is because if you have, say, "1;*;2;" and the connection receives
+	the 3 hunks ("1;" and "*;" and "2;") at the same time, it will
+	attempt to build the AST.  But since the 2nd hunk is invalid, a
+	parse error is issued and this hunk is discarded.  Then the
+	resulting AST ("1;2;noop") is evaluated.  That's why the parse error
+	will appear before the result of "1;" (well, it will most likely do
+	in the console, but it might not over the network, this is non
+	deterministic, it depends on timing issues).
+
+	* include/kernel/uconnection.hh (execute): Don't take any argument.
+	(has_pending_command, drop_pending_commands): New.
+	Remove some attributes from the public visibility.
+	(append): Remove.
+	* include/kernel/userver.hh: Aesthetic change.
+	* src/ast/ast.yml (BinaryExp): Equip lhs and rhs with setters.
+	* src/object/fwd.hh: Clarify the code with comments.
+	* src/runner/runner.hh (emit_result): New.
+	(result) Remove.
+	* src/runner/runner.cc (emit_result): Implement.
+	(operator() (SemicolonExp)): Emit results to the context.
+	* src/runner/runner.hxx (result): Remove.
+	* src/uconnection.cc (ctor, dtor): Adjust.
+	(has_pending_command, drop_pending_commands): Implement.
+	(received): Properly store and build the AST so that only one call
+	to execute is made per cycle.
+	(simplify): Remove (unused).
+	(execute): Adjust.  Don't print anything.  The result is printed by
+	the Runner with emit_result.
+	(append): Remove.
+	* src/userver.cc: Adjust.
+
 2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Code cleanup (use C++ instead of C).

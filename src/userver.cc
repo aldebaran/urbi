@@ -293,17 +293,16 @@ UServer::work_handle_connections_ ()
       (*r)->errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
-      if ((*r)->activeCommand)
+      if ((*r)->has_pending_command ())
       {
 	(*r)->obstructed = true; // will be changed to 'false' if the whole
                                  // tree is visited
-	(*r)->treeLock.lock();
+	(*r)->treeLock.lock ();
 	(*r)->inwork = true; // to distinguish this call of execute from the
                              // one in receive
-	(*r)->execute(dynamic_cast<const ast::BinaryExp&> (*(*r)->activeCommand));
-        (*r)->activeCommand = 0;
+	(*r)->execute ();
 	(*r)->inwork = false;
-	(*r)->treeLock.unlock();
+	(*r)->treeLock.unlock ();
       }
 
       if ((*r)->newDataAdded)
@@ -325,13 +324,12 @@ UServer::work_handle_stopall_ ()
   for (std::list<UConnection*>::iterator r = connectionList.begin();
        r != connectionList.end();
        ++r)
-    if ((*r)->isActive() && (*r)->activeCommand)
+    if ((*r)->isActive() && (*r)->has_pending_command ())
     {
       if ((*r)->killall || stopall)
       {
 	(*r)->killall = false;
-	delete (*r)->activeCommand;
-	(*r)->activeCommand = 0;
+	(*r)->drop_pending_commands ();
       }
     }
 

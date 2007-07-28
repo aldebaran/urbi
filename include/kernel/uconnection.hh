@@ -163,8 +163,10 @@ public:
   void activate ();
   void disactivate ();
   bool isActive ();
-  void execute (const ast::BinaryExp& ast);
-  void append (ast::Ast* command);
+
+  /// Execute the pending commands (if any).
+  void execute ();
+
   int availableSendQueue ();
   int sendQueueRemain ();
 
@@ -180,16 +182,27 @@ public:
    as a long int.  */
   void setIP (IPAdd ip);
 
+  bool has_pending_command () const;
+  void drop_pending_commands ();
+
+  /// Notify the connection that a new result is available.  This will
+  /// typically print the result on the console or send it through the
+  /// network.
+  void new_result (object::rObject result);
+
+protected:
   /// Error return code for the constructor.
   UErrorValue uerror_;
+
+public:
   /// Reference to the underlying server.
   UServer* server;
-  /// The command to be executed.
-  ast::Ast* activeCommand;
-  /// Store the position of the last command added.
-  ast::Ast* lastCommand;
 
+private:
+  /// The command to be executed (root of the AST).
+  ast::BinaryExp* active_command_;
 
+public:
   /// Temporarily stores bin command while binary transfer occurs.
   UCommand_ASSIGN_BINARY* binCommand;
 

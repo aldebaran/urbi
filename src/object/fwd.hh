@@ -27,9 +27,9 @@ namespace object
   // primitive_type.
   typedef rObject (*primitive_type) (objects_type);
 
-  /// Macro should be a binary macro whose first arg, \p What, is the
+  /// \a Macro should be a binary macro whose first arg, \p What, is the
   /// lower case C++ name, and the second argument, \p Name, the
-  /// capitalized Urbi name.
+  /// capitalized URBI name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(Macro)	\
   Macro(code,      Code)				\
   Macro(context,   Context)				\
@@ -47,13 +47,20 @@ namespace object
   template <typename Traits>
   class Atom;
 
-# define DECLARE(What, Name)				\
+  /// Define a primitive as an Atom parametrized with a traits.
+# define DEFINE(What, Name)				\
   struct What ## _traits;				\
   typedef Atom< What ## _traits > Name;			\
   typedef libport::shared_ptr < Name > r ## Name;
 
-  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DECLARE)
-# undef DECLARE
+  /* You have to understand that the primitives are defined here.  For
+   * example, a Code is manipulated through a rCode (r = ref counted) and in
+   * fact Code is just a typedef for Atom<code_traits>.  If get compilation
+   * errors about non existent members, it's most likely because you did
+   * obj.get_value () instead of obj->get_value ().  This is a side effect
+   * of the operator-> used for the ref-counting.  Keep that in mind. */
+  APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT(DEFINE)
+# undef DEFINE
 
   class UrbiException;
 

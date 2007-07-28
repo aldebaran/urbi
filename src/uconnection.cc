@@ -55,40 +55,38 @@
 
 #include "object/atom.hh" // object::Context
 
-UConnection::UConnection (UServer *userver,
+UConnection::UConnection (UServer* userver,
 			  int minSendBufferSize,
 			  int maxSendBufferSize,
 			  int packetSize,
 			  int minRecvBufferSize,
 			  int maxRecvBufferSize)
-  : uerror_(USUCCESS),
-    server(userver),
-    activeCommand(0),
-    // no active command and no last command at start:
-    lastCommand(0),
-    connectionTag(0),
-    functionTag(0),
-    clientIP(0),
-    killall(false),
-    closing(false),
-    receiving(false),
-    inwork(false),
-    newDataAdded(false),
-    returnMode(false),
-    obstructed(false),
-    parser_(new UParser (*this)),
-    sendQueue_(new UQueue (minSendBufferSize, maxSendBufferSize,
+  : uerror_ (USUCCESS),
+    server (userver),
+    active_command_ (0),
+    connectionTag (0),
+    functionTag (0),
+    clientIP (0),
+    killall (false),
+    closing (false),
+    receiving (false),
+    inwork (false),
+    newDataAdded (false),
+    returnMode (false),
+    obstructed (false),
+    parser_ (new UParser (*this)),
+    sendQueue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
 			   UConnection::ADAPTIVE)),
-    recvQueue_(new UCommandQueue (minRecvBufferSize, maxRecvBufferSize,
+    recvQueue_ (new UCommandQueue (minRecvBufferSize, maxRecvBufferSize,
 				  UConnection::ADAPTIVE)),
-    packetSize_(packetSize),
-    blocked_(false),
-    receiveBinary_(false),
-    sendAdaptive_(UConnection::ADAPTIVE),
-    recvAdaptive_(UConnection::ADAPTIVE),
+    packetSize_ (packetSize),
+    blocked_ (false),
+    receiveBinary_ (false),
+    sendAdaptive_ (UConnection::ADAPTIVE),
+    recvAdaptive_ (UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
-    active_(true),
-    context_(new object::Context(*this))
+    active_ (true),
+    context_ (new object::Context (*this))
 {
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
@@ -104,7 +102,7 @@ UConnection::UConnection (UServer *userver,
 }
 
 //! UConnection destructor.
-UConnection::~UConnection()
+UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
   if (connectionTag)
@@ -112,7 +110,8 @@ UConnection::~UConnection()
     delete server->getVariable(connectionTag->c_str(), "connectionID");
     delete connectionTag;
   }
-  delete activeCommand;
+  delete active_command_;
+  active_command_ = 0;
 
   // free bindings
   for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
@@ -156,9 +155,22 @@ UConnection::~UConnection()
 }
 
 void
-UConnection::setIP(IPAdd ip)
+UConnection::setIP (IPAdd ip)
 {
   clientIP = ip;
+}
+
+bool
+UConnection::has_pending_command () const
+{
+  return active_command_;
+}
+
+void
+UConnection::drop_pending_commands ()
+{
+  delete active_command_;
+  active_command_ = 0;
 }
 
 //! UConnection close. Must be redefined by the robot-specific sub class.
@@ -458,7 +470,15 @@ UConnection::received (const ubyte *buffer, int length)
   receiving = true;
   server->updateTime();
 
+  // Code extracted from the UCommandQueue
   std::string command;
+  // active_command_: The command to be executed (root of the AST).
+  assert (active_command_ == 0);
+  // The last command added (where there is a dangling noop added because we
+  // don't know what comes next).
+  ast::BinaryExp* last_command = 0;
+
+  // Loop to get all the commands that are ready to be executed.
   do {
     command = recvQueue_->popCommand();
 
@@ -500,21 +520,46 @@ UConnection::received (const ubyte *buffer, int length)
                       "UConnection::received",
                       p.error_get().c_str());
       }
-
-      if (p.command_tree_get ())
+      else
       {
-	// Process "commandTree"
-        // immediate execution of simple commands
-        if (!obstructed)
-        {
-          execute (dynamic_cast<const ast::BinaryExp&> (*p.command_tree_get ()));
-        }
+        // Alright so at this point, we have parsed a new command (either a
+        // ";" or a ",", in any case it's a BinaryExp) now it's time to
+        // paste this new command in the AST.
+        ast::BinaryExp& parsed_command =
+          dynamic_cast<ast::BinaryExp&> (*p.command_tree_get ());
 
+        ECHO ("parsed lhs: " << parsed_command.lhs_get ()
+              << " rhs:" << parsed_command.rhs_get ());
+
+        // Is this our first command? (first as in first in this do-while
+        // loop)
+        if (!active_command_)
+          active_command_ = last_command = &parsed_command;
+        else
+        {
+          ECHO ("last command lhs: " << last_command->lhs_get ()
+                << " rhs:" << last_command->rhs_get ());
+          // It wasn't our first command so the last_command must be a
+          // BinaryExp with a dangling noop added on its rhs.
+          ast::Noop& dangling_noop =
+            const_cast<ast::Noop&>
+              (dynamic_cast<const ast::Noop&> (last_command->rhs_get ()));
+
+          delete &dangling_noop;
+          last_command->rhs_set (&parsed_command);
+          last_command = &parsed_command;
+        }
         p.command_tree_set (0);
       }
     }
   } while (!command.empty ()
 	   && !receiveBinary_);
+
+  // Execute the new command.
+  if (!obstructed)
+  {
+    execute ();
+  }
 
   receiving = false;
   p.command_tree_set (0);
@@ -639,7 +684,7 @@ UConnection::activate()
 /*! see UConnection::activate() for more details about activation.
  */
 void
-UConnection::disactivate()
+UConnection::disactivate ()
 {
   active_ = false;
 }
@@ -648,99 +693,46 @@ UConnection::disactivate()
 /*! see UConnection::activate() for more details about activation.
  */
 bool
-UConnection::isActive()
+UConnection::isActive ()
 {
   return active_;
 }
 
-namespace
-{
-  /// Simplify a UCommand_TREE if possible.
-  /// \return whether a simplification was made.
-  // FIXME: Should be with UCommand_TREE, not here.
-  bool simplify (UCommand_TREE* tree)
-  {
-    // Do not simplify nodes that hold scoping information
-    if (tree->callid)
-      return false;
-
-    // left reduction
-    if (!tree->command1 && tree->command2)
-    {
-      ASSERT(tree->position)
-	*tree->position = tree->command2;
-      tree->command2->up = tree->up;
-      tree->command2->position = tree->position;
-      tree->command2->background = tree->background;
-      tree->command2 = 0;
-      return true;
-    }
-
-    // right reduction
-    // the background hack is here to preserve {at()...} commands.
-    if (!tree->command2
-	&& tree->command1
-	&& tree->command1->status != UCommand::UBACKGROUND)
-    {
-      ASSERT(tree->position)
-	*tree->position = tree->command1;
-      tree->command1->up = tree->up;
-      tree->command1->position = tree->position;
-      tree->command1->background = tree->background;
-      tree->command1 = 0;
-      return true;
-    }
-    return false;
-  }
-}
-
 void
-UConnection::execute(const ast::BinaryExp& ast)
+UConnection::execute ()
 {
-  PING();
+  PING ();
 
+  if (!active_command_)
+    return;
   if (closing)
     return;
 
-  // std::cerr << "Command is: " << ast << std::endl;
-  runner::Runner r(context_, ::urbiserver->getScheduler ());
-  r(&ast);
+  // std::cerr << "Command is: " << *active_command_ << std::endl;
+  runner::Runner r (context_, ::urbiserver->getScheduler ());
+  r (active_command_);
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 
-  // "Display" the result.
-  if (r.result())
-  {
-    std::ostringstream os;
-    r.result()->print(os);
+  // FIXME: 2007-07-20: Currently we can't free the command,
+  // we might kill function bodies.
+  active_command_ = 0;
 
-    // The prefix should be (getTag().c_str()) instead of 0.
-    if (!os.str().empty())
-    {
-      sendc(os.str().c_str(), 0);
-      endline();
-    }
-  }
-
-  PING();
+  PING ();
 }
 
-//! Append a command to the command queue
-/*! This function appends a command to the command queue
- activeCommand is the command to process when the system
- wants to process next command. Commands are stored in
- a tree structure, each branch being a ; , & or | command
- seprarator. The lastCommand always point to a ; or ,
- tree where the left side is empty, ready to receive the
- next command to append.
- See UConnection::execute for more details on the way
- commands are stored and processed.
-
- \param command is the UCommand to append.
- */
 void
-UConnection::append(ast::Ast *command)
+UConnection::new_result (object::rObject result)
 {
-  lastCommand = command;
+  // "Display" the result.
+  std::ostringstream os;
+  result->print (os);
+
+  // The prefix should be (getTag().c_str()) instead of 0.
+  if (!os.str ().empty ())
+  {
+    sendc (os.str ().c_str (), 0);
+    endline ();
+  }
 }
 
 //! Returns how much space is available in the send queue

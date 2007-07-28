@@ -269,7 +269,7 @@ public:
   runner::Scheduler& getScheduler ();
 
 protected:
-  virtual void     effectiveDisplay         (const char*) = 0;
+  virtual void effectiveDisplay (const char*) = 0;
 
 private:
   friend class TagInfo;

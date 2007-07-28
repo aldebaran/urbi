@@ -117,8 +117,14 @@ BinaryExp:
   super: Exp
   desc: /// Expressions with two sub expressions
   attributes:
-    - lhs: { type: 'Exp*', desc: Left-hand side expression }
-    - rhs: { type: 'Exp*', desc: Right-hand side expression }
+    - lhs:
+        type: 'Exp*'
+        desc: Left-hand side expression
+        access: rW
+    - rhs:
+        type: 'Exp*'
+        desc: Right-hand side expression
+        access: rW
 
 AndExp:
   super: BinaryExp

@@ -41,7 +41,9 @@ namespace runner
     /// \{
     /// Evaluate a tree and return the \a current_ that results.
     rObject eval (const ast::Ast& e);
-    rObject result ();
+
+    /// Send a result to the context.
+    void emit_result (rObject result);
 
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for Io.

@@ -2,15 +2,23 @@
  ** \file runner/runner.cc
  ** \brief Implementation of runner::Runner.
  */
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include <boost/foreach.hpp>
 
+#include "kernel/uconnection.hh"
 #include "object/atom.hh"
-
 #include "runner/runner.hh"
 
 namespace runner
 {
+
+  void
+  Runner::emit_result (rObject result)
+  {
+    context_->value_get ().new_result (result);
+  }
 
   void
   Runner::operator() (const ast::AssignExp& e)
@@ -105,7 +113,15 @@ namespace runner
   Runner::operator() (const ast::SemicolonExp& e)
   {
     operator() (e.lhs_get());
+    ECHO ("sending result of lhs");
+    if (current_.get ())
+      emit_result (current_);
+    current_.reset ();
+    assert (current_.get () == 0);
     operator() (e.rhs_get());
+    ECHO ("sending result of rhs");
+    if (current_.get ())
+      emit_result (current_);
   }
 
 
