@@ -55,7 +55,7 @@
 #include "runner/scheduler.hh"
 
 // Global server reference
-UServer *urbiserver= 0;
+UServer *urbiserver = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 
@@ -225,11 +225,11 @@ UServer::work ()
   previous3Time = previous2Time;
   previous2Time = previousTime;
   previousTime  = currentTime;
-  currentTime   = lastTime();
+  currentTime   = lastTime ();
 
   work_exec_timers_ ();
 
-  beforeWork();
+  beforeWork ();
 
   work_access_and_change_ ();
   work_handle_connections_ ();
@@ -237,10 +237,10 @@ UServer::work ()
   work_blend_values_ ();
   work_execute_hub_updater_ ();
 
-  afterWork();
+  afterWork ();
 
-  updateTime();
-  latestTime = lastTime();
+  updateTime ();
+  latestTime = lastTime ();
 
   work_test_cpuoverload_ ();
 

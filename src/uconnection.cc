@@ -412,41 +412,6 @@ UConnection::received (const ubyte *buffer, int length)
   libport::BlockLock bl(server);
   // Lock the connection.
   lock();
-#if 0
-  if (receiveBinary_)
-  {
-    // Handle and try to finish the binary transfer.
-    int total =
-      binCommand->refBinary->ref()->bufferSize - transferedBinary_;
-    if (length < total)
-    {
-      memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
-	     buffer,
-	     length);
-      transferedBinary_ += length;
-      unlock();
-      return USUCCESS;
-    }
-    else
-    {
-      memcpy(binCommand->refBinary->ref()->buffer + transferedBinary_,
-	     buffer,
-	     total);
-      buffer += total;
-      length -= total;
-      if (treeLock.tryLock())
-      {
-	receiveBinary_ = false;
-	append(binCommand->up);
-	gotlock = true;
-      }
-      else
-      {
-	faillock = true;
-      }
-    }
-  }
-#endif
 
   UErrorValue result = recvQueue_->push(buffer, length);
   unlock();
@@ -535,52 +500,13 @@ UConnection::received (const ubyte *buffer, int length)
       if (p.commandTree)
       {
 	// Process "commandTree"
-#if 0
-	// ASSIGN_BINARY: intercept and execute immediately
-	if (p.binaryCommand)
-	{
-	  binCommand =
-	    dynamic_cast<UCommand_ASSIGN_BINARY*> (p.commandTree->command1);
-	  assert (binCommand);
-
-	  ubyte* buffer =
-	    recvQueue_->pop(binCommand->refBinary->ref()->bufferSize);
-
-	  if (buffer)
-	  {
-	    // the binary was all in the queue
-	    memcpy(binCommand->refBinary->ref()->buffer,
-		   buffer,
-		   binCommand->refBinary->ref()->bufferSize);
-	  }
-	  else
-	  {
-	    // not all was there, must set receiveBinary mode on
-	    transferedBinary_ = recvQueue_->dataSize();
-	    memcpy(binCommand->refBinary->ref()->buffer,
-		   recvQueue_->pop(transferedBinary_),
-		   transferedBinary_);
-	    receiveBinary_ = true;
-	  }
-	}
-	else
-#endif
 	{
 	  // immediate execution of simple commands
 	  if (!obstructed)
 	  {
 	    execute(p.commandTree);
-#if 0
-	    if (p.commandTree &&
-		p.commandTree->status == UCommand::URUNNING)
-	      obstructed = true;
-#endif
 	  }
 
-#if 0
-	  if (p.commandTree)
-	    append(p.commandTree);
-#endif
 	  p.commandTree = 0;
 	}
       }
@@ -725,232 +651,6 @@ UConnection::isActive()
   return active_;
 }
 
-#if 0
-// There is still a lot of code to move from here to elsewhere.
-UCommand*
-UConnection::processCommand(UCommand*& command,
-			    URunlevel &rl,
-			    bool &mustReturn)
-{
-  mustReturn = false;
-  if (command == 0)
-    return 0;
-
-  if (rl != UWAITING
-      || returnMode
-      || command->toDelete)
-    return command;
-
-  rl = UEXPLORED;
-
-  // Handle blocked/freezed commands
-  if (command->isFrozen())
-    return command;
-
-  if (command->isBlocked())
-  {
-    delete command;
-    return 0;
-  }
-
-  while (true)
-  {
-    // timeout, stop , freeze and connection flags initialization
-    if (command->startTime == -1)
-    {
-      command->startTime = server->lastTime();
-
-      for (UNamedParameters *param = command->flags; param; param = param->next)
-	if (param->name)
-	{
-	  if (*param->name == "flagid")
-	  {
-	    *param->name = "noflag";
-	    UValue* tmpID = param->expression->eval(command, this);
-	    if (tmpID)
-	    {
-	      if (tmpID->dataType == DATA_STRING)
-		for (std::list<UConnection*>::iterator i =
-		       ::urbiserver->connectionList.begin();
-		     i != ::urbiserver->connectionList.end();
-		     ++i)
-		  if ((*i)->isActive()
-		      && (*(*i)->connectionTag == *tmpID->str
-			  || *tmpID->str == "all"
-			  || (*tmpID->str == "other"
-			      && !(*(*i)->connectionTag == *connectionTag))))
-		    (*i)->append(new UCommand_TREE(UCommand::location(),
-						   Flavorable::UAND,
-						   command->copy(),
-						   0));
-	      delete tmpID;
-	    }
-	    delete command;
-	    return 0;
-	  }
-
-	  if (*param->name == "flagtimeout")
-	  {
-	    command->flagType += 1;
-	    command->flagExpr1 = param->expression;
-	    send("!!! Warning: +timeout flag is obsolete."
-		 " Use timeout(time) command instead.\n",
-		 command->getTag().c_str());
-	  }
-	  if (*param->name == "flagstop")
-	  {
-	    command->flagType += 2;
-	    command->flagExpr2 = param->expression;
-	    send("!!! Warning: +stop flag is obsolete."
-		 " Use stopif(test) command instead.\n",
-		 command->getTag().c_str());
-	  }
-	  if (*param->name == "flagfreeze")
-	  {
-	    command->flagType += 4;
-	    command->flagExpr4 = param->expression;
-	    send("!!! Warning: +freeze flag is obsolete."
-		 " Use freezeif(test) command instead.\n",
-		 command->getTag().c_str());
-	  }
-
-	  if (*param->name == "flag"
-	      && param->expression
-	      && param->expression->val == 10)
-	    command->flagType += 8;
-
-	  if (*param->name == "flag"
-	      && param->expression
-	      && !command->morphed
-	      && (param->expression->val == 4 // 4 = +begin
-		  || param->expression->val == 1)) // 1 = +report
-	    send("*** begin\n", command->getTag().c_str());
-	}
-    }
-
-    bool stopit = false;
-
-    // flag "+timeout"
-    if (command->flagType&1)
-    {
-      UValue *value = command->flagExpr1->eval(command, this);
-      if (value &&
-	  value->dataType == DATA_NUM &&
-	  command->startTime + value->val <= server->lastTime())
-	stopit = true;
-      delete value;
-    }
-
-    // flag "+stop"
-    if (command->flagType&2)
-    {
-      UTestResult testres = booleval(command->flagExpr2->eval(command, this));
-
-      if (testres == UTRUE)
-      {
-	if (command->flag_nbTrue2 == 0)
-	  command->flag_startTrue2 = server->lastTime();
-	++command->flag_nbTrue2;
-      }
-      else
-	command->flag_nbTrue2 = 0;
-
-      if ((command->flagExpr2->softtest_time
-	   && command->flag_nbTrue2 > 0
-	   && (server->lastTime() - command->flag_startTrue2 >=
-	       command->flagExpr2->softtest_time->val))
-	  || (command->flag_nbTrue2 >0
-	      && command->flagExpr2->softtest_time == 0))
-	stopit = true;
-    }
-
-    // flag "+freeze"
-    if (command->flagType&4)
-    {
-      UTestResult testres = booleval(command->flagExpr4->eval(command, this));
-
-      if (testres == UTRUE)
-      {
-	if (command->flag_nbTrue4 == 0)
-	  command->flag_startTrue4 = server->lastTime();
-	++command->flag_nbTrue4;
-      }
-      else
-	command->flag_nbTrue4 = 0;
-
-      if ((command->flagExpr4->softtest_time &&
-	   command->flag_nbTrue4 > 0 &&
-	   (server->lastTime() - command->flag_startTrue4 >=
-	    command->flagExpr4->softtest_time->val)) ||
-	  (command->flag_nbTrue4 >0 &&
-	   command->flagExpr4->softtest_time==0))
-	return command;
-    }
-
-    if (stopit)
-    {
-      if (command == lastCommand)
-	lastCommand = command->up;
-
-      delete command;
-      return 0;
-    }
-
-    // Regular command processing
-
-    if (command->type == UCommand::TREE)
-    {
-      mustReturn = true;
-      return command;
-    }
-    else
-    {
-      // != TREE
-      UCommand_TREE* morphed_up = command->up;
-      UCommand** morphed_position = command->position;
-
-      switch (command->execute(this))
-      {
-	case UCommand::UCOMPLETED:
-	  if (command == lastCommand)
-	    lastCommand = command->up;
-	  delete command;
-	  return 0;
-
-	case UCommand::UMORPH:
-	{
-	  command->status = UCommand::UONQUEUE;
-	  command->morphed = true;
-
-	  UCommand *morphed = command->morph;
-	  morphed->myconnection = command->myconnection;
-	  morphed->toDelete = command->toDelete;
-	  morphed->up = morphed_up;
-	  morphed->position = morphed_position;
-	  if (command->flags)
-	    morphed->flags = command->flags->copy();
-
-	  morphed->setTag(command);
-
-	  if (!command->persistant)
-	    delete command;
-	  command = morphed;
-	  break;
-	}
-
-	default:
-	  // "+bg" flag
-	  // FIXME: Nia?  What the heck is happening here???
-	  if ((command->flagType & 8) &&
-	      command->status == UCommand::URUNNING)
-	    command->status = UCommand::UBACKGROUND;
-	  return command;
-      }
-    }
-  }
-}
-#endif
-
 namespace
 {
   /// Simplify a UCommand_TREE if possible.
@@ -1048,20 +748,6 @@ UConnection::execute(ast::Ast*& execCommand)
 void
 UConnection::append(ast::Ast *command)
 {
-#if 0
-  if (activeCommand == 0)
-  {
-    activeCommand = command;
-    command->up = 0;
-    command->position = 0;
-  }
-  else
-  {
-    lastCommand->command2 = command;
-    command->up = lastCommand;
-    command->position = &(lastCommand->command2);
-  }
-#endif
   lastCommand = command;
 }
 
