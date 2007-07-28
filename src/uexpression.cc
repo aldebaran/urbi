@@ -942,10 +942,9 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   ECHO("Parsing " << variablename->id->c_str() << ':' << e1->str->c_str());
 
   if (in_load)
-    p.process (::urbiserver->find_file (e1->str->c_str()));
+    p.process_file (::urbiserver->find_file (e1->str->c_str ()));
   else
-    p.process(reinterpret_cast<const ubyte*>(e1->str->c_str()),
-	      e1->str->size());
+    p.process (e1->str->c_str ());
 
 #ifdef ENABLE_DEBUG_TRACES
   ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());

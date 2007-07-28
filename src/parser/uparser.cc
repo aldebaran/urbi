@@ -54,17 +54,15 @@ UParser::parse_ ()
 }
 
 int
-UParser::process (const ubyte* command, int length)
+UParser::process (const std::string& command)
 {
   // It has been said Flex scanners cannot work with istrstream.
-  std::istrstream mem_buff (reinterpret_cast<const char*> (command), length);
+  std::istrstream mem_buff (command.c_str ());
   std::istream mem_input (mem_buff.rdbuf());
   scanner_.switch_streams(&mem_input, 0);
-  ECHO("Parsing string: ==================" << std::endl
-       << loc_ << ':' << std::endl
-       << std::string (reinterpret_cast<const char*>(command), length)
-       << std::endl
-       << "==================================");
+  ECHO("Parsing string: ==================\n"
+       << loc_ << ":\n" << command
+       << "\n==================================");
   return parse_ ();
 }
 
@@ -87,7 +85,7 @@ UParser::command_tree_set (ast::Ast* ast)
 }
 
 int
-UParser::process(const std::string& fn)
+UParser::process_file (const std::string& fn)
 {
   // A location pointing to it.
   location_type loc;

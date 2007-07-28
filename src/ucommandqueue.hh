@@ -23,6 +23,7 @@
 # define UCOMMANDQUEUE_HH
 
 # include <vector>
+# include <string>
 
 # include "kernel/fwd.hh"
 
@@ -67,21 +68,21 @@ public:
 		   is available yet".
    \return a pointer to the the data popped or 0 in case of error.
    */
-  ubyte*              popCommand        (int &length);
+  std::string popCommand ();
 
 private:
 
   /// internal position of the preparsing cursor. It's an offset of
   /// start_
-  int            cursor_;
+  int cursor_;
   /// True when a commentary is active;
-  bool           discard_;
+  bool discard_;
   /// Used to store the 1st closing character for the commentary
   /// detection.
-  char           closechar_;
+  char closechar_;
   /// Used to store thezq 2nd closing character for the commentary
   /// detection.
-  char           closechar2_;
+  char closechar2_;
   /// A stack of expected closing braces: ), ], } etc.
   std::vector<char> closers_;
 };

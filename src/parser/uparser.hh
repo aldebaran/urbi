@@ -54,13 +54,13 @@ public:
   typedef parser_type::semantic_type semantic_type;
   typedef parser_type::location_type location_type;
 
-  UParser(UConnection& cn);
+  UParser (UConnection& cn);
 
   /// Parse the command from a buffer.
-  int process(const ubyte* command, int length);
+  int process (const std::string& code);
 
   /// Parse a file.
-  int process (const std::string& fn);
+  int process_file (const std::string& fn);
 
   /// \{
   /// The last AST read by process().

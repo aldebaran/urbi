@@ -38,11 +38,11 @@ UCommandQueue::UCommandQueue  (int minBufferSize,
 			       int maxBufferSize,
 			       int adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
-    cursor_         (0),
-    discard_        (false),
-    closechar_      (' '),
-    closechar2_     (' '),
-    closers_()
+    cursor_ (0),
+    discard_ (false),
+    closechar_ (' '),
+    closechar2_ (' '),
+    closers_ ()
 {
 }
 
@@ -52,14 +52,11 @@ UCommandQueue::~UCommandQueue()
 }
 
 
-ubyte*
-UCommandQueue::popCommand (int &length)
+std::string
+UCommandQueue::popCommand ()
 {
   if (dataSize_ == 0)
-  {
-    length = 0;
-    return buffer_;
-  }
+    return std::string ();
 
   // Scanning
   int position = start_ + cursor_;
@@ -162,7 +159,6 @@ UCommandQueue::popCommand (int &length)
 	&& (char)buffer_[nextposition] == '$'
 	&& !discard_)
     {
-      length = -1;
       closers_.clear();
       cursor_ = 0;
       discard_  = false;
@@ -178,20 +174,17 @@ UCommandQueue::popCommand (int &length)
       nextposition = 0;
   }
 
-  ubyte* res;
+  std::string res;
   if (found)
   {
-    res = pop(cursor_);
-    length = cursor_;
+    res = std::string (reinterpret_cast<const char*> (pop(cursor_)),
+                       cursor_);
     cursor_ = 0;
   }
   else
   {
-    res = buffer_;
-    length = 0;
+    res = std::string ();
   }
-  ECHO("Sending {{{"
-       << std::string(reinterpret_cast<const char*>(res), length)
-       << "}}}");
+  ECHO("Sending {{{" << res << "}}}");
   return res;
 }

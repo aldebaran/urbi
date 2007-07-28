@@ -458,19 +458,16 @@ UConnection::received (const ubyte *buffer, int length)
   receiving = true;
   server->updateTime();
 
+  std::string command;
   do {
-    ubyte* command = recvQueue_->popCommand(length);
+    command = recvQueue_->popCommand();
 
-    if (command == 0 && length==-1)
-    {
+    if (command.empty ())
       recvQueue_->clear();
-      length = 0;
-    }
-
-    if (length !=0)
+    else
     {
       server->setSystemCommand (false);
-      int result = p.process(command, length);
+      int result = p.process (command);
       server->setSystemCommand (true);
 
       if (result == -1)
@@ -516,7 +513,7 @@ UConnection::received (const ubyte *buffer, int length)
         p.command_tree_set (0);
       }
     }
-  } while (length != 0
+  } while (!command.empty ()
 	   && !receiveBinary_);
 
   receiving = false;

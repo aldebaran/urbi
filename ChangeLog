@@ -1,5 +1,20 @@
 2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Code cleanup (use C++ instead of C).
+	* src/parser/uparser.hh (process): Use a std::string instead of a
+	ubyte*+int.
+	(process): Rename as process_file (using overloads to do something
+	different is evil, a small kitten died because of this one).
+	* src/parser/uparser.cc (process): Adjust.
+	(process(std::string)): Rename as process_file.
+	* src/ucommandqueue.hh (popCommand): Return a std::string instead of
+	a ubyte* (and don't take an int-reference to return the length).
+	* src/ucommandqueue.cc (popCommand),
+	* src/uconnection.cc (received),
+	* src/uexpression.cc (eval_FUNCTION_EXEC_OR_LOAD): Adjust.
+
+2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Code cleanup.
 	* include/kernel/uconnection.hh (execute): Argument is now a
 	const reference (BinaryExp) instead of a reference-to-pointer (Ast).
