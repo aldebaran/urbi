@@ -356,10 +356,10 @@ root:
   error
   {
     // FIXME: We should probably free it.
-    up.commandTree = 0;
+    up.command_tree_set (0);
   }
 | lvalue "=" binary ";"  { /* FIXME: */ }
-| stmts                  { up.commandTree = $1; }
+| stmts                  { up.command_tree_set ($1); }
 ;
 
 binary:

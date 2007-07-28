@@ -41,6 +41,7 @@
 #include "kernel/uvariable.hh"
 
 #include "ast/ast.hh"
+#include "ast/binary-exp.hh"
 
 #include "ubanner.hh"
 #include "ucommand.hh"
@@ -299,7 +300,8 @@ UServer::work_handle_connections_ ()
 	(*r)->treeLock.lock();
 	(*r)->inwork = true; // to distinguish this call of execute from the
                              // one in receive
-	(*r)->execute((*r)->activeCommand);
+	(*r)->execute(dynamic_cast<const ast::BinaryExp&> (*(*r)->activeCommand));
+        (*r)->activeCommand = 0;
 	(*r)->inwork = false;
 	(*r)->treeLock.unlock();
       }

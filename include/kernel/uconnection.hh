@@ -30,6 +30,7 @@
 # include "kernel/utypes.hh"
 # include "kernel/ucomplaints.hh"
 
+# include "ast/fwd.hh"
 # include "object/fwd.hh"
 
 /// Pure virtual class for a client connection.
@@ -109,36 +110,36 @@ public:
     success - UFAIL : memory allocation failed.
 
     \sa UQueue */
-  UConnection  (UServer *userver,
-		int minSendBufferSize,
-		int maxSendBufferSize,
-		int packetSize,
-		int minRecvBufferSize,
-		int maxRecvBufferSize);
+  UConnection (UServer* userver,
+               int minSendBufferSize,
+               int maxSendBufferSize,
+               int packetSize,
+               int minRecvBufferSize,
+               int maxRecvBufferSize);
 
   virtual ~UConnection ();
 
-  void                initialize         ();
-  virtual UErrorValue closeConnection    () = 0;
+  void initialize ();
+  virtual UErrorValue closeConnection () = 0;
 
-  UErrorValue         sendPrefix         (const char* tag = 0);
-  UErrorValue         send               (const char *s, const char* tag = 0);
-  virtual UErrorValue send               (const ubyte *buffer, int length);
+  UErrorValue sendPrefix (const char* tag = 0);
+  UErrorValue send (const char *s, const char* tag = 0);
+  virtual UErrorValue send (const ubyte *buffer, int length);
 
   UErrorValue sendf (const std::string& tag, const char* format, va_list args);
   UErrorValue sendf (const std::string& tag, const char* format, ...);
 
-  UErrorValue         sendc              (const char *s, const char* tag = 0);
-  virtual UErrorValue sendc              (const ubyte *buffer, int length);
-  UErrorValue         endline            ();
+  UErrorValue sendc (const char *s, const char* tag = 0);
+  virtual UErrorValue sendc (const ubyte *buffer, int length);
+  UErrorValue endline ();
 
 
-  bool                isBlocked          ();
-  void                block              ();
-  UErrorValue         continueSend       ();
-  void                flush              ();
+  bool isBlocked ();
+  void block ();
+  UErrorValue continueSend ();
+  void flush ();
 
-  UErrorValue         received           (const char *s);
+  UErrorValue received (const char *s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -148,29 +149,29 @@ public:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UErrorValue         received           (const ubyte *buffer, int length);
+  UErrorValue received (const ubyte *buffer, int length);
 
-  int                 sendAdaptive       ();
-  int                 receiveAdaptive    ();
+  int sendAdaptive ();
+  int receiveAdaptive ();
 
-  void                setSendAdaptive    (int sendAdaptive);
-  void                setReceiveAdaptive (int receiveAdaptive);
+  void setSendAdaptive (int sendAdaptive);
+  void setReceiveAdaptive (int receiveAdaptive);
 
-  void                errorSignal        (UErrorCode n);
-  void                errorCheck         (UErrorCode n);
+  void errorSignal (UErrorCode n);
+  void errorCheck (UErrorCode n);
 
-  void                activate           ();
-  void                disactivate        ();
-  bool                isActive           ();
-  void                execute            (ast::Ast* &execCommand);
-  void                append             (ast::Ast *command);
-  int                 availableSendQueue ();
-  int                 sendQueueRemain    ();
+  void activate ();
+  void disactivate ();
+  bool isActive ();
+  void execute (const ast::BinaryExp& ast);
+  void append (ast::Ast* command);
+  int availableSendQueue ();
+  int sendQueueRemain ();
 
-  UCommandQueue&      recvQueue          ();
-  UQueue& send_queue();
+  UCommandQueue&recvQueue ();
+  UQueue& send_queue ();
 
-  void                localVariableCheck (UVariable *variable);
+  void localVariableCheck (UVariable* variable);
 
 
   //! UConnection IP associated
@@ -180,9 +181,9 @@ public:
   void setIP (IPAdd ip);
 
   /// Error return code for the constructor.
-  UErrorValue         uerror_;
+  UErrorValue uerror_;
   /// Reference to the underlying server.
-  UServer             *server;
+  UServer* server;
   /// The command to be executed.
   ast::Ast* activeCommand;
   /// Store the position of the last command added.
@@ -190,32 +191,32 @@ public:
 
 
   /// Temporarily stores bin command while binary transfer occurs.
-  UCommand_ASSIGN_BINARY *binCommand;
+  UCommand_ASSIGN_BINARY* binCommand;
 
   /// Virtual device for the connection..
-  UString             *connectionTag;
+  UString* connectionTag;
   /// Virtual device for function def.
-  UString             *functionTag;
+  UString* functionTag;
   /// Class name in a class method definition.
-  UString             *functionClass;
+  UString* functionClass;
   /// Ip of the calling client.
-  IPAdd               clientIP;
+  IPAdd clientIP;
   /// Killall signal (empty Activecommand).
-  bool                killall;
+  bool killall;
   /// Connection closing.
-  bool                closing;
+  bool closing;
   /// Connection receiving (and processing) commands.
-  bool                receiving;
+  bool receiving;
   /// Connection in the work command.
-  bool                inwork;
+  bool inwork;
   /// Used by addToQueue to notify new data.
-  bool                newDataAdded;
+  bool newDataAdded;
   /// True after a "return" command is met.
-  bool                returnMode;
+  bool returnMode;
   /// False when the whole command tree has been processed.
-  bool                obstructed;
+  bool obstructed;
   /// Call ids stack for function calls.
-  std::list<UCallid*>      stack;
+  std::list<UCallid*> stack;
 
 
   /// \name Parsing.
@@ -237,9 +238,9 @@ protected:
   /// Default adaptive behavior for Send/Recv..
   enum { ADAPTIVE = 100 };
 
-  virtual int         effectiveSend     (const ubyte*, int length) = 0;
-  UErrorValue         error             (UErrorCode n);
-  UErrorValue         warning           (UWarningCode n);
+  virtual int effectiveSend (const ubyte*, int length) = 0;
+  UErrorValue error (UErrorCode n);
+  UErrorValue warning (UWarningCode n);
 
 private:
   /// Max number of error signals used..
@@ -252,7 +253,7 @@ private:
   UCommandQueue* recvQueue_;
 
   /// Each call to effectiveSend() will send packetSize byte (or less)..
-  int            packetSize_;
+  int packetSize_;
 
   /// Stores the state of the connection.
   bool blocked_;
@@ -261,16 +262,16 @@ private:
   bool receiveBinary_;
 
   /// Nb of bytes already received in bin mode.
-  int            transferedBinary_;
+  int transferedBinary_;
   /// Adaptive behavior for the send UQueue.
   int sendAdaptive_;
   /// Adaptive behavior for the receiving UQueue.
   int recvAdaptive_;
   /// Stores error flags.
-  bool           errorSignals_[MAX_ERRORSIGNALS];
+  bool errorSignals_[MAX_ERRORSIGNALS];
   /// True when the connection is reading to send/receive data (usualy
   /// set at "true" on start).
-  bool           active_;
+  bool active_;
 
   /// The Context into which the code is evaluated.
   /// This is this connection, wrapped into an Urbi object.

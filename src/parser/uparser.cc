@@ -19,7 +19,7 @@
 `----------*/
 
 UParser::UParser(UConnection& cn)
-  : commandTree (0),
+  : command_tree_ (0),
     binaryCommand (false),
     connection (cn),
     hasError_(false),
@@ -36,7 +36,7 @@ UParser::UParser(UConnection& cn)
 int
 UParser::parse_ ()
 {
-  commandTree = 0;
+  command_tree_ = 0;
   binaryCommand = false;
   hasError_ = false;
   hasWarning_ = false;
@@ -65,7 +65,25 @@ UParser::process (const ubyte* command, int length)
        << std::string (reinterpret_cast<const char*>(command), length)
        << std::endl
        << "==================================");
-  return parse_();
+  return parse_ ();
+}
+
+ast::Ast*
+UParser::command_tree_get ()
+{
+  return command_tree_;
+}
+
+const ast::Ast*
+UParser::command_tree_get () const
+{
+  return command_tree_;
+}
+
+void
+UParser::command_tree_set (ast::Ast* ast)
+{
+  command_tree_ = ast;
 }
 
 int

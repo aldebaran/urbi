@@ -967,12 +967,12 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
   if (p.hasError())
     {
       // a parsing error occured
-      if (p.commandTree)
+      if (p.command_tree_get ())
 	{
 	  // FIXME: 2007-07-20: Currently we can't free the commandTree,
 	  // we might kill function bodies.
 	  //delete p.commandTree;
-	  p.commandTree = 0;
+          p.command_tree_set (0);
 	}
       connection->send(p.error_get().c_str(), "error");
     }
@@ -983,13 +983,13 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
     // a warning was emitted
     connection->send(p.warning_get().c_str(), "warn ");
 
-  if (p.commandTree)
+  if (p.command_tree_get ())
     {
 #if 0
       command->morph = p.commandTree;
       command->persistant = false;
 #endif
-      p.commandTree = 0;
+      p.command_tree_set (0);
     }
   else
     {

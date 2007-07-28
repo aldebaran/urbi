@@ -38,6 +38,7 @@
 #include "kernel/uvariable.hh"
 
 #include "ast/ast.hh"
+#include "ast/binary-exp.hh"
 #include "object/object.hh"
 #include "object/atom.hh"
 #include "runner/runner.hh"
@@ -442,8 +443,11 @@ UConnection::received (const ubyte *buffer, int length)
 
   UParser& p = parser();
   PING();
-  if (p.commandTree)
+  if (p.command_tree_get ())
   {
+    // This chunk of code seems suspect in k2, meanwhile:
+    ECHO ("SHOULD NEVER BE HERE");
+    abort ();
     PING();
     //reentrency trouble
     treeLock.unlock();
@@ -488,8 +492,11 @@ UConnection::received (const ubyte *buffer, int length)
       {
         // FIXME: 2007-07-20: Currently we can't free the commandTree,
         // we might kill function bodies.
+        // XXX 2007-07-28: I think that if we get here, it's because there
+        // was a parse error so I guess we can safely free the commandTree
+        // here, can't we?
         //delete p.commandTree;
-        p.commandTree = 0;
+        p.command_tree_set (0);
 
         send(p.error_get().c_str(), "error");
         server->error(::DISPLAY_FORMAT, (long)this,
@@ -497,25 +504,23 @@ UConnection::received (const ubyte *buffer, int length)
                       p.error_get().c_str());
       }
 
-      if (p.commandTree)
+      if (p.command_tree_get ())
       {
 	// Process "commandTree"
-	{
-	  // immediate execution of simple commands
-	  if (!obstructed)
-	  {
-	    execute(p.commandTree);
-	  }
+        // immediate execution of simple commands
+        if (!obstructed)
+        {
+          execute (dynamic_cast<const ast::BinaryExp&> (*p.command_tree_get ()));
+        }
 
-	  p.commandTree = 0;
-	}
+        p.command_tree_set (0);
       }
     }
   } while (length != 0
 	   && !receiveBinary_);
 
   receiving = false;
-  p.commandTree = 0;
+  p.command_tree_set (0);
   treeLock.unlock();
 
   return USUCCESS;
@@ -692,22 +697,17 @@ namespace
   }
 }
 
-//! Execute a command tree
-/*! This function executes a command tree and
- returns the next node of the tree to process.
-
- \param tree is the UCommand_TREE to execute.
- */
 void
-UConnection::execute(ast::Ast*& execCommand)
+UConnection::execute(const ast::BinaryExp& ast)
 {
   PING();
-  if (!execCommand || closing)
+
+  if (closing)
     return;
 
-  // std::cerr << "Command is: " << *execCommand << std::endl;
+  // std::cerr << "Command is: " << ast << std::endl;
   runner::Runner r(context_, ::urbiserver->getScheduler ());
-  r(execCommand);
+  r(&ast);
   //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 
   // "Display" the result.
@@ -723,11 +723,6 @@ UConnection::execute(ast::Ast*& execCommand)
       endline();
     }
   }
-
-  // FIXME: 2007-07-20: Currently we can't free the commandTree,
-  // we might kill function bodies.
-  // delete execCommand;
-  execCommand = 0;
 
   PING();
 }

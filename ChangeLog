@@ -1,5 +1,18 @@
 2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Code cleanup.
+	* include/kernel/uconnection.hh (execute): Argument is now a
+	const reference (BinaryExp) instead of a reference-to-pointer (Ast).
+	* src/parser/uparser.hh (commandTree): No longer a public attribute.
+	(command_tree_get, command_tree_set): New accessors.
+	* src/parser/uparser.cc: Adjust, implement new accessors.
+	* src/parser/bison/ugrammar.y,
+	* src/uconnection.cc,
+	* src/uexpression.cc,
+	* src/userver.cc: Adjust.
+
+2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Remove dead code.
 	* src/uconnection.cc: Remove all the hunks between #if 0 ... #endif.
 	* src/userver.cc: Aesthetic change.
