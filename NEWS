@@ -3,7 +3,7 @@ New in 1.0
 * New keyword 'taglist' displays the tags of currently running commands.
 
 * UObject::send(string) is now available to send URBI code from any UObject
-  (plugged or remote). The code is executed immediately in pluggin mode, which
+  (plugged or remote). The code is executed immediately in plugin mode, which
   makes it convenient to add specialized initialization in UObject
   constructors to setup some useful wrappers.
 
