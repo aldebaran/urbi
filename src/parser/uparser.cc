@@ -69,12 +69,16 @@ UParser::process (const std::string& command)
 ast::Ast*
 UParser::command_tree_get ()
 {
+  if (hasError ())
+    return 0;
   return command_tree_;
 }
 
 const ast::Ast*
 UParser::command_tree_get () const
 {
+  if (hasError ())
+    return 0;
   return command_tree_;
 }
 
