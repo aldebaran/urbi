@@ -101,6 +101,10 @@ TagExp:
   attributes:
     - tag: { type: 'Exp*', desc: The tagging expression }
     - exp: { type: 'Exp*', desc: The tagged expression }
+  printer:
+    - ~tag
+    - '": "'
+    - ~exp
 
 
 ## ------- ##

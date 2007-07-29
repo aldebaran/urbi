@@ -94,6 +94,8 @@
 	    ast::Exp* lhs, ast::Exp* rhs)
     {
       ast::Exp* res = 0;
+      assert (lhs);
+      assert (rhs);
       switch (op)
       {
 	case Flavorable::UAND:

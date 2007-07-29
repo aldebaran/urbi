@@ -1,5 +1,12 @@
 2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Pretty-print tagged expressions.
+	* src/ast/ast.yml (TagExp): Add a printer.
+	* src/parser/bison/ugrammar.y (new_bin): Add assert to prevent NULL
+	operands.
+
+2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Ensure that no invalid AST is executed.
 	* src/parser/uparser.cc (command_tree_get): Don't return the AST if
 	there was a parse error.
