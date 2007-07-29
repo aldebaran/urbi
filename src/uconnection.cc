@@ -259,14 +259,14 @@ UConnection::operator<< (_Send __msg)
   if (__msg._buf != 0)
   {
     UErrorValue ret = sendc_ (__msg._buf, __msg._buflen).error ();
-    free ((void*)__msg._buf);
+    free (const_cast<void*> (reinterpret_cast <const void*> (__msg._buf)));
 
     if (__msg._flush && ret != UFAIL)
       flush ();
 
     CONN_ERR_RET(ret);
   }
-  return (*this);
+  return *this;
 }
 
 UConnection&

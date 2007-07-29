@@ -1,3 +1,10 @@
+2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Compilation fix for GCC3.
+	* src/uconnection.cc (operator<< (_Send)): Old-style
+	C-cast may not cast away constness with GCC3.  Use a
+	reinterpret_cast + const_cast instead.
+
 2007-07-25  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Names and code cleaning in UConnection, call fixes
