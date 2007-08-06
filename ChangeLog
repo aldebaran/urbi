@@ -1,5 +1,10 @@
 2007-08-06  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Add a rule to generate the documentation.
+	* Makefile.am (doc): New.
+
+2007-08-06  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	* include/kernel/fwd.hh,
 	* include/kernel/uasyncregister.hh,
 	* include/kernel/userver.hh,

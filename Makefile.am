@@ -56,8 +56,13 @@ include/kernel/uvariable.hh
 SVN_EXTERNALS += tests libport src/uobject
 
 maintainer-check: valgrind-check
+
+.PHONY: valgrind-check check-html doc
 valgrind-check:
 	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1
 
 check-html:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
+
+doc:
+	cd doc && $(MAKE) $(AM_MAKEFLAGS) $@
