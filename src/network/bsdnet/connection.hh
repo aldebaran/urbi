@@ -1,7 +1,7 @@
 #ifndef CONNECTION_HH
 # define CONNECTION_HH
 
-/** \file Connection.h.cpp
+/** \file connection.hh
  *  \brief the linux specialization of the UConnection class of the URBI kernel.
  *  @author Anthony Truchet from a previous work by Arnaud Sarthou  */
 
@@ -29,10 +29,8 @@ public:
 
   //! Creates a new connection from the connection file descriptor
   /**
-   * @param fd the file descriptor of the underlying socket
-   * @param clientinfo a pointer to the informations about the client connected
-   * NOTE : the LinuxConnection stole the property of the struct hostent and
-   * is thus responsible for its deletion, and the declaration of its allocation*/
+   * @param connfd the file descriptor of the underlying socket
+   */
   Connection(int connfd);
   virtual ~Connection();
   virtual UErrorValue closeConnection ();

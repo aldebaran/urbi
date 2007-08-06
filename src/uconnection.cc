@@ -614,9 +614,6 @@ UConnection::error (UErrorCode n)
 
  \param n the warning number. Use the UWarningCode enum. Can be:
  - 0 : Memory overflow warning
-
- \param complement is a complement string added at the end
- of the warning message.
  */
 UErrorValue
 UConnection::warning (UWarningCode n)

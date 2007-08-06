@@ -30,8 +30,6 @@ class UASyncRegister
 public:
 
   /** UASyncRegister constructor
-   * @param eventhandler The parent eventhandler
-   * @param parameters The event parameters
    */
   UASyncRegister();
 

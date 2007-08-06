@@ -36,7 +36,7 @@ class UAtCandidate
 {
 public:
   /** UAtCandidate constructor.
-   * @param startTime The time when the constructor is called
+   * @param endTime The time when the constructor is called
    * @param mei The @c UMultiEventInstance that is candidate
    */
   UAtCandidate(ufloat endTime, UMultiEventInstance* mei);

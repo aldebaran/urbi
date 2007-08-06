@@ -1,4 +1,4 @@
-/// \file   fwd.hh
+/// \file   kernel/fwd.hh
 /// \brief  Forward declarations.
 
 #ifndef KERNEL1_FWD_HH

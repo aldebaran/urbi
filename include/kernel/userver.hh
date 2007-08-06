@@ -79,6 +79,8 @@ public:
    a fixed, precise, real-time frequency to let the server computer motor
    trajectories between two "work" calls.
 
+   \param mainName FIXME: A comment is missing here
+
    */
   UServer (ufloat frequency, const char* mainName);
 
@@ -119,6 +121,7 @@ public:
    the server.
    \param key is the message key. Maxlength = 5 chars.
    \param s   is the formatted string containing the message.
+   \param args Arguments for the format string.
    */
   void vecho_key (const char* key, const char* s, va_list args)
     __attribute__ ((__format__ (__printf__, 3, 0)));

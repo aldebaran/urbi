@@ -54,7 +54,7 @@ public:
    - / * and * /
    - // and \\n
    - # and \\n
-   - (and )
+   - ( and )
 
    This function is interruptible which means that is does not rescan the
    entire buffer from the start each time it is called, but it stores it's
@@ -64,9 +64,8 @@ public:
 
    The final ',' or ';' is the last character of the popped data.
 
-   \param length   of the extracted command. zero means "no command
-		   is available yet".
-   \return a pointer to the the data popped or 0 in case of error.
+   \return the command popped or an empty string if there was an error or
+           nothing to pop.
    */
   std::string popCommand ();
 

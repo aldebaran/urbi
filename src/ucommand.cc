@@ -139,9 +139,10 @@ TagInfo* UCommand::systemTagInfo = 0;
 
 // **************************************************************************
 //! UCommand constructor.
-/*! The parameter 'type' is required here to describe the type of the command.
+/*! The parameter \a _type is required here to describe the type of the command.
 
- \param type is the command type
+ \param l the location of the node in the input
+ \param _type is the command type
  */
 UCommand::UCommand(const location& l, Type _type)
   : UAst (l),

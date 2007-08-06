@@ -591,6 +591,7 @@ UServer::echo(const char* s, ...)
  message printing robot-specific.
 
  \param s is the formatted string containing the message
+ \param args Arguments for the format string.
  */
 void
 UServer::vdebug (const char* s, va_list args)

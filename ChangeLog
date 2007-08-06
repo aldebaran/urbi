@@ -1,3 +1,17 @@
+2007-08-06  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	* include/kernel/fwd.hh,
+	* include/kernel/uasyncregister.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/uvalue.hh,
+	* src/network/bsdnet/connection.hh,
+	* src/parser/uparser.hh,
+	* src/uatcandidate.hh,
+	* src/ucommand.cc,
+	* src/ucommandqueue.hh,
+	* src/uconnection.cc,
+	* src/userver.cc: Fix the Doxygen comments.
+
 2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Pretty-print tagged expressions.
