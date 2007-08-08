@@ -33,10 +33,21 @@ namespace runner
 
     unsigned context_number () const;
 
+    /***********************************************************
+     * End of public interface.  Everything below is internal. *
+     ***********************************************************/
+
+  protected:
+    struct CoroCtx {};
+
   private:
     typedef int line;
-    typedef void* opaque_ctx_type;
-    typedef std::stack<std::pair<line, opaque_ctx_type> > stack_type;
+    typedef std::stack<std::pair<line, CoroCtx*> > stack_type;
+
+  protected:
+    void cr_save_ (line l, CoroCtx* ctx);
+    CoroCtx* cr_restore_ ();
+    void cr_drop_stack_ ();
 
   protected:
     stack_type cr_stack_;
@@ -46,7 +57,7 @@ namespace runner
 } // namespace runner
 
 # define CORO_CTX_START                         \
-  struct __coro_ctx                             \
+  struct __coro_ctx: public Coroutine::CoroCtx  \
   {
 
 # define CORO_CTX_ADD(Decl)                     \
@@ -88,24 +99,21 @@ namespace runner
 
 # define CORO_CTX(What) __ctx->What
 
-# define CORO_SAVE_BEGIN_                                               \
-  cr_stack_.push (std::make_pair (__LINE__,                             \
-                                  reinterpret_cast<void*> (__ctx)));    \
+# define CORO_SAVE_BEGIN_(Coro)                                         \
+    cr_save_ (__LINE__, __ctx);                                         \
     ECHO ("coroutine saved (ctx: " << __ctx << ") now "                 \
           << context_number () << " contexts in the coroutine stack")
 
 # define CORO_SAVE_END_                                                 \
       case __LINE__:                                                    \
-        __ctx = reinterpret_cast<__coro_ctx*> (cr_stack_.top ().second); \
-        cr_stack_.pop ();                                               \
+        __ctx = static_cast<__coro_ctx*> (cr_restore_ ());              \
         ECHO ("coroutine resumed (ctx: " << __ctx << ") now "           \
               << context_number () << " contexts in the coroutine stack")
-
 
 # define CORO_YIELD_(Ret)                                               \
       do                                                                \
       {                                                                 \
-        CORO_SAVE_BEGIN_;                                               \
+        CORO_SAVE_BEGIN_ (this);                                        \
         throw Ret; /* No parens (see below) */                          \
         CORO_SAVE_END_;                                                 \
       } while (0)
@@ -115,28 +123,36 @@ namespace runner
 # define CORO_YIELD_VALUE(Val) CORO_YIELD_ (Val) // FIXME: Wrap Val in a known exn
 # define CORO_YIELD() CORO_YIELD_ (CoroutineYield ())
 
+# define CORO_CALL_(Coro, What, OnYield)                \
+    cr_call_ = true;                                    \
+    if (false)                                          \
+    {                                                   \
+      CORO_SAVE_END_;                                   \
+    }                                                   \
+    try {                                               \
+      What;                                             \
+    }                                                   \
+    catch (const CoroutineYield&)                       \
+    {                                                   \
+      CORO_SAVE_BEGIN_ (Coro);                          \
+      OnYield                                           \
+    }                                                   \
+    ECHO ("back to coroutine ctx: " << __ctx            \
+          << " with " << context_number ()              \
+          << " contexts in the coroutine stack");       \
+    cr_call_ = false;
+
 # define CORO_CALL(What)                        \
-  do {                                          \
-    cr_call_ = true;                            \
-    if (false)                                  \
-    {                                           \
-      CORO_SAVE_END_;                           \
-    }                                           \
-    try {                                       \
-      What;                                     \
-    }                                           \
-    catch (const CoroutineYield&)               \
-    {                                           \
-      CORO_SAVE_BEGIN_;                         \
-      throw;                                    \
-    }                                           \
-    ECHO ("back to coroutine ctx: " << __ctx    \
-          << " with " << context_number ()          \
-          << " contexts in the coroutine stack");   \
-    cr_call_ = false;                           \
+  do { CORO_CALL_ (this, What, throw;); } while (0)
+
+# define CORO_CALL_IN_BACKGROUND(Coro, What)            \
+  do {                                                  \
+    Coro->cr_drop_stack_ ();                            \
+    CORO_CALL_ (Coro, What, /* nothing */);             \
   } while (0)
 
-# define CORO_CALL_IN_BACKGROUND(What)          \
+/*
+# define CORO_CALL_IN_BACKGROUND(Coro, What)    \
   do {                                          \
     try {                                       \
       cr_call_ = true;                          \
@@ -147,13 +163,13 @@ namespace runner
     {                                           \
     }                                           \
   } while (0)
+*/
 
 # define CORO_RET_(Ret)                                         \
   do {                                                          \
-    ECHO ("coroutine ret (ctx: " << __ctx << ") now "           \
+    ECHO ("coroutine ret (ctx: " << __ctx << ") with "          \
           << context_number ()-1 << " contexts in the coroutine stack"); \
     delete __ctx;                                               \
-    cr_stack_.pop ();                                           \
     return Ret;                                                 \
   } while (0)
 

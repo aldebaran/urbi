@@ -29,7 +29,7 @@ namespace runner
 
   inline
   Runner::rObject
-  Runner::eval (const ast::Ast& e)
+  Runner::eval (ast::Ast& e)
   {
     e.accept (*this);
     return current_;

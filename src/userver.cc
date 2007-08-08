@@ -288,7 +288,8 @@ UServer::work_handle_connections_ ()
 
       if (signalcpuoverload)
       {
-	(*r)->errorSignal(UERROR_CPU_OVERLOAD);
+	// (*r)->errorSignal (UERROR_CPU_OVERLOAD);
+        ECHO ("UERROR_CPU_OVERLOAD");
 	signalcpuoverload = false;
       }
 

@@ -60,7 +60,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::AssignExp& e)
+  Runner::operator() (ast::AssignExp& e)
   {
     CORO_INIT_WITH_1SLOT_CTX (rObject tgt);
     YIELD (e);
@@ -80,23 +80,24 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::AndExp& e)
+  Runner::operator() (ast::AndExp& e)
   {
     CORO_INIT_WITHOUT_CTX ();
-    YIELD (e);
 
-    /// FIXME BROKEN
-    ECHO ("[LHS] this = " << ME);
-    CORO_CALL_IN_BACKGROUND (operator() (e.lhs_get()));
+    ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
+    Runner* clone = new Runner (*this);
+    clone->ast_ = &e.lhs_get ();
+    scheduler_get ().add_job (clone);
+    CORO_CALL_IN_BACKGROUND (clone, clone->eval (e.lhs_get ()));
     PING ();
-    ECHO ("[RHS] this = " << ME);
-    CORO_CALL (operator() (e.rhs_get()));
+    ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
+    CORO_CALL (operator() (e.rhs_get ()));
 
     CORO_END;
   }
 
   void
-  Runner::operator() (const ast::CallExp& e)
+  Runner::operator() (ast::CallExp& e)
   {
     CORO_CTX_START;
     CORO_CTX_ADD (bool call_code);
@@ -113,16 +114,15 @@ namespace runner
       PING ();
       CORO_CTX (i = e.args_get ().begin ());
       CORO_CTX (i_end = e.args_get ().end ());
-        CORO_CALL (CORO_CTX (tgt) = target(*CORO_CTX (i)));
+      CORO_CALL (CORO_CTX (tgt) = target(*CORO_CTX (i)));
 
-        // Ask the target for the handler of the message.
-        CORO_CTX (val = CORO_CTX (tgt)->lookup (e.name_get ()));
+      // Ask the target for the handler of the message.
+      CORO_CTX (val = CORO_CTX (tgt)->lookup (e.name_get ()));
 
-        CORO_CTX (args).push_back (CORO_CTX (tgt));
+      CORO_CTX (args).push_back (CORO_CTX (tgt));
       PING ();
       for (++CORO_CTX(i); CORO_CTX (i) != CORO_CTX (i_end); ++CORO_CTX (i))
       {
-        PING ();
         CORO_CALL (eval (**CORO_CTX (i)));
         PING ();
         CORO_CTX (args).push_back (current_);
@@ -130,7 +130,6 @@ namespace runner
 
       // We may have to run a primitive, or some code.
       CORO_CTX (call_code = false);
-      PING ();
       switch (CORO_CTX (val->kind_get ()))
       {
         case object::Object::kind_primitive:
@@ -147,7 +146,6 @@ namespace runner
           break;
       }
     }
-    PING ();
     if (CORO_CTX (call_code))
     {
       PING ();
@@ -158,7 +156,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (const ast::FloatExp& e)
+  Runner::operator() (ast::FloatExp& e)
   {
     CORO_INIT_WITHOUT_CTX ();
     YIELD (e);
@@ -171,7 +169,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::ListExp& e)
+  Runner::operator() (ast::ListExp& e)
   {
     typedef std::list<object::rObject> objects;
     typedef std::list<ast::Exp*> exps;
@@ -184,7 +182,7 @@ namespace runner
       PING ();
       // Evaluate every expression in the list
       // FIXME: parallelized?
-      //BOOST_FOREACH (const ast::Exp* v, e.value_get())
+      //BOOST_FOREACH (ast::Exp* v, e.value_get())
       for (CORO_CTX (i) = e.value_get ().begin ();
            CORO_CTX (i) != e.value_get ().end ();
            ++CORO_CTX(i))
@@ -201,7 +199,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::Function& e)
+  Runner::operator() (ast::Function& e)
   {
     CORO_INIT_WITHOUT_CTX ();
     YIELD (e);
@@ -215,7 +213,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::NegOpExp& e)
+  Runner::operator() (ast::NegOpExp& e)
   {
     CORO_INIT_WITHOUT_CTX ();
 
@@ -231,18 +229,18 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::SemicolonExp& e)
+  Runner::operator() (ast::SemicolonExp& e)
   {
     CORO_INIT_WITHOUT_CTX ();
 
-    ECHO ("[LHS] this = " << ME << " {{{" << e.lhs_get () << "}}}");
+    ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
     CORO_CALL (operator() (e.lhs_get()));
     ECHO ("sending result of lhs");
     if (current_.get ())
       emit_result (current_);
     current_.reset ();
     assert (current_.get () == 0);
-    ECHO ("[RHS] this = " << ME << " {{{" << e.rhs_get () << "}}}");
+    ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
     CORO_CALL (operator() (e.rhs_get()));
     ECHO ("sending result of rhs");
     if (current_.get ())
@@ -253,7 +251,7 @@ namespace runner
 
 
   void
-  Runner::operator() (const ast::StringExp& e)
+  Runner::operator() (ast::StringExp& e)
   {
     CORO_INIT_WITHOUT_CTX ();
     YIELD (e);

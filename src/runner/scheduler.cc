@@ -23,11 +23,13 @@ namespace runner
   {
     jobs pending;
     pending.swap (jobs_);
-    ECHO (pending.size () << " jobs pending");
+    jobs::size_type n = pending.size ();
+    ECHO (n << " jobs pending");
+    unsigned i = 0;
     BOOST_FOREACH (Job* job, pending)
     {
       assert (job);
-      ECHO ("scheduling " << job);
+      ECHO ("scheduling job " << ++i << '/' << n << ": " << job);
       schedule_immediately (job);
     }
   }

@@ -18,14 +18,14 @@ namespace runner
 {
 
   /// Ast executor.
-  class Runner : public ast::DefaultConstVisitor,
+  class Runner : public ast::DefaultVisitor,
                  public Job, private Coroutine
   {
   public:
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
-    typedef ast::DefaultConstVisitor super_type;
+    typedef ast::DefaultVisitor super_type;
     typedef object::rObject rObject;
     typedef object::rContext rContext;
     /// \}
@@ -45,7 +45,7 @@ namespace runner
     /// \name Evaluation.
     /// \{
     /// Evaluate a tree and return the \a current_ that results.
-    rObject eval (const ast::Ast& e);
+    rObject eval (ast::Ast& e);
 
     /// Send a result to the context.
     void emit_result (rObject result);
@@ -57,15 +57,15 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    virtual void operator() (const ast::AssignExp& e);
-    virtual void operator() (const ast::AndExp& e);
-    virtual void operator() (const ast::CallExp& e);
-    virtual void operator() (const ast::FloatExp& e);
-    virtual void operator() (const ast::Function& e);
-    virtual void operator() (const ast::NegOpExp& e);
-    virtual void operator() (const ast::SemicolonExp& e);
-    virtual void operator() (const ast::StringExp& e);
-    virtual void operator() (const ast::ListExp& e);
+    virtual void operator() (ast::AssignExp& e);
+    virtual void operator() (ast::AndExp& e);
+    virtual void operator() (ast::CallExp& e);
+    virtual void operator() (ast::FloatExp& e);
+    virtual void operator() (ast::Function& e);
+    virtual void operator() (ast::NegOpExp& e);
+    virtual void operator() (ast::SemicolonExp& e);
+    virtual void operator() (ast::StringExp& e);
+    virtual void operator() (ast::ListExp& e);
     /// \}
 
     /// Do the actual work.  Implementation of \c Job::run.

@@ -19,6 +19,33 @@
 
 2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Add the first version of the "&"-operator.
+	* src/runner/coroutine.hh (CoroCtx): New internal class.
+	(cr_save_, cr_restore_, cr_drop_stack_): New internal methods.
+	Contexts now inherit CoroCtx.
+	(CORO_SAVE_BEGIN_): Take an argument and use cr_save_.
+	(CORO_SAVE_END_): Use cr_restore_.
+	(CORO_CALL_): New internal helper to implement one coroutine calling
+	another.
+	(CORO_CALL, CORO_CALL_IN_BACKGROUND): Implement with CORO_CALL_.
+	(CORO_RET_): Fix a bug (don't pop the context since it's not in the
+	stack anyway!).
+	* src/runner/coroutine.hxx (cr_save_, cr_restore_, cr_drop_stack_):
+	Implement.
+	* src/runner/runner.hh (Runner): Be a DefaultVisitor not a
+	DefaultConstVisitor.  Adjust methods accordingly.
+	* src/runner/runner.hxx: Adjust methods accordingly.
+	* src/runner/runner.cc: Ditto.
+	(operator()(AndExp)): Almost correct implementation.
+	* src/runner/scheduler.cc (work): Print the number of jobs as they
+	are executed.
+	* src/userver.cc (work_handle_connections_): Keep the CPU Overload
+	warning quiet.  I run make -j5 on my machines and sometimes it
+	triggers the warning.  Maybe we should ignore this one in
+	uconsole-check.
+
+2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	A Runner is not a const visitor.
 	The Runner needs to modify (actually destroy) bits of AST that have
 	been executed (and can safely be discarded unlike function bodies).
