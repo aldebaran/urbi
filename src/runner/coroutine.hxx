@@ -103,6 +103,13 @@ namespace runner
     cr_resumed_ = 0;
   }
 
+  inline
+  Coroutine::line
+  Coroutine::cr_line_ () const
+  {
+    return cr_stack_.top ().first;
+  }
+
 } // namespace runner
 
 #endif // !RUNNER_COROUTINE_HXX

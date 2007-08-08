@@ -17,6 +17,15 @@
 	* src/uconnection.cc,
 	* src/userver.cc: Fix the Doxygen comments.
 
+2007-08-06  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Add documentation.
+	* src/runner/coroutine.hh: Document everything.
+	(cr_line_): New internal method.
+	(CORO_CHK_WAITING_, CORO_CHECK_WAITING_)
+	(CORO_CHECK_WAITING_AND_SAVE_): New internal macros.
+	* src/runner/coroutine.hxx (cr_line_): Implement.
+
 2007-08-04  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Don't create unecessary contexts.
