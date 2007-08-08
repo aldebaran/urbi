@@ -33,7 +33,7 @@ namespace runner
     {
       T* data;
     };
-    return reinterpret_cast<dummy_ctx*> (cr_stack_.front ().second)->data;
+    return reinterpret_cast<dummy_ctx*> (cr_stack_.top ().second)->data;
   }
 
   inline
@@ -41,6 +41,13 @@ namespace runner
   Coroutine::started () const
   {
     return !cr_stack_.empty ();
+  }
+
+  inline
+  unsigned
+  Coroutine::context_number () const
+  {
+    return cr_stack_.size ();
   }
 
 } // namespace runner

@@ -25,6 +25,7 @@ namespace runner
   void
   Scheduler::add_job (Job* job)
   {
+    assert (job);
     jobs_.push_back (job);
   }
 

@@ -60,7 +60,7 @@ namespace runner
   void
   Job::run ()
   {
-    ECHO (this << " scheduled...");
+    ECHO ("job " << this << " scheduled...");
     assert (scheduler_);
     if (!started_)
     {

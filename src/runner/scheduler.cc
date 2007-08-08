@@ -11,6 +11,7 @@
 
 #include "libport/compiler.hh"
 
+#include "runner/fwd.hh"
 #include "runner/scheduler.hh"
 #include "runner/job.hh"
 
@@ -20,12 +21,27 @@ namespace runner
   void
   Scheduler::work ()
   {
-    ECHO (jobs_.size () << " jobs pending");
-    BOOST_FOREACH (Job* job, jobs_)
+    jobs pending;
+    pending.swap (jobs_);
+    ECHO (pending.size () << " jobs pending");
+    BOOST_FOREACH (Job* job, pending)
     {
       assert (job);
       ECHO ("scheduling " << job);
+      schedule_immediately (job);
+    }
+  }
+
+  void
+  Scheduler::schedule_immediately (Job* job)
+  {
+    assert (job);
+    try {
       job->run ();
+    }
+    catch (const CoroutineYield&)
+    {
+      add_job (job);
     }
   }
 

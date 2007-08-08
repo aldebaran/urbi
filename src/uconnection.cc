@@ -42,6 +42,7 @@
 #include "object/object.hh"
 #include "object/atom.hh"
 #include "runner/fwd.hh"
+#include "runner/scheduler.hh"
 #include "runner/runner.hh"
 
 #include "parser/uparser.hh"
@@ -699,28 +700,18 @@ UConnection::isActive ()
 void
 UConnection::execute ()
 {
+  using runner::Runner;
   PING ();
 
   if (!active_command_)
     return;
 
-  runner::Runner* r = new runner::Runner(context_, ::urbiserver->getScheduler ());
-  // std::cerr << "Command is: " << *execCommand << std::endl;
-  std::cerr << "Command is: " << execCommand << std::endl;
-  try {
-    (*r)(execCommand);
-  }
-  catch (const runner::CoroutineYield&)
-  {
-    // FIXME: 2007-07-20: Currently we can't free the commandTree,
-    // we might kill function bodies.
-    // delete execCommand;
-    execCommand = 0;
+  std::cerr << "Command is: " << *active_command_ << std::endl;
 
-    PING();
-    return;
-  }
-  //  std::cerr << "Result: " << libport::deref << r->result() << std::endl;
+  Runner* runner = new Runner(context_,
+                              ::urbiserver->getScheduler (),
+                              active_command_);
+  ::urbiserver->getScheduler ().schedule_immediately (runner);
 
   // FIXME: 2007-07-20: Currently we can't free the command,
   // we might kill function bodies.

@@ -203,23 +203,26 @@ UServer::main (int argc, const char* argv[])
     current = v;
   }
 
-  new UVariable(MAINDEVICE, "args", arglistv);
+  new UVariable (MAINDEVICE, "args", arglistv);
 }
 
 void
-UServer::beforeWork()
+UServer::beforeWork ()
 {
 }
 
 void
-UServer::afterWork()
+UServer::afterWork ()
 {
 }
 
 void
 UServer::work ()
 {
-  libport::BlockLock bl(this);
+//   static int i = 0;
+//   if (++i == 12)
+//     abort ();
+  libport::BlockLock bl (this);
 
   // CPU Overload test
   updateTime();

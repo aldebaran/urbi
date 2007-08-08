@@ -17,6 +17,34 @@
 	* src/uconnection.cc,
 	* src/userver.cc: Fix the Doxygen comments.
 
+2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Finally get k2.0 to work with coroutines.
+	* src/runner/coroutine.hh (context_number): New.
+	(CORO_INIT_WITHOUT_CTX, CORO_INIT_WITH_1SLOT_CTX)
+	(CORO_INIT_WITH_2SLOTS_CTX, CORO_INIT_WITH_3SLOTS_CTX): New.
+	(CORO_CALL): Properly restore the call stack.  We save the call
+	stack only if needed (that is, if the sub-coroutine or a deeper
+	child did a yield).
+	* src/runner/coroutine.hxx (context_number: Implement.
+	* src/runner/job.hxx (run): Aesthetic change.
+	* src/runner/runner.hh (ctor): Take the AST as a 3rd argument.  Hide
+	most of the methods (visiting operators and eval) in a protected
+	section.  They must only be called by `work'.
+	* src/runner/runner.hxx (ctor): Adjust.
+	* src/runner/runner.cc (YIELD): Do not call Job::yield.  This sounds
+	weird but CORO_YIELD is enough to reschedule the job.
+	(work): Always restart the evaluation from the topmost AST node to
+	ensure the entire call stack is restored.
+	Various implementation fixes in the rest of the file.
+	* src/runner/scheduler.hh (schedule_immediately): New.
+	* src/runner/scheduler.cc (schedule_immediately): Implement.
+	(work): Use schedule_immediately.
+	* src/runner/scheduler.hxx (add_job): Add a safety assertion.
+	* src/uconnection.cc (execute): Pass the new Runner to
+	schedule_immediately instead of trying to execute it manually.
+	* src/userver.cc (work): Add some dead code convenient for debugging.
+
 2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Pretty-print tagged expressions.

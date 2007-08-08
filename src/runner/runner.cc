@@ -2,7 +2,7 @@
  ** \file runner/runner.cc
  ** \brief Implementation of runner::Runner.
  */
-//#define ENABLE_DEBUG_TRACES
+#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include <boost/foreach.hpp>
@@ -27,22 +27,30 @@ namespace runner
  * left hand side.  However, the "1" does something useful: it calculates
  * a value (even though calculating the constant "1" is somewhat trivial),
  * so it should most probably start with a YIELD. */
-#define YIELD(Ast)                              \
-  do                                            \
-  {                                             \
-    ECHO (ME << " yielding on ast = " << &Ast); \
-    yield ();                                   \
-    CORO_YIELD ();                              \
+#define YIELD(Ast)                                              \
+  do                                                            \
+  {                                                             \
+    ECHO ("job " << ME << " yielding on AST: "                  \
+          << &Ast << " {{{" << Ast << "}}}");                   \
+    CORO_YIELD ();                                              \
   } while (0)
 
   void
   Runner::work ()
   {
-    ast::Ast* ast = Coroutine::take_first_slot<ast::Ast> ();
-    assert (ast);
-    ECHO (ME << " restarting evaluation of " << ast);
-    // Restart evaluation where it was stopped.
-    operator() (*ast);
+    assert (ast_);
+
+    if (!started_)
+    {
+      ECHO ("job " << ME << " starting evaluation of AST: " << ast_
+            << " {{{" << *ast_ << "}}}");
+      started_ = true;
+    }
+    else
+      ECHO ("job " << ME << " restarting evaluation of AST: " << ast_
+            << " {{{" << *ast_ << "}}} "
+            << context_number () << " contexts in the coroutine stack");
+    operator() (*ast_);
   }
 
   void
@@ -54,30 +62,28 @@ namespace runner
   void
   Runner::operator() (const ast::AssignExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITH_1SLOT_CTX (rObject tgt);
     YIELD (e);
 
     {
       PING ();
-      assert (e.lhs_get().args_get().size () == 1);
-      rObject tgt = target(e.lhs_get().args_get().front());
-      libport::Symbol s = e.lhs_get().name_get();
-      tgt->slot_set (s, eval(e.rhs_get()));
+      assert (e.lhs_get ().args_get ().size () == 1);
+      CORO_CALL (CORO_CTX (tgt) = target (e.lhs_get ().args_get ().front ()));
+      CORO_CALL (eval (e.rhs_get ()));
+      {
+        libport::Symbol s = e.lhs_get ().name_get ();
+        CORO_CTX (tgt)->slot_set (s, current_);
+      }
     }
 
     CORO_END;
-    assert (e.lhs_get().args_get().size () == 1);
-    rObject tgt = target(e.lhs_get().args_get().front());
-    libport::Symbol s = e.lhs_get().name_get();
-    tgt->slot_set (s, eval(e.rhs_get()));
   }
 
   void
   Runner::operator() (const ast::AndExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITHOUT_CTX ();
+    YIELD (e);
 
     /// FIXME BROKEN
     ECHO ("[LHS] this = " << ME);
@@ -92,40 +98,60 @@ namespace runner
   void
   Runner::operator() (const ast::CallExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
-    YIELD (e);
+    CORO_CTX_START;
+    CORO_CTX_ADD (bool call_code);
+    CORO_CTX_ADD (rObject val);
+    // Iterate over arguments, with a special case for the target.
+    CORO_CTX_ADD (ast::exps_type::const_iterator i);
+    CORO_CTX_ADD (ast::exps_type::const_iterator i_end);
+    // Gather the arguments, including the target.
+    CORO_CTX_ADD (object::objects_type args);
+    CORO_CTX_ADD (rObject tgt);
+    CORO_START ();
 
     {
       PING ();
-      // Iterate over arguments, with a special case for the target.
-      ast::exps_type::const_iterator
-        i = e.args_get().begin(),
-        i_end = e.args_get().end();
-      rObject tgt = target(*i);
+      CORO_CTX (i = e.args_get ().begin ());
+      CORO_CTX (i_end = e.args_get ().end ());
+        CORO_CALL (CORO_CTX (tgt) = target(*CORO_CTX (i)));
 
-      // Ask the target for the handler of the message.
-      rObject val = tgt->lookup (e.name_get ());
+        // Ask the target for the handler of the message.
+        CORO_CTX (val = CORO_CTX (tgt)->lookup (e.name_get ()));
 
-      // Gather the arguments, including the target.
-      object::objects_type args;
-      args.push_back (tgt);
-      for (++i; i != i_end; ++i)
-        args.push_back (eval (**i));
+        CORO_CTX (args).push_back (CORO_CTX (tgt));
+      PING ();
+      for (++CORO_CTX(i); CORO_CTX (i) != CORO_CTX (i_end); ++CORO_CTX (i))
+      {
+        PING ();
+        CORO_CALL (eval (**CORO_CTX (i)));
+        PING ();
+        CORO_CTX (args).push_back (current_);
+      }
 
       // We may have to run a primitive, or some code.
-      switch (val->kind_get ())
+      CORO_CTX (call_code = false);
+      PING ();
+      switch (CORO_CTX (val->kind_get ()))
       {
         case object::Object::kind_primitive:
-          current_ = val.cast<object::Primitive>()->value_get()(args);
+          PING ();
+          current_ = CORO_CTX (val).cast<object::Primitive>()->value_get()(CORO_CTX (args));
           break;
         case object::Object::kind_code:
-          CORO_CALL (current_ = eval (val.cast<object::Code>()->value_get()));
+          PING ();
+          CORO_CTX (call_code = true);
           break;
         default:
-          current_ = val;
+          PING ();
+          current_ = CORO_CTX (val);
           break;
       }
+    }
+    PING ();
+    if (CORO_CTX (call_code))
+    {
+      PING ();
+      CORO_CALL (current_ = eval (CORO_CTX (val).cast<object::Code> ()->value_get ()));
     }
 
     CORO_END;
@@ -134,8 +160,7 @@ namespace runner
   void
   Runner::operator() (const ast::FloatExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITHOUT_CTX ();
     YIELD (e);
 
     current_ = new object::Float (e.value_get());
@@ -148,22 +173,26 @@ namespace runner
   void
   Runner::operator() (const ast::ListExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    typedef std::list<object::rObject> objects;
+    typedef std::list<ast::Exp*> exps;
+                            // list values
+    CORO_INIT_WITH_2SLOTS_CTX (objects values,
+                               exps::const_iterator i);
     YIELD (e);
 
     {
       PING ();
-      // list values
-      std::list<object::rObject> values;
       // Evaluate every expression in the list
       // FIXME: parallelized?
-      BOOST_FOREACH (const ast::Exp* v, e.value_get())
+      //BOOST_FOREACH (const ast::Exp* v, e.value_get())
+      for (CORO_CTX (i) = e.value_get ().begin ();
+           CORO_CTX (i) != e.value_get ().end ();
+           ++CORO_CTX(i))
       {
-        operator() (*v);
-        values.push_back(current_);
+        CORO_CALL (operator() (**CORO_CTX (i)));
+        CORO_CTX (values).push_back(current_);
       }
-      current_ = new object::List (values);
+      current_ = new object::List (CORO_CTX (values));
       ECHO ("result: " << *current_);
     }
 
@@ -174,8 +203,7 @@ namespace runner
   void
   Runner::operator() (const ast::Function& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITHOUT_CTX ();
     YIELD (e);
 
     PING ();
@@ -189,14 +217,13 @@ namespace runner
   void
   Runner::operator() (const ast::NegOpExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITHOUT_CTX ();
 
+    CORO_CALL (eval (e.operand_get ()));
     {
-      rObject val = eval (e.operand_get ());
-      assert (val->kind_get() == object::Object::kind_float);
+      assert (current_->kind_get() == object::Object::kind_float);
       current_ =
-        new object::Float (-1 * val.cast<object::Float>()->value_get ());
+        new object::Float (-1 * current_.cast<object::Float>()->value_get ());
     }
 
     CORO_END;
@@ -206,17 +233,16 @@ namespace runner
   void
   Runner::operator() (const ast::SemicolonExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITHOUT_CTX ();
 
-    ECHO ("[LHS] this = " << ME);
+    ECHO ("[LHS] this = " << ME << " {{{" << e.lhs_get () << "}}}");
     CORO_CALL (operator() (e.lhs_get()));
     ECHO ("sending result of lhs");
     if (current_.get ())
       emit_result (current_);
     current_.reset ();
     assert (current_.get () == 0);
-    ECHO ("[RHS] this = " << ME);
+    ECHO ("[RHS] this = " << ME << " {{{" << e.rhs_get () << "}}}");
     CORO_CALL (operator() (e.rhs_get()));
     ECHO ("sending result of rhs");
     if (current_.get ())
@@ -229,8 +255,7 @@ namespace runner
   void
   Runner::operator() (const ast::StringExp& e)
   {
-    CORO_INIT_WITH_1SLOT_CTX (const ast::Ast* ast);
-    CORO_CTX (ast = &e);
+    CORO_INIT_WITHOUT_CTX ();
     YIELD (e);
 
     PING ();

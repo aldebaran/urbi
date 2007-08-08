@@ -26,6 +26,10 @@ namespace runner
     /// Memory ownership of @a job is transferred to the Scheduler.
     void add_job (Job* job);
 
+    // Ask the scheduler do run this @a job immediately.  Memory ownership
+    // of @a job is transferred to the Scheduler.
+    void schedule_immediately (Job* job);
+
   private:
     typedef std::list<Job*> jobs;
     jobs jobs_;

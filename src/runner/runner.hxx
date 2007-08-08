@@ -14,9 +14,11 @@ namespace runner
 {
 
   inline
-  Runner::Runner (rContext ctx, Scheduler& sched)
+  Runner::Runner (rContext ctx, Scheduler& sched, ast::Ast* ast)
     : Job (sched),
-      context_ (ctx)
+      context_ (ctx),
+      ast_ (ast),
+      started_ (false)
   {
   }
 

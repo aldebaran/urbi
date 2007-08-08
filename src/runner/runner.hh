@@ -32,13 +32,16 @@ namespace runner
 
     /// \name Ctor & dtor.
     /// \{
-    /// Construct a Runner.
-    Runner (rContext ctx, Scheduler& scheduler);
+    /// Construct a \c Runner in the context \a ctx.  The runner needs to
+    /// know who is its \a scheduler and will execute \a ast.  Memory
+    /// ownership of \a ast is transferred to the Runner.
+    Runner (rContext ctx, Scheduler& scheduler, ast::Ast* ast);
 
     /// Destroy a Runner.
     virtual ~Runner ();
     /// \}
 
+  protected:
     /// \name Evaluation.
     /// \{
     /// Evaluate a tree and return the \a current_ that results.
@@ -65,7 +68,6 @@ namespace runner
     virtual void operator() (const ast::ListExp& e);
     /// \}
 
-  protected:
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
 
@@ -76,6 +78,12 @@ namespace runner
 
     /// The current value during the evaluation of the AST.
     rObject current_;
+
+    /// The root of the AST being executed.
+    ast::Ast* ast_;
+
+    /// Whether or not we started to execute anything.
+    bool started_;
   };
 
 } // namespace runner
