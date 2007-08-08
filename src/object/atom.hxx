@@ -61,8 +61,16 @@ namespace object
 
   template <typename Traits>
   inline
-  typename Traits::type
+  const typename Traits::type
   Atom<Traits>::value_get () const
+  {
+    return value_;
+  }
+
+  template <typename Traits>
+  inline
+  typename Traits::type
+  Atom<Traits>::value_get ()
   {
     return value_;
   }

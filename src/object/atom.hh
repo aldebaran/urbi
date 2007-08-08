@@ -37,8 +37,10 @@ namespace object
     /// The kind of Atom.
     virtual kind_type kind_get () const;
 
-    /// The held value.
-    typename Traits::type value_get () const;
+    /// The value held.
+    const typename Traits::type value_get () const;
+    /// The value held.
+    typename Traits::type value_get ();
 
     /// For debugging.
     std::ostream& special_slots_dump (std::ostream& o) const;
@@ -57,7 +59,7 @@ namespace object
 
   struct code_traits
   {
-    typedef const ast::Exp& type;
+    typedef ast::Exp& type;
     enum { kind = Object::kind_code };
   };
 

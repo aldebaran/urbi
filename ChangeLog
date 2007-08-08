@@ -19,6 +19,18 @@
 
 2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	A Runner is not a const visitor.
+	The Runner needs to modify (actually destroy) bits of AST that have
+	been executed (and can safely be discarded unlike function bodies).
+	* dev/ast-default-visitor-gen (GenDefaultVisitor): Allow non-const
+	visitors.
+	* src/ast/ast.yml (BinaryExp): Add non-const accessors.
+	* src/object/atom.hh (value_get): Add a non-const version.
+	(code_traits):  Hold a non-const reference to the AST.
+	* src/object/atom.hxx (value_get): Implement the non-const version.
+
+2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Finally get k2.0 to work with coroutines.
 	* src/runner/coroutine.hh (context_number): New.
 	(CORO_INIT_WITHOUT_CTX, CORO_INIT_WITH_1SLOT_CTX)
