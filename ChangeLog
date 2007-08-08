@@ -1,5 +1,13 @@
 2007-08-07  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Minor build fixes.
+	* src/console.cc: Add missing include.
+	* src/kernel.mk: Put BOOST_CPPFLAGS in AM_CPPFLAGS not AM_CXXFLAGS.
+	* src/network/bsdnet/network.cc (processNetwork): Add a return
+	statement (gcc4 complains with -03).
+
+2007-08-07  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Tie the Coroutine class with the Scheduler.
 	Before this patch, Coroutine was a standalone class.  The Runner
 	inherited Job (to be schedulable by the Scheduler) and Coroutine.

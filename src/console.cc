@@ -8,6 +8,7 @@
 # include <unistd.h>
 #endif
 #include "libport/windows.hh"
+#include <iostream>
 #include <fstream>
 
 #include "libport/utime.hh"
