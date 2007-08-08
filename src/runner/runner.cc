@@ -81,7 +81,7 @@ namespace runner
 
     /// FIXME BROKEN
     ECHO ("[LHS] this = " << ME);
-    CORO_CALL_IN_BACKGROUND ((*clone)(e.lhs_get()));
+    CORO_CALL_IN_BACKGROUND (operator() (e.lhs_get()));
     PING ();
     ECHO ("[RHS] this = " << ME);
     CORO_CALL (operator() (e.rhs_get()));

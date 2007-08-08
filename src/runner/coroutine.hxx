@@ -33,7 +33,7 @@ namespace runner
     {
       T* data;
     };
-    return reinterpret_cast<dummy_ctx*> (cr_stack_.top ().second)->data;
+    return reinterpret_cast<dummy_ctx*> (cr_stack_.front ().second)->data;
   }
 
   inline

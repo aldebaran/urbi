@@ -83,6 +83,18 @@
 
 2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Properly restore the call stack of coroutines.
+	* src/runner/coroutine.hh: Use a list instead of a stack to hold the
+	stack of calls.  When yielding, the execution is saved right before
+	the call.  New contexts are pushed at the end of the list.  This
+	way, when a coroutine is resumed, the stack frame is properly
+	restored (which leads to much more natural programming and makes it
+	possible to return values from one coroutine to another).
+	* src/runner/coroutine.hxx: Adjust.
+	* src/runner/runner.cc: Compilation fix.
+
+2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	First attempt to implement parallelism with coroutines.
 	* src/runner/Makefile.am: Add new files.
 	* src/runner/coroutine.hh: New.

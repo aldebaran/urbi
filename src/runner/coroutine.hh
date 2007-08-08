@@ -8,7 +8,7 @@
 
 # include <cassert>
 
-# include <stack>
+# include <list>
 # include <utility>
 
 # define ENABLE_DEBUG_TRACES
@@ -33,7 +33,7 @@ namespace runner
 
     typedef int line;
     typedef void* opaque_ctx_type;
-    typedef std::stack<std::pair<line, opaque_ctx_type> > stack_type;
+    typedef std::list<std::pair<line, opaque_ctx_type> > stack_type;
 
     stack_type cr_stack_;
     bool cr_call_;
@@ -53,7 +53,7 @@ namespace runner
   __coro_ctx* __ctx = 0;                                                \
   try                                                                   \
   {                                                                     \
-    switch (cr_call_ || cr_stack_.empty () ? 0 : cr_stack_.top ().first) \
+    switch (cr_call_ || cr_stack_.empty () ? 0 : cr_stack_.front ().first) \
     {                                                                   \
     case 0:                                                             \
       cr_call_ =  false;                                                \
@@ -70,15 +70,15 @@ namespace runner
 # define CORO_SAVE_BEGIN_                                               \
     ECHO ("coroutine saving (" __FILE__ ":" << __LINE__ << ", "         \
           << __ctx << ')');                                             \
-    cr_stack_.push (std::make_pair (__LINE__,                           \
-                                    reinterpret_cast<void*> (__ctx)))
+    cr_stack_.push_back (std::make_pair (__LINE__,                      \
+                                         reinterpret_cast<void*> (__ctx)))
 
 # define CORO_SAVE_END_                                                 \
       case __LINE__:                                                    \
-        __ctx = reinterpret_cast<__coro_ctx*> (cr_stack_.top ().second); \
+        __ctx = reinterpret_cast<__coro_ctx*> (cr_stack_.front ().second); \
         ECHO ("coroutine resumed (" __FILE__ ":" << __LINE__            \
             << ", " << __ctx << ')');                                   \
-        cr_stack_.pop ()
+        cr_stack_.pop_front ()
 
 # define CORO_YIELD_(Ret)                                               \
       do                                                                \
@@ -97,9 +97,12 @@ namespace runner
   do {                                          \
     CORO_SAVE_BEGIN_;                           \
     cr_call_ = true;                            \
+    if (false)                                  \
+    {                                           \
+      CORO_SAVE_END_;                           \
+    }                                           \
     What;                                       \
     cr_call_ = false;                           \
-    CORO_SAVE_END_;                             \
   } while (0)
 
 # define CORO_CALL_IN_BACKGROUND(What)          \
@@ -129,7 +132,7 @@ namespace runner
       break;                                                    \
     default:                                                    \
       ECHO ("coroutine invalid resume (" __FILE__ ":"     \
-            << (cr_stack_.empty () ? 0 : cr_stack_.top ().first)\
+            << (cr_stack_.empty () ? 0 : cr_stack_.front ().first)\
             << ", " << __ctx << ')');                           \
       abort ();                                                 \
     } /* end of switch */                                       \
