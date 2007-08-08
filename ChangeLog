@@ -17,6 +17,15 @@
 	* src/uconnection.cc,
 	* src/userver.cc: Fix the Doxygen comments.
 
+2007-08-04  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Don't create unecessary contexts.
+	* src/runner/coroutine.hh (CORO_START): Make a macro-function (to
+	uniformize with other CORO_* macros).
+	(CORO_START_WITHOUT_CTX): New.
+	(CORO_INIT_WITHOUT_CTX): Use CORO_START_WITHOUT_CTX.
+	* src/runner/runner.cc: Adjust.
+
 2007-08-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Implement the "|"-operator.  Fix the ";"-operator.

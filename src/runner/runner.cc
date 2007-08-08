@@ -124,7 +124,7 @@ namespace runner
   void
   Runner::operator() (ast::CallExp& e)
   {
-    CORO_CTX_START;
+    CORO_CTX_START ();
     CORO_CTX_ADD (bool call_code);
     CORO_CTX_ADD (rObject val);
     // Iterate over arguments, with a special case for the target.

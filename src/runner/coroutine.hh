@@ -111,21 +111,22 @@ namespace runner
 
 } // namespace runner
 
-# define CORO_CTX_START                         \
+# define CORO_CTX_START()                       \
   struct __coro_ctx: public Coroutine::CoroCtx  \
-  {
+  {                                             \
+    struct e_n_d__w_i_t_h__s_e_m_i_c_o_l_o_n
 
 # define CORO_CTX_ADD(Decl)                     \
     Decl
 
-# define CORO_START()                                                   \
+# define CORO_START_(NEW_CTX)                                           \
   };                                                                    \
   if (waiting_for_)                                                     \
   {                                                                     \
     assert (!cr_stack_.empty ());                                       \
     ECHO ("coroutine not ready to resume execution at line "            \
           << cr_stack_.top ().first << " (still waiting for "           \
-          << waiting_for_ << " other coroutines)");                      \
+          << waiting_for_ << " other coroutines)");                     \
     throw CoroutineYield ();                                            \
   }                                                                     \
   __coro_ctx* __ctx = 0;                                                \
@@ -135,29 +136,32 @@ namespace runner
     {                                                                   \
     case 0:                                                             \
       cr_new_call_ =  false;                                            \
-      __ctx = new __coro_ctx ();                                        \
+      __ctx = NEW_CTX;                                                  \
       ECHO ("creating a new coroutine (ctx: " << __ctx << ')')
 
+# define CORO_START() CORO_START_ (new __coro_ctx ())
+# define CORO_START_WITHOUT_CTX() CORO_START_ (0)
+
+# define CORO_INIT_WITHOUT_CTX()                \
+  CORO_CTX_START ();                            \
+  CORO_START_WITHOUT_CTX ()
+
 # define CORO_INIT_WITH_1SLOT_CTX(Decl)         \
-  CORO_CTX_START;                               \
+  CORO_CTX_START ();                            \
   CORO_CTX_ADD (Decl);                          \
   CORO_START ()
 
 # define CORO_INIT_WITH_2SLOTS_CTX(Decl1, Decl2)        \
-  CORO_CTX_START;                                       \
+  CORO_CTX_START ();                                    \
   CORO_CTX_ADD (Decl1);                                 \
   CORO_CTX_ADD (Decl2);                                 \
   CORO_START ()
 
 # define CORO_INIT_WITH_3SLOTS_CTX(Decl1, Decl2, Decl3) \
-  CORO_CTX_START;                                       \
+  CORO_CTX_START ();                                    \
   CORO_CTX_ADD (Decl1);                                 \
   CORO_CTX_ADD (Decl2);                                 \
   CORO_CTX_ADD (Decl3);                                 \
-  CORO_START ()
-
-# define CORO_INIT_WITHOUT_CTX()                \
-  CORO_CTX_START;                               \
   CORO_START ()
 
 # define CORO_CTX(What) __ctx->What
