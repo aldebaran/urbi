@@ -11,13 +11,15 @@
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
 # include "runner/job.hh"
+# include "runner/coroutine.hh"
 # include "runner/scheduler.hh"
 
 namespace runner
 {
 
   /// Ast executor.
-  class Runner : public ast::DefaultConstVisitor, public Job
+  class Runner : public ast::DefaultConstVisitor,
+                 public Job, private Coroutine
   {
   public:
     /// \name Useful shorthands.

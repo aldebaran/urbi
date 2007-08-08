@@ -83,6 +83,25 @@
 
 2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	First attempt to implement parallelism with coroutines.
+	* src/runner/Makefile.am: Add new files.
+	* src/runner/coroutine.hh: New.
+	* src/runner/coroutine.hxx: New.
+	* src/runner/fwd.hh: New.
+	* src/runner/job.hh (yield): New.
+	* src/runner/job.hxx (yield): Implement.
+	* src/runner/runner.cc: Complete rewrite with coroutines.  AndExp
+	doesn't work.
+	* src/runner/runner.hh (Runner): Inherit from Coroutine.
+	* src/runner/runner.hxx: Adjust.
+	* src/runner/scheduler.cc: New.
+	* src/runner/scheduler.hh: Adjust.
+	* src/runner/scheduler.hxx (add_job): Implement.
+	* src/uconnection.cc (execute): Adjust.
+	* src/userver.cc (work): Invoke the Scheduler.
+
+2007-07-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Code cleanup (use C++ instead of C).
 	* src/parser/uparser.hh (process): Use a std::string instead of a
 	ubyte*+int.

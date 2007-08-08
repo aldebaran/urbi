@@ -16,14 +16,14 @@ namespace runner
   inline
   Runner::Runner (rContext ctx, Scheduler& sched)
     : Job (sched),
-      context_ (ctx),
-      current_ (0)
+      context_ (ctx)
   {
   }
 
   inline
   Runner::~Runner ()
-  {}
+  {
+  }
 
   inline
   Runner::rObject
@@ -43,12 +43,6 @@ namespace runner
       return eval (*n);
     else
       return context_;
-  }
-
-  inline
-  void
-  Runner::work ()
-  {
   }
 
 } // namespace runner

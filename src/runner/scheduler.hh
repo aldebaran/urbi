@@ -6,12 +6,13 @@
 #ifndef RUNNER_SCHEDULER_HH
 # define RUNNER_SCHEDULER_HH
 
+# include <list>
 # include <boost/utility.hpp>
+
+# include "runner/fwd.hh"
 
 namespace runner
 {
-
-  class Job; // Fwd decl.
 
   class Scheduler : boost::noncopyable
   {
@@ -26,7 +27,8 @@ namespace runner
     void add_job (Job* job);
 
   private:
-    std::list<Job*> jobs_;
+    typedef std::list<Job*> jobs;
+    jobs jobs_;
   };
 
 } // namespace runner

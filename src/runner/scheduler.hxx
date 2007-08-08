@@ -21,6 +21,13 @@ namespace runner
   {
   }
 
+  inline
+  void
+  Scheduler::add_job (Job* job)
+  {
+    jobs_.push_back (job);
+  }
+
 } // namespace runner
 
 #endif // !RUNNER_SCHEDULER_HXX

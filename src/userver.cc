@@ -238,6 +238,8 @@ UServer::work ()
   work_blend_values_ ();
   work_execute_hub_updater_ ();
 
+  scheduler_->work ();
+
   afterWork ();
 
   updateTime ();

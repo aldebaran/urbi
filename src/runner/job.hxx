@@ -8,6 +8,10 @@
 
 # include <cassert>
 # include "runner/job.hh"
+# include "runner/scheduler.hh"
+
+#define ENABLE_DEBUG_TRACES // XXX REMOVE ME XXX
+#include "libport/compiler.hh" // XXX REMOVE ME XXX
 
 namespace runner
 {
@@ -56,6 +60,7 @@ namespace runner
   void
   Job::run ()
   {
+    ECHO (this << " scheduled...");
     assert (scheduler_);
     if (!started_)
     {
@@ -73,6 +78,13 @@ namespace runner
     assert (started_);
     stop ();
     started_ = false;
+  }
+
+  inline
+  void Job::yield ()
+  {
+    assert (scheduler_);
+    scheduler_->add_job (this);
   }
 
   inline
