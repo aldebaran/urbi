@@ -254,17 +254,60 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::SemicolonExp& e)
+  Runner::operator() (ast::PipeExp& e)
   {
     CORO_INIT_WITHOUT_CTX ();
 
+    // lhs
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
     CORO_CALL (operator() (e.lhs_get()));
     ECHO ("sending result of lhs");
     if (current_.get ())
       emit_result (current_);
+
     current_.reset ();
     assert (current_.get () == 0);
+
+    // rhs:  start the execution immediately.
+    ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
+    CORO_CALL (operator() (e.rhs_get()));
+    ECHO ("sending result of rhs");
+    if (current_.get ())
+      emit_result (current_);
+
+    /* We already returned the result of both our lhs and our rhs so let's
+     * reset the current value to make sure nobody will return it again.  If
+     * this ever becomes a problem (because we might want `a|b' to return
+     * the value of `b') we can leave the value of the rhs in current_
+     * instead of returning it.  I haven't do so ATM because the way it's
+     * done now enforces the URBI semantics.  */
+    current_.reset ();
+    assert (current_.get () == 0);
+
+    CORO_END;
+  }
+
+
+  void
+  Runner::operator() (ast::SemicolonExp& e)
+  {
+    CORO_INIT_WITHOUT_CTX ();
+
+    // lhs
+    ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
+    CORO_CALL (operator() (e.lhs_get()));
+    ECHO ("sending result of lhs");
+    if (current_.get ())
+      emit_result (current_);
+
+    current_.reset ();
+    assert (current_.get () == 0);
+
+    /* Allow some time to pass before we execute RHS.  If we don't do this,
+     * the ;-operator would act almost like the |-operator because it would
+     * always start to execute its RHS immediately.  */
+    YIELD (e);
+    // rhs
     ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
     CORO_CALL (operator() (e.rhs_get()));
     ECHO ("sending result of rhs");

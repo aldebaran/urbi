@@ -19,6 +19,14 @@
 
 2007-08-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Implement the "|"-operator.  Fix the ";"-operator.
+	* src/runner/runner.hh (operator()(PipeExp)): New.
+	* src/runner/runner.cc (operator()(SemicolonExp)): Fix to strictly
+	follow the URBI semantics.
+	(operator()(PipeExp)): Implement.
+
+2007-08-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Finish the implementation of AndExp.
 	This patch adds a CORO_JOIN feature (a coroutine can wait for a
 	given set of other coroutines to terminate).  This way, the

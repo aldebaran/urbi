@@ -62,10 +62,11 @@ namespace runner
     virtual void operator() (ast::CallExp& e);
     virtual void operator() (ast::FloatExp& e);
     virtual void operator() (ast::Function& e);
+    virtual void operator() (ast::ListExp& e);
     virtual void operator() (ast::NegOpExp& e);
+    virtual void operator() (ast::PipeExp& e);
     virtual void operator() (ast::SemicolonExp& e);
     virtual void operator() (ast::StringExp& e);
-    virtual void operator() (ast::ListExp& e);
     /// \}
 
     /// Do the actual work.  Implementation of \c Job::run.
