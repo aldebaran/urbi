@@ -2,7 +2,7 @@
  ** \file runner/runner.cc
  ** \brief Implementation of runner::Runner.
  */
-#define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include <boost/foreach.hpp>
@@ -103,14 +103,12 @@ namespace runner
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
     Runner* lhs = new Runner (*this);
     lhs->ast_ = &e.lhs_get ();
-    scheduler_get ().add_job (lhs);
     CORO_CALL_IN_BACKGROUND (lhs, lhs->eval (e.lhs_get ()));
 
     PING ();
     ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
     Runner* rhs = new Runner (*this);
     rhs->ast_ = &e.rhs_get ();
-    scheduler_get ().add_job (rhs);
     CORO_CALL_IN_BACKGROUND (rhs, rhs->eval (e.rhs_get ()));
 
     wait_for (*lhs);
@@ -249,6 +247,14 @@ namespace runner
         new object::Float (-1 * current_.cast<object::Float>()->value_get ());
     }
 
+    CORO_END;
+  }
+
+
+  void
+  Runner::operator() (ast::Noop&)
+  {
+    CORO_INIT_WITHOUT_CTX ();
     CORO_END;
   }
 

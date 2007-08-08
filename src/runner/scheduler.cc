@@ -14,14 +14,25 @@
 #include "runner/fwd.hh"
 #include "runner/scheduler.hh"
 #include "runner/job.hh"
+#include "runner/coroutine-yield.hh"
 
 namespace runner
 {
 
   void
+  Scheduler::add_job (Job* job)
+  {
+    assert (job);
+    ECHO ("adding job " << job << " to the task queue.");
+    jobs_.push_back (job);
+  }
+
+  void
   Scheduler::work ()
   {
+#ifdef ENABLE_DEBUG_TRACES
     static int cycle = 0;
+#endif
     static int nothing_todo = 0;
     if (nothing_todo >= 5)
     {
@@ -39,7 +50,9 @@ namespace runner
       ++nothing_todo;
     else
       nothing_todo = 0;
+#ifdef ENABLE_DEBUG_TRACES
     unsigned i = 0;
+#endif
     BOOST_FOREACH (Job* job, pending)
     {
       assert (job);
@@ -58,7 +71,6 @@ namespace runner
     }
     catch (const CoroutineYield&)
     {
-      add_job (job);
     }
     active_job_ = 0;
   }
@@ -69,8 +81,10 @@ namespace runner
     ECHO ("killing all jobs!");
     jobs pending;
     pending.swap (jobs_);
+#ifdef ENABLE_DEBUG_TRACES
     jobs::size_type n = pending.size ();
     unsigned i = 0;
+#endif
     BOOST_FOREACH (Job* job, pending)
     {
       assert (job);

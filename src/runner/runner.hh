@@ -6,11 +6,8 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
-# include "kernel/fwd.hh"  // UConnection
-
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
-# include "runner/job.hh"
 # include "runner/coroutine.hh"
 # include "runner/scheduler.hh"
 
@@ -19,7 +16,7 @@ namespace runner
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-                 public Job, public Coroutine
+                 public Coroutine
   {
   public:
     /// \name Useful shorthands.
@@ -64,6 +61,7 @@ namespace runner
     virtual void operator() (ast::Function& e);
     virtual void operator() (ast::ListExp& e);
     virtual void operator() (ast::NegOpExp& e);
+    virtual void operator() (ast::Noop& e);
     virtual void operator() (ast::PipeExp& e);
     virtual void operator() (ast::SemicolonExp& e);
     virtual void operator() (ast::StringExp& e);

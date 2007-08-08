@@ -7,6 +7,7 @@ librunner_la_SOURCES =				\
 coroutine.hh					\
 coroutine.hxx					\
 coroutine.cc					\
+coroutine-yield.hh				\
 job.hh						\
 job.hxx						\
 fwd.hh						\

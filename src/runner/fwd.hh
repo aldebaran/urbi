@@ -14,9 +14,7 @@ namespace runner
   class Job;
   class Coroutine;
 
-  struct CoroutineYield
-  {
-  };
+  struct CoroutineYield;
 
   class Runner;
 

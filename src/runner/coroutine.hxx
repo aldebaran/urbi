@@ -19,9 +19,11 @@ namespace runner
 {
 
   inline
-  Coroutine::Coroutine ()
-    : cr_stack_ (),
+  Coroutine::Coroutine (Scheduler& sched)
+    : Job (sched),
+      cr_stack_ (),
       cr_new_call_ (false),
+      cr_finished_ (false),
       cr_resumed_ (0),
       waiting_for_ (0),
       waited_by_ ()
@@ -35,9 +37,11 @@ namespace runner
   }
 
   inline
-  Coroutine::Coroutine (const Coroutine&)
-    : cr_stack_ (),
+  Coroutine::Coroutine (const Coroutine& other)
+    : Job (const_cast<Scheduler&> (other.scheduler_get ())),
+      cr_stack_ (),
       cr_new_call_ (false),
+      cr_finished_ (false),
       cr_resumed_ (0),
       waiting_for_ (0),
       waited_by_ ()
@@ -89,6 +93,7 @@ namespace runner
   Coroutine::CoroCtx*
   Coroutine::cr_restore_ ()
   {
+    assert (!cr_stack_.empty ());
     CoroCtx* ctx = cr_stack_.top ().second;
     cr_stack_.pop ();
     return ctx;
@@ -98,6 +103,7 @@ namespace runner
   void
   Coroutine::cr_drop_stack_ ()
   {
+    assert (!cr_finished_);
     stack_type empty;
     std::swap (cr_stack_, empty);
     cr_resumed_ = 0;
@@ -107,7 +113,22 @@ namespace runner
   Coroutine::line
   Coroutine::cr_line_ () const
   {
+    assert (!cr_stack_.empty ());
     return cr_stack_.top ().first;
+  }
+
+  inline
+  unsigned
+  Coroutine::cr_waiting_for_ () const
+  {
+    return waiting_for_;
+  }
+
+  inline
+  unsigned
+  Coroutine::cr_waited_by_ () const
+  {
+    return waited_by_.size ();
   }
 
 } // namespace runner

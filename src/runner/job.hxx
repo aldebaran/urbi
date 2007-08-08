@@ -10,9 +10,6 @@
 # include "runner/job.hh"
 # include "runner/scheduler.hh"
 
-#define ENABLE_DEBUG_TRACES // XXX REMOVE ME XXX
-#include "libport/compiler.hh" // XXX REMOVE ME XXX
-
 namespace runner
 {
 
@@ -60,7 +57,6 @@ namespace runner
   void
   Job::run ()
   {
-    ECHO ("job " << this << " scheduled...");
     assert (scheduler_);
     if (!started_)
     {

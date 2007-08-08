@@ -1,3 +1,45 @@
+2007-08-07  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Tie the Coroutine class with the Scheduler.
+	Before this patch, Coroutine was a standalone class.  The Runner
+	inherited Job (to be schedulable by the Scheduler) and Coroutine.
+	Now a Coroutine is-a Job and Runner simply inherits Coroutine.  This
+	makes the Coroutine aware of the Scheduler and simplifies some
+	aspects of the implementation.  The Scheduler was already aware of
+	the CoroutineYield exception anyways.
+	Thanks to this patch, noop are correctly handled (they used to leak
+	Jobs which could never end).  A couple of bugs in the internals of
+	the Coroutine are also fixed.
+
+	* src/runner/Makefile.am: Add the new file.
+	* src/runner/coroutine-yield.hh: New.  The exception CoroutineYield
+	now contains a reference to the coroutine that yielded.
+	* src/runner/coroutine.cc (dtor): Emit the `finished' signal.
+	(cr_signal_finished_): Cleanup the list of coroutines signaled so
+	that the signal is delivered only once.
+	* src/runner/coroutine.hh: The class Coroutine is-a Job.
+	(ctor): Adjust: take a Scheduler in argument.
+	(cr_waiting_for_, cr_waited_by_): New internal helpers.
+	(CORO_CHK_WAITING_): Reschedule jobs to be deleted.
+	(CORO_CHECK_WAITING_AND_SAVE_): Simplify.
+	(CORO_YIELD_): Reschedule the job that yields.
+	(CORO_CLEANUP_): Adjust.
+	* src/runner/coroutine.hxx: Adjust various methods.
+	(cr_waiting_for_, cr_waited_by_): Implement.
+	* src/runner/fwd.hh: Forward declare CoroutineYield.
+	* src/runner/job.hxx: Remove debugging code.
+	* src/runner/runner.cc: Adjust.
+	(operator()(Noop)): Implement.
+	* src/runner/runner.hh: Remove useless includes.  No longer inherit
+	Job, inheriting Coroutine is now enough.
+	(operator()(Noop)): New.
+	* src/runner/runner.hxx (ctor): Adjust.
+	* src/runner/scheduler.hxx (add_job): Move ...
+	* src/runner/scheduler.cc: ... here.
+	(schedule_immediately): Adjust.
+	Add a couple of CPP guards so that the code compiles when debugging
+	is disabled.
+
 2007-08-06  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Add a rule to generate the documentation.

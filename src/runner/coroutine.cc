@@ -24,6 +24,14 @@ namespace runner
 
   Coroutine::~Coroutine ()
   {
+    if (!waited_by_.empty ())
+    {
+      ECHO ("warning: coroutine destroyed but " << waited_by_.size ()
+            << " other coroutines still waiting.");
+      // This is not a problem as long as coroutines signaled don't try to
+      // use this coroutine which has been partially destroyed.
+      cr_signal_finished_ ();
+    }
     ECHO ("destroyed");
     assert (cr_stack_.empty ());
 #ifndef NDEBUG
@@ -34,6 +42,7 @@ namespace runner
   void
   Coroutine::cr_signal_finished_ ()
   {
+    cr_finished_ = true;
     BOOST_FOREACH (Coroutine* coro, waited_by_)
     {
       assert (coro);
@@ -41,6 +50,8 @@ namespace runner
       --coro->waiting_for_;
       coro->finished (*this);
     }
+    wait_set empty;
+    waited_by_.swap (empty);
   }
 
   void
