@@ -346,7 +346,6 @@ namespace Network
   {
     while (true)
       selectAndProcess(delay);
-    return 0;
   }
 
 

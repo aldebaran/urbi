@@ -6,43 +6,41 @@
 #ifndef RUNNER_RUNNER_HH
 # define RUNNER_RUNNER_HH
 
+# include "kernel/fwd.hh"  // UConnection
+
 # include "ast/default-visitor.hh"
 # include "object/object.hh"
-# include "runner/coroutine.hh"
+# include "runner/job.hh"
 # include "runner/scheduler.hh"
 
 namespace runner
 {
 
   /// Ast executor.
-  class Runner : public ast::DefaultVisitor,
-                 public Coroutine
+  class Runner : public ast::DefaultConstVisitor, public Job
   {
   public:
     /// \name Useful shorthands.
     /// \{
     /// Super class type.
-    typedef ast::DefaultVisitor super_type;
+    typedef ast::DefaultConstVisitor super_type;
     typedef object::rObject rObject;
     typedef object::rContext rContext;
     /// \}
 
     /// \name Ctor & dtor.
     /// \{
-    /// Construct a \c Runner in the context \a ctx.  The runner needs to
-    /// know who is its \a scheduler and will execute \a ast.  Memory
-    /// ownership of \a ast is transferred to the Runner.
-    Runner (rContext ctx, Scheduler& scheduler, ast::Ast* ast);
+    /// Construct a Runner.
+    Runner (rContext ctx, Scheduler& scheduler);
 
     /// Destroy a Runner.
     virtual ~Runner ();
     /// \}
 
-  protected:
     /// \name Evaluation.
     /// \{
     /// Evaluate a tree and return the \a current_ that results.
-    rObject eval (ast::Ast& e);
+    rObject eval (const ast::Ast& e);
 
     /// Send a result to the context.
     void emit_result (rObject result);
@@ -54,25 +52,20 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    virtual void operator() (ast::AssignExp& e);
-    virtual void operator() (ast::AndExp& e);
-    virtual void operator() (ast::CallExp& e);
-    virtual void operator() (ast::FloatExp& e);
-    virtual void operator() (ast::Function& e);
-    virtual void operator() (ast::ListExp& e);
-    virtual void operator() (ast::NegOpExp& e);
-    virtual void operator() (ast::Noop& e);
-    virtual void operator() (ast::PipeExp& e);
-    virtual void operator() (ast::SemicolonExp& e);
-    virtual void operator() (ast::StringExp& e);
+    virtual void operator() (const ast::AssignExp& e);
+    virtual void operator() (const ast::AndExp& e);
+    virtual void operator() (const ast::CallExp& e);
+    virtual void operator() (const ast::FloatExp& e);
+    virtual void operator() (const ast::Function& e);
+    virtual void operator() (const ast::NegOpExp& e);
+    virtual void operator() (const ast::SemicolonExp& e);
+    virtual void operator() (const ast::StringExp& e);
+    virtual void operator() (const ast::ListExp& e);
     /// \}
 
+  protected:
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
-    /// Re-implementation of \c Job::run.
-    virtual void stop ();
-    /// Re-implementation of \c Coroutine::finished.
-    virtual void finished (Coroutine& coro);
 
   private:
     /// The URBI Context used to evaluate.
@@ -81,12 +74,6 @@ namespace runner
 
     /// The current value during the evaluation of the AST.
     rObject current_;
-
-    /// The root of the AST being executed.
-    ast::Ast* ast_;
-
-    /// Whether or not we started to execute anything.
-    bool started_;
   };
 
 } // namespace runner

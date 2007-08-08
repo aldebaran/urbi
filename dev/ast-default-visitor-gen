@@ -47,7 +47,7 @@ namespace ast
   {
   public:
     /// Super class type.
-    typedef GenVisitor<Const> super_type;
+    typedef GenVisitor<libport::constify_traits> super_type;
 
     /** \\name Ctor & dtor.
      ** \\{ */

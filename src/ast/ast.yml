@@ -124,11 +124,11 @@ BinaryExp:
     - lhs:
         type: 'Exp*'
         desc: Left-hand side expression
-        access: rwW
+        access: rW
     - rhs:
         type: 'Exp*'
         desc: Right-hand side expression
-        access: rwW
+        access: rW
 
 AndExp:
   super: BinaryExp

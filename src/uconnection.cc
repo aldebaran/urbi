@@ -41,8 +41,6 @@
 #include "ast/binary-exp.hh"
 #include "object/object.hh"
 #include "object/atom.hh"
-#include "runner/fwd.hh"
-#include "runner/scheduler.hh"
 #include "runner/runner.hh"
 
 #include "parser/uparser.hh"
@@ -700,18 +698,17 @@ UConnection::isActive ()
 void
 UConnection::execute ()
 {
-  using runner::Runner;
   PING ();
 
   if (!active_command_)
     return;
+  if (closing)
+    return;
 
-  std::cerr << "Command is: " << *active_command_ << std::endl;
-
-  Runner* runner = new Runner(context_,
-                              ::urbiserver->getScheduler (),
-                              active_command_);
-  ::urbiserver->getScheduler ().schedule_immediately (runner);
+  // std::cerr << "Command is: " << *active_command_ << std::endl;
+  runner::Runner r (context_, ::urbiserver->getScheduler ());
+  r (active_command_);
+  //  std::cerr << "Result: " << libport::deref << r.result() << std::endl;
 
   // FIXME: 2007-07-20: Currently we can't free the command,
   // we might kill function bodies.

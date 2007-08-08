@@ -14,22 +14,20 @@ namespace runner
 {
 
   inline
-  Runner::Runner (rContext ctx, Scheduler& sched, ast::Ast* ast)
-    : Coroutine (sched),
+  Runner::Runner (rContext ctx, Scheduler& sched)
+    : Job (sched),
       context_ (ctx),
-      ast_ (ast),
-      started_ (false)
+      current_ (0)
   {
   }
 
   inline
   Runner::~Runner ()
-  {
-  }
+  {}
 
   inline
   Runner::rObject
-  Runner::eval (ast::Ast& e)
+  Runner::eval (const ast::Ast& e)
   {
     e.accept (*this);
     return current_;
@@ -45,6 +43,12 @@ namespace runner
       return eval (*n);
     else
       return context_;
+  }
+
+  inline
+  void
+  Runner::work ()
+  {
   }
 
 } // namespace runner

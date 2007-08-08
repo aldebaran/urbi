@@ -8,7 +8,6 @@
 # include <unistd.h>
 #endif
 #include "libport/windows.hh"
-#include <iostream>
 #include <fstream>
 
 #include "libport/utime.hh"
@@ -33,7 +32,6 @@ public:
 
   virtual void shutdown()
   {
-    UServer::shutdown ();
     exit (0);
   }
 
