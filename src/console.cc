@@ -32,6 +32,7 @@ public:
 
   virtual void shutdown()
   {
+    UServer::shutdown ();
     exit (0);
   }
 

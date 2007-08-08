@@ -6,6 +6,7 @@ noinst_LTLIBRARIES = librunner.la
 librunner_la_SOURCES =				\
 coroutine.hh					\
 coroutine.hxx					\
+coroutine.cc					\
 job.hh						\
 job.hxx						\
 fwd.hh						\

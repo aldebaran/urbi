@@ -70,6 +70,8 @@ namespace runner
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
+    /// Re-implementation of \c Job::run.
+    virtual void stop ();
 
   private:
     /// The URBI Context used to evaluate.

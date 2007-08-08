@@ -30,9 +30,15 @@ namespace runner
     // of @a job is transferred to the Scheduler.
     void schedule_immediately (Job* job);
 
+    /// Remove all jobs.
+    void killall_jobs ();
+
+    void kill_job (Job* job);
+
   private:
     typedef std::list<Job*> jobs;
     jobs jobs_;
+    Job* active_job_;
   };
 
 } // namespace runner

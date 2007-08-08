@@ -19,6 +19,32 @@
 
 2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Automatically delete the coroutines when they are finished.
+	This patch also ensures the server terminates properly with the
+	builtin `shutdown'.
+	* src/console.cc (shutdown): Invoke UServer::shutdown.
+	* src/runner/Makefile.am: Add the new file.
+	* src/runner/coroutine.cc: New.
+	* src/runner/coroutine.hh: Document the public interface.
+	(reset, wait_for): New.
+	(CORO_CLEANUP_): New macro to properly delete the coroutine when it
+	has finished.
+	* src/runner/coroutine.hxx [!NDEBUG]: Track the number of coroutines
+	alive in order to make sure they have all been destroyed when the
+	program finishes.
+	* src/runner/runner.hh (stop): New.
+	* src/runner/runner.cc (stop): Implement.
+	(operator()(AndExp)): Fix the code to match the URBI semantics of
+	the "&"-operator.
+	* src/runner/scheduler.hh (killall_jobs, kill_job): New.
+	* src/runner/scheduler.cc (work): Exit after 5 consecutive cycles of
+	doing nothing.  Very useful when debugging.
+	(killall_jobs, kill_job): Implement.
+	* src/runner/scheduler.hxx (ctor): Adjust.
+	* src/userver.cc (shutdown): Tell the Scheduler to kill all jobs.
+
+2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Add the first version of the "&"-operator.
 	* src/runner/coroutine.hh (CoroCtx): New internal class.
 	(cr_save_, cr_restore_, cr_drop_stack_): New internal methods.

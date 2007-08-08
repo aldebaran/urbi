@@ -54,6 +54,12 @@ namespace runner
   }
 
   void
+  Runner::stop ()
+  {
+    Coroutine::reset ();
+  }
+
+  void
   Runner::emit_result (rObject result)
   {
     context_->value_get ().new_result (result);
@@ -85,13 +91,20 @@ namespace runner
     CORO_INIT_WITHOUT_CTX ();
 
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
-    Runner* clone = new Runner (*this);
-    clone->ast_ = &e.lhs_get ();
-    scheduler_get ().add_job (clone);
-    CORO_CALL_IN_BACKGROUND (clone, clone->eval (e.lhs_get ()));
+    Runner* lhs = new Runner (*this);
+    lhs->ast_ = &e.lhs_get ();
+    scheduler_get ().add_job (lhs);
+    CORO_CALL_IN_BACKGROUND (lhs, lhs->eval (e.lhs_get ()));
+
     PING ();
     ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
-    CORO_CALL (operator() (e.rhs_get ()));
+    Runner* rhs = new Runner (*this);
+    rhs->ast_ = &e.rhs_get ();
+    scheduler_get ().add_job (rhs);
+    CORO_CALL_IN_BACKGROUND (rhs, rhs->eval (e.rhs_get ()));
+
+    wait_for (*lhs);
+    wait_for (*rhs);
 
     CORO_END;
   }

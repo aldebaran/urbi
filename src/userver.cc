@@ -219,13 +219,10 @@ UServer::afterWork ()
 void
 UServer::work ()
 {
-//   static int i = 0;
-//   if (++i == 12)
-//     abort ();
   libport::BlockLock bl (this);
 
   // CPU Overload test
-  updateTime();
+  updateTime ();
   previous3Time = previous2Time;
   previous2Time = previousTime;
   previousTime  = currentTime;
@@ -673,6 +670,7 @@ UServer::reboot()
 void
 UServer::shutdown()
 {
+  scheduler_->killall_jobs ();
 }
 
 //! Overload this function to return the running time of the server.

@@ -13,6 +13,8 @@ namespace runner
 
   inline
   Scheduler::Scheduler ()
+    : jobs_ (),
+      active_job_ (0)
   {
   }
 

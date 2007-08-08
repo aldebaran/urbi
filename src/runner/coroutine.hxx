@@ -7,6 +7,13 @@
 # define RUNNER_COROUTINE_HXX
 
 # include "runner/coroutine.hh"
+# include <iostream>
+
+#ifndef NDEBUG
+extern "C" {
+  void coroutine_chk (void);
+}
+#endif
 
 namespace runner
 {
@@ -14,14 +21,30 @@ namespace runner
   inline
   Coroutine::Coroutine ()
     : cr_stack_ (),
-      cr_call_ (false)
+      cr_new_call_ (false),
+      cr_resumed_ (0),
+      waiting_for_ (0),
+      waited_by_ ()
   {
+#ifndef NDEBUG
+    static bool first_time = true;
+    if (first_time)
+      atexit (coroutine_chk);
+    ++coro_cnt;
+#endif
   }
 
   inline
-  Coroutine::~Coroutine ()
+  Coroutine::Coroutine (const Coroutine&)
+    : cr_stack_ (),
+      cr_new_call_ (false),
+      cr_resumed_ (0),
+      waiting_for_ (0),
+      waited_by_ ()
   {
-    assert (cr_stack_.empty ());
+#ifndef NDEBUG
+    ++coro_cnt;
+#endif
   }
 
   template <typename T>
@@ -29,7 +52,7 @@ namespace runner
   Coroutine::take_first_slot ()
   {
     assert (!cr_stack_.empty ());
-    struct dummy_ctx
+    struct dummy_ctx: public CoroCtx
     {
       T* data;
     };
@@ -72,6 +95,7 @@ namespace runner
   {
     stack_type empty;
     std::swap (cr_stack_, empty);
+    cr_resumed_ = 0;
   }
 
 } // namespace runner
