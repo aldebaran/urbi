@@ -1,3 +1,5 @@
+#include <boost/foreach.hpp>
+
 # define ENABLE_DEBUG_TRACES
 # include "libport/compiler.hh"
 
@@ -27,6 +29,18 @@ namespace runner
 #ifndef NDEBUG
     --coro_cnt;
 #endif
+  }
+
+  void
+  Coroutine::cr_signal_finished_ ()
+  {
+    BOOST_FOREACH (Coroutine* coro, waited_by_)
+    {
+      assert (coro);
+      assert (coro->waiting_for_);
+      --coro->waiting_for_;
+      coro->finished (*this);
+    }
   }
 
   void

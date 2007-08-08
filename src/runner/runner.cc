@@ -60,8 +60,18 @@ namespace runner
   }
 
   void
+  Runner::finished (Coroutine& coro)
+  {
+    ECHO (ME << " join with " << JOB (static_cast<Runner*> (&coro)));
+    Runner& r = dynamic_cast<Runner&> (coro);
+    if (r.current_.get ())
+      emit_result (r.current_);
+  }
+
+  void
   Runner::emit_result (rObject result)
   {
+    assert (result.get ());
     context_->value_get ().new_result (result);
   }
 
@@ -105,6 +115,8 @@ namespace runner
 
     wait_for (*lhs);
     wait_for (*rhs);
+    CORO_JOIN ();
+    PING ();
 
     CORO_END;
   }

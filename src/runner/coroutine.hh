@@ -54,13 +54,21 @@ namespace runner
      * with @c new or @c malloc.  */
     void reset ();
 
-    /** Suspend the execution of this coroutine until @a coro has completely
-     * finished its execution.
+    /** Register that this coroutine must not be re-scheduled until @a coro
+     * has completely finished its execution.  Once @a coro has finished,
+     * this coroutine will have its method @c finished invoked with @a coro
+     * in argument.
      *
      * @note Cycles are detected and lead to an @c abort (there is a cycle
      * when a coroutine @c A tries to @c wait_for @c B and @c B was already
      * waiting for @c A).  */
     void wait_for (Coroutine& coro);
+
+  protected:
+    /** Signal that @a coro has finished.  This signal is delivered for
+     * coroutines waited for with @c wait_for.  You can override this
+     * method.  */
+    virtual void finished (Coroutine& coro);
 
     /***********************************************************
      * End of public interface.  Everything below is internal. *
@@ -77,6 +85,7 @@ namespace runner
     void cr_save_ (line l, CoroCtx* ctx);
     CoroCtx* cr_restore_ ();
     void cr_drop_stack_ ();
+    void cr_signal_finished_ ();
 
   protected:
     /// Stack of contexts.
@@ -86,10 +95,10 @@ namespace runner
     /// How many calls have we resumed?
     unsigned cr_resumed_;
 
-  private:
     /// Number of coroutines this one is waiting for.
     unsigned waiting_for_;
 
+  private:
     typedef std::set<Coroutine*> wait_set;
     /// Coroutines waiting for this one.
     wait_set waited_by_;
@@ -111,13 +120,21 @@ namespace runner
 
 # define CORO_START()                                                   \
   };                                                                    \
+  if (waiting_for_)                                                     \
+  {                                                                     \
+    assert (!cr_stack_.empty ());                                       \
+    ECHO ("coroutine not ready to resume execution at line "            \
+          << cr_stack_.top ().first << " (still waiting for "           \
+          << waiting_for_ << " other coroutines)");                      \
+    throw CoroutineYield ();                                            \
+  }                                                                     \
   __coro_ctx* __ctx = 0;                                                \
   try                                                                   \
   {                                                                     \
-    switch (cr_new_call_ || !started () ? 0 : cr_stack_.top ().first)       \
+    switch (cr_new_call_ || !started () ? 0 : cr_stack_.top ().first)   \
     {                                                                   \
     case 0:                                                             \
-      cr_new_call_ =  false;                                                \
+      cr_new_call_ =  false;                                            \
       __ctx = new __coro_ctx ();                                        \
       ECHO ("creating a new coroutine (ctx: " << __ctx << ')')
 
@@ -169,6 +186,12 @@ namespace runner
 # define CORO_YIELD_VALUE(Val) CORO_YIELD_ (Val) // FIXME: Wrap Val in a known exn
 # define CORO_YIELD() CORO_YIELD_ (CoroutineYield ())
 
+# define CORO_JOIN()                            \
+  do {                                          \
+    if (waiting_for_)                           \
+      CORO_YIELD();                             \
+  } while (0)
+
 # define CORO_CALL_(Coro, What, OnYield)                \
     cr_new_call_ = true;                                \
     ++cr_resumed_;                                      \
@@ -210,19 +233,31 @@ namespace runner
   if (!context_number () && !cr_resumed_)                               \
   {                                                                     \
     ECHO ("cleaning up");                                               \
+    cr_signal_finished_ ();                                             \
     delete this;                                                        \
   }                                                                     \
   else                                                                  \
   {                                                                     \
-    ECHO ("not cleaning cup: " << cr_resumed_ << " calls resumed");     \
+    ECHO ("not cleaning up: " << cr_resumed_ << " calls to be resumed"); \
   }
 
 # define CORO_RET_(Ret)                                                 \
   do {                                                                  \
     ECHO ("coroutine ret (ctx: " << __ctx << ") with "                  \
           << context_number ()-1 << " contexts in the coroutine stack"); \
-    delete __ctx;                                                       \
+    if (false)                                                          \
+    {                                                                   \
+      CORO_SAVE_END_;                                                   \
+    }                                                                   \
+    if (waiting_for_)                                                   \
+    {                                                                   \
+      ECHO ("cannot return at this time, still waiting for "            \
+            << waiting_for_ << " other coroutines");                    \
+      CORO_SAVE_BEGIN_ (this);                                          \
+      throw CoroutineYield ();                                          \
+    }                                                                   \
     CORO_CLEANUP_;                                                      \
+    delete __ctx;                                                       \
     return Ret;                                                         \
   } while (0)
 
@@ -236,6 +271,7 @@ namespace runner
             << (!started () ? 0 : cr_stack_.top ().first)               \
             << ", ctx: " << __ctx << ')');                              \
       abort ();                                                         \
+      CORO_SAVE_END_;                                                   \
     } /* end of switch */                                               \
   } /* end of try */                                                    \
   catch (const CoroutineYield&)                                         \
@@ -246,14 +282,21 @@ namespace runner
   {                                                                     \
     ECHO ("coroutine exn (ctx: " << __ctx << ") "                       \
           << context_number () << " contexts left in the coroutine stack"); \
-    delete __ctx;                                                       \
     CORO_CLEANUP_;                                                      \
+    delete __ctx;                                                       \
     throw;                                                              \
   }                                                                     \
   ECHO ("coroutine end (ctx: " << __ctx << ") "                         \
         << context_number () << " contexts left in the coroutine stack"); \
-  delete __ctx;                                                         \
+  if (waiting_for_)                                                     \
+  {                                                                     \
+    ECHO ("cannot return at this time, still waiting for "              \
+          << waiting_for_ << " other coroutines");                      \
+    CORO_SAVE_BEGIN_ (this);                                            \
+    throw CoroutineYield ();                                            \
+  }                                                                     \
   CORO_CLEANUP_;                                                        \
+  delete __ctx;                                                         \
   return Ret
 
 # define CORO_END  CORO_END_ (;)

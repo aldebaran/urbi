@@ -63,7 +63,7 @@ namespace runner
   bool
   Coroutine::started () const
   {
-    return !cr_stack_.empty ();
+    return waiting_for_ || !cr_stack_.empty ();
   }
 
   inline
@@ -71,6 +71,11 @@ namespace runner
   Coroutine::context_number () const
   {
     return cr_stack_.size ();
+  }
+
+  inline
+  void Coroutine::finished (Coroutine&)
+  {
   }
 
   inline

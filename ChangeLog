@@ -17,6 +17,30 @@
 	* src/uconnection.cc,
 	* src/userver.cc: Fix the Doxygen comments.
 
+2007-08-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Finish the implementation of AndExp.
+	This patch adds a CORO_JOIN feature (a coroutine can wait for a
+	given set of other coroutines to terminate).  This way, the
+	execution of AndExp is suspend until both its LHS and RHS have
+	finished.  When either of these finished, they signal the AndExp
+	which can fetch their result and send it to the context.  Results
+	are thus printed as soon as they are available.
+	* src/runner/coroutine.hh (finished): New.
+	(cr_signal_finished_): New internal helper.
+	(CORO_START): Adjust: prevent coroutines to be rescheduled if
+	they're waiting for other coroutines to terminate.
+	(CORO_RET_, CORO_END_): Prevent a coroutine from returning if it's
+	waiting for other coroutines to terminate.
+	(CORO_JOIN): New.
+	* src/runner/coroutine.hxx (started): Adjust.
+	(finished): Provide a default implementation.
+	* src/runner/coroutine.cc (cr_signal_finished_): Implement.
+	* src/runner/runner.hh (finished): Override the virtual method.
+	* src/runner/runner.cc (finished): Implement.
+	(operator()(AndExp)): Use CORO_JOIN.
+	* src/runner/scheduler.cc (work): Fix the cycle number printed.
+
 2007-07-31  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Automatically delete the coroutines when they are finished.

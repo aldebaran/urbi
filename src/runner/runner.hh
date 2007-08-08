@@ -19,7 +19,7 @@ namespace runner
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-                 public Job, private Coroutine
+                 public Job, public Coroutine
   {
   public:
     /// \name Useful shorthands.
@@ -72,6 +72,8 @@ namespace runner
     virtual void work ();
     /// Re-implementation of \c Job::run.
     virtual void stop ();
+    /// Re-implementation of \c Coroutine::finished.
+    virtual void finished (Coroutine& coro);
 
   private:
     /// The URBI Context used to evaluate.
