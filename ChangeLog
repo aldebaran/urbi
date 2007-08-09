@@ -1,5 +1,13 @@
 2007-08-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Do not generate case statements for calls in background.
+	* src/runner/coroutine.hh (CORO_CALL_): Add an argument.  Do not
+	always invoke CORO_SAVE_END_ as it generates useless `case'
+	statements for calls in background.
+	(CORO_CALL, CORO_CALL_IN_BACKGROUND): Adjust.
+
+2007-08-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Enhance usability of coroutines.
 	This patch greatly improves usability of coroutines by injecting the
 	context in the current scope.  The code used to be clobbered with

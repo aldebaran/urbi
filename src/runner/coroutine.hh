@@ -328,15 +328,12 @@ namespace runner
 /** @internal
  * Call another coroutine with the C++ statement @a What and execute the C++
  * statement @a OnYield if the statement @a What did a Yield.
+ * The C++ statement @a Before is executed before invoking @a What.
  */
-# define CORO_CALL_(What, OnYield)                      \
+# define CORO_CALL_(Before, What, OnYield)              \
     cr_new_call_ = true;                                \
     ++cr_resumed_;                                      \
-    if (false)                                          \
-    {                                                   \
-      CORO_SAVE_END_;                                   \
-      ++cr_resumed_;                                    \
-    }                                                   \
+    Before                                              \
     try {                                               \
       What;                                             \
     }                                                   \
@@ -367,7 +364,12 @@ namespace runner
  */
 # define CORO_CALL(What)                        \
   do {                                          \
-    CORO_CALL_ (What,                           \
+    CORO_CALL_ (if (false)                      \
+                {                               \
+                  CORO_SAVE_END_;               \
+                  ++cr_resumed_;                \
+                },                              \
+                What,                           \
                 CORO_SAVE_BEGIN_ (Coro);        \
                 assert (cr_resumed_);           \
                 --cr_resumed_;                  \
@@ -377,10 +379,10 @@ namespace runner
 /** Same thing as @c CORO_CALL but you need to specify the target
  * @c Coroutine pointer in @a Coro and if @a What yields.
  */
-# define CORO_CALL_IN_BACKGROUND(Coro, What)    \
-  do {                                          \
-    Coro->cr_drop_stack_ ();                    \
-    CORO_CALL_ (What, /* nothing */);           \
+# define CORO_CALL_IN_BACKGROUND(Coro, What)            \
+  do {                                                  \
+    Coro->cr_drop_stack_ ();                            \
+    CORO_CALL_ (/* nothing */, What, /* nothing */);    \
   } while (0)
 
 /// @internal Maybe perform some cleanup.  Checks if this coroutine finished
