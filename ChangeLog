@@ -1,5 +1,11 @@
 2007-08-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Compilation fix.
+	* src/runner/runner.cc: Declare variables in a local scope so that
+	they are not crossed by case labels.
+
+2007-08-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Do not generate case statements for calls in background.
 	* src/runner/coroutine.hh (CORO_CALL_): Add an argument.  Do not
 	always invoke CORO_SAVE_END_ as it generates useless `case'

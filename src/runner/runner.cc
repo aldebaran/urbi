@@ -98,19 +98,21 @@ namespace runner
   {
     CORO_WITHOUT_CTX ();
 
-    ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
-    Runner* lhs = new Runner (*this);
-    lhs->ast_ = &e.lhs_get ();
-    CORO_CALL_IN_BACKGROUND (lhs, lhs->eval (e.lhs_get ()));
+    {
+      ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
+      Runner* lhs = new Runner (*this);
+      lhs->ast_ = &e.lhs_get ();
+      CORO_CALL_IN_BACKGROUND (lhs, lhs->eval (e.lhs_get ()));
 
-    PING ();
-    ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
-    Runner* rhs = new Runner (*this);
-    rhs->ast_ = &e.rhs_get ();
-    CORO_CALL_IN_BACKGROUND (rhs, rhs->eval (e.rhs_get ()));
+      PING ();
+      ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
+      Runner* rhs = new Runner (*this);
+      rhs->ast_ = &e.rhs_get ();
+      CORO_CALL_IN_BACKGROUND (rhs, rhs->eval (e.rhs_get ()));
 
-    wait_for (*lhs);
-    wait_for (*rhs);
+      wait_for (*lhs);
+      wait_for (*rhs);
+    }
     CORO_JOIN ();
     PING ();
 
