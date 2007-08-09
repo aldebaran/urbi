@@ -1,3 +1,31 @@
+2007-08-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Enhance usability of coroutines.
+	This patch greatly improves usability of coroutines by injecting the
+	context in the current scope.  The code used to be clobbered with
+	calls to CORO_CTX which was both ugly and tedious.  Now the context
+	needs to be declared with a Boost CPP array so that thanks to the
+	Boost preprocessor library, the context is injected in the current
+	scope by declaring references that alias members of the context.
+	Credits go Roland Levillain for his help to use the Boost
+	preprocessor library.
+
+	* src/runner/coroutine.hh: Use the Boost preprocessor library.
+	Do not use names starting with an underscore.  Suffix these names
+	with `__' instead.
+	(CORO_DECL_, CORO_USE_): New internal helpers.
+	(CORO_CTX_ADD, CORO_CTX_START, CORO_START, CORO_INIT_WITHOUT_CTX):
+	Remove.
+	(CORO_CTX_VARS_): New.  Injects the variables of the context in the
+	current scope.
+	(CORO_CTX_VARS, CORO_WITHOUT_CTX): New.
+	(CORO_INIT_WITH_[123]SLOT_CTX): Rename as CORO_WITH_[123]SLOT_CTX
+	and adjust.
+	(CORO_SAVE_END_): Don't restore the context, this is already done if
+	necessary by CORO_CTX_VARS_.
+	* src/runner/runner.cc: Adjust.  Remove all the explicit accesses to
+	the context.
+
 2007-08-07  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Minor build fixes.

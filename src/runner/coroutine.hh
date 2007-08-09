@@ -12,6 +12,10 @@
 # include <set>
 # include <utility>
 
+# include <boost/preprocessor/array.hpp>
+# include <boost/preprocessor/tuple.hpp>
+# include <boost/preprocessor/repeat.hpp>
+
 # define ENABLE_DEBUG_TRACES
 # include "libport/compiler.hh"
 
@@ -165,17 +169,70 @@ namespace runner
  *       CORO_YIELD, CORO_YIELD_VALUE, CORO_CALL, CORO_CALL_IN_BACKGROUND
  */
 
-/// Start to define a context.
-# define CORO_CTX_START()                       \
-  struct __coro_ctx: public Coroutine::CoroCtx  \
-  {                                             \
-    struct e_n_d__w_i_t_h__s_e_m_i_c_o_l_o_n
+/// @internal Helper of @c CORO_CTX_VARS_ used to declare a variable
+# define CORO_DECL_(Z, N, Array)                                \
+  BOOST_PP_TUPLE_ELEM(2, 0, BOOST_PP_ARRAY_ELEM(N, Array))	\
+  BOOST_PP_TUPLE_ELEM(2, 1, BOOST_PP_ARRAY_ELEM(N, Array));
 
-/** Add a variable in the context.
- * @param Decl is a C++ declaration.
- * Example: @code CORO_CTX_ADD (int i); @endcode  */
-# define CORO_CTX_ADD(Decl)                     \
-    Decl
+/** @internal Helper of @c CORO_CTX_VARS_ used to initialize a reference to
+ * a member of the context.  */
+# define CORO_USE_(Z, N, Array)						\
+  BOOST_PP_TUPLE_ELEM(2, 0, BOOST_PP_ARRAY_ELEM(N, Array))&		\
+  BOOST_PP_TUPLE_ELEM(2, 1, BOOST_PP_ARRAY_ELEM(N, Array))		\
+  = ctx__->BOOST_PP_TUPLE_ELEM(2, 1, BOOST_PP_ARRAY_ELEM(N, Array));
+
+/** @internal Define a context.
+ * @param Vars a Boost CPP Array of tuples (type, name).
+ * @param NewCtx is an expression (rvalue) to initialize the @c ctx__
+ * pointer.  */
+# define CORO_CTX_VARS_(Vars, NewCtx)                                   \
+  struct coro_ctx__: public Coroutine::CoroCtx                          \
+  {                                                                     \
+    BOOST_PP_REPEAT(                                                    \
+      BOOST_PP_ARRAY_SIZE(Vars),                                        \
+      CORO_DECL_,                                                       \
+      Vars                                                              \
+    )                                                                   \
+  };                                                                    \
+  int cr_line__ = cr_new_call_ || !started () ? 0 : cr_line_ ();        \
+  CORO_CHECK_WAITING_ ("coroutine not ready to resume execution at line " \
+                       << cr_line__ << " (still waiting for "           \
+                       << cr_waiting_for_ () << " other coroutines)");  \
+  coro_ctx__* ctx__ = cr_line__ == 0                                    \
+                    ? NewCtx                                            \
+                    : static_cast<coro_ctx__*> (cr_restore_ ());        \
+  /* Inject the values of the context in the current scope */           \
+  BOOST_PP_REPEAT(                                                      \
+    BOOST_PP_ARRAY_SIZE(Vars),                                          \
+    CORO_USE_,                                                          \
+    Vars)                                                               \
+  try                                                                   \
+  {                                                                     \
+    switch (cr_line__)                                                  \
+    {                                                                   \
+    case 0:                                                             \
+      cr_new_call_ =  false;                                            \
+      ECHO ("creating a new coroutine (ctx: " << ctx__ << ')')
+
+/** Initialize the context of a coroutine.
+ * @param Vars a Boost CPP Array of tuples (type, name).
+ * Example: @code
+ * CORO_CTX_VARS ((1, ((int, i))));
+ * @endcode
+ * Example: @code
+ * CORO_CTX_VARS ((2, ((int, i), (float, f))));
+ * @endcode
+ * Example: @code
+ * CORO_CTX_VARS ((3, (
+ *   (MyObject, obj),
+ *   (int*, p),
+ *   (float, f),
+ * )));
+ * @endcode
+ */
+# define CORO_CTX_VARS(Vars) CORO_CTX_VARS_ (Vars, new coro_ctx__ ())
+/// Initialize a coroutine without a context.
+# define CORO_WITHOUT_CTX() CORO_CTX_VARS_ ((0, ()), 0)
 
 /** @internal Suspend the execution if this coroutine is waiting for other
  * coroutines to finish.
@@ -203,73 +260,29 @@ namespace runner
                      << cr_waiting_for_ () << " other coroutines",      \
                      CORO_SAVE_BEGIN_ (this);)
 
-/** @internal
- * Initialize a coroutine.
- * @param NEW_CTX is an expression (rvalue) to initialize the @c __ctx pointer.
- */
-# define CORO_START_(NEW_CTX)                                           \
-  };                                                                    \
-  __coro_ctx* __ctx = 0;                                                \
-  CORO_CHECK_WAITING_ ("coroutine not ready to resume execution at line " \
-                       << cr_line_ () << " (still waiting for "         \
-                       << cr_waiting_for_ () << " other coroutines)");  \
-  try                                                                   \
-  {                                                                     \
-    switch (cr_new_call_ || !started () ? 0 : cr_line_ ())              \
-    {                                                                   \
-    case 0:                                                             \
-      cr_new_call_ =  false;                                            \
-      __ctx = NEW_CTX;                                                  \
-      ECHO ("creating a new coroutine (ctx: " << __ctx << ')')
+/** Shorthand to initialize a context with a single variable.  */
+# define CORO_WITH_1SLOT_CTX(Type, Name)        \
+  CORO_CTX_VARS ((1, ((Type, Name))))
 
-/// Start a new coroutine with a context.
-# define CORO_START() CORO_START_ (new __coro_ctx ())
-/// Start a new coroutine without a context.
-# define CORO_START_WITHOUT_CTX() CORO_START_ (0)
+/** Shorthand to initialize a context with two variables.  */
+# define CORO_WITH_2SLOTS_CTX(Type1, Name1, Type2, Name2)       \
+  CORO_CTX_VARS ((2, ((Type1, Name1), (Type2, Name2))))
 
-/// Shorthand to completely initialize a coroutine without a context.
-# define CORO_INIT_WITHOUT_CTX()                \
-  CORO_CTX_START ();                            \
-  CORO_START_WITHOUT_CTX ()
-
-/** Shorthand to completely initialize a coroutine with a single variable
- * @a Decl in its context.  */
-# define CORO_INIT_WITH_1SLOT_CTX(Decl)         \
-  CORO_CTX_START ();                            \
-  CORO_CTX_ADD (Decl);                          \
-  CORO_START ()
-
-/** Shorthand to completely initialize a coroutine with a 2 variables
- * @a Decl1 and @a Decl2 in its context.  */
-# define CORO_INIT_WITH_2SLOTS_CTX(Decl1, Decl2)        \
-  CORO_CTX_START ();                                    \
-  CORO_CTX_ADD (Decl1);                                 \
-  CORO_CTX_ADD (Decl2);                                 \
-  CORO_START ()
-
-/** Shorthand to completely initialize a coroutine with a 3 variables
- * @a Decl1, @a Decl2 and @a Decl3 in its context.  */
-# define CORO_INIT_WITH_3SLOTS_CTX(Decl1, Decl2, Decl3) \
-  CORO_CTX_START ();                                    \
-  CORO_CTX_ADD (Decl1);                                 \
-  CORO_CTX_ADD (Decl2);                                 \
-  CORO_CTX_ADD (Decl3);                                 \
-  CORO_START ()
-
-/** Provide access (read or write) to the context.
- * Example, read access:  @code int& my_i = CORO_CTX (i); @endcode
- * Example, write access: @code CORO_CTX (i = 42); @endcode
- * Example, same example: @code CORO_CTX (i) = 42; @endcode
- */
-# define CORO_CTX(What) __ctx->What
+/** Shorthand to initialize a context with 3 variables.  */
+# define CORO_WITH_3SLOTS_CTX(Type1, Name1, Type2, Name2, Type3, Name3) \
+  CORO_CTX_VARS ((3, (                                                  \
+    (Type1, Name1),                                                     \
+    (Type2, Name2),                                                     \
+    (Type3, Name3),                                                     \
+  )))
 
 /** @internal
  * Start to save the context.  Must be invoked on the same line as
  * @c CORO_SAVE_END_.  The current line and context are pushed on
  * the context stack. */
 # define CORO_SAVE_BEGIN_(Coro)                                         \
-    cr_save_ (__LINE__, __ctx);                                         \
-    ECHO ("coroutine saved (ctx: " << __ctx << ") now "                 \
+    cr_save_ (__LINE__, ctx__);                                         \
+    ECHO ("coroutine saved (ctx: " << ctx__ << ") now "                 \
           << context_number () << " contexts in the coroutine stack")
 
 /** @internal
@@ -284,8 +297,7 @@ namespace runner
  */
 # define CORO_SAVE_END_                                                 \
       case __LINE__:                                                    \
-        __ctx = static_cast<__coro_ctx*> (cr_restore_ ());              \
-        ECHO ("coroutine resumed (ctx: " << __ctx << ") now "           \
+        ECHO ("coroutine resumed (ctx: " << ctx__ << ") now "           \
               << context_number () << " contexts in the coroutine stack")
 
 /// @internal Yield the value @a Ret.
@@ -332,7 +344,7 @@ namespace runner
     {                                                   \
       OnYield                                           \
     }                                                   \
-    ECHO ("back to coroutine ctx: " << __ctx            \
+    ECHO ("back to coroutine ctx: " << ctx__            \
           << " with " << context_number ()              \
           << " contexts in the coroutine stack");       \
     assert (cr_resumed_);                               \
@@ -351,7 +363,6 @@ namespace runner
  * anything in @a What as well as doing side effects.  When the execution of
  * @a What is resumed, only values stored in the context are valid.
  * Example: @code CORO_CALL (member_ = other_coro ()); @endcode
- * Example: @code CORO_CALL (CORO_CTX (ret) = other_coro ()); @endcode
  * Example: @code CORO_CALL (other_coro ()); @endcode
  */
 # define CORO_CALL(What)                        \
@@ -395,7 +406,7 @@ namespace runner
 /// @internal Return the value @a Ret and terminates this coroutine.
 # define CORO_RET_(Ret)                                                 \
   do {                                                                  \
-    ECHO ("coroutine ret (ctx: " << __ctx << ") with "                  \
+    ECHO ("coroutine ret (ctx: " << ctx__ << ") with "                  \
           << context_number ()-1 << " contexts in the coroutine stack"); \
     if (false)                                                          \
     {                                                                   \
@@ -403,7 +414,7 @@ namespace runner
     }                                                                   \
     CORO_CHECK_WAITING_AND_SAVE_ ();                                    \
     CORO_CLEANUP_;                                                      \
-    delete __ctx;                                                       \
+    delete ctx__;                                                       \
     return Ret;                                                         \
   } while (0)
 
@@ -419,8 +430,7 @@ namespace runner
       break;                                                            \
     default:                                                            \
       ECHO ("coroutine invalid resume (invalid line: "                  \
-            << (!started () ? 0 : cr_line_ ())                          \
-            << ", ctx: " << __ctx << ')');                              \
+            << cr_line__ << ", ctx: " << ctx__ << ')');                 \
       abort ();                                                         \
       CORO_SAVE_END_; /* Save for the waiting_for case below.  */       \
     } /* end of switch */                                               \
@@ -431,7 +441,7 @@ namespace runner
   }                                                                     \
   catch (...)                                                           \
   {                                                                     \
-    ECHO ("coroutine exn (ctx: " << __ctx << ") "                       \
+    ECHO ("coroutine exn (ctx: " << ctx__ << ") "                       \
           << context_number () << " contexts left in the coroutine stack"); \
     try {                                                               \
       CORO_CLEANUP_;                                                    \
@@ -439,14 +449,14 @@ namespace runner
     catch (...)                                                         \
     {                                                                   \
     }                                                                   \
-    delete __ctx;                                                       \
+    delete ctx__;                                                       \
     throw;                                                              \
   }                                                                     \
-  ECHO ("coroutine end (ctx: " << __ctx << ") "                         \
+  ECHO ("coroutine end (ctx: " << ctx__ << ") "                         \
         << context_number () << " contexts left in the coroutine stack"); \
   CORO_CHECK_WAITING_AND_SAVE_ ();                                      \
   CORO_CLEANUP_;                                                        \
-  delete __ctx;                                                         \
+  delete ctx__;                                                         \
   return Ret
 
 /// Epilogue of a coroutine that returns @c void.
