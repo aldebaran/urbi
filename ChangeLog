@@ -1,3 +1,8 @@
+2007-08-25  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix a memory leak and a bug when assigning UList to an UVar.
+	* src/uvalue.cc: Set liststart to 0 after deleting it when assigning a kernel value from a urbi::UList.
+
 2007-07-23  mefyl  <mefyl@lrde.epita.fr>
 
 	Use '**' instead of '^'. Update tests external.
