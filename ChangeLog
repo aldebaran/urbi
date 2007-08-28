@@ -1,5 +1,16 @@
 2007-08-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Minor code enhancements.
+	* src/runner/coroutine.hh (context_number): Rename as context_count.
+	* src/runner/runner.hh (emit_result): Accept NULL ref-counted
+	pointers and ignore them.
+	* src/runner/coroutine.hxx,
+	* src/runner/runner.cc: Adjust all callers of context_number and
+	emit_result.
+	* src/runner/scheduler.cc (kill_job): Simplify with libport.
+
+2007-08-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Code cleanup.
 	* src/runner/coroutine.hh (CORO_SAVE_BEGIN_): Drop the unused
 	argument.

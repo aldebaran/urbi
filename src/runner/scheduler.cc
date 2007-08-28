@@ -10,6 +10,7 @@
 #include <boost/foreach.hpp>
 
 #include "libport/compiler.hh"
+#include "libport/containers.hh"
 
 #include "runner/fwd.hh"
 #include "runner/scheduler.hh"
@@ -102,8 +103,7 @@ namespace runner
   Scheduler::kill_job (Job* job)
   {
     assert (job);
-    assert (active_job_ == job
-            || std::find (jobs_.begin (), jobs_.end (), job) != jobs_.end ());
+    assert (active_job_ == job || libport::has (jobs_, job));
     job->terminate ();
     ECHO ("deleting job " << job);
     delete job;

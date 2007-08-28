@@ -51,7 +51,7 @@ namespace runner
     bool started () const;
 
     /// Number of contexts stacked in this coroutine.
-    unsigned context_number () const;
+    unsigned context_count () const;
 
     /** Delete all the contexts stacked in this coroutine.
      *
@@ -283,7 +283,7 @@ namespace runner
 # define CORO_SAVE_BEGIN_                                               \
     cr_save_ (__LINE__, ctx__);                                         \
     ECHO ("coroutine saved (ctx: " << ctx__ << ") now "                 \
-          << context_number () << " contexts in the coroutine stack")
+          << context_count () << " contexts in the coroutine stack")
 
 /** @internal
  * Finish to save the context.  Must be invoked on the same line as
@@ -298,7 +298,7 @@ namespace runner
 # define CORO_SAVE_END_                                                 \
       case __LINE__:                                                    \
         ECHO ("coroutine resumed (ctx: " << ctx__ << ") now "           \
-              << context_number () << " contexts in the coroutine stack")
+              << context_count () << " contexts in the coroutine stack")
 
 /// @internal Yield the value @a Ret.
 # define CORO_YIELD_(Ret)                                               \
@@ -342,7 +342,7 @@ namespace runner
       OnYield                                           \
     }                                                   \
     ECHO ("back to coroutine ctx: " << ctx__            \
-          << " with " << context_number ()              \
+          << " with " << context_count ()              \
           << " contexts in the coroutine stack");       \
     assert (cr_resumed_);                               \
     --cr_resumed_;                                      \
@@ -395,7 +395,7 @@ namespace runner
     cr_signal_finished_ ();                             \
     delete this;                                        \
   }                                                     \
-  else if (!context_number () && !cr_resumed_)          \
+  else if (!context_count () && !cr_resumed_)          \
   {                                                     \
     ECHO ("finished: signaling " << cr_waited_by_ ()    \
           << " other coroutines");                      \
@@ -409,7 +409,7 @@ namespace runner
 # define CORO_RET_(Ret)                                                 \
   do {                                                                  \
     ECHO ("coroutine ret (ctx: " << ctx__ << ") with "                  \
-          << context_number ()-1 << " contexts in the coroutine stack"); \
+          << context_count ()-1 << " contexts in the coroutine stack"); \
     if (false)                                                          \
     {                                                                   \
       CORO_SAVE_END_;                                                   \
@@ -444,7 +444,7 @@ namespace runner
   catch (...)                                                           \
   {                                                                     \
     ECHO ("coroutine exn (ctx: " << ctx__ << ") "                       \
-          << context_number () << " contexts left in the coroutine stack"); \
+          << context_count () << " contexts left in the coroutine stack"); \
     try {                                                               \
       CORO_CLEANUP_;                                                    \
     }                                                                   \
@@ -455,7 +455,7 @@ namespace runner
     throw;                                                              \
   }                                                                     \
   ECHO ("coroutine end (ctx: " << ctx__ << ") "                         \
-        << context_number () << " contexts left in the coroutine stack"); \
+        << context_count () << " contexts left in the coroutine stack"); \
   CORO_CHECK_WAITING_AND_SAVE_ ();                                      \
   CORO_CLEANUP_;                                                        \
   delete ctx__;                                                         \

@@ -72,7 +72,7 @@ namespace runner
 
   inline
   unsigned
-  Coroutine::context_number () const
+  Coroutine::context_count () const
   {
     return cr_stack_.size ();
   }

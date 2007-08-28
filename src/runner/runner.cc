@@ -49,7 +49,7 @@ namespace runner
     else
       ECHO ("job " << ME << " restarting evaluation of AST: " << ast_
             << " {{{" << *ast_ << "}}} "
-            << context_number () << " contexts in the coroutine stack");
+            << context_count () << " contexts in the coroutine stack");
     operator() (*ast_);
   }
 
@@ -64,15 +64,14 @@ namespace runner
   {
     ECHO (ME << " join with " << JOB (static_cast<Runner*> (&coro)));
     Runner& r = dynamic_cast<Runner&> (coro);
-    if (r.current_.get ())
-      emit_result (r.current_);
+    emit_result (r.current_);
   }
 
   void
   Runner::emit_result (rObject result)
   {
-    assert (result.get ());
-    context_->value_get ().new_result (result);
+    if (result.get ())
+      context_->value_get ().new_result (result);
   }
 
   void
@@ -263,8 +262,7 @@ namespace runner
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
     CORO_CALL (operator() (e.lhs_get()));
     ECHO ("sending result of lhs");
-    if (current_.get ())
-      emit_result (current_);
+    emit_result (current_);
 
     current_.reset ();
     assert (current_.get () == 0);
@@ -273,8 +271,7 @@ namespace runner
     ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
     CORO_CALL (operator() (e.rhs_get()));
     ECHO ("sending result of rhs");
-    if (current_.get ())
-      emit_result (current_);
+    emit_result (current_);
 
     /* We already returned the result of both our lhs and our rhs so let's
      * reset the current value to make sure nobody will return it again.  If
@@ -298,8 +295,7 @@ namespace runner
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
     CORO_CALL (operator() (e.lhs_get()));
     ECHO ("sending result of lhs");
-    if (current_.get ())
-      emit_result (current_);
+    emit_result (current_);
 
     current_.reset ();
     assert (current_.get () == 0);
@@ -312,8 +308,7 @@ namespace runner
     ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
     CORO_CALL (operator() (e.rhs_get()));
     ECHO ("sending result of rhs");
-    if (current_.get ())
-      emit_result (current_);
+    emit_result (current_);
 
     CORO_END;
   }
