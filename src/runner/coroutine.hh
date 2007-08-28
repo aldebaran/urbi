@@ -309,7 +309,7 @@ namespace runner
       {                                                                 \
 	CORO_SAVE_BEGIN_;						\
 	scheduler_get ().add_job (this);                                \
-	/* Not "throw Ret()": gcc <= 3.3 chokes. */			\
+	/* Not "throw (Ret)": gcc <= 3.3 chokes. */			\
 	throw Ret;							\
 	CORO_SAVE_END_;                                                 \
       } while (0)
