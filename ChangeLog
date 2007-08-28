@@ -1,3 +1,9 @@
+2007-08-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Code cleanup.
+	* src/runner/coroutine.hh (CORO_SAVE_BEGIN_): Drop the unused
+	argument.
+
 2007-08-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Compilation fix.

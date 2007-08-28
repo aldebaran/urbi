@@ -258,7 +258,7 @@ namespace runner
 # define CORO_CHECK_WAITING_AND_SAVE_()                                 \
   CORO_CHK_WAITING_ ("cannot return at this time, still waiting for "   \
                      << cr_waiting_for_ () << " other coroutines",      \
-                     CORO_SAVE_BEGIN_ (this);)
+                     CORO_SAVE_BEGIN_;)
 
 /** Shorthand to initialize a context with a single variable.  */
 # define CORO_WITH_1SLOT_CTX(Type, Name)        \
@@ -280,7 +280,7 @@ namespace runner
  * Start to save the context.  Must be invoked on the same line as
  * @c CORO_SAVE_END_.  The current line and context are pushed on
  * the context stack. */
-# define CORO_SAVE_BEGIN_(Coro)                                         \
+# define CORO_SAVE_BEGIN_                                               \
     cr_save_ (__LINE__, ctx__);                                         \
     ECHO ("coroutine saved (ctx: " << ctx__ << ") now "                 \
           << context_number () << " contexts in the coroutine stack")
@@ -304,7 +304,7 @@ namespace runner
 # define CORO_YIELD_(Ret)                                               \
       do                                                                \
       {                                                                 \
-        CORO_SAVE_BEGIN_ (this);                                        \
+        CORO_SAVE_BEGIN_;                                               \
         scheduler_get ().add_job (this);                                \
         throw Ret; /* No parens (see below) */                          \
         CORO_SAVE_END_;                                                 \
@@ -370,7 +370,7 @@ namespace runner
                   ++cr_resumed_;                \
                 },                              \
                 What,                           \
-                CORO_SAVE_BEGIN_ (Coro);        \
+                CORO_SAVE_BEGIN_;               \
                 assert (cr_resumed_);           \
                 --cr_resumed_;                  \
                 throw;);                        \
@@ -401,7 +401,7 @@ namespace runner
           << " other coroutines");                      \
     cr_signal_finished_ ();                             \
     scheduler_get ().add_job (this);                    \
-    CORO_SAVE_BEGIN_ (this);                            \
+    CORO_SAVE_BEGIN_;                                   \
     throw CoroutineYield (*this);                       \
   }
 
