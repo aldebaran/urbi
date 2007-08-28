@@ -31,7 +31,7 @@ namespace runner
   do                                                            \
   {                                                             \
     ECHO ("job " << ME << " yielding on AST: "                  \
-          << &Ast << " {{{" << Ast << "}}}");                   \
+	  << &Ast << " {{{" << Ast << "}}}");                   \
     CORO_YIELD ();                                              \
   } while (0)
 
@@ -43,13 +43,13 @@ namespace runner
     if (!started_)
     {
       ECHO ("job " << ME << " starting evaluation of AST: " << ast_
-            << " {{{" << *ast_ << "}}}");
+	    << " {{{" << *ast_ << "}}}");
       started_ = true;
     }
     else
       ECHO ("job " << ME << " restarting evaluation of AST: " << ast_
-            << " {{{" << *ast_ << "}}} "
-            << context_count () << " contexts in the coroutine stack");
+	    << " {{{" << *ast_ << "}}} "
+	    << context_count () << " contexts in the coroutine stack");
     operator() (*ast_);
   }
 
@@ -154,17 +154,17 @@ namespace runner
     switch (val->kind_get ())
     {
       case object::Object::kind_primitive:
-        PING ();
-        current_ = val.cast<object::Primitive>()->value_get()(args);
-        break;
+	PING ();
+	current_ = val.cast<object::Primitive>()->value_get()(args);
+	break;
       case object::Object::kind_code:
-        PING ();
-        call_code = true;
-        break;
+	PING ();
+	call_code = true;
+	break;
       default:
-        PING ();
-        current_ = val;
-        break;
+	PING ();
+	current_ = val;
+	break;
     }
     if (call_code)
     {
@@ -193,17 +193,17 @@ namespace runner
   {
     typedef std::list<object::rObject> objects;
     typedef std::list<ast::Exp*> exps;
-                      // list values
+		      // list values
     CORO_WITH_2SLOTS_CTX (objects, values,
-                          exps::const_iterator, i);
+			  exps::const_iterator, i);
     YIELD (e);
 
     PING ();
     // Evaluate every expression in the list
     // FIXME: parallelized?
     for (i = e.value_get ().begin ();
-         i != e.value_get ().end ();
-         ++i)
+	 i != e.value_get ().end ();
+	 ++i)
     {
       CORO_CALL (operator() (**i));
       values.push_back(current_);
@@ -238,7 +238,7 @@ namespace runner
     {
       assert (current_->kind_get() == object::Object::kind_float);
       current_ =
-        new object::Float (-1 * current_.cast<object::Float>()->value_get ());
+	new object::Float (-1 * current_.cast<object::Float>()->value_get ());
     }
 
     CORO_END;

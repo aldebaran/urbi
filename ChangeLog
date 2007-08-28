@@ -1,3 +1,9 @@
+2007-08-28  Akim Demaille  <akim@lrde.epita.fr>
+
+	Minor changes
+	* src/runner/coroutine.hh (line): protected so that we can use
+	it in the macros.
+
 2007-08-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Minor code enhancements.

@@ -16,7 +16,7 @@ namespace runner
 
   /// Ast executor.
   class Runner : public ast::DefaultVisitor,
-                 public Coroutine
+		 public Coroutine
   {
   public:
     /// \name Useful shorthands.
@@ -70,7 +70,7 @@ namespace runner
 
     /// Do the actual work.  Implementation of \c Job::run.
     virtual void work ();
-    /// Re-implementation of \c Job::run.
+    /// Re-implementation of \c Job::stop.
     virtual void stop ();
     /// Re-implementation of \c Coroutine::finished.
     virtual void finished (Coroutine& coro);

@@ -33,6 +33,7 @@ namespace runner
     /// Remove all jobs.
     void killall_jobs ();
 
+    /// Kill @a job, and delete it.
     void kill_job (Job* job);
 
   private:

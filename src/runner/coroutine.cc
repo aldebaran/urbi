@@ -27,7 +27,7 @@ namespace runner
     if (!waited_by_.empty ())
     {
       ECHO ("warning: coroutine destroyed but " << waited_by_.size ()
-            << " other coroutines still waiting.");
+	    << " other coroutines still waiting.");
       // This is not a problem as long as coroutines signaled don't try to
       // use this coroutine which has been partially destroyed.
       cr_signal_finished_ ();
@@ -66,8 +66,8 @@ namespace runner
     if (waited_by_.find (&coro) != waited_by_.end ())
     {
       ECHO ("wait cycle detected: "
-            << &coro << " was already waiting for " << this
-            << " when " << this << " attempted to wait for " << &coro);
+	    << &coro << " was already waiting for " << this
+	    << " when " << this << " attempted to wait for " << &coro);
       assert (!"wait cycle detected");
       abort ();
     }

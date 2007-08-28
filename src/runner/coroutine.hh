@@ -87,9 +87,10 @@ namespace runner
      * inherits this interface.  */
     struct CoroCtx {};
 
-  private:
     /// Used to store values of @c __LINE__.
     typedef int line;
+
+  private:
     /// Type to hold a call stack.
     typedef std::stack<std::pair<line, CoroCtx*> > stack_type;
 
@@ -114,7 +115,7 @@ namespace runner
     /** @internal
      * When this coroutine is finished, signal it to other coroutines
      * waiting for this one by calling their @c finished method with @c this
-     * in argument..  */
+     * as argument.  */
     void cr_signal_finished_ ();
 
     /** @internal
@@ -194,13 +195,13 @@ namespace runner
       Vars                                                              \
     )                                                                   \
   };                                                                    \
-  int cr_line__ = cr_new_call_ || !started () ? 0 : cr_line_ ();        \
+  line cr_line__ = cr_new_call_ || !started () ? 0 : cr_line_ ();        \
   CORO_CHECK_WAITING_ ("coroutine not ready to resume execution at line " \
-                       << cr_line__ << " (still waiting for "           \
-                       << cr_waiting_for_ () << " other coroutines)");  \
+		       << cr_line__ << " (still waiting for "           \
+		       << cr_waiting_for_ () << " other coroutines)");  \
   coro_ctx__* ctx__ = cr_line__ == 0                                    \
-                    ? NewCtx                                            \
-                    : static_cast<coro_ctx__*> (cr_restore_ ());        \
+		    ? NewCtx                                            \
+		    : static_cast<coro_ctx__*> (cr_restore_ ());        \
   /* Inject the values of the context in the current scope */           \
   BOOST_PP_REPEAT(                                                      \
     BOOST_PP_ARRAY_SIZE(Vars),                                          \
@@ -231,6 +232,7 @@ namespace runner
  * @endcode
  */
 # define CORO_CTX_VARS(Vars) CORO_CTX_VARS_ (Vars, new coro_ctx__ ())
+
 /// Initialize a coroutine without a context.
 # define CORO_WITHOUT_CTX() CORO_CTX_VARS_ ((0, ()), 0)
 
@@ -252,13 +254,14 @@ namespace runner
  * coroutines to finish.  */
 # define CORO_CHECK_WAITING_(Msg)               \
   CORO_CHK_WAITING_ (Msg, /*nothing*/)
+
 /** @internal Suspend the execution if this coroutine is waiting for other
  * coroutines to finish.  If the execution is suspended, @c CORO_SAVE_BEGIN_
  * is invoked before yielding.  */
 # define CORO_CHECK_WAITING_AND_SAVE_()                                 \
   CORO_CHK_WAITING_ ("cannot return at this time, still waiting for "   \
-                     << cr_waiting_for_ () << " other coroutines",      \
-                     CORO_SAVE_BEGIN_;)
+		     << cr_waiting_for_ () << " other coroutines",      \
+		     CORO_SAVE_BEGIN_;)
 
 /** Shorthand to initialize a context with a single variable.  */
 # define CORO_WITH_1SLOT_CTX(Type, Name)        \
@@ -283,7 +286,7 @@ namespace runner
 # define CORO_SAVE_BEGIN_                                               \
     cr_save_ (__LINE__, ctx__);                                         \
     ECHO ("coroutine saved (ctx: " << ctx__ << ") now "                 \
-          << context_count () << " contexts in the coroutine stack")
+	  << context_count () << " contexts in the coroutine stack")
 
 /** @internal
  * Finish to save the context.  Must be invoked on the same line as
@@ -297,23 +300,24 @@ namespace runner
  */
 # define CORO_SAVE_END_                                                 \
       case __LINE__:                                                    \
-        ECHO ("coroutine resumed (ctx: " << ctx__ << ") now "           \
-              << context_count () << " contexts in the coroutine stack")
+	ECHO ("coroutine resumed (ctx: " << ctx__ << ") now "           \
+	      << context_count () << " contexts in the coroutine stack")
 
 /// @internal Yield the value @a Ret.
 # define CORO_YIELD_(Ret)                                               \
       do                                                                \
       {                                                                 \
-        CORO_SAVE_BEGIN_;                                               \
-        scheduler_get ().add_job (this);                                \
-        throw Ret; /* No parens (see below) */                          \
-        CORO_SAVE_END_;                                                 \
+	CORO_SAVE_BEGIN_;						\
+	scheduler_get ().add_job (this);                                \
+	/* Not "throw Ret()": gcc <= 3.3 chokes. */			\
+	throw Ret;							\
+	CORO_SAVE_END_;                                                 \
       } while (0)
 
-/* No parentheses around throw Ret: gcc <= 3.3 would choke */
 
 /// Yield and return an intermediate value @c Val.
 # define CORO_YIELD_VALUE(Val) CORO_YIELD_ (Val) // FIXME: Wrap Val in a known exn
+
 /// Yield without returning an intermediate value.
 # define CORO_YIELD() CORO_YIELD_ (CoroutineYield (*this))
 
@@ -342,8 +346,8 @@ namespace runner
       OnYield                                           \
     }                                                   \
     ECHO ("back to coroutine ctx: " << ctx__            \
-          << " with " << context_count ()              \
-          << " contexts in the coroutine stack");       \
+	  << " with " << context_count ()		\
+	  << " contexts in the coroutine stack");       \
     assert (cr_resumed_);                               \
     --cr_resumed_;                                      \
     cr_new_call_ = false
@@ -365,15 +369,15 @@ namespace runner
 # define CORO_CALL(What)                        \
   do {                                          \
     CORO_CALL_ (if (false)                      \
-                {                               \
-                  CORO_SAVE_END_;               \
-                  ++cr_resumed_;                \
-                },                              \
-                What,                           \
-                CORO_SAVE_BEGIN_;               \
-                assert (cr_resumed_);           \
-                --cr_resumed_;                  \
-                throw;);                        \
+		{                               \
+		  CORO_SAVE_END_;               \
+		  ++cr_resumed_;                \
+		},                              \
+		What,                           \
+		CORO_SAVE_BEGIN_;               \
+		assert (cr_resumed_);           \
+		--cr_resumed_;                  \
+		throw;);                        \
   } while (0)
 
 /** Same thing as @c CORO_CALL but you need to specify the target
@@ -398,7 +402,7 @@ namespace runner
   else if (!context_count () && !cr_resumed_)          \
   {                                                     \
     ECHO ("finished: signaling " << cr_waited_by_ ()    \
-          << " other coroutines");                      \
+	  << " other coroutines");                      \
     cr_signal_finished_ ();                             \
     scheduler_get ().add_job (this);                    \
     CORO_SAVE_BEGIN_;                                   \
@@ -409,7 +413,7 @@ namespace runner
 # define CORO_RET_(Ret)                                                 \
   do {                                                                  \
     ECHO ("coroutine ret (ctx: " << ctx__ << ") with "                  \
-          << context_count ()-1 << " contexts in the coroutine stack"); \
+	  << context_count ()-1 << " contexts in the coroutine stack"); \
     if (false)                                                          \
     {                                                                   \
       CORO_SAVE_END_;                                                   \
@@ -432,7 +436,7 @@ namespace runner
       break;                                                            \
     default:                                                            \
       ECHO ("coroutine invalid resume (invalid line: "                  \
-            << cr_line__ << ", ctx: " << ctx__ << ')');                 \
+	    << cr_line__ << ", ctx: " << ctx__ << ')');                 \
       abort ();                                                         \
       CORO_SAVE_END_; /* Save for the waiting_for case below.  */       \
     } /* end of switch */                                               \
@@ -444,7 +448,7 @@ namespace runner
   catch (...)                                                           \
   {                                                                     \
     ECHO ("coroutine exn (ctx: " << ctx__ << ") "                       \
-          << context_count () << " contexts left in the coroutine stack"); \
+	  << context_count () << " contexts left in the coroutine stack"); \
     try {                                                               \
       CORO_CLEANUP_;                                                    \
     }                                                                   \
@@ -455,7 +459,7 @@ namespace runner
     throw;                                                              \
   }                                                                     \
   ECHO ("coroutine end (ctx: " << ctx__ << ") "                         \
-        << context_count () << " contexts left in the coroutine stack"); \
+	<< context_count () << " contexts left in the coroutine stack"); \
   CORO_CHECK_WAITING_AND_SAVE_ ();                                      \
   CORO_CLEANUP_;                                                        \
   delete ctx__;                                                         \
