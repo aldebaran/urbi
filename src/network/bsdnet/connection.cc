@@ -95,7 +95,7 @@ void Connection::doRead()
     closeConnection();
   }
   else
-    received(read_buff, n);
+    *this << UConnection::received(read_buff, n);
 }
 
 int Connection::effectiveSend (const ubyte* buffer, int length)
@@ -128,6 +128,6 @@ UConnection& Connection::send(const ubyte* buffer, int length)
 UConnection& Connection::endline ()
 {
   //FIXME: test send error
-  (*this) <<UConnection:: send((const ubyte*)"\n", 1);
+  (*this) << UConnection::send((const ubyte*)"\n", 1);
   CONN_ERR_RET(USUCCESS);
 }

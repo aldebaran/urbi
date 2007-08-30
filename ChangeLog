@@ -1,3 +1,10 @@
+2007-08-30  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Add missing call fixes for UConnection stream version.
+	* src/network/bsdnet/connection.cc: UConnection::received.
+	* src/uconnection.cc: UConnection::errorSignal_set.
+	* src/ughostconnection.cc: UConnection::send.
+
 2007-07-29  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Compilation fix for GCC3.

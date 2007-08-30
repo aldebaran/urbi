@@ -431,12 +431,12 @@ UConnection::sendc_ (const ubyte *buffer, int length)
   {
     if (result == UMEMORYFAIL)
     {
-      errorSignal(UERROR_SEND_BUFFER_FULL);
+      errorSignal_set(UERROR_SEND_BUFFER_FULL);
       server->memoryOverflow = true;
       server->isolate();
     }
     if (result == UFAIL)
-      errorSignal(UERROR_SEND_BUFFER_FULL);
+      errorSignal_set(UERROR_SEND_BUFFER_FULL);
 
     sendQueue_->revert ();
     CONN_ERR_RET(UFAIL);
@@ -533,7 +533,7 @@ UConnection::received_ (const ubyte *buffer, int length)
   PING();
   if (server->memoryOverflow)
   {
-    errorSignal(UERROR_MEMORY_OVERFLOW);
+    errorSignal_set(UERROR_MEMORY_OVERFLOW);
     // Block any new incoming command when the system is out of
     // memory
     CONN_ERR_RET(UFAIL);
@@ -589,13 +589,13 @@ UConnection::received_ (const ubyte *buffer, int length)
     // Handles memory errors.
     if (result == UFAIL)
     {
-      errorSignal(UERROR_RECEIVE_BUFFER_FULL);
-      errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      errorSignal_set(UERROR_RECEIVE_BUFFER_FULL);
+      errorSignal_set(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
 
     if (result == UMEMORYFAIL)
     {
-      errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      errorSignal_set(UERROR_RECEIVE_BUFFER_CORRUPTED);
       server->memoryOverflow = true;
       server->isolate();
     }
