@@ -1,3 +1,7 @@
+2007-08-31  Rémi Humbert  <humbert@gostai.com>
+
+	* network.cc: Don't set the option SO_REUSEADDR under windows .
+
 2007-08-25  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix a memory leak and a bug when assigning UList to an UVar.

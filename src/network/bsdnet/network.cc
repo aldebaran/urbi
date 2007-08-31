@@ -71,11 +71,22 @@ namespace Network
     if (fd == -1)
       return false;
 
+#ifdef WIN32
+    /*
+      Under linux&all os, SO_REUSEADDR means you can reuse an adress in the
+      TIME_WAIT state. Under windows, it means you can bind an allready bound
+      port.
+      http://msdn2.microsoft.com/en-us/library/ms740476.aspx
+      "SO_REUSEADDR    BOOL    Allows the socket to be bound to an address
+      that is already in use."
+      So we don't set this option under windows
+    */
     /* set the REUSEADDR option to 1 to allow imediate reuse of the port */
     int yes = 1;
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
 		   (char *) &yes, sizeof (yes)) < 0)
       return false;
+#endif
 
     /* fill in socket address */
     memset(&address, 0, sizeof (struct sockaddr_in));
