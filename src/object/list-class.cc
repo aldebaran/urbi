@@ -20,6 +20,22 @@ namespace object
 
   namespace
   {
+    /// Concatenate a list in place
+    /**
+     * @return \a lhs
+     */
+    static rList
+    ip_concat(rList lhs, rList rhs)
+    {
+      // FIXME: I can't explain why, but the line below result in an
+      // infinite loop. Use foreach instead for now.
+      //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
+
+      BOOST_FOREACH (const rObject& o, rhs->value_get())
+        lhs->value_get().push_back(o);
+
+      return lhs;
+    }
     /// Concatenate two list
     /**
      * @return A fresh list, concatenation of \a lhs and \a rhs
@@ -28,18 +44,12 @@ namespace object
     concat(rList lhs, rList rhs)
     {
       // Copy lhs
-      list_traits::type res(lhs->value_get());
+      list_traits::type l(lhs->value_get());
+      rList res = new List(l);
 
       // Append rhs
-
-      // FIXME: I can't explain why, but the line below result in an
-      // infinite loop. Use foreach instead for now.
-
-      //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
-      BOOST_FOREACH (const rObject& o, rhs->value_get())
-        res.push_back(o);
-
-      return new List(res);
+      ip_concat(res, rhs);
+      return res;
     }
 
     /// Give the first element of \a l.
@@ -65,6 +75,14 @@ namespace object
       return new List(res);
     }
 
+    /// Insert \a elt at the end of \a l
+    static rObject
+    insert(rList l, rObject elt)
+    {
+      l->value_get().push_back(elt);
+      return l;
+    }
+
   }
 
   /*-------------------------.
@@ -78,9 +96,12 @@ namespace object
   PRIMITIVE_2(list, Name, Name, List, Type2)
 
   PRIMITIVE_2_LIST(concat, List);
+  PRIMITIVE_2_LIST(ip_concat, List);
   PRIMITIVE_1_LIST(front);
   PRIMITIVE_1_LIST(back);
   PRIMITIVE_1_LIST(tail);
+
+  PRIMITIVE_2_OBJECT(list, insert, insert, List);
 
   void
   list_class_initialize ()
@@ -93,6 +114,7 @@ namespace object
     DECLARE(head, front);
     DECLARE(tail, tail);
     DECLARE(back, back);
+    DECLARE(insert, insert);
 #undef DECLARE
   }
 

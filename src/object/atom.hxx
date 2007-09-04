@@ -69,6 +69,14 @@ namespace object
 
   template <typename Traits>
   inline
+  typename libport::ref_traits<typename Traits::type>::type
+  Atom<Traits>::value_get ()
+  {
+    return value_;
+  }
+
+  template <typename Traits>
+  inline
   std::ostream&
   Atom<Traits>::print(std::ostream& o) const
   {

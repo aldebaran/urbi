@@ -17,4 +17,3 @@ namespace object
 }; // namespace object
 
 #endif // !OBJECT_LIST_CLASS_HH
-

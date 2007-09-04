@@ -8,6 +8,7 @@
 
 # include "kernel/fwd.hh"
 # include "libport/ufloat.h"
+# include "libport/select-ref.hh"
 # include "object/object.hh"
 
 namespace object
@@ -39,6 +40,9 @@ namespace object
 
     /// The held value.
     typename Traits::type value_get () const;
+
+    /// The held value.
+    typename libport::ref_traits<typename Traits::type>::type value_get ();
 
     /// For debugging.
     std::ostream& special_slots_dump (std::ostream& o) const;

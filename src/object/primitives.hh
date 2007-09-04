@@ -44,13 +44,13 @@ namespace object
   Class ## _class_ ## Name (objects_type args)                  \
   {                                                             \
     FETCH_ARG(0, Type1);                                        \
-    return Ret(Call(arg0 Get));                             \
+    return Ret(Call(arg0 Get));                                 \
   }
 
-#define PRIMITIVE_1(Class, Name, Call, Type1)              \
+#define PRIMITIVE_1(Class, Name, Call, Type1)                   \
   PRIMITIVE_1_(Class, Name, Call, , Type1, )
 
-#define PRIMITIVE_1_V(Class, Name, Call, Ret, Type1)              \
+#define PRIMITIVE_1_V(Class, Name, Call, Ret, Type1)            \
   PRIMITIVE_1_(Class, Name, Call, new Ret, Type1, ->value_get())
 
 
@@ -65,16 +65,28 @@ namespace object
   {                                                             \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
-    return Ret(Call(arg0 Get, arg1 Get));                   \
+    return Ret(Call(arg0 Get, arg1 Get));                       \
   }
 
-#define PRIMITIVE_2(Class, Name, Call, Type1, Type2)       \
+#define PRIMITIVE_2(Class, Name, Call, Type1, Type2)            \
   PRIMITIVE_2_(Class, Name, Call, , Type1, Type2, )
 
 #define PRIMITIVE_2_V(Class, Name, Call, Ret, Type1, Type2)     \
   PRIMITIVE_2_(Class, Name, Call, new Ret, Type1, Type2, ->value_get())
 
-
+/**
+ * Define a primitive for class Class named name, which takes two
+ * arguments of type Type1 and rObject, returns type Ret and whose
+ * result is Call applied to all arguments.
+ */
+#define PRIMITIVE_2_OBJECT(Class, Name, Call, Type1)            \
+  rObject                                                       \
+  Class ## _class_ ## Name (objects_type args)                  \
+  {                                                             \
+    FETCH_ARG(0, Type1);                                        \
+    rObject arg1 = args[1];                                     \
+    return (Call(arg0, arg1));                                  \
+  }
 
 /**
  * Define an operator-primitive. @see PRIMITIVE_2_.
