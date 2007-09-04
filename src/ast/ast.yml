@@ -111,11 +111,15 @@ TagExp:
 ## Scope.  ##
 ## ------- ##
 
-ScopeExp:
+Scope:
   super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: The scoped expression }
 
+
+## -------------------- ##
+## Composing commands.  ##
+## -------------------- ##
 
 BinaryExp:
   super: Exp
@@ -417,6 +421,7 @@ NegOpExp:
   attributes: [ { operand: { type: 'Exp*', desc: Operand of the negation operator } } ]
 
 CallExp:
+  desc: /// Function calls, and attribute look-ups.
   super: Exp
   attributes:
     - name:

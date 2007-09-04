@@ -1,5 +1,16 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	More automatic generation
+	* dev/ast-all-gen: New.
+	* dev/ast-ignores-gen: New.
+	* dev/ast-visitor-gen: Use Boost PP library.
+	* src/ast/Makefile.am: Adjust to use the new generators.
+	* src/ast/all.hh: Now generated (should be removed from repo).
+	* src/ast/ast.yml (ScopeExp): Rename as...
+	(Scope): this.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	We need ReturnExp
 	* src/ast/ast.yml (ReturnExp): Decomment it.
 	Implement its printer.
