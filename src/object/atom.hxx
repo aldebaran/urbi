@@ -105,9 +105,9 @@ namespace object
     BOOST_FOREACH (const rObject& o, values)
     {
       if (first)
-        first = false;
+	first = false;
       else
-        out << ", ";
+	out << ", ";
       o->print(out);
     }
     out << ']';

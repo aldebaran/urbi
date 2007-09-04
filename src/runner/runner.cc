@@ -71,7 +71,7 @@ namespace runner
   Runner::emit_result (rObject result)
   {
     if (result.get ())
-      context_->value_get ().new_result (result);
+      context_->value_get ().connection.new_result (result);
   }
 
   void

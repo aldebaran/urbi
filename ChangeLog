@@ -1,3 +1,16 @@
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
+	object::State
+	* src/object/state.hh, src/object/state.cc: New.
+	* src/object/Makefile.am: Adjust.
+	* src/object/atom.hh, src/object/atom.hxx: Context now
+	holds a State, not a UConnection&.
+	* src/object/code-class.cc: Adjust.
+	* src/object/context-class.hh: Adjust.
+	* src/object/fwd.hh: Declare State.
+	* src/runner/runner.cc: Adjust.
+	* src/uconnection.cc: Adjust.
+
 2007-08-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Adjust a comment.

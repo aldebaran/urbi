@@ -23,8 +23,8 @@ namespace object
   rObject
   code_class_echo (objects_type args)
   {
-    UConnection& c = args[0].cast<Context>()->value_get();
-    c.send (boost::lexical_cast<std::string>(*args[1]).c_str());
+    State s = args[0].cast<Context>()->value_get();
+    s.connection.send (boost::lexical_cast<std::string>(*args[1]).c_str());
     return args[0];
   }
 

@@ -18,6 +18,8 @@ namespace ast
 
 namespace object
 {
+  // state.hh
+  struct State;
 
   // rObject & objects_type.
   class Object;

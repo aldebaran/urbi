@@ -88,7 +88,7 @@ UConnection::UConnection (UServer* userver,
     recvAdaptive_ (UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
-    context_ (new object::Context (*this))
+    context_ (new object::Context (object::State(*this)))
 {
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
@@ -494,64 +494,64 @@ UConnection::received (const ubyte *buffer, int length)
 
       if (result == -1)
       {
-        abort ();
+	abort ();
       }
 
       // Warnings handling
       if (p.hasWarning())
       {
-        send(p.warning_get().c_str(), "warn ");
-        server->error(::DISPLAY_FORMAT, (long)this,
-                      "UConnection::received",
-                      p.warning_get().c_str());
+	send(p.warning_get().c_str(), "warn ");
+	server->error(::DISPLAY_FORMAT, (long)this,
+		      "UConnection::received",
+		      p.warning_get().c_str());
       }
 
       // Errors handling
       if (p.hasError())
       {
-        // FIXME: 2007-07-20: Currently we can't free the commandTree,
-        // we might kill function bodies.
-        // XXX 2007-07-28: I think that if we get here, it's because there
-        // was a parse error so I guess we can safely free the commandTree
-        // here, can't we?
-        //delete p.commandTree;
-        p.command_tree_set (0);
+	// FIXME: 2007-07-20: Currently we can't free the commandTree,
+	// we might kill function bodies.
+	// XXX 2007-07-28: I think that if we get here, it's because there
+	// was a parse error so I guess we can safely free the commandTree
+	// here, can't we?
+	//delete p.commandTree;
+	p.command_tree_set (0);
 
-        send(p.error_get().c_str(), "error");
-        server->error(::DISPLAY_FORMAT, (long)this,
-                      "UConnection::received",
-                      p.error_get().c_str());
+	send(p.error_get().c_str(), "error");
+	server->error(::DISPLAY_FORMAT, (long)this,
+		      "UConnection::received",
+		      p.error_get().c_str());
       }
       else
       {
-        // Alright so at this point, we have parsed a new command (either a
-        // ";" or a ",", in any case it's a BinaryExp) now it's time to
-        // paste this new command in the AST.
-        ast::BinaryExp& parsed_command =
-          dynamic_cast<ast::BinaryExp&> (*p.command_tree_get ());
+	// Alright so at this point, we have parsed a new command (either a
+	// ";" or a ",", in any case it's a BinaryExp) now it's time to
+	// paste this new command in the AST.
+	ast::BinaryExp& parsed_command =
+	  dynamic_cast<ast::BinaryExp&> (*p.command_tree_get ());
 
-        ECHO ("parsed lhs: " << parsed_command.lhs_get ()
-              << " rhs:" << parsed_command.rhs_get ());
+	ECHO ("parsed lhs: " << parsed_command.lhs_get ()
+	      << " rhs:" << parsed_command.rhs_get ());
 
-        // Is this our first command? (first as in first in this do-while
-        // loop)
-        if (!active_command_)
-          active_command_ = last_command = &parsed_command;
-        else
-        {
-          ECHO ("last command lhs: " << last_command->lhs_get ()
-                << " rhs:" << last_command->rhs_get ());
-          // It wasn't our first command so the last_command must be a
-          // BinaryExp with a dangling noop added on its rhs.
-          ast::Noop& dangling_noop =
-            const_cast<ast::Noop&>
-              (dynamic_cast<const ast::Noop&> (last_command->rhs_get ()));
+	// Is this our first command? (first as in first in this do-while
+	// loop)
+	if (!active_command_)
+	  active_command_ = last_command = &parsed_command;
+	else
+	{
+	  ECHO ("last command lhs: " << last_command->lhs_get ()
+		<< " rhs:" << last_command->rhs_get ());
+	  // It wasn't our first command so the last_command must be a
+	  // BinaryExp with a dangling noop added on its rhs.
+	  ast::Noop& dangling_noop =
+	    const_cast<ast::Noop&>
+	      (dynamic_cast<const ast::Noop&> (last_command->rhs_get ()));
 
-          delete &dangling_noop;
-          last_command->rhs_set (&parsed_command);
-          last_command = &parsed_command;
-        }
-        p.command_tree_set (0);
+	  delete &dangling_noop;
+	  last_command->rhs_set (&parsed_command);
+	  last_command = &parsed_command;
+	}
+	p.command_tree_set (0);
       }
     }
   } while (!command.empty ()
@@ -709,8 +709,8 @@ UConnection::execute ()
   std::cerr << "Command is: " << *active_command_ << std::endl;
 
   Runner* runner = new Runner(context_,
-                              ::urbiserver->getScheduler (),
-                              active_command_);
+			      ::urbiserver->getScheduler (),
+			      active_command_);
   ::urbiserver->getScheduler ().schedule_immediately (runner);
 
   // FIXME: 2007-07-20: Currently we can't free the command,

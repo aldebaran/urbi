@@ -9,6 +9,7 @@
 # include "kernel/fwd.hh"
 # include "libport/ufloat.h"
 # include "object/object.hh"
+# include "object/state.hh"
 
 namespace object
 {
@@ -70,7 +71,7 @@ namespace object
 
   struct context_traits
   {
-    typedef UConnection& type;
+    typedef State type;
     enum { kind = Object::kind_context };
   };
 
