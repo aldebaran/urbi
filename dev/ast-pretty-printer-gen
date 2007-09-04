@@ -135,16 +135,8 @@ print tools.banner("ast/pretty-printer.cc",
 #include "pretty-printer.hh"
 #include "all.hh"
 
-namespace
-{
-  // hack to avoid warnings aboute unused values
-  inline void ignore(const void*)
-  {}
-}
-
 namespace ast
 {
-
 """
 
 for node in arr:
@@ -180,8 +172,8 @@ for node in arr:
     print """\
   void PrettyPrinter::operator() (const %s& n)
   {
-    // Don't warn about unused arguments
-    ignore(&n);
+    // Don't warn about unused arguments.
+    (void) n;
 %s  }
 """ % (node.name, action)
 

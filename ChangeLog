@@ -1,5 +1,11 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Use regular idiom for unused values
+	* dev/ast-pretty-printer-gen: Don't use a fake function,
+	cast to void.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	More automatic generation
 	* dev/ast-all-gen: New.
 	* dev/ast-ignores-gen: New.
