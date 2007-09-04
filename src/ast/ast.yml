@@ -283,11 +283,19 @@ AssignExp:
 #     - type: { type: ExternalExp::Type, access: r, desc: External binding type }
 #     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
-# ReturnExp:
-#   super: Exp
-#   attributes:
-#     - exp: { type: 'Exp*', desc: Returned value }
-#     - cont: { type: bool, desc: Continuation flag for return& }
+ReturnExp:
+  super: Exp
+  attributes:
+    - exp: { type: 'Exp*', desc: Returned value }
+    - cont: { type: bool, desc: Continuation flag for return& }
+  printer:
+    - '"return"'
+    - '{
+         if (n.cont_get())
+           ostr_ << "&";
+       }'
+    - '" "'
+    - ~exp
 
 # WaitExp:
 #   super: Exp

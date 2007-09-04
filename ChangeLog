@@ -1,8 +1,8 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
-	Disable ast:: bits that are not used
-	* src/ast/ast.yml: Comment unused nodes.
-	* dev/ast_params.py: Adjust.
+	We need ReturnExp
+	* src/ast/ast.yml (ReturnExp): Decomment it.
+	Implement its printer.
 
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
