@@ -1,5 +1,10 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	k2-check
+	* tests-local.mk (K2_TESTS, k2-check): New.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Let primitives access the context
 	* src/object/fwd.hh (primitive_type): Takes an rContext
 	as 1st arg.

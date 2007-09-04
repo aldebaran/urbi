@@ -1,7 +1,12 @@
 # This file is loaded by tests/Makefile.am.  It contains things that
 # are specific to a given project or even Svn branch.
 
-TESTS += $(notdir $(wildcard $(srcdir)/k2/*.chk))
+K2_TESTS = $(notdir $(wildcard $(srcdir)/k2/*.chk))
+TESTS += $(K2_TESTS)
+
+# Run k2 tests only.
+k2-check:
+	$(MAKE) check TESTS="$(K2_TESTS)"
 
 XFAIL_TESTS += 					\
 armor-simple.chk				\
