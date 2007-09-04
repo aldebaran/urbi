@@ -26,12 +26,14 @@ namespace runner
  * SemicolonExp does not do anything useful, it simply recurses in its
  * left hand side.  However, the "1" does something useful: it calculates
  * a value (even though calculating the constant "1" is somewhat trivial),
- * so it should most probably start with a YIELD. */
-#define YIELD(Ast)                                              \
+ * so it should most probably start with a YIELD.
+ *
+ * The Ast is expected to be named "e".  */
+#define YIELD()							\
   do                                                            \
   {                                                             \
     ECHO ("job " << ME << " yielding on AST: "                  \
-	  << &Ast << " {{{" << Ast << "}}}");                   \
+	  << &e << " {{{" << e << "}}}");			\
     CORO_YIELD ();                                              \
   } while (0)
 
@@ -78,7 +80,7 @@ namespace runner
   Runner::operator() (ast::AssignExp& e)
   {
     CORO_WITH_1SLOT_CTX (rObject, tgt);
-    YIELD (e);
+    YIELD ();
 
     PING ();
     // The message cannot have arguments: just the target (can be 0).
@@ -181,7 +183,7 @@ namespace runner
   Runner::operator() (ast::FloatExp& e)
   {
     CORO_WITHOUT_CTX ();
-    YIELD (e);
+    YIELD ();
 
     current_ = new object::Float (e.value_get());
     ECHO ("result: " << *current_);
@@ -198,7 +200,7 @@ namespace runner
 		      // list values
     CORO_WITH_2SLOTS_CTX (objects, values,
 			  exps::const_iterator, i);
-    YIELD (e);
+    YIELD ();
 
     PING ();
     // Evaluate every expression in the list
@@ -221,7 +223,7 @@ namespace runner
   Runner::operator() (ast::Function& e)
   {
     CORO_WITHOUT_CTX ();
-    YIELD (e);
+    YIELD ();
 
     PING ();
     // FIXME: Arguments.
@@ -295,7 +297,6 @@ namespace runner
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
     CORO_WITH_1SLOT_CTX (rObject, locals);
-    YIELD (e);
     locals = new object::Object;
     locals->parent_add (locals_);
     std::swap(locals, locals_);
@@ -322,7 +323,7 @@ namespace runner
     /* Allow some time to pass before we execute RHS.  If we don't do this,
      * the ;-operator would act almost like the |-operator because it would
      * always start to execute its RHS immediately.  */
-    YIELD (e);
+    YIELD ();
     // rhs
     ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
     CORO_CALL (operator() (e.rhs_get()));
@@ -337,7 +338,7 @@ namespace runner
   Runner::operator() (ast::StringExp& e)
   {
     CORO_WITHOUT_CTX ();
-    YIELD (e);
+    YIELD ();
 
     PING ();
     current_ = new object::String(e.value_get());

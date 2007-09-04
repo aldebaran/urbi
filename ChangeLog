@@ -1,5 +1,12 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Don't yield for Scope
+	* src/runner/runner.cc (YIELD): Take no arg, it is very misleading:
+	it looks like we yield a result.
+	(Scope): Don't yield here, we do nothing.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Fix scopes handling
 	* src/ast/ast.yml: Implement default visitor.
 	* src/runner/runner.cc: Fix Scope processing.
