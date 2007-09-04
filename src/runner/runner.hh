@@ -55,17 +55,20 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    virtual void operator() (ast::AssignExp& e);
-    virtual void operator() (ast::AndExp& e);
-    virtual void operator() (ast::CallExp& e);
-    virtual void operator() (ast::FloatExp& e);
-    virtual void operator() (ast::Function& e);
-    virtual void operator() (ast::ListExp& e);
-    virtual void operator() (ast::NegOpExp& e);
-    virtual void operator() (ast::Noop& e);
-    virtual void operator() (ast::PipeExp& e);
-    virtual void operator() (ast::SemicolonExp& e);
-    virtual void operator() (ast::StringExp& e);
+    VISITOR_VISIT_NODES((11,
+			 (
+			  AssignExp,
+			  AndExp,
+			  CallExp,
+			  FloatExp,
+			  Function,
+			  ListExp,
+			  NegOpExp,
+			  Noop,
+			  PipeExp,
+			  SemicolonExp,
+			  StringExp
+			  )))
     /// \}
 
     /// Do the actual work.  Implementation of \c Job::run.

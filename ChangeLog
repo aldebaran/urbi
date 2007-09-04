@@ -1,5 +1,10 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Use Boost PP
+	* src/runner/runner.hh: To factor op() declarations.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Disable "def" instead of "var"
 	* src/parser/bison/ugrammar.y: here.
 
@@ -463,7 +468,7 @@
 
 	Improve primitive-generation macros. Add list primitives.
 	* src/object/primitives.hh: Macro now can act whether on Urbi object,
-          whether on C++ values.
+	  whether on C++ values.
 	* src/object/float-class.cc: Use new macros.
 	* src/object/list-class.cc: Add head, tail, front and back primitives.
 
@@ -472,9 +477,9 @@
 	Generalize and document primitive-generation macros.
 	* src/object/atom.hh: Add an access to the traits, for macros.
 	* src/object/primitives.hh: Add generic macros for
-          primitives generation,.
+	  primitives generation,.
 	* src/object/float-class.cc: Remove float-dedicated macros
-          and use generic ones.
+	  and use generic ones.
 	* src/object/list-class.cc: Use macros.
 
 2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
@@ -482,7 +487,7 @@
 	Fix minor problems in UrbiException.
 	* src/object/urbi-exception.cc: Aesthetic change.
 	* src/object/urbi-exception.hh:
-        Remove superfluous prototype specification.
+	Remove superfluous prototype specification.
 
 2007-07-27  Thomas Moulard  <thomas.moulard@gmail.com>
 
@@ -513,7 +518,7 @@
 	* src/object/primitive-class.cc: New.
 	* src/object/primitive-class.hh: New.
 	* src/object/primitives.cc:
-        Remove moved code and fix static initialization problem.
+	Remove moved code and fix static initialization problem.
 	* src/object/primitives.hh: Add root_classes_initialize prototype.
 	* src/object/string-class.cc: New.
 	* src/object/string-class.hh: New.
@@ -813,10 +818,10 @@
 	Reduce code duplication. Use strings instead of char*.
 	* src/parser/uparser.cc,
 	* src/parser/uparser.hh: Use std::string instead of char*.
-          Add accessors for errors and warnings handling.
+	  Add accessors for errors and warnings handling.
 	* src/uconnection.cc,
 	* src/uexpression.cc: Use the new interface for
-          errors and warnings handling.
+	  errors and warnings handling.
 
 2007-07-24  Akim Demaille  <demaille@gostai.com>
 
