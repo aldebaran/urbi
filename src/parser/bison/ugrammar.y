@@ -909,6 +909,7 @@ instruction:
       memcheck(up, $$);
     }
 
+  // The following two rules cannot be factored because of s/r conflicts.
   | "var" name {
 
       $2->local_scope = true;
