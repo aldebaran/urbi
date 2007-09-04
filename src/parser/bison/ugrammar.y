@@ -442,7 +442,7 @@ flags.0:
 `-------*/
 
 stmt:
-  "{" stmts "}" { $$ = $2; }
+  "{" stmts "}" { $$ = new ast::Scope(@$, $2); }
 ;
 
 

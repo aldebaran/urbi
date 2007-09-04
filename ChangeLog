@@ -1,5 +1,14 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Start scopes implementation
+	* src/ast/ast.yml (Scope): New.
+	* src/parser/bison/ugrammar.y: Support it.
+	* src/runner/runner.hh, src/runner/runner.hxx,
+	* src/runner/runner.cc: Ditto.
+	(locals_): New.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	k2-check
 	* tests-local.mk (K2_TESTS, k2-check): New.
 

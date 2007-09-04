@@ -81,6 +81,7 @@ namespace runner
     YIELD (e);
 
     PING ();
+    // The message cannot have arguments: just the target (can be 0).
     assert (e.lhs_get ().args_get ().size () == 1);
     CORO_CALL (tgt = target (e.lhs_get ().args_get ().front ()));
     CORO_CALL (eval (e.rhs_get ()));
@@ -150,6 +151,7 @@ namespace runner
     }
 
     // We may have to run a primitive, or some code.
+    // We cannot use CORO_* in a switch.
     call_code = false;
     switch (val->kind_get ())
     {
@@ -282,6 +284,23 @@ namespace runner
     current_.reset ();
     assert (current_.get () == 0);
 
+    CORO_END;
+  }
+
+
+  void
+  Runner::operator() (ast::Scope& e)
+  {
+    // To each scope corresponds a "locals" object which stores the
+    // local variables.  It points to the previous current scope to
+    // implement lexical scoping.
+    CORO_WITH_1SLOT_CTX (rObject, locals);
+    YIELD (e);
+    locals = new object::Object;
+    locals->parent_add (locals_);
+    std::swap(locals, locals_);
+    super_type::operator()(e);
+    std::swap(locals, locals_);
     CORO_END;
   }
 

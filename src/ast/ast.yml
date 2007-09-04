@@ -115,7 +115,12 @@ Scope:
   super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: The scoped expression }
-
+  printer:
+    - '"{"'
+    - 'libport::incendl'
+    - ~exp
+    - 'libport::decendl'
+    - '"}"'
 
 ## -------------------- ##
 ## Composing commands.  ##

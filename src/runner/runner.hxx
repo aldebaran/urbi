@@ -18,8 +18,15 @@ namespace runner
     : Coroutine (sched),
       context_ (ctx),
       ast_ (ast),
-      started_ (false)
+      started_ (false),
+      current_ (0),
+      locals_ (new object::Object)
   {
+    // If the lookup in the local variable failed, try in the the
+    // Connection object, sort of a Lobby for Io.
+    locals_->parent_add(context_);
+    // Provide direct access to the Context.
+    locals_->slot_set(libport::Symbol("context"), context_);
   }
 
   inline
@@ -39,12 +46,11 @@ namespace runner
   Runner::rObject
   Runner::target (ast::Exp* n)
   {
-    // FIXME: For the time being, if there is no target, it is the
-    // Connection object which is used, sort of a Lobby for Io.
+    // If there is no target, look in the local variables.
     if (n)
       return eval (*n);
     else
-      return context_;
+      return locals_;
   }
 
 } // namespace runner

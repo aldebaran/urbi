@@ -55,7 +55,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((11,
+    VISITOR_VISIT_NODES((12,
 			 (
 			  AssignExp,
 			  AndExp,
@@ -66,6 +66,7 @@ namespace runner
 			  NegOpExp,
 			  Noop,
 			  PipeExp,
+			  Scope,
 			  SemicolonExp,
 			  StringExp
 			  )))
@@ -83,14 +84,17 @@ namespace runner
     /// Wraps an UConnection (ATM).
     rContext context_;
 
-    /// The current value during the evaluation of the AST.
-    rObject current_;
-
     /// The root of the AST being executed.
     ast::Ast* ast_;
 
     /// Whether or not we started to execute anything.
     bool started_;
+
+    /// The current value during the evaluation of the AST.
+    rObject current_;
+
+    /// The (current set of) local variables, slots of the "locals" object.
+    rObject locals_;
   };
 
 } // namespace runner
