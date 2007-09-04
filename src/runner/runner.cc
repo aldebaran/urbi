@@ -299,7 +299,7 @@ namespace runner
     locals = new object::Object;
     locals->parent_add (locals_);
     std::swap(locals, locals_);
-    super_type::operator()(e);
+    CORO_CALL (super_type::operator()(e));
     std::swap(locals, locals_);
     CORO_END;
   }

@@ -1,5 +1,11 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Fix scopes handling
+	* src/ast/ast.yml: Implement default visitor.
+	* src/runner/runner.cc: Fix Scope processing.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Start scopes implementation
 	* src/ast/ast.yml (Scope): New.
 	* src/parser/bison/ugrammar.y: Support it.

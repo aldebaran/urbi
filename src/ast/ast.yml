@@ -115,6 +115,7 @@ Scope:
   super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: The scoped expression }
+  default: 'operator() (n.exp_get());'
   printer:
     - '"{"'
     - 'libport::incendl'
@@ -141,6 +142,9 @@ BinaryExp:
 
 AndExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" & "'
@@ -148,6 +152,9 @@ AndExp:
 
 PipeExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" | "'
@@ -155,6 +162,9 @@ PipeExp:
 
 CommaExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" , "'
@@ -162,6 +172,9 @@ CommaExp:
 
 SemicolonExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" ; "'
