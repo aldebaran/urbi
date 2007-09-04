@@ -44,8 +44,8 @@ fwd_hh_epilogue = """
   typedef std::list<Exp*> exps_type;
   typedef std::pair<Exp*, Exp*> exp_pair_type;
   typedef std::list<exp_pair_type> exp_pairs_type;
-  typedef std::list<VarDec*> vardecs_type;
-  typedef std::list<Dec*> decs_type;
+  //typedef std::list<VarDec*> vardecs_type;
+  //typedef std::list<Dec*> decs_type;
 
   // FIXME: Should not be pointers, but the machinery is not ready
   // for that.

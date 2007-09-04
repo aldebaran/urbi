@@ -1,5 +1,11 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Disable ast:: bits that are not used
+	* src/ast/ast.yml: Comment unused nodes.
+	* dev/ast_params.py: Adjust.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	object::State
 	* src/object/state.hh, src/object/state.cc: New.
 	* src/object/Makefile.am: Adjust.
