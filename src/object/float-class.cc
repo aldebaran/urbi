@@ -129,7 +129,7 @@ namespace object
 
 #define PRIMITIVE_1_FLOAT(Name, Call)                   \
   rObject                                               \
-  float_class_ ## Name (objects_type args)              \
+  float_class_ ## Name (rContext, objects_type args)	\
   {                                                     \
     FETCH_ARG(1, Float);                                \
     return new Float(Call(arg1->value_get()));          \

@@ -155,7 +155,7 @@ namespace runner
     {
       case object::Object::kind_primitive:
 	PING ();
-	current_ = val.cast<object::Primitive>()->value_get()(args);
+	current_ = val.cast<object::Primitive>()->value_get()(context_, args);
 	break;
       case object::Object::kind_code:
 	PING ();

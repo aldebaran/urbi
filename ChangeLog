@@ -1,5 +1,17 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Let primitives access the context
+	* src/object/fwd.hh (primitive_type): Takes an rContext
+	as 1st arg.
+	* src/object/code-class.cc, src/object/float-class.cc,
+	* src/object/float-class.hh, src/object/list-class.cc,
+	* src/object/list-class.hh, src/object/object-class.cc,
+	* src/object/primitive-class.hh, src/object/primitives.hh,
+	* src/runner/runner.cc:
+	Adjust.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Use Boost PP
 	* src/runner/runner.hh: To factor op() declarations.
 

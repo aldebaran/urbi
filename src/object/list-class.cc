@@ -20,7 +20,7 @@ namespace object
 
   namespace
   {
-    /// Concatenate two list
+    /// Concatenate two lists.
     /**
      * @return A fresh list, concatenation of \a lhs and \a rhs
      */
@@ -37,7 +37,7 @@ namespace object
 
       //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
       BOOST_FOREACH (const rObject& o, rhs->value_get())
-        res.push_back(o);
+	res.push_back(o);
 
       return new List(res);
     }

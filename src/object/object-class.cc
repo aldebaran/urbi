@@ -18,19 +18,19 @@ namespace object
   `--------------------*/
 
   rObject
-  object_class_clone (objects_type args)
+  object_class_clone (rContext, objects_type args)
   {
     return clone(args[0]);
   }
 
   rObject
-  object_class_init (objects_type args)
+  object_class_init (rContext, objects_type args)
   {
     return args[0];
   }
 
   rObject
-  object_class_print (objects_type args)
+  object_class_print (rContext, objects_type args)
   {
     std::cout << *args[0] << std::endl;
     return args[0];
@@ -38,7 +38,7 @@ namespace object
 
 #define SERVER_FUNCTION(Function)				\
   rObject							\
-  object_class_ ## Function (objects_type args)			\
+  object_class_ ## Function (rContext, objects_type args)	\
   {								\
     ::urbiserver->Function();					\
     /* Return the current object to return something. */	\
@@ -52,7 +52,7 @@ namespace object
 
 
   rObject
-  object_class_wait (objects_type args)
+  object_class_wait (rContext, objects_type args)
   {
     // FIXME: Currently does nothing.  A stub so that we
     // accept "wait 2s" as is used in the test suite.

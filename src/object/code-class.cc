@@ -21,10 +21,11 @@ namespace object
   `------------------*/
 
   rObject
-  code_class_echo (objects_type args)
+  code_class_echo (rContext c, objects_type args)
   {
-    State s = args[0].cast<Context>()->value_get();
-    s.connection.send (boost::lexical_cast<std::string>(*args[1]).c_str());
+    // FIXME: First argument is ignored.
+    c->value_get().connection.send
+      (boost::lexical_cast<std::string>(*args[1]).c_str());
     return args[0];
   }
 
