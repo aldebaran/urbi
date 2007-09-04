@@ -1,5 +1,13 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Fix Bison use
+	Apparently I didn't know that <TYPE> anotations
+	were applied to all the following tokens...
+	* src/parser/bison/ugrammar.y: Fix <types>.
+	Factor them.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Use regular idiom for unused values
 	* dev/ast-pretty-printer-gen: Don't use a fake function,
 	cast to void.
