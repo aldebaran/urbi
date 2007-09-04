@@ -516,7 +516,8 @@ stmt:
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }
-| "def" name { $$ = 0; }
+//  Duplicates the previous one, and cannot be factored.
+// | "def" name { $$ = 0; }
 | "var" "{" names "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }

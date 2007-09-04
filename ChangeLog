@@ -1,5 +1,10 @@
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
+	Disable "def" instead of "var"
+	* src/parser/bison/ugrammar.y: here.
+
+2007-09-04  Akim Demaille  <demaille@gostai.com>
+
 	Fix Bison use
 	Apparently I didn't know that <TYPE> anotations
 	were applied to all the following tokens...
