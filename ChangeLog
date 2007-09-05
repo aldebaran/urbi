@@ -1,3 +1,13 @@
+2007-09-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Fix the test suite.
+	* src/object/object-test-primitives.cc: Adjust to match the new
+	prototypes (pass a NULL context to float_class_mul and
+	float_class_add).
+	* tests-local.mk (XFAIL_TESTS): Adjust (sort and add
+	parse-errors.chk since a k2-specific version of this test will be
+	added).
+
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
 	Don't yield for Scope
