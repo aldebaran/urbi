@@ -1,3 +1,10 @@
+2007-09-07  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Handle run-time URBI errors.
+	* src/object/float-class.cc: Primitives now throw errors.
+	* src/object/urbi-exception.cc: Fix error format.
+	* src/runner/runner.cc: Catch run-time errors.
+
 2007-09-04  mefyl  <mefyl@lrde.epita.fr>
 
 	Add list insertion functions.

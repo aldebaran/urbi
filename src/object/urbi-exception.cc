@@ -12,7 +12,7 @@ namespace object
   {}
 
   UrbiException::UrbiException (std::string primitive, std::string msg)
-    : msg_ (primitive + ": " + msg)
+    : msg_ (primitive + ": " + msg + ".")
   {}
 
   UrbiException::~UrbiException () throw ()

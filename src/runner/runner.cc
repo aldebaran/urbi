@@ -9,6 +9,7 @@
 
 #include "kernel/uconnection.hh"
 #include "object/atom.hh"
+#include "object/urbi-exception.hh"
 #include "runner/runner.hh"
 
 namespace runner
@@ -56,7 +57,7 @@ namespace runner
     switch (val->kind_get ())
     {
       case object::Object::kind_primitive:
-	current_ = val.cast<object::Primitive>()->value_get()(args);
+        current_ = val.cast<object::Primitive>()->value_get()(args);
 	break;
       case object::Object::kind_code:
 	current_ = eval (val.cast<object::Code>()->value_get());
@@ -112,10 +113,20 @@ namespace runner
   void
   Runner::operator() (const ast::SemicolonExp& e)
   {
-    operator() (e.lhs_get());
-    ECHO ("sending result of lhs");
-    if (current_.get ())
-      emit_result (current_);
+    try
+    {
+      operator() (e.lhs_get());
+      ECHO ("sending result of lhs");
+      if (current_.get ())
+        emit_result (current_);
+    }
+    catch (object::UrbiException& ue)
+    {
+      UConnection& c = context_.cast<object::Context>()->value_get();
+      c.sendc (ue.what (), "error");
+      c.endline ();
+    }
+
     current_.reset ();
     assert (current_.get () == 0);
     operator() (e.rhs_get());
