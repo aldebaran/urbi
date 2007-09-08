@@ -69,7 +69,7 @@ namespace object
 
   template <typename Traits>
   inline
-  typename Traits::type
+  typename libport::ref_traits<typename Traits::type>::type
   Atom<Traits>::value_get ()
   {
     return value_;

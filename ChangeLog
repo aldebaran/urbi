@@ -8,6 +8,16 @@
 	parse-errors.chk since a k2-specific version of this test will be
 	added).
 
+2007-09-04  mefyl  <mefyl@lrde.epita.fr>
+
+	Add list insertion functions.
+	* src/object/atom.hh,
+	* src/object/atom.hxx: Add a non-const accessor to the held value.
+	* src/object/primitives.hh: Add macro for primitive taking objects
+        as argument.
+	* src/object/list-class.cc,
+	* src/object/list-class.hh: Add insertion function.
+
 2007-09-04  Akim Demaille  <demaille@gostai.com>
 
 	Don't yield for Scope
