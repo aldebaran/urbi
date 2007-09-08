@@ -23,8 +23,13 @@ print tools.banner("ast/visitor.hh",
 # define AST_VISITOR_HH
 
 # include <functional>
-# include "ast/fwd.hh"
+
+# include <boost/preprocessor/array.hpp>
+# include <boost/preprocessor/repeat.hpp>
+
 # include "libport/select-const.hh"
+
+# include "ast/fwd.hh"
 
 namespace ast
 {
@@ -53,6 +58,14 @@ for node in arr:
 	  + node.name + ">::type&) = 0;"
 print """
   };
+
+# define VISITOR_VISIT_NODE_(Z, N, Array)			\\
+    virtual void operator() (ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
+
+# define VISITOR_VISIT_NODES(Nodes)			\\
+  BOOST_PP_REPEAT(BOOST_PP_ARRAY_SIZE(Nodes),		\\
+		  VISITOR_VISIT_NODE_,			\\
+		  Nodes)
 
   /// Shorthand for a const visitor.
   typedef GenVisitor<libport::constify_traits> ConstVisitor;

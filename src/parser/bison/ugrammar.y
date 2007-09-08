@@ -163,68 +163,71 @@
 /* Tokens and nonterminal symbols, with their type */
 
 %token
-	 TOK_ADDGROUP     "addgroup"
-	 TOK_ALIAS        "alias"
-	 TOK_ASSIGN       "="
-	 TOK_AT           "at"
-	 TOK_BIN          "bin"
-	 TOK_CLASS        "class"
-	 TOK_COLON        ":"
-	 TOK_COPY         "copy"
-	 TOK_DEF          "def"
-	 TOK_DELGROUP     "delgroup"
-	 TOK_DIR          "->"
-	 TOK_DISINHERITS  "disinherits"
-	 TOK_DOLLAR       "$"
-	 TOK_DOUBLECOLON  "::"
-<symbol> TOK_ECHO         "echo"
-	 TOK_ELSE         "else"
-	 TOK_EMIT         "emit"
-	 TOK_EVENT        "event"
-	 TOK_EVERY        "every"
-	 TOK_FALSE        "false"
-	 TOK_FOR          "for"
-	 TOK_FOREACH      "foreach"
-	 TOK_FREEZEIF     "freezeif"
-	 TOK_FROM         "from"
-	 TOK_FUNCTION     "function"
-	 TOK_GROUP        "group"
-	 TOK_IF           "if"
-	 TOK_IN           "in"
-	 TOK_INHERITS     "inherits"
-	 TOK_LBRACE       "{"
-	 TOK_LOOP         "loop"
-	 TOK_LOOPN        "loopn"
-	 TOK_LPAREN       "("
-	 TOK_LBRACKET     "["
-	 TOK_MINUSASSIGN  "-="
-	 TOK_MINUSMINUS   "--"
-	 TOK_NEW          "new"
-	 TOK_NOOP         "noop"
-	 TOK_NORM         "'n"
-	 TOK_OBJECT       "object"
-	 TOK_ONLEAVE      "onleave"
-	 TOK_PLUSASSIGN   "+="
-	 TOK_PLUSPLUS     "++"
-	 TOK_POINT        "."
-	 TOK_RBRACE       "}"
-	 TOK_RETURN       "return"
-	 TOK_RPAREN       ")"
-	 TOK_RBRACKET     "]"
-	 TOK_STATIC       "static"
-	 TOK_STOPIF       "stopif"
-	 TOK_TILDE        "~"
-	 TOK_TIMEOUT      "timeout"
-	 TOK_TRUE         "true"
-	 TOK_UNALIAS      "unalias"
-	 TOK_VAR          "var"
-	 TOK_VARERROR     "'e"
-	 TOK_VARIN        "'in"
-	 TOK_VAROUT       "'out"
-<symbol> TOK_WAIT         "wait"
-	 TOK_WAITUNTIL    "waituntil"
-	 TOK_WHENEVER     "whenever"
-	 TOK_WHILE        "while"
+	TOK_ADDGROUP     "addgroup"
+	TOK_ALIAS        "alias"
+	TOK_ASSIGN       "="
+	TOK_AT           "at"
+	TOK_BIN          "bin"
+	TOK_CLASS        "class"
+	TOK_COLON        ":"
+	TOK_COPY         "copy"
+	TOK_DEF          "def"
+	TOK_DELGROUP     "delgroup"
+	TOK_DIR          "->"
+	TOK_DISINHERITS  "disinherits"
+	TOK_DOLLAR       "$"
+	TOK_DOUBLECOLON  "::"
+	TOK_ELSE         "else"
+	TOK_EMIT         "emit"
+	TOK_EVENT        "event"
+	TOK_EVERY        "every"
+	TOK_FALSE        "false"
+	TOK_FOR          "for"
+	TOK_FOREACH      "foreach"
+	TOK_FREEZEIF     "freezeif"
+	TOK_FROM         "from"
+	TOK_FUNCTION     "function"
+	TOK_GROUP        "group"
+	TOK_IF           "if"
+	TOK_IN           "in"
+	TOK_INHERITS     "inherits"
+	TOK_LBRACE       "{"
+	TOK_LBRACKET     "["
+	TOK_LOOP         "loop"
+	TOK_LOOPN        "loopn"
+	TOK_LPAREN       "("
+	TOK_MINUSASSIGN  "-="
+	TOK_MINUSMINUS   "--"
+	TOK_NEW          "new"
+	TOK_NOOP         "noop"
+	TOK_NORM         "'n"
+	TOK_OBJECT       "object"
+	TOK_ONLEAVE      "onleave"
+	TOK_PLUSASSIGN   "+="
+	TOK_PLUSPLUS     "++"
+	TOK_POINT        "."
+	TOK_RBRACE       "}"
+	TOK_RBRACKET     "]"
+	TOK_RETURN       "return"
+	TOK_RPAREN       ")"
+	TOK_STATIC       "static"
+	TOK_STOPIF       "stopif"
+	TOK_TILDE        "~"
+	TOK_TIMEOUT      "timeout"
+	TOK_TRUE         "true"
+	TOK_UNALIAS      "unalias"
+	TOK_VAR          "var"
+	TOK_VARERROR     "'e"
+	TOK_VARIN        "'in"
+	TOK_VAROUT       "'out"
+	TOK_WAITUNTIL    "waituntil"
+	TOK_WHENEVER     "whenever"
+	TOK_WHILE        "while"
+
+ // Tokens that have a symbol semantic value.
+%token <symbol>
+	TOK_ECHO         "echo"
+	TOK_WAIT         "wait"
 
 %token TOK_EOF 0 "end of command"
 
@@ -235,18 +238,18 @@
 `----------*/
 
 %union { int ival; }
-%token
-  <ival> INTEGER    "integer"
-  <ival> FLAG       "flag"
-  <ival> FLAG_TEST  "flag test"
-  <ival> FLAG_ID    "flag identifier"
-  <ival> FLAG_TIME  "flag time"
+%token <ival>
+	INTEGER    "integer"
+	FLAG       "flag"
+	FLAG_TEST  "flag test"
+	FLAG_ID    "flag identifier"
+	FLAG_TIME  "flag time"
 %printer { debug_stream() << $$; } <ival>;
 
 %union { float fval; }
-%token
-  <fval> FLOAT      "float"
-  <fval> TIME_VALUE "time"
+%token <fval>
+	FLOAT      "float"
+	TIME_VALUE "time"
 %type <fval> number;
 %type <fval> time_expr;
 %printer { debug_stream() << $$; } <fval>;
@@ -276,12 +279,12 @@
   ast::symbols_type* symbols;
 }
 
-%token
-   <symbol> IDENTIFIER         "identifier"
-   <symbol> BINDER             "binder"
-   <symbol> OPERATOR           "operator command"
-   <symbol> OPERATOR_ID        "operator"
-   <symbol> OPERATOR_VAR       "var-operator"
+%token <symbol>
+	IDENTIFIER         "identifier"
+	BINDER             "binder"
+	OPERATOR           "operator command"
+	OPERATOR_ID        "operator"
+	OPERATOR_VAR       "var-operator"
 %type <symbols> identifiers identifiers.1 formal_arguments
 // FIXME: this destructor entails double frees and invalid pointer
 // frees.
@@ -439,7 +442,7 @@ flags.0:
 `-------*/
 
 stmt:
-  "{" stmts "}" { $$ = $2; }
+  "{" stmts "}" { $$ = new ast::Scope(@$, $2); }
 ;
 
 
@@ -451,11 +454,11 @@ stmt:
 #include "flavorable.hh"
 };
 %union { Flavorable::UNodeType flavor; };
-%token
-  <flavor> TOK_COMMA        ","
-  <flavor> TOK_SEMICOLON    ";"
-  <flavor> TOK_AND          "&"
-  <flavor> TOK_PIPE         "|"
+%token <flavor>
+	TOK_COMMA        ","
+	TOK_SEMICOLON    ";"
+	TOK_AND          "&"
+	TOK_PIPE         "|"
 ;
 
 %type <flavor> and.opt flavor.opt pipe.opt;
@@ -513,7 +516,8 @@ stmt:
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }
-| "def" name { $$ = 0; }
+//  Duplicates the previous one, and cannot be factored.
+// | "def" name { $$ = 0; }
 | "var" "{" names "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
@@ -703,14 +707,14 @@ expr:
   | num expr |
   `---------*/
 // The name of the operators are the name of the messages.
-%token
-  <symbol> TOK_BANG    "!"
-  <symbol> TOK_PERCENT "%"
-  <symbol> TOK_STAR    "*"
-  <symbol> TOK_PLUS    "+"
-  <symbol> TOK_MINUS   "-"
-  <symbol> TOK_DIV     "/"
-  <symbol> TOK_EXP     "^"
+%token <symbol>
+	TOK_BANG    "!"
+	TOK_PERCENT "%"
+	TOK_STAR    "*"
+	TOK_PLUS    "+"
+	TOK_MINUS   "-"
+	TOK_DIV     "/"
+	TOK_EXP     "^"
 ;
 
 expr:
@@ -728,21 +732,19 @@ expr:
 /*--------.
 | Tests.  |
 `--------*/
-%token
-  <symbol> TOK_DEQ  "=~="
-  <symbol> TOK_EQU  "=="
-  <symbol> TOK_GEQ  ">="
-  <symbol> TOK_GTH  ">"
-  <symbol> TOK_LEQ  "<="
-  <symbol> TOK_LTH  "<"
-  <symbol> TOK_NEQ  "!="
-  <symbol> TOK_PEQ  "%="
-  <symbol> TOK_REQ  "~="
-;
+%token <symbol>
+	TOK_DEQ  "=~="
+	TOK_EQU  "=="
+	TOK_GEQ  ">="
+	TOK_GTH  ">"
+	TOK_LEQ  "<="
+	TOK_LTH  "<"
+	TOK_NEQ  "!="
+	TOK_PEQ  "%="
+	TOK_REQ  "~="
 
-%token
-  <symbol> TOK_LAND  "&&"
-  <symbol> TOK_LOR   "||"
+	TOK_LAND  "&&"
+	TOK_LOR   "||"
 ;
 
 expr:

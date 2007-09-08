@@ -203,26 +203,26 @@ UServer::main (int argc, const char* argv[])
     current = v;
   }
 
-  new UVariable(MAINDEVICE, "args", arglistv);
+  new UVariable (MAINDEVICE, "args", arglistv);
 }
 
 void
-UServer::beforeWork()
+UServer::beforeWork ()
 {
 }
 
 void
-UServer::afterWork()
+UServer::afterWork ()
 {
 }
 
 void
 UServer::work ()
 {
-  libport::BlockLock bl(this);
+  libport::BlockLock bl (this);
 
   // CPU Overload test
-  updateTime();
+  updateTime ();
   previous3Time = previous2Time;
   previous2Time = previousTime;
   previousTime  = currentTime;
@@ -237,6 +237,8 @@ UServer::work ()
   work_handle_stopall_ ();
   work_blend_values_ ();
   work_execute_hub_updater_ ();
+
+  scheduler_->work ();
 
   afterWork ();
 
@@ -283,7 +285,8 @@ UServer::work_handle_connections_ ()
 
       if (signalcpuoverload)
       {
-	(*r)->errorSignal(UERROR_CPU_OVERLOAD);
+	// (*r)->errorSignal (UERROR_CPU_OVERLOAD);
+        ECHO ("UERROR_CPU_OVERLOAD");
 	signalcpuoverload = false;
       }
 
@@ -667,6 +670,7 @@ UServer::reboot()
 void
 UServer::shutdown()
 {
+  scheduler_->killall_jobs ();
 }
 
 //! Overload this function to return the running time of the server.

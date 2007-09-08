@@ -114,7 +114,9 @@ namespace object
     DECLARE(head, front);
     DECLARE(tail, tail);
     DECLARE(back, back);
-    DECLARE(insert, insert);
+    //DECLARE(insert, insert);
+    Primitive* p = new Primitive (list_class_insert);
+    list_class->slot_set ("insert", p);
 #undef DECLARE
   }
 

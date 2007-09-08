@@ -31,7 +31,7 @@ namespace object
  */
 #define FETCH_ARG(N, Type)                              \
   assert(args[N]->kind_get() ==                         \
-         object::Object::kind_type(Type::traits::kind));\
+	 object::Object::kind_type(Type::traits::kind));\
   r ## Type arg ## N = args[N].unsafe_cast<Type>();
 
 /**
@@ -41,7 +41,7 @@ namespace object
  */
 #define PRIMITIVE_1_(Class, Name, Call, Ret, Type1, Get)        \
   rObject                                                       \
-  Class ## _class_ ## Name (objects_type args)                  \
+  Class ## _class_ ## Name (rContext, objects_type args)	\
   {                                                             \
     FETCH_ARG(0, Type1);                                        \
     return Ret(Call(arg0 Get));                                 \
@@ -61,7 +61,7 @@ namespace object
  */
 #define PRIMITIVE_2_(Class, Name, Call, Ret, Type1, Type2, Get) \
   rObject                                                       \
-  Class ## _class_ ## Name (objects_type args)                  \
+  Class ## _class_ ## Name (rContext, objects_type args)	\
   {                                                             \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
@@ -81,7 +81,7 @@ namespace object
  */
 #define PRIMITIVE_2_OBJECT(Class, Name, Call, Type1)            \
   rObject                                                       \
-  Class ## _class_ ## Name (objects_type args)                  \
+  Class ## _class_ ## Name (rContext, objects_type args)        \
   {                                                             \
     FETCH_ARG(0, Type1);                                        \
     rObject arg1 = args[1];                                     \
@@ -93,11 +93,11 @@ namespace object
  */
 #define PRIMITIVE_OP_(Class, Name, Op, Ret, Type1, Type2, Get)  \
   rObject                                                       \
-  Class ## _class_ ## Name (objects_type args)                  \
+  Class ## _class_ ## Name (rContext, objects_type args)	\
   {                                                             \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
-    return Ret(arg0 Get Op arg1 Get);                       \
+    return Ret(arg0 Get Op arg1 Get);				\
   }
 
 #define PRIMITIVE_OP(Class, Name, Op, Type1, Type2)             \

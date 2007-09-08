@@ -18,19 +18,19 @@ namespace object
   `--------------------*/
 
   rObject
-  object_class_clone (objects_type args)
+  object_class_clone (rContext, objects_type args)
   {
     return clone(args[0]);
   }
 
   rObject
-  object_class_init (objects_type args)
+  object_class_init (rContext, objects_type args)
   {
     return args[0];
   }
 
   rObject
-  object_class_print (objects_type args)
+  object_class_print (rContext, objects_type args)
   {
     std::cout << *args[0] << std::endl;
     return args[0];
@@ -38,7 +38,7 @@ namespace object
 
 #define SERVER_FUNCTION(Function)				\
   rObject							\
-  object_class_ ## Function (objects_type args)			\
+  object_class_ ## Function (rContext, objects_type args)	\
   {								\
     ::urbiserver->Function();					\
     /* Return the current object to return something. */	\
@@ -52,7 +52,7 @@ namespace object
 
 
   rObject
-  object_class_wait (objects_type args)
+  object_class_wait (rContext, objects_type args)
   {
     // FIXME: Currently does nothing.  A stub so that we
     // accept "wait 2s" as is used in the test suite.
@@ -61,7 +61,7 @@ namespace object
 
   /// Get slots' list.
   static rObject
-  object_class_slotNames (objects_type args)
+  object_class_slotNames (rContext, objects_type args)
   {
     rObject obj = args[0];
 
@@ -74,7 +74,7 @@ namespace object
 
   /// Get parents' list.
   static rObject
-  object_class_parents (objects_type args)
+  object_class_parents (rContext, objects_type args)
   {
     rObject obj = args[0];
 
@@ -87,7 +87,7 @@ namespace object
 
   /// Get a slot.
   static rObject
-  object_class_getSlot (objects_type args)
+  object_class_getSlot (rContext, objects_type args)
   {
     rObject obj = args[0];
     FETCH_ARG(1, String);
@@ -97,7 +97,7 @@ namespace object
 
   /// Set a slot.
   static rObject
-  object_class_setSlot (objects_type args)
+  object_class_setSlot (rContext, objects_type args)
   {
     rObject obj = args[0];
     FETCH_ARG(1, String);

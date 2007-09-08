@@ -10,6 +10,7 @@
 # include "libport/ufloat.h"
 # include "libport/select-ref.hh"
 # include "object/object.hh"
+# include "object/state.hh"
 
 namespace object
 {
@@ -38,8 +39,8 @@ namespace object
     /// The kind of Atom.
     virtual kind_type kind_get () const;
 
-    /// The held value.
-    typename Traits::type value_get () const;
+    /// The value held.
+    const typename Traits::type value_get () const;
 
     /// The held value.
     typename libport::ref_traits<typename Traits::type>::type value_get ();
@@ -61,7 +62,7 @@ namespace object
 
   struct code_traits
   {
-    typedef const ast::Exp& type;
+    typedef ast::Exp& type;
     enum { kind = Object::kind_code };
   };
 
@@ -72,7 +73,7 @@ namespace object
 
   struct context_traits
   {
-    typedef UConnection& type;
+    typedef State type;
     enum { kind = Object::kind_context };
   };
 

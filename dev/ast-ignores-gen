@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+
+import sys
+import ast, tools
+import ast_params
+
+if len (sys.argv) != 2:
+  tools.error("Usage: .. SRCDIR")
+srcdir = sys.argv[1]
+
+## Abstract syntax tree C++ forward declarations ------------------------------
+loader = ast.Loader ()
+nodes = loader.load (sys.stdin)
+
+ignores = file ("ignores.tmp", "w")
+print >>ignores, """\
+Makefile.in
+all.stamp
+all.hh
+ast-fwd-gen.stamp
+ast-nodes-gen.stamp
+ast-nodes.mk
+ast-print-visitor-gen.stamp
+ast-visitor-gen.stamp
+default-visitor.hh
+default-visitor.hxx
+default-visitor.stamp
+fwd.hh
+fwd.stamp
+ignores
+ignores.stamp
+nodes-mk.stamp
+nodes.stamp
+pretty-printer.stamp
+pretty-printer.hh
+pretty-printer.hxx
+pretty-printer.cc
+visitor.stamp
+visitor.hh
+visitor.hxx
+"""
+
+arr = nodes.values ()
+arr.sort (lambda x, y: cmp (x.name, y.name))
+for node in arr:
+  print >>ignores, node.hh()
+  print >>ignores, node.hxx()
+  print >>ignores, node.cc()
+
+ignores.close ()
+tools.lazy_install (srcdir, "ignores");

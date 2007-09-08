@@ -19,12 +19,12 @@ main ()
   ECHO("3: " << *f3);
   args.push_back (f2);
   args.push_back (f10);
-  rObject f20 = float_class_mul(args);
+  rObject f20 = float_class_mul(0, args);
   ECHO("20: " << *f20);
 
   args.clear();
   args.push_back (f20);
   args.push_back (f3);
-  rObject f23 = float_class_add(args);
+  rObject f23 = float_class_add(0, args);
   ECHO("23: " << *f23);
 }

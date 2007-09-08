@@ -133,7 +133,7 @@ namespace object
   /// \param Pre C++ code executed before call (typically to check args)
 #define PRIMITIVE_1_FLOAT_(Name, Call, Pre)             \
   rObject                                               \
-  float_class_ ## Name (objects_type args)              \
+  float_class_ ## Name (rContext, objects_type args)	\
   {                                                     \
     FETCH_ARG(1, Float);                                \
     Pre;                                                \

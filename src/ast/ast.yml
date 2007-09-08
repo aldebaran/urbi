@@ -111,11 +111,21 @@ TagExp:
 ## Scope.  ##
 ## ------- ##
 
-ScopeExp:
+Scope:
   super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: The scoped expression }
+  default: 'operator() (n.exp_get());'
+  printer:
+    - '"{"'
+    - 'libport::incendl'
+    - ~exp
+    - 'libport::decendl'
+    - '"}"'
 
+## -------------------- ##
+## Composing commands.  ##
+## -------------------- ##
 
 BinaryExp:
   super: Exp
@@ -124,14 +134,17 @@ BinaryExp:
     - lhs:
         type: 'Exp*'
         desc: Left-hand side expression
-        access: rW
+        access: rwW
     - rhs:
         type: 'Exp*'
         desc: Right-hand side expression
-        access: rW
+        access: rwW
 
 AndExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" & "'
@@ -139,6 +152,9 @@ AndExp:
 
 PipeExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" | "'
@@ -146,6 +162,9 @@ PipeExp:
 
 CommaExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" , "'
@@ -153,6 +172,9 @@ CommaExp:
 
 SemicolonExp:
   super: BinaryExp
+  default: |2
+    operator()(n.lhs_get());
+    operator()(n.rhs_get());
   printer:
     - ~lhs
     - '" ; "'
@@ -161,80 +183,80 @@ SemicolonExp:
 
 # Identifier constructs
 
-DotExp:
-  super: Exp
-  attributes:
-    - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
-    - symbol:  { type: 'libport::Symbol*', desc: Name of the variable separated from exp with a dot }
+# DotExp:
+#   super: Exp
+#   attributes:
+#     - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
+#     - symbol:  { type: 'libport::Symbol*', desc: Name of the variable separated from exp with a dot }
 
-IdExp:
-  super: Exp
-  attributes:
-    - symbol:  { type: 'libport::Symbol*', desc: Name of the symbol to be name-resolved }
+# IdExp:
+#   super: Exp
+#   attributes:
+#     - symbol:  { type: 'libport::Symbol*', desc: Name of the symbol to be name-resolved }
 
-Var:
-  super: DotExp
+# Var:
+#   super: DotExp
 
-ArrowExp:
-  super: Exp
-  attributes:
-    - var: { type: 'Var*', desc: variable whose property is accessed }
-    - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
+# ArrowExp:
+#   super: Exp
+#   attributes:
+#     - var: { type: 'Var*', desc: variable whose property is accessed }
+#     - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
 
-TagOpExp:
-  super: Exp
-  inline:
-    header inside: |2
+# TagOpExp:
+#   super: Exp
+#   inline:
+#     header inside: |2
 
-        public:
-          /// Operator qualifier.
-          enum type
-            {
-              stop,
-              freeze,
-              unfreeze,
-              block,
-              unblock,
-            };
-  attributes:
-    - tag: { type: Exp*, desc: Tag of the tag-operation command }
-    - oper: { type: TagOpExp::type, access: r, desc: Operator }
+#         public:
+#           /// Operator qualifier.
+#           enum type
+#             {
+#               stop,
+#               freeze,
+#               unfreeze,
+#               block,
+#               unblock,
+#             };
+#   attributes:
+#     - tag: { type: Exp*, desc: Tag of the tag-operation command }
+#     - oper: { type: TagOpExp::type, access: r, desc: Operator }
 
-IfExp:
-  super: Exp
-  attributes:
-    - test: { type: 'Exp*', desc: Condition }
-    - thenclause:
-        type: Exp*
-        desc: Instructions executed if condition is true
-    - elseclause:
-        type: Exp*
-        desc: Instructions executed if condition is false
+# IfExp:
+#   super: Exp
+#   attributes:
+#     - test: { type: 'Exp*', desc: Condition }
+#     - thenclause:
+#         type: Exp*
+#         desc: Instructions executed if condition is true
+#     - elseclause:
+#         type: Exp*
+#         desc: Instructions executed if condition is false
+ 
+# AtExp:
+#   super: Exp
+#   attributes:
+#     - test: { type: 'Exp*', desc: Condition }
+#     - atclause:
+#         type: Exp*
+#         desc: Instructions executed at the moment when condition becomes true
+#     - onleaveclause:
+#         type: Exp*
+#         desc: Instructions executed onleave
 
-AtExp:
-  super: Exp
-  attributes:
-    - test: { type: 'Exp*', desc: Condition }
-    - atclause:
-        type: Exp*
-        desc: Instructions executed at the moment when condition becomes true
-    - onleaveclause:
-        type: Exp*
-        desc: Instructions executed onleave
+# AliasExp:
+#   super: Exp
+#   desc: |2
 
-AliasExp:
-  super: Exp
-  desc: |2
+#       /** \class ast::AliasExp
+#        ** \brief Set an alias flag in the object given, to point to one of
+#        ** its attribute (typically, 'val'). For backward compat only.
+#        */
 
-      /** \class ast::AliasExp
-       ** \brief Set an alias flag in the object given, to point to one of
-       ** its attribute (typically, 'val'). For backward compat only.
-       */
-
-  attributes:
-    - obj: { type: 'Exp*', desc: Reference to the object to alias }
-    - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
-
+#   attributes:
+#     - obj: { type: 'Exp*', desc: Reference to the object to alias }
+#     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
+ 
 AssignExp:
   super: Exp
   attributes:
@@ -245,98 +267,106 @@ AssignExp:
     - '" = "'
     - ~rhs
 
-InheritsExp:
-  super: Exp
-  attributes:
-    - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
-    - inherited: { type: 'Exp*', desc: Reference to the inherited object }
+# InheritsExp:
+#   super: Exp
+#   attributes:
+#     - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
+#     - inherited: { type: 'Exp*', desc: Reference to the inherited object }
 
-DisinheritsExp:
-  super: Exp
-  attributes:
-    - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
-    - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
+# DisinheritsExp:
+#   super: Exp
+#   attributes:
+#     - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
+#     - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
 
-DeleteExp:
-  super: Exp
-  attributes:
-    - obj:
-        type: 'Exp*'
-        desc: Reference to the object to delete
+# DeleteExp:
+#   super: Exp
+#   attributes:
+#     - obj:
+#         type: 'Exp*'
+#         desc: Reference to the object to delete
 
-ExternalExp:
-  super: Exp
-  inline:
-    header inside: |2
+# ExternalExp:
+#   super: Exp
+#   inline:
+#     header inside: |2
 
-        public:
-          /// External binding type.
-          enum Type
-            {
-              var,
-              function,
-              event,
-            };
-  attributes:
-    - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
-    - attribute: { type: 'libport::Symbol*', desc: Bound attribute }
-    - type: { type: ExternalExp::Type, access: r, desc: External binding type }
-    - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
+#         public:
+#           /// External binding type.
+#           enum Type
+#             {
+#               var,
+#               function,
+#               event,
+#             };
+#   attributes:
+#     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
+#     - attribute: { type: 'libport::Symbol*', desc: Bound attribute }
+#     - type: { type: ExternalExp::Type, access: r, desc: External binding type }
+#     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
 ReturnExp:
   super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: Returned value }
     - cont: { type: bool, desc: Continuation flag for return& }
+  printer:
+    - '"return"'
+    - '{
+         if (n.cont_get())
+           ostr_ << "&";
+       }'
+    - '" "'
+    - ~exp
 
-WaitExp:
-  super: Exp
-  attributes:
-    - duration: { type: 'Exp*', desc: Time to wait }
+# WaitExp:
+#   super: Exp
+#   attributes:
+#     - duration: { type: 'Exp*', desc: Time to wait }
 
-WaitUntilExp:
-  super: Exp
-  attributes:
-    - condition: { type: 'Exp*', desc: Condition to wait }
+# WaitUntilExp:
+#   super: Exp
+#   attributes:
+#     - condition: { type: 'Exp*', desc: Condition to wait }
 
-WheneverExp:
-  super: Exp
-  attributes:
-    - test: { type: 'Exp*', desc: Condition }
-    - wheneverclause:
-        type: Exp*
-        desc: Instructions executed whenever condition is true
-    - elseclause:
-        type: Exp*
-        desc: Instructions executed whenever condition is false
-
+# WheneverExp:
+#   super: Exp
+#   attributes:
+#     - test: { type: 'Exp*', desc: Condition }
+#     - wheneverclause:
+#         type: Exp*
+#         desc: Instructions executed whenever condition is true
+#     - elseclause:
+#         type: Exp*
+#         desc: Instructions executed whenever condition is false
+ 
 Noop:
   super: Exp
   desc: /// Also known as nop, noop etc.
   printer:
     - '"noop"'
 
-EmitExp:
-  super: Exp
-  attributes:
-    - name:
-        type: 'Exp*'
-        desc: Reference to the called event
-    - args:
-        type: 'exps_type*'
-        desc: List of arguments passed to the event
-
+# EmitExp:
+#   super: Exp
+#   attributes:
+#     - name:
+#         type: 'Exp*'
+#         desc: Reference to the called event
+#     - args:
+#         type: 'exps_type*'
+#         desc: List of arguments passed to the event
+ 
 
 # Expressions
 
-ExecExp:
-  super: Exp
-  attributes:
-    - toexec:
-        type: 'Exp*'
-        access: r
-        desc: String to execute
-
+# ExecExp:
+#   super: Exp
+#   attributes:
+#     - toexec:
+#         type: 'Exp*'
+#         access: r
+#         desc: String to execute
+ 
 FloatExp:
   super: Exp
   attributes:
@@ -379,36 +409,37 @@ ListExp:
 ##        access: r
 ##        desc: Stored pair values
 
-RefExp:
-  super: Exp
-  attributes:
-    - value:
-        type: 'Exp*'
-        access: r
-        desc: Stored reference
+# RefExp:
+#   super: Exp
+#   attributes:
+#     - value:
+#         type: 'Exp*'
+#         access: r
+#         desc: Stored reference
 
-OpVarExp:
-  super: Exp
-  inline:
-    header inside: |2
+# OpVarExp:
+#   super: Exp
+#   inline:
+#     header inside: |2
 
-        public:
-          /// Operator qualifier.
-          enum type
-            {
-              copy,  ///< Copy
-              addr,  ///< @
-              group, ///< group
-            };
-  attributes:
-    - operand: { type: 'Var*', desc: Operand }
-    - oper: { type: OpVarExp::type, access: r, desc: Operator }
-
+#         public:
+#           /// Operator qualifier.
+#           enum type
+#             {
+#               copy,  ///< Copy
+#               addr,  ///< @
+#               group, ///< group
+#             };
+#   attributes:
+#     - operand: { type: 'Var*', desc: Operand }
+#     - oper: { type: OpVarExp::type, access: r, desc: Operator }
+ 
 NegOpExp:
   super: Exp
   attributes: [ { operand: { type: 'Exp*', desc: Operand of the negation operator } } ]
 
 CallExp:
+  desc: /// Function calls, and attribute look-ups.
   super: Exp
   attributes:
     - name:
@@ -436,16 +467,16 @@ CallExp:
                   << ")";
        }'
 
-ArrayExp:
-  super: Exp
-  attributes:
-    - name:
-        type: 'Exp*'
-        desc: Reference to the array
-    - arg:
-        type: 'Exp*'
-        desc: Index of the array
-
+# ArrayExp:
+#   super: Exp
+#   attributes:
+#     - name:
+#         type: 'Exp*'
+#         desc: Reference to the array
+#     - arg:
+#         type: 'Exp*'
+#         desc: Index of the array
+ 
 NewExp:
   super: Exp
   attributes:
@@ -459,44 +490,44 @@ NewExp:
 
 # Types (embryonic for now)
 
-Ty:
-  super: Ast
+# Ty:
+#   super: Ast
 
-NameTy:
-  super: Ty
-  attributes:
-    - name:
-        type: 'libport::Symbol'
-        owned: False
-        desc: The name of the type
-        access: rW
-
+# NameTy:
+#   super: Ty
+#   attributes:
+#     - name:
+#         type: 'libport::Symbol'
+#         owned: False
+#         desc: The name of the type
+#         access: rW
+ 
 
 # Declarations
 
-Dec:
-  super: Exp
-  attributes:
-    - exp:
-        type: 'Var*'
-        mandatory: False
-        desc: Object the variable is attached to (or null if root)
-    - symbol:
-        type: 'libport::Symbol*'
-        desc: Name of the variable, separated from exp with a dot
+# Dec:
+#   super: Exp
+#   attributes:
+#     - exp:
+#         type: 'Var*'
+#         mandatory: False
+#         desc: Object the variable is attached to (or null if root)
+#     - symbol:
+#         type: 'libport::Symbol*'
+#         desc: Name of the variable, separated from exp with a dot
 
-VarDec:
-  super: Dec
-  attributes:
-    - type_name:
-        type: NameTy*
-        mandatory: False
-        desc: Optional type of the declared variable
-    - init:
-        type: Exp*
-        mandatory: False
-        desc: The initial value (expression) assigned to the variable
-
+# VarDec:
+#   super: Dec
+#   attributes:
+#     - type_name:
+#         type: NameTy*
+#         mandatory: False
+#         desc: Optional type of the declared variable
+#     - init:
+#         type: Exp*
+#         mandatory: False
+#         desc: The initial value (expression) assigned to the variable
+ 
 Function:
   super: Exp
   attributes:
@@ -509,11 +540,11 @@ Function:
     - ~body
     - '"}"'
 
-EventDec:
-  super: Dec
-  attributes:
-    - formals: { type: 'vardecs_type*', desc: Formal arguments }
-
+# EventDec:
+#   super: Dec
+#   attributes:
+#     - formals: { type: 'vardecs_type*', desc: Formal arguments }
+ 
 ## FIXME: This does not work currently, because the machinery is not ready
 ## to free lists of pairs.
 ##
@@ -523,9 +554,9 @@ EventDec:
 ##     - inherits: { type: 'exps_type*', mandatory: False, desc: Inherited classes }
 ##     - decs: { type: 'decs_type*', mandatory: False, desc: List of declarations }
 
-TagDec:
-  super: Dec
-
+# TagDec:
+#   super: Dec
+ 
 # Local Variables:
 # mode: yaml
 # End:

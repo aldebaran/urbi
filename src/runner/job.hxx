@@ -8,6 +8,7 @@
 
 # include <cassert>
 # include "runner/job.hh"
+# include "runner/scheduler.hh"
 
 namespace runner
 {
@@ -73,6 +74,13 @@ namespace runner
     assert (started_);
     stop ();
     started_ = false;
+  }
+
+  inline
+  void Job::yield ()
+  {
+    assert (scheduler_);
+    scheduler_->add_job (this);
   }
 
   inline

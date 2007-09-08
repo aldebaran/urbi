@@ -14,20 +14,29 @@ namespace runner
 {
 
   inline
-  Runner::Runner (rContext ctx, Scheduler& sched)
-    : Job (sched),
+  Runner::Runner (rContext ctx, Scheduler& sched, ast::Ast* ast)
+    : Coroutine (sched),
       context_ (ctx),
-      current_ (0)
+      ast_ (ast),
+      started_ (false),
+      current_ (0),
+      locals_ (new object::Object)
   {
+    // If the lookup in the local variable failed, try in the the
+    // Connection object, sort of a Lobby for Io.
+    locals_->parent_add(context_);
+    // Provide direct access to the Context.
+    locals_->slot_set(libport::Symbol("context"), context_);
   }
 
   inline
   Runner::~Runner ()
-  {}
+  {
+  }
 
   inline
   Runner::rObject
-  Runner::eval (const ast::Ast& e)
+  Runner::eval (ast::Ast& e)
   {
     e.accept (*this);
     return current_;
@@ -37,18 +46,11 @@ namespace runner
   Runner::rObject
   Runner::target (ast::Exp* n)
   {
-    // FIXME: For the time being, if there is no target, it is the
-    // Connection object which is used, sort of a Lobby for Io.
+    // If there is no target, look in the local variables.
     if (n)
       return eval (*n);
     else
-      return context_;
-  }
-
-  inline
-  void
-  Runner::work ()
-  {
+      return locals_;
   }
 
 } // namespace runner

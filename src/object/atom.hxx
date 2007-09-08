@@ -61,7 +61,7 @@ namespace object
 
   template <typename Traits>
   inline
-  typename Traits::type
+  const typename Traits::type
   Atom<Traits>::value_get () const
   {
     return value_;
@@ -105,9 +105,9 @@ namespace object
     BOOST_FOREACH (const rObject& o, values)
     {
       if (first)
-        first = false;
+	first = false;
       else
-        out << ", ";
+	out << ", ";
       o->print(out);
     }
     out << ']';

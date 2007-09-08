@@ -6,12 +6,13 @@
 #ifndef RUNNER_SCHEDULER_HH
 # define RUNNER_SCHEDULER_HH
 
+# include <list>
 # include <boost/utility.hpp>
+
+# include "runner/fwd.hh"
 
 namespace runner
 {
-
-  class Job; // Fwd decl.
 
   class Scheduler : boost::noncopyable
   {
@@ -25,8 +26,20 @@ namespace runner
     /// Memory ownership of @a job is transferred to the Scheduler.
     void add_job (Job* job);
 
+    // Ask the scheduler do run this @a job immediately.  Memory ownership
+    // of @a job is transferred to the Scheduler.
+    void schedule_immediately (Job* job);
+
+    /// Remove all jobs.
+    void killall_jobs ();
+
+    /// Kill @a job, and delete it.
+    void kill_job (Job* job);
+
   private:
-    std::list<Job*> jobs_;
+    typedef std::list<Job*> jobs;
+    jobs jobs_;
+    Job* active_job_;
   };
 
 } // namespace runner

@@ -6,10 +6,10 @@
 #ifndef RUNNER_JOB_HH
 # define RUNNER_JOB_HH
 
+# include "runner/fwd.hh"
+
 namespace runner
 {
-
-  class Scheduler; // Fwd decl.
 
   class Job
   {
@@ -27,6 +27,10 @@ namespace runner
     void terminate ();
 
   protected:
+    /// Register this Job on its Scheduler so that it is rescheduled next
+    /// cycle (that is, its \c run method will be invoked).
+    void yield ();
+
     /// Can optionally be overridden to do something when (re)starting a new
     /// job.
     virtual void start ();

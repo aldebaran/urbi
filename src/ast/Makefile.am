@@ -8,6 +8,8 @@ BUILT_SOURCES += $(BUILT_SOURCES_local)
 # program `LOCAL_BUILT' and triggers Automake warnings.
 BUILT_SOURCES_local =						\
 	fwd.hh							\
+	all.hh							\
+	ignores							\
 	visitor.hh						\
 	default-visitor.hh default-visitor.hxx			\
 	pretty-printer.hh pretty-printer.hxx pretty-printer.cc	\
@@ -46,9 +48,17 @@ $(srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
 # ast-nodes.mk
 $(srcdir)/ast-nodes.mk: $(srcdir)/nodes-mk.stamp
 
+# all.hh.
+EXTRA_DIST += all.stamp
+all.hh: $(srcdir)/all.stamp
+
 # fwd.hh.
 EXTRA_DIST += fwd.stamp
 fwd.hh: $(srcdir)/fwd.stamp
+
+# ignores.
+EXTRA_DIST += ignores
+ignores: $(srcdir)/ignores.stamp
 
 # AST itself.
 EXTRA_DIST += nodes.stamp

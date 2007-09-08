@@ -10,6 +10,7 @@
 
 namespace object
 {
+  /// The prototype for Context objects.
   extern rObject context_class;
 
   /// Initialize the Context class.
@@ -17,4 +18,3 @@ namespace object
 }; // namespace object
 
 #endif // !OBJECT_CONTEXT_CLASS_HH
-

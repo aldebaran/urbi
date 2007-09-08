@@ -169,11 +169,11 @@ class Node:
   def attribute (self, name):
     for attr in self.attributes:
       if attr.name == name:
-        return attr
+	return attr
     for parent in self.super:
       attr = parent.attribute(name)
       if attr != None:
-        return attr
+	return attr
     return None
 
   def guard (self):
