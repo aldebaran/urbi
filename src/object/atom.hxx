@@ -128,7 +128,8 @@ namespace object
   std::ostream&
   Atom<code_traits>::print(std::ostream& out) const
   {
-    // FIXME: For now, don't print anything.
+    // FIXME
+    out << "<code>";
     return out;
   }
 
@@ -147,7 +148,7 @@ namespace object
   Atom<primitive_traits>::print(std::ostream& out) const
   {
     // FIXME
-    assert(!"Printing primitives isn't handled!");
+    out << "<primitive>";
     return out;
   }
 

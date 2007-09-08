@@ -61,6 +61,13 @@ namespace object
     return *this;
   }
 
+  inline
+  const Object::parents_type&
+  Object::parents_get () const
+  {
+    return parents_;
+  }
+
 
   /*--------.
   | Slots.  |
@@ -104,7 +111,12 @@ namespace object
     return *this;
   }
 
-
+  inline
+  const Object::slots_type&
+  Object::slots_get () const
+  {
+    return slots_;
+  }
 
 
   /*--------------------------.

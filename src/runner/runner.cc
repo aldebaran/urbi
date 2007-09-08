@@ -314,18 +314,21 @@ namespace runner
 
     // lhs
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
-    try
-    {
+    /*try
+    {*/
+    // OMFG: error: jump to case label enters try block!
+    // This badly sucks if we can't use a try block within the coro!
       CORO_CALL (operator() (e.lhs_get()));
       ECHO ("sending result of lhs");
       emit_result (current_);
-    }
+    /*}
+    // Following code is merged from 2.0 but needs to be adjusted.
     catch (object::UrbiException& ue)
     {
       UConnection& c = context_.cast<object::Context>()->value_get();
       c.sendc (ue.what (), "error");
       c.endline ();
-    }
+    }*/
 
     current_.reset ();
     assert (current_.get () == 0);

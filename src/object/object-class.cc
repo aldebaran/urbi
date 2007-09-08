@@ -59,6 +59,53 @@ namespace object
     return args[0];
   }
 
+  /// Get slots' list.
+  static rObject
+  object_class_slotNames (rContext, objects_type args)
+  {
+    rObject obj = args[0];
+
+    object::list_traits::type l;
+    BOOST_FOREACH (const Object::slot_type& p, obj->slots_get())
+      l.push_back(p.second);
+
+    return new object::List(l);
+  }
+
+  /// Get parents' list.
+  static rObject
+  object_class_parents (rContext, objects_type args)
+  {
+    rObject obj = args[0];
+
+    object::list_traits::type l;
+    BOOST_FOREACH (const Object::parent_type& o, obj->parents_get())
+      l.push_back(o);
+
+    return new object::List(l);
+  }
+
+  /// Get a slot.
+  static rObject
+  object_class_getSlot (rContext, objects_type args)
+  {
+    rObject obj = args[0];
+    FETCH_ARG(1, String);
+
+    return (*obj)[libport::Symbol(arg1->value_get())];
+  }
+
+  /// Set a slot.
+  static rObject
+  object_class_setSlot (rContext, objects_type args)
+  {
+    rObject obj = args[0];
+    FETCH_ARG(1, String);
+    rObject val = args[2];
+
+    (*obj)[libport::Symbol(arg1->value_get())] = val;
+    return obj;
+  }
 
   void
   object_class_initialize ()
@@ -68,6 +115,12 @@ namespace object
 			      new Primitive(object_class_ ## Name));
       DECLARE(clone);
       DECLARE(init);
+
+      DECLARE(slotNames);
+      DECLARE(parents);
+      DECLARE(getSlot);
+      DECLARE(setSlot);
+
       DECLARE(print);
       DECLARE(reboot);
       DECLARE(shutdown);

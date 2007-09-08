@@ -26,6 +26,7 @@ namespace object
     // FIXME: First argument is ignored.
     c->value_get().connection.send
       (boost::lexical_cast<std::string>(*args[1]).c_str());
+    c->value_get().connection.endline();
     return args[0];
   }
 

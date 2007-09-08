@@ -60,6 +60,8 @@ namespace object
     Object& parent_add (const parent_type& p);
     /// Remove parent.
     Object& parent_remove (const parent_type& p);
+    /// Read only access to parents.
+    const parents_type& parents_get () const;
     /// \}
 
     /// \name The slots.
@@ -85,6 +87,8 @@ namespace object
     Object& slot_set (const key_type& k, rObject o);
     /// Remove slot.
     Object& slot_remove (const key_type& k);
+    /// Read only access to slots.
+    const slots_type& slots_get () const;
     /// \}
 
     /// \name Printing.
