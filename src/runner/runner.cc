@@ -9,6 +9,7 @@
 
 #include "kernel/uconnection.hh"
 #include "object/atom.hh"
+#include "object/urbi-exception.hh"
 #include "runner/runner.hh"
 
 namespace runner
@@ -313,9 +314,18 @@ namespace runner
 
     // lhs
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
-    CORO_CALL (operator() (e.lhs_get()));
-    ECHO ("sending result of lhs");
-    emit_result (current_);
+    try
+    {
+      CORO_CALL (operator() (e.lhs_get()));
+      ECHO ("sending result of lhs");
+      emit_result (current_);
+    }
+    catch (object::UrbiException& ue)
+    {
+      UConnection& c = context_.cast<object::Context>()->value_get();
+      c.sendc (ue.what (), "error");
+      c.endline ();
+    }
 
     current_.reset ();
     assert (current_.get () == 0);

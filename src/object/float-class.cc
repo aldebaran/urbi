@@ -127,13 +127,35 @@ namespace object
     return x * x;
   }
 
-#define PRIMITIVE_1_FLOAT(Name, Call)                   \
+  /// Internal macro used to define a primitive for float numbers.
+  /// \param Name primitive's name
+  /// \param Call C++ code executed when primitive is called.
+  /// \param Pre C++ code executed before call (typically to check args)
+#define PRIMITIVE_1_FLOAT_(Name, Call, Pre)             \
   rObject                                               \
   float_class_ ## Name (rContext, objects_type args)	\
   {                                                     \
     FETCH_ARG(1, Float);                                \
+    Pre;                                                \
     return new Float(Call(arg1->value_get()));          \
   }
+
+  /// Define a primitive for float numbers.
+  /// \param Call Name primitive's name
+  /// \param Pre C++ code executed when primitive is called.
+#define PRIMITIVE_1_FLOAT(Name, Call)                   \
+  PRIMITIVE_1_FLOAT_(Name, Call, ;)
+
+#define PRIMITIVE_1_FLOAT_CHECK_POSITIVE(Name, Call)    \
+  PRIMITIVE_1_FLOAT_(Name, Call,                        \
+    if (args[1].unsafe_cast<Float>()->value_get() < 0)  \
+      throw UrbiException(#Name, "argument has to be positive"))
+
+#define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)     \
+  PRIMITIVE_1_FLOAT_(Name, Call,                                \
+    if ((args[1].unsafe_cast<Float>()->value_get() < Min)       \
+        || (args[1].unsafe_cast<Float>()->value_get() > Max))   \
+      throw UrbiException(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
   PRIMITIVE_2_V(float, Name, Call, Float, Float, Float)
@@ -141,7 +163,6 @@ namespace object
 #define PRIMITIVE_OP_FLOAT(Name, Op)                    \
   PRIMITIVE_OP_V(float, Name, Op, Float, Float, Float)
 
-  //FIXME: check if rvalue is 0 for % and / operators
   PRIMITIVE_OP_FLOAT(add, +)
   PRIMITIVE_2_FLOAT(div, float_div)
   PRIMITIVE_OP_FLOAT(mul, *)
@@ -164,23 +185,26 @@ namespace object
   PRIMITIVE_OP_FLOAT(geq, >=)
 
   PRIMITIVE_1_FLOAT(sin, sin)
-  PRIMITIVE_1_FLOAT(asin, asin)
+  PRIMITIVE_1_FLOAT_CHECK_RANGE(asin, asin, -1, 1)
   PRIMITIVE_1_FLOAT(cos, cos)
-  PRIMITIVE_1_FLOAT(acos, acos)
+  PRIMITIVE_1_FLOAT_CHECK_RANGE(acos, acos, -1, 1)
   PRIMITIVE_1_FLOAT(tan, tan)
   PRIMITIVE_1_FLOAT(atan, atan)
   PRIMITIVE_1_FLOAT(sgn, float_sgn)
   PRIMITIVE_1_FLOAT(abs, fabs)
   PRIMITIVE_1_FLOAT(exp, exp)
-  PRIMITIVE_1_FLOAT(log, log)
+  PRIMITIVE_1_FLOAT_CHECK_POSITIVE(log, log)
   PRIMITIVE_1_FLOAT(round, round)
   PRIMITIVE_1_FLOAT(random, float_random)
   PRIMITIVE_1_FLOAT(trunc, trunc)
   PRIMITIVE_1_FLOAT(sqr, float_sqr)
-  PRIMITIVE_1_FLOAT(sqrt, sqrt)
+  PRIMITIVE_1_FLOAT_CHECK_POSITIVE(sqrt, sqrt)
 
 #undef PRIMITIVE_2_FLOAT
+#undef PRIMITIVE_1_FLOAT_CHECK_RANGE
+#undef PRIMITIVE_1_FLOAT_CHECK_POSITIVE
 #undef PRIMITIVE_1_FLOAT
+#undef PRIMITIVE_1_FLOAT_
 #undef PRIMITIVE_OP_FLOAT
 
   /// Initialize the Float class.
