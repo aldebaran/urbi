@@ -16,6 +16,7 @@
 # include "object/object-class.hh"
 # include "object/primitive-class.hh"
 # include "object/string-class.hh"
+# include "object/urbi-exception.hh"
 
 namespace object
 {
@@ -28,11 +29,22 @@ namespace object
 
 /**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.
+ * If the argument's type is wrong, throw an UrbiException.
  */
 #define FETCH_ARG(N, Type)                              \
-  assert(args[N]->kind_get() ==                         \
-	 object::Object::kind_type(Type::traits::kind));\
-  r ## Type arg ## N = args[N].unsafe_cast<Type>();
+  if(args[N]->kind_get() !=                             \
+         object::Object::kind_type(Type::traits::kind)) \
+    throw UrbiException::wrongArgumentType(args[N]->kind_get(), \
+                object::Object::kind_type(Type::traits::kind)); \
+  r ## Type arg ## N = args[N].unsafe_cast<Type>()
+
+/**
+ * Check argument's count and throw an Urbi exception if it is wrong.
+ * \param N expected number of arguments.
+ */
+#define CHECK_ARG_COUNT(N)                              \
+  if (args.size () != (N))                              \
+    throw UrbiException::wrongArgumentCount((N), args.size ())
 
 /**
  * Define a primitive for class Class named name, which takes one
@@ -43,6 +55,7 @@ namespace object
   rObject                                                       \
   Class ## _class_ ## Name (rContext, objects_type args)	\
   {                                                             \
+    CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Type1);                                        \
     return Ret(Call(arg0 Get));                                 \
   }
@@ -63,6 +76,7 @@ namespace object
   rObject                                                       \
   Class ## _class_ ## Name (rContext, objects_type args)	\
   {                                                             \
+    CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
     return Ret(Call(arg0 Get, arg1 Get));                       \
@@ -83,6 +97,7 @@ namespace object
   rObject                                                       \
   Class ## _class_ ## Name (rContext, objects_type args)        \
   {                                                             \
+    CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     rObject arg1 = args[1];                                     \
     return (Call(arg0, arg1));                                  \
@@ -95,6 +110,7 @@ namespace object
   rObject                                                       \
   Class ## _class_ ## Name (rContext, objects_type args)	\
   {                                                             \
+    CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
     FETCH_ARG(1, Type2);                                        \
     return Ret(arg0 Get Op arg1 Get);				\

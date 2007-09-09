@@ -4,11 +4,11 @@
  */
 
 #include <algorithm>
-#include <stdexcept>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include "object/object.hh"
 #include "object/atom.hh"
+#include "object/urbi-exception.hh"
 
 namespace object
 {
@@ -54,8 +54,7 @@ namespace object
       return it->second;
 
     if (lu.find (this) != lu.end ())
-      throw std::invalid_argument (std::string("cannot find: ")
-				   + boost::lexical_cast<std::string>(k));
+      throw UrbiException::lookupFailed(boost::lexical_cast<std::string>(k));
     lu.insert (this);
 
     /// Look in parent slots (depth first search)
@@ -64,11 +63,10 @@ namespace object
       {
 	return p->lookup (k, lu);
       }
-      catch (std::exception)
+      catch (UrbiException&)
       { }
     /// If not found, throw exception
-    throw std::invalid_argument (std::string("cannot find: ")
-				 + boost::lexical_cast<std::string>(k));
+    throw UrbiException::lookupFailed(boost::lexical_cast<std::string>(k));
   }
 
   std::ostream&
@@ -85,7 +83,7 @@ namespace object
       // Should be an rString.
       o << lookup("type").cast<String>()->value_get ();
     }
-    catch (std::exception e)
+    catch (UrbiException&)
     {}
     return o << '_' << this;
   }

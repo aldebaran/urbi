@@ -26,7 +26,7 @@ namespace object
   float_##Name (libport::ufloat l, libport::ufloat r)                   \
   {                                                                     \
     if (r == 0)                                                         \
-      throw UrbiException("Operator " #Operator, ErrorMessage);         \
+      throw UrbiException::primitiveError("Operator " #Operator, ErrorMessage);\
     return l Operator r;                                                \
   }
 
@@ -36,7 +36,7 @@ namespace object
   float_##Name (libport::ufloat l, libport::ufloat r)                   \
   {                                                                     \
     if (r == 0)                                                         \
-      throw UrbiException(#Method, ErrorMessage);                       \
+      throw UrbiException::primitiveError(#Method, ErrorMessage);       \
     return Method(l, r);                                                \
   }
 
@@ -135,6 +135,7 @@ namespace object
   rObject                                               \
   float_class_ ## Name (rContext, objects_type args)	\
   {                                                     \
+    CHECK_ARG_COUNT(2);                                 \
     FETCH_ARG(1, Float);                                \
     Pre;                                                \
     return new Float(Call(arg1->value_get()));          \
@@ -149,13 +150,14 @@ namespace object
 #define PRIMITIVE_1_FLOAT_CHECK_POSITIVE(Name, Call)    \
   PRIMITIVE_1_FLOAT_(Name, Call,                        \
     if (args[1].unsafe_cast<Float>()->value_get() < 0)  \
-      throw UrbiException(#Name, "argument has to be positive"))
+      throw UrbiException::primitiveError(#Name,        \
+              "argument has to be positive"))
 
 #define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)     \
   PRIMITIVE_1_FLOAT_(Name, Call,                                \
     if ((args[1].unsafe_cast<Float>()->value_get() < Min)       \
         || (args[1].unsafe_cast<Float>()->value_get() > Max))   \
-      throw UrbiException(#Name, "invalid range"))
+      throw UrbiException::primitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
   PRIMITIVE_2_V(float, Name, Call, Float, Float, Float)

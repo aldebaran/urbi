@@ -32,6 +32,7 @@ state.cc					\
 string-class.hh					\
 string-class.cc					\
 urbi-exception.hh				\
+urbi-exception.hxx				\
 urbi-exception.cc
 
 

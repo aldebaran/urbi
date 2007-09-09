@@ -5,9 +5,11 @@
 
 #ifndef OBJECT_URBI_EXCEPTION_HH
 # define OBJECT_URBI_EXCEPTION_HH
-
 # include <exception>
 # include <string>
+
+# include "object/fwd.hh"
+# include "object/object.hh"
 
 namespace object
 {
@@ -15,30 +17,52 @@ namespace object
   /// occurs in an URBI primitive.
   class UrbiException : public std::exception
   {
-    /// \name Ctor & dtor.
-    /// \{
   public:
+    /// Destructor.
+    virtual ~UrbiException () throw ();
+
+    /// \brief Construct an UrbiException (used when lookup fails).
+    /// \param slot Searched slot.
+    static UrbiException lookupFailed (std::string slot);
+
     /// \brief Construct an UrbiException from a primitive and a message.
     /// \param primitive primitive which has thrown the error.
     /// \param msg error message which will be sent.
-    explicit UrbiException (std::string primitive, std::string msg);
+    static UrbiException primitiveError (std::string primitive,
+                                  std::string msg);
 
-    /// \brief Contrusct an exception which contains a raw message.
-    /// \param msg raw error message
-    explicit UrbiException (std::string msg);
+    /// Construct an UrbiException (used when types mismatch in a primitive).
+    /// \param real Real type.
+    /// \param expected Expetected type.
+    static UrbiException wrongArgumentType (Object::kind_type real,
+                                            Object::kind_type expected);
 
-    virtual ~UrbiException () throw ();
-
-    /// \}
+    /// Construct an UrbiException (used when args count is wrong).
+    /// \param argReal Number of arguments given.
+    /// \param argExpected Number of arguments expected.
+    static UrbiException wrongArgumentCount (unsigned argReal,
+                                             unsigned argExpected);
 
     /// Return the exception's error message.
     virtual const char* what () const throw ();
 
+  protected:
+    /// \name Constructor
+    /// \brief Construct an exception which contains a raw message.
+    /// \param msg raw error message
+    explicit UrbiException (std::string msg);
+
   private:
     /// Error message.
     std::string msg_;
+
+    /// Error messages.
+    static const char lookupFailed_[];
+    static const char primitiveError_[];
+    static const char wrongArgumentType_[];
+    static const char wrongArgumentCount_[];
   };
 }; // namespace object
 
-
+# include "object/urbi-exception.hxx"
 #endif //! OBJECT_URBI_EXCEPTION_HH
