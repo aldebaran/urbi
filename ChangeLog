@@ -1,5 +1,10 @@
 2007-09-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Remove useless file.
+	* buildnumber.php: Remove.
+
+2007-09-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Minor changes.
 	* AUTHORS,
 	* NEWS,
