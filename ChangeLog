@@ -1,3 +1,11 @@
+2007-09-09  mefyl  <mefyl@gruntech.net>
+
+	Remove coroutines debug traces.
+	* src/console.cc,
+	* src/runner/scheduler.cc,
+	* src/uconnection.cc: Here.
+	* src/runner/runner.hh: Remove trailing whitespace.
+
 2007-09-08  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Add introspection functions.

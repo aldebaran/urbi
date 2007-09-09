@@ -1,4 +1,4 @@
-#define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "config.h"

@@ -33,8 +33,8 @@ namespace runner
     /// know who is its \a scheduler and will execute \a ast.  Memory
     /// ownership of \a ast is transferred to the Runner.
     Runner (rContext ctx, Scheduler& scheduler, ast::Ast* ast);
-
     /// Destroy a Runner.
+
     virtual ~Runner ();
     /// \}
 

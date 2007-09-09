@@ -3,7 +3,7 @@
  ** \brief Implementation of runner::Scheduler.
  */
 
-#define ENABLE_DEBUG_TRACES
+// #define ENABLE_DEBUG_TRACES
 
 #include <cassert>
 
