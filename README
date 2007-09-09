@@ -3,6 +3,7 @@
 --enable-host=URBI-HOST
 --enable-env=URBI-ENV
 --with-openr[=sdk-path]
+--with-boost=path
 
 This package builds a single kernel (libkernel).  If you pass
 --with-openr, this library will use the openr communication parts,

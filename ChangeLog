@@ -1,6 +1,13 @@
 2007-09-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Minor changes.
+	* AUTHORS,
+	* NEWS,
+	* README: Adjust.
+
+2007-09-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Minor changes.
 	* configure.ac: Aesthetic changes.
 	* src/runner/coroutine.cc,
 	* src/runner/coroutine.hh: Disable debug traces.
