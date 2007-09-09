@@ -1,6 +1,6 @@
 #include <boost/foreach.hpp>
 
-# define ENABLE_DEBUG_TRACES
+//# define ENABLE_DEBUG_TRACES
 # include "libport/compiler.hh"
 
 # include "runner/coroutine.hh"

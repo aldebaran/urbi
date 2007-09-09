@@ -16,7 +16,7 @@
 # include <boost/preprocessor/tuple.hpp>
 # include <boost/preprocessor/repeat.hpp>
 
-# define ENABLE_DEBUG_TRACES
+//# define ENABLE_DEBUG_TRACES
 # include "libport/compiler.hh"
 
 # include "runner/fwd.hh"

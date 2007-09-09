@@ -706,7 +706,9 @@ UConnection::execute ()
   if (!active_command_)
     return;
 
+#ifdef ENABLE_DEBUG_TRACES
   std::cerr << "Command is: " << *active_command_ << std::endl;
+#endif
 
   Runner* runner = new Runner(context_,
 			      ::urbiserver->getScheduler (),
