@@ -130,7 +130,7 @@ sys.stdout = visitor_cc
 print tools.banner("ast/pretty-printer.cc",
 		   "Implementation of ast::PrettyPrinter.") + """
 #include <ostream>
-#include <boost/foreach.hpp>
+#include "libport/foreach.hh"
 #define foreach BOOST_FOREACH
 #include "pretty-printer.hh"
 #include "all.hh"

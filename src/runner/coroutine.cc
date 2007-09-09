@@ -1,4 +1,4 @@
-#include <boost/foreach.hpp>
+#include "libport/foreach.hh"
 
 //# define ENABLE_DEBUG_TRACES
 # include "libport/compiler.hh"

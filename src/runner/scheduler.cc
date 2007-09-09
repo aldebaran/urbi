@@ -7,8 +7,7 @@
 
 #include <cassert>
 
-#include <boost/foreach.hpp>
-
+#include "libport/foreach.hh"
 #include "libport/compiler.hh"
 #include "libport/containers.hh"
 

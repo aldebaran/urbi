@@ -3,7 +3,7 @@
  ** \brief Creation of the URBI object list.
  */
 
-#include <boost/foreach.hpp>
+#include "libport/foreach.hh"
 
 #include "object/list-class.hh"
 #include "object/atom.hh"

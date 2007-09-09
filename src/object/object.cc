@@ -5,8 +5,8 @@
 
 #include <algorithm>
 #include <stdexcept>
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include "libport/foreach.hh"
 #include "object/object.hh"
 #include "object/atom.hh"
 
