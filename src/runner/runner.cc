@@ -5,6 +5,8 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include <boost/foreach.hpp>
+
 #include "kernel/uconnection.hh"
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"

@@ -6,7 +6,8 @@
 #ifndef OBJECT_ATOM_HXX
 # define OBJECT_ATOM_HXX
 
-# include "libport/foreach.hh"
+# include <boost/foreach.hpp>
+
 # include "libport/deref.hh"
 
 # include "ast/pretty-printer.hh"

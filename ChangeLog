@@ -1,16 +1,5 @@
 2007-09-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
-	Use foreach from libport.
-	* dev/ast-pretty-printer-gen,
-	* src/object/atom.hxx,
-	* src/object/list-class.cc,
-	* src/object/object.cc,
-	* src/runner/coroutine.cc,
-	* src/runner/scheduler.cc: Here.
-	* src/runner/runner.cc: Remove useless include.
-
-2007-09-09  Benoit Sigoure  <tsuna@lrde.epita.fr>
-
 	Remove useless file.
 	* buildnumber.php: Remove.
 
