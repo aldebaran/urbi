@@ -63,6 +63,7 @@ namespace object
   static rObject
   object_class_slotNames (rContext, objects_type args)
   {
+    CHECK_ARG_COUNT(1);
     rObject obj = args[0];
 
     object::list_traits::type l;
@@ -76,6 +77,7 @@ namespace object
   static rObject
   object_class_parents (rContext, objects_type args)
   {
+    CHECK_ARG_COUNT(1);
     rObject obj = args[0];
 
     object::list_traits::type l;
@@ -89,6 +91,7 @@ namespace object
   static rObject
   object_class_getSlot (rContext, objects_type args)
   {
+    CHECK_ARG_COUNT(2);
     rObject obj = args[0];
     FETCH_ARG(1, String);
 
@@ -99,6 +102,7 @@ namespace object
   static rObject
   object_class_setSlot (rContext, objects_type args)
   {
+    CHECK_ARG_COUNT(3);
     rObject obj = args[0];
     FETCH_ARG(1, String);
     rObject val = args[2];

@@ -326,7 +326,7 @@ namespace runner
     catch (object::UrbiException& ue)
     {
       UConnection& c = context_.cast<object::Context>()->value_get();
-      c.sendc (ue.what (), "error");
+      c.sendc ("!!! " ue.what (), "error");
       c.endline ();
     }*/
 

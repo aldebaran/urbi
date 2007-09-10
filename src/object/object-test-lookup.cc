@@ -62,7 +62,7 @@ main ()
   {
     ECHOVAL(top, top_nosuch);
   }
-  catch (UrbiException)
+  catch (UrbiException&)
   {
     std::cerr << "top_nosuch : " << "not found" << " OK" << std::endl;
   }
