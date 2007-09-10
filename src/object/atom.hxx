@@ -128,7 +128,7 @@ namespace object
   std::ostream&
   Atom<code_traits>::print(std::ostream& out) const
   {
-    // FIXME
+    // FIXME: discuss what we should print here.
     out << "<code>";
     return out;
   }
@@ -147,7 +147,7 @@ namespace object
   std::ostream&
   Atom<primitive_traits>::print(std::ostream& out) const
   {
-    // FIXME
+    // FIXME: discuss what we should print here.
     out << "<primitive>";
     return out;
   }

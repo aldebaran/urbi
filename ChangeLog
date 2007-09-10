@@ -1,5 +1,11 @@
 2007-09-10  Thomas Moulard  <thomas.moulard@gmail.com>
 
+	Fix slotNames.
+	* src/object/atom.hxx: Fix FIXME's.
+	* src/object/object-class.cc: Fix slotNames returned values.
+
+2007-09-10  Thomas Moulard  <thomas.moulard@gmail.com>
+
 	Check argument's count in object's primitives.
 	* src/object/object-class.cc: Check argument's count.
 	* src/object/object-test-lookup.cc: Catch exceptions by reference.
