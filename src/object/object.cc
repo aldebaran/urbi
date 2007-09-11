@@ -75,6 +75,12 @@ namespace object
     return o;
   }
 
+  bool
+  Object::operator< (const Object& rhs) const
+  {
+    return this < &rhs;
+  }
+
   std::ostream&
   Object::id_dump (std::ostream& o) const
   {

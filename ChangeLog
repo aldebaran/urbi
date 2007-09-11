@@ -1,3 +1,12 @@
+2007-09-12  Thomas Moulard  <thomas@moulard.net>
+
+	Add sort primitive.
+	* src/object/atom.hh: Add comparison operator.
+	* src/object/atom.hxx: Idem.
+	* src/object/list-class.cc: Add sort primitive.
+	* src/object/object.cc: Add comparison operator.
+	* src/object/object.hh: Idem.
+
 2007-09-10  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Fix slotNames.

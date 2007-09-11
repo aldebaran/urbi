@@ -42,6 +42,12 @@ namespace object
     /// The value held.
     const typename Traits::type value_get () const;
 
+    /// Comparison methods
+    /// \{
+    bool operator< (const Atom& rhs) const;
+    virtual bool operator< (const Object& rhs) const;
+    /// \}
+
     /// The held value.
     typename libport::ref_traits<typename Traits::type>::type value_get ();
 

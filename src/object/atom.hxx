@@ -69,6 +69,41 @@ namespace object
 
   template <typename Traits>
   inline
+  bool
+  Atom<Traits>::operator< (const Atom& rhs) const
+  {
+    return value_get () < rhs.value_get ();
+  }
+
+  template <>
+  inline
+  bool
+  Atom<object::code_traits>::operator< (const Atom& rhs) const
+  {
+    return this < &rhs;
+  }
+
+  template <>
+  inline
+  bool
+  Atom<object::context_traits>::operator< (const Atom& rhs) const
+  {
+    return this < &rhs;
+  }
+
+  template <typename Traits>
+  inline
+  bool
+  Atom<Traits>::operator< (const Object& rhs) const
+  {
+    const Atom* a = dynamic_cast<const Atom*> (&rhs);
+    if (a)
+      return this->operator< (*a);
+    return this->Object::operator< (rhs);
+  }
+
+  template <typename Traits>
+  inline
   typename libport::ref_traits<typename Traits::type>::type
   Atom<Traits>::value_get ()
   {

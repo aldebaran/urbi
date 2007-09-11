@@ -106,6 +106,9 @@ namespace object
     virtual std::ostream& special_slots_dump (std::ostream& o) const;
     /// \}
 
+    /// Comparison methods.
+    virtual bool operator< (const Object& rhs) const;
+
   private:
     /// Lookup field in object hierarchy.
     const rObject& lookup (const key_type& k, lookup_set_type& lu) const;

@@ -83,6 +83,21 @@ namespace object
       return l;
     }
 
+    /// Binary predicate used to sort lists.
+    static bool
+    compareListItems (const rObject a, const rObject b)
+    {
+      return *a < *b;
+    }
+
+    /// Sort a list.
+    static rObject
+    sort (rList l)
+    {
+      l->value_get ().sort (compareListItems);
+      return l;
+    }
+
   }
 
   /*-------------------------.
@@ -103,6 +118,8 @@ namespace object
 
   PRIMITIVE_2_OBJECT(list, insert, insert, List);
 
+  PRIMITIVE_1_LIST (sort);
+
   void
   list_class_initialize ()
   {
@@ -117,6 +134,7 @@ namespace object
     //DECLARE(insert, insert);
     Primitive* p = new Primitive (list_class_insert);
     list_class->slot_set ("insert", p);
+    DECLARE (sort, sort);
 #undef DECLARE
   }
 
