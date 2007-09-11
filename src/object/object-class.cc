@@ -69,7 +69,7 @@ namespace object
     object::list_traits::type l;
     BOOST_FOREACH (const Object::slot_type& p, obj->slots_get())
       l.push_back (new object::String (p.first.name_get ()));
-
+    l.sort ();
     return new object::List (l);
   }
 

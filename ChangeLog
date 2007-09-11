@@ -1,5 +1,10 @@
 2007-09-12  Thomas Moulard  <thomas@moulard.net>
 
+	Sort slotNames output.
+	* src/object/object-class.cc: Here.
+
+2007-09-12  Thomas Moulard  <thomas@moulard.net>
+
 	Add sort primitive.
 	* src/object/atom.hh: Add comparison operator.
 	* src/object/atom.hxx: Idem.
