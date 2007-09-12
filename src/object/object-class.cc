@@ -95,7 +95,7 @@ namespace object
     rObject obj = args[0];
     FETCH_ARG(1, String);
 
-    return (*obj)[libport::Symbol(arg1->value_get())];
+    return (*obj)[arg1->value_get()];
   }
 
   /// Set a slot.
@@ -107,7 +107,7 @@ namespace object
     FETCH_ARG(1, String);
     rObject val = args[2];
 
-    (*obj)[libport::Symbol(arg1->value_get())] = val;
+    (*obj)[arg1->value_get()] = val;
     return obj;
   }
 

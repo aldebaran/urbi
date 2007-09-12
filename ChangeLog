@@ -1,5 +1,11 @@
 2007-09-12  Thomas Moulard  <thomas@moulard.net>
 
+	Make URBI strings symbols.
+	* src/object/atom.hh: Here.
+	* src/object/object-class.cc: Remove useless symbol construction.
+
+2007-09-12  Thomas Moulard  <thomas@moulard.net>
+
 	Revert r1505.
 	* src/object/object-class.cc: Don't sort.
 

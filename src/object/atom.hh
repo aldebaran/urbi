@@ -9,6 +9,7 @@
 # include "kernel/fwd.hh"
 # include "libport/ufloat.h"
 # include "libport/select-ref.hh"
+# include "libport/symbol.hh"
 # include "object/object.hh"
 # include "object/state.hh"
 
@@ -134,7 +135,7 @@ namespace object
 
   struct string_traits
   {
-    typedef std::string type;
+    typedef libport::Symbol type;
     enum { kind = Object::kind_string };
   };
 
