@@ -6,7 +6,10 @@
 #ifndef OBJECT_FLOAT_HH
 # define OBJECT_FLOAT_HH
 
+# include "ast/fwd.hh"
+
 # include "kernel/fwd.hh"
+
 # include "libport/ufloat.h"
 # include "libport/select-ref.hh"
 # include "libport/symbol.hh"
@@ -69,7 +72,7 @@ namespace object
 
   struct code_traits
   {
-    typedef ast::Exp& type;
+    typedef ast::Function& type;
     enum { kind = Object::kind_code };
   };
 

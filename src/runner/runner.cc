@@ -131,21 +131,31 @@ namespace runner
   void
   Runner::operator() (ast::CallExp& e)
   {
-    CORO_CTX_VARS ((6, (
+    CORO_CTX_VARS ((10, (
       (bool, call_code),
       (rObject, val),
-      // Iterate over arguments, with a special case for the target.
+      // Iteration over un-evaluated effective arguments.
       (ast::exps_type::const_iterator, i),
       (ast::exps_type::const_iterator, i_end),
       // Gather the arguments, including the target.
       (object::objects_type, args),
-      (rObject, tgt)
+      (rObject, tgt),
+      // Formal argument iterator.
+      (ast::symbols_type::const_iterator, fi),
+      // Effective (evaluated) argument iterator.
+      (object::objects_type::const_iterator, ei),
+      // Object to bind the arguments.
+      (rObject, bound_args),
+      // The called function.
+      (ast::Function*, fn)
     )));
 
     /*-------------------------.
     | Evaluate the arguments.  |
     `-------------------------*/
     PING ();
+
+    // Iterate over arguments, with a special case for the target.
     i = e.args_get ().begin ();
     i_end = e.args_get ().end ();
 
@@ -188,10 +198,34 @@ namespace runner
 	  current_ = val;
 	  break;
       }
+
+      /*---------------------------.
+      | Calling an Urbi function.  |
+      `---------------------------*/
       if (call_code)
       {
 	PING ();
-	CORO_CALL (current_ = eval (val.cast<object::Code> ()->value_get ()));
+	// Create a new object to store the arguments.
+	bound_args = new object::Object;
+	
+	// Fetch the called function.
+	fn = &val.cast<object::Code> ()->value_get ();
+	
+	// Bind formal and effective arguments.
+	// The target is "self".
+	// FIXME: mismatches.
+	ei = args.begin();
+	bound_args->slot_set (libport::Symbol("self"), *ei);
+	++ei;
+	for (fi = fn->formals_get().begin();
+	     fi != fn->formals_get().end() && ei != args.end();
+	     ++fi, ++ei)
+	  bound_args->slot_set (**fi, *ei);
+	ECHO("bound args: " << *bound_args);
+	// Change the current context and call.
+	std::swap(bound_args, locals_);
+	CORO_CALL (current_ = eval (*fn->body_get()));
+	std::swap(bound_args, locals_);
       }
     }
 
@@ -245,8 +279,7 @@ namespace runner
     YIELD ();
 
     PING ();
-    // FIXME: Arguments.
-    current_ = new object::Code (*e.body_get());
+    current_ = new object::Code (e);
 
     CORO_END;
   }

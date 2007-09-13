@@ -164,9 +164,7 @@ namespace object
   std::ostream&
   Atom<code_traits>::print(std::ostream& out) const
   {
-    // FIXME: discuss what we should print here.
-    out << "<code>";
-    return out;
+    return out << value_get();
   }
 
   template <>
