@@ -30,6 +30,8 @@
 #include <sstream>
 #include <string>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
 #include "urbi/uobject.hh"
@@ -275,45 +277,43 @@ UServer::work_access_and_change_ ()
 void
 UServer::work_handle_connections_ ()
 {
-  for (std::list<UConnection*>::iterator r = connectionList.begin();
-       r != connectionList.end();
-       ++r)
-    if ((*r)->isActive())
+  BOOST_FOREACH (UConnection* c, connectionList)
+    if (c->isActive())
     {
-      if (!(*r)->isBlocked())
-	(*r)->continueSend();
+      if (!c->isBlocked())
+	c->continueSend();
 
       if (signalcpuoverload)
       {
-	// (*r)->errorSignal (UERROR_CPU_OVERLOAD);
-        ECHO ("UERROR_CPU_OVERLOAD");
+	// c->errorSignal (UERROR_CPU_OVERLOAD);
+	ECHO ("UERROR_CPU_OVERLOAD");
 	signalcpuoverload = false;
       }
 
-      (*r)->errorCheck(UERROR_SEND_BUFFER_FULL);
-      (*r)->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (*r)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (*r)->errorCheck(UERROR_CPU_OVERLOAD);
+      c->errorCheck(UERROR_SEND_BUFFER_FULL);
+      c->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      c->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      c->errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
-      if ((*r)->has_pending_command ())
+      if (c->has_pending_command ())
       {
-	(*r)->obstructed = true; // will be changed to 'false' if the whole
-                                 // tree is visited
-	(*r)->treeLock.lock ();
-	(*r)->inwork = true; // to distinguish this call of execute from the
-                             // one in receive
-	(*r)->execute ();
-	(*r)->inwork = false;
-	(*r)->treeLock.unlock ();
+	c->obstructed = true; // will be changed to 'false' if the whole
+				 // tree is visited
+	c->treeLock.lock ();
+	c->inwork = true; // to distinguish this call of execute from the
+			     // one in receive
+	c->execute ();
+	c->inwork = false;
+	c->treeLock.unlock ();
       }
 
-      if ((*r)->newDataAdded)
+      if (c->newDataAdded)
       {
 	// used by loadFile and exec to delay the parsing after the
 	// completion of execute().
-	(*r)->newDataAdded = false;
-	(*r)->received("");
+	c->newDataAdded = false;
+	c->received("");
       }
     }
 }
@@ -324,15 +324,13 @@ UServer::work_handle_stopall_ ()
   if (resetting && stage==0)
     stopall = true;
 
-  for (std::list<UConnection*>::iterator r = connectionList.begin();
-       r != connectionList.end();
-       ++r)
-    if ((*r)->isActive() && (*r)->has_pending_command ())
+  BOOST_FOREACH (UConnection* c, connectionList)
+    if (c->isActive() && c->has_pending_command ())
     {
-      if ((*r)->killall || stopall)
+      if (c->killall || stopall)
       {
-	(*r)->killall = false;
-	(*r)->drop_pending_commands ();
+	c->killall = false;
+	c->drop_pending_commands ();
       }
     }
 
@@ -431,35 +429,35 @@ UServer::work_reset_if_needed_ ()
   {
     //delete objects first
     for (HMvariabletab::iterator i = variabletab.begin();
-         i != variabletab.end();
-         ++i)
+	 i != variabletab.end();
+	 ++i)
       if (i->second->value
-          && i->second->value->dataType == DATA_OBJ)
-        varToReset.push_back(i->second);
+	  && i->second->value->dataType == DATA_OBJ)
+	varToReset.push_back(i->second);
 
     while (!varToReset.empty())
       for (std::list<UVariable*>::iterator it = varToReset.begin();
-           it != varToReset.end();)
-        if ((*it)->isDeletable())
-        {
-          delete *it;
-          it = varToReset.erase(it);
-        }
-        else
-          ++it;
+	   it != varToReset.end();)
+	if ((*it)->isDeletable())
+	{
+	  delete *it;
+	  it = varToReset.erase(it);
+	}
+	else
+	  ++it;
 
     //delete hubs
     for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-         i != urbi::objecthublist->end();
-         ++i)
+	 i != urbi::objecthublist->end();
+	 ++i)
       delete (*i)->getUObjectHub ();
 
     //delete the rest
     for (HMvariabletab::iterator i = variabletab.begin();
-         i != variabletab.end();
-         ++i)
+	 i != variabletab.end();
+	 ++i)
       if (i->second->uservar)
-        varToReset.push_back(i->second);
+	varToReset.push_back(i->second);
 
     libport::deep_clear (varToReset);
 
@@ -474,21 +472,21 @@ UServer::work_reset_if_needed_ ()
     //tagtab.clear();
 
     for (std::list<UConnection*>::iterator i = connectionList.begin();
-         i != connectionList.end();
-         ++i)
+	 i != connectionList.end();
+	 ++i)
       if ((*i)->isActive())
-        (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
+	(*i)->send("*** Reset completed. Now, restarting...\n", "reset");
 
     //restart hubs
     for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-         i != urbi::objecthublist->end();
-         ++i)
+	 i != urbi::objecthublist->end();
+	 ++i)
       (*i)->init((*i)->name);
 
     //restart uobjects
     for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-         i != urbi::objectlist->end();
-         ++i)
+	 i != urbi::objectlist->end();
+	 ++i)
       (*i)->init((*i)->name);
 
     //reload URBI.INI
@@ -503,14 +501,14 @@ UServer::work_reset_if_needed_ ()
   {
     //reload CLIENT.INI
     for (std::list<UConnection*>::iterator i = connectionList.begin();
-         i != connectionList.end();
-         ++i)
+	 i != connectionList.end();
+	 ++i)
       if ((*i)->isActive() && (*i) != ghost_)
       {
-        (*i)->send("*** Restart completed.\n", "reset");
-        loadFile("CLIENT.INI", &(*i)->recvQueue());
-        (*i)->newDataAdded = true;
-        (*i)->send("*** Ready.\n", "reset");
+	(*i)->send("*** Restart completed.\n", "reset");
+	loadFile("CLIENT.INI", &(*i)->recvQueue());
+	(*i)->newDataAdded = true;
+	(*i)->send("*** Ready.\n", "reset");
       }
     resetting = false;
     stage = 0;
