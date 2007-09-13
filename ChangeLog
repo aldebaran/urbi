@@ -1,3 +1,10 @@
+2007-09-13  mefyl  <mefyl@lrde.epita.fr>
+
+	Handle the 'context' special message.
+	* src/runner/runner.cc: Catch and handle the message.
+	* src/runner/runner.hxx: Remove obsolete 'context' slot.
+	* src/object/atom.hxx: Print out context, for test purpose.
+
 2007-09-13  Thomas Moulard  <thomas@moulard.net>
 
 	Add string primitives.

@@ -154,7 +154,8 @@ namespace object
   std::ostream&
   Atom<context_traits>::print(std::ostream& out) const
   {
-    // FIXME: For now, don't print anything.
+    // FIXME: discuss what we should print here.
+    out << "<context>";
     return out;
   }
 

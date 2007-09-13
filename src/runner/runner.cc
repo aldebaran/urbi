@@ -6,6 +6,7 @@
 #include "libport/compiler.hh"
 
 #include <boost/foreach.hpp>
+#include <libport/symbol.hh>
 
 #include "kernel/uconnection.hh"
 #include "object/atom.hh"
@@ -14,6 +15,11 @@
 
 namespace runner
 {
+  namespace
+  {
+    /// Name of the 'context' message
+    static const libport::Symbol ctx_msg_name("context");
+  }
 
 /// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
 #define JOB(Runner) static_cast<Job*> (Runner)
@@ -139,42 +145,50 @@ namespace runner
     PING ();
     i = e.args_get ().begin ();
     i_end = e.args_get ().end ();
-    CORO_CALL (tgt = target(*i));
 
-    // Ask the target for the handler of the message.
-    val = tgt->lookup (e.name_get ());
-
-    args.push_back (tgt);
-    PING ();
-    for (++i; i != i_end; ++i)
+    // If the message is 'context' and there's no target, we return
+    // the current context
+    if (!*i && e.name_get() == ctx_msg_name)
+      current_ = context_;
+    else
     {
-      CORO_CALL (eval (**i));
+      CORO_CALL (tgt = target(*i));
+
+      // Ask the target for the handler of the message.
+      val = tgt->lookup (e.name_get ());
+
+      args.push_back (tgt);
       PING ();
-      args.push_back (current_);
-    }
+      for (++i; i != i_end; ++i)
+      {
+        CORO_CALL (eval (**i));
+        PING ();
+        args.push_back (current_);
+      }
 
-    // We may have to run a primitive, or some code.
-    // We cannot use CORO_* in a switch.
-    call_code = false;
-    switch (val->kind_get ())
-    {
-      case object::Object::kind_primitive:
-	PING ();
-	current_ = val.cast<object::Primitive>()->value_get()(context_, args);
-	break;
-      case object::Object::kind_code:
-	PING ();
-	call_code = true;
-	break;
-      default:
-	PING ();
-	current_ = val;
-	break;
-    }
-    if (call_code)
-    {
-      PING ();
-      CORO_CALL (current_ = eval (val.cast<object::Code> ()->value_get ()));
+      // We may have to run a primitive, or some code.
+      // We cannot use CORO_* in a switch.
+      call_code = false;
+      switch (val->kind_get ())
+      {
+        case object::Object::kind_primitive:
+          PING ();
+          current_ = val.cast<object::Primitive>()->value_get()(context_, args);
+          break;
+        case object::Object::kind_code:
+          PING ();
+          call_code = true;
+          break;
+        default:
+          PING ();
+          current_ = val;
+          break;
+      }
+      if (call_code)
+      {
+        PING ();
+        CORO_CALL (current_ = eval (val.cast<object::Code> ()->value_get ()));
+      }
     }
 
     CORO_END;
