@@ -1,5 +1,12 @@
 2007-09-13  Akim Demaille  <demaille@gostai.com>
 
+	Insert code after the includes
+	* dev/ast-nodes-gen: Insert the prologue after the
+	first includes so that the added bits can use entities
+	declared in the headers.
+
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
 	Use foreach
 	* src/userver.cc (work_handle_connections_)
 	(work_handle_stopall_): here.
