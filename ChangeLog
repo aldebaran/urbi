@@ -1,5 +1,36 @@
 2007-09-13  Akim Demaille  <demaille@gostai.com>
 
+	Introduce Nary
+	* dev/ast-fwd-gen: Support fwd_hh_prologue.
+	* dev/ast_params.py: Define it.
+	Indentation changes.
+
+	* src/ast/ast.yml (BinaryExp): Rename as...
+	(Binary): this.
+	(SemicolonExp, CommaExp): Remove, replaced by...
+	(Nary): this.
+	* src/ast/all.hh: Regen.
+	* src/parser/bison/ugrammar.y (cstmt): New, used to handle
+	| and &.
+	(stmts): Now produce Nary.
+	Handle , and ;.
+	* src/runner/runner.hh, src/runner/runner.cc (SemicolonExp):
+	Remove its support, replaced by...
+	(Nary): this new one.
+	(Noop): Set the current_ result to 0 instead of leaking the
+	previous value.
+	* include/kernel/uconnection.hh (active_command_): Be an
+	Nary.
+	* src/uconnection.cc: Adjust.
+	(received): Instead of having a growing and shrinking tree,
+	work on a single Nary by pushing into it the commands as they
+	arrive.
+	* src/userver.cc (UServer::work_handle_connections_): Comment out
+	code that made sense only in k1 with a growing/shrinking tree.
+	* tests-local.mk: Two more failures related to emit_result.
+
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
 	* src/runner/coroutine.cc: Use passert
 
 2007-09-13  Akim Demaille  <demaille@gostai.com>

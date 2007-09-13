@@ -101,14 +101,8 @@
 	case Flavorable::UAND:
 	  res = new ast::AndExp (l, lhs, rhs);
 	  break;
-	case Flavorable::UCOMMA:
-	  res = new ast::CommaExp (l, lhs, rhs);
-	  break;
 	case Flavorable::UPIPE:
 	  res = new ast::PipeExp (l, lhs, rhs);
-	  break;
-	case Flavorable::USEMICOLON:
-	  res = new ast::SemicolonExp (l, lhs, rhs);
 	  break;
 	default:
 	  pabort(op);
@@ -301,9 +295,10 @@
 {
   ast::Exp*       expr;
   ast::CallExp*   call;
+  ast::Nary*      nary;
 }
 
-%printer { debug_stream() << libport::deref << $$; } <expr> <call>;
+%printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
 
 %type <call>  name
 %type <call>  lvalue
@@ -320,7 +315,6 @@
 %type <expr>  raw_arguments
 %type <expr>  softtest
 %type <expr>  stmt
-%type <expr>  stmts
 
 /*----------------------.
 | Operator precedence.  |
@@ -364,7 +358,14 @@ root:
     up.command_tree_set (0);
   }
 | lvalue "=" binary ";"  { /* FIXME: */ }
-| stmts                  { up.command_tree_set ($1); }
+| stmts
+  {
+    // The last child is certainly a noop.  Remove it, it is useless,
+    // and troublesome.
+    passert($1->back(), dynamic_cast<ast::Noop*>($1->back().first));
+    $1->pop_back();
+    up.command_tree_set ($1);
+  }
 ;
 
 binary:
@@ -387,12 +388,36 @@ raw_arguments:
 | stmts.  |
 `--------*/
 
+%type <nary>  stmts;
+
+// Statements: with ";" and ",".
 stmts:
+  cstmt
+  {
+    // FIXME: Adjust the locations.
+    $$ = new ast::Nary();
+    $$->children_get().push_back(ast::exec_exp_type($1, ast::execution_none));
+  }
+| stmts ";" cstmt
+  {
+    // The ";" qualifies the previous command.
+    $$->back().second = ast::execution_foreground;
+    $$->children_get().push_back(ast::exec_exp_type($3, ast::execution_none));
+  }
+| stmts "," cstmt
+  {
+    // The "," qualifies the previous command.
+    $$->back().second = ast::execution_background;
+    $$->children_get().push_back(ast::exec_exp_type($3, ast::execution_none));
+  }
+;
+
+%type <expr> cstmt;
+// Composite statement: with "|" and "&".
+cstmt:
   stmt
-| stmts "," stmts { $$ = new_bin(@$, $2, $1, $3); }
-| stmts ";" stmts { $$ = new_bin(@$, $2, $1, $3); }
-| stmts "|" stmts { $$ = new_bin(@$, $2, $1, $3); }
-| stmts "&" stmts { $$ = new_bin(@$, $2, $1, $3); }
+| cstmt "|" cstmt { $$ = new_bin(@$, $2, $1, $3); }
+| cstmt "&" cstmt { $$ = new_bin(@$, $2, $1, $3); }
 ;
 
 

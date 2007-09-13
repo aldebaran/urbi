@@ -63,11 +63,11 @@ namespace runner
 			  FloatExp,
 			  Function,
 			  ListExp,
+			  Nary,
 			  NegOpExp,
 			  Noop,
 			  PipeExp,
 			  Scope,
-			  SemicolonExp,
 			  StringExp
 			  )))
     /// \}

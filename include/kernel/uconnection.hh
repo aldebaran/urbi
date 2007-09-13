@@ -111,11 +111,11 @@ public:
 
     \sa UQueue */
   UConnection (UServer* userver,
-               int minSendBufferSize,
-               int maxSendBufferSize,
-               int packetSize,
-               int minRecvBufferSize,
-               int maxRecvBufferSize);
+	       int minSendBufferSize,
+	       int maxSendBufferSize,
+	       int packetSize,
+	       int minRecvBufferSize,
+	       int maxRecvBufferSize);
 
   virtual ~UConnection ();
 
@@ -199,8 +199,8 @@ public:
   UServer* server;
 
 private:
-  /// The command to be executed (root of the AST).
-  ast::BinaryExp* active_command_;
+  /// The commands to be executed.
+  ast::Nary* active_command_;
 
 public:
   /// Temporarily stores bin command while binary transfer occurs.

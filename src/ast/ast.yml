@@ -127,7 +127,172 @@ Scope:
 ## Composing commands.  ##
 ## -------------------- ##
 
-BinaryExp:
+Nary:
+  super: Exp
+  desc: /// A list of expressions to run possibly in background.
+  attributes:
+    - children:
+        type: 'exec_exps_type'
+        desc: Subtrees possibly qualified to be background.
+        access: rw
+  printer:
+    - $children
+  inline:
+    header prologue: |
+        namespace ast
+        {
+          /// Whether a command is to be run in background.
+          enum execution_kind
+          {
+            execution_none,
+            execution_foreground,
+            execution_background,
+          };
+          
+          /// Report \a e on \a o.
+          std::ostream& operator<<(std::ostream& o, execution_kind e);
+          
+          // An expression and its execution kind.
+          typedef std::pair<Exp*, execution_kind> exec_exp_type;
+          
+          /// Report \a e on \a o.
+          std::ostream& operator<<(std::ostream& o, const exec_exp_type& e);
+          
+          // A list of such expressions.
+          typedef std::list<exec_exp_type> exec_exps_type;
+
+          /// Report \a e on \a o.
+          std::ostream& operator<<(std::ostream& o, const exec_exps_type& e);
+        }
+
+    header inside: |2
+        public:
+          /// A completely empty Nary node.
+          Nary();
+
+          /// Drop the children.
+          void clear ();
+
+          /// Are there any children?
+          bool empty() const;
+
+          /// Return the back of the children.
+          exec_exp_type& back ();
+
+          /// Drop the last children.
+          void pop_back ();
+
+          /// Splice the content of \a rhs at the back this list.
+          void splice_back (Nary& rhs);
+
+    impl prologue: |2
+      #include <boost/foreach.hpp>
+        
+      #include "libport/indent.hh"
+
+      #include "ast/pretty-printer.hh"
+
+      namespace libport
+      {
+      
+        // Specialization to free the children.
+        template<>
+        struct Delete<ast::exec_exp_type>
+        {
+          void operator () (ast::exec_exp_type& t)
+          {
+            delete t.first;
+          }
+        };
+
+      } // libport
+
+    impl inside: |2
+        Nary::Nary ()
+          : Exp (ast::loc()),
+            children_ ()
+        { }
+
+        void
+        Nary::clear ()
+        {
+          children_.clear ();
+        }
+
+        bool
+        Nary::empty () const
+        {
+          return children_.empty();
+        }
+
+        exec_exp_type&
+        Nary::back ()
+        {
+          return children_.back();
+        }
+      
+        void
+        Nary::pop_back ()
+        {
+          children_.pop_back();
+        }
+      
+        void
+        Nary::splice_back (Nary& rhs)
+        {
+          children_.splice (children_.end (), rhs.children_get ());
+        }
+      
+        std::ostream&
+        operator<<(std::ostream& o, execution_kind e)
+        {
+           switch (e)
+           {
+      #define CASE(E, S) case execution_ ## E: return o S;
+              CASE(none,       )
+              CASE(foreground, << " ; ")
+              CASE(background, << " , ")
+      #undef CASE
+           }
+           abort();
+        }
+        
+        std::ostream&
+        operator<<(std::ostream& o, const exec_exp_type& e)
+        {
+          return o << *e.first << e.second;
+        }
+        
+        std::ostream&
+        operator<<(std::ostream& o, const exec_exps_type& es)
+        {
+          BOOST_FOREACH(const exec_exp_type& e, es)
+            o << e;
+          return o;
+        }
+
+# CommaExp:
+#   super: Nary
+#   default: |2
+#     operator()(n.lhs_get());
+#     operator()(n.rhs_get());
+#   printer:
+#     - ~lhs
+#     - '" , "'
+#     - ~rhs
+# 
+# SemicolonExp:
+#   super: Nary
+#   default: |2
+#     operator()(n.lhs_get());
+#     operator()(n.rhs_get());
+#   printer:
+#     - ~lhs
+#     - '" ; "'
+#     - ~rhs
+
+
+Binary:
   super: Exp
   desc: /// Expressions with two sub expressions
   attributes:
@@ -139,45 +304,22 @@ BinaryExp:
         type: 'Exp*'
         desc: Right-hand side expression
         access: rwW
-
-AndExp:
-  super: BinaryExp
   default: |2
     operator()(n.lhs_get());
     operator()(n.rhs_get());
+
+AndExp:
+  super: Binary
   printer:
     - ~lhs
     - '" & "'
     - ~rhs
 
 PipeExp:
-  super: BinaryExp
-  default: |2
-    operator()(n.lhs_get());
-    operator()(n.rhs_get());
+  super: Binary
   printer:
     - ~lhs
     - '" | "'
-    - ~rhs
-
-CommaExp:
-  super: BinaryExp
-  default: |2
-    operator()(n.lhs_get());
-    operator()(n.rhs_get());
-  printer:
-    - ~lhs
-    - '" , "'
-    - ~rhs
-
-SemicolonExp:
-  super: BinaryExp
-  default: |2
-    operator()(n.lhs_get());
-    operator()(n.rhs_get());
-  printer:
-    - ~lhs
-    - '" ; "'
     - ~rhs
 
 

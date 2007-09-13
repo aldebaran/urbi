@@ -295,6 +295,10 @@ UServer::work_handle_connections_ ()
       c->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
       c->errorCheck(UERROR_CPU_OVERLOAD);
 
+      // The following code only made sense in k1, and should be
+      // removed in k2, provided we are really sure it is useless.
+      // The following if is also suspicous...
+#if 0
       // Run the connection's command queue:
       if (c->has_pending_command ())
       {
@@ -307,6 +311,7 @@ UServer::work_handle_connections_ ()
 	c->inwork = false;
 	c->treeLock.unlock ();
       }
+#endif
 
       if (c->newDataAdded)
       {

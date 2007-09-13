@@ -2,6 +2,7 @@
  ** \file runner/runner.cc
  ** \brief Implementation of runner::Runner.
  */
+
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
@@ -131,24 +132,25 @@ namespace runner
   void
   Runner::operator() (ast::CallExp& e)
   {
-    CORO_CTX_VARS ((10, (
-      (bool, call_code),
-      (rObject, val),
-      // Iteration over un-evaluated effective arguments.
-      (ast::exps_type::const_iterator, i),
-      (ast::exps_type::const_iterator, i_end),
-      // Gather the arguments, including the target.
-      (object::objects_type, args),
-      (rObject, tgt),
-      // Formal argument iterator.
-      (ast::symbols_type::const_iterator, fi),
-      // Effective (evaluated) argument iterator.
-      (object::objects_type::const_iterator, ei),
-      // Object to bind the arguments.
-      (rObject, bound_args),
-      // The called function.
-      (ast::Function*, fn)
-    )));
+    CORO_CTX_VARS
+      ((10, (
+	  (bool, call_code),
+	  (rObject, val),
+	  // Iteration over un-evaluated effective arguments.
+	  (ast::exps_type::const_iterator, i),
+	  (ast::exps_type::const_iterator, i_end),
+	  // Gather the arguments, including the target.
+	  (object::objects_type, args),
+	  (rObject, tgt),
+	  // Formal argument iterator.
+	  (ast::symbols_type::const_iterator, fi),
+	  // Effective (evaluated) argument iterator.
+	  (object::objects_type::const_iterator, ei),
+	  // Object to bind the arguments.
+	  (rObject, bound_args),
+	  // The called function.
+	  (ast::Function*, fn)
+	  )));
 
     /*-------------------------.
     | Evaluate the arguments.  |
@@ -305,6 +307,7 @@ namespace runner
   Runner::operator() (ast::Noop&)
   {
     CORO_WITHOUT_CTX ();
+    current_ = 0;
     CORO_END;
   }
 
@@ -358,34 +361,35 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::SemicolonExp& e)
+  Runner::operator() (ast::Nary& e)
   {
-    CORO_WITHOUT_CTX ();
+    // FIXME: execution_background support.
+    CORO_CTX_VARS
+      ((1, (
+	  (ast::exec_exps_type::iterator, i)
+	  )));
 
-    // lhs
-    ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
-    CORO_CALL_CATCH (operator() (e.lhs_get());
-                     ECHO ("sending result of lhs");
-                     emit_result (current_);,
-      catch (object::UrbiException& ue)
-      {
-        UConnection& c = context_.cast<object::Context>()->value_get().connection;
-        c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
-        c.endline ();
-      });
+    for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
+    {
+      ECHO ("job " << ME << ", {{{" << *i << "}}}");
+      passert (i->second, i->second = ast::execution_foreground);
+      CORO_CALL_CATCH (operator() (*i->first);
+		       ECHO ("sending result of Nary node");
+		       emit_result (current_);,
+	catch (object::UrbiException& ue)
+	{
+	  UConnection& c =
+	    context_.cast<object::Context>()->value_get().connection;
+	  c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
+	  c.endline ();
+	});
 
-    current_.reset ();
-    assert (current_.get () == 0);
-
-    /* Allow some time to pass before we execute RHS.  If we don't do this,
-     * the ;-operator would act almost like the |-operator because it would
-     * always start to execute its RHS immediately.  */
-    YIELD ();
-    // rhs
-    ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
-    CORO_CALL (operator() (e.rhs_get()));
-    ECHO ("sending result of rhs");
-    emit_result (current_);
+      /* Allow some time to pass before we execute what follows.  If
+	 we don't do this, the ;-operator would act almost like the
+	 |-operator because it would always start to execute its RHS
+	 immediately.  */
+      YIELD ();
+    }
 
     CORO_END;
   }

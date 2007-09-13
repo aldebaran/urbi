@@ -1,43 +1,55 @@
 # The generator will accept these types as is, without looking for a
 # particular header.  Also, they are handled by copy.
-atomic_types = ["bool", "int",
-		"VarDec::Kind",
-		"OpExp::type",
-		"DecsList::decs_type",
-		"ExternalExp::Type",
-		"TagOpExp::type",
-		"OpVarExp::type",
-		"ufloat"]
+atomic_types = [
+    "bool",
+    "int",
+    "VarDec::Kind",
+    "OpExp::type",
+    "DecsList::decs_type",
+    "ExternalExp::Type",
+    "TagOpExp::type",
+    "OpVarExp::type",
+    "ufloat",
+    ]
 
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
 includes_map = {
-  "std::string": "<string>",
+    "std::string": "<string>",
 
-  "ufloat": '"libport/ufloat.h"',
+    "ufloat": '"libport/ufloat.h"',
 
-  "libport::Symbol": '"libport/symbol.hh"',
-  "symbols_type": '"ast/fwd.hh"',
+    "libport::Symbol": '"libport/symbol.hh"',
+    "symbols_type": '"ast/fwd.hh"',
 
-  "exps_type": '"ast/exp.hh"',
+    "exps_type": '"ast/exp.hh"',
 
-  "decs_type": '"ast/dec.hh"',
-  "vardecs_type": '"ast/var-dec.hh"',
+    "decs_type": '"ast/dec.hh"',
+    "vardecs_type": '"ast/var-dec.hh"',
 
-  "exp_pair_type": '"ast/exp.hh"',
-  "exp_pairs_type": '"ast/exp.hh"',
+    "exp_pair_type": '"ast/exp.hh"',
+    "exp_pairs_type": '"ast/exp.hh"',
 
-  "fields_type": '"ast/field.hh"',
-  "fieldinits_type": '"ast/field-init.hh"',
-  "VarDecs": '"ast/anydecs.hh"',
+    "fields_type": '"ast/field.hh"',
+    "fieldinits_type": '"ast/field-init.hh"',
+    "VarDecs": '"ast/anydecs.hh"',
 
-  }
+    "exec_exps_type" : '"ast/fwd.hh"',
+    }
 
 
 # The function to clear a list of pointers.
 deep_clear = "libport::deep_clear"
 
-# The end of the fwd.hh file.
+# The beginning of fwd.hh, for includes.
+fwd_hh_prologue = """
+# include <list>
+# include <vector>
+
+# include "libport/fwd.hh"
+"""
+
+# The end of the fwd.hh file, in the namespace.
 fwd_hh_epilogue = """
 
   // List types.

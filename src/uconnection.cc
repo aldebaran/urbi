@@ -65,7 +65,7 @@ UConnection::UConnection (UServer* userver,
 			  int maxRecvBufferSize)
   : uerror_ (USUCCESS),
     server (userver),
-    active_command_ (0),
+    active_command_ (new ast::Nary()),
     connectionTag (0),
     functionTag (0),
     clientIP (0),
@@ -112,8 +112,6 @@ UConnection::~UConnection ()
     delete server->getVariable(connectionTag->c_str(), "connectionID");
     delete connectionTag;
   }
-  delete active_command_;
-  active_command_ = 0;
 
   // free bindings
   for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
@@ -165,14 +163,13 @@ UConnection::setIP (IPAdd ip)
 bool
 UConnection::has_pending_command () const
 {
-  return active_command_;
+  return !active_command_->empty();
 }
 
 void
 UConnection::drop_pending_commands ()
 {
-  delete active_command_;
-  active_command_ = 0;
+  active_command_->clear();
 }
 
 //! UConnection close. Must be redefined by the robot-specific sub class.
@@ -393,9 +390,8 @@ UConnection::continueSend ()
 
     if (wasSent < 0)
       return UFAIL;
-    else
-      if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
-	return USUCCESS;
+    else if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
+      return USUCCESS;
   }
 
   server->isolate();
@@ -475,10 +471,7 @@ UConnection::received (const ubyte *buffer, int length)
   // Code extracted from the UCommandQueue
   std::string command;
   // active_command_: The command to be executed (root of the AST).
-  assert (active_command_ == 0);
-  // The last command added (where there is a dangling noop added because we
-  // don't know what comes next).
-  ast::BinaryExp* last_command = 0;
+  assert (active_command_->empty());
 
   // Loop to get all the commands that are ready to be executed.
   do {
@@ -490,12 +483,8 @@ UConnection::received (const ubyte *buffer, int length)
     {
       server->setSystemCommand (false);
       int result = p.process (command);
+      assert (result != -1);
       server->setSystemCommand (true);
-
-      if (result == -1)
-      {
-	abort ();
-      }
 
       // Warnings handling
       if (p.hasWarning())
@@ -524,34 +513,16 @@ UConnection::received (const ubyte *buffer, int length)
       }
       else
       {
-	// Alright so at this point, we have parsed a new command (either a
-	// ";" or a ",", in any case it's a BinaryExp) now it's time to
-	// paste this new command in the AST.
-	ast::BinaryExp& parsed_command =
-	  dynamic_cast<ast::BinaryExp&> (*p.command_tree_get ());
-
-	ECHO ("parsed lhs: " << parsed_command.lhs_get ()
-	      << " rhs:" << parsed_command.rhs_get ());
-
-	// Is this our first command? (first as in first in this do-while
-	// loop)
-	if (!active_command_)
-	  active_command_ = last_command = &parsed_command;
-	else
-	{
-	  ECHO ("last command lhs: " << last_command->lhs_get ()
-		<< " rhs:" << last_command->rhs_get ());
-	  // It wasn't our first command so the last_command must be a
-	  // BinaryExp with a dangling noop added on its rhs.
-	  ast::Noop& dangling_noop =
-	    const_cast<ast::Noop&>
-	      (dynamic_cast<const ast::Noop&> (last_command->rhs_get ()));
-
-	  delete &dangling_noop;
-	  last_command->rhs_set (&parsed_command);
-	  last_command = &parsed_command;
-	}
+	// Alright so at this point, we have parsed a new command
+	// (either a ";" or a ",", in any case it's a Nary) now it's
+	// time to append this new command in the AST.
+	ast::Nary& parsed_command =
+	  dynamic_cast<ast::Nary&> (*p.command_tree_get ());
+	ECHO ("parsed: {{{" << parsed_command << "}}}");
+	// Append to the current list.
+	active_command_->splice_back(parsed_command);
 	p.command_tree_set (0);
+	ECHO ("appended: " << *active_command_ << "}}}");
       }
     }
   } while (!command.empty ()
@@ -559,9 +530,7 @@ UConnection::received (const ubyte *buffer, int length)
 
   // Execute the new command.
   if (!obstructed)
-  {
     execute ();
-  }
 
   receiving = false;
   p.command_tree_set (0);
@@ -703,12 +672,10 @@ UConnection::execute ()
   using runner::Runner;
   PING ();
 
-  if (!active_command_)
+  if (active_command_->empty())
     return;
 
-#ifdef ENABLE_DEBUG_TRACES
-  std::cerr << "Command is: " << *active_command_ << std::endl;
-#endif
+  ECHO("Command is: {{{" << *active_command_ << "}}}");
 
   Runner* runner = new Runner(context_,
 			      ::urbiserver->getScheduler (),
@@ -717,7 +684,8 @@ UConnection::execute ()
 
   // FIXME: 2007-07-20: Currently we can't free the command,
   // we might kill function bodies.
-  active_command_ = 0;
+  ECHO("Clear commands: {{{" << *active_command_ << "}}}");
+  //  active_command_->clear();
 
   PING ();
 }

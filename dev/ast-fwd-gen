@@ -18,10 +18,11 @@ print >>fwd_hh, tools.banner("ast/fwd.hh",
  ** (needed by the visitors).""") + """
 #ifndef AST_FWD_HH
 # define AST_FWD_HH
+"""
 
-# include <list>
-# include "libport/fwd.hh"
+print >>fwd_hh, ast_params.fwd_hh_prologue
 
+print >>fwd_hh, """
 namespace ast
 {
 """
