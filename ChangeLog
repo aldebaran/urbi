@@ -1,5 +1,10 @@
 2007-09-13  Akim Demaille  <demaille@gostai.com>
 
+	Sort
+	* src/runner/runner.cc (Nary): Move to where it belongs.
+
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
 	Introduce Nary
 	* dev/ast-fwd-gen: Support fwd_hh_prologue.
 	* dev/ast_params.py: Define it.

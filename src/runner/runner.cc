@@ -288,6 +288,41 @@ namespace runner
 
 
   void
+  Runner::operator() (ast::Nary& e)
+  {
+    // FIXME: execution_background support.
+    CORO_CTX_VARS
+      ((1, (
+	  (ast::exec_exps_type::iterator, i)
+	  )));
+
+    for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
+    {
+      ECHO ("job " << ME << ", {{{" << *i << "}}}");
+      passert (i->second, i->second = ast::execution_foreground);
+      CORO_CALL_CATCH (operator() (*i->first);
+		       ECHO ("sending result of Nary node");
+		       emit_result (current_);,
+	catch (object::UrbiException& ue)
+	{
+	  UConnection& c =
+	    context_.cast<object::Context>()->value_get().connection;
+	  c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
+	  c.endline ();
+	});
+
+      /* Allow some time to pass before we execute what follows.  If
+	 we don't do this, the ;-operator would act almost like the
+	 |-operator because it would always start to execute its RHS
+	 immediately.  */
+      YIELD ();
+    }
+
+    CORO_END;
+  }
+
+
+  void
   Runner::operator() (ast::NegOpExp& e)
   {
     CORO_WITHOUT_CTX ();
@@ -359,41 +394,6 @@ namespace runner
     std::swap(locals, locals_);
     CORO_END;
   }
-
-  void
-  Runner::operator() (ast::Nary& e)
-  {
-    // FIXME: execution_background support.
-    CORO_CTX_VARS
-      ((1, (
-	  (ast::exec_exps_type::iterator, i)
-	  )));
-
-    for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
-    {
-      ECHO ("job " << ME << ", {{{" << *i << "}}}");
-      passert (i->second, i->second = ast::execution_foreground);
-      CORO_CALL_CATCH (operator() (*i->first);
-		       ECHO ("sending result of Nary node");
-		       emit_result (current_);,
-	catch (object::UrbiException& ue)
-	{
-	  UConnection& c =
-	    context_.cast<object::Context>()->value_get().connection;
-	  c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
-	  c.endline ();
-	});
-
-      /* Allow some time to pass before we execute what follows.  If
-	 we don't do this, the ;-operator would act almost like the
-	 |-operator because it would always start to execute its RHS
-	 immediately.  */
-      YIELD ();
-    }
-
-    CORO_END;
-  }
-
 
   void
   Runner::operator() (ast::StringExp& e)
