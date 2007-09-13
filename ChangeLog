@@ -1,5 +1,11 @@
 2007-09-13  Thomas Moulard  <thomas@moulard.net>
 
+	Prevent runner from emitting a result after an error.
+	* src/runner/runner.cc: Here.
+	* tests-local.mk: Enable test.
+
+2007-09-13  Thomas Moulard  <thomas@moulard.net>
+
 	Fix typo.
 	* tests-local.mk: Here.
 

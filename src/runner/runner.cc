@@ -364,15 +364,15 @@ namespace runner
 
     // lhs
     ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
-    CORO_CALL_CATCH (operator() (e.lhs_get()),
+    CORO_CALL_CATCH (operator() (e.lhs_get());
+                     ECHO ("sending result of lhs");
+                     emit_result (current_);,
       catch (object::UrbiException& ue)
       {
         UConnection& c = context_.cast<object::Context>()->value_get().connection;
         c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
         c.endline ();
       });
-    ECHO ("sending result of lhs");
-    emit_result (current_);
 
     current_.reset ();
     assert (current_.get () == 0);

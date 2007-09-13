@@ -10,7 +10,6 @@ k2-check:
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
-k2-maths-errors.chk				\
 k2-scopes.chk
 
 # k1 tests that currently don't pass.
