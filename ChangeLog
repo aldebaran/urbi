@@ -1,3 +1,8 @@
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes
+	* dev/ast-nodes-gen: Empty line bw accept implementations.
+
 2007-09-13  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Finally merge Thomas' work on exception handling.

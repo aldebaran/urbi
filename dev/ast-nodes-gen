@@ -311,17 +311,17 @@ def print_visitor(node, header, inline, impl):
     sys.stdout = inline
     print ""
     sys.stdout = impl
-    print "  void"
-    print "  " + node.name + "::accept (ConstVisitor& v) const"
-    print """  {
-    v (*this);
-  }"""
-    print "  void"
-    print "  " + node.name + "::accept (Visitor& v)"
-    print """  {
+    print """  void
+  """ + node.name + """::accept (ConstVisitor& v) const
+  {
     v (*this);
   }
-    """
+
+  void
+  """ + node.name + """::accept (Visitor& v)
+  {
+    v (*this);
+  }"""
   # In our design, the class is concrete iff it has a single parent.
   # This excludes roots, and "joins".
   elif len (node.super) != 1:
