@@ -1,3 +1,9 @@
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
+	Make handling of "context" more local
+	* src/runner/runner.cc: here.
+	Group the handling of the message name.
+
 2007-09-13  mefyl  <mefyl@lrde.epita.fr>
 
 	Handle the 'context' special message.
