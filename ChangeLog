@@ -1,5 +1,13 @@
 2007-09-13  Akim Demaille  <demaille@gostai.com>
 
+	* src/object/atom.hh, src/object/atom.hxx (code_traits::type):
+	Now ast::Function.
+	* src/runner/runner.cc (operator()(Function)): Adjust.
+	(operator()(CallExp)): Adjust.
+	Handle Urbi function calls with arguments.
+
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
 	Make handling of "context" more local
 	* src/runner/runner.cc: here.
 	Group the handling of the message name.
@@ -67,7 +75,7 @@
 	* src/object/Makefile.am: Add urbi-exception.hxx.
 	* src/object/float-class.cc: Check argument's count.
 	* src/object/object-test-lookup.cc: Use UrbiException
-        instead of std::exception.
+	instead of std::exception.
 	* src/object/object.cc: Handle lookup failure.
 	* src/object/primitives.hh: Check argument's count.
 	* src/object/urbi-exception.cc: Add error messsages text.
@@ -135,7 +143,7 @@
 	* src/object/atom.hh,
 	* src/object/atom.hxx: Add a non-const accessor to the held value.
 	* src/object/primitives.hh: Add macro for primitive taking objects
-        as argument.
+	as argument.
 	* src/object/list-class.cc,
 	* src/object/list-class.hh: Add insertion function.
 

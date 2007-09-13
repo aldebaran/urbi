@@ -207,10 +207,10 @@ namespace runner
 	PING ();
 	// Create a new object to store the arguments.
 	bound_args = new object::Object;
-	
+
 	// Fetch the called function.
 	fn = &val.cast<object::Code> ()->value_get ();
-	
+
 	// Bind formal and effective arguments.
 	// The target is "self".
 	// FIXME: mismatches.
