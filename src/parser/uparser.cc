@@ -114,7 +114,7 @@ namespace
 {
   /// Helper to format error and warning messages.
   std::string errorFormat(const yy::parser::location_type& l,
-                          const std::string& msg)
+			  const std::string& msg)
   {
     std::ostringstream o;
     o << "!!! " << l << ": " << msg << '\n' << std::ends;
