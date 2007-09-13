@@ -156,7 +156,7 @@ STRING   \"([^\"]|"\\\"")*\"
    It is some sort of lexical sugar that allows to write << add >>,
    instead of << "add" >>.  Needless to say that it conflicts badly
    with the rest of the language.
-  
+
    "add"     |
    "cancel"  |
    "discard" |
