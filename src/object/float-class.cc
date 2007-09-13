@@ -151,12 +151,12 @@ namespace object
   PRIMITIVE_1_FLOAT_(Name, Call,                        \
     if (args[1].unsafe_cast<Float>()->value_get() < 0)  \
       throw UrbiException::primitiveError(#Name,        \
-              "argument has to be positive"))
+	      "argument has to be positive"))
 
 #define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)     \
   PRIMITIVE_1_FLOAT_(Name, Call,                                \
     if ((args[1].unsafe_cast<Float>()->value_get() < Min)       \
-        || (args[1].unsafe_cast<Float>()->value_get() > Max))   \
+	|| (args[1].unsafe_cast<Float>()->value_get() > Max))   \
       throw UrbiException::primitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
