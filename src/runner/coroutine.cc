@@ -1,6 +1,7 @@
 #include <boost/foreach.hpp>
 
 //# define ENABLE_DEBUG_TRACES
+# include "libport/assert.hh"
 # include "libport/compiler.hh"
 
 # include "runner/coroutine.hh"
@@ -10,9 +11,8 @@ extern "C"
 {
   void coroutine_chk (void)
   {
-    if (runner::Coroutine::coro_cnt)
-      ECHO ("runner::Coroutine::coro_cnt = " << runner::Coroutine::coro_cnt);
-    assert (runner::Coroutine::coro_cnt == 0);
+    passert (runner::Coroutine::coro_cnt,
+	     runner::Coroutine::coro_cnt == 0);
   }
 }
 

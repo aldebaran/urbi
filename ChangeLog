@@ -1,5 +1,9 @@
 2007-09-13  Akim Demaille  <demaille@gostai.com>
 
+	* src/runner/coroutine.cc: Use passert
+
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
 	Insert code after the includes
 	* dev/ast-nodes-gen: Insert the prologue after the
 	first includes so that the added bits can use entities
