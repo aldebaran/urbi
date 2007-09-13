@@ -59,7 +59,7 @@ maintainer-check: valgrind-check
 valgrind-check:
 	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1
 
-check-html:
+check-html k2-check:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
 
 doc:
