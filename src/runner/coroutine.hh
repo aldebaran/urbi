@@ -333,24 +333,44 @@ namespace runner
  * Call another coroutine with the C++ statement @a What and execute the C++
  * statement @a OnYield if the statement @a What did a Yield.
  * The C++ statement @a Before is executed before invoking @a What.
+ * The @a MoreCatch can be used to catch exceptions thrown by @a What.
  */
-# define CORO_CALL_(Before, What, OnYield)              \
-    cr_new_call_ = true;                                \
-    ++cr_resumed_;                                      \
-    Before                                              \
-    try {                                               \
-      What;                                             \
-    }                                                   \
-    catch (const CoroutineYield&)                       \
-    {                                                   \
-      OnYield                                           \
-    }                                                   \
-    ECHO ("back to coroutine ctx: " << ctx__            \
-	  << " with " << context_count ()		\
-	  << " contexts in the coroutine stack");       \
-    assert (cr_resumed_);                               \
-    --cr_resumed_;                                      \
+# define CORO_CALL_INTERNAL_(Before, What, OnYield, MoreCatch)  \
+    cr_new_call_ = true;                                        \
+    ++cr_resumed_;                                              \
+    Before                                                      \
+    try {                                                       \
+      What;                                                     \
+    }                                                           \
+    catch (const CoroutineYield&)                               \
+    {                                                           \
+      OnYield                                                   \
+    }                                                           \
+    MoreCatch                                                   \
+    ECHO ("back to coroutine ctx: " << ctx__                    \
+	  << " with " << context_count ()                       \
+	  << " contexts in the coroutine stack");               \
+    assert (cr_resumed_);                                       \
+    --cr_resumed_;                                              \
     cr_new_call_ = false
+
+/** @internal
+ * Internal helper to factor code of @c CORO_CALL and @c CORO_CALL_CATCH.
+ */
+# define CORO_CALL_(What, Catch)                \
+  do {                                          \
+    CORO_CALL_INTERNAL_ (if (false)             \
+		{                               \
+		  CORO_SAVE_END_;               \
+		  ++cr_resumed_;                \
+		},                              \
+		What,                           \
+		CORO_SAVE_BEGIN_;               \
+		assert (cr_resumed_);           \
+		--cr_resumed_;                  \
+		throw;,                         \
+                Catch);                         \
+  } while (0)
 
 /**
  * Call another coroutine with the C++ statement @a What.  You must use this
@@ -366,19 +386,30 @@ namespace runner
  * Example: @code CORO_CALL (member_ = other_coro ()); @endcode
  * Example: @code CORO_CALL (other_coro ()); @endcode
  */
-# define CORO_CALL(What)                        \
-  do {                                          \
-    CORO_CALL_ (if (false)                      \
-		{                               \
-		  CORO_SAVE_END_;               \
-		  ++cr_resumed_;                \
-		},                              \
-		What,                           \
-		CORO_SAVE_BEGIN_;               \
-		assert (cr_resumed_);           \
-		--cr_resumed_;                  \
-		throw;);                        \
-  } while (0)
+# define CORO_CALL(What) CORO_CALL_ (What, /* nothing */)
+
+/**
+ * Identical to @c CORO_CALL but enables to to pass @c catch clauses in the
+ * parameter @a Catch to catch exceptions throw by @a What, e.g.:
+ * @code
+ * CORO_CALL_CATCH (coro (),
+ *   catch (SomeException&) {
+ *     // Code.
+ *   }
+ *   // You can pass more catch clauses here.
+ * );
+ * @endcode
+ *
+ * The pitfall here is that you can't use commas in @a Catch, you must
+ * instead use a workaround such as: @code #define COMMA , @endcode and then
+ * use @c COMMA instead of a plain ",".
+ */
+# define CORO_CALL_CATCH(What, Catch) CORO_CALL_ (What, Catch)
+
+# ifndef COMMA
+/// Used as a workaround to invoke a macro with a comma in its argument.
+#  define COMMA ,
+# endif
 
 /** Same thing as @c CORO_CALL but you need to specify the target
  * @c Coroutine pointer in @a Coro and if @a What yields.
@@ -386,7 +417,8 @@ namespace runner
 # define CORO_CALL_IN_BACKGROUND(Coro, What)            \
   do {                                                  \
     Coro->cr_drop_stack_ ();                            \
-    CORO_CALL_ (/* nothing */, What, /* nothing */);    \
+    CORO_CALL_INTERNAL_ (/* nothing */, What,           \
+                /* nothing */, /* nothing */);          \
   } while (0)
 
 /// @internal Maybe perform some cleanup.  Checks if this coroutine finished
@@ -399,7 +431,7 @@ namespace runner
     cr_signal_finished_ ();                             \
     delete this;                                        \
   }                                                     \
-  else if (!context_count () && !cr_resumed_)          \
+  else if (!context_count () && !cr_resumed_)           \
   {                                                     \
     ECHO ("finished: signaling " << cr_waited_by_ ()    \
 	  << " other coroutines");                      \

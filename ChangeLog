@@ -1,3 +1,13 @@
+2007-09-13  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Finally merge Thomas' work on exception handling.
+	* src/runner/coroutine.hh (CORO_CALL_CATCH): New.
+	(CORO_CALL_): Rename as CORO_CALL_INTERNAL_.
+	(CORO_CALL_): New.
+	(CORO_CALL): Use CORO_CALL_.
+	* src/runner/runner.cc (operator()(SemicolonExp)): Use
+	CORO_CALL_CATCH to handle exceptions.
+
 2007-09-13  Akim Demaille  <demaille@gostai.com>
 
 	* src/object/atom.hh, src/object/atom.hxx (code_traits::type):
