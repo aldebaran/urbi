@@ -1,3 +1,10 @@
+2007-09-13  Akim Demaille  <demaille@gostai.com>
+
+	Disable "autostringification"
+	* src/parser/bison/utoken.l: For the time being, do not
+	allow automatic stringification of add, cancel etc.  Another,
+	hopefully cleaner, solution will be found when needed.
+
 2007-09-12  Thomas Moulard  <thomas@moulard.net>
 
 	Make URBI strings symbols.

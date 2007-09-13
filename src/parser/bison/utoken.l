@@ -149,12 +149,21 @@ STRING   \"([^\"]|"\\\"")*\"
 "info"    |
 "undef"   RETURN_SYMBOL (OPERATOR_VAR);
 
-"add"     |
-"cancel"  |
-"discard" |
-"mix"     |
-"normal"  |
-"queue"   RETURN_STR (STRING);
+ /*
+   FIXME: Surprisingly enough, these are strings, not symbols,
+   i.e., they pretend to have quotes around them.  This is because
+   they are used as properties, which are "generalized" as strings.
+   It is some sort of lexical sugar that allows to write << add >>,
+   instead of << "add" >>.  Needless to say that it conflicts badly
+   with the rest of the language.
+  
+   "add"     |
+   "cancel"  |
+   "discard" |
+   "mix"     |
+   "normal"  |
+   "queue"   RETURN_STR (STRING);
+ */
 
 "external"  |
 "internal"  RETURN_SYMBOL (BINDER);
