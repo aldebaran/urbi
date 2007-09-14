@@ -7,7 +7,7 @@ class Vcs
 
   def local_commit! ( *args )
     common_commit!("k2.0 <%= rev %>: <%= title %>", *args) do |subject|
-      mail!(:to => %w[kernelteam@gostai.com],
+      mail!(:to => %w[kernel-patches@lists.gostai.com],
             :subject => subject)
     end
   end
