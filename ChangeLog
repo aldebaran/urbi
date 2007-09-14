@@ -1,5 +1,14 @@
 2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Add a UCONSOLE_MODE to the scanner.
+	* src/parser/bison/utoken.l [NDEBUG]: When the UCONSOLE_MODE
+	environment variable is set, add a couple of rules to ignore the
+	typical things we can find a .chk file.  This will (hopefully)
+	simplify uconsole-check and make it easier to debug a .chk file
+	directly within gdb.
+
+2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	* src/uconnection.cc,
 	* src/userver.cc: Fix includes.
 

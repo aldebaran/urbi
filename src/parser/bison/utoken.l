@@ -23,6 +23,9 @@
 
 #include <cstdlib>
 #include <cstring>
+#ifndef NDEBUG
+# include <cstdlib> // for getenv
+#endif
 
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
@@ -90,6 +93,7 @@ typedef yy::parser::token token;
 %option noyywrap
 
 %x SC_C_COMMENT SC_STRING
+%s UCONSOLE_MODE
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -102,11 +106,29 @@ STRING   \"([^\"]|"\\\"")*\"
 %%
 %{
   locp->step();
+
+#ifndef NDEBUG
+  static bool first_run = true;
+  if (first_run)
+  {
+    if (getenv ("UCONSOLE_MODE"))
+    {
+      std::cerr << "Message from the scanner: UCONSOLE_MODE enabled.\n";
+      BEGIN (UCONSOLE_MODE);
+    }
+    first_run = false;
+  }
+#endif
 %}
 
   /*------------.
   | The rules.  |
   `------------*/
+
+<UCONSOLE_MODE>{
+  ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
+  ^#plug.*              /* ignore the "#plug whatever" lines */;
+}
 
 "inf"         RETURN_FVAL(FLOAT, UINFINITY);
 "pi"          RETURN_FVAL(FLOAT, 3.14159265358979323846264338327950288);
