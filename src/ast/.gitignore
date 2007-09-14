@@ -1,7 +1,0 @@
-ast-nodes.mk
-all.stamp
-ignores
-ignores.stamp
-scope.cc
-scope.hh
-scope.hxx
