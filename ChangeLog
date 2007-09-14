@@ -1,5 +1,11 @@
 2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Remove dead code.
+	* src/parser/bison/ugrammar.y (push_Nary_exp): Remove an unused
+	overload.
+
+2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Fix the grammar.
 	* src/parser/bison/ugrammar.y (push_Nary_exp): New helper.
 	(root rule): Expect the top-level command to be ;-terminated or

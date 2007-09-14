@@ -143,22 +143,6 @@
     }
 
     /** @internal
-     * Adds the expression @a expr at the end of the @a nary using @a kind
-     * to find out whether it's a ";" or "," operator. */
-    inline static
-    void
-    push_Nary_exp (ast::Nary& nary, ast::Exp* expr, Flavorable::UNodeType kind)
-    {
-      assert (expr);
-      passert (kind,
-               kind == Flavorable::USEMICOLON || kind == Flavorable::UCOMMA);
-      ast::execution_kind k = kind == Flavorable::USEMICOLON
-        ? ast::execution_foreground  // ";"
-        : ast::execution_background; // ","
-      nary.children_get ().push_back (ast::exec_exp_type (expr, k));
-    }
-
-    /** @internal
      * Adds the expression @a expr at the end of the @a nary and set the
      * execution type of @a expr to be @a kind */
     inline static
