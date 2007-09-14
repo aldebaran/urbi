@@ -43,7 +43,7 @@
 #include "kernel/uvariable.hh"
 
 #include "ast/ast.hh"
-#include "ast/binary-exp.hh"
+#include "ast/nary.hh"
 
 #include "ubanner.hh"
 #include "ucommand.hh"
