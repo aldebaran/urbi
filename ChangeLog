@@ -1,5 +1,10 @@
 2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Remove an invalid assert.
+	* src/parser/bison/ugrammar.y (push_Nary_exp): Here.
+
+2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Remove dead code.
 	* src/parser/bison/ugrammar.y (push_Nary_exp): Remove an unused
 	overload.

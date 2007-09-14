@@ -149,7 +149,6 @@
     void
     push_Nary_exp (ast::Nary& nary, ast::Exp* expr, ast::execution_kind kind)
     {
-      assert (expr);
       nary.children_get ().push_back (ast::exec_exp_type (expr, kind));
     }
 
