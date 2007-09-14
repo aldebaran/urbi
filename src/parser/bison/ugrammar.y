@@ -142,6 +142,33 @@
       return res;
     }
 
+    /** @internal
+     * Adds the expression @a expr at the end of the @a nary using @a kind
+     * to find out whether it's a ";" or "," operator. */
+    inline static
+    void
+    push_Nary_exp (ast::Nary& nary, ast::Exp* expr, Flavorable::UNodeType kind)
+    {
+      assert (expr);
+      passert (kind,
+               kind == Flavorable::USEMICOLON || kind == Flavorable::UCOMMA);
+      ast::execution_kind k = kind == Flavorable::USEMICOLON
+        ? ast::execution_foreground  // ";"
+        : ast::execution_background; // ","
+      nary.children_get ().push_back (ast::exec_exp_type (expr, k));
+    }
+
+    /** @internal
+     * Adds the expression @a expr at the end of the @a nary and set the
+     * execution type of @a expr to be @a kind */
+    inline static
+    void
+    push_Nary_exp (ast::Nary& nary, ast::Exp* expr, ast::execution_kind kind)
+    {
+      assert (expr);
+      nary.children_get ().push_back (ast::exec_exp_type (expr, kind));
+    }
+
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -358,12 +385,14 @@ root:
     up.command_tree_set (0);
   }
 | lvalue "=" binary ";"  { /* FIXME: */ }
-| stmts
+| stmts ";"
   {
-    // The last child is certainly a noop.  Remove it, it is useless,
-    // and troublesome.
-    passert($1->back(), dynamic_cast<ast::Noop*>($1->back().first));
-    $1->pop_back();
+    $1->back().second = ast::execution_foreground;
+    up.command_tree_set ($1);
+  }
+| stmts ","
+  {
+    $1->back().second = ast::execution_background;
     up.command_tree_set ($1);
   }
 ;
@@ -396,19 +425,19 @@ stmts:
   {
     // FIXME: Adjust the locations.
     $$ = new ast::Nary();
-    $$->children_get().push_back(ast::exec_exp_type($1, ast::execution_none));
+    push_Nary_exp (*$$, $1, ast::execution_foreground);
   }
 | stmts ";" cstmt
   {
     // The ";" qualifies the previous command.
     $$->back().second = ast::execution_foreground;
-    $$->children_get().push_back(ast::exec_exp_type($3, ast::execution_none));
+    push_Nary_exp (*$$, $3, ast::execution_none);
   }
 | stmts "," cstmt
   {
     // The "," qualifies the previous command.
     $$->back().second = ast::execution_background;
-    $$->children_get().push_back(ast::exec_exp_type($3, ast::execution_none));
+    push_Nary_exp (*$$, $3, ast::execution_none);
   }
 ;
 

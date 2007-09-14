@@ -11,8 +11,7 @@ k2-check:
 # k2 tests that fail.
 XFAIL_TESTS +=					\
 k2-scopes.chk					\
-k2-functions.chk				\
-k2-parse-errors.chk
+k2-functions.chk
 
 # k1 tests that currently don't pass.
 XFAIL_TESTS +=					\

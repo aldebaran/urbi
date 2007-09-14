@@ -1,5 +1,14 @@
 2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Fix the grammar.
+	* src/parser/bison/ugrammar.y (push_Nary_exp): New helper.
+	(root rule): Expect the top-level command to be ;-terminated or
+	,-terminated.
+	(stmts rule): Use it.
+	* tests-local.mk (XFAIL_TESTS): k2-functions should now pass.
+
+2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Add a UCONSOLE_MODE to the scanner.
 	* src/parser/bison/utoken.l [NDEBUG]: When the UCONSOLE_MODE
 	environment variable is set, add a couple of rules to ignore the
