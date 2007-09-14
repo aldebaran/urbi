@@ -7,7 +7,7 @@ class Vcs
 
   def local_commit! ( *args )
     common_commit!("urbi-sdk <%= rev %>: <%= title %>", *args) do |subject|
-      mail!(:to => %w[liburbi-cpp@gostai.com],
+      mail!(:to => %w[liburbi-cpp-patches@lists.gostai.com],
             :subject => subject)
     end
   end
