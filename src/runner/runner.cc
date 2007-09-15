@@ -46,6 +46,15 @@ namespace runner
   } while (0)
 
   void
+  Runner::raise_error_ (const object::UrbiException& ue)
+  {
+    UConnection& c =
+      context_.cast<object::Context>()->value_get().connection;
+    c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
+    c.endline ();
+  }
+
+  void
   Runner::work ()
   {
     assert (ast_);
@@ -162,6 +171,10 @@ namespace runner
     i_end = e.args_get ().end ();
 
     CORO_CALL (tgt = target(*i));
+    // No target?  Abort the call.  This can happen (for instance) when you
+    // do a.b () and a does not exist (lookup error).
+    if (!tgt)
+      Coroutine::abort ();
 
     args.push_back (tgt);
     PING ();
@@ -183,8 +196,16 @@ namespace runner
       // We may have to run a primitive, or some code.
       // We cannot use CORO_* in a switch.
       call_code = false;
-      // Ask the target for the handler of the message.
-      val = tgt->lookup (e.name_get ());
+      try {
+        // Ask the target for the handler of the message.
+        val = tgt->lookup (e.name_get ());
+      }
+      catch (object::UrbiException& ue)
+      {
+        raise_error_ (ue);
+        current_ = 0;
+        Coroutine::abort ();
+      }
       switch (val->kind_get ())
       {
 	case object::Object::kind_primitive:
@@ -305,10 +326,7 @@ namespace runner
 		       emit_result (current_);,
 	catch (object::UrbiException& ue)
 	{
-	  UConnection& c =
-	    context_.cast<object::Context>()->value_get().connection;
-	  c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
-	  c.endline ();
+          raise_error_ (ue);
 	});
 
       /* Allow some time to pass before we execute what follows.  If

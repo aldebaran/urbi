@@ -1,5 +1,15 @@
 2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Abort the execution of the Runner on runtime errors.
+	* src/runner/runner.hh (raise_error_): New.
+	* src/runner/runner.cc (raise_error_): Implement.
+	(operator()(CallExp)): Abort the call if the target of the call is
+	not available (most probably due to a lookup error).  Catch lookup
+	failures and raise an error before aborting when they occur.
+	(operator()(Nary)): Use raise_error_.
+
+2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Coroutines can abort their execution.
 	* src/runner/coroutine.hh (abort): New.
 	(CORO_CALL_INTERNAL_): Handle aborts.

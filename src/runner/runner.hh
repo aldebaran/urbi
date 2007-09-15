@@ -81,6 +81,9 @@ namespace runner
     virtual void finished (Coroutine& coro);
 
   private:
+    void raise_error_ (const object::UrbiException& ue);
+
+  private:
     /// The URBI Context used to evaluate.
     /// Wraps an UConnection (ATM).
     rContext context_;
