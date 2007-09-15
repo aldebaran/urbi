@@ -14,7 +14,9 @@ namespace runner
   class Job;
   class Coroutine;
 
+  struct CoroutineException;
   struct CoroutineYield;
+  struct CoroutineAbort;
 
   class Runner;
 

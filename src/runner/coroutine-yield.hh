@@ -11,10 +11,10 @@
 namespace runner
 {
 
-  class CoroutineYield
+  class CoroutineException
   {
   public:
-    explicit CoroutineYield (Coroutine& coro)
+    explicit CoroutineException (const Coroutine& coro)
       : coro_ (coro)
     {
     }
@@ -26,11 +26,27 @@ namespace runner
 
     Coroutine& coro ()
     {
-      return coro_;
+      return const_cast<Coroutine&> (coro_);
     }
 
   protected:
-    Coroutine& coro_;
+    const Coroutine& coro_;
+  };
+
+  struct CoroutineYield: public CoroutineException
+  {
+    explicit CoroutineYield (const Coroutine& coro)
+      : CoroutineException (coro)
+    {
+    }
+  };
+
+  struct CoroutineAbort: public CoroutineException
+  {
+    explicit CoroutineAbort (const Coroutine& coro)
+      : CoroutineException (coro)
+    {
+    }
   };
 
 } // namespace runner

@@ -1,5 +1,13 @@
 2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Make a hierarchy of coroutine exceptions.
+	* src/runner/coroutine-yield.hh (CoroutineYield): Rename as
+	CoroutineException.
+	(CoroutineYield, CoroutineAbort): New exception classes.
+	* src/runner/fwd.hh: Forward declare the new classes.
+
+2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Have less SEGV because of un-implemented features.
 	* src/parser/bison/ugrammar.y (root, cstmt, lvalue): Adjust the
 	rules to avoid SEGVs.
