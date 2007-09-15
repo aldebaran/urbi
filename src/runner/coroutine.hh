@@ -76,6 +76,12 @@ namespace runner
      * method.  */
     virtual void finished (Coroutine& coro);
 
+    /** Aborts the execution of the coroutine.  All the contexts stacked are
+     * destroyed.  The coroutine will signal its termination to other
+     * coroutines that could be waiting for it.
+     */
+    void abort () const;
+
     /***********************************************************
      * End of public interface.  Everything below is internal. *
      ***********************************************************/
@@ -195,7 +201,7 @@ namespace runner
       Vars                                                              \
     )                                                                   \
   };                                                                    \
-  line cr_line__ = cr_new_call_ || !started () ? 0 : cr_line_ ();        \
+  line cr_line__ = cr_new_call_ || !started () ? 0 : cr_line_ ();       \
   CORO_CHECK_WAITING_ ("coroutine not ready to resume execution at line " \
 		       << cr_line__ << " (still waiting for "           \
 		       << cr_waiting_for_ () << " other coroutines)");  \
@@ -346,6 +352,12 @@ namespace runner
     {                                                           \
       OnYield                                                   \
     }                                                           \
+    catch (const CoroutineAbort&)                               \
+    {                                                           \
+      /* We are just about to remove this stack frame */        \
+      --cr_resumed_;                                            \
+      throw;                                                    \
+    }                                                           \
     MoreCatch                                                   \
     ECHO ("back to coroutine ctx: " << ctx__                    \
 	  << " with " << context_count ()                       \
@@ -439,6 +451,11 @@ namespace runner
     scheduler_get ().add_job (this);                    \
     CORO_SAVE_BEGIN_;                                   \
     throw CoroutineYield (*this);                       \
+  }                                                     \
+  else                                                  \
+  {                                                     \
+    ECHO ("not cleaning up (finished? " << cr_finished_ \
+          << ", resumed? " <<  cr_resumed_ << ")");     \
   }
 
 /// @internal Return the value @a Ret and terminates this coroutine.
@@ -487,7 +504,6 @@ namespace runner
     catch (...)                                                         \
     {                                                                   \
     }                                                                   \
-    delete ctx__;                                                       \
     throw;                                                              \
   }                                                                     \
   ECHO ("coroutine end (ctx: " << ctx__ << ") "                         \

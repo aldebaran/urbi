@@ -83,6 +83,12 @@ namespace runner
   }
 
   inline
+  void Coroutine::abort () const
+  {
+    throw CoroutineAbort (*this);
+  }
+
+  inline
   void
   Coroutine::cr_save_ (line l, CoroCtx* ctx)
   {
@@ -103,7 +109,6 @@ namespace runner
   void
   Coroutine::cr_drop_stack_ ()
   {
-    assert (!cr_finished_);
     stack_type empty;
     std::swap (cr_stack_, empty);
     cr_resumed_ = 0;

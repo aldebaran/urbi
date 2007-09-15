@@ -3,7 +3,7 @@
  ** \brief Implementation of runner::Scheduler.
  */
 
-// #define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 
 #include <cassert>
 
@@ -16,6 +16,7 @@
 #include "runner/scheduler.hh"
 #include "runner/job.hh"
 #include "runner/coroutine-yield.hh"
+#include "runner/coroutine.hh"
 
 namespace runner
 {
@@ -72,6 +73,10 @@ namespace runner
     }
     catch (const CoroutineYield&)
     {
+    }
+    catch (CoroutineAbort& ca)
+    {
+      ECHO ("coro " << &ca.coro () << " abort while running " << job);
     }
     active_job_ = 0;
   }

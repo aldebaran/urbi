@@ -1,5 +1,15 @@
 2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Coroutines can abort their execution.
+	* src/runner/coroutine.hh (abort): New.
+	(CORO_CALL_INTERNAL_): Handle aborts.
+	(CORO_END_): Fix a double delete that occured when the coroutine was
+	terminated by an exception.
+	* src/runner/coroutine.hxx (abort): Implement.
+	* src/runner/scheduler.cc (schedule_immediately): Handle aborts.
+
+2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Make a hierarchy of coroutine exceptions.
 	* src/runner/coroutine-yield.hh (CoroutineYield): Rename as
 	CoroutineException.
