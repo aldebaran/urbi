@@ -103,6 +103,9 @@ namespace runner
     // The message cannot have arguments: just the target (can be 0).
     assert (e.lhs_get ().args_get ().size () == 1);
     CORO_CALL (tgt = target (e.lhs_get ().args_get ().front ()));
+    // FIXME: Do we need to issue an error message here?
+    if (!tgt)
+      CORO_RETURN;
     CORO_CALL (eval (e.rhs_get ()));
     {
       libport::Symbol s = e.lhs_get ().name_get ();
@@ -142,8 +145,11 @@ namespace runner
   Runner::operator() (ast::CallExp& e)
   {
     CORO_CTX_VARS
-      ((10, (
+      ((11, (
+          // Whether or not we must issue a real URBI function call
 	  (bool, call_code),
+          // Whether or not something went wrong
+	  (bool, has_error),
 	  (rObject, val),
 	  // Iteration over un-evaluated effective arguments.
 	  (ast::exps_type::const_iterator, i),
@@ -174,7 +180,7 @@ namespace runner
     // No target?  Abort the call.  This can happen (for instance) when you
     // do a.b () and a does not exist (lookup error).
     if (!tgt)
-      Coroutine::abort ();
+      CORO_RETURN;
 
     args.push_back (tgt);
     PING ();
@@ -196,6 +202,7 @@ namespace runner
       // We may have to run a primitive, or some code.
       // We cannot use CORO_* in a switch.
       call_code = false;
+      has_error = false;
       try {
         // Ask the target for the handler of the message.
         val = tgt->lookup (e.name_get ());
@@ -204,8 +211,14 @@ namespace runner
       {
         raise_error_ (ue);
         current_ = 0;
-        Coroutine::abort ();
+        has_error = true;
       }
+      if (has_error)
+        CORO_RETURN;
+      // FIXME: Do we need to issue an error message here?
+      if (!val)
+        CORO_RETURN;
+
       switch (val->kind_get ())
       {
 	case object::Object::kind_primitive:
@@ -327,6 +340,7 @@ namespace runner
 	catch (object::UrbiException& ue)
 	{
           raise_error_ (ue);
+          continue;
 	});
 
       /* Allow some time to pass before we execute what follows.  If

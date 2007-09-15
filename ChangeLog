@@ -1,3 +1,13 @@
+2007-09-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Do not abort when there is a runtime error.
+	* src/runner/runner.cc (operator()(AssignExp)): Handle the
+	shared_ptr-to-NULL case.
+	(operator()(CallExp)): Don't abort, handle error cases more
+	gracefully.
+	(operator()(Nary)): When there is an error, go on with the next
+	Nary.  This may or may not be correct :)
+
 2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Abort the execution of the Runner on runtime errors.
