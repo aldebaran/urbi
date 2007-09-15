@@ -1,3 +1,16 @@
+2007-09-15  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Have less SEGV because of un-implemented features.
+	* src/parser/bison/ugrammar.y (root, cstmt, lvalue): Adjust the
+	rules to avoid SEGVs.
+	* src/runner/runner.hh (operator()(TagExp)): Override.
+	* src/runner/runner.cc (operator()(TagExp)): Add a dummy
+	implementation.
+	* src/uconnection.cc (received): Raise an error if the parser
+	returns a NULL AST and did not have a parse error.
+	* tests-local.mk (XFAIL_TESTS): Remove class-definition.chk (I
+	wonder whether this test is of any use to any branch).
+
 2007-09-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Remove an invalid assert.

@@ -55,7 +55,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((12,
+    VISITOR_VISIT_NODES((13,
 			 (
 			  AssignExp,
 			  AndExp,
@@ -68,7 +68,8 @@ namespace runner
 			  Noop,
 			  PipeExp,
 			  Scope,
-			  StringExp
+			  StringExp,
+                          TagExp
 			  )))
     /// \}
 

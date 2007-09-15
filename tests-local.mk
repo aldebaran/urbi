@@ -26,7 +26,6 @@ begin_end_report.chk				\
 bin.chk						\
 bin_copy.chk					\
 bug76.chk					\
-class-definition.chk				\
 comparison.chk					\
 doublecolon.chk					\
 empty_then.chk					\

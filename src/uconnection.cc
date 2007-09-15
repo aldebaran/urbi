@@ -507,9 +507,16 @@ UConnection::received (const ubyte *buffer, int length)
 	p.command_tree_set (0);
 
 	send(p.error_get().c_str(), "error");
-	server->error(::DISPLAY_FORMAT, (long)this,
+	server->error(::DISPLAY_FORMAT, (long) this,
 		      "UConnection::received",
 		      p.error_get().c_str());
+      }
+      else if (!p.command_tree_get ())
+      {
+        send ("the parser returned NULL\n", "error");
+	server->error(::DISPLAY_FORMAT, (long) this,
+		      "UConnection::received",
+		      "the parser returned NULL\n");
       }
       else
       {

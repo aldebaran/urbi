@@ -264,7 +264,7 @@
  `----------*/
 %union
 {
-  std::string	   *str;
+  std::string* str;
 }
 
 // FIXME: Arguably, could be a Symbol too.
@@ -367,7 +367,7 @@ root:
     // FIXME: We should probably free it.
     up.command_tree_set (0);
   }
-| lvalue "=" binary ";"  { /* FIXME: */ }
+| lvalue "=" binary ";"  { /* FIXME: */ up.command_tree_set (0); }
 | stmts ";"
   {
     $1->back().second = ast::execution_foreground;
@@ -428,6 +428,14 @@ stmts:
 // Composite statement: with "|" and "&".
 cstmt:
   stmt
+  {
+    // XXX FIXME: Used as a temporary workaround until all actions are
+    // filled in this parser
+    if (!$1)
+      $$ = new ast::Noop (@$);
+    else
+      $$ = $1;
+  }
 | cstmt "|" cstmt { $$ = new_bin(@$, $2, $1, $3); }
 | cstmt "&" cstmt { $$ = new_bin(@$, $2, $1, $3); }
 ;
@@ -628,8 +636,10 @@ lvalue:
     // There is an implicit target: the current object, 0.
     if (!$$ || $$->args_get().size() != 1)
     {
+      std::string lvalue ($1 ? boost::lexical_cast<std::string>(*$1)
+                          : "<NULL>");
       error(@$, (std::string ("invalid lvalue: ")
-		 + boost::lexical_cast<std::string>(*$1)));
+		 + lvalue));
       YYERROR;
     }
   }
