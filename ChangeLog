@@ -1,5 +1,10 @@
 2007-09-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Add assertions.
+	* src/parser/bison/ugrammar.y (new_exp, take): Here.
+
+2007-09-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Do not abort when there is a runtime error.
 	* src/runner/runner.cc (operator()(AssignExp)): Handle the
 	shared_ptr-to-NULL case.

@@ -82,6 +82,7 @@
     T
     take (T* s)
     {
+      assert (s);
       T res = *s;
       delete s;
       return res;
@@ -128,6 +129,7 @@
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method)
     {
+      assert (method);
       return new_exp (l, target, take(method));
     }
 
@@ -137,6 +139,7 @@
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
+      assert (method);
       ast::CallExp* res = new_exp (l, target, method);
       res->args_get().push_back(arg1);
       return res;
