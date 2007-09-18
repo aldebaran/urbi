@@ -146,9 +146,9 @@ namespace runner
   {
     CORO_CTX_VARS
       ((11, (
-          // Whether or not we must issue a real URBI function call
+	  // Whether or not we must issue a real URBI function call
 	  (bool, call_code),
-          // Whether or not something went wrong
+	  // Whether or not something went wrong
 	  (bool, has_error),
 	  (rObject, val),
 	  // Iteration over un-evaluated effective arguments.
@@ -204,20 +204,20 @@ namespace runner
       call_code = false;
       has_error = false;
       try {
-        // Ask the target for the handler of the message.
-        val = tgt->lookup (e.name_get ());
+	// Ask the target for the handler of the message.
+	val = tgt->lookup (e.name_get ());
       }
       catch (object::UrbiException& ue)
       {
-        raise_error_ (ue);
-        current_ = 0;
-        has_error = true;
+	raise_error_ (ue);
+	current_ = 0;
+	has_error = true;
       }
       if (has_error)
-        CORO_RETURN;
+	CORO_RETURN;
       // FIXME: Do we need to issue an error message here?
       if (!val)
-        CORO_RETURN;
+	CORO_RETURN;
 
       switch (val->kind_get ())
       {
@@ -339,8 +339,8 @@ namespace runner
 		       emit_result (current_);,
 	catch (object::UrbiException& ue)
 	{
-          raise_error_ (ue);
-          continue;
+	  raise_error_ (ue);
+	  continue;
 	});
 
       /* Allow some time to pass before we execute what follows.  If

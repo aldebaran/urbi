@@ -640,7 +640,7 @@ lvalue:
     if (!$$ || $$->args_get().size() != 1)
     {
       std::string lvalue ($1 ? boost::lexical_cast<std::string>(*$1)
-                          : "<NULL>");
+			  : "<NULL>");
       error(@$, (std::string ("invalid lvalue: ")
 		 + lvalue));
       YYERROR;
@@ -688,6 +688,7 @@ expr:
 
 // Anonymous function.
 expr:
+  // Because of conflicts, we need the braces.
   "function" formal_arguments "{" stmts "}"
     {
       $$ = new ast::Function (@$, take($2), $4);
