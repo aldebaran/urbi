@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Simplify the grammar
+	* src/parser/bison/ugrammar.y (class_declaration): There
+	is no reason to accept composite names here.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Unary -
 	* src/object/float-class.cc (float_class_sub): Support 1- and 2-ary.
 	* src/parser/bison/ugrammar.y (copy): Now has a symbol value.

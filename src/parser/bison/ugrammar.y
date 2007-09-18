@@ -902,9 +902,9 @@ identifiers:
 `---------------------------------------------*/
 
 class_declaration:
-  "var"      name               { $$ = 0; }
-| "function" name formal_args   { $$ = 0; }
-| "event"    name formal_args   { $$ = 0; }
+  "var"      "identifier"               { $$ = 0; }
+| "function" "identifier" formal_args   { $$ = 0; }
+| "event"    "identifier" formal_args   { $$ = 0; }
 ;
 
 /* It used to be possible to not have the parens for empty identifiers.
