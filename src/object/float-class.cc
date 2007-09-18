@@ -104,11 +104,10 @@ namespace object
   static float
   float_sgn (libport::ufloat x)
   {
-    if (x > 0)
-      return 1;
-    else if (x < 0)
-      return -1;
-    return 0;
+    return
+      0 < x ?  1 :
+      x < 0 ? -1 :
+      0;
   }
 
   static float
@@ -116,7 +115,7 @@ namespace object
   {
     float res = 0.f;
     const long long range = libport::to_long_long (x);
-    if (range != 0)
+    if (range)
       res = rand () % range;
     return res;
   }
@@ -125,6 +124,22 @@ namespace object
   float_sqr (libport::ufloat x)
   {
     return x * x;
+  }
+
+  /// Unary or binary minus.
+  rObject
+  float_class_sub(rContext, objects_type args)
+  {
+    if (args.size () != 1 && args.size() != 2)
+      throw UrbiException::wrongArgumentCount(2, args.size ());
+    FETCH_ARG(0, Float);
+    if (args.size() == 1)
+      return new Float(- arg0->value_get());
+    else
+    {
+      FETCH_ARG(1, Float);
+      return new Float(arg0->value_get() - arg1->value_get());
+    }
   }
 
   /// Internal macro used to define a primitive for float numbers.
@@ -168,7 +183,6 @@ namespace object
   PRIMITIVE_OP_FLOAT(add, +)
   PRIMITIVE_2_FLOAT(div, float_div)
   PRIMITIVE_OP_FLOAT(mul, *)
-  PRIMITIVE_OP_FLOAT(sub, -)
   PRIMITIVE_2_FLOAT(pow, powf)
   PRIMITIVE_2_FLOAT(mod, float_mod)
 

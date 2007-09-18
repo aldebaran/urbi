@@ -355,22 +355,6 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::NegOp& e)
-  {
-    CORO_WITHOUT_CTX ();
-
-    CORO_CALL (eval (e.operand_get ()));
-    {
-      assert (current_->kind_get() == object::Object::kind_float);
-      current_ =
-	new object::Float (-1 * current_.cast<object::Float>()->value_get ());
-    }
-
-    CORO_END;
-  }
-
-
-  void
   Runner::operator() (ast::Noop&)
   {
     CORO_WITHOUT_CTX ();

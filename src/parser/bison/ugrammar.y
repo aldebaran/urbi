@@ -178,7 +178,6 @@
 	TOK_BIN          "bin"
 	TOK_CLASS        "class"
 	TOK_COLON        ":"
-	TOK_COPY         "copy"
 	TOK_DEF          "def"
 	TOK_DELGROUP     "delgroup"
 	TOK_DIR          "->"
@@ -234,6 +233,7 @@
 
  // Tokens that have a symbol semantic value.
 %token <symbol>
+	TOK_COPY         "copy"
 	TOK_ECHO         "echo"
 	TOK_WAIT         "wait"
 
@@ -343,7 +343,7 @@
 %left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
 %left  "-" "+"
 %left  "*" "/" "%"
-%left  "!" NEG     /* Negation--unary minus */
+%left  "!" UNARY     /* Negation--unary minus */
 %left "("
 %right "^"
 %right "'n"
@@ -768,15 +768,15 @@ expr:
 ;
 
 expr:
-  expr "+" expr	{ $$ = call(@$, $1, $2, $3); }
-| expr "-" expr	{ $$ = call(@$, $1, $2, $3); }
-| expr "*" expr	{ $$ = call(@$, $1, $2, $3); }
-| expr "/" expr	{ $$ = call(@$, $1, $2, $3); }
-| expr "%" expr	{ $$ = call(@$, $1, $2, $3); }
-| expr "^" expr	{ $$ = call(@$, $1, $2, $3); }
-| "-" expr     %prec NEG { $$ = new ast::NegOp(@$, $2); }
-| "(" expr ")"  { $$ = $2; }
-| "copy" expr  %prec NEG { $$ = 0; }
+  expr "+" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "-" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "*" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "/" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "%" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "^" expr	          { $$ = call(@$, $1, $2, $3); }
+| "-" expr    %prec UNARY { $$ = call(@$, $2, $1); }
+| "(" expr ")"            { $$ = $2; }
+| "copy" expr %prec UNARY { $$ = call(@$, $2, $1); }
 ;
 
 /*--------.

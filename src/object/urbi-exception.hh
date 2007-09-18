@@ -29,19 +29,19 @@ namespace object
     /// \param primitive primitive which has thrown the error.
     /// \param msg error message which will be sent.
     static UrbiException primitiveError (std::string primitive,
-                                  std::string msg);
+					 std::string msg);
 
     /// Construct an UrbiException (used when types mismatch in a primitive).
     /// \param real Real type.
     /// \param expected Expetected type.
     static UrbiException wrongArgumentType (Object::kind_type real,
-                                            Object::kind_type expected);
+					    Object::kind_type expected);
 
     /// Construct an UrbiException (used when args count is wrong).
     /// \param argReal Number of arguments given.
     /// \param argExpected Number of arguments expected.
     static UrbiException wrongArgumentCount (unsigned argReal,
-                                             unsigned argExpected);
+					     unsigned argExpected);
 
     /// Return the exception's error message.
     virtual const char* what () const throw ();

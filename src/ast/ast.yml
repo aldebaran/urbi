@@ -599,10 +599,6 @@ List:
 #     - operand: { type: 'Var*', desc: Operand }
 #     - oper: { type: OpVar::type, access: r, desc: Operator }
  
-NegOp:
-  super: Exp
-  attributes: [ { operand: { type: 'Exp*', desc: Operand of the negation operator } } ]
-
 Call:
   desc: /// Function calls, and attribute look-ups.
   super: Exp

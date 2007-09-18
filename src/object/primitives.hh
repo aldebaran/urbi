@@ -33,9 +33,9 @@ namespace object
  */
 #define FETCH_ARG(N, Type)                              \
   if(args[N]->kind_get() !=                             \
-         object::Object::kind_type(Type::traits::kind)) \
+	 object::Object::kind_type(Type::traits::kind)) \
     throw UrbiException::wrongArgumentType(args[N]->kind_get(), \
-                object::Object::kind_type(Type::traits::kind)); \
+		object::Object::kind_type(Type::traits::kind)); \
   r ## Type arg ## N = args[N].unsafe_cast<Type>()
 
 /**

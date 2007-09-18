@@ -29,4 +29,3 @@ namespace object
 }; // namespace object
 
 #endif // !OBJECT_FLOAT_CLASS_HH
-

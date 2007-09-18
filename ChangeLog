@@ -1,5 +1,18 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Unary -
+	* src/object/float-class.cc (float_class_sub): Support 1- and 2-ary.
+	* src/parser/bison/ugrammar.y (copy): Now has a symbol value.
+	(NEG): Rename as...
+	(UNARY): this.
+	Instead of creating a NegOp, pass the message "-()" to the target.
+	Support "copy expr" as some dummy sugar for "expr.copy".
+	* src/parser/bison/utoken.l: Adjust.
+	* src/ast/ast.yml (NegOp): Remove.
+	* src/runner/runner.hh, src/runner/runner.cc: Adjust.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	new_exp -> call
 	* src/parser/bison/ugrammar.y (new_exp): Rename as...
 	(call): this, it is more logical.

@@ -217,7 +217,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "at"            return token::TOK_AT;
 "bin"           return token::TOK_BIN;
 "class"         return token::TOK_CLASS;
-"copy"          return token::TOK_COPY;
+"copy"          RETURN_OP(COPY);
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;

@@ -55,7 +55,7 @@ namespace runner
     /// Import from super.
     using super_type::operator();
 
-    VISITOR_VISIT_NODES((13,
+    VISITOR_VISIT_NODES((12,
 			 (
 			  Assign,
 			  And,
@@ -64,7 +64,6 @@ namespace runner
 			  Function,
 			  List,
 			  Nary,
-			  NegOp,
 			  Noop,
 			  Pipe,
 			  Scope,
