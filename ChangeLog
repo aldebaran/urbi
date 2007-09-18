@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Tidy the grammar
+	* src/parser/bison/ugrammar.y: Classify stmt rules.
+	Reactivate some of the rules.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Propagate k1_id
 	* src/parser/bison/ugrammar.y (name): Remove, replaced by k1_id.
 

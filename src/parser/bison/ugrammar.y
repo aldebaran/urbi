@@ -549,37 +549,68 @@ stmt:
 | "noop"      { $$ = new ast::Noop (@$); }
 | expr        { $$ = $1; }
 | "echo" expr namedarguments { $$ = call (@$, 0, $1, $2); }
-| "group" "identifier" "{" identifiers "}" { $$ = 0; }
+;
+
+// Groups.
+stmt:
+  "group"    "identifier" "{" identifiers "}" { $$ = 0; }
 | "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "group" { $$ = 0; }
+;
+
+// Aliases.
+stmt:
+  "alias" { $$ = 0; }
 //| "alias" k1_id k1_id { $$ = 0; }
-//| k1_id "inherits" k1_id { $$ = 0; }
-//| k1_id "disinherits" k1_id { $$ = 0; }
 //| "alias" k1_id { $$ = 0; }
 //| "unalias" k1_id { $$ = 0; }
-| "alias" { $$ = 0; }
-| OPERATOR { $$ = 0; }
+;
+
+// Classes.
+stmt:
+//  k1_id "inherits" k1_id { $$ = 0; }
+//| k1_id "disinherits" k1_id { $$ = 0; }
+  "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
+| "class" "identifier" { $$ = 0; }
+;
+
+stmt:
+  OPERATOR        { $$ = 0; }
 | OPERATOR_ID tag { $$ = 0; }
-//| OPERATOR_VAR k1_id { $$ = 0; }
-//| BINDER "object" k1_id { $$ = 0; }
-//| BINDER "var" k1_id "from" k1_id { $$ = 0; }
-//| BINDER "function" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
-//| BINDER "event" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
-//| "emit" k1_id args                  { $$ = 0; }
-| "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
-| "wait" expr			    { $$ = call (@$, 0, $1, $2); }
-| "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
-//| "var" k1_id { $$ = 0; }
+;
+
+// Variables.
+// stmt:
+// | OPERATOR_VAR k1_id { $$ = 0; }
+// | "var" k1_id { $$ = 0; }
 // Duplicates the previous one, and cannot be factored.
 // | "def" k1_id { $$ = 0; }
 // The following one is incorrect: wrong separator, should be ;.
 // | "var" "{" identifiers "}" { $$ = 0; }
-| "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
-| "class" "identifier" { $$ = 0; }
-// | "event"    k1_id formal_args { $$ = 0; }
-| "function" k1_id formal_args "{" stmts "}"
+// ;
+
+// Bindings.
+stmt:
+  BINDER "object" k1_id { $$ = 0; }
+| BINDER "var" k1_id "from" k1_id { $$ = 0; }
+| BINDER "function" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
+| BINDER "event" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
+;
+
+// Events.
+stmt:
+  "emit" k1_id args                  { $$ = 0; }
+| "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
+| "wait" expr			    { $$ = call (@$, 0, $1, $2); }
+| "waituntil" softtest              { $$ = 0; }
+| "event"    k1_id formal_args { $$ = 0; }
+;
+
+// Functions.
+stmt:
+  "function" k1_id formal_args "{" stmts "}"
   {
     // Compiled as "name = function args stmt".
     $$ = new ast::Assign (@$, $2,
