@@ -1,3 +1,9 @@
+2007-09-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Be nice to non-SVN users.
+	* src/ast/Makefile.am (ignores.stamp): Set svn:ignores only when SVN
+	is used.
+
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
 	Method look up in the object itself
