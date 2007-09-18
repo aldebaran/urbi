@@ -1,5 +1,14 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	s/\BExp//g
+	* src/ast/ast.yml: Remove all the suffixes "Exp".
+	* src/parser/bison/ugrammar.y, src/runner/runner.cc,
+	* src/runner/runner.hh: Adjust.
+
+	* src/ast/Makefile.am: Set the svn:ignore property automatically.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Fix function's scope handling
 	"function () exp" is sugar for "function() { exp }".
 	* src/parser/bison/ugrammar.y (scope): New.

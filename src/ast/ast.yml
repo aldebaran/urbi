@@ -96,7 +96,7 @@ Exp:
 ## Tags.  ##
 ## ------ ##
 
-TagExp:
+Tag:
   super: Exp
   attributes:
     - tag: { type: 'Exp*', desc: The tagging expression }
@@ -294,7 +294,7 @@ Nary:
           return o;
         }
 
-# CommaExp:
+# Comma:
 #   super: Nary
 #   default: |2
 #     operator()(n.lhs_get());
@@ -304,7 +304,7 @@ Nary:
 #     - '" , "'
 #     - ~rhs
 # 
-# SemicolonExp:
+# Semicolon:
 #   super: Nary
 #   default: |2
 #     operator()(n.lhs_get());
@@ -331,14 +331,14 @@ Binary:
     operator()(n.lhs_get());
     operator()(n.rhs_get());
 
-AndExp:
+And:
   super: Binary
   printer:
     - ~lhs
     - '" & "'
     - ~rhs
 
-PipeExp:
+Pipe:
   super: Binary
   printer:
     - ~lhs
@@ -348,27 +348,27 @@ PipeExp:
 
 # Identifier constructs
 
-# DotExp:
+# Dot:
 #   super: Exp
 #   attributes:
 #     - exp: { type: 'Exp*', desc: Object the variable is attached to (or null if root) }
 #     - symbol:  { type: 'libport::Symbol*', desc: Name of the variable separated from exp with a dot }
 
-# IdExp:
+# Id:
 #   super: Exp
 #   attributes:
 #     - symbol:  { type: 'libport::Symbol*', desc: Name of the symbol to be name-resolved }
 
 # Var:
-#   super: DotExp
+#   super: Dot
 
-# ArrowExp:
+# Arrow:
 #   super: Exp
 #   attributes:
 #     - var: { type: 'Var*', desc: variable whose property is accessed }
 #     - symbol:  { type: 'libport::Symbol*', desc: Name of the property }
 
-# TagOpExp:
+# TagOp:
 #   super: Exp
 #   inline:
 #     header inside: |2
@@ -385,9 +385,9 @@ PipeExp:
 #             };
 #   attributes:
 #     - tag: { type: Exp*, desc: Tag of the tag-operation command }
-#     - oper: { type: TagOpExp::type, access: r, desc: Operator }
+#     - oper: { type: TagOp::type, access: r, desc: Operator }
 
-# IfExp:
+# If:
 #   super: Exp
 #   attributes:
 #     - test: { type: 'Exp*', desc: Condition }
@@ -398,7 +398,7 @@ PipeExp:
 #         type: Exp*
 #         desc: Instructions executed if condition is false
  
-# AtExp:
+# At:
 #   super: Exp
 #   attributes:
 #     - test: { type: 'Exp*', desc: Condition }
@@ -409,11 +409,11 @@ PipeExp:
 #         type: Exp*
 #         desc: Instructions executed onleave
 
-# AliasExp:
+# Alias:
 #   super: Exp
 #   desc: |2
 
-#       /** \class ast::AliasExp
+#       /** \class ast::Alias
 #        ** \brief Set an alias flag in the object given, to point to one of
 #        ** its attribute (typically, 'val'). For backward compat only.
 #        */
@@ -422,36 +422,36 @@ PipeExp:
 #     - obj: { type: 'Exp*', desc: Reference to the object to alias }
 #     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
  
-AssignExp:
+Assign:
   super: Exp
   attributes:
-    - lhs: { type: 'CallExp*', desc: Reference to the affected variable }
+    - lhs: { type: 'Call*', desc: Reference to the affected variable }
     - rhs: { type: 'Exp*', desc: Assigned value }
   printer:
     - ~lhs
     - '" = "'
     - ~rhs
 
-# InheritsExp:
+# Inherits:
 #   super: Exp
 #   attributes:
 #     - inheritor: { type: 'Exp*', desc: Reference to the inheriting object }
 #     - inherited: { type: 'Exp*', desc: Reference to the inherited object }
 
-# DisinheritsExp:
+# Disinherits:
 #   super: Exp
 #   attributes:
 #     - disinheritor: { type: 'Exp*', desc: Reference to the disinheriting object }
 #     - disinherited: { type: 'Exp*', desc: Reference to the diinherited object }
 
-# DeleteExp:
+# Delete:
 #   super: Exp
 #   attributes:
 #     - obj:
 #         type: 'Exp*'
 #         desc: Reference to the object to delete
 
-# ExternalExp:
+# External:
 #   super: Exp
 #   inline:
 #     header inside: |2
@@ -467,10 +467,10 @@ AssignExp:
 #   attributes:
 #     - fromobj: { type: 'Exp*', desc: Reference to the bound-from object }
 #     - attribute: { type: 'libport::Symbol*', desc: Bound attribute }
-#     - type: { type: ExternalExp::Type, access: r, desc: External binding type }
+#     - type: { type: External::Type, access: r, desc: External binding type }
 #     - qualifier:  { type: int, desc: Binding qualifier used to specify the number of args in a function }
 
-ReturnExp:
+Return:
   super: Exp
   attributes:
     - exp: { type: 'Exp*', desc: Returned value }
@@ -484,17 +484,17 @@ ReturnExp:
     - '" "'
     - ~exp
 
-# WaitExp:
+# Wait:
 #   super: Exp
 #   attributes:
 #     - duration: { type: 'Exp*', desc: Time to wait }
 
-# WaitUntilExp:
+# WaitUntil:
 #   super: Exp
 #   attributes:
 #     - condition: { type: 'Exp*', desc: Condition to wait }
 
-# WheneverExp:
+# Whenever:
 #   super: Exp
 #   attributes:
 #     - test: { type: 'Exp*', desc: Condition }
@@ -511,7 +511,7 @@ Noop:
   printer:
     - '"noop"'
 
-# EmitExp:
+# Emit:
 #   super: Exp
 #   attributes:
 #     - name:
@@ -524,7 +524,7 @@ Noop:
 
 # Expressions
 
-# ExecExp:
+# Exec:
 #   super: Exp
 #   attributes:
 #     - toexec:
@@ -532,7 +532,7 @@ Noop:
 #         access: r
 #         desc: String to execute
  
-FloatExp:
+Float:
   super: Exp
   attributes:
     - value:
@@ -542,7 +542,7 @@ FloatExp:
   printer:
     - $value
 
-StringExp:
+String:
   super: Exp
   attributes:
     - value:
@@ -550,7 +550,7 @@ StringExp:
         access: r
         desc: String value
 
-ListExp:
+List:
   super: Exp
   attributes:
     - value:
@@ -566,7 +566,7 @@ ListExp:
 
 ## FIXME: Disabled because I don't know how to free the exp_pairs_type
 ## pointer.  The machinery is not ready.
-##MapExp:
+##Map:
 ##  super: Exp
 ##  attributes:
 ##    - value:
@@ -574,7 +574,7 @@ ListExp:
 ##        access: r
 ##        desc: Stored pair values
 
-# RefExp:
+# Ref:
 #   super: Exp
 #   attributes:
 #     - value:
@@ -582,7 +582,7 @@ ListExp:
 #         access: r
 #         desc: Stored reference
 
-# OpVarExp:
+# OpVar:
 #   super: Exp
 #   inline:
 #     header inside: |2
@@ -597,13 +597,13 @@ ListExp:
 #             };
 #   attributes:
 #     - operand: { type: 'Var*', desc: Operand }
-#     - oper: { type: OpVarExp::type, access: r, desc: Operator }
+#     - oper: { type: OpVar::type, access: r, desc: Operator }
  
-NegOpExp:
+NegOp:
   super: Exp
   attributes: [ { operand: { type: 'Exp*', desc: Operand of the negation operator } } ]
 
-CallExp:
+Call:
   desc: /// Function calls, and attribute look-ups.
   super: Exp
   attributes:
@@ -632,7 +632,7 @@ CallExp:
                   << ")";
        }'
 
-# ArrayExp:
+# Array:
 #   super: Exp
 #   attributes:
 #     - name:
@@ -642,7 +642,7 @@ CallExp:
 #         type: 'Exp*'
 #         desc: Index of the array
  
-NewExp:
+New:
   super: Exp
   attributes:
     - obj:

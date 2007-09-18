@@ -100,10 +100,10 @@
       switch (op)
       {
 	case Flavorable::UAND:
-	  res = new ast::AndExp (l, lhs, rhs);
+	  res = new ast::And (l, lhs, rhs);
 	  break;
 	case Flavorable::UPIPE:
-	  res = new ast::PipeExp (l, lhs, rhs);
+	  res = new ast::Pipe (l, lhs, rhs);
 	  break;
 	default:
 	  pabort(op);
@@ -113,19 +113,19 @@
 
     /// "<target> . <method> ()".
     static
-    ast::CallExp*
+    ast::Call*
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol method)
     {
       ast::exps_type* args = new ast::exps_type;
       args->push_front (target);
-      ast::CallExp* res = new ast::CallExp(l, method, args);
+      ast::Call* res = new ast::Call(l, method, args);
       return res;
     }
 
     /// "<target> . <method> ()".
     static
-    ast::CallExp*
+    ast::Call*
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method)
     {
@@ -135,12 +135,12 @@
 
     /// "<target> . <method> (<arg1>)".
     static
-    ast::CallExp*
+    ast::Call*
     new_exp (const yy::parser::location_type& l,
 	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
       assert (method);
-      ast::CallExp* res = new_exp (l, target, method);
+      ast::Call* res = new_exp (l, target, method);
       res->args_get().push_back(arg1);
       return res;
     }
@@ -308,7 +308,7 @@
 %union
 {
   ast::Exp*       expr;
-  ast::CallExp*   call;
+  ast::Call*   call;
   ast::Nary*      nary;
 }
 
@@ -453,7 +453,7 @@ tag: expr;
 stmt:
   tag flags.0 ":" stmt
   {
-    $$ = new ast::TagExp (@$, $1, $4);
+    $$ = new ast::Tag (@$, $1, $4);
   }
 | flags.1 ":" stmt { $$ = $3; }
 ;
@@ -572,7 +572,7 @@ stmt:
 | "function" name formal_args stmt
   {
     // Compiled as "name = function args stmt".
-    $$ = new ast::AssignExp (@$, $2,
+    $$ = new ast::Assign (@$, $2,
 			     new ast::Function (@$, take($3), scope(@4, $4)));
   }
 ;
@@ -581,7 +581,7 @@ stmt:
 | Stmt: Assignment.  |
 `-------------------*/
 stmt:
-	lvalue "=" expr namedarguments { $$ = new ast::AssignExp (@$, $1, $3); }
+	lvalue "=" expr namedarguments { $$ = new ast::Assign (@$, $1, $3); }
 | "var" lvalue "=" expr namedarguments { $$ = 0; }
 | lvalue "+=" expr { $$ = 0; }
 | lvalue "-=" expr { $$ = 0; }
@@ -605,7 +605,7 @@ stmt:
 | "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
 | "stopif" "(" softtest ")" stmt { $$ = 0; }
 | "timeout" "(" expr ")" stmt { $$ = 0; }
-| "return" expr.opt   { $$ = new ast::ReturnExp(@$, $2, false); }
+| "return" expr.opt   { $$ = new ast::Return(@$, $2, false); }
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK { $$ = 0; }
 | "whenever" "(" softtest ")" stmt "else" stmt { $$ = 0; }
 | "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
@@ -630,11 +630,11 @@ name:
 | Variables.  |
 `------------*/
 
-// An lvalue is a CallExp without arguments.
+// An lvalue is a Call without arguments.
 lvalue:
   expr
   {
-    $$ = dynamic_cast<ast::CallExp*>($1);
+    $$ = dynamic_cast<ast::Call*>($1);
     // There is an implicit target: the current object, 0.
     if (!$$ || $$->args_get().size() != 1)
     {
@@ -725,10 +725,10 @@ number:
 `-------*/
 
 expr:
-  number    { $$ = new ast::FloatExp(@$, $1);        }
-| time_expr { $$ = new ast::FloatExp(@$, $1);        }
-| "string"  { $$ = new ast::StringExp(@$, take($1)); }
-| "[" exprs "]" { $$ = new ast::ListExp(@$, $2); }
+  number    { $$ = new ast::Float(@$, $1);        }
+| time_expr { $$ = new ast::Float(@$, $1);        }
+| "string"  { $$ = new ast::String(@$, take($1)); }
+| "[" exprs "]" { $$ = new ast::List(@$, $2); }
 | name "(" exprs ")"
     {
       $1->args_get().splice($1->args_get().end(), *$3);
@@ -747,7 +747,7 @@ expr:
     args->push_back (new_exp(@1 + @2, parent, "clone"));
     args->splice(args->end(), *$3);
     delete $3;
-    $$ = new ast::CallExp (@$, "init", args);
+    $$ = new ast::Call (@$, "init", args);
   }
 ;
 
@@ -774,7 +774,7 @@ expr:
 | expr "/" expr	{ $$ = new_exp(@$, $1, $2, $3); }
 | expr "%" expr	{ $$ = new_exp(@$, $1, $2, $3); }
 | expr "^" expr	{ $$ = new_exp(@$, $1, $2, $3); }
-| "-" expr     %prec NEG { $$ = new ast::NegOpExp(@$, $2); }
+| "-" expr     %prec NEG { $$ = new ast::NegOp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
 | "copy" expr  %prec NEG { $$ = 0; }
 ;
@@ -798,8 +798,8 @@ expr:
 ;
 
 expr:
-  "false" { $$ = new ast::FloatExp(@$, 0); }
-| "true"  { $$ = new ast::FloatExp(@$, 1); }
+  "false" { $$ = new ast::Float(@$, 0); }
+| "true"  { $$ = new ast::Float(@$, 1); }
 
 | expr "!="  expr { $$ = new_exp(@$, $1, $2, $3); }
 | expr "%="  expr { $$ = new_exp(@$, $1, $2, $3); }

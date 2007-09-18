@@ -57,19 +57,19 @@ namespace runner
 
     VISITOR_VISIT_NODES((13,
 			 (
-			  AssignExp,
-			  AndExp,
-			  CallExp,
-			  FloatExp,
+			  Assign,
+			  And,
+			  Call,
+			  Float,
 			  Function,
-			  ListExp,
+			  List,
 			  Nary,
-			  NegOpExp,
+			  NegOp,
 			  Noop,
-			  PipeExp,
+			  Pipe,
 			  Scope,
-			  StringExp,
-                          TagExp
+			  String,
+			  Tag
 			  )))
     /// \}
 

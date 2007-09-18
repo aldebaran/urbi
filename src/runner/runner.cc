@@ -30,8 +30,8 @@ namespace runner
 
 /** Call this macro at the very beginning of the evaluation of an AST
  * node.  Nodes that should yield are that doing something useful.  For
- * instance in "1;2" we have 3 nodes: two values in a SemicolonExp.  The
- * SemicolonExp does not do anything useful, it simply recurses in its
+ * instance in "1;2" we have 3 nodes: two values in a Semicolon.  The
+ * Semicolon does not do anything useful, it simply recurses in its
  * left hand side.  However, the "1" does something useful: it calculates
  * a value (even though calculating the constant "1" is somewhat trivial),
  * so it should most probably start with a YIELD.
@@ -94,7 +94,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::AssignExp& e)
+  Runner::operator() (ast::Assign& e)
   {
     CORO_WITH_1SLOT_CTX (rObject, tgt);
     YIELD ();
@@ -116,7 +116,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::AndExp& e)
+  Runner::operator() (ast::And& e)
   {
     CORO_WITHOUT_CTX ();
 
@@ -142,7 +142,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::CallExp& e)
+  Runner::operator() (ast::Call& e)
   {
     CORO_CTX_VARS
       ((11, (
@@ -269,7 +269,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::FloatExp& e)
+  Runner::operator() (ast::Float& e)
   {
     CORO_WITHOUT_CTX ();
     YIELD ();
@@ -282,7 +282,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::ListExp& e)
+  Runner::operator() (ast::List& e)
   {
     typedef std::list<object::rObject> objects;
     typedef std::list<ast::Exp*> exps;
@@ -355,7 +355,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::NegOpExp& e)
+  Runner::operator() (ast::NegOp& e)
   {
     CORO_WITHOUT_CTX ();
 
@@ -380,7 +380,7 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::PipeExp& e)
+  Runner::operator() (ast::Pipe& e)
   {
     CORO_WITHOUT_CTX ();
 
@@ -428,7 +428,7 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::StringExp& e)
+  Runner::operator() (ast::String& e)
   {
     CORO_WITHOUT_CTX ();
     YIELD ();
@@ -441,7 +441,7 @@ namespace runner
   }
 
     void
-  Runner::operator() (ast::TagExp&)
+  Runner::operator() (ast::Tag&)
   {
     CORO_WITHOUT_CTX ();
     // FIXME: Some code is missing here.

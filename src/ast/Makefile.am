@@ -58,6 +58,13 @@ fwd.hh: $(srcdir)/fwd.stamp
 
 # ignores.
 EXTRA_DIST += ignores
+$(srcdir)/ignores.stamp: $(gen_dir)/ast-ignores-gen $(ast_gen_deps)
+	@rm -rf $@
+	@rm -rf $@.tmp
+	@touch $@.tmp
+	$(gen_dir)/ast-ignores-gen $(srcdir) < $(srcdir)/ast.yml
+	svn propset svn:ignore $(srcdir) -F $(srcdir)/ignores
+	@mv -f $@.tmp $@
 ignores: $(srcdir)/ignores.stamp
 
 # AST itself.
@@ -85,8 +92,8 @@ pretty-printer.hh pretty-printer.hxx pretty-printer.cc: $(srcdir)/pretty-printer
 MAINTAINERCLEANFILES += $(BUILT_SOURCES_local)
 
 noinst_LTLIBRARIES = libast.la
-libast_la_SOURCES =					\
-	all.hh                                          \
-	loc.hh                                          \
-	visitor.hxx					\
+libast_la_SOURCES =				\
+	all.hh					\
+	loc.hh					\
+	visitor.hxx				\
 	$(BUILT_SOURCES_local)
