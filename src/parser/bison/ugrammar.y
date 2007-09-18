@@ -553,32 +553,32 @@ stmt:
 | "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "group" { $$ = 0; }
-//| "alias" name name { $$ = 0; }
-//| name "inherits" name { $$ = 0; }
-//| name "disinherits" name { $$ = 0; }
-//| "alias" name { $$ = 0; }
-//| "unalias" name { $$ = 0; }
+//| "alias" k1_id k1_id { $$ = 0; }
+//| k1_id "inherits" k1_id { $$ = 0; }
+//| k1_id "disinherits" k1_id { $$ = 0; }
+//| "alias" k1_id { $$ = 0; }
+//| "unalias" k1_id { $$ = 0; }
 | "alias" { $$ = 0; }
 | OPERATOR { $$ = 0; }
 | OPERATOR_ID tag { $$ = 0; }
-//| OPERATOR_VAR name { $$ = 0; }
-//| BINDER "object" name { $$ = 0; }
-//| BINDER "var" name "from" name { $$ = 0; }
-//| BINDER "function" "(" "integer" ")" name "from" name { $$ = 0; }
-//| BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
-//| "emit" name args                  { $$ = 0; }
-//| "emit" "(" expr.opt ")" name args { $$ = 0; }
+//| OPERATOR_VAR k1_id { $$ = 0; }
+//| BINDER "object" k1_id { $$ = 0; }
+//| BINDER "var" k1_id "from" k1_id { $$ = 0; }
+//| BINDER "function" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
+//| BINDER "event" "(" "integer" ")" k1_id "from" k1_id { $$ = 0; }
+//| "emit" k1_id args                  { $$ = 0; }
+| "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
 | "wait" expr			    { $$ = call (@$, 0, $1, $2); }
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
-//| "var" name { $$ = 0; }
+//| "var" k1_id { $$ = 0; }
 // Duplicates the previous one, and cannot be factored.
-// | "def" name { $$ = 0; }
+// | "def" k1_id { $$ = 0; }
 // The following one is incorrect: wrong separator, should be ;.
 // | "var" "{" identifiers "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
-// | "event"    name formal_args { $$ = 0; }
+// | "event"    k1_id formal_args { $$ = 0; }
 | "function" k1_id formal_args "{" stmts "}"
   {
     // Compiled as "name = function args stmt".
@@ -622,6 +622,18 @@ k1_id:
   "identifier"                   { $$ = call (@$, 0, $1); }
 | "identifier" "." "identifier"  { $$ = call (@$, call (@1, 0, $1), $3); }
 ;
+
+// These should probably be integrated into k1_id too, but without
+// the recursion.
+
+//name:
+//  "identifier"             { $$ = call(@$, 0, $1); }
+//| "$" "(" expr ")"         { $$ = 0; }
+//| name "." "identifier"    { $$ = call(@$, $1, $3); }
+//| name "[" expr "]"        { $$ = 0; }
+//| name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
+//;
+
 
 /*-------------------.
 | Stmt: Assignment.  |
@@ -725,18 +737,6 @@ expr:
   call  { $$ = $1; }
 ;
 
-/*-------.
-| Name.  |
-`-------*/
-
-//%type <call>  name
-//name:
-//  "identifier"             { $$ = call(@$, 0, $1); }
-//| "$" "(" expr ")"         { $$ = 0; }
-//| name "." "identifier"    { $$ = call(@$, $1, $3); }
-//| name "[" expr "]"        { $$ = 0; }
-//| name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
-//;
 
 
 /*------------.
@@ -759,13 +759,13 @@ lvalue:
 ;
 
 //expr:
-//  name          { $$ = $1; }
-//| "static" name	{ /* FIXME: Fill. */ }
-//| name derive   { /* FIXME: Fill. */ }
-//| name "'e"	{ /* FIXME: Fill. */ }
-//| name "'in"	{ /* FIXME: Fill. */ }
-//| name "'out"   { /* FIXME: Fill. */ }
-//| name "'n"	{ $$ = 0; }
+//  k1_id          { $$ = $1; }
+//| "static" k1_id	{ /* FIXME: Fill. */ }
+//| k1_id derive   { /* FIXME: Fill. */ }
+//| k1_id "'e"	{ /* FIXME: Fill. */ }
+//| k1_id "'in"	{ /* FIXME: Fill. */ }
+//| k1_id "'out"   { /* FIXME: Fill. */ }
+//| k1_id "'n"	{ $$ = 0; }
 //;
 //
 //%code requires
@@ -788,7 +788,7 @@ lvalue:
 
 
 //expr:
-//  name "->" "identifier" { $$ = 0; }
+//  k1_id "->" "identifier" { $$ = 0; }
 //;
 
 
