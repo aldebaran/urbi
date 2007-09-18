@@ -701,9 +701,8 @@ Function:
   printer:
     - '"function ("'
     - libport::separate (n.formals_get(), ", ")
-    - '") {"'
+    - '") "'
     - ~body
-    - '"}"'
 
 # EventDec:
 #   super: Dec

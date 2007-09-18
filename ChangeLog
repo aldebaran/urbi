@@ -1,5 +1,17 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Fix function's scope handling
+	"function () exp" is sugar for "function() { exp }".
+	* src/parser/bison/ugrammar.y (scope): New.
+	Use it instead of always creating scopes, possibly unnecessary.
+	Add one missing scope creation for function bodies.
+	(formal_arguments): Rename as...
+	(formal_args): this.
+	* src/ast/ast.yml: Don't print braces for functions, let the body
+	do it.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	* src/ast/ast.yml (Nary::push_back): New.
 	* src/parser/bison/ugrammar.y: Use it.
 	As a side effect, when there is a single expression,

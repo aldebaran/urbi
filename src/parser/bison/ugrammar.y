@@ -145,6 +145,17 @@
       return res;
     }
 
+    /// Return \a e in a ast::Scope unless it is already one.
+    static
+    ast::Scope*
+    scope (const yy::parser::location_type& l, ast::Exp* e)
+    {
+      if (ast::Scope* res = dynamic_cast<ast::Scope*>(e))
+	return res;
+      else
+	return new ast::Scope(l, e);
+    }
+
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -282,7 +293,7 @@
 	OPERATOR           "operator command"
 	OPERATOR_ID        "operator"
 	OPERATOR_VAR       "var-operator"
-%type <symbols> identifiers identifiers.1 formal_arguments
+%type <symbols> identifiers identifiers.1 formal_args
 // FIXME: this destructor entails double frees and invalid pointer
 // frees.
 // %destructor { delete $$; } <symbol>;
@@ -478,7 +489,7 @@ flags.0:
 `-------*/
 
 stmt:
-  "{" stmts "}" { $$ = new ast::Scope(@$, $2); }
+  "{" stmts "}" { $$ = scope(@$, $2); }
 ;
 
 
@@ -557,12 +568,12 @@ stmt:
 | "var" "{" names "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
-| "event" name formal_arguments { $$ = 0; }
-| "function" name formal_arguments stmt
+| "event" name formal_args { $$ = 0; }
+| "function" name formal_args stmt
   {
     // Compiled as "name = function args stmt".
     $$ = new ast::AssignExp (@$, $2,
-			     new ast::Function (@$, take($3), $4));
+			     new ast::Function (@$, take($3), scope(@4, $4)));
   }
 ;
 
@@ -677,9 +688,9 @@ expr:
 // Anonymous function.
 expr:
   // Because of conflicts, we need the braces
-  "function" formal_arguments "{" stmts "}"
+  "function" formal_args "{" stmts "}"
     {
-      $$ = new ast::Function (@$, take($2), $4);
+      $$ = new ast::Function (@$, take($2), scope(@3+@5, $4));
     }
 ;
 
@@ -891,15 +902,15 @@ identifiers:
 `---------------------------------------------*/
 
 class_declaration:
-  "var"      name                    { $$ = 0; }
-| "function" name formal_arguments   { $$ = 0; }
-| "event"    name formal_arguments   { $$ = 0; }
+  "var"      name               { $$ = 0; }
+| "function" name formal_args   { $$ = 0; }
+| "event"    name formal_args   { $$ = 0; }
 ;
 
 /* It used to be possible to not have the parens for empty identifiers.
    For the time being, this is disabled because it goes against
    factoring.  Might be reintroduced later. */
-formal_arguments:
+formal_args:
   "(" identifiers ")" { $$ = $2; }
 ;
 
