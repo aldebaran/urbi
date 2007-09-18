@@ -840,12 +840,6 @@ expr:
 | time_expr { $$ = new ast::Float(@$, $1);        }
 | "string"  { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2); }
-//| name "(" exprs ")"
-//    {
-//      $1->args_get().splice($1->args_get().end(), *$3);
-//      delete $3;
-//      $$ = $1;
-//    }
 //| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
 | "new" "identifier" args

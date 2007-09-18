@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Dead code
+	* src/parser/bison/ugrammar.y: Remove it, to avoid confusion
+	with disabled code.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Accept x.f().g()
 	This change was quite tough, and I finally decided to disable
 	most of the grammar to have it work.  It is really difficult
