@@ -562,9 +562,10 @@ stmt:
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }
-//  Duplicates the previous one, and cannot be factored.
+// Duplicates the previous one, and cannot be factored.
 // | "def" name { $$ = 0; }
-| "var" "{" identifiers "}" { $$ = 0; }
+// The following one is incorrect: wrong separator, should be ;.
+// | "var" "{" identifiers "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
 | "event"    name formal_args { $$ = 0; }
