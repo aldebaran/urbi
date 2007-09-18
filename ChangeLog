@@ -1,5 +1,13 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Braces are mandatory for functions
+	Otherwise we have nasty issues: "function foo (a)" looks
+	like "fn foo() { (a) }" and "function foo(a) { a }".  The
+	parser does not like this.
+	* src/parser/bison/ugrammar.y: Do that.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Simplify the grammar
 	* src/parser/bison/ugrammar.y (class_declaration): There
 	is no reason to accept composite names here.

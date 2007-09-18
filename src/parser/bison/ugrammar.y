@@ -569,11 +569,12 @@ stmt:
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
 | "event" name formal_args { $$ = 0; }
-| "function" name formal_args stmt
+| "function" name formal_args "{" stmts "}"
   {
     // Compiled as "name = function args stmt".
     $$ = new ast::Assign (@$, $2,
-			     new ast::Function (@$, take($3), scope(@4, $4)));
+			     new ast::Function (@$, take($3), 
+						scope(@4+@6, $5)));
   }
 ;
 
