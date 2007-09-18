@@ -1,3 +1,9 @@
+2007-09-18  HUMBERT Remi <humbert@gostai.com>
+
+	* src/utypes.hh: Undefine 'min' and 'max' macros,
+	it should be done in libport/windows.hh. This is only a temporary
+	solution.
+
 2007-08-31  Rémi Humbert  <humbert@gostai.com>
 
 	* network.cc: Don't set the option SO_REUSEADDR under windows .
