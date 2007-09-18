@@ -111,16 +111,24 @@
       return res;
     }
 
+    /// "<target> . <method> (args)".
+    static
+    ast::Call*
+    call (const yy::parser::location_type& l,
+	  ast::Exp* target, libport::Symbol method, ast::exps_type* args)
+    {
+      args->push_front (target);
+      ast::Call* res = new ast::Call(l, method, args);
+      return res;
+    }
+
     /// "<target> . <method> ()".
     static
     ast::Call*
     call (const yy::parser::location_type& l,
 	  ast::Exp* target, libport::Symbol method)
     {
-      ast::exps_type* args = new ast::exps_type;
-      args->push_front (target);
-      ast::Call* res = new ast::Call(l, method, args);
-      return res;
+      return call (l, target, method, new ast::exps_type);
     }
 
     /// "<target> . <method> ()".
@@ -314,7 +322,6 @@
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
 
-%type <call>  name
 %type <call>  lvalue
 
 %type <expr>  class_declaration
@@ -338,14 +345,17 @@
  */
 
 %left  "||"
-%left "&&"
+%left  "&&"
 %left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
 %left  "-" "+"
 %left  "*" "/" "%"
 %left  "!" UNARY     /* Negation--unary minus */
-%left "("
+%left  "("
 %right "^"
 %right "'n"
+
+// a^b.c reads "a ^ (b.c)".
+%left  "."
 
 %right "," ";"
 %left  "&" "|"
@@ -543,39 +553,74 @@ stmt:
 | "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "group" { $$ = 0; }
-| "alias" name name { $$ = 0; }
-| name "inherits" name { $$ = 0; }
-| name "disinherits" name { $$ = 0; }
-| "alias" name { $$ = 0; }
-| "unalias" name { $$ = 0; }
+//| "alias" name name { $$ = 0; }
+//| name "inherits" name { $$ = 0; }
+//| name "disinherits" name { $$ = 0; }
+//| "alias" name { $$ = 0; }
+//| "unalias" name { $$ = 0; }
 | "alias" { $$ = 0; }
 | OPERATOR { $$ = 0; }
 | OPERATOR_ID tag { $$ = 0; }
-| OPERATOR_VAR name { $$ = 0; }
-| BINDER "object" name { $$ = 0; }
-| BINDER "var" name "from" name { $$ = 0; }
-| BINDER "function" "(" "integer" ")" name "from" name { $$ = 0; }
-| BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
-| "emit" name args                  { $$ = 0; }
-| "emit" "(" expr.opt ")" name args { $$ = 0; }
+//| OPERATOR_VAR name { $$ = 0; }
+//| BINDER "object" name { $$ = 0; }
+//| BINDER "var" name "from" name { $$ = 0; }
+//| BINDER "function" "(" "integer" ")" name "from" name { $$ = 0; }
+//| BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
+//| "emit" name args                  { $$ = 0; }
+//| "emit" "(" expr.opt ")" name args { $$ = 0; }
 | "wait" expr			    { $$ = call (@$, 0, $1, $2); }
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
-| "var" name { $$ = 0; }
+//| "var" name { $$ = 0; }
 // Duplicates the previous one, and cannot be factored.
 // | "def" name { $$ = 0; }
 // The following one is incorrect: wrong separator, should be ;.
 // | "var" "{" identifiers "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
-| "event"    name formal_args { $$ = 0; }
-| "function" name formal_args "{" stmts "}"
+// | "event"    name formal_args { $$ = 0; }
+| "function" k1_id formal_args "{" stmts "}"
   {
     // Compiled as "name = function args stmt".
     $$ = new ast::Assign (@$, $2,
-			     new ast::Function (@$, take($3),
-						scope(@4+@6, $5)));
+			  new ast::Function (@$, take($3),
+					     scope(@4+@6, $5)));
   }
+;
+
+/*-----------------------------.
+| k1_id: A simple identifier.  |
+`-----------------------------*/
+
+// We would really like to support simultaneously the following
+// constructs:
+//
+//  a.b = function (c) { c }
+// and
+//  function a.b (c) { c }
+//
+// unfortunately it unleashes a host of issues.  It requires introducing
+// two nonterminals to denote on the one hand side "a.b.c" etc. and otoh
+// "a().b(c,d).e".  Of course they overlap, so we have conflicts.
+//
+// We can also try to use a single nonterminal, i.e., accept to parse:
+//
+//   function a(b).c(1) { 1 }
+//
+// but then reject it by hand once "formal arguments" have been "reparsed".
+// It sucks.  Yet we have another problem: the two "function"-constructs
+// conflict between themselves.  The LR(1) parser cannot tell whether
+// "function (" is starting an lambda expression ("a = function (){ 1 }")
+// or a named function ("function (a).f() { 1 }").  So I chose to limit
+// named function to what we need to be compatible with k1: basically
+// "function a ()" and "function a.b()".
+//
+// Another option would have been to use two keywords, say using "lambda"
+// for anonymous functions.  But that's not a good option IMHO (AD).
+%type <call> k1_id;
+k1_id:
+  "identifier"                   { $$ = call (@$, 0, $1); }
+| "identifier" "." "identifier"  { $$ = call (@$, call (@1, 0, $1), $3); }
 ;
 
 /*-------------------.
@@ -658,19 +703,40 @@ stmt:
     }
 ;
 
+%type <call> call message;
+message:
+  "identifier" args
+    {
+      // The target of the message is currently unknown.
+      $$ = call (@$, 0, take($1), $2);
+    }
+;
 
+call:
+  message           { $$ = $1; }
+| expr "." message  
+  { 
+    // Now we know the target.
+    $$ = $3; $$->args_get().front() = $1; 
+  }
+;
+
+expr:
+  call  { $$ = $1; }
+;
 
 /*-------.
 | Name.  |
 `-------*/
 
-name:
-  "identifier"             { $$ = call(@$, 0, $1); }
-| "$" "(" expr ")"         { $$ = 0; }
-| name "." "identifier"    { $$ = call(@$, $1, $3); }
-| name "[" expr "]"        { $$ = 0; }
-| name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
-;
+//%type <call>  name
+//name:
+//  "identifier"             { $$ = call(@$, 0, $1); }
+//| "$" "(" expr ")"         { $$ = 0; }
+//| name "." "identifier"    { $$ = call(@$, $1, $3); }
+//| name "[" expr "]"        { $$ = 0; }
+//| name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
+//;
 
 
 /*------------.
@@ -679,11 +745,10 @@ name:
 
 // An lvalue is a Call without arguments.
 lvalue:
-  expr
+  call
   {
-    $$ = dynamic_cast<ast::Call*>($1);
     // There is an implicit target: the current object, 0.
-    if (!$$ || $$->args_get().size() != 1)
+    if ($$->args_get().size() != 1)
     {
       std::string lvalue ($1 ? boost::lexical_cast<std::string>(*$1)
 			  : "<NULL>");
@@ -722,9 +787,9 @@ lvalue:
 //;
 
 
-expr:
-  name "->" "identifier" { $$ = 0; }
-;
+//expr:
+//  name "->" "identifier" { $$ = 0; }
+//;
 
 
 /*------------.
@@ -775,13 +840,13 @@ expr:
 | time_expr { $$ = new ast::Float(@$, $1);        }
 | "string"  { $$ = new ast::String(@$, take($1)); }
 | "[" exprs "]" { $$ = new ast::List(@$, $2); }
-| name "(" exprs ")"
-    {
-      $1->args_get().splice($1->args_get().end(), *$3);
-      delete $3;
-      $$ = $1;
-    }
-| "%" name            { $$ = 0; }
+//| name "(" exprs ")"
+//    {
+//      $1->args_get().splice($1->args_get().end(), *$3);
+//      delete $3;
+//      $$ = $1;
+//    }
+//| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
 | "new" "identifier" args
   {

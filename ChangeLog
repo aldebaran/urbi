@@ -1,5 +1,22 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Accept x.f().g()
+	This change was quite tough, and I finally decided to disable
+	most of the grammar to have it work.  It is really difficult
+	to blend what JC names "C++ syntax" with the generalization
+	of the concept of name.
+	Maybe we should get rid of the latter (complex names), and
+	see the assignment as just another message sent to some expression.
+	A` la Self.
+	* src/parser/bison/ugrammar.y (k1_id): New.
+	(call): One more.
+	("."): Set its priority to high.
+	(message): New.
+	(call): New.
+	(expr, lvalue): Use it.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Space changes
 	* src/parser/bison/ugrammar.y: here.
 
