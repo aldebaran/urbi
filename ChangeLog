@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Get rid of "names"
+	* src/parser/bison/ugrammar.y (names): Remove, use
+	identifiers instead.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Braces are mandatory for functions
 	Otherwise we have nasty issues: "function foo (a)" looks
 	like "fn foo() { (a) }" and "function foo(a) { a }".  The

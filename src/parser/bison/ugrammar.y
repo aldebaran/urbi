@@ -325,7 +325,6 @@
 %type <expr>  flags.0
 %type <expr>  flags.1
 %type <expr>  namedarguments
-%type <expr>  names
 %type <expr>  raw_arguments
 %type <expr>  softtest
 %type <expr>  stmt
@@ -565,7 +564,7 @@ stmt:
 | "var" name { $$ = 0; }
 //  Duplicates the previous one, and cannot be factored.
 // | "def" name { $$ = 0; }
-| "var" "{" names "}" { $$ = 0; }
+| "var" "{" identifiers "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
 | "event" name formal_args { $$ = 0; }
@@ -573,7 +572,7 @@ stmt:
   {
     // Compiled as "name = function args stmt".
     $$ = new ast::Assign (@$, $2,
-			     new ast::Function (@$, take($3), 
+			     new ast::Function (@$, take($3),
 						scope(@4+@6, $5)));
   }
 ;
@@ -918,16 +917,6 @@ class_declaration_list:
   /* empty */  { $$ = 0; }
 | class_declaration { $$ = 0; }
 | class_declaration ";" class_declaration_list { $$ = 0; }
-;
-
-/*--------.
-| names.  |
-`--------*/
-
-names:
-  /* empty */    { $$ = 0; }
-| name           { $$ = 0; }
-| name ";" names { $$ = 0; }
 ;
 
 /* End of grammar */
