@@ -594,22 +594,68 @@ stmt:
 | Stmt: Control flow.  |
 `---------------------*/
 stmt:
-  "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK { $$ = 0; }
-| "at" and.opt "(" softtest ")" stmt "onleave" stmt { $$ = 0; }
-| "every" "(" expr ")" stmt { $$ = 0; }
-| "if" "(" expr ")" stmt %prec CMDBLOCK    { $$ = 0; }
-| "if" "(" expr ")" stmt "else" stmt  { $$ = 0; }
-| "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK { $$ = 0; }
-| "foreach" flavor.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK { $$ = 0; }
-| "freezeif" "(" softtest ")" stmt { $$ = 0; }
-| "loop" stmt %prec CMDBLOCK { $$ = 0; }
-| "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
-| "stopif" "(" softtest ")" stmt { $$ = 0; }
-| "timeout" "(" expr ")" stmt { $$ = 0; }
-| "return" expr.opt   { $$ = new ast::Return(@$, $2, false); }
-| "whenever" "(" softtest ")" stmt %prec CMDBLOCK { $$ = 0; }
-| "whenever" "(" softtest ")" stmt "else" stmt { $$ = 0; }
-| "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK { $$ = 0; }
+  "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
+| "at" and.opt "(" softtest ")" stmt "onleave" stmt
+    { 
+      $$ = 0; 
+    }
+| "every" "(" expr ")" stmt
+    { 
+      $$ = 0; 
+    }
+| "if" "(" expr ")" stmt %prec CMDBLOCK   
+    { 
+      $$ = 0; 
+    }
+| "if" "(" expr ")" stmt "else" stmt 
+    { 
+      $$ = 0; 
+    }
+| "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
+| "foreach" flavor.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
+| "freezeif" "(" softtest ")" stmt
+    { 
+      $$ = 0; 
+    }
+| "loop" stmt %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
+| "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
+| "stopif" "(" softtest ")" stmt
+    { 
+      $$ = 0; 
+    }
+| "timeout" "(" expr ")" stmt
+    { 
+      $$ = 0; 
+    }
+| "return" expr.opt  
+    { $$ = new ast::Return(@$, $2, false); }
+| "whenever" "(" softtest ")" stmt %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
+| "whenever" "(" softtest ")" stmt "else" stmt
+    { 
+      $$ = 0; 
+    }
+| "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
+    { 
+      $$ = 0; 
+    }
 ;
 
 
