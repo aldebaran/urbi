@@ -281,12 +281,14 @@ STRING   \"([^\"]|"\\\"")*\"
 "$"             return token::TOK_DOLLAR;
 "%="            return token::TOK_PEQ;
 
-"'"             return token::TOK_DERIV;
-"''"            return token::TOK_DERIV2;
-"'d"            return token::TOK_TRUEDERIV;
-"'dd"           return token::TOK_TRUEDERIV2;
-"'e"            return token::TOK_VARERROR;
-"'n"            return token::TOK_NORM;
+  /*
+   "'"             return token::TOK_DERIV;
+   "''"            return token::TOK_DERIV2;
+   "'d"            return token::TOK_TRUEDERIV;
+   "'dd"           return token::TOK_TRUEDERIV2;
+   "'e"            return token::TOK_VARERROR;
+   "'n"            return token::TOK_NORM;
+   */
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
 "++"            return token::TOK_PLUSPLUS;
