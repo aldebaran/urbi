@@ -307,9 +307,9 @@
 
 %union
 {
-  ast::Exp*       expr;
+  ast::Exp*    expr;
   ast::Call*   call;
-  ast::Nary*      nary;
+  ast::Nary*   nary;
 }
 
 %printer { debug_stream() << libport::deref << $$; } <expr> <call> <nary>;
@@ -640,8 +640,7 @@ lvalue:
     {
       std::string lvalue ($1 ? boost::lexical_cast<std::string>(*$1)
 			  : "<NULL>");
-      error(@$, (std::string ("invalid lvalue: ")
-		 + lvalue));
+      error(@$, (std::string ("invalid lvalue: ") + lvalue));
       YYERROR;
     }
   }
