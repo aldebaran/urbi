@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Disable derives
+	* src/parser/bison/ugrammar.y: Disable them, it is yet unclear
+	what's valid on their lhs.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Get rid of "names"
 	* src/parser/bison/ugrammar.y (names): Remove, use
 	identifiers instead.

@@ -567,7 +567,7 @@ stmt:
 | "var" "{" identifiers "}" { $$ = 0; }
 | "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
-| "event" name formal_args { $$ = 0; }
+| "event"    name formal_args { $$ = 0; }
 | "function" name formal_args "{" stmts "}"
   {
     // Compiled as "name = function args stmt".
@@ -646,33 +646,33 @@ lvalue:
   }
 ;
 
-expr:
-  name          { $$ = $1; }
-| "static" name	{ /* FIXME: Fill. */ }
-| name derive   { /* FIXME: Fill. */ }
-| name "'e"	{ /* FIXME: Fill. */ }
-| name "'in"	{ /* FIXME: Fill. */ }
-| name "'out"   { /* FIXME: Fill. */ }
-| name "'n"	{ $$ = 0; }
-;
-
-%code requires
-{
-#include "uvariablename.hh" // UDeriveType
-};
-%union { UVariableName::UDeriveType derive; };
-%token
-  TOK_DERIV        "'"
-  TOK_DERIV2       "''"
-  TOK_TRUEDERIV    "'d"
-  TOK_TRUEDERIV2   "'dd";
-%type <derive> derive;
-derive:
-  "'"	{ $$ = UVariableName::UDERIV;	   }
-| "''"	{ $$ = UVariableName::UDERIV2;	   }
-| "'d"	{ $$ = UVariableName::UTRUEDERIV;  }
-| "'dd"	{ $$ = UVariableName::UTRUEDERIV2; }
-;
+//expr:
+//  name          { $$ = $1; }
+//| "static" name	{ /* FIXME: Fill. */ }
+//| name derive   { /* FIXME: Fill. */ }
+//| name "'e"	{ /* FIXME: Fill. */ }
+//| name "'in"	{ /* FIXME: Fill. */ }
+//| name "'out"   { /* FIXME: Fill. */ }
+//| name "'n"	{ $$ = 0; }
+//;
+//
+//%code requires
+//{
+//#include "uvariablename.hh" // UDeriveType
+//};
+//%union { UVariableName::UDeriveType derive; };
+//%token
+//  TOK_DERIV        "'"
+//  TOK_DERIV2       "''"
+//  TOK_TRUEDERIV    "'d"
+//  TOK_TRUEDERIV2   "'dd";
+//%type <derive> derive;
+//derive:
+//  "'"	{ $$ = UVariableName::UDERIV;	   }
+//| "''"	{ $$ = UVariableName::UDERIV2;	   }
+//| "'d"	{ $$ = UVariableName::UTRUEDERIV;  }
+//| "'dd"	{ $$ = UVariableName::UTRUEDERIV2; }
+//;
 
 
 expr:
