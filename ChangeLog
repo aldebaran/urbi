@@ -1,3 +1,13 @@
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
+	* src/ast/ast.yml (Nary::push_back): New.
+	* src/parser/bison/ugrammar.y: Use it.
+	As a side effect, when there is a single expression,
+	it is flagged with execution_none, no longer with execution_foreground
+	as Benoit Sigoure changed recently with his introduction of
+	push_Nary_exp.
+	(push_Nary_exp): Remove.
+
 2007-09-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Add assertions.

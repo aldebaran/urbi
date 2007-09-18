@@ -176,6 +176,15 @@ Nary:
           /// Are there any children?
           bool empty() const;
 
+          /// Push a new expression.
+          void push_back(ast::Exp* e);
+
+          /// Push a new expression.
+          /// Add the expression @a e at the end of this, set the
+          /// *previous* execution type to be @a k.
+          /// \precondition this is not empty.
+          void push_back(execution_kind k, ast::Exp* e);
+
           /// Return the back of the children.
           exec_exp_type& back ();
 
@@ -223,6 +232,20 @@ Nary:
         Nary::empty () const
         {
           return children_.empty();
+        }
+
+        void
+        Nary::push_back(ast::Exp* e)
+        {
+          children_.push_back (ast::exec_exp_type (e, execution_none));
+        }
+
+        void
+        Nary::push_back(execution_kind k, ast::Exp* e)
+        {
+          assert(!children_.empty());
+          children_.back().second = k;
+          push_back (e);
         }
 
         exec_exp_type&

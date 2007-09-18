@@ -145,16 +145,6 @@
       return res;
     }
 
-    /** @internal
-     * Adds the expression @a expr at the end of the @a nary and set the
-     * execution type of @a expr to be @a kind */
-    inline static
-    void
-    push_Nary_exp (ast::Nary& nary, ast::Exp* expr, ast::execution_kind kind)
-    {
-      nary.children_get ().push_back (ast::exec_exp_type (expr, kind));
-    }
-
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -411,19 +401,17 @@ stmts:
   {
     // FIXME: Adjust the locations.
     $$ = new ast::Nary();
-    push_Nary_exp (*$$, $1, ast::execution_foreground);
+    $$->push_back ($1);
   }
 | stmts ";" cstmt
   {
     // The ";" qualifies the previous command.
-    $$->back().second = ast::execution_foreground;
-    push_Nary_exp (*$$, $3, ast::execution_none);
+    $$->push_back(ast::execution_foreground, $3);
   }
 | stmts "," cstmt
   {
     // The "," qualifies the previous command.
-    $$->back().second = ast::execution_background;
-    push_Nary_exp (*$$, $3, ast::execution_none);
+    $$->push_back(ast::execution_background, $3);
   }
 ;
 
@@ -688,7 +676,7 @@ expr:
 
 // Anonymous function.
 expr:
-  // Because of conflicts, we need the braces.
+  // Because of conflicts, we need the braces
   "function" formal_arguments "{" stmts "}"
     {
       $$ = new ast::Function (@$, take($2), $4);
