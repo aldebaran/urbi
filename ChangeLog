@@ -1,5 +1,11 @@
 2007-09-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Simplify the parser.
+	* src/parser/bison/ugrammar.y (root): Simplify the way stmts are
+	handled.
+
+2007-09-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Be nice to non-SVN users.
 	* src/ast/Makefile.am (ignores.stamp): Set svn:ignores only when SVN
 	is used.

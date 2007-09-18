@@ -381,14 +381,8 @@ root:
     up.command_tree_set (0);
   }
 | lvalue "=" binary ";"  { /* FIXME: */ up.command_tree_set (0); }
-| stmts ";"
+| stmts
   {
-    $1->back().second = ast::execution_foreground;
-    up.command_tree_set ($1);
-  }
-| stmts ","
-  {
-    $1->back().second = ast::execution_background;
     up.command_tree_set ($1);
   }
 ;
@@ -683,66 +677,66 @@ stmt:
 `---------------------*/
 stmt:
   "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "at" and.opt "(" softtest ")" stmt "onleave" stmt
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "every" "(" expr ")" stmt
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
-| "if" "(" expr ")" stmt %prec CMDBLOCK   
-    { 
-      $$ = 0; 
+| "if" "(" expr ")" stmt %prec CMDBLOCK
+    {
+      $$ = 0;
     }
-| "if" "(" expr ")" stmt "else" stmt 
-    { 
-      $$ = 0; 
+| "if" "(" expr ")" stmt "else" stmt
+    {
+      $$ = 0;
     }
 | "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "foreach" flavor.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "freezeif" "(" softtest ")" stmt
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "loop" stmt %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "stopif" "(" softtest ")" stmt
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "timeout" "(" expr ")" stmt
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
-| "return" expr.opt  
+| "return" expr.opt
     { $$ = new ast::Return(@$, $2, false); }
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "whenever" "(" softtest ")" stmt "else" stmt
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 | "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
-    { 
-      $$ = 0; 
+    {
+      $$ = 0;
     }
 ;
 
@@ -757,10 +751,10 @@ message:
 
 call:
   message           { $$ = $1; }
-| expr "." message  
-  { 
+| expr "." message
+  {
     // Now we know the target.
-    $$ = $3; $$->args_get().front() = $1; 
+    $$ = $3; $$->args_get().front() = $1;
   }
 ;
 
