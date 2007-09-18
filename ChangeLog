@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	new_exp -> call
+	* src/parser/bison/ugrammar.y (new_exp): Rename as...
+	(call): this, it is more logical.
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	s/\BExp//g
 	* src/ast/ast.yml: Remove all the suffixes "Exp".
 	* src/parser/bison/ugrammar.y, src/runner/runner.cc,

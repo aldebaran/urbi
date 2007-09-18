@@ -114,8 +114,8 @@
     /// "<target> . <method> ()".
     static
     ast::Call*
-    new_exp (const yy::parser::location_type& l,
-	     ast::Exp* target, libport::Symbol method)
+    call (const yy::parser::location_type& l,
+	  ast::Exp* target, libport::Symbol method)
     {
       ast::exps_type* args = new ast::exps_type;
       args->push_front (target);
@@ -126,21 +126,21 @@
     /// "<target> . <method> ()".
     static
     ast::Call*
-    new_exp (const yy::parser::location_type& l,
-	     ast::Exp* target, libport::Symbol* method)
+    call (const yy::parser::location_type& l,
+	  ast::Exp* target, libport::Symbol* method)
     {
       assert (method);
-      return new_exp (l, target, take(method));
+      return call (l, target, take(method));
     }
 
     /// "<target> . <method> (<arg1>)".
     static
     ast::Call*
-    new_exp (const yy::parser::location_type& l,
-	     ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
+    call (const yy::parser::location_type& l,
+	  ast::Exp* target, libport::Symbol* method, ast::Exp* arg1)
     {
       assert (method);
-      ast::Call* res = new_exp (l, target, method);
+      ast::Call* res = call (l, target, method);
       res->args_get().push_back(arg1);
       return res;
     }
@@ -539,7 +539,7 @@ stmt:
   /* empty */ { $$ = new ast::Noop (@$); }
 | "noop"      { $$ = new ast::Noop (@$); }
 | expr        { $$ = $1; }
-| "echo" expr namedarguments { $$ = new_exp (@$, 0, $1, $2); }
+| "echo" expr namedarguments { $$ = call (@$, 0, $1, $2); }
 | "group" "identifier" "{" identifiers "}" { $$ = 0; }
 | "addgroup" "identifier" "{" identifiers "}" { $$ = 0; }
 | "delgroup" "identifier" "{" identifiers "}" { $$ = 0; }
@@ -559,7 +559,7 @@ stmt:
 | BINDER "event" "(" "integer" ")" name "from" name { $$ = 0; }
 | "emit" name args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" name args { $$ = 0; }
-| "wait" expr			    { $$ = new_exp (@$, 0, $1, $2); }
+| "wait" expr			    { $$ = call (@$, 0, $1, $2); }
 | "waituntil" softtest              { $$ = 0; }
 | "def" { $$ = 0; }
 | "var" name { $$ = 0; }
@@ -618,9 +618,9 @@ stmt:
 `-------*/
 
 name:
-  "identifier"             { $$ = new_exp(@$, 0, $1); }
+  "identifier"             { $$ = call(@$, 0, $1); }
 | "$" "(" expr ")"         { $$ = 0; }
-| name "." "identifier"    { $$ = new_exp(@$, $1, $3); }
+| name "." "identifier"    { $$ = call(@$, $1, $3); }
 | name "[" expr "]"        { $$ = 0; }
 | name "::" "identifier"   { $$ = 0; } // FIXME: Get rid of it, it's useless.
 ;
@@ -742,9 +742,9 @@ expr:
     // Compiled as
     // id . clone () . init (args);
     // Parent class.
-    ast::Exp* parent = new_exp (@2, 0, $2);
+    ast::Exp* parent = call (@2, 0, $2);
     ast::exps_type* args = new ast::exps_type;
-    args->push_back (new_exp(@1 + @2, parent, "clone"));
+    args->push_back (call(@1 + @2, parent, "clone"));
     args->splice(args->end(), *$3);
     delete $3;
     $$ = new ast::Call (@$, "init", args);
@@ -768,12 +768,12 @@ expr:
 ;
 
 expr:
-  expr "+" expr	{ $$ = new_exp(@$, $1, $2, $3); }
-| expr "-" expr	{ $$ = new_exp(@$, $1, $2, $3); }
-| expr "*" expr	{ $$ = new_exp(@$, $1, $2, $3); }
-| expr "/" expr	{ $$ = new_exp(@$, $1, $2, $3); }
-| expr "%" expr	{ $$ = new_exp(@$, $1, $2, $3); }
-| expr "^" expr	{ $$ = new_exp(@$, $1, $2, $3); }
+  expr "+" expr	{ $$ = call(@$, $1, $2, $3); }
+| expr "-" expr	{ $$ = call(@$, $1, $2, $3); }
+| expr "*" expr	{ $$ = call(@$, $1, $2, $3); }
+| expr "/" expr	{ $$ = call(@$, $1, $2, $3); }
+| expr "%" expr	{ $$ = call(@$, $1, $2, $3); }
+| expr "^" expr	{ $$ = call(@$, $1, $2, $3); }
 | "-" expr     %prec NEG { $$ = new ast::NegOp(@$, $2); }
 | "(" expr ")"  { $$ = $2; }
 | "copy" expr  %prec NEG { $$ = 0; }
@@ -801,20 +801,20 @@ expr:
   "false" { $$ = new ast::Float(@$, 0); }
 | "true"  { $$ = new ast::Float(@$, 1); }
 
-| expr "!="  expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr "%="  expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr "<"   expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr "<="  expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr "=="  expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr "=~=" expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr ">"   expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr ">="  expr { $$ = new_exp(@$, $1, $2, $3); }
-| expr "~="  expr { $$ = new_exp(@$, $1, $2, $3); }
+| expr "!="  expr { $$ = call(@$, $1, $2, $3); }
+| expr "%="  expr { $$ = call(@$, $1, $2, $3); }
+| expr "<"   expr { $$ = call(@$, $1, $2, $3); }
+| expr "<="  expr { $$ = call(@$, $1, $2, $3); }
+| expr "=="  expr { $$ = call(@$, $1, $2, $3); }
+| expr "=~=" expr { $$ = call(@$, $1, $2, $3); }
+| expr ">"   expr { $$ = call(@$, $1, $2, $3); }
+| expr ">="  expr { $$ = call(@$, $1, $2, $3); }
+| expr "~="  expr { $$ = call(@$, $1, $2, $3); }
 
 | "!" expr { $$ = 0; }
 
-| expr "&&" expr  { $$ = new_exp(@$, $1, $2, $3); }
-| expr "||" expr  { $$ = new_exp(@$, $1, $2, $3); }
+| expr "&&" expr  { $$ = call(@$, $1, $2, $3); }
+| expr "||" expr  { $$ = call(@$, $1, $2, $3); }
 ;
 
 expr.opt:
