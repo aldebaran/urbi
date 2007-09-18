@@ -1,5 +1,11 @@
 2007-09-18  Akim Demaille  <demaille@gostai.com>
 
+	Method look up in the object itself
+	* src/runner/runner.cc (Call): The parent of the call's local
+	object is the target (self).
+
+2007-09-18  Akim Demaille  <demaille@gostai.com>
+
 	Tidy the grammar
 	* src/parser/bison/ugrammar.y: Classify stmt rules.
 	Reactivate some of the rules.

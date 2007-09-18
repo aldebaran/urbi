@@ -252,6 +252,11 @@ namespace runner
 	// FIXME: mismatches.
 	ei = args.begin();
 	bound_args->slot_set (libport::Symbol("self"), *ei);
+	// self is also the parent of the function outer scope, so that
+	// we look for non-local identifiers in the target itself.
+	bound_args->parent_add (*ei);
+
+	// Now bind the non-target arguments.
 	++ei;
 	for (fi = fn->formals_get().begin();
 	     fi != fn->formals_get().end() && ei != args.end();
