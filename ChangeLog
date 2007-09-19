@@ -1,6 +1,7 @@
 2007-09-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Simplify the parser.
+	Patch by Akim Demaille.
 	* src/parser/bison/ugrammar.y (root): Simplify the way stmts are
 	handled.
 
