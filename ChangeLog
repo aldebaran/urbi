@@ -1,3 +1,8 @@
+2007-09-19  POTHIER Benoit  <pothier@gostai.com>
+
+	Add known bugs file.
+	* KNOWN_BUGS: New.
+
 2007-09-18  HUMBERT Remi <humbert@gostai.com>
 
 	* src/utypes.hh: Undefine 'min' and 'max' macros,
