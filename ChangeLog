@@ -1,3 +1,11 @@
+2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+
+	Use libport::escape in the pretty printer
+	* dev/ast_params.py (printer_cc_prologue): New.
+	* dev/ast-pretty-printer-gen: Use it.
+	Move includes used in the implementation into the CC file, not the HH.
+	Remove useless imports.
+
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
 	= is sugar for setSlot

@@ -63,3 +63,13 @@ fwd_hh_epilogue = """
   // for that.
   typedef std::list<libport::Symbol*> symbols_type;
 """
+
+printer_cc_prologue = """
+#include "libport/indent.hh"
+#include "libport/pair.hh"
+#include "libport/escape.hh"
+#include "libport/separator.hh"
+
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+"""
