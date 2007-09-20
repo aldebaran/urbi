@@ -37,6 +37,24 @@ namespace object
     return kind_object;
   }
 
+  inline
+  bool
+  Object::kind_is(Object::kind_type k) const
+  {
+    return kind_get () == k;
+  }
+
+  template <typename Type>
+  inline
+  bool
+  Object::type_is() const
+  {
+    // FIXME: static_assert Obj derives from Object.
+    // FIXME: Is this really faster than using dynamic_cast? Or RTTI.
+    return kind_is(object::Object::kind_type(Type::traits::kind));
+  }
+
+
 
   /*----------.
   | Parents.  |

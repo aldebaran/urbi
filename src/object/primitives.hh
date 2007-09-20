@@ -28,14 +28,19 @@ namespace object
   `-------------------*/
 
 /**
+ * Throw an exception if \a Obj is not of type \a Type.
+ */
+#define TYPE_CHECK(Obj, Type)					\
+  if (!(Obj)->type_is<Type>())					\
+    throw UrbiException::wrongArgumentType(Obj->kind_get(),	\
+		object::Object::kind_type(Type::traits::kind)); \
+
+/**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.
  * If the argument's type is wrong, throw an UrbiException.
  */
-#define FETCH_ARG(N, Type)                              \
-  if(args[N]->kind_get() !=                             \
-	 object::Object::kind_type(Type::traits::kind)) \
-    throw UrbiException::wrongArgumentType(args[N]->kind_get(), \
-		object::Object::kind_type(Type::traits::kind)); \
+#define FETCH_ARG(N, Type)				\
+  TYPE_CHECK(args[N], Type);				\
   r ## Type arg ## N = args[N].unsafe_cast<Type>()
 
 /**

@@ -46,6 +46,13 @@ namespace object
 
     /// Return the kind as a string.  Used by dump.
     static const char* string_of (kind_type k);
+
+    /// Whether kind == \a k.
+    bool kind_is(Object::kind_type k) const;
+
+    /// Whether \a Type has the same kind as \a this.
+    /// Very similar to testting via dynamic_cast, might not be faster.
+    template <typename Type> bool type_is() const;
     /// \}
 
 

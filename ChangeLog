@@ -1,5 +1,15 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	Object::type_is
+	* src/object/object.hh (object::kind_is,  object::type_is): New.
+	* src/object/object.hxx: implement them.
+	* src/object/primitives.hh (TYPE_CHECK): New.
+	Use it.
+	Extracted from...
+	(FETCH_ARG): here.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	CPP Fixes
 	* src/object/atom.cc: Remove, unused.
 	* src/object/atom.hh: Fix guards.
