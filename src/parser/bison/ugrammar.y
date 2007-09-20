@@ -690,11 +690,11 @@ stmt:
     }
 | "if" "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = 0;
+      $$ = new ast::If(@$, $3, $5, new ast::Noop(@$));
     }
 | "if" "(" expr ")" stmt "else" stmt
     {
-      $$ = 0;
+      $$ = new ast::If(@$, $3, $5, $7);
     }
 | "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
     {

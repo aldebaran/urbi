@@ -1,5 +1,13 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	if then else
+	* src/ast/ast.yml (If): New.
+	* src/parser/bison/ugrammar.y: Build it.
+	* src/runner/runner.hh, src/runner/runner.cc: Handle it.
+	(AST, JECHO): New macros.  Use them.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	Object::type_is
 	* src/object/object.hh (object::kind_is,  object::type_is): New.
 	* src/object/object.hxx: implement them.

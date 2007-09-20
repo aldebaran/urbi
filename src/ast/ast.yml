@@ -387,17 +387,34 @@ Pipe:
 #     - tag: { type: Exp*, desc: Tag of the tag-operation command }
 #     - oper: { type: TagOp::type, access: r, desc: Operator }
 
-# If:
-#   super: Exp
-#   attributes:
-#     - test: { type: 'Exp*', desc: Condition }
-#     - thenclause:
-#         type: Exp*
-#         desc: Instructions executed if condition is true
-#     - elseclause:
-#         type: Exp*
-#         desc: Instructions executed if condition is false
- 
+If:
+  super: Exp
+  attributes:
+    - test:
+        type: Exp*
+        desc: Condition to select thenclause or elseclause
+    - thenclause:
+        type: Exp*
+        desc: Executed if test is true
+    - elseclause:
+        type: Exp*
+        desc: Executed if test is false
+  default: |2
+    operator()(n.test_get());
+    operator()(n.thenclause_get());
+    operator()(n.elseclause_get());
+  printer:
+    - '"if ("'
+    - ~test
+    - '")"'
+    - libport::incendl
+    - ~thenclause
+    - libport::decendl
+    - '"else"'
+    - libport::incendl
+    - ~elseclause
+    - libport::decindent
+
 # At:
 #   super: Exp
 #   attributes:

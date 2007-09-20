@@ -28,6 +28,13 @@ namespace runner
 /// Address of \c this seen as a \c Job (Runner has multiple inheritance).
 #define ME JOB (this)
 
+#define AST(Ast) "{{{" << Ast << "}}}"
+
+/// Job echo.
+#define JECHO(Title, Ast)					\
+  ECHO ("job " << ME << ", " Title ": " << AST(Ast));
+
+
 /** Call this macro at the very beginning of the evaluation of an AST
  * node.  Nodes that should yield are that doing something useful.  For
  * instance in "1;2" we have 3 nodes: two values in a Semicolon.  The
@@ -41,7 +48,7 @@ namespace runner
   do                                                            \
   {                                                             \
     ECHO ("job " << ME << " yielding on AST: "                  \
-	  << &e << " {{{" << e << "}}}");			\
+	  << &e << " " << AST(e));				\
     CORO_YIELD ();                                              \
   } while (0)
 
@@ -62,12 +69,12 @@ namespace runner
     if (!started_)
     {
       ECHO ("job " << ME << " starting evaluation of AST: " << ast_
-	    << " {{{" << *ast_ << "}}}");
+	    << " " << AST(*ast_));
       started_ = true;
     }
     else
       ECHO ("job " << ME << " restarting evaluation of AST: " << ast_
-	    << " {{{" << *ast_ << "}}} "
+	    << " " << AST(*ast_)
 	    << context_count () << " contexts in the coroutine stack");
     operator() (*ast_);
   }
@@ -121,13 +128,13 @@ namespace runner
     CORO_WITHOUT_CTX ();
 
     {
-      ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
+      JECHO ("lhs", e.lhs_get ());
       Runner* lhs = new Runner (*this);
       lhs->ast_ = &e.lhs_get ();
       CORO_CALL_IN_BACKGROUND (lhs, lhs->eval (e.lhs_get ()));
 
       PING ();
-      ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
+      JECHO ("rhs", e.rhs_get ());
       Runner* rhs = new Runner (*this);
       rhs->ast_ = &e.rhs_get ();
       CORO_CALL_IN_BACKGROUND (rhs, rhs->eval (e.rhs_get ()));
@@ -140,6 +147,38 @@ namespace runner
 
     CORO_END;
   }
+
+
+  void
+  Runner::operator() (ast::If& e)
+  {
+    CORO_WITHOUT_CTX ();
+    YIELD ();
+
+    // Evaluate the test.
+    JECHO ("test", e.test_get ());
+    CORO_CALL (operator() (e.test_get()));
+
+    YIELD();
+
+    // We don't have Booleans currently: 0 is false, everything else
+    // is true.  The day we have a Nil, it should evaluate to false too.
+    // FIXME: Rounding errors on 0?
+    if (!current_->type_is<object::Float>()
+	|| current_.unsafe_cast<object::Float>()->value_get())
+    {
+      JECHO ("then", e.thenclause_get ());
+      CORO_CALL (operator() (e.thenclause_get()));
+    }
+    else
+    {
+      JECHO ("else", e.elseclause_get ());
+      CORO_CALL (operator() (e.elseclause_get()));
+    }
+
+    CORO_END;
+  }
+
 
   void
   Runner::operator() (ast::Call& e)
@@ -273,6 +312,7 @@ namespace runner
     CORO_END;
   }
 
+
   void
   Runner::operator() (ast::Float& e)
   {
@@ -281,6 +321,19 @@ namespace runner
 
     current_ = new object::Float (e.value_get());
     ECHO ("result: " << *current_);
+
+    CORO_END;
+  }
+
+
+  void
+  Runner::operator() (ast::Function& e)
+  {
+    CORO_WITHOUT_CTX ();
+    YIELD ();
+
+    PING ();
+    current_ = new object::Code (e);
 
     CORO_END;
   }
@@ -314,19 +367,6 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::Function& e)
-  {
-    CORO_WITHOUT_CTX ();
-    YIELD ();
-
-    PING ();
-    current_ = new object::Code (e);
-
-    CORO_END;
-  }
-
-
-  void
   Runner::operator() (ast::Nary& e)
   {
     // FIXME: execution_background support.
@@ -337,7 +377,7 @@ namespace runner
 
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
-      ECHO ("job " << ME << ", {{{" << *i << "}}}");
+      JECHO ("child", *i);
       passert (i->second, i->second = ast::execution_foreground);
       CORO_CALL_CATCH (operator() (*i->first);
 		       ECHO ("sending result of Nary node");
@@ -374,7 +414,7 @@ namespace runner
     CORO_WITHOUT_CTX ();
 
     // lhs
-    ECHO ("job " << ME << ", lhs: {{{" << e.lhs_get () << "}}}");
+    JECHO ("lhs", e.lhs_get ());
     CORO_CALL (operator() (e.lhs_get()));
     ECHO ("sending result of lhs");
     emit_result (current_);
@@ -383,7 +423,7 @@ namespace runner
     assert (current_.get () == 0);
 
     // rhs:  start the execution immediately.
-    ECHO ("job " << ME << ", rhs: {{{" << e.rhs_get () << "}}}");
+    JECHO ("rhs", e.rhs_get ());
     CORO_CALL (operator() (e.rhs_get()));
     ECHO ("sending result of rhs");
     emit_result (current_);
