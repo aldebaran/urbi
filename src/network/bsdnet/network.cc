@@ -71,7 +71,7 @@ namespace Network
     if (fd == -1)
       return false;
 
-#ifdef WIN32
+#ifndef WIN32
     /*
       Under linux&all os, SO_REUSEADDR means you can reuse an adress in the
       TIME_WAIT state. Under windows, it means you can bind an allready bound

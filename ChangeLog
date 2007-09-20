@@ -1,3 +1,8 @@
+2007-09-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+
+	* network.cc: Correct a typo, dont use SO_REUSADDR under
+	windows.
+
 2007-09-19  POTHIER Benoit  <pothier@gostai.com>
 
 	Add known bugs file.
