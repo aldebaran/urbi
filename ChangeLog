@@ -1,5 +1,11 @@
 2007-09-20  Akim Demaille  <akim.demaille@free.fr>
 
+	Escape ast strings
+	Reported by Benoit Sigoure.
+	* src/ast/ast.yml (String::printer): Use escape.
+
+2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+
 	Don't lose the UCONSOLE_MODE when BEGIN is called
 	When we use BEGIN (e.g. for strings), we come back to INITIAL
 	instead of coming back to UCONSOLE_MODE.

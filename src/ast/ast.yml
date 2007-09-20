@@ -557,7 +557,8 @@ String:
         desc: String value
   printer:
     - "'\"'"
-    - $value
+# FIXME: It really stinks not to be able to use $value here.
+    - libport::escape(n.value_get())
     - "'\"'"
 
 List:
