@@ -9,14 +9,17 @@
 
 namespace object
 {
-  inline UrbiException
+
+  inline
+  UrbiException
   UrbiException::lookupFailed (std::string slot)
   {
     return UrbiException ((boost::format (lookupFailed_)
 			   % slot).str ());
   }
 
-  inline UrbiException
+  inline
+  UrbiException
   UrbiException::primitiveError (std::string primitive,
 				 std::string msg)
   {
@@ -25,7 +28,8 @@ namespace object
 			   % msg).str ());
   }
 
-  inline UrbiException
+  inline
+  UrbiException
   UrbiException::wrongArgumentType (Object::kind_type real,
 				    Object::kind_type expected)
   {
@@ -34,13 +38,22 @@ namespace object
 			   % Object::string_of (expected)).str ());
   }
 
-  inline UrbiException
+  inline
+  UrbiException
   UrbiException::wrongArgumentCount (unsigned argReal,
 				     unsigned argExpected)
   {
     return UrbiException ((boost::format (wrongArgumentCount_)
 			   % argReal
 			   % argExpected).str ());
+  }
+
+  inline
+  void
+  check_arg_count (unsigned formal, unsigned effective)
+  {
+    if (formal != effective)
+      throw UrbiException::wrongArgumentCount(formal, effective);
   }
 
 }; // end of namespace object

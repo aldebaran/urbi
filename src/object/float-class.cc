@@ -170,8 +170,8 @@ namespace object
       throw UrbiException::primitiveError(#Name,        \
 	      "argument has to be positive"))
 
-#define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)	\
-  PRIMITIVE_1_FLOAT_(Name, Call,	\
+#define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)		\
+  PRIMITIVE_1_FLOAT_(Name, Call,					\
      if (VALUE(args[1], Float) < Min || Max < VALUE(args[1], Float))	\
       throw UrbiException::primitiveError(#Name, "invalid range"))
 

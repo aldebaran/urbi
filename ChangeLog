@@ -1,5 +1,26 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	Function arity, echo & print
+	* src/object/code-class.cc (code_class_echo): Remove, it is
+	unclear why it was there, not to mention that it subscribed itself
+	in context_class, not code_class.
+	So move it to...
+	* src/object/object-class.cc (object_class_echo): here.
+	Reimplement using...
+	(object_class_print): this.
+	Reimplement it to issue the pretty-printed output, not the detailed
+	debug output.
+
+	* src/object/urbi-exception.cc: Simplify error msg..
+	* src/object/urbi-exception.hh, src/object/urbi-exception.hxx
+	(check_arg_count): New.
+	* src/object/primitives.hh: Use it.
+	* src/runner/runner.cc: Ditto.
+
+	* tests-local.mk: All the k2 tests pass.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	Even more debugging
 	* src/runner/runner.cc, src/runner/runner.hxx: More
 	ECHOs.

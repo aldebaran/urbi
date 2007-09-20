@@ -48,8 +48,7 @@ namespace object
  * \param N expected number of arguments.
  */
 #define CHECK_ARG_COUNT(N)                              \
-  if (args.size () != (N))                              \
-    throw UrbiException::wrongArgumentCount((N), args.size ())
+  check_arg_count(N, args.size())
 
 /**
  * Define a primitive for class Class named name, which takes one

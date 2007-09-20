@@ -16,7 +16,7 @@ namespace object
   const char UrbiException::wrongArgumentType_[] =
   "Argument type is ``%1%'', but ``%2%'' was expected.";
   const char UrbiException::wrongArgumentCount_[] =
-  "%1% arguments were expected, but %2% has been given.";
+  "expected %1% arguments, given %2%.";
   /// \}
 
   UrbiException::UrbiException (std::string msg)

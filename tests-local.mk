@@ -9,9 +9,7 @@ k2-check:
 	$(MAKE) check TESTS="$(K2_TESTS)"
 
 # k2 tests that fail.
-XFAIL_TESTS +=					\
-k2-scopes.chk					\
-k2-functions.chk
+XFAIL_TESTS +=
 
 # k1 tests that currently don't pass.
 XFAIL_TESTS +=					\

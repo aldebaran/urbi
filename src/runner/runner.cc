@@ -287,9 +287,11 @@ namespace runner
 	// Fetch the called function.
 	fn = &val.cast<object::Code> ()->value_get ();
 
+	// Check the arity.
+	object::check_arg_count (fn->formals_get().size(), args.size() - 1);
+
 	// Bind formal and effective arguments.
 	// The target is "self".
-	// FIXME: mismatches.
 	ei = args.begin();
 	bound_args->slot_set (libport::Symbol("self"), *ei);
 	// self is also the parent of the function outer scope, so that

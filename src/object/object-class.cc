@@ -3,7 +3,10 @@
  ** \brief Creation of the URBI object object.
  */
 
+#include <boost/lexical_cast.hpp>
+
 #include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
 
 #include "object/atom.hh"
 #include "object/object-class.hh"
@@ -29,10 +32,23 @@ namespace object
     return args[0];
   }
 
+  /// Send pretty-printed self on the connection.
   rObject
-  object_class_print (rContext, objects_type args)
+  object_class_print (rContext c, objects_type args)
   {
-    std::cout << *args[0] << std::endl;
+    std::ostringstream os;
+    args[0]->print (os);
+    c->value_get().connection.send (os.str().c_str());
+    c->value_get().connection.endline();
+    return args[0];
+  }
+
+  /// Send pretty-printed args[1] to the connection.
+  rObject
+  object_class_echo (rContext c, objects_type args)
+  {
+    // First argument (self) is ignored, print args[1].
+    object_class_print(c, objects_type(args.begin()+1, args.end()));
     return args[0];
   }
 
@@ -125,6 +141,7 @@ namespace object
       DECLARE(getSlot);
       DECLARE(setSlot);
 
+      DECLARE(echo);
       DECLARE(print);
       DECLARE(reboot);
       DECLARE(shutdown);

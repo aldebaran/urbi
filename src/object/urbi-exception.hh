@@ -62,7 +62,12 @@ namespace object
     static const char wrongArgumentType_[];
     static const char wrongArgumentCount_[];
   };
-}; // namespace object
+
+  /// Throw an exception if formal != effective.
+  /// \note: self is not included in the count.
+  void check_arg_count (unsigned formal, unsigned effective);
+
+} // namespace object
 
 # include "object/urbi-exception.hxx"
 #endif //! OBJECT_URBI_EXCEPTION_HH
