@@ -1,5 +1,11 @@
 2007-09-20  Akim Demaille  <akim.demaille@free.fr>
 
+	Missing include
+	* src/parser/bison/ugrammar.y: separator.hh is now needed.
+	It used to "leak" from pretty-printer.hh.
+
+2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+
 	Escape ast strings
 	Reported by Benoit Sigoure.
 	* src/ast/ast.yml (String::printer): Use escape.

@@ -59,6 +59,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "libport/separator.hh"
+
 #include "ast/all.hh"
 #include "runner/runner.hh"
 
