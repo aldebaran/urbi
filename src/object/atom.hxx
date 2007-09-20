@@ -9,6 +9,7 @@
 # include <boost/foreach.hpp>
 
 # include "libport/deref.hh"
+# include "libport/escape.hh"
 
 # include "ast/pretty-printer.hh"
 
@@ -59,6 +60,10 @@ namespace object
     return static_cast<Object::kind_type>(Traits::kind);
   }
 
+  /*------------.
+  | value_get.  |
+  `------------*/
+
   template <typename Traits>
   inline
   const typename Traits::type
@@ -66,6 +71,19 @@ namespace object
   {
     return value_;
   }
+
+  template <typename Traits>
+  inline
+  typename libport::ref_traits<typename Traits::type>::type
+  Atom<Traits>::value_get ()
+  {
+    return value_;
+  }
+
+
+  /*------------.
+  | operator<.  |
+  `------------*/
 
   template <typename Traits>
   inline
@@ -96,19 +114,15 @@ namespace object
   bool
   Atom<Traits>::operator< (const Object& rhs) const
   {
-    const Atom* a = dynamic_cast<const Atom*> (&rhs);
-    if (a)
+    if (const Atom* a = dynamic_cast<const Atom*> (&rhs))
       return this->operator< (*a);
-    return this->Object::operator< (rhs);
+    else
+      return this->Object::operator< (rhs);
   }
 
-  template <typename Traits>
-  inline
-  typename libport::ref_traits<typename Traits::type>::type
-  Atom<Traits>::value_get ()
-  {
-    return value_;
-  }
+  /*--------.
+  | print.  |
+  `--------*/
 
   template <typename Traits>
   inline
@@ -122,10 +136,37 @@ namespace object
   template <>
   inline
   std::ostream&
+  Atom<code_traits>::print(std::ostream& out) const
+  {
+    return out << value_get();
+  }
+
+  template <>
+  inline
+  std::ostream&
+  Atom<context_traits>::print(std::ostream& out) const
+  {
+    // FIXME: discuss what we should print here.
+    out << "<context>";
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream&
   Atom<float_traits>::print(std::ostream& out) const
   {
     // FIXME: std::fixed leaks to every use of os.
     out << std::fixed << value_get();
+    return out;
+  }
+
+  template <>
+  inline
+  std::ostream&
+  Atom<integer_traits>::print(std::ostream& out) const
+  {
+    out << value_get();
     return out;
   }
 
@@ -152,33 +193,6 @@ namespace object
   template <>
   inline
   std::ostream&
-  Atom<context_traits>::print(std::ostream& out) const
-  {
-    // FIXME: discuss what we should print here.
-    out << "<context>";
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<code_traits>::print(std::ostream& out) const
-  {
-    return out << value_get();
-  }
-
-  template <>
-  inline
-  std::ostream&
-  Atom<integer_traits>::print(std::ostream& out) const
-  {
-    out << value_get();
-    return out;
-  }
-
-  template <>
-  inline
-  std::ostream&
   Atom<primitive_traits>::print(std::ostream& out) const
   {
     // FIXME: discuss what we should print here.
@@ -191,9 +205,13 @@ namespace object
   std::ostream&
   Atom<string_traits>::print(std::ostream& out) const
   {
-    out << "\"" << value_get() << "\"";
+    out << "\"" << libport::escape(value_get()) << "\"";
     return out;
   }
+
+  /*---------------------.
+  | special_slots_dump.  |
+  `---------------------*/
 
   template <typename Traits>
   inline
