@@ -1,10 +1,10 @@
 /**
  ** \file object/atom.hh
- ** \brief Definition of atomic objects (code, float, string).
+ ** \brief Definition of atomic objects.
  */
 
-#ifndef OBJECT_FLOAT_HH
-# define OBJECT_FLOAT_HH
+#ifndef OBJECT_ATOM_HH
+# define OBJECT_ATOM_HH
 
 # include "ast/fwd.hh"
 
@@ -146,4 +146,4 @@ namespace object
 
 # include "object/atom.hxx"
 
-#endif // !OBJECT_FLOAT_HH
+#endif // !OBJECT_ATOM_HH

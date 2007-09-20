@@ -1,3 +1,9 @@
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
+	CPP Fixes
+	* src/object/atom.cc: Remove, unused.
+	* src/object/atom.hh: Fix guards.
+
 2007-09-19  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Simplify the parser.
