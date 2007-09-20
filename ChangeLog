@@ -1,5 +1,16 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	while
+	* src/ast/ast.yml: Remove dead comments.
+	(While): New.
+	* src/parser/bison/ugrammar.y: Use it.
+	* src/object/object.hh (IS_TRUE): New.
+	* src/runner/runner.hh, src/runner/runner.cc (If): Use IS_TRUE.
+	Remove spurious YIELD.
+	(While): New.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	Function arity, echo & print
 	* src/object/code-class.cc (code_class_echo): Remove, it is
 	unclear why it was there, not to mention that it subscribed itself

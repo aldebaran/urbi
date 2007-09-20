@@ -151,6 +151,15 @@ namespace object
 #define VALUE(Obj, Type)			\
   ((Obj).unsafe_cast<Type>()->value_get())
 
+/// Whether the truth value of \a Obj is true.
+// We don't have Booleans currently: 0 is false, everything else
+// is true.  The day we have a Nil, it should evaluate to false too.
+// FIXME: Rounding errors on 0?
+#define IS_TRUE(Obj)					\
+  (!(Obj)->type_is<object::Float>()			\
+   || (Obj).unsafe_cast<object::Float>()->value_get())
+
+
 # include "object/object.hxx"
 
 #endif // !OBJECT_OBJECT_HH

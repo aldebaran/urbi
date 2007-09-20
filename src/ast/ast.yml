@@ -294,27 +294,6 @@ Nary:
           return o;
         }
 
-# Comma:
-#   super: Nary
-#   default: |2
-#     operator()(n.lhs_get());
-#     operator()(n.rhs_get());
-#   printer:
-#     - ~lhs
-#     - '" , "'
-#     - ~rhs
-# 
-# Semicolon:
-#   super: Nary
-#   default: |2
-#     operator()(n.lhs_get());
-#     operator()(n.rhs_get());
-#   printer:
-#     - ~lhs
-#     - '" ; "'
-#     - ~rhs
-
-
 Binary:
   super: Exp
   desc: /// Expressions with two sub expressions
@@ -372,7 +351,7 @@ Pipe:
 #   super: Exp
 #   inline:
 #     header inside: |2
-
+#
 #         public:
 #           /// Operator qualifier.
 #           enum type
@@ -415,6 +394,26 @@ If:
     - ~elseclause
     - libport::decindent
 
+While:
+  super: Exp
+  attributes:
+    - test:
+        type: Exp*
+        desc: Condition to continue
+    - body:
+        type: Exp*
+        desc: Executed if test is true
+  default: |2
+    operator()(n.test_get());
+    operator()(n.body_get());
+  printer:
+    - '"while ("'
+    - ~test
+    - '")"'
+    - libport::incendl
+    - ~body
+    - libport::decindent
+
 # At:
 #   super: Exp
 #   attributes:
@@ -429,12 +428,12 @@ If:
 # Alias:
 #   super: Exp
 #   desc: |2
-
+#
 #       /** \class ast::Alias
 #        ** \brief Set an alias flag in the object given, to point to one of
 #        ** its attribute (typically, 'val'). For backward compat only.
 #        */
-
+#
 #   attributes:
 #     - obj: { type: 'Exp*', desc: Reference to the object to alias }
 #     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }

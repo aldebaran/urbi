@@ -153,7 +153,6 @@ namespace runner
   Runner::operator() (ast::If& e)
   {
     CORO_WITHOUT_CTX ();
-    YIELD ();
 
     // Evaluate the test.
     JECHO ("test", e.test_get ());
@@ -161,11 +160,7 @@ namespace runner
 
     YIELD();
 
-    // We don't have Booleans currently: 0 is false, everything else
-    // is true.  The day we have a Nil, it should evaluate to false too.
-    // FIXME: Rounding errors on 0?
-    if (!current_->type_is<object::Float>()
-	|| current_.unsafe_cast<object::Float>()->value_get())
+    if (IS_TRUE(current_))
     {
       JECHO ("then", e.thenclause_get ());
       CORO_CALL (operator() (e.thenclause_get()));
@@ -472,11 +467,34 @@ namespace runner
     CORO_END;
   }
 
-    void
+  void
   Runner::operator() (ast::Tag&)
   {
     CORO_WITHOUT_CTX ();
     // FIXME: Some code is missing here.
+    CORO_END;
+  }
+
+  void
+  Runner::operator() (ast::While& e)
+  {
+    CORO_WITHOUT_CTX ();
+
+    // Evaluate the test.
+    while (true)
+    {
+      JECHO ("while test", e.test_get ());
+      CORO_CALL (operator() (e.test_get()));
+      if (!IS_TRUE(current_))
+	break;
+      
+      // FIXME: Yield before or after the break?
+      YIELD();
+
+      JECHO ("while body", e.thenclause_get ());
+      CORO_CALL (operator() (e.body_get()));
+    }
+
     CORO_END;
   }
 

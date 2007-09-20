@@ -736,7 +736,8 @@ stmt:
     }
 | "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = 0;
+      // FIXME: Use $2.
+      $$ = new ast::While(@$, $4, $6);
     }
 ;
 
