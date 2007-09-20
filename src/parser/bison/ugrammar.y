@@ -725,7 +725,9 @@ stmt:
       $$ = 0;
     }
 | "return" expr.opt
-    { $$ = new ast::Return(@$, $2, false); }
+    { 
+      $$ = new ast::Return(@$, $2, false); 
+    }
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
     {
       $$ = 0;
