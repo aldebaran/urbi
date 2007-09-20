@@ -36,7 +36,9 @@ namespace runner
   Runner::rObject
   Runner::eval (ast::Ast& e)
   {
+    ECHO("Eval: " << &e << " {{{" << e << "}}}");
     e.accept (*this);
+    ECHO("Eval: " << &e << " = " << current_);
     return current_;
   }
 

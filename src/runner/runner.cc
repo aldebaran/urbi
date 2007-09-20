@@ -32,7 +32,7 @@ namespace runner
 
 /// Job echo.
 #define JECHO(Title, Ast)					\
-  ECHO ("job " << ME << ", " Title ": " << AST(Ast));
+  ECHO ("job " << ME << ", " Title ": " << AST(Ast))
 
 
 /** Call this macro at the very beginning of the evaluation of an AST
@@ -48,7 +48,7 @@ namespace runner
   do                                                            \
   {                                                             \
     ECHO ("job " << ME << " yielding on AST: "                  \
-	  << &e << " " << AST(e));				\
+	  << &e << ' ' << AST(e));				\
     CORO_YIELD ();                                              \
   } while (0)
 
@@ -69,13 +69,13 @@ namespace runner
     if (!started_)
     {
       ECHO ("job " << ME << " starting evaluation of AST: " << ast_
-	    << " " << AST(*ast_));
+	    << ' ' << AST(*ast_));
       started_ = true;
     }
     else
       ECHO ("job " << ME << " restarting evaluation of AST: " << ast_
-	    << " " << AST(*ast_)
-	    << context_count () << " contexts in the coroutine stack");
+	    << ' ' << AST(*ast_)
+	    << ' ' << context_count () << " contexts in the coroutine stack");
     operator() (*ast_);
   }
 
@@ -226,6 +226,7 @@ namespace runner
     for (++i; i != i_end; ++i)
     {
       CORO_CALL (eval (**i));
+      assert (current_);
       PING ();
       args.push_back (current_);
     }

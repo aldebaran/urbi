@@ -1,5 +1,12 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	Even more debugging
+	* src/runner/runner.cc, src/runner/runner.hxx: More
+	ECHOs.
+	Simplify a couple of ones.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	String::+
 	* src/object/object.hh (VALUE): New.
 	Bad name, agreed.  Please, make it clearer.
