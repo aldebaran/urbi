@@ -32,7 +32,7 @@ namespace object
       //    res.insert(res.end(), rhs->value_get().begin(), rhs->value_get().end());
 
       BOOST_FOREACH (const rObject& o, rhs->value_get())
-        lhs->value_get().push_back(o);
+	lhs->value_get().push_back(o);
 
       return lhs;
     }
