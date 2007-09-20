@@ -13,34 +13,34 @@ namespace object
   UrbiException::lookupFailed (std::string slot)
   {
     return UrbiException ((boost::format (lookupFailed_)
-                           % slot).str ());
+			   % slot).str ());
   }
 
   inline UrbiException
   UrbiException::primitiveError (std::string primitive,
-                                 std::string msg)
+				 std::string msg)
   {
     return UrbiException ((boost::format (primitiveError_)
-                           % primitive
-                           % msg).str ());
+			   % primitive
+			   % msg).str ());
   }
 
   inline UrbiException
   UrbiException::wrongArgumentType (Object::kind_type real,
-                                    Object::kind_type expected)
+				    Object::kind_type expected)
   {
     return UrbiException ((boost::format (wrongArgumentType_)
-                           % Object::string_of (real)
-                           % Object::string_of (expected)).str ());
+			   % Object::string_of (real)
+			   % Object::string_of (expected)).str ());
   }
 
   inline UrbiException
   UrbiException::wrongArgumentCount (unsigned argReal,
-                                     unsigned argExpected)
+				     unsigned argExpected)
   {
     return UrbiException ((boost::format (wrongArgumentCount_)
-                           % argReal
-                           % argExpected).str ());
+			   % argReal
+			   % argExpected).str ());
   }
 
 }; // end of namespace object
