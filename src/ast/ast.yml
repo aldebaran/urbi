@@ -566,6 +566,10 @@ String:
         type: 'std::string'
         access: r
         desc: String value
+  printer:
+    - "'\"'"
+    - $value
+    - "'\"'"
 
 List:
   super: Exp

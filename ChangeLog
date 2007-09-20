@@ -1,5 +1,10 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	String::print
+	* src/ast/ast.yml: Implement it.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	if then else
 	* src/ast/ast.yml (If): New.
 	* src/parser/bison/ugrammar.y: Build it.
