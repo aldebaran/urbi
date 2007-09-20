@@ -438,16 +438,6 @@ While:
 #     - obj: { type: 'Exp*', desc: Reference to the object to alias }
 #     - alias: { type: 'libport::Symbol*', desc: Aliased attribute }
  
-Assign:
-  super: Exp
-  attributes:
-    - lhs: { type: 'Call*', desc: Reference to the affected variable }
-    - rhs: { type: 'Exp*', desc: Assigned value }
-  printer:
-    - ~lhs
-    - '" = "'
-    - ~rhs
-
 # Inherits:
 #   super: Exp
 #   attributes:
@@ -641,10 +631,11 @@ Call:
     - '{
           if (n.args_get ().size() >= 2)
             ostr_ << "("
+                  << libport::incindent
                   << libport::separate (exps_type (++n.args_get ().begin(),
                                                    n.args_get ().end()),
-                                        libport::make_pair (",",
-                                                            libport::iendl))
+                                        ", ")
+                  << libport::decindent
                   << ")";
        }'
 

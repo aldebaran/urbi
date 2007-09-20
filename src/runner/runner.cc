@@ -101,28 +101,6 @@ namespace runner
   }
 
   void
-  Runner::operator() (ast::Assign& e)
-  {
-    CORO_WITH_1SLOT_CTX (rObject, tgt);
-    YIELD ();
-
-    PING ();
-    // The message cannot have arguments: just the target (can be 0).
-    assert (e.lhs_get ().args_get ().size () == 1);
-    CORO_CALL (tgt = target (e.lhs_get ().args_get ().front ()));
-    // FIXME: Do we need to issue an error message here?
-    if (!tgt)
-      CORO_RETURN;
-    CORO_CALL (eval (e.rhs_get ()));
-    {
-      libport::Symbol s = e.lhs_get ().name_get ();
-      tgt->slot_set (s, current_);
-    }
-
-    CORO_END;
-  }
-
-  void
   Runner::operator() (ast::And& e)
   {
     CORO_WITHOUT_CTX ();

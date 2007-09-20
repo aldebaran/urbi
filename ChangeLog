@@ -1,5 +1,18 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	= is sugar for setSlot
+	We need updateSlot, but this implements exactly the (incorrect)
+	semantics we have until now.
+	* src/ast/ast.yml, src/runner/runner.hh, src/runner/runner.cc
+	(Assign): remove.
+	* src/object/object-class.cc (object_class_updateSlot): New.
+	(object_class_setSlot): Return the pseudo rhs.
+	* src/parser/bison/ugrammar.y (call): Yet another one, with 2 args.
+	(assign): New.
+	Use it to replace ast::Assign.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	while
 	* src/ast/ast.yml: Remove dead comments.
 	(While): New.

@@ -114,18 +114,22 @@ namespace object
     return (*obj)[arg1->value_get()];
   }
 
-  /// Set a slot.
-  static rObject
-  object_class_setSlot (rContext, objects_type args)
-  {
-    CHECK_ARG_COUNT(3);
-    rObject obj = args[0];
-    FETCH_ARG(1, String);
-    rObject val = args[2];
-
-    (*obj)[arg1->value_get()] = val;
-    return obj;
+  /// Define setSlot or updateSlot.  \a Verb is "set" or "update".
+#define CHANGE_SLOT(Verb)					\
+  static rObject						\
+  object_class_ ## Verb ## Slot (rContext, objects_type args)	\
+  {								\
+    CHECK_ARG_COUNT(3);						\
+    FETCH_ARG(1, String);					\
+    args[0]->slot_ ## Verb (arg1->value_get(), args[2]);	\
+    return args[2];						\
   }
+
+  /// Set a slot.
+  CHANGE_SLOT(set)
+  /// Update a slot.
+  CHANGE_SLOT(update)
+#undef CHANGE_SLOT
 
   void
   object_class_initialize ()
@@ -140,6 +144,7 @@ namespace object
       DECLARE(parents);
       DECLARE(getSlot);
       DECLARE(setSlot);
+      DECLARE(updateSlot);
 
       DECLARE(echo);
       DECLARE(print);

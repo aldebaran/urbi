@@ -153,6 +153,38 @@
       return res;
     }
 
+    /// "<target> . <method> (<arg1>, <arg2>)".
+    static
+    ast::Call*
+    call (const yy::parser::location_type& l,
+	  ast::Exp* target, libport::Symbol* method, 
+	  ast::Exp* arg1, ast::Exp* arg2)
+    {
+      assert (method);
+      ast::Call* res = call (l, target, method);
+      res->args_get().push_back(arg1);
+      res->args_get().push_back(arg2);
+      return res;
+    }
+
+   
+    /// "<lvalue> = <value>".
+    static
+    ast::Call*
+    assign (const yy::parser::location_type& l,
+	    ast::Call* lvalue, ast::Exp* value)
+    {
+      return call (l,
+		   lvalue->args_get().front(), 
+		   // this new is stupid.  We need to clean
+		   // this set of call functions.
+		   new libport::Symbol("setSlot"), 
+		   new ast::String(lvalue->location_get(),
+				   lvalue->name_get().name_get()),
+		   value);
+    }
+
+   
     /// Return \a e in a ast::Scope unless it is already one.
     static
     ast::Scope*
@@ -605,11 +637,11 @@ stmt:
 // Functions.
 stmt:
   "function" k1_id formal_args "{" stmts "}"
-  {
-    // Compiled as "name = function args stmt".
-    $$ = new ast::Assign (@$, $2,
-			  new ast::Function (@$, take($3),
-					     scope(@4+@6, $5)));
+    {
+      // Compiled as "name = function args stmt", i.e., 
+      // updateSlot (name, function args stmt).
+      $$ = assign (@$, $2,
+		   new ast::Function (@$, take($3), scope(@4+@6, $5)));
   }
 ;
 
@@ -664,7 +696,11 @@ k1_id:
 | Stmt: Assignment.  |
 `-------------------*/
 stmt:
-	lvalue "=" expr namedarguments { $$ = new ast::Assign (@$, $1, $3); }
+  lvalue "=" expr namedarguments
+    {
+      // $1 is a 0-ary Call: get its target and method name.
+      $$ = assign (@$, $1, $3); 
+    }
 | "var" lvalue "=" expr namedarguments { $$ = 0; }
 | lvalue "+=" expr { $$ = 0; }
 | lvalue "-=" expr { $$ = 0; }
