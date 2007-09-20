@@ -25,8 +25,9 @@ namespace object
   libport::ufloat                                                       \
   float_##Name (libport::ufloat l, libport::ufloat r)                   \
   {                                                                     \
-    if (r == 0)                                                         \
-      throw UrbiException::primitiveError("Operator " #Operator, ErrorMessage);\
+    if (!r)								\
+      throw UrbiException::primitiveError("Operator " #Operator,	\
+					  ErrorMessage);		\
     return l Operator r;                                                \
   }
 
@@ -35,7 +36,7 @@ namespace object
   libport::ufloat                                                       \
   float_##Name (libport::ufloat l, libport::ufloat r)                   \
   {                                                                     \
-    if (r == 0)                                                         \
+    if (!r)								\
       throw UrbiException::primitiveError(#Method, ErrorMessage);       \
     return Method(l, r);                                                \
   }
@@ -130,6 +131,7 @@ namespace object
   rObject
   float_class_sub(rContext, objects_type args)
   {
+    // FIXME: The error message requires 2 although 1 is ok.
     if (args.size () != 1 && args.size() != 2)
       throw UrbiException::wrongArgumentCount(2, args.size ());
     FETCH_ARG(0, Float);
@@ -164,14 +166,13 @@ namespace object
 
 #define PRIMITIVE_1_FLOAT_CHECK_POSITIVE(Name, Call)    \
   PRIMITIVE_1_FLOAT_(Name, Call,                        \
-    if (args[1].unsafe_cast<Float>()->value_get() < 0)  \
+     if (VALUE(args[1], Float) < 0)                     \
       throw UrbiException::primitiveError(#Name,        \
 	      "argument has to be positive"))
 
-#define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)     \
-  PRIMITIVE_1_FLOAT_(Name, Call,                                \
-    if ((args[1].unsafe_cast<Float>()->value_get() < Min)       \
-	|| (args[1].unsafe_cast<Float>()->value_get() > Max))   \
+#define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)	\
+  PRIMITIVE_1_FLOAT_(Name, Call,	\
+     if (VALUE(args[1], Float) < Min || Max < VALUE(args[1], Float))	\
       throw UrbiException::primitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
@@ -227,6 +228,7 @@ namespace object
   void
   float_class_initialize ()
   {
+    /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
 #define DECLARE(Call, Name)                      \
     DECLARE_PRIMITIVE(float, Name, Call)
 

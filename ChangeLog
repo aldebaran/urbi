@@ -1,5 +1,16 @@
 2007-09-20  Akim Demaille  <demaille@gostai.com>
 
+	String::+
+	* src/object/object.hh (VALUE): New.
+	Bad name, agreed.  Please, make it clearer.
+	* src/object/float-class.cc: Use it.
+	* src/object/primitives.hh: Ditto.
+	* src/object/string-class.cc (PRIMITIVE_OP_STRING): Don't work
+	on symbols, but on std::string.
+	(String::add): New.
+
+2007-09-20  Akim Demaille  <demaille@gostai.com>
+
 	String::print
 	* src/ast/ast.yml: Implement it.
 

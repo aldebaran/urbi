@@ -141,6 +141,16 @@ namespace object
 
 } // namespace object
 
+/// Return the value of the shared_ptr \a Obj as an Atom<Type>.
+// FIXME: Bad name (space).
+// A macro, not a function, because I want to work on the ref-pointer.
+// But I might be wrong: the problem is that when I have to different
+// pointer types to the same object, they should share the ref counter.
+// But is it really the case with our ref ptr?  Be careful, be very
+// careful :(  To be checked thoroughly.
+#define VALUE(Obj, Type)			\
+  ((Obj).unsafe_cast<Type>()->value_get())
+
 # include "object/object.hxx"
 
 #endif // !OBJECT_OBJECT_HH

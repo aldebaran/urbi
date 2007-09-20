@@ -73,9 +73,9 @@ namespace object
 
 
 /**
- * Define a primitive for class Class named name, which takes two
- * arguments of type Type1 and Type2, returns type Ret and whose
- * result is Call applied to all arguments.
+ * Define a primitive for class \a Class named name, which takes two
+ * arguments of type \a Type1 and \a Type2, returns type \a Ret and whose
+ * result is \a Call applied to all arguments.
  */
 #define PRIMITIVE_2_(Class, Name, Call, Ret, Type1, Type2, Get) \
   rObject                                                       \

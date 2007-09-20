@@ -19,16 +19,21 @@ namespace object
   namespace
   {
 
+    // Don't forget our Strings are wrapped in Symbols.
 #define PRIMITIVE_OP_STRING(Name, Op, TypeRet)                  \
-    static rObject                                              \
+    static							\
+    r ## TypeRet						\
     Name (rString& a, rString& b)                               \
     {                                                           \
-      return new TypeRet (a->value_get () Op b->value_get ());  \
+      return new TypeRet (a->value_get ().name_get()		\
+			  Op					\
+			  b->value_get ().name_get());		\
     }
 
-    PRIMITIVE_OP_STRING(equ, ==, Integer);
+    PRIMITIVE_OP_STRING(add,   +, String);
+    PRIMITIVE_OP_STRING(equ,  ==, Integer);
+    PRIMITIVE_OP_STRING(lth,   <, Integer);
     PRIMITIVE_OP_STRING(nequ, !=, Integer);
-    PRIMITIVE_OP_STRING(lth, <, Integer);
 
 #undef PRIMITIVE_OP_STRING
 
@@ -47,6 +52,7 @@ namespace object
 #define PRIMITIVE_2_STRING(Name, Type2)           \
   PRIMITIVE_2(string, Name, Name, String, Type2)
 
+  PRIMITIVE_2_STRING(add, String);
   PRIMITIVE_2_STRING(equ, String);
   PRIMITIVE_2_STRING(nequ, String);
 
@@ -63,9 +69,10 @@ namespace object
 #define DECLARE(Name, Implem)                   \
     DECLARE_PRIMITIVE(string, Name, Implem)
 
+    DECLARE(+,  add);
     DECLARE(==, equ);
     DECLARE(!=, nequ);
-    DECLARE(<, lth);
+    DECLARE(<,  lth);
 
     DECLARE(size, size);
     DECLARE(length, size);
