@@ -1,5 +1,16 @@
 2007-09-20  Akim Demaille  <akim.demaille@free.fr>
 
+	Don't lose the UCONSOLE_MODE when BEGIN is called
+	When we use BEGIN (e.g. for strings), we come back to INITIAL
+	instead of coming back to UCONSOLE_MODE.
+	* src/parser/bison/utoken.l (first_run): Replace with...
+	(sc_default): this.
+	Compute appropriately.
+	(UCONSOLE_MODE): Rename as...
+	(SC_UCONSOLE): this.
+
+2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+
 	Use libport::escape in the pretty printer
 	* dev/ast_params.py (printer_cc_prologue): New.
 	* dev/ast-pretty-printer-gen: Use it.

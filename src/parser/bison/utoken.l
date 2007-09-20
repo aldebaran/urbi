@@ -93,7 +93,7 @@ typedef yy::parser::token token;
 %option noyywrap
 
 %x SC_C_COMMENT SC_STRING
-%s UCONSOLE_MODE
+%s SC_UCONSOLE
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -108,15 +108,18 @@ STRING   \"([^\"]|"\\\"")*\"
   locp->step();
 
 #ifndef NDEBUG
-  static bool first_run = true;
-  if (first_run)
+  // The default start condition: the one replacing INITIAL.
+  static int sc_default = -1;
+  if (sc_default == -1)
   {
     if (getenv ("UCONSOLE_MODE"))
     {
       std::cerr << "Message from the scanner: UCONSOLE_MODE enabled.\n";
-      BEGIN (UCONSOLE_MODE);
+      sc_default = SC_UCONSOLE;
     }
-    first_run = false;
+    else
+      sc_default = INITIAL;
+    BEGIN sc_default;
   }
 #endif
 %}
@@ -125,7 +128,7 @@ STRING   \"([^\"]|"\\\"")*\"
   | The rules.  |
   `------------*/
 
-<UCONSOLE_MODE>{
+<SC_UCONSOLE>{
   ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
   ^#plug.*              /* ignore the "#plug whatever" lines */;
 }
@@ -321,7 +324,7 @@ STRING   \"([^\"]|"\\\"")*\"
 
 <SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
      \" {
-       BEGIN INITIAL;
+       BEGIN sc_default;
        return token::STRING;
      }
 
@@ -354,7 +357,7 @@ STRING   \"([^\"]|"\\\"")*\"
 
      <<EOF>> {
        up.error (*locp, "unexpected end of file in a string");
-       BEGIN INITIAL;
+       BEGIN sc_default;
        return token::STRING;
      }
 }
@@ -379,7 +382,7 @@ STRING   \"([^\"]|"\\\"")*\"
 <SC_C_COMMENT>{ /* Comments. */
   "*/" { /* End of the comment. */
     locp->step ();
-    BEGIN INITIAL;
+    BEGIN sc_default;
   }
 
   [^*/\n\r]+	;
@@ -389,7 +392,7 @@ STRING   \"([^\"]|"\\\"")*\"
   <<EOF>> {
     up.error(*locp, std::string ("unexpected end of file in a comment"));
     locp->step ();
-    BEGIN INITIAL;
+    BEGIN sc_default;
   }
 }
 
