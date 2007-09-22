@@ -1,3 +1,10 @@
+2007-09-23  mefyl  <mefyl@lrde.epita.fr>
+
+	Revert patch 1151 and 1152.
+	* src/runner/runner.cc,
+	* src/runner/runner.hxx: Handle context as a lobby slot instead of
+        a special message.
+
 2007-09-20  Akim Demaille  <akim.demaille@free.fr>
 
 	string escapes

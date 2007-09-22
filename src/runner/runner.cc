@@ -16,11 +16,6 @@
 
 namespace runner
 {
-  namespace
-  {
-    /// Name of the 'context' message
-    static const libport::Symbol ctx_msg_name("context");
-  }
 
 /// Address of \a Runner seen as a \c Job (Runner has multiple inheritance).
 #define JOB(Runner) static_cast<Job*> (Runner)
@@ -207,82 +202,76 @@ namespace runner
     /*---------------------.
     | Decode the message.  |
     `---------------------*/
-    // If the message is 'context', we return the current context.
-    if (e.name_get() == ctx_msg_name)
-      current_ = context_;
-    else
+    // We may have to run a primitive, or some code.
+    // We cannot use CORO_* in a switch.
+    call_code = false;
+    has_error = false;
+    try {
+      // Ask the target for the handler of the message.
+      val = tgt->lookup (e.name_get ());
+    }
+    catch (object::UrbiException& ue)
     {
-      // We may have to run a primitive, or some code.
-      // We cannot use CORO_* in a switch.
-      call_code = false;
-      has_error = false;
-      try {
-	// Ask the target for the handler of the message.
-	val = tgt->lookup (e.name_get ());
-      }
-      catch (object::UrbiException& ue)
-      {
-	raise_error_ (ue);
-	current_ = 0;
-	has_error = true;
-      }
-      if (has_error)
-	CORO_RETURN;
-      // FIXME: Do we need to issue an error message here?
-      if (!val)
-	CORO_RETURN;
+      raise_error_ (ue);
+      current_ = 0;
+      has_error = true;
+    }
+    if (has_error)
+      CORO_RETURN;
+    // FIXME: Do we need to issue an error message here?
+    if (!val)
+      CORO_RETURN;
 
-      switch (val->kind_get ())
-      {
-	case object::Object::kind_primitive:
-	  PING ();
-	  current_ = val.cast<object::Primitive>()->value_get()(context_, args);
-	  break;
-	case object::Object::kind_code:
-	  PING ();
-	  call_code = true;
-	  break;
-	default:
-	  PING ();
-	  current_ = val;
-	  break;
-      }
+    switch (val->kind_get ())
+    {
+      case object::Object::kind_primitive:
+        PING ();
+        current_ = val.cast<object::Primitive>()->value_get()(context_, args);
+        break;
+      case object::Object::kind_code:
+        PING ();
+        call_code = true;
+        break;
+      default:
+        PING ();
+        current_ = val;
+        break;
+    }
 
-      /*---------------------------.
+    /*---------------------------.
       | Calling an Urbi function.  |
       `---------------------------*/
-      if (call_code)
-      {
-	PING ();
-	// Create a new object to store the arguments.
-	bound_args = new object::Object;
+    if (call_code)
+    {
+      PING ();
+      // Create a new object to store the arguments.
+      bound_args = new object::Object;
 
-	// Fetch the called function.
-	fn = &val.cast<object::Code> ()->value_get ();
+      // Fetch the called function.
+      fn = &val.cast<object::Code> ()->value_get ();
 
-	// Check the arity.
-	object::check_arg_count (fn->formals_get().size(), args.size() - 1);
+      // Check the arity.
+      object::check_arg_count (fn->formals_get().size(), args.size() - 1);
 
-	// Bind formal and effective arguments.
-	// The target is "self".
-	ei = args.begin();
-	bound_args->slot_set (libport::Symbol("self"), *ei);
-	// self is also the parent of the function outer scope, so that
-	// we look for non-local identifiers in the target itself.
-	bound_args->parent_add (*ei);
+      // Bind formal and effective arguments.
+      // The target is "self".
+      ei = args.begin();
+      bound_args->slot_set (libport::Symbol("self"), *ei);
+      // self is also the parent of the function outer scope, so that
+      // we look for non-local identifiers in the target itself.
+      bound_args->parent_add (*ei);
 
-	// Now bind the non-target arguments.
-	++ei;
-	for (fi = fn->formals_get().begin();
-	     fi != fn->formals_get().end() && ei != args.end();
-	     ++fi, ++ei)
-	  bound_args->slot_set (**fi, *ei);
-	ECHO("bound args: " << *bound_args);
-	// Change the current context and call.
-	std::swap(bound_args, locals_);
-	CORO_CALL (current_ = eval (*fn->body_get()));
-	std::swap(bound_args, locals_);
-      }
+      // Now bind the non-target arguments.
+      ++ei;
+      for (fi = fn->formals_get().begin();
+           fi != fn->formals_get().end() && ei != args.end();
+           ++fi, ++ei)
+        bound_args->slot_set (**fi, *ei);
+      ECHO("bound args: " << *bound_args);
+      // Change the current context and call.
+      std::swap(bound_args, locals_);
+      CORO_CALL (current_ = eval (*fn->body_get()));
+      std::swap(bound_args, locals_);
     }
 
     CORO_END;
@@ -465,7 +454,7 @@ namespace runner
       CORO_CALL (operator() (e.test_get()));
       if (!IS_TRUE(current_))
 	break;
-      
+
       // FIXME: Yield before or after the break?
       YIELD();
 

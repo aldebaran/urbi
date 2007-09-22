@@ -25,6 +25,8 @@ namespace runner
     // If the lookup in the local variable failed, try in the the
     // Connection object, sort of a Lobby for Io.
     locals_->parent_add(context_);
+    // Provide direct access to the Context.
+    locals_->slot_set(libport::Symbol("context"), context_);
   }
 
   inline
