@@ -390,8 +390,9 @@ take (T* t)
 %type <binary>              binary
 %type <property>            property
 %type <variable>            name
-
-
+%type <variable>            lvalue
+%type <variable>            rvalue
+%type <derive>              derive
 
 /*----------------------.
 | Operator precedence.  |
@@ -411,7 +412,6 @@ take (T* t)
 %left  CMDBLOCK
 %left  "else" "onleave"
 %nonassoc "="
-
 
 /* URBI Grammar */
 %%
@@ -1179,7 +1179,6 @@ name:
 
 ;
 
-%type <variable> lvalue;
 lvalue:
   name		{ $$ = $1;				}
 | name "'n"	{ $$ = $1; $$->isnormalized = true;	}
@@ -1289,7 +1288,6 @@ expr:
 | variables as rvalues.  |
 `-----------------------*/
 
-%type <variable> rvalue;
 expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 ;
 
@@ -1301,8 +1299,6 @@ rvalue:
 | name "'in"	{ $$->varin = true;		}
 | name "'out"   // FIXME: Nothing to do???
 
-
-%type <derive> derive;
 derive:
   "'"	{ $$ = UVariableName::UDERIV;	 }
 | "''"	{ $$ = UVariableName::UDERIV2;	 }

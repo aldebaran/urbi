@@ -1,3 +1,9 @@
+2007-09-23  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	Fixed lack of early declaration for types lvalue, rvalue, derive. 
+	* src/parser/bison/ugrammar.y: move declarations at the top of the
+	file.
+
 2007-08-30  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add missing call fixes for UConnection stream version.
