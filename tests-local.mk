@@ -2,6 +2,4 @@
 # are specific to a given project or even Svn branch.
 
 XFAIL_TESTS +=					\
-long-identifiers.chk				\
-function-declaration.chk			\
-variable-qualifiers.chk
+long-identifiers.chk

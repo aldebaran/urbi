@@ -135,7 +135,7 @@ namespace urbi
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
-				     int size,  UTable &t)
+				     int size,  UTable &t, bool owned)
     : storage(0), objname(objname), name(name)
   {
     nbparam = size;
@@ -169,19 +169,29 @@ namespace urbi
 	  {
 	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
 	    if (variable)
-	      variable->internalBinder.push_back(this);
+	    {
+	      if (owned)
+	        variable->internalTargetBinder.push_back(this);
+	      else
+		variable->internalBinder.push_back(this);
+	    }
 	  }
 	else
 	{
-	  it->second->internalBinder.push_back(this);
-	  if ( !it->second->internalAccessBinder.empty ()
-	       && std::find (::urbiserver->access_and_change_varlist.begin (),
-			     ::urbiserver->access_and_change_varlist.end (),
-			     it->second) ==
-	       ::urbiserver->access_and_change_varlist.end ())
+	  if (owned)
+	    it->second->internalTargetBinder.push_back(this);
+	  else 
 	  {
-	    it->second->access_and_change = true;
-	    ::urbiserver->access_and_change_varlist.push_back (it->second);
+	    it->second->internalBinder.push_back(this);
+	    if ( !it->second->internalAccessBinder.empty ()
+	      && std::find (::urbiserver->access_and_change_varlist.begin (),
+		::urbiserver->access_and_change_varlist.end (),
+		it->second) ==
+	      ::urbiserver->access_and_change_varlist.end ())
+	    {
+	      it->second->access_and_change = true;
+	      ::urbiserver->access_and_change_varlist.push_back (it->second);
+	    }
 	  }
 	}
       }

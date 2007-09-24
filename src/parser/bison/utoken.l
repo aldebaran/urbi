@@ -228,6 +228,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "true"          return token::TOK_TRUECONST;
 "unalias"       return token::TOK_UNALIAS;
 "var"           return token::TOK_VAR;
+"ptr"           return token::TOK_PTR;
 "'in"           return token::TOK_VARIN;
 "'out"          return token::TOK_VAROUT;
 "wait"          return token::TOK_WAIT;
@@ -238,6 +239,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "!"             return token::TOK_BANG;
 "!="            return token::TOK_NE;
 "$"             return token::TOK_DOLLAR;
+"=>"            return token::TOK_ARROW;
 "%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
 "&"             return token::TOK_AND;

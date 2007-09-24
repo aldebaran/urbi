@@ -519,11 +519,12 @@ UValue::copy() const
     case DATA_UNKNOWN:
     case DATA_FUNCTION:
     case DATA_VARIABLE:
-      abort ();
+      assert (!"not reachable");
   }
 
   // Pacify warnings.
-  abort ();
+  assert (!"not reachable");
+  abort();
 }
 
 
@@ -822,9 +823,9 @@ UValue::echo(bool hr)
 
     case DATA_NUM:
     {
-      std::ostringstream o;
-      o << std::fixed << val;
-      return o.str();
+      char dv[64];
+      sprintf(dv,"%f",(float)val);
+      return std::string(dv);
     }
 
     case DATA_STRING:

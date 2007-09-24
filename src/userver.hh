@@ -127,6 +127,11 @@ public:
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
+  inline int        getUID          () 
+  {
+    libport::BlockLock bl(this);
+    return ++uid;
+  }
   int               addAlias        (const char* id, const char* variablename);
   UGhostConnection* getGhostConnection ()
   {
@@ -243,6 +248,9 @@ private:
   ufloat           lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection *ghost;
+  
+  /// unique id source
+  int               uid;
 };
 
 //! Accessor for frequency_.

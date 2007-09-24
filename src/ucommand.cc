@@ -687,6 +687,47 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
   }
 }
 
+UValue * UCommand::tryModuleCall(const char * name,
+  UNamedParameters * parameters, UConnection * connection)
+  {
+   urbi::UTable::iterator hmfi =
+      urbi::functionmap.find(name);
+    if (hmfi != urbi::functionmap.end())
+    {
+      for (std::list<urbi::UGenericCallback*>::iterator cbi =
+	     hmfi->second.begin();
+	   cbi != hmfi->second.end();
+	   ++cbi)
+      {
+	if ((parameters
+	     && parameters->size() == (*cbi)->nbparam)
+	    || (!parameters && !(*cbi)->nbparam) )
+	{
+	  urbi::UList tmparray;
+	  for (UNamedParameters* pvalue = parameters;
+	       pvalue != 0;
+	       pvalue = pvalue->next)
+	  {
+	    UValue* valparam = pvalue->expression->eval(this, connection);
+	    if (!valparam)
+	    {
+	      send_error(connection, this, "EXPR evaluation failed");
+	      return 0;
+	    }
+	    // urbi::UValue do not see ::UValue, so it must
+	    // be valparam who does the job.
+	    tmparray.array.push_back(valparam->urbiValue());
+	    delete valparam;
+	  }
+
+
+	  return new UValue((*cbi)->__evalcall(tmparray));
+
+	}
+      }
+    }
+    return 0;
+  }
 //! UCommand subclass execution function
 UCommand::Status
 UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
@@ -701,6 +742,12 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     devicename = variablename->getDevice();
   }
   ufloat currentTime = connection->server->lastTime();
+
+  if (variablename->deriv != UVariableName::UNODERIV)
+  {
+    send_error(connection, this, "cannot assign value to derivative");
+    return UCOMPLETED;
+  }
 
   // Wait in queue if needed
   if (variable && variable->blendType == UQUEUE && variable->nbAverage > 0)
@@ -863,43 +910,13 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
     ////// module-defined /////
     bool found_function = false;
-    urbi::UTable::iterator hmfi =
-      urbi::functionmap.find(functionname->str());
-    if (hmfi != urbi::functionmap.end())
+    UValue * tv =  tryModuleCall(functionname->str(),
+      expression->parameters, connection);
+    if (tv)
     {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	     hmfi->second.begin();
-	   cbi != hmfi->second.end() && !found_function;
-	   ++cbi)
-      {
-	if ((expression->parameters
-	     && expression->parameters->size() == (*cbi)->nbparam)
-	    || (!expression->parameters && !(*cbi)->nbparam) )
-	{
-	  urbi::UList tmparray;
-	  for (UNamedParameters* pvalue = expression->parameters;
-	       pvalue != 0;
-	       pvalue = pvalue->next)
-	  {
-	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    if (!valparam)
-	    {
-	      send_error(connection, this, "EXPR evaluation failed");
-	      return UCOMPLETED;
-	    }
-	    // urbi::UValue do not see ::UValue, so it must
-	    // be valparam who does the job.
-	    tmparray.array.push_back(valparam->urbiValue());
-	    delete valparam;
-	  }
-
-	  delete expression;
-	  expression =
-	    new UExpression (loc(),  UExpression::VALUE,
-			     new UValue((*cbi)->__evalcall(tmparray)));
-	  found_function = true;
-	}
-      }
+      found_function = true;
+      delete expression;
+      expression = new UExpression (loc(),  UExpression::VALUE,tv);
     }
 
     ////// EXTERNAL /////
@@ -1396,8 +1413,10 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     // Hence the report to reinit list processing.
 
     if (variable->blendType != UMIX && variable->blendType != UADD)
+    {
       variable->selfSet(valtmp);
-
+      variable->setTarget();
+    }
     first = false;
 
     if (finished)
@@ -2398,55 +2417,23 @@ UCommand_EXPR::execute_(UConnection *connection)
     }
 
     ////// module-defined /////
-
-    urbi::UTable::iterator hmfi = urbi::functionmap.find(funname->str());
-    if (hmfi != urbi::functionmap.end())
+    UValue *v = tryModuleCall(funname->str(), expression->parameters,
+      connection);
+    if (v)
     {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	     hmfi->second.begin();
-	   cbi != hmfi->second.end();
-	   ++cbi)
+      if (v->dataType != DATA_VOID)
       {
-	if ((expression->parameters &&
-	     expression->parameters->size() == (*cbi)->nbparam)
-	    || (!expression->parameters && !(*cbi)->nbparam))
-	{
-	  // here you could spawn a thread... if only Aperios knew how to!
-	  urbi::UList tmparray;
-	  for (UNamedParameters *pvalue = expression->parameters;
-	       pvalue != 0;
-	       pvalue = pvalue->next)
-	  {
-	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    if (!valparam)
-	    {
-	      send_error(connection, this, "EXPR evaluation failed");
-	      return UCOMPLETED;
-	    }
-	    // urbi::UValue do not see ::UValue,
-	    // so it must be valparam who does the job.
-	    urbi::UValue *tmpvalue = valparam->urbiValue();
-
-	    tmparray.array.push_back(tmpvalue);
-	  }
-
-	  UValue ret = (*cbi)->__evalcall(tmparray);
-
-	  if (ret.dataType != DATA_VOID)
-	  {
-	    connection->sendPrefix(getTag().c_str());
-	    ret.echo(connection);
-	  }
-	  if (ret.dataType != DATA_BINARY && ret.dataType != DATA_VOID)
-	    connection->endline();
-	  else
-	    connection->flush ();
-	  return UCOMPLETED;
-	}
+	connection->sendPrefix(getTag().c_str());
+	v->echo(connection);
       }
-      send_error(connection, this, "Invalid function call");
+      if (v->dataType != DATA_BINARY && v->dataType != DATA_VOID)
+	connection->endline();
+      else
+	connection->flush ();
+      delete v;
       return UCOMPLETED;
     }
+
 
     ////// EXTERNAL /////
     HMbindertab::iterator it =
@@ -2457,6 +2444,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    || (!expression->parameters && it->second->nbparam == 0))
 	&& !it->second->monitors.empty())
     {
+      bool validcmd = false;
       int UU = unic();
       char tmpprefix[1024];
       snprintf(tmpprefix, 1024, "[0,\"%s__%d\",\"__UFnctret.EXTERNAL_%d\"",
@@ -2466,28 +2454,47 @@ UCommand_EXPR::execute_(UConnection *connection)
 	   j != it->second->monitors.end();
 	   ++j)
       {
-	(*j)->c->sendPrefix(EXTERNAL_MESSAGE_TAG);
-	(*j)->c->sendc((const ubyte*)tmpprefix, strlen(tmpprefix));
+	std::stringstream ss;
+	ss.str ("");
+	ss << tmpprefix;
+
 	for (UNamedParameters *pvalue = expression->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  (*j)->c->sendc((const ubyte*)",", 1);
+	  validcmd = false;
 	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*j)->c);
+	  if (valparam != 0)
+	  {
+	    ss << ",";
+	    ss << valparam->echo ();
+	  }
+	  else
+	    break;
+	  validcmd = true;
 	}
-	(*j)->c->send((const ubyte*)"]\n", 2);
+
+	if (validcmd)
+	{
+	  (*j)->c->sendPrefix (EXTERNAL_MESSAGE_TAG);
+	  ss << "]\n";
+	  (*j)->c->sendc ((const ubyte*)ss.str ().c_str (), ss.str ().length());
+	}
+
       }
 
       persistant = false;
-      NOT_ON_AIBO(buffer_t buf);
-      sprintf(buf,
-	      "{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
-	      "%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
-	      UU, getTag().c_str(), UU, UU);
-
-      strMorph (buf);
-      return UMORPH;
+      if (validcmd)
+      {
+	NOT_ON_AIBO(buffer_t buf);
+	sprintf(buf,
+		"{waituntil(isdef(__UFnctret.EXTERNAL_%d))|"
+		"%s:__UFnctret.EXTERNAL_%d|delete __UFnctret.EXTERNAL_%d}",
+		UU, getTag().c_str(), UU, UU);
+	strMorph (buf);
+	return UMORPH;
+      }
+      return UCOMPLETED;
     }
   }
 
@@ -4279,7 +4286,7 @@ UCommand::Status UCommand_OPERATOR::execute_(UConnection *connection)
 	std::ostringstream tstr;
 	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
 	connection->sendf(getTag(), tstr.str().c_str());
-      }   
+      }
     }
 
     connection->sendf(getTag(), "*** end of tag list.\n");
@@ -5703,6 +5710,10 @@ UCommand_AT::execute_(UConnection *connection)
   UCommand* morph_onleave = 0;
   bool domorph = false;
   ufloat currentTime = connection->server->lastTime();
+
+  if (!test->isconst)
+    force_reeval ();
+
   if (reeval ())
   {
     UEventCompound* ec = 0;
@@ -5727,7 +5738,7 @@ UCommand_AT::execute_(UConnection *connection)
     }
 
     for (std::list<UMultiEventInstance*>::iterator i = mixlist.begin ();
-	 i != mixlist.end ();
+ 	 i != mixlist.end ();
 	 ++i)
     {
       bool ok = false;
@@ -6003,6 +6014,9 @@ UCommand_WHENEVER::execute_(UConnection *connection)
       return UCOMPLETED;
     }
   }
+
+  if (!test->isconst)
+    force_reeval ();
 
   bool domorph = false;
   if (reeval ())

@@ -33,6 +33,7 @@
 %{
 #include "fwd.hh"
 #include "utypes.hh"
+#include "userver.hh"
 %}
 
 // Locations.
@@ -264,6 +265,7 @@ take (T* t)
   TOK_DISINHERITS  "disinherits"
   TOK_DIV          "/"
   TOK_DOLLAR       "$"
+  TOK_ARROW        "=>"
   TOK_DOUBLECOLON  "::"
   TOK_ELSE         "else"
   TOK_EMIT         "emit"
@@ -324,6 +326,7 @@ take (T* t)
   TOK_UNBLOCK      "unblock"
   TOK_UNIT         "unit"
   TOK_VAR          "var"
+  TOK_PTR          "ptr"
   TOK_VARERROR     "'e"
   TOK_VARIN        "'in"
   TOK_VAROUT       "'out"
@@ -417,6 +420,8 @@ take (T* t)
 %left  "else" "onleave"
 %nonassoc "="
 
+%left "$"
+%left "=>"
 
 /* URBI Grammar */
 %%
@@ -639,6 +644,17 @@ instruction:
       memcheck(up, $$, $2, $4, $5);
     }
 
+  | "ptr" refvariable  {
+
+      $2->local_scope = true;
+      std::stringstream ss;
+      ss << "ptr_" << urbiserver->getUID();
+      UExpression *e = new UExpression(@$, UExpression::VALUE,
+        new UString(ss.str().c_str()));
+      $$ = new UCommand_ASSIGN_VALUE(@$, $2, e, 0);
+      memcheck(up, $$, $2, e);
+    }
+
   | property "=" expr {
 
     $$ = new UCommand_ASSIGN_PROPERTY(@$, $1->variablename, $1->property, $3);
@@ -674,6 +690,41 @@ instruction:
 
     $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
+    }
+   | "ptr" refvariable "=" "new" "identifier" {
+     memcheck(up, $5);
+      $2->local_scope = true;
+      std::stringstream ss;
+      ss << "ptr_" << urbiserver->getUID();
+      UExpression *e = new UExpression(@$, UExpression::VALUE,
+        new UString(ss.str().c_str()));
+      UCommand * asgn = new UCommand_ASSIGN_VALUE(@$, $2, e, 0);
+
+      UVariableName *v = new UVariableName(
+        new UExpression(@$,
+          UExpression::VALUE,
+	  new UString(ss.str().c_str())));
+      UCommand * cnew = new UCommand_NEW(@$, v, $5, 0);
+      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, asgn, cnew);
+      memcheck(up, $$, $2, $5);
+    }
+
+  | "ptr" refvariable "=" "new" "identifier" "(" parameterlist ")" {
+      memcheck(up, $5);
+      $2->local_scope = true;
+      std::stringstream ss;
+      ss << "ptr_" << urbiserver->getUID();
+      UExpression *e = new UExpression(@$, UExpression::VALUE,
+        new UString(ss.str().c_str()));
+      UCommand * asgn = new UCommand_ASSIGN_VALUE(@$, $2, e, 0);
+
+      UVariableName *v = new UVariableName(
+        new UExpression(@$,
+          UExpression::VALUE,
+	  new UString(ss.str().c_str())));
+      UCommand * cnew = new UCommand_NEW(@$, v, $5, $7);
+      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, asgn, cnew);
+      memcheck(up, $$, $2, $5, $7);
     }
 
   | refvariable "=" "new" "identifier" {
@@ -1165,7 +1216,97 @@ purevariable:
       $$ = new UVariableName($3);
       memcheck(up, $$, $3);
     }
+  |
+  purevariable TOK_ARROW "identifier" {
+    //a$b unsugared to $(a+".b")
+    memcheck(up, $1, $3);
+    UExpression * eleft = new UExpression(@$, UExpression::VARIABLE, $1);
+    std::string s = ".";
+    s += $3->str();
+    UExpression *eright = new UExpression(@$, UExpression::VALUE,
+      new UString(s.c_str() ));
+    $$ = new UVariableName(
+      new UExpression(@$, UExpression::PLUS, eleft, eright));
+     memcheck(up, $$, $1, $3);
+     delete $3;
+  }
+  |
+  "$" "identifier" /*array*/{
+    //$a unsugared to $(a)
+    memcheck(up, $2);
+    UVariableName *vari;
+    if (up.connection.functionTag)
+	// We are inside a function
+	vari = new UVariableName(new UString(up.connection.functionTag),
+				 $2, false, 0/*$5*/);
+      else
+	vari = new UVariableName(new UString(up.connection.connectionTag),
+				 $2, false, 0/*$5*/);
+      $$ = new UVariableName(new UExpression(@$, UExpression::VARIABLE, vari));
+      memcheck(up, $$, $2);
+  }
+  |
+  "$" STRUCT {
+    //$a.b unsugared to $(a+".b")
+    memcheck(up, $2.device);
+    memcheck(up, $2.id);
+    UVariableName *varleft;
+    if (up.connection.functionTag)
+	// We are inside a function
+	varleft = new UVariableName(new UString(up.connection.functionTag),
+			       $2.device, false, 0);
+      else
+	varleft = new UVariableName(new UString(up.connection.connectionTag),
+			       $2.device, false, 0);
+    UExpression *expleft = new UExpression(@$, UExpression::VARIABLE,
+      varleft);
+    std::string v = ".";
+    v += $2.id->str();
+    UExpression *expright = new UExpression(@$, UExpression::VALUE,
+      new UValue(v.c_str()));
+    UExpression *exp = new UExpression(@$, UExpression::PLUS,
+      expleft, expright);
+    $$ = new UVariableName(exp);
+    memcheck(up, $$);
+    delete $2.id;  //$2.device is used
+  }
+//   | "$" "identifier" array TOK_POINT "identifier" array{
+//     //$a[x].b[y] unsugared to $(a[x]+".b"+"__"+y)
+//     memcheck(up, $2, $5);
+//     UVariableName *varleft;
+//     if (up.connection.functionTag)
+// 	// We are inside a function
+// 	varleft = new UVariableName(new UString(up.connection.functionTag),
+// 			       $2, false, $3);
+//       else
+// 	varleft = new UVariableName(new UString(up.connection.connectionTag),
+// 			       $2, false, $3);
+//     UExpression *expleft = new UExpression(@$, UExpression::VARIABLE,
+//       varleft);
+//     std::string v = ".";
+//     v += $5->str();
+//     UExpression *expright = new UExpression(@$, UExpression::VALUE,
+//       new UValue(v.c_str()));
+//     UExpression *exp = new UExpression(@$, UExpression::PLUS,
+//       expleft, expright);
+//     UNamedParameters * np = $6;
+//     while (np) {
+//       UExpression * __ = new UExpression(@$, UExpression::VALUE,
+//         new UValue("__"));
+//       exp = new UExpression(@$, UExpression::PLUS,
+//         exp,
+// 	new UExpression(@$, UExpression::PLUS,
+// 	  __,
+// 	  np->expression));
+//      np->expression = 0; //we stole it
+//      np = np->next;
+//     }
+//     $$ = new UVariableName(exp);
+//     delete $5;
+//     delete $6;
+//     memcheck(up, $$);
 
+//   }
   | "identifier" array TOK_POINT "identifier" array {
 
       memcheck(up, $1);

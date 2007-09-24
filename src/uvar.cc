@@ -125,7 +125,17 @@ namespace urbi
       vardata->variable->updated (true);
     }
     else
-      vardata->variable->setFloat(n);
+    {
+      //write to target, blend mode override we're not in sync with cycles
+      if (vardata->variable->autoUpdate)
+      {
+	vardata->variable->selfSet(&n);
+	vardata->variable->setTarget();
+	vardata->variable->setSensorVal(vardata->variable->target);
+      }
+      else
+	vardata->variable->setFloat(n);
+    }
   }
 
   //! UVar string assignment
@@ -279,24 +289,24 @@ namespace urbi
     switch (prop)
     {
       case PROP_RANGEMIN:
-	vardata->variable->rangemin = (double) v;
+	vardata->variable->rangemin = (ufloat) v;
 	break;
       case PROP_RANGEMAX:
-	vardata->variable->rangemax = (double) v;
+	vardata->variable->rangemax = (ufloat) v;
 	break;
       case PROP_SPEEDMIN:
-	vardata->variable->speedmin = (double) v;
+	vardata->variable->speedmin = (ufloat) v;
 	break;
       case PROP_SPEEDMAX:
-	vardata->variable->speedmax = (double) v;
+	vardata->variable->speedmax = (ufloat) v;
 	break;
       case PROP_DELTA:
-	vardata->variable->delta = (double) v;
+	vardata->variable->delta = (ufloat) v;
 	break;
       case PROP_BLEND:
 	if (v.type == DATA_DOUBLE)
 	  //numeric val
-	  vardata->variable->blendType = (UBlendType) (int) (double) v;
+	  vardata->variable->blendType = (UBlendType) (int) (ufloat) v;
 	else if (v.type == DATA_STRING)
 	  vardata->variable->blendType = ublendtype (std::string(v).c_str ());
     }
@@ -305,13 +315,13 @@ namespace urbi
   void
   UVar::setProp(UProperty prop, const char * v)
   {
-    return setProp(prop, UValue(v));
+    setProp(prop, UValue(v));
   }
 
   void
-  UVar::setProp(UProperty prop, double v)
+  UVar::setProp(UProperty prop, ufloat v)
   {
-    return setProp(prop, UValue(v));
+    setProp(prop, UValue(v));
   }
 
   UValue

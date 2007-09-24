@@ -1,22 +1,96 @@
-2007-09-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
 
-	* network.cc: Correct a typo, dont use SO_REUSADDR under
-	windows.
+	Merge nm branch to 1.0
+	* ChangeLog: .
+	* KNOWN_BUGS: Remove.
+	* Makefile.am: .
+	* doc/Doxyfile.in: .
+	* src/flavorable.hh: .
+	* src/network/bsdnet/network.cc: .
+	* src/parser/bison/ugrammar.y: .
+	* src/parser/bison/utoken.l: .
+	* src/ucommand.cc: .
+	* src/ucommand.hh: .
+	* src/ucomplaints.cc: .
+	* src/uexpression.cc: .
+	* src/uobject.cc: .
+	* src/userver.cc: .
+	* src/userver.hh: .
+	* src/utypes.hh: .
+	* src/uvalue.cc: .
+	* src/uvar.cc: .
+	* src/uvariable.cc: .
+	* src/uvariable.hh: .
+	* tests-local.mk: .
+	* vcs/local.rb: .
 
-2007-09-19  POTHIER Benoit  <pothier@gostai.com>
+2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
 
-	Add known bugs file.
-	* KNOWN_BUGS: New.
+	Fix parser conflicts for URBI side pointers
+	* src/parser/bison/ugrammar.y: Handle token arrow.
+	Comment unstable array rules for now.
+	* src/parser/bison/utoken.l: Add token arrow.
 
-2007-09-18  HUMBERT Remi <humbert@gostai.com>
+2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
 
-	* src/utypes.hh: Undefine 'min' and 'max' macros,
-	it should be done in libport/windows.hh. This is only a temporary
-	solution.
+	Update mail address to mailing list
+	* local.rb: Here.
 
-2007-08-31  Rémi Humbert  <humbert@gostai.com>
+2007-09-20  Guillaume Deslandes  <deslandes@gostai.com>
 
-	* network.cc: Don't set the option SO_REUSEADDR under windows .
+	Fixes and cleaning
+	* Makefile.am: Update libport inclusion.
+	* doc/Doxyfile.in: .
+	* src/ucommand.cc: Fix assign to derivative error.
+	Fix segfault on remote.fct(other_remote.fct(x)) calls.
+	Fix at/whenever not beeing reevaluated.
+	* src/userver.cc: Cleaning.
+	* src/uvar.cc: Fix variable assignment for uowned.
+	* src/uvariable.cc: Choose binder hash depending on autoupdate.
+	* tests-local.mk: Remove fixed tests from XFAIL list.
+	* vcs/local.rb: .
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+        The "uowned variable with both notifychange and notifyaccess" use case is fixed, but not-uowned variables are broken.
+	Fix infinite loop when a module has both a notifychange and a notifyaccess callback on its UOwned variable
+	* src/uobject.cc,
+	* src/userver.cc,
+	* src/uvar.cc,
+	* src/uvariable.cc,
+	* src/uvariable.hh:
+	    - Distinguate between owned/non-owned notifychange callbacks
+	    - Deny non-uowned notifyaccess callbacks
+	    - Try to fix the meaningless chaotic mess of selfSet, setSensorVal, update and all this shit.
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+	Factor bound function check in a tryModuleCall method. Use it to allow call to those methods in expressions
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/uexpression.cc: Here and there.
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+	more abort=>assert,  ostream<< replaced by sprintf because of gumstix problems with c++ iostream and floats
+	* src/ucomplaints.cc,
+	* src/uvalue.cc: Here.
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+	assert/abbort replace, add a getuid method.
+	* src/flavorable.hh: abort=>assert.
+	* src/userver.hh: Add a getuid() method used by ugrammar.y.
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+	Add "pointer" like in the grammar as glue to $()
+	   $a  is $(a)
+	   a$b is a=>b  is $(a+".b")
+	   ptr a = new b is  a=create_unique_string() | $(a) = new b;
+		 
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l: Add ptr a=new b, ptr a, a=>b a$b and $a constructs.
 
 2007-08-25  Matthieu Nottale  <nottale@gostai.com>
 

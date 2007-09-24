@@ -32,15 +32,6 @@
 # include "libport/hash.hh"
 # include "libport/ufloat.h"
 
-/* Undefine min and max macro if they are defined. This should be done in
- * libport/windows.hh.*/
-#ifdef min
-# undef min
-#endif
-#ifdef max
-# undef max
-#endif
-
 # include "fwd.hh"
 
 # include "urbi/utypes-common.hh"
