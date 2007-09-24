@@ -33,7 +33,7 @@
 %{
 #include "fwd.hh"
 #include "utypes.hh"
-#include "userver.hh"
+//#include "userver.hh"
 %}
 
 // Locations.
@@ -72,8 +72,14 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#define TRUE  ufloat(1)
-#define FALSE ufloat(0)
+// #ifdef TRUE
+// # undef TRUE
+# define TRUE  ufloat(1)
+// #endif
+// #ifdef FALSE
+// # undef FALSE
+# define FALSE ufloat(0)
+// #endif
 
 #include "libport/ref-pt.hh"
 
