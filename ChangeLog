@@ -1,5 +1,10 @@
 2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Restore KNOWN_BUGS, update libport external
+	* KNOWN_BUGS: New.
+
+2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+
 	Merge nm branch to 1.0
 	* ChangeLog: .
 	* KNOWN_BUGS: Remove.
