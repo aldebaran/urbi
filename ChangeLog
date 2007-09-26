@@ -1,3 +1,8 @@
+2007-09-26  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Reactivate doc subdir
+	* Makefile.am: Here.
+
 2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Remove extra include in ugrammar.y
