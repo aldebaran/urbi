@@ -6,6 +6,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include <sstream>
 #include <boost/foreach.hpp>
 #include <libport/symbol.hh>
 
@@ -52,7 +53,9 @@ namespace runner
   {
     UConnection& c =
       context_.cast<object::Context>()->value_get().connection;
-    c.sendc ((std::string ("!!! ") + ue.what ()).c_str () COMMA "error");
+    std::ostringstream o;
+    o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
+    c.sendc (o.str ().c_str (), "error");
     c.endline ();
   }
 
@@ -212,6 +215,7 @@ namespace runner
     }
     catch (object::UrbiException& ue)
     {
+      ue.location_set (e.location_get ());
       raise_error_ (ue);
       current_ = 0;
       has_error = true;
@@ -226,7 +230,14 @@ namespace runner
     {
       case object::Object::kind_primitive:
         PING ();
-        current_ = val.cast<object::Primitive>()->value_get()(context_, args);
+        try {
+          current_ = val.cast<object::Primitive>()->value_get()(context_, args);
+        }
+        catch (object::UrbiException& ue)
+        {
+          ue.location_set (e.location_get ());
+          throw;
+        }
         break;
       case object::Object::kind_code:
         PING ();
@@ -251,7 +262,14 @@ namespace runner
       fn = &val.cast<object::Code> ()->value_get ();
 
       // Check the arity.
-      object::check_arg_count (fn->formals_get().size(), args.size() - 1);
+      try {
+        object::check_arg_count (fn->formals_get().size(), args.size() - 1);
+      }
+      catch (object::UrbiException& ue)
+      {
+        ue.location_set (e.location_get ());
+        throw;
+      }
 
       // Bind formal and effective arguments.
       // The target is "self".

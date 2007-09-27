@@ -1,5 +1,12 @@
 2007-09-27  Thomas Moulard  <thomas@moulard.net>
 
+	Add locations to run-time errors.
+	* src/object/urbi-exception.cc: Add getter and setter for location.
+	* src/object/urbi-exception.hh: Add location, getter and setter.
+	* src/runner/runner.cc: Add locations to run-time errors and display it.
+
+2007-09-27  Thomas Moulard  <thomas@moulard.net>
+
 	Sort primitive is not in place.
 	* src/object/list-class.cc: Here.
 

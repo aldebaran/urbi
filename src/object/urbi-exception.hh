@@ -8,6 +8,7 @@
 # include <exception>
 # include <string>
 
+# include "ast/loc.hh"
 # include "object/fwd.hh"
 # include "object/object.hh"
 
@@ -33,7 +34,8 @@ namespace object
 
     /// Construct an UrbiException (used when types mismatch in a primitive).
     /// \param real Real type.
-    /// \param expected Expetected type.
+    /// \param expected Expected type.
+    /// \param loc Error's location.
     static UrbiException wrongArgumentType (Object::kind_type real,
 					    Object::kind_type expected);
 
@@ -46,15 +48,30 @@ namespace object
     /// Return the exception's error message.
     virtual const char* what () const throw ();
 
+    /// Get location.
+    const ast::loc& location_get () const;
+
+    /// Set location.
+    void location_set (const ast::loc&);
+
   protected:
     /// \name Constructor
     /// \brief Construct an exception which contains a raw message.
     /// \param msg raw error message
     explicit UrbiException (std::string msg);
 
+    /// \name Constructor
+    /// \brief Construct an exception which contains a raw message.
+    /// \param msg raw Error message.
+    /// \param loc Error's location.
+    explicit UrbiException (std::string msg, const ast::loc& loc);
+
   private:
     /// Error message.
     std::string msg_;
+
+    /// Location
+    ast::loc loc_;
 
     /// Error messages.
     static const char lookupFailed_[];

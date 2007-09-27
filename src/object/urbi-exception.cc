@@ -20,7 +20,13 @@ namespace object
   /// \}
 
   UrbiException::UrbiException (std::string msg)
-    : msg_ (msg)
+    : msg_ (msg),
+      loc_ ()
+  {}
+
+  UrbiException::UrbiException (std::string msg, const ast::loc& loc)
+    : msg_ (msg),
+      loc_ (loc)
   {}
 
   UrbiException::~UrbiException () throw ()
@@ -31,4 +37,17 @@ namespace object
   {
     return msg_.c_str();
   }
+
+  const ast::loc&
+  UrbiException::location_get () const
+  {
+    return loc_;
+  }
+
+  void
+  UrbiException::location_set (const ast::loc& l)
+  {
+    loc_ = l;
+  }
+
 }; // namespace object
