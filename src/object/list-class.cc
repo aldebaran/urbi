@@ -90,12 +90,16 @@ namespace object
       return *a < *b;
     }
 
-    /// Sort a list.
+    /// \brief Sort a list.
+    /// If the list contains different kinds of elements,
+    /// the order is not defined.
+    /// \return New sorted list
     static rObject
     sort (rList l)
     {
-      l->value_get ().sort (compareListItems);
-      return l;
+      List::traits::type res (l->value_get());
+      res.sort (compareListItems);
+      return new List (res);
     }
 
   }

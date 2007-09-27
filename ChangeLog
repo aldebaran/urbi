@@ -1,3 +1,8 @@
+2007-09-27  Thomas Moulard  <thomas@moulard.net>
+
+	Sort primitive is not in place.
+	* src/object/list-class.cc: Here.
+
 2007-09-23  mefyl  <mefyl@lrde.epita.fr>
 
 	Revert patch 1151 and 1152.
