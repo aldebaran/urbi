@@ -239,8 +239,8 @@ namespace runner
     }
 
     /*---------------------------.
-      | Calling an Urbi function.  |
-      `---------------------------*/
+    | Calling an Urbi function.  |
+    `---------------------------*/
     if (call_code)
     {
       PING ();
