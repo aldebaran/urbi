@@ -1,3 +1,11 @@
+2007-10-01  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix timeout stoping background commands
+	* src/ucommand.cc: Here.
+	Timeout stoped whenever and at commands at once since they
+	spawn in background (thus "killing" their AST branch).
+	This may not be the best fix, but it seems to work.
+
 2007-09-26  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Reactivate doc subdir

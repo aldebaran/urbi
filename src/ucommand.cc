@@ -5485,9 +5485,12 @@ UCommand_TIMEOUT::execute_(UConnection*)
 						new UString("stop"),
 						tagRef->copy())),
      new UCommand_TREE(loc_, Flavorable::UPIPE, command->copy(),
-		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
-						tagRef->copy()))
-      );
+		       (command->type == UCommand::WHENEVER ||
+			command->type == UCommand::AT) ?
+		       0 :
+ 		       new UCommand_OPERATOR_ID(loc_, new UString(""),
+ 						tagRef->copy()))
+     );
   //we cant tag morph as morphing engine will override us
   static_cast<UCommand_TREE*>(morph)->command1->setTag(tagRef->str());
   static_cast<UCommand_TREE*>(morph)->command2->setTag(tagRef->str());
