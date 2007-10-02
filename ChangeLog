@@ -1,3 +1,7 @@
+2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+
+	Fix previous commit: use 'eval' instead of 'exec'.
+
 2007-10-01  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Fix timeout stoping background commands
