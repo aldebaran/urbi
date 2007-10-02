@@ -136,7 +136,7 @@ namespace runner
   void
   Runner::operator() (ast::If& e)
   {
-    CORO_WITHOUT_CTX ();
+    CORO_WITH_1SLOT_CTX (rObject, condition);
 
     // Evaluate the test.
     JECHO ("test", e.test_get ());
@@ -144,7 +144,13 @@ namespace runner
 
     YIELD();
 
-    if (IS_TRUE(current_))
+    // Clever way of making sure that the condition is not use after it's
+    // been tested.  Indeed, if the then-part or the else-part is *nothing*,
+    // the condition would be leaked and "returned" as the result of the
+    // `if'.  Which is wrong.
+    current_.swap (condition);
+
+    if (IS_TRUE(condition))
     {
       JECHO ("then", e.thenclause_get ());
       CORO_CALL (operator() (e.thenclause_get()));
@@ -370,7 +376,6 @@ namespace runner
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
       JECHO ("child", *i);
-      passert (i->second, i->second == ast::flavor_semicolon);
       CORO_CALL_CATCH (operator() (*i->first);,
 	catch (object::UrbiException& ue)
 	{
@@ -475,7 +480,12 @@ namespace runner
       JECHO ("while test", e.test_get ());
       CORO_CALL (operator() (e.test_get()));
       if (!IS_TRUE(current_))
+      {
+        // Otherwise the `while' will evaluate to 0.0
+        // Is a `while' meant to return anything anyways?
+        current_.reset ();
 	break;
+      }
 
       if (e.flavor_get() == ast::flavor_semicolon)
 	YIELD();

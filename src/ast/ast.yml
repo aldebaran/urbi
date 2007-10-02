@@ -183,8 +183,11 @@ Nary:
           /// \precondition this is not empty.
           void push_back(flavor_type k, ast::Exp* e);
 
-          /// Return the back of the children.
+          /// Return the last child.
           exec_exp_type& back ();
+
+          /// Sets the flavor of the last child.
+          void back_flavor_set (flavor_type k);
 
           /// Drop the last children.
           void pop_back ();
@@ -251,6 +254,13 @@ Nary:
         Nary::back ()
         {
           return children_.back();
+        }
+
+        void
+        Nary::back_flavor_set (flavor_type k)
+        {
+           if (!children_.empty ())
+             children_.back ().second = k;
         }
       
         void

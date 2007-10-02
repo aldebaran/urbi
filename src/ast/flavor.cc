@@ -14,7 +14,7 @@ namespace ast
      switch (e)
      {
 #define CASE(E, S) case flavor_ ## E: return o S;
-        CASE(none,       )
+        CASE(none,      << "???")
         CASE(and,       << '&')
         CASE(comma,     << ',')
         CASE(pipe,      << '|')

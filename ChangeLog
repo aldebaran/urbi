@@ -1,5 +1,18 @@
 2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Don't add unecessary `Noop' in the AST.
+	* src/ast/ast.yml (Nary::back_flavor_set): New method.
+	* src/ast/flavor.cc (operator<<(flavor_type)): Print "???" for
+	flavor_none.
+	* src/parser/bison/ugrammar.y (stmts): Prevent Noop to be added in
+	Nary.
+	* src/runner/runner.cc:
+	(operator()(If)): Don't let the condition leak from the `if'.
+	(operator()(Nary)): Remove an invalid passert.
+	(operator()(While)): Don't let the condition leak from the `while'
+
+2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Fix an invalid assert.
 	* src/runner/runner.cc (operator(Nary)): Here.
 

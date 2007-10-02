@@ -454,10 +454,31 @@ stmts:
   {
     // FIXME: Adjust the locations.
     $$ = new ast::Nary();
-    $$->push_back ($1);
+    if (!dynamic_cast<ast::Noop*> ($1))
+      $$->push_back ($1);
+    else
+      delete $1;
   }
-| stmts ";" cstmt  { $$->push_back($2, $3); }
-| stmts "," cstmt  { $$->push_back($2, $3); }
+| stmts ";" cstmt
+  {
+    if (!dynamic_cast<ast::Noop*> ($3))
+      $$->push_back($2, $3);
+    else
+    {
+      delete $3;
+      $$->back_flavor_set ($2);
+    }
+  }
+| stmts "," cstmt
+  {
+    if (!dynamic_cast<ast::Noop*> ($3))
+      $$->push_back($2, $3);
+    else
+    {
+      delete $3;
+      $$->back_flavor_set ($2);
+    }
+  }
 ;
 
 %type <expr> cstmt;
