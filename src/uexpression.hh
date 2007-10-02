@@ -180,9 +180,9 @@ private:
   eval_FUNCTION (UCommand* command, UConnection* connection,
 		 UEventCompound*& ec);
 
-  /// eval_FUNCTION() specialized for variablename = "exec" or "load".
+  /// eval_FUNCTION() specialized for variablename = "eval" or "load".
   UValue*
-  eval_FUNCTION_EXEC_OR_LOAD (UCommand* command, UConnection* connection);
+  eval_FUNCTION_EVAL_OR_LOAD (UCommand* command, UConnection* connection);
 
   /// eval() specialized for type == LIST.
   UValue* eval_LIST (UCommand* command, UConnection* connection);

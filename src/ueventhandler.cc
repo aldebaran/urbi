@@ -81,6 +81,7 @@ kernel::isCoreFunction (UString *fullname)
 	   (fullname->equal ("load")) ||
 	   (fullname->equal ("loadwav")) ||
 	   (fullname->equal ("exec")) ||
+	   (fullname->equal ("eval")) ||
 	   (fullname->equal ("strsub")) ||
 	   (fullname->equal ("atan2")) ||
 	   (fullname->equal ("sin")) ||

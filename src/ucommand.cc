@@ -486,7 +486,7 @@ UCommand::strMorph (const std::string& cmd)
       (
 	loc(),
 	UExpression::FUNCTION,
-	new UVariableName (new UString("global"), new UString("exec"),
+	new UVariableName (new UString("global"), new UString("eval"),
 			   false, 0),
 	new UNamedParameters
 	(new UExpression (loc(), UExpression::VALUE, new UString(cmd.c_str())))
@@ -2391,10 +2391,11 @@ UCommand_EXPR::execute_(UConnection *connection)
     }
     else if (connection->receiving
 	     && (expression->variablename->id->equal("exec")
+                 || expression->variablename->id->equal("eval")
 		 || expression->variablename->id->equal("load")))
       // Some functions are executed at the same time as they are
       // received (e.g., ping).  For some reason, it is believed that
-      // exec should not be executed asap.  For the same reasons, load
+      // eval should not be executed asap.  For the same reasons, load
       // must not (otherwise several things do not work).
       //
       // JC thinks there is no reason to try to understand further:

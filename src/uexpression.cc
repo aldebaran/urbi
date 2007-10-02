@@ -924,7 +924,7 @@ UExpression::eval (UCommand *command,
 
 
 UValue*
-UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
+UExpression::eval_FUNCTION_EVAL_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
 #ifdef ENABLE_DEBUG_TRACES
@@ -935,6 +935,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 #endif
 
   assert (STREQ(variablename->id->str(), "exec")
+          || STREQ(variablename->id->str(), "eval")
 	  || STREQ(variablename->id->str(), "load"));
 
   bool in_load = STREQ(variablename->id->str(), "load");
@@ -1306,11 +1307,16 @@ UExpression::eval_FUNCTION (UCommand *command,
     }
 
 
-    // Exec and load are exactly the same thing with one difference:
-    // exec parse the string, and load, the file whose name is given.
+    // Eval and load are exactly the same thing with one difference:
+    // eval parse the string, and load the file whose name is given.
     if (STREQ(variablename->id->str(), "exec")
-	|| STREQ(variablename->id->str(), "load"))
-      return eval_FUNCTION_EXEC_OR_LOAD (command, connection);
+	|| STREQ(variablename->id->str(), "eval")
+        || STREQ(variablename->id->str(), "load"))
+    {
+      if (STREQ(variablename->id->str(), "exec"))
+        connection->send("The 'exec' function is deprecated. Use 'eval' instead.\n", "warn ");
+      return eval_FUNCTION_EVAL_OR_LOAD (command, connection);
+    }
   }
 
   if (parameters &&
