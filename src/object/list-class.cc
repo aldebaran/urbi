@@ -67,7 +67,7 @@ namespace object
     }
 
     /// Give \a l without the first element.
-    static rObject
+    static rList
     tail(rList l)
     {
       List::traits::type res(l->value_get());
@@ -76,7 +76,7 @@ namespace object
     }
 
     /// Insert \a elt at the end of \a l
-    static rObject
+    static rList
     insert(rList l, rObject elt)
     {
       l->value_get().push_back(elt);
@@ -94,12 +94,19 @@ namespace object
     /// If the list contains different kinds of elements,
     /// the order is not defined.
     /// \return New sorted list
-    static rObject
+    static rList
     sort (rList l)
     {
       List::traits::type res (l->value_get());
       res.sort (compareListItems);
       return new List (res);
+    }
+
+    /// Its size.
+    static rFloat
+    size (rList l)
+    {
+      return new Float (l->value_get().size());
     }
 
   }
@@ -119,6 +126,7 @@ namespace object
   PRIMITIVE_1_LIST(front);
   PRIMITIVE_1_LIST(back);
   PRIMITIVE_1_LIST(tail);
+  PRIMITIVE_1_LIST(size);
 
   PRIMITIVE_2_OBJECT(list, insert, insert, List);
 
@@ -139,6 +147,7 @@ namespace object
     Primitive* p = new Primitive (list_class_insert);
     list_class->slot_set ("insert", p);
     DECLARE (sort, sort);
+    DECLARE (size, size);
 #undef DECLARE
   }
 

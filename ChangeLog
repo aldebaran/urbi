@@ -1,5 +1,12 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	List.size.
+	* src/object/list-class.cc (tail, insert, sort): Fix return type.
+	(size): New.
+	Bind it.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	ast::Flavorable.
 	* src/ast/ast.yml (Flavorable): New.
 	(While): Derive from it.
