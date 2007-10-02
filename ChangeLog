@@ -1,5 +1,11 @@
 2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 
+	Fix operators precedence. Add '<<' and '>>'.
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l: Here.
+
+2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+
 	Warn on alias declarations and uses.
 	* src/ucommand.cc: Warn on declaration.
 	* src/uvariablename.cc: Warn on use.

@@ -273,6 +273,8 @@ STRING   \"([^\"]|"\\\"")*\"
 "=~="           return token::TOK_DEQ;
 ">"             return token::TOK_GT;
 ">="            return token::TOK_GE;
+"<<"            return token::TOK_LSHIFT;
+">>"            return token::TOK_RSHIFT;
 "@"             return token::TOK_AROBASE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
