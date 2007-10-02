@@ -129,7 +129,7 @@ namespace object
   std::ostream&
   Atom<Traits>::print(std::ostream& o) const
   {
-    assert(0);
+    pabort("Printing an Atom<T>");
     return o;
   }
 

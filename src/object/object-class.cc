@@ -75,6 +75,48 @@ namespace object
     return args[0];
   }
 
+
+
+  /*----------.
+  | Parents.  |
+  `----------*/
+
+  /// Adding or removing parents. \a Verb is "add" or "remove".
+#define CHANGE_PARENTS(Verb)					\
+  static rObject						\
+  object_class_ ## Verb ## Parent (rContext, objects_type args)	\
+  {								\
+    CHECK_ARG_COUNT(2);						\
+    args[0]->parent_ ## Verb (args[1]);				\
+    return args[0];						\
+  }
+
+  /// Add a parent.
+  CHANGE_PARENTS(add);
+  /// Remove a parent.
+  CHANGE_PARENTS(remove);
+#undef CHANGE_PARENTS
+
+  /// Get parents' list.
+  static rObject
+  object_class_parents (rContext, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    rObject obj = args[0];
+
+    object::list_traits::type l;
+    BOOST_FOREACH (const rObject o, obj->parents_get())
+      l.push_back(o);
+
+    return new object::List(l);
+  }
+
+
+  /*--------.
+  | Slots.  |
+  `--------*/
+
+
   /// Get slots' list.
   static rObject
   object_class_slotNames (rContext, objects_type args)
@@ -87,20 +129,6 @@ namespace object
       l.push_back (new object::String (p.first.name_get ()));
 
     return new object::List (l);
-  }
-
-  /// Get parents' list.
-  static rObject
-  object_class_parents (rContext, objects_type args)
-  {
-    CHECK_ARG_COUNT(1);
-    rObject obj = args[0];
-
-    object::list_traits::type l;
-    BOOST_FOREACH (const Object::parent_type& o, obj->parents_get())
-      l.push_back(o);
-
-    return new object::List(l);
   }
 
   /// Get a slot.
@@ -142,8 +170,11 @@ namespace object
       DECLARE(clone);
       DECLARE(init);
 
-      DECLARE(slotNames);
       DECLARE(parents);
+      DECLARE(addParent);
+      DECLARE(removeParent);
+
+      DECLARE(slotNames);
       DECLARE(getSlot);
       DECLARE(setSlot);
       DECLARE(updateSlot);

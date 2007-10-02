@@ -1,5 +1,13 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	Object.addParent, removeParent.
+	* src/object/atom.hxx: Use pabort.
+	* src/object/object-class.cc (CHANGE_PARENTS): New.
+	(object_class_addParents, object_class_removeParents): New.
+	Bind them.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	parent_type is rObject only.
 	* src/object/object.cc, src/object/object.hh, src/object/object.hxx
 	(parent_type): Remove.
