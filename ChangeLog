@@ -1,5 +1,10 @@
 2007-10-02  Thomas Moulard  <thomas@moulard.net>
 
+	Fix list concatenation.
+	* src/uvalue.cc: Fix concatenation of two lists.
+
+2007-10-02  Thomas Moulard  <thomas@moulard.net>
+
 	Create 1.5 branch.
 	* .automerge: New.
 
