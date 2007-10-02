@@ -173,11 +173,6 @@ memorymanager_HEADERS =				\
 memorymanager/blockmemorymanager.hh		\
 memorymanager/memorymanager.hh
 
-miscdir = $(kernelincludedir)/misc
-misc_HEADERS =                                  \
-misc/fwd.hh                                     \
-misc/select-const.hh
-
 
 ## ---------- ##
 ## uconsole.  ##

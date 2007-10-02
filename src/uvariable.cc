@@ -36,6 +36,7 @@
 #include "uvalue.hh"
 #include "uvariable.hh"
 #include "uobj.hh"
+#include "ucallid.hh"
 
 MEMORY_MANAGER_INIT(UVariable);
 
@@ -44,7 +45,8 @@ UVariable::UVariable(const char* name, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = _value;
@@ -59,7 +61,8 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = _value;
@@ -75,7 +78,8 @@ UVariable::UVariable(const char* name,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(val);
@@ -90,7 +94,8 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(val);
@@ -105,7 +110,8 @@ UVariable::UVariable(const char* name, const char* str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(str);
@@ -120,7 +126,8 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
 		     bool _notifyWrite,
 		     bool _notifyRead,
 		     bool _autoUpdate):
-  UASyncRegister()
+  UASyncRegister(),
+  context(0)
 {
   init();
   value = new UValue(str);
@@ -160,6 +167,9 @@ UVariable::init()
   activity   = 0;
   binder     = 0;
   access_and_change = false;
+  useCpt     = 0;
+
+  cycleBeginTime = -1;
 }
 
 //! UVariable destructor
@@ -177,6 +187,15 @@ UVariable::~UVariable()
       ::urbiserver->variabletab.end())
     ::urbiserver->variabletab.erase(hmi);
 
+  // Disactivate corresponding UVars
+  urbi::UVarTable::iterator varmapfind = urbi::varmap.find(varname->str ());
+  if (varmapfind != urbi::varmap.end())
+  {
+    for (std::list<urbi::UVar*>::iterator it = varmapfind->second.begin();
+         it != varmapfind->second.end();++it)
+       (*it)->setZombie ();
+  }
+
   FREEOBJ(UVariable);
   if (value)
   {
@@ -193,6 +212,9 @@ UVariable::~UVariable()
   delete varname;
   delete method;
   delete devicename;
+
+  if (context)
+    context->remove(this);
 }
 
 
@@ -296,11 +318,30 @@ UVariable::set(UValue *v)
 	    delete value;
 	    value = v->copy();
 	    break;
+	  case DATA_VOID:
+	    //this can happen. do nothing
+	    break;
+	  case DATA_UNKNOWN:
+	  case DATA_FILE:
+	  case DATA_FUNCTION:
+	  case DATA_OBJ:
+	  case DATA_VARIABLE:
+	    assert (!"not reachable");
 	}
+	break;
+      case DATA_VARIABLE:
+      case DATA_UNKNOWN:
+      case DATA_FILE:
+      case DATA_FUNCTION:
+      case DATA_OBJ:
+	assert (!"not reachable");
     }
   }
-
-  return selfSet(&(value->val));
+  UVariable::UVarSet r = UOK;
+  if (value->dataType == DATA_NUM)
+    r = selfSet(&(value->val));
+  setTarget();
+  return r;
 }
 
 //! Set the UValue associated to the variable
@@ -312,10 +353,11 @@ UVariable::setFloat(ufloat f)
 {
   if (!value)
     value = new UValue(f);
+  /* stupid, target update, not sensor update
   else
     setSensorVal(f);
-
-  return selfSet(&value->val);
+  */
+  return selfSet(&f);
 }
 
 //! Check the float reference associated to the variable
@@ -354,11 +396,11 @@ UVariable::selfSet(ufloat *valcheck)
       }
     }
 
-    target = *valcheck; // for consistancy reasons
+    target = *valcheck; // for consistancy reasons <- LIE! this is crucial
   }
 
   modified = true;
-  updated();
+  //selfset is called to update target which must not trigger updated updated();
 
   if (speedmodified)
     return USPEEDMAX;
@@ -384,11 +426,11 @@ UVariable::get()
 	  && value->str
 	  && it->second->value->dataType != DATA_OBJ
 	  && it->second->devicename->equal(value->str))
-	it->second->get ();
+	it->second->get();
 
   // check for existing notifychange
   for (std::list<urbi::UGenericCallback*>::iterator i =
-	 internalAccessBinder.begin();
+       internalAccessBinder.begin();
        i != internalAccessBinder.end();
        ++i)
   {
@@ -400,8 +442,7 @@ UVariable::get()
       v->storage = (*i)->storage;
       l.array.push_back(v);
     }
-    // FIXME: I guess the following comment reads "emptied".
-    (*i)->__evalcall(l); // l is empty here
+    (*i)->__evalcall(l);
   }
 
   return value;
@@ -409,11 +450,11 @@ UVariable::get()
 
 //! This function takes care of notifying the monitors that the var is updated
 /*! When the variable is updated, either by the kernel of robot-specific
-    part, this function must be called. It's called automatically by the above
-    set methods.
+    part, this function must be called.
+    @param uvar_assign: unused
 */
 void
-UVariable::updated()
+UVariable::updated(bool )
 {
   // triggers associated commands update
   updateRegisteredCmd ();
@@ -435,21 +476,25 @@ UVariable::updated()
       }
 
   for (std::list<urbi::UGenericCallback*>::iterator i =
-	 internalBinder.begin();
+       internalBinder.begin();
        i != internalBinder.end();
        ++i)
   {
-    urbi::UList tmparray;
-
-    if ((*i)->storage)
+    /* handled better otherwise if (!uvar_assign
+        || (*i)->objname != devicename->str ()) */
     {
-      // monitor with &UVar reference
-      urbi::UValue *tmpvalue = new urbi::UValue();
-      tmpvalue->storage = (*i)->storage;
-      tmparray.array.push_back(tmpvalue);
-    };
+      urbi::UList tmparray;
 
-    (*i)->__evalcall(tmparray); // tmparray is empty here
+      if ((*i)->storage)
+      {
+        // monitor with &UVar reference
+        urbi::UValue *tmpvalue = new urbi::UValue();
+        tmpvalue->storage = (*i)->storage;
+       tmparray.array.push_back(tmpvalue);
+      };
+
+      (*i)->__evalcall(tmparray);
+    }
   }
 }
 
@@ -483,4 +528,30 @@ UVariable::initSensorVal(ufloat f)
   valPrev2 = f;
   valPrev = f;
   value->val = f;
+}
+
+void UVariable::setTarget() {
+  std::list<urbi::UGenericCallback*>* callbacks = 0;
+  if (this->autoUpdate)
+    callbacks = &internalBinder;
+  else
+    callbacks = &internalTargetBinder;
+
+  for (std::list<urbi::UGenericCallback*>::iterator i =
+       callbacks->begin();
+       i != callbacks->end();
+       ++i)
+  {
+    urbi::UList tmparray;
+
+    if ((*i)->storage)
+    {
+      // monitor with &UVar reference
+      urbi::UValue *tmpvalue = new urbi::UValue();
+      tmpvalue->storage = (*i)->storage;
+      tmparray.array.push_back(tmpvalue);
+    };
+
+    (*i)->__evalcall(tmparray);
+  }
 }

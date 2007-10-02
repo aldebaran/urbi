@@ -60,7 +60,7 @@
     system is actually sending data through the real connection.
  */
 
-class UConnection: public urbi::Lockable //queue lock
+class UConnection: public libport::Lockable //queue lock
 {
   friend class UServer;
 
@@ -148,6 +148,15 @@ public:
   void                flush              ();
 
   UErrorValue         received           (const char *s);
+
+  /// \brief Handle an incoming buffer of data.
+  ///
+  /// Must be called each time a buffer of data is received by the connection.
+  /// \param buffer the incoming buffer
+  /// \param length the length of the buffer
+  /// \return UFAIL       buffer overflow
+  /// \return UMEMORYFAIL critical memory overflow
+  /// \return USUCCESS    otherwise
   UErrorValue         received           (const ubyte *buffer, int length);
 
   int                 sendAdaptive       ();
@@ -216,7 +225,7 @@ public:
   UParser& parser ();
 
   /// Lock access to command tree.
-  urbi::Lockable treeLock;
+  libport::Lockable treeLock;
 
 private:
   /// The parser object.
@@ -282,7 +291,7 @@ UConnection::recvQueue()
 inline int
 UConnection::receiveAdaptive()
 {
-return recvAdaptive_;
+  return recvAdaptive_;
 }
 
 //! Sets sendAdaptive_
@@ -290,6 +299,7 @@ inline void
 UConnection::setSendAdaptive (int sendAdaptive)
 {
   sendAdaptive_ = sendAdaptive;
+  sendQueue_.setAdaptive (sendAdaptive_);
 }
 
 //! Sets receiveAdaptive_
@@ -297,6 +307,7 @@ inline void
 UConnection::setReceiveAdaptive (int receiveAdaptive)
 {
   recvAdaptive_ = receiveAdaptive;
+  recvQueue_.setAdaptive (recvAdaptive_);
 }
 
 inline

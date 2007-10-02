@@ -108,10 +108,10 @@ public:
 	       UCommand* command1, UCommand* command2);
   virtual ~UCommand_AT ();
 
-  virtual void print (int l);
+  virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute (UConnection* connection);
-  virtual UCommand* copy ();
+  virtual Status execute_ (UConnection* connection);
+  virtual UCommand* copy () const;
 
   /// test
   UExpression* test;
@@ -138,10 +138,10 @@ public:
 		     UCommand* command1, UCommand* command2);
   virtual ~UCommand_WHENEVER ();
 
-  virtual void print (int l);
+  virtual void print_(unsigned l) const;
 
-  virtual UCommandStatus execute (UConnection* connection);
-  virtual UCommand* copy ();
+  virtual Status execute_ (UConnection* connection);
+  virtual UCommand* copy () const;
 
   /// test
   UExpression* test;

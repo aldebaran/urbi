@@ -13,6 +13,17 @@
 #include <list>
 #include <algorithm>
 
+// In the long run, this should be part of libport, but I don't know
+// where actually :( Should it be libport/sys/types.hh?  Or unistd.hh?
+// What standard header should do that?
+
+#ifdef WIN32
+// On windows, file descriptors are defined as u_int (i.e., unsigned int).
+# define LIBPORT_FD_SET(N, P) FD_SET(static_cast<u_int>(N), P)
+#else
+# define LIBPORT_FD_SET(N, P) FD_SET(N, P)
+#endif
+
 namespace Network
 {
 
@@ -22,7 +33,7 @@ namespace Network
     TCPServerPipe()
       : fd(-1), port(-1)
     {}
-    bool init(int port);
+    bool init(int port, const std::string & address);
 
     virtual int readFD()
     {
@@ -42,7 +53,7 @@ namespace Network
   };
 
   bool
-  TCPServerPipe::init(int port)
+  TCPServerPipe::init(int port, const std::string &addr)
   {
     this->port = port;
     int rc;
@@ -70,9 +81,34 @@ namespace Network
     memset(&address, 0, sizeof (struct sockaddr_in));
     address.sin_family = AF_INET;
     address.sin_port = htons((unsigned short) port);
-    address.sin_addr.s_addr = INADDR_ANY;
+    if (addr.empty() || addr == "0.0.0.0")
+      address.sin_addr.s_addr = INADDR_ANY;
+    else
+    {
+      //attempt name resolution
+      hostent* hp = gethostbyname (addr.c_str());
+      if (!hp) //assume IP address in case of failure
+        // FIXME: Check that inet_addr did not return INADDR_NONE.
+	address.sin_addr.s_addr = inet_addr (addr.c_str());
+      else
+      {
+        /* hp->h_addr is now a char* such as the IP is:
+         *    a.b.c.d
+         * where
+         *    a = hp->h_addr[0]
+         *    b = hp->h_addr[1]
+         *    c = hp->h_addr[2]
+         *    d = hp->h_addr[3]
+         * hence the following calculation.  Don't cast this to an int*
+         * because of the alignment problems (eg: ARM) and also because
+         * sizeof (int) is not necessarily 4 and also because the result
+         * depends on the endianness of the host.
+         */
+	memcpy (&address.sin_addr, hp->h_addr, hp->h_length);
+      }
+    }
     /* bind to port */
-    rc = bind(fd, (struct sockaddr *)&address, sizeof (struct sockaddr));
+    rc = bind(fd, (struct sockaddr*) &address, sizeof (struct sockaddr));
     if (rc == -1)
       return false;
     /* listen for connections */
@@ -101,20 +137,30 @@ namespace Network
     registerNetworkPipe(c);
   }
 
-  static std::list<Pipe*> pList;
-  static int controlPipe[2] = {-1, -1};
-
   bool
-  createTCPServer(int port)
+  createTCPServer(int port, const char* address)
   {
     TCPServerPipe* tsp = new TCPServerPipe();
-    if (!tsp->init(port))
+    std::string addr;
+    if (address)
+      addr = address;
+    if (!tsp->init(port, addr))
       {
 	delete tsp;
 	return false;
       }
     return true;
   }
+
+
+  namespace
+  {
+#ifndef WIN32
+    int controlPipe[2] = {-1, -1};
+#endif
+    std::list<Pipe*> pList;
+  }
+
 
   int
   buildFD(fd_set& rd, fd_set& wr)
@@ -123,7 +169,7 @@ namespace Network
     FD_ZERO(&wr);
     int maxfd = 0;
 #ifndef WIN32
-    FD_SET(controlPipe[0], &rd);
+    LIBPORT_FD_SET(controlPipe[0], &rd);
     maxfd = controlPipe[0];
 #endif
     for (std::list<Pipe*>::iterator i = pList.begin();
@@ -132,12 +178,12 @@ namespace Network
       {
 	int f = (*i)->readFD();
 	if (f > 0)
-	  FD_SET(f, &rd);
+	  LIBPORT_FD_SET(f, &rd);
 	if (f > maxfd)
 	  maxfd = f;
 	int g = (*i)->writeFD();
 	if (g > 0)
-	  FD_SET(g, &wr);
+	  LIBPORT_FD_SET(g, &wr);
 	if (g > maxfd)
 	  maxfd = g;
       }
@@ -222,10 +268,10 @@ namespace Network
   }
 
 #ifdef WIN32
-  static const int delay = 10000;
+  enum { delay = 10000 };
   DWORD WINAPI
 #else
-  static const int delay = 1000000;
+  enum { delay = 1000000 };
   void*
 #endif
   processNetwork(void*)

@@ -33,6 +33,7 @@
 %{
 #include "fwd.hh"
 #include "utypes.hh"
+//#include "userver.hh"
 %}
 
 // Locations.
@@ -57,7 +58,8 @@
   UProperty               *property;
 
   ufloat                   *val;
-  UString                  *str;
+  UString                  *ustr;
+  std::string		   *str;
   struct {
     UString *device;
     UString *id;
@@ -69,8 +71,15 @@
   // Output in ugrammar.cc.
 #include <string>
 #include <iostream>
-#define TRUE  ufloat(1)
-#define FALSE ufloat(0)
+#include <sstream>
+// #ifdef TRUE
+// # undef TRUE
+# define TRUE  ufloat(1)
+// #endif
+// #ifdef FALSE
+// # undef FALSE
+# define FALSE ufloat(0)
+// #endif
 
 #include "libport/ref-pt.hh"
 
@@ -152,6 +161,34 @@ memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
   }
 }
 
+/// Whether the \a command was the empty command.
+bool
+spontaneous (const UCommand& u)
+{
+  const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
+  return noop && noop->is_spontaneous();
+}
+
+/// Issue a warning.
+void
+warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+{
+  std::ostringstream o;
+  o << "!!! " << l << ": " << m << "\n" << std::ends;
+  up.connection.send(o.str().c_str(), "warning");
+}
+
+/// Complain if \a command is not spontaneous.
+void
+warn_spontaneous(UParser& up,
+		 const yy::parser::location_type& l, const UCommand& u)
+{
+  if (spontaneous(u))
+    warn (up, l,
+	  "implicit empty instruction.  "
+	  "Use 'noop' to make it explicit.");
+}
+
 /// Direct the call from 'bison' to the scanner in the right UParser.
 inline
 yy::parser::token_type
@@ -177,9 +214,10 @@ new_bin(UParser& up,
 /// A new UExpression of type \c t and child \c t1.
 template <class T1>
 UExpression*
-new_exp (UParser& up, UExpression::Type t, T1* t1)
+new_exp (UParser& up, const yy::parser::location_type& l,
+	 UExpression::Type t, T1* t1)
 {
-  UExpression* res = new UExpression(t, t1);
+  UExpression* res = new UExpression(l, t, t1);
   memcheck(up, res, t1);
   return res;
 }
@@ -187,9 +225,10 @@ new_exp (UParser& up, UExpression::Type t, T1* t1)
 /// A new UExpression of type \c t and children \c t1, \c t2.
 template <class T1, class T2>
 UExpression*
-new_exp (UParser& up, UExpression::Type t, T1* t1, T2* t2)
+new_exp (UParser& up, const yy::parser::location_type& l,
+	 UExpression::Type t, T1* t1, T2* t2)
 {
-  UExpression* res = new UExpression(t, t1, t2);
+  UExpression* res = new UExpression(l, t, t1, t2);
   memcheck(up, res, t1, t2);
   return res;
 }
@@ -226,18 +265,19 @@ take (T* t)
   TOK_COPY         "copy"
   TOK_DEF          "def"
   TOK_DELGROUP     "delgroup"
-  TOK_DERIV        "derivation"
-  TOK_DERIV2       "second-derivation"
+  TOK_DERIV        "'"
+  TOK_DERIV2       "''"
   TOK_DIR          "->"
   TOK_DISINHERITS  "disinherits"
   TOK_DIV          "/"
   TOK_DOLLAR       "$"
+  TOK_ARROW        "=>"
   TOK_DOUBLECOLON  "::"
   TOK_ELSE         "else"
   TOK_EMIT         "emit"
   TOK_EVENT        "event"
   TOK_EVERY        "every"
-  TOK_EXP          "^"
+  TOK_EXP          "**"
   TOK_EXPRBLOCK    "expression block"
   TOK_FALSECONST   "false"
   TOK_FOR          "for"
@@ -262,7 +302,7 @@ take (T* t)
   TOK_MULT         "*"
   TOK_NEW          "new"
   TOK_NOOP         "noop"
-  TOK_NORM         "normalized"
+  TOK_NORM         "'n"
   TOK_OBJECT       "object"
   TOK_ONLEAVE      "onleave"
   TOK_ONLY         "only"
@@ -285,13 +325,14 @@ take (T* t)
   TOK_TILDE        "~"
   TOK_TIMEOUT      "timeout"
   TOK_TRUECONST    "true"
-  TOK_TRUEDERIV    "command-derivation"
-  TOK_TRUEDERIV2   "second-command-derivation"
+  TOK_TRUEDERIV    "'d"
+  TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
   TOK_UNALIAS      "unalias"
   TOK_UNBLOCK      "unblock"
   TOK_UNIT         "unit"
   TOK_VAR          "var"
+  TOK_PTR          "ptr"
   TOK_VARERROR     "'e"
   TOK_VARIN        "'in"
   TOK_VAROUT       "'out"
@@ -321,16 +362,16 @@ take (T* t)
  | Str.  |
  `------*/
 %token
-   <str>  IDENTIFIER         "identifier"
-   <str>  TAG                "tag"
-   <str>  STRING             "string"
-   <str>  SWITCH             "switch"
-   <str>  BINDER             "binder"
-   <str>  OPERATOR           "operator command"
-   <str>  OPERATOR_ID        "operator"
-   <str>  OPERATOR_ID_PARAM  "param-operator"
-   <str>  OPERATOR_VAR       "var-operator"
-%type <str> tag "any kind of tag"
+   <ustr>  IDENTIFIER         "identifier"
+   <ustr>  TAG                "tag"
+   <ustr>  STRING             "string"
+   <ustr>  SWITCH             "switch"
+   <ustr>  BINDER             "binder"
+   <ustr>  OPERATOR           "operator command"
+   <ustr>  OPERATOR_ID        "operator"
+   <ustr>  OPERATOR_ID_PARAM  "param-operator"
+   <ustr>  OPERATOR_VAR       "var-operator"
+%type <ustr> tag "any kind of tag"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
    "identifier" TAG STRING SWITCH BINDER OPERATOR OPERATOR_ID
@@ -370,13 +411,15 @@ take (T* t)
 | Operator precedence.  |
 `----------------------*/
 
-// FIXME: This is sick!  Puke puke puke.
-%left  "||" "&&" "!"
-%left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
+%left  "||"
+%left "&&"
+%left  "==" "~=" "%=" "=~=" "!="
+%nonassoc ">" ">=" "<" "<="
+%left "<<" ">>"
 %left  "-" "+"
 %left  "*" "/" "%"
-%left  NEG     /* Negation--unary minus */
-%right "^"
+%right "**"
+%left  "!" NEG     /* Negation--unary minus */
 %right TOK_NORM
 
 %right "," ";"
@@ -385,6 +428,8 @@ take (T* t)
 %left  "else" "onleave"
 %nonassoc "="
 
+%left "$"
+%left "=>"
 
 /* URBI Grammar */
 %%
@@ -415,7 +460,7 @@ root:
       if (c)
 	up.binaryCommand = true;
 
-      up.commandTree  = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
+      up.commandTree = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
       if (up.commandTree)
 	up.commandTree->setTag("__node__");
       memcheck(up, up.commandTree);
@@ -503,9 +548,11 @@ taggedcommand:
 flag:
   FLAG
   {
-    UExpression *flagval = new UExpression(UExpression::VALUE, take($1));
+    UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
     $$ = new UNamedParameters(new UString("flag"), flagval);
+    if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
+      $$->notifyEnd = true;
     memcheck(up, $$, flagval);
   }
 
@@ -532,7 +579,10 @@ flag:
 // One or more "flag"s.
 flags.1:
   flag             { $$ = $1;       }
-| flags.1 flag     { $1->next = $2; }
+| flags.1 flag     { $1->next = $2;
+		     if ($2->notifyEnd)
+		       $1->notifyEnd = true; // propagate the +end flag optim
+		   }
 ;
 
 // Zero or more "flag"s.
@@ -553,23 +603,29 @@ command:
 
   | "{" taggedcommands "}" {
 
-      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, $2,
-			     new UCommand_NOOP(@$, true));
-      $$->setTag("__UGrouped_set_of_commands__");
-      ((UCommand_TREE*)$$)->command2->setTag("__system__");
+      UCommand_TREE* res =
+	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
+			  new UCommand_NOOP(@$, UCommand_NOOP::zerotime));
+      res->groupOfCommands = true;
+      res->setTag("__UGrouped_set_of_commands__");
+      res->command2->setTag("__system__");
+      $$ = res;
     }
 ;
 
 /* INSTRUCTION */
 
 instruction:
-  /* empty */ { $$ = 0; } /* FIXME: THIS IS BAD! REMOVE THIS!
-			     FIXME: I WHOLEHEARTEDLY AGREE! */
+  /* empty */
+  {
+    $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
+  }
 
-  | "noop" {
+  | "noop"
+  {
     $$ = new UCommand_NOOP(@$);
     memcheck(up, $$);
-    }
+  }
 
   | refvariable "=" expr namedparameters {
     $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
@@ -594,6 +650,17 @@ instruction:
       $2->local_scope = true;
       $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
       memcheck(up, $$, $2, $4, $5);
+    }
+
+  | "ptr" refvariable  {
+
+      $2->local_scope = true;
+      std::stringstream ss;
+      ss << "ptr_" << urbiserver->getUID();
+      UExpression *e = new UExpression(@$, UExpression::VALUE,
+        new UString(ss.str().c_str()));
+      $$ = new UCommand_ASSIGN_VALUE(@$, $2, e, 0);
+      memcheck(up, $$, $2, e);
     }
 
   | property "=" expr {
@@ -631,6 +698,41 @@ instruction:
 
     $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
+    }
+   | "ptr" refvariable "=" "new" "identifier" {
+     memcheck(up, $5);
+      $2->local_scope = true;
+      std::stringstream ss;
+      ss << "ptr_" << urbiserver->getUID();
+      UExpression *e = new UExpression(@$, UExpression::VALUE,
+        new UString(ss.str().c_str()));
+      UCommand * asgn = new UCommand_ASSIGN_VALUE(@$, $2, e, 0);
+
+      UVariableName *v = new UVariableName(
+        new UExpression(@$,
+          UExpression::VALUE,
+	  new UString(ss.str().c_str())));
+      UCommand * cnew = new UCommand_NEW(@$, v, $5, 0);
+      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, asgn, cnew);
+      memcheck(up, $$, $2, $5);
+    }
+
+  | "ptr" refvariable "=" "new" "identifier" "(" parameterlist ")" {
+      memcheck(up, $5);
+      $2->local_scope = true;
+      std::stringstream ss;
+      ss << "ptr_" << urbiserver->getUID();
+      UExpression *e = new UExpression(@$, UExpression::VALUE,
+        new UString(ss.str().c_str()));
+      UCommand * asgn = new UCommand_ASSIGN_VALUE(@$, $2, e, 0);
+
+      UVariableName *v = new UVariableName(
+        new UExpression(@$,
+          UExpression::VALUE,
+	  new UString(ss.str().c_str())));
+      UCommand * cnew = new UCommand_NEW(@$, v, $5, $7);
+      $$ = new UCommand_TREE(@$, Flavorable::UPIPE, asgn, cnew);
+      memcheck(up, $$, $2, $5, $7);
     }
 
   | refvariable "=" "new" "identifier" {
@@ -774,44 +876,38 @@ instruction:
 
   | "emit" purevariable {
 
-      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $2, 0);
       memcheck(up, $$, $2);
     }
 
   | "emit" purevariable "(" parameterlist ")" {
 
-      $2->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $2, $4);
       memcheck(up, $$, $2, $4);
     }
 
   | "emit" "(" expr ")" purevariable {
 
-      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $5, 0, $3);
       memcheck(up, $$, $5, $3);
     }
 
   | "emit" "(" expr ")" purevariable "(" parameterlist ")" {
 
-      $5->id_type = UDEF_EVENT;
       $$ = new UCommand_EMIT(@$, $5, $7, $3);
       memcheck(up, $$, $5, $7, $3);
     }
 
   | "emit" "(" ")" purevariable {
 
-      $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(UExpression::VALUE,
+      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
 							UINFINITY));
       memcheck(up, $$, $4);
     }
 
   | "emit" "(" ")" purevariable "(" parameterlist ")" {
 
-      $4->id_type = UDEF_EVENT;
-      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(UExpression::VALUE,
+      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
 							 UINFINITY));
       memcheck(up, $$, $4, $6);
     }
@@ -836,56 +932,54 @@ instruction:
 
   | "def" {
 
-      $$ = new UCommand_DEF(@$, UDEF_QUERY, 0, 0, 0);
-      memcheck(up, $$)
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
+      memcheck(up, $$);
     }
 
   | "var" refvariable {
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
-      memcheck(up, $$, $2)
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
+      memcheck(up, $$, $2);
     }
 
   | "def" refvariable {
 
       $2->local_scope = true;
-      $$ = new UCommand_DEF(@$, UDEF_VAR, $2, 0, 0);
-      memcheck(up, $$, $2)
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
+      memcheck(up, $$, $2);
     }
 
   | "var" "{" refvariables "}" {
 
-    $$ = new UCommand_DEF(@$, UDEF_VARS, $3);
-      memcheck(up, $$, $3)
+    $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
+    memcheck(up, $$, $3);
     }
 
   | "class" "identifier" "{" class_declaration_list "}" {
 
     $$ = new UCommand_CLASS(@$, $2, $4);
-      memcheck(up, $$, $2, $4)
+    memcheck(up, $$, $2, $4);
     }
 
   | "class" "identifier" {
 
     $$ = new UCommand_CLASS(@$, $2, 0);
-      memcheck(up, $$, $2)
+    memcheck(up, $$, $2);
     }
 
 
   | "event" variable "(" identifiers ")" {
 
       $2->local_scope = true;
-      $2->id_type = UDEF_EVENT;
-      $$ = new UCommand_DEF(@$, UDEF_EVENT, $2, $4, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
       memcheck(up, $$, $2, $4);
     }
 
   | "event" variable {
 
       $2->local_scope = true;
-      $2->id_type = UDEF_EVENT;
-      $$ = new UCommand_DEF(@$, UDEF_EVENT, $2, 0, 0);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
       memcheck(up, $$, $2);
     }
 
@@ -909,8 +1003,7 @@ instruction:
 
     } taggedcommand {
 
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(@$, UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
 
       memcheck(up, $$, $2, $4);
       if (up.connection.functionTag)
@@ -923,8 +1016,7 @@ instruction:
 
   | "def" variable "(" identifiers ")" {
 
-      up.connection.server->debug("Warning: 'def' is deprecated, use"
-				       "'function' instead\n");
+      warn (up, @$, "'def' is deprecated, use 'function' instead");
       if (up.connection.functionTag)
       {
 	delete $2;
@@ -943,8 +1035,7 @@ instruction:
 
     } taggedcommand {
 
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UCommand_DEF(@$, UDEF_FUNCTION, $2, $4, $7);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
 
       memcheck(up, $$, $2, $4);
       if (up.connection.functionTag)
@@ -955,29 +1046,16 @@ instruction:
       }
     }
 
-  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK {
-
-      if (!$5)
-      {
-	delete $3;
-	delete $5;
-	error(@$, "Empty then-part within an if.");
-	YYERROR;
-      }
+  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, 0);
       memcheck(up, $$, $3, $5);
     }
 
-  | "if" "(" expr ")" taggedcommand "else" taggedcommand {
-
-      if (!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty then-part within an if.");
-	YYERROR;
-      }
+  | "if" "(" expr ")" taggedcommand "else" taggedcommand
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_IF(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1012,15 +1090,9 @@ instruction:
       memcheck(up, $$, $3, $5);
     }
 
-  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
+  | "at" "(" softtest ")" taggedcommand "onleave" taggedcommand
+    {
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_AT(@$, UCommand::AT, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1032,16 +1104,9 @@ instruction:
     }
 
   | "at" "&" "(" softtest ")" taggedcommand "onleave" taggedcommand {
-      if(!$6)
-      {
-	delete $4;
-	delete $6;
-	delete $8;
-	error(@$, "Empty body within an at command.");
-	YYERROR;
-      }
-      $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
-      memcheck(up, $$, $4, $6, $8);
+     warn_spontaneous(up, @6, *$6);
+     $$ = new UCommand_AT(@$, UCommand::AT_AND, $4, $6, $8);
+     memcheck(up, $$, $4, $6, $8);
     }
 
   | "while" "(" expr ")" taggedcommand %prec CMDBLOCK {
@@ -1063,14 +1128,7 @@ instruction:
     }
 
   | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {
-      if(!$5)
-      {
-	delete $3;
-	delete $5;
-	delete $7;
-	error(@$, "Empty body within a whenever command.");
-	YYERROR;
-      }
+      warn_spontaneous(up, @5, *$5);
       $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
@@ -1147,7 +1205,7 @@ instruction:
 
 array:
 
-  /* empty */ { $$ = 0 }
+  /* empty */ { $$ = 0; }
 
   | "[" expr "]" array {
 
@@ -1166,7 +1224,97 @@ purevariable:
       $$ = new UVariableName($3);
       memcheck(up, $$, $3);
     }
+  |
+  purevariable TOK_ARROW "identifier" {
+    //a$b unsugared to $(a+".b")
+    memcheck(up, $1, $3);
+    UExpression * eleft = new UExpression(@$, UExpression::VARIABLE, $1);
+    std::string s = ".";
+    s += $3->str();
+    UExpression *eright = new UExpression(@$, UExpression::VALUE,
+      new UString(s.c_str() ));
+    $$ = new UVariableName(
+      new UExpression(@$, UExpression::PLUS, eleft, eright));
+     memcheck(up, $$, $1, $3);
+     delete $3;
+  }
+  |
+  "$" "identifier" /*array*/{
+    //$a unsugared to $(a)
+    memcheck(up, $2);
+    UVariableName *vari;
+    if (up.connection.functionTag)
+	// We are inside a function
+	vari = new UVariableName(new UString(up.connection.functionTag),
+				 $2, false, 0/*$5*/);
+      else
+	vari = new UVariableName(new UString(up.connection.connectionTag),
+				 $2, false, 0/*$5*/);
+      $$ = new UVariableName(new UExpression(@$, UExpression::VARIABLE, vari));
+      memcheck(up, $$, $2);
+  }
+  |
+  "$" STRUCT {
+    //$a.b unsugared to $(a+".b")
+    memcheck(up, $2.device);
+    memcheck(up, $2.id);
+    UVariableName *varleft;
+    if (up.connection.functionTag)
+	// We are inside a function
+	varleft = new UVariableName(new UString(up.connection.functionTag),
+			       $2.device, false, 0);
+      else
+	varleft = new UVariableName(new UString(up.connection.connectionTag),
+			       $2.device, false, 0);
+    UExpression *expleft = new UExpression(@$, UExpression::VARIABLE,
+      varleft);
+    std::string v = ".";
+    v += $2.id->str();
+    UExpression *expright = new UExpression(@$, UExpression::VALUE,
+      new UValue(v.c_str()));
+    UExpression *exp = new UExpression(@$, UExpression::PLUS,
+      expleft, expright);
+    $$ = new UVariableName(exp);
+    memcheck(up, $$);
+    delete $2.id;  //$2.device is used
+  }
+//   | "$" "identifier" array TOK_POINT "identifier" array{
+//     //$a[x].b[y] unsugared to $(a[x]+".b"+"__"+y)
+//     memcheck(up, $2, $5);
+//     UVariableName *varleft;
+//     if (up.connection.functionTag)
+// 	// We are inside a function
+// 	varleft = new UVariableName(new UString(up.connection.functionTag),
+// 			       $2, false, $3);
+//       else
+// 	varleft = new UVariableName(new UString(up.connection.connectionTag),
+// 			       $2, false, $3);
+//     UExpression *expleft = new UExpression(@$, UExpression::VARIABLE,
+//       varleft);
+//     std::string v = ".";
+//     v += $5->str();
+//     UExpression *expright = new UExpression(@$, UExpression::VALUE,
+//       new UValue(v.c_str()));
+//     UExpression *exp = new UExpression(@$, UExpression::PLUS,
+//       expleft, expright);
+//     UNamedParameters * np = $6;
+//     while (np) {
+//       UExpression * __ = new UExpression(@$, UExpression::VALUE,
+//         new UValue("__"));
+//       exp = new UExpression(@$, UExpression::PLUS,
+//         exp,
+// 	new UExpression(@$, UExpression::PLUS,
+// 	  __,
+// 	  np->expression));
+//      np->expression = 0; //we stole it
+//      np = np->next;
+//     }
+//     $$ = new UVariableName(exp);
+//     delete $5;
+//     delete $6;
+//     memcheck(up, $$);
 
+//   }
   | "identifier" array TOK_POINT "identifier" array {
 
       memcheck(up, $1);
@@ -1189,8 +1337,8 @@ purevariable:
       memcheck(up, $1);
       if (up.connection.functionTag)
 	// We are inside a function
-	  $$ = new UVariableName(new UString(up.connection.functionTag),
-				 $1, false, $2);
+	$$ = new UVariableName(new UString(up.connection.functionTag),
+			       $1, false, $2);
       else
 	$$ = new UVariableName(new UString(up.connection.connectionTag),
 			       $1, false, $2);
@@ -1209,16 +1357,16 @@ purevariable:
 ;
 
 variable:
-  purevariable			{ $$ = $1;				}
-| "static" purevariable		{ $$ = $2; $$->isstatic = true;		}
-| purevariable TOK_NORM		{ $$ = $1; $$->isnormalized = true;	}
-| purevariable TOK_VARERROR	{ $$ = $1; $$->varerror = true;		}
-| purevariable TOK_VARIN	{ $$ = $1; $$->varin = true;		}
-| purevariable TOK_VAROUT	{ $$ = $1;				}
-| purevariable TOK_DERIV	{ $$ = $1; $$->deriv = UDERIV;		}
-| purevariable TOK_DERIV2	{ $$ = $1; $$->deriv = UDERIV2;		}
-| purevariable TOK_TRUEDERIV	{ $$ = $1; $$->deriv = UTRUEDERIV;	}
-| purevariable TOK_TRUEDERIV2	{ $$ = $1; $$->deriv = UTRUEDERIV2;	}
+  purevariable		{ $$ = $1;				}
+| "static" purevariable	{ $$ = $2; $$->isstatic = true;		}
+| purevariable "'n"	{ $$ = $1; $$->isnormalized = true;	}
+| purevariable "'e"	{ $$ = $1; $$->varerror = true;		}
+| purevariable "'in"	{ $$ = $1; $$->varin = true;		}
+| purevariable "'out"	{ $$ = $1;				}
+| purevariable "'"	{ $$ = $1; $$->deriv = UVariableName::UDERIV;	  }
+| purevariable "''"	{ $$ = $1; $$->deriv = UVariableName::UDERIV2;	  }
+| purevariable "'d"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV; }
+| purevariable "'dd"	{ $$ = $1; $$->deriv = UVariableName::UTRUEDERIV2;}
 ;
 
 refvariable:
@@ -1250,7 +1398,7 @@ property:
 /* NAMEDPARAMETERS */
 
 namedparameters:
-  /* empty */ { $$ = 0 }
+  /* empty */ { $$ = 0; }
 
   | "identifier" ":" expr namedparameters {
 
@@ -1293,31 +1441,31 @@ timeexpr:
 
 expr:
   NUM {
-    $$ = new UExpression(UExpression::VALUE, take($1));
+    $$ = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, $$);
   }
 
 | timeexpr {
-    $$ = new UExpression(UExpression::VALUE, take ($1));
+    $$ = new UExpression(@$, UExpression::VALUE, take ($1));
     memcheck(up, $$);
   }
 
 | STRING {
     memcheck(up, $1);
-    $$ = new UExpression(UExpression::VALUE, $1);
+    $$ = new UExpression(@$, UExpression::VALUE, $1);
     memcheck(up, $$, $1);
   }
 
 | "[" parameterlist "]" {
 
-    $$ = new UExpression(UExpression::LIST, $2);
+    $$ = new UExpression(@2, UExpression::LIST, $2);
     memcheck(up, $$, $2);
   }
 
 | property {
 
-     $$ = new UExpression(UExpression::PROPERTY,
-			    $1->property, $1->variablename);
+    $$ = new UExpression(@$, UExpression::PROPERTY,
+			 $1->property, $1->variablename);
      memcheck(up, $$, $1);
   }
 
@@ -1328,34 +1476,33 @@ expr:
     //  $1->nameUpdate(up.connection.connectionTag->str(),
     //                 $1->id->str());
 
-    $1->id_type = UDEF_FUNCTION;
-    $$ = new_exp(up, UExpression::FUNCTION, $1, $3);
+    $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }
 
-| "%" variable		{ $$ = new_exp(up, UExpression::ADDR_VARIABLE, $2); }
-| variable		{ $$ = new_exp(up, UExpression::VARIABLE, $1);      }
-| "group" "identifier"	{ $$ = new_exp(up, UExpression::GROUP, $2);         }
+| "%" variable         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
+| variable             { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
+| "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
 ;
 
 
   /* num expr */
 expr:
-    expr "+" expr	{ $$ = new_exp(up, UExpression::PLUS, $1, $3); }
-  | expr "-" expr	{ $$ = new_exp(up, UExpression::MINUS, $1, $3); }
-  | expr "*" expr	{ $$ = new_exp(up, UExpression::MULT, $1, $3); }
-  | expr "/" expr	{ $$ = new_exp(up, UExpression::DIV,  $1, $3); }
-  | expr "%" expr	{ $$ = new_exp(up, UExpression::MOD,  $1, $3); }
-  | expr "^" expr	{ $$ = new_exp(up, UExpression::EXP,  $1, $3); }
+    expr "+" expr	{ $$ = new_exp(up, @$, UExpression::PLUS,  $1, $3); }
+  | expr "-" expr	{ $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); }
+  | expr "*" expr	{ $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); }
+  | expr "/" expr	{ $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); }
+  | expr "%" expr	{ $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); }
+  | expr "**" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
 
   | TOK_COPY expr  %prec NEG {
 
-      $$ = new UExpression(UExpression::COPY, $2, 0);
+      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
     }
 
   | "-" expr %prec NEG {
 
-      $$ = new UExpression(UExpression::NEG, $2, 0);
+      $$ = new UExpression(@$, UExpression::NEG, $2, 0);
       memcheck(up, $$, $2);
     }
 
@@ -1382,27 +1529,40 @@ expr:
 ;
 
 expr:
-    "true"  { $$ = new UExpression(UExpression::VALUE, TRUE);  }
-  | "false" { $$ = new UExpression(UExpression::VALUE, FALSE); }
+    "true"  { $$ = new UExpression(@$, UExpression::VALUE, TRUE);  }
+  | "false" { $$ = new UExpression(@$, UExpression::VALUE, FALSE); }
 
-  | expr "=="  expr { $$ = new_exp(up, UExpression::TEST_EQ,  $1, $3); }
-  | expr "~="  expr { $$ = new_exp(up, UExpression::TEST_REQ, $1, $3); }
-  | expr "=~=" expr { $$ = new_exp(up, UExpression::TEST_DEQ, $1, $3); }
-  | expr "%="  expr { $$ = new_exp(up, UExpression::TEST_PEQ, $1, $3); }
-  | expr "!="  expr { $$ = new_exp(up, UExpression::TEST_NE,  $1, $3); }
-  | expr ">"   expr { $$ = new_exp(up, UExpression::TEST_GT,  $1, $3); }
-  | expr ">="  expr { $$ = new_exp(up, UExpression::TEST_GE,  $1, $3); }
-  | expr "<"   expr { $$ = new_exp(up, UExpression::TEST_LT,  $1, $3); }
-  | expr "<="  expr { $$ = new_exp(up, UExpression::TEST_LE,  $1, $3); }
+  | expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
+  | expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
+  | expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
+  | expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
+  | expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
+  | expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
+  | expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
+  | expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
+  | expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
 
   | "!" expr {
-      $$ = new UExpression(UExpression::TEST_BANG, $2, 0);
+      $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
       memcheck(up, $$, $2);
     }
 
-  | expr "&&" expr { $$ = new_exp(up, UExpression::TEST_AND, $1, $3); }
-  | expr "||" expr { $$ = new_exp(up, UExpression::TEST_OR,  $1, $3); }
+  | expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
+  | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 
+;
+
+  /*---------------.
+  | Redirections.  |
+  `---------------*/
+%token
+  TOK_LSHIFT   "<<"
+  TOK_RSHIFT   ">>"
+;
+
+expr:
+    expr "<<"  expr { $$ = 0; } // FIXME:
+  | expr ">>"  expr { $$ = 0; } // FIXME:
 ;
 
 
@@ -1430,28 +1590,28 @@ parameters:
 
 rawparameters:
     NUM {
-      UExpression *expr = new UExpression(UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     }
 
   | "identifier" {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, $1);
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr);
       memcheck(up, $$, expr);
     }
 
   |  NUM rawparameters {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, take($1));
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     }
 
   |  "identifier" rawparameters {
 
-      UExpression *expr = new UExpression(UExpression::VALUE, $1);
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
       $$ = new UNamedParameters(expr, $2);
       memcheck(up, $$, $2, expr);
     }
@@ -1518,30 +1678,26 @@ class_declaration:
     "var" "identifier" {
 
       memcheck(up, $2);
-      $$ = new UExpression(UExpression::VALUE, $2);
+      $$ = new UExpression(@$, UExpression::VALUE, $2);
       memcheck(up, $$, $2);
     }
 
   | "function" variable "(" identifiers ")" {
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new_exp(up, UExpression::FUNCTION, $2, $4);
+      $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $4);
     }
 
   | "function" variable {
-      $2->id_type = UDEF_FUNCTION;
-      $$ = new UExpression(UExpression::FUNCTION, $2,
+      $$ = new UExpression(@$, UExpression::FUNCTION, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }
 
   | "event" variable "(" identifiers ")" {
-      $2->id_type = UDEF_EVENT;
-      $$ = new_exp(up, UExpression::EVENT, $2, $4);
+      $$ = new_exp(up, @$, UExpression::EVENT, $2, $4);
     }
 
   | "event" variable {
-      $2->id_type = UDEF_EVENT;
-      $$ = new UExpression(UExpression::EVENT, $2,
+      $$ = new UExpression(@$, UExpression::EVENT, $2,
 			   static_cast<UNamedParameters*> (0));
       memcheck(up, $$, $2);
     }

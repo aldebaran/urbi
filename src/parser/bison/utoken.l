@@ -25,10 +25,24 @@
 #include <cstring>
 
 #include "parser/uparser.hh"
+
+#ifdef ECHO
+// libport/compiler.hh has a #define ECHO that conflicts with flex.
+# undef ECHO
+#endif
 // Shorter access to the tokens.
 typedef yy::parser::token token;
 
+// At each match, adjust the end cursor.
 #define YY_USER_ACTION locp->columns(yyleng);
+
+// To avoid differences between versions of Bison, set by hand the
+// initial columns when advancing lines.
+#define LINES(Loc)				\
+ do {						\
+   (Loc)->lines();				\
+   (Loc)->end.column = 1;			\
+ } while (0)
 
 // Otherwise Flex returns an int instead of an enum.
 #define yyterminate() return token::TOK_EOF
@@ -40,11 +54,11 @@ typedef yy::parser::token token;
 // Be bulletproof when memory allocation fails.
 #define SET_VALP_STR(Value)			\
 do {						\
-  valp->str = new UString(Value);		\
-  if (valp->str->str() == 0)			\
+  valp->ustr = new UString(Value);		\
+  if (valp->ustr->str() == 0)			\
   {						\
-    delete valp->str;				\
-    valp->str = 0;				\
+    delete valp->ustr;				\
+    valp->ustr = 0;				\
   }						\
 } while (0)
 
@@ -77,7 +91,7 @@ do {							\
 %}
 %option noyywrap
 
-%x SC_C_COMMENT
+%x SC_C_COMMENT SC_STRING
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -125,13 +139,7 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}      { valp->val = new ufloat(atof(yytext));
 		return token::NUM; }
 
-{STRING}      { /* Remove ending ". */
-		yytext[yyleng - 1] = 0;
-		SET_VALP_STR(yytext+1);
-		if (valp->str)
-		  valp->str->un_armor();
-		return token::STRING;
-	      }
+\"            valp->str = new std::string; BEGIN SC_STRING;
 
 
 "block"      |
@@ -174,6 +182,9 @@ STRING   \"([^\"]|"\\\"")*\"
 "undefall"    |
 "unstrict"    |
 "uservars"    |
+"functions"   |
+"taglist"     |
+"runningcommands" |
 "vars"        RETURN_STR_TOKEN (OPERATOR);
 
 "BIN"           return token::TOK_BIN;
@@ -217,6 +228,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "true"          return token::TOK_TRUECONST;
 "unalias"       return token::TOK_UNALIAS;
 "var"           return token::TOK_VAR;
+"ptr"           return token::TOK_PTR;
 "'in"           return token::TOK_VARIN;
 "'out"          return token::TOK_VAROUT;
 "wait"          return token::TOK_WAIT;
@@ -227,6 +239,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "!"             return token::TOK_BANG;
 "!="            return token::TOK_NE;
 "$"             return token::TOK_DOLLAR;
+"=>"            return token::TOK_ARROW;
 "%"             return token::TOK_PERCENT;
 "%="            return token::TOK_PEQ;
 "&"             return token::TOK_AND;
@@ -260,10 +273,15 @@ STRING   \"([^\"]|"\\\"")*\"
 "=~="           return token::TOK_DEQ;
 ">"             return token::TOK_GT;
 ">="            return token::TOK_GE;
+"<<"            return token::TOK_LSHIFT;
+">>"            return token::TOK_RSHIFT;
 "@"             return token::TOK_AROBASE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
-"^"             return token::TOK_EXP;
+"^"             { up.warn(*locp, "The use of '^' for exponent operator"
+			  " is deprecated. Use '**' instead.");
+		  return token::TOK_EXP; }
+"**"            return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
 "|"             return token::TOK_PIPE;
 "||"            return token::TOK_OROPERATOR;
@@ -296,6 +314,56 @@ STRING   \"([^\"]|"\\\"")*\"
 
 {ID}"."{ID}("."{ID})+   RETURN_STR_TOKEN(TAG);
 
+
+    /*----------.
+    | Strings.  |
+    `----------*/
+
+<SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
+     \" {
+       BEGIN INITIAL;
+       UString* u = new UString (*valp->str);
+       delete valp->str;
+       valp->ustr = u;
+       return token::STRING;
+     }
+
+     \\[0-7]{3}		{
+       long c = strtol (yytext + 1, 0, 8);
+       if (c > 255)
+	 up.error(*locp, "invalid escape");
+       else
+	 *valp->str += c;
+     }
+
+     \\x[0-9a-fA-F]{2}	{
+       *valp->str += strtol (yytext + 2, 0, 16);
+     }
+
+     \\a	*valp->str += '\a';
+     \\b	*valp->str += '\b';
+     \\f	*valp->str += '\f';
+     \\n	*valp->str += '\n';
+     \\r	*valp->str += '\r';
+     \\t	*valp->str += '\t';
+     \\v	*valp->str += '\v';
+     \\[\\""]   *valp->str += yytext[1];
+     \\.	up.error (*locp, "unrecognized escape");
+
+
+     [^\"\n\r\\]+      valp->str->append (yytext, yyleng);
+
+     {EOL}+    locp->lines (yyleng); valp->str->append (yyleng, '\n');
+
+     <<EOF>> {
+       up.error (*locp, "unexpected end of file in a string");
+       BEGIN INITIAL;
+       return token::STRING;
+     }
+}
+
+
+
     /*----------------------------.
     | White spaces and comments.  |
     `----------------------------*/
@@ -304,7 +372,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "/*"           BEGIN SC_C_COMMENT;
 
 {BLANKS}       locp->step();
-{EOL}          locp->lines(); locp->step();
+{EOL}          LINES(locp); locp->step();
 .              {
 		 up.error(*locp, std::string ("invalid character: ")
 			  + yytext);
@@ -317,8 +385,8 @@ STRING   \"([^\"]|"\\\"")*\"
     BEGIN INITIAL;
   }
 
-  [^*/\n\r]+  	;
-  {EOL}	        locp->lines ();
+  [^*/\n\r]+	;
+  {EOL}	        LINES(locp);
   .             /* Stray `*' and `/'. */;
 
   <<EOF>> {

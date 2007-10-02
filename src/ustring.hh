@@ -36,12 +36,12 @@ class UString
  public:
   MEMORY_MANAGED;
   UString(const char* s);
-  UString(const UString *s);
+  UString(const UString* s);
   UString(const UString& s);
   UString(const std::string& s);
 
   /// Concat \c s1 and \c s2 with a dot in the middle.
-  UString(const UString *s1, const UString *s2);
+  UString(const UString* s1, const UString* s2);
 
   ~UString();
 
@@ -76,12 +76,25 @@ class UString
   // Return the string with " and \ escaped.
   std::string armor();
 
- private:
-  void fast_armor();
+  /// put "p1.p2" in name
+  static inline void makeName(char * name, const UString &p1, 
+				const UString & p2) {
+    memcpy(name,  p1.str(), p1.len());
+    name[p1.len()] = '.';
+    memcpy(name + p1.len() +1, p2.str(), p2.len());
+    name[p1.len() + 1 + p2.len()] = 0;
+  }
 
+  /// put "p1.p2" in name
+  static inline void makeName(char * name, const UString &p1, 
+				const char * p2) {
+    memcpy(name,  p1.str(), p1.len());
+    name[p1.len()] = '.';
+    strcpy(name + p1.len() +1, p2);
+  }
+ private:
   int  len_;
   char* str_;
-  bool fast_armor_;
 };
 
 inline void

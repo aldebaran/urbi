@@ -19,6 +19,9 @@
 
  **************************************************************************** */
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
+
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
@@ -101,7 +104,8 @@ UServer::UServer(ufloat frequency,
     systemcommands (true),
     frequency_(frequency),
     securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
-    isolate_ (false)
+    isolate_ (false),
+    uid(0)
 {
   ::urbiserver = 0;
   memoryOverflow = securityBuffer_ == 0;
@@ -143,9 +147,9 @@ void
 UServer::main (int argc, const char* argv[])
 {
   UValue* arglistv = new UValue ();
+  arglistv->dataType = DATA_LIST;
 
   UValue* current = 0;
-  arglistv->dataType = DATA_LIST;
   for (int i = 0; i < argc; ++i)
   {
     UValue* v = new UValue (argv[i]);
@@ -195,7 +199,6 @@ UServer::initialization()
 
   // Ghost connection
   ghost = new UGhostConnection(this);
-  connectionList.push_front(ghost);
 
   char tmpbuffer_ghostTag[50];
   sprintf(tmpbuffer_ghostTag, "U%ld", (long)ghost);
@@ -204,7 +207,8 @@ UServer::initialization()
   new UVariable(MAINDEVICE, "name", mainName->str());
   uservarState = true;
 
-
+  // cached taginfos
+  UCommand::initializeTagInfos();
   // Plugins (internal components)
 
   for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
@@ -250,7 +254,7 @@ UServer::afterWork()
 void
 UServer::work()
 {
-  urbi::BlockLock bl(this);
+  libport::BlockLock bl(this);
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;
@@ -349,7 +353,7 @@ UServer::work()
 
       if ((*r)->newDataAdded)
       {
-	// used by loadFile and exec to
+	// used by loadFile and eval to
 	// delay the parsing after the completion
 	// of execute().
 	(*r)->newDataAdded = false;
@@ -388,6 +392,7 @@ UServer::work()
   // Values final assignment and nbAverage reset to 0
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
+  {
     if ((*i)->activity == 2)
     {
       (*i)->activity = 0;
@@ -409,7 +414,10 @@ UServer::work()
 	  if ((*i)->autoUpdate)
 	    (*i)->selfSet (&((*i)->value->val));
 	  else
+	  {
 	    (*i)->selfSet (&((*i)->target));
+	    (*i)->setTarget();
+	  }
 	}
 
       // set previous for next iation
@@ -423,6 +431,7 @@ UServer::work()
 
       ++i;
     }
+  }
 
   // Execute Hub Updaters
   for (urbi::UTimerTable::iterator i = urbi::updatemap.begin();
@@ -487,6 +496,13 @@ UServer::work()
 	  else
 	    ++it;
 
+      //delete hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	delete (*i)->getUObjectHub ();
+
+
       //delete the rest
       for (HMvariabletab::iterator i = variabletab.begin();
 	   i != variabletab.end();
@@ -496,26 +512,35 @@ UServer::work()
 
       libport::deep_clear (varToReset);
 
-      //variabletab.clear();
       aliastab.clear();
       emittab.clear();
       functiontab.clear();  //This leaks awfuly...
       grouptab.clear();
       objaliastab.clear();
-      tagtab.clear();
+
+      // do not clear tagtab, everything is refcounted and will be cleared
+      // when commands will be
+      //tagtab.clear();
 
       for (std::list<UConnection*>::iterator i = connectionList.begin();
 	   i != connectionList.end();
 	   ++i)
 	if ((*i)->isActive())
-	  (*i)->send("*** Reset completed.\n", "reset");
+	  (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
 
-      //restart everything
+      //restart hubs
+      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
+	   i != urbi::objecthublist->end();
+	   ++i)
+	(*i)->init((*i)->name);
+
+      //restart uobjects
       for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
 	   i != urbi::objectlist->end();
 	   ++i)
 	(*i)->init((*i)->name);
 
+      //reload URBI.INI
       loadFile("URBI.INI", &ghost->recvQueue());
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
@@ -528,15 +553,17 @@ UServer::work()
 	= variabletab.find("__system__.resetsignal");
       if (findResetSignal != variabletab.end())
       {
+	//reload CLIENT.INI
 	for (std::list<UConnection*>::iterator i = connectionList.begin();
 	     i != connectionList.end();
 	     ++i)
 	  if ((*i)->isActive() && (*i) != ghost)
 	  {
-	    (*i)->send("*** Reloading\n", "reset");
+	    (*i)->send("*** Restart completed.\n", "reset");
 
 	    loadFile("CLIENT.INI", &(*i)->recvQueue());
 	    (*i)->newDataAdded = true;
+	    (*i)->send("*** Ready.\n", "reset");
 	  }
 	reseting = false;
 	stage = 0;
@@ -657,7 +684,7 @@ UServer::echoKey(const char* key, const char* s, ...)
  \param s is the formatted string containing the message
  */
 void
-UServer::debug (const char* s, va_list args)
+UServer::vdebug (const char* s, va_list args)
 {
   char buf[MAXSIZE_INTERNALMESSAGE];
   vsnprintf(buf, sizeof buf, s, args);
@@ -669,7 +696,8 @@ UServer::debug(const char* s, ...)
 {
   va_list args;
   va_start(args, s);
-  debug (s, args);
+  vdebug (s, args);
+  va_end(args);
 }
 
 //! Isolate the server from incoming commands.
@@ -899,7 +927,7 @@ UServer::mark(TagInfo* ti)
   for (std::list<UCommand*>::iterator i = ti->commands.begin();
       i != ti->commands.end();
       ++i)
-    if ((*i)->status != UONQUEUE || (*i)->morphed)
+    if ((*i)->status != UCommand::UONQUEUE || (*i)->morphed)
       (*i)->toDelete = true;
 
   for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
@@ -957,19 +985,33 @@ UServer::unblock(const std::string &tag)
     it->second.blocked = false;
 }
 
+namespace
+{
+  bool
+  file_readable (const std::string& s)
+  {
+    std::ifstream is (s.c_str(), std::ios::binary);
+    bool res = is;
+    is.close();
+    return res;
+  }
+}
+
 std::string
 UServer::find_file (const char* base)
 {
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  {
+    std::string f = *p + "/" + base;
+    ECHO("find_file(" << base << ") testing " << f);
+    if (file_readable(f))
     {
-      std::string f = *p + "/" + base;
-      std::ifstream is (f.c_str(), std::ios::binary);
-      if (is)
-	{
-	  is.close ();
-	  return f;
-	}
+      ECHO("find_file(" << base << ") = " << f);
+      return f;
     }
+  }
+  if (!file_readable(base))
+    error ("cannot find file: %s", base);
   return base;
 }
 
@@ -1060,4 +1102,52 @@ UServer::addAlias(const char* id, const char* variablename)
     aliastab[id_copy] = new UString(variablename);
   }
   return 1;
+}
+
+
+/* Free standing functions. */
+
+namespace
+{
+
+  // Use with care, returns a static buffer.
+  const char* tab (unsigned n)
+  {
+    static char buf[1024];
+    if (n >= sizeof buf)
+      n = sizeof buf - 1;
+
+    for (unsigned i = 0; i < n; ++i)
+      buf[i] = ' ';
+    buf[n] = 0;
+    return buf;
+  }
+
+}
+
+
+void
+vdebug (const char* fmt, va_list args)
+{
+  ::urbiserver->vdebug (fmt, args);
+}
+
+void
+debug (const char* fmt, ...)
+{
+  va_list args;
+  va_start (args, fmt);
+  vdebug (fmt, args);
+  va_end (args);
+}
+
+
+void
+debug (unsigned t, const char* fmt, ...)
+{
+  debug ("%s", tab(t));
+  va_list args;
+  va_start (args, fmt);
+  vdebug (fmt, args);
+  va_end (args);
 }

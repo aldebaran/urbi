@@ -20,7 +20,9 @@
  **************************************************************************** */
 
 #include <cstdlib>
-
+#include <sstream>
+#include <iostream>
+#include <iomanip>
 #include "libport/cstring"
 
 #include "ustring.hh"
@@ -30,8 +32,7 @@ MEMORY_MANAGER_INIT(UString);
 
 UString::UString(const UString& s)
   : len_ (s.len_),
-    str_ (s.str_ ? strdup (s.str_) : 0),
-    fast_armor_ (s.fast_armor_)
+    str_ (s.str_ ? strdup (s.str_) : 0)
 {
   ADDOBJ(UString);
   ADDMEM(len_);
@@ -39,22 +40,18 @@ UString::UString(const UString& s)
 
 UString::UString(const std::string& s)
   : len_ (s.size ()),
-    str_ (strdup (s.c_str ())),
-    fast_armor_ (false)
+    str_ (strdup (s.c_str ()))
 {
   ADDOBJ(UString);
   ADDMEM(len_);
-  fast_armor ();
 }
 
 UString::UString(const char* s)
   : len_ (s ? strlen(s) : 0),
-    str_ (s ? strdup (s) : strdup("")),
-    fast_armor_ (false)
+    str_ (s ? strdup (s) : strdup(""))
 {
   ADDOBJ(UString);
   ADDMEM(len_);
-  fast_armor ();
 }
 
 UString::UString(const UString* s)
@@ -65,14 +62,12 @@ UString::UString(const UString* s)
     len_ = 0;
     str_ = static_cast<char*> (malloc (1));
     strcpy(str_, "");
-    fast_armor_ = true;
   }
   else
   {
     len_ = s->len();
     str_ = static_cast<char*> (malloc (len_+1));
     strcpy(str_, s->str());
-    fast_armor_ = s->fast_armor_;
   }
   if (str_ == 0)
     len_ = 0;
@@ -94,7 +89,6 @@ UString::UString(const UString* s1, const UString* s2)
     len_ = tmpname.length();
   else
     len_ = 0;
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -157,7 +151,6 @@ void UString::update(const char* s)
   str_ = static_cast<char*> (malloc (slen+1));
   strcpy(str_, s);
   len_ = slen;
-  fast_armor ();
   ADDMEM(len_);
 }
 
@@ -172,67 +165,77 @@ void UString::update(const UString* s)
   str_ = static_cast<char*> (malloc (s->len()+1));
   strcpy(str_, s->str());
   len_ = s->len();
-  fast_armor ();
   ADDMEM(len_);
 }
 
 char*
 UString::un_armor ()
 {
-  char* cp = str_;
-  int pos = 0;
-  while (pos < len_)
+  char * src = str_;
+  char * dst = str_;
+  char * end = str_+len_;
+  while (src != end)
   {
-    if (cp[0] == '\\' && pos + 1 < len_)
+    if (*src == '\\' && end - src >1)
     {
-      if (cp[1] == 'n'
-	  || cp[1] == 't'
-	  || cp[1] == '\\'
-	  || cp[1] == '"')
-      {
-	if (cp[1] ==  'n')
-	  cp[1] = '\n';
-	if (cp[1] ==  't')
-	  cp[1] = '\t';
-
-	memmove (static_cast<void*> (cp),
-		 static_cast<void*> (cp + 1),
-		 len_ - pos);
-	--len_;
-	if (cp[0] == '\\')
-	  ++cp;
-      }
+      if (src[1]=='n')
+	*dst = '\n';
+      else if (src[1]=='t')
+	*dst = '\t';
+      else if (src[1]=='\\')
+	*dst = '\\';
       else
-	++cp;
+      { //maybe an integer
+	int v,pos;
+	int count = sscanf(src+1, "%d%n", &v, &pos);
+	if (count)
+	{
+	  *dst = static_cast<char>(v);
+	  src += pos-1; //because we do src++ below
+	}
+	else
+	  *dst = src[1];
+      }
+
+      src++;
     }
     else
-      ++cp;
-    pos = cp - str_;
+      *dst = *src;
+    dst++;
+    src++;
   }
 
+  len_ = dst - str_;
+  str_[len_] = 0;
   return str_;
 }
 
 std::string
 UString::armor ()
 {
-  // speedup
-  if (fast_armor_)
-    return std::string (str_);
-
   std::string res;
   res.reserve (len_);
   for (char* cp = str_; *cp; ++cp)
   {
-    if (*cp=='"' || *cp=='\\')
+    if (*cp=='\n')
+      res += "\\n";
+    else if (*cp=='\t')
+      res += "\\t";
+    else if (*cp=='"' || *cp=='\\')
+    {
       res += '\\';
-    res += *cp;
+      res += *cp;
+    }
+    else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127)
+    {
+      std::ostringstream str;
+      str << "\\x"
+	  << std::hex << std::setfill ('0') << std::setw (2)
+	  << static_cast<unsigned int>(static_cast<unsigned char>(*cp));
+      res += str.str();
+    }
+    else
+      res += *cp;
   }
   return res;
-}
-
-void
-UString::fast_armor ()
-{
-  fast_armor_= !strchr (str_, '"') && !strchr (str_, '\\');
 }

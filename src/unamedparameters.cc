@@ -19,29 +19,35 @@
 
  **************************************************************************** */
 
-#include "unamedparameters.hh"
 #include "ucopy.hh"
 #include "uexpression.hh"
+#include "unamedparameters.hh"
 #include "userver.hh"
+#include "ustring.hh"
+#include "utypes.hh"
 
 // **************************************************************************
 //! UNamedParameters constructor.
 UNamedParameters::UNamedParameters(UString* name,
 				   UExpression *expression,
-				   UNamedParameters* next)
+				   UNamedParameters* next,
+                                   bool notifyEnd)
   : name       (name),
     expression (expression),
-    next       (next)
+    next       (next),
+    notifyEnd  (notifyEnd)
 {
   ADDOBJ(UNamedParameters);
 }
 
 //! UNamedParameters constructor (for expression list only)
 UNamedParameters::UNamedParameters(UExpression *expression,
-				   UNamedParameters* next)
+				   UNamedParameters* next,
+                                   bool notifyEnd)
   : name       (0),
     expression (expression),
-    next       (next)
+    next       (next),
+    notifyEnd  (notifyEnd)
 {
   ADDOBJ(UNamedParameters);
 }
@@ -67,7 +73,7 @@ UNamedParameters::rank(int n)
 }
 
 int
-UNamedParameters::size()
+UNamedParameters::size() const
 {
   if (next)
     return next->size() + 1;
@@ -77,12 +83,13 @@ UNamedParameters::size()
 
 //! UNamedParameters hard copy function
 UNamedParameters*
-UNamedParameters::copy()
+UNamedParameters::copy() const
 {
   return
     new UNamedParameters(ucopy (name),
 			 ucopy (expression),
-			 ucopy (next));
+			 ucopy (next),
+                         notifyEnd);
 }
 
 //! Print the list of parameters
@@ -90,20 +97,20 @@ UNamedParameters::copy()
     It is not safe, efficient or crash proof. A better version will come later.
 */
 void
-UNamedParameters::print()
+UNamedParameters::print() const
 {
   if (name)
-    ::urbiserver->debug("%s:", name->str());
+    debug("%s:", name->str());
   if (expression)
   {
-    ::urbiserver->debug("expr=");
-    expression->print();
-    ::urbiserver->debug(" ");
+    debug("expr=");
+    expression->print(0);
+    debug(" ");
   }
   if (next)
   {
-    ::urbiserver->debug(", ");
+    debug(", ");
     next->print();
-    ::urbiserver->debug(" ");
+    debug(" ");
   }
 }

@@ -23,8 +23,6 @@
 # define UNAMEDPARAMETERS_HH
 
 # include "fwd.hh"
-# include "utypes.hh"
-# include "ustring.hh"
 
 /// Any list of identifiers, expressions or combinaison of both.
 // FIXME: There should be UNamedParameter, and we should use lists or so.
@@ -33,16 +31,20 @@ class UNamedParameters
 public:
   UNamedParameters(UString* name,
 		   UExpression *expression,
-		   UNamedParameters* next=0);
+		   UNamedParameters* next=0,
+                   bool notifyEnd=false);
 
-  UNamedParameters(UExpression *expression, UNamedParameters* next = 0);
+  UNamedParameters(UExpression *expression,
+                   UNamedParameters* next = 0,
+                   bool notifyEnd=false);
+
   virtual ~UNamedParameters();
 
-  void print();
+  void print() const;
 
   UNamedParameters* rank(int n);
-  int               size();
-  UNamedParameters* copy();
+  int               size() const;
+  UNamedParameters* copy() const;
 
   /// Name.
   UString            *name;
@@ -50,6 +52,9 @@ public:
   UExpression        *expression;
   /// Next in the list.
   UNamedParameters   *next;
+
+  /// Horrible hack to speed up the flag scanning done in UCommand dctor
+  bool               notifyEnd;
 };
 
 #endif

@@ -1,3 +1,26 @@
+New in 1.0
+
+* New keyword 'taglist' displays the tags of currently running commands.
+
+* UObject::send(string) is now available to send URBI code from any UObject
+  (plugged or remote). The code is executed immediately in pluggin mode, which
+  makes it convenient to add specialized initialization in UObject
+  constructors to setup some useful wrappers.
+
+New in 1.0 RC2:
+
+* USensor becomes UOwned (with backward compatibility)
+
+* It is new OK to redefine a function that already exist, you will get a
+  warning in scrict mode only.
+
+* inherit changes to 'inherits' (same for disinherit)
+
+* Important bug fix on UNotifyChange: was not working with motor variables
+  like headPan.val from within a UObject. NotifyAccess and NotifyChange
+  simultaneous usage has also been improved in plugin mode.
+
+
 New in 1.0 RC1:
 
 * New support for multi events. Example:

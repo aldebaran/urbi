@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include "libport/cstdio"
 #include <cmath>
@@ -61,7 +63,6 @@ UVariableName::UVariableName(UString* device,
     fromGroup (false),
     firsttime (true),
     nostruct  (false),
-    id_type   (UDEF_VAR),
     local_scope  (false),
     doublecolon (false),
     // Protected.
@@ -95,7 +96,6 @@ UVariableName::UVariableName(UString* objname,
     fromGroup (false),
     firsttime (true),
     nostruct  (false),
-    id_type   (UDEF_VAR),
     local_scope  (false),
     doublecolon (false),
     fullname_ (0),
@@ -125,7 +125,6 @@ UVariableName::UVariableName(UExpression* str, bool rooted)
     function  (0),
     firsttime (true),
     nostruct  (false),
-    id_type   (UDEF_VAR),
     local_scope  (false),
     doublecolon (false),
     fullname_ (0),
@@ -287,9 +286,34 @@ UVariableName::buildFullname (UCommand* command,
 			      UConnection* connection,
 			      bool withalias)
 {
-  const int		fullnameMaxSize = 1024;
-  char			name[fullnameMaxSize];
-  char			indexstr[fullnameMaxSize];
+  /* The behavior of snprintf is not portable when we hit the limit.
+   For instance:
+
+   #include <string>
+   #include <cstdlib>
+   #include <iostream>
+
+   int main()
+   {
+     char buf[10];
+     const char* lng = "012345678901234567890123456789";
+     snprintf (buf, sizeof buf, "%s", lng);
+     std::cout << buf << std::endl;
+     return 0;
+   }
+
+   gives "0123456789$" on MingW, and "012345678" on OSX.
+
+   So to make sure we do nothing silly (such as the $ on MingW),
+   leave at least one 0 at the end.  Of course the right answer is
+   to use stringstreams.  That's already done in the trunk.
+   */
+  const int		fullnameMaxSize = 1023;
+  char			name[fullnameMaxSize + 1];
+  char			indexstr[fullnameMaxSize + 1];
+  name[fullnameMaxSize] = 0;
+  indexstr[fullnameMaxSize] = 0;
+
   UValue*		e1;
   UNamedParameters*	itindex;
   HMaliastab::iterator	hmi;
@@ -305,8 +329,8 @@ UVariableName::buildFullname (UCommand* command,
 
     if (e1==0 || e1->str==0 || e1->dataType != DATA_STRING)
     {
-      connection->sendf (command->getTag(),
-			 "!!! dynamic variable evaluation failed\n");
+      send_error (connection, command,
+		  "dynamic variable evaluation failed");
       delete e1;
       if (fullname_)
       {
@@ -320,14 +344,13 @@ UVariableName::buildFullname (UCommand* command,
     {
       nostruct = true;
       if (connection->stack.empty())
-	snprintf(name, fullnameMaxSize,
-		 "%s.%s", connection->connectionTag->str(),
-		 e1->str->str());
+	UString::makeName(name, *connection->connectionTag, *e1->str);
       else
-      {
-	snprintf(name, fullnameMaxSize,
-		 "%s.%s", "__Funct__",
-		 e1->str->str());
+      { //ugly, but optimised with good reasons
+	memcpy(name, "__Funct__",  9);
+	name[9] = '.';
+	memcpy(name+10, e1->str->str(), e1->str->len());
+	name[10+e1->str->len()] = 0;
 	localFunction = true;
       }
     }
@@ -366,8 +389,7 @@ UVariableName::buildFullname (UCommand* command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	connection->sendf (command->getTag(),
-			   "!!! array index evaluation failed\n");
+	send_error(connection, command, "array index evaluation failed");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -380,8 +402,7 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	delete e1;
-	connection->sendf (command->getTag(),
-			   "!!! invalid array index type\n");
+	send_error(connection, command, "invalid array index type");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -411,8 +432,7 @@ UVariableName::buildFullname (UCommand* command,
       e1 = itindex->expression->eval(command, connection);
       if (e1==0)
       {
-	connection->sendf (command->getTag(),
-			   "!!! array index evaluation failed\n");
+	send_error(connection, command, "array index evaluation failed");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -426,8 +446,7 @@ UVariableName::buildFullname (UCommand* command,
       else
       {
 	delete e1;
-	connection->sendf (command->getTag(),
-			   "!!! invalid array index type\n");
+	send_error(connection, command, "invalid array index type");
 	delete fullname_;
 	fullname_ = 0;
 	return 0;
@@ -518,8 +537,7 @@ UVariableName::buildFullname (UCommand* command,
     }
     else
     {
-      connection->sendf (command->getTag(),
-			 "!!! invalid prefix resolution\n");
+      send_error(connection, command, "invalid prefix resolution");
       delete fullname_;
       fullname_ = 0;
       return 0;
@@ -561,8 +579,13 @@ UVariableName::buildFullname (UCommand* command,
       hmi = ::urbiserver->aliastab.find(name);
     past_hmi = hmi;
 
+    // If it's an alias
     while (hmi != ::urbiserver->aliastab.end())
     {
+      send_error(connection, command,
+                 (std::string("'") + name +
+                  "' is an alias for '" + hmi->second->str() +
+                  "'. Using aliases is deprecated.").c_str());
       past_hmi = hmi;
       hmi = ::urbiserver->aliastab.find(hmi->second->str());
     }
@@ -617,6 +640,7 @@ UVariableName::buildFullname (UCommand* command,
   else
     fullname_ = new UString(name);
 
+  ECHO(*fullname_);
   return fullname_;
 }
 
@@ -637,23 +661,22 @@ UVariableName::nameUpdate(const char* _device, const char* _id)
 
 //! UNamedParameters hard copy function
 UVariableName*
-UVariableName::copy()
+UVariableName::copy() const
 {
   UVariableName *ret;
 
   if (str)
     ret = new UVariableName(str->copy(), rooted);
+  else if (index_obj)
+    ret = new UVariableName (ucopy (device),
+			     ucopy (index_obj),
+			     ucopy (id),
+			     ucopy (index));
   else
-    if (index_obj)
-      ret = new UVariableName (ucopy (device),
-			       ucopy (index_obj),
-			       ucopy (id),
-			       ucopy (index));
-    else
-      ret = new UVariableName(ucopy (device),
-			      ucopy (id),
-			      rooted,
-			      ucopy (index));
+    ret = new UVariableName(ucopy (device),
+			    ucopy (id),
+			    rooted,
+			    ucopy (index));
 
   ret->isstatic     = isstatic;
   ret->isnormalized = isnormalized;
@@ -661,7 +684,6 @@ UVariableName::copy()
   ret->varerror     = varerror;
   ret->fromGroup    = fromGroup;
   ret->nostruct     = nostruct;
-  ret->id_type      = id_type;
   ret->local_scope  = local_scope;
   ret->doublecolon  = doublecolon;
 
@@ -673,7 +695,7 @@ UVariableName::copy()
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UVariableName::print()
+UVariableName::print() const
 {
   ::urbiserver->debug("(VAR root=%d ", rooted);
   if (device)

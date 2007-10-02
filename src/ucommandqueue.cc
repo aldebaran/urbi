@@ -19,6 +19,8 @@
 
  **************************************************************************** */
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 #include <cstdlib>
 #include "libport/cstring"
 
@@ -31,19 +33,17 @@
     behavior.
 */
 UCommandQueue::UCommandQueue  (int minBufferSize,
-				int maxBufferSize,
-				int adaptive)
+			       int maxBufferSize,
+			       int adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
     cursor_         (0),
-    bracketlevel_   (0),
-    sbracketlevel_  (0),
-    parenlevel_     (0),
     discard_        (false),
     closechar_      (' '),
-    closechar2_     (' ')
+    closechar2_     (' '),
+    closers_()
 {
   ADDOBJ(UCommandQueue);
-  FREEOBJ(UQueue); // A tester...
+  FREEOBJ(UQueue); // A tester.
 }
 
 //! UCommandQueue destructor.
@@ -54,37 +54,9 @@ UCommandQueue::~UCommandQueue()
 }
 
 
-//! Pops the next command in the queue.
-/*! popCommand scan the buffer to a terminating ',' or ';' symbol by removing
-    any text between:
-
-    - { and }
-    - [ and ]
-    - / * and * /
-    - // and \\n
-    - # and \\n
-    - (and )
-
-    This function is interruptible which means that is does not rescan the
-    entire buffer from the start each time it is called, but it stores it's
-    internal state before quitting and starts again where it left. This
-    is important when the buffer comes from a TCP/IP entry connection where
-    instructions typically arrive in several shots.
-
-    The final ',' or ';' is the last character of the popped data.
-
-    \param length the length of the extracted command. zero means "no command
-	   is available yet".
-    \return a pointer to the the data popped or 0 in case of error.
-*/
 ubyte*
 UCommandQueue::popCommand (int &length)
 {
-  bool   found;
-  ubyte* result;
-  int    position,nextposition,previousposition;
-  char   p0,p1,p_1;
-
   if (dataSize_ == 0)
   {
     length = 0;
@@ -92,32 +64,28 @@ UCommandQueue::popCommand (int &length)
   }
 
   // Scanning
-
-  position = start_ + cursor_;
+  int position = start_ + cursor_;
   if (position >= bufferSize_)
     position = position - bufferSize_;
 
-  nextposition = position + 1;
+  int nextposition = position + 1;
   if (nextposition >= bufferSize_)
     nextposition = nextposition - bufferSize_;
 
-  previousposition = position - 1;
+  int previousposition = position - 1;
   if (previousposition < 0)
     previousposition = previousposition + bufferSize_;
-  p0 = (char) (*(buffer_ + previousposition)); // extract the previous char.
+  char p0 = (char) buffer_[previousposition]; // extract the previous char.
   if (cursor_ == 0)
     // no previous char at start
     p0 = ' ';
 
-  found = false;
+  bool found = false;
   while (cursor_ < dataSize_ && !found)
   {
-    p_1 = p0;
-    p0 = (char) (*(buffer_ + position));
-    if (cursor_ < dataSize_ - 1)
-      p1 = (char) (*(buffer_ + nextposition));
-    else
-      p1 = '-';
+    char p_1 = p0;
+    p0 = (char) buffer_[position];
+    char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : '-';
 
     if (discard_)
     {
@@ -135,72 +103,73 @@ UCommandQueue::popCommand (int &length)
     }
     else
     {
-      if (p0 == '{')
-	++bracketlevel_;
-      else if (p0 == '}')
-	--bracketlevel_;
-      else if (p0 == '[')
-	++sbracketlevel_;
-      else if (p0 == ']')
-	--sbracketlevel_;
-      else if (p0 == '(')
-	++parenlevel_;
-      else if (p0 == ')')
-	--parenlevel_;
+      switch (p0)
+      {
+	case '{':
+	  closers_.push_back('}');
+	  break;
+	case '[':
+	  closers_.push_back(']');
+	  break;
+	case '(':
+	  closers_.push_back(')');
+	  break;
+	case ')':
+	case ']':
+	case '}':
+	  if (!closers_.empty() && closers_.back() == p0)
+	    closers_.pop_back();
+	  else
+	    // This is a syntax error.  Empty the set of closers so
+	    // that we finish as if the sentence was correct.  It will
+	    // be given to the parser which will report the error
+	    // itself.
+	    closers_.clear();
+	  break;
 
-      if (bracketlevel_ < 0)
-	bracketlevel_ = 0;
-      if (sbracketlevel_ < 0)
-	sbracketlevel_ = 0;
-      if (parenlevel_ < 0)
-	parenlevel_ = 0;
+	case '#':
+	  discard_    = true;
+	  closechar_  = '\n';
+	  closechar2_ = ' ';
+	  break;
 
-      if (p0 == '#')
-      {
-	discard_    = true;
-	closechar_  = '\n';
-	closechar2_ = ' ';
-      }
-      if (p0 == '"')
-      {
-	discard_    = true;
-	closechar_  = '"';
-	closechar2_ = ' ';
-      }
-      if (p0 == '/' && p1 == '*'
-	  || p_1 == '/' && p0 == '*')
-      {
-	discard_    = true;
-	closechar_  = '*';
-	closechar2_ = '/';
-      }
-      if (p0 == '/' && p1 == '/'
-	  || p_1 == '/' && p0 == '/')
-      {
-	discard_    = true;
-	closechar_  = '\n';
-	closechar2_ = ' ';
+	case '"':
+	  discard_    = true;
+	  closechar_  = '"';
+	  closechar2_ = ' ';
+	  break;
+
+	default:
+	  if (p0 == '/' && p1 == '*'
+	      || p_1 == '/' && p0 == '*')
+	  {
+	    discard_    = true;
+	    closechar_  = '*';
+	    closechar2_ = '/';
+	  }
+	  if (p0 == '/' && p1 == '/'
+	      || p_1 == '/' && p0 == '/')
+	  {
+	    discard_    = true;
+	    closechar_  = '\n';
+	    closechar2_ = ' ';
+	  }
       }
     }
 
     // , or ; separator, except between paren or brackets
-    if ((((char)(*(buffer_ + position)) == ',' ) ||
-	 ((char)(*(buffer_ + position)) == ';' )) &&
-	(!discard_ ) &&
-	(bracketlevel_ == 0) &&
-	(sbracketlevel_ == 0) &&
-	(parenlevel_ == 0) )
+    if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
+	&& !discard_
+	&& closers_.empty())
       found = true;
 
     // Emergency escape character: ¤
-    if (((char)(*(buffer_ + position)) == '$' ) &&
-	((char)(*(buffer_ + nextposition)) == '$' ) &&
-	(!discard_ ) )
+    if ((char)buffer_[position] == '$'
+	&& (char)buffer_[nextposition] == '$'
+	&& !discard_)
     {
       length = -1;
-      bracketlevel_ = 0;
-      sbracketlevel_ = 0;
-      parenlevel_ = 0;
+      closers_.clear();
       cursor_ = 0;
       discard_  = false;
       return 0;
@@ -213,20 +182,22 @@ UCommandQueue::popCommand (int &length)
     ++nextposition;
     if (nextposition == bufferSize_)
       nextposition = 0;
-
   }
 
+  ubyte* res;
   if (found)
   {
-    result = pop(cursor_);
+    res = pop(cursor_);
     length = cursor_;
     cursor_ = 0;
   }
   else
   {
-    result = buffer_;
+    res = buffer_;
     length = 0;
   }
-
-  return result;
+  ECHO("Sending {{{"
+       << std::string(reinterpret_cast<const char*>(res), length)
+       << "}}}");
+  return res;
 }

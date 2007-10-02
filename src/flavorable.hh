@@ -2,7 +2,7 @@
 
 #ifndef FLAVORABLE_HH
 # define FLAVORABLE_HH
-
+#include <cassert>
 /// Root for command that come in different flavors.
 class Flavorable
 {
@@ -41,7 +41,7 @@ public:
       case UCOMMA:
 	return "COMMA";
       default:
-	abort ();
+	assert (!"not reachable");
     }
   }
 

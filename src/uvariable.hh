@@ -110,6 +110,8 @@ public:
   /// Stage of usage in the reinit list: 0 (off), 1(in) or 2(going
   /// out).
   int             activity;
+  /// Nb of UVar pointing to this UVariable
+  int             useCpt;
   /// Indicates user variables.
   bool            uservar;
   /// Temporary value container.
@@ -117,8 +119,10 @@ public:
   ufloat          previous,
 		  previous2,
 		  previous3; ///< previous theoretical value container
-  /// Previous sensed value.
-  ufloat          previous_sensed;
+  /// Sensed value at the beginning of the cycle.
+  ufloat          cyclevalue;
+  /// Time of the last cycle beginning  (used to update cyclevalue)
+  ufloat          cycleBeginTime;
   /// Variable value.
   UValue          *value;
   ufloat          valPrev,
@@ -144,6 +148,8 @@ public:
 
   /// Binder for internal monitors.
   std::list<urbi::UGenericCallback*> internalBinder;
+  /// Binder for internal monitors.
+  std::list<urbi::UGenericCallback*> internalTargetBinder;
   /// Binder for internal access monitors.
   std::list<urbi::UGenericCallback*> internalAccessBinder;
 
@@ -169,6 +175,8 @@ public:
   UVarSet set(UValue *v);
   UVarSet setFloat(ufloat f);
   UVarSet selfSet(ufloat *valcheck);
+  ///  notify internalTargetBinders
+  void setTarget();
   /// \}
 
   ///  Set a value->val value.
@@ -183,14 +191,18 @@ public:
   /// subclasses.
   bool isDeletable();
 
-  void          updated();
+  void          updated(bool uvar_assign = false);
 
   UValue*       get();
 
+  void setContext(UCallid * ctx)  {context = ctx;}
+
   private:
 
-  void    init();
+  /// context if scope is a function
+  UCallid * context;
 
+  void    init();
 };
 
 #endif

@@ -33,6 +33,7 @@
 #include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
+#include "unamedparameters.hh"
 
 // FIXME: Help!
 #define private protected
@@ -83,12 +84,13 @@ inline int exprToInt(UExpression *e)
   else
     return strtol(e->str->str(), 0, 0);
 }
+
 UValue::operator urbi::UImage()
 {
   urbi::UImage img;
   img.data=0;
   img.size=img.width = img.height=0;
-  img.imageFormat=urbi::IMAGE_UNKNOWN;
+  img.imageFormat = urbi::IMAGE_UNKNOWN;
   if (dataType != DATA_BINARY)
     return img;
 
@@ -97,7 +99,6 @@ UValue::operator urbi::UImage()
   //validate
   if (!(param && param->next && param->next->next && param->next->next))
     return img;
-
 
   if (STREQ(param->expression->str->str(), "rgb"))
     img.imageFormat = urbi::IMAGE_RGB;
@@ -226,7 +227,7 @@ UValue::operator urbi::USound()
     short bitperchannel;
     char data[4];
     int datalength;
-  };
+  } __attribute__ ((__packed__));
 
   urbi::USound snd;
   snd.data=0;
@@ -265,12 +266,13 @@ UValue::operator urbi::USound()
 	(refBinary->ref()->buffer) )
     {
       decoded= true;
-      wavheader * wh = (wavheader *)refBinary->ref()->buffer;
+      wavheader* wh = reinterpret_cast<wavheader*> (refBinary->ref()->buffer);
       snd.channels = wh->channels;
       snd.rate = wh->freqechant;
       snd.sampleSize = wh->bitperchannel;
-      snd.sampleFormat =  (snd.sampleSize>8)?urbi::SAMPLE_SIGNED :
-	urbi::SAMPLE_UNSIGNED;
+      snd.sampleFormat =
+	(snd.sampleSize>8)
+	? urbi::SAMPLE_SIGNED : urbi::SAMPLE_UNSIGNED;
     }
   }
   else
@@ -324,19 +326,21 @@ UValue & UValue::operator = (const urbi::UBinary &b)
 
   dataType = DATA_BINARY;
   //Build named parameters list from getMessage() output
-  UNamedParameters * first=0;
-  UNamedParameters * last=0;
+  UNamedParameters* first=0;
+  UNamedParameters* last=0;
   std::stringstream str;
   str.str(b.getMessage());
-  std::string item;
   while (!!str)
   {
-    item = "";
+    std::string item = "";
     str >> item;
     if (item == "")
       break;
-    UNamedParameters * unp =
-      new UNamedParameters(0, new UExpression(UExpression::VALUE,
+    // FIXME: I don't understand what happens here, the location is
+    // a fake.
+    UNamedParameters* unp =
+      new UNamedParameters(0, new UExpression(UExpression::location(),
+					      UExpression::VALUE,
 					      new UString(item.c_str())));
     if (!first)
     {
@@ -367,6 +371,9 @@ UValue & UValue::operator = (const urbi::UList &l)
     LIBERATE(refBinary);
   }
   UValue * current = 0;
+  if (dataType == DATA_LIST)
+    delete liststart;
+  liststart = 0;
   dataType = DATA_LIST;
   for (int i=0;i<l.size(); ++i)
   {
@@ -388,7 +395,7 @@ UValue::UValue(const urbi::UValue &v)
 {
   ADDOBJ(UValue);
   switch (v.type)
-  {
+    {
     case urbi::DATA_DOUBLE:
       dataType = DATA_NUM;
       this->val = v.val;
@@ -398,23 +405,23 @@ UValue::UValue(const urbi::UValue &v)
       this->str = new UString(v.stringValue->c_str());
       break;
     case urbi::DATA_LIST:
-    {
-      dataType = DATA_LIST;
-      UValue * current = this;
-      for (std::vector<urbi::UValue *>::iterator it =
-	     v.list->array.begin();
-	   it != v.list->array.end(); ++it)
       {
-	UValue *n = new UValue(*(*it));
-	current->next = n;
-	while (current->next)
-	  current = current->next;
-      }
+	dataType = DATA_LIST;
+	UValue * current = this;
+	for (std::vector<urbi::UValue *>::iterator it =
+	       v.list->array.begin();
+	     it != v.list->array.end(); ++it)
+	  {
+	    UValue *n = new UValue(*(*it));
+	    current->next = n;
+	    while (current->next)
+	      current = current->next;
+	  }
 
-      liststart = next;
-      next = 0;
-    }
-    break;
+	liststart = next;
+	next = 0;
+      }
+      break;
     case urbi::DATA_BINARY:
       *this = *v.binary;
       break;
@@ -423,7 +430,7 @@ UValue::UValue(const urbi::UValue &v)
       break;
     default:
       dataType = DATA_VOID;
-  }
+    }
 }
 
 //! UValue destructor.
@@ -441,39 +448,51 @@ UValue::~UValue()
 }
 
 //! UValue hard copy
+// FIXME: Why don't we have copy-ctors?
 UValue*
-UValue::copy()
+UValue::copy() const
 {
-  UValue *ret = new UValue();
-  ret->dataType = dataType;
-
   switch (dataType)
   {
     case DATA_NUM:
-      ret->val = val;
-      break;
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
+      res->val = val;
+      return res;
+    }
 
     case DATA_FILE:
     case DATA_STRING:
     case DATA_OBJ:
-      ret->str = new UString(str);
-      if (!ret->str)
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
+      res->str = new UString(str);
+      if (!res->str)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      break;
+      return res;
+    }
 
     case DATA_BINARY:
-      ret->refBinary = ucopy (refBinary);
-      break;
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
+      res->refBinary = refBinary->ref() ? refBinary->copy () : 0;
+      return res;
+    }
 
     case DATA_LIST:
     {
+      UValue *res = new UValue();
+      res->dataType = dataType;
       UValue *scanlist = liststart;
-      UValue *sret = ret;
+      UValue *sret = res;
       if (scanlist == 0)
-	ret->liststart = 0;
+	res->liststart = 0;
       else
       {
 	sret->liststart = scanlist->copy();
@@ -487,11 +506,25 @@ UValue::copy()
 	  sret = sret->next;
 	}
       }
+      return res;
     }
-    break;
+
+    case DATA_VOID:
+    {
+      UValue *res = new UValue();
+      res->dataType = dataType;
+      return res;
+    }
+
+    case DATA_UNKNOWN:
+    case DATA_FUNCTION:
+    case DATA_VARIABLE:
+      assert (!"not reachable");
   }
 
-  return ret;
+  // Pacify warnings.
+  assert (!"not reachable");
+  abort();
 }
 
 
@@ -506,11 +539,11 @@ UValue::add(UValue *v)
   {
     // concat two binaries (useful for sound)
 
-    UValue *ret = new UValue();
-    if (!ret)
+    UValue *res = new UValue();
+    if (!res)
       return 0;
 
-    ret->dataType = DATA_BINARY;
+    res->dataType = DATA_BINARY;
 
     UNamedParameters *param = 0;
     if (refBinary->ref()->parameters)
@@ -518,7 +551,7 @@ UValue::add(UValue *v)
     else if (v->refBinary->ref()->parameters)
       param = v->refBinary->ref()->parameters->copy();
 
-    ret->refBinary =
+    res->refBinary =
       new libport::RefPt<UBinary> (
 	new UBinary(
 	  refBinary->ref()->bufferSize+
@@ -527,17 +560,17 @@ UValue::add(UValue *v)
 	  )
 	);
 
-    if (!ret->refBinary)
+    if (!res->refBinary)
       return 0;
 
-    ubyte* p = ret->refBinary->ref()->buffer;
+    ubyte* p = res->refBinary->ref()->buffer;
     if (!p)
       return 0;
     memcpy(p, refBinary->ref()->buffer, refBinary->ref()->bufferSize);
     memcpy(p+refBinary->ref()->bufferSize,
 	   v->refBinary->ref()->buffer,
 	   v->refBinary->ref()->bufferSize);
-    return ret;
+    return res;
   }
 
   if (dataType == DATA_FILE ||
@@ -551,59 +584,59 @@ UValue::add(UValue *v)
 
   if (dataType == DATA_LIST)
   {
-    UValue *ret = copy();
+    UValue *res = copy();
 
-    if (ret->liststart)
+    if (res->liststart)
     {
-      UValue *scanlist = ret->liststart;
+      UValue *scanlist = res->liststart;
       while (scanlist->next)
 	scanlist = scanlist->next;
 
       scanlist->next = v->copy();
     }
     else
-      ret->liststart = v->copy();
+      res->liststart = v->copy();
 
-    return ret;
+    return res;
   }
 
   if (v->dataType == DATA_LIST)
   {
     // we are not a list
-    UValue *ret = v->copy();
-    UValue * b = ret->liststart;
-    ret->liststart = copy();
-    ret->liststart->next = b;
-    return ret;
+    UValue *res = v->copy();
+    UValue * b = res->liststart;
+    res->liststart = copy();
+    res->liststart->next = b;
+    return res;
   }
 
   if (dataType == DATA_NUM)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *ret = new UValue();
-      ret->dataType = DATA_NUM;
-      ret->val = val + v->val;
-      return ret;
+      UValue *res = new UValue();
+      res->dataType = DATA_NUM;
+      res->val = val + v->val;
+      return res;
     }
 
     if (v->dataType == DATA_STRING)
     {
-      UValue *ret = new UValue();
-      if (ret == 0)
+      UValue *res = new UValue();
+      if (res == 0)
 	return 0;
 
-      ret->dataType = DATA_STRING;
+      res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << val<<v->str->str();
-      ret->str = new UString(ostr.str().c_str());
-      if (ret->str == 0)
+      ostr << val << v->str->str();
+      res->str = new UString(ostr.str().c_str());
+      if (res->str == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      return ret;
+      return res;
     }
   }
 
@@ -611,47 +644,47 @@ UValue::add(UValue *v)
   {
     if (v->dataType == DATA_NUM)
     {
-      UValue *ret = new UValue();
-      if (ret == 0)
+      UValue *res = new UValue();
+      if (res == 0)
 	return 0;
 
-      ret->dataType = DATA_STRING;
+      res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << str->str()<<v->val;
-      ret->str = new UString(ostr.str().c_str());
+      ostr << str->str() << v->val;
+      res->str = new UString(ostr.str().c_str());
 
-      if (ret->str == 0)
+      if (res->str == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      return ret;
+      return res;
     }
 
     if (v->dataType == DATA_STRING)
     {
-      UValue *ret = new UValue();
-      if (ret == 0)
+      UValue *res = new UValue();
+      if (res == 0)
 	return 0;
 
-      ret->dataType = DATA_STRING;
+      res->dataType = DATA_STRING;
 
       char *tmp_String = new char[v->str->len()+str->len()+1];
       if (tmp_String == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
       sprintf(tmp_String, "%s%s", str->str(), v->str->str());
-      ret->str = new UString(tmp_String);
+      res->str = new UString(tmp_String);
       delete[] (tmp_String);
-      if (ret->str == 0)
+      if (res->str == 0)
       {
-	delete ret;
+	delete res;
 	return 0;
       }
-      return ret;
+      return res;
     }
   }
   return 0;
@@ -790,9 +823,9 @@ UValue::echo(bool hr)
 
     case DATA_NUM:
     {
-      std::ostringstream o;
-      o << std::fixed << val;
-      return o.str();
+      char dv[64];
+      sprintf(dv,"%f",(float)val);
+      return std::string(dv);
     }
 
     case DATA_STRING:

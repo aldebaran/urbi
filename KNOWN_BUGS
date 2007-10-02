@@ -1,0 +1,38 @@
+Release 1.0
+-----------
+
+URBI
+----
+
+* at (isdef(somevar)) defines somevar
+
+* an emit in a function is dropped if the function returns immediately with
+ "return"
+
+function test() {
+  emit an.event(1);
+  return;
+};
+
+function test2() { 
+  emit an.event(2);
+};
+
+at(an.event(x)) tag:x;
+test(),
+//nothing happens
+test2(),
+[12313:tag] 2.000000
+
+
+UObject API
+-----------
+
+* If you create a UNotifyChange on a UVar and if you change the type of the UVar,
+the UNotifyChange stops functioning.
+
+By example, create a UNotifyChange on the UVar val.
+test.val="1"; ==> UNotifyChange actived (type string)
+test.val="toto"; ==> UNotifyChange actived (type string)
+test.val="zorro"; ==> UNotifyChange actived (type string)
+test.val=1; ==> UNotifyChange desactived (type int) 

@@ -35,16 +35,13 @@ UGhostConnection::UGhostConnection  (UServer * mainserver)
 		   UGhostConnection::MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
-
-  // FIXME: What the heck is this suppose to do???
-  // Test the error from UConnection constructor.
-  if (UError != USUCCESS)
-    return;
+  ::urbiserver->connectionList.push_front (dynamic_cast<UConnection*> (this));
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
+  ::urbiserver->connectionList.remove (dynamic_cast<UConnection*> (this));
   FREEOBJ(UGhostConnection);
 }
 
@@ -54,6 +51,7 @@ UGhostConnection::~UGhostConnection()
 UErrorValue
 UGhostConnection::closeConnection()
 {
+  closing = true;
   return USUCCESS;
 }
 
@@ -70,8 +68,7 @@ UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 	  static_cast<const void*> (buffer),
 	  real_length);
   tmpbuf[real_length] = 0;
-
-  ::urbiserver->debug(tmpbuf);
+  ::urbiserver->debug("%s", tmpbuf);
 
   return length;
 }

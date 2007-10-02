@@ -28,6 +28,13 @@ TC_PROG([bison], [>= 2.2],   [BISON], [GNU parser generator])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
+TC_CXX_WARNINGS([[-Wcast-align],
+ 		 [-Wcast-qual],
+ 		 [-Wmissing-prototypes],
+ 		 [-Wstrict-prototypes],
+ 		 [-Wwrite-strings],
+ 		 [-Wbad-function-cast],
+ 		 [-Wmissing-declarations]])
 
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])
@@ -45,6 +52,6 @@ URBI_LIBPORT
 ## -------- ##
 
 AC_CONFIG_HEADERS([src/config.h])
-# This is urbivalid.
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile src/ast/Makefile])
+URBI_TESTS
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

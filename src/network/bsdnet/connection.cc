@@ -76,15 +76,17 @@ void Connection::doRead()
 
 int Connection::effectiveSend (const ubyte *buffer, int length)
 {
-  int ret = ::send(fd, (char *)buffer, length, MSG_NOSIGNAL);
-  if (ret<=0)
+  int res = ::send(fd, 
+		   reinterpret_cast<const char *>(buffer), length,
+		   MSG_NOSIGNAL);
+  if (res <= 0)
   {
     //kill us
     closeConnection();
     return -1;
   }
   else
-    return ret; // Number of bytes actually written.
+    return res; // Number of bytes actually written.
 }
 
 void Connection::doWrite()

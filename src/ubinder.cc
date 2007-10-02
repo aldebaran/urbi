@@ -29,7 +29,9 @@
 
 // **************************************************************************
 //! UBinder constructor.
-UBinder::UBinder (const UString& objname, const UString& id, UBindMode bindMode,
+UBinder::UBinder (const UString& objname,
+                  const UString& id,
+                  UBindMode bindMode,
 		  UBindType type, int nbparam,
 		  UConnection* c)
   : id (id),
@@ -60,7 +62,7 @@ UBinder::addMonitor (const UString& objname, UConnection *c)
 
   if (!m)
   {
-    m = new UMonitor(objname,c);
+    m = new UMonitor(objname, c);
     monitors.push_back(m);
   }
   else

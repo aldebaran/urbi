@@ -23,6 +23,7 @@
 # define USERVER_HH
 
 # include <cstdarg>
+# include "libport/compiler.hh"
 # include "libport/lockable.hh"
 # include "fwd.hh"
 # include "utypes.hh"
@@ -46,7 +47,7 @@ extern  class UServer   *urbiserver; // Global variable for the server
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class UServer: public urbi::Lockable
+class UServer: public libport::Lockable
 {
 public:
   UServer(ufloat frequency, int freeMemory, const char* mainName);
@@ -57,12 +58,18 @@ public:
   void              work();
   void              main (int argc, const char* argv[]);
 
-  void              error           (const char* s, ...);
-  void              echo            (const char* s, ...);
-  void              echoKey         (const char* key, const char* s, ...);
+  void error (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echo (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
+  void echoKey (const char* key, const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 3, 4)));
 
-  void debug (const char* s, va_list args);
-  void debug (const char* s, ...);
+  /// Send debugging data.
+  void vdebug (const char* s, va_list args)
+    __attribute__ ((__format__ (__printf__, 2, 0)));
+  void debug (const char* s, ...)
+    __attribute__ ((__format__ (__printf__, 2, 3)));
 
   void              isolate         ();
   void              deIsolate       ();
@@ -120,6 +127,11 @@ public:
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
+  inline int        getUID          () 
+  {
+    libport::BlockLock bl(this);
+    return ++uid;
+  }
   int               addAlias        (const char* id, const char* variablename);
   UGhostConnection* getGhostConnection ()
   {
@@ -151,8 +163,10 @@ public:
   HMaliastab               objaliastab;
   /// Hash of group definitions.
   HMgrouptab               grouptab;
-  /// Hash of events.
+  /// Hash of events, one entry per (name,nbArgs).
   HMemittab                emittab;
+  /// Hash of events, one entry per name.
+  HMemit2tab               emit2tab;
   /// Hash of function binders.
   HMbindertab              functionbindertab;
   /// Hash of event binders.
@@ -179,7 +193,7 @@ public:
   /// Flag used to signal a memory overflow.
   bool                     memoryOverflow;
 
-  /// Shows debug or not..
+  /// Shows debug or not.
   bool                     debugOutput;
   /// Name of the main device.
   UString                  *mainName;
@@ -234,6 +248,9 @@ private:
   ufloat           lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection *ghost;
+  
+  /// unique id source
+  int               uid;
 };
 
 //! Accessor for frequency_.
@@ -257,6 +274,23 @@ inline int unic()
   ++URBI_unicID;
   return URBI_unicID;
 }
+
+
+/* Freestanding functions. */
+
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, va_list args)
+  __attribute__ ((__format__ (__printf__, 1, 0)));
+
+/// Send debugging messages via ::urbiserver.
+void debug (const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 1, 2)));
+
+/// Send debugging messages indented with \a t spaces, via ::urbiserver.
+void debug (unsigned t, const char* fmt, ...)
+  __attribute__ ((__format__ (__printf__, 2, 3)));
+
 
 #endif
 

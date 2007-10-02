@@ -20,20 +20,20 @@
  **************************************************************************** */
 
 #ifndef UBINARY_HH
-#define UBINARY_HH
+# define UBINARY_HH
 
-#include "unamedparameters.hh"
+# include "fwd.hh"
+# include "utypes.hh"
 
-// *****************************************************************************
-//! Contains binary data, an the binary buffer in particular.
+
+/// Binary data, an the binary buffer in particular.
 class UBinary
 {
 public:
-
   UBinary(int bufferSize, UNamedParameters *parameters);
   ~UBinary();
 
-  void     print();
+  void     print() const;
 
   /// The size of the buffer.
   int               bufferSize;

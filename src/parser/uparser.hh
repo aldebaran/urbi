@@ -55,11 +55,11 @@ public:
 
   UParser(UConnection& cn);
 
-  /// Parse the command from a buffer
-  int process(ubyte* command, int length);
+  /// Parse the command from a buffer.
+  int process(const ubyte* command, int length);
 
   /// Parse a file.
-  int process (const char* fn);
+  int process (const std::string& fn);
 
   UCommand_TREE *commandTree;
   bool          binaryCommand;
@@ -69,8 +69,17 @@ public:
   /// Declare an error at \a l about \a msg.
   void error (const location_type& l, const std::string& msg);
 
+  /// Warn at \a l about \a msg.
+  void warn (const location_type& l, const std::string& msg);
+
+  /// Size of the message buffers
+  static const int msgMaxSize = 1024;
+
   /// The latest parse error message.
-  char errorMessage[1024];
+  char errorMessage[msgMaxSize];
+
+  /// The latest warning
+  char warning[msgMaxSize];
 
   /// The connection we belong to.
   UConnection& connection;
@@ -88,7 +97,8 @@ private:
 
   /// The file names that were parsed.
   ///
-  /// Kept because each location point to it.
+  /// Kept because each location point to it, and since they are hooked
+  /// on the AST, they survive the parsing.
   typedef std::set<std::string> files;
   files files_;
 

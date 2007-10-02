@@ -6,7 +6,7 @@
 
 #ifndef BLOCKMEMORYMANAGER_HH
 # define BLOCKMEMORYMANAGER_HH
-
+#include "libport/lockable.hh"
 # define DEFAULT_BLOCK_SIZE 100
 
 # define MEMORY_MANAGED				\
@@ -25,7 +25,7 @@
 # define MEMORY_MANAGER_INIT(classname)		\
   BlockPool* classname::mempool_ = 0
 
-class BlockPool
+class BlockPool: public libport::Lockable
 {
  public:
   BlockPool ();
@@ -35,12 +35,12 @@ class BlockPool
   /// Current position in pool.
   void** cptr;
   /// Pool size in number of items.
-  int size;
-  int itemSize;
+  size_t size;
+  size_t itemSize;
 };
 
 void block_operator_delete(BlockPool* mempool, void* ptr);
 
-void* block_operator_new(BlockPool* &mempool, int sz);
+void* block_operator_new(BlockPool* &mempool, size_t sz);
 
 #endif // !BLOCKMEMORYMANAGER_HH

@@ -18,6 +18,8 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
+// #define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
 
 #include <cmath>
 #include "libport/cstdio"
@@ -44,6 +46,50 @@
 #include "uvariablename.hh"
 #include "uobj.hh"
 
+// FIXME: This is code duplication with ucommand.cc, with a slight
+// difference: expression do not have a tag, so we get the command's
+// one.  It will be trivial to factor when we have cleaner asts.
+namespace
+{
+  UErrorValue
+  send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
+	      const char* fmt, va_list args)
+    __attribute__ ((__format__ (__printf__, 4, 0)));
+
+  /// Report an error, with "!!! " prepended, and "\n" appended.
+  /// \param c     the connection to which the message is sent.
+  /// \param cmd   the command whose tag will be used.
+  /// \param e     the expression whose location will be used.
+  /// \param fmt   printf-format string.
+  /// \param args  its arguments.
+  UErrorValue
+  send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
+	      const char* fmt, va_list args)
+  {
+    std::ostringstream o;
+    // FIXME: This is really bad if file names have %.  We need
+    // something more robust (such using real C++ here instead of C
+    // buffers).
+    o << "!!! " << e->loc() << ": " << fmt << '\n';
+    return c->sendf (cmd->getTag(), o.str ().c_str(), args);
+  }
+
+  UErrorValue
+  send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
+	      const char* fmt, ...)
+    __attribute__ ((__format__ (__printf__, 4, 5)));
+
+  UErrorValue
+  send_error (UConnection* c, const UCommand* cmd, const UExpression* e,
+	      const char* fmt, ...)
+  {
+    va_list args;
+    va_start(args, fmt);
+    return send_error (c, cmd, e, fmt, args);
+  }
+
+}
+
 MEMORY_MANAGER_INIT(UExpression);
 // **************************************************************************
 //! UExpression base constructor called by every specific constructor.
@@ -62,9 +108,7 @@ void UExpression::initialize()
   issofttest	   = false;
   staticcache	   = 0;
   tmp_value	   = 0;
-
-  this->softtest_time = 0;
-
+  softtest_time = 0;
   dataType  = DATA_UNKNOWN;
 }
 
@@ -72,15 +116,15 @@ void UExpression::initialize()
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, ufloat val)
+UExpression::UExpression(const location& l,
+			 UExpression::Type t, ufloat v)
+ : UAst(l)
 {
+  assert (t == VALUE);
   initialize();
-
-  this->val  = val;
-  assert (type == VALUE);
-  this->type = type;
-  this->isconst = true;
-
+  val  = v;
+  type = t;
+  isconst = true;
   dataType   = DATA_NUM;
 }
 
@@ -89,13 +133,15 @@ UExpression::UExpression(UExpression::Type type, ufloat val)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, UString *str)
+UExpression::UExpression(const location& l,
+			 UExpression::Type t, UString *s)
+ : UAst(l)
 {
+  assert (t == VALUE | t == GROUP);
   initialize();
-  this->str  = str;
-  assert (type == VALUE);
-  this->type = type;
-  this->isconst = true;
+  str = s;
+  type = t;
+  isconst = true;
   dataType   = DATA_STRING;
 }
 
@@ -103,19 +149,19 @@ UExpression::UExpression(UExpression::Type type, UString *str)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, UValue *v)
+UExpression::UExpression(const location& l, UExpression::Type t, UValue *v)
+ : UAst(l)
 {
   initialize();
-
-  assert (type == VALUE);
-  this->type = type;
-  this->isconst = true;
+  assert (t == VALUE);
+  type = t;
+  isconst = true;
   dataType   = v->dataType;
 
   if (v->dataType == DATA_NUM)
-    this->val  = v->val;
+    val  = v->val;
   else if (v->dataType == DATA_STRING)
-    this->str = v->str->copy();
+    str = v->str->copy();
   else
   {
     tmp_value = v;
@@ -127,9 +173,10 @@ UExpression::UExpression(UExpression::Type type, UValue *v)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UString *oper,
 			 UVariableName *variablename)
+ : UAst(l)
 {
   initialize();
   this->str	     = oper;
@@ -145,7 +192,9 @@ UExpression::UExpression(UExpression::Type type,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
+UExpression::UExpression(const location& l,
+			 UExpression::Type type, UVariableName* variablename)
+ : UAst(l)
 {
   initialize();
   this->type	 = type; // should be VARIABLE or
@@ -159,9 +208,10 @@ UExpression::UExpression(UExpression::Type type, UVariableName* variablename)
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UVariableName* variablename,
 			 UNamedParameters *parameters)
+ : UAst(l)
 {
   initialize();
   this->type	     = type; // should be FUNCTION
@@ -174,8 +224,9 @@ UExpression::UExpression(UExpression::Type type,
 /*! The parameter 'type' is required here only for the sake of uniformity
  between all the different constructors.
  */
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UNamedParameters *parameters)
+  : UAst(l)
 {
   initialize();
   this->type	     = type; // should be LIST
@@ -184,9 +235,10 @@ UExpression::UExpression(UExpression::Type type,
 }
 
 //! UExpression constructor for composed operation
-UExpression::UExpression(UExpression::Type type,
+UExpression::UExpression(const location& l, UExpression::Type type,
 			 UExpression* expression1,
 			 UExpression* expression2)
+ : UAst(l)
 {
   initialize();
   this->type	    = type;
@@ -220,6 +272,10 @@ UExpression::UExpression(UExpression::Type type,
       case EXP:
 	val = pow (expression1->val , expression2->val);
 	break;
+      default:
+	// This case is not possible, but GCC does not seem to be
+	// able to infer it.
+	assert (!"not reachable");
     }
 
     this->type = VALUE;
@@ -247,16 +303,18 @@ UExpression::UExpression(UExpression::Type type,
 }
 
 //! UExpression constructor.
-UExpression::UExpression (UExpression::Type _type, UExpression* _expression1,
-			  UExpression* _expression2,
-			  UVariableName* _variablename,
-			  UNamedParameters* _parameters, UString* _str,
-			  UString* _id, UExpression* _softtest_time,
-			  UValue* _staticcache, UDataType _dataType,
-			  ufloat _val, bool _isconst,
-			  bool _issofttest, bool _firsteval,
-			  UValue* _tmp_value)
-  : type (_type), dataType (_dataType), val (_val), str (_str),
+UExpression::UExpression(const location& l,
+			 UExpression::Type _type, UExpression* _expression1,
+			 UExpression* _expression2,
+			 UVariableName* _variablename,
+			 UNamedParameters* _parameters, UString* _str,
+			 UString* _id, UExpression* _softtest_time,
+			 UValue* _staticcache, UDataType _dataType,
+			 ufloat _val, bool _isconst,
+			 bool _issofttest, bool _firsteval,
+			 UValue* _tmp_value)
+  : UAst(l),
+    type (_type), dataType (_dataType), val (_val), str (_str),
     tmp_value (_tmp_value), id (_id), firsteval (_firsteval),
     isconst (_isconst), issofttest (_issofttest),staticcache (_staticcache),
     expression1 (_expression1), expression2 (_expression2),
@@ -282,9 +340,10 @@ UExpression::~UExpression()
 
 //! UExpression hard copy function
 UExpression*
-UExpression::copy()
+UExpression::copy() const
 {
-  return new UExpression (type, ucopy (expression1), ucopy (expression2),
+  return new UExpression (loc(),
+			  type, ucopy (expression1), ucopy (expression2),
 			  ucopy (variablename), ucopy (parameters),
 			  ucopy (str), ucopy (id), ucopy (softtest_time),
 			  ucopy (staticcache), dataType, val, isconst,
@@ -301,31 +360,41 @@ UExpression::copy()
     }						\
   } while (0)
 
+#define UDEBUG_EXPR_I(What)			\
+  do {						\
+    if (What)					\
+    {						\
+      ::urbiserver->debug(#What "= {");		\
+      What->print(t+3);				\
+      ::urbiserver->debug("} ");		\
+    }						\
+  } while (0)
+
 //! Print the expression
 /*! This function is for debugging purpose only.
  It is not safe, efficient or crash proof. A better version will come later.
  */
 void
-UExpression::print()
+UExpression::print(unsigned t)
 {
-  ::urbiserver->debug("[Type:E%d ", type);
+  debug(t, "[Type:E%d ", type);
   if (isconst)
-    ::urbiserver->debug("(const) ");
+    debug("(const) ");
   if (type == VALUE && dataType == DATA_NUM)
   {
     std::ostringstream tstr;
-    tstr << "val="<<val<<" ";
-    ::urbiserver->debug(tstr.str().c_str());
+    tstr << "val=" << val << " ";
+    debug("%s", tstr.str().c_str());
   }
   if (str)
-    ::urbiserver->debug("str='%s' ", str->str());
+    debug("str='%s' ", str->str());
   if (id)
-    ::urbiserver->debug("id='%s' ", id->str());
-  UDEBUG_EXPR (expression1);
-  UDEBUG_EXPR (expression2);
+    debug("id='%s' ", id->str());
+  UDEBUG_EXPR_I (expression1);
+  UDEBUG_EXPR_I (expression2);
   UDEBUG_EXPR (variablename);
   UDEBUG_EXPR (parameters);
-  ::urbiserver->debug("] ");
+  debug("] ");
 }
 
 //! UExpression evaluation.
@@ -354,6 +423,7 @@ UExpression::eval (UCommand *command,
     if (!e1 || e1->dataType != Type1)		\
     {						\
       delete e1;				\
+      send_error(connection, command, this, "Invalid type"); \
       return 0;					\
     }						\
   } while (0)
@@ -365,6 +435,7 @@ UExpression::eval (UCommand *command,
     {						\
       delete e1;				\
       delete e2;				\
+      send_error(connection, command, this, "Invalid type"); \
       return 0;					\
     }						\
   } while (0)
@@ -378,24 +449,24 @@ UExpression::eval (UCommand *command,
       delete e1;				\
       delete e2;				\
       delete e3;				\
+      send_error(connection, command, this, "Invalid type"); \
       return 0;					\
     }						\
   } while (0)
 
 /// If Kind is non null, require that \a Lhs and \a Rhs be defined.
-#define ENSURE_COMPARISON(Kind, Lhs, Rhs)			\
-  do {								\
-    if (*Kind							\
-	&& !(Lhs && Lhs->dataType == DATA_NUM			\
-	     && Rhs && Rhs->dataType == DATA_NUM))		\
-    {								\
-      connection->send("!!! " Kind " comparisons must be"	\
-		       " between numerical values\n",		\
-		       command->getTag().c_str());		\
-      delete Lhs;						\
-      delete Rhs;						\
-      return 0;							\
-    }								\
+#define ENSURE_COMPARISON(Kind, Lhs, Rhs)				\
+  do {									\
+    if (*Kind								\
+	&& !(Lhs && Lhs->dataType == DATA_NUM				\
+	     && Rhs && Rhs->dataType == DATA_NUM))			\
+    {									\
+      send_error(connection, command, this,				\
+		 Kind " comparisons must be between numerical values");	\
+      delete Lhs;							\
+      delete Rhs;							\
+      return 0;								\
+    }									\
   } while (0)
 
 
@@ -423,116 +494,10 @@ UExpression::eval (UCommand *command,
   switch (type)
   {
     case LIST:
-    {
-      UValue* ret = new UValue();
-      ret->dataType = DATA_LIST;
-      UNamedParameters *pevent = parameters;
-      UValue* e1 = ret;
-      if (pevent)
-      {
-	e1->liststart = pevent->expression->eval(command, connection);
-
-	if (!e1->liststart)
-	{
-	  delete ret;
-	  return 0;
-	}
-
-	if (e1->liststart->dataType == DATA_OBJ)
-	{
-	  connection->send("!!! Objects not allowed in lists with Kernel 1. "
-			   "Use lists of keys and object maps instead\n",
-			   command->getTag().c_str());
-	  delete ret;
-	  return 0;
-	}
-
-	e1 = e1->liststart;
-	pevent = pevent->next;
-      }
-
-      while (pevent)
-      {
-	e1->next = pevent->expression->eval(command, connection);
-	if (e1->next==0)
-	{
-	  delete ret;
-	  return 0;
-	}
-	if (e1->next->dataType == DATA_OBJ)
-	{
-	  connection->send("!!! Objects not allowed in lists with Kernel 1. "
-			   "Use lists of keys and object maps instead\n",
-			   command->getTag().c_str());
-	  delete ret;
-	  return 0;
-	}
-
-	pevent = pevent->next;
-	e1 = e1->next;
-      }
-      return ret;
-    }
+      return eval_LIST (command, connection);
 
     case GROUP:
-    {
-      UValue* ret = new UValue();
-      HMgrouptab::iterator retr = connection->server->grouptab.find(str->str());
-      if (retr !=  connection->server->grouptab.end())
-      {
-	ret->dataType = DATA_LIST;
-	UValue* e1 = 0;
-	std::list<UString*>::iterator it = retr->second->members.begin();
-	if (it !=  retr->second->members.end())
-	{
-	  UExpression *e = new UExpression (GROUP, (*it)->copy());
-	  UValue* e2 = e->eval(command, connection);
-	  delete e;
-	  if (e2->dataType == DATA_VOID)
-	  {
-	    ret->liststart = new UValue((*it)->str());
-	    delete e2;
-	  }
-	  else
-	  {
-	    delete ret;
-	    ret = e2;
-	  }
-
-	  e1 = ret->liststart;
-	  while (e1->next)
-	    e1 = e1->next;
-	  ++it;
-	}
-
-	while (it !=  retr->second->members.end())
-	{
-	  UExpression *e = new UExpression (GROUP, (*it)->copy());
-	  UValue* e2 = e->eval(command, connection);
-	  delete e;
-	  if (e2->dataType == DATA_VOID)
-	  {
-	    e1->next = new UValue((*it)->str());
-	    delete e2;
-	    e1 = e1->next;
-	  }
-	  else
-	  {
-	    UValue* e3 = e2;
-	    e2 = e2->liststart;
-	    while (e2)
-	    {
-	      e1->next = e2->copy();
-	      e1 = e1->next;
-	      e2 = e2->next;
-	    }
-	    delete e3;
-	  }
-	  ++it;
-	}
-      }
-      return ret;
-    }
+      return eval_GROUP (command, connection);
 
     case VALUE:
     {
@@ -570,12 +535,9 @@ UExpression::eval (UCommand *command,
 	return 0;
       if (!variable)
       {
-	char errorString[256];
-	snprintf(errorString, sizeof errorString,
-		 "!!! Unknown identifier: %s\n",
-		 variablename->getFullname()->str());
-
-	connection->send(errorString, command->getTag().c_str());
+	send_error(connection, command, this,
+		   "Unknown identifier: %s",
+		   variablename->getFullname()->str());
 	return 0;
       }
 
@@ -630,13 +592,9 @@ UExpression::eval (UCommand *command,
 	return ret;
       }
 
-      char errorString[256];
-      snprintf(errorString, sizeof errorString, "!!! Unknown property: %s\n",
-	       str->str());
-
-      connection->send(errorString, command->getTag().c_str());
+      send_error(connection, command, this,
+		 "Unknown property: %s", str->str());
       return 0;
-
     }
 
     case FUNCTION:
@@ -650,8 +608,12 @@ UExpression::eval (UCommand *command,
       if (e1==0 || e1->dataType == DATA_VOID ||
 	  e2==0 || e2->dataType == DATA_VOID)
       {
+	if (e1 && e1->dataType == DATA_VOID
+	    || e2 && e2->dataType == DATA_VOID)
+	  send_error(connection, command, this, "Invalid type");
 	delete e1;
 	delete e2;
+
 	return 0;
       }
       UValue* ret = e1->add(e2);
@@ -699,7 +661,7 @@ UExpression::eval (UCommand *command,
 
       if (e2->val == 0)
       {
-	connection->send("!!! Division by zero\n", command->getTag().c_str());
+	send_error(connection, command, this, "Division by zero");
 	return 0;
       }
 
@@ -734,8 +696,10 @@ UExpression::eval (UCommand *command,
 	UBinary *b = new UBinary(ret->refBinary->ref()->bufferSize, 0);
 	if (!b || b->buffer == 0)
 	  return 0;
-	b->parameters = ret->refBinary->ref()->parameters->copy();
-
+	if (ret->refBinary->ref()->parameters)
+	  b->parameters = ret->refBinary->ref()->parameters->copy();
+	else
+	  b->parameters = 0;
 	libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
 	if (!ref)
 	  return 0;
@@ -810,7 +774,7 @@ UExpression::eval (UCommand *command,
       ENSURE_COMPARISON ("Approximate", e1, e2);
       if (e2->val == 0 || e1->val == 0)
       {
-	connection->send("!!! Division by zero\n", command->getTag().c_str());
+	send_error(connection, command, this, "Division by zero");
 	return 0;
       }
 
@@ -888,12 +852,17 @@ UExpression::eval (UCommand *command,
 
       delete e1;
       if (ec1)
-	ec = new UEventCompound (EC_BANG, ec1);
+	ec = new UEventCompound (UEventCompound::EC_BANG, ec1);
       return ret;
     }
 
-#define EVAL_BIN_BOOLEAN(Op, Command)				\
+#define EVAL_BIN_BOOLEAN(Op, Command, OpAbort)				\
     {									\
+      UValue* ret = new UValue();					\
+      if (!ret)								\
+	return 0;							\
+      ret->dataType = DATA_NUM;						\
+									\
       UEventCompound* ec1 = 0;						\
       UValue* e1 = expression1->eval(command, connection, ec1);		\
       if (!e1)								\
@@ -902,10 +871,14 @@ UExpression::eval (UCommand *command,
 	return 0;							\
       }									\
 									\
-      UValue* ret = new UValue();					\
-      if (!ret)								\
-	return 0;							\
-      ret->dataType = DATA_NUM;						\
+      if ((int)e1->val OpAbort 0)					\
+      {                                                                 \
+	if (ec1)                                                        \
+	  ec = ec1;                                                     \
+	ret->val =  (ufloat) (true OpAbort false);                      \
+	delete e1;                                                      \
+	return ret;                                                     \
+      }                                                                 \
 									\
       UEventCompound* ec2 = 0;						\
       UValue* e2 = expression2->eval(command, connection, ec2);		\
@@ -938,10 +911,10 @@ UExpression::eval (UCommand *command,
     }
 
     case TEST_AND:
-      EVAL_BIN_BOOLEAN(&&, EC_AND);
+      EVAL_BIN_BOOLEAN(&&, UEventCompound::EC_AND, ==);
 
     case TEST_OR:
-      EVAL_BIN_BOOLEAN(||, EC_OR);
+      EVAL_BIN_BOOLEAN(||, UEventCompound::EC_OR, !=);
 
 #undef EVAL_BIN_BOOLEAN
     default:
@@ -949,10 +922,94 @@ UExpression::eval (UCommand *command,
   }
 }
 
+
+UValue*
+UExpression::eval_FUNCTION_EVAL_OR_LOAD (UCommand* command,
+					 UConnection* connection)
+{
+#ifdef ENABLE_DEBUG_TRACES
+  PING();
+  if (command)
+    command->print (10);
+  PING();
+#endif
+
+  assert (STREQ(variablename->id->str(), "exec")
+          || STREQ(variablename->id->str(), "eval")
+	  || STREQ(variablename->id->str(), "load"));
+
+  bool in_load = STREQ(variablename->id->str(), "load");
+  UValue* e1 = parameters->expression->eval(command, connection);
+  ENSURE_TYPES_1 (DATA_STRING);
+
+  // send string in the queue
+  ::urbiserver->systemcommands = false;
+  if (!connection->stack.empty())
+    connection->functionTag = new UString("__Funct__");
+  UParser& p = connection->parser();
+
+  ECHO("Parsing " << variablename->id->str() << ':' << e1->str->str());
+
+  if (in_load)
+    p.process (::urbiserver->find_file (e1->str->str()));
+  else
+    p.process(reinterpret_cast<const ubyte*>(e1->str->str()),
+	      e1->str->len());
+
+#ifdef ENABLE_DEBUG_TRACES
+  ECHO("Parsed " << variablename->id->str() << ':' << e1->str->str());
+  if (p.commandTree)
+    p.commandTree->print (3);
+#endif
+
+  if (connection->functionTag)
+    {
+      delete connection->functionTag;
+      connection->functionTag = 0;
+    }
+  ::urbiserver->systemcommands = true;
+
+  // FIXME: Errors and warning are already reported in UConnection.
+  //        Are these two blocks dead-code?
+  if (p.errorMessage[0])
+    {
+      // a parsing error occured
+      if (p.commandTree)
+	{
+	  delete p.commandTree;
+	  p.commandTree = 0;
+	}
+      connection->send(p.errorMessage, "error");
+    }
+
+  if (p.warning[0])
+    // a warning was emitted
+    connection->send(p.warning, "warn ");
+
+  if (p.commandTree)
+    {
+      command->morph = p.commandTree;
+      command->persistant = false;
+      p.commandTree = 0;
+    }
+  else
+    {
+      send_error(connection, command, this,
+		 (in_load
+		  ? "Error loading file: %s"
+		  : "Error parsing string: %s"),
+		 e1->str->str());
+      return 0;
+    }
+
+  delete e1;
+  return new UValue();
+}
+
 UValue*
 UExpression::eval_FUNCTION (UCommand *command,
-				 UConnection *connection,
-				 UEventCompound*& ec)
+			    UConnection *connection,
+			    UEventCompound*& ec)
 {
   assert (type == FUNCTION);
   UString* funname = variablename->buildFullname(command, connection);
@@ -1013,10 +1070,8 @@ UExpression::eval_FUNCTION (UCommand *command,
       if (connection->server->saveFile(e1->str->str(),
 				       e2->str->str()) == UFAIL)
       {
-	char errorString[256];
-	snprintf(errorString, sizeof errorString,
-		 "!!! Cannot save to the file %s\n", e1->str->str());
-	connection->send(errorString, command->getTag().c_str());
+	send_error(connection, command, this, "Cannot save to the file %s",
+		   e1->str->str());
 	delete ret;
 	ret = 0;
       }
@@ -1042,8 +1097,7 @@ UExpression::eval_FUNCTION (UCommand *command,
       UValue* ret = 0;
       if (!e3)
       {
-	connection->send("!!! Index out of range\n",
-			 command->getTag().c_str());
+	send_error(connection, command, this, "Index out of range");
 	ret = 0;
       }
       else
@@ -1227,10 +1281,8 @@ UExpression::eval_FUNCTION (UCommand *command,
       if (connection->server->loadFile(e1->str->str(),
 				       loadQueue) == UFAIL)
       {
-	char errorString[256];
-	snprintf(errorString, sizeof errorString,
-		 "!!! Cannot load the file %s\n", e1->str->str());
-	connection->send(errorString, command->getTag().c_str());
+	send_error(connection, command, this,
+		   "Cannot load the file %s", e1->str->str());
 	delete ret;
 	delete loadQueue;
 	ret = 0;
@@ -1240,7 +1292,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 	UBinary *b =
 	  new UBinary(loadQueue->dataSize(),
 		      new UNamedParameters
-		      (new UExpression(VALUE,
+		      (new UExpression(loc(), VALUE,
 				       new UString("wav")),
 		       0));
 	memcpy(b->buffer,
@@ -1255,72 +1307,15 @@ UExpression::eval_FUNCTION (UCommand *command,
     }
 
 
-    // Exec and load are exactly the same thing with one difference:
-    // exec parse the string, and load, the file whose name is given.
+    // Eval and load are exactly the same thing with one difference:
+    // eval parse the string, and load the file whose name is given.
     if (STREQ(variablename->id->str(), "exec")
-	|| STREQ(variablename->id->str(), "load"))
+	|| STREQ(variablename->id->str(), "eval")
+        || STREQ(variablename->id->str(), "load"))
     {
-      bool in_load = STREQ(variablename->id->str(), "load");
-      UValue* e1 = parameters->expression->eval(command, connection);
-      ENSURE_TYPES_1 (DATA_STRING);
-      UValue* ret = new UValue();
-      ret->dataType = DATA_VOID;
-
-      // send string in the queue
-      ::urbiserver->systemcommands = false;
-      if (!connection->stack.empty())
-	connection->functionTag = new UString("__Funct__");
-      UParser& p = connection->parser();
-      if (in_load)
-      {
-	std::string f = ::urbiserver->find_file (e1->str->str());
-	p.process (f.c_str ());
-      }
-      else
-      {
-	p.process((ubyte*)e1->str->str(), e1->str->len());
-      }
-
-      if (connection->functionTag)
-      {
-	delete connection->functionTag;
-	connection->functionTag=0;
-      }
-      ::urbiserver->systemcommands = true;
-
-      if (p.errorMessage[0])
-      {
-	// a parsing error occured
-	if (p.commandTree)
-	{
-	  delete p.commandTree;
-	  p.commandTree = 0;
-	}
-	connection->send(p.errorMessage, "error");
-      }
-
-      if (p.commandTree)
-      {
-	command->morph = p.commandTree;
-	command->persistant = false;
-	p.commandTree = 0;
-      }
-      else
-      {
-	if (in_load)
-	  connection->sendf(command->getTag(),
-			    "!!! Error loading file: %s\n",
-			    e1->str->str());
-	else
-	  connection->sendf(command->getTag(),
-			    "!!! Error parsing string: %s\n",
-			    e1->str->str());
-	delete ret;
-	ret = 0;
-      }
-
-      delete e1;
-      return ret;
+      if (STREQ(variablename->id->str(), "exec"))
+        connection->send("The 'exec' function is deprecated. Use 'eval' instead.\n", "warn ");
+      return eval_FUNCTION_EVAL_OR_LOAD (command, connection);
     }
   }
 
@@ -1423,7 +1418,13 @@ UExpression::eval_FUNCTION (UCommand *command,
     else if (STREQ(variablename->id->str(), "abs"))
       ret->val = fabs(e1->val);
     else if (STREQ(variablename->id->str(), "random"))
-      ret->val = (rand()%(int)e1->val);
+    {
+      int range =  (int)e1->val;
+      if (range)
+	ret->val = rand()%range;
+      else
+	ret->val = 0;
+    }
     else if (STREQ(variablename->id->str(), "round"))
     {
       if (e1->val>=0)
@@ -1441,8 +1442,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     {
       if (e1->val<0)
       {
-	connection->send("!!! Negative square root\n",
-			 command->getTag().c_str());
+	send_error(connection, command, this, "Negative square root");
 	return 0;
       }
       ret->val = sqrt(e1->val);
@@ -1451,8 +1451,7 @@ UExpression::eval_FUNCTION (UCommand *command,
     {
       if (e1->val<0)
       {
-	connection->send("!!! Negative logarithm\n",
-			 command->getTag().c_str());
+	send_error(connection, command, this, "Negative logarithm");
 	return 0;
       }
       ret->val = log(e1->val);
@@ -1469,30 +1468,149 @@ UExpression::eval_FUNCTION (UCommand *command,
     ::urbiserver->functiontab.find(funname->str());
   if (hmf != ::urbiserver->functiontab.end())
   {
-    connection->send("!!! Custom function call in expressions"
-		     " not allowed in kernel 1\n",
-		     command->getTag().c_str());
+    send_error(connection, command, this,
+	       "Custom function call in expressions"
+	       " not allowed in kernel 1");
     return 0;
   }
 
 
-  char errorString[256];
-  if (parameters)
-    snprintf(errorString, sizeof errorString,
-	     "!!! Error with function eval: %s [nb param=%d]\n",
-	     variablename->getFullname()->str(), parameters->size());
+  //accept callse to module-defined functions
+  UValue * v = command->tryModuleCall(funname->str(),
+    parameters, connection);
+  if (!v)
+  {
+    send_error(connection, command, this,
+      "Error with function eval: %s [nb param=%d]",
+      variablename->getFullname()->str(),
+      parameters ? parameters->size() : 0);
+    return 0;
+  }
   else
-    snprintf(errorString, sizeof errorString,
-	     "!!! Error with function eval: %s [no param]\n",
-	     variablename->getFullname()->str());
-  connection->send(errorString, command->getTag().c_str());
-  return 0;
+    return v;
+}
+
+
+UValue*
+UExpression::eval_GROUP (UCommand *command, UConnection *connection)
+{
+  assert (type == GROUP);
+  UValue* ret = new UValue();
+  HMgrouptab::iterator retr = connection->server->grouptab.find(str->str());
+  if (retr != connection->server->grouptab.end())
+  {
+    ret->dataType = DATA_LIST;
+    UValue* e1 = 0;
+    std::list<UString*>::iterator it = retr->second->members.begin();
+    if (it !=  retr->second->members.end())
+    {
+      UExpression *e = new UExpression (loc(), GROUP, (*it)->copy());
+      UValue* e2 = e->eval(command, connection);
+      delete e;
+      if (e2->dataType == DATA_VOID)
+      {
+	ret->liststart = new UValue((*it)->str());
+	delete e2;
+      }
+      else
+      {
+	delete ret;
+	ret = e2;
+      }
+
+      e1 = ret->liststart;
+      while (e1->next)
+	e1 = e1->next;
+      ++it;
+    }
+
+    while (it != retr->second->members.end())
+    {
+      UExpression *e = new UExpression (loc(), GROUP, (*it)->copy());
+      UValue* e2 = e->eval(command, connection);
+      delete e;
+      if (e2->dataType == DATA_VOID)
+      {
+	e1->next = new UValue((*it)->str());
+	delete e2;
+	e1 = e1->next;
+      }
+      else
+      {
+	UValue* e3 = e2;
+	e2 = e2->liststart;
+	while (e2)
+	{
+	  e1->next = e2->copy();
+	  e1 = e1->next;
+	  e2 = e2->next;
+	}
+	delete e3;
+      }
+      ++it;
+    }
+  }
+  return ret;
+}
+
+UValue*
+UExpression::eval_LIST (UCommand *command, UConnection *connection)
+{
+  assert (type == LIST);
+  UValue* ret = new UValue();
+  ret->dataType = DATA_LIST;
+  UNamedParameters *pevent = parameters;
+  UValue* e1 = ret;
+  if (pevent)
+  {
+    e1->liststart = pevent->expression->eval(command, connection);
+
+    if (!e1->liststart)
+    {
+      delete ret;
+      return 0;
+    }
+
+    if (e1->liststart->dataType == DATA_OBJ)
+    {
+      send_error(connection, command, this,
+		 "Objects not allowed in lists with Kernel 1. "
+		 "Use lists of keys and object maps instead");
+      delete ret;
+      return 0;
+    }
+
+    e1 = e1->liststart;
+    pevent = pevent->next;
+  }
+
+  while (pevent)
+  {
+    e1->next = pevent->expression->eval(command, connection);
+    if (e1->next==0)
+    {
+      delete ret;
+      return 0;
+    }
+    if (e1->next->dataType == DATA_OBJ)
+    {
+      send_error(connection, command, this,
+		 "Objects not allowed in lists with Kernel 1. "
+		 "Use lists of keys and object maps instead");
+      delete ret;
+      return 0;
+    }
+
+    pevent = pevent->next;
+    e1 = e1->next;
+  }
+  return ret;
 }
 
 UValue*
 UExpression::eval_VARIABLE (UCommand *command,
-				 UConnection *connection,
-				 UEventCompound*& ec)
+			    UConnection *connection,
+			    UEventCompound*& ec)
 {
   assert (type == VARIABLE);
   UVariable *variable = variablename->getVariable(command, connection);
@@ -1535,12 +1653,9 @@ UExpression::eval_VARIABLE (UCommand *command,
 	searchVariable(variablename->getMethod()->str(), ambiguous);
       if (ambiguous)
       {
-	char errorString[256];
-	snprintf(errorString, sizeof errorString,
-		 "!!! Ambiguous multiple inheritance on variable %s\n",
-		 variablename->getFullname()->str());
-	connection->send(errorString,
-			 command->getTag().c_str());
+	send_error(connection, command, this,
+		   "Ambiguous multiple inheritance on variable %s",
+		   variablename->getFullname()->str());
 	return new UValue();
       }
 
@@ -1607,8 +1722,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	    }
 	    if (!xval)
 	    {
-	      connection->send("!!! Index out of range\n",
-			       command->getTag().c_str());
+	      send_error(connection, command, this, "Index out of range");
 	      return new UValue();
 	    }
 	    else
@@ -1617,8 +1731,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 	      {
 		if (xval->dataType != DATA_LIST)
 		{
-		  connection->send("!!! Invalid index usage\n",
-				   command->getTag().c_str());
+		  send_error(connection, command, this, "Invalid index usage");
 		  return new UValue();
 		}
 		else
@@ -1643,10 +1756,8 @@ UExpression::eval_VARIABLE (UCommand *command,
 	p[0] = '_';
     }
 
-    char errorString[256];
-    snprintf(errorString, sizeof errorString, "!!! Unknown identifier: %s\n",
-	     variablename->getFullname()->str());
-    connection->send(errorString, command->getTag().c_str());
+    send_error(connection, command, this, "Unknown identifier: %s",
+	       variablename->getFullname()->str());
     return 0;
   }
 
@@ -1672,13 +1783,10 @@ UExpression::eval_VARIABLE (UCommand *command,
 	  variable->rangemax ==  UINFINITY ||
 	  variable->value->dataType != DATA_NUM)
       {
-	char errorString[256];
-	snprintf(errorString, sizeof errorString,
-		 "!!! Impossible to normalize:"
-		 " no range defined for variable %s\n",
-		 variablename->getFullname()->str());
-
-	connection->send(errorString, command->getTag().c_str());
+	send_error(connection, command, this,
+		   "Impossible to normalize: "
+		   "no range defined for variable %s",
+		   variablename->getFullname()->str());
 	return 0;
       }
 
@@ -1686,23 +1794,29 @@ UExpression::eval_VARIABLE (UCommand *command,
 	(variable->rangemax - variable->rangemin);
     }
 
-    if (variablename->deriv != UNODERIV)
+    if (variablename->deriv != UVariableName::UNODERIV)
     {
       if (variable->autoUpdate)
       {
-	if (variablename->deriv == UTRUEDERIV)
-	  variablename->deriv = UDERIV;
-	if (variablename->deriv == UTRUEDERIV2)
-	  variablename->deriv = UDERIV2;
+	if (variablename->deriv == UVariableName::UTRUEDERIV)
+	  variablename->deriv = UVariableName::UDERIV;
+	if (variablename->deriv == UVariableName::UTRUEDERIV2)
+	  variablename->deriv = UVariableName::UDERIV2;
       }
 
       switch (variablename->deriv)
       {
-	case UDERIV:
+	case UVariableName::UNODERIV:
+	  // Impossible case, but GCC cannot infer it.
+	  assert (!"not reachable");
+
+	case UVariableName::UDERIV:
 	  ret->val = 1000. * (variable->previous - variable->previous2)/
 	    (::urbiserver->previousTime - ::urbiserver->previous2Time);
 	  break;
-	case UDERIV2: ret->val = 1000000. * 2 *
+
+	case UVariableName::UDERIV2:
+	  ret->val = 1000000. * 2 *
 	    ( variable->previous  * (::urbiserver->previous2Time-
 				     ::urbiserver->previous3Time)
 	      - variable->previous2 *(::urbiserver->previousTime-
@@ -1719,12 +1833,16 @@ UExpression::eval_VARIABLE (UCommand *command,
 			  - ::urbiserver->previous2Time) );
 
 	  break;
-	case UTRUEDERIV: ret->val = 1000. *
+
+	case UVariableName::UTRUEDERIV:
+	  ret->val = 1000. *
 	    (variable->get()->val - variable->valPrev)/
 	    (::urbiserver->currentTime
 	     - ::urbiserver->previousTime);
 	  break;
-	case UTRUEDERIV2: ret->val = 1000000. * 2 *
+
+	case UVariableName::UTRUEDERIV2:
+	  ret->val = 1000000. * 2 *
 	    ( variable->get()->val	*
 	      (::urbiserver->previousTime -
 	       ::urbiserver->previous2Time) -
@@ -1814,9 +1932,9 @@ UExpression::asyncScan(UASyncCommand *cmd,
 
 	  if (variable)
 	  {
-	    c->send("!!! Pure virtual variables not allowed"
-		    " in asynchronous tests.\n",
-		    cmd->getTag().c_str());
+	    send_error(c, cmd, this,
+		       "Pure virtual variables not allowed"
+		       " in asynchronous tests.");
 	    return UFAIL;
 	  }
 	}

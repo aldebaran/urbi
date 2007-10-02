@@ -48,13 +48,8 @@ extern  int   availableMemory;
 
 // FIXME: Why applying the 1.15 threshold here instead of where we
 // consult usedMemory?
-#if 0
 # define ADDMEM(X)   usedMemory += (int) ((X) * 1.15)
-# define FREEMEM(X)  ADDMEM (-(X))
-#else
-# define ADDMEM(x)   {usedMemory += ((int)(x*1.15));}
-# define FREEMEM(x)  {usedMemory -= ((int)(x*1.15));}
-#endif
+# define FREEMEM(X)  usedMemory -= (int) ((X) * 1.15)
 
 # define ADDOBJ(X)   ADDMEM (sizeof (X))
 # define FREEOBJ(X)  FREEMEM (sizeof (X))
@@ -110,52 +105,12 @@ enum UBindType
   UBIND_OBJECT
 };
 
-/// Type of defs in UCommand_DEF
-enum UDefType
-{
-  UDEF_FUNCTION,
-  UDEF_VAR,
-  UDEF_VARS,
-  UDEF_EVENT,
-  UDEF_QUERY
-};
-
-/// Type of Derivative
-enum UDeriveType
-{
-  UNODERIV,
-  UDERIV,
-  UDERIV2,
-  UTRUEDERIV,
-  UTRUEDERIV2
-};
-
-
 /// Results of a test
 enum UTestResult
 {
   UFALSE,
   UTRUE,
   UTESTFAIL
-};
-
-/// Possible status for a UCommand
-enum UCommandStatus
-{
-  UONQUEUE,
-  URUNNING,
-  UCOMPLETED,
-  UBACKGROUND,
-  UMORPH
-};
-
-
-enum UEventCompoundType
-{
-  EC_MATCH,
-  EC_AND,
-  EC_OR,
-  EC_BANG
 };
 
 /// The different Data types
@@ -224,6 +179,7 @@ typedef libport::hash_map_type<const char*, UObj*>::type HMobjtab;
 typedef libport::hash_map_type<const char*, UGroup*>::type HMgrouptab;
 typedef libport::hash_map_type<const char*, UString*>::type HMaliastab;
 typedef libport::hash_map_type<const char*, UEventHandler*>::type HMemittab;
+typedef libport::hash_map_type<const char*, int>::type HMemit2tab;
 typedef libport::hash_map_type<const char*, UBinder*>::type HMbindertab;
 typedef libport::hash_map_type<const char*, UWaitCounter*>::type HMobjWaiting;
 typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;
@@ -238,7 +194,20 @@ typedef libport::hash_map_type<std::string, TagInfo>::type HMtagtab;
 class TagInfo
 {
   public:
-  TagInfo():frozen(false), blocked(false), parent(0)  {}
+    TagInfo()
+      : frozen(false), blocked(false), parent(0)
+    {}
+
+    TagInfo(const TagInfo& rhs)
+      : frozen(rhs.frozen), blocked(rhs.blocked),
+	commands(rhs.commands), subTags(rhs.subTags), parent(rhs.parent),
+	parentPtr(), name (rhs.name)
+    {
+      // Do not copy singular iterators.
+      if (rhs.parent && rhs.parentPtr != rhs.parent->subTags.end ())
+	parentPtr = rhs.parentPtr;
+    }
+
     bool frozen;
     bool blocked;
     std::list<UCommand*> commands; ///< All commands with this tag

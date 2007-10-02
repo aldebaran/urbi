@@ -22,6 +22,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <cstdarg>
 #include "libport/cstdio"
 #include <list>
+#include <sstream>
 
 #include "uconnection.hh"
 #include "ughostconnection.hh"
@@ -32,6 +33,7 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include "utypes.hh"
 #include "uvalue.hh"
 #include "uvariable.hh"
+#include "ufunction.hh"
 
 #define LIBURBIDEBUG
 
@@ -133,10 +135,27 @@ namespace urbi
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
-				     int size,  UTable &t)
+				     int size,  UTable &t, bool owned)
     : storage(0), objname(objname), name(name)
   {
     nbparam = size;
+
+    // Autodetect redefined members higher in the hierarchy of an object
+    // If one is found, cancel the binding.
+    if  (type == "function")
+    {
+      UObj* srcobj;
+      HMobjtab::iterator it = ::urbiserver->objtab.find(objname.c_str ());
+      if (it != ::urbiserver->objtab.end())
+      {
+        srcobj = it->second;
+        bool ambiguous;
+        std::string member = name.substr (name.find ('.') + 1);
+        UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+        if (fun && fun != kernel::remoteFunction && !ambiguous)
+          return;
+      }
+    }
 
     if (type == "function"
 	|| type== "event"
@@ -150,19 +169,29 @@ namespace urbi
 	  {
 	    UVariable *variable = new UVariable(name.c_str(), new ::UValue());
 	    if (variable)
-	      variable->internalBinder.push_back(this);
+	    {
+	      if (owned)
+	        variable->internalTargetBinder.push_back(this);
+	      else
+		variable->internalBinder.push_back(this);
+	    }
 	  }
 	else
 	{
-	  it->second->internalBinder.push_back(this);
-	  if ( !it->second->internalAccessBinder.empty ()
-	       && std::find (::urbiserver->access_and_change_varlist.begin (),
-			     ::urbiserver->access_and_change_varlist.end (),
-			     it->second) ==
-	       ::urbiserver->access_and_change_varlist.end ())
+	  if (owned)
+	    it->second->internalTargetBinder.push_back(this);
+	  else 
 	  {
-	    it->second->access_and_change = true;
-	    ::urbiserver->access_and_change_varlist.push_back (it->second);
+	    it->second->internalBinder.push_back(this);
+	    if ( !it->second->internalAccessBinder.empty ()
+	      && std::find (::urbiserver->access_and_change_varlist.begin (),
+		::urbiserver->access_and_change_varlist.end (),
+		it->second) ==
+	      ::urbiserver->access_and_change_varlist.end ())
+	    {
+	      it->second->access_and_change = true;
+	      ::urbiserver->access_and_change_varlist.push_back (it->second);
+	    }
 	  }
 	}
       }
@@ -229,15 +258,20 @@ namespace urbi
 
   //! Generic UVar monitoring without callback
   void
-  UObject::USync(UVar &v)
+  UObject::USync(UVar &)
   {
-    UNotifyChange(v, &UObject::voidfun);
+    // nothing to do here, UVars are always sync'd in plugin mode.
   }
 
   // **************************************************************************
   //! UObject constructor.
   UObject::UObject(const std::string &s)
-    : __name(s)
+    : __name(s),
+      classname(s),
+      derived(false),
+      gc (0),
+      remote (false),
+      load(s, "load")
   {
     objecthub = 0;
     autogroup = false;
@@ -252,13 +286,23 @@ namespace urbi
 	tmpobj->internalBinder = (*retr);
 
     // default
-    derived = false;
-    classname = __name;
-
-    UBindVar(UObject, load);
     load = 1;
   }
 
+  //! Dummy UObject constructor.
+  UObject::UObject(int index)
+    : derived(false),
+      gc (0),
+      remote (false)
+  {
+    std::stringstream ss;
+    ss << "dummy" << index;
+    __name = ss.str();
+    classname = __name;
+    objecthub = 0;
+    autogroup = false;
+    period = -1;
+  }
 
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
@@ -336,6 +380,7 @@ namespace urbi
   UObject::~UObject()
   {
     clean();
+    delete gc;
   }
 
   void
@@ -364,6 +409,15 @@ namespace urbi
 				   &UObject::update, updatemap);
   }
 
+  int
+  UObject::send (const std::string& s)
+  {
+    if (!gc)
+      gc = new UGhostConnection (::urbiserver);
+
+    return gc->received (s.c_str ());
+  }
+
   // **************************************************************************
   //! UObjectHub constructor.
 
@@ -374,6 +428,7 @@ namespace urbi
   //! UObjectHub destructor.
   UObjectHub::~UObjectHub()
   {
+    cleanTimerTable(updatemap, name);
   }
 
   void
