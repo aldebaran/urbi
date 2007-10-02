@@ -1,5 +1,10 @@
 2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Fix an invalid assert.
+	* src/runner/runner.cc (operator(Nary)): Here.
+
+2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Change the way results are returned to the connection.
 	* src/ast/ast.yml (Nary): Add a new `toplevel' attribute.
 	* src/runner/runner.hh (emit_result): Remove.

@@ -370,7 +370,7 @@ namespace runner
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
       JECHO ("child", *i);
-      passert (i->second, i->second = ast::flavor_semicolon);
+      passert (i->second, i->second == ast::flavor_semicolon);
       CORO_CALL_CATCH (operator() (*i->first);,
 	catch (object::UrbiException& ue)
 	{
