@@ -292,7 +292,7 @@ UVariableName::buildFullname (UCommand* command,
    #include <string>
    #include <cstdlib>
    #include <iostream>
-   
+
    int main()
    {
      char buf[10];
@@ -343,8 +343,8 @@ UVariableName::buildFullname (UCommand* command,
     if (strchr(e1->str->str(), '.') == 0)
     {
       nostruct = true;
-      if (connection->stack.empty()) 
-	UString::makeName(name, *connection->connectionTag, *e1->str);	
+      if (connection->stack.empty())
+	UString::makeName(name, *connection->connectionTag, *e1->str);
       else
       { //ugly, but optimised with good reasons
 	memcpy(name, "__Funct__",  9);
@@ -579,8 +579,13 @@ UVariableName::buildFullname (UCommand* command,
       hmi = ::urbiserver->aliastab.find(name);
     past_hmi = hmi;
 
+    // If it's an alias
     while (hmi != ::urbiserver->aliastab.end())
     {
+      send_error(connection, command,
+                 (std::string("'") + name +
+                  "' is an alias for '" + hmi->second->str() +
+                  "'. Using aliases is deprecated.").c_str());
       past_hmi = hmi;
       hmi = ::urbiserver->aliastab.find(hmi->second->str());
     }
