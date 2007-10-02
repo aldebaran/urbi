@@ -1560,10 +1560,10 @@ expr:
   TOK_RSHIFT   ">>"
 ;
 
-expr:
-    expr "<<"  expr { $$ = 0; } // FIXME:
-  | expr ">>"  expr { $$ = 0; } // FIXME:
-;
+// expr:
+//     expr "<<"  expr { } // FIXME:
+//   | expr ">>"  expr { } // FIXME:
+// ;
 
 
 /* PARAMETERLIST, PARAMETERS, PARAMETERSERIES */
