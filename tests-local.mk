@@ -30,6 +30,7 @@ events.chk					\
 exec.chk					\
 for-loop.chk					\
 freeze-time.chk					\
+function-declaration.chk			\
 function-delete.chk				\
 function-return.chk				\
 groups.chk					\

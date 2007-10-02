@@ -1,3 +1,9 @@
+2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Disable hard errors.
+	* configure.ac (ENABLE_HARD_ERRORS): New.  Set to false.
+	* tests-local.mk (XFAIL_TESTS): Adjust.
+
 2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Don't add unecessary `Noop' in the AST.

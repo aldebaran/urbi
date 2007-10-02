@@ -21,6 +21,10 @@ URBI_DIRS([engine])
 
 URBI_DOC
 
+# k2 is under heavy development, don't catch SEGV and the like as hard errors
+# while running make check.
+AC_SUBST([ENABLE_HARD_ERRORS], [false])
+
 ## ------------- ##
 ## Compilation.  ##
 ## ------------- ##
