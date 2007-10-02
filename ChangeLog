@@ -1,5 +1,11 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	parent_type is rObject only.
+	* src/object/object.cc, src/object/object.hh, src/object/object.hxx
+	(parent_type): Remove.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	List.size.
 	* src/object/list-class.cc (tail, insert, sort): Fix return type.
 	(size): New.

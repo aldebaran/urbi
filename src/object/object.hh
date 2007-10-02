@@ -58,15 +58,13 @@ namespace object
 
     /// \name The parents.
     /// \{
-    /// The refs to parents.
-    typedef rObject parent_type;
     /// The parents.
-    typedef std::list<parent_type> parents_type;
+    typedef std::list<rObject> parents_type;
 
     /// Add parent.
-    Object& parent_add (const parent_type& p);
+    Object& parent_add (const rObject& p);
     /// Remove parent.
-    Object& parent_remove (const parent_type& p);
+    Object& parent_remove (const rObject& p);
     /// Read only access to parents.
     const parents_type& parents_get () const;
     /// \}

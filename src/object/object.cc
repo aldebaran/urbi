@@ -50,7 +50,7 @@ namespace object
     os.insert (this);
 
     /// Look in parent slots (depth first search).
-    BOOST_FOREACH (parent_type p, parents_)
+    BOOST_FOREACH (rObject p, parents_)
       if (const Object* res = p->which (k, os))
 	return res;
     return 0;
