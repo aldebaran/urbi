@@ -44,10 +44,6 @@ namespace runner
     /// Evaluate a tree and return the \a current_ that results.
     rObject eval (ast::Ast& e);
 
-    /** Send a @a result to the context.  The @a result is not sent if it
-     *  doesn't point to anything.  */
-    void emit_result (rObject result);
-
     // FIXME: For the time being, if there is no target, it is the
     // Connection object which is used, sort of a Lobby for Io.
     rObject target (ast::Exp* n);

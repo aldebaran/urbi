@@ -57,6 +57,9 @@ namespace runner
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
     c.sendc (o.str ().c_str (), "error");
     c.endline ();
+    // Reset the current value: there was an error so whatever value it has,
+    // it must not be used.
+    current_.reset ();
   }
 
   void
@@ -86,16 +89,21 @@ namespace runner
   void
   Runner::finished (Coroutine& coro)
   {
-    ECHO (ME << " join with " << JOB (static_cast<Runner*> (&coro)));
     Runner& r = dynamic_cast<Runner&> (coro);
-    emit_result (r.current_);
-  }
-
-  void
-  Runner::emit_result (rObject result)
-  {
-    if (result.get ())
-      context_->value_get ().connection.new_result (result);
+    ECHO (ME << " join with " << JOB (&r));
+    /*
+     * Alright so for now, we only join other coroutines for the &-operator.
+     * So what this line does is that it fetches the result of that
+     * coroutine (which is about to delete itself).  Admittedly, this line
+     * do better be in the operator (And) but it's been moved here
+     * temporarily due to a small bug in the coroutine implementation: Once
+     * we'll be back to the operator (And) the coroutine which has finished
+     * may have deleted itself and we could be accessing its current_
+     * attribute whereas the object is no longer valid.  So this line will
+     * move to operator (And) once the coroutine properly handle its
+     * lifetime.
+     */
+    current_ = r.current_;
   }
 
   void
@@ -363,14 +371,19 @@ namespace runner
     {
       JECHO ("child", *i);
       passert (i->second, i->second = ast::flavor_semicolon);
-      CORO_CALL_CATCH (operator() (*i->first);
-		       ECHO ("sending result of Nary node");
-		       emit_result (current_);,
+      CORO_CALL_CATCH (operator() (*i->first);,
 	catch (object::UrbiException& ue)
 	{
 	  raise_error_ (ue);
 	  continue;
 	});
+
+      if (e.toplevel_get () && current_.get ())
+      {
+        ECHO ("toplevel: returning a result to the connection.");
+        context_->value_get ().connection.new_result (current_);
+        current_.reset ();
+      }
 
       /* Allow some time to pass before we execute what follows.  If
 	 we don't do this, the ;-operator would act almost like the
@@ -387,7 +400,6 @@ namespace runner
   Runner::operator() (ast::Noop&)
   {
     CORO_WITHOUT_CTX ();
-    current_ = 0;
     CORO_END;
   }
 
@@ -400,26 +412,15 @@ namespace runner
     // lhs
     JECHO ("lhs", e.lhs_get ());
     CORO_CALL (operator() (e.lhs_get()));
-    ECHO ("sending result of lhs");
-    emit_result (current_);
 
+    // Let's just make sure nobody uses this intermediate return value by
+    // trashing it right now.
     current_.reset ();
     assert (current_.get () == 0);
 
     // rhs:  start the execution immediately.
     JECHO ("rhs", e.rhs_get ());
     CORO_CALL (operator() (e.rhs_get()));
-    ECHO ("sending result of rhs");
-    emit_result (current_);
-
-    /* We already returned the result of both our lhs and our rhs so let's
-     * reset the current value to make sure nobody will return it again.  If
-     * this ever becomes a problem (because we might want `a|b' to return
-     * the value of `b') we can leave the value of the rhs in current_
-     * instead of returning it.  I haven't do so ATM because the way it's
-     * done now enforces the URBI semantics.  */
-    current_.reset ();
-    assert (current_.get () == 0);
 
     CORO_END;
   }

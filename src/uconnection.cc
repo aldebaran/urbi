@@ -687,6 +687,12 @@ UConnection::execute ()
   Runner* runner = new Runner(context_,
 			      ::urbiserver->getScheduler (),
 			      active_command_);
+  {
+    // Our active_command_ is a ast::Nary, we must now "tell" it that it's a
+    // top-level Nary so that it can send its results back to the
+    // UConnection.
+    active_command_->toplevel_set (true);
+  }
   ::urbiserver->getScheduler ().schedule_immediately (runner);
 
   // FIXME: 2007-07-20: Currently we can't free the command,

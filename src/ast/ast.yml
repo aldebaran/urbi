@@ -139,6 +139,10 @@ Nary:
         type: 'exec_exps_type'
         desc: Subtrees possibly qualified to be background.
         access: rw
+    - toplevel:
+        type: 'bool'
+        desc: Whether or not this node is a top-level node.
+        access: rW
   printer:
     - $children
   inline:
@@ -213,7 +217,8 @@ Nary:
     impl inside: |2
         Nary::Nary ()
           : Exp (ast::loc()),
-            children_ ()
+            children_ (),
+            toplevel_ (false)
         { }
 
         void

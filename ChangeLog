@@ -1,3 +1,18 @@
+2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Change the way results are returned to the connection.
+	* src/ast/ast.yml (Nary): Add a new `toplevel' attribute.
+	* src/runner/runner.hh (emit_result): Remove.
+	* src/runner/runner.cc (raise_error_): Drop the `current_' value.
+	(finished): Fetch the `current_' value from the coroutine that
+	finished.
+	(operator(Nary)): Adjust: return values to the connection if this
+	Nary is at the toplevel.
+	(operator(Noop)): Do not reset the current_ value.
+	(operator(Pipe)): Adjust.
+	* src/uconnection.cc (execute): Properly set the toplevel Nary
+	nodes.
+
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
 	Object.addParent, removeParent.
