@@ -562,18 +562,10 @@ add_ulists(const UValue& l, const UValue& r)
   while (end->next)
     end = end->next;
 
-  UValue* it = r.liststart;
-
-  if (!it->next)
-    end->next = new UValue(*it);
-
-  while (it->next)
-  {
-    end->next = new UValue(*it);
-    end = end->next;
-    it = it->next;
-  }
-
+  UValue* rc = r.copy();
+  end->next = rc->liststart;
+  rc->liststart = 0;
+  delete rc;
   return res;
 }
 

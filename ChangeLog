@@ -1,3 +1,8 @@
+2007-10-02  Thomas Moulard  <thomas@moulard.net>
+
+	Fix list concatenation.
+	* src/uvalue.cc: Here.
+
 2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 
 	Do not accept '<<' and '>>' in the parser yet.
