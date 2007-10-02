@@ -469,15 +469,17 @@ namespace runner
     // Evaluate the test.
     while (true)
     {
+      // FIXME: YIELD if second iteration for "while;".
+
       JECHO ("while test", e.test_get ());
       CORO_CALL (operator() (e.test_get()));
       if (!IS_TRUE(current_))
 	break;
 
-      // FIXME: Yield before or after the break?
-      YIELD();
+      if (e.flavor_get() == ast::flavor_semicolon)
+	YIELD();
 
-      JECHO ("while body", e.thenclause_get ());
+      JECHO ("while body", e.body_get ());
       CORO_CALL (operator() (e.body_get()));
     }
 

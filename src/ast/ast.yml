@@ -127,11 +127,9 @@ Scope:
 ## Composing commands.  ##
 ## -------------------- ##
 
-#Flavorable:
-#  attributes:
-#    - flavor: { type: flavor, desc: Execution model }
-#  printer:
-#    - $flavor
+Flavorable:
+  attributes:
+    - flavor: { type: flavor_type, desc: Execution model }
 
 Nary:
   super: Exp
@@ -381,7 +379,9 @@ If:
     - libport::decindent
 
 While:
-  super: Exp
+  super:
+    - Exp
+    - Flavorable
   attributes:
     - test:
         type: Exp*
@@ -393,7 +393,12 @@ While:
     operator()(n.test_get());
     operator()(n.body_get());
   printer:
-    - '"while ("'
+    - '"while"'
+    - '{
+         if (n.flavor_get() != flavor_semicolon)
+           ostr_ << n.flavor_get();
+       }'
+    - '"("'
     - ~test
     - '")"'
     - libport::incendl

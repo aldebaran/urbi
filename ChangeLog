@@ -1,5 +1,13 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	ast::Flavorable.
+	* src/ast/ast.yml (Flavorable): New.
+	(While): Derive from it.
+	* src/parser/bison/ugrammar.y: Adjust to build "while|" too.
+	* src/runner/runner.cc: Adjust.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	ast::flavor_type.
 	Replaces former Flavorable and execution_kind.
 	* src/ast/flavor.hh, src/ast/flavor.cc: New.
