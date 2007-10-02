@@ -10,7 +10,9 @@
 //#include "libport/compiler.hh"
 
 # include <ostream>
+
 # include "libport/indent.hh"
+
 # include "object/object.hh"
 # include "object/primitives.hh"
 
@@ -99,17 +101,9 @@ namespace object
   Object::slot_update (const Object::key_type& k, rObject o)
   {
     if (locals_)
-      lookup (k) = o;
+      lookup(k) = o;
     else
-      slot_set (k, o);
-    return *this;
-  }
-
-  inline
-  Object&
-  Object::slot_set (const Object::key_type& k, rObject o)
-  {
-    slots_[k] = o;
+      slots_[k] = o;
     return *this;
   }
 

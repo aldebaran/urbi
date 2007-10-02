@@ -1,5 +1,19 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	Slot redefinition.
+	* src/object/urbi-exception.hh, src/object/urbi-exception.cc,
+	* src/object/urbi-exception.hxx:
+	Move the error messages to where they are used instead of using
+	variables.
+	(redefinition): New.
+	(lookupFailed): Take a symbol, since that's what it's about.
+	Adjust uses.
+	* src/object/object.hxx (slot_set): Move to...
+	* src/object/object.cc (slot_set): here.
+	Catch redefinition.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	Assignment depends on the container.
 	"=" must update the value, not set it.
 	Unless the object is a local variable container.

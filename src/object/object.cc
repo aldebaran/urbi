@@ -69,7 +69,7 @@ namespace object
     if (const Object* o = which(k))
       return o->own_slot_get (k);
     else
-      throw UrbiException::lookupFailed(boost::lexical_cast<std::string>(k));
+      throw UrbiException::lookupFailed(k);
   }
 
   rObject&
@@ -77,6 +77,21 @@ namespace object
   {
     return const_cast<rObject&>(const_cast<const Object*>(this)->lookup(k));
   }
+
+
+  Object&
+  Object::slot_set (const Object::key_type& k, rObject o)
+  {
+    if (libport::mhas(slots_, k))
+      throw UrbiException::redefinition(k);
+    slots_[k] = o;
+    return *this;
+  }
+
+
+  /*-----------.
+  | Printing.  |
+  `-----------*/
 
   std::ostream&
   Object::special_slots_dump (std::ostream& o) const

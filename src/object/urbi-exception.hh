@@ -5,10 +5,14 @@
 
 #ifndef OBJECT_URBI_EXCEPTION_HH
 # define OBJECT_URBI_EXCEPTION_HH
+
 # include <exception>
 # include <string>
 
+# include "libport/symbol.hh"
+
 # include "ast/loc.hh"
+
 # include "object/fwd.hh"
 # include "object/object.hh"
 
@@ -24,7 +28,10 @@ namespace object
 
     /// \brief Construct an UrbiException (used when lookup fails).
     /// \param slot Searched slot.
-    static UrbiException lookupFailed (std::string slot);
+    static UrbiException lookupFailed (libport::Symbol slot);
+
+    /// \brief A slot is redefined.
+    static UrbiException redefinition (libport::Symbol slot);
 
     /// \brief Construct an UrbiException from a primitive and a message.
     /// \param primitive primitive which has thrown the error.

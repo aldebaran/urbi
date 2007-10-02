@@ -98,7 +98,8 @@ namespace object
     /// existing slot, not creating a new slot in the inner scope.
     Object& slot_update (const key_type& k, rObject o);
 
-    /// Set slot value in local slot. Create slot if necessary.
+    /// Set slot value in local slot.
+    /// \precondition the slot does not exist in this.
     Object& slot_set (const key_type& k, rObject o);
 
     /// Get the object pointed to by the *local* slot.
