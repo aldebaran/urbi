@@ -413,13 +413,11 @@ take (T* t)
 
 %left  "||"
 %left "&&"
-%left  "==" "~=" "%=" "=~=" "!="
-%nonassoc ">" ">=" "<" "<="
-%left "<<" ">>"
+%left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
 %left  "-" "+"
 %left  "*" "/" "%"
-%right "**"
 %left  "!" NEG     /* Negation--unary minus */
+%right "**"
 %right TOK_NORM
 
 %right "," ";"
@@ -1550,19 +1548,6 @@ expr:
   | expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
   | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 
-;
-
-  /*---------------.
-  | Redirections.  |
-  `---------------*/
-%token
-  TOK_LSHIFT   "<<"
-  TOK_RSHIFT   ">>"
-;
-
-expr:
-    expr "<<"  expr { $$ = 0; } // FIXME:
-  | expr ">>"  expr { $$ = 0; } // FIXME:
 ;
 
 

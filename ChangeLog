@@ -1,5 +1,13 @@
 2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 
+	Revert patches 1618 to 1624 destined to 1.5.
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/ucommand.cc,
+	* src/uvariablename.cc: Here.
+
+2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+
 	Fix operators precedence. Add '<<' and '>>'.
 	* src/parser/bison/ugrammar.y,
 	* src/parser/bison/utoken.l: Here.
