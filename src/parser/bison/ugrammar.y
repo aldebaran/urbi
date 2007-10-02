@@ -159,7 +159,7 @@
     static
     ast::Call*
     call (const yy::parser::location_type& l,
-	  ast::Exp* target, libport::Symbol* method, 
+	  ast::Exp* target, libport::Symbol* method,
 	  ast::Exp* arg1, ast::Exp* arg2)
     {
       assert (method);
@@ -169,24 +169,24 @@
       return res;
     }
 
-   
+
     /// "<lvalue> = <value>".
     static
     ast::Call*
     assign (const yy::parser::location_type& l,
-	    ast::Call* lvalue, ast::Exp* value)
+	    ast::Call* lvalue, ast::Exp* value, bool declare = false)
     {
       return call (l,
-		   lvalue->args_get().front(), 
+		   lvalue->args_get().front(),
 		   // this new is stupid.  We need to clean
 		   // this set of call functions.
-		   new libport::Symbol("setSlot"), 
+		   new libport::Symbol(declare ? "setSlot" : "updateSlot"),
 		   new ast::String(lvalue->location_get(),
 				   lvalue->name_get().name_get()),
 		   value);
     }
 
-   
+
     /// Return \a e in a ast::Scope unless it is already one.
     static
     ast::Scope*
@@ -631,8 +631,8 @@ stmt:
 stmt:
   "emit" k1_id args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
-| "wait" expr			    { $$ = call (@$, 0, $1, $2); }
-| "waituntil" softtest              { $$ = 0; }
+| "wait" expr 			     { $$ = call (@$, 0, $1, $2); }
+| "waituntil" softtest               { $$ = 0; }
 | "event"    k1_id formal_args { $$ = 0; }
 ;
 
@@ -640,10 +640,11 @@ stmt:
 stmt:
   "function" k1_id formal_args "{" stmts "}"
     {
-      // Compiled as "name = function args stmt", i.e., 
+      // Compiled as "name = function args stmt", i.e.,
       // updateSlot (name, function args stmt).
       $$ = assign (@$, $2,
-		   new ast::Function (@$, take($3), scope(@4+@6, $5)));
+		   new ast::Function (@$, take($3), scope(@4+@6, $5)),
+		   true);
   }
 ;
 
@@ -698,12 +699,8 @@ k1_id:
 | Stmt: Assignment.  |
 `-------------------*/
 stmt:
-  lvalue "=" expr namedarguments
-    {
-      // $1 is a 0-ary Call: get its target and method name.
-      $$ = assign (@$, $1, $3); 
-    }
-| "var" lvalue "=" expr namedarguments { $$ = 0; }
+	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3);        }
+| "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
 | lvalue "+=" expr { $$ = 0; }
 | lvalue "-=" expr { $$ = 0; }
 | lvalue "--"      { $$ = 0; }
@@ -763,8 +760,8 @@ stmt:
       $$ = 0;
     }
 | "return" expr.opt
-    { 
-      $$ = new ast::Return(@$, $2, false); 
+    {
+      $$ = new ast::Return(@$, $2, false);
     }
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
     {

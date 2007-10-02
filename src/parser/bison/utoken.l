@@ -130,6 +130,7 @@ STRING   \"([^\"]|"\\\"")*\"
 
 <SC_UCONSOLE>{
   ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
+  ^\[:].*               /* ignore the "[:] whatever" messages */;
   ^#plug.*              /* ignore the "#plug whatever" lines */;
 }
 

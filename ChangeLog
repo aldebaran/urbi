@@ -1,3 +1,8 @@
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
+	Complete UCONSOLE_MODE.
+	* src/parser/bison/utoken.l: Also catch [:] continuation lines.
+
 2007-09-27  Thomas Moulard  <thomas@moulard.net>
 
 	Add locations to run-time errors.
