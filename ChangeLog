@@ -78,6 +78,12 @@
 	Complete UCONSOLE_MODE.
 	* src/parser/bison/utoken.l: Also catch [:] continuation lines.
 
+2007-10-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Fix a debugging message.
+	* src/runner/runner.cc (operator(ast::While)): Properly print the
+	body.
+
 2007-09-27  Thomas Moulard  <thomas@moulard.net>
 
 	Add locations to run-time errors.
