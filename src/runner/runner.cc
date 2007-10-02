@@ -353,7 +353,7 @@ namespace runner
   void
   Runner::operator() (ast::Nary& e)
   {
-    // FIXME: execution_background support.
+    // FIXME: other flavor support.
     CORO_CTX_VARS
       ((1, (
 	  (ast::exec_exps_type::iterator, i)
@@ -362,7 +362,7 @@ namespace runner
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
       JECHO ("child", *i);
-      passert (i->second, i->second = ast::execution_foreground);
+      passert (i->second, i->second = ast::flavor_semicolon);
       CORO_CALL_CATCH (operator() (*i->first);
 		       ECHO ("sending result of Nary node");
 		       emit_result (current_);,

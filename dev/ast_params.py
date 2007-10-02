@@ -30,9 +30,7 @@ includes_map = {
     "exp_pair_type": '"ast/exp.hh"',
     "exp_pairs_type": '"ast/exp.hh"',
 
-    "fields_type": '"ast/field.hh"',
-    "fieldinits_type": '"ast/field-init.hh"',
-    "VarDecs": '"ast/anydecs.hh"',
+    "flavor_type": '"ast/flavor.hh"',
 
     "exec_exps_type" : '"ast/fwd.hh"',
     }

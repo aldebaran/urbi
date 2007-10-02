@@ -1,5 +1,18 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	ast::flavor_type.
+	Replaces former Flavorable and execution_kind.
+	* src/ast/flavor.hh, src/ast/flavor.cc: New.
+	* dev/ast_params.py: Use it.
+	* src/ast/ast.yml (Nary): Use it.
+	(Nary::execution_kind): Remove.
+	* src/ast/Makefile.am: Compile it.
+	* src/parser/bison/ugrammar.y: Adjust.
+	* src/parser/bison/utoken.l: Adjust.
+	* src/runner/runner.cc: Adjust.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	Slot redefinition.
 	* src/object/urbi-exception.hh, src/object/urbi-exception.cc,
 	* src/object/urbi-exception.hxx:

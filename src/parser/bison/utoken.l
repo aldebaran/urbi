@@ -58,8 +58,8 @@ typedef yy::parser::token token;
 
 
 // For ",", ";", "|", and "&" (i.e., COMMA, SEMICOLON, PIPE, and AND).
-#define RETURN_FLAVOR(Symbol)					\
-  RETURN_VALUE(TOK_ ## Symbol, flavor, Flavorable::U ## Symbol)
+#define RETURN_FLAVOR(Symbol, Flavor)					\
+  RETURN_VALUE(TOK_ ## Symbol, flavor, ast::flavor_ ## Flavor)
 
 /// Return an fval of type Token with Value.
 #define RETURN_FVAL(Token, Value)		\
@@ -310,10 +310,10 @@ STRING   \"([^\"]|"\\\"")*\"
 "~"             return token::TOK_TILDE;
 "~="            return token::TOK_REQ;
 
-"&"             RETURN_FLAVOR(AND);
-"|"             RETURN_FLAVOR(PIPE);
-";"             RETURN_FLAVOR(SEMICOLON);
-","             RETURN_FLAVOR(COMMA);
+"&"             RETURN_FLAVOR(AND, and);
+"|"             RETURN_FLAVOR(PIPE, pipe);
+";"             RETURN_FLAVOR(SEMICOLON, semicolon);
+","             RETURN_FLAVOR(COMMA, comma);
 
 
 {ID}     RETURN_VALUE(IDENTIFIER, symbol, new libport::Symbol(yytext));

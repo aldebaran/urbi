@@ -93,7 +93,7 @@
     /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
     static
     ast::Exp*
-    new_bin(const yy::parser::location_type& l, Flavorable::UNodeType op,
+    new_bin(const yy::parser::location_type& l, ast::flavor_type op,
 	    ast::Exp* lhs, ast::Exp* rhs)
     {
       ast::Exp* res = 0;
@@ -101,10 +101,10 @@
       assert (rhs);
       switch (op)
       {
-	case Flavorable::UAND:
+	case ast::flavor_and:
 	  res = new ast::And (l, lhs, rhs);
 	  break;
-	case Flavorable::UPIPE:
+	case ast::flavor_pipe:
 	  res = new ast::Pipe (l, lhs, rhs);
 	  break;
 	default:
@@ -456,16 +456,8 @@ stmts:
     $$ = new ast::Nary();
     $$->push_back ($1);
   }
-| stmts ";" cstmt
-  {
-    // The ";" qualifies the previous command.
-    $$->push_back(ast::execution_foreground, $3);
-  }
-| stmts "," cstmt
-  {
-    // The "," qualifies the previous command.
-    $$->push_back(ast::execution_background, $3);
-  }
+| stmts ";" cstmt  { $$->push_back($2, $3); }
+| stmts "," cstmt  { $$->push_back($2, $3); }
 ;
 
 %type <expr> cstmt;
@@ -540,9 +532,9 @@ stmt:
 `----------*/
 %code requires
 {
-#include "flavorable.hh"
+#include "ast/flavor.hh"
 };
-%union { Flavorable::UNodeType flavor; };
+%union { ast::flavor_type flavor; };
 %token <flavor>
 	TOK_COMMA        ","
 	TOK_SEMICOLON    ";"
@@ -555,20 +547,20 @@ stmt:
 
 // One or zero "&", defaulting to ";".
 and.opt:
-  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+  /* empty. */  { $$ = ast::flavor_semicolon; }
 | "&"
 ;
 
 // One or zero "&" or "|", defaulting to ";".
 flavor.opt:
-  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+  /* empty. */  { $$ = ast::flavor_semicolon; }
 | "|"
 | "&"
 ;
 
 // One or zero "|", defaulting to ";".
 pipe.opt:
-  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+  /* empty. */  { $$ = ast::flavor_semicolon; }
 | "|"
 ;
 

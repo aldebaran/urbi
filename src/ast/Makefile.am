@@ -97,5 +97,6 @@ noinst_LTLIBRARIES = libast.la
 libast_la_SOURCES =				\
 	all.hh					\
 	loc.hh					\
+	flavor.hh flavor.cc			\
 	visitor.hxx				\
 	$(BUILT_SOURCES_local)

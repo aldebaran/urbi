@@ -127,6 +127,12 @@ Scope:
 ## Composing commands.  ##
 ## -------------------- ##
 
+#Flavorable:
+#  attributes:
+#    - flavor: { type: flavor, desc: Execution model }
+#  printer:
+#    - $flavor
+
 Nary:
   super: Exp
   desc: /// A list of expressions to run possibly in background.
@@ -139,21 +145,11 @@ Nary:
     - $children
   inline:
     header prologue: |
+        # include "ast/flavor.hh"
         namespace ast
         {
-          /// Whether a command is to be run in background.
-          enum execution_kind
-          {
-            execution_none,
-            execution_foreground,
-            execution_background,
-          };
-          
-          /// Report \a e on \a o.
-          std::ostream& operator<<(std::ostream& o, execution_kind e);
-          
-          // An expression and its execution kind.
-          typedef std::pair<Exp*, execution_kind> exec_exp_type;
+          // An expression and its flavor.
+          typedef std::pair<Exp*, flavor_type> exec_exp_type;
           
           /// Report \a e on \a o.
           std::ostream& operator<<(std::ostream& o, const exec_exp_type& e);
@@ -183,7 +179,7 @@ Nary:
           /// Add the expression @a e at the end of this, set the
           /// *previous* execution type to be @a k.
           /// \precondition this is not empty.
-          void push_back(execution_kind k, ast::Exp* e);
+          void push_back(flavor_type k, ast::Exp* e);
 
           /// Return the back of the children.
           exec_exp_type& back ();
@@ -237,11 +233,11 @@ Nary:
         void
         Nary::push_back(ast::Exp* e)
         {
-          children_.push_back (ast::exec_exp_type (e, execution_none));
+          children_.push_back (ast::exec_exp_type (e, flavor_none));
         }
 
         void
-        Nary::push_back(execution_kind k, ast::Exp* e)
+        Nary::push_back(flavor_type k, ast::Exp* e)
         {
           assert(!children_.empty());
           children_.back().second = k;
@@ -267,23 +263,12 @@ Nary:
         }
       
         std::ostream&
-        operator<<(std::ostream& o, execution_kind e)
-        {
-           switch (e)
-           {
-      #define CASE(E, S) case execution_ ## E: return o S;
-              CASE(none,       )
-              CASE(foreground, << " ; ")
-              CASE(background, << " , ")
-      #undef CASE
-           }
-           abort();
-        }
-        
-        std::ostream&
         operator<<(std::ostream& o, const exec_exp_type& e)
         {
-          return o << *e.first << e.second;
+          o << *e.first;
+          if (e.second != flavor_none)
+            o << ' ' << e.second << ' ';
+          return o;
         }
         
         std::ostream&
@@ -323,6 +308,7 @@ Pipe:
     - ~lhs
     - '" | "'
     - ~rhs
+
 
 
 # Identifier constructs
