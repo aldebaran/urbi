@@ -79,23 +79,47 @@ namespace object
     typedef libport::hash_map<key_type, rObject> slots_type;
     /// One slot.
     typedef std::pair<const key_type, rObject> slot_type;
-    /// The slot set for lookup.
-    typedef std::set<const Object*> lookup_set_type;
+    /// A set of objects.
+    typedef std::set<const Object*> objects_type;
 
-    /// R/w access to the slots. Returns same slot as \c lookup,
-    //  or create slot if \c lookup fails.
-    rObject& operator[] (const key_type& k);
+    /// Find the Object which defines k.
+    /// \return 0 if none found.
+    const Object* which (const key_type& k) const;
+
     /// Lookup field in object hierarchy.
     const rObject& lookup (const key_type& k) const;
     rObject& lookup (const key_type& k);
-    /// Update value in slot returned by \c lookup.
+
+    /// \brief Update value in slot returned by \c lookup.
+    ///
+    /// If the target is a "real" object, then updating means the same
+    /// as slot_set: one never updates a parent.  If the target is a
+    /// "locals" object, then updating really means updating the
+    /// existing slot, not creating a new slot in the inner scope.
     Object& slot_update (const key_type& k, rObject o);
+
     /// Set slot value in local slot. Create slot if necessary.
     Object& slot_set (const key_type& k, rObject o);
+
+    /// Get the object pointed to by the *local* slot.
+    /// An error if the slot does not exist in this object (not its
+    /// parents).
+    const rObject& own_slot_get (const key_type& k) const;
+    rObject& own_slot_get (const key_type& k);
+
     /// Remove slot.
     Object& slot_remove (const key_type& k);
     /// Read only access to slots.
     const slots_type& slots_get () const;
+    /// \}
+
+    /// \name Properties.
+    /// \{
+    /// Whether this is an anynomous object containing local variables.
+    bool locals_get () const;
+    /// Change whether is a locals object.
+    /// \return this
+    Object& locals_set (bool b);
     /// \}
 
     /// \name Printing.
@@ -118,12 +142,18 @@ namespace object
 
   private:
     /// Lookup field in object hierarchy.
-    const rObject& lookup (const key_type& k, lookup_set_type& lu) const;
+    /// \param k   the key looked up for
+    /// \param os  the objects already looked up for, to break infinite
+    ///            recursions
+    /// \return 0  if k does not exist.
+    const Object* which (const key_type& k, objects_type& os) const;
 
     /// The parents.
     parents_type parents_;
     /// The slots.
     slots_type slots_;
+    /// Whether is a locals object.
+    bool locals_;
   };
 
   /// Clone, i.e., create a fresh object with this class as sole parent.

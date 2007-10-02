@@ -111,7 +111,9 @@ namespace object
     rObject obj = args[0];
     FETCH_ARG(1, String);
 
-    return (*obj)[arg1->value_get()];
+    // FIXME: This is not exact: there is a difference between local
+    // and non local slots.
+    return obj->own_slot_get(arg1->value_get());
   }
 
   /// Define setSlot or updateSlot.  \a Verb is "set" or "update".

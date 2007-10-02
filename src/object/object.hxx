@@ -6,6 +6,9 @@
 #ifndef OBJECT_OBJECT_HXX
 # define OBJECT_OBJECT_HXX
 
+//#define ENABLE_DEBUG_TRACES
+//#include "libport/compiler.hh"
+
 # include <ostream>
 # include "libport/indent.hh"
 # include "object/object.hh"
@@ -16,7 +19,7 @@ namespace object
 
   inline
   Object::Object ()
-    : parents_ (), slots_ ()
+    : parents_ (), slots_ (), locals_ (false)
   {
     root_classes_initialize();
   }
@@ -92,24 +95,13 @@ namespace object
   `--------*/
 
   inline
-  rObject&
-  Object::operator[] (const Object::key_type& k)
-  {
-    try
-    {
-      return lookup (k);
-    }
-    catch (std::exception e)
-    {
-      return slots_[k];
-    }
-  }
-
-  inline
   Object&
   Object::slot_update (const Object::key_type& k, rObject o)
   {
-    lookup (k) = o;
+    if (locals_)
+      lookup (k) = o;
+    else
+      slot_set (k, o);
     return *this;
   }
 
@@ -119,6 +111,20 @@ namespace object
   {
     slots_[k] = o;
     return *this;
+  }
+
+  inline
+  rObject&
+  Object::own_slot_get (const Object::key_type& k)
+  {
+    return slots_[k];
+  }
+
+  inline
+  const rObject&
+  Object::own_slot_get (const Object::key_type& k) const
+  {
+    return const_cast<Object*>(this)->slots_[k];
   }
 
   inline
@@ -134,6 +140,26 @@ namespace object
   Object::slots_get () const
   {
     return slots_;
+  }
+
+
+  /*-------------.
+  | Properties.  |
+  `-------------*/
+
+  inline
+  bool
+  Object::locals_get () const
+  {
+    return locals_;
+  }
+
+  inline
+  Object&
+  Object::locals_set (bool b)
+  {
+    locals_ = b;
+    return *this;
   }
 
 

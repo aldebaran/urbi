@@ -229,24 +229,24 @@ namespace runner
     switch (val->kind_get ())
     {
       case object::Object::kind_primitive:
-        PING ();
-        try {
-          current_ = val.cast<object::Primitive>()->value_get()(context_, args);
-        }
-        catch (object::UrbiException& ue)
-        {
-          ue.location_set (e.location_get ());
-          throw;
-        }
-        break;
+	PING ();
+	try {
+	  current_ = val.cast<object::Primitive>()->value_get()(context_, args);
+	}
+	catch (object::UrbiException& ue)
+	{
+	  ue.location_set (e.location_get ());
+	  throw;
+	}
+	break;
       case object::Object::kind_code:
-        PING ();
-        call_code = true;
-        break;
+	PING ();
+	call_code = true;
+	break;
       default:
-        PING ();
-        current_ = val;
-        break;
+	PING ();
+	current_ = val;
+	break;
     }
 
     /*---------------------------.
@@ -257,18 +257,19 @@ namespace runner
       PING ();
       // Create a new object to store the arguments.
       bound_args = new object::Object;
+      bound_args->locals_set(true);
 
       // Fetch the called function.
       fn = &val.cast<object::Code> ()->value_get ();
 
       // Check the arity.
       try {
-        object::check_arg_count (fn->formals_get().size(), args.size() - 1);
+	object::check_arg_count (fn->formals_get().size(), args.size() - 1);
       }
       catch (object::UrbiException& ue)
       {
-        ue.location_set (e.location_get ());
-        throw;
+	ue.location_set (e.location_get ());
+	throw;
       }
 
       // Bind formal and effective arguments.
@@ -282,9 +283,9 @@ namespace runner
       // Now bind the non-target arguments.
       ++ei;
       for (fi = fn->formals_get().begin();
-           fi != fn->formals_get().end() && ei != args.end();
-           ++fi, ++ei)
-        bound_args->slot_set (**fi, *ei);
+	   fi != fn->formals_get().end() && ei != args.end();
+	   ++fi, ++ei)
+	bound_args->slot_set (**fi, *ei);
       ECHO("bound args: " << *bound_args);
       // Change the current context and call.
       std::swap(bound_args, locals_);
@@ -432,7 +433,7 @@ namespace runner
     // implement lexical scoping.
     CORO_WITH_1SLOT_CTX (rObject, locals);
     locals = new object::Object;
-    locals->parent_add (locals_);
+    locals->locals_set(true).parent_add (locals_);
     std::swap(locals, locals_);
     CORO_CALL (super_type::operator()(e));
     std::swap(locals, locals_);

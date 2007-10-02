@@ -171,6 +171,11 @@
 
 
     /// "<lvalue> = <value>".
+    /// \param l        source location.
+    /// \param lvalue   object and slot to assign to.
+    /// \param value    assigned value.
+    /// \param declare  whether we also declare the lvalue.
+    /// \return The AST node calling the slot assignment.
     static
     ast::Call*
     assign (const yy::parser::location_type& l,
@@ -631,9 +636,9 @@ stmt:
 stmt:
   "emit" k1_id args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
-| "wait" expr 			     { $$ = call (@$, 0, $1, $2); }
+| "wait" expr			     { $$ = call (@$, 0, $1, $2); }
 | "waituntil" softtest               { $$ = 0; }
-| "event"    k1_id formal_args { $$ = 0; }
+| "event" k1_id formal_args          { $$ = 0; }
 ;
 
 // Functions.

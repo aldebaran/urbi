@@ -1,5 +1,24 @@
 2007-10-02  Akim Demaille  <demaille@gostai.com>
 
+	Assignment depends on the container.
+	"=" must update the value, not set it.
+	Unless the object is a local variable container.
+	* src/object/object.hh, src/object/object.cc, src/object/object.hxx
+	(locals_, locals_set, locals_get): New.
+	(lookup_set_type): Rename as...
+	(objects_type): this.
+	(which): New.
+	(lookup, slot_set, update_slot): Use it.
+	(operator[]): Remove: its semantics is unclear since now the
+	lookup depends whether we want to read or to write.
+	(own_slot_get): New.	
+	* src/runner/runner.cc, src/runner/runner.hxx: Adjust to
+	declare locals objects as such.
+
+	* src/parser/bison/ugrammar.y: Documentation changes.
+
+2007-10-02  Akim Demaille  <demaille@gostai.com>
+
 	Complete UCONSOLE_MODE.
 	* src/parser/bison/utoken.l: Also catch [:] continuation lines.
 

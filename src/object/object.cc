@@ -4,8 +4,12 @@
  */
 
 #include <algorithm>
+
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+
+#include "libport/containers.hh"
+
 #include "object/object.hh"
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
@@ -32,41 +36,46 @@ namespace object
   | Slots.  |
   `--------*/
 
+  const Object*
+  Object::which (const key_type& k, Object::objects_type& os) const
+  {
+    /// Look in local slots.
+    slots_type::const_iterator it = slots_.find (k);
+    if (libport::mhas(slots_, k))
+      return this;
+
+    /// Break recursive loops.
+    if (libport::mhas(os, this))
+      return 0;
+    os.insert (this);
+
+    /// Look in parent slots (depth first search).
+    BOOST_FOREACH (parent_type p, parents_)
+      if (const Object* res = p->which (k, os))
+	return res;
+    return 0;
+  }
+
+  const Object*
+  Object::which (const key_type& k) const
+  {
+    objects_type os;
+    return which(k, os);
+  }
+
   const rObject&
   Object::lookup (const key_type& k) const
   {
-    lookup_set_type lu;
-    return lookup(k, lu);
+    if (const Object* o = which(k))
+      return o->own_slot_get (k);
+    else
+      throw UrbiException::lookupFailed(boost::lexical_cast<std::string>(k));
   }
 
   rObject&
   Object::lookup (const key_type& k)
   {
     return const_cast<rObject&>(const_cast<const Object*>(this)->lookup(k));
-  }
-
-  const rObject&
-  Object::lookup (const key_type& k, Object::lookup_set_type& lu) const
-  {
-    /// Look in local slots.
-    slots_type::const_iterator it = slots_.find (k);
-    if (it != slots_.end ())
-      return it->second;
-
-    if (lu.find (this) != lu.end ())
-      throw UrbiException::lookupFailed(boost::lexical_cast<std::string>(k));
-    lu.insert (this);
-
-    /// Look in parent slots (depth first search)
-    BOOST_FOREACH (parent_type p, parents_)
-      try
-      {
-	return p->lookup (k, lu);
-      }
-      catch (UrbiException&)
-      { }
-    /// If not found, throw exception
-    throw UrbiException::lookupFailed(boost::lexical_cast<std::string>(k));
   }
 
   std::ostream&

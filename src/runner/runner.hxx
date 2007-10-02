@@ -22,6 +22,7 @@ namespace runner
       current_ (0),
       locals_ (new object::Object)
   {
+    locals_->locals_set (true);
     // If the lookup in the local variable failed, try in the the
     // Connection object, sort of a Lobby for Io.
     locals_->parent_add(context_);
