@@ -1,5 +1,20 @@
 2007-10-02  Thomas Moulard  <thomas@moulard.net>
 
+	Remove network.
+        The network is now plugged through an externals.
+        Network's new location is modules/network.
+
+	* src/Makefile.am: Remove network.
+	* src/network/bsdnet/bsdnet.mk: Remove.
+	* src/network/bsdnet/connection.cc: Remove.
+	* src/network/bsdnet/connection.hh: Remove.
+	* src/network/bsdnet/network.cc: Remove.
+	* src/network/bsdnet/network.hh: Remove.
+	* src/network/bsdnet: Remove.
+	* src/network: Remove.
+
+2007-10-02  Thomas Moulard  <thomas@moulard.net>
+
 	Fix list concatenation.
 	* src/uvalue.cc: Here.
 
