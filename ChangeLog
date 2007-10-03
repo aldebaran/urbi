@@ -1,3 +1,9 @@
+2007-10-04  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Properly clean the build tree.
+	* src/parser/bison/bison.mk (CLEANFILES): Add the HTML file produced
+	by output-to-html.
+
 2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Use the replacement implementation of `round' if needed.
