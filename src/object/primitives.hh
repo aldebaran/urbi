@@ -30,10 +30,10 @@ namespace object
 /**
  * Throw an exception if \a Obj is not of type \a Type.
  */
-#define TYPE_CHECK(Obj, Type)					\
-  if (!(Obj)->type_is<Type>())					\
-    throw UrbiException::wrongArgumentType(Obj->kind_get(),	\
-		object::Object::kind_type(Type::traits::kind)); \
+#define TYPE_CHECK(Obj, Type)                                           \
+  if (!(Obj)->type_is<Type>())                                          \
+    throw WrongArgumentType(Obj->kind_get(),                            \
+                            object::Object::kind_type(Type::traits::kind));
 
 /**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.

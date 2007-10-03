@@ -11,50 +11,56 @@ namespace object
 {
 
   inline
-  UrbiException
-  UrbiException::lookupFailed (libport::Symbol slot)
+  const ast::loc&
+  UrbiException::location_get () const
   {
-    return UrbiException ((boost::format ("lookup failed: %1%")
-			   % slot.name_get()).str ());
+    return loc_;
   }
 
   inline
-  UrbiException
-  UrbiException::redefinition (libport::Symbol slot)
+  void
+  UrbiException::location_set (const ast::loc& l)
   {
-    return UrbiException ((boost::format ("slot redefinition: %1%")
-			   % slot.name_get()).str ());
+    loc_ = l;
   }
 
   inline
-  UrbiException
-  UrbiException::primitiveError (std::string primitive,
-				 std::string msg)
+  LookupError::LookupError (libport::Symbol slot)
+    : UrbiException ((boost::format ("lookup failed: %1%")
+                      % slot.name_get()).str ())
   {
-    return UrbiException ((boost::format ("%1%: %2%")
-			   % primitive
-			   % msg).str ());
   }
 
   inline
-  UrbiException
-  UrbiException::wrongArgumentType (Object::kind_type real,
-				    Object::kind_type expected)
+  RedefinitionError::RedefinitionError (libport::Symbol slot)
+    : UrbiException ((boost::format ("slot redefinition: %1%")
+                      % slot.name_get()).str ())
   {
-    return UrbiException
-      ((boost::format ("unexpected argument type ``%1%'', expected ``%2%''")
-	% Object::string_of (real)
-	% Object::string_of (expected)).str ());
   }
 
   inline
-  UrbiException
-  UrbiException::wrongArgumentCount (unsigned argReal,
-				     unsigned argExpected)
+  PrimitiveError::PrimitiveError (std::string primitive,
+                                  std::string msg)
+    : UrbiException (primitive + ": " + msg)
   {
-    return UrbiException ((boost::format ("expected %1% arguments, given %2%")
-			   % argReal
-			   % argExpected).str ());
+  }
+
+  inline
+  WrongArgumentType::WrongArgumentType (Object::kind_type real,
+                                        Object::kind_type expected)
+    : UrbiException (std::string ("unexpected argument type `")
+                     + Object::string_of (real) + "', expected `"
+                     + Object::string_of (expected) + '\'')
+  {
+  }
+
+  inline
+  WrongArgumentCount::WrongArgumentCount (unsigned argReal,
+                                          unsigned argExpected)
+    : UrbiException ((boost::format ("expected %1% arguments, given %2%")
+                      % argReal
+                      % argExpected).str ())
+  {
   }
 
   inline
@@ -62,7 +68,7 @@ namespace object
   check_arg_count (unsigned formal, unsigned effective)
   {
     if (formal != effective)
-      throw UrbiException::wrongArgumentCount(formal, effective);
+      throw WrongArgumentCount(formal, effective);
   }
 
 }; // end of namespace object

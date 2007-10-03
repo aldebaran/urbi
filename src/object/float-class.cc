@@ -26,8 +26,8 @@ namespace object
   float_##Name (libport::ufloat l, libport::ufloat r)                   \
   {                                                                     \
     if (!r)								\
-      throw UrbiException::primitiveError("Operator " #Operator,	\
-					  ErrorMessage);		\
+      throw PrimitiveError("Operator " #Operator,                       \
+                           ErrorMessage);                               \
     return l Operator r;                                                \
   }
 
@@ -37,7 +37,7 @@ namespace object
   float_##Name (libport::ufloat l, libport::ufloat r)                   \
   {                                                                     \
     if (!r)								\
-      throw UrbiException::primitiveError(#Method, ErrorMessage);       \
+      throw PrimitiveError(#Method, ErrorMessage);                      \
     return Method(l, r);                                                \
   }
 
@@ -133,7 +133,7 @@ namespace object
   {
     // FIXME: The error message requires 2 although 1 is ok.
     if (args.size () != 1 && args.size() != 2)
-      throw UrbiException::wrongArgumentCount(2, args.size ());
+      throw WrongArgumentCount(2, args.size ());
     FETCH_ARG(0, Float);
     if (args.size() == 1)
       return new Float(- arg0->value_get());
@@ -164,16 +164,16 @@ namespace object
 #define PRIMITIVE_1_FLOAT(Name, Call)                   \
   PRIMITIVE_1_FLOAT_(Name, Call, ;)
 
-#define PRIMITIVE_1_FLOAT_CHECK_POSITIVE(Name, Call)    \
-  PRIMITIVE_1_FLOAT_(Name, Call,                        \
-     if (VALUE(args[1], Float) < 0)                     \
-      throw UrbiException::primitiveError(#Name,        \
-	      "argument has to be positive"))
+#define PRIMITIVE_1_FLOAT_CHECK_POSITIVE(Name, Call)            \
+  PRIMITIVE_1_FLOAT_(Name, Call,                                \
+     if (VALUE(args[1], Float) < 0)                             \
+       throw PrimitiveError(#Name,                              \
+                            "argument has to be positive"))
 
 #define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)		\
   PRIMITIVE_1_FLOAT_(Name, Call,					\
      if (VALUE(args[1], Float) < Min || Max < VALUE(args[1], Float))	\
-      throw UrbiException::primitiveError(#Name, "invalid range"))
+      throw PrimitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
   PRIMITIVE_2_V(float, Name, Call, Float, Float, Float)

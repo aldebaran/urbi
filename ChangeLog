@@ -1,5 +1,22 @@
 2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Use a real exception hierarchy.
+	* src/object/urbi-exception.hh (UrbiException): Remove the static
+	methods lookupFailed, redefinition, primitiveError,
+	wrongArgumentType and wrongArgumentCount.
+	(LookupError, RedefinitionError, PrimitiveError, WrongArgumentType)
+	(WrongArgumentCount): New exception classes.
+	Adjust various Doxygen comments.
+	* src/object/urbi-exception.cc (location_get, location_set): Move...
+	* src/object/urbi-exception.hxx: ... here.
+	Implement various inline constructors.
+	* src/object/fwd.hh: Add new forward declarations.
+	* src/object/object.cc,
+	* src/object/primitives.hh,
+	* src/object/float-class.cc: Adjust.
+
+2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Remove old object-related tests.
 	* src/object/Makefile.am: Adjust.
 	* src/object/object-test-lookup.cc: Remove.

@@ -71,7 +71,13 @@ namespace object
   DEFINE(primitive, Primitive)
 # undef DEFINE
 
+  // urbi-exception.hh
   class UrbiException;
+  class LookupError;
+  class RedefinitionError;
+  class PrimitiveError;
+  class WrongArgumentType;
+  class WrongArgumentCount;
 
 } // namespace object
 

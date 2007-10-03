@@ -69,7 +69,7 @@ namespace object
     if (const Object* o = which(k))
       return o->own_slot_get (k);
     else
-      throw UrbiException::lookupFailed(k);
+      throw LookupError(k);
   }
 
   rObject&
@@ -83,7 +83,7 @@ namespace object
   Object::slot_set (const Object::key_type& k, rObject o)
   {
     if (libport::mhas(slots_, k))
-      throw UrbiException::redefinition(k);
+      throw RedefinitionError(k);
     slots_[k] = o;
     return *this;
   }

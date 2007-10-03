@@ -26,32 +26,6 @@ namespace object
     /// Destructor.
     virtual ~UrbiException () throw ();
 
-    /// \brief Construct an UrbiException (used when lookup fails).
-    /// \param slot Searched slot.
-    static UrbiException lookupFailed (libport::Symbol slot);
-
-    /// \brief A slot is redefined.
-    static UrbiException redefinition (libport::Symbol slot);
-
-    /// \brief Construct an UrbiException from a primitive and a message.
-    /// \param primitive primitive which has thrown the error.
-    /// \param msg error message which will be sent.
-    static UrbiException primitiveError (std::string primitive,
-					 std::string msg);
-
-    /// Construct an UrbiException (used when types mismatch in a primitive).
-    /// \param real Real type.
-    /// \param expected Expected type.
-    /// \param loc Error's location.
-    static UrbiException wrongArgumentType (Object::kind_type real,
-					    Object::kind_type expected);
-
-    /// Construct an UrbiException (used when args count is wrong).
-    /// \param argReal Number of arguments given.
-    /// \param argExpected Number of arguments expected.
-    static UrbiException wrongArgumentCount (unsigned argReal,
-					     unsigned argExpected);
-
     /// Return the exception's error message.
     virtual const char* what () const throw ();
 
@@ -62,16 +36,16 @@ namespace object
     void location_set (const ast::loc&);
 
   protected:
-    /// \name Constructor
-    /// \brief Construct an exception which contains a raw message.
-    /// \param msg raw error message
+    /**
+     * \brief Construct an exception which contains a raw message.
+     * \param msg raw error message.  */
     explicit UrbiException (std::string msg);
 
-    /// \name Constructor
-    /// \brief Construct an exception which contains a raw message.
-    /// \param msg raw Error message.
-    /// \param loc Error's location.
-    explicit UrbiException (std::string msg, const ast::loc& loc);
+    /**
+     * \brief Construct an exception which contains a raw message.
+     * \param msg raw Error message.
+     * \param loc Error's location.  */
+    UrbiException (std::string msg, const ast::loc& loc);
 
   private:
     /// Error message.
@@ -79,16 +53,53 @@ namespace object
 
     /// Location
     ast::loc loc_;
+  };
 
-    /// Error messages.
-    static const char lookupFailed_[];
-    static const char primitiveError_[];
-    static const char wrongArgumentType_[];
-    static const char wrongArgumentCount_[];
+
+  /** Exception for lookup failures.
+   * \param slot Searched slot.  */
+  struct LookupError: public UrbiException
+  {
+    explicit LookupError (libport::Symbol slot);
+  };
+
+  /// Explicit for slots redefined.
+  struct RedefinitionError: public UrbiException
+  {
+    explicit RedefinitionError (libport::Symbol slot);
+  };
+
+  /** Exception for errors related to primitives usage.
+   * \param primitive primitive which has thrown the error.
+   * \param msg error message which will be sent.  */
+  struct PrimitiveError: public UrbiException
+  {
+    PrimitiveError (std::string primitive,
+                    std::string msg);
+  };
+
+  /** Exception for type mismatch in a primitive usage.
+   * \param real Real type.
+   * \param expected Expected type.
+   * \param loc Error's location.  */
+  struct WrongArgumentType: public UrbiException
+  {
+    WrongArgumentType (Object::kind_type real,
+                       Object::kind_type expected);
+
+  };
+
+  /** Exception used for calls with wrong argument count.
+   * \param argReal Number of arguments given.
+   * \param argExpected Number of arguments expected.  */
+  struct WrongArgumentCount: public UrbiException
+  {
+    WrongArgumentCount (unsigned argReal,
+                        unsigned argExpected);
   };
 
   /// Throw an exception if formal != effective.
-  /// \note: self is not included in the count.
+  /// \note: \c self is not included in the count.
   void check_arg_count (unsigned formal, unsigned effective);
 
 } // namespace object
