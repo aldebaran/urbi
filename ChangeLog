@@ -1,5 +1,15 @@
 2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Remove the networking from the kernel.
+	* src/Makefile.am: Adjust.
+	* src/network/bsdnet/bsdnet.mk: Remove.
+	* src/network/bsdnet/connection.cc: Remove.
+	* src/network/bsdnet/connection.hh: Remove.
+	* src/network/bsdnet/network.cc: Remove.
+	* src/network/bsdnet/network.hh: Remove.
+
+2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Use a real exception hierarchy.
 	* src/object/urbi-exception.hh (UrbiException): Remove the static
 	methods lookupFailed, redefinition, primitiveError,
