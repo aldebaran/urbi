@@ -1,5 +1,16 @@
 2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Partial fix of distcheck.
+	* Makefile.am (EXTRA_DIST): Adjust properly: distribute required
+	stuff from build-aux and remove (deprecated) Windows stuff.
+	* configure.ac (AM_INIT_AUTOMAKE): Don't generate .zip distribution
+	as we don't need it at this stage of development, it's a waste of time.
+	* src/ast/Makefile.am (EXTRA_DIST): Distribute missing witness files.
+	* src/object/Makefile.am (libobject_la_SOURCES): Properly list all
+	sources.
+
+2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Remove the networking from the kernel.
 	* src/Makefile.am: Adjust.
 	* src/network/bsdnet/bsdnet.mk: Remove.

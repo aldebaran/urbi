@@ -46,6 +46,7 @@ $(srcdir)/%.stamp: $(gen_dir)/ast-%-gen $(ast_gen_deps)
 	@mv -f $@.tmp $@
 
 # ast-nodes.mk
+EXTRA_DIST += nodes-mk.stamp
 $(srcdir)/ast-nodes.mk: $(srcdir)/nodes-mk.stamp
 
 # all.hh.
@@ -57,7 +58,7 @@ EXTRA_DIST += fwd.stamp
 fwd.hh: $(srcdir)/fwd.stamp
 
 # ignores.
-EXTRA_DIST += ignores
+EXTRA_DIST += ignores ignores.stamp
 $(srcdir)/ignores.stamp: $(gen_dir)/ast-ignores-gen $(ast_gen_deps)
 	@rm -rf $@
 	@rm -rf $@.tmp

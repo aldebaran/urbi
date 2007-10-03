@@ -15,14 +15,8 @@ SUBDIRS = libport src tests . doc
 # build-aux.
 EXTRA_DIST +=					\
 build-aux/bison++.in				\
-build-aux/move-if-change
-
-# windows.
-EXTRA_DIST +=					\
-windows/urbikernel/Debug			\
-windows/urbikernel/urbikernel.sln		\
-windows/urbikernel/urbikernel.suo          	\
-windows/urbikernel/urbikernel.vcproj
+build-aux/move-if-change			\
+build-aux/output-to-html
 
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
