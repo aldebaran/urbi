@@ -1,5 +1,16 @@
 2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Remove old object-related tests.
+	* src/object/Makefile.am: Adjust.
+	* src/object/object-test-lookup.cc: Remove.
+	* src/object/object-test-parent.cc: Remove.
+	* src/object/object-test-primitives.cc: Remove.
+	* src/object/object-test-slot.cc: Remove.
+	* src/object/object-test.cc: Remove.
+	* src/object/object-test.hh: Remove.
+
+2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Disable hard errors.
 	* configure.ac (ENABLE_HARD_ERRORS): New.  Set to false.
 	* tests-local.mk (XFAIL_TESTS): Adjust.
