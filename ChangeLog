@@ -1,5 +1,11 @@
 2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Use the replacement implementation of `round' if needed.
+	* src/object/float-class.cc [!HAVE_ROUND]: Use the replacement
+	implementation of libport.
+
+2007-10-03  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Partial fix of distcheck.
 	* Makefile.am (EXTRA_DIST): Adjust properly: distribute required
 	stuff from build-aux and remove (deprecated) Windows stuff.

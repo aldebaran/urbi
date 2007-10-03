@@ -5,6 +5,11 @@
 
 #include <cmath>
 
+#include "config.h"
+#ifndef HAVE_ROUND
+#  include "libport/ufloat.h"
+#endif
+
 #include "object/float-class.hh"
 #include "object/object.hh"
 #include "object/atom.hh"
