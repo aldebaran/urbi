@@ -1,5 +1,17 @@
 2007-10-04  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Simplify the way the `current_' value is handled.
+	* src/runner/runner.cc (operator()(If)): Don't deal with current_
+	anymore.  This reverts the change done 15 revisions ago (8 patches
+	ago).
+	(operator()(Call)): Use boost::shared_ptr::reset instead of `= 0'.
+	(operator()(Nary)): Reset the `current_' value before starting to
+	evaluate a new child of the Nary.
+	(operator()(Noop)): Reset the `current_' value.
+	(operator()(While)): Simplify.  `while' doesn't return a value.
+
+2007-10-04  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Properly clean the build tree.
 	* src/parser/bison/bison.mk (CLEANFILES): Add the HTML file produced
 	by output-to-html.

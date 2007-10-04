@@ -136,7 +136,7 @@ namespace runner
   void
   Runner::operator() (ast::If& e)
   {
-    CORO_WITH_1SLOT_CTX (rObject, condition);
+    CORO_WITHOUT_CTX ();
 
     // Evaluate the test.
     JECHO ("test", e.test_get ());
@@ -144,13 +144,7 @@ namespace runner
 
     YIELD();
 
-    // Clever way of making sure that the condition is not use after it's
-    // been tested.  Indeed, if the then-part or the else-part is *nothing*,
-    // the condition would be leaked and "returned" as the result of the
-    // `if'.  Which is wrong.
-    current_.swap (condition);
-
-    if (IS_TRUE(condition))
+    if (IS_TRUE(current_))
     {
       JECHO ("then", e.thenclause_get ());
       CORO_CALL (operator() (e.thenclause_get()));
@@ -231,7 +225,7 @@ namespace runner
     {
       ue.location_set (e.location_get ());
       raise_error_ (ue);
-      current_ = 0;
+      current_.reset ();
       has_error = true;
     }
     if (has_error)
@@ -375,6 +369,7 @@ namespace runner
 
     for (i = e.children_get().begin(); i != e.children_get().end(); ++i)
     {
+      current_.reset ();
       JECHO ("child", *i);
       CORO_CALL_CATCH (operator() (*i->first);,
 	catch (object::UrbiException& ue)
@@ -405,6 +400,7 @@ namespace runner
   Runner::operator() (ast::Noop&)
   {
     CORO_WITHOUT_CTX ();
+    current_.reset ();
     CORO_END;
   }
 
@@ -417,11 +413,6 @@ namespace runner
     // lhs
     JECHO ("lhs", e.lhs_get ());
     CORO_CALL (operator() (e.lhs_get()));
-
-    // Let's just make sure nobody uses this intermediate return value by
-    // trashing it right now.
-    current_.reset ();
-    assert (current_.get () == 0);
 
     // rhs:  start the execution immediately.
     JECHO ("rhs", e.rhs_get ());
@@ -480,12 +471,7 @@ namespace runner
       JECHO ("while test", e.test_get ());
       CORO_CALL (operator() (e.test_get()));
       if (!IS_TRUE(current_))
-      {
-        // Otherwise the `while' will evaluate to 0.0
-        // Is a `while' meant to return anything anyways?
-        current_.reset ();
 	break;
-      }
 
       if (e.flavor_get() == ast::flavor_semicolon)
 	YIELD();
@@ -493,6 +479,8 @@ namespace runner
       JECHO ("while body", e.body_get ());
       CORO_CALL (operator() (e.body_get()));
     }
+    // As far as I know, `while' doesn't return a value in URBI.
+    current_.reset ();
 
     CORO_END;
   }
