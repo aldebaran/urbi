@@ -1,10 +1,9 @@
 include $(top_srcdir)/build-aux/build-aux.mk
-include $(top_srcdir)/libport/libport.mk
 
 # That's where aclocal extensions are.
 ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = jpeg-6b libport/tests sdk src doc .
+SUBDIRS = jpeg-6b libport/tests sdk src doc libport .
 SVN_EXTERNALS += jpeg-6b sdk
 
 

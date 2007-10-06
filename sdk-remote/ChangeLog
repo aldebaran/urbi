@@ -1,3 +1,8 @@
+2007-10-06  POTHIER Benoit  <benoit.pothier@gmx.net>
+
+	Remove libport.mk in Makefile.am to handle the external update.
+	* Makefile.am: Here.
+
 2007-07-09  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 472:478 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
