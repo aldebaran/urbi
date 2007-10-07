@@ -3,6 +3,7 @@
 import re
 import sys, os, os.path, filecmp, shutil, stat
 import ast, tools
+from string import lower
 
 if len(sys.argv) != 2:
   tools.error("Usage: .. SRCDIR")
@@ -64,6 +65,11 @@ namespace ast
     // Useful shortcut for pointer types.
     template<class E> void operator() (E* e);
 
+    /* The following \\c typedef foo_type are only here to workaround a
+     * bug in MSVC 2005 SP1, see:
+     * http://forums.microsoft.com/msdn/showpost.aspx?postid=987536
+     * http://support.microsoft.com/kb/930198 */
+
     /// \\name Visit nodes.
     /// \\{
 """
@@ -75,10 +81,13 @@ for node in arr:
   # Unless the user asks for troubles.
   if node.concrete or 'default' in node.__dict__:
     print >>visitor_hh, \
-	"    virtual void operator() (typename Const<%s>::type&);" % (node.name)
+	"""
+    /// MSVC 2005 SP1 workaround.
+    typedef typename Const<%s>::type %s_type;
+    virtual void operator() (%s_type&);
+""" % (node.name, lower(node.name), lower(node.name))
 
-print >>visitor_hh, """
-    /// \\}
+print >>visitor_hh, """    /// \\}
   };
 
   /// Shorthand for a const visitor.
@@ -144,11 +153,11 @@ for node in arr:
     print """\
   template <template <typename> class Const>
   void
-  GenDefaultVisitor<Const>::operator() (typename Const<%s>::type&%s)
+  GenDefaultVisitor<Const>::operator() (typename GenDefaultVisitor<Const>::%s_type&%s)
   {
     %s
   }
-""" % (node.name, var, action)
+""" % (lower(node.name), var, action)
 
 print """} // namespace ast
 #endif // !AST_DEFAULT_VISITOR_HH

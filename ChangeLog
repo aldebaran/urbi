@@ -1,3 +1,14 @@
+2007-10-07  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Workaround a bug in MSVC 2005 SP1.
+	See:
+	http://forums.microsoft.com/msdn/showpost.aspx?postid=987536
+	http://support.microsoft.com/kb/930198 */
+	* dev/ast-default-visitor-gen,
+	* dev/ast-visitor-gen: Add typedef to work around a bug in MSVC 2005
+	SP1.
+	* src/ast/visitor.hxx: Adjust to use the workaround typedef.
+
 2007-10-04  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Simplify the way the `current_' value is handled.

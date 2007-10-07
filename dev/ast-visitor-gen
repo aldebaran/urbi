@@ -3,6 +3,7 @@
 import re
 import sys, os, os.path, filecmp, shutil, stat
 import ast, tools
+from string import lower
 
 from stat import ST_MODE
 
@@ -47,6 +48,11 @@ namespace ast
     virtual ~GenVisitor ();
     /** \\} */
 
+    /** This \\c typedef and the following ones are only here to workaround a
+     * bug in MSVC 2005 SP1, see:
+     * http://forums.microsoft.com/msdn/showpost.aspx?postid=987536
+     * http://support.microsoft.com/kb/930198 */
+    typedef typename Const<ast::Ast>::type ast_type;
     /// The entry point: visit \\a e.
     virtual void operator() (typename Const<ast::Ast>::type& e);
 """
@@ -54,10 +60,13 @@ arr = nodes.values ()
 arr.sort (lambda x, y: cmp(x.name, y.name))
 for node in arr:
   if node.concrete:
-    print "    virtual void operator() (typename Const<" \
-	  + node.name + ">::type&) = 0;"
-print """
-  };
+    print """
+    /// MSVC 2005 SP1 workaround.
+    typedef typename Const<ast::%s>::type %s_type;
+    virtual void operator() (typename Const<ast::%s>::type&) = 0;
+""" % (node.name, lower(node.name), node.name)
+
+print """  };
 
 # define VISITOR_VISIT_NODE_(Z, N, Array)			\\
     virtual void operator() (ast::BOOST_PP_ARRAY_ELEM(N, Array)& e);
