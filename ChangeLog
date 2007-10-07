@@ -1,3 +1,9 @@
+2007-10-08  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Bump the version number.
+	* configure.ac: Adjust the version number and email address for bug
+	reports.
+
 2007-10-02  Thomas Moulard  <thomas@moulard.net>
 
 	Remove network.
