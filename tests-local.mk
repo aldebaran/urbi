@@ -1,5 +1,6 @@
 # This file is loaded by tests/Makefile.am.  It contains things that
 # are specific to a given project or even Svn branch.
+UCONSOLE_CHECK_FLAGS = -k2
 
 K2_TESTS = $(notdir $(wildcard $(srcdir)/k2/*.chk))
 TESTS += $(K2_TESTS)

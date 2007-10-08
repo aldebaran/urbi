@@ -1,5 +1,10 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	Tests suite failures.
+	* tests-local.mk: Pass -k2 to uconsole-check.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	Kill Matthieu Notag.
 	* include/kernel/uconnection.hh: Move inline functions...
 	* include/kernel/uconnection.hxx: in this new file.
