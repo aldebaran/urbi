@@ -1,5 +1,10 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	k2 inherits k1 (poor little guy, so young and yet so old).
+	* src/parser/bison/ugrammar.y: Support inherits/disinherits.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	tests/ sync.
 	* tests-local.mk: stopif fails.
 

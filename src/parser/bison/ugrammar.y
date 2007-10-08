@@ -228,7 +228,7 @@
 	TOK_DEF          "def"
 	TOK_DELGROUP     "delgroup"
 	TOK_DIR          "->"
-	TOK_DISINHERITS  "disinherits"
+        TOK_DISINHERITS  "disinherits"
 	TOK_DOLLAR       "$"
 	TOK_DOUBLECOLON  "::"
 	TOK_ELSE         "else"
@@ -244,7 +244,7 @@
 	TOK_GROUP        "group"
 	TOK_IF           "if"
 	TOK_IN           "in"
-	TOK_INHERITS     "inherits"
+        TOK_INHERITS     "inherits"
 	TOK_LBRACE       "{"
 	TOK_LBRACKET     "["
 	TOK_LOOP         "loop"
@@ -615,9 +615,11 @@ stmt:
 
 // Classes.
 stmt:
-//  k1_id "inherits" k1_id { $$ = 0; }
-//| k1_id "disinherits" k1_id { $$ = 0; }
-  "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
+  expr "inherits" expr
+    { $$ = call (@$, $1, new libport::Symbol("addParent"), $3); }
+| expr "disinherits" expr
+    { $$ = call (@$, $1, new libport::Symbol("removeParent"), $3); }
+| "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
 | "class" "identifier" { $$ = 0; }
 ;
 
