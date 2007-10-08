@@ -199,6 +199,7 @@ Nary:
       #include <boost/foreach.hpp>
         
       #include "libport/indent.hh"
+      #include "libport/separator.hh"
 
       #include "ast/pretty-printer.hh"
 
@@ -280,16 +281,14 @@ Nary:
         {
           o << *e.first;
           if (e.second != flavor_none)
-            o << ' ' << e.second << ' ';
+            o << e.second;
           return o;
         }
         
         std::ostream&
         operator<<(std::ostream& o, const exec_exps_type& es)
         {
-          BOOST_FOREACH(const exec_exp_type& e, es)
-            o << e;
-          return o;
+          return o << libport::separate (es, libport::iendl);
         }
 
 Binary:

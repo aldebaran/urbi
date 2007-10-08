@@ -1,5 +1,10 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	Nary pretty print.
+	* src/ast/ast.yml (Nary::printer): Use iendl as a separator.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	Spare compilation cycles.
 	Suggested by Benoit Sigoure too.
 	* src/object/Makefile.am, src/runner/Makefile.am: Rename as...
