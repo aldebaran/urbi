@@ -106,6 +106,12 @@ namespace runner
     current_ = r.current_;
   }
 
+
+
+  /*---------------------.
+  | Regular operator().  |
+  `---------------------*/
+
   void
   Runner::operator() (ast::And& e)
   {
@@ -128,32 +134,6 @@ namespace runner
     }
     CORO_JOIN ();
     PING ();
-
-    CORO_END;
-  }
-
-
-  void
-  Runner::operator() (ast::If& e)
-  {
-    CORO_WITHOUT_CTX ();
-
-    // Evaluate the test.
-    JECHO ("test", e.test_get ());
-    CORO_CALL (operator() (e.test_get()));
-
-    YIELD();
-
-    if (IS_TRUE(current_))
-    {
-      JECHO ("then", e.thenclause_get ());
-      CORO_CALL (operator() (e.thenclause_get()));
-    }
-    else
-    {
-      JECHO ("else", e.elseclause_get ());
-      CORO_CALL (operator() (e.elseclause_get()));
-    }
 
     CORO_END;
   }
@@ -306,6 +286,32 @@ namespace runner
 
 
   void
+  Runner::operator() (ast::If& e)
+  {
+    CORO_WITHOUT_CTX ();
+
+    // Evaluate the test.
+    JECHO ("test", e.test_get ());
+    CORO_CALL (operator() (e.test_get()));
+
+    YIELD();
+
+    if (IS_TRUE(current_))
+    {
+      JECHO ("then", e.thenclause_get ());
+      CORO_CALL (operator() (e.thenclause_get()));
+    }
+    else
+    {
+      JECHO ("else", e.elseclause_get ());
+      CORO_CALL (operator() (e.elseclause_get()));
+    }
+
+    CORO_END;
+  }
+
+
+  void
   Runner::operator() (ast::Float& e)
   {
     CORO_WITHOUT_CTX ();
@@ -380,9 +386,9 @@ namespace runner
 
       if (e.toplevel_get () && current_.get ())
       {
-        ECHO ("toplevel: returning a result to the connection.");
-        context_->value_get ().connection.new_result (current_);
-        current_.reset ();
+	ECHO ("toplevel: returning a result to the connection.");
+	context_->value_get ().connection.new_result (current_);
+	current_.reset ();
       }
 
       /* Allow some time to pass before we execute what follows.  If
@@ -436,6 +442,7 @@ namespace runner
     std::swap(locals, locals_);
     CORO_END;
   }
+
 
   void
   Runner::operator() (ast::String& e)

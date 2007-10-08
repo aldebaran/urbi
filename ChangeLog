@@ -1,5 +1,10 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	Cleanup.
+	* src/runner/runner.cc: Sort functions.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	Tests suite failures.
 	* tests-local.mk: Pass -k2 to uconsole-check.
 
