@@ -1,5 +1,11 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	: in URBI_PATH.
+	If someone can do more elegantly, I buy.
+	* src/console.cc (ConsoleServer::ConsoleServer): Split the URBI_PATH.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	slot_get in depth.
 	* src/object/object.hh, src/object/object.cc, src/object/object.hxx
 	(lookup): Rename as...

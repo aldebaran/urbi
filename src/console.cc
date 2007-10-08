@@ -23,9 +23,15 @@ public:
   ConsoleServer(int freq)
     : UServer(freq, "console")
   {
-    // FIXME: Add support for : in the path.
     if (const char* cp = getenv ("URBI_PATH"))
-      path.push_back (cp);
+      // FIXME: Is there anything more elegant?
+    {
+      for (const char* end = strchr (cp, ':');
+	   end;
+	   cp = end + 1, end = strchr(cp, ':'))
+	path.push_back(std::string(cp, end - cp));
+      path.push_back(std::string(cp));
+    }
   }
 
   virtual ~ConsoleServer()
