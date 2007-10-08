@@ -1,0 +1,16 @@
+// This file should be loaded instead of being hard coded.
+// But this requires more work and to decide where to install
+// this file.
+// OTOH, this way uconsole is self contained.
+
+# Cannot use "copy", not "from" which are k1 reserved words :) :) :)
+#Object.cp = function (frm, to) {
+#  echo(frm);
+#  echo(getSlot(frm));
+#  setSlot(to, getSlot(frm))
+#};
+#Object.cp ("addParent", "inherit");
+#Object.cp ("removeParent", "disinherit");
+#
+#// Does not have anything special.
+#Channel = new Object;

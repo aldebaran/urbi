@@ -181,6 +181,11 @@ UServer::initialize()
     DEBUG (("done\n"));
   }
 
+  DEBUG (("Loading urbi.u..."));
+  if (loadFile("urbi.u", &ghost_->recvQueue()) == USUCCESS)
+    ghost_->newDataAdded = true;
+  DEBUG (("done\n"));
+
   DEBUG (("Loading URBI.INI..."));
   if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
     ghost_->newDataAdded = true;
@@ -836,22 +841,23 @@ namespace
 std::string
 UServer::find_file (const std::string& base)
 {
+  ECHO (base << " in " << path);
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + '/' + base;
-    ECHO("find_file(" << base << ") testing " << f);
     if (file_readable(f))
     {
-      ECHO("find_file(" << base << ") = " << f);
+      ECHO("found: " << f);
       return f;
     }
   }
   if (!file_readable(base))
+  {
+    ECHO("not found: " << base);
     error ((std::string ("cannot find file: ") + base).c_str ());
+  }
   return base;
 }
-
-#define URBI_BUFSIZ 1024
 
 UErrorValue
 UServer::loadFile (const std::string& base, UCommandQueue* q)
@@ -863,7 +869,7 @@ UServer::loadFile (const std::string& base, UCommandQueue* q)
 
   while (is.good ())
   {
-    char buf[URBI_BUFSIZ];
+    char buf[BUFSIZ];
     is.read (buf, sizeof buf);
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;

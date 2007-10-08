@@ -1,5 +1,15 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	urbi.u.
+	* share/urbi/urbi.u: New.
+	* src/userver.cc (initialize): Load it.
+	(find_file): More traces.
+	For some reason, failures are ignored: calls to "error"
+	here go to void.  This is annoying.  To be fixed.
+	(URBI_BUFSIZ): Useless.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	Learn the alphabet.
 	* src/runner/runner.cc: I is after F.
 
