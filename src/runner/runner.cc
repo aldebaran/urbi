@@ -185,7 +185,7 @@ namespace runner
     for (++i; i != i_end; ++i)
     {
       CORO_CALL (eval (**i));
-      assert (current_);
+      passert ("argument without a value: " << **i, current_);
       PING ();
       args.push_back (current_);
     }
@@ -199,7 +199,7 @@ namespace runner
     has_error = false;
     try {
       // Ask the target for the handler of the message.
-      val = tgt->lookup (e.name_get ());
+      val = tgt->slot_get (e.name_get ());
     }
     catch (object::UrbiException& ue)
     {
@@ -281,6 +281,8 @@ namespace runner
       std::swap(bound_args, locals_);
     }
 
+    passert ("no value: " << e, current_);
+    ECHO (AST(e) << " result: " << *current_);
     CORO_END;
   }
 

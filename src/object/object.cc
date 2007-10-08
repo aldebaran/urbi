@@ -64,7 +64,7 @@ namespace object
   }
 
   const rObject&
-  Object::lookup (const key_type& k) const
+  Object::slot_get (const key_type& k) const
   {
     if (const Object* o = which(k))
       return o->own_slot_get (k);
@@ -73,9 +73,9 @@ namespace object
   }
 
   rObject&
-  Object::lookup (const key_type& k)
+  Object::slot_get (const key_type& k)
   {
-    return const_cast<rObject&>(const_cast<const Object*>(this)->lookup(k));
+    return const_cast<rObject&>(const_cast<const Object*>(this)->slot_get(k));
   }
 
 
@@ -111,7 +111,7 @@ namespace object
     try
     {
       // Should be an rString.
-      o << lookup("type").cast<String>()->value_get ();
+      o << slot_get("type").cast<String>()->value_get ();
     }
     catch (UrbiException&)
     {}

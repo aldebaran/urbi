@@ -85,10 +85,10 @@ namespace object
     const Object* which (const key_type& k) const;
 
     /// Lookup field in object hierarchy.
-    const rObject& lookup (const key_type& k) const;
-    rObject& lookup (const key_type& k);
+    const rObject& slot_get (const key_type& k) const;
+    rObject& slot_get (const key_type& k);
 
-    /// \brief Update value in slot returned by \c lookup.
+    /// \brief Update value in slot.
     ///
     /// If the target is a "real" object, then updating means the same
     /// as slot_set: one never updates a parent.  If the target is a

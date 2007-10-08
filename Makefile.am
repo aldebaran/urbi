@@ -43,6 +43,9 @@ include/kernel/utypes.hh			\
 include/kernel/uvalue.hh 			\
 include/kernel/uvariable.hh 
 
+pkgdata_DATA = share/urbi/urbi.u
+
+
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##

@@ -138,10 +138,7 @@ namespace object
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
     FETCH_ARG(1, String);
-
-    // FIXME: This is not exact: there is a difference between local
-    // and non local slots.
-    return obj->own_slot_get(arg1->value_get());
+    return obj->slot_get(arg1->value_get());
   }
 
   /// Remove a slot.

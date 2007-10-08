@@ -101,7 +101,7 @@ namespace object
   Object::slot_update (const Object::key_type& k, rObject o)
   {
     if (locals_)
-      lookup(k) = o;
+      slot_get(k) = o;
     else
       slots_[k] = o;
     return *this;

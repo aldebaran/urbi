@@ -1,5 +1,17 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	slot_get in depth.
+	* src/object/object.hh, src/object/object.cc, src/object/object.hxx
+	(lookup): Rename as...
+	(slot_get): this.
+	* src/object/object-class.cc (object_class_getSlot): Use it.
+	* src/runner/runner.cc: Adjust.
+	Add a couple of assertions.
+
+	* Makefile.am: Ship and install urbi.u.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	urbi.u.
 	* share/urbi/urbi.u: New.
 	* src/userver.cc (initialize): Load it.
