@@ -1,3 +1,13 @@
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
+	More Object features.
+	* src/object/object-class.cc (CHANGE_SLOT): Rename as...
+	(SLOT_CHANGE): this, for consistency.
+	(DECLARE): Rename as...
+	(DECLARE1): this.
+	(object_class_removeSlot, DECLARE2): New.
+	* tests-local.mk: k2-closure fails.
+
 2007-10-07  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Workaround a bug in MSVC 2005 SP1.

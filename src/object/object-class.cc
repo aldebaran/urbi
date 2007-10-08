@@ -117,7 +117,7 @@ namespace object
   `--------*/
 
 
-  /// Get slots' list.
+  /// List of slot names.
   static rObject
   object_class_slotNames (rContext, objects_type args)
   {
@@ -131,7 +131,7 @@ namespace object
     return new object::List (l);
   }
 
-  /// Get a slot.
+  /// Get a slot content.
   static rObject
   object_class_getSlot (rContext, objects_type args)
   {
@@ -144,8 +144,19 @@ namespace object
     return obj->own_slot_get(arg1->value_get());
   }
 
+  /// Remove a slot.
+  static rObject
+  object_class_removeSlot (rContext, objects_type args)
+  {
+    CHECK_ARG_COUNT(2);
+    rObject obj = args[0];
+    FETCH_ARG(1, String);
+    obj->slot_remove(arg1->value_get());
+    return obj;
+  }
+
   /// Define setSlot or updateSlot.  \a Verb is "set" or "update".
-#define CHANGE_SLOT(Verb)					\
+#define SLOT_CHANGE(Verb)					\
   static rObject						\
   object_class_ ## Verb ## Slot (rContext, objects_type args)	\
   {								\
@@ -156,35 +167,43 @@ namespace object
   }
 
   /// Set a slot.
-  CHANGE_SLOT(set)
+  SLOT_CHANGE(set)
   /// Update a slot.
-  CHANGE_SLOT(update)
-#undef CHANGE_SLOT
+  SLOT_CHANGE(update)
+#undef SLOT_CHANGE
 
   void
   object_class_initialize ()
   {
-#define DECLARE(Name)							\
-      object_class->slot_set (#Name,					\
-			      new Primitive(object_class_ ## Name));
-      DECLARE(clone);
-      DECLARE(init);
+    /// \a Call gives the name of the C++ function, and \a Name that in Urbi.
+#define DECLARE2(Call, Name)						\
+    object_class->slot_set (#Name,					\
+			    new Primitive(object_class_ ## Call))
+#define DECLARE1(Name)				\
+    DECLARE2(Name, Name)
 
-      DECLARE(parents);
-      DECLARE(addParent);
-      DECLARE(removeParent);
+    DECLARE1(clone);
+    DECLARE1(init);
 
-      DECLARE(slotNames);
-      DECLARE(getSlot);
-      DECLARE(setSlot);
-      DECLARE(updateSlot);
+    DECLARE1(parents);
+    DECLARE1(addParent);
+    DECLARE1(removeParent);
+    // FIXME: Define them from Urbi: we need to std.u.
+    DECLARE2(addParent,       inherit);
+    DECLARE2(removeParent, disinherit);
 
-      DECLARE(echo);
-      DECLARE(print);
-      DECLARE(reboot);
-      DECLARE(shutdown);
-      DECLARE(wait);
-#undef DECLARE
+    DECLARE1(slotNames);
+    DECLARE1(getSlot);
+    DECLARE1(removeSlot);
+    DECLARE1(setSlot);
+    DECLARE1(updateSlot);
+
+    DECLARE1(echo);
+    DECLARE1(print);
+    DECLARE1(reboot);
+    DECLARE1(shutdown);
+    DECLARE1(wait);
+#undef DECLARE1
   }
 
 }; // namespace object
