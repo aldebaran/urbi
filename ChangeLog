@@ -1,5 +1,15 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	Spare compilation cycles.
+	Suggested by Benoit Sigoure too.
+	* src/object/Makefile.am, src/runner/Makefile.am: Rename as...
+	* src/object/object.mk, src/runner/runner.mk: these.
+	Adjust to be includable by...
+	* src/Makefile.am: this.
+	* configure.ac: Adjust.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	k2 inherits k1 (poor little guy, so young and yet so old).
 	* src/parser/bison/ugrammar.y: Support inherits/disinherits.
 

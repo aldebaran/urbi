@@ -1,0 +1,30 @@
+dist_libkernel_la_SOURCES +=			\
+object/atom.hh					\
+object/atom.hxx					\
+object/code-class.cc				\
+object/code-class.hh				\
+object/context-class.cc				\
+object/context-class.hh				\
+object/float-class.cc				\
+object/float-class.hh				\
+object/fwd.hh					\
+object/integer-class.cc				\
+object/integer-class.hh				\
+object/list-class.cc				\
+object/list-class.hh				\
+object/object-class.cc				\
+object/object-class.hh				\
+object/object.cc				\
+object/object.hh				\
+object/object.hxx				\
+object/primitive-class.cc			\
+object/primitive-class.hh			\
+object/primitives.cc				\
+object/primitives.hh				\
+object/state.cc					\
+object/state.hh					\
+object/string-class.cc				\
+object/string-class.hh				\
+object/urbi-exception.cc			\
+object/urbi-exception.hh			\
+object/urbi-exception.hxx
