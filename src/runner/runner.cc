@@ -286,32 +286,6 @@ namespace runner
 
 
   void
-  Runner::operator() (ast::If& e)
-  {
-    CORO_WITHOUT_CTX ();
-
-    // Evaluate the test.
-    JECHO ("test", e.test_get ());
-    CORO_CALL (operator() (e.test_get()));
-
-    YIELD();
-
-    if (IS_TRUE(current_))
-    {
-      JECHO ("then", e.thenclause_get ());
-      CORO_CALL (operator() (e.thenclause_get()));
-    }
-    else
-    {
-      JECHO ("else", e.elseclause_get ());
-      CORO_CALL (operator() (e.elseclause_get()));
-    }
-
-    CORO_END;
-  }
-
-
-  void
   Runner::operator() (ast::Float& e)
   {
     CORO_WITHOUT_CTX ();
@@ -332,6 +306,32 @@ namespace runner
 
     PING ();
     current_ = new object::Code (e);
+
+    CORO_END;
+  }
+
+
+  void
+  Runner::operator() (ast::If& e)
+  {
+    CORO_WITHOUT_CTX ();
+
+    // Evaluate the test.
+    JECHO ("test", e.test_get ());
+    CORO_CALL (operator() (e.test_get()));
+
+    YIELD();
+
+    if (IS_TRUE(current_))
+    {
+      JECHO ("then", e.thenclause_get ());
+      CORO_CALL (operator() (e.thenclause_get()));
+    }
+    else
+    {
+      JECHO ("else", e.elseclause_get ());
+      CORO_CALL (operator() (e.elseclause_get()));
+    }
 
     CORO_END;
   }

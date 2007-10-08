@@ -1,5 +1,10 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	Learn the alphabet.
+	* src/runner/runner.cc: I is after F.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	Cleanup.
 	* src/runner/runner.cc: Sort functions.
 
