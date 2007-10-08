@@ -18,8 +18,8 @@
 	Kill Matthieu Notag.
 	* include/kernel/uconnection.hh: Move inline functions...
 	* include/kernel/uconnection.hxx: in this new file.
-	* include/kernel/uconnection.hh: Move some doxumentation to...
-	* src/uconnection.cc: here.
+	* src/uconnection.cc: Move some doxumentation to...
+	* include/kernel/uconnection.hh: here.
 	* include/kernel/uconnection.hh, include/kernel/uconnection.hxx
 	(sendc): Another one for std::string.
 	* include/kernel/uconnection.hh, include/kernel/uconnection.cc
@@ -254,7 +254,7 @@
 	(lookup, slot_set, update_slot): Use it.
 	(operator[]): Remove: its semantics is unclear since now the
 	lookup depends whether we want to read or to write.
-	(own_slot_get): New.	
+	(own_slot_get): New.
 	* src/runner/runner.cc, src/runner/runner.hxx: Adjust to
 	declare locals objects as such.
 
@@ -288,7 +288,7 @@
 	Revert patch 1151 and 1152.
 	* src/runner/runner.cc,
 	* src/runner/runner.hxx: Handle context as a lobby slot instead of
-        a special message.
+	a special message.
 
 2007-09-20  Akim Demaille  <akim.demaille@free.fr>
 
