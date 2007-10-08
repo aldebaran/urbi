@@ -55,6 +55,7 @@ parse-errors.chk				\
 simple-alias.chk				\
 size.chk					\
 speed-zero.chk					\
+stopif.chk					\
 string-escapes.chk				\
 switch.chk					\
 synchro-assignment.chk				\

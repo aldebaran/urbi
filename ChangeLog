@@ -1,5 +1,10 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	tests/ sync.
+	* tests-local.mk: stopif fails.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	More Object features.
 	* src/object/object-class.cc (CHANGE_SLOT): Rename as...
 	(SLOT_CHANGE): this, for consistency.
