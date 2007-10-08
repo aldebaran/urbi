@@ -141,7 +141,7 @@ public:
   virtual ufloat getTime () = 0;
   virtual ufloat getPower () = 0;
   virtual void getCustomHeader (int line, char* header,
-                                int maxlength) = 0;
+				int maxlength) = 0;
 
   /// A list of directory names.
   typedef std::list<std::string> path_type;
@@ -162,6 +162,9 @@ public:
   virtual UErrorValue loadFile (const std::string& file_name,
 				UCommandQueue* loadQueue);
 
+  /// Load \a fn in the ghostqueue.
+  UErrorValue load_init_file(const char* fn);
+
   /// Save content to a file
   /// This function must be redefined by the robot-specific server.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
@@ -170,7 +173,7 @@ public:
 
   /// FIXME: Doc?
   UVariable* getVariable (const std::string& device,
-                          const std::string& property);
+			  const std::string& property);
 
   //! Accessor for frequency_.
   ufloat getFrequency ();

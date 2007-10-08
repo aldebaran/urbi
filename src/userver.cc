@@ -33,6 +33,7 @@
 #include <boost/foreach.hpp>
 
 #include "libport/containers.hh"
+#include "libport/separator.hh"
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -116,6 +117,21 @@ UServer::UServer(ufloat frequency,
   systemObjects.push_back (empty_list);
 }
 
+UErrorValue
+UServer::load_init_file(const char* fn)
+{
+  DEBUG (("Loading %s...", fn));
+  UErrorValue res = loadFile(fn, &ghost_->recvQueue());
+  if (res == USUCCESS)
+  {
+    DEBUG (("done\n"));
+    ghost_->newDataAdded = true;
+  }
+  else
+    DEBUG (("not found\n"));
+  return res;
+}
+
 void
 UServer::initialize()
 {
@@ -181,15 +197,8 @@ UServer::initialize()
     DEBUG (("done\n"));
   }
 
-  DEBUG (("Loading urbi.u..."));
-  if (loadFile("urbi.u", &ghost_->recvQueue()) == USUCCESS)
-    ghost_->newDataAdded = true;
-  DEBUG (("done\n"));
-
-  DEBUG (("Loading URBI.INI..."));
-  if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
-    ghost_->newDataAdded = true;
-  DEBUG (("done\n"));
+  load_init_file("urbi.u");
+  load_init_file("URBI.INI");
 }
 
 
@@ -841,7 +850,7 @@ namespace
 std::string
 UServer::find_file (const std::string& base)
 {
-  ECHO (base << " in " << path);
+  ECHO (base << " in " << libport::separate(path, ':'));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + '/' + base;
