@@ -26,6 +26,7 @@
 #include <cassert>
 #include <cstdarg>
 #include <sstream>
+#include <iomanip>
 
 #include <boost/lexical_cast.hpp>
 
@@ -221,18 +222,16 @@ void UConnection::initialize()
 UErrorValue
 UConnection::sendPrefix (const char* tag)
 {
-  enum { MAXSIZE_TMPBUFFER = 1024 };
-  char buf[MAXSIZE_TMPBUFFER];
-
-  snprintf(buf, sizeof buf,
-	   "[%08d:%s",
-	   (int)server->lastTime(), tag ? tag : ::UNKNOWN_TAG);
-  // This splitting method is used to truncate the tag if its size
-  // is too large.
-  strcat(buf, "] ");
+  std::ostringstream o;
+  char fill = o.fill('0');
+  o << '[' << std::setw(8) << (int) server->lastTime();
+  o.fill(fill);
+  if (tag)
+    o << ':' << tag;
+  o << "] ";
 
   sendQueue_->mark (); // put a marker to indicate the beginning of a message
-  sendc((const ubyte*)buf, strlen(buf));
+  sendc(o.str());
   return USUCCESS;
 }
 
@@ -244,16 +243,6 @@ UConnection::endline ()
   return USUCCESS;
 }
 
-//! Send a string through the connection.
-/*! A tag is automatically added to output the message string and the
- resulting string is sent via send(const ubyte*,int).
- \param s the string to send
- \param tag the tag of the message. Default is "notag"
- \return
- - USUCCESS: successful
- - UFAIL   : could not send the string
- \sa send(const ubyte*,int)
- */
 UErrorValue
 UConnection::send (const char *s, const char* tag)
 {
@@ -277,7 +266,6 @@ UConnection::sendf (const std::string& tag, const char* format, ...)
   return sendf (tag, format, args);
 }
 
-//! Send a buffer through the connection and flush it
 UErrorValue
 UConnection::send (const ubyte *buffer, int length)
 {
@@ -287,31 +275,10 @@ UConnection::send (const ubyte *buffer, int length)
   return ret;
 }
 
-//! Send a string through the connection but without flushing it
-UErrorValue
-UConnection::sendc (const char *s, const char* tag)
-{
-  sendPrefix(tag);
-  return sendc((const ubyte*)s, strlen(s));
-}
+/*--------.
+| sendc.  |
+`--------*/
 
-//! Send a buffer through the connection without flushing it.
-/*! The function piles the buffer in the sending queue and calls continueSend()
- if the connection is not blocked (blocked means that the connection is not
- ready to send data). The server will try to send the data in the
- sending queue each time the "work" function is called and if the connection
- is not blocked. It is the job of the programmer to let the kernel know when
- the connection is blocked or not, using the "block()" function to block it
- or by calling continueSend() directly to unblock it.
-
- \param buffer the buffer to send
- \param length the length of the buffer
- \return
- - USUCCESS: successful. The message is in the queue.
- - UFAIL   : could not send the buffer, not enough memory in the
- send queue.
- \sa send(const char*)
- */
 UErrorValue
 UConnection::sendc (const ubyte *buffer, int length)
 {
@@ -332,6 +299,13 @@ UConnection::sendc (const ubyte *buffer, int length)
   }
 
   return USUCCESS;
+}
+
+UErrorValue
+UConnection::sendc (const char *s, const char* tag)
+{
+  sendPrefix(tag);
+  return sendc((const ubyte*)s, strlen(s));
 }
 
 /// Flushes the connection buffer into the network

@@ -741,7 +741,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	*fundevice = connection->stack.front()->self();
 
       uc_tree->callid = new UCallid (unique ("__UFnct"),
-                                     fundevice->c_str (), uc_tree);
+				     fundevice->c_str (), uc_tree);
 
       resultContainer->nameUpdate(uc_tree->callid->str(), "__result__");
       // creates return variable
@@ -2270,7 +2270,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	*fundevice = connection->stack.front()->self();
 
       uc_tree->callid = new UCallid (unique ("__UFnct"),
-                                     fundevice->c_str (), uc_tree);
+				     fundevice->c_str (), uc_tree);
       resultContainer->nameUpdate(uc_tree->callid->str(),
 				  "__result__");
       // creates return variable

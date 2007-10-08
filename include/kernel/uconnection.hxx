@@ -1,0 +1,54 @@
+/// \file uconnection.hxx
+
+#ifndef UCONNECTION_HXX
+# define UCONNECTION_HXX
+
+# include "kernel/uconnection.hh"
+
+inline
+UErrorValue
+UConnection::sendc (const std::string& s)
+{
+  return sendc(reinterpret_cast<const ubyte*>(s.c_str()), s.size());
+}
+
+//! Accessor for sendAdaptive_
+inline 
+int
+UConnection::sendAdaptive()
+{
+  return sendAdaptive_;
+}
+
+//! Accessor for recvQueue_
+inline 
+UCommandQueue&
+UConnection::recvQueue()
+{
+  return *recvQueue_;
+}
+
+//! Accessor for sendQueue_
+inline 
+UQueue&
+UConnection::send_queue()
+{
+  return *sendQueue_;
+}
+
+//! Accessor for receiveAdaptive_
+inline 
+int
+UConnection::receiveAdaptive()
+{
+  return recvAdaptive_;
+}
+
+inline
+UParser&
+UConnection::parser ()
+{
+  return *parser_;
+}
+
+#endif

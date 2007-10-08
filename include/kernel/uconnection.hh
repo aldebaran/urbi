@@ -1,7 +1,7 @@
 /*! \file uconnection.hh
  *******************************************************************************
 
- File: uconnection.h\n
+ File: uconnection.hh\n
  Definition of the UConnection class.
 
  This file is part of
@@ -123,14 +123,52 @@ public:
   virtual UErrorValue closeConnection () = 0;
 
   UErrorValue sendPrefix (const char* tag = 0);
+
+  //! Send a string through the connection.
+  /*! A tag is automatically added to output the message string and the
+   resulting string is sent via send(const ubyte*,int).
+   \param s the string to send
+   \param tag the tag of the message. Default is "notag"
+   \return
+   - USUCCESS: successful
+   - UFAIL   : could not send the string
+   \sa send(const ubyte*,int)
+   */
   UErrorValue send (const char *s, const char* tag = 0);
+
+  //! Send a buffer through the connection and flush it.
   virtual UErrorValue send (const ubyte *buffer, int length);
 
   UErrorValue sendf (const std::string& tag, const char* format, va_list args);
   UErrorValue sendf (const std::string& tag, const char* format, ...);
 
+  //! Send a buffer through the connection without flushing it.
+  /*! The function piles the buffer in the sending queue and calls
+   continueSend() if the connection is not blocked (blocked means that
+   the connection is not ready to send data). The server will try to send
+   the data in the sending queue each time the "work" function is called
+   and if the connection is not blocked.
+
+   It is the job of the programmer to let the kernel know when
+   the connection is blocked or not, using the "block()" function to block it
+   or by calling continueSend() directly to unblock it.
+
+   \param buffer the buffer to send
+   \param length the length of the buffer
+   \return
+   - USUCCESS: successful. The message is in the queue.
+   - UFAIL   : could not send the buffer, not enough memory in the
+   send queue.
+   \sa send(const char*)
+   */
+    virtual UErrorValue sendc (const ubyte *buffer, int length);
+
+  //! Send a string through the connection but without flushing it
   UErrorValue sendc (const char *s, const char* tag = 0);
-  virtual UErrorValue sendc (const ubyte *buffer, int length);
+
+  /// Send \a str through the connection, don't flush.
+  UErrorValue sendc (const std::string& s);
+
   UErrorValue endline ();
 
 
@@ -291,39 +329,5 @@ private:
   object::rContext context_;
 };
 
-//! Accessor for sendAdaptive_
-inline int
-UConnection::sendAdaptive()
-{
-  return sendAdaptive_;
-}
-
-//! Accessor for recvQueue_
-inline UCommandQueue&
-UConnection::recvQueue()
-{
-  return *recvQueue_;
-}
-
-//! Accessor for sendQueue_
-inline UQueue&
-UConnection::send_queue()
-{
-  return *sendQueue_;
-}
-
-//! Accessor for receiveAdaptive_
-inline int
-UConnection::receiveAdaptive()
-{
-  return recvAdaptive_;
-}
-
-inline
-UParser&
-UConnection::parser ()
-{
-  return *parser_;
-}
-
+# include "kernel/uconnection.hxx"
 #endif

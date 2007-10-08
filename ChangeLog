@@ -1,5 +1,19 @@
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
+	Kill Matthieu Notag.
+	* include/kernel/uconnection.hh: Move inline functions...
+	* include/kernel/uconnection.hxx: in this new file.
+	* include/kernel/uconnection.hh: Move some doxumentation to...
+	* src/uconnection.cc: here.
+	* include/kernel/uconnection.hh, include/kernel/uconnection.hxx
+	(sendc): Another one for std::string.
+	* include/kernel/uconnection.hh, include/kernel/uconnection.cc
+	(sendPrefix): Use it.
+	Don't use static C buffers, let play C++.
+	* Makefile.am: Adjust.
+
+2007-10-08  Akim Demaille  <demaille@gostai.com>
+
 	Nary pretty print.
 	* src/ast/ast.yml (Nary::printer): Use iendl as a separator.
 

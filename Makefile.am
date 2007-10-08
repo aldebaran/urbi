@@ -35,6 +35,7 @@ include/kernel/tag-info.hh			\
 include/kernel/uasyncregister.hh 		\
 include/kernel/ucomplaints.hh			\
 include/kernel/uconnection.hh			\
+include/kernel/uconnection.hxx			\
 include/kernel/userver.hh			\
 include/kernel/userver.hxx			\
 include/kernel/ustring.hh			\
