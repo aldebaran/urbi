@@ -264,9 +264,16 @@ STRING   \"([^\"]|"\\\"")*\"
 "!"             RETURN_OP(BANG);
 "%"             RETURN_OP(PERCENT);
 "*"             RETURN_OP(STAR);
+"*="            RETURN_OP(STAR_ASSIGN);
 "+"             RETURN_OP(PLUS);
+"+="            RETURN_OP(PLUS_ASSIGN);
+"++"            RETURN_OP(PLUS_PLUS);
 "-"             RETURN_OP(MINUS);
+"-="            RETURN_OP(MINUS_ASSIGN);
+"--"            RETURN_OP(MINUS_MINUS);
 "/"             RETURN_OP(DIV);
+"/="            RETURN_OP(DIV_ASSIGN);
+
 "<"             RETURN_OP(LTH);
 "<="            RETURN_OP(LEQ);
 "=="            RETURN_OP(EQU);
@@ -295,10 +302,6 @@ STRING   \"([^\"]|"\\\"")*\"
    */
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
-"++"            RETURN_OP(PLUSPLUS);
-"+="            RETURN_OP(PLUSASSIGN);
-"--"            RETURN_OP(MINUSMINUS);
-"-="            RETURN_OP(MINUSASSIGN);
 "->"            return token::TOK_DIR;
 "."             return token::TOK_POINT;
 ":"             return token::TOK_COLON;

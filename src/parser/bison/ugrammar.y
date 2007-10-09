@@ -397,7 +397,14 @@
 	OPERATOR           "operator command"
 	OPERATOR_ID        "operator"
 	OPERATOR_VAR       "var-operator"
-%type <symbols> identifiers identifiers.1 formal_args
+;
+
+// id is meant to enclose all the symbols we use as operators.  For
+// instance "+" is special so that we do have the regular priority and
+// asssociativity, yet we can write "foo . + (2)" and call foo's +.
+%type <symbol> id;
+
+%type <symbols> identifiers identifiers.1 formal_args;
 // FIXME: this destructor entails double frees and invalid pointer
 // frees.
 // %destructor { delete $$; } <symbol>;
@@ -769,10 +776,21 @@ k1_id:
 | Stmt: Assignment.  |
 `-------------------*/
 %token <symbol>
-	TOK_MINUSASSIGN  "-="
-	TOK_MINUSMINUS   "--"
-	TOK_PLUSASSIGN   "+="
-	TOK_PLUSPLUS     "++"
+	TOK_DIV_ASSIGN    "/="
+	TOK_MINUS_ASSIGN  "-="
+	TOK_MINUS_MINUS   "--"
+	TOK_PLUS_ASSIGN   "+="
+	TOK_PLUS_PLUS     "++"
+	TOK_STAR_ASSIGN   "*="
+;
+
+id:
+  "/="
+| "-="
+| "--"
+| "+="
+| "++"
+| "*="
 ;
 
 stmt:
@@ -780,6 +798,8 @@ stmt:
 | "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
 | lvalue "+=" expr { $$ = call (@$, $1, $2, $3); }
 | lvalue "-=" expr { $$ = call (@$, $1, $2, $3); }
+| lvalue "*=" expr { $$ = call (@$, $1, $2, $3); }
+| lvalue "/=" expr { $$ = call (@$, $1, $2, $3); }
 | lvalue "--"      { $$ = call (@$, $1, $2); }
 | lvalue "++"      { $$ = call (@$, $1, $2); }
 ;
@@ -856,11 +876,15 @@ stmt:
 
 %type <call> call message;
 message:
-  "identifier" args
+  id args
     {
       // The target of the message is currently unknown.
       $$ = call (@$, 0, take($1), $2);
     }
+;
+
+id:
+  "identifier"
 ;
 
 call:
@@ -1011,6 +1035,16 @@ expr:
 	TOK_EXP     "^"
 ;
 
+id:
+//  "!"
+  "%"
+| "*"
+| "+"
+  //| "-"
+| "/"
+| "^"
+;
+
 expr:
   expr "+" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "-" expr	          { $$ = call(@$, $1, $2, $3); }
@@ -1039,6 +1073,20 @@ expr:
 
 	TOK_LAND  "&&"
 	TOK_LOR   "||"
+;
+
+id:
+  "=~="
+| "=="
+| ">="
+| ">"
+| "<="
+| "<"
+| "!="
+| "%="
+| "~="
+| "&&"
+| "||"
 ;
 
 expr:

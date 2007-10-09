@@ -1,5 +1,18 @@
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
+	Operators are identifiers.
+	* src/parser/bison/ugrammar.y (id): New.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l
+	(TOK_STAR_ASSIGN, TOK_DIV_ASSIGN): New.
+	(TOK_MINUSMINUS, TOK_PLUSPLUS, TOK_PLUSASSIGN, TOK_MINUSASSIGN):
+	Rename as...
+	(TOK_MINUS_MINUS, TOK_PLUS_PLUS, TOK_PLUS_ASSIGN, TOK_MINUS_ASSIGN):
+	these.
+	* share/urbi/urbi.u: Use these new symbols to define these
+	operators.
+
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
 	Simplify ast/ast.mk.
 	* src/ast/ast.mk: It is no longer needed to handle the special
 	case of location.hh which is now a regular dependency.
