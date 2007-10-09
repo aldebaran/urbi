@@ -177,6 +177,13 @@ public:
   UErrorValue continueSend ();
   void flush ();
 
+  /// Handle an incoming string.
+  /*! Must be called each time a string is received by the connection.
+   \param s the incoming string
+   \return UFAIL buffer overflow
+   \return UMEMORYFAIL critical memory overflow
+   \return USUCCESS otherwise
+   */
   UErrorValue received (const char *s);
 
   /// \brief Handle an incoming buffer of data.

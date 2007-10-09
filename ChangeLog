@@ -1,3 +1,9 @@
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
+	Comment changes.
+	* src/uconnection.cc: Move some doxumentation to...
+	* include/kernel/uconnection.hh: here.
+
 2007-10-08  Akim Demaille  <demaille@gostai.com>
 
 	.

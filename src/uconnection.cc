@@ -373,13 +373,6 @@ UConnection::continueSend ()
   return UFAIL;
 }
 
-//! Handles an incoming string.
-/*! Must be called each time a string is received by the connection.
- \param s the incoming string
- \return UFAIL buffer overflow
- \return UMEMORYFAIL critical memory overflow
- \return USUCCESS otherwise
- */
 UErrorValue
 UConnection::received (const char *s)
 {
@@ -430,8 +423,7 @@ UConnection::received (const ubyte *buffer, int length)
   if (p.command_tree_get ())
   {
     // This chunk of code seems suspect in k2, meanwhile:
-    ECHO ("SHOULD NEVER BE HERE");
-    abort ();
+    pabort ("SHOULD NEVER BE HERE");
     PING();
     //reentrency trouble
     treeLock.unlock();
