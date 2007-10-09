@@ -32,7 +32,7 @@ namespace object
   {                                                                     \
     if (!r)								\
       throw PrimitiveError("Operator " #Operator,                       \
-                           ErrorMessage);                               \
+			   ErrorMessage);                               \
     return l Operator r;                                                \
   }
 
@@ -173,7 +173,7 @@ namespace object
   PRIMITIVE_1_FLOAT_(Name, Call,                                \
      if (VALUE(args[1], Float) < 0)                             \
        throw PrimitiveError(#Name,                              \
-                            "argument has to be positive"))
+			    "argument has to be positive"))
 
 #define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)		\
   PRIMITIVE_1_FLOAT_(Name, Call,					\

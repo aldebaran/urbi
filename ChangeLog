@@ -1,5 +1,11 @@
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
+	Fix tests.
+	Update tests.
+	* share/urbi/urbi.u: Remove debug instructions.
+
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
 	urbi.u is born.
 	* src/object/object-class.cc (object_class_init): No longer
 	create inherit and disinherit messages.

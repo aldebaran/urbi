@@ -7,8 +7,6 @@ Object.slotCopy = function (frm, to) {
 Object.slotCopy ("addParent", "inherit");
 Object.slotCopy ("removeParent", "disinherit");
 
-Object.slotNames;
-
 // Does not have anything special.  Yet.
 var Channel = new Object;
 
