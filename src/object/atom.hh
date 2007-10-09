@@ -28,10 +28,16 @@ namespace object
   public:
 
     /// Give access to Traits. Useful in macros.
-    typedef Traits traits;
+    typedef Traits traits_type;
+
+    /// What we store.
+    typedef typename Traits::type value_type;
+
+    /// What we store, as a ref (for arguments and return values).
+    typedef typename libport::ref_traits<value_type>::type value_ref_type;
 
     /// Construct an Atom with value \p v.
-    Atom (const typename Traits::type v);
+    Atom (const value_type v);
 
     /// Destroy an Atom.
     virtual ~Atom ();
@@ -44,16 +50,16 @@ namespace object
     virtual kind_type kind_get () const;
 
     /// The value held.
-    const typename Traits::type value_get () const;
+    const value_type value_get () const;
+    value_ref_type value_get ();
+
+    void value_set (value_ref_type v);
 
     /// Comparison methods
     /// \{
     bool operator< (const Atom& rhs) const;
     virtual bool operator< (const Object& rhs) const;
     /// \}
-
-    /// The held value.
-    typename libport::ref_traits<typename Traits::type>::type value_get ();
 
     /// For debugging.
     std::ostream& special_slots_dump (std::ostream& o) const;
@@ -62,7 +68,7 @@ namespace object
 
   private:
     /// The value.
-    typename Traits::type value_;
+    value_type value_;
   };
 
 

@@ -1,3 +1,14 @@
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
+	Atom typedef.
+	* src/object/atom.hh, src/object/atom.hxx (traits): Rename as...
+	(traits_type): this.
+	Adjust uses.
+	(value_type, value_ref_type, value_set): New.
+	Use it.
+	* src/object/list-class.cc, src/object/object.hxx,
+	* src/object/primitives.hh: Adjust.
+
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
 	for loops.

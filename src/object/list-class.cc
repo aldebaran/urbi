@@ -70,7 +70,7 @@ namespace object
     static rList
     tail(rList l)
     {
-      List::traits::type res(l->value_get());
+      List::value_type res(l->value_get());
       res.pop_front();
       return new List(res);
     }
@@ -97,7 +97,7 @@ namespace object
     static rList
     sort (rList l)
     {
-      List::traits::type res (l->value_get());
+      List::value_type res (l->value_get());
       res.sort (compareListItems);
       return new List (res);
     }

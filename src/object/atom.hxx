@@ -60,13 +60,13 @@ namespace object
     return static_cast<Object::kind_type>(Traits::kind);
   }
 
-  /*------------.
-  | value_get.  |
-  `------------*/
+  /*------------------.
+  | value accessors.  |
+  `------------------*/
 
   template <typename Traits>
   inline
-  const typename Traits::type
+  const typename Atom<Traits>::value_type
   Atom<Traits>::value_get () const
   {
     return value_;
@@ -74,10 +74,18 @@ namespace object
 
   template <typename Traits>
   inline
-  typename libport::ref_traits<typename Traits::type>::type
+  typename Atom<Traits>::value_ref_type
   Atom<Traits>::value_get ()
   {
     return value_;
+  }
+
+  template <typename Traits>
+  inline
+  void
+  Atom<Traits>::value_set (typename Atom<Traits>::value_ref_type v)
+  {
+    value_ = v;
   }
 
 
@@ -90,7 +98,7 @@ namespace object
   bool
   Atom<Traits>::operator< (const Atom& rhs) const
   {
-    return value_get () < rhs.value_get ();
+    return value_ < rhs.value_get ();
   }
 
   template <>
