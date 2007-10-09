@@ -898,7 +898,7 @@ UServer::addConnection(UConnection& connection)
 {
   if (connection.uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
-	  "UServer::addConnection",
+	  __PRETTY_FUNCTION__,
 	  "UConnection constructor failed");
   else
     connectionList.push_front (&connection);
@@ -913,7 +913,7 @@ UServer::removeConnection(UConnection& connection)
 {
   connectionList.remove (&connection);
   echo(::DISPLAY_FORMAT1, (long)this,
-       "UServer::removeConnection",
+       __PRETTY_FUNCTION__,
        "Connection closed", (long) &connection);
   delete &connection;
 }

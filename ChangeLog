@@ -1,5 +1,10 @@
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
+	Use __PRETTY_FUNCTION__.
+	* src/userver.cc: here.
+
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
 	|-loops do not exist.
 	* src/parser/bison/ugrammar.y (flavor.opt): Remove.
 	Use pipe.opt instead.
