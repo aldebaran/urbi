@@ -33,7 +33,7 @@ namespace object
 #define TYPE_CHECK(Obj, Type)                                           \
   if (!(Obj)->type_is<Type>())                                          \
     throw WrongArgumentType(Obj->kind_get(),                            \
-                            object::Object::kind_type(Type::traits::kind));
+			    object::Object::kind_type(Type::traits::kind));
 
 /**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.
@@ -93,7 +93,7 @@ namespace object
   PRIMITIVE_2_(Class, Name, Call, new Ret, Type1, Type2, ->value_get())
 
 /**
- * Define a primitive for class Class named name, which takes two
+ * Define a primitive for class Class named Name, which takes two
  * arguments of type Type1 and rObject, returns type Ret and whose
  * result is Call applied to all arguments.
  */

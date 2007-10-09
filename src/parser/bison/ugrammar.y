@@ -250,15 +250,11 @@
 	TOK_LOOP         "loop"
 	TOK_LOOPN        "loopn"
 	TOK_LPAREN       "("
-	TOK_MINUSASSIGN  "-="
-	TOK_MINUSMINUS   "--"
 	TOK_NEW          "new"
 	TOK_NOOP         "noop"
 	TOK_NORM         "'n"
 	TOK_OBJECT       "object"
 	TOK_ONLEAVE      "onleave"
-	TOK_PLUSASSIGN   "+="
-	TOK_PLUSPLUS     "++"
 	TOK_POINT        "."
 	TOK_RBRACE       "}"
 	TOK_RBRACKET     "]"
@@ -711,13 +707,20 @@ k1_id:
 /*-------------------.
 | Stmt: Assignment.  |
 `-------------------*/
+%token <symbol>
+	TOK_MINUSASSIGN  "-="
+	TOK_MINUSMINUS   "--"
+	TOK_PLUSASSIGN   "+="
+	TOK_PLUSPLUS     "++"
+;
+
 stmt:
 	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3);        }
 | "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
-| lvalue "+=" expr { $$ = 0; }
-| lvalue "-=" expr { $$ = 0; }
-| lvalue "--"      { $$ = 0; }
-| lvalue "++"      { $$ = 0; }
+| lvalue "+=" expr { $$ = call (@$, $1, $2, $3); }
+| lvalue "-=" expr { $$ = call (@$, $1, $2, $3); }
+| lvalue "--"      { $$ = call (@$, $1, $2); }
+| lvalue "++"      { $$ = call (@$, $1, $2); }
 ;
 
 /*---------------------.

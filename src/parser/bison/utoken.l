@@ -295,10 +295,10 @@ STRING   \"([^\"]|"\\\"")*\"
    */
 "("             return token::TOK_LPAREN;
 ")"             return token::TOK_RPAREN;
-"++"            return token::TOK_PLUSPLUS;
-"+="            return token::TOK_PLUSASSIGN;
-"--"            return token::TOK_MINUSMINUS;
-"-="            return token::TOK_MINUSASSIGN;
+"++"            RETURN_OP(PLUSPLUS);
+"+="            RETURN_OP(PLUSASSIGN);
+"--"            RETURN_OP(MINUSMINUS);
+"-="            RETURN_OP(MINUSASSIGN);
 "->"            return token::TOK_DIR;
 "."             return token::TOK_POINT;
 ":"             return token::TOK_COLON;

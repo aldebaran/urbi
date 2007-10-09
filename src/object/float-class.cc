@@ -47,6 +47,7 @@ namespace object
   }
 
   FCT_OP_PROTECTED(div, /, "division by 0")
+  FCT_OP_PROTECTED(divi, /=, "division by 0")
   FCT_M_PROTECTED(mod, fmod, "modulo by 0")
 
 #undef FCT_M_PROTECTED
@@ -186,11 +187,18 @@ namespace object
 #define PRIMITIVE_OP_FLOAT(Name, Op)                    \
   PRIMITIVE_OP_V(float, Name, Op, Float, Float, Float)
 
+  // Binary arithmetics operators.
   PRIMITIVE_OP_FLOAT(add, +)
   PRIMITIVE_2_FLOAT(div, float_div)
   PRIMITIVE_OP_FLOAT(mul, *)
-  PRIMITIVE_2_FLOAT(pow, powf)
   PRIMITIVE_2_FLOAT(mod, float_mod)
+  PRIMITIVE_2_FLOAT(pow, powf)
+
+  // In place binary arithmetics operators.
+  PRIMITIVE_OP_FLOAT(addi, +=)
+  PRIMITIVE_2_FLOAT(divi, float_divi)
+  PRIMITIVE_OP_FLOAT(muli, *=)
+  PRIMITIVE_OP_FLOAT(subi, -=)
 
   PRIMITIVE_OP_FLOAT(land, &&)
   PRIMITIVE_OP_FLOAT(lor, ||)
@@ -238,9 +246,13 @@ namespace object
     DECLARE_PRIMITIVE(float, Name, Call)
 
     DECLARE(add, +);
+    DECLARE(addi, +=);
     DECLARE(div, /);
+    DECLARE(divi, /=);
     DECLARE(mul, *);
+    DECLARE(muli, *=);
     DECLARE(sub, -);
+    DECLARE(subi, -=);
     DECLARE(pow, **);
     DECLARE(mod, %);
 

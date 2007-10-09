@@ -1,3 +1,7 @@
+## -------- ##
+## Object.  ##
+## -------- ##
+
 # Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
 Object.slotCopy = function (frm, to) {
   # This is annoying: one has to specify "self" here, otherwise the
@@ -7,8 +11,23 @@ Object.slotCopy = function (frm, to) {
 Object.slotCopy ("addParent", "inherit");
 Object.slotCopy ("removeParent", "disinherit");
 
+## ------- ##
+## Float.  ##
+## ------- ##
+Float.setSlot("++", function () { self += 1 });
+Float.setSlot("--", function () { self -= 1 });
+
+## --------- ##
+## Channel.  ##
+## --------- ##
+
 // Does not have anything special.  Yet.
 var Channel = new Object;
+
+
+## ------------- ##
+## Ready to go.  ##
+## ------------- ##
 
 # This string is special and expected by uconsole-check as the
 # signal that we have loaded urbi.u.  Messages before, and including

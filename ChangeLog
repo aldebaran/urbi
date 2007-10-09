@@ -1,3 +1,11 @@
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
+	++.
+	* src/object/float-class.cc: Support +=, -=, *= and /=.
+	* share/urbi/urbi.u (Float.++, Float.--): New.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l
+	(+=, -=, *=, /=): They now have a Symbol value.
+
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
 	Use __PRETTY_FUNCTION__.
