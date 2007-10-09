@@ -1,3 +1,9 @@
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
+	Simplify ast/ast.mk.
+	* src/ast/ast.mk: It is no longer needed to handle the special
+	case of location.hh which is now a regular dependency.
+
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	ast/ast.mk.
