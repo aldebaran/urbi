@@ -87,12 +87,24 @@ namespace Network
     }
 
     // Set the REUSEADDR option to 1 to allow imediate reuse of the port.
+#ifdef WIN32
+    /*
+      Under linux&all os, SO_REUSEADDR means you can reuse an adress in the
+      TIME_WAIT state. Under windows, it means you can bind an allready bound
+      port.
+      http://msdn2.microsoft.com/en-us/library/ms740476.aspx
+      "SO_REUSEADDR    BOOL    Allows the socket to be bound to an address
+      that is already in use."
+      So we don't set this option under windows
+    */
+    // set the REUSEADDR option to 1 to allow imediate reuse of the port
     int yes = 1;
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof yes))
     {
       perror ("setsockopt failed");
       return false;
     }
+#endif
 
     // Do not send a SIGPIPE, rather return EPIPE.  See the comment
     // for MSG_NOSIGNAL in connection.cc.
