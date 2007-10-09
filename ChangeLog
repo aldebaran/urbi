@@ -1,5 +1,10 @@
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
+	!.
+	* src/object/object.hxx: Add missing !.
+
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
 	Atom::traits_type.
 	* src/object/atom.hh (kind): New.
 	(traits_type): Remove.

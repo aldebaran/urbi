@@ -71,7 +71,7 @@ namespace object
   Object::parent_add (const rObject& p)
   {
     assert(p);
-    if (libport::has(parents_, p))
+    if (!libport::has(parents_, p))
       parents_.push_back (p);
     return *this;
   }
