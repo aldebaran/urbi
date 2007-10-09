@@ -1,5 +1,13 @@
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
+	Float.set.
+	* src/object/float-class.cc (float_class_set): New.
+	Remove support for in place arithmetics as primitives.
+	* share/urbi/urbi.u (Float.+=, Float.-=, Float.*=)
+	(Float./=): New.
+
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
 	!.
 	* src/object/object.hxx: Add missing !.
 

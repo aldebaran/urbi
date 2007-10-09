@@ -19,9 +19,9 @@ namespace object
 {
   rObject float_class;
 
-  /*-------------------.
-  | Float primitives.  |
-  `-------------------*/
+  /*-----------------------------------------.
+  | Routines to implement float primitives.  |
+  `-----------------------------------------*/
 
   // This macro is used to generate modulo
   // and division functions.
@@ -47,7 +47,6 @@ namespace object
   }
 
   FCT_OP_PROTECTED(div, /, "division by 0")
-  FCT_OP_PROTECTED(divi, /=, "division by 0")
   FCT_M_PROTECTED(mod, fmod, "modulo by 0")
 
 #undef FCT_M_PROTECTED
@@ -133,6 +132,24 @@ namespace object
     return x * x;
   }
 
+/*------------------------------------------------------------.
+| Float Primitives.                                           |
+|                                                             |
+| I.e., the signature is rContext x objects_type -> rObject.  |
+`------------------------------------------------------------*/
+
+
+  /// Change the value.
+  rObject
+  float_class_set(rContext, objects_type args)
+  {
+    FETCH_ARG(0, Float);
+    FETCH_ARG(1, Float);
+    arg0->value_set (arg1->value_get());
+    return arg0;
+  }
+
+
   /// Unary or binary minus.
   rObject
   float_class_sub(rContext, objects_type args)
@@ -194,12 +211,6 @@ namespace object
   PRIMITIVE_2_FLOAT(mod, float_mod)
   PRIMITIVE_2_FLOAT(pow, powf)
 
-  // In place binary arithmetics operators.
-  PRIMITIVE_OP_FLOAT(addi, +=)
-  PRIMITIVE_2_FLOAT(divi, float_divi)
-  PRIMITIVE_OP_FLOAT(muli, *=)
-  PRIMITIVE_OP_FLOAT(subi, -=)
-
   PRIMITIVE_OP_FLOAT(land, &&)
   PRIMITIVE_OP_FLOAT(lor, ||)
 
@@ -246,13 +257,9 @@ namespace object
     DECLARE_PRIMITIVE(float, Name, Call)
 
     DECLARE(add, +);
-    DECLARE(addi, +=);
     DECLARE(div, /);
-    DECLARE(divi, /=);
     DECLARE(mul, *);
-    DECLARE(muli, *=);
     DECLARE(sub, -);
-    DECLARE(subi, -=);
     DECLARE(pow, **);
     DECLARE(mod, %);
 
@@ -273,6 +280,8 @@ namespace object
 
 #define DECLARE(Name)                      \
     DECLARE_PRIMITIVE(float, Name, Name)
+
+    DECLARE(set);
 
     DECLARE(sin);
     DECLARE(asin);

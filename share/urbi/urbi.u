@@ -11,9 +11,16 @@ Object.slotCopy = function (frm, to) {
 Object.slotCopy ("addParent", "inherit");
 Object.slotCopy ("removeParent", "disinherit");
 
+
 ## ------- ##
 ## Float.  ##
 ## ------- ##
+
+Float.setSlot("+=", function (x) { self.set (self + x) });
+Float.setSlot("-=", function (x) { self.set (self - x) });
+Float.setSlot("*=", function (x) { self.set (self * x) });
+Float.setSlot("/=", function (x) { self.set (self / x) });
+
 Float.setSlot("++", function () { self += 1 });
 Float.setSlot("--", function () { self -= 1 });
 
