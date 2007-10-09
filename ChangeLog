@@ -1,5 +1,10 @@
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
+	echo.
+	* src/object/object-class.cc (object_class_echo): Issue to ***.
+
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
 	Operators are identifiers.
 	* src/parser/bison/ugrammar.y (id): New.
 	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l

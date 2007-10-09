@@ -971,7 +971,7 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 	  // FIXME: 2007-07-20: Currently we can't free the commandTree,
 	  // we might kill function bodies.
 	  //delete p.commandTree;
-          p.command_tree_set (0);
+	  p.command_tree_set (0);
 	}
       connection->send(p.error_get().c_str(), "error");
     }

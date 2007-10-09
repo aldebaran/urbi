@@ -51,7 +51,11 @@ namespace object
   object_class_echo (rContext c, objects_type args)
   {
     // First argument (self) is ignored, print args[1].
-    object_class_print(c, objects_type(args.begin()+1, args.end()));
+    std::ostringstream os;
+    os << "*** ";
+    args[1]->print (os);
+    c->value_get().connection.send (os.str().c_str());
+    c->value_get().connection.endline();
     return args[0];
   }
 
