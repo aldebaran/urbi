@@ -1,5 +1,13 @@
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
+	Atom::traits_type.
+	* src/object/atom.hh (kind): New.
+	(traits_type): Remove.
+	Adjust dependencies.
+	* src/object/object.hxx: Use libport::has.
+
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
 	Atom typedef.
 	* src/object/atom.hh, src/object/atom.hxx (traits): Rename as...
 	(traits_type): this.

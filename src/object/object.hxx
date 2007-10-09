@@ -11,6 +11,7 @@
 
 # include <ostream>
 
+# include "libport/containers.hh"
 # include "libport/indent.hh"
 
 # include "object/object.hh"
@@ -56,7 +57,7 @@ namespace object
   {
     // FIXME: static_assert Obj derives from Object.
     // FIXME: Is this really faster than using dynamic_cast? Or RTTI?
-    return kind_is(object::Object::kind_type(Type::traits_type::kind));
+    return kind_is(object::Object::kind_type(Type::kind));
   }
 
 
@@ -70,7 +71,7 @@ namespace object
   Object::parent_add (const rObject& p)
   {
     assert(p);
-    if (parents_.end () == find (parents_.begin (), parents_.end (), p))
+    if (libport::has(parents_, p))
       parents_.push_back (p);
     return *this;
   }

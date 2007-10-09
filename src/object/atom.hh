@@ -27,9 +27,6 @@ namespace object
      ** \{ */
   public:
 
-    /// Give access to Traits. Useful in macros.
-    typedef Traits traits_type;
-
     /// What we store.
     typedef typename Traits::type value_type;
 
@@ -47,6 +44,7 @@ namespace object
     typedef Object super_type;
 
     /// The kind of Atom.
+    enum { kind = Traits::kind };
     virtual kind_type kind_get () const;
 
     /// The value held.

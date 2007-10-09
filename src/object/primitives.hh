@@ -33,7 +33,7 @@ namespace object
 #define TYPE_CHECK(Obj, Type)                                           \
   if (!(Obj)->type_is<Type>())                                          \
     throw WrongArgumentType(Obj->kind_get(),                            \
-			    object::Object::kind_type(Type::traits_type::kind));
+			    object::Object::kind_type(Type::kind));
 
 /**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.
