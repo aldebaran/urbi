@@ -1,5 +1,22 @@
 2007-09-10  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1367:1594 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-09-20  SIGOURE Benoit  <sigoure.benoit@lrde.epita.fr>
+	* network.cc: Correct a typo, dont use SO_REUSADDR under
+	windows.
+
+	2007-09-19  POTHIER Benoit  <pothier@gostai.com>
+	Add known bugs file.
+	* KNOWN_BUGS: New.
+
+	2007-09-18  HUMBERT Remi <humbert@gostai.com>
+	* src/utypes.hh: Undefine 'min' and 'max' macros,
+	it should be done in libport/windows.hh. This is only a temporary
+	solution.
+
+2007-09-10  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1367:1464 https://svn.gostai.com/svn/kernel1/branches/1.0
 
 	2007-08-25  Matthieu Nottale  <nottale@gostai.com>

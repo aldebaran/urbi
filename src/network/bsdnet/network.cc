@@ -87,7 +87,7 @@ namespace Network
     }
 
     // Set the REUSEADDR option to 1 to allow imediate reuse of the port.
-#ifdef WIN32
+#ifndef WIN32
     /*
       Under linux&all os, SO_REUSEADDR means you can reuse an adress in the
       TIME_WAIT state. Under windows, it means you can bind an allready bound
