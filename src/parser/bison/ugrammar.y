@@ -563,19 +563,12 @@ stmt:
 	TOK_PIPE         "|"
 ;
 
-%type <flavor> and.opt flavor.opt pipe.opt;
-%printer { debug_stream() << $$; } and.opt flavor.opt pipe.opt ";" "|" "&" ",";
+%type <flavor> and.opt pipe.opt;
+%printer { debug_stream() << $$; } <flavor>;
 
 // One or zero "&", defaulting to ";".
 and.opt:
   /* empty. */  { $$ = ast::flavor_semicolon; }
-| "&"
-;
-
-// One or zero "&" or "|", defaulting to ";".
-flavor.opt:
-  /* empty. */  { $$ = ast::flavor_semicolon; }
-| "|"
 | "&"
 ;
 
@@ -751,11 +744,11 @@ stmt:
     {
       $$ = new ast::If(@$, $3, $5, $7);
     }
-| "for" flavor.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
+| "for" pipe.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
     {
       $$ = 0;
     }
-| "foreach" flavor.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
+| "foreach" pipe.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
     {
       $$ = 0;
     }
@@ -767,7 +760,7 @@ stmt:
     {
       $$ = 0;
     }
-| "loopn" flavor.opt "(" expr ")" stmt %prec CMDBLOCK
+| "loopn" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
     {
       $$ = 0;
     }

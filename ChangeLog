@@ -1,3 +1,9 @@
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
+	|-loops do not exist.
+	* src/parser/bison/ugrammar.y (flavor.opt): Remove.
+	Use pipe.opt instead.
+
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	Fix tests.
