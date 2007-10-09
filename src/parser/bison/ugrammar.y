@@ -413,6 +413,9 @@ take (T* t)
 %left  "else" "onleave"
 %nonassoc "="
 
+%left "$"
+%left "=>"
+
 /* URBI Grammar */
 %%
 

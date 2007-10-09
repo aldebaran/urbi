@@ -789,9 +789,9 @@ UValue::echo(bool hr)
 
     case DATA_NUM:
     {
-      std::ostringstream o;
-      o << std::fixed << val;
-      return o.str();
+      char dv[64];
+      sprintf(dv,"%f",(float)val);
+      return std::string(dv);
     }
 
     case DATA_STRING:

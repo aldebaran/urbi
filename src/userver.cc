@@ -87,7 +87,8 @@ UServer::UServer(ufloat frequency,
     systemcommands (true),
     frequency_(frequency),
     securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
-    isolate_ (false)
+    isolate_ (false),
+    uid(0)
 {
   ::urbiserver = 0;
   memoryOverflow = securityBuffer_ == 0;
@@ -374,6 +375,7 @@ UServer::work()
   // Values final assignment and nbAverage reset to 0
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
+  {
     if ((*i)->activity == 2)
     {
       (*i)->activity = 0;
@@ -395,7 +397,10 @@ UServer::work()
 	  if ((*i)->autoUpdate)
 	    (*i)->selfSet (&((*i)->value->val));
 	  else
+	  {
 	    (*i)->selfSet (&((*i)->target));
+	    (*i)->setTarget();
+	  }
 	}
 
       // set previous for next iation
@@ -409,6 +414,7 @@ UServer::work()
 
       ++i;
     }
+  }
 
   // Execute Hub Updaters
   for (urbi::UTimerTable::iterator i = urbi::updatemap->begin();

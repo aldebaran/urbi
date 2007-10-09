@@ -27,6 +27,7 @@
 # include <boost/thread.hpp>
 
 # include "libport/compiler.hh"
+# include "libport/lockable.hh"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
@@ -52,7 +53,7 @@ extern  class UServer   *urbiserver; // Global variable for the server
     This object does all the internal processing of URBI and handles the pool
     of UCommand's.
 */
-class UServer
+class UServer: public libport::Lockable
 {
 public:
   //! UServer constructor.
@@ -190,6 +191,11 @@ public:
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
+  inline int        getUID          ()
+  {
+    libport::BlockLock bl(this);
+    return ++uid;
+  }
   int               addAlias        (const char* id, const char* variablename);
 
   // A usual connection to stop dependencies.
@@ -312,6 +318,9 @@ private:
   ufloat           lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
+
+  /// unique id source
+  int               uid;
 };
 
 //! Accessor for frequency_.
