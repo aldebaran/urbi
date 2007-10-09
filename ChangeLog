@@ -1,5 +1,12 @@
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
+	for loops.
+	* src/parser/bison/ugrammar.y (new_flavor, for_loop): New.
+	(for): Use it.
+	* tests-local.mk: We pass for-loop from k1.
+
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
 	Don't expect Call& to always have a value.
 	We need some Void.
 	* src/runner/runner.cc (Call&): Don't assert current_.

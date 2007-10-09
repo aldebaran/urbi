@@ -203,6 +203,67 @@
 	return new ast::Scope(l, e);
     }
 
+    /// When op can be either of the four cases.
+    static
+    ast::Exp*
+    new_flavor(const yy::parser::location_type& l, ast::flavor_type op,
+	       ast::Exp* lhs, ast::Exp* rhs)
+    {
+      switch (op)
+      {
+	case ast::flavor_and:
+	case ast::flavor_pipe:
+	  return new_bin(l, op, lhs, rhs);
+
+	case ast::flavor_comma:
+	case ast::flavor_semicolon:
+	{
+	  ast::Nary* res = new ast::Nary ();
+	  res->push_back (lhs);
+	  res->push_back (op, rhs);
+	  return res;
+	}
+	default:
+	  pabort(op);
+      }
+    }
+
+
+    /// Build a for loop.
+    // Since we don't have "continue", for is really a sugared
+    // while:
+    //
+    // "for OP ( INIT; TEST; INC ) BODY"
+    //
+    // ->
+    //
+    // "{ INIT OP WHILE OP (TEST) { BODY OP INC } }"
+    //
+    // OP is either ";" or "|".
+    static
+    ast::Exp*
+    for_loop (const yy::parser::location_type& l,
+	      ast::flavor_type op,
+	      ast::Exp* init, ast::Exp* test, ast::Exp* inc,
+	      ast::Exp* body)
+    {
+      passert (op, op == ast::flavor_pipe || op == ast::flavor_semicolon);
+      assert (init);
+      assert (test);
+      assert (inc);
+      assert (body);
+
+      // BODY OP INC.
+      ast::Exp* loop_body = new_flavor (l, op, body, inc);
+
+      // WHILE OP (TEST) { BODY OP INC }.
+      ast::While *while_loop = new ast::While(l, op, test, scope(l, loop_body));
+
+      // { INIT OP WHILE OP (TEST) { BODY OP INC } }.
+      return scope (l, new_flavor (l, op, init, while_loop));
+    }
+
+
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -749,7 +810,7 @@ stmt:
     }
 | "for" pipe.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
     {
-      $$ = 0;
+      $$ = for_loop (@$, $2, $4, $6, $8, $10);
     }
 | "foreach" pipe.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
     {
