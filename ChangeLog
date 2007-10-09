@@ -1,5 +1,13 @@
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
+	ast/ast.mk.
+	* src/ast/Makefile.am: Rename as...
+	* src/ast/ast.mk: this.
+	Adjust to work as a file included by src/Makefile.am.
+	* configure.ac, src/Makefile.am: Adjust.
+
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
 	Float.set.
 	* src/object/float-class.cc (float_class_set): New.
 	Remove support for in place arithmetics as primitives.

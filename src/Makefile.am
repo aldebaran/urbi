@@ -13,8 +13,7 @@
 ## ---------------- ##
 
 include kernel.mk
-
-SUBDIRS = ast .
+AUTOMAKE_OPTIONS += -Wno-portability
 
 # Defined in sub mk files, e.g., src/parser/bison/bison.mk.
 # FIXME: Might not be needed after all.
@@ -109,6 +108,7 @@ nodist_libkernel_la_SOURCES += $(uobject_sources)
 ## Sub directories.  ##
 ## ----------------- ##
 
+include ast/ast.mk
 include object/object.mk
 include runner/runner.mk
 

@@ -62,7 +62,6 @@ URBI_TESTS
 
 AC_CONFIG_FILES([Makefile
 		   src/Makefile
-		     src/ast/Makefile
 ])
 
 AC_OUTPUT
