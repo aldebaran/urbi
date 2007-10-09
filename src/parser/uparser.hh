@@ -57,9 +57,11 @@ public:
   UParser (UConnection& cn);
 
   /// Parse the command from a buffer.
+  /// \return yyparse's result (0 on success).
   int process (const std::string& code);
 
   /// Parse a file.
+  /// \return yyparse's result (0 on success).
   int process_file (const std::string& fn);
 
   /// \{
