@@ -1,16 +1,18 @@
-// This file should be loaded instead of being hard coded.
-// But this requires more work and to decide where to install
-// this file.
-// OTOH, this way uconsole is self contained.
+# Cannot use "copy", nor "from" which are k1 reserved words :) :) :)
+Object.slotCopy = function (frm, to) {
+  # This is annoying: one has to specify "self" here, otherwise the
+  # setSlot goes to the locals_ :(
+  self . setSlot(to, getSlot(frm))
+};
+Object.slotCopy ("addParent", "inherit");
+Object.slotCopy ("removeParent", "disinherit");
 
-# Cannot use "copy", not "from" which are k1 reserved words :) :) :)
-#Object.cp = function (frm, to) {
-#  echo(frm);
-#  echo(getSlot(frm));
-#  setSlot(to, getSlot(frm))
-#};
-#Object.cp ("addParent", "inherit");
-#Object.cp ("removeParent", "disinherit");
-#
-#// Does not have anything special.
-#Channel = new Object;
+Object.slotNames;
+
+// Does not have anything special.  Yet.
+var Channel = new Object;
+
+# This string is special and expected by uconsole-check as the
+# signal that we have loaded urbi.u.  Messages before, and including
+# this one, are ignored.
+"Urbi is up and running.";

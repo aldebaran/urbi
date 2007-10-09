@@ -3,6 +3,9 @@
  ** \brief Creation of the URBI object object.
  */
 
+//#define ENABLE_DEBUG_TRACES
+#include "libport/compiler.hh"
+
 #include <boost/lexical_cast.hpp>
 
 #include "kernel/userver.hh"
@@ -185,9 +188,6 @@ namespace object
     DECLARE1(parents);
     DECLARE1(addParent);
     DECLARE1(removeParent);
-    // FIXME: Define them from Urbi: we need to std.u.
-    DECLARE2(addParent,       inherit);
-    DECLARE2(removeParent, disinherit);
 
     DECLARE1(slotNames);
     DECLARE1(getSlot);

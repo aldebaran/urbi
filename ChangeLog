@@ -1,5 +1,13 @@
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
+	urbi.u is born.
+	* src/object/object-class.cc (object_class_init): No longer
+	create inherit and disinherit messages.
+	* share/urbi/urbi.u (Object.slotCopy): New.
+	(Object.inherit, Object.disinherit): New.
+
+2007-10-09  Akim Demaille  <demaille@gostai.com>
+
 	More doxumentation.
 	* src/parser/uparser.hh: here.
 
