@@ -281,7 +281,9 @@ namespace runner
       std::swap(bound_args, locals_);
     }
 
-    passert ("no value: " << e, current_);
+    // Because while returns 0, we can't have a call that returns 0
+    // (a function that runs a while for instance).
+    // passert ("no value: " << e, current_);
     ECHO (AST(e) << " result: " << *current_);
     CORO_END;
   }

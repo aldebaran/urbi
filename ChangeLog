@@ -1,3 +1,9 @@
+2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+
+	Don't expect Call& to always have a value.
+	We need some Void.
+	* src/runner/runner.cc (Call&): Don't assert current_.
+
 2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	++.
