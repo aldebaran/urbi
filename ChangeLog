@@ -1,5 +1,10 @@
 2007-10-10  Akim Demaille  <akim.demaille@free.fr>
 
+	String comparison.
+	* share/urbi/urbi.u (String.<=, String.>, String.>=): New.
+
+2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+
 	Makefile.am simplification.
 	* src/ast/ast.mk: Fuse two variable increments.
 

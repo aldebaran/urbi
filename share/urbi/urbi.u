@@ -12,6 +12,14 @@ Object.slotCopy ("addParent", "inherit");
 Object.slotCopy ("removeParent", "disinherit");
 
 
+## --------- ##
+## Channel.  ##
+## --------- ##
+
+// Does not have anything special.  Yet.
+var Channel = new Object;
+
+
 ## ------- ##
 ## Float.  ##
 ## ------- ##
@@ -24,12 +32,17 @@ Float./= = function (x) { self.set (self / x) };
 Float.++ = function () { self += 1 };
 Float.-- = function () { self -= 1 };
 
-## --------- ##
-## Channel.  ##
-## --------- ##
 
-// Does not have anything special.  Yet.
-var Channel = new Object;
+## -------- ##
+## String.  ##
+## -------- ##
+
+# We do have ==, <, and != as builtins.
+# FIXME: Introduce "Sortable", or whatever, which defines these
+# operators, and derive from it.
+String.<= = function (rhs) { self < rhs || self == rhs };
+String.>  = function (rhs) { rhs < self };
+String.>= = function (rhs) { rhs < self || self == rhs };
 
 
 ## ------------- ##
