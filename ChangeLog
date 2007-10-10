@@ -1,5 +1,10 @@
 2007-10-10  Akim Demaille  <akim.demaille@free.fr>
 
+	Makefile.am simplification.
+	* src/ast/ast.mk: Fuse two variable increments.
+
+2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+
 	Return floats.
 	* src/object/string-class.cc: Do not return Integers, k2 is
 	not ready for them.
