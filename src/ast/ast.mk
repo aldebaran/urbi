@@ -69,7 +69,7 @@ $(ast_srcdir)/ast.dot: $(gen_dir)/ast-graph-gen $(ast_gen_deps)
 
 # DefaultVisitor
 EXTRA_DIST += ast/default-visitor.stamp
-ast/default-visitor.hh default-visitor.hxx: $(ast_srcdir)/default-visitor.stamp
+ast/default-visitor.hh ast/default-visitor.hxx: $(ast_srcdir)/default-visitor.stamp
 
 # Visitor.
 EXTRA_DIST += ast/visitor.stamp
