@@ -16,6 +16,8 @@ BUILT_SOURCES_ast =							   \
 	ast/pretty-printer.hh ast/pretty-printer.hxx ast/pretty-printer.cc \
 	$(ast_nodes)
 
+EXTRA_DIST += $(BUILT_SOURCES_ast)
+
 gen_dir = $(top_srcdir)/dev
 ast_gen_deps = $(gen_dir)/ast.py $(gen_dir)/ast_params.py \
 	       $(gen_dir)/tools.py $(ast_srcdir)/ast.yml

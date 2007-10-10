@@ -1,5 +1,10 @@
 2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Properly distribute generated AST files.
+	* src/ast/ast.mk (EXTRA_DIST): Add BUILT_SOURCES_ast.
+
+2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Fix (again) dependencies in ast.mk.
 	* src/ast/ast.mk: Here.
 
