@@ -1,5 +1,11 @@
 2007-10-10  Akim Demaille  <akim.demaille@free.fr>
 
+	Return floats.
+	* src/object/string-class.cc: Do not return Integers, k2 is
+	not ready for them.
+
+2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+
 	Missing lval.
 	* src/parser/bison/utoken.l: != is expected to have a semantic value.
 

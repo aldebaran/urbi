@@ -31,17 +31,17 @@ namespace object
     }
 
     PRIMITIVE_OP_STRING(add,   +, String);
-    PRIMITIVE_OP_STRING(equ,  ==, Integer);
-    PRIMITIVE_OP_STRING(lth,   <, Integer);
-    PRIMITIVE_OP_STRING(nequ, !=, Integer);
+    PRIMITIVE_OP_STRING(equ,  ==, Float);
+    PRIMITIVE_OP_STRING(lth,   <, Float);
+    PRIMITIVE_OP_STRING(nequ, !=, Float);
 
 #undef PRIMITIVE_OP_STRING
 
     /// Return string's length.
-    static rObject
+    static rFloat
     size (rString& s)
     {
-      return new Integer (s->value_get ().name_get ().size ());
+      return new Float (s->value_get ().name_get ().size ());
     }
 
   };
