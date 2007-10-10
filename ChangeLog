@@ -1,3 +1,13 @@
+2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Fix the non-recursive Makefile.
+	* dev/ast-nodes-mk-gen: Prefix the paths to the files listed in the
+	piece of Makefile by `ast/'.
+	* src/ast/ast.mk: Be nicer to automake by enabling it to include the
+	pieces of Makefile and properly resolve the dependencies.  Fix the
+	names of several targets because now, file paths must be prefixed by
+	`ast/'.
+
 2007-10-09  Akim Demaille  <akim.demaille@free.fr>
 
 	echo.
