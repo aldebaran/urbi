@@ -88,5 +88,5 @@ ast/loc.hh					\
 ast/flavor.hh ast/flavor.cc			\
 ast/visitor.hxx
 
-libkernel_la_SOURCES += 			\
+dist_libkernel_la_SOURCES += 			\
 $(BUILT_SOURCES_ast)

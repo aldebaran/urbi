@@ -1,5 +1,11 @@
 2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Adjust a Makefile.
+	* src/ast/ast.mk: Use dist_libkernel_la_SOURCES instead of
+	libkernel_la_SOURCES.
+
+2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Simplify the distribution of generated files.
 	* src/ast/ast.mk: Put BUILT_SOURCES_ast in libkernel_la_SOURCES
 	instead of EXTRA_DIST and nodist_libkernel_la_SOURCES.
