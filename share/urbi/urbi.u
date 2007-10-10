@@ -29,8 +29,11 @@ Float.-= = function (x) { self.set (self - x) };
 Float.*= = function (x) { self.set (self * x) };
 Float./= = function (x) { self.set (self / x) };
 
-Float.++ = function () { self += 1 };
-Float.-- = function () { self -= 1 };
+// FIXME: Does not work as expected because using "set" changes *all*
+// the slots that point to a given value (because we change the
+// value).  "set" is probably not the right approach here.
+Float.++ = function () { var res = self; self += 1; res };
+Float.-- = function () { var res = self; self -= 1; res };
 
 
 ## -------- ##

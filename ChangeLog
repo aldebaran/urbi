@@ -1,5 +1,11 @@
 2007-10-10  Akim Demaille  <akim.demaille@free.fr>
 
+	++ is incorrect.
+	* share/urbi/urbi.u (Float.++, Float.--): Try to fix them...
+	* tests-local.mk: but acknowledge we failed.
+
+2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+
 	String comparison.
 	* share/urbi/urbi.u (String.<=, String.>, String.>=): New.
 

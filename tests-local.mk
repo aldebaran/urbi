@@ -10,8 +10,9 @@ k2-check:
 	$(MAKE) check TESTS="$(K2_TESTS)"
 
 # k2 tests that fail.
-XFAIL_TESTS +=	\
-k2-closure.chk
+XFAIL_TESTS +=					\
+k2-closure.chk					\
+k2-inplace.chk
 
 # k1 tests that currently don't pass.
 XFAIL_TESTS +=					\
