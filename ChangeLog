@@ -1,3 +1,9 @@
+2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+
+	Fix the priorities.
+	* src/parser/bison/ugrammar.y: Strictly follow the C precedence
+	rules, except, of course, those for &, |, ;, and ,.
+
 2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Adjust a Makefile.

@@ -443,28 +443,49 @@
 | Operator precedence.  |
 `----------------------*/
 
+// man operator
+
+// Operator                        Associativity
+// --------                        -------------
+// () [] -> .                      left to right
+// ! ~ ++ -- - (type) * & sizeof   right to left
+// * / %                           left to right
+// + -                             left to right
+// << >>                           left to right
+// < <= > >=                       left to right
+// == !=                           left to right
+// &                               left to right
+// ^                               left to right
+// |                               left to right
+// &&                              left to right
+// ||                              left to right
+// ?:                              right to left
+// = += -= etc.                    right to left
+// ,                               left to right
+
  /*
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
-%left  "||"
-%left  "&&"
-%left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
-%left  "-" "+"
-%left  "*" "/" "%"
-%left  "!" UNARY     /* Negation--unary minus */
-%left  "("
-%right "^"
-%right "'n"
-
-// a^b.c reads "a ^ (b.c)".
-%left  "."
-
-%right "," ";"
+%left  "," ";"
 %left  "&" "|"
 %left  CMDBLOCK
 %left  "else" "onleave"
-%nonassoc "="
+
+%left "="
+%left  "||"
+%left  "&&"
+%right "^"
+%nonassoc "==" "~=" "%=" "=~=" "!="
+%nonassoc  ">" ">=" "<" "<="
+%left  "+" "-"
+%left  "*" "/" "%"
+%right  "!" "++" "--" UNARY     /* Negation--unary minus */
+%left  "("
+%left "."
+
+%right "'n"
+
 
 
 /* URBI Grammar */
@@ -1105,6 +1126,8 @@ expr:
 
 | "!" expr { $$ = 0; }
 
+// FIXME: This is not good: we are not short-circuiting.  Ideally we
+// would like to use an If here, but it's not an expression (yet?).
 | expr "&&" expr  { $$ = call(@$, $1, $2, $3); }
 | expr "||" expr  { $$ = call(@$, $1, $2, $3); }
 ;
