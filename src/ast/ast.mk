@@ -39,11 +39,11 @@ $(ast_srcdir)/ast-nodes.mk: $(ast_srcdir)/nodes-mk.stamp
 
 # all.hh.
 EXTRA_DIST += ast/all.stamp
-all.hh: $(ast_srcdir)/all.stamp
+ast/all.hh: $(ast_srcdir)/all.stamp
 
 # fwd.hh.
 EXTRA_DIST += ast/fwd.stamp
-fwd.hh: $(ast_srcdir)/fwd.stamp
+ast/fwd.hh: $(ast_srcdir)/fwd.stamp
 
 # ignores.
 EXTRA_DIST += ast/ignores ast/ignores.stamp
@@ -56,7 +56,7 @@ $(ast_srcdir)/ignores.stamp: $(gen_dir)/ast-ignores-gen $(ast_gen_deps)
           svn propset svn:ignore $(ast_srcdir) -F $(ast_srcdir)/ignores; \
         fi
 	@mv -f $@.tmp $@
-ignores: $(ast_srcdir)/ignores.stamp
+ast/ignores: $(ast_srcdir)/ignores.stamp
 
 # AST itself.
 EXTRA_DIST += ast/nodes.stamp

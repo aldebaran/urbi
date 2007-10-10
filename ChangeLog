@@ -1,5 +1,10 @@
 2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	More dependency fixes in ast.mk.
+	* src/ast/ast.mk: Fix dependencies for all.hh, ignores and fwd.hh.
+
+2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Fix the non-recursive Makefile.
 	* dev/ast-nodes-mk-gen: Prefix the paths to the files listed in the
 	piece of Makefile by `ast/'.
