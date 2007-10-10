@@ -288,7 +288,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "||"            RETURN_OP(LOR);
 
 "="             return token::TOK_ASSIGN;
-"!="            return token::TOK_NEQ;
+"!="            RETURN_OP(NEQ);
 "$"             return token::TOK_DOLLAR;
 "%="            return token::TOK_PEQ;
 

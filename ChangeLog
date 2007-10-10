@@ -1,5 +1,10 @@
 2007-10-10  Akim Demaille  <akim.demaille@free.fr>
 
+	Missing lval.
+	* src/parser/bison/utoken.l: != is expected to have a semantic value.
+
+2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+
 	Fix the priorities.
 	* src/parser/bison/ugrammar.y: Strictly follow the C precedence
 	rules, except, of course, those for &, |, ;, and ,.
