@@ -25,8 +25,6 @@ kernelinclude_HEADERS =
 
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static
-libkernel_la_LIBADD = \
-ast/libast.la $(libport_la)
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
@@ -139,7 +137,8 @@ urbiinclude_HEADERS = $(uobject_headers)
 if !OPENR
 noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
-uconsole_LDADD = libkernel.la $(PTHREAD_LIBS)
+uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la \
+                 $(PTHREAD_LIBS)
 endif
 
 # Clean VC++ debug file. BTW, Do we want to install it?

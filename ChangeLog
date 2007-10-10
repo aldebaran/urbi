@@ -1,5 +1,11 @@
 2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Fix compilation dependencies for uconsole.
+	* src/Makefile.am: Remove the remaining traces of libast.
+	(uconsole_LDADD): Fix.
+
+2007-10-10  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	More dependency fixes in ast.mk.
 	* src/ast/ast.mk: Fix dependencies for all.hh, ignores and fwd.hh.
 
