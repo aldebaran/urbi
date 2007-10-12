@@ -18,8 +18,7 @@ XFAIL_TESTS +=					\
 alias.chk					\
 arithmetics-failures.chk			\
 armor-unarmor.chk				\
-bad-if.chk					\
-bad-whenever.chk				\
+whenever-bad.chk				\
 basic.chk					\
 begin-end-report.chk				\
 bin.chk						\
@@ -27,7 +26,6 @@ bin-copy.chk					\
 bug76.chk					\
 comparison.chk					\
 doublecolon.chk					\
-empty-then.chk					\
 events.chk					\
 exec.chk					\
 freeze-time.chk					\

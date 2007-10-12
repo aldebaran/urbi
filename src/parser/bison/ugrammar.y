@@ -64,6 +64,7 @@
 #include "ast/all.hh"
 #include "runner/runner.hh"
 
+#include "kernel/uconnection.hh"
 #include "parser/uparser.hh"
 
 #define EVALUATE(Tree)						\
@@ -261,6 +262,36 @@
 
       // { INIT OP WHILE OP (TEST) { BODY OP INC } }.
       return scope (l, new_flavor (l, op, init, while_loop));
+    }
+
+    /// Whether the \a e was the empty command.
+    bool
+    implicit (const ast::Exp* e)
+    {
+      const ast::Noop* noop = dynamic_cast<const ast::Noop*>(e);
+      if (noop)
+	std::cerr << noop->location_get() << ": " << noop->implicit_get() << std::endl;
+      return noop && noop->implicit_get();
+    }
+    
+    /// Issue a warning.
+    void
+    warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+    {
+      std::ostringstream o;
+      o << "!!! " << l << ": " << m << "\n" << std::ends;
+      up.connection.send(o.str().c_str(), "warning");
+    }
+    
+    /// Complain if \a command is not implicit.
+    void
+    warn_implicit(UParser& up,
+		  const yy::parser::location_type& l, const ast::Exp* e)
+    {
+      if (implicit(e))
+	warn (up, l,
+	      "implicit empty instruction.  "
+	      "Use 'noop' to make it explicit.");
     }
 
 
@@ -574,7 +605,7 @@ cstmt:
     // XXX FIXME: Used as a temporary workaround until all actions are
     // filled in this parser
     if (!$1)
-      $$ = new ast::Noop (@$);
+      $$ = new ast::Noop (@$, true);
     else
       $$ = $1;
   }
@@ -669,8 +700,8 @@ pipe.opt:
 `-------*/
 
 stmt:
-  /* empty */ { $$ = new ast::Noop (@$); }
-| "noop"      { $$ = new ast::Noop (@$); }
+  /* empty */ { $$ = new ast::Noop (@$, true); }
+| "noop"      { $$ = new ast::Noop (@$, false); }
 | expr        { $$ = $1; }
 | "echo" expr namedarguments { $$ = call (@$, 0, $1, $2); }
 ;
@@ -831,6 +862,7 @@ stmt:
 stmt:
   "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK
     {
+      warn_implicit(up, @6, $6);
       $$ = 0;
     }
 | "at" and.opt "(" softtest ")" stmt "onleave" stmt
@@ -843,10 +875,12 @@ stmt:
     }
 | "if" "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = new ast::If(@$, $3, $5, new ast::Noop(@$));
+      warn_implicit(up, @5, $5);
+      $$ = new ast::If(@$, $3, $5, new ast::Noop(@$, true));
     }
 | "if" "(" expr ")" stmt "else" stmt
     {
+      warn_implicit(up, @5, $5);
       $$ = new ast::If(@$, $3, $5, $7);
     }
 | "for" pipe.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
@@ -883,6 +917,7 @@ stmt:
     }
 | "whenever" "(" softtest ")" stmt %prec CMDBLOCK
     {
+      warn_implicit(up, @5, $5);
       $$ = 0;
     }
 | "whenever" "(" softtest ")" stmt "else" stmt

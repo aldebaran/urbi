@@ -519,6 +519,8 @@ Return:
 Noop:
   super: Exp
   desc: /// Also known as nop, noop etc.
+  attributes:
+    - implicit: { type: bool, desc: Whether not spelled out in the source }
   printer:
     - '"noop"'
 

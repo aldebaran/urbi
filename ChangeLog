@@ -1,5 +1,13 @@
 2007-10-12  Akim Demaille  <akim.demaille@free.fr>
 
+	Warn about implicit noops.
+	* src/ast/ast.yml (Noop::implicit): New.
+	* src/parser/bison/ugrammar.y (warn, warn_implicit, implicit): New.
+	Use them.
+	* tests-local.mk: Update XFAILS.
+
+2007-10-12  Akim Demaille  <akim.demaille@free.fr>
+
 	Fix ++.
 	We need to override clone (in the C++ world) for Atoms.
 	* share/urbi/urbi.u (Float.++, Float.--): Rewrite.
