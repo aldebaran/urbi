@@ -11,8 +11,7 @@ k2-check:
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
-k2-closure.chk					\
-k2-inplace.chk
+k2-closure.chk
 
 # k1 tests that currently don't pass.
 XFAIL_TESTS +=					\

@@ -24,16 +24,27 @@ var Channel = new Object;
 ## Float.  ##
 ## ------- ##
 
+Float.init = function (x) { self.set(x) };
+
 Float.+= = function (x) { self.set (self + x) };
 Float.-= = function (x) { self.set (self - x) };
 Float.*= = function (x) { self.set (self * x) };
 Float./= = function (x) { self.set (self / x) };
 
-// FIXME: Does not work as expected because using "set" changes *all*
-// the slots that point to a given value (because we change the
-// value).  "set" is probably not the right approach here.
-Float.++ = function () { var res = self; self += 1; res };
-Float.-- = function () { var res = self; self -= 1; res };
+// One would like to write
+//
+// Float.++ = function () { var res = self.clone; self += 1; res };
+//
+// but it does not return a Float, it returns an Object which
+// has Float as *grand*-parent.  As a result, it does not have
+// a value (it is not an Atom<Float>).  This might be to change,
+// but it is to me (akim) unclear how.
+//
+// This does not work either: var res = new Float(self), because it
+// creates an Object which derives from Float, but which is not a
+// Atom<Float>.  Not nice, eh?
+Float.++ = function () { var res = 0; res.set(self); self += 1; res };
+Float.-- = function () { var res = 0; res.set(self); self -= 1; res };
 
 
 ## -------- ##

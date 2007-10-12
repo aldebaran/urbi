@@ -1,3 +1,10 @@
+2007-10-12  Akim Demaille  <akim.demaille@free.fr>
+
+	Fix ++.
+	We need to override clone (in the C++ world) for Atoms.
+	* share/urbi/urbi.u (Float.++, Float.--): Rewrite.
+	* tests-local.mk: k2-inplace.chk passes.
+
 2007-10-10  Akim Demaille  <akim.demaille@free.fr>
 
 	++ is incorrect.
