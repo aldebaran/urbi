@@ -106,6 +106,24 @@ STRING   \"([^\"]|"\\\"")*\"
   locp->step();
 %}
 
+  /*-----------------------------------.
+  | Internal rules for generated code. |
+  `-----------------------------------*/
+
+"#__LINE__"{NUMBER}	{
+  char *arg = yytext + 9;
+  int linenb = atoi(arg) - 2;
+  locp->initialize (locp->begin.filename);
+  locp->lines (linenb);
+}
+
+"#__FILE__".*{EOL}	{
+  std::string tmpname = yytext + 9;
+  tmpname = std::string(tmpname, 0, tmpname.find_first_of("\n\r"));
+  std::string* name = (tmpname.length () > 0) ? new std::string (tmpname) : 0;
+  locp->initialize (name);
+}
+
   /*------------.
   | The rules.  |
   `------------*/
