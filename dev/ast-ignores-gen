@@ -14,7 +14,6 @@ nodes = loader.load (sys.stdin)
 
 ignores = file ("ignores.tmp", "w")
 print >>ignores, """\
-Makefile.in
 all.stamp
 all.hh
 ast-fwd-gen.stamp

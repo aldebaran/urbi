@@ -1,5 +1,10 @@
 2007-10-13  Akim Demaille  <akim.demaille@free.fr>
 
+	src/ast/Makefile.in no longer exists.
+	* dev/ast-ignores-gen: Remove it from ignores.
+
+2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+
 	This is not k1.
 	* configure.ac: Fix AC_INIT invocation.
 
