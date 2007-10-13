@@ -1,5 +1,10 @@
 2007-10-13  Akim Demaille  <akim.demaille@free.fr>
 
+	This is not k1.
+	* configure.ac: Fix AC_INIT invocation.
+
+2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Remove debug code.
 	* src/parser/ugrammar.y (implicit): Here.
 	Reported by Benoit Sigoure.

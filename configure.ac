@@ -3,7 +3,7 @@ m4_pattern_forbid([^AX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([kernel1], [2.0], [kernelteam@gostai.com])
+AC_INIT([kernel], [2.0], [kernel-bugs@lists.gostai.com])
 
 # Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
