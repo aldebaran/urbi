@@ -1,3 +1,15 @@
+2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+
+	mv src/parser/bison/* src/parser.
+	* src/parser/bison/bison.mk, src/parser/bison/flex-lexer.hh,
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l:
+	Rename as....
+	* src/parser/parser.mk, src/parser/flex-lexer.hh,
+	* src/parser/ugrammar.y, src/parser/utoken.l:
+	this.
+	Adjust dependencies.
+	* src/Makefile.am, src/parser/uparser.hh: Adjust.
+
 2007-10-12  Akim Demaille  <akim.demaille@free.fr>
 
 	Warn about implicit noops.
