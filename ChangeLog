@@ -1,5 +1,11 @@
 2007-10-13  Akim Demaille  <akim.demaille@free.fr>
 
+	Remove debug code.
+	* src/parser/ugrammar.y (warn): Here.
+	Reported by Benoit Sigoure.
+
+2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+
 	mv src/parser/bison/* src/parser.
 	* src/parser/bison/bison.mk, src/parser/bison/flex-lexer.hh,
 	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l:

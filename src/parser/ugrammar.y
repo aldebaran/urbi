@@ -269,11 +269,9 @@
     implicit (const ast::Exp* e)
     {
       const ast::Noop* noop = dynamic_cast<const ast::Noop*>(e);
-      if (noop)
-	std::cerr << noop->location_get() << ": " << noop->implicit_get() << std::endl;
       return noop && noop->implicit_get();
     }
-    
+
     /// Issue a warning.
     void
     warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
@@ -282,7 +280,7 @@
       o << "!!! " << l << ": " << m << "\n" << std::ends;
       up.connection.send(o.str().c_str(), "warning");
     }
-    
+
     /// Complain if \a command is not implicit.
     void
     warn_implicit(UParser& up,
