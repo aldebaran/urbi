@@ -1,5 +1,25 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Sanitize Urbi exceptions.
+	* src/object/urbi-exception.cc, src/object/urbi-exception.hh,
+	* src/object/urbi-exception.hxx:
+	Pass strings by const ref.
+	Pass first the formal argument type/number, then the effective
+	one.
+	I think the previous code had it wrong, but it was not tested
+	(for builtins).
+	(UrbiException::fun_): New.
+	With a new ctor.
+	(UrbiException::what): Adjust.
+	* src/object/primitives.hh: Adjust dependencies, and pass
+	the __PRETTY_FUNCTION__ when we can.
+	(TYPE_CHECK): Make it a decent macro.
+	* src/runner/runner.cc: Adjust.
+	* src/object/float-class.cc: Adjust.
+	(float_class_clone): New.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	shared_type.
 	* src/object/object.hh, src/object/atom.hh (shared_type): New.
 	* src/object/atom.hh, src/object/atom.hxx (clone): New.

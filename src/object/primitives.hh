@@ -31,9 +31,12 @@ namespace object
  * Throw an exception if \a Obj is not of type \a Type.
  */
 #define TYPE_CHECK(Obj, Type)                                           \
-  if (!(Obj)->type_is<Type>())                                          \
-    throw WrongArgumentType(Obj->kind_get(),                            \
-			    object::Object::kind_type(Type::kind));
+  do {									\
+    if (!(Obj)->type_is<Type>())					\
+      throw WrongArgumentType(object::Object::kind_type(Type::kind),	\
+			      Obj->kind_get(),				\
+			      __PRETTY_FUNCTION__);			\
+  } while (0)
 
 /**
  * Fetch the N-th argument, of type Type. Name it 'arg ## N'.
@@ -48,7 +51,7 @@ namespace object
  * \param N expected number of arguments.
  */
 #define CHECK_ARG_COUNT(N)                              \
-  check_arg_count(N, args.size())
+  check_arg_count(N, args.size(), __PRETTY_FUNCTION__)
 
 /**
  * Define a primitive for class Class named name, which takes one

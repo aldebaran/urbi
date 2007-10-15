@@ -39,13 +39,20 @@ namespace object
     /**
      * \brief Construct an exception which contains a raw message.
      * \param msg raw error message.  */
-    explicit UrbiException (std::string msg);
+    explicit UrbiException (const std::string& msg);
 
     /**
      * \brief Construct an exception which contains a raw message.
      * \param msg raw Error message.
      * \param loc Error's location.  */
-    UrbiException (std::string msg, const ast::loc& loc);
+    UrbiException (const std::string& msg, const ast::loc& loc);
+
+    /**
+     * \brief Construct an exception which contains a raw message.
+     * \param msg raw Error message.
+     * \param fun C++ function that raised.  */
+    UrbiException (const std::string& msg,
+		   const std::string& fun);
 
   private:
     /// Error message.
@@ -53,6 +60,9 @@ namespace object
 
     /// Location
     ast::loc loc_;
+
+    /// The (C++) function that raised.
+    std::string fun_;
   };
 
 
@@ -70,37 +80,39 @@ namespace object
   };
 
   /** Exception for errors related to primitives usage.
-   * \param primitive primitive which has thrown the error.
-   * \param msg error message which will be sent.  */
+   * \param primitive   primitive that has thrown the error.
+   * \param msg         error message which will be sent.  */
   struct PrimitiveError: public UrbiException
   {
-    PrimitiveError (std::string primitive,
-                    std::string msg);
+    PrimitiveError (const std::string& primitive,
+		    const std::string& msg);
   };
 
   /** Exception for type mismatch in a primitive usage.
-   * \param real Real type.
-   * \param expected Expected type.
-   * \param loc Error's location.  */
+   * \param formal      Expected type.
+   * \param effective   Real type.
+   * \param fun         Primitive's name.  */
   struct WrongArgumentType: public UrbiException
   {
-    WrongArgumentType (Object::kind_type real,
-                       Object::kind_type expected);
+    WrongArgumentType (Object::kind_type formal,
+		       Object::kind_type effective,
+		       const std::string& fun);
 
   };
 
   /** Exception used for calls with wrong argument count.
-   * \param argReal Number of arguments given.
-   * \param argExpected Number of arguments expected.  */
+   * \param effective  Number of arguments given.
+   * \param formal     Number of arguments expected.  */
   struct WrongArgumentCount: public UrbiException
   {
-    WrongArgumentCount (unsigned argReal,
-                        unsigned argExpected);
+    WrongArgumentCount (unsigned formal, unsigned effective,
+			const std::string& fun);
   };
 
   /// Throw an exception if formal != effective.
   /// \note: \c self is not included in the count.
-  void check_arg_count (unsigned formal, unsigned effective);
+  void check_arg_count (unsigned formal, unsigned effective,
+		       const std::string& fun);
 
 } // namespace object
 

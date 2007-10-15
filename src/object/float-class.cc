@@ -139,10 +139,21 @@ namespace object
 `------------------------------------------------------------*/
 
 
+  /// Clone.
+  rObject
+  float_class_clone(rContext, objects_type args)
+  {
+    CHECK_ARG_COUNT(1);
+    FETCH_ARG(0, Float);
+    return clone(arg0);
+  }
+
+
   /// Change the value.
   rObject
   float_class_set(rContext, objects_type args)
   {
+    CHECK_ARG_COUNT(2);
     FETCH_ARG(0, Float);
     FETCH_ARG(1, Float);
     arg0->value_set (arg1->value_get());
@@ -156,7 +167,7 @@ namespace object
   {
     // FIXME: The error message requires 2 although 1 is ok.
     if (args.size () != 1 && args.size() != 2)
-      throw WrongArgumentCount(2, args.size ());
+      throw WrongArgumentCount(2, args.size (), __PRETTY_FUNCTION__);
     FETCH_ARG(0, Float);
     if (args.size() == 1)
       return new Float(- arg0->value_get());
@@ -281,6 +292,7 @@ namespace object
 #define DECLARE(Name)                      \
     DECLARE_PRIMITIVE(float, Name, Name)
 
+    DECLARE(clone);
     DECLARE(set);
 
     DECLARE(sin);

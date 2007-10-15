@@ -27,48 +27,52 @@ namespace object
   inline
   LookupError::LookupError (libport::Symbol slot)
     : UrbiException ((boost::format ("lookup failed: %1%")
-                      % slot.name_get()).str ())
+		      % slot.name_get()).str ())
   {
   }
 
   inline
   RedefinitionError::RedefinitionError (libport::Symbol slot)
     : UrbiException ((boost::format ("slot redefinition: %1%")
-                      % slot.name_get()).str ())
+		      % slot.name_get()).str ())
   {
   }
 
   inline
-  PrimitiveError::PrimitiveError (std::string primitive,
-                                  std::string msg)
+  PrimitiveError::PrimitiveError (const std::string& primitive,
+				  const std::string& msg)
     : UrbiException (primitive + ": " + msg)
   {
   }
 
   inline
-  WrongArgumentType::WrongArgumentType (Object::kind_type real,
-                                        Object::kind_type expected)
+  WrongArgumentType::WrongArgumentType (Object::kind_type formal,
+					Object::kind_type effective,
+					const std::string& fun)
     : UrbiException (std::string ("unexpected argument type `")
-                     + Object::string_of (real) + "', expected `"
-                     + Object::string_of (expected) + '\'')
+		     + Object::string_of (effective) + "', expected `"
+		     + Object::string_of (formal) + '\'',
+		     fun)
   {
   }
 
   inline
-  WrongArgumentCount::WrongArgumentCount (unsigned argReal,
-                                          unsigned argExpected)
+  WrongArgumentCount::WrongArgumentCount (unsigned formal,
+					  unsigned effective,
+					  const std::string& fun)
     : UrbiException ((boost::format ("expected %1% arguments, given %2%")
-                      % argReal
-                      % argExpected).str ())
+		      % effective
+		      % formal).str (),
+		     fun)
   {
   }
 
   inline
   void
-  check_arg_count (unsigned formal, unsigned effective)
+  check_arg_count (unsigned formal, unsigned effective, const std::string& fun)
   {
     if (formal != effective)
-      throw WrongArgumentCount(formal, effective);
+      throw WrongArgumentCount(formal, effective, fun);
   }
 
 }; // end of namespace object

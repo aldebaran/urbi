@@ -252,7 +252,8 @@ namespace runner
 
       // Check the arity.
       try {
-	object::check_arg_count (fn->formals_get().size(), args.size() - 1);
+	object::check_arg_count (args.size() - 1, fn->formals_get().size(),
+				 __PRETTY_FUNCTION__);
       }
       catch (object::UrbiException& ue)
       {
