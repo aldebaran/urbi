@@ -292,7 +292,6 @@
 	      "Use 'noop' to make it explicit.");
     }
 
-
   } // anon namespace
 
   /// Direct the call from 'bison' to the scanner in the right UParser.
@@ -501,7 +500,7 @@
 %left  CMDBLOCK
 %left  "else" "onleave"
 
-%left "="
+%left "=" "+=" "-=" "*=" "/="
 %left  "||"
 %left  "&&"
 %right "^"
@@ -846,12 +845,18 @@ id:
 stmt:
 	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3);        }
 | "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
-| lvalue "+=" expr { $$ = call (@$, $1, $2, $3); }
-| lvalue "-=" expr { $$ = call (@$, $1, $2, $3); }
-| lvalue "*=" expr { $$ = call (@$, $1, $2, $3); }
-| lvalue "/=" expr { $$ = call (@$, $1, $2, $3); }
-| lvalue "--"      { $$ = call (@$, $1, $2); }
-| lvalue "++"      { $$ = call (@$, $1, $2); }
+;
+
+expr:
+  expr "+=" expr { $$ = call (@$, $1, $2, $3); }
+| expr "-=" expr { $$ = call (@$, $1, $2, $3); }
+| expr "*=" expr { $$ = call (@$, $1, $2, $3); }
+| expr "/=" expr { $$ = call (@$, $1, $2, $3); }
+;
+
+expr:
+  expr "--"      { $$ = call (@$, $1, $2); }
+| expr "++"      { $$ = call (@$, $1, $2); }
 ;
 
 /*---------------------.
