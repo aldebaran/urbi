@@ -33,6 +33,9 @@ namespace object
     /// What we store, as a ref (for arguments and return values).
     typedef typename libport::ref_traits<value_type>::type value_ref_type;
 
+    /// Ref-couting.
+    typedef libport::shared_ptr< Atom<Traits> > shared_type;
+
     /// Construct an Atom with value \p v.
     Atom (const value_type v);
 
@@ -69,6 +72,18 @@ namespace object
     value_type value_;
   };
 
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  /// Clone, i.e., create a fresh object with this class as sole parent.
+  // Overloads the definition for rObject.
+  // Not a member function because we want the shared_ptr, which
+  // is not available via this.
+  template <typename Traits>
+  typename Atom<Traits>::shared_type
+  clone (typename Atom<Traits>::shared_type ref);
 
   /*-------.
   | Code.  |

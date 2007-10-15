@@ -1,5 +1,11 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	shared_type.
+	* src/object/object.hh, src/object/atom.hh (shared_type): New.
+	* src/object/atom.hh, src/object/atom.hxx (clone): New.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	++ etc. are expressions bw expressions.
 	* src/parser/ugrammar.y: Don't require lvalues for ++, += etc.
 	And don't return lvalues either (bw, even in C ++ does not

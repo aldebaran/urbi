@@ -30,6 +30,8 @@ namespace object
     virtual ~Object ();
     /// \}
 
+    /// Ref-couting.
+    typedef libport::shared_ptr<Object> shared_type;
 
     /// \name Kind
     /// \{

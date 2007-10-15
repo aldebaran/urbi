@@ -239,6 +239,20 @@ namespace object
     return o << libport::iendl;
   }
 
+
+  /*--------------------------.
+  | Free standing functions.  |
+  `--------------------------*/
+
+  template <typename Traits>
+  typename Atom<Traits>::shared_type 
+  clone (typename Atom<Traits>::shared_type ref)
+  {
+    typename Atom<Traits>::shared_type res = new Atom<Traits>;
+    res->parent_add (ref);
+    return res;
+  }
+
 } // namespace object
 
 #endif // !OBJECT_ATOM_HXX
