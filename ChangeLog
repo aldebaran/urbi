@@ -1,5 +1,10 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Update tests.
+	* tests-local.mk: Adjust.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Update test suite.
 	* tests-local.mk: now we must specify the directory of the failed
 	tests.
