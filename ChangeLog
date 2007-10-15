@@ -1,3 +1,7 @@
+2007-10-16  Akim Demaille  <demaille@gostai.com>
+
+	Restore subscription to uobject.
+
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
 	Update tests, fix failure.
