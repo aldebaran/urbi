@@ -6,6 +6,8 @@
 #ifndef OBJECT_PRIMITIVES_HH
 # define OBJECT_PRIMITIVES_HH
 
+# include "libport/compiler.hh"
+
 # include "object/fwd.hh"
 
 # include "object/code-class.hh"
