@@ -48,7 +48,7 @@ namespace object
 
 /**
  * Check argument's count and throw an Urbi exception if it is wrong.
- * \param N expected number of arguments.
+ * \param N expected number of arguments (including self).
  */
 #define CHECK_ARG_COUNT(N)                              \
   check_arg_count(N, args.size(), __PRETTY_FUNCTION__)

@@ -61,8 +61,8 @@ namespace object
 					  unsigned effective,
 					  const std::string& fun)
     : UrbiException ((boost::format ("expected %1% arguments, given %2%")
-		      % effective
-		      % formal).str (),
+		      % formal
+		      % effective).str (),
 		     fun)
   {
   }

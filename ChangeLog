@@ -1,5 +1,11 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Fix arity check.
+	* src/object/primitives.hh: Comment changes.
+	* src/object/urbi-exception.hxx: Fix error message.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Sanitize Urbi exceptions.
 	* src/object/urbi-exception.cc, src/object/urbi-exception.hh,
 	* src/object/urbi-exception.hxx:
