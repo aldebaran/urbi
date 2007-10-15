@@ -312,12 +312,10 @@
 	TOK_ASSIGN       "="
 	TOK_AT           "at"
 	TOK_BIN          "bin"
-	TOK_CLASS        "class"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
 	TOK_DELGROUP     "delgroup"
 	TOK_DIR          "->"
-	TOK_DISINHERITS  "disinherits"
 	TOK_DOLLAR       "$"
 	TOK_DOUBLECOLON  "::"
 	TOK_ELSE         "else"
@@ -333,7 +331,6 @@
 	TOK_GROUP        "group"
 	TOK_IF           "if"
 	TOK_IN           "in"
-	TOK_INHERITS     "inherits"
 	TOK_LBRACE       "{"
 	TOK_LBRACKET     "["
 	TOK_LOOP         "loop"
@@ -720,6 +717,11 @@ stmt:
 ;
 
 // Classes.
+%token
+	TOK_CLASS       "class"
+	TOK_DISINHERITS	"disinherits"
+	TOK_INHERITS	"inherits"
+;
 stmt:
   expr "inherits" expr
     { $$ = call (@$, $1, new libport::Symbol("addParent"), $3); }
