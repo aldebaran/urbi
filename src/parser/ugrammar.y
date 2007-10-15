@@ -496,6 +496,7 @@
 %left  "else" "onleave"
 
 %left "=" "+=" "-=" "*=" "/="
+%left "inherits" "disinherits"
 %left  "||"
 %left  "&&"
 %right "^"
@@ -721,7 +722,7 @@ stmt:
 	TOK_INHERITS	"inherits"
 ;
 
-stmt:
+expr:
   expr "inherits" expr
     { $$ = call (@$, $1, new libport::Symbol("addParent"), $3); }
 | expr "disinherits" expr
