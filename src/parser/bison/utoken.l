@@ -110,18 +110,21 @@ STRING   \"([^\"]|"\\\"")*\"
   | Internal rules for generated code. |
   `-----------------------------------*/
 
-"#__LINE__"{NUMBER}	{
-  char *arg = yytext + 9;
-  int linenb = atoi(arg) - 2;
-  locp->initialize (locp->begin.filename);
-  locp->lines (linenb);
-}
+^"#"{BLANKS}?"line"{BLANKS}+"\"".*"\""{BLANKS}{NUMBER}{EOL}	{
 
-"#__FILE__".*{EOL}	{
-  std::string tmpname = yytext + 9;
-  tmpname = std::string(tmpname, 0, tmpname.find_first_of("\n\r"));
-  std::string* name = (tmpname.length () > 0) ? new std::string (tmpname) : 0;
-  locp->initialize (name);
+  std::string tmpname = yytext;
+  tmpname = tmpname.substr (0, tmpname.find_first_of ("\n\r"));
+
+  std::string tmpline = tmpname.substr (tmpname.find_last_not_of ("0123456789") + 1);
+
+  tmpname = tmpname.substr (tmpname.find_first_of ("\"") + 1);
+  tmpname = tmpname.substr (0,tmpname.find_last_of ("\""));
+
+  int linenb = atoi(tmpline.c_str ()) - 1;
+
+  locp->initialize (tmpname == "-" ? 0 : new std::string (tmpname));
+  locp->lines (linenb);
+  locp->step ();
 }
 
   /*------------.
