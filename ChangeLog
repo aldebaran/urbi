@@ -1,5 +1,11 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Update test suite.
+	* tests-local.mk: now we must specify the directory of the failed
+	tests.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Prefer expr to stmt.
 	* src/parser/ugrammar.y: The inherits and disinherits keywords
 	are now proper binary operators returning expressions.
