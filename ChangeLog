@@ -1,5 +1,10 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Update tests.
+	* configure.ac: and rev.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Applied changes to userver.hh by hand.
 
 	2007-10-05  Guillaume Deslandes  <deslandes@gostai.com>
