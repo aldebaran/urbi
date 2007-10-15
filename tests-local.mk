@@ -4,5 +4,4 @@
 XFAIL_TESTS +=					\
 class-definition.chk				\
 function-declaration.chk			\
-stopif.chk					\
 variable-qualifiers.chk

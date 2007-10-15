@@ -4480,7 +4480,7 @@ UCommand_EMIT::execute_(UConnection *connection)
       }
       eh = new UEventHandler (ens, nbargs);
     }
-    ASSERT (eh);
+    ASSERT (eh) {};
     event = eh->addEvent (parameters, this, connection);
     eventnamestr = ens->c_str();
 
@@ -5464,6 +5464,9 @@ UCommand_STOPIF::execute_(UConnection *connection)
 				      0),
 		      command->copy());
   morph->setTag(tagRef->c_str());
+  static_cast<UCommand_TREE*>(morph)->command1->setTag(tagRef->c_str());
+  static_cast<UCommand_TREE*>(morph)->command2->setTag(tagRef->c_str());
+  // useless, overriden by morphing morph->setTag(tagRef->str());
   return UMORPH;
 }
 
@@ -6016,7 +6019,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     if (trigger && !active_) // we need to start the loop
     {
       active_ = true;
-      ASSERT (!theloop_);
+      ASSERT (!theloop_) {}
       theloop_ = new UCommand_LOOP (loc_, command1->copy ());
       theloop_->setTag (systemTagInfo); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;

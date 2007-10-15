@@ -55,7 +55,7 @@ UEventMatch::UEventMatch (UString* eventname,
       ASSERT (param->expression->variablename)
 	varname = param->expression->variablename->
 		 buildFullname (command, connection);
-      ASSERT (varname);
+      ASSERT (varname) {}
       e1 = new UValue (varname->c_str());
       // this is a dirty hack. It means that the UValue does not
       // contain a value, but a variable name instead.

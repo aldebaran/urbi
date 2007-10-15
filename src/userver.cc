@@ -41,6 +41,8 @@
 #include "kernel/uvalue.hh"
 #include "kernel/uvariable.hh"
 
+#include "config.h"
+#include "version.hh"
 #include "ubanner.hh"
 #include "ucommand.hh"
 #include "ucommandqueue.hh"
@@ -53,6 +55,9 @@
 
 // Global server reference
 UServer *urbiserver= 0;
+
+const std::string UServer::package_ver = PACKAGE_VERSION;
+const std::string UServer::package_rev = PACKAGE_REVISION;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 
@@ -327,14 +332,14 @@ UServer::work()
       if ((*r)->activeCommand)
       {
 	(*r)->obstructed = true; // will be changed to 'false'
-        {
-          //if the whole tree is visited
-          boost::try_mutex::scoped_lock((*r)->treeMutex);
-          (*r)->inwork = true;   // to distinguish this call of
-          //execute from the one in receive
-          (*r)->execute((*r)->activeCommand);
-          (*r)->inwork = false;
-        }
+	{
+	  //if the whole tree is visited
+	  boost::try_mutex::scoped_lock((*r)->treeMutex);
+	  (*r)->inwork = true;   // to distinguish this call of
+	  //execute from the one in receive
+	  (*r)->execute((*r)->activeCommand);
+	  (*r)->inwork = false;
+	}
       }
 
       if ((*r)->newDataAdded)
