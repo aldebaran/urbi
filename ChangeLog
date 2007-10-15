@@ -1,5 +1,10 @@
 2007-10-15  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Line number comes first in #line
+	* src/parser/bison/utoken.l: Here.
+
+2007-10-15  Guillaume Deslandes  <deslandes@gostai.com>
+
 	Use a more CPP-like way for #line
 	* src/parser/bison/utoken.l: Here.
 
