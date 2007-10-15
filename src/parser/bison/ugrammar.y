@@ -1185,6 +1185,7 @@ name:
 lvalue:
   name		{ $$ = $1;				}
 | name "'n"	{ $$ = $1; $$->isnormalized = true;	}
+| "static" name	{ $$ = $2; $$->isstatic = true;	}
 ;
 
 
@@ -1296,7 +1297,6 @@ expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 
 rvalue:
   name
-| "static" name	{ $$ = $2; $$->isstatic = true;	}
 | name derive   { $$->deriv = $2;		}
 | name "'e"	{ $$->varerror = true;		}
 | name "'in"	{ $$->varin = true;		}

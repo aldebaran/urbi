@@ -1,5 +1,12 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Update tests, fix failure.
+	* src/parser/bison/ugrammar.y: static applies to lvalues,
+	as per variable-qualifiers.chk.
+	* tests-local.mk: Update.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Update tests.
 	* configure.ac: and rev.
 
