@@ -440,11 +440,21 @@ namespace runner
     // local variables.  It points to the previous current scope to
     // implement lexical scoping.
     CORO_WITH_1SLOT_CTX (rObject, locals);
-    locals = new object::Object;
-    locals->locals_set(true).parent_add (locals_);
+    if (e.target_get())
+    {
+      CORO_CALL (locals = eval(*e.target_get()));
+      // FIXME: Set the parents to locals_? Set self?
+    }
+    else
+    {
+      locals = new object::Object;
+      locals->locals_set(true).parent_add (locals_);
+    }
+
     std::swap(locals, locals_);
-    CORO_CALL (super_type::operator()(e));
+    CORO_CALL (super_type::operator()(e.body_get()));
     std::swap(locals, locals_);
+
     CORO_END;
   }
 

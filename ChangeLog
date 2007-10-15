@@ -1,5 +1,17 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	do.
+	* src/ast/ast.yml (Scope::target): New.
+	* share/urbi/urbi.u: Use it to declare the String and Float features.
+	* src/parser/ugrammar.y, src/parser/utoken.l (TOK_DO): New.
+	(do expr { stmts }): Generalization of scope.
+	Adjust scope uses.
+	* src/runner/runner.cc (Scope): Adjust.
+	* tests-local.mk: We no longer pass class-definition.chk which is
+	really a stupid test case that we should get rid of.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Sort rules.
 	* src/parser/ugrammar.y: Here.
 

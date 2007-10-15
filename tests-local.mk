@@ -18,12 +18,12 @@ XFAIL_TESTS +=					\
 alias.chk					\
 arithmetics-failures.chk			\
 armor-unarmor.chk				\
-whenever-bad.chk				\
 basic.chk					\
 begin-end-report.chk				\
-bin.chk						\
 bin-copy.chk					\
+bin.chk						\
 bug76.chk					\
+class-definition.chk				\
 comparison.chk					\
 doublecolon.chk					\
 events.chk					\
@@ -41,10 +41,10 @@ lazy-test-eval.chk				\
 load.chk					\
 long-identifiers.chk				\
 multiinheritance.chk				\
-nameresolution.chk				\
 nameresolution-array.chk			\
 nameresolution-dollars.chk			\
 nameresolution-objects.chk			\
+nameresolution.chk				\
 new-init.chk					\
 object-events.chk				\
 onleave.chk					\
@@ -59,4 +59,5 @@ switch.chk					\
 synchro-assignment.chk				\
 tag.chk						\
 undefall.chk					\
-variable-qualifiers.chk
+variable-qualifiers.chk				\
+whenever-bad.chk

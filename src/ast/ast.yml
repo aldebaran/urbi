@@ -114,12 +114,20 @@ Tag:
 Scope:
   super: Exp
   attributes:
-    - exp: { type: 'Exp*', desc: The scoped expression }
-  default: 'operator() (n.exp_get());'
+    - target: { type: 'Exp*', mandatory: false, desc: The default target }
+    - body:   { type: 'Exp*', desc: The scoped expression }
+  default: |2
+    if (n.target_get())
+      operator()(*n.target_get());
+    operator()(n.body_get());
   printer:
+    - '{
+         if (n.target_get())
+           ostr_ << "do " << *n.target_get() << " ";
+       }'
     - '"{"'
     - 'libport::incendl'
-    - ~exp
+    - ~body
     - 'libport::decendl'
     - '"}"'
 

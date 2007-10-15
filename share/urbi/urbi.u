@@ -24,28 +24,31 @@ var Channel = new Object;
 ## Float.  ##
 ## ------- ##
 
-Float.init = function (x) { self.set(x) };
+do Float
+{
+  init = function (x) { self.set(x) };
+  
+  += = function (x) { self.set (self + x) };
+  -= = function (x) { self.set (self - x) };
+  *= = function (x) { self.set (self * x) };
+  /= = function (x) { self.set (self / x) };
 
-Float.+= = function (x) { self.set (self + x) };
-Float.-= = function (x) { self.set (self - x) };
-Float.*= = function (x) { self.set (self * x) };
-Float./= = function (x) { self.set (self / x) };
+  // One would like to write
+  //   
+  // ++ = function () { var res = self.clone; self += 1; res };
+  //
+  // but it does not return a Float, it returns an Object which
+  // has Float as *grand*-parent.  As a result, it does not have
+  // a value (it is not an Atom<Float>).  This might be to change,
+  // but it is to me (akim) unclear how.
+  //
+  // This does not work either: var res = new Float(self), because it
+  // creates an Object which derives from Float, but which is not a
+  // Atom<Float>.  Not nice, eh?
 
-// One would like to write
-//
-// Float.++ = function () { var res = self.clone; self += 1; res };
-//
-// but it does not return a Float, it returns an Object which
-// has Float as *grand*-parent.  As a result, it does not have
-// a value (it is not an Atom<Float>).  This might be to change,
-// but it is to me (akim) unclear how.
-//
-// This does not work either: var res = new Float(self), because it
-// creates an Object which derives from Float, but which is not a
-// Atom<Float>.  Not nice, eh?
-Float.++ = function () { var res = 0; res.set(self); self += 1; res };
-Float.-- = function () { var res = 0; res.set(self); self -= 1; res };
-
+  ++ = function () { var res = 0; res.set(self); self += 1; res };
+  -- = function () { var res = 0; res.set(self); self -= 1; res };
+};
 
 ## -------- ##
 ## String.  ##
@@ -54,10 +57,12 @@ Float.-- = function () { var res = 0; res.set(self); self -= 1; res };
 # We do have ==, <, and != as builtins.
 # FIXME: Introduce "Sortable", or whatever, which defines these
 # operators, and derive from it.
-String.<= = function (rhs) { self < rhs || self == rhs };
-String.>  = function (rhs) { rhs < self };
-String.>= = function (rhs) { rhs < self || self == rhs };
-
+do String
+{
+  <= = function (rhs) { self < rhs || self == rhs };
+  >  = function (rhs) { rhs < self };
+  >= = function (rhs) { rhs < self || self == rhs };
+};
 
 ## ------------- ##
 ## Ready to go.  ##

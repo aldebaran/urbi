@@ -201,7 +201,7 @@
       if (ast::Scope* res = dynamic_cast<ast::Scope*>(e))
 	return res;
       else
-	return new ast::Scope(l, e);
+	return new ast::Scope(l, 0, e);
     }
 
     /// When op can be either of the four cases.
@@ -452,8 +452,6 @@
 
 %type <call>  lvalue
 
-%type <expr>  class_declaration
-%type <expr>  class_declaration_list
 %type <expr>  expr
 %type <expr>  expr.opt
 %type <expr>  flag
@@ -722,13 +720,22 @@ stmt:
 	TOK_DISINHERITS	"disinherits"
 	TOK_INHERITS	"inherits"
 ;
+
 stmt:
   expr "inherits" expr
     { $$ = call (@$, $1, new libport::Symbol("addParent"), $3); }
 | expr "disinherits" expr
     { $$ = call (@$, $1, new libport::Symbol("removeParent"), $3); }
-| "class" "identifier" "{" class_declaration_list "}" { $$ = 0; }
-| "class" "identifier" { $$ = 0; }
+| "class" lvalue "{" stmts "}"
+    {
+      // Compiled as
+      // var id; do id { stmts };
+      $$ = new_flavor(@$, ast::flavor_semicolon,
+		      assign (@1+@2, $2, 0, true),
+		      new ast::Scope(@$, $2, $4));
+    }
+// | "class" lvalue
+//    { $$ = assign (@$, $2, 0, true); }
 ;
 
 stmt:
@@ -865,6 +872,8 @@ expr:
 /*---------------------.
 | Stmt: Control flow.  |
 `---------------------*/
+%token TOK_DO "do";
+
 stmt:
   "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK
     {
@@ -874,6 +883,10 @@ stmt:
 | "at" and.opt "(" softtest ")" stmt "onleave" stmt
     {
       $$ = 0;
+    }
+| "do" expr "{" stmts "}"
+    {
+      $$ = new ast::Scope(@$, $2, $4);
     }
 | "every" "(" expr ")" stmt
     {
@@ -1252,28 +1265,11 @@ identifiers:
 | identifiers.1   { $$ = $1; }
 ;
 
-
-/*---------------------------------------------.
-| class_declaration & class_declaration_list.  |
-`---------------------------------------------*/
-
-class_declaration:
-  "var"      "identifier"               { $$ = 0; }
-| "function" "identifier" formal_args   { $$ = 0; }
-| "event"    "identifier" formal_args   { $$ = 0; }
-;
-
 /* It used to be possible to not have the parens for empty identifiers.
    For the time being, this is disabled because it goes against
    factoring.  Might be reintroduced later. */
 formal_args:
   "(" identifiers ")" { $$ = $2; }
-;
-
-class_declaration_list:
-  /* empty */  { $$ = 0; }
-| class_declaration { $$ = 0; }
-| class_declaration ";" class_declaration_list { $$ = 0; }
 ;
 
 /* End of grammar */
