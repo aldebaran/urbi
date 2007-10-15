@@ -212,14 +212,14 @@ public:
 
   /// initialize the cached taginfos
   static void initializeTagInfos();
-  
+
   /** try to make a module-defined function call
   @param name: function full name
   @param parameters: arguments to call
   @param connection: context connection
   @return : 0 if no call was made, a value otherwise
   */
-  UValue * tryModuleCall(const char * name, 
+  UValue * tryModuleCall(const char * name,
     UNamedParameters * parameters, UConnection * connection);
 protected:
   UCommand* copybase(UCommand* c) const;

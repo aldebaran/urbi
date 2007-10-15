@@ -74,6 +74,7 @@ kernel::isCoreFunction (UString *fullname)
 	  || *fullname == "cat"
 	  || *fullname == "cos"
 	  || *fullname == "cpuload"
+	  || *fullname == "eval"
 	  || *fullname == "exec"
 	  || *fullname == "exp"
 	  || *fullname == "freemem"

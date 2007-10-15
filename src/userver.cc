@@ -339,7 +339,7 @@ UServer::work()
 
       if ((*r)->newDataAdded)
       {
-	// used by loadFile and exec to
+	// used by loadFile and eval to
 	// delay the parsing after the completion
 	// of execute().
 	(*r)->newDataAdded = false;

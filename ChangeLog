@@ -1,3 +1,16 @@
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
+	merge -r 1604:1620 with 1.0.
+	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+	Fix previous commit: use 'eval' instead of 'exec'.
+	
+	2007-10-01  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix timeout stoping background commands
+	* src/ucommand.cc: Here.
+	Timeout stoped whenever and at commands at once since they
+	spawn in background (thus "killing" their AST branch).
+	This may not be the best fix, but it seems to work.
+
 2007-10-15  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Line number comes first in #line

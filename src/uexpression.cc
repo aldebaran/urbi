@@ -918,7 +918,7 @@ UExpression::eval (UCommand *command,
 
 
 UValue*
-UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
+UExpression::eval_FUNCTION_EVAL_OR_LOAD (UCommand* command,
 					 UConnection* connection)
 {
 #ifdef ENABLE_DEBUG_TRACES
@@ -929,8 +929,14 @@ UExpression::eval_FUNCTION_EXEC_OR_LOAD (UCommand* command,
 #endif
 
   passert (variablename->id->c_str(),
-	   *variablename->id == "exec" || *variablename->id == "load");
+	   *variablename->id == "exec"
+	   || *variablename->id == "eval"
+	   || *variablename->id == "load");
   bool in_load = *variablename->id == "load";
+
+  if (*variablename->id == "exec")
+    connection->send("The 'exec' function is deprecated. "
+		     "Use 'eval' instead.\n", "warn ");
 
   UValue* e1 = parameters->expression->eval(command, connection);
   ENSURE_TYPES_1 (DATA_STRING);
@@ -1196,8 +1202,9 @@ UExpression::eval_FUNCTION_1 (UCommand *command, UConnection *connection)
   // Exec and load are exactly the same thing with one difference:
   // exec parse the string, and load, the file whose name is given.
   if (*variablename->id == "exec"
+      || *variablename->id == "eval"
       || *variablename->id == "load")
-    return eval_FUNCTION_EXEC_OR_LOAD (command, connection);
+    return eval_FUNCTION_EVAL_OR_LOAD (command, connection);
 
   if (false
       || *variablename->id == "sin"
@@ -1489,7 +1496,7 @@ UExpression::eval_FUNCTION (UCommand *command,
 
   //accept callse to module-defined functions
   UValue * v = command->tryModuleCall(funname->str().c_str(),
-                                      parameters, connection);
+				      parameters, connection);
   if (!v)
   {
     send_error(connection, command, this,
