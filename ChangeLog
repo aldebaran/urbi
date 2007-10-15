@@ -1,5 +1,11 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Fix arg count check.
+	* src/runner/runner.cc: here.
+	The code used to be right, I shouldn't have changed it.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Fix arity check.
 	* src/object/primitives.hh: Comment changes.
 	* src/object/urbi-exception.hxx: Fix error message.
