@@ -2,6 +2,7 @@
 # are specific to a given project or even Svn branch.
 
 XFAIL_TESTS +=					\
+class-definition.chk				\
 function-declaration.chk			\
 stopif.chk					\
 variable-qualifiers.chk

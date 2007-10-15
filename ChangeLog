@@ -1,5 +1,25 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Merge 1620:1630 from 1.0.
+	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+	Revert patches 1618 to 1624 destined to 1.5.
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/ucommand.cc,
+	* src/uvariablename.cc: Here.
+	
+	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+	Fix operators precedence. Add '<<' and '>>'.
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l: Here.
+	
+	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+	Warn on alias declarations and uses.
+	* src/ucommand.cc: Warn on declaration.
+	* src/uvariablename.cc: Warn on use.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1604:1620 with 1.0.
 	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 	Fix previous commit: use 'eval' instead of 'exec'.
