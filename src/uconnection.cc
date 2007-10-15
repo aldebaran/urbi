@@ -27,6 +27,8 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include <cstdarg>
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/ref-pt.hh"
 
 #include "kernel/userver.hh"
@@ -121,10 +123,8 @@ UConnection::~UConnection()
     if (i->second->removeMonitor(this))
       deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    ::urbiserver->functionbindertab.erase(*i);
+  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+    ::urbiserver->functionbindertab.erase(i);
   deletelist.clear();
 
   for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
@@ -133,10 +133,8 @@ UConnection::~UConnection()
     if (i->second->removeMonitor(this))
       deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    ::urbiserver->eventbindertab.erase(*i);
+  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+    ::urbiserver->eventbindertab.erase(i);
   deletelist.clear();
 
   delete parser_;
@@ -927,23 +925,19 @@ UConnection::processCommand(UCommand *&command,
 	  if (*param->name == "flagid")
 	  {
 	    *param->name = "noflag";
-	    UValue* tmpID = param->expression->eval(command, this);
-	    if (tmpID)
+	    if (UValue* tmpID = param->expression->eval(command, this))
 	    {
 	      if (tmpID->dataType == DATA_STRING)
-		for (std::list<UConnection*>::iterator i =
-		       ::urbiserver->connectionList.begin();
-		     i != ::urbiserver->connectionList.end();
-		     ++i)
-		  if ((*i)->isActive()
-		      && (*(*i)->connectionTag == *tmpID->str
+		BOOST_FOREACH (UConnection* i, ::urbiserver->connectionList)
+		  if (i->isActive()
+		      && (*i->connectionTag == *tmpID->str
 			  || *tmpID->str == "all"
 			  || (*tmpID->str == "other"
-			      && !(*(*i)->connectionTag == *connectionTag))))
-		    (*i)->append(new UCommand_TREE(UCommand::location(),
-						   Flavorable::UAND,
-						   command->copy(),
-						   0));
+			      && !(*i->connectionTag == *connectionTag))))
+		    i->append(new UCommand_TREE(UCommand::location(),
+						Flavorable::UAND,
+						command->copy(),
+						0));
 	      delete tmpID;
 	    }
 	    delete command;

@@ -29,6 +29,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include <boost/foreach.hpp>
 #include <boost/thread.hpp>
 
 #include "libport/containers.hh"
@@ -182,17 +184,13 @@ UServer::initialize()
   // Plugins (internal components)
   {
     DEBUG (("Loading objecthubs..."));
-    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	 i != urbi::objecthublist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+    BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+      i->init(i->name);
     DEBUG (("done\n"));
 
     DEBUG (("Loading hubs..."));
-    for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-	 i != urbi::objectlist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+    BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+      i->init(i->name);
     DEBUG (("done\n"));
   }
 
@@ -257,22 +255,18 @@ UServer::work()
   currentTime   = lastTime();
 
   // Execute Timers
-  for (urbi::UTimerTable::iterator i = urbi::timermap->begin();
-       i != urbi::timermap->end();
-       ++i)
-    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
+  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::timermap)
+    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
     {
-      (*i)->call();
-      (*i)->lastTimeCalled = currentTime;
+      i->call();
+      i->lastTimeCalled = currentTime;
     }
 
 
   beforeWork();
   // Access & Change variable list
-  for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
-       i != access_and_change_varlist.end ();
-       ++i)
-    (*i)->get ();
+  BOOST_FOREACH (UVariable* i, access_and_change_varlist)
+    i->get ();
 
   // memory test
   memoryCheck(); // Check for memory availability
@@ -305,50 +299,48 @@ UServer::work()
   }
 
   // Scan currently opened connections for ongoing work
-  for (std::list<UConnection*>::iterator r = connectionList.begin();
-       r != connectionList.end();
-       ++r)
-    if ((*r)->isActive())
+  BOOST_FOREACH (UConnection* r, connectionList)
+    if (r->isActive())
     {
-      if (!(*r)->isBlocked())
-	(**r) << UConnection::continueSend;
+      if (!r->isBlocked())
+	*r << UConnection::continueSend;
 
       if (signalMemoryOverflow)
-	(**r) << UConnection::errorSignal(UERROR_MEMORY_OVERFLOW);
+	*r << UConnection::errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
-	(**r) << UConnection::errorSignal(UERROR_CPU_OVERLOAD);
+	*r << UConnection::errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      (**r) << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
-      (**r) << UConnection::errorCheck(UERROR_MEMORY_WARNING);
-      (**r) << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
-      (**r) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (**r) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (**r) << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
+      *r << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
+      *r << UConnection::errorCheck(UERROR_MEMORY_WARNING);
+      *r << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
+      *r << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      *r << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      *r << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
-      if ((*r)->activeCommand)
+      if (r->activeCommand)
       {
-	(*r)->obstructed = true; // will be changed to 'false'
+	r->obstructed = true; // will be changed to 'false'
 	{
 	  //if the whole tree is visited
-	  boost::try_mutex::scoped_lock((*r)->treeMutex);
-	  (*r)->inwork = true;   // to distinguish this call of
+	  boost::try_mutex::scoped_lock(r->treeMutex);
+	  r->inwork = true;   // to distinguish this call of
 	  //execute from the one in receive
-	  (*r)->execute((*r)->activeCommand);
-	  (*r)->inwork = false;
+	  r->execute(r->activeCommand);
+	  r->inwork = false;
 	}
       }
 
-      if ((*r)->newDataAdded)
+      if (r->newDataAdded)
       {
 	// used by loadFile and eval to
 	// delay the parsing after the completion
 	// of execute().
-	(*r)->newDataAdded = false;
-	(**r) << UConnection::received("");
+	r->newDataAdded = false;
+	*r << UConnection::received("");
       }
     }
 
@@ -357,24 +349,22 @@ UServer::work()
   if (reseting && stage==0)
     stopall = true;
 
-  for (std::list<UConnection*>::iterator r = connectionList.begin();
-       r != connectionList.end();
-       ++r)
-    if ((*r)->isActive() && (*r)->activeCommand)
+  BOOST_FOREACH (UConnection* r, connectionList)
+    if (r->isActive() && r->activeCommand)
     {
-      if ((*r)->killall || stopall)
+      if (r->killall || stopall)
       {
-	(*r)->killall = false;
-	delete (*r)->activeCommand;
-	(*r)->activeCommand = 0;
+	r->killall = false;
+	delete r->activeCommand;
+	r->activeCommand = 0;
       }
-      else if ((*r)->activeCommand->toDelete)
+      else if (r->activeCommand->toDelete)
       {
-	delete (*r)->activeCommand;
-	(*r)->activeCommand = 0;
+	delete r->activeCommand;
+	r->activeCommand = 0;
       }
       else if (somethingToDelete)
-	(*r)->activeCommand->deleteMarked();
+	r->activeCommand->deleteMarked();
     }
 
   somethingToDelete = false;
@@ -425,13 +415,11 @@ UServer::work()
   }
 
   // Execute Hub Updaters
-  for (urbi::UTimerTable::iterator i = urbi::updatemap->begin();
-       i != urbi::updatemap->end();
-       ++i)
-    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
+  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::updatemap)
+    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
     {
-      (*i)->call();
-      (*i)->lastTimeCalled = currentTime;
+      i->call();
+      i->lastTimeCalled = currentTime;
     }
 
   // after work
@@ -489,10 +477,8 @@ UServer::work()
 	    ++it;
 
       //delete hubs
-      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	   i != urbi::objecthublist->end();
-	   ++i)
-	delete (*i)->getUObjectHub ();
+      BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+	delete i->getUObjectHub ();
 
 
       //delete the rest
@@ -514,23 +500,18 @@ UServer::work()
       // when commands will be
       //tagtab.clear();
 
-      for (std::list<UConnection*>::iterator i = connectionList.begin();
-	   i != connectionList.end();
-	   ++i)
-	if ((*i)->isActive())
-	  (**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
+      BOOST_FOREACH (UConnection* i, connectionList)
+	if (i->isActive())
+	  *i << UConnection::send("*** Reset completed. Now, restarting...\n",
+				  "reset");
 
       //restart hubs
-      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	   i != urbi::objecthublist->end();
-	   ++i)
-	(*i)->init((*i)->name);
+      BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+	i->init(i->name);
 
       //restart uobjects
-      for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-	   i != urbi::objectlist->end();
-	   ++i)
-	(*i)->init((*i)->name);
+      BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+	i->init(i->name);
 
       //reload URBI.INI
       loadFile("URBI.INI", &ghost_->recvQueue());
@@ -543,16 +524,14 @@ UServer::work()
     else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
       //reload CLIENT.INI
-      for (std::list<UConnection*>::iterator i = connectionList.begin();
-	   i != connectionList.end();
-	   ++i)
-	if ((*i)->isActive() && (*i) != ghost_)
+      BOOST_FOREACH (UConnection* i, connectionList)
+	if (i->isActive() && i != ghost_)
 	{
-	  (**i) << UConnection::send("*** Restart completed.\n", "reset");
-	  loadFile("CLIENT.INI", &(*i)->recvQueue());
-	  (*i)->recvQueue().push ("#__LINE__1\n");
-	  (*i)->newDataAdded = true;
-	  (**i) << UConnection::send("*** Ready.\n", "reset");
+	  *i << UConnection::send("*** Restart completed.\n", "reset");
+	  loadFile("CLIENT.INI", &i->recvQueue());
+	  i->recvQueue().push ("#__LINE__1\n");
+	  i->newDataAdded = true;
+	  *i << UConnection::send("*** Ready.\n", "reset");
 	}
       reseting = false;
       stage = 0;
@@ -802,11 +781,9 @@ UServer::memoryCheck ()
     warningSent = true;
 
     // Scan currently opened connections
-    for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
-      if ((*i)->isActive())
-	(**i) << UWARNING_MEMORY;
+    BOOST_FOREACH (UConnection* i, connectionList)
+      if (i->isActive())
+	(*i) << UWARNING_MEMORY;
   }
 
   // Hysteresis mechanism
@@ -860,16 +837,12 @@ UServer::mark(UString* stopTag)
 void
 UServer::mark(TagInfo* ti)
 {
-  for (std::list<UCommand*>::iterator i = ti->commands.begin();
-      i != ti->commands.end();
-      ++i)
-    if ((*i)->status != UCommand::UONQUEUE || (*i)->morphed)
-      (*i)->toDelete = true;
+  BOOST_FOREACH(UCommand* i, ti->commands)
+    if (i->status != UCommand::UONQUEUE || i->morphed)
+      i->toDelete = true;
 
-  for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
-       i != ti->subTags.end();
-       ++i)
-    mark(*i);
+  BOOST_FOREACH (TagInfo* i, ti->subTags)
+    mark(i);
 }
 
 

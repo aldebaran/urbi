@@ -1,5 +1,11 @@
 2007-10-16  Akim Demaille  <demaille@gostai.com>
 
+	BOOST_FOREACH IS COOL.
+	* src/uconnection.cc, src/uobject.cc, src/userver.cc,
+	* src/uvariable.cc: Use it.
+
+2007-10-16  Akim Demaille  <demaille@gostai.com>
+
 	Restore subscription to uobject.
 
 2007-10-15  Akim Demaille  <demaille@gostai.com>
