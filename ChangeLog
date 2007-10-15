@@ -1,5 +1,10 @@
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
+	Sort rules.
+	* src/parser/ugrammar.y: Here.
+
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
 	Declaration order change.
 	* src/parser/ugrammar.y: Here.
 

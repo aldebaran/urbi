@@ -826,6 +826,12 @@ k1_id:
 /*-------------------.
 | Stmt: Assignment.  |
 `-------------------*/
+
+stmt:
+	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3);        }
+| "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
+;
+
 %token <symbol>
 	TOK_DIV_ASSIGN    "/="
 	TOK_MINUS_ASSIGN  "-="
@@ -842,11 +848,6 @@ id:
 | "+="
 | "++"
 | "*="
-;
-
-stmt:
-	lvalue "=" expr namedarguments { $$ = assign (@$, $1, $3);        }
-| "var" lvalue "=" expr namedarguments { $$ = assign (@$, $2, $4, true);  }
 ;
 
 expr:
