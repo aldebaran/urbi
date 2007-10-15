@@ -47,7 +47,7 @@ namespace urbi
 
     createUCallback(dummyUObject->__name,
 		    "var",
-		    dummyUObject, &UObject::voidfun, name, monitormap);
+		    dummyUObject, &UObject::voidfun, name, monitormap, false);
   }
 
   //! UVar out value (read mode)

@@ -11,9 +11,25 @@
 	* src/liburbi/uobject/urbi/uvar.hh: s/double/ufloat.
 
 	2007-08-31  Matthieu Nottale  <nottale@gostai.com>
-	Under gumstix buildroot, c++ iostream+ ufloat = broken, so use sprintf insteand of ostream<<
+	Under gumstix buildroot, c++ iostream+ ufloat = broken, so use
+	sprintf insteand of ostream<<
 	* src/liburbi/uobject/uvalue-common.cc: Use sprintf instead of ostrea<<.
 
+
+2007-09-20  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Add missing prototype for reset
+	* urbi/uvar.hh: Here.
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+	Replace double by ufloat everywhere.
+	* src/liburbi/uobject/urbi/uvar.hh: s/double/ufloat.
+
+2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+
+	Under gumstix buildroot, c++ iostream+ ufloat = broken, so use sprintf insteand of ostream<<
+	* src/liburbi/uobject/uvalue-common.cc: Use sprintf instead of ostrea<<.
 
 2007-07-01  Jean-Christophe Baillie  <baillie@gostai.com>
 

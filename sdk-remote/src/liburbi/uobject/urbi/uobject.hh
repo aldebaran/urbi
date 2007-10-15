@@ -59,7 +59,7 @@
 # define UBindFunction(obj,x)						\
   ::urbi::createUCallback(__name, "function", this,			\
 			  (&obj::x), __name + "." #x,			\
-			  ::urbi::functionmap)
+			  ::urbi::functionmap, false)
 
 /** Registers a function x in current object that will be called each
  time the event of same name is triggered. The function will be
@@ -69,7 +69,7 @@
 # define UBindEvent(obj,x)						\
   ::urbi::createUCallback(__name, "event", this,			\
 			  (&obj::x), __name + "." #x,			\
-			  ::urbi::eventmap)
+			  ::urbi::eventmap, false)
 
 /** Registers a function x in current object that will be called each
  * time the event of same name is triggered, and a function fun called
@@ -158,7 +158,8 @@ namespace urbi
       // is found (e.g., using free standing functions instead of a
       // member functions).
       createUCallback(__name, "var",
-		      dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
+		      dynamic_cast<T*>(this),
+		      fun, v.get_name(), monitormap, v.owned);
     }
 
     /// Calls the specified function each time the variable v is modified.
@@ -167,7 +168,8 @@ namespace urbi
     {
       UGenericCallback* cb =
 	createUCallback(__name, "var",
-			dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
+			dynamic_cast<T*>(this),
+			fun, v.get_name(), monitormap, v.owned);
       if (cb)
 	cb->storage = &v;
     }
@@ -178,7 +180,8 @@ namespace urbi
     void UNotifyOnRequest (UVar& v, int (T::*fun) ())
     {
       createUCallback(__name, "var_onrequest",
-		      dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
+		      dynamic_cast<T*>(this),
+		      fun, v.get_name(), monitormap, v.owned);
     }
 
     /// Calls the specified function when the variable value is updated on
@@ -188,7 +191,29 @@ namespace urbi
     {
       UGenericCallback* cb =
 	createUCallback(__name, "var_onrequest",
-			dynamic_cast<T*>(this), fun, v.get_name(), monitormap);
+			dynamic_cast<T*>(this),
+			fun, v.get_name(), monitormap, v.owned);
+      if (cb)
+	cb->storage = &v;
+    }
+
+    /// Calls the specified function each time the variable v is read.
+    template <class T>
+    void UNotifyAccess (UVar& v, int (T::*fun) ())
+    {
+      createUCallback(__name, "varaccess",
+		      dynamic_cast<T*>(this),
+		      fun, v.get_name(), accessmap, v.owned);
+    }
+
+    /// Calls the specified function each time the variable v is read.
+    template <class T>
+    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&))
+    {
+      UGenericCallback* cb =
+	createUCallback(__name, "varaccess",
+			dynamic_cast<T*>(this),
+			fun, v.get_name(), accessmap, v.owned);
       if (cb)
 	cb->storage = &v;
     }
@@ -207,20 +232,9 @@ namespace urbi
     {
       UGenericCallback* cb =
 	createUCallback(__name, "var",
-			dynamic_cast<T*>(this), fun, name, monitormap);
+			dynamic_cast<T*>(this), fun, name, monitormap, false);
       if (cb)
 	cb->storage = new UVar(name);
-    }
-
-    /// Calls the specified function each time the variable v is read.
-    template <class T>
-    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&))
-    {
-      UGenericCallback* cb =
-	createUCallback(__name, "varaccess",
-			dynamic_cast<T*>(this), fun, v.get_name(), accessmap);
-      if (cb)
-	cb->storage = &v;
     }
 
     /// Set a timer that will call tune 'fun' function every 't' milliseconds.

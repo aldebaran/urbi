@@ -34,6 +34,7 @@ int imcount;
 int format;
 Monitor *mon=0;
 unsigned char * buffer=NULL;
+float scale;
 urbi::UImage im;
 
 /* Our callback function */
@@ -46,9 +47,11 @@ showImage(const urbi::UMessage &msg)
     return urbi::URBI_CONTINUE;
 
   urbi::UImage& img = msg.value->binary->image;
+  im.width = static_cast<int>(static_cast<float>(img.width) * scale);
+  im.height = static_cast<int>(static_cast<float>(img.height) * scale);
   convert(img, im);
   
-  int sz = 3*img.width*img.height;
+  int sz = 3*im.width*im.height;
   static int tme = 0;
   /* Calculate framerate. */
   if (!(imcount % 20))
@@ -63,7 +66,7 @@ showImage(const urbi::UMessage &msg)
     }
 
   if (!mon)
-    mon = new Monitor(img.width, img.height, "image");
+    mon = new Monitor(im.width, im.height, "image");
 
   mon->setImage((bits8 *) im.data, sz);
   ++imcount;
@@ -91,6 +94,7 @@ void usage(const char * n)
 	      "    -j factor : jpeg compression factor (from 0 to 100, def 70\n"
 	      "    -d device : query image on device.val (default: camera.val\n"
 	      "    -o file   : query and save one image to file\n"
+	      "    -s scale  : rescale image with given factor (display only)\n"
 	      "  transfer Format : jpeg=transfer jpeg, raw=transfer raw\n"
 	      "  save     Format : rgb , ycrcb, jpeg, ppm\n", n
 	      );
@@ -101,10 +105,11 @@ main (int argc, char *argv[])
 {
   signal(SIGINT, closeandquit);
   int frequency = 0;
-  char * device = "camera";
+  const char * device = "camera";
   char * fileName = 0;
   bool reconstruct = false;
   int port = 54000;
+  scale = 1.0;
   int jpegfactor = 70;
   mon = NULL;
   im.width = im.height = 0;
@@ -122,6 +127,8 @@ main (int argc, char *argv[])
       device = argv[++argp];
     else if (arg == "-f")
       frequency = strtol(argv[++argp],0,0);
+    else if (arg == "-s")
+      sscanf(argv[++argp],"%f",&scale);
     else if (arg == "-r")
       reconstruct = true;
     else if (arg == "-o")

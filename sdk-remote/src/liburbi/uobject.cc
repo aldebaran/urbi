@@ -65,7 +65,7 @@ namespace urbi
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
-				     int size,  UTable& t)
+				     int size,  UTable& t, bool)
     : objname (objname), name (name)
   {
     nbparam = size;
@@ -127,7 +127,7 @@ namespace urbi
     std::string cbname = os.str();
 
     createUCallback(objname, "event", this, &UTimerCallback::call,
-		    objname + "." + cbname, eventmap);
+		    objname + "." + cbname, eventmap, false);
     //new UCallbackvoid0<UTimerCallback> (objname, "event", this,
     //				&UTimerCallback::call,
     //				objname + '.' + cbname, eventmap);
@@ -233,7 +233,7 @@ namespace urbi
       period = 1;
     std::string cbname = __name + ".maintimer";
     createUCallback(__name, "event",
-		    this, &UObject::update, cbname, eventmap);
+		    this, &UObject::update, cbname, eventmap, false);
     os.str("");
     os.clear();
     os << "maintimer_" << __name << ": every(" << period << ") "

@@ -18,7 +18,7 @@ main (int argc, char * argv[])
   if (cl.error())
     exit(2);
   urbi::Move mv;
-  char * config;
+  const char * config;
   bool init=true;
   if (argc>2 && argv[2][0]=='0')
     init=false;

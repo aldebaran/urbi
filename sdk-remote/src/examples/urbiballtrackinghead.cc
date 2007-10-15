@@ -315,14 +315,16 @@ BallTrackingHead::BallTrackingHead(const char * robotname)
 int
 main(int argc, char * argv[])
 {
+  const char * host;
   if (argc != 2)
     {
     printf("usage: %s robotname\n", argv[0]);
     //urbi::exit(1);
-    argv[1]="127.0.0.1";
+    host = "127.0.0.1";
   }
-
-  BallTrackingHead bt (argv[1]);
+  else
+    host = argv[1];
+  BallTrackingHead bt (host);
   // Help GCC understand we really want this variable to be "used".
   (void) bt;
   urbi::execute();

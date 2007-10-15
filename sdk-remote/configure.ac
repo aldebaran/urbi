@@ -1,15 +1,15 @@
 m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
-AC_PREREQ([2.60])
-AC_INIT([URBI SDK], [1.0RC], [bugs@gostai.com], [urbi-sdk])
+AC_PREREQ([2.61])
+AC_INIT([URBI SDK], [1.5], [liburbi-cpp-bugs@gostai.com], [urbi-sdk])
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 -Wall tar-ustar dist-zip nostdinc])
+AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc])
 
 # Urbi standard locations.
 URBI_SDK_DIRS([remote])
@@ -88,11 +88,11 @@ AM_CONDITIONAL([BINDING_CSHARP],
 AM_CONDITIONAL([BINDING_JAVA],
 		[echo "$enable_bindings" | grep -w java >/dev/null])
 AM_CONDITIONAL([BINDING_LUA],
- 	        [echo "$enable_bindings" | grep -w lua >/dev/null])
+		[echo "$enable_bindings" | grep -w lua >/dev/null])
 AM_CONDITIONAL([BINDING_PERL],
- 	        [echo "$enable_bindings" | grep -w perl >/dev/null])
+		[echo "$enable_bindings" | grep -w perl >/dev/null])
 AM_CONDITIONAL([BINDING_PHP],
- 	        [echo "$enable_bindings" | grep -w php >/dev/null])
+		[echo "$enable_bindings" | grep -w php >/dev/null])
 AM_CONDITIONAL([BINDING_PYTHON],
 		[echo "$enable_bindings" | grep -w python >/dev/null])
 AM_CONDITIONAL([BINDING_RUBY],

@@ -218,8 +218,8 @@ namespace urbi
     UCallback%N%(const std::string& objname, const std::string& type,
 		 OBJ* obj,
 		 R (OBJ::*fun) (%%%,% P% %%),
-		 const std::string& funname, UTable &t)
-      : UGenericCallback(objname, type, funname, %N%, t),
+	       const std::string& funname, UTable &t, bool owned)
+    : UGenericCallback(objname, type, funname, %N%, t, owned),
 	obj(obj), fun(fun)
     {
     }
@@ -229,7 +229,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), ((*obj).*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      res(), ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%);
       return res;
     }
 
@@ -247,8 +247,8 @@ namespace urbi
     UCallbackvoid%N%(const std::string& objname, const std::string& type,
 		     OBJ* obj,
 		     void (OBJ::*fun) (%%%,% P% %%),
-		     const std::string& funname, UTable &t)
-      : UGenericCallback(objname, type, funname,%N%, t),
+		   const std::string& funname, UTable &t, bool owned)
+    : UGenericCallback(objname, type, funname,%N%, t, owned),
 	obj(obj), fun(fun)
     {
     }
@@ -302,8 +302,8 @@ namespace urbi
     public:
     UFCallbackvoid%N%(const std::string& objname, const std::string& type,
 		      void (*fun) (%%%,% P% %%),
-		      const std::string& funname, UTable &t)
-      : UGenericCallback(objname, type, funname,%N%, t),  fun(fun)
+		    const std::string& funname, UTable &t, bool owned)
+    : UGenericCallback(objname, type, funname,%N%, t,owned),  fun(fun)
     {
     }
 
@@ -328,8 +328,8 @@ namespace urbi
     public:
     UFCallback%N%(const std::string& objname, const std::string& type,
 		  R (*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable &t)
-      : UGenericCallback(objname, type, funname,%N%, t),  fun(fun)
+		const std::string& funname, UTable &t, bool owned)
+    : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
     {
     }
 
@@ -338,7 +338,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), (*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      res(), back_cast((*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%));
       return res;
     }
 
@@ -352,9 +352,9 @@ namespace urbi
   UGenericCallback*
   createUCallback(const std::string& objname, const std::string& type,
 		  R (*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable& t)
+		  const std::string& funname, UTable& t, bool owned)
   {
-    return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t);
+    return new UFCallback%N%<R%%, P% %%> (objname, type,fun,funname,t, owned);
   }
 
 #if 0
@@ -364,9 +364,10 @@ namespace urbi
     UGenericCallback*
     createUCallback(const std::string& objname, const std::string& type,
 		    void (*fun) (%%%,% P% %%),
-		    const std::string& funname, UTable &t)
+		    const std::string& funname, UTable &t, bool owned)
   {
-    return new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t);
+    return new UFCallbackvoid%N%<void %%, P% %%> (objname, type,fun,funname,t,
+      owned);
   }
 #endif
 
@@ -376,9 +377,10 @@ namespace urbi
   createUCallback(const std::string& objname, const std::string& type,
 		  OBJ* obj,
 		  R (OBJ::*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable &t)
+		  const std::string& funname, UTable &t, bool owned)
   {
-    return new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t);
+    return new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t,
+      owned);
   }
 
 #if 0
@@ -389,9 +391,10 @@ namespace urbi
   createUCallback(const std::string& objname, const std::string& type,
 		  OBJ* obj,
 		  void (OBJ::*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable &t)
+		  const std::string& funname, UTable &t, bool owned)
   {
-    return new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t);
+    return new UCallbackvoid%N%<OBJ%%, P% %%> (objname, type,obj,fun,funname,t,
+      owned);
   }
 #endif
 

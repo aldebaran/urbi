@@ -1,3 +1,158 @@
+2007-10-15  Akim Demaille  <demaille@gostai.com>
+
+	merge -r 478:514 https://svn.gostai.com/svn/liburbi-cpp/branches/1.0
+
+	2007-10-01  Guillaume Deslandes  <deslandes@gostai.com>
+	Add back_cast for boolean
+	* src/liburbi/uobject/urbi/uobject.hh.template: Here.
+
+	2007-10-01  Guillaume Deslandes  <deslandes@gostai.com>
+	Add missing prototypes for UNotify*
+	* src/liburbi/uobject/urbi/uobject.hh.template: Here.
+
+	2007-09-28  Guillaume Deslandes  <deslandes@gostai.com>
+	Reactivate doc dir
+	* Makefile.am: Here.
+
+	2007-09-28  POTHIER Benoit  <pothier@gostai.com>
+	Rename sample projects.
+	* sample_projects/liburbi/windows - devcpp/test.cpp: Remove.
+	* sample_projects/liburbi/windows - devcpp/test.dev: Remove.
+	* sample_projects/liburbi/windows - devcpp: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi.sln: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi.suo: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/stdafx.cpp: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/stdafx.h: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/test.cpp: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/test_liburbi.vcproj: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi: Remove.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi.sln: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi.suo: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/stdafx.cpp: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/stdafx.h: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/test.cpp: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/test_liburbi.vcproj: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi: Remove.
+	* sample_projects/liburbi/windows - vc++ Multithread MT: Remove.
+	* sample_projects/liburbi/windows-devcpp: New.
+	* sample_projects/liburbi/windows-vcxx-DLL-Multithread-MD: New.
+	* sample_projects/liburbi/windows-vcxx-Multithread-MT: New.
+	* sample_projects/uobject/linux - umake/Makefile: Remove.
+	* sample_projects/uobject/linux - umake/test.cpp: Remove.
+	* sample_projects/uobject/linux - umake: Remove.
+	* sample_projects/uobject/linux-umake: New.
+	* sample_projects/uobject/windows - devcpp/test.cpp: Remove.
+	* sample_projects/uobject/windows - devcpp/test.dev: Remove.
+	* sample_projects/uobject/windows - devcpp: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject.sln: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject.suo: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/stdafx.cpp: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/stdafx.h: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/test.cpp: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/testUObject.vcproj: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject: Remove.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject.sln: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject.suo: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/stdafx.cpp: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/stdafx.h: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/test.cpp: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/testUObject.vcproj: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject: Remove.
+	* sample_projects/uobject/windows - vc++ Multithread MT: Remove.
+	* sample_projects/uobject/windows-devcpp: New.
+	* sample_projects/uobject/windows-vcxx-DLL-Multithread-MD: New.
+	* sample_projects/uobject/windows-vcxx-Multithread-MT: New.
+
+	2007-09-25  Matthieu Nottale  <nottale@gostai.com>
+	Add support for multiple files to urbisendbin, fix warnings.
+	* src/examples/urbiballtrackinghead.cc,
+	* src/examples/urbiimage.cc,
+	* src/examples/urbirecord.cc: fix warning 
+	   "deprecated string constant->char * conversion"
+	* src/examples/urbisendbin.cc: Add support for multiple files.
+	* src/liburbi/uconversion.cc,
+	* src/utils/urbiwalk.cc: Fix the warning.
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Merge branche nm to 1.0
+	* ChangeLog: .
+	* Makefile.am: .
+	* doc/Doxyfile.in: .
+	* src/liburbi/uobject.cc: .
+	* src/liburbi/uobject/ChangeLog: .
+	* src/liburbi/uobject/urbi/uobject.hh.template: .
+	* src/liburbi/uobject/urbi/utypes-common.hh: .
+	* src/liburbi/uobject/urbi/uvar.hh: .
+	* src/liburbi/uobject/uvalue-common.cc: .
+	* src/liburbi/uvar.cc: .
+	* vcs/local.rb: .
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Change mailing list to patches
+	* local.rb: Here.
+
+	2007-09-21  Guillaume Deslandes  <deslandes@gostai.com>
+	Fixes for branche nm compatibility
+	* Makefile.am: .
+	* doc/Doxyfile.in: .
+	* src/liburbi/uobject.cc: .
+	* src/liburbi/uobject/urbi/uobject.hh.template: .
+	* src/liburbi/uvar.cc: .
+
+	2007-08-31  Matthieu Nottale  <nottale@gostai.com>
+	Add mecanism to differentiate usensor/non usensor calls to
+	notifychange/access, introduce back_cast to cast any->uvalue
+	* src/liburbi/uobject/urbi/uobject.hh.template: 
+	    - Add a bool to GenericCallbac ctor and all createcallbacks.
+	    - Casting from any type to UValue is not done by UValue
+	cast operators but by calling the back_cast method. 
+	* src/liburbi/uobject/urbi/utypes-common.hh: Add an abort
+	after an assert to please some versions of gcc. 
+
+	2007-07-19  POTHIER Benoit  <pothier@gostai.com>
+	Add sample projects.
+	* README: Point sample projects.
+	* sample_projects/gpl.txt: New.
+	* sample_projects/liburbi/linux/Makefile: New.
+	* sample_projects/liburbi/linux/test.cpp: New.
+	* sample_projects/liburbi/windows - devcpp/test.cpp: New.
+	* sample_projects/liburbi/windows - devcpp/test.dev: New.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi.sln: New.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi.suo: New.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/stdafx.cpp: New.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/stdafx.h: New.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/test.cpp: New.
+	* sample_projects/liburbi/windows - vc++ DLL Multithread MD/test_liburbi/test_liburbi.vcproj: New.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi.sln: New.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi.suo: New.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/stdafx.cpp: New.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/stdafx.h: New.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/test.cpp: New.
+	* sample_projects/liburbi/windows - vc++ Multithread MT/test_liburbi/test_liburbi.vcproj: New.
+	* sample_projects/uobject/linux - umake/Makefile: New.
+	* sample_projects/uobject/linux - umake/test.cpp: New.
+	* sample_projects/uobject/windows - devcpp/test.cpp: New.
+	* sample_projects/uobject/windows - devcpp/test.dev: New.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject.sln: New.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject.suo: New.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/stdafx.cpp: New.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/stdafx.h: New.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/test.cpp: New.
+	* sample_projects/uobject/windows - vc++ DLL Multithread MD/testUObject/testUObject.vcproj: New.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject.sln: New.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject.suo: New.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/stdafx.cpp: New.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/stdafx.h: New.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/test.cpp: New.
+	* sample_projects/uobject/windows - vc++ Multithread MT/testUObject/testUObject.vcproj: New.
+
+	2007-07-19  POTHIER Benoit  <pothier@gostai.com>
+	* AUTHORS: Add gostai in AUTHORS.
+	README changes to test git.
+	* README: Here.
+
 2007-10-06  POTHIER Benoit  <benoit.pothier@gmx.net>
 
 	Remove libport.mk in Makefile.am to handle the external update.

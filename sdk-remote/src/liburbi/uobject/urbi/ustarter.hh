@@ -27,7 +27,7 @@
 
 /// This macro must be called once for every UObject class.
 # define UStartRename(x,name)						\
-  ::urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# name),	\
+  ::urbi::URBIStarter<x> name ##  ____URBI_object(std::string(# name),	\
 					       ::urbi::objectlist)
 
 /// This macro must be called once for each UObjectHub class.
@@ -127,6 +127,26 @@ namespace urbi
     UStartlist  *slist;
     T*          object;
   };
+
+
+
+#define SETBACKCASTCTOR(T) inline UValue  back_cast(T & t) { return UValue(t);}
+
+SETBACKCASTCTOR(bool)
+SETBACKCASTCTOR(int)
+SETBACKCASTCTOR(long)
+SETBACKCASTCTOR(ufloat)
+SETBACKCASTCTOR(UValue)
+SETBACKCASTCTOR(char *)
+SETBACKCASTCTOR(void *)
+SETBACKCASTCTOR(const std::string)
+SETBACKCASTCTOR(std::string)
+SETBACKCASTCTOR(const UBinary)
+SETBACKCASTCTOR(const UList)
+SETBACKCASTCTOR(const UObjectStruct)
+SETBACKCASTCTOR(const USound)
+SETBACKCASTCTOR(const UImage)
+
 
 
   /// URBIStarter base class used to store heterogeneous template

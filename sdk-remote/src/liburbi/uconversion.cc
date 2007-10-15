@@ -457,7 +457,7 @@ namespace urbi
     //then convert to destination format
     dest.size = dest.width * dest.height * 3 + 20;
     dest.data = static_cast<unsigned char*> (realloc(dest.data, dest.size));
-
+    int dsz = dest.size;
     switch (dest.imageFormat)
     {
       case IMAGE_RGB:
@@ -486,19 +486,19 @@ namespace urbi
 		 uncompressedData, dest.width * dest.height * 3);
 	break;
       case IMAGE_JPEG:
-	/*if (format == 1)
+	if (format == 1)
 	  convertYCrCbtoJPEG((byte*) uncompressedData,
-			     dest.width * dest.height * 3,
-			     (byte*) dest.data, dsz);
+			     dest.width ,dest.height,
+			     (byte*) dest.data, dsz, 90);
 	else
 	  convertRGBtoJPEG((byte*) uncompressedData,
-			   dest.width * dest.height * 3,
-			   (byte*) dest.data, dsz);
-	*/
-	fprintf(stderr,
-		"unsupported conversion requested: can't compress to jpeg\n");
+			   dest.width , dest.height,
+			   (byte*) dest.data, dsz, 90);
+	
+	//fprintf(stderr,
+	//	"unsupported conversion requested: can't compress to jpeg\n");
 	free(uncompressedData);
-	return 0;
+	return 1;
 	break;
       case IMAGE_UNKNOWN:
 	break;

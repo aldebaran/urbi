@@ -243,10 +243,12 @@ namespace urbi
   std::ostream&
   UValue::print (std::ostream& s) const
   {
+    char dv[256];
     switch (type)
     {
       case DATA_DOUBLE:
-	s << val;
+	sprintf(dv,"%f",(float)val);
+	s << dv;
 	break;
       case DATA_STRING:
 	s << '"' << *stringValue << '"';

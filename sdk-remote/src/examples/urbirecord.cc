@@ -34,7 +34,7 @@ struct UCommand
 
 
 
-char * devices[]=
+const char * devices[]=
 {
   "legLF1",
   "legLF2",

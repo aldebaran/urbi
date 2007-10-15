@@ -17,6 +17,8 @@
 
 # include <string>
 
+# include <libport/ufloat.hh>
+
 /// Define an attribute and its accessors.
 # define PRIVATE(vartype, varname)		\
   private:					\
@@ -41,10 +43,10 @@ namespace urbi
   public:
 
     void operator =(const UValue &v);
-    void operator =(const double v);
+    void operator =(const ufloat v);
     void operator =(const std::string & v);
 
-    operator double();
+    operator ufloat();
     operator std::string();
     operator UValue();
 
@@ -102,7 +104,7 @@ namespace urbi
     void setOwned();
     void syncValue ();
 
-    void reset      (ufloat);
+    void reset (ufloat);
     void operator = (ufloat);
     void operator = (const std::string&);
     void operator = (const UBinary &);  ///< deep copy
@@ -148,7 +150,7 @@ namespace urbi
 
     UValue getProp(UProperty prop);
     void setProp(UProperty prop, const UValue &v);
-    void setProp(UProperty prop, double v);
+    void setProp(UProperty prop, ufloat v);
     void setProp(UProperty prop, const char * v);
     void setProp(UProperty prop, const std::string& v)
     {
@@ -181,9 +183,9 @@ namespace urbi
   };
 
   inline void UProp::operator =(const UValue& v)  {owner.setProp(name, v);}
-  inline void UProp::operator =(const double v)  {owner.setProp(name, v);}
+  inline void UProp::operator =(const ufloat v)  {owner.setProp(name, v);}
   inline void UProp::operator =(const std::string& v){owner.setProp(name, v);}
-  inline UProp::operator double()  {return (double)owner.getProp(name);}
+  inline UProp::operator ufloat()  {return (ufloat)owner.getProp(name);}
   inline UProp::operator std::string()  {return owner.getProp(name);}
   inline UProp::operator UValue()  {return owner.getProp(name);}
 

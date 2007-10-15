@@ -1,5 +1,4 @@
-// liburbi-cpp - C++ library for Universal Robotics Body Interface.
-// Copyright (C) 2004-2006 Jean-Christophe Baillie
+// Copyright (C) 2004-2007 Gostai 
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +14,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
-// Contact: Jean-Christophe Baillie
+// Contact: contact@gostai.com 
 // URL:     http://www.gostai.com
 
 This is liburbi-cpp, a C++ library for URBI.
 It provides an API to connect to an URBI server, send messages
-(both "-Aà la printf" and "à la iostream") ,  register callback -b
+(both ".AŽà la printf" and "Žà la iostream"),  register callback 
 functions that will be called when messages with a given tag 
 is received.
 
@@ -29,3 +28,6 @@ HTML tutorial and the Doxygen-generated reference.
 
 Many examples are included to get you started in the src/examples
 directory.
+
+Samples projects for various OSes are available in the
+src/examples/sample_projects directory.

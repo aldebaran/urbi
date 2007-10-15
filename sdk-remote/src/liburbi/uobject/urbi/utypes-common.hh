@@ -74,6 +74,7 @@ namespace urbi
       if (STREQ (UBlendNames[i], cp))
 	return static_cast<UBlendType> (i);
     pabort ("unknown blendtype: " << cp);
+    abort();
   }
 
   /*------------.
