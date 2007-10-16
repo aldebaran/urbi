@@ -27,14 +27,14 @@ var Channel = new Object;
 do Float
 {
   init = function (x) { self.set(x) };
-  
+
   += = function (x) { self.set (self + x) };
   -= = function (x) { self.set (self - x) };
   *= = function (x) { self.set (self * x) };
   /= = function (x) { self.set (self / x) };
 
   // One would like to write
-  //   
+  //
   // ++ = function () { var res = self.clone; self += 1; res };
   //
   // but it does not return a Float, it returns an Object which
@@ -49,6 +49,31 @@ do Float
   ++ = function () { var res = 0; res.set(self); self += 1; res };
   -- = function () { var res = 0; res.set(self); self -= 1; res };
 };
+
+## ----- ##
+## Math. ##
+## ----- ##
+
+var Math = new Object;
+do Math
+{
+  sin = function (x) { x.sin };
+  asin = function (x) { x.asin };
+  cos = function (x) { x.cos };
+  acos = function (x) { x.acos };
+  tan = function (x) { x.tan };
+  atan = function (x) { x.atan };
+  sgn = function (x) { x.sgn };
+  abs = function (x) { x.abs };
+  exp = function (x) { x.exp };
+  log = function (x) { x.log };
+  round = function (x) { x.round };
+  random = function (x) { x.random };
+  trunc = function (x) { x.trunc };
+  sqr = function (x) { x.sqr };
+  sqrt = function (x) { x.sqrt };
+};
+Object inherits Math;
 
 ## -------- ##
 ## String.  ##

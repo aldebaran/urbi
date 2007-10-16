@@ -1,3 +1,9 @@
+2007-10-16  Thomas Moulard  <thomas@moulard.net>
+
+	Fix float implementation.
+	* share/urbi/urbi.u: Add Math wrapper.
+	* src/object/float-class.cc: Fix implementation.
+
 2007-10-15  Akim Demaille  <demaille@gostai.com>
 
 	Update tests.

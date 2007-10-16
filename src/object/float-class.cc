@@ -182,31 +182,30 @@ namespace object
   /// \param Name primitive's name
   /// \param Call C++ code executed when primitive is called.
   /// \param Pre C++ code executed before call (typically to check args)
-#define PRIMITIVE_1_FLOAT_(Name, Call, Pre)             \
+#define PRIMITIVE_0_FLOAT_(Name, Call, Pre)             \
   rObject                                               \
   float_class_ ## Name (rContext, objects_type args)	\
   {                                                     \
-    CHECK_ARG_COUNT(2);                                 \
-    FETCH_ARG(1, Float);                                \
+    CHECK_ARG_COUNT(1);                                 \
+    FETCH_ARG(0, Float);                                \
     Pre;                                                \
-    return new Float(Call(arg1->value_get()));          \
+    return new Float(Call(arg0->value_get()));          \
   }
 
   /// Define a primitive for float numbers.
   /// \param Call Name primitive's name
-  /// \param Pre C++ code executed when primitive is called.
-#define PRIMITIVE_1_FLOAT(Name, Call)                   \
-  PRIMITIVE_1_FLOAT_(Name, Call, ;)
+#define PRIMITIVE_0_FLOAT(Name, Call)                   \
+  PRIMITIVE_0_FLOAT_(Name, Call, )
 
-#define PRIMITIVE_1_FLOAT_CHECK_POSITIVE(Name, Call)            \
-  PRIMITIVE_1_FLOAT_(Name, Call,                                \
-     if (VALUE(args[1], Float) < 0)                             \
+#define PRIMITIVE_0_FLOAT_CHECK_POSITIVE(Name, Call)            \
+  PRIMITIVE_0_FLOAT_(Name, Call,                                \
+     if (VALUE(args[0], Float) < 0)                             \
        throw PrimitiveError(#Name,                              \
 			    "argument has to be positive"))
 
-#define PRIMITIVE_1_FLOAT_CHECK_RANGE(Name, Call, Min, Max)		\
-  PRIMITIVE_1_FLOAT_(Name, Call,					\
-     if (VALUE(args[1], Float) < Min || Max < VALUE(args[1], Float))	\
+#define PRIMITIVE_0_FLOAT_CHECK_RANGE(Name, Call, Min, Max)		\
+  PRIMITIVE_0_FLOAT_(Name, Call,					\
+     if (VALUE(args[0], Float) < Min || Max < VALUE(args[0], Float))	\
       throw PrimitiveError(#Name, "invalid range"))
 
 #define PRIMITIVE_2_FLOAT(Name, Call)                   \
@@ -236,27 +235,27 @@ namespace object
   PRIMITIVE_OP_FLOAT(gth, >)
   PRIMITIVE_OP_FLOAT(geq, >=)
 
-  PRIMITIVE_1_FLOAT(sin, sin)
-  PRIMITIVE_1_FLOAT_CHECK_RANGE(asin, asin, -1, 1)
-  PRIMITIVE_1_FLOAT(cos, cos)
-  PRIMITIVE_1_FLOAT_CHECK_RANGE(acos, acos, -1, 1)
-  PRIMITIVE_1_FLOAT(tan, tan)
-  PRIMITIVE_1_FLOAT(atan, atan)
-  PRIMITIVE_1_FLOAT(sgn, float_sgn)
-  PRIMITIVE_1_FLOAT(abs, fabs)
-  PRIMITIVE_1_FLOAT(exp, exp)
-  PRIMITIVE_1_FLOAT_CHECK_POSITIVE(log, log)
-  PRIMITIVE_1_FLOAT(round, round)
-  PRIMITIVE_1_FLOAT(random, float_random)
-  PRIMITIVE_1_FLOAT(trunc, trunc)
-  PRIMITIVE_1_FLOAT(sqr, float_sqr)
-  PRIMITIVE_1_FLOAT_CHECK_POSITIVE(sqrt, sqrt)
+  PRIMITIVE_0_FLOAT(sin, sin)
+  PRIMITIVE_0_FLOAT_CHECK_RANGE(asin, asin, -1, 1)
+  PRIMITIVE_0_FLOAT(cos, cos)
+  PRIMITIVE_0_FLOAT_CHECK_RANGE(acos, acos, -1, 1)
+  PRIMITIVE_0_FLOAT(tan, tan)
+  PRIMITIVE_0_FLOAT(atan, atan)
+  PRIMITIVE_0_FLOAT(sgn, float_sgn)
+  PRIMITIVE_0_FLOAT(abs, fabs)
+  PRIMITIVE_0_FLOAT(exp, exp)
+  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(log, log)
+  PRIMITIVE_0_FLOAT(round, round)
+  PRIMITIVE_0_FLOAT(random, float_random)
+  PRIMITIVE_0_FLOAT(trunc, trunc)
+  PRIMITIVE_0_FLOAT(sqr, float_sqr)
+  PRIMITIVE_0_FLOAT_CHECK_POSITIVE(sqrt, sqrt)
 
 #undef PRIMITIVE_2_FLOAT
-#undef PRIMITIVE_1_FLOAT_CHECK_RANGE
-#undef PRIMITIVE_1_FLOAT_CHECK_POSITIVE
-#undef PRIMITIVE_1_FLOAT
-#undef PRIMITIVE_1_FLOAT_
+#undef PRIMITIVE_0_FLOAT_CHECK_RANGE
+#undef PRIMITIVE_0_FLOAT_CHECK_POSITIVE
+#undef PRIMITIVE_0_FLOAT
+#undef PRIMITIVE_0_FLOAT_
 #undef PRIMITIVE_OP_FLOAT
 
   /// Initialize the Float class.
