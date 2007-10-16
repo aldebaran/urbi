@@ -225,7 +225,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;
-"do"	   	return token::TOK_DO;
+"do"		return token::TOK_DO;
 "echo"          RETURN_OP(ECHO);
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
@@ -378,11 +378,6 @@ STRING   \"([^\"]|"\\\"")*\"
 
 {BLANKS}       locp->step();
 {EOL}          LINES(locp); locp->step();
-.              {
-		 up.error(*locp, std::string ("invalid character: ")
-			  + yytext);
-		 locp->step ();
-	       }
 
 <SC_C_COMMENT>{ /* Comments. */
   "*/" { /* End of the comment. */
@@ -401,6 +396,12 @@ STRING   \"([^\"]|"\\\"")*\"
   }
 }
 
+<*>{
+  .   {
+	up.error(*locp, std::string ("invalid character: ") + yytext);
+	locp->step ();
+  }
+}
 %%
 
 // Local Variables:

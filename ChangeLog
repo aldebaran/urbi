@@ -1,5 +1,10 @@
 2007-10-16  Akim Demaille  <demaille@gostai.com>
 
+	Fix Flex warning.
+	* src/parser/utoken.l: Catch stray chars in all start conditions.
+
+2007-10-16  Akim Demaille  <demaille@gostai.com>
+
 	Formatting changes.
 	* src/parser/ugrammar.y: here.
 
