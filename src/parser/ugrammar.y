@@ -1075,10 +1075,10 @@ number:
 `-------*/
 
 expr:
-  number    { $$ = new ast::Float(@$, $1);        }
-| time_expr { $$ = new ast::Float(@$, $1);        }
-| "string"  { $$ = new ast::String(@$, take($1)); }
-| "[" exprs "]" { $$ = new ast::List(@$, $2); }
+  number        { $$ = new ast::Float(@$, $1);        }
+| time_expr     { $$ = new ast::Float(@$, $1);        }
+| "string"      { $$ = new ast::String(@$, take($1)); }
+| "[" exprs "]" { $$ = new ast::List(@$, $2); 	      }
 //| "%" name            { $$ = 0; }
 | "group" "identifier"    { $$ = 0; }
 | "new" "identifier" args

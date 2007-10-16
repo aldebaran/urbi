@@ -1,3 +1,8 @@
+2007-10-16  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes.
+	* src/parser/ugrammar.y: here.
+
 2007-10-16  Thomas Moulard  <thomas@moulard.net>
 
 	Fix float implementation.
