@@ -1,48 +1,35 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 
 import string
 import sys, os, os.path
 import ast, tools
-
-from stat import ST_MODE
 
 if len(sys.argv) != 2:
   tools.error("Usage: .. SRCDIR")
 srcdir = sys.argv[1]
 
 loader = ast.Loader ()
-nodes = loader.load (sys.stdin)
+nodes, ast_params = loader.load (sys.stdin)
 arr = nodes.values ()
 concrete_nodes = filter ((lambda node: node.concrete), arr)
 concrete_nodes.sort (lambda x, y: cmp(x.name, y.name))
 
-
-## Globals --------------------------------------------------------------------
-
-non_visitable_types = ["bool",
-		       "int",
-		       "std::string",
-		       "symbol::Symbol",
-		       "const symbol::Symbol",
-		       "OpExp::Oper",
-		       "Location"]
-
-collections = ["exps_type",
-	       "fields_type",
-	       "fieldinits_type",
-	       "DecsList::decs_type"]
+# FIXME: The definition of dec_subclasses is redundant with
+# ast-visitor-gen's.
+dec_subclasses = \
+  filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
+	   concrete_nodes)
 
 
 ## Abstract syntax tree C++ clone visitor - header ----------------------------
 
-clone_visitor_hh = file("clone-visitor.hh.tmp", "w")
-sys.stdout = clone_visitor_hh
+cloner_hh = file("cloner.hh.tmp", "w")
+sys.stdout = cloner_hh
 
-print tools.banner("astclone/clone-visitor.hh",
-                   """Declaration of astclone::CloneVisitor.""") + """
-
-#ifndef ASTCLONE_CLONE_VISITOR_HH
-# define ASTCLONE_CLONE_VISITOR_HH
+print tools.banner("astclone/cloner.hh",
+                   """Declaration of astclone::Cloner.""") + """
+#ifndef ASTCLONE_CLONER_HH
+# define ASTCLONE_CLONER_HH
 
 # include "ast/default-visitor.hh"
 
@@ -50,7 +37,7 @@ namespace astclone
 {
 
   /// \\brief Duplicate an Ast.
-  class CloneVisitor : public ast::DefaultConstVisitor
+  class Cloner : public ast::DefaultConstVisitor
   {
   public:
     typedef ast::DefaultConstVisitor super_type;
@@ -58,8 +45,8 @@ namespace astclone
     // Import overloaded virtual functions.
     using super_type::operator();
 
-    /// Destroy a CloneVisitor.
-    virtual ~CloneVisitor ();
+    /// Destroy a Cloner.
+    virtual ~Cloner ();
 
     // Return the cloned Ast.
     ast::Ast* result_get ();
@@ -72,7 +59,7 @@ namespace astclone
 
     /** \\brief Clone a collection object.
 
-	Using overloading for this method is tempting, but it would
+    	Using overloading for this method is tempting, but it would
 	lead to the same prototype than the first \\a recurse method.
 
 	A partial specialization for \\a std::list<T> would work, but is
@@ -87,6 +74,7 @@ namespace astclone
   public:"""
 for node in concrete_nodes:
   print "    virtual void operator() (const ast::" + node.name + "&);"
+
 print """
     template <typename DecsType>
     /** \\brief Visit a chunk (i.e., a list of Function, Var, and Type decs).
@@ -96,11 +84,11 @@ print """
     void decs_visit (const DecsType& e);
 
     // As we can't mix template and virtual methods, we have to
-    // duplicate these methods.  That's too bad.  :(
-    virtual void operator() (const ast::VarDecs&);
-    virtual void operator() (const ast::FunctionDecs&);
-    virtual void operator() (const ast::TypeDecs&);
+    // duplicate these methods.  That's too bad.  :("""
+for dec_type in dec_subclasses:
+  print "    virtual void operator() (const ast::" + dec_type.name + "s" + "&);"
 
+print """
   protected:
     /// The cloned Ast.
     ast::Ast* result_;
@@ -108,17 +96,17 @@ print """
 
 } // namespace ast
 
-# include "astclone/clone-visitor.hxx"
+# include "astclone/cloner.hxx"
 
-#endif // !ASTCLONE_CLONE_VISITOR_HH"""
+#endif // !ASTCLONE_CLONER_HH"""
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
-clone_visitor_hh.close ()
+cloner_hh.close ()
 
-file_fullpath = os.path.join (srcdir, "clone-visitor.hh");
+file_fullpath = os.path.join (srcdir, "cloner.hh");
 # Check differences and update if any
-tools.lazy_overwrite (file_fullpath, "clone-visitor.hh.tmp")
+tools.lazy_overwrite (file_fullpath, "cloner.hh.tmp")
 
 
 ## Abstract syntax tree C++ clone visitor - implementation --------------------
@@ -133,32 +121,32 @@ def node_all_attributes (node):
   attrs.extend (node.attributes)
   return attrs
 
-clone_visitor_cc = file("clone-visitor.cc.tmp", "w")
-sys.stdout = clone_visitor_cc
+cloner_cc = file("cloner.cc.tmp", "w")
+sys.stdout = cloner_cc
 
 print """\
 //<<-
 // Generated, do not edit by hand.
 //->>
 /**
- ** \\file astclone/clone-visitor.cc
- ** \\brief Implementation of astclone::CloneVisitor.
+ ** \\file astclone/cloner.cc
+ ** \\brief Implementation of astclone::Cloner.
  */
 
 #include "ast/all.hh"
-#include "astclone/clone-visitor.hh"
-#include "libport/symbol.hh"
+#include "astclone/cloner.hh"
+#include "misc/symbol.hh"
 
 namespace astclone
 {
   using namespace ast;
 
-  CloneVisitor::~CloneVisitor ()
+  Cloner::~Cloner ()
   {
   }
 
   Ast*
-  CloneVisitor::result_get ()
+  Cloner::result_get ()
   {
     return result_;
   }
@@ -166,8 +154,11 @@ namespace astclone
 
 for node in concrete_nodes:
   print "  void"
-  print "  CloneVisitor::operator() (const ast::" + node.name + "& e)"
+  print "  Cloner::operator() (const ast::" + node.name + "& e)"
   print "  {"
+  if node.hide:
+    print "    //<<"
+
   args = node.ctor_args (False, False)
 
   # Clone recursively the children of E.
@@ -175,7 +166,7 @@ for node in concrete_nodes:
     if not a.init:
       accessor = "e." + a.name + "_get ()"
       # Non visitable attributes.
-      if a.type in non_visitable_types:
+      if a.type in ast_params['non_visitable_types']:
 	type = a.W_type ()
 	get_deref = ""
 	if a.pointer_p () and a.mandatory:
@@ -184,7 +175,7 @@ for node in concrete_nodes:
 	      get_deref + accessor + ";"
 
       # Collection attributes.
-      elif a.root_type () in collections:
+      elif a.root_type () in ast_params['collections']:
 	if a.pointer_p ():
 	  print "    " + a.root_type () + "* " + a.name + \
 		" = recurse_collection (" + accessor + ");"
@@ -200,42 +191,43 @@ for node in concrete_nodes:
   # Result.
   if node.name == "FunctionDec":
     # Special case for FunctionDec: copy the sl_needed_ and sl_escapes_ fields.
-    print "    FunctionDec* fundec = "
+    print "    FunctionDec* fundec ="
     print "      new " + node.name + " (" + args + ");"
+    print "    //<<-"
     for a in ["sl_needed", "sl_escapes"]:
       print "    fundec->" + a + "_set (e." + a + "_get ());"
+    print "    //->>"
     print "    result_ = fundec;"
   else:
     # Normal case.
     print "    result_ = new " + node.name + " (" + args + ");"
+  if node.hide:
+    print "    //>>"
   print """  }
 """
 
-# Decs nodes.
-print """
+first_decs_type_p = True
+for dec_type in dec_subclasses:
+  print """
   void
-  CloneVisitor::operator() (const VarDecs& e)
+  Cloner::operator() (const ast::""" + dec_type.name + "s" + """& e)
   {
-    decs_visit<VarDecs> (e);
-  }
-
-  void
-  CloneVisitor::operator() (const FunctionDecs& e)
-  {
-    decs_visit<FunctionDecs> (e);
-  }
-
-  void
-  CloneVisitor::operator() (const TypeDecs& e)
-  {
-    decs_visit<TypeDecs> (e);
-  }
+    decs_visit<ast::""" + dec_type.name + "s" + """> (e);
+  }"""
+  # Show the visit method for the first instance of decs types, but
+  # hide the others.
+  if first_decs_type_p:
+    first_decs_type_p = False
+    print """
+  //<< Other declarations.""",
+print """  //>>
 
 } // namespace ast"""
 
 # Restore stdout and close files
 sys.stdout = sys.__stdout__
-clone_visitor_cc.close ()
+cloner_cc.close ()
 
-file_fullpath = os.path.join (srcdir, "clone-visitor.cc");
-tools.lazy_overwrite (file_fullpath, "clone-visitor.cc.tmp")
+# Check differences and update if any
+file_fullpath = os.path.join (srcdir, "cloner.cc");
+tools.lazy_overwrite (file_fullpath, "cloner.cc.tmp")
