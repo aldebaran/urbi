@@ -1,5 +1,11 @@
 2007-10-16  Akim Demaille  <akim@lrde.epita.fr>
 
+	No longer export float functions.
+	* src/object/float-class.hh: here, since we no longer have
+	direct tests on them, they are tested via Urbi.
+
+2007-10-16  Akim Demaille  <akim@lrde.epita.fr>
+
 	dev/ update.
 	* ast-clone-visitor-gen: Rename as...
 	* ast-cloner-gen: this.

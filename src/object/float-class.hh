@@ -12,18 +12,6 @@ namespace object
 {
   extern rObject float_class;
 
-  // FIXME: Do we really want to declare them?  They are only
-  // for sake of the test suite.
-# define DECLARE(Name, Op)				\
-  rObject float_class_ ## Name (rContext c, objects_type args);
-
-  DECLARE(add, +)
-  DECLARE(div, /)
-  DECLARE(mul, *)
-  DECLARE(sub, -)
-
-# undef DECLARE
-
   /// Initialize the Float class.
   void float_class_initialize ();
 }; // namespace object
