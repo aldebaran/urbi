@@ -535,7 +535,7 @@ namespace urbi
   void copy(S* src, D* dst,
 	    int sc, int dc, int sr, int dr, int count, bool sf, bool df)
   {
-    int shift = 8 * (sizeof (S) - sizeof (D));
+    long shift = 8 * (sizeof (S) - sizeof (D));
     for (int i = 0; i < count; ++i)
     {
       float soffset = (float)i * ((float)sr / (float)dr);

@@ -31,6 +31,7 @@
 #ifndef WIN32
 # include <sys/time.h>
 # include <time.h>
+# include <signal.h>
 #endif
 
 #include "urbi/uclient.hh"
@@ -58,6 +59,8 @@ namespace urbi
       perror("UClient::UClient failed to create pipe");
       return;
     }
+    //block sigpipe
+    signal(SIGPIPE, SIG_IGN);
 #endif
 
     // Address resolution stage.
@@ -190,7 +193,7 @@ namespace urbi
   void
   UClient::listenThread()
   {
-    fd_set rfds;
+    fd_set rfds, efds;
     int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
     int res;
     while (true)
@@ -199,14 +202,16 @@ namespace urbi
 	if (sd==-1)
 	  return;
 	FD_ZERO(&rfds);
+	FD_ZERO(&efds);
 	LIBPORT_FD_SET(sd, &rfds);
+	LIBPORT_FD_SET(sd, &efds);
 #ifndef WIN32
 	LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
 	struct timeval tme;
 	tme.tv_sec = 1;
 	tme.tv_usec = 0;
-	res = select(maxfd+1, &rfds, NULL, NULL, &tme);
+	res = select(maxfd+1, &rfds, NULL, &efds, &tme);
 	if (res < 0 && errno != EINTR)
 	{
 	  this->rc = -1;
@@ -231,7 +236,7 @@ namespace urbi
       int count = ::recv(sd,
 			 &recvBuffer[recvBufferPosition],
 			 buflen - recvBufferPosition - 1, 0);
-      if (count < 0)
+      if (count <= 0)
       {
 	rc = -1;
 	std::cerr << "error " << count << std::endl;
