@@ -95,6 +95,23 @@ UConnection::UConnection (UServer *userver,
     cid->uservar = false;
 }
 
+namespace
+{
+  static
+  void
+  removeMonitor(UConnection* c, HMbindertab& t)
+  {
+    std::list<HMbindertab::iterator> deletelist;
+    for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
+      if (i->second->removeMonitor(c))
+	deletelist.push_back(i);
+
+    BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+      t.erase(i);
+    deletelist.clear();
+  }
+}
+
 //! UConnection destructor.
 UConnection::~UConnection()
 {
@@ -107,35 +124,16 @@ UConnection::~UConnection()
   delete activeCommand;
 
   // free bindings
-  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
-       i != ::urbiserver->variabletab.end(); ++i)
-    if (i->second->binder
-	&& i->second->binder->removeMonitor(this))
+  BOOST_FOREACH (HMvariabletab::value_type i, ::urbiserver->variabletab)
+    if (i.second->binder
+	&& i.second->binder->removeMonitor(this))
     {
-      delete i->second->binder;
-      i->second->binder = 0;
+      delete i.second->binder;
+      i.second->binder = 0;
     }
 
-  std::list<HMbindertab::iterator> deletelist;
-  for (HMbindertab::iterator i = ::urbiserver->functionbindertab.begin();
-       i != ::urbiserver->functionbindertab.end();
-       ++i)
-    if (i->second->removeMonitor(this))
-      deletelist.push_back(i);
-
-  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-    ::urbiserver->functionbindertab.erase(i);
-  deletelist.clear();
-
-  for (HMbindertab::iterator i = ::urbiserver->eventbindertab.begin();
-       i != ::urbiserver->eventbindertab.end();
-       ++i)
-    if (i->second->removeMonitor(this))
-      deletelist.push_back(i);
-
-  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-    ::urbiserver->eventbindertab.erase(i);
-  deletelist.clear();
+  removeMonitor(this, ::urbiserver->functionbindertab);
+  removeMonitor(this, ::urbiserver->eventbindertab);
 
   delete parser_;
   delete sendQueue_;
@@ -948,25 +946,25 @@ UConnection::processCommand(UCommand *&command,
 	  {
 	    command->flagType += 1;
 	    command->flagExpr1 = param->expression;
-	    (*this) << send("!!! Warning: +timeout flag is obsolete."
-			     " Use timeout(time) command instead.\n",
-			     command->getTag().c_str());
+	    *this << send("!!! Warning: +timeout flag is obsolete."
+			  " Use timeout(time) command instead.\n",
+			  command->getTag().c_str());
 	  }
 	  if (*param->name == "flagstop")
 	  {
 	    command->flagType += 2;
 	    command->flagExpr2 = param->expression;
-	    (*this) << send("!!! Warning: +stop flag is obsolete."
-			     " Use stopif(test) command instead.\n",
-			     command->getTag().c_str());
+	    *this << send("!!! Warning: +stop flag is obsolete."
+			  " Use stopif(test) command instead.\n",
+			  command->getTag().c_str());
 	  }
 	  if (*param->name == "flagfreeze")
 	  {
 	    command->flagType += 4;
 	    command->flagExpr4 = param->expression;
-	    (*this) << send("!!! Warning: +freeze flag is obsolete."
-			     " Use freezeif(test) command instead.\n",
-			     command->getTag().c_str());
+	    *this << send("!!! Warning: +freeze flag is obsolete."
+			  " Use freezeif(test) command instead.\n",
+			  command->getTag().c_str());
 	  }
 
 	  if (*param->name == "flag"
@@ -979,7 +977,7 @@ UConnection::processCommand(UCommand *&command,
 	      && !command->morphed
 	      && (param->expression->val == 4 // 4 = +begin
 		  || param->expression->val == 1)) // 1 = +report
-	    (*this) << send("*** begin\n", command->getTag().c_str());
+	    *this << send("*** begin\n", command->getTag().c_str());
 	}
     }
 
@@ -1052,55 +1050,52 @@ UConnection::processCommand(UCommand *&command,
     }
 
     // Regular command processing
-
     if (command->type == UCommand::TREE)
     {
       mustReturn = true;
       return command;
     }
-    else
+
+    // command->type!= TREE
+    UCommand_TREE* morphed_up = command->up;
+    UCommand** morphed_position = command->position;
+
+    switch (command->execute(this))
     {
-      // != TREE
-      UCommand_TREE* morphed_up = command->up;
-      UCommand** morphed_position = command->position;
+      case UCommand::UCOMPLETED:
+	if (command == lastCommand)
+	  lastCommand = command->up;
+	delete command;
+	return 0;
 
-      switch (command->execute(this))
+      case UCommand::UMORPH:
       {
-	case UCommand::UCOMPLETED:
-	  if (command == lastCommand)
-	    lastCommand = command->up;
+	command->status = UCommand::UONQUEUE;
+	command->morphed = true;
+
+	UCommand *morphed = command->morph;
+	morphed->myconnection = command->myconnection;
+	morphed->toDelete = command->toDelete;
+	morphed->up = morphed_up;
+	morphed->position = morphed_position;
+	if (command->flags)
+	  morphed->flags = command->flags->copy();
+
+	morphed->setTag(command);
+
+	if (!command->persistant)
 	  delete command;
-	  return 0;
-
-	case UCommand::UMORPH:
-	{
-	  command->status = UCommand::UONQUEUE;
-	  command->morphed = true;
-
-	  UCommand *morphed = command->morph;
-	  morphed->myconnection = command->myconnection;
-	  morphed->toDelete = command->toDelete;
-	  morphed->up = morphed_up;
-	  morphed->position = morphed_position;
-	  if (command->flags)
-	    morphed->flags = command->flags->copy();
-
-	  morphed->setTag(command);
-
-	  if (!command->persistant)
-	    delete command;
-	  command = morphed;
-	  break;
-	}
-
-	default:
-	  // "+bg" flag
-	  // FIXME: Nia?  What the heck is happening here???
-	  if ((command->flagType & 8) &&
-	      command->status == UCommand::URUNNING)
-	    command->status = UCommand::UBACKGROUND;
-	  return command;
+	command = morphed;
+	break;
       }
+
+      default:
+	// "+bg" flag
+	// FIXME: Nia?  What the heck is happening here???
+	if ((command->flagType & 8) &&
+	    command->status == UCommand::URUNNING)
+	  command->status = UCommand::UBACKGROUND;
+	return command;
     }
   }
 }
@@ -1280,9 +1275,9 @@ UConnection::execute(UCommand_TREE*& execCommand)
     tree = tree->up;
   }
 
-  if (execCommand &&
-      execCommand->command1 == 0 &&
-      execCommand->command2 == 0)
+  if (execCommand
+      && !execCommand->command1
+      && !execCommand->command2)
   {
     delete execCommand;
     execCommand = 0;
