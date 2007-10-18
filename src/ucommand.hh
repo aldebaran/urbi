@@ -210,9 +210,6 @@ public:
   /// true when the command is part of a morphed structure
   bool morphed;
 
-  /// initialize the cached taginfos
-  static void initializeTagInfos();
-
   /** try to make a module-defined function call
   @param name: function full name
   @param parameters: arguments to call
@@ -234,12 +231,6 @@ private:
 
   /// Protection against copy
   UCommand (const UCommand &c);
-
-  protected:
-  /// Cached often used taginfo
-  static TagInfo * systemTagInfo;
-  /// Cached often used taginfo
-  static TagInfo * notagTagInfo;
 };
 
 class UCommand_TREE : public UCommand, public Flavorable

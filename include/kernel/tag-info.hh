@@ -44,6 +44,14 @@ public:
 
   /// The name of this tag.
   std::string name;
+
+  /// initialize the cached taginfos.
+  static void initializeTagInfos();
+
+  /// Cached often used taginfo
+  static TagInfo* systemTagInfo;
+  /// Cached often used taginfo
+  static TagInfo* notagTagInfo;
 };
 
 #endif // !TAG_INFO_HH

@@ -59,3 +59,23 @@ TagInfo::insert(HMtagtab& tab)
   res->parentPtr = parent->subTags.insert (parent->subTags.end(), res);
   return res;
 }
+
+void
+TagInfo::initializeTagInfos()
+{
+  // empty name, no parent, not a pb
+  TagInfo* dummy = new TagInfo();
+
+  TagInfo t;
+  t.name = "__system__";
+  systemTagInfo = t.insert(::urbiserver->tagtab);
+  // insert a dummy tag in subtag list, so that the taginfo is never deleted
+  systemTagInfo->subTags.push_back(dummy);
+  t.name = "notag";
+  notagTagInfo =  t.insert(::urbiserver->tagtab);
+  notagTagInfo->subTags.push_back(dummy);
+}
+
+/// Cache the location of notag and system taginfos
+TagInfo* TagInfo::notagTagInfo = 0;
+TagInfo* TagInfo::systemTagInfo = 0;

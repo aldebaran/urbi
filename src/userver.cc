@@ -179,7 +179,7 @@ UServer::initialize()
   }
 
   // Cached taginfos.
-  UCommand::initializeTagInfos();
+  TagInfo::initializeTagInfos();
 
   // Plugins (internal components)
   {

@@ -133,11 +133,6 @@ MEMORY_MANAGER_INIT(UCommand);
 
 
 
-/// Cache the location of notag and system taginfos
-TagInfo* UCommand::notagTagInfo = 0;
-TagInfo* UCommand::systemTagInfo = 0;
-
-
 // **************************************************************************
 //! UCommand constructor.
 /*! The parameter 'type' is required here to describe the type of the command.
@@ -170,10 +165,9 @@ UCommand::UCommand(const location& l, Type _type)
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
     L2: pass a tag or a command ptr to ctor
   */
-  if (::urbiserver->systemcommands)
-    setTag(systemTagInfo); //untouchable
-  else
-    setTag(notagTagInfo); //untouchable
+  setTag(::urbiserver->systemcommands
+	 ? TagInfo::systemTagInfo
+	 : TagInfo::notagTagInfo);
 }
 
 //! UCommand destructor.
@@ -183,23 +177,6 @@ UCommand::~UCommand()
     *myconnection << UConnection::send("*** end\n", getTag().c_str());
   unsetTag();
   delete flags;
-}
-
-
-void
-UCommand::initializeTagInfos()
-{
-  // empty name, no parent, not a pb
-  TagInfo* dummy = new TagInfo();
-
-  TagInfo t;
-  t.name = "__system__";
-  systemTagInfo = t.insert(urbiserver->tagtab);
-  // insert a dummy tag in subtag list, so that the taginfo is never deleted
-  systemTagInfo->subTags.push_back(dummy);
-  t.name = "notag";
-  notagTagInfo =  t.insert(urbiserver->tagtab);
-  notagTagInfo->subTags.push_back(dummy);
 }
 
 
@@ -6021,7 +5998,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
       active_ = true;
       ASSERT (!theloop_) {}
       theloop_ = new UCommand_LOOP (loc_, command1->copy ());
-      theloop_->setTag (systemTagInfo); //untouchable
+      theloop_->setTag (TagInfo::systemTagInfo); //untouchable
       ((UCommand_LOOP*)theloop_)->whenever_hook = this;
       if (assign)
 	assign = new UCommand_TREE (loc_, Flavorable::UPIPE, assign, theloop_);
