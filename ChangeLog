@@ -1,3 +1,8 @@
+2007-10-18  Akim Demaille  <akim@lrde.epita.fr>
+
+	foreach.
+	* src/userver.cc: use it.
+
 2007-10-16  Akim Demaille  <demaille@gostai.com>
 
 	BOOST_FOREACH IS COOL.

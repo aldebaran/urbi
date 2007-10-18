@@ -458,12 +458,10 @@ UServer::work()
     if (stage == 1)
     {
       //delete objects first
-      for (HMvariabletab::iterator i = variabletab.begin();
-	   i != variabletab.end();
-	   ++i)
-	if (i->second->value
-	    && i->second->value->dataType == DATA_OBJ)
-	  varToReset.push_back(i->second);
+      BOOST_FOREACH (HMvariabletab::value_type i, variabletab)
+	if (i.second->value
+	    && i.second->value->dataType == DATA_OBJ)
+	  varToReset.push_back(i.second);
 
       while (!varToReset.empty())
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
@@ -482,11 +480,9 @@ UServer::work()
 
 
       //delete the rest
-      for (HMvariabletab::iterator i = variabletab.begin();
-	   i != variabletab.end();
-	   ++i)
-	if (i->second->uservar)
-	  varToReset.push_back(i->second);
+      BOOST_FOREACH (HMvariabletab::value_type i, variabletab)
+	if (i.second->uservar)
+	  varToReset.push_back(i.second);
 
       libport::deep_clear (varToReset);
 
