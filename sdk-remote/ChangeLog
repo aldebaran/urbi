@@ -1,5 +1,14 @@
 2007-10-18  Matthieu Nottale  <nottale@gostai.com>
 
+	Notify a callback on socket error.
+	* include/urbi/uabstractclient.hh,
+	* src/liburbi/uabstractclient.cc: add setClientErrorCallback, 
+	  add clientError that generates an error UMessage and
+	  notifyCallbacks().
+	* src/liburbi/uclient.cc: call clientError() on socket error.
+
+2007-10-18  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix disconnection detection in liburbi.
 	* uclient.cc: Block SIGPIPE, include the socket FD in the error
 	 FD_SET in select, treat a return value of 0 from recv as an error

@@ -127,7 +127,8 @@ namespace urbi
   }
 
 
-
+  const char * UAbstractClient::CLIENTERROR_TAG="client error";
+  
   /*! Pass the given UMessage to all registered callbacks with the
    * corresponding tag, as if it were comming from the URBI server.
    */
@@ -1026,6 +1027,11 @@ namespace urbi
     return addCallback(URBI_ERROR_TAG, callback);
   }
 
+  UCallbackID UAbstractClient::setClientErrorCallback(UCallbackWrapper& callback)
+  {
+    return addCallback(CLIENTERROR_TAG, callback);
+  }
+  
   UCallbackID UAbstractClient::setCallback(UCallbackWrapper& callback,
 					   const char* tag)
   {
@@ -1045,7 +1051,33 @@ namespace urbi
     return ci.id;
   }
 
-
+  /*! Generates a client error message and send it to listeners
+  \param message an optional string describing the error
+  \param erc an optional system error code on which strerror is called
+  */
+  void
+  UAbstractClient::clientError(const char * message, int erc)
+  {
+    UMessage m(*this);
+    m.type = MESSAGE_ERROR;
+    std::string msg;
+    if (message) 
+      msg = message;
+    if (message && erc)
+      msg += " : ";
+    if (erc) 
+      msg+=strerror(erc);
+    m.message = m.rawMessage = msg; //rawMessage is incorrect but we dont care
+    m.timestamp = 0;
+    m.tag = CLIENTERROR_TAG;
+    notifyCallbacks(m);
+  }
+  
+  UMessage::UMessage(UAbstractClient& client)
+  :client(client), value(0)
+  {
+  }
+  
   UMessage::UMessage(UAbstractClient& client, int timestamp,
 		     const char *tag, const char *message,
 		     std::list<BinaryData> bins)

@@ -90,6 +90,9 @@ namespace urbi
     /// Raw message without the binary data.
     std::string	 rawMessage;
 
+    /// Default ctor
+    UMessage(UAbstractClient & client);
+    
     /// Parser constructor
     UMessage(UAbstractClient & client, int timestamp,
 	     const char *tag, const char *message,
@@ -224,12 +227,15 @@ namespace urbi
     /// Associate a callback function with a tag. new style
     UCallbackID setCallback(UCallbackWrapper & callback, const char * tag);
 
-    /// Associate a callbaxk function with all error messages
+    /// Associate a callbaxk function with all error messages from the server
     UCallbackID setErrorCallback(UCallbackWrapper & callback);
 
     /// Associate a callback with all messages
     UCallbackID setWildcardCallback(UCallbackWrapper & callback);
-
+    
+    /// Associate a callback with liburbi errors
+    UCallbackID setClientErrorCallback(UCallbackWrapper & callback);
+    
     /// OLD-style callbacks
     UCallbackID setCallback(UCallback ,const char* tag);
 
@@ -274,7 +280,8 @@ namespace urbi
 
     std::ostream & getStream() { return *stream;}
 
-
+     /// dummy tag for client error callback
+    static const char * CLIENTERROR_TAG;
   protected:
     /// Queue data for sending, returns zero on success, nonzero on failure.
     virtual int effectiveSend(const void * buffer, int size)=0;
@@ -288,7 +295,10 @@ namespace urbi
 
     /// Add a callback to the list.
     UCallbackID addCallback(const char * tag, UCallbackWrapper &w);
-
+    
+    /// Generate a client error message and notify callbacks
+    void clientError(const char * msg=0, int code=0);
+    
     /// Host name.
     char	     *host;
     /// Urbi Port.
@@ -344,6 +354,7 @@ namespace urbi
     std::ostream     *stream;
 
     friend class UClientStreambuf;
+    
   };
 
   class UCallbackWrapper

@@ -183,6 +183,7 @@ namespace urbi
       if (retval<0)
       {
 	rc = retval;
+	clientError("send error", rc);
 	return rc;
       }
       pos += retval;
@@ -218,6 +219,7 @@ namespace urbi
 #ifdef WIN32
 	  res = WSAGetLastError();
 #endif
+          clientError("select error", res);
 	  std::cerr << "select error "<<res<<std::endl;
 	  //TODO when error will be implemented, send an error msg
 	  //TODO maybe try to reconnect?
@@ -238,6 +240,7 @@ namespace urbi
 			 buflen - recvBufferPosition - 1, 0);
       if (count <= 0)
       {
+	clientError("recv error", count);
 	rc = -1;
 	std::cerr << "error " << count << std::endl;
 	//TODO when error will be implemented, send an error msg
