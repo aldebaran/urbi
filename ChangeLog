@@ -1,5 +1,10 @@
 2007-10-19  Akim Demaille  <demaille@gostai.com>
 
+	foreach.
+	* src/ucommand.cc: More of it.
+
+2007-10-19  Akim Demaille  <demaille@gostai.com>
+
 	Fix error message.
 	* src/parser/bison/ugrammar.y: Report by JCB.
 
