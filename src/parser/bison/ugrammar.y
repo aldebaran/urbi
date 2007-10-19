@@ -1153,7 +1153,7 @@ instruction:
       // Can't use "pipe.opt" here, introduces conflicts.
       if ($2 == Flavorable::UAND)
       {
-	error(@$, "`for& (;;)' is deprecated, use `for .. in ..'");
+	error(@$, "`for& (;;)' is deprecated, use `for& .. in ..'");
 	YYERROR;
       }
       $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
