@@ -160,7 +160,8 @@ UCommand::UCommand(const location& l, Type _type)
     flag_nbTrue4 (0),
     morphed (false),
     tag (""),
-    tagInfo (0)
+    tagInfo (0),
+    is_channel_(false)
 {
   /*XXX todo: L1:remove this, assert to ensure a setTag is called before use
     L2: pass a tag or a command ptr to ctor
