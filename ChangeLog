@@ -1,5 +1,11 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
+	Fix, again, externals.
+	Something is going wrong: sometimes when updating the externals,
+	I actually lost some subscriptions.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
 	Update tests.
 	* tests-local.mk: Adjust.
 
