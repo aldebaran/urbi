@@ -32,6 +32,8 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "libport/containers.hh"
 #include "libport/ref-pt.hh"
 
+#include <boost/foreach.hpp>
+
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
 
@@ -2590,20 +2592,17 @@ UCommand_ECHO::execute_(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator i =
-	   connection->server->connectionList.begin();
-	 i != connection->server->connectionList.end();
-	 ++i)
-      if ((*i)->isActive()
-	  && (*(*i)->connectionTag == *connectionTag
+    BOOST_FOREACH (UConnection* i, connection->server->connectionList)
+      if (i->isActive()
+	  && (*i->connectionTag == *connectionTag
 	      || *connectionTag == "all"
-	      || (!(*(*i)->connectionTag == *connection->connectionTag)
+	      || (*i->connectionTag != *connection->connectionTag
 		  && *connectionTag == "other")))
       {
 	ok = true;
-	(**i) << UConnection::sendc("*** ", getTag().c_str());
-	ret->echo((*i), true);
-	(**i) << UConnection::endl;
+	*i << UConnection::sendc("*** ", getTag().c_str());
+	ret->echo(i, true);
+	*i << UConnection::endl;
       }
 
     if (!ok)
@@ -4144,18 +4143,16 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "taglist")
   {
-    for (HMtagtab::iterator i = connection->server->tagtab.begin();
-	 i != connection->server->tagtab.end();
-	 ++i)
+    BOOST_FOREACH (HMtagtab::value_type i, connection->server->tagtab)
     {
-      std::ostringstream tstr;
-      if (i->second.name != "__system__" &&
-	  i->second.name != "__node__" &&
-	  i->second.name != "__UGrouped_set_of_commands__" &&
-	  i->second.name != "notag")
+      if (i.second.name != "__system__"
+	  && i.second.name != "__node__"
+	  && i.second.name != "__UGrouped_set_of_commands__"
+	  && i.second.name != "notag")
       {
-	tstr << "*** " << i->second.name << "\n";
-	*connection << UConnection::sendf(getTag(), tstr.str().c_str());
+	std::ostringstream o;
+	o << "*** " << i.second.name << "\n";
+	*connection << UConnection::sendf(getTag(), o.str().c_str());
       }
     }
 
@@ -4164,20 +4161,13 @@ UCommand_OPERATOR::execute_(UConnection *connection)
   }
 
   if (*oper == "runningcommands")
-  {
-    for (HMtagtab::iterator i = connection->server->tagtab.begin();
-	 i != connection->server->tagtab.end();
-	 ++i)
+    BOOST_FOREACH (HMtagtab::value_type i, connection->server->tagtab)
+      BOOST_FOREACH (UCommand* j, i.second.commands)
     {
-      for (std::list<UCommand *>::iterator j = i->second.commands.begin();
-	   j != i->second.commands.end(); j++)
-      {
-	std::ostringstream tstr;
-	tstr << "*** "<< i->second.name<<" " << (*j)->loc() << "\n";
-	*connection << UConnection::sendf(getTag(), tstr.str().c_str());
-      }
+      std::ostringstream o;
+      o << "*** "<< i.second.name<<" " << j->loc() << "\n";
+      *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
-  }
 
   if (*oper == "uservars")
   {

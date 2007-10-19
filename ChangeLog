@@ -1,5 +1,10 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
+	Use BOOST_FOREACH.
+	* src/ucommand.cc: At some random places, while it compiles.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
 	Fix notag handling.
 	* src/ucommand.cc (UCommand_EXPR::execture_): Display the result
 	when there is no tag, so that the top level displays the result.
