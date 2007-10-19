@@ -1,6 +1,12 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
 	foreach.
+	* src/ueventinstance.cc, src/ueventmatch.cc, src/uobj.cc,
+	* src/uvalue.cc: here.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
+	foreach.
 	* src/uasynccommand.cc, src/uasyncregister.cc, src/uatcandidate.cc,
 	* src/ueventcompound.cc, src/ueventhandler.cc, src/ueventinstance.cc:
 	Use it.

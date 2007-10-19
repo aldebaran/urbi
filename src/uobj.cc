@@ -21,6 +21,8 @@
 
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/cstdio"
 #include "libport/containers.hh"
 
@@ -60,10 +62,8 @@ remove (HMbindertab& t, UString& s)
     if (i->second->removeMonitor(s))
       deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    t.erase((*i));
+  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+    t.erase(i);
   deletelist.clear();
 }
 
@@ -106,12 +106,10 @@ UObj::~UObj()
     std::ostringstream o;
     o << "[5,\"" << device->c_str() << "\"]\n";
 
-    for (std::list<UMonitor*>::iterator it = binder->monitors.begin();
-	 it != binder->monitors.end();
-	 ++it)
+    BOOST_FOREACH (UMonitor* it, binder->monitors)
     {
-      *((*it)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-      *((*it)->c) << UConnection::send((const ubyte*)o.str().c_str(), o.str().size());
+      *it->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+      *it->c << UConnection::send((const ubyte*)o.str().c_str(), o.str().size());
     }
 
     // in fact here we can delete the binder since it contained only bindings
@@ -125,10 +123,8 @@ UObj::~UObj()
     ::urbiserver->objtab.erase(idit);
 
   // Remove the objects from the subclass list of its parents
-  for (std::list<UObj*>::iterator i = up.begin();
-       i != up.end();
-       ++i)
-    (*i)->down.remove(this);
+  BOOST_FOREACH (UObj* i, up)
+    i->down.remove(this);
 
   // INTERNAL cleanups
   if (internalBinder && internalBinder->getUObject())
