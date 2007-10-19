@@ -32,7 +32,7 @@
 #include <string>
 
 #include <boost/foreach.hpp>
-#if ! define LIBPORT_URBI_ENV_AIBO
+#if ! defined LIBPORT_URBI_ENV_AIBO
 # include <boost/thread.hpp>
 #endif
 
