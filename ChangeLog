@@ -1,5 +1,12 @@
 2007-10-19  Akim Demaille  <akim.demaille@free.fr>
 
+	No longer use #__LINE__1.
+	* src/uconnection.cc, src/userver.cc: since it does not exist.
+	How come this is not triggered with uconsole@kernel???
+	The off-by-one is now off-by-three, but we are getting closer.
+
+2007-10-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Indentation fixes.
 	* src/uexpression.cc: here.
 

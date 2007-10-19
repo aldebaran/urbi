@@ -180,7 +180,7 @@ UConnection::initialize()
 	       customHeader);
 
   server->loadFile("CLIENT.INI", recvQueue_);
-  recvQueue_->push ("#__LINE__1\n");
+  recvQueue_->push ("#line 1 \"\"\n");
   newDataAdded = true;
   return *this;
 }
