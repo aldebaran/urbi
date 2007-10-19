@@ -28,6 +28,8 @@ XFAIL_TESTS +=					\
 1.x/doublecolon.chk				\
 1.x/events.chk					\
 1.x/exec.chk					\
+1.x/for-loop.chk				\
+1.x/foreach.chk					\
 1.x/freeze-time.chk				\
 1.x/function-declaration.chk			\
 1.x/function-delete.chk				\
@@ -40,6 +42,7 @@ XFAIL_TESTS +=					\
 1.x/lazy-test-eval.chk				\
 1.x/load.chk					\
 1.x/long-identifiers.chk			\
+1.x/loopn.chk					\
 1.x/multiinheritance.chk			\
 1.x/nameresolution-array.chk			\
 1.x/nameresolution-dollars.chk			\
