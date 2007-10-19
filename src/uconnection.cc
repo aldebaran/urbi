@@ -503,9 +503,8 @@ UConnection::continueSend ()
 
     if (wasSent < 0)
       CONN_ERR_RET(UFAIL);
-    else
-      if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
-	CONN_ERR_RET(USUCCESS);
+    else if (wasSent == 0 || sendQueue_->pop(wasSent) != 0)
+      CONN_ERR_RET(USUCCESS);
   }
 
   server->memoryOverflow = true;
@@ -642,7 +641,7 @@ UConnection::received_ (const ubyte *buffer, int length)
       length = 0;
     }
 
-    if (length !=0)
+    if (length)
     {
       server->systemcommands = false;
       int result = p.process(command, length);
@@ -812,7 +811,7 @@ UConnection::send_error (UErrorCode n)
 UConnection&
 UConnection::send_warning (UWarningCode n)
 {
-  const char*msg = message (UWARNINGCODE, n);
+  const char* msg = message (UWARNINGCODE, n);
   UErrorValue result = ((*this) << send(msg, "warning")).error ();
   if (result == USUCCESS)
   {
