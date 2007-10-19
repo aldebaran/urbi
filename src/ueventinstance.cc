@@ -18,6 +18,8 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
 //FIXME for debugging purposes only
@@ -38,11 +40,9 @@ UEventInstance::UEventInstance (UEventMatch *match, UEvent* e):
   e_ (e)
 {
   id_ = e_->id ();
-  for (std::list<UValue*>::iterator iuv = match->filter ().begin ();
-	iuv != match->filter ().end ();
-	++iuv)
-    if ((*iuv)->dataType == DATA_VARIABLE)
-      filter_.push_back (std::string ((*iuv)->str->c_str()));
+  BOOST_FOREACH (UValue* iuv, match->filter ())
+    if (iuv->dataType == DATA_VARIABLE)
+      filter_.push_back (std::string (iuv->str->c_str()));
     else
       filter_.push_back (std::string ());
 }
