@@ -574,14 +574,18 @@ UConnection::received_ (const ubyte *buffer, int length)
 	       total);
 	buffer += total;
 	length -= total;
+# if ! defined LIBPORT_URBI_ENV_AIBO
 	if (treeLock.try_lock())
+# endif
 	{
 	  receiveBinary_ = false;
 	  append(binCommand->up);
 	  gotlock = true;
 	}
+# if ! defined LIBPORT_URBI_ENV_AIBO
 	else
 	  faillock = true;
+# endif
       }
     }
     result = recvQueue_->push(buffer, length);
@@ -611,7 +615,9 @@ UConnection::received_ (const ubyte *buffer, int length)
     CONN_ERR_RET(USUCCESS);
   }
 
+# if ! defined LIBPORT_URBI_ENV_AIBO
   if (!gotlock && !treeLock.try_lock())
+# endif
   {
     newDataAdded = true; //server will call us again right after work
     CONN_ERR_RET(USUCCESS);
@@ -744,7 +750,9 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   receiving = false;
   p.commandTree = 0;
+# if ! defined LIBPORT_URBI_ENV_AIBO
   treeLock.unlock();
+# endif
   if (server->memoryOverflow)
     CONN_ERR_RET(UMEMORYFAIL);
 
