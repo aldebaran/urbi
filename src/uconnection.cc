@@ -483,7 +483,9 @@ UConnection::block ()
 UConnection&
 UConnection::continueSend ()
 {
+# if ! defined URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
+# endif
   blocked_ = false;	    // continueSend unblocks the connection.
 
   int toSend = sendQueue_->dataSize(); // nb of bytes to send
@@ -542,12 +544,15 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   UErrorValue result = UFAIL;
 
+# if ! defined URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock serverLock(server->mutex);
   boost::try_mutex::scoped_try_lock treeLock(treeMutex, false);
+# endif
 
   {
+# if ! defined URBI_ENV_AIBO
     boost::mutex::scoped_lock lock(mutex_);
-
+# endif
     if (receiveBinary_)
     {
       // Handle and try to finish the binary transfer.

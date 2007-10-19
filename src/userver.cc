@@ -246,7 +246,9 @@ UServer::afterWork()
 void
 UServer::work()
 {
+# if ! defined URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);
+# endif
   // CPU Overload test
   updateTime();
   previous3Time = previous2Time;
@@ -326,7 +328,9 @@ UServer::work()
 	r->obstructed = true; // will be changed to 'false'
 	{
 	  //if the whole tree is visited
+# if ! defined URBI_ENV_AIBO
 	  boost::try_mutex::scoped_lock(r->treeMutex);
+# endif
 	  r->inwork = true;   // to distinguish this call of
 	  //execute from the one in receive
 	  r->execute(r->activeCommand);

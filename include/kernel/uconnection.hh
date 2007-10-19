@@ -24,7 +24,9 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 # include <cstdarg>
 # include <iomanip>
-# include <boost/thread.hpp>
+# if ! defined URBI_ENV_AIBO
+#  include <boost/thread.hpp>
+# endif
 # include <boost/shared_ptr.hpp>
 
 # include "kernel/fwd.hh"
@@ -426,8 +428,10 @@ public:
   /// Return the UParser we use.
   UParser& parser (); // OK : accessor
 
+# if ! defined URBI_ENV_AIBO
   /// Lock access to command tree.
   boost::try_mutex treeMutex;
+# endif
 
 private:
   /// Our parser.  A pointer to stop dependencies.
@@ -484,7 +488,9 @@ private:
   /// set at "true" on start).
   bool           active_;
 
+# if ! defined URBI_ENV_AIBO
   boost::mutex mutex_;
+# endif
 };
 
 //! Accessor for sendAdaptive_

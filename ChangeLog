@@ -1,5 +1,12 @@
 2007-10-19  Akim Demaille  <demaille@gostai.com>
 
+	Use threads only if !OPENR.
+	* include/kernel/blockmemorymanager.hh, include/kernel/uconnection.hh,
+	* include/kernel/userver.hh, src/uconnection.cc, src/userver.cc:
+	Do it.
+
+2007-10-19  Akim Demaille  <demaille@gostai.com>
+
 	Use BOOST_FOREACH.
 	* src/ucommand.cc: At random places.
 
