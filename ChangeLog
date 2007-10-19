@@ -1,5 +1,10 @@
 2007-10-19  Akim Demaille  <demaille@gostai.com>
 
+	Use BOOST_FOREACH.
+	* src/ucommand.cc: At random places.
+
+2007-10-19  Akim Demaille  <demaille@gostai.com>
+
 	Reject for&.
 	* src/parser/bison/ugrammar.y: here.
 

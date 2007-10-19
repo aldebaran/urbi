@@ -281,9 +281,7 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
     if (oo && !oo->members.empty())
     {
       UCommand *gplist = 0;
-      for (std::list<UString*>::iterator i = oo->members.begin();
-	   i != oo->members.end();
-	   ++i)
+      BOOST_FOREACH (UString* i, oo->members)
       {
 	UCommand *clone = copy();
 	UVariableName*& clonename = *((clone->*refName)());
@@ -293,10 +291,10 @@ UCommand::scanGroups(UVariableName** (UCommand::*refName)(),
 	// There are some attributes that are not copied (e.g.,
 	// isstatic).  This is way too error-prone.
 	if (varname->nostruct && with_nostruct)
-	  clonename = new UVariableName(devicename->copy(), (*i)->copy(),
+	  clonename = new UVariableName(devicename->copy(), i->copy(),
 					false, ucopy (varname->index));
 	else
-	  clonename = new UVariableName((*i)->copy(), method->copy(),
+	  clonename = new UVariableName(i->copy(), method->copy(),
 					false, ucopy (varname->index));
 
 	clonename->isnormalized = varname->isnormalized;
@@ -647,14 +645,10 @@ UValue * UCommand::tryModuleCall(const char * name,
       urbi::functionmap->find(name);
     if (hmfi != urbi::functionmap->end())
     {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	     hmfi->second.begin();
-	   cbi != hmfi->second.end();
-	   ++cbi)
+      BOOST_FOREACH (urbi::UGenericCallback* cbi, hmfi->second)
       {
-	if ((parameters
-	     && parameters->size() == (*cbi)->nbparam)
-	    || (!parameters && !(*cbi)->nbparam) )
+	if (parameters && parameters->size() == cbi->nbparam
+	    || !parameters && !cbi->nbparam)
 	{
 	  urbi::UList tmparray;
 	  for (UNamedParameters* pvalue = parameters;
@@ -672,10 +666,7 @@ UValue * UCommand::tryModuleCall(const char * name,
 	    tmparray.array.push_back(valparam->urbiValue());
 	    delete valparam;
 	  }
-
-
-	  return new UValue((*cbi)->__evalcall(tmparray));
-
+	  return new UValue(cbi->__evalcall(tmparray));
 	}
       }
     }
@@ -849,22 +840,20 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	  << "__" << b->nbparam << "\","
 	  << "\"" << uid << "\"";
 
-	for (std::list<UMonitor*>::iterator j = b->monitors.begin();
-	     j != b->monitors.end();
-	     ++j)
+	BOOST_FOREACH (UMonitor* j, b->monitors)
 	{
-	  *((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-	  *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+	  *j->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	  *j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
 					   o.str().size());
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
 	  {
-	    *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
+	    *j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    valparam->echo((*j)->c);
+	    valparam->echo(j->c);
 	  }
-	  *((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
+	  *j->c << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
 
@@ -2377,9 +2366,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	o << "[0,\"" << funname->c_str() << "__" << it->second->nbparam
 	  << "\",\"" << uid << "\"";
 	const std::string n = o.str();
-	for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	     j != it->second->monitors.end();
-	     ++j)
+	BOOST_FOREACH (UMonitor* j, it->second->monitors)
 	{
 	  std::stringstream ss;
 	  ss.str ("");
@@ -2404,7 +2391,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  if (validcmd)
 	  {
 	    ss << "]\n";
-	    (*j)->c->send (EXTERNAL_MESSAGE_TAG, ss.str ().c_str ());
+	    j->c->send (EXTERNAL_MESSAGE_TAG, ss.str ().c_str ());
 	  }
 	}
       }
@@ -2731,14 +2718,11 @@ UCommand_NEW::execute_(UConnection *connection)
 	std::list<urbi::USystem*>& tmp_list =
 	  ::urbiserver->systemObjects[urbi::NEW_CHANNEL];
 
-	for (std::list<urbi::USystem*>::iterator it =
-	       tmp_list.begin ();
-	     it != tmp_list.end ();
-	     ++it)
+	BOOST_FOREACH (urbi::USystem* it, tmp_list)
 	{
-	  int timeout_tmp = (*it)->receive_message (urbi::NEW_CHANNEL,
-						    urbi::UStringSystemMessage
-						    (objname));
+	  int timeout_tmp = it->receive_message (urbi::NEW_CHANNEL,
+						 urbi::UStringSystemMessage
+						 (objname));
 	  if (timeout_tmp > timeout)
 	    timeout = timeout_tmp;
 	}
@@ -2779,13 +2763,11 @@ UCommand_NEW::execute_(UConnection *connection)
       << objit->second->device->c_str() << "\"]\n";
     const std::string n = o.str();
     int nb=0;
-    for (std::list<UMonitor*>::iterator i =
-	   objit->second->binder->monitors.begin();
-	 i != objit->second->binder->monitors.end();
-	 ++i)
+    BOOST_FOREACH (UMonitor* i, objit->second->binder->monitors)
     {
-      *((*i)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-      *((*i)->c) << UConnection::send(reinterpret_cast<const ubyte*>(n.c_str()), n.size());
+      *i->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+      *i->c << UConnection::send(reinterpret_cast<const ubyte*>(n.c_str()),
+				 n.size());
       ++nb;
     }
     // Wait for remote new
@@ -2975,13 +2957,10 @@ UCommand_ALIAS::execute_(UConnection *connection)
   // full alias query
   if (!aliasname && !id)
   {
-    for (HMaliastab::iterator i =
-	   connection->server->aliastab.begin();
-	 i != connection->server->aliastab.end();
-	 ++i)
+    BOOST_FOREACH (HMaliastab::value_type i, connection->server->aliastab)
       *connection << UConnection::sendf(getTag(),
 					"*** %25s -> %s\n",
-					i->first, i->second->c_str());
+					i.first, i.second->c_str());
 
     return UCOMPLETED;
   }
@@ -3325,15 +3304,12 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator i =
-	   connection->server->connectionList.begin();
-	 i != connection->server->connectionList.end();
-	 ++i)
-      if ((*i)->isActive() &&
-	  *(*i)->connectionTag == *id)
+    BOOST_FOREACH (UConnection* i, connection->server->connectionList)
+      if (i->isActive() &&
+	  *i->connectionTag == *id)
       {
 	ok = true;
-	(*i)->killall = true;
+	i->killall = true;
       }
 
     if (!ok)
@@ -3349,15 +3325,12 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     bool ok = false;
     // Scan currently opened connections to locate the connection with the
     // appropriate tag (connectionTag)
-    for (std::list<UConnection*>::iterator i =
-	   connection->server->connectionList.begin();
-	 i != connection->server->connectionList.end();
-	 ++i)
-      if ((*i)->isActive() && *(*i)->connectionTag == *id)
+    BOOST_FOREACH (UConnection* i, connection->server->connectionList)
+      if (i->isActive() && *i->connectionTag == *id)
       {
 	ok = true;
-	(**i) << UConnection::disactivate;
-	(**i) << UConnection::close;
+	*i << UConnection::disactivate;
+	*i << UConnection::close;
       }
 
     if (!ok)
@@ -4220,20 +4193,16 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "connections")
   {
-    for (std::list<UConnection*>::iterator i =
-	   ::urbiserver->connectionList.begin();
-	 i != ::urbiserver->connectionList.end();
-	 ++i)
-      if ((*i)->isActive())
-      {
-	*connection << UConnection::sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
-					   (*i)->connectionTag->c_str(),
-					   static_cast<int>(((*i)->clientIP>>24) % 256),
-					   static_cast<int>(((*i)->clientIP>>16) % 256),
-					   static_cast<int>(((*i)->clientIP>>8) % 256),
-					   static_cast<int>((*i)->clientIP     % 256)
-			   );
-      }
+    BOOST_FOREACH (UConnection* i, ::urbiserver->connectionList)
+      if (i->isActive())
+	*connection
+	  << UConnection::sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
+				 i->connectionTag->c_str(),
+				 static_cast<int>((i->clientIP>>24) % 256),
+				 static_cast<int>((i->clientIP>>16) % 256),
+				 static_cast<int>((i->clientIP>>8) % 256),
+				 static_cast<int>(i->clientIP     % 256)
+	    );
 
     return UCOMPLETED;
   }
@@ -4469,22 +4438,20 @@ UCommand_EMIT::execute_(UConnection *connection)
     {
       std::ostringstream o;
       o << "[2,\"" << eventnamestr << "__" << it->second->nbparam << "\"";
-      for (std::list<UMonitor*>::iterator j = it->second->monitors.begin();
-	   j != it->second->monitors.end();
-	   ++j)
+      BOOST_FOREACH (UMonitor* j, it->second->monitors)
       {
-	*((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-	*((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
+	*j->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	*j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(o.str().c_str()),
 					 o.str().size());
 	for (UNamedParameters *pvalue = parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
 	{
-	  *((*j)->c) << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
+	  *j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
-	  valparam->echo((*j)->c);
+	  valparam->echo(j->c);
 	}
-	*((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
+	*j->c << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
       }
     }
 
@@ -4493,14 +4460,9 @@ UCommand_EMIT::execute_(UConnection *connection)
 
     urbi::UTable::iterator hmfi = urbi::eventmap->find(eventnamestr);
     if (hmfi != urbi::eventmap->end())
-    {
-      for (std::list<urbi::UGenericCallback*>::iterator cbi =
-	     hmfi->second.begin();
-	   cbi != hmfi->second.end();
-	   ++cbi)
-      {
-	if (parameters && parameters->size() == (*cbi)->nbparam
-	    || !parameters && !(*cbi)->nbparam)
+      BOOST_FOREACH (urbi::UGenericCallback* cbi, hmfi->second)
+	if (parameters && parameters->size() == cbi->nbparam
+	    || !parameters && !cbi->nbparam)
 	{
 	  urbi::UList tmparray;
 	  for (UNamedParameters *pvalue = parameters;
@@ -4519,10 +4481,8 @@ UCommand_EMIT::execute_(UConnection *connection)
 	    tmparray.array.push_back(tmpvalue);
 	  }
 
-	  (*cbi)->__evalcall(tmparray);
+	  cbi->__evalcall(tmparray);
 	}
-      }
-    }
   }
 
   if (thetime > targetTime && !firsttime)
@@ -4554,13 +4514,11 @@ UCommand_EMIT::removeEvent ()
     {
       std::ostringstream o;
       o << "[3,\"" << eventnamestr << "__" << i->second->nbparam << "\"]\n";
-      for (std::list<UMonitor*>::iterator j = i->second->monitors.begin();
-	   j != i->second->monitors.end();
-	   ++j)
+      BOOST_FOREACH (UMonitor* j, i->second->monitors)
       {
-	*((*j)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-	*((*j)->c) << UConnection::send(reinterpret_cast<const ubyte*>(o.str().c_str()),
-					o.str().size());
+	*j->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	*j->c << UConnection::send(reinterpret_cast<const ubyte*>(o.str().c_str()),
+				   o.str().size());
       }
     }
   }
@@ -4569,11 +4527,10 @@ UCommand_EMIT::removeEvent ()
   {
     urbi::UTable::iterator i = urbi::eventendmap->find(eventnamestr);
     if (i != urbi::eventendmap->end())
-      for (std::list<urbi::UGenericCallback*>::iterator j = i->second.begin();
-	   j != i->second.end(); ++j)
+      BOOST_FOREACH (urbi::UGenericCallback* j, i->second)
       {
 	urbi::UList tmparray;
-	(*j)->__evalcall(tmparray);
+	j->__evalcall(tmparray);
       }
   }
 }
@@ -5611,9 +5568,7 @@ UCommand_AT::execute_(UConnection *connection)
       mixlist = ec->mixing ();
     }
 
-    for (std::list<UMultiEventInstance*>::iterator i = mixlist.begin ();
-	 i != mixlist.end ();
-	 ++i)
+    BOOST_FOREACH (UMultiEventInstance* i, mixlist)
     {
       bool ok = false;
       // FIXME: weird enough: we don't use break (which seems to mean
@@ -5621,15 +5576,15 @@ UCommand_AT::execute_(UConnection *connection)
       for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
 	   ic != candidates.end () && !ok;
 	   ++ic)
-	if ((*ic)->equal (*i))
+	if ((*ic)->equal (i))
 	{
 	  (*ic)->visited ();
 	  ok = true;
-	  delete *i;
+	  delete i;
 	}
 
       if (!ok)
-	candidates.push_back (new UAtCandidate (currentTime + duration, *i));
+	candidates.push_back (new UAtCandidate (currentTime + duration, i));
     }
 
     //cleanup of candidates that do not appear anymore in the mixlist
@@ -5665,14 +5620,12 @@ UCommand_AT::execute_(UConnection *connection)
     reloop_ = false;
     morph = this;
     // scan triggering candidates
-    for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	 ic != candidates.end ();
-	 ++ic)
+    BOOST_FOREACH (UAtCandidate* ic, candidates)
     {
       UCommand* assigncmd;
-      if (!(*ic)->hasTriggered())
+      if (!ic->hasTriggered())
       {
-	if ((*ic)->trigger (currentTime, assigncmd))
+	if (ic->trigger (currentTime, assigncmd))
 	{
 	  if (assigncmd)
 	    morph =
