@@ -69,6 +69,7 @@
     UString *id;
     bool rooted;
   }                        structure;
+  bool                     is_colon;
 }
 
 %{
@@ -434,7 +435,8 @@ take (T* t)
 %left  "&&"
 %right "^"
 %nonassoc "==" "~=" "%=" "=~=" "!="
-%nonassoc  ">" ">=" "<" "<="
+%nonassoc "<" "<=" ">" ">="
+%left  "<<" ">>"
 %left  "+" "-"
 %left  "*" "/" "%"
 %right "**"
@@ -532,7 +534,7 @@ taggedcommand:
       $$ = $1;
     }
 
-  | tag flags.0 ":" command {
+  | tag flags.0 colon_or_ltlt command {
 
       memcheck(up, $1);
       if ($4)
@@ -544,7 +546,7 @@ taggedcommand:
       $$ = $4;
     }
 
-  | flags.1 ":" command {
+  | flags.1 colon_or_ltlt command {
 
       memcheck(up, $1);
       if ($3)
@@ -554,6 +556,13 @@ taggedcommand:
       }
       $$ = $3;
     }
+
+;
+
+%type <is_colon> colon_or_ltlt;
+colon_or_ltlt:
+  ":"     { $$ = true; }
+| "<<"    { $$ = false;}
 ;
 
 
@@ -1369,15 +1378,17 @@ expr:
   | Tests.  |
   `--------*/
 %token
-  TOK_EQ   "=="
-  TOK_GT   ">"
-  TOK_LE   "<="
-  TOK_LT   "<"
-  TOK_PEQ  "%="
-  TOK_NE   "!="
-  TOK_GE   ">="
-  TOK_DEQ  "=~="
-  TOK_REQ  "~="
+  TOK_EQ    "=="
+  TOK_GT    ">"
+  TOK_GT_GT ">>"
+  TOK_LE    "<="
+  TOK_LT    "<"
+  TOK_LT_LT "<<"
+  TOK_PEQ   "%="
+  TOK_NE    "!="
+  TOK_GE    ">="
+  TOK_DEQ   "=~="
+  TOK_REQ   "~="
 ;
 
 expr:

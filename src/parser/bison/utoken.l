@@ -282,11 +282,13 @@ STRING   \"([^\"]|"\\\"")*\"
 "::"            return token::TOK_DOUBLECOLON;
 ";"             RETURN_FLAVOR(SEMICOLON);
 "<"             return token::TOK_LT;
+"<<"            return token::TOK_LT_LT;
 "<="            return token::TOK_LE;
 "="             return token::TOK_ASSIGN;
 "=="            return token::TOK_EQ;
 "=~="           return token::TOK_DEQ;
 ">"             return token::TOK_GT;
+">>"            return token::TOK_GT_GT;
 ">="            return token::TOK_GE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
@@ -385,11 +387,6 @@ STRING   \"([^\"]|"\\\"")*\"
 
 {BLANKS}       locp->step();
 {EOL}          LINES(locp); locp->step();
-.              {
-		 up.error(*locp, std::string ("invalid character: ")
-			  + yytext);
-		 locp->step ();
-	       }
 
 <SC_C_COMMENT>{ /* Comments. */
   "*/" { /* End of the comment. */
@@ -408,6 +405,12 @@ STRING   \"([^\"]|"\\\"")*\"
   }
 }
 
+<*>{
+   .      {
+	     up.error(*locp, std::string ("invalid character: ") + yytext);
+	     locp->step ();
+	  }
+}
 %%
 
 // Local Variables:
