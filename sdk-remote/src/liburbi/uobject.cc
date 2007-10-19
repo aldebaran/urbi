@@ -470,15 +470,28 @@ namespace urbi
     return URBI_CONTINUE;
   }
 
-
+  UCallbackAction
+  endProgram(const UMessage& msg)
+  {
+    std::stringstream mesg;
+    mesg<<msg;
+    msg.client.printf("ERROR: got a disconnection message  : %s\n",
+		      mesg.str().c_str());
+    exit(1);
+    return URBI_CONTINUE; //stupid gcc
+  }
+  
   void
   main(int argc, char* argv[])
   {
+    
+    bool exitOnDisconnect = false;
     // Retrieving command line arguments
     if (argc<2)
     {
       std::cout << "usage:\n"
-		<< argv[0] << " <URBI Server IP> [port [buffer length]]"
+		<< argv[0] << " <URBI Server IP> [-d] [port [buffer length]]\n"
+		<< "  -d:  exit program if disconnected"
 		<< std::endl;
       exit(0);
     }
@@ -489,10 +502,16 @@ namespace urbi
     //we need a usyncclient connect(argv[1]);
     int port = UAbstractClient::URBI_PORT;
     int buflen = UAbstractClient::URBI_BUFLEN;
-    if (argc>2)
-      port = strtol(argv[2],0,0);
-    if (argc>3)
-      buflen = strtol(argv[3],0,0);
+    int argp = 2;
+    if (argc > argp && argv[argp][0]=='-') 
+    {
+      exitOnDisconnect = true;
+      argp++;
+    }
+    if (argc>argp)
+      port = strtol(argv[argp++],0,0);
+    if (argc>argp)
+      buflen = strtol(argv[argp++],0,0);
     new USyncClient(argv[1],port, buflen);
 
 
@@ -504,7 +523,16 @@ namespace urbi
 
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
-
+    if (exitOnDisconnect) 
+    {
+      if (getDefaultClient()->error())
+      {
+	std::cerr <<"ERROR: failed to connect, exiting..."<<std::endl;
+	exit(1);
+      }
+      getDefaultClient()->setClientErrorCallback( callback (&endProgram));
+    }
+    
     dummyUObject = new UObject (0);
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();

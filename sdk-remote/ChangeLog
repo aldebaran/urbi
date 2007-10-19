@@ -1,3 +1,9 @@
+2007-10-19  Matthieu Nottale  <nottale@gostai.com>
+
+	Add an option on uobject remote command line: exit on disconnect.
+	* src/liburbi/uobject.cc: Pass -d between the host and port options
+	to have the program exited on connection error.
+
 2007-10-18  Matthieu Nottale  <nottale@gostai.com>
 
 	Notify a callback on socket error.
