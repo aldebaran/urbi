@@ -1,5 +1,12 @@
 2007-10-19  Akim Demaille  <akim.demaille@free.fr>
 
+	Be robust to digits in file names.
+	* src/parser/bison/utoken.l: When handling #line, be careful
+	to digits in file names.
+	Also, consider the empty string to denote stdin too.
+
+2007-10-19  Akim Demaille  <akim.demaille@free.fr>
+
 	No longer use #__LINE__1.
 	* src/uconnection.cc, src/userver.cc: since it does not exist.
 	How come this is not triggered with uconsole@kernel???
