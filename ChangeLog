@@ -1,3 +1,9 @@
+2007-10-19  Akim Demaille  <demaille@gostai.com>
+
+	Update precedence.
+	* src/parser/ugrammar.y: from 1.x.
+	Should have been done by Quentin Hocquet.
+
 2007-10-16  Akim Demaille  <akim@lrde.epita.fr>
 
 	No longer export float functions.
