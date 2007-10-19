@@ -18,7 +18,9 @@ BlockPool::BlockPool ()
 void
 block_operator_delete(BlockPool* mempool, void* ptr)
 {
+#if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mempool->mutex);
+#endif
   ++mempool->cptr;
   *mempool->cptr = ptr;
   MemoryManager::allocatedMemory -= mempool->itemSize;
@@ -32,15 +34,16 @@ void* block_operator_new(BlockPool* &mempool, size_t sz)
   if (!blockPoolExist)
     mempool = new BlockPool;
 
+#if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mempool->mutex);
-
+#endif
   if (!blockPoolExist)
     {
       --mempool->cptr;
       const int align = sizeof (void*);
       size_t asz = sz;
       if (asz % align)
-        asz = asz + align - (asz % align);
+	asz = asz + align - (asz % align);
       mempool->itemSize = asz;
     }
 

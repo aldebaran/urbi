@@ -1,5 +1,10 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
+	More aibo shielding.
+	* src/memorymanager/memorymanager.cc: here.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
 	More Aibo shielding.
 	* src/uconnection.cc: here.
 
