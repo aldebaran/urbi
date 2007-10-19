@@ -364,6 +364,7 @@ UCommand::setTag(TagInfo* ti)
 void
 UCommand::setTag(const UCommand* cmd)
 {
+  is_channel_ = (cmd->is_channel_);
   if (tag == cmd->tag)
     return;
   if (tag != "")
@@ -2351,9 +2352,7 @@ UCommand_EXPR::execute_(UConnection *connection)
     if (v)
     {
       if (v->dataType != DATA_VOID)
-      {
 	connection->send(v->echo().c_str(), getTag().c_str());
-      }
       delete v;
       return UCOMPLETED;
     }
@@ -2410,9 +2409,9 @@ UCommand_EXPR::execute_(UConnection *connection)
       if (validcmd)
       {
 	std::ostringstream o;
-	o << "{waituntil(isdef(" << uid << "))|"
-	  << getTag().c_str() << ":" << uid
-	  << "|delete " << uid << "}";
+	o << "{ waituntil(isdef(" << uid << ")) | "
+	  << getTag() << " : " << uid
+	  << " | delete " << uid << " }";
 	strMorph (o.str());
 	return UMORPH;
       }
@@ -2435,15 +2434,18 @@ UCommand_EXPR::execute_(UConnection *connection)
     return UMORPH;
   }
 
-  if (ret->dataType != DATA_VOID)
+  if (is_channel_get())
   {
-    *connection << UConnection::prefix(getTag().c_str());
-    ret->echo(connection);
+    if (ret->dataType != DATA_VOID)
+    {
+      *connection << UConnection::prefix(getTag().c_str());
+      ret->echo(connection);
+    }
+    if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
+      *connection << UConnection::endl;
+    else
+      *connection << UConnection::flush;
   }
-  if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
-    *connection << UConnection::endl;
-  else
-    *connection << UConnection::flush;
   delete ret;
   return UCOMPLETED;
 }

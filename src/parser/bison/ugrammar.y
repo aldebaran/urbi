@@ -69,7 +69,7 @@
     UString *id;
     bool rooted;
   }                        structure;
-  bool                     is_colon;
+  bool                     is_channel;
 }
 
 %{
@@ -538,6 +538,10 @@ taggedcommand:
       if ($4)
       {
 	$4->setTag($1->c_str());
+	// If one says "foo << ", then "foo :", don't lose the
+	// channelitudeness.
+	if ($3)
+	  $4->is_channel_set(true);
 	delete $1;
 	$4->flags = $2;
       }
@@ -557,10 +561,10 @@ taggedcommand:
 
 ;
 
-%type <is_colon> colon_or_ltlt;
+%type <is_channel> colon_or_ltlt;
 colon_or_ltlt:
-  ":"     { $$ = true; }
-| "<<"    { $$ = false;}
+  ":"     { $$ = false; }
+| "<<"    { $$ = true;  }
 ;
 
 
