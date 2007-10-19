@@ -1197,15 +1197,8 @@ private:
 | Free standing functions.  |
 `--------------------------*/
 
-inline
-std::ostream&
-operator<<(std::ostream& o, const UCommand& u)
-{
-  // Yeah, we don't really use O here.  Too bad.
-  u.print(0);
-  return o;
-}
-
+/// Report \a u on \o, for debugging.
+std::ostream& operator<<(std::ostream& o, const UCommand& u);
 
 /// Report an error, with "!!! " prepended, and "\n" appended.
 /// \param c     the connection to which the message is sent.

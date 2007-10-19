@@ -25,7 +25,17 @@
 # include "ucommand.hh"
 
 inline
-void 
+std::ostream&
+operator<<(std::ostream& o, const UCommand& u)
+{
+  // Yeah, we don't really use O here.  Too bad.
+  u.print(0);
+  return o;
+}
+
+
+inline
+void
 UCommand::is_channel_set (bool b)
 {
   is_channel_ = b;
