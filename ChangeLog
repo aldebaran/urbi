@@ -1,5 +1,12 @@
 2007-10-19  Akim Demaille  <akim.demaille@free.fr>
 
+	Clean #line handling.
+	* src/parser/bison/utoken.l: Use lexical_cast.
+	Don't use "tmp" in names, of course local variables are "tmp".
+	Handle envvar FLEX_DEBUG.
+
+2007-10-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Move implementation into hxx.
 	* src/ucommand.hh (operator<<): Move implementation to...
 	* src/ucommand.hxx: here.
