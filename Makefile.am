@@ -53,7 +53,7 @@ include/kernel/uvariable.hh
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += tests src/uobject
+SVN_EXTERNALS += libport tests src/uobject
 
 maintainer-check: valgrind-check
 valgrind-check:

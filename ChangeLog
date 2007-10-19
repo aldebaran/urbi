@@ -1,5 +1,14 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
+	libport use.
+	WARNING: Apparently someone decided to use libport/Makefile.am,
+	which is wrong afai can remember...  Now both liburbi *and* the
+	kernel will want to install libport.  Well done pal.
+	* Makefile.am (SVN_EXTERNALS): Add libport so that libport-ci
+	works as expected.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
 	Use BOOST_FOREACH.
 	* src/ucommand.cc: At some random places, while it compiles.
 
