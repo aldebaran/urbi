@@ -394,28 +394,55 @@ take (T* t)
 %type <variable>            rvalue
 %type <derive>              derive
 
+
 /*----------------------.
 | Operator precedence.  |
 `----------------------*/
 
-%left  "||"
-%left "&&"
-%left  "==" "~=" "%=" "=~=" "!=" ">" ">=" "<" "<="
-%left  "-" "+"
-%left  "*" "/" "%"
-%left  "!" NEG     /* Negation--unary minus */
-%right "**"
-%right TOK_NORM
+// man operator
 
-%right "," ";"
+// Operator                        Associativity
+// --------                        -------------
+// () [] -> .                      left to right
+// ! ~ ++ -- - (type) * & sizeof   right to left
+// * / %                           left to right
+// + -                             left to right
+// << >>                           left to right
+// < <= > >=                       left to right
+// == !=                           left to right
+// &                               left to right
+// ^                               left to right
+// |                               left to right
+// &&                              left to right
+// ||                              left to right
+// ?:                              right to left
+// = += -= etc.                    right to left
+// ,                               left to right
+
+ /*
+   ! < ( so that !m(x) be read as !(m(x)).
+ */
+
+%left  "," ";"
 %left  "&" "|"
 %left  CMDBLOCK
 %left  "else" "onleave"
-%nonassoc "="
 
-%left "$"
-%left "=>"
+%left "=" "+=" "-=" "*=" "/="
+%left "inherits" "disinherits"
+%left  "||"
+%left  "&&"
+%right "^"
+%nonassoc "==" "~=" "%=" "=~=" "!="
+%nonassoc  ">" ">=" "<" "<="
+%left  "+" "-"
+%left  "*" "/" "%"
+%right "**"
+%right  "!" "++" "--" NEG     /* Negation--unary minus */
+%left  "("
+%left "."
 
+%right "'n"
 /* URBI Grammar */
 %%
 
