@@ -1334,7 +1334,8 @@ expr:
 | variables as rvalues.  |
 `-----------------------*/
 
-expr: rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
+expr:
+  rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
 ;
 
 rvalue:
@@ -1343,6 +1344,8 @@ rvalue:
 | name "'e"	{ $$->varerror = true;		}
 | name "'in"	{ $$->varin = true;		}
 | name "'out"   // FIXME: Nothing to do???
+| "static" name	{ $$ = $2; $$->isstatic = true;	}
+;
 
 derive:
   "'"	{ $$ = UVariableName::UDERIV;	 }

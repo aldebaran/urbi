@@ -1,5 +1,11 @@
 2007-10-19  Akim Demaille  <akim.demaille@free.fr>
 
+	static is also on rvalues.
+	* src/parser/bison/ugrammar.y: Support it.
+	* tests-local.mk: Remove variable-qualifiers.chk.
+
+2007-10-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Style changes.
 	* src/uconnection.cc: here.
 
