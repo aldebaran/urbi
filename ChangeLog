@@ -1,5 +1,10 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
+	More Aibo protections.
+	* src/userver.cc: here.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
 	Use libport's config.h to detect OpenR.
 	* include/kernel/blockmemorymanager.hh, include/kernel/uconnection.hh,
 	* include/kernel/userver.hh, src/uconnection.cc, src/userver.cc:
