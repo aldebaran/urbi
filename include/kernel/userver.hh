@@ -24,7 +24,9 @@
 
 # include <cstdarg>
 # include <sstream>
-# if ! defined URBI_ENV_AIBO
+
+# include "libport/config.h"
+# if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
 
@@ -265,7 +267,7 @@ public:
   /// Shows debug or not.
   bool debugOutput;
 
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   /// Used to synchronize message reception.
   boost::recursive_mutex mutex;
 # endif

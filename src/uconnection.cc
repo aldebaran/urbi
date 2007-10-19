@@ -21,6 +21,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include "libport/config.h"
 #include "libport/cstring"
 #include "libport/cstdio"
 #include <cassert>
@@ -483,7 +484,7 @@ UConnection::block ()
 UConnection&
 UConnection::continueSend ()
 {
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
 # endif
   blocked_ = false;	    // continueSend unblocks the connection.
@@ -544,13 +545,13 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   UErrorValue result = UFAIL;
 
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock serverLock(server->mutex);
   boost::try_mutex::scoped_try_lock treeLock(treeMutex, false);
 # endif
 
   {
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
     boost::mutex::scoped_lock lock(mutex_);
 # endif
     if (receiveBinary_)
