@@ -57,21 +57,21 @@ do Float
 var Math = new Object;
 do Math
 {
-  sin = function (x) { x.sin };
-  asin = function (x) { x.asin };
-  cos = function (x) { x.cos };
-  acos = function (x) { x.acos };
-  tan = function (x) { x.tan };
-  atan = function (x) { x.atan };
-  sgn = function (x) { x.sgn };
-  abs = function (x) { x.abs };
-  exp = function (x) { x.exp };
-  log = function (x) { x.log };
-  round = function (x) { x.round };
+  abs    = function (x) { x.abs };
+  acos   = function (x) { x.acos };
+  asin   = function (x) { x.asin };
+  atan   = function (x) { x.atan };
+  cos    = function (x) { x.cos };
+  exp    = function (x) { x.exp };
+  log    = function (x) { x.log };
   random = function (x) { x.random };
-  trunc = function (x) { x.trunc };
-  sqr = function (x) { x.sqr };
-  sqrt = function (x) { x.sqrt };
+  round  = function (x) { x.round };
+  sgn    = function (x) { x.sgn };
+  sin    = function (x) { x.sin };
+  sqr    = function (x) { x.sqr };
+  sqrt   = function (x) { x.sqrt };
+  tan    = function (x) { x.tan };
+  trunc  = function (x) { x.trunc };
 };
 Object inherits Math;
 
