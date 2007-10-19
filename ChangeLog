@@ -1,5 +1,10 @@
 2007-10-19  Akim Demaille  <akim.demaille@free.fr>
 
+	Indentation fixes.
+	* src/uexpression.cc: here.
+
+2007-10-19  Akim Demaille  <akim.demaille@free.fr>
+
 	Clean #line handling.
 	* src/parser/bison/utoken.l: Use lexical_cast.
 	Don't use "tmp" in names, of course local variables are "tmp".
