@@ -2435,7 +2435,10 @@ UCommand_EXPR::execute_(UConnection *connection)
     return UMORPH;
   }
 
-  if (is_channel_get())
+  // It is unclear when a result is to be displayed.  For the time
+  // being, in order to display results in the REPL, if the tag is
+  // notag, display (but don't display the tag...)
+  if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
   {
     if (ret->dataType != DATA_VOID)
     {

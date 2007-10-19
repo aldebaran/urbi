@@ -110,6 +110,7 @@ public:
   void setTag(const std::string& tag);
   void setTag(const UCommand* b); //faster than the one above
   void setTag(TagInfo * ti); //faster, no hash acces
+  const TagInfo* tag_info_get () const;
   void unsetTag();
 
   /// Whether the tag is associated to a channel, i.e., whether it is

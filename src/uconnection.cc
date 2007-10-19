@@ -387,14 +387,14 @@ UConnection::operator<< (UConnection& m (UConnection&))
 std::string
 UConnection::mkPrefix (const ubyte* tag) const
 {
-  std::stringstream ss;
-  ss << "["
-     << std::setw(8) << std::setfill('0') << (int)server->lastTime()
-     << ":"
-     << ((tag != 0) ? tag : (const ubyte*)::UNKNOWN_TAG)
-     << "] ";
-
-  return ss.str ();
+  std::stringstream o;
+  o << "["
+    << std::setw(8) << std::setfill('0') << (int)server->lastTime();
+  // Don't display ":notag".
+  if (!tag || !STREQ((const char*) tag, "notag"))
+    o << ":" << tag;
+  o << "] ";
+  return o.str ();
 }
 
 //! Send a buffer through the connection without flushing it.

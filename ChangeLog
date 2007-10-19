@@ -1,3 +1,14 @@
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
+	Fix notag handling.
+	* src/ucommand.cc (UCommand_EXPR::execture_): Display the result
+	when there is no tag, so that the top level displays the result.
+	As a consequence, inner expressions still display something, I
+	don't really know how to avoid this with a simple Q&D hack.
+	* src/ucommand.hh, src/ucommand.hxx (tag_info_get): New.
+	* src/uconnection.cc (UConnection::mkPrefix): Don't display notag
+	tags.
+
 2007-10-19  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add .automerge_moves file.

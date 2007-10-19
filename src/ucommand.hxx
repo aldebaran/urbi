@@ -38,5 +38,11 @@ UCommand::is_channel_get () const
   return is_channel_;
 }
 
+inline
+const TagInfo*
+UCommand::tag_info_get () const
+{
+  return tagInfo;
+}
 
 #endif
