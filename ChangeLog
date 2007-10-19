@@ -1,3 +1,10 @@
+2007-10-19  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Add .automerge_moves file.
+	* .automerge_moves: New.
+	The file only contains help for remembering.
+	File list need to be appended.
+
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
 	Missing member init.
