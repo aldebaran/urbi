@@ -245,7 +245,7 @@ namespace object
   `--------------------------*/
 
   template <typename Traits>
-  typename Atom<Traits>::shared_type 
+  typename Atom<Traits>::shared_type
   clone (typename Atom<Traits>::shared_type ref)
   {
     typename Atom<Traits>::shared_type res = new Atom<Traits>;

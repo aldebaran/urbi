@@ -51,7 +51,6 @@
 #include "ubinary.hh"
 #include "ubinder.hh"
 #include "ucallid.hh"
-#include "ucommand.hh"
 #include "ucommandqueue.hh"
 #include "unamedparameters.hh"
 #include "uqueue.hh"

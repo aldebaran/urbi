@@ -47,7 +47,6 @@
 #include "ast/nary.hh"
 
 #include "ubanner.hh"
-#include "ucommand.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
 #include "ueventcompound.hh"
@@ -178,7 +177,7 @@ UServer::initialize()
   }
 
   // Cached taginfos.
-  UCommand::initializeTagInfos();
+  TagInfo::initializeTagInfos();
 
   // Plugins (internal components)
   {
@@ -772,8 +771,9 @@ UServer::mark(UString* stopTag)
 }
 
 void
-UServer::mark(TagInfo* ti)
+UServer::mark(TagInfo* /*ti*/)
 {
+#if 0
   for (std::list<UCommand*>::iterator i = ti->commands.begin();
       i != ti->commands.end();
       ++i)
@@ -784,6 +784,7 @@ UServer::mark(TagInfo* ti)
        i != ti->subTags.end();
        ++i)
     mark(*i);
+#endif
 }
 
 

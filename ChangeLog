@@ -1,3 +1,14 @@
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
+	Remove dependencies on ucommand.hh.
+	* src/ucommand.hh, src/ucommand.cc (initializeTagInfos)
+	(systemTagInfo, notagTagInfo): Move to...
+	* include/kernel/tag-info.hh, src/tag-info.cc: here.
+	Adjust dependencies.
+	* src/uconnection.cc: No longer include ucommand.hh.
+	* src/userver.cc: No longer include ucommand.hh.
+	(UServer::mark): Comment out the body, for the time being.
+
 2007-10-19  Akim Demaille  <demaille@gostai.com>
 
 	Update precedence.
