@@ -1135,8 +1135,7 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "for" flavor.opt name "in" expr "{" taggedcommands "}"
-     %prec CMDBLOCK {
+  | "for" flavor.opt name "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
@@ -1151,7 +1150,12 @@ instruction:
   | "for" flavor.opt "(" instruction ";"
 			 expr ";"
 			 instruction ")" taggedcommand %prec CMDBLOCK {
-
+      // Can't use "pipe.opt" here, introduces conflicts.
+      if ($2 == Flavorable::UAND)
+      {
+	error(@$, "`for& (;;)' is deprecated, use `for .. in ..'");
+	YYERROR;
+      }
       $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
       memcheck(up, $$, $4, $6, $8, $10);
     }
