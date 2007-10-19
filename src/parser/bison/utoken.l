@@ -90,6 +90,17 @@ do {							\
   return token::TIMEVALUE;				\
 } while (0)
 
+// We matched an obsolete token, New is now preferered.  Unput it so
+// that the regular scanning rule of New is run.
+#define DEPRECATED(New)						\
+  do {								\
+    up.warn(*locp,						\
+	    std::string("`") + yytext + "' is deprecated. "	\
+	    "Use `" New "' instead.");				\
+    for (int i = strlen(New) - 1; 0 <= i; --i)			\
+      unput(New[i]);						\
+  } while(0);
+
 %}
 %option noyywrap
 
@@ -223,7 +234,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "every"         return token::TOK_EVERY;
 "false"         return token::TOK_FALSECONST;
 "for"           return token::TOK_FOR;
-"foreach"       return token::TOK_FOREACH;
+"foreach"       DEPRECATED("for");
 "freezeif"      return token::TOK_FREEZEIF;
 "from"          return token::TOK_FROM;
 "function"      return token::TOK_FUNCTION;
@@ -233,7 +244,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "inherits"      return token::TOK_INHERITS;
 
 "loop"          return token::TOK_LOOP;
-"loopn"         return token::TOK_LOOPN;
+"loopn"         DEPRECATED("for");
 "new"           return token::TOK_NEW;
 "noop"          return token::TOK_NOOP;
 "object"        return token::TOK_OBJECT;
@@ -292,9 +303,7 @@ STRING   \"([^\"]|"\\\"")*\"
 ">="            return token::TOK_GE;
 "["             return token::TOK_LSBRACKET;
 "]"             return token::TOK_RSBRACKET;
-"^"             { up.warn(*locp, "The use of '^' for exponent operator"
-			  " is deprecated. Use '**' instead.");
-		  return token::TOK_EXP; }
+"^"             DEPRECATED("**");
 "**"            return token::TOK_EXP;
 "{"             return token::TOK_LBRACKET;
 "|"             RETURN_FLAVOR(PIPE);

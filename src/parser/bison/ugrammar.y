@@ -275,7 +275,6 @@ take (T* t)
   TOK_EXPRBLOCK    "expression block"
   TOK_FALSECONST   "false"
   TOK_FOR          "for"
-  TOK_FOREACH      "foreach"
   TOK_FREEZEIF     "freezeif"
   TOK_FROM         "from"
   TOK_FUNCTION     "function"
@@ -285,7 +284,6 @@ take (T* t)
   TOK_INHERITS     "inherits"
   TOK_LBRACKET     "{"
   TOK_LOOP         "loop"
-  TOK_LOOPN        "loopn"
   TOK_LPAREN       "("
   TOK_LSBRACKET    "["
   TOK_MINUS        "-"
@@ -1133,14 +1131,14 @@ instruction:
       memcheck(up, $$, $2);
     }
 
-  | "foreach" flavor.opt name "in" expr "{" taggedcommands "}"
+  | "for" flavor.opt name "in" expr "{" taggedcommands "}"
      %prec CMDBLOCK {
 
       $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
 
-  | "loopn" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
+  | "for" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
 
       $$ = new UCommand_LOOPN(@$, $2, $4, $6);
       memcheck(up, $$, $4, $6);

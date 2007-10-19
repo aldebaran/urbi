@@ -1,5 +1,13 @@
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
+	loopn|foreach -> for.
+	* src/parser/bison/ugrammar.y ("loopn", "foreach"): Remove,
+	use "for" instead.
+	* src/parser/bison/utoken.l (DEPRECATED): New.
+	Use it for ^, foreach and loopn.
+
+2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+
 	<< for tags.
 	This patch is a rough implementation of << for channels.
 	It actually makes << and : both usable for both tags and
