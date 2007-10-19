@@ -1127,6 +1127,27 @@ UExpression::eval_FUNCTION_1 (UCommand *command, UConnection *connection)
   }
 
 
+  if (*variablename->id == "seq")
+  {
+    UValue* e1 = parameters->expression->eval(command, connection);
+    ENSURE_TYPES_1 (DATA_NUM);
+    UValue* ret = new UValue();
+    ret->dataType = DATA_LIST;
+    /* These fucking "Lists" are not std::list... */
+    UValue* current = 0;
+    for (ufloat i = 0; i < e1->val; ++i)
+    {
+      UValue* v = new UValue(i);
+      if (!i)
+	ret->liststart = v;
+      else
+	current->next = v;
+      current = v;
+    }
+    delete e1;
+    return ret;
+  }
+
   if (*variablename->id == "isdef")
   {
     UValue* ret = new UValue();
