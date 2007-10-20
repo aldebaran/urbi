@@ -1,3 +1,8 @@
+2007-10-20  Akim Demaille  <akim.demaille@free.fr>
+
+	We fail no 1.x tests.
+	* tests-local.mk: Update.
+
 2007-10-19  Akim Demaille  <akim.demaille@free.fr>
 
 	static is also on rvalues.
