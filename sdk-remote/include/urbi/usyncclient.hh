@@ -82,6 +82,11 @@ namespace urbi
     /// Overriding UAbstractclient implementation
     virtual void notifyCallbacks(const UMessage &msg);
 
+    /// Check message queue for pending messages, notify callbacks synchronously
+    void processEvents();
+    
+    /// Stop callback thread, in case you want to use your own.
+    void stopCallbackThread();
     void callbackThread();
 
   private:
@@ -91,6 +96,8 @@ namespace urbi
     UMessage* msg;
     libport::Semaphore syncLock_;
     std::string syncTag;
+    
+    bool stopCallbackThread_;
   };
 
 } // namespace urbi

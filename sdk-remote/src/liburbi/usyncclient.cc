@@ -31,7 +31,8 @@ namespace urbi
       queueLock_(),
       msg(0),
       syncLock_(),
-      syncTag ("")
+      syncTag (""),
+      stopCallbackThread_(false)
   {
     libport::startThread(this, &USyncClient::callbackThread);
     if (!defaultClient)
@@ -43,6 +44,8 @@ namespace urbi
     while (true)
     {
       sem_--;
+      if (stopCallbackThread_)
+	return;
       queueLock_.lock();
       if (queue.empty())
       {
@@ -57,7 +60,29 @@ namespace urbi
       delete m;
     }
   }
+  void USyncClient::stopCallbackThread()
+  {
+    stopCallbackThread_ = true;
+  }
+  void USyncClient::processEvents()
+  {
+    while (true) 
+    {
+      queueLock_.lock();
+      if (queue.empty())
+      {
+	queueLock_.unlock();
+	return;
+      }
+      UMessage *m = queue.front();
+      queue.pop_front();
+      queueLock_.unlock();
+      UAbstractClient::notifyCallbacks(*m);
+      delete m;
+    }
 
+  }
+  
   void USyncClient::notifyCallbacks(const UMessage &msg)
   {
     queueLock_.lock();
