@@ -1,3 +1,9 @@
+2007-10-20  Akim Demaille  <akim.demaille@free.fr>
+
+	Fix English.
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template: Fix a
+	comment and indentation.
+
 2007-10-19  Matthieu Nottale  <nottale@gostai.com>
 
 	Add an option on uobject remote command line: exit on disconnect.
