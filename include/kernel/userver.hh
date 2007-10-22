@@ -144,6 +144,28 @@ public:
 
   virtual ufloat    getTime         () = 0;
   virtual ufloat    getPower        () = 0;
+
+  //! Overload this function to return a specific header for your URBI server
+  /*! Used to give some information specific to your server in the standardized
+   header which is displayed on the server output at start and in the
+   connection when a new connection is created.\n
+   Typical custom header should be like:
+
+   *** URBI version xx.xx for \<robotname\> robot\\n\n
+   *** (c) Copyright \<year\> \<name\>\\n
+
+   The function should return in header the line corresponding to 'line'
+   or an empty string (not NULL!) when there is no line any more.
+   Each line is supposed to end with a carriage return \\n and each line should
+   start with three empty spaces. This complicated method is necessary to allow
+   the connection to stamp every line with the standard URBI prefix [time:tag].
+
+   \param line is the requested line number
+   \param header the custom header
+   \param maxlength the maximum length allowed for the header (the parameter
+   has been malloc'ed for that size). Typical size is 1024 octets and
+   should be enough for any reasonable header.
+   */
   virtual void      getCustomHeader (int line, char* header,
 				     int maxlength) = 0;
 
@@ -171,7 +193,17 @@ public:
   virtual UErrorValue saveFile (const char *filename,
 				const char * content) = 0;
 
-  void              memoryCheck     ();
+  //! Check if there is enough free memory to run
+  /*! Every time there is a new, a malloc, a delete or free or a strdup in the
+   server, the global variable "usedMemory" is updated. The "memoryCheck"
+   function checks that the currently used memory is less than the maximum
+   availableMemory declared at the the server initialization.
+   If it is more than the maximum, an memoryOverflow is raised and the
+   server enter isolation mode.
+
+   \sa isIsolated()
+   */
+ void              memoryCheck     ();
 
   //! Evaluate how much memory is available for a malloc
   /*! This function tries to evaluate how much memory is available for a malloc,

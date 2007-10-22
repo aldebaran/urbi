@@ -1,5 +1,11 @@
 2007-10-22  Akim Demaille  <akim.demaille@free.fr>
 
+	Move doxumentation.
+	* src/userver.cc: from here.
+	* include/kernel/userver.hh: to there.
+
+2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+
 	package_info can be static.
 	* include/kernel/userver.hh, src/package-info.cc
 	(UServer::package_info): Make it static.
