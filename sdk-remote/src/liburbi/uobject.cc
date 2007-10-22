@@ -504,7 +504,7 @@ namespace urbi
   void
   version ()
   {
-    std::cout << "FIXME:\n";    
+    std::cout << "FIXME:\n";
   }
 
   void
@@ -517,7 +517,7 @@ namespace urbi
       exit (1);
     }
 
-    const char* addr;
+    const char* addr = 0;
     bool exitOnDisconnect = false;
     int port = UAbstractClient::URBI_PORT;
     int buflen = UAbstractClient::URBI_BUFLEN;
