@@ -504,7 +504,10 @@ namespace urbi
   void
   version ()
   {
-    std::cout << "FIXME:\n";
+    std::cout
+      << urbi::liburbi_package_info().string
+      << " rev " << urbi::liburbi_package_info().revision
+      << std::endl;
   }
 
   void

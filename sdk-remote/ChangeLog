@@ -1,3 +1,14 @@
+2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+
+	Use PackageInfo.
+	* Makefile.am (SVN_EXTERNALS): Add libport.
+	* src/Makefile.am: Create version.hh.
+	* flags.mk: Find it.
+	* src/liburbi/uobject/urbi/uobject.hh (liburbi_package_info): New.
+	* src/liburbi/uobject.cc (version): Use it.
+	* src/liburbi/package-info.cc: New.
+	* src/liburbi/Makefile.am: Compile it.
+
 2007-10-22  Akim Demaille  <demaille@gostai.com>
 
 	<< UVar.

@@ -23,6 +23,7 @@
 
 # include <string>
 
+# include "libport/package-info.hh"
 # include "libport/ufloat.h"
 
 # include "urbi/fwd.hh"
@@ -104,6 +105,10 @@
 
 namespace urbi
 {
+
+  /// Package information about liburbi.
+  const libport::PackageInfo& liburbi_package_info ();
+
 
   typedef int UReturn;
 

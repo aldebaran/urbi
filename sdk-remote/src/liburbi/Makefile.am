@@ -21,6 +21,7 @@ urbiinclude_HEADERS = $(uobject_headers)
 lib_LTLIBRARIES = liburbi.la
 
 liburbi_la_SOURCES =				\
+package-info.cc					\
 $(uobject_sources)				\
 uabstractclient.cc				\
 uclient.cc					\
