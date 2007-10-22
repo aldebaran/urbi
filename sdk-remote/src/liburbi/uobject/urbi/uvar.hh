@@ -15,6 +15,7 @@
 #ifndef URBI_UVAR_HH
 # define URBI_UVAR_HH
 
+# include <iosfwd>
 # include <string>
 
 # include <libport/ufloat.hh>
@@ -25,6 +26,10 @@
     vartype varname;				\
   public:					\
     vartype get_ ##  varname ()			\
+    {						\
+      return varname;				\
+    }						\
+    const vartype get_ ##  varname () const	\
     {						\
       return varname;				\
     }						\
@@ -41,7 +46,6 @@ namespace urbi
   class UProp
   {
   public:
-
     void operator =(const UValue &v);
     void operator =(const ufloat v);
     void operator =(const std::string & v);
@@ -51,7 +55,7 @@ namespace urbi
     operator UValue();
 
     UProp(UVar &owner, UProperty name)
-      :owner(owner), name(name)
+      : owner(owner), name(name)
     {}
 
   private:
@@ -65,36 +69,16 @@ namespace urbi
 
 
 
-  //Helper macro to initialize UProps in UVar constructors
-#   define VAR_PROP_INIT			\
-  rangemin(*this, PROP_RANGEMIN),		\
-  rangemax(*this, PROP_RANGEMAX),		\
-  speedmin(*this, PROP_SPEEDMIN),		\
-  speedmax(*this, PROP_SPEEDMAX),		\
-  delta(*this, PROP_DELTA),			\
-  blend(*this, PROP_BLEND)
-
-
   /** UVar class definition
-      Each UVar instance corresponds to one URBI variable. The class provides access to
-      the variable properties, and reading/writting the value to/from all known types.
-  */
+
+     Each UVar instance corresponds to one URBI variable. The class
+     provides access to the variable properties, and reading/writting
+     the value to/from all known types.  */
   class UVar
   {
   public:
-    UVar()
-      : owned (false),
-	VAR_PROP_INIT,
-	vardata (0), name ("noname")
-    {}
-    UVar(UVar&)
-      : owned (false),
-	VAR_PROP_INIT,
-	vardata (0), name ("")
-    {
-      /// FIXME: This is really weird: a copy-ctor that does not use
-      /// the lhs?
-    }
+    UVar();
+    UVar(UVar&);
     UVar(const std::string&);
     UVar(const std::string&, const std::string&);
     UVar(UObject&, const std::string&);
@@ -107,20 +91,31 @@ namespace urbi
     void reset (ufloat);
     void operator = (ufloat);
     void operator = (const std::string&);
-    void operator = (const UBinary &);  ///< deep copy
-    void operator = (const UImage &i);  ///< deep copy
-    void operator = (const USound &s);  ///< deep copy
+    /// Deep copy.
+    void operator = (const UBinary &);
+    /// Deep copy.
+    void operator = (const UImage &i);
+    /// Deep copy.
+    void operator = (const USound &s);
+
     void operator = (const UList &l);
+
     void operator = (const UValue &v);
+
     operator int ();
     operator bool ()  {return (int)(*this);}
-    operator UBinary ();   ///< deep copy
+
+    /// Deep copy.
+    operator UBinary ();
+
     /// Deep copy, binary will have to be deleted by the user.
     operator UBinary *();
+
     /// In plugin mode, gives direct access to the buffer, which may
     /// not be valid after the calling function returns. Changes to
     /// the other fields of the structure have no effect..
     operator UImage ();
+
     /// In plugin mode, gives direct access to the buffer, which may
     /// not be valid after the calling function returns. Changes to
     /// the other fields of the structure have no effect..
@@ -133,14 +128,14 @@ namespace urbi
     /// once asynchronously..
     void requestValue();
 
-    //kernel operators
+    /// Kernel operators.
     ufloat& in();
     ufloat& out();
 
-    bool owned; //< is the variable owned by the module?
+    /// Is the variable owned by the module?
+    bool owned;
 
-    //Property accessors
-
+    /// Property accessors.
     UProp rangemin;
     UProp rangemax;
     UProp speedmin;
@@ -182,6 +177,37 @@ namespace urbi
     bool invariant () const;
   };
 
+  /*-------------------------.
+  | Inline implementations.  |
+  `-------------------------*/
+
+  /// Helper macro to initialize UProps in UVar constructors.
+#   define VAR_PROP_INIT			\
+  rangemin(*this, PROP_RANGEMIN),		\
+  rangemax(*this, PROP_RANGEMAX),		\
+  speedmin(*this, PROP_SPEEDMIN),		\
+  speedmax(*this, PROP_SPEEDMAX),		\
+  delta(*this, PROP_DELTA),			\
+  blend(*this, PROP_BLEND)
+
+
+  inline
+  UVar::UVar()
+    : owned (false),
+      VAR_PROP_INIT,
+      vardata (0), name ("noname")
+  {}
+
+  inline
+  UVar::UVar(UVar&)
+    : owned (false),
+      VAR_PROP_INIT,
+      vardata (0), name ("")
+  {
+    /// FIXME: This is really weird: a copy-ctor that does not use
+    /// the lhs?
+  }
+
   inline void UProp::operator =(const UValue& v)  {owner.setProp(name, v);}
   inline void UProp::operator =(const ufloat v)  {owner.setProp(name, v);}
   inline void UProp::operator =(const std::string& v){owner.setProp(name, v);}
@@ -190,6 +216,9 @@ namespace urbi
   inline UProp::operator UValue()  {return owner.getProp(name);}
 
 } // end namespace urbi
+
+/// Report \a u on \a o for debugging.
+std::ostream& operator<< (std::ostream& o, const urbi::UVar& u);
 
 # undef PRIVATE
 

@@ -1,3 +1,12 @@
+2007-10-22  Akim Demaille  <demaille@gostai.com>
+
+	<< UVar.
+	* src/liburbi/uobject/urbi/uvar.hh,
+	* src/liburbi/uobject/uvar-common.cc (operator<< (UVar)): New.
+	PRIVATE: No kidding...  This "private" stuff does not provide
+	a readonly accessor...  Great job.
+	Move some bits to put implementation out of declarations.
+
 2007-10-22  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add missing initialization.

@@ -71,3 +71,9 @@ namespace urbi
   }
 
 } // namespace urbi
+
+std::ostream&
+operator<< (std::ostream& o, const urbi::UVar& u)
+{
+  return o << "UVar (\"" << u.get_name() << "\" = " << u.get_value() << ')';
+}
