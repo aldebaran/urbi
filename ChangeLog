@@ -1,3 +1,9 @@
+2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+
+	package_info can be static.
+	* include/kernel/userver.hh, src/package-info.cc
+	(UServer::package_info): Make it static.
+
 2007-10-22  Akim Demaille  <demaille@gostai.com>
 
 	Use libport's package_info.

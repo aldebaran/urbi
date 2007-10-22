@@ -109,7 +109,7 @@ public:
 
 
   /// Package information about this server.
-  const libport::PackageInfo& package_info () const;
+  static const libport::PackageInfo& package_info ();
 
   void error (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));

@@ -2,7 +2,7 @@
 #include "libport/package-info.hcc"
 
 const libport::PackageInfo&
-UServer::package_info () const
+UServer::package_info ()
 {
   static libport::PackageInfo pi;
   return pi;
