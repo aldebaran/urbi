@@ -1,3 +1,15 @@
+2007-10-22  Akim Demaille  <demaille@gostai.com>
+
+	PackageInfo.
+	* include/kernel/userver.hh, src/userver.cc (package_rev)
+	(package_rev): Remove since the names are ugly as they can be,
+	and it's not the interface we want anyway (gosh, *please*, use
+	accessors, not attributes!).
+	If needed, we will provide the server with a means to return
+	its package info.  This is going to end into libport...
+	* src/package-info.hh, src/package-info.cc: New.
+	* src/Makefile.am: Adjust.
+
 2007-10-20  Akim Demaille  <akim.demaille@free.fr>
 
 	We fail no 1.x tests.

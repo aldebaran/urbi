@@ -47,7 +47,7 @@
 #include "kernel/uvariable.hh"
 
 #include "config.h"
-#include "version.hh"
+#include "package-info.hh"
 #include "ubanner.hh"
 #include "ucommand.hh"
 #include "ucommandqueue.hh"
@@ -60,9 +60,6 @@
 
 // Global server reference
 UServer *urbiserver= 0;
-
-const std::string UServer::package_ver = PACKAGE_VERSION;
-const std::string UServer::package_rev = PACKAGE_REVISION;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 
