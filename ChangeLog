@@ -1,5 +1,13 @@
 2007-10-22  Akim Demaille  <akim.demaille@free.fr>
 
+	.
+	* configure.ac: Fix package full name.
+	* src/package-info.cc: Rename as...
+	* src/userver-package-info.cc: this.
+	* src/Makefile.am: Adjust.
+
+2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+
 	Move doxumentation.
 	* src/userver.cc: from here.
 	* include/kernel/userver.hh: to there.
