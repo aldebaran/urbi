@@ -480,40 +480,82 @@ namespace urbi
     exit(1);
     return URBI_CONTINUE; //stupid gcc
   }
-  
+
+  static
+  void
+  usage (const char* name)
+  {
+    std::cout << ""
+      "usage:\n" <<
+      name << " ADDR [OPTIONS...] [PORT [LEN]]\n"
+      "\n"
+      "   ADDR   Urbi server IP (e.g., \"localhost\")\n"
+      "   PORT   Port to listen to (defaults to 54000)\n"
+      "   LEN    Size of the input buffer\n"
+      "\n"
+      "Options:\n"
+      "  -h, --help      display this message and exit\n"
+      "  -v, --version   print version information and exit\n"
+      "  -d              exit program if disconnected\n";
+    exit(0);
+  }
+
+  static
+  void
+  version ()
+  {
+    std::cout << "FIXME:\n";    
+  }
+
   void
   main(int argc, char* argv[])
   {
-    
-    bool exitOnDisconnect = false;
     // Retrieving command line arguments
     if (argc<2)
     {
-      std::cout << "usage:\n"
-		<< argv[0] << " <URBI Server IP> [-d] [port [buffer length]]\n"
-		<< "  -d:  exit program if disconnected"
-		<< std::endl;
-      exit(0);
+      std::cerr << "invalid number of arguments" << std::endl;
+      exit (1);
     }
 
-    //serverIP = argv[1];
-    std::cout << "Running Remote Component '" << argv[0]
-	      << "' on " << argv[1] << std::endl;
-    //we need a usyncclient connect(argv[1]);
+    const char* addr;
+    bool exitOnDisconnect = false;
     int port = UAbstractClient::URBI_PORT;
     int buflen = UAbstractClient::URBI_BUFLEN;
-    int argp = 2;
-    if (argc > argp && argv[argp][0]=='-') 
-    {
-      exitOnDisconnect = true;
-      argp++;
-    }
-    if (argc>argp)
-      port = strtol(argv[argp++],0,0);
-    if (argc>argp)
-      buflen = strtol(argv[argp++],0,0);
-    new USyncClient(argv[1],port, buflen);
 
+    // The number of the next (non-option) argument.
+    int argp = 1;
+    for (int i = 1; i < argc; ++i)
+    {
+      std::string arg = argv[i];
+      if (arg == "-h" || arg == "--help")
+	usage (argv[0]);
+      else if (arg == "-v" || arg == "--version")
+	version ();
+      else if (arg == "-d")
+	exitOnDisconnect = true;
+      else
+	// A genuine argument.
+	switch (argp++)
+	{
+	  case 1:
+	    addr = argv[i];
+	    break;
+	  case 2:
+	    port = strtol(argv[i], 0, 0);
+	    break;
+	  case 3:
+	    buflen = strtol(argv[i], 0, 0);
+	    break;
+	  default:
+	    std::cerr << "unexpected argument: " << arg << std::endl;
+	    exit (2);
+	}
+    }
+
+    std::cout << "Running Remote Component '" << argv[0]
+	      << "' on " << addr << std::endl;
+
+    new USyncClient(addr, port, buflen);
 
 #ifdef LIBURBIDEBUG
     getDefaultClient()->setWildcardCallback( callback (&debug));
@@ -523,7 +565,7 @@ namespace urbi
 
     getDefaultClient()->setCallback(&dispatcher,
 				    externalModuleTag.c_str());
-    if (exitOnDisconnect) 
+    if (exitOnDisconnect)
     {
       if (getDefaultClient()->error())
       {
@@ -532,7 +574,7 @@ namespace urbi
       }
       getDefaultClient()->setClientErrorCallback( callback (&endProgram));
     }
-    
+
     dummyUObject = new UObject (0);
     for (UStartlist::iterator retr = objectlist->begin();
 	 retr != objectlist->end();

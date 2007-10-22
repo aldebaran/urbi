@@ -219,7 +219,7 @@ namespace urbi
 #ifdef WIN32
 	  res = WSAGetLastError();
 #endif
-          clientError("select error", res);
+	  clientError("select error", res);
 	  std::cerr << "select error "<<res<<std::endl;
 	  //TODO when error will be implemented, send an error msg
 	  //TODO maybe try to reconnect?

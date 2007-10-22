@@ -1,3 +1,10 @@
+2007-10-22  Akim Demaille  <demaille@gostai.com>
+
+	Improve cmd line interface.
+	* src/liburbi/uobject.cc (version, usage): New.
+	(main): Use them.
+	Use a more rational interface.
+
 2007-10-20  Matthieu Nottale  <nottale@gostai.com>
 
 	USyncClient::processEvents().
