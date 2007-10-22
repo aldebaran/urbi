@@ -1,5 +1,12 @@
 2007-10-22  Akim Demaille  <demaille@gostai.com>
 
+	Use libport's package_info.
+	* include/kernel/userver.hh (package_info): New member function.
+	* src/package-info.cc: Implement this function.
+	* src/userver.cc: No longer include package-info.hh.
+
+2007-10-22  Akim Demaille  <demaille@gostai.com>
+
 	PackageInfo.
 	* include/kernel/userver.hh, src/userver.cc (package_rev)
 	(package_rev): Remove since the names are ugly as they can be,

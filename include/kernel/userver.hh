@@ -32,6 +32,7 @@
 
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
+# include "libport/package-info.hh"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
@@ -105,6 +106,10 @@ public:
 
   /// Set the system.args list in URBI.
   void main (int argc, const char* argv[]);
+
+
+  /// Package information about this server.
+  const libport::PackageInfo& package_info () const;
 
   void error (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));

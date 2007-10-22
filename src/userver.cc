@@ -47,7 +47,6 @@
 #include "kernel/uvariable.hh"
 
 #include "config.h"
-#include "package-info.hh"
 #include "ubanner.hh"
 #include "ucommand.hh"
 #include "ucommandqueue.hh"
