@@ -1,3 +1,9 @@
+2007-10-23  mefyl  <mefyl@lrde.epita.fr>
+
+	Document an impossible change in the grammar.
+	* src/parser/bison/ugrammar.y: Explain why "loop"
+        can't be changed to "for".
+
 2007-10-23  Akim Demaille  <demaille@gostai.com>
 
 	Work again with src=build.
@@ -320,12 +326,12 @@
 	* src/parser/bison/utoken.l,
 	* src/ucommand.cc,
 	* src/uvariablename.cc: Here.
-	
+
 	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 	Fix operators precedence. Add '<<' and '>>'.
 	* src/parser/bison/ugrammar.y,
 	* src/parser/bison/utoken.l: Here.
-	
+
 	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 	Warn on alias declarations and uses.
 	* src/ucommand.cc: Warn on declaration.
@@ -336,7 +342,7 @@
 	merge -r 1604:1620 with 1.0.
 	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
 	Fix previous commit: use 'eval' instead of 'exec'.
-	
+
 	2007-10-01  Guillaume Deslandes  <deslandes@gostai.com>
 	Fix timeout stoping background commands
 	* src/ucommand.cc: Here.
