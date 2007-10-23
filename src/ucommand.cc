@@ -2940,6 +2940,8 @@ UCommand::Status
 UCommand_ALIAS::execute_(UConnection *connection)
 {
   //alias setting
+  send_error(connection, this,
+             "Defining aliases is deprecated.");
   if (aliasname && id)
   {
     UString *id0 = aliasname->buildFullname(this, connection, false);
