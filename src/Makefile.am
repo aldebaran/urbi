@@ -23,8 +23,9 @@ AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 
 # Add boost libraries.
 AM_CXXFLAGS += $(BOOST_CPPFLAGS)
-AM_LDFLAGS  += $(BOOST_LDFLAGS) $(BOOST_THREAD_LIB)
-
+AM_LDFLAGS  += $(BOOST_LDFLAGS)
+# There is no AM_LIBADD.
+LIBS        += $(BOOST_THREAD_LIB)
 
 ## ----------- ##
 ## libkernel.  ##
