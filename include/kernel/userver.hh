@@ -30,9 +30,9 @@
 #  include <boost/thread.hpp>
 # endif
 
+# include "libport/fwd.hh"
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
-# include "libport/package-info.hh"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"

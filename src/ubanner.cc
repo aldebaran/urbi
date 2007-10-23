@@ -29,3 +29,9 @@ const char* HEADER_AFTER_CUSTOM[] =
     "*** **********************************************************\n",
     0
   };
+
+const char* uconsole_banner[] =
+{
+  "***      URBI Console " PACKAGE_VERSION_REV "\n",
+  "***      (C) 2006 Gostai SAS\n"
+};

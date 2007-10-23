@@ -2,7 +2,6 @@
 #include "libport/compiler.hh"
 
 #include "config.h"
-#include "version.hh"
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -14,6 +13,8 @@
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
+
+#include "banner.hh"
 
 class ConsoleServer
   : public UServer
@@ -54,14 +55,8 @@ public:
   //! Called to display the header at each coonection start
   virtual void getCustomHeader(int line, char* header, int maxlength)
   {
-    const char* banner[] =
-      {
-	"***      URBI Console " PACKAGE_VERSION_REV "\n",
-	"***      (C) 2006 Gostai SAS\n"
-      };
-
-    if ((size_t) line < sizeof banner / sizeof banner[0])
-      strncpy(header, banner[line], maxlength);
+    if ((size_t) line < sizeof uconsole_banner / sizeof uconsole_banner[0])
+      strncpy(uconsole_banner, uconsole_banner[line], maxlength);
     else
       header[0] = 0;
   }
