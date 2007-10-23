@@ -505,9 +505,7 @@ namespace urbi
   version ()
   {
     std::cout
-      << urbi::liburbi_package_info().string
-      << " rev " << urbi::liburbi_package_info().revision
-      << std::endl;
+      << urbi::liburbi_package_info().name_version_revision() << std::endl;
   }
 
   void

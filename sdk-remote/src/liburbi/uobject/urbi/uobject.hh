@@ -109,11 +109,10 @@ namespace urbi
   /// Package information about liburbi.
   const libport::PackageInfo& liburbi_package_info ();
 
-
   typedef int UReturn;
 
   // For remote mode.
-  extern void main(int argc, char *argv[]);
+  void main(int argc, char *argv[]);
 
   /// an empty dummy UObject used by UVar to set a NotifyChange
   /// This avoid coupling a UVar to a particular object
@@ -131,8 +130,10 @@ namespace urbi
   /// Send URBI code (ghost connection in plugin mode, default
   /// connection in remote mode).
   void uobject_unarmorAndSend(const char* str);
+
   /// Send the string to the connection hosting the UObject.
   void send(const char* str);
+
   /// Send buf to the connection hosting the UObject.
   void send(void* buf, int size);
 
