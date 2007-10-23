@@ -14,7 +14,7 @@
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
 
-#include "banner.hh"
+#include "ubanner.hh"
 
 class ConsoleServer
   : public UServer
@@ -55,10 +55,8 @@ public:
   //! Called to display the header at each coonection start
   virtual void getCustomHeader(int line, char* header, int maxlength)
   {
-    if ((size_t) line < sizeof uconsole_banner / sizeof uconsole_banner[0])
-      strncpy(uconsole_banner, uconsole_banner[line], maxlength);
-    else
-      header[0] = 0;
+    // FIXME: This interface is really really ridiculous and fragile.
+    strncpy(header, uconsole_banner[line], maxlength);
   }
 
   virtual
