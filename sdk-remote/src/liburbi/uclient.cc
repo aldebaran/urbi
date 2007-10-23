@@ -245,7 +245,7 @@ namespace urbi
 	perror ("recv failed");
 	clientError("recv failed, errno =", count);
 	rc = -1;
-	return;	
+	return;
       }
       else if (!count)
       {
