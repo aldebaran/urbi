@@ -882,10 +882,10 @@ instruction:
       memcheck(up, $$, $1, $6, $8);
     }
 
-  | "wait" expr {
+  | "wait" "(" expr ")" {
 
-    $$ = new UCommand_WAIT(@$, $2);
-      memcheck(up, $$, $2);
+      $$ = new UCommand_WAIT(@$, $3);
+      memcheck(up, $$, $3);
     }
 
   | "emit" name {

@@ -1,5 +1,10 @@
 2007-10-23  Akim Demaille  <demaille@gostai.com>
 
+	Let wait have a function-like syntax.
+	* src/parser/bison/ugrammar.y ("wait"): Take its arg in parens.
+
+2007-10-23  Akim Demaille  <demaille@gostai.com>
+
 	We no longer use pthreads but Boost.Threads.
 	* src/Makefile.am: So don't use the compiler flags.
 
