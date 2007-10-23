@@ -1,3 +1,8 @@
+2007-10-23  Akim Demaille  <demaille@gostai.com>
+
+	Update libport.
+	* src/userver-package-info.cc: Catch up calling convention changes.
+
 2007-10-23  mefyl  <mefyl@lrde.epita.fr>
 
 	Document an impossible change in the grammar.
