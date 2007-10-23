@@ -1,3 +1,10 @@
+2007-10-23  mefyl  <mefyl@lrde.epita.fr>
+
+	Factorize code.
+	* src/liburbi/uobject/urbi/uvalue.hh,
+	* src/liburbi/uobject/uvalue-common.cc: Factorize cleanup code
+        from UList::~UList and UList::operator= in the UList::clean method.
+
 2007-10-23  Akim Demaille  <demaille@gostai.com>
 
 	Useless cast remove.

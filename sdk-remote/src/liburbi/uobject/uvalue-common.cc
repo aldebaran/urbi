@@ -815,12 +815,7 @@ namespace
   {
     if (this == &b)
       return *this;
-
-    offset = 0;
-    for (int i = 0; i < size(); ++i) //relax, its a vector
-      delete array[i];
-    array.clear();
-
+    clear();
     for (std::vector<UValue*>::const_iterator it = b.array.begin();
 	 it !=b.array.end();
 	 ++it)
@@ -832,12 +827,16 @@ namespace
 
   UList::~UList()
   {
+    clear();
+  }
+
+  void UList::clear()
+  {
     offset = 0;
     for (int i = 0; i < size(); ++i) //relax, its a vector
       delete array[i];
     array.clear();
   }
-
 
   /*----------------.
   | UObjectStruct.  |
