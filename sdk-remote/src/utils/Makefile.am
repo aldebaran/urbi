@@ -1,5 +1,7 @@
 include $(top_srcdir)/flags.mk
 
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+
 bin_PROGRAMS = urbicycle urbireverse urbiwalk urbiscale
 
 urbicycle_SOURCES = parse-header.hh urbicycle.cc

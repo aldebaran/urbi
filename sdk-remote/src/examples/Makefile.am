@@ -1,5 +1,7 @@
 include $(top_srcdir)/flags.mk
 
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+
 AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
            $(top_builddir)/jpeg-6b/libjpeg.la		\
            $(PTHREAD_LIBS)

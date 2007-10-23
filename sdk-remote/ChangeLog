@@ -1,5 +1,11 @@
 2007-10-23  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Use more BOOST_CPPFLAGS.
+	* src/examples/Makefile.am,
+	* src/utils/Makefile.am (AM_CPPFLAGS): New.  Add BOOST_CPPFLAGS.
+
+2007-10-23  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Use BOOST_CPPFLAGS.
 	* src/liburbi/Makefile.am (AM_CPPFLAGS): New.  Add BOOST_CPPFLAGS.
 
