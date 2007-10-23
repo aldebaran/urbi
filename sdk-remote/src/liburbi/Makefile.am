@@ -1,5 +1,7 @@
 include $(top_srcdir)/flags.mk
 
+AM_CPPFLAGS += $(BOOST_CPPFLAGS)
+
 SUBDIRS =
 if BINDINGS
  SUBDIRS += swig
