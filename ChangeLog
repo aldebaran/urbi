@@ -1,3 +1,9 @@
+2007-10-23  Akim Demaille  <demaille@gostai.com>
+
+	Work again with src=build.
+	* src/userver-package-info.cc: Help it to find src/config.h, not
+	libport/config.h.
+
 2007-10-23  mefyl  <mefyl@lrde.epita.fr>
 
 	Add warnings on alias definition and use.
