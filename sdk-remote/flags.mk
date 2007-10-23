@@ -13,3 +13,4 @@ AM_CPPFLAGS += -I$(top_builddir)/src
 
 AM_CXXFLAGS += $(PTHREAD_CFLAGS) $(WARNING_CXXFLAGS)
 LIBADD       = $(top_builddir)/jpeg-6b/libjpeg.la $(PTHREAD_LIBS)
+LIBADD      += $(top_builddir)/libport/libport.la
