@@ -23,7 +23,6 @@
 #include <list>
 
 #include "urbi/uobject.hh"
-
 #include "urbi/usyncclient.hh"
 #include "urbi/uexternal.hh"
 
@@ -57,90 +56,6 @@ namespace urbi
     std::ostream& s = getDefaultClient() == 0 ? std::cerr
       : ((UAbstractClient*)getDefaultClient())->getStream();
     s.rdbuf()->sputn(static_cast<char*> (buf), size);
-  }
-
-
-  // **************************************************************************
-  //! UGenericCallback constructor.
-  UGenericCallback::UGenericCallback(const std::string& objname,
-				     const std::string& type,
-				     const std::string& name,
-				     int size,  UTable& t, bool)
-    : objname (objname), name (name)
-  {
-    nbparam = size;
-
-    if (type == "function" || type== "event" || type == "eventend")
-    {
-      std::ostringstream oss;
-      oss << size;
-      this->name = this->name + "__" + oss.str();
-    }
-    t[this->name].push_back(this);
-
-    std::cout << "Registering " << type << " " << name << " " << size
-	      << " into " << this->name
-	      << " from " << objname
-	      << std::endl;
-
-    if (type == "var")
-      URBI(()) << "external " << type << " "
-	       << name << " from " << objname << ";";
-
-    if (type == "event" || type == "function")
-      URBI(()) << "external " << type << "(" << size << ") "
-	       << name << " from " << objname << ";";
-
-    if (type == "varaccess")
-      echo("Warning: NotifyAccess facility is not available for modules in "
-	   "remote mode.\n");
-  };
-
-  //! UGenericCallback constructor.
-  UGenericCallback::UGenericCallback(const std::string& objname,
-				     const std::string& type,
-				     const std::string& name, UTable& t)
-    : objname(objname), name(name)
-  {
-    t[this->name].push_back(this);
-    URBI(()) << "external " << type << " " << name << ";";
-  };
-
-  UGenericCallback::~UGenericCallback()
-  {
-  };
-
-
-  // **************************************************************************
-  //! UTimerCallbacl constructor.
-
-  UTimerCallback::UTimerCallback(const std::string& objname,
-				 ufloat period, UTimerTable& tt)
-    : period(period),
-      objname(objname)
-  {
-    tt.push_back(this);
-    lastTimeCalled = -9999999;
-    std::ostringstream os;
-    os << "timer"<< tt.size();
-    //register oursselves as an event
-    std::string cbname = os.str();
-
-    createUCallback(objname, "event", this, &UTimerCallback::call,
-		    objname + "." + cbname, eventmap, false);
-    //new UCallbackvoid0<UTimerCallback> (objname, "event", this,
-    //				&UTimerCallback::call,
-    //				objname + '.' + cbname, eventmap);
-
-    os.str("");
-    os.clear();
-    os << "timer_" << objname << ": every(" << period << ") { emit "
-       << (objname + '.' + cbname) << ";};";
-    URBI(()) << os.str();
-  }
-
-  UTimerCallback::~UTimerCallback()
-  {
   }
 
   // **************************************************************************

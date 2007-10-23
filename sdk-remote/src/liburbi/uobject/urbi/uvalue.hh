@@ -15,6 +15,9 @@
 #ifndef URBI_UVALUE_HH
 # define URBI_UVALUE_HH
 
+# include "libport/ufloat.h"
+
+# include "urbi/fwd.hh"
 # include "urbi/ubinary.hh"
 
 namespace urbi
@@ -67,7 +70,7 @@ namespace urbi
   {
   public:
     UNamedValue(const std::string& n, UValue* v)
-      : val(v),name(n)
+      : val(v), name(n)
     {}
     UNamedValue()
       : val(0),name()
@@ -159,10 +162,19 @@ namespace urbi
     operator long() const {return (int)(ufloat)(*this);}
     operator unsigned long() const {return (unsigned int)(ufloat)(*this);}
     operator bool() const {return (bool)(int)(ufloat)(*this);}
-    operator UBinary() const; ///< deep copy
-    operator UList() const; ///< deep copy
-    operator UImage() const; ///< ptr copy
-    operator USound() const; ///< ptr copy
+
+    /// Deep copy.
+    operator UBinary() const;
+
+    /// Deep copy.
+    operator UList() const;
+
+    /// Shallow copy.
+    operator UImage() const;
+
+    /// Shallow copy.
+    operator USound() const;
+
     UValue& operator=(const UValue&);
 
 
@@ -193,6 +205,6 @@ namespace urbi
   }
 
 
-} // end namespace urbi
+} // namespace urbi
 
 #endif // ! URBI_UVALUE_HH

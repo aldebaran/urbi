@@ -220,7 +220,7 @@ namespace urbi
 		 R (OBJ::*fun) (%%%,% P% %%),
 	       const std::string& funname, UTable &t, bool owned)
       : UGenericCallback(objname, type, funname, %N%, t, owned),
-        obj(obj), fun(fun)
+	obj(obj), fun(fun)
     {
     }
 
@@ -249,7 +249,7 @@ namespace urbi
 		     void (OBJ::*fun) (%%%,% P% %%),
 		   const std::string& funname, UTable &t, bool owned)
       : UGenericCallback(objname, type, funname,%N%, t, owned),
-        obj(obj), fun(fun)
+	obj(obj), fun(fun)
     {
     }
 
@@ -406,7 +406,7 @@ namespace urbi
 		  void (OBJ::*fun) (%%%,% P% %%),
 		  void (OBJ::*end)(), const std::string& funname, UTable &t)
   {
-    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname, 
+    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,
 						    type,obj,fun,end,funname,t);
   }
 

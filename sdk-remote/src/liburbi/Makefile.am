@@ -24,6 +24,7 @@ liburbi_la_SOURCES =				\
 package-info.cc					\
 $(uobject_sources)				\
 uabstractclient.cc				\
+ucallbacks.cc					\
 uclient.cc					\
 uconversion.cc					\
 uobject.cc					\
