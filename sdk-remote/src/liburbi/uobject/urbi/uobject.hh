@@ -88,7 +88,7 @@
   do {								\
     objecthub = ::urbi::getUObjectHub(#hub);			\
     if (objecthub)						\
-      objecthub->addMember(dynamic_cast<UObject*>(this));	\
+      objecthub->addMember(this);				\
     else							\
       ::urbi::echo("Error: hub name '%s' is unknown\n", #hub);	\
   } while (0)
@@ -338,7 +338,3 @@ namespace urbi
 # include "urbi/ustarter.hh"
 
 #endif // ! URBI_UOBJECT_HH
-
-/// Local Variables:
-/// mode: c++
-/// End:
