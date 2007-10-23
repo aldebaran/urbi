@@ -1,3 +1,9 @@
+2007-10-23  Akim Demaille  <demaille@gostai.com>
+
+	Better recv failure messages.
+	* src/liburbi/uclient.cc: recv returning 0 and <0 are
+	two different cases.
+
 2007-10-23  mefyl  <mefyl@lrde.epita.fr>
 
 	Factorize code.

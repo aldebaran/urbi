@@ -215,7 +215,7 @@ namespace urbi
 	res = select(maxfd+1, &rfds, NULL, &efds, &tme);
 	if (res < 0 && errno != EINTR)
 	{
-	  this->rc = -1;
+	  rc = -1;
 #ifdef WIN32
 	  res = WSAGetLastError();
 #endif
@@ -227,24 +227,31 @@ namespace urbi
 	}
 	if (res == -1)
 	{
-	  res=0;
+	  res = 0;
 	  continue;
 	}
 #ifndef WIN32
 	if (res != 0 && FD_ISSET(control_fd[0], &rfds))
 	  return;
 #endif
-      } while (res == 0);
+      } while (!res);
       int count = ::recv(sd,
 			 &recvBuffer[recvBufferPosition],
 			 buflen - recvBufferPosition - 1, 0);
-      if (count <= 0)
+      //TODO when error will be implemented, send an error msg
+      //TODO maybe try to reconnect?
+      if (count < 0)
       {
-	clientError("recv error", count);
+	perror ("recv failed");
+	clientError("recv failed, errno =", count);
 	rc = -1;
-	std::cerr << "error " << count << std::endl;
-	//TODO when error will be implemented, send an error msg
-	//TODO maybe try to reconnect?
+	return;	
+      }
+      else if (!count)
+      {
+	clientError("recv error: empty message", count);
+	std::cerr << "recv error: empty message: " << count << std::endl;
+	rc = -1;
 	return;
       }
 
