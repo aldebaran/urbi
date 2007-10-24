@@ -277,7 +277,7 @@ namespace urbi
 			  void (OBJ::*fun) (%%%,% P% %%),
 			  void (OBJ::*end)(),const std::string& funname,
 			  UTable &t)
-      : UGenericCallback(objname, type, funname,%N%, t),
+      : UGenericCallback(objname, type, funname,%N%, t, false),
 	obj(obj), fun(end)
     {
     }
