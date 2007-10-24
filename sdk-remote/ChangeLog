@@ -1,5 +1,11 @@
 2007-10-24  Matthieu Nottale  <nottale@gostai.com>
 
+	Doc fix.
+	* include/urbi/uabstractclient.hh,
+	* include/urbi/usyncclient.hh: Here and there.
+
+2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix error message when recv returns 0.
 	* src/liburbi/uclient.cc: recv()==0 means connection closed.
 

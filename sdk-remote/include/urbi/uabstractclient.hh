@@ -227,13 +227,13 @@ namespace urbi
     /// Associate a callback function with a tag. new style
     UCallbackID setCallback(UCallbackWrapper & callback, const char * tag);
 
-    /// Associate a callbaxk function with all error messages from the server
+    /// Associate a callback function with all error messages from the server
     UCallbackID setErrorCallback(UCallbackWrapper & callback);
 
     /// Associate a callback with all messages
     UCallbackID setWildcardCallback(UCallbackWrapper & callback);
     
-    /// Associate a callback with liburbi errors
+    /// Associate a callback with local connection errors
     UCallbackID setClientErrorCallback(UCallbackWrapper & callback);
     
     /// OLD-style callbacks

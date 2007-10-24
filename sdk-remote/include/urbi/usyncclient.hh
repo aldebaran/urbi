@@ -40,10 +40,14 @@ namespace urbi
       URBI_TRANSMIT_YCbCr
     };
 
-  /// UClient linux implementation with support for synchronous functions.
-  /*! These functions differs from the UClient interface in that they are
-    synchronous. One must seriously ponder the fact that they are not easily
-    portable before using them.
+  /// UClient linux implementation with support for synchronous extra functions.
+  /*! This class provides extra functions to synchronously request values. These
+  functions can safely be called frow within a callback function.
+    
+  All callback will be called in a separate thread created in the constructor.
+  If you want to call these callbacks in a different thread, call 
+  @stopCallbackThread, then regularly call @processEvents. Each call will call
+  callbacks for all pending messages in the current thread.
   */
   class USyncClient: public UClient
   {
