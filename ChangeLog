@@ -1,5 +1,11 @@
 2007-10-24  Matthieu Nottale  <nottale@gostai.com>
 
+	Fix notifychange when called from a C++ variable update.
+	* src/uvar.cc: Call methods in the correct order, otherwise
+	  callbacks are called with the old value.
+
+2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix display of value returned by a bound uobject method.
 	* src/ucommand.cc: Replace old display code that does not work
 	 anymore by new code (copy-pasted from below in the same function).

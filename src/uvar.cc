@@ -130,9 +130,10 @@ namespace urbi
       //write to target, blend mode override we're not in sync with cycles
       if (vardata->variable->autoUpdate)
       {
-	vardata->variable->selfSet(&n);
-	vardata->variable->setTarget();
-	vardata->variable->setSensorVal(vardata->variable->target);
+	//do it in the right order
+	vardata->variable->selfSet(&n); //rangecheck and target update
+	vardata->variable->setSensorVal(vardata->variable->target); //set value
+	vardata->variable->setTarget(); //invoke callbacks
       }
       else
 	vardata->variable->setFloat(n);
