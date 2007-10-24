@@ -249,8 +249,8 @@ namespace urbi
       }
       else if (!count)
       {
-	clientError("recv error: empty message", count);
-	std::cerr << "recv error: empty message: " << count << std::endl;
+	clientError("recv error: connection closed");
+	std::cerr << "recv error: connection closed" << std::endl;
 	rc = -1;
 	return;
       }
