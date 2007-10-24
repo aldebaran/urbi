@@ -2339,16 +2339,27 @@ UCommand_EXPR::execute_(UConnection *connection)
     }
 
     ////// module-defined /////
-    UValue *v = tryModuleCall(funname->str().c_str(), expression->parameters,
+    UValue *ret = tryModuleCall(funname->str().c_str(), expression->parameters,
 			      connection);
-    if (v)
+    if (ret)
     {
-      if (v->dataType != DATA_VOID)
-	connection->send(v->echo().c_str(), getTag().c_str());
-      delete v;
+      //use same output code as below (for the non-function case)
+      if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
+      {
+	if (ret->dataType != DATA_VOID)
+	{
+	  *connection << UConnection::prefix(getTag().c_str());
+	  ret->echo(connection);
+	}
+	if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
+	  *connection << UConnection::endl;
+	else
+	  *connection << UConnection::flush;
+      }
+      delete ret;
       return UCOMPLETED;
     }
-
+    
 
     ////// EXTERNAL /////
     HMbindertab::iterator it =

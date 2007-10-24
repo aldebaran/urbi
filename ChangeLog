@@ -1,3 +1,9 @@
+2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix display of value returned by a bound uobject method.
+	* src/ucommand.cc: Replace old display code that does not work
+	 anymore by new code (copy-pasted from below in the same function).
+
 2007-10-23  Akim Demaille  <demaille@gostai.com>
 
 	Let wait have a function-like syntax.
