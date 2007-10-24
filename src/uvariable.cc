@@ -51,7 +51,8 @@ UVariable::UVariable(const char* name, UValue* _value,
 		     bool _notifyRead,
 		     bool _autoUpdate):
   UASyncRegister(),
-  context(0)
+  context(0),
+  inSetTarget(false)
 {
   init();
   value = _value;
@@ -67,7 +68,8 @@ UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 		     bool _notifyRead,
 		     bool _autoUpdate):
   UASyncRegister(),
-  context(0)
+  context(0),
+  inSetTarget(false)
 {
   init();
   value = _value;
@@ -84,7 +86,8 @@ UVariable::UVariable(const char* name,
 		     bool _notifyRead,
 		     bool _autoUpdate):
   UASyncRegister(),
-  context(0)
+  context(0),
+  inSetTarget(false)
 {
   init();
   value = new UValue(val);
@@ -100,7 +103,8 @@ UVariable::UVariable(const char* _id, const char* _method, ufloat val,
 		     bool _notifyRead,
 		     bool _autoUpdate):
   UASyncRegister(),
-  context(0)
+  context(0),
+  inSetTarget(false)
 {
   init();
   value = new UValue(val);
@@ -116,7 +120,8 @@ UVariable::UVariable(const char* name, const char* str,
 		     bool _notifyRead,
 		     bool _autoUpdate):
   UASyncRegister(),
-  context(0)
+  context(0),
+  inSetTarget(false)
 {
   init();
   value = new UValue(str);
@@ -132,7 +137,8 @@ UVariable::UVariable(const char* _id, const char* _method, const char *str,
 		     bool _notifyRead,
 		     bool _autoUpdate):
   UASyncRegister(),
-  context(0)
+  context(0),
+  inSetTarget(false)
 {
   init();
   value = new UValue(str);
@@ -460,11 +466,9 @@ UVariable::get()
 void
 UVariable::updated(bool )
 {
+  inSetTarget = true;
   // triggers associated commands update
   updateRegisteredCmd ();
-
-  if (!binder && internalBinder.empty())
-    return;
 
   if (binder)
     BOOST_FOREACH (UMonitor* i, binder->monitors)
@@ -496,6 +500,8 @@ UVariable::updated(bool )
       i->__evalcall(tmparray);
     }
   }
+  
+  inSetTarget = false;
 }
 
 bool
@@ -530,8 +536,10 @@ UVariable::initSensorVal(ufloat f)
   value->val = f;
 }
 
+/// Called when the target value has been updated. Call all callbacks.
 void UVariable::setTarget() {
   std::list<urbi::UGenericCallback*>* callbacks = 0;
+  inSetTarget = true; //set to false when exiting function
   if (this->autoUpdate)
     callbacks = &internalBinder;
   else
@@ -551,4 +559,19 @@ void UVariable::setTarget() {
 
     i->__evalcall(tmparray);
   }
+  if (autoUpdate)
+  {
+     if (binder)
+    BOOST_FOREACH (UMonitor* i, binder->monitors)
+    {
+      *(i->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+      *(i->c) << UConnection::sendc((const ubyte*)"[1,\"", 4);
+      *(i->c) << UConnection::sendc((const ubyte*)varname.c_str(), varname.length());
+      *(i->c) << UConnection::sendc((const ubyte*)"\",", 2);
+      value->echo(i->c);
+      *(i->c) << UConnection::send((const ubyte*)"]\n", 2);
+    }
+  }
+  inSetTarget = false;
 }
+

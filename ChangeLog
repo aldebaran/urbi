@@ -1,5 +1,21 @@
 2007-10-24  Matthieu Nottale  <nottale@gostai.com>
 
+	Correct uobject behavior.
+	When a c++ code reads an UVar, it must triggers notifyaccess, except
+	if this read occurrs in a notifychange callback: in this case the
+	value is allready up2date, and it would create a potential infinite
+	loop to call the notifyaccess.
+	* include/kernel/uvariable.hh: Add inSetTarget and isInSetTarget
+	  accessor.
+	* src/uvar.cc:
+	   - invoque uvariable->get() in in() except if inSetTarget()
+	   - Add missing call to remote callbacks in setTarget()
+	   - call selfSet, setTarget but not setSensorVal in operator = for
+	     !owned !variable->autoUpdate case
+	* src/uvariable.cc: set/clear inSetTarget in setTarget and setSensor.
+
+2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix notifychange when called from a C++ variable update.
 	* src/uvar.cc: Call methods in the correct order, otherwise
 	  callbacks are called with the old value.
