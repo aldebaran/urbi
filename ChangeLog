@@ -1,3 +1,11 @@
+2007-10-25  mefyl  <mefyl@lrde.epita.fr>
+
+	Use boost to handle paths.
+	* include/kernel/userver.hh,
+	* src/userver.cc:
+	(UServer::find_file): Use boost::filesystem::path to open files,
+	to avoid portability problem such as the directory separator.
+
 2007-10-24  Matthieu Nottale  <nottale@gostai.com>
 
 	Correct uobject behavior.
