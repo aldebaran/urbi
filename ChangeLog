@@ -1,3 +1,37 @@
+2007-10-26  Thomas Moulard  <thomas@moulard.net>
+
+	merge -r 1625:1828 https://svn.gostai.com/svn/kernel1/branches/1.5
+	2007-10-08  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Bump the version number.
+	* configure.ac: Adjust the version number and email address for bug
+	reports.
+
+	2007-10-02  Thomas Moulard  <thomas@moulard.net>
+	Remove network.
+        The network is now plugged through an externals.
+        Network's new location is modules/network.
+
+	* src/Makefile.am: Remove network.
+	* src/network/bsdnet/bsdnet.mk: Remove.
+	* src/network/bsdnet/connection.cc: Remove.
+	* src/network/bsdnet/connection.hh: Remove.
+	* src/network/bsdnet/network.cc: Remove.
+	* src/network/bsdnet/network.hh: Remove.
+	* src/network/bsdnet: Remove.
+	* src/network: Remove.
+
+	2007-10-02  Thomas Moulard  <thomas@moulard.net>
+	Fix list concatenation.
+	* src/uvalue.cc: Here.
+
+	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+	Do not accept '<<' and '>>' in the parser yet.
+	* src/parser/bison/ugrammar.y: Here.
+
+	2007-10-02  Thomas Moulard  <thomas@moulard.net>
+	Fix list concatenation.
+	* src/uvalue.cc: Fix concatenation of two lists.
+
 2007-10-25  mefyl  <mefyl@lrde.epita.fr>
 
 	Use boost to handle paths.
