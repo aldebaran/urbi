@@ -1,5 +1,14 @@
 2007-10-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Don't use Boost.Filesystem in the kernel.
+	libboost_filesystem is not available on Aibo, so we can't use it in
+	the kernel.
+	* include/kernel/userver.hh,
+	* src/Makefile.am,
+	* src/userver.cc: Revert the changes done at r1828 and r1838.
+
+2007-10-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Link with boost_filesystem.
 	* src/Makefile.am (LIBS): Add a `-lboost_filesystem' (quick hack).
 

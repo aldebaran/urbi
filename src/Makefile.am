@@ -25,8 +25,7 @@ AM_CXXFLAGS += $(WARNING_CXXFLAGS)
 AM_CXXFLAGS += $(BOOST_CPPFLAGS)
 AM_LDFLAGS  += $(BOOST_LDFLAGS)
 # There is no AM_LIBADD.
-# FIXME: Properly check for Boost.Filesystem (this is only a quick hack)
-LIBS        += $(BOOST_THREAD_LIB) -lboost_filesystem
+LIBS        += $(BOOST_THREAD_LIB)
 
 ## ----------- ##
 ## libkernel.  ##

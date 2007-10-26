@@ -30,8 +30,6 @@
 #  include <boost/thread.hpp>
 # endif
 
-# include <boost/filesystem.hpp>
-
 # include "libport/fwd.hh"
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
@@ -172,7 +170,7 @@ public:
 				     int maxlength) = 0;
 
   /// A list of directory names.
-  typedef std::list<boost::filesystem::path> path_type;
+  typedef std::list<std::string> path_type;
   /// Where to look for files to load.
   // Should eventually become an Urbi variable.
   // Should probably be changeable with an envvar.
@@ -182,7 +180,7 @@ public:
 
   /// Return the full file name, handle paths.
   /// Return \a f on failure.
-  virtual std::string find_file (const std::string& f);
+  virtual std::string find_file (const char* f);
 
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
