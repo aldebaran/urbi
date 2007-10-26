@@ -520,12 +520,12 @@ UValue::copy() const
 
 //! Add an item to a list.
 static UValue*
-add_ulist(const UValue& l, const UValue& r)
+ulist_append(const UValue& l, const UValue& r)
 {
-  UValue* res = l.copy();
+  UValue* res = l.copy ();
 
   if (!l.liststart)
-    res->liststart = new UValue(r);
+    res->liststart = new UValue (r);
   else
   {
     UValue* end = res->liststart;
@@ -533,16 +533,16 @@ add_ulist(const UValue& l, const UValue& r)
     while (end->next)
       end = end->next;
 
-    end->next = new UValue(r);
+    end->next = new UValue (r);
   }
   return res;
 }
 
 //! Add two lists.
 static UValue*
-add_ulists(const UValue& l, const UValue& r)
+ulist_concat(const UValue& l, const UValue& r)
 {
-  UValue* res = l.copy();
+  UValue* res = l.copy ();
   if (!r.liststart)
     return res;
   if (!l.liststart)
@@ -553,7 +553,7 @@ add_ulists(const UValue& l, const UValue& r)
   while (end->next)
     end = end->next;
 
-  UValue* rc = r.copy();
+  UValue* rc = r.copy ();
   end->next = rc->liststart;
   rc->liststart = 0;
   delete rc;
@@ -618,9 +618,9 @@ UValue::add(UValue *v)
   if (dataType == DATA_LIST)
   {
     if (v->dataType == DATA_LIST)
-      return add_ulists(*this, *v);
+      return ulist_concat(*this, *v);
     else
-      return add_ulist(*this, *v);
+      return ulist_append(*this, *v);
   }
 
   if (v->dataType == DATA_LIST)

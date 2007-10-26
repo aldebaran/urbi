@@ -1,5 +1,13 @@
 2007-10-26  Thomas Moulard  <thomas@moulard.net>
 
+	Fix merge.
+	* .automerge: Update to last sync revision.
+	* src/parser/bison/ugrammar.y: Remove useless comments.
+	* src/uvalue.cc: Rename add_ulist into utlist_append
+        and add_ulists into ulist_concat.
+
+2007-10-26  Thomas Moulard  <thomas@moulard.net>
+
 	merge -r 1625:1828 https://svn.gostai.com/svn/kernel1/branches/1.5
 	2007-10-08  Benoit Sigoure  <tsuna@lrde.epita.fr>
 	Bump the version number.

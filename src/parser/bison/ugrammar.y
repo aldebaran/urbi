@@ -1441,19 +1441,6 @@ expr:
 | expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
 ;
 
-  /*---------------.
-  | Redirections.  |
-  `---------------*/
-%token
-  TOK_LSHIFT   "<<"
-  TOK_RSHIFT   ">>"
-;
-
-// expr:
-//     expr "<<"  expr { } // FIXME:
-//   | expr ">>"  expr { } // FIXME:
-// ;
-
 
 /* PARAMETERLIST, PARAMETERS, PARAMETERSERIES */
 
