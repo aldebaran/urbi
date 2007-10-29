@@ -13,6 +13,7 @@
 #ifndef URBI_UTYPES_COMMON_HH
 # define URBI_UTYPES_COMMON_HH
 
+# include "libport/cstring"
 # include "libport/assert.hh"
 
 /// \file  urbi/utypes-common.hh

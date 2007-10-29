@@ -41,7 +41,6 @@ namespace urbi
 
   typedef libport::hash_map_type<std::string, std::list<UVar*> >::type UVarTable;
   typedef std::list<UTimerCallback*> UTimerTable;
-  typedef std::list<UObject*> UObjectList;
 
   // Lists and hashtables used.
   EXTERN_STATIC_INSTANCE(UTable, accessmap);
@@ -338,7 +337,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), back_cast((*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%));
+      res(), (*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
       return res;
     }
 

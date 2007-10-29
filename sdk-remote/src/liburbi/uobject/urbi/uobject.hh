@@ -106,6 +106,8 @@
 namespace urbi
 {
 
+  typedef std::list<UObject*> UObjectList;
+  
   /// Package information about liburbi.
   const libport::PackageInfo& liburbi_package_info ();
 

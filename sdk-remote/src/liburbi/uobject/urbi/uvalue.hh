@@ -15,6 +15,7 @@
 #ifndef URBI_UVALUE_HH
 # define URBI_UVALUE_HH
 
+# include <vector>
 # include "libport/ufloat.h"
 
 # include "urbi/fwd.hh"

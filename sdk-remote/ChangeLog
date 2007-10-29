@@ -1,3 +1,14 @@
+2007-10-29  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix inclusions problems.
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template:
+	   - Remove leftover back-cast in non-member case.
+	   - Move UObjectList typedef...
+	* src/liburbi/uobject/urbi/uobject.hh: ...here.
+	* src/liburbi/uobject/urbi/utypes-common.hh: #include libport/cstring.
+	* src/liburbi/uobject/urbi/uvalue.hh: #include <vector>.
+	* src/liburbi/uobject/urbi/uvar.hh: #include uvalue.hh.
+
 2007-10-24  Matthieu Nottale  <nottale@gostai.com>
 
 	Doc fix.

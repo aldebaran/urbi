@@ -18,7 +18,9 @@
 # include <iosfwd>
 # include <string>
 
-# include <libport/ufloat.hh>
+# include "libport/fwd.hh"
+# include "libport/ufloat.hh"
+# include "urbi/uvalue.hh"
 
 /// Define an attribute and its accessors.
 # define PRIVATE(vartype, varname)		\
