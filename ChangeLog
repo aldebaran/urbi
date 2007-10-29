@@ -1,3 +1,8 @@
+2007-10-29  Matthieu Nottale  <nottale@gostai.com>
+
+	Buxgfix on aibo.
+	* src/uconnection.cc: Move misplaced #endif.
+
 2007-10-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Don't use Boost.Filesystem in the kernel.

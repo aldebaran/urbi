@@ -616,11 +616,11 @@ UConnection::received_ (const ubyte *buffer, int length)
 
 # if ! defined LIBPORT_URBI_ENV_AIBO
   if (!gotlock && !treeLock.try_lock())
-# endif
   {
     newDataAdded = true; //server will call us again right after work
     CONN_ERR_RET(USUCCESS);
   }
+# endif
 
   UParser& p = parser();
 
