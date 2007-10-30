@@ -400,9 +400,8 @@ namespace urbi
   void
   usage (const char* name)
   {
-    std::cout << ""
-      "usage:\n" <<
-      name << " ADDR [OPTIONS...] [PORT [LEN]]\n"
+    std::cout <<
+      "usage:\n" << name << " ADDR [OPTIONS...] [PORT [LEN]]\n"
       "\n"
       "   ADDR   Urbi server IP (e.g., \"localhost\")\n"
       "   PORT   Port to listen to (defaults to 54000)\n"
@@ -419,8 +418,7 @@ namespace urbi
   void
   version ()
   {
-    std::cout
-      << urbi::liburbi_package_info().name_version_revision() << std::endl;
+    std::cout << urbi::liburbi_package_info().signature() << std::endl;
   }
 
   void
