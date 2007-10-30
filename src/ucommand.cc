@@ -2359,7 +2359,7 @@ UCommand_EXPR::execute_(UConnection *connection)
       delete ret;
       return UCOMPLETED;
     }
-    
+
 
     ////// EXTERNAL /////
     HMbindertab::iterator it =
@@ -2952,7 +2952,7 @@ UCommand_ALIAS::execute_(UConnection *connection)
 {
   //alias setting
   send_error(connection, this,
-             "Defining aliases is deprecated.");
+	     "Defining aliases is deprecated.");
   if (aliasname && id)
   {
     UString *id0 = aliasname->buildFullname(this, connection, false);

@@ -1,3 +1,8 @@
+2007-10-30  Akim Demaille  <demaille@gostai.com>
+
+	Use newest PackageInfo.
+	* src/userver-package-info.cc: Adjust.
+
 2007-10-29  Matthieu Nottale  <nottale@gostai.com>
 
 	Buxgfix on aibo.
