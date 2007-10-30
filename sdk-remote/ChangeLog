@@ -1,3 +1,9 @@
+2007-10-30  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix UVALUE_OPERATORS macro.
+	* src/liburbi/uobject/uvalue-common.cc: set type to DataType macro
+	   parameter.
+
 2007-10-29  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix inclusions problems.

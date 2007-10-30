@@ -501,7 +501,7 @@ namespace urbi
   UValue& UValue::operator=(Args)			\
   {							\
     passert (type, type == DATA_VOID);			\
-    type = DATA_DOUBLE;					\
+    type = DataType;					\
     Field = Value;					\
     return *this;					\
   }
