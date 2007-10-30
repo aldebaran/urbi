@@ -1,3 +1,8 @@
+2007-10-30  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix external method calls.
+	* src/ucommand.cc: Use new << UConnection API.
+
 2007-10-30  Akim Demaille  <demaille@gostai.com>
 
 	Use COPYRIGHT info.
