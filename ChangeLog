@@ -1,5 +1,13 @@
 2007-10-30  Akim Demaille  <demaille@gostai.com>
 
+	Use COPYRIGHT info.
+	* configure.ac: Define it.
+	* src/console.cc: Use it.
+	Support options.
+	* src/ubanner.cc: Ditto.
+
+2007-10-30  Akim Demaille  <demaille@gostai.com>
+
 	Use newest PackageInfo.
 	* src/userver-package-info.cc: Adjust.
 

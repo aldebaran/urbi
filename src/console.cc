@@ -10,6 +10,7 @@
 #include <fstream>
 
 #include "libport/utime.hh"
+#include "libport/package-info.hh"
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
@@ -77,11 +78,62 @@ public:
   }
 };
 
+namespace
+{
+  static
+  void
+  usage (const char* program_name, int estatus)
+  {
+    std::cout <<
+      "usage: " << program_name << "[OPTIONS] [FILE]\n"
+      "\n"
+      "  FILE    to load\n"
+      "\n"
+      "Options:\n"
+      "  -h, --help     display this message and exit successfully\n"
+      "  -v, --version  display version information\n";
+    exit (estatus);
+  }
+
+  static
+  void
+  version ()
+  {
+    std::cout << UServer::package_info().signature() << std::endl;
+    exit (0);
+  }
+}
+
 int
 main (int argc, const char* argv[])
 {
   // Input file.
-  const char *in = argc == 2 ? argv[1] : "/dev/stdin";
+  const char *in = "/dev/stdin";
+  // Parse the command line.
+  {
+    int argp = 1;
+    for (int i = 1; i < argc; ++i)
+    {
+      std::string arg = argv[i];
+
+      if (arg == "-h" || arg == "--help")
+	usage(argv[0], 0);
+      else if (arg == "-v" || arg == "--version")
+	version();
+      else
+	// An argument.
+	switch (argp++)
+	{
+	  case 1:
+	    in = argv[i];
+	    break;
+	  default:
+	    std::cerr << "Unexpected argument: " << arg << std::endl;
+	    exit (1);
+	    break;
+	}
+    }
+  }
 
   ConsoleServer s (10);
 
