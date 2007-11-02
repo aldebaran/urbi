@@ -1,3 +1,8 @@
+2007-11-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Properly use the new Boost flags.
+	* src/Makefile.am (AM_LDFLAGS, LIBS): Adjust.
+
 2007-10-30  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix external method calls.
