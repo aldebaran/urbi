@@ -32,7 +32,7 @@ LIBS        += $(BOOST_THREAD_LIBS)
 ## ----------- ##
 
 env_LTLIBRARIES = libkernel.la
-libkernel_la_LDFLAGS = -static
+libkernel_la_LDFLAGS = -static $(BOOST_THREAD_LDFLAGS)
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \

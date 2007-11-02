@@ -1,5 +1,12 @@
 2007-11-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Properly use the Boost flags to link libkernel.
+	* src/Makefile.am (libkernel_la_LDFLAGS): Use
+	$(BOOST_THREAD_LDFLAGS) because target-specific flags override
+	AM_LDFLAGS.
+
+2007-11-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Properly use the new Boost flags.
 	* src/Makefile.am (AM_LDFLAGS, LIBS): Adjust.
 
