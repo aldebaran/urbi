@@ -48,7 +48,10 @@ include/kernel/userver.hh			\
 include/kernel/ustring.hh			\
 include/kernel/utypes.hh			\
 include/kernel/uvalue.hh 			\
-include/kernel/uvariable.hh 
+include/kernel/uvariable.hh
+
+nodist_kernelincludekernel_HEADERS =		\
+include/kernel/version.hh
 
 ## --------------- ##
 ## Svn externals.  ##

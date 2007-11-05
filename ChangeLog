@@ -1,3 +1,10 @@
+2007-11-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Use URBI_KERNEL_VERSION.
+	* Makefile.am (nodist_kernelincludekernel_HEADERS): New, list
+	version.hh.
+	* configure.ac: Here.
+
 2007-11-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Properly use the Boost flags to link libkernel.
