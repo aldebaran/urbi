@@ -1,5 +1,10 @@
 2007-11-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
+	Add version.hh.
+	* include/kernel/version.hh.in: New.
+
+2007-11-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
 	Use URBI_KERNEL_VERSION.
 	* Makefile.am (nodist_kernelincludekernel_HEADERS): New, list
 	version.hh.
