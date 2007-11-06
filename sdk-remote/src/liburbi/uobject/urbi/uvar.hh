@@ -23,21 +23,21 @@
 # include "urbi/uvalue.hh"
 
 /// Define an attribute and its accessors.
-# define PRIVATE(vartype, varname)		\
+# define PRIVATE(Type, Name)			\
   private:					\
-    vartype varname;				\
+    Type Name;					\
   public:					\
-    vartype get_ ##  varname ()			\
+    Type get_ ##  Name ()			\
     {						\
-      return varname;				\
+      return Name;				\
     }						\
-    const vartype get_ ##  varname () const	\
+    const Type get_ ##  Name () const		\
     {						\
-      return varname;				\
+      return Name;				\
     }						\
-    void set_ ##  varname (vartype& v)		\
+    void set_ ##  Name (Type& v)		\
     {						\
-      varname = v;				\
+      Name = v;					\
     }						\
   private:
 
@@ -48,20 +48,20 @@ namespace urbi
   class UProp
   {
   public:
-    void operator =(const UValue &v);
+    void operator =(const UValue& v);
     void operator =(const ufloat v);
-    void operator =(const std::string & v);
+    void operator =(const std::string& v);
 
     operator ufloat();
     operator std::string();
     operator UValue();
 
-    UProp(UVar &owner, UProperty name)
+    UProp(UVar& owner, UProperty name)
       : owner(owner), name(name)
     {}
 
   private:
-    UVar & owner;
+    UVar& owner;
     UProperty name;
 
     //disable copy ctor and equal operator

@@ -1,3 +1,10 @@
+2007-11-06  Akim Demaille  <demaille@gostai.com>
+
+	Fix macros.
+	* urbi/uobject.hh, urbi/ustarter.hh, urbi/uvar.hh: Use a consistent
+	style for macro parameters.
+	Use them between parens to avoid well known issues.
+
 2007-10-24  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix UGenericCallback ctor call in UEventEndCallback ctor..

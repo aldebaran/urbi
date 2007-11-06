@@ -39,7 +39,8 @@
  This macro can only be called from within a class inheriting from
  UObject.  It binds the UVar x within the object to a variable
  with the same name in the corresponding URBI object.  */
-# define UBindVar(obj,x) x.init(__name,# x)
+# define UBindVar(Obj,X) \
+  (X).init(__name, #X)
 
 /** This macro inverts a UVar in/out accesses.
 
@@ -48,18 +49,21 @@
  and URBI code affect the target value, and reads get the sensed
  value. Without this call, all operations affect the same
  underlying variable.  */
-# define UOwned(x) x.setOwned()
-// for backward compatibility
-# define USensor(x) x.setOwned()
+# define UOwned(X) \
+  (X).setOwned()
+
+/// Backward compatibility.
+# define USensor(X) \
+  UOwned(X)
 
 /** Bind the function x in current URBI object to the C++ member
  function of same name.  The return value and parameters must be of
  a basic integral or floating types, char *, std::string, UValue,
  UBinary, USound or UImage, or any type that can cast to/from
  UValue.  */
-# define UBindFunction(obj,x)						\
+# define UBindFunction(Obj, X)						\
   ::urbi::createUCallback(__name, "function", this,			\
-			  (&obj::x), __name + "." #x,			\
+			  (&Obj::X), __name + "." #X,			\
 			  ::urbi::functionmap, false)
 
 /** Registers a function x in current object that will be called each
@@ -67,9 +71,9 @@
  called only if the number of arguments match between the function
  prototype and the URBI event.
  */
-# define UBindEvent(obj,x)						\
+# define UBindEvent(Obj, X)						\
   ::urbi::createUCallback(__name, "event", this,			\
-			  (&obj::x), __name + "." #x,			\
+			  (&Obj::X), __name + "." #X,			\
 			  ::urbi::eventmap, false)
 
 /** Registers a function x in current object that will be called each
@@ -78,19 +82,19 @@
  * of arguments match between the function prototype and the URBI
  * event.
  */
-# define UBindEventEnd(obj,x,fun)					\
+# define UBindEventEnd(Obj, X, Fun)					\
   ::urbi::createUCallback(__name, "eventend", this,			\
-			  (&obj::x),(&obj::fun), __name + "." #x,	\
+			  (&Obj::X),(&Obj::Fun), __name + "." #X,	\
 			  ::urbi::eventendmap)
 
 /// Register current object to the UObjectHub named 'hub'.
-# define URegister(hub)						\
+# define URegister(Hub)						\
   do {								\
-    objecthub = ::urbi::getUObjectHub(#hub);			\
+    objecthub = ::urbi::getUObjectHub(#Hub);			\
     if (objecthub)						\
       objecthub->addMember(this);				\
     else							\
-      ::urbi::echo("Error: hub name '%s' is unknown\n", #hub);	\
+      ::urbi::echo("Error: hub name '" #Hub "' is unknown\n");	\
   } while (0)
 
 
@@ -99,7 +103,8 @@
 /** Send unquoted URBI commands to the server. Add an extra layer of parenthesis
     for safety.
 */
-#   define URBI(a) ::urbi::uobject_unarmorAndSend(# a)
+#   define URBI(A) \
+  ::urbi::uobject_unarmorAndSend(# A)
 # endif
 
 
@@ -107,7 +112,7 @@ namespace urbi
 {
 
   typedef std::list<UObject*> UObjectList;
-  
+
   /// Package information about liburbi.
   const libport::PackageInfo& liburbi_package_info ();
 

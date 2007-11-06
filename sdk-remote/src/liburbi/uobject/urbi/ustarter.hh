@@ -21,18 +21,18 @@
 # include "urbi/fwd.hh"
 
 /// This macro must be called once for every UObject class.
-# define UStart(x)							\
-  ::urbi::URBIStarter<x> x ##  ____URBI_object(std::string(# x),	\
+# define UStart(X)							\
+  ::urbi::URBIStarter<X> X ##  ____URBI_object(std::string(#X),		\
 					       ::urbi::objectlist)
 
 /// This macro must be called once for every UObject class.
-# define UStartRename(x,name)						\
-  ::urbi::URBIStarter<x> name ##  ____URBI_object(std::string(# name),	\
+# define UStartRename(X,Name)						\
+  ::urbi::URBIStarter<X> Name ##  ____URBI_object(std::string(#Name),	\
 					       ::urbi::objectlist)
 
 /// This macro must be called once for each UObjectHub class.
-# define UStartHub(x)							\
-  ::urbi::URBIStarterHub<x> x ##  ____URBI_object(std::string(# x),	\
+# define UStartHub(X)							\
+  ::urbi::URBIStarterHub<X> x ##  ____URBI_object(std::string(#X),	\
 						  ::urbi::objecthublist)
 
 namespace urbi
@@ -130,7 +130,13 @@ namespace urbi
 
 
 
-#define SETBACKCASTCTOR(T) inline UValue  back_cast(T & t) { return UValue(t);}
+#define SETBACKCASTCTOR(T)			\
+  inline					\
+  UValue					\
+  back_cast(T& t)				\
+  {						\
+    return UValue(t);				\
+  }
 
 SETBACKCASTCTOR(bool)
 SETBACKCASTCTOR(int)
