@@ -1,3 +1,9 @@
+2007-11-06  Akim Demaille  <demaille@gostai.com>
+
+	Macro style.
+	* include/urbi/uabstractclient.hh: Use a simpler and more consitent
+	style for macros.
+
 2007-10-30  Akim Demaille  <demaille@gostai.com>
 
 	Update PackageInfo use.

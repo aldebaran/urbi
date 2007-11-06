@@ -92,7 +92,7 @@ namespace urbi
 
     /// Default ctor
     UMessage(UAbstractClient & client);
-    
+
     /// Parser constructor
     UMessage(UAbstractClient & client, int timestamp,
 	     const char *tag, const char *message,
@@ -232,10 +232,10 @@ namespace urbi
 
     /// Associate a callback with all messages
     UCallbackID setWildcardCallback(UCallbackWrapper & callback);
-    
+
     /// Associate a callback with local connection errors
     UCallbackID setClientErrorCallback(UCallbackWrapper & callback);
-    
+
     /// OLD-style callbacks
     UCallbackID setCallback(UCallback ,const char* tag);
 
@@ -295,10 +295,10 @@ namespace urbi
 
     /// Add a callback to the list.
     UCallbackID addCallback(const char * tag, UCallbackWrapper &w);
-    
+
     /// Generate a client error message and notify callbacks
     void clientError(const char * msg=0, int code=0);
-    
+
     /// Host name.
     char	     *host;
     /// Urbi Port.
@@ -354,7 +354,7 @@ namespace urbi
     std::ostream     *stream;
 
     friend class UClientStreambuf;
-    
+
   };
 
   class UCallbackWrapper
@@ -588,14 +588,16 @@ namespace urbi
 #  undef URBI
 # endif
 
-# if defined(LIBURBI_NOARMOR)
-#  if !defined(__GNUC__)
+# if defined LIBURBI_NOARMOR
+#  if !defined __GNUC__
 #   error "as far as we know, your compiler does not support the __VA_ARGS__ C preprocessor extension, feature unavailable"
 #  else
-#   define URBI(...) ((::urbi::getDefaultClient()==0)? std::cerr : (*urbi::getDefaultClient())) << # __VA_ARGS__
+#   define URBI(...)							\
+  (::urbi::getDefaultClient() ? *urbi::getDefaultClient() : std::cerr) << # __VA_ARGS__
 #  endif
 # else
-#  define URBI(a) ::urbi::unarmorAndSend(# a)
+#  define URBI(A)				\
+  ::urbi::unarmorAndSend(#A)
 # endif
 
   static const char semicolon = ';';
