@@ -1,5 +1,10 @@
 2007-11-06  Thomas Moulard  <thomas@moulard.net>
 
+	merge -r 1450:1465 https://svn.gostai.com/svn/kernel1/trunk.
+	* ChangeLog: Fix emails.
+
+2007-11-06  Thomas Moulard  <thomas@moulard.net>
+
 	merge -r 1421:1450 https://svn.gostai.com/svn/kernel1/trunk.
 	2007-08-30  Guillaume Deslandes  <deslandes@gostai.com>
 	Add missing call fixes for UConnection stream version.
@@ -296,23 +301,23 @@
 	return an lvalue, it doesn't make sense).
 	Give precedences to them.
 
-2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+2007-10-13  Akim Demaille  <demaille@gostai.com>
 
 	src/ast/Makefile.in no longer exists.
 	* dev/ast-ignores-gen: Remove it from ignores.
 
-2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+2007-10-13  Akim Demaille  <demaille@gostai.com>
 
 	This is not k1.
 	* configure.ac: Fix AC_INIT invocation.
 
-2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+2007-10-13  Akim Demaille  <demaille@gostai.com>
 
 	Remove debug code.
 	* src/parser/ugrammar.y (implicit): Here.
 	Reported by Benoit Sigoure.
 
-2007-10-13  Akim Demaille  <akim.demaille@free.fr>
+2007-10-13  Akim Demaille  <demaille@gostai.com>
 
 	mv src/parser/bison/* src/parser.
 	* src/parser/bison/bison.mk, src/parser/bison/flex-lexer.hh,
@@ -324,7 +329,7 @@
 	Adjust dependencies.
 	* src/Makefile.am, src/parser/uparser.hh: Adjust.
 
-2007-10-12  Akim Demaille  <akim.demaille@free.fr>
+2007-10-12  Akim Demaille  <demaille@gostai.com>
 
 	Warn about implicit noops.
 	* src/ast/ast.yml (Noop::implicit): New.
@@ -332,41 +337,41 @@
 	Use them.
 	* tests-local.mk: Update XFAILS.
 
-2007-10-12  Akim Demaille  <akim.demaille@free.fr>
+2007-10-12  Akim Demaille  <demaille@gostai.com>
 
 	Fix ++.
 	We need to override clone (in the C++ world) for Atoms.
 	* share/urbi/urbi.u (Float.++, Float.--): Rewrite.
 	* tests-local.mk: k2-inplace.chk passes.
 
-2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+2007-10-10  Akim Demaille  <demaille@gostai.com>
 
 	++ is incorrect.
 	* share/urbi/urbi.u (Float.++, Float.--): Try to fix them...
 	* tests-local.mk: but acknowledge we failed.
 
-2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+2007-10-10  Akim Demaille  <demaille@gostai.com>
 
 	String comparison.
 	* share/urbi/urbi.u (String.<=, String.>, String.>=): New.
 
-2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+2007-10-10  Akim Demaille  <demaille@gostai.com>
 
 	Makefile.am simplification.
 	* src/ast/ast.mk: Fuse two variable increments.
 
-2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+2007-10-10  Akim Demaille  <demaille@gostai.com>
 
 	Return floats.
 	* src/object/string-class.cc: Do not return Integers, k2 is
 	not ready for them.
 
-2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+2007-10-10  Akim Demaille  <demaille@gostai.com>
 
 	Missing lval.
 	* src/parser/bison/utoken.l: != is expected to have a semantic value.
 
-2007-10-10  Akim Demaille  <akim.demaille@free.fr>
+2007-10-10  Akim Demaille  <demaille@gostai.com>
 
 	Fix the priorities.
 	* src/parser/bison/ugrammar.y: Strictly follow the C precedence
@@ -420,12 +425,12 @@
 	names of several targets because now, file paths must be prefixed by
 	`ast/'.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	echo.
 	* src/object/object-class.cc (object_class_echo): Issue to ***.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	Operators are identifiers.
 	* src/parser/bison/ugrammar.y (id): New.
@@ -438,7 +443,7 @@
 	* share/urbi/urbi.u: Use these new symbols to define these
 	operators.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	Simplify ast/ast.mk.
 	* src/ast/ast.mk: It is no longer needed to handle the special
@@ -484,14 +489,14 @@
 	* src/object/list-class.cc, src/object/object.hxx,
 	* src/object/primitives.hh: Adjust.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	for loops.
 	* src/parser/bison/ugrammar.y (new_flavor, for_loop): New.
 	(for): Use it.
 	* tests-local.mk: We pass for-loop from k1.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	Don't expect Call& to always have a value.
 	We need some Void.
@@ -505,12 +510,12 @@
 	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l
 	(+=, -=, *=, /=): They now have a Symbol value.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	Use __PRETTY_FUNCTION__.
 	* src/userver.cc: here.
 
-2007-10-09  Akim Demaille  <akim.demaille@free.fr>
+2007-10-09  Akim Demaille  <demaille@gostai.com>
 
 	|-loops do not exist.
 	* src/parser/bison/ugrammar.y (flavor.opt): Remove.
@@ -866,7 +871,7 @@
 	* src/runner/runner.hxx: Handle context as a lobby slot instead of
 	a special message.
 
-2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+2007-09-20  Akim Demaille  <demaille@gostai.com>
 
 	string escapes
 	* src/object/atom.hxx: Sort.
@@ -875,19 +880,19 @@
 	(Atom<String>::print): Use libport::escape.
 	* tests-local.mk: Adjust to tests renaming.
 
-2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+2007-09-20  Akim Demaille  <demaille@gostai.com>
 
 	Missing include
 	* src/parser/bison/ugrammar.y: separator.hh is now needed.
 	It used to "leak" from pretty-printer.hh.
 
-2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+2007-09-20  Akim Demaille  <demaille@gostai.com>
 
 	Escape ast strings
 	Reported by Benoit Sigoure.
 	* src/ast/ast.yml (String::printer): Use escape.
 
-2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+2007-09-20  Akim Demaille  <demaille@gostai.com>
 
 	Don't lose the UCONSOLE_MODE when BEGIN is called
 	When we use BEGIN (e.g. for strings), we come back to INITIAL
@@ -898,7 +903,7 @@
 	(UCONSOLE_MODE): Rename as...
 	(SC_UCONSOLE): this.
 
-2007-09-20  Akim Demaille  <akim.demaille@free.fr>
+2007-09-20  Akim Demaille  <demaille@gostai.com>
 
 	Use libport::escape in the pretty printer
 	* dev/ast_params.py (printer_cc_prologue): New.
@@ -3861,7 +3866,7 @@
 	* dev/ast_params.py: Adjust.
 	* src/parser/bison/ugrammar.y (new_exp): Adjust to using ast::OpExp.
 
-2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+2007-05-22  Akim Demaille  <demaille@gostai.com>
 
 	Bind "return"
 	* src/ast/all.hh: Include all the *-exp.hh headers.
@@ -3869,19 +3874,19 @@
 	Activate the code for "return".
 	NUM -> "number".
 
-2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+2007-05-22  Akim Demaille  <demaille@gostai.com>
 
 	Activate some rules
 	* src/parser/bison/ugrammar.y: <command> -> <expr>.
 	instruction -> statement.
 	Use new_bin.
 
-2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+2007-05-22  Akim Demaille  <demaille@gostai.com>
 
 	Make it linkable
 	* src/Makefile.am: Link libast into libkernel.
 
-2007-05-22  Akim Demaille  <akim.demaille@free.fr>
+2007-05-22  Akim Demaille  <demaille@gostai.com>
 
 	Make it compilable
 	* src/ast/all.hh: Include all the headers we need.
@@ -4224,7 +4229,7 @@
 	UServer::initialization. Replace an assert by code handling the
 	condition as it can happen without being a problem.
 
-	2007-04-03  Akim Demaille  <akim.demaille@free.fr>
+	2007-04-03  Akim Demaille  <demaille@gostai.com>
 	From hanging to segv
 	* src/ucommand.cc (UCommand_OPERATOR::execute_): Iterate when
 	running "undefall".
@@ -4233,7 +4238,7 @@
 	tests-local.mk
 	* tests-local.mk: New.
 
-2007-04-02  Akim Demaille  <akim.demaille@free.fr>
+2007-04-02  Akim Demaille  <demaille@gostai.com>
 
 	undefall
 	* src/ucommand.cc (UCommand_OPERATOR::execute_): When handling
@@ -4383,10 +4388,10 @@
 	(tab): Use a bigger buffer, as I triggered the assertion for
 	its previous size...
 
-	2007-03-21  Akim Demaille  <akim.demaille@free.fr>
+	2007-03-21  Akim Demaille  <demaille@gostai.com>
 	* Makefile.am (CLEANFILES): Remove what's handled by init.mk.
 
-	2007-03-21  Akim Demaille  <akim.demaille@free.fr>
+	2007-03-21  Akim Demaille  <demaille@gostai.com>
 	Catch up with the trunk
 	No longer make uobject an external of src, let src/uobject be
 	an external of ".".
@@ -4394,7 +4399,7 @@
 	* Makefile.am: Adjust.
 	(check-html): Import from the trunk.
 
-	2007-03-21  Akim Demaille  <akim.demaille@free.fr>
+	2007-03-21  Akim Demaille  <demaille@gostai.com>
 	Update externals.
 	* configure.ac: Use URBI_TESTS.
 
@@ -4403,11 +4408,11 @@
 	Fix tests invocation
 	* configure.ac (URBI_TESTS): Call it.
 
-2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+2007-03-13  Akim Demaille  <demaille@gostai.com>
 
 	* src/uobject.cc (algorithm): Include it.
 
-2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+2007-03-13  Akim Demaille  <demaille@gostai.com>
 
 	svn merge -r 970:996 https://svn.gostai.com/svn/kernel1/branches/1.0
 
@@ -4419,7 +4424,7 @@
 	Update banner copyright date.
 	* src/ubanner.cc: Here.
 
-2007-03-13  Akim Demaille  <akim.demaille@free.fr>
+2007-03-13  Akim Demaille  <demaille@gostai.com>
 
 	Change the handling of externals (experimental)
 	No longer subscribe to uobject in ./src, subscribe to src/uobject
@@ -4427,18 +4432,18 @@
 	it works well, I'll lift the other externals.
 	* Makefile.am: src/uobject is now a local external.
 
-2007-03-08  Akim Demaille  <akim.demaille@free.fr>
+2007-03-08  Akim Demaille  <demaille@gostai.com>
 
 	This seems to totally confuse cccl, which loses the arguments
 	and even produces /I-I.
 	* src/Makefile.am: No space bw -I and its arg.
 
-2007-03-08  Akim Demaille  <akim.demaille@free.fr>
+2007-03-08  Akim Demaille  <demaille@gostai.com>
 
 	Fix member function declaration
 	* include/kernel/uconnection.hh: Remove spurious qualifier.
 
-2007-03-08  Akim Demaille  <akim.demaille@free.fr>
+2007-03-08  Akim Demaille  <demaille@gostai.com>
 
 	Install uasyncregister.hh, uvariable.hh and uvalue.hh
 	* src/uasyncregister.hh, src/uvariable.hh, src/uvalue.hh:
@@ -4615,7 +4620,7 @@
 	* src/network/bsdnet/network.cc: Here, propagate in  TCPServerPipe::init.
 	* src/network/bsdnet/network.hh: Also here.
 
-	2007-02-22  Akim Demaille  <akim.demaille@free.fr>
+	2007-02-22  Akim Demaille  <demaille@gostai.com>
 	Fix #133
 	We focused on the fact that the current code is boggus and
 	missed the fact that my proposal was addressing one issue, but
@@ -4707,7 +4712,7 @@
 	There are conflicts on Windows.
 	* src/parser/bison/ugrammar.y: Inline the uses of TRUE and FALSE.
 
-2007-03-01  Akim Demaille  <akim.demaille@free.fr>
+2007-03-01  Akim Demaille  <demaille@gostai.com>
 
 	tagequal
 	* src/uvariablename.cc (prefix, suffix): Move to...
@@ -4726,7 +4731,7 @@
 	add automerge support.
 	* .automerge: New.
 
-2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+2007-02-24  Akim Demaille  <demaille@gostai.com>
 
 	Let UString use std::string
 	* src/ustring.hh, src/ustring.cc (len_): Remove.
@@ -4735,7 +4740,7 @@
 	Adjust all the code
 	* src/uexpression.cc, src/uvariablename.cc: Adjust.
 
-2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+2007-02-24  Akim Demaille  <demaille@gostai.com>
 
 	mem-track.hh
 	This is needed because ustring.hh needs to include utypes.hh,
@@ -4746,19 +4751,19 @@
 	* src/utypes.hh: here.
 	* src/Makefile.am: Adjust.
 
-2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+2007-02-24  Akim Demaille  <demaille@gostai.com>
 
 	Fix uninitialized variable warning
 	* src/userver.hh, src/userver.cc (memory): here.
 	While we're at it, give this function a proper prototype,
 	and useful variable names.
 
-2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+2007-02-24  Akim Demaille  <demaille@gostai.com>
 
 	Scope reduction
 	* src/userver.cc (memory): Here.
 
-2007-02-24  Akim Demaille  <akim.demaille@free.fr>
+2007-02-24  Akim Demaille  <demaille@gostai.com>
 
 	Morph slowly UString into std::string
 	* src/ustring.hh, src/ustring.cc (str, len): Rename as...
@@ -4925,7 +4930,7 @@
 	(searchEvent): Here.
 	Also, use const_iterators.
 
-2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+2007-02-19  Akim Demaille  <demaille@gostai.com>
 
 	Get rid of buffers
 	* src/uvariablename.hh (set_fullname): Move to...
@@ -4936,12 +4941,12 @@
 	Use it.
 	Use std::strings instead of buffers.
 
-2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+2007-02-19  Akim Demaille  <demaille@gostai.com>
 
 	More UString operators
 	* src/ustring.hh (operator!=): New.
 
-2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+2007-02-19  Akim Demaille  <demaille@gostai.com>
 
 	Get rid of buffers
 	* src/uvariablename.hh, src/uvariablename.cc (build_from_str): New.
@@ -4949,7 +4954,7 @@
 	Don't use static buffers.
 	Factor and try to be readable.
 
-2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+2007-02-19  Akim Demaille  <demaille@gostai.com>
 
 	Factor a bit UVariableName
 	This code is really hard to follow, and Aibo crashes somewhere here
@@ -4961,30 +4966,30 @@
 	Instrument for ECHO etc. but do not activate.
 	Shorten some scopes.
 
-2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+2007-02-19  Akim Demaille  <demaille@gostai.com>
 
 	update UString
 	* src/ustring.hh (update): New.
 	Hopefully, should disapear in the future, together with UStrings.
 
-2007-02-19  Akim Demaille  <akim.demaille@free.fr>
+2007-02-19  Akim Demaille  <demaille@gostai.com>
 
 	Use libport::m?has
 	* src/ucommand.cc, src/uvariablename.cc: Here.
 
-2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+2007-02-18  Akim Demaille  <demaille@gostai.com>
 
 	Fix signature
 	* src/uvariable.hh: Add missing inline.
 	* src/uvariable.cc (UVariable::print): here.
 
-2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+2007-02-18  Akim Demaille  <demaille@gostai.com>
 
 	UVariable::print
 	* src/uvariable.hh, src/uvariable.cc (UVariable::print)
 	(operator<< (ostream, UVariable): New.
 
-2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+2007-02-18  Akim Demaille  <demaille@gostai.com>
 
 	unic("PREFIX")
 	* src/userver.hh, src/userver.cc (URBI_unicID): Now a static
@@ -4994,29 +4999,29 @@
 	* src/ucommand.cc: Use it instead of unic().
 	(copy): Get rid of the ret temp var when we can.
 
-2007-02-18  Akim Demaille  <akim.demaille@free.fr>
+2007-02-18  Akim Demaille  <demaille@gostai.com>
 
 	Factor loops
 	* src/uexpression.cc (UExpression::eval_FUNCTION): Factor two
 	while loops ending both branches of an if.
 
-2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+2007-02-17  Akim Demaille  <demaille@gostai.com>
 
 	* src/uexpression.cc (to_string): New, for UExpression::Type.
 
-2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+2007-02-17  Akim Demaille  <demaille@gostai.com>
 
 	Adjust to *maps becoming SingletonPtr
 	* src/ucommand.cc, src/uobj.cc, src/userver.cc, src/uvar.cc,
 	* src/uvariablename.cc: Catch up with changes in liburbi-cpp
 	[426].
 
-2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+2007-02-17  Akim Demaille  <demaille@gostai.com>
 
 	uobject-hub-common.cc
 	* src/uobject.cc: Remove factored functions.
 
-2007-02-17  Akim Demaille  <akim.demaille@free.fr>
+2007-02-17  Akim Demaille  <demaille@gostai.com>
 
 	Update uobject/
 	* src/uobject.cc: Remove parts now factored in uobject-common.cc.
@@ -5027,29 +5032,29 @@
 	* src/uqueue.cc: Fix a bug reported by MN, introduced by myself
 	in 501: the removal of important parens.
 
-2007-02-15  Akim Demaille  <akim.demaille@free.fr>
+2007-02-15  Akim Demaille  <demaille@gostai.com>
 
 	UCommand_ASSIGN_VALUE::execute_function_call
 	* src/ucommand.hh, src/ucommand.cc (UFALLTHRU): New.
 	(UCommand_ASSIGN_VALUE::execute_function_call): New.
 	(UCommand_ASSIGN_VALUE::execute_): Use it.
 
-2007-02-14  Akim Demaille  <akim.demaille@free.fr>
+2007-02-14  Akim Demaille  <demaille@gostai.com>
 
 	Use &, not *
 	* src/uobject.cc: to alias the ghost connection.
 
-2007-02-14  Akim Demaille  <akim.demaille@free.fr>
+2007-02-14  Akim Demaille  <demaille@gostai.com>
 
 	Cleaning
 	* src/uobject.cc: Spaces, identifiers, scopes.
 
-2007-02-14  Akim Demaille  <akim.demaille@free.fr>
+2007-02-14  Akim Demaille  <demaille@gostai.com>
 
 	Respect the tradition
 	* src/uobject.cc: For iterator names.
 
-2007-02-14  Akim Demaille  <akim.demaille@free.fr>
+2007-02-14  Akim Demaille  <demaille@gostai.com>
 
 	Process doc last
 	* Makefile.am (SUBDIRS): here.
@@ -5059,13 +5064,13 @@
 	Query replace regexp:
 	STREQ *(\(.*?\)->str(), *\([^)]*\)) -> *\1 == \2
 
-2007-02-13  Akim Demaille  <akim.demaille@free.fr>
+2007-02-13  Akim Demaille  <demaille@gostai.com>
 
 	Bug fix
 	* src/uexpression.cc (UExpression::UExpression): Use t, not type,
 	which is not yet defined.
 
-2007-02-13  Akim Demaille  <akim.demaille@free.fr>
+2007-02-13  Akim Demaille  <demaille@gostai.com>
 
 	Use operator== for UString
 	* src/ucommand.cc: here.
@@ -5174,7 +5179,7 @@
 	* src/network/bsdnet/network.cc: Don't rely on SO_NOSIGPIPE
 	being defined.
 
-2007-02-13  Akim Demaille  <akim.demaille@free.fr>
+2007-02-13  Akim Demaille  <demaille@gostai.com>
 
 	Add debugging traces to network handling
 	* src/network/bsdnet/network.hh
@@ -5192,17 +5197,17 @@
 	(TCPServerPipe::init): Ask for errno instead of a signal for
 	broken pipes.
 
-2007-02-12  Akim Demaille  <akim.demaille@free.fr>
+2007-02-12  Akim Demaille  <demaille@gostai.com>
 
 	Debugging traces
 	* src/utypes.hh: For UErrorValue.
 
-2007-02-12  Akim Demaille  <akim.demaille@free.fr>
+2007-02-12  Akim Demaille  <demaille@gostai.com>
 
 	Pretend C++ is a scoped language
 	* src/uconnection.cc: And reuse the identifiers.
 
-2007-02-12  Akim Demaille  <akim.demaille@free.fr>
+2007-02-12  Akim Demaille  <demaille@gostai.com>
 
 	Revert debug traces
 	I checked in bits I didn't mean to check in, for I forgot -N.
@@ -5211,17 +5216,17 @@
 	* src/network/bsdnet/network.cc: Add even more perror calls
 	on failures.
 
-2007-02-10  Akim Demaille  <akim.demaille@free.fr>
+2007-02-10  Akim Demaille  <demaille@gostai.com>
 
 	Use libport::escape
 	* src/ustring.cc (armor): here.
 	* src/Makefile.am: Compile the libport_sources.
 
-2007-02-10  Akim Demaille  <akim.demaille@free.fr>
+2007-02-10  Akim Demaille  <demaille@gostai.com>
 
 	* src/flavorable.hh (libport/assert.hh): Include it.
 
-2007-02-10  Akim Demaille  <akim.demaille@free.fr>
+2007-02-10  Akim Demaille  <demaille@gostai.com>
 
 	svn merge -r 826:832 https://svn.gostai.com/svn/kernel1/branches/1.0
 	2007-02-09  Matthieu Nottale  <nottale@gostai.com>
@@ -5290,7 +5295,7 @@
 	Built by taking pieces from...
 	* src/utypes.hh, src/ucommand.cc, src/userver.hh: these files.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	Get rid of casts
 	* src/ucommand.hh, src/ucommand.cc (UCommand_BINDER): Use UBindType,
@@ -5299,29 +5304,29 @@
 	Convert others to C++ style.
 	* src/parser/bison/ugrammar.y: Adjust.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	Remove some casts using tmp vars
 	* src/ucommand.cc: here.
 	* src/uobject/: Update.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	C++ casts, enums
 	* uqueue.hh: here, as usual.
 	The declaration of enums could be done by style.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	C++ Casts
 	* utypes.hh: here.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	C cast
 	* src/ughostconnection.cc: Make it C++.
 
-2007-02-01  Akim Demaille  <akim.demaille@free.fr>
+2007-02-01  Akim Demaille  <demaille@gostai.com>
 
 	Remove C casts
 	* src/memorymanager/memorymanager.cc: here.
@@ -5462,7 +5467,7 @@
 	* src/utypes.hh (TagInfo): move to.
 	* src/fwd.hh: here.
 
-2007-01-26  Akim Demaille  <akim.demaille@free.fr>
+2007-01-26  Akim Demaille  <demaille@gostai.com>
 
 	Coding style
 	* src/uproperty.hh, src/uproperty.cc: Use C++ ctors.
