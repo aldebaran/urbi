@@ -438,7 +438,7 @@ UConnection::sendc_ (const ubyte *buffer, int length)
   {
     if (result == UFAIL)
     {
-      errorSignal(UERROR_SEND_BUFFER_FULL);
+      errorSignal_set(UERROR_SEND_BUFFER_FULL);
       server->isolate();
     }
 
@@ -550,10 +550,9 @@ UConnection::received_ (const ubyte *buffer, int length)
     // Handles memory errors.
     if (result == UFAIL)
     {
-      errorSignal(UERROR_RECEIVE_BUFFER_FULL);
-      errorSignal(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      errorSignal_set(UERROR_RECEIVE_BUFFER_FULL);
+      errorSignal_set(UERROR_RECEIVE_BUFFER_CORRUPTED);
     }
-
     CONN_ERR_RET(result);
   }
 
