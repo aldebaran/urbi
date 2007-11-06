@@ -86,6 +86,6 @@ UConnection&
 UGhostConnection::endline ()
 {
   //FIXME: test send error
-  (*this) << msend((const ubyte*)"\n", 1);
+  (*this) << send((const ubyte*)"\n", 1);
   CONN_ERR_RET(USUCCESS);
 }

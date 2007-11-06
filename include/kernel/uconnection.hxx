@@ -7,15 +7,15 @@
 
 inline
 UConnection&
-UConnection::sendc (const std::string& s)
+UConnection::sendc_ (const std::string& s)
 {
-  return sendc(reinterpret_cast<const ubyte*>(s.c_str()), s.size());
+  return sendc_ (reinterpret_cast<const ubyte*> (s.c_str ()), s.size ());
 }
 
 //! Accessor for sendAdaptive_
 inline 
 int
-UConnection::sendAdaptive()
+UConnection::sendAdaptive ()
 {
   return sendAdaptive_;
 }
@@ -23,7 +23,7 @@ UConnection::sendAdaptive()
 //! Accessor for recvQueue_
 inline 
 UCommandQueue&
-UConnection::recvQueue()
+UConnection::recvQueue ()
 {
   return *recvQueue_;
 }
@@ -31,7 +31,7 @@ UConnection::recvQueue()
 //! Accessor for sendQueue_
 inline 
 UQueue&
-UConnection::send_queue()
+UConnection::send_queue ()
 {
   return *sendQueue_;
 }
@@ -39,7 +39,7 @@ UConnection::send_queue()
 //! Accessor for receiveAdaptive_
 inline 
 int
-UConnection::receiveAdaptive()
+UConnection::receiveAdaptive ()
 {
   return recvAdaptive_;
 }

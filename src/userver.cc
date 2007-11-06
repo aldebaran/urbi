@@ -290,24 +290,25 @@ UServer::work_access_and_change_ ()
 void
 UServer::work_handle_connections_ ()
 {
+  // Scan currently opened connections for ongoing work
   BOOST_FOREACH (UConnection* c, connectionList)
     if (c->isActive())
     {
       if (!c->isBlocked())
-	(*c) << UConnection::mcontinue;
+	(*c) << UConnection::continueSend;
 
       if (signalcpuoverload)
       {
-	(*c) << UConnection::merrorSignal(UERROR_CPU_OVERLOAD);
+	(*c) << UConnection::errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      (*c) << UConnection::merrorCheck(UERROR_MEMORY_OVERFLOW);
-      (*c) << UConnection::merrorCheck(UERROR_MEMORY_WARNING);
-      (*c) << UConnection::merrorCheck(UERROR_SEND_BUFFER_FULL);
-      (*c) << UConnection::merrorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (*c) << UConnection::merrorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (*c) << UConnection::merrorCheck(UERROR_CPU_OVERLOAD);
+      (*c) << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
+      (*c) << UConnection::errorCheck(UERROR_MEMORY_WARNING);
+      (*c) << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
+      (*c) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      (*c) << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      (*c) << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
 
       // The following code only made sense in k1, and should be
       // removed in k2, provided we are really sure it is useless.
@@ -316,14 +317,14 @@ UServer::work_handle_connections_ ()
       // Run the connection's command queue:
       if (c->has_pending_command ())
       {
-	(*r)->obstructed = true; // will be changed to 'false'
+	c->obstructed = true; // will be changed to 'false'
         {
           //if the whole tree is visited
-          boost::try_mutex::scoped_lock((*r)->treeMutex);
-          (*r)->inwork = true;   // to distinguish this call of
+          boost::try_mutex::scoped_lock((*c)->treeMutex);
+          c->inwork = true;   // to distinguish this call of
           //execute from the one in receive
-          (*r)->execute((*r)->activeCommand);
-          (*r)->inwork = false;
+          c->execute((*c)->activeCommand);
+          c->inwork = false;
         }
       }
 #endif
@@ -334,7 +335,7 @@ UServer::work_handle_connections_ ()
 	// delay the parsing after the completion
 	// of execute().
 	c->newDataAdded = false;
-	(*c) << UConnection::mreceived("");
+	(*c) << UConnection::received("");
       }
     }
 }
@@ -496,7 +497,7 @@ UServer::work_reset_if_needed_ ()
          i != connectionList.end();
          ++i)
       if ((*i)->isActive())
-        (**i) << UConnection::msend("*** Reset completed. Now, restarting...\n", "reset");
+        (**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
 
     //restart uobjects
     for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
@@ -519,10 +520,10 @@ UServer::work_reset_if_needed_ ()
          ++i)
       if ((*i)->isActive() && (*i) != ghost_)
       {
-        (**i) << UConnection::msend("*** Restart completed.\n", "reset");
+        (**i) << UConnection::send("*** Restart completed.\n", "reset");
         loadFile("CLIENT.INI", &(*i)->recvQueue());
         (*i)->newDataAdded = true;
-        (**i) << UConnection::msend("*** Ready.\n", "reset");
+        (**i) << UConnection::send("*** Ready.\n", "reset");
       }
     resetting = false;
     stage = 0;
