@@ -1,3 +1,98 @@
+2007-11-06  Thomas Moulard  <thomas@moulard.net>
+
+	merge -r 1336:1376 https://svn.gostai.com/svn/kernel1/trunk.
+
+        This merge introduces a bug in result display
+        which will be fixed while merging r1385. See:
+        https://core.gostai.com/projects/kernel1/changeset/1385
+
+	2007-07-24  Thomas Moulard  <thomas.moulard@gmail.com>
+	Restore crushed modifications.
+        (crushed while merging boost-thread branch into trunk in r1341)
+	* configure.ac,
+	* include/kernel/uvariable.hh,
+	* src/Makefile.am,
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/uconnection.cc,
+	* src/uexpression.cc: Here.
+
+	2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
+	merge -r 1362:1367 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-07-23  Guillaume Deslandes  <deslandes@gostai.com>
+	Use UConnection as a stream
+	This still needs cleaning.
+	It will be done after more intensibve testing.
+	* include/kernel/ucomplaints.hh (message): New. Unify functions for
+	error and warning messages.
+	* include/kernel/uconnection.hh: .
+	* src/network/bsdnet/connection.cc: Fixed prototypes.
+	(endline): Moved implementation from UConnection here.
+	* Src/network/bsdnet/connection.hh: Idem.
+	* src/parser/bison/ugrammar.y: Fixed calls.
+	* src/ucommand.cc: .
+	* src/ucomplaints.cc (messages): New. Static array for messages.
+	(message): New. Unified function.
+	* src/uconnection.cc: Fixed calls.
+	* src/uexpression.cc: Fixed calls.
+	* src/ughostconnection.cc: Fixed prototypes.
+	(endline): Moved implementation from UConnection here.
+	* src/ughostconnection.hh: Idem.
+	* src/uobj.cc: Fixed calls.
+	* src/uobject.cc: Fixed calls.
+	* src/userver.cc: Fixed calls.
+	* src/uvalue.cc: Fixed prototypes and calls.
+	* src/uvariable.cc: Fixed calls.
+
+	2007-07-23  mefyl  <mefyl@lrde.epita.fr>
+	merge -r 1340:1362 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-07-23  mefyl  <mefyl@lrde.epita.fr>
+	Use '**' instead of '^'. Update tests external.
+	* src/parser/bison/ugrammar.y: Use '**' instead of '^' in the grammar.
+	* tests-local.mk: Do not check new tests from trunk which fail.
+
+	2007-07-19  Thomas Moulard  <thomas.moulard@gmail.com>
+	Merge boost-thread, 1.0 into trunk.
+	* .automerge: Update revision.
+	* ChangeLog,
+	* Makefile.am,
+	* configure.ac,
+	* include/kernel/blockmemorymanager.hh,
+	* include/kernel/uconnection.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/uvariable.hh,
+	* src/Makefile.am,
+	* src/memorymanager/memorymanager.cc,
+	* src/network/bsdnet/network.cc,
+	* src/parser/bison/ugrammar.y,
+	* src/parser/bison/utoken.l,
+	* src/ucommand.cc,
+	* src/ucommand.hh,
+	* src/uconnection.cc,
+	* src/uexpression.cc,
+	* src/userver.cc: Import branches.
+
+	Automerge: svn merge -r 1186:1340 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-07-13  Akim Demaille  <demaille@gostai.com>
+
+	Fix ''d
+	* src/parser/bison/ugrammar.y: Actually, it's 'dd.
+
+	2007-07-12  mefyl  <mefyl@lrde.epita.fr>
+
+	Warn on use of operator ^. Add operator **.
+	* src/parser/uparser.cc,
+	* src/parser/uparser.hh: Add a mehod to emit warnings. 
+	* src/parser/bison/utoken.l: Emit warnings on ^. 
+        Scan ** as exponent operator
+        * src/uconnection.cc,
+        * src/uexpression.cc: Report warnings through the connection.
+
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
 	Fix, again, externals.

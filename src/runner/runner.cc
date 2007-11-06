@@ -55,8 +55,8 @@ namespace runner
       context_.cast<object::Context>()->value_get().connection;
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
-    c.sendc (o.str ().c_str (), "error");
-    c.endline ();
+    c << UConnection::msend (o.str ().c_str (), "error")
+      << UConnection::mendl;
     // Reset the current value: there was an error so whatever value it has,
     // it must not be used.
     current_.reset ();

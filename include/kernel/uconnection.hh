@@ -22,9 +22,9 @@
 #ifndef UCONNECTION_HH
 # define UCONNECTION_HH
 
-#include <cstdarg>
-
-# include "libport/lockable.hh"
+# include <cstdarg>
+# include <iomanip>
+# include <boost/thread.hpp>
 
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
@@ -32,6 +32,13 @@
 
 # include "ast/fwd.hh"
 # include "object/fwd.hh"
+
+# define ERR_SET(Val) (error_ = Val)
+# define CONN_ERR_RET(Val) do			\
+  {						\
+    ERR_SET(Val);				\
+    return *this;				\
+  } while (0)
 
 /// Pure virtual class for a client connection.
 /*! UConnection is holding the message queue in and out. No assumption is made
@@ -60,7 +67,7 @@
     system is actually sending data through the real connection.
  */
 
-class UConnection: public libport::Lockable //queue lock
+class UConnection
 {
   friend class UServer;
 
@@ -119,11 +126,185 @@ public:
 
   virtual ~UConnection ();
 
-  void initialize ();
-  virtual UErrorValue closeConnection () = 0;
+  UConnection& initialize ();
 
-  UErrorValue sendPrefix (const char* tag = 0);
+protected:
+  virtual UConnection& closeConnection () = 0;
 
+#if 1
+public:
+  static UConnection& mblock (UConnection& c);
+  static UConnection& mendl (UConnection& c);
+  static UConnection& mflush (UConnection& c);
+  static UConnection& mcontinue (UConnection& c);
+  static UConnection& mactivate (UConnection& c);
+  static UConnection& mdisactivate (UConnection& c);
+  static UConnection& mclose (UConnection& c);
+
+  UConnection& operator<< (UConnection& m (UConnection&));
+
+  /// Unified struct for sending messages
+  struct _Send
+  {
+    const ubyte* _tag; int _taglen;
+    const ubyte* _buf; int _buflen;
+    bool _flush;
+  };
+
+  static inline _Send msendf (const std::string& __tag,
+			      const char* __format, ...)
+  {
+    va_list args;
+    va_start(args, __format);
+    return msendf (__tag, __format, args);
+  }
+
+  static inline _Send msendf (const std::string& __tag,
+			      const char* __format, va_list __args)
+  {
+    char buf[1024];
+    vsnprintf(buf, sizeof (buf), __format, __args);
+    return msend (buf, __tag.c_str());
+  }
+
+  static inline _Send msend (const char *__s, const char* __tag = 0)
+  {
+    return msend ((const ubyte*) __s, ((__s != 0) ? strlen (__s) : 0),
+		  (const ubyte*) __tag);
+  }
+
+  static inline _Send msendc (const char* __buf, const char* __tag)
+  {
+    return msendc ((const ubyte*)__buf, ((__buf != 0) ? strlen (__buf) : 0),
+		   (const ubyte*)__tag);
+  }
+
+  static inline _Send msendc (const ubyte* __buf, int __len,
+			      const ubyte* __tag = 0)
+  {
+    return msend (__buf, __len, __tag, false);
+  }
+
+  static inline _Send msend (const ubyte* __buf, int __buflen,
+			     const ubyte* __tag = 0,
+			     bool __flush = true)
+  {
+    _Send __msg;
+    __msg._tag = __tag;
+    __msg._taglen = -1;
+    __msg._buf = __buf;
+    __msg._buflen = __buflen;
+    __msg._flush = __flush;
+    return __msg;
+  }
+
+  UConnection& operator<< (_Send __msg);
+
+
+  struct _Prefix { const char* _tag; };
+  static inline _Prefix msendPrefix (const char * __tag)
+  {
+    _Prefix __pref;
+    __pref._tag = __tag;
+    return __pref;
+  }
+  UConnection& operator<< (_Prefix __pref);
+
+  struct _ErrorSignal { UErrorCode _n; };
+  static inline _ErrorSignal merrorSignal (UErrorCode __n)
+  {
+    _ErrorSignal __err;
+    __err._n = __n;
+    return __err;
+  }
+  UConnection& operator<< (_ErrorSignal __pref);
+
+  struct _ErrorCheck { UErrorCode _n; };
+  static inline _ErrorCheck merrorCheck (UErrorCode __n)
+  {
+    _ErrorCheck __err;
+    __err._n = __n;
+    return __err;
+  }
+  UConnection& operator<< (_ErrorCheck __pref);
+
+  struct _Activate { bool _st; };
+  static inline _Activate msetActivate (bool __st)
+  {
+    _Activate __act;
+    __act._st = __st;
+    return __act;
+  }
+  UConnection& operator<< (_Activate __act);
+
+  struct _IPAddress { IPAdd _addr; };
+  static inline _IPAddress msetIP ( IPAdd __addr)
+  {
+    _IPAddress __ip;
+    __ip._addr = __addr;
+    return __ip;
+  }
+  UConnection& operator<< (_IPAddress __ip);
+
+  struct _SendAdaptative { int _val; };
+  static inline _SendAdaptative msetSendAdaptative (int __val)
+  {
+    _SendAdaptative __adap;
+    __adap._val = __val;
+    return __adap;
+  }
+  UConnection& operator<< (_SendAdaptative __adap);
+
+  struct _RecvAdaptative { int _val; };
+  static inline _RecvAdaptative msetReceiveAdaptative (int __val)
+  {
+    _RecvAdaptative __adap;
+    __adap._val = __val;
+    return __adap;
+  }
+  UConnection& operator<< (_RecvAdaptative __adap);
+
+  struct _MsgCode { UMsgType _t; int _n; };
+  static inline _MsgCode mmsg (UMsgType __t, int __n)
+  {
+    _MsgCode __msg;
+    __msg._t = __t;
+    __msg._n = __n;
+    return __msg;
+  }
+  UConnection& operator<< (_MsgCode __msg);
+  UConnection& operator<< (UErrorCode __id);
+  UConnection& operator<< (UWarningCode __id);
+
+
+  struct _Received { const ubyte* _val; int _len; };
+  static inline _Received mreceived (const ubyte* __val, int __len)
+  {
+    _Received __cmd;
+    __cmd._val = __val;
+    __cmd._len = __len;
+    return __cmd;
+  }
+  static inline _Received mreceived (const char* __val)
+  {
+    return mreceived((const ubyte*) __val,
+		     ((__val != 0) ? strlen (__val) : 0));
+  }
+  UConnection& operator<< (_Received __cmd);
+
+  struct _LocalVariableCheck { UVariable* _val; };
+  static inline _LocalVariableCheck mlocalVariableCheck (UVariable* __val)
+  {
+    _LocalVariableCheck __var;
+    __var._val = __val;
+    return __var;
+  }
+  UConnection& operator<< (_LocalVariableCheck __cmd);
+#endif // 1
+
+  std::string mkPrefix (const ubyte* tag) const;
+
+//   UConnection& sendPrefix (const char* tag = 0);
   //! Send a string through the connection.
   /*! A tag is automatically added to output the message string and the
    resulting string is sent via send(const ubyte*,int).
@@ -134,14 +315,11 @@ public:
    - UFAIL   : could not send the string
    \sa send(const ubyte*,int)
    */
-  UErrorValue send (const char *s, const char* tag = 0);
-
+//   UConnection& send (const char *s, const char* tag = 0);
   //! Send a buffer through the connection and flush it.
-  virtual UErrorValue send (const ubyte *buffer, int length);
-
-  UErrorValue sendf (const std::string& tag, const char* format, va_list args);
-  UErrorValue sendf (const std::string& tag, const char* format, ...);
-
+//   virtual UConnection& send (const ubyte *buffer, int length);
+//   UConnection& sendf (const std::string& tag, const char* format, va_list args);
+//   UConnection& sendf (const std::string& tag, const char* format, ...);
   //! Send a buffer through the connection without flushing it.
   /*! The function piles the buffer in the sending queue and calls
    continueSend() if the connection is not blocked (blocked means that
@@ -160,23 +338,27 @@ public:
    - UFAIL   : could not send the buffer, not enough memory in the
    send queue.
    \sa send(const char*)
-   */
-    virtual UErrorValue sendc (const ubyte *buffer, int length);
+  */
+//   UConnection& sendc (const char *s, const char* tag = 0);
+
 
   //! Send a string through the connection but without flushing it
-  UErrorValue sendc (const char *s, const char* tag = 0);
+  virtual UConnection& sendc (const ubyte *buffer, int length);
 
   /// Send \a str through the connection, don't flush.
-  UErrorValue sendc (const std::string& s);
+  UConnection& sendc (const std::string& s);
 
-  UErrorValue endline ();
+  virtual UConnection& endline () = 0;
 
-
+public:
   bool isBlocked ();
-  void block ();
-  UErrorValue continueSend ();
-  void flush ();
 
+protected:
+  UConnection& block ();
+  UConnection& continueSend ();
+  UConnection& flush ();
+
+protected:
   /// Handle an incoming string.
   /*! Must be called each time a string is received by the connection.
    \param s the incoming string
@@ -184,7 +366,7 @@ public:
    \return UMEMORYFAIL critical memory overflow
    \return USUCCESS otherwise
    */
-  UErrorValue received (const char *s);
+  UConnection& received (const char *s);
 
   /// \brief Handle an incoming buffer of data.
   ///
@@ -194,38 +376,40 @@ public:
   /// \return UFAIL       buffer overflow
   /// \return UMEMORYFAIL critical memory overflow
   /// \return USUCCESS    otherwise
-  UErrorValue received (const ubyte *buffer, int length);
+  UConnection& received (const ubyte *buffer, int length);
 
+public:
   int sendAdaptive ();
   int receiveAdaptive ();
 
-  void setSendAdaptive (int sendAdaptive);
-  void setReceiveAdaptive (int receiveAdaptive);
+protected:
+  UConnection& setSendAdaptive (int sendAdaptive);
+  UConnection& setReceiveAdaptive (int receiveAdaptive);
 
-  void errorSignal (UErrorCode n);
-  void errorCheck (UErrorCode n);
+  UConnection& errorSignal (UErrorCode n);
+  UConnection& errorCheck (UErrorCode n);
 
-  void activate ();
-  void disactivate ();
-  bool isActive ();
+  UConnection& activate (); // OK
+  UConnection& disactivate (); // OK
+public:
+  bool  isActive (); // OK : accessor
+protected:
+  UConnection& execute ();
+public:
+  int availableSendQueue (); // OK : accessor
+  int sendQueueRemain (); // OK : accessor
 
-  /// Execute the pending commands (if any).
-  void execute ();
+  UCommandQueue& recvQueue (); // OK : accessor
+  UQueue& send_queue (); // OK : accessor
 
-  int availableSendQueue ();
-  int sendQueueRemain ();
-
-  UCommandQueue&recvQueue ();
-  UQueue& send_queue ();
-
-  void localVariableCheck (UVariable* variable);
+  UConnection& localVariableCheck (UVariable *variable); // OK
 
 
   //! UConnection IP associated
   /*! The robot specific part should call the function when the
-   connection is active and transmit the IP address of the client,
-   as a long int.  */
-  void setIP (IPAdd ip);
+    connection is active and transmit the IP address of the client,
+    as a long int.  */
+  UConnection& setIP (IPAdd ip); // OK : to remove
 
   bool has_pending_command () const;
   void drop_pending_commands ();
@@ -235,7 +419,7 @@ public:
   /// network.
   void new_result (object::rObject result);
 
-protected:
+public:
   /// Error return code for the constructor.
   UErrorValue uerror_;
 
@@ -281,10 +465,10 @@ public:
   /// \{
 public:
   /// Return the UParser we use.
-  UParser& parser ();
+  UParser& parser (); // OK : accessor
 
   /// Lock access to command tree.
-  libport::Lockable treeLock;
+  boost::try_mutex treeMutex;
 
 private:
   /// Our parser.  A pointer to stop dependencies.
@@ -296,9 +480,16 @@ protected:
   /// Default adaptive behavior for Send/Recv..
   enum { ADAPTIVE = 100 };
 
-  virtual int effectiveSend (const ubyte*, int length) = 0;
-  UErrorValue error (UErrorCode n);
-  UErrorValue warning (UWarningCode n);
+  virtual int  effectiveSend (const ubyte*, int length) = 0; // OK : don't touch
+  UConnection& error (UErrorCode n); // OK : don't remove (may be removed)
+  UConnection& warning (UWarningCode n); // OK : don't remove (may be removed)
+
+public:
+  UErrorValue  error () const; // OK : accessor
+
+protected:
+  /// Store error on commands
+  UErrorValue error_;
 
 private:
   /// Max number of error signals used..
@@ -334,6 +525,8 @@ private:
   /// The Context into which the code is evaluated.
   /// This is this connection, wrapped into an Urbi object.
   object::rContext context_;
+
+  boost::mutex mutex_;
 };
 
 # include "kernel/uconnection.hxx"

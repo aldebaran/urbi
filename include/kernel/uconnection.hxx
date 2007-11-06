@@ -6,7 +6,7 @@
 # include "kernel/uconnection.hh"
 
 inline
-UErrorValue
+UConnection&
 UConnection::sendc (const std::string& s)
 {
   return sendc(reinterpret_cast<const ubyte*>(s.c_str()), s.size());
@@ -49,6 +49,13 @@ UParser&
 UConnection::parser ()
 {
   return *parser_;
+}
+
+inline
+UErrorValue
+UConnection::error () const
+{
+  return error_;
 }
 
 #endif

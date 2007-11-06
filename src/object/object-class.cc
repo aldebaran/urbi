@@ -41,8 +41,8 @@ namespace object
   {
     std::ostringstream os;
     args[0]->print (os);
-    c->value_get().connection.send (os.str().c_str());
-    c->value_get().connection.endline();
+    c->value_get().connection << UConnection::msend (os.str().c_str())
+                              << UConnection::mendl;
     return args[0];
   }
 
@@ -54,8 +54,11 @@ namespace object
     std::ostringstream os;
     os << "*** ";
     args[1]->print (os);
-    c->value_get().connection.send (os.str().c_str());
-    c->value_get().connection.endline();
+    // FIXME: do not build manually prefix.
+    c->value_get().connection
+      << UConnection::msend (c->value_get().connection.mkPrefix (0).c_str ())
+      << UConnection::msend (os.str().c_str())
+      << UConnection::mendl;
     return args[0];
   }
 

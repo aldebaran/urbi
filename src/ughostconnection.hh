@@ -32,12 +32,14 @@
 class UGhostConnection : public UConnection
 {
 public:
-  UGhostConnection  ( UServer *mainserver );
+  UGhostConnection (UServer *mainserver);
   virtual ~UGhostConnection ();
-  virtual UErrorValue   closeConnection    ();
+  virtual UConnection& closeConnection ();
 
 protected:
-  virtual int   effectiveSend     (const ubyte *buffer, int length);
+  virtual int effectiveSend (const ubyte *buffer, int length);
+public:
+  virtual UConnection& endline ();
 };
 
 #endif

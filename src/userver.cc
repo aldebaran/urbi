@@ -29,6 +29,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <boost/thread.hpp>
 
 #include <boost/foreach.hpp>
 
@@ -234,8 +235,7 @@ UServer::afterWork ()
 void
 UServer::work ()
 {
-  libport::BlockLock bl (this);
-
+  boost::recursive_mutex::scoped_lock lock(mutex);
   // CPU Overload test
   updateTime ();
   previous3Time = previous2Time;
@@ -294,19 +294,20 @@ UServer::work_handle_connections_ ()
     if (c->isActive())
     {
       if (!c->isBlocked())
-	c->continueSend();
+	(*c) << UConnection::mcontinue;
 
       if (signalcpuoverload)
       {
-	// c->errorSignal (UERROR_CPU_OVERLOAD);
-	ECHO ("UERROR_CPU_OVERLOAD");
+	(*c) << UConnection::merrorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      c->errorCheck(UERROR_SEND_BUFFER_FULL);
-      c->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      c->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      c->errorCheck(UERROR_CPU_OVERLOAD);
+      (*c) << UConnection::merrorCheck(UERROR_MEMORY_OVERFLOW);
+      (*c) << UConnection::merrorCheck(UERROR_MEMORY_WARNING);
+      (*c) << UConnection::merrorCheck(UERROR_SEND_BUFFER_FULL);
+      (*c) << UConnection::merrorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      (*c) << UConnection::merrorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      (*c) << UConnection::merrorCheck(UERROR_CPU_OVERLOAD);
 
       // The following code only made sense in k1, and should be
       // removed in k2, provided we are really sure it is useless.
@@ -315,23 +316,25 @@ UServer::work_handle_connections_ ()
       // Run the connection's command queue:
       if (c->has_pending_command ())
       {
-	c->obstructed = true; // will be changed to 'false' if the whole
-				 // tree is visited
-	c->treeLock.lock ();
-	c->inwork = true; // to distinguish this call of execute from the
-			     // one in receive
-	c->execute ();
-	c->inwork = false;
-	c->treeLock.unlock ();
+	(*r)->obstructed = true; // will be changed to 'false'
+        {
+          //if the whole tree is visited
+          boost::try_mutex::scoped_lock((*r)->treeMutex);
+          (*r)->inwork = true;   // to distinguish this call of
+          //execute from the one in receive
+          (*r)->execute((*r)->activeCommand);
+          (*r)->inwork = false;
+        }
       }
 #endif
 
       if (c->newDataAdded)
       {
-	// used by loadFile and exec to delay the parsing after the
-	// completion of execute().
+	// used by loadFile and exec to
+	// delay the parsing after the completion
+	// of execute().
 	c->newDataAdded = false;
-	c->received("");
+	(*c) << UConnection::mreceived("");
       }
     }
 }
@@ -490,16 +493,10 @@ UServer::work_reset_if_needed_ ()
     //tagtab.clear();
 
     for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
+         i != connectionList.end();
+         ++i)
       if ((*i)->isActive())
-	(*i)->send("*** Reset completed. Now, restarting...\n", "reset");
-
-    //restart hubs
-    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	 i != urbi::objecthublist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+        (**i) << UConnection::msend("*** Reset completed. Now, restarting...\n", "reset");
 
     //restart uobjects
     for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
@@ -513,20 +510,19 @@ UServer::work_reset_if_needed_ ()
     strcpy(resetsignal, "var __system__.resetsignal;");
     ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
     ghost_->newDataAdded = true;
-
   }
   else if (libport::mhas(variabletab, "__system__.resetsignal"))
   {
     //reload CLIENT.INI
     for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
+         i != connectionList.end();
+         ++i)
       if ((*i)->isActive() && (*i) != ghost_)
       {
-	(*i)->send("*** Restart completed.\n", "reset");
-	loadFile("CLIENT.INI", &(*i)->recvQueue());
-	(*i)->newDataAdded = true;
-	(*i)->send("*** Ready.\n", "reset");
+        (**i) << UConnection::msend("*** Restart completed.\n", "reset");
+        loadFile("CLIENT.INI", &(*i)->recvQueue());
+        (*i)->newDataAdded = true;
+        (**i) << UConnection::msend("*** Ready.\n", "reset");
       }
     resetting = false;
     stage = 0;

@@ -18,29 +18,31 @@ BlockPool::BlockPool ()
 void
 block_operator_delete(BlockPool* mempool, void* ptr)
 {
-  mempool->lock();
+  boost::mutex::scoped_lock lock(mempool->mutex);
   ++mempool->cptr;
   *mempool->cptr = ptr;
   MemoryManager::allocatedMemory -= mempool->itemSize;
-  mempool->unlock();
 }
 
 // This implementation can't release any memory to malloc.
 void* block_operator_new(BlockPool* &mempool, size_t sz)
 {
-  if (!mempool)
-  {
+  const bool blockPoolExist = !!mempool;
+
+  if (!blockPoolExist)
     mempool = new BlockPool;
-    mempool->lock();
-    --mempool->cptr;
-    const int align = sizeof (void*);
-    size_t asz = sz;
-    if (asz % align)
-      asz = asz + align - (asz % align);
-    mempool->itemSize = asz;
-  }
-  else
-    mempool->lock();
+
+  boost::mutex::scoped_lock lock(mempool->mutex);
+
+  if (!blockPoolExist)
+    {
+      --mempool->cptr;
+      const int align = sizeof (void*);
+      size_t asz = sz;
+      if (asz % align)
+        asz = asz + align - (asz % align);
+      mempool->itemSize = asz;
+    }
 
   if (!mempool->ptr || mempool->cptr < mempool->ptr)
   {
@@ -71,7 +73,6 @@ void* block_operator_new(BlockPool* &mempool, size_t sz)
   void* result = *mempool->cptr;
   --mempool->cptr;
   MemoryManager::allocatedMemory += sz;
-  mempool->unlock();
   return result;
 }
 #endif // !DISABLE_BLOCKMEMMNGR

@@ -130,9 +130,9 @@ public:
   DumbConnection()
     : UConnection(::urbiserver, 1000, 1000000, 1000, 1000, 1000)
   {}
-  virtual UErrorValue closeConnection ()
+  virtual UConnection& closeConnection ()
   {
-    return USUCCESS;
+    CONN_ERR_RET(USUCCESS);
   }
   char* getData()
   {
@@ -844,7 +844,7 @@ void
 UValue::echo(UConnection *connection, bool human_readable)
 {
   std::string res = echo(human_readable);
-  connection->sendc((const ubyte*)res.c_str(), res.size());
+  *connection << UConnection::msendc((const ubyte*)res.c_str(), res.size());
 }
 
 
