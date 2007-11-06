@@ -1,5 +1,24 @@
 2007-11-06  Thomas Moulard  <thomas@moulard.net>
 
+	merge -r 1465:1688 https://svn.gostai.com/svn/kernel1/trunk.
+	2007-09-10  mefyl  <mefyl@lrde.epita.fr>
+	merge -r 1367:1464 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-08-25  Matthieu Nottale  <nottale@gostai.com>
+	Fix a memory leak and a bug when assigning UList to an UVar.
+	* src/uvalue.cc: Set liststart to 0 after deleting it when assigning a
+        kernel value from a urbi::UList.
+
+	2007-08-31  Remi Humbert  <humbert@gostai.com>
+	* network.cc: Don't set the option SO_REUSEADDR under windows .
+
+	2007-09-23  Jean-Christophe Baillie  <baillie@gostai.com>
+	Fixed lack of early declaration for types lvalue, rvalue, derive.
+	* src/parser/bison/ugrammar.y: move declarations at the top of the
+	file.
+
+2007-11-06  Thomas Moulard  <thomas@moulard.net>
+
 	merge -r 1450:1465 https://svn.gostai.com/svn/kernel1/trunk.
 	* ChangeLog: Fix emails.
 

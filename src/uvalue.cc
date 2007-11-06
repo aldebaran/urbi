@@ -370,6 +370,9 @@ UValue & UValue::operator = (const urbi::UBinary &b)
 UValue & UValue::operator= (const urbi::UList &l)
 {
   UValue* current = 0;
+  if (dataType == DATA_LIST)
+    delete liststart;
+  liststart = 0;
   dataType = DATA_LIST;
   for (int i=0;i<l.size(); ++i)
   {
