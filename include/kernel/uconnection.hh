@@ -25,6 +25,7 @@
 # include <cstdarg>
 # include <iomanip>
 # include <boost/thread.hpp>
+# include <boost/shared_ptr.hpp>
 
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
@@ -146,7 +147,7 @@ public:
   /// Unified struct for sending messages
   struct _Send
   {
-    const ubyte* _tag; int _taglen;
+    ubyte _tag[1024]; int _taglen;
     const ubyte* _buf; int _buflen;
     bool _flush;
   };
@@ -156,14 +157,19 @@ public:
   {
     va_list args;
     va_start(args, __format);
-    return msendf (__tag, __format, args);
+    const _Send tmp = msendf (__tag, __format, args);
+    va_end(args);
+    return tmp;
   }
 
   static inline _Send msendf (const std::string& __tag,
 			      const char* __format, va_list __args)
   {
+    //char* buf = new char[1024];
     char buf[1024];
-    vsnprintf(buf, sizeof (buf), __format, __args);
+    for (int i = 0; i < 1024; ++i)
+      buf[i] = '\0';
+    vsnprintf(buf, 1020, __format, __args);
     return msend (buf, __tag.c_str());
   }
 
@@ -190,8 +196,13 @@ public:
 			     bool __flush = true)
   {
     _Send __msg;
-    __msg._tag = __tag;
-    __msg._taglen = -1;
+    __msg._tag[0] = '\0';
+    __msg._taglen = 0;
+    if (__tag != 0)
+    {
+      strcpy((char *)__msg._tag, (const char *)__tag);
+      __msg._taglen = strlen((const char*)__tag);
+    }
     __msg._buf = __buf;
     __msg._buflen = __buflen;
     __msg._flush = __flush;

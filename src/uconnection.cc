@@ -275,10 +275,10 @@ UConnection::operator<< (_Prefix __pref)
 UConnection&
 UConnection::operator<< (_Send __msg)
 {
-  if (__msg._tag != 0)
+  if (__msg._tag[0] != '\0')
   {
     std::string pref = mkPrefix (__msg._tag);
-    __msg._tag = (const ubyte*) pref.c_str ();
+    strcpy((char*)__msg._tag, pref.c_str ());
     __msg._taglen = pref.length ();
     sendQueue_->mark (); // put a marker to indicate the beginning of a message
 

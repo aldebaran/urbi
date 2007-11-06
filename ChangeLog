@@ -1,5 +1,15 @@
 2007-11-06  Thomas Moulard  <thomas@moulard.net>
 
+	merge -r 1376:1385 https://svn.gostai.com/svn/kernel1/trunk.
+
+	2007-07-24  Guillaume Deslandes  <deslandes@gostai.com>
+	* include/kernel/uconnection.hh: Patch to fix read errors.
+	Not complete
+	* src/ucommand.cc: Remove extra debug info.
+	* src/uconnection.cc: Idem uconnection.hh.
+
+2007-11-06  Thomas Moulard  <thomas@moulard.net>
+
 	merge -r 1336:1376 https://svn.gostai.com/svn/kernel1/trunk.
 
         This merge introduces a bug in result display
