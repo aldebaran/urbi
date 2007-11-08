@@ -1,5 +1,12 @@
 2007-11-08  Thomas Moulard  <thomas@moulard.net>
 
+	merge -r 1696:1727 https://svn.gostai.com/svn/kernel1/trunk.
+	2007-10-12  Guillaume Deslandes  <deslandes@gostai.com>
+	Add #__LINE__ and #__FILE__ tokens to lexer
+	* src/parser/bison/utoken.l: Here.
+
+2007-11-08  Thomas Moulard  <thomas@moulard.net>
+
 	merge -r 1691:1696 https://svn.gostai.com/svn/kernel1/trunk.
 	2007-09-10  mefyl  <mefyl@lrde.epita.fr>
 	merge -r 1594:1604 https://svn.gostai.com/svn/kernel1/branches/1.0
