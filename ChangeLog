@@ -1,5 +1,13 @@
 2007-11-08  Thomas Moulard  <thomas@moulard.net>
 
+	merge -r 1727:1728 https://svn.gostai.com/svn/kernel1/trunk.
+	2007-10-12  Guillaume Deslandes  <deslandes@gostai.com>
+	Use #__LINE__ to reset line counter after autoloaded files
+	* src/uconnection.cc,
+	* src/userver.cc: Here.
+
+2007-11-08  Thomas Moulard  <thomas@moulard.net>
+
 	merge -r 1696:1727 https://svn.gostai.com/svn/kernel1/trunk.
 	2007-10-12  Guillaume Deslandes  <deslandes@gostai.com>
 	Add #__LINE__ and #__FILE__ tokens to lexer
