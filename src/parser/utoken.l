@@ -127,17 +127,16 @@ STRING   \"([^\"]|"\\\"")*\"
   /*-----------------------------------.
   | Internal rules for generated code. |
   `-----------------------------------*/
-^"#"{BLANKS}?"line"{BLANKS}+"\"".*"\""{BLANKS}{NUMBER}{EOL}	{
+^"#"{BLANKS}?"line"{BLANKS}{NUMBER}{BLANKS}"\"".*"\""{EOL}	{
 
   std::string tmpname = yytext;
-  tmpname = tmpname.substr (0, tmpname.find_first_of ("\n\r"));
 
-  std::string tmpline = tmpname.substr (tmpname.find_last_not_of ("0123456789") + 1);
+  std::string tmpline = tmpname.substr (tmpname.find_first_of ("0123456789"));
+  tmpline = tmpline.substr (0, tmpname.find_last_of ("0123456789"));
+  int linenb = atoi(tmpline.c_str ()) - 1;
 
   tmpname = tmpname.substr (tmpname.find_first_of ("\"") + 1);
   tmpname = tmpname.substr (0,tmpname.find_last_of ("\""));
-
-  int linenb = atoi(tmpline.c_str ()) - 1;
 
   locp->initialize (tmpname == "-" ? 0 : new libport::Symbol (tmpname));
   locp->lines (linenb);
