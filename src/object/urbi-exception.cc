@@ -11,6 +11,7 @@ namespace object
     : msg_ (msg),
       loc_ ()
   {
+    initialize_msg ();
   }
 
   UrbiException::UrbiException (const std::string& msg,
@@ -18,6 +19,7 @@ namespace object
     : msg_ (msg),
       loc_ (loc)
   {
+    initialize_msg ();
   }
 
   UrbiException::UrbiException (const std::string& msg,
@@ -26,20 +28,24 @@ namespace object
       loc_ (),
       fun_ (fun)
   {
+    initialize_msg ();
   }
 
   UrbiException::~UrbiException () throw ()
   {
   }
 
+  void
+  UrbiException::initialize_msg () throw ()
+  {
+    if (getenv("DEBUG") && !fun_.empty ())
+      msg_ = fun_ + ": " + msg_;
+  }
+
   const char*
   UrbiException::what () const throw ()
   {
-    std::string msg;
-    if (getenv("DEBUG"))
-      msg = fun_ + ": ";
-    msg += msg_;
-    return msg.c_str();
+    return msg_.c_str();
   }
 
 }; // namespace object

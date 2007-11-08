@@ -26,6 +26,9 @@ namespace object
     /// Destructor.
     virtual ~UrbiException () throw ();
 
+    /// Initialize message (add debug information if required).
+    void initialize_msg () throw ();
+
     /// Return the exception's error message.
     virtual const char* what () const throw ();
 
