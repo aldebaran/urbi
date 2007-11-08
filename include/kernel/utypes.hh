@@ -32,6 +32,8 @@
 # include "libport/hash.hh"
 # include "libport/ufloat.h"
 
+# include "fwd.hh"
+
 # include "urbi/utypes-common.hh"
 
 # include "kernel/fwd.hh"

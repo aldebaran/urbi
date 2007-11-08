@@ -200,6 +200,7 @@ public:
   void updateTime ();
   void addConnection (UConnection& connection);
   void removeConnection (UConnection& connection);
+  int getUID ();
   int addAlias (const std::string& id, const std::string& variablename);
 
   // A usual connection to stop dependencies.
@@ -426,6 +427,9 @@ private:
   ufloat lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
+
+  /// unique id source
+  int               uid;
 };
 
 /// Unique identifier to create new references.

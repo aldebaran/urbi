@@ -144,6 +144,8 @@ public:
 
   /// Binder for internal monitors.
   std::list<urbi::UGenericCallback*> internalBinder;
+  /// Binder for internal monitors.
+  std::list<urbi::UGenericCallback*> internalTargetBinder;
   /// Binder for internal access monitors.
   std::list<urbi::UGenericCallback*> internalAccessBinder;
 
@@ -169,6 +171,8 @@ public:
   UVarSet set(UValue* v);
   UVarSet setFloat(ufloat f);
   UVarSet selfSet(ufloat* valcheck);
+  ///  notify internalTargetBinders
+  void setTarget();
   /// \}
 
   ///  Set a value->val value.

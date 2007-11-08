@@ -2,7 +2,6 @@
 
 #ifndef FLAVORABLE_HH
 # define FLAVORABLE_HH
-
 # include "libport/assert.hh"
 
 /// Root for command that come in different flavors.

@@ -23,6 +23,13 @@
 
 # include "userver.hh"
 
+inline int
+UServer::getUID ()
+{
+  boost::recursive_mutex::scoped_lock lock(mutex);
+  return ++uid;
+}
+
 inline ufloat
 UServer::getFrequency ()
 {

@@ -1,3 +1,69 @@
+2007-11-08  Thomas Moulard  <thomas@moulard.net>
+
+	merge -r 1691:1696 https://svn.gostai.com/svn/kernel1/trunk.
+	2007-09-10  mefyl  <mefyl@lrde.epita.fr>
+	merge -r 1594:1604 https://svn.gostai.com/svn/kernel1/branches/1.0
+
+	2007-09-26  Guillaume Deslandes  <deslandes@gostai.com>
+	Reactivate doc subdir
+	* Makefile.am: Here.
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Remove extra include in ugrammar.y
+	* src/parser/bison/ugrammar.y: Here.
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Restore KNOWN_BUGS, update libport external
+	* KNOWN_BUGS: New.
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Merge nm branch to 1.0
+	* ChangeLog: .
+	* KNOWN_BUGS: Remove.
+	* Makefile.am: .
+	* doc/Doxyfile.in: .
+	* src/flavorable.hh: .
+	* src/network/bsdnet/network.cc: .
+	* src/parser/bison/ugrammar.y: .
+	* src/parser/bison/utoken.l: .
+	* src/ucommand.cc: .
+	* src/ucommand.hh: .
+	* src/ucomplaints.cc: .
+	* src/uexpression.cc: .
+	* src/uobject.cc: .
+	* src/userver.cc: .
+	* src/userver.hh: .
+	* src/utypes.hh: .
+	* src/uvalue.cc: .
+	* src/uvar.cc: .
+	* src/uvariable.cc: .
+	* src/uvariable.hh: .
+	* tests-local.mk: .
+	* vcs/local.rb: .
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix parser conflicts for URBI side pointers
+	* src/parser/bison/ugrammar.y: Handle token arrow.
+	Comment unstable array rules for now.
+	* src/parser/bison/utoken.l: Add token arrow.
+
+	2007-09-24  Guillaume Deslandes  <deslandes@gostai.com>
+	Update mail address to mailing list
+	* local.rb: Here.
+
+	2007-09-20  Guillaume Deslandes  <deslandes@gostai.com>
+	Fixes and cleaning
+	* Makefile.am: Update libport inclusion.
+	* doc/Doxyfile.in: .
+	* src/ucommand.cc: Fix assign to derivative error.
+	Fix segfault on remote.fct(other_remote.fct(x)) calls.
+	Fix at/whenever not beeing reevaluated.
+	* src/userver.cc: Cleaning.
+	* src/uvar.cc: Fix variable assignment for uowned.
+	* src/uvariable.cc: Choose binder hash depending on autoupdate.
+	* tests-local.mk: Remove fixed tests from XFAIL list.
+	* vcs/local.rb: .
+
 2007-11-07  Thomas Moulard  <thomas@moulard.net>
 
 	merge -r 1688:1691 https://svn.gostai.com/svn/kernel1/trunk.

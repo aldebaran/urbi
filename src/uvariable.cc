@@ -341,8 +341,11 @@ UVariable::set(UValue *v)
 	passert (value->dataType, !"not reachable");
     }
   }
-
-  return selfSet(&(value->val));
+  UVariable::UVarSet r = UOK;
+  if (value->dataType == DATA_NUM)
+    r = selfSet(&(value->val));
+  setTarget();
+  return r;
 }
 
 //! Set the UValue associated to the variable
@@ -354,10 +357,11 @@ UVariable::setFloat(ufloat f)
 {
   if (!value)
     value = new UValue(f);
+  /* stupid, target update, not sensor update
   else
     setSensorVal(f);
-
-  return selfSet(&value->val);
+  */
+  return selfSet(&f);
 }
 
 //! Check the float reference associated to the variable
@@ -396,11 +400,11 @@ UVariable::selfSet(ufloat *valcheck)
       }
     }
 
-    target = *valcheck; // for consistancy reasons
+    target = *valcheck; // for consistancy reasons <- LIE! this is crucial
   }
 
   modified = true;
-  updated();
+  //selfset is called to update target which must not trigger updated updated();
 
   if (speedmodified)
     return USPEEDMAX;
@@ -425,7 +429,7 @@ UVariable::get()
 	  && value->str
 	  && it->second->value->dataType != DATA_OBJ
 	  && it->second->getDevicename()== (std::string)value->str->c_str())
-	it->second->get ();
+	it->second->get();
 
   // check for existing notifychange
   for (std::list<urbi::UGenericCallback*>::iterator i =
@@ -449,11 +453,11 @@ UVariable::get()
 
 //! This function takes care of notifying the monitors that the var is updated
 /*! When the variable is updated, either by the kernel of robot-specific
-    part, this function must be called. It's called automatically by the above
-    set methods.
+    part, this function must be called.
+    @param uvar_assign: unused
 */
 void
-UVariable::updated(bool uvar_assign)
+UVariable::updated(bool )
 {
   // triggers associated commands update
   updateRegisteredCmd ();
@@ -479,8 +483,9 @@ UVariable::updated(bool uvar_assign)
        i != internalBinder.end();
        ++i)
   {
-    if (!uvar_assign
-	|| (*i)->objname != getDevicename())
+    // handled better otherwise
+//     if (!uvar_assign
+//         || (*i)->objname != devicename->str ())
     {
       urbi::UList tmparray;
 
@@ -527,4 +532,30 @@ UVariable::initSensorVal(ufloat f)
   valPrev2 = f;
   valPrev = f;
   value->val = f;
+}
+
+void UVariable::setTarget() {
+  std::list<urbi::UGenericCallback*>* callbacks = 0;
+  if (this->autoUpdate)
+    callbacks = &internalBinder;
+  else
+    callbacks = &internalTargetBinder;
+
+  for (std::list<urbi::UGenericCallback*>::iterator i =
+       callbacks->begin();
+       i != callbacks->end();
+       ++i)
+  {
+    urbi::UList tmparray;
+
+    if ((*i)->storage)
+    {
+      // monitor with &UVar reference
+      urbi::UValue *tmpvalue = new urbi::UValue();
+      tmpvalue->storage = (*i)->storage;
+      tmparray.array.push_back(tmpvalue);
+    };
+
+    (*i)->__evalcall(tmparray);
+  }
 }

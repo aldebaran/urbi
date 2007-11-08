@@ -93,7 +93,8 @@ UServer::UServer(ufloat frequency,
     stopall (false),
     systemcommands (true),
     frequency_(frequency),
-    isolate_ (false)
+    isolate_ (false),
+    uid(0)
 {
   ::urbiserver = this;
 
@@ -386,7 +387,10 @@ UServer::work_blend_values_ ()
 	  if ((*i)->autoUpdate)
 	    (*i)->selfSet (&((*i)->value->val));
 	  else
+	  {
 	    (*i)->selfSet (&((*i)->target));
+	    (*i)->setTarget();
+	  }
 	}
 
       // set previous for next iteration

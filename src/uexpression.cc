@@ -1485,11 +1485,19 @@ UExpression::eval_FUNCTION (UCommand *command,
     return 0;
   }
 
-  send_error(connection, command, this,
-	     "Error with function eval: %s [nb param=%d]",
-	     variablename->getFullname()->c_str(),
-	     parameters ? parameters->size() : 0);
-  return 0;
+  //accept callse to module-defined functions
+  UValue * v = command->tryModuleCall(funname->str().c_str(),
+                                      parameters, connection);
+  if (!v)
+  {
+    send_error(connection, command, this,
+      "Error with function eval: %s [nb param=%d]",
+      variablename->getFullname()->c_str(),
+      parameters ? parameters->size() : 0);
+    return 0;
+  }
+  else
+    return v;
 }
 
 
