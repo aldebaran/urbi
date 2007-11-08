@@ -214,7 +214,13 @@ public:
     _Send __msg;
     __msg._tag = __tag;
     __msg._taglen = 0;
-    __msg._buf = (__buf == 0) ? 0 : (const ubyte*)strdup((const char*)__buf);
+    if (__buf)
+    {
+      __msg._buf = new ubyte [__buflen];
+      memcpy(const_cast<ubyte*>(__msg._buf), __buf, __buflen);
+    }
+    else
+      __msg._buf = 0;
     __msg._buflen = __buflen;
     __msg._flush = __flush;
     return __msg;

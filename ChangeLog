@@ -1,3 +1,11 @@
+2007-11-08  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix bug in uconnection triggered when sending binaries.
+	Credit goes to Florian for locating this.
+	* include/kernel/uconnection.hh: Replace strdup by new/memcpy, data
+	  is not a cstring.
+	* src/uconnection.cc: Replace corresponding free by delete.
+
 2007-11-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Add version.hh.
