@@ -1,5 +1,12 @@
 2007-11-08  Thomas Moulard  <thomas@moulard.net>
 
+	merge -r 1728:1735 https://svn.gostai.com/svn/kernel1/trunk.
+	2007-10-15  Guillaume Deslandes  <deslandes@gostai.com>
+	Use a more CPP-like way for #line
+	* src/parser/bison/utoken.l: Here.
+
+2007-11-08  Thomas Moulard  <thomas@moulard.net>
+
 	Fix debug info in urbi-exception.
         UrbiException::what() was returning a local variable address.
 	* src/object/urbi-exception.cc,
