@@ -142,13 +142,12 @@ main (int argc, char *argv[])
     ++argp;
   }
   if (argc-argp != 2)
-    {
-      std::cerr << argc<<" " <<argp<<std::endl;
-      usage(argv[0]);
-      urbi::exit(1);
-    }
+  {
+    std::cerr << argc << " " << argp << std::endl;
+    usage(argv[0]);
+    urbi::exit(1);
+  }
 
- 
 
   urbi::USyncClient client (argv[argp+1], port);
   if (client.error())
@@ -159,62 +158,62 @@ main (int argc, char *argv[])
   client.send("%s.resolution  = 0;", device);
   client.send("%s.jpegfactor = %d;", device, jpegfactor);
 
-  client << "%s.reconstruct = " << (reconstruct? 1:0)
+  client << "%s.reconstruct = " << (reconstruct ? 1 : 0)
 	 << urbi::semicolon;
 
   if (!fileName)
-    {
-      imcount = 0;
-      format = (argv[argp][0]=='r')?0:1;
-      client.send("%s.format = %d;", device, format);
-      if (!frequency)
-	client.send("loop {uimg: %s.val; noop},",device);
-      else 
-        client.send("every (%d) uimg: %s.val,",frequency, device);
-      urbi::execute();
-    }
+  {
+    imcount = 0;
+    format = (argv[argp][0]=='r')?0:1;
+    client.send("%s.format = %d;", device, format);
+    if (!frequency)
+      client.send("loop {uimg << %s.val; noop},",device);
+    else 
+      client.send("every (%d) uimg << %s.val,",frequency, device);
+    urbi::execute();
+  }
   else
+  {
+    /* Use syncGetImage to save one image to a file. */
+    char buff[1000000];
+    int sz = 1000000;
+    int w, h;
+    switch (argv[argp][0])
     {
-      /* Use syncGetImage to save one image to a file. */
-      char buff[1000000];
-      int sz = 1000000;
-      int w, h;
-      switch (argv[argp][0])
-	{
-	case 'r':
-	  format = urbi::IMAGE_RGB;
-	  break;
-	case 'y':
-	  format = urbi::IMAGE_YCbCr;
-	  break;
-	case 'p':
-	  format = urbi::IMAGE_PPM;
-	  break;
-	case 'j':
-	  format = urbi::IMAGE_JPEG;
-	  break;
-	default:
-	  std::cerr << "invalid format "<<argv[argp]<<std::endl;
-	  usage(argv[0]);
-	  exit(1);
-	};
+      case 'r':
+	format = urbi::IMAGE_RGB;
+	break;
+      case 'y':
+	format = urbi::IMAGE_YCbCr;
+	break;
+      case 'p':
+	format = urbi::IMAGE_PPM;
+	break;
+      case 'j':
+	format = urbi::IMAGE_JPEG;
+	break;
+      default:
+	std::cerr << "invalid format "<<argv[argp]<<std::endl;
+	usage(argv[0]);
+	exit(1);
+    };
 
-      client.syncGetImage(device, buff, sz,
-			  format,
-			  (format == urbi::IMAGE_JPEG
-			   ? urbi::URBI_TRANSMIT_JPEG
-			   : urbi::URBI_TRANSMIT_YCbCr),
-			  w, h);
+    client.syncGetImage(device, buff, sz,
+			format,
+			(format == urbi::IMAGE_JPEG
+			 ? urbi::URBI_TRANSMIT_JPEG
+			 : urbi::URBI_TRANSMIT_YCbCr),
+			w, h);
 
-      FILE *f = fopen(fileName, "w");
+    FILE *f = fopen(fileName, "w");
 
-      if (!f)
-	urbi::exit(2);
+    if (!f)
+      urbi::exit(2);
 
-      fwrite(buff, 1, sz, f);
-      fclose(f);
-      exit(0);
-    }
+    fwrite(buff, 1, sz, f);
+    fclose(f);
+    exit(0);
+  }
 
   return 0;
 }

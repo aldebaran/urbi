@@ -122,8 +122,8 @@ namespace urbi
       ++p;
     if (format[p] == ':')
     {
-      std::cerr << "FATAL: passing a taged command to syncGet:'" << format <<
-	"'\n";
+      std::cerr << "FATAL: passing a tagged command to syncGet:'"
+		<< format << "'\n";
       ::exit(1);
     }
     //check if there is a command separator
@@ -267,7 +267,6 @@ namespace urbi
     val = (double)(*(m->value));
     delete m;
     return 1;
-
   }
 
 
@@ -285,8 +284,6 @@ namespace urbi
     val = (double)(*(m->value));
     delete m;
     return 1;
-
-
   }
 
 
@@ -305,7 +302,7 @@ namespace urbi
     if (m->type != MESSAGE_DATA
 	|| m->value->type != DATA_BINARY
 	|| m->value->binary->type != BINARY_SOUND)
-	{
+    {
       delete m;
       return 0;
     }

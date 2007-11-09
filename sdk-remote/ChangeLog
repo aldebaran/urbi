@@ -1,3 +1,9 @@
+2007-11-09  Akim Demaille  <demaille@gostai.com>
+
+	Beware of : -> <<.
+	* src/examples/urbiimage.cc: Use << instead of :.
+	* src/liburbi/usyncclient.cc: Space changes.
+
 2007-11-06  Akim Demaille  <demaille@gostai.com>
 
 	Macro style.
