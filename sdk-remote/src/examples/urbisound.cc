@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
   client.setCallback(getSound, "usound");
   client.setCallback(endProgram, "end");
 
-  client.send("loopsound:loop usound: micro.val ,"
-	      "{ wait(%d); stop loopsound; wait(1000); end:ping }, ", time);
+  client.send("loopsound:loop usound << micro.val ,"
+	      "{ wait(%d); stop loopsound; wait(1000); end << ping }, ", time);
   urbi::execute();
 }

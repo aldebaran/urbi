@@ -307,8 +307,8 @@ BallTrackingHead::BallTrackingHead(const char * robotname)
   robotC.send("camera.jpegfactor = 75;");
   robotC.setCallback(*this, &BallTrackingHead::getImage,"cam");
 
-  robotC.send("loop cam: camera.val, ");
-  //robotG.send("loop {pan: headPan.val& tilt: headTilt.val},");
+  robotC.send("loop cam << camera.val, ");
+  //robotG.send("loop {pan << headPan.val& tilt << headTilt.val},");
 }
 
 

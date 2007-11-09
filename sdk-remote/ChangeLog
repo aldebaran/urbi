@@ -1,3 +1,14 @@
+2007-11-09  Matthieu Nottale  <nottale@gostai.com>
+
+	Update examples to 1.5 language syntax.
+	* src/examples/urbiballtrackinghead.cc,
+	* src/examples/urbibandwidth.cc,
+	* src/examples/urbimirror.cc,
+	* src/examples/urbiping.cc,
+	* src/examples/urbirecord.cc,
+	* src/examples/urbisound.cc,
+	* src/examples/urbitalkie.cc: Use << instead of : in URBI code.
+
 2007-11-09  Akim Demaille  <demaille@gostai.com>
 
 	Beware of : -> <<.

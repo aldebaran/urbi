@@ -135,10 +135,10 @@ int main(int argc, char * argv[])
   for (int i=0;i<devCount-1; ++i)
   {
     c.setCallback(command,devices[i]);
-    c.send("%s: %s.val&",devices[i], devices[i]);
+    c.send("%s << %s.val&",devices[i], devices[i]);
   }
   c.setCallback(command,devices[devCount-1]);
-  c.send("%s: %s.val},",devices[devCount-1], devices[devCount-1]);
+  c.send("%s << %s.val},",devices[devCount-1], devices[devCount-1]);
 
 
   fprintf(stderr,"starting, hit ctrl-c to stop...\n");

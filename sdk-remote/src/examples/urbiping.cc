@@ -81,7 +81,7 @@ int main(int argc, char * argv[])
 	usleep(200);
       received=false;
       sendtime = c->getCurrentTime();
-      c->send("uping:ping;");
+      c->send("uping << ping;");
       usleep(interval*1000);
     }
 

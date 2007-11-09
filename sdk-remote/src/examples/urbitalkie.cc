@@ -38,8 +38,8 @@ SoundPipe::SoundPipe(urbi::UClient &r1, urbi::UClient &r2)
   stack[1].serverStackPos = 0;
   r1.setCallback(*this, &SoundPipe::microNotify, 0, "mic");
   r2.setCallback(*this, &SoundPipe::microNotify, 1, "mic");
-  r1.send("loop mic: micro.val,");
-  r2.send("loop mic: micro.val,");
+  r1.send("loop mic << micro.val,");
+  r2.send("loop mic << micro.val,");
   r1.setCallback(*this, &SoundPipe::speakerNotify, 0, "speak");
   r2.setCallback(*this, &SoundPipe::speakerNotify, 1, "speak");
 }
