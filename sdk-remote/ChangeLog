@@ -1,3 +1,14 @@
+2007-11-09  Matthieu Nottale  <nottale@gostai.com>
+
+	Test-suite in progress.
+	* tests/Makefile.am: Generate dispatcher.
+	* tests/checkfiles/removecallbacks.cc: New.
+	* tests/checkfiles/values.cc: New.
+	* tests/checkfiles: New.
+	* tests/tests.cc: New.
+	* tests/tests.hh: New.
+	* tests/urbiping.cc: Remove.
+
 2007-11-09  mefyl  <mefyl@lrde.epita.fr>
 
 	Compile tests in tests/
