@@ -88,7 +88,7 @@ UEventCompound::keepalive()
 std::list<UMultiEventInstance*>
 UEventCompound::mixing()
 {
-  ASSERT (ectype_ != EC_BANG);
+  ASSERT (ectype_ != EC_BANG) {}
 
   typedef std::list<UMultiEventInstance*> multievents_type;
   multievents_type result, res1, res2;
@@ -101,7 +101,7 @@ UEventCompound::mixing()
 	   ++ievent)
       {
 	UMultiEventInstance* mei;
-	ASSERT (mei = new UMultiEventInstance ());
+	ASSERT (mei = new UMultiEventInstance ()) {}
 	mei->addInstance (new UEventInstance (em_, (*ievent)));
 	result.push_back (mei);
       }
@@ -126,7 +126,7 @@ UEventCompound::mixing()
 	     imei2 != res2.end (); ++imei2)
 	{
 	  UMultiEventInstance* mei;
-	  ASSERT (mei = new UMultiEventInstance (*imei1, *imei2));
+	  ASSERT (mei = new UMultiEventInstance (*imei1, *imei2)) {}
 	  result.push_back (mei);
 	}
 
@@ -154,8 +154,8 @@ UEventCompound::normalForm ()
 	ec1_->normalForm ();
       ASSERT (ec2_)
 	ec2_->normalForm ();
-      ASSERT (ec1_->ectype_ != EC_BANG);
-      ASSERT (ec2_->ectype_ != EC_BANG);
+      ASSERT (ec1_->ectype_ != EC_BANG) {}
+      ASSERT (ec2_->ectype_ != EC_BANG) {}
       return;
 
     case EC_AND:
@@ -163,8 +163,8 @@ UEventCompound::normalForm ()
 	ec1_->normalForm ();
       ASSERT (ec2_)
 	ec2_->normalForm ();
-      ASSERT (ec1_->ectype_ != EC_BANG);
-      ASSERT (ec2_->ectype_ != EC_BANG);
+      ASSERT (ec1_->ectype_ != EC_BANG) {}
+      ASSERT (ec2_->ectype_ != EC_BANG) {}
       return;
 
     case EC_BANG:

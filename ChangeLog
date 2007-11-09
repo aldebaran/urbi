@@ -1,5 +1,31 @@
 2007-09-11  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1747:1748 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-10-15  Akim Demaille  <demaille@gostai.com>
+
+	Applied changes to userver.hh by hand.
+
+	2007-10-05  Guillaume Deslandes  <deslandes@gostai.com>
+	Add package version and revision numbers to userver
+	* src/userver.cc,
+	* src/userver.hh: Here.
+	This is for --version option of engines.
+
+	2007-10-05  Guillaume Deslandes  <deslandes@gostai.com>
+	Remove deprecated exec warning
+	* src/uexpression.cc: Here.
+	This warning is for rev >= 1.5.
+	Fix ticket #182.
+
+	2007-10-04  Matthieu Nottale  <nottale@gostai.com>
+	Fix stopif bug, fix compile warnings.
+	* src/ucommand.cc: STOPIF: Tag children of morphed command.
+	* src/ueventcompound.cc,
+	* src/ueventmatch.cc: Fix compile warnings.
+
+2007-09-11  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1746:1747 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-10-15  Akim Demaille  <demaille@gostai.com>

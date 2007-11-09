@@ -46,7 +46,8 @@
 
 #include "ast/ast.hh"
 #include "ast/nary.hh"
-
+#include "config.h"
+#include "version.hh"
 #include "ubanner.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
@@ -60,6 +61,9 @@
 
 // Global server reference
 UServer *urbiserver = 0;
+
+const std::string UServer::package_ver = PACKAGE_VERSION;
+const std::string UServer::package_rev = PACKAGE_REVISION;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 
