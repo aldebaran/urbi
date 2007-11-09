@@ -336,7 +336,7 @@ UServer::work_handle_connections_ ()
 
       if (c->newDataAdded)
       {
-	// used by loadFile and exec to
+	// used by loadFile and eval to
 	// delay the parsing after the completion
 	// of execute().
 	c->newDataAdded = false;

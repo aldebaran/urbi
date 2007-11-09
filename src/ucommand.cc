@@ -444,7 +444,7 @@ UCommand::strMorph (const std::string& cmd)
      (
       loc(),
       UExpression::FUNCTION,
-      new UVariableName (new UString("global"), new UString("exec"),
+      new UVariableName (new UString("global"), new UString("eval"),
 			 false, 0),
       new UNamedParameters
       (new UExpression (loc(), UExpression::VALUE, new UString(cmd.c_str())))
@@ -816,7 +816,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 
   ////// module-defined /////
   UValue * tv =  tryModuleCall(functionname->str().c_str(),
-                               expression->parameters, connection);
+			       expression->parameters, connection);
   bool found_function = false;
   if (tv)
   {
@@ -2300,10 +2300,11 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
   }
   else if (connection->receiving
 	   && (*expression->variablename->id == "exec"
+               || *expression->variablename->id == "eval"
 	       || *expression->variablename->id == "load"))
     // Some functions are executed at the same time as they are
     // received (e.g., ping).  For some reason, it is believed that
-    // exec should not be executed asap.  For the same reasons, load
+    // eval should not be executed asap.  For the same reasons, load
     // must not (otherwise several things do not work).
     //
     // JC thinks there is no reason to try to understand further:
@@ -2326,7 +2327,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 
   ////// module-defined /////
   UValue *v = tryModuleCall(funname->str().c_str(), expression->parameters,
-                              connection);
+			      connection);
   if (v)
   {
     if (v->dataType != DATA_VOID)
@@ -5322,7 +5323,10 @@ UCommand_TIMEOUT::execute_(UConnection*)
 						new UString("stop"),
 						tagRef->copy())),
      new UCommand_TREE(loc_, Flavorable::UPIPE, command->copy(),
-		       new UCommand_OPERATOR_ID(loc_, new UString("stop"),
+		       (command->type == UCommand::WHENEVER ||
+			command->type == UCommand::AT) ?
+		       0 :
+		       new UCommand_OPERATOR_ID(loc_, new UString(""),
 						tagRef->copy()))
      );
   // We can't tag morph as morphing engine will override us.
@@ -5565,7 +5569,7 @@ UCommand_AT::execute_(UConnection *connection)
     }
 
     for (std::list<UMultiEventInstance*>::iterator i = mixlist.begin ();
- 	 i != mixlist.end ();
+	 i != mixlist.end ();
 	 ++i)
     {
       bool ok = false;

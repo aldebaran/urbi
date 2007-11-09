@@ -210,14 +210,14 @@ public:
   /// true when the command is part of a morphed structure
   bool morphed;
 
-  
+
   /** try to make a module-defined function call
   @param name: function full name
   @param parameters: arguments to call
   @param connection: context connection
   @return : 0 if no call was made, a value otherwise
   */
-  UValue * tryModuleCall(const char * name, 
+  UValue * tryModuleCall(const char * name,
     UNamedParameters * parameters, UConnection * connection);
 protected:
   UCommand* copybase(UCommand* c) const;
