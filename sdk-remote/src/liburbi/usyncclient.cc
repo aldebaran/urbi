@@ -6,6 +6,7 @@
 #include <fcntl.h>
 
 #include "libport/thread.hh"
+#include "libport/assert.hh"
 
 #include "urbi/usyncclient.hh"
 #include "urbi/uconversion.hh"
@@ -120,12 +121,7 @@ namespace urbi
       ++p;
     while (format[p] == ' ')
       ++p;
-    if (format[p] == ':')
-    {
-      std::cerr << "FATAL: passing a tagged command to syncGet:'"
-		<< format << "'\n";
-      ::exit(1);
-    }
+    passert(format[p], format[p]!= ':' && format[p] != '<'); 
     //check if there is a command separator
     p = strlen(format) - 1;
     while (format[p] == ' ')
@@ -143,11 +139,11 @@ namespace urbi
     }
     if (!hasSep)
       strcat(sendBuffer, ",");
+    const char * separator = "<<";
     char tag[70];
     makeUniqueTag(tag);
-    strcat(tag, ":");
     effectiveSend(tag, strlen(tag));
-    tag[strlen(tag) - 1] = 0; //restore tag
+    effectiveSend(separator, strlen(separator));
     queueLock_.lock();
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;

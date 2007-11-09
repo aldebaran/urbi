@@ -281,7 +281,7 @@ namespace urbi
   UVar::requestValue()
   {
     //build a getvalue message  that will be parsed and returned by the server
-    URBI(()) << externalModuleTag << ':'
+    URBI(()) << externalModuleTag << "<<"
 	     <<'[' << UEM_ASSIGNVALUE << ","
 	     << '"' << name << '"' << ',' << name << "];";
   }
@@ -294,7 +294,7 @@ namespace urbi
     char		tag[32];
 
     client.makeUniqueTag(tag);
-    client.send ("if (isdef (%s) && !isvoid (%s)) { %s:%s } else { %s:1/0 };",
+    client.send ("if (isdef (%s) && !isvoid (%s)) { %s<<%s } else { %s<<1/0 };",
 		 name.c_str (), name.c_str (), tag, name.c_str (), tag);
     m = client.waitForTag(tag);
     if (m->type == MESSAGE_DATA)

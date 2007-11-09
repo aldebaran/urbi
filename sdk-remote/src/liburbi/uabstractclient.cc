@@ -530,7 +530,7 @@ namespace urbi
 
     s->uc->sendBin(s->buffer+s->pos, tosend);
     s->uc->send("wait(%s.remain < %d);"
-		" %s: ping;", s->device, playlength / 2, msg.tag.c_str());
+		" %s << ping;", s->device, playlength / 2, msg.tag.c_str());
     // printf("%d end sending chunk\n", 0);
     s->pos += tosend;
     if (s->pos >= s->length )
@@ -541,7 +541,7 @@ namespace urbi
 
       s->uc->send("speaker->blend=speaker.sendsoundsaveblend;");
       if (s->tag && s->tag[0])
-	s->uc->send("%s: 1;", s->tag);
+	s->uc->send("%s << 1;", s->tag);
       free(s->buffer);
       free(s->tag);
       free(s->device);
@@ -678,7 +678,7 @@ namespace urbi
     char tag[16];
     makeUniqueTag(tag);
     char *mcmd = new char[strlen(cmd) + strlen(tag) + 5];
-    sprintf(mcmd, "%s: %s", tag, cmd);
+    sprintf(mcmd, "%s << %s", tag, cmd);
     UCallbackID cid = setCallback(cb, tag);
     sendBufferLock.lock();
     va_list arg;
@@ -704,7 +704,7 @@ namespace urbi
     char tag[16];
     makeUniqueTag(tag);
     char *mcmd = new char[strlen(cmd) + strlen(tag) + 10];
-    sprintf(mcmd, "%s: %s", tag, cmd);
+    sprintf(mcmd, "%s << %s", tag, cmd);
     UCallbackID cid = setCallback(cb, cbData, tag);
     sendBufferLock.lock();
     va_list arg;
