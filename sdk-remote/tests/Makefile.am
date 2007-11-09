@@ -6,7 +6,7 @@ include $(top_srcdir)/build-aux/check.mk
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
 %.log: %.cc
-	@$(am__check_pre) wrapper $* $(am__check_post)
+	@$(am__check_pre) $(srcdir)/liburbi-check $(srcdir)/$* $(am__check_post)
 	
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
@@ -22,11 +22,12 @@ bin_PROGRAMS =	tests
 checkfiles = checkfiles/values.cc \
 		  checkfiles/removecallbacks.cc
 TEST_LOGS = $(checkfiles:.cc=.log)
-tests_SOURCES = tests.cc $(checkfiles)
+tests_SOURCES = tests.hh tests.cc $(checkfiles)
 tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_tests_SOURCES = dispatcher.cc
 
+CLEANFILES += $(nodist_tests_SOURCES)
 dispatcher.cc: $(tests_SOURCES) Makefile
 	(                                                                    \
       	echo '#include "tests.hh"'  ; \

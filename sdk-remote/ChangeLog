@@ -1,5 +1,10 @@
 2007-11-09  Matthieu Nottale  <nottale@gostai.com>
 
+	Fix distcheck.
+	* tests/Makefile.am: Add missing files to sources and CLEANFILES.
+
+2007-11-09  Matthieu Nottale  <nottale@gostai.com>
+
 	Test-suite in progress.
 	* tests/Makefile.am: Generate dispatcher.
 	* tests/checkfiles/removecallbacks.cc: New.
