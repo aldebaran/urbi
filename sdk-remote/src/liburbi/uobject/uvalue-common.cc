@@ -60,7 +60,7 @@ namespace urbi
       ++src;
       ++dst;
     }
-    data[dst] = 0;
+    data = data.substr(0, dst);
   }
 
   void unescape(char* data)
