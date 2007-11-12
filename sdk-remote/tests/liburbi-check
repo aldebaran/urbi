@@ -64,7 +64,8 @@ run_prefix=
 run ()
 {
   local title=$1
-  run_prefix=$run_counter-$(echo $1 | tr -cs '[:alnum:]' '[-*]')
+  run_prefix=$run_counter-$(echo $1 |
+			     sed -e 's/[^a-zA-Z0-9][^a-zA-Z0-9]*/-/;s/-$//')
   run_counter=$((run_counter + 1))
   shift
 
@@ -212,15 +213,21 @@ pre ()
 # Compare expected output with effective, actual, output.
 expect ()
 {
+  subsection "$2"
   if ! diff -u --label="Expected $1 ($1.exp)" $1.exp  \
 	       --label="Effective $1 ($2.eff)" $2.eff \
 	       >$2.diff; then
-    subsection "$2"
     pre "Expected $1 for $me"      $1.exp
     pre "Raw effective $2 for $me" $2.raw
     pre "Effective $2 for $me"     $2.eff
     pre "Diffs on $2 for $me"      $2.diff
-    exit=false
+    if test x"$exit" = xtrue; then
+      exit=false
+    fi
+  else
+    # Dump something, it is really surprising in the logs to see
+    # nothing.
+    pre "Raw effective $2 for $me" $2.raw
   fi
 }
 
@@ -281,14 +288,14 @@ harvest_children ()
 	68) reason=' (EX_NOHOST)';;
 	69) reason=' (EX_UNAVAILABLE)';;
 	70) reason=' (EX_SOFTWARE)';;
-        71) reason=' (EX_OSERR)';;
+	71) reason=' (EX_OSERR)';;
 	72) reason=' (EX_OSFILE)';;
 	73) reason=' (EX_CANTCREAT)';;
 	74) reason=' (EX_IOERR)';;
 	75) reason=' (EX_TEMPFAIL)';;
 	76) reason=' (EX_PROTOCOL)';;
 	77) reason=' (EX_NOPERM)';;
-        78) reason=' (EX_CONFIG)';;
+	78) reason=' (EX_CONFIG)';;
 	242)reason=' (killed by Valgrind)';;
 	*)  if test 127 -lt $sta; then
 	      reason=" (SIG$(kill -l $sta || true))"
@@ -390,7 +397,7 @@ sleep 1
   if test -s debug.rst; then
     cat debug.rst
   fi
-  
+
    # Compare expected output with actual output.
   cp remote.out remote.out.eff
   expect output remote.out
@@ -398,9 +405,9 @@ sleep 1
   #cp remote.sta remote.sta.eff
   #echo 0 >status.exp
   #expect status remote.sta
-  
+
   # Display Valgrind report.
   pre "Valgrind" remote.val
-  
+
 echo "$exit" >exit
 $exit

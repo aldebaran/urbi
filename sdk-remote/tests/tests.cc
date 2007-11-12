@@ -1,5 +1,7 @@
 #include <boost/lexical_cast.hpp>
 
+#include <libport/sysexits.hh>
+
 #include <urbi/uclient.hh>
 #include <urbi/usyncclient.hh>
 
@@ -59,13 +61,22 @@ removeOnZero(const urbi::UMessage& msg)
 int
 main(int argc, const char* argv[])
 {
-  if (argc != 4)
-    exit(1);
+  if (argc < 4)
+  {
+    std::cerr << "Usage: " << argv[0]
+	      << " HOST PORT TEST-NAMES..." << std::endl;
+    exit(EX_USAGE);
+  }
   const char* host = argv[1];
   int port = boost::lexical_cast<int>(argv[2]);
-  const char* call = argv[3];
   urbi::UClient client(host, port);
   urbi::USyncClient syncClient(host, port);
-  dispatch(call, client, syncClient);
+
+  for (int i = 3; i < argc; ++i)
+  {
+    if (getenv("VERBOSE"))
+      std::cerr << argv[0] << ": test " << argv[i] << std::endl;
+    dispatch(argv[i], client, syncClient);
+  }
   return 0;
 }

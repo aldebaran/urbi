@@ -1,5 +1,13 @@
 2007-11-12  Akim Demaille  <demaille@gostai.com>
 
+	Improve tests.
+	* tests/liburbi-check (run, expect): Sync with master.
+	* tests/tests.cc: Use sysexits.
+	Accept several tests in a raw.
+	Issue usage message.
+
+2007-11-12  Akim Demaille  <demaille@gostai.com>
+
 	Help the test suite.
 	* tests/Makefile.am: Define URBISERVER and pass it to the
 	TESTS_ENVIRONMENT.
