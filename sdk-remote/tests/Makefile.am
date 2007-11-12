@@ -1,13 +1,12 @@
 include $(top_srcdir)/flags.mk
 include $(top_srcdir)/build-aux/check.mk
 
-
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
 %.log: %.cc
 	@$(am__check_pre) $(srcdir)/liburbi-check $(srcdir)/$* $(am__check_post)
-	
+
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
 AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
@@ -17,7 +16,7 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
 # This is a hack for Automake 1.9: 1.10 honors AM_LDADD.
 LDADD = $(AM_LDADD)
 
-bin_PROGRAMS =	tests
+check_PROGRAMS = tests
 
 checkfiles = checkfiles/values.cc \
 		  checkfiles/removecallbacks.cc
