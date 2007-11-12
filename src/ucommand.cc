@@ -2382,7 +2382,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  std::stringstream ss;
 	  ss.str ("");
 	  ss << o.str();
-	  validcmd = true;
+	  validcmd = true; //in case we have no parameters
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
@@ -3534,7 +3534,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
   if (*oper == "undef" || *oper == "delete")
   {
-    if (status != URUNNING)
+    //if (status != URUNNING)
     {
       variable = 0;
       fun = variablename->getFunction(this, connection);
@@ -3551,7 +3551,9 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
       if (!fun && !variable)
       {
-	send_error(connection, this,
+	// if not found and URUNNING: someone else deleted it
+	if (status != URUNNING)
+	  send_error(connection, this,
 		   "identifier %s does not exist",
 		   fullname->c_str());
 	return UCOMPLETED;

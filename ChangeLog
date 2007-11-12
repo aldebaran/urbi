@@ -1,3 +1,10 @@
+2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix segfault when "delete a & delete a".
+	* src/ucommand.cc: When deleting a UVariable, recheck it
+	  during the phase2, and don't complain if it's not there.
+	* tests-local.mk: Remove corresponding test from XFAIL.
+
 2007-11-12  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Restore var'n as a valid rvalue.
