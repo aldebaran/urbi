@@ -1,3 +1,8 @@
+2007-11-12  Akim Demaille  <demaille@gostai.com>
+
+	Fix error message.
+	* src/parser/bison/utoken.l: s/unrecognized/invalid/.
+
 2007-11-12  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix segfault when "delete a & delete a".

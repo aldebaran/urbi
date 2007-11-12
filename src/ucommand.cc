@@ -2403,7 +2403,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  {
 	    ss << "]\n";
 	    *j->c << UConnection::send (ss.str ().c_str (),
-				        EXTERNAL_MESSAGE_TAG);
+					EXTERNAL_MESSAGE_TAG);
 	  }
 	}
       }
