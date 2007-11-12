@@ -17,12 +17,18 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
 LDADD = $(AM_LDADD)
 
 check_PROGRAMS = tests
+
+# By default, instrument the code.
 INSTRUMENT = true
+# liburbi should run an installed urbi-server.
+URBISERVER = $$(which urbi-server)
+
 TESTS_ENVIRONMENT =				\
  srcdir='$(srcdir)'				\
  INSTRUMENT=$(INSTRUMENT)			\
  PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
- URBI_PATH='$(top_srcdir)/share/urbi'
+ URBI_PATH='$(top_srcdir)/share/urbi'		\
+ URBISERVER=$(URBISERVER)
 
 TESTS = checkfiles/values.cc \
 	checkfiles/removecallbacks.cc
@@ -40,7 +46,7 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 	  echo;								 \
 	  echo 'void';							 \
 	  echo 'dispatch(const char* method, urbi::UClient& client,';	 \
-	  echo '         urbi::USyncClient& syncClient)';		 \
+	  echo '	urbi::USyncClient& syncClient)';		 \
 	  echo '{';							 \
 	  for f in $(TESTS); do						 \
 	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		 \

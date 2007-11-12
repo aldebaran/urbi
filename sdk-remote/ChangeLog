@@ -1,3 +1,11 @@
+2007-11-12  Akim Demaille  <demaille@gostai.com>
+
+	Help the test suite.
+	* tests/Makefile.am: Define URBISERVER and pass it to the
+	TESTS_ENVIRONMENT.
+	* tests/tests.cc: Formatting changes.
+	Use lexical_cast, it is much safer.
+
 2007-11-12  Matthieu Nottale  <nottale@gostai.com>
 
 	Bugfix: dont change std::string size by writting 0.
