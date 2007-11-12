@@ -1359,6 +1359,7 @@ expr:
 rvalue:
   name
 | name derive   { $$->deriv = $2;		}
+| name "'n"	{ $$->isnormalized = true;	}
 | name "'e"	{ $$->varerror = true;		}
 | name "'in"	{ $$->varin = true;		}
 | name "'out"   // FIXME: Nothing to do???
