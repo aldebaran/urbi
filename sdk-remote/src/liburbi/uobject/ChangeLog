@@ -1,3 +1,8 @@
+2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Add operator ,(UValue&).
+	* src/liburbi/uobject/urbi/uvalue.hh: Add operator,(UValue).
+
 2007-11-06  Akim Demaille  <demaille@gostai.com>
 
 	Fix macros.

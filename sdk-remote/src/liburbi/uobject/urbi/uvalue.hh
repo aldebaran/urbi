@@ -135,7 +135,11 @@ namespace urbi
     {						\
       return *this = rhs;			\
     }
-
+    
+    UValue & operator, (const UValue &b) 
+    {
+      return *this = b;
+    }
     // UFloats.
     CTOR_AND_ASSIGN_AND_COMMA(ufloat);
     CTOR_AND_ASSIGN_AND_COMMA(int);
