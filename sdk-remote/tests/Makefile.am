@@ -17,28 +17,41 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
 LDADD = $(AM_LDADD)
 
 check_PROGRAMS = tests
+INSTRUMENT = true
+TESTS_ENVIRONMENT =				\
+ srcdir='$(srcdir)'				\
+ INSTRUMENT=$(INSTRUMENT)			\
+ PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
+ URBI_PATH='$(top_srcdir)/share/urbi'
 
-checkfiles = checkfiles/values.cc \
-		  checkfiles/removecallbacks.cc
-TEST_LOGS = $(checkfiles:.cc=.log)
-tests_SOURCES = tests.hh tests.cc $(checkfiles)
+TESTS = checkfiles/values.cc \
+	checkfiles/removecallbacks.cc
+TEST_LOGS = $(TESTS:.cc=.log)
+tests_SOURCES = tests.hh tests.cc $(TESTS)
 tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_tests_SOURCES = dispatcher.cc
 
+EXTRA_DIST += liburbi-check
 CLEANFILES += $(nodist_tests_SOURCES)
 dispatcher.cc: $(tests_SOURCES) Makefile
 	(                                                                    \
       	echo '#include "tests.hh"'  ; \
-	for f in $(checkfiles); do  \
+	for f in $(TESTS); do  \
 	  name=$$(echo $$f | sed -e 's@.*/@@' -e 's@\..*@@') ;                \
 	  echo "void $$name(urbi::UClient & , urbi::USyncClient &);";\
 	done;    \
   	echo 'void dispatch(const char * method, urbi::UClient & client,'   ;\
 	echo '    urbi::USyncClient & syncClient) {'   ;\
-	for f in $(checkfiles); do  \
+	for f in $(TESTS); do  \
 	  name=$$(echo $$f | sed -e 's@.*/@@' -e 's@\..*@@') ;                \
 	  echo 'if (!strcmp(method, '"\"$$name\")) { \
 	    $$name(client, syncClient);return;}" ;\
 	done; echo 'std::cerr << "unknown test " <<method << std::endl;}' ;   \
 	) > dispatcher.cc
+
+.PHONY: clean-test-dirs
+clean-local: clean-test-dirs
+clean-test-dirs:
+	rm -rf $(TESTS:.cc=.dir)
+

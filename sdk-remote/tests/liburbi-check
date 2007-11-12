@@ -1,0 +1,406 @@
+#! /bin/sh
+
+set -e
+
+case $VERBOSE in
+  x) set -x;;
+esac
+
+# Avoid zombies and preserve debugging information.
+cleanup ()
+{
+  exit_status=$?
+  # Signal 0 is confusing, it just means we exited normally.
+  test "$1" == 0 ||
+    stderr "signal $1"
+
+  # In case we were caught by set -e, kill the children.
+  kill_children
+  harvest_children
+
+  echo "cleanup finished correctly, exiting $exit_status" >>debug
+  subsection "Debug outputs" >&3
+  pre "debug" debug >&3
+
+  # Results.
+  for i in $children
+  do
+    pre "$i command"  "$i.cmd"
+    pre "$i status"   "$i.sta"
+    pre "$i output"   "$i.out"
+    pre "$i error"    "$i.err"
+    pre "$i valgrind" "$i.val"
+  done >&3
+
+  exit $exit_status
+}
+for signal in 0 1 2 13 15; do
+  trap "cleanup $signal" $signal
+done
+
+stderr ()
+{
+  echo >&2 "$(basename $0): $me: $@"
+  echo >&2
+}
+
+
+fatal ()
+{
+  stderr "$@"
+  exit 1
+}
+
+
+# run TITLE COMMAND...
+# --------------------
+# Run the COMMAND... (which may use its stdin) and output detailed
+# logs about the execution.
+#
+# Leave un $run_prefix.{cmd, out, sta, err, val} the command, standard
+# output, exit status, standard error, and instrumentation output.
+run_counter=0
+run_prefix=
+run ()
+{
+  local title=$1
+  run_prefix=$run_counter-$(echo $1 | tr -cs '[:alnum:]' '[-*]')
+  run_counter=$((run_counter + 1))
+  shift
+
+  {
+    ("$@") >$run_prefix.out 2>$run_prefix.err
+    local sta=$?
+    echo $sta >$run_prefix.sta
+
+    case $sta in
+	0) ;;
+	*) title="$title FAIL ($sta)";;
+    esac
+    subsection "$title"
+
+    echo
+    echo "$@"> $run_prefix.cmd
+    pre "Command"   $run_prefix.cmd
+    pre "Output"    $run_prefix.out
+    pre "Status"    $run_prefix.sta
+    pre "Error"     $run_prefix.err
+    pre "Valgrind"  $run_prefix.val
+
+    return $(cat $run_prefix.sta)
+  } >&3
+}
+
+
+# Sleep some time, but taking into account the fact that
+# instrumentation slows down a lot.
+my_sleep ()
+{
+  if $INSTRUMENT; then
+    sleep $(($1 * 5))
+  else
+    sleep $1
+  fi
+}
+
+
+find_urbiserver ()
+{
+  # If URBISERVER is not defined, try to find one.
+  if test -z "$URBISERVER"; then
+    # If we are in $top_builddir/tests/TEST.dir, then look in $top_builddir/src.
+    for i in $top_builddir/src .
+    do
+      if test -f "$i/urbi-server"; then
+	URBISERVER=$i/urbi-server
+	break
+      fi
+    done
+
+    if test -z "$URBISERVER"; then
+      fatal "cannot find urbi-server, please define URBISERVER"
+    fi
+  fi
+
+  # Check for URBISERVER
+  if test ! -f "$URBISERVER"; then
+    fatal "cannot find urbi-server, please check URBISERVER: $URBISERVER"
+  fi
+
+  # Check its version.
+  if ! run "Server version" "$URBISERVER" --version; then
+    fatal "cannot run $URBISERVER --version"
+  fi
+  echo "$URBISERVER"
+}
+
+
+
+## --------------- ##
+## Rst functions.  ##
+## --------------- ##
+
+subsection ()
+{
+  echo "$me: $@" | sed 'p;s/./-/g;p;g'
+}
+
+tab ()
+{
+  sed -e 's/^/	/' "$@"
+}
+
+
+
+# COMMAND-PREFIX instrument LOG-FILE
+# ----------------------------------
+# Return what's to be prepended to an executable so that it is instrumented
+# to be checked: Valgrind or Darwin's Malloc features.
+#
+# Use LOG-FILE as output file.
+#
+# Shared with uconsole-check, please keep sync.
+instrument ()
+{
+  local log=$1
+  shift
+  case ${INSTRUMENT+yes}:$(uname -s) in
+      yes:Darwin)
+	  # Instrument to use Darwin's malloc features.
+	  echo "env"				\
+	      "MallocGuardEdges=1"		\
+	      "MallocPreScribble=1"		\
+	      "MallocScribble=1"		\
+	      "MallocBadFreeAbort=1"		\
+	      "MallocCheckHeapAbort=1"		\
+	      "MallocLogFile=$log"
+	  ;;
+      yes:*)
+	  # Instrument using Valgrind.
+	  : ${VALGRIND=valgrind}
+	  if ($VALGRIND --version) >/dev/null 2>&1; then
+	      echo "$VALGRIND"			\
+		  "--error-exitcode=242"	\
+		  "--log-file-exactly=$log"	\
+		  "--"
+	  else
+	      stderr "cannot find valgrind as $VALGRIND"
+	  fi
+	  ;;
+      *)
+	  # Don't instrument.
+	  ;;
+  esac
+}
+
+# pre TITLE [FILE]
+# ----------------
+# FILE may be empty to denote stdin.
+pre ()
+{
+  if test $# = 1 || test -s "$2"; then
+    echo "$1::"
+    echo
+    shift
+    tab "$@"
+    echo
+  fi
+}
+
+# expect EXPECTED EFFECTIVE
+# -------------------------
+# Compare expected output with effective, actual, output.
+expect ()
+{
+  if ! diff -u --label="Expected $1 ($1.exp)" $1.exp  \
+	       --label="Effective $1 ($2.eff)" $2.eff \
+	       >$2.diff; then
+    subsection "$2"
+    pre "Expected $1 for $me"      $1.exp
+    pre "Raw effective $2 for $me" $2.raw
+    pre "Effective $2 for $me"     $2.eff
+    pre "Diffs on $2 for $me"      $2.diff
+    exit=false
+  fi
+}
+
+
+
+
+## ---------- ##
+## Children.  ##
+## ---------- ##
+
+# register_child NAME
+# -------------------
+register_child ()
+{
+  children="$children $1"
+  echo $! >$1.pid
+}
+
+
+# kill_children
+# -------------
+# Kill all the children.  This function can be called twice: once
+# before cleaning the components, and once when exiting.
+kill_children ()
+{
+  for i in $children
+  do
+    pid=$(cat $i.pid)
+    if ps $pid 2>&1; then
+      echo "Killing $i ($pid)"
+      kill $pid 2>&1 || true
+    fi
+  done >>debug
+}
+
+
+# harvest_children
+# ----------------
+# Report the exit status of the children.
+harvest_children ()
+{
+  # Harvest exit status.
+  for i in $children
+  do
+    pid=$(cat $i.pid)
+    # Beware of set -e.
+    if wait $pid 2>&1; then
+      sta=$?
+    else
+      sta=$?
+    fi
+
+    local reason=;
+    case $sta in
+	65) reason=' (EX_DATAERR)';;
+	66) reason=' (EX_NOINPUT)';;
+	67) reason=' (EX_NOUSER)';;
+	68) reason=' (EX_NOHOST)';;
+	69) reason=' (EX_UNAVAILABLE)';;
+	70) reason=' (EX_SOFTWARE)';;
+        71) reason=' (EX_OSERR)';;
+	72) reason=' (EX_OSFILE)';;
+	73) reason=' (EX_CANTCREAT)';;
+	74) reason=' (EX_IOERR)';;
+	75) reason=' (EX_TEMPFAIL)';;
+	76) reason=' (EX_PROTOCOL)';;
+	77) reason=' (EX_NOPERM)';;
+        78) reason=' (EX_CONFIG)';;
+	242)reason=' (killed by Valgrind)';;
+	*)  if test 127 -lt $sta; then
+	      reason=" (SIG$(kill -l $sta || true))"
+	    fi;;
+    esac
+    echo "$sta$reason" >$i.sta
+  done
+}
+
+# find_srcdir
+# -----------
+find_srcdir ()
+{
+  # Guess srcdir if not defined.
+  if test -z "$srcdir"; then
+    # Try to compute it from $0.
+    srcdir=$(dirname "$0")
+  fi
+
+  # We may change directory.
+  case "$srcdir" in
+    [\\/]* | ?:[\\/]* )  # Absolute name.
+	;;
+    *) # Relative name.
+	srcdir=$(cd "$srcdir" && pwd);;
+  esac
+
+  # Check that srcdir is valid.
+  test -f "$srcdir/tests.hh" ||
+    fatal "cannot find $srcdir/tests.hh: define srcdir"
+
+  echo "$srcdir"
+}
+
+# Make it absolute.
+chk=$(cd $(dirname "$1") && pwd)/$(basename "$1")
+if test ! -f "$chk.cc"; then
+  fatal "no such file: $chk.cc"
+fi
+
+
+period=32
+# ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x
+medir=$(basename $(dirname "$chk"))
+# ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x/andexp-pipeexp
+me=$medir/$(basename "$chk" ".cc")
+# ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
+meraw=$(basename $me)    # MERAW!
+# Guess srcdir if not defined.
+srcdir=$(find_srcdir)
+
+# Move to a private test directory.
+rm -rf $me.dir
+mkdir -p $me.dir
+cd $me.dir
+
+exec 3>debug.rst
+
+#compute expected output
+sed -n -e 's@//= @@p' $chk.cc >output.exp
+touch error.exp
+echo 0 >status.exp
+
+#urbi-server check
+URBISERVER=$(find_urbiserver)
+
+
+#start it
+valgrind=$(instrument "server.val")
+echo $valgrind $URBISERVER -p 0 -w server.port $period >server.cmd
+$valgrind $URBISERVER -p 0 -w server.port $period >server.out 2>server.err &
+register_child server
+
+my_sleep 2
+
+
+#start the test
+valgrind=$(instrument "remote.val")
+echo $valgrind ../../tests localhost $(cat server.port) $meraw >remote.cmd
+$valgrind ../../tests localhost $(cat server.port) $meraw>remote.out 2>remote.err &
+register_child remote
+my_sleep 1
+#wait for...
+harvest_children
+kill_children
+estatus=$?
+sleep 1
+#generate traces
+  # If the return value >126, something really wrong is going on.  127 is
+  # command not found (should not happen here) and >127 means that the
+  # program was killed by a signal (which often indicates that something
+  # really wrong is going on).
+  if test $estatus -gt 126; then
+    stderr "Fatal: return value $estatus > 126"
+    exit='exit 177' # 177 = hard error
+  fi
+
+   # Debugging data often explains failures, so it should be first.
+  if test -s debug.rst; then
+    cat debug.rst
+  fi
+  
+   # Compare expected output with actual output.
+  cp remote.out remote.out.eff
+  expect output remote.out
+  pre "Error output" remote.err
+  #cp remote.sta remote.sta.eff
+  #echo 0 >status.exp
+  #expect status remote.sta
+  
+  # Display Valgrind report.
+  pre "Valgrind" remote.val
+  
+echo "$exit" >exit
+$exit

@@ -7,13 +7,18 @@ urbi::UCallbackID i2 = client.setCallback(&dump, "tagb");
 client.send("tagb << 1;");
 //= D tagb 1.000000
 //= D tagb 1.000000
+dumpSem--;
+dumpSem--;
 client.send("p << 1;");   //ping
 //= D p 1.000000
+dumpSem--;
 client.deleteCallback(i1);
 client.send("tagb << 1;");
 //= D tagb 1.000000
 client.send("p << 1;");   //ping
 //= D p 1.000000
+dumpSem--;
+dumpSem--;
 client.deleteCallback(i2);
 client.send("tagb << 1;");
 client.send("p << 1;");   //ping
@@ -27,4 +32,5 @@ client.send("rm << 0;");
 client.send("rm << 1;");
 client.send("p << 1;");   //ping
 //= D p 1.000000
+sleep(5);
 END_TEST

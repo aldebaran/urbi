@@ -1,3 +1,13 @@
+2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Make check now does something.
+	* tests/Makefile.am: Clean everything for distcheck.
+	* tests/checkfiles/removecallbacks.cc: Use dumpSem for timing.
+	* tests/checkfiles/values.cc: Fix expected output.
+	* tests/liburbi-check: New. Wrapper-script.
+	* tests/tests.cc,
+	* tests/tests.hh: declare and use a semaphore.
+
 2007-11-12  Akim Demaille  <demaille@gostai.com>
 
 	Use check_PROGRAMS.

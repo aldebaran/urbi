@@ -2,6 +2,8 @@
 #include <urbi/usyncclient.hh>
 
 #include "tests.hh"
+
+libport::Semaphore dumpSem;
 urbi::UCallbackAction
 dump(const urbi::UMessage & msg)
 {
@@ -22,18 +24,19 @@ dump(const urbi::UMessage & msg)
   default:
     type = '?';
   }
-  std::cerr << type << ' ';
+  std::cout << type << ' ';
    switch (msg.type)
     {
     case urbi::MESSAGE_DATA:
-		std::cerr << msg.tag << ' ' << *msg.value << std::endl;
+		std::cout << msg.tag << ' ' << *msg.value << std::endl;
       break;
 
     case urbi::MESSAGE_ERROR:
     case urbi::MESSAGE_SYSTEM:
-		std::cerr  << msg.tag << ' ' << msg.message << std::endl;
+		std::cout  << msg.tag << ' ' << msg.message << std::endl;
       break;
     }
+  dumpSem++;
   return urbi::URBI_CONTINUE;
 }
 
