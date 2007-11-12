@@ -21,7 +21,7 @@ check_PROGRAMS = tests
 # By default, instrument the code.
 INSTRUMENT = true
 # liburbi should run an installed urbi-server.
-URBISERVER = $$(which urbi-server)
+URBISERVER = $(shell if which urbi-server >/dev/null 2>&1; then which urbi-server; else echo false; fi)
 
 TESTS_ENVIRONMENT =				\
  srcdir='$(srcdir)'				\

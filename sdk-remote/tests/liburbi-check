@@ -107,25 +107,30 @@ my_sleep ()
 
 find_urbiserver ()
 {
-  # If URBISERVER is not defined, try to find one.
-  if test -z "$URBISERVER"; then
-    # If we are in $top_builddir/tests/TEST.dir, then look in $top_builddir/src.
-    for i in $top_builddir/src .
-    do
-      if test -f "$i/urbi-server"; then
-	URBISERVER=$i/urbi-server
-	break
-      fi
-    done
+  case $URBISERVER in
+    false) #  If not installed, skip.
+       exit 77
+       ;;
+    '')
+       # If URBISERVER is not defined, try to find one.  If we are in
+       # $top_builddir/tests/TEST.dir, then look in $top_builddir/src.
+       for i in $top_builddir/src .
+       do
+         if test -f "$i/urbi-server"; then
+   	   URBISERVER=$i/urbi-server
+   	   break
+         fi
+       done
+   
+       if test -z "$URBISERVER"; then
+         fatal "cannot find urbi-server, please define URBISERVER"
+       fi
+       ;;
+  esac
 
-    if test -z "$URBISERVER"; then
-      fatal "cannot find urbi-server, please define URBISERVER"
-    fi
-  fi
-
-  # Check for URBISERVER
+  # Check for URBISERVER. 
   if test ! -f "$URBISERVER"; then
-    fatal "cannot find urbi-server, please check URBISERVER: $URBISERVER"
+    fatal "cannot find urbi-server, please check \$URBISERVER: $URBISERVER"
   fi
 
   # Check its version.

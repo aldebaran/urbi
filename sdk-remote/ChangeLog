@@ -1,5 +1,11 @@
 2007-11-12  Akim Demaille  <demaille@gostai.com>
 
+	Accept that urbi-server is not installed.
+	* tests/Makefile.am (URBISERVER): Set to false when not available.
+	* tests/liburbi-check: Adjust.
+
+2007-11-12  Akim Demaille  <demaille@gostai.com>
+
 	Fix run().
 	* tests/liburbi-check: Missing g...
 
