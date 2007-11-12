@@ -1,3 +1,9 @@
+2007-11-12  Akim Demaille  <demaille@gostai.com>
+
+	Clarify test suite.
+	* tests/Makefile.am (dispatcher): Use it.
+	* tests/tests.hh (TESTS_RUN): New.
+
 2007-11-12  Matthieu Nottale  <nottale@gostai.com>
 
 	Make check now does something.

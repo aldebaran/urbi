@@ -35,20 +35,22 @@ nodist_tests_SOURCES = dispatcher.cc
 EXTRA_DIST += liburbi-check
 CLEANFILES += $(nodist_tests_SOURCES)
 dispatcher.cc: $(tests_SOURCES) Makefile
-	(                                                                    \
-      	echo '#include "tests.hh"'  ; \
-	for f in $(TESTS); do  \
-	  name=$$(echo $$f | sed -e 's@.*/@@' -e 's@\..*@@') ;                \
-	  echo "void $$name(urbi::UClient & , urbi::USyncClient &);";\
-	done;    \
-  	echo 'void dispatch(const char * method, urbi::UClient & client,'   ;\
-	echo '    urbi::USyncClient & syncClient) {'   ;\
-	for f in $(TESTS); do  \
-	  name=$$(echo $$f | sed -e 's@.*/@@' -e 's@\..*@@') ;                \
-	  echo 'if (!strcmp(method, '"\"$$name\")) { \
-	    $$name(client, syncClient);return;}" ;\
-	done; echo 'std::cerr << "unknown test " <<method << std::endl;}' ;   \
-	) > dispatcher.cc
+	{								 \
+	  echo '#include "tests.hh"';					 \
+	  echo;								 \
+	  echo 'void';							 \
+	  echo 'dispatch(const char* method, urbi::UClient& client,';	 \
+	  echo '         urbi::USyncClient& syncClient)';		 \
+	  echo '{';							 \
+	  for f in $(TESTS); do						 \
+	    name=$$(echo $$f | sed -e 's@.*/@@;s@\..*@@');		 \
+	    echo "  TESTS_RUN ($$name);";				 \
+	  done;								 \
+	  echo '  std::cerr << "Unknown test " << method << std::endl;'; \
+	  echo '  exit (1);';						 \
+	  echo '}';							 \
+	} >dispatcher.cc.tmp
+	mv dispatcher.cc.tmp dispatcher.cc
 
 .PHONY: clean-test-dirs
 clean-local: clean-test-dirs

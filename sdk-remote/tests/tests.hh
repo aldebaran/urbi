@@ -30,12 +30,24 @@ urbi::UCallbackAction removeOnZero(const urbi::UMessage & msg);
 
 #define BEGIN_TEST(name) \
   void name(urbi::UClient & client, urbi::USyncClient & syncClient) {
-    
+
 #define END_TEST \
   client.send("shutdown;"); \
   }
 
-void dispatch(const char * method, urbi::UClient & client, 
+void dispatch(const char * method, urbi::UClient & client,
 	      urbi::USyncClient & syncClient);
+
+/// \a Name is the base name of the C++ file containing the function
+/// \a Name.
+#define TESTS_RUN(Name)							\
+  do {									\
+    if (!strcmp(method, #Name))						\
+    {									\
+      void Name (urbi::UClient& , urbi::USyncClient&);			\
+      Name(client, syncClient);						\
+      return;								\
+    }									\
+  } while (0)
 
 #endif
