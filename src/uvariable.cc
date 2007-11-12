@@ -181,6 +181,7 @@ UVariable::init()
 //! UVariable destructor
 UVariable::~UVariable()
 {
+  //  std::cerr << "Deleting " << this << std::endl;
   if (activity)
     ::urbiserver->reinitList.remove(this);
 
@@ -500,7 +501,7 @@ UVariable::updated(bool )
       i->__evalcall(tmparray);
     }
   }
-  
+
   inSetTarget = false;
 }
 
@@ -574,4 +575,3 @@ void UVariable::setTarget() {
   }
   inSetTarget = false;
 }
-
