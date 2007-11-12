@@ -1,3 +1,8 @@
+2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix remote call to method with no parameter.
+	* src/ucommand.cc: Add missing variable initialization.
+
 2007-11-12  Akim Demaille  <demaille@gostai.com>
 
 	New failing test.

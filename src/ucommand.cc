@@ -2382,7 +2382,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  std::stringstream ss;
 	  ss.str ("");
 	  ss << o.str();
-
+	  validcmd = true;
 	  for (UNamedParameters *pvalue = expression->parameters;
 	       pvalue != 0;
 	       pvalue = pvalue->next)
