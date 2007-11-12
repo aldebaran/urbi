@@ -1,3 +1,9 @@
+2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+
+	Error message normalization, testsuite fix.
+	* src/liburbi/uclient.cc: Replace 'custom' message by perror.
+	* tests/tests.cc: Call exit when the UClient is disconnected.
+
 2007-11-12  Akim Demaille  <demaille@gostai.com>
 
 	Improve tests.

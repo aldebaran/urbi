@@ -57,6 +57,12 @@ removeOnZero(const urbi::UMessage& msg)
   return urbi::URBI_CONTINUE;
 }
 
+urbi::UCallbackAction
+doExit(const urbi::UMessage& msg)
+{
+  exit(0);
+}
+
 
 int
 main(int argc, const char* argv[])
@@ -71,7 +77,7 @@ main(int argc, const char* argv[])
   int port = boost::lexical_cast<int>(argv[2]);
   urbi::UClient client(host, port);
   urbi::USyncClient syncClient(host, port);
-
+  client.setClientErrorCallback(callback(&doExit));
   for (int i = 3; i < argc; ++i)
   {
     if (getenv("VERBOSE"))

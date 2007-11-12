@@ -83,7 +83,7 @@ namespace urbi
       sa.sin_addr.s_addr = inet_addr(host);
       if (sa.sin_addr.s_addr == INADDR_NONE)
       {
-	printf("UClient::UClient cannot resolve host name.\n");
+	std::cerr << "UClient::UClient cannot resolve host name." << std::endl;
 	rc = -1;
 	return;
       }
@@ -94,7 +94,7 @@ namespace urbi
     sd = socket(AF_INET, SOCK_STREAM, 0);
     if (sd < 0)
     {
-      printf("UClient::UClient socket allocation failed.\n");
+      perror("UClient::UClient socket");
       rc = -1;
       return;
     }
@@ -112,7 +112,7 @@ namespace urbi
     // Check there was no error.
     if (rc)
     {
-      std::cerr << "UClient::UClient cannot connect." << std::endl;
+      perror("UClient::UClient connect");
       return;
     }
 
@@ -122,8 +122,8 @@ namespace urbi
       pos = ::recv(sd, recvBuffer, buflen, 0);
     if (pos<0)
     {
+      perror("UClient::UClient recv");
       rc = pos;
-      printf("UClient::UClient cannot connect: read error %d.\n", rc);
       return;
     }
     else
@@ -242,15 +242,15 @@ namespace urbi
       //TODO maybe try to reconnect?
       if (count < 0)
       {
-	perror ("recv failed");
-	clientError("recv failed, errno =", count);
+	perror ("recv error");
+	clientError("recv error, errno =", count);
 	rc = -1;
 	return;
       }
       else if (!count)
       {
-	clientError("recv error: connection closed");
 	std::cerr << "recv error: connection closed" << std::endl;
+	clientError("recv error: connection closed");
 	rc = -1;
 	return;
       }
