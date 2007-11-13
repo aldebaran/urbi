@@ -17,8 +17,6 @@ AM_LDADD = $(top_builddir)/src/liburbi/liburbi.la 	\
 # This is a hack for Automake 1.9: 1.10 honors AM_LDADD.
 LDADD = $(AM_LDADD)
 
-check_PROGRAMS = tests
-
 # By default, instrument the code.
 INSTRUMENT = true
 URBI_SERVER = urbi-server
@@ -30,18 +28,13 @@ TESTS_ENVIRONMENT =				\
  URBI_PATH='$(top_srcdir)/share/urbi'		\
  URBI_SERVER=$(URBI_SERVER)
 
-TESTS = checkfiles/values.cc \
-	checkfiles/removecallbacks.cc
-TEST_LOGS = $(TESTS:.cc=.log)
+# tests(*).
+check_PROGRAMS = tests
+
 tests_SOURCES = tests.hh tests.cc $(TESTS)
 tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_tests_SOURCES = dispatcher.cc
-
-EXTRA_DIST += liburbi-check.as
-nodist_check_SCRIPTS = liburbi-check
-m4sh_scripts = liburbi-check
-
 CLEANFILES += $(nodist_tests_SOURCES)
 
 dispatcher.cc: $(tests_SOURCES) Makefile
@@ -61,6 +54,16 @@ dispatcher.cc: $(tests_SOURCES) Makefile
 	  echo '}';							 \
 	} >dispatcher.cc.tmp
 	mv dispatcher.cc.tmp dispatcher.cc
+
+# liburbi-check
+EXTRA_DIST += liburbi-check.as
+nodist_check_SCRIPTS = liburbi-check
+m4sh_scripts = liburbi-check
+
+# The test suite.
+TESTS = checkfiles/values.cc \
+	checkfiles/removecallbacks.cc
+TEST_LOGS = $(TESTS:.cc=.log)
 
 .PHONY: clean-test-dirs
 clean-local: clean-test-dirs

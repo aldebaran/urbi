@@ -1,5 +1,13 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Fixes.
+	* tests/Makefile.am: Fix dist/clean thingies.
+	* tests/liburbi-check.as: Build FD 3 after having moved in the
+	test's dir.
+	(find_urbi_server): path_sep no longer exists.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	nodist_.
 	* tests/Makefile.am: liburbi-check is nodist_.
 

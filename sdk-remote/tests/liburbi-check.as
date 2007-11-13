@@ -70,7 +70,8 @@ find_urbi_server ()
     '')
        # If URBI_SERVER is not defined, try to find one.  If we are in
        # $top_builddir/tests/TEST.dir, then look in $top_builddir/src.
-       URBI_SERVER=$(find_prog "urbi-server" "$top_builddir/src${path_sep}.")
+       URBI_SERVER=$(find_prog "urbi-server" \
+	                       "$top_builddir/src${PATH_SEPARATOR}.")
        ;;
 
     *[[\\/]]* ) # A path, relative or absolute.  Make it absolute.
@@ -126,8 +127,6 @@ find_srcdir ()
 ## Main program.  ##
 ## -------------- ##
 
-exec 3>debug.rst
-
 # Make it absolute.
 chk=$(absolute "$1")
 if test ! -f "$chk.cc"; then
@@ -147,13 +146,16 @@ srcdir=$(find_srcdir)
 # $URBI_SERVER
 find_urbi_server
 
-# Help debugging
-set | rst_pre "$me variables" >&3
-
 # Move to a private test directory.
 rm -rf $me.dir
 mkdir -p $me.dir
 cd $me.dir
+
+# Debugging info.
+exec 3>debug.rst
+
+# Help debugging
+set | rst_pre "$me variables" >&3
 
 #compute expected output
 sed -n -e 's@//= @@p' $chk.cc >output.exp
