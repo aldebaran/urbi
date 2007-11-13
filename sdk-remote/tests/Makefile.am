@@ -39,10 +39,11 @@ tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_tests_SOURCES = dispatcher.cc
 
 EXTRA_DIST += liburbi-check.as
-check_SCRIPTS = liburbi-check
+nodist_check_SCRIPTS = liburbi-check
 m4sh_scripts = liburbi-check
 
 CLEANFILES += $(nodist_tests_SOURCES)
+
 dispatcher.cc: $(tests_SOURCES) Makefile
 	{								 \
 	  echo '#include "tests.hh"';					 \

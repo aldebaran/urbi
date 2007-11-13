@@ -1,5 +1,10 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	nodist_.
+	* tests/Makefile.am: liburbi-check is nodist_.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Use children.as.
 	* tests/liburbi-check.as: Here.
 	Construct FD 3 before using it.
