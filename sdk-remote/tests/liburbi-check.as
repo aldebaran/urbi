@@ -3,6 +3,7 @@ m4_pattern_allow([^URBI_SERVER$])		         -*- shell-script -*-
 AS_INIT()dnl
 URBI_PREPARE()
 URBI_RST_PREPARE()
+URBI_INSTRUMENT_PREPARE()
 
 set -e
 
@@ -155,74 +156,6 @@ find_urbi_server ()
     fatal "cannot run $URBI_SERVER --version"
   fi
 }
-
-
-
-# COMMAND-PREFIX instrument LOG-FILE
-# ----------------------------------
-# Return what's to be prepended to an executable so that it is instrumented
-# to be checked: Valgrind or Darwin's Malloc features.
-#
-# Use LOG-FILE as output file.
-#
-# Shared with uconsole-check, please keep sync.
-instrument ()
-{
-  local log=$1
-  shift
-  case ${INSTRUMENT+yes}:$(uname -s) in
-      yes:Darwin)
-	  # Instrument to use Darwin's malloc features.
-	  echo "env"				\
-	      "MallocGuardEdges=1"		\
-	      "MallocPreScribble=1"		\
-	      "MallocScribble=1"		\
-	      "MallocBadFreeAbort=1"		\
-	      "MallocCheckHeapAbort=1"		\
-	      "MallocLogFile=$log"
-	  ;;
-      yes:*)
-	  # Instrument using Valgrind.
-	  : ${VALGRIND=valgrind}
-	  if ($VALGRIND --version) >/dev/null 2>&1; then
-	      echo "$VALGRIND"			\
-		  "--error-exitcode=242"	\
-		  "--log-file-exactly=$log"	\
-		  "--"
-	  else
-	      stderr "cannot find valgrind as $VALGRIND"
-	  fi
-	  ;;
-      *)
-	  # Don't instrument.
-	  ;;
-  esac
-}
-
-
-# expect EXPECTED EFFECTIVE
-# -------------------------
-# Compare expected output with effective, actual, output.
-expect ()
-{
-  rst_subsection "$me: $2"
-  if ! diff -u --label="Expected $1 ($1.exp)" $1.exp  \
-	       --label="Effective $1 ($2.eff)" $2.eff \
-	       >$2.diff; then
-    rst_pre "Expected $1 for $me"      $1.exp
-    rst_pre "Raw effective $2 for $me" $2.raw
-    rst_pre "Effective $2 for $me"     $2.eff
-    rst_pre "Diffs on $2 for $me"      $2.diff
-    if test x"$exit" = xtrue; then
-      exit=false
-    fi
-  else
-    # Dump something, it is really surprising in the logs to see
-    # nothing.
-    rst_pre "Raw effective $2 for $me" $2.raw
-  fi
-}
-
 
 
 
@@ -388,11 +321,11 @@ sleep 1
 
    # Compare expected output with actual output.
   cp remote.out remote.out.eff
-  expect output remote.out
+  rst_expect output remote.out
   rst_pre "Error output" remote.err
   #cp remote.sta remote.sta.eff
   #echo 0 >status.exp
-  #expect status remote.sta
+  #rst_expect status remote.sta
 
   # Display Valgrind report.
   rst_pre "Valgrind" remote.val
