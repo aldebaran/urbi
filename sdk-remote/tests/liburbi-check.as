@@ -43,28 +43,14 @@ for signal in 0 1 2 13 15; do
   trap "cleanup $signal" $signal
 done
 
+
+# Overriden to include the test name.
 stderr ()
 {
   echo >&2 "$(basename $0): $me: $@"
   echo >&2
 }
 
-
-fatal ()
-{
-  stderr "$@"
-  exit 1
-}
-
-
-# Systems which define $COMSPEC or $ComSpec use semicolons to separate
-# directories in TEXINPUTS -- except for Cygwin, where COMSPEC might be
-# inherited, but : is used.
-if test -n "$COMSPEC$ComSpec" && uname | grep -iv cygwin >/dev/null; then
-  path_sep=";"
-else
-  path_sep=":"
-fi
 
 # run TITLE COMMAND...
 # --------------------
@@ -204,29 +190,7 @@ harvest_children ()
     else
       sta=$?
     fi
-
-    local reason=;
-    case $sta in
-	65) reason=' (EX_DATAERR)';;
-	66) reason=' (EX_NOINPUT)';;
-	67) reason=' (EX_NOUSER)';;
-	68) reason=' (EX_NOHOST)';;
-	69) reason=' (EX_UNAVAILABLE)';;
-	70) reason=' (EX_SOFTWARE)';;
-	71) reason=' (EX_OSERR)';;
-	72) reason=' (EX_OSFILE)';;
-	73) reason=' (EX_CANTCREAT)';;
-	74) reason=' (EX_IOERR)';;
-	75) reason=' (EX_TEMPFAIL)';;
-	76) reason=' (EX_PROTOCOL)';;
-	77) reason=' (EX_NOPERM)';;
-	78) reason=' (EX_CONFIG)';;
-	242)reason=' (killed by Valgrind)';;
-	*)  if test 127 -lt $sta; then
-	      reason=" (SIG$(kill -l $sta || true))"
-	    fi;;
-    esac
-    echo "$sta$reason" >$i.sta
+    echo "$sta$(ex_to_string $sta)" >$i.sta
   done
 }
 
@@ -251,7 +215,7 @@ find_srcdir ()
 }
 
 # Make it absolute.
-chk=$(cd $(dirname "$1") && pwd)/$(basename "$1")
+chk=$(absolute "$1")
 if test ! -f "$chk.cc"; then
   fatal "no such file: $chk.cc"
 fi

@@ -1,5 +1,11 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Use M4sh's stderr.
+	* tests/liburbi-check.as (fatal): Remove.
+	(harvest_children): Use ex_to_string.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Use instrument.as.
 	* tests/liburbi-check.as (expect, instrument): Remove.
 	Adjust.
