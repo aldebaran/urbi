@@ -1,7 +1,8 @@
-m4_pattern_allow([^URBI_SERVER$])
+m4_pattern_allow([^URBI_SERVER$])		         -*- shell-script -*-
 
 AS_INIT()dnl
 URBI_PREPARE()
+URBI_RST_PREPARE()
 
 set -e
 
@@ -22,17 +23,17 @@ cleanup ()
   harvest_children
 
   echo "cleanup finished correctly, exiting $exit_status" >>debug
-  subsection "Debug outputs" >&3
-  pre "debug" debug >&3
+  rst_subsection "$me: Debug outputs" >&3
+  rst_pre "debug" debug >&3
 
   # Results.
   for i in $children
   do
-    pre "$i command"  "$i.cmd"
-    pre "$i status"   "$i.sta"
-    pre "$i output"   "$i.out"
-    pre "$i error"    "$i.err"
-    pre "$i valgrind" "$i.val"
+    rst_pre "$i command"  "$i.cmd"
+    rst_pre "$i status"   "$i.sta"
+    rst_pre "$i output"   "$i.out"
+    rst_pre "$i error"    "$i.err"
+    rst_pre "$i valgrind" "$i.val"
   done >&3
 
   exit $exit_status
@@ -82,7 +83,7 @@ run ()
   shift
 
   {
-    ("$@") >$run_prefix.out 2>$run_prefix.err
+    ("$@") >$run_prefix.out 2>$run_rst_prefix.err
     local sta=$?
     echo $sta >$run_prefix.sta
 
@@ -90,15 +91,15 @@ run ()
 	0) ;;
 	*) title="$title FAIL ($sta)";;
     esac
-    subsection "$title"
+    rst_subsection "$me: $title"
 
     echo
     echo "$@"> $run_prefix.cmd
-    pre "Command"   $run_prefix.cmd
-    pre "Output"    $run_prefix.out
-    pre "Status"    $run_prefix.sta
-    pre "Error"     $run_prefix.err
-    pre "Valgrind"  $run_prefix.val
+    rst_pre "Command"   $run_prefix.cmd
+    rst_pre "Output"    $run_prefix.out
+    rst_pre "Status"    $run_prefix.sta
+    rst_pre "Error"     $run_prefix.err
+    rst_pre "Valgrind"  $run_prefix.val
 
     return $(cat $run_prefix.sta)
   } >&3
@@ -157,22 +158,6 @@ find_urbi_server ()
 
 
 
-## --------------- ##
-## Rst functions.  ##
-## --------------- ##
-
-subsection ()
-{
-  echo "$me: $@" | sed 'p;s/./-/g;p;g'
-}
-
-tab ()
-{
-  sed -e 's/^/	/' "$@"
-}
-
-
-
 # COMMAND-PREFIX instrument LOG-FILE
 # ----------------------------------
 # Return what's to be prepended to an executable so that it is instrumented
@@ -214,40 +199,27 @@ instrument ()
   esac
 }
 
-# pre TITLE [FILE]
-# ----------------
-# FILE may be empty to denote stdin.
-pre ()
-{
-  if test $# = 1 || test -s "$2"; then
-    echo "$1::"
-    echo
-    shift
-    tab "$@"
-    echo
-  fi
-}
 
 # expect EXPECTED EFFECTIVE
 # -------------------------
 # Compare expected output with effective, actual, output.
 expect ()
 {
-  subsection "$2"
+  rst_subsection "$me: $2"
   if ! diff -u --label="Expected $1 ($1.exp)" $1.exp  \
 	       --label="Effective $1 ($2.eff)" $2.eff \
 	       >$2.diff; then
-    pre "Expected $1 for $me"      $1.exp
-    pre "Raw effective $2 for $me" $2.raw
-    pre "Effective $2 for $me"     $2.eff
-    pre "Diffs on $2 for $me"      $2.diff
+    rst_pre "Expected $1 for $me"      $1.exp
+    rst_pre "Raw effective $2 for $me" $2.raw
+    rst_pre "Effective $2 for $me"     $2.eff
+    rst_pre "Diffs on $2 for $me"      $2.diff
     if test x"$exit" = xtrue; then
       exit=false
     fi
   else
     # Dump something, it is really surprising in the logs to see
     # nothing.
-    pre "Raw effective $2 for $me" $2.raw
+    rst_pre "Raw effective $2 for $me" $2.raw
   fi
 }
 
@@ -365,7 +337,7 @@ srcdir=$(find_srcdir)
 find_urbi_server
 
 # Help debugging
-set | pre "$me variables" >&3
+set | rst_pre "$me variables" >&3
 
 # Move to a private test directory.
 rm -rf $me.dir
@@ -417,13 +389,13 @@ sleep 1
    # Compare expected output with actual output.
   cp remote.out remote.out.eff
   expect output remote.out
-  pre "Error output" remote.err
+  rst_pre "Error output" remote.err
   #cp remote.sta remote.sta.eff
   #echo 0 >status.exp
   #expect status remote.sta
 
   # Display Valgrind report.
-  pre "Valgrind" remote.val
+  rst_pre "Valgrind" remote.val
 
 echo "$exit" >exit
 $exit

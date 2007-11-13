@@ -1,5 +1,11 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Use rst.as.
+	* tests/liburbi-check.as (pre, subsection, tab): Remove.
+	Adjust to using their rst_* counterparts.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Use M4sh for liburbi-check.
 	* tests/liburbi-check: Rename as...
 	* tests/liburbi-check.as: this.
