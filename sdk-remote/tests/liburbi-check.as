@@ -102,8 +102,8 @@ find_urbi_server ()
 }
 
 
-# find_srcdir
-# -----------
+# find_srcdir WITNESS
+# -------------------
 find_srcdir ()
 {
   # Guess srcdir if not defined.
@@ -116,8 +116,8 @@ find_srcdir ()
   srcdir=$(absolute "$srcdir")
 
   # Check that srcdir is valid.
-  test -f "$srcdir/tests.hh" ||
-    fatal "cannot find $srcdir/tests.hh: define srcdir"
+  test -f "$srcdir/$1" ||
+    fatal "cannot find $srcdir/$1: define srcdir"
 
   echo "$srcdir"
 }
@@ -141,18 +141,21 @@ medir=$(basename $(dirname "$chk"))
 me=$medir/$(basename "$chk" ".cc")
 # ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
 meraw=$(basename $me)    # MERAW!
+
+# Set up FD 3 before functions that can fail, since the trap
+# uses it.
+rm -rf $me.dir
+mkdir -p $me.dir
+exec 3>$me.dir/debug.rst
+
 # Guess srcdir if not defined.
-srcdir=$(find_srcdir)
+srcdir=$(find_srcdir "tests.hh")
+
 # $URBI_SERVER
 find_urbi_server
 
 # Move to a private test directory.
-rm -rf $me.dir
-mkdir -p $me.dir
 cd $me.dir
-
-# Debugging info.
-exec 3>debug.rst
 
 # Help debugging
 set | rst_pre "$me variables" >&3
