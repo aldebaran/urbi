@@ -1,5 +1,11 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Use children.as.
+	* tests/liburbi-check.as: Here.
+	Construct FD 3 before using it.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Use M4sh's stderr.
 	* tests/liburbi-check.as (fatal): Remove.
 	(harvest_children): Use ex_to_string.
