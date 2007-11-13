@@ -484,6 +484,8 @@ UConnection::block ()
 UConnection&
 UConnection::continueSend ()
 {
+  if (closing)
+     CONN_ERR_RET(UFAIL);
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
 # endif

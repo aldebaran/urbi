@@ -369,7 +369,20 @@ UServer::work()
       else if (somethingToDelete)
 	r->activeCommand->deleteMarked();
     }
-
+  
+  // Delete all connections with closing=true
+  for (std::list<UConnection *>::iterator i = connectionList.begin();
+       i!= connectionList.end(); )
+  {
+    if ((*i)->closing)
+    {
+      delete *i;
+      i = connectionList.erase(i);
+    }
+    else
+      i++;
+  }
+  
   somethingToDelete = false;
   stopall = false;
 

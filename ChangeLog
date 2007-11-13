@@ -1,5 +1,12 @@
 2007-11-13  Matthieu Nottale  <nottale@gostai.com>
 
+	Delete closed connection.
+	* src/uconnection.cc: Don't send anything to closed connection.
+	* src/userver.cc: At every call to work, scan connection list, and
+	  delete closed ones.
+
+2007-11-13  Matthieu Nottale  <nottale@gostai.com>
+
 	Fix binary transmission in remote method call.
 	* src/ucommand.cc: Don't send message as c-string.
 
