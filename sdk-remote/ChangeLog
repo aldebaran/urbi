@@ -1,3 +1,8 @@
+2007-11-13  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix segfault when bogus uobject message is received.
+	* src/liburbi/uobject.cc: Check result of hash->find() before use.
+
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
 	Stop using FD3.

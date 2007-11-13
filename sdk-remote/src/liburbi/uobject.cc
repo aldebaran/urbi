@@ -200,17 +200,18 @@ namespace urbi
 	  (*it)->__update(array[2]);
 
       UTable::iterator monitormapfind = monitormap->find(array[1]);
-      for (std::list<UGenericCallback*>::iterator
-	     cbit = monitormapfind->second.begin();
-	   cbit != monitormapfind->second.end();
-	   ++cbit)
-      {
-	// test of return value here
-	UList u;
-	u.array.push_back(new UValue());
-	u[0].storage = (*cbit)->storage;
-	(*cbit)->__evalcall(u);
-      }
+      if (monitormapfind != monitormap->end())
+        for (std::list<UGenericCallback*>::iterator
+	       cbit = monitormapfind->second.begin();
+	     cbit != monitormapfind->second.end();
+	     ++cbit)
+        {
+	  // test of return value here
+	  UList u;
+	  u.array.push_back(new UValue());
+	  u[0].storage = (*cbit)->storage;
+	  (*cbit)->__evalcall(u);
+	}
     }
 
     // UEM_EVALFUNCTION
