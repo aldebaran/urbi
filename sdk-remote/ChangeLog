@@ -1,5 +1,12 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Stop using FD3.
+	* tests/liburbi-check.as: Actually this is useless, it makes
+	sense for uconsole because it is run by uconsole-check, but here,
+	it makes no sense and makes everything more complex.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Fix FD 3 usage.
 	* tests/liburbi-check.as: Build it before using it.
 

@@ -21,9 +21,10 @@ cleanup ()
   kill_children
   harvest_children
 
-  echo "cleanup finished correctly, exiting $exit_status" >>debug
-  rst_subsection "$me: Debug outputs" >&3
-  rst_pre "debug" debug >&3
+  echo "cleanup finished correctly, exiting $exit_status"
+  echo
+
+  rst_subsection "$me: Debug outputs"
 
   # Results.
   for i in $children
@@ -33,7 +34,7 @@ cleanup ()
     rst_pre "$i output"   "$i.out"
     rst_pre "$i error"    "$i.err"
     rst_pre "$i valgrind" "$i.val"
-  done >&3
+  done
 
   exit $exit_status
 }
@@ -133,7 +134,6 @@ if test ! -f "$chk.cc"; then
   fatal "no such file: $chk.cc"
 fi
 
-
 period=32
 # ./../../../tests/2.x/andexp-pipeexp.chk -> 2.x
 medir=$(basename $(dirname "$chk"))
@@ -142,23 +142,19 @@ me=$medir/$(basename "$chk" ".cc")
 # ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
 meraw=$(basename $me)    # MERAW!
 
-# Set up FD 3 before functions that can fail, since the trap
-# uses it.
-rm -rf $me.dir
-mkdir -p $me.dir
-exec 3>$me.dir/debug.rst
-
 # Guess srcdir if not defined.
 srcdir=$(find_srcdir "tests.hh")
 
 # $URBI_SERVER
 find_urbi_server
 
-# Move to a private test directory.
+# Move to a private dir.
+rm -rf $me.dir
+mkdir -p $me.dir
 cd $me.dir
 
 # Help debugging
-set | rst_pre "$me variables" >&3
+set | rst_pre "$me variables"
 
 #compute expected output
 sed -n -e 's@//= @@p' $chk.cc >output.exp
@@ -196,9 +192,9 @@ sleep 1
   fi
 
    # Debugging data often explains failures, so it should be first.
-  if test -s debug.rst; then
-    cat debug.rst
-  fi
+  #if test -s debug.rst; then
+  #  cat debug.rst
+  #fi
 
    # Compare expected output with actual output.
   cp remote.out remote.out.eff
