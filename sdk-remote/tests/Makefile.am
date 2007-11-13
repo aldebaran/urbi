@@ -20,15 +20,14 @@ check_PROGRAMS = tests
 
 # By default, instrument the code.
 INSTRUMENT = true
-# liburbi should run an installed urbi-server.
-URBISERVER = $(shell if which urbi-server >/dev/null 2>&1; then which urbi-server; else echo false; fi)
+URBI_SERVER = urbi-server
 
 TESTS_ENVIRONMENT =				\
  srcdir='$(srcdir)'				\
  INSTRUMENT=$(INSTRUMENT)			\
  PACKAGE_NAME='$(PACKAGE_TARNAME)'		\
  URBI_PATH='$(top_srcdir)/share/urbi'		\
- URBISERVER=$(URBISERVER)
+ URBI_SERVER=$(URBI_SERVER)
 
 TESTS = checkfiles/values.cc \
 	checkfiles/removecallbacks.cc

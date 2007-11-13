@@ -1,3 +1,17 @@
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
+	Fix the finding of urbi-server.
+	* tests/Makefile.am (URBISERVER): Rename as...
+	(URBI_SERVER): This.
+	No longer compute it here.
+	* tests/liburbi-check (absolute, find_prog, $path_sep): New,
+	inspired by their counterparts in texi2dvi.
+	(find_urbiserver, URBISERVER): Rename as...
+	(find_urbi_server, URBI)SERVER): these.
+	Use these recently introduced functions.
+	No longer echo the result, just set URBI_SERVER.
+	Use absolute.
+
 2007-11-12  Akim Demaille  <demaille@gostai.com>
 
 	Accept that urbi-server is not installed.
