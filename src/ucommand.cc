@@ -2402,8 +2402,10 @@ UCommand_EXPR::execute_(UConnection *connection)
 	  if (validcmd)
 	  {
 	    ss << "]\n";
-	    *j->c << UConnection::send (ss.str ().c_str (),
-					EXTERNAL_MESSAGE_TAG);
+	    *j->c << UConnection::send (
+	      reinterpret_cast<const ubyte *>(ss.str ().c_str ()),
+	      ss.str().length(), 
+	      reinterpret_cast<const ubyte *>(EXTERNAL_MESSAGE_TAG));
 	  }
 	}
       }
