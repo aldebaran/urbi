@@ -1,11 +1,12 @@
 include $(top_srcdir)/flags.mk
 include $(top_srcdir)/build-aux/check.mk
+include $(top_srcdir)/build-aux/m4sh.mk
 
 # From a test file to a log file.
 # Do not use a regular `.test.log:' rule here, since in that case the
 # following rule (without incoming extension) will mask this one.
 %.log: %.cc
-	@$(am__check_pre) $(srcdir)/liburbi-check $(srcdir)/$* $(am__check_post)
+	@$(am__check_pre) ./liburbi-check $(srcdir)/$* $(am__check_post)
 
 AM_CPPFLAGS += $(BOOST_CPPFLAGS)
 
@@ -37,7 +38,10 @@ tests_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)
 tests_CXXFLAGS = $(AM_CXXFLAGS) -Wno-unused-parameter
 nodist_tests_SOURCES = dispatcher.cc
 
-EXTRA_DIST += liburbi-check
+EXTRA_DIST += liburbi-check.as
+check_SCRIPTS = liburbi-check
+m4sh_scripts = liburbi-check
+
 CLEANFILES += $(nodist_tests_SOURCES)
 dispatcher.cc: $(tests_SOURCES) Makefile
 	{								 \

@@ -1,5 +1,13 @@
 2007-11-13  Akim Demaille  <demaille@gostai.com>
 
+	Use M4sh for liburbi-check.
+	* tests/liburbi-check: Rename as...
+	* tests/liburbi-check.as: this.
+	(absolute, find_prog): Remove, now defined in urbi.as.
+	* tests/Makefile.am: Adjust.
+
+2007-11-13  Akim Demaille  <demaille@gostai.com>
+
 	Fix the finding of urbi-server.
 	* tests/Makefile.am (URBISERVER): Rename as...
 	(URBI_SERVER): This.

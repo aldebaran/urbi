@@ -1,4 +1,7 @@
-#! /bin/sh
+m4_pattern_allow([^URBI_SERVER$])
+
+AS_INIT()dnl
+URBI_PREPARE()
 
 set -e
 
@@ -61,66 +64,6 @@ else
   path_sep=":"
 fi
 
-# find_prog PROG PATH
-# -------------------
-# Return full path to PROG in PATH (path_sep separated), nothing if not found.
-find_prog ()
-{
-  local prog=$1
-  local path=$2
-  local save_IFS=$IFS
-  IFS=$path_sep  # break path components at the path separator
-  for dir in $path
-  do
-    IFS=$save_IFS
-    # The basic test for an executable is `test -f $f && test -x $f'.
-    # (`test -x' is not enough, because it can also be true for directories.)
-    # We have to try this both for $1 and $1.exe.
-    #
-    # Note: On Cygwin and DJGPP, `test -x' also looks for .exe.  On Cygwin,
-    # also `test -f' has this enhancement, but not on DJGPP.  (Both are
-    # design decisions, so there is little chance to make them consistent.)
-    # Thusly, it seems to be difficult to make use of these enhancements.
-    #
-    if  { test -f "$dir/$1"	&& test -x "$dir/$1"; } ||
-	{ test -f "$dir/$1.exe"	&& test -x "$dir/$1.exe"; }; then
-      echo "$dir/$1"
-      break
-    fi
-  done
-}
-
-# absolute NAME -> ABS-NAME
-# -------------------------
-# Return an absolute path to NAME.
-absolute ()
-{
-  local res
-  case $1 in
-   [\\/]* | ?:[\\/]*)
-      # Absolute paths don't need to be expanded.
-      res=$1
-      ;;
-   *) local dir=$(pwd)/$(dirname "$1")
-      if test -d "$dir"; then
-	res=$(cd "$dir" 2>/dev/null && pwd)/$(basename "$1")
-      else
-	fatal "not a directory: $dir"
-      fi
-      ;;
-  esac
-
-  # On Windows, we must make sure we have a Windows-like UNIX-friendly path (of
-  # the form C:/cygwin/path/to/somewhere instead of /path/to/somewhere, notice
-  # the use of forward slashes in the Windows path.  Windows *does* understand
-  # paths with forward slashes).
-  case $(uname -s) in
-    CYGWIN*) res=$(cygpath --mixed "$res")
-  esac
-  echo "$res"
-}
-
-
 # run TITLE COMMAND...
 # --------------------
 # Run the COMMAND... (which may use its stdin) and output detailed
@@ -134,7 +77,7 @@ run ()
 {
   local title=$1
   run_prefix=$run_counter-$(echo $1 |
-			     sed -e 's/[^a-zA-Z0-9][^a-zA-Z0-9]*/-/g;s/-$//')
+			     sed -e 's/[[^a-zA-Z0-9][^a-zA-Z0-9]]*/-/g;s/-$//')
   run_counter=$((run_counter + 1))
   shift
 
@@ -185,7 +128,7 @@ find_urbi_server ()
        URBI_SERVER=$(find_prog "urbi-server" "$top_builddir/src${path_sep}.")
        ;;
 
-    *[\\/]* ) # A path, relative or absolute.  Make it absolute.
+    *[[\\/]]* ) # A path, relative or absolute.  Make it absolute.
        URBI_SERVER=$(absolute "$URBI_SERVER")
        ;;
 
@@ -194,7 +137,7 @@ find_urbi_server ()
        URBI_SERVER=$(find_prog "urbi-server" "$PATH")
        # If we can't find it, then ucore-pc was probably not installed.
        # Skip.
-       exit 77
+       test x"$URBI_SERVER" != x || exit 77
        ;;
   esac
 
