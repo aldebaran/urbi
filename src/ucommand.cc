@@ -2344,11 +2344,16 @@ UCommand_EXPR::execute_(UConnection *connection)
     if (ret)
     {
       //use same output code as below (for the non-function case)
-      if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
+      if (is_channel_get() ||
+	  connection->stack.empty ())
+	// || tag_info_get() == TagInfo::notagTagInfo)
       {
 	if (ret->dataType != DATA_VOID)
 	{
-	  *connection << UConnection::prefix(getTag().c_str());
+	  if (!is_channel_get())
+	    *connection << UConnection::prefix("notag");
+ 	  else
+	    *connection << UConnection::prefix(getTag().c_str());
 	  ret->echo(connection);
 	}
 	if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
@@ -2404,7 +2409,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    ss << "]\n";
 	    *j->c << UConnection::send (
 	      reinterpret_cast<const ubyte *>(ss.str ().c_str ()),
-	      ss.str().length(), 
+	      ss.str().length(),
 	      reinterpret_cast<const ubyte *>(EXTERNAL_MESSAGE_TAG));
 	  }
 	}
@@ -2441,11 +2446,16 @@ UCommand_EXPR::execute_(UConnection *connection)
   // It is unclear when a result is to be displayed.  For the time
   // being, in order to display results in the REPL, if the tag is
   // notag, display (but don't display the tag...)
-  if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
+  if (is_channel_get() ||
+      connection->stack.empty ())
+    // || tag_info_get() == TagInfo::notagTagInfo)
   {
     if (ret->dataType != DATA_VOID)
     {
-      *connection << UConnection::prefix(getTag().c_str());
+      if (!is_channel_get())
+ 	*connection << UConnection::prefix("notag");
+      else
+	*connection << UConnection::prefix(getTag().c_str());
       ret->echo(connection);
     }
     if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
@@ -2583,7 +2593,10 @@ UCommand_ECHO::execute_(UConnection *connection)
 
   if (!connectionTag)
   {
-    *connection << UConnection::sendc("*** ", getTag().c_str());
+    if (!is_channel_get())
+      *connection << UConnection::sendc("*** ", "notag");
+    else
+      *connection << UConnection::sendc("*** ", getTag().c_str());
     ret->echo(connection, true);
     *connection << UConnection::endl;
   }
@@ -2601,7 +2614,10 @@ UCommand_ECHO::execute_(UConnection *connection)
 		  && *connectionTag == "other")))
       {
 	ok = true;
-	*i << UConnection::sendc("*** ", getTag().c_str());
+	if (!is_channel_get())
+	  *i << UConnection::sendc("*** ", "notag");
+	else
+	  *i << UConnection::sendc("*** ", getTag().c_str());
 	ret->echo(i, true);
 	*i << UConnection::endl;
       }

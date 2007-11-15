@@ -1,3 +1,9 @@
+2007-11-15  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix tags and channels behavior, update tests.
+        The correct (cf Baillie) behavior is in 1.x/channels_tags.chk
+	* src/ucommand.cc: Here.
+
 2007-11-13  Matthieu Nottale  <nottale@gostai.com>
 
 	Delete closed connection.
