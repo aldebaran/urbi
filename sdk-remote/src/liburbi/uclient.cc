@@ -38,6 +38,7 @@
 #include "libport/network.h"
 #include "libport/lockable.hh"
 #include "libport/thread.hh"
+#include "libport/utime.hh"
 
 namespace urbi
 {
@@ -47,7 +48,7 @@ namespace urbi
    */
   UClient::UClient(const char *_host, int _port, int _buflen)
     : UAbstractClient(_host, _port, _buflen),
-      thread(0)
+      thread(0), pingInterval(0), lastPong(0)
   {
     setlocale(LC_NUMERIC, "C");
     control_fd[0] = control_fd[1] = -1;
@@ -191,12 +192,23 @@ namespace urbi
     return 0;
   }
 
+  UCallbackAction
+  UClient::pong(const UMessage &)
+  {
+    lastPong++;
+    return URBI_CONTINUE;
+  }
+  
   void
   UClient::listenThread()
   {
+    static const char * pingTag = "_liburbi_ping";
     fd_set rfds, efds;
     int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
     int res;
+    long long lastPing = libport::utime();
+    lastPong = libport::utime();
+    setCallback(callback(*this, &UClient::pong), pingTag);
     while (true)
     {
       do {
@@ -209,9 +221,10 @@ namespace urbi
 #ifndef WIN32
 	LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
+        unsigned int msTime = pingInterval? pingInterval:1000;
 	struct timeval tme;
-	tme.tv_sec = 1;
-	tme.tv_usec = 0;
+	tme.tv_sec = msTime / 1000;
+	tme.tv_usec = (msTime%1000)*1000;
 	res = select(maxfd+1, &rfds, NULL, &efds, &tme);
 	if (res < 0 && errno != EINTR)
 	{
@@ -224,6 +237,28 @@ namespace urbi
 	  //TODO when error will be implemented, send an error msg
 	  //TODO maybe try to reconnect?
 	  return;
+	}
+	if (pingInterval)
+	{
+	  long long currentTime = libport::utime();
+	  if (currentTime - lastPing > pingInterval * 1000)
+	  {
+	    if (lastPong >0) 
+	    {
+	      send("%s << 1,",pingTag);
+	      lastPong = 0;
+	    }
+	    else 
+	    {
+	      lastPong --;
+	      if (lastPong <= -3)
+	      {
+		clientError("ping timeout", 0);
+		return;
+	      }
+	    }
+	    lastPing = currentTime;
+	  }
 	}
 	if (res == -1)
 	{
@@ -300,4 +335,10 @@ namespace urbi
     return *new UClient(host);
   }
 
+  
+  void UClient::setPingInterval(unsigned int msTime)
+  {
+    pingInterval = msTime;
+  }
+  
 } // namespace urbi

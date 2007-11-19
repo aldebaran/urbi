@@ -46,6 +46,13 @@ dump(const urbi::UMessage & msg)
   return urbi::URBI_CONTINUE;
 }
 
+urbi::UCallbackAction
+error(const urbi::UMessage& msg)
+{
+  dump(msg);
+  exit(0);
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -57,9 +64,11 @@ int main(int argc, char *argv[])
     }
 
   urbi::UClient client (argv[1]);
+  client.setPingInterval(1000);
   if (client.error())
     exit(0);
   client.setWildcardCallback(callback(&dump));
+  client.setClientErrorCallback(callback(&error));
   client.sendFile(argv[2]);
   fprintf(stdout, "File sent, hit Ctrl-C to terminate.\n");
   urbi::execute();

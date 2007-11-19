@@ -1,3 +1,13 @@
+2007-11-19  Matthieu Nottale  <nottale@gostai.com>
+
+	Implement urbi-level ping.
+	* NEWS: Update.
+	* include/urbi/uabstractclient.hh: Declare setPingInterval().
+	* include/urbi/uclient.hh: Declare extra variables to handle pings.
+	* src/examples/urbisend.cc: Use the new feature to quit on disconnection.
+	* src/liburbi/uclient.cc: Send pings and monitor response in
+	  listenThread().
+
 2007-11-13  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix segfault when bogus uobject message is received.

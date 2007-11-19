@@ -1,2 +1,7 @@
+liburbi 1.5
+        Better detection of disconections.
+	* feature: setClientErrorCallback() to setup a callback on 
+	connection errors.
+	* feature: setPingInterval(), to enable an URBI-level ping.
 liburbi 0.1
 	initial prerelease.

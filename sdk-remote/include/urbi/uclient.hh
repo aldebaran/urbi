@@ -42,12 +42,13 @@ namespace urbi
     //! For compatibility with older versions of the library
     void start() {}
 
-    //! For internal use.
-    void listenThread();
-
     virtual void printf(const char * format, ...);
     virtual unsigned int getCurrentTime() const;
-
+    virtual void setPingInterval(unsigned int msTime);
+    
+    //! For internal use.
+    void listenThread();
+    UCallbackAction pong(const UMessage& msg);
   protected:
     virtual int  effectiveSend(const void * buffer, int size);
     virtual bool canSend(int size);
@@ -56,6 +57,8 @@ namespace urbi
   private:
     int             control_fd[2];       ///< Pipe for termination notification.
     void           *thread;
+    unsigned int   pingInterval;
+    long long      lastPong;      ///< utime() of last pong received
   };
 
 } // namespace urbi
