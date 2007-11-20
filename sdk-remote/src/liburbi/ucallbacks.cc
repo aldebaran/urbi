@@ -34,7 +34,7 @@ namespace urbi
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
 				     const std::string& name,
-				     int size,  UTable& t, bool)
+				     int size, UTable &, bool)
     : objname (objname), name (name)
   {
     nbparam = size;
@@ -45,7 +45,6 @@ namespace urbi
       oss << size;
       this->name += + "__" + oss.str();
     }
-    t[this->name].push_back(this);
 
     std::cerr << "Registering " << type << " " << name << " " << size
 	      << " into " << this->name
@@ -68,10 +67,9 @@ namespace urbi
   //! UGenericCallback constructor.
   UGenericCallback::UGenericCallback(const std::string& objname,
 				     const std::string& type,
-				     const std::string& name, UTable& t)
+				     const std::string& name, UTable&)
     : objname(objname), name(name)
   {
-    t[this->name].push_back(this);
     URBI(()) << "external " << type << " " << name << ";";
   };
 
@@ -79,6 +77,11 @@ namespace urbi
   {
   };
 
+  void
+  UGenericCallback::registerCallback(UTable& t)
+  {
+     t[this->name].push_back(this);
+  }
 
   // **************************************************************************
   //! UTimerCallbacl constructor.

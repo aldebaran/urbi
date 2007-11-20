@@ -65,11 +65,13 @@ namespace urbi
     UGenericCallback(const std::string& objname,
 		     const std::string& type,
 		     const std::string& name,
-		     int size, UTable &t, bool owned);
+		     int size, UTable&, bool owned);
     UGenericCallback(const std::string& objname,
 		     const std::string& type,
-		     const std::string& name, UTable &t);
+		     const std::string& name, UTable&);
     virtual ~UGenericCallback();
+    
+    void registerCallback(UTable& t);
     std::string getName() { return name;};
 
     virtual UValue __evalcall(UList &param)  = 0;
@@ -221,6 +223,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname, %N%, t, owned),
 	obj(obj), fun(fun)
     {
+      registerCallback(t);
     }
 
     virtual UValue __evalcall(UList& param)
@@ -250,6 +253,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname,%N%, t, owned),
 	obj(obj), fun(fun)
     {
+      registerCallback(t);
     }
 
     virtual UValue __evalcall(UList &param)
@@ -279,6 +283,7 @@ namespace urbi
       : UGenericCallback(objname, type, funname,%N%, t, false),
 	obj(obj), fun(end)
     {
+      registerCallback(t);
     }
 
     virtual UValue __evalcall(UList &)
@@ -302,8 +307,9 @@ namespace urbi
     UFCallbackvoid%N%(const std::string& objname, const std::string& type,
 		      void (*fun) (%%%,% P% %%),
 		    const std::string& funname, UTable &t, bool owned)
-      : UGenericCallback(objname, type, funname,%N%, t,owned),  fun(fun)
+      : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
     {
+      registerCallback(t);
     }
 
     virtual UValue __evalcall(UList &param)
@@ -330,6 +336,7 @@ namespace urbi
 		const std::string& funname, UTable &t, bool owned)
       : UGenericCallback(objname, type, funname,%N%, t, owned),  fun(fun)
     {
+      registerCallback(t);
     }
 
     virtual UValue __evalcall(UList& param)

@@ -1,3 +1,13 @@
+2007-11-20  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix race condition.
+	* src/examples/urbiping.cc: Change behavior when a 0-interval is
+	  passed to send pings without any sleep() call.
+	* src/liburbi/ucallbacks.cc: Do not insert ourselve in hash from 
+	  base class to avoid a race condition. Do it in registerCallback().
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template: Call
+	  registerCallback.
+
 2007-11-19  Matthieu Nottale  <nottale@gostai.com>
 
 	Implement urbi-level ping.

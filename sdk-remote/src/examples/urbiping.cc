@@ -14,7 +14,7 @@ bool over=false;
 char * rname;
 bool received;
 unsigned count;
-
+bool flood = false;
 urbi::UCallbackAction
 pong(const urbi::UMessage& msg)
 {
@@ -30,6 +30,11 @@ pong(const urbi::UMessage& msg)
   received=true;
   if (pingCount == count)
     over = true;
+  if (flood)
+  {
+    sendtime = c->getCurrentTime();
+    c->send("uping << ping,");
+  }
   return urbi::URBI_CONTINUE;
 }
 
@@ -75,7 +80,13 @@ int main(int argc, char * argv[])
 
   received=true;
 
-  for (unsigned i=0; i<count || !count; ++i)
+  if (!interval)
+    {
+    flood = true;
+    c->send("uping << ping;");
+    }
+  else
+    for (unsigned i=0; i<count || !count; ++i)
     {
       while (!received)
 	usleep(200);
