@@ -186,7 +186,11 @@ namespace urbi
   {
   }
 
-
+  void
+  UGenericCallback::registerCallback(UTable&)
+  {
+  }
+  
   // **************************************************************************
   //! UTimerCallbacl constructor.
 

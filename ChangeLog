@@ -1,3 +1,8 @@
+2007-11-20  Matthieu Nottale  <nottale@gostai.com>
+
+	Adapt for internal UObject API change.
+	* src/uobject.cc: Add an empty UGenericCallback::registerCallback.
+
 2007-11-15  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Fix tags and channels behavior, update tests.
