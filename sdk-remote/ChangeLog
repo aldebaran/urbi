@@ -1,3 +1,8 @@
+2007-11-22  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Do not create duplicate callbak if USetUpdate is called multiple times.
+	* src/liburbi/uobject.cc: Here.
+
 2007-11-20  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix race condition.

@@ -137,23 +137,51 @@ namespace urbi
   UObject::USetUpdate(ufloat t)
   {
     std::ostringstream os;
-    if (period != -1)
+    // Forge names for callback and tag
+    std::string tagName = "maintimer_" + __name;
+    std::string cbName = __name + ".maintimer";
+    std::string cbFullName = cbName + "__0";
+
+    // Stop any previous update
+    os << "stop " << tagName << ";";
+    URBI(()) << os.str ();
+
+    // Find previous update timer on this object
+    std::list<UGenericCallback*>& cblist = (*eventmap) [cbFullName];
+    std::list<UGenericCallback*>::iterator it = cblist.begin ();
+    for (; it != cblist.end () && (*it)->getName () != cbFullName ; ++it)
+      ;
+
+    // Delete if found
+    if (it != cblist.end ())
     {
-      //kill previous timer
-      os << "stop maintimer_" << __name << ";";
-      URBI(())<<os.str();
+      cblist.erase (it);
+      delete (*it);
     }
+
+    // Set period value
     period = t;
-    if (period <= 0)
+    // Do nothing more if negative value given
+    if (period < 0)
+      return;
+
+    // FIXME: setting update at 0 put the kernel in infinite loop
+    //        and memory usage goes up to 100%
+    if (period == 0)
       period = 1;
-    std::string cbname = __name + ".maintimer";
+
+    // Create callback
     createUCallback(__name, "event",
-		    this, &UObject::update, cbname, eventmap, false);
-    os.str("");
-    os.clear();
-    os << "maintimer_" << __name << ": every(" << period << ") "
-      "{ emit "<<cbname<<";};";
-    URBI(()) << os.str();
+		    this, &UObject::update, cbName, eventmap, false);
+
+    // Set update at given period
+    os.str ("");
+    os.clear ();
+    os << tagName << ": every(" << period << ") "
+      "{ emit " << cbName << ";};";
+    URBI(()) << os.str ();
+
+    return;
   }
 
   // This part is specific for standalone linux objects
