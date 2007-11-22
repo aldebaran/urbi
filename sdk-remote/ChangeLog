@@ -1,5 +1,15 @@
 2007-11-22  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Add a way to specify the tag used in syncGet.
+	* include/urbi/usyncclient.hh,
+	* src/liburbi/usyncclient.cc: Here.
+	(syncGet_): New. Gets tag to use and optional modifiers (+end...).
+	(syncGet): Changed to wrapper on syncGet_.
+	(syncGetTag): New. Wrapper on syncGet_. Takes user specified tag and
+	tag options.
+
+2007-11-22  Guillaume Deslandes  <deslandes@gostai.com>
+
 	Do not create duplicate callbak if USetUpdate is called multiple times.
 	* src/liburbi/uobject.cc: Here.
 

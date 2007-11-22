@@ -67,7 +67,7 @@ namespace urbi
   }
   void USyncClient::processEvents()
   {
-    while (true) 
+    while (true)
     {
       queueLock_.lock();
       if (queue.empty())
@@ -83,7 +83,7 @@ namespace urbi
     }
 
   }
-  
+
   void USyncClient::notifyCallbacks(const UMessage &msg)
   {
     queueLock_.lock();
@@ -110,8 +110,9 @@ namespace urbi
     return msg;
   }
 
-
-  UMessage* USyncClient::syncGet(const char* format, ...)
+  UMessage* USyncClient::syncGet_(const char* format,
+				  const char* mtag, const char* mmod,
+				  va_list& arg)
   {
     //check there is no tag
     int p = 0;
@@ -121,17 +122,14 @@ namespace urbi
       ++p;
     while (format[p] == ' ')
       ++p;
-    passert(format[p], format[p]!= ':' && format[p] != '<'); 
+    passert(format[p], format[p]!= ':' && format[p] != '<');
     //check if there is a command separator
     p = strlen(format) - 1;
     while (format[p] == ' ')
       --p;
     bool hasSep = (format[p] == ';' || format[p] == ',');
-    va_list arg;
-    va_start(arg, format);
     sendBufferLock.lock();
     rc = vpack(format, arg);
-    va_end(arg);
     if (rc < 0)
     {
       sendBufferLock.unlock();
@@ -140,16 +138,51 @@ namespace urbi
     if (!hasSep)
       strcat(sendBuffer, ",");
     const char * separator = "<<";
-    char tag[70];
-    makeUniqueTag(tag);
+    char tag[100];
+    if (mtag != 0)
+    {
+      strcpy (tag, mtag);
+      if (mmod != 0)
+	strcat (tag, mmod);
+    }
+    else
+      makeUniqueTag(tag);
     effectiveSend(tag, strlen(tag));
     effectiveSend(separator, strlen(separator));
     queueLock_.lock();
     rc = effectiveSend(sendBuffer, strlen(sendBuffer));
     sendBuffer[0] = 0;
     sendBufferLock.unlock();
+
+    if (mtag != 0)
+      strcpy (tag, mtag);
+
     UMessage* m = waitForTag(tag);
     return m;
+  }
+
+  UMessage* USyncClient::syncGet(const char* format, ...)
+  {
+    UMessage* ret = 0;
+
+    va_list arg;
+    va_start(arg, format);
+    ret =  syncGet_ (format, 0, 0, arg);
+    va_end (arg);
+
+    return ret;
+  }
+
+  UMessage* USyncClient::syncGetTag(const char* format, const char* mtag, const char* mmod, ...)
+  {
+    UMessage* ret = 0;
+
+    va_list arg;
+    va_start(arg, mmod);
+    ret =  syncGet_ (format, mtag, mmod, arg);
+    va_end (arg);
+
+    return ret;
   }
 
   int

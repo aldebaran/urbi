@@ -43,9 +43,9 @@ namespace urbi
   /// UClient linux implementation with support for synchronous extra functions.
   /*! This class provides extra functions to synchronously request values. These
   functions can safely be called frow within a callback function.
-    
+
   All callback will be called in a separate thread created in the constructor.
-  If you want to call these callbacks in a different thread, call 
+  If you want to call these callbacks in a different thread, call
   @stopCallbackThread, then regularly call @processEvents. Each call will call
   callbacks for all pending messages in the current thread.
   */
@@ -56,8 +56,14 @@ namespace urbi
 		int _port = URBI_PORT,
 		int _buflen = URBI_BUFLEN);
 
-    /// Sends the expression and returns the result.
-    UMessage * syncGet(const char * expression,...);
+  protected:
+    UMessage * syncGet_ (const char * expression, const char* mtag, const char* mmod, va_list& arg);
+
+  public:
+    UMessage * syncGet (const char * expression, ...);
+    UMessage * syncGetTag (const char * expression, const char* mtag, const char* mmod, ...);
+
+
 
     /// Send given buffer without copying it.
     int syncSend(const void * buffer, int length);
@@ -88,7 +94,7 @@ namespace urbi
 
     /// Check message queue for pending messages, notify callbacks synchronously
     void processEvents();
-    
+
     /// Stop callback thread, in case you want to use your own.
     void stopCallbackThread();
     void callbackThread();
@@ -100,7 +106,7 @@ namespace urbi
     UMessage* msg;
     libport::Semaphore syncLock_;
     std::string syncTag;
-    
+
     bool stopCallbackThread_;
   };
 
