@@ -1,3 +1,9 @@
+2007-11-25  Jean-Christophe Baillie  <baillie@gostai.com>
+
+	Fix type declaration position in ugrammar.y  
+	* src/parser/bison/ugrammar.y: put the declaration before the first
+	use.
+
 2007-11-22  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Do not create duplicate callbak if USetUpdate is called multiple times.
