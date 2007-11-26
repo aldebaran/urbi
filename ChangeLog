@@ -1,5 +1,10 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Skip newest 1.x tests.
+	* tests-local.mk: here.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Fix Boost use.
 	* src/kernel.mk: Catch up with newest macros.
 

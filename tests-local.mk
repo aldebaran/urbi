@@ -22,8 +22,10 @@ XFAIL_TESTS +=					\
 1.x/bin-copy.chk				\
 1.x/bin.chk					\
 1.x/bug76.chk					\
+1.x/channels_tags.chk				\
 1.x/class-definition.chk			\
 1.x/comparison.chk				\
+1.x/connection-delete.chk			\
 1.x/doublecolon.chk				\
 1.x/events.chk					\
 1.x/exec.chk					\
@@ -62,4 +64,5 @@ XFAIL_TESTS +=					\
 1.x/tag.chk					\
 1.x/undefall.chk				\
 1.x/variable-qualifiers.chk			\
+1.x/variable-normalize.chk			\
 1.x/whenever-bad.chk
