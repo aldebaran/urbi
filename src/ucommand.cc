@@ -2419,7 +2419,7 @@ UCommand_EXPR::execute_(UConnection *connection)
       {
 	std::ostringstream o;
 	o << "{ waituntil(isdef(" << uid << ")) | "
-	  << getTag() << " : " << uid
+	  << getTag() << " << " << uid
 	  << " | delete " << uid << " }";
 	strMorph (o.str());
 	return UMORPH;
@@ -3558,7 +3558,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
       fun = variablename->getFunction(this, connection);
       if (!fun)
       {
-	variable = variablename->getVariable(this, connection);
+	variable = variablename->getVariable(this, connection, true);
 	if (!variable && variablename->nostruct)
 	{
 	  UString* objname = variablename->getMethod();
@@ -3577,7 +3577,6 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	return UCOMPLETED;
       }
     }
-
     if (variable)
     {
       // undef variable

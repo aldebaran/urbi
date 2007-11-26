@@ -1,3 +1,15 @@
+2007-11-26  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix delete.
+	* src/ucommand.cc: 
+	    - Force getVariableName to recheck in hashtable 
+	        instead of using its cache.
+	    - Replace a : with << in code generated for a remote method
+	      call.
+	* src/uvariablename.cc,
+	* src/uvariablename.hh: Add argument to getVariableName() to ignore
+	  its cache (with a default value of false).
+
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
 	Restore the code.
