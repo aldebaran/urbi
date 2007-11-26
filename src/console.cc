@@ -10,7 +10,6 @@
 #include <fstream>
 
 #include "libport/utime.hh"
-#include "libport/package-info.hh"
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
@@ -99,7 +98,7 @@ namespace
   void
   version ()
   {
-    std::cout << UServer::package_info().signature() << std::endl;
+    userver_package_info_dump(std::cout) << std::endl;
     exit (0);
   }
 }

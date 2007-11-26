@@ -2,6 +2,10 @@
 // frequently, so include it in a small file instead of userver.cc
 // which is demanding.
 
+#include "kernel/userver.hh"
+
+#include "libport/package-info.hh"
+
 #include "config.h"
 #include "version.hh"
 #include "ubanner.hh"
@@ -38,3 +42,16 @@ const char* uconsole_banner[] =
   "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
   ""
 };
+
+const libport::PackageInfo&
+UServer::package_info ()
+{
+  LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
+  return pi;
+}
+
+std::ostream&
+userver_package_info_dump (std::ostream& o)
+{
+  return o << UServer::package_info().signature();
+}

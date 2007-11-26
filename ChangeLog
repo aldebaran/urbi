@@ -1,5 +1,12 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Less dependencies.
+	* src/userver-package-info.cc: Remove, merged in...
+	* src/ubanner.cc: here.
+	* src/console.cc, src/Makefile.am, src/ubanner.hh: Adjust.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	copy (expr), not copy expr.
 	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l ("copy("):
 	New token.

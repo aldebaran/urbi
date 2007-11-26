@@ -80,7 +80,7 @@ uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
-userver.cc userver-package-info.cc				\
+userver.cc							\
 ustring.cc							\
 uvalue.cc							\
 uvar.cc								\
