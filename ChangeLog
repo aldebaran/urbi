@@ -1,5 +1,10 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Implement echo/2.
+	* src/object/object-class.cc: here.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Catch up with --xml.
 	* Makefile.am, src/parser/parser.mk: output-to-html no longer
 	exists.
