@@ -22,6 +22,8 @@
 #include <sstream>
 #include <list>
 
+#include "libport/package-info.hh"
+
 #include "urbi/uobject.hh"
 #include "urbi/usyncclient.hh"
 #include "urbi/uexternal.hh"
@@ -229,11 +231,11 @@ namespace urbi
 
       UTable::iterator monitormapfind = monitormap->find(array[1]);
       if (monitormapfind != monitormap->end())
-        for (std::list<UGenericCallback*>::iterator
+	for (std::list<UGenericCallback*>::iterator
 	       cbit = monitormapfind->second.begin();
 	     cbit != monitormapfind->second.end();
 	     ++cbit)
-        {
+	{
 	  // test of return value here
 	  UList u;
 	  u.array.push_back(new UValue());

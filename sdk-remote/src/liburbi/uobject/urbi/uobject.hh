@@ -23,7 +23,7 @@
 
 # include <string>
 
-# include "libport/package-info.hh"
+# include "libport/fwd.hh"
 # include "libport/ufloat.h"
 
 # include "urbi/fwd.hh"

@@ -1,3 +1,9 @@
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
+	Less header dependencies.
+	* src/liburbi/uobject/urbi/uobject.hh: Don't include package-info.hh.
+	* src/liburbi/uobject.cc: Do it.
+
 2007-11-26  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Give access to UVariable.
