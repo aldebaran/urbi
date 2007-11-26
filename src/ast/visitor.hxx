@@ -14,14 +14,14 @@ namespace ast
   GenVisitor<Const>::~GenVisitor ()
   {
   }
-  
+
   template < template <typename> class Const >
   void
   GenVisitor<Const>::operator() (typename GenVisitor<Const>::ast_type& e)
   {
     e.accept (*this);
   }
-  
+
   template <template <typename> class Const>
   template <typename E>
   void
