@@ -1,5 +1,11 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Don't require init to return self.
+	* src/parser/ugrammar.y (new id args): Return the result of clone,
+	not of init.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Implement echo/2.
 	* src/object/object-class.cc: here.
 

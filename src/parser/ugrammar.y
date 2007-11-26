@@ -1073,14 +1073,44 @@ expr:
 | "new" "identifier" args
   {
     // Compiled as
-    // id . clone () . init (args);
-    // Parent class.
+    //  {
+    //     var res = id . clone ();
+    //     res . init (args);
+    //     res;
+    //  }
+    //
+    // Used to be compiled as
+    //
+    //     id . clone () . init (args);
+    //
+    // but in that case the return value is that of the end of
+    // "init".  And we don't want to require the users to end "init"
+    // with "self".
+    //
+    // FIXME: Using "res" is not sane if the user use "res" too
+    // for her id, or in the arguments...  Don't know what to do
+    // yet.
+
+    // I wish I could use tweasts here...  Lord, help me.
+
+    // var res = id . clone ();
     ast::Exp* parent = call (@2, 0, $2);
-    ast::exps_type* args = new ast::exps_type;
-    args->push_back (call(@1 + @2, parent, "clone"));
-    args->splice(args->end(), *$3);
-    delete $3;
-    $$ = new ast::Call (@$, "init", args);
+    ast::Call* res = call (@$, 0, "res");
+    ast::Exp* decl = assign (@1 + @2,
+			     res,
+			     call(@1 + @2, parent, "clone"),
+			     true);
+    
+    // res . init (args);
+    ast::Exp* init = call (@$, res, "init", $3);
+
+    // The sequence.
+    ast::Nary* seq = new ast::Nary ();
+    seq->push_back (decl);
+    seq->push_back (ast::flavor_semicolon, init);
+    seq->push_back (ast::flavor_semicolon, res);
+
+    $$ = scope (@$, seq);
   }
 ;
 
@@ -1111,6 +1141,9 @@ id:
   //| "-"
 | "/"
 | "^"
+| "**"
+| "<<"
+| ">>"
 ;
 
 expr:
