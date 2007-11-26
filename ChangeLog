@@ -1,5 +1,12 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	sending an object.
+	* include/kernel/uconnection.hh, src/uconnection.cc (send): Yet
+	another overloaded version, for rObjects.
+	(new_result): Use it.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Don't require init to return self.
 	* src/parser/ugrammar.y (new id args): Return the result of clone,
 	not of init.

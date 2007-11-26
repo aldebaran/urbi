@@ -382,6 +382,9 @@ public:
   bool has_pending_command () const;
   void drop_pending_commands ();
 
+  /// Send Object \a o on \a tag, possibly prefixed by \a p (e.g., "*** ").
+  void send (object::rObject result, const char* tag = 0, const char* p = 0);
+
   /// Notify the connection that a new result is available.  This will
   /// typically print the result on the console or send it through the
   /// network.

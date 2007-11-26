@@ -824,20 +824,29 @@ UConnection::execute ()
 }
 
 void
-UConnection::new_result (object::rObject result)
+UConnection::send (object::rObject result, const char* tag, const char* p)
 {
   // "Display" the result.
   std::ostringstream os;
+  if (p)
+    os << p;
   result->print (os);
 
-  // The prefix should be (getTag().c_str()) instead of 0.
-  // FIXME: the prefix should not be built manually.
   if (!os.str ().empty ())
   {
-    *this << UConnection::sendc (mkPrefix (0).c_str (), 0)
-	  << UConnection::sendc (os.str ().c_str (), 0)
-	  << UConnection::endl;
+    *this
+      << sendc (mkPrefix (reinterpret_cast<const ubyte*>(tag)).c_str (), 0)
+      << sendc (os.str ().c_str (), 0)
+      << endl;
   }
+}
+
+void
+UConnection::new_result (object::rObject result)
+{
+  // The prefix should be (getTag().c_str()) instead of 0.
+  // FIXME: the prefix should not be built manually.
+  send (result, 0, 0);
 }
 
 //! Returns how much space is available in the send queue
