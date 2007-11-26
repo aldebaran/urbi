@@ -102,6 +102,16 @@ namespace urbi
     vardata = 0;
   }
 
+  //! Return the internal variable.
+  UVariable*
+  UVar::variable()
+  {
+    if (vardata)
+      return vardata->variable;
+    else
+      return 0;
+  }
+
   //! UVar float reset  (deep assignment)
   void
   UVar::reset (ufloat n)

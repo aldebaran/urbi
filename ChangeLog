@@ -1,3 +1,13 @@
+2007-11-26  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Give direct access to std::string in UValue/Ustring.
+	This will be of use for modules/trunk/systemlib/string.
+	Doing real work on strings through UVars it way to expensive.
+	Update UObject.
+	* include/kernel/ustring.hh (str, non const): New.
+	* include/kernel/uvalue.hh (innerStr): New.
+	* src/uvar.cc (variable): New.
+
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
 	Fix copyright in the banner.
