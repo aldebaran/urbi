@@ -1,5 +1,14 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	copy (expr), not copy expr.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l ("copy("):
+	New token.
+	Use it to handle copy(expr).
+	Let the older code trigger a warning.
+	* NEWS: Doc it.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	deprecate echo <expr>.
 	* NEWS: Some old news.
 	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l

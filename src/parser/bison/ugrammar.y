@@ -189,6 +189,24 @@ warn_spontaneous(UParser& up,
 	  "Use 'noop' to make it explicit.");
 }
 
+/// Better newer style than deprecated.
+void
+warn_deprecated (UParser& up,
+		 const yy::parser::location_type& l,
+		 const std::string& older, const std::string& newer)
+{
+  warn (up, l, std::string("'") + older + "' is deprecated,");
+  warn (up, l, std::string("  use '") + newer + "' instead");
+}
+
+/// Issue a warning about missing parens for a function \a f call.
+void
+warn_parens (UParser& up,
+	     const yy::parser::location_type& l, const std::string& f)
+{
+  warn_deprecated (up, l, f + " <expression>", f + " (<expression>)");
+}
+
 /// Direct the call from 'bison' to the scanner in the right UParser.
 inline
 yy::parser::token_type
@@ -258,6 +276,7 @@ take (T* t)
   TOK_CLASS        "class"
   TOK_COLON        ":"
   TOK_COPY         "copy"
+  TOK_COPY_LPAREN  "copy("
   TOK_DEF          "def"
   TOK_DELGROUP     "delgroup"
   TOK_DERIV        "'"
@@ -745,8 +764,7 @@ instruction:
     }
 
   | "echo" expr namedparameters {
-      warn (up, @$, "'echo <expression>' is deprecated,");
-      warn (up, @$, "  use 'echo (<expression>)' instead");
+      warn_parens (up, @$, "echo");
       $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
     }
@@ -1038,7 +1056,7 @@ instruction:
 
   | "def" name "(" identifiers ")" {
 
-      warn (up, @$, "'def' is deprecated, use 'function' instead");
+    warn_deprecated (up, @$, "def", "function");
       if (up.connection.functionTag)
       {
 	delete $2;
@@ -1350,6 +1368,11 @@ expr:
     $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
   }
 
+| "copy(" expr ")" {
+      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
 | "%" name         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
 | "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
 ;
@@ -1391,7 +1414,7 @@ expr:
   | expr "**" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
 
   | "copy" expr  %prec NEG {
-
+      warn_parens (up, @$, "copy");
       $$ = new UExpression(@$, UExpression::COPY, $2, 0);
       memcheck(up, $$, $2);
     }
