@@ -87,7 +87,16 @@ typedef yy::parser::token token;
     RETURN_VALUE(TIME_VALUE, fval, atof(yytext) * (Scale));	\
   } while (0)
 
-
+// We matched an obsolete token, New is now preferered.  Unput it so
+// that the regular scanning rule of New is run.
+#define DEPRECATED(New)                                         \
+  do {                                                          \
+    up.warn(*locp,                                              \
+	    std::string("`") + yytext + "' is deprecated. "     \
+	    "Use `" New "' instead.");                          \
+    for (int i = strlen(New) - 1; 0 <= i; --i)                  \
+      unput(New[i]);                                            \
+  } while(0);
 
 %}
 %option noyywrap
@@ -252,7 +261,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "every"         return token::TOK_EVERY;
 "false"         return token::TOK_FALSE;
 "for"           return token::TOK_FOR;
-"foreach"       return token::TOK_FOREACH;
+"foreach"       DEPRECATED("for");
 "freezeif"      return token::TOK_FREEZEIF;
 "from"          return token::TOK_FROM;
 "function"      return token::TOK_FUNCTION;
@@ -262,7 +271,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "inherits"      return token::TOK_INHERITS;
 
 "loop"          return token::TOK_LOOP;
-"loopn"         return token::TOK_LOOPN;
+"loopn"         DEPRECATED("for");
 "new"           return token::TOK_NEW;
 "noop"          return token::TOK_NOOP;
 "object"        return token::TOK_OBJECT;
@@ -302,10 +311,8 @@ STRING   \"([^\"]|"\\\"")*\"
 ">"             RETURN_OP(GTH);
 ">="            RETURN_OP(GEQ);
 ">>"            RETURN_OP(GT_GT);
-"^"             { up.warn(*locp, "The use of '^' for exponent operator"
-			  " is deprecated. Use '**' instead.");
-		  RETURN_VALUE(TOK_CARET, symbol, new libport::Symbol("**")); }
-"**"            RETURN_OP(CARET);
+"^"             RETURN_OP(CARET);
+"**"            RETURN_OP(STAR_STAR);
 "&&"            RETURN_OP(LAND);
 "||"            RETURN_OP(LOR);
 

@@ -65,9 +65,9 @@ namespace object
     // else
     //   return 0;
 
-# define epsilontilde 0.0001
+#define epsilontilde 0.0001
     return fabs(l - r) <= epsilontilde;
-# undef epsilontilde
+#undef epsilontilde
   }
 
   static float
@@ -133,22 +133,18 @@ namespace object
   }
 
   // This is quite hideous, to be cleaned once we have integers.
-  static float
-  float_lshift (libport::ufloat x, libport::ufloat y)
-  {
-    const long long lhs = libport::to_long_long (x);
-    const long long rhs = libport::to_long_long (y);
-    return lhs << rhs;
+# define INTEGER_BIN_OP(Name, Op)					\
+  static float								\
+  float_ ## Name (libport::ufloat lhs, libport::ufloat rhs)		\
+  {									\
+    return libport::to_long_long (lhs) Op libport::to_long_long (rhs);	\
   }
 
-  static float
-  float_rshift (libport::ufloat x, libport::ufloat y)
-  {
-    const long long lhs = libport::to_long_long (x);
-    const long long rhs = libport::to_long_long (y);
-    return lhs >> rhs;
-  }
+  INTEGER_BIN_OP(lshift, <<)
+  INTEGER_BIN_OP(rshift, >>)
+  INTEGER_BIN_OP(xor,    ^)
 
+# undef INTEGER_BIN_OP
 
 
 
@@ -243,6 +239,7 @@ namespace object
 
   PRIMITIVE_2_FLOAT(lshift, float_lshift) // <<
   PRIMITIVE_2_FLOAT(rshift, float_rshift) // >>
+  PRIMITIVE_2_FLOAT(xor,    float_xor)    // ^
 
   PRIMITIVE_OP_FLOAT(land, &&)
   PRIMITIVE_OP_FLOAT(lor, ||)
@@ -298,6 +295,7 @@ namespace object
 
     DECLARE(lshift, <<);
     DECLARE(rshift, >>);
+    DECLARE(xor,    ^);
 
     DECLARE(land, &&);
     DECLARE(lor, ||);

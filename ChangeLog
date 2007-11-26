@@ -1,5 +1,15 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Implement ^ and deprecated old tokens.
+	* src/object/float-class.cc (INTEGER_BIN_OP): New.
+	Use it.
+	Define xor.
+	* src/parser/ugrammar.y: Restore the true associativity of ^.
+	* src/parser/utoken.l (DEPRECATED): New, from the kernel's trunk.
+	Use it.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Support << and >> on integers.
 	* src/object/float-class.cc (float_lshift, float_rshift): New.
 	* src/parser/ugrammar.y: Parse << and >>.

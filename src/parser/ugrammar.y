@@ -486,20 +486,20 @@
 %left  CMDBLOCK
 %left  "else" "onleave"
 
-%left "=" "+=" "-=" "*=" "/="
-%left "inherits" "disinherits"
+%left  "=" "+=" "-=" "*=" "/="
+%left  "inherits" "disinherits"
 %left  "||"
 %left  "&&"
-%right "^"
+%left  "^"
 %nonassoc "==" "~=" "%=" "=~=" "!="
 %nonassoc "<" "<=" ">" ">="
 %left  "<<" ">>"
 %left  "+" "-"
 %left  "*" "/" "%"
 %right "**"
-%right  "!" "++" "--" UNARY     /* Negation--unary minus */
+%right "!" "++" "--" UNARY     /* Negation--unary minus */
 %left  "("
-%left "."
+%left  "."
 
 %right "'n"
 
@@ -1095,15 +1095,16 @@ expr:
   `---------*/
 // The name of the operators are the name of the messages.
 %token <symbol>
-	TOK_BANG    "!"
-	TOK_SLASH   "/"
-	TOK_CARET   "^"
-	TOK_GT_GT   ">>"
-	TOK_LT_LT   "<<"
-	TOK_MINUS   "-"
-	TOK_PERCENT "%"
-	TOK_PLUS    "+"
-	TOK_STAR    "*"
+	TOK_BANG       "!"
+	TOK_CARET      "^"
+	TOK_GT_GT      ">>"
+	TOK_LT_LT      "<<"
+	TOK_MINUS      "-"
+	TOK_PERCENT    "%"
+	TOK_PLUS       "+"
+	TOK_SLASH      "/"
+	TOK_STAR       "*"
+	TOK_STAR_STAR  "**"
 ;
 
 id:
@@ -1120,6 +1121,7 @@ expr:
   expr "+" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "-" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "*" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "**" expr          { $$ = call(@$, $1, $2, $3); }
 | expr "/" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "%" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "^" expr	          { $$ = call(@$, $1, $2, $3); }
