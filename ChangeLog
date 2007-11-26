@@ -1,5 +1,10 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	k2-check.
+	* tests-local.mk: Use TESTS_DIRS to define it.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Remove dead code.
 	* src/parser/ugrammar.y (EVALUATE): Useless, and unusable today.
 

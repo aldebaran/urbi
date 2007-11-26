@@ -2,12 +2,11 @@
 # are specific to a given project or even Svn branch.
 UCONSOLE_CHECK_FLAGS = -k2
 
-K2_TESTS = $(call tests_for,2.x)
 TESTS_DIRS += 2.x
 
 # Run k2 tests only.
 k2-check:
-	$(MAKE) check TESTS="$(K2_TESTS)"
+	$(MAKE) check TESTS_DIRS=2.x
 
 # k2 tests that fail.
 XFAIL_TESTS +=					\
