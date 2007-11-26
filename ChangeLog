@@ -1,5 +1,10 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Support Channels in 2.x.
+	* share/urbi/urbi.u (Channel): New.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Object::print takes an optionnal tag name.
 	* src/object/object-class.cc (object_class_print): Accept
 	an optional tag name.

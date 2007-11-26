@@ -18,6 +18,11 @@ Object.slotCopy ("removeParent", "disinherit");
 
 // Does not have anything special.  Yet.
 var Channel = new Object;
+do Channel
+{
+  init = function (x) { self.name = x };
+  <<   = function (x) { x.print (name); {} };
+};
 
 
 ## ------- ##
@@ -97,3 +102,4 @@ do String
 # signal that we have loaded urbi.u.  Messages before, and including
 # this one, are ignored.
 "Urbi is up and running.";
+
