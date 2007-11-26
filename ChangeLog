@@ -1,3 +1,8 @@
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
+	Restore the code.
+	* src/parser/bison/ugrammar.y: Revert the previous "fix".
+
 2007-11-26  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Give direct access to std::string in UValue/Ustring.

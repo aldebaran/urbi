@@ -392,7 +392,6 @@ take (T* t)
 %type <variable>            lvalue
 %type <variable>            rvalue
 %type <derive>              derive
-%type <is_channel> colon_or_ltlt;
 
 
 /*----------------------.
@@ -562,6 +561,7 @@ taggedcommand:
 
 ;
 
+%type <is_channel> colon_or_ltlt;
 colon_or_ltlt:
   ":"     { $$ = false; }
 | "<<"    { $$ = true;  }
