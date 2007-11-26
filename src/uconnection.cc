@@ -77,9 +77,9 @@ UConnection::UConnection (UServer* userver,
     obstructed (false),
     parser_ (new UParser (*this)),
     sendQueue_ (new UQueue (minSendBufferSize, maxSendBufferSize,
-                            UConnection::ADAPTIVE)),
+			    UConnection::ADAPTIVE)),
     recvQueue_ (new UCommandQueue (minRecvBufferSize, maxRecvBufferSize,
-                                   UConnection::ADAPTIVE)),
+				   UConnection::ADAPTIVE)),
     packetSize_ (packetSize),
     blocked_ (false),
     receiveBinary_ (false),
@@ -600,7 +600,7 @@ UConnection::received_ (const ubyte *buffer, int length)
       // Warnings handling
       if (p.hasWarning())
       {
-        (*this) << send(p.warning_get().c_str(), "warn ");
+	(*this) << send(p.warning_get().c_str(), "warn ");
 	server->error(::DISPLAY_FORMAT, (long)this,
 		      "UConnection::received",
 		      p.warning_get().c_str());
@@ -617,7 +617,7 @@ UConnection::received_ (const ubyte *buffer, int length)
 	//delete p.commandTree;
 	p.command_tree_set (0);
 
-        (*this) << send(p.error_get().c_str(), "error");
+	(*this) << send(p.error_get().c_str(), "error");
 	server->error(::DISPLAY_FORMAT, (long) this,
 		      "UConnection::received",
 		      p.error_get().c_str());
@@ -835,8 +835,8 @@ UConnection::new_result (object::rObject result)
   if (!os.str ().empty ())
   {
     *this << UConnection::sendc (mkPrefix (0).c_str (), 0)
-          << UConnection::sendc (os.str ().c_str (), 0)
-          << UConnection::endl;
+	  << UConnection::sendc (os.str ().c_str (), 0)
+	  << UConnection::endl;
   }
 }
 

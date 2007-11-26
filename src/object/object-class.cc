@@ -42,7 +42,7 @@ namespace object
     std::ostringstream os;
     args[0]->print (os);
     c->value_get().connection << UConnection::send (os.str().c_str())
-                              << UConnection::endl;
+			      << UConnection::endl;
     return args[0];
   }
 
