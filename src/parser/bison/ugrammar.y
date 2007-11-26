@@ -313,6 +313,7 @@ take (T* t)
   TOK_TRUEDERIV    "'d"
   TOK_TRUEDERIV2   "'dd"
   TOK_ECHO         "echo"
+  TOK_ECHO_LPAREN  "echo("
   TOK_UNALIAS      "unalias"
   TOK_VAR          "var"
   TOK_VARERROR     "'e"
@@ -744,9 +745,15 @@ instruction:
     }
 
   | "echo" expr namedparameters {
-
+      warn (up, @$, "'echo <expression>' is deprecated,");
+      warn (up, @$, "  use 'echo (<expression>)' instead");
       $$ = new UCommand_ECHO(@$, $2, $3, 0);
       memcheck(up, $$, $2, $3);
+    }
+
+  | "echo(" expr ")" {
+      $$ = new UCommand_ECHO(@$, $2, 0, 0);
+      memcheck(up, $$, $2);
     }
 
   | lvalue "=" "new" "identifier" {

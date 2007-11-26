@@ -1,3 +1,12 @@
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
+	deprecate echo <expr>.
+	* NEWS: Some old news.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l
+	(echo): Triggers a warning, rather use...
+	("echo("): this new token.
+	* src/ucommand.cc: Fix use of echo.
+
 2007-11-26  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix delete.

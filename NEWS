@@ -1,3 +1,20 @@
+New in 1.5
+
+* "foreach" and "loopn" are deprecated, use "for" instead.
+
+* Use "**", not "^", to denote exponentiation.  In the future
+  "^" between numbers will denote exclusive-or.
+
+* "echo" and "wait" use a more traditional syntax.
+  Use "echo (1)" instead of "echo 1", and "wait (1s)" instead of "wait 1s".
+
+* Job control and channels are different.
+  The structure "tag : code" used to address two different issues:
+  enabling job control, and reporting values.  They now have two
+  different syntaxes.  Write "chan << code" to send the evaluation
+  of "code" to the channel "chan", and write "tag : code" to allow
+  job control over "code".
+
 New in 1.0
 
 * New keyword `taglist' displays the tags of currently running commands.

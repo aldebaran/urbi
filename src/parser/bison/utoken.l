@@ -233,6 +233,7 @@ STRING   \"([^\"]|"\\\"")*\"
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;
 "echo"          return token::TOK_ECHO;
+"echo"{BLANKS}"("  return token::TOK_ECHO_LPAREN;
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;

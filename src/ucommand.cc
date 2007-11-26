@@ -2352,7 +2352,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	{
 	  if (!is_channel_get())
 	    *connection << UConnection::prefix("notag");
- 	  else
+	  else
 	    *connection << UConnection::prefix(getTag().c_str());
 	  ret->echo(connection);
 	}
@@ -2453,7 +2453,7 @@ UCommand_EXPR::execute_(UConnection *connection)
     if (ret->dataType != DATA_VOID)
     {
       if (!is_channel_get())
- 	*connection << UConnection::prefix("notag");
+	*connection << UConnection::prefix("notag");
       else
 	*connection << UConnection::prefix(getTag().c_str());
       ret->echo(connection);
@@ -2902,7 +2902,7 @@ UCommand_NEW::execute_(UConnection *connection)
     oss << ") | if (!isdef("
 	<< uid << ") || ((" << uid << "!=0) && (!isvoid("
 	<< uid << ")))) { "
-	<< "echo \"Error: Constructor failed, object deleted\";"
+	<< "echo (\"Error: Constructor failed, object deleted\");"
 	<< " delete "
 	<< id->c_str() << "} | if (isdef("
 	<< uid << ")) delete " << uid
