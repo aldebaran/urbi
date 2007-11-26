@@ -16,7 +16,7 @@ SUBDIRS = libport src tests . doc
 EXTRA_DIST +=					\
 build-aux/bison++.in				\
 build-aux/move-if-change			\
-build-aux/output-to-html
+build-aux/output-to-dot
 
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
