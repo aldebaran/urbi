@@ -291,19 +291,21 @@ STRING   \"([^\"]|"\\\"")*\"
 "-"             RETURN_OP(MINUS);
 "-="            RETURN_OP(MINUS_ASSIGN);
 "--"            RETURN_OP(MINUS_MINUS);
-"/"             RETURN_OP(DIV);
-"/="            RETURN_OP(DIV_ASSIGN);
+"/"             RETURN_OP(SLASH);
+"/="            RETURN_OP(SLASH_ASSIGN);
 
 "<"             RETURN_OP(LTH);
 "<="            RETURN_OP(LEQ);
+"<<"            RETURN_OP(LT_LT);
 "=="            RETURN_OP(EQU);
 "=~="           RETURN_OP(DEQ);
 ">"             RETURN_OP(GTH);
 ">="            RETURN_OP(GEQ);
+">>"            RETURN_OP(GT_GT);
 "^"             { up.warn(*locp, "The use of '^' for exponent operator"
 			  " is deprecated. Use '**' instead.");
-		  RETURN_VALUE(TOK_EXP, symbol, new libport::Symbol("**")); }
-"**"            RETURN_OP(EXP);
+		  RETURN_VALUE(TOK_CARET, symbol, new libport::Symbol("**")); }
+"**"            RETURN_OP(CARET);
 "&&"            RETURN_OP(LAND);
 "||"            RETURN_OP(LOR);
 

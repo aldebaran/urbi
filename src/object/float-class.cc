@@ -132,6 +132,26 @@ namespace object
     return x * x;
   }
 
+  // This is quite hideous, to be cleaned once we have integers.
+  static float
+  float_lshift (libport::ufloat x, libport::ufloat y)
+  {
+    const long long lhs = libport::to_long_long (x);
+    const long long rhs = libport::to_long_long (y);
+    return lhs << rhs;
+  }
+
+  static float
+  float_rshift (libport::ufloat x, libport::ufloat y)
+  {
+    const long long lhs = libport::to_long_long (x);
+    const long long rhs = libport::to_long_long (y);
+    return lhs >> rhs;
+  }
+
+
+
+
 /*------------------------------------------------------------.
 | Float Primitives.                                           |
 |                                                             |
@@ -221,6 +241,9 @@ namespace object
   PRIMITIVE_2_FLOAT(mod, float_mod)
   PRIMITIVE_2_FLOAT(pow, powf)
 
+  PRIMITIVE_2_FLOAT(lshift, float_lshift) // <<
+  PRIMITIVE_2_FLOAT(rshift, float_rshift) // >>
+
   PRIMITIVE_OP_FLOAT(land, &&)
   PRIMITIVE_OP_FLOAT(lor, ||)
 
@@ -272,6 +295,9 @@ namespace object
     DECLARE(sub, -);
     DECLARE(pow, **);
     DECLARE(mod, %);
+
+    DECLARE(lshift, <<);
+    DECLARE(rshift, >>);
 
     DECLARE(land, &&);
     DECLARE(lor, ||);

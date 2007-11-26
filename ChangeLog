@@ -1,5 +1,14 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Support << and >> on integers.
+	* src/object/float-class.cc (float_lshift, float_rshift): New.
+	* src/parser/ugrammar.y: Parse << and >>.
+	(TOK_DIV, TOK_DIV_ASSIGN, TOK_EXP): Rename as...
+	(TOK_SLASH, TOK_SLASH_ASSIGN, TOK_CARET): these.
+	* src/parser/utoken.l: Adjust.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Skip newest 1.x tests.
 	* tests-local.mk: here.
 

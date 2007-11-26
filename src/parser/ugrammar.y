@@ -834,7 +834,7 @@ stmt:
 ;
 
 %token <symbol>
-	TOK_DIV_ASSIGN    "/="
+	TOK_SLASH_ASSIGN    "/="
 	TOK_MINUS_ASSIGN  "-="
 	TOK_MINUS_MINUS   "--"
 	TOK_PLUS_ASSIGN   "+="
@@ -1096,12 +1096,14 @@ expr:
 // The name of the operators are the name of the messages.
 %token <symbol>
 	TOK_BANG    "!"
-	TOK_PERCENT "%"
-	TOK_STAR    "*"
-	TOK_PLUS    "+"
+	TOK_SLASH   "/"
+	TOK_CARET   "^"
+	TOK_GT_GT   ">>"
+	TOK_LT_LT   "<<"
 	TOK_MINUS   "-"
-	TOK_DIV     "/"
-	TOK_EXP     "^"
+	TOK_PERCENT "%"
+	TOK_PLUS    "+"
+	TOK_STAR    "*"
 ;
 
 id:
@@ -1121,6 +1123,8 @@ expr:
 | expr "/" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "%" expr	          { $$ = call(@$, $1, $2, $3); }
 | expr "^" expr	          { $$ = call(@$, $1, $2, $3); }
+| expr "<<" expr          { $$ = call(@$, $1, $2, $3); }
+| expr ">>" expr          { $$ = call(@$, $1, $2, $3); }
 | "-" expr    %prec UNARY { $$ = call(@$, $2, $1); }
 | "(" expr ")"            { $$ = $2; }
 | "copy" expr %prec UNARY { $$ = call(@$, $2, $1); }
