@@ -67,15 +67,6 @@
 #include "kernel/uconnection.hh"
 #include "parser/uparser.hh"
 
-#define EVALUATE(Tree)						\
- do {								\
-    std::cerr << "Command: " << Tree << std::endl;		\
-    runner::Runner r;						\
-    r(Tree);							\
-    std::cerr << "Result: "					\
-	      << libport::deref << r.result() << std::endl;	\
- } while (0)
-
   namespace
   {
 

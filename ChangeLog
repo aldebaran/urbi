@@ -1,3 +1,8 @@
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
+	Remove dead code.
+	* src/parser/ugrammar.y (EVALUATE): Useless, and unusable today.
+
 2007-09-11  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 1747:1748 https://svn.gostai.com/svn/kernel1/trunk
