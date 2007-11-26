@@ -1,5 +1,11 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	unecho, unwait.
+        * src/parser/ugrammar.y, src/parser/utoken.l: echo and wait are
+	regular	ids.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	* src/network: Remove.
 
 2007-11-26  Akim Demaille  <demaille@gostai.com>

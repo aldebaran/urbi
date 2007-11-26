@@ -254,7 +254,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;
 "do"		return token::TOK_DO;
-"echo"          RETURN_OP(ECHO);
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;
@@ -285,7 +284,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "var"           return token::TOK_VAR;
 "'in"           return token::TOK_VARIN;
 "'out"          return token::TOK_VAROUT;
-"wait"          RETURN_OP(WAIT);
 "waituntil"     return token::TOK_WAITUNTIL;
 "whenever"      return token::TOK_WHENEVER;
 "while"         return token::TOK_WHILE;

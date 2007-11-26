@@ -354,8 +354,6 @@
  // Tokens that have a symbol semantic value.
 %token <symbol>
 	TOK_COPY         "copy"
-	TOK_ECHO         "echo"
-	TOK_WAIT         "wait"
 
 %token TOK_EOF 0 "end of command"
 
@@ -689,7 +687,6 @@ stmt:
   /* empty */ { $$ = new ast::Noop (@$, true); }
 | "noop"      { $$ = new ast::Noop (@$, false); }
 | expr        { $$ = $1; }
-| "echo" expr namedarguments { $$ = call (@$, 0, $1, $2); }
 ;
 
 // Groups.
@@ -760,7 +757,6 @@ stmt:
 stmt:
   "emit" k1_id args                  { $$ = 0; }
 | "emit" "(" expr.opt ")" k1_id args { $$ = 0; }
-| "wait" expr			     { $$ = call (@$, 0, $1, $2); }
 | "waituntil" softtest               { $$ = 0; }
 | "event" k1_id formal_args          { $$ = 0; }
 ;
