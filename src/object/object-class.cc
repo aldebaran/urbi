@@ -35,43 +35,38 @@ namespace object
     return args[0];
   }
 
+
   /// Send pretty-printed self on the connection.
+  /// args[1], if present, can be the tag to use.
   rObject
   object_class_print (rContext c, objects_type args)
   {
-    std::ostringstream os;
-    args[0]->print (os);
-    c->value_get().connection << UConnection::send (os.str().c_str())
-			      << UConnection::endl;
+    // Second argument is the tag name.
+    const char* tag = 0;
+    if (args.size() == 2)
+    {
+      FETCH_ARG(1, String);
+      tag = arg1->value_get().name_get().c_str();
+    }
+
+    c->value_get().connection.send (args[0], tag);
     return args[0];
   }
 
   /// Send pretty-printed args[1] to the connection.
-  // FIXME: Lots of duplication with UConnection::new_result.
+  // FIXME: Lots of duplication with the previous primitive :(
   rObject
   object_class_echo (rContext c, objects_type args)
   {
-    UConnection& cn = c->value_get().connection;
-
     // Second argument is the tag name.
-    const char* p = 0;
+    const char* tag = 0;
     if (args.size() == 3)
     {
       FETCH_ARG(2, String);
-      p = arg2->value_get().name_get().c_str();
+      tag = arg2->value_get().name_get().c_str();
     }
 
-    // First argument (self) is ignored, print args[1].
-    std::ostringstream os;
-    os << "*** ";
-    args[1]->print (os);
-
-    // FIXME: do not build manually prefix.
-    // FIXME: The UConnection interface really sucks.
-    cn << UConnection::send (cn.mkPrefix(reinterpret_cast<const ubyte*> (p)).c_str())
-       << UConnection::send (os.str().c_str())
-       << UConnection::endl;
-
+    c->value_get().connection.send (args[1], tag, "*** ");
     return args[0];
   }
 

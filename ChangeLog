@@ -1,5 +1,12 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Object::print takes an optionnal tag name.
+	* src/object/object-class.cc (object_class_print): Accept
+	an optional tag name.
+	(object_class_echo): Use the UConnection::send for rObjects.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	sending an object.
 	* include/kernel/uconnection.hh, src/uconnection.cc (send): Yet
 	another overloaded version, for rObjects.
