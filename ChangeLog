@@ -1,5 +1,10 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Fix Boost use.
+	* src/kernel.mk: Catch up with newest macros.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Catch up with dev/.
 	* dev/ast-all-gen, dev/ast-default-visitor-gen,
 	* dev/ast-fwd-gen, dev/ast-graph-gen, dev/ast-ignores-gen,
