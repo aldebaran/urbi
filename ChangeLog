@@ -1,5 +1,20 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	Catch up with dev/.
+	* dev/ast-all-gen, dev/ast-default-visitor-gen,
+	* dev/ast-fwd-gen, dev/ast-graph-gen, dev/ast-ignores-gen,
+	* dev/ast-nodes-gen, dev/ast-nodes-mk-gen,
+	* dev/ast-pretty-printer-gen, dev/ast-readme-gen,
+	* dev/ast-visitor-gen, dev/ast.py:
+	Sync with tc's version.
+
+	* dev/ast_params.py: Remove.
+	* src/ast/ast.yml: Complete with the former contents of the latter.
+
+	* src/ast/ast.mk, src/ast/visitor.hxx: Adjust.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	k2-check.
 	* tests-local.mk: Use TESTS_DIRS to define it.
 

@@ -11,13 +11,7 @@ srcdir = sys.argv[1]
 
 ## Abstract syntax tree C++ visitor - header ----------------------------------
 loader = ast.Loader ()
-nodes = loader.load (sys.stdin)
-
-header = """\
-//<<-
-// Generated, do not edit by hand.
-//->>
-"""
+nodes, ast_params = loader.load (sys.stdin)
 
 ## --------------- ##
 ## The *.hh file.  ##
@@ -27,14 +21,11 @@ visitor_hh = file("default-visitor.hh.tmp", "w")
 
 print >>visitor_hh, tools.banner("ast/default-visitor.hh",
 		   "Definition of ast::DefaultVisitor.") + """
+
 #ifndef AST_DEFAULT_VISITOR_HH
 # define AST_DEFAULT_VISITOR_HH
 
-# include <functional>
-# include <ostream>
-# include "ast/visitor.hh"
-# include "ast/fwd.hh"
-# include "libport/select-const.hh"
+""" + ast_params['default_visitor_hh_prologue'] + """
 
 namespace ast
 {

@@ -1,4 +1,131 @@
-#							-*- Yaml -*-
+#                                                      -*- Yaml -*-
+#
+---
+
+# ---------------- #
+# AST parameters.  #
+# ---------------- #
+
+# The generator will accept these types as is, without looking for a
+# particular header.  Also, they are handled by copy.
+atomic_types:
+  - "bool"
+  - "int"
+  - "unsigned"
+  - "VarDec::Kind"
+  - "OpExp::type"
+  - "DecsList::decs_type"
+  - "ExternalExp::Type"
+  - "TagOpExp::type"
+  - "OpVarExp::type"
+  - "ufloat"
+
+# Likewise, but these types are handled by references, because of
+# their size.
+compound_types:
+ - "DecsList::decs_type"
+
+# In most cases, the name of the header to include can be computed
+# from the name of the type.  Below are the exceptions.
+includes_map:
+  "std::string": "<string>"
+
+  "ufloat": '"libport/ufloat.h"'
+
+  "libport::Symbol": '"libport/symbol.hh"'
+  "symbols_type": '"ast/fwd.hh"'
+
+  "exps_type": '"ast/exp.hh"'
+
+  "decs_type": '"ast/dec.hh"'
+  "vardecs_type": '"ast/var-dec.hh"'
+
+  "exp_pair_type": '"ast/exp.hh"'
+  "exp_pairs_type": '"ast/exp.hh"'
+
+  "flavor_type": '"ast/flavor.hh"'
+
+  "exec_exps_type" : '"ast/fwd.hh"'
+
+# FIXME: Can we compute this list from atomic_types?
+non_visitable_types:
+  - "bool"
+  - "int"
+  - "unsigned"
+  - "std::string"
+  - "misc::symbol"
+  - "const misc::symbol"
+  - "OpExp::Oper"
+  - "Location"
+
+collections:
+  - "exps_type"
+  - "fields_type"
+  - "fieldinits_type"
+  - "DecsList::decs_type"
+
+# The function to clear a list of pointers.
+deep_clear: "libport::deep_clear"
+
+# The beginning of visitor.hh, for includes.
+visitor_hh_prologue: |2
+
+  # include <functional>
+ 
+  # include <boost/preprocessor/array.hpp>
+  # include <boost/preprocessor/repeat.hpp>
+ 
+  # include "libport/select-const.hh"
+ 
+  # include "ast/fwd.hh"
+
+# The beginning of default-visitor.hh, for includes.
+default_visitor_hh_prologue: |2
+
+  # include <functional>
+  # include <ostream>
+  # include "ast/visitor.hh"
+  # include "ast/fwd.hh"
+  # include "libport/select-const.hh"
+
+# The beginning of fwd.hh, for includes.
+fwd_hh_prologue: |2
+
+  # include <list>
+  # include <vector>
+  
+  # include "libport/fwd.hh"
+
+# The end of the fwd.hh file, in the namespace.
+fwd_hh_epilogue: |2
+
+    // List types.
+    typedef std::list<Exp*> exps_type;
+    typedef std::pair<Exp*, Exp*> exp_pair_type;
+    typedef std::list<exp_pair_type> exp_pairs_type;
+    //typedef std::list<VarDec*> vardecs_type;
+    //typedef std::list<Dec*> decs_type;
+  
+    // FIXME: Should not be pointers, but the machinery is not ready
+    // for that.
+    typedef std::list<libport::Symbol*> symbols_type;
+
+printer_cc_prologue: |2
+
+  #include "libport/indent.hh"
+  #include "libport/pair.hh"
+  #include "libport/escape.hh"
+  #include "libport/separator.hh"
+
+  #include <boost/foreach.hpp>
+  #define foreach BOOST_FOREACH
+
+---
+
+# ----------- #
+# AST Nodes.  #
+# ----------- #
+
 # Possible values:
 #  * class
 #    Description of classes.
@@ -65,9 +192,6 @@
 #    + access: rw
 #    + owned: True
 #
-
----
-
 
 ## -------------- ##
 ## Root classes.  ##

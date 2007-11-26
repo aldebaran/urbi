@@ -2,7 +2,6 @@
 
 import sys
 import ast, tools
-import ast_params
 
 if len (sys.argv) != 2:
   tools.error("Usage: .. SRCDIR")
@@ -10,7 +9,7 @@ srcdir = sys.argv[1]
 
 ## Abstract syntax tree C++ forward declarations ------------------------------
 loader = ast.Loader ()
-nodes = loader.load (sys.stdin)
+nodes, ast_params = loader.load (sys.stdin)
 
 ignores = file ("ignores.tmp", "w")
 print >>ignores, """\

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import re, sys
-import ast, tools, ast_params
+import ast, tools
 
 if len(sys.argv) != 2:
   tools.error("Usage: .. SRCDIR")
@@ -9,7 +9,7 @@ srcdir = sys.argv[1]
 
 ## Abstract syntax tree C++ visitor - header ----------------------------------
 loader = ast.Loader ()
-nodes = loader.load (sys.stdin)
+nodes, ast_params = loader.load (sys.stdin)
 
 
 ## --------------- ##
@@ -128,7 +128,7 @@ print tools.banner("ast/pretty-printer.cc",
 
 #include "pretty-printer.hh"
 #include "all.hh"
-""" + ast_params.printer_cc_prologue + """
+""" + ast_params["printer_cc_prologue"] + """
 namespace ast
 {
 """
@@ -164,7 +164,7 @@ for node in arr:
       else:
 	action += '    ostr_ << %s;\n' % (a)
     print """\
-  void 
+  void
   PrettyPrinter::operator() (const %s& n)
   {
     // Don't warn about unused arguments.

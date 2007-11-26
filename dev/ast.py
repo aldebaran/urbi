@@ -3,7 +3,6 @@
 ## ---------------------------------------------------------------------------
 
 import string, re, sys, syck, tools
-import ast_params
 
 from tools import warning, error
 
@@ -20,7 +19,7 @@ def decl (type, name):
 
 ## AST Descriptions ----------------------------------------------------------
 class Attribute:
-  def __init__(self, name, dict):
+  def __init__(self, name, dict, ast_params):
     self.name = name
     self.type = ""
     self.mandatory = True
@@ -30,16 +29,19 @@ class Attribute:
     self.desc = ""
     self.hide = False
     for key in dict:
-      if not key in [ 'access',
-		      'desc',
-		      'hide',
-		      'init',
-		      'mandatory',
-		      'owned',
-		      'type']:
-	warning ('unknown Attribute attribute: ' + name + "::" + key)
+      if not key in [
+	'access',
+	'desc',
+	'hide',
+	'init',
+	'mandatory',
+	'owned',
+	'type',
+	]:
+	warning ('unknown Attribute attribute: ' + key + ' from ' + name)
       self.__dict__[key] = dict[key]
     self.init = str (self.init)
+    self.ast_params = ast_params
 
   def description (self):
     if self.desc != "":
@@ -47,10 +49,14 @@ class Attribute:
     else:
       return attribute.name
 
+  def name_ (self):
+    """The name of the attribute, i.e., with an underscore appended."""
+    return self.name + "_"
+
   def atomic_p (self):
     """If this an atomic type?  I.e. a type to copy instead of passing
     as a reference."""
-    return self.root_type () in ast_params.atomic_types;
+    return self.root_type () in self.ast_params['atomic_types'];
 
   def pointer_p (self):
     "Is this a pointer type?"
@@ -84,14 +90,14 @@ class Attribute:
 
   def attr_decl (self):
     "Declaration as an attribute."
-    return decl (self.type, self.name + "_")
+    return decl (self.type, self.name_())
 
   def ctor_init (self):
     if self.init != "":
       value = self.init
     else:
       value = self.name
-    return self.name + "_ (" + value + ")"
+    return self.name_() + " (" + value + ")"
 
   def root_type (self):
     "The type with &, * and const removed."
@@ -110,17 +116,19 @@ class Attribute:
     if self.owned:
       if self.pointer_p ():
 	if re_list.match (self.root_type ()):
-	  res += "    " + ast_params.deep_clear + " (*" + self.name + "_);\n"
-	res += "    delete " + self.name + "_;\n"
+	  res += "    " + self.ast_params['deep_clear'] + \
+		 " (*" + self.name_() + ");\n"
+	res += "    delete " + self.name_() + ";\n"
       else:
 	if re_list.match (self.root_type ()):
-	  res += "    " + ast_params.deep_clear + " (" + self.name + "_);\n"
+	  res += "    " + self.ast_params['deep_clear'] + \
+		 " (" + self.name_() + ");\n"
       if self.hide and res:
 	res = "    //<<-\n" + res + "    //->>\n"
     return res;
 
 class Node:
-  def __init__(self, name, dict):
+  def __init__(self, name, dict, ast_params):
     self.name = name
     self.super = ""
     self.derived = []
@@ -130,6 +138,7 @@ class Node:
     self.attributes = []
     # Is the class concrete? (Default is false.)
     self.concrete = False
+    self.ast_params = ast_params
 
     for key in dict:
       # PySyck changed its behavior WRT duplicate keys
@@ -141,14 +150,16 @@ class Node:
       if isinstance (key, tuple):
 	(realkey, value) = key
 	error ('duplicate key: ' + name + "::" + realkey)
-      if not key in ['attributes',
-		     'concrete',
-		     'default',
-		     'desc',
-		     'hide',
-		     'inline',
-		     'printer',
-		     'super']:
+      if not key in [
+	'attributes',
+	'concrete',
+	'default',
+	'desc',
+	'hide',
+	'inline',
+	'printer',
+	'super',
+	]:
 	warning ('unknown Node attribute: ' + name + "::" + key)
       self.__dict__[key] = dict[key]
 
@@ -161,7 +172,7 @@ class Node:
 
   def attribute_of_dict (self, dict):
     for att_name, att_dict in dict.iteritems ():
-      return Attribute (att_name, att_dict)
+      return Attribute (att_name, att_dict, self.ast_params)
 
   # Search the 'name' attribute of this node.
   # Perform lookup in parents nodes if not found in current
@@ -169,11 +180,11 @@ class Node:
   def attribute (self, name):
     for attr in self.attributes:
       if attr.name == name:
-	return attr
+       return attr
     for parent in self.super:
       attr = parent.attribute(name)
       if attr != None:
-	return attr
+       return attr
     return None
 
   def guard (self):
@@ -232,26 +243,25 @@ class Node:
 
   def ctor_init (self, hide):
     "The initialization part of the constructor implementation."
-    init = ""
+    indent = " " * 4
+    init = indent + ": "
     first = True
     for sup in self.super:
       if not first:
-	init += ",\n"
-      init += "    " + sup.name + " (" + sup.ctor_args (hide, False) + ")"
+	init += ",\n" + indent + "  "
+      init += sup.name + " (" + sup.ctor_args (hide, False) + ")"
       first = False
     for a in self.attributes:
       if hide and a.hide:
 	continue
       if a.hide:
 	if first:
-	  init += "    /*<<-*/ "
+	  init += "/*<<-*/ "
 	else:
-	  init += "\n    /*<<-*/, "
+	  init += "\n" + indent + "  /*<<-*/, "
       else:
-	if first:
-	  init += "    "
-	else:
-	  init += ",\n    "
+	if not first:
+	  init += ",\n" + indent + "  "
       init += a.ctor_init ()
       if a.hide:
 	init += " /*->>*/"
@@ -283,11 +293,11 @@ class Loader:
 	  break
 	i.concrete = True
 
-  def parse (self, file):
-    dict = syck.load (file.read ())
+  def create_nodes (self, ast_nodes, ast_params):
+    "Create and index the AST nodes."
     nodes = {}
-    for node_name in dict:
-      nodes[node_name] = Node (node_name, dict[node_name])
+    for node_name in ast_nodes:
+      nodes[node_name] = Node (node_name, ast_nodes[node_name], ast_params)
     # Return AST nodes
     return nodes
 
@@ -304,7 +314,14 @@ class Loader:
 	ast[sup].derived.append (n)
 
   def load (self, file):
-    ast = self.parse (file)
-    self.final_compute (ast)
-    self.resolve_super (ast)
-    return ast
+    "Load both the paramaters and the AST description."
+    # See http://pyyaml.org/browser/pysyck/trunk/README.txt for more
+    # information on `syck.load_documents'.
+    docs = syck.load_documents (file.read ())
+    i = iter (docs)
+    ast_params = i.next ()
+    ast_nodes = i.next ()
+    nodes = self.create_nodes (ast_nodes, ast_params)
+    self.final_compute (nodes)
+    self.resolve_super (nodes)
+    return nodes, ast_params

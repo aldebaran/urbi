@@ -17,7 +17,7 @@ BUILT_SOURCES_ast =							   \
 	$(ast_nodes)
 
 gen_dir = $(top_srcdir)/dev
-ast_gen_deps = $(gen_dir)/ast.py $(gen_dir)/ast_params.py \
+ast_gen_deps = $(gen_dir)/ast.py \
 	       $(gen_dir)/tools.py $(ast_srcdir)/ast.yml
 
 ## -------------------------- ##
