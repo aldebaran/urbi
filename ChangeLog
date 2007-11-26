@@ -1,5 +1,9 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
+	* src/network: Remove.
+
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
 	Implement ^ and deprecated old tokens.
 	* src/object/float-class.cc (INTEGER_BIN_OP): New.
 	Use it.
