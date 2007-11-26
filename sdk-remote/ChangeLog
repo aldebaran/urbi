@@ -1,3 +1,13 @@
+2007-11-26  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Give access to UVariable.
+	This will be of use in the plugin UObjects. These
+	modifications are for interface consistancy.
+	* src/liburbi/uobject/urbi/fwd.hh: Add UVaraible.
+	* src/liburbi/uobject/urbi/uvar.hh (variable): New.
+	* src/liburbi/uvar.cc (class UVariable): Dummy class.
+	(variable): new.
+
 2007-11-22  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add a way to specify the tag used in syncGet.

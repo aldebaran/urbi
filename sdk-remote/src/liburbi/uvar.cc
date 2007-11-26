@@ -23,6 +23,8 @@
 #include "urbi/uexternal.hh"
 #include "urbi/usyncclient.hh"
 
+class UVariable {};
+
 namespace urbi
 {
   class UVardata
@@ -135,6 +137,13 @@ namespace urbi
   UVar::setZombie ()
   {
     // no effect in remote mode.
+  }
+
+  //! Return the internal variable.
+  UVariable*
+  UVar::variable()
+  {
+    return 0;
   }
 
   //! UVar reset  (deep assignement)

@@ -159,6 +159,8 @@ namespace urbi
 
     void setZombie ();
 
+    UVariable* variable();
+
   private:
     /// Xxx only works in softdevice mode.
     UValue& val()

@@ -26,6 +26,7 @@ namespace urbi
   class baseURBIStarterHub;
 };
 
+class UVariable;
 class UGhostConnection;
 
 #endif //! URBI_FWD_HH
