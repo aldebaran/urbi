@@ -1,3 +1,8 @@
+2007-11-26  Akim Demaille  <demaille@gostai.com>
+
+	Fix copyright in the banner.
+	* src/ubanner.cc: here.
+
 2007-11-25  Jean-Christophe Baillie  <baillie@gostai.com>
 
 	Fix type declaration position in ugrammar.y  
