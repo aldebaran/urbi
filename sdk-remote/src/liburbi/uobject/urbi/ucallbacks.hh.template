@@ -186,7 +186,7 @@ namespace urbi
     typedef T noref;
   };
 
-# ifndef _MSC_VER
+# if 1 // #ifndef _MSC_VER
 
   template<typename T>
   struct utrait<T&>
