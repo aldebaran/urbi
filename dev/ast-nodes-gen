@@ -71,9 +71,9 @@ def print_includes (node, header, inline, impl):
     if type in ast_params['includes_map']:
       includes[ast_params['includes_map'][type]] = True
     elif not type == node.name and \
-         not type in ast_params['atomic_types'] and \
+	 not type in ast_params['atomic_types'] and \
 	 not ('compound_types' in ast_params and \
-                type in ast_params['compound_types']):         
+		type in ast_params['compound_types']):
       # Don't include ourselves.
       # Don't include headers for atomic types.
       # Don't include headers for types defined elsewhere.
