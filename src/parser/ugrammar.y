@@ -315,7 +315,6 @@
 	TOK_EVERY        "every"
 	TOK_FALSE        "false"
 	TOK_FOR          "for"
-	TOK_FOREACH      "foreach"
 	TOK_FREEZEIF     "freezeif"
 	TOK_FROM         "from"
 	TOK_FUNCTION     "function"
@@ -325,7 +324,6 @@
 	TOK_LBRACE       "{"
 	TOK_LBRACKET     "["
 	TOK_LOOP         "loop"
-	TOK_LOOPN        "loopn"
 	TOK_LPAREN       "("
 	TOK_NEW          "new"
 	TOK_NOOP         "noop"
@@ -451,6 +449,7 @@
 %type <expr>  softtest
 %type <expr>  stmt
 
+
 /*----------------------.
 | Operator precedence.  |
 `----------------------*/
@@ -500,8 +499,6 @@
 %left  "."
 
 %right "'n"
-
-
 
 /* URBI Grammar */
 %%
@@ -611,8 +608,8 @@ stmt:
     $$ = new ast::Tag (@$, $1, $4);
   }
 | flags.1 ":" stmt { $$ = $3; }
-;
 
+;
 
 /*--------.
 | flags.  |
@@ -896,7 +893,7 @@ stmt:
     {
       $$ = for_loop (@$, $2, $4, $6, $8, $10);
     }
-| "foreach" pipe.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
+| "for" pipe.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
     {
       $$ = 0;
     }
@@ -1165,15 +1162,15 @@ expr:
 | Tests.  |
 `--------*/
 %token <symbol>
-	TOK_DEQ  "=~="
-	TOK_EQU  "=="
-	TOK_GEQ  ">="
-	TOK_GTH  ">"
-	TOK_LEQ  "<="
-	TOK_LTH  "<"
-	TOK_NEQ  "!="
-	TOK_PEQ  "%="
-	TOK_REQ  "~="
+	TOK_DEQ   "=~="
+	TOK_EQU   "=="
+	TOK_GEQ   ">="
+	TOK_GTH   ">"
+	TOK_LEQ   "<="
+	TOK_LTH   "<"
+	TOK_NEQ   "!="
+	TOK_PEQ   "%="
+	TOK_REQ   "~="
 
 	TOK_LAND  "&&"
 	TOK_LOR   "||"

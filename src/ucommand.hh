@@ -112,6 +112,11 @@ public:
   void setTag(TagInfo * ti); //faster, no hash acces
   void unsetTag();
 
+  /// Whether the tag is associated to a channel, i.e., whether it is
+  /// verbose.
+  void is_channel_set (bool b);
+  bool is_channel_get () const;
+
   bool isBlocked();
   bool isFrozen();
 
@@ -227,11 +232,13 @@ private:
   std::string tag;
   /// Ptr to tag info concerning us.
   TagInfo* tagInfo;
+  bool is_channel_;
   /// For fast deletion.
   std::list<UCommand *>::iterator tagInfoPtr;
 
   /// Protection against copy
   UCommand (const UCommand &c);
+
 };
 
 class UCommand_TREE : public UCommand, public Flavorable
@@ -1192,13 +1199,7 @@ private:
 
 inline
 std::ostream&
-operator<<(std::ostream& o, const UCommand& u)
-{
-  // Yeah, we don't really use O here.  Too bad.
-  u.print(0);
-  return o;
-}
-
+operator<<(std::ostream& o, const UCommand& u);
 
 /// Report an error, with "!!! " prepended, and "\n" appended.
 /// \param c     the connection to which the message is sent.
@@ -1217,5 +1218,7 @@ send_error (UConnection* c, const UCommand* cmd,
 
 
 const char* to_string (UCommand::Status s);
+
+# include "ucommand.hxx"
 
 #endif

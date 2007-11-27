@@ -1,3 +1,45 @@
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
+	merge -r 1764:1770 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	<< vs. :.
+	* src/parser/bison/ugrammar.y (is_colon): Rename as...
+	(is_channel): this.
+	Use it in the <</: rule.
+	* src/ucommand.hh, src/ucommand.cc (UCommand::is_channel_)
+	(UCommand::is_channel_get, UCommand::is_channel_set): New.
+	Use them where it seems appropriate.
+	* src/ucommand.hxx: New.
+	* src/Makefile.am: Adjust.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	Support seq(n).
+	* src/uexpression.cc (UExpression::eval_FUNCTION_1): Do it.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	loopn|foreach -> for.
+	* src/parser/bison/ugrammar.y ("loopn", "foreach"): Remove,
+	use "for" instead.
+	* src/parser/bison/utoken.l (DEPRECATED): New.
+	Use it for ^, foreach and loopn.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	<< for tags.
+	This patch is a rough implementation of << for channels.
+	It actually makes << and : both usable for both tags and
+	channels.  If someone wants to improve this, go ahead.
+	* src/parser/bison/ugrammar.y (<<, >>): New tokens.
+	(YYSTYPE::is_colon, colon_or_ltlt): New.
+	* src/parser/bison/utoken.l (<<, >>): New tokens.
+	Fix the catch-all rule to be active for all the start conditions
+	(fixes a Flex warning).
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	Fix the operator precedence.
+	* src/parser/bison/ugrammar.y: Import from k2 (but add "**" support).
+	This was supposed to be done by Quentin Hocquet.
+
 2007-11-27  Akim Demaille  <demaille@gostai.com>
 
 	Update failed tests.

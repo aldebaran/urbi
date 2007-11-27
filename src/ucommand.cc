@@ -367,6 +367,7 @@ UCommand::setTag(TagInfo* ti)
 void
 UCommand::setTag(const UCommand* cmd)
 {
+  is_channel_ = (cmd->is_channel_);
   if (tag == cmd->tag)
     return;
   if (tag != "")
@@ -2328,6 +2329,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
   ////// module-defined /////
   UValue *v = tryModuleCall(funname->str().c_str(), expression->parameters,
 			      connection);
+
   if (v)
   {
     if (v->dataType != DATA_VOID)
@@ -2425,15 +2427,18 @@ UCommand_EXPR::execute_(UConnection *connection)
 
 #if 1
   // "Display" the result.
-  if (ret->dataType != DATA_VOID)
+  if (is_channel_get())
   {
-    *connection << UConnection::prefix(getTag().c_str());
-    ret->echo(connection);
+    if (ret->dataType != DATA_VOID)
+    {
+      *connection << UConnection::prefix(getTag().c_str());
+      ret->echo(connection);
+    }
+    if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
+      *connection << UConnection::endl;
+    else
+      *connection << UConnection::flush;
   }
-  if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
-    *connection << UConnection::endl;
-  else
-    *connection << UConnection::flush;
 #else
   // "Display" the result.
   if (ret->dataType != DATA_VOID)
