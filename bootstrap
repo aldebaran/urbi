@@ -123,9 +123,15 @@ except ImportError:
 
 -----------------------------------------------------------------------
 If the last error is "./bootstrap: Python module \`syck' is required"
-Then you need to install Python Bindings for Syck:
+Then you need to install Python Bindings for Syck.
+If it was "AttributeError: 'module' object has no attribute
+'load_documents'", you need the latest version of PySyck.
+
+In both cases, see:
   * Syck: http://whytheluckystiff.net/syck/
   * PySyck: http://pyyaml.org/wiki/PySyck
+Or run install-pysyck, found in the install directory of the common
+repository.
 
 If it was "ImportError: No module named _syck"
 Then check your install of PySyck (probably chmod -R a+rX python's
