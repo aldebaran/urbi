@@ -1,5 +1,10 @@
 2007-11-27  Akim Demaille  <demaille@gostai.com>
 
+	Update failed tests.
+	* tests-local.mk: here.
+
+2007-11-27  Akim Demaille  <demaille@gostai.com>
+
 	Polish dev/.
 	* dev/tools.py (lazy_overwrite): Output the diffs.
 	* dev/ast-nodes-gen: Don't let headers include themselves.

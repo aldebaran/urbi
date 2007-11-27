@@ -17,7 +17,6 @@ XFAIL_TESTS +=					\
 1.x/alias.chk					\
 1.x/arithmetics-failures.chk			\
 1.x/armor-unarmor.chk				\
-1.x/basic.chk					\
 1.x/begin-end-report.chk			\
 1.x/bin-copy.chk				\
 1.x/bin.chk					\
@@ -26,6 +25,7 @@ XFAIL_TESTS +=					\
 1.x/class-definition.chk			\
 1.x/comparison.chk				\
 1.x/connection-delete.chk			\
+1.x/delete.chk					\
 1.x/doublecolon.chk				\
 1.x/events.chk					\
 1.x/exec.chk					\
@@ -54,6 +54,7 @@ XFAIL_TESTS +=					\
 1.x/onleave.chk					\
 1.x/onleave2.chk				\
 1.x/parse-errors.chk				\
+1.x/ping.chk					\
 1.x/simple-alias.chk				\
 1.x/size.chk					\
 1.x/speed-zero.chk				\
