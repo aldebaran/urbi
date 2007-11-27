@@ -1,5 +1,15 @@
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1763:1764 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-18  Akim Demaille  <akim@lrde.epita.fr>
+	Move TagInfo stuff into tag-info.*.
+	* src/ucommand.hh, src/ucommand.cc (initializeTagInfos)
+	(systemTagInfo, notagTagInfo): Move to...
+	* include/kernel/tag-info.hh, src/tag-info.cc: here.
+	* src/userver.cc: Adjust.
+
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1762:1763 https://svn.gostai.com/svn/kernel1/trunk
 	2007-10-18  Akim Demaille  <akim@lrde.epita.fr>
 	foreach, factor.
