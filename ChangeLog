@@ -1,3 +1,11 @@
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
+	merge -r 1748:1749 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-15  Akim Demaille  <demaille@gostai.com>
+
+	Update tests.
+	* configure.ac: and rev.
+
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
 	Support Channels in 2.x.
