@@ -1,5 +1,12 @@
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1779:1782 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-19  Akim Demaille  <demaille@gostai.com>
+	Use BOOST_FOREACH.
+	* src/ucommand.cc: At random places.
+
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
 	Fix previous commit.
 	* src/parser/utoken.l: Remove duplicated macro.
 
