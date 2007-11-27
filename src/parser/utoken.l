@@ -89,17 +89,6 @@ typedef yy::parser::token token;
 
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.
-#define DEPRECATED(New)                                         \
-  do {                                                          \
-    up.warn(*locp,                                              \
-	    std::string("`") + yytext + "' is deprecated. "     \
-	    "Use `" New "' instead.");                          \
-    for (int i = strlen(New) - 1; 0 <= i; --i)                  \
-      unput(New[i]);                                            \
-  } while(0);
-
-// We matched an obsolete token, New is now preferered.  Unput it so
-// that the regular scanning rule of New is run.
 #define DEPRECATED(New)						\
   do {								\
     up.warn(*locp,						\
