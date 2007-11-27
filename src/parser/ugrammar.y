@@ -1100,7 +1100,7 @@ expr:
 			     res,
 			     call(@1 + @2, parent, "clone"),
 			     true);
-    
+
     // res . init (args);
     ast::Exp* init = call (@$, res, "init", $3);
 
