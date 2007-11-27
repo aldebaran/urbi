@@ -1,5 +1,10 @@
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
+	Fix previous commit.
+	* src/userver.cc: Fix trivial errors.
+
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
 	Explain how to upgrade pysick in case of error bootstrap.
 	* bootstrap: Here.
 

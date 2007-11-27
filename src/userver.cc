@@ -502,7 +502,7 @@ UServer::work_reset_if_needed_ ()
         (**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
 
     //restart uobjects
-    BOOST_FOREACH (baseURBIStarter& starter, *objectlist)
+    BOOST_FOREACH (::urbi::baseURBIStarter* starter, *::urbi::objectlist)
       starter->init(starter->name);
 
     //reload URBI.INI
