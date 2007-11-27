@@ -1,3 +1,10 @@
+2007-11-27  Akim Demaille  <demaille@gostai.com>
+
+	Polish dev/.
+	* dev/tools.py (lazy_overwrite): Output the diffs.
+	* dev/ast-nodes-gen: Don't let headers include themselves.
+	* src/ast/ast.yml: Remove nonused bits.
+
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 1763:1764 https://svn.gostai.com/svn/kernel1/trunk

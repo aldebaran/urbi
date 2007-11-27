@@ -70,8 +70,13 @@ def print_includes (node, header, inline, impl):
       need_misc_algorithm = True
     if type in ast_params['includes_map']:
       includes[ast_params['includes_map'][type]] = True
-    elif not type in ast_params['atomic_types'] and \
-	 not type in ast_params['compound_types']:
+    elif not type == node.name and \
+         not type in ast_params['atomic_types'] and \
+	 not ('compound_types' in ast_params and \
+                type in ast_params['compound_types']):         
+      # Don't include ourselves.
+      # Don't include headers for atomic types.
+      # Don't include headers for types defined elsewhere.
       includes["\"ast/" + tools.file_id (type) + ".hh\""] = True
 
   # *.hh

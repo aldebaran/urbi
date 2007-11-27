@@ -23,6 +23,7 @@ def lazy_overwrite (old, new):
   if not os.path.isfile (old):
     print "> Create: " + old
     shutil.move (new, old)
+    os.system("diff -uw /dev/null " + old)
   elif not filecmp.cmp (old, new):
     print "> Overwrite: " + old
     # Change the file modes to write the file
@@ -30,6 +31,7 @@ def lazy_overwrite (old, new):
     os.chmod (old, file_modes | 0666);
     shutil.move (old, old + "~")
     shutil.move (new, old)
+    os.system("diff -uw " + old + "~ " + old)
   else:
     os.remove (new)
   # Prevent generated file modifications
@@ -52,6 +54,9 @@ def define_id (s):
 def file_id (s):
   return re.sub ("^-", "", re.sub ("([A-Z])", "-\\1", s)).lower ()
 
+# FIXME: Improve this generator
+# (see http://en.wikipedia.org/wiki/A_and_an for instance).
+# Reported by Nicolas Pierron.
 ## Return the indefinite article to be put before NOUN.
 def indef_article (noun):
   if re.match ("[aeiouAEIOU]", noun):

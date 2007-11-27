@@ -12,18 +12,12 @@ atomic_types:
   - "bool"
   - "int"
   - "unsigned"
-  - "VarDec::Kind"
-  - "OpExp::type"
-  - "DecsList::decs_type"
-  - "ExternalExp::Type"
-  - "TagOpExp::type"
-  - "OpVarExp::type"
   - "ufloat"
 
 # Likewise, but these types are handled by references, because of
 # their size.
-compound_types:
- - "DecsList::decs_type"
+# compound_types:
+# - "DecsList::decs_type"
 
 # In most cases, the name of the header to include can be computed
 # from the name of the type.  Below are the exceptions.
@@ -55,14 +49,13 @@ non_visitable_types:
   - "std::string"
   - "misc::symbol"
   - "const misc::symbol"
-  - "OpExp::Oper"
   - "Location"
 
 collections:
-  - "exps_type"
-  - "fields_type"
-  - "fieldinits_type"
-  - "DecsList::decs_type"
+#  - "exps_type"
+#  - "fields_type"
+#  - "fieldinits_type"
+#  - "DecsList::decs_type"
 
 # The function to clear a list of pointers.
 deep_clear: "libport::deep_clear"
