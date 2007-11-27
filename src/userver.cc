@@ -454,12 +454,11 @@ UServer::work_reset_if_needed_ ()
   if (stage == 1)
   {
     //delete objects first
-    for (HMvariabletab::iterator i = variabletab.begin();
-	 i != variabletab.end();
-	 ++i)
-      if (i->second->value
-	  && i->second->value->dataType == DATA_OBJ)
-	varToReset.push_back(i->second);
+    typedef std::pair<const char* const, UVariable*> variable;
+    BOOST_FOREACH (variable& i, variabletab)
+      if (i.second->value
+	  && i.second->value->dataType == DATA_OBJ)
+	varToReset.push_back(i.second);
 
     while (!varToReset.empty())
       for (std::list<UVariable*>::iterator it = varToReset.begin();

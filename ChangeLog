@@ -1,3 +1,10 @@
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
+	merge -r 1755:1762 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-18  Akim Demaille  <akim@lrde.epita.fr>
+	foreach.
+	* src/userver.cc: use it.
+
 2007-11-27  Akim Demaille  <demaille@gostai.com>
 
 	Bison 2.3a+.
