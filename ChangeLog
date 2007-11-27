@@ -1,3 +1,8 @@
+2007-11-27  Akim Demaille  <demaille@gostai.com>
+
+	Bison 2.3a+.
+	* configure.ac: Be more specific on the Bison version.
+
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
 	Fix previous commit.
