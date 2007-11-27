@@ -1,5 +1,16 @@
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1762:1763 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-18  Akim Demaille  <akim@lrde.epita.fr>
+	foreach, factor.
+	* src/uconnection.cc: Use BOOST_FOREACH.
+	(removeMonitor): New, to factor two uses.
+	Simplify if () { return } else { body } into if () { return }
+	body.
+	Remove useless parens.
+
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1755:1762 https://svn.gostai.com/svn/kernel1/trunk
 	2007-10-18  Akim Demaille  <akim@lrde.epita.fr>
 	foreach.

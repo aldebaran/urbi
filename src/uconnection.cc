@@ -103,6 +103,23 @@ UConnection::UConnection (UServer* userver,
     cid->uservar = false;
 }
 
+namespace
+{
+  static
+  void
+  removeMonitor(UConnection* c, HMbindertab& t)
+  {
+    std::list<HMbindertab::iterator> deletelist;
+    for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
+      if (i->second->removeMonitor(c))
+	deletelist.push_back(i);
+
+    BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+      t.erase(i);
+    deletelist.clear();
+  }
+}
+
 //! UConnection destructor.
 UConnection::~UConnection ()
 {
@@ -114,35 +131,17 @@ UConnection::~UConnection ()
   }
 
   // free bindings
-  for (HMvariabletab::iterator i = ::urbiserver->getVariableTab ().begin();
-       i != ::urbiserver->getVariableTab ().end(); ++i)
-    if (i->second->binder
-	&& i->second->binder->removeMonitor(this))
+  typedef std::pair<const char* const, UVariable*> variable;
+  BOOST_FOREACH (variable& i, ::urbiserver->getVariableTab())
+    if (i.second->binder
+	&& i.second->binder->removeMonitor(this))
     {
-      delete i->second->binder;
-      i->second->binder = 0;
+      delete i.second->binder;
+      i.second->binder = 0;
     }
 
-  std::list<HMbindertab::iterator> deletelist;
-  for (HMbindertab::iterator i = ::urbiserver->getFunctionBinderTab ().begin();
-       i != ::urbiserver->getFunctionBinderTab ().end();
-       ++i)
-    if (i->second->removeMonitor(this))
-      deletelist.push_back(i);
-
-  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-      ::urbiserver->getFunctionBinderTab ().erase(i);
-  deletelist.clear();
-
-  for (HMbindertab::iterator i = ::urbiserver->getEventBinderTab ().begin();
-       i != ::urbiserver->getEventBinderTab ().end();
-       ++i)
-    if (i->second->removeMonitor(this))
-      deletelist.push_back(i);
-
-  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-    ::urbiserver->getEventBinderTab ().erase(i);
-  deletelist.clear();
+  removeMonitor(this, ::urbiserver->getFunctionBinderTab ());
+  removeMonitor(this, ::urbiserver->getEventBinderTab ());
 
   delete parser_;
   delete sendQueue_;
