@@ -1,5 +1,44 @@
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 1770:1779 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-19  Akim Demaille  <demaille@gostai.com>
+	Reject for&.
+	* src/parser/bison/ugrammar.y: here.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	libport use.
+	WARNING: Apparently someone decided to use libport/Makefile.am,
+	which is wrong afai can remember...  Now both liburbi *and* the
+	kernel will want to install libport.  Well done pal.
+	* Makefile.am (SVN_EXTERNALS): Add libport so that libport-ci
+	works as expected.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	Use BOOST_FOREACH.
+	* src/ucommand.cc: At some random places, while it compiles.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	Fix notag handling.
+	* src/ucommand.cc (UCommand_EXPR::execture_): Display the result
+	when there is no tag, so that the top level displays the result.
+	As a consequence, inner expressions still display something, I
+	don't really know how to avoid this with a simple Q&D hack.
+	* src/ucommand.hh, src/ucommand.hxx (tag_info_get): New.
+	* src/uconnection.cc (UConnection::mkPrefix): Don't display notag
+	tags.
+
+	2007-10-19  Guillaume Deslandes  <deslandes@gostai.com>
+	Add .automerge_moves file.
+	* .automerge_moves: New.
+	The file only contains help for remembering.
+	File list need to be appended.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	Missing member init.
+	* src/ucommand.cc (UCommand::UCommand): Initialize is_channel_.
+
+2007-11-27  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1764:1770 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>

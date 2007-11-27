@@ -41,7 +41,7 @@ include/kernel/userver.hxx			\
 include/kernel/ustring.hh			\
 include/kernel/utypes.hh			\
 include/kernel/uvalue.hh 			\
-include/kernel/uvariable.hh 
+include/kernel/uvariable.hh
 
 dist_pkgdata_DATA = share/urbi/urbi.u
 
@@ -49,7 +49,7 @@ dist_pkgdata_DATA = share/urbi/urbi.u
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += tests libport src/uobject
+SVN_EXTERNALS += libport tests src/uobject
 
 maintainer-check: valgrind-check
 
