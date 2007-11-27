@@ -22,6 +22,8 @@
 #include <string>
 #include <cstdlib>
 
+#include <boost/foreach.hpp>
+
 #include "libport/assert.hh"
 #include "libport/cstdio"
 #include "libport/ref-pt.hh"
@@ -188,9 +190,8 @@ UVariable::~UVariable()
   {
     urbi::UVarTable::iterator i = urbi::varmap->find(varname.c_str ());
     if (i != urbi::varmap->end())
-      for (std::list<urbi::UVar*>::iterator j = i->second.begin();
-	   j != i->second.end(); ++j)
-	(*j)->setZombie ();
+      BOOST_FOREACH (urbi::UVar* j, i->second)
+	j->setZombie ();
   }
 
   if (value)
@@ -432,20 +433,17 @@ UVariable::get()
 	it->second->get();
 
   // check for existing notifychange
-  for (std::list<urbi::UGenericCallback*>::iterator i =
-	 internalAccessBinder.begin();
-       i != internalAccessBinder.end();
-       ++i)
+  BOOST_FOREACH (urbi::UGenericCallback* i, internalAccessBinder)
   {
     urbi::UList l;
-    if ((*i)->storage)
+    if (i->storage)
     {
       // monitor with &UVar reference
       urbi::UValue *v = new urbi::UValue();
-      v->storage = (*i)->storage;
+      v->storage = i->storage;
       l.array.push_back(v);
     }
-    (*i)->__evalcall(l);
+    i->__evalcall(l);
   }
 
   return value;
@@ -466,38 +464,33 @@ UVariable::updated(bool )
     return;
 
   if (binder)
-    for (std::list<UMonitor*>::iterator i = binder->monitors.begin();
-	 i != binder->monitors.end();
-	 ++i)
-      {
-	*((*i)->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-	*((*i)->c) << UConnection::sendc((const ubyte*)"[1,\"", 4);
-	*((*i)->c) << UConnection::sendc((const ubyte*)varname.c_str(), varname.length());
-	*((*i)->c) << UConnection::sendc((const ubyte*)"\",", 2);
-	value->echo((*i)->c);
-	*((*i)->c) << UConnection::send((const ubyte*)"]\n", 2);
-      }
+    BOOST_FOREACH (UMonitor* i, binder->monitors)
+    {
+      *(i->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+      *(i->c) << UConnection::sendc((const ubyte*)"[1,\"", 4);
+      *(i->c) << UConnection::sendc((const ubyte*)varname.c_str(), varname.length());
+      *(i->c) << UConnection::sendc((const ubyte*)"\",", 2);
+      value->echo(i->c);
+      *(i->c) << UConnection::send((const ubyte*)"]\n", 2);
+    }
 
-  for (std::list<urbi::UGenericCallback*>::iterator i =
-       internalBinder.begin();
-       i != internalBinder.end();
-       ++i)
+  BOOST_FOREACH (urbi::UGenericCallback* i, internalBinder)
   {
     // handled better otherwise
 //     if (!uvar_assign
-//         || (*i)->objname != devicename->str ())
+//         || i->objname != devicename->str ())
     {
       urbi::UList tmparray;
 
-      if ((*i)->storage)
+      if (i->storage)
       {
 	// monitor with &UVar reference
 	urbi::UValue *tmpvalue = new urbi::UValue();
-	tmpvalue->storage = (*i)->storage;
+	tmpvalue->storage = i->storage;
 	tmparray.array.push_back(tmpvalue);
       };
 
-      (*i)->__evalcall(tmparray);
+      i->__evalcall(tmparray);
     }
   }
 }
@@ -541,21 +534,18 @@ void UVariable::setTarget() {
   else
     callbacks = &internalTargetBinder;
 
-  for (std::list<urbi::UGenericCallback*>::iterator i =
-       callbacks->begin();
-       i != callbacks->end();
-       ++i)
+  BOOST_FOREACH (urbi::UGenericCallback* i, *callbacks)
   {
     urbi::UList tmparray;
 
-    if ((*i)->storage)
+    if (i->storage)
     {
       // monitor with &UVar reference
       urbi::UValue *tmpvalue = new urbi::UValue();
-      tmpvalue->storage = (*i)->storage;
+      tmpvalue->storage = i->storage;
       tmparray.array.push_back(tmpvalue);
     };
 
-    (*i)->__evalcall(tmparray);
+    i->__evalcall(tmparray);
   }
 }

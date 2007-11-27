@@ -29,6 +29,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include <boost/foreach.hpp>
 #include <boost/thread.hpp>
 
 #include <boost/foreach.hpp>
@@ -188,17 +190,13 @@ UServer::initialize()
   // Plugins (internal components)
   {
     DEBUG (("Loading objecthubs..."));
-    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	 i != urbi::objecthublist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+    BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+      i->init(i->name);
     DEBUG (("done\n"));
 
     DEBUG (("Loading hubs..."));
-    for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-	 i != urbi::objectlist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+    BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+      i->init(i->name);
     DEBUG (("done\n"));
   }
 
@@ -277,23 +275,19 @@ UServer::work ()
 void
 UServer::work_exec_timers_ ()
 {
-  for (urbi::UTimerTable::iterator i = urbi::timermap->begin();
-       i != urbi::timermap->end();
-       ++i)
-    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
+  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::timermap)
+    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
     {
-      (*i)->call();
-      (*i)->lastTimeCalled = currentTime;
+      i->call();
+      i->lastTimeCalled = currentTime;
     }
 }
 
 void
 UServer::work_access_and_change_ ()
 {
-  for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
-       i != access_and_change_varlist.end ();
-       ++i)
-    (*i)->get ();
+  BOOST_FOREACH (UVariable* i, access_and_change_varlist)
+    i->get ();
 }
 
 void
@@ -417,13 +411,11 @@ UServer::work_blend_values_ ()
 void
 UServer::work_execute_hub_updater_ ()
 {
-  for (urbi::UTimerTable::iterator i = urbi::updatemap->begin();
-       i != urbi::updatemap->end();
-       ++i)
-    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
+  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::updatemap)
+    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
     {
-      (*i)->call();
-      (*i)->lastTimeCalled = currentTime;
+      i->call();
+      i->lastTimeCalled = currentTime;
     }
 }
 
@@ -481,10 +473,8 @@ UServer::work_reset_if_needed_ ()
 	  ++it;
 
     //delete hubs
-    for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	 i != urbi::objecthublist->end();
-	 ++i)
-      delete (*i)->getUObjectHub ();
+    BOOST_FOREACH (urbi::baseURBIStarterHub* hub, *urbi::objecthublist)
+      delete hub->getUObjectHub ();
 
     //delete the rest
     for (HMvariabletab::iterator i = variabletab.begin();
@@ -512,10 +502,8 @@ UServer::work_reset_if_needed_ ()
         (**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
 
     //restart uobjects
-    for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-	 i != urbi::objectlist->end();
-	 ++i)
-      (*i)->init((*i)->name);
+    BOOST_FOREACH (baseURBIStarter& starter, *objectlist)
+      starter->init(starter->name);
 
     //reload URBI.INI
     loadFile("URBI.INI", &ghost_->recvQueue());
@@ -759,6 +747,7 @@ UServer::getCustomHeader (int, char* header, int)
   header[0] = 0; // empty string
 }
 
+
 //! Get a variable in the hash table
 UVariable*
 UServer::getVariable (const std::string& device,
@@ -785,16 +774,12 @@ void
 UServer::mark(TagInfo* /*ti*/)
 {
 #if 0
-  for (std::list<UCommand*>::iterator i = ti->commands.begin();
-      i != ti->commands.end();
-      ++i)
-    if ((*i)->status != UCommand::UONQUEUE || (*i)->morphed)
-      (*i)->toDelete = true;
+  BOOST_FOREACH(UCommand* i, ti->commands)
+    if (i->status != UCommand::UONQUEUE || i->morphed)
+      i->toDelete = true;
 
-  for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
-       i != ti->subTags.end();
-       ++i)
-    mark(*i);
+  BOOST_FOREACH (TagInfo* i, ti->subTags)
+    mark(i);
 #endif
 }
 

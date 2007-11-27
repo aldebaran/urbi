@@ -29,6 +29,7 @@
 #include <iomanip>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 #include "libport/ref-pt.hh"
 
@@ -129,10 +130,8 @@ UConnection::~UConnection ()
     if (i->second->removeMonitor(this))
       deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    ::urbiserver->getFunctionBinderTab ().erase(*i);
+  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+      ::urbiserver->getFunctionBinderTab ().erase(i);
   deletelist.clear();
 
   for (HMbindertab::iterator i = ::urbiserver->getEventBinderTab ().begin();
@@ -141,10 +140,8 @@ UConnection::~UConnection ()
     if (i->second->removeMonitor(this))
       deletelist.push_back(i);
 
-  for (std::list<HMbindertab::iterator>::iterator i = deletelist.begin();
-       i != deletelist.end();
-       ++i)
-    ::urbiserver->getEventBinderTab ().erase(*i);
+  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
+    ::urbiserver->getEventBinderTab ().erase(i);
   deletelist.clear();
 
   delete parser_;
