@@ -21,6 +21,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include "libport/config.h"
 #include "libport/cstring"
 #include "libport/cstdio"
 #include <cassert>
@@ -487,7 +488,7 @@ UConnection::block ()
 UConnection&
 UConnection::continueSend ()
 {
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
 # endif
   blocked_ = false;	    // continueSend unblocks the connection.
@@ -533,15 +534,21 @@ UConnection::received_ (const ubyte *buffer, int length)
 {
   PING();
 
+#if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock serverLock(server->mutex);
+#endif
   UErrorValue result = UFAIL;
   {
     // Lock the connection.
+#if ! defined LIBPORT_URBI_ENV_AIBO
     boost::mutex::scoped_lock lock(mutex_);
+#endif
     result = recvQueue_->push(buffer, length);
   }
 
+#if ! defined LIBPORT_URBI_ENV_AIBO
   boost::try_mutex::scoped_try_lock treeLock(treeMutex, false);
+#endif
 
   PING();
   if (result != USUCCESS)
@@ -555,7 +562,9 @@ UConnection::received_ (const ubyte *buffer, int length)
     CONN_ERR_RET(result);
   }
 
+#if ! defined LIBPORT_URBI_ENV_AIBO
   if (!treeLock.try_lock())
+#endif
   {
     newDataAdded = true; //server will call us again right after work
     CONN_ERR_RET(USUCCESS);
@@ -569,7 +578,9 @@ UConnection::received_ (const ubyte *buffer, int length)
     pabort ("SHOULD NEVER BE HERE");
     PING();
     //reentrency trouble
+#if ! defined LIBPORT_URBI_ENV_AIBO
     treeLock.unlock();
+#endif
     CONN_ERR_RET(USUCCESS);
   }
 
@@ -650,7 +661,9 @@ UConnection::received_ (const ubyte *buffer, int length)
 
   receiving = false;
   p.command_tree_set (0);
+#if ! defined LIBPORT_URBI_ENV_AIBO
   treeLock.unlock();
+#endif
 
   CONN_ERR_RET(USUCCESS);
 }

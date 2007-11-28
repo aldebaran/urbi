@@ -21,6 +21,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include "libport/config.h"
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
@@ -31,7 +32,9 @@
 #include <string>
 
 #include <boost/foreach.hpp>
-#include <boost/thread.hpp>
+#if ! defined LIBPORT_URBI_ENV_AIBO
+# include <boost/thread.hpp>
+#endif
 
 #include <boost/foreach.hpp>
 
@@ -242,7 +245,7 @@ UServer::afterWork ()
 void
 UServer::work ()
 {
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);
 # endif
   // CPU Overload test
@@ -325,7 +328,7 @@ UServer::work_handle_connections_ ()
 	c->obstructed = true; // will be changed to 'false'
         {
           //if the whole tree is visited
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
           boost::try_mutex::scoped_lock((*c)->treeMutex);
 # endif
           c->inwork = true;   // to distinguish this call of

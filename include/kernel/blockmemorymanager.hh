@@ -7,7 +7,8 @@
 #ifndef BLOCKMEMORYMANAGER_HH
 # define BLOCKMEMORYMANAGER_HH
 
-# if ! defined URBI_ENV_AIBO
+# include "libport/config.h"
+# if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
 
@@ -50,7 +51,7 @@ class BlockPool
   size_t size;
   size_t itemSize;
 
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex;
 # endif
 };

@@ -24,7 +24,9 @@
 
 # include <cstdarg>
 # include <iomanip>
-# if ! defined URBI_ENV_AIBO
+
+# include "libport/config.h"
+# if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
 # include <boost/shared_ptr.hpp>
@@ -440,7 +442,7 @@ public:
   /// Return the UParser we use.
   UParser& parser (); // OK : accessor
 
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   /// Lock access to command tree.
   boost::try_mutex treeMutex;
 # endif
@@ -501,7 +503,7 @@ private:
   /// This is this connection, wrapped into an Urbi object.
   object::rContext context_;
 
-# if ! defined URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;
 # endif
 };

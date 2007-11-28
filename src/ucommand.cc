@@ -3177,19 +3177,17 @@ UCommand_GROUP::execute_(UConnection *connection)
   // full query
   if (!id)
   {
-    for (HMgrouptab::iterator i = connection->server->getGroupTab ().begin();
-	 i != connection->server->getGroupTab ().end();
-	 ++i)
+    BOOST_FOREACH (HMgrouptab::value_type i, connection->server->getGroupTab ())
     {
       std::ostringstream o;
-      o << "*** " << i->first << " = {";
+      o << "*** " << i.first << " = {";
 
-      for (std::list<UString*>::iterator it = i->second->members.begin();
-	   it !=  i->second->members.end(); )
+      for (std::list<UString*>::iterator it = i.second->members.begin();
+	   it !=  i.second->members.end(); )
       {
 	o << (*it)->c_str();
 	++it;
-	if (it != i->second->members.end())
+	if (it != i.second->members.end())
 	  o << ',';
       }
       o << "}\n";
@@ -4018,15 +4016,11 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "functions")
   {
-    for (HMfunctiontab::iterator i =
-	   connection->server->getFunctionTab ().begin();
-	 i != connection->server->getFunctionTab ().end();
-	 ++i)
+      BOOST_FOREACH (HMfunctiontab::value_type i, connection->server->getFunctionTab ())
     {
       std::ostringstream o;
-      o << "*** " << i->second->name().c_str() << " ["
-	<< i->second->nbparam() << ']';
-      o << '\n';
+      o << "*** " << i.second->name() << " [" << i.second->nbparam() << ']'
+	<< '\n';
       *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
     return UCOMPLETED;
@@ -4034,28 +4028,24 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "vars")
   {
-    for (HMvariabletab::iterator i =
-	   connection->server->getVariableTab ().begin();
-	 i != connection->server->getVariableTab ().end();
-	 ++i)
+    BOOST_FOREACH (HMvariabletab::value_type i, connection->server->getVariableTab ())
     {
-
       std::ostringstream o;
-      o << "*** " <<  i->second->getVarname() << " = ";
-      switch (i->second->value->dataType)
+      o << "*** " <<  i.second->getVarname() << " = ";
+      switch (i.second->value->dataType)
       {
 	case DATA_NUM:
-	  o << i->second->value->val;
+	  o << i.second->value->val;
 	  break;
 
 	case DATA_STRING:
-	  o << i->second->value->str->c_str();
+	  o << i.second->value->str->c_str();
 	  break;
 
 	case DATA_BINARY:
 	  o << "BIN ";
-	  if (i->second->value->refBinary)
-	    o << i->second->value->refBinary->ref()->bufferSize;
+	  if (i.second->value->refBinary)
+	    o << i.second->value->refBinary->ref()->bufferSize;
 	  else
 	    o << "0 null";
 	  break;
@@ -4084,14 +4074,11 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "events")
   {
-    for (HMemittab::iterator i =
-	   connection->server->emittab.begin();
-	 i != connection->server->emittab.end();
-	 ++i)
+    BOOST_FOREACH (HMemittab::value_type i, connection->server->emittab)
     {
       std::ostringstream o;
-      o << "*** " << i->second->unforgedName->c_str() << "["
-	<<  i->second->nbarg () << "]\n";
+      o << "*** " << i.second->unforgedName << "["
+	<<  i.second->nbarg () << "]\n";
       *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
 
@@ -4130,34 +4117,32 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "uservars")
   {
-    for (HMvariabletab::iterator i = connection->server->getVariableTab ().begin();
-	 i != connection->server->getVariableTab ().end();
-	 ++i)
+    BOOST_FOREACH (HMvariabletab::value_type i, connection->server->getVariableTab ())
     {
-      if (i->second->uservar)
+      if (i.second->uservar)
       {
 	std::ostringstream o;
-	o << "*** " << i->second->getVarname() << " = ";
-	switch (i->second->value->dataType)
+	o << "*** " << i.second->getVarname() << " = ";
+	switch (i.second->value->dataType)
 	{
 	  case DATA_NUM:
-	    o << i->second->value->val;
+	    o << i.second->value->val;
 	    break;
 
 	  case DATA_STRING:
-	    o << i->second->value->str->c_str();
+	    o << i.second->value->str->c_str();
 	    break;
 
 	  case DATA_BINARY:
 	    o << "BIN ";
-	    if (i->second->value->refBinary)
-	      o << i->second->value->refBinary->ref()->bufferSize;
+	    if (i.second->value->refBinary)
+	      o << i.second->value->refBinary->ref()->bufferSize;
 	    else
 	      o << "0 null";
 	    break;
 
 	  case DATA_OBJ:
-	    o << "OBJ " << i->second->value->str->c_str();
+	    o << "OBJ " << i.second->value->str->c_str();
 	    break;
 
 	  default:
@@ -4771,13 +4756,10 @@ UCommand_DEF::execute_(UConnection *connection)
   // Def list query
   if (!variablename && !command && !parameters && !variablelist)
   {
-    for (HMfunctiontab::iterator i =
-	   connection->server->getFunctionTab ().begin();
-	 i != connection->server->getFunctionTab ().end();
-	 ++i)
-      *connection << UConnection::sendf (getTag(), "*** %s : %d param(s)\n",
-                                         i->second->name().c_str(),
-                                         i->second->nbparam());
+      BOOST_FOREACH (HMfunctiontab::value_type i, connection->server->getFunctionTab ())
+        *connection << UConnection::sendf (getTag(), "*** %s : %d param(s)\n",
+                                           i.second->name().c_str(),
+                                           i.second->nbparam());
     return UCOMPLETED;
   }
 
@@ -5534,14 +5516,13 @@ UCommand_AT::execute_(UConnection *connection)
       bool ok = false;
       // FIXME: weird enough: we don't use break (which seems to mean
       // that we can find *i several times), but we free it though.
-      for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	   ic != candidates.end () && !ok;
-	   ++ic)
-	if ((*ic)->equal (i))
+      BOOST_FOREACH (UAtCandidate* ic, candidates)
+	if (ic->equal (i))
 	{
-	  (*ic)->visited ();
-	  ok = true;
+	  ic->visited ();
 	  delete i;
+	  ok = true;
+	  break;
 	}
 
       if (!ok)
@@ -5821,24 +5802,21 @@ UCommand_WHENEVER::execute_(UConnection *connection)
       mixlist = ec->mixing ();
     }
 
-    for (std::list<UMultiEventInstance*>::iterator i = mixlist.begin ();
-	 i != mixlist.end ();
-	 ++i)
+    BOOST_FOREACH (UMultiEventInstance* i, mixlist)
     {
       bool ok = false;
-      for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	   ic != candidates.end () && !ok;
-	   ++ic)
+      BOOST_FOREACH (UAtCandidate* ic, candidates)
       {
-	if ((*ic)->equal (*i))
+	if (ic->equal (i))
 	{
-	  (*ic)->visited ();
+	  ic->visited ();
+	  delete i;
 	  ok = true;
-	  delete *i;
+	  break;
 	}
       }
       if (!ok)
-	candidates.push_back (new UAtCandidate (currentTime + duration, *i));
+	candidates.push_back (new UAtCandidate (currentTime + duration, i));
     }
 
     //cleanup of candidates that do not appear anymore in the mixlist
@@ -5877,14 +5855,12 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     UCommand* assign = 0;
 
     // scan triggering candidates
-    for (std::list<UAtCandidate*>::iterator ic = candidates.begin ();
-	 ic != candidates.end ();
-	 ++ic)
+    BOOST_FOREACH (UAtCandidate* ic, candidates)
     {
       UCommand* assigncmd = 0;
-      if (!(*ic)->hasTriggered())
+      if (!ic->hasTriggered())
       {
-	if ((*ic)->trigger (currentTime, assigncmd))
+	if (ic->trigger (currentTime, assigncmd))
 	{
 	  trigger = true;
 	  if (assigncmd)
