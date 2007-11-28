@@ -525,7 +525,7 @@ ulist_append(const UValue& l, const UValue& r)
   UValue* res = l.copy ();
 
   if (!l.liststart)
-    res->liststart = new UValue (r);
+    res->liststart = r.copy ();
   else
   {
     UValue* end = res->liststart;
@@ -533,7 +533,7 @@ ulist_append(const UValue& l, const UValue& r)
     while (end->next)
       end = end->next;
 
-    end->next = new UValue (r);
+    end->next = r.copy ();
   }
   return res;
 }

@@ -1,3 +1,11 @@
+2007-11-28  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Use UValue::copy instead of default copy constructor.
+	* src/uvalue.cc: Here.
+	UValue::UValue (UValue&) does a shallow copy.
+	This led to double free on the str field in
+	ulist_append.
+
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
 	Less dependencies.
