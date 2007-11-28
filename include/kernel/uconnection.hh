@@ -24,7 +24,9 @@
 
 # include <cstdarg>
 # include <iomanip>
-# include <boost/thread.hpp>
+# if ! defined URBI_ENV_AIBO
+#  include <boost/thread.hpp>
+# endif
 # include <boost/shared_ptr.hpp>
 
 # include "kernel/fwd.hh"
@@ -438,8 +440,10 @@ public:
   /// Return the UParser we use.
   UParser& parser (); // OK : accessor
 
+# if ! defined URBI_ENV_AIBO
   /// Lock access to command tree.
   boost::try_mutex treeMutex;
+# endif
 
 private:
   /// Our parser.  A pointer to stop dependencies.
@@ -497,7 +501,9 @@ private:
   /// This is this connection, wrapped into an Urbi object.
   object::rContext context_;
 
+# if ! defined URBI_ENV_AIBO
   boost::mutex mutex_;
+# endif
 };
 
 # include "kernel/uconnection.hxx"

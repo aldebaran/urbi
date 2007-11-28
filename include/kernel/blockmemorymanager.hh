@@ -6,7 +6,11 @@
 
 #ifndef BLOCKMEMORYMANAGER_HH
 # define BLOCKMEMORYMANAGER_HH
-# include <boost/thread.hpp>
+
+# if ! defined URBI_ENV_AIBO
+#  include <boost/thread.hpp>
+# endif
+
 # define DEFAULT_BLOCK_SIZE 100
 
 /* The placement new is required on the Aibo to support
@@ -46,7 +50,9 @@ class BlockPool
   size_t size;
   size_t itemSize;
 
+# if ! defined URBI_ENV_AIBO
   boost::mutex mutex;
+# endif
 };
 
 void block_operator_delete(BlockPool* mempool, void* ptr);

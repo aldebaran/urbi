@@ -25,7 +25,9 @@
 
 # include <cstdarg>
 # include <sstream>
-# include <boost/thread.hpp>
+# if ! defined URBI_ENV_AIBO
+#  include <boost/thread.hpp>
+# endif
 
 # include "libport/compiler.hh"
 
@@ -373,8 +375,10 @@ public:
   /// Shows debug or not.
   bool debugOutput;
 
+# if ! defined URBI_ENV_AIBO
   /// Used to synchronize message reception.
   boost::recursive_mutex mutex;
+# endif
 
 private:
   /// Name of the main device.

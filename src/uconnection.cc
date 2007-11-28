@@ -487,7 +487,9 @@ UConnection::block ()
 UConnection&
 UConnection::continueSend ()
 {
+# if ! defined URBI_ENV_AIBO
   boost::mutex::scoped_lock lock(mutex_);
+# endif
   blocked_ = false;	    // continueSend unblocks the connection.
 
   int toSend = sendQueue_->dataSize(); // nb of bytes to send

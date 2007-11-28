@@ -6402,8 +6402,3 @@ void
 UCommand_NOOP::print_(unsigned) const
 {
 }
-
-const TagInfo* UCommand::tag_info_get () const
-{
-  return tagInfo;
-}

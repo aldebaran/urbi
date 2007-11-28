@@ -1,3 +1,16 @@
+2007-11-28  mefyl  <mefyl@gruntech.net>
+
+	merge -r 1782:1785 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-19  Akim Demaille  <demaille@gostai.com>
+	Fix error message.
+	* src/parser/bison/ugrammar.y: Report by JCB.
+
+	2007-10-19  Akim Demaille  <demaille@gostai.com>
+	Use threads only if !OPENR.
+	* include/kernel/blockmemorymanager.hh, include/kernel/uconnection.hh,
+	* include/kernel/userver.hh, src/uconnection.cc, src/userver.cc:
+	Do it.
+
 2007-11-27  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 1779:1782 https://svn.gostai.com/svn/kernel1/trunk
