@@ -18,6 +18,8 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "kernel/uasyncregister.hh"
 #include "uasynccommand.hh"
 
@@ -30,10 +32,8 @@ UASyncRegister::UASyncRegister ()
 
 UASyncRegister::~UASyncRegister()
 {
-  for (std::list<UASyncCommand*>::iterator i = register_.begin ();
-	i != register_.end ();
-	++i)
-    (*i)->registered_out (this);
+  BOOST_FOREACH (UASyncCommand* i, register_)
+    i->registered_out (this);
 }
 
 void
@@ -52,8 +52,6 @@ UASyncRegister::unregisterCmd(UASyncCommand* cmd)
 void
 UASyncRegister::updateRegisteredCmd ()
 {
-  for (std::list<UASyncCommand*>::iterator i = register_.begin ();
-	i != register_.end ();
-	++i)
-    (*i)->force_reeval ();
+  BOOST_FOREACH (UASyncCommand* i, register_)
+    i->force_reeval ();
 }

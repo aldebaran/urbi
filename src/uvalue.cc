@@ -23,6 +23,8 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/escape.hh"
 #include "libport/ref-pt.hh"
 
@@ -241,9 +243,9 @@ UValue::operator urbi::USound()
   snd.data=0;
   snd.size = snd.channels = snd.rate = 0;
   snd.soundFormat = urbi::SOUND_UNKNOWN;
-  if ((dataType != DATA_BINARY) ||
-      (!refBinary) ||
-      (!refBinary->ref()))
+  if (dataType != DATA_BINARY
+      || !refBinary
+      || !refBinary->ref())
     return snd;
   UNamedParameters *param = refBinary->ref()->parameters;
   if (!VALIDATE(param, DATA_STRING))
@@ -393,7 +395,7 @@ UValue::UValue(const urbi::UValue &v)
     next (0)
 {
   switch (v.type)
-    {
+  {
     case urbi::DATA_DOUBLE:
       dataType = DATA_NUM;
       this->val = v.val;
@@ -403,22 +405,20 @@ UValue::UValue(const urbi::UValue &v)
       this->str = new UString(v.stringValue->c_str());
       break;
     case urbi::DATA_LIST:
+    {
+      dataType = DATA_LIST;
+      UValue * current = this;
+      BOOST_FOREACH (urbi::UValue* i, v.list->array)
       {
-	dataType = DATA_LIST;
-	UValue * current = this;
-	for (std::vector<urbi::UValue *>::iterator i =
-	       v.list->array.begin();
-	     i != v.list->array.end(); ++i)
-	  {
-	    UValue *n = new UValue(**i);
-	    current->next = n;
-	    while (current->next)
-	      current = current->next;
-	  }
-	liststart = next;
-	next = 0;
+	UValue *n = new UValue(*i);
+	current->next = n;
+	while (current->next)
+	  current = current->next;
       }
-      break;
+      liststart = next;
+      next = 0;
+    }
+    break;
     case urbi::DATA_BINARY:
       *this = *v.binary;
       break;
@@ -427,7 +427,7 @@ UValue::UValue(const urbi::UValue &v)
       break;
     default:
       dataType = DATA_VOID;
-    }
+  }
 }
 
 //! UValue destructor.

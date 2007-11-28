@@ -18,6 +18,8 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
 #include "kernel/utypes.hh"
@@ -91,18 +93,15 @@ UEventMatch::findMatches_ ()
   if (!eventhandler_)
     return;
 
-  for (std::list<UEvent*>::iterator
-	 itevent = eventhandler_->eventlist().begin ();
-       itevent != eventhandler_->eventlist().end ();
-       ++itevent)
+  BOOST_FOREACH (UEvent* itevent, eventhandler_->eventlist())
   {
     bool ok = true;
     std::list<UValue*>::iterator
       ifilter_arg = filter_.begin (),
-      itevent_arg = (*itevent)->args().begin();
+      itevent_arg = itevent->args().begin();
 
     while (ifilter_arg != filter_.end ()
-	   && itevent_arg != (*itevent)->args().end ()
+	   && itevent_arg != itevent->args().end ()
 	   && ok)
     {
       if ((*ifilter_arg)->dataType != DATA_VARIABLE
@@ -114,7 +113,7 @@ UEventMatch::findMatches_ ()
     }
 
     if (ok)
-      matches_.push_back (*itevent);
+      matches_.push_back (itevent);
   }
 }
 

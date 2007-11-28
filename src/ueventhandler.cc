@@ -18,6 +18,8 @@
 
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
 #include "kernel/utypes.hh"
@@ -176,10 +178,8 @@ UEventHandler::addEvent(UEvent* e)
 bool
 UEventHandler::noPositive ()
 {
-  for (std::list<UEvent*>::iterator ie = eventlist_.begin ();
-       ie != eventlist_.end ();
-       ++ie)
-    if (!(*ie)->toDelete ())
+  BOOST_FOREACH (UEvent* ie, eventlist_)
+    if (!ie->toDelete ())
       return false;
 
   return true;

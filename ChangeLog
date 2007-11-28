@@ -1,5 +1,28 @@
 2007-11-28  mefyl  <mefyl@gruntech.net>
 
+	merge -r 1790:1795 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-19  Akim Demaille  <akim.demaille@free.fr>
+	Move implementation into hxx.
+	* src/ucommand.hh (operator<<): Move implementation to...
+	* src/ucommand.hxx: here.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	foreach.
+	* src/ueventinstance.cc, src/ueventmatch.cc, src/uobj.cc,
+	* src/uvalue.cc: here.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	foreach.
+	* src/uasynccommand.cc, src/uasyncregister.cc, src/uatcandidate.cc,
+	* src/ueventcompound.cc, src/ueventhandler.cc, src/ueventinstance.cc:
+	Use it.
+
+	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
+	Fix CPP typo.
+	* src/userver.cc: here.
+
+2007-11-28  mefyl  <mefyl@gruntech.net>
+
 	merge -r 1785:1790 https://svn.gostai.com/svn/kernel1/trunk
 	2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 	More aibo shielding.

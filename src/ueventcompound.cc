@@ -18,6 +18,8 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
 #include "kernel/userver.hh"
@@ -96,13 +98,11 @@ UEventCompound::mixing()
   switch (ectype_)
   {
     case EC_MATCH:
-      for (std::list<UEvent*>::iterator ievent = em_->matches ().begin ();
-	   ievent != em_->matches ().end ();
-	   ++ievent)
+      BOOST_FOREACH (UEvent* ievent, em_->matches ())
       {
 	UMultiEventInstance* mei;
 	ASSERT (mei = new UMultiEventInstance ()) {}
-	mei->addInstance (new UEventInstance (em_, (*ievent)));
+	mei->addInstance (new UEventInstance (em_, ievent));
 	result.push_back (mei);
       }
       return result;

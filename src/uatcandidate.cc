@@ -16,6 +16,8 @@
 
  **************************************************************************** */
 
+#include <boost/foreach.hpp>
+
 #include "kernel/uvalue.hh"
 
 #include "uatcandidate.hh"
@@ -53,14 +55,12 @@ UAtCandidate::trigger (ufloat currentTime, UCommand*& cmd)
   cmd = 0;
   hasTriggered_ = true;
 
-  for (std::list<UEventInstance*>::iterator i = mei_->instances_.begin ();
-       i != mei_->instances_.end ();
-       ++i)
+  BOOST_FOREACH (UEventInstance* i, mei_->instances_)
   {
     std::list<std::string>::iterator is;
     std::list<UValue*>::iterator iuv;
-    for (is = (*i)->filter_.begin (), iuv = (*i)->e_->args ().begin ();
-	 is != (*i)->filter_.end ();
+    for (is = i->filter_.begin (), iuv = i->e_->args ().begin ();
+	 is != i->filter_.end ();
 	 ++is, ++iuv)
       if (!is->empty())
       {

@@ -1198,6 +1198,7 @@ private:
 | Free standing functions.  |
 `--------------------------*/
 
+/// Report \a u on \o, for debugging.
 inline
 std::ostream&
 operator<<(std::ostream& o, const UCommand& u);
