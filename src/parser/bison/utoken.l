@@ -229,12 +229,12 @@ STRING   \"([^\"]|"\\\"")*\"
 "bin"           return token::TOK_BIN;
 "class"         return token::TOK_CLASS;
 "copy"          return token::TOK_COPY;
-"copy"{BLANKS}"("  return token::TOK_COPY_LPAREN;
+"copy"{BLANKS}*"("  return token::TOK_COPY_LPAREN;
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;
 "echo"          return token::TOK_ECHO;
-"echo"{BLANKS}"("  return token::TOK_ECHO_LPAREN;
+"echo"{BLANKS}*"("  return token::TOK_ECHO_LPAREN;
 "else"          return token::TOK_ELSE;
 "emit"          return token::TOK_EMIT;
 "event"         return token::TOK_EVENT;
