@@ -90,9 +90,6 @@ public:
   virtual ~UServer ();
 
 public:
-  static const std::string package_ver;
-  static const std::string package_rev;
-
   //! Initialization of the server. Displays the header message & init stuff
   /*! This function must be called once the server is operational and
    able to print messages. It is a requirement for URBI compliance to print
