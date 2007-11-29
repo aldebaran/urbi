@@ -960,10 +960,10 @@ UExpression::eval_FUNCTION_EVAL_OR_LOAD (UCommand* command,
 #endif
 
   if (connection->functionTag)
-    {
-      delete connection->functionTag;
-      connection->functionTag = 0;
-    }
+  {
+    delete connection->functionTag;
+    connection->functionTag = 0;
+  }
   ::urbiserver->setSystemCommand (true);
 
   PING();
@@ -971,17 +971,17 @@ UExpression::eval_FUNCTION_EVAL_OR_LOAD (UCommand* command,
   // FIXME: Errors and warning are already reported in UConnection.
   //        Are these two blocks dead-code?
   if (p.hasError())
+  {
+    // a parsing error occured
+    if (p.command_tree_get ())
     {
-      // a parsing error occured
-      if (p.command_tree_get ())
-	{
-	  // FIXME: 2007-07-20: Currently we can't free the commandTree,
-	  // we might kill function bodies.
-	  //delete p.commandTree;
-	  p.command_tree_set (0);
-	}
+      // FIXME: 2007-07-20: Currently we can't free the commandTree,
+      // we might kill function bodies.
+      //delete p.command_tree_get();
+      p.command_tree_set (0);
       *connection << UConnection::send(p.error_get ().c_str (), "error");
     }
+  }
 
   PING();
 
@@ -990,22 +990,22 @@ UExpression::eval_FUNCTION_EVAL_OR_LOAD (UCommand* command,
     *connection << UConnection::send(p.warning_get () .c_str (), "warn ");
 
   if (p.command_tree_get ())
-    {
+  {
 #if 0
-      command->morph = p.commandTree;
-      command->persistant = false;
+    command->morph = p.commandTree;
+    command->persistant = false;
 #endif
-      p.command_tree_set (0);
-    }
+    p.command_tree_set (0);
+  }
   else
-    {
-      send_error(connection, command, this,
-		 (in_load
-		  ? "Error loading file: %s"
-		  : "Error parsing string: %s"),
-		 e1->str->c_str());
-      return 0;
-    }
+  {
+    send_error(connection, command, this,
+	       (in_load
+		? "Error loading file: %s"
+		: "Error parsing string: %s"),
+	       e1->str->c_str());
+    return 0;
+  }
   PING();
 
   delete e1;

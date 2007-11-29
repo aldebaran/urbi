@@ -206,7 +206,7 @@ UServer::initialize()
   if (load_init_file("urbi.u") == USUCCESS)
   {
     ghost_->newDataAdded = true;
-    ghost_->recvQueue().push ("#__LINE__1\n");
+    ghost_->recvQueue().push ("#line 1\n");
   }
   load_init_file("URBI.INI");
 }
@@ -513,7 +513,7 @@ UServer::work_reset_if_needed_ ()
 
     //reload URBI.INI
     loadFile("URBI.INI", &ghost_->recvQueue());
-    ghost_->recvQueue().push ("#__LINE__1\n");
+    ghost_->recvQueue().push ("#line 1\n");
     char resetsignal[255];
     strcpy(resetsignal, "var __system__.resetsignal;");
     ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
@@ -529,7 +529,7 @@ UServer::work_reset_if_needed_ ()
       {
         (**i) << UConnection::send("*** Restart completed.\n", "reset");
         loadFile("CLIENT.INI", &(*i)->recvQueue());
-        (*i)->recvQueue().push ("#__LINE__1\n");
+        (*i)->recvQueue().push ("#line 1\n");
         (*i)->newDataAdded = true;
         (**i) << UConnection::send("*** Ready.\n", "reset");
       }

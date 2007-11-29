@@ -201,7 +201,7 @@ UConnection::initialize()
 	       customHeader);
 
   server->loadFile("CLIENT.INI", recvQueue_);
-  recvQueue_->push ("#__LINE__1\n");
+  recvQueue_->push ("#line 1\n");
   newDataAdded = true;
   return *this;
 }
@@ -722,7 +722,7 @@ UConnection::send_error (UErrorCode n)
 UConnection&
 UConnection::send_warning (UWarningCode n)
 {
-  const char*msg = message (UWARNINGCODE, n);
+  const char* msg = message (UWARNINGCODE, n);
   UErrorValue result = ((*this) << send(msg, "warning")).error ();
   if (result == USUCCESS)
   {

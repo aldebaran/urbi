@@ -27,6 +27,8 @@
 # include <cstdlib> // for getenv
 #endif
 
+#include <boost/lexical_cast.hpp>
+
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
@@ -99,7 +101,7 @@ typedef yy::parser::token token;
   } while(0);
 
 %}
-%option noyywrap
+%option noyywrap debug
 
 %x SC_C_COMMENT SC_STRING
 %s SC_UCONSOLE
@@ -114,6 +116,11 @@ STRING   \"([^\"]|"\\\"")*\"
 
 %%
 %{
+#ifndef NDEBUG
+  static bool first_run = true;
+  if (first_run)
+    yy_flex_debug = !!getenv("FLEX_DEBUG");
+#endif
   locp->step();
 
 #ifndef NDEBUG
@@ -136,19 +143,17 @@ STRING   \"([^\"]|"\\\"")*\"
   /*-----------------------------------.
   | Internal rules for generated code. |
   `-----------------------------------*/
-^"#"{BLANKS}?"line"{BLANKS}{NUMBER}{BLANKS}"\"".*"\""{EOL}	{
+^"#"{BLANKS}?"line"{BLANKS}{NUMBER}{BLANKS}"\"".*"\""{BLANKS}?{EOL}	{
+  std::string file = yytext;
 
-  std::string tmpname = yytext;
+  std::string line = file.substr (file.find_first_of ("0123456789"));
+  line = line.substr (0, line.find_first_not_of ("0123456789"));
 
-  std::string tmpline = tmpname.substr (tmpname.find_first_of ("0123456789"));
-  tmpline = tmpline.substr (0, tmpname.find_last_of ("0123456789"));
-  int linenb = atoi(tmpline.c_str ()) - 1;
+  file = file.substr (file.find_first_of ("\"") + 1);
+  file = file.substr (0, file.find_last_of ("\""));
 
-  tmpname = tmpname.substr (tmpname.find_first_of ("\"") + 1);
-  tmpname = tmpname.substr (0,tmpname.find_last_of ("\""));
-
-  locp->initialize (tmpname == "-" ? 0 : new libport::Symbol (tmpname));
-  locp->lines (linenb);
+  locp->initialize ((file == "-" || file == "") ? 0 : new libport::Symbol (file));
+  locp->lines (boost::lexical_cast<int>(line) - 1);
   locp->step ();
 }
 
