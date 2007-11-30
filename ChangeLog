@@ -1,3 +1,8 @@
+2007-11-30  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Improve regexps in r1952.
+	* src/parser/bison/utoken.l: Here.
+
 2007-11-29  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Allow "no space" style for "echo (expr)" and "copy (expr)".
