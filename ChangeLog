@@ -1,5 +1,11 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	Remove DumbConnection.
+	* src/uvalue.cc: here.
+	Used nowhere (not even in ucore-pc or liburbi-cpp).
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	Clean up.
 	* src/Makefile.am: here.
 

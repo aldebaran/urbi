@@ -130,27 +130,6 @@ UValue::operator urbi::UImage()
   return img;
 }
 
-class DumbConnection : public UConnection
-{
-public:
-  DumbConnection()
-    : UConnection(::urbiserver, 1000, 1000000, 1000, 1000, 1000)
-  {}
-  virtual UConnection& closeConnection ()
-  {
-    CONN_ERR_RET(USUCCESS);
-  }
-  char* getData()
-  {
-    return (char*) send_queue().virtualPop(send_queue().dataSize());
-  }
-protected:
-  virtual int effectiveSend (const ubyte*, int)
-  {
-    return 0;
-  }
-};
-
 UValue::operator urbi::UBinary()
 {
   //simplest way is to echo our bin headers and parse again
