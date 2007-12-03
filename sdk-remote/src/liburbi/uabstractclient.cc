@@ -1091,7 +1091,8 @@ namespace urbi
     {
       //system message
       type = MESSAGE_SYSTEM;
-      this->message = (std::string)(message+4);
+      if (strlen(message) >= 4)
+	this->message = (std::string)(message+4);
       return;
     }
 
@@ -1099,7 +1100,8 @@ namespace urbi
     {
       //error message
       type = MESSAGE_ERROR;
-      this->message = (std::string)(message+4);
+      if (strlen(message) >= 4)
+	this->message = (std::string)(message+4);
       return;
     }
 

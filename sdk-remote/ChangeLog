@@ -1,3 +1,8 @@
+2007-12-03  Matthieu Nottale  <nottale@gostai.com>
+
+	Handle short system and error messages.
+	* src/liburbi/uabstractclient.cc: Here.
+
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
 	Accept extended floats.
