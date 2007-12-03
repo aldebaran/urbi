@@ -1,5 +1,15 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	UValue cleanup.
+	* src/uvalue.cc: Use boost::foreach and lexical_cast.
+	(ulist_last): New.
+	Use it.
+	Factor a bit.
+	(VALIDATE): Group definition, use and undefinition.
+	Use '' for single characters.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	More type.
 	* include/kernel/utypes.hh: Give access to the type of
 	the map values.

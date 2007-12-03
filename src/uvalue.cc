@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "libport/escape.hh"
 #include "libport/ref-pt.hh"
@@ -89,14 +90,12 @@ UValue::UValue(UDataType t, const char* s)
   ADDOBJ(UValue);
 }
 
-#define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
-
 inline int exprToInt(UExpression *e)
 {
   if (e->dataType == DATA_NUM)
     return (int)e->val;
   else
-    return strtol(e->str->c_str(), 0, 0);
+    return boost::lexical_cast<int>(e->str);
 }
 
 UValue::operator urbi::UImage()
@@ -163,9 +162,9 @@ UValue::operator urbi::UBinary()
     if (param->expression)
     {
       if (param->expression->dataType == ::DATA_NUM)
-	msg<< " "<<(int)param->expression->val;
+	msg << ' ' << (int)param->expression->val;
       else if (param->expression->dataType == ::DATA_STRING)
-	msg << " "<<param->expression->str->c_str();
+	msg << ' '<< param->expression->str->c_str();
     }
     param = param->next;
   }
@@ -191,9 +190,9 @@ UValue::operator urbi::UBinary*()
     if (param->expression)
     {
       if (param->expression->dataType == ::DATA_NUM)
-	msg<< " "<<(int)param->expression->val;
+	msg<< ' '<<(int)param->expression->val;
       else if (param->expression->dataType == ::DATA_STRING)
-	msg << " "<<param->expression->str->c_str();
+	msg << ' '<<param->expression->str->c_str();
     }
     param = param->next;
   }
@@ -252,8 +251,12 @@ UValue::operator urbi::USound()
       || !refBinary->ref())
     return snd;
   UNamedParameters *param = refBinary->ref()->parameters;
+
+#define VALIDATE(p, t) (p && p->expression && p->expression->dataType==t)
   if (!VALIDATE(param, DATA_STRING))
     return snd;
+#undef VALIDATE
+
 
   bool decoded = false;
   if (!param->expression->str)
@@ -301,8 +304,6 @@ UValue::operator urbi::USound()
 
   return snd;
 }
-
-#undef VALIDATE
 
 
 UValue & UValue::operator = (const urbi::USound &i)
@@ -378,13 +379,14 @@ UValue & UValue::operator = (const urbi::UBinary &b)
   return *this;
 }
 
-UValue & UValue::operator = (const urbi::UList &l)
+UValue&
+UValue::operator = (const urbi::UList &l)
 {
   if (dataType == DATA_BINARY && refBinary)
   {
     LIBERATE(refBinary);
   }
-  UValue * current = 0;
+  UValue* current = 0;
   if (dataType == DATA_LIST)
     delete liststart;
   liststart = 0;
@@ -518,6 +520,18 @@ UValue::copy() const
   pabort ("Impossible");
 }
 
+inline
+UValue*
+ulist_last(const UValue* l)
+{
+  assert (l);
+  assert (l->liststart);
+  UValue* res = l->liststart;
+  while (res->next)
+    res = res->next;
+  return res;
+}
+
 //! Add an item to a list.
 static UValue*
 ulist_append(const UValue& l, const UValue& r)
@@ -527,14 +541,7 @@ ulist_append(const UValue& l, const UValue& r)
   if (!l.liststart)
     res->liststart = r.copy ();
   else
-  {
-    UValue* end = res->liststart;
-
-    while (end->next)
-      end = end->next;
-
-    end->next = r.copy ();
-  }
+    ulist_last(res)->next = r.copy ();
   return res;
 }
 
@@ -548,13 +555,8 @@ ulist_concat(const UValue& l, const UValue& r)
   if (!l.liststart)
     return r.copy();
 
-  UValue* end = res->liststart;
-
-  while (end->next)
-    end = end->next;
-
   UValue* rc = r.copy ();
-  end->next = rc->liststart;
+  ulist_last(res)->next = rc->liststart;
   rc->liststart = 0;
   delete rc;
   return res;
@@ -779,42 +781,33 @@ UValue::echo(bool hr)
       std::ostringstream o;
       o << "OBJ [";
       bool first = true;
-      for (HMvariabletab::iterator it = ::urbiserver->variabletab.begin();
-	   it != ::urbiserver->variabletab.end();
-	   ++it)
-	if (!it->second->getMethod().empty()
+      BOOST_FOREACH (HMvariable_type i, ::urbiserver->variabletab)
+	if (!i.second->getMethod().empty()
 	    && str
-	    && it->second->value->dataType != DATA_OBJ
-	    && it->second->getDevicename() == (std::string)str->c_str())
+	    && i.second->value->dataType != DATA_OBJ
+	    && i.second->getDevicename() == (std::string)str->c_str())
 	{
 	  if (!first)
-	    o << ",";
+	    o << ',';
 	  first = false;
-	  o << it->second->getMethod()<< ":";
+	  o << i.second->getMethod()<< ':';
 
 	  // FIXME: It's better be non null!!!	Look at the if above,
 	  // it assumes it is not.
-	  if (it->second->value)
-	    o << it->second->value->echo(hr);
+	  if (i.second->value)
+	    o << i.second->value->echo(hr);
 	}
-      o << "]";
+      o << ']';
       return o.str();
     }
 
     case DATA_LIST:
     {
       std::ostringstream o;
-      o << "[";
-
-      UValue *scanlist = liststart;
-      while (scanlist)
-      {
-	o << scanlist->echo(hr);
-	scanlist = scanlist->next;
-	if (scanlist)
-	  o << ",";
-      }
-      o << "]";
+      o << '[';
+      for (UValue *i = liststart; i; i = i->next)
+	o << i->echo(hr) << (i->next ? "," : "");
+      o << ']';
 
       return o.str();
     }
@@ -825,15 +818,18 @@ UValue::echo(bool hr)
       sprintf(dv,"%f",(float)val);
       return std::string(dv);
     }
+//      return boost::lexical_cast<std::string>((float)val);
 
     case DATA_STRING:
     {
-      std::ostringstream o;
       if (!hr)
-	o << "\"" << libport::escape(str->c_str()) << "\"";
+      {
+	std::ostringstream o;
+	o << '\"' << libport::escape(str->str()) << '\"';
+	return o.str();
+      }
       else
-	o << str->c_str();
-      return o.str();
+	return str->str();
     }
 
     case DATA_BINARY:
@@ -846,7 +842,7 @@ UValue::echo(bool hr)
 
       UNamedParameters *param = refBinary->ref()->parameters;
       if (param)
-	o << " ";
+	o << ' ';
 
       while (param)
       {
@@ -858,13 +854,13 @@ UValue::echo(bool hr)
 	    o << param->expression->str->c_str();
 	}
 	if (param->next)
-	  o << " ";
+	  o << ' ';
 	param = param->next;
       }
 
       if (!hr)
       {
-	o << "\n";
+	o << '\n';
 
 	/* FIXME
 	 if (connection->availableSendQueue() >
