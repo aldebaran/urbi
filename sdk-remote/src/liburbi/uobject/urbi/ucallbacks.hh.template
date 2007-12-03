@@ -70,7 +70,7 @@ namespace urbi
 		     const std::string& type,
 		     const std::string& name, UTable&);
     virtual ~UGenericCallback();
-    
+
     void registerCallback(UTable& t);
     std::string getName() { return name;};
 
@@ -113,18 +113,28 @@ namespace urbi
   class UTimerCallbackobj : public UTimerCallback
   {
   public:
-    UTimerCallbackobj(const std::string& objname,
-		      ufloat period, T* obj, int (T::*fun) (), UTimerTable &tt)
-      : UTimerCallback(objname, period,tt), obj(obj), fun(fun)
+# define MKUTimerCallBackObj(Const, IsConst)				\
+    UTimerCallbackobj(const std::string& objname,			\
+		      ufloat period, T* obj,				\
+		      int (T::*fun) () Const, UTimerTable &tt)		\
+      : UTimerCallback(objname, period,tt), obj(obj),			\
+	fun##Const(fun), is_const_ (IsConst)				\
     {}
+
+    MKUTimerCallBackObj (/**/, false);
+    MKUTimerCallBackObj (const, true);
+
+# undef MKUTimerCallBackObj
 
     virtual void call()
     {
-      ((*obj).*fun)();
+      (is_const_) ? ((*obj).*funconst)() : ((*obj).*fun)();
     }
   private:
     T* obj;
     int (T::*fun) ();
+    int (T::*funconst) () const;
+    bool is_const_;
   };
 
 
@@ -216,28 +226,39 @@ namespace urbi
   class UCallback%N% : public UGenericCallback
   {
     public:
-    UCallback%N%(const std::string& objname, const std::string& type,
-		 OBJ* obj,
-		 R (OBJ::*fun) (%%%,% P% %%),
-	       const std::string& funname, UTable &t, bool owned)
-      : UGenericCallback(objname, type, funname, %N%, t, owned),
-	obj(obj), fun(fun)
-    {
-      registerCallback(t);
+
+# define MKUCallBackNotifyCtr%N%(Const, IsConst)			\
+      UCallback%N%(const std::string& objname, const std::string& type,	\
+		   OBJ* obj,						\
+		   R (OBJ::*fun) (%%%,% P% %%) Const,			\
+		   const std::string& funname, UTable &t, bool owned)	\
+      : UGenericCallback(objname, type, funname, %N%, t, owned),	\
+      obj(obj), fun##Const(fun), is_const_ (IsConst)			\
+    {									\
+      registerCallback(t);						\
     }
+
+    MKUCallBackNotifyCtr%N% (/**/, false);
+    MKUCallBackNotifyCtr%N% (const, true);
+
+# undef MKUCallBackNotifyCtr%N%
 
     virtual UValue __evalcall(UList& param)
     {
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), ((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%);
+      res(), (is_const_) ?
+	((*obj).*funconst)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%) :
+	((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%);
       return res;
     }
 
     private:
     OBJ* obj;
     R (OBJ::*fun) (%%%,% P% %%);
+    R (OBJ::*funconst) (%%%,% P% %%) const;
+    bool is_const_;
   };
 
 #if 0
@@ -275,27 +296,40 @@ namespace urbi
   class UCallbacknotifyend%N% : public UGenericCallback
   {
     public:
-    UCallbacknotifyend%N%(const std::string& objname, const std::string& type,
-			  OBJ* obj,
-			  void (OBJ::*fun) (%%%,% P% %%),
-			  void (OBJ::*end)(),const std::string& funname,
-			  UTable &t)
-      : UGenericCallback(objname, type, funname,%N%, t, false),
-	obj(obj), fun(end)
-    {
-      registerCallback(t);
+
+# define MKUCallBackNotifyEndCtr%N%(FConst, EConst, IsConst)		\
+      UCallbacknotifyend%N%(const std::string& objname,			\
+			    const std::string& type,			\
+			    OBJ* obj,					\
+			    void (OBJ::*fun) (%%%,% P% %%) FConst,	\
+			    void (OBJ::*end)() EConst,			\
+			    const std::string& funname,			\
+			    UTable &t)					\
+      : UGenericCallback(objname, type, funname,%N%, t, false),		\
+      obj(obj), fun(end), is_const_(IsConst)				\
+    {									\
+      registerCallback(t);						\
     }
+
+    MKUCallBackNotifyEndCtr%N% (/**/, /**/, false);
+    MKUCallBackNotifyEndCtr%N% (/**/, const, true);
+    MKUCallBackNotifyEndCtr%N% (const ,/**/, false);
+    MKUCallBackNotifyEndCtr%N% (const, const, true);
+
+# undef MKUCallBackNotifyEndCtr%N%
 
     virtual UValue __evalcall(UList &)
     {
       UValue res;
-      res(), ((*obj).*fun)();
+      res(), (is_const_) ? ((*obj).*func)() : ((*obj).*fun)();
       return res;
     }
 
     private:
     OBJ* obj;
     void (OBJ::*fun) ();
+    void (OBJ::*func) ();
+    bool is_const_;
   };
 
 #if 0
@@ -378,16 +412,24 @@ namespace urbi
 #endif
 
   // callback creation for non void return type
-  template <class OBJ, class R%%, class P% %%>
-  UGenericCallback*
-  createUCallback(const std::string& objname, const std::string& type,
-		  OBJ* obj,
-		  R (OBJ::*fun) (%%%,% P% %%),
-		  const std::string& funname, UTable &t, bool owned)
-  {
-    return new UCallback%N%<OBJ,R%%, P% %%> (objname, type,obj,fun,funname,t,
-					     owned);
+
+# define MKUCreateCallBack%N%(Const)					\
+  template <class OBJ, class R%%, class P% %%>				\
+  UGenericCallback*							\
+  createUCallback(const std::string& objname, const std::string& type,	\
+		  OBJ* obj,						\
+		  R (OBJ::*fun) (%%%,% P% %%) Const,			\
+		  const std::string& funname, UTable &t, bool owned)	\
+  {									\
+    return new UCallback%N%<OBJ,R%%, P% %%> (objname, type, obj, fun,	\
+					     funname,t,			\
+					     owned);			\
   }
+
+  MKUCreateCallBack%N% (/**/);
+  MKUCreateCallBack%N% (const);
+
+# undef MKUCreateCallBack%N%
 
 #if 0
   // callback creation for void return type
@@ -404,17 +446,27 @@ namespace urbi
   }
 #endif
 
-  // special case for eventend notification
-  template <class OBJ%%, class P% %%>
-  UGenericCallback*
-  createUCallback(const std::string& objname, const std::string& type,
-		  OBJ* obj,
-		  void (OBJ::*fun) (%%%,% P% %%),
-		  void (OBJ::*end)(), const std::string& funname, UTable &t)
-  {
-    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,
-						    type,obj,fun,end,funname,t);
+  // Special case for eventend notification
+# define MKCreateUCallBackEnd%N%(FConst, EConst)			\
+  template <class OBJ%%, class P% %%>					\
+  UGenericCallback*							\
+  createUCallback(const std::string& objname, const std::string& type,	\
+		  OBJ* obj,						\
+		  void (OBJ::*fun) (%%%,% P% %%) FConst,		\
+		  void (OBJ::*end)() EConst,				\
+		  const std::string& funname, UTable &t)		\
+  {									\
+    return new UCallbacknotifyend%N%<OBJ%%, P% %%> (objname,		\
+						    type, obj, fun,	\
+						    end,funname,t);	\
   }
+
+  MKCreateUCallBackEnd%N% (/**/, /**/);
+  MKCreateUCallBackEnd%N% (/**/, const);
+  MKCreateUCallBackEnd%N% (const, /**/);
+  MKCreateUCallBackEnd%N% (const, const);
+
+# undef MKCreateUCallBackEnd%N%
 
   %%%%
 

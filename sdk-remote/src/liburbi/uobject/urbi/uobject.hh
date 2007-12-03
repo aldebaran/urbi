@@ -157,106 +157,82 @@ namespace urbi
     UObject(int);
     virtual ~UObject();
 
-    /// Calls the specified function each time the variable v is modified.
-    template <class T>
-    void UNotifyChange (UVar& v, int (T::*fun) ())
-    {
-      // This call registers both an UObject (say of type
-      // UObjectDerived), and a callback working on it (named here
-      // fun).  createUCallback wants both the object and the callback
-      // to have the same type, which is not the casem this is static
-      // type of the former is UObject (its runtime type is indeed
-      // UObjectDerived though), and the callback wants a
-      // UObjectDerived.  So we need a cast, until a more elegant way
-      // is found (e.g., using free standing functions instead of a
-      // member functions).
-      createUCallback(__name, "var",
-		      dynamic_cast<T*>(this),
-		      fun, v.get_name(), monitormap, v.owned);
+
+    // This call registers both an UObject (say of type
+    // UObjectDerived), and a callback working on it (named here
+    // fun).  createUCallback wants both the object and the callback
+    // to have the same type, which is not the casem this is static
+    // type of the former is UObject (its runtime type is indeed
+    // UObjectDerived though), and the callback wants a
+    // UObjectDerived.  So we need a cast, until a more elegant way
+    // is found (e.g., using free standing functions instead of a
+    // member functions).
+
+    // These macros provide the following callbacks :
+    // Notify
+    // Access    | const std::string& | int (T::*fun) ()            | const
+    // Change    | urbi::UVar&        | int (T::*fun) (urbi::UVar&) | non-const
+    // OnRequest |
+
+# define MakeNotify(Type, Notified, Arg, Const,				\
+		    TypeString, Name, Map, Owned,			\
+		    WithArg, StoreArg)					\
+    template <class T>							\
+    void UNotify##Type (Notified, int (T::*fun) (Arg) Const)		\
+    {									\
+      UGenericCallback* cb =						\
+	createUCallback (__name, TypeString,				\
+			 dynamic_cast<T*>(this),			\
+			 fun, Name, Map, Owned);			\
+      									\
+      if (WithArg && cb)						\
+	cb->storage = StoreArg;						\
     }
 
-    /// Calls the specified function each time the variable v is modified.
-    template <class T>
-    void UNotifyChange (UVar& v, int (T::*fun) (UVar&))
-    {
-      UGenericCallback* cb =
-	createUCallback(__name, "var",
-			dynamic_cast<T*>(this),
-			fun, v.get_name(), monitormap, v.owned);
-      if (cb)
-	cb->storage = &v;
-    }
+# define MakeMetaNotifyArg(Type, Notified, TypeString, Map, Owned,	\
+			   Name, StoreArg)				\
+    MakeNotify (Type, Notified, /**/, /**/,   TypeString, Name,		\
+		Map, Owned, false, StoreArg);				\
+	MakeNotify (Type, Notified, /**/, const,  TypeString, Name,	\
+		    Map, Owned, false, StoreArg);			\
+	MakeNotify (Type, Notified, UVar&, /**/,  TypeString, Name,	\
+		    Map, Owned, true, StoreArg);			\
+	MakeNotify (Type, Notified, UVar&, const, TypeString, Name,	\
+		    Map, Owned, true, StoreArg);
 
-    /// Calls the specified function when the variable value is updated on
+# define MakeMetaNotify(Type, TypeString, Map)				\
+    MakeMetaNotifyArg (Type, UVar& v, TypeString,			\
+		       Map, v.owned, v.get_name (), &v);		\
+	MakeMetaNotifyArg (Type, const std::string& name, TypeString,	\
+			   Map, false, name, new UVar(name));
+
+    /// Calls the specified Method each time the variable is access.
+    MakeMetaNotify (Access, "varaccess", accessmap);
+
+    /// Calls the specified Method each time the variable is modified.
+    MakeMetaNotify (Change, "var", monitormap);
+
+    /// Calls the specified Method when the variable value is updated on
     /// request by requestValue().
-    template <class T>
-    void UNotifyOnRequest (UVar& v, int (T::*fun) ())
-    {
-      createUCallback(__name, "var_onrequest",
-		      dynamic_cast<T*>(this),
-		      fun, v.get_name(), monitormap, v.owned);
-    }
+    MakeMetaNotify (OnRequest, "var_onrequest", monitormap);
 
-    /// Calls the specified function when the variable value is updated on
-    /// request by requestValue().
-    template <class T>
-    void UNotifyOnRequest (UVar& v, int (T::*fun) (UVar&))
-    {
-      UGenericCallback* cb =
-	createUCallback(__name, "var_onrequest",
-			dynamic_cast<T*>(this),
-			fun, v.get_name(), monitormap, v.owned);
-      if (cb)
-	cb->storage = &v;
-    }
-
-    /// Calls the specified function each time the variable v is read.
-    template <class T>
-    void UNotifyAccess (UVar& v, int (T::*fun) ())
-    {
-      createUCallback(__name, "varaccess",
-		      dynamic_cast<T*>(this),
-		      fun, v.get_name(), accessmap, v.owned);
-    }
-
-    /// Calls the specified function each time the variable v is read.
-    template <class T>
-    void UNotifyAccess (UVar& v, int (T::*fun) (UVar&))
-    {
-      UGenericCallback* cb =
-	createUCallback(__name, "varaccess",
-			dynamic_cast<T*>(this),
-			fun, v.get_name(), accessmap, v.owned);
-      if (cb)
-	cb->storage = &v;
-    }
-
-    /// Calls the specified function each time the variable v is modified.
-    template <class T>
-    void UNotifyChange (const std::string& name, int (T::*fun) ())
-    {
-      createUCallback(__name, "var",
-		      dynamic_cast<T*>(this), fun, name, monitormap);
-    }
-
-    /// Calls the specified function each time the variable v is modified.
-    template <class T>
-    void UNotifyChange (const std::string& name, int (T::*fun) (UVar&))
-    {
-      UGenericCallback* cb =
-	createUCallback(__name, "var",
-			dynamic_cast<T*>(this), fun, name, monitormap, false);
-      if (cb)
-	cb->storage = new UVar(name);
-    }
+# undef MakeNotify
+# undef MakeMetaNotifyArg
+# undef MakeMEtaNotify
 
     /// Set a timer that will call tune 'fun' function every 't' milliseconds.
-    template <class T>
-    void USetTimer(ufloat t, int (T::*fun) ())
-    {
-      new UTimerCallbackobj<T> (__name, t,
-				dynamic_cast<T*>(this), fun, timermap);
+# define MKUSetTimer(Const)						\
+    template <class T>							\
+    void USetTimer(ufloat t, int (T::*fun) () Const)			\
+    {									\
+      new UTimerCallbackobj<T> (__name, t,				\
+				dynamic_cast<T*>(this), fun, timermap);	\
     }
+
+    MKUSetTimer (/**/);
+    MKUSetTimer (const);
+
+# undef MKUSetTimer
 
     /// Request permanent synchronization for v.
     void USync(UVar &v);

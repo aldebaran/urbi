@@ -1,3 +1,10 @@
+2007-12-03  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Add const version for UNotify* and  USetTimer.
+	Put everything in macros to prevent code duplication.
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template,
+	* src/liburbi/uobject/urbi/uobject.hh: Here.
+
 2007-12-03  Matthieu Nottale  <nottale@gostai.com>
 
 	Handle short system and error messages.
