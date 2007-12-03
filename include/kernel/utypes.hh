@@ -159,14 +159,35 @@ public:
 
 
 typedef libport::hash_map<const char*, UVariable*> HMvariabletab;
+typedef HMvariabletab::value_type HMvariable_type;
+
 typedef libport::hash_map<const char*, UFunction*> HMfunctiontab;
+typedef HMfunctiontab::value_type HMfunction_type;
+
 typedef libport::hash_map<const char*, UObj*> HMobjtab;
+typedef HMobjtab::value_type HMobj_type;
+
 typedef libport::hash_map<const char*, UGroup*> HMgrouptab;
+typedef HMgrouptab::value_type HMgroup_type;
+
 typedef libport::hash_map<const char*, UString*> HMaliastab;
+typedef HMaliastab::value_type HMalias_type;
+
 typedef libport::hash_map<const char*, UEventHandler*> HMemittab;
+typedef HMemittab::value_type HMemit_type;
+
 typedef libport::hash_map<const char*, int> HMemit2tab;
+typedef HMemit2tab::value_type HMemit2_type;
+
 typedef libport::hash_map<const char*, UBinder*> HMbindertab;
+typedef HMbindertab::value_type HMbinder_type;
+
 typedef libport::hash_map<const char*, UWaitCounter*> HMobjWaiting;
+typedef HMobjWaiting::value_type HMobjWait_type;
+
 typedef libport::hash_map<std::string, TagInfo> HMtagtab;
+// TagInfo is not defined yet, only fwd declared.  Cannot make the
+// following definition.
+// typedef HMtagtab::value_type HMtag_type;
 
 #endif
