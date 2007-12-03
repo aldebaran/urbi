@@ -384,7 +384,7 @@ STRING   \"([^\"]|"\\\"")*\"
      \\t	*valp->str += '\t';
      \\v	*valp->str += '\v';
      \\[\\""]   *valp->str += yytext[1];
-     \\.	up.error (*locp, "unrecognized escape");
+     \\.	up.error (*locp, "invalid escape");
 
 
      [^\"\n\r\\]+      valp->str->append (yytext, yyleng);

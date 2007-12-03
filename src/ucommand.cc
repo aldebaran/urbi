@@ -2326,10 +2326,23 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
     //use same output code as below (for the non-function case)
     if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
     {
-      if (ret->dataType != DATA_VOID)
+      //use same output code as below (for the non-function case)
+      if (is_channel_get() ||
+	  connection->stack.empty ())
+	// || tag_info_get() == TagInfo::notagTagInfo)
       {
-	*connection << UConnection::prefix(getTag().c_str());
-	ret->echo(connection);
+	if (ret->dataType != DATA_VOID)
+	{
+	  if (!is_channel_get())
+	    *connection << UConnection::prefix("notag");
+	  else
+	    *connection << UConnection::prefix(getTag().c_str());
+	  ret->echo(connection);
+	}
+	if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
+	  *connection << UConnection::endl;
+	else
+	  *connection << UConnection::flush;
       }
       if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
 	*connection << UConnection::endl;
@@ -2363,7 +2376,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	std::stringstream ss;
 	ss.str ("");
 	ss << o.str();
-	  validcmd = true;
+	  validcmd = true; //in case we have no parameters
 	for (UNamedParameters *pvalue = expression->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
@@ -2375,17 +2388,17 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	    ss << ",";
 	    ss << valparam->echo ();
 	  }
-	  else
-	    break;
-	  validcmd = true;
-	}
-	if (validcmd)
-	{
-	  ss << "]\n";
-	  // FIXME: This does not compile, I don't know why, and I (or you)
-	  // will find later.  It works in k1.5.
-	  // *j->c << UConnection::send (ss.str ().c_str (),
-	  //				      EXTERNAL_MESSAGE_TAG);
+
+	  if (validcmd)
+	  {
+	    ss << "]\n";
+	    // FIXME: This does not compile, I don't know why, and I (or you)
+	    // will find later.  It works in k1.5.
+	    //*j->c << UConnection::send (
+	    //	      reinterpret_cast<const ubyte *>(ss.str ().c_str ()),
+	    //	      ss.str().length(),
+	    //	      reinterpret_cast<const ubyte *>(EXTERNAL_MESSAGE_TAG));
+	  }
 	}
       }
     }
@@ -2433,11 +2446,16 @@ UCommand_EXPR::execute_(UConnection *connection)
   // It is unclear when a result is to be displayed.  For the time
   // being, in order to display results in the REPL, if the tag is
   // notag, display (but don't display the tag...)
-  if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
+  if (is_channel_get() ||
+      connection->stack.empty ())
+    // || tag_info_get() == TagInfo::notagTagInfo)
   {
     if (ret->dataType != DATA_VOID)
     {
-      *connection << UConnection::prefix(getTag().c_str());
+      if (!is_channel_get())
+	*connection << UConnection::prefix("notag");
+      else
+	*connection << UConnection::prefix(getTag().c_str());
       ret->echo(connection);
     }
     if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
@@ -2581,7 +2599,10 @@ UCommand_ECHO::execute_(UConnection *connection)
 
   if (!connectionTag)
   {
-    *connection << UConnection::sendc("*** ", getTag().c_str());
+    if (!is_channel_get())
+      *connection << UConnection::sendc("*** ", "notag");
+    else
+      *connection << UConnection::sendc("*** ", getTag().c_str());
     ret->echo(connection, true);
     *connection << UConnection::endl;
   }
@@ -2599,7 +2620,10 @@ UCommand_ECHO::execute_(UConnection *connection)
 		  && *connectionTag == "other")))
       {
 	ok = true;
-	*i << UConnection::sendc("*** ", getTag().c_str());
+	if (!is_channel_get())
+	  *i << UConnection::sendc("*** ", "notag");
+	else
+	  *i << UConnection::sendc("*** ", getTag().c_str());
 	ret->echo(i, true);
 	*i << UConnection::endl;
       }
@@ -3519,7 +3543,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
   if (*oper == "undef" || *oper == "delete")
   {
-    if (status != URUNNING)
+    //if (status != URUNNING)
     {
       variable = 0;
       fun = variablename->getFunction(this, connection);
@@ -3536,7 +3560,9 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 
       if (!fun && !variable)
       {
-	send_error(connection, this,
+	// if not found and URUNNING: someone else deleted it
+	if (status != URUNNING)
+	  send_error(connection, this,
 		   "identifier %s does not exist",
 		   fullname->c_str());
 	return UCOMPLETED;

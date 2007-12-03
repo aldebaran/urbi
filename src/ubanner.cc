@@ -13,8 +13,8 @@ const char* HEADER_BEFORE_CUSTOM[] =
   {
     "*** **********************************************************\n",
     "*** URBI Language specif 1.0 - "
-    "Copyright " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
-    "*** URBI Kernel version " PACKAGE_VERSION " rev." PACKAGE_REVISION "\n",
+    "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
+    "*** URBI Kernel version " PACKAGE_VERSION " rev. " PACKAGE_REVISION "\n",
     "***\n",
     0
   };
@@ -33,7 +33,8 @@ const char* HEADER_AFTER_CUSTOM[] =
 
 const char* uconsole_banner[] =
 {
-  "***      URBI Console " PACKAGE_VERSION_REV "\n",
-  "***      (C) 2006 Gostai SAS\n",
+  "***      URBI Kernel Console " PACKAGE_VERSION_REV "\n",
+  "***      "
+  "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
   ""
 };

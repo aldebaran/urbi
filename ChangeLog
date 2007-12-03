@@ -1,5 +1,51 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1882:1900 https://svn.gostai.com/svn/kernel1/trunk
+	2007-11-26  Akim Demaille  <demaille@gostai.com>
+	Fix copyright in the banner.
+	* src/ubanner.cc: here.
+
+	2007-11-25  Jean-Christophe Baillie  <baillie@gostai.com>
+	Fix type declaration position in ugrammar.y  
+	* src/parser/bison/ugrammar.y: put the declaration before the first
+	use.
+
+	2007-11-22  Guillaume Deslandes  <deslandes@gostai.com>
+	Do not create duplicate callbak if USetUpdate is called multiple times.
+	* src/uobject.cc: Here.
+	(UObject): Set period to -1 in default constructor.
+
+	2007-11-20  Matthieu Nottale  <nottale@gostai.com>
+	Adapt for internal UObject API change.
+	* src/uobject.cc: Add an empty UGenericCallback::registerCallback.
+
+	2007-11-15  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix tags and channels behavior, update tests.
+        The correct (cf Baillie) behavior is in 1.x/channels_tags.chk
+	* src/ucommand.cc: Here.
+
+	2007-11-13  Matthieu Nottale  <nottale@gostai.com>
+	Delete closed connection.
+	* src/uconnection.cc: Don't send anything to closed connection.
+	* src/userver.cc: At every call to work, scan connection list, and
+	  delete closed ones.
+
+	2007-11-13  Matthieu Nottale  <nottale@gostai.com>
+	Fix binary transmission in remote method call.
+	* src/ucommand.cc: Don't send message as c-string.
+
+	2007-11-12  Akim Demaille  <demaille@gostai.com>
+	Fix error message.
+	* src/parser/bison/utoken.l: s/unrecognized/invalid/.
+
+	2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+	Fix segfault when "delete a & delete a".
+	* src/ucommand.cc: When deleting a UVariable, recheck it
+	  during the phase2, and don't complain if it's not there.
+	* tests-local.mk: Remove corresponding test from XFAIL.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1847:1882 https://svn.gostai.com/svn/kernel1/trunk
 	2007-11-12  Guillaume Deslandes  <deslandes@gostai.com>
 	Restore var'n as a valid rvalue.

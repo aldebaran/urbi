@@ -186,6 +186,10 @@ namespace urbi
   {
   }
 
+  void
+  UGenericCallback::registerCallback(UTable&)
+  {
+  }
 
   // **************************************************************************
   //! UTimerCallbacl constructor.
@@ -226,6 +230,7 @@ namespace urbi
   {
     objecthub = 0;
     autogroup = false;
+    period = -1;
     lastUObject = this;
     UString tmps(__name.c_str()); // quelle merde ces UString!!!!
     UObj* tmpobj = new UObj(&tmps);
@@ -317,9 +322,28 @@ namespace urbi
   void
   UObject::USetUpdate(ufloat t)
   {
+    // Find previous update timer on this object
+    UTimerTable::iterator it = updatemap->begin ();
+    for (; it != updatemap->end () && (*it)->objname != __name; ++it)
+      ;
+
+    // Delete if found
+    if (it != updatemap->end ())
+    {
+      updatemap->erase (it);
+      delete (*it);
+    }
+
+    // Set period value
     period = t;
+    // Do nothing more if negative value given
+    if (period < 0)
+      return;
+
+    // Create callback
     new UTimerCallbackobj<UObject>(__name, t, this,
 				   &UObject::update, updatemap);
+    return;
   }
 
   int
@@ -342,9 +366,29 @@ namespace urbi
   void
   UObjectHub::USetUpdate(ufloat t)
   {
+    // Find previous update timer on this object
+    UTimerTable::iterator it = updatemap->begin ();
+    for (; it != updatemap->end () && (*it)->objname != name; ++it)
+      ;
+
+    // Delete if found
+    if (it != updatemap->end ())
+    {
+      updatemap->erase (it);
+      delete (*it);
+    }
+
+    // Set period value
     period = t;
+    // Do nothing more if negative value given
+    if (period < 0)
+      return;
+
+    // Create callback
     new UTimerCallbackobj<UObjectHub>(name, t, this,
-				      &UObjectHub::updateGlobal, updatemap);
+				      &UObjectHub::updateGlobal,
+				      updatemap);
+    return;
   }
 
   //! echo method
