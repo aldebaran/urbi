@@ -125,19 +125,7 @@ nodist_libkernel_la_SOURCES += $(libport_sources)
 EXTRA_DIST +=					\
 parser/uparser.hh
 
-# parser/bison.
-# This case is handled by parser/bison/bison.mk itself.
-
-
 urbiinclude_HEADERS = $(uobject_headers)
-
-## parserdir = $(kernelincludedir)/parser
-## parser_HEADERS = parser/uparser.hh
-## 
-## memorymanagerdir = $(kernelincludedir)/memorymanager
-## memorymanager_HEADERS =				\
-## memorymanager/blockmemorymanager.hh		\
-## memorymanager/memorymanager.hh
 
 
 ## ---------- ##
@@ -149,6 +137,3 @@ noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
 uconsole_LDADD = libkernel.la
 endif
-
-# Clean VC++ debug file. BTW, Do we want to install it?
-CLEANFILES += vc80.pdb

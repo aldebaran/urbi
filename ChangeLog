@@ -1,5 +1,10 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	Clean up.
+	* src/Makefile.am: here.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	1e2.
 	* src/parser/bison/utoken.l: Support the scientific notation.
 	* src/uvalue.cc: Stop using the fixed format.
