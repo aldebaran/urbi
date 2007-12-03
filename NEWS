@@ -16,6 +16,11 @@ New in 1.5
   of "code" to the channel "chan", and write "tag : code" to allow
   job control over "code".
 
+* Numbers
+  Numbers are no longer output in fixed format, hence 1+2*3 yields
+  7, no longer 7.000000.  Besides, so called "scientific notation"
+  is supported: "1e-5" stands for "0.00001" etc.
+
 New in 1.0
 
 * New keyword `taglist' displays the tags of currently running commands.

@@ -85,11 +85,11 @@ do {						\
 #define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
 #define RETURN_FLAGTIME(Value) RETURN_VAL_TOKEN(FLAGTIME, Value)
 
-#define RETURN_TIMEVALUE(Scale)				\
-do {							\
-  yytext[yyleng-1]=0;					\
-  valp->val = new ufloat(atof(yytext) * (Scale));	\
-  return token::TIMEVALUE;				\
+#define RETURN_TIMEVALUE(Scale)						\
+do {									\
+  yytext[yyleng-1] = 0;							\
+  valp->val = new ufloat(boost::lexical_cast<float>(yytext) * (Scale)); \
+  return token::TIMEVALUE;						\
 } while (0)
 
 // We matched an obsolete token, New is now preferered.  Unput it so
@@ -110,8 +110,13 @@ do {							\
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
+
 ID       [a-zA-Z_][_A-Za-z0-9]*
-NUMBER   (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+
+FRACTION (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+EXPONENT [eE][-+]?[0-9]+
+NUMBER   {FRACTION}{EXPONENT}?
+
 STRING   \"([^\"]|"\\\"")*\"
 
 %%
@@ -171,7 +176,7 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}"s"   RETURN_TIMEVALUE(1000);
 {NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIMEVALUE(1);
 
-{NUMBER}      { valp->val = new ufloat(atof(yytext));
+{NUMBER}      { valp->val = new ufloat(boost::lexical_cast<float>(yytext));
 		return token::NUM; }
 
 \"            valp->str = new std::string; BEGIN SC_STRING;

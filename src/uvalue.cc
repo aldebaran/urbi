@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include <boost/foreach.hpp>
+#include <boost/io/ios_state.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "libport/escape.hh"
