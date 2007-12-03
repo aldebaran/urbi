@@ -71,7 +71,7 @@ uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
-userver.cc userver-package-info.cc				\
+userver.cc							\
 ustring.cc							\
 uvalue.cc							\
 uvar.cc								\
@@ -109,7 +109,6 @@ include parser/parser.mk
 include object/object.mk
 include runner/runner.mk
 
-
 urbiinclude_HEADERS = $(uobject_headers)
 
 
@@ -122,6 +121,3 @@ noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
 uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la
 endif
-
-# Clean VC++ debug file. BTW, Do we want to install it?
-CLEANFILES += vc80.pdb

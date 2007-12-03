@@ -7,6 +7,7 @@
 # define OBJECT_ATOM_HXX
 
 # include <boost/foreach.hpp>
+# include <boost/lexical_cast.hpp>
 
 # include "libport/deref.hh"
 # include "libport/escape.hh"
@@ -164,8 +165,11 @@ namespace object
   std::ostream&
   Atom<float_traits>::print(std::ostream& out) const
   {
-    // FIXME: std::fixed leaks to every use of os.
-    out << std::fixed << value_get();
+    // FIXME: Get rid of this cast by setting the precision for
+    // streams to the same as used by lexical_cast (which is one more
+    // than the default value, and this results in different output bw
+    // 1.x and 2.x, a useless nuisance in the test suite.
+    out << boost::lexical_cast<std::string>((float) value_get());
     return out;
   }
 

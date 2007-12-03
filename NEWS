@@ -9,6 +9,29 @@ New in 2.0
 
 // FIXME: More things must be missing here...
 
+New in 1.5
+
+* "foreach" and "loopn" are deprecated, use "for" instead.
+
+* Use "**", not "^", to denote exponentiation.  In the future
+  "^" between numbers will denote exclusive-or.
+
+* "copy", "echo", and "wait" use a more traditional function syntax.
+  Use "echo (1)" instead of "echo 1", and "wait (1s)" instead of "wait 1s".
+  Similarly with "copy".
+
+* Job control and channels are different.
+  The structure "tag : code" used to address two different issues:
+  enabling job control, and reporting values.  They now have two
+  different syntaxes.  Write "chan << code" to send the evaluation
+  of "code" to the channel "chan", and write "tag : code" to allow
+  job control over "code".
+
+* Numbers
+  Numbers are no longer output in fixed format, hence 1+2*3 yields
+  7, no longer 7.000000.  Besides, so called "scientific notation"
+  is supported: "1e-5" stands for "0.00001" etc.
+
 New in 1.0
 
 * New keyword `taglist' displays the tags of currently running commands.

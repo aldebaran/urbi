@@ -349,10 +349,6 @@
 	TOK_WHENEVER     "whenever"
 	TOK_WHILE        "while"
 
- // Tokens that have a symbol semantic value.
-%token <symbol>
-	TOK_COPY         "copy"
-
 %token TOK_EOF 0 "end of command"
 
 
@@ -1174,7 +1170,6 @@ expr:
 | expr ">>" expr          { $$ = call(@$, $1, $2, $3); }
 | "-" expr    %prec UNARY { $$ = call(@$, $2, $1); }
 | "(" expr ")"            { $$ = $2; }
-| "copy" expr %prec UNARY { $$ = call(@$, $2, $1); }
 ;
 
 /*--------.

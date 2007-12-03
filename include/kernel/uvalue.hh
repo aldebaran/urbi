@@ -57,6 +57,12 @@ public:
   operator urbi::UBinary*();
   ~UValue();
 
+  /// Direct access to the inner string
+  UString* innerStr ()
+  {
+    return str;
+  }
+
   /// Type of the value.
   UDataType dataType;
 

@@ -57,6 +57,11 @@ class UString
     return str_;
   }
 
+  std::string& str()
+  {
+    return str_;
+  }
+
   /// The content as a C string.
   const char* c_str() const
   {

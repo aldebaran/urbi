@@ -179,9 +179,10 @@ UVariableName::set_fullname (const char* s)
  the hash table.
  */
 UVariable*
-UVariableName::getVariable (UCommand* command, UConnection* connection)
+UVariableName::getVariable (UCommand* command, UConnection* connection,
+			    bool force)
 {
-  if (variable)
+  if (variable && !force)
     return variable->toDelete ? 0 : variable;
 
   if (!fullname_ || !cached)

@@ -361,7 +361,7 @@ UServer::work_handle_stopall_ ()
 	c->drop_pending_commands ();
       }
     }
-  
+
   // Delete all connections with closing=true
   for (std::list<UConnection *>::iterator i = connectionList.begin();
        i!= connectionList.end(); )
@@ -374,7 +374,7 @@ UServer::work_handle_stopall_ ()
     else
       i++;
   }
-  
+
   somethingToDelete = false;
   stopall = false;
 }

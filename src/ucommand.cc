@@ -2401,6 +2401,17 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	  }
 	}
       }
+      persistant = false;
+      if (validcmd)
+      {
+	std::ostringstream o;
+	o << "{ waituntil(isdef(" << uid << ")) | "
+	  << getTag() << " << " << uid
+	  << " | delete " << uid << " }";
+	strMorph (o.str());
+	return UMORPH;
+      }
+      return UCOMPLETED;
     }
     persistant = false;
     if (validcmd)
@@ -2906,7 +2917,7 @@ UCommand_NEW::execute_(UConnection *connection)
     oss << ") | if (!isdef("
 	<< uid << ") || ((" << uid << "!=0) && (!isvoid("
 	<< uid << ")))) { "
-	<< "echo \"Error: Constructor failed, object deleted\";"
+	<< "echo (\"Error: Constructor failed, object deleted\");"
 	<< " delete "
 	<< id->c_str() << "} | if (isdef("
 	<< uid << ")) delete " << uid
@@ -3549,7 +3560,7 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
       fun = variablename->getFunction(this, connection);
       if (!fun)
       {
-	variable = variablename->getVariable(this, connection);
+	variable = variablename->getVariable(this, connection, true);
 	if (!variable && variablename->nostruct)
 	{
 	  UString* objname = variablename->getMethod();
@@ -3568,7 +3579,6 @@ UCommand_OPERATOR_VAR::execute_(UConnection *connection)
 	return UCOMPLETED;
       }
     }
-
     if (variable)
     {
       // undef variable

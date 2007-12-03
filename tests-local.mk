@@ -26,8 +26,10 @@ XFAIL_TESTS +=					\
 1.x/comparison.chk				\
 1.x/connection-delete.chk			\
 1.x/delete.chk					\
+1.x/deprecated-echo-syntax-warning.chk		\
 1.x/doublecolon.chk				\
 1.x/events.chk					\
+1.x/every.chk					\
 1.x/exec.chk					\
 1.x/for-loop.chk				\
 1.x/foreach.chk					\
@@ -41,6 +43,9 @@ XFAIL_TESTS +=					\
 1.x/illegal-operation-on-void.chk		\
 1.x/init-in-pipe-with-time.chk			\
 1.x/lazy-test-eval.chk				\
+1.x/list-concat.chk				\
+1.x/list-concat-string.chk			\
+1.x/list-reaffect.chk				\
 1.x/load.chk					\
 1.x/long-identifiers.chk			\
 1.x/loopn.chk					\

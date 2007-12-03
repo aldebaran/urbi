@@ -83,10 +83,11 @@ typedef yy::parser::token token;
 #define RETURN_OP(Token)			\
   RETURN_SYMBOL(TOK_ ## Token)
 
-#define RETURN_TIME_VALUE(Scale)				\
-  do {								\
-    yytext[yyleng-1]=0;						\
-    RETURN_VALUE(TIME_VALUE, fval, atof(yytext) * (Scale));	\
+#define RETURN_TIME_VALUE(Scale)					\
+  do {									\
+    yytext[yyleng-1]=0;							\
+    RETURN_VALUE(TIME_VALUE, fval,					\
+		 boost::lexical_cast<float>(yytext) * (Scale));		\
   } while (0)
 
 // We matched an obsolete token, New is now preferered.  Unput it so
@@ -108,10 +109,17 @@ typedef yy::parser::token token;
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
+
 ID       [a-zA-Z_][_A-Za-z0-9]*
+
 INTEGER  [0-9]+
-FLOAT    \.[0-9]+|[0-9]+\.[0-9]*
+
+FRACTION (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+EXPONENT [eE][-+]?[0-9]+
+FLOAT    {FRACTION}{EXPONENT}?
+
 NUMBER   {INTEGER}|{FLOAT}
+
 STRING   \"([^\"]|"\\\"")*\"
 
 %%
@@ -164,7 +172,6 @@ STRING   \"([^\"]|"\\\"")*\"
 <SC_UCONSOLE>{
   ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
   ^\[:].*               /* ignore the "[:] whatever" messages */;
-  ^#plug.*              /* ignore the "#plug whatever" lines */;
 }
 
 "inf"         RETURN_FVAL(FLOAT, UINFINITY);
@@ -190,8 +197,8 @@ STRING   \"([^\"]|"\\\"")*\"
 {NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIME_VALUE(1);
 
   /* FIXME: atof and atoi are no good. */
-{FLOAT}       { RETURN_FVAL(FLOAT,   atof(yytext)); }
 {INTEGER}     { RETURN_IVAL(INTEGER, atoi(yytext)); }
+{FLOAT}       { RETURN_FVAL(FLOAT,   atof(yytext)); }
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 
@@ -254,7 +261,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "at"            return token::TOK_AT;
 "bin"           return token::TOK_BIN;
 "class"         return token::TOK_CLASS;
-"copy"          RETURN_OP(COPY);
 "def"           return token::TOK_DEF;
 "delgroup"      return token::TOK_DELGROUP;
 "disinherits"   return token::TOK_DISINHERITS;

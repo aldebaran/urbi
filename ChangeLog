@@ -1,5 +1,98 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1900:1967 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	Clean up.
+	* src/Makefile.am: here.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	1e2.
+	* src/parser/bison/utoken.l: Support the scientific notation.
+	* src/uvalue.cc: Stop using the fixed format.
+	* NEWS: Doc it.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	1+2*3 = 7.
+	* src/uvalue.cc (echo): Don't use %f to avoid issuing useless
+	zeros.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	UValue cleanup.
+	* src/uvalue.cc: Use boost::foreach and lexical_cast.
+	(ulist_last): New.
+	Use it.
+	Factor a bit.
+	(VALIDATE): Group definition, use and undefinition.
+	Use '' for single characters.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	More type.
+	* include/kernel/utypes.hh: Give access to the type of
+	the map values.
+
+	2007-11-30  Guillaume Deslandes  <deslandes@gostai.com>
+	Improve regexps in r1952.
+	* src/parser/bison/utoken.l: Here.
+
+	2007-11-29  Guillaume Deslandes  <deslandes@gostai.com>
+	Allow "no space" style for "echo (expr)" and "copy (expr)".
+	* src/parser/bison/utoken.l: Here.
+
+	2007-11-28  Guillaume Deslandes  <deslandes@gostai.com>
+	Use UValue::copy instead of default copy constructor.
+	* src/uvalue.cc: Here.
+	UValue::UValue (UValue&) does a shallow copy.
+	This led to double free on the str field in
+	ulist_append.
+
+	2007-11-26  Akim Demaille  <demaille@gostai.com>
+	Less dependencies.
+	* src/userver-package-info.cc: Remove, merged in...
+	* src/ubanner.cc: here.
+	* src/console.cc, src/Makefile.am, src/ubanner.hh: Adjust.
+
+	2007-11-26  Akim Demaille  <demaille@gostai.com>
+	copy (expr), not copy expr.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l ("copy("):
+	New token.
+	Use it to handle copy(expr).
+	Let the older code trigger a warning.
+	* NEWS: Doc it.
+
+	2007-11-26  Akim Demaille  <demaille@gostai.com>
+	deprecate echo <expr>.
+	* NEWS: Some old news.
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l
+	(echo): Triggers a warning, rather use...
+	("echo("): this new token.
+	* src/ucommand.cc: Fix use of echo.
+
+	2007-11-26  Matthieu Nottale  <nottale@gostai.com>
+	Fix delete.
+	* src/ucommand.cc: 
+	    - Force getVariableName to recheck in hashtable 
+	        instead of using its cache.
+	    - Replace a : with << in code generated for a remote method
+	      call.
+	* src/uvariablename.cc,
+	* src/uvariablename.hh: Add argument to getVariableName() to ignore
+	  its cache (with a default value of false).
+
+	2007-11-26  Akim Demaille  <demaille@gostai.com>
+	Restore the code.
+	* src/parser/bison/ugrammar.y: Revert the previous "fix".
+
+	2007-11-26  Guillaume Deslandes  <deslandes@gostai.com>
+	Give direct access to std::string in UValue/Ustring.
+	This will be of use for modules/trunk/systemlib/string.
+	Doing real work on strings through UVars it way to expensive.
+	Update UObject.
+	* include/kernel/ustring.hh (str, non const): New.
+	* include/kernel/uvalue.hh (innerStr): New.
+	* src/uvar.cc (variable): New.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1882:1900 https://svn.gostai.com/svn/kernel1/trunk
 	2007-11-26  Akim Demaille  <demaille@gostai.com>
 	Fix copyright in the banner.

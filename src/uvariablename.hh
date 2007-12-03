@@ -52,7 +52,8 @@ public:
   void           print() const;
   UVariableName* copy() const;
 
-  UVariable*     getVariable (UCommand* command, UConnection* connection);
+  UVariable*     getVariable (UCommand* command, UConnection* connection, bool
+			      force = false);
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
 
