@@ -1,5 +1,10 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	Space after commas in lists.
+	* src/uvalue.cc: here.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	Remove DumbConnection.
 	* src/uvalue.cc: here.
 	Used nowhere (not even in ucore-pc or liburbi-cpp).

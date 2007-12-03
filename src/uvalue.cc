@@ -786,7 +786,7 @@ UValue::echo(bool hr)
       std::ostringstream o;
       o << '[';
       for (UValue *i = liststart; i; i = i->next)
-	o << i->echo(hr) << (i->next ? "," : "");
+	o << i->echo(hr) << (i->next ? ", " : "");
       o << ']';
 
       return o.str();
