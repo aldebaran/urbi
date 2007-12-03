@@ -46,6 +46,9 @@ include/kernel/uvariable.hh
 dist_pkgdata_DATA = share/urbi/urbi.u
 
 
+nodist_kernelincludekernel_HEADERS =		\
+include/kernel/version.hh
+
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##

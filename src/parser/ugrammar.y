@@ -1005,6 +1005,7 @@ lvalue:
 //  k1_id          { $$ = $1; }
 //| "static" k1_id	{ /* FIXME: Fill. */ }
 //| k1_id derive   { /* FIXME: Fill. */ }
+//| k1_id "'n"	{ /* FIXME: Fill. */ }
 //| k1_id "'e"	{ /* FIXME: Fill. */ }
 //| k1_id "'in"	{ /* FIXME: Fill. */ }
 //| k1_id "'out"   { /* FIXME: Fill. */ }

@@ -1,5 +1,47 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1847:1882 https://svn.gostai.com/svn/kernel1/trunk
+	2007-11-12  Guillaume Deslandes  <deslandes@gostai.com>
+	Restore var'n as a valid rvalue.
+	* src/parser/bison/ugrammar.y: Here.
+
+	2007-11-12  Matthieu Nottale  <nottale@gostai.com>
+	Fix remote call to method with no parameter.
+	* src/ucommand.cc: Add missing variable initialization.
+
+	2007-11-12  Akim Demaille  <demaille@gostai.com>
+	New failing test.
+	* tests-local.mk: Add connection-delete.chk.
+
+	2007-11-08  Matthieu Nottale  <nottale@gostai.com>
+	Fix bug in uconnection triggered when sending binaries.
+	Credit goes to Florian for locating this.
+	* include/kernel/uconnection.hh: Replace strdup by new/memcpy, data
+	  is not a cstring.
+	* src/uconnection.cc: Replace corresponding free by delete.
+
+	2007-11-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Add version.hh.
+	* include/kernel/version.hh.in: New.
+
+	2007-11-05  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Use URBI_KERNEL_VERSION.
+	* Makefile.am (nodist_kernelincludekernel_HEADERS): New, list
+	version.hh.
+	* configure.ac: Here.
+
+	2007-11-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Properly use the Boost flags to link libkernel.
+	* src/Makefile.am (libkernel_la_LDFLAGS): Use
+	$(BOOST_THREAD_LDFLAGS) because target-specific flags override
+	AM_LDFLAGS.
+
+	2007-11-02  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Properly use the new Boost flags.
+	* src/Makefile.am (AM_LDFLAGS, LIBS): Adjust.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	Fix for the previous merge.
 	* src/ucommand.cc: comment code that does not compile.
 	It is not needed in 2.0.

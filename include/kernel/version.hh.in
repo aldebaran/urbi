@@ -1,0 +1,33 @@
+/// \file   version.hh
+/// \brief  Version information on the URBI Kernel
+///
+///  @warning this is the only kernel header that is guarenteed
+///  to change with every kernel release, including this header
+///  will cause a recompile every time a new kernel version is
+///  released.
+
+#ifndef KERNEL1_VERSION_HH_
+# define KERNEL1_VERSION_HH_
+
+/// Version number of this kernel.
+/// KERNEL_VERSION % 100 is the sub-minor version
+/// KERNEL_VERSION / 100 % 1000 is the minor version
+/// KERNEL_VERSION / 100000 is the major version
+# define KERNEL_VERSION @KERNEL_VERSION@
+
+/// Major version number.
+# define KERNEL_VERSION_MAJOR @KERNEL_VERSION_MAJOR@
+
+/// Minor version number.
+# define KERNEL_VERSION_MINOR @KERNEL_VERSION_MINOR@
+
+/// Sub-minor version number.
+# define KERNEL_VERSION_SUBMINOR @KERNEL_VERSION_SUBMINOR@
+
+/// Human readable version number.
+# define KERNEL_VERSION_STRING "@PACKAGE_VERSION@"
+
+/// Revision number of this kernel.
+# define KERNEL_REVISION @KERNEL_REVISION@
+
+#endif /* !KERNEL1_VERSION_HH_ */
