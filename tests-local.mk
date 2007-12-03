@@ -12,21 +12,26 @@ k2-check:
 XFAIL_TESTS +=					\
 2.x/closure.chk
 
-# k1 tests that currently don't pass.
+# Tests that are only for 1.x, and we don't want them in k2.
+# We should probably use different directories instead.
 XFAIL_TESTS +=					\
 1.x/alias.chk					\
+1.x/deprecated-echo-syntax-warning.chk		\
+1.x/string-comparison.chk
+
+# k1 tests that currently don't pass, but we should.
+# Not really sorted yet, please help.
+XFAIL_TESTS +=					\
 1.x/arithmetics-failures.chk			\
 1.x/armor-unarmor.chk				\
 1.x/begin-end-report.chk			\
 1.x/bin-copy.chk				\
 1.x/bin.chk					\
 1.x/bug76.chk					\
-1.x/channels_tags.chk				\
+1.x/channels-tags.chk				\
 1.x/class-definition.chk			\
-1.x/comparison.chk				\
 1.x/connection-delete.chk			\
 1.x/delete.chk					\
-1.x/deprecated-echo-syntax-warning.chk		\
 1.x/doublecolon.chk				\
 1.x/events.chk					\
 1.x/every.chk					\
@@ -43,8 +48,8 @@ XFAIL_TESTS +=					\
 1.x/illegal-operation-on-void.chk		\
 1.x/init-in-pipe-with-time.chk			\
 1.x/lazy-test-eval.chk				\
-1.x/list-concat.chk				\
 1.x/list-concat-string.chk			\
+1.x/list-concat.chk				\
 1.x/list-reaffect.chk				\
 1.x/load.chk					\
 1.x/long-identifiers.chk			\
@@ -69,6 +74,6 @@ XFAIL_TESTS +=					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
 1.x/undefall.chk				\
-1.x/variable-qualifiers.chk			\
 1.x/variable-normalize.chk			\
+1.x/variable-qualifiers.chk			\
 1.x/whenever-bad.chk
