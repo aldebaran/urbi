@@ -1,5 +1,11 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	Fix for the previous merge.
+	* src/ucommand.cc: comment code that does not compile.
+	It is not needed in 2.0.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1834:1847 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-10-30  Matthieu Nottale  <nottale@gostai.com>

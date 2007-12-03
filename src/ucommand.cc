@@ -2363,7 +2363,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	std::stringstream ss;
 	ss.str ("");
 	ss << o.str();
-
+	  validcmd = true;
 	for (UNamedParameters *pvalue = expression->parameters;
 	     pvalue != 0;
 	     pvalue = pvalue->next)
@@ -2382,8 +2382,10 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	if (validcmd)
 	{
 	  ss << "]\n";
-	  *j->c << UConnection::send (ss.str ().c_str (),
-				      EXTERNAL_MESSAGE_TAG);
+	  // FIXME: This does not compile, I don't know why, and I (or you)
+	  // will find later.  It works in k1.5.
+	  // *j->c << UConnection::send (ss.str ().c_str (),
+	  //				      EXTERNAL_MESSAGE_TAG);
 	}
       }
     }
