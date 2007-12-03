@@ -497,6 +497,9 @@ UVariableName::buildFullname (UCommand* command,
     std::string resolved = resolve_aliases (::urbiserver->getAliasTab (), n);
     if (resolved != n)
     {
+      send_error(connection, command,
+                 ("'" + n + "' is an alias for '" + resolved + "'. "
+                   "Using aliases is deprecated.").c_str());
       name = resolved;
       nostruct = false;
       delete device;

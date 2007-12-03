@@ -1,3 +1,65 @@
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
+	merge -r 1805:1821 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	Fix ubanner use in uconsole.
+	* src/ubanner.cc (uconsole_banner): Terminate the list.
+	* src/console.cc (getCustomHeader): Adjust.
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	Less deps.
+	* src/ubanner.hh, src/ubanner.cc (uconsole_banner): New.
+	* src/console.cc: Use it instead of version.hh.
+	* include/kernel/userver.hh: Use libport/fwd.hh.
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	Do not pass libraries in LDFLAGS.
+	* src/Makefile.am (AM_LDFLAGS): Move BOOST_THREAD_LIB from here to...
+	(LIBS): here.
+	See http://lists.gnu.org/archive/html/automake/2007-10/msg00055.html
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	Update libport.
+	* src/userver-package-info.cc: Catch up calling convention changes.
+
+	2007-10-23  mefyl  <mefyl@lrde.epita.fr>
+	Document an impossible change in the grammar.
+	* src/parser/bison/ugrammar.y: Explain why "loop"
+        can't be changed to "for".
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	Work again with src=build.
+	* src/userver-package-info.cc: Help it to find src/config.h, not
+	libport/config.h.
+
+	2007-10-23  mefyl  <mefyl@lrde.epita.fr>
+	Add warnings on alias definition and use.
+	* src/ucommand.cc: Warn on alias definition.
+	* src/uvariablename.cc: Warn on alias use.
+
+	2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+	* configure.ac: Fix package full name.
+	* src/package-info.cc: Rename as...
+	* src/userver-package-info.cc: this.
+	* src/Makefile.am: Adjust.
+
+	2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+	Move doxumentation.
+	* src/userver.cc: from here.
+	* include/kernel/userver.hh: to there.
+
+	2007-10-22  Akim Demaille  <akim.demaille@free.fr>
+	package_info can be static.
+	* include/kernel/userver.hh, src/package-info.cc
+	(UServer::package_info): Make it static.
+
+	2007-10-22  Akim Demaille  <demaille@gostai.com>
+	Use libport's package_info.
+	* include/kernel/userver.hh (package_info): New member function.
+	* src/package-info.cc: Implement this function.
+	* src/userver.cc: No longer include package-info.hh.
+
 2007-11-29  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 1800:1805 https://svn.gostai.com/svn/kernel1/trunk

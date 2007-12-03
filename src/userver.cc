@@ -52,7 +52,6 @@
 #include "ast/ast.hh"
 #include "ast/nary.hh"
 #include "config.h"
-#include "package-info.hh"
 #include "ubanner.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
@@ -323,16 +322,16 @@ UServer::work_handle_connections_ ()
       if (c->has_pending_command ())
       {
 	c->obstructed = true; // will be changed to 'false'
-        {
-          //if the whole tree is visited
+	{
+	  //if the whole tree is visited
 # if ! defined LIBPORT_URBI_ENV_AIBO
-          boost::try_mutex::scoped_lock((*c)->treeMutex);
+	  boost::try_mutex::scoped_lock((*c)->treeMutex);
 # endif
-          c->inwork = true;   // to distinguish this call of
-          //execute from the one in receive
-          c->execute((*c)->activeCommand);
-          c->inwork = false;
-        }
+	  c->inwork = true;   // to distinguish this call of
+	  //execute from the one in receive
+	  c->execute((*c)->activeCommand);
+	  c->inwork = false;
+	}
       }
 #endif
 
@@ -499,10 +498,10 @@ UServer::work_reset_if_needed_ ()
     //tagtab.clear();
 
     for (std::list<UConnection*>::iterator i = connectionList.begin();
-         i != connectionList.end();
-         ++i)
+	 i != connectionList.end();
+	 ++i)
       if ((*i)->isActive())
-        (**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
+	(**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
 
     //restart uobjects
     BOOST_FOREACH (::urbi::baseURBIStarter* starter, *::urbi::objectlist)
@@ -520,15 +519,15 @@ UServer::work_reset_if_needed_ ()
   {
     //reload CLIENT.INI
     for (std::list<UConnection*>::iterator i = connectionList.begin();
-         i != connectionList.end();
-         ++i)
+	 i != connectionList.end();
+	 ++i)
       if ((*i)->isActive() && (*i) != ghost_)
       {
-        (**i) << UConnection::send("*** Restart completed.\n", "reset");
-        loadFile("CLIENT.INI", &(*i)->recvQueue());
-        (*i)->recvQueue().push ("#line 1\n");
-        (*i)->newDataAdded = true;
-        (**i) << UConnection::send("*** Ready.\n", "reset");
+	(**i) << UConnection::send("*** Restart completed.\n", "reset");
+	loadFile("CLIENT.INI", &(*i)->recvQueue());
+	(*i)->recvQueue().push ("#line 1\n");
+	(*i)->newDataAdded = true;
+	(**i) << UConnection::send("*** Ready.\n", "reset");
       }
     resetting = false;
     stage = 0;
@@ -723,33 +722,11 @@ UServer::updateTime()
   lastTime_ = getTime();
 }
 
-//! Overload this function to return a specific header for your URBI server
-/*! Used to give some information specific to your server in the standardized
- header which is displayed on the server output at start and in the
- connection when a new connection is created.\n
- Typical custom header should be like:
-
- *** URBI version xx.xx for \<robotname\> robot\\n\n
- *** (c) Copyright \<year\> \<name\>\\n
-
- The function should return in header the line corresponding to 'line'
- or an empty string (not NULL!) when there is no line any more.
- Each line is supposed to end with a carriage return \\n and each line should
- start with three empty spaces. This complicated method is necessary to allow
- the connection to stamp every line with the standard URBI prefix [time:tag].
-
- \param line is the requested line number
- \param header the custom header
- \param maxlength the maximum length allowed for the header (the parameter
- has been malloc'ed for that size). Typical size is 1024 octets and
- should be enough for any reasonable header.
- */
 void
 UServer::getCustomHeader (int, char* header, int)
 {
   header[0] = 0; // empty string
 }
-
 
 //! Get a variable in the hash table
 UVariable*

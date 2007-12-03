@@ -31,6 +31,7 @@
 #  include <boost/thread.hpp>
 # endif
 
+# include "libport/fwd.hh"
 # include "libport/compiler.hh"
 
 # include "kernel/fwd.hh"
@@ -110,6 +111,10 @@ public:
   /// Set the system.args list in URBI.
   void main (int argc, const char* argv[]);
 
+
+  /// Package information about this server.
+  static const libport::PackageInfo& package_info ();
+
   void error (const char* s, ...)
     __attribute__ ((__format__ (__printf__, 2, 3)));
   void echo (const char* s, ...)
@@ -144,8 +149,30 @@ public:
 
   virtual ufloat getTime () = 0;
   virtual ufloat getPower () = 0;
-  virtual void getCustomHeader (int line, char* header,
-				int maxlength) = 0;
+
+  //! Overload this function to return a specific header for your URBI server
+  /*! Used to give some information specific to your server in the standardized
+   header which is displayed on the server output at start and in the
+   connection when a new connection is created.\n
+   Typical custom header should be like:
+
+   *** URBI version xx.xx for \<robotname\> robot\\n\n
+   *** (c) Copyright \<year\> \<name\>\\n
+
+   The function should return in header the line corresponding to 'line'
+   or an empty string (not NULL!) when there is no line any more.
+   Each line is supposed to end with a carriage return \\n and each line should
+   start with three empty spaces. This complicated method is necessary to allow
+   the connection to stamp every line with the standard URBI prefix [time:tag].
+
+   \param line is the requested line number
+   \param header the custom header
+   \param maxlength the maximum length allowed for the header (the parameter
+   has been malloc'ed for that size). Typical size is 1024 octets and
+   should be enough for any reasonable header.
+   */
+  virtual void      getCustomHeader (int line, char* header,
+				     int maxlength) = 0;
 
   /// A list of directory names.
   typedef std::list<std::string> path_type;

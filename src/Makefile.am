@@ -44,7 +44,6 @@ uninstall-local:
 dist_libkernel_la_SOURCES +=					\
 flavorable.hh							\
 memorymanager/memorymanager.cc					\
-package-info.hh package-info.cc					\
 tag-info.cc							\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
@@ -72,7 +71,7 @@ uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
-userver.cc							\
+userver.cc userver-package-info.cc				\
 ustring.cc							\
 uvalue.cc							\
 uvar.cc								\

@@ -901,6 +901,24 @@ stmt:
     {
       $$ = 0;
     }
+/*
+ *  This loop keyword can't be converted to a for, since it would
+ *  cause an ambiguity in the language. Consider this line:
+ *
+ *      for (42);
+ *
+ *  It could be either:
+ *
+ *      for (42)
+ *        ;
+ *
+ *  i.e, while 42 is true execute the empty instruction, either:
+ *
+ *      for
+ *        42;
+ *
+ *  i.e. execute "42"  forever, with 42 being parenthesized.
+ */
 | "loop" stmt %prec CMDBLOCK
     {
       $$ = 0;
