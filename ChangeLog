@@ -1,5 +1,11 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	OLDS.
+	* CHANGELOG-Kernel: Remove, copies into
+	* NEWS: here.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	C++.
 	* src/console.cc: Use << rather than printf.
 
