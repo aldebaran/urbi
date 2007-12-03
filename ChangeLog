@@ -1,5 +1,47 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1834:1847 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-10-30  Matthieu Nottale  <nottale@gostai.com>
+	Fix external method calls.
+	* src/ucommand.cc: Use new << UConnection API.
+
+	2007-10-30  Akim Demaille  <demaille@gostai.com>
+	Use COPYRIGHT info.
+	* configure.ac: Define it.
+	* src/console.cc: Use it.
+	Support options.
+	* src/ubanner.cc: Ditto.
+
+	2007-10-30  Akim Demaille  <demaille@gostai.com>
+	Use newest PackageInfo.
+	* src/userver-package-info.cc: Adjust.
+
+	2007-10-29  Matthieu Nottale  <nottale@gostai.com>
+	Buxgfix on aibo.
+	* src/uconnection.cc: Move misplaced #endif.
+
+	2007-10-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Don't use Boost.Filesystem in the kernel.
+	libboost_filesystem is not available on Aibo, so we can't use it in
+	the kernel.
+	* include/kernel/userver.hh,
+	* src/Makefile.am,
+	* src/userver.cc: Revert the changes done at r1828 and r1838.
+
+	2007-10-26  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Link with boost_filesystem.
+	* src/Makefile.am (LIBS): Add a `-lboost_filesystem' (quick hack).
+
+	2007-10-26  Thomas Moulard  <thomas@moulard.net>
+	Fix merge.
+	* .automerge: Update to last sync revision.
+	* src/parser/bison/ugrammar.y: Remove useless comments.
+	* src/uvalue.cc: Rename add_ulist into utlist_append
+        and add_ulists into ulist_concat.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1821:1834 https://svn.gostai.com/svn/kernel1/trunk
 	2007-10-26  Thomas Moulard  <thomas@moulard.net>
 	merge -r 1625:1828 https://svn.gostai.com/svn/kernel1/branches/1.5

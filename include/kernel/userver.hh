@@ -31,8 +31,6 @@
 #  include <boost/thread.hpp>
 # endif
 
-# include <boost/filesystem.hpp>
-
 # include "libport/fwd.hh"
 # include "libport/compiler.hh"
 
@@ -177,7 +175,7 @@ public:
 				     int maxlength) = 0;
 
   /// A list of directory names.
-  typedef std::list<boost::filesystem::path> path_type;
+  typedef std::list<std::string> path_type;
 
   /// Where to look for files to load.
   // Should eventually become an Urbi variable.

@@ -12,7 +12,8 @@
 const char* HEADER_BEFORE_CUSTOM[] =
   {
     "*** **********************************************************\n",
-    "*** URBI Language specif 1.0 - Copyright 2006-2007 Gostai SAS\n",
+    "*** URBI Language specif 1.0 - "
+    "Copyright " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
     "*** URBI Kernel version " PACKAGE_VERSION " rev." PACKAGE_REVISION "\n",
     "***\n",
     0

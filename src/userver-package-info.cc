@@ -1,19 +1,12 @@
 #include "kernel/userver.hh"
 
-// The following file includes "config.h", unfortunately, it's going
-// to catch libport/config.h because when one includes "dir/foo.h"
-// which includes "bar.h", then it's "dir/bar.h" that takes precedence
-// over the local "bar.h" :(
-//
-// So we force the loading of src/config.h.  This is fragile, but I
-// don't have time for something more intelligent now -- Akim.
 #include "src/config.h"
 #include "version.hh"
-#include "libport/package-info.hcc"
+#include "libport/package-info.hh"
 
 const libport::PackageInfo&
 UServer::package_info ()
 {
-  static libport::PackageInfo pi;
+  LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
   return pi;
 }
