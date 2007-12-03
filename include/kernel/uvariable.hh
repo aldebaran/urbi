@@ -198,6 +198,7 @@ public:
   void setUnit(const char *u) {unit =u;}
   void setContext(UCallid * ctx) {context = ctx;}
 
+  bool isInSetTarget() {return inSetTarget;}
 private:
   /// Device in the varname.
   std::string devicename;
@@ -213,6 +214,10 @@ private:
   void init();
   UVariable(const UVariable &);
   UVariable& operator = (const UVariable &);
+  
+  
+  /// True when we are in a setTarget call.
+  bool inSetTarget;
 };
 
 inline

@@ -765,7 +765,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
       // creates return variable
       uc_tree->callid->setReturnVar (
 	new UVariable (uc_tree->callid->str().c_str(), "__result__",
-                       new UValue ()));
+		       new UValue ()));
 
       if (!uc_tree->callid)
 	return UCOMPLETED;
@@ -1249,7 +1249,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 				   rhs->copy());
 	  if (!variable)
 	    return UCOMPLETED;
-          connection->localVariableCheck(variable);
+	  connection->localVariableCheck(variable);
 	}
 
 	// correct the type of VOID variables (comming from a def)
@@ -1283,20 +1283,20 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	++variable->nbAssigns;
 	assigned = true;
 
-        // use of previous value as a start value to ensure that the start value
-        // will remain identical when several assignments are run during the same
-        // cycle
-        // old code: startval = *targetvalue;
+	// use of previous value as a start value to ensure that the start value
+	// will remain identical when several assignments are run during the same
+	// cycle
+	// old code: startval = *targetvalue;
 
-        // the "fix" below is insane. I paste back the old code...
-        //startval = variable->previous;
+	// the "fix" below is insane. I paste back the old code...
+	//startval = variable->previous;
 	if (variable->cycleBeginTime < currentTime)
 	{
 	  variable->cyclevalue = *targetvalue;
 	  variable->cycleBeginTime = currentTime;
 	}
 
-        startval = variable->cyclevalue;
+	startval = variable->cyclevalue;
 
 	first = true;
 	status = URUNNING;
@@ -2293,7 +2293,7 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
   }
   else if (connection->receiving
 	   && (*expression->variablename->id == "exec"
-               || *expression->variablename->id == "eval"
+	       || *expression->variablename->id == "eval"
 	       || *expression->variablename->id == "load"))
     // Some functions are executed at the same time as they are
     // received (e.g., ping).  For some reason, it is believed that
@@ -2319,14 +2319,24 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
   }
 
   ////// module-defined /////
-  UValue *v = tryModuleCall(funname->str().c_str(), expression->parameters,
-			      connection);
-
-  if (v)
+  UValue *ret = tryModuleCall(funname->str().c_str(), expression->parameters,
+			    connection);
+  if (ret)
   {
-    if (v->dataType != DATA_VOID)
-      *connection << UConnection::send (v->echo().c_str(), getTag().c_str());
-    delete v;
+    //use same output code as below (for the non-function case)
+    if (is_channel_get() || tag_info_get() == TagInfo::notagTagInfo)
+    {
+      if (ret->dataType != DATA_VOID)
+      {
+	*connection << UConnection::prefix(getTag().c_str());
+	ret->echo(connection);
+      }
+      if (ret->dataType != DATA_BINARY && ret->dataType != DATA_VOID)
+	*connection << UConnection::endl;
+      else
+	*connection << UConnection::flush;
+    }
+    delete ret;
     return UCOMPLETED;
   }
 
@@ -2350,30 +2360,30 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
 	   j != it->second->monitors.end();
 	   ++j)
       {
-        std::stringstream ss;
-        ss.str ("");
-        ss << o.str();
+	std::stringstream ss;
+	ss.str ("");
+	ss << o.str();
 
-        for (UNamedParameters *pvalue = expression->parameters;
-             pvalue != 0;
-             pvalue = pvalue->next)
-        {
-          validcmd = false;
-          UValue* valparam = pvalue->expression->eval(this, connection);
-          if (valparam != 0)
-          {
-            ss << ",";
-            ss << valparam->echo ();
-          }
-          else
-            break;
-          validcmd = true;
-        }
-        if (validcmd)
-        {
-          ss << "]\n";
-          (*j)->c->send (EXTERNAL_MESSAGE_TAG, ss.str ().c_str ());
-        }
+	for (UNamedParameters *pvalue = expression->parameters;
+	     pvalue != 0;
+	     pvalue = pvalue->next)
+	{
+	  validcmd = false;
+	  UValue* valparam = pvalue->expression->eval(this, connection);
+	  if (valparam != 0)
+	  {
+	    ss << ",";
+	    ss << valparam->echo ();
+	  }
+	  else
+	    break;
+	  validcmd = true;
+	}
+	if (validcmd)
+	{
+	  ss << "]\n";
+	  (*j)->c->send (EXTERNAL_MESSAGE_TAG, ss.str ().c_str ());
+	}
       }
     }
     persistant = false;
@@ -2381,8 +2391,8 @@ UCommand_EXPR::execute_function_call(UConnection *connection)
     {
       std::ostringstream o;
       o << "{waituntil(isdef(" << uid << "))|"
-        << getTag().c_str() << ":" << uid
-        << "|delete " << uid << "}";
+	<< getTag().c_str() << ":" << uid
+	<< "|delete " << uid << "}";
       strMorph (o.str());
     }
     return UMORPH;
@@ -2936,7 +2946,7 @@ UCommand_ALIAS::execute_(UConnection *connection)
 {
   //alias setting
   send_error(connection, this,
-             "Defining aliases is deprecated.");
+	     "Defining aliases is deprecated.");
   if (aliasname && id)
   {
     UString *id0 = aliasname->buildFullname(this, connection, false);
@@ -2956,8 +2966,8 @@ UCommand_ALIAS::execute_(UConnection *connection)
   {
     BOOST_FOREACH (HMaliastab::value_type i, connection->server->getAliasTab ())
       *connection << UConnection::sendf(getTag(),
-                                        "*** %25s -> %s\n",
-                                        i.first, i.second->c_str());
+					"*** %25s -> %s\n",
+					i.first, i.second->c_str());
     return UCOMPLETED;
   }
 
@@ -3796,29 +3806,29 @@ UCommand_BINDER::execute_(UConnection *connection)
       HMvariabletab::iterator it = ::urbiserver->getVariableTab ().find(key->c_str());
       if (it == ::urbiserver->getVariableTab ().end())
       {
-        UVariable *variable = new UVariable(key->c_str(), new UValue());
-        variable->binder = new UBinder(*fullobjname, *fullname,
-                                       mode,
-                                       type, nbparam, connection);
+	UVariable *variable = new UVariable(key->c_str(), new UValue());
+	variable->binder = new UBinder(*fullobjname, *fullname,
+				       mode,
+				       type, nbparam, connection);
       }
       else
       {
-        if (it->second->binder)
-          it->second->binder->addMonitor(*fullobjname, connection);
-        else
-          it->second->binder = new UBinder(*fullobjname, *fullname,
-                                           mode,
-                                           type,
-                                           nbparam,
-                                           connection);
-        if (!it->second->internalAccessBinder.empty ()
-            && !libport::has (::urbiserver->access_and_change_varlist,
-                              it->second))
+	if (it->second->binder)
+	  it->second->binder->addMonitor(*fullobjname, connection);
+	else
+	  it->second->binder = new UBinder(*fullobjname, *fullname,
+					   mode,
+					   type,
+					   nbparam,
+					   connection);
+	if (!it->second->internalAccessBinder.empty ()
+	    && !libport::has (::urbiserver->access_and_change_varlist,
+			      it->second))
 	{
-          it->second->access_and_change = true;
-          ::urbiserver->access_and_change_varlist.push_back (it->second);
+	  it->second->access_and_change = true;
+	  ::urbiserver->access_and_change_varlist.push_back (it->second);
 
-        }
+	}
       }
     }
     break;
@@ -3830,13 +3840,13 @@ UCommand_BINDER::execute_(UConnection *connection)
       HMobjtab::iterator it = ::urbiserver->getObjTab ().find(fullobjname->c_str());
       if (it != ::urbiserver->getObjTab ().end())
       {
-        UObj* srcobj = it->second;
-        bool ambiguous;
-        std::string member (fullname->str ());
-        member = member.substr (member.find ('.') + 1);
-        UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
-        if (fun && fun != kernel::remoteFunction && !ambiguous)
-          break;
+	UObj* srcobj = it->second;
+	bool ambiguous;
+	std::string member (fullname->str ());
+	member = member.substr (member.find ('.') + 1);
+	UFunction* fun = srcobj->searchFunction (member.c_str (), ambiguous);
+	if (fun && fun != kernel::remoteFunction && !ambiguous)
+	  break;
       }
 
       // do the binding
@@ -4096,7 +4106,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  && i.second.name != "__UGrouped_set_of_commands__"
 	  && i.second.name != "notag")
       {
-        std::ostringstream tstr;
+	std::ostringstream tstr;
 	tstr << "*** " << i.second.name << '\n';
 	*connection << UConnection::sendf(getTag(), tstr.str().c_str());
       }
@@ -4111,8 +4121,8 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     BOOST_FOREACH (HMtagtab::value_type i, connection->server->getTagTab ())
       BOOST_FOREACH (UCommand* j, i.second.commands)
       {
-        std::ostringstream tstr;
-          tstr << "*** "<< i.second.name<<' ' << j->loc() << '\n';
+	std::ostringstream tstr;
+	  tstr << "*** "<< i.second.name<<' ' << j->loc() << '\n';
 	  *connection << UConnection::sendf(getTag(), tstr.str().c_str());
       }
   }
@@ -4759,9 +4769,9 @@ UCommand_DEF::execute_(UConnection *connection)
   if (!variablename && !command && !parameters && !variablelist)
   {
       BOOST_FOREACH (HMfunctiontab::value_type i, connection->server->getFunctionTab ())
-        *connection << UConnection::sendf (getTag(), "*** %s : %d param(s)\n",
-                                           i.second->name().c_str(),
-                                           i.second->nbparam());
+	*connection << UConnection::sendf (getTag(), "*** %s : %d param(s)\n",
+					   i.second->name().c_str(),
+					   i.second->nbparam());
     return UCOMPLETED;
   }
 

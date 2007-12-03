@@ -80,6 +80,7 @@ uvariablelist.hh uvariablelist.cc				\
 uvariablename.hh uvariablename.cc                               \
 usystem.cc
 
+
 ## ------------ ##
 ## version.hh.  ##
 ## ------------ ##
@@ -119,8 +120,7 @@ urbiinclude_HEADERS = $(uobject_headers)
 if !OPENR
 noinst_PROGRAMS = uconsole
 uconsole_SOURCES = console.cc
-uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la \
-                 $(PTHREAD_LIBS)
+uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la
 endif
 
 # Clean VC++ debug file. BTW, Do we want to install it?

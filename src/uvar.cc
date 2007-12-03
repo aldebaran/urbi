@@ -128,14 +128,11 @@ namespace urbi
     else
     {
       //write to target, blend mode override we're not in sync with cycles
+      //do it in the right order
+      vardata->variable->selfSet(&n); //rangecheck and target update
       if (vardata->variable->autoUpdate)
-      {
-	vardata->variable->selfSet(&n);
-	vardata->variable->setTarget();
-	vardata->variable->setSensorVal(vardata->variable->target);
-      }
-      else
-	vardata->variable->setFloat(n);
+	vardata->variable->setSensorVal(vardata->variable->target); //set value
+      vardata->variable->setTarget(); //invoke callbacks
     }
   }
 
@@ -275,6 +272,8 @@ namespace urbi
   UVar::in()
   {
     static ufloat er=0;
+    if (vardata && !vardata->variable->isInSetTarget())
+      vardata->variable->get();
     if (vardata && vardata->variable->value->dataType == ::DATA_NUM)
       return vardata->variable->value->val;
     else

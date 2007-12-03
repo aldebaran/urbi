@@ -814,10 +814,12 @@ UServer::unblock(const std::string &tag)
 
 namespace
 {
+  // FIXME: Quite a hack. Boost provide funcitons to test whether a
+  // file exist, but not whether it's readable
   bool
-  file_readable (const std::string& s)
+  file_readable (const boost::filesystem::path& s)
   {
-    std::ifstream is (s.c_str(), std::ios::binary);
+    std::ifstream is (s.string().c_str(), std::ios::binary);
     bool res = is;
     is.close();
     return res;
@@ -830,11 +832,12 @@ UServer::find_file (const std::string& base)
   ECHO (base << " in " << libport::separate(path, ':'));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
-    std::string f = *p + '/' + base;
+    boost::filesystem::path f = *p / base;
+    ECHO("find_file(" << base << ") testing " << f);
     if (file_readable(f))
     {
       ECHO("found: " << f);
-      return f;
+      return f.string();
     }
   }
   if (!file_readable(base))

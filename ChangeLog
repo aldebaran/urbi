@@ -1,5 +1,81 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 1821:1834 https://svn.gostai.com/svn/kernel1/trunk
+	2007-10-26  Thomas Moulard  <thomas@moulard.net>
+	merge -r 1625:1828 https://svn.gostai.com/svn/kernel1/branches/1.5
+	2007-10-08  Benoit Sigoure  <tsuna@lrde.epita.fr>
+	Bump the version number.
+	* configure.ac: Adjust the version number and email address for bug
+	reports.
+
+	2007-10-02  Thomas Moulard  <thomas@moulard.net>
+	Remove network.
+        The network is now plugged through an externals.
+        Network's new location is modules/network.
+
+	* src/Makefile.am: Remove network.
+	* src/network/bsdnet/bsdnet.mk: Remove.
+	* src/network/bsdnet/connection.cc: Remove.
+	* src/network/bsdnet/connection.hh: Remove.
+	* src/network/bsdnet/network.cc: Remove.
+	* src/network/bsdnet/network.hh: Remove.
+	* src/network/bsdnet: Remove.
+	* src/network: Remove.
+
+	2007-10-02  Thomas Moulard  <thomas@moulard.net>
+	Fix list concatenation.
+	* src/uvalue.cc: Here.
+
+	2007-10-02  mefyl  <mefyl@lrde.epita.fr>
+	Do not accept '<<' and '>>' in the parser yet.
+	* src/parser/bison/ugrammar.y: Here.
+
+	2007-10-02  Thomas Moulard  <thomas@moulard.net>
+	Fix list concatenation.
+	* src/uvalue.cc: Fix concatenation of two lists.
+
+	2007-10-25  mefyl  <mefyl@lrde.epita.fr>
+	Use boost to handle paths.
+	* include/kernel/userver.hh,
+	* src/userver.cc:
+	(UServer::find_file): Use boost::filesystem::path to open files,
+	to avoid portability problem such as the directory separator.
+
+	2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+	Correct uobject behavior.
+	When a c++ code reads an UVar, it must triggers notifyaccess, except
+	if this read occurrs in a notifychange callback: in this case the
+	value is allready up2date, and it would create a potential infinite
+	loop to call the notifyaccess.
+	* include/kernel/uvariable.hh: Add inSetTarget and isInSetTarget
+	  accessor.
+	* src/uvar.cc:
+	   - invoque uvariable->get() in in() except if inSetTarget()
+	   - Add missing call to remote callbacks in setTarget()
+	   - call selfSet, setTarget but not setSensorVal in operator = for
+	     !owned !variable->autoUpdate case
+	* src/uvariable.cc: set/clear inSetTarget in setTarget and setSensor.
+
+	2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+	Fix notifychange when called from a C++ variable update.
+	* src/uvar.cc: Call methods in the correct order, otherwise
+	  callbacks are called with the old value.
+
+	2007-10-24  Matthieu Nottale  <nottale@gostai.com>
+	Fix display of value returned by a bound uobject method.
+	* src/ucommand.cc: Replace old display code that does not work
+	 anymore by new code (copy-pasted from below in the same function).
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	Let wait have a function-like syntax.
+	* src/parser/bison/ugrammar.y ("wait"): Take its arg in parens.
+
+	2007-10-23  Akim Demaille  <demaille@gostai.com>
+	We no longer use pthreads but Boost.Threads.
+	* src/Makefile.am: So don't use the compiler flags.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 1805:1821 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-10-23  Akim Demaille  <demaille@gostai.com>

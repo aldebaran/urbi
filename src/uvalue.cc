@@ -501,6 +501,48 @@ UValue::copy() const
   pabort ("Impossible");
 }
 
+//! Add an item to a list.
+static UValue*
+add_ulist(const UValue& l, const UValue& r)
+{
+  UValue* res = l.copy();
+
+  if (!l.liststart)
+    res->liststart = new UValue(r);
+  else
+  {
+    UValue* end = res->liststart;
+
+    while (end->next)
+      end = end->next;
+
+    end->next = new UValue(r);
+  }
+  return res;
+}
+
+//! Add two lists.
+static UValue*
+add_ulists(const UValue& l, const UValue& r)
+{
+  UValue* res = l.copy();
+  if (!r.liststart)
+    return res;
+  if (!l.liststart)
+    return r.copy();
+
+  UValue* end = res->liststart;
+
+  while (end->next)
+    end = end->next;
+
+  UValue* rc = r.copy();
+  end->next = rc->liststart;
+  rc->liststart = 0;
+  delete rc;
+  return res;
+}
+
 
 //! UValue polymorphic addition
 UValue*
@@ -558,20 +600,10 @@ UValue::add(UValue *v)
 
   if (dataType == DATA_LIST)
   {
-    UValue* res = copy();
-
-    if (res->liststart)
-    {
-      UValue* scanlist = res->liststart;
-      while (scanlist->next)
-	scanlist = scanlist->next;
-
-      scanlist->next = v->copy();
-    }
+    if (v->dataType == DATA_LIST)
+      return add_ulists(*this, *v);
     else
-      res->liststart = v->copy();
-
-    return res;
+      return add_ulist(*this, *v);
   }
 
   if (v->dataType == DATA_LIST)
