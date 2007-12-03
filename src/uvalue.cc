@@ -813,12 +813,7 @@ UValue::echo(bool hr)
     }
 
     case DATA_NUM:
-    {
-      char dv[64];
-      sprintf(dv,"%f",(float)val);
-      return std::string(dv);
-    }
-//      return boost::lexical_cast<std::string>((float)val);
+    return boost::lexical_cast<std::string>((float)val);
 
     case DATA_STRING:
     {

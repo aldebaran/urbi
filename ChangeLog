@@ -1,5 +1,11 @@
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
+	1+2*3 = 7.
+	* src/uvalue.cc (echo): Don't use %f to avoid issuing useless
+	zeros.
+
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
 	UValue cleanup.
 	* src/uvalue.cc: Use boost::foreach and lexical_cast.
 	(ulist_last): New.
