@@ -96,12 +96,16 @@ namespace urbi
   /*---------.
   | UValue.  |
   `---------*/
+
+#define SKIP_SPACES()				\
+    while (message[pos] == ' ')			\
+      ++pos
+
   int UValue::parse(const char* message, int pos,
 		    std::list<BinaryData>& bins,
 		    std::list<BinaryData>::iterator& binpos)
   {
-    while (message[pos] == ' ')
-      ++pos;
+    SKIP_SPACES();
     if (message[pos] == '"')
     {
       //string
@@ -128,12 +132,9 @@ namespace urbi
       type = DATA_LIST;
       list = new UList();
       ++pos;
-      while (message[pos] == ' ')
-	++pos;
       while (message[pos])
       {
-	while (message[pos] == ' ')
-	  ++pos;
+	SKIP_SPACES();
 	if (message[pos] == ']')
 	  break;
 	UValue* v = new UValue();
@@ -142,8 +143,7 @@ namespace urbi
 	  return p;
 	list->array.push_back(v);
 	pos = p;
-	while (message[pos] == ' ')
-	  ++pos;
+	SKIP_SPACES();
 	//expect , or rbracket
 	if (message[pos] == ']')
 	  break;
@@ -164,17 +164,14 @@ namespace urbi
       pos += 4;
       type = DATA_OBJECT;
       object = new UObjectStruct();
-
-      while (message[pos] == ' ')
-	++pos;
+      SKIP_SPACES();
       if (message[pos] != '[')
 	return -pos;
       ++pos;
 
       while (message[pos])
       {
-	while (message[pos] == ' ')
-	  ++pos;
+	SKIP_SPACES();
 	if (message[pos] == ']')
 	  break; //empty object
 	//parse name
@@ -187,8 +184,7 @@ namespace urbi
 	UNamedValue nv;
 	nv.name = std::string(message + pos, p - pos - 1);
 	pos = p;
-	while (message[pos] == ' ')
-	  ++pos;
+	SKIP_SPACES();
 	UValue* v = new UValue();
 	p = v->parse(message, pos, bins, binpos);
 	if (p < 0)
@@ -196,8 +192,7 @@ namespace urbi
 	nv.val = v;
 	object->array.push_back(nv);
 	pos = p;
-	while (message[pos] == ' ')
-	  ++pos;
+	SKIP_SPACES();
 	//expect , or rbracket
 	if (message[pos] == ']')
 	  break;
@@ -243,12 +238,10 @@ namespace urbi
   std::ostream&
   UValue::print (std::ostream& s) const
   {
-    char dv[256];
     switch (type)
     {
       case DATA_DOUBLE:
-	sprintf(dv,"%f",(float)val);
-	s << dv;
+	s << (float) val;
 	break;
       case DATA_STRING:
 	s << '"' << *stringValue << '"';
@@ -263,27 +256,20 @@ namespace urbi
       case DATA_LIST:
       {
 	s << '[';
-	int sz = list->size();
-	for (int i = 0; i < sz; ++i)
-	{
-	  s << (*list)[i];
-	  if (i != sz - 1)
-	    s << " , ";
-	}
+	unsigned sz = list->size();
+	for (unsigned i = 0; i < sz; ++i)
+	  s << (*list)[i]
+	    << (i != sz - 1 ? ", " : "");
 	s << ']';
       }
       break;
       case DATA_OBJECT:
       {
 	s << "OBJ "<<object->refName<<" [";
-	int sz = object->size();
-	for (int i = 0; i < sz; ++i)
-	{
-	  s << (*object)[i].name << ':';
-	  s << (*object)[i].val;
-	  if (i != sz - 1)
-	    s << " , ";
-	}
+	unsigned sz = object->size();
+	for (unsigned i = 0; i < sz; ++i)
+	  s << (*object)[i].name << ':' << (*object)[i].val
+	    << (i != sz - 1 ? ", " : "");
 	s << ']';
       }
       break;
@@ -349,8 +335,7 @@ namespace urbi
 		 std::list<BinaryData>& bins,
 		 std::list<BinaryData>::iterator& binpos)
   {
-    while (message[pos] == ' ')
-      ++pos;
+    SKIP_SPACES();
     //find end of header
 
     if (binpos == bins.end()) //no binary data available
@@ -592,9 +577,9 @@ namespace
 
       case DATA_STRING:
       {
-	std::istringstream tstr(*stringValue);
+	std::istringstream is(*stringValue);
 	ufloat v;
-	tstr >> v;
+	is >> v;
 	return v;
       }
       break;

@@ -50,7 +50,7 @@ showImage(const urbi::UMessage &msg)
   im.width = static_cast<int>(static_cast<float>(img.width) * scale);
   im.height = static_cast<int>(static_cast<float>(img.height) * scale);
   convert(img, im);
-  
+
   int sz = 3*im.width*im.height;
   static int tme = 0;
   /* Calculate framerate. */
@@ -81,11 +81,11 @@ closeandquit (int)
 }
 
 
-void usage(const char * n) 
+void usage(const char * n)
 {
    fprintf(stderr,
 	      "usage: %s [options] format robotname\n"
-	      "  Displays images from an urbi server, or save one image if\n" 
+	      "  Displays images from an urbi server, or save one image if\n"
 	      "    -o is given\n"
 	      "  Options:\n"
 	      "    -p port   : use port instead of default urbi server port\n"
@@ -114,14 +114,14 @@ main (int argc, char *argv[])
   mon = NULL;
   im.width = im.height = 0;
   im.size = 0; im.data = 0; im.imageFormat = urbi::IMAGE_RGB;
-  
+
   int argp = 1;
-  while (argp <argc) 
+  while (argp < argc)
   {
     const std::string arg(argv[argp]);
-    if (arg == "-p") 
+    if (arg == "-p")
       port = strtol(argv[++argp],0,0);
-    else if (arg == "-j") 
+    else if (arg == "-j")
       jpegfactor = strtol(argv[++argp],0,0);
     else if (arg == "-d")
       device = argv[++argp];
@@ -133,7 +133,7 @@ main (int argc, char *argv[])
       reconstruct = true;
     else if (arg == "-o")
       fileName = argv[++argp];
-    else if (arg == "-h") 
+    else if (arg == "-h")
     {
       usage(argv[0]);
       exit(0);
@@ -168,7 +168,7 @@ main (int argc, char *argv[])
     client.send("%s.format = %d;", device, format);
     if (!frequency)
       client.send("loop {uimg << %s.val; noop},",device);
-    else 
+    else
       client.send("every (%d) uimg << %s.val,",frequency, device);
     urbi::execute();
   }

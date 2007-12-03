@@ -1,3 +1,16 @@
+2007-12-03  Akim Demaille  <demaille@gostai.com>
+
+	Accept extended floats.
+	* src/liburbi/uobject/uvalue-common.cc (SKIP_SPACES): New.
+	Use it.
+	(UValue::print): Use the default output for float, not %f.
+	Chain << together instead of creating blocks.
+	Don't issue spaces before commas.
+	* tests/checkfiles/removecallbacks.cc, tests/checkfiles/values.cc:
+	Adjust expected values.
+	* tests/liburbi-check.as: Use rst_run_report.
+	* src/examples/urbisend.cc: More C++.
+
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
 	Less header dependencies.

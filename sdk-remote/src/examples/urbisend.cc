@@ -3,7 +3,7 @@
  *
  * Sample urbi client that sends commands contained in a file.
  *
- * Copyright (C) 2004, 2006 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,6 +24,7 @@
 /* This is a trivial demonstration program that send commands contained in a file to an urbi server */
 
 #include "libport/cstdio"
+#include "libport/sysexits.hh"
 #include "urbi/uclient.hh"
 
 urbi::UCallbackAction
@@ -32,17 +33,18 @@ dump(const urbi::UMessage & msg)
   // FIXME: This is absolutely not completely migrated.
   // To be finished -- Akim.
   switch (msg.type)
-    {
+  {
     case urbi::MESSAGE_DATA:
-		std::cerr << *msg.value << std::endl;
+      std::cerr << *msg.value << std::endl;
       break;
 
     case urbi::MESSAGE_ERROR:
     case urbi::MESSAGE_SYSTEM:
-		std::cerr << msg.timestamp << " " << msg.tag.c_str() << " "
-		  << msg.message.c_str() << std::endl;
+      std::cerr << msg.timestamp << " "
+		<< msg.tag << " "
+		<< msg.message << std::endl;
       break;
-    }
+  }
   return urbi::URBI_CONTINUE;
 }
 
@@ -58,19 +60,21 @@ int main(int argc, char *argv[])
 {
   if (argc != 3)
     {
-      fprintf (stderr,
-	       "Missing file name\nUsage: urbisend robotname filename\n");
-      exit(1);
+      std::cerr << "Missing file name\nUsage: urbisend robotname filename"
+		<< std::endl;
+      exit(EX_USAGE);
     }
 
   urbi::UClient client (argv[1]);
   client.setPingInterval(1000);
   if (client.error())
-    exit(0);
+    exit(1);
   client.setWildcardCallback(callback(&dump));
   client.setClientErrorCallback(callback(&error));
   client.sendFile(argv[2]);
-  fprintf(stdout, "File sent, hit Ctrl-C to terminate.\n");
+
+  std::cout << "File sent, hit Ctrl-C to terminate." << std::endl;
   urbi::execute();
+
   return 0;
 }

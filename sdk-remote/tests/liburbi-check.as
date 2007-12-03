@@ -29,11 +29,7 @@ cleanup ()
   # Results.
   for i in $children
   do
-    rst_pre "$i command"  "$i.cmd"
-    rst_pre "$i status"   "$i.sta"
-    rst_pre "$i output"   "$i.out"
-    rst_pre "$i error"    "$i.err"
-    rst_pre "$i valgrind" "$i.val"
+    rst_run_report "$i" "$i"
   done
 
   exit $exit_status
@@ -72,7 +68,7 @@ find_urbi_server ()
        # If URBI_SERVER is not defined, try to find one.  If we are in
        # $top_builddir/tests/TEST.dir, then look in $top_builddir/src.
        URBI_SERVER=$(find_prog "urbi-server" \
-	                       "$top_builddir/src${PATH_SEPARATOR}.")
+			       "$top_builddir/src${PATH_SEPARATOR}.")
        ;;
 
     *[[\\/]]* ) # A path, relative or absolute.  Make it absolute.
@@ -182,30 +178,31 @@ kill_children
 estatus=$?
 sleep 1
 #generate traces
-  # If the return value >126, something really wrong is going on.  127 is
-  # command not found (should not happen here) and >127 means that the
-  # program was killed by a signal (which often indicates that something
-  # really wrong is going on).
-  if test $estatus -gt 126; then
-    stderr "Fatal: return value $estatus > 126"
-    exit='exit 177' # 177 = hard error
-  fi
 
-   # Debugging data often explains failures, so it should be first.
-  #if test -s debug.rst; then
-  #  cat debug.rst
-  #fi
+# If the return value >126, something really wrong is going on.  127 is
+# command not found (should not happen here) and >127 means that the
+# program was killed by a signal (which often indicates that something
+# really wrong is going on).
+if test $estatus -gt 126; then
+  stderr "Fatal: return value $estatus > 126"
+  exit='exit 177' # 177 = hard error
+fi
 
-   # Compare expected output with actual output.
-  cp remote.out remote.out.eff
-  rst_expect output remote.out
-  rst_pre "Error output" remote.err
-  #cp remote.sta remote.sta.eff
-  #echo 0 >status.exp
-  #rst_expect status remote.sta
+# Debugging data often explains failures, so it should be first.
+#if test -s debug.rst; then
+#  cat debug.rst
+#fi
 
-  # Display Valgrind report.
-  rst_pre "Valgrind" remote.val
+ # Compare expected output with actual output.
+cp remote.out remote.out.eff
+rst_expect output remote.out
+rst_pre "Error output" remote.err
+#cp remote.sta remote.sta.eff
+#echo 0 >status.exp
+#rst_expect status remote.sta
+
+# Display Valgrind report.
+rst_pre "Valgrind" remote.val
 
 echo "$exit" >exit
 $exit
