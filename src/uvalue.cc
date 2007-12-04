@@ -24,7 +24,6 @@
 #include <sstream>
 
 #include <boost/foreach.hpp>
-#include <boost/io/ios_state.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "libport/escape.hh"
@@ -783,7 +782,10 @@ UValue::echo(bool hr)
       // other display 1e04.  AFAIK C++ does not provide means to
       // adjust the width of the exponent.
       std::ostringstream o;
-      o << std::setprecision(7) << (float) val;
+      // We cast to double instead of float, because on some
+      // architectures floats seem not to honor setprecision, while
+      // doubles do.
+      o << std::setprecision(7) << (double) val;
       return o.str();
     }
 

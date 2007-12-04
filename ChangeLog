@@ -1,5 +1,10 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Issue floats as doubles.
+	* src/uvalue.cc (echo): Here.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	For the precision to 7.
 	* src/uvalue.cc (echo): here.
 
