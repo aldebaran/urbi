@@ -73,8 +73,8 @@ namespace urbi
 
       Current available channels for system messages are:
 
-      NEW_CHANNEL: send a message when a new command fail, with the name of 
-                   the requested object in a UStringSystemMessage
+      NEW_CHANNEL: send a message when a new command fail, with the name of
+		   the requested object in a UStringSystemMessage
   */
   class USystem
   {
@@ -90,24 +90,24 @@ namespace urbi
      * receive_message must return immediately, returning a timeout limit in
      * milliseconds. If necessary, it should spawn a thread to handle
      * asynchronous responses and set an appropriate timeout.
-     * 
+     *
      * Possible channels are:
      *
-     *  NEW_CHANNEL: 
+     *  NEW_CHANNEL:
      *
      *    @c message contains the name of an object on which a 'new'
      *    command failed. It is stored as a UStringSystemMessage and a cast is
      *    needed + call to @c UStringSystemMessage::getMessage.
      *
      *  How to cast?
-     *  
-     *  const UStringSystemMessage& msg = 
+     *
+     *  const UStringSystemMessage& msg =
      *    dynamic_cast<const UStringSystemMessage&> (message);
      *
      *  @return the number of milliseconds before timeout.
      */
     virtual int receive_message (const USystemChannel &channel,
-                                 const USystemMessage &message);
+				 const USystemMessage &message);
   };
 
 } // end namespace urbi
