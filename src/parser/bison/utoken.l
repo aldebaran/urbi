@@ -83,7 +83,6 @@ do {						\
 
 #define RETURN_NUM(Value)      RETURN_VAL_TOKEN(NUM, Value)
 #define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
-#define RETURN_FLAGTIME(Value) RETURN_VAL_TOKEN(FLAGTIME, Value)
 
 #define RETURN_TIMEVALUE(Scale)						\
 do {									\

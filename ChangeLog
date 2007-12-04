@@ -1,5 +1,12 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Remove FLAGTIME, unused.
+	* src/parser/bison/utoken.l (RETURN_FLAGTIME): Remove.
+	* src/parser/bison/ugrammar.y: Ditto.
+	Simplify <val> printer definition.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Cleanup.
 	* src/uvalue.cc: Minor changes.
 

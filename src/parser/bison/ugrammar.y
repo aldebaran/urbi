@@ -362,10 +362,8 @@ take (T* t)
   <val> FLAG       "flag"
   <val> FLAGTEST   "flag test"
   <val> FLAGID     "flag identifier"
-  <val> FLAGTIME   "flag time"
 // FIXME: Simplify once Bison 2.4 is out.
-%printer { debug_stream() << *$$; }
-  NUM TIMEVALUE FLAG FLAGTEST FLAGID FLAGTIME;
+%printer { debug_stream() << *$$; } <val>;
 
  /*------.
  | Str.  |
@@ -603,12 +601,6 @@ flag:
     if (flagval->val == 11)
       $$->notifyFreeze = true;
     memcheck(up, $$, flagval);
-  }
-
-| FLAGTIME "(" expr ")"
-  {
-    $$ = new UNamedParameters(new UString("flagtimeout"), $3);
-    memcheck(up, $$, $3);
   }
 
 | FLAGID "(" expr ")"
