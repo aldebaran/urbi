@@ -27,11 +27,31 @@
 # include <cstdlib> // for getenv
 #endif
 
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
+
+
+// Safe conversion to a numeric value.
+template <typename Out, typename In>
+Out
+lexical_cast (UParser& up, const yy::location& loc, In t)
+{
+  try
+  {
+    return boost::lexical_cast<Out>(t);
+  }
+  catch (boost::bad_lexical_cast)
+  {
+    up.error(loc,
+	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+    return 0;
+  }
+}
+
 
 // At each match, adjust the end cursor.
 #define YY_USER_ACTION locp->columns(yyleng);
@@ -83,9 +103,10 @@ typedef yy::parser::token token;
 #define RETURN_OP(Token)			\
   RETURN_SYMBOL(TOK_ ## Token)
 
-#define RETURN_TIME_VALUE(Scale)					\
+// UnitSize is the number of letters used for the unit.
+#define RETURN_TIME_VALUE(UnitSize, Scale)				\
   do {									\
-    yytext[yyleng-1]=0;							\
+    yytext[yyleng - UnitSize] = 0;					\
     RETURN_VALUE(TIME_VALUE, fval,					\
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   } while (0)
@@ -112,13 +133,12 @@ EOL      \n|\r|\n\r|\r\n
 
 ID       [a-zA-Z_][_A-Za-z0-9]*
 
-INTEGER  [0-9]+
-
-FRACTION (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+NATURAL  [0-9]+
+FRACTION (\.{NATURAL})|({NATURAL}(\.[0-9]*)?)
 EXPONENT [eE][-+]?[0-9]+
 FLOAT    {FRACTION}{EXPONENT}?
 
-NUMBER   {INTEGER}|{FLOAT}
+NUMBER   {NATURAL}|{FLOAT}
 
 STRING   \"([^\"]|"\\\"")*\"
 
@@ -151,17 +171,20 @@ STRING   \"([^\"]|"\\\"")*\"
   /*-----------------------------------.
   | Internal rules for generated code. |
   `-----------------------------------*/
-^"#"{BLANKS}?"line"{BLANKS}{NUMBER}{BLANKS}"\"".*"\""{BLANKS}?{EOL}	{
+^"#"{BLANKS}?"line"{BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
   std::string file = yytext;
 
   std::string line = file.substr (file.find_first_of ("0123456789"));
   line = line.substr (0, line.find_first_not_of ("0123456789"));
 
-  file = file.substr (file.find_first_of ("\"") + 1);
-  file = file.substr (0, file.find_last_of ("\""));
-
-  locp->initialize ((file == "-" || file == "") ? 0 : new libport::Symbol (file));
-  locp->lines (boost::lexical_cast<int>(line) - 1);
+  size_t first_quote = file.find_first_of ("\"");
+  if (first_quote != std::string::npos)
+    file = file.substr (first_quote + 1, file.find_last_of ("\""));
+  else
+    file.clear();
+  locp->initialize ((file.empty() || file == "-")
+		    ? 0 : new libport::Symbol (file));
+  locp->lines (lexical_cast<int>(up, *locp, line) - 1);
   locp->step ();
 }
 
@@ -190,15 +213,14 @@ STRING   \"([^\"]|"\\\"")*\"
 "+freeze"     RETURN_IVAL(FLAG, 11);
 "+stop"       RETURN_IVAL(FLAG, 12);
 
-{NUMBER}"d"   RETURN_TIME_VALUE(1000*60*60*24);
-{NUMBER}"h"   RETURN_TIME_VALUE(1000*60*60);
-{NUMBER}"m"   RETURN_TIME_VALUE(1000*60);
-{NUMBER}"s"   RETURN_TIME_VALUE(1000);
-{NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIME_VALUE(1);
+{NUMBER}"d"   RETURN_TIME_VALUE(1, 1000*60*60*24);
+{NUMBER}"h"   RETURN_TIME_VALUE(1, 1000*60*60);
+{NUMBER}"m"   RETURN_TIME_VALUE(1, 1000*60);
+{NUMBER}"s"   RETURN_TIME_VALUE(1, 1000);
+{NUMBER}"ms"  RETURN_TIME_VALUE(2, 1);
 
-  /* FIXME: atof and atoi are no good. */
-{INTEGER}     { RETURN_IVAL(INTEGER, atoi(yytext)); }
-{FLOAT}       { RETURN_FVAL(FLOAT,   atof(yytext)); }
+{NATURAL}     RETURN_IVAL(INTEGER, lexical_cast<int>  (up, *locp, yytext));
+{FLOAT}       RETURN_FVAL(FLOAT,   lexical_cast<float>(up, *locp, yytext));
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 

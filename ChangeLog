@@ -1,5 +1,83 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	In addition to the merge, various fixes in the scanner.
+
+	merge -r 1967:1990 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Don't accept #line 3.14.
+	* src/parser/bison/utoken.l (NATURAL): New.
+	Use it.
+	Don't accept #line 3.14e-13.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Too big a literal.
+	* src/parser/bison/utoken.l (lexical_cast): New.
+	Use it.
+	(RETURN_TIMEVALUE): Binary now.
+	Use RETURN_VAL_TOKEN.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Accept #line without file name.
+	* src/parser/bison/utoken.l: here.
+	* src/uconnection.cc: use it.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Issue floats as doubles.
+	* src/uvalue.cc (echo): Here.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	For the precision to 7.
+	* src/uvalue.cc (echo): here.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Coding style.
+	* src/uvalue.cc: Scope reduction.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Remove FLAGTEST.
+	Unused.  Not even defined in the scanner.
+	* src/parser/bison/ugrammar.y: here.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Remove FLAGTIME, unused.
+	* src/parser/bison/utoken.l (RETURN_FLAGTIME): Remove.
+	* src/parser/bison/ugrammar.y: Ditto.
+	Simplify <val> printer definition.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Cleanup.
+	* src/uvalue.cc: Minor changes.
+
+	2007-12-04  Akim Demaille  <demaille@gostai.com>
+	Split work().
+	This patch is based on one from Benoit Sigoure for 2.x.
+	* include/kernel/userver.hh (work_exec_timers_, work_access_and_change_)
+	(work_memory_check_, work_handle_connections_, work_handle_stopall_)
+	(work_blend_values_, work_execute_hub_updater_, work_test_cpuoverload_)
+	(work_reset_if_needed_): New.
+	* src/userver.cc: Idem.
+	(work): Use them.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	OLDS.
+	* CHANGELOG-Kernel: Remove, copies into
+	* NEWS: here.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	C++.
+	* src/console.cc: Use << rather than printf.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	Space after commas in lists.
+	* src/uvalue.cc: here.
+
+	2007-12-03  Akim Demaille  <demaille@gostai.com>
+	Remove DumbConnection.
+	* src/uvalue.cc: here.
+	Used nowhere (not even in ucore-pc or liburbi-cpp).
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Remove FLAG_TEST, FLAG_TIME, FLAG_ID, FLAG_ADA.
 	* src/parser/ugrammar.y: Unused.
 

@@ -81,7 +81,7 @@ public:
   virtual
   void effectiveDisplay(const char* t)
   {
-    printf ("%s", t);
+    std::cout << t;
   }
 };
 
