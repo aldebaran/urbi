@@ -1,5 +1,10 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	For the precision to 7.
+	* src/uvalue.cc (echo): here.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Coding style.
 	* src/uvalue.cc: Scope reduction.
 

@@ -729,6 +729,8 @@ booleval(UValue *v, bool freeme)
 
 
 //! UValue echo as a std::string
+// FIXME: This should be done via lexical_cast using operator<<
+// on UValues.  Code duplication, as always...
 std::string
 UValue::echo(bool hr)
 {
@@ -774,7 +776,16 @@ UValue::echo(bool hr)
     }
 
     case DATA_NUM:
-    return boost::lexical_cast<std::string>((float)val);
+    {
+      // We use to use lexical_cast, but the precision varies
+      // depending on the architecture.  The output still depends on
+      // the architecture: on Windows, 1e4 is written 1e004, and most
+      // other display 1e04.  AFAIK C++ does not provide means to
+      // adjust the width of the exponent.
+      std::ostringstream o;
+      o << std::setprecision(7) << (float) val;
+      return o.str();
+    }
 
     case DATA_STRING:
     {
