@@ -1,3 +1,14 @@
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
+	Split work().
+	This patch is based on one from Benoit Sigoure for 2.x.
+	* include/kernel/userver.hh (work_exec_timers_, work_access_and_change_)
+	(work_memory_check_, work_handle_connections_, work_handle_stopall_)
+	(work_blend_values_, work_execute_hub_updater_, work_test_cpuoverload_)
+	(work_reset_if_needed_): New.
+	* src/userver.cc: Idem.
+	(work): Use them.
+
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
 	OLDS.

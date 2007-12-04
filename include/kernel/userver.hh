@@ -256,6 +256,30 @@ public:
   /// Hash of variable that have both an access and change notify
   std::list<UVariable*>    access_and_change_varlist;
 
+  /// \{ Various parts of @c UServer::work.
+  /// Execute Timers
+  void work_exec_timers_ ();
+  /// Access & Change variable list
+  void work_access_and_change_ ();
+  /// Check memory overflow.
+  /// \return true iff overflow just detected.
+  bool work_memory_check_ ();
+  /// Scan currently opened connections for ongoing work.
+  /// \param overflow iff an overflow has just been detected.
+  void work_handle_connections_ (bool overflow);
+  /// Scan currently opened connections for deleting marked commands or
+  /// killall order
+  void work_handle_stopall_ ();
+  /// Values final assignment and nbAverage reset to 0
+  void work_blend_values_ ();
+  /// Execute Hub Updaters
+  void work_execute_hub_updater_ ();
+  /// Test CPU overload.
+  void work_test_cpuoverload_ ();
+  /// Resetting procedure
+  void work_reset_if_needed_ ();
+  /// \}
+
   /// Hash of function definition.
   HMfunctiontab            functiontab;
   /// Hash of functions definition markers.

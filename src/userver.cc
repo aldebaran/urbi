@@ -243,32 +243,26 @@ UServer::afterWork()
 
 
 void
-UServer::work()
+UServer::work_exec_timers_ ()
 {
-# if ! defined LIBPORT_URBI_ENV_AIBO
-  boost::recursive_mutex::scoped_lock lock(mutex);
-# endif
-  // CPU Overload test
-  updateTime();
-  previous3Time = previous2Time;
-  previous2Time = previousTime;
-  previousTime  = currentTime;
-  currentTime   = lastTime();
-
-  // Execute Timers
   BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::timermap)
     if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
     {
       i->call();
       i->lastTimeCalled = currentTime;
     }
+}
 
-
-  beforeWork();
-  // Access & Change variable list
+void
+UServer::work_access_and_change_ ()
+{
   BOOST_FOREACH (UVariable* i, access_and_change_varlist)
     i->get ();
+}
 
+bool
+UServer::work_memory_check_ ()
+{
   // memory test
   memoryCheck(); // Check for memory availability
   // recover the security memory space, with a margin (size x 2)
@@ -289,16 +283,22 @@ UServer::work()
       }
     }
   }
-  bool signalMemoryOverflow = false;
+
   if (memoryOverflow && securityBuffer_)
   {
     // Free space to ensure the warning messages will be sent without
     // problem.
     free (securityBuffer_);
     securityBuffer_ = 0;
-    signalMemoryOverflow = true;
+    return true;
   }
 
+  return false;
+}
+
+void
+UServer::work_handle_connections_ (bool overflow)
+{
   // Scan currently opened connections for ongoing work
   BOOST_FOREACH (UConnection* r, connectionList)
     if (r->isActive())
@@ -306,7 +306,7 @@ UServer::work()
       if (!r->isBlocked())
 	*r << UConnection::continueSend;
 
-      if (signalMemoryOverflow)
+      if (overflow)
 	*r << UConnection::errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
@@ -346,7 +346,11 @@ UServer::work()
 	*r << UConnection::received("");
       }
     }
+}
 
+void
+UServer::work_handle_stopall_ ()
+{
   // Scan currently opened connections for deleting marked
   // commands or killall order
   if (reseting && stage==0)
@@ -385,7 +389,11 @@ UServer::work()
 
   somethingToDelete = false;
   stopall = false;
+}
 
+void
+UServer::work_blend_values_ ()
+{
   // Values final assignment and nbAverage reset to 0
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
@@ -429,7 +437,11 @@ UServer::work()
       ++i;
     }
   }
+}
 
+void
+UServer::work_execute_hub_updater_ ()
+{
   // Execute Hub Updaters
   BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::updatemap)
     if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
@@ -437,13 +449,11 @@ UServer::work()
       i->call();
       i->lastTimeCalled = currentTime;
     }
+}
 
-  // after work
-  afterWork();
-
-  updateTime();
-  latestTime = lastTime();
-
+void
+UServer::work_test_cpuoverload_ ()
+{
   cpuload = (latestTime - currentTime)/getFrequency();
 
   if (!cpuoverload)
@@ -466,7 +476,11 @@ UServer::work()
     cpuoverload = false;
     cpucount = 0;
   }
+}
 
+void
+UServer::work_reset_if_needed_ ()
+{
   // Reseting procedure
   if (reseting)
   {
@@ -549,6 +563,40 @@ UServer::work()
       stage = 0;
     }
   }
+}
+
+void
+UServer::work()
+{
+# if ! defined LIBPORT_URBI_ENV_AIBO
+  boost::recursive_mutex::scoped_lock lock(mutex);
+# endif
+  // CPU Overload test
+  updateTime ();
+  previous3Time = previous2Time;
+  previous2Time = previousTime;
+  previousTime  = currentTime;
+  currentTime   = lastTime ();
+
+  work_exec_timers_ ();
+
+  beforeWork ();
+
+  work_access_and_change_ ();
+  bool overflow = work_memory_check_ ();
+  work_handle_connections_ (overflow);
+  work_handle_stopall_ ();
+  work_blend_values_ ();
+  work_execute_hub_updater_ ();
+
+  afterWork ();
+
+  updateTime ();
+  latestTime = lastTime ();
+
+  work_test_cpuoverload_ ();
+
+  work_reset_if_needed_ ();
 }
 
 //! UServer destructor.
