@@ -132,16 +132,18 @@ STRING   \"([^\"]|"\\\"")*\"
   | Internal rules for generated code. |
   `-----------------------------------*/
 
-^"#"{BLANKS}?"line"{BLANKS}{NUMBER}{BLANKS}"\"".*"\""{BLANKS}?{EOL}	{
+^"#"{BLANKS}?"line"{BLANKS}{NUMBER}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
   std::string file = yytext;
 
   std::string line = file.substr (file.find_first_of ("0123456789"));
   line = line.substr (0, line.find_first_not_of ("0123456789"));
 
-  file = file.substr (file.find_first_of ("\"") + 1);
-  file = file.substr (0, file.find_last_of ("\""));
-
-  locp->initialize ((file == "-" || file == "") ? 0 : new std::string (file));
+  size_t first_quote = file.find_first_of ("\"");
+  if (first_quote != std::string::npos)
+    file = file.substr (first_quote + 1, file.find_last_of ("\""));
+  else
+    file.clear();
+  locp->initialize ((file.empty() || file == "-") ? 0 : new std::string (file));
   locp->lines (boost::lexical_cast<int>(line) - 1);
   locp->step ();
 }

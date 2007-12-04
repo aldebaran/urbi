@@ -1,5 +1,11 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Accept #line without file name.
+	* src/parser/bison/utoken.l: here.
+	* src/uconnection.cc: use it.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Issue floats as doubles.
 	* src/uvalue.cc (echo): Here.
 
