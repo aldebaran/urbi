@@ -1,5 +1,10 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Fix #line parsing.
+	* src/parser/bison/utoken.l: here.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Don't accept #line 3.14.
 	* src/parser/bison/utoken.l (NATURAL): New.
 	Use it.

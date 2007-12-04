@@ -43,7 +43,7 @@ lexical_cast (UParser& up, const yy::location& loc, In t)
   }
   catch (boost::bad_lexical_cast)
   {
-    up.error(loc, 
+    up.error(loc,
 	     (boost::format ("invalid numerical litteral: %1%") % t).str());
     return 0;
   }
@@ -162,7 +162,8 @@ STRING   \"([^\"]|"\\\"")*\"
 
   size_t first_quote = file.find_first_of ("\"");
   if (first_quote != std::string::npos)
-    file = file.substr (first_quote + 1, file.find_last_of ("\""));
+    file = file.substr (first_quote + 1,
+			file.find_last_of ("\"") - first_quote - 1);
   else
     file.clear();
   locp->initialize ((file.empty() || file == "-") ? 0 : new std::string (file));
