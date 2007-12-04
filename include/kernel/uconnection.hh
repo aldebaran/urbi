@@ -380,7 +380,6 @@ public:
 
   UCommandQueue& recvQueue ();
   UQueue& send_queue ();
-  UConnection& localVariableCheck (UVariable *variable);
 
 public:
   //! UConnection IP associated
@@ -413,9 +412,6 @@ private:
   ast::Nary* active_command_;
 
 public:
-  /// Temporarily stores bin command while binary transfer occurs.
-  UCommand_ASSIGN_BINARY* binCommand;
-
   /// Virtual device for the connection..
   UString* connectionTag;
   /// Virtual device for function def.
@@ -438,8 +434,6 @@ public:
   bool returnMode;
   /// False when the whole command tree has been processed.
   bool obstructed;
-  /// Call ids stack for function calls.
-  std::list<UCallid*> stack;
 
 
   /// \name Parsing.

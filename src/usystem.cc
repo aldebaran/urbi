@@ -51,8 +51,8 @@ namespace urbi
   // UStringSystemMessage
 
   //! UStringSystemMessage constructor.
-  UStringSystemMessage::UStringSystemMessage (const std::string &s) :
-	  msg (s)
+  UStringSystemMessage::UStringSystemMessage (const std::string& s)
+    : msg (s)
   {
   }
 
@@ -81,14 +81,13 @@ namespace urbi
   }
 
   void
-  USystem::register_channel (const USystemChannel &channel)
+  USystem::register_channel (const USystemChannel&)
   {
-    ::urbiserver->systemObjects[(int) channel].push_back (this);
   }
 
   int
-  USystem::receive_message (const USystemChannel &,
-			    const USystemMessage &)
+  USystem::receive_message (const USystemChannel&,
+			    const USystemMessage&)
   {
     // user defined.
     return 0;

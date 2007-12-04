@@ -37,7 +37,6 @@
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
 # include "kernel/utypes.hh"
-# include "kernel/tag-info.hh"
 
 //# include "runner/scheduler.hh"
 namespace runner
@@ -202,10 +201,6 @@ public:
   virtual UErrorValue saveFile (const std::string& filename,
 				const std::string& content) = 0;
 
-  /// FIXME: Doc?
-  UVariable* getVariable (const std::string& device,
-			  const std::string& property);
-
   //! Accessor for frequency_.
   ufloat getFrequency ();
   void mark (UString* stopTag);
@@ -233,73 +228,16 @@ public:
   void addConnection (UConnection& connection);
   void removeConnection (UConnection& connection);
   int getUID ();
-  int addAlias (const std::string& id, const std::string& variablename);
 
   // A usual connection to stop dependencies.
   UConnection& getGhostConnection ();
 
-  void freeze (const std::string& tag);
-  void unfreeze (const std::string& tag);
-  void block (const std::string& tag);
-  void unblock (const std::string& tag);
-
   bool isRunningSystemCommands () const;
   void setSystemCommand (bool val);
-
-  /// Hash of all tags currently 'instanciated'
-  const HMtagtab& getTagTab () const;
-  /// Hash of all tags currently 'instanciated'
-  HMtagtab& getTagTab ();
-
-  /// Hash of group definitions.
-  const HMgrouptab& getGroupTab () const;
-  /// Hash of group definitions.
-  HMgrouptab& getGroupTab ();
-
-  /// Hash of group definitions.
-  const HMfunctiontab& getFunctionTab () const;
-  /// Hash of group definitions.
-  HMfunctiontab& getFunctionTab ();
-
-  /// Hash of objects hierarchy.
-  const HMobjtab& getObjTab () const;
-  /// Hash of objects hierarchy.
-  HMobjtab& getObjTab ();
-
-  /// Hash of function binders.
-  const HMbindertab& getFunctionBinderTab () const;
-  /// Hash of function binders.
-  HMbindertab& getFunctionBinderTab ();
-
-  /// Hash of obj alias definitions.
-  const HMaliastab& getObjAliasTab () const;
-  /// Hash of obj alias definitions.
-  HMaliastab& getObjAliasTab ();
 
   /// True when the server is paranoid on def checking.
   bool isDefChecking () const;
   void setDefCheck (bool val);
-
-  /// Hash of obj name waiting for a remote new.
-  const HMobjWaiting& getObjWaitTab () const;
-  /// Hash of obj name waiting for a remote new.
-  HMobjWaiting& getObjWaitTab ();
-
-  /// Hash of alias definitions.
-  const HMaliastab& getAliasTab () const;
-  HMaliastab& getAliasTab ();
-
-  /// Hash of variable values.
-  const HMvariabletab& getVariableTab () const;
-  HMvariabletab& getVariableTab ();
-
-  /// Hash of functions definition markers.
-  const HMfunctiontab& getFunctionDefTab () const;
-  HMfunctiontab& getFunctionDefTab ();
-
-  /// Hash of event binders.
-  const HMbindertab& getEventBinderTab () const;
-  HMbindertab& getEventBinderTab ();
 
   void hasSomethingToDelete ();
 
@@ -310,8 +248,6 @@ protected:
   virtual void effectiveDisplay (const char*) = 0;
 
 private:
-  friend class TagInfo;
-
   // Pointer to stop the header dependency.
   runner::Scheduler* scheduler_;
 
@@ -319,83 +255,16 @@ public: // FIXME remove from the public section.
   /// List of active connections: includes one UGhostConnection.
   // FIXME: This is meant to become a runner::Job and move out of this class.
   std::list<UConnection*> connectionList;
+
 private:
-
-  /// FIXME: Comment me.
-  void mark (TagInfo*);
-
   /// \{ Various parts of @c UServer::work.
-  /// Execute Timers
-  void work_exec_timers_ ();
-  /// Access & Change variable list
-  void work_access_and_change_ ();
   /// Scan currently opened connections for ongoing work
   void work_handle_connections_ ();
   /// Scan currently opened connections for deleting marked commands or
   /// killall order
   void work_handle_stopall_ ();
-  /// Values final assignment and nbAverage reset to 0
-  void work_blend_values_ ();
-  /// Execute Hub Updaters
-  void work_execute_hub_updater_ ();
   void work_test_cpuoverload_ ();
-  /// Resetting procedure
-  void work_reset_if_needed_ ();
   /// \}
-
-  /// Hash of variable values.
-  HMvariabletab variabletab;
-
-public: // FIXME remove from the public section.
-  /// Hash of variable that have both an access and change notify
-  std::list<UVariable*> access_and_change_varlist;
-private:
-
-  /// Hash of function definition.
-  HMfunctiontab functiontab;
-  /// Hash of functions definition markers.
-  HMfunctiontab functiondeftab;
-  /// Hash of objects hierarchy.
-  HMobjtab objtab;
-  /// Hash of alias definitions.
-  HMaliastab aliastab;
-  /// Hash of obj alias definitions.
-  HMaliastab objaliastab;
-  /// Hash of group definitions.
-  HMgrouptab grouptab;
-  /// Hash of events, one entry per (name,nbArgs).
-public:
-  HMemittab emittab;
-  /// Hash of events, one entry per name.
-  HMemit2tab emit2tab;
-private:
-  /// Hash of function binders.
-  HMbindertab functionbindertab;
-  /// Hash of event binders.
-  HMbindertab eventbindertab;
-  /// Hash of obj name waiting for a remote new.
-  HMobjWaiting objWaittab;
-  /// Hash of all tags currently 'instanciated'
-  HMtagtab tagtab;
-
-public: // FIXME: remove this from the public section
-  /// Array of list of UObjects registered for a system messages
-  /// The system message type is the index.
-  std::vector<std::list<urbi::USystem*> > systemObjects;
-
-  /// Variables to reinit (nbAverage=0).
-  std::list<UVariable*> reinitList;
-private:
-  /// List of variables to delete after a reset.
-  std::list<UVariable*> resetList;
-public:
-  /// True when the server is in the process of resetting.
-  bool resetting;
-private:
-  /// Resetting stage.
-  int stage;
-  /// List of variables to delete in a reset command.
-  std::list<UVariable*> varToReset;
 
 public:
   /// Shows debug or not.

@@ -36,8 +36,6 @@
 
 #include "kernel/userver.hh"
 #include "kernel/uconnection.hh"
-#include "kernel/uvalue.hh"
-#include "kernel/uvariable.hh"
 
 #include "ast/ast.hh"
 #include "ast/nary.hh"
@@ -49,11 +47,7 @@
 
 #include "parser/uparser.hh"
 #include "ubanner.hh"
-#include "ubinary.hh"
-#include "ubinder.hh"
-#include "ucallid.hh"
 #include "ucommandqueue.hh"
-#include "unamedparameters.hh"
 #include "uqueue.hh"
 
 #include "object/atom.hh" // object::Context
@@ -98,52 +92,12 @@ UConnection::UConnection (UServer* userver,
   std::ostringstream o;
   o << 'U' << (long) this;
   connectionTag = new UString(o.str());
-  UVariable* cid =
-    new UVariable(o.str().c_str(), "connectionID", o.str().c_str());
-  if (cid)
-    cid->uservar = false;
-}
-
-namespace
-{
-  static
-  void
-  removeMonitor(UConnection* c, HMbindertab& t)
-  {
-    std::list<HMbindertab::iterator> deletelist;
-    for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
-      if (i->second->removeMonitor(c))
-	deletelist.push_back(i);
-
-    BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-      t.erase(i);
-    deletelist.clear();
-  }
 }
 
 //! UConnection destructor.
 UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
-  if (connectionTag)
-  {
-    delete server->getVariable(connectionTag->c_str(), "connectionID");
-    delete connectionTag;
-  }
-
-  // free bindings
-  typedef std::pair<const char* const, UVariable*> variable;
-  BOOST_FOREACH (variable& i, ::urbiserver->getVariableTab())
-    if (i.second->binder
-	&& i.second->binder->removeMonitor(this))
-    {
-      delete i.second->binder;
-      i.second->binder = 0;
-    }
-
-  removeMonitor(this, ::urbiserver->getFunctionBinderTab ());
-  removeMonitor(this, ::urbiserver->getEventBinderTab ());
-
   delete parser_;
   delete sendQueue_;
   delete recvQueue_;
@@ -892,24 +846,5 @@ UConnection::setReceiveAdaptive (int receiveAdaptive)
 {
   recvAdaptive_ = receiveAdaptive;
   recvQueue_->setAdaptive (recvAdaptive_);
-  return *this;
-}
-
-//! Performs a variable prefix check for local storage in function calls
-/*! When a new variable is created inside a connection, it is necessary to
- check if it is not a variable local to some function, in that case it
- must be added to the local stack of this function in order to destroy
- the variable once the function returns.
- This is done by localVariableCheck.
- */
-UConnection&
-UConnection::localVariableCheck (UVariable *variable)
-{
-  if (!stack.empty())
-  {
-    UCallid* cid = stack.front();
-    if (variable->getDevicename() == cid->str())
-      cid->store(variable);
-  }
   return *this;
 }

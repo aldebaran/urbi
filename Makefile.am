@@ -31,17 +31,13 @@ kernelincludekernel_HEADERS =			\
 include/kernel/blockmemorymanager.hh		\
 include/kernel/fwd.hh				\
 include/kernel/memorymanager.hh			\
-include/kernel/tag-info.hh			\
-include/kernel/uasyncregister.hh 		\
 include/kernel/ucomplaints.hh			\
 include/kernel/uconnection.hh			\
 include/kernel/uconnection.hxx			\
 include/kernel/userver.hh			\
 include/kernel/userver.hxx			\
 include/kernel/ustring.hh			\
-include/kernel/utypes.hh			\
-include/kernel/uvalue.hh 			\
-include/kernel/uvariable.hh
+include/kernel/utypes.hh
 
 dist_pkgdata_DATA = share/urbi/urbi.u
 

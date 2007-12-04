@@ -1,3 +1,38 @@
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
+	Remove bits that are irrelevant to k2.
+	Maybe some bits will have to be restored, in which case the trunk/
+	is a fine source.  This should simplify the merges too.
+
+	* include/kernel/tag-info.hh,
+	* include/kernel/uasyncregister.hh, include/kernel/uvalue.hh,
+	* include/kernel/uvariable.hh, src/tag-info.cc,
+	* src/uasynccommand.cc, src/uasynccommand.hh,
+	* src/uasyncregister.cc, src/uatcandidate.cc,
+	* src/uatcandidate.hh, src/ubinary.cc, src/ubinary.hh,
+	* src/ubinder.cc, src/ubinder.hh, src/ucallid.cc,
+	* src/ucallid.hh, src/ucommand.cc, src/ucommand.hh,
+	* src/ucommand.hxx, src/ucopy.hh, src/ueventcompound.cc,
+	* src/ueventcompound.hh, src/ueventhandler.cc,
+	* src/ueventhandler.hh, src/ueventinstance.cc,
+	* src/ueventinstance.hh, src/ueventmatch.cc,
+	* src/ueventmatch.hh, src/uexpression.cc, src/uexpression.hh,
+	* src/ufunction.cc, src/ufunction.hh, src/ugroup.cc,
+	* src/ugroup.hh, src/unamedparameters.cc,
+	* src/unamedparameters.hh, src/uobj.cc, src/uobj.hh,
+	* src/uobject.cc, src/uproperty.cc, src/uproperty.hh,
+	* src/uvalue.cc, src/uvar.cc, src/uvariable.cc,
+	* src/uvariablelist.cc, src/uvariablelist.hh,
+	* src/uvariablename.cc, src/uvariablename.hh:
+	Remove.
+
+	* Makefile.am, include/kernel/fwd.hh,
+	* include/kernel/uconnection.hh, include/kernel/userver.hh,
+	* include/kernel/userver.hxx, include/kernel/utypes.hh,
+	* src/Makefile.am, src/parser/uparser.hh, src/uconnection.cc,
+	* src/userver.cc, src/usystem.cc:
+	Adjust.
+
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
 	Catch up with the tests.

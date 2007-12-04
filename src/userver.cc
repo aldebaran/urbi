@@ -41,13 +41,10 @@
 #include "libport/containers.hh"
 #include "libport/separator.hh"
 
-#include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
 
 #include "kernel/userver.hh"
 #include "kernel/utypes.hh"
-#include "kernel/uvalue.hh"
-#include "kernel/uvariable.hh"
 
 #include "ast/ast.hh"
 #include "ast/nary.hh"
@@ -55,10 +52,6 @@
 #include "ubanner.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
-#include "ueventcompound.hh"
-#include "ueventhandler.hh"
-#include "ueventmatch.hh"
-#include "ufunction.hh"
 #include "ughostconnection.hh"
 
 #include "runner/scheduler.hh"
@@ -84,8 +77,6 @@ int usedMemory;
 UServer::UServer(ufloat frequency,
 		 const char* mainName)
   : scheduler_ (new runner::Scheduler),
-    resetting (false),
-    stage (0),
     debugOutput (false),
     mainName_ (mainName),
     somethingToDelete (false),
@@ -102,25 +93,6 @@ UServer::UServer(ufloat frequency,
     uid(0)
 {
   ::urbiserver = this;
-
-  // Create system events
-  kernel::eh_system_alwaystrue = new UEventHandler
-    (new UString ("system.alwaysTrue"), 0);
-  kernel::eh_system_alwaysfalse = new UEventHandler
-    (new UString ("system.alwaysFalse"), 0);
-
-  std::list<UValue*> args;
-  kernel::system_alwaystrue = new UEvent (kernel::eh_system_alwaystrue, args);
-  kernel::eh_system_alwaystrue->addEvent (kernel::system_alwaystrue);
-
-  kernel::eventmatch_true  = new UEventMatch (kernel::eh_system_alwaystrue);
-  kernel::eventmatch_false = new UEventMatch (kernel::eh_system_alwaysfalse);
-  kernel::remoteFunction   = new UFunction("<remote Function>", 0, 0);
-
-  // initialize system message channels
-  std::list<urbi::USystem*> empty_list;
-  systemObjects.reserve (1); // one system message type known so far.
-  systemObjects.push_back (empty_list);
 }
 
 UErrorValue
@@ -177,25 +149,7 @@ UServer::initialize()
     std::ostringstream o;
     o << 'U' << (long)ghost_;
 
-    new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
-    new UVariable(MAINDEVICE, "name", mainName_.c_str());
     uservarState = true;
-    DEBUG (("done\n"));
-  }
-
-  // Cached taginfos.
-  TagInfo::initializeTagInfos();
-
-  // Plugins (internal components)
-  {
-    DEBUG (("Loading objecthubs..."));
-    BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
-      i->init(i->name);
-    DEBUG (("done\n"));
-
-    DEBUG (("Loading hubs..."));
-    BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
-      i->init(i->name);
     DEBUG (("done\n"));
   }
 
@@ -211,21 +165,9 @@ UServer::initialize()
 void
 UServer::main (int argc, const char* argv[])
 {
-  UValue* arglistv = new UValue ();
-  arglistv->dataType = DATA_LIST;
-
-  UValue* current = 0;
-  for (int i = 0; i < argc; ++i)
-  {
-    UValue* v = new UValue (argv[i]);
-    if (i == 0)
-      arglistv->liststart = v;
-    else
-      current->next = v;
-    current = v;
-  }
-
-  new UVariable (MAINDEVICE, "args", arglistv);
+  // FIXME: Save argv into Urbi world.
+  (void) argc;
+  (void) argv;
 }
 
 void
@@ -251,15 +193,9 @@ UServer::work ()
   previousTime  = currentTime;
   currentTime   = lastTime ();
 
-  work_exec_timers_ ();
-
   beforeWork ();
 
-  work_access_and_change_ ();
   work_handle_connections_ ();
-  work_handle_stopall_ ();
-  work_blend_values_ ();
-  work_execute_hub_updater_ ();
 
   scheduler_->work ();
 
@@ -269,26 +205,6 @@ UServer::work ()
   latestTime = lastTime ();
 
   work_test_cpuoverload_ ();
-
-  work_reset_if_needed_ ();
-}
-
-void
-UServer::work_exec_timers_ ()
-{
-  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::timermap)
-    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
-    {
-      i->call();
-      i->lastTimeCalled = currentTime;
-    }
-}
-
-void
-UServer::work_access_and_change_ ()
-{
-  BOOST_FOREACH (UVariable* i, access_and_change_varlist)
-    i->get ();
 }
 
 void
@@ -349,9 +265,6 @@ UServer::work_handle_connections_ ()
 void
 UServer::work_handle_stopall_ ()
 {
-  if (resetting && stage==0)
-    stopall = true;
-
   BOOST_FOREACH (UConnection* c, connectionList)
     if (c->isActive() && c->has_pending_command ())
     {
@@ -380,62 +293,6 @@ UServer::work_handle_stopall_ ()
 }
 
 void
-UServer::work_blend_values_ ()
-{
-  for (std::list<UVariable*>::iterator i = reinitList.begin();
-       i != reinitList.end();)
-    if ((*i)->activity == 2)
-    {
-      (*i)->activity = 0;
-      // set previous for stationnary values
-      (*i)->previous3 = (*i)->previous;
-      (*i)->previous2 = (*i)->previous;
-
-      i = reinitList.erase(i);
-    }
-    else
-    {
-      (*i)->activity = 2;
-      (*i)->nbAverage = 0;
-      (*i)->reloop = false;
-
-      if ((*i)->blendType == urbi::UMIX || (*i)->blendType == urbi::UADD)
-	if ((*i)->value->dataType == DATA_NUM)
-	{
-	  if ((*i)->autoUpdate)
-	    (*i)->selfSet (&((*i)->value->val));
-	  else
-	  {
-	    (*i)->selfSet (&((*i)->target));
-	    (*i)->setTarget();
-	  }
-	}
-
-      // set previous for next iteration
-      (*i)->previous3 = (*i)->previous2;
-      (*i)->previous2 = (*i)->previous;
-      (*i)->previous  = (*i)->target;
-
-      if ((*i)->speedmodified)
-	(*i)->reloop = true;
-      (*i)->speedmodified = false;
-
-      ++i;
-    }
-}
-
-void
-UServer::work_execute_hub_updater_ ()
-{
-  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::updatemap)
-    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
-    {
-      i->call();
-      i->lastTimeCalled = currentTime;
-    }
-}
-
-void
 UServer::work_test_cpuoverload_ ()
 {
   cpuload = (latestTime - currentTime)/getFrequency();
@@ -461,92 +318,6 @@ UServer::work_test_cpuoverload_ ()
   }
 }
 
-void
-UServer::work_reset_if_needed_ ()
-{
-  if (!resetting)
-    return;
-  ++stage;
-  if (stage == 1)
-  {
-    //delete objects first
-    typedef std::pair<const char* const, UVariable*> variable;
-    BOOST_FOREACH (variable& i, variabletab)
-      if (i.second->value
-	  && i.second->value->dataType == DATA_OBJ)
-	varToReset.push_back(i.second);
-
-    while (!varToReset.empty())
-      for (std::list<UVariable*>::iterator it = varToReset.begin();
-	   it != varToReset.end();)
-	if ((*it)->isDeletable())
-	{
-	  delete *it;
-	  it = varToReset.erase(it);
-	}
-	else
-	  ++it;
-
-    //delete hubs
-    BOOST_FOREACH (urbi::baseURBIStarterHub* hub, *urbi::objecthublist)
-      delete hub->getUObjectHub ();
-
-    //delete the rest
-    for (HMvariabletab::iterator i = variabletab.begin();
-	 i != variabletab.end();
-	 ++i)
-      if (i->second->uservar)
-	varToReset.push_back(i->second);
-
-    libport::deep_clear (varToReset);
-
-    aliastab.clear();
-    emittab.clear();
-    functiontab.clear();  //This leaks awfully...
-    grouptab.clear();
-    objaliastab.clear();
-
-    // do not clear tagtab, everything is refcounted and will be cleared
-    // when commands will be
-    //tagtab.clear();
-
-    for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
-      if ((*i)->isActive())
-	(**i) << UConnection::send("*** Reset completed. Now, restarting...\n", "reset");
-
-    //restart uobjects
-    BOOST_FOREACH (::urbi::baseURBIStarter* starter, *::urbi::objectlist)
-      starter->init(starter->name);
-
-    //reload URBI.INI
-    loadFile("URBI.INI", &ghost_->recvQueue());
-    ghost_->recvQueue().push ("#line 1\n");
-    char resetsignal[255];
-    strcpy(resetsignal, "var __system__.resetsignal;");
-    ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
-    ghost_->newDataAdded = true;
-  }
-  else if (libport::mhas(variabletab, "__system__.resetsignal"))
-  {
-    //reload CLIENT.INI
-    for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
-      if ((*i)->isActive() && (*i) != ghost_)
-      {
-	(**i) << UConnection::send("*** Restart completed.\n", "reset");
-	loadFile("CLIENT.INI", &(*i)->recvQueue());
-	(*i)->recvQueue().push ("#line 1\n");
-	(*i)->newDataAdded = true;
-	(**i) << UConnection::send("*** Ready.\n", "reset");
-      }
-    resetting = false;
-    stage = 0;
-  }
-}
-
 //! UServer destructor.
 UServer::~UServer()
 {
@@ -557,7 +328,6 @@ UServer::vecho_key(const char* key, const char* s, va_list args)
 {
   // This local declaration is rather unefficient but is necessary
   // to insure that the server could be made semi-reentrant.
-
   char key_[6];
 
   if (key == NULL)
@@ -741,90 +511,6 @@ UServer::getCustomHeader (int, char* header, int)
   header[0] = 0; // empty string
 }
 
-//! Get a variable in the hash table
-UVariable*
-UServer::getVariable (const std::string& device,
-		      const std::string& property)
-{
-  std::string n = device + '.' + property;
-  return libport::find0 (variabletab, n.c_str());
-}
-
-
-
-//! Mark all commands with stopTag in all connection for deletion
-void
-UServer::mark(UString* stopTag)
-{
-  HMtagtab::iterator it = tagtab.find(stopTag->c_str());
-  if (it == tagtab.end())
-    return; //no command with this tag
-  TagInfo* ti = &it->second;
-  mark(ti);
-}
-
-void
-UServer::mark(TagInfo* /*ti*/)
-{
-#if 0
-  BOOST_FOREACH(UCommand* i, ti->commands)
-    if (i->status != UCommand::UONQUEUE || i->morphed)
-      i->toDelete = true;
-
-  BOOST_FOREACH (TagInfo* i, ti->subTags)
-    mark(i);
-#endif
-}
-
-
-void
-UServer::freeze(const std::string &tag)
-{
-  HMtagtab::iterator it = tagtab.find(tag);
-  if (it != tagtab.end())
-    it->second.frozen = true;
-  else
-  {
-    TagInfo t;
-    t.name = tag;
-    t.frozen = true;
-    t.blocked = false;
-    t.insert(tagtab);
-  }
-}
-
-void
-UServer::unfreeze(const std::string &tag)
-{
-  HMtagtab::iterator it = tagtab.find(tag);
-  if (it != tagtab.end())
-    it->second.frozen = false;
-}
-
-void
-UServer::block(const std::string &tag)
-{
-  HMtagtab::iterator it = tagtab.find(tag);
-  if (it != tagtab.end())
-    it->second.blocked = true;
-  else
-  {
-    TagInfo t;
-    t.name = tag;
-    t.frozen = false;
-    t.blocked = true;
-    t.insert(tagtab);
-  }
-}
-
-void
-UServer::unblock(const std::string &tag)
-{
-  HMtagtab::iterator it = tagtab.find(tag);
-  if (it != tagtab.end())
-    it->second.blocked = false;
-}
-
 namespace
 {
   bool
@@ -914,44 +600,6 @@ UConnection&
 UServer::getGhostConnection ()
 {
   return *ghost_;
-}
-
-//! Adds an alias in the server base
-/*! This function is mostly useful for alias creation at start in the
- initialize() function for example.
- return 1 in case of success,  0 if circular alias is detected
- */
-int
-UServer::addAlias(const std::string& id, const std::string& variablename)
-{
-  if (id == variablename)
-    return 0;
-
-  const char* newobj = variablename.c_str ();
-  HMaliastab::iterator getobj = ::urbiserver->aliastab.find(newobj);
-
-  while (getobj != ::urbiserver->aliastab.end())
-  {
-    newobj = getobj->second->c_str();
-    if (id == newobj)
-      return 0;
-
-    getobj = ::urbiserver->aliastab.find(newobj);
-  }
-
-  if (aliastab.find(id.c_str ()) != aliastab.end())
-  {
-    UString* alias = aliastab[id.c_str ()];
-    *alias = variablename.c_str ();
-  }
-  else
-  {
-    // XXX we'll leak id_copy forever :|
-    char* id_copy = strdup (id.c_str ());
-    assert (id_copy);
-    aliastab[id_copy] = new UString (variablename.c_str ());
-  }
-  return 1;
 }
 
 
