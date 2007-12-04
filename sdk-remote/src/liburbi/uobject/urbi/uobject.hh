@@ -114,7 +114,7 @@ namespace urbi
   typedef std::list<UObject*> UObjectList;
 
   /// Package information about liburbi.
-  const libport::PackageInfo& liburbi_package_info ();
+  const libport::PackageInfo& package_info ();
 
   typedef int UReturn;
 

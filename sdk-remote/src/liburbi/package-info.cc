@@ -5,9 +5,10 @@
 namespace urbi
 {
   const libport::PackageInfo&
-  liburbi_package_info ()
+  package_info ()
   {
     LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
     return pi;
   }
+
 }

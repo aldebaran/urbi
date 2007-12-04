@@ -1,3 +1,11 @@
+2007-12-04  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Rename urbi::liburbi_package_info into urbi::package_info.
+	So it can be used the same way in engines and remotes.
+	* src/liburbi/package-info.cc,
+	* src/liburbi/uobject.cc,
+	* src/liburbi/uobject/urbi/uobject.hh: Here.
+
 2007-12-03  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add const version for UNotify* and  USetTimer.

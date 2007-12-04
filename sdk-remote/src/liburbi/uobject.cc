@@ -449,7 +449,7 @@ namespace urbi
   void
   version ()
   {
-    std::cout << urbi::liburbi_package_info().signature() << std::endl;
+    std::cout << urbi::package_info().signature() << std::endl;
   }
 
   void
