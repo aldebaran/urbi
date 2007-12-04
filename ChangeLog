@@ -1,5 +1,12 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Don't accept #line 3.14.
+	* src/parser/bison/utoken.l (NATURAL): New.
+	Use it.
+	Don't accept #line 3.14e-13.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Too big a literal.
 	* src/parser/bison/utoken.l (lexical_cast): New.
 	Use it.

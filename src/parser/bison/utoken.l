@@ -133,7 +133,8 @@ EOL      \n|\r|\n\r|\r\n
 
 ID       [a-zA-Z_][_A-Za-z0-9]*
 
-FRACTION (\.[0-9]+)|([0-9]+(\.[0-9]*)?)
+NATURAL  [0-9]+
+FRACTION (\.{NATURAL})|({NATURAL}(\.[0-9]*)?)
 EXPONENT [eE][-+]?[0-9]+
 NUMBER   {FRACTION}{EXPONENT}?
 
@@ -153,7 +154,7 @@ STRING   \"([^\"]|"\\\"")*\"
   | Internal rules for generated code. |
   `-----------------------------------*/
 
-^"#"{BLANKS}?"line"{BLANKS}{NUMBER}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
+^"#"{BLANKS}?"line"{BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
   std::string file = yytext;
 
   std::string line = file.substr (file.find_first_of ("0123456789"));
