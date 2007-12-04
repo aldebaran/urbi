@@ -32,6 +32,7 @@
 #include <string>
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 #if ! defined LIBPORT_URBI_ENV_AIBO
 # include <boost/thread.hpp>
 #endif
@@ -553,6 +554,7 @@ UServer::loadFile (const std::string& base, UCommandQueue* q)
   if (!is)
     return UFAIL;
 
+  q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
   while (is.good ())
   {
     char buf[BUFSIZ];
@@ -560,6 +562,7 @@ UServer::loadFile (const std::string& base, UCommandQueue* q)
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;
   }
+  q->push ("#pop\n");
   is.close();
 
   return USUCCESS;

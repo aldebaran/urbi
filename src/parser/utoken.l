@@ -27,6 +27,8 @@
 # include <cstdlib> // for getenv
 #endif
 
+#include <stack>
+
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -166,27 +168,45 @@ STRING   \"([^\"]|"\\\"")*\"
     BEGIN sc_default;
   }
 #endif
+
+  static std::stack<yy::location> synclines;
 %}
 
   /*-----------------------------------.
   | Internal rules for generated code. |
   `-----------------------------------*/
-^"#"{BLANKS}?"line"{BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
-  std::string file = yytext;
+^"#"{BLANKS}?("line"|"push"){BLANKS}{NATURAL}({BLANKS}"\"".*"\"")?{BLANKS}?{EOL}	{
+# define SKIP_SPACES()				\
+  for (++yytext; isspace (*yytext); ++yytext)	\
+    continue;
 
-  std::string line = file.substr (file.find_first_of ("0123456789"));
-  line = line.substr (0, line.find_first_not_of ("0123456789"));
+  SKIP_SPACES();
+  bool push = yytext[0] == 'p';
+  yytext += 4; // line|push.
 
-  size_t first_quote = file.find_first_of ("\"");
-  if (first_quote != std::string::npos)
-    file = file.substr (first_quote + 1, file.find_last_of ("\""));
-  else
-    file.clear();
-  locp->initialize ((file.empty() || file == "-")
-		    ? 0 : new libport::Symbol (file));
+  SKIP_SPACES();
+  const char* line = yytext;
+  yytext += strspn(yytext, "0123456789");
+  *yytext = 0;
+  ++yytext;
+
+  const char* file = 0;
+  if ((yytext = strchr (yytext, '"')))
+  {
+    file = yytext + 1;
+    *strchr (file, '"') = 0;
+  }
+
+  if (push)
+    synclines.push(*locp);
+
+  locp->initialize (!file || STREQ(file, "-") ? 0 : new libport::Symbol (file));
   locp->lines (lexical_cast<int>(up, *locp, line) - 1);
   locp->step ();
 }
+
+^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     *locp = synclines.top(); synclines.pop();
+
 
   /*------------.
   | The rules.  |
