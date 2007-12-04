@@ -75,7 +75,7 @@ namespace urbi
       : val(v), name(n)
     {}
     UNamedValue()
-      : val(0),name()
+      : val(0), name()
     {}
     UValue *val;
     std::string name;
@@ -135,8 +135,8 @@ namespace urbi
     {						\
       return *this = rhs;			\
     }
-    
-    UValue & operator, (const UValue &b) 
+
+    UValue & operator, (const UValue &b)
     {
       return *this = b;
     }
