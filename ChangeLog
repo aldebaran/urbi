@@ -1,5 +1,12 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Support #push and #pop for synclines.
+	* src/parser/bison/utoken.l: Do it.
+	(synclines): New.
+	* src/userver.cc (loadFile): Push and pop the sync lines.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Fix #line parsing.
 	* src/parser/bison/utoken.l: here.
 
