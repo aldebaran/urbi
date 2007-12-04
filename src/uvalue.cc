@@ -189,16 +189,11 @@ UValue::operator urbi::UBinary*()
 UValue::operator urbi::UList()
 {
   if (dataType != DATA_LIST)
-  {
     return urbi::UList();
-  }
+
   urbi::UList l;
-  UValue *n = liststart;
-  while (n)
-  {
+  for (UValue *n = liststart; n; n = n->next)
     l.array.push_back(n->urbiValue());
-    n = n->next;
-  }
   return l;
 }
 
@@ -315,9 +310,7 @@ UValue & UValue::operator = (const urbi::UBinary &b)
 {
   //TODO: cleanup
   if (dataType == DATA_BINARY && refBinary)
-  {
     LIBERATE(refBinary);
-  }
 
   dataType = DATA_BINARY;
   //Build named parameters list from getMessage() output
@@ -327,16 +320,16 @@ UValue & UValue::operator = (const urbi::UBinary &b)
   str.str(b.getMessage());
   while (!!str)
   {
-    std::string item = "";
+    std::string item;
     str >> item;
-    if (item == "")
+    if (item.empty())
       break;
     // FIXME: I don't understand what happens here, the location is
     // a fake.
     UNamedParameters* unp =
       new UNamedParameters(0, new UExpression(UExpression::location(),
 					      UExpression::VALUE,
-					      new UString(item.c_str())));
+					      new UString(item)));
     if (!first)
     {
       first = unp;
@@ -363,9 +356,8 @@ UValue&
 UValue::operator = (const urbi::UList &l)
 {
   if (dataType == DATA_BINARY && refBinary)
-  {
     LIBERATE(refBinary);
-  }
+
   UValue* current = 0;
   if (dataType == DATA_LIST)
     delete liststart;

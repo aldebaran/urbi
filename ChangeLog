@@ -1,5 +1,10 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Cleanup.
+	* src/uvalue.cc: Minor changes.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Split work().
 	This patch is based on one from Benoit Sigoure for 2.x.
 	* include/kernel/userver.hh (work_exec_timers_, work_access_and_change_)
