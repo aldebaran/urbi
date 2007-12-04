@@ -1,5 +1,10 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Coding style.
+	* src/uvalue.cc: Scope reduction.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Remove FLAGTEST.
 	Unused.  Not even defined in the scanner.
 	* src/parser/bison/ugrammar.y: here.

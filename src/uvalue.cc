@@ -287,7 +287,7 @@ UValue & UValue::operator = (const urbi::USound &i)
   urbi::UBinary b;
   b.type = urbi::BINARY_SOUND;
   b.sound = i;
-  (*this)=b;
+  *this = b;
   b.common.data=0;
   return *this;
 }
@@ -300,7 +300,7 @@ UValue & UValue::operator = (const urbi::UImage &i)
   urbi::UBinary b;
   b.type = urbi::BINARY_IMAGE;
   b.image = i;
-  (*this)=b;
+  *this = b;
   b.common.data=0;
   return *this;
 }
@@ -669,9 +669,6 @@ UValue::add(UValue *v)
 bool
 UValue::equal(UValue *v)
 {
-  UValue* scanlist;
-  UValue* vscanlist;
-
   switch (dataType)
   {
     case DATA_NUM:
@@ -694,21 +691,13 @@ UValue::equal(UValue *v)
     case DATA_LIST:
       if (v->dataType != DATA_LIST)
 	return false;
-
-      scanlist = liststart;
-      vscanlist = v->liststart;
-
-      while (scanlist && vscanlist)
       {
-	if (!scanlist->equal(vscanlist))
-	  return false;
-	scanlist = scanlist->next;
-	vscanlist = vscanlist->next;
+	UValue *i, *j;
+	for (i = liststart, j = v->liststart; i && j; i = i->next, j = j->next)
+	  if (!i->equal(j))
+	    return false;
+	return !i && !j;
       }
-      if (scanlist || vscanlist)
-	return false;
-
-      return true;
 
     default:
       return false;
@@ -811,18 +800,17 @@ UValue::echo(bool hr)
       if (param)
 	o << ' ';
 
-      while (param)
+      for (/* nothing */; param; param = param->next)
       {
 	if (param->expression)
 	{
 	  if (param->expression->dataType == DATA_NUM)
-	    o << (int)param->expression->val;
+	    o << (int) param->expression->val;
 	  if (param->expression->dataType == DATA_STRING)
 	    o << param->expression->str->c_str();
 	}
 	if (param->next)
 	  o << ' ';
-	param = param->next;
       }
 
       if (!hr)
@@ -846,9 +834,7 @@ UValue::echo(bool hr)
     }
 
     default:
-    {
       return "unknown_type";
-    }
   }
 }
 
