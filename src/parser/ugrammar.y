@@ -361,9 +361,6 @@
 %token <ival>
 	INTEGER    "integer"
 	FLAG       "flag"
-	FLAG_TEST  "flag test"
-	FLAG_ID    "flag identifier"
-	FLAG_TIME  "flag time"
 %printer { debug_stream() << $$; } <ival>;
 
 %union { float fval; }
@@ -613,9 +610,6 @@ stmt:
 
 flag:
   FLAG                        { $$ = 0; }
-| FLAG_TIME "(" expr ")"      { $$ = 0; }
-| FLAG_ID "(" expr ")"        { $$ = 0; }
-| FLAG_TEST "(" softtest ")"  { $$ = 0; }
 ;
 
 // One or more "flag"s.

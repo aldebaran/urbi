@@ -1,5 +1,10 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Remove FLAG_TEST, FLAG_TIME, FLAG_ID, FLAG_ADA.
+	* src/parser/ugrammar.y: Unused.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Remove bits that are irrelevant to k2.
 	Maybe some bits will have to be restored, in which case the trunk/
 	is a fine source.  This should simplify the merges too.
