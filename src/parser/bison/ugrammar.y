@@ -360,7 +360,6 @@ take (T* t)
   <val> NUM        "number"
   <val> TIMEVALUE  "time"
   <val> FLAG       "flag"
-  <val> FLAGTEST   "flag test"
   <val> FLAGID     "flag identifier"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; } <val>;
@@ -606,13 +605,6 @@ flag:
 | FLAGID "(" expr ")"
   {
     $$ = new UNamedParameters(new UString("flagid"), $3);
-    memcheck(up, $$, $3);
-  }
-
-| FLAGTEST "(" softtest ")"
-  {
-    $$ = new UNamedParameters(new UString(*$1 == 6 ? "flagstop" : "flagfreeze"),
-			      $3);
     memcheck(up, $$, $3);
   }
 ;

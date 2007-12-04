@@ -1,5 +1,11 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Remove FLAGTEST.
+	Unused.  Not even defined in the scanner.
+	* src/parser/bison/ugrammar.y: here.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Remove FLAGTIME, unused.
 	* src/parser/bison/utoken.l (RETURN_FLAGTIME): Remove.
 	* src/parser/bison/ugrammar.y: Ditto.
