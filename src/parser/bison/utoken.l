@@ -24,11 +24,31 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;
+
+
+// Safe conversion to a numeric value.
+template <typename Out, typename In>
+Out
+lexical_cast (UParser& up, const yy::location& loc, In t)
+{
+  try
+  {
+    return boost::lexical_cast<Out>(t);
+  }
+  catch (boost::bad_lexical_cast)
+  {
+    up.error(loc, 
+	     (boost::format ("invalid numerical litteral: %1%") % t).str());
+    return 0;
+  }
+}
+
 
 // At each match, adjust the end cursor.
 #define YY_USER_ACTION locp->columns(yyleng);
@@ -84,11 +104,12 @@ do {						\
 #define RETURN_NUM(Value)      RETURN_VAL_TOKEN(NUM, Value)
 #define RETURN_FLAG(Value)     RETURN_VAL_TOKEN(FLAG, Value)
 
-#define RETURN_TIMEVALUE(Scale)						\
+// UnitSize is the number of letters used for the unit.
+#define RETURN_TIMEVALUE(UnitSize, Scale)				\
 do {									\
-  yytext[yyleng-1] = 0;							\
-  valp->val = new ufloat(boost::lexical_cast<float>(yytext) * (Scale)); \
-  return token::TIMEVALUE;						\
+  yytext[yyleng - UnitSize] = 0;					\
+  RETURN_VAL_TOKEN(TIMEVALUE,						\
+		   lexical_cast<float>(up, *locp, yytext) * (Scale));	\
 } while (0)
 
 // We matched an obsolete token, New is now preferered.  Unput it so
@@ -144,7 +165,7 @@ STRING   \"([^\"]|"\\\"")*\"
   else
     file.clear();
   locp->initialize ((file.empty() || file == "-") ? 0 : new std::string (file));
-  locp->lines (boost::lexical_cast<int>(line) - 1);
+  locp->lines (lexical_cast<int>(up, *locp, line) - 1);
   locp->step ();
 }
 
@@ -171,14 +192,13 @@ STRING   \"([^\"]|"\\\"")*\"
 "+connection" RETURN_VAL_TOKEN(FLAGID, 9);
 
 
-{NUMBER}"d"   RETURN_TIMEVALUE(1000*60*60*24);
-{NUMBER}"h"   RETURN_TIMEVALUE(1000*60*60);
-{NUMBER}"m"   RETURN_TIMEVALUE(1000*60);
-{NUMBER}"s"   RETURN_TIMEVALUE(1000);
-{NUMBER}"ms"  yytext[yyleng-2]=0; RETURN_TIMEVALUE(1);
+{NUMBER}"d"   RETURN_TIMEVALUE(1, 1000*60*60*24);
+{NUMBER}"h"   RETURN_TIMEVALUE(1, 1000*60*60);
+{NUMBER}"m"   RETURN_TIMEVALUE(1, 1000*60);
+{NUMBER}"s"   RETURN_TIMEVALUE(1, 1000);
+{NUMBER}"ms"  RETURN_TIMEVALUE(2, 1);
 
-{NUMBER}      { valp->val = new ufloat(boost::lexical_cast<float>(yytext));
-		return token::NUM; }
+{NUMBER}      RETURN_VAL_TOKEN(NUM, lexical_cast<float>(up, *locp, yytext));
 
 \"            valp->str = new std::string; BEGIN SC_STRING;
 

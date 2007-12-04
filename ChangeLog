@@ -1,5 +1,13 @@
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
+	Too big a literal.
+	* src/parser/bison/utoken.l (lexical_cast): New.
+	Use it.
+	(RETURN_TIMEVALUE): Binary now.
+	Use RETURN_VAL_TOKEN.
+
+2007-12-04  Akim Demaille  <demaille@gostai.com>
+
 	Accept #line without file name.
 	* src/parser/bison/utoken.l: here.
 	* src/uconnection.cc: use it.
