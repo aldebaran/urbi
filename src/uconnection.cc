@@ -47,6 +47,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "unamedparameters.hh"
 #include "uqueue.hh"
 #include "uqueue.hh"
+#include "uobj.hh"
 
 UConnection::UConnection (UServer *userver,
 			  int minSendBufferSize,
@@ -125,13 +126,19 @@ UConnection::~UConnection()
   delete activeCommand;
 
   // free bindings
-  BOOST_FOREACH (HMvariabletab::value_type i, ::urbiserver->variabletab)
-    if (i.second->binder
-	&& i.second->binder->removeMonitor(this))
-    {
-      delete i.second->binder;
-      i.second->binder = 0;
+# define FREE_BINDINGS(Table)\
+  BOOST_FOREACH (HM##Table::value_type i, ::urbiserver->Table)\
+    if (i.second->binder\
+	&& i.second->binder->removeMonitor(this))\
+    {\
+      delete i.second->binder;\
+      i.second->binder = 0;\
     }
+
+  FREE_BINDINGS(variabletab);
+  FREE_BINDINGS(objtab);
+
+# undef FREE_BINDINGS
 
   removeMonitor(this, ::urbiserver->functionbindertab);
   removeMonitor(this, ::urbiserver->eventbindertab);

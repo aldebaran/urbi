@@ -1,3 +1,10 @@
+2007-12-05  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Delete binds from objtable as well on connection deletion.
+	Not doing so caused the kernel to segv when calling
+	a method/constructor/destructor of a disconnected remote.
+	* src/uconnection.cc: Here.
+
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
 	Support #push and #pop for synclines.
