@@ -450,6 +450,7 @@ namespace urbi
   version ()
   {
     std::cout << urbi::package_info().signature() << std::endl;
+    exit (0);
   }
 
   void

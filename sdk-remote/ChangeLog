@@ -1,3 +1,8 @@
+2007-12-05  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Exit on -v or --version.
+	* src/liburbi/uobject.cc: Here.
+
 2007-12-04  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Rename urbi::liburbi_package_info into urbi::package_info.
