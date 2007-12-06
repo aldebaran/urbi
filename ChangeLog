@@ -1,3 +1,9 @@
+2007-12-06  Loic Fosse  <fosse@gostai.com>
+
+	Implement loop keyword.
+	* src/parser/ugrammar.y: Define "loop" as an infinite "while" in the
+	AST.
+
 2007-12-04  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 1990:1996 https://svn.gostai.com/svn/kernel1/trunk
