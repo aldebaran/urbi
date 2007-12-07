@@ -1174,23 +1174,27 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	    if (*modif->name == "sin")
 	    {
+	      delete modif_sin;
 	      modif_sin = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "cos")
 	    {
+	      delete modif_sin;
 	      modif_sin = modif->expression;
-	      // FIXME: delete modif_phase before?
+	      delete modif_phase;
 	      modif_phase = new UExpression(loc_,
 					    UExpression::VALUE, PI/ufloat(2));
 	      controlled = true;
 	    }
 	    else if (*modif->name == "ampli")
 	    {
+	      delete modif_ampli;
 	      modif_ampli = modif->expression;
 	    }
 	    else if (*modif->name == "smooth")
 	    {
+	      delete modif_smooth;
 	      modif_smooth = modif->expression;
 	      controlled = true;
 	    }
@@ -1202,21 +1206,25 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    }
 	    else if (*modif->name == "speed")
 	    {
+	      delete modif_speed;
 	      modif_speed = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "accel")
 	    {
+	      delete modif_accel;
 	      modif_accel = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "adaptive")
 	    {
+	      delete modif_adaptive;
 	      modif_adaptive = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "phase")
 	    {
+	      delete modif_phase;
 	      modif_phase = modif->expression;
 	    }
 	    else if (*modif->name == "getphase")
@@ -1228,6 +1236,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 			   " the 'getphase' modifier");
 		return UCOMPLETED;
 	      }
+	      delete modif_getphase;
 	      modif_getphase = modif->expression->variablename;
 	    }
 	    else if (*modif->name == "timelimit")
