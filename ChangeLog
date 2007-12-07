@@ -1,6 +1,11 @@
 2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
 
-	Mode delete of modif_.
+	Fix typo.
+	* ChangeLog: Here.
+
+2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
+
+	More delete of modif_.
 	* src/ucommand.cc: Here.
 
 2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
@@ -202,8 +207,8 @@
 2007-11-26  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix delete.
-	* src/ucommand.cc: 
-	    - Force getVariableName to recheck in hashtable 
+	* src/ucommand.cc:
+	    - Force getVariableName to recheck in hashtable
 	        instead of using its cache.
 	    - Replace a : with << in code generated for a remote method
 	      call.
@@ -233,7 +238,7 @@
 
 2007-11-25  Jean-Christophe Baillie  <baillie@gostai.com>
 
-	Fix type declaration position in ugrammar.y  
+	Fix type declaration position in ugrammar.y
 	* src/parser/bison/ugrammar.y: put the declaration before the first
 	use.
 
