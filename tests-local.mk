@@ -23,21 +23,19 @@ XFAIL_TESTS +=					\
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
 1.x/arithmetics-failures.chk			\
-1.x/armor-unarmor.chk				\
 1.x/begin-end-report.chk			\
 1.x/bin-copy.chk				\
 1.x/bin.chk					\
 1.x/bug76.chk					\
 1.x/channels-tags.chk				\
-1.x/class-definition.chk			\
 1.x/connection-delete.chk			\
 1.x/delete.chk					\
 1.x/doublecolon.chk				\
+1.x/echo.chk					\
 1.x/events.chk					\
 1.x/every.chk					\
 1.x/exec.chk					\
-1.x/for-loop.chk				\
-1.x/foreach.chk					\
+1.x/for-in.chk					\
 1.x/freeze-time.chk				\
 1.x/function-declaration.chk			\
 1.x/function-delete.chk				\

@@ -1,3 +1,8 @@
+2007-12-07  Akim Demaille  <demaille@gostai.com>
+
+	Update tests.
+	* tests-local.mk: update.
+
 2007-12-06  Loic Fosse  <fosse@gostai.com>
 
 	Implement loop keyword.
