@@ -174,7 +174,7 @@ STRING   \"([^\"]|"\\\"")*\"
   *yytext = 0;
   ++yytext;
 
-  const char* file = 0;
+  char* file = 0;
   if ((yytext = strchr (yytext, '"')))
   {
     file = yytext + 1;
