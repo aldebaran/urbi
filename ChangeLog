@@ -1,5 +1,12 @@
 2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
 
+	Remove memory leaks.
+	* src/ucommand.cc: Here.
+	Delete expression for assign modifiers.
+	Delete temporary list.
+
+2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
+
 	Remove const on temporary.
 	* src/parser/bison/utoken.l: Here.
 	It caused a compile error on VCxx.

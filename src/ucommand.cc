@@ -629,6 +629,16 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
   delete variablename;
   delete parameters;
 
+  delete modif_time;
+  delete modif_sin;
+  delete modif_phase;
+  delete modif_smooth;
+  delete modif_speed;
+  delete modif_accel;
+  delete modif_ampli;
+  delete modif_adaptive;
+  delete modif_getphase;
+
   if (assigned)
   {
     --variable->nbAssigns;
@@ -1186,6 +1196,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	    }
 	    else if (*modif->name == "time")
 	    {
+	      delete modif_time;
 	      modif_time = modif->expression;
 	      controlled = true;
 	    }
@@ -1259,9 +1270,11 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	// virtual "time:0" if no modifier specified (controlled == false)
 	if (!controlled)
+	{
 	  // no controlling modifier => time:0
-	  // FIXME: delete modif_time before?
+	  delete modif_time;
 	  modif_time = new UExpression(loc(), UExpression::VALUE, ufloat(0));
+	}
 
 	// clean the temporary rhs UValue
 	delete rhs;
@@ -2398,6 +2411,7 @@ UCommand_EXPR::execute_(UConnection *connection)
 	    {
 	      ss << ",";
 	      ss << valparam->echo ();
+	      delete valparam;
 	    }
 	    else
 	      break;
