@@ -1,3 +1,9 @@
+2007-12-08  mefyl  <mefyl@gruntech.net>
+
+	Use BOOST_FOREACH.
+	* src/userver.cc: Here.
+	* TODO: Remove task.
+
 2007-12-07  Akim Demaille  <demaille@gostai.com>
 
 	Update tests.

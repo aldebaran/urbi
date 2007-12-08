@@ -133,7 +133,7 @@ UServer::initialize()
       if (customHeader[0])
 	display(customHeader);
       ++i;
-    } while (customHeader[0]!=0);
+    } while (customHeader[0] != 0);
 
     display(::HEADER_AFTER_CUSTOM);
     display("Ready.\n");
@@ -278,7 +278,7 @@ UServer::work_handle_stopall_ ()
 
   // Delete all connections with closing=true
   for (std::list<UConnection *>::iterator i = connectionList.begin();
-       i!= connectionList.end(); )
+       i != connectionList.end(); )
   {
     if ((*i)->closing)
     {
@@ -528,9 +528,9 @@ std::string
 UServer::find_file (const std::string& base)
 {
   ECHO (base << " in " << libport::separate(path, ':'));
-  for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  BOOST_FOREACH (path_type::value_type p, path)
   {
-    std::string f = *p + "/" + base;
+    std::string f = p + "/" + base;
     ECHO("find_file(" << base << ") testing " << f);
     if (file_readable(f))
     {
