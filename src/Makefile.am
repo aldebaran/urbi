@@ -12,22 +12,12 @@
 ## Initialization.  ##
 ## ---------------- ##
 
-include $(top_srcdir)/build-aux/init.mk
+include kernel.mk
+AUTOMAKE_OPTIONS += -Wno-portability
 
 kernelinclude_HEADERS =
 dist_libkernel_la_SOURCES =
 nodist_libkernel_la_SOURCES =
-
-AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
-# Find the kernel headers exported to the cores.
-AM_CPPFLAGS += -I$(top_srcdir)/include
-AM_CXXFLAGS += $(WARNING_CXXFLAGS)
-
-# Add boost libraries.
-AM_CXXFLAGS += $(BOOST_CPPFLAGS)
-AM_LDFLAGS  += $(BOOST_THREAD_LDFLAGS)
-# There is no AM_LIBADD.
-LIBS        += $(BOOST_THREAD_LIBS)
 
 ## ----------- ##
 ## libkernel.  ##

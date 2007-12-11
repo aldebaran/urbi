@@ -1,5 +1,11 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	kernel.mk.
+	* src/kernel.mk: New, fetched from the future.
+	* src/Makefile.am: Use it.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	src/parser/bison -> src/parser.
 	I should have done this long ago.  Now 1.x and 2.x are alike.
 	* src/parser/bison/bison.mk, src/parser/bison/flex-lexer.hh,
