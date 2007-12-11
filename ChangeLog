@@ -1,5 +1,11 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Fix.
+	* src/unamedparameters.hxx: Fix type name.
+	Breaks VC++, but not G++.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Gotcha.
 	There is a f*ing ctor that takes void*, so any pointer mistake
 	is doomed to failure.

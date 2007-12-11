@@ -6,7 +6,7 @@
 # include "unamedparameters.hh"
 
 inline
-UNamedParameters::UNamedParameters*
+UNamedParameters*
 UNamedParameters::operator[] (size_t n)
 {
   UNamedParameters* res = this;
