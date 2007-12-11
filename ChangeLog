@@ -1,3 +1,9 @@
+2007-12-11  Loic Fosse  <fosse@gostai.com>
+
+	Fix TYPE_CHECK macro.
+	* src/object/primitives.hh: Add missing namespace in TYPE_CHECK
+	macro.
+
 2007-12-08  mefyl  <mefyl@gruntech.net>
 
 	Use BOOST_FOREACH.

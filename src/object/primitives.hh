@@ -35,9 +35,9 @@ namespace object
 #define TYPE_CHECK(Obj, Type)                                           \
   do {									\
     if (!(Obj)->type_is<Type>())					\
-      throw WrongArgumentType(object::Object::kind_type(Type::kind),	\
-			      Obj->kind_get(),				\
-			      __PRETTY_FUNCTION__);			\
+      throw object::WrongArgumentType(object::Object::kind_type(Type::kind), \
+				      Obj->kind_get(),			\
+				      __PRETTY_FUNCTION__);		\
   } while (0)
 
 /**
