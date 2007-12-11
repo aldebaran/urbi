@@ -93,16 +93,16 @@ UValue::UValue(UDataType t, const char* s)
 inline int exprToInt(UExpression *e)
 {
   if (e->dataType == DATA_NUM)
-    return (int)e->val;
+    return (int) e->val;
   else
-    return boost::lexical_cast<int>(e->str);
+    return boost::lexical_cast<int>(*e->str);
 }
 
 UValue::operator urbi::UImage()
 {
   urbi::UImage img;
-  img.data=0;
-  img.size=img.width = img.height=0;
+  img.data = 0;
+  img.size = img.width = img.height=0;
   img.imageFormat = urbi::IMAGE_UNKNOWN;
   if (dataType != DATA_BINARY)
     return img;

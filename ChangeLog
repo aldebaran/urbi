@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Fix exprToInt.
+	* src/uvalue.cc: Cast the pointee, not the pointer.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	param[n].
 	* src/unamedparameters.hh, src/unamedparameters.hxx (operator[]): New.
 	* src/Makefile.am: Adjust.
