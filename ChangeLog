@@ -1,5 +1,11 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Simplify UString uses.
+	* include/kernel/uvalue.hh, src/uvalue.cc: Add a ctor with UString.
+	Use it.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	UString + UString.
 	* include/kernel/ustring.hh (operator+): New.
 

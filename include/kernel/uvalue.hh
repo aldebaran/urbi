@@ -40,6 +40,8 @@ public:
   MEMORY_MANAGED;
   UValue();
   UValue(ufloat val);
+  // \a s is (deep) copied.
+  UValue(const UString& s);
   UValue(const char* str);
   UValue(const urbi::UValue&);
 

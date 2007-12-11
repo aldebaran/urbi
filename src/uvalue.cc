@@ -57,7 +57,7 @@ UValue::UValue()
   ADDOBJ(UValue);
 }
 
-//! UValue constructor.
+
 UValue::UValue(ufloat val)
   : dataType (DATA_NUM),
     val (val),
@@ -68,7 +68,17 @@ UValue::UValue(ufloat val)
   ADDOBJ(UValue);
 }
 
-//! UValue constructor.
+
+UValue::UValue(const UString& s)
+  : dataType (DATA_STRING),
+    val (0),
+    str (new UString (s)),
+    liststart (0),
+    next (0)
+{
+  ADDOBJ(UValue);
+}
+
 UValue::UValue(const char* str)
   : dataType (DATA_STRING),
     val (0),
@@ -382,7 +392,7 @@ UValue::UValue(const urbi::UValue &v)
       break;
     case urbi::DATA_STRING:
       dataType = DATA_STRING;
-      this->str = new UString(v.stringValue->c_str());
+      this->str = new UString(*v.stringValue);
       break;
     case urbi::DATA_LIST:
     {
@@ -618,8 +628,8 @@ UValue::add(UValue *v)
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << val << v->str->c_str();
-      res->str = new UString(ostr.str().c_str());
+      ostr << val << *v->str;
+      res->str = new UString(ostr.str());
       if (res->str == 0)
       {
 	delete res;
@@ -640,7 +650,7 @@ UValue::add(UValue *v)
       res->dataType = DATA_STRING;
 
       std::ostringstream ostr;
-      ostr << str->c_str() << v->val;
+      ostr << *str << v->val;
       res->str = new UString(ostr.str().c_str());
 
       if (res->str == 0)
@@ -652,7 +662,7 @@ UValue::add(UValue *v)
     }
 
     if (v->dataType == DATA_STRING)
-      return new UValue((std::string(str->c_str()) + v->str->c_str()).c_str());
+      return new UValue(*str + *v->str);
   }
   return 0;
 }
@@ -667,10 +677,10 @@ UValue::equal(UValue *v)
       return v->dataType == DATA_NUM && v->val == val;
 
     case DATA_STRING:
-      return v->dataType == DATA_STRING && *str == v->str->c_str();
+      return v->dataType == DATA_STRING && *str == *v->str;
 
     case DATA_FILE:
-      return v->dataType == DATA_FILE && *str == v->str->c_str();
+      return v->dataType == DATA_FILE && *str == *v->str;
 
     case DATA_BINARY:
       if (v->dataType != DATA_BINARY)
@@ -740,7 +750,7 @@ UValue::echo(bool hr)
 	if (!i.second->getMethod().empty()
 	    && str
 	    && i.second->value->dataType != DATA_OBJ
-	    && i.second->getDevicename() == (std::string)str->c_str())
+	    && i.second->getDevicename() == *str)
 	{
 	  if (!first)
 	    o << ',';
@@ -847,11 +857,11 @@ UValue::urbiValue()
     case DATA_NUM:
       return new urbi::UValue(val);
     case DATA_STRING:
-      return new urbi::UValue(std::string(str->c_str()));
+      return new urbi::UValue(str);
     case DATA_BINARY:
       return new urbi::UValue(operator urbi::UBinary()); //FIXME
     case DATA_LIST:
-      return new urbi::UValue((urbi::UList)(*this));
+      return new urbi::UValue((urbi::UList) *this);
     default:
       return new urbi::UValue();
   };
