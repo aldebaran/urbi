@@ -23,7 +23,7 @@
  **************************************************************************** */
 
 %expect 0
-%require "2.2"
+%require "2.3"
 %error-verbose
 %defines
 %skeleton "lalr1.cc"
@@ -31,12 +31,15 @@
 %lex-param {UParser& up}
 %debug
 
-%{
+%code requires
+{
+#include "libport/ufloat.h"
+
 #include "kernel/fwd.hh"
 #include "kernel/utypes.hh"
 #include "flavorable.hh"
 #include "uvariablename.hh" // UDeriveType
-%}
+}
 
 // Locations.
 %locations
@@ -72,8 +75,8 @@
   bool                     is_channel;
 }
 
-%{
-  // Output in ugrammar.cc.
+%code  // Output in ugrammar.cc.
+{
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -93,175 +96,175 @@
 #include "uproperty.hh"
 #include "uvariablelist.hh"
 
-static UString** globalDelete;
+  static UString** globalDelete;
 
-/* Memory checking macros, used in the command tree building process */
+  /* Memory checking macros, used in the command tree building process */
 
-void
-memcheck (UParser& up, const void* p)
-{
-  if (!p)
+  void
+  memcheck (UParser& up, const void* p)
   {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+    }
+  }
+
+  template <class T1>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+    }
+  }
+
+  template <class T1, class T2>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+      delete p2; p2 = 0;
+    }
+  }
+
+  template <class T1, class T2, class T3>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+      delete p2; p2 = 0;
+      delete p3; p3 = 0;
+    }
+  }
+
+  template <class T1, class T2, class T3, class T4>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+      delete p2; p2 = 0;
+      delete p3; p3 = 0;
+      delete p4; p4 = 0;
+    }
+  }
+
+  /// Whether the \a command was the empty command.
+  bool
+  spontaneous (const UCommand& u)
+  {
+    const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
+    return noop && noop->is_spontaneous();
+  }
+
+  /// Issue a warning.
+  void
+  warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+  {
+    std::ostringstream o;
+    o << "!!! " << l << ": " << m << "\n" << std::ends;
+    up.connection << UConnection::send(o.str().c_str(), "warning");
+  }
+
+  /// Complain if \a command is not spontaneous.
+  void
+  warn_spontaneous(UParser& up,
+		   const yy::parser::location_type& l, const UCommand& u)
+  {
+    if (spontaneous(u))
+      warn (up, l,
+	    "implicit empty instruction.  "
+	    "Use 'noop' to make it explicit.");
+  }
+
+  /// Better newer style than deprecated.
+  void
+  warn_deprecated (UParser& up,
+		   const yy::parser::location_type& l,
+		   const std::string& older, const std::string& newer)
+  {
+    warn (up, l, std::string("'") + older + "' is deprecated,");
+    warn (up, l, std::string("  use '") + newer + "' instead");
+  }
+
+  /// Issue a warning about missing parens for a function \a f call.
+  void
+  warn_parens (UParser& up,
+	       const yy::parser::location_type& l, const std::string& f)
+  {
+    warn_deprecated (up, l, f + " <expression>", f + " (<expression>)");
+  }
+
+  /// Direct the call from 'bison' to the scanner in the right UParser.
+  inline
+  yy::parser::token_type
+  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
+  {
+    return up.scanner_.yylex(val, loc, up);
+  }
+
+
+  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+  UCommand*
+    new_bin(UParser& up,
+	    const yy::parser::location_type& l, Flavorable::UNodeType op,
+	    UCommand* lhs, UCommand* rhs)
+  {
+    UCommand_TREE*res = new UCommand_TREE(l, op, lhs, rhs);
+    if (res)
+      res->setTag("__node__");
+    memcheck(up, res, lhs, rhs);
+    return res;
+  }
+
+  /// A new UExpression of type \c t and child \c t1.
+  template <class T1>
+    UExpression*
+    new_exp (UParser& up, const yy::parser::location_type& l,
+	     UExpression::Type t, T1* t1)
+  {
+    UExpression* res = new UExpression(l, t, t1);
+    memcheck(up, res, t1);
+    return res;
+  }
+
+  /// A new UExpression of type \c t and children \c t1, \c t2.
+  template <class T1, class T2>
+    UExpression*
+    new_exp (UParser& up, const yy::parser::location_type& l,
+	     UExpression::Type t, T1* t1, T2* t2)
+  {
+    UExpression* res = new UExpression(l, t, t1, t2);
+    memcheck(up, res, t1, t2);
+    return res;
+  }
+
+  /// Take the value, free the pointer.
+  template <class T>
+    inline
+    T
+    take (T* t)
+  {
+    T res(*t);
+    delete t;
+    return res;
   }
 }
-
-template <class T1>
-void
-memcheck(UParser& up, const void* p, T1*& p1)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-  }
-}
-
-template <class T1, class T2>
-void
-memcheck(UParser& up, const void* p, T1*& p1, T2*& p2)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-    delete p2; p2 = 0;
-  }
-}
-
-template <class T1, class T2, class T3>
-void
-memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-    delete p2; p2 = 0;
-    delete p3; p3 = 0;
-  }
-}
-
-template <class T1, class T2, class T3, class T4>
-void
-memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
-{
-  if (!p)
-  {
-    up.connection.server->isolate();
-    up.connection.server->memoryOverflow = true;
-    delete p1; p1 = 0;
-    delete p2; p2 = 0;
-    delete p3; p3 = 0;
-    delete p4; p4 = 0;
-  }
-}
-
-/// Whether the \a command was the empty command.
-bool
-spontaneous (const UCommand& u)
-{
-  const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
-  return noop && noop->is_spontaneous();
-}
-
-/// Issue a warning.
-void
-warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
-{
-  std::ostringstream o;
-  o << "!!! " << l << ": " << m << "\n" << std::ends;
-  up.connection << UConnection::send(o.str().c_str(), "warning");
-}
-
-/// Complain if \a command is not spontaneous.
-void
-warn_spontaneous(UParser& up,
-		 const yy::parser::location_type& l, const UCommand& u)
-{
-  if (spontaneous(u))
-    warn (up, l,
-	  "implicit empty instruction.  "
-	  "Use 'noop' to make it explicit.");
-}
-
-/// Better newer style than deprecated.
-void
-warn_deprecated (UParser& up,
-		 const yy::parser::location_type& l,
-		 const std::string& older, const std::string& newer)
-{
-  warn (up, l, std::string("'") + older + "' is deprecated,");
-  warn (up, l, std::string("  use '") + newer + "' instead");
-}
-
-/// Issue a warning about missing parens for a function \a f call.
-void
-warn_parens (UParser& up,
-	     const yy::parser::location_type& l, const std::string& f)
-{
-  warn_deprecated (up, l, f + " <expression>", f + " (<expression>)");
-}
-
-/// Direct the call from 'bison' to the scanner in the right UParser.
-inline
-yy::parser::token_type
-yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
-{
-  return up.scanner_.yylex(val, loc, up);
-}
-
-
-/// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-UCommand*
-new_bin(UParser& up,
-	const yy::parser::location_type& l, Flavorable::UNodeType op,
-	UCommand* lhs, UCommand* rhs)
-{
-  UCommand_TREE*res = new UCommand_TREE(l, op, lhs, rhs);
-  if (res)
-    res->setTag("__node__");
-  memcheck(up, res, lhs, rhs);
-  return res;
-}
-
-/// A new UExpression of type \c t and child \c t1.
-template <class T1>
-UExpression*
-new_exp (UParser& up, const yy::parser::location_type& l,
-	 UExpression::Type t, T1* t1)
-{
-  UExpression* res = new UExpression(l, t, t1);
-  memcheck(up, res, t1);
-  return res;
-}
-
-/// A new UExpression of type \c t and children \c t1, \c t2.
-template <class T1, class T2>
-UExpression*
-new_exp (UParser& up, const yy::parser::location_type& l,
-	 UExpression::Type t, T1* t1, T2* t2)
-{
-  UExpression* res = new UExpression(l, t, t1, t2);
-  memcheck(up, res, t1, t2);
-  return res;
-}
-
-/// Take the value, free the pointer.
-template <class T>
-inline
-T
-take (T* t)
-{
-  T res(*t);
-  delete t;
-  return res;
-}
-%}
 
 /* List of all tokens and terminal symbols, with their type */
 

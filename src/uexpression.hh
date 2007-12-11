@@ -24,6 +24,8 @@
 
 # include <list>
 
+# include "libport/ufloat.h"
+
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"
 # include "kernel/memorymanager.hh"

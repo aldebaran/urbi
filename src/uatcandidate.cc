@@ -19,6 +19,7 @@
 #include <boost/foreach.hpp>
 
 #include "kernel/uvalue.hh"
+#include "kernel/ustring.hh"
 
 #include "uatcandidate.hh"
 #include "ucommand.hh"

@@ -29,6 +29,9 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
+// Lord, forgive us.
+#include "kernel/ustring.hh"
+
 #include "parser/uparser.hh"
 // Shorter access to the tokens.
 typedef yy::parser::token token;

@@ -1,5 +1,11 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Less includes.
+	* include/kernel/utypes.hh: Remove useless includes.
+	Adjust dependencies.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	uwait-counter.hh.
 	* src/uwait-counter.hh: New.
 	* include/kernel/utypes.hh: Extracted from here.
