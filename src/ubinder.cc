@@ -19,6 +19,9 @@
 
  **************************************************************************** */
 #include <algorithm>
+
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
 #include "kernel/ustring.hh"
@@ -77,13 +80,9 @@ UBinder::locateMonitor (UConnection *c)
   UMonitor *m = 0;
 
   // locate the connection
-  for (monitors_type::iterator i = monitors.begin();
-       i != monitors.end();
-       ++i)
-  {
-    if ((*i)->c == c)
-      m = (*i);
-  }
+  BOOST_FOREACH (UMonitor* i, monitors)
+    if (i->c == c)
+      m = i;
 
   return m;
 }
@@ -148,7 +147,8 @@ UBinder::removeMonitor (const UString& objname)
 `-----------*/
 
 //! UMonitor constructor
-UMonitor::UMonitor(UConnection *c): c(c)
+UMonitor::UMonitor(UConnection *c)
+  : c(c)
 {
 }
 
