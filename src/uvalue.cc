@@ -144,7 +144,7 @@ namespace
 	if (e->dataType == ::DATA_NUM)
 	  o << ' ' << (int) e->val;
 	else if (e->dataType == ::DATA_STRING)
-	  o << ' '<< e->str;
+	  o << ' ' << *e->str;
       }
     return o;
   }

@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Stop playing with pointers...
+	* src/uvalue.cc: Second time I make the same mistake...
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	kernel.mk.
 	* src/kernel.mk: New, fetched from the future.
 	* src/Makefile.am: Use it.
