@@ -2815,11 +2815,11 @@ UCommand_NEW::execute_(UConnection *connection)
     o << "[4,\"" << id->c_str() << "\",\""
       << objit->second->device->c_str() << "\"]\n";
     const std::string n = o.str();
-    int nb=0;
+    int nb = 0;
     BOOST_FOREACH (UMonitor* i, objit->second->binder->monitors)
     {
-      *i->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-      *i->c << UConnection::send(reinterpret_cast<const ubyte*>(n.c_str()),
+      *i->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG)
+	    << UConnection::send(reinterpret_cast<const ubyte*>(n.c_str()),
 				 n.size());
       ++nb;
     }
@@ -2828,11 +2828,8 @@ UCommand_NEW::execute_(UConnection *connection)
     if (ow != ::urbiserver->objWaittab.end())
       ow->second->nb += nb;
     else
-    {
-      UWaitCounter *wc = new UWaitCounter(*id, nb);
-      ASSERT(wc)
-	::urbiserver->objWaittab[wc->id.c_str()] = wc;
-    }
+      ::urbiserver->objWaittab[wc->id.c_str()] = new UWaitCounter(*id, nb);
+
     // initiate remote new waiting
     remoteNew = true;
     return URUNNING;
