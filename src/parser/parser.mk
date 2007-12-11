@@ -1,3 +1,7 @@
+dist_libkernel_la_SOURCES +=					\
+parser/uparser.hh parser/uparser.cc
+
+
 ## -------------- ##
 ## Bison parser.  ##
 ## -------------- ##
@@ -8,7 +12,7 @@ BISONXX_IN = $(top_srcdir)/build-aux/bison++.in
 $(BISONXX): $(BISONXX_IN)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) build-aux/bison++
 
-parsedir = $(top_srcdir)/src/parser/bison
+parser_dir = $(top_srcdir)/src/parser
 
 # We do not use Automake features here.
 FROM_UGRAMMAR_Y =			\
@@ -19,19 +23,21 @@ ugrammar.hh				\
 ugrammar.cc
 
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
-CLEANFILES += $(FROM_UGRAMMAR_Y) ugrammar.stamp ugrammar.output
-nodist_libkernel_la_SOURCES = $(FROM_UGRAMMAR_Y)
+CLEANFILES += $(FROM_UGRAMMAR_Y)
+CLEANFILES += ugrammar.stamp ugrammar.output ugrammar.html
+nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 
 
 # Compile the parser and save cycles.
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
-EXTRA_DIST += $(parsedir)/ugrammar.y
-ugrammar.stamp: $(parsedir)/ugrammar.y $(BISONXX_IN) $(parsedir)/bison.mk
+EXTRA_DIST += $(parser_dir)/ugrammar.y
+ugrammar_deps = $(BISONXX_IN) $(parser_dir)/parser.mk $(top_srcdir)/build-aux/output-to-dot
+ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp
 	@touch $@.tmp
-	$(BISONXX) $(parsedir)/ugrammar.y ugrammar.cc -d -ra
+	$(BISONXX) $(parser_dir)/ugrammar.y ugrammar.cc -d -ra
 	@mv -f $@.tmp $@
 
 $(FROM_UGRAMMAR_Y): ugrammar.stamp
@@ -39,6 +45,14 @@ $(FROM_UGRAMMAR_Y): ugrammar.stamp
 	  rm -f ugrammar.stamp; \
 	  $(MAKE) $(AM_MAKEFLAGS) ugrammar.stamp; \
 	fi
+
+# We tried several times to run make from ast/ to build position.hh
+# and location.hh.  Unfortunately, because of different, but
+# equivalent, paths, BSD Make was unable to build them.  The following
+# hook is here to address this.
+.PHONY: generate-parser
+generate-parser: $(FROM_UGRAMMAR_Y)
+
 
 ## -------------- ##
 ## Flex Scanner.  ##
@@ -53,17 +67,17 @@ utoken.cc
 
 BUILT_SOURCES += $(FROM_UTOKEN_L)
 CLEANFILES += $(FROM_UTOKEN_L) utoken.stamp
-dist_libkernel_la_SOURCES += $(parsedir)/flex-lexer.hh
+dist_libkernel_la_SOURCES += $(parser_dir)/flex-lexer.hh
 nodist_libkernel_la_SOURCES += $(FROM_UTOKEN_L)
 
-EXTRA_DIST += $(parsedir)/utoken.l
-utoken.stamp: $(parsedir)/utoken.l $(parsedir)/bison.mk
+EXTRA_DIST += $(parser_dir)/utoken.l
+utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/parser.mk
 	@rm -f $@.tmp
 	@touch $@.tmp
 # -s to disable the default rule (ECHO).
-	$(FLEX) -s -+ -outoken.cc $(parsedir)/utoken.l
+	$(FLEX) -s -+ -outoken.cc $(parser_dir)/utoken.l
 	perl -pi						\
-	     -e 's,<FlexLexer.h>,"parser/bison/flex-lexer.hh",;'\
+	     -e 's,<FlexLexer.h>,"parser/flex-lexer.hh",;'	\
 	     -e 's/class istream;/#include <iostream>/;'	\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
 	     -e 's/# *include *<unistd.h>/#include "config.h"\n#ifndef WIN32\n$$&\n#endif/;'	\
@@ -86,6 +100,5 @@ position.hh				\
 location.hh				\
 ugrammar.hh
 
-bisonincludedir = $(kernelincludedir)/parser/bison
-bisoninclude_HEADERS = \
-$(parsedir)/flex-lexer.hh
+nobase_kernelinclude_HEADERS = 		\
+parser/flex-lexer.hh

@@ -31,7 +31,7 @@
 # include "flavorable.hh"
 # include "uvariablename.hh"
 # include "ugrammar.hh"
-# include "parser/bison/flex-lexer.hh"
+# include "parser/flex-lexer.hh"
 
 
 # undef  YY_DECL

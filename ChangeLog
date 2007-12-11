@@ -1,5 +1,18 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	src/parser/bison -> src/parser.
+	I should have done this long ago.  Now 1.x and 2.x are alike.
+	* src/parser/bison/bison.mk, src/parser/bison/flex-lexer.hh,
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l:
+	Rename as...
+	* src/parser/parser.mk, src/parser/flex-lexer.hh,
+	* src/parser/ugrammar.y, src/parser/utoken.l:
+	these.
+	* src/parser/uparser.hh, src/Makefile.am:
+	Adjust.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Factoring.
 	* src/uvalue.cc (params_dump, uvalue_to_ubinary): New.
 	Use them.

@@ -15,6 +15,8 @@
 include $(top_srcdir)/build-aux/init.mk
 
 kernelinclude_HEADERS =
+dist_libkernel_la_SOURCES =
+nodist_libkernel_la_SOURCES =
 
 AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
 # Find the kernel headers exported to the cores.
@@ -49,10 +51,9 @@ install-data-hook:
 uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
-dist_libkernel_la_SOURCES =					\
+dist_libkernel_la_SOURCES +=					\
 flavorable.hh							\
 memorymanager/memorymanager.cc					\
-parser/uparser.hh parser/uparser.cc				\
 tag-info.cc							\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
@@ -89,8 +90,6 @@ uvariablelist.hh uvariablelist.cc				\
 uvariablename.hh uvariablename.cc                               \
 usystem.cc
 
-include parser/bison/bison.mk
-
 ## ------------ ##
 ## version.hh.  ##
 ## ------------ ##
@@ -121,9 +120,7 @@ nodist_libkernel_la_SOURCES += $(libport_sources)
 ## Sub directories.  ##
 ## ----------------- ##
 
-# parser.
-EXTRA_DIST +=					\
-parser/uparser.hh
+include parser/parser.mk
 
 urbiinclude_HEADERS = $(uobject_headers)
 
