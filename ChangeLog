@@ -1,5 +1,12 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Factoring.
+	* src/uvalue.cc (params_dump, uvalue_to_ubinary): New.
+	Use them.
+	The same code was written twice, and some more code three times.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Fix exprToInt.
 	* src/uvalue.cc: Cast the pointee, not the pointer.
 

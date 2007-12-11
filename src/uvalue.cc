@@ -129,53 +129,53 @@ UValue::operator urbi::UImage()
   return img;
 }
 
+// FIXME: The following code should certainly be moved
+// in UBinary's file.
+
+namespace
+{
+  static
+  std::ostream&
+  params_dump (std::ostream& o, const UNamedParameters& param)
+  {
+    for (const UNamedParameters *p = &param; p; p = p->next)
+      if (const UExpression* e = p->expression)
+      {
+	if (e->dataType == ::DATA_NUM)
+	  o << ' ' << (int) e->val;
+	else if (e->dataType == ::DATA_STRING)
+	  o << ' '<< e->str;
+      }
+    return o;
+  }
+
+  static
+  urbi::UBinary&
+  uvalue_to_ubinary (UValue& v, urbi::UBinary &b)
+  {
+    //simplest way is to echo our bin headers and parse again
+    std::ostringstream msg;
+    msg << v.refBinary->ref()->bufferSize;
+    params_dump(msg, *v.refBinary->ref()->parameters);    
+    msg << '\n'; //parse expects this
+    std::list<urbi::BinaryData> lBin;
+    lBin.push_back(urbi::BinaryData(v.refBinary->ref()->buffer,
+				    v.refBinary->ref()->bufferSize));
+    std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
+    b.parse(msg.str().c_str(), 0, lBin, lIter);
+    return b;
+  }
+}
+
 UValue::operator urbi::UBinary()
 {
-  //simplest way is to echo our bin headers and parse again
   urbi::UBinary b;
-  std::ostringstream msg;
-  msg << refBinary->ref()->bufferSize;
-  for (UNamedParameters *param = refBinary->ref()->parameters;
-       param; param = param->next)
-    if (param->expression)
-      {
-	if (param->expression->dataType == ::DATA_NUM)
-	  msg << ' ' << (int)param->expression->val;
-	else if (param->expression->dataType == ::DATA_STRING)
-	  msg << ' '<< param->expression->str->c_str();
-      }
-
-  msg << '\n'; //parse expects this
-  std::list<urbi::BinaryData> lBin;
-  lBin.push_back(urbi::BinaryData(refBinary->ref()->buffer,
-				  refBinary->ref()->bufferSize));
-  std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-  b.parse(msg.str().c_str(), 0, lBin, lIter);
-  return b;
+  return uvalue_to_ubinary (*this, b);
 }
 
 UValue::operator urbi::UBinary*()
 {
-  //simplest way is to echo our bin headers and parse again
-  urbi::UBinary* b = new urbi::UBinary();
-  std::ostringstream msg;
-  msg << refBinary->ref()->bufferSize;
-  for (UNamedParameters *param = refBinary->ref()->parameters;
-       param; param = param->next)
-    if (param->expression)
-      {
-	if (param->expression->dataType == ::DATA_NUM)
-	  msg<< ' '<<(int)param->expression->val;
-	else if (param->expression->dataType == ::DATA_STRING)
-	  msg << ' '<<param->expression->str->c_str();
-      }
-  msg << '\n'; //parse expects this
-  std::list<urbi::BinaryData> lBin;
-  lBin.push_back(urbi::BinaryData(refBinary->ref()->buffer,
-				  refBinary->ref()->bufferSize));
-  std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-  b->parse(msg.str().c_str(), 0, lBin, lIter);
-  return b;
+  return &uvalue_to_ubinary (*this, *new urbi::UBinary());
 }
 
 
@@ -801,23 +801,7 @@ UValue::echo(bool hr)
 
       std::ostringstream o;
       o << "BIN " << refBinary->ref()->bufferSize;
-
-      UNamedParameters *param = refBinary->ref()->parameters;
-      if (param)
-	o << ' ';
-
-      for (/* nothing */; param; param = param->next)
-      {
-	if (param->expression)
-	{
-	  if (param->expression->dataType == DATA_NUM)
-	    o << (int) param->expression->val;
-	  if (param->expression->dataType == DATA_STRING)
-	    o << param->expression->str->c_str();
-	}
-	if (param->next)
-	  o << ' ';
-      }
+      params_dump(o, *refBinary->ref()->parameters);    
 
       if (!hr)
       {
