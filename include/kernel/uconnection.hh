@@ -165,170 +165,170 @@ public:
     bool _flush;
   };
 
-  static inline _Send sendf (const std::string& __tag,
-			     const char* __format, ...)
+  static inline _Send sendf (const std::string& tag,
+			     const char* format, ...)
   {
     va_list args;
-    va_start(args, __format);
-    const _Send tmp = sendf (__tag, __format, args);
+    va_start(args, format);
+    const _Send tmp = sendf (tag, format, args);
     va_end(args);
     return tmp;
   }
 
-  static inline _Send sendf (const std::string& __tag,
-			     const char* __format, va_list __args)
+  static inline _Send sendf (const std::string& tag,
+			     const char* format, va_list args)
   {
     char buf[1024];
-    vsnprintf(buf, 1023, __format, __args);
-    return send (buf, __tag.c_str());
+    vsnprintf(buf, 1023, format, args);
+    return send (buf, tag.c_str());
   }
 
   //! Send a string through the connection.
   /*! A tag is automatically added to output the message string and the
     resulting string is sent via send(const ubyte*,int).
-    \param __s the string to send
-    \param __tag the tag of the message. Default is "notag"
+    \param s the string to send
+    \param tag the tag of the message. Default is "notag"
   */
-  static inline _Send send (const char *__s, const char* __tag)
+  static inline _Send send (const char *s, const char* tag)
   {
-    return send ((const ubyte*) __s, ((__s != 0) ? strlen (__s) : 0),
-		 (const ubyte*) __tag);
+    return send ((const ubyte*) s, ((s != 0) ? strlen (s) : 0),
+		 (const ubyte*) tag);
   }
 
-  static inline _Send sendc (const char* __buf, const char* __tag)
+  static inline _Send sendc (const char* buf, const char* tag)
   {
-    return sendc ((const ubyte*)__buf, ((__buf != 0) ? strlen (__buf) : 0),
-		  (const ubyte*)__tag);
+    return sendc ((const ubyte*)buf, ((buf != 0) ? strlen (buf) : 0),
+		  (const ubyte*)tag);
   }
 
-  static inline _Send sendc (const ubyte* __buf, int __len,
-			     const ubyte* __tag = 0)
+  static inline _Send sendc (const ubyte* buf, int len,
+			     const ubyte* tag = 0)
   {
-    return send (__buf, __len, __tag, false);
+    return send (buf, len, tag, false);
   }
 
-  static inline _Send send (const ubyte* __buf, int __buflen,
-			    const ubyte* __tag = 0,
-			    bool __flush = true)
+  static inline _Send send (const ubyte* buf, int buflen,
+			    const ubyte* tag = 0,
+			    bool flush = true)
   {
-    _Send __msg;
-    __msg._tag = __tag;
-    __msg._taglen = 0;
-    if (__buf)
+    _Send msg;
+    msg._tag = tag;
+    msg._taglen = 0;
+    if (buf)
     {
-      __msg._buf = new ubyte [__buflen];
-      memcpy(const_cast<ubyte*>(__msg._buf), __buf, __buflen);
+      msg._buf = new ubyte [buflen];
+      memcpy(const_cast<ubyte*>(msg._buf), buf, buflen);
     }
     else
-      __msg._buf = 0;
-    __msg._buflen = __buflen;
-    __msg._flush = __flush;
-    return __msg;
+      msg._buf = 0;
+    msg._buflen = buflen;
+    msg._flush = flush;
+    return msg;
   }
 
-  UConnection& operator<< (_Send __msg);
+  UConnection& operator<< (_Send msg);
 
 
   struct _Prefix { const char* _tag; };
-  static inline _Prefix prefix (const char * __tag)
+  static inline _Prefix prefix (const char * tag)
   {
-    _Prefix __pref;
-    __pref._tag = __tag;
-    return __pref;
+    _Prefix pref;
+    pref._tag = tag;
+    return pref;
   }
-  UConnection& operator<< (_Prefix __pref);
+  UConnection& operator<< (_Prefix pref);
 
   struct _ErrorSignal { UErrorCode _n; };
-  static inline _ErrorSignal errorSignal (UErrorCode __n)
+  static inline _ErrorSignal errorSignal (UErrorCode n)
   {
-    _ErrorSignal __err;
-    __err._n = __n;
-    return __err;
+    _ErrorSignal err;
+    err._n = n;
+    return err;
   }
-  UConnection& operator<< (_ErrorSignal __pref);
+  UConnection& operator<< (_ErrorSignal pref);
 
   struct _ErrorCheck { UErrorCode _n; };
-  static inline _ErrorCheck errorCheck (UErrorCode __n)
+  static inline _ErrorCheck errorCheck (UErrorCode n)
   {
-    _ErrorCheck __err;
-    __err._n = __n;
-    return __err;
+    _ErrorCheck err;
+    err._n = n;
+    return err;
   }
-  UConnection& operator<< (_ErrorCheck __pref);
+  UConnection& operator<< (_ErrorCheck pref);
 
   struct _Activate { bool _st; };
-  static inline _Activate setActivate (bool __st)
+  static inline _Activate setActivate (bool st)
   {
-    _Activate __act;
-    __act._st = __st;
-    return __act;
+    _Activate act;
+    act._st = st;
+    return act;
   }
-  UConnection& operator<< (_Activate __act);
+  UConnection& operator<< (_Activate act);
 
   struct _SendAdaptative { int _val; };
-  static inline _SendAdaptative sendAdaptative (int __val)
+  static inline _SendAdaptative sendAdaptative (int val)
   {
-    _SendAdaptative __adap;
-    __adap._val = __val;
-    return __adap;
+    _SendAdaptative adap;
+    adap._val = val;
+    return adap;
   }
-  UConnection& operator<< (_SendAdaptative __adap);
+  UConnection& operator<< (_SendAdaptative adap);
 
   struct _RecvAdaptative { int _val; };
-  static inline _RecvAdaptative receiveAdaptative (int __val)
+  static inline _RecvAdaptative receiveAdaptative (int val)
   {
-    _RecvAdaptative __adap;
-    __adap._val = __val;
-    return __adap;
+    _RecvAdaptative adap;
+    adap._val = val;
+    return adap;
   }
-  UConnection& operator<< (_RecvAdaptative __adap);
+  UConnection& operator<< (_RecvAdaptative adap);
 
   struct _MsgCode { UMsgType _t; int _n; };
-  static inline _MsgCode msg (UMsgType __t, int __n)
+  static inline _MsgCode msg (UMsgType t, int n)
   {
-    _MsgCode __msg;
-    __msg._t = __t;
-    __msg._n = __n;
-    return __msg;
+    _MsgCode msg;
+    msg._t = t;
+    msg._n = n;
+    return msg;
   }
-  UConnection& operator<< (_MsgCode __msg);
-  UConnection& operator<< (UErrorCode __id);
-  UConnection& operator<< (UWarningCode __id);
+  UConnection& operator<< (_MsgCode msg);
+  UConnection& operator<< (UErrorCode id);
+  UConnection& operator<< (UWarningCode id);
 
   struct _Execute {
-    _Execute (UCommand_TREE*& __cmd) : _val (__cmd) {}
+    _Execute (UCommand_TREE*& cmd) : _val (cmd) {}
     UCommand_TREE*& _val;
   };
-  static inline _Execute mexecute (UCommand_TREE*& __val)
+  static inline _Execute mexecute (UCommand_TREE*& val)
   {
-    _Execute __cmd (__val);
-    return __cmd;
+    _Execute cmd (val);
+    return cmd;
   }
-  UConnection& operator<< (_Execute __cmd);
+  UConnection& operator<< (_Execute cmd);
 
   struct _Append { UCommand_TREE* _val; };
-  static inline _Append mappend (UCommand_TREE* __val)
+  static inline _Append mappend (UCommand_TREE* val)
   {
-    _Append __cmd;
-    __cmd._val = __val;
-    return __cmd;
+    _Append cmd;
+    cmd._val = val;
+    return cmd;
   }
-  UConnection& operator<< (_Append __cmd);
+  UConnection& operator<< (_Append cmd);
 
   struct _Received { const ubyte* _val; int _len; };
-  static inline _Received received (const ubyte* __val, int __len)
+  static inline _Received received (const ubyte* val, int len)
   {
-    _Received __cmd;
-    __cmd._val = __val;
-    __cmd._len = __len;
-    return __cmd;
+    _Received cmd;
+    cmd._val = val;
+    cmd._len = len;
+    return cmd;
   }
-  static inline _Received received (const char* __val)
+  static inline _Received received (const char* val)
   {
-    return received((const ubyte*) __val,
-		     ((__val != 0) ? strlen (__val) : 0));
+    return received((const ubyte*) val,
+		     ((val != 0) ? strlen (val) : 0));
   }
-  UConnection& operator<< (_Received __cmd);
+  UConnection& operator<< (_Received cmd);
 
 #endif // 1
 

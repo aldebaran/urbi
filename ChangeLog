@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Simplify __ crazyness.
+	* include/kernel/uconnection.hh: Remove __ prefixes.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Fix.
 	* src/unamedparameters.hxx: Fix type name.
 	Breaks VC++, but not G++.
