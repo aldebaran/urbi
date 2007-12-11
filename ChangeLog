@@ -1,5 +1,12 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Cleanup.
+	There is something broken here that annoys the Aibo :(
+	* src/uvalue.cc: Use `o' for ostream, including ostringstream.
+	Avoid useless calls to c_str.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Simplify UString uses.
 	* include/kernel/uvalue.hh, src/uvalue.cc: Add a ctor with UString.
 	Use it.

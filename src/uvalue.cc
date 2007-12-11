@@ -164,15 +164,15 @@ namespace
   uvalue_to_ubinary (UValue& v, urbi::UBinary &b)
   {
     //simplest way is to echo our bin headers and parse again
-    std::ostringstream msg;
-    msg << v.refBinary->ref()->bufferSize;
-    params_dump(msg, *v.refBinary->ref()->parameters);    
-    msg << '\n'; //parse expects this
+    std::ostringstream o;
+    o << v.refBinary->ref()->bufferSize;
+    params_dump(o, *v.refBinary->ref()->parameters);
+    o << '\n'; // Parse expects this.
     std::list<urbi::BinaryData> lBin;
     lBin.push_back(urbi::BinaryData(v.refBinary->ref()->buffer,
 				    v.refBinary->ref()->bufferSize));
     std::list<urbi::BinaryData>::iterator lIter = lBin.begin();
-    b.parse(msg.str().c_str(), 0, lBin, lIter);
+    b.parse(o.str().c_str(), 0, lBin, lIter);
     return b;
   }
 }
@@ -627,9 +627,9 @@ UValue::add(UValue *v)
 
       res->dataType = DATA_STRING;
 
-      std::ostringstream ostr;
-      ostr << val << *v->str;
-      res->str = new UString(ostr.str());
+      std::ostringstream o;
+      o << val << *v->str;
+      res->str = new UString(o.str());
       if (res->str == 0)
       {
 	delete res;
@@ -649,9 +649,9 @@ UValue::add(UValue *v)
 
       res->dataType = DATA_STRING;
 
-      std::ostringstream ostr;
-      ostr << *str << v->val;
-      res->str = new UString(ostr.str().c_str());
+      std::ostringstream o;
+      o << *str << v->val;
+      res->str = new UString(o.str());
 
       if (res->str == 0)
       {
@@ -755,7 +755,7 @@ UValue::echo(bool hr)
 	  if (!first)
 	    o << ',';
 	  first = false;
-	  o << i.second->getMethod()<< ':';
+	  o << i.second->getMethod() << ':';
 
 	  // FIXME: It's better be non null!!!	Look at the if above,
 	  // it assumes it is not.
@@ -811,7 +811,7 @@ UValue::echo(bool hr)
 
       std::ostringstream o;
       o << "BIN " << refBinary->ref()->bufferSize;
-      params_dump(o, *refBinary->ref()->parameters);    
+      params_dump(o, *refBinary->ref()->parameters);
 
       if (!hr)
       {
