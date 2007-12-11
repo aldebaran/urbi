@@ -1,4 +1,6 @@
 # This file is loaded by tests/Makefile.am.  It contains things that
 # are specific to a given project or even Svn branch.
 
+TESTS_DIRS += 1.5
+
 XFAIL_TESTS += 		
