@@ -72,4 +72,10 @@ public:
   std::list<UString> objects;
 };
 
+/// \a S should be UString& or UConnection*.
+template <typename S>
+void removeMonitor(HMbindertab& t, S c);
+
+# include "ubinder.hxx"
+
 #endif

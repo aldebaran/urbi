@@ -1,5 +1,11 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Factor.
+	* src/ubinder.hh, src/ubinder.hxx (removeMonitor): Factored from...
+	* src/uconnection.cc, src/uobj.cc: here.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Use FOREACH.
 	* src/ubinder.cc: here.
 	I'm tracking duplicate code.

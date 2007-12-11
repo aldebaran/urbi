@@ -31,6 +31,7 @@
 #include "kernel/uconnection.hh"
 #include "kernel/uvalue.hh"
 #include "kernel/uvariable.hh"
+
 #include "ubinder.hh"
 #include "ueventhandler.hh"
 #include "ufunction.hh"
@@ -50,21 +51,6 @@ UObj::UObj (UString *device)
   objvalue->dataType = DATA_OBJ;
   objvalue->str = new UString(*device);
   new UVariable(this->device->c_str(), objvalue);
-}
-
-
-// Empty event binders.
-void
-remove (HMbindertab& t, UString& s)
-{
-  std::list<HMbindertab::iterator> deletelist;
-  for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
-    if (i->second->removeMonitor(s))
-      deletelist.push_back(i);
-
-  BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-    t.erase(i);
-  deletelist.clear();
 }
 
 //! UObj destructor
@@ -96,9 +82,9 @@ UObj::~UObj()
     }
 
   // clean functions binders.
-  remove(::urbiserver->functionbindertab, *device);
+  removeMonitor(::urbiserver->functionbindertab, *device);
   // Clean events binders.
-  remove(::urbiserver->eventbindertab, *device);
+  removeMonitor(::urbiserver->eventbindertab, *device);
 
   // clean the object binder
   if (binder)

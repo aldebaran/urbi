@@ -97,23 +97,6 @@ UConnection::UConnection (UServer *userver,
     cid->uservar = false;
 }
 
-namespace
-{
-  static
-  void
-  removeMonitor(UConnection* c, HMbindertab& t)
-  {
-    std::list<HMbindertab::iterator> deletelist;
-    for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
-      if (i->second->removeMonitor(c))
-	deletelist.push_back(i);
-
-    BOOST_FOREACH (HMbindertab::iterator i, deletelist)
-      t.erase(i);
-    deletelist.clear();
-  }
-}
-
 //! UConnection destructor.
 UConnection::~UConnection()
 {
@@ -140,8 +123,8 @@ UConnection::~UConnection()
 
 # undef FREE_BINDINGS
 
-  removeMonitor(this, ::urbiserver->functionbindertab);
-  removeMonitor(this, ::urbiserver->eventbindertab);
+  removeMonitor(::urbiserver->functionbindertab, this);
+  removeMonitor(::urbiserver->eventbindertab,    this);
 
   delete parser_;
   delete sendQueue_;
