@@ -1,5 +1,12 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	send (std::string).
+	* include/kernel/uconnection.hh (_Send): Remove incorrect const.
+	(send(std::string)): New.
+	* src/uobj.cc: Use it.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Comment.
 	* include/kernel/uconnection.hh: Some bits.
 

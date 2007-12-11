@@ -157,11 +157,15 @@ public:
 
   UConnection& operator<< (UConnection& m (UConnection&));
 
+  /*--------------.
+  | Send, sendc.  |
+  `--------------*/
+
   /// Unified struct for sending messages
   struct _Send
   {
     const ubyte* _tag; int _taglen;
-    const ubyte* _buf; int _buflen;
+    ubyte* _buf; int _buflen;
     bool _flush;
   };
 
@@ -208,9 +212,10 @@ public:
     return send (buf, len, tag, false);
   }
 
-  static inline _Send send (const ubyte* buf, int buflen,
-			    const ubyte* tag = 0,
-			    bool flush = true)
+  static inline
+  _Send
+  send (const ubyte* buf, int buflen,
+	const ubyte* tag = 0, bool flush = true)
   {
     _Send msg;
     msg._tag = tag;
@@ -218,7 +223,7 @@ public:
     if (buf)
     {
       msg._buf = new ubyte [buflen];
-      memcpy(const_cast<ubyte*>(msg._buf), buf, buflen);
+      memcpy(msg._buf, buf, buflen);
     }
     else
       msg._buf = 0;
@@ -227,8 +232,19 @@ public:
     return msg;
   }
 
+  static inline
+  _Send
+  send (const std::string& s)
+  {
+    return send (reinterpret_cast<const ubyte*>(s.c_str()), s.length(),
+		 0, false);
+  }
+
   UConnection& operator<< (_Send msg);
 
+  /*---------.
+  | Prefix.  |
+  `---------*/
 
   struct _Prefix { const char* _tag; };
   static inline _Prefix prefix (const char * tag)

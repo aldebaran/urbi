@@ -107,10 +107,8 @@ UObj::~UObj()
     o << "[5,\"" << device->c_str() << "\"]\n";
 
     BOOST_FOREACH (UMonitor* it, binder->monitors)
-    {
-      *it->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-      *it->c << UConnection::send((const ubyte*)o.str().c_str(), o.str().size());
-    }
+      *it->c << UConnection::prefix(EXTERNAL_MESSAGE_TAG)
+	     << UConnection::send(o.str());
 
     // in fact here we can delete the binder since it contained only bindings
     // to a single object (himself) associated to unique connections:
