@@ -46,6 +46,7 @@ public:
   UBindType    type;
   int          nbparam;
 
+  // FIXME: Should be a set.
   typedef std::list<UMonitor*> monitors_type;
   monitors_type monitors;
 

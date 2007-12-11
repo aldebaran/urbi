@@ -214,8 +214,8 @@ private:
   void init();
   UVariable(const UVariable &);
   UVariable& operator = (const UVariable &);
-  
-  
+
+
   /// True when we are in a setTarget call.
   bool inSetTarget;
 };

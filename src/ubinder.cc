@@ -56,35 +56,24 @@ UBinder::~UBinder ()
 void
 UBinder::addMonitor (const UString& objname, UConnection* c)
 {
-  UMonitor *m = 0;
-
-  for (monitors_type::iterator i = monitors.begin();
-       i != monitors.end() && !m;
-       ++i)
-    if ((*i)->c == c)
-      m = *i;
-
-  if (!m)
+  if (UMonitor *m = locateMonitor (c))
+    m->addObject(objname);
+  else
   {
     m = new UMonitor(objname, c);
     monitors.push_back(m);
   }
-  else
-    m->addObject(objname);
 }
 
 //! Locate a monitor based on its connection or zero if not found
 UMonitor*
 UBinder::locateMonitor (UConnection *c)
 {
-  UMonitor *m = 0;
-
   // locate the connection
   BOOST_FOREACH (UMonitor* i, monitors)
     if (i->c == c)
-      m = i;
-
-  return m;
+      return i;
+  return 0;
 }
 
 //! Remove a monitoring connection.

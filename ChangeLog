@@ -1,5 +1,12 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Simplify UBinders.
+	* src/ubinder.hh, src/ubinder.cc (addMonitor): Use
+	(locateMonitor): this.
+	Simplify it.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	More unbind_monitor uses.
 	* src/ubinder.hh, src/ubinder.hxx: Make it more generic.
 	* src/uobj.cc: Use it.
