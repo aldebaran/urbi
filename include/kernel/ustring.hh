@@ -138,6 +138,16 @@ operator!= (const UString& lhs, const char* rhs)
   return !(lhs == rhs);
 }
 
+
+inline
+UString
+operator+ (const UString& lhs, const UString& rhs)
+{
+  return lhs.str() + rhs.str();
+}
+
+
+
 /// Return the part after the first `.', or the whole string if there is none.
 std::string suffix (const std::string& name);
 

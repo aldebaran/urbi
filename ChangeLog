@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	UString + UString.
+	* include/kernel/ustring.hh (operator+): New.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Stop playing with pointers...
 	* src/uvalue.cc: Second time I make the same mistake...
 
