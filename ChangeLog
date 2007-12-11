@@ -1,5 +1,13 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	uwait-counter.hh.
+	* src/uwait-counter.hh: New.
+	* include/kernel/utypes.hh: Extracted from here.
+	* include/kernel/fwd.hh: Adjust.
+	* src/Makefile.am: Ditto.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Fix libport use.
 	* src/Makefile.am: here.
 

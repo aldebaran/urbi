@@ -78,6 +78,7 @@ uvar.cc								\
 uvariable.cc							\
 uvariablelist.hh uvariablelist.cc				\
 uvariablename.hh uvariablename.cc                               \
+uwait-counter.hh						\
 usystem.cc
 
 ## ------------ ##

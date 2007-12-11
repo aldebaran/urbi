@@ -143,21 +143,6 @@ typedef unsigned char ubyte;
 
 # define ABSF(x)     (((x)>0)? (x) : (-(x)))
 
-/// The number of pending call to a remote new for a given class name (id).
-class UWaitCounter
-{
-public:
-  UWaitCounter(const UString& id, int nb)
-    : id(id),
-      nb(nb)
-  {
-  }
-
-  UString id; ///< class name
-  int nb; ///< nb of waiting calls
-};
-
-
 typedef libport::hash_map<const char*, UVariable*> HMvariabletab;
 typedef HMvariabletab::value_type HMvariable_type;
 

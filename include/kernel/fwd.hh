@@ -55,6 +55,7 @@ class UValue;
 class UVariable;
 class UVariableList;
 class UVariableName;
+class UWaitCounter;
 
 // From ucommand.hh.
 class UCommand;
