@@ -240,33 +240,33 @@ UConnection::close (UConnection& c)
 
 //! Send a message prefix [time:tag] through the connection
 UConnection&
-UConnection::operator<< (_Prefix __pref)
+UConnection::operator<< (_Prefix pref)
 {
-  return (*this) << sendc (0, 0, (const ubyte*)__pref._tag);
+  return (*this) << sendc (0, 0, (const ubyte*)pref._tag);
 }
 
 UConnection&
-UConnection::operator<< (_Send __msg)
+UConnection::operator<< (_Send msg)
 {
-  if (__msg._tag != 0)
+  if (msg._tag != 0)
   {
-    std::string pref = mkPrefix (__msg._tag);
-    __msg._tag = (const ubyte*)pref.c_str ();
-    __msg._taglen = pref.length ();
+    std::string pref = mkPrefix (msg._tag);
+    msg._tag = (const ubyte*)pref.c_str ();
+    msg._taglen = pref.length ();
     sendQueue_->mark (); // put a marker to indicate the beginning of a message
 
     // UErrorValue ret =
-    sendc_(__msg._tag, __msg._taglen);
+    sendc_(msg._tag, msg._taglen);
     // .error ();
 
     //FIXME: check error
   }
-  if (__msg._buf != 0)
+  if (msg._buf != 0)
   {
-    UErrorValue ret = sendc_ (__msg._buf, __msg._buflen).error ();
-    delete [] __msg._buf;
+    UErrorValue ret = sendc_ (msg._buf, msg._buflen).error ();
+    delete [] msg._buf;
 
-    if (__msg._flush && ret != UFAIL)
+    if (msg._flush && ret != UFAIL)
       flush ();
 
     CONN_ERR_RET(ret);
@@ -275,46 +275,46 @@ UConnection::operator<< (_Send __msg)
 }
 
 UConnection&
-UConnection::operator<< (_ErrorSignal __err)
+UConnection::operator<< (_ErrorSignal err)
 {
-  return (*this).errorSignal_set (__err._n);
+  return (*this).errorSignal_set (err._n);
 }
 
 UConnection&
-UConnection::operator<< (_ErrorCheck __err)
+UConnection::operator<< (_ErrorCheck err)
 {
-  return (*this).errorCheckAndSend (__err._n);
+  return (*this).errorCheckAndSend (err._n);
 }
 
 UConnection&
-UConnection::operator<< (_Activate __act)
+UConnection::operator<< (_Activate act)
 {
   // Reminder: this code is the same as activate()
-  active_ = __act._st;
+  active_ = act._st;
   return *this;
 }
 
 UConnection&
-UConnection::operator<< (_SendAdaptative __adap)
+UConnection::operator<< (_SendAdaptative adap)
 {
-  return (*this).setSendAdaptive (__adap._val);
+  return (*this).setSendAdaptive (adap._val);
 }
 
 UConnection&
-UConnection::operator<< (_RecvAdaptative __adap)
+UConnection::operator<< (_RecvAdaptative adap)
 {
-  return (*this).setReceiveAdaptive (__adap._val);
+  return (*this).setReceiveAdaptive (adap._val);
 }
 
 UConnection&
-UConnection::operator<< (_MsgCode __msg)
+UConnection::operator<< (_MsgCode mc)
 {
   // Reminder: this function is a merge of send_warning and send_error
-  const char* msg = message (__msg._t, __msg._n);
+  const char* msg = message (mc._t, mc._n);
 
   UErrorValue result = UFAIL;
 
-  switch (__msg._t)
+  switch (mc._t)
   {
     case UERRORCODE:
       (*this) << send(msg, "error");
@@ -326,7 +326,7 @@ UConnection::operator<< (_MsgCode __msg)
       break;
   };
 
-  result = (*this).error ();
+  result = this->error ();
 
   if (result == USUCCESS)
   {
@@ -336,7 +336,7 @@ UConnection::operator<< (_MsgCode __msg)
       //remove the '\n' at the end.
       buf[strlen(msg)-1] = 0;
 
-    switch (__msg._t)
+    switch (mc._t)
     {
       case UERRORCODE:
 	server->error(::DISPLAY_FORMAT, (long)this, "UConnection::error", buf);
@@ -354,33 +354,33 @@ UConnection::operator<< (_MsgCode __msg)
 }
 
 UConnection&
-UConnection::operator<< (UWarningCode __id)
+UConnection::operator<< (UWarningCode id)
 {
-  return *this << msg (UWARNINGCODE, __id);
+  return *this << msg (UWARNINGCODE, id);
 }
 
 UConnection&
-UConnection::operator<< (UErrorCode __id)
+UConnection::operator<< (UErrorCode id)
 {
-  return *this << msg (UERRORCODE, __id);
+  return *this << msg (UERRORCODE, id);
 }
 
 UConnection&
-UConnection::operator<< (_Execute __cmd)
+UConnection::operator<< (_Execute cmd)
 {
-  return execute (__cmd._val);
+  return execute (cmd._val);
 }
 
 UConnection&
-UConnection::operator<< (_Append __cmd)
+UConnection::operator<< (_Append cmd)
 {
-  return append (__cmd._val);
+  return append (cmd._val);
 }
 
 UConnection&
-UConnection::operator<< (_Received __cmd)
+UConnection::operator<< (_Received cmd)
 {
-  return received_ (__cmd._val, __cmd._len);
+  return received_ (cmd._val, cmd._len);
 }
 
 UConnection&

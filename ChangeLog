@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	__ craze.
+	* src/uconnection.cc: Remove useless __ prefixes.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	send (std::string).
 	* include/kernel/uconnection.hh (_Send): Remove incorrect const.
 	(send(std::string)): New.
