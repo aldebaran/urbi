@@ -277,13 +277,13 @@ UConnection::operator<< (_Send msg)
 UConnection&
 UConnection::operator<< (_ErrorSignal err)
 {
-  return (*this).errorSignal_set (err._n);
+  return errorSignal_set (err._n);
 }
 
 UConnection&
 UConnection::operator<< (_ErrorCheck err)
 {
-  return (*this).errorCheckAndSend (err._n);
+  return errorCheckAndSend (err._n);
 }
 
 UConnection&
@@ -297,13 +297,13 @@ UConnection::operator<< (_Activate act)
 UConnection&
 UConnection::operator<< (_SendAdaptative adap)
 {
-  return (*this).setSendAdaptive (adap._val);
+  return setSendAdaptive (adap._val);
 }
 
 UConnection&
 UConnection::operator<< (_RecvAdaptative adap)
 {
-  return (*this).setReceiveAdaptive (adap._val);
+  return setReceiveAdaptive (adap._val);
 }
 
 UConnection&
@@ -326,7 +326,7 @@ UConnection::operator<< (_MsgCode mc)
       break;
   };
 
-  result = this->error ();
+  result = error ();
 
   if (result == USUCCESS)
   {

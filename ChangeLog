@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	this-> is useless.
+	* src/uconnection.cc: At least in these cases.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	__ craze.
 	* src/uconnection.cc: Remove useless __ prefixes.
 
