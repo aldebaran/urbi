@@ -857,7 +857,7 @@ UValue::urbiValue()
     case DATA_NUM:
       return new urbi::UValue(val);
     case DATA_STRING:
-      return new urbi::UValue(str);
+      return new urbi::UValue(str->str());
     case DATA_BINARY:
       return new urbi::UValue(operator urbi::UBinary()); //FIXME
     case DATA_LIST:

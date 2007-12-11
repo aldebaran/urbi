@@ -1,5 +1,14 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Gotcha.
+	There is a f*ing ctor that takes void*, so any pointer mistake
+	is doomed to failure.
+	This should fix Aibo failures.
+	* src/uvalue.cc (urbiValue): urbi::UValue does not know about UString
+	(lucky guy): give it an std::string.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Cleanup.
 	There is something broken here that annoys the Aibo :(
 	* src/uvalue.cc: Use `o' for ostream, including ostringstream.
