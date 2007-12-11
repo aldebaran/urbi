@@ -913,9 +913,9 @@ stmt:
     {
       $$ = new ast::While(@$, ast::flavor_semicolon, new ast::Float(@$, 1), $2);
     }
-| "loopn" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
+| "for" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = 0;
+      $$ = new ast::Repeat(@$, $2, $4, $6);
     }
 | "stopif" "(" softtest ")" stmt
     {

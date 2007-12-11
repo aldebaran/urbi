@@ -1,5 +1,14 @@
 2007-12-11  Loic Fosse  <fosse@gostai.com>
 
+	Implement loopn behavior of for keyword.
+	* src/ast/ast.yml: Add repeat node.
+	* src/parser/ugrammar.y: Add "loopn" syntax for the for keyword
+	using repeat node.
+	* src/runner/runner.cc, src/runner/runner.hh: Define behavior on the
+	repeat node.
+
+2007-12-11  Loic Fosse  <fosse@gostai.com>
+
 	Fix TYPE_CHECK macro.
 	* src/object/primitives.hh: Add missing namespace in TYPE_CHECK
 	macro.
