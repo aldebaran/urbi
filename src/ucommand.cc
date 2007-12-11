@@ -630,16 +630,6 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
   delete variablename;
   delete parameters;
 
-  delete modif_time;
-  delete modif_sin;
-  delete modif_phase;
-  delete modif_smooth;
-  delete modif_speed;
-  delete modif_accel;
-  delete modif_ampli;
-  delete modif_adaptive;
-  delete modif_getphase;
-
   if (assigned)
   {
     --variable->nbAssigns;
@@ -863,6 +853,7 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	    *j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	    UValue* valparam = pvalue->expression->eval(this, connection);
 	    valparam->echo(j->c);
+	    delete valparam;
 	  }
 	  *j->c << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
@@ -2402,8 +2393,11 @@ UCommand_EXPR::execute_(UConnection *connection)
       std::string uid = unic("__UFnctret.EXTERNAL_");
       {
 	std::ostringstream o;
-	o << "[0,\"" << funname->c_str() << "__" << it->second->nbparam
+	o << "[0,"
+	  << "\"" << funname->c_str()
+	  << "__" << it->second->nbparam
 	  << "\",\"" << uid << "\"";
+
 	const std::string n = o.str();
 	BOOST_FOREACH (UMonitor* j, it->second->monitors)
 	{
@@ -2918,6 +2912,8 @@ UCommand_NEW::execute_(UConnection *connection)
       oss << valparam->echo();
       if (pvalue->next)
 	oss << ",";
+
+      delete valparam;
     }
 
     oss << ") | if (!isdef("
@@ -4489,6 +4485,7 @@ UCommand_EMIT::execute_(UConnection *connection)
 	  *j->c << UConnection::sendc(reinterpret_cast<const ubyte*>(","), 1);
 	  UValue* valparam = pvalue->expression->eval(this, connection);
 	  valparam->echo(j->c);
+	  delete valparam;
 	}
 	*j->c << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
       }
