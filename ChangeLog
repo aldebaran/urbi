@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Comment.
+	* include/kernel/uconnection.hh: Some bits.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Simplify __ crazyness.
 	* include/kernel/uconnection.hh: Remove __ prefixes.
 

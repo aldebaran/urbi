@@ -166,6 +166,15 @@ public:
   };
 
   static inline _Send sendf (const std::string& tag,
+			     const char* format, va_list args)
+  {
+    char buf[1024];
+    vsnprintf(buf, sizeof buf - 1, format, args);
+    return send (buf, tag.c_str());
+  }
+
+  /// Invoke the previous sendf.
+  static inline _Send sendf (const std::string& tag,
 			     const char* format, ...)
   {
     va_list args;
@@ -175,30 +184,22 @@ public:
     return tmp;
   }
 
-  static inline _Send sendf (const std::string& tag,
-			     const char* format, va_list args)
-  {
-    char buf[1024];
-    vsnprintf(buf, 1023, format, args);
-    return send (buf, tag.c_str());
-  }
-
   //! Send a string through the connection.
   /*! A tag is automatically added to output the message string and the
     resulting string is sent via send(const ubyte*,int).
     \param s the string to send
     \param tag the tag of the message. Default is "notag"
   */
-  static inline _Send send (const char *s, const char* tag)
+  static inline _Send send (const char* s, const char* tag)
   {
-    return send ((const ubyte*) s, ((s != 0) ? strlen (s) : 0),
+    return send ((const ubyte*) s, s != 0 ? strlen (s) : 0,
 		 (const ubyte*) tag);
   }
 
-  static inline _Send sendc (const char* buf, const char* tag)
+  static inline _Send sendc (const char* s, const char* tag)
   {
-    return sendc ((const ubyte*)buf, ((buf != 0) ? strlen (buf) : 0),
-		  (const ubyte*)tag);
+    return sendc ((const ubyte*) s, s != 0 ? strlen (s) : 0,
+		  (const ubyte*) tag);
   }
 
   static inline _Send sendc (const ubyte* buf, int len,
