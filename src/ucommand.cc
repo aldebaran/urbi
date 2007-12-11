@@ -58,6 +58,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "unamedparameters.hh"
 #include "uvariablename.hh"
 #include "uvariablelist.hh"
+#include "uwait-counter.hh"
 
 /// Report an error, with "!!! " prepended, and "\n" appended.
 /// \param c     the connection to which the message is sent.
@@ -2828,7 +2829,7 @@ UCommand_NEW::execute_(UConnection *connection)
     if (ow != ::urbiserver->objWaittab.end())
       ow->second->nb += nb;
     else
-      ::urbiserver->objWaittab[wc->id.c_str()] = new UWaitCounter(*id, nb);
+      ::urbiserver->objWaittab[id->c_str()] = new UWaitCounter(*id, nb);
 
     // initiate remote new waiting
     remoteNew = true;
