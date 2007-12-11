@@ -1,5 +1,10 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	Fix dist.
+	* src/Makefile.am: Ship ubinder.hxx.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Simplify UBinders.
 	* src/ubinder.hh, src/ubinder.cc (addMonitor): Use
 	(locateMonitor): this.

@@ -51,7 +51,7 @@ uasyncregister.cc						\
 uatcandidate.hh uatcandidate.cc					\
 ubanner.hh ubanner.cc						\
 ubinary.hh ubinary.cc						\
-ubinder.hh ubinder.cc						\
+ubinder.hh ubinder.hxx ubinder.cc				\
 ucallid.hh ucallid.cc						\
 ucommand.hh ucommand.hxx ucommand.cc				\
 ucommandqueue.hh ucommandqueue.cc				\
