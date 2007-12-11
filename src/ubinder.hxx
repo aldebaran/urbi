@@ -5,7 +5,7 @@
 
 template <typename S>
 void
-removeMonitor(HMbindertab& t, S c)
+remove_monitor(HMbindertab& t, S c)
 {
   std::list<HMbindertab::iterator> deletelist;
   for (HMbindertab::iterator i = t.begin(); i != t.end(); ++i)
@@ -15,6 +15,20 @@ removeMonitor(HMbindertab& t, S c)
   BOOST_FOREACH (HMbindertab::iterator i, deletelist)
     t.erase(i);
   deletelist.clear();
+}
+
+template <typename S>
+void
+unbind_monitor(libport::hash_map<const char*, S>& table, UConnection* c)
+{
+  typedef libport::hash_map<const char*, S> table_type;
+  BOOST_FOREACH (typename table_type::value_type i, table)
+    if (i.second->binder
+	&& i.second->binder->removeMonitor(c))
+    {
+      delete i.second->binder;
+      i.second->binder = 0;
+    }
 }
 
 #endif

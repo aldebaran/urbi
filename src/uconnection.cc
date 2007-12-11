@@ -109,22 +109,10 @@ UConnection::~UConnection()
   delete activeCommand;
 
   // free bindings
-# define FREE_BINDINGS(Table)\
-  BOOST_FOREACH (HM##Table::value_type i, ::urbiserver->Table)\
-    if (i.second->binder\
-	&& i.second->binder->removeMonitor(this))\
-    {\
-      delete i.second->binder;\
-      i.second->binder = 0;\
-    }
-
-  FREE_BINDINGS(variabletab);
-  FREE_BINDINGS(objtab);
-
-# undef FREE_BINDINGS
-
-  removeMonitor(::urbiserver->functionbindertab, this);
-  removeMonitor(::urbiserver->eventbindertab,    this);
+  unbind_monitor(::urbiserver->variabletab, this);
+  unbind_monitor(::urbiserver->objtab,      this);
+  remove_monitor(::urbiserver->functionbindertab, this);
+  remove_monitor(::urbiserver->eventbindertab,    this);
 
   delete parser_;
   delete sendQueue_;

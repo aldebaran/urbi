@@ -22,7 +22,7 @@
 #ifndef UBINDER_HH
 # define UBINDER_HH
 
-# include <list>
+# include "libport/hash.hh"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
@@ -74,7 +74,10 @@ public:
 
 /// \a S should be UString& or UConnection*.
 template <typename S>
-void removeMonitor(HMbindertab& t, S c);
+void remove_monitor(HMbindertab& t, S c);
+
+template <typename S>
+void unbind_monitor(libport::hash_map<const char*, S>& table, UConnection* c);
 
 # include "ubinder.hxx"
 

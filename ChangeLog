@@ -1,5 +1,14 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	More factoring.
+	There is nothing like factoring to understand :(
+	* src/ubinder.hh, src/ubinder.hxx (removeMonitor): Rename as...
+	(remove_monitor): this.
+	(unbind_monitor): new.
+	* src/uconnection.cc, src/uobj.cc: Adjust to use them.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	Less includes.
 	* include/kernel/utypes.hh: Remove useless includes.
 	Adjust dependencies.

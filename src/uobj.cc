@@ -82,9 +82,9 @@ UObj::~UObj()
     }
 
   // clean functions binders.
-  removeMonitor(::urbiserver->functionbindertab, *device);
+  remove_monitor(::urbiserver->functionbindertab, *device);
   // Clean events binders.
-  removeMonitor(::urbiserver->eventbindertab, *device);
+  remove_monitor(::urbiserver->eventbindertab, *device);
 
   // clean the object binder
   if (binder)
