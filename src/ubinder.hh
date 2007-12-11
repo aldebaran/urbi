@@ -76,8 +76,10 @@ public:
 template <typename S>
 void remove_monitor(HMbindertab& t, S c);
 
-template <typename S>
-void unbind_monitor(libport::hash_map<const char*, S>& table, UConnection* c);
+/// \a S should be anything used in utypes's table types.
+/// \a T should be UString& or UConnection*.
+template <typename S, typename T>
+void unbind_monitor(libport::hash_map<const char*, S>& table, T c);
 
 # include "ubinder.hxx"
 

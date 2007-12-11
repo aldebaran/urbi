@@ -1,5 +1,11 @@
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
+	More unbind_monitor uses.
+	* src/ubinder.hh, src/ubinder.hxx: Make it more generic.
+	* src/uobj.cc: Use it.
+
+2007-12-11  Akim Demaille  <demaille@gostai.com>
+
 	More factoring.
 	There is nothing like factoring to understand :(
 	* src/ubinder.hh, src/ubinder.hxx (removeMonitor): Rename as...

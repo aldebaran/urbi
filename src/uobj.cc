@@ -69,17 +69,7 @@ UObj::~UObj()
 
   libport::deep_clear (varToDelete);
 
-  // clean variables binders (a bit brutal, we scan all wariables...
-  // I'll work on an optimized version later)
-  for (HMvariabletab::iterator i = ::urbiserver->variabletab.begin();
-       i != ::urbiserver->variabletab.end();
-       ++i)
-    if (i->second->binder
-      && i->second->binder->removeMonitor(*device))
-    {
-      delete i->second->binder;
-      i->second->binder = 0;
-    }
+  unbind_monitor (::urbiserver->variabletab, *device);
 
   // clean functions binders.
   remove_monitor(::urbiserver->functionbindertab, *device);

@@ -17,9 +17,9 @@ remove_monitor(HMbindertab& t, S c)
   deletelist.clear();
 }
 
-template <typename S>
+template <typename S, typename T>
 void
-unbind_monitor(libport::hash_map<const char*, S>& table, UConnection* c)
+unbind_monitor(libport::hash_map<const char*, S>& table, T c)
 {
   typedef libport::hash_map<const char*, S> table_type;
   BOOST_FOREACH (typename table_type::value_type i, table)
