@@ -58,27 +58,6 @@ my_sleep ()
   fi
 }
 
-# find_srcdir WITNESS
-# -------------------
-find_srcdir ()
-{
-  # Guess srcdir if not defined.
-  if test -z "$srcdir"; then
-    # Try to compute it from $0.
-    srcdir=$(dirname "$0")
-  fi
-
-  # We may change directory.
-  srcdir=$(absolute "$srcdir")
-
-  # Check that srcdir is valid.
-  test -f "$srcdir/$1" ||
-    fatal "cannot find $srcdir/$1: define srcdir"
-
-  echo "$srcdir"
-}
-
-
 ## -------------- ##
 ## Main program.  ##
 ## -------------- ##
@@ -96,9 +75,6 @@ medir=$(basename $(dirname "$chk"))
 me=$medir/$(basename "$chk" ".cc")
 # ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
 meraw=$(basename $me)    # MERAW!
-
-# Guess srcdir if not defined.
-srcdir=$(find_srcdir "tests.hh")
 
 # $URBI_SERVER
 find_urbi_server
