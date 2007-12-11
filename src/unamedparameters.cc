@@ -33,7 +33,7 @@ UNamedParameters::UNamedParameters(UString* name,
 				   UExpression *expression,
 				   UNamedParameters* next,
 				   bool notifyEnd,
-                                   bool notifyFreeze)
+				   bool notifyFreeze)
   : name       (name),
     expression (expression),
     next       (next),
@@ -47,7 +47,7 @@ UNamedParameters::UNamedParameters(UString* name,
 UNamedParameters::UNamedParameters(UExpression *expression,
 				   UNamedParameters* next,
 				   bool notifyEnd,
-                                   bool notifyFreeze)
+				   bool notifyFreeze)
   : name       (0),
     expression (expression),
     next       (next),
@@ -95,7 +95,7 @@ UNamedParameters::copy() const
 			 ucopy (expression),
 			 ucopy (next),
 			 notifyEnd,
-                         notifyFreeze);
+			 notifyFreeze);
 }
 
 //! Print the list of parameters

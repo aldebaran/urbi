@@ -110,7 +110,7 @@ UValue::operator urbi::UImage()
   //fill parameters from list
   UNamedParameters *param = refBinary->ref()->parameters;
   //validate
-  if (!(param && param->next && param->next->next && param->next->next))
+  if (!(param && (*param)[1] && (*param)[2]))
     return img;
 
   if (*param->expression->str == "rgb")
@@ -122,8 +122,8 @@ UValue::operator urbi::UImage()
   else
     img.imageFormat = urbi::IMAGE_UNKNOWN;
 
-  img.width = exprToInt(param->next->expression);
-  img.height = exprToInt(param->next->next->expression);
+  img.width = exprToInt((*param)[1]->expression);
+  img.height = exprToInt((*param)[2]->expression);
   img.size = refBinary->ref()->bufferSize;
   img.data = (unsigned char *)refBinary->ref()->buffer;
   return img;
@@ -135,18 +135,15 @@ UValue::operator urbi::UBinary()
   urbi::UBinary b;
   std::ostringstream msg;
   msg << refBinary->ref()->bufferSize;
-  UNamedParameters *param = refBinary->ref()->parameters;
-  while (param)
-  {
+  for (UNamedParameters *param = refBinary->ref()->parameters;
+       param; param = param->next)
     if (param->expression)
-    {
-      if (param->expression->dataType == ::DATA_NUM)
-	msg << ' ' << (int)param->expression->val;
-      else if (param->expression->dataType == ::DATA_STRING)
-	msg << ' '<< param->expression->str->c_str();
-    }
-    param = param->next;
-  }
+      {
+	if (param->expression->dataType == ::DATA_NUM)
+	  msg << ' ' << (int)param->expression->val;
+	else if (param->expression->dataType == ::DATA_STRING)
+	  msg << ' '<< param->expression->str->c_str();
+      }
 
   msg << '\n'; //parse expects this
   std::list<urbi::BinaryData> lBin;
@@ -163,18 +160,15 @@ UValue::operator urbi::UBinary*()
   urbi::UBinary* b = new urbi::UBinary();
   std::ostringstream msg;
   msg << refBinary->ref()->bufferSize;
-  UNamedParameters *param = refBinary->ref()->parameters;
-  while (param)
-  {
+  for (UNamedParameters *param = refBinary->ref()->parameters;
+       param; param = param->next)
     if (param->expression)
-    {
-      if (param->expression->dataType == ::DATA_NUM)
-	msg<< ' '<<(int)param->expression->val;
-      else if (param->expression->dataType == ::DATA_STRING)
-	msg << ' '<<param->expression->str->c_str();
-    }
-    param = param->next;
-  }
+      {
+	if (param->expression->dataType == ::DATA_NUM)
+	  msg<< ' '<<(int)param->expression->val;
+	else if (param->expression->dataType == ::DATA_STRING)
+	  msg << ' '<<param->expression->str->c_str();
+      }
   msg << '\n'; //parse expects this
   std::list<urbi::BinaryData> lBin;
   lBin.push_back(urbi::BinaryData(refBinary->ref()->buffer,
@@ -239,15 +233,14 @@ UValue::operator urbi::USound()
   if (*param->expression->str == "raw")
   {
     snd.soundFormat = urbi::SOUND_RAW;
-    decoded = (param->next && param->next->next &&
-	       param->next->next->next && param->next->next->next->next);
+    decoded = ((*param)[1] && (*param)[2] && (*param)[3] && (*param)[4]);
     if (decoded)
     {
-      snd.channels = exprToInt(param->next->expression);
-      snd.rate = exprToInt(param->next->next->expression);
-      snd.sampleSize = exprToInt(param->next->next->next->expression);
+      snd.channels = exprToInt((*param)[1]->expression);
+      snd.rate = exprToInt((*param)[2]->expression);
+      snd.sampleSize = exprToInt((*param)[3]->expression);
       snd.sampleFormat = (urbi::USoundSampleFormat)
-	exprToInt(param->next->next->next->next->expression);
+	exprToInt((*param)[4]->expression);
     }
   }
   else if (*param->expression->str == "wav")

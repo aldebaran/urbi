@@ -33,12 +33,12 @@ public:
 		   UExpression* expression,
 		   UNamedParameters* next = 0,
 		   bool notifyEnd = false,
-                   bool notifyFreeze = false);
+		   bool notifyFreeze = false);
 
   UNamedParameters(UExpression *expression,
 		   UNamedParameters* next = 0,
 		   bool notifyEnd = false,
-                   bool notifyFreeze = false);
+		   bool notifyFreeze = false);
 
   virtual ~UNamedParameters();
 
@@ -47,6 +47,9 @@ public:
   UNamedParameters* rank(int n);
   int               size() const;
   UNamedParameters* copy() const;
+
+  /// Return the n-th param, this one being 0.
+  UNamedParameters* operator[] (size_t n);
 
   /// Name.
   UString            *name;
@@ -59,5 +62,7 @@ public:
   bool               notifyEnd;
   bool               notifyFreeze;
 };
+
+# include "unamedparameters.hxx"
 
 #endif

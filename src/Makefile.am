@@ -75,7 +75,7 @@ uexpression.hh uexpression.cc					\
 ufunction.hh ufunction.cc					\
 ughostconnection.hh ughostconnection.cc				\
 ugroup.hh ugroup.cc						\
-unamedparameters.hh unamedparameters.cc				\
+unamedparameters.hh unamedparameters.hxx unamedparameters.cc	\
 uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
