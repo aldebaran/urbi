@@ -184,7 +184,7 @@ namespace urbi
 	createUCallback (__name, TypeString,				\
 			 dynamic_cast<T*>(this),			\
 			 fun, Name, Map, Owned);			\
-      									\
+									\
       if (WithArg && cb)						\
 	cb->storage = StoreArg;						\
     }
@@ -193,18 +193,18 @@ namespace urbi
 			   Name, StoreArg)				\
     MakeNotify (Type, Notified, /**/, /**/,   TypeString, Name,		\
 		Map, Owned, false, StoreArg);				\
-	MakeNotify (Type, Notified, /**/, const,  TypeString, Name,	\
-		    Map, Owned, false, StoreArg);			\
-	MakeNotify (Type, Notified, UVar&, /**/,  TypeString, Name,	\
-		    Map, Owned, true, StoreArg);			\
-	MakeNotify (Type, Notified, UVar&, const, TypeString, Name,	\
-		    Map, Owned, true, StoreArg);
+    MakeNotify (Type, Notified, /**/, const,  TypeString, Name,		\
+		Map, Owned, false, StoreArg);				\
+    MakeNotify (Type, Notified, UVar&, /**/,  TypeString, Name,		\
+		Map, Owned, true, StoreArg);				\
+    MakeNotify (Type, Notified, UVar&, const, TypeString, Name,		\
+		Map, Owned, true, StoreArg);
 
 # define MakeMetaNotify(Type, TypeString, Map)				\
     MakeMetaNotifyArg (Type, UVar& v, TypeString,			\
 		       Map, v.owned, v.get_name (), &v);		\
-	MakeMetaNotifyArg (Type, const std::string& name, TypeString,	\
-			   Map, false, name, new UVar(name));
+    MakeMetaNotifyArg (Type, const std::string& name, TypeString,	\
+		       Map, false, name, new UVar(name));
 
     /// Calls the specified Method each time the variable is access.
     MakeMetaNotify (Access, "varaccess", accessmap);
