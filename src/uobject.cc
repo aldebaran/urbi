@@ -262,20 +262,36 @@ namespace urbi
 
 
   //! Clean a callback UTimerTable from all callbacks linked to
-  //! the object whose name is 'name'
+  //! the object whose name is \a n.
   void
-  cleanTimerTable(UTimerTable &t, const std::string& name)
+  cleanTimerTable(UTimerTable &t, const std::string& n)
   {
     for (UTimerTable::iterator i = t.begin(); i != t.end(); )
-    {
-      if ((*i)->objname == name)
+      if ((*i)->objname == n)
       {
 	delete *i;
 	i = t.erase(i);
       }
       else
 	++i;
-    }
+  }
+
+
+  // Remove from \a t the item whose objname is \a n (if present).
+  // FIXME: Interestingly enough, might be equal to the above, if we
+  // know that the name can appear only once.  Using lists is really
+  // not smart.
+  void
+  remove (UTimerTable& t, const std::string& n)
+  {
+    // Find previous update timer on this object
+    for (UTimerTable::iterator i = t.begin (); i != t.end(); ++i)
+      if ((*i)->objname == n)
+      {
+	updatemap->erase (i);
+	delete *i;
+	break;
+      }
   }
 
 
@@ -323,16 +339,7 @@ namespace urbi
   UObject::USetUpdate(ufloat t)
   {
     // Find previous update timer on this object
-    UTimerTable::iterator it = updatemap->begin ();
-    for (; it != updatemap->end () && (*it)->objname != __name; ++it)
-      ;
-
-    // Delete if found
-    if (it != updatemap->end ())
-    {
-      updatemap->erase (it);
-      delete (*it);
-    }
+    remove (updatemap, __name);
 
     // Set period value
     period = t;
@@ -367,16 +374,7 @@ namespace urbi
   UObjectHub::USetUpdate(ufloat t)
   {
     // Find previous update timer on this object
-    UTimerTable::iterator it = updatemap->begin ();
-    for (; it != updatemap->end () && (*it)->objname != name; ++it)
-      ;
-
-    // Delete if found
-    if (it != updatemap->end ())
-    {
-      updatemap->erase (it);
-      delete (*it);
-    }
+    remove (updatemap, name);
 
     // Set period value
     period = t;
