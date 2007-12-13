@@ -84,7 +84,7 @@ namespace
   usage (const char* program_name, int estatus)
   {
     std::cout <<
-      "usage: " << program_name << "[OPTIONS] [FILE]\n"
+      "usage: " << program_name << " [OPTIONS] [FILE]\n"
       "\n"
       "  FILE    to load\n"
       "\n"
