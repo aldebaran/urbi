@@ -109,12 +109,12 @@ nodist_libkernel_la_SOURCES += $(libport_sources)
 urbiinclude_HEADERS = $(uobject_headers)
 
 
-## ---------- ##
-## uconsole.  ##
-## ---------- ##
+## -------------- ##
+## urbi-console.  ##
+## -------------- ##
 
 if !OPENR
-noinst_PROGRAMS = uconsole
-uconsole_SOURCES = console.cc
-uconsole_LDADD = libkernel.la
+bin_PROGRAMS = urbi-console
+urbi_console_SOURCES = console-server.cc
+urbi_console_LDADD = libkernel.la
 endif

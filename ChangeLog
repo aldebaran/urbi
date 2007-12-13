@@ -1,5 +1,12 @@
 2007-12-13  Akim Demaille  <akim.demaille@free.fr>
 
+	Install uconsole as urbi-console.
+	* src/Makefile.am: Do it.
+	* src/console.cc: Rename as...
+	* src/console-server.cc: this to match the class name.
+
+2007-12-13  Akim Demaille  <akim.demaille@free.fr>
+
 	Use misc::has.
 	* src/uobject.cc: here.
 
