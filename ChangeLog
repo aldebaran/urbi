@@ -1,3 +1,8 @@
+2007-12-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Use misc::has.
+	* src/uobject.cc: here.
+
 2007-12-12  Akim Demaille  <akim.demaille@free.fr>
 
 	Factor.

@@ -25,6 +25,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 #include <sstream>
 #include <algorithm>
 
+#include "libport/containers.hh"
+
 #include "urbi/uobject.hh"
 
 #include "kernel/userver.hh"
@@ -159,12 +161,10 @@ namespace urbi
       else
       {
 	it->second->internalAccessBinder.push_back(this);
-	if ( (!it->second->internalBinder.empty ()
-	      || it->second->binder)
-	     && std::find (::urbiserver->access_and_change_varlist.begin (),
-			   ::urbiserver->access_and_change_varlist.end (),
-			   it->second) ==
-	     ::urbiserver->access_and_change_varlist.end ())
+	if ((!it->second->internalBinder.empty ()
+	     || it->second->binder)
+	    && !libport::has (::urbiserver->access_and_change_varlist,
+			      it->second))
 	{
 	  it->second->access_and_change = true;
 	  ::urbiserver->access_and_change_varlist.push_back (it->second);
