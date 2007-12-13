@@ -494,7 +494,7 @@ namespace urbi
 	  convertRGBtoJPEG((byte*) uncompressedData,
 			   dest.width , dest.height,
 			   (byte*) dest.data, dsz, 90);
-	
+
 	//fprintf(stderr,
 	//	"unsupported conversion requested: can't compress to jpeg\n");
 	free(uncompressedData);
@@ -578,8 +578,8 @@ namespace urbi
       }
       else
       {
-	d1 = (D)(v1) *  (1<< (-shift));
-	d2 = (D)(v2) * (1<< (-shift));
+	d1 = (D)(v1) * (1 << -shift);
+	d2 = (D)(v2) * (1 << -shift);
       }
       if (!df)
       {
