@@ -1,3 +1,8 @@
+2007-12-13  Akim Demaille  <demaille@gostai.com>
+
+	Specify URBI_SERVER.
+	* tests-local.mk: We use urbi-console.
+
 2007-12-13  Akim Demaille  <akim.demaille@free.fr>
 
 	Install uconsole as urbi-console.
