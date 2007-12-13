@@ -1,3 +1,9 @@
+2007-12-13  Akim Demaille  <akim.demaille@free.fr>
+
+	Remove useless declaration.
+	* src/liburbi/umain.cc: urbi::main is declared in uobject.hh, which
+	is included.
+
 2007-12-11  Akim Demaille  <demaille@gostai.com>
 
 	Use m4sh.
