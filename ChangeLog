@@ -1,3 +1,11 @@
+2007-12-14  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix loadFile which can be used for binaries.
+	* include/kernel/userver.hh: Add extra parameter to loadFile to
+	  specify Queue type.
+	* src/uexpression.cc: Pass it.
+	* src/userver.cc: Do not output #push and #pop to DATA queue.
+
 2007-12-14  Akim Demaille  <demaille@gostai.com>
 
 	Let urbi-console support network connections.

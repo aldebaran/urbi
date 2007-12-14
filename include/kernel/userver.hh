@@ -183,10 +183,19 @@ public:
   /// Return \a f on failure.
   virtual std::string find_file (const char* f);
 
+  /// Type of UCommandQueue
+  enum QueueType {
+    /// The UComandQueue contains URBI code.
+    QUEUE_URBI,
+    /// THe UCommandQueu contains data, not to be messed with.
+    QUEUE_DATA
+  };
+
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue loadFile (const char *filename,
-				UCommandQueue* loadQueue);
+				UCommandQueue* loadQueue, 
+				QueueType t=QUEUE_URBI);
 
   /// Save content to a file
   /// This function must be redefined by the robot-specific server.

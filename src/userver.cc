@@ -959,14 +959,15 @@ UServer::find_file (const char* base)
 #define URBI_BUFSIZ 1024
 
 UErrorValue
-UServer::loadFile (const char* base, UCommandQueue* q)
+UServer::loadFile (const char* base, UCommandQueue* q, QueueType type)
 {
   std::string f = find_file (base);
   std::ifstream is (f.c_str(), std::ios::binary);
   if (!is)
     return UFAIL;
 
-  q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
+  if (type == QUEUE_URBI)
+    q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
   while (is.good ())
   {
     char buf[URBI_BUFSIZ];
@@ -974,7 +975,8 @@ UServer::loadFile (const char* base, UCommandQueue* q)
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;
   }
-  q->push ("#pop\n");
+  if (type == QUEUE_URBI)
+    q->push ("#pop\n");
   is.close();
 
   return USUCCESS;
