@@ -1,4 +1,4 @@
-//#define ENABLE_DEBUG_TRACES
+#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "config.h"
@@ -7,7 +7,6 @@
 # include <unistd.h>
 #endif
 #include "libport/windows.hh"
-#include <iostream>
 #include <fstream>
 
 #include "libport/utime.hh"
@@ -22,17 +21,11 @@ class ConsoleServer
 {
 public:
   ConsoleServer(int freq)
-    : UServer(freq, "console")
+    : UServer(freq, 64000000, "console")
   {
+    // FIXME: Add support for : in the path.
     if (const char* cp = getenv ("URBI_PATH"))
-      // FIXME: Is there anything more elegant?
-    {
-      for (const char* end = strchr (cp, ':');
-	   end;
-	   cp = end + 1, end = strchr(cp, ':'))
-	path.push_back(std::string(cp, end - cp));
-      path.push_back(std::string(cp));
-    }
+      path.push_back (cp);
   }
 
   virtual ~ConsoleServer()
@@ -40,7 +33,6 @@ public:
 
   virtual void shutdown()
   {
-    UServer::shutdown ();
     exit (0);
   }
 
@@ -69,10 +61,10 @@ public:
 
   virtual
   UErrorValue
-  saveFile (const std::string& filename, const std::string& content)
+  saveFile (const char* filename, const char* content)
   {
     //! \todo check this code
-    std::ofstream os (filename.c_str ());
+    std::ofstream os (filename);
     os << content;
     os.close ();
     return os.good () ? USUCCESS : UFAIL;

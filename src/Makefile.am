@@ -92,12 +92,12 @@ include runner/runner.mk
 urbiinclude_HEADERS = $(uobject_headers)
 
 
-## ---------- ##
-## uconsole.  ##
-## ---------- ##
+## -------------- ##
+## urbi-console.  ##
+## -------------- ##
 
 if !OPENR
-noinst_PROGRAMS = uconsole
-uconsole_SOURCES = console.cc
+noinst_PROGRAMS = urbi-console
+uconsole_SOURCES = console-server.cc
 uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la
 endif

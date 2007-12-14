@@ -1,5 +1,27 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 2045:2055 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-13  Akim Demaille  <akim.demaille@free.fr>
+	Install uconsole as urbi-console.
+	* src/Makefile.am: Do it.
+	* src/console.cc: Rename as...
+	* src/console-server.cc: this to match the class name.
+
+	2007-12-13  Akim Demaille  <akim.demaille@free.fr>
+	Use misc::has.
+	* src/uobject.cc: here.
+
+	2007-12-12  Akim Demaille  <akim.demaille@free.fr>
+	Factor.
+	* src/uobject.cc (remove): New.
+	Use it.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Don't forget to run 1.5 tests...
+	* tests-local.mk: here.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 2035:2045 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-12-11  Guillaume Deslandes  <deslandes@gostai.com>
