@@ -33,6 +33,7 @@
 
 # include "libport/fwd.hh"
 # include "libport/compiler.hh"
+# include "libport/ufloat.h"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"

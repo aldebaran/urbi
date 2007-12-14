@@ -1,5 +1,53 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 2035:2045 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-12-11  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix memleaks, remove extra deletes.
+	* src/ucommand.cc: Here.
+	The deletes of modif_* were hidden in delete parameters.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Fix dist.
+	* src/Makefile.am: Ship ubinder.hxx.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Simplify UBinders.
+	* src/ubinder.hh, src/ubinder.cc (addMonitor): Use
+	(locateMonitor): this.
+	Simplify it.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	More unbind_monitor uses.
+	* src/ubinder.hh, src/ubinder.hxx: Make it more generic.
+	* src/uobj.cc: Use it.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	More factoring.
+	There is nothing like factoring to understand :(
+	* src/ubinder.hh, src/ubinder.hxx (removeMonitor): Rename as...
+	(remove_monitor): this.
+	(unbind_monitor): new.
+	* src/uconnection.cc, src/uobj.cc: Adjust to use them.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Less includes.
+	* include/kernel/utypes.hh: Remove useless includes.
+	Adjust dependencies.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	uwait-counter.hh.
+	* src/uwait-counter.hh: New.
+	* include/kernel/utypes.hh: Extracted from here.
+	* include/kernel/fwd.hh: Adjust.
+	* src/Makefile.am: Ditto.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Fix libport use.
+	* src/Makefile.am: here.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	Remove accidentally added file during previous merge.
 	* src/ubinder.hxx: Remove.
 

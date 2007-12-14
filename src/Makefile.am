@@ -46,6 +46,10 @@ flavorable.hh							\
 memorymanager/memorymanager.cc					\
 uast.hh								\
 ubanner.hh ubanner.cc						\
+ubinary.hh ubinary.cc						\
+ubinder.hh ubinder.hxx ubinder.cc				\
+ucallid.hh ucallid.cc						\
+ucommand.hh ucommand.hxx ucommand.cc				\
 ucommandqueue.hh ucommandqueue.cc				\
 ucomplaints.cc							\
 uconnection.cc							\
@@ -53,6 +57,7 @@ ughostconnection.hh ughostconnection.cc				\
 uqueue.hh uqueue.cc						\
 userver.cc							\
 ustring.cc							\
+uwait-counter.hh						\
 usystem.cc
 
 
@@ -74,7 +79,6 @@ include uobject/uobject.mk
 # nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
-
 ## ----------------- ##
 ## Sub directories.  ##
 ## ----------------- ##
@@ -83,6 +87,7 @@ include ast/ast.mk
 include parser/parser.mk
 include object/object.mk
 include runner/runner.mk
+
 
 urbiinclude_HEADERS = $(uobject_headers)
 
