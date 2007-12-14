@@ -1,5 +1,50 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 2015:2025 https://svn.gostai.com/svn/kernel1/trunk
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Simplify __ crazyness.
+	* include/kernel/uconnection.hh: Remove __ prefixes.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Fix.
+	* src/unamedparameters.hxx: Fix type name.
+	Breaks VC++, but not G++.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Gotcha.
+	There is a f*ing ctor that takes void*, so any pointer mistake
+	is doomed to failure.
+	This should fix Aibo failures.
+	* src/uvalue.cc (urbiValue): urbi::UValue does not know about UString
+	(lucky guy): give it an std::string.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Cleanup.
+	There is something broken here that annoys the Aibo :(
+	* src/uvalue.cc: Use `o' for ostream, including ostringstream.
+	Avoid useless calls to c_str.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Simplify UString uses.
+	* include/kernel/uvalue.hh, src/uvalue.cc: Add a ctor with UString.
+	Use it.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	UString + UString.
+	* include/kernel/ustring.hh (operator+): New.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Stop playing with pointers...
+	* src/uvalue.cc: Second time I make the same mistake...
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	kernel.mk.
+	* src/kernel.mk: New, fetched from the future.
+	* src/Makefile.am: Use it.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 2005:2015 https://svn.gostai.com/svn/kernel1/trunk
 	2007-12-11  Akim Demaille  <demaille@gostai.com>
 	src/parser/bison -> src/parser.
