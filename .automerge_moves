@@ -25,4 +25,3 @@
 ## src/ustring.hh | include/kernel/ustring.hh
 
 #trunk
-src/server.cc | src/console-server.cc

@@ -1,3 +1,10 @@
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
+	Fix console-server.
+	* .automerge_moves: Remove erroneous entry.
+	* src/console-server.cc: Apply changes lost during merge from
+        trunk.
+
 2007-12-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Make k2 compile again.

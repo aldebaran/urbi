@@ -1,4 +1,4 @@
-#define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "config.h"
@@ -8,6 +8,7 @@
 #endif
 #include "libport/sysexits.hh"
 #include "libport/windows.hh"
+#include <iostream>
 #include <fstream>
 
 #include "libport/cli.hh"
@@ -26,12 +27,18 @@ class ConsoleServer
   : public UServer
 {
 public:
-  ConsoleServer(int period)
-    : UServer(period, "console")
+  ConsoleServer(int freq)
+    : UServer(freq, "console")
   {
-    // FIXME: Add support for : in the path.
     if (const char* cp = getenv ("URBI_PATH"))
-      path.push_back (cp);
+      // FIXME: Is there anything more elegant?
+    {
+      for (const char* end = strchr (cp, ':');
+	   end;
+	   cp = end + 1, end = strchr(cp, ':'))
+	path.push_back(std::string(cp, end - cp));
+      path.push_back(std::string(cp));
+    }
   }
 
   virtual ~ConsoleServer()
@@ -39,6 +46,7 @@ public:
 
   virtual void shutdown()
   {
+    UServer::shutdown ();
     exit (0);
   }
 
