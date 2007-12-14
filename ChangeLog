@@ -1,5 +1,44 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 2025:2035 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Fix previous patch.
+	* src/ucommand.cc: here.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Don't use ASSERT.
+	* src/ucommand.cc: here.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Factor.
+	* src/ubinder.hh, src/ubinder.hxx (removeMonitor): Factored from...
+	* src/uconnection.cc, src/uobj.cc: here.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Use FOREACH.
+	* src/ubinder.cc: here.
+	I'm tracking duplicate code.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	this-> is useless.
+	* src/uconnection.cc: At least in these cases.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	__ craze.
+	* src/uconnection.cc: Remove useless __ prefixes.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	send (std::string).
+	* include/kernel/uconnection.hh (_Send): Remove incorrect const.
+	(send(std::string)): New.
+	* src/uobj.cc: Use it.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Comment.
+	* include/kernel/uconnection.hh: Some bits.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 2015:2025 https://svn.gostai.com/svn/kernel1/trunk
 
 	2007-12-11  Akim Demaille  <demaille@gostai.com>

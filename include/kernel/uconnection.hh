@@ -152,14 +152,27 @@ public:
 
   UConnection& operator<< (UConnection& m (UConnection&));
 
+  /*--------------.
+  | Send, sendc.  |
+  `--------------*/
+
   /// Unified struct for sending messages
   struct _Send
   {
     const ubyte* _tag; int _taglen;
-    const ubyte* _buf; int _buflen;
+    ubyte* _buf; int _buflen;
     bool _flush;
   };
 
+  static inline _Send sendf (const std::string& tag,
+			     const char* format, va_list args)
+  {
+    char buf[1024];
+    vsnprintf(buf, sizeof buf - 1, format, args);
+    return send (buf, tag.c_str());
+  }
+
+  /// Invoke the previous sendf.
   static inline _Send sendf (const std::string& tag,
 			     const char* format, ...)
   {
@@ -170,14 +183,6 @@ public:
     return tmp;
   }
 
-  static inline _Send sendf (const std::string& tag,
-			     const char* format, va_list args)
-  {
-    char buf[1024];
-    vsnprintf(buf, 1023, format, args);
-    return send (buf, tag.c_str());
-  }
-
   //! Send a string through the connection.
   /*! A tag is automatically added to output the message string and the
     resulting string is sent via send(const ubyte*,int).
@@ -186,14 +191,14 @@ public:
   */
   static inline _Send send (const char *s, const char* tag = 0)
   {
-    return send ((const ubyte*) s, ((s != 0) ? strlen (s) : 0),
+    return send ((const ubyte*) s, s != 0 ? strlen (s) : 0,
 		 (const ubyte*) tag);
   }
 
-  static inline _Send sendc (const char* buf, const char* tag)
+  static inline _Send sendc (const char* s, const char* tag)
   {
-    return sendc ((const ubyte*)buf, ((buf != 0) ? strlen (buf) : 0),
-		  (const ubyte*)tag);
+    return sendc ((const ubyte*) s, s != 0 ? strlen (s) : 0,
+		  (const ubyte*) tag);
   }
 
   static inline _Send sendc (const ubyte* buf, int len,
@@ -202,9 +207,10 @@ public:
     return send (buf, len, tag, false);
   }
 
-  static inline _Send send (const ubyte* buf, int buflen,
-			    const ubyte* tag = 0,
-			    bool flush = true)
+  static inline
+  _Send
+  send (const ubyte* buf, int buflen,
+	const ubyte* tag = 0, bool flush = true)
   {
     _Send msg;
     msg._tag = tag;
@@ -212,7 +218,7 @@ public:
     if (buf)
     {
       msg._buf = new ubyte [buflen];
-      memcpy(const_cast<ubyte*>(msg._buf), buf, buflen);
+      memcpy(msg._buf, buf, buflen);
     }
     else
       msg._buf = 0;
@@ -221,8 +227,19 @@ public:
     return msg;
   }
 
+  static inline
+  _Send
+  send (const std::string& s)
+  {
+    return send (reinterpret_cast<const ubyte*>(s.c_str()), s.length(),
+		 0, false);
+  }
+
   UConnection& operator<< (_Send msg);
 
+  /*---------.
+  | Prefix.  |
+  `---------*/
 
   struct _Prefix { const char* _tag; };
   static inline _Prefix prefix (const char * tag)
