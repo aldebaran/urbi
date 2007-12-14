@@ -1,3 +1,17 @@
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
+	merge -r 1996:2005 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
+	Remove const on temporary.
+	* src/parser/bison/utoken.l: Here.
+	It caused a compile error on VCxx.
+
+	2007-12-05  Guillaume Deslandes  <deslandes@gostai.com>
+	Delete binds from objtable as well on connection deletion.
+	Not doing so caused the kernel to segv when calling
+	a method/constructor/destructor of a disconnected remote.
+	* src/uconnection.cc: Here.
+
 2007-12-11  Loic Fosse  <fosse@gostai.com>
 
 	Implement loopn behavior of for keyword.

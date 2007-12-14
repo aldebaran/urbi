@@ -49,6 +49,7 @@
 #include "ubanner.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
+#include "uobj.hh"
 
 #include "object/atom.hh" // object::Context
 
@@ -98,6 +99,31 @@ UConnection::UConnection (UServer* userver,
 UConnection::~UConnection ()
 {
   DEBUG(("Destroying UConnection..."));
+  if (connectionTag)
+  {
+    delete server->getVariable(connectionTag->c_str(), "connectionID");
+    delete connectionTag;
+  }
+  delete activeCommand;
+
+  // free bindings
+# define FREE_BINDINGS(Table)\
+  BOOST_FOREACH (HM##Table::value_type i, ::urbiserver->Table)\
+    if (i.second->binder\
+	&& i.second->binder->removeMonitor(this))\
+    {\
+      delete i.second->binder;\
+      i.second->binder = 0;\
+    }
+
+  FREE_BINDINGS(variabletab);
+  FREE_BINDINGS(objtab);
+
+# undef FREE_BINDINGS
+
+  removeMonitor(this, ::urbiserver->functionbindertab);
+  removeMonitor(this, ::urbiserver->eventbindertab);
+
   delete parser_;
   delete sendQueue_;
   delete recvQueue_;
