@@ -1,3 +1,8 @@
+2007-12-14  Akim Demaille  <demaille@gostai.com>
+
+	Fix CPP guard.
+	* include/kernel/userver.hh: here.
+
 2007-12-13  Akim Demaille  <demaille@gostai.com>
 
 	Specify URBI_SERVER.

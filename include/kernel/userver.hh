@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef USERVER_HH
-# define USERVER_HH
+#ifndef KERNEL_USERVER_HH
+# define KERNEL_USERVER_HH
 
 # include <cstdarg>
 # include <sstream>
@@ -449,8 +449,5 @@ void debug (unsigned t, const char* fmt, ...)
 # define DEBUG(Msg) ((void) 0)
 #endif
 
-#endif
+#endif // ! KERNEL_USERVER_HH
 
-// Local Variables:
-// mode: c++
-// End:
