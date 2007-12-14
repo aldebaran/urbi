@@ -19,9 +19,8 @@
 
  **************************************************************************** */
 
-
-#ifndef USERVER_HH
-# define USERVER_HH
+#ifndef KERNEL_USERVER_HH
+# define KERNEL_USERVER_HH
 
 # include <cstdarg>
 # include <sstream>
@@ -188,10 +187,19 @@ public:
   /// Return \a f on failure.
   virtual std::string find_file (const std::string& f);
 
+  /// Type of UCommandQueue
+  enum QueueType {
+    /// The UComandQueue contains URBI code.
+    QUEUE_URBI,
+    /// THe UCommandQueu contains data, not to be messed with.
+    QUEUE_DATA
+  };
+
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue loadFile (const std::string& file_name,
-				UCommandQueue* loadQueue);
+				UCommandQueue* loadQueue,
+				QueueType t=QUEUE_URBI);
 
   /// Load \a fn in the ghostqueue.
   UErrorValue load_init_file(const char* fn);
@@ -367,9 +375,5 @@ void debug (unsigned t, const char* fmt, ...)
 # endif
 
 # include "userver.hxx"
+#endif // ! KERNEL_USERVER_HH
 
-#endif
-
-// Local Variables:
-// mode: c++
-// End:

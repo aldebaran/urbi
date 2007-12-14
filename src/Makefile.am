@@ -98,6 +98,11 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 if !OPENR
 noinst_PROGRAMS = urbi-console
-uconsole_SOURCES = console-server.cc
+uconsole_SOURCES =				\
+console-server.cc				\
+network/bsdnet/connection.hh			\
+network/bsdnet/connection.cc			\
+network/bsdnet/network.hh			\
+network/bsdnet/network.cc
 uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la
 endif

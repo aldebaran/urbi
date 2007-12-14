@@ -3,6 +3,7 @@
 UCONSOLE_CHECK_FLAGS = -k2
 
 TESTS_DIRS += 2.x
+URBI_SERVER = $(abs_top_builddir)/src/urbi-console
 
 # Run k2 tests only.
 k2-check:
