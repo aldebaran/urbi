@@ -186,11 +186,12 @@ main (int argc, const char* argv[])
 
   c.newDataAdded = true;
 
-  long long startTime = libport::utime();
+  long long startTime = 0;
 
   DEBUG(("Going to work...\n"));
   while (true)
   {
+    startTime = libport::utime();
     ufloat period = s.getFrequency() * 1000;
     while (libport::utime() < startTime + period)
       usleep (1);
