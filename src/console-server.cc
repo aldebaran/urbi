@@ -11,6 +11,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <boost/tokenizer.hpp>
+
 #include "libport/cli.hh"
 #include "libport/utime.hh"
 
@@ -27,17 +29,24 @@ class ConsoleServer
   : public UServer
 {
 public:
-  ConsoleServer(int freq)
-    : UServer(freq, "console")
+  ConsoleServer(int period)
+    : UServer(period, "console")
   {
     if (const char* cp = getenv ("URBI_PATH"))
-      // FIXME: Is there anything more elegant?
     {
+#if ! defined LIBPORT_URBI_ENV_AIBO
+      typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+      boost::char_separator<char> sep("-;|");
+      tokenizer tok(std::string(cp), sep);
+      for (tokenizer::iterator it = tok.begin(); it != tok.end(); ++it)
+        path.push_back(*it);
+#else
       for (const char* end = strchr (cp, ':');
 	   end;
 	   cp = end + 1, end = strchr(cp, ':'))
 	path.push_back(std::string(cp, end - cp));
       path.push_back(std::string(cp));
+#endif
     }
   }
 

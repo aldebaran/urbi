@@ -1,5 +1,10 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	Use boost tokenizer to iterate over URBI_PATH.
+	* src/console-server.cc: Here.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	Fix console-server.
 	* .automerge_moves: Remove erroneous entry.
 	* src/console-server.cc: Apply changes lost during merge from
