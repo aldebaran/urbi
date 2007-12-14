@@ -1,5 +1,10 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	Remove accidentally added file during previous merge.
+	* src/ubinder.hxx: Remove.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 2025:2035 https://svn.gostai.com/svn/kernel1/trunk
 	2007-12-11  Akim Demaille  <demaille@gostai.com>
 	Fix previous patch.
