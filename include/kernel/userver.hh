@@ -235,6 +235,8 @@ public:
   ufloat lastTime ();
   void updateTime ();
   void addConnection (UConnection& connection);
+  /// Overload to support the legacy interface of k1.
+  void addConnection (UConnection* connection);
   void removeConnection (UConnection& connection);
   int getUID ();
 

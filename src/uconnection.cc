@@ -49,7 +49,6 @@
 #include "ubanner.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
-#include "uobj.hh"
 
 #include "object/atom.hh" // object::Context
 
@@ -101,16 +100,8 @@ UConnection::~UConnection ()
   DEBUG(("Destroying UConnection..."));
   if (connectionTag)
   {
-    delete server->getVariable(connectionTag->c_str(), "connectionID");
     delete connectionTag;
   }
-  delete activeCommand;
-
-  // free bindings
-  unbind_monitor(::urbiserver->variabletab, this);
-  unbind_monitor(::urbiserver->objtab,      this);
-  remove_monitor(::urbiserver->functionbindertab, this);
-  remove_monitor(::urbiserver->eventbindertab,    this);
 
   delete parser_;
   delete sendQueue_;

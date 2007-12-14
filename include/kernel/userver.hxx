@@ -42,6 +42,13 @@ UServer::lastTime()
   return lastTime_;
 }
 
+inline void
+UServer::addConnection (UConnection* connection)
+{
+  assert (connection != 0);
+  addConnection (*connection);
+}
+
 inline bool
 UServer::isRunningSystemCommands () const
 {

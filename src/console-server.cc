@@ -27,7 +27,7 @@ class ConsoleServer
 {
 public:
   ConsoleServer(int period)
-    : UServer(period, 64000000, "console")
+    : UServer(period, "console")
   {
     // FIXME: Add support for : in the path.
     if (const char* cp = getenv ("URBI_PATH"))
@@ -67,10 +67,10 @@ public:
 
   virtual
   UErrorValue
-  saveFile (const char* filename, const char* content)
+  saveFile (const std::string& filename, const std::string& content)
   {
     //! \todo check this code
-    std::ofstream os (filename);
+    std::ofstream os (filename.c_str ());
     os << content;
     os.close ();
     return os.good () ? USUCCESS : UFAIL;

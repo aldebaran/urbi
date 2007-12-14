@@ -1,3 +1,19 @@
+2007-12-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Make k2 compile again.
+	* include/kernel/userver.hh (addConnection): Add an overload to
+	support the legacy interface used by k1.  This is required to use
+	the `network' module without forking it for k1 and k2.
+	* include/kernel/userver.hxx (addConnection): Implement the new
+	overload.
+	* src/Makefile.am (dist_libkernel_la_SOURCES): Remove the files that
+	no longer exist.
+	(uconsole_SOURCES, uconsole_LDADD): Adjust the names to
+	urbi_console_SOURCES / urbi_console_LDADD.
+	* src/console-server.cc: Adjust the ctor and saveFile.
+	* src/uconnection.cc: Do not reference non existent headers or
+	members.
+
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
 	merge -r 2055:2066 https://svn.gostai.com/svn/kernel1/trunk

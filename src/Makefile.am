@@ -46,10 +46,6 @@ flavorable.hh							\
 memorymanager/memorymanager.cc					\
 uast.hh								\
 ubanner.hh ubanner.cc						\
-ubinary.hh ubinary.cc						\
-ubinder.hh ubinder.hxx ubinder.cc				\
-ucallid.hh ucallid.cc						\
-ucommand.hh ucommand.hxx ucommand.cc				\
 ucommandqueue.hh ucommandqueue.cc				\
 ucomplaints.cc							\
 uconnection.cc							\
@@ -98,11 +94,11 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 if !OPENR
 noinst_PROGRAMS = urbi-console
-uconsole_SOURCES =				\
+urbi_console_SOURCES =				\
 console-server.cc				\
 network/bsdnet/connection.hh			\
 network/bsdnet/connection.cc			\
 network/bsdnet/network.hh			\
 network/bsdnet/network.cc
-uconsole_LDADD = libkernel.la $(top_builddir)/libport/libport.la
+urbi_console_LDADD = libkernel.la $(top_builddir)/libport/libport.la
 endif
