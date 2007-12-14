@@ -1,5 +1,50 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 2005:2015 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	src/parser/bison -> src/parser.
+	I should have done this long ago.  Now 1.x and 2.x are alike.
+	* src/parser/bison/bison.mk, src/parser/bison/flex-lexer.hh,
+	* src/parser/bison/ugrammar.y, src/parser/bison/utoken.l:
+	Rename as...
+	* src/parser/parser.mk, src/parser/flex-lexer.hh,
+	* src/parser/ugrammar.y, src/parser/utoken.l:
+	these.
+	* src/parser/uparser.hh, src/Makefile.am:
+	Adjust.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Factoring.
+	* src/uvalue.cc (params_dump, uvalue_to_ubinary): New.
+	Use them.
+	The same code was written twice, and some more code three times.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	Fix exprToInt.
+	* src/uvalue.cc: Cast the pointee, not the pointer.
+
+	2007-12-11  Akim Demaille  <demaille@gostai.com>
+	param[n].
+	* src/unamedparameters.hh, src/unamedparameters.hxx (operator[]): New.
+	* src/Makefile.am: Adjust.
+	* src/uvalue.cc: Use it.
+
+	2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix typo.
+	* ChangeLog: Here.
+
+	2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
+	More delete of modif_.
+	* src/ucommand.cc: Here.
+
+	2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
+	Remove memory leaks.
+	* src/ucommand.cc: Here.
+	Delete expression for assign modifiers.
+	Delete temporary list.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	Remove obsolete automerge_moves entries.
 	* .automerge_moves: Remove ugrammar.y and utoken.l.
 
