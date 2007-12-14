@@ -1,5 +1,10 @@
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
+	Remove obsolete automerge_moves entries.
+	* .automerge_moves: Remove ugrammar.y and utoken.l.
+
+2007-12-14  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 1996:2005 https://svn.gostai.com/svn/kernel1/trunk
 	2007-12-07  Guillaume Deslandes  <deslandes@gostai.com>
 	Remove const on temporary.

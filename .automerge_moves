@@ -25,5 +25,3 @@
 ## src/ustring.hh | include/kernel/ustring.hh
 
 #trunk
-src/parser/bison/ugrammar.y | src/parser/ugrammar.y
-src/parser/bison/utoken.l | src/parser/utoken.l
