@@ -1,5 +1,12 @@
 2007-12-14  Akim Demaille  <demaille@gostai.com>
 
+	Let urbi-console support network connections.
+	Subscribe to src/network
+	* src/Makefile.am: Adjust.
+	* src/console-server.cc: Improve cli to match ucore-pc's.
+
+2007-12-14  Akim Demaille  <demaille@gostai.com>
+
 	Fix CPP guard.
 	* include/kernel/userver.hh: here.
 

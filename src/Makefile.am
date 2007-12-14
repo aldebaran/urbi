@@ -115,6 +115,11 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 if !OPENR
 bin_PROGRAMS = urbi-console
-urbi_console_SOURCES = console-server.cc
+urbi_console_SOURCES =				\
+console-server.cc				\
+network/bsdnet/connection.hh			\
+network/bsdnet/connection.cc			\
+network/bsdnet/network.hh			\
+network/bsdnet/network.cc
 urbi_console_LDADD = libkernel.la
 endif
