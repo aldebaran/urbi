@@ -1,3 +1,8 @@
+2007-12-16  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Use UValue::echo to print strings in vars and uservars commands.
+	* src/ucommand.cc: Here.
+
 2007-12-14  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Make good use of period in urbi-console.

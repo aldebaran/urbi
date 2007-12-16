@@ -4105,7 +4105,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  break;
 
 	case DATA_STRING:
-	  o << i.second->value->str->c_str();
+	  o << i.second->value->echo ();
 	  break;
 
 	case DATA_BINARY:
@@ -4194,7 +4194,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	    break;
 
 	  case DATA_STRING:
-	    o << i.second->value->str->c_str();
+	    o << i.second->value->echo ();
 	    break;
 
 	  case DATA_BINARY:
