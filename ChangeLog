@@ -1,6 +1,6 @@
 2007-12-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
-	Always use boost::tokenizer.
+	Always use boost::tokenizer and fix the handling of URBI_PATH.
 	As opposed to boost:regex, boost::tokenizer is a header-only library
 	which we can use on Aibo.
 	* configure.ac: Invoke BOOST_TOKENIZER.
