@@ -4148,7 +4148,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     BOOST_FOREACH (HMemittab::value_type i, connection->server->emittab)
     {
       std::ostringstream o;
-      o << "*** " << i.second->unforgedName << "["
+      o << "*** " << *i.second->unforgedName << "["
 	<<  i.second->nbarg () << "]\n";
       *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
