@@ -54,6 +54,8 @@ AC_PROG_LIBTOOL
 ## -------- ##
 URBI_OPENR
 URBI_LIBPORT
+dnl URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
+BOOST_TOKENIZER
 
 ## -------- ##
 ## Output.  ##

@@ -1,3 +1,11 @@
+2007-12-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Always use boost::tokenizer.
+	As opposed to boost:regex, boost::tokenizer is a header-only library
+	which we can use on Aibo.
+	* configure.ac: Invoke BOOST_TOKENIZER.
+	* src/console-server.cc (ConsoleServer::ConsoleServer): Here.
+
 2007-12-14  mefyl  <mefyl@lrde.epita.fr>
 
 	Use boost tokenizer to iterate over URBI_PATH.
