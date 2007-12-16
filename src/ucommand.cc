@@ -4094,6 +4094,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "vars")
   {
+    std::list<std::string> tmpVarList;
     BOOST_FOREACH (HMvariabletab::value_type i, connection->server->variabletab)
     {
       std::ostringstream o;
@@ -4132,9 +4133,13 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	  o << "UNKNOWN TYPE";
       }
       o << '\n';
-      *connection << UConnection::sendf(getTag(), o.str().c_str());
+      tmpVarList.push_back (o.str ());
     }
-
+    tmpVarList.sort ();
+    BOOST_FOREACH (std::string var, tmpVarList)
+    {
+      *connection << UConnection::sendf(getTag(), var.c_str ());
+    }
     return UCOMPLETED;
   }
 
@@ -4181,6 +4186,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "uservars")
   {
+    std::list<std::string> tmpVarList;
     BOOST_FOREACH (HMvariabletab::value_type i, connection->server->variabletab)
     {
       if (i.second->uservar)
@@ -4213,10 +4219,14 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 	    o << "UNKNOWN TYPE";
 	}
 	o << '\n';
-	*connection << UConnection::sendf(getTag(), o.str().c_str());
+	tmpVarList.push_back (o.str ());
       }
     }
-
+    tmpVarList.sort ();
+    BOOST_FOREACH (std::string var, tmpVarList)
+    {
+      *connection << UConnection::sendf(getTag(), var.c_str ());
+    }
     return UCOMPLETED;
   }
 
