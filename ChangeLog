@@ -1,5 +1,11 @@
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
+	Factor vars and uservars.
+	* src/ucommand.cc (dump_vars): New.
+	Use it.
+
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
 	Space changes.
 	* src/parser/ugrammar.y: here.
 

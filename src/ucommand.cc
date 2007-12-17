@@ -29,10 +29,11 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include <sstream>
 #include "libport/cstring"
 
+#include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
+
 #include "libport/containers.hh"
 #include "libport/ref-pt.hh"
-
-#include <boost/foreach.hpp>
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -639,40 +640,41 @@ UCommand_ASSIGN_VALUE::~UCommand_ASSIGN_VALUE()
 }
 
 // Function call. morph into the function code
-UValue * UCommand::tryModuleCall(const char * name,
-  UNamedParameters * parameters, UConnection * connection)
+UValue *
+UCommand::tryModuleCall(const char * name,
+			UNamedParameters * parameters,
+			UConnection * connection)
+{
+  urbi::UTable::iterator hmfi = urbi::functionmap->find(name);
+  if (hmfi != urbi::functionmap->end())
   {
-    urbi::UTable::iterator hmfi =
-      urbi::functionmap->find(name);
-    if (hmfi != urbi::functionmap->end())
+    BOOST_FOREACH (urbi::UGenericCallback* cbi, hmfi->second)
     {
-      BOOST_FOREACH (urbi::UGenericCallback* cbi, hmfi->second)
+      if (parameters && parameters->size() == cbi->nbparam
+	  || !parameters && !cbi->nbparam)
       {
-	if (parameters && parameters->size() == cbi->nbparam
-	    || !parameters && !cbi->nbparam)
+	urbi::UList tmparray;
+	for (UNamedParameters* pvalue = parameters;
+	     pvalue != 0;
+	     pvalue = pvalue->next)
 	{
-	  urbi::UList tmparray;
-	  for (UNamedParameters* pvalue = parameters;
-	       pvalue != 0;
-	       pvalue = pvalue->next)
+	  UValue* valparam = pvalue->expression->eval(this, connection);
+	  if (!valparam)
 	  {
-	    UValue* valparam = pvalue->expression->eval(this, connection);
-	    if (!valparam)
-	    {
-	      send_error(connection, this, "EXPR evaluation failed");
-	      return 0;
-	    }
-	    // urbi::UValue do not see ::UValue, so it must
-	    // be valparam who does the job.
-	    tmparray.array.push_back(valparam->urbiValue());
-	    delete valparam;
+	    send_error(connection, this, "EXPR evaluation failed");
+	    return 0;
 	  }
-	  return new UValue(cbi->__evalcall(tmparray));
+	  // urbi::UValue do not see ::UValue, so it must
+	  // be valparam who does the job.
+	  tmparray.array.push_back(valparam->urbiValue());
+	  delete valparam;
 	}
+	return new UValue(cbi->__evalcall(tmparray));
       }
     }
-    return 0;
   }
+  return 0;
+}
 
 //! UCommand subclass execution function
 UCommand::Status
@@ -3990,6 +3992,31 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
   delete oper;
 }
 
+namespace
+{
+  enum dump_vars_type
+  { 
+    dump_vars_all, 
+    dump_vars_user,
+  };
+
+  static
+  void
+  dump_vars (UConnection& c, const std::string& tag, dump_vars_type d)
+  {
+    std::list<std::string> vars;
+    BOOST_FOREACH (HMvariabletab::value_type i, c.server->variabletab)
+      if (d == dump_vars_all || i.second->uservar)
+	vars.push_back ("*** "
+			+ boost::lexical_cast<std::string>(*i.second)
+			+ '\n');
+    vars.sort ();
+    BOOST_FOREACH (const std::string& var, vars)
+      c << UConnection::sendf(tag, var.c_str());
+  }
+
+}
+
 //#define ENABLE_BENCH
 #ifdef ENABLE_BENCH
 # include "testspeed.hh"
@@ -4094,52 +4121,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "vars")
   {
-    std::list<std::string> tmpVarList;
-    BOOST_FOREACH (HMvariabletab::value_type i, connection->server->variabletab)
-    {
-      std::ostringstream o;
-      o << "*** " <<  i.second->getVarname() << " = ";
-      switch (i.second->value->dataType)
-      {
-	case DATA_NUM:
-	  o << i.second->value->val;
-	  break;
-
-	case DATA_STRING:
-	  o << i.second->value->echo ();
-	  break;
-
-	case DATA_BINARY:
-	  o << "BIN ";
-	  if (i.second->value->refBinary)
-	    o << i.second->value->refBinary->ref()->bufferSize;
-	  else
-	    o << "0 null";
-	  break;
-
-	case DATA_LIST:
-	  o << "LIST";
-	  break;
-
-	case DATA_OBJ:
-	  o << "OBJ";
-	  break;
-
-	case DATA_VOID:
-	  o << "VOID";
-	  break;
-
-	default:
-	  o << "UNKNOWN TYPE";
-      }
-      o << '\n';
-      tmpVarList.push_back (o.str ());
-    }
-    tmpVarList.sort ();
-    BOOST_FOREACH (std::string var, tmpVarList)
-    {
-      *connection << UConnection::sendf(getTag(), var.c_str ());
-    }
+    dump_vars (*connection, getTag(), dump_vars_all);
     return UCOMPLETED;
   }
 
@@ -4186,47 +4168,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "uservars")
   {
-    std::list<std::string> tmpVarList;
-    BOOST_FOREACH (HMvariabletab::value_type i, connection->server->variabletab)
-    {
-      if (i.second->uservar)
-      {
-	std::ostringstream o;
-	o << "*** " << i.second->getVarname() << " = ";
-	switch (i.second->value->dataType)
-	{
-	  case DATA_NUM:
-	    o << i.second->value->val;
-	    break;
-
-	  case DATA_STRING:
-	    o << i.second->value->echo ();
-	    break;
-
-	  case DATA_BINARY:
-	    o << "BIN ";
-	    if (i.second->value->refBinary)
-	      o << i.second->value->refBinary->ref()->bufferSize;
-	    else
-	      o << "0 null";
-	    break;
-
-	  case DATA_OBJ:
-	    o << "OBJ " << i.second->value->str->c_str();
-	    break;
-
-	  default:
-	    o << "UNKNOWN TYPE";
-	}
-	o << '\n';
-	tmpVarList.push_back (o.str ());
-      }
-    }
-    tmpVarList.sort ();
-    BOOST_FOREACH (std::string var, tmpVarList)
-    {
-      *connection << UConnection::sendf(getTag(), var.c_str ());
-    }
+    dump_vars (*connection, getTag(), dump_vars_user);
     return UCOMPLETED;
   }
 
@@ -4874,10 +4816,10 @@ UCommand_DEF::execute_(UConnection *connection)
 
       // undef function
       UFunction* fun = variablename->getFunction(this, connection);
-      connection->server->functiontab.erase(
-					    connection->server->functiontab.find(funname->c_str()));
-      connection->server->functiondeftab.erase(
-					       connection->server->functiondeftab.find(funname->c_str()));
+      connection->server->functiontab.
+	erase(connection->server->functiontab.find(funname->c_str()));
+      connection->server->functiondeftab.
+	erase(connection->server->functiondeftab.find(funname->c_str()));
       delete fun;
     }
 
@@ -4923,8 +4865,8 @@ UCommand_DEF::execute_(UConnection *connection)
       return UCOMPLETED;
 
     // Variable definition
-
-    variable = new UVariable(variablename->getFullname()->c_str(), new UValue());
+    variable = new UVariable(variablename->getFullname()->c_str(),
+			     new UValue());
     connection->localVariableCheck(variable);
 
     return UCOMPLETED;
