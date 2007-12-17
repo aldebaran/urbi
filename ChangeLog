@@ -1,5 +1,10 @@
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
+	Space changes.
+	* src/parser/ugrammar.y: here.
+
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
 	Var renaming.
 	* src/uvariablename.cc: here.
 

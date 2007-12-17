@@ -979,20 +979,20 @@ instruction:
 
   | "var" "{" names "}" {
 
-    $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
-    memcheck(up, $$, $3);
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
+      memcheck(up, $$, $3);
     }
 
   | "class" "identifier" "{" class_declaration_list "}" {
 
-    $$ = new UCommand_CLASS(@$, $2, $4);
-    memcheck(up, $$, $2, $4);
+      $$ = new UCommand_CLASS(@$, $2, $4);
+      memcheck(up, $$, $2, $4);
     }
 
   | "class" "identifier" {
 
-    $$ = new UCommand_CLASS(@$, $2, 0);
-    memcheck(up, $$, $2);
+      $$ = new UCommand_CLASS(@$, $2, 0);
+      memcheck(up, $$, $2);
     }
 
 
