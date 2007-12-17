@@ -836,7 +836,7 @@ stmt:
     {
       if ($1 != ast::flavor_semicolon && $1 != ast::flavor_and)
       {
-	error(@$, "Unauthorized flavor for \"at\" keyword");
+	error(@$, "invalid flavor for `at' keyword");
 	YYERROR;
       }
       warn_implicit(up, @5, $5);
@@ -868,7 +868,7 @@ stmt:
     {
       if ($1 != ast::flavor_semicolon && $1 != ast::flavor_pipe)
       {
-	error(@$, "Unauthorized flavor for \"for\" keyword");
+	error(@$, "invalid flavor for `for' keyword");
 	YYERROR;
       }
       $$ = for_loop (@$, $1, $3, $5, $7, $9);
@@ -932,7 +932,7 @@ stmt:
     {
       if ($1 != ast::flavor_semicolon && $1 != ast::flavor_pipe)
       {
-	error(@$, "Unauthorized flavor for \"while\" keyword");
+	error(@$, "invalid flavor for `while' keyword");
 	YYERROR;
       }
       $$ = new ast::While(@$, $1, $3, $5);

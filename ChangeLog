@@ -1,5 +1,10 @@
 2007-12-17  Loic Fosse  <fosse@gostai.com>
 
+	Fix error messages for flavored keywords.
+	* src/parser/ugrammar.y: Here.
+
+2007-12-17  Loic Fosse  <fosse@gostai.com>
+
 	Handle flavors for keywords in the scanner.
 	* src/parser/ugrammar.y: Get flavor of keywords from scanner and
 	check if the flavor is relevant.
