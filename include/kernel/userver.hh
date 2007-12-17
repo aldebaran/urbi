@@ -71,9 +71,9 @@ public:
    considered as neglectible and included in the security margin. If you
    don't understand this point, ignore it.
 
-   \param frequency gives the value in msec of the server update,
+   \param period gives the value in msec of the server update,
    which are the calls to the "work" function. These calls must be done at
-   a fixed, precise, real-time frequency to let the server computer motor
+   a fixed, precise, real-time period to let the server computer motor
    trajectories between two "work" calls.
 
    \param freeMemory indicates the biggest malloc possible on the system
@@ -81,7 +81,7 @@ public:
    limit of memory allocation, thus avoiding later to run out of memory
    during a new or malloc.
    */
-  UServer(ufloat frequency, int freeMemory, const char* mainName);
+  UServer(ufloat period, int freeMemory, const char* mainName);
 
   virtual ~UServer();
 
@@ -97,11 +97,11 @@ public:
   void initialization () { initialize(); }
 
   //! Main processing loop of the server
-  /*! This function must be called every "frequency_" msec to ensure the proper
+  /*! This function must be called every "period_" msec to ensure the proper
    functionning of the server. It will call the command execution, the
    connection message sending when they are delayed, etc...
 
-   "frequency_" is a parameter of the server, given in the constructor.
+   "period_" is a parameter of the server, given in the constructor.
    */
   void work();
 
@@ -194,7 +194,7 @@ public:
   /// Load a file into the connection.
   /// Returns UFAIL if anything goes wrong, USUCCESS otherwise.
   virtual UErrorValue loadFile (const char *filename,
-				UCommandQueue* loadQueue, 
+				UCommandQueue* loadQueue,
 				QueueType t=QUEUE_URBI);
 
   /// Save content to a file
@@ -227,7 +227,7 @@ public:
 				      const char *property);
 
 
-  ufloat            getFrequency    ();
+  ufloat            period_get    () const;
   void              mark            (UString *stopTag);
   virtual void      reboot          () = 0;
   virtual void      shutdown        () = 0;
@@ -387,7 +387,7 @@ private:
   enum { SECURITY_MEMORY_SIZE = 100000 };
 
   /// Frequency of the calls to work().
-  ufloat           frequency_;
+  ufloat           period_;
   /// Stores memory for emergency use..
   void*            securityBuffer_;
   /// Is the server isolated.
@@ -401,37 +401,10 @@ private:
   int               uid;
 };
 
-//! Accessor for frequency_.
-inline ufloat
-UServer::getFrequency()
-{
-  return frequency_;
-}
-
-//! Accessor for lastTime_.
-inline ufloat
-UServer::lastTime()
-{
-  return lastTime_;
-}
-
-
-inline
-int unic()
-{
-  /// Unique identifier to create new references.
-  static int cnt = 10000;
-  return ++cnt;
-}
+inline int unic();
 
 // Return an identifier starting with \a prefix, ending with a unique int.
-inline
-std::string unic (const char* prefix)
-{
-  std::ostringstream o;
-  o << prefix << unic();
-  return o.str();
-}
+inline std::string unic (const char* prefix);
 
 
 /*-------------------------.
@@ -451,12 +424,13 @@ void debug (unsigned t, const char* fmt, ...)
   __attribute__ ((__format__ (__printf__, 2, 3)));
 
 // Send debugging messages.
-#if URBI_DEBUG
+# if URBI_DEBUG
 // Must be invoked with two pairs of parens.
-# define DEBUG(Msg)  debug Msg
-#else
-# define DEBUG(Msg) ((void) 0)
-#endif
+#  define DEBUG(Msg)  debug Msg
+# else
+#  define DEBUG(Msg) ((void) 0)
+# endif
+
+# include <kernel/userver.hxx>
 
 #endif // ! KERNEL_USERVER_HH
-

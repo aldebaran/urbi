@@ -398,15 +398,15 @@ UVariable::selfSet(ufloat *valcheck)
 
     if (speedmax != UINFINITY)
     {
-      localspeed = (*valcheck - previous) / ::urbiserver->getFrequency();
+      localspeed = (*valcheck - previous) / ::urbiserver->period_get();
       s = speedmax / 1000.;
 
       if (ABSF(localspeed) > s)
       {
 	if (localspeed>0)
-	  *valcheck = *valcheck - ((localspeed - s) * ::urbiserver->getFrequency());
+	  *valcheck -= (localspeed - s) * ::urbiserver->period_get();
 	else
-	  *valcheck = *valcheck - ((localspeed + s) * ::urbiserver->getFrequency());
+	  *valcheck -= (localspeed + s) * ::urbiserver->period_get();
 
 	speedmodified = true;
       }

@@ -1,5 +1,14 @@
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
+	/!\ freq -> period.
+	* include/kernel/userver.hh (frequency_, getFrequency): Rename as...
+	(period_, period_get): these.
+	* include/kernel/userver.hxx: New.
+	* src/console-server.cc, src/userver.cc, src/uvariable.cc,
+	* Makefile.am: Adjust.
+
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
 	Fix SEGV.
 	* src/uvariable.cc: Assert that urbiserver is defined.
 	* src/console-server.cc: Set up the network after the server,

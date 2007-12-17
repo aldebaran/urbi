@@ -1392,7 +1392,7 @@ UErrorValue
 UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 					ufloat currentTime)
 {
-  ufloat deltaTime = connection->server->getFrequency();
+  ufloat deltaTime = connection->server->period_get();
   ufloat currentVal = controlled ? variable->get()->val : variable->value->val;
 
   if (frozen)

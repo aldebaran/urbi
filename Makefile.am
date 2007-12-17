@@ -45,6 +45,7 @@ include/kernel/uasyncregister.hh 		\
 include/kernel/ucomplaints.hh			\
 include/kernel/uconnection.hh			\
 include/kernel/userver.hh			\
+include/kernel/userver.hxx			\
 include/kernel/ustring.hh			\
 include/kernel/utypes.hh			\
 include/kernel/uvalue.hh 			\

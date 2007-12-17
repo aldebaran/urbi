@@ -76,7 +76,7 @@ int availableMemory;
 int usedMemory;
 
 
-UServer::UServer(ufloat frequency,
+UServer::UServer(ufloat period,
 		 int freeMemory,
 		 const char* mainName)
   : reseting (false),
@@ -92,7 +92,7 @@ UServer::UServer(ufloat frequency,
     defcheck (false),
     stopall (false),
     systemcommands (true),
-    frequency_(frequency),
+    period_(period),
     securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
     isolate_ (false),
     uid(0)
@@ -247,7 +247,7 @@ void
 UServer::work_exec_timers_ ()
 {
   BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::timermap)
-    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
+    if (i->lastTimeCalled - currentTime + i->period < period_ / 2)
     {
       i->call();
       i->lastTimeCalled = currentTime;
@@ -445,7 +445,7 @@ UServer::work_execute_hub_updater_ ()
 {
   // Execute Hub Updaters
   BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::updatemap)
-    if (i->lastTimeCalled - currentTime + i->period < frequency_ / 2)
+    if (i->lastTimeCalled - currentTime + i->period < period_ / 2)
     {
       i->call();
       i->lastTimeCalled = currentTime;
@@ -455,7 +455,7 @@ UServer::work_execute_hub_updater_ ()
 void
 UServer::work_test_cpuoverload_ ()
 {
-  cpuload = (latestTime - currentTime)/getFrequency();
+  cpuload = (latestTime - currentTime) / period_get();
 
   if (!cpuoverload)
     if (cpuload > cputhreshold)
