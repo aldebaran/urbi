@@ -1,3 +1,8 @@
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
+	Fix XFAIL use.
+	* tests-local.mk: here.
+
 2007-12-17  Akim Demaille  <akim.demaille@free.fr>
 
 	Issue warnings for undeclared variable assignments.

@@ -4013,8 +4013,8 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 namespace
 {
   enum dump_vars_type
-  { 
-    dump_vars_all, 
+  {
+    dump_vars_all,
     dump_vars_user,
   };
 
@@ -4682,7 +4682,7 @@ UCommand_INCDECREMENT::execute_(UConnection *connection)
 		       new UExpression(loc(),
 				       UExpression::VALUE, ufloat(1))),
        0);
-    
+
     persistant = false;
     return UMORPH;
   }

@@ -5,4 +5,4 @@ TESTS_DIRS += 1.5
 URBI_SERVER = $(abs_top_builddir)/src/urbi-console
 
 XFAIL_TESTS += 		\
-1.x/switch.log
+1.x/switch.chk
