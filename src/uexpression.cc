@@ -1994,7 +1994,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  eh->registerCmd(cmd);
 	  return USUCCESS;
 	}
-	else if (c->server->defcheck) //strict
+	else if (c->server->defcheck == UServer::defcheck_sarkozy)
 	  return UFAIL;
 	else
 	{
@@ -2048,7 +2048,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	else
 	{
 	  // it is not a known function
-	  if (c->server->defcheck) //strict
+	  if (c->server->defcheck == UServer::defcheck_sarkozy)
 	    return UFAIL;
 	  else
 	  {

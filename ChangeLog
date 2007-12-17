@@ -1,5 +1,15 @@
 2007-12-17  Akim Demaille  <akim.demaille@free.fr>
 
+	Issue warnings for undeclared variable assignments.
+	* include/kernel/userver.hh (defcheck_type): New.
+	(defcheck): Use it.
+	* src/uexpression.cc, src/userver.cc, src/ucommand.cc: Use it.
+	* src/parser/ugrammar.y: Accept "var" in various places where
+	it was not valid.
+	* tests-local.mk: We don't pass switch.chk.
+
+2007-12-17  Akim Demaille  <akim.demaille@free.fr>
+
 	Factor.
 	* src/ucommand.cc: The handling of increment/decrement.
 

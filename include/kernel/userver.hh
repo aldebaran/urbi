@@ -361,7 +361,14 @@ public:
   /// Threshold for cpu overload alert.
   ufloat                   cputhreshold;
   /// True when the server is paranoid on def checking.
-  bool                     defcheck;
+  enum defcheck_type
+  {
+    defcheck_student,   ///< 1.0 behavior: you can assign to non existent.
+    defcheck_teacher,   ///< 1.5 behavior: issue a warning in that case.
+    defcheck_sarkozy,   ///< 2.0 behavior: a hard error.
+  };
+  bool defcheck;
+
   ufloat                   previous2Time,
 			   previous3Time,
 			   currentTime,

@@ -471,6 +471,30 @@ start:
   root  { up.loc_ = @$; }
 ;
 
+%code
+{
+  static
+    void
+    new_bin_assign (UParser& up, const yy::parser::location_type& loc, 
+		    bool is_var, UVariableName* var, UBinary* b)
+  {
+    // FIXME: A pointer to a ref-pointer?  Sounds absurd.
+    libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
+    memcheck(up, ref);
+    UCommand* c = new UCommand_ASSIGN_BINARY(loc, var, ref);
+    var->local_scope = is_var;
+    if (c)
+      c->setTag("__node__");
+    memcheck(up, c, var, ref);
+    if (c)
+      up.binaryCommand = true;
+    up.commandTree = new UCommand_TREE(loc, Flavorable::USEMICOLON, c, 0);
+    if (up.commandTree)
+      up.commandTree->setTag("__node__");
+    memcheck(up, up.commandTree);
+  }
+};
+
 root:
     /* Minimal error recovery, so that all the tokens are read,
        especially the end-of-lines, to keep error messages in sync. */
@@ -480,23 +504,9 @@ root:
     up.commandTree = 0;
   }
 
-  | lvalue "=" binary ";" {
-
-      // FIXME: A pointer to a ref-pointer?  Sounds absurd.
-      libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>($3);
-      memcheck(up, ref);
-      UCommand* c = new UCommand_ASSIGN_BINARY(@$, $1, ref);
-      if (c)
-	c->setTag("__node__");
-      memcheck(up, c, $1, ref);
-      if (c)
-	up.binaryCommand = true;
-
-      up.commandTree = new UCommand_TREE(@$, Flavorable::USEMICOLON, c, 0);
-      if (up.commandTree)
-	up.commandTree->setTag("__node__");
-      memcheck(up, up.commandTree);
-    }
+  // This grammar is so fucked up that we can't factor the following two.
+  |       lvalue "=" binary ";" { new_bin_assign (up, @$, false, $1, $3);  }
+  | "var" lvalue "=" binary ";" { new_bin_assign (up, @$, true,  $2, $4);  }
 
   | taggedcommands {
 
@@ -761,6 +771,7 @@ instruction:
       memcheck(up, $$, $2);
     }
 
+  // This grammar is so fucked up that we can't factor the following two.
   | lvalue "=" "new" "identifier" {
 
       memcheck(up, $4);
@@ -768,11 +779,29 @@ instruction:
       memcheck(up, $$, $1, $4);
     }
 
+  | "var" lvalue "=" "new" "identifier" {
+
+      $2->local_scope = true;
+      memcheck(up, $5);
+      $$ = new UCommand_NEW(@$, $2, $5, 0, true);
+      memcheck(up, $$, $2, $5);
+    }
+
+
+  // This grammar is so fucked up that we can't factor the following two.
   | lvalue "=" "new" "identifier" "(" parameterlist ")" {
 
       memcheck(up, $4);
       $$ = new UCommand_NEW(@$, $1, $4, $6);
       memcheck(up, $$, $1, $4, $6);
+    }
+
+  | "var" lvalue "=" "new" "identifier" "(" parameterlist ")" {
+
+      $2->local_scope = true;
+      memcheck(up, $5);
+      $$ = new UCommand_NEW(@$, $2, $5, $7);
+      memcheck(up, $$, $2, $5, $7);
     }
 
   | "group" "identifier" "{" identifiers "}" {
@@ -1534,9 +1563,14 @@ softtest:
 `--------------*/
 
 // "var"?
+%union
+{
+  bool is_var;
+};
+%type <is_var> var.opt;
 var.opt:
-  /* empty. */
-| "var"
+  /* empty. */   { $$ = false; }
+| "var"          { $$ = true;  }
 ;
 
 // One or several comma-separated identifiers.

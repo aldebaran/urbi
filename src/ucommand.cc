@@ -72,7 +72,7 @@ vsend_error (UConnection* c, const UCommand* cmd,
 {
   std::ostringstream o;
   // FIXME: This is really bad if file names have %.  We need
-  // something more robust (such using real C++ here instead of C
+  // something more robust (such as using real C++ here instead of C
   // buffers).
   o << "!!! " << cmd->loc() << ": " << fmt << '\n';
   *c << UConnection::sendf (cmd->getTag(), o.str().c_str(), args);
@@ -972,9 +972,34 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     }
 
     // Strict variable definition checking
-    if (!variable && connection->server->defcheck && !defkey)
-      send_error(connection, this, "Unknown identifier: %s",
-		 variablename->getFullname()->c_str());
+    if (!variable && !defkey)
+      switch (connection->server->defcheck)
+      {
+	case UServer::defcheck_student:
+	  break;
+	case UServer::defcheck_teacher:
+	{
+	  std::string err =
+	    std::string("!!! ")
+	    + boost::lexical_cast<std::string> (loc())
+	    + ": warning, identifier "
+	    + variablename->getFullname()->str()
+	    + " was not introduced using `var'\n";
+	  *connection << UConnection::sendf(getTag(), err.c_str());
+	}
+	break;
+	case UServer::defcheck_sarkozy:
+	{
+	  std::string err =
+	    std::string("!!! ")
+	    + boost::lexical_cast<std::string> (loc())
+	    + ": unknown identifier: "
+	    + variablename->getFullname()->str()
+	    + '\n';
+	  *connection << UConnection::send(err.c_str(), "warning");
+	}
+	break;
+      }
 
     // Check the +error flag
     errorFlag = false;
@@ -1002,7 +1027,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	variable->value->dataType != DATA_VOID &&
 	rhs->dataType != variable->value->dataType)
     {
-      if (::urbiserver->defcheck)
+      if (::urbiserver->defcheck == UServer::defcheck_sarkozy)
       {
 	send_error(connection, this, "Warning: %s type mismatch",
 		   variablename->getFullname()->c_str());
@@ -3487,6 +3512,7 @@ UCommand_DEVICE_CMD::execute_(UConnection *connection)
 			0);
     delete variablename;
     variablename = recreatevar;
+    variablename->local_scope = true;
     variablename->buildFullname(this, connection);
   }
 
@@ -3495,25 +3521,17 @@ UCommand_DEVICE_CMD::execute_(UConnection *connection)
     return UMORPH;
 
   // Main execution
+  UExpression* rhs = 0;
   if (cmd == -1)
-    morph =
-      new UCommand_ASSIGN_VALUE
-      (loc_,
-       variablename->copy(),
-       new UExpression(loc(), UExpression::MINUS,
-		       new UExpression(loc(), UExpression::VALUE, ufloat(1)),
-		       new UExpression(loc(), UExpression::VARIABLE, variablename->copy())),
-       0,
-       false);
+    rhs =
+      new UExpression(loc(), UExpression::MINUS,
+		      new UExpression(loc(), UExpression::VALUE, ufloat(1)),
+		      new UExpression(loc(), UExpression::VARIABLE,
+				      variablename->copy()));
   else
-    morph =
-      new UCommand_ASSIGN_VALUE(loc_,
-				variablename->copy(),
-				new UExpression(loc(), UExpression::VALUE,
-						ufloat(cmd)),
-				0,
-				false);
+    rhs = new UExpression(loc(), UExpression::VALUE, ufloat(cmd));
 
+  morph = new UCommand_ASSIGN_VALUE(loc_, variablename->copy(), rhs, 0, false);
   persistant = false;
   return UMORPH;
 }
@@ -3995,8 +4013,8 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 namespace
 {
   enum dump_vars_type
-  {
-    dump_vars_all,
+  { 
+    dump_vars_all, 
     dump_vars_user,
   };
 
@@ -4051,13 +4069,13 @@ UCommand_OPERATOR::execute_(UConnection *connection)
 
   if (*oper == "strict")
   {
-    connection->server->defcheck = true;
+    connection->server->defcheck = UServer::defcheck_sarkozy;
     return UCOMPLETED;
   }
 
   if (*oper == "unstrict")
   {
-    connection->server->defcheck = false;
+    connection->server->defcheck = UServer::defcheck_teacher;
     return UCOMPLETED;
   }
 
@@ -4400,7 +4418,7 @@ UCommand_EMIT::execute_(UConnection *connection)
     eh = kernel::findEventHandler (ens, nbargs);
     if (!eh)
     {
-      if (::urbiserver->defcheck)
+      if (::urbiserver->defcheck == UServer::defcheck_sarkozy)
       {
 	send_error(connection, this, "undefined event %s with %d param(s)",
 		   ens->c_str(),
@@ -4794,7 +4812,7 @@ UCommand_DEF::execute_(UConnection *connection)
 
     if (libport::mhas(connection->server->functiontab, funname->c_str()))
     {
-      if (::urbiserver->defcheck)
+      if (::urbiserver->defcheck == UServer::defcheck_sarkozy)
 	send_error(connection, this,
 		   "Warning: function %s already exists", funname->c_str());
 
