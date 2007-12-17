@@ -1,3 +1,11 @@
+2007-12-17  Loic Fosse  <fosse@gostai.com>
+
+	Handle flavors for keywords in the scanner.
+	* src/parser/ugrammar.y: Get flavor of keywords from scanner and
+	check if the flavor is relevant.
+	* src/parser/utoken.l: Replace for, at, while and loop with their
+	flavored version.
+
 2007-12-16  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Always use boost::tokenizer and fix the handling of URBI_PATH.

@@ -113,6 +113,15 @@ lexical_cast (UParser& up, const yy::location& loc, In t)
 		 boost::lexical_cast<float>(yytext) * (Scale));		\
   } while (0)
 
+#define RETURN_FLAVORED_KEYWORD(Token)					\
+  switch (yytext[strlen(yytext) - 1])					\
+  {									\
+    case '|': RETURN_FLAVOR(Token, pipe);				\
+    case ',': RETURN_FLAVOR(Token, comma);				\
+    case '&': RETURN_FLAVOR(Token, and);				\
+    default: RETURN_FLAVOR(Token, semicolon);				\
+  }
+
 // We matched an obsolete token, New is now preferered.  Unput it so
 // that the regular scanning rule of New is run.
 #define DEPRECATED(New)						\
@@ -143,6 +152,8 @@ FLOAT    {FRACTION}{EXPONENT}?
 NUMBER   {NATURAL}|{FLOAT}
 
 STRING   \"([^\"]|"\\\"")*\"
+
+FLAVOR   [;|,&]?
 
 %%
 %{
@@ -300,7 +311,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "BIN"           return token::TOK_BIN;
 "addgroup"      return token::TOK_ADDGROUP;
 "alias"         return token::TOK_ALIAS;
-"at"            return token::TOK_AT;
 "bin"           return token::TOK_BIN;
 "class"         return token::TOK_CLASS;
 "def"           return token::TOK_DEF;
@@ -312,7 +322,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "event"         return token::TOK_EVENT;
 "every"         return token::TOK_EVERY;
 "false"         return token::TOK_FALSE;
-"for"           return token::TOK_FOR;
 "foreach"       DEPRECATED("for");
 "freezeif"      return token::TOK_FREEZEIF;
 "from"          return token::TOK_FROM;
@@ -322,7 +331,6 @@ STRING   \"([^\"]|"\\\"")*\"
 "in"            return token::TOK_IN;
 "inherits"      return token::TOK_INHERITS;
 
-"loop"          return token::TOK_LOOP;
 "loopn"         DEPRECATED("for");
 "new"           return token::TOK_NEW;
 "noop"          return token::TOK_NOOP;
@@ -339,7 +347,11 @@ STRING   \"([^\"]|"\\\"")*\"
 "'out"          return token::TOK_VAROUT;
 "waituntil"     return token::TOK_WAITUNTIL;
 "whenever"      return token::TOK_WHENEVER;
-"while"         return token::TOK_WHILE;
+
+"for"{FLAVOR}   RETURN_FLAVORED_KEYWORD(FOR);
+"loop"{FLAVOR}  RETURN_FLAVORED_KEYWORD(LOOP);
+"while"{FLAVOR} RETURN_FLAVORED_KEYWORD(WHILE);
+"at"{FLAVOR}    RETURN_FLAVORED_KEYWORD(AT);
 
 "!"             RETURN_OP(BANG);
 "%"             RETURN_OP(PERCENT);

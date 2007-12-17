@@ -301,7 +301,6 @@
 	TOK_ADDGROUP     "addgroup"
 	TOK_ALIAS        "alias"
 	TOK_ASSIGN       "="
-	TOK_AT           "at"
 	TOK_BIN          "bin"
 	TOK_COLON        ":"
 	TOK_DEF          "def"
@@ -314,7 +313,6 @@
 	TOK_EVENT        "event"
 	TOK_EVERY        "every"
 	TOK_FALSE        "false"
-	TOK_FOR          "for"
 	TOK_FREEZEIF     "freezeif"
 	TOK_FROM         "from"
 	TOK_FUNCTION     "function"
@@ -323,7 +321,6 @@
 	TOK_IN           "in"
 	TOK_LBRACE       "{"
 	TOK_LBRACKET     "["
-	TOK_LOOP         "loop"
 	TOK_LPAREN       "("
 	TOK_NEW          "new"
 	TOK_NOOP         "noop"
@@ -347,10 +344,30 @@
 	TOK_VAROUT       "'out"
 	TOK_WAITUNTIL    "waituntil"
 	TOK_WHENEVER     "whenever"
-	TOK_WHILE        "while"
 
 %token TOK_EOF 0 "end of command"
 
+
+/*----------.
+| Flavors.  |
+`----------*/
+
+%code requires
+{
+#include "ast/flavor.hh"
+};
+%union { ast::flavor_type flavor; };
+%token <flavor>
+	TOK_COMMA        ","
+	TOK_SEMICOLON    ";"
+	TOK_AND          "&"
+	TOK_PIPE         "|"
+	TOK_FOR          "for"
+	TOK_LOOP         "loop"
+	TOK_WHILE        "while"
+	TOK_AT           "at"
+;
+%printer { debug_stream() << $$; } <flavor>;
 
 
 /*----------.
@@ -625,50 +642,13 @@ flags.0:
 ;
 
 
-
 /*-------.
-| stmt.  |
+| Stmt.  |
 `-------*/
 
 stmt:
   "{" stmts "}" { $$ = scope(@$, $2); }
 ;
-
-
-/*----------.
-| flavors.  |
-`----------*/
-%code requires
-{
-#include "ast/flavor.hh"
-};
-%union { ast::flavor_type flavor; };
-%token <flavor>
-	TOK_COMMA        ","
-	TOK_SEMICOLON    ";"
-	TOK_AND          "&"
-	TOK_PIPE         "|"
-;
-
-%type <flavor> and.opt pipe.opt;
-%printer { debug_stream() << $$; } <flavor>;
-
-// One or zero "&", defaulting to ";".
-and.opt:
-  /* empty. */  { $$ = ast::flavor_semicolon; }
-| "&"
-;
-
-// One or zero "|", defaulting to ";".
-pipe.opt:
-  /* empty. */  { $$ = ast::flavor_semicolon; }
-| "|"
-;
-
-
-/*-------.
-| Stmt.  |
-`-------*/
 
 stmt:
   /* empty */ { $$ = new ast::Noop (@$, true); }
@@ -852,12 +832,17 @@ expr:
 %token TOK_DO "do";
 
 stmt:
-  "at" and.opt "(" softtest ")" stmt %prec CMDBLOCK
+  "at" "(" softtest ")" stmt %prec CMDBLOCK
     {
-      warn_implicit(up, @6, $6);
+      if ($1 != ast::flavor_semicolon && $1 != ast::flavor_and)
+      {
+	error(@$, "Unauthorized flavor for \"at\" keyword");
+	YYERROR;
+      }
+      warn_implicit(up, @5, $5);
       $$ = 0;
     }
-| "at" and.opt "(" softtest ")" stmt "onleave" stmt
+| "at" "(" softtest ")" stmt "onleave" stmt
     {
       $$ = 0;
     }
@@ -879,11 +864,16 @@ stmt:
       warn_implicit(up, @5, $5);
       $$ = new ast::If(@$, $3, $5, $7);
     }
-| "for" pipe.opt "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
+| "for" "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
     {
-      $$ = for_loop (@$, $2, $4, $6, $8, $10);
+      if ($1 != ast::flavor_semicolon && $1 != ast::flavor_pipe)
+      {
+	error(@$, "Unauthorized flavor for \"for\" keyword");
+	YYERROR;
+      }
+      $$ = for_loop (@$, $1, $3, $5, $7, $9);
     }
-| "for" pipe.opt "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
+| "for" "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
     {
       $$ = 0;
     }
@@ -911,11 +901,11 @@ stmt:
  */
 | "loop" stmt %prec CMDBLOCK
     {
-      $$ = new ast::While(@$, ast::flavor_semicolon, new ast::Float(@$, 1), $2);
+      $$ = new ast::While(@$, $1, new ast::Float(@$, 1), $2);
     }
-| "for" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
+| "for" "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = new ast::Repeat(@$, $2, $4, $6);
+      $$ = new ast::Repeat(@$, $1, $3, $5);
     }
 | "stopif" "(" softtest ")" stmt
     {
@@ -938,9 +928,14 @@ stmt:
     {
       $$ = 0;
     }
-| "while" pipe.opt "(" expr ")" stmt %prec CMDBLOCK
+| "while" "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = new ast::While(@$, $2, $4, $6);
+      if ($1 != ast::flavor_semicolon && $1 != ast::flavor_pipe)
+      {
+	error(@$, "Unauthorized flavor for \"while\" keyword");
+	YYERROR;
+      }
+      $$ = new ast::While(@$, $1, $3, $5);
     }
 ;
 
