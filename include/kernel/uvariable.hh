@@ -84,6 +84,8 @@ public:
   ~UVariable();
 
   /// For debugging.
+  std::ostream& dump (std::ostream& o) const;
+  /// For user eyes.
   std::ostream& print (std::ostream& o) const;
 
 
@@ -191,14 +193,14 @@ public:
 
   UValue* get();
 
-  const std::string& getDevicename() {return devicename;}
-  const std::string& getVarname() {return varname;}
-  const std::string& getMethod() {return method;}
-  const std::string& getUnit() {return unit;}
-  void setUnit(const char *u) {unit =u;}
-  void setContext(UCallid * ctx) {context = ctx;}
+  const std::string& getDevicename() const;
+  const std::string& getVarname() const;
+  const std::string& getMethod() const;
+  const std::string& getUnit() const;
+  void setUnit(const char *u);
+  void setContext(UCallid * ctx);
 
-  bool isInSetTarget() {return inSetTarget;}
+  bool isInSetTarget() const;
 private:
   /// Device in the varname.
   std::string devicename;
@@ -226,5 +228,15 @@ operator<< (std::ostream& o, const UVariable& v)
 {
   return v.print(o);
 }
+
+
+inline const std::string& UVariable::getDevicename() const {return devicename;}
+inline const std::string& UVariable::getVarname() const {return varname;}
+inline const std::string& UVariable::getMethod() const {return method;}
+inline const std::string& UVariable::getUnit() const {return unit;}
+inline void UVariable::setUnit(const char *u) {unit =u;}
+inline void UVariable::setContext(UCallid * ctx) {context = ctx;}
+
+inline bool UVariable::isInSetTarget() const {return inSetTarget;}
 
 #endif

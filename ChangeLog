@@ -1,5 +1,12 @@
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
+	Factor vars and uservars code.
+	* include/kernel/uvariable.hh, src/uvariable.cc (UVariable::print):
+	New.
+	(operator <<(ostream, UVariable)): Use it.
+
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
 	Use libport::exit.
 	* src/console-server.cc: to get rid of a few braces.
 

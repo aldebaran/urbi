@@ -221,7 +221,7 @@ UVariable::~UVariable()
 }
 
 std::ostream&
-UVariable::print(std::ostream& o) const
+UVariable::dump(std::ostream& o) const
 {
 #define UV_PRINT(Id) " " #Id " = " << Id
   return
@@ -234,6 +234,45 @@ UVariable::print(std::ostream& o) const
 #undef UV_PRINT
 }
 
+std::ostream&
+UVariable::print(std::ostream& o) const
+{
+  o << getVarname() << " = ";
+  switch (value->dataType)
+  {
+    case DATA_NUM:
+      o << value->val;
+      break;
+
+    case DATA_STRING:
+      o << value->echo ();
+      break;
+
+    case DATA_BINARY:
+      o << "BIN ";
+      if (value->refBinary)
+	o << value->refBinary->ref()->bufferSize;
+      else
+	o << "0 null";
+      break;
+
+    case DATA_LIST:
+      o << "LIST";
+      break;
+
+    case DATA_OBJ:
+      o << "OBJ";
+      break;
+
+    case DATA_VOID:
+      o << "VOID";
+      break;
+
+    default:
+      o << "UNKNOWN TYPE";
+  }
+  return o;
+}
 
 //! Associated variable name initialization
 const char*
