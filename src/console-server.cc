@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include "libport/cli.hh"
+#include "libport/program-name.hh"
 #include "libport/utime.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
@@ -19,8 +20,6 @@
 #include "kernel/uconnection.hh"
 
 #include "ubanner.hh"
-
-const char* program_name;
 
 class ConsoleServer
   : public UServer
@@ -90,7 +89,7 @@ namespace
   usage ()
   {
     std::cout <<
-      "usage: " << program_name << " [OPTIONS] [FILE]\n"
+      "usage: " << libport::program_name << " [OPTIONS] [FILE]\n"
       "\n"
       "  FILE    to load\n"
       "\n"
@@ -116,7 +115,7 @@ namespace
 int
 main (int argc, const char* argv[])
 {
-  program_name = argv[0];
+  libport::program_name = argv[0];
 
   // Input file.
   const char* in = "/dev/stdin";
