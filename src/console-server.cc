@@ -153,8 +153,8 @@ main (int argc, const char* argv[])
 	    in = argv[i];
 	    break;
 	  default:
-	    std::cerr << "Unexpected argument: " << arg << std::endl;
-	    exit (1);
+	    std::cerr << "Unexpected argument: " << arg << std::endl
+		      << libport::exit (1);
 	    break;
 	}
     }
@@ -164,11 +164,10 @@ main (int argc, const char* argv[])
 
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
-  {
     std::cerr << "cannot bind to port " << arg_port
-	      << " on localhost" << std::endl;
-    exit (EX_UNAVAILABLE);
-  }
+	      << " on localhost" << std::endl
+	      << libport::exit (EX_UNAVAILABLE);
+
   if (arg_port_filename)
     std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
   Network::startNetworkProcessingThread();
@@ -179,10 +178,8 @@ main (int argc, const char* argv[])
   DEBUG(("Got ghost connection\n"));
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
-  {
-    std::cerr << argv[0] << ": failed to process " << in << std::endl;
-    return 1;
-  }
+    std::cerr << argv[0] << ": failed to process " << in << std::endl
+	      << libport::exit(1);
 
   c.newDataAdded = true;
 

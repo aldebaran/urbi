@@ -1,5 +1,10 @@
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
+	Use libport::exit.
+	* src/console-server.cc: to get rid of a few braces.
+
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
 	/!\ freq -> period.
 	* include/kernel/userver.hh (frequency_, getFrequency): Rename as...
 	(period_, period_get): these.
