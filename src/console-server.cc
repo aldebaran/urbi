@@ -160,6 +160,8 @@ main (int argc, const char* argv[])
     }
   }
 
+  ConsoleServer s (arg_period);
+
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
   {
@@ -171,7 +173,6 @@ main (int argc, const char* argv[])
     std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
   Network::startNetworkProcessingThread();
 
-  ConsoleServer s (arg_period);
 
   s.initialize ();
   UConnection& c = s.getGhostConnection ();

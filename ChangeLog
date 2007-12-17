@@ -1,5 +1,13 @@
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
+	Fix SEGV.
+	* src/uvariable.cc: Assert that urbiserver is defined.
+	* src/console-server.cc: Set up the network after the server,
+	as the former uses the latter.
+	Diagnosed by Matthieu Nottale.
+
+2007-12-17  Akim Demaille  <demaille@gostai.com>
+
 	Use libport::program_name.
 	* src/console-server.cc: here.
 

@@ -59,7 +59,7 @@
 #include "ughostconnection.hh"
 
 // Global server reference
-UServer *urbiserver= 0;
+UServer *urbiserver = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
 

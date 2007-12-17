@@ -66,10 +66,10 @@ UVariable::UVariable(const char* name, UValue* _value,
 UVariable::UVariable(const char* _id, const char* _method, UValue* _value,
 		     bool _notifyWrite,
 		     bool _notifyRead,
-		     bool _autoUpdate):
-  UASyncRegister(),
-  context(0),
-  inSetTarget(false)
+		     bool _autoUpdate)
+  : UASyncRegister(),
+    context(0),
+    inSetTarget(false)
 {
   init();
   value = _value;
@@ -168,6 +168,7 @@ UVariable::init()
   previous2  = 0;
   previous3  = 0;
   cancel     = 0;
+  assert (::urbiserver);
   uservar    = ::urbiserver->uservarState;
   toDelete   = false;
   activity   = 0;
