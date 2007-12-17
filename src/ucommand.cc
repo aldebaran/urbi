@@ -3995,8 +3995,8 @@ UCommand_OPERATOR::~UCommand_OPERATOR()
 namespace
 {
   enum dump_vars_type
-  { 
-    dump_vars_all, 
+  {
+    dump_vars_all,
     dump_vars_user,
   };
 
@@ -4650,37 +4650,21 @@ UCommand_INCDECREMENT::execute_(UConnection *connection)
     return UMORPH;
 
   // Main execution
-  if (type == INCREMENT)
-  {
-    morph =
-      new UCommand_ASSIGN_VALUE(loc_,
-				variablename->copy(),
-				new UExpression(loc(),
-						UExpression::PLUS,
-						new UExpression(loc(),
-								UExpression::VARIABLE,
-								variablename->copy()),
-						new UExpression(loc(),
-								UExpression::VALUE,
-								ufloat(1))), 0);
-
-    persistant = false;
-    return UMORPH;
-  }
-
-  if (type == DECREMENT)
+  if (type == INCREMENT || type == DECREMENT)
   {
     morph =
       new UCommand_ASSIGN_VALUE
       (loc_,
        variablename->copy(),
        new UExpression(loc(),
-		       UExpression::MINUS,
-		       new UExpression(loc(), UExpression::VARIABLE,
+		       type==INCREMENT ? UExpression::PLUS : UExpression::MINUS,
+		       new UExpression(loc(),
+				       UExpression::VARIABLE,
 				       variablename->copy()),
 		       new UExpression(loc(),
-				       UExpression::VALUE, ufloat(1))), 0);
-
+				       UExpression::VALUE, ufloat(1))),
+       0);
+    
     persistant = false;
     return UMORPH;
   }
