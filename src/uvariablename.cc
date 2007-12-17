@@ -195,16 +195,16 @@ UVariableName::getVariable (UCommand* command, UConnection* connection,
   if (!fullname_)
     return 0;
 
-  UVariable *v;
+  UVariable *res;
   if (nostruct &&
       libport::mhas(::urbiserver->objtab, getMethod()->c_str()))
-    v = libport::find0(::urbiserver->variabletab, getMethod()->c_str());
+    res = libport::find0(::urbiserver->variabletab, getMethod()->c_str());
   else
-    v = libport::find0(::urbiserver->variabletab, fullname_->c_str());
+    res = libport::find0(::urbiserver->variabletab, fullname_->c_str());
   if (cached)
-    variable = v;
+    variable = res;
 
-  return v;
+  return res;
 }
 
 //! UVariableName access to function (with cache)
@@ -503,8 +503,8 @@ UVariableName::buildFullname (UCommand* command,
     if (resolved != n)
     {
       send_error(connection, command,
-                 ("'" + n + "' is an alias for '" + resolved + "'. "
-                   "Using aliases is deprecated.").c_str());
+		 ("'" + n + "' is an alias for '" + resolved + "'. "
+		   "Using aliases is deprecated.").c_str());
       name = resolved;
       nostruct = false;
       delete device;
