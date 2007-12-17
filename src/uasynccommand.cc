@@ -23,11 +23,15 @@
 
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uconnection.hh"
+#include "kernel/uasyncregister.hh"
+
 #include "uasynccommand.hh"
 #include "ucommand.hh"
-#include "uconnection.hh"
-#include "userver.hh"
-#include "utypes.hh"
 #include "ueventinstance.hh"
 #include "ueventmatch.hh"
 
@@ -42,10 +46,8 @@ UASyncCommand::UASyncCommand (const location& l, Type type)
 
 UASyncCommand::~UASyncCommand()
 {
-  for (std::list<UASyncRegister*>::iterator i = regList_.begin ();
-	i != regList_.end ();
-	++i)
-    (*i)->unregisterCmd (this);
+  BOOST_FOREACH (UASyncRegister* i, regList_)
+    i->unregisterCmd (this);
 }
 
 void

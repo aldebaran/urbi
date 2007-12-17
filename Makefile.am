@@ -29,10 +29,35 @@ windows/urbikernel/urbikernel.vcproj
 dist-hook:
 	find '$(top_distdir)' -type d -name .svn | xargs rm -rf
 
+
+## -------------------------- ##
+## Installed kernel headers.  ##
+## -------------------------- ##
+
+kernelincludekerneldir = $(kernelincludedir)/kernel
+kernelincludekernel_HEADERS =			\
+include/kernel/blockmemorymanager.hh		\
+include/kernel/fwd.hh				\
+include/kernel/mem-track.hh			\
+include/kernel/memorymanager.hh			\
+include/kernel/tag-info.hh			\
+include/kernel/uasyncregister.hh 		\
+include/kernel/ucomplaints.hh			\
+include/kernel/uconnection.hh			\
+include/kernel/userver.hh			\
+include/kernel/userver.hxx			\
+include/kernel/ustring.hh			\
+include/kernel/utypes.hh			\
+include/kernel/uvalue.hh 			\
+include/kernel/uvariable.hh
+
+nodist_kernelincludekernel_HEADERS =		\
+include/kernel/version.hh
+
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += tests src/uobject
+SVN_EXTERNALS += libport tests src/uobject
 
 maintainer-check: valgrind-check
 valgrind-check:

@@ -1,0 +1,1674 @@
+/* \file ugrammar.y
+ *******************************************************************************
+
+ File: ugrammar.y\n
+ Definition of the parser used by the UParser object.
+ This parser is defined with bison, using the option %pure_parser to make it
+ reentrant. For more details about reentrancy issues, check the definition of
+ the UServer class.
+
+ This file is part of
+ %URBI, version __kernelversion__\n
+ (c) Jean-Christophe Baillie, 2004.
+
+ Permission to use, copy, modify, and redistribute this software for
+ non-commercial use is hereby granted.
+
+ This software is provided "as is" without warranty of any kind,
+ either expressed or implied, including but not limited to the
+ implied warranties of fitness for a particular purpose.
+
+ For more information, comments, bug reports: http://www.urbiforge.net
+
+ **************************************************************************** */
+
+%expect 0
+%require "2.3"
+%error-verbose
+%defines
+%skeleton "lalr1.cc"
+%parse-param {UParser& up}
+%lex-param {UParser& up}
+%debug
+
+%code requires
+{
+#include "libport/ufloat.h"
+
+#include "kernel/fwd.hh"
+#include "kernel/utypes.hh"
+#include "flavorable.hh"
+#include "uvariablename.hh" // UDeriveType
+}
+
+// Locations.
+%locations
+%define "filename_type" "const std::string"
+%initial-action
+{
+  // Saved when exiting the start symbol.
+  @$ = up.loc_;
+}
+
+
+/* Possible data type returned by the bison parsing mechanism */
+%union
+{
+  UCommand                *command;
+  UExpression             *expr;
+  UBinary                 *binary;
+  UNamedParameters        *namedparameters;
+  UVariableName           *variable;
+  UVariableName::UDeriveType derive;
+  UVariableList           *variablelist;
+  UProperty               *property;
+
+  Flavorable::UNodeType   flavor;
+  ufloat                   *val;
+  UString                  *ustr;
+  std::string		   *str;
+  struct {
+    UString *device;
+    UString *id;
+    bool rooted;
+  }                        structure;
+  bool                     is_channel;
+}
+
+%code  // Output in ugrammar.cc.
+{
+#include <string>
+#include <iostream>
+#include <sstream>
+
+#include "libport/ref-pt.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/uconnection.hh"
+
+#include "parser/uparser.hh"
+#include "ubinary.hh"
+#include "ucommand.hh"
+#include "uasynccommand.hh"
+#include "ugroup.hh"
+#include "unamedparameters.hh"
+#include "uobj.hh"
+#include "uproperty.hh"
+#include "uvariablelist.hh"
+
+  static UString** globalDelete;
+
+  /* Memory checking macros, used in the command tree building process */
+
+  void
+  memcheck (UParser& up, const void* p)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+    }
+  }
+
+  template <class T1>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+    }
+  }
+
+  template <class T1, class T2>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+      delete p2; p2 = 0;
+    }
+  }
+
+  template <class T1, class T2, class T3>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+      delete p2; p2 = 0;
+      delete p3; p3 = 0;
+    }
+  }
+
+  template <class T1, class T2, class T3, class T4>
+    void
+    memcheck(UParser& up, const void* p, T1*& p1, T2*& p2, T3*& p3, T4*& p4)
+  {
+    if (!p)
+    {
+      up.connection.server->isolate();
+      up.connection.server->memoryOverflow = true;
+      delete p1; p1 = 0;
+      delete p2; p2 = 0;
+      delete p3; p3 = 0;
+      delete p4; p4 = 0;
+    }
+  }
+
+  /// Whether the \a command was the empty command.
+  bool
+  spontaneous (const UCommand& u)
+  {
+    const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
+    return noop && noop->is_spontaneous();
+  }
+
+  /// Issue a warning.
+  void
+  warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
+  {
+    std::ostringstream o;
+    o << "!!! " << l << ": " << m << "\n" << std::ends;
+    up.connection << UConnection::send(o.str().c_str(), "warning");
+  }
+
+  /// Complain if \a command is not spontaneous.
+  void
+  warn_spontaneous(UParser& up,
+		   const yy::parser::location_type& l, const UCommand& u)
+  {
+    if (spontaneous(u))
+      warn (up, l,
+	    "implicit empty instruction.  "
+	    "Use 'noop' to make it explicit.");
+  }
+
+  /// Better newer style than deprecated.
+  void
+  warn_deprecated (UParser& up,
+		   const yy::parser::location_type& l,
+		   const std::string& older, const std::string& newer)
+  {
+    warn (up, l, std::string("'") + older + "' is deprecated,");
+    warn (up, l, std::string("  use '") + newer + "' instead");
+  }
+
+  /// Issue a warning about missing parens for a function \a f call.
+  void
+  warn_parens (UParser& up,
+	       const yy::parser::location_type& l, const std::string& f)
+  {
+    warn_deprecated (up, l, f + " <expression>", f + " (<expression>)");
+  }
+
+  /// Direct the call from 'bison' to the scanner in the right UParser.
+  inline
+  yy::parser::token_type
+  yylex(yy::parser::semantic_type* val, yy::location* loc, UParser& up)
+  {
+    return up.scanner_.yylex(val, loc, up);
+  }
+
+
+  /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
+  UCommand*
+    new_bin(UParser& up,
+	    const yy::parser::location_type& l, Flavorable::UNodeType op,
+	    UCommand* lhs, UCommand* rhs)
+  {
+    UCommand_TREE*res = new UCommand_TREE(l, op, lhs, rhs);
+    if (res)
+      res->setTag("__node__");
+    memcheck(up, res, lhs, rhs);
+    return res;
+  }
+
+  /// A new UExpression of type \c t and child \c t1.
+  template <class T1>
+    UExpression*
+    new_exp (UParser& up, const yy::parser::location_type& l,
+	     UExpression::Type t, T1* t1)
+  {
+    UExpression* res = new UExpression(l, t, t1);
+    memcheck(up, res, t1);
+    return res;
+  }
+
+  /// A new UExpression of type \c t and children \c t1, \c t2.
+  template <class T1, class T2>
+    UExpression*
+    new_exp (UParser& up, const yy::parser::location_type& l,
+	     UExpression::Type t, T1* t1, T2* t2)
+  {
+    UExpression* res = new UExpression(l, t, t1, t2);
+    memcheck(up, res, t1, t2);
+    return res;
+  }
+
+  /// Take the value, free the pointer.
+  template <class T>
+    inline
+    T
+    take (T* t)
+  {
+    T res(*t);
+    delete t;
+    return res;
+  }
+}
+
+/* List of all tokens and terminal symbols, with their type */
+
+%token
+  TOK_ADDGROUP     "addgroup"
+  TOK_ALIAS        "alias"
+  TOK_ANDOPERATOR  "&&"
+  TOK_ASSIGN       "="
+  TOK_AT           "at"
+  TOK_BANG         "!"
+  TOK_BIN          "bin"
+  TOK_CLASS        "class"
+  TOK_COLON        ":"
+  TOK_COPY         "copy"
+  TOK_COPY_LPAREN  "copy("
+  TOK_DEF          "def"
+  TOK_DELGROUP     "delgroup"
+  TOK_DERIV        "'"
+  TOK_DERIV2       "''"
+  TOK_DIR          "->"
+  TOK_DISINHERITS  "disinherits"
+  TOK_DIV          "/"
+  TOK_DOLLAR       "$"
+  TOK_DOUBLECOLON  "::"
+  TOK_ELSE         "else"
+  TOK_EMIT         "emit"
+  TOK_EVENT        "event"
+  TOK_EVERY        "every"
+  TOK_EXP          "**"
+  TOK_EXPRBLOCK    "expression block"
+  TOK_FALSECONST   "false"
+  TOK_FOR          "for"
+  TOK_FREEZEIF     "freezeif"
+  TOK_FROM         "from"
+  TOK_FUNCTION     "function"
+  TOK_GROUP        "group"
+  TOK_IF           "if"
+  TOK_IN           "in"
+  TOK_INHERITS     "inherits"
+  TOK_LBRACKET     "{"
+  TOK_LOOP         "loop"
+  TOK_LPAREN       "("
+  TOK_LSBRACKET    "["
+  TOK_MINUS        "-"
+  TOK_MINUSASSIGN  "-="
+  TOK_MINUSMINUS   "--"
+  TOK_MULT         "*"
+  TOK_NEW          "new"
+  TOK_NOOP         "noop"
+  TOK_NORM         "'n"
+  TOK_OBJECT       "object"
+  TOK_ONLEAVE      "onleave"
+  TOK_OROPERATOR   "||"
+  TOK_PERCENT      "%"
+  TOK_PLUS         "+"
+  TOK_PLUSASSIGN   "+="
+  TOK_PLUSPLUS     "++"
+  TOK_POINT        "."
+  TOK_RBRACKET     "}"
+  TOK_RETURN       "return"
+  TOK_RPAREN       ")"
+  TOK_RSBRACKET    "]"
+  TOK_STATIC       "static"
+  TOK_STOPIF       "stopif"
+  TOK_TILDE        "~"
+  TOK_TIMEOUT      "timeout"
+  TOK_TRUECONST    "true"
+  TOK_TRUEDERIV    "'d"
+  TOK_TRUEDERIV2   "'dd"
+  TOK_ECHO         "echo"
+  TOK_ECHO_LPAREN  "echo("
+  TOK_UNALIAS      "unalias"
+  TOK_VAR          "var"
+  TOK_VARERROR     "'e"
+  TOK_VARIN        "'in"
+  TOK_VAROUT       "'out"
+  TOK_WAIT         "wait"
+  TOK_WAITUNTIL    "waituntil"
+  TOK_WHENEVER     "whenever"
+  TOK_WHILE        "while"
+
+%token TOK_EOF 0 "end of command"
+
+%token
+  <flavor> TOK_COMMA        ","
+  <flavor> TOK_SEMICOLON    ";"
+  <flavor> TOK_AND          "&"
+  <flavor> TOK_PIPE         "|"
+;
+
+/*------.
+| Val.  |
+`------*/
+
+%token
+  <val> NUM        "number"
+  <val> TIMEVALUE  "time"
+  <val> FLAG       "flag"
+  <val> FLAGID     "flag identifier"
+// FIXME: Simplify once Bison 2.4 is out.
+%printer { debug_stream() << *$$; } <val>;
+
+ /*------.
+ | Str.  |
+ `------*/
+%token
+   <ustr>  IDENTIFIER         "identifier"
+   <ustr>  TAG                "tag"
+   <ustr>  STRING             "string"
+   <ustr>  BINDER             "binder"
+   <ustr>  OPERATOR           "operator command"
+   <ustr>  OPERATOR_ID        "operator"
+   <ustr>  OPERATOR_VAR       "var-operator"
+%type <ustr> tag
+// FIXME: Simplify once Bison 2.4 is out.
+%printer { debug_stream() << *$$; }
+   "identifier" TAG STRING BINDER OPERATOR OPERATOR_ID OPERATOR_VAR tag;
+
+%token <structure>           STRUCT
+
+%type <expr>                expr
+%type <val>                 timeexpr
+%type <command>             taggedcommands
+%type <command>             taggedcommand
+%type <command>             command
+%type <command>             instruction
+%type <namedparameters>     parameters
+%type <namedparameters>     array
+%type <namedparameters>     parameterlist
+%type <namedparameters>     rawparameters
+%type <namedparameters>     namedparameters
+%type <namedparameters>     flag
+%type <namedparameters>     flags.0
+%type <namedparameters>     flags.1
+%type <variablelist>        names
+%type <expr>                softtest
+%type <namedparameters>     formal_arguments
+%type <namedparameters>     identifiers
+%type <namedparameters>     identifiers.1
+%type <expr>                class_declaration
+%type <namedparameters>     class_declaration_list
+%type <binary>              binary
+%type <property>            property
+%type <variable>            name
+%type <variable>            lvalue
+%type <variable>            rvalue
+%type <derive>              derive
+
+
+/*----------------------.
+| Operator precedence.  |
+`----------------------*/
+
+// man operator
+
+// Operator                        Associativity
+// --------                        -------------
+// () [] -> .                      left to right
+// ! ~ ++ -- - (type) * & sizeof   right to left
+// * / %                           left to right
+// + -                             left to right
+// << >>                           left to right
+// < <= > >=                       left to right
+// == !=                           left to right
+// &                               left to right
+// ^                               left to right
+// |                               left to right
+// &&                              left to right
+// ||                              left to right
+// ?:                              right to left
+// = += -= etc.                    right to left
+// ,                               left to right
+
+ /*
+   ! < ( so that !m(x) be read as !(m(x)).
+ */
+
+%left  "," ";"
+%left  "&" "|"
+%left  CMDBLOCK
+%left  "else" "onleave"
+
+%left "=" "+=" "-=" "*=" "/="
+%left "inherits" "disinherits"
+%left  "||"
+%left  "&&"
+%right "^"
+%nonassoc "==" "~=" "%=" "=~=" "!="
+%nonassoc "<" "<=" ">" ">="
+%left  "<<" ">>"
+%left  "+" "-"
+%left  "*" "/" "%"
+%right "**"
+%right  "!" "++" "--" NEG     /* Negation--unary minus */
+%left  "("
+%left "."
+
+%right "'n"
+/* URBI Grammar */
+%%
+
+%start start;
+start:
+  root  { up.loc_ = @$; }
+;
+
+%code
+{
+  static
+    void
+    new_bin_assign (UParser& up, const yy::parser::location_type& loc, 
+		    bool is_var, UVariableName* var, UBinary* b)
+  {
+    // FIXME: A pointer to a ref-pointer?  Sounds absurd.
+    libport::RefPt<UBinary> *ref = new libport::RefPt<UBinary>(b);
+    memcheck(up, ref);
+    UCommand* c = new UCommand_ASSIGN_BINARY(loc, var, ref);
+    var->local_scope = is_var;
+    if (c)
+      c->setTag("__node__");
+    memcheck(up, c, var, ref);
+    if (c)
+      up.binaryCommand = true;
+    up.commandTree = new UCommand_TREE(loc, Flavorable::USEMICOLON, c, 0);
+    if (up.commandTree)
+      up.commandTree->setTag("__node__");
+    memcheck(up, up.commandTree);
+  }
+};
+
+root:
+    /* Minimal error recovery, so that all the tokens are read,
+       especially the end-of-lines, to keep error messages in sync. */
+  error
+  {
+    // FIXME: We should probably free it.
+    up.commandTree = 0;
+  }
+
+  // This grammar is so fucked up that we can't factor the following two.
+  |       lvalue "=" binary ";" { new_bin_assign (up, @$, false, $1, $3);  }
+  | "var" lvalue "=" binary ";" { new_bin_assign (up, @$, true,  $2, $4);  }
+
+  | taggedcommands {
+
+      up.commandTree = 0;
+      if ($1 && $1->type == UCommand::TREE)
+      {
+	up.commandTree = dynamic_cast<UCommand_TREE*> ($1);
+	assert (up.commandTree != 0);
+      }
+      else
+	delete $1;
+    }
+;
+
+
+
+/*-----------------.
+| taggedcommands.  |
+`-----------------*/
+
+taggedcommands:
+  taggedcommand
+| taggedcommands "," taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands ";" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "|" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+| taggedcommands "&" taggedcommands { $$ = new_bin(up, @$, $2, $1, $3); }
+;
+
+/*----------------.
+| taggedcommand.  |
+`----------------*/
+
+// FIXME: I still use UString here, but that's really stupid, and
+// leaking everywhere.  Should be fixed later.
+tag:
+  "identifier" { $$ = $1; }
+| TAG          { $$ = $1; }
+| STRUCT       {
+		 memcheck(up, $1.device);
+		 memcheck(up, $1.id);
+		 // FIXME: This is stupid, args should not be given as pointers.
+		 $$ = new UString(*$1.device, *$1.id);
+		 delete $1.device;
+		 delete $1.id;
+		}
+;
+
+taggedcommand:
+
+    command {
+      if ($1)
+	$1->setTag(UNKNOWN_TAG);
+      $$ = $1;
+    }
+
+  | tag flags.0 colon_or_ltlt command {
+
+      memcheck(up, $1);
+      if ($4)
+      {
+	$4->setTag($1->c_str());
+	// If one says "foo << ", then "foo :", don't lose the
+	// channelitudeness.
+	if ($3)
+	  $4->is_channel_set(true);
+	delete $1;
+	$4->flags = $2;
+      }
+      $$ = $4;
+    }
+
+  | flags.1 colon_or_ltlt command {
+
+      memcheck(up, $1);
+      if ($3)
+      {
+	$3->setTag(UNKNOWN_TAG);
+	$3->flags = $1;
+      }
+      $$ = $3;
+    }
+
+;
+
+%type <is_channel> colon_or_ltlt;
+colon_or_ltlt:
+  ":"     { $$ = false; }
+| "<<"    { $$ = true;  }
+;
+
+
+/*--------.
+| flags.  |
+`--------*/
+
+flag:
+  FLAG
+  {
+    UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
+    memcheck(up, flagval);
+    $$ = new UNamedParameters(new UString("flag"), flagval);
+    if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
+      $$->notifyEnd = true;
+    if (flagval->val == 11)
+      $$->notifyFreeze = true;
+    memcheck(up, $$, flagval);
+  }
+
+| FLAGID "(" expr ")"
+  {
+    $$ = new UNamedParameters(new UString("flagid"), $3);
+    memcheck(up, $$, $3);
+  }
+;
+
+// One or more "flag"s.
+flags.1:
+  flag             { $$ = $1;       }
+| flags.1 flag     { $1->next = $2;
+		     if ($2->notifyEnd)
+		       $1->notifyEnd = true; // propagate the +end flag optim
+		     if ($2->notifyFreeze)
+		       $1->notifyFreeze = true; // propagate the +freeze flag
+		   }
+;
+
+// Zero or more "flag"s.
+flags.0:
+  /* empty. */   { $$ = 0; }
+| flags.1        { $$ = $1; }
+;
+
+
+
+/*----------.
+| command.  |
+`----------*/
+
+command:
+
+    instruction
+
+  | "{" taggedcommands "}" {
+
+      UCommand_TREE* res =
+	new UCommand_TREE(@$, Flavorable::UPIPE, $2,
+			  new UCommand_NOOP(@$, UCommand_NOOP::zerotime));
+      res->groupOfCommands = true;
+      res->setTag("__UGrouped_set_of_commands__");
+      res->command2->setTag("__system__");
+      $$ = res;
+    }
+;
+
+
+/*----------.
+| flavors.  |
+`----------*/
+%type <flavor> and.opt flavor.opt pipe.opt;
+%printer { debug_stream() << $$; } and.opt flavor.opt pipe.opt ";" "|" "&" ",";
+
+// One or zero "&", defaulting to ";".
+and.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "&"
+;
+
+// One or zero "&" or "|", defaulting to ";".
+flavor.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "|"
+| "&"
+;
+
+// One or zero "|", defaulting to ";".
+pipe.opt:
+  /* empty. */  { $$ = Flavorable::USEMICOLON; }
+| "|"
+;
+
+
+/*--------------.
+| Instruction.  |
+`--------------*/
+
+instruction:
+  /* empty */
+  {
+    $$ = new UCommand_NOOP(@$, UCommand_NOOP::spontaneous);
+  }
+
+  | "noop"
+  {
+    $$ = new UCommand_NOOP(@$);
+    memcheck(up, $$);
+  }
+
+  | lvalue "=" expr namedparameters {
+    $$ = new UCommand_ASSIGN_VALUE(@$, $1, $3, $4, false);
+    memcheck(up, $$, $1, $3, $4);
+    }
+
+  | lvalue "+=" expr {
+
+    $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 0);
+    memcheck(up, $$, $1, $3);
+    }
+
+  | lvalue "-=" expr {
+
+    $$ = new UCommand_AUTOASSIGN(@$, $1, $3, 1);
+    memcheck(up, $$, $1, $3);
+    }
+
+
+  | "var" lvalue "=" expr namedparameters {
+
+      $2->local_scope = true;
+      $$ = new UCommand_ASSIGN_VALUE(@$, $2, $4, $5);
+      memcheck(up, $$, $2, $4, $5);
+    }
+
+  | property "=" expr {
+
+    $$ = new UCommand_ASSIGN_PROPERTY(@$, $1->variablename, $1->property, $3);
+      memcheck(up, $$, $1, $1, $3);
+    }
+
+  | expr {
+
+    $$ = new UCommand_EXPR(@$, $1);
+      memcheck(up, $$, $1);
+    }
+
+  | name NUM {
+
+      // FIXME: Leak
+      $$ = new UCommand_DEVICE_CMD(@$, $1, $2);
+      memcheck(up, $$, $1);
+    }
+
+  | "return" {
+
+      $$ = new UCommand_RETURN(@$, 0);
+      memcheck(up, $$);
+    }
+
+  | "return" expr {
+
+      $$ = new UCommand_RETURN(@$, $2);
+      memcheck(up, $$, $2);
+    }
+
+  | "echo" expr namedparameters {
+      warn_parens (up, @$, "echo");
+      $$ = new UCommand_ECHO(@$, $2, $3, 0);
+      memcheck(up, $$, $2, $3);
+    }
+
+  | "echo(" expr ")" {
+      $$ = new UCommand_ECHO(@$, $2, 0, 0);
+      memcheck(up, $$, $2);
+    }
+
+  // This grammar is so fucked up that we can't factor the following two.
+  | lvalue "=" "new" "identifier" {
+
+      memcheck(up, $4);
+      $$ = new UCommand_NEW(@$, $1, $4, 0, true);
+      memcheck(up, $$, $1, $4);
+    }
+
+  | "var" lvalue "=" "new" "identifier" {
+
+      $2->local_scope = true;
+      memcheck(up, $5);
+      $$ = new UCommand_NEW(@$, $2, $5, 0, true);
+      memcheck(up, $$, $2, $5);
+    }
+
+
+  // This grammar is so fucked up that we can't factor the following two.
+  | lvalue "=" "new" "identifier" "(" parameterlist ")" {
+
+      memcheck(up, $4);
+      $$ = new UCommand_NEW(@$, $1, $4, $6);
+      memcheck(up, $$, $1, $4, $6);
+    }
+
+  | "var" lvalue "=" "new" "identifier" "(" parameterlist ")" {
+
+      $2->local_scope = true;
+      memcheck(up, $5);
+      $$ = new UCommand_NEW(@$, $2, $5, $7);
+      memcheck(up, $$, $2, $5, $7);
+    }
+
+  | "group" "identifier" "{" identifiers "}" {
+
+      $$ = new UCommand_GROUP(@$, $2, $4);
+      memcheck(up, $$, $4, $2);
+    }
+
+  | "addgroup" "identifier" "{" identifiers "}" {
+
+      $$ = new UCommand_GROUP(@$, $2, $4, 1);
+      memcheck(up, $$, $4, $2);
+    }
+
+
+  | "delgroup" "identifier" "{" identifiers "}" {
+
+      $$ = new UCommand_GROUP(@$, $2, $4, 2);
+      memcheck(up, $$, $4, $2);
+    }
+
+   /*
+  | GROUP "identifier" {
+
+      $$ = new UCommand_GROUP(@$, $2, 0);
+      memcheck(up, $$, $2);
+    }
+*/
+  | "group" {
+
+    $$ = new UCommand_GROUP(@$, 0, 0);
+      memcheck(up, $$);
+    }
+
+  | "alias" name name {
+
+    $$ = new UCommand_ALIAS(@$, $2, $3);
+      memcheck(up, $$, $2, $3);
+    }
+
+  | name "inherits" name {
+
+    $$ = new UCommand_INHERIT(@$, $1, $3);
+      memcheck(up, $$, $1, $3);
+    }
+
+  | name "disinherits" name {
+
+    $$ = new UCommand_INHERIT(@$, $1, $3, true);
+      memcheck(up, $$, $1, $3);
+    }
+
+  | "alias" name {
+
+    $$ = new UCommand_ALIAS(@$, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "unalias" name {
+
+    $$ = new UCommand_ALIAS(@$, $2, 0, true);
+      memcheck(up, $$, $2);
+    }
+
+  | "alias" {
+
+    $$ = new UCommand_ALIAS(@$, 0, 0);
+      memcheck(up, $$);
+  }
+
+  | OPERATOR {
+
+      memcheck(up, $1);
+      $$ = new UCommand_OPERATOR(@$, $1);
+      memcheck(up, $$, $1);
+    }
+
+  | OPERATOR_ID tag {
+
+      memcheck(up, $1);
+      memcheck(up, $2);
+      $$ = new UCommand_OPERATOR_ID(@$, $1, $2);
+      memcheck(up, $$, $1, $2);
+    }
+
+  | OPERATOR_VAR name {
+
+      memcheck(up, $1);
+      $$ = new UCommand_OPERATOR_VAR(@$, $1, $2);
+      memcheck(up, $$, $1, $2);
+    }
+
+  | BINDER "object" name {
+
+      memcheck(up, $1);
+      $$ = new UCommand_BINDER(@$, 0, $1, UBIND_OBJECT, $3);
+      memcheck(up, $$, $1, $3);
+    }
+
+
+  | BINDER "var" name "from" name {
+
+      memcheck(up, $1);
+      $$ = new UCommand_BINDER(@$, $5, $1, UBIND_VAR, $3);
+      memcheck(up, $$, $1, $3, $5);
+    }
+
+  | BINDER "function" "(" NUM ")" name "from" name {
+
+      memcheck(up, $1);
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_FUNCTION, $6, (int)take($4));
+      memcheck(up, $$, $1, $6, $8);
+    }
+
+  | BINDER "event" "(" NUM ")" name "from" name {
+
+      memcheck(up, $1);
+      $$ = new UCommand_BINDER(@$, $8, $1, UBIND_EVENT, $6, (int)take ($4));
+      memcheck(up, $$, $1, $6, $8);
+    }
+
+  | "wait" "(" expr ")" {
+
+      $$ = new UCommand_WAIT(@$, $3);
+      memcheck(up, $$, $3);
+    }
+
+  | "emit" name {
+
+      $$ = new UCommand_EMIT(@$, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "emit" name "(" parameterlist ")" {
+
+      $$ = new UCommand_EMIT(@$, $2, $4);
+      memcheck(up, $$, $2, $4);
+    }
+
+  | "emit" "(" expr ")" name {
+
+      $$ = new UCommand_EMIT(@$, $5, 0, $3);
+      memcheck(up, $$, $5, $3);
+    }
+
+  | "emit" "(" expr ")" name "(" parameterlist ")" {
+
+      $$ = new UCommand_EMIT(@$, $5, $7, $3);
+      memcheck(up, $$, $5, $7, $3);
+    }
+
+  | "emit" "(" ")" name {
+
+      $$ = new UCommand_EMIT(@$, $4, 0, new UExpression(@$, UExpression::VALUE,
+							UINFINITY));
+      memcheck(up, $$, $4);
+    }
+
+  | "emit" "(" ")" name "(" parameterlist ")" {
+
+      $$ = new UCommand_EMIT(@$, $4, $6, new UExpression(@$, UExpression::VALUE,
+							 UINFINITY));
+      memcheck(up, $$, $4, $6);
+    }
+
+  | "waituntil" softtest {
+
+      $$ = new UCommand_WAIT_TEST(@$, $2);
+      memcheck(up, $$, $2);
+    }
+
+  | lvalue "--" {
+
+      $$ = new UCommand_INCDECREMENT(@$, UCommand::DECREMENT, $1);
+      memcheck(up, $$, $1);
+    }
+
+  | lvalue "++" {
+
+      $$ = new UCommand_INCDECREMENT(@$, UCommand::INCREMENT, $1);
+      memcheck(up, $$, $1);
+    }
+
+  | "def" {
+
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_QUERY, 0, 0, 0);
+      memcheck(up, $$);
+    }
+
+  // The following two rules cannot be factored because of s/r conflicts.
+  | "var" name {
+
+      $2->local_scope = true;
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "def" name {
+
+      $2->local_scope = true;
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VAR, $2, 0, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "var" "{" names "}" {
+
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_VARS, $3);
+      memcheck(up, $$, $3);
+    }
+
+  | "class" "identifier" "{" class_declaration_list "}" {
+
+      $$ = new UCommand_CLASS(@$, $2, $4);
+      memcheck(up, $$, $2, $4);
+    }
+
+  | "class" "identifier" {
+
+      $$ = new UCommand_CLASS(@$, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
+
+  | "event" name "(" identifiers ")" {
+
+      $2->local_scope = true;
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, $4, 0);
+      memcheck(up, $$, $2, $4);
+    }
+
+  | "event" name {
+
+      $2->local_scope = true;
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_EVENT, $2, 0, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "function" name "(" identifiers ")" {
+
+      if (up.connection.functionTag)
+      {
+	delete $2;
+	delete $4;
+	$2 = 0;
+	delete up.connection.functionTag;
+	up.connection.functionTag = 0;
+	error(@$, "Nested function def not allowed.");
+	YYERROR;
+      }
+      else
+      {
+	up.connection.functionTag = new UString("__Funct__");
+	globalDelete = &up.connection.functionTag;
+      }
+
+    } taggedcommand {
+
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
+
+      memcheck(up, $$, $2, $4);
+      if (up.connection.functionTag)
+      {
+	delete up.connection.functionTag;
+	up.connection.functionTag = 0;
+	globalDelete = 0;
+      }
+    }
+
+  | "def" name "(" identifiers ")" {
+
+    warn_deprecated (up, @$, "def", "function");
+      if (up.connection.functionTag)
+      {
+	delete $2;
+	delete $4;
+	$2 = 0;
+	delete up.connection.functionTag;
+	up.connection.functionTag = 0;
+	error(@$, "Nested function def not allowed.");
+	YYERROR;
+      }
+      else
+      {
+	up.connection.functionTag = new UString("__Funct__");
+	globalDelete = &up.connection.functionTag;
+      }
+
+    } taggedcommand {
+
+      $$ = new UCommand_DEF(@$, UCommand_DEF::UDEF_FUNCTION, $2, $4, $7);
+
+      memcheck(up, $$, $2, $4);
+      if (up.connection.functionTag)
+      {
+	delete up.connection.functionTag;
+	up.connection.functionTag = 0;
+	globalDelete = 0;
+      }
+    }
+
+  | "if" "(" expr ")" taggedcommand %prec CMDBLOCK
+    {
+      warn_spontaneous(up, @5, *$5);
+      $$ = new UCommand_IF(@$, $3, $5, 0);
+      memcheck(up, $$, $3, $5);
+    }
+
+  | "if" "(" expr ")" taggedcommand "else" taggedcommand
+    {
+      warn_spontaneous(up, @5, *$5);
+      $$ = new UCommand_IF(@$, $3, $5, $7);
+      memcheck(up, $$, $3, $5, $7);
+    }
+
+  | "every" "(" expr ")" taggedcommand {
+
+    $$ = new UCommand_EVERY(@$, $3, $5);
+      memcheck(up, $$, $3, $5);
+    }
+
+  | "timeout" "(" expr ")" taggedcommand {
+
+    $$ = new UCommand_TIMEOUT(@$, $3, $5);
+      memcheck(up, $$, $3, $5);
+    }
+
+  | "stopif" "(" softtest ")" taggedcommand {
+
+    $$ = new UCommand_STOPIF(@$, $3, $5);
+      memcheck(up, $$, $3, $5);
+    }
+
+  | "freezeif" "(" softtest ")" taggedcommand {
+
+    $$ = new UCommand_FREEZEIF(@$, $3, $5);
+      memcheck(up, $$, $3, $5);
+    }
+
+  | "at" and.opt "(" softtest ")" taggedcommand %prec CMDBLOCK {
+
+      $$ = new UCommand_AT(@$,  $2, $4, $6, 0);
+      memcheck(up, $$, $4, $6);
+    }
+
+  | "at" and.opt "(" softtest ")" taggedcommand "onleave" taggedcommand {
+     warn_spontaneous(up, @6, *$6);
+     $$ = new UCommand_AT(@$, $2, $4, $6, $8);
+     memcheck(up, $$, $4, $6, $8);
+    }
+
+  | "while" pipe.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
+
+      $$ = new UCommand_WHILE(@$, $2, $4, $6);
+      memcheck(up, $$, $4, $6);
+    }
+
+  | "whenever" "(" softtest ")" taggedcommand %prec CMDBLOCK {
+
+      $$ = new UCommand_WHENEVER(@$, $3, $5, 0);
+      memcheck(up, $$, $3, $5);
+    }
+
+  | "whenever" "(" softtest ")" taggedcommand "else" taggedcommand {
+      warn_spontaneous(up, @5, *$5);
+      $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
+      memcheck(up, $$, $3, $5, $7);
+    }
+
+/*
+ *  This loop keyword can't be converted to a for, since it would
+ *  cause and ambiguity in the language. Consider this line:
+ *
+ *      for (42);
+ *
+ *  It could be either:
+ *
+ *      for (42)
+ *        ;
+ *
+ *  i.e, while 42 is true execute the empty instruction, either:
+ *
+ *      for
+ *        42;
+ *
+ *  i.e. execute "42"  forever, with 42 being parenthesized.
+ */
+  | "loop" taggedcommand %prec CMDBLOCK {
+
+      $$ = new UCommand_LOOP(@$, $2);
+      memcheck(up, $$, $2);
+    }
+
+  | "for" flavor.opt name "in" expr "{" taggedcommands "}" %prec CMDBLOCK {
+
+      $$ = new UCommand_FOREACH(@$, $2, $3, $5, $7);
+      memcheck(up, $$, $3, $5, $7);
+    }
+
+  | "for" flavor.opt "(" expr ")" taggedcommand %prec CMDBLOCK {
+
+      $$ = new UCommand_LOOPN(@$, $2, $4, $6);
+      memcheck(up, $$, $4, $6);
+    }
+
+  | "for" flavor.opt "(" instruction ";"
+			 expr ";"
+			 instruction ")" taggedcommand %prec CMDBLOCK {
+      // Can't use "pipe.opt" here, introduces conflicts.
+      if ($2 == Flavorable::UAND)
+      {
+	error(@$, "`for& (;;)' is deprecated, use `for& .. in ..'");
+	YYERROR;
+      }
+      $$ = new UCommand_FOR(@$, $2, $4, $6, $8, $10);
+      memcheck(up, $$, $4, $6, $8, $10);
+    }
+;
+
+
+/* ARRAY */
+
+array:
+
+  /* empty */ { $$ = 0; }
+
+  | "[" expr "]" array {
+
+      $$ = new UNamedParameters($2, $4);
+      memcheck(up, $$, $2, $4);
+    }
+;
+
+
+/* VARID, NAME, NAME, NAME */
+
+name:
+
+    "$" "(" expr ")" {
+
+      $$ = new UVariableName($3);
+      memcheck(up, $$, $3);
+    }
+
+  | "identifier" array "." "identifier" array {
+
+      memcheck(up, $1);
+      memcheck(up, $4);
+      $$ = new UVariableName($1, $2, $4, $5);
+      memcheck(up, $$, $1, $2, $4, $5);
+    }
+
+  | "identifier" "::" "identifier" {
+
+      memcheck(up, $1);
+      memcheck(up, $3);
+      $$ = new UVariableName($1, $3, true, 0);
+      if ($$) $$->doublecolon = true;
+      memcheck(up, $$, $1, $3);
+    }
+
+  | "identifier" array {
+
+      memcheck(up, $1);
+      $$ = new UVariableName(new UString(up.connection.functionTag
+					 ? *up.connection.functionTag
+					 : *up.connection.connectionTag),
+			     $1, false, $2);
+      memcheck(up, $$, $1, $2);
+      $$->nostruct = true;
+    }
+
+  | STRUCT array {
+
+      memcheck(up, $1.device);
+      memcheck(up, $1.id);
+      $$ = new UVariableName($1.device, $1.id, false, $2);
+      memcheck(up, $$, $1.device, $1.id, $2);
+    }
+
+;
+
+lvalue:
+  name		{ $$ = $1;				}
+| name "'n"	{ $$ = $1; $$->isnormalized = true;	}
+| "static" name	{ $$ = $2; $$->isstatic = true;	}
+;
+
+
+/* PROPERTY */
+
+property:
+
+    name "->" "identifier" {
+
+      $$ = new UProperty($1, $3);
+      memcheck(up, $$, $1, $3);
+    }
+;
+
+
+/* NAMEDPARAMETERS */
+
+namedparameters:
+  /* empty */ { $$ = 0; }
+
+  | "identifier" ":" expr namedparameters {
+
+      memcheck(up, $1);
+      $$ = new UNamedParameters($1, $3, $4);
+      memcheck(up, $$, $1, $4, $3);
+    }
+;
+
+
+/* BINARY */
+
+binary:
+    "bin" NUM {
+      $$ = new UBinary((int)take($2), 0);
+      memcheck(up, $$);
+      if ($$ != 0)
+	memcheck(up, $$->buffer, $$);
+    }
+
+  | "bin" NUM rawparameters {
+
+      $$ = new UBinary((int)take($2), $3);
+      memcheck(up, $$, $3);
+      if ($$ != 0)
+	memcheck(up, $$->buffer, $$, $3);
+    }
+;
+
+
+/* TIMEEXPR */
+
+timeexpr:
+ TIMEVALUE           { $$ = $1;  }
+| timeexpr TIMEVALUE { $$ = new ufloat(take($1)+take($2));  }
+;
+
+
+/* EXPR */
+
+expr:
+  NUM {
+    $$ = new UExpression(@$, UExpression::VALUE, take($1));
+    memcheck(up, $$);
+  }
+
+| timeexpr {
+    $$ = new UExpression(@$, UExpression::VALUE, take ($1));
+    memcheck(up, $$);
+  }
+
+| STRING {
+    memcheck(up, $1);
+    $$ = new UExpression(@$, UExpression::VALUE, $1);
+    memcheck(up, $$, $1);
+  }
+
+| "[" parameterlist "]" {
+    $$ = new UExpression(@2, UExpression::LIST, $2);
+    memcheck(up, $$, $2);
+  }
+
+| property {
+    $$ = new UExpression(@$, UExpression::PROPERTY,
+			$1->property, $1->variablename);
+     memcheck(up, $$, $1);
+  }
+
+| name "(" parameterlist ")"  {
+
+    //if (($1) && ($1->device) &&
+    //    ($1->device->equal(up.connection.functionTag)))
+    //  $1->nameUpdate(up.connection.connectionTag->c_str(),
+    //                 $1->id->c_str());
+
+    $$ = new_exp(up, @$, UExpression::FUNCTION, $1, $3);
+  }
+
+| "copy(" expr ")" {
+      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
+| "%" name         { $$ = new_exp(up, @$, UExpression::ADDR_VARIABLE, $2); }
+| "group" "identifier" { $$ = new_exp(up, @$, UExpression::GROUP, $2);         }
+;
+
+
+/*-----------------------.
+| variables as rvalues.  |
+`-----------------------*/
+
+expr:
+  rvalue { $$ = new_exp(up, @$, UExpression::VARIABLE, $1);      }
+;
+
+rvalue:
+  name
+| name derive   { $$->deriv = $2;		}
+| name "'n"	{ $$->isnormalized = true;	}
+| name "'e"	{ $$->varerror = true;		}
+| name "'in"	{ $$->varin = true;		}
+| name "'out"   // FIXME: Nothing to do???
+| "static" name	{ $$ = $2; $$->isstatic = true;	}
+;
+
+derive:
+  "'"	{ $$ = UVariableName::UDERIV;	 }
+| "''"	{ $$ = UVariableName::UDERIV2;	 }
+| "'d"	{ $$ = UVariableName::UTRUEDERIV;  }
+| "'dd"	{ $$ = UVariableName::UTRUEDERIV2; }
+;
+
+
+  /* num expr */
+expr:
+    expr "+" expr	{ $$ = new_exp(up, @$, UExpression::PLUS,  $1, $3); }
+  | expr "-" expr	{ $$ = new_exp(up, @$, UExpression::MINUS, $1, $3); }
+  | expr "*" expr	{ $$ = new_exp(up, @$, UExpression::MULT,  $1, $3); }
+  | expr "/" expr	{ $$ = new_exp(up, @$, UExpression::DIV,   $1, $3); }
+  | expr "%" expr	{ $$ = new_exp(up, @$, UExpression::MOD,   $1, $3); }
+  | expr "**" expr	{ $$ = new_exp(up, @$, UExpression::EXP,   $1, $3); }
+
+  | "copy" expr  %prec NEG {
+      warn_parens (up, @$, "copy");
+      $$ = new UExpression(@$, UExpression::COPY, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "-" expr %prec NEG {
+
+      $$ = new UExpression(@$, UExpression::NEG, $2, 0);
+      memcheck(up, $$, $2);
+    }
+
+  | "(" expr ")" {
+
+      $$ = $2;
+    }
+;
+
+
+  /*--------.
+  | Tests.  |
+  `--------*/
+%token
+  TOK_EQ    "=="
+  TOK_GT    ">"
+  TOK_GT_GT ">>"
+  TOK_LE    "<="
+  TOK_LT    "<"
+  TOK_LT_LT "<<"
+  TOK_PEQ   "%="
+  TOK_NE    "!="
+  TOK_GE    ">="
+  TOK_DEQ   "=~="
+  TOK_REQ   "~="
+;
+
+expr:
+  "true"  { $$ = new UExpression(@$, UExpression::VALUE, ufloat(1)); }
+| "false" { $$ = new UExpression(@$, UExpression::VALUE, ufloat(0)); }
+
+| expr "=="  expr { $$ = new_exp(up, @$, UExpression::TEST_EQ,  $1, $3); }
+| expr "~="  expr { $$ = new_exp(up, @$, UExpression::TEST_REQ, $1, $3); }
+| expr "=~=" expr { $$ = new_exp(up, @$, UExpression::TEST_DEQ, $1, $3); }
+| expr "%="  expr { $$ = new_exp(up, @$, UExpression::TEST_PEQ, $1, $3); }
+| expr "!="  expr { $$ = new_exp(up, @$, UExpression::TEST_NE,  $1, $3); }
+| expr ">"   expr { $$ = new_exp(up, @$, UExpression::TEST_GT,  $1, $3); }
+| expr ">="  expr { $$ = new_exp(up, @$, UExpression::TEST_GE,  $1, $3); }
+| expr "<"   expr { $$ = new_exp(up, @$, UExpression::TEST_LT,  $1, $3); }
+| expr "<="  expr { $$ = new_exp(up, @$, UExpression::TEST_LE,  $1, $3); }
+
+| "!" expr {
+    $$ = new UExpression(@$, UExpression::TEST_BANG, $2, 0);
+    memcheck(up, $$, $2);
+  }
+
+| expr "&&" expr { $$ = new_exp(up, @$, UExpression::TEST_AND, $1, $3); }
+| expr "||" expr { $$ = new_exp(up, @$, UExpression::TEST_OR,  $1, $3); }
+;
+
+
+/* PARAMETERLIST, PARAMETERS, PARAMETERSERIES */
+
+parameterlist:
+  /* empty */ { $$ = 0; }
+
+  | parameters
+;
+
+parameters:
+    expr {
+
+      $$ = new UNamedParameters($1);
+      memcheck(up, $$, $1);
+    }
+
+  | expr "," parameters {
+
+      $$ = new UNamedParameters($1, $3);
+      memcheck(up, $$, $1, $3);
+    }
+;
+
+rawparameters:
+    NUM {
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
+      $$ = new UNamedParameters(expr);
+      memcheck(up, $$, expr);
+    }
+
+  | "identifier" {
+
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
+      $$ = new UNamedParameters(expr);
+      memcheck(up, $$, expr);
+    }
+
+  |  NUM rawparameters {
+
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, take($1));
+      $$ = new UNamedParameters(expr, $2);
+      memcheck(up, $$, $2, expr);
+    }
+
+  |  "identifier" rawparameters {
+
+      UExpression *expr = new UExpression(@$, UExpression::VALUE, $1);
+      $$ = new UNamedParameters(expr, $2);
+      memcheck(up, $$, $2, expr);
+    }
+;
+
+/* SOFTTEST */
+
+softtest:
+    expr
+  | expr "~" expr  {
+
+      $$ = $1;
+      $$->issofttest = true;
+      $$->softtest_time = $3;
+    }
+  | "(" expr "~" expr ")" {
+
+      $$ = $2;
+      $$->issofttest = true;
+      $$->softtest_time = $4;
+    }
+;
+
+/*--------------.
+| identifiers.  |
+`--------------*/
+
+// "var"?
+%union
+{
+  bool is_var;
+};
+%type <is_var> var.opt;
+var.opt:
+  /* empty. */   { $$ = false; }
+| "var"          { $$ = true;  }
+;
+
+// One or several comma-separated identifiers.
+identifiers.1:
+  var.opt "identifier"
+  {
+    memcheck(up, $2);
+    $$ = new UNamedParameters($2, 0);
+    memcheck(up, $$, $2);
+  }
+
+| var.opt "identifier" "," identifiers.1
+  {
+    memcheck(up, $2);
+    $$ = new UNamedParameters($2, 0, $4);
+    memcheck(up, $$, $2, $4);
+  }
+;
+
+// Zero or several comma-separated identifiers.
+identifiers:
+  /* empty */    { $$ = 0;  }
+| identifiers.1  { $$ = $1; }
+;
+
+
+/* CLASS_DECLARATION & CLASS_DECLARATION_LIST */
+
+formal_arguments:
+  /* empty */         { $$ = 0;  }
+| "(" identifiers ")" { $$ = $2; }
+;
+
+class_declaration:
+// FIXME: Should be s/"identifier"/name/, but then the kernel SEGVes.
+  "var" "identifier" {
+    $$ = new_exp(up, @$, UExpression::VALUE, $2);
+  }
+
+| "function" name formal_arguments {
+    $$ = new_exp(up, @$, UExpression::FUNCTION, $2, $3);
+  }
+
+| "event" name formal_arguments {
+    $$ = new_exp(up, @$, UExpression::EVENT, $2, $3);
+  }
+;
+
+
+class_declaration_list:
+  /* empty */  { $$ = 0; }
+
+  | class_declaration {
+      $$ = new UNamedParameters($1, 0);
+      memcheck(up, $$, $1);
+    }
+
+  | class_declaration ";" class_declaration_list {
+      $$ = new UNamedParameters($1, $3);
+      memcheck(up, $$, $3, $1);
+    }
+;
+
+/*--------.
+| names.  |
+`--------*/
+
+names:
+  /* empty */  { $$ = 0; }
+
+  | name {
+      memcheck(up, $1);
+      $$ = new UVariableList($1);
+      memcheck(up, $$, $1);
+    }
+
+  | name ";" names {
+      memcheck(up, $1);
+      $$ = new UVariableList($1, $3);
+      memcheck(up, $$, $3, $1);
+    }
+;
+
+/* End of grammar */
+
+%%
+
+// The error function that 'bison' calls
+void yy::parser::error(const location_type& l, const std::string& m)
+{
+  up.error (l, m);
+  if (globalDelete)
+  {
+    delete *globalDelete;
+    *globalDelete = 0;
+  }
+}
+
+// Local Variables:
+// mode: c++
+// End:

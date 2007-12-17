@@ -21,18 +21,12 @@
 
 # include <list>
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
 
 # include "ucommand.hh"
-# include "utypes.hh"
-# include "ustring.hh"
 # include "uexpression.hh"
-# include "unamedparameters.hh"
-# include "uvariablelist.hh"
-# include "uvalue.hh"
 # include "uobj.hh"
-# include "uvariablename.hh"
-# include "ueventhandler.hh"
 
 // ****************************************************************************
 /** UASyncCommand class is used by At end WHENEVER to store
@@ -98,14 +92,13 @@ UASyncCommand::reset_reeval()
   reeval_ = false;
 }
 
-class UCommand_AT: public UASyncCommand
+class UCommand_AT: public UASyncCommand, public Flavorable
 {
 public:
   MEMORY_MANAGED;
 
-  UCommand_AT (const UCommand::location& l,
-	       UCommand::Type type, UExpression* test,
-	       UCommand* command1, UCommand* command2);
+  UCommand_AT (const UCommand::location& l, UNodeType flavor,
+	       UExpression* test, UCommand* cmd1, UCommand* cmd2);
   virtual ~UCommand_AT ();
 
   virtual void print_(unsigned l) const;

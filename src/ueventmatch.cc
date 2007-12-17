@@ -18,12 +18,19 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
-#include "ueventmatch.hh"
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+
 #include "uasynccommand.hh"
-#include "utypes.hh"
-#include "userver.hh"
+#include "ueventhandler.hh"
+#include "ueventmatch.hh"
+#include "unamedparameters.hh"
+#include "uvariablename.hh"
 
 UEventMatch* kernel::eventmatch_true;
 UEventMatch* kernel::eventmatch_false;
@@ -50,8 +57,8 @@ UEventMatch::UEventMatch (UString* eventname,
       ASSERT (param->expression->variablename)
 	varname = param->expression->variablename->
 		 buildFullname (command, connection);
-      ASSERT (varname);
-      e1 = new UValue (varname->str ());
+      ASSERT (varname) {}
+      e1 = new UValue (varname->c_str());
       // this is a dirty hack. It means that the UValue does not
       // contain a value, but a variable name instead.
       e1->dataType = DATA_VARIABLE;
@@ -86,18 +93,15 @@ UEventMatch::findMatches_ ()
   if (!eventhandler_)
     return;
 
-  for (std::list<UEvent*>::iterator
-	 itevent = eventhandler_->eventlist().begin ();
-       itevent != eventhandler_->eventlist().end ();
-       ++itevent)
+  BOOST_FOREACH (UEvent* itevent, eventhandler_->eventlist())
   {
     bool ok = true;
     std::list<UValue*>::iterator
       ifilter_arg = filter_.begin (),
-      itevent_arg = (*itevent)->args().begin();
+      itevent_arg = itevent->args().begin();
 
     while (ifilter_arg != filter_.end ()
-	   && itevent_arg != (*itevent)->args().end ()
+	   && itevent_arg != itevent->args().end ()
 	   && ok)
     {
       if ((*ifilter_arg)->dataType != DATA_VARIABLE
@@ -109,7 +113,7 @@ UEventMatch::findMatches_ ()
     }
 
     if (ok)
-      matches_.push_back (*itevent);
+      matches_.push_back (itevent);
   }
 }
 

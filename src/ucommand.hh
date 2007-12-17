@@ -1,4 +1,3 @@
-
 /*! \file ucommand.hh
  *******************************************************************************
 
@@ -29,11 +28,12 @@
 # include "libport/fwd.hh"
 # include "libport/compiler.hh"
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+
 # include "flavorable.hh"
 # include "uast.hh"
 # include "uexpression.hh" // FIXME: Required until we move some code in *.cc.
-# include "ustring.hh"
+
 
 // ****************************************************************************
 //! UCommand class stores URBI commands.
@@ -55,7 +55,6 @@ public:
     ASSIGN_PROPERTY,
     ASSIGN_VALUE,
     AT,
-    AT_AND,
     CLASS,
     DECREMENT,
     DEF,
@@ -111,7 +110,13 @@ public:
   void setTag(const std::string& tag);
   void setTag(const UCommand* b); //faster than the one above
   void setTag(TagInfo * ti); //faster, no hash acces
+  const TagInfo* tag_info_get () const;
   void unsetTag();
+
+  /// Whether the tag is associated to a channel, i.e., whether it is
+  /// verbose.
+  void is_channel_set (bool b);
+  bool is_channel_get () const;
 
   bool isBlocked();
   bool isFrozen();
@@ -132,7 +137,12 @@ public:
     URUNNING,
     UCOMPLETED,
     UBACKGROUND,
-    UMORPH
+    UMORPH,
+    /// If a function returns this value, its caller should not return
+    /// it, but rather fallthru to the next instruction.  This dirty
+    /// hack should be removed once we have refactored the code using
+    /// it.
+    UFALLTHRU,
   };
 
   /// Status of the command since last execution.
@@ -171,8 +181,14 @@ public:
   /// "at" or "whenever").
   bool background;
 
+  /// true when the command is frozen (used to "stop time flow")
+  bool frozen;
+
   /// Start time.
   ufloat startTime;
+
+  /// Time of last execution.
+  ufloat lastExec;
 
   /// \name Hideous hacks we must get rid of.
   /// \{
@@ -200,9 +216,6 @@ public:
   /// true when the command is part of a morphed structure
   bool morphed;
 
-  /// initialize the cached taginfos
-  static void initializeTagInfos();
-
   /** try to make a module-defined function call
   @param name: function full name
   @param parameters: arguments to call
@@ -219,17 +232,13 @@ private:
   std::string tag;
   /// Ptr to tag info concerning us.
   TagInfo* tagInfo;
+  bool is_channel_;
   /// For fast deletion.
   std::list<UCommand *>::iterator tagInfoPtr;
 
   /// Protection against copy
   UCommand (const UCommand &c);
 
-  protected:
-  /// Cached often used taginfo
-  static TagInfo * systemTagInfo;
-  /// Cached often used taginfo
-  static TagInfo * notagTagInfo;
 };
 
 class UCommand_TREE : public UCommand, public Flavorable
@@ -301,6 +310,9 @@ public:
 
 private:
 
+  // Function call. morph into the function code
+  Status execute_function_call(UConnection *connection);
+
   // Pointers to modificators to ease further processing
   // in the URUNNING mode.
   UExpression* modif_time;
@@ -313,10 +325,6 @@ private:
   UExpression* modif_adaptive;
   UVariableName* modif_getphase;
 
-  /// stored temporary phase for cos modificator
-  UExpression* tmp_phase;
-  /// stored temporary time=0 for direct assignment
-  UExpression* tmp_time;
   /// time limit in case of timeout modificator
   ufloat endtime;
   /// start value for modificators
@@ -466,6 +474,7 @@ public:
   virtual void print_(unsigned l) const;
 
   virtual Status execute_(UConnection* connection);
+  Status execute_function_call(UConnection* connection);
   virtual UCommand* copy() const;
   virtual UVariableName** refVarName ()
   {
@@ -706,7 +715,7 @@ public:
   UCommand_BINDER (const location& l,
 		   UVariableName* objname,
 		   UString* binder,
-		   int type,
+		   UBindType type,
 		   UVariableName* variablename,
 		   int nbparam=0);
   virtual ~UCommand_BINDER();
@@ -722,8 +731,8 @@ public:
   UVariableName* variablename;
   /// name of the uobject controling the binding
   UVariableName* objname;
-  /// type of binding: 0:"function", 1:"var", 2:"event"
-  int type;
+  /// type of binding.
+  UBindType type;
   /// nb of param in a function binding
   int nbparam;
 };
@@ -1188,6 +1197,9 @@ private:
 | Free standing functions.  |
 `--------------------------*/
 
+/// Report \a u on \o, for debugging.
+std::ostream& operator<<(std::ostream& o, const UCommand& u);
+
 /// Report an error, with "!!! " prepended, and "\n" appended.
 /// \param c     the connection to which the message is sent.
 /// \param cmd   the command whose tag will be used.
@@ -1205,5 +1217,7 @@ send_error (UConnection* c, const UCommand* cmd,
 
 
 const char* to_string (UCommand::Status s);
+
+# include "ucommand.hxx"
 
 #endif

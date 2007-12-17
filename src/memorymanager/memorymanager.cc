@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <iostream>
-#include "memorymanager/memorymanager.hh"
+#include "kernel/memorymanager.hh"
 
 namespace MemoryManager
 {
@@ -18,29 +18,35 @@ BlockPool::BlockPool ()
 void
 block_operator_delete(BlockPool* mempool, void* ptr)
 {
-  mempool->lock();
+#if ! defined LIBPORT_URBI_ENV_AIBO
+  boost::mutex::scoped_lock lock(mempool->mutex);
+#endif
   ++mempool->cptr;
   *mempool->cptr = ptr;
   MemoryManager::allocatedMemory -= mempool->itemSize;
-  mempool->unlock();
 }
 
 // This implementation can't release any memory to malloc.
 void* block_operator_new(BlockPool* &mempool, size_t sz)
 {
-  if (!mempool)
-  {
+  const bool blockPoolExist = !!mempool;
+
+  if (!blockPoolExist)
     mempool = new BlockPool;
-    mempool->lock();
-    --mempool->cptr;
-    const int align = sizeof (void*);
-    size_t asz = sz;
-    if (asz % align)
-      asz = asz + align - (asz % align);
-    mempool->itemSize = asz;
-  }
-  else
-    mempool->lock();
+
+#if ! defined LIBPORT_URBI_ENV_AIBO
+  boost::mutex::scoped_lock lock(mempool->mutex);
+#endif
+  if (!blockPoolExist)
+    {
+      --mempool->cptr;
+      const int align = sizeof (void*);
+      size_t asz = sz;
+      if (asz % align)
+	asz = asz + align - (asz % align);
+      mempool->itemSize = asz;
+    }
+
   if (!mempool->ptr || mempool->cptr < mempool->ptr)
   {
     size_t newsize = (mempool->size * 3) / 2 + DEFAULT_BLOCK_SIZE;
@@ -62,7 +68,7 @@ void* block_operator_new(BlockPool* &mempool, size_t sz)
     for (size_t i = 0; i < newsize-mempool->size; ++i)
     {
       ++mempool->cptr;
-      *mempool->cptr = (data + mempool->itemSize * i);
+      *mempool->cptr = data + mempool->itemSize * i;
     }
     mempool->size = newsize;
   }
@@ -70,7 +76,6 @@ void* block_operator_new(BlockPool* &mempool, size_t sz)
   void* result = *mempool->cptr;
   --mempool->cptr;
   MemoryManager::allocatedMemory += sz;
-  mempool->unlock();
   return result;
 }
 #endif // !DISABLE_BLOCKMEMMNGR

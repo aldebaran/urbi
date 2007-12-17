@@ -21,54 +21,73 @@
 
 #include "libport/cstring"
 
-#include "utypes.hh"
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+
 #include "ughostconnection.hh"
-#include "userver.hh"
+
+
+// Parameters used by the constructor.
+
+enum
+{
+  MINSENDBUFFERSIZE = 4096,
+  MAXSENDBUFFERSIZE = 1048576,
+  PACKETSIZE        = 32768,
+  MINRECVBUFFERSIZE = 4096,
+  MAXRECVBUFFERSIZE = 1048576,
+};
 
 //! UGhostConnection constructor.
-UGhostConnection::UGhostConnection  (UServer * mainserver)
+UGhostConnection::UGhostConnection  (UServer* mainserver)
   : UConnection   (mainserver,
-		   UGhostConnection::MINSENDBUFFERSIZE,
-		   UGhostConnection::MAXSENDBUFFERSIZE,
-		   UGhostConnection::PACKETSIZE,
-		   UGhostConnection::MINRECVBUFFERSIZE,
-		   UGhostConnection::MAXRECVBUFFERSIZE)
+		   MINSENDBUFFERSIZE,
+		   MAXSENDBUFFERSIZE,
+		   PACKETSIZE,
+		   MINRECVBUFFERSIZE,
+		   MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
-  ::urbiserver->connectionList.push_front (dynamic_cast<UConnection*> (this));
+  ::urbiserver->connectionList.push_front (this);
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
-  ::urbiserver->connectionList.remove (dynamic_cast<UConnection*> (this));
+  ::urbiserver->connectionList.remove (this);
   FREEOBJ(UGhostConnection);
 }
 
 //! Close the connection
 /*! This function does nothing. The ghost connection cannot be closed.
 */
-UErrorValue
+UConnection&
 UGhostConnection::closeConnection()
 {
   closing = true;
-  return USUCCESS;
+  CONN_ERR_RET(USUCCESS);
 }
 
 //! Does nothing. No output for the ghosts...
 int
 UGhostConnection::effectiveSend(const ubyte *buffer, int length)
 {
-  char tmpbuf[1024];
-  int real_length = length;
-  if (real_length >= 1024)
-    real_length = 1023;
+  char buf[1024];
+  int len = std::min (length, static_cast<int>(sizeof buf) - 1);
 
-  memcpy (static_cast<void*> (tmpbuf),
-	  static_cast<const void*> (buffer),
-	  real_length);
-  tmpbuf[real_length] = 0;
-  ::urbiserver->debug("%s", tmpbuf);
+  memcpy (static_cast<void*> (buf), static_cast<const void*> (buffer),
+	  len);
+  buf[len] = 0;
+  ::urbiserver->debug("%s", buf);
 
   return length;
+}
+
+//! Send a "\n" through the connection
+UConnection&
+UGhostConnection::endline ()
+{
+  //FIXME: test send error
+  (*this) << UConnection::send((const ubyte*)"\n", 1);
+  CONN_ERR_RET(USUCCESS);
 }

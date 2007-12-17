@@ -24,9 +24,11 @@
 #include <cstdlib>
 #include "libport/cstring"
 
+#include "kernel/userver.hh"
+
 #include "uqueue.hh"
 #include "ucommandqueue.hh"
-#include "userver.hh"
+
 
 //! UCommandQueue constructor.
 /*! UCommandQueue constructor simply calls the UQueue constructor with the same
@@ -91,11 +93,7 @@ UCommandQueue::popCommand (int &length)
     {
       // One char close sequence
       if (p0 == closechar_ && closechar2_ == ' ')
-      {
-	discard_ = false;
-	if (closechar_ == '"' && p_1 == '\\')
-	  discard_ = true; // cancel the closure.
-      }
+	discard_ = closechar_ == '"' && p_1 == '\\';
 
       // Two chars close sequence
       if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')

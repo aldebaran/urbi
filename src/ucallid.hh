@@ -20,38 +20,38 @@
  **************************************************************************** */
 
 #ifndef UCALLID_HH
-#define UCALLID_HH
+# define UCALLID_HH
 
-#include <list>
+# include <list>
 
-#include "fwd.hh"
-#include "ustring.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
 
-// ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UCallid
 {
 public:
 
-  UCallid(const char* fun_id, const char* self_id, UCommand_TREE* root);
+  UCallid(const std::string& fun_id, const std::string& self_id,
+	  UCommand_TREE* root);
   ~UCallid();
 
-  void         store(UVariable *variable);
-  void         remove(UVariable *variable);
-  const char*  str();
-  const char*  self();
-  void         setReturnVar(UVariable *v);
+  void         store(UVariable* variable);
+  void         remove(UVariable* variable);
+  const UString& str() const;
+  const UString& self() const;
+  void         setReturnVar(UVariable* v);
 
   // FIXME: Should be private, but ucommand.cc currently directly uses it.
   UVariable* returnVar;
 
 private:
-  std::list<UVariable*> stack;
-  UString fun_id;
-  UString self_id;
-  UCommand_TREE* root;
-  /// true if destructor is being called
-  bool dying;
+  std::list<UVariable*> stack_;
+  UString fun_id_;
+  UString self_id_;
+  UCommand_TREE* root_;
+  /// Whether the destructor is being called.
+  bool dying_;
 };
 
 #endif

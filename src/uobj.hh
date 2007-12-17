@@ -24,10 +24,8 @@
 
 # include <list>
 
-# include "fwd.hh"
-# include "ustring.hh"
+# include "kernel/fwd.hh"
 
-// ****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UObj
 {
@@ -38,13 +36,13 @@ public:
   std::list<UObj*> down;
   std::list<UObj*> up;
 
-  UString      *device;
-  UBinder      *binder;
+  UString* device;
+  UBinder* binder;
   urbi::baseURBIStarter* internalBinder;
 
-  UFunction*    searchFunction(const char* id, bool& ambiguous);
-  UVariable*    searchVariable(const char* id, bool& ambiguous);
-  bool  searchEvent   (const char* id, bool& ambiguous);
+  UFunction* searchFunction(const char* id, bool& ambiguous) const;
+  UVariable* searchVariable(const char* id, bool& ambiguous) const;
+  bool searchEvent(const char* id, bool& ambiguous) const;
 };
 
 #endif

@@ -22,7 +22,7 @@
 #ifndef UNAMEDPARAMETERS_HH
 # define UNAMEDPARAMETERS_HH
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
 
 /// Any list of identifiers, expressions or combinaison of both.
 // FIXME: There should be UNamedParameter, and we should use lists or so.
@@ -30,13 +30,15 @@ class UNamedParameters
 {
 public:
   UNamedParameters(UString* name,
-		   UExpression *expression,
-		   UNamedParameters* next=0,
-                   bool notifyEnd=false);
+		   UExpression* expression,
+		   UNamedParameters* next = 0,
+		   bool notifyEnd = false,
+		   bool notifyFreeze = false);
 
   UNamedParameters(UExpression *expression,
-                   UNamedParameters* next = 0,
-                   bool notifyEnd=false);
+		   UNamedParameters* next = 0,
+		   bool notifyEnd = false,
+		   bool notifyFreeze = false);
 
   virtual ~UNamedParameters();
 
@@ -45,6 +47,9 @@ public:
   UNamedParameters* rank(int n);
   int               size() const;
   UNamedParameters* copy() const;
+
+  /// Return the n-th param, this one being 0.
+  UNamedParameters* operator[] (size_t n);
 
   /// Name.
   UString            *name;
@@ -55,6 +60,9 @@ public:
 
   /// Horrible hack to speed up the flag scanning done in UCommand dctor
   bool               notifyEnd;
+  bool               notifyFreeze;
 };
+
+# include "unamedparameters.hxx"
 
 #endif

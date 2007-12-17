@@ -22,8 +22,8 @@
 #ifndef UVARIABLENAME_HH
 # define UVARIABLENAME_HH
 
-# include "fwd.hh"
-# include "memorymanager/memorymanager.hh"
+# include "kernel/fwd.hh"
+# include "kernel/memorymanager.hh"
 
 // ****************************************************************************
 //! Contains a variable name description
@@ -52,17 +52,28 @@ public:
   void           print() const;
   UVariableName* copy() const;
 
-  UVariable*     getVariable (UCommand* command, UConnection* connection);
+  UVariable*     getVariable (UCommand* command, UConnection* connection, bool
+			      force = false);
   UFunction*     getFunction(UCommand *command, UConnection *connection);
   bool           isFunction(UCommand *command, UConnection *connection);
+
   UString*       buildFullname(UCommand* command, UConnection* connection,
 			       bool withalias = true);
-  UString*       getFullname ()
-  {
-    return fullname_;
-  }
-  void           nameUpdate(const char* _device, const char* _id);
-  void           resetCache();
+
+private:
+  /// Update \a id and \a device using \a str.
+  /// \returns false if there was an error.
+  bool build_from_str(UCommand* command, UConnection* connection);
+
+public:
+  UString* getFullname ();
+  UString* set_fullname (const char* s);
+
+  void nameUpdate(const char* _device, const char* _id);
+  void nameUpdate(const std::string& _device, const std::string& _id);
+  void nameUpdate(const UString& _device, const UString& _id);
+
+  void resetCache();
   UString*       getDevice();
   UString*       getMethod();
 
@@ -131,6 +142,22 @@ protected:
   bool			selfFunction;
   /// Internal.
   bool			cached;
+
+private:
+  /// Update the mangled name for \a s.
+  ///
+  /// Used for the pairs (device, index_obj) and (id, index).
+  /// \return whether there was no error.
+  bool update_array_mangling (UCommand* cmd, UConnection* cn,
+			      UString* s, UNamedParameters* ps);
+
 };
+
+inline
+UString*
+UVariableName::getFullname ()
+{
+  return fullname_;
+}
 
 #endif

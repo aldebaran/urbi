@@ -20,25 +20,21 @@
  **************************************************************************** */
 
 #ifndef UPROPERTY_HH
-#define UPROPERTY_HH
+# define UPROPERTY_HH
 
-#include "utypes.hh"
-#include "ustring.hh"
-#include "uvariablename.hh"
+# include "kernel/fwd.hh"
 
-// *****************************************************************************
 //! Contains a group definition, as a result of a GROUP command
 class UProperty
 {
 public:
-
-  UProperty(UVariableName *variablename,
-	    UString *property);
+  UProperty(UVariableName* variablename,
+	    UString* property);
 
   ~UProperty();
 
-  UVariableName *variablename;
-  UString       *property;
+  UVariableName* variablename;
+  UString* property;
 };
 
 #endif

@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - Copyright (C) 2004, 2005, 2006 Jean-Christophe Baillie
+# URBI - Copyright (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -12,20 +12,19 @@
 ## Initialization.  ##
 ## ---------------- ##
 
-include $(top_srcdir)/build-aux/init.mk
+include kernel.mk
+AUTOMAKE_OPTIONS += -Wno-portability
 
 kernelinclude_HEADERS =
-
-AM_CPPFLAGS += -I. -I$(srcdir) $(LIBPORT_CPPFLAGS) -I$(uobject_srcdir)
-AM_CXXFLAGS += $(WARNING_CXXFLAGS) $(PTHREAD_CFLAGS)
-
+dist_libkernel_la_SOURCES =
+nodist_libkernel_la_SOURCES =
 
 ## ----------- ##
 ## libkernel.  ##
 ## ----------- ##
 
 env_LTLIBRARIES = libkernel.la
-libkernel_la_LDFLAGS = -static
+libkernel_la_LDFLAGS = -static $(BOOST_THREAD_LDFLAGS)
 
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
@@ -42,24 +41,22 @@ install-data-hook:
 uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
 
-dist_libkernel_la_SOURCES =					\
-fwd.hh								\
+dist_libkernel_la_SOURCES +=					\
 flavorable.hh							\
-memorymanager/blockmemorymanager.hh				\
-memorymanager/memorymanager.hh memorymanager/memorymanager.cc	\
-parser/uparser.hh parser/uparser.cc				\
+memorymanager/memorymanager.cc					\
+tag-info.cc							\
 uast.hh								\
 uasynccommand.hh uasynccommand.cc				\
-uasyncregister.hh uasyncregister.cc				\
+uasyncregister.cc						\
 uatcandidate.hh uatcandidate.cc					\
 ubanner.hh ubanner.cc						\
 ubinary.hh ubinary.cc						\
-ubinder.hh ubinder.cc						\
+ubinder.hh ubinder.hxx ubinder.cc				\
 ucallid.hh ucallid.cc						\
-ucommand.hh ucommand.cc						\
+ucommand.hh ucommand.hxx ucommand.cc				\
 ucommandqueue.hh ucommandqueue.cc				\
-ucomplaints.hh ucomplaints.cc					\
-uconnection.hh uconnection.cc					\
+ucomplaints.cc							\
+uconnection.cc							\
 ucopy.hh							\
 ueventcompound.hh ueventcompound.cc				\
 ueventhandler.hh ueventhandler.cc				\
@@ -69,22 +66,20 @@ uexpression.hh uexpression.cc					\
 ufunction.hh ufunction.cc					\
 ughostconnection.hh ughostconnection.cc				\
 ugroup.hh ugroup.cc						\
-unamedparameters.hh unamedparameters.cc				\
+unamedparameters.hh unamedparameters.hxx unamedparameters.cc	\
 uobj.hh uobj.cc							\
 uobject.cc							\
 uproperty.hh uproperty.cc					\
 uqueue.hh uqueue.cc						\
-userver.hh userver.cc						\
-ustring.hh ustring.cc						\
-utypes.hh							\
-uvalue.hh uvalue.cc						\
+userver.cc							\
+ustring.cc							\
+uvalue.cc							\
 uvar.cc								\
-uvariable.hh uvariable.cc					\
+uvariable.cc							\
 uvariablelist.hh uvariablelist.cc				\
 uvariablename.hh uvariablename.cc                               \
+uwait-counter.hh						\
 usystem.cc
-
-include parser/bison/bison.mk
 
 ## ------------ ##
 ## version.hh.  ##
@@ -108,76 +103,23 @@ nodist_libkernel_la_SOURCES += $(uobject_sources)
 ## Sub directories.  ##
 ## ----------------- ##
 
-# parser.
-EXTRA_DIST +=					\
-parser/uparser.hh
-
-# parser/bison.
-# This case is handled by parser/bison/bison.mk itself.
-
-
-## ----------------- ##
-## Install headers.  ##
-## ----------------- ##
-
-# This is a kludge: for the time being, install all the server include
-# files for the cores.
-kernelinclude_HEADERS +=			\
-fwd.hh						\
-flavorable.hh					\
-uast.hh						\
-uasynccommand.hh				\
-uasyncregister.hh				\
-uatcandidate.hh					\
-ubinary.hh					\
-ubinder.hh					\
-ucallid.hh					\
-ucommand.hh					\
-ucommandqueue.hh				\
-ucomplaints.hh					\
-uconnection.hh					\
-ucopy.hh					\
-ueventcompound.hh				\
-ueventhandler.hh				\
-ueventinstance.hh				\
-ueventmatch.hh					\
-uexpression.hh					\
-ufunction.hh					\
-ughostconnection.hh				\
-ugroup.hh					\
-unamedparameters.hh				\
-uobj.hh						\
-uproperty.hh					\
-uqueue.hh					\
-userver.hh					\
-ustring.hh					\
-utypes.hh					\
-uvalue.hh					\
-uvariable.hh					\
-uvariablelist.hh				\
-uvariablename.hh				\
-version.hh
+include parser/parser.mk
+nodist_libkernel_la_SOURCES += $(libport_sources)
 
 urbiinclude_HEADERS = $(uobject_headers)
 
-parserdir = $(kernelincludedir)/parser
-parser_HEADERS = parser/uparser.hh
 
-memorymanagerdir = $(kernelincludedir)/memorymanager
-memorymanager_HEADERS =				\
-memorymanager/blockmemorymanager.hh		\
-memorymanager/memorymanager.hh
-
-
-## ---------- ##
-## uconsole.  ##
-## ---------- ##
+## -------------- ##
+## urbi-console.  ##
+## -------------- ##
 
 if !OPENR
-noinst_PROGRAMS = uconsole
-uconsole_SOURCES = console.cc
-uconsole_LDADD = libkernel.la $(PTHREAD_LIBS)
+bin_PROGRAMS = urbi-console
+urbi_console_SOURCES =				\
+console-server.cc				\
+network/bsdnet/connection.hh			\
+network/bsdnet/connection.cc			\
+network/bsdnet/network.hh			\
+network/bsdnet/network.cc
+urbi_console_LDADD = libkernel.la
 endif
-
-# Clean VC++ debug file. BTW, Do we want to install it?
-CLEANFILES += vc80.pdb

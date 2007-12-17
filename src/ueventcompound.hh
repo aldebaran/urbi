@@ -21,7 +21,7 @@
 
 # include <list>
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
 
 /** UEventCompound stores a complete multi instanciation of a given event
  * expression.

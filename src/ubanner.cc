@@ -2,6 +2,10 @@
 // frequently, so include it in a small file instead of userver.cc
 // which is demanding.
 
+#include "kernel/userver.hh"
+
+#include "libport/package-info.hh"
+
 #include "config.h"
 #include "version.hh"
 #include "ubanner.hh"
@@ -12,8 +16,9 @@
 const char* HEADER_BEFORE_CUSTOM[] =
   {
     "*** **********************************************************\n",
-    "*** URBI Language specif 1.0 - Copyright 2006-2007 Gostai SAS\n",
-    "*** URBI Kernel version " PACKAGE_VERSION " rev." PACKAGE_REVISION "\n",
+    "*** URBI Language specif 1.0 - "
+    "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
+    "*** URBI Kernel version " PACKAGE_VERSION " rev. " PACKAGE_REVISION "\n",
     "***\n",
     0
   };
@@ -29,3 +34,24 @@ const char* HEADER_AFTER_CUSTOM[] =
     "*** **********************************************************\n",
     0
   };
+
+const char* uconsole_banner[] =
+{
+  "***      URBI Kernel Console " PACKAGE_VERSION_REV "\n",
+  "***      "
+  "Copyright (C) " PACKAGE_COPYRIGHT_YEARS " " PACKAGE_COPYRIGHT_HOLDER "\n",
+  ""
+};
+
+const libport::PackageInfo&
+UServer::package_info ()
+{
+  LIBPORT_PACKAGE_INFO_STATIC_VAR(pi);
+  return pi;
+}
+
+std::ostream&
+userver_package_info_dump (std::ostream& o)
+{
+  return o << UServer::package_info().signature();
+}

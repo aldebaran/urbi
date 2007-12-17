@@ -18,16 +18,20 @@
 #include "libport/cstdio"
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
 
-#include "ueventinstance.hh"
-#include "uasynccommand.hh"
-#include "ueventmatch.hh"
-#include "ueventhandler.hh"
-
 //FIXME for debugging purposes only
-#include "userver.hh"
-#include "utypes.hh"
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+
+#include "uasynccommand.hh"
+#include "ueventhandler.hh"
+#include "ueventinstance.hh"
+#include "ueventmatch.hh"
+
 
 // **************************************************************************
 // UEventInstance
@@ -36,11 +40,9 @@ UEventInstance::UEventInstance (UEventMatch *match, UEvent* e):
   e_ (e)
 {
   id_ = e_->id ();
-  for (std::list<UValue*>::iterator iuv = match->filter ().begin ();
-	iuv != match->filter ().end ();
-	++iuv)
-    if ((*iuv)->dataType == DATA_VARIABLE)
-      filter_.push_back (std::string ((*iuv)->str->str ()));
+  BOOST_FOREACH (UValue* iuv, match->filter ())
+    if (iuv->dataType == DATA_VARIABLE)
+      filter_.push_back (std::string (iuv->str->c_str()));
     else
       filter_.push_back (std::string ());
 }
@@ -73,15 +75,11 @@ UMultiEventInstance::UMultiEventInstance ()
 UMultiEventInstance::UMultiEventInstance (UMultiEventInstance *mei1,
 					  UMultiEventInstance *mei2)
 {
-  for (std::list<UEventInstance*>::iterator iei1 = mei1->instances_.begin();
-	iei1 != mei1->instances_.end ();
-	++iei1)
-    instances_.push_back (new UEventInstance (*iei1));
+  BOOST_FOREACH (UEventInstance* i, mei1->instances_)
+    instances_.push_back (new UEventInstance (i));
 
-  for (std::list<UEventInstance*>::iterator iei2 = mei2->instances_.begin();
-	iei2 != mei2->instances_.end ();
-	++iei2)
-    instances_.push_back (new UEventInstance (*iei2));
+  BOOST_FOREACH (UEventInstance* i, mei2->instances_)
+    instances_.push_back (new UEventInstance (i));
 }
 
 
@@ -99,14 +97,16 @@ UMultiEventInstance::addInstance(UEventInstance *instance)
 bool
 UMultiEventInstance::operator== (UMultiEventInstance& mei)
 {
-  if (mei.instances_.size () != instances_.size ()) return false;
-  std::list<UEventInstance*>::iterator i1;
-  std::list<UEventInstance*>::iterator i2;
+  if (mei.instances_.size () != instances_.size ())
+    return false;
 
-  for (i1 = instances_.begin (), i2 = mei.instances_.begin ();
+  for (std::list<UEventInstance*>::iterator
+	 i1 = instances_.begin (),
+	 i2 = mei.instances_.begin ();
        i1 != instances_.end ();
        ++i1, ++i2)
-    if ( ! (*(*i1) == *(*i2)) )
+    // Yes, there is no !=.
+    if (!(**i1 == **i2))
       return false;
 
   return true;

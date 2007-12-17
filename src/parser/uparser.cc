@@ -13,7 +13,6 @@
 #include <string>
 
 #include "uparser.hh"
-#include "ugrammar.hh"
 
 /*----------.
 | UParser.  |
@@ -99,10 +98,10 @@ UParser::process(const std::string& fn)
 void
 UParser::error (const yy::parser::location_type& l, const std::string& msg)
 {
-  std::ostringstream sstr;
-  sstr << "!!! " << l << ": " << msg << "\n" << std::ends;
-  strncpy(errorMessage, sstr.str().c_str(),
-	  std::min(sizeof (errorMessage), sstr.str().size()));
+  std::ostringstream o;
+  o << "!!! " << l << ": " << msg << "\n" << std::ends;
+  strncpy(errorMessage, o.str().c_str(),
+	  std::min(sizeof (errorMessage), o.str().size()));
 }
 
 void

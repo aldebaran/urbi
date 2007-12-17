@@ -24,7 +24,8 @@
 
 # include <vector>
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
+
 # include "uqueue.hh"
 
 /// UQueue with facilities to pop a well formed command.

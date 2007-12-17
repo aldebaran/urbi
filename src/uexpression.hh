@@ -24,10 +24,13 @@
 
 # include <list>
 
-# include "fwd.hh"
+# include "libport/ufloat.h"
+
+# include "kernel/fwd.hh"
+# include "kernel/utypes.hh"
+# include "kernel/memorymanager.hh"
+
 # include "uast.hh"
-# include "utypes.hh"
-# include "memorymanager/memorymanager.hh"
 
 // ****************************************************************************
 //! An expression tree as returned by the parser
@@ -174,6 +177,18 @@ private:
   /// eval() specialized for type == GROUP.
   UValue*
   eval_GROUP (UCommand* command, UConnection* connection);
+
+  /// Functions with no arguments.
+  UValue*
+  eval_FUNCTION_0 (UConnection *connection);
+
+  /// Unary functions.
+  UValue*
+  eval_FUNCTION_1 (UCommand *command, UConnection *connection);
+
+  /// Binary functions.
+  UValue*
+  eval_FUNCTION_2 (UCommand *command, UConnection *connection);
 
   /// eval() specialized for type == FUNCTION.
   UValue*

@@ -1,45 +1,66 @@
 /// \file ucomplaints.cc
 
 #include <cstdlib>
-#include <cassert>
-#include "ucomplaints.hh"
+#include "libport/assert.hh"
+#include "kernel/ucomplaints.hh"
 
+static const char* messages[][250] =
+  {
+    // UErrorCode
+    {
+      "!!! Critical error\n",
+      "!!! Syntax error\n",
+      "!!! Division by zero\n",
+      "!!! Receive buffer full\n",
+      "!!! Out of memory\n",
+      "!!! Send buffer full\n",
+      "!!! Receive buffer corrupted\n",
+      "!!! Memory warning\n",
+      "!!! CPU Overload\n",
+    },
+    // UWarningCode
+    {
+      "!!! Memory overflow warning\n",
+    }
+  };
+
+const char*
+message (UMsgType t, int code)
+{
+  int max = 0;
+
+  if (t < 0 || t >= UMSGMAX)
+    pabort ("unexpected case (UMsgType):" << t);
+
+  switch (t)
+  {
+    case UERRORCODE:
+      max = UERROR_MAX;
+      break;
+    case UWARNINGCODE:
+      max = UWARNING_MAX;
+      break;
+    case UMSGMAX:
+      max = -1;
+      break;
+  };
+
+  if (code < 0 || code >= max)
+    pabort ("unexpected case (message code):" << code);
+
+  return messages[t][code];
+}
+
+// Deprecated
 const char*
 message (UErrorCode n)
 {
-  switch (n)
-  {
-    case UERROR_CRITICAL:
-      return "!!! Critical error\n";
-    case UERROR_SYNTAX:
-      return "!!! Syntax error\n";
-    case UERROR_DIVISION_BY_ZERO:
-      return "!!! Division by zero\n";
-    case UERROR_RECEIVE_BUFFER_FULL:
-      return "!!! Receive buffer full\n";
-    case UERROR_MEMORY_OVERFLOW:
-      return "!!! Out of memory\n";
-    case UERROR_SEND_BUFFER_FULL:
-      return "!!! Send buffer full\n";
-    case UERROR_CPU_OVERLOAD:
-      return "!!! CPU Overload\n";
-    case UERROR_RECEIVE_BUFFER_CORRUPTED:
-      return "!!! Receive buffer corrupted\n";
-    case UERROR_MEMORY_WARNING:
-      return "!!! Memory warning\n";
-  }
-  assert (!"not reachable");
-  abort();
+  return message (UERRORCODE, n);
 }
 
+// Deprecated
 const char*
 message (UWarningCode n)
 {
-  switch (n)
-  {
-    case UWARNING_MEMORY:
-      return "!!! Memory overflow warning\n";
-  }
-  assert (!"not reachable");
-  abort();
+  return message (UWARNINGCODE, n);
 }

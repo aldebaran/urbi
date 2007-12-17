@@ -19,63 +19,66 @@
 
  **************************************************************************** */
 
-#include <cassert> 
+#include <cassert>
 #include <iostream>
-#include "userver.hh"
+
 #include "libport/containers.hh"
-#include "fwd.hh"
-#include "utypes.hh"
+
+#include "kernel/fwd.hh"
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uvariable.hh"
+
 #include "ucallid.hh"
-#include "uvariable.hh"
 
 // **************************************************************************
 //! UCallid constructor.
-UCallid::UCallid (const char *f, const char *s, UCommand_TREE* r)
+UCallid::UCallid (const std::string& f, const std::string& s, UCommand_TREE* r)
   : returnVar (0),
-    fun_id (f),
-    self_id (s),
-    root (r),
-    dying(false)
+    fun_id_ (f),
+    self_id_ (s),
+    root_ (r),
+    dying_(false)
 {
 }
 
 //! UCallid destructor
 UCallid::~UCallid()
 {
-  dying = true;
-  libport::deep_clear (stack);
+  dying_ = true;
+  libport::deep_clear (stack_);
 }
 
 //! Add a variable to the list of variable to liberate
 void
-UCallid::store(UVariable *variable)
+UCallid::store(UVariable* variable)
 {
-  stack.push_front(variable);
+  stack_.push_front(variable);
   variable->setContext(this);
 }
 
 
 //! Remove a variable from the list of variable to liberate
 void
-UCallid::remove(UVariable *variable)
+UCallid::remove(UVariable* variable)
 {
-  if (dying)
+  if (dying_)
     return; //ignore remove call triggered by our dtor calling deep_clear
-  stack.remove(variable);
+  stack_.remove(variable);
 }
 
 //! Access to the call ID
-const char*
-UCallid::str()
+const UString&
+UCallid::str() const
 {
-  return fun_id.str();
+  return fun_id_;
 }
 
 //! Access to the call self ref
-const char*
-UCallid::self()
+const UString&
+UCallid::self() const
 {
-  return self_id.str();
+  return self_id_;
 }
 
 //! Set the returnVar in a function call

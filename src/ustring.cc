@@ -18,224 +18,96 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
+#include "libport/compiler.hh"
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
-#include <iomanip>
 #include "libport/cstring"
 
-#include "ustring.hh"
-#include "userver.hh"
+#include "kernel/ustring.hh"
+#include "kernel/userver.hh"
 
 MEMORY_MANAGER_INIT(UString);
 
 UString::UString(const UString& s)
-  : len_ (s.len_),
-    str_ (s.str_ ? strdup (s.str_) : 0)
+  : str_ (s.str_)
 {
   ADDOBJ(UString);
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 UString::UString(const std::string& s)
-  : len_ (s.size ()),
-    str_ (strdup (s.c_str ()))
+  : str_ (s)
 {
   ADDOBJ(UString);
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 UString::UString(const char* s)
-  : len_ (s ? strlen(s) : 0),
-    str_ (s ? strdup (s) : strdup(""))
+  : str_ (s)
 {
   ADDOBJ(UString);
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
-UString::UString(const UString* s)
+UString::UString(const UString& s1, const UString& s2)
+  : str_ (s1.str_ + "." + s2.str_)
 {
   ADDOBJ(UString);
-  if (s==0)
-  {
-    len_ = 0;
-    str_ = static_cast<char*> (malloc (1));
-    strcpy(str_, "");
-  }
-  else
-  {
-    len_ = s->len();
-    str_ = static_cast<char*> (malloc (len_+1));
-    strcpy(str_, s->str());
-  }
-  if (str_ == 0)
-    len_ = 0;
-  ADDMEM(len_);
-}
-
-
-UString::UString(const UString* s1, const UString* s2)
-{
-  ADDOBJ(UString);
-
-  std::string tmpname = s1->str();
-  tmpname = tmpname + "." + s2->str();
-
-  str_ = static_cast<char*> (malloc (tmpname.length()+1));
-  strcpy(str_, tmpname.c_str());
-
-  if (str_ != 0)
-    len_ = tmpname.length();
-  else
-    len_ = 0;
-  ADDMEM(len_);
+  ADDMEM(size());
 }
 
 
 UString::~UString()
 {
   FREEOBJ(UString);
-  if (str_)
-    free(str_);
-  FREEMEM(len_);
+  FREEMEM(size());
 }
 
-const char* UString::ext(int deb, int length)
+UString&
+UString::operator=(const char* s)
 {
-  if (length<0)
-    length=0;
-  if (deb>=len_)
-    return str_+len_;
-  if (deb+length<len_)
-    str_[deb+length]=0;
-  return str_+deb;
+  assert (s);
+  FREEMEM(size());
+  str_ = s;
+  ADDMEM(size());
+  return *this;
 }
 
-bool UString::equal(const UString* s) const
+UString&
+UString::operator=(const UString* s)
 {
-  if (s == 0)
-    return false;
-  return STREQ(s->str(), str_);
+  assert (s);
+  FREEMEM(size());
+  str_ = s->str_;
+  ADDMEM(size());
+  return *this;
 }
 
-bool UString::tagequal(const UString* s) const
-{
-  if (s == 0)
-    return false;
-  char* p = const_cast<char*>(strchr(s->str(), '.'));
-  if (p)
-    *p = 0;
-  bool res = STREQ(s->str(), str_);
-  if (p)
-    *p = '.';
-  return res;
-}
 
-bool UString::equal(const char* s) const
-{
-  if (s == 0)
-    return false;
-  return STREQ(s, str_);
-}
+/*-------------------------.
+| Freestanding functions.  |
+`-------------------------*/
 
-void UString::update(const char* s)
-{
-  if (s == 0 || s == str_ /*|| (STREQ(s, str_)) */)
-    return;
 
-  if (str_)
-    free(str_);
-  FREEMEM(len_);
-  int slen = strlen(s);
-  str_ = static_cast<char*> (malloc (slen+1));
-  strcpy(str_, s);
-  len_ = slen;
-  ADDMEM(len_);
-}
-
-void UString::update(const UString* s)
-{
-  if (!s)
-    return;
-  if (str_)
-    free(str_);
-  FREEMEM(len_);
-
-  str_ = static_cast<char*> (malloc (s->len()+1));
-  strcpy(str_, s->str());
-  len_ = s->len();
-  ADDMEM(len_);
-}
-
-char*
-UString::un_armor ()
-{
-  char * src = str_;
-  char * dst = str_;
-  char * end = str_+len_;
-  while (src != end)
-  {
-    if (*src == '\\' && end - src >1)
-    {
-      if (src[1]=='n')
-	*dst = '\n';
-      else if (src[1]=='t')
-	*dst = '\t';
-      else if (src[1]=='\\')
-	*dst = '\\';
-      else
-      { //maybe an integer
-	int v,pos;
-	int count = sscanf(src+1, "%d%n", &v, &pos);
-	if (count)
-	{
-	  *dst = static_cast<char>(v);
-	  src += pos-1; //because we do src++ below
-	}
-	else
-	  *dst = src[1];
-      }
-
-      src++;
-    }
-    else
-      *dst = *src;
-    dst++;
-    src++;
-  }
-
-  len_ = dst - str_;
-  str_[len_] = 0;
-  return str_;
-}
-
+// Return the part before the `.', or an empty string.
 std::string
-UString::armor ()
+prefix (const std::string& name)
 {
-  std::string res;
-  res.reserve (len_);
-  for (char* cp = str_; *cp; ++cp)
-  {
-    if (*cp=='\n')
-      res += "\\n";
-    else if (*cp=='\t')
-      res += "\\t";
-    else if (*cp=='"' || *cp=='\\')
-    {
-      res += '\\';
-      res += *cp;
-    }
-    else if (*cp < 32 || static_cast<unsigned char>(*cp) > 127)
-    {
-      std::ostringstream str;
-      str << "\\x"
-	  << std::hex << std::setfill ('0') << std::setw (2)
-	  << static_cast<unsigned int>(static_cast<unsigned char>(*cp));
-      res += str.str();
-    }
-    else
-      res += *cp;
-  }
-  return res;
+  size_t pos = name.find('.');
+  if (pos != std::string::npos)
+    return name.substr(0, pos);
+  else
+    return "";
+}
+
+// Return the part after the first `.', or the whole string if there is none.
+std::string
+suffix (const std::string& name)
+{
+  size_t pos = name.find('.');
+  if (pos != std::string::npos)
+    return name.substr(pos + 1);
+  else
+    return name;
 }

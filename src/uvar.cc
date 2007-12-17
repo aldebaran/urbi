@@ -20,9 +20,10 @@ For more information, comments, bug reports: http://www.urbiforge.com
 **************************************************************************** */
 
 #include "urbi/uobject.hh"
-#include "userver.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
 
 namespace urbi
 {
@@ -45,7 +46,7 @@ namespace urbi
   UVar::__init()
   {
     owned = false;
-    varmap[name].push_back(this);
+    (*varmap)[name].push_back(this);
 
     HMvariabletab::iterator it = ::urbiserver->variabletab.find(name.c_str());
     if (it == ::urbiserver->variabletab.end())
@@ -73,9 +74,9 @@ namespace urbi
   //! UVar destructor.
   UVar::~UVar()
   {
-    UVarTable::iterator varmapfind = varmap.find(name);
+    UVarTable::iterator varmapfind = varmap->find(name);
 
-    if (varmapfind != varmap.end())
+    if (varmapfind != varmap->end())
     {
       for (std::list<UVar*>::iterator it = varmapfind->second.begin();
 	   it != varmapfind->second.end();)
@@ -85,7 +86,7 @@ namespace urbi
 	  ++it;
 
       if (varmapfind->second.empty())
-	varmap.erase(varmapfind);
+	varmap->erase(varmapfind);
     }
 
     if (vardata)
@@ -99,6 +100,16 @@ namespace urbi
   {
     delete vardata;
     vardata = 0;
+  }
+
+  //! Return the internal variable.
+  UVariable*
+  UVar::variable()
+  {
+    if (vardata)
+      return vardata->variable;
+    else
+      return 0;
   }
 
   //! UVar float reset  (deep assignment)
@@ -127,14 +138,11 @@ namespace urbi
     else
     {
       //write to target, blend mode override we're not in sync with cycles
+      //do it in the right order
+      vardata->variable->selfSet(&n); //rangecheck and target update
       if (vardata->variable->autoUpdate)
-      {
-	vardata->variable->selfSet(&n);
-	vardata->variable->setTarget();
-	vardata->variable->setSensorVal(vardata->variable->target);
-      }
-      else
-	vardata->variable->setFloat(n);
+	vardata->variable->setSensorVal(vardata->variable->target); //set value
+      vardata->variable->setTarget(); //invoke callbacks
     }
   }
 
@@ -210,7 +218,7 @@ namespace urbi
   UVar::operator std::string ()
   {
     if (vardata && vardata->variable->value->dataType == ::DATA_STRING)
-      return std::string(vardata->variable->value->str->str());
+      return std::string(vardata->variable->value->str->c_str());
     else
       return std::string("");
   }
@@ -274,6 +282,8 @@ namespace urbi
   UVar::in()
   {
     static ufloat er=0;
+    if (vardata && !vardata->variable->isInSetTarget())
+      vardata->variable->get();
     if (vardata && vardata->variable->value->dataType == ::DATA_NUM)
       return vardata->variable->value->val;
     else

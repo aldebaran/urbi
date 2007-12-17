@@ -2,20 +2,23 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.60])
-AC_INIT([kernel1], [1.5], [kernel-bugs@lists.gostai.com])
+AC_INIT([Urbi Kernel], [1.5], [kernel-bugs@lists.gostai.com], [kernel])
+URBI_KERNEL_VERSION
+URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2005-2007])
 
 # Libtoolize needs to see this invocation...
 AC_CONFIG_AUX_DIR([build-aux])
 URBI_BUILD_AUX
 
 # Automake.
-AM_INIT_AUTOMAKE([1.9.6 foreign tar-ustar -Wall dist-zip nostdinc])
+AM_INIT_AUTOMAKE([1.10 foreign tar-ustar -Wall dist-zip nostdinc])
 
 ## ------------ ##
 ## Parameters.  ##
 ## ------------ ##
 
-URBI_KERNEL_DIRS([engine])
+URBI_PACKAGE_KIND([kernel])
+URBI_DIRS([engine])
 
 URBI_DOC
 
@@ -29,12 +32,12 @@ TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
 TC_CXX_WARNINGS([[-Wcast-align],
- 		 [-Wcast-qual],
- 		 [-Wmissing-prototypes],
- 		 [-Wstrict-prototypes],
- 		 [-Wwrite-strings],
- 		 [-Wbad-function-cast],
- 		 [-Wmissing-declarations]])
+		 [-Wcast-qual],
+		 [-Wmissing-prototypes],
+		 [-Wstrict-prototypes],
+		 [-Wwrite-strings],
+		 [-Wbad-function-cast],
+		 [-Wmissing-declarations]])
 
 # We don't need shared libraries, speed the compilation up.
 AC_ENABLE_SHARED([no])

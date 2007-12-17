@@ -22,7 +22,7 @@
 #ifndef UVARIABLELIST_HH
 # define UVARIABLELIST_HH
 
-# include "fwd.hh"
+# include "kernel/fwd.hh"
 
 /// A list of UVariableName.
 class UVariableList

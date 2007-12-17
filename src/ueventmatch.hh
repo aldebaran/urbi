@@ -22,8 +22,7 @@
 # include <list>
 # include <string>
 
-# include "fwd.hh"
-# include "ustring.hh"
+# include "kernel/fwd.hh"
 
 namespace kernel
 {

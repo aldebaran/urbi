@@ -18,42 +18,52 @@
  For more information, comments, bug reports: http://www.urbiforge.net
 
  **************************************************************************** */
-
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
+#include "libport/config.h"
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
 #include <cstdarg>
-#include <string>
+
 #include <fstream>
+#include <sstream>
+#include <string>
+
+#include <boost/foreach.hpp>
+#include <boost/format.hpp>
+#if ! defined LIBPORT_URBI_ENV_AIBO
+# include <boost/thread.hpp>
+#endif
 
 #include "libport/containers.hh"
 
+#include "urbi/uobject.hh"
+#include "urbi/usystem.hh"
+
+#include "kernel/userver.hh"
+#include "kernel/utypes.hh"
+#include "kernel/uvalue.hh"
+#include "kernel/uvariable.hh"
+
+#include "config.h"
 #include "ubanner.hh"
-#include "uconnection.hh"
+#include "ucommand.hh"
+#include "ucommandqueue.hh"
+#include "uqueue.hh"
 #include "ueventcompound.hh"
 #include "ueventhandler.hh"
 #include "ueventmatch.hh"
 #include "ufunction.hh"
 #include "ughostconnection.hh"
-#include "urbi/uobject.hh"
-#include "urbi/usystem.hh"
-#include "userver.hh"
-#include "utypes.hh"
-#include "uvalue.hh"
-#include "uvariable.hh"
 
 // Global server reference
-UServer *urbiserver= 0;
-UString **globalDelete = 0;
+UServer *urbiserver = 0;
 
 const char* EXTERNAL_MESSAGE_TAG   = "__ExternalMessage__";
-int URBI_unicID = 10000; ///< unique identifier to create new references
 
 // Formatting for the echo and error outputs.
-
 const char* DISPLAY_FORMAT   = "[%ld] %-35s %s";
 const char* DISPLAY_FORMAT1  = "[%ld] %-35s %s : %ld";
 const char* DISPLAY_FORMAT2  = "[%d] %-35s %s : %d/%d";
@@ -62,47 +72,27 @@ const char* UNKNOWN_TAG = "notag";
 const char* MAINDEVICE  = "system";
 
 // Memory counter system
-
 int availableMemory;
 int usedMemory;
 
 
-//! UServer constructor.
-/*! UServer constructor
-
- Unlike UConstructor, it is not required that you handle the memory
- management task when you create the robot-specific sub class. The
- difference in memory between your class and the UServer class is
- considered as neglectible and included in the security margin. If you
- don't understand this point, ignore it.
-
- \param frequency gives the value in msec of the server update,
- which are the calls to the "work" function. These calls must be done at
- a fixed, precise, real-time frequency to let the server computer motor
- trajectories between two "work" calls.
-
- \param freeMemory indicates the biggest malloc possible on the system
- when the server has just started. It is used to determine a high
- limit of memory allocation, thus avoiding later to run out of memory
- during a new or malloc.
- */
-UServer::UServer(ufloat frequency,
+UServer::UServer(ufloat period,
 		 int freeMemory,
 		 const char* mainName)
   : reseting (false),
     stage (0),
     debugOutput (false),
-    mainName (new UString(mainName)),
+    mainName_ (mainName),
     somethingToDelete (false),
     uservarState (false),
     cpuoverload (false),
     signalcpuoverload (false),
     cpucount (0),
     cputhreshold (1.2),
-    defcheck (false),
+    defcheck (defcheck_teacher),
     stopall (false),
     systemcommands (true),
-    frequency_(frequency),
+    period_(period),
     securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
     isolate_ (false),
     uid(0)
@@ -111,6 +101,7 @@ UServer::UServer(ufloat frequency,
   memoryOverflow = securityBuffer_ == 0;
   usedMemory = 0;
   availableMemory = freeMemory;
+  // FIXME: What the heck???  We don't even check if it fits!!!
   availableMemory -=  3000000; // Need 3.1Mo at min to run safely.
   // You might hack this for a small
   // size server, but anything with
@@ -142,7 +133,77 @@ UServer::UServer(ufloat frequency,
   systemObjects.push_back (empty_list);
 }
 
-/// Sets the system.arg list in URBI
+void
+UServer::initialize()
+{
+  updateTime();
+  currentTime = latestTime = lastTime();
+  previousTime = currentTime - 0.000001; // avoid division by zero at start
+  previous2Time = previousTime - 0.000001; // avoid division by zero at start
+  previous3Time = previous2Time - 0.000001; // avoid division by zero at start
+
+  // Display the banner.
+  {
+    bool old_debugOutput = debugOutput;
+    debugOutput = true;
+    display(::HEADER_BEFORE_CUSTOM);
+
+    int i = 0;
+    char customHeader[1024];
+    do {
+      getCustomHeader(i, customHeader, 1024);
+      if (customHeader[0])
+	display(customHeader);
+      ++i;
+    } while (customHeader[0]!=0);
+
+    display(::HEADER_AFTER_CUSTOM);
+    display("Ready.\n");
+
+    debugOutput = old_debugOutput;
+  }
+
+  //The order is important: ghost connection, plugins, urbi.ini
+
+  // Ghost connection
+  {
+    DEBUG (("Setting up ghost connection..."));
+    ghost_ = new UGhostConnection(this);
+    std::ostringstream o;
+    o << 'U' << (long)ghost_;
+
+    new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
+    new UVariable(MAINDEVICE, "name", mainName_.c_str());
+    uservarState = true;
+    DEBUG (("done\n"));
+  }
+
+  // Cached taginfos.
+  TagInfo::initializeTagInfos();
+
+  // Plugins (internal components)
+  {
+    DEBUG (("Loading objecthubs..."));
+    BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+      i->init(i->name);
+    DEBUG (("done\n"));
+
+    DEBUG (("Loading hubs..."));
+    BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+      i->init(i->name);
+    DEBUG (("done\n"));
+  }
+
+  DEBUG (("Loading URBI.INI..."));
+  if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
+  {
+    ghost_->newDataAdded = true;
+    ghost_->recvQueue().push ("#line 1 \"\"\n");
+  }
+  DEBUG (("done\n"));
+}
+
+
 void
 UServer::main (int argc, const char* argv[])
 {
@@ -161,68 +222,6 @@ UServer::main (int argc, const char* argv[])
   }
 
   new UVariable(MAINDEVICE, "args", arglistv);
-}
-
-//! Initialization of the server. Displays the header message & init stuff
-/*! This function must be called once the server is operational and
- able to print messages. It is a requirement for URBI compliance to print
- the header at start, so this function *must* be called. Beside, it also
- do initalization work for the devices and system variables.
- */
-void
-UServer::initialization()
-{
-  updateTime();
-  currentTime = latestTime = lastTime();
-  previousTime = currentTime - 0.000001; // avoid division by zero at start
-  previous2Time = previousTime - 0.000001; // avoid division by zero at start
-  previous3Time = previous2Time - 0.000001; // avoid division by zero at start
-
-  debugOutput     = true;
-  display(::HEADER_BEFORE_CUSTOM);
-
-  int i = 0;
-  char customHeader[1024];
-  do {
-    getCustomHeader(i, (char*)customHeader, 1024);
-    if (customHeader[0])
-      display((const char*) customHeader);
-    ++i;
-  } while (customHeader[0]!=0);
-
-  display(::HEADER_AFTER_CUSTOM);
-  display("Ready.\n");
-
-  debugOutput     = false;
-
-  //The order is important: ghost connection, plugins, urbi.ini
-
-  // Ghost connection
-  ghost = new UGhostConnection(this);
-
-  char tmpbuffer_ghostTag[50];
-  sprintf(tmpbuffer_ghostTag, "U%ld", (long)ghost);
-
-  new UVariable(MAINDEVICE, "ghostID", tmpbuffer_ghostTag);
-  new UVariable(MAINDEVICE, "name", mainName->str());
-  uservarState = true;
-
-  // cached taginfos
-  UCommand::initializeTagInfos();
-  // Plugins (internal components)
-
-  for (urbi::UStartlistHub::iterator retr = urbi::objecthublist->begin();
-       retr != urbi::objecthublist->end();
-       ++retr)
-    (*retr)->init((*retr)->name);
-
-  for (urbi::UStartlist::iterator retr = urbi::objectlist->begin();
-       retr != urbi::objectlist->end();
-       ++retr)
-    (*retr)->init((*retr)->name);
-
-  if (loadFile("URBI.INI", &ghost->recvQueue()) == USUCCESS)
-    ghost->newDataAdded = true;
 }
 
 //! Function called before work
@@ -244,46 +243,29 @@ UServer::afterWork()
 }
 
 
-//! Main processing loop of the server
-/*! This function must be called every "frequency_" msec to ensure the proper
- functionning of the server. It will call the command execution, the
- connection message sending when they are delayed, etc...
-
- "frequency_" is a parameter of the server, given in the constructor.
- */
 void
-UServer::work()
+UServer::work_exec_timers_ ()
 {
-  libport::BlockLock bl(this);
-  // CPU Overload test
-  updateTime();
-  previous3Time = previous2Time;
-  previous2Time = previousTime;
-  previousTime  = currentTime;
-  currentTime   = lastTime();
-
-  // Execute Timers
-  for (urbi::UTimerTable::iterator i = urbi::timermap.begin();
-       i != urbi::timermap.end();
-       ++i)
-    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
+  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::timermap)
+    if (i->lastTimeCalled - currentTime + i->period < period_ / 2)
     {
-      (*i)->call();
-      (*i)->lastTimeCalled = currentTime;
+      i->call();
+      i->lastTimeCalled = currentTime;
     }
+}
 
+void
+UServer::work_access_and_change_ ()
+{
+  BOOST_FOREACH (UVariable* i, access_and_change_varlist)
+    i->get ();
+}
 
-  beforeWork();
-
-  // Access & Change variable list
-  for (std::list<UVariable*>::iterator i = access_and_change_varlist.begin ();
-       i != access_and_change_varlist.end ();
-       ++i)
-    (*i)->get ();
-
+bool
+UServer::work_memory_check_ ()
+{
   // memory test
   memoryCheck(); // Check for memory availability
-
   // recover the security memory space, with a margin (size x 2)
   // if the margin can be malloced, then freed, then remalloced with
   // the correct size, then the memoryOverflow error is removed.
@@ -303,92 +285,116 @@ UServer::work()
     }
   }
 
-  bool signalMemoryOverflow = false;
   if (memoryOverflow && securityBuffer_)
-    {
-      // free space to ensure the warning messages will
-      // be sent without problem.
-      free (securityBuffer_);
-      securityBuffer_ = 0;
-      signalMemoryOverflow = true;
-    }
+  {
+    // Free space to ensure the warning messages will be sent without
+    // problem.
+    free (securityBuffer_);
+    securityBuffer_ = 0;
+    return true;
+  }
 
+  return false;
+}
 
+void
+UServer::work_handle_connections_ (bool overflow)
+{
   // Scan currently opened connections for ongoing work
-  for (std::list<UConnection*>::iterator r = connectionList.begin();
-       r != connectionList.end();
-       ++r)
-    if ((*r)->isActive())
+  BOOST_FOREACH (UConnection* r, connectionList)
+    if (r->isActive())
     {
-      if (!(*r)->isBlocked())
-	(*r)->continueSend();
+      if (!r->isBlocked())
+	*r << UConnection::continueSend;
 
-      if (signalMemoryOverflow)
-	(*r)->errorSignal(UERROR_MEMORY_OVERFLOW);
+      if (overflow)
+	*r << UConnection::errorSignal(UERROR_MEMORY_OVERFLOW);
       if (signalcpuoverload)
       {
-	(*r)->errorSignal(UERROR_CPU_OVERLOAD);
+	*r << UConnection::errorSignal(UERROR_CPU_OVERLOAD);
 	signalcpuoverload = false;
       }
 
-      (*r)->errorCheck(UERROR_MEMORY_OVERFLOW);
-      (*r)->errorCheck(UERROR_MEMORY_WARNING);
-      (*r)->errorCheck(UERROR_SEND_BUFFER_FULL);
-      (*r)->errorCheck(UERROR_RECEIVE_BUFFER_FULL);
-      (*r)->errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
-      (*r)->errorCheck(UERROR_CPU_OVERLOAD);
+      *r << UConnection::errorCheck(UERROR_MEMORY_OVERFLOW);
+      *r << UConnection::errorCheck(UERROR_MEMORY_WARNING);
+      *r << UConnection::errorCheck(UERROR_SEND_BUFFER_FULL);
+      *r << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_FULL);
+      *r << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
+      *r << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
 
       // Run the connection's command queue:
-      if ((*r)->activeCommand)
+      if (r->activeCommand)
       {
-	(*r)->obstructed = true; // will be changed to 'false'
-	//if the whole tree is visited
-	(*r)->treeLock.lock();
-	(*r)->inwork = true;   // to distinguish this call of
-	//execute from the one in receive
-	(*r)->execute((*r)->activeCommand);
-	(*r)->inwork = false;
-	(*r)->treeLock.unlock();
+	r->obstructed = true; // will be changed to 'false'
+	{
+	  //if the whole tree is visited
+# if ! defined LIBPORT_URBI_ENV_AIBO
+	  boost::try_mutex::scoped_lock(r->treeMutex);
+# endif
+	  r->inwork = true;   // to distinguish this call of
+	  //execute from the one in receive
+	  r->execute(r->activeCommand);
+	  r->inwork = false;
+	}
       }
 
-      if ((*r)->newDataAdded)
+      if (r->newDataAdded)
       {
 	// used by loadFile and eval to
 	// delay the parsing after the completion
 	// of execute().
-	(*r)->newDataAdded = false;
-	(*r)->received("");
+	r->newDataAdded = false;
+	*r << UConnection::received("");
       }
     }
+}
 
+void
+UServer::work_handle_stopall_ ()
+{
   // Scan currently opened connections for deleting marked
   // commands or killall order
   if (reseting && stage==0)
     stopall = true;
 
-  for (std::list<UConnection*>::iterator r = connectionList.begin();
-       r != connectionList.end();
-       ++r)
-    if ((*r)->isActive() && (*r)->activeCommand)
+  BOOST_FOREACH (UConnection* r, connectionList)
+    if (r->isActive() && r->activeCommand)
     {
-      if ((*r)->killall || stopall)
+      if (r->killall || stopall)
       {
-	(*r)->killall = false;
-	delete (*r)->activeCommand;
-	(*r)->activeCommand = 0;
+	r->killall = false;
+	delete r->activeCommand;
+	r->activeCommand = 0;
       }
-      else if ((*r)->activeCommand->toDelete)
+      else if (r->activeCommand->toDelete)
       {
-	delete (*r)->activeCommand;
-	(*r)->activeCommand = 0;
+	delete r->activeCommand;
+	r->activeCommand = 0;
       }
       else if (somethingToDelete)
-	(*r)->activeCommand->deleteMarked();
+	r->activeCommand->deleteMarked();
     }
+
+  // Delete all connections with closing=true
+  for (std::list<UConnection *>::iterator i = connectionList.begin();
+       i!= connectionList.end(); )
+  {
+    if ((*i)->closing)
+    {
+      delete *i;
+      i = connectionList.erase(i);
+    }
+    else
+      i++;
+  }
 
   somethingToDelete = false;
   stopall = false;
+}
 
+void
+UServer::work_blend_values_ ()
+{
   // Values final assignment and nbAverage reset to 0
   for (std::list<UVariable*>::iterator i = reinitList.begin();
        i != reinitList.end();)
@@ -408,7 +414,7 @@ UServer::work()
       (*i)->nbAverage = 0;
       (*i)->reloop = false;
 
-      if ((*i)->blendType == UMIX || (*i)->blendType == UADD)
+      if ((*i)->blendType == urbi::UMIX || (*i)->blendType == urbi::UADD)
 	if ((*i)->value->dataType == DATA_NUM)
 	{
 	  if ((*i)->autoUpdate)
@@ -432,24 +438,24 @@ UServer::work()
       ++i;
     }
   }
+}
 
+void
+UServer::work_execute_hub_updater_ ()
+{
   // Execute Hub Updaters
-  for (urbi::UTimerTable::iterator i = urbi::updatemap.begin();
-       i != urbi::updatemap.end();
-       ++i)
-    if ((*i)->lastTimeCalled - currentTime + (*i)->period < frequency_ / 2)
+  BOOST_FOREACH (urbi::UTimerCallback* i, *urbi::updatemap)
+    if (i->lastTimeCalled - currentTime + i->period < period_ / 2)
     {
-      (*i)->call();
-      (*i)->lastTimeCalled = currentTime;
+      i->call();
+      i->lastTimeCalled = currentTime;
     }
+}
 
-  // after work
-  afterWork();
-
-  updateTime();
-  latestTime = lastTime();
-
-  cpuload = (latestTime - currentTime)/getFrequency();
+void
+UServer::work_test_cpuoverload_ ()
+{
+  cpuload = (latestTime - currentTime) / period_get();
 
   if (!cpuoverload)
     if (cpuload > cputhreshold)
@@ -465,12 +471,17 @@ UServer::work()
     else if (cpucount > 0)
       --cpucount;
 
+
   if (cpuoverload && cpuload < 1)
   {
     cpuoverload = false;
     cpucount = 0;
   }
+}
 
+void
+UServer::work_reset_if_needed_ ()
+{
   // Reseting procedure
   if (reseting)
   {
@@ -478,12 +489,10 @@ UServer::work()
     if (stage == 1)
     {
       //delete objects first
-      for (HMvariabletab::iterator i = variabletab.begin();
-	   i != variabletab.end();
-	   ++i)
-	if (i->second->value
-	    && i->second->value->dataType == DATA_OBJ)
-	  varToReset.push_back(i->second);
+      BOOST_FOREACH (HMvariabletab::value_type i, variabletab)
+	if (i.second->value
+	    && i.second->value->dataType == DATA_OBJ)
+	  varToReset.push_back(i.second);
 
       while (!varToReset.empty())
 	for (std::list<UVariable*>::iterator it = varToReset.begin();
@@ -497,18 +506,14 @@ UServer::work()
 	    ++it;
 
       //delete hubs
-      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	   i != urbi::objecthublist->end();
-	   ++i)
-	delete (*i)->getUObjectHub ();
+      BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+	delete i->getUObjectHub ();
 
 
       //delete the rest
-      for (HMvariabletab::iterator i = variabletab.begin();
-	   i != variabletab.end();
-	   ++i)
-	if (i->second->uservar)
-	  varToReset.push_back(i->second);
+      BOOST_FOREACH (HMvariabletab::value_type i, variabletab)
+	if (i.second->uservar)
+	  varToReset.push_back(i.second);
 
       libport::deep_clear (varToReset);
 
@@ -522,60 +527,115 @@ UServer::work()
       // when commands will be
       //tagtab.clear();
 
-      for (std::list<UConnection*>::iterator i = connectionList.begin();
-	   i != connectionList.end();
-	   ++i)
-	if ((*i)->isActive())
-	  (*i)->send("*** Reset completed. Now, restarting...\n", "reset");
+      BOOST_FOREACH (UConnection* i, connectionList)
+	if (i->isActive())
+	  *i << UConnection::send("*** Reset completed. Now, restarting...\n",
+				  "reset");
 
       //restart hubs
-      for (urbi::UStartlistHub::iterator i = urbi::objecthublist->begin();
-	   i != urbi::objecthublist->end();
-	   ++i)
-	(*i)->init((*i)->name);
+      BOOST_FOREACH (urbi::baseURBIStarterHub* i, *urbi::objecthublist)
+	i->init(i->name);
 
       //restart uobjects
-      for (urbi::UStartlist::iterator i = urbi::objectlist->begin();
-	   i != urbi::objectlist->end();
-	   ++i)
-	(*i)->init((*i)->name);
+      BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+	i->init(i->name);
 
       //reload URBI.INI
-      loadFile("URBI.INI", &ghost->recvQueue());
+      loadFile("URBI.INI", &ghost_->recvQueue());
+      ghost_->recvQueue().push ("#line 1 \"\"\n");
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
-      ghost->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
-      ghost->newDataAdded = true;
+      ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
+      ghost_->newDataAdded = true;
     }
-    else
+    else if (libport::mhas(variabletab, "__system__.resetsignal"))
     {
-      HMvariabletab::iterator findResetSignal
-	= variabletab.find("__system__.resetsignal");
-      if (findResetSignal != variabletab.end())
-      {
-	//reload CLIENT.INI
-	for (std::list<UConnection*>::iterator i = connectionList.begin();
-	     i != connectionList.end();
-	     ++i)
-	  if ((*i)->isActive() && (*i) != ghost)
-	  {
-	    (*i)->send("*** Restart completed.\n", "reset");
-
-	    loadFile("CLIENT.INI", &(*i)->recvQueue());
-	    (*i)->newDataAdded = true;
-	    (*i)->send("*** Ready.\n", "reset");
-	  }
-	reseting = false;
-	stage = 0;
-      }
+      //reload CLIENT.INI
+      BOOST_FOREACH (UConnection* i, connectionList)
+	if (i->isActive() && i != ghost_)
+	{
+	  *i << UConnection::send("*** Restart completed.\n", "reset");
+	  loadFile("CLIENT.INI", &i->recvQueue());
+	  i->recvQueue().push ("#line 1 \"\"\n");
+	  i->newDataAdded = true;
+	  *i << UConnection::send("*** Ready.\n", "reset");
+	}
+      reseting = false;
+      stage = 0;
     }
   }
+}
+
+void
+UServer::work()
+{
+# if ! defined LIBPORT_URBI_ENV_AIBO
+  boost::recursive_mutex::scoped_lock lock(mutex);
+# endif
+  // CPU Overload test
+  updateTime ();
+  previous3Time = previous2Time;
+  previous2Time = previousTime;
+  previousTime  = currentTime;
+  currentTime   = lastTime ();
+
+  work_exec_timers_ ();
+
+  beforeWork ();
+
+  work_access_and_change_ ();
+  bool overflow = work_memory_check_ ();
+  work_handle_connections_ (overflow);
+  work_handle_stopall_ ();
+  work_blend_values_ ();
+  work_execute_hub_updater_ ();
+
+  afterWork ();
+
+  updateTime ();
+  latestTime = lastTime ();
+
+  work_test_cpuoverload_ ();
+
+  work_reset_if_needed_ ();
 }
 
 //! UServer destructor.
 UServer::~UServer()
 {
-  FREEOBJ(UServer); // Not useful here, but remains for consistency.
+  FREEOBJ(UServer);
+}
+
+void
+UServer::vecho_key(const char* key, const char* s, va_list args)
+{
+  // This local declaration is rather unefficient but is necessary
+  // to insure that the server could be made semi-reentrant.
+
+  char key_[6];
+
+  if (key == NULL)
+    key_[0] = 0;
+  else
+  {
+    strncpy(key_, key, 5);
+    key_[5] = 0;
+  }
+
+  char buf1[MAXSIZE_INTERNALMESSAGE];
+  vsnprintf(buf1, sizeof buf1, s, args);
+  char buf2[MAXSIZE_INTERNALMESSAGE];
+  snprintf(buf2, sizeof buf2, "%-90s [%5s]\n", buf1, key_);
+  display(buf2);
+}
+
+void
+UServer::echoKey(const char* key, const char* s, ...)
+{
+  va_list args;
+  va_start(args, s);
+  vecho_key(key, s, args);
+  va_end(args);
 }
 
 //! Displays a formatted error message.
@@ -588,22 +648,10 @@ UServer::~UServer()
 void
 UServer::error(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [ERROR]\n",
-	   tmpBuffer_);
-
-  display(internalMessage_);
+  va_list args;
+  va_start(args, s);
+  vecho_key("ERROR", s, args);
+  va_end(args);
 }
 
 //! Displays a formatted message.
@@ -619,62 +667,10 @@ UServer::error(const char* s, ...)
 void
 UServer::echo(const char* s, ...)
 {
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [     ]\n",
-	   tmpBuffer_);
-
-  display(internalMessage_);
-}
-
-//! Displays a formatted message, with a key
-/*! This function uses the virtual URobot::display() function to make the
- message printing robot-specific.
- It formats the output in a standard URBI way by adding a key between
- brackets at the end. This key can be "" or NULL.It can be used to
- visually extract information from the flux of messages printed by
- the server.
- \param key is the message key. Maxlength = 5 chars.
- \param s is the formatted string containing the message.
- */
-void
-UServer::echoKey(const char* key, const char* s, ...)
-{
-  // This local declaration is rather unefficient but is necessary
-  // to insure that the server could be made semi-reentrant.
-
-  char internalMessage_[UServer::MAXSIZE_INTERNALMESSAGE];
-  char tmpBuffer_      [UServer::MAXSIZE_INTERNALMESSAGE];
-  char key_[6];
-
-  if (key == NULL)
-    key_[0] = 0;
-  else
-  {
-    strncpy(key_, key, 5);
-    key_[5] = 0;
-  }
-
-  va_list arg;
-
-  va_start(arg, s);
-  vsnprintf(tmpBuffer_, MAXSIZE_INTERNALMESSAGE, s, arg);
-  va_end(arg);
-  snprintf(internalMessage_, MAXSIZE_INTERNALMESSAGE,
-	   "%-90s [%5s]\n",
-	   tmpBuffer_, key_);
-
-  display(internalMessage_);
+  va_list args;
+  va_start(args, s);
+  vecho_key("     ", s, args);
+  va_end(args);
 }
 
 //! Displays a raw message for debug
@@ -791,48 +787,15 @@ UServer::updateTime()
   lastTime_ = getTime();
 }
 
-//! Overload this function to return a specific header for your URBI server
-/*! Used to give some information specific to your server in the standardized
- header which is displayed on the server output at start and in the
- connection when a new connection is created.\n
- Typical custom header should be like:
-
- *** URBI version xx.xx for \<robotname\> robot\\n\n
- *** (c) Copyright \<year\> \<name\>\\n
-
- The function should return in header the line corresponding to 'line'
- or an empty string (not NULL!) when there is no line any more.
- Each line is supposed to end with a carriage return \\n and each line should
- start with three empty spaces. This complicated method is necessary to allow
- the connection to stamp every line with the standard URBI prefix [time:tag].
-
- \param line is the requested line number
- \param header the custom header
- \param maxlength the maximum length allowed for the header (the parameter
- has been malloc'ed for that size). Typical size is 1024 octets and
- should be enough for any reasonable header.
- */
 void
 UServer::getCustomHeader (int, char* header, int)
 {
   header[0] = 0; // empty string
 }
 
-//! Check if there is enough free memory to run
-/*! Every time there is a new, a malloc, a delete or free or a strdup in the
- server, the global variable "usedMemory" is updated. The "memoryCheck"
- function checks that the currently used memory is less than the maximum
- availableMemory declared at the the server initialization.
- If it is more than the maximum, an memoryOverflow is raised and the
- server enter isolation mode.
-
- \sa isIsolated()
- */
 void
 UServer::memoryCheck ()
 {
-  static bool warningSent = false;
-
   if (usedMemory > availableMemory)
   {
     memoryOverflow = true;
@@ -842,17 +805,15 @@ UServer::memoryCheck ()
   // Issue a warning when memory reaches 80% of use (except if you know what
   // you are doing, you better take appropriate measures when this warning
   // reaches your connection...
-
+  static bool warningSent = false;
   if (usedMemory > (int)(0.8 * availableMemory) && !warningSent)
   {
     warningSent = true;
 
     // Scan currently opened connections
-    for (std::list<UConnection*>::iterator i = connectionList.begin();
-	 i != connectionList.end();
-	 ++i)
-      if ((*i)->isActive())
-	(*i)->warning(UWARNING_MEMORY);
+    BOOST_FOREACH (UConnection* i, connectionList)
+      if (i->isActive())
+	(*i) << UWARNING_MEMORY;
   }
 
   // Hysteresis mechanism
@@ -860,36 +821,25 @@ UServer::memoryCheck ()
     warningSent = false;
 }
 
-//! Evaluate how much memory is available for a malloc
-/*! This function tries to evaluate how much memory is available for a malloc,
- using brute force dichotomic allocation. This is the only known way to get
- this information on most systems (like OPENR).
- */
-int
-UServer::memory()
+size_t
+UServer::memory() const
 {
-  int memo;
-  int memo1;
-  int memo2;
-  void *buf;
-
-  memo  = 50000000;
-  memo1 = 0;
-  memo2 = memo;
-  while (memo2 > memo1+1)
+  size_t low = 0;
+  size_t high = 50000000;
+  size_t mid = 0;
+  while (low + 1 < high)
   {
-    memo = (memo1 + memo2)/2;
-    buf = malloc(memo);
-    if (buf)
+    mid = (low + high)/2;
+    if (void *buf = malloc(mid))
     {
       free(buf);
-      memo1 = memo;
+      low = mid;
     }
     else
-      memo2 = memo;
+      high = mid;
   }
 
-  return memo;
+  return mid;
 }
 
 //! Get a variable in the hash table
@@ -897,15 +847,8 @@ UVariable*
 UServer::getVariable (const char *device,
 		      const char *property)
 {
-  char tmpbuffer[1024];
-  HMvariabletab::iterator hmi;
-
-  snprintf(tmpbuffer, 1024, "%s.%s", device, property);
-
-  if ((hmi = variabletab.find(tmpbuffer)) != variabletab.end())
-    return hmi->second;
-  else
-    return 0;
+  std::string n = std::string (device) + "." + property;
+  return libport::find0(variabletab, n.c_str());
 }
 
 
@@ -914,7 +857,7 @@ UServer::getVariable (const char *device,
 void
 UServer::mark(UString* stopTag)
 {
-  HMtagtab::iterator it = tagtab.find(stopTag->str());
+  HMtagtab::iterator it = tagtab.find(stopTag->c_str());
   if (it == tagtab.end())
     return; //no command with this tag
   TagInfo* ti = &it->second;
@@ -924,16 +867,12 @@ UServer::mark(UString* stopTag)
 void
 UServer::mark(TagInfo* ti)
 {
-  for (std::list<UCommand*>::iterator i = ti->commands.begin();
-      i != ti->commands.end();
-      ++i)
-    if ((*i)->status != UCommand::UONQUEUE || (*i)->morphed)
-      (*i)->toDelete = true;
+  BOOST_FOREACH(UCommand* i, ti->commands)
+    if (i->status != UCommand::UONQUEUE || i->morphed)
+      i->toDelete = true;
 
-  for (std::list<TagInfo*>::iterator i = ti->subTags.begin();
-       i != ti->subTags.end();
-       ++i)
-    mark(*i);
+  BOOST_FOREACH (TagInfo* i, ti->subTags)
+    mark(i);
 }
 
 
@@ -1000,6 +939,8 @@ namespace
 std::string
 UServer::find_file (const char* base)
 {
+  assert(base);
+  //DEBUG(("Looking for file %s\n", base));
   for (path_type::iterator p = path.begin(); p != path.end(); ++p)
   {
     std::string f = *p + "/" + base;
@@ -1018,20 +959,24 @@ UServer::find_file (const char* base)
 #define URBI_BUFSIZ 1024
 
 UErrorValue
-UServer::loadFile (const char* base, UCommandQueue* q)
+UServer::loadFile (const char* base, UCommandQueue* q, QueueType type)
 {
   std::string f = find_file (base);
   std::ifstream is (f.c_str(), std::ios::binary);
   if (!is)
     return UFAIL;
 
+  if (type == QUEUE_URBI)
+    q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
   while (is.good ())
   {
     char buf[URBI_BUFSIZ];
-    is.read (buf, URBI_BUFSIZ);
+    is.read (buf, sizeof buf);
     if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
       return UFAIL;
   }
+  if (type == QUEUE_URBI)
+    q->push ("#pop\n");
   is.close();
 
   return USUCCESS;
@@ -1045,7 +990,7 @@ UServer::loadFile (const char* base, UCommandQueue* q)
 void
 UServer::addConnection(UConnection *connection)
 {
-  if (connection == 0 || connection->UError != USUCCESS)
+  if (!connection || connection->uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",
 	  "UConnection constructor failed");
@@ -1067,9 +1012,16 @@ UServer::removeConnection(UConnection *connection)
   delete connection;
 }
 
+
+UConnection&
+UServer::getGhostConnection ()
+{
+  return *ghost_;
+}
+
 //! Adds an alias in the server base
 /*! This function is mostly useful for alias creation at start in the
- initialization() function for example.
+ initialize() function for example.
  return 1 in case of success,  0 if circular alias is detected
  */
 int
@@ -1083,7 +1035,7 @@ UServer::addAlias(const char* id, const char* variablename)
 
   while (getobj != ::urbiserver->aliastab.end())
   {
-    newobj = getobj->second->str();
+    newobj = getobj->second->c_str();
     if (STREQ(newobj, id))
       return 0;
 
@@ -1093,12 +1045,13 @@ UServer::addAlias(const char* id, const char* variablename)
   if (aliastab.find(id) != aliastab.end())
   {
     UString* alias = aliastab[id];
-    alias->update(variablename);
+    *alias = variablename;
   }
   else
   {
-    char* id_copy = strdup (id); // XXX we'll leak id_copy forever :|
-    assert (id_copy != 0);
+    // XXX we'll leak id_copy forever :|
+    char* id_copy = strdup (id);
+    assert (id_copy);
     aliastab[id_copy] = new UString(variablename);
   }
   return 1;

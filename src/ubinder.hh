@@ -22,11 +22,11 @@
 #ifndef UBINDER_HH
 # define UBINDER_HH
 
-# include <list>
+# include "libport/hash.hh"
 
-# include "fwd.hh"
-# include "ustring.hh"
-# include "utypes.hh"
+# include "kernel/fwd.hh"
+# include "kernel/ustring.hh"
+# include "kernel/utypes.hh"
 
 // ****************************************************************************
 //! Contains a binder definition, as a result of a BINDER command
@@ -46,6 +46,7 @@ public:
   UBindType    type;
   int          nbparam;
 
+  // FIXME: Should be a set.
   typedef std::list<UMonitor*> monitors_type;
   monitors_type monitors;
 
@@ -69,7 +70,18 @@ public:
   bool removeObject(const UString& objname);
 
   UConnection* c;
-  std::list<UString*> objects;
+  std::list<UString> objects;
 };
+
+/// \a S should be UString& or UConnection*.
+template <typename S>
+void remove_monitor(HMbindertab& t, S c);
+
+/// \a S should be anything used in utypes's table types.
+/// \a T should be UString& or UConnection*.
+template <typename S, typename T>
+void unbind_monitor(libport::hash_map<const char*, S>& table, T c);
+
+# include "ubinder.hxx"
 
 #endif

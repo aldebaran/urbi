@@ -19,23 +19,26 @@
 
  **************************************************************************** */
 
+#include "kernel/userver.hh"
+#include "kernel/ustring.hh"
+#include "kernel/utypes.hh"
+
 #include "ucopy.hh"
 #include "uexpression.hh"
 #include "unamedparameters.hh"
-#include "userver.hh"
-#include "ustring.hh"
-#include "utypes.hh"
 
 // **************************************************************************
 //! UNamedParameters constructor.
 UNamedParameters::UNamedParameters(UString* name,
 				   UExpression *expression,
 				   UNamedParameters* next,
-                                   bool notifyEnd)
+				   bool notifyEnd,
+				   bool notifyFreeze)
   : name       (name),
     expression (expression),
     next       (next),
-    notifyEnd  (notifyEnd)
+    notifyEnd  (notifyEnd),
+    notifyFreeze (notifyFreeze)
 {
   ADDOBJ(UNamedParameters);
 }
@@ -43,11 +46,13 @@ UNamedParameters::UNamedParameters(UString* name,
 //! UNamedParameters constructor (for expression list only)
 UNamedParameters::UNamedParameters(UExpression *expression,
 				   UNamedParameters* next,
-                                   bool notifyEnd)
+				   bool notifyEnd,
+				   bool notifyFreeze)
   : name       (0),
     expression (expression),
     next       (next),
-    notifyEnd  (notifyEnd)
+    notifyEnd  (notifyEnd),
+    notifyFreeze (notifyFreeze)
 {
   ADDOBJ(UNamedParameters);
 }
@@ -89,7 +94,8 @@ UNamedParameters::copy() const
     new UNamedParameters(ucopy (name),
 			 ucopy (expression),
 			 ucopy (next),
-                         notifyEnd);
+			 notifyEnd,
+			 notifyFreeze);
 }
 
 //! Print the list of parameters
@@ -100,7 +106,7 @@ void
 UNamedParameters::print() const
 {
   if (name)
-    debug("%s:", name->str());
+    debug("%s:", name->c_str());
   if (expression)
   {
     debug("expr=");

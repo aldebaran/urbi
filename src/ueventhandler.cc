@@ -18,14 +18,17 @@
 
 #include <sstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/containers.hh"
+
+#include "kernel/utypes.hh"
+#include "kernel/userver.hh"
+#include "kernel/uvalue.hh"
 
 #include "ueventhandler.hh"
 #include "uexpression.hh"
 #include "unamedparameters.hh"
-#include "utypes.hh"
-#include "uvalue.hh"
-#include "userver.hh"
 
 std::string
 kernel::forgeName (UString* name, int nbarg)
@@ -34,7 +37,7 @@ kernel::forgeName (UString* name, int nbarg)
     return std::string("error");
 
   std::stringstream s;
-  s << name->str() << "|" << nbarg;
+  s << name->c_str() << "|" << nbarg;
   return s.str();
 }
 
@@ -59,48 +62,48 @@ kernel::eventSymbolDefined (const char* symbol)
 
   HMemit2tab::iterator i = ::urbiserver->emit2tab.find(symbol);
   return (i!= ::urbiserver->emit2tab.end());
-
 }
 
 bool
 kernel::isCoreFunction (UString *fullname)
 {
-  return ( (fullname->equal ("freemem")) ||
-	   (fullname->equal ("power")) ||
-	   (fullname->equal ("cpuload")) ||
-	   (fullname->equal ("time")) ||
-	   (fullname->equal ("save")) ||
-	   (fullname->equal ("getIndex")) ||
-	   (fullname->equal ("cat")) ||
-	   (fullname->equal ("strlen")) ||
-	   (fullname->equal ("head")) ||
-	   (fullname->equal ("tail")) ||
-	   (fullname->equal ("size")) ||
-	   (fullname->equal ("isdef")) ||
-	   (fullname->equal ("isvoid")) ||
-	   (fullname->equal ("load")) ||
-	   (fullname->equal ("loadwav")) ||
-	   (fullname->equal ("exec")) ||
-	   (fullname->equal ("eval")) ||
-	   (fullname->equal ("strsub")) ||
-	   (fullname->equal ("atan2")) ||
-	   (fullname->equal ("sin")) ||
-	   (fullname->equal ("asin")) ||
-	   (fullname->equal ("cos")) ||
-	   (fullname->equal ("acos")) ||
-	   (fullname->equal ("string")) ||
-	   (fullname->equal ("tan")) ||
-	   (fullname->equal ("atan")) ||
-	   (fullname->equal ("sgn")) ||
-	   (fullname->equal ("abs")) ||
-	   (fullname->equal ("exp")) ||
-	   (fullname->equal ("log")) ||
-	   (fullname->equal ("round")) ||
-	   (fullname->equal ("random")) ||
-	   (fullname->equal ("trunc")) ||
-	   (fullname->equal ("sqr")) ||
-	   (fullname->equal ("sqrt"))
-	   );
+  return (false
+	  || *fullname == "abs"
+	  || *fullname == "acos"
+	  || *fullname == "asin"
+	  || *fullname == "atan"
+	  || *fullname == "atan2"
+	  || *fullname == "cat"
+	  || *fullname == "cos"
+	  || *fullname == "cpuload"
+	  || *fullname == "eval"
+	  || *fullname == "exec"
+	  || *fullname == "exp"
+	  || *fullname == "freemem"
+	  || *fullname == "getIndex"
+	  || *fullname == "head"
+	  || *fullname == "isdef"
+	  || *fullname == "isvoid"
+	  || *fullname == "load"
+	  || *fullname == "loadwav"
+	  || *fullname == "log"
+	  || *fullname == "power"
+	  || *fullname == "random"
+	  || *fullname == "round"
+	  || *fullname == "save"
+	  || *fullname == "sgn"
+	  || *fullname == "sin"
+	  || *fullname == "size"
+	  || *fullname == "sqr"
+	  || *fullname == "sqrt"
+	  || *fullname == "string"
+	  || *fullname == "strlen"
+	  || *fullname == "strsub"
+	  || *fullname == "tail"
+	  || *fullname == "tan"
+	  || *fullname == "time"
+	  || *fullname == "trunc"
+    );
 }
 
 UEventHandler* kernel::eh_system_alwaystrue;
@@ -128,16 +131,15 @@ UEvent::~UEvent()
 // **************************************************************************
 // UEventHandler
 
-UEventHandler::UEventHandler (UString* name, int nbarg):
-  UASyncRegister(),
-  nbarg_ (nbarg)
+UEventHandler::UEventHandler (UString* name, int nbarg)
+  : UASyncRegister(),
+    nbarg_ (nbarg)
 {
-  unforgedName = new UString (name);
-  ::urbiserver->emit2tab[unforgedName->str()];
+  unforgedName = new UString (*name);
+  ::urbiserver->emit2tab[unforgedName->str().c_str()];
 
   name_ = kernel::forgeName(name, nbarg);
   ::urbiserver->emittab[name_.c_str ()] = this;
-
 }
 
 UEventHandler::~UEventHandler()
@@ -149,20 +151,15 @@ UEventHandler::addEvent(UNamedParameters* parameters,
 			UCommand* command,
 			UConnection* connection)
 {
-  UNamedParameters* param = parameters;
-  UValue* e1;
   std::list<UValue*> args;
-
-  while (param)
-  {
-    e1 = param->expression->eval (command, connection);
-    if (e1==0)
+  for (UNamedParameters* param = parameters; param; param = param->next)
+    if (UValue* e1 = param->expression->eval (command, connection))
+      args.push_back (e1);
+    else
       return 0;
-    args.push_back (e1);
-    param = param->next;
-  }
   UEvent* e = new UEvent(this, args);
-  ASSERT(e) eventlist_.push_back(e);
+  ASSERT(e)
+    eventlist_.push_back(e);
 
   // triggers associated commands update
   updateRegisteredCmd ();
@@ -173,7 +170,8 @@ UEventHandler::addEvent(UNamedParameters* parameters,
 UEvent*
 UEventHandler::addEvent(UEvent* e)
 {
-  ASSERT(e) eventlist_.push_back(e);
+  ASSERT(e)
+    eventlist_.push_back(e);
   return e;
 }
 
@@ -181,10 +179,9 @@ UEventHandler::addEvent(UEvent* e)
 bool
 UEventHandler::noPositive ()
 {
-  for (std::list<UEvent*>::iterator ie = eventlist_.begin ();
-       ie != eventlist_.end ();
-       ++ie)
-    if ( !(*ie)->toDelete ()) return false;
+  BOOST_FOREACH (UEvent* ie, eventlist_)
+    if (!ie->toDelete ())
+      return false;
 
   return true;
 }
