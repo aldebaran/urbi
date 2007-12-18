@@ -50,7 +50,7 @@ public:
   }
   virtual void beforeWork()
   {
-    ctime += period_get() * 1000LL;
+    ctime += static_cast<long long>(period_get()) * 1000LL;
   }
   virtual void reset()
   {}
