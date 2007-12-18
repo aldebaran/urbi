@@ -1,3 +1,10 @@
+2007-12-18  Akim Demaille  <akim.demaille@free.fr>
+
+	src/liburbi/tests.
+	* Makefile.am, configure.ac, src/liburbi/Makefile.am: Adjust.
+	* tests: Move to...
+	* src/liburbi/tests: here.
+
 2007-12-13  Akim Demaille  <akim.demaille@free.fr>
 
 	Remove useless declaration.

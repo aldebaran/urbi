@@ -13,7 +13,8 @@ URBI_BUILD_AUX
 AM_INIT_AUTOMAKE([1.10 -Wall tar-ustar dist-zip nostdinc])
 
 # Urbi standard locations.
-URBI_SDK_DIRS([remote])
+URBI_PACKAGE_KIND([sdk])
+URBI_DIRS([remote])
 
 URBI_SDK
 
@@ -24,8 +25,9 @@ URBI_DOC
 ## Compilation.  ##
 ## ------------- ##
 
-URBI_LIBPORT
+# URBI_LIBPORT AC_REQUIREs URBI_PTHREAD, so run the latter first.
 URBI_PTHREAD
+URBI_LIBPORT
 # liburbi-c++ is also in charge of Libport's test suite.
 AC_CONFIG_FILES([libport/tests/Makefile])
 AC_CONFIG_FILES([build-aux/test.sh], [chmod a=rx build-aux/test.sh])
@@ -119,8 +121,8 @@ AC_CONFIG_FILES([Makefile
 	  src/Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile
-	  src/liburbi/swig/Makefile
+	  	  src/liburbi/tests/Makefile
+	  	  src/liburbi/swig/Makefile
 	  src/utils/Makefile
-	  tests/Makefile
 ])
 AC_OUTPUT
