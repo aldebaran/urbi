@@ -1,3 +1,10 @@
+2007-12-18  Akim Demaille  <akim.demaille@free.fr>
+
+	Don't use tmp values after their death.
+	* src/console-server.cc: Do not pass a const char* to make_tokenizer,
+	since it returns an object that references this value: here it first
+	has to convert it to an std::string, destroyed before being used.
+
 2007-12-18  Akim Demaille  <demaille@gostai.com>
 
 	Declare internal variables.

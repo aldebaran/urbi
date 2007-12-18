@@ -31,9 +31,9 @@ public:
   ConsoleServer(int period)
     : UServer(period, 64000000, "console")
   {
-    if (const char* cp = getenv ("URBI_PATH"))
-      BOOST_FOREACH (const std::string& s, libport::make_tokenizer(cp, ":"))
-	path.push_back (s);
+    std::string up = getenv ("URBI_PATH");
+    BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
+      path.push_back (s);
   }
 
   virtual ~ConsoleServer()
