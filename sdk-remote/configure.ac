@@ -121,8 +121,8 @@ AC_CONFIG_FILES([Makefile
 	  src/Makefile
 	  src/examples/Makefile
 	  src/liburbi/Makefile
-	  	  src/liburbi/tests/Makefile
-	  	  src/liburbi/swig/Makefile
+		  src/liburbi/tests/Makefile
+		  src/liburbi/swig/Makefile
 	  src/utils/Makefile
 ])
 AC_OUTPUT
