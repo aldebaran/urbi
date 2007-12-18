@@ -1,5 +1,10 @@
 2007-12-18  Matthieu Nottale  <nottale@gostai.com>
 
+	Add -f option to urbi-console.
+	* src/console-server.cc: Add -f (which does while(true) work()).
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
 	list + not_list raises an error.
 	* src/ucommand.cc: Report an error if expr->eval returns 0 in
 	 UCOMMAND_ASSING_VALUE.

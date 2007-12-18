@@ -28,8 +28,8 @@ class ConsoleServer
   : public UServer
 {
 public:
-  ConsoleServer(int period)
-    : UServer(period, 64000000, "console")
+  ConsoleServer(int period, bool fast)
+    : UServer(period, 64000000, "console"), fast(fast), ctime(0)
   {
     std::string up = getenv ("URBI_PATH");
     BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
@@ -43,7 +43,10 @@ public:
   {
     exit (0);
   }
-
+  virtual void beforeWork()
+  {
+    ctime += period_get() * 1000LL;
+  }
   virtual void reset()
   {}
 
@@ -52,7 +55,10 @@ public:
 
   virtual ufloat getTime()
   {
-    return static_cast<ufloat>(libport::utime() / 1000LL);
+    if (fast)
+      return ctime / 1000LL;
+    else
+      return static_cast<ufloat>(libport::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
@@ -83,6 +89,9 @@ public:
   {
     std::cout << t;
   }
+  
+  bool fast;
+  long long ctime;
 };
 
 namespace
@@ -167,7 +176,7 @@ main (int argc, const char* argv[])
     }
   }
 
-  ConsoleServer s (arg_period);
+  ConsoleServer s (arg_period, fast);
 
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
@@ -193,12 +202,16 @@ main (int argc, const char* argv[])
   DEBUG(("Going to work...\n"));
   if (fast)
     while(true)
-  while (true)
-  {
-    long long startTime = libport::utime();
-    ufloat period = s.period_get() * 1000;
-    while (libport::utime() < startTime + period)
-      usleep (1);
-    s.work ();
-  }
+    {
+      s.work();
+    }
+  else
+    while (true)
+    {
+      long long startTime = libport::utime();
+      ufloat period = s.period_get() * 1000;
+      while (libport::utime() < startTime + period)
+	usleep (1);
+      s.work ();
+    }
 }
