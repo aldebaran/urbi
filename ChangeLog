@@ -1,5 +1,11 @@
 2007-12-18  Matthieu Nottale  <nottale@gostai.com>
 
+	Fix segv.
+	* src/console-server.cc: std::string s=(char*)0 triggers an
+	  exception, so avoid it.
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
 	Add -f option to urbi-console.
 	* src/console-server.cc: Add -f (which does while(true) work()).
 
