@@ -1,3 +1,8 @@
+2007-12-18  Akim Demaille  <demaille@gostai.com>
+
+	Use libport::make_tokenizer.
+	* src/console-server.cc: here.
+
 2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Clean modifier error checking.

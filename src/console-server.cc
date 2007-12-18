@@ -10,8 +10,11 @@
 #include "libport/windows.hh"
 #include <fstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/cli.hh"
 #include "libport/program-name.hh"
+#include "libport/tokenizer.hh"
 #include "libport/utime.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
@@ -28,9 +31,9 @@ public:
   ConsoleServer(int period)
     : UServer(period, 64000000, "console")
   {
-    // FIXME: Add support for : in the path.
     if (const char* cp = getenv ("URBI_PATH"))
-      path.push_back (cp);
+      BOOST_FOREACH (const std::string& s, libport::make_tokenizer(cp, ":"))
+        path.push_back (s);
   }
 
   virtual ~ConsoleServer()
