@@ -1,3 +1,8 @@
+2007-12-18  Loic Fosse  <fosse@gostai.com>
+
+	Factor error code for unvalid flavors.
+	* src/parser/ugrammar.y: Here.
+
 2007-12-17  Loic Fosse  <fosse@gostai.com>
 
 	Fix error messages for flavored keywords.
