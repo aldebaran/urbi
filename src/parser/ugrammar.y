@@ -702,9 +702,10 @@ expr:
 | "class" lvalue "{" stmts "}"
     {
       // Compiled as
-      // var id; do id { stmts };
+      // var id = Object.clone; do id { stmts };
+      ast::Exp* object_clone = call(@$, call (@$, 0, "Object"), "clone");
       $$ = new_flavor(@$, ast::flavor_semicolon,
-		      assign (@1+@2, $2, 0, true),
+		      assign (@1+@2, $2, object_clone, true),
 		      new ast::Scope(@$, $2, $4));
     }
 // | "class" lvalue

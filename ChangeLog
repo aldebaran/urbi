@@ -1,5 +1,11 @@
 2007-12-18  Loic Fosse  <fosse@gostai.com>
 
+	Fix class keyword implementation.
+	* src/parser/ugrammar.y: Change initialization of variables declared
+	with the class keyword from 0 to Object.clone.
+
+2007-12-18  Loic Fosse  <fosse@gostai.com>
+
 	* include/kernel/userver.hh (defcheck): Remove.
 	Adjust all dependencies.
 
