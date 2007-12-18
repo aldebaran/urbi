@@ -1180,10 +1180,20 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  }
 
 	  speed = 0;
-
+	  int sin_modif_count = 0;
+	  int modif_count = 0;
 	  // Initialize modifiers
 	  for (UNamedParameters* modif = parameters; modif; modif = modif->next)
 	  {
+# define TEST_MODIF_SIN(Name)						\
+	    if (!modif_sin)						\
+	    {								\
+	      send_error(connection, this,				\
+			 "Use cos or sin before " #Name);		\
+	      delete rhs;						\
+	      return UCOMPLETED;					\
+	    }
+
 	    if (!modif->expression || !modif->name)
 	    {
 	      send_error(connection, this, "Invalid modifier");
@@ -1193,61 +1203,68 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 
 	    if (*modif->name == "sin")
 	    {
-	      delete modif_sin;
+	      ++sin_modif_count;
+	      ++modif_count;
 	      modif_sin = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "cos")
 	    {
-	      delete modif_sin;
+	      ++sin_modif_count;
+	      ++modif_count;
 	      modif_sin = modif->expression;
-	      delete modif_phase;
 	      modif_phase = new UExpression(loc_,
 					    UExpression::VALUE, PI/ufloat(2));
 	      controlled = true;
 	    }
 	    else if (*modif->name == "ampli")
 	    {
-	      delete modif_ampli;
+	      TEST_MODIF_SIN(ampli);
 	      modif_ampli = modif->expression;
 	    }
 	    else if (*modif->name == "smooth")
 	    {
-	      delete modif_smooth;
+	      ++modif_count;
 	      modif_smooth = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "time")
 	    {
-	      delete modif_time;
+	      ++modif_count;
 	      modif_time = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "speed")
 	    {
-	      delete modif_speed;
+	      ++modif_count;
 	      modif_speed = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "accel")
 	    {
-	      delete modif_accel;
+	      ++modif_count;
 	      modif_accel = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "adaptive")
 	    {
-	      delete modif_adaptive;
 	      modif_adaptive = modif->expression;
 	      controlled = true;
 	    }
 	    else if (*modif->name == "phase")
 	    {
-	      delete modif_phase;
+	      TEST_MODIF_SIN(phase);
+	      // If modif_phase is not NULL, we have a cos. Add both phases.
+	      if (modif_phase)
+		modif->expression = new UExpression(loc(), UExpression::PLUS,
+						    modif_phase,
+						    modif->expression);
 	      modif_phase = modif->expression;
 	    }
 	    else if (*modif->name == "getphase")
 	    {
+	      TEST_MODIF_SIN(getphase);
+
 	      if (modif->expression->type != UExpression::VARIABLE)
 	      {
 		send_error(connection, this,
@@ -1255,7 +1272,6 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 			   " the 'getphase' modifier");
 		return UCOMPLETED;
 	      }
-	      delete modif_getphase;
 	      modif_getphase = modif->expression->variablename;
 	    }
 	    else if (*modif->name == "timelimit")
@@ -1279,6 +1295,31 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	      delete rhs;
 	      return UCOMPLETED;
 	    }
+
+#undef TEST_MODIF_SIN
+	  }
+
+	  // Check modifiers
+	  bool modif_error = false;
+	  if (sin_modif_count > 1 && (modif_error = true))
+	      send_error(connection, this,
+			 "Multiple sin or cos modifier applied");
+	  else
+	  if (modif_count > 1 && (modif_error = true))
+	      send_error(connection, this,
+			 "Only one modifier allowed on assignment");
+	  if ((modif_ampli || modif_phase || modif_getphase) &&
+	      (sin_modif_count == 0) && (modif_error = true))
+	      send_error(connection, this,
+			 "Sinus modifiers applied, but no sin or cos used");
+	  if (sin_modif_count == 1 && modif_ampli == 0 && (modif_error = true))
+	      send_error(connection, this,
+			 "No amplitude specified for sinus");
+
+	  if (modif_error)
+	  {
+	      delete rhs;
+	      return UCOMPLETED;
 	  }
 	}
 
@@ -1325,22 +1366,16 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	++variable->nbAssigns;
 	assigned = true;
 
-	// use of previous value as a start value to ensure that the start value
-	// will remain identical when several assignments are run during the same
-	// cycle
-	// old code: startval = *targetvalue;
-
-	// the "fix" below is insane. I paste back the old code...
-	//startval = variable->previous;
+	startval = variable->previous;
 	if (variable->cycleBeginTime < currentTime)
 	{
 	  variable->cyclevalue = *targetvalue;
 	  variable->cycleBeginTime = currentTime;
 	}
 
-	startval = variable->cyclevalue;
-
 	first = true;
+	if (controlled)
+	  finished = false;
 	status = URUNNING;
     }
   }
@@ -1349,7 +1384,6 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
   /////////////////////////////////////////////////
   // Execution phase (second pass and next passes)
   /////////////////////////////////////////////////
-
   if (status == URUNNING)
   {
     if (finished)
@@ -1426,7 +1460,15 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   {
     frozen = false;
     starttime += currentTime - lastExec;
+    lastExec = currentTime;
+    return USUCCESS;
   }
+
+  // Use this instead of deltaTime. In some cases deltaTime is not
+  // exactly what is should be (eg: 12ms instead of 10ms).
+  ufloat tmpDeltaTime = currentTime - lastExec;
+  if (tmpDeltaTime == 0)
+    tmpDeltaTime = deltaTime;
 
   // Adaptive mode? (only for "speed" and "time")
   bool adaptive = false;
@@ -1441,14 +1483,14 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
   if (endtime != -1 && currentTime >= endtime)
   {
     finished = true;
-    *valtmp = variable->nbAverage * *valtmp + currentVal;
+    *valtmp = variable->nbAverage * *valtmp +
+      currentVal;
     return USUCCESS;
   }
 
   // speedmin conversion for convenience
   speedmin = variable->speedmin / 1000.;
 
-  // time
   if (modif_time)
   {
     if (adaptive
@@ -1457,6 +1499,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       finished = true;
       *valtmp = variable->nbAverage * *valtmp +
 	targetval;
+      return USUCCESS;
     }
 
     if (UValue* v = modif_time->eval(this, connection))
@@ -1482,29 +1525,33 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     {
       targettime = currentTime - starttime +
 	ABSF(targetval - currentVal)/ speedmin;
-
       if (errorFlag && first)
 	send_error(connection, this, "low speed: increased to speedmin");
     }
 
-    if (currentTime - starttime + deltaTime >= targettime)
+    if (currentTime - starttime + tmpDeltaTime >= targettime)
     {
       if (!adaptive)
 	finished = true;
       *valtmp = variable->nbAverage * *valtmp +	targetval;
+      startval = targetval;
     }
-    else if (adaptive)
-      *valtmp = variable->nbAverage * *valtmp +
-	currentVal +
-	deltaTime*
-	((targetval - currentVal) /
-	 (targettime - (currentTime - starttime)) );
     else
-      *valtmp = variable->nbAverage * *valtmp +
-	startval +
-	(currentTime - starttime + deltaTime)*
-	((targetval - startval) /
-	 targettime );
+      if (adaptive)
+      {
+	*valtmp = variable->nbAverage * *valtmp + currentVal;
+	if (currentTime != starttime)
+	{
+	  ufloat remainingTime = tmpDeltaTime *
+	    floorf (currentTime / tmpDeltaTime);
+	  remainingTime -= tmpDeltaTime * floorf (starttime / tmpDeltaTime);
+	  *valtmp += (targetval - currentVal) /
+	    ((targettime - remainingTime) / tmpDeltaTime);
+	}
+      }
+      else
+	*valtmp = variable->nbAverage * *valtmp + startval +
+	  (currentTime - starttime) * ((targetval - startval) / targettime);
 
     return USUCCESS;
   }
@@ -1524,30 +1571,26 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	      (targettime - (currentTime - starttime))) < speedmin))
     {
       targettime = currentTime - starttime +
-	ABSF(targetval - currentVal)/speedmin;
+	ABSF(targetval - *valtmp)/speedmin;
 
       if (errorFlag && first)
 	send_error(connection, this, "low speed: increased to speedmin");
     }
 
-    if (currentTime - starttime + deltaTime >= targettime)
+    if (currentTime - starttime + tmpDeltaTime >= targettime)
     {
       finished = true;
       *valtmp = variable->nbAverage * *valtmp +
 	targetval;
     }
     else
-      *valtmp = variable->nbAverage * *valtmp +
-	startval +
+      *valtmp = variable->nbAverage * *valtmp +	startval +
 	((targetval - startval) * 0.5 *
-	 (ufloat(1)+sin(-(PI/ufloat(2))+ PI*(currentTime - starttime + deltaTime) /
-			targettime
-			))
-	 );
+	 (ufloat(1)+sin(-(PI/ufloat(2))+ PI*(currentTime - starttime) /
+			targettime)));
     return USUCCESS;
   }
 
-  //speed
   if (modif_speed)
   {
     if (adaptive && ABSF(currentVal - targetval) <= variable->delta)
@@ -1555,6 +1598,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       finished = true;
       *valtmp = variable->nbAverage * *valtmp +
 	targetval;
+      return USUCCESS;
     }
 
     if (UValue* v = modif_speed->eval(this, connection))
@@ -1589,30 +1633,38 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
 	send_error(connection, this, "low speed: increased to speedmin");
     }
 
-    if (currentTime - starttime + deltaTime >= targettime)
+    if (currentTime - starttime + tmpDeltaTime >= targettime)
     {
       if (!adaptive)
 	finished = true;
-      *valtmp = variable->nbAverage * *valtmp +
-	targetval;
-    }
-    else if (speed != 0)
-    {
-      if (adaptive)
-	*valtmp = variable->nbAverage * *valtmp +
-	  currentVal +
-	  deltaTime*
-	  ((targetval - currentVal) /
-	   (targettime - (currentTime - starttime)) );
-      else
-	*valtmp = variable->nbAverage * *valtmp +
-	  startval +
-	  (currentTime - starttime + deltaTime)*
-	  ((targetval - startval) /
-	   targettime );
+      *valtmp = variable->nbAverage * *valtmp +	targetval;
     }
     else
-      *valtmp = variable->nbAverage * *valtmp + currentVal;
+      if (speed != 0)
+      {
+	*valtmp = variable->nbAverage * *valtmp;
+	if (!variable->nbAverage || variable->blendType != urbi::UADD)
+      	  *valtmp += currentVal;
+
+	if (adaptive)
+	  *valtmp +=
+	    ((currentTime != starttime) ? 1 : 0) *
+	    tmpDeltaTime*
+	    ((targetval - currentVal) /
+	     (targettime - (currentTime - starttime)) );
+	else
+	{
+	  // Speed is absolute, choose direction
+	  if (variable->blendType != urbi::UADD && currentVal > targetval)
+	    speed *= -1;
+
+	  *valtmp +=
+	    (currentTime - lastExec) * (speed/1000.);
+	}
+      }
+      else
+	*valtmp = variable->nbAverage * *valtmp +
+	  currentVal;
 
     return USUCCESS;
   }
@@ -1635,20 +1687,18 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     if (variablename->isnormalized)
       accel = accel * (variable->rangemax - variable->rangemin);
 
-    targettime = sqrt (2 * ABSF(targetval - startval)
-		       / (ABSF(accel)/1000.));
+    targettime = sqrt (2 * ABSF(targetval - startval) / (ABSF(accel)/1000.));
 
-    if (currentTime - starttime + deltaTime >= targettime)
+    if (currentTime - starttime + tmpDeltaTime >= targettime)
     {
       finished = true;
-      *valtmp = variable->nbAverage * *valtmp +
-	targetval;
+      *valtmp = variable->nbAverage * *valtmp +	targetval;
     }
     else
       *valtmp = variable->nbAverage * *valtmp +
 	startval + 0.5 * (accel/1000.) *
-	(currentTime - starttime + deltaTime)*
-	(currentTime - starttime + deltaTime);
+	(currentTime - starttime + tmpDeltaTime) *
+	(currentTime - starttime + tmpDeltaTime);
   }
 
   //sin
@@ -1701,7 +1751,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
     ufloat intermediary;
     intermediary = targetval +
       amplitude * sin(phase +
-		      (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
+		      (PI*ufloat(2))*((currentTime - starttime) /
 				      targettime ));
     if (modif_getphase)
     {
@@ -1721,7 +1771,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       UValue *phaseval = phasevari->value;
 
       phaseval->val = (phase +
-		       (PI*ufloat(2))*((currentTime - starttime + deltaTime) /
+		       (PI*ufloat(2))*((currentTime - starttime) /
 				       targettime ));
       int n = static_cast<int>(phaseval->val / (PI*ufloat(2)));
       if (n < 0)

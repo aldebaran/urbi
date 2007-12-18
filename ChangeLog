@@ -1,3 +1,11 @@
+2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix modifier handling, enhance syntax check.
+	* src/ucommand.cc: Here.
+	Test for mutltiple and missing modifiers.
+	Don't increment value instantly (so sync get ant set return
+	the previous value).
+
 2007-12-18  Akim Demaille  <demaille@gostai.com>
 
 	Pass switch.chk.
