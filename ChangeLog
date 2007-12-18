@@ -1,3 +1,8 @@
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
+	Add $(PTHREAD_LIBS) to urbi_console.
+	* src/Makefile.am: Here. It has threads now.
+
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
 	Fix XFAIL use.
