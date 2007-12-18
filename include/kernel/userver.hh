@@ -367,7 +367,7 @@ public:
     defcheck_teacher,   ///< 1.5 behavior: issue a warning in that case.
     defcheck_sarkozy,   ///< 2.0 behavior: a hard error.
   };
-  bool defcheck;
+  defcheck_type defcheck;
 
   ufloat                   previous2Time,
 			   previous3Time,

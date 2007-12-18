@@ -1,3 +1,11 @@
+2007-12-18  Akim Demaille  <demaille@gostai.com>
+
+	Fix defcheck.
+	* include/kernel/userver.hh (defcheck): Fix its type.
+	The F*g type system of C++ was not annoyed that I mixed bools
+	and enums.  Hopefully "class enum" might make it into C++ some day.
+	* src/ucommand.cc: Fix warning/error reports.
+
 2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Fix modifier handling, enhance syntax check.

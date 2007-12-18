@@ -972,42 +972,31 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     }
 
     // Strict variable definition checking
-    if (!variable && !defkey)
-      switch (connection->server->defcheck)
-      {
-	case UServer::defcheck_student:
-	  break;
-	case UServer::defcheck_teacher:
-	{
-	  std::string err =
-	    std::string("!!! ")
-	    + boost::lexical_cast<std::string> (loc())
-	    + ": warning, identifier "
-	    + variablename->getFullname()->str()
-	    + " was not introduced using `var'\n";
-	  *connection << UConnection::sendf(getTag(), err.c_str());
-	}
-	break;
-	case UServer::defcheck_sarkozy:
-	{
-	  std::string err =
-	    std::string("!!! ")
-	    + boost::lexical_cast<std::string> (loc())
-	    + ": unknown identifier: "
-	    + variablename->getFullname()->str()
-	    + '\n';
-	  *connection << UConnection::send(err.c_str(), "warning");
-	}
-	break;
-      }
+    if (!variable
+	&& !defkey
+	&& (connection->server->defcheck == UServer::defcheck_teacher
+	    || connection->server->defcheck == UServer::defcheck_sarkozy))
+    {
+      bool warn = connection->server->defcheck == UServer::defcheck_teacher;
+      std::string err =
+	std::string("!!! ")
+	+ boost::lexical_cast<std::string> (loc())
+	+ ": "
+	+ (warn
+	   ? "deprecated declaration without `var'"
+	   : "undeclared identifier")
+	+ ": "
+	+ variablename->getFullname()->str()
+	+ '\n';
+      *connection << UConnection::send(err.c_str(),
+				       warn ? "warning" : "error");
+    }
 
     // Check the +error flag
     errorFlag = false;
     for (UNamedParameters *param = flags; param; param = param->next)
-      if (param->name
-	  && *param->name == "flag"
-	  && param->expression
-	  && param->expression->val == 2) // 2 = +error
+      if (param->name && *param->name == "flag"
+	  && param->expression && param->expression->val == 2) // 2 = +error
 	errorFlag = true;
 
     // UCANCEL mode
@@ -1023,9 +1012,9 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       return UCOMPLETED;
 
     // Check type compatibility if the left side variable already exists
-    if (variable &&
-	variable->value->dataType != DATA_VOID &&
-	rhs->dataType != variable->value->dataType)
+    if (variable
+	&& variable->value->dataType != DATA_VOID
+	&& rhs->dataType != variable->value->dataType)
     {
       if (::urbiserver->defcheck == UServer::defcheck_sarkozy)
       {
