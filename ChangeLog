@@ -1,3 +1,8 @@
+2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Prepend connection id on resolved aliases if needed.
+	* src/uvariablename.cc (UVariableName::buildFullname): Here.
+
 2007-12-18  Akim Demaille  <demaille@gostai.com>
 
 	Use libport::make_tokenizer.
