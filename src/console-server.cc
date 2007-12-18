@@ -14,6 +14,7 @@
 #include <boost/tokenizer.hpp>
 
 #include "libport/cli.hh"
+#include "libport/program-name.hh"
 #include "libport/utime.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
@@ -22,8 +23,6 @@
 #include "kernel/uconnection.hh"
 
 #include "ubanner.hh"
-
-const char* program_name;
 
 class ConsoleServer
   : public UServer
@@ -99,7 +98,7 @@ namespace
   usage ()
   {
     std::cout <<
-      "usage: " << program_name << " [OPTIONS] [FILE]\n"
+      "usage: " << libport::program_name << " [OPTIONS] [FILE]\n"
       "\n"
       "  FILE    to load\n"
       "\n"
@@ -125,7 +124,7 @@ namespace
 int
 main (int argc, const char* argv[])
 {
-  program_name = argv[0];
+  libport::program_name = argv[0];
 
   // Input file.
   const char* in = "/dev/stdin";
@@ -163,45 +162,41 @@ main (int argc, const char* argv[])
 	    in = argv[i];
 	    break;
 	  default:
-	    std::cerr << "Unexpected argument: " << arg << std::endl;
-	    exit (1);
+	    std::cerr << "Unexpected argument: " << arg << std::endl
+		      << libport::exit (1);
 	    break;
 	}
     }
   }
 
+  ConsoleServer s (arg_period);
+
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
-  {
     std::cerr << "cannot bind to port " << arg_port
-	      << " on localhost" << std::endl;
-    exit (EX_UNAVAILABLE);
-  }
+	      << " on localhost" << std::endl
+	      << libport::exit (EX_UNAVAILABLE);
+
   if (arg_port_filename)
     std::ofstream(arg_port_filename, std::ios::out) << port << std::endl;
   Network::startNetworkProcessingThread();
 
-  ConsoleServer s (arg_period);
 
   s.initialize ();
   UConnection& c = s.getGhostConnection ();
   DEBUG(("Got ghost connection\n"));
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
-  {
-    std::cerr << argv[0] << ": failed to process " << in << std::endl;
-    return 1;
-  }
+    std::cerr << argv[0] << ": failed to process " << in << std::endl
+	      << libport::exit(1);
 
   c.newDataAdded = true;
-
-  long long startTime = 0;
 
   DEBUG(("Going to work...\n"));
   while (true)
   {
-    startTime = libport::utime();
-    ufloat period = s.getFrequency() * 1000;
+    long long startTime = libport::utime();
+    ufloat period = s.period_get() * 1000;
     while (libport::utime() < startTime + period)
       usleep (1);
     s.work ();

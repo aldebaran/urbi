@@ -75,7 +75,7 @@ int availableMemory;
 int usedMemory;
 
 
-UServer::UServer(ufloat frequency,
+UServer::UServer(ufloat period,
 		 const char* mainName)
   : scheduler_ (new runner::Scheduler),
     debugOutput (false),
@@ -86,10 +86,9 @@ UServer::UServer(ufloat frequency,
     signalcpuoverload (false),
     cpucount (0),
     cputhreshold (1.2),
-    defcheck (false),
     stopall (false),
     systemcommands (true),
-    frequency_(frequency),
+    period_(period),
     isolate_ (false),
     uid(0)
 {
@@ -296,7 +295,7 @@ UServer::work_handle_stopall_ ()
 void
 UServer::work_test_cpuoverload_ ()
 {
-  cpuload = (latestTime - currentTime)/getFrequency();
+  cpuload = (latestTime - currentTime) / period_get();
 
   if (!cpuoverload)
     if (cpuload > cputhreshold)

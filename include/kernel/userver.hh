@@ -77,15 +77,15 @@ public:
    considered as neglectible and included in the security margin. If you
    don't understand this point, ignore it.
 
-   \param frequency gives the value in msec of the server update,
+   \param period gives the value in msec of the server update,
    which are the calls to the "work" function. These calls must be done at
-   a fixed, precise, real-time frequency to let the server computer motor
+   a fixed, precise, real-time period to let the server computer motor
    trajectories between two "work" calls.
 
    \param mainName FIXME: A comment is missing here
 
    */
-  UServer (ufloat frequency, const char* mainName);
+  UServer (ufloat period, const char* mainName);
 
   virtual ~UServer ();
 
@@ -99,11 +99,11 @@ public:
   void initialize ();
 
   //! Main processing loop of the server
-  /*! This function must be called every "frequency_" msec to ensure the proper
+  /*! This function must be called every "period_" msec to ensure the proper
    functionning of the server. It will call the command execution, the
    connection message sending when they are delayed, etc...
 
-   "frequency_" is a parameter of the server, given in the constructor.
+   "period_" is a parameter of the server, given in the constructor.
    */
   void work ();
 
@@ -210,8 +210,8 @@ public:
   virtual UErrorValue saveFile (const std::string& filename,
 				const std::string& content) = 0;
 
-  //! Accessor for frequency_.
-  ufloat getFrequency ();
+  //! Accessor for period_.
+  ufloat period_get();
   void mark (UString* stopTag);
   virtual void reboot () = 0;
   virtual void shutdown () = 0;
@@ -245,10 +245,6 @@ public:
 
   bool isRunningSystemCommands () const;
   void setSystemCommand (bool val);
-
-  /// True when the server is paranoid on def checking.
-  bool isDefChecking () const;
-  void setDefCheck (bool val);
 
   void hasSomethingToDelete ();
 
@@ -306,9 +302,6 @@ public:
   int cpucount;
   /// Threshold for cpu overload alert.
   ufloat cputhreshold;
-private:
-  /// True when the server is paranoid on def checking.
-  bool defcheck;
 
 public:
   ufloat previous2Time;
@@ -334,7 +327,7 @@ private:
   };
 
   /// Frequency of the calls to work().
-  ufloat frequency_;
+  ufloat period_;
   /// Is the server isolated.
   bool isolate_;
   /// Store the time on the last call to updateTime();.
@@ -347,10 +340,10 @@ private:
 };
 
 /// Unique identifier to create new references.
-int unique ();
+inline int unique ();
 
 /// Return an identifier starting with \a prefix, ending with a unique int.
-std::string unique (const std::string& prefix);
+inline std::string unique (const std::string& prefix);
 
 /*-------------------------.
 | Freestanding functions.  |
@@ -376,6 +369,6 @@ void debug (unsigned t, const char* fmt, ...)
 #  define DEBUG(Msg) ((void) 0)
 # endif
 
-# include "userver.hxx"
-#endif // ! KERNEL_USERVER_HH
+# include <kernel/userver.hxx>
 
+#endif // ! KERNEL_USERVER_HH

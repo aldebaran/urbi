@@ -31,9 +31,9 @@ UServer::getUID ()
 }
 
 inline ufloat
-UServer::getFrequency ()
+UServer::period_get ()
 {
-  return frequency_;
+  return period_;
 }
 
 inline ufloat
@@ -59,18 +59,6 @@ inline void
 UServer::setSystemCommand (bool val)
 {
   systemcommands = val;
-}
-
-inline bool
-UServer::isDefChecking () const
-{
-  return defcheck;
-}
-
-inline void
-UServer::setDefCheck (bool val)
-{
-  defcheck = val;
 }
 
 inline void

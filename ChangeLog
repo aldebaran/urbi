@@ -1,5 +1,104 @@
 2007-12-18  Loic Fosse  <fosse@gostai.com>
 
+	* include/kernel/userver.hh (defcheck): Remove.
+	Adjust all dependencies.
+
+	merge -r 2066:2114 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-18  Akim Demaille  <demaille@gostai.com>
+	Fix defcheck.
+	* include/kernel/userver.hh (defcheck): Fix its type.
+	The F*g type system of C++ was not annoyed that I mixed bools
+	and enums.  Hopefully "class enum" might make it into C++ some day.
+	* src/ucommand.cc: Fix warning/error reports.
+
+	2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix modifier handling, enhance syntax check.
+	* src/ucommand.cc: Here.
+	Test for mutltiple and missing modifiers.
+	Don't increment value instantly (so sync get ant set return
+	the previous value).
+
+	2007-12-18  Akim Demaille  <demaille@gostai.com>
+	Pass switch.chk.
+	* tests-local.mk: Here.
+
+	2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+	Add $(PTHREAD_LIBS) to urbi_console.
+	* src/Makefile.am: Here. It has threads now.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Fix XFAIL use.
+	* tests-local.mk: here.
+
+	2007-12-17  Akim Demaille  <akim.demaille@free.fr>
+	Issue warnings for undeclared variable assignments.
+	* include/kernel/userver.hh (defcheck_type): New.
+	(defcheck): Use it.
+	* src/uexpression.cc, src/userver.cc, src/ucommand.cc: Use it.
+	* src/parser/ugrammar.y: Accept "var" in various places where
+	it was not valid.
+	* tests-local.mk: We don't pass switch.chk.
+
+	2007-12-17  Akim Demaille  <akim.demaille@free.fr>
+	Factor.
+	* src/ucommand.cc: The handling of increment/decrement.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Factor vars and uservars.
+	* src/ucommand.cc (dump_vars): New.
+	Use it.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Space changes.
+	* src/parser/ugrammar.y: here.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Var renaming.
+	* src/uvariablename.cc: here.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Factor vars and uservars code.
+	* include/kernel/uvariable.hh, src/uvariable.cc (UVariable::print):
+	New.
+	(operator <<(ostream, UVariable)): Use it.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Use libport::exit.
+	* src/console-server.cc: to get rid of a few braces.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	/!\ freq -> period.
+	* include/kernel/userver.hh (frequency_, getFrequency): Rename as...
+	(period_, period_get): these.
+	* include/kernel/userver.hxx: New.
+	* src/console-server.cc, src/userver.cc, src/uvariable.cc,
+	* Makefile.am: Adjust.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Fix SEGV.
+	* src/uvariable.cc: Assert that urbiserver is defined.
+	* src/console-server.cc: Set up the network after the server,
+	as the former uses the latter.
+	Diagnosed by Matthieu Nottale.
+
+	2007-12-17  Akim Demaille  <demaille@gostai.com>
+	Use libport::program_name.
+	* src/console-server.cc: here.
+
+	2007-12-16  Guillaume Deslandes  <deslandes@gostai.com>
+	Fix event list printing command.
+	* src/ucommand.cc: Here.
+
+	2007-12-16  Guillaume Deslandes  <deslandes@gostai.com>
+	Sort output for vars and uservars commands.
+	* src/ucommand.cc: Here.
+
+	2007-12-16  Guillaume Deslandes  <deslandes@gostai.com>
+	Use UValue::echo to print strings in vars and uservars commands.
+	* src/ucommand.cc: Here.
+
+2007-12-18  Loic Fosse  <fosse@gostai.com>
+
 	Factor error code for unvalid flavors.
 	* src/parser/ugrammar.y: Here.
 

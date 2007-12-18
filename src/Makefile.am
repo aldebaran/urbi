@@ -100,5 +100,5 @@ network/bsdnet/connection.hh			\
 network/bsdnet/connection.cc			\
 network/bsdnet/network.hh			\
 network/bsdnet/network.cc
-urbi_console_LDADD = libkernel.la $(top_builddir)/libport/libport.la
+urbi_console_LDADD = libkernel.la $(top_builddir)/libport/libport.la $(PTHREAD_LIBS)
 endif
