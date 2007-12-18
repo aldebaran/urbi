@@ -1634,7 +1634,7 @@ UCommand_ASSIGN_VALUE::processModifiers(UConnection* connection,
       {
 	*valtmp = variable->nbAverage * *valtmp;
 	if (!variable->nbAverage || variable->blendType != urbi::UADD)
-      	  *valtmp += currentVal;
+	  *valtmp += currentVal;
 
 	if (adaptive)
 	  *valtmp +=
@@ -2960,11 +2960,9 @@ UCommand_NEW::execute_(UConnection *connection)
 
   if (parameters || initfun != 0 || component)
   {
-    oss << uid << "=" << id->c_str() << ".init(";
+    oss << "var " << uid << "=" << id->c_str() << ".init(";
 
-    for (UNamedParameters *pvalue = parameters;
-	 pvalue != 0;
-	 pvalue = pvalue->next)
+    for (UNamedParameters *pvalue = parameters; pvalue; pvalue = pvalue->next)
     {
       UValue* valparam = pvalue->expression->eval(this, connection);
       if (!valparam)
