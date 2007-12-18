@@ -1,5 +1,10 @@
 2007-12-18  Akim Demaille  <akim.demaille@free.fr>
 
+	Update find_file.
+	* src/userver.cc (find_file): Use the same code as in k2.
+
+2007-12-18  Akim Demaille  <akim.demaille@free.fr>
+
 	Don't use tmp values after their death.
 	* src/console-server.cc: Do not pass a const char* to make_tokenizer,
 	since it returns an object that references this value: here it first

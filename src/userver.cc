@@ -38,6 +38,7 @@
 #endif
 
 #include "libport/containers.hh"
+#include "libport/separator.hh"
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -939,20 +940,22 @@ namespace
 std::string
 UServer::find_file (const char* base)
 {
-  assert(base);
-  //DEBUG(("Looking for file %s\n", base));
-  for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  ECHO (base << " in " << libport::separate(path, ':'));
+  BOOST_FOREACH (path_type::value_type p, path)
   {
-    std::string f = *p + "/" + base;
+    std::string f = p + "/" + base;
     ECHO("find_file(" << base << ") testing " << f);
     if (file_readable(f))
     {
-      ECHO("find_file(" << base << ") = " << f);
+      ECHO("found: " << f);
       return f;
     }
   }
   if (!file_readable(base))
+  {
+    ECHO("not found: " << base);
     error ("cannot find file: %s", base);
+  }
   return base;
 }
 
