@@ -101,6 +101,7 @@ namespace
       "  -v, --version        display version information\n"
       "  -P, --period PERIOD  base URBI interval in milliseconds\n"
       "  -p, --port PORT      specify the tcp port URBI will listen to.\n"
+      "  -f, --fast           ignore system time, go as fast as possible\n"
       "  -w FILE              write port number to specified file.\n"
       ;
     exit (EX_OK);
@@ -128,7 +129,8 @@ main (int argc, const char* argv[])
   int arg_port = 0;
   /// Where to write the port we use.
   const char* arg_port_filename = 0;
-
+  /// fast mode
+  bool fast = false;
   // Parse the command line.
   {
     int argp = 1;
@@ -144,6 +146,8 @@ main (int argc, const char* argv[])
 	arg_port = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "-v" || arg == "--version")
 	version();
+      else if (arg == "-f" || arg == "--fast")
+	fast = true;
       else if (arg == "-w")
 	arg_port_filename = argv[++i];
       else if (arg[0] == '-')
@@ -187,6 +191,8 @@ main (int argc, const char* argv[])
   c.newDataAdded = true;
 
   DEBUG(("Going to work...\n"));
+  if (fast)
+    while(true)
   while (true)
   {
     long long startTime = libport::utime();

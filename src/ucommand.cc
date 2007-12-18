@@ -1009,8 +1009,10 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
     // eval the right side of the assignment and check for errors
     UValue* rhs = expression->eval(this, connection);
     if (!rhs)
+    {
+      send_error(connection, this, "EXPR evaluation failed");
       return UCOMPLETED;
-
+    }
     // Check type compatibility if the left side variable already exists
     if (variable
 	&& variable->value->dataType != DATA_VOID

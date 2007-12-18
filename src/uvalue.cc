@@ -506,18 +506,7 @@ ulist_last(const UValue* l)
   return res;
 }
 
-//! Add an item to a list.
-static UValue*
-ulist_append(const UValue& l, const UValue& r)
-{
-  UValue* res = l.copy ();
 
-  if (!l.liststart)
-    res->liststart = r.copy ();
-  else
-    ulist_last(res)->next = r.copy ();
-  return res;
-}
 
 //! Add two lists.
 static UValue*
@@ -596,17 +585,13 @@ UValue::add(UValue *v)
     if (v->dataType == DATA_LIST)
       return ulist_concat(*this, *v);
     else
-      return ulist_append(*this, *v);
+      return 0;
   }
 
   if (v->dataType == DATA_LIST)
   {
     // we are not a list
-    UValue* res = v->copy();
-    UValue* b = res->liststart;
-    res->liststart = copy();
-    res->liststart->next = b;
-    return res;
+    return 0;
   }
 
   if (dataType == DATA_NUM)
