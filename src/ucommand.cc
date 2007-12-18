@@ -1289,21 +1289,22 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
 	  }
 
 	  // Check modifiers
-	  bool modif_error = false;
-	  if (sin_modif_count > 1 && (modif_error = true))
+	  bool modif_error = true;
+	  if (sin_modif_count > 1)
 	      send_error(connection, this,
 			 "Multiple sin or cos modifier applied");
+	  else if (modif_count > 1)
+	    send_error(connection, this,
+		       "Only one modifier allowed on assignment");
+	  else if ((modif_ampli || modif_phase || modif_getphase) &&
+		   (sin_modif_count == 0))
+	    send_error(connection, this,
+		       "Sinus modifiers applied, but no sin or cos used");
+	  else if (sin_modif_count == 1 && modif_ampli == 0)
+	    send_error(connection, this,
+		       "No amplitude specified for sinus");
 	  else
-	  if (modif_count > 1 && (modif_error = true))
-	      send_error(connection, this,
-			 "Only one modifier allowed on assignment");
-	  if ((modif_ampli || modif_phase || modif_getphase) &&
-	      (sin_modif_count == 0) && (modif_error = true))
-	      send_error(connection, this,
-			 "Sinus modifiers applied, but no sin or cos used");
-	  if (sin_modif_count == 1 && modif_ampli == 0 && (modif_error = true))
-	      send_error(connection, this,
-			 "No amplitude specified for sinus");
+	    modif_error = false;
 
 	  if (modif_error)
 	  {
