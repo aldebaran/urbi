@@ -36,9 +36,9 @@ print >>fwd_hh, """
   // From visitor.hh
   template <template <typename> class Const>
   class GenVisitor;
-  typedef GenVisitor<libport::constify_traits> ConstVisitor;
-  typedef GenVisitor<libport::id_traits> Visitor;
-"""
+  typedef GenVisitor<%(auxlib)s::constify_traits> ConstVisitor;
+  typedef GenVisitor<%(auxlib)s::id_traits> Visitor;
+""" % ast_params
 
 print >>fwd_hh, ast_params['fwd_hh_epilogue']
 
