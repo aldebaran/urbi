@@ -1,5 +1,11 @@
 2007-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Ast transformer generation.
+	* dev/transform-all-gen: New.
+	* dev/transform-proxy-visitors-gen: New.
+
+2007-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Generalize ast-nodes-mk-gen.
 	* src/ast/ast.yml (ast_basedir): New.
 	* dev/ast-nodes-mk-gen: Use it.

@@ -1,0 +1,251 @@
+#!/usr/bin/env python
+
+import re
+import sys, os, os.path
+import ast, tools
+
+if len(sys.argv) != 2:
+  tools.error("Usage: .. SRCDIR")
+srcdir = sys.argv[1]
+
+## Proxy visitors (used by voyagers) -- header ----------------------------
+loader = ast.Loader ()
+nodes, ast_params = loader.load (sys.stdin)
+
+proxy_visitors_hh = file("proxy-visitors.hh.tmp", "w")
+sys.stdout = proxy_visitors_hh
+
+print tools.banner("transform/proxy-visitors.hh",
+                   """Declaration of proxy visitors used by voyagers.""") + """
+// FIXME: Document.
+"""
+
+print """#ifndef TRANSFORM_PROXY_VISITORS_HH
+# define TRANSFORM_PROXY_VISITORS_HH
+
+# include "ast/visitor.hh"
+
+namespace transform
+{
+
+  /// \\brief First proxy used by a voyager.
+  template <typename VoyagerType>
+  class ProxyVisitor1 : public ast::ConstVisitor
+  {
+    /** \\name Ctor & dtor.
+     ** \\{ */
+  public:
+    // FIXME: Document.
+    ProxyVisitor1 (VoyagerType& voyager, const ast::Ast& second);
+    virtual ~ProxyVisitor1 ();
+    /** \\} */
+
+    /// Default case: should not be used.
+    virtual void operator() (const ast::Ast& e);
+"""
+sorted_nodes = nodes.values ()
+sorted_nodes.sort (lambda x, y: cmp(x.name, y.name))
+for node in sorted_nodes:
+  if node.concrete:
+    # FIXME: Get rif of these `ast::' prefixes.  `using namespace ast'
+    # is a solution, but improving the Python generator/tools would be
+    # better.
+    print "    virtual void operator() (const ast::" + node.name + "& e);"
+print
+dec_subclasses = \
+  filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
+	   sorted_nodes)
+for dec_type in dec_subclasses:
+  print "    virtual void operator() " + \
+            "(const ast::" + dec_type.name + "s" + "& e);"
+print """\
+  private:
+    /// Abstract voyager.
+    VoyagerType& voyager_;
+    /// Abstract node from the second hierachy.
+    const ast::Ast& second_;
+  };
+"""
+
+print """\
+  // FIXME: Have a mutable version of this proxy visitor too?
+  template <typename FirstType, typename VoyagerType>
+  class ProxyVisitor2 : public ast::ConstVisitor
+  {
+  public:
+    ProxyVisitor2 (const FirstType& first, VoyagerType& voyager);
+    virtual ~ProxyVisitor2 ();
+
+    /// Default case: should not be used.
+    virtual void operator() (const ast::Ast& e);
+"""
+# FIXME: Factor.
+for node in sorted_nodes:
+  if node.concrete:
+    print "    virtual void operator() (const ast::" + node.name + "& e);"
+print
+dec_subclasses = \
+  filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
+	   sorted_nodes)
+for dec_type in dec_subclasses:
+  print "    virtual void operator() " + \
+            "(const ast::" + dec_type.name + "s" + "& e);"
+print """\
+  private:
+    /// Concrete node from the first hierachy.
+    const FirstType& first_;
+    /// Abstract voyager.
+    VoyagerType& voyager_;
+  };
+
+} // namespace transform
+
+# include \"transform/proxy-visitors.hxx\"
+
+#endif // !TRANSFORM_PROXY_VISITORS_HH"""
+
+# Restore stdout and close files
+sys.stdout = sys.__stdout__
+proxy_visitors_hh.close ()
+
+# Check differences and update if any
+tools.lazy_overwrite (os.path.join (srcdir, "proxy-visitors.hh"),
+		      "proxy-visitors.hh.tmp")
+
+
+## Proxy visitors (used by voyagers) -- implementation --------------------
+proxy_visitors_hxx = file("proxy-visitors.hxx.tmp", "w")
+sys.stdout = proxy_visitors_hxx
+
+print """\
+//<<-
+// Generated, do not edit by hand.
+//->>
+/**
+ ** \\file transform/proxy-visitors.hxx
+ ** \\brief Implementation of proxy visitors used by voyagers.
+ */
+
+"""
+
+print """#ifndef TRANSFORM_PROXY_VISITORS_HXX
+# define TRANSFORM_PROXY_VISITORS_HXX
+
+# include "transform/proxy-visitors.hh"
+
+namespace transform
+{
+
+  /*----------------.
+  | ProxyVisitor1.  |
+  `----------------*/
+
+  template <typename VoyagerType>
+  ProxyVisitor1<VoyagerType>::ProxyVisitor1 (VoyagerType& voyager,
+					     const ast::Ast& second)
+    : voyager_ (voyager), second_ (second)
+  {
+  }
+
+  template <typename VoyagerType>
+  ProxyVisitor1<VoyagerType>::~ProxyVisitor1 ()
+  {
+  }
+
+  template <typename VoyagerType>
+  void ProxyVisitor1<VoyagerType>::operator() (const ast::Ast&)
+  {
+    // FIXME: Better error message.
+    abort ();
+  }
+"""
+# FIXME: Factor.
+for node in sorted_nodes:
+  if node.concrete:
+    print "  template <typename VoyagerType>"
+    print "  void"
+    print "  ProxyVisitor1<VoyagerType>::operator() " + \
+            "(const ast::" + node.name + "& first)"
+    print "  {"
+    print "    ProxyVisitor2<ast::" + node.name + ", VoyagerType> " + \
+              "proxy (first, voyager_);"
+    print "    second_.accept (proxy);"
+    print "  }"
+    print
+print
+dec_subclasses = \
+  filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
+	   sorted_nodes)
+for dec_type in dec_subclasses:
+  print "  template <typename VoyagerType>"
+  print "  void"
+  print "  ProxyVisitor1<VoyagerType>::operator() " + \
+          "(const ast::" + dec_type.name + "s" + "& first)"
+  print "  {"
+  print "    ProxyVisitor2<ast::" + dec_type.name + "s" + ", VoyagerType> " + \
+             "proxy (first, voyager_);"
+  print "    second_.accept (proxy);"
+  print "  }"
+  print
+print """
+  /*----------------.
+  | ProxyVisitor2.  |
+  `----------------*/
+
+  template <typename FirstType, typename VoyagerType>
+  ProxyVisitor2<FirstType, VoyagerType>::ProxyVisitor2 (const FirstType& first,
+                                                        VoyagerType& voyager)
+    : first_ (first), voyager_ (voyager)
+  {
+  }
+
+  template <typename FirstType, typename VoyagerType>
+  ProxyVisitor2<FirstType, VoyagerType>::~ProxyVisitor2 ()
+  {
+  }
+
+  template <typename FirstType, typename VoyagerType>
+  void
+  ProxyVisitor2<FirstType, VoyagerType>::operator() (const ast::Ast&)
+  {
+    // FIXME: Better error message.
+    abort ();
+  }
+"""
+# FIXME: Factor.
+for node in sorted_nodes:
+  if node.concrete:
+    print "  template <typename FirstType, typename VoyagerType>"
+    print "  void"
+    print "  ProxyVisitor2<FirstType, VoyagerType>::operator() " + \
+            "(const ast::" + node.name + "& second)"
+    print "  {"
+    print "    voyager_.visit_ (first_, second);"
+    print "  }"
+    print
+print
+dec_subclasses = \
+  filter (lambda node: node.name != 'Dec' and node.is_a ('Dec'),
+	   sorted_nodes)
+for dec_type in dec_subclasses:
+  print "  template <typename FirstType, typename VoyagerType>"
+  print "  void"
+  print "  ProxyVisitor2<FirstType, VoyagerType>::operator() " + \
+          "(const ast::" + dec_type.name + "s" + "& second)"
+  print "  {"
+  print "    voyager_.visit_ (first_, second);"
+  print "  }"
+  print
+print """
+} // namespace transform
+
+#endif // !TRANSFORM_PROXY_VISITORS_HXX"""
+
+# Restore stdout and close files
+sys.stdout = sys.__stdout__
+proxy_visitors_hxx.close ()
+
+# Check differences and update if any
+fullname = os.path.join (srcdir, "proxy-visitors.hxx")
+tools.lazy_overwrite (fullname, "proxy-visitors.hxx.tmp")
+
