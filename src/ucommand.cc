@@ -4529,6 +4529,8 @@ UCommand_EMIT::execute_(UConnection *connection)
 
 	  cbi->__evalcall(tmparray);
 	}
+    firsttime = false;
+    return UONQUEUE;
   }
 
   if (thetime > targetTime && !firsttime)
@@ -4537,7 +4539,6 @@ UCommand_EMIT::execute_(UConnection *connection)
     return UCOMPLETED;
   }
 
-  firsttime = false;
   return UBACKGROUND;
 }
 
