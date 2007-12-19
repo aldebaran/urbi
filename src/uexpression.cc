@@ -1994,7 +1994,7 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  eh->registerCmd(cmd);
 	  return USUCCESS;
 	}
-	else if (c->server->defcheck == UServer::defcheck_sarkozy)
+	else if (c->server->defcheck > UServer::defcheck_student)
 	  return UFAIL;
 	else
 	{
@@ -2040,7 +2040,8 @@ UExpression::asyncScan(UASyncCommand *cmd,
 	  {
 	    if (param->expression)
 	      if (param->expression->asyncScan(cmd, c) == UFAIL)
-		return UFAIL;
+		if (*variablename->id != "isdef")
+		  return UFAIL;
 	    param = param->next;
 	  }
 	  return USUCCESS;

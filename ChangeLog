@@ -1,3 +1,10 @@
+2007-12-19  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix "at (isdef (id))" bug.
+	* src/uexpression.cc: Here.
+	Typing "at (isdef (id))" declared id if it was not
+	declared yet.
+
 2007-12-18  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix warning with some versions of gcc.
