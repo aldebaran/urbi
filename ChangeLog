@@ -1,5 +1,11 @@
 2007-12-19  Akim Demaille  <demaille@gostai.com>
 
+	Generalize ast-nodes-mk-gen.
+	* src/ast/ast.yml (ast_basedir): New.
+	* dev/ast-nodes-mk-gen: Use it.
+
+2007-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Generalize ast-fwd-gen.
 	* src/ast/ast.yml (auxlib): New.
 	* dev/ast-fwd-gen: Use it.

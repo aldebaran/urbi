@@ -16,9 +16,7 @@ nodes, ast_params = loader.load (sys.stdin)
 # than super classes.  When there is multiple inheritance, consider
 # only the first super class.
 
-# FIXME: Add a --base-dir option (or whatever) to be able to set this from
-# the command line
-basedir = 'ast/'
+basedir = ast_params['ast_basedir']
 
 mk = file("ast-nodes.mk.tmp",  "w")
 print >>mk, "AST_NODES =",

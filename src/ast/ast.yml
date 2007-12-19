@@ -6,6 +6,16 @@
 # AST parameters.  #
 # ---------------- #
 
+# The base directory to prepend to all the file names generated in the
+# generated Makefile snippet.  If this ast-nodes.mk is to be included
+# by ast/Makefile.am, then define to empty.  If it is included by its
+# parent Makefile.am, define to "ast/".
+ast_basedir: "ast/"
+
+# The name of the directory/namespace that contains our auxiliary C++
+# library.
+auxlib: "libport"
+
 # The generator will accept these types as is, without looking for a
 # particular header.  Also, they are handled by copy.
 atomic_types:
@@ -13,10 +23,6 @@ atomic_types:
   - "int"
   - "unsigned"
   - "ufloat"
-
-# The name of the directory/namespace that contains our auxiliary C++
-# library.
-auxlib: "libport"
 
 # Likewise, but these types are handled by references, because of
 # their size.
