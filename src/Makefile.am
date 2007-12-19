@@ -53,7 +53,6 @@ ughostconnection.hh ughostconnection.cc				\
 uqueue.hh uqueue.cc						\
 userver.cc							\
 ustring.cc							\
-uwait-counter.hh						\
 usystem.cc
 
 

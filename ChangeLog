@@ -1,5 +1,17 @@
 2007-12-19  Akim Demaille  <demaille@gostai.com>
 
+	dev/dev.mk.
+	* dev/dev.mk: New.
+	* Makefile.am: Use it to ship the files in dev/.
+	(dist-hook): Remove, useless.
+
+	* src/ast/ast.mk: Remove its older content, replaced by...
+	* dev/ast-gen.mk: this new file from Gostai.
+	* src/Makefile.am (uwait-counter): No longer exists.
+	* src/parser/parser.mk (CLEANFILES): Remove the xml output.
+
+2007-12-19  Akim Demaille  <demaille@gostai.com>
+
 	Ast transformer generation.
 	* dev/transform-all-gen: New.
 	* dev/transform-proxy-visitors-gen: New.
