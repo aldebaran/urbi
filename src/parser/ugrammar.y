@@ -661,10 +661,6 @@ flags.0:
 `-------*/
 
 stmt:
-  "{" stmts "}" { $$ = scope(@$, $2); }
-;
-
-stmt:
   /* empty */ { $$ = new ast::Noop (@$, true); }
 | "noop"      { $$ = new ast::Noop (@$, false); }
 | expr        { $$ = $1; }
@@ -841,10 +837,10 @@ expr:
 | expr "++"      { $$ = call (@$, $1, $2); }
 ;
 
+
 /*---------------------.
 | Stmt: Control flow.  |
 `---------------------*/
-%token TOK_DO "do";
 
 stmt:
   "at" "(" softtest ")" stmt %prec CMDBLOCK
@@ -857,10 +853,6 @@ stmt:
 | "at" "(" softtest ")" stmt "onleave" stmt
     {
       $$ = 0;
-    }
-| "do" expr "{" stmts "}"
-    {
-      $$ = new ast::Scope(@$, $2, $4);
     }
 | "every" "(" expr ")" stmt
     {
@@ -944,6 +936,26 @@ stmt:
       $$ = new ast::While(@$, $1, $3, $5);
     }
 ;
+
+
+/*---------------------.
+| expr: Control flow.  |
+`---------------------*/
+
+%token TOK_DO "do";
+
+expr:
+  "{" stmts "}"
+    { $$ = scope(@$, $2); }
+| "do" expr "{" stmts "}"
+    {
+      $$ = new ast::Scope(@$, $2, $4);
+    }
+;
+
+/*---------------------------.
+| Function calls, messages.  |
+`---------------------------*/
 
 %type <call> call message;
 message:

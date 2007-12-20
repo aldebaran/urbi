@@ -1,5 +1,10 @@
 2007-12-20  Akim Demaille  <demaille@gostai.com>
 
+	Let {} and do {} be expressions.
+	* src/parser/ugrammar.y: here.
+
+2007-12-20  Akim Demaille  <demaille@gostai.com>
+
 	FLAVOR_CHECK.
 	* src/parser/ugrammar.y (FLAVOR_ASSERT): Rename as...
 	(FLAVOR_CHECK): this, as it's a user error, not a programmer error.
