@@ -1,3 +1,13 @@
+2007-12-20  Akim Demaille  <demaille@gostai.com>
+
+	FLAVOR_CHECK.
+	* src/parser/ugrammar.y (FLAVOR_ASSERT): Rename as...
+	(FLAVOR_CHECK): this, as it's a user error, not a programmer error.
+	Don't duplicate the printing of flavor_type, use lexical_cast.
+	Group it with the remaining handling of flavor_type.
+	End its invocation with a (useless, stylistic) semicolon.
+	Put a do-while protection.
+
 2007-12-19  Akim Demaille  <demaille@gostai.com>
 
 	dev/dev.mk.

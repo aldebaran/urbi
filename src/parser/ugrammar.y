@@ -67,21 +67,6 @@
 #include "kernel/uconnection.hh"
 #include "parser/uparser.hh"
 
-#define FLAVOR_ASSERT(Loc, Keyword, Flav, Condition)			\
-  if (!(Condition))							\
-  {									\
-    std::string f;							\
-    switch (Flav)							\
-    {									\
-      case ast::flavor_pipe: f = "|"; break;				\
-      case ast::flavor_comma: f = ","; break;				\
-      case ast::flavor_and: f = "&"; break;				\
-      default: f = ";";							\
-    }									\
-    error(Loc, "invalid flavor `" + f + "' for `" Keyword  "' keyword"); \
-    YYERROR;								\
-  }
-
   namespace
   {
 
@@ -370,6 +355,20 @@
 %code requires
 {
 #include "ast/flavor.hh"
+};
+%code
+{
+/// Generate a parse error for invalid keyword/flavor combination.
+#define FLAVOR_CHECK(Loc, Keyword, Flav, Condition)			\
+  do									\
+    if (!(Condition))							\
+    {									\
+      error(Loc,							\
+	    ("invalid flavor `" + boost::lexical_cast<std::string>(Flav) \
+	     + "' for `" Keyword  "'"));				\
+      YYERROR;								\
+    }									\
+  while (0)
 };
 %union { ast::flavor_type flavor; };
 %token <flavor>
@@ -850,8 +849,8 @@ expr:
 stmt:
   "at" "(" softtest ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_ASSERT(@$, "for", $1,
-                    $1 == ast::flavor_semicolon || $1 == ast::flavor_and)
+      FLAVOR_CHECK(@$, "for", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       $$ = 0;
     }
@@ -879,8 +878,8 @@ stmt:
     }
 | "for" "(" stmt ";" expr ";" stmt ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_ASSERT(@$, "for", $1,
-                    $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe)
+      FLAVOR_CHECK(@$, "for", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = for_loop (@$, $1, $3, $5, $7, $9);
     }
 | "for" "identifier" "in" expr "{" stmts "}"    %prec CMDBLOCK
@@ -940,8 +939,8 @@ stmt:
     }
 | "while" "(" expr ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_ASSERT(@$, "while", $1,
-                    $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe)
+      FLAVOR_CHECK(@$, "while", $1,
+		   $1 == ast::flavor_semicolon || $1 == ast::flavor_pipe);
       $$ = new ast::While(@$, $1, $3, $5);
     }
 ;
