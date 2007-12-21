@@ -1,3 +1,8 @@
+2007-12-21  mefyl  <mefyl@lrde.epita.fr>
+
+	Document.
+	* include/kernel/userver.hh: Document and reorder time members.
+
 2007-12-21  Akim Demaille  <demaille@gostai.com>
 
 	No color for the buildfarm.
