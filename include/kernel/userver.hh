@@ -226,13 +226,14 @@ public:
   */
   virtual void afterWork ();
 
-  /// Display a message on the robot console
+  /// Display a message on the robot console.
   void display (const char*);
   /// Display a set of messages on the robot console.
   void display (const char**);
 
   //! Accessor for lastTime_.
   ufloat lastTime ();
+  //! Update lastTime_ to current time.
   void updateTime ();
   void addConnection (UConnection& connection);
   /// Overload to support the legacy interface of k1.
@@ -304,11 +305,14 @@ public:
   ufloat cputhreshold;
 
 public:
+  /// Time at the start of the current cycle
+  ufloat currentTime;
+  /// Time at the start of previous cycles
+  ufloat previousTime;
   ufloat previous2Time;
   ufloat previous3Time;
-  ufloat currentTime;
-  ufloat previousTime;
-  ufloat latestTime; ///< used to detect cpu overload
+  /// Time after the work for current cycle (used to detect cpu overload)
+  ufloat latestTime;
 
   /// Stops all commands in all connections.
   bool stopall;

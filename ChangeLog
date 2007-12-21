@@ -1,3 +1,8 @@
+2007-12-21  mefyl  <mefyl@lrde.epita.fr>
+
+	Document.
+	* include/kernel/userver.hh: Comment and reorder time members.
+
 2007-12-20  Akim Demaille  <demaille@gostai.com>
 
 	Let {} and do {} be expressions.
