@@ -262,7 +262,7 @@ namespace urbi
 	  URBI(()) << "var " << (std::string) array[2];
 	else
 	{
-	  URBI(()) << (std::string) array[2] << "=";
+	  URBI(()) << "var " << (std::string) array[2] << "=";
 	  getDefaultClient()->send(retval);//I'd rather not use << for bins
 	}
 	URBI(()) << ";";
