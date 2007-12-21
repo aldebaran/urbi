@@ -21,10 +21,12 @@ XFAIL_TESTS +=					\
 1.x/deprecated-echo-syntax-warning.chk		\
 1.x/string-comparison.chk
 
+
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
 1.x/arithmetics-failures.chk			\
+1.x/at-is-def.chk				\
 1.x/begin-end-report.chk			\
 1.x/bin-copy.chk				\
 1.x/bin.chk					\
@@ -35,6 +37,7 @@ XFAIL_TESTS +=					\
 1.x/doublecolon.chk				\
 1.x/echo.chk					\
 1.x/events.chk					\
+1.x/events-emit-then-return-in-function.chk	\
 1.x/every.chk					\
 1.x/exec.chk					\
 1.x/for-in.chk					\
@@ -54,6 +57,15 @@ XFAIL_TESTS +=					\
 1.x/load.chk					\
 1.x/long-identifiers.chk			\
 1.x/loopn.chk					\
+1.x/modifier-accel-adaptive.chk			\
+1.x/modifier-accel.chk				\
+1.x/modifier-smooth-adaptive.chk		\
+1.x/modifier-smooth.chk				\
+1.x/modifier-speed-adaptive.chk			\
+1.x/modifier-speed.chk				\
+1.x/modifier-time-adaptive.chk			\
+1.x/modifier-time.chk				\
+1.x/modifier-syntax.chk				\
 1.x/multiinheritance.chk			\
 1.x/nameresolution-array.chk			\
 1.x/nameresolution-dollars.chk			\
@@ -66,6 +78,7 @@ XFAIL_TESTS +=					\
 1.x/parse-errors.chk				\
 1.x/ping.chk					\
 1.x/simple-alias.chk				\
+1.x/sinus.chk					\
 1.x/size.chk					\
 1.x/speed-zero.chk				\
 1.x/stopif.chk					\
@@ -74,6 +87,7 @@ XFAIL_TESTS +=					\
 1.x/synchro-assignment.chk			\
 1.x/tag.chk					\
 1.x/undefall.chk				\
+1.x/var-lookup.chk				\
 1.x/variable-normalize.chk			\
 1.x/variable-qualifiers.chk			\
 1.x/whenever-bad.chk
