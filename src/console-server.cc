@@ -32,10 +32,9 @@ public:
     : UServer(period, 64000000, "console"), fast(fast), ctime(0)
   {
     
-    const char * e = getenv ("URBI_PATH");
-    if (e)
+    if (const char* cp = getenv ("URBI_PATH"))
     {
-      std::string up(e);
+      std::string up(cp);
       BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
         path.push_back (s);
     }
