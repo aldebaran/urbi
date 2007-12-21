@@ -1,5 +1,10 @@
 2007-12-21  Akim Demaille  <demaille@gostai.com>
 
+	make check-buildfarm.
+	* Makefile.am (check-buildfarm): New.
+
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
 	Update tests.
 	* tests-local.mk (TESTS_DIRS): Define it.
 

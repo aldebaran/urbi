@@ -65,3 +65,7 @@ valgrind-check:
 
 check-html:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
+
+# The target run by the buildfarm.
+check-buildfarm:
+	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html VERBOSE=1 USE_VALGRIND=1
