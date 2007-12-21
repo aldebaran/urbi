@@ -507,47 +507,4 @@ namespace runner
     CORO_END;
   }
 
-  void
-  Runner::operator() (ast::Repeat& e)
-  {
-    CORO_CTX_VARS
-      ((2, (
-	  (int, iterations),
-	  (bool, has_error)
-	  )));
-
-    // Evaluate the iteration number.
-    JECHO ("repeat iteration number", e.iterations_get ());
-    CORO_CALL (operator() (e.iterations_get()));
-
-    has_error = false;
-    try
-    {
-      TYPE_CHECK(current_, object::Float);
-    }
-    catch (object::UrbiException& ue)
-    {
-      ue.location_set (e.iterations_get().location_get());
-      raise_error_ (ue);
-      current_.reset ();
-      has_error = true;
-    }
-    if (has_error)
-      CORO_RETURN;
-
-    iterations = (int)VALUE(current_, object::Float);
-
-    while (iterations-- > 0)
-    {
-      if (e.flavor_get() == ast::flavor_semicolon)
-	YIELD();
-
-      JECHO ("repeat body", e.body_get ());
-      CORO_CALL (operator() (e.body_get()));
-    }
-    current_.reset ();
-
-    CORO_END;
-  }
-
 } // namespace runner

@@ -906,7 +906,12 @@ stmt:
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
-      $$ = new ast::Repeat(@$, $1, $3, $5);
+      ast::Call *idx = call(@$, 0, "___idx");
+      ast::Call	*init = assign(@$, idx, $3, true);
+      ast::Call *test = call(@$, idx, new libport::Symbol(">"),
+                             new ast::Float(@$, 0));
+      ast::Call *dec = call(@$, idx, "--");
+      $$ = for_loop(@$, $1, init, test, dec, $5);
     }
 | "stopif" "(" softtest ")" stmt
     {

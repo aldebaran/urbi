@@ -554,33 +554,6 @@ While:
     - ~body
     - libport::decindent
 
-Repeat:
-  super:
-    - Exp
-    - Flavorable
-  attributes:
-    - iterations:
-        type: Exp*
-        desc: Number of iteration
-    - body:
-        type: Exp*
-        desc: Executed several times
-  default: |2
-    operator()(n.iterations_get());
-    operator()(n.body_get());
-  printer:
-    - '"repeat"'
-    - '{
-         if (n.flavor_get() != flavor_semicolon)
-           ostr_ << n.flavor_get();
-       }'
-    - '"("'
-    - ~iterations
-    - '")"'
-    - libport::incendl
-    - ~body
-    - libport::decindent
-
 # At:
 #   super: Exp
 #   attributes:

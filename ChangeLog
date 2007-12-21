@@ -1,3 +1,11 @@
+2007-12-21  Loic Fosse  <fosse@gostai.com>
+
+	Use ast::While for loopn.
+	* src/ast/ast.yml, src/runner/runner.cc, src/runner/runner.hh:
+	Remove ast::Repeat.
+	* src/parser/ugrammar.y: Expand for (integer) into a while instead of
+	using ast::Repeat.
+
 2007-12-21  mefyl  <mefyl@lrde.epita.fr>
 
 	Declare XFAIL tests.
