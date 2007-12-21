@@ -1,5 +1,10 @@
 2007-12-21  Loic Fosse  <fosse@gostai.com>
 
+	Fix error message about wrong flavor for at keyword.
+	* src/parser/ugrammar.y: Here.
+
+2007-12-21  Loic Fosse  <fosse@gostai.com>
+
 	Use ast::While for loopn.
 	* src/ast/ast.yml, src/runner/runner.cc, src/runner/runner.hh:
 	Remove ast::Repeat.

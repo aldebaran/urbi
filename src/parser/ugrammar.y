@@ -845,7 +845,7 @@ expr:
 stmt:
   "at" "(" softtest ")" stmt %prec CMDBLOCK
     {
-      FLAVOR_CHECK(@$, "for", $1,
+      FLAVOR_CHECK(@$, "at", $1,
 		   $1 == ast::flavor_semicolon || $1 == ast::flavor_and);
       warn_implicit(up, @5, $5);
       $$ = 0;
