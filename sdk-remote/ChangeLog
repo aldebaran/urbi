@@ -1,3 +1,10 @@
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
+	Adapt tests for new server/buildaux conventions.
+	* src/liburbi/tests/liburbi-check.as: 
+	   - Start server with --period <period>.
+	   - Redirect fd 3 to stderr. 
+
 2007-12-18  Akim Demaille  <akim.demaille@free.fr>
 
 	src/liburbi/tests.

@@ -62,6 +62,8 @@ my_sleep ()
 ## Main program.  ##
 ## -------------- ##
 
+exec 3>&2
+
 # Make it absolute.
 chk=$(absolute "$1")
 if test ! -f "$chk.cc"; then
@@ -94,8 +96,8 @@ echo 0 >status.exp
 
 #start it
 valgrind=$(instrument "server.val")
-echo $valgrind $URBI_SERVER -p 0 -w server.port $period >server.cmd
-$valgrind $URBI_SERVER -p 0 -w server.port $period >server.out 2>server.err &
+echo $valgrind $URBI_SERVER -p 0 -w server.port --period $period >server.cmd
+$valgrind $URBI_SERVER -p 0 -w server.port --period $period >server.out 2>server.err &
 register_child server
 
 my_sleep 2
