@@ -12,9 +12,11 @@
 #include <fstream>
 
 #include <boost/tokenizer.hpp>
+#include <boost/foreach.hpp>
 
 #include "libport/cli.hh"
 #include "libport/program-name.hh"
+#include "libport/tokenizer.hh"
 #include "libport/utime.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
@@ -31,14 +33,9 @@ public:
   ConsoleServer(int period)
     : UServer(period, "console")
   {
-    if (const char* cp = getenv ("URBI_PATH"))
-    {
-      typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-      boost::char_separator<char> sep (":");
-      tokenizer tok (std::string (cp), sep);
-      for (tokenizer::iterator it = tok.begin (); it != tok.end (); ++it)
-        path.push_back (*it);
-    }
+    std::string up = getenv ("URBI_PATH");
+    BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
+      path.push_back (s);
   }
 
   virtual ~ConsoleServer()

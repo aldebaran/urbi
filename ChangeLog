@@ -1,5 +1,34 @@
 2007-12-21  mefyl  <mefyl@lrde.epita.fr>
 
+	merge -r 2055:2066 https://svn.gostai.com/svn/kernel1/trunk
+	2007-12-14  Guillaume Deslandes  <deslandes@gostai.com>
+	Make good use of period in urbi-console.
+	* src/console-server.cc: Here.
+	The "utime() < startTime + period" test was never true.
+
+	2007-12-14  Matthieu Nottale  <nottale@gostai.com>
+	Fix loadFile which can be used for binaries.
+	* include/kernel/userver.hh: Add extra parameter to loadFile to
+	  specify Queue type.
+	* src/uexpression.cc: Pass it.
+	* src/userver.cc: Do not output #push and #pop to DATA queue.
+
+	2007-12-14  Akim Demaille  <demaille@gostai.com>
+	Let urbi-console support network connections.
+	Subscribe to src/network
+	* src/Makefile.am: Adjust.
+	* src/console-server.cc: Improve cli to match ucore-pc's.
+
+	2007-12-14  Akim Demaille  <demaille@gostai.com>
+	Fix CPP guard.
+	* include/kernel/userver.hh: here.
+
+	2007-12-13  Akim Demaille  <demaille@gostai.com>
+	Specify URBI_SERVER.
+	* tests-local.mk: We use urbi-console.
+
+2007-12-21  mefyl  <mefyl@lrde.epita.fr>
+
 	Document.
 	* include/kernel/userver.hh: Comment and reorder time members.
 
