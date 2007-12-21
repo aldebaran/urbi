@@ -162,6 +162,7 @@ FLAVOR   [;|,&]?
   if (first_run)
     yy_flex_debug = !!getenv("FLEX_DEBUG");
 #endif
+
   locp->step();
 
 #ifndef NDEBUG
@@ -219,14 +220,19 @@ FLAVOR   [;|,&]?
 ^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     *locp = synclines.top(); synclines.pop();
 
 
-  /*------------.
-  | The rules.  |
-  `------------*/
+  /*--------------------------------------------------------------.
+  | Console mode: skip the [01234567] lines for expected output.  |
+  `--------------------------------------------------------------*/
 
 <SC_UCONSOLE>{
   ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
   ^\[:].*               /* ignore the "[:] whatever" messages */;
 }
+
+
+  /*------------.
+  | The rules.  |
+  `------------*/
 
 "inf"         RETURN_FVAL(FLOAT, UINFINITY);
 "pi"          RETURN_FVAL(FLOAT, 3.14159265358979323846264338327950288);

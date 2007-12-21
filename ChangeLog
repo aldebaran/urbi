@@ -1,3 +1,8 @@
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	Formatting changes in the handling of SC_UCONSOLE.
+	* src/parser/utoken.l: Here, to be like k1.
+
 2007-12-21  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Move some code from configure.ac to test-local.mk.
