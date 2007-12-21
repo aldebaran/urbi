@@ -1,5 +1,10 @@
 2007-12-21  mefyl  <mefyl@lrde.epita.fr>
 
+	Define TESTS_DIR.
+	* tests-local.mk: Kernel 2 must pass 2.x and 1.x tests.
+
+2007-12-21  mefyl  <mefyl@lrde.epita.fr>
+
 	merge -r 2055:2066 https://svn.gostai.com/svn/kernel1/trunk
 	2007-12-14  Guillaume Deslandes  <deslandes@gostai.com>
 	Make good use of period in urbi-console.
