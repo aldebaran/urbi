@@ -860,16 +860,20 @@ UCommand_ASSIGN_VALUE::execute_function_call(UConnection *connection)
 	  *j->c << UConnection::send(reinterpret_cast<const ubyte*>("]\n"), 2);
 	}
       }
-
+      #define STRINGIFY(a) #a
       persistant = false;
       {
+	const char * vname = variablename->getFullname()->c_str();
 	std::ostringstream o;
-	o << "{"
+	o //<< "#push \"" __FILE__ "\" " STRINGIFY(__LINE__) "\n"
+	  << "{"
+	  << "if (!isdef(" << vname << ")) var "<<vname<<";"
 	  << "  waituntil(isdef(" << uid << "))|"
-	  << variablename->getFullname()->c_str()
+	  << vname
 	  << "=" << uid
 	  << "|delete " << uid
-	  << "}";
+	  << "}"
+	  ;//<< "\n#pop\n";
 	strMorph (o.str());
       }
       return UMORPH;

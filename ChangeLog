@@ -1,5 +1,11 @@
 2007-12-21  Matthieu Nottale  <nottale@gostai.com>
 
+	Declare vars in generated code.
+	* src/ucommand.cc: Here when writting the result of a remote
+	  function call.
+
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
 	loadFile uses std::cin if /dev/stdin is passed.
 	* src/userver.cc: Here.
 
