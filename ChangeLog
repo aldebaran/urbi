@@ -1,3 +1,9 @@
+2007-12-21  Benoit Sigoure  <tsuna@lrde.epita.fr>
+
+	Move some code from configure.ac to test-local.mk.
+	* configure.ac (ENABLE_HARD_ERRORS): Move to...
+	* tests-local.mk: ... Here.
+
 2007-12-21  Loic Fosse  <fosse@gostai.com>
 
 	Add comments for translation of loopn.

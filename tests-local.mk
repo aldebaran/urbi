@@ -10,6 +10,10 @@ URBI_SERVER = $(abs_top_builddir)/src/urbi-console
 k2-check:
 	$(MAKE) check TESTS_DIRS=2.x
 
+# k2 is under heavy development, don't catch SEGV and the like as hard errors
+# while running make check.
+ENABLE_HARD_ERRORS = false
+
 # k2 tests that fail.
 XFAIL_TESTS +=					\
 2.x/closure.chk
