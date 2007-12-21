@@ -906,11 +906,32 @@ stmt:
     }
 | "for" "(" expr ")" stmt %prec CMDBLOCK
     {
+      /*
+       * Compiled as
+       *
+       * {
+       *   var ___idx = <expr>;
+       *   while (___idx > 0)
+       *   {
+       *     <stmt>
+       *     ___idx--;
+       *   }
+       * }
+       *
+       * using the for_loop function.
+       */
+
+      // var ___idx = <expr>
       ast::Call *idx = call(@$, 0, "___idx");
       ast::Call	*init = assign(@$, idx, $3, true);
+
+      // ___idx > 0
       ast::Call *test = call(@$, idx, new libport::Symbol(">"),
                              new ast::Float(@$, 0));
+      // ___idx--
       ast::Call *dec = call(@$, idx, "--");
+
+      // Put all together into a while.
       $$ = for_loop(@$, $1, init, test, dec, $5);
     }
 | "stopif" "(" softtest ")" stmt
