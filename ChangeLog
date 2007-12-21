@@ -1,3 +1,9 @@
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	No color for the buildfarm.
+	* Makefile.am (CHECK_BUILDFARM_FLAGS): New.
+	Use it.
+
 2007-12-21  Matthieu Nottale  <nottale@gostai.com>
 
 	Fix bug from var-lookup.chk.
