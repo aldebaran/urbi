@@ -971,8 +971,30 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
+    // check if variable is inherited 
+    //XXX fixme duplicated from uexpression:cc:1684 (virtual variables) 
+    bool inherited = false;
+    const char* devname = variablename->getDevice()->c_str();
+    HMobjtab::iterator itobj;
+    if ((itobj = ::urbiserver->objtab.find(devname)) !=
+	::urbiserver->objtab.end())
+    {
+      bool ambiguous;
+      UVariable * v = itobj->second->
+      searchVariable(variablename->getMethod()->c_str(), ambiguous);
+      if (ambiguous)
+      {
+	send_error(connection, this,
+	    "Ambiguous multiple inheritance on variable %s",
+	    variablename->getFullname()->c_str());
+      }
+      if (v)
+	inherited = true;
+    }
+      
     // Strict variable definition checking
     if (!variable
+       && !inherited
 	&& !defkey
 	&& (connection->server->defcheck == UServer::defcheck_teacher
 	    || connection->server->defcheck == UServer::defcheck_sarkozy))

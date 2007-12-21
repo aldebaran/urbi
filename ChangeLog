@@ -1,3 +1,9 @@
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix bug from var-lookup.chk.
+	* src/ucommand.cc: Check if a variable is inherited && do not display
+	  the "undeclared variable" warning.
+
 2007-12-21  Akim Demaille  <demaille@gostai.com>
 
 	make check-buildfarm.
