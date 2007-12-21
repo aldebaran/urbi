@@ -1,3 +1,8 @@
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	Backport SC_UCONSOLE mode.
+	* src/parser/utoken.l: From k2.
+
 2007-12-21  mefyl  <mefyl@lrde.epita.fr>
 
 	Document.
