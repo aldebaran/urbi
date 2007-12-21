@@ -1,3 +1,8 @@
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	Update tests.
+	* tests-local.mk (TESTS_DIRS): Define it.
+
 2007-12-21  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Add 1.x to default test directories, update tests.
