@@ -1,5 +1,10 @@
 2007-12-24  Akim Demaille  <demaille@gostai.com>
 
+	parser.mk from k2.
+	* src/parser/parser.mk (CLEANFILES): Add *xml.
+
+2007-12-24  Akim Demaille  <demaille@gostai.com>
+
 	Don't depend on output-to-dot.
 	* src/parser/parser.mk: here, since we don't use it.
 

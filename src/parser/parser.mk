@@ -24,7 +24,7 @@ ugrammar.cc
 
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UGRAMMAR_Y)
-CLEANFILES += ugrammar.stamp ugrammar.output ugrammar.html
+CLEANFILES += ugrammar.{html,output,stamp,xml}
 nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 
 
