@@ -927,7 +927,7 @@ stmt:
 
       // ___idx > 0
       ast::Call *test = call(@$, idx, new libport::Symbol(">"),
-                             new ast::Float(@$, 0));
+			     new ast::Float(@$, 0));
       // ___idx--
       ast::Call *dec = call(@$, idx, "--");
 
