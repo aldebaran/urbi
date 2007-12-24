@@ -1,5 +1,14 @@
 2007-12-24  Akim Demaille  <demaille@gostai.com>
 
+	Fix (?) k2 test suite failures.
+	Now that we use the network connection to test the kernel,
+	the Tsuna trick that exits when there was nothing to do during
+	a few cycles no longer applies.
+	* src/runner/scheduler.cc (work): Comment out the "autoexiting"
+	code.
+
+2007-12-24  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 2153:2174 https://svn.gostai.com/svn/kernel1/trunk
 	2007-12-24  Akim Demaille  <demaille@gostai.com>
 	Don't depend on output-to-dot.
