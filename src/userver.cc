@@ -548,24 +548,33 @@ UServer::find_file (const std::string& base)
 UErrorValue
 UServer::loadFile (const std::string& base, UCommandQueue* q, QueueType type)
 {
-  std::string f = find_file (base);
-  std::ifstream is (f.c_str(), std::ios::binary);
-  if (!is)
-    return UFAIL;
-
+  std::istream *is;
+  bool isStdin = (base == std::string("/dev/stdin"));
+  if (isStdin)
+    is = & std::cin;
+  else
+  {
+    std::string f = find_file (base);
+    is = new std::ifstream(f.c_str(), std::ios::binary);
+    if (!*is)
+      return UFAIL;
+  }
   if (type == QUEUE_URBI)
     q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
-  while (is.good ())
+  while (is->good ())
   {
     char buf[BUFSIZ];
-    is.read (buf, sizeof buf);
-    if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
+    is->read (buf, sizeof buf);
+    if (q->push((const ubyte*) buf, is->gcount()) == UFAIL)
       return UFAIL;
   }
   if (type == QUEUE_URBI)
     q->push ("#pop\n");
-  is.close();
-
+  if (!isStdin)
+  {
+    reinterpret_cast<std::ifstream*>(is)->close();
+    delete is;
+  }
   return USUCCESS;
 }
 

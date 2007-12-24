@@ -61,3 +61,8 @@ check-html k2-check:
 
 doc:
 	cd doc && $(MAKE) $(AM_MAKEFLAGS) $@
+
+# The target run by the buildfarm.
+CHECK_BUILDFARM_FLAGS = AM_COLOR_TESTS=no USE_VALGRIND=1 VERBOSE=1
+check-buildfarm:
+	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-html $(CHECK_BUILDFARM_FLAGS)
