@@ -1,3 +1,8 @@
+2007-12-24  Akim Demaille  <demaille@gostai.com>
+
+	Don't depend on output-to-dot.
+	* src/parser/parser.mk: here, since we don't use it.
+
 2007-12-21  Matthieu Nottale  <nottale@gostai.com>
 
 	Declare vars in generated code.
