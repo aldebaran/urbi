@@ -58,6 +58,7 @@ XFAIL_TESTS +=					\
 1.x/list-concat.chk				\
 1.x/list-reaffect.chk				\
 1.x/load.chk					\
+1.x/loadwav.chk					\
 1.x/long-identifiers.chk			\
 1.x/loopn.chk					\
 1.x/modifier-accel-adaptive.chk			\

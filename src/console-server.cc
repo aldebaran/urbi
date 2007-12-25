@@ -11,7 +11,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/tokenizer.hpp>
 #include <boost/foreach.hpp>
 
 #include "libport/cli.hh"
@@ -33,12 +32,11 @@ public:
   ConsoleServer(int period, bool fast)
     : UServer(period, "console"), fast(fast), ctime(0)
   {
-
     if (const char* cp = getenv ("URBI_PATH"))
     {
       std::string up(cp);
       BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
-        path.push_back (s);
+	path.push_back (s);
     }
   }
 

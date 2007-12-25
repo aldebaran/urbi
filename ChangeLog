@@ -1,3 +1,9 @@
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	Update tests.
+	* src/console-server.cc: Minor changes.
+	* tests-local.mk (XFAIL_TESTS): Add 1.x/loadwav.chk.
+
 2007-12-24  Akim Demaille  <demaille@gostai.com>
 
 	Fix (?) k2 test suite failures.
