@@ -1,5 +1,11 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	More sysexits uses.
+	Don't use hard coded values.
+	* src/console-server.cc: here.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	Useless parens.
 	* src/uconnection.cc: here.
 

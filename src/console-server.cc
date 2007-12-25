@@ -45,7 +45,7 @@ public:
   virtual void shutdown()
   {
     UServer::shutdown ();
-    exit (0);
+    exit (EX_OK);
   }
   virtual void beforeWork()
   {
@@ -125,7 +125,7 @@ namespace
   version ()
   {
     userver_package_info_dump(std::cout) << std::endl;
-    exit (0);
+    exit (EX_OK);
   }
 }
 
@@ -174,7 +174,7 @@ main (int argc, const char* argv[])
 	    break;
 	  default:
 	    std::cerr << "Unexpected argument: " << arg << std::endl
-		      << libport::exit (1);
+		      << libport::exit (EX_USAGE);
 	    break;
 	}
     }
@@ -199,7 +199,7 @@ main (int argc, const char* argv[])
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
     std::cerr << argv[0] << ": failed to process " << in << std::endl
-	      << libport::exit(1);
+	      << libport::exit(EX_NOINPUT);
 
   c.newDataAdded = true;
 
