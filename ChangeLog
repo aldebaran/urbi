@@ -1,5 +1,14 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	Remove a #line.
+	The loadFile uses are a mess.  It seems abnormal that the
+	users of the UConnection class play with the newDataAdded flag.
+	Why don't loadFile do it?  Why isn't loadFile part of the
+	UConnection interface?
+	* src/uconnection.cc: here.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	Remove #line 1.
 	* src/userver.cc: Now that loadFile takes care of protecting the
 	current location, do not force it to be 1 after loading a file.
