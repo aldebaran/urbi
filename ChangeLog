@@ -1,5 +1,10 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	Useless parens.
+	* src/uconnection.cc: here.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	Remove a #line.
 	The loadFile uses are a mess.  It seems abnormal that the
 	users of the UConnection class play with the newDataAdded flag.
