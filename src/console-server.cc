@@ -1,4 +1,4 @@
-#define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "config.h"
@@ -31,12 +31,11 @@ public:
   ConsoleServer(int period, bool fast)
     : UServer(period, 64000000, "console"), fast(fast), ctime(0)
   {
-    
     if (const char* cp = getenv ("URBI_PATH"))
     {
       std::string up(cp);
       BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
-        path.push_back (s);
+	path.push_back (s);
     }
   }
 
@@ -45,6 +44,7 @@ public:
 
   virtual void shutdown()
   {
+    UServer::shutdown ();
     exit (0);
   }
   virtual void beforeWork()
@@ -93,7 +93,7 @@ public:
   {
     std::cout << t;
   }
-  
+
   bool fast;
   long long ctime;
 };

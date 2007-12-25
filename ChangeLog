@@ -1,3 +1,10 @@
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	console cleanup.
+	* src/console-server.cc (ENABLE_DEBUG_TRACES): Deactivate.
+	Formatting changes.
+	(shutdown): Call the precursor.
+
 2007-12-24  Akim Demaille  <demaille@gostai.com>
 
 	parser.mk from k2.
