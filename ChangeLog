@@ -1,5 +1,11 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	Simplify the loading of urbi.u.
+	* src/userver.cc: Don't #line 1, loadFile does it.
+	Don't newDataAdded, load_init_file does it.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	Update tests.
 	* src/console-server.cc: Minor changes.
 	* tests-local.mk (XFAIL_TESTS): Add 1.x/loadwav.chk.

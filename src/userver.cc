@@ -153,11 +153,7 @@ UServer::initialize()
     DEBUG (("done\n"));
   }
 
-  if (load_init_file("urbi.u") == USUCCESS)
-  {
-    ghost_->newDataAdded = true;
-    ghost_->recvQueue().push ("#line 1\n");
-  }
+  load_init_file("urbi.u");
   load_init_file("URBI.INI");
 }
 
