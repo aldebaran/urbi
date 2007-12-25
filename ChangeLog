@@ -1,5 +1,12 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	Fix test suite problems.
+	* share/urbi/urbi.u: Define Math and Channel in Lobby.
+	Maybe sending the whole urbi.u to Lobby would be better?
+	* tests-local.mk: Catch up.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 2174:2188 https://svn.gostai.com/svn/kernel1/trunk
 	2007-12-25  Akim Demaille  <demaille@gostai.com>
 	Useless parens.

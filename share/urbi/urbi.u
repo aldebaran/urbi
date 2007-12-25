@@ -17,8 +17,7 @@ Object.slotCopy ("removeParent", "disinherit");
 ## --------- ##
 
 // Does not have anything special.  Yet.
-var Channel = new Object;
-do Channel
+class Lobby.Channel
 {
   init = function (x) { self.name = x };
   <<   = function (x) { x.print (name); {} };
@@ -59,8 +58,7 @@ do Float
 ## Math. ##
 ## ----- ##
 
-var Math = new Object;
-do Math
+class Lobby.Math
 {
   abs    = function (x) { x.abs };
   acos   = function (x) { x.acos };

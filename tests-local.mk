@@ -28,7 +28,6 @@ XFAIL_TESTS +=					\
 # k1 tests that currently don't pass, but we should.
 # Not really sorted yet, please help.
 XFAIL_TESTS +=					\
-1.x/arithmetics-failures.chk			\
 1.x/at-is-def.chk				\
 1.x/begin-end-report.chk			\
 1.x/bin-copy.chk				\
@@ -54,9 +53,6 @@ XFAIL_TESTS +=					\
 1.x/illegal-operation-on-void.chk		\
 1.x/init-in-pipe-with-time.chk			\
 1.x/lazy-test-eval.chk				\
-1.x/list-concat-string.chk			\
-1.x/list-concat.chk				\
-1.x/list-reaffect.chk				\
 1.x/load.chk					\
 1.x/loadwav.chk					\
 1.x/long-identifiers.chk			\
