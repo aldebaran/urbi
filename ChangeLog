@@ -1,5 +1,11 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	Remove #line 1.
+	* src/userver.cc: Now that loadFile takes care of protecting the
+	current location, do not force it to be 1 after loading a file.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	console cleanup.
 	* src/console-server.cc (ENABLE_DEBUG_TRACES): Deactivate.
 	Formatting changes.
