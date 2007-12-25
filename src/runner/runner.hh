@@ -24,15 +24,15 @@ namespace runner
     /// Super class type.
     typedef ast::DefaultVisitor super_type;
     typedef object::rObject rObject;
-    typedef object::rContext rContext;
+    typedef object::rLobby rLobby;
     /// \}
 
     /// \name Ctor & dtor.
     /// \{
-    /// Construct a \c Runner in the context \a ctx.  The runner needs to
+    /// Construct a \c Runner in the \a lobby.  The runner needs to
     /// know who is its \a scheduler and will execute \a ast.  Memory
     /// ownership of \a ast is transferred to the Runner.
-    Runner (rContext ctx, Scheduler& scheduler, ast::Ast* ast);
+    Runner (rLobby lobby, Scheduler& scheduler, ast::Ast* ast);
     /// Destroy a Runner.
 
     virtual ~Runner ();
@@ -80,9 +80,9 @@ namespace runner
     void raise_error_ (const object::UrbiException& ue);
 
   private:
-    /// The URBI Context used to evaluate.
+    /// The URBI Lobby used to evaluate.
     /// Wraps an UConnection (ATM).
-    rContext context_;
+    rLobby lobby_;
 
     /// The root of the AST being executed.
     ast::Ast* ast_;

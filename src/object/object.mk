@@ -3,8 +3,8 @@ object/atom.hh					\
 object/atom.hxx					\
 object/code-class.cc				\
 object/code-class.hh				\
-object/context-class.cc				\
-object/context-class.hh				\
+object/lobby-class.cc				\
+object/lobby-class.hh				\
 object/float-class.cc				\
 object/float-class.hh				\
 object/fwd.hh					\

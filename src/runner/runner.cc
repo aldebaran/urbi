@@ -51,8 +51,7 @@ namespace runner
   void
   Runner::raise_error_ (const object::UrbiException& ue)
   {
-    UConnection& c =
-      context_.cast<object::Context>()->value_get().connection;
+    UConnection& c = lobby_.cast<object::Lobby>()->value_get().connection;
     std::ostringstream o;
     o << "!!! " << ue.location_get () << ": " << ue.what () << std::ends;
     c << UConnection::send (o.str ().c_str (), "error")
@@ -219,7 +218,7 @@ namespace runner
       case object::Object::kind_primitive:
 	PING ();
 	try {
-	  current_ = val.cast<object::Primitive>()->value_get()(context_, args);
+	  current_ = val.cast<object::Primitive>()->value_get()(lobby_, args);
 	}
 	catch (object::UrbiException& ue)
 	{
@@ -392,7 +391,7 @@ namespace runner
       if (e.toplevel_get () && current_.get ())
       {
 	ECHO ("toplevel: returning a result to the connection.");
-	context_->value_get ().connection.new_result (current_);
+	lobby_->value_get ().connection.new_result (current_);
 	current_.reset ();
       }
 

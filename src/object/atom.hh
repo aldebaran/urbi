@@ -96,14 +96,14 @@ namespace object
   };
 
 
-  /*----------.
-  | Context.  |
-  `----------*/
+  /*-------.
+  | Lobby.  |
+  `-------*/
 
-  struct context_traits
+  struct lobby_traits
   {
     typedef State type;
-    enum { kind = Object::kind_context };
+    enum { kind = Object::kind_lobby };
   };
 
 

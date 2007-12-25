@@ -24,13 +24,13 @@ namespace object
   `--------------------*/
 
   rObject
-  object_class_clone (rContext, objects_type args)
+  object_class_clone (rLobby, objects_type args)
   {
     return clone(args[0]);
   }
 
   rObject
-  object_class_init (rContext, objects_type args)
+  object_class_init (rLobby, objects_type args)
   {
     return args[0];
   }
@@ -39,7 +39,7 @@ namespace object
   /// Send pretty-printed self on the connection.
   /// args[1], if present, can be the tag to use.
   rObject
-  object_class_print (rContext c, objects_type args)
+  object_class_print (rLobby c, objects_type args)
   {
     // Second argument is the tag name.
     const char* tag = 0;
@@ -56,7 +56,7 @@ namespace object
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
   rObject
-  object_class_echo (rContext c, objects_type args)
+  object_class_echo (rLobby c, objects_type args)
   {
     // Second argument is the tag name.
     const char* tag = 0;
@@ -72,7 +72,7 @@ namespace object
 
 #define SERVER_FUNCTION(Function)				\
   rObject							\
-  object_class_ ## Function (rContext, objects_type args)	\
+  object_class_ ## Function (rLobby, objects_type args)	\
   {								\
     ::urbiserver->Function();					\
     /* Return the current object to return something. */	\
@@ -86,7 +86,7 @@ namespace object
 
 
   rObject
-  object_class_wait (rContext, objects_type args)
+  object_class_wait (rLobby, objects_type args)
   {
     // FIXME: Currently does nothing.  A stub so that we
     // accept "wait 2s" as is used in the test suite.
@@ -102,7 +102,7 @@ namespace object
   /// Adding or removing parents. \a Verb is "add" or "remove".
 #define CHANGE_PARENTS(Verb)					\
   static rObject						\
-  object_class_ ## Verb ## Parent (rContext, objects_type args)	\
+  object_class_ ## Verb ## Parent (rLobby, objects_type args)	\
   {								\
     CHECK_ARG_COUNT(2);						\
     args[0]->parent_ ## Verb (args[1]);				\
@@ -117,7 +117,7 @@ namespace object
 
   /// Get parents' list.
   static rObject
-  object_class_parents (rContext, objects_type args)
+  object_class_parents (rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
@@ -137,7 +137,7 @@ namespace object
 
   /// List of slot names.
   static rObject
-  object_class_slotNames (rContext, objects_type args)
+  object_class_slotNames (rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(1);
     rObject obj = args[0];
@@ -151,7 +151,7 @@ namespace object
 
   /// Get a slot content.
   static rObject
-  object_class_getSlot (rContext, objects_type args)
+  object_class_getSlot (rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
@@ -161,7 +161,7 @@ namespace object
 
   /// Remove a slot.
   static rObject
-  object_class_removeSlot (rContext, objects_type args)
+  object_class_removeSlot (rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(2);
     rObject obj = args[0];
@@ -173,7 +173,7 @@ namespace object
   /// Define setSlot or updateSlot.  \a Verb is "set" or "update".
 #define SLOT_CHANGE(Verb)					\
   static rObject						\
-  object_class_ ## Verb ## Slot (rContext, objects_type args)	\
+  object_class_ ## Verb ## Slot (rLobby, objects_type args)	\
   {								\
     CHECK_ARG_COUNT(3);						\
     FETCH_ARG(1, String);					\

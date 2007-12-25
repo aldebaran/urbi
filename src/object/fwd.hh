@@ -31,7 +31,7 @@ namespace object
   /// capitalized URBI name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)	\
   Macro(code,      Code)						\
-  Macro(context,   Context)						\
+  Macro(lobby,      Lobby)						\
   Macro(float,     Float)						\
   Macro(integer,   Integer)						\
   Macro(list,      List)						\
@@ -66,7 +66,7 @@ namespace object
   // primitive_type.
   // It is because we need this typedef that we have the
   // previous hideous macro.
-  typedef rObject (*primitive_type) (rContext, objects_type);
+  typedef rObject (*primitive_type) (rLobby, objects_type);
 
   DEFINE(primitive, Primitive)
 # undef DEFINE

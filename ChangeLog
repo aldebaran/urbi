@@ -1,5 +1,33 @@
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
+	Rename the Urbi object Context as Loby.
+	I should have thought about this earlier, it de-overloads
+	"context" which already has too many meanings.
+
+	* src/object/context-class.hh,
+	* src/object/context-class.cc (ContextClass):
+	Rename as...
+	* src/object/lobby-class.hh,
+	* src/object/lobby-class.cc (LobbyClass):
+	this.
+
+	* include/kernel/uconnection.hh,
+	* include/kernel/uconnection.hxx,
+	* src/object/atom.hh,
+	* src/object/atom.hxx,
+	* src/object/float-class.cc,
+	* src/object/fwd.hh,
+	* src/object/object-class.cc,
+	* src/object/object.mk,
+	* src/object/primitives.hh,
+	* src/runner/runner.cc,
+	* src/runner/runner.hh,
+	* src/runner/runner.hxx,
+	* src/uconnection.cc:
+	Adjust.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
 	Simplify the loading of urbi.u.
 	* src/userver.cc: Don't #line 1, loadFile does it.
 	Don't newDataAdded, load_init_file does it.

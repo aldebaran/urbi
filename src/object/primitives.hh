@@ -11,7 +11,7 @@
 # include "object/fwd.hh"
 
 # include "object/code-class.hh"
-# include "object/context-class.hh"
+# include "object/lobby-class.hh"
 # include "object/float-class.hh"
 # include "object/integer-class.hh"
 # include "object/list-class.hh"
@@ -62,7 +62,7 @@ namespace object
  */
 #define PRIMITIVE_1_(Class, Name, Call, Ret, Type1, Get)        \
   rObject                                                       \
-  Class ## _class_ ## Name (rContext, objects_type args)	\
+  Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(1);                                         \
     FETCH_ARG(0, Type1);                                        \
@@ -83,7 +83,7 @@ namespace object
  */
 #define PRIMITIVE_2_(Class, Name, Call, Ret, Type1, Type2, Get) \
   rObject                                                       \
-  Class ## _class_ ## Name (rContext, objects_type args)	\
+  Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
@@ -104,7 +104,7 @@ namespace object
  */
 #define PRIMITIVE_2_OBJECT(Class, Name, Call, Type1)            \
   rObject                                                       \
-  Class ## _class_ ## Name (rContext, objects_type args)        \
+  Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \
@@ -117,7 +117,7 @@ namespace object
  */
 #define PRIMITIVE_OP_(Class, Name, Op, Ret, Type1, Type2, Get)  \
   rObject                                                       \
-  Class ## _class_ ## Name (rContext, objects_type args)	\
+  Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
     FETCH_ARG(0, Type1);                                        \

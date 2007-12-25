@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UCONNECTION_HH
-# define UCONNECTION_HH
+#ifndef KERNEL_UCONNECTION_HH
+# define KERNEL_UCONNECTION_HH
 
 # include <cstdarg>
 # include <iomanip>
@@ -515,9 +515,8 @@ private:
   /// set at "true" on start).
   bool active_;
 
-  /// The Context into which the code is evaluated.
-  /// This is this connection, wrapped into an Urbi object.
-  object::rContext context_;
+  /// The Lobby into which the code is evaluated.
+  object::rLobby lobby_;
 
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;

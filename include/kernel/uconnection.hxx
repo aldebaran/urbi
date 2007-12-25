@@ -13,7 +13,7 @@ UConnection::sendc_ (const std::string& s)
 }
 
 //! Accessor for sendAdaptive_
-inline 
+inline
 int
 UConnection::sendAdaptive ()
 {
@@ -21,7 +21,7 @@ UConnection::sendAdaptive ()
 }
 
 //! Accessor for recvQueue_
-inline 
+inline
 UCommandQueue&
 UConnection::recvQueue ()
 {
@@ -29,7 +29,7 @@ UConnection::recvQueue ()
 }
 
 //! Accessor for sendQueue_
-inline 
+inline
 UQueue&
 UConnection::send_queue ()
 {
@@ -37,7 +37,7 @@ UConnection::send_queue ()
 }
 
 //! Accessor for receiveAdaptive_
-inline 
+inline
 int
 UConnection::receiveAdaptive ()
 {

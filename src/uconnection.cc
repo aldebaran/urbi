@@ -50,7 +50,7 @@
 #include "ucommandqueue.hh"
 #include "uqueue.hh"
 
-#include "object/atom.hh" // object::Context
+#include "object/atom.hh" // object::Lobby
 
 UConnection::UConnection (UServer* userver,
 			  int minSendBufferSize,
@@ -83,7 +83,7 @@ UConnection::UConnection (UServer* userver,
     recvAdaptive_ (UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
     active_ (true),
-    context_ (new object::Context (object::State(*this)))
+    lobby_ (new object::Lobby (object::State(*this)))
 {
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
@@ -775,7 +775,7 @@ UConnection::execute ()
 
   ECHO("Command is: {{{" << *active_command_ << "}}}");
 
-  Runner* runner = new Runner(context_,
+  Runner* runner = new Runner(lobby_,
 			      ::urbiserver->getScheduler (),
 			      active_command_);
   {

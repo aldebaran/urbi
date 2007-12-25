@@ -18,7 +18,7 @@
 # include "object/primitives.hh"
 
 /// How to print a UConnection.
-/// Used by the atom object::Context.
+/// Used by the atom object::Lobby.
 inline
 std::ostream&
 operator<< (std::ostream& o, const UConnection& c)
@@ -113,7 +113,7 @@ namespace object
   template <>
   inline
   bool
-  Atom<object::context_traits>::operator< (const Atom& rhs) const
+  Atom<object::lobby_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
   }
@@ -153,10 +153,10 @@ namespace object
   template <>
   inline
   std::ostream&
-  Atom<context_traits>::print(std::ostream& out) const
+  Atom<lobby_traits>::print(std::ostream& out) const
   {
     // FIXME: discuss what we should print here.
-    out << "<context>";
+    out << "<lobby>";
     return out;
   }
 
