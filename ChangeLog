@@ -1,3 +1,10 @@
+2007-12-27  Loic Fosse  <fosse@gostai.com>
+
+	Fix compilation with GCC 3.
+	* src/ast/ast.yml: Call separate by specifying template parameters.
+	GCC 3 seems to be confused when a function pointer is given to a
+	function which expect a reference.
+
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 2188:2194 https://svn.gostai.com/svn/kernel1/trunk

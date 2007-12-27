@@ -423,7 +423,10 @@ Nary:
         std::ostream&
         operator<<(std::ostream& o, const exec_exps_type& es)
         {
-          return o << libport::separate (es, libport::iendl);
+          // Specifying template parameters is needed for gcc-3
+          return o << libport::separate<const exec_exps_type,
+                                        std::ostream&(*)(std::ostream&)>
+                                       (es, libport::iendl);
         }
 
 Binary:
