@@ -206,7 +206,8 @@ FLAVOR   [;|,&]?
   if ((yytext = strchr (yytext, '"')))
   {
     file = yytext + 1;
-    *strchr (file, '"') = 0;
+    // const_cast required because strchr returns a const char* on MSVC.
+    *const_cast<char*>(strchr (file, '"')) = 0;
   }
 
   if (push)
