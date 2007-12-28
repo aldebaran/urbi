@@ -24,7 +24,7 @@ ugrammar.cc
 
 BUILT_SOURCES += $(FROM_UGRAMMAR_Y)
 CLEANFILES += $(FROM_UGRAMMAR_Y)
-CLEANFILES += ugrammar.stamp ugrammar.output ugrammar.html
+CLEANFILES += ugrammar.{html,output,stamp,xml}
 nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 
 
@@ -32,7 +32,7 @@ nodist_libkernel_la_SOURCES += $(FROM_UGRAMMAR_Y)
 # This code comes from "Handling Tools that Produce Many Outputs",
 # from the Automake documentation.
 EXTRA_DIST += $(parser_dir)/ugrammar.y
-ugrammar_deps = $(BISONXX_IN) $(parser_dir)/parser.mk $(top_srcdir)/build-aux/output-to-dot
+ugrammar_deps = $(BISONXX_IN) $(parser_dir)/parser.mk
 ugrammar.stamp: $(parser_dir)/ugrammar.y $(ugrammar_deps)
 	$(MAKE) $(AM_MAKEFLAGS) $(BISONXX)
 	@rm -f $@.tmp

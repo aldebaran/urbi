@@ -234,12 +234,13 @@ public:
   virtual void      beforeWork      ();
   virtual void      afterWork       ();
 
-  /// Display a message on the robot console
+  /// Display a message on the robot console.
   void              display         (const char*);
   /// Display a set of messages on the robot console.
   void              display         (const char**);
 
   ufloat            lastTime        ();
+  //! Update lastTime_ to current time.
   void              updateTime      ();
   void              addConnection   (UConnection* connection);
   void              removeConnection(UConnection* connection);
@@ -367,13 +368,17 @@ public:
     defcheck_teacher,   ///< 1.5 behavior: issue a warning in that case.
     defcheck_sarkozy,   ///< 2.0 behavior: a hard error.
   };
-  bool defcheck;
+  defcheck_type defcheck;
 
-  ufloat                   previous2Time,
-			   previous3Time,
-			   currentTime,
-			   previousTime,
-			   latestTime; ///< used to detect cpu overload
+  /// Time at the start of the current cycle
+  ufloat                   currentTime;
+  /// Time at the start of previous cycles
+  ufloat                   previousTime;
+  ufloat                   previous2Time;
+  ufloat                   previous3Time;
+  /// Time after the work for current cycle (used to detect cpu overload)
+  ufloat                   latestTime;
+
   /// Stops all commands in all connections.
   bool                     stopall;
   /// False inside parsing, true otherwise for commands created by the

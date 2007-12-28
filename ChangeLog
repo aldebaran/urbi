@@ -1,3 +1,207 @@
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	More sysexits uses.
+	Don't use hard coded values.
+	* src/console-server.cc: here.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	Useless parens.
+	* src/uconnection.cc: here.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	Remove a #line.
+	The loadFile uses are a mess.  It seems abnormal that the
+	users of the UConnection class play with the newDataAdded flag.
+	Why don't loadFile do it?  Why isn't loadFile part of the
+	UConnection interface?
+	* src/uconnection.cc: here.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	Remove #line 1.
+	* src/userver.cc: Now that loadFile takes care of protecting the
+	current location, do not force it to be 1 after loading a file.
+
+2007-12-25  Akim Demaille  <demaille@gostai.com>
+
+	console cleanup.
+	* src/console-server.cc (ENABLE_DEBUG_TRACES): Deactivate.
+	Formatting changes.
+	(shutdown): Call the precursor.
+
+2007-12-24  Akim Demaille  <demaille@gostai.com>
+
+	parser.mk from k2.
+	* src/parser/parser.mk (CLEANFILES): Add *xml.
+
+2007-12-24  Akim Demaille  <demaille@gostai.com>
+
+	Don't depend on output-to-dot.
+	* src/parser/parser.mk: here, since we don't use it.
+
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
+	Declare vars in generated code.
+	* src/ucommand.cc: Here when writting the result of a remote
+	  function call.
+
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
+	loadFile uses std::cin if /dev/stdin is passed.
+	* src/userver.cc: Here.
+
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	Backport SC_UCONSOLE mode.
+	* src/parser/utoken.l: From k2.
+
+2007-12-21  mefyl  <mefyl@lrde.epita.fr>
+
+	Document.
+	* include/kernel/userver.hh: Document and reorder time members.
+
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	No color for the buildfarm.
+	* Makefile.am (CHECK_BUILDFARM_FLAGS): New.
+	Use it.
+
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix bug from var-lookup.chk.
+	* src/ucommand.cc: Check if a variable is inherited && do not display
+	  the "undeclared variable" warning.
+
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	make check-buildfarm.
+	* Makefile.am (check-buildfarm): New.
+
+2007-12-21  Akim Demaille  <demaille@gostai.com>
+
+	Update tests.
+	* tests-local.mk (TESTS_DIRS): Define it.
+
+2007-12-21  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Add 1.x to default test directories, update tests.
+	* tests-local.mk: Here.
+
+2007-12-21  Matthieu Nottale  <nottale@gostai.com>
+
+	Cosmetic changes.
+	* src/console-server.cc: Here.
+
+2007-12-20  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Update KNOWN_BUGS.
+	* KNOWN_BUGS: Here.
+	Previously specified URBI bugs not longer exist.
+	UObject notify bug explaination augmented.
+
+2007-12-19  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Remove warning at alias use.
+	* src/uvariablename.cc: Here.
+
+2007-12-19  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix "return after emit" bug and 1.x/lazy-test-eval test.
+	* src/ucommand.cc: Here.
+	This prevents the event from beeing deleted before
+	anyone noticed it was there.
+
+2007-12-19  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix "at (isdef (id))" bug.
+	* src/uexpression.cc: Here.
+	Typing "at (isdef (id))" declared id if it was not
+	declared yet.
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix warning with some versions of gcc.
+	* src/console-server.cc: static cast when doing longlong =
+	  long+longlong.
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
+	Fix segv.
+	* src/console-server.cc: std::string s=(char*)0 triggers an
+	  exception, so avoid it.
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
+	Add -f option to urbi-console.
+	* src/console-server.cc: Add -f (which does while(true) work()).
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
+	list + not_list raises an error.
+	* src/ucommand.cc: Report an error if expr->eval returns 0 in
+	 UCOMMAND_ASSING_VALUE.
+	* src/uvalue.cc: Return 0 in add() for list+not_list case.
+
+2007-12-18  Akim Demaille  <akim.demaille@free.fr>
+
+	Update find_file.
+	* src/userver.cc (find_file): Use the same code as in k2.
+
+2007-12-18  Akim Demaille  <akim.demaille@free.fr>
+
+	Don't use tmp values after their death.
+	* src/console-server.cc: Do not pass a const char* to make_tokenizer,
+	since it returns an object that references this value: here it first
+	has to convert it to an std::string, destroyed before being used.
+
+2007-12-18  Akim Demaille  <demaille@gostai.com>
+
+	Declare internal variables.
+	* src/ucommand.cc (UCommand_NEW::execute_): Here.
+
+2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Prepend connection id on resolved aliases if needed.
+	* src/uvariablename.cc (UVariableName::buildFullname): Here.
+
+2007-12-18  Akim Demaille  <demaille@gostai.com>
+
+	Use libport::make_tokenizer.
+	* src/console-server.cc: here.
+
+2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Clean modifier error checking.
+	* src/ucommand.cc: Here.
+
+2007-12-18  Akim Demaille  <demaille@gostai.com>
+
+	Fix defcheck.
+	* include/kernel/userver.hh (defcheck): Fix its type.
+	The F*g type system of C++ was not annoyed that I mixed bools
+	and enums.  Hopefully "class enum" might make it into C++ some day.
+	* src/ucommand.cc: Fix warning/error reports.
+
+2007-12-18  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix modifier handling, enhance syntax check.
+	* src/ucommand.cc: Here.
+	Test for mutltiple and missing modifiers.
+	Don't increment value instantly (so sync get ant set return
+	the previous value).
+
+2007-12-18  Akim Demaille  <demaille@gostai.com>
+
+	Pass switch.chk.
+	* tests-local.mk: Here.
+
+2007-12-18  Matthieu Nottale  <nottale@gostai.com>
+
+	Add $(PTHREAD_LIBS) to urbi_console.
+	* src/Makefile.am: Here. It has threads now.
+
 2007-12-17  Akim Demaille  <demaille@gostai.com>
 
 	Fix XFAIL use.

@@ -502,10 +502,9 @@ UVariableName::buildFullname (UCommand* command,
     std::string resolved = resolve_aliases (::urbiserver->aliastab, n);
     if (resolved != n)
     {
-      send_error(connection, command,
-		 ("'" + n + "' is an alias for '" + resolved + "'. "
-		   "Using aliases is deprecated.").c_str());
       name = resolved;
+      if (name.find('.') == std::string::npos)
+	name = device->str () + "." + suffix(name);
       nostruct = false;
       delete device;
       device = 0;

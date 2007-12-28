@@ -38,6 +38,7 @@
 #endif
 
 #include "libport/containers.hh"
+#include "libport/separator.hh"
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -196,10 +197,7 @@ UServer::initialize()
 
   DEBUG (("Loading URBI.INI..."));
   if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
-  {
     ghost_->newDataAdded = true;
-    ghost_->recvQueue().push ("#line 1 \"\"\n");
-  }
   DEBUG (("done\n"));
 }
 
@@ -542,7 +540,6 @@ UServer::work_reset_if_needed_ ()
 
       //reload URBI.INI
       loadFile("URBI.INI", &ghost_->recvQueue());
-      ghost_->recvQueue().push ("#line 1 \"\"\n");
       char resetsignal[255];
       strcpy(resetsignal, "var __system__.resetsignal;");
       ghost_->recvQueue().push((const ubyte*)resetsignal, strlen(resetsignal));
@@ -556,7 +553,6 @@ UServer::work_reset_if_needed_ ()
 	{
 	  *i << UConnection::send("*** Restart completed.\n", "reset");
 	  loadFile("CLIENT.INI", &i->recvQueue());
-	  i->recvQueue().push ("#line 1 \"\"\n");
 	  i->newDataAdded = true;
 	  *i << UConnection::send("*** Ready.\n", "reset");
 	}
@@ -939,20 +935,22 @@ namespace
 std::string
 UServer::find_file (const char* base)
 {
-  assert(base);
-  //DEBUG(("Looking for file %s\n", base));
-  for (path_type::iterator p = path.begin(); p != path.end(); ++p)
+  ECHO (base << " in " << libport::separate(path, ':'));
+  BOOST_FOREACH (path_type::value_type p, path)
   {
-    std::string f = *p + "/" + base;
+    std::string f = p + "/" + base;
     ECHO("find_file(" << base << ") testing " << f);
     if (file_readable(f))
     {
-      ECHO("find_file(" << base << ") = " << f);
+      ECHO("found: " << f);
       return f;
     }
   }
   if (!file_readable(base))
+  {
+    ECHO("not found: " << base);
     error ("cannot find file: %s", base);
+  }
   return base;
 }
 
@@ -961,24 +959,33 @@ UServer::find_file (const char* base)
 UErrorValue
 UServer::loadFile (const char* base, UCommandQueue* q, QueueType type)
 {
-  std::string f = find_file (base);
-  std::ifstream is (f.c_str(), std::ios::binary);
-  if (!is)
-    return UFAIL;
-
+  std::istream *is;
+  bool isStdin = (base == std::string("/dev/stdin"));
+  if (isStdin)
+    is = & std::cin;
+  else
+  {
+    std::string f = find_file (base);
+    is = new std::ifstream(f.c_str(), std::ios::binary);
+    if (!*is)
+      return UFAIL;
+  }
   if (type == QUEUE_URBI)
     q->push ((boost::format ("#push 1 \"%1%\"\n") % base).str().c_str());
-  while (is.good ())
+  while (is->good ())
   {
     char buf[URBI_BUFSIZ];
-    is.read (buf, sizeof buf);
-    if (q->push((const ubyte*) buf, is.gcount()) == UFAIL)
+    is->read (buf, sizeof buf);
+    if (q->push((const ubyte*) buf, is->gcount()) == UFAIL)
       return UFAIL;
   }
   if (type == QUEUE_URBI)
     q->push ("#pop\n");
-  is.close();
-
+  if (!isStdin)
+  {
+    reinterpret_cast<std::ifstream*>(is)->close();
+    delete is;
+  }
   return USUCCESS;
 }
 

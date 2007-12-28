@@ -1,4 +1,4 @@
-#define ENABLE_DEBUG_TRACES
+//#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
 #include "config.h"
@@ -10,8 +10,11 @@
 #include "libport/windows.hh"
 #include <fstream>
 
+#include <boost/foreach.hpp>
+
 #include "libport/cli.hh"
 #include "libport/program-name.hh"
+#include "libport/tokenizer.hh"
 #include "libport/utime.hh"
 
 // Inclusion order matters for windows. Leave userver.hh after network.hh.
@@ -25,12 +28,15 @@ class ConsoleServer
   : public UServer
 {
 public:
-  ConsoleServer(int period)
-    : UServer(period, 64000000, "console")
+  ConsoleServer(int period, bool fast)
+    : UServer(period, 64000000, "console"), fast(fast), ctime(0)
   {
-    // FIXME: Add support for : in the path.
     if (const char* cp = getenv ("URBI_PATH"))
-      path.push_back (cp);
+    {
+      std::string up(cp);
+      BOOST_FOREACH (const std::string& s, libport::make_tokenizer(up, ":"))
+	path.push_back (s);
+    }
   }
 
   virtual ~ConsoleServer()
@@ -38,9 +44,13 @@ public:
 
   virtual void shutdown()
   {
-    exit (0);
+    UServer::shutdown ();
+    exit (EX_OK);
   }
-
+  virtual void beforeWork()
+  {
+    ctime += static_cast<long long>(period_get()) * 1000LL;
+  }
   virtual void reset()
   {}
 
@@ -49,7 +59,10 @@ public:
 
   virtual ufloat getTime()
   {
-    return static_cast<ufloat>(libport::utime() / 1000LL);
+    if (fast)
+      return ctime / 1000LL;
+    else
+      return static_cast<ufloat>(libport::utime() / 1000LL);
   }
 
   virtual ufloat getPower()
@@ -80,6 +93,9 @@ public:
   {
     std::cout << t;
   }
+
+  bool fast;
+  long long ctime;
 };
 
 namespace
@@ -98,6 +114,7 @@ namespace
       "  -v, --version        display version information\n"
       "  -P, --period PERIOD  base URBI interval in milliseconds\n"
       "  -p, --port PORT      specify the tcp port URBI will listen to.\n"
+      "  -f, --fast           ignore system time, go as fast as possible\n"
       "  -w FILE              write port number to specified file.\n"
       ;
     exit (EX_OK);
@@ -108,7 +125,7 @@ namespace
   version ()
   {
     userver_package_info_dump(std::cout) << std::endl;
-    exit (0);
+    exit (EX_OK);
   }
 }
 
@@ -125,7 +142,8 @@ main (int argc, const char* argv[])
   int arg_port = 0;
   /// Where to write the port we use.
   const char* arg_port_filename = 0;
-
+  /// fast mode
+  bool fast = false;
   // Parse the command line.
   {
     int argp = 1;
@@ -141,6 +159,8 @@ main (int argc, const char* argv[])
 	arg_port = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "-v" || arg == "--version")
 	version();
+      else if (arg == "-f" || arg == "--fast")
+	fast = true;
       else if (arg == "-w")
 	arg_port_filename = argv[++i];
       else if (arg[0] == '-')
@@ -154,13 +174,13 @@ main (int argc, const char* argv[])
 	    break;
 	  default:
 	    std::cerr << "Unexpected argument: " << arg << std::endl
-		      << libport::exit (1);
+		      << libport::exit (EX_USAGE);
 	    break;
 	}
     }
   }
 
-  ConsoleServer s (arg_period);
+  ConsoleServer s (arg_period, fast);
 
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
@@ -179,17 +199,23 @@ main (int argc, const char* argv[])
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
     std::cerr << argv[0] << ": failed to process " << in << std::endl
-	      << libport::exit(1);
+	      << libport::exit(EX_NOINPUT);
 
   c.newDataAdded = true;
 
   DEBUG(("Going to work...\n"));
-  while (true)
-  {
-    long long startTime = libport::utime();
-    ufloat period = s.period_get() * 1000;
-    while (libport::utime() < startTime + period)
-      usleep (1);
-    s.work ();
-  }
+  if (fast)
+    while(true)
+    {
+      s.work();
+    }
+  else
+    while (true)
+    {
+      long long startTime = libport::utime();
+      ufloat period = s.period_get() * 1000;
+      while (libport::utime() < startTime + period)
+	usleep (1);
+      s.work ();
+    }
 }

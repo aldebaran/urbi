@@ -132,6 +132,7 @@ do {									\
 %option noyywrap debug
 
 %x SC_C_COMMENT SC_STRING
+%s SC_UCONSOLE
 
 BLANKS   [ \t]+
 EOL      \n|\r|\n\r|\r\n
@@ -153,9 +154,25 @@ STRING   \"([^\"]|"\\\"")*\"
     yy_flex_debug = !!getenv("FLEX_DEBUG");
 #endif
 
-  static std::stack<yy::location> synclines;
-
   locp->step();
+
+#ifndef NDEBUG
+  // The default start condition: the one replacing INITIAL.
+  static int sc_default = -1;
+  if (sc_default == -1)
+  {
+    if (getenv ("UCONSOLE_MODE"))
+    {
+      std::cerr << "Message from the scanner: UCONSOLE_MODE enabled.\n";
+      sc_default = SC_UCONSOLE;
+    }
+    else
+      sc_default = INITIAL;
+    BEGIN sc_default;
+  }
+#endif
+
+  static std::stack<yy::location> synclines;
 %}
 
   /*-----------------------------------.
@@ -193,6 +210,16 @@ STRING   \"([^\"]|"\\\"")*\"
 }
 
 ^"#"{BLANKS}?"pop"{BLANKS}?{EOL}     *locp = synclines.top(); synclines.pop();
+
+
+  /*--------------------------------------------------------------.
+  | Console mode: skip the [01234567] lines for expected output.  |
+  `--------------------------------------------------------------*/
+
+<SC_UCONSOLE>{
+  ^\[[0-9X]{8,}.*\]\ .* /* ignore the "[timestamp:tags] whatever" messages */;
+  ^\[:].*               /* ignore the "[:] whatever" messages */;
+}
 
 
   /*------------.
@@ -403,7 +430,7 @@ STRING   \"([^\"]|"\\\"")*\"
 
 <SC_STRING>{ /* Handling of the strings.  Initial " is eaten. */
      \" {
-       BEGIN INITIAL;
+       BEGIN sc_default;
        UString* u = new UString (*valp->str);
        delete valp->str;
        valp->ustr = u;
@@ -439,7 +466,7 @@ STRING   \"([^\"]|"\\\"")*\"
 
      <<EOF>> {
        up.error (*locp, "unexpected end of file in a string");
-       BEGIN INITIAL;
+       BEGIN sc_default;
        return token::STRING;
      }
 }
@@ -459,7 +486,7 @@ STRING   \"([^\"]|"\\\"")*\"
 <SC_C_COMMENT>{ /* Comments. */
   "*/" { /* End of the comment. */
     locp->step ();
-    BEGIN INITIAL;
+    BEGIN sc_default;
   }
 
   [^*/\n\r]+	;
@@ -469,7 +496,7 @@ STRING   \"([^\"]|"\\\"")*\"
   <<EOF>> {
     up.error(*locp, std::string ("unexpected end of file in a comment"));
     locp->step ();
-    BEGIN INITIAL;
+    BEGIN sc_default;
   }
 }
 

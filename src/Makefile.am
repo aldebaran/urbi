@@ -121,5 +121,5 @@ network/bsdnet/connection.hh			\
 network/bsdnet/connection.cc			\
 network/bsdnet/network.hh			\
 network/bsdnet/network.cc
-urbi_console_LDADD = libkernel.la
+urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS)
 endif

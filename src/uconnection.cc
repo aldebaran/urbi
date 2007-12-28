@@ -135,7 +135,7 @@ UConnection&
 UConnection::initialize()
 {
   for (int i = 0; ::HEADER_BEFORE_CUSTOM[i]; ++i)
-    (*this) << send(::HEADER_BEFORE_CUSTOM[i], "start");
+    *this << send(::HEADER_BEFORE_CUSTOM[i], "start");
 
   int i = 0;
   char customHeader[1024];
@@ -143,14 +143,14 @@ UConnection::initialize()
   do {
     server->getCustomHeader(i, customHeader, 1024);
     if (customHeader[0]!=0)
-      (*this) << send(customHeader, "start");
+      *this << send(customHeader, "start");
     ++i;
   } while (customHeader[0]!=0);
 
   for (int i = 0; ::HEADER_AFTER_CUSTOM[i]; ++i)
-    (*this) << send(::HEADER_AFTER_CUSTOM[i], "start");
+    *this << send(::HEADER_AFTER_CUSTOM[i], "start");
   sprintf(customHeader, "*** ID: %s\n", connectionTag->c_str());
-  (*this) << send(customHeader, "ident");
+  *this << send(customHeader, "ident");
 
   sprintf(customHeader, "%s created", connectionTag->c_str());
   server->echo(::DISPLAY_FORMAT, (long)this,
@@ -158,7 +158,6 @@ UConnection::initialize()
 	       customHeader);
 
   server->loadFile("CLIENT.INI", recvQueue_);
-  recvQueue_->push ("#line 1\n");
   newDataAdded = true;
   return *this;
 }
@@ -213,7 +212,7 @@ UConnection::close (UConnection& c)
 UConnection&
 UConnection::operator<< (_Prefix pref)
 {
-  return (*this) << sendc (0, 0, (const ubyte*)pref._tag);
+  return *this << sendc (0, 0, (const ubyte*)pref._tag);
 }
 
 UConnection&
@@ -288,10 +287,10 @@ UConnection::operator<< (_MsgCode mc)
   switch (mc._t)
   {
     case UERRORCODE:
-      (*this) << send(msg, "error");
+      *this << send(msg, "error");
       break;
     case UWARNINGCODE:
-      (*this) << send(msg, "warning");
+      *this << send(msg, "warning");
       break;
     default:
       break;
@@ -648,7 +647,7 @@ UConnection::received_ (const ubyte *buffer, int length)
 	delete p.commandTree;
 	p.commandTree = 0;
 
-	(*this) << send(p.errorMessage, "error");
+	*this << send(p.errorMessage, "error");
 
 	p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
 	p.errorMessage[ 42 ] = 0; // cut at 41 characters
@@ -662,7 +661,7 @@ UConnection::received_ (const ubyte *buffer, int length)
 	if (*p.warning && !server->memoryOverflow)
 	{
 	  // a warning was emitted
-	  (*this) << send(p.warning, "warn");
+	  *this << send(p.warning, "warn");
 
 	  p.errorMessage[ strlen(p.errorMessage) - 1 ] = 0; // remove '\n'
 	  p.errorMessage[ 42 ] = 0; // cut at 41 characters
@@ -764,7 +763,7 @@ UConnection&
 UConnection::send_error (UErrorCode n)
 {
   const char* msg = message (UERRORCODE, n);
-  UErrorValue result = ((*this) << send(msg, "error")).error ();
+  UErrorValue result = (*this << send(msg, "error")).error ();
   if (result == USUCCESS)
   {
     char buf[80];
@@ -792,7 +791,7 @@ UConnection&
 UConnection::send_warning (UWarningCode n)
 {
   const char* msg = message (UWARNINGCODE, n);
-  UErrorValue result = ((*this) << send(msg, "warning")).error ();
+  UErrorValue result = (*this << send(msg, "warning")).error ();
   if (result == USUCCESS)
   {
     char buf[80];
