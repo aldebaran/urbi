@@ -468,7 +468,7 @@
 	Fix console-server.
 	* .automerge_moves: Remove erroneous entry.
 	* src/console-server.cc: Apply changes lost during merge from
-        trunk.
+	trunk.
 
 2007-12-14  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
@@ -977,9 +977,9 @@
 
 	2007-11-26  Matthieu Nottale  <nottale@gostai.com>
 	Fix delete.
-	* src/ucommand.cc: 
-	    - Force getVariableName to recheck in hashtable 
-	        instead of using its cache.
+	* src/ucommand.cc:
+	    - Force getVariableName to recheck in hashtable
+		instead of using its cache.
 	    - Replace a : with << in code generated for a remote method
 	      call.
 	* src/uvariablename.cc,
@@ -1007,7 +1007,7 @@
 	* src/ubanner.cc: here.
 
 	2007-11-25  Jean-Christophe Baillie  <baillie@gostai.com>
-	Fix type declaration position in ugrammar.y  
+	Fix type declaration position in ugrammar.y
 	* src/parser/bison/ugrammar.y: put the declaration before the first
 	use.
 
@@ -1022,7 +1022,7 @@
 
 	2007-11-15  Guillaume Deslandes  <deslandes@gostai.com>
 	Fix tags and channels behavior, update tests.
-        The correct (cf Baillie) behavior is in 1.x/channels_tags.chk
+	The correct (cf Baillie) behavior is in 1.x/channels_tags.chk
 	* src/ucommand.cc: Here.
 
 	2007-11-13  Matthieu Nottale  <nottale@gostai.com>
@@ -1133,7 +1133,7 @@
 	* .automerge: Update to last sync revision.
 	* src/parser/bison/ugrammar.y: Remove useless comments.
 	* src/uvalue.cc: Rename add_ulist into utlist_append
-        and add_ulists into ulist_concat.
+	and add_ulists into ulist_concat.
 
 2007-12-03  Akim Demaille  <demaille@gostai.com>
 
@@ -1147,8 +1147,8 @@
 
 	2007-10-02  Thomas Moulard  <thomas@moulard.net>
 	Remove network.
-        The network is now plugged through an externals.
-        Network's new location is modules/network.
+	The network is now plugged through an externals.
+	Network's new location is modules/network.
 
 	* src/Makefile.am: Remove network.
 	* src/network/bsdnet/bsdnet.mk: Remove.
@@ -1239,7 +1239,7 @@
 	2007-10-23  mefyl  <mefyl@lrde.epita.fr>
 	Document an impossible change in the grammar.
 	* src/parser/bison/ugrammar.y: Explain why "loop"
-        can't be changed to "for".
+	can't be changed to "for".
 
 	2007-10-23  Akim Demaille  <demaille@gostai.com>
 	Work again with src=build.
@@ -1601,7 +1601,7 @@
 2007-11-26  Akim Demaille  <demaille@gostai.com>
 
 	unecho, unwait.
-        * src/parser/ugrammar.y, src/parser/utoken.l: echo and wait are
+	* src/parser/ugrammar.y, src/parser/utoken.l: echo and wait are
 	regular	ids.
 
 2007-11-26  Akim Demaille  <demaille@gostai.com>
@@ -1746,10 +1746,10 @@
 2007-11-08  Thomas Moulard  <thomas@moulard.net>
 
 	Fix debug info in urbi-exception.
-        UrbiException::what() was returning a local variable address.
+	UrbiException::what() was returning a local variable address.
 	* src/object/urbi-exception.cc,
 	* src/object/urbi-exception.hh:
-        initialize_msg is used to add debug information.
+	initialize_msg is used to add debug information.
 
 2007-11-08  Thomas Moulard  <thomas@moulard.net>
 
@@ -1860,7 +1860,7 @@
 	2007-08-25  Matthieu Nottale  <nottale@gostai.com>
 	Fix a memory leak and a bug when assigning UList to an UVar.
 	* src/uvalue.cc: Set liststart to 0 after deleting it when assigning a
-        kernel value from a urbi::UList.
+	kernel value from a urbi::UList.
 
 	2007-08-31  Remi Humbert  <humbert@gostai.com>
 	* network.cc: Don't set the option SO_REUSEADDR under windows .
@@ -1934,13 +1934,13 @@
 
 	merge -r 1336:1376 https://svn.gostai.com/svn/kernel1/trunk.
 
-        This merge introduces a bug in result display
-        which will be fixed while merging r1385. See:
-        https://core.gostai.com/projects/kernel1/changeset/1385
+	This merge introduces a bug in result display
+	which will be fixed while merging r1385. See:
+	https://core.gostai.com/projects/kernel1/changeset/1385
 
 	2007-07-24  Thomas Moulard  <thomas.moulard@gmail.com>
 	Restore crushed modifications.
-        (crushed while merging boost-thread branch into trunk in r1341)
+	(crushed while merging boost-thread branch into trunk in r1341)
 	* configure.ac,
 	* include/kernel/uvariable.hh,
 	* src/Makefile.am,
@@ -2019,11 +2019,11 @@
 
 	Warn on use of operator ^. Add operator **.
 	* src/parser/uparser.cc,
-	* src/parser/uparser.hh: Add a mehod to emit warnings. 
-	* src/parser/bison/utoken.l: Emit warnings on ^. 
-        Scan ** as exponent operator
-        * src/uconnection.cc,
-        * src/uexpression.cc: Report warnings through the connection.
+	* src/parser/uparser.hh: Add a mehod to emit warnings.
+	* src/parser/bison/utoken.l: Emit warnings on ^.
+	Scan ** as exponent operator
+	* src/uconnection.cc,
+	* src/uexpression.cc: Report warnings through the connection.
 
 2007-10-19  Akim Demaille  <akim@lrde.epita.fr>
 
