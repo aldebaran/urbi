@@ -1,3 +1,8 @@
+2007-12-31  Akim Demaille  <demaille@gostai.com>
+
+	Fix the strchr fix.
+	* src/parser/utoken.l: line is not const, neither is file.
+
 2007-12-28  Benoit Sigoure  <tsuna@lrde.epita.fr>
 
 	Compilation fix for Aibo (don't use Boost.Threads).

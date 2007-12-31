@@ -197,17 +197,16 @@ FLAVOR   [;|,&]?
   yytext += 4; // line|push.
 
   SKIP_SPACES();
-  const char* line = yytext;
+  char* line = yytext;
   yytext += strspn(yytext, "0123456789");
   *yytext = 0;
   ++yytext;
 
-  const char* file = 0;
-  if ((yytext = strchr (yytext, '"')))
+  char* file = strchr (yytext, '"');
+  if (file)
   {
-    file = yytext + 1;
-    // const_cast required because strchr returns a const char* on MSVC.
-    *const_cast<char*>(strchr (file, '"')) = 0;
+    ++file;
+    *strchr (file, '"') = 0;
   }
 
   if (push)
