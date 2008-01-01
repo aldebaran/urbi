@@ -28,12 +28,14 @@ cleanup ()
 
   children_sta=$(children_status remote)
   case $exit_status:$children_sta in
-    0:0) exit 0;;
+    0:0) ;;
     0:*) # Maybe a children exited for SKIP etc.
 	 exit $children_sta;;
     *:*) # If liburbi-check failed, there is a big problem.
 	 error SOFTWARE "liburbi-check itself failed with $exit_status";;
   esac
+  # rst_expect sets exit=false if it saw a failure.
+  $exit
 }
 for signal in 1 2 13 15; do
   trap 'error $((128 + $signal)) \
@@ -123,4 +125,7 @@ rst_pre "Error output" remote.err
 # Display Valgrind report.
 rst_pre "Valgrind" remote.val
 
-$exit
+# Exit with success: liburbi-check made its job.  But now clean (on
+# trap 0) will check $exit to see if there is a failure in the tests
+# and adjust the exit status accordingly.
+exit 0

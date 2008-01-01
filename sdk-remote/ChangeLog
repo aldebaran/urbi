@@ -1,5 +1,12 @@
 2008-01-01  Akim Demaille  <demaille@gostai.com>
 
+	Fix exit status.
+	* src/liburbi/tests/liburbi-check.as: The main program
+	should exit 0, it is cleanup that gives the final real
+	exit status.
+
+2008-01-01  Akim Demaille  <demaille@gostai.com>
+
 	liburbi-check cleanup.
 	* src/liburbi/tests/liburbi-check.as: Remove dead comments.
 	Use children_status for the final exit status.
