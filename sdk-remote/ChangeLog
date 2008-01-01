@@ -1,5 +1,11 @@
 2008-01-01  Akim Demaille  <demaille@gostai.com>
 
+	Catch invalid options.
+	* src/liburbi/uobject.cc: here.
+	Add use more usual iterator names.
+
+2008-01-01  Akim Demaille  <demaille@gostai.com>
+
 	Catch up with children.as.
 	* src/liburbi/tests/liburbi-check.as: here.
 

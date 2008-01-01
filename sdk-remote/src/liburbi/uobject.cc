@@ -281,12 +281,12 @@ namespace urbi
       if (eventmap->find(array[1]) != eventmap->end())
       {
 	std::list<UGenericCallback*> tmpfun = (*eventmap)[array[1]];
-	for (std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-	     tmpfunit != tmpfun.end();
-	     ++tmpfunit)
+	for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
+	     i != tmpfun.end();
+	     ++i)
 	{
 	  array.setOffset(2);
-	  (*tmpfunit)->__evalcall(array);
+	  (*i)->__evalcall(array);
 	  array.setOffset(0);
 	}
       }
@@ -298,12 +298,12 @@ namespace urbi
       if (eventendmap->find(array[1]) != eventendmap->end())
       {
 	std::list<UGenericCallback*> tmpfun = (*eventendmap)[array[1]];
-	for (std::list<UGenericCallback*>::iterator tmpfunit = tmpfun.begin();
-	     tmpfunit != tmpfun.end();
-	     ++tmpfunit)
+	for (std::list<UGenericCallback*>::iterator i = tmpfun.begin();
+	     i != tmpfun.end();
+	     ++i)
 	{
 	  array.setOffset(2);
-	  (*tmpfunit)->__evalcall(array);
+	  (*i)->__evalcall(array);
 	  array.setOffset(0);
 	}
       }
@@ -313,15 +313,15 @@ namespace urbi
     else if ((USystemExternalMessage)(int)array[0] == UEM_NEW)
     {
       std::list<baseURBIStarter*>::iterator found = objectlist->end();
-      for (std::list<baseURBIStarter*>::iterator retr = objectlist->begin();
-	   retr != objectlist->end();
-	   ++retr)
-	if ((*retr)->name == (std::string)array[2])
+      for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
+	   i != objectlist->end();
+	   ++i)
+	if ((*i)->name == (std::string)array[2])
 	  if (found != objectlist->end())
 	    msg.client.printf("Double object definition %s\n",
-			      (*retr)->name.c_str());
+			      (*i)->name.c_str());
 	  else
-	    found = retr;
+	    found = i;
 
       if (found == objectlist->end())
 	msg.client.printf("Unknown object definition %s\n",
@@ -335,15 +335,15 @@ namespace urbi
     else if ((USystemExternalMessage)(int)array[0] == UEM_DELETE)
     {
       std::list<baseURBIStarter*>::iterator found = objectlist->end();
-      for (std::list<baseURBIStarter*>::iterator retr = objectlist->begin();
-	   retr != objectlist->end();
-	   ++retr)
-	if ((*retr)->name == (std::string)array[1])
+      for (std::list<baseURBIStarter*>::iterator i = objectlist->begin();
+	   i != objectlist->end();
+	   ++i)
+	if ((*i)->name == (std::string)array[1])
 	  if (found != objectlist->end())
 	    msg.client.printf("Double object definition %s\n",
-			      (*retr)->name.c_str());
+			      (*i)->name.c_str());
 	  else
-	    found = retr;
+	    found = i;
 
       if (found == objectlist->end())
 	msg.client.printf("Unknown object definition %s\n",
@@ -486,6 +486,8 @@ namespace urbi
 	port = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--version" || arg == "-v")
 	version ();
+      else if (arg[0] == '-')
+	libport::invalid_option (arg);
       else
 	// A genuine argument.
 	switch (argp++)
@@ -503,7 +505,7 @@ namespace urbi
     }
 
     std::cout << "Running Remote Component '" << argv[0]
-	      << "' on " << addr << std::endl;
+	      << "' on " << addr << " " << port << std::endl;
 
     new USyncClient(addr, port, buflen);
 
