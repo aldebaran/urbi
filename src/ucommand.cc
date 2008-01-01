@@ -975,7 +975,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       return UCOMPLETED;
     }
 
-    // check if variable is inherited 
+    // check if variable is inherited
     //XXX fixme duplicated from uexpression:cc:1684 (virtual variables) 
     bool inherited = false;
     const char* devname = variablename->getDevice()->c_str();
@@ -995,7 +995,7 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
       if (v)
 	inherited = true;
     }
-      
+
     // Strict variable definition checking
     if (!variable
        && !inherited
