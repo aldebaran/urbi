@@ -13,16 +13,10 @@ esac
 cleanup ()
 {
   exit_status=$?
-  # Signal 0 is confusing, it just means we exited normally.
-  test "$1" == 0 ||
-    stderr "signal $1"
 
   # In case we were caught by set -e, kill the children.
-  kill_children
-  harvest_children
-
-  echo "cleanup finished correctly, exiting $exit_status"
-  echo
+  children_kill
+  children_harvest
 
   rst_subsection "$me: Debug outputs"
 
@@ -34,9 +28,11 @@ cleanup ()
 
   exit $exit_status
 }
-for signal in 0 1 2 13 15; do
-  trap "cleanup $signal" $signal
+for signal in 1 2 13 15; do
+  trap 'error $((128 + $signal)) \
+	      "received signal $signal ($(kill -l $signal))"' $signal
 done
+trap cleanup 0
 
 
 # Overriden to include the test name.
@@ -96,25 +92,23 @@ echo 0 >status.exp
 
 #start it
 valgrind=$(instrument "server.val")
-echo $valgrind $URBI_SERVER -p 0 -w server.port --period $period >server.cmd
-$valgrind $URBI_SERVER -p 0 -w server.port --period $period >server.out 2>server.err &
-register_child server
+cmd="$valgrind $URBI_SERVER --port 0 -w server.port --period $period"
+echo "$cmd" >server.cmd
+$cmd >server.out 2>server.err &
+children_register server
 
 my_sleep 2
 
-
 #start the test
 valgrind=$(instrument "remote.val")
-echo $valgrind ../../tests localhost $(cat server.port) $meraw >remote.cmd
-$valgrind ../../tests localhost $(cat server.port) $meraw>remote.out 2>remote.err &
-register_child remote
-my_sleep 1
-#wait for...
-harvest_children
-kill_children
+cmd="$valgrind ../../tests localhost $(cat server.port) $meraw"
+echo "$cmd" >remote.cmd
+$cmd >remote.out 2>remote.err &
+children_register remote
+
+
+children_wait 10
 estatus=$?
-sleep 1
-#generate traces
 
 # If the return value >126, something really wrong is going on.  127 is
 # command not found (should not happen here) and >127 means that the
