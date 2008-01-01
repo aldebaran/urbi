@@ -3,6 +3,5 @@
 
 TESTS_DIRS = 1.5 1.x # uob
 URBI_SERVER = $(abs_top_builddir)/src/urbi-console
-XFAIL_TESTS += 		\
-1.x/blocking-comma.chk
+XFAIL_TESTS +=
 

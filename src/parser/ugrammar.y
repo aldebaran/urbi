@@ -442,7 +442,7 @@
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
-%left  "," ";"
+%right  "," ";"
 %left  "&" "|"
 %left  CMDBLOCK
 %left  "else" "onleave"

@@ -1,5 +1,11 @@
 2008-01-01  Akim Demaille  <demaille@gostai.com>
 
+	Fix ,.
+	* src/parser/ugrammar.y: Restore right associativity.
+	* tests-local.mk: Fixes 1.x/blocking-comma.chk.
+
+2008-01-01  Akim Demaille  <demaille@gostai.com>
+
 	Update tests.
 	* tests-local.mk: We fail 1.x/blocking-comma.chk.
 
