@@ -1,3 +1,8 @@
+2008-01-01  Akim Demaille  <demaille@gostai.com>
+
+	Improve CLI.
+	* src/liburbi/uobject.cc: Fix the CLI.
+
 2007-12-21  Matthieu Nottale  <nottale@gostai.com>
 
 	Declare vars in generated code.

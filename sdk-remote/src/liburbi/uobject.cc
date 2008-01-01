@@ -22,7 +22,10 @@
 #include <sstream>
 #include <list>
 
+#include "libport/cli.hh"
 #include "libport/package-info.hh"
+#include "libport/program-name.hh"
+#include "libport/sysexits.hh"
 
 #include "urbi/uobject.hh"
 #include "urbi/usyncclient.hh"
@@ -432,17 +435,22 @@ namespace urbi
   usage (const char* name)
   {
     std::cout <<
-      "usage:\n" << name << " ADDR [OPTIONS...] [PORT [LEN]]\n"
+      "usage:\n" << name << " [OPTIONS...] [ADDR] [PORT]\n"
       "\n"
       "   ADDR   Urbi server IP (e.g., \"localhost\")\n"
       "   PORT   Port to listen to (defaults to 54000)\n"
       "   LEN    Size of the input buffer\n"
       "\n"
       "Options:\n"
-      "  -h, --help      display this message and exit\n"
-      "  -v, --version   print version information and exit\n"
-      "  -d              exit program if disconnected\n";
-    exit(0);
+      "  -b, --buffer SIZE  input buffer size"
+		 << " [" << UAbstractClient::URBI_BUFLEN << "]\n"
+      "  -h, --help         display this message and exit\n"
+      "  -H, --host ADDR    server host name   [localhost]\n"
+      "  -p, --port PORT    tcp port URBI will listen to"
+		 << " [" << UAbstractClient::URBI_PORT << "]\n"
+      "  -v, --version      print version information and exit\n"
+      "  -d, --disconnect   exit program if disconnected\n"
+		 << libport::exit (EX_OK);
   }
 
   static
@@ -456,14 +464,7 @@ namespace urbi
   void
   main(int argc, char* argv[])
   {
-    // Retrieving command line arguments
-    if (argc<2)
-    {
-      std::cerr << "invalid number of arguments" << std::endl;
-      exit (1);
-    }
-
-    const char* addr = 0;
+    const char* addr = "localhost";
     bool exitOnDisconnect = false;
     int port = UAbstractClient::URBI_PORT;
     int buflen = UAbstractClient::URBI_BUFLEN;
@@ -473,12 +474,18 @@ namespace urbi
     for (int i = 1; i < argc; ++i)
     {
       std::string arg = argv[i];
-      if (arg == "-h" || arg == "--help")
-	usage (argv[0]);
-      else if (arg == "-v" || arg == "--version")
-	version ();
-      else if (arg == "-d")
+      if (arg == "--buffer" || arg == "-b")
+	buflen = libport::convert_argument<int> (arg, argv[++i]);
+      else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
+      else if (arg == "--help" || arg == "-h")
+	usage (argv[0]);
+      else if (arg == "--host" || arg == "-H")
+	addr = argv[i];
+      else if (arg == "--port" || arg == "-p")
+	port = libport::convert_argument<int> (arg, argv[++i]);
+      else if (arg == "--version" || arg == "-v")
+	version ();
       else
 	// A genuine argument.
 	switch (argp++)
@@ -487,14 +494,11 @@ namespace urbi
 	    addr = argv[i];
 	    break;
 	  case 2:
-	    port = strtol(argv[i], 0, 0);
-	    break;
-	  case 3:
-	    buflen = strtol(argv[i], 0, 0);
+	    port = libport::convert_argument<int> ("port", argv[i]);
 	    break;
 	  default:
-	    std::cerr << "unexpected argument: " << arg << std::endl;
-	    exit (2);
+	    std::cerr << "unexpected argument: " << arg << std::endl
+		      << libport::exit (EX_USAGE);
 	}
     }
 
@@ -504,9 +508,9 @@ namespace urbi
     new USyncClient(addr, port, buflen);
 
 #ifdef LIBURBIDEBUG
-    getDefaultClient()->setWildcardCallback( callback (&debug));
+    getDefaultClient()->setWildcardCallback(callback (&debug));
 #else
-    getDefaultClient()->setErrorCallback( callback (&debug));
+    getDefaultClient()->setErrorCallback(callback (&debug));
 #endif
 
     getDefaultClient()->setCallback(&dispatcher,
@@ -514,18 +518,16 @@ namespace urbi
     if (exitOnDisconnect)
     {
       if (getDefaultClient()->error())
-      {
-	std::cerr <<"ERROR: failed to connect, exiting..."<<std::endl;
-	exit(1);
-      }
-      getDefaultClient()->setClientErrorCallback( callback (&endProgram));
+	std::cerr << "ERROR: failed to connect, exiting..." << std::endl
+		  << libport::exit(1);
+      getDefaultClient()->setClientErrorCallback(callback (&endProgram));
     }
 
     dummyUObject = new UObject (0);
-    for (UStartlist::iterator retr = objectlist->begin();
-	 retr != objectlist->end();
-	 ++retr)
-      (*retr)->init((*retr)->name);
+    for (UStartlist::iterator i = objectlist->begin();
+	 i != objectlist->end();
+	 ++i)
+      (*i)->init((*i)->name);
   }
 
 } // namespace urbi
