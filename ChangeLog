@@ -1,3 +1,8 @@
+2008-01-01  Akim Demaille  <demaille@gostai.com>
+
+	Update tests.
+	* tests-local.mk: We fail 1.x/blocking-comma.chk.
+
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
 	More sysexits uses.
