@@ -1,5 +1,11 @@
 2008-01-01  Akim Demaille  <demaille@gostai.com>
 
+	liburbi-check cleanup.
+	* src/liburbi/tests/liburbi-check.as: Remove dead comments.
+	Use children_status for the final exit status.
+
+2008-01-01  Akim Demaille  <demaille@gostai.com>
+
 	Catch invalid options.
 	* src/liburbi/uobject.cc: here.
 	Add use more usual iterator names.

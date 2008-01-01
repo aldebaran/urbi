@@ -26,7 +26,14 @@ cleanup ()
     rst_run_report "$i" "$i"
   done
 
-  exit $exit_status
+  children_sta=$(children_status remote)
+  case $exit_status:$children_sta in
+    0:0) exit 0;;
+    0:*) # Maybe a children exited for SKIP etc.
+	 exit $children_sta;;
+    *:*) # If liburbi-check failed, there is a big problem.
+	 error SOFTWARE "liburbi-check itself failed with $exit_status";;
+  esac
 }
 for signal in 1 2 13 15; do
   trap 'error $((128 + $signal)) \
@@ -103,37 +110,17 @@ my_sleep 2
 valgrind=$(instrument "remote.val")
 cmd="$valgrind ../../tests localhost $(cat server.port) $meraw"
 echo "$cmd" >remote.cmd
-$cmd >remote.out 2>remote.err &
+$cmd >remote.out.eff 2>remote.err &
 children_register remote
 
 
 children_wait 10
-estatus=$?
 
-# If the return value >126, something really wrong is going on.  127 is
-# command not found (should not happen here) and >127 means that the
-# program was killed by a signal (which often indicates that something
-# really wrong is going on).
-if test $estatus -gt 126; then
-  stderr "Fatal: return value $estatus > 126"
-  exit='exit 177' # 177 = hard error
-fi
-
-# Debugging data often explains failures, so it should be first.
-#if test -s debug.rst; then
-#  cat debug.rst
-#fi
-
- # Compare expected output with actual output.
-cp remote.out remote.out.eff
+# Compare expected output with actual output.
 rst_expect output remote.out
 rst_pre "Error output" remote.err
-#cp remote.sta remote.sta.eff
-#echo 0 >status.exp
-#rst_expect status remote.sta
 
 # Display Valgrind report.
 rst_pre "Valgrind" remote.val
 
-echo "$exit" >exit
 $exit
