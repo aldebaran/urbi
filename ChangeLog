@@ -1,3 +1,8 @@
+2008-01-02  Loic Fosse  <fosse@gostai.com>
+
+	"&" has higher precedence than "|".
+	* src/parser/ugrammar.y: Here.
+
 2008-01-01  Akim Demaille  <demaille@gostai.com>
 
 	Option tweaks.

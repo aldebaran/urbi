@@ -443,7 +443,8 @@
  */
 
 %right  "," ";"
-%left  "&" "|"
+%left  "|"
+%left  "&"
 %left  CMDBLOCK
 %left  "else" "onleave"
 
