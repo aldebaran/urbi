@@ -1,3 +1,8 @@
+2008-01-02  Guillaume Deslandes  <deslandes@gostai.com>
+
+	Fix ,.
+	* src/parser/ugrammar.y: Restore right associativity.
+
 2007-12-25  Akim Demaille  <demaille@gostai.com>
 
 	More sysexits uses.

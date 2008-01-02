@@ -442,7 +442,7 @@
    ! < ( so that !m(x) be read as !(m(x)).
  */
 
-%left  "," ";"
+%right  "," ";"
 %left  "&" "|"
 %left  CMDBLOCK
 %left  "else" "onleave"
@@ -475,7 +475,7 @@ start:
 {
   static
     void
-    new_bin_assign (UParser& up, const yy::parser::location_type& loc, 
+    new_bin_assign (UParser& up, const yy::parser::location_type& loc,
 		    bool is_var, UVariableName* var, UBinary* b)
   {
     // FIXME: A pointer to a ref-pointer?  Sounds absurd.
