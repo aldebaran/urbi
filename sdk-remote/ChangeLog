@@ -1,3 +1,8 @@
+2008-01-02  POTHIER Benoit  <benoit.pothier@gmx.net>
+
+	Do not create libjpeg dynamic libs.
+	* configure.ac: Here.
+
 2008-01-01  Akim Demaille  <demaille@gostai.com>
 
 	Fix exit status.

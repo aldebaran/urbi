@@ -115,7 +115,7 @@ fi
 ## Output.  ##
 ## -------- ##
 
-ac_configure_args=" $ac_configure_args --disable-programs "
+ac_configure_args=" $ac_configure_args --disable-programs --disable-shared"
 AC_CONFIG_SUBDIRS([jpeg-6b])
 AC_CONFIG_FILES([Makefile
 	  src/Makefile
