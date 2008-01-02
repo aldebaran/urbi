@@ -1,3 +1,8 @@
+2008-01-02  Loic Fosse  <fosse@gostai.com>
+
+	"&" has higher precedence than "|".
+	* src/parser/ugrammar.y: Here.
+
 2007-12-31  Akim Demaille  <demaille@gostai.com>
 
 	Fix the strchr fix.

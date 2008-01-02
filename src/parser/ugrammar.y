@@ -503,7 +503,8 @@
  */
 
 %left  "," ";"
-%left  "&" "|"
+%left  "|"
+%left  "&"
 %left  CMDBLOCK
 %left  "else" "onleave"
 
