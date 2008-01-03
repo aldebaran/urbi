@@ -1,3 +1,9 @@
+2008-01-03  Matthieu Nottale  <nottale@gostai.com>
+
+	Uobjects defaults to exit on connection error.
+	* src/liburbi/uobject.cc: Add --stay-alive, -s. 
+	  Leave -d for backward compatibility, defaults to -d.
+
 2008-01-02  POTHIER Benoit  <benoit.pothier@gmx.net>
 
 	Do not create libjpeg dynamic libs.

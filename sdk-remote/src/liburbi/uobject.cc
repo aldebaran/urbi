@@ -449,7 +449,8 @@ namespace urbi
       "  -p, --port PORT    tcp port URBI will listen to"
 		 << " [" << UAbstractClient::URBI_PORT << "]\n"
       "  -v, --version      print version information and exit\n"
-      "  -d, --disconnect   exit program if disconnected\n"
+      "  -d, --disconnect   exit program if disconnected(defaults)\n"
+      "  -s, --stay-alive   do not exit program if disconnected\n"
 		 << libport::exit (EX_OK);
   }
 
@@ -465,7 +466,7 @@ namespace urbi
   main(int argc, char* argv[])
   {
     const char* addr = "localhost";
-    bool exitOnDisconnect = false;
+    bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
     int buflen = UAbstractClient::URBI_BUFLEN;
 
@@ -478,6 +479,8 @@ namespace urbi
 	buflen = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--disconnect" || arg == "-d")
 	exitOnDisconnect = true;
+      else if (arg == "--stay-alive" || arg == "-s")
+	exitOnDisconnect = false;
       else if (arg == "--help" || arg == "-h")
 	usage (argv[0]);
       else if (arg == "--host" || arg == "-H")
