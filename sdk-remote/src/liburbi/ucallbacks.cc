@@ -22,6 +22,8 @@
 #include <sstream>
 #include <list>
 
+#include "libport/program-name.hh"
+
 #include "urbi/ucallbacks.hh"
 #include "urbi/usyncclient.hh"
 #include "urbi/uexternal.hh"
@@ -43,10 +45,11 @@ namespace urbi
     {
       std::ostringstream oss;
       oss << size;
-      this->name += + "__" + oss.str();
+      this->name += "__" + oss.str();
     }
 
-    std::cerr << "Registering " << type << " " << name << " " << size
+    std::cerr << libport::program_name
+	      << ": Registering " << type << " " << name << " " << size
 	      << " into " << this->name
 	      << " from " << objname
 	      << std::endl;

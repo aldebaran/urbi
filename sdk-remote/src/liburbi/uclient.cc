@@ -3,7 +3,7 @@
  *
  * Linux implementation of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -173,15 +173,15 @@ namespace urbi
     char output[size+1];
     memcpy (static_cast<void*> (output), buffer, size);
     output[size]=0;
-    cout << ">>>> SENT : [" << output << "]" << endl;
+    std::cerr << ">>>> SENT : [" << output << "]" << std::endl;
 #endif
     if (rc)
       return -1;
     int pos = 0;
-    while (pos!=size)
+    while (pos != size)
     {
       int retval = ::send(sd, (char *) buffer + pos, size-pos, 0);
-      if (retval<0)
+      if (retval< 0)
       {
 	rc = retval;
 	clientError("send error", rc);
@@ -198,14 +198,14 @@ namespace urbi
     lastPong++;
     return URBI_CONTINUE;
   }
-  
+
   void
   UClient::listenThread()
   {
-    static const char * pingTag = "_liburbi_ping";
+    const char* pingTag = "_liburbi_ping";
     fd_set rfds, efds;
-    int maxfd=1+ (sd>control_fd[0]? sd:control_fd[0]);
     int res;
+    int maxfd = 1 + std::max(sd, control_fd[0]);
     long long lastPing = libport::utime();
     lastPong = libport::utime();
     setCallback(callback(*this, &UClient::pong), pingTag);
@@ -221,7 +221,7 @@ namespace urbi
 #ifndef WIN32
 	LIBPORT_FD_SET(control_fd[0], &rfds);
 #endif
-        unsigned int msTime = pingInterval? pingInterval:1000;
+	unsigned int msTime = pingInterval? pingInterval:1000;
 	struct timeval tme;
 	tme.tv_sec = msTime / 1000;
 	tme.tv_usec = (msTime%1000)*1000;
@@ -233,7 +233,7 @@ namespace urbi
 	  res = WSAGetLastError();
 #endif
 	  clientError("select error", res);
-	  std::cerr << "select error "<<res<<std::endl;
+	  std::cerr << "select error " << res << std::endl;
 	  //TODO when error will be implemented, send an error msg
 	  //TODO maybe try to reconnect?
 	  return;
@@ -243,12 +243,12 @@ namespace urbi
 	  long long currentTime = libport::utime();
 	  if (currentTime - lastPing > pingInterval * 1000)
 	  {
-	    if (lastPong >0) 
+	    if (0 < lastPong)
 	    {
-	      send("%s << 1,",pingTag);
+	      send("%s << 1,", pingTag);
 	      lastPong = 0;
 	    }
-	    else 
+	    else
 	    {
 	      lastPong --;
 	      if (lastPong <= -3)
@@ -330,15 +330,15 @@ namespace urbi
   }
 
 
-  UClient & connect(const char* host)
+  UClient& connect(const char* host)
   {
     return *new UClient(host);
   }
 
-  
+
   void UClient::setPingInterval(unsigned int msTime)
   {
     pingInterval = msTime;
   }
-  
+
 } // namespace urbi

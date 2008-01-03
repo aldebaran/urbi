@@ -1,5 +1,13 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Clearer logs.
+	* src/liburbi/ucallbacks.cc: Use libport::program_name.
+	
+	* src/liburbi/uclient.cc: Use cerr for logs, not cout.
+	Don't use static where inappropriate.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	More logs.
 	* src/liburbi/uobject.cc (main): Output the liburbi version.
 
