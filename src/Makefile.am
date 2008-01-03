@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - Copyright (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie
+# URBI - Copyright (C) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -26,6 +26,8 @@ nodist_libkernel_la_SOURCES =
 env_LTLIBRARIES = libkernel.la
 libkernel_la_LDFLAGS = -static $(BOOST_THREAD_LDFLAGS)
 
+# The separation in two different targets is needed to be sure that
+# the libs are installed before we try to move them.
 install-exec-local:
 	sed -e 's/libdir=.*/libdir=/' \
 	    -e 's/installed=.*/installed=no/' \
@@ -33,10 +35,10 @@ install-exec-local:
 	mv -f libkernel.lai.new .libs/libkernel.lai
 
 install-data-hook:
-	mkdir -p $(DESTDIR)$(envdir)/.libs
+	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
 	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
-	ln -s .libs/libkernel.la $(DESTDIR)$(envdir)
-	ln -s .libs/libkernel.a $(DESTDIR)$(envdir)
+	$(LN_S) .libs/libkernel.la $(DESTDIR)$(envdir)
+	$(LN_S) .libs/libkernel.a $(DESTDIR)$(envdir)
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
@@ -93,11 +95,20 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 if !OPENR
 noinst_PROGRAMS = urbi-console
-urbi_console_SOURCES =				\
+urbi_console_SOURCES = urbi-console.cc
+urbi_console_LDADD = libkernel.la
+
+dist_libkernel_la_SOURCES +=			\
 console-server.cc				\
 network/bsdnet/connection.hh			\
 network/bsdnet/connection.cc			\
 network/bsdnet/network.hh			\
 network/bsdnet/network.cc
-urbi_console_LDADD = libkernel.la $(top_builddir)/libport/libport.la $(PTHREAD_LIBS)
+
+libkernel_la_LIBADD = $(top_builddir)/libport/libport.la
+
+# FIXME: We might need these guys somewhere: $(PTHREAD_LIBS).  In
+# libkernel, or urbi_console_LDADD?
+# urbi_console_LDADD = libkernel.la $(top_builddir)/libport/libport.la $(PTHREAD_LIBS)
+
 endif

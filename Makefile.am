@@ -8,9 +8,9 @@
 
 include $(top_srcdir)/build-aux/build-aux.mk
 
-ACLOCAL_AMFLAGS = -I build-aux
+ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = libport src tests . doc
+SUBDIRS = libport src sdk tests . doc
 
 # build-aux.
 EXTRA_DIST +=					\
@@ -50,13 +50,7 @@ include/kernel/version.hh
 ## --------------- ##
 SVN_EXTERNALS += libport tests src/uobject
 
-maintainer-check: valgrind-check
-
-.PHONY: valgrind-check check-html doc
-valgrind-check:
-	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1
-
-check-html k2-check:
+check-html check-clean k2-check:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
 
 doc:

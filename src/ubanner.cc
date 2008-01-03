@@ -53,5 +53,5 @@ UServer::package_info ()
 std::ostream&
 userver_package_info_dump (std::ostream& o)
 {
-  return o << UServer::package_info().signature();
+  return o << UServer::package_info();
 }

@@ -111,12 +111,12 @@ namespace
       "  FILE    to load\n"
       "\n"
       "Options:\n"
-      "  -h, --help           display this message and exit successfully\n"
-      "  -v, --version        display version information\n"
-      "  -P, --period PERIOD  base URBI interval in milliseconds\n"
-      "  -p, --port PORT      specify the tcp port URBI will listen to.\n"
-      "  -f, --fast           ignore system time, go as fast as possible\n"
-      "  -w FILE              write port number to specified file.\n"
+      "  -h, --help            display this message and exit successfully\n"
+      "  -v, --version         display version information\n"
+      "  -P, --period PERIOD   base URBI interval in milliseconds\n"
+      "  -p, --port PORT       tcp port URBI will listen to.\n"
+      "  -f, --fast            ignore system time, go as fast as possible\n"
+      "  -w, --port-file FILE  write port number to specified file.\n"
       ;
     exit (EX_OK);
   }
@@ -152,18 +152,18 @@ main (int argc, const char* argv[])
     {
       std::string arg = argv[i];
 
-      if (arg == "-h" || arg == "--help")
+      if (arg == "--fast" || arg == "-f")
+	fast = true;
+      else if (arg == "--help" || arg == "-h")
 	usage();
       else if (arg == "--period" || arg == "-P")
-	arg_period = libport::convert_argument<int> ("period", argv[++i]);
+	arg_period = libport::convert_argument<int> (arg, argv[++i]);
       else if (arg == "--port" || arg == "-p")
 	arg_port = libport::convert_argument<int> (arg, argv[++i]);
-      else if (arg == "-v" || arg == "--version")
-	version();
-      else if (arg == "-f" || arg == "--fast")
-	fast = true;
-      else if (arg == "-w")
+      else if (arg == "--port-file" || arg == "-w")
 	arg_port_filename = argv[++i];
+      else if (arg == "--version" || arg == "-v")
+	version();
       else if (arg[0] == '-')
 	libport::invalid_option (arg);
       else
@@ -174,7 +174,8 @@ main (int argc, const char* argv[])
 	    in = argv[i];
 	    break;
 	  default:
-	    std::cerr << "Unexpected argument: " << arg << std::endl
+	    std::cerr << libport::program_name
+		      << ": unexpected argument: " << arg << std::endl
 		      << libport::exit (EX_USAGE);
 	    break;
 	}
@@ -185,7 +186,8 @@ main (int argc, const char* argv[])
 
   int port = Network::createTCPServer(arg_port, "localhost");
   if (!port)
-    std::cerr << "cannot bind to port " << arg_port
+    std::cerr << libport::program_name
+	      << ": cannot bind to port " << arg_port
 	      << " on localhost" << std::endl
 	      << libport::exit (EX_UNAVAILABLE);
 
@@ -196,15 +198,17 @@ main (int argc, const char* argv[])
 
   s.initialize ();
   UConnection& c = s.getGhostConnection ();
-  DEBUG(("Got ghost connection\n"));
+  std::cerr << libport::program_name
+	    << ": got ghost connection" << std::endl;
 
   if (s.loadFile(in, &c.recvQueue ()) != USUCCESS)
-    std::cerr << argv[0] << ": failed to process " << in << std::endl
+    std::cerr << libport::program_name
+	      << ": failed to process " << in << std::endl
 	      << libport::exit(EX_NOINPUT);
 
   c.newDataAdded = true;
 
-  DEBUG(("Going to work...\n"));
+  std::cerr << libport::program_name << ": going to work..." << std::endl;
   if (fast)
     while(true)
     {

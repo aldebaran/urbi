@@ -2,7 +2,7 @@
 # are specific to a given project or even Svn branch.
 UCONSOLE_CHECK_FLAGS = -k2
 
-TESTS_DIRS = 1.x 2.x
+TESTS_DIRS = 1.x 2.x # uob
 
 URBI_SERVER = $(abs_top_builddir)/src/urbi-console
 # Run k2 tests only.

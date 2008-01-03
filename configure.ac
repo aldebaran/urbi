@@ -53,6 +53,13 @@ URBI_LIBPORT
 dnl URBI_LIBPORT calls the Boost macros first, so keep other Boost stuff below.
 BOOST_TOKENIZER
 
+
+## ------ ##
+## sdk/.  ##
+## ------ ##
+
+URBI_SDK
+
 ## -------- ##
 ## Output.  ##
 ## -------- ##
