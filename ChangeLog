@@ -1,5 +1,11 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Use program_name.
+	* src/console-server.cc: Use package_name.
+	* src/ubanner.cc: Catch up with PackageInfo.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	check-clean.
 	* Makefile.am (check-clean): New.
 	(maintainer-check, valgrind-check): Remove.
