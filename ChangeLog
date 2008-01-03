@@ -1,5 +1,10 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Update tests.
+	* Makefile.am: USE_VALGRIND is no longer used.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	A single config.h.
 	The kernel used to create src/config.h, and sdk creates sdk/config.h.
 	But Autoconf does not support multiple AC_CONFIG_HEADERS, so we keep
