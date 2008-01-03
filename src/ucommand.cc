@@ -20,7 +20,6 @@ For more information, comments, bug reports: http://www.urbiforge.net
 **************************************************************************** */
 // #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
-#include "config.h"
 
 #include "libport/cstdio"
 #include <cstdarg>

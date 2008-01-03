@@ -5,8 +5,9 @@ include $(top_srcdir)/libport/libport-sources.mk
 # Find the kernel public headers.
 AM_CPPFLAGS += -I$(top_srcdir)/include
 
-# Find the kernel private headers.
+# Find the kernel private headers.  location.hh etc. are generated.
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_builddir)/src
+
 # Find the uobject headers
 AM_CPPFLAGS += -I$(top_srcdir)/src/uobject
 

@@ -48,7 +48,6 @@
 #include "kernel/uvalue.hh"
 #include "kernel/uvariable.hh"
 
-#include "config.h"
 #include "ubanner.hh"
 #include "ucommand.hh"
 #include "ucommandqueue.hh"
