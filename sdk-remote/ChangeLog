@@ -1,5 +1,11 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	envdir/liburbi.
+	* src/liburbi/Makefile.am: Install liburbi in envdir, link to there
+	from libdir.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	distcheck.
 	* src/liburbi/tests/Makefile.am (clean-local): Remove.
 	(check-clean-local): New.
