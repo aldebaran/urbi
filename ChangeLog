@@ -1,12 +1,18 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Don't fuse install-exec-local and install-data-hook.
+	* src/Makefile.am: Revert partially the previous change.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Put most of urbi-console in libkernel.
 	* src/urbi-console.cc: New.
 	* src/Makefile.am: Use it.
-	(libkernel): Now include everything that used to be source of urbi-console.
+	(libkernel): Now include everything that used to be source of
+	urbi-console.
 	This is so that we can use libkernel to create small engines, to test
 	plugged components.
-	(install-exec-hook, install-data-hook): Fuse.
+	(install-exec-local, install-data-hook): Fuse.
 	Use $(mkdir_p) and $(LN_S).
 	* configure.ac: Call URBI_SDK.
 	* Makefile.am: Go into sdk/.
@@ -782,7 +788,7 @@
 	Fix delete.
 	* src/ucommand.cc:
 	    - Force getVariableName to recheck in hashtable
-	        instead of using its cache.
+		instead of using its cache.
 	    - Replace a : with << in code generated for a remote method
 	      call.
 	* src/uvariablename.cc,
@@ -829,7 +835,7 @@
 2007-11-15  Guillaume Deslandes  <deslandes@gostai.com>
 
 	Fix tags and channels behavior, update tests.
-        The correct (cf Baillie) behavior is in 1.x/channels_tags.chk
+	The correct (cf Baillie) behavior is in 1.x/channels_tags.chk
 	* src/ucommand.cc: Here.
 
 2007-11-13  Matthieu Nottale  <nottale@gostai.com>
@@ -946,7 +952,7 @@
 	* .automerge: Update to last sync revision.
 	* src/parser/bison/ugrammar.y: Remove useless comments.
 	* src/uvalue.cc: Rename add_ulist into utlist_append
-        and add_ulists into ulist_concat.
+	and add_ulists into ulist_concat.
 
 2007-10-26  Thomas Moulard  <thomas@moulard.net>
 
@@ -958,8 +964,8 @@
 
 	2007-10-02  Thomas Moulard  <thomas@moulard.net>
 	Remove network.
-        The network is now plugged through an externals.
-        Network's new location is modules/network.
+	The network is now plugged through an externals.
+	Network's new location is modules/network.
 
 	* src/Makefile.am: Remove network.
 	* src/network/bsdnet/bsdnet.mk: Remove.
@@ -1057,7 +1063,7 @@
 
 	Document an impossible change in the grammar.
 	* src/parser/bison/ugrammar.y: Explain why "loop"
-        can't be changed to "for".
+	can't be changed to "for".
 
 2007-10-23  Akim Demaille  <demaille@gostai.com>
 
