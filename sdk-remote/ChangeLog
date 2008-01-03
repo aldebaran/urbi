@@ -1,5 +1,18 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Fuse liburbi and libkernel-remote.
+	The latter used to be the former plus umain.cc.  That was because it
+	was fearer that there could be conflicts between the main from the
+	library and the one from the main program itself.  This is not true,
+	and MN has checked that it works correcly, even using the VC++ tool
+	chain.  Therefore we only need a single library.  Note that it also
+	was a problem with Libtool which was shooting in its leg in -j2 when
+	linking two libraries using the same sub libraries: it created
+	concurrenty twice the same directory with the library files in it.
+	* src/liburbi/Makefile.am (libkernel-remote): Remove.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Use cerr for logs.
 	* src/liburbi/uabstractclient.cc: Here.
 	Remove commented out code.

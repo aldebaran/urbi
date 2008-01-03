@@ -23,23 +23,16 @@ urbiinclude_HEADERS = $(uobject_headers)
 lib_LTLIBRARIES = liburbi.la
 
 liburbi_la_SOURCES =				\
-package-info.cc					\
 $(uobject_sources)				\
+package-info.cc					\
 uabstractclient.cc				\
 ucallbacks.cc					\
 uclient.cc					\
 uconversion.cc					\
+umain.cc					\
 uobject.cc					\
-uvar.cc						\
-usystem.cc                                      \
-usyncclient.cc
+usyncclient.cc					\
+usystem.cc					\
+uvar.cc
+
 liburbi_la_LIBADD = $(LIBADD)
-
-
-## --------------------- ##
-## libkernel-remove.la.  ##
-## --------------------- ##
-
-env_LTLIBRARIES = libkernel-remote.la
-libkernel_remote_la_SOURCES = $(liburbi_la_SOURCES) umain.cc
-libkernel_remote_la_LIBADD = $(LIBADD)
