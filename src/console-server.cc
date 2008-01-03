@@ -1,11 +1,7 @@
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 
-#include "config.h"
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include "libport/unistd.h"
 #include "libport/sysexits.hh"
 #include "libport/windows.hh"
 #include <iostream>

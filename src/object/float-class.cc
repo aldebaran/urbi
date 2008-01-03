@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#include "config.h"
+#include "sdk/config.h"
 #ifndef HAVE_ROUND
 #  include "libport/ufloat.h"
 #endif

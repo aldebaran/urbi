@@ -6,7 +6,7 @@
 
 #include "libport/package-info.hh"
 
-#include "config.h"
+#include "sdk/config.h"
 #include "version.hh"
 #include "ubanner.hh"
 

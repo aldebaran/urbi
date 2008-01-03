@@ -49,7 +49,6 @@
 
 #include "ast/ast.hh"
 #include "ast/nary.hh"
-#include "config.h"
 #include "ubanner.hh"
 #include "ucommandqueue.hh"
 #include "uqueue.hh"

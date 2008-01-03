@@ -1,5 +1,22 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	merge -r 2222:2227 https://svn.gostai.com/svn/kernel1/trunk
+	2008-01-03  Akim Demaille  <demaille@gostai.com>
+	A single config.h.
+	The kernel used to create src/config.h, and sdk creates sdk/config.h.
+	But Autoconf does not support multiple AC_CONFIG_HEADERS, so we keep
+	only sdk's one.
+	* configure.ac: No longer (pretend to) create src/config.h.
+	* src/console-server.cc: Don't include unistd.h but libport's one.
+	* src/parser/parser.mk, src/ubanner.cc: Find config.h in sdk.
+	* src/ucommand.cc, src/userver.cc: Don't include config.h uselessly.
+
+	2008-01-03  Akim Demaille  <demaille@gostai.com>
+	Complete externals.
+	* Makefile.am (SVN_EXTERNALS): Complete.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	k2 is green.
 	* tests-local.mk: We don't pass blocking-comma because we don't
 	have a sound "wait" implementation.

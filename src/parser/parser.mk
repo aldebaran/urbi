@@ -80,9 +80,9 @@ utoken.stamp: $(parser_dir)/utoken.l $(parser_dir)/parser.mk
 	     -e 's,<FlexLexer.h>,"parser/flex-lexer.hh",;'	\
 	     -e 's/class istream;/#include <iostream>/;'	\
 	     -e 's/([	 &])('$(flex_nonstd)')/$$1std::$$2/g;'	\
-	     -e 's/# *include *<unistd.h>/#include "config.h"\n#ifndef WIN32\n$$&\n#endif/;'	\
+	     -e 's,# *include *<unistd.h>,#include "sdk/config.h"\n#ifndef WIN32\n$$&\n#endif,'	\
 	     utoken.cc
-## For some reason, on Windows machine perl does not remove the back up file.
+## For some reason, on Windows perl does not remove the back up file.
 	rm -f utoken.cc.bak
 	@mv -f $@.tmp $@
 
