@@ -1,6 +1,6 @@
 ################################################################################
 #
-# URBI - Copyright (C) 2004, 2005, 2006, 2007 Jean-Christophe Baillie
+# URBI - Copyright (C) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie
 #
 # This software is provided "as is" without warranty of any kind,
 # either expressed or implied, including but not limited to the
@@ -31,12 +31,10 @@ install-exec-local:
 	    -e 's/installed=.*/installed=no/' \
 	    .libs/libkernel.lai >libkernel.lai.new
 	mv -f libkernel.lai.new .libs/libkernel.lai
-
-install-data-hook:
-	mkdir -p $(DESTDIR)$(envdir)/.libs
+	$(mkdir_p) $(DESTDIR)$(envdir)/.libs
 	mv $(DESTDIR)$(envdir)/lib* $(DESTDIR)$(envdir)/.libs
-	ln -s .libs/libkernel.la $(DESTDIR)$(envdir)
-	ln -s .libs/libkernel.a $(DESTDIR)$(envdir)
+	$(LN_S) .libs/libkernel.la $(DESTDIR)$(envdir)
+	$(LN_S) .libs/libkernel.a $(DESTDIR)$(envdir)
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(envdir)/.libs
@@ -115,11 +113,17 @@ urbiinclude_HEADERS = $(uobject_headers)
 
 if !OPENR
 bin_PROGRAMS = urbi-console
-urbi_console_SOURCES =				\
+urbi_console_SOURCES = urbi-console.cc
+urbi_console_LDADD = libkernel.la
+
+dist_libkernel_la_SOURCES +=			\
 console-server.cc				\
 network/bsdnet/connection.hh			\
 network/bsdnet/connection.cc			\
 network/bsdnet/network.hh			\
 network/bsdnet/network.cc
-urbi_console_LDADD = libkernel.la $(PTHREAD_LIBS)
+
+# FIXME: We might need this guy somewhere: $(PTHREAD_LIBS).  In
+# libkernel, or urbi_console_LDADD?
+
 endif

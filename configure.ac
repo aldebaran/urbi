@@ -50,6 +50,13 @@ AC_PROG_LIBTOOL
 URBI_OPENR
 URBI_LIBPORT
 
+
+## ------ ##
+## sdk/.  ##
+## ------ ##
+
+URBI_SDK
+
 ## -------- ##
 ## Output.  ##
 ## -------- ##

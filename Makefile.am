@@ -10,9 +10,9 @@
 
 include $(top_srcdir)/build-aux/build-aux.mk
 
-ACLOCAL_AMFLAGS = -I build-aux
+ACLOCAL_AMFLAGS = -I build-aux -I sdk
 
-SUBDIRS = libport src tests . doc
+SUBDIRS = libport src sdk tests . doc
 
 # build-aux.
 EXTRA_DIST +=					\

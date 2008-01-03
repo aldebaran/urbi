@@ -1,5 +1,18 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Put most of urbi-console in libkernel.
+	* src/urbi-console.cc: New.
+	* src/Makefile.am: Use it.
+	(libkernel): Now include everything that used to be source of urbi-console.
+	This is so that we can use libkernel to create small engines, to test
+	plugged components.
+	(install-exec-hook, install-data-hook): Fuse.
+	Use $(mkdir_p) and $(LN_S).
+	* configure.ac: Call URBI_SDK.
+	* Makefile.am: Go into sdk/.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Run the uob tests.
 	* tests-local.mk: Here.
 
