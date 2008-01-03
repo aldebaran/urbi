@@ -2,7 +2,7 @@
 ****************************************************************************
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,8 +30,9 @@
 #include <algorithm>
 #include <iostream>
 
-#include "urbi/uabstractclient.hh"
 #include "libport/lockable.hh"
+
+#include "urbi/uabstractclient.hh"
 
 #define URBI_ERROR_TAG "[error]"
 #define URBI_WILDCARD_TAG "[wildcard]"
@@ -128,7 +129,7 @@ namespace urbi
 
 
   const char * UAbstractClient::CLIENTERROR_TAG="client error";
-  
+
   /*! Pass the given UMessage to all registered callbacks with the
    * corresponding tag, as if it were comming from the URBI server.
    */
@@ -778,7 +779,6 @@ namespace urbi
   void
   UAbstractClient::processRecvBuffer()
   {
-    char* endline;
     while (true)
     {
       if (binaryMode)
@@ -848,27 +848,13 @@ namespace urbi
       }
       else
       {
-	//Not in binary mode.
-	endline = static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
-					     recvBufferPosition));
+	// Not in binary mode.
+	char* endline =
+	  static_cast<char*> (memchr(recvBuffer+parsePosition, '\n',
+				     recvBufferPosition));
 	if (!endline)
 	  return; //no new end of command/start of binary: wait
 
-#if 0
-	//check
-	printf("ding %15s\n", recvBuffer);
-	endline2 = static_cast<char*> (memchr(recvBuffer, 0,
-					      recvBufferPosition));
-	if ((unsigned int) endline - (unsigned int) recvBuffer > 50U)
-	  printf("WARNING, header unexpectedly long\n");
-	if ((unsigned int) endline > (unsigned int) endline2 && endline2)
-	  printf("WARNING, 0 before newline\n");
-#endif
-
-	//parse the line
-#if DEBUG
-	printf("%d parse line: --%s--\n", mtime(), recvBuffer);
-#endif
 	if (parsePosition == 0) // parse header
 	{
 	  int found = sscanf(recvBuffer, "[%d:%64[A-Za-z0-9_.]]",
@@ -880,8 +866,8 @@ namespace urbi
 	      currentTag[0] = 0;
 	    else // failure
 	    {
-	      printf("UAbstractClient::read, fatal error parsing header");
-	      printf(" line was '%s'\n", recvBuffer);
+	      std::cerr << "UAbstractClient::read, fatal error parsing header: "
+			<< recvBuffer << std::endl;
 	      currentTimestamp = 0;
 	      strcpy(currentTag, "UNKNWN");
 	      //listLock.lock();
@@ -982,7 +968,7 @@ namespace urbi
 		break; //restart
 	      }
 	      //this should not happen: \n should have been handled by binary code below
-	      fprintf(stderr, "FATAL PARSE ERROR\n");
+	      std::cerr << "FATAL PARSE ERROR" << std::endl;
 	    }
 	    if (!system && !strncmp(recvBuffer+parsePosition-3, "BIN ", 4))
 	    {
@@ -992,7 +978,8 @@ namespace urbi
 	      binaryBufferLength = strtol(recvBuffer+parsePosition+1, &endLength, 0);
 	      if (endLength == recvBuffer+parsePosition+1)
 	      {
-		printf("UClient::read, error parsing bin data length.\n");
+		std::cerr << "UClient::read, error parsing bin data length."
+			  << std::endl;
 		recvBufferPosition = 0;
 		return;
 	      }
@@ -1031,7 +1018,7 @@ namespace urbi
   {
     return addCallback(CLIENTERROR_TAG, callback);
   }
-  
+
   UCallbackID UAbstractClient::setCallback(UCallbackWrapper& callback,
 					   const char* tag)
   {
@@ -1061,23 +1048,23 @@ namespace urbi
     UMessage m(*this);
     m.type = MESSAGE_ERROR;
     std::string msg;
-    if (message) 
+    if (message)
       msg = message;
     if (message && erc)
       msg += " : ";
-    if (erc) 
+    if (erc)
       msg+=strerror(erc);
     m.message = m.rawMessage = msg; //rawMessage is incorrect but we dont care
     m.timestamp = 0;
     m.tag = CLIENTERROR_TAG;
     notifyCallbacks(m);
   }
-  
+
   UMessage::UMessage(UAbstractClient& client)
-  :client(client), value(0)
+    : client(client), value(0)
   {
   }
-  
+
   UMessage::UMessage(UAbstractClient& client, int timestamp,
 		     const char *tag, const char *message,
 		     std::list<BinaryData> bins)

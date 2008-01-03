@@ -1,5 +1,11 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Use cerr for logs.
+	* src/liburbi/uabstractclient.cc: Here.
+	Remove commented out code.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Clearer logs.
 	* src/liburbi/ucallbacks.cc: Use libport::program_name.
 	
