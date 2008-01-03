@@ -17,14 +17,8 @@ cleanup ()
   # In case we were caught by set -e, kill the children.
   children_kill
   children_harvest
-
-  rst_subsection "$me: Debug outputs"
-
-  # Results.
-  for i in $children
-  do
-    rst_run_report "$i" "$i"
-  done
+  children_report
+  test x$VERBOSE != x || children_clean
 
   children_sta=$(children_status remote)
   case $exit_status:$children_sta in
@@ -83,9 +77,6 @@ me=$medir/$(basename "$chk" ".cc")
 # ./../../../tests/2.x/andexp-pipeexp.chk -> andexp-pipeexp
 meraw=$(basename $me)    # MERAW!
 
-# $URBI_SERVER
-find_urbi_server
-
 # Move to a private dir.
 rm -rf $me.dir
 mkdir -p $me.dir
@@ -94,7 +85,10 @@ cd $me.dir
 # Help debugging
 set | rst_pre "$me variables"
 
-#compute expected output
+# $URBI_SERVER.  Leaves trailing files, so run it in subdir.
+find_urbi_server
+
+# compute expected output
 sed -n -e 's@//= @@p' $chk.cc >output.exp
 touch error.exp
 echo 0 >status.exp

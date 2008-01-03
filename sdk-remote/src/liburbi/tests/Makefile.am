@@ -65,8 +65,6 @@ TESTS = checkfiles/values.cc \
 	checkfiles/removecallbacks.cc
 TEST_LOGS = $(TESTS:.cc=.log)
 
-.PHONY: clean-test-dirs
-clean-local: clean-test-dirs
-clean-test-dirs:
+check-clean-local:
 	rm -rf $(TESTS:.cc=.dir)
 

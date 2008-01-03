@@ -1,5 +1,14 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	distcheck.
+	* src/liburbi/tests/Makefile.am (clean-local): Remove.
+	(check-clean-local): New.
+	* src/liburbi/tests/liburbi-check.as: Use children_clean and
+	chidren_report.
+	Call find_urbi_server in subdir.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Fuse liburbi and libkernel-remote.
 	The latter used to be the former plus umain.cc.  That was because it
 	was fearer that there could be conflicts between the main from the
