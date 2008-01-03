@@ -59,11 +59,7 @@ include/kernel/version.hh
 ## --------------- ##
 SVN_EXTERNALS += libport tests src/uobject
 
-maintainer-check: valgrind-check
-valgrind-check:
-	$(MAKE) $(AM_MAKEFLAGS) check USE_VALGRIND=1
-
-check-html:
+check-html check-clean:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
 
 # The target run by the buildfarm.

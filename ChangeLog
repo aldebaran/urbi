@@ -1,3 +1,9 @@
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
+	check-clean.
+	* Makefile.am (check-clean): New.
+	(maintainer-check, valgrind-check): Remove.
+
 2008-01-02  Loic Fosse  <fosse@gostai.com>
 
 	"&" has higher precedence than "|".
