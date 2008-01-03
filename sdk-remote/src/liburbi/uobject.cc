@@ -458,13 +458,15 @@ namespace urbi
   void
   version ()
   {
-    std::cout << urbi::package_info().signature() << std::endl;
+    std::cout << urbi::package_info() << std::endl;
     exit (0);
   }
 
   void
   main(int argc, char* argv[])
   {
+    libport::program_name = argv[0];
+
     const char* addr = "localhost";
     bool exitOnDisconnect = true;
     int port = UAbstractClient::URBI_PORT;
@@ -507,8 +509,11 @@ namespace urbi
 	}
     }
 
-    std::cout << "Running Remote Component '" << argv[0]
-	      << "' on " << addr << " " << port << std::endl;
+    std::cerr << libport::program_name
+	      << ": " << urbi::package_info() << std::endl
+	      << libport::program_name
+	      << ": Remote Component Running on "
+	      << addr << " " << port << std::endl;
 
     new USyncClient(addr, port, buflen);
 

@@ -1,3 +1,8 @@
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
+	More logs.
+	* src/liburbi/uobject.cc (main): Output the liburbi version.
+
 2008-01-03  Matthieu Nottale  <nottale@gostai.com>
 
 	Uobjects defaults to exit on connection error.
