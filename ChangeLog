@@ -1,5 +1,10 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Run the uob tests.
+	* tests-local.mk: Here.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Use program_name.
 	* src/console-server.cc: Use package_name.
 	* src/ubanner.cc: Catch up with PackageInfo.
