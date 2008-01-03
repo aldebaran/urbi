@@ -4,7 +4,7 @@
  *
  * Definition of the URBI interface class
  *
- * Copyright (C) 2004, 2006, 2007 Jean-Christophe Baillie.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008 Jean-Christophe Baillie.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -107,7 +107,7 @@ namespace urbi
 
   };
 
-  std::ostream & operator <<(std::ostream &s, const UMessage &m);
+  std::ostream& operator<<(std::ostream& s, const UMessage& m);
 
   /// Callback prototypes.
   typedef UCallbackAction (*UCallback)		   (const UMessage &msg);
@@ -272,13 +272,13 @@ namespace urbi
     /// Get time in milliseconds since an unspecified but constant
     /// reference time.
     virtual unsigned int getCurrentTime() const = 0;
-    
+
     /** Set interval between ping messages in milliseconds, 0 to disable.
      Sends an URBI message at specified interval, if no anwser is received after
      three times this interval, close the connection.
     */
     virtual void setPingInterval(unsigned int msTime) = 0;
-    
+
     /// Return the server name or IP address.
     const char * getServerName() {return host;}
 
