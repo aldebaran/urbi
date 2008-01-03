@@ -1,5 +1,10 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	Complete externals.
+	* Makefile.am (SVN_EXTERNALS): Complete.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	Don't fuse install-exec-local and install-data-hook.
 	* src/Makefile.am: Revert partially the previous change.
 

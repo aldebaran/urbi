@@ -57,7 +57,7 @@ include/kernel/version.hh
 ## --------------- ##
 ## Svn externals.  ##
 ## --------------- ##
-SVN_EXTERNALS += libport tests src/uobject
+SVN_EXTERNALS += libport tests src/uobject src/network sdk
 
 check-html check-clean:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) $@
