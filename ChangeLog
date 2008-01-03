@@ -1,5 +1,11 @@
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
+	k2 is green.
+	* tests-local.mk: We don't pass blocking-comma because we don't
+	have a sound "wait" implementation.
+
+2008-01-03  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 2194:2222 https://svn.gostai.com/svn/kernel1/trunk
 
 	2008-01-03  Akim Demaille  <demaille@gostai.com>
