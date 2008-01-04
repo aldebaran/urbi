@@ -18,9 +18,11 @@ cleanup ()
   children_kill
   children_harvest
   children_report
-  test x$VERBOSE != x || children_clean
 
   children_sta=$(children_status remote)
+  # Don't clean before calling children_status...
+  test x$VERBOSE != x || children_clean
+
   case $exit_status:$children_sta in
     0:0) ;;
     0:*) # Maybe a children exited for SKIP etc.
