@@ -244,7 +244,7 @@ namespace urbi
   typename uvar_ref_traits<typename libport::unref_traits<Type>::type>::type
   uvalue_cast (UValue& v)
   {
-    return uvalue_caster<Type>()(v);
+    return uvalue_caster<typename libport::unref_traits<Type>::type>()(v);
   }
 
 # define UVALUE_CASTER_DEFINE(Type)		\

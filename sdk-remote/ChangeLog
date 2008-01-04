@@ -1,5 +1,11 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	Fix uvalue_cast.
+	* src/liburbi/uobject/urbi/uvalue.hh: The uvalue_cast needs its
+	parameter without reference too.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	Simplify reference stripping.
 	Remove the refs at definition site, instead of use site.
 	* src/liburbi/uobject/urbi/uvalue.hh: Use libport::unref_traits.
