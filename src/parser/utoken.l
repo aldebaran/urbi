@@ -144,8 +144,6 @@ FRACTION (\.{NATURAL})|({NATURAL}(\.[0-9]*)?)
 EXPONENT [eE][-+]?[0-9]+
 NUMBER   {FRACTION}{EXPONENT}?
 
-STRING   \"([^\"]|"\\\"")*\"
-
 %%
 %{
 #ifndef NDEBUG

@@ -1,5 +1,10 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	Useless regexp.
+	* src/parser/utoken.l (STRING): Remove, useless for months.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	Update to newest UObject.
 	* include/kernel/utypes.hh: utypes-common.hh no longer exists.
 	* include/kernel/uvariable.hh (ublend-types.hh): Include it.
