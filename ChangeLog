@@ -1,5 +1,9 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	* Makefile.am (check-%.): Forward to tests/.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	Run reheader.
 	* include/kernel/blockmemorymanager.hh,
 	* include/kernel/fwd.hh,
