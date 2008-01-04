@@ -1,5 +1,13 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	UValue cast: use a templated syntax.
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template,
+	* src/liburbi/uobject/uvalue-common.cc (cast): Remove.
+	(urbi_cast, URBI_cast): New.
+	Use them.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	Tidy the casts.
 	* src/liburbi/uobject/urbi/ucallbacks.hh.template: Reorder.
 	* src/liburbi/uobject/uobject-common.cc (cast): Move to...

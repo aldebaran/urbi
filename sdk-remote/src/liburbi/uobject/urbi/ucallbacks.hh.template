@@ -141,14 +141,31 @@ namespace urbi
   /*----------.
   | Casters.  |
   `----------*/
-  
+
+  template <typename Type>
+  struct urbi_cast
+  {
+  };
+
+  // It would be nice to be able to use this function to wrap all the
+  // uses of the urbi_cast classes, but the signature for UVar is
+  // different: it is parameterized by "UVar" but returns an "UVar&".
+  // A traits should help.
+  template <typename Type>
+  Type URBI_cast (UValue& v)
+  {
+    return urbi_cast<Type>()(v);
+  }
 
 # define SETCAST(Type)				\
-  inline Type					\
-  cast(UValue& val, Type*)			\
+  template <>					\
+  struct urbi_cast <Type>			\
   {						\
-    return (Type)val;				\
-  }
+    Type operator() (UValue& v)			\
+    {						\
+      return v;					\
+    }						\
+  };
 
   SETCAST(int);
   SETCAST(unsigned int);
@@ -160,39 +177,64 @@ namespace urbi
   SETCAST(bool);
   SETCAST(UImage);
   SETCAST(USound);
-
 #undef SETCAST
 
-  inline const UValue& cast(UValue& val, const UValue*)
+  template <>
+  struct urbi_cast<const UValue&>
   {
-    return val;
-  }
+    const UValue& operator()(UValue& v)
+    {
+      return v;
+    }
+  };
 
-  inline UValue cast(UValue& val, UValue*)
+  template <>
+  struct urbi_cast<UValue>
   {
-    return val;
-  }
+    UValue operator()(UValue& v)
+    {
+      return v;
+    }
+  };
 
-  UVar& cast(UValue& val, UVar* var);
-  UBinary cast(UValue& v, UBinary* b);
-  UList cast(UValue& v, UList *l);
-  UObjectStruct cast(UValue& v, UObjectStruct* o);
-  const char* cast(UValue& v, const char** b);
+  template <>
+  struct urbi_cast<UVar>
+  {
+    UVar& operator () (UValue& v);
+  };
+
+
+# define URBI_CAST_DECLARE(Type)		\
+  template <>					\
+  struct urbi_cast<Type>			\
+  {						\
+    Type operator () (UValue& v);		\
+  };
+
+  URBI_CAST_DECLARE(UBinary)
+  URBI_CAST_DECLARE(UList)
+  URBI_CAST_DECLARE(UObjectStruct)
+  URBI_CAST_DECLARE(const char*)
+
+# undef URBI_CAST_DECLARE
+
 
 #ifndef UOBJECT_NO_LIST_CAST
-  template<class I>
-  std::list<I>
-  cast(UValue& val, std::list<I>* inu)
+  template<typename I>
+  struct urbi_cast <std::list<I> >
   {
-    std::list<I> res;
-    if (val.type != DATA_LIST)
-      //cast just the element
-      res.push_back(cast(val, static_cast<I*>(0)));
-    else
-      for (int i = 0; i<val.list->size(); ++i)
-	res.push_back(cast(*val.list->array[i], static_cast<I*>(0)));
-    return res;
-  }
+    std::list<I> operator()(UValue& v)
+    {
+      std::list<I> res;
+      if (v.type != DATA_LIST)
+	//cast just the element
+	res.push_back(urbi_cast<I*>()(v));
+      else
+	for (int i = 0; i < v.list->size(); ++i)
+	  res.push_back(urbi_cast<I*>()(*v.list->array[i]));
+      return res;
+    }
+  };
 #endif
 
   template<typename T>
@@ -253,15 +295,16 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), (is_const_) ?
-	((*obj).*funconst)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%) :
-	((*obj).*fun)(%%%,% cast(param[% - 1], (typename utrait<P%>::noref*)0) %%);
+      res(),
+	(is_const_)
+	? ((*obj).*funconst)(%%%,% urbi_cast<typename utrait<P%>::noref>()(param[% - 1]) %%)
+	: ((*obj).*fun)     (%%%,% urbi_cast<typename utrait<P%>::noref>()(param[% - 1]) %%);
       return res;
     }
 
     private:
     OBJ* obj;
-    R (OBJ::*fun) (%%%,% P% %%);
+    R (OBJ::*fun)      (%%%,% P% %%);
     R (OBJ::*funconst) (%%%,% P% %%) const;
     bool is_const_;
   };
@@ -286,7 +329,7 @@ namespace urbi
     {
       // Avoid warnings when we don't use param.
       (void) param;
-      ((*obj).*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      ((*obj).*fun)(%%%,% urbi_cast<typename utrait<P%>::noref>()(param[% - 1]) %%);
       return UValue();
     }
     private:
@@ -355,7 +398,7 @@ namespace urbi
     {
       // Avoid warnings when we don't use param.
       (void) param;
-      (*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      (*fun)(%%%,% urbi_cast<typename utrait<P%>::noref>()(param[% - 1]) %%);
       return UValue();
     }
 
@@ -383,7 +426,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), (*fun)(%%%,% cast(param[% - 1], static_cast<typename utrait<P%>::noref*>(0)) %%);
+      res(), (*fun)(%%%,% urbi_cast<typename utrait<P%>::noref>()(param[% - 1]) %%);
       return res;
     }
 

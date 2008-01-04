@@ -32,33 +32,38 @@ namespace urbi
   | UValue Casts.  |
   `---------------*/
 
-  UVar& cast(UValue &v, UVar *)
+  UVar&
+  urbi_cast<UVar>::operator() (UValue& v)
   {
     return *((UVar*)v.storage);
   }
 
-  UBinary cast(UValue& v, UBinary*)
+  UBinary
+  urbi_cast<UBinary>::operator() (UValue& v)
   {
     if (v.type != DATA_BINARY)
       return UBinary();
     return UBinary(*v.binary);
   }
 
-  UList cast(UValue& v, UList*)
+  UList
+  urbi_cast<UList>::operator() (UValue& v)
   {
     if (v.type != DATA_LIST)
       return UList();
     return UList(*v.list);
   }
 
-  UObjectStruct cast(UValue& v, UObjectStruct*)
+  UObjectStruct
+  urbi_cast<UObjectStruct>::operator() (UValue& v)
   {
     if (v.type != DATA_OBJECT)
       return UObjectStruct();
     return UObjectStruct(*v.object);
   }
 
-  const char* cast(UValue& v, const char**)
+  const char*
+  urbi_cast<const char*>::operator() (UValue& v)
   {
     static const char* er = "invalid";
     if (v.type != DATA_STRING)
