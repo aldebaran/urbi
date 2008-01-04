@@ -1,3 +1,10 @@
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
+	Speed up BF's check.
+	* Makefile.am (CHECK_BUILDFARM_FLAGS): Pass -j4.
+	The tests spend a lot of time in sleep(1), and currently the BF is
+	way too slow to be really useful.
+
 2008-01-04  Matthieu Nottale  <nottale@gostai.com>
 
 	Realy implement foreach.
