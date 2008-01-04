@@ -25,6 +25,8 @@
 # include <string>
 # include <list>
 
+# include "urbi/ublend-type.hh"
+
 # include "kernel/memorymanager.hh"
 # include "kernel/fwd.hh"
 # include "kernel/utypes.hh"

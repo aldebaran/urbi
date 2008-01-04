@@ -1,5 +1,11 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	Update to newest UObject.
+	* include/kernel/utypes.hh: utypes-common.hh no longer exists.
+	* include/kernel/uvariable.hh (ublend-types.hh): Include it.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	Speed up BF's check.
 	* Makefile.am (CHECK_BUILDFARM_FLAGS): Pass -j4.
 	The tests spend a lot of time in sleep(1), and currently the BF is
