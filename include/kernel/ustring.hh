@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef USTRING_HH
-# define USTRING_HH
+#ifndef KERNEL_USTRING_HH
+# define KERNEL_USTRING_HH
 
 # include "libport/cstring"
 # include <string>
@@ -180,4 +180,4 @@ update (UString*& s, const std::string& v)
   return s;
 }
 
-#endif // !USTRING_HH
+#endif // !KERNEL_USTRING_HH

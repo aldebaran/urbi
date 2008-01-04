@@ -1,5 +1,5 @@
-#ifndef TAG_INFO_HH
-# define TAG_INFO_HH
+#ifndef KERNEL_TAG_INFO_HH
+# define KERNEL_TAG_INFO_HH
 
 /// \file tag-info.hh
 
@@ -54,4 +54,4 @@ public:
   static TagInfo* notagTagInfo;
 };
 
-#endif // !TAG_INFO_HH
+#endif // !KERNEL_TAG_INFO_HH

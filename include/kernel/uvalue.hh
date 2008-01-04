@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UVALUE_HH
-# define UVALUE_HH
+#ifndef KERNEL_UVALUE_HH
+# define KERNEL_UVALUE_HH
 
 # include <string>
 
@@ -92,4 +92,4 @@ private:
 
 UTestResult booleval(UValue* , bool freeme = true);
 
-#endif
+#endif // !KERNEL_UVALUE_HH

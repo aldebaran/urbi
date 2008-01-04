@@ -6,8 +6,8 @@
 ///  will cause a recompile every time a new kernel version is
 ///  released.
 
-#ifndef KERNEL1_VERSION_HH_
-# define KERNEL1_VERSION_HH_
+#ifndef KERNEL_VERSION_HH
+# define KERNEL_VERSION_HH
 
 /// Version number of this kernel.
 /// KERNEL_VERSION % 100 is the sub-minor version
@@ -30,4 +30,4 @@
 /// Revision number of this kernel.
 # define KERNEL_REVISION @KERNEL_REVISION@
 
-#endif /* !KERNEL1_VERSION_HH_ */
+#endif // !KERNEL_VERSION_HH

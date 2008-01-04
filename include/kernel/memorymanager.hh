@@ -1,5 +1,5 @@
-#ifndef MEMORYMANAGER_HH
-# define MEMORYMANAGER_HH
+#ifndef KERNEL_MEMORYMANAGER_HH
+# define KERNEL_MEMORYMANAGER_HH
 
 /**
  * Memory manager common definitions
@@ -22,4 +22,4 @@ namespace MemoryManager
 #  define MEMORY_MANAGER_INIT(classname)
 # endif
 
-#endif
+#endif // !KERNEL_MEMORYMANAGER_HH

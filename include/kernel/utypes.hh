@@ -23,8 +23,8 @@
 
  **************************************************************************** */
 
-#ifndef UTYPES_HH
-# define UTYPES_HH
+#ifndef KERNEL_UTYPES_HH
+# define KERNEL_UTYPES_HH
 
 # include "libport/hash.hh"
 
@@ -169,4 +169,4 @@ typedef libport::hash_map<std::string, TagInfo> HMtagtab;
 // following definition.
 // typedef HMtagtab::value_type HMtag_type;
 
-#endif
+#endif // !KERNEL_UTYPES_HH

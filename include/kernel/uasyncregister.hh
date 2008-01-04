@@ -16,8 +16,8 @@
 
  **************************************************************************** */
 
-#ifndef UASYNCREGISTER_HH
-# define UASYNCREGISTER_HH
+#ifndef KERNEL_UASYNCREGISTER_HH
+# define KERNEL_UASYNCREGISTER_HH
 
 # include <list>
 # include <string>
@@ -60,4 +60,4 @@ private:
   std::list<UASyncCommand*> register_;
 };
 
-#endif
+#endif // !KERNEL_UASYNCREGISTER_HH

@@ -19,8 +19,8 @@
 
  **************************************************************************** */
 
-#ifndef UVARIABLE_HH
-# define UVARIABLE_HH
+#ifndef KERNEL_UVARIABLE_HH
+# define KERNEL_UVARIABLE_HH
 
 # include <string>
 # include <list>
@@ -32,7 +32,7 @@
 # include "uasyncregister.hh"
 
 //! Uvariable is used to store variables
-/* ! You can pass to the constructor three importants parameters:
+/* ! You can pass to the constructor three important parameters:
 
      - notifyWrite: when true, the device associated to the variable
        (if there is a device), will be notified by a call to its
@@ -58,29 +58,29 @@ class UVariable : public UASyncRegister
 public:
   MEMORY_MANAGED;
   UVariable(const char* name, ufloat val,
-	    bool _notifyWrite = false,
-	    bool _notifyRead = false,
-	    bool _autoUpdate = true);
+	    bool notifyWrite = false,
+	    bool notifyRead = false,
+	    bool autoUpdate = true);
   UVariable(const char* name, const char* str,
-	    bool _notifyWrite = false,
-	    bool _notifyRead = false,
-	    bool _autoUpdate = true);
-  UVariable(const char* name, UValue* _value,
-	    bool _notifyWrite = false,
-	    bool _notifyRead = false,
-	    bool _autoUpdate = true);
-  UVariable(const char* _id, const char* _method, UValue* _value,
-	    bool _notifyWrite = false,
-	    bool _notifyRead = false,
-	    bool _autoUpdate = true);
-  UVariable(const char* _id, const char* _method, ufloat val,
-	    bool _notifyWrite = false,
-	    bool _notifyRead = false,
-	    bool _autoUpdate = true);
-  UVariable(const char* _id, const char* _method, const char *str,
-	    bool _notifyWrite = false,
-	    bool _notifyRead = false,
-	    bool _autoUpdate = true);
+	    bool notifyWrite = false,
+	    bool notifyRead = false,
+	    bool autoUpdate = true);
+  UVariable(const char* name, UValue* value,
+	    bool notifyWrite = false,
+	    bool notifyRead = false,
+	    bool autoUpdate = true);
+  UVariable(const char* id, const char* method, UValue* value,
+	    bool notifyWrite = false,
+	    bool notifyRead = false,
+	    bool autoUpdate = true);
+  UVariable(const char* id, const char* method, ufloat val,
+	    bool notifyWrite = false,
+	    bool notifyRead = false,
+	    bool autoUpdate = true);
+  UVariable(const char* id, const char* method, const char *str,
+	    bool notifyWrite = false,
+	    bool notifyRead = false,
+	    bool autoUpdate = true);
   ~UVariable();
 
   /// For debugging.
@@ -158,17 +158,17 @@ public:
   UCommand_ASSIGN_VALUE* cancel;
 
   const char* setName(const char* s);
-  const char* setName(const char* _id, const char* _method);
+  const char* setName(const char* id, const char* method);
   const char* setName(UString* s);
 
   /// \name Updates.
   /// \{
   /// Return code for variable Update
   enum UVarSet
-    {
-      UOK,
-      USPEEDMAX
-    };
+  {
+    UOK,
+    USPEEDMAX
+  };
 
   UVarSet set(UValue* v);
   UVarSet setFloat(ufloat f);
@@ -239,4 +239,4 @@ inline void UVariable::setContext(UCallid * ctx) {context = ctx;}
 
 inline bool UVariable::isInSetTarget() const {return inSetTarget;}
 
-#endif
+#endif // !KERNEL_UVARIABLE_HH

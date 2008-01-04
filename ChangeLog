@@ -1,3 +1,24 @@
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
+	Run reheader.
+	* include/kernel/blockmemorymanager.hh,
+	* include/kernel/fwd.hh,
+	* include/kernel/mem-track.hh,
+	* include/kernel/memorymanager.hh,
+	* include/kernel/tag-info.hh,
+	* include/kernel/uasyncregister.hh,
+	* include/kernel/ucomplaints.hh,
+	* include/kernel/uconnection.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/userver.hxx,
+	* include/kernel/ustring.hh,
+	* include/kernel/utypes.hh,
+	* include/kernel/uvalue.hh,
+	* include/kernel/uvariable.hh,
+	* include/kernel/version.hh.in:
+	Fix cpp guards.
+	* include/kernel/uvariable.hh: Simplify arg names.
+
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
 	Update tests.

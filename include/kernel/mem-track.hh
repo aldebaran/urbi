@@ -23,8 +23,8 @@ Copyright (c) 2007 Jean-Christophe Baillie.
 
  **************************************************************************** */
 
-#ifndef MEM_TRACK_HH
-# define MEM_TRACK_HH
+#ifndef KERNEL_MEM_TRACK_HH
+# define KERNEL_MEM_TRACK_HH
 
 /*--------------------.
 | Memory allocation.  |
@@ -51,4 +51,4 @@ extern  int   availableMemory;
       delete X;					\
   } while (0)
 
-#endif // MEM_TRACK_HH
+#endif // !KERNEL_MEM_TRACK_HH

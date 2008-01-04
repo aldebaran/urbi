@@ -1,7 +1,7 @@
 /// \file ucomplaints.hh
 
-#ifndef UCOMPLAINTS_HH
-# define UCOMPLAINTS_HH
+#ifndef KERNEL_UCOMPLAINTS_HH
+# define KERNEL_UCOMPLAINTS_HH
 
 enum UMsgType
 {
@@ -38,4 +38,4 @@ const char* message (UMsgType t, int code);
 const char* message (UErrorCode n);
 const char* message (UWarningCode n);
 
-#endif // ! UCOMPLAINTS_HH
+#endif // !KERNEL_UCOMPLAINTS_HH

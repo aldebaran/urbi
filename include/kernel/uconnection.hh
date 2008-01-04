@@ -19,8 +19,8 @@ For more information, comments, bug reports: http://www.urbiforge.net
 
 **************************************************************************** */
 
-#ifndef UCONNECTION_HH
-# define UCONNECTION_HH
+#ifndef KERNEL_UCONNECTION_HH
+# define KERNEL_UCONNECTION_HH
 
 # include <cstdarg>
 # include <iomanip>
@@ -561,4 +561,4 @@ UConnection::parser ()
   return *parser_;
 }
 
-#endif
+#endif // !KERNEL_UCONNECTION_HH

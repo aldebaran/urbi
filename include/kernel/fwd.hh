@@ -1,8 +1,8 @@
 /// \file   fwd.hh
 /// \brief  Forward declarations.
 
-#ifndef KERNEL1_FWD_HH
-# define KERNEL1_FWD_HH
+#ifndef KERNEL_FWD_HH
+# define KERNEL_FWD_HH
 
 namespace urbi
 {
@@ -96,4 +96,4 @@ class UCommand_WAIT_TEST;
 class UCommand_WHENEVER;
 class UCommand_WHILE;
 
-#endif //! KERNEL1_FWD_HH
+#endif // !KERNEL_FWD_HH
