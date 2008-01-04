@@ -138,30 +138,6 @@ namespace urbi
   };
 
 
-  template<typename T>
-  struct utrait
-  {
-    typedef T noref;
-  };
-
-# if 1 // #ifndef _MSC_VER
-
-  template<typename T>
-  struct utrait<T&>
-  {
-    typedef T noref;
-  };
-
-# else
-
-  template<>
-  struct utrait<UVar&>
-  {
-    typedef UVar noref;
-  };
-
-# endif
-
   /*------------------------------------------------.
   | This section is generated. Not for human eyes.  |
   `------------------------------------------------*/
@@ -181,7 +157,7 @@ namespace urbi
 		   R (OBJ::*fun) (%%%,% P% %%) Const,			\
 		   const std::string& funname, UTable &t, bool owned)	\
       : UGenericCallback(objname, type, funname, %N%, t, owned),	\
-      obj(obj), fun##Const(fun), is_const_ (IsConst)			\
+	obj(obj), fun##Const(fun), is_const_ (IsConst)			\
     {									\
       registerCallback(t);						\
     }
@@ -198,8 +174,8 @@ namespace urbi
       UValue res;
       res(),
 	(is_const_)
-	? ((*obj).*funconst)(%%%,% uvalue_cast<typename utrait<P%>::noref>(param[% - 1]) %%)
-	: ((*obj).*fun)     (%%%,% uvalue_cast<typename utrait<P%>::noref>(param[% - 1]) %%);
+	? ((*obj).*funconst)(%%%,% uvalue_cast<P%>(param[% - 1]) %%)
+	: ((*obj).*fun)     (%%%,% uvalue_cast<P%>(param[% - 1]) %%);
       return res;
     }
 
@@ -230,7 +206,7 @@ namespace urbi
     {
       // Avoid warnings when we don't use param.
       (void) param;
-      ((*obj).*fun)(%%%,% uvalue_cast<typename utrait<P%>::noref>(param[% - 1]) %%);
+      ((*obj).*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
       return UValue();
     }
     private:
@@ -255,7 +231,7 @@ namespace urbi
 			    const std::string& funname,			\
 			    UTable &t)					\
       : UGenericCallback(objname, type, funname,%N%, t, false),		\
-      obj(obj), fun(end), is_const_(IsConst)				\
+	obj(obj), fun(end), is_const_(IsConst)				\
     {									\
       registerCallback(t);						\
     }
@@ -299,7 +275,7 @@ namespace urbi
     {
       // Avoid warnings when we don't use param.
       (void) param;
-      (*fun)(%%%,% uvalue_cast<typename utrait<P%>::noref>(param[% - 1]) %%);
+      (*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
       return UValue();
     }
 
@@ -327,7 +303,7 @@ namespace urbi
       // Avoid warnings when we don't use param.
       (void) param;
       UValue res;
-      res(), (*fun)(%%%,% uvalue_cast<typename utrait<P%>::noref>(param[% - 1]) %%);
+      res(), (*fun)(%%%,% uvalue_cast<P%>(param[% - 1]) %%);
       return res;
     }
 

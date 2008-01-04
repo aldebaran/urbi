@@ -1,5 +1,13 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	Simplify reference stripping.
+	Remove the refs at definition site, instead of use site.
+	* src/liburbi/uobject/urbi/uvalue.hh: Use libport::unref_traits.
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template: Simplify.
+	(utrait): Remove.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	uvalue_cast<Type>(uvalue).
 	* src/liburbi/uobject/urbi/ucallbacks.hh.template (urbi_cast): Rename as...
 	(uvalue_caster): this.

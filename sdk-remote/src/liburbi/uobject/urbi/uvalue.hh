@@ -16,6 +16,8 @@
 # define URBI_UVALUE_HH
 
 # include <vector>
+
+# include "libport/select-ref.hh"
 # include "libport/ufloat.h"
 
 # include "urbi/fwd.hh"
@@ -210,6 +212,8 @@ namespace urbi
     return v.print (s);
   }
 
+
+
   /*----------.
   | Casters.  |
   `----------*/
@@ -237,7 +241,7 @@ namespace urbi
 
   // Run the uvalue_caster<Type> on v.
   template <typename Type>
-  typename uvar_ref_traits<Type>::type
+  typename uvar_ref_traits<typename libport::unref_traits<Type>::type>::type
   uvalue_cast (UValue& v)
   {
     return uvalue_caster<Type>()(v);
