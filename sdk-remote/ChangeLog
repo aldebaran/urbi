@@ -1,3 +1,9 @@
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
+	Fix test suite.
+	* src/liburbi/tests/liburbi-check.as: It is quite stupid to remove
+	a file just before reading it.
+
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
 	envdir/liburbi.
