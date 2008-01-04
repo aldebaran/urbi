@@ -1,7 +1,7 @@
 /// \file urbi/uvar.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007 Gostai S.A.S.
+// Copyright (c) 2007, 2008 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -20,7 +20,9 @@
 
 # include "libport/fwd.hh"
 # include "libport/ufloat.hh"
+
 # include "urbi/uvalue.hh"
+# include "urbi/uproperty.hh"
 
 /// Define an attribute and its accessors.
 # define PRIVATE(Type, Name)			\

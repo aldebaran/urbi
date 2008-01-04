@@ -1,7 +1,7 @@
 /// \file urbi/uvalue.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007 Gostai S.A.S.
+// Copyright (c) 2007, 2008 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -209,6 +209,122 @@ namespace urbi
   {
     return v.print (s);
   }
+
+  /*----------.
+  | Casters.  |
+  `----------*/
+
+  // For each Type, define an operator() that cast its UValue&
+  // argument into Type.  We need partial specialization.
+  template <typename Type>
+  struct uvalue_caster
+  {
+  };
+
+  // T -> UVar&  if T = UVar
+  // T -> T      otherwise.
+  template <typename T>
+  struct uvar_ref_traits
+  {
+    typedef T type;
+  };
+
+  template <>
+  struct uvar_ref_traits<UVar>
+  {
+    typedef UVar& type;
+  };
+
+  // Run the uvalue_caster<Type> on v.
+  template <typename Type>
+  typename uvar_ref_traits<Type>::type
+  uvalue_cast (UValue& v)
+  {
+    return uvalue_caster<Type>()(v);
+  }
+
+# define UVALUE_CASTER_DEFINE(Type)		\
+  template <>					\
+  struct uvalue_caster <Type>			\
+  {						\
+    Type operator() (UValue& v)			\
+    {						\
+      return v;					\
+    }						\
+  };
+
+  UVALUE_CASTER_DEFINE(int);
+  UVALUE_CASTER_DEFINE(unsigned int);
+  UVALUE_CASTER_DEFINE(long);
+  UVALUE_CASTER_DEFINE(unsigned long);
+  UVALUE_CASTER_DEFINE(ufloat);
+  UVALUE_CASTER_DEFINE(std::string);
+  UVALUE_CASTER_DEFINE(const std::string);
+  UVALUE_CASTER_DEFINE(bool);
+  UVALUE_CASTER_DEFINE(UImage);
+  UVALUE_CASTER_DEFINE(USound);
+
+#undef UVALUE_CASTER_DEFINE
+
+  template <>
+  struct uvalue_caster<const UValue&>
+  {
+    const UValue& operator()(UValue& v)
+    {
+      return v;
+    }
+  };
+
+  template <>
+  struct uvalue_caster<UValue>
+  {
+    UValue operator()(UValue& v)
+    {
+      return v;
+    }
+  };
+
+  // The following ones are defined in uvalue-common.cc.
+
+  template <>
+  struct uvalue_caster<UVar>
+  {
+    UVar& operator () (UValue& v);
+  };
+
+
+# define UVALUE_CASTER_DECLARE(Type)		\
+  template <>					\
+  struct uvalue_caster<Type>			\
+  {						\
+    Type operator () (UValue& v);		\
+  };
+
+  UVALUE_CASTER_DECLARE(UBinary)
+  UVALUE_CASTER_DECLARE(UList)
+  UVALUE_CASTER_DECLARE(UObjectStruct)
+  UVALUE_CASTER_DECLARE(const char*)
+
+# undef UVALUE_CASTER_DECLARE
+
+
+# ifndef UOBJECT_NO_LIST_CAST
+  template<typename I>
+  struct uvalue_caster <std::list<I> >
+  {
+    std::list<I> operator()(UValue& v)
+    {
+      std::list<I> res;
+      if (v.type != DATA_LIST)
+	//cast just the element
+	res.push_back(uvalue_cast<I*>(v));
+      else
+	for (int i = 0; i < v.list->size(); ++i)
+	  res.push_back(uvalue_cast<I*>(*v.list->array[i]));
+      return res;
+    }
+  };
+# endif
 
 
 } // namespace urbi

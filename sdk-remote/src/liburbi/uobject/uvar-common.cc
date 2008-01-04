@@ -19,6 +19,8 @@ For more information, comments, bug reports: http://www.urbiforge.com
 **************************************************************************** */
 
 #include "urbi/uobject.hh"
+#include "urbi/uvalue.hh"
+#include "urbi/uvar.hh"
 
 namespace urbi
 {
@@ -68,6 +70,38 @@ namespace urbi
     }
     else
       return true;
+  }
+
+  /*-------.
+  | UVar.  |
+  `-------*/
+
+  void
+  UVar::operator= (const UValue& v)
+  {
+    switch (v.type)
+    {
+      case DATA_STRING:
+	*this = *v.stringValue;
+	break;
+      case DATA_BINARY:
+	*this = *v.binary;
+	break;
+      case DATA_LIST:
+	*this = *v.list;
+	break;
+      case DATA_DOUBLE:
+	*this = v.val;
+	break;
+      case DATA_VOID:
+	//TODO: do something!
+	pabort (v);
+	break;
+      case DATA_OBJECT:
+	// Not valid currently.
+	pabort (v);
+	break;
+    }
   }
 
 } // namespace urbi

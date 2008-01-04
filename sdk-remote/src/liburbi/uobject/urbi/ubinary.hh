@@ -1,7 +1,7 @@
 /// \file urbi/ubinary.hh
 
 // This file is part of UObject Component Architecture
-// Copyright (c) 2007 Gostai S.A.S.
+// Copyright (c) 2007, 2008 Gostai S.A.S.
 //
 // Permission to use, copy, modify, and redistribute this software for
 // non-commercial use is hereby granted.
@@ -16,6 +16,7 @@
 # define URBI_UBINARY_HH
 
 # include <list>
+# include <string>
 
 namespace urbi
 {

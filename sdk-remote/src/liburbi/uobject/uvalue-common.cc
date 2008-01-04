@@ -18,12 +18,13 @@
 
  **************************************************************************** */
 
-#include "libport/cstdio"
-
 #include <sstream>
 #include <iostream>
 
-#include "urbi/uobject.hh"
+#include "libport/assert.hh"
+#include "libport/cstring"
+
+#include "urbi/uvalue.hh"
 
 namespace urbi
 {
@@ -33,13 +34,13 @@ namespace urbi
   `---------------*/
 
   UVar&
-  urbi_cast<UVar>::operator() (UValue& v)
+  uvalue_caster<UVar>::operator() (UValue& v)
   {
     return *((UVar*)v.storage);
   }
 
   UBinary
-  urbi_cast<UBinary>::operator() (UValue& v)
+  uvalue_caster<UBinary>::operator() (UValue& v)
   {
     if (v.type != DATA_BINARY)
       return UBinary();
@@ -47,7 +48,7 @@ namespace urbi
   }
 
   UList
-  urbi_cast<UList>::operator() (UValue& v)
+  uvalue_caster<UList>::operator() (UValue& v)
   {
     if (v.type != DATA_LIST)
       return UList();
@@ -55,7 +56,7 @@ namespace urbi
   }
 
   UObjectStruct
-  urbi_cast<UObjectStruct>::operator() (UValue& v)
+  uvalue_caster<UObjectStruct>::operator() (UValue& v)
   {
     if (v.type != DATA_OBJECT)
       return UObjectStruct();
@@ -63,7 +64,7 @@ namespace urbi
   }
 
   const char*
-  urbi_cast<const char*>::operator() (UValue& v)
+  uvalue_caster<const char*>::operator() (UValue& v)
   {
     static const char* er = "invalid";
     if (v.type != DATA_STRING)
@@ -415,7 +416,7 @@ namespace urbi
     int p2, p3, p4, p5;
     count = sscanf(message + pos, "%63s %d %d %d %d",
 		   type, &p2, &p3, &p4, &p5);
-    //DEBUG fprintf(stderr, "%s:	 %d %s %d %d\n", message, p1, type, p2, p3);
+
     if (STREQ(type, "jpeg"))
     {
       this->type = BINARY_IMAGE;
@@ -914,38 +915,6 @@ namespace
 	return *array[i].val;
     static UValue n;
     return n; // Gni?
-  }
-
-  /*-------.
-  | UVar.  |
-  `-------*/
-
-  void
-  UVar::operator= (const UValue& v)
-  {
-    switch (v.type)
-    {
-      case DATA_STRING:
-	*this = *v.stringValue;
-	break;
-      case DATA_BINARY:
-	*this = *v.binary;
-	break;
-      case DATA_LIST:
-	*this = *v.list;
-	break;
-      case DATA_DOUBLE:
-	*this = v.val;
-	break;
-      case DATA_VOID:
-	//TODO: do something!
-	pabort (v);
-	break;
-      case DATA_OBJECT:
-	// Not valid currently.
-	pabort (v);
-	break;
-    }
   }
 
 } // namespace urbi

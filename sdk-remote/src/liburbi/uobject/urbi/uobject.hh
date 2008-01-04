@@ -28,7 +28,6 @@
 
 # include "urbi/fwd.hh"
 # include "urbi/ucallbacks.hh"
-# include "urbi/utypes-common.hh"
 # include "urbi/uvar.hh"
 
 // Tell our users that it is fine to use void returning functions.

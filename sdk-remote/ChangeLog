@@ -1,5 +1,24 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	uvalue_cast<Type>(uvalue).
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template (urbi_cast): Rename as...
+	(uvalue_caster): this.
+	(uvar_ref_traits): New.
+	(uvalue_cast): New.
+	Use it.
+	And move them all into...
+	* src/liburbi/uobject/urbi/uvalue.hh: here.
+	* src/liburbi/uobject/uvalue-common.cc: Adjust.
+
+	* src/liburbi/uobject/utypes-common: Split into...
+	* uobject/urbi/uproperty.hh, uobject/urbi/ublend-type.hh: these.
+	Simplify the dependencies.
+
+	* src/liburbi/uobject/uvalue-common.cc (UVar::operator=): Move to...
+	* src/liburbi/uobject/uvar-common.cc: here.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	UValue cast: use a templated syntax.
 	* src/liburbi/uobject/urbi/ucallbacks.hh.template,
 	* src/liburbi/uobject/uvalue-common.cc (cast): Remove.

@@ -29,12 +29,11 @@
 # include "libport/ufloat.h"
 # include "libport/hash.hh"
 
-# include "urbi/utypes-common.hh"
-
 namespace urbi
 {
   /// Possible value types a UValue can contain.
-  enum USystemChannel {
+  enum USystemChannel
+  {
     NEW_CHANNEL
   };
 
