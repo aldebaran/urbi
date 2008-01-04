@@ -4,7 +4,7 @@
  Definition of the callback classes.
 
  This file is part of UObject Component Architecture\n
- Copyright (c) 2006, 2007 Gostai S.A.S.
+ Copyright (c) 2006, 2007, 2008 Gostai S.A.S.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -141,6 +141,7 @@ namespace urbi
   /*----------.
   | Casters.  |
   `----------*/
+  
 
 # define SETCAST(Type)				\
   inline Type					\
@@ -149,15 +150,6 @@ namespace urbi
     return (Type)val;				\
   }
 
-  inline const UValue& cast(UValue& val, const UValue*)
-  {
-    return val;
-  }
-
-  inline UValue cast(UValue& val, UValue*)
-  {
-    return val;
-  }
   SETCAST(int);
   SETCAST(unsigned int);
   SETCAST(long);
@@ -168,11 +160,24 @@ namespace urbi
   SETCAST(bool);
   SETCAST(UImage);
   SETCAST(USound);
-  UVar& cast(UValue &val, UVar *var);
-  UBinary cast(UValue &v, UBinary * b);
-  UList cast(UValue &v, UList *l);
-  UObjectStruct cast(UValue &v, UObjectStruct *o);
-  const char * cast(UValue &v, const char ** b);
+
+#undef SETCAST
+
+  inline const UValue& cast(UValue& val, const UValue*)
+  {
+    return val;
+  }
+
+  inline UValue cast(UValue& val, UValue*)
+  {
+    return val;
+  }
+
+  UVar& cast(UValue& val, UVar* var);
+  UBinary cast(UValue& v, UBinary* b);
+  UList cast(UValue& v, UList *l);
+  UObjectStruct cast(UValue& v, UObjectStruct* o);
+  const char* cast(UValue& v, const char** b);
 
 #ifndef UOBJECT_NO_LIST_CAST
   template<class I>
@@ -184,7 +189,7 @@ namespace urbi
       //cast just the element
       res.push_back(cast(val, static_cast<I*>(0)));
     else
-      for (int i = 0; i<val.list->size(); i++)
+      for (int i = 0; i<val.list->size(); ++i)
 	res.push_back(cast(*val.list->array[i], static_cast<I*>(0)));
     return res;
   }

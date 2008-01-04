@@ -28,6 +28,44 @@
 namespace urbi
 {
 
+  /*---------------.
+  | UValue Casts.  |
+  `---------------*/
+
+  UVar& cast(UValue &v, UVar *)
+  {
+    return *((UVar*)v.storage);
+  }
+
+  UBinary cast(UValue& v, UBinary*)
+  {
+    if (v.type != DATA_BINARY)
+      return UBinary();
+    return UBinary(*v.binary);
+  }
+
+  UList cast(UValue& v, UList*)
+  {
+    if (v.type != DATA_LIST)
+      return UList();
+    return UList(*v.list);
+  }
+
+  UObjectStruct cast(UValue& v, UObjectStruct*)
+  {
+    if (v.type != DATA_OBJECT)
+      return UObjectStruct();
+    return UObjectStruct(*v.object);
+  }
+
+  const char* cast(UValue& v, const char**)
+  {
+    static const char* er = "invalid";
+    if (v.type != DATA_STRING)
+      return er;
+    return v.stringValue->c_str();
+  }
+
   /*-----------------.
   | UValue Parsing.  |
   `-----------------*/

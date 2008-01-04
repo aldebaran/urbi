@@ -1,5 +1,12 @@
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
+	Tidy the casts.
+	* src/liburbi/uobject/urbi/ucallbacks.hh.template: Reorder.
+	* src/liburbi/uobject/uobject-common.cc (cast): Move to...
+	* src/liburbi/uobject/uvalue-common.cc: here.
+
+2008-01-04  Akim Demaille  <demaille@gostai.com>
+
 	Do what the previous patches says.
 	* src/liburbi/tests/liburbi-check.as: It is quite stupid to remove
         a file just before reading it.

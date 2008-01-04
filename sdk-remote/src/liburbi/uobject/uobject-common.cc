@@ -5,7 +5,7 @@
  Implementation of the UObject class.
 
  This file is part of LIBURBI\n
-Copyright (c) 2004, 2005, 2006, 2007 Jean-Christophe Baillie.
+Copyright (c) 2004, 2005, 2006, 2007, 2008 Jean-Christophe Baillie.
 
  Permission to use, copy, modify, and redistribute this software for
  non-commercial use is hereby granted.
@@ -38,40 +38,6 @@ namespace urbi
   // Timer and update maps.
   STATIC_INSTANCE(UTimerTable, timermap);
   STATIC_INSTANCE(UTimerTable, updatemap);
-
-  UVar& cast(UValue &v, UVar *)
-  {
-    return *((UVar*)v.storage);
-  }
-
-  UBinary cast(UValue& v, UBinary*)
-  {
-    if (v.type != DATA_BINARY)
-      return UBinary();
-    return UBinary(*v.binary);
-  }
-
-  UList cast(UValue& v, UList*)
-  {
-    if (v.type != DATA_LIST)
-      return UList();
-    return UList(*v.list);
-  }
-
-  UObjectStruct cast(UValue& v, UObjectStruct*)
-  {
-    if (v.type != DATA_OBJECT)
-      return UObjectStruct();
-    return UObjectStruct(*v.object);
-  }
-
-  const char* cast(UValue& v, const char**)
-  {
-    static const char* er = "invalid";
-    if (v.type != DATA_STRING)
-      return er;
-    return v.stringValue->c_str();
-  }
 
   //! Clean a callback UTable from all callbacks linked to the
   //! object whose name is 'name'
