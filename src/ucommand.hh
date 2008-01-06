@@ -657,6 +657,27 @@ public:
   UString* id;
 };
 
+class UCommand_OPERATOR_VAL : public UCommand
+{
+public:
+  MEMORY_MANAGED;
+
+  UCommand_OPERATOR_VAL (const location& l,
+			UString* oper,
+			UExpression* expr);
+  virtual ~UCommand_OPERATOR_VAL();
+
+  virtual void print_(unsigned l) const;
+
+  virtual Status execute_(UConnection* connection);
+  virtual UCommand* copy() const;
+
+  /// operator name
+  UString* oper;
+  /// identifier
+  UExpression* expr;
+};
+
 class UCommand_DEVICE_CMD : public UCommand
 {
 public:

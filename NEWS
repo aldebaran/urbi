@@ -1,3 +1,15 @@
+* New in 1.6
+
+** Connections can be prioritized. Use "setpriority N" to set a connection
+   priority. Valid range is [-100, 100]. Default value is 0. 
+   A second connection is created on startup with priority 80,
+   loading the file "URBIRT.INI"
+
+** Kernel can be 'sealed' to prevent interference with high-priority code.
+   Call "seal" to activate. Once activated:
+     - no +connection can be used to connections with higher priority.
+     - no "setpriority" can be called with a positive value.
+ 
 * New in 1.5
 
 ** "foreach" and "loopn" are deprecated, use "for" instead.

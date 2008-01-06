@@ -1,3 +1,55 @@
+2008-01-06  Matthieu Nottale  <nottale@gostai.com>
+
+        Merging and closing RT kernel branch
+	2008-01-06  Matthieu Nottale  <nottale@gostai.com>
+
+	        Fix a race condition on connectionList access.
+	        * src/ucommand.cc: Add missing static_cast.
+	        * src/userver.cc: Lock using UServer::mutex in addConnection to
+	          protect connectionList.
+	
+	2007-12-11  Matthieu Nottale  <nottale@gostai.com>
+
+	        New priority rules.
+	        - Valid priority range is [-100,100]
+	        - Higher value means higher priority
+	        - 'RT' connection starts at 80.
+	        * NEWS: Adapt.
+	        * include/kernel/uconnection.hh: Adapt connection comparison operator.
+	        * src/ucommand.cc: Adapt setpriority keyword.
+	        * src/uconnection.cc: Adapt +connection check in sealed mode.
+	        * src/userver.cc: Adapt rt connection creation.
+	
+	2007-12-04  Matthieu Nottale  <nottale@gostai.com>
+
+	        Add support for connection priority.
+	           - UConnection::execute now takes an extra argument: the time at
+	             which it must interrupt itself. When called again, execution
+	             will resume where it stopped.
+	           - Connections now have a priority_ field. The connectionList is
+	             now a std::vector. It gets sorted by priority_, then time of
+	             last execution. Call to the execute methodes occur in order,
+	             and stop when (serverPeriod - someMargin) milliseconds elapsed.
+	           - The setpriority and seal keywords were added, and documented in
+	             NEWS.
+	           - New flag, +rc, which is unsugared to
+	             +connection(system.ghostRTID)
+	           - somethingToDelete is now a per-connection flag, as they dont
+	             all terminate an execution cycle at the same time.
+	        * NEWS,
+	        * include/kernel/fwd.hh,
+	        * include/kernel/uconnection.hh,
+	        * include/kernel/userver.hh,
+	        * src/console.cc,
+	        * src/parser/bison/ugrammar.y,
+	        * src/parser/bison/utoken.l,
+	        * src/ucommand.cc,
+	        * src/ucommand.hh,
+	        * src/uconnection.cc,
+	        * src/ughostconnection.cc,
+	        * src/userver.cc,
+	        * tests-local.mk: Here.
+
 2008-01-04  Akim Demaille  <demaille@gostai.com>
 
 	Useless regexp.

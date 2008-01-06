@@ -76,12 +76,16 @@ public:
    a fixed, precise, real-time period to let the server computer motor
    trajectories between two "work" calls.
 
+   \param margin is a time margin in milliseconds: the work function will
+   execute in at most 1/frequency - margin milliseconds.
+   
    \param freeMemory indicates the biggest malloc possible on the system
    when the server has just started. It is used to determine a high
    limit of memory allocation, thus avoiding later to run out of memory
    during a new or malloc.
    */
-  UServer(ufloat period, int freeMemory, const char* mainName);
+  UServer(ufloat period, ufloat margin, int freeMemory, 
+	  const char* mainName);
 
   virtual ~UServer();
 
@@ -259,8 +263,7 @@ public:
   void              block           (const std::string &tag);
   void              unblock         (const std::string &tag);
   /// List of active connections: includes one UGhostConnection.
-  std::list<UConnection*>  connectionList;
-
+  std::vector<UConnection*> connectionList;
   /// Hash of variable values.
   HMvariabletab            variabletab;
 
@@ -277,7 +280,8 @@ public:
   bool work_memory_check_ ();
   /// Scan currently opened connections for ongoing work.
   /// \param overflow iff an overflow has just been detected.
-  void work_handle_connections_ (bool overflow);
+  /// \param stopTime time at which to interrupt command execution
+  void work_handle_connections_ (bool overflow, long long stopTime);
   /// Scan currently opened connections for deleting marked commands or
   /// killall order
   void work_handle_stopall_ ();
@@ -346,8 +350,8 @@ private:
   UString mainName_;
 
 public:
-  /// True after a stop command.
-  bool somethingToDelete;
+  /// Mark all connections as potentially having something to delete
+  void somethingToDelete();
   /// True after the initialization phase: all vars are uservar then.
   bool uservarState;
 
@@ -388,6 +392,9 @@ public:
   /// Urbi TCP Port..
   enum { TCP_PORT = 54000 };
 
+  
+  bool                     isSealed() {return sealed_;}
+  void                     seal()     {sealed_ = true;}
 protected:
   virtual void     effectiveDisplay         (const char*) = 0;
 
@@ -400,6 +407,8 @@ private:
 
   /// Frequency of the calls to work().
   ufloat           period_;
+  /// Margin: work must return before starttime+1/frequency - timeMargin
+  ufloat           timeMargin_;
   /// Stores memory for emergency use..
   void*            securityBuffer_;
   /// Is the server isolated.
@@ -408,7 +417,10 @@ private:
   ufloat           lastTime_;
   /// The ghost connection used for URBI.INI.
   UGhostConnection* ghost_;
-
+  /// The ghost "realtime" connection used for URBIRT.INI.
+  UGhostConnection* ghostRT_;
+  /// Set to true to forbid all setPriority calls with prio <0
+  bool             sealed_;
   /// unique id source
   int               uid;
 };

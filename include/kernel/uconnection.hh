@@ -388,7 +388,8 @@ public:
   bool                isActive           ();
 
 protected:
-  UConnection&        execute            (UCommand_TREE* &execCommand);
+  /// Execute until stopTime is reached, return false on timeout, true on finish
+  bool                execute            (UCommand_TREE*&, long long stopTime);
   UConnection&        append             (UCommand_TREE *command);
 
 public:
@@ -513,11 +514,52 @@ private:
   /// set at "true" on start).
   bool           active_;
 
+  
+  
+  /********************
+  *    SCHEDULING     *
+  ********************/
+  public:
+  
+  /// Set connection priority
+  void    setPriority(int p) {priority_ = p;}
+  /// Get priority
+  int     getPriority() {return priority_;}
+  /// Return true if last execution was interupted
+  bool    wasInterrupted() {return executionInterrupted_;}
+  /// Return true if deleteMarked must be called
+  bool    hasSomethingToDelete() {return somethingToDelete_;}
+  
+  private:
+ 
+  int           priority_;
+  /// Time at which it was run last
+  long long     lastRun_;
+  /// Position at which execution stopped last time
+  UCommand_TREE* executionPosition_;
+  /// True if last execution was interrupted
+  bool           executionInterrupted_;
+
+  /// Set to true if work must call deleteMarked()
+  bool           somethingToDelete_;
+  
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::mutex mutex_;
 # endif
+
+friend class UConnectionCompare;
 };
 
+
+class UConnectionCompare
+{
+  public:
+  bool operator()(UConnection *a, UConnection *b) const
+  {
+    return a->priority_ > b->priority_ ||
+    (a->priority_ == b->priority_ && a->lastRun_ < b->lastRun_);
+  }
+};
 //! Accessor for sendAdaptive_
 inline int
 UConnection::sendAdaptive()

@@ -26,6 +26,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include <cstdlib>
 #include <cmath>
 #include <sstream>
+#include <boost/lexical_cast.hpp>
 #include "libport/cstring"
 
 #include <boost/foreach.hpp>
@@ -3434,7 +3435,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     if (status == URUNNING)
       return UCOMPLETED;
     connection->server->mark(id);
-    connection->server->somethingToDelete = true;
+    connection->server->somethingToDelete();
     return URUNNING;
   }
   else if (*oper == "killall")
@@ -3457,6 +3458,7 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
 		 "%s: no such connection", id->c_str());
       return UCOMPLETED;
     }
+
     return UCOMPLETED;
   }
   else if (*oper == "disconnect")
@@ -3514,7 +3516,6 @@ UCommand_OPERATOR_ID::execute_(UConnection *connection)
     connection->server->unfreeze(id->c_str());
     return UCOMPLETED;
   }
-
   return UCOMPLETED;
 }
 
@@ -3619,6 +3620,85 @@ UCommand_DEVICE_CMD::print_(unsigned l) const
   debug("%s:\n", variablename->device->c_str());
   if (cmd)
     debug(l, "  Cmd:[%f]\n", cmd);
+}
+
+MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAL);
+// *********************************************************
+//! UCommand subclass constructor.
+/*! Subclass of UCommand with standard member initialization.
+ */
+UCommand_OPERATOR_VAL::UCommand_OPERATOR_VAL(const location& l,
+					     UString* oper,
+					     UExpression* expr)
+  : UCommand(l, GENERIC),
+    oper (oper),
+    expr (expr)
+{
+  ADDOBJ(UCommand_OPERATOR_VAL);
+}
+
+//! UCommand subclass destructor.
+UCommand_OPERATOR_VAL::~UCommand_OPERATOR_VAL()
+{
+  FREEOBJ(UCommand_OPERATOR_VAL);
+  delete oper;
+  delete expr;
+}
+
+
+//! UCommand subclass execution function
+UCommand::Status
+UCommand_OPERATOR_VAL::execute_(UConnection *connection)
+{
+    if (*oper == "setpriority")
+  {
+    UValue *value = expr->eval(this, connection);
+    if ( !value || value->dataType != DATA_NUM)
+    {
+      if (value)
+	delete value;
+      send_error(connection, this, 
+		 "invalid non-numeric argument to setpriority");
+      return UCOMPLETED;
+    }
+    int prio = static_cast<int>(value->val);
+    delete value;
+    if (prio<-100 || prio > 100)
+    {
+      send_error(connection, this, 
+		 "priority outside valid range [-100,100]");
+    }
+    
+    if (prio>0 && ::urbiserver->isSealed())
+    {
+      send_error(connection, this, 
+		 "cannot set positive priority in sealed kernel");
+       return UCOMPLETED;
+    }
+    connection->setPriority(prio);
+    //XXX echo something?
+    return UCOMPLETED;
+  }
+  return UCOMPLETED;
+}
+  
+//! UCommand subclass hard copy function
+UCommand*
+UCommand_OPERATOR_VAL::copy() const
+{
+  return copybase(new UCommand_OPERATOR_VAL(loc_, ucopy (oper),
+					    ucopy (expr)));
+}
+
+//! Print the command
+/*! This function is for debugging purpose only.
+  It is not safe, efficient or crash proof. A better version will come later.
+*/
+void
+UCommand_OPERATOR_VAL::print_(unsigned l) const
+{
+  debug("%s:\n", oper->c_str());
+  DEBUG_ATTR_I (expr);
 }
 
 MEMORY_MANAGER_INIT(UCommand_OPERATOR_VAR);
@@ -4266,12 +4346,13 @@ UCommand_OPERATOR::execute_(UConnection *connection)
     BOOST_FOREACH (UConnection* i, ::urbiserver->connectionList)
       if (i->isActive())
 	*connection
-	  << UConnection::sendf (getTag(), "*** %s (%d.%d.%d.%d)\n",
+	  << UConnection::sendf (getTag(), "*** %s (%d.%d.%d.%d) (p=%d)\n",
 				 i->connectionTag->c_str(),
 				 static_cast<int>((i->clientIP>>24) % 256),
 				 static_cast<int>((i->clientIP>>16) % 256),
 				 static_cast<int>((i->clientIP>>8) % 256),
-				 static_cast<int>(i->clientIP     % 256)
+				 static_cast<int>(i->clientIP     % 256),
+				 i->getPriority()
 	    );
 
     return UCOMPLETED;
@@ -4292,6 +4373,12 @@ UCommand_OPERATOR::execute_(UConnection *connection)
   if (*oper == "reboot")
   {
     connection->server->reboot();
+    return UCOMPLETED;
+  }
+
+  if (*oper == "seal")
+  {
+    ::urbiserver->seal();
     return UCOMPLETED;
   }
 
@@ -5953,7 +6040,7 @@ UCommand_WHENEVER::execute_(UConnection *connection)
     if (candidates.empty () && active_) // whenever stops
     {
       active_ = false;
-      connection->server->somethingToDelete = true;
+      connection->server->somethingToDelete();
       // theloop_ is 0 if something has deleted it from the outside (thanks
       // to the 'whenever_hook' attribute), that's why we test here
       if (theloop_)

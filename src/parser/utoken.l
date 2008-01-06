@@ -240,7 +240,9 @@ NUMBER   {FRACTION}{EXPONENT}?
 "+freeze"     RETURN_FLAG(11);
 "+stop"       RETURN_FLAG(12);
 
-"+connection" RETURN_VAL_TOKEN(FLAGID, 9);
+"+rt"         return token::TOK_PLUS_RT;
+
+"+connection" return token::TOK_PLUS_CONNECTION;
 
 
 {NUMBER}"d"   RETURN_TIMEVALUE(1, 1000*60*60*24);
@@ -265,6 +267,9 @@ NUMBER   {FRACTION}{EXPONENT}?
 "delete"  |
 "info"    |
 "undef"   RETURN_STR_TOKEN (OPERATOR_VAR);
+
+"setpriority" RETURN_STR_TOKEN(OPERATOR_VAL);
+
 
 "add"     |
 "cancel"  |
@@ -297,6 +302,7 @@ NUMBER   {FRACTION}{EXPONENT}?
 "functions"   |
 "taglist"     |
 "runningcommands" |
+"seal"        |
 "vars"        RETURN_STR_TOKEN (OPERATOR);
 
 "BIN"           return token::TOK_BIN;

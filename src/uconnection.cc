@@ -24,6 +24,9 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "libport/config.h"
 #include "libport/cstring"
 #include "libport/cstdio"
+#include "libport/utime.hh"
+#include "libport/assert.hh"
+
 #include <cassert>
 #include <cstdarg>
 #include <sstream>
@@ -48,6 +51,10 @@ For more information, comments, bug reports: http://www.urbiforge.net
 #include "uqueue.hh"
 #include "uqueue.hh"
 #include "uobj.hh"
+
+#ifndef SCHED_DEBUG
+#define SCHED_DEBUG 0
+#endif
 
 UConnection::UConnection (UServer *userver,
 			  int minSendBufferSize,
@@ -82,7 +89,12 @@ UConnection::UConnection (UServer *userver,
     sendAdaptive_(UConnection::ADAPTIVE),
     recvAdaptive_(UConnection::ADAPTIVE),
     // Initial state of the connection: unblocked, not receiving binary.
-    active_(true)
+    active_(true),
+    priority_(0),
+    lastRun_(0),
+    executionPosition_(0),
+    executionInterrupted_(false),
+    somethingToDelete_(false)
 {
   for (int i = 0; i < MAX_ERRORSIGNALS ; ++i)
     errorSignals_[i] = false;
@@ -336,9 +348,10 @@ UConnection::operator<< (UErrorCode id)
 }
 
 UConnection&
-UConnection::operator<< (_Execute cmd)
+UConnection::operator<< (_Execute )
 {
-  return execute (cmd._val);
+  assert(false);
+  return *this;
 }
 
 UConnection&
@@ -709,12 +722,15 @@ UConnection::received_ (const ubyte *buffer, int length)
 	    p.commandTree->up = 0;
 	    p.commandTree->position = 0;
 	    PING();
-	    execute(p.commandTree);
+	    // XXX interaction between this and RT constraints must be evaluated
+	    if (SCHED_DEBUG)
+	      std::cerr << "immediate execute on "<<this<<std::endl;
+	    execute(p.commandTree, libport::utime()+100);
 	    if (p.commandTree &&
 		p.commandTree->status == UCommand::URUNNING)
 	      obstructed = true;
 	  }
-
+	  
 	  if (p.commandTree)
 	    append(p.commandTree);
 
@@ -908,7 +924,6 @@ UConnection::processCommand(UCommand *&command,
     if (command->startTime == -1)
     {
       command->startTime = server->lastTime();
-
       for (UNamedParameters *param = command->flags; param; param = param->next)
 	if (param->name)
 	{
@@ -918,16 +933,35 @@ UConnection::processCommand(UCommand *&command,
 	    if (UValue* tmpID = param->expression->eval(command, this))
 	    {
 	      if (tmpID->dataType == DATA_STRING)
+	      {
+		bool found = false;
 		BOOST_FOREACH (UConnection* i, ::urbiserver->connectionList)
 		  if (i->isActive()
 		      && (*i->connectionTag == *tmpID->str
 			  || *tmpID->str == "all"
 			  || (*tmpID->str == "other"
 			      && !(*i->connectionTag == *connectionTag))))
-		    i->append(new UCommand_TREE(UCommand::location(),
+		  {
+		    found = true;
+		    if (::urbiserver->isSealed()
+		      && getPriority() < i->getPriority())
+		    {
+		      ::send_error(this, command, "Cannot write to command "
+		      "queue of U%ld: kernel is sealed and it has a higher "   
+		      "priority.", (long)i);
+		    }
+		    else
+		      i->append(new UCommand_TREE(UCommand::location(),
 						Flavorable::UAND,
 						command->copy(),
 						0));
+		  }
+		  if (!found)
+		  ::send_error(this, command, "no connection matches '%s'",
+		    tmpID->str->c_str());
+	      } 
+	      else
+		::send_error(this, command, "invalid parameter to +connection");
 	      delete tmpID;
 	    }
 	    delete command;
@@ -1133,6 +1167,8 @@ namespace
   }
 }
 
+
+
 //! Execute a command tree
 /*! This function executes a command tree and
   returns the next node of the tree to process.
@@ -1140,26 +1176,49 @@ namespace
   \param tree is the UCommand_TREE to execute.
 */
 //FIXME: find, store (and return ?) error if send fails
-UConnection&
-UConnection::execute(UCommand_TREE*& execCommand)
+bool
+UConnection::execute(UCommand_TREE * & execCommand, long long stopTime)
 {
+  lastRun_ = libport::utime();
   PING();
-  if (!execCommand || closing)
-    return *this;
-
-  // There are complications to make this a for loop: occurrences of
-  // "continue".
-  UCommand_TREE* tree = execCommand;
-
+ 
+  UCommand_TREE * tree;
+  if (wasInterrupted())
+  { //ignore execCommand
+    tree = executionPosition_;
+  }
+  else
+  {
+    tree = execCommand;
+  }
+//std::cerr <<"execute "<<wasInterupted()<<" "<<stopTime<<' '<<execCommand<<' '
+//    <<tree<<std::endl;
+  if (!tree || closing)
+    return true;
+  //std::cerr <<"resuming, "<<tree<<std::endl;
   while (tree)
   {
+     
+    /* DEBUG: uncomment this to test execute interruuption code
+    static int coincoin= 0;
+    coincoin++;
+    if ( (stopTime && libport::utime()*0 > stopTime) || !(coincoin%5))
+    */
+    if ( stopTime && libport::utime() > stopTime)
+    {
+      //std::cerr <<"interrupting, "<<tree<<std::endl;
+      executionPosition_ = tree;
+      executionInterrupted_ = true;
+      return false;
+    }
+    
     tree->status = UCommand::URUNNING;
 
     // Requests a +end notification for {...} type of trees
     if (tree->groupOfCommands)
       tree->myconnection = this;
 
-    //check if freezed
+    //check if frozen
     if (tree->isFrozen())
     {
       tree = tree->up;
@@ -1231,7 +1290,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
       if (tree == lastCommand)
 	lastCommand = tree->up;
       if (tree == execCommand)
-	execCommand = 0;
+	execCommand = 0;  //we delete it, so steal it
 
       if (tree->position)
 	*tree->position = 0;
@@ -1254,7 +1313,8 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // REDUCTION
 
-    if (tree != lastCommand && tree != execCommand && !tree->toDelete)
+    if (tree != lastCommand && tree != execCommand 
+      && !tree->toDelete)
       if (simplify (tree))
       {
 	UCommand_TREE* oldtree = tree;
@@ -1265,6 +1325,7 @@ UConnection::execute(UCommand_TREE*& execCommand)
 
     // BACK UP
     tree = tree->up;
+   
   }
 
   if (execCommand
@@ -1275,8 +1336,12 @@ UConnection::execute(UCommand_TREE*& execCommand)
     execCommand = 0;
   }
   PING();
-  return *this;
+  //std::cerr <<"terminating, "<<tree<<std::endl;
+  executionPosition_ = 0;
+  executionInterrupted_ = false;
+  return true;
 }
+
 
 //! Append a command to the command queue
 /*! This function appends a command to the command queue
@@ -1309,6 +1374,8 @@ UConnection::append(UCommand_TREE *command)
   }
 
   lastCommand = command;
+  passert(lastCommand->command2, !lastCommand->command2 
+	  ||    dynamic_cast<UCommand_NOOP*>(lastCommand->command2));
   return *this;
 }
 

@@ -48,13 +48,15 @@ UGhostConnection::UGhostConnection  (UServer* mainserver)
 		   MAXRECVBUFFERSIZE)
 {
   ADDOBJ(UGhostConnection);
-  ::urbiserver->connectionList.push_front (this);
+  ::urbiserver->connectionList.push_back (this);
 }
 
 //! UGhostConnection destructor.
 UGhostConnection::~UGhostConnection()
 {
-  ::urbiserver->connectionList.remove (this);
+  ::urbiserver->connectionList.erase (
+     std::find(::urbiserver->connectionList.begin(),
+	       ::urbiserver->connectionList.end(),this));
   FREEOBJ(UGhostConnection);
 }
 

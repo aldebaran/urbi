@@ -20,8 +20,9 @@
  **************************************************************************** */
 //#define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
-
+#include "libport/utime.hh"
 #include "libport/config.h"
+
 #include <cassert>
 #include <cstdlib>
 #include "libport/cstdio"
@@ -75,15 +76,18 @@ const char* MAINDEVICE  = "system";
 int availableMemory;
 int usedMemory;
 
+#ifndef SCHED_DEBUG
+#define SCHED_DEBUG 0
+#endif
 
 UServer::UServer(ufloat period,
+		 ufloat margin,
 		 int freeMemory,
 		 const char* mainName)
   : reseting (false),
     stage (0),
     debugOutput (false),
     mainName_ (mainName),
-    somethingToDelete (false),
     uservarState (false),
     cpuoverload (false),
     signalcpuoverload (false),
@@ -93,8 +97,10 @@ UServer::UServer(ufloat period,
     stopall (false),
     systemcommands (true),
     period_(period),
+    timeMargin_(margin),
     securityBuffer_ (malloc(SECURITY_MEMORY_SIZE)),
     isolate_ (false),
+    sealed_(false),
     uid(0)
 {
   ::urbiserver = 0;
@@ -163,8 +169,20 @@ UServer::initialize()
     debugOutput = old_debugOutput;
   }
 
+  new UVariable(MAINDEVICE, "name", mainName_.c_str());
   //The order is important: ghost connection, plugins, urbi.ini
 
+  // GhostRT connection
+  {
+    DEBUG (("Setting up ghostRT connection..."));
+    ghostRT_ = new UGhostConnection(this);
+    std::ostringstream o;
+    o << 'U' << (long)ghostRT_;
+    new UVariable(MAINDEVICE, "ghostRTID", o.str().c_str());
+    ghostRT_->newDataAdded = true;
+    ghostRT_->recvQueue().push ("setpriority 80;");
+    DEBUG (("done\n"));
+  }
   // Ghost connection
   {
     DEBUG (("Setting up ghost connection..."));
@@ -173,7 +191,6 @@ UServer::initialize()
     o << 'U' << (long)ghost_;
 
     new UVariable(MAINDEVICE, "ghostID", o.str().c_str());
-    new UVariable(MAINDEVICE, "name", mainName_.c_str());
     uservarState = true;
     DEBUG (("done\n"));
   }
@@ -194,6 +211,13 @@ UServer::initialize()
     DEBUG (("done\n"));
   }
 
+  DEBUG (("Loading URBIRT.INI..."));
+  if (loadFile("URBIRT.INI", &ghostRT_->recvQueue()) == USUCCESS)
+  {
+    ghostRT_->newDataAdded = true;
+    ghostRT_->recvQueue().push ("#line 1 \"\"\n");
+  }
+  
   DEBUG (("Loading URBI.INI..."));
   if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
     ghost_->newDataAdded = true;
@@ -295,12 +319,17 @@ UServer::work_memory_check_ ()
 }
 
 void
-UServer::work_handle_connections_ (bool overflow)
+UServer::work_handle_connections_ (bool overflow, long long stopTime)
 {
+  if (SCHED_DEBUG)
+    std::cerr <<"-- "<<libport::utime()<<' '<<stopTime<<std::endl;
+  std::sort(connectionList.begin(), connectionList.end(), UConnectionCompare());
   // Scan currently opened connections for ongoing work
   BOOST_FOREACH (UConnection* r, connectionList)
     if (r->isActive())
     {
+      if (SCHED_DEBUG)
+	std::cerr << libport::utime()<<" scheduling "<<r<<' '<<r->getPriority() << std::endl;
       if (!r->isBlocked())
 	*r << UConnection::continueSend;
 
@@ -319,6 +348,7 @@ UServer::work_handle_connections_ (bool overflow)
       *r << UConnection::errorCheck(UERROR_RECEIVE_BUFFER_CORRUPTED);
       *r << UConnection::errorCheck(UERROR_CPU_OVERLOAD);
 
+      bool interupted = false;
       // Run the connection's command queue:
       if (r->activeCommand)
       {
@@ -330,7 +360,7 @@ UServer::work_handle_connections_ (bool overflow)
 # endif
 	  r->inwork = true;   // to distinguish this call of
 	  //execute from the one in receive
-	  r->execute(r->activeCommand);
+	  interupted = !r->execute(r->activeCommand, stopTime);
 	  r->inwork = false;
 	}
       }
@@ -343,6 +373,9 @@ UServer::work_handle_connections_ (bool overflow)
 	r->newDataAdded = false;
 	*r << UConnection::received("");
       }
+      
+      if (interupted)
+	break;
     }
 }
 
@@ -355,7 +388,7 @@ UServer::work_handle_stopall_ ()
     stopall = true;
 
   BOOST_FOREACH (UConnection* r, connectionList)
-    if (r->isActive() && r->activeCommand)
+    if (r->isActive() && r->activeCommand && !r->wasInterrupted())
     {
       if (r->killall || stopall)
       {
@@ -368,15 +401,18 @@ UServer::work_handle_stopall_ ()
 	delete r->activeCommand;
 	r->activeCommand = 0;
       }
-      else if (somethingToDelete)
+      else if (r->hasSomethingToDelete())
+      {
 	r->activeCommand->deleteMarked();
+	r->somethingToDelete_ = false;
+      }
     }
 
   // Delete all connections with closing=true
-  for (std::list<UConnection *>::iterator i = connectionList.begin();
+  for (std::vector<UConnection *>::iterator i = connectionList.begin();
        i!= connectionList.end(); )
   {
-    if ((*i)->closing)
+    if ((*i)->closing && !(*i)->wasInterrupted())
     {
       delete *i;
       i = connectionList.erase(i);
@@ -385,7 +421,6 @@ UServer::work_handle_stopall_ ()
       i++;
   }
 
-  somethingToDelete = false;
   stopall = false;
 }
 
@@ -564,6 +599,9 @@ UServer::work_reset_if_needed_ ()
 void
 UServer::work()
 {
+  long long stopTime = static_cast<long long>(libport::utime()) + static_cast<long long>((period_ - timeMargin_)) * 1000LL;
+  if (SCHED_DEBUG)
+    std::cerr << libport::utime()<< " stop at "<<stopTime<<std::endl;
 # if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);
 # endif
@@ -580,7 +618,7 @@ UServer::work()
 
   work_access_and_change_ ();
   bool overflow = work_memory_check_ ();
-  work_handle_connections_ (overflow);
+  work_handle_connections_ (overflow, stopTime);
   work_handle_stopall_ ();
   work_blend_values_ ();
   work_execute_hub_updater_ ();
@@ -996,12 +1034,15 @@ UServer::loadFile (const char* base, UCommandQueue* q, QueueType type)
 void
 UServer::addConnection(UConnection *connection)
 {
+  # if ! defined LIBPORT_URBI_ENV_AIBO
+  boost::recursive_mutex::scoped_lock lock(mutex);
+  # endif
   if (!connection || connection->uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",
 	  "UConnection constructor failed");
   else
-    connectionList.push_front(connection);
+    connectionList.push_back(connection);
 }
 
 //! Remove a connection from the connection list
@@ -1011,7 +1052,8 @@ UServer::addConnection(UConnection *connection)
 void
 UServer::removeConnection(UConnection *connection)
 {
-  connectionList.remove(connection);
+   connectionList.erase ( std::find(connectionList.begin(),
+				    connectionList.end(), connection));
   echo(::DISPLAY_FORMAT1, (long)this,
        "UServer::removeConnection",
        "Connection closed", (long)connection);
@@ -1064,6 +1106,12 @@ UServer::addAlias(const char* id, const char* variablename)
 }
 
 
+void
+UServer::somethingToDelete()
+{
+  BOOST_FOREACH(UConnection * c, connectionList)
+    c->somethingToDelete_ = true;
+}
 /* Free standing functions. */
 
 namespace

@@ -25,7 +25,7 @@ class ConsoleServer
 {
 public:
   ConsoleServer(int period, bool fast)
-    : UServer(period, 64000000, "console"), fast(fast), ctime(0)
+    : UServer(period, 1.0, 64000000, "console"), fast(fast), ctime(0)
   {
     if (const char* cp = getenv ("URBI_PATH"))
     {

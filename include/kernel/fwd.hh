@@ -25,6 +25,7 @@ class UBinder;
 class UCallid;
 class UCommandQueue;
 class UConnection;
+class UConnectionCompare;
 class UContext;
 class UEvent;
 class UEventCompound;

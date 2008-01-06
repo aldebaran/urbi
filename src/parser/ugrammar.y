@@ -363,7 +363,6 @@
   <val> NUM        "number"
   <val> TIMEVALUE  "time"
   <val> FLAG       "flag"
-  <val> FLAGID     "flag identifier"
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; } <val>;
 
@@ -378,6 +377,7 @@
    <ustr>  OPERATOR           "operator command"
    <ustr>  OPERATOR_ID        "operator"
    <ustr>  OPERATOR_VAR       "var-operator"
+   <ustr>  OPERATOR_VAL       "val-operator"
 %type <ustr> tag
 // FIXME: Simplify once Bison 2.4 is out.
 %printer { debug_stream() << *$$; }
@@ -602,24 +602,36 @@ colon_or_ltlt:
 /*--------.
 | flags.  |
 `--------*/
+%token TOK_PLUS_RT         "+rt"
+       TOK_PLUS_CONNECTION "+connection";
 
 flag:
   FLAG
   {
     UExpression *flagval = new UExpression(@$, UExpression::VALUE, take($1));
     memcheck(up, flagval);
+    
     $$ = new UNamedParameters(new UString("flag"), flagval);
     if (flagval->val == 1 || flagval->val == 3) // +report or +end flag
       $$->notifyEnd = true;
     if (flagval->val == 11)
       $$->notifyFreeze = true;
     memcheck(up, $$, flagval);
+    
   }
 
-| FLAGID "(" expr ")"
+| "+connection" "(" expr ")"
   {
     $$ = new UNamedParameters(new UString("flagid"), $3);
     memcheck(up, $$, $3);
+  }
+| "+rt"
+  {
+    UExpression *flagval = new UExpression(@$, UExpression::VARIABLE, 
+			      new UVariableName(new UString("system"), 
+			   new UString("ghostRTID"), false, 0));
+    $$ = new UNamedParameters(new UString("flagid"), flagval);
+    memcheck(up, $$, flagval);
   }
 ;
 
@@ -888,6 +900,13 @@ instruction:
       memcheck(up, $$, $1, $2);
     }
 
+  | OPERATOR_VAL expr {
+     memcheck(up, $1);
+     memcheck(up, $2);
+     $$ = new UCommand_OPERATOR_VAL(@$, $1, $2);
+     memcheck(up, $$, $1, $2);
+  }
+  
   | OPERATOR_VAR name {
 
       memcheck(up, $1);
@@ -1170,7 +1189,7 @@ instruction:
       $$ = new UCommand_WHENEVER(@$, $3, $5, $7);
       memcheck(up, $$, $3, $5, $7);
     }
-
+    
 /*
  *  This loop keyword can't be converted to a for, since it would
  *  cause and ambiguity in the language. Consider this line:
