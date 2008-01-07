@@ -3,6 +3,7 @@
  ** \brief Implementation of ast::flavor.
  */
 
+#include <cstdlib>
 #include "ast/flavor.hh"
 
 namespace ast

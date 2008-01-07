@@ -6,8 +6,7 @@
 #ifndef AST_FLAVOR_HH
 # define AST_FLAVOR_HH
 
-# include "ast/fwd.hh"
-# include "ast/exp.hh"
+# include <ostream>
 
 namespace ast
 {
