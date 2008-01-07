@@ -1,5 +1,11 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	List.+=.
+	* src/object/list-class.cc: Bind it to avoid warnings about non
+	used functions.
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	reheader.
 	* include/kernel/blockmemorymanager.hh,
 	* include/kernel/fwd.hh,

@@ -139,6 +139,7 @@ namespace object
     DECLARE_PRIMITIVE(list, Name, Implem)
 
     DECLARE(+, concat);
+    DECLARE(+=, ip_concat);
     DECLARE(front, front);
     DECLARE(head, front);
     DECLARE(tail, tail);
