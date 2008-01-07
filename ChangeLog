@@ -1,5 +1,11 @@
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
+	Fix incorrect function name in prototype.
+	* include/kernel/userver.hh: Function was incorrectly prototyped
+	as debug() instead of vdebug().
+
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
 	Cleanup macro usage.
 	* src/ast/flavor.cc (operator<<): Factor << operator into the
 	macro.
