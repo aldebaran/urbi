@@ -1,3 +1,9 @@
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
+	Cleanup macro usage.
+	* src/ast/flavor.cc (operator<<): Factor << operator into the
+	macro.
+
 2008-01-03  Akim Demaille  <demaille@gostai.com>
 
 	merge -r 2222:2227 https://svn.gostai.com/svn/kernel1/trunk

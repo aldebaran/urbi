@@ -13,12 +13,12 @@ namespace ast
   {
      switch (e)
      {
-#define CASE(E, S) case flavor_ ## E: return o S;
-        CASE(none,      << "???")
-        CASE(and,       << '&')
-        CASE(comma,     << ',')
-        CASE(pipe,      << '|')
-        CASE(semicolon, << ';')
+#define CASE(E, S) case flavor_ ## E: return o << S;
+        CASE(none,      "???")
+        CASE(and,       '&')
+        CASE(comma,     ',')
+        CASE(pipe,      '|')
+        CASE(semicolon, ';')
 #undef CASE
      }
      abort();
