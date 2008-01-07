@@ -38,9 +38,8 @@
 class UCommandQueue : public UQueue
 {
 public:
-  UCommandQueue  (int minBufferSize = 0,
-		  int maxBufferSize = -1,
-		  int adaptive = 0);
+  UCommandQueue (int minBufferSize = 0, int maxBufferSize = -1,
+		 int adaptive = 0);
 
   virtual ~UCommandQueue ();
 
@@ -67,7 +66,7 @@ public:
 		   is available yet".
    \return a pointer to the the data popped or 0 in case of error.
    */
-  ubyte*              popCommand        (int &length);
+  ubyte* popCommand (int& length);
 
 private:
 
@@ -75,15 +74,13 @@ private:
   /// start_.  Should always be before a complete "character".  I.e.,
   /// should never point to the * of an "/*" that does open a comment,
   /// should stop between a `\' and its "argument" and so forth.
-  int            cursor_;
-  /// True when a commentary is active;
-  bool           discard_;
-  /// Used to store the 1st closing character for the commentary
-  /// detection.
-  char           closechar_;
-  /// Used to store thezq 2nd closing character for the commentary
-  /// detection.
-  char           closechar2_;
+  int cursor_;
+
+  /// The closing character(s) for the commentary/string detection.
+  /// 0 if not in such a token.
+  /// Long lexemes: /* ... */, " ... ", # ... \n, \\ ... \n.
+  const char* close_;
+
   /// A stack of expected closing braces: ), ], } etc.
   std::vector<char> closers_;
 };

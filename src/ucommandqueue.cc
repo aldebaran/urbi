@@ -19,7 +19,7 @@
 
  **************************************************************************** */
 
-//#define ENABLE_DEBUG_TRACES
+// #define ENABLE_DEBUG_TRACES
 #include "libport/compiler.hh"
 #include <cstdlib>
 #include "libport/cstring"
@@ -38,10 +38,8 @@ UCommandQueue::UCommandQueue  (int minBufferSize,
 			       int maxBufferSize,
 			       int adaptive)
   : UQueue (minBufferSize, maxBufferSize, adaptive),
-    cursor_         (0),
-    discard_        (false),
-    closechar_      (' '),
-    closechar2_     (' '),
+    cursor_ (0),
+    close_ (0),
     closers_()
 {
   ADDOBJ(UCommandQueue);
@@ -57,33 +55,38 @@ UCommandQueue::~UCommandQueue()
 
 
 ubyte*
-UCommandQueue::popCommand (int &length)
+UCommandQueue::popCommand (int& length)
 {
   // Scanning
   for (/* nothing */; cursor_ < dataSize_; ++cursor_)
   {
-    // Extract the previous char (' ' otherwise).
-    int previousposition = (start_ + cursor_ - 1 + bufferSize_) % bufferSize_;
-    char p_1 = cursor_ == 0 ? (char) buffer_[previousposition] : ' ';
-
     int position = (start_ + cursor_) % bufferSize_;
     char p0 = (char) buffer_[position];
 
     int nextposition = (position + 1) % bufferSize_;
-    char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : '-';
+    char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : 0;
 
-    if (discard_)
+    // Beware of \ which disables the next char whatever the context.
+    if (p0 == '\\')
     {
-      // One char close sequence
-      if (p0 == closechar_ && closechar2_ == ' ')
-	discard_ = closechar_ == '"' && p_1 == '\\';
+      ++cursor_;
+      continue;
+    }
 
-      // Two chars close sequence
-      if (p_1 == closechar_ && p0  == closechar2_ && closechar2_ != ' ')
-	discard_ = false;
+    // In string or in comment.
+    if (close_)
+    {
+      // Look for the closing sequence.
+      if (p0 == close_[0])
+      {
+	if (// One-char close sequence: strings, // and # comments.
+	  close_[1] == 0
+	  // Two-char close sequences: /* ... */
+	  || p1 == close_[1])
+	  close_ = 0;
+      }
     }
     else
-    {
       switch (p0)
       {
 	case '{':
@@ -109,62 +112,42 @@ UCommandQueue::popCommand (int &length)
 	  break;
 
 	case '#':
-	  discard_    = true;
-	  closechar_  = '\n';
-	  closechar2_ = ' ';
+	  close_ = "\n";
 	  break;
 
 	case '"':
-	  discard_    = true;
-	  closechar_  = '"';
-	  closechar2_ = ' ';
+	  close_ = "\"";
 	  break;
 
-	default:
-	  if (p0 == '/' && p1 == '*'
-	      || p_1 == '/' && p0 == '*')
+	case '/':
+	  if (p1 == '*')
 	  {
-	    discard_    = true;
-	    closechar_  = '*';
-	    closechar2_ = '/';
+	    close_ = "*/";
+	    ++cursor_;
 	  }
-	  if (p0 == '/' && p1 == '/'
-	      || p_1 == '/' && p0 == '/')
+	  else if (p1 == '/')
 	  {
-	    discard_    = true;
-	    closechar_  = '\n';
-	    closechar2_ = ' ';
+	    close_ = "\n";
+	    ++cursor_;
+	  }
+	  break;
+
+	case ',':
+	case ';':
+	  // , or ; separator, except between paren or brackets
+	  if (closers_.empty())
+	  {
+	    // Include the terminator.
+	    ++cursor_;
+	    ubyte* res = pop(cursor_);
+	    length = cursor_;
+	    cursor_ = 0;
+	    ECHO("Sending {{{"
+		 << std::string(reinterpret_cast<const char*>(res), length)
+		 << "}}} (" << length << " chars)");
+	    return res;
 	  }
       }
-    }
-
-    // Emergency escape character: ¤
-    if ((char)buffer_[position] == '$'
-	&& (char)buffer_[nextposition] == '$'
-	&& !discard_)
-    {
-      length = -1;
-      closers_.clear();
-      cursor_ = 0;
-      discard_  = false;
-      return 0;
-    }
-
-    // , or ; separator, except between paren or brackets
-    if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
-	&& !discard_
-	&& closers_.empty())
-    {
-      // Include the terminator.
-      ++cursor_;
-      ubyte* res = pop(cursor_);
-      length = cursor_;
-      cursor_ = 0;
-      ECHO("Sending {{{"
-	   << std::string(reinterpret_cast<const char*>(res), length)
-	   << "}}}");
-      return res;
-    }
   }
 
   // A complete command was not found.

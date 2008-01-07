@@ -1,5 +1,18 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	Fix preparser.
+	* src/ucommandqueue.hh (closechar_, closechar2_): Replace with
+	(close_): this string, instead of two chars...
+	(discard_): Remove, useless now we have a string that can be 0.
+	* src/ucommandqueue.cc (UCommandQueue::popCommand): Adjust.
+	Simplify.
+	Instead of doing a switch and them some ifs, how about just
+	extending the switch?
+	And fix to support properly \.
+	Remove "$$" support.
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	Start cleaning the handling of escapes in the preparser.
 	1.x/string-escapes fails, and with this patch, so does
 	1.x/armor-unarmor and a.x/channels-tags.
