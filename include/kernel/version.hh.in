@@ -1,7 +1,7 @@
 /// \file   version.hh
 /// \brief  Version information on the URBI Kernel
 ///
-///  @warning this is the only kernel header that is guarenteed
+///  @warning this is the only kernel header that is guaranteed
 ///  to change with every kernel release, including this header
 ///  will cause a recompile every time a new kernel version is
 ///  released.

@@ -1,5 +1,10 @@
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
+	Typo.
+	* include/kernel/version.hh.in: Fix typo.
+
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
 	Add warning about modifying ucomplaints.hh.
 	* include/kernel/ucomplaints.hh: Add a note about keeping this file
 	in sync with ucomplaints.cc.
