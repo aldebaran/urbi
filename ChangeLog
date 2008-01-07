@@ -1,5 +1,10 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	Use passert.
+	* src/uconnection.cc (UConnection::received_): here.
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	merge -r 2227:2246 https://svn.gostai.com/svn/kernel1/trunk
 
 	2008-01-04  Akim Demaille  <demaille@gostai.com>

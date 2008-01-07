@@ -32,6 +32,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 
+#include "libport/assert.hh"
 #include "libport/ref-pt.hh"
 
 #include "kernel/userver.hh"
@@ -551,7 +552,7 @@ UConnection::received_ (const ubyte *buffer, int length)
   // Code extracted from the UCommandQueue
   std::string command;
   // active_command_: The command to be executed (root of the AST).
-  assert (active_command_->empty());
+  passert (*active_command_, active_command_->empty());
 
   // Loop to get all the commands that are ready to be executed.
   do {
