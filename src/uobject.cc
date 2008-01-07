@@ -263,7 +263,7 @@ namespace urbi
 
   //! Clean a callback UTimerTable from all callbacks linked to
   //! the object whose name is \a n.
-  void
+  static void
   cleanTimerTable(UTimerTable &t, const std::string& n)
   {
     for (UTimerTable::iterator i = t.begin(); i != t.end(); )
@@ -281,7 +281,7 @@ namespace urbi
   // FIXME: Interestingly enough, might be equal to the above, if we
   // know that the name can appear only once.  Using lists is really
   // not smart.
-  void
+  static void
   remove (UTimerTable& t, const std::string& n)
   {
     // Find previous update timer on this object

@@ -437,7 +437,7 @@ inline std::string unic (const char* prefix);
 `-------------------------*/
 
 /// Send debugging messages via ::urbiserver.
-void debug (const char* fmt, va_list args)
+void vdebug (const char* fmt, va_list args)
   __attribute__ ((__format__ (__printf__, 1, 0)));
 
 /// Send debugging messages via ::urbiserver.

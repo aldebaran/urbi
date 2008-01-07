@@ -100,7 +100,7 @@
 
   /* Memory checking macros, used in the command tree building process */
 
-  void
+  static void
   memcheck (UParser& up, const void* p)
   {
     if (!p)
@@ -165,7 +165,7 @@
   }
 
   /// Whether the \a command was the empty command.
-  bool
+  static bool
   spontaneous (const UCommand& u)
   {
     const UCommand_NOOP* noop = dynamic_cast<const UCommand_NOOP*>(&u);
@@ -173,7 +173,7 @@
   }
 
   /// Issue a warning.
-  void
+  static void
   warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
   {
     std::ostringstream o;
@@ -182,7 +182,7 @@
   }
 
   /// Complain if \a command is not spontaneous.
-  void
+  static void
   warn_spontaneous(UParser& up,
 		   const yy::parser::location_type& l, const UCommand& u)
   {
@@ -193,7 +193,7 @@
   }
 
   /// Better newer style than deprecated.
-  void
+  static void
   warn_deprecated (UParser& up,
 		   const yy::parser::location_type& l,
 		   const std::string& older, const std::string& newer)
@@ -203,7 +203,7 @@
   }
 
   /// Issue a warning about missing parens for a function \a f call.
-  void
+  static void
   warn_parens (UParser& up,
 	       const yy::parser::location_type& l, const std::string& f)
   {
@@ -220,7 +220,7 @@
 
 
   /// Create a new Tree node composing \c Lhs and \c Rhs with \c Op.
-  UCommand*
+  static UCommand*
     new_bin(UParser& up,
 	    const yy::parser::location_type& l, Flavorable::UNodeType op,
 	    UCommand* lhs, UCommand* rhs)

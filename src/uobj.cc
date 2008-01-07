@@ -190,6 +190,7 @@ UObj::searchFunction(const char* id, bool &ambiguous) const
     if (ambiguous)
       return 0;
     if (f)
+    {
       if (found)
       {
 	ambiguous = true;
@@ -200,6 +201,7 @@ UObj::searchFunction(const char* id, bool &ambiguous) const
 	ret = f;
 	found = true;
       }
+    }
   }
   ambiguous = false;
   return ret;
@@ -229,6 +231,7 @@ UObj::searchVariable(const char* id, bool &ambiguous) const
       if (ambiguous)
 	return 0;
       if (tmpres)
+      {
 	if (found)
 	{
 	  ambiguous = true;
@@ -239,6 +242,7 @@ UObj::searchVariable(const char* id, bool &ambiguous) const
 	  ret = tmpres;
 	  found = true;
 	}
+      }
     }
     ambiguous = false;
     return ret;
@@ -266,6 +270,7 @@ UObj::searchEvent(const char* id, bool &ambiguous) const
       if (ambiguous)
 	return false;
       if (tmpres)
+      {
 	if (found)
 	{
 	  ambiguous = true;
@@ -273,6 +278,7 @@ UObj::searchEvent(const char* id, bool &ambiguous) const
 	}
 	else
 	  found = true;
+      }
     }
     ambiguous = false;
     return found;

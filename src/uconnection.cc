@@ -1280,7 +1280,7 @@ UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
 
     // STATUS UPDATE
 
-    if (tree->command1 == 0 && tree->command2 == 0
+    if ((tree->command1 == 0 && tree->command2 == 0)
 	|| deletecommand)
     {
       if (tree == lastCommand)

@@ -602,8 +602,8 @@ UExpression::eval (UCommand *command,
       if (e1==0 || e1->dataType == DATA_VOID ||
 	  e2==0 || e2->dataType == DATA_VOID)
       {
-	if (e1 && e1->dataType == DATA_VOID
-	    || e2 && e2->dataType == DATA_VOID)
+	if ((e1 && e1->dataType == DATA_VOID)
+	    || (e2 && e2->dataType == DATA_VOID))
 	  send_error(connection, command, this, "Invalid type");
 	delete e1;
 	delete e2;
@@ -1895,6 +1895,7 @@ UExpression::eval_VARIABLE (UCommand *command,
 
   // static variables
   if (variablename->isstatic)
+  {
     if (firsteval)
     {
       firsteval = false;
@@ -1904,6 +1905,7 @@ UExpression::eval_VARIABLE (UCommand *command,
     }
     else
       ret = staticcache->copy();
+  }
 
   return ret;
 }

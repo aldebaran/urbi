@@ -489,6 +489,7 @@ UServer::work_test_cpuoverload_ ()
   cpuload = (latestTime - currentTime) / period_get();
 
   if (!cpuoverload)
+  {
     if (cpuload > cputhreshold)
     {
       ++cpucount;
@@ -501,6 +502,7 @@ UServer::work_test_cpuoverload_ ()
     }
     else if (cpucount > 0)
       --cpucount;
+  }
 
 
   if (cpuoverload && cpuload < 1)

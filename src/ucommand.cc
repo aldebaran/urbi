@@ -528,6 +528,7 @@ UCommand_TREE::deleteMarked()
   while (tree != up)
   {
     if (tree->command1 && go_to == 1)
+    {
       if (tree->command1->toDelete)
       {
 	delete tree->command1;
@@ -540,8 +541,10 @@ UCommand_TREE::deleteMarked()
 	go_to = 1;
 	continue;
       }
+    }
 
     if (tree->command2 && go_to >= 1)
+    {
       if (tree->command2->toDelete)
       {
 	delete tree->command2;
@@ -554,6 +557,7 @@ UCommand_TREE::deleteMarked()
 	go_to = 1;
 	continue;
       }
+    }
 
     go_to = 2;
     if (tree->up && *tree->position == tree->up->command2)
@@ -650,8 +654,8 @@ UCommand::tryModuleCall(const char * name,
   {
     BOOST_FOREACH (urbi::UGenericCallback* cbi, hmfi->second)
     {
-      if (parameters && parameters->size() == cbi->nbparam
-	  || !parameters && !cbi->nbparam)
+      if ((parameters && parameters->size() == cbi->nbparam)
+	  || (!parameters && !cbi->nbparam))
       {
 	urbi::UList tmparray;
 	for (UNamedParameters* pvalue = parameters;
@@ -1405,10 +1409,12 @@ UCommand_ASSIGN_VALUE::execute_(UConnection *connection)
   if (status == URUNNING)
   {
     if (finished)
+    {
       if (variable->reloop)
 	finished = false;
       else
 	return UCOMPLETED;
+    }
 
     // Cancel if needed
     if (variable->blendType == urbi::UCANCEL && variable->cancel != this)
@@ -4320,6 +4326,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
   }
 
   if (*oper == "runningcommands")
+  {
     BOOST_FOREACH (HMtagtab::value_type i, connection->server->tagtab)
       BOOST_FOREACH (UCommand* j, i.second.commands)
     {
@@ -4327,6 +4334,7 @@ UCommand_OPERATOR::execute_(UConnection *connection)
       o << "*** "<< i.second.name<<" " << j->loc() << "\n";
       *connection << UConnection::sendf(getTag(), o.str().c_str());
     }
+  }
 
   if (*oper == "uservars")
   {
@@ -4617,9 +4625,10 @@ UCommand_EMIT::execute_(UConnection *connection)
 
     urbi::UTable::iterator hmfi = urbi::eventmap->find(eventnamestr);
     if (hmfi != urbi::eventmap->end())
+    {
       BOOST_FOREACH (urbi::UGenericCallback* cbi, hmfi->second)
-	if (parameters && parameters->size() == cbi->nbparam
-	    || !parameters && !cbi->nbparam)
+	if ((parameters && parameters->size() == cbi->nbparam)
+	    || (!parameters && !cbi->nbparam))
 	{
 	  urbi::UList tmparray;
 	  for (UNamedParameters *pvalue = parameters;
@@ -4640,6 +4649,7 @@ UCommand_EMIT::execute_(UConnection *connection)
 
 	  cbi->__evalcall(tmparray);
 	}
+    }
     firsttime = false;
     return UONQUEUE;
   }
@@ -4685,11 +4695,13 @@ UCommand_EMIT::removeEvent ()
   {
     urbi::UTable::iterator i = urbi::eventendmap->find(eventnamestr);
     if (i != urbi::eventendmap->end())
+    {
       BOOST_FOREACH (urbi::UGenericCallback* j, i->second)
       {
 	urbi::UList tmparray;
 	j->__evalcall(tmparray);
       }
+    }
   }
 }
 
@@ -6064,11 +6076,13 @@ UCommand_WHENEVER::execute_(UConnection *connection)
 	{
 	  trigger = true;
 	  if (assigncmd)
+	  {
 	    if (!assign)
 	      assign = assigncmd;
 	    else
 	      assign = new UCommand_TREE (loc_, Flavorable::UAND,
 					  assigncmd, assign);
+	  }
 	}
 	else
 	  reloop_ = true; // we should try again later

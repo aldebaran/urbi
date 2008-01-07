@@ -199,8 +199,10 @@ UVariable::~UVariable()
   {
     urbi::UVarTable::iterator i = urbi::varmap->find(varname.c_str ());
     if (i != urbi::varmap->end())
+    {
       BOOST_FOREACH (urbi::UVar* j, i->second)
 	j->setZombie ();
+    }
   }
 
   FREEOBJ(UVariable);
@@ -512,6 +514,7 @@ UVariable::updated(bool )
   updateRegisteredCmd ();
 
   if (binder)
+  {
     BOOST_FOREACH (UMonitor* i, binder->monitors)
     {
       *(i->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
@@ -521,6 +524,7 @@ UVariable::updated(bool )
       value->echo(i->c);
       *(i->c) << UConnection::send((const ubyte*)"]\n", 2);
     }
+  }
 
   BOOST_FOREACH (urbi::UGenericCallback* i, internalBinder)
   {
@@ -603,15 +607,18 @@ void UVariable::setTarget() {
   if (autoUpdate)
   {
      if (binder)
-    BOOST_FOREACH (UMonitor* i, binder->monitors)
-    {
-      *(i->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
-      *(i->c) << UConnection::sendc((const ubyte*)"[1,\"", 4);
-      *(i->c) << UConnection::sendc((const ubyte*)varname.c_str(), varname.length());
-      *(i->c) << UConnection::sendc((const ubyte*)"\",", 2);
-      value->echo(i->c);
-      *(i->c) << UConnection::send((const ubyte*)"]\n", 2);
-    }
+     {
+       BOOST_FOREACH (UMonitor* i, binder->monitors)
+	 {
+	   *(i->c) << UConnection::prefix(EXTERNAL_MESSAGE_TAG);
+	   *(i->c) << UConnection::sendc((const ubyte*)"[1,\"", 4);
+	   *(i->c) << UConnection::sendc((const ubyte*)varname.c_str(),
+					 varname.length());
+	   *(i->c) << UConnection::sendc((const ubyte*)"\",", 2);
+	   value->echo(i->c);
+	   *(i->c) << UConnection::send((const ubyte*)"]\n", 2);
+	 }
+     }
   }
   inSetTarget = false;
 }
