@@ -1,5 +1,11 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	Update checks.
+	* Makefile.am: Update check-% targets.
+	* tests-local.mk: Run 0.x tests.
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	List.+=.
 	* src/object/list-class.cc: Bind it to avoid warnings about non
 	used functions.
