@@ -1,3 +1,9 @@
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
+	Skip RT commits for merging.
+	* .automerge: Here. 2246-2254 patches are meaningless
+	for k2.
+
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
 	Use passert.
