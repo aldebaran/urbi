@@ -19,9 +19,9 @@
 
  **************************************************************************** */
 //#define ENABLE_DEBUG_TRACES
-#include "libport/compiler.hh"
-#include "libport/utime.hh"
+
 #include "libport/config.h"
+
 
 #include <cassert>
 #include <cstdlib>
@@ -39,7 +39,9 @@
 #endif
 
 #include "libport/containers.hh"
+#include "libport/compiler.hh"
 #include "libport/separator.hh"
+#include "libport/utime.hh"
 
 #include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
@@ -213,11 +215,8 @@ UServer::initialize()
 
   DEBUG (("Loading URBIRT.INI..."));
   if (loadFile("URBIRT.INI", &ghostRT_->recvQueue()) == USUCCESS)
-  {
     ghostRT_->newDataAdded = true;
-    ghostRT_->recvQueue().push ("#line 1 \"\"\n");
-  }
-  
+
   DEBUG (("Loading URBI.INI..."));
   if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
     ghost_->newDataAdded = true;
@@ -319,7 +318,7 @@ UServer::work_memory_check_ ()
 }
 
 void
-UServer::work_handle_connections_ (bool overflow, long long stopTime)
+UServer::work_handle_connections_ (bool overflow, libport::utime_t stopTime)
 {
   if (SCHED_DEBUG)
     std::cerr <<"-- "<<libport::utime()<<' '<<stopTime<<std::endl;
@@ -599,7 +598,9 @@ UServer::work_reset_if_needed_ ()
 void
 UServer::work()
 {
-  long long stopTime = static_cast<long long>(libport::utime()) + static_cast<long long>((period_ - timeMargin_)) * 1000LL;
+  libport::utime_t stopTime = 
+    static_cast<libport::utime_t>(libport::utime()) 
+    + static_cast<libport::utime_t>((period_ - timeMargin_)) * 1000;
   if (SCHED_DEBUG)
     std::cerr << libport::utime()<< " stop at "<<stopTime<<std::endl;
 # if ! defined LIBPORT_URBI_ENV_AIBO
@@ -1034,9 +1035,9 @@ UServer::loadFile (const char* base, UCommandQueue* q, QueueType type)
 void
 UServer::addConnection(UConnection *connection)
 {
-  # if ! defined LIBPORT_URBI_ENV_AIBO
+# if ! defined LIBPORT_URBI_ENV_AIBO
   boost::recursive_mutex::scoped_lock lock(mutex);
-  # endif
+# endif
   if (!connection || connection->uerror_ != USUCCESS)
     error(::DISPLAY_FORMAT1, (long)this,
 	  "UServer::addConnection",

@@ -1,3 +1,10 @@
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
+	Code cleanup.
+	* include/kernel/userver.hh: Use libport::utime_t.
+	* src/ucommand.cc: Remove useless 'if x delete x' protection.
+	* src/userver.cc: Use libport::utime_t, reindent, reorder headers
+
 2008-01-06  Matthieu Nottale  <nottale@gostai.com>
 
         Merging and closing RT kernel branch

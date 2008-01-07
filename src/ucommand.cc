@@ -3655,8 +3655,7 @@ UCommand_OPERATOR_VAL::execute_(UConnection *connection)
     UValue *value = expr->eval(this, connection);
     if ( !value || value->dataType != DATA_NUM)
     {
-      if (value)
-	delete value;
+      delete value;
       send_error(connection, this, 
 		 "invalid non-numeric argument to setpriority");
       return UCOMPLETED;

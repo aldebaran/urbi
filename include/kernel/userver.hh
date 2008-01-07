@@ -34,6 +34,7 @@
 # include "libport/compiler.hh"
 # include "libport/lockable.hh"
 # include "libport/ufloat.h"
+# include "libport/utime.hh"
 
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
@@ -281,7 +282,7 @@ public:
   /// Scan currently opened connections for ongoing work.
   /// \param overflow iff an overflow has just been detected.
   /// \param stopTime time at which to interrupt command execution
-  void work_handle_connections_ (bool overflow, long long stopTime);
+  void work_handle_connections_ (bool overflow, libport::utime_t stopTime);
   /// Scan currently opened connections for deleting marked commands or
   /// killall order
   void work_handle_stopall_ ();
