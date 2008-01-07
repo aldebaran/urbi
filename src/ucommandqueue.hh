@@ -72,7 +72,9 @@ public:
 private:
 
   /// internal position of the preparsing cursor. It's an offset of
-  /// start_
+  /// start_.  Should always be before a complete "character".  I.e.,
+  /// should never point to the * of an "/*" that does open a comment,
+  /// should stop between a `\' and its "argument" and so forth.
   int            cursor_;
   /// True when a commentary is active;
   bool           discard_;

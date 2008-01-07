@@ -1,5 +1,21 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	Start cleaning the handling of escapes in the preparser.
+	1.x/string-escapes fails, and with this patch, so does
+	1.x/armor-unarmor and a.x/channels-tags.
+	But the code is borken anyway: it thinks it
+	can handle \ from right to left.  So first, make the code cleaner
+	(this patch), then fix it (next patch).
+	* src/ucommandqueue.cc: Factor.
+	Group together what goes together.
+	Reduce scopes.
+	Prefer for to while.
+	Enjoy calling "return" from the loop.
+	* src/ucommandqueue.hh: more doc.
+	* src/uqueue.hh: Doc changes..
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	Use 0.x tests.
 	* tests-local.mk: here.
 

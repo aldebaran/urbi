@@ -59,34 +59,17 @@ UCommandQueue::~UCommandQueue()
 ubyte*
 UCommandQueue::popCommand (int &length)
 {
-  if (dataSize_ == 0)
-  {
-    length = 0;
-    return buffer_;
-  }
-
   // Scanning
-  int position = start_ + cursor_;
-  if (position >= bufferSize_)
-    position = position - bufferSize_;
-
-  int nextposition = position + 1;
-  if (nextposition >= bufferSize_)
-    nextposition = nextposition - bufferSize_;
-
-  int previousposition = position - 1;
-  if (previousposition < 0)
-    previousposition = previousposition + bufferSize_;
-  char p0 = (char) buffer_[previousposition]; // extract the previous char.
-  if (cursor_ == 0)
-    // no previous char at start
-    p0 = ' ';
-
-  bool found = false;
-  while (cursor_ < dataSize_ && !found)
+  for (/* nothing */; cursor_ < dataSize_; ++cursor_)
   {
-    char p_1 = p0;
-    p0 = (char) buffer_[position];
+    // Extract the previous char (' ' otherwise).
+    int previousposition = (start_ + cursor_ - 1 + bufferSize_) % bufferSize_;
+    char p_1 = cursor_ == 0 ? (char) buffer_[previousposition] : ' ';
+
+    int position = (start_ + cursor_) % bufferSize_;
+    char p0 = (char) buffer_[position];
+
+    int nextposition = (position + 1) % bufferSize_;
     char p1 = (cursor_ < dataSize_ - 1) ? (char) buffer_[nextposition] : '-';
 
     if (discard_)
@@ -155,12 +138,6 @@ UCommandQueue::popCommand (int &length)
       }
     }
 
-    // , or ; separator, except between paren or brackets
-    if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
-	&& !discard_
-	&& closers_.empty())
-      found = true;
-
     // Emergency escape character: ¤
     if ((char)buffer_[position] == '$'
 	&& (char)buffer_[nextposition] == '$'
@@ -173,29 +150,24 @@ UCommandQueue::popCommand (int &length)
       return 0;
     }
 
-    ++cursor_;
-    ++position;
-    if (position == bufferSize_)
-      position = 0;
-    ++nextposition;
-    if (nextposition == bufferSize_)
-      nextposition = 0;
+    // , or ; separator, except between paren or brackets
+    if (((char)buffer_[position] == ',' || (char)buffer_[position] == ';' )
+	&& !discard_
+	&& closers_.empty())
+    {
+      // Include the terminator.
+      ++cursor_;
+      ubyte* res = pop(cursor_);
+      length = cursor_;
+      cursor_ = 0;
+      ECHO("Sending {{{"
+	   << std::string(reinterpret_cast<const char*>(res), length)
+	   << "}}}");
+      return res;
+    }
   }
 
-  ubyte* res;
-  if (found)
-  {
-    res = pop(cursor_);
-    length = cursor_;
-    cursor_ = 0;
-  }
-  else
-  {
-    res = buffer_;
-    length = 0;
-  }
-  ECHO("Sending {{{"
-       << std::string(reinterpret_cast<const char*>(res), length)
-       << "}}}");
-  return res;
+  // A complete command was not found.
+  length = 0;
+  return buffer_;
 }

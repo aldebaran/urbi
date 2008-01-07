@@ -74,8 +74,8 @@ public:
 
 protected:
 
-  enum { INITIAL_BUFFER_SIZE = 4096 }; ///< initial size of the
-					       ///< output buffer used by pop.
+  /// Initial size of the output buffer used by pop.
+  enum { INITIAL_BUFFER_SIZE = 4096 };
 
   ubyte          *buffer_;       ///< queue internal buffer (circular).
   ubyte          *outputBuffer_; ///< buffer used by pop to return it's value.
