@@ -1,5 +1,17 @@
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
+	merge -r 2284:2287 https://svn.gostai.com/svn/kernel1/trunk.
+        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+        Typo.
+        * include/kernel/version.hh.in: Fix typo.
+
+        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+        Add warning about modifying ucomplaints.hh.
+        * include/kernel/ucomplaints.hh: Add a note about keeping this file
+        in sync with ucomplaints.cc.
+
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
 	merge -r 2268:2284 https://svn.gostai.com/svn/kernel1/trunk.
         2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
         Explicitely require bison >= 2.3a+.

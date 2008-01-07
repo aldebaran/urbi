@@ -3,7 +3,9 @@
 #ifndef KERNEL_UCOMPLAINTS_HH
 # define KERNEL_UCOMPLAINTS_HH
 
-/// Type of error messages
+// Be careful not to change anything in this file without proper
+// synchronization with the corresponding C++ code.
+
 enum UMsgType
 {
   UERRORCODE = 0,
