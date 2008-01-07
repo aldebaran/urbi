@@ -13,6 +13,7 @@
 #include "kernel/uconnection.hh"
 #include "object/atom.hh"
 #include "object/urbi-exception.hh"
+#include "object/idelegate.hh"
 #include "runner/runner.hh"
 
 namespace runner
@@ -219,6 +220,18 @@ namespace runner
 	PING ();
 	try {
 	  current_ = val.cast<object::Primitive>()->value_get()(lobby_, args);
+	}
+	catch (object::UrbiException& ue)
+	{
+	  ue.location_set (e.location_get ());
+	  throw;
+	}
+	break;
+      case object::Object::kind_delegate:
+	PING();
+	try {
+	  current_ = val.cast<object::Delegate>()->value_get()
+	    ->operator()(lobby_, args);
 	}
 	catch (object::UrbiException& ue)
 	{

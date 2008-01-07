@@ -42,6 +42,7 @@
 #include "libport/containers.hh"
 #include "libport/separator.hh"
 
+#include "urbi/uobject.hh"
 #include "urbi/usystem.hh"
 
 #include "kernel/userver.hh"
@@ -54,6 +55,8 @@
 #include "uqueue.hh"
 #include "ughostconnection.hh"
 
+#include "object/atom.hh"
+#include "object/primitives.hh"
 #include "runner/scheduler.hh"
 
 // Global server reference
@@ -153,6 +156,16 @@ UServer::initialize()
   }
 
   load_init_file("urbi.u");
+  
+  //pluged uobjects
+  //create uobject
+  object::rObject uobject = new object::Object();
+  ghost_->lobby_->slot_set("uobject", uobject);
+  BOOST_FOREACH (urbi::baseURBIStarter* i, *urbi::objectlist)
+  {
+    uobject->slot_set(i->name, new object::Object());
+    i->init(i->name);
+  }
   load_init_file("URBI.INI");
 }
 

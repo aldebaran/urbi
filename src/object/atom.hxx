@@ -113,6 +113,14 @@ namespace object
   template <>
   inline
   bool
+  Atom<object::delegate_traits>::operator< (const Atom& rhs) const
+  {
+    return this < &rhs;
+  }
+  
+  template <>
+  inline
+  bool
   Atom<object::lobby_traits>::operator< (const Atom& rhs) const
   {
     return this < &rhs;
@@ -150,6 +158,14 @@ namespace object
     return out << value_get();
   }
 
+  template <>
+  inline
+  std::ostream&
+  Atom<delegate_traits>::print(std::ostream& out) const
+  {
+    return out << "delegate";
+  }
+  
   template <>
   inline
   std::ostream&
@@ -243,6 +259,13 @@ namespace object
     return o << libport::iendl;
   }
 
+  template <>
+  inline
+  std::ostream&
+  Atom<delegate_traits>::special_slots_dump (std::ostream& o) const
+  {
+  return o << "delegate" << libport::iendl;
+  }
 
   /*--------------------------.
   | Free standing functions.  |

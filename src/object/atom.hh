@@ -6,6 +6,7 @@
 #ifndef OBJECT_ATOM_HH
 # define OBJECT_ATOM_HH
 
+# include <boost/scoped_ptr.hpp>
 # include "ast/fwd.hh"
 
 # include "kernel/fwd.hh"
@@ -85,6 +86,16 @@ namespace object
   typename Atom<Traits>::shared_type
   clone (typename Atom<Traits>::shared_type ref);
 
+  /*----------.
+  | Delegate. |
+  `----------*/
+
+  struct delegate_traits
+  {
+    typedef IDelegate* type;
+    enum { kind = Object::kind_delegate };
+  };
+
   /*-------.
   | Code.  |
   `-------*/
@@ -140,7 +151,7 @@ namespace object
   };
 
 
-  /*------------.
+ /*------------.
   | Primitive.  |
   `------------*/
 
@@ -150,7 +161,7 @@ namespace object
     enum { kind = Object::kind_primitive };
   };
 
-
+  
   /*---------.
   | String.  |
   `---------*/

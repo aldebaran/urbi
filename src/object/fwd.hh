@@ -31,7 +31,8 @@ namespace object
   /// capitalized URBI name.
 # define APPLY_ON_ALL_PRIMITIVES_BUT_OBJECT_AND_PRIMITIVE(Macro)	\
   Macro(code,      Code)						\
-  Macro(lobby,      Lobby)						\
+  Macro(delegate,  Delegate)                                            \
+  Macro(lobby,     Lobby)						\
   Macro(float,     Float)						\
   Macro(integer,   Integer)						\
   Macro(list,      List)						\
@@ -72,13 +73,13 @@ namespace object
 # undef DEFINE
 
   // urbi-exception.hh
+  class IDelegate;
   class UrbiException;
   class LookupError;
   class RedefinitionError;
   class PrimitiveError;
   class WrongArgumentType;
   class WrongArgumentCount;
-
 } // namespace object
 
 #endif // !OBJECT_FWD_HH

@@ -1,5 +1,37 @@
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
+	UObject initial support (UBindFunction working).
+	General idea:
+	  - new primitive Delegate, Atom wrapping a IDelegate*, which is an
+	  interface(pure virtual class) with rObject operator()(rLoby,  object_list).
+	  - support for this primitive in runner (Call node)
+	  - casts between rObject and urbi::UValue in uvalue_cast.cc
+	  - UServer::initialize() creates an object::Object for each UObject, with
+	    the same name, in lobby.uobject.
+	  - UGenericCallback ctor calls setSlot on lobby.uobject.<obname>.<funcname>
+	    with a IDelegate implementation, who is taking care of casting the
+	    arguments calling this->__evalcall(), casting the result back.
+
+	  Creating new UObject instances is not yet supported.
+	* include/kernel/uconnection.hh: get_lobby() accessor.
+	* src/Makefile.am: Add uvalue_cast.cc, uobject.cc, and uobject/*
+	* src/object/atom.hh: Add delegate.
+	* src/object/atom.hxx: Handle (badly) delegate printing.
+	* src/object/delegate-class.cc: New.
+	* src/object/delegate-class.hh: New.
+	* src/object/fwd.hh: Add delegate.
+	* src/object/idelegate.hh: New. IDelegate interface.
+	* src/object/object.mk: Add delegate.
+	* src/object/primitives.hh: Add delegate.
+	* src/runner/runner.cc: Support for kind_delegate call type.
+	* src/uobject.cc: New.
+	* src/userver.cc: Initialize lobby.uobject, and
+	  lobby.uobject<plugedobject> for all uobjects.
+	* src/uvalue_cast.cc,
+	* src/uvalue_cast.hh: New. casts between rObject and urbi::UValue
+
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
 	merge -r 2284:2287 https://svn.gostai.com/svn/kernel1/trunk.
         2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
         Typo.

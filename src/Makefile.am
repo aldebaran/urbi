@@ -52,10 +52,12 @@ ucommandqueue.hh ucommandqueue.cc				\
 ucomplaints.cc							\
 uconnection.cc							\
 ughostconnection.hh ughostconnection.cc				\
+uobject.cc                                                      \
 uqueue.hh uqueue.cc						\
 userver.cc							\
 ustring.cc							\
-usystem.cc
+usystem.cc                                                      \
+uvalue_cast.cc
 
 
 ## ------------ ##
@@ -73,7 +75,7 @@ include $(top_srcdir)/build-aux/revision.mk
 
 include $(top_srcdir)/build-aux/svn-externals.mk
 include uobject/uobject.mk
-# nodist_libkernel_la_SOURCES += $(uobject_sources)
+nodist_libkernel_la_SOURCES += $(uobject_sources)
 
 
 ## ----------------- ##
