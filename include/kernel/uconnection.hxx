@@ -1,7 +1,7 @@
 /// \file uconnection.hxx
 
-#ifndef UCONNECTION_HXX
-# define UCONNECTION_HXX
+#ifndef KERNEL_UCONNECTION_HXX
+# define KERNEL_UCONNECTION_HXX
 
 # include "kernel/uconnection.hh"
 
@@ -58,4 +58,4 @@ UConnection::error () const
   return error_;
 }
 
-#endif
+#endif // !KERNEL_UCONNECTION_HXX

@@ -1,3 +1,53 @@
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
+	merge -r 2227:2246 https://svn.gostai.com/svn/kernel1/trunk
+
+	2008-01-04  Akim Demaille  <demaille@gostai.com>
+	Useless regexp.
+	* src/parser/utoken.l (STRING): Remove, useless for months.
+
+	2008-01-04  Akim Demaille  <demaille@gostai.com>
+	Update to newest UObject.
+	* include/kernel/utypes.hh: utypes-common.hh no longer exists.
+	* include/kernel/uvariable.hh (ublend-types.hh): Include it.
+
+	2008-01-04  Akim Demaille  <demaille@gostai.com>
+	Speed up BF's check.
+	* Makefile.am (CHECK_BUILDFARM_FLAGS): Pass -j4.
+	The tests spend a lot of time in sleep(1), and currently the BF is
+	way too slow to be really useful.
+
+	2008-01-04  Matthieu Nottale  <nottale@gostai.com>
+	Realy implement foreach.
+	* src/ucommand.cc: Just copy the value.
+
+	2008-01-04  Akim Demaille  <demaille@gostai.com>
+	* Makefile.am (check-%.): Forward to tests/.
+
+	2008-01-04  Akim Demaille  <demaille@gostai.com>
+	Run reheader.
+	* include/kernel/blockmemorymanager.hh,
+	* include/kernel/fwd.hh,
+	* include/kernel/mem-track.hh,
+	* include/kernel/memorymanager.hh,
+	* include/kernel/tag-info.hh,
+	* include/kernel/uasyncregister.hh,
+	* include/kernel/ucomplaints.hh,
+	* include/kernel/uconnection.hh,
+	* include/kernel/userver.hh,
+	* include/kernel/userver.hxx,
+	* include/kernel/ustring.hh,
+	* include/kernel/utypes.hh,
+	* include/kernel/uvalue.hh,
+	* include/kernel/uvariable.hh,
+	* include/kernel/version.hh.in:
+	Fix cpp guards.
+	* include/kernel/uvariable.hh: Simplify arg names.
+
+	2008-01-03  Akim Demaille  <demaille@gostai.com>
+	Update tests.
+	* Makefile.am: USE_VALGRIND is no longer used.
+
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
 	Reduce dependencies to a minimum.

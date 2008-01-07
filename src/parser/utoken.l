@@ -151,8 +151,6 @@ FLOAT    {FRACTION}{EXPONENT}?
 
 NUMBER   {NATURAL}|{FLOAT}
 
-STRING   \"([^\"]|"\\\"")*\"
-
 FLAVOR   [;|,&]?
 
 %%

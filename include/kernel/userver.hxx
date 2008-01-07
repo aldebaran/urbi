@@ -18,8 +18,8 @@
 
  **************************************************************************** */
 
-#ifndef USERVER_HXX
-# define USERVER_HXX
+#ifndef KERNEL_USERVER_HXX
+# define KERNEL_USERVER_HXX
 
 # include "userver.hh"
 
@@ -96,4 +96,4 @@ std::string unique (const std::string& prefix)
   return o.str();
 }
 
-#endif
+#endif // !KERNEL_USERVER_HXX

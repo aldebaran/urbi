@@ -34,8 +34,6 @@
 
 # include "fwd.hh"
 
-# include "urbi/utypes-common.hh"
-
 # include "kernel/fwd.hh"
 # include "kernel/ustring.hh"
 
