@@ -216,6 +216,7 @@ UServer::initialize()
   DEBUG (("Loading URBIRT.INI..."));
   if (loadFile("URBIRT.INI", &ghostRT_->recvQueue()) == USUCCESS)
     ghostRT_->newDataAdded = true;
+  DEBUG (("done\n"));
 
   DEBUG (("Loading URBI.INI..."));
   if (loadFile("URBI.INI", &ghost_->recvQueue()) == USUCCESS)
@@ -372,7 +373,7 @@ UServer::work_handle_connections_ (bool overflow, libport::utime_t stopTime)
 	r->newDataAdded = false;
 	*r << UConnection::received("");
       }
-      
+
       if (interupted)
 	break;
     }
@@ -600,8 +601,8 @@ UServer::work_reset_if_needed_ ()
 void
 UServer::work()
 {
-  libport::utime_t stopTime = 
-    static_cast<libport::utime_t>(libport::utime()) 
+  libport::utime_t stopTime =
+    static_cast<libport::utime_t>(libport::utime())
     + static_cast<libport::utime_t>((period_ - timeMargin_)) * 1000;
   if (SCHED_DEBUG)
     std::cerr << libport::utime()<< " stop at "<<stopTime<<std::endl;

@@ -723,7 +723,7 @@ UConnection::received_ (const ubyte *buffer, int length)
 		p.commandTree->status == UCommand::URUNNING)
 	      obstructed = true;
 	  }
-	  
+
 	  if (p.commandTree)
 	    append(p.commandTree);
 
@@ -940,7 +940,7 @@ UConnection::processCommand(UCommand *&command,
 		      && getPriority() < i->getPriority())
 		    {
 		      ::send_error(this, command, "Cannot write to command "
-		      "queue of U%ld: kernel is sealed and it has a higher "   
+		      "queue of U%ld: kernel is sealed and it has a higher "
 		      "priority.", (long)i);
 		    }
 		    else
@@ -952,7 +952,7 @@ UConnection::processCommand(UCommand *&command,
 		  if (!found)
 		  ::send_error(this, command, "no connection matches '%s'",
 		    tmpID->str->c_str());
-	      } 
+	      }
 	      else
 		::send_error(this, command, "invalid parameter to +connection");
 	      delete tmpID;
@@ -1174,7 +1174,7 @@ UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
 {
   lastRun_ = libport::utime();
   PING();
- 
+
   UCommand_TREE * tree;
   if (wasInterrupted())
   { //ignore execCommand
@@ -1191,8 +1191,8 @@ UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
   //std::cerr <<"resuming, "<<tree<<std::endl;
   while (tree)
   {
-     
-    /* DEBUG: 
+
+    /* DEBUG:
     uncomment this(and replace 'if' below) to have execute interrupt itself
     frequently.
     otherwise you need to overload the kernel with code to activate the feature
@@ -1207,7 +1207,7 @@ UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
       executionInterrupted_ = true;
       return false;
     }
-    
+
     tree->status = UCommand::URUNNING;
 
     // Requests a +end notification for {...} type of trees
@@ -1309,7 +1309,7 @@ UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
 
     // REDUCTION
 
-    if (tree != lastCommand && tree != execCommand 
+    if (tree != lastCommand && tree != execCommand
       && !tree->toDelete)
       if (simplify (tree))
       {
@@ -1321,7 +1321,7 @@ UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
 
     // BACK UP
     tree = tree->up;
-   
+
   }
 
   if (execCommand
@@ -1370,7 +1370,7 @@ UConnection::append(UCommand_TREE *command)
   }
 
   lastCommand = command;
-  passert(lastCommand->command2, !lastCommand->command2 
+  passert(lastCommand->command2, !lastCommand->command2
 	  ||    dynamic_cast<UCommand_NOOP*>(lastCommand->command2));
   return *this;
 }
