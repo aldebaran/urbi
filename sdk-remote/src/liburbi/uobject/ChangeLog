@@ -1,3 +1,8 @@
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
+	Use static where applicable.
+	* uvalue-common.cc: Use static where applicable.
+
 2008-01-04  Matthieu Nottale  <nottale@gostai.com>
 
 	Add missing include <libport/package-info.hh>.

@@ -76,7 +76,7 @@ namespace urbi
   | UValue Parsing.  |
   `-----------------*/
 
-  void unescape(std::string& data)
+  static void unescape(std::string& data)
   {
     int src = 0;
     int dst = 0;
@@ -107,7 +107,7 @@ namespace urbi
     data = data.substr(0, dst);
   }
 
-  void unescape(char* data)
+  static void unescape(char* data)
   {
     char* src = data;
     char* dst = data;
