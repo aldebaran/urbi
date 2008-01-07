@@ -107,36 +107,6 @@ namespace urbi
     data = data.substr(0, dst);
   }
 
-  static void unescape(char* data)
-  {
-    char* src = data;
-    char* dst = data;
-    while (*src)
-    {
-      if (*src != '\\')
-	*dst = *src;
-      else
-	switch (*(++src))
-	{
-	  case 'n':
-	    *dst = '\n';
-	    break;
-	  case '\\':
-	    *dst = '\\';
-	    break;
-	  case '"':
-	    *dst = '"';
-	    break;
-	  default:
-	    *dst = *src;
-	}
-
-      ++src;
-      ++dst;
-    }
-    *dst = 0;
-  }
-
   /*---------.
   | UValue.  |
   `---------*/
@@ -145,9 +115,10 @@ namespace urbi
     while (message[pos] == ' ')			\
       ++pos
 
-  int UValue::parse(const char* message, int pos,
-		    std::list<BinaryData>& bins,
-		    std::list<BinaryData>::iterator& binpos)
+  int
+  UValue::parse(const char* message, int pos,
+		std::list<BinaryData>& bins,
+		std::list<BinaryData>::iterator& binpos)
   {
     SKIP_SPACES();
     if (message[pos] == '"')
@@ -879,7 +850,15 @@ namespace
     *this = b;
   }
 
-  UObjectStruct& UObjectStruct::operator= (const UObjectStruct& b)
+  UObjectStruct::~UObjectStruct()
+  {
+    for (int i = 0; i < size(); ++i) //relax, it's a vector
+      delete array[i].val;
+    array.clear();
+  }
+
+  UObjectStruct&
+  UObjectStruct::operator= (const UObjectStruct& b)
   {
     if (this == &b)
       return *this;
@@ -896,19 +875,8 @@ namespace
     return *this;
   }
 
-  UObjectStruct::~UObjectStruct()
-  {
-    for (int i = 0; i < size(); ++i) //relax, it's a vector
-      delete array[i].val;
-    array.clear();
-  }
-
-
-  /*---------.
-  | UValue.  |
-  `---------*/
-
-  UValue& UObjectStruct::operator[] (const std::string& s)
+  UValue&
+  UObjectStruct::operator[] (const std::string& s)
   {
     for (int i = 0; i < size(); ++i)
       if (array[i].name == s)

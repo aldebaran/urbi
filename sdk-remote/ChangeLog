@@ -1,5 +1,12 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	Remove useless function.
+	* src/liburbi/uobject/uvalue-common.cc (unescape): Remove the useless
+	one.
+	Tidy the file a bit.
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	check-%.
 	* Makefile.am (check-%, check-buildfarm): New.
 
