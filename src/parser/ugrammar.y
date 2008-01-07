@@ -256,7 +256,7 @@
     }
 
     /// Whether the \a e was the empty command.
-    bool
+    static bool
     implicit (const ast::Exp* e)
     {
       const ast::Noop* noop = dynamic_cast<const ast::Noop*>(e);
@@ -264,7 +264,7 @@
     }
 
     /// Issue a warning.
-    void
+    static void
     warn (UParser& up, const yy::parser::location_type& l, const std::string& m)
     {
       std::ostringstream o;
@@ -273,7 +273,7 @@
     }
 
     /// Complain if \a command is not implicit.
-    void
+    static void
     warn_implicit(UParser& up,
 		  const yy::parser::location_type& l, const ast::Exp* e)
     {

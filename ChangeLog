@@ -1,5 +1,26 @@
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
+	merge -r 2268:2284 https://svn.gostai.com/svn/kernel1/trunk.
+        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+        Explicitely require bison >= 2.3a+.
+        * configure.ac: Require usage of bison 2.3a+ or later, as is done
+        in k2 (needed for %code support).
+
+        2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+        Update trunk for GCC 4.3.0.
+        * include/kernel/userver.hh: Prototype was wrong, declare vdebug()
+        here instead of debug().
+        * src/parser/ugrammar.y: Add static where needed.
+        * src/ucommand.cc: Add {} to prevent warnings.
+        * src/uconnection.cc: Add () to prevent warnings.
+        * src/uexpression.cc: Add () to prevent warnings.
+        * src/uobj.cc: Add {} to prevent warnings.
+        * src/uobject.cc: Add static where needed.
+        * src/userver.cc: Add {} to prevent warnings.
+        * src/uvariable.cc: Add {} to prevent warnings.
+
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
 	merge -r 2256:2268 https://svn.gostai.com/svn/kernel1/trunk.
 	2008-01-07  Akim Demaille  <demaille@gostai.com>
         Fix preparser.
