@@ -1,5 +1,10 @@
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
+	check-%.
+	* Makefile.am (check-%, check-buildfarm): New.
+
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
 	1.6pre.
 	* configure.ac: here.
 

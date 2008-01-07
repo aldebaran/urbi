@@ -37,3 +37,21 @@ nodist_include_libport_sys__HEADERS = $(libportsys_HEADERS)
 # new style installation.  To be removed eventually.
 install-data-local:
 	test -d $(include_libport_dir) || rm -rf $(include_libport_dir)
+
+
+## ------- ##
+## Check.  ##
+## ------- ##
+
+# check-html, check-clean, check-uob etc.
+check-%:
+	cd src/liburbi/tests && \
+	  $(MAKE) $(AM_MAKEFLAGS) $@
+
+# The target run by the buildfarm.
+CHECK_BUILDFARM_FLAGS = -j4 AM_COLOR_TESTS=no VERBOSE=1 INSTRUMENT=1
+check-buildfarm:
+	cd src/liburbi/tests && \
+	  $(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) check-html
+	cd libport && \
+	  $(MAKE) $(AM_MAKEFLAGS) $(CHECK_BUILDFARM_FLAGS) maintainer-check
