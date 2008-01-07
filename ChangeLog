@@ -1,5 +1,11 @@
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
+	Explicitely require bison >= 2.3a+.
+	* configure.ac: Require usage of bison 2.3a+ or later, as is done
+	in k2 (needed for %code support).
+
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
 	Update trunk for GCC 4.3.0.
 	* include/kernel/userver.hh: Prototype was wrong, declare vdebug()
 	here instead of debug().

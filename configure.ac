@@ -27,7 +27,7 @@ URBI_DOC
 ## ------------- ##
 
 AC_CONFIG_FILES([build-aux/bison++], [chmod +x build-aux/bison++])
-TC_PROG([bison], [>= 2.2],   [BISON], [GNU parser generator])
+TC_PROG([bison], [>= 2.3a+],   [BISON], [GNU parser generator])
 TC_PROG([flex],  [== 2.5.4], [FLEX],  [fast lexical analyzer generator])
 
 URBI_PROG_CXX
