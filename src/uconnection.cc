@@ -348,13 +348,6 @@ UConnection::operator<< (UErrorCode id)
 }
 
 UConnection&
-UConnection::operator<< (_Execute )
-{
-  assert(false);
-  return *this;
-}
-
-UConnection&
 UConnection::operator<< (_Append cmd)
 {
   return append (cmd._val);
@@ -1177,7 +1170,7 @@ namespace
 */
 //FIXME: find, store (and return ?) error if send fails
 bool
-UConnection::execute(UCommand_TREE * & execCommand, long long stopTime)
+UConnection::execute(UCommand_TREE * & execCommand, libport::utime_t stopTime)
 {
   lastRun_ = libport::utime();
   PING();
@@ -1199,10 +1192,13 @@ UConnection::execute(UCommand_TREE * & execCommand, long long stopTime)
   while (tree)
   {
      
-    /* DEBUG: uncomment this to test execute interruuption code
+    /* DEBUG: 
+    uncomment this(and replace 'if' below) to have execute interrupt itself
+    frequently.
+    otherwise you need to overload the kernel with code to activate the feature
     static int coincoin= 0;
     coincoin++;
-    if ( (stopTime && libport::utime()*0 > stopTime) || !(coincoin%5))
+    if ( !(coincoin%5))
     */
     if ( stopTime && libport::utime() > stopTime)
     {

@@ -26,6 +26,7 @@ For more information, comments, bug reports: http://www.urbiforge.net
 # include <iomanip>
 
 # include "libport/config.h"
+# include "libport/utime.hh"
 # if ! defined LIBPORT_URBI_ENV_AIBO
 #  include <boost/thread.hpp>
 # endif
@@ -312,17 +313,6 @@ public:
   UConnection& operator<< (UErrorCode id);
   UConnection& operator<< (UWarningCode id);
 
-  struct _Execute {
-    _Execute (UCommand_TREE*& cmd) : _val (cmd) {}
-    UCommand_TREE*& _val;
-  };
-  static inline _Execute mexecute (UCommand_TREE*& val)
-  {
-    _Execute cmd (val);
-    return cmd;
-  }
-  UConnection& operator<< (_Execute cmd);
-
   struct _Append { UCommand_TREE* _val; };
   static inline _Append mappend (UCommand_TREE* val)
   {
@@ -389,7 +379,8 @@ public:
 
 protected:
   /// Execute until stopTime is reached, return false on timeout, true on finish
-  bool                execute            (UCommand_TREE*&, long long stopTime);
+  bool                execute            (UCommand_TREE*&, 
+					  libport::utime_t stopTime);
   UConnection&        append             (UCommand_TREE *command);
 
 public:
@@ -534,7 +525,7 @@ private:
  
   int           priority_;
   /// Time at which it was run last
-  long long     lastRun_;
+  libport::utime_t     lastRun_;
   /// Position at which execution stopped last time
   UCommand_TREE* executionPosition_;
   /// True if last execution was interrupted

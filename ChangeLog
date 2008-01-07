@@ -1,3 +1,10 @@
+2008-01-07  Matthieu Nottale  <nottale@gostai.com>
+
+	More code cleanup.
+	* include/kernel/uconnection.hh: Remove all long long, remove
+	  unused <<(_Execute) API.
+	* src/uconnection.cc: idem.
+
 2008-01-07  Akim Demaille  <demaille@gostai.com>
 
 	Use a clearer version number.
