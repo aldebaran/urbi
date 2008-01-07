@@ -1,5 +1,12 @@
 2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
 
+	Use static where appropriate.
+	* src/object/float-class.cc: Use static where appropriate.
+	* src/object/object-class.cc: Ditto.
+	* src/object/primitives.hh: Ditto.
+
+2008-01-07  Samuel Tardieu  <tardieu@gostai.com>
+
 	Fix GCC 4.3.0 warnings.
 	* src/ucommandqueue.cc: Fix GCC 4.3.0 warnings.
 	* src/userver.cc: Fix GCC 4.3.0 warnings.

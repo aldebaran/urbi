@@ -156,7 +156,7 @@ namespace object
 
 
   /// Clone.
-  rObject
+  static rObject
   float_class_clone(rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(1);
@@ -166,7 +166,7 @@ namespace object
 
 
   /// Change the value.
-  rObject
+  static rObject
   float_class_set(rLobby, objects_type args)
   {
     CHECK_ARG_COUNT(2);
@@ -178,7 +178,7 @@ namespace object
 
 
   /// Unary or binary minus.
-  rObject
+  static rObject
   float_class_sub(rLobby, objects_type args)
   {
     // FIXME: The error message requires 2 although 1 is ok.
@@ -199,7 +199,7 @@ namespace object
   /// \param Call C++ code executed when primitive is called.
   /// \param Pre C++ code executed before call (typically to check args)
 #define PRIMITIVE_0_FLOAT_(Name, Call, Pre)             \
-  rObject                                               \
+  static rObject					\
   float_class_ ## Name (rLobby, objects_type args)	\
   {                                                     \
     CHECK_ARG_COUNT(1);                                 \

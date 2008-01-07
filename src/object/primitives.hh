@@ -61,7 +61,7 @@ namespace object
  * applied to all arguments.
  */
 #define PRIMITIVE_1_(Class, Name, Call, Ret, Type1, Get)        \
-  rObject                                                       \
+  static rObject						\
   Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(1);                                         \
@@ -82,7 +82,7 @@ namespace object
  * result is \a Call applied to all arguments.
  */
 #define PRIMITIVE_2_(Class, Name, Call, Ret, Type1, Type2, Get) \
-  rObject                                                       \
+  static rObject						\
   Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
@@ -103,7 +103,7 @@ namespace object
  * result is Call applied to all arguments.
  */
 #define PRIMITIVE_2_OBJECT(Class, Name, Call, Type1)            \
-  rObject                                                       \
+  static rObject						\
   Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \
@@ -116,7 +116,7 @@ namespace object
  * Define an operator-primitive. @see PRIMITIVE_2_.
  */
 #define PRIMITIVE_OP_(Class, Name, Op, Ret, Type1, Type2, Get)  \
-  rObject                                                       \
+  static rObject						\
   Class ## _class_ ## Name (rLobby, objects_type args)		\
   {                                                             \
     CHECK_ARG_COUNT(2);                                         \

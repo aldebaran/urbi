@@ -23,13 +23,13 @@ namespace object
   | Object primitives.  |
   `--------------------*/
 
-  rObject
+  static rObject
   object_class_clone (rLobby, objects_type args)
   {
     return clone(args[0]);
   }
 
-  rObject
+  static rObject
   object_class_init (rLobby, objects_type args)
   {
     return args[0];
@@ -38,7 +38,7 @@ namespace object
 
   /// Send pretty-printed self on the connection.
   /// args[1], if present, can be the tag to use.
-  rObject
+  static rObject
   object_class_print (rLobby c, objects_type args)
   {
     // Second argument is the tag name.
@@ -55,7 +55,7 @@ namespace object
 
   /// Send pretty-printed args[1] to the connection.
   // FIXME: Lots of duplication with the previous primitive :(
-  rObject
+  static rObject
   object_class_echo (rLobby c, objects_type args)
   {
     // Second argument is the tag name.
@@ -71,8 +71,8 @@ namespace object
   }
 
 #define SERVER_FUNCTION(Function)				\
-  rObject							\
-  object_class_ ## Function (rLobby, objects_type args)	\
+  static rObject						\
+  object_class_ ## Function (rLobby, objects_type args)		\
   {								\
     ::urbiserver->Function();					\
     /* Return the current object to return something. */	\
@@ -85,7 +85,7 @@ namespace object
 #undef SERVER_FUNCTION
 
 
-  rObject
+  static rObject
   object_class_wait (rLobby, objects_type args)
   {
     // FIXME: Currently does nothing.  A stub so that we
