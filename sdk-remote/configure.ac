@@ -2,7 +2,7 @@ m4_pattern_forbid([^ACX_])dnl
 m4_pattern_forbid([^URBI_])dnl
 
 AC_PREREQ([2.61])
-AC_INIT([URBI SDK], [1.5], [liburbi-cpp-bugs@gostai.com], [urbi-sdk])
+AC_INIT([URBI SDK], [1.6pre], [liburbi-cpp-bugs@gostai.com], [urbi-sdk])
 URBI_PACKAGE_COPYRIGHT([Gostai SAS], [2004-2007])
 
 # Auxiliary files.
