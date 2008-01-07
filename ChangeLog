@@ -1,3 +1,8 @@
+2008-01-07  Akim Demaille  <demaille@gostai.com>
+
+	Use a clearer version number.
+	* configure.ac: 1.6pre.
+
 2008-01-07  Matthieu Nottale  <nottale@gostai.com>
 
 	Code cleanup.
